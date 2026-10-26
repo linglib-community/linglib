@@ -12,13 +12,17 @@ This file defines conditional operators on propositions, taken as sets of worlds
 of the conditional derive it from a domain of antecedent-worlds: *if p, q* is true when `q` holds
 throughout the domain that `p` picks out from the evaluation point. The theories differ in the
 domain, which is the accessible antecedent-worlds for the strict conditional and the closest
-antecedent-worlds for the variably strict conditional under the Limit Assumption.
+accessible antecedent-worlds under the Limit Assumption. Lewis's variably strict conditional
+needs no such domain: *if p, q* is true when `q` holds at every accessible `p`-world from some
+point on as the `p`-worlds come closer, and it reduces to the closest-world conditional exactly
+where the Limit Assumption holds.
 
 ## Main definitions
 
 * `ofDomain`: the conditional quantifying over a domain of antecedent-worlds.
 * `materialImp`, `strictImp`: the material and strict conditionals.
-* `variablyStrictImp`: Lewis's variably strict conditional over a family of preorders.
+* `variablyStrictImp`: Lewis's variably strict conditional over an accessibility assignment and a
+  family of preorders.
 * `IsCentered`: strong centering of a family of preorders.
 * `closestImp`: the conditional of the minimal antecedent-worlds.
 * `orderingImp`: the conditional over the best accessible antecedent-worlds under a preorder.
@@ -27,8 +31,11 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
 ## Main results
 
 * `ofDomain_eq_core`: the conditional over a domain is necessity along the relation of its domain.
-* `closestImp_eq_variablyStrictImp`: on a total ordering the two variably strict conditionals
-  coincide wherever the Limit Assumption holds.
+* `variablyStrictImp_subset_orderingImp`, `mem_variablyStrictImp_iff_mem_orderingImp`: the
+  variably strict conditional entails truth at the best accessible antecedent-worlds, and is it
+  under the Limit Assumption.
+* `mem_variablyStrictImp_iff_of_total`: on a total preorder it is Lewis's clause over comparative
+  similarity.
 * `mem_variablyStrictImp_compl_singleton`: without closest antecedent-worlds, *if p, it would not
   be v* holds for every world `v`.
 * `isPreferential_closestImp`, `isRational_closestImp`: the conditional at a world satisfies
@@ -36,7 +43,7 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
 
 ## References
 
-* [D. Lewis, *Counterfactuals* (1973)][lewis-1973]
+* [D. Lewis, *Counterfactuals* (1973)][lewis-1973b]
 * [D. Lewis, *Adverbs of Quantification* (1975)][lewis-1975]
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
 * [R. C. Stalnaker, *Indicative conditionals* (1975)][stalnaker-1975]
@@ -81,7 +88,7 @@ theorem contraposition : materialImp p q ⊆ materialImp qᶜ pᶜ :=
 
 A theory of the conditional picks out, for an evaluation point `i` and an antecedent `p`, a
 domain of `p`-worlds, and *if p, q* is true at `i` iff `q` holds throughout it (`ofDomain`): the
-accessible `p`-worlds for the strict conditional, the closest ones for [lewis-1973] under the
+accessible `p`-worlds for the strict conditional, the closest ones for [lewis-1973b] under the
 Limit Assumption (`closestImp`), the selected one for [stalnaker-1968] (`selectionConditional`),
 the best worlds of the modal base restricted by the antecedent for the restrictor analysis
 ([lewis-1975], [kratzer-1986]). Principles about a single antecedent are properties of its
@@ -195,25 +202,19 @@ theorem strict_implies_material {R : W → Set W} (h_refl : w ∈ R w)
     (h : w ∈ strictImp R p q) : w ∈ materialImp p q :=
   fun hp ↦ h ⟨h_refl, hp⟩
 
-/-! ### Variably strict conditionals
+/-! ### Closest worlds
 
-[lewis-1973] §2.3 states the counterfactual over a comparative similarity system, a total
-preorder of the worlds for each center: *if p, q* is true at `w` iff there is no
-antecedent-world, or some antecedent-world `v` is such that the consequent holds at every
-antecedent-world at least as close to `w` as `v` (`variablyStrictImp`). Under the Limit
-Assumption, that closest antecedent-worlds exist whenever antecedent-worlds do, §1.4
-simplifies the clause to the consequent holding at every closest antecedent-world
-(`closestImp`); the two coincide on total orderings wherever the Limit Assumption holds
-(`closestImp_eq_variablyStrictImp`), in particular for finite antecedents.
-
-The operators take any family `ord : W → Preorder W` of preorders indexed by the evaluation
-world, the closest antecedent-worlds being the minimal ones (`Preorder.minimals`). Lewis reads
-the family as comparative similarity and requires it to be total and strongly centered
-(`IsCentered`); `closestImp` is also meaningful on preorders that are not total. `might` is
-§1.5's *might* counterfactual, the dual of a *would* conditional. -/
+Lewis requires comparative similarity to be a total preorder of the worlds for each center, each
+world closer to itself than any other is (`IsCentered`). Under the Limit Assumption, that closest
+antecedent-worlds exist whenever antecedent-worlds do, his clause simplifies to the consequent
+holding at every closest antecedent-world (`closestImp`, [lewis-1973b] §1.4). The operators take
+any family `ord : W → Preorder W` of preorders indexed by the evaluation world, the closest
+antecedent-worlds being the minimal ones (`Preorder.minimals`); `closestImp` is also meaningful on
+preorders that are not total. `might` is §1.5's *might* counterfactual, the dual of a *would*
+conditional. -/
 
 /-- The *might* counterfactual of a *would* conditional `op`, *not (if p, would not q)*
-([lewis-1973] §1.5). -/
+([lewis-1973b] §1.5). -/
 def might (op : Set W → Set W → Set W) (p q : Set W) : Set W := (op p qᶜ)ᶜ
 
 @[simp]
@@ -222,12 +223,12 @@ theorem mem_might {op : Set W → Set W → Set W} : w ∈ might op p q ↔ w �
 instance {op : Set W → Set W → Set W} [Decidable (w ∈ op p qᶜ)] : Decidable (w ∈ might op p q) :=
   inferInstanceAs (Decidable (w ∉ _))
 
-section VariablyStrict
+section Closest
 
 variable {ord : W → Preorder W} {r : Set W}
 
 /-- A family of preorders is strongly centered when every world is strictly below every other
-world in its own preorder, [lewis-1973]'s requirement that each world be closer to itself than
+world in its own preorder, [lewis-1973b]'s requirement that each world be closer to itself than
 any other world is. -/
 def IsCentered (ord : W → Preorder W) : Prop := ∀ w w' : W, w ≠ w' → (ord w).lt w w'
 
@@ -247,20 +248,8 @@ theorem IsCentered.minimals_eq_singleton (hc : IsCentered ord) (hw : w ∈ p) :
   exact hc.not_le (Ne.symm hne) (hu.2 hw (hc.le w u))
 
 
-/-- The variably strict conditional of [lewis-1973] §2.3 for a universal system, one in which
-every world is accessible. It is vacuously true without antecedent-worlds, and otherwise true
-when the consequent holds at every antecedent-world at least as close as some antecedent-world,
-that is, when the consequent is a good possibility over the antecedent-worlds. -/
-def variablyStrictImp (ord : W → Preorder W) (p q : Set W) : Set W :=
-  {w | p = ∅ ∨ OrderingSemantics.IsGoodPossibility (ord w) p q}
-
-@[simp]
-theorem mem_variablyStrictImp :
-    w ∈ variablyStrictImp ord p q ↔ p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, (ord w).le u v → u ∈ q :=
-  Iff.rfl
-
 /-- The conditional of the closest antecedent-worlds, true when the consequent holds at every
-closest antecedent-world. It is [lewis-1973]'s simplification of the variably strict
+closest antecedent-world. It is [lewis-1973b]'s simplification of the variably strict
 conditional under the Limit Assumption (§1.4). -/
 def closestImp (ord : W → Preorder W) (p q : Set W) : Set W :=
   ofDomain (fun w ↦ (ord w).minimals) p q
@@ -278,60 +267,13 @@ instance [Fintype W] [DecidableRel (ord w).le] [DecidablePred (· ∈ p)] [Decid
     Decidable (w ∈ closestImp ord p q) :=
   decidable_of_iff _ mem_closestImp_iff_forall_filter.symm
 
-theorem variablyStrictImp_subset_closestImp (htot : ∀ w, Std.Total (ord w).le) :
-    variablyStrictImp ord p q ⊆ closestImp ord p q := by
-  rintro w (rfl | h) u hu
-  · exact absurd hu.1 id
-  · exact (h.isNecessity_of_total (htot w)).minimals_subset hu
-
-/-- On a total ordering satisfying the Limit Assumption for `p`, the two conditionals coincide
-([lewis-1973] §1.4). -/
-theorem closestImp_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le)
-    (hlim : ∀ w, p.Nonempty → ((ord w).minimals p).Nonempty) :
-    closestImp ord p q = variablyStrictImp ord p q := by
-  refine subset_antisymm (fun w hw ↦ ?_) (variablyStrictImp_subset_closestImp htot)
-  rcases p.eq_empty_or_nonempty with hp | hp
-  · exact .inl hp
-  obtain ⟨v, hv⟩ := hlim w hp
-  rw [Preorder.mem_minimals_iff_forall_le (htot _)] at hv
-  exact .inr ((OrderingSemantics.isGoodPossibility_iff_of_least hv.1 hv.2).2
-    ((OrderingSemantics.minimals_subset_iff_of_least hv.1 hv.2).1 hw))
-
-theorem closestImp_eq_variablyStrictImp_of_finite (htot : ∀ w, Std.Total (ord w).le)
-    (hp : p.Finite) :
-    closestImp ord p q = variablyStrictImp ord p q :=
-  closestImp_eq_variablyStrictImp htot fun w ↦ (ord w).minimals_nonempty_of_finite hp
-
 theorem mem_closestImp_of_closest_eq_empty (h : (ord w).minimals p = ∅) :
     w ∈ closestImp ord p q :=
   (mem_closestImp.2 (h ▸ Set.empty_subset q))
 
-/-- Where an antecedent has no closest worlds, as for [lewis-1973]'s line more than an inch long,
-*if p, it would not be v* is true for every world `v`, since every antecedent-world has a
-strictly closer one. -/
-theorem mem_variablyStrictImp_compl_singleton (h : (ord w).minimals p = ∅) (v : W) :
-    w ∈ variablyStrictImp ord p {v}ᶜ := by
-  rcases p.eq_empty_or_nonempty with hp | ⟨u, hu⟩
-  · exact .inl hp
-  by_cases hv : v ∈ p
-  · have hvc : v ∉ (ord w).minimals p := h ▸ Set.notMem_empty v
-    simp only [Preorder.mem_minimals_iff, hv, true_and, not_forall] at hvc
-    obtain ⟨x, hx, -, hvx⟩ := hvc
-    exact .inr ⟨x, hx, fun y _ hyx hyv ↦ hvx (hyv ▸ hyx)⟩
-  · exact .inr ⟨u, hu, fun y hy _ hyv ↦ hv (hyv ▸ hy)⟩
-
-theorem notMem_might_variablyStrictImp_singleton (h : (ord w).minimals p = ∅) (v : W) :
-    w ∉ might (variablyStrictImp ord) p {v} :=
-  fun hm ↦ hm (mem_variablyStrictImp_compl_singleton h v)
-
 theorem closestImp_subset_materialImp (hc : IsCentered ord) :
     closestImp ord p q ⊆ materialImp p q :=
   ofDomain_subset_materialImp fun w hw ↦ ⟨hw, fun u _ _ ↦ hc.le w u⟩
-
-theorem variablyStrictImp_subset_materialImp (hc : IsCentered ord) :
-    variablyStrictImp ord p q ⊆ materialImp p q := by
-  rintro w (rfl | ⟨v, _, h⟩) hp
-  exacts [absurd hp id, h w hp (hc.le w v)]
 
 theorem closestImp_eq_univ_of_subset (h : p ⊆ q) : closestImp ord p q = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ (Preorder.minimals_subset _ p).trans h
@@ -365,21 +307,48 @@ theorem mem_might_closestImp_iff_of_cem (h_nonempty : ((ord w).minimals p).Nonem
   · exact ⟨fun _ ↦ h, fun _ hn ↦ hn hv (h hv)⟩
   · exact ⟨fun hm ↦ absurd h hm, fun hq ↦ absurd (hq hv) (h hv)⟩
 
-end VariablyStrict
+end Closest
 
-/-! ### Conditionals over an accessibility relation and an ordering
+/-! ### Variably strict conditionals
 
-A modal base and an ordering source ([kratzer-1981]) give each evaluation point a set of
-accessible worlds and a preorder ranking them, and on the restrictor analysis ([lewis-1975],
-[kratzer-1986]) *if p, q* is true when `q` holds at the best accessible `p`-worlds
-(`orderingImp`). The strict conditional is the case of the preorder relating every two worlds,
-under which every accessible antecedent-world is best (`strictImp_eq_orderingImp`), and the
-conditional of the closest worlds the case in which every world is accessible
-(`closestImp_eq_orderingImp`). -/
+[lewis-1973b] interprets the counterfactual over an assignment to each world of a set of accessible
+worlds and a total preorder of comparative similarity (§2.3), and a modal base and an ordering
+source ([kratzer-1981]) give each evaluation point the same two items. *If p, q* is true at `i`
+when `q` is a necessity of ordering semantics over the accessible `p`-worlds: every accessible
+`p`-world has one at least as close all of whose accessible `p`-worlds at least as close are
+`q`-worlds (`variablyStrictImp`). The clause needs neither the Limit Assumption nor a total
+preorder, and on a total preorder it is §2.3's (`mem_variablyStrictImp_iff_of_total`). Under the
+Limit Assumption it is truth at the best accessible antecedent-worlds (`orderingImp`), the
+restrictor analysis of [lewis-1975] and [kratzer-1986]. The strict conditional is the case of the
+preorder relating every two worlds (`strictImp_eq_orderingImp`), and the conditional of the
+closest worlds the case in which every world is accessible (`closestImp_eq_orderingImp`). -/
 
 section Ordering
 
 variable {ord : I → Preorder W}
+
+/-- The variably strict conditional, true at `i` when the consequent is a necessity over the
+accessible antecedent-worlds under the preorder `ord i`. -/
+def variablyStrictImp (access : I → Set W) (ord : I → Preorder W) (p q : Set W) : Set I :=
+  {i | OrderingSemantics.IsNecessity (ord i) (access i ∩ p) q}
+
+@[simp]
+theorem mem_variablyStrictImp :
+    i ∈ variablyStrictImp access ord p q ↔
+      OrderingSemantics.IsNecessity (ord i) (access i ∩ p) q :=
+  Iff.rfl
+
+/-- On a total preorder the variably strict conditional holds when no antecedent-world is
+accessible, or some accessible antecedent-world has only consequent-worlds among the accessible
+antecedent-worlds at least as close ([lewis-1973b] §2.3). -/
+theorem mem_variablyStrictImp_iff_of_total (htot : Std.Total (ord i).le) :
+    i ∈ variablyStrictImp access ord p q ↔
+      access i ∩ p = ∅ ∨ OrderingSemantics.IsGoodPossibility (ord i) (access i ∩ p) q := by
+  rw [mem_variablyStrictImp]
+  rcases (access i ∩ p).eq_empty_or_nonempty with h | h
+  · exact iff_of_true (fun u hu ↦ absurd (h ▸ hu) (Set.notMem_empty u)) (.inl h)
+  · rw [or_iff_right h.ne_empty]
+    exact ⟨fun hn ↦ hn.isGoodPossibility h, fun hg ↦ hg.isNecessity_of_total htot⟩
 
 /-- The conditional over the best accessible antecedent-worlds, the minimal worlds of
 `access i ∩ p` under the preorder `ord i`. -/
@@ -397,7 +366,75 @@ theorem closestImp_eq_orderingImp {ord : W → Preorder W} :
     closestImp ord p q = orderingImp (fun _ ↦ Set.univ) ord p q := by
   ext; simp
 
+theorem variablyStrictImp_subset_orderingImp :
+    variablyStrictImp access ord p q ⊆ orderingImp access ord p q :=
+  fun _ hi ↦ hi.minimals_subset
+
+/-- Under the Limit Assumption at `i`, the variably strict conditional is truth at the best
+accessible antecedent-worlds ([lewis-1973b] §1.4). -/
+theorem mem_variablyStrictImp_iff_mem_orderingImp
+    (hlim : ∀ B : Set W, (access i ∩ B).Nonempty → ((ord i).minimals (access i ∩ B)).Nonempty) :
+    i ∈ variablyStrictImp access ord p q ↔ i ∈ orderingImp access ord p q := by
+  refine ⟨fun h ↦ variablyStrictImp_subset_orderingImp h, fun hi ↦ ?_⟩
+  let := ord i
+  refine OrderingSemantics.isNecessity_of_minimals_subset (fun h hh ↦ ?_) hi
+  obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ p | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
+  exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
+
+theorem variablyStrictImp_subset_materialImp {ord : W → Preorder W} {access : W → Set W}
+    (hR : ∀ w, w ∈ access w) (hc : IsCentered ord) :
+    variablyStrictImp access ord p q ⊆ materialImp p q := fun w h hp ↦
+  let ⟨v, _, _, hvq⟩ := h w ⟨hR w, hp⟩
+  hvq w ⟨hR w, hp⟩ (hc.le w v)
+
 end Ordering
+
+/-! ### Every world accessible -/
+
+section Universal
+
+variable {ord : W → Preorder W}
+
+theorem variablyStrictImp_subset_closestImp :
+    variablyStrictImp (fun _ ↦ Set.univ) ord p q ⊆ closestImp ord p q := fun _ hw ↦ by
+  rw [closestImp_eq_orderingImp]
+  exact variablyStrictImp_subset_orderingImp hw
+
+/-- On a total ordering satisfying the Limit Assumption for `p`, the two conditionals coincide
+([lewis-1973b] §1.4). -/
+theorem closestImp_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le)
+    (hlim : ∀ w, p.Nonempty → ((ord w).minimals p).Nonempty) :
+    closestImp ord p q = variablyStrictImp (fun _ ↦ Set.univ) ord p q := by
+  refine subset_antisymm (fun w hw ↦ ?_) variablyStrictImp_subset_closestImp
+  rw [mem_variablyStrictImp, Set.univ_inter]
+  refine OrderingSemantics.isNecessity_of_minimals_subset (fun u hu ↦ ?_) hw
+  obtain ⟨v, hv⟩ := hlim w ⟨u, hu⟩
+  exact ⟨v, hv, ((Preorder.mem_minimals_iff_forall_le (htot w)).1 hv).2 u hu⟩
+
+theorem closestImp_eq_variablyStrictImp_of_finite (htot : ∀ w, Std.Total (ord w).le)
+    (hp : p.Finite) :
+    closestImp ord p q = variablyStrictImp (fun _ ↦ Set.univ) ord p q :=
+  closestImp_eq_variablyStrictImp htot fun w ↦ (ord w).minimals_nonempty_of_finite hp
+
+/-- Where an antecedent has no closest worlds, as for [lewis-1973b]'s line more than an inch long,
+*if p, it would not be v* is true for every world `v`, since every antecedent-world has a
+strictly closer one. -/
+theorem mem_variablyStrictImp_compl_singleton {w : W} (h : (ord w).minimals p = ∅) (v : W) :
+    w ∈ variablyStrictImp (fun _ ↦ Set.univ) ord p {v}ᶜ := by
+  rw [mem_variablyStrictImp, Set.univ_inter]
+  intro u hu
+  by_cases hvu : v ∈ p ∧ (ord w).le v u
+  · have hvm : v ∉ (ord w).minimals p := h ▸ Set.notMem_empty v
+    simp only [Preorder.mem_minimals_iff, hvu.1, true_and, not_forall] at hvm
+    obtain ⟨x, hx, hxv, hvx⟩ := hvm
+    exact ⟨x, hx, (ord w).le_trans _ _ _ hxv hvu.2, fun y _ hyx hyv ↦ hvx (hyv ▸ hyx)⟩
+  · exact ⟨u, hu, (ord w).le_refl u, fun y hy hyu hyv ↦ hvu ⟨hyv ▸ hy, hyv ▸ hyu⟩⟩
+
+theorem notMem_might_variablyStrictImp_singleton {w : W} (h : (ord w).minimals p = ∅) (v : W) :
+    w ∉ might (variablyStrictImp (fun _ ↦ Set.univ) ord) p {v} :=
+  fun hm ↦ hm (mem_variablyStrictImp_compl_singleton h v)
+
+end Universal
 
 /-! ### The logic of the conditional at a world
 
@@ -405,7 +442,7 @@ At a world `w` the conditional of the closest worlds is the consequence relation
 preorder `ord w` defines on propositions (`Nonmonotonic.Entails`), true when the most normal
 antecedent-worlds are consequent-worlds (`mem_closestImp_iff_entails`). When that preorder is
 well-founded, which gives the Limit Assumption, the conditional therefore satisfies the rules of
-system P ([kraus-magidor-1990]), and when it is also total, as [lewis-1973] requires, rational
+system P ([kraus-magidor-1990]), and when it is also total, as [lewis-1973b] requires, rational
 monotonicity ([lehmann-magidor-1992]). On a preorder that is not total, such as an ordering
 source can induce, rational monotonicity can fail (`exists_not_isRational_closestImp`). -/
 

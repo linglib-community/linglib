@@ -46,7 +46,7 @@ affirming a *might*, and the Kennedy example are not formalized.
 ## References
 
 * [stalnaker-1981]
-* [lewis-1973]
+* [lewis-1973b]
 * [quine-1950]
 * [van-fraassen-1966]
 -/
@@ -235,20 +235,22 @@ section Limit
 
 variable {W : Type*} {ord : W → Preorder W} {A : Set W} {w : W}
 
-theorem lewisWould_ne (h : (ord w).minimals A = ∅) (x : W) : w ∈ variablyStrictImp ord A {x}ᶜ :=
+theorem lewisWould_ne (h : (ord w).minimals A = ∅) (x : W) :
+    w ∈ variablyStrictImp (fun _ ↦ .univ) ord A {x}ᶜ :=
   mem_variablyStrictImp_compl_singleton h x
 
 theorem not_lewisMight_eq (h : (ord w).minimals A = ∅) (x : W) :
-    w ∉ might (variablyStrictImp ord) A {x} :=
+    w ∉ might (variablyStrictImp (fun _ ↦ .univ) ord) A {x} :=
   notMem_might_variablyStrictImp_singleton h x
 
 theorem not_consequence_lewisWould (h : (ord w).minimals A = ∅) (hA : A.Nonempty) :
-    (⋂ x ∈ A, ({x}ᶜ : Set W)) ⊆ Aᶜ ∧ (∀ x ∈ A, w ∈ variablyStrictImp ord A {x}ᶜ) ∧
-      w ∉ variablyStrictImp ord A Aᶜ := by
-  refine ⟨fun v hv hvA ↦ Set.mem_iInter₂.1 hv v hvA rfl, fun x _ ↦ lewisWould_ne h x, ?_⟩
-  rintro (hA' | ⟨v, hv, hvc⟩)
-  · exact hA.ne_empty hA'
-  · exact hvc v hv ((ord w).le_refl v) hv
+    (⋂ x ∈ A, ({x}ᶜ : Set W)) ⊆ Aᶜ ∧
+      (∀ x ∈ A, w ∈ variablyStrictImp (fun _ ↦ .univ) ord A {x}ᶜ) ∧
+      w ∉ variablyStrictImp (fun _ ↦ .univ) ord A Aᶜ := by
+  refine ⟨fun v hv hvA ↦ Set.mem_iInter₂.1 hv v hvA rfl, fun x _ ↦ lewisWould_ne h x, fun hw ↦ ?_⟩
+  obtain ⟨u, hu⟩ := hA
+  obtain ⟨v, hv, -, hvc⟩ := hw u ⟨trivial, hu⟩
+  exact hvc v hv ((ord w).le_refl v) hv.2
 
 end Limit
 

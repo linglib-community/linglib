@@ -40,7 +40,7 @@ disjoint alternatives, an observation Holliday and Icard credit to Lassiter.
 
 ## References
 
-* [lewis-1973]
+* [lewis-1973b]
 * [kratzer-1991]
 * [kratzer-2012]
 * [holliday-icard-2013]

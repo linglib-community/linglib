@@ -6,7 +6,7 @@ public import Linglib.Semantics.Conditionals.Counterfactual
 # McKay and van Inwagen (1977): Counterfactuals with Disjunctive Antecedents
 
 This file formalizes the defence in [mckay-vaninwagen-1977] of the variably strict
-conditional of [lewis-1973] against simplification of disjunctive antecedents, the inference
+conditional of [lewis-1973b] against simplification of disjunctive antecedents, the inference
 from a counterfactual with a disjunctive antecedent to the counterfactual from either
 disjunct. Two arguments are stated on the substrate's variably strict conditional. The
 bumper-crop argument: the English sentence is false while the disjunctive-closure reading
@@ -19,14 +19,14 @@ simplification would yield the absurd counterfactual from the Allied disjunct.
 
 Both readings reduce to `Conditional.variablyStrictImp`, evaluated on the disjunction or
 conjoined over the disjuncts, with propositions as sets of worlds of enumerated world types.
-Similarity is a ranking of the worlds, so it is total as [lewis-1973]'s comparative similarity
+Similarity is a ranking of the worlds, so it is total as [lewis-1973b]'s comparative similarity
 requires, and with finitely many worlds each verdict is computed on the closest
 antecedent-worlds (`holds`).
 
 ## References
 
 * [mckay-vaninwagen-1977]
-* [lewis-1973]
+* [lewis-1973b]
 -/
 
 @[expose] public section
@@ -40,7 +40,7 @@ open Conditional
 the closest antecedent-worlds. -/
 theorem holds {W : Type*} [Finite W] {α : Type*} [LinearOrder α] (d : W → W → α)
     (p q : Set W) :
-    variablyStrictImp (fun w ↦ Preorder.lift (d w)) p q =
+    variablyStrictImp (fun _ ↦ Set.univ) (fun w ↦ Preorder.lift (d w)) p q =
       closestImp (fun w ↦ Preorder.lift (d w)) p q :=
   (closestImp_eq_variablyStrictImp_of_finite (fun w ↦ Preorder.total_lift (d w)) p.toFinite).symm
 
@@ -92,20 +92,20 @@ abbrev bumperCrop : Set CropWorld := {.goodWeather}
 /-- S* (Lewis disjunctive closure) is TRUE: the closest (goodWeather ∨ sunCold)-world is a
     good-weather world. This is premise (3) of the critics' argument. -/
 theorem bumperCrop_lewis_true :
-    .actual ∈ variablyStrictImp cropSim (goodWeather ∪ sunCold) bumperCrop := by
+    .actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim (goodWeather ∪ sunCold) bumperCrop := by
   rw [holds]; decide
 
 theorem bumperCrop_conjunction_false :
-    ¬ (.actual ∈ variablyStrictImp cropSim goodWeather bumperCrop ∧
-       .actual ∈ variablyStrictImp cropSim sunCold bumperCrop) := by
+    ¬ (.actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim goodWeather bumperCrop ∧
+       .actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim sunCold bumperCrop) := by
   rw [holds, holds]; decide
 
 /-- Lewis's disjunctive closure is true while the conjunction regimentation is false, so premise (2)
 fails. -/
 theorem lewis_ne_conjunction :
-    .actual ∈ variablyStrictImp cropSim (goodWeather ∪ sunCold) bumperCrop ∧
-    ¬ (.actual ∈ variablyStrictImp cropSim goodWeather bumperCrop ∧
-       .actual ∈ variablyStrictImp cropSim sunCold bumperCrop) :=
+    .actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim (goodWeather ∪ sunCold) bumperCrop ∧
+    ¬ (.actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim goodWeather bumperCrop ∧
+       .actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim sunCold bumperCrop) :=
   ⟨bumperCrop_lewis_true, bumperCrop_conjunction_false⟩
 
 end BumperCrop
@@ -149,16 +149,18 @@ abbrev foughtAxis : Set SpainWorld := {.axis}
 abbrev foughtAllies : Set SpainWorld := {.allies}
 
 theorem spain_lewis_true :
-    .actual ∈ variablyStrictImp spainSim (foughtAxis ∪ foughtAllies) foughtAxis := by
+    .actual ∈
+      variablyStrictImp (fun _ ↦ .univ) spainSim (foughtAxis ∪ foughtAllies) foughtAxis := by
   rw [holds]; decide
 
 theorem allies_implies_axis_false :
-    .actual ∉ variablyStrictImp spainSim foughtAllies foughtAxis := by
+    .actual ∉ variablyStrictImp (fun _ ↦ .univ) spainSim foughtAllies foughtAxis := by
   rw [holds]; decide
 
 theorem sda_invalid :
     ∃ (W : Type) (ord : W → Preorder W) (A B C : Set W) (w : W),
-      w ∈ variablyStrictImp ord (A ∪ B) C ∧ w ∉ variablyStrictImp ord B C :=
+      w ∈ variablyStrictImp (fun _ ↦ .univ) ord (A ∪ B) C ∧
+        w ∉ variablyStrictImp (fun _ ↦ .univ) ord B C :=
   ⟨SpainWorld, spainSim, foughtAxis, foughtAllies, foughtAxis, .actual,
    spain_lewis_true, allies_implies_axis_false⟩
 

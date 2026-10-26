@@ -7,9 +7,9 @@ public import Linglib.Semantics.Reference.Context.Index
 public import Mathlib.Logic.Relation
 
 /-!
-# Lewis (1973): Causation
+# Lewis (1973a): Causation
 
-This file formalizes the counterfactual analysis of causation of [lewis-1973-causation] on
+This file formalizes Lewis's counterfactual analysis of causation on
 deterministic Boolean structural equation models. An event depends causally on another when,
 had the cause not occurred, the effect would not have occurred (`lewisButFor`,
 `lewisDependence`), and causation is the ancestral of causal dependence, a chain of
@@ -29,12 +29,12 @@ deterministic scenarios. The paper's treatment of preemption is not represented.
 
 ## References
 
-* [lewis-1973-causation]
+* [lewis-1973a]
 -/
 
 @[expose] public section
 
-namespace Lewis1973
+namespace Lewis1973a
 
 open CausalModel Relation Kaplan
 
@@ -219,4 +219,4 @@ theorem overdetermination_no_dependence_b : ¬ lewisDependence sem ⟨true, true
 
 end Overdetermination
 
-end Lewis1973
+end Lewis1973a

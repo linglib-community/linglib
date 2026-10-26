@@ -48,7 +48,7 @@ and exhaustification strengthens it to SDA (`distributive_of_exh`).
 ## References
 
 * [zani-ciardelli-sanfelici-2026]
-* [lewis-1973]
+* [lewis-1973b]
 * [alonso-ovalle-2009]
 * [santorio-2018]
 * [cariani-goldstein-2020]

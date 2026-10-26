@@ -35,7 +35,7 @@ agree on the consequent, and part under embedding.
 
 * [S. Ramotowska, P. Marty, J. Romoli and P. Santorio, *Counterfactuals and quantificational force:
   Experimental evidence for selectional semantics* (2025)][ramotowska-marty-romoli-santorio-2025]
-* [D. Lewis, *Counterfactuals* (1973)][lewis-1973]
+* [D. Lewis, *Counterfactuals* (1973)][lewis-1973b]
 * [A. Kratzer, *Modals and Conditionals* (2012)][kratzer-2012]
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
 * [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
@@ -149,7 +149,7 @@ theorem homogeneityCounterfactual_eq_selectionalCounterfactual :
 
 /-! ### *Might* counterfactuals
 
-[lewis-1973] defines *if p, might q* as *not (if p, would not q)*. Together with Conditional
+[lewis-1973b] defines *if p, might q* as *not (if p, would not q)*. Together with Conditional
 Excluded Middle that definition makes *might* equivalent to *would*, which Lewis counts against a
 semantics validating it. [stalnaker-1981] rejects the definition instead, reading *might* as a
 possibility operator over the whole conditional. -/

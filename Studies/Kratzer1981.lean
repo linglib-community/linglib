@@ -40,7 +40,7 @@ injustice must be amended for* and *... must be rewarded* both vacuously true
 what is morally good makes the first true and the second false
 (`injustice_must_be_amended`, `not_injustice_must_be_rewarded`), a world where injustice is
 amended for being closer to the good than one where it is rewarded, the truth conditions of
-[lewis-1973].
+[lewis-1973b].
 
 ## Implementation notes
 
@@ -60,7 +60,7 @@ paper in [kratzer-2012].
 
 * [kratzer-1981]
 * [kratzer-2012] — Chapter 2, the revised version of the paper
-* [lewis-1973]
+* [lewis-1973b]
 -/
 
 @[expose] public section

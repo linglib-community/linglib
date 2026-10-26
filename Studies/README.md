@@ -24,6 +24,12 @@ phenomena, and rename/merge/split decisions would force path churn. The
 phenomenon-based discovery (and `grep -l "Phenomena.X" Studies/` recovers
 ad-hoc groupings). Flat eliminates the placement debate.
 
+## Same author, same year
+
+Distinct works by the same authors in the same year take APA letters in title order, in the file
+name and the bib key alike: `Lewis1973a.lean` (*Causation*, `lewis-1973a`) and `Lewis1973b.lean`
+(*Counterfactuals*, `lewis-1973b`).
+
 ## Cross-phenomenon name collisions
 
 When the same paper appears in multiple phenomena (different chapters /

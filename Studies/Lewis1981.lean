@@ -6,14 +6,14 @@ public import Mathlib.Tactic.FinCases
 /-!
 # Lewis (1981): Ordering semantics and premise semantics for counterfactuals
 
-This file formalizes [lewis-1981]'s equivalence of two ways of letting factual background
+This file formalizes Lewis's equivalence of two ways of letting factual background
 settle the truth of a counterfactual. An ordering frame assigns to each world a set of worlds,
 its field, and an ordering of them by how little they differ from it, and a counterfactual is
 true when its consequent holds at the closest antecedent-worlds (truth condition OF, the
 library's `orderingImp`). A premise frame assigns to each world a set of premises, and a
 counterfactual is true when every nonempty maximal set of premises consistent with the
-antecedent implies the consequent together with it (truth condition PF, the premise semantics of
-[kratzer-1981-partition] up to the word *nonempty*). A premise frame induces an ordering frame
+antecedent implies the consequent together with it (truth condition PF, Kratzer's premise
+semantics up to the word *nonempty*). A premise frame induces an ordering frame
 on the worlds where some premise holds, one world closer than another when it satisfies every
 premise the other satisfies, and the two frames evaluate every counterfactual alike
 (`premiseImp_eq_orderingImp`, §4). Every ordering frame is induced in this way, by the premises
@@ -22,27 +22,24 @@ so the correspondence exhausts both classes of frames.
 
 Section 6 replaces OF by a truth condition that needs neither the Limit Assumption nor
 comparability: every antecedent-world of the field has one at least as close, all of whose
-antecedent-worlds at least as close are consequent-worlds (`neutralImp`), the necessity of
-ordering semantics over the antecedent-worlds of the field. It entails OF
-(`neutralImp_subset_orderingImp`), follows from OF under the Limit Assumption
-(`orderingImp_subset_neutralImp`), and on a universal frame is [lewis-1973]'s truth condition
-under comparability (`neutralImp_univ_eq_variablyStrictImp`).
+antecedent-worlds at least as close are consequent-worlds. This is the variably strict
+conditional of the theory layer (`Conditional.variablyStrictImp`), the necessity of ordering
+semantics over the antecedent-worlds of the field. It entails OF
+(`Conditional.variablyStrictImp_subset_orderingImp`), is OF under the Limit Assumption
+(`Conditional.mem_variablyStrictImp_iff_mem_orderingImp`), and under comparability is the truth
+condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_of_total`).
 
 ## Main definitions
 
 * `Lewis1981.premiseImp`: truth condition PF of a premise frame.
 * `Lewis1981.premiseOrder`: the ordering a premise frame induces.
 * `Lewis1981.ofOrdering`: the premise frame an ordering frame induces.
-* `Lewis1981.neutralImp`: the neutral truth condition O of §6.
 
 ## Main results
 
 * `Lewis1981.premiseImp_eq_orderingImp`: a premise frame and the ordering frame it induces
   evaluate every counterfactual alike.
 * `Lewis1981.orderingImp_eq_premiseImp`: every ordering frame is induced by a premise frame.
-* `Lewis1981.neutralImp_subset_orderingImp`, `Lewis1981.orderingImp_subset_neutralImp`,
-  `Lewis1981.neutralImp_univ_eq_variablyStrictImp`: the neutral truth condition reduces to OF
-  under the Limit Assumption and to [lewis-1973]'s under comparability.
 
 ## Implementation notes
 
@@ -58,7 +55,8 @@ under comparability (`neutralImp_univ_eq_variablyStrictImp`).
 
 ## TODO
 
-* Section 6's neutral truth condition for premise frames and its equivalence with `neutralImp`.
+* Section 6's neutral truth condition for premise frames and its equivalence with
+  `Conditional.variablyStrictImp`.
 * Section 6's example of a counterfactual true under the neutral condition on a frame and false
   on one of its refinements.
 
@@ -68,7 +66,7 @@ under comparability (`neutralImp_univ_eq_variablyStrictImp`).
 * [A. Kratzer, *Partition and Revision: The Semantics of Counterfactuals*
   (1981)][kratzer-1981-partition]
 * [A. Kratzer, *Conditional Necessity and Possibility* (1979)][kratzer-1979]
-* [D. Lewis, *Counterfactuals* (1973)][lewis-1973]
+* [D. Lewis, *Counterfactuals* (1973)][lewis-1973b]
 * [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
 -/
 
@@ -181,48 +179,5 @@ theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
     revert a b; decide
   simp only [premiseImp_eq_orderingImp, mem_orderingImp, hS,
     Preorder.minimals_eq_of_lt_iff (p := premiseOrder tied 0) (q := premiseOrder split 0) hlt]
-
-/-! ### The neutral truth condition (§6) -/
-
-variable {S : W → Set W} {ord : W → Preorder W}
-
-/-- Truth condition O holds when every antecedent-world `h` of the field has an antecedent-world
-`j` of the field at least as close, all of whose antecedent-worlds of the field at least as close
-are consequent-worlds. It is necessity in ordering semantics over the antecedent-worlds of the
-field. -/
-def neutralImp (S : W → Set W) (ord : W → Preorder W) (A C : Set W) : Set W :=
-  {i | OrderingSemantics.IsNecessity (ord i) (S i ∩ A) C}
-
-/-- The neutral truth condition entails OF. -/
-theorem neutralImp_subset_orderingImp : neutralImp S ord A C ⊆ orderingImp S ord A C :=
-  fun _ hi ↦ OrderingSemantics.IsNecessity.minimals_subset hi
-
-/-- Under the Limit Assumption OF entails the neutral truth condition. -/
-theorem orderingImp_subset_neutralImp {i : W}
-    (hlim : ∀ B : Set W, (S i ∩ B).Nonempty → ((ord i).minimals (S i ∩ B)).Nonempty)
-    (hi : i ∈ orderingImp S ord A C) : i ∈ neutralImp S ord A C := by
-  let := ord i
-  refine OrderingSemantics.isNecessity_of_minimals_subset (fun h hh ↦ ?_) hi
-  obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ A | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
-  exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
-
-theorem neutralImp_univ_subset_variablyStrictImp :
-    neutralImp (fun _ ↦ Set.univ) ord A C ⊆ variablyStrictImp ord A C := by
-  intro i hi
-  have hi' : OrderingSemantics.IsNecessity (ord i) A C := by
-    simpa only [neutralImp, Set.mem_ofPred_eq, Set.univ_inter] using hi
-  rcases A.eq_empty_or_nonempty with hA | hA
-  exacts [.inl hA, .inr (hi'.isGoodPossibility hA)]
-
-/-- On a universal frame satisfying comparability the neutral truth condition is
-[lewis-1973]'s. -/
-theorem neutralImp_univ_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le) :
-    neutralImp (fun _ ↦ Set.univ) ord A C = variablyStrictImp ord A C := by
-  refine subset_antisymm neutralImp_univ_subset_variablyStrictImp fun i hi ↦ ?_
-  show OrderingSemantics.IsNecessity (ord i) (Set.univ ∩ A) C
-  rw [Set.univ_inter]
-  rcases hi with rfl | h
-  · exact fun u hu ↦ absurd hu (Set.notMem_empty u)
-  · exact h.isNecessity_of_total (htot i)
 
 end Lewis1981

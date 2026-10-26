@@ -60,7 +60,7 @@ bounded linear order on which the revised comparative is the comparative of degr
 * [W. H. Holliday and T. F. Icard III, *Measure Semantics and Qualitative Semantics for Epistemic
   Modals* (2013)][holliday-icard-2013]
 * [E. Klein, *A Semantics for Positive and Comparative Adjectives* (1980)][klein-1980]
-* [D. Lewis, *Counterfactuals* (1973)][lewis-1973]
+* [D. Lewis, *Counterfactuals* (1973)][lewis-1973b]
 * [A. Kratzer, *Modals and Conditionals* (2012)][kratzer-2012]
 * [J. Y. Halpern, *Reasoning about Uncertainty* (2003)][halpern-2003]
 * [S. Yalcin, *Epistemic Modals* (2007)][yalcin-2007]

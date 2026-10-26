@@ -33,7 +33,7 @@ The paper's verdicts are checked in `rows_agree`.
 ## References
 
 * [alonso-ovalle-2009]
-* [lewis-1973]
+* [lewis-1973b]
 * [mckay-vaninwagen-1977]
 * [nute-1975]
 * [hamblin-1973b]
