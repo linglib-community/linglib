@@ -7,6 +7,7 @@ public import Linglib.Data.UD.Features
 public import Linglib.Discourse.Coherence
 public import Linglib.Discourse.Centering.Basic
 public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Discourse.Accessibility
 public import Linglib.Fragments.English.Pronouns
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.Field.Basic
@@ -60,6 +61,7 @@ frequencies fall short of one by the continuations coded otherwise.
 namespace KehlerRohde2013
 
 open Discourse.Centering Finset
+open Discourse.AccessibilityLevel (Head)
 open Morphology (Word Features)
 
 /-! ### The Bayesian model -/
@@ -361,16 +363,16 @@ theorem she_ambiguous_over_stimuli :
   decide
 
 /-- The context sentence of (20a): Amanda the subject, Brittany the object. -/
-def prevAmandaActive : Utterance Word GrammaticalRole :=
-  { realizations := [⟨amanda, .subject, false⟩, ⟨brittany, .object, false⟩] }
+def prevAmandaActive : Utterance Word GrammaticalRole Head :=
+  { realizations := [⟨amanda, .subject, .name⟩, ⟨brittany, .object, .name⟩] }
 
 /-- An active continuation pronominalizing both. -/
-def curActive : Utterance Word GrammaticalRole :=
-  { realizations := [⟨amanda, .subject, true⟩, ⟨brittany, .object, true⟩] }
+def curActive : Utterance Word GrammaticalRole Head :=
+  { realizations := [⟨amanda, .subject, .pronoun⟩, ⟨brittany, .object, .pronoun⟩] }
 
 /-- The passive continuation: Amanda promoted to subject, Brittany in the by-phrase. -/
-def curPassive : Utterance Word GrammaticalRole :=
-  { realizations := [⟨amanda, .subject, true⟩, ⟨brittany, .other, false⟩] }
+def curPassive : Utterance Word GrammaticalRole Head :=
+  { realizations := [⟨amanda, .subject, .pronoun⟩, ⟨brittany, .other, .name⟩] }
 
 theorem cb_invariant_under_voice :
     cb prevAmandaActive curActive = cb prevAmandaActive curPassive := by
