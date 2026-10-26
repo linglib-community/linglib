@@ -177,7 +177,7 @@ structure Gameboard (D : Gameboard.Domain.{u}) where
   addressee : D.Participant
   /-- The commonly accepted facts. -/
   facts : Finset D.Fact := ∅
-  /-- The moves made, the latest last. -/
+  /-- The moves made, LatestMove first. -/
   moves : List (LocutionaryProposition D.toGrammaticalDomain D.Content) := []
   /-- The utterances not yet grounded, MaxPending first. -/
   pending : List (LocutionaryProposition D.toGrammaticalDomain D.Content) := []

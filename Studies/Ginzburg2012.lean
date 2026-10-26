@@ -403,7 +403,7 @@ require. -/
 
 /-- The initial gameboard: `A` addressing `B`, with no moves. -/
 def initial (facts : Finset Fact := ∅) : Board Agent Fact Q :=
-  { speaker := .A, addressee := .B, facts := facts }
+  Gameboard.initial .A .B facts
 
 /-- The columns of a trace table: FACTS, QUD and the contents of MOVES. -/
 def table (d : Board Agent Fact Q) : Finset Fact × List Q × List (IllocutionaryAct Fact Q) :=
@@ -453,7 +453,7 @@ def trace66 : List (Rule Agent Fact Q) :=
 /-- After (65): FACTS `{p₁, p₂}`, QUD `⟨q₀⟩`, the six moves recorded. -/
 theorem trace : (run trace66 initial).map table =
     some ({.p₁, .p₂}, [.q₀],
-      [.ask .q₀, .ask .q₁, .assert .p₁, .accept .p₁, .assert .p₂, .accept .p₂]) := by decide
+      [.accept .p₂, .assert .p₂, .accept .p₁, .assert .p₁, .ask .q₁, .ask .q₀]) := by decide
 
 /-- A asserts `p₁`, checks it, B confirms. -/
 def trace68 : List (Rule Agent Fact Q) :=
@@ -462,7 +462,7 @@ def trace68 : List (Rule Agent Fact Q) :=
 
 /-- After (67): FACTS `{p₁}` and QUD empty. -/
 theorem trace68_table : (run trace68 initial).map table =
-    some ({.p₁}, [], [.assert .p₁, .check .p₁, .confirm .p₁]) := by decide
+    some ({.p₁}, [], [.confirm .p₁, .check .p₁, .assert .p₁]) := by decide
 
 end Ex66
 
@@ -505,7 +505,7 @@ def trace79 : List (Rule Agent Fact Q) :=
 /-- After (78): FACTS `{p₀}`, QUD `⟨p₁?, q₁⟩`. -/
 theorem trace : (run trace79 initial).map table =
     some ({.p₀}, [.polar .p₁, .q₁],
-      [.ask .q₀, .ask .q₁, .assert .p₀, .accept .p₀, .assert .p₁]) := by decide
+      [.assert .p₁, .accept .p₀, .assert .p₀, .ask .q₁, .ask .q₀]) := by decide
 
 end Ex79
 
