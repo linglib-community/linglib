@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Denotation
+public import Linglib.Fragments.English.Phonology
 
 /-!
 # English determiners
@@ -15,13 +16,15 @@ reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every}`, and *many
 Barwise and Cooper leave to context, denotes `∅`. Everything a reading fixes, its force,
 monotonicity, strength and conservativity, is a theorem about it, as in
 `Studies/BarwiseCooper1981.lean`. The articles, demonstratives and possessives are the other
-determiner kinds.
+determiner kinds. The indefinite article has the liaison form *an* before a word that begins with
+a vowel sound, and the weak form of *the* varies in the same environment.
 
 ## Main declarations
 
 * `QuantityWord`: the quantificational determiners, with the six-word scale
   `QuantityWord.scale` of van Tiel, Franke and Sauerland inside it.
 * `QuantityWord.toQuantifier`: a word as a determiner record.
+* `indefinite`, `theWeakForm`: the forms of the articles before each beginning of a word.
 * `inventory`: the English determiner inventory, whose *the* marks both strengths
   (`isSyncretic_inventory`).
 
@@ -129,13 +132,27 @@ def the : Article :=
   { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme
   , uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
-/-- *A* is the singular indefinite article. -/
-def a : Article :=
-  { form := "a", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+/-- The weak form of *the*, /ðə/ before a consonant and /ði/ before a vowel, though some speakers
+use /ðə/ throughout ([huddleston-pullum-2002] ch. 18 §6.1, p. 1613). -/
+def theWeakForm : Phonology.Onset → List Phonology.Segment
+  | .vowel => [Phonology.ð, Phonology.i]
+  | .consonant => [Phonology.ð, Phonology.schwa]
 
-/-- *An* is the singular indefinite article, the allomorph of *a* before a vowel. -/
-def an : Article :=
-  { form := "an", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+/-- The singular indefinite article, *an* before a word beginning with a vowel and *a* elsewhere,
+*an* being its liaison form ([huddleston-pullum-2002] ch. 18 §6.4, p. 1618). -/
+def indefinite : Phonology.Onset → String
+  | .vowel => "an"
+  | .consonant => "a"
+
+/-- *A* is the singular indefinite article, under its form before a consonant. -/
+def a : Article :=
+  { form := indefinite .consonant, definiteness := .indefinite, exponent := .dedicatedMorpheme }
+
+open Phonology in
+example : [[smallCapitalI, d, i, schwa, t], [wedge, ŋ, k, l], [j, u, n, smallCapitalI, t],
+    [w, wedge, n, s], [scriptA, n, smallCapitalI, s, t], [h, æ, b, smallCapitalI, t, æ, t]].map
+      (indefinite ∘ Onset.of) = ["an", "an", "a", "a", "an", "a"] := by
+  decide
 
 /-- *This* is the singular proximal demonstrative. -/
 def this : DemonstrativeDeterminer := { form := "this", deixis := Person.first.participantSets }
@@ -161,7 +178,7 @@ def your : PossessiveDeterminer := { form := "your" }
 def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier
 
 /-- The articles. -/
-def allArticles : List Article := [the, a, an]
+def allArticles : List Article := [the, a]
 
 /-- The demonstratives. -/
 def allDemonstratives : List DemonstrativeDeterminer := [this, that, these, those]
