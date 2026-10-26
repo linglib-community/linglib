@@ -234,7 +234,7 @@ variable {α β : Type*} [DecidableEq (UnorderedTree (α ⊕ β))] {τ : Unorder
     its component map ([marcolli-chomsky-berwick-2025] Proposition 1.6.10). -/
 theorem NoComplexityLoss.not_map_accessibleSize_componentMap_merge (a : α)
     (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a)
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft)
     {S S' : UnorderedTree (α ⊕ β)} (hK : s.crown = {S, S'})
     (h : S ∉ F ∨ S' ∉ F) :
     ¬ NoComplexityLoss.Map (fun T ↦ Forest.accessibleSize {T})

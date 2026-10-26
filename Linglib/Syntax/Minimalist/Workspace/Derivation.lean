@@ -72,11 +72,6 @@ theorem Step.value_isLeft_apply {step : Step} {current : SyntacticObject} {W : W
   | im mover _ => simp [Step.apply]
   | extract _ | remerge _ => exact h.elim
 
-private theorem numTraces_lt_numNodes {S : SyntacticObject} (h : S.val.value.isLeft) :
-    S.val.numTraces < S.val.numNodes := by
-  obtain ⟨a, ha⟩ := Sum.isLeft_iff.mp h
-  exact UnorderedTree.numTraces_lt_numNodes_of_rootInl _ a ha
-
 /-! ### External Merge as a term of Merge
 
 External Merge of `S` and `S'` beside spectators `W` is the term of Merge taking `S` and `S'`
@@ -107,12 +102,12 @@ private theorem emTerm_whole_or_uncut : ∀ x ∈ emTerm S S' W, x.2.1 = 0 ∨ x
 
 variable {S S'} in
 private theorem emTerm_lexical (hS : S.value.isLeft) (hS' : S'.value.isLeft) :
-    ∀ x ∈ emTerm S S' W, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a := by
+    ∀ x ∈ emTerm S S' W, x.2.1 ≠ 0 → x.1.value.isLeft := by
   simp only [emTerm, Multiset.mem_add, Multiset.mem_map]
   rintro x (⟨T, hT, rfl⟩ | ⟨T, -, rfl⟩) h
   · rcases Multiset.mem_cons.mp hT with rfl | hT
-    · exact Sum.isLeft_iff.mp hS
-    · exact Multiset.mem_singleton.mp hT ▸ Sum.isLeft_iff.mp hS'
+    · exact hS
+    · exact Multiset.mem_singleton.mp hT ▸ hS'
   · exact absurd rfl h
 
 end ExternalMerge
@@ -139,7 +134,8 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
     have hs := emTerm_mem current.val (item : SyntacticObject).val (W.map Subtype.val)
     have hm := UnorderedTree.accessibleCount_merge none current.val (item : SyntacticObject).val
-      (numTraces_lt_numNodes hcur) (numTraces_lt_numNodes hitems)
+      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hcur)
+      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)
     have := NoComplexityLoss.of_componentMap hs
       (X := UnorderedTree.node Vertex.bare {current.val, (item : SyntacticObject).val})
       ((NoComplexityLoss.map_componentMap_merge_iff hs
@@ -155,11 +151,11 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.va
   | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
     have hp := mem_cutSummandsCN_mover hm hc hne
-    have hσ := cutSummandsCN_accessibleSize traceEncoder (Sum.isLeft_iff.mp hcur).choose_spec hp
+    have hσ := cutSummandsCN_accessibleSize traceEncoder hcur hp
     have hmerge := UnorderedTree.accessibleCount_merge none (deleteAccessible mover current).val
-      mover.val (numTraces_lt_numNodes (by
+      mover.val (UnorderedTree.numTraces_lt_numNodes_of_isLeft (by
         rw [cutSummandsCN_trunk_value traceEncoder _ _ hp]; exact hcur))
-      (numTraces_lt_numNodes hm)
+      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hm)
     simp only [Multiset.map_singleton, Multiset.sum_singleton,
       Forest.accessibleSize_singleton] at hσ
     refine ⟨{(current.val, (merge (deleteAccessible mover current) mover).val)} +
@@ -188,8 +184,9 @@ theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.va
     rw [Step.apply_em, merge_comm]
     simp only [Step.items, Multiset.mem_singleton, forall_eq] at hitems
     simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
-    exact (MinimalYield.em_pair_accessibleCount none (numTraces_lt_numNodes hcur)
-      (numTraces_lt_numNodes hitems)).add_right _
+    exact (MinimalYield.em_pair_accessibleCount none
+      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hcur)
+      (UnorderedTree.numTraces_lt_numNodes_of_isLeft hitems)).add_right _
   | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
     have hp := mem_cutSummandsCN_mover hm hc hne

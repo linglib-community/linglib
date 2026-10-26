@@ -8,10 +8,6 @@ module
 public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.Trace
 public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceConservation
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
 # Edge-count grading of the Δ^c bialgebra
 
@@ -29,6 +25,10 @@ instance (with connectedness feeding the graded Hopf upgrade).
 
 * [marcolli-chomsky-berwick-2025]
 -/
+
+@[expose] public section
+
+open RoseTree UnorderedTree
 
 namespace ConnesKreimer
 

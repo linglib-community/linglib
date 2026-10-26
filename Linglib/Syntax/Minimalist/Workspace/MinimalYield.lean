@@ -270,10 +270,11 @@ theorem accessibleCount_im_of_cut (lbl a₀ : α) (τ : UnorderedTree (α ⊕ β
     (UnorderedTree.node (Sum.inl lbl) {v, p.2}).accessibleCount =
       (UnorderedTree.node (Sum.inl a₀) F₀).accessibleCount + 1 := by
   rw [UnorderedTree.accessibleCount_merge lbl v p.2
-    (cutSummandsCN_crown_numTraces_lt_numNodes τ _ p hp v (hv ▸ Multiset.mem_singleton_self v))
-    (UnorderedTree.numTraces_lt_numNodes_of_rootInl p.2 a₀
-      ((cutSummandsCN_trunk_value τ _ p hp).trans (by rw [UnorderedTree.value_node])))]
-  have := cutSummandsCN_accessibleCount τ (UnorderedTree.value_node _ _) hp
+    (UnorderedTree.numTraces_lt_numNodes_of_isLeft <|
+      cutSummandsCN_value_isLeft_of_mem_crown τ _ p hp v (hv ▸ Multiset.mem_singleton_self v))
+    (UnorderedTree.numTraces_lt_numNodes_of_isLeft <| by
+      rw [cutSummandsCN_trunk_value τ _ p hp]; simp)]
+  have := cutSummandsCN_accessibleCount τ (by simp) hp
   simp only [hv, Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at this
   omega
 
@@ -345,7 +346,7 @@ variable [DecidableEq (UnorderedTree (α ⊕ β))] {τ : UnorderedTree (α ⊕ �
 /-- Under trace counting a term of Merge gains one accessible term for each object it takes whole
     ([marcolli-chomsky-berwick-2025] Propositions 1.6.4 and 1.6.8, for `Δ^c`). -/
 theorem accessibleCount_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {S S' : UnorderedTree (α ⊕ β)}
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft) {S S' : UnorderedTree (α ⊕ β)}
     (hK : s.crown = {S, S'}) :
     Forest.accessibleCount ({UnorderedTree.node (Sum.inl a) {S, S'}} + s.trunk) =
       Forest.accessibleCount F + s.numWhole := by
@@ -356,7 +357,7 @@ theorem accessibleCount_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSu
 
 /-- Under trace counting every term of Merge grows the size `σ` of the workspace by exactly one. -/
 theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {S S' : UnorderedTree (α ⊕ β)}
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft) {S S' : UnorderedTree (α ⊕ β)}
     (hK : s.crown = {S, S'}) :
     Forest.accessibleSize ({UnorderedTree.node (Sum.inl a) {S, S'}} + s.trunk) =
       Forest.accessibleSize F + 1 := by
@@ -369,7 +370,7 @@ theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSum
 unextracted workspace component ([marcolli-chomsky-berwick-2025] Proposition 1.6.8). -/
 theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
     (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a)
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft)
     {S S' : UnorderedTree (α ⊕ β)} (hK : s.crown = {S, S'}) :
     MinimalYield UnorderedTree.accessibleCount F
         ({UnorderedTree.node (Sum.inl a) {S, S'}} + s.trunk) ↔ s.numWhole ≠ 0 :=
@@ -380,7 +381,7 @@ theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
 /-- Under trace counting, a unit-stage term loses one accessible term unless `B` is an unextracted
 workspace component ([marcolli-chomsky-berwick-2025] Remark 1.6.7, for `Δ^c`). -/
 theorem accessibleCount_unit_term (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
-    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {B : UnorderedTree (α ⊕ β)}
+    (hF : ∀ x ∈ s, x.2.1 ≠ 0 → x.1.value.isLeft) {B : UnorderedTree (α ⊕ β)}
     (hK : s.crown = {B}) :
     Forest.accessibleCount ({B} + s.trunk) + 1 = Forest.accessibleCount F + s.numWhole ∧
       Forest.accessibleSize ({B} + s.trunk) = Forest.accessibleSize F := by
