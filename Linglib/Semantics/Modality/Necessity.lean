@@ -144,7 +144,7 @@ universal quantification over `bestWorlds`, is its Limit Assumption collapse. -/
 /-- Human necessity holds when every accessible world has an accessible world at least as good,
 below which `p` holds throughout ([kratzer-1981], restated as necessity in [kratzer-2012]). -/
 def humanNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
-  OrderingSemantics.IsNecessity (premisePreorder (g w)) (f.accessibleWorlds w) {v | p v}
+  {v | p v} ∈ OrderingSemantics.necessityFilter (premisePreorder (g w)) (f.accessibleWorlds w)
 
 theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
     humanNecessity f g p w ↔ ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
@@ -153,7 +153,7 @@ theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
 
 theorem necessity_of_humanNecessity {f g : Background W} {p : W → Prop}
     {w : W} (h : humanNecessity f g p w) : necessity f g p w :=
-  fun _ hv ↦ h.minimals_subset hv
+  fun _ hv ↦ OrderingSemantics.minimals_subset_of_mem_necessityFilter h hv
 
 /-- The Limit Assumption holds at `w` when every accessible world sees a best world at least as
 good. -/
@@ -171,7 +171,7 @@ theorem LimitAssumption.bot (f : Background W) (w : W) : LimitAssumption f ⊥ w
 theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) (h : necessity f g p w) :
     humanNecessity f g p w :=
-  OrderingSemantics.isNecessity_of_minimals_subset hlim fun _ hv ↦ h _ hv
+  OrderingSemantics.mem_necessityFilter_of_minimals_subset hlim fun _ hv ↦ h _ hv
 
 /-- Under the Limit Assumption, [kratzer-1981]'s human necessity is exactly universal
 quantification over the best worlds. -/
@@ -221,7 +221,7 @@ theorem goodPossibility_mono (h : ∀ v, p v → q v) :
 
 theorem goodPossibility_of_humanNecessity (hne : (f.accessibleWorlds w).Nonempty)
     (h : humanNecessity f g p w) : goodPossibility f g p w :=
-  h.isGoodPossibility hne
+  OrderingSemantics.isGoodPossibility_of_mem_necessityFilter h hne
 
 theorem goodPossibility_bot_iff (f : Background W) (p : W → Prop) (w : W) :
     goodPossibility f ⊥ p w ↔ (f.accessibleWorlds w).Nonempty ∧ simpleNecessity f p w :=
@@ -287,7 +287,7 @@ theorem goodPossibility_iff_simpleNecessity_sup :
 theorem humanNecessity_iff_simpleNecessity_sup :
     humanNecessity f g p w ↔ simpleNecessity (f ⊔ g) p w :=
   let ⟨_, hb⟩ := h
-  (OrderingSemantics.isNecessity_iff_of_least (mem_of_mem_sup hb)
+  (OrderingSemantics.mem_necessityFilter_iff_of_least (mem_of_mem_sup hb)
     fun v _ ↦ le_of_mem_sup hb v).trans (simpleNecessity_sup_iff_of_mem hb).symm
 
 theorem goodPossibility_iff_humanNecessity :

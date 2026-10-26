@@ -233,21 +233,27 @@ theorem exists_aPart_eq_zero (hA : A.Nonempty) : ∃ w ∈ A, aPart κ A w = 0 :
 
 /-! ### The induced consequence relation -/
 
-/-- `B` follows from `A` in `κ` when the `A`-worlds of least rank are `B`-worlds. This is the
-consequence relation of the ranked model `Preorder.lift κ`, under which `w` is at least as normal
-as `v` when its rank is at most that of `v`. -/
-def Entails (A B : Set W) : Prop := Nonmonotonic.Entails (Preorder.lift κ) A B
+/-- `B` follows from `A` in `κ` when it is a necessity over `A` in the ranked model
+`Preorder.lift κ`, under which `w` is at least as normal as `v` when its rank is at most that of
+`v`. Ranks being well-founded, this is truth at the `A`-worlds of least rank. -/
+def Entails (A B : Set W) : Prop := B ∈ OrderingSemantics.necessityFilter (Preorder.lift κ) A
+
+theorem entails_iff_minimals_subset : Entails κ A B ↔ (Preorder.lift κ).minimals A ⊆ B := by
+  rw [Entails, OrderingSemantics.necessityFilter_eq_principal_of_wellFounded
+    (Preorder.wellFounded_lt_lift κ), Filter.mem_principal]
 
 theorem entails_iff_forall_least :
     Entails κ A B ↔ ∀ w ∈ A, (∀ v ∈ A, κ w ≤ κ v) → w ∈ B :=
-  ⟨fun h _ hw hmin ↦ h ((Preorder.mem_minimals_lift κ).2 ⟨hw, hmin⟩),
-    fun h w hw ↦ have := (Preorder.mem_minimals_lift κ).1 hw; h w this.1 this.2⟩
+  (entails_iff_minimals_subset κ).trans
+    ⟨fun h _ hw hmin ↦ h ((Preorder.mem_minimals_lift κ).2 ⟨hw, hmin⟩),
+      fun h w hw ↦ have := (Preorder.mem_minimals_lift κ).1 hw; h w this.1 this.2⟩
 
 /-- `B` follows from `A` exactly when every `A`-world outside `B` is outranked by an `A`-world
 in `B`. -/
 theorem entails_iff_forall_exists_lt :
     Entails κ A B ↔ ∀ x ∈ A, x ∉ B → ∃ y ∈ A, y ∈ B ∧ κ y < κ x :=
-  Nonmonotonic.entails_iff_forall_exists_lt (Preorder.wellFounded_lt_lift κ)
+  (entails_iff_minimals_subset κ).trans
+    (Preorder.minimals_subset_iff_forall_exists_lt (Preorder.wellFounded_lt_lift κ))
 
 /-- `B` follows from `A` exactly when `A` is impossible or `A ∩ B` is less disbelieved than
 `A \ B`. -/
@@ -289,7 +295,7 @@ instance [Fintype W] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
 
 /-- The consequence relation of a ranking function is rational. -/
 theorem isRational_entails : Nonmonotonic.IsRational (Entails κ) :=
-  Nonmonotonic.isRational_entails (Preorder.wellFounded_lt_lift κ) (Preorder.total_lift κ)
+  Nonmonotonic.isRational_necessityFilter (Preorder.total_lift κ)
 
 end Grading
 

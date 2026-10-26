@@ -324,17 +324,18 @@ theorem isAGM_iff : r.IsAGM ↔ ∃ ord, r.Faithful ord :=
   ⟨fun h ↦ ⟨_, h.faithful⟩, fun ⟨_, h⟩ ↦ h.isAGM⟩
 
 /-- The preorder of a state encodes its conditional beliefs, since `β` is accepted given `α`
-exactly when the least `α`-worlds are `β`-worlds. -/
+exactly when the least `α`-worlds are `β`-worlds, that is, when `β` is a necessity over `α`. -/
 theorem Faithful.accepts_iff (h : r.Faithful ord) :
-    r.Accepts Ψ α β ↔ Nonmonotonic.Entails (ord Ψ) α β := by
-  rw [Accepts, h.bel_revise, Nonmonotonic.Entails]
+    r.Accepts Ψ α β ↔ β ∈ OrderingSemantics.necessityFilter (ord Ψ) α := by
+  rw [Accepts, h.bel_revise, OrderingSemantics.necessityFilter_eq_principal_of_wellFounded
+    (h.wellFounded Ψ), Filter.mem_principal]
 
 /-- A state accepts `β` given a satisfiable `α` iff some `α ∩ β`-world is strictly more plausible
 than every `α \ β`-world (Lemma 1). -/
 theorem Faithful.accepts_iff_exists_lt (h : r.Faithful ord) (hα : α.Nonempty) :
     r.Accepts Ψ α β ↔ ∃ w ∈ α ∩ β, ∀ v ∈ α \ β, (ord Ψ).lt w v := by
-  rw [h.accepts_iff]
-  exact Nonmonotonic.entails_iff_exists_forall_lt (h.wellFounded Ψ) (h.total Ψ) hα
+  rw [Accepts, h.bel_revise]
+  exact Preorder.minimals_subset_iff_exists_forall_lt (h.wellFounded Ψ) (h.total Ψ) hα
 
 /-! ### The iterated-revision postulates -/
 

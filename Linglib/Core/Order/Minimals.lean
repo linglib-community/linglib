@@ -30,6 +30,10 @@ definition here unfolds to `Minimal` for the membership predicate, so the lemmas
   preorder it has at most one.
 * `Preorder.minimals_eq_of_subset_of_subset`: under a well-founded total preorder, two sets whose
   minimal elements each lie in the other have the same minimal elements.
+* `Preorder.minimals_subset_iff_forall_exists_lt`, `Preorder.minimals_subset_iff_exists_forall_lt`:
+  under a well-founded strict order the minimal elements of `s` lie in `t` when each element of
+  `s` outside `t` is above one inside, and, for a total preorder, when one element inside is
+  below all those outside.
 * `Preorder.minimals_inter_eq`, `Preorder.eq_of_minimals_eq`: under a total preorder, restricting
   a set to a part that meets its minimal elements restricts them, and the minimal elements
   determine the preorder.
@@ -99,6 +103,18 @@ nonempty. -/
 theorem minimals_nonempty_iff (hp : WellFounded p.lt) : (p.minimals s).Nonempty ↔ s.Nonempty :=
   ⟨fun ⟨a, ha⟩ ↦ ⟨a, ha.1⟩, fun ⟨_, ha⟩ ↦ (exists_le_mem_minimals hp ha).imp fun _ h ↦ h.1⟩
 
+/-- Under a well-founded strict order the minimal elements of `s` lie in `t` exactly when every
+element of `s` outside `t` lies strictly above an element of `s` in `t`. -/
+theorem minimals_subset_iff_forall_exists_lt (hp : WellFounded p.lt) :
+    p.minimals s ⊆ t ↔ ∀ a ∈ s, a ∉ t → ∃ b ∈ s, b ∈ t ∧ p.lt b a := by
+  refine ⟨fun h a ha hat ↦ ?_, fun h a ha ↦ by_contra fun hat ↦ ?_⟩
+  · obtain ⟨b, hb, hba⟩ := exists_le_mem_minimals hp ha
+    refine ⟨b, hb.1, h hb, (p.lt_iff_le_not_ge _ _).2 ⟨hba, fun hab ↦ hat (h ⟨ha, fun c hc hca ↦
+      p.le_trans _ _ _ hab (hb.2 hc (p.le_trans _ _ _ hca hab))⟩)⟩⟩
+  · obtain ⟨b, hb, -, hlt⟩ := h a ha.1 hat
+    have hlt' := (p.lt_iff_le_not_ge _ _).1 hlt
+    exact hlt'.2 (ha.2 hb hlt'.1)
+
 /-- Under a total preorder `a < b` exactly when `b ≤ a` fails. -/
 theorem lt_iff_not_ge (hp : Std.Total p.le) {b : α} : p.lt a b ↔ ¬ p.le b a :=
   (p.lt_iff_le_not_ge a b).trans (and_iff_right_of_imp fun h ↦ (hp.total a b).resolve_right h)
@@ -126,6 +142,19 @@ theorem minimals_eq_of_subset_of_subset (hwf : WellFounded p.lt) (hp : Std.Total
     exact (mem_minimals_iff_forall_le hp).2 ⟨hst ha, fun c hc ↦
       p.le_trans _ _ _ hab (((mem_minimals_iff_forall_le hp).1 hb).2 c hc)⟩
   exact subset_antisymm (key hst hts) (key hts hst)
+
+/-- Under a well-founded total preorder the minimal elements of a nonempty `s` lie in `t` exactly
+when some element of `s` in `t` lies strictly below every element of `s` outside `t`. -/
+theorem minimals_subset_iff_exists_forall_lt (hp : WellFounded p.lt) (hc : Std.Total p.le)
+    (hs : s.Nonempty) : p.minimals s ⊆ t ↔ ∃ a ∈ s ∩ t, ∀ b ∈ s \ t, p.lt a b := by
+  refine ⟨fun h ↦ ?_, fun ⟨a, ⟨has, _⟩, hlt⟩ b hb ↦ by_contra fun hbt ↦ ?_⟩
+  · obtain ⟨a, ha, -⟩ := exists_le_mem_minimals hp hs.some_mem
+    rw [mem_minimals_iff_forall_le hc] at ha
+    refine ⟨a, ⟨ha.1, h ((mem_minimals_iff_forall_le hc).2 ha)⟩, fun b hb ↦
+      (lt_iff_not_ge hc).2 fun hba ↦ hb.2 (h ?_)⟩
+    exact (mem_minimals_iff_forall_le hc).2 ⟨hb.1, fun c hc' ↦ p.le_trans _ _ _ hba (ha.2 c hc')⟩
+  · have hlt' := (p.lt_iff_le_not_ge _ _).1 (hlt b ⟨hb.1, hbt⟩)
+    exact hlt'.2 (hb.2 has hlt'.1)
 
 /-- Under a total preorder an element is minimal in a pair exactly when it is below the other
 element. -/

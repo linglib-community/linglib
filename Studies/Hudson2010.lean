@@ -222,8 +222,9 @@ theorem inherited_war_nixon : inherited war .nixon = {.accepts, .rejects} := by
 /-- Neither view of war is a skeptical conclusion: Nixon's specifiers preferentially entail
 neither. -/
 theorem not_entails_war_nixon (s : Stance) :
-    ¬ Nonmonotonic.Entails inferInstance (specifiers war .nixon) {m | war m = some s} := by
-  rw [entails_iff_inherited_subset, inherited_war_nixon]
+    {m | war m = some s} ∉
+      OrderingSemantics.necessityFilter inferInstance (specifiers war .nixon) := by
+  rw [mem_necessityFilter_iff_inherited_subset, inherited_war_nixon]
   cases s <;> simp
 
 theorem search_war_nixon :

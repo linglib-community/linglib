@@ -23,7 +23,8 @@ so the characterization holds over any domain in the lower-set topology of its r
 
 ## Main statements
 
-* `OrderingSemantics.isNecessity_iff_dense_interior`: necessity is truth on a dense open set.
+* `OrderingSemantics.mem_necessityFilter_iff_dense_interior`: necessity is truth on a dense open
+  set.
 * `OrderingSemantics.isGoodPossibility_iff_nonempty_interior`: good possibility is truth on a
   nonempty open set.
 
@@ -54,9 +55,9 @@ theorem dense_iff_forall_exists_le {D : Set α} : Dense D ↔ ∀ a, ∃ d ∈ D
   rw [dense_iff_closure_eq, Topology.IsLowerSet.closure_eq_upperClosure, eq_univ_iff_forall]
   simp only [SetLike.mem_coe, mem_upperClosure]
 
-theorem isNecessity_univ_iff_dense_interior :
-    IsNecessity ‹Preorder α› univ t ↔ Dense (interior t) := by
-  simp only [dense_iff_forall_exists_le, interior_eq_setOf_forall_le, IsNecessity, mem_univ,
+theorem mem_necessityFilter_univ_iff_dense_interior :
+    t ∈ necessityFilter ‹Preorder α› univ ↔ Dense (interior t) := by
+  simp only [dense_iff_forall_exists_le, interior_eq_setOf_forall_le, mem_necessityFilter, mem_univ,
     true_and, mem_ofPred_eq, forall_const]
   exact forall_congr' fun _ ↦ exists_congr fun _ ↦ and_comm
 
@@ -73,8 +74,9 @@ section Domain
 
 variable {W : Type*} (p : Preorder W) (s t : Set W)
 
-theorem isNecessity_iff_subtype :
-    IsNecessity p s t ↔ IsNecessity (@Preorder.lift s W p Subtype.val) univ (Subtype.val ⁻¹' t) :=
+theorem mem_necessityFilter_iff_subtype :
+    t ∈ necessityFilter p s ↔
+      Subtype.val ⁻¹' t ∈ necessityFilter (@Preorder.lift s W p Subtype.val) univ :=
   ⟨fun h ⟨u, hu⟩ _ ↦
       let ⟨v, hv, hvu, hvt⟩ := h u hu
       ⟨⟨v, hv⟩, trivial, hvu, fun ⟨w, hw⟩ _ hwv ↦ hvt w hw hwv⟩,
@@ -90,12 +92,12 @@ theorem isGoodPossibility_iff_subtype :
 
 /-- `t` is a necessity over `s` exactly when its interior in the lower-set topology of `s` is
 dense. -/
-theorem isNecessity_iff_dense_interior :
+theorem mem_necessityFilter_iff_dense_interior :
     letI : Preorder s := @Preorder.lift s W p Subtype.val
-    IsNecessity p s t ↔ Dense (interior (Subtype.val ⁻¹' t : Set (WithLowerSet s))) := by
+    t ∈ necessityFilter p s ↔ Dense (interior (Subtype.val ⁻¹' t : Set (WithLowerSet s))) := by
   let : Preorder s := @Preorder.lift s W p Subtype.val
-  exact (isNecessity_iff_subtype p s t).trans
-    (isNecessity_univ_iff_dense_interior (α := WithLowerSet s))
+  exact (mem_necessityFilter_iff_subtype p s t).trans
+    (mem_necessityFilter_univ_iff_dense_interior (α := WithLowerSet s))
 
 /-- `t` is a good possibility over `s` exactly when its interior in the lower-set topology of `s`
 is nonempty. -/
