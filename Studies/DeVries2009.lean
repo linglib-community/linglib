@@ -25,6 +25,9 @@ implements it by indexing each node when it is visited.
   spell-out of `Linearization/Multidominance.lean`, yields them too.
 * `linearization_double`, `remergedYield_double`: on a shared node whose other parent is itself
   shared, (71) pronounces the node twice, the spell-out once.
+* `remergedYield_sharing`, `remergedYield_movement`: on the examples that remerge only externally
+  each node is pronounced at its last occurrence, and on those that remerge only internally at its
+  highest, whichever highest mother is chosen.
 
 ## Implementation notes
 
@@ -216,5 +219,40 @@ theorem linearization_double : linearization double = [δ₁, g, α, δ₂, w, �
 /-- Pronouncing each node under its highest mother pronounced last pronounces α once. -/
 theorem remergedYield_double : remergedYield List.getLast? double = [δ₁, g, δ₂, w, α] := by
   decide +kernel
+
+/-! ### Internal and external remerge -/
+
+/-- (42), (48), (52) and (66) remerge externally only: no parent of a node dominates another. -/
+theorem sharing_examples : ∀ t ∈ [ex42, ex48, ex52, ex66], ∀ s ∈ t.val.subtrees,
+    ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s, IsSubtree g g' → g = g' := by
+  decide +kernel
+
+/-- (41), (47), (51) and (60) remerge internally only: the parents of each node are ordered by
+dominance, and no node is merged with itself. -/
+theorem movement_examples : ∀ t ∈ [ex41, ex47, ex51, ex60],
+    (∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
+      IsSubtree g g' ∨ IsSubtree g' g) ∧ ∀ g ∈ t.val.subtrees, g.children.Nodup := by
+  decide +kernel
+
+/-- (54) remerges α both ways, so it is neither. -/
+theorem not_sharing_not_movement_ex54 :
+    ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
+      IsSubtree g g' → g = g') ∧
+    ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
+      IsSubtree g g' ∨ IsSubtree g' g) := by
+  decide +kernel
+
+/-- External remerge alone pronounces each node at its last occurrence. -/
+theorem remergedYield_sharing (t) (ht : t ∈ [ex42, ex48, ex52, ex66]) :
+    remergedYield List.getLast? t = tokens t :=
+  remergedYield_getLast?_eq_tokens (sharing_examples t ht)
+
+/-- Internal remerge alone pronounces each node at its highest occurrence, whichever highest
+mother is chosen. -/
+theorem remergedYield_movement (t) (ht : t ∈ [ex41, ex47, ex51, ex60]) :
+    remergedYield List.head? t = remergedYield List.getLast? t :=
+  remergedYield_eq_of_chain (fun _ hl ↦ ⟨_, List.head_mem hl, List.head?_eq_some_head hl⟩)
+    (fun _ hl ↦ ⟨_, List.getLast_mem hl, List.getLast?_eq_some_getLast hl⟩)
+    (movement_examples t ht).1 (movement_examples t ht).2
 
 end DeVries2009

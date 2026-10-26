@@ -37,7 +37,8 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
 * `RoseTree.exists_subtreeAt_height_sub`: a maximal descent from a tree of height above `k`.
 * `RoseTree.numNodes_le_of_subtreeAt`: a subtree is no larger than its tree.
 * `RoseTree.vertices`: the addresses in preorder, one per vertex (`length_vertices`,
-  `nodup_vertices`) and exactly those inside the tree (`mem_vertices`);
+  `nodup_vertices`), increasing lexicographically (`pairwise_lt_vertices`), and exactly those
+  inside the tree (`mem_vertices`);
   `RoseTree.positionedSubtrees` pairs each with its subtree (`mem_positionedSubtrees`).
 * `RoseTree.positionedLeaves`: the leaves with their addresses, exactly the leaf addresses
   (`subtreeAt_of_mem_positionedLeaves`, `mem_positionedLeaves_of_subtreeAt`) in the order of the
@@ -436,6 +437,43 @@ theorem nodup_map_fst_positionedSubtrees (t : RoseTree α) :
   obtain ⟨-, -, rfl⟩ := hp
   obtain ⟨-, -, h⟩ := hq
   exact congrArg TreePath.toList h.symm
+
+private theorem modifyHead_succ_lt_modifyHead_succ {l m : List ℕ} (hl : l ≠ []) (hm : m ≠ [])
+    (h : l < m) : l.modifyHead (· + 1) < m.modifyHead (· + 1) := by
+  obtain ⟨a, l, rfl⟩ := List.exists_cons_of_ne_nil hl
+  obtain ⟨b, m, rfl⟩ := List.exists_cons_of_ne_nil hm
+  simpa [List.cons_lt_cons_iff] using h
+
+mutual
+/-- The addresses in preorder increase lexicographically. -/
+theorem pairwise_lt_vertices : ∀ t : RoseTree α, t.vertices.Pairwise (· < ·)
+  | node _ cs => by
+    rw [vertices_node, List.pairwise_cons]
+    refine ⟨fun p hp ↦ ?_, pairwise_lt_verticesList cs⟩
+    obtain ⟨j, q, rfl⟩ := exists_cons_of_mem_verticesList hp
+    exact List.nil_lt_cons _ _
+theorem pairwise_lt_verticesList : ∀ cs : List (RoseTree α), (verticesList cs).Pairwise (· < ·)
+  | [] => List.Pairwise.nil
+  | c :: cs => by
+    rw [verticesList_cons, List.pairwise_append, List.pairwise_map, List.pairwise_map]
+    refine ⟨(pairwise_lt_vertices c).imp fun h ↦ List.cons_lt_cons_iff.2 (.inr ⟨rfl, h⟩),
+      (pairwise_lt_verticesList cs).imp_of_mem fun hp hq h ↦ ?_, ?_⟩
+    · obtain ⟨_, _, rfl⟩ := exists_cons_of_mem_verticesList hp
+      obtain ⟨_, _, rfl⟩ := exists_cons_of_mem_verticesList hq
+      exact modifyHead_succ_lt_modifyHead_succ (List.cons_ne_nil _ _) (List.cons_ne_nil _ _) h
+    · simp only [List.mem_map]
+      rintro _ ⟨p, -, rfl⟩ _ ⟨q, hq, rfl⟩
+      obtain ⟨j, q, rfl⟩ := exists_cons_of_mem_verticesList hq
+      exact List.cons_lt_cons_iff.2 (.inl (Nat.succ_pos j))
+end
+
+theorem pairwise_lt_positionedSubtrees (t : RoseTree α) :
+    t.positionedSubtrees.Pairwise fun x y ↦ x.1.toList < y.1.toList :=
+  (pairwise_lt_vertices t).filterMap _ fun p q h x hx y hy ↦ by
+    simp only [Option.map_eq_some_iff] at hx hy
+    obtain ⟨_, -, rfl⟩ := hx
+    obtain ⟨_, -, rfl⟩ := hy
+    exact h
 
 /-! ### The leaves with their addresses -/
 
