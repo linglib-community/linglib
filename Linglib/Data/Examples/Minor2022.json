@@ -80,6 +80,26 @@
     "verified": "page-image"
   },
   {
+    "id": "minor2022_10b",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Most of the girls were wearing hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "pluralQ"],
+      ["dependent", "bare"]
+    ],
+    "comment": "Judged true relative to a situation in which a majority of the girls were each wearing one or more hats, more than one hat overall (p. 435); the context is such a situation.",
+    "verified": "page-image"
+  },
+  {
     "id": "minor2022_11a",
     "source": {"bibkey": "minor-2022", "paperLabel": "(11a)"},
     "reportedIn": null,
@@ -97,6 +117,26 @@
       ["dependent", "bare"]
     ],
     "comment": "Dependent plural licensed by floating all (p. 435).",
+    "verified": "page-image"
+  },
+  {
+    "id": "minor2022_12b",
+    "source": {"bibkey": "minor-2022", "paperLabel": "(12b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every girl was wearing hats.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Each girl was wearing a single hat, and no two girls were wearing the same hat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["licensor", "singularQ"],
+      ["dependent", "bare"]
+    ],
+    "comment": "Entails that each girl was wearing more than one hat (p. 436).",
     "verified": "page-image"
   },
   {

@@ -67,6 +67,19 @@ def ex_4 : Datum :=
     readings := []
     paperFeatures := [("licensor", "nonQ"), ("dependent", "cardinal")] }
 
+def ex_10b : Datum :=
+  { id := "minor2022_10b"
+    source := ⟨"minor-2022", "(10b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Most of the girls were wearing hats."
+    glossedTokens := []
+    context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("licensor", "pluralQ"), ("dependent", "bare")] }
+
 def ex_11a : Datum :=
   { id := "minor2022_11a"
     source := ⟨"minor-2022", "(11a)"⟩
@@ -79,6 +92,19 @@ def ex_11a : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("licensor", "pluralQ"), ("dependent", "bare")] }
+
+def ex_12b : Datum :=
+  { id := "minor2022_12b"
+    source := ⟨"minor-2022", "(12b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Every girl was wearing hats."
+    glossedTokens := []
+    context := "Each girl was wearing a single hat, and no two girls were wearing the same hat."
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("licensor", "singularQ"), ("dependent", "bare")] }
 
 def ex_13 : Datum :=
   { id := "minor2022_13"
@@ -93,6 +119,6 @@ def ex_13 : Datum :=
     readings := []
     paperFeatures := [("licensor", "singularQ"), ("dependent", "bare")] }
 
-def all : List Datum := [ex_1a, ex_2a, ex_3, ex_4, ex_11a, ex_13]
+def all : List Datum := [ex_1a, ex_2a, ex_3, ex_4, ex_10b, ex_11a, ex_12b, ex_13]
 
 end Minor2022.Examples
