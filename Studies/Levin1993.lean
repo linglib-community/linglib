@@ -217,7 +217,7 @@ def schema? : DiathesisAlternation → Option Voice
       of .np (.np_pp (some on)) [some external, some (complement 1), some (complement 0)]
   | .swarm => some (of .spatialPP (.pp (some with_)) [some (complement 0), some external])
   | .materialProduct => some <|
-      of (.np_pp (some outOf)) (.np_pp (some into))
+      of (.np_pp (some out)) (.np_pp (some into))
         [some external, some (complement 1), some (complement 0)]
   | .totalTransformation => some <|
       of (.np_pp (some into))
