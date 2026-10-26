@@ -15,9 +15,10 @@ not embedded. A language's medial forms are an instance of `MedialForm`, which r
 form the switch-reference value it marks, the interclausal relations it encodes, whether it
 indexes the subject of its clause, and the cell of Allen relations in which it places the time of
 its clause relative to the time the clause is evaluated against, as a relative tense does in
-Toosarvandani's account of Northern Paiute. When each clause is evaluated against the next, the
-time of the first clause of a chain stands to that of the final clause in the composite of the
-cells along the chain.
+Toosarvandani's account of Northern Paiute. A language evaluates each medial clause against the
+next clause, as Manambu does, or against the final clause, as Northern Paiute does; in the first
+case the time of the first clause of a chain stands to that of the final clause in the composite
+of the cells along the chain.
 
 ## Main definitions
 
@@ -31,8 +32,7 @@ cells along the chain.
 
 The Korean, Turkish and Nungon forms record their timing only through the relations `sequential`
 and `simultaneous`, which should give way to cells, and the relations should be Dixon's semantic
-types of clause linking. In Northern Paiute each medial clause is evaluated against the final
-clause rather than the next one.
+types of clause linking.
 
 ## References
 
