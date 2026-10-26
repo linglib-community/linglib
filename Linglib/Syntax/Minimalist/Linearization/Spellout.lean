@@ -22,9 +22,11 @@ everywhere.
 
 * `eHeads`, `elidedDomains`, `IsSilenced`: the [E] heads, the complements they elide, one per
   term, and the tokens they silence.
-* `pfYield`, `pfPhon`: the pronounced tokens and forms, left to right.
+* `tokens`, `pfYield`, `pfPhon`: the tokens, and the pronounced tokens and forms, left to right.
 * `SpellsOut`: recognition by checked witness, an object over a lexicon pronouncing a given word
   sequence.
+* `pfYieldEliding`, `AppliesVacuously`, `PronunciationEconomy`: spell-out under a given set of
+  elided domains, and the ban on ellipsis that leaves pronunciation unchanged.
 
 ## Main statements
 
@@ -42,12 +44,16 @@ everywhere.
 * [E] tells PF to skip its complement (Merchant, p. 60). Ellipsis applies once per elided term, as
   Citko and Gračanin-Yuksek count it: once for a shared [E] head over a shared complement, their
   (38b), and twice over two complements, their (38d).
+* Pronunciation Economy, proposed by Citko and Gračanin-Yuksek in 2020 (p. 22) and named in 2025
+  (39), compares an application with all the others: neither paper orders the applications
+  ("deleting one TP (say TP1)"), so the earlier ones are not singled out.
 
 ## References
 
 * [wilder-1999]
 * [de-vries-2009]
 * [merchant-2001]
+* [citko-gracanin-yuksek-2020]
 * [citko-gracanin-yuksek-2025]
 -/
 
@@ -94,9 +100,11 @@ theorem isSilenced_iff_exists_mem_elidedDomains {tok : LexicalItem.Token} :
 
 /-! ### Pronunciation -/
 
+/-- The tokens with a pronounced copy, left to right, each once, at its last occurrence. -/
+def tokens : List LexicalItem.Token := ((tokenList t.val).map Prod.snd).dedup
+
 /-- The pronounced tokens, left to right, each at its last occurrence unless silenced. -/
-def pfYield : List LexicalItem.Token :=
-  ((tokenList t.val).map Prod.snd).dedup.filter (¬ IsSilenced t ·)
+def pfYield : List LexicalItem.Token := (tokens t).filter (¬ IsSilenced t ·)
 
 /-- The pronounced forms, left to right. -/
 def pfPhon : List String := (pfYield t).filterMap (·.item.phonForm?)
@@ -112,12 +120,34 @@ instance (lex : List LexicalItem) (ws : List String) : Decidable (SpellsOut t le
 
 theorem mem_pfYield {tok : LexicalItem.Token} :
     tok ∈ pfYield t ↔ (∃ p, (p, tok) ∈ tokenList t.val) ∧ ¬ IsSilenced t tok := by
-  simp [pfYield, List.mem_dedup]
+  simp [pfYield, tokens, List.mem_dedup]
 
 /-- A token is pronounced once at most, however many mothers dominate it. -/
 theorem nodup_pfYield : (pfYield t).Nodup := (List.nodup_dedup _).filter _
 
 theorem pfYield_sublist : (pfYield t).Sublist ((tokenList t.val).map Prod.snd) :=
   List.filter_sublist.trans (List.dedup_sublist _)
+
+/-! ### Pronunciation Economy -/
+
+/-- The pronounced tokens when ellipsis applies at the domains `Ks` alone. -/
+def pfYieldEliding (Ks : List TreePath) : List LexicalItem.Token :=
+  (tokens t).filter fun tok ↦ ¬ ∃ K ∈ Ks, ∃ p ∈ occurrences t tok, K ≤ p
+
+theorem pfYieldEliding_elidedDomains : pfYieldEliding t (elidedDomains t) = pfYield t :=
+  List.filter_congr fun _ _ ↦
+    decide_eq_decide.2 (not_congr (isSilenced_iff_exists_mem_elidedDomains t)).symm
+
+/-- Ellipsis applies vacuously at `K` when the other applications alone pronounce the same forms. -/
+def AppliesVacuously (K : TreePath) : Prop :=
+  (pfYieldEliding t ((elidedDomains t).erase K)).filterMap (·.item.phonForm?) = pfPhon t
+
+instance (K : TreePath) : Decidable (AppliesVacuously t K) :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- Pronunciation Economy: ellipsis applies only where it has an effect on pronunciation. -/
+def PronunciationEconomy : Prop := ∀ K ∈ elidedDomains t, ¬ AppliesVacuously t K
+
+instance : Decidable (PronunciationEconomy t) := inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 end Minimalist
