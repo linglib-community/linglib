@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Control.Distributive
 public import Linglib.Semantics.Composition.Mode
 public import Linglib.Semantics.Composition.Assignment
 
@@ -11,8 +12,8 @@ traces bind, the abstraction over such a variable, and the composition of two te
 (`Montague.Term`). Every interpretation of the trees is an evaluation of their terms: the
 denotation under an assignment of the variables (`Montague.Term.eval`), whose variable and
 abstraction cases are Heim and Kratzer's Traces and Pronouns Rule and Predicate Abstraction; the
-denotation under an applicative effect, where abstraction needs the effect's distributor
-(`Montague.Term.evalM`); and the partial denotation of `Composition/Partial.lean`. Trees translate
+denotation under an applicative effect, where abstraction needs the effect to distribute over
+functions (`Montague.Term.evalM`); and the partial denotation of `Composition/Partial.lean`. Trees translate
 to terms in `Composition/Tree.lean`.
 
 ## Main definitions
@@ -20,7 +21,6 @@ to terms in `Composition/Tree.lean`.
 * `Montague.Term`: the terms over a signature of constants.
 * `Montague.Term.eval`, `Montague.Term.evalM`: the denotation of a term, pure and under an
   applicative effect.
-* `Montague.PredAbs`: the distributor an effect needs for abstraction.
 
 ## Main results
 
@@ -35,10 +35,20 @@ to terms in `Composition/Tree.lean`.
 Variables are named by the trace indices, so a binder with index `n` translates to the
 abstraction over the variable `n`, and translation needs no fresh names.
 
+Under an effect, the body of an abstraction is a computation at each entity, and the abstract is
+the computation of a function that `Distributive` gives. Scope effects such as continuations do
+not distribute over functions, so the engine does not interpret them. For a set of readings the
+distribution chooses a reading at each entity: Kratzer and Shimoyama's abstraction, which Shan and
+Charlow show overgenerates functional readings, since a constant family of readings distributes to
+more than the constant functions (`SetM.not_preservesConst`).
+
 ## References
 
 * [heim-kratzer-1998]
 * [montague-1973]
+* [kratzer-shimoyama-2002]
+* [shan-2004]
+* [charlow-2020]
 -/
 
 @[expose] public section
@@ -58,19 +68,6 @@ inductive Term (K : Ty → Type u) : Ty → Type u where
   | lam {τ : Ty} (n : ℕ) (body : Term K τ) : Term K (.e ⇒ τ)
   /-- The composition of two terms by a mode. -/
   | comp {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) (l : Term K σ₁) (r : Term K σ₂) : Term K τ
-
-/-- An effect supports Predicate Abstraction when it has an entity-distributor, which commutes
-`M` over entity-indexed families. `Id` and the Reader-like effects have one; scope effects such
-as `Cont R` do not, since abstraction would have to run one continuation at every entity at
-once, and record that by `dist? = none`. -/
-class PredAbs (M : Type → Type) (E W : Type) (S : Sorts := {}) where
-  /-- The entity-distributor, if the effect has one. -/
-  dist? : Option (∀ ty : Ty, (E → M (Ty.Domain E W ty S)) → M (E → Ty.Domain E W ty S))
-
-instance (E W : Type) (S : Sorts) : PredAbs Id E W S := ⟨some fun _ f ↦ f⟩
-
-@[simp] theorem PredAbs.dist?_id (E W : Type) (S : Sorts) :
-    PredAbs.dist? (M := Id) (E := E) (W := W) (S := S) = some fun _ f ↦ f := rfl
 
 namespace Term
 
@@ -125,15 +122,14 @@ theorem eval_lam (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignmen
 
 /-- `evalM I g t` is the denotation of `t` under an applicative effect, given an interpretation
 `I` of the constants as computations and an assignment `g`. A composition runs its left daughter
-first, and an abstraction distributes the effect over the entities, so `evalM` is `none` when
-the effect has no distributor. -/
-def evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
+first, and an abstraction distributes the effect over the entities. -/
+def evalM {M : Type → Type} [Applicative M] [Distributive M]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) (g : Assignment E) :
     {ty : Ty} → Term K ty → Option (M (Ty.Domain E W ty S))
   | _, const c => some (I c)
   | _, var n => some (pure (g n))
-  | _, lam n b => (PredAbs.dist? (M := M) (E := E) (W := W) (S := S)).bind fun dist ↦
-      (evalM I g b).map fun probe ↦ dist _ fun x ↦ (evalM I (g[n ↦ x]) b).getD probe
+  | _, lam n b =>
+      (evalM I g b).map fun probe ↦ distribute fun x ↦ (evalM I (g[n ↦ x]) b).getD probe
   | _, comp m l r => (evalM I g l).bind fun a ↦ (evalM I g r).map fun b ↦ m.evalM a b
 
 /-- At the identity effect, evaluation is the pure denotation. -/
@@ -154,7 +150,7 @@ theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty 
   | lam n b ih => funext x; exact ih _
   | comp m l r ihl ihr => simp only [map, eval, ihl, ihr]
 
-theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W S]
+theorem evalM_map {M : Type → Type} [Applicative M] [Distributive M]
     (I : ∀ {ty : Ty}, K' ty → M (Ty.Domain E W ty S)) (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : Assignment E) {ty : Ty} (t : Term K ty) :
     (t.map f).evalM I g = t.evalM (fun c ↦ I (f c)) g := by
@@ -164,15 +160,13 @@ theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W S]
   | lam n b ih => simp only [map, evalM, ih]
   | comp m l r ihl ihr => simp only [map, evalM, ihl, ihr]
 
-theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
+theorem isSome_evalM {M : Type → Type} [Applicative M] [Distributive M]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) (g g' : Assignment E) {ty : Ty}
     (t : Term K ty) : (t.evalM I g).isSome = (t.evalM I g').isSome := by
   induction t generalizing g g' with
   | const c => rfl
   | var n => rfl
-  | lam n b ih =>
-    simp only [evalM]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) <;> simp [ih g g']
+  | lam n b ih => simp [evalM, ih g g']
   | comp m l r ihl ihr =>
     have hl := ihl g g'
     have hr := ihr g g'
@@ -181,7 +175,7 @@ theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
       cases h₄ : r.evalM I g' <;> simp_all
 
 /-- A term's denotation depends on the assignment only at its free variables. -/
-theorem evalM_congr_of_agree {M : Type → Type} [Applicative M] [PredAbs M E W S]
+theorem evalM_congr_of_agree {M : Type → Type} [Applicative M] [Distributive M]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) {ty : Ty} (t : Term K ty)
     {g g' : Assignment E} (h : ∀ n ∈ t.freeVars, g n = g' n) : t.evalM I g = t.evalM I g' := by
   induction t generalizing g g' with
@@ -192,26 +186,43 @@ theorem evalM_congr_of_agree {M : Type → Type} [Applicative M] [PredAbs M E W 
       by_cases hmn : m = n
       · subst hmn; simp
       · simp [Function.update_of_ne hmn, h m (Finset.mem_erase.2 ⟨hmn, hm⟩)]
+    have hsome := isSome_evalM I g g' b
     simp only [evalM]
-    cases PredAbs.dist? (M := M) (E := E) (W := W) (S := S) with
-    | none => rfl
-    | some dist =>
-      have hsome := isSome_evalM I g g' b
-      simp only [Option.bind_some]
-      rcases hg : b.evalM I g with _ | p <;> rcases hg' : b.evalM I g' with _ | p' <;>
-        simp only [hg, hg', Option.isSome_none, Option.isSome_some, reduceCtorEq] at hsome
-      · rfl
-      · simp only [Option.map_some, Option.some.injEq]
-        congr 1
-        funext x
-        rw [hb x]
-        have hx : (b.evalM I (g'[n ↦ x])).isSome := by
-          rw [isSome_evalM I _ g' b, hg']; rfl
-        obtain ⟨v, hv⟩ := Option.isSome_iff_exists.1 hx
-        simp [hv]
+    rcases hg : b.evalM I g with _ | p <;> rcases hg' : b.evalM I g' with _ | p' <;>
+      simp only [hg, hg', Option.isSome_none, Option.isSome_some, reduceCtorEq] at hsome
+    · rfl
+    · simp only [Option.map_some, Option.some.injEq]
+      congr 1
+      funext x
+      rw [hb x]
+      have hx : (b.evalM I (g'[n ↦ x])).isSome := by
+        rw [isSome_evalM I _ g' b, hg']; rfl
+      obtain ⟨v, hv⟩ := Option.isSome_iff_exists.1 hx
+      simp [hv]
   | comp m l r ihl ihr =>
     simp only [freeVars, Finset.mem_union] at h
     simp only [evalM, ihl fun n hn ↦ h n (.inl hn), ihr fun n hn ↦ h n (.inr hn)]
+
+/-- A term whose constants are values of another's sets of values evaluates, under the set effect,
+to a set containing the first term's denotation. -/
+theorem Rel.mem_run_evalM {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty S)) ty}
+    {u' : Term (fun ty ↦ SetM (Ty.Domain E W ty S)) ty}
+    (h : Rel (fun _ c c' ↦ c ∈ SetM.run c') u u') (g : Assignment E) :
+    ∃ X, u'.evalM (fun c ↦ c) g = some X ∧ u.eval (fun c ↦ c) g ∈ X.run := by
+  induction h generalizing g with
+  | const hc => exact ⟨_, rfl, hc⟩
+  | var n => exact ⟨_, rfl, rfl⟩
+  | @lam τ n b b' _ ih =>
+    obtain ⟨X₀, hX₀, -⟩ := ih g
+    refine ⟨distribute fun x ↦ (b'.evalM (fun c ↦ c) (g[n ↦ x])).getD X₀,
+      by simp only [evalM, hX₀, Option.map_some], SetM.mem_run_distribute.2 fun x ↦ ?_⟩
+    obtain ⟨X, hX, hmem⟩ := ih (g[n ↦ x])
+    simpa [hX, eval] using hmem
+  | @comp σ₁ σ₂ τ m l l' r r' _ _ ihl ihr =>
+    obtain ⟨Xl, hXl, hl⟩ := ihl g
+    obtain ⟨Xr, hXr, hr⟩ := ihr g
+    refine ⟨m.evalM Xl Xr, by simp only [evalM, hXl, hXr, Option.bind_some, Option.map_some], ?_⟩
+    exact ⟨m.eval (l.eval (fun c ↦ c) g), ⟨_, hl, rfl⟩, _, hr, rfl⟩
 
 end Term
 
