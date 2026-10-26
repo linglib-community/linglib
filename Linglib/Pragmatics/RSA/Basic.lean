@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.MeasureTheory.Function.EssSup
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.Prod
@@ -42,11 +43,18 @@ reduce to counting, are treated in `Linglib.Pragmatics.RSA.Uniform`.
   belief, less a cost. Its weights are the geometric mean of the listener's mass over the belief
   to the power `α`, times `exp (-(α * C))`; at the point-mass belief it is the speaker of
   eqs. 2/6–7, with weights `L ^ α * exp (-(α * C))` (`RSA.speaker_dirac_eq_ofWeights`).
+* `RSA.maximinSpeaker`: the speaker who values an utterance by its least utility over the states
+  she entertains, whose weights put the essential infimum of the listener's mass over her belief
+  where `RSA.speaker` puts its geometric mean.
+* `RSA.parseListener`: the literal listeners of a family of parses as one listener on pairs of a
+  parse and a state, which a speaker unsure of the parse addresses.
 
 ## Main results
 
 * `RSA.speaker_apply_singleton_eq_zero_iff`: the speaker produces exactly the utterances whose
   listener rules out no state she entertains.
+* `RSA.maximinSpeaker_apply_singleton_eq_zero_iff_speaker`: the MaxiMin speaker produces the
+  utterances the expected-utility speaker produces.
 * `RSA.listener_prod_fst`: lexical uncertainty. Against independent priors over states and a
   latent, the state marginal of the joint listener is the listener of the speaker averaged over
   the latent.
@@ -65,6 +73,7 @@ reduce to counting, are treated in `Linglib.Pragmatics.RSA.Uniform`.
   (2016)][bergen-levy-goodman-2016]
 * [M. Franke and L. Bergen, *Theory-Driven Statistical Modeling for Semantics and Pragmatics: A
   Case Study on Grammatically Generated Implicature Readings* (2020)][franke-bergen-2020]
+* [spector-2025]
 -/
 
 @[expose] public section
@@ -708,6 +717,178 @@ theorem speaker_apply_singleton_eq_zero_iff [IsFiniteMeasure (b o)] (hα : 0 < �
     Measure.geomMean_eq_zero_iff]
 
 end Speaker
+
+/-! #### The MaxiMin speaker
+
+A speaker who is maximally averse to the risk of being misread values an utterance by its least
+utility over the states she entertains, the MaxiMin rule, instead of by its expected utility. Her
+weight puts the essential infimum of the listener's mass over her belief where the expected-utility
+speaker puts its geometric mean. She produces the utterances that speaker produces, and is that
+speaker when her belief is a point mass, but she depends on her belief only through the states
+it entertains, not through their probabilities. -/
+
+private theorem essInf_ne_top [Countable W] {β ν : Measure W} [IsFiniteMeasure ν]
+    (hβ : ∃ w, β {w} ≠ 0) : essInf (fun w ↦ ν {w}) β ≠ ∞ := by
+  obtain ⟨w, hw⟩ := hβ
+  rw [essInf_eq_biInf]
+  exact ne_top_of_le_ne_top (measure_ne_top ν {w}) (iInf₂_le w hw)
+
+section MaxiMin
+
+variable [Fintype U] [Countable O] [MeasurableSingletonClass O]
+
+/-- The MaxiMin speaker at rationality `α` and cost `C` addresses the listener `L` and at `o`
+believes `b o`. Her weight for an utterance is the essential infimum of its listener's mass over
+her belief, to the power `α`, times the cost weight. -/
+noncomputable def maximinSpeaker (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
+    Kernel O U :=
+  Kernel.ofWeights fun o u ↦
+    essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+
+instance (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
+    IsFiniteKernel (maximinSpeaker α C L b) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+/-- The MaxiMin speaker who knows the state is the speaker who knows it. -/
+theorem maximinSpeaker_dirac [Fintype W] [MeasurableSingletonClass W] (α : ℝ) (C : U → ℝ)
+    (L : U → Measure W) : maximinSpeaker α C L Measure.dirac = speaker α C L Measure.dirac := by
+  simp only [maximinSpeaker, speaker, essInf_dirac, Measure.geomMean_dirac]
+
+variable [MeasurableSingletonClass U] {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W}
+  {o : O} {u : U}
+
+theorem maximinSpeaker_apply_singleton (u : U) :
+    maximinSpeaker α C L b o {u} =
+      essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) /
+        ∑ u', essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_apply_singleton _ o u
+
+/-- The MaxiMin speaker depends on her belief only through its null sets. -/
+theorem maximinSpeaker_congr_belief {b' : O → Measure W} (h : ae (b o) = ae (b' o)) :
+    maximinSpeaker α C L b o = maximinSpeaker α C L b' o :=
+  Measure.ext_of_singleton fun u ↦ by simp only [maximinSpeaker_apply_singleton, essInf, h]
+
+variable [Fintype W] [∀ u, IsFiniteMeasure (L u)]
+
+/-- The MaxiMin speaker never produces an utterance whose listener rules out a state she
+entertains. -/
+theorem maximinSpeaker_apply_singleton_eq_zero_iff (hα : 0 < α) (hb : ∃ w, b o {w} ≠ 0) :
+    maximinSpeaker α C L b o {u} = 0 ↔ ∃ w, b o {w} ≠ 0 ∧ L u {w} = 0 := by
+  rw [maximinSpeaker_apply_singleton, ENNReal.div_eq_zero_iff,
+    or_iff_left (ENNReal.sum_ne_top.2 fun _ _ ↦ weight_ne_top hα.le (essInf_ne_top hb) _),
+    mul_eq_zero, or_iff_left (ofReal_exp_ne_zero _), ENNReal.rpow_eq_zero_iff_of_pos hα,
+    ENNReal.essInf_eq_zero_iff]
+
+/-- The MaxiMin speaker produces exactly the utterances the expected-utility speaker produces. -/
+theorem maximinSpeaker_apply_singleton_eq_zero_iff_speaker [IsFiniteMeasure (b o)] (hα : 0 < α)
+    (hb : ∃ w, b o {w} ≠ 0) : maximinSpeaker α C L b o {u} = 0 ↔ speaker α C L b o {u} = 0 := by
+  rw [maximinSpeaker_apply_singleton_eq_zero_iff hα hb, speaker_apply_singleton_eq_zero_iff hα]
+
+/-- Row preference of the MaxiMin speaker compares the weights; the normalization cancels. -/
+theorem maximinSpeaker_real_singleton_lt_iff (hα : 0 ≤ α) (hb : ∃ w, b o {w} ≠ 0)
+    (h0 : ∃ u, ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0) {u u' : U} :
+    (maximinSpeaker α C L b o).real {u} < (maximinSpeaker α C L b o).real {u'} ↔
+      essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) <
+        essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_real_singleton_lt_iff o
+    (fun h ↦ let ⟨u₀, hu₀⟩ := h0
+      weight_ne_zero hα (fun h' ↦ (ENNReal.essInf_eq_zero_iff.1 h').elim fun w ⟨hw, hL⟩ ↦
+        hu₀ w hw hL) _
+        (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
+    (ENNReal.sum_ne_top.mpr fun _ _ ↦ weight_ne_top hα (essInf_ne_top hb) _)
+
+end MaxiMin
+
+/-! #### Uncertainty about the parse
+
+A speaker unsure how the listener will parse her utterance addresses the literal listeners of the
+parses as one listener on pairs of a parse and a state. Knowing the state `w` and holding a prior
+`ν` over the parses, she believes `ν.prod (dirac w)`: the expected-utility speaker then weighs the
+parses' listeners by their geometric mean under `ν`, the MaxiMin speaker by their least value over
+the parses `ν` allows, and neither uses an utterance that one of those parses rules out at `w`. -/
+
+section Parse
+
+variable {ι : Type*} [MeasurableSpace ι]
+
+/-- The literal listeners of a family of parses, as one listener on pairs of a parse and a
+state. -/
+noncomputable def parseListener (L : ι → U → Measure W) (u : U) : Measure (ι × W) :=
+  Measure.sum fun i ↦ (L i u).map (Prod.mk i)
+
+instance [Fintype ι] (L : ι → U → Measure W) [∀ i u, IsFiniteMeasure (L i u)] (u : U) :
+    IsFiniteMeasure (parseListener L u) := by
+  unfold parseListener; infer_instance
+
+variable [MeasurableSingletonClass ι] [MeasurableSingletonClass W] {L : ι → U → Measure W}
+  {ν : Measure ι} {u : U} {w : W}
+
+omit [MeasurableSpace U] in
+@[simp] theorem parseListener_apply_singleton (L : ι → U → Measure W) (u : U) (i : ι) (w : W) :
+    parseListener L u {(i, w)} = L i u {w} := by
+  rw [parseListener, Measure.sum_apply _ (measurableSet_singleton _), tsum_eq_single i]
+  · rw [Measure.map_apply measurable_prodMk_left (measurableSet_singleton _)]
+    congr 1; ext; simp
+  · intro j hji
+    rw [Measure.map_apply measurable_prodMk_left (measurableSet_singleton _)]
+    convert measure_empty (μ := L j u)
+    ext; simp [hji]
+
+omit [MeasurableSpace U] in
+/-- Under the belief `ν.prod (dirac w)` the geometric mean of the listener's mass is that of the
+parses' listeners at `w` under `ν`. -/
+theorem geomMean_prod_dirac_parseListener [Fintype ι] [Fintype W] :
+    (ν.prod (Measure.dirac w)).geomMean (fun p ↦ parseListener L u {p}) =
+      ν.geomMean fun i ↦ L i u {w} := by
+  simp only [Measure.geomMean_prod, Measure.geomMean_dirac, parseListener_apply_singleton]
+
+omit [MeasurableSpace U] in
+/-- Under the belief `ν.prod (dirac w)` the essential infimum of the listener's mass is the least
+value of the parses' listeners at `w` over the parses `ν` allows. -/
+theorem essInf_prod_dirac_parseListener [Countable ι] [Countable W] :
+    essInf (fun p ↦ parseListener L u {p}) (ν.prod (Measure.dirac w)) =
+      ⨅ (i) (_ : ν {i} ≠ 0), L i u {w} := by
+  rw [essInf_eq_biInf]
+  refine le_antisymm (le_iInf₂ fun i hi ↦ ?_) (le_iInf₂ fun p hp ↦ ?_)
+  · rw [← parseListener_apply_singleton L u i w]
+    exact iInf₂_le (f := fun p (_ : ν.prod (Measure.dirac w) {p} ≠ 0) ↦ parseListener L u {p})
+      (i, w) ((Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, w)).2 ⟨hi, rfl⟩)
+  · obtain ⟨i, v⟩ := p
+    obtain ⟨hi, rfl⟩ := (Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, v)).1 hp
+    rw [parseListener_apply_singleton]
+    exact iInf₂_le (f := fun i (_ : ν {i} ≠ 0) ↦ L i u {v}) i hi
+
+omit [MeasurableSpace U] in
+private theorem exists_prod_dirac_parseListener_eq_zero_iff :
+    (∃ p, ν.prod (Measure.dirac w) {p} ≠ 0 ∧ parseListener L u {p} = 0) ↔
+      ∃ i, ν {i} ≠ 0 ∧ L i u {w} = 0 := by
+  refine ⟨fun ⟨⟨i, v⟩, hp, hL⟩ ↦ ?_, fun ⟨i, hi, hL⟩ ↦
+    ⟨(i, w), (Measure.prod_dirac_apply_singleton_ne_zero_iff ν w _).2 ⟨hi, rfl⟩, by simpa⟩⟩
+  obtain ⟨hi, rfl⟩ := (Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, v)).1 hp
+  exact ⟨i, hi, by simpa using hL⟩
+
+variable [Fintype ι] [Fintype W] [Fintype U] [MeasurableSingletonClass U] [Countable O]
+  [MeasurableSingletonClass O] {α : ℝ} {C : U → ℝ} [∀ i u, IsFiniteMeasure (L i u)] {o : O}
+
+/-- The expected-utility speaker never uses an utterance that a parse her prior allows rules out
+at her state. -/
+theorem speaker_parseListener_apply_singleton_eq_zero_iff [IsFiniteMeasure ν] (f : O → W)
+    (hα : 0 < α) :
+    speaker α C (parseListener L) (fun o ↦ ν.prod (Measure.dirac (f o))) o {u} = 0 ↔
+      ∃ i, ν {i} ≠ 0 ∧ L i u {f o} = 0 := by
+  rw [speaker_apply_singleton_eq_zero_iff hα, exists_prod_dirac_parseListener_eq_zero_iff]
+
+/-- Nor does the MaxiMin speaker. -/
+theorem maximinSpeaker_parseListener_apply_singleton_eq_zero_iff (f : O → W) (hα : 0 < α)
+    (hν : ∃ i, ν {i} ≠ 0) :
+    maximinSpeaker α C (parseListener L) (fun o ↦ ν.prod (Measure.dirac (f o))) o {u} = 0 ↔
+      ∃ i, ν {i} ≠ 0 ∧ L i u {f o} = 0 := by
+  obtain ⟨i, hi⟩ := hν
+  rw [maximinSpeaker_apply_singleton_eq_zero_iff (b := fun o ↦ ν.prod (Measure.dirac (f o))) hα
+      ⟨(i, f o), (Measure.prod_dirac_apply_singleton_ne_zero_iff ν _ _).2 ⟨hi, rfl⟩⟩,
+    exists_prod_dirac_parseListener_eq_zero_iff]
+
+end Parse
 
 /-! #### The speaker against a graded meaning
 

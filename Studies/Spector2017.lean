@@ -24,9 +24,9 @@ came* entertains that only some came only under that question (`L1_the_justSome_
   the paper's flat priors and its two priors over questions are instances.
 * A question maps a world to its answer, yes or no for the polar questions and the world itself
   for *what is the case*; the speaker's answer is that answer together with the question.
-* The literal listeners of the two interpretations are one measure on pairs of an interpretation
-  and an answer, and the speaker's belief is the interpretation prior times a point mass at her
-  answer, so `RSA.speaker` takes the expected utility across interpretations.
+* The literal listeners of the two interpretations are one listener on pairs of an interpretation
+  and an answer (`RSA.parseListener`), and the speaker's belief is the interpretation prior times
+  a point mass at her answer, so `RSA.speaker` takes the expected utility across interpretations.
 
 ## TODO
 
@@ -120,17 +120,12 @@ noncomputable def L0 (i : Interp) : Kernel Message (World × QUD) :=
 instance (i : Interp) : IsFiniteKernel (L0 μ ρ i) :=
   inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
-/-- The literal listeners' probabilities of the answers, one for each interpretation. -/
-noncomputable def answerL0 (u : Message) : Measure (Interp × ((Bool ⊕ World) × QUD)) :=
-  Measure.sum fun i ↦ ((L0 μ ρ i).map answer u).map (Prod.mk i)
-
-instance (u : Message) : IsFiniteMeasure (answerL0 μ ρ u) := by
-  unfold answerL0; infer_instance
-
 /-- The first speaker is uncertain about the interpretation of the literal listener and weighs a
-message by its expected utility across interpretations. -/
+message by its expected utility across interpretations, the utility of each being the literal
+listener's probability of her answer. -/
 noncomputable def S1 : Kernel (World × QUD) Message :=
-  speaker α cost (answerL0 μ ρ) fun p ↦ ν.prod (Measure.dirac (answer p))
+  speaker α cost (parseListener fun i ↦ (L0 μ ρ i).map answer)
+    fun p ↦ ν.prod (Measure.dirac (answer p))
 
 instance : IsFiniteKernel (S1 μ ρ ν α) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
@@ -139,26 +134,13 @@ questions. -/
 noncomputable def L1 : Kernel Message (World × QUD) :=
   listener (μ.prod ρ) (S1 μ ρ ν α)
 
-theorem answerL0_apply_singleton (u : Message) (i : Interp) (x : (Bool ⊕ World) × QUD) :
-    answerL0 μ ρ u {(i, x)} = (L0 μ ρ i).map answer u {x} := by
-  rw [answerL0, Measure.sum_apply _ (measurableSet_singleton _), tsum_fintype,
-    Finset.sum_eq_single i]
-  · rw [Measure.map_apply measurable_prodMk_left (measurableSet_singleton _)]
-    congr 1; ext; simp
-  · intro j _ hji
-    rw [Measure.map_apply measurable_prodMk_left (measurableSet_singleton _)]
-    convert measure_empty (μ := (L0 μ ρ j).map answer u)
-    ext; simp [hji]
-  · simp
-
 theorem S1_apply_singleton (p : World × QUD) (u : Message) :
     S1 μ ρ ν α p {u} =
       ν.geomMean (fun i ↦ (L0 μ ρ i).map answer u {answer p}) ^ α *
           ENNReal.ofReal (Real.exp (-(α * cost u))) /
         ∑ u', ν.geomMean (fun i ↦ (L0 μ ρ i).map answer u' {answer p}) ^ α *
           ENNReal.ofReal (Real.exp (-(α * cost u'))) := by
-  simp only [S1, speaker_apply_singleton, Measure.geomMean_prod, Measure.geomMean_dirac,
-    answerL0_apply_singleton]
+  simp only [S1, speaker_apply_singleton, geomMean_prod_dirac_parseListener]
 
 variable {μ ρ ν α}
 
@@ -167,10 +149,10 @@ section Support
 variable [IsFiniteMeasure μ] [IsFiniteMeasure ρ] (hμ : ∀ w, μ {w} ≠ 0) (hρ : ∀ Q, ρ {Q} ≠ 0)
 include hμ hρ
 
-theorem answerL0_answer_eq_zero_iff (u : Message) (i : Interp) (w : World) (Q : QUD) :
-    answerL0 μ ρ u {(i, answer (w, Q))} = 0 ↔
+theorem L0_map_answer_eq_zero_iff (u : Message) (i : Interp) (w : World) (Q : QUD) :
+    (L0 μ ρ i).map answer u {answer (w, Q)} = 0 ↔
       ∀ v, Q.answer v = Q.answer w → v ∉ meaning i u := by
-  rw [answerL0_apply_singleton, L0, listener_truthful_map_apply_singleton,
+  rw [L0, listener_truthful_map_apply_singleton,
     ENNReal.div_eq_zero_iff, or_iff_left (measure_ne_top _ _),
     measure_null_iff_singleton (Set.to_countable _)]
   have hprod (p : World × QUD) : (μ.prod ρ) {p} ≠ 0 := by
@@ -189,22 +171,8 @@ include hα
 theorem S1_apply_singleton_eq_zero_iff (w : World) (Q : QUD) (u : Message) :
     S1 μ ρ ν α (w, Q) {u} = 0 ↔
       ∃ i, ν {i} ≠ 0 ∧ ∀ v, Q.answer v = Q.answer w → v ∉ meaning i u := by
-  have hb (p : Interp × ((Bool ⊕ World) × QUD)) :
-      (ν.prod (Measure.dirac (answer (w, Q)))) {p} ≠ 0 ↔
-        ν {p.1} ≠ 0 ∧ p.2 = answer (w, Q) := by
-    obtain ⟨i, x⟩ := p
-    rw [← Set.singleton_prod_singleton, Measure.prod_prod, Measure.dirac_apply]
-    by_cases hx : x = answer (w, Q) <;> simp [hx]
-  rw [S1, speaker_apply_singleton_eq_zero_iff hα]
-  constructor
-  · rintro ⟨⟨i, x⟩, hbx, hL⟩
-    obtain ⟨hi, hx⟩ := (hb _).1 hbx
-    dsimp only at hx
-    subst hx
-    exact ⟨i, hi, (answerL0_answer_eq_zero_iff hμ hρ u i w Q).1 hL⟩
-  · rintro ⟨i, hi, h⟩
-    exact ⟨(i, answer (w, Q)), (hb _).2 ⟨hi, rfl⟩,
-      (answerL0_answer_eq_zero_iff hμ hρ u i w Q).2 h⟩
+  rw [S1, speaker_parseListener_apply_singleton_eq_zero_iff _ hα]
+  exact exists_congr fun i ↦ and_congr_right fun _ ↦ L0_map_answer_eq_zero_iff hμ hρ u i w Q
 
 variable (hν : ∀ i, ν {i} ≠ 0)
 include hν
