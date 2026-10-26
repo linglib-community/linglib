@@ -17,7 +17,8 @@ negates.
 
 A bias value in Sudo's scheme is the set of states a question is compatible with:
 [+s] (`BiasValue.plus`), its complement [−s] (`BiasValue.minus`) and [neutral]. A `BiasProfile`
-pairs an evidential and an epistemic value, and its `felicity` is the set of situations it admits.
+pairs an evidential and an epistemic value, and its `felicity` is the set of situations, pairs
+of the two states (`Situation`), that it admits.
 The forms and readings of polar questions are `Negation.Position` and
 `Option Polarity`.
 
@@ -32,6 +33,9 @@ The forms and readings of polar questions are `Negation.Position` and
 @[expose] public section
 
 namespace Question
+
+/-- A situation: the states of the contextual evidence and of the speaker's prior belief. -/
+abbrev Situation := SignType × SignType
 
 /-- A bias value ([sudo-2013]): the states of a body of information, the sign of the prejacent
 it supports, that a question is compatible with. -/
@@ -60,7 +64,12 @@ structure BiasProfile where
   deriving DecidableEq
 
 /-- The situations a profile admits, as pairs of contextual evidence and prior belief. -/
-def BiasProfile.felicity (b : BiasProfile) : Finset (SignType × SignType) :=
+def BiasProfile.felicity (b : BiasProfile) : Finset Situation :=
   b.evidential ×ˢ b.epistemic
+
+@[simp]
+theorem BiasProfile.mem_felicity {b : BiasProfile} {s : Situation} :
+    s ∈ b.felicity ↔ s.1 ∈ b.evidential ∧ s.2 ∈ b.epistemic :=
+  Finset.mem_product
 
 end Question

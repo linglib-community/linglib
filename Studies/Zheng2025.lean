@@ -107,7 +107,7 @@ theorem not_nandaoQFelicitous_of_not_posRelevant {f : Property D W n} {φ : Set 
 
 /-- Where a context sits in Sudo's grid for `φ`: the relevance signs of the evidence and of the
 speaker's beliefs. -/
-noncomputable def situation (φ : Set W) (beliefs : Set (W → Prop)) : SignType × SignType :=
+noncomputable def situation (φ : Set W) (beliefs : Set (W → Prop)) : Situation :=
   (relevanceSign ⟨φ, .of_discrete, μ⟩ k.base,
     relevanceSign ⟨φ, .of_discrete, μ⟩ {w | sInf beliefs w})
 
@@ -210,7 +210,7 @@ def Felicitous (c : RaincoatContext) : Prop :=
   nandaoFelicitous .count c.evidence (c.beliefs ∪ c.defaults) {w | isRaining w}
 
 /-- The context's place in Sudo's grid. -/
-noncomputable def situation (c : RaincoatContext) : SignType × SignType :=
+noncomputable def situation (c : RaincoatContext) : Situation :=
   Zheng2025.situation .count c.evidence {w | isRaining w} c.beliefs
 
 end RaincoatContext

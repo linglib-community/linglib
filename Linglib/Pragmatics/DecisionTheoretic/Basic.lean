@@ -212,6 +212,27 @@ theorem relevanceSign_eq_one_iff {ctx : Context W} {e : Set W} :
   rw [relevanceSign, sign_eq_one_iff, sub_pos, posRelevant_iff_cond_lt, measureReal_def,
     measureReal_def, ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)]
 
+/-- Possible evidence that entails H is positively relevant to it. -/
+theorem relevanceSign_eq_one_of_subset {ctx : Context W} [IsFiniteMeasure ctx.prior] {e : Set W}
+    (h : e ⊆ ctx.topic) (he : ctx.prior e ≠ 0) : relevanceSign ctx e = 1 := by
+  rw [relevanceSign_eq_one_iff, posRelevant_iff_cond_lt, cond_apply ctx.topicMeasurable.compl,
+    (Set.disjoint_compl_left_iff_subset.2 h).inter_eq, measure_empty, mul_zero]
+  exact cond_pos_of_inter_ne_zero ctx.topicMeasurable (by rwa [Set.inter_eq_right.2 h])
+
+/-- Possible evidence that entails ¬H is negatively relevant to H. -/
+theorem relevanceSign_eq_neg_one_of_subset_compl {ctx : Context W} [IsFiniteMeasure ctx.prior]
+    {e : Set W} (h : e ⊆ ctx.topicᶜ) (he : ctx.prior e ≠ 0) : relevanceSign ctx e = -1 := by
+  have : IsFiniteMeasure (swapIssue ctx).prior := ‹_›
+  rw [← neg_neg (relevanceSign ctx e), ← relevanceSign_swapIssue,
+    relevanceSign_eq_one_of_subset (ctx := swapIssue ctx) h he]
+
+/-- Evidence that rules nothing out is irrelevant to a live issue. -/
+theorem relevanceSign_univ (ctx : Context W) [IsFiniteMeasure ctx.prior] [ctx.Nondegenerate] :
+    relevanceSign ctx Set.univ = 0 := by
+  have := ctx.isProbabilityMeasure_conditional true
+  have := ctx.isProbabilityMeasure_conditional false
+  simp_all [relevanceSign]
+
 /-! ### Monotonicity
 
 Shedding ¬H-worlds from an utterance can only strengthen it as an argument for

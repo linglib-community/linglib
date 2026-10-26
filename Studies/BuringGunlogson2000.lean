@@ -108,6 +108,13 @@ theorem felicitous_some_negative_iff_eq (ev : SignType) :
     Felicitous (some .negative) ev ↔ ev = -1 := by
   decide +revert
 
+theorem felicitous_none_iff_ne (ev : SignType) : Felicitous none ev ↔ ev ≠ -1 := by
+  decide +revert
+
+theorem felicitous_some_positive_iff_ne (ev : SignType) :
+    Felicitous (some .positive) ev ↔ ev ≠ 1 := by
+  decide +revert
+
 theorem felicitous_some_positive_zero_not_negative :
     Felicitous (some .positive) 0 ∧ ¬ Felicitous (some .negative) 0 := by
   decide
