@@ -18,16 +18,18 @@ the less expected subject from .24 to .60.
 The conjecture recorded here is that the utterance prior reads the referent's thematic role, and so
 its predictability, only in continuations that focus the end state of the previous eventuality. With
 different-gender characters, predictability effects on pronominalization then appear only in
-Occasion and Result continuations.
+Occasion and Result continuations. Kravtchenko's noisy channel, in which *he* and *she* are
+sometimes confused, predicts them in every continuation, so the two accounts part on
+different-gender, non-end-state continuations.
 
 ## Main statements
 
 * `speaker_real_pronoun_of_unambiguous`: an unambiguous pronoun's rate ignores the listener's prior.
-* `listener_real_subject_lt`: a referent-blind speaker moves interpretation to the expected one.
-* `not_audienceDesign_passive`: no such speaker prints Kehler and Rohde's passive.
+* `not_audienceDesign_passive`: no referent-blind speaker prints Kehler and Rohde's passive.
 * `speaker_pronoun_eq_iff`: such a speaker's pronoun is inert iff the prior is uniform.
 * `pronounRate_eq_of_not_focusesEndState`: under the conjecture, outside end-state continuations
   the unambiguous pronoun rate depends on the referent's position alone.
+* `noisySpeaker_real_pronoun_lt`: through a noisy channel that rate rises with the prior.
 
 ## Implementation notes
 
@@ -270,8 +272,6 @@ theorem lt_of_prior_lt {a b x y : ℝ} (ha : 0 < a) (hb : 0 < b) (hx : 0 ≤ x) 
   rw [div_lt_div_iff₀ (by positivity) (by nlinarith)]
   nlinarith [mul_pos ha hb]
 
-/-- With an utterance prior that ignores the referent, the posterior of the less expected of two
-characters falls below its prior. -/
 theorem listener_real_subject_lt [IsProbabilityMeasure μ] (hμ : 0 < μ.real {.subject})
     (hlt : μ.real {.subject} < μ.real {.nonSubject}) (ha : κ .pronoun ≠ 0) (hb : κ .other ≠ 0)
     (hfin : ∀ f, κ f ≠ ∞) :
@@ -366,5 +366,131 @@ theorem pronounRate_eq_of_not_focusesEndState {pos : R → KehlerRohde2013.Posit
     (hfin · _)
   dsimp only at h₁ h₂
   rw [h₁, h₂, hκ .pronoun r r' c hc hpos, hκ .other r r' c hc hpos]
+
+/-! ### The noisy channel -/
+
+section NoisyChannel
+
+open scoped Classical in
+/-- The likelihood of an expression for a referent through a channel in which a pronoun that does
+not fit the referent is heard as one that does with probability `ε`, and a name is heard as
+said. -/
+noncomputable def noisyLikelihood (P : Set R) (ε : ℝ≥0∞) : Expression R → R → ℝ≥0∞
+  | pronoun, r => if r ∈ P then 1 else ε
+  | name r', r => if r = r' then 1 else 0
+
+/-- The noisy literal listener reweights the prior by the noisy likelihood. -/
+noncomputable def noisyListener (π : Measure R) (P : Set R) (ε : ℝ≥0∞) :
+    Kernel (Expression R) R :=
+  Kernel.ofDensity π (noisyLikelihood P ε)
+
+/-- The speaker who reasons about the noisy literal listener. -/
+noncomputable def noisySpeaker (π : Measure R) (P : Set R) (ε : ℝ≥0∞) (ref : S → R)
+    (κ : Form → S → ℝ≥0∞) : Kernel S (Expression R) :=
+  Kernel.ofWeights fun s e ↦ noisyListener π P ε e {ref s} * κ e.form s
+
+instance (π : Measure R) (P : Set R) (ε : ℝ≥0∞) (ref : S → R) (κ : Form → S → ℝ≥0∞) :
+    IsFiniteKernel (noisySpeaker π P ε ref κ) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+omit [MeasurableSpace R] [Fintype R] [DiscreteMeasurableSpace R] in
+theorem noisyLikelihood_zero (P : Set R) :
+    noisyLikelihood P 0 = fun e ↦ (e.sem P).indicator 1 := by
+  classical
+  funext e r
+  cases e <;> simp [noisyLikelihood, sem, Set.indicator_apply]
+
+theorem noisyListener_zero (π : Measure R) (P : Set R) (e : Expression R) :
+    noisyListener π P 0 e = literalListener π P e := by
+  rw [noisyListener, noisyLikelihood_zero,
+    Kernel.ofDensity_indicator_one_apply π (fun e ↦ e.sem P) e .of_discrete]
+  rfl
+
+theorem noisySpeaker_zero (π : Measure R) (P : Set R) (ref : S → R) (κ : Form → S → ℝ≥0∞) :
+    noisySpeaker π P 0 ref κ = speaker π P ref κ := by
+  simp only [noisySpeaker, speaker, noisyListener_zero]
+
+theorem noisyListener_name_apply [IsFiniteMeasure π] {P : Set R} {ε : ℝ≥0∞} {r : R}
+    (hπ : π {r} ≠ 0) : noisyListener π P ε (name r) {r} = 1 := by
+  classical
+  rw [noisyListener, Kernel.ofDensity_apply_singleton,
+    Finset.sum_eq_single r (fun r' _ h ↦ by simp [noisyLikelihood, h]) (by simp)]
+  simp [noisyLikelihood, ENNReal.div_self hπ (measure_ne_top _ _)]
+
+theorem noisyListener_name_apply_of_ne {P : Set R} {ε : ℝ≥0∞} {r r' : R} (h : r' ≠ r) :
+    noisyListener π P ε (name r') {r} = 0 := by
+  classical
+  rw [noisyListener, Kernel.ofDensity_apply_singleton]
+  simp [noisyLikelihood, Ne.symm h]
+
+theorem noisySpeaker_real_pronoun [IsFiniteMeasure π] {ε : ℝ≥0∞} {κ : Form → R → ℝ≥0∞} {r : R}
+    (hπ : π {r} ≠ 0) (hκ : ∀ f, κ f r ≠ ∞) (hfin : noisyListener π {r} ε pronoun {r} ≠ ∞) :
+    (noisySpeaker π {r} ε id κ r).real {.pronoun} =
+      (noisyListener π {r} ε pronoun {r}).toReal * (κ .pronoun r).toReal /
+        ((noisyListener π {r} ε pronoun {r}).toReal * (κ .pronoun r).toReal +
+          (κ .other r).toReal) := by
+  classical
+  have hn : ∀ r', noisyListener π {r} ε (name r') {r} * κ (name r').form r =
+      if r' = r then κ .other r else 0 := fun r' ↦ by
+    split_ifs with h
+    · subst h; rw [noisyListener_name_apply hπ, one_mul]; rfl
+    · rw [noisyListener_name_apply_of_ne h, zero_mul]
+  have htop : ∀ e : Expression R, noisyListener π {r} ε e {r} * κ e.form r ≠ ∞ := fun e ↦ by
+    cases e with
+    | pronoun => exact ENNReal.mul_ne_top hfin (hκ _)
+    | name r' => rw [hn]; split_ifs <;> simp [hκ]
+  rw [noisySpeaker, Kernel.ofWeights_real_singleton _ _ htop, Expression.sum_eq]
+  simp only [id_eq, hn]
+  rw [Finset.sum_eq_single r (fun r' _ h ↦ by simp [h]) (by simp)]
+  simp [form, ENNReal.toReal_mul]
+
+theorem noisyListener_real_pronoun (π : Measure Role) [IsProbabilityMeasure π] (r : Role)
+    {ε : ℝ≥0∞} (hε : ε ≠ ∞) :
+    (noisyListener π {r} ε pronoun {r}).toReal =
+      π.real {r} / (π.real {r} + ε.toReal * (1 - π.real {r})) := by
+  have hsum : π.real {.source} + π.real {.goal} = 1 := by
+    rw [show ({.goal} : Set Role) = {.source}ᶜ by ext p; cases p <;> simp,
+      measureReal_compl (.singleton _)]
+    simp
+  rw [noisyListener, Kernel.ofDensity_apply_singleton,
+    show (Finset.univ : Finset Role) = {.source, .goal} by decide, Finset.sum_pair (by decide)]
+  cases r <;> simp only [noisyLikelihood, Set.mem_singleton_iff, reduceCtorEq, ite_true, ite_false,
+    one_mul, ENNReal.toReal_div, ← measureReal_def]
+  · rw [ENNReal.toReal_add (measure_ne_top _ _) (ENNReal.mul_ne_top hε (measure_ne_top _ _)),
+      ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def,
+      show π.real {.goal} = 1 - π.real {.source} by linarith]
+  · rw [ENNReal.toReal_add (ENNReal.mul_ne_top hε (measure_ne_top _ _)) (measure_ne_top _ _),
+      ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def,
+      show π.real {.source} = 1 - π.real {.goal} by linarith, add_comm]
+
+/-- Through a noisy channel, a pronoun that fits only the intended character still depends on the
+prior, its rate rising with the character's prior mass. With the same utterance prior in both
+contexts, as for two characters in the same position, Kravtchenko's noisy channel predicts a
+predictability effect with different-gender characters in every continuation, where the end-state
+conjecture predicts none outside Occasion and Result (`pronounRate_eq_of_not_focusesEndState`). -/
+theorem noisySpeaker_real_pronoun_lt {π π' : Measure Role} [IsProbabilityMeasure π]
+    [IsProbabilityMeasure π'] {r r' : Role} {ε : ℝ≥0∞} (hε0 : ε ≠ 0) (hε : ε ≠ ∞)
+    {κ : Form → ℝ≥0∞} (ha : κ .pronoun ≠ 0) (hb : κ .other ≠ 0) (hfin : ∀ f, κ f ≠ ∞)
+    (hπ : 0 < π.real {r}) (hlt : π.real {r} < π'.real {r'}) (hlt1 : π'.real {r'} < 1) :
+    (noisySpeaker π {r} ε id (fun f _ ↦ κ f) r).real {.pronoun} <
+      (noisySpeaker π' {r'} ε id (fun f _ ↦ κ f) r').real {.pronoun} := by
+  have he : 0 < ε.toReal := ENNReal.toReal_pos hε0 hε
+  have ha' : 0 < (κ .pronoun).toReal := ENNReal.toReal_pos ha (hfin _)
+  have hb' : 0 < (κ .other).toReal := ENNReal.toReal_pos hb (hfin _)
+  have hπ' : 0 < π'.real {r'} := hπ.trans hlt
+  have h0 : π {r} ≠ 0 := fun h ↦ by simp [measureReal_def, h] at hπ
+  have h0' : π' {r'} ≠ 0 := fun h ↦ by simp [measureReal_def, h] at hπ'
+  have hq : noisyListener π {r} ε pronoun {r} ≠ ∞ := by
+    unfold noisyListener; exact measure_ne_top _ _
+  have hq' : noisyListener π' {r'} ε pronoun {r'} ≠ ∞ := by
+    unfold noisyListener; exact measure_ne_top _ _
+  rw [noisySpeaker_real_pronoun h0 (fun f ↦ hfin f) hq,
+    noisySpeaker_real_pronoun h0' (fun f ↦ hfin f) hq', noisyListener_real_pronoun π r hε,
+    noisyListener_real_pronoun π' r' hε]
+  refine lt_of_prior_lt ha' hb' (div_nonneg hπ.le (by nlinarith)) ?_
+  rw [div_lt_div_iff₀ (by nlinarith) (by nlinarith)]
+  nlinarith [mul_pos he (sub_pos.2 hlt)]
+
+end NoisyChannel
 
 end Lab.ReferringExpressions
