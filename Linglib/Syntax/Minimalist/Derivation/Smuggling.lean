@@ -64,6 +64,12 @@ theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=
   let ⟨m, hm, hc, _⟩ := h
   ⟨m, mem_movedItems_of_mem_mover? hm, hc⟩
 
+theorem isSmugglingStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
+    (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) :
+    (d.map f).IsSmugglingStep i (xp.map f) (w.map f) ↔ d.IsSmugglingStep i xp w := by
+  cases h : d.mover? i <;>
+    simp [IsSmugglingStep, mover?_map, h, contains_map_iff hf, cCommandsAt_map_iff hf hsel]
+
 /-- Moving the smuggled phrase on violates Freezing. -/
 theorem IsSmugglingStep.not_obeysFreezing_append_im (h : d.IsSmugglingStep i xp w)
     (side : Edge) : ¬ (d.append [.im xp side]).ObeysFreezing :=

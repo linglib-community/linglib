@@ -35,6 +35,8 @@ in the relation, and in a derivation of Merge steps that merges no token twice t
   merges no token twice and moves no trace.
 * `Minimalist.Derivation.bindsAtSomeStage_iff_bindsAtLF`: derivational binding is binding at
   the copy object.
+* `Minimalist.Derivation.cCommandsAt_map_iff`: c-command at a stage is invariant under an
+  injective relabelling that preserves selection.
 
 ## References
 
@@ -92,6 +94,32 @@ theorem BindsAtSomeStage.append (h : d.BindsAtSomeStage x y) :
   let ⟨n, hn, hc⟩ := h
   ⟨n, by rw [length_append]; exact hn.trans (Nat.le_add_right _ _),
     (cCommandsAt_append_of_le hn).2 hc⟩
+
+/-! ### Relabelling -/
+
+section Map
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+
+theorem cCommandsAt_map_iff (hf : Function.Injective f)
+    (hsel : LexicalItem.Token.PreservesSelection f) :
+    (d.map f).CCommandsAt n (x.map f) (y.map f) ↔ d.CCommandsAt n x y := by
+  rw [CCommandsAt, CCommandsAt, take_map,
+    externalize?_map hf fun s ↦ SyntacticObject.selHead_map s hsel]
+  cases (d.take n).externalize? <;>
+    simp [LinearizedSyntacticObject.toSyntacticObject_map, cCommands_map_iff hf]
+
+theorem bindsAtSurface_map_iff (hf : Function.Injective f)
+    (hsel : LexicalItem.Token.PreservesSelection f) :
+    (d.map f).BindsAtSurface (x.map f) (y.map f) ↔ d.BindsAtSurface x y := by
+  rw [BindsAtSurface, BindsAtSurface, length_map, cCommandsAt_map_iff hf hsel]
+
+theorem bindsAtSomeStage_map_iff (hf : Function.Injective f)
+    (hsel : LexicalItem.Token.PreservesSelection f) :
+    (d.map f).BindsAtSomeStage (x.map f) (y.map f) ↔ d.BindsAtSomeStage x y := by
+  simp only [BindsAtSomeStage, length_map, cCommandsAt_map_iff hf hsel]
+
+end Map
 
 /-! ### Binding at the copy object -/
 

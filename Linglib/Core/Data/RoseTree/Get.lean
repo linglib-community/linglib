@@ -109,6 +109,11 @@ def validPaths (t : RoseTree α) : Set TreePath := {p | (t.subtreeAt p.toList).i
 instance (t : RoseTree α) : DecidablePred (· ∈ t.validPaths) :=
   fun p ↦ inferInstanceAs (Decidable ((t.subtreeAt p.toList).isSome = true))
 
+@[simp] theorem validPaths_map {β : Type*} (f : α → β) (t : RoseTree α) :
+    (map f t).validPaths = t.validPaths := by
+  ext p
+  simp [validPaths, subtreeAt_map]
+
 theorem bot_mem_validPaths (t : RoseTree α) : (⊥ : TreePath) ∈ t.validPaths := by
   simp [validPaths]
 
@@ -289,6 +294,14 @@ theorem mem_subtrees {s t : RoseTree α} : s ∈ t.subtrees ↔ IsSubtree s t :=
     exact or_congr_right (exists_congr fun c ↦ and_congr_right fun hc ↦ ih c hc)
 
 theorem self_mem_subtrees (t : RoseTree α) : t ∈ t.subtrees := mem_subtrees.mpr (.refl t)
+
+theorem subtrees_map {β : Type*} (f : α → β) (t : RoseTree α) :
+    (map f t).subtrees = t.subtrees.map (map f) := by
+  induction t with
+  | node a cs ih =>
+    rw [map_node, subtrees_node, subtrees_node, List.map_cons, ← map_node, List.flatMap_map,
+      List.map_flatMap]
+    exact congrArg _ (List.flatMap_congr fun c hc ↦ ih c hc)
 
 instance [DecidableEq α] (s t : RoseTree α) : Decidable (IsSubtree s t) :=
   decidable_of_iff _ mem_subtrees

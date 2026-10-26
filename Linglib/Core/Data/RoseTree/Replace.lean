@@ -72,6 +72,19 @@ theorem replaceIf_node (a : α) (cs : List (RoseTree α)) :
     replaceIf p r (node a cs) = if p (node a cs) then r else node a (cs.map (replaceIf p r)) :=
   modifyIf_node _ _ a cs
 
+theorem map_replaceIf {β : Type*} {g : α → β} {p' : RoseTree β → Prop} [DecidablePred p']
+    (hp : ∀ s, p' (map g s) ↔ p s) (t : RoseTree α) :
+    map g (replaceIf p r t) = replaceIf p' (map g r) (map g t) := by
+  induction t with
+  | node a cs ih =>
+    have h := hp (node a cs)
+    rw [map_node] at h
+    rw [replaceIf_node, map_node, replaceIf_node]
+    by_cases hpa : p (node a cs)
+    · rw [ite_eq_left hpa, ite_eq_left (h.2 hpa)]
+    · rw [ite_eq_right hpa, ite_eq_right (mt h.1 hpa), map_node, List.map_map, List.map_map]
+      exact congrArg _ (List.map_congr_left fun c hc ↦ ih c hc)
+
 end ModifyIf
 
 section SubtreesUntil

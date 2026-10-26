@@ -184,6 +184,17 @@ theorem comp_map (f : α → β) (g : β → γ) (t : RoseTree α) :
     congr 1
     exact List.map_congr_left ih
 
+@[simp] theorem value_map (f : α → β) (t : RoseTree α) : (map f t).value = f t.value := by
+  cases t; simp
+
+theorem map_injective {f : α → β} (hf : Function.Injective f) : Function.Injective (map f) := by
+  cases isEmpty_or_nonempty α with
+  | inl h => exact fun t _ _ ↦ (h.false t.value).elim
+  | inr _ =>
+    obtain ⟨g, hg⟩ := hf.hasLeftInverse
+    exact Function.LeftInverse.injective (g := map g) fun t ↦ by
+      rw [← comp_map, hg.comp_eq_id, id_map]
+
 /-! ### Counting -/
 
 /-- The number of nodes. A leaf counts as `1`. -/

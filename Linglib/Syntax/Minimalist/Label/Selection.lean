@@ -41,6 +41,8 @@ head functions it is partial: `0` at exocentric nodes.
   order-independence — the formal content of Merge's unordered output.
 * `Head SelectionState`: the head of a selection product is a factor's head, so `selHead` is
   endocentric (`Minimalist.mem_head_or_mem_head_of_mem_head_map_mul`).
+* `Minimalist.SyntacticObject.selHead_map`: a relabelling that preserves selection commutes
+  with the selection-driven head.
 * `Minimalist.SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero`,
   `Minimalist.SelectionState.head_mul_of_not_isSaturated`: Merge is triggered, one factor
   selecting and the other saturated, and the selecting factor projects.
@@ -135,6 +137,20 @@ instance : MulZeroClass SelectionState where
   mul_zero x := by rcases x with ⟨_ | ⟨h, _ | ⟨c, s⟩⟩⟩ <;> rfl
 
 theorem SelectionState.mul_def : x * y = ⟨(selCombine x y).map (·.2)⟩ := rfl
+
+/-- The selection state with its head relabelled by `f`. -/
+def SelectionState.map (f : LexicalItem.Token → LexicalItem.Token) (x : SelectionState) :
+    SelectionState :=
+  ⟨x.toOption.map (Prod.map f id)⟩
+
+@[simp] theorem SelectionState.head_map (f : LexicalItem.Token → LexicalItem.Token) :
+    (x.map f).head = x.head.map f := by
+  simp [SelectionState.map, SelectionState.head, Option.map_map, Function.comp_def]
+
+theorem SelectionState.map_mul {f : LexicalItem.Token → LexicalItem.Token}
+    (hf : LexicalItem.Token.PreservesSelection f) : (x * y).map f = x.map f * y.map f := by
+  rcases x with ⟨_ | ⟨hx, _ | ⟨cx, sx⟩⟩⟩ <;> rcases y with ⟨_ | ⟨hy, _ | ⟨cy, sy⟩⟩⟩ <;>
+    simp [mul_def, map, selCombine, hf.cat]
 
 instance : CommMagma SelectionState where
   mul_comm x y := by
@@ -287,6 +303,21 @@ noncomputable def selCheckHom : SyntacticObject →ₙ* SelectionState :=
 
 @[simp] theorem selHead_merge_self (x : SyntacticObject) : (merge x x).selHead = none := by
   simp [selHead]
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+
+theorem selCheck_map (hf : LexicalItem.Token.PreservesSelection f) :
+    (s.map f).selCheck = s.selCheck.map f := by
+  induction s using ind with
+  | leaf a => simp [SelectionState.map, SelectionState.of, hf.sel]
+  | trace => simp [SelectionState.map, SelectionState.of, hf.bareTrace]
+  | traceOf a => simp [SelectionState.map, SelectionState.of]
+  | merge l r ihl ihr => rw [map_merge, selCheck_node, selCheck_node, ihl, ihr,
+      SelectionState.map_mul _ _ hf]
+
+theorem selHead_map (hf : LexicalItem.Token.PreservesSelection f) :
+    (s.map f).selHead = s.selHead.map f := by
+  rw [selHead, selHead, selCheck_map s hf, SelectionState.head_map]
 
 @[simp] theorem cat?_leaf : (SyntacticObject.leaf tok).cat?
     = some tok.item.cat := rfl

@@ -156,6 +156,10 @@ theorem attach_swap (p d : LinearizedSyntacticObject L) (e : Edge) :
   · exact toSyntacticObject_merge d p
   · exact (toSyntacticObject_merge p d).trans (SyntacticObject.merge_comm _ _)
 
+@[simp] theorem attach_map {L' : Type} (f : L → L') (p d : LinearizedSyntacticObject L) (e : Edge) :
+    (p.attach e d).map f = (p.map f).attach e (d.map f) := by
+  cases e <;> simp
+
 /-- The pronounced tokens of a linearized object, left to right; traces are unpronounced. -/
 def yield (p : LinearizedSyntacticObject L) : List L :=
   p.val.leafList.filterMap (Sum.elim id fun _ ↦ none)
@@ -192,7 +196,7 @@ instance : Insert (LinearizedSyntacticObject L) (LinearizedSyntacticObject L) :=
     ({p} : LinearizedSyntacticObject L) = p := rfl
 
 @[simp] theorem insert_def (l r : LinearizedSyntacticObject L) :
-    ({l, r} : LinearizedSyntacticObject L) = merge l r := rfl
+    (insert l r : LinearizedSyntacticObject L) = merge l r := rfl
 
 end LinearizedSyntacticObject
 
@@ -248,6 +252,15 @@ theorem token?_eq_some_iff {s : SyntacticObject L} {tok : L} :
     s.token? = some tok ↔ s = leaf tok := by
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ token?_leaf tok⟩
   rcases s.exists_form with ⟨tok', rfl⟩ | rfl | ⟨tok', rfl⟩ | ⟨l, r, rfl⟩ <;> simp_all
+
+theorem token?_map {L' : Type} (f : L → L') (s : SyntacticObject L) :
+    (s.map f).token? = s.token?.map f := by
+  rcases s.exists_form with ⟨a, rfl⟩ | rfl | ⟨a, rfl⟩ | ⟨l, r, rfl⟩ <;> simp
+
+theorem isLeafOf_map {f : LexicalItem.Token → LexicalItem.Token}
+    (hcat : ∀ t, (f t).item.cat = t.item.cat) (c : Cat) (s : SyntacticObject) :
+    isLeafOf c (s.map f) ↔ isLeafOf c s := by
+  simp [isLeafOf, token?_map, Option.map_map, Function.comp_def, hcat]
 
 /-- A trace leaf, bare or indexed. -/
 def isTrace (s : SyntacticObject L) : Prop :=

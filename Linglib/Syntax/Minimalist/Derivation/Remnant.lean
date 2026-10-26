@@ -68,4 +68,12 @@ theorem IsRemnantStep.append (h : d.IsRemnantStep i) : (d.append steps).IsRemnan
   have hi := lt_length_of_mem_mover? hm
   exact ⟨m, by rwa [mover?_append_of_lt hi], x, by rwa [take_append_of_le hi.le], hc⟩
 
+theorem isRemnantStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
+    (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) :
+    (d.map f).IsRemnantStep i ↔ d.IsRemnantStep i := by
+  have hτ (s : SyntacticObject) : (s.map f).selHead = s.selHead.map f := s.selHead_map hsel
+  cases h : d.mover? i <;>
+    simp [IsRemnantStep, mover?_map, h, movedItems_map, ← SyntacticObject.headTrace_map hτ,
+      contains_map_iff hf]
+
 end Minimalist.Derivation

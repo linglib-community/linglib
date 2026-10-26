@@ -409,6 +409,10 @@ theorem cCommand_map {γ : Type*} (f : β → γ) (t : RoseTree β) :
     cCommand (t.map f) = cCommand t := by
   simp only [cCommand, isBranchingAt_map]
 
+theorem cCommands_map {γ : Type*} (f : β → γ) (t : RoseTree β) (a b : TreePath) :
+    (t.map f).CCommands a b ↔ t.CCommands a b := by
+  rw [cCommands_iff, cCommands_iff, cCommand_map]
+
 section Replace
 
 variable {t new : RoseTree β} {a b c : TreePath}

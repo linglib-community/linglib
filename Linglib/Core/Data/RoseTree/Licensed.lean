@@ -146,4 +146,14 @@ theorem licensed_of_perm (hR : ∀ a {ks ls : List α}, ks.Perm ls → (R a ks �
     · obtain ⟨d, hd', hcd⟩ := Multiset.exists_mem_of_rel_of_mem hrel (Multiset.mem_coe.mpr hc)
       exact (ih c hc hcd).mpr (hd d (Multiset.mem_coe.mp hd'))
 
+theorem licensed_map_iff {β : Type*} {f : α → β} {R' : β → List β → Prop}
+    (h : ∀ a ks, R' (f a) (ks.map f) ↔ R a ks) {t : RoseTree α} :
+    (map f t).Licensed R' ↔ t.Licensed R := by
+  induction t with
+  | node a cs ih =>
+    rw [map_node, licensed_node_iff, licensed_node_iff, List.map_map,
+      show value ∘ map f = f ∘ value from funext fun c ↦ value_map f c, ← List.map_map, h,
+      List.forall_mem_map]
+    exact and_congr_right fun _ ↦ forall₂_congr fun c hc ↦ ih c hc
+
 end RoseTree

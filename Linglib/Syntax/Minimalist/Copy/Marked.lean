@@ -358,10 +358,10 @@ theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.T
     mem_terms.1 hzcy⟩
   · simp only [ImmediatelyContains, map_node, UnorderedTree.children_mk, Multiset.mem_coe,
       List.mem_map]
-    exact ⟨_, show _ ∈ rs.map (map Prod.snd) from List.mem_map_of_mem hri, rfl⟩
+    exact ⟨_, show _ ∈ rs.map (RoseTree.map Prod.snd) from List.mem_map_of_mem hri, rfl⟩
   · simp only [ImmediatelyContains, map_node, UnorderedTree.children_mk, Multiset.mem_coe,
       List.mem_map]
-    exact ⟨_, show _ ∈ rs.map (map Prod.snd) from List.mem_map_of_mem hrj, rfl⟩
+    exact ⟨_, show _ ∈ rs.map (RoseTree.map Prod.snd) from List.mem_map_of_mem hrj, rfl⟩
   · rw [← he, terms_leaf, Multiset.mem_singleton, leaf_inj] at hzcy
     exact hxy hzcy.symm
 

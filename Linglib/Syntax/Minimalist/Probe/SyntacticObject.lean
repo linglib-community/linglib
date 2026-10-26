@@ -29,6 +29,8 @@ then does to the goal's features is `Minimalist.FeatureBundle.applyAgree`.
   c-commands a position blocks the goal there.
 * `Minimalist.LinearizedSyntacticObject.finds_above_branching_iff`: among satisfiers none of which
   dominates another, a probe finds those that no satisfier asymmetrically c-commands.
+* `Minimalist.LinearizedSyntacticObject.mem_goals_leafProbe_map_iff`: a probe for the leaves of
+  a category finds the same goals under an injective relabelling that keeps categories.
 
 ## References
 
@@ -129,6 +131,36 @@ def phraseProbe (c : Cat) : Probe t.val.Positions :=
   .relativized fun q ↦
     decide (∃ e : t.val.Positions, e ≠ ⊥ ∧ e.val.parent = q.val ∧
       SyntacticObject.isLeafOf c (t.termAt e))
+
+/-- A probe for the leaves of a category finds the relabelled goals in a relabelled object, under
+an injective relabelling that keeps categories. -/
+theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token}
+    (hf : Function.Injective f) (hcat : ∀ t, (f t).item.cat = t.item.cat) {c : Cat}
+    {h x : SyntacticObject} :
+    x.map f ∈ (t.map f).goals ((t.map f).leafProbe c) (h.map f) ↔
+      x ∈ t.goals (t.leafProbe c) h := by
+  let e : t.val.Positions ≃ (t.map f).val.Positions :=
+    Equiv.subtypeEquivRight fun p ↦ by simp only [val_map, RoseTree.validPaths_map]
+  have hsub (q : t.val.Positions) :
+      (e q).subtree = RoseTree.map (SyntacticObject.Vertex.map f) q.subtree :=
+    Option.some.inj <| (e q).subtreeAt_eq.symm.trans <|
+      (RoseTree.subtreeAt_map _ t.val q.val.toList).trans (by rw [q.subtreeAt_eq, Option.map_some])
+  have hterm (q : t.val.Positions) : (t.map f).termAt (e q) = (t.termAt q).map f :=
+    Subtype.ext <| show UnorderedTree.mk (e q).subtree = (UnorderedTree.mk q.subtree).map _ by
+      rw [hsub, UnorderedTree.map_mk]
+  have hcc (a q : t.val.Positions) : (t.map f).val.CCommands (e a) (e q) ↔ t.val.CCommands a q :=
+    RoseTree.cCommands_map _ _ _ _
+  have hkey (q : t.val.Positions) :
+      (t.map f).above (t.map f).branching (e q) = t.above t.branching q :=
+    Finset.filter_congr fun x _ ↦ RoseTree.isBranchingAt_map _ t.val x
+  have hfinds (a g : t.val.Positions) :
+      ((t.map f).leafProbe c).Finds {q | (t.map f).val.CCommands (e a) q}
+          ((t.map f).above (t.map f).branching) (e g) ↔
+        (t.leafProbe c).Finds {q | t.val.CCommands a q} (t.above t.branching) g := by
+    simp only [Probe.Finds, MinimalFor, e.surjective.forall, Set.mem_ofPred_eq, hcc, hkey,
+      leafProbe, Probe.relativized_sat, hterm, SyntacticObject.isLeafOf_map hcat]
+  rw [mem_goals, mem_goals, e.surjective.exists]
+  simp only [hterm, (SyntacticObject.map_injective hf).eq_iff, e.surjective.exists, hfinds]
 
 end LinearizedSyntacticObject
 
