@@ -54,12 +54,14 @@ subject and the comitative symmetric underlying content
   properties are derived from them and not recorded per formation. The exceptions the paper
   notes, Czech reciprocal event nominals (Hron) and English *kiss* and *hug* resisting
   the discontinuous construction (footnote 32), are recorded in the docstrings.
-* The counting model takes events and individuals to be finite sets of markers, with a group
-  atom for each round of kissing and one for Dan and Rina; the participants' roles are read off
-  the parity of the marker.
-* Footnote 17 takes the members of the pair to be singular individuals, so its postulate is
-  stated for atoms; without that, a "pair" with one member below the other would have the
-  larger member as its sum.
+* The counting model takes events and individuals to be Landman's model on directional events
+  and on the two participants (`GroupStructure.finsetModel`), with a group for each round of
+  kissing and one for Dan and Rina; the participants' roles are read off the parity of the
+  directional event.
+* Footnote 17 takes the members of the pair to be singular individuals, and Landman's group
+  formation is defined on sums of individuals, so its postulate is stated for individuals;
+  without that, a "pair" with one member below the other would have the larger member as its
+  sum.
 
 ## References
 
@@ -171,7 +173,7 @@ def GroupEventReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (d₁ d₂ : D) (e : E) : Prop :=
   ∃ e₁ e₂, e = GE.up (e₁ ⊔ e₂) ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
 
-/-- The content of (41b), on which the event's dissolution is the sum of two directional base
+/-- The content of (41b), on which the event's members are the sum of two directional base
 events. -/
 def UnderlyingReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (d₁ d₂ : D) (e : E) : Prop :=
@@ -207,33 +209,33 @@ theorem subEventReading_of_crossedPair {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁)
   ⟨e₁, e₂, left_lt_sup.2 h₁, right_lt_sup.2 h₂, rfl, hc⟩
 
 /-- On the singular-event reading too, counting sees one event: group events are atoms. -/
-theorem GroupEventReading.atom (h : GroupEventReading GE V ag th d₁ d₂ e) :
+theorem GroupEventReading.atom (hV : V ⊆ GE.sums) (h : GroupEventReading GE V ag th d₁ d₂ e) :
     Mereology.Atom e := by
-  obtain ⟨_, _, rfl, -⟩ := h
-  exact GE.atom_up _
+  obtain ⟨_, _, rfl, hc⟩ := h
+  exact GE.atom_up (GE.supClosed_sums (hV hc.1) (hV hc.2.1))
 
 /-- The group-event reading of (47) has the underlying reading of the symmetric verb in (41b). -/
-theorem GroupEventReading.underlyingReading (h : GroupEventReading GE V ag th d₁ d₂ e) :
-    UnderlyingReading GE V ag th d₁ d₂ e := by
+theorem GroupEventReading.underlyingReading (hV : V ⊆ GE.sums)
+    (h : GroupEventReading GE V ag th d₁ d₂ e) : UnderlyingReading GE V ag th d₁ d₂ e := by
   obtain ⟨e₁, e₂, rfl, hc⟩ := h
-  exact ⟨e₁, e₂, GE.down_up _, hc⟩
+  exact ⟨e₁, e₂, GE.down_up (GE.supClosed_sums (hV hc.1) (hV hc.2.1)), hc⟩
 
 variable [SemilatticeSup D] {GD : GroupStructure D} {Vsym : Set E} {agTh : E → D}
 
 /-- A symmetric verb over the transitive `V`, the SYM marking of reciprocal bundling (36) as
 footnote 17 spells it out, is a set `Vsym` of singular events whose complex role `agTh` assigns
-the group of two distinct singular individuals, under the meaning postulate that such an event
-dissolves into two `V` events with crossed Agent and Theme. -/
+the group of two distinct individuals, under the meaning postulate that the members of such an
+event are two `V` events with crossed Agent and Theme. -/
 structure IsSymmetricVerb (GD : GroupStructure D) (GE : GroupStructure E) (V : Set E)
     (ag th : E → D) (Vsym : Set E) (agTh : E → D) : Prop where
   /-- Symmetric verbs denote singular events. -/
   atom : ∀ e ∈ Vsym, Mereology.Atom e
-  /-- The complex role assigns the group of two distinct singular individuals. -/
-  exists_pair : ∀ e ∈ Vsym, ∃ d₁ d₂, Mereology.Atom d₁ ∧ Mereology.Atom d₂ ∧ d₁ ≠ d₂ ∧
+  /-- The complex role assigns the group of two distinct individuals. -/
+  exists_pair : ∀ e ∈ Vsym, ∃ d₁ d₂, d₁ ∈ GD.individuals ∧ d₂ ∈ GD.individuals ∧ d₁ ≠ d₂ ∧
     agTh e = GD.up (d₁ ⊔ d₂)
-  /-- The meaning postulate: an event whose role is the group of two singular individuals has
-  the underlying reading (41b) for them. -/
-  underlyingReading : ∀ e ∈ Vsym, ∀ ⦃d₁ d₂⦄, Mereology.Atom d₁ → Mereology.Atom d₂ →
+  /-- The meaning postulate: an event whose role is the group of two individuals has the
+  underlying reading (41b) for them. -/
+  underlyingReading : ∀ e ∈ Vsym, ∀ ⦃d₁ d₂⦄, d₁ ∈ GD.individuals → d₂ ∈ GD.individuals →
     agTh e = GD.up (d₁ ⊔ d₂) → UnderlyingReading GE V ag th d₁ d₂ e
 
 namespace IsSymmetricVerb
@@ -533,15 +535,15 @@ end Periphrastic
 
 /-! ### Count adverbials: five mutual against ten directional events (section 2.2)
 
-Five rounds of kissing between Dan and Rina yield ten directional events. The Hebrew symmetric
-verb packs each round into a group atom: *hitnašku xameš pe'amim* counts five mutual events
-(`card_mutualEvent`), each recovering its round's directional events by dissolution
-(`mutualEvent_down`) though they are not parts of the counted event
+Five rounds of kissing between Dan and Rina yield ten directional events. The French
+accumulation reading sums each round's two directional events: the five rounds
+(`card_accumulated`) keep both directional events accessible as proper parts
+(`directional_lt_accumulated`), so *s'embrassèrent cinq fois* can also count ten (16b). The
+Hebrew symmetric verb forms a group atom from each sum instead: *hitnašku xameš pe'amim* counts
+five mutual events (`card_mutualEvent`), each recovering its round's directional events as its
+members (`mutualEvent_down`) though they are not parts of the counted event
 (`mutualEvent_not_subEventReading`), which is also why *\*hitnašku al ha-mecax* 'kissed on the
-forehead' fails (15d). The French accumulation reading sums the two directional events instead:
-the same five rounds (`card_accumulated`) keep both directional events accessible as proper
-parts (`directional_lt_accumulated`), so *s'embrassèrent cinq fois* can also count ten
-(16b). -/
+forehead' fails (15d). -/
 
 section Counting
 
@@ -550,13 +552,10 @@ inductive Kisser
   | dan | rina
   deriving DecidableEq, Fintype
 
-noncomputable instance : Encodable Kisser := Encodable.ofCountable Kisser
+/-- The domain of individuals, finite sets of the participants and of their group. -/
+abbrev Individual : Type := Finset (Kisser ⊕ {s : Finset Kisser // s.Nontrivial})
 
-/-- The domain of individuals, finite sets of atomic markers, the left summand for the
-participants and the right for group atoms. -/
-abbrev Individual : Type := Finset (Kisser ⊕ ℕ)
-
-noncomputable def individualGroups : GroupStructure Individual := GroupStructure.finsetModel Kisser
+def individualGroups : GroupStructure Individual := GroupStructure.finsetModel Kisser
 
 /-- Dan, a singular individual. -/
 def dan : Individual := {.inl .dan}
@@ -571,14 +570,13 @@ theorem atom_rina : Mereology.Atom rina :=
 
 theorem dan_ne_rina : dan ≠ rina := by decide
 
-/-- The event domain, finite sets of atomic event markers, the left summand for directional kissings
-and the right for group atoms. -/
-abbrev KissEvent : Type := Finset (ℕ ⊕ ℕ)
+/-- The event domain, finite sets of directional kissings and of their groups. -/
+abbrev KissEvent : Type := Finset (ℕ ⊕ {s : Finset ℕ // s.Nontrivial})
 
-noncomputable def kissGroups : GroupStructure KissEvent := GroupStructure.finsetModel ℕ
+def kissGroups : GroupStructure KissEvent := GroupStructure.finsetModel ℕ
 
 /-- The `i`-th directional kissing event. -/
-def directional (i : ℕ) : KissEvent := {Sum.inl i}
+def directional (i : ℕ) : KissEvent := {.inl i}
 
 theorem directional_injective : Function.Injective directional :=
   fun _ _ h ↦ Sum.inl.inj (Finset.singleton_injective h)
@@ -609,93 +607,28 @@ theorem crossedPair_round {j : ℕ} (hj : j < 5) :
     by rw [kissAg, ite_eq_right hodd], by rw [kissTh, ite_eq_right hodd]⟩
 
 theorem directional_not_le {i k : ℕ} (h : i ≠ k) : ¬ directional i ≤ directional k :=
-  fun hle ↦ by
-    have hmem : (Sum.inl i : ℕ ⊕ ℕ) ∈ ({Sum.inl k} : Finset (ℕ ⊕ ℕ)) :=
-      Finset.singleton_subset_iff.mp hle
-    rw [Finset.mem_singleton] at hmem
-    exact h (Sum.inl.inj hmem)
-
-/-- The `j`-th mutual kissing event: the round's two directional events packed as a group atom,
-the Hebrew *hitnašku* denotation. -/
-noncomputable def mutualEvent (j : Fin 5) : KissEvent :=
-  kissGroups.up (directional (2 * j) ⊔ directional (2 * j + 1))
-
-theorem mutualEvent_injective : Function.Injective mutualEvent := by
-  intro j j' h
-  have h2 := kissGroups.up_injective h
-  have hv : ({Sum.inl (2 * (j : ℕ))} ∪ {Sum.inl (2 * (j : ℕ) + 1)} : Finset (ℕ ⊕ ℕ)) =
-      {Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)} := by
-    simpa [directional, Finset.sup_eq_union] using h2
-  have hmem : (Sum.inl (2 * (j : ℕ)) : ℕ ⊕ ℕ) ∈
-      ({Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)} : Finset (ℕ ⊕ ℕ)) := by
-    rw [← hv]; simp
-  simp only [Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
-  exact Fin.ext (by omega)
-
-/-- Five mutual kissing events (15). -/
-theorem card_mutualEvent : (Finset.univ.image mutualEvent).card = 5 := by
-  rw [Finset.card_image_of_injective _ mutualEvent_injective]
-  simp
-
-theorem card_directional : ((Finset.range 10).image directional).card = 10 := by
-  rw [Finset.card_image_of_injective _ directional_injective]
-  simp
-
-theorem mutualEvent_down (j : Fin 5) :
-    kissGroups.down (mutualEvent j) = directional (2 * j) ⊔ directional (2 * j + 1) :=
-  kissGroups.down_up _
-
-/-- Each round's directional events underlie its mutual event (41b). -/
-theorem underlyingReading_mutualEvent (j : Fin 5) :
-    UnderlyingReading kissGroups kiss kissAg kissTh dan rina (mutualEvent j) :=
-  ⟨_, _, mutualEvent_down j, crossedPair_round j.isLt⟩
-
-/-- *Hitnašek* 'kissREC' in the model, the five mutual events. -/
-def hitnashek : Set KissEvent := Set.range mutualEvent
-
-/-- The complex role of the mutual events, the group of Dan and Rina. -/
-noncomputable def kissAgTh (_ : KissEvent) : Individual := individualGroups.up (dan ⊔ rina)
-
-/-- The model makes *hitnašek* a symmetric verb over *nišek* 'kiss' in the sense of footnote 17 and
-(41b). -/
-theorem isSymmetricVerb_hitnashek :
-    IsSymmetricVerb individualGroups kissGroups kiss kissAg kissTh hitnashek kissAgTh where
-  atom := by
-    rintro _ ⟨j, rfl⟩
-    exact kissGroups.atom_up _
-  exists_pair _ _ := ⟨dan, rina, atom_dan, atom_rina, dan_ne_rina, rfl⟩
-  underlyingReading := by
-    rintro _ ⟨j, rfl⟩ d₁ d₂ h₁ h₂ hrole
-    obtain ⟨a, rfl⟩ := Finset.isAtom_iff.mp (Mereology.atom_iff_isAtom.mp h₁)
-    obtain ⟨b, rfl⟩ := Finset.isAtom_iff.mp (Mereology.atom_iff_isAtom.mp h₂)
-    have h := congrArg (fun s : Individual ↦ (s : Set (Kisser ⊕ ℕ)))
-      (individualGroups.up_injective hrole)
-    simp only [dan, rina, Finset.sup_eq_union, Finset.coe_union, Finset.coe_singleton,
-      ← Set.insert_eq] at h
-    rcases Set.pair_eq_pair_iff.mp h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    exacts [underlyingReading_mutualEvent j, (underlyingReading_mutualEvent j).symm]
-
-/-- Yet the mutual event has no accessible parts: the count adverbial and locative modification
-see one atomic event per round ((15a) and (15d)). -/
-theorem mutualEvent_not_subEventReading (j : Fin 5) :
-    ¬ SubEventReading kiss kissAg kissTh dan rina (mutualEvent j) :=
-  isSymmetricVerb_hitnashek.not_subEventReading ⟨j, rfl⟩
+  fun hle ↦ h (Sum.inl.inj (Finset.singleton_subset_singleton.1 hle))
 
 /-- The French accumulation event of round `j` is the plain sum (16). -/
 def accumulated (j : Fin 5) : KissEvent := directional (2 * j) ⊔ directional (2 * j + 1)
 
+theorem accumulated_injective : Function.Injective accumulated := by
+  intro j j' h
+  have hmem : directional (2 * j) ≤ accumulated j' := h ▸ (le_sup_left : _ ≤ accumulated j)
+  simp only [accumulated, directional, Finset.sup_eq_union, Finset.singleton_subset_iff,
+    Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
+  exact Fin.ext (by omega)
+
+theorem accumulated_mem_sums (j : Fin 5) : accumulated j ∈ kissGroups.sums :=
+  kissGroups.sup_mem_sums ⟨_, rfl⟩ ⟨_, rfl⟩
+
 /-- Five accumulation events, the five-count of (16b). -/
 theorem card_accumulated : (Finset.univ.image accumulated).card = 5 := by
-  have hinj : Function.Injective accumulated := by
-    intro j j' h
-    have hmem : (Sum.inl (2 * (j : ℕ)) : ℕ ⊕ ℕ) ∈
-        ({Sum.inl (2 * (j' : ℕ))} ∪ {Sum.inl (2 * (j' : ℕ) + 1)} : Finset (ℕ ⊕ ℕ)) := by
-      have hv := h
-      simp only [accumulated, Finset.sup_eq_union, directional] at hv
-      rw [← hv]; simp
-    simp only [Finset.mem_union, Finset.mem_singleton, Sum.inl.injEq] at hmem
-    exact Fin.ext (by omega)
-  rw [Finset.card_image_of_injective _ hinj]
+  rw [Finset.card_image_of_injective _ accumulated_injective]
+  simp
+
+theorem card_directional : ((Finset.range 10).image directional).card = 10 := by
+  rw [Finset.card_image_of_injective _ directional_injective]
   simp
 
 /-- The accumulation event keeps the sub-event reading: both directional events are accessible
@@ -709,6 +642,57 @@ theorem directional_lt_accumulated (j : Fin 5) :
     directional (2 * j) < accumulated j ∧ directional (2 * j + 1) < accumulated j :=
   ⟨left_lt_sup.mpr (directional_not_le (by omega)),
     right_lt_sup.mpr (directional_not_le (by omega))⟩
+
+/-- The `j`-th mutual kissing event: the group of the round's two directional events, the Hebrew
+*hitnašku* denotation. -/
+def mutualEvent (j : Fin 5) : KissEvent := kissGroups.up (accumulated j)
+
+theorem mutualEvent_injective : Function.Injective mutualEvent := fun _ _ h ↦
+  accumulated_injective (kissGroups.injOn_up (accumulated_mem_sums _) (accumulated_mem_sums _) h)
+
+/-- Five mutual kissing events (15). -/
+theorem card_mutualEvent : (Finset.univ.image mutualEvent).card = 5 := by
+  rw [Finset.card_image_of_injective _ mutualEvent_injective]
+  simp
+
+theorem mutualEvent_down (j : Fin 5) :
+    kissGroups.down (mutualEvent j) = directional (2 * j) ⊔ directional (2 * j + 1) :=
+  kissGroups.down_up (accumulated_mem_sums j)
+
+/-- Each round's directional events underlie its mutual event (41b). -/
+theorem underlyingReading_mutualEvent (j : Fin 5) :
+    UnderlyingReading kissGroups kiss kissAg kissTh dan rina (mutualEvent j) :=
+  ⟨_, _, mutualEvent_down j, crossedPair_round j.isLt⟩
+
+/-- *Hitnašek* 'kissREC' in the model, the five mutual events. -/
+def hitnashek : Set KissEvent := Set.range mutualEvent
+
+/-- The complex role of the mutual events, the group of Dan and Rina. -/
+def kissAgTh (_ : KissEvent) : Individual := individualGroups.up (dan ⊔ rina)
+
+/-- The model makes *hitnašek* a symmetric verb over *nišek* 'kiss' in the sense of footnote 17 and
+(41b). -/
+theorem isSymmetricVerb_hitnashek :
+    IsSymmetricVerb individualGroups kissGroups kiss kissAg kissTh hitnashek kissAgTh where
+  atom := by
+    rintro _ ⟨j, rfl⟩
+    exact kissGroups.atom_up (accumulated_mem_sums j)
+  exists_pair _ _ := ⟨dan, rina, ⟨_, rfl⟩, ⟨_, rfl⟩, dan_ne_rina, rfl⟩
+  underlyingReading := by
+    rintro _ ⟨j, rfl⟩ _ _ ⟨a, rfl⟩ ⟨b, rfl⟩ hrole
+    have h := individualGroups.injOn_up (individualGroups.sup_mem_sums ⟨_, rfl⟩ ⟨_, rfl⟩)
+      (individualGroups.sup_mem_sums ⟨_, rfl⟩ ⟨_, rfl⟩) hrole
+    rcases a <;> rcases b
+    · exact absurd h (by decide)
+    · exact underlyingReading_mutualEvent j
+    · exact (underlyingReading_mutualEvent j).symm
+    · exact absurd h (by decide)
+
+/-- Yet the mutual event has no accessible parts: the count adverbial and locative modification
+see one atomic event per round ((15a) and (15d)). -/
+theorem mutualEvent_not_subEventReading (j : Fin 5) :
+    ¬ SubEventReading kiss kissAg kissTh dan rina (mutualEvent j) :=
+  isSymmetricVerb_hitnashek.not_subEventReading ⟨j, rfl⟩
 
 end Counting
 
@@ -730,7 +714,7 @@ variable {D E : Type*} [SemilatticeSup E] {GE : GroupStructure E} {V Vsym : Set 
 
 /-- A dyadic symmetric verb over the transitive `V` (footnote 43) is a set `Vsym` of singular
 events with the [Agent-Theme] role `agTh` for the subject and the [Ø-WITH] role `obl` for the
-comitative, under the meaning postulate that each event dissolves into two `V` events whose
+comitative, under the meaning postulate that the members of each event are two `V` events whose
 Agent and Theme are the subject and the comitative, crossed. -/
 structure IsDyadicSymmetricVerb (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (Vsym : Set E) (agTh obl : E → D) : Prop where
@@ -768,7 +752,7 @@ theorem exists_discontinuous_not_comm :
         Discontinuous Vsym agTh obl dan rina ∧ ¬ Discontinuous Vsym agTh obl rina dan := by
   refine ⟨{mutualEvent 0}, fun _ ↦ dan, fun _ ↦ rina, ⟨?_, ?_⟩, ⟨_, rfl, rfl, rfl⟩, ?_⟩
   · rintro _ rfl
-    exact kissGroups.atom_up _
+    exact kissGroups.atom_up (accumulated_mem_sums 0)
   · rintro _ rfl
     exact underlyingReading_mutualEvent 0
   · rintro ⟨_, -, h, -⟩

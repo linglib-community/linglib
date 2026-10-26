@@ -157,7 +157,7 @@ theorem PlainReciprocity.pr5 (h : PlainReciprocity P R) : Pr5 P R :=
 
 Previous accounts take *A and B hugged* to entail *A hugged B* and *B hugged A* (43), which is
 (Pr₂). [siloni-2012]'s symmetric verbs are an instance: footnote 17's meaning
-postulate makes an event of the reciprocal verb dissolve into two events of the transitive one
+postulate makes the members of an event of the reciprocal verb two events of the transitive one
 with crossed roles. Its collective holds of a sum when some event has the group of the sum as
 its complex role, and its binary predicate when some event of the transitive verb has the two
 entities as Agent and Theme. -/
@@ -171,7 +171,7 @@ variable [DecidableEq A] {D E : Type*} [SemilatticeSup D] [SemilatticeSup E]
 /-- [siloni-2012]'s symmetric verbs validate (Pr₂), so the reciprocals of §3.3 that fail it, after
 [kruitwagen-et-al-2017], are not symmetric verbs. -/
 theorem pr2_of_isSymmetricVerb (h : Siloni2012.IsSymmetricVerb GD GE V ag th Vsym agTh)
-    {ι : A → D} (hι : ∀ x, Mereology.Atom (ι x)) {σ : Finset A → D}
+    {ι : A → D} (hι : ∀ x, ι x ∈ GD.individuals) {σ : Finset A → D}
     (hσ : ∀ x y, σ {x, y} = ι x ⊔ ι y) :
     Pr2 (fun s ↦ ∃ e ∈ Vsym, agTh e = GD.up (σ s))
       (fun x y ↦ ∃ e ∈ V, ag e = ι x ∧ th e = ι y) := by
