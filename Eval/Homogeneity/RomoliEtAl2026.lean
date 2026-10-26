@@ -41,7 +41,7 @@ def targets (pol : Polarity) : List Item :=
 
 /-- Whether the test of an effect in Experiment 3 was significant at the .05 level. -/
 def found (e : Effect) : Bool :=
-  decide ((tests .three e).p.toRat < 1 / 20)
+  decide ((tests .three e).p.Significant (1 / 20))
 
 /-- Whether an account predicts a context effect for a level of POLARITY of Experiment 3, which it
 does when on some target picture for it it accepts the sentence under the existential question,

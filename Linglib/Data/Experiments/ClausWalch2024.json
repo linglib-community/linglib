@@ -83,22 +83,6 @@
           "doc": "the interaction of modifier and frame"
         }
       ]
-    },
-    {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {
-          "name": "below",
-          "label": "<",
-          "doc": "as an upper bound"
-        },
-        {
-          "name": "exact",
-          "label": "=",
-          "doc": "as a value"
-        }
-      ]
     }
   ],
   "constants": [
@@ -373,14 +357,9 @@
           "doc": "The z statistic."
         },
         {
-          "name": "bound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
-          "doc": "The p-value or its bound."
+          "type": "pvalue",
+          "doc": "The p-value."
         }
       ],
       "rows": [
@@ -390,8 +369,7 @@
           "b": "1.43",
           "se": "0.65",
           "z": "2.22",
-          "bound": "<",
-          "p": "0.05"
+          "p": "< 0.05"
         },
         {
           "experiment": "Experiment 1, attribute framing",
@@ -399,8 +377,7 @@
           "b": "15.43",
           "se": "4.23",
           "z": "3.65",
-          "bound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "experiment": "Experiment 2",
@@ -408,8 +385,7 @@
           "b": "-1.35",
           "se": "0.64",
           "z": "-2.09",
-          "bound": "<",
-          "p": "0.05"
+          "p": "< 0.05"
         },
         {
           "experiment": "Experiment 2",
@@ -417,7 +393,6 @@
           "b": "0.15",
           "se": "0.37",
           "z": "0.40",
-          "bound": "=",
           "p": "0.69"
         },
         {
@@ -426,7 +401,6 @@
           "b": "0.02",
           "se": "0.31",
           "z": "0.07",
-          "bound": "=",
           "p": "0.95"
         },
         {
@@ -435,8 +409,7 @@
           "b": "-34.53",
           "se": "16.54",
           "z": "-2.09",
-          "bound": "<",
-          "p": "0.05"
+          "p": "< 0.05"
         },
         {
           "experiment": "Experiment 3",
@@ -444,7 +417,6 @@
           "b": "10.52",
           "se": "11.31",
           "z": "0.93",
-          "bound": "=",
           "p": "0.35"
         },
         {
@@ -453,7 +425,6 @@
           "b": "11.41",
           "se": "12.09",
           "z": "0.94",
-          "bound": "=",
           "p": "0.35"
         }
       ]

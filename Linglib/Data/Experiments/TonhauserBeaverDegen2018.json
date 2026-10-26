@@ -199,22 +199,6 @@
      "doc": "not significant"
     }
    ]
-  },
-  {
-   "name": "PBound",
-   "doc": "Whether a printed p-value is an upper or a lower bound.",
-   "levels": [
-    {
-     "name": "below",
-     "label": "<",
-     "doc": "p is below the printed value"
-    },
-    {
-     "name": "above",
-     "label": ">",
-     "doc": "p is above the printed value"
-    }
-   ]
   }
  ],
  "tables": [
@@ -489,13 +473,8 @@
     },
     {
      "name": "p",
-     "type": "decimal",
-     "doc": "The printed p bound."
-    },
-    {
-     "name": "pBound",
-     "type": "PBound",
-     "doc": "Whether p is below or above the printed value."
+     "type": "pvalue",
+     "doc": "The p-value."
     }
    ],
    "rows": [
@@ -505,8 +484,7 @@
      "se": "0.10",
      "t": "3.70",
      "chiSq": "9.20",
-     "p": "0.003",
-     "pBound": "<"
+     "p": "< 0.003"
     },
     {
      "experiment": "1b",
@@ -514,8 +492,7 @@
      "se": "0.04",
      "t": "9.31",
      "chiSq": "31.36",
-     "p": "0.0001",
-     "pBound": "<"
+     "p": "< 0.0001"
     },
     {
      "experiment": "2a",
@@ -523,8 +500,7 @@
      "se": "0.06",
      "t": "5.21",
      "chiSq": "20.94",
-     "p": "0.0001",
-     "pBound": "<",
+     "p": "< 0.0001",
      "note": "simplified random-effects structure; marginal under the full structure"
     },
     {
@@ -533,8 +509,7 @@
      "se": "0.04",
      "t": "0.83",
      "chiSq": "0.68",
-     "p": "0.4",
-     "pBound": ">",
+     "p": "> 0.4",
      "note": "the sign in the predicted direction"
     }
    ]

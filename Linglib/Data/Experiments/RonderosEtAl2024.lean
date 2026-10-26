@@ -55,14 +55,6 @@ inductive AdjType where
   | scalar
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- A row of Results, p. 1222: the cluster of time bins in the noun window over which condition
 affects looks to the target, for an adjective type. -/
 structure Cluster where
@@ -72,14 +64,14 @@ structure Cluster where
   offset : Option ℕ
   /-- The total sum of t values over the cluster. -/
   tSum : Option Decimal
-  /-- The bound below which the cluster's permutation p-value lies. -/
-  p : Option Decimal
+  /-- The cluster's permutation p-value. -/
+  p : Option PValue
   deriving DecidableEq, Repr
 
 /-- The cells of Results, p. 1222, by adjType; checked against the page images. -/
 def clusters : AdjType → Cluster
-  | .color => ⟨some 240, some 600, some ⟨3961, 2⟩, some ⟨1, 2⟩⟩
-  | .scalar => ⟨some 260, some 500, some ⟨3307, 2⟩, some ⟨1, 2⟩⟩
+  | .color => ⟨some 240, some 600, some ⟨3961, 2⟩, some ⟨.lt, ⟨1, 2⟩⟩⟩
+  | .scalar => ⟨some 260, some 500, some ⟨3307, 2⟩, some ⟨.lt, ⟨1, 2⟩⟩⟩
   | .material => ⟨none, none, none, none⟩  -- no clusters whatsoever
 
 /-- A row of Results, p. 1222: the effect of condition on the target-advantage score over the
@@ -88,19 +80,17 @@ adjective type. -/
 structure TargetAdvantage where
   /-- The estimate of the effect of condition. -/
   beta : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value, from the Satterthwaite approximation. -/
-  p : Decimal
+  p : PValue
   /-- The t statistic. -/
   t : Decimal
   deriving DecidableEq, Repr
 
 /-- The cells of Results, p. 1222, by adjType; checked against the page images. -/
 def targetAdvantage : AdjType → TargetAdvantage
-  | .color => ⟨⟨24, 2⟩, .below, ⟨5, 2⟩, ⟨241, 2⟩⟩
-  | .scalar => ⟨⟨19, 2⟩, .below, ⟨5, 2⟩, ⟨202, 2⟩⟩
-  | .material => ⟨⟨10, 2⟩, .exact, ⟨28, 2⟩, ⟨108, 2⟩⟩
+  | .color => ⟨⟨24, 2⟩, ⟨.lt, ⟨5, 2⟩⟩, ⟨241, 2⟩⟩
+  | .scalar => ⟨⟨19, 2⟩, ⟨.lt, ⟨5, 2⟩⟩, ⟨202, 2⟩⟩
+  | .material => ⟨⟨10, 2⟩, ⟨.eq, ⟨28, 2⟩⟩, ⟨108, 2⟩⟩
 
 /-- A row of Results, p. 1223: the difference from scalar adjectives in the looks to target and
 competitor together over the noun window of the No-Contrast condition, for an adjective type. -/
@@ -109,17 +99,15 @@ structure BaselineLooks where
   adjType : AdjType
   /-- The estimate of the difference. -/
   beta : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   /-- The z statistic. -/
   z : Decimal
   deriving DecidableEq, Repr
 
 /-- The 2 rows of Results, p. 1223, in the paper's order; checked against the page images. -/
 def baselineLooks : List BaselineLooks :=
-  [⟨.color, ⟨25, 2⟩, .below, ⟨1, 2⟩, ⟨280, 2⟩⟩,
-   ⟨.material, ⟨24, 2⟩, .below, ⟨5, 2⟩, ⟨240, 2⟩⟩]
+  [⟨.color, ⟨25, 2⟩, ⟨.lt, ⟨1, 2⟩⟩, ⟨280, 2⟩⟩,
+   ⟨.material, ⟨24, 2⟩, ⟨.lt, ⟨5, 2⟩⟩, ⟨240, 2⟩⟩]
 
 end RonderosEtAl2024

@@ -122,14 +122,6 @@ inductive Verdict where
   | noDifference
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- Participants recruited for Experiment 1, eighteen per list. (p. 812; checked against the page
 images.) -/
 def exp1Recruited : ℕ := 216
@@ -408,115 +400,97 @@ structure Coefficient where
   beta : Decimal
   /-- Its standard error. -/
   se : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 72 rows of Table 2, p. 815 (Experiment 1, mixed effects); Table 4, p. 824 (Experiment 2,
 linear), in the paper's order; checked against the page images. -/
 def coefficients : List Coefficient :=
-  [⟨.exp1, .status, none, none, ⟨494, 2⟩, ⟨9, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp1, .status, some .underspecified, none, ⟨10, 2⟩, ⟨5, 2⟩, .exact, ⟨5, 2⟩⟩,
-   ⟨.exp1, .status, some .precise, none, ⟨15, 2⟩, ⟨5, 2⟩, .below, ⟨1, 2⟩⟩,
-   ⟨.exp1, .status, none, some .persuasive, ⟨9, 2⟩, ⟨6, 2⟩, .exact, ⟨15, 2⟩⟩,
-   ⟨.exp1, .status, none, some .stranger, ⟨-4, 2⟩, ⟨6, 2⟩, .exact, ⟨52, 2⟩⟩,
-   ⟨.exp1, .status, none, some .bonding, ⟨4, 2⟩, ⟨6, 2⟩, .exact, ⟨52, 2⟩⟩,
-   ⟨.exp1, .status, some .underspecified, some .persuasive, ⟨-5, 2⟩, ⟨17, 2⟩, .exact, ⟨73, 2⟩⟩,
-   ⟨.exp1, .status, some .precise, some .persuasive, ⟨-24, 2⟩, ⟨17, 2⟩, .exact, ⟨15, 2⟩⟩,
-   ⟨.exp1, .status, some .underspecified, some .stranger, ⟨-8, 2⟩, ⟨16, 2⟩, .exact, ⟨60, 2⟩⟩,
-   ⟨.exp1, .status, some .precise, some .stranger, ⟨-24, 2⟩, ⟨16, 2⟩, .exact, ⟨13, 2⟩⟩,
-   ⟨.exp1, .status, some .underspecified, some .bonding, ⟨-3, 2⟩, ⟨16, 2⟩, .exact, ⟨83, 2⟩⟩,
-   ⟨.exp1, .status, some .precise, some .bonding, ⟨-38, 2⟩, ⟨15, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp1, .solidarity, none, none, ⟨447, 2⟩, ⟨9, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp1, .solidarity, some .underspecified, none, ⟨-8, 2⟩, ⟨5, 2⟩, .exact, ⟨13, 2⟩⟩,
-   ⟨.exp1, .solidarity, some .precise, none, ⟨-19, 2⟩, ⟨5, 2⟩, .below, ⟨1, 2⟩⟩,
-   ⟨.exp1, .solidarity, none, some .persuasive, ⟨-6, 2⟩, ⟨6, 2⟩, .exact, ⟨31, 2⟩⟩,
-   ⟨.exp1, .solidarity, none, some .stranger, ⟨20, 2⟩, ⟨6, 2⟩, .below, ⟨1, 2⟩⟩,
-   ⟨.exp1, .solidarity, none, some .bonding, ⟨3, 2⟩, ⟨6, 2⟩, .exact, ⟨55, 2⟩⟩,
-   ⟨.exp1, .solidarity, some .underspecified, some .persuasive, ⟨4, 2⟩, ⟨18, 2⟩, .exact, ⟨81, 2⟩⟩,
-   ⟨.exp1, .solidarity, some .precise, some .persuasive, ⟨6, 2⟩, ⟨18, 2⟩, .exact, ⟨71, 2⟩⟩,
-   ⟨.exp1, .solidarity, some .underspecified, some .stranger, ⟨19, 2⟩, ⟨17, 2⟩, .exact, ⟨25, 2⟩⟩,
-   ⟨.exp1, .solidarity, some .precise, some .stranger, ⟨17, 2⟩, ⟨17, 2⟩, .exact, ⟨32, 2⟩⟩,
-   ⟨.exp1, .solidarity, some .underspecified, some .bonding, ⟨-11, 2⟩, ⟨17, 2⟩, .exact, ⟨52, 2⟩⟩,
-   ⟨.exp1, .solidarity, some .precise, some .bonding, ⟨3, 2⟩, ⟨17, 2⟩, .exact, ⟨85, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, none, none, ⟨421, 2⟩, ⟨9, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp1, .antiSolidarity, some .underspecified, none, ⟨8, 2⟩, ⟨6, 2⟩, .exact, ⟨17, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, some .precise, none, ⟨27, 2⟩, ⟨6, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp1, .antiSolidarity, none, some .persuasive, ⟨-5, 2⟩, ⟨17, 2⟩, .exact, ⟨45, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, none, some .stranger, ⟨-16, 2⟩, ⟨7, 2⟩, .below, ⟨1, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, none, some .bonding, ⟨-8, 2⟩, ⟨7, 2⟩, .exact, ⟨28, 2⟩⟩,
+  [⟨.exp1, .status, none, none, ⟨494, 2⟩, ⟨9, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp1, .status, some .underspecified, none, ⟨10, 2⟩, ⟨5, 2⟩, ⟨.eq, ⟨5, 2⟩⟩⟩,
+   ⟨.exp1, .status, some .precise, none, ⟨15, 2⟩, ⟨5, 2⟩, ⟨.lt, ⟨1, 2⟩⟩⟩,
+   ⟨.exp1, .status, none, some .persuasive, ⟨9, 2⟩, ⟨6, 2⟩, ⟨.eq, ⟨15, 2⟩⟩⟩,
+   ⟨.exp1, .status, none, some .stranger, ⟨-4, 2⟩, ⟨6, 2⟩, ⟨.eq, ⟨52, 2⟩⟩⟩,
+   ⟨.exp1, .status, none, some .bonding, ⟨4, 2⟩, ⟨6, 2⟩, ⟨.eq, ⟨52, 2⟩⟩⟩,
+   ⟨.exp1, .status, some .underspecified, some .persuasive, ⟨-5, 2⟩, ⟨17, 2⟩, ⟨.eq, ⟨73, 2⟩⟩⟩,
+   ⟨.exp1, .status, some .precise, some .persuasive, ⟨-24, 2⟩, ⟨17, 2⟩, ⟨.eq, ⟨15, 2⟩⟩⟩,
+   ⟨.exp1, .status, some .underspecified, some .stranger, ⟨-8, 2⟩, ⟨16, 2⟩, ⟨.eq, ⟨60, 2⟩⟩⟩,
+   ⟨.exp1, .status, some .precise, some .stranger, ⟨-24, 2⟩, ⟨16, 2⟩, ⟨.eq, ⟨13, 2⟩⟩⟩,
+   ⟨.exp1, .status, some .underspecified, some .bonding, ⟨-3, 2⟩, ⟨16, 2⟩, ⟨.eq, ⟨83, 2⟩⟩⟩,
+   ⟨.exp1, .status, some .precise, some .bonding, ⟨-38, 2⟩, ⟨15, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, none, none, ⟨447, 2⟩, ⟨9, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .underspecified, none, ⟨-8, 2⟩, ⟨5, 2⟩, ⟨.eq, ⟨13, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .precise, none, ⟨-19, 2⟩, ⟨5, 2⟩, ⟨.lt, ⟨1, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, none, some .persuasive, ⟨-6, 2⟩, ⟨6, 2⟩, ⟨.eq, ⟨31, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, none, some .stranger, ⟨20, 2⟩, ⟨6, 2⟩, ⟨.lt, ⟨1, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, none, some .bonding, ⟨3, 2⟩, ⟨6, 2⟩, ⟨.eq, ⟨55, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .underspecified, some .persuasive, ⟨4, 2⟩, ⟨18, 2⟩, ⟨.eq, ⟨81, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .precise, some .persuasive, ⟨6, 2⟩, ⟨18, 2⟩, ⟨.eq, ⟨71, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .underspecified, some .stranger, ⟨19, 2⟩, ⟨17, 2⟩, ⟨.eq, ⟨25, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .precise, some .stranger, ⟨17, 2⟩, ⟨17, 2⟩, ⟨.eq, ⟨32, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .underspecified, some .bonding, ⟨-11, 2⟩, ⟨17, 2⟩, ⟨.eq, ⟨52, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, some .precise, some .bonding, ⟨3, 2⟩, ⟨17, 2⟩, ⟨.eq, ⟨85, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, none, none, ⟨421, 2⟩, ⟨9, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, some .underspecified, none, ⟨8, 2⟩, ⟨6, 2⟩, ⟨.eq, ⟨17, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, some .precise, none, ⟨27, 2⟩, ⟨6, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, none, some .persuasive, ⟨-5, 2⟩, ⟨17, 2⟩, ⟨.eq, ⟨45, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, none, some .stranger, ⟨-16, 2⟩, ⟨7, 2⟩, ⟨.lt, ⟨1, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, none, some .bonding, ⟨-8, 2⟩, ⟨7, 2⟩, ⟨.eq, ⟨28, 2⟩⟩⟩,
    ⟨.exp1,
      .antiSolidarity,
      some .underspecified,
      some .persuasive,
      ⟨22, 2⟩,
      ⟨21, 2⟩,
-     .exact,
-     ⟨28, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, some .precise, some .persuasive, ⟨0, 2⟩, ⟨21, 2⟩, .exact, ⟨97, 2⟩⟩,
-   ⟨.exp1,
-     .antiSolidarity,
-     some .underspecified,
-     some .stranger,
-     ⟨27, 2⟩,
-     ⟨19, 2⟩,
-     .exact,
-     ⟨16, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, some .precise, some .stranger, ⟨17, 2⟩, ⟨20, 2⟩, .exact, ⟨38, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, some .underspecified, some .bonding, ⟨47, 2⟩, ⟨20, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, some .precise, some .bonding, ⟨30, 2⟩, ⟨19, 2⟩, .exact, ⟨11, 2⟩⟩,
-   ⟨.exp2, .status, none, none, ⟨503, 2⟩, ⟨2, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .status, some .underspecified, none, ⟨16, 2⟩, ⟨6, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp2, .status, some .precise, none, ⟨25, 2⟩, ⟨6, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .status, none, some .persuasive, ⟨37, 2⟩, ⟨7, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .status, none, some .stranger, ⟨50, 2⟩, ⟨7, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .status, none, some .bonding, ⟨36, 2⟩, ⟨7, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .status, some .underspecified, some .persuasive, ⟨-50, 2⟩, ⟨19, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .status, some .precise, some .persuasive, ⟨-31, 2⟩, ⟨19, 2⟩, .exact, ⟨10, 2⟩⟩,
-   ⟨.exp2, .status, some .underspecified, some .stranger, ⟨-16, 2⟩, ⟨19, 2⟩, .exact, ⟨40, 2⟩⟩,
-   ⟨.exp2, .status, some .precise, some .stranger, ⟨-26, 2⟩, ⟨19, 2⟩, .exact, ⟨18, 2⟩⟩,
-   ⟨.exp2, .status, some .underspecified, some .bonding, ⟨-26, 2⟩, ⟨19, 2⟩, .exact, ⟨15, 2⟩⟩,
-   ⟨.exp2, .status, some .precise, some .bonding, ⟨-22, 2⟩, ⟨19, 2⟩, .exact, ⟨23, 2⟩⟩,
-   ⟨.exp2, .solidarity, none, none, ⟨446, 2⟩, ⟨3, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .solidarity, some .underspecified, none, ⟨-27, 2⟩, ⟨7, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .solidarity, some .precise, none, ⟨-46, 2⟩, ⟨7, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .solidarity, none, some .persuasive, ⟨21, 2⟩, ⟨8, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp2, .solidarity, none, some .stranger, ⟨65, 2⟩, ⟨8, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .solidarity, none, some .bonding, ⟨39, 2⟩, ⟨8, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp2, .solidarity, some .underspecified, some .persuasive, ⟨22, 2⟩, ⟨21, 2⟩, .exact, ⟨29, 2⟩⟩,
-   ⟨.exp2, .solidarity, some .precise, some .persuasive, ⟨14, 2⟩, ⟨21, 2⟩, .exact, ⟨49, 2⟩⟩,
-   ⟨.exp2, .solidarity, some .underspecified, some .stranger, ⟨17, 2⟩, ⟨21, 2⟩, .exact, ⟨25, 2⟩⟩,
-   ⟨.exp2, .solidarity, some .precise, some .stranger, ⟨-17, 2⟩, ⟨22, 2⟩, .exact, ⟨41, 2⟩⟩,
-   ⟨.exp2, .solidarity, some .underspecified, some .bonding, ⟨37, 2⟩, ⟨21, 2⟩, .exact, ⟨8, 2⟩⟩,
-   ⟨.exp2, .solidarity, some .precise, some .bonding, ⟨14, 2⟩, ⟨21, 2⟩, .exact, ⟨48, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, none, none, ⟨336, 2⟩, ⟨3, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .antiSolidarity, some .underspecified, none, ⟨10, 2⟩, ⟨0, 2⟩, .exact, ⟨28, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, some .precise, none, ⟨36, 2⟩, ⟨9, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .antiSolidarity, none, some .persuasive, ⟨-5, 2⟩, ⟨11, 2⟩, .exact, ⟨7, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, none, some .stranger, ⟨-16, 2⟩, ⟨11, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, none, some .bonding, ⟨-8, 2⟩, ⟨10, 2⟩, .exact, ⟨38, 2⟩⟩,
+     ⟨.eq, ⟨28, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, some .precise, some .persuasive, ⟨0, 2⟩, ⟨21, 2⟩, ⟨.eq, ⟨97, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, some .underspecified, some .stranger, ⟨27, 2⟩, ⟨19, 2⟩, ⟨.eq, ⟨16, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, some .precise, some .stranger, ⟨17, 2⟩, ⟨20, 2⟩, ⟨.eq, ⟨38, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, some .underspecified, some .bonding, ⟨47, 2⟩, ⟨20, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, some .precise, some .bonding, ⟨30, 2⟩, ⟨19, 2⟩, ⟨.eq, ⟨11, 2⟩⟩⟩,
+   ⟨.exp2, .status, none, none, ⟨503, 2⟩, ⟨2, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .status, some .underspecified, none, ⟨16, 2⟩, ⟨6, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp2, .status, some .precise, none, ⟨25, 2⟩, ⟨6, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .status, none, some .persuasive, ⟨37, 2⟩, ⟨7, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .status, none, some .stranger, ⟨50, 2⟩, ⟨7, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .status, none, some .bonding, ⟨36, 2⟩, ⟨7, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .status, some .underspecified, some .persuasive, ⟨-50, 2⟩, ⟨19, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .status, some .precise, some .persuasive, ⟨-31, 2⟩, ⟨19, 2⟩, ⟨.eq, ⟨10, 2⟩⟩⟩,
+   ⟨.exp2, .status, some .underspecified, some .stranger, ⟨-16, 2⟩, ⟨19, 2⟩, ⟨.eq, ⟨40, 2⟩⟩⟩,
+   ⟨.exp2, .status, some .precise, some .stranger, ⟨-26, 2⟩, ⟨19, 2⟩, ⟨.eq, ⟨18, 2⟩⟩⟩,
+   ⟨.exp2, .status, some .underspecified, some .bonding, ⟨-26, 2⟩, ⟨19, 2⟩, ⟨.eq, ⟨15, 2⟩⟩⟩,
+   ⟨.exp2, .status, some .precise, some .bonding, ⟨-22, 2⟩, ⟨19, 2⟩, ⟨.eq, ⟨23, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, none, none, ⟨446, 2⟩, ⟨3, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .underspecified, none, ⟨-27, 2⟩, ⟨7, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .precise, none, ⟨-46, 2⟩, ⟨7, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .solidarity, none, some .persuasive, ⟨21, 2⟩, ⟨8, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, none, some .stranger, ⟨65, 2⟩, ⟨8, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .solidarity, none, some .bonding, ⟨39, 2⟩, ⟨8, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .underspecified, some .persuasive, ⟨22, 2⟩, ⟨21, 2⟩, ⟨.eq, ⟨29, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .precise, some .persuasive, ⟨14, 2⟩, ⟨21, 2⟩, ⟨.eq, ⟨49, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .underspecified, some .stranger, ⟨17, 2⟩, ⟨21, 2⟩, ⟨.eq, ⟨25, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .precise, some .stranger, ⟨-17, 2⟩, ⟨22, 2⟩, ⟨.eq, ⟨41, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .underspecified, some .bonding, ⟨37, 2⟩, ⟨21, 2⟩, ⟨.eq, ⟨8, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, some .precise, some .bonding, ⟨14, 2⟩, ⟨21, 2⟩, ⟨.eq, ⟨48, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, none, none, ⟨336, 2⟩, ⟨3, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, some .underspecified, none, ⟨10, 2⟩, ⟨0, 2⟩, ⟨.eq, ⟨28, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, some .precise, none, ⟨36, 2⟩, ⟨9, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, none, some .persuasive, ⟨-5, 2⟩, ⟨11, 2⟩, ⟨.eq, ⟨7, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, none, some .stranger, ⟨-16, 2⟩, ⟨11, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, none, some .bonding, ⟨-8, 2⟩, ⟨10, 2⟩, ⟨.eq, ⟨38, 2⟩⟩⟩,
    ⟨.exp2,
      .antiSolidarity,
      some .underspecified,
      some .persuasive,
      ⟨22, 2⟩,
      ⟨27, 2⟩,
-     .exact,
-     ⟨65, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, some .precise, some .persuasive, ⟨0, 2⟩, ⟨27, 2⟩, .exact, ⟨99, 2⟩⟩,
-   ⟨.exp2,
-     .antiSolidarity,
-     some .underspecified,
-     some .stranger,
-     ⟨27, 2⟩,
-     ⟨27, 2⟩,
-     .exact,
-     ⟨70, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, some .precise, some .stranger, ⟨17, 2⟩, ⟨27, 2⟩, .exact, ⟨34, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, some .underspecified, some .bonding, ⟨47, 2⟩, ⟨26, 2⟩, .exact, ⟨95, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, some .precise, some .bonding, ⟨30, 2⟩, ⟨26, 2⟩, .exact, ⟨26, 2⟩⟩]
+     ⟨.eq, ⟨65, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, some .precise, some .persuasive, ⟨0, 2⟩, ⟨27, 2⟩, ⟨.eq, ⟨99, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, some .underspecified, some .stranger, ⟨27, 2⟩, ⟨27, 2⟩, ⟨.eq, ⟨70, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, some .precise, some .stranger, ⟨17, 2⟩, ⟨27, 2⟩, ⟨.eq, ⟨34, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, some .underspecified, some .bonding, ⟨47, 2⟩, ⟨26, 2⟩, ⟨.eq, ⟨95, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, some .precise, some .bonding, ⟨30, 2⟩, ⟨26, 2⟩, ⟨.eq, ⟨26, 2⟩⟩⟩]
 
 /-- A row of pp. 816–817 (Experiment 1); p. 823 (Experiment 2): the paper's reading of a
 comparison of two Precision conditions on a composite score, across scenarios. -/
@@ -558,20 +532,18 @@ structure PostHoc where
   t : Decimal
   /-- Its degrees of freedom. -/
   df : ℕ
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 6 rows of pp. 816–817 (Experiment 1); p. 823 (Experiment 2), in the paper's order;
 checked against the page images. -/
 def preciseVsUnderspecified : List PostHoc :=
-  [⟨.exp1, .status, ⟨100, 2⟩, 759, .exact, ⟨57, 2⟩⟩,
-   ⟨.exp1, .solidarity, ⟨189, 2⟩, 759, .exact, ⟨14, 2⟩⟩,
-   ⟨.exp1, .antiSolidarity, ⟨276, 2⟩, 759, .below, ⟨5, 2⟩⟩,
-   ⟨.exp2, .status, ⟨131, 2⟩, 798, .exact, ⟨34, 2⟩⟩,
-   ⟨.exp2, .solidarity, ⟨254, 2⟩, 798, .below, ⟨5, 2⟩⟩,
-   ⟨.exp2, .antiSolidarity, ⟨-279, 2⟩, 798, .below, ⟨5, 2⟩⟩]
+  [⟨.exp1, .status, ⟨100, 2⟩, 759, ⟨.eq, ⟨57, 2⟩⟩⟩,
+   ⟨.exp1, .solidarity, ⟨189, 2⟩, 759, ⟨.eq, ⟨14, 2⟩⟩⟩,
+   ⟨.exp1, .antiSolidarity, ⟨276, 2⟩, 759, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp2, .status, ⟨131, 2⟩, 798, ⟨.eq, ⟨34, 2⟩⟩⟩,
+   ⟨.exp2, .solidarity, ⟨254, 2⟩, 798, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp2, .antiSolidarity, ⟨-279, 2⟩, 798, ⟨.lt, ⟨5, 2⟩⟩⟩]
 
 end BeltramaSoltBurnett2023

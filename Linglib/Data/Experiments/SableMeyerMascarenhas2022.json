@@ -53,22 +53,6 @@
       ]
     },
     {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {
-          "name": "below",
-          "label": "<",
-          "doc": "an upper bound"
-        },
-        {
-          "name": "exact",
-          "label": "=",
-          "doc": "an exact value"
-        }
-      ]
-    },
-    {
       "name": "Term",
       "doc": "The terms of the binomial model of Table 2.",
       "levels": [
@@ -505,13 +489,8 @@
           "doc": "The F statistic on 1 and 5 degrees of freedom."
         },
         {
-          "name": "pBound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         }
       ],
@@ -521,7 +500,6 @@
           "slopeSE": "0.14",
           "rSquared": "0.9",
           "fStat": "45.0",
-          "pBound": "=",
           "p": "0.001",
           "note": "the intercept is not significant; the matching limit P(a given d) = 1 predicts an acceptance of 0.92",
           "intercept": "-0.05",
@@ -533,7 +511,6 @@
           "slopeSE": "0.26",
           "rSquared": "0.58",
           "fStat": "6.92",
-          "pBound": "=",
           "p": "0.046",
           "intercept": null,
           "interceptSE": null,
@@ -572,13 +549,8 @@
           "doc": "The z-value."
         },
         {
-          "name": "pBound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         }
       ],
@@ -588,23 +560,20 @@
           "beta": "0.50",
           "se": "0.10",
           "z": "4.98",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "term": "Normed d to a",
           "beta": "4.14",
           "se": "0.93",
           "z": "4.42",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "term": "% Error on Controls",
           "beta": "-0.37",
           "se": "0.41",
           "z": "-0.91",
-          "pBound": "=",
           "p": "0.36"
         },
         {
@@ -612,8 +581,7 @@
           "beta": "13.0",
           "se": "3.89",
           "z": "3.35",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         }
       ],
       "key": [
@@ -736,13 +704,8 @@
           "doc": "The comparison."
         },
         {
-          "name": "pBound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         }
       ],
@@ -750,38 +713,32 @@
         {
           "experiment": "Experiment 1",
           "comparison": "chance",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "experiment": "Experiment 1",
           "comparison": "valid controls",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "experiment": "Experiment 1",
           "comparison": "invalid controls",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "experiment": "Experiment 2",
           "comparison": "chance",
-          "pBound": "=",
           "p": "0.0066"
         },
         {
           "experiment": "Experiment 2",
           "comparison": "valid controls",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "experiment": "Experiment 2",
           "comparison": "invalid controls",
-          "pBound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         }
       ]
     },

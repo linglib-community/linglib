@@ -91,14 +91,6 @@ inductive Effect where
   | contextTerms
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- The boys in a picture. (§3.1.1; checked against the page images.) -/
 def boys : ℕ := 4
 
@@ -173,20 +165,18 @@ structure Test where
   df : ℕ
   /-- The chi-square statistic. -/
   chiSq : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 7 rows of §3.1.2, §3.2.2, in the paper's order; checked against the page images. -/
 def tests : List Test :=
-  [⟨.one, .mixed, .context, 1, ⟨49, 0⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.one, .mixed, .polarity, 1, ⟨93, 0⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.one, .mixed, .interaction, 1, ⟨11, 0⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.two, .controls, .contextTerms, 3, ⟨46, 2⟩, .exact, ⟨93, 2⟩⟩,
-   ⟨.two, .mixed, .context, 1, ⟨89, 0⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.two, .mixed, .polarity, 1, ⟨2, 2⟩, .exact, ⟨90, 2⟩⟩,
-   ⟨.two, .mixed, .interaction, 1, ⟨21, 1⟩, .exact, ⟨15, 2⟩⟩]
+  [⟨.one, .mixed, .context, 1, ⟨49, 0⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.one, .mixed, .polarity, 1, ⟨93, 0⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.one, .mixed, .interaction, 1, ⟨11, 0⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.two, .controls, .contextTerms, 3, ⟨46, 2⟩, ⟨.eq, ⟨93, 2⟩⟩⟩,
+   ⟨.two, .mixed, .context, 1, ⟨89, 0⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.two, .mixed, .polarity, 1, ⟨2, 2⟩, ⟨.eq, ⟨90, 2⟩⟩⟩,
+   ⟨.two, .mixed, .interaction, 1, ⟨21, 1⟩, ⟨.eq, ⟨15, 2⟩⟩⟩]
 
 end AugurzkyEtAl2023

@@ -71,14 +71,6 @@ inductive Control where
   | localAccommodationThe
   deriving DecidableEq, Repr, Fintype
 
-/-- How the paper prints a p-value. -/
-inductive PComparison where
-  /-- <: as an upper bound -/
-  | lt
-  /-- =: as a value -/
-  | eq
-  deriving DecidableEq, Repr, Fintype
-
 /-- The participants of Experiments 1 and 2. (§3.1.1.1, p. 202; checked against the PDF text
 layer only.) -/
 def participantsGroup1 : ℕ := 18
@@ -127,21 +119,19 @@ structure Experiment1Test where
   dfError : ℕ
   /-- The F statistic. -/
   f : Decimal
-  /-- Whether the paper prints the p-value as an equality or an upper bound. -/
-  pComparison : PComparison
-  /-- The printed p-value or its bound. -/
-  p : Decimal
+  /-- The p-value. -/
+  p : PValue
   /-- The partial eta squared. -/
   eta2 : Decimal
   deriving DecidableEq, Repr
 
 /-- The 5 rows of Table 4, p. 206, in the paper's order; checked against the page images. -/
 def experiment1Tests : List Experiment1Test :=
-  [⟨.ifSentence, .canonical, 17, ⟨32, 0⟩, .lt, ⟨1, 3⟩, ⟨40, 2⟩⟩,
-   ⟨.ifSentence, .inverse, 17, ⟨16, 0⟩, .lt, ⟨1, 3⟩, ⟨33, 2⟩⟩,
-   ⟨.orSentence, .canonical, 17, ⟨45, 0⟩, .lt, ⟨1, 3⟩, ⟨42, 2⟩⟩,
-   ⟨.orSentence, .inverse, 17, ⟨66, 1⟩, .lt, ⟨5, 2⟩, ⟨22, 2⟩⟩,
-   ⟨.unlessSentence, .inverse, 17, ⟨22, 0⟩, .lt, ⟨1, 3⟩, ⟨36, 2⟩⟩]
+  [⟨.ifSentence, .canonical, 17, ⟨32, 0⟩, ⟨.lt, ⟨1, 3⟩⟩, ⟨40, 2⟩⟩,
+   ⟨.ifSentence, .inverse, 17, ⟨16, 0⟩, ⟨.lt, ⟨1, 3⟩⟩, ⟨33, 2⟩⟩,
+   ⟨.orSentence, .canonical, 17, ⟨45, 0⟩, ⟨.lt, ⟨1, 3⟩⟩, ⟨42, 2⟩⟩,
+   ⟨.orSentence, .inverse, 17, ⟨66, 1⟩, ⟨.lt, ⟨5, 2⟩⟩, ⟨22, 2⟩⟩,
+   ⟨.unlessSentence, .inverse, 17, ⟨22, 0⟩, ⟨.lt, ⟨1, 3⟩⟩, ⟨36, 2⟩⟩]
 
 /-- A row of Table 5, p. 209: the mean acceptability of a target sentence in Experiment 2. -/
 structure Experiment2Target where
@@ -242,21 +232,19 @@ structure Experiment4Test where
   dfError : ℕ
   /-- The F statistic. -/
   f : Decimal
-  /-- Whether the paper prints the p-value as an equality or an upper bound. -/
-  pComparison : PComparison
-  /-- The printed p-value or its bound. -/
-  p : Decimal
+  /-- The p-value. -/
+  p : PValue
   /-- The partial eta squared. -/
   eta2 : Decimal
   deriving DecidableEq, Repr
 
 /-- The 5 rows of Table 7, p. 212, in the paper's order; checked against the page images. -/
 def experiment4Tests : List Experiment4Test :=
-  [⟨.ifSentence, .canonical, 16, ⟨11, 0⟩, .lt, ⟨1, 2⟩, ⟨29, 2⟩⟩,
-   ⟨.ifSentence, .inverse, 16, ⟨20, 1⟩, .eq, ⟨18, 2⟩, ⟨10, 2⟩⟩,
-   ⟨.orSentence, .canonical, 16, ⟨23, 0⟩, .lt, ⟨1, 3⟩, ⟨37, 2⟩⟩,
-   ⟨.orSentence, .inverse, 16, ⟨42, 1⟩, .eq, ⟨56, 3⟩, ⟨17, 2⟩⟩,
-   ⟨.unlessSentence, .inverse, 16, ⟨11, 0⟩, .lt, ⟨1, 2⟩, ⟨29, 2⟩⟩]
+  [⟨.ifSentence, .canonical, 16, ⟨11, 0⟩, ⟨.lt, ⟨1, 2⟩⟩, ⟨29, 2⟩⟩,
+   ⟨.ifSentence, .inverse, 16, ⟨20, 1⟩, ⟨.eq, ⟨18, 2⟩⟩, ⟨10, 2⟩⟩,
+   ⟨.orSentence, .canonical, 16, ⟨23, 0⟩, ⟨.lt, ⟨1, 3⟩⟩, ⟨37, 2⟩⟩,
+   ⟨.orSentence, .inverse, 16, ⟨42, 1⟩, ⟨.eq, ⟨56, 3⟩⟩, ⟨17, 2⟩⟩,
+   ⟨.unlessSentence, .inverse, 16, ⟨11, 0⟩, ⟨.lt, ⟨1, 2⟩⟩, ⟨29, 2⟩⟩]
 
 /-- A row of Table 8, p. 214: the mean acceptability of a target sentence in Experiment 5. -/
 structure Experiment5Target where

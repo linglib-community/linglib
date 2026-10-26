@@ -135,14 +135,6 @@ inductive Term where
   | interaction
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- The children in a picture. (§3.3.1; checked against the PDF text layer only.) -/
 def boys : ℕ := 4
 
@@ -294,24 +286,22 @@ structure Test where
   df : ℕ
   /-- The chi-square statistic. -/
   chiSq : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of §3.3.3, §3.4.3, §3.5.3, by experiment and effect; checked against the page
 images. -/
 def tests : Experiment → Effect → Test
-  | .one, .context => ⟨1, ⟨127, 1⟩, .below, ⟨1, 3⟩⟩
-  | .one, .polarity => ⟨1, ⟨522, 1⟩, .below, ⟨1, 3⟩⟩
-  | .one, .interaction => ⟨1, ⟨109, 1⟩, .below, ⟨1, 3⟩⟩
-  | .two, .context => ⟨1, ⟨973, 1⟩, .below, ⟨1, 3⟩⟩
-  | .two, .polarity => ⟨1, ⟨53, 2⟩, .exact, ⟨469, 3⟩⟩
-  | .two, .interaction => ⟨1, ⟨24, 2⟩, .exact, ⟨624, 3⟩⟩
-  | .three, .context => ⟨1, ⟨158, 1⟩, .below, ⟨1, 3⟩⟩
-  | .three, .polarity => ⟨1, ⟨342, 1⟩, .below, ⟨1, 3⟩⟩
-  | .three, .interaction => ⟨1, ⟨19, 3⟩, .exact, ⟨892, 3⟩⟩
+  | .one, .context => ⟨1, ⟨127, 1⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .one, .polarity => ⟨1, ⟨522, 1⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .one, .interaction => ⟨1, ⟨109, 1⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .two, .context => ⟨1, ⟨973, 1⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .two, .polarity => ⟨1, ⟨53, 2⟩, ⟨.eq, ⟨469, 3⟩⟩⟩
+  | .two, .interaction => ⟨1, ⟨24, 2⟩, ⟨.eq, ⟨624, 3⟩⟩⟩
+  | .three, .context => ⟨1, ⟨158, 1⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .three, .polarity => ⟨1, ⟨342, 1⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .three, .interaction => ⟨1, ⟨19, 3⟩, ⟨.eq, ⟨892, 3⟩⟩⟩
 
 /-- A row of Tables 5, 8 and 11: a fixed-effect estimate of the cumulative logit mixed-effects
 model fitted to an experiment's target conditions, with the p-value of its likelihood-ratio
@@ -321,35 +311,33 @@ structure Estimate where
   beta : Decimal
   /-- Its standard error. -/
   se : Decimal
-  /-- How the p-value is printed, where it is. -/
-  bound : Option Bound
   /-- The p-value, where printed. -/
-  p : Option Decimal
+  p : Option PValue
   deriving DecidableEq, Repr
 
 /-- The cells of Tables 5, 8 and 11, by experiment and term; checked against the page images. -/
 def estimates : Experiment → Term → Estimate
-  | .one, .theta1 => ⟨⟨-49, 2⟩, ⟨21, 2⟩, none, none⟩
-  | .one, .theta2 => ⟨⟨134, 2⟩, ⟨23, 2⟩, none, none⟩
-  | .one, .theta3 => ⟨⟨307, 2⟩, ⟨28, 2⟩, none, none⟩
-  | .one, .theta4 => ⟨⟨723, 2⟩, ⟨51, 2⟩, none, none⟩
-  | .one, .context => ⟨⟨141, 2⟩, ⟨40, 2⟩, some .below, some ⟨1, 3⟩⟩
-  | .one, .polarity => ⟨⟨336, 2⟩, ⟨37, 2⟩, some .below, some ⟨1, 3⟩⟩
-  | .one, .interaction => ⟨⟨243, 2⟩, ⟨74, 2⟩, some .below, some ⟨1, 3⟩⟩
-  | .two, .theta1 => ⟨⟨-188, 2⟩, ⟨10, 2⟩, none, none⟩
-  | .two, .theta2 => ⟨⟨-60, 2⟩, ⟨9, 2⟩, none, none⟩
-  | .two, .theta3 => ⟨⟨20, 2⟩, ⟨9, 2⟩, none, none⟩
-  | .two, .theta4 => ⟨⟨215, 2⟩, ⟨10, 2⟩, none, none⟩
-  | .two, .context => ⟨⟨326, 2⟩, ⟨17, 2⟩, some .below, some ⟨1, 3⟩⟩
-  | .two, .polarity => ⟨⟨13, 2⟩, ⟨17, 2⟩, some .exact, some ⟨47, 2⟩⟩
-  | .two, .interaction => ⟨⟨-17, 2⟩, ⟨35, 2⟩, some .exact, some ⟨62, 2⟩⟩
-  | .three, .theta1 => ⟨⟨-11, 2⟩, ⟨26, 2⟩, none, none⟩
-  | .three, .theta2 => ⟨⟨73, 2⟩, ⟨26, 2⟩, none, none⟩
-  | .three, .theta3 => ⟨⟨150, 2⟩, ⟨27, 2⟩, none, none⟩
-  | .three, .theta4 => ⟨⟨293, 2⟩, ⟨28, 2⟩, none, none⟩
-  | .three, .context => ⟨⟨61, 2⟩, ⟨15, 2⟩, some .below, some ⟨1, 3⟩⟩
-  | .three, .polarity => ⟨⟨315, 2⟩, ⟨41, 2⟩, some .below, some ⟨1, 3⟩⟩
-  | .three, .interaction => ⟨⟨6, 2⟩, ⟨41, 2⟩, some .exact, some ⟨89, 2⟩⟩
+  | .one, .theta1 => ⟨⟨-49, 2⟩, ⟨21, 2⟩, none⟩
+  | .one, .theta2 => ⟨⟨134, 2⟩, ⟨23, 2⟩, none⟩
+  | .one, .theta3 => ⟨⟨307, 2⟩, ⟨28, 2⟩, none⟩
+  | .one, .theta4 => ⟨⟨723, 2⟩, ⟨51, 2⟩, none⟩
+  | .one, .context => ⟨⟨141, 2⟩, ⟨40, 2⟩, some ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .one, .polarity => ⟨⟨336, 2⟩, ⟨37, 2⟩, some ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .one, .interaction => ⟨⟨243, 2⟩, ⟨74, 2⟩, some ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .two, .theta1 => ⟨⟨-188, 2⟩, ⟨10, 2⟩, none⟩
+  | .two, .theta2 => ⟨⟨-60, 2⟩, ⟨9, 2⟩, none⟩
+  | .two, .theta3 => ⟨⟨20, 2⟩, ⟨9, 2⟩, none⟩
+  | .two, .theta4 => ⟨⟨215, 2⟩, ⟨10, 2⟩, none⟩
+  | .two, .context => ⟨⟨326, 2⟩, ⟨17, 2⟩, some ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .two, .polarity => ⟨⟨13, 2⟩, ⟨17, 2⟩, some ⟨.eq, ⟨47, 2⟩⟩⟩
+  | .two, .interaction => ⟨⟨-17, 2⟩, ⟨35, 2⟩, some ⟨.eq, ⟨62, 2⟩⟩⟩
+  | .three, .theta1 => ⟨⟨-11, 2⟩, ⟨26, 2⟩, none⟩
+  | .three, .theta2 => ⟨⟨73, 2⟩, ⟨26, 2⟩, none⟩
+  | .three, .theta3 => ⟨⟨150, 2⟩, ⟨27, 2⟩, none⟩
+  | .three, .theta4 => ⟨⟨293, 2⟩, ⟨28, 2⟩, none⟩
+  | .three, .context => ⟨⟨61, 2⟩, ⟨15, 2⟩, some ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .three, .polarity => ⟨⟨315, 2⟩, ⟨41, 2⟩, some ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .three, .interaction => ⟨⟨6, 2⟩, ⟨41, 2⟩, some ⟨.eq, ⟨89, 2⟩⟩⟩
 
 /-- A row of Table 12: the effect size of the context manipulation on the target condition of a
 level of POLARITY in an experiment: the difference of the mean ratings in the lax and the

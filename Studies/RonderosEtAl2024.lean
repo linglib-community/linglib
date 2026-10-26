@@ -212,29 +212,18 @@ theorem perceptual_predictsEffect_iff (t : AdjType) :
 
 /-! ### The findings -/
 
-/-- A printed p-value is below 0.05 when it is an upper bound at most 0.05 or a value under
-it. -/
-def Bound.Significant : Bound → Decimal → Prop
-  | .below, p => p.toRat ≤ 5 / 100
-  | .exact, p => p.toRat < 5 / 100
-
-instance : ∀ b p, Decidable (Bound.Significant b p)
-  | .below, _ => inferInstanceAs (Decidable (_ ≤ _))
-  | .exact, _ => inferInstanceAs (Decidable (_ < _))
-
 /-- The paper found a contrast effect for an adjective type when it reports a significant cluster
 of condition effects on target looks in the noun window and a significant effect of condition on
 the target-advantage score. -/
 def Effect (t : AdjType) : Prop :=
-  (∃ p ∈ (clusters t).p, Bound.below.Significant p) ∧
-    (targetAdvantage t).bound.Significant (targetAdvantage t).p
+  (∃ p ∈ (clusters t).p, p.Significant (1 / 20)) ∧ (targetAdvantage t).p.Significant (1 / 20)
 
 instance : DecidablePred Effect := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Whether looks to the target and the competitor in the no-contrast baseline were significantly
 higher for an adjective type than for scalar adjectives, the intercept of the model. -/
 def BaselineHigherThanScalar (t : AdjType) : Prop :=
-  ∃ r ∈ baselineLooks, r.adjType = t ∧ 0 < r.beta.toRat ∧ r.bound.Significant r.p
+  ∃ r ∈ baselineLooks, r.adjType = t ∧ 0 < r.beta.toRat ∧ r.p.Significant (1 / 20)
 
 instance : DecidablePred BaselineHigherThanScalar := fun _ ↦
   inferInstanceAs (Decidable (∃ _ ∈ _, _))

@@ -70,14 +70,6 @@
       ]
     },
     {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {"name": "below", "label": "<", "doc": "as an upper bound"},
-        {"name": "exact", "label": "=", "doc": "as a value"}
-      ]
-    },
-    {
       "name": "Mark",
       "doc": "Whether the authors star the p-value.",
       "levels": [
@@ -152,23 +144,22 @@
         {"name": "effect", "type": "Effect", "doc": "The fixed effect tested."},
         {"name": "df", "type": "nat", "doc": "The degrees of freedom."},
         {"name": "chiSq", "type": "decimal", "doc": "The chi-square statistic."},
-        {"name": "bound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The p-value."},
+        {"name": "p", "type": "pvalue", "doc": "The p-value."},
         {"name": "mark", "type": "Mark", "doc": "Whether the authors star the p-value."}
       ],
       "rows": [
-        {"language": "Georgian", "measure": "accuracy", "effect": "group", "df": 1, "chiSq": "12.27", "bound": "<", "p": "0.001", "mark": "*"},
-        {"language": "Georgian", "measure": "accuracy", "effect": "sentence", "df": 2, "chiSq": "2.24", "bound": "=", "p": "0.327", "mark": "none"},
-        {"language": "Georgian", "measure": "accuracy", "effect": "group:sentence", "df": 2, "chiSq": "1.95", "bound": "=", "p": "0.377", "mark": "none"},
-        {"language": "Georgian", "measure": "sentence-played-n", "effect": "group", "df": 1, "chiSq": "35.88", "bound": "<", "p": "0.001", "mark": "*"},
-        {"language": "Georgian", "measure": "sentence-played-n", "effect": "sentence", "df": 2, "chiSq": "14.95", "bound": "<", "p": "0.001", "mark": "*"},
-        {"language": "Georgian", "measure": "sentence-played-n", "effect": "group:sentence", "df": 2, "chiSq": "23.89", "bound": "<", "p": "0.001", "mark": "*"},
-        {"language": "Hungarian", "measure": "accuracy", "effect": "group", "df": 1, "chiSq": "0.75", "bound": "=", "p": "0.385", "mark": "none"},
-        {"language": "Hungarian", "measure": "accuracy", "effect": "sentence", "df": 2, "chiSq": "2.93", "bound": "=", "p": "0.231", "mark": "none"},
-        {"language": "Hungarian", "measure": "accuracy", "effect": "group:sentence", "df": 2, "chiSq": "1.82", "bound": "=", "p": "0.402", "mark": "none"},
-        {"language": "Hungarian", "measure": "sentence-played-n", "effect": "group", "df": 1, "chiSq": "6.54", "bound": "<", "p": "0.05", "mark": "none", "note": "printed `< .05` without a star"},
-        {"language": "Hungarian", "measure": "sentence-played-n", "effect": "sentence", "df": 2, "chiSq": "2.19", "bound": "=", "p": "0.334", "mark": "none"},
-        {"language": "Hungarian", "measure": "sentence-played-n", "effect": "group:sentence", "df": 2, "chiSq": "0.55", "bound": "=", "p": "0.761", "mark": "none"}
+        {"language": "Georgian", "measure": "accuracy", "effect": "group", "df": 1, "chiSq": "12.27", "p": "< 0.001", "mark": "*"},
+        {"language": "Georgian", "measure": "accuracy", "effect": "sentence", "df": 2, "chiSq": "2.24", "p": "0.327", "mark": "none"},
+        {"language": "Georgian", "measure": "accuracy", "effect": "group:sentence", "df": 2, "chiSq": "1.95", "p": "0.377", "mark": "none"},
+        {"language": "Georgian", "measure": "sentence-played-n", "effect": "group", "df": 1, "chiSq": "35.88", "p": "< 0.001", "mark": "*"},
+        {"language": "Georgian", "measure": "sentence-played-n", "effect": "sentence", "df": 2, "chiSq": "14.95", "p": "< 0.001", "mark": "*"},
+        {"language": "Georgian", "measure": "sentence-played-n", "effect": "group:sentence", "df": 2, "chiSq": "23.89", "p": "< 0.001", "mark": "*"},
+        {"language": "Hungarian", "measure": "accuracy", "effect": "group", "df": 1, "chiSq": "0.75", "p": "0.385", "mark": "none"},
+        {"language": "Hungarian", "measure": "accuracy", "effect": "sentence", "df": 2, "chiSq": "2.93", "p": "0.231", "mark": "none"},
+        {"language": "Hungarian", "measure": "accuracy", "effect": "group:sentence", "df": 2, "chiSq": "1.82", "p": "0.402", "mark": "none"},
+        {"language": "Hungarian", "measure": "sentence-played-n", "effect": "group", "df": 1, "chiSq": "6.54", "p": "< 0.05", "mark": "none", "note": "printed `< .05` without a star"},
+        {"language": "Hungarian", "measure": "sentence-played-n", "effect": "sentence", "df": 2, "chiSq": "2.19", "p": "0.334", "mark": "none"},
+        {"language": "Hungarian", "measure": "sentence-played-n", "effect": "group:sentence", "df": 2, "chiSq": "0.55", "p": "0.761", "mark": "none"}
       ]
     },
     {
@@ -185,17 +176,16 @@
         {"name": "se", "type": "decimal", "doc": "The standard error."},
         {"name": "df", "type": "nat", "doc": "The degrees of freedom."},
         {"name": "t", "type": "decimal", "doc": "The t ratio."},
-        {"name": "bound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The Tukey-adjusted p-value."},
+        {"name": "p", "type": "pvalue", "doc": "The Tukey-adjusted p-value."},
         {"name": "mark", "type": "Mark", "doc": "Whether the authors star the p-value."}
       ],
       "rows": [
-        {"group": "Adult", "contrast": "j vs. j-mu", "estimate": "0.019", "se": "0.026", "df": 1120, "t": "0.708", "bound": "=", "p": "0.759", "mark": "none"},
-        {"group": "Adult", "contrast": "j vs. mu", "estimate": "-0.003", "se": "0.027", "df": 1120, "t": "-0.102", "bound": "=", "p": "0.994", "mark": "none"},
-        {"group": "Adult", "contrast": "j-mu vs. mu", "estimate": "-0.021", "se": "0.025", "df": 1120, "t": "-0.850", "bound": "=", "p": "0.672", "mark": "none"},
-        {"group": "Child", "contrast": "j vs. j-mu", "estimate": "-0.176", "se": "0.031", "df": 1121, "t": "-5.681", "bound": "<", "p": "0.0001", "mark": "*"},
-        {"group": "Child", "contrast": "j vs. mu", "estimate": "-0.069", "se": "0.031", "df": 1121, "t": "-2.230", "bound": "=", "p": "0.067", "mark": "none"},
-        {"group": "Child", "contrast": "j-mu vs. mu", "estimate": "0.106", "se": "0.03", "df": 1121, "t": "3.555", "bound": "<", "p": "0.01", "mark": "*"}
+        {"group": "Adult", "contrast": "j vs. j-mu", "estimate": "0.019", "se": "0.026", "df": 1120, "t": "0.708", "p": "0.759", "mark": "none"},
+        {"group": "Adult", "contrast": "j vs. mu", "estimate": "-0.003", "se": "0.027", "df": 1120, "t": "-0.102", "p": "0.994", "mark": "none"},
+        {"group": "Adult", "contrast": "j-mu vs. mu", "estimate": "-0.021", "se": "0.025", "df": 1120, "t": "-0.850", "p": "0.672", "mark": "none"},
+        {"group": "Child", "contrast": "j vs. j-mu", "estimate": "-0.176", "se": "0.031", "df": 1121, "t": "-5.681", "p": "< 0.0001", "mark": "*"},
+        {"group": "Child", "contrast": "j vs. mu", "estimate": "-0.069", "se": "0.031", "df": 1121, "t": "-2.230", "p": "0.067", "mark": "none"},
+        {"group": "Child", "contrast": "j-mu vs. mu", "estimate": "0.106", "se": "0.03", "df": 1121, "t": "3.555", "p": "< 0.01", "mark": "*"}
       ]
     },
     {

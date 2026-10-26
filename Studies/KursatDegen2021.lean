@@ -176,34 +176,24 @@ end Hypothesis
 
 /-! ### The findings -/
 
-/-- A printed p-value is below .05 when it is an upper bound of at most .05 or a value under
-it. -/
-def Bound.Significant : Bound → Decimal → Prop
-  | .below, p => p.toRat ≤ 5 / 100
-  | .exact, p => p.toRat < 5 / 100
-
-instance : ∀ b p, Decidable (Bound.Significant b p)
-  | .below, _ => inferInstanceAs (Decidable (_ ≤ _))
-  | .exact, _ => inferInstanceAs (Decidable (_ < _))
-
 /-- Material was harder to verify than colour. In both norming experiments it raised the error
 rate and the response time. -/
 theorem material_harder (e : Norming) (m : DifficultyMeasure) :
     0 < (verification e m).beta.toRat ∧
-      (verification e m).bound.Significant (verification e m).p := by
+      (verification e m).p.Significant (1 / 20) := by
   revert e m; decide +kernel
 
 /-- Colour was mentioned redundantly more often than material. -/
 theorem color_more_redundant :
     0 < (redundantUse .redundantProperty).beta.toRat ∧
-      (redundantUse .redundantProperty).bound.Significant (redundantUse .redundantProperty).p := by
+      (redundantUse .redundantProperty).p.Significant (1 / 20) := by
   decide +kernel
 
 /-- No measure of difficulty within a property type predicted redundant mention, so the strong
 version of the hypothesis found no support. -/
 theorem no_within_property_effect :
     ∀ r ∈ [Predictor.difficulty, .interaction, .logRatio],
-      ¬ (redundantUse r).bound.Significant (redundantUse r).p := by
+      ¬ (redundantUse r).p.Significant (1 / 20) := by
   decide +kernel
 
 end KursatDegen2021

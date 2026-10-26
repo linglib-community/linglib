@@ -52,14 +52,6 @@ inductive Dependence where
   | hintToConclusion
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: an upper bound -/
-  | below
-  /-- =: an exact value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- The terms of the binomial model of Table 2. -/
 inductive Term where
   /-- Intercept: -/
@@ -243,10 +235,8 @@ structure Regression where
   rSquared : Decimal
   /-- The F statistic on 1 and 5 degrees of freedom. -/
   fStat : Decimal
-  /-- How the p-value is printed. -/
-  pBound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of §3.2.2, p. 577; §4.2, p. 580, by experiment; checked against the PDF text layer
@@ -259,9 +249,8 @@ def regressions : Experiment → Regression
      ⟨14, 2⟩,
      ⟨9, 1⟩,
      ⟨450, 1⟩,
-     .exact,
-     ⟨1, 3⟩⟩
-  | .experimentTwo => ⟨⟨69, 2⟩, none, none, ⟨26, 2⟩, ⟨58, 2⟩, ⟨692, 2⟩, .exact, ⟨46, 3⟩⟩
+     ⟨.eq, ⟨1, 3⟩⟩⟩
+  | .experimentTwo => ⟨⟨69, 2⟩, none, none, ⟨26, 2⟩, ⟨58, 2⟩, ⟨692, 2⟩, ⟨.eq, ⟨46, 3⟩⟩⟩
 
 /-- A row of Table 2, p. 578: the binomial model of Table 2: acceptance as a function of the
 normed d-to-a strength, the error rate on controls, and their interaction (centered
@@ -273,18 +262,16 @@ structure BinomialTerm where
   se : Decimal
   /-- The z-value. -/
   z : Decimal
-  /-- How the p-value is printed. -/
-  pBound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of Table 2, p. 578, by term; checked against the PDF text layer only. -/
 def binomialModel : Term → BinomialTerm
-  | .intercept => ⟨⟨50, 2⟩, ⟨10, 2⟩, ⟨498, 2⟩, .below, ⟨1, 3⟩⟩
-  | .normedStrength => ⟨⟨414, 2⟩, ⟨93, 2⟩, ⟨442, 2⟩, .below, ⟨1, 3⟩⟩
-  | .errorOnControls => ⟨⟨-37, 2⟩, ⟨41, 2⟩, ⟨-91, 2⟩, .exact, ⟨36, 2⟩⟩
-  | .interaction => ⟨⟨130, 1⟩, ⟨389, 2⟩, ⟨335, 2⟩, .below, ⟨1, 3⟩⟩
+  | .intercept => ⟨⟨50, 2⟩, ⟨10, 2⟩, ⟨498, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .normedStrength => ⟨⟨414, 2⟩, ⟨93, 2⟩, ⟨442, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .errorOnControls => ⟨⟨-37, 2⟩, ⟨41, 2⟩, ⟨-91, 2⟩, ⟨.eq, ⟨36, 2⟩⟩⟩
+  | .interaction => ⟨⟨130, 1⟩, ⟨389, 2⟩, ⟨335, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩
 
 /-- A row of (9) and §3.2.1, pp. 575-576: the eight item sets and whether they survived the
 norming analysis. -/
@@ -320,21 +307,19 @@ def normingBlocks : Dependence → NormingBlock
 /-- A row of §3.2.2, p. 577; §4.2, p. 580: the t-tests of target acceptance against chance and
 the controls. -/
 structure TargetContrast where
-  /-- How the p-value is printed. -/
-  pBound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of §3.2.2, p. 577; §4.2, p. 580, by experiment and comparison; checked against the
 PDF text layer only. -/
 def targetContrasts : Experiment → Comparison → TargetContrast
-  | .experimentOne, .chance => ⟨.below, ⟨1, 3⟩⟩
-  | .experimentOne, .validControls => ⟨.below, ⟨1, 3⟩⟩
-  | .experimentOne, .invalidControls => ⟨.below, ⟨1, 3⟩⟩
-  | .experimentTwo, .chance => ⟨.exact, ⟨66, 4⟩⟩
-  | .experimentTwo, .validControls => ⟨.below, ⟨1, 3⟩⟩
-  | .experimentTwo, .invalidControls => ⟨.below, ⟨1, 3⟩⟩
+  | .experimentOne, .chance => ⟨⟨.lt, ⟨1, 3⟩⟩⟩
+  | .experimentOne, .validControls => ⟨⟨.lt, ⟨1, 3⟩⟩⟩
+  | .experimentOne, .invalidControls => ⟨⟨.lt, ⟨1, 3⟩⟩⟩
+  | .experimentTwo, .chance => ⟨⟨.eq, ⟨66, 4⟩⟩⟩
+  | .experimentTwo, .validControls => ⟨⟨.lt, ⟨1, 3⟩⟩⟩
+  | .experimentTwo, .invalidControls => ⟨⟨.lt, ⟨1, 3⟩⟩⟩
 
 /-- A row of §4.2, p. 580: the Experiment 2 binomial model, reported qualitatively: only the
 crucial rating is significant. -/

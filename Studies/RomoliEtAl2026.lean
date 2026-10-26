@@ -486,7 +486,7 @@ def Effect.ofAugurzky : AugurzkyEtAl2023.Effect → Option Effect
 .05 level. -/
 theorem significant_iff_augurzky : ∀ t ∈ AugurzkyEtAl2023.tests, t.model = .mixed →
     ∀ e ∈ Effect.ofAugurzky t.effect,
-      ((tests (.ofAugurzky t.experiment) e).p.toRat < 1 / 20 ↔ t.p.toRat < 1 / 20) := by
+      ((tests (.ofAugurzky t.experiment) e).p.Significant (1 / 20) ↔ t.p.Significant (1 / 20)) := by
   decide +kernel
 
 /-- The mean rating of a target condition in a recoded context, from Figures 4 and 6 as recoded

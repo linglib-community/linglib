@@ -25,8 +25,10 @@ A JSON file has four parts:
 Column types form a closed vocabulary:
 
 * `nat`, `int`
-* `decimal`: a JSON string as printed ("99.1", "75", "0"), emitted as
-  `Data.Experiments.Decimal`
+* `decimal`: a JSON string as printed ("99.1", "75", "0", or a power of ten "10^-5"),
+  emitted as `Data.Experiments.Decimal`
+* `pvalue`: a p-value as printed, a decimal with the relation it is printed with
+  ("< 0.001", "> 0.4", or "0.15" for a value), emitted as `Data.Experiments.PValue`
 * `<Type>`: a level of a declared type, written by its label
 * `literals <Type>`: a signed feature list in the paper's notation,
   "[+IHCr, -Mediation]", emitted as `List (<Type> × Sign)`
@@ -52,6 +54,8 @@ VERIFIED = {"raw-data": "recomputed from the authors' released data by `scripts/
 IDENT = re.compile(r"^[a-z][A-Za-z0-9]*$")
 TYPE_IDENT = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 DECIMAL = re.compile(r"^(-?)(\d+)(?:\.(\d+))?$")
+POWER = re.compile(r"^10\^-(\d+)$")
+PVALUE = re.compile(r"^(?:([<>]) )?(\S+)$")
 LITERAL = re.compile(r"^([+-])\s*(\S+)$")
 
 
@@ -88,7 +92,7 @@ def parse_type(s: str, types: Types, where: str):
         return (parts[0], parse_type(" ".join(parts[1:]), types, where))
     if parts[0] == "literals" and len(parts) == 2 and parts[1] in types.levels:
         return ("literals", parts[1])
-    if len(parts) == 1 and parts[0] in ("nat", "int", "decimal"):
+    if len(parts) == 1 and parts[0] in ("nat", "int", "decimal", "pvalue"):
         return (parts[0],)
     if len(parts) == 1 and parts[0] in types.levels:
         return ("enum", parts[0])
@@ -100,6 +104,7 @@ def lean_type(t) -> str:
         case "nat": return "ℕ"
         case "int": return "ℤ"
         case "decimal": return "Decimal"
+        case "pvalue": return "PValue"
         case "enum": return t[1]
         case "literals": return f"List ({t[1]} × Sign)"
         case "option": return f"Option {paren(lean_type(t[1]))}"
@@ -107,11 +112,22 @@ def lean_type(t) -> str:
 
 
 def decimal_lit(v, where: str) -> str:
+    p = POWER.match(v) if isinstance(v, str) else None
+    if p:
+        return f"⟨1, {int(p.group(1))}⟩"
     m = DECIMAL.match(v) if isinstance(v, str) else None
     if not m:
         fatal(where, f"decimal {v!r} is not a printed decimal string")
     sign, whole, frac = m.group(1), m.group(2), m.group(3) or ""
     return f"⟨{sign}{int(whole + frac)}, {len(frac)}⟩"
+
+
+def pvalue_lit(v, where: str) -> str:
+    m = PVALUE.match(v) if isinstance(v, str) else None
+    if not m:
+        fatal(where, f"{v!r} is not a printed p-value")
+    rel = {"<": ".lt", ">": ".gt", None: ".eq"}[m.group(1)]
+    return f"⟨{rel}, {decimal_lit(m.group(2), where)}⟩"
 
 
 def literals_lit(v, ty: str, types: Types, where: str) -> str:
@@ -141,6 +157,7 @@ def value_lit(v, t, types: Types, where: str) -> str:
                 fatal(where, f"{v!r} is not an integer")
             return str(v)
         case "decimal": return decimal_lit(v, where)
+        case "pvalue": return pvalue_lit(v, where)
         case "enum": return types.level(t[1], v, where)
         case "literals": return literals_lit(v, t[1], types, where)
         case "option":

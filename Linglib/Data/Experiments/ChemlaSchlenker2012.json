@@ -83,22 +83,6 @@
           "doc": "a negated definite description whose presupposition must be accommodated locally"
         }
       ]
-    },
-    {
-      "name": "PComparison",
-      "doc": "How the paper prints a p-value.",
-      "levels": [
-        {
-          "name": "lt",
-          "label": "<",
-          "doc": "as an upper bound"
-        },
-        {
-          "name": "eq",
-          "label": "=",
-          "doc": "as a value"
-        }
-      ]
     }
   ],
   "constants": [
@@ -247,14 +231,9 @@
           "doc": "The F statistic."
         },
         {
-          "name": "pComparison",
-          "type": "PComparison",
-          "doc": "Whether the paper prints the p-value as an equality or an upper bound."
-        },
-        {
           "name": "p",
-          "type": "decimal",
-          "doc": "The printed p-value or its bound."
+          "type": "pvalue",
+          "doc": "The p-value."
         },
         {
           "name": "eta2",
@@ -268,8 +247,7 @@
           "order": "canonical",
           "dfError": 17,
           "f": "32",
-          "pComparison": "<",
-          "p": "0.001",
+          "p": "< 0.001",
           "eta2": "0.40"
         },
         {
@@ -277,8 +255,7 @@
           "order": "inverse",
           "dfError": 17,
           "f": "16",
-          "pComparison": "<",
-          "p": "0.001",
+          "p": "< 0.001",
           "eta2": "0.33"
         },
         {
@@ -286,8 +263,7 @@
           "order": "canonical",
           "dfError": 17,
           "f": "45",
-          "pComparison": "<",
-          "p": "0.001",
+          "p": "< 0.001",
           "eta2": "0.42"
         },
         {
@@ -295,8 +271,7 @@
           "order": "inverse",
           "dfError": 17,
           "f": "6.6",
-          "pComparison": "<",
-          "p": "0.05",
+          "p": "< 0.05",
           "eta2": "0.22"
         },
         {
@@ -304,8 +279,7 @@
           "order": "inverse",
           "dfError": 17,
           "f": "22",
-          "pComparison": "<",
-          "p": "0.001",
+          "p": "< 0.001",
           "eta2": "0.36"
         }
       ]
@@ -611,14 +585,9 @@
           "doc": "The F statistic."
         },
         {
-          "name": "pComparison",
-          "type": "PComparison",
-          "doc": "Whether the paper prints the p-value as an equality or an upper bound."
-        },
-        {
           "name": "p",
-          "type": "decimal",
-          "doc": "The printed p-value or its bound."
+          "type": "pvalue",
+          "doc": "The p-value."
         },
         {
           "name": "eta2",
@@ -632,8 +601,7 @@
           "order": "canonical",
           "dfError": 16,
           "f": "11",
-          "pComparison": "<",
-          "p": "0.01",
+          "p": "< 0.01",
           "eta2": "0.29"
         },
         {
@@ -641,7 +609,6 @@
           "order": "inverse",
           "dfError": 16,
           "f": "2.0",
-          "pComparison": "=",
           "p": "0.18",
           "eta2": "0.10"
         },
@@ -650,8 +617,7 @@
           "order": "canonical",
           "dfError": 16,
           "f": "23",
-          "pComparison": "<",
-          "p": "0.001",
+          "p": "< 0.001",
           "eta2": "0.37"
         },
         {
@@ -659,7 +625,6 @@
           "order": "inverse",
           "dfError": 16,
           "f": "4.2",
-          "pComparison": "=",
           "p": "0.056",
           "eta2": "0.17"
         },
@@ -668,8 +633,7 @@
           "order": "inverse",
           "dfError": 16,
           "f": "11",
-          "pComparison": "<",
-          "p": "0.01",
+          "p": "< 0.01",
           "eta2": "0.29"
         }
       ]
