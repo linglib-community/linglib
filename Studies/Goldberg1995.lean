@@ -254,7 +254,7 @@ theorem put_uses_exception :
 /-- *mail* profiles only its mailer and mailed (*Paul mailed a letter*, p. 53); the mailee is its
 *to*-phrase. -/
 def mailLF : LinkedFrame :=
-  { frame := .np_pp (some English.Adpositions.to_)
+  { frame := .np_pp (some English.Adpositions.to_) (some .dat)
     roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, true⟩),
       (complement 1, ⟨{.recipient}, false⟩)] }
 

@@ -91,7 +91,7 @@ def clean : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .accomplishment
   scaleDimension := some .cleanliness
   incrementality := some .strict
@@ -117,8 +117,9 @@ def send : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 1 (some .def), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 1 (some .def),
+       [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send}
 
@@ -144,7 +145,7 @@ def donate : Verb where
 /-- "obtain" — Levin 13.5.2 Obtain verbs. -/
 def obtain : Verb where
   morphs := [.root "obtain"]
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.for_)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.for_) (some .ben)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.obtain}
 
@@ -168,7 +169,7 @@ def learn : Verb where
 def hold : Verb where
   morphs := [.root "hold"]
   past := "held"
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on) (some .sup)]
   vendlerClass := some .state
   levinClasses := {LevinClass.conjecture, .fit, .hold}
 
@@ -192,9 +193,11 @@ def throw : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .def), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 1 (some .indef), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 0 (some .def),
+       [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 1 (some .indef),
+       [0, 1, 2])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.amuse, .throw}
 
@@ -206,8 +209,8 @@ def poke : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.poke, .rummage}
 
@@ -216,8 +219,8 @@ def touch : Verb where
   morphs := [.root "touch"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.amuse, .contiguousLocation, .touch}
 
@@ -232,8 +235,8 @@ def cut : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   root := { content := {
@@ -247,7 +250,7 @@ def chop : Verb where
   morphs := [.root "chop"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2]),
      (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -307,10 +310,10 @@ def weave : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
-     (ArgumentFrame.np_pp (some Adpositions.into), [0, 3, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.into) (some .transl), [0, 3, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.build, .meander}
 
@@ -323,7 +326,7 @@ def grow : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.into), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.into) (some .transl), [0, 2, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.appear, .build, .calibratableChangeOfState,
@@ -335,9 +338,9 @@ def perform : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.performance}
 
@@ -457,8 +460,8 @@ def knock : Verb where
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClasses := {LevinClass.hit, .nonAgentiveImpact, .soundEmission, .split, .throw}
@@ -471,8 +474,8 @@ def tap : Verb where
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClasses := {LevinClass.hit, .investigate, .throw}
@@ -563,7 +566,7 @@ def bleed : Verb where
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.pp (some Adpositions.from_), [0, 1])]
+     (ArgumentFrame.pp (some Adpositions.from_) (some .abl), [0, 1])]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.breathe, .cheat, .marvel, .substanceEmission}
