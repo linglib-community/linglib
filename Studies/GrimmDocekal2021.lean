@@ -26,9 +26,15 @@ and *-ojí* counts subkinds and so fails on a kind-less argument (`oji_needs_sub
 
 The connection relation is a parameter, the paper's proximate or external connectedness, which (63)
 binds existentially; the cluster of (61) uses a finite set of members and its supremum. The group
-numeral is stated over the library's `Plurality.GroupStructure`, whose `up` packs a sum into an
-atom, which is why a group can be counted again. The paper's Table 1, the twenty-two nouns derived
-by *-í*, is lexical data for the Czech Fragment and is not retyped here.
+numeral is stated over the library's `Plurality.GroupStructure`, whose `up` forms a group atom
+from a sum of individuals, which is why a group can be counted again. The paper's Table 1, the
+twenty-two nouns derived by *-í*, is lexical data for the Czech Fragment and is not retyped here.
+
+## Errata
+
+The entry for *-ice* (55a), `λnλPλx[↑x ∧ P(x)(n)]`, conjoins the group `↑x` with a formula, as do
+(55c) and footnote 22 (ii). `iceSem` takes the reading the text describes, the groups formed from
+sums of `n` members of `P`: `λnλPλx∃y[x = ↑y ∧ P(y)(n)]`.
 
 ## References
 
@@ -202,15 +208,15 @@ after (63). -/
 
 variable {α : Type*} [SemilatticeSup α] (C : α → α → Prop)
 
-/-- The group numeral (55) packs a sum of `n` members of `P` into a group atom. -/
+/-- The group numeral (55) forms a group atom from a sum of `n` members of `P`. -/
 def iceSem (G : Plurality.GroupStructure α) (n : ℕ) (P : α → ℕ → Prop) (x : α) : Prop :=
-  ∃ y, x = G.up y ∧ P y n
+  ∃ y ∈ G.sums, x = G.up y ∧ P y n
 
 /-- A group numeral phrase denotes an atom, which is why it is counted again, (17) and (54). -/
 theorem iceSem_atom {G : Plurality.GroupStructure α} {n : ℕ} {P : α → ℕ → Prop} {x : α}
     (h : iceSem G n P x) : Mereology.Atom x :=
-  let ⟨_, hx, _⟩ := h
-  hx ▸ G.atom_up _
+  let ⟨_, hy, hx, _⟩ := h
+  hx ▸ G.atom_up hy
 
 /-- By (64), `n`-*oje* `P` holds of a `P`-entity `x` when the maximal `P`-clusters properly
 below `x` number `n`. -/
