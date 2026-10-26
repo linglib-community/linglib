@@ -6,9 +6,9 @@ public import Linglib.Semantics.Reference.Rigidity
 /-!
 # Stalnaker (1975): Indicative Conditionals
 
-This file formalizes [stalnaker-1975]'s account of the direct argument, *either the butler or
+This file formalizes Stalnaker's account of the direct argument, *either the butler or
 the gardener did it, so if the butler didn't, the gardener did*. The indicative conditional
-has the selection-function truth condition of [stalnaker-1968], and entails the material
+has the selection-function truth condition of Stalnaker's earlier theory, and entails the material
 conditional without being entailed by it (`Conditional.selectionConditional_subset_materialImp`,
 `not_entails_direct`). What makes the argument compelling is pragmatic: in a context, an
 indicative conditional's selection function keeps to the context set whenever the antecedent
@@ -19,8 +19,9 @@ set changes nothing at context worlds (`pragmaticConstraint_iff_restrict`). Unde
 constraint, a proposition accepted in the context is accepted under any compatible antecedent
 (`selectionConditional_of_accepted`), the indicative and the material conditional are accepted
 in the same contexts (`accepted_iff_material`), and so the direct argument, contraposition and
-the hypothetical syllogism are reasonable for
-indicatives though invalid (`direct_argument`, `contraposition`, `hypothetical_syllogism`).
+the hypothetical syllogism are reasonable for indicatives (`direct_argument`, `contraposition`,
+`hypothetical_syllogism`) though invalid (`Stalnaker1968.not_valid_contraposition`,
+`Stalnaker1968.not_valid_trans`).
 
 The appendix's calculus makes reasonable inference a logical notion: a pragmatic
 interpretation assigns each sentence a proposition in a context, an appropriateness relation
