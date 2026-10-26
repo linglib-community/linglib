@@ -1,0 +1,212 @@
+[
+  {
+    "id": "ginzburgfernandezschlangen2014_37d",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "(37a), (37d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Is Bo here? B: You mean Jo.",
+    "discourseSegments": [
+      "A: Is Bo here?",
+      "B: You mean Jo."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["rule", "backward looking"],
+      ["turn", "taken"],
+      ["u0", "Bo"],
+      ["answer", "Jo"]
+    ],
+    "comment": "A correction by the addressee: Backward Looking Appropriateness Repair leaves the turn underspecified, so it deals with other-corrections such as (37d) (p. 9:43).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_41",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Is Georges here? I meant Jacques.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["rule", "backward looking"],
+      ["turn", "kept"],
+      ["u0", "Georges"],
+      ["answer", "Jacques"]
+    ],
+    "comment": "Cross-turn self-correction; the paper licenses it by Parameter identification (36), followed by Pending replacement (40).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_49",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Take that book in I mean from the shelf",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["rule", "backward looking"],
+      ["turn", "kept"],
+      ["u0", "in"],
+      ["answer", "from"]
+    ],
+    "comment": "Mid-utterance self-correction: the issue what A meant by uttering 'in' is accommodated with 'in' as FEC, and 'I meant from' answers it (pp. 9:43-45).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_54",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "(54)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Have you seen Mark's erm earphones? Headphones.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "I mean headphones", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["rule", "backward looking"],
+      ["turn", "kept"],
+      ["u0", "earphones"],
+      ["answer", "headphones"]
+    ],
+    "comment": "BNC KP0 369-370. A non-sentential alteration, interpreted as a short answer to what A meant with 'earphones' (p. 9:45).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_iv_swimming",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "§4 (iv)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I was a little bit + swimming",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "I was swimming", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["rule", "backward looking"],
+      ["turn", "kept"],
+      ["u0", "a little bit"],
+      ["answer", "swimming"]
+    ],
+    "comment": "Printed with '#'. 'Swimming' is not a good answer to what A meant to say when A said 'a little bit' (p. 9:38).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_iv_quite_a_bit",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "§4 (iv)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I was a little bit + actually, quite a bit shocked by that",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "I was quite a bit shocked by that", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["rule", "backward looking"],
+      ["turn", "kept"],
+      ["u0", "a little bit"],
+      ["answer", "quite a bit"]
+    ],
+    "comment": "The coherent counterpart of the swimming example (p. 9:38).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_67",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "(67)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Show flights arriving in uh Boston.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["rule", "forward looking"],
+      ["turn", "kept"],
+      ["u0", "in"],
+      ["answer", "Boston"]
+    ],
+    "comment": "From Shriberg 1994. 'uh' expresses FLDEdit(A,B,in), triggering the Forward Looking Utterance rule; 'Boston' answers what A means to say after 'in' (p. 9:51).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_11a",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: Chilli, has, has, has never really been [pause] er B: A big seller.",
+    "discourseSegments": [
+      "A: Chilli, has, has, has never really been [pause] er",
+      "B: A big seller."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["rule", "forward looking"],
+      ["turn", "taken"],
+      ["u0", "been"],
+      ["answer", "a big seller"]
+    ],
+    "comment": "BNC KPJ 550-551. The other participant takes over during a forward looking disfluency (p. 9:8); u0 as in the paper's analysis of (67).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ginzburgfernandezschlangen2014_72a",
+    "source": {"bibkey": "ginzburg-fernandez-schlangen-2014", "paperLabel": "(72a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Carol: Well it's (pause) it's (pause) er (pause) what's his name? Bernard Matthews' turkey roast.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["rule", "forward looking"],
+      ["turn", "kept"],
+      ["u0", "it's"],
+      ["query", "what's his name"]
+    ],
+    "comment": "BNC KBJ. A self addressed query after a filled pause, which the paper takes to be co-propositional with what A means to say after u0 (pp. 9:52-53); u0 as in the paper's analysis of (67).",
+    "verified": "page-image"
+  }
+]

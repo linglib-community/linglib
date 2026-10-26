@@ -15,7 +15,9 @@ question under discussion; downdate establishes the condition and is idle exactl
 that satisfy it, and pushing a question keeps it exactly when no fact resolves that question, which
 is Ginzburg's Question Introduction Appropriateness Condition. Contextual instantiation witnesses
 some of an utterance's contextual parameters, and the utterances it produces are exactly Ginzburg's
-contextual extensions.
+contextual extensions. Utterance Interpolation accommodates a question as MaxQUD and records a move
+co-propositional with it, and a Clarification Context Update Rule does so for a question built from
+a constituent of the maximal pending utterance, with the turn kept or passed on.
 
 A gameboard whose facts have common grounds has the meet of them as its common ground, and adding
 a fact is Stalnakerian assertion of it; a gameboard whose questions have issues has the issue of
@@ -28,6 +30,8 @@ MaxQUD.
   `Discourse.Gameboard.swapTurn`: updates of a gameboard.
 * `Discourse.Gameboard.NonResolveCond`, `Discourse.Gameboard.downdateQud`: `non-resolve-cond` and
   QUD-downdate.
+* `Discourse.Gameboard.interpolate`, `Discourse.Gameboard.clarify`: Utterance Interpolation and
+  the Clarification Context Update Rules.
 
 ## Main results
 
@@ -37,6 +41,7 @@ MaxQUD.
 * `Discourse.Gameboard.sublist_qud_downdateQud_iff`: the downdate of (44) is the largest of the
   downdates Appendix B allows.
 * `Discourse.Gameboard.commonGround_addFact`: adding a fact meets the common ground with it.
+* `Discourse.Gameboard.clarify_eq_some_iff`.
 
 ## Implementation notes
 
@@ -44,6 +49,9 @@ MaxQUD.
   domain: resolvedness is "not purely semantic" but agent-relative, so the types of facts and
   questions do not determine it.
 * MOVES, PENDING and QUD are lists with their maximal element first, as Ginzburg writes them.
+* Co-propositionality is likewise an explicit relation between a move's content and a question,
+  which each study defines from its own contents.
+* A rule that leaves the turn underspecified takes the turn as an argument (`Gameboard.Turn`).
 * Ginzburg states `non-resolve-cond` as resolution by FACTS as a whole, where (44) and (52)
   quantify over its members; `NonResolveCond` follows the members, so that downdate establishes
   it.
@@ -51,6 +59,7 @@ MaxQUD.
 ## References
 
 * [ginzburg-2012]
+* [ginzburg-fernandez-schlangen-2014]
 -/
 
 @[expose] public section
@@ -118,6 +127,10 @@ def latestMove : Option (LocutionaryProposition D.toGrammaticalDomain D.Content)
 def maxQud : Option D.Question :=
   d.qud.head?.map (·.question)
 
+/-- MaxPending, the latest ungrounded utterance. -/
+def maxPending : Option (LocutionaryProposition D.toGrammaticalDomain D.Content) :=
+  d.pending.head?
+
 /-- The content of the latest move. -/
 def latestContent : Option D.Content :=
   d.latestMove.map (·.content)
@@ -141,6 +154,18 @@ def pushPending (m : LocutionaryProposition D.toGrammaticalDomain D.Content) : G
 /-- The addressee takes the turn. -/
 def swapTurn : Gameboard D :=
   { d with speaker := d.addressee, addressee := d.speaker }
+
+/-- Who speaks after a rule: the speaker keeps the turn or the addressee takes it. A rule that
+underspecifies the turn holder ([ginzburg-fernandez-schlangen-2014] fn. 17) takes either. -/
+inductive Turn
+  | keep
+  | change
+  deriving DecidableEq, Repr
+
+/-- Effect the turn on a gameboard. -/
+def Turn.act : Turn → Gameboard D → Gameboard D
+  | .keep, d => d
+  | .change, d => d.swapTurn
 
 section Initial
 
@@ -227,6 +252,50 @@ theorem downdateQud_eq_self_iff : d.downdateQud R = d ↔ d.NonResolveCond R := 
   simp [downdateQud, NonResolveCond, List.filter_eq_self]
 
 end Downdate
+
+section Interpolation
+
+variable (C : D.Content → D.Question → Prop) [DecidableRel C] {d' : Gameboard D}
+
+/-- Utterance Interpolation with Question Accommodation ([ginzburg-2012] (67) p. 190): `i` is
+accommodated as MaxQUD and `m`, co-propositional with its question under `C`, becomes
+LatestMove. -/
+def interpolate (i : InformationStructure D.toGrammaticalDomain D.Question)
+    (m : LocutionaryProposition D.toGrammaticalDomain D.Content) : Option (Gameboard D) :=
+  if C m.content i.question then some ((d.pushQud i).recordMove m) else none
+
+/-- A Clarification Context Update Rule ([ginzburg-2012] (71) p. 192,
+[ginzburg-fernandez-schlangen-2014] p. 9:31): given a constituent `u` of MaxPending `v`, the turn
+`t` is taken and the information structure `i v u` is accommodated by Utterance Interpolation. -/
+def clarify (t : Turn) (i : LocutionaryProposition D.toGrammaticalDomain D.Content →
+      SubUtterance D.toGrammaticalDomain → InformationStructure D.toGrammaticalDomain D.Question)
+    (u : SubUtterance D.toGrammaticalDomain)
+    (m : LocutionaryProposition D.toGrammaticalDomain D.Content) : Option (Gameboard D) :=
+  d.maxPending.bind fun v ↦ if u ∈ v.constituents then (t.act d).interpolate C (i v u) m else none
+
+variable {C} {t : Turn} {i : LocutionaryProposition D.toGrammaticalDomain D.Content →
+    SubUtterance D.toGrammaticalDomain → InformationStructure D.toGrammaticalDomain D.Question}
+  {u : SubUtterance D.toGrammaticalDomain}
+  {m : LocutionaryProposition D.toGrammaticalDomain D.Content}
+
+theorem clarify_eq_some_iff : d.clarify C t i u m = some d' ↔
+    ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ C m.content (i v u).question ∧
+      ((t.act d).pushQud (i v u)).recordMove m = d' := by
+  unfold clarify
+  cases d.maxPending with
+  | none => simp
+  | some v => by_cases hu : u ∈ v.constituents <;> simp [hu, interpolate]
+
+theorem speaker_clarify (h : d.clarify C t i u m = some d') : d'.speaker = (t.act d).speaker := by
+  obtain ⟨_, _, _, _, rfl⟩ := d.clarify_eq_some_iff.1 h
+  rfl
+
+theorem qud_clarify (h : d.clarify C t i u m = some d') :
+    ∃ v ∈ d.maxPending, u ∈ v.constituents ∧ d'.qud = i v u :: d.qud := by
+  obtain ⟨v, hv, hu, -, rfl⟩ := d.clarify_eq_some_iff.1 h
+  exact ⟨v, hv, hu, by cases t <;> rfl⟩
+
+end Interpolation
 
 section CommonGround
 
