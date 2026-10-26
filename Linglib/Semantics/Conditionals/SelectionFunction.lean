@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Semantics.Reference.ChoiceFunction
 public import Mathlib.Order.Extension.Linear
 public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Data.Fintype.Card
@@ -9,20 +10,20 @@ public import Mathlib.Order.Hom.CompleteLattice
 /-!
 # Selection functions
 
-This file defines selection functions and the selection conditional. A selection function takes
-a world and a possible proposition to a world at which the proposition holds, the world itself
-when it holds there: intuitively the closest world at which the proposition holds. The selection
-conditional *if p, q* is true when `q` holds at the world selected for `p`, and vacuously true
-when `p` is impossible. Under Stalnaker's condition (4) the selection at a world is a rational
-choice, so a selection function satisfying it is the conditional of the closest worlds under the
-ordering its choices from pairs reveal, a well-ordering with each world first in its own. A
-similarity ordering with ties corresponds to the class of selection functions its completions
-determine, and for a single conditional the supervaluation over them is the conditional of the
-closest worlds.
+This file defines selection functions and the selection conditional. A selection function is a
+choice function at each world that picks the world itself from every proposition true there, so
+it takes a possible proposition to a world at which it holds, intuitively the closest such world.
+The selection conditional *if p, q* is true when `q` holds at the world selected for `p`, and
+vacuously true when `p` is impossible. Under Stalnaker's condition (4) the selection at a world is
+a rational choice, so a selection function satisfying it is the conditional of the closest worlds
+under the ordering its choices from pairs reveal, a well-ordering with each world first in its
+own. A similarity ordering with ties corresponds to the class of selection functions its
+completions determine, and for a single conditional the supervaluation over them is the
+conditional of the closest worlds.
 
 ## Main definitions
 
-* `SelectionFunction`: a selection function.
+* `SelectionFunction`: a selection function, a centered choice function at each world.
 * `selectionConditional`: the selection conditional.
 * `SelectionFunction.IsCSO`: Stalnaker's condition (4), that antecedents each true at the world
   selected for the other select the same world.
@@ -47,6 +48,11 @@ closest worlds.
 * `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
   supervaluation over completions.
 
+## Implementation notes
+
+Propositions are sets of worlds and choice functions choose from properties, so the world
+selected for `A` is the one chosen from the property of being in `A`.
+
 ## References
 
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
@@ -58,29 +64,52 @@ closest worlds.
 
 namespace Conditional
 
-/-- A selection function ([stalnaker-1968]) takes a world and a proposition to a selected
-world, one at which the proposition holds when it is possible, and the world itself when the
-proposition holds there. -/
+/-- A selection function ([stalnaker-1968]) is a choice function at each world that picks the
+world itself from every proposition true there. -/
 structure SelectionFunction (W : Type*) where
-  /-- The selection map. -/
-  sel : W → Set W → W
-  /-- The world selected for a possible proposition is one at which it holds. -/
-  inclusion : ∀ (w : W) (A : Set W), A.Nonempty → sel w A ∈ A
+  /-- The choice function at each world. -/
+  choice : W → ChoiceFunction W
   /-- A world at which the proposition holds selects itself. -/
-  centering : ∀ (w : W) (A : Set W), w ∈ A → sel w A = w
+  centering' : ∀ (w : W) (A : Set W), w ∈ A → choice w (· ∈ A) = w
+
+namespace SelectionFunction
+
+variable {W : Type*} {w v : W} {A : Set W}
+
+/-- The world selected at `w` for `A`. -/
+def sel (s : SelectionFunction W) (w : W) (A : Set W) : W := s.choice w (· ∈ A)
+
+/-- The world selected for a possible proposition is one at which it holds. -/
+theorem inclusion (s : SelectionFunction W) (w : W) (A : Set W) (hA : A.Nonempty) :
+    s.sel w A ∈ A :=
+  (s.choice w).apply_of_exists hA
+
+theorem centering (s : SelectionFunction W) (w : W) (A : Set W) (hw : w ∈ A) : s.sel w A = w :=
+  s.centering' w A hw
+
+/-- The selection function of a selection map satisfying inclusion and centering. -/
+def ofSel (sel : W → Set W → W) (inclusion : ∀ w A, A.Nonempty → sel w A ∈ A)
+    (centering : ∀ w A, w ∈ A → sel w A = w) : SelectionFunction W where
+  choice w := ⟨fun P ↦ sel w {x | P x}, fun P hP ↦ inclusion w {x | P x} hP⟩
+  centering' w A hw := centering w {x | x ∈ A} hw
+
+@[simp]
+theorem sel_ofSel {sel : W → Set W → W} {h₁ h₂} : (ofSel sel h₁ h₂).sel w A = sel w A :=
+  rfl
 
 /-- Inclusion and centering are the only constraints on a selection function, so at a world
 outside a proposition any world of the proposition is selected by some selection function. -/
-theorem SelectionFunction.exists_sel_eq {W : Type*} {w v : W} {A : Set W} (hv : v ∈ A)
-    (hw : w ∉ A) : ∃ s : SelectionFunction W, s.sel w A = v := by
+theorem exists_sel_eq (hv : v ∈ A) (hw : w ∉ A) : ∃ s : SelectionFunction W, s.sel w A = v := by
   classical
-  refine ⟨⟨fun w' A' ↦ if w' ∈ A' then w' else if w' = w ∧ A' = A then v
-      else if h : A'.Nonempty then h.some else w', fun w' A' hA' ↦ ?_, fun _ _ h ↦ ite_eq_left h⟩,
-    by simp [hw]⟩
+  refine ⟨.ofSel (fun w' A' ↦ if w' ∈ A' then w' else if w' = w ∧ A' = A then v
+      else if h : A'.Nonempty then h.some else w') (fun w' A' hA' ↦ ?_)
+      (fun _ _ h ↦ ite_eq_left h), by simp [hw]⟩
   split_ifs with h₁ h₂
   · exact h₁
   · exact h₂.2 ▸ hv
   · exact Set.Nonempty.some_mem _
+
+end SelectionFunction
 
 section SelectionConditional
 
@@ -221,16 +250,16 @@ open Classical in
 /-- The restriction of a selection function to a set `C`, which at a world of `C` selects among
 the antecedent-worlds in `C` when there are any and otherwise selects as before. -/
 noncomputable def SelectionFunction.restrict (s : SelectionFunction W) (C : Set W) :
-    SelectionFunction W where
-  sel w A := if w ∈ C ∧ (A ∩ C).Nonempty then s.sel w (A ∩ C) else s.sel w A
-  inclusion w A hA := by
-    split_ifs with h
-    · exact (s.inclusion w (A ∩ C) h.2).1
-    · exact s.inclusion w A hA
-  centering w A hw := by
-    split_ifs with h
-    · exact s.centering w (A ∩ C) ⟨hw, h.1⟩
-    · exact s.centering w A hw
+    SelectionFunction W :=
+  .ofSel (fun w A ↦ if w ∈ C ∧ (A ∩ C).Nonempty then s.sel w (A ∩ C) else s.sel w A)
+    (fun w A hA ↦ by
+      split_ifs with h
+      · exact (s.inclusion w (A ∩ C) h.2).1
+      · exact s.inclusion w A hA)
+    fun w A hw ↦ by
+      split_ifs with h
+      · exact s.centering w (A ∩ C) ⟨hw, h.1⟩
+      · exact s.centering w A hw
 
 theorem SelectionFunction.restrict_sel_of_mem (s : SelectionFunction W) (C : Set W) {A : Set W}
     (hw : w ∈ C) (hA : (A ∩ C).Nonempty) : (s.restrict C).sel w A = s.sel w (A ∩ C) := by
@@ -423,8 +452,8 @@ theorem SelectionFunction.exists_compatible [Finite W] (hc : IsCentered ord)
     obtain ⟨m, hm, hmin⟩ := (wellFounded_lt (α := W)).has_min p' hp'
     exact ⟨m, hm, fun u hu ↦ not_lt.1 (hmin u hu)⟩
   choose! m hm hmle using hleast
-  refine ⟨⟨fun w' p' ↦ if h : p'.Nonempty then m w' p' else w', fun w' p' hp' ↦ ?_,
-    fun w' p' hw' ↦ ?_⟩, ⟨c, fun w' p' hp' u hu ↦ ?_⟩, ?_⟩
+  refine ⟨.ofSel (fun w' p' ↦ if h : p'.Nonempty then m w' p' else w') (fun w' p' hp' ↦ ?_)
+    (fun w' p' hw' ↦ ?_), ⟨c, fun w' p' hp' u hu ↦ ?_⟩, ?_⟩
   · simpa [hp'] using hm w' p' hp'
   · have hne : p'.Nonempty := ⟨w', hw'⟩
     show (if h : p'.Nonempty then m w' p' else w') = w'

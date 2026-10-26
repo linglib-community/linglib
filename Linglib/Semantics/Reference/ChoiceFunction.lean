@@ -13,7 +13,9 @@ pronouns, so a skolemized choice function is a family `S → ChoiceFunction E`; 
 argument that an intensional operator can bind, and Owusu feeds the same situation to the
 function and to the restrictor. Closing the function variable existentially gives the existential
 reading, and closing it when its index or its restrictor varies with a bound variable gives the
-reading on which the indefinite scopes below the binder.
+reading on which the indefinite scopes below the binder. Stalnaker's selection function for
+conditionals is a choice function over worlds at each world, which picks the world itself from
+every proposition true there (`Conditional.SelectionFunction`).
 
 ## Main definitions
 
@@ -43,6 +45,7 @@ reading on which the indefinite scopes below the binder.
 * [kratzer-1998-pseudoscope]
 * [owusu-2022]
 * [mirrazi-2024]
+* [stalnaker-1968]
 -/
 
 @[expose] public section
