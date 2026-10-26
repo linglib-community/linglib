@@ -217,10 +217,14 @@ theorem in_focus_collapse :
   decide
 
 open Discourse.Centering in
-theorem pronominalization_vacuous {E R : Type*} [DecidableEq E] [LinearOrder R]
-    (prev cur : Utterance E R) (h : ∀ e, ¬ cur.Pronominalizes e) :
-    PronominalizationConstraint prev cur :=
-  pronominalizationConstraint_of_forall_not h
+/-- Centering's Rule 1 is silent on lexical anaphors: an utterance that realizes every entity by a
+lexical form satisfies it, whatever came before, so it cannot penalize a repeated name. -/
+theorem pronominalizationConstraint_of_lexical {E R : Type*} [DecidableEq E] [LinearOrder R]
+    (prev cur : Utterance E R AccessibilityLevel) (h : ∀ r ∈ cur.realizations, r.form.lexical) :
+    PronominalizationConstraint {l | l.head = .pronoun} prev cur := by
+  refine pronominalizationConstraint_of_forall_not fun _ ⟨r, hr, _, hp⟩ ↦ ?_
+  have : ∀ l : AccessibilityLevel, l.lexical → l.head ≠ .pronoun := by decide
+  exact this r.form (h r hr) hp
 
 /-- The discourse topic takes a higher accessibility marker than the local subject (12). -/
 theorem rows_topic_over_subject :

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Discourse.Centering.Transition
 public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Discourse.Accessibility
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Examples.Beaver2004
@@ -50,6 +51,7 @@ filters out.
 namespace Beaver2004
 
 open Discourse.Centering OptimalityTheory
+open Discourse.AccessibilityLevel (Head)
 
 /-! ### Candidates -/
 
@@ -59,7 +61,7 @@ substrate does not carry — φ-features (AGREE), predicate-argument structure
 (DISJOINT) and definiteness/familiarity (FAM-DEF). -/
 structure Candidate (E : Type) (R : Type) where
   /-- The resolved utterance. -/
-  utt : Utterance E R
+  utt : Utterance E R Head
   /-- AGREE verdict: pronoun–antecedent number/gender match. -/
   agreementOK : Bool
   /-- DISJOINT verdict: co-arguments of each predicate are distinct. -/
@@ -67,6 +69,11 @@ structure Candidate (E : Type) (R : Type) where
   /-- FAM-DEF verdict: every definite NP is familiar. -/
   famDefOK : Bool
   deriving Repr, DecidableEq
+
+/-- The forms PRO-TOP counts as pronominalizing the topic, the pronouns. -/
+def pronouns : Set Head := {h | h = .pronoun}
+
+instance : DecidablePred (· ∈ pronouns) := fun h ↦ inferInstanceAs (Decidable (h = .pronoun))
 
 /-! ### The six constraints (4) -/
 
@@ -87,8 +94,8 @@ via the unconditional `CbPronominalized` ([gordon-grosz-gilliom-1993]).
 With no pronoun in the sentence every candidate violates PRO-TOP alike
 (p. 16), so the conditional Rule-1 form would be the wrong primitive. -/
 def proTop [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) : Constraint (Candidate E R) :=
-  Constraint.binary (fun c => ¬ CbPronominalized prev c.utt)
+    (prev : Utterance E R Head) : Constraint (Candidate E R) :=
+  Constraint.binary (fun c => ¬ CbPronominalized pronouns prev c.utt)
 
 /-- FAM-DEF: each definite NP is familiar. -/
 def famDef : Constraint (Candidate E R) :=
@@ -98,7 +105,7 @@ def famDef : Constraint (Candidate E R) :=
 one — satisfied only when both are defined and equal (p. 17); an undefined
 topic counts as a violation. -/
 def cohere [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) (priorTopic : Option E) :
+    (prev : Utterance E R Head) (priorTopic : Option E) :
     Constraint (Candidate E R) :=
   Constraint.binary (fun c =>
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = priorTopic))
@@ -107,20 +114,20 @@ def cohere [DecidableEq E] [LinearOrder R]
 topic is the preferred center (p. 18); an undefined topic counts as a
 violation. -/
 def align [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) : Constraint (Candidate E R) :=
+    (prev : Utterance E R Head) : Constraint (Candidate E R) :=
   Constraint.binary (fun c =>
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp))
 
 /-- The COT ranking (4): AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE >
 ALIGN. -/
 def cotRanking [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) (priorTopic : Option E) :
+    (prev : Utterance E R Head) (priorTopic : Option E) :
     List (Constraint (Candidate E R)) :=
   [agree, disjoint, proTop prev, famDef, cohere prev priorTopic, align prev]
 
 /-- The §4.1 reranking: PRO-TOP demoted below FAM-DEF. -/
 def cotRankingDemoted [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) (priorTopic : Option E) :
+    (prev : Utterance E R Head) (priorTopic : Option E) :
     List (Constraint (Candidate E R)) :=
   [agree, disjoint, famDef, proTop prev, cohere prev priorTopic, align prev]
 
@@ -128,14 +135,14 @@ def cotRankingDemoted [DecidableEq E] [LinearOrder R]
 
 /-- COHERE cannot distinguish candidates whose `cb` agrees. -/
 theorem cohere_factors_through_cb [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) (priorTopic : Option E)
+    (prev : Utterance E R Head) (priorTopic : Option E)
     (c1 c2 : Candidate E R) (h : cb prev c1.utt = cb prev c2.utt) :
     (cohere prev priorTopic) c1 = (cohere prev priorTopic) c2 := by
   simp only [cohere, Constraint.binary_apply, h]
 
 /-- ALIGN cannot distinguish candidates whose `cb` and `cp` both agree. -/
 theorem align_factors_through_cb_and_cp [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R)
+    (prev : Utterance E R Head)
     (c1 c2 : Candidate E R)
     (h_cb : cb prev c1.utt = cb prev c2.utt)
     (h_cp : c1.utt.cp = c2.utt.cp) :
@@ -145,20 +152,20 @@ theorem align_factors_through_cb_and_cp [DecidableEq E] [LinearOrder R]
 /-! ### Table (19): the COT ranking is the BFP transition preference -/
 
 /-- The transition a candidate realizes, read off its COHERE and ALIGN verdicts. -/
-def bfpTransition [DecidableEq E] [LinearOrder R] (prev : Utterance E R)
+def bfpTransition [DecidableEq E] [LinearOrder R] (prev : Utterance E R Head)
     (priorTopic : Option E) (c : Candidate E R) : ExtendedTransition :=
   .ofTests ((cohere prev priorTopic) c = 0) ((align prev) c = 0)
 
 /-- COHERE and ALIGN are the tests of [brennan-friedman-pollard-1987] when the prior topic is
 defined (p. 17). -/
-theorem bfpTransition_some [DecidableEq E] [LinearOrder R] {prev : Utterance E R} {p x : E}
+theorem bfpTransition_some [DecidableEq E] [LinearOrder R] {prev : Utterance E R Head} {p x : E}
     {c : Candidate E R} (h : cb prev c.utt = some x) :
     bfpTransition prev (some p) c = .ofCenters (some p) x c.utt.cp := by
   ext <;> simp [bfpTransition, ExtendedTransition.ofCenters, cohere, align, h] <;> exact eq_comm
 
 /-- With no prior topic COHERE fails (p. 17), where the first test of [walker-iida-cote-1994]
 passes. -/
-theorem bfpTransition_none_cohesion [DecidableEq E] [LinearOrder R] (prev : Utterance E R)
+theorem bfpTransition_none_cohesion [DecidableEq E] [LinearOrder R] (prev : Utterance E R Head)
     (c : Candidate E R) : (bfpTransition prev none c).cohesion = false := by
   simp [bfpTransition, cohere, Option.isSome_iff_ne_none]
 
@@ -190,7 +197,7 @@ private theorem profile_lt_iff_last_two {p q : ViolationProfile 6}
 /-- For candidates tied on AGREE, DISJOINT, PRO-TOP and FAM-DEF, the COT comparison coincides with
 the BFP preference (Table (19), Theorem (20)). -/
 theorem cot_iff_bfp [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) (priorTopic : Option E) (c1 c2 : Candidate E R)
+    (prev : Utterance E R Head) (priorTopic : Option E) (c1 c2 : Candidate E R)
     (h : ∀ i : Fin 6, i.val < 4 →
       toLex ((cotRanking prev priorTopic).get · c1) i =
         toLex ((cotRanking prev priorTopic).get · c2) i) :
@@ -218,24 +225,24 @@ theorem cot_iff_bfp [DecidableEq E] [LinearOrder R]
 
 namespace D12
 
-abbrev Utt := Utterance String GrammaticalRole
+abbrev Utt := Utterance String GrammaticalRole Head
 
 /-- (12a) "Jane is happy." -/
-def a : Utt := ⟨[⟨"Jane", .subject, false⟩]⟩
+def a : Utt := ⟨[⟨"Jane", .subject, .name⟩]⟩
 
 /-- (12b) "She was congratulated by Freda." She = Jane. -/
 def b : Utt :=
-  ⟨[⟨"Jane", .subject, true⟩, ⟨"Freda", .other, false⟩]⟩
+  ⟨[⟨"Jane", .subject, .pronoun⟩, ⟨"Freda", .other, .name⟩]⟩
 
 /-- (12c) with her = Jane: the winner. -/
 def c_l_eq_i : Utt :=
-  ⟨[⟨"Mary", .subject, false⟩, ⟨"Jane", .object, true⟩,
-    ⟨"present", .other, false⟩]⟩
+  ⟨[⟨"Mary", .subject, .name⟩, ⟨"Jane", .object, .pronoun⟩,
+    ⟨"present", .other, .description⟩]⟩
 
 /-- (12c) with her = Freda: the loser. -/
 def c_l_eq_j : Utt :=
-  ⟨[⟨"Mary", .subject, false⟩, ⟨"Freda", .object, true⟩,
-    ⟨"present", .other, false⟩]⟩
+  ⟨[⟨"Mary", .subject, .name⟩, ⟨"Freda", .object, .pronoun⟩,
+    ⟨"present", .other, .description⟩]⟩
 
 /-- her = Jane, wrapped: AGREE, DISJOINT and FAM-DEF are all satisfied. -/
 def cand_l_eq_i : Candidate String GrammaticalRole :=
@@ -272,23 +279,23 @@ theorem d12_transition_retain :
 
 namespace D2
 
-abbrev Utt := Utterance String GrammaticalRole
+abbrev Utt := Utterance String GrammaticalRole Head
 
 /-- (2a) "Mary likes tennis." -/
 def a : Utt :=
-  ⟨[⟨"Mary", .subject, false⟩, ⟨"tennis", .object, false⟩]⟩
+  ⟨[⟨"Mary", .subject, .name⟩, ⟨"tennis", .object, .description⟩]⟩
 
 /-- (2b) "She plays Jim quite often." She = Mary. -/
 def b : Utt :=
-  ⟨[⟨"Mary", .subject, true⟩, ⟨"Jim", .object, false⟩]⟩
+  ⟨[⟨"Mary", .subject, .pronoun⟩, ⟨"Jim", .object, .name⟩]⟩
 
 /-- (2c), coreferential reading: He = Jim, Mary = the (2a) Mary. -/
 def c_bound : Utt :=
-  ⟨[⟨"Jim", .subject, true⟩, ⟨"Mary", .other, false⟩]⟩
+  ⟨[⟨"Jim", .subject, .pronoun⟩, ⟨"Mary", .other, .name⟩]⟩
 
 /-- (2c), two-Marys reading: the object "Mary" is a new entity. -/
 def c_two_marys : Utt :=
-  ⟨[⟨"Jim", .subject, true⟩, ⟨"Mary_new", .other, false⟩]⟩
+  ⟨[⟨"Jim", .subject, .pronoun⟩, ⟨"Mary_new", .other, .name⟩]⟩
 
 /-- Coreferential candidate: the anaphoric "Mary" is familiar. -/
 def cand_bound : Candidate String GrammaticalRole :=
@@ -326,7 +333,7 @@ theorem d2_demoted_picks_bound :
 preferred center — the within-utterance analogue of [strube-1998]'s cheap
 transitions, which test the same shape against the *previous* Cp. -/
 theorem align_eq_zero_iff [DecidableEq E] [LinearOrder R]
-    (prev : Utterance E R) (c : Candidate E R) :
+    (prev : Utterance E R Head) (c : Candidate E R) :
     (align prev) c = 0 ↔
       ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp) := by
   simp [align]

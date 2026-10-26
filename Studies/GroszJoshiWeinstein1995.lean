@@ -2,6 +2,7 @@ module
 
 public import Linglib.Discourse.Centering.Transition
 public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Discourse.Accessibility
 public import Linglib.Core.Data.List.Forall2
 public import Linglib.Data.Examples.GroszJoshiWeinstein1995
 public import Studies.Sidner1979
@@ -62,6 +63,7 @@ realization relation richer than the substrate's list of directly realized entit
 namespace GroszJoshiWeinstein1995
 
 open Discourse.Centering
+open Discourse.AccessibilityLevel (Head)
 
 /-- The individuals of the paper's discourses. -/
 inductive Entity
@@ -70,31 +72,43 @@ inductive Entity
   deriving DecidableEq
 
 /-- An utterance with its realizations, ranked subject > object > other. -/
-abbrev Utt := Utterance Entity GrammaticalRole
+abbrev Utt := Utterance Entity GrammaticalRole Head
 
 variable {E : Type*}
 
-/-- A realization by a name or a description. -/
-def name (e : E) (r : GrammaticalRole) : Realization E GrammaticalRole := ⟨e, r, false⟩
+/-- A realization by a name. -/
+def name (e : E) (r : GrammaticalRole) : Realization E GrammaticalRole Head := ⟨e, r, .name⟩
+
+/-- A realization by a description. -/
+def desc (e : E) (r : GrammaticalRole) : Realization E GrammaticalRole Head := ⟨e, r, .description⟩
 
 /-- A realization by a pronoun. -/
-def pron (e : E) (r : GrammaticalRole) : Realization E GrammaticalRole := ⟨e, r, true⟩
+def pron (e : E) (r : GrammaticalRole) : Realization E GrammaticalRole Head := ⟨e, r, .pronoun⟩
+
+/-- The forms Rule 1 governs, the pronouns. -/
+def pronouns : Set Head := {h | h = .pronoun}
+
+instance : DecidablePred (· ∈ pronouns) := fun h ↦ inferInstanceAs (Decidable (h = .pronoun))
+
+/-- Rule 1, for the pronouns. -/
+abbrev Rule1 {E : Type*} [DecidableEq E] (prev cur : Utterance E GrammaticalRole Head) : Prop :=
+  PronominalizationConstraint pronouns prev cur
 
 /-! ### The coherence contrast, section 2 -/
 
 namespace D1
 
 /-- (1a) John went to his favorite music store to buy a piano. -/
-def a : Utt := ⟨[name .john .subject, name .store .object, name .piano .other]⟩
+def a : Utt := ⟨[name .john .subject, desc .store .object, desc .piano .other]⟩
 
 /-- (1b) He had frequented the store for many years. -/
-def b : Utt := ⟨[pron .john .subject, name .store .object]⟩
+def b : Utt := ⟨[pron .john .subject, desc .store .object]⟩
 
 /-- (1c) He was excited that he could finally buy a piano. -/
-def c : Utt := ⟨[pron .john .subject, name .piano .object]⟩
+def c : Utt := ⟨[pron .john .subject, desc .piano .object]⟩
 
 /-- (1d) He arrived just as the store was closing for the day. -/
-def d : Utt := ⟨[pron .john .subject, name .store .other]⟩
+def d : Utt := ⟨[pron .john .subject, desc .store .other]⟩
 
 def all : List Utt := [a, b, c, d]
 
@@ -114,15 +128,15 @@ end D2
 
 /-- Discourse (1) centers on John by three continuations, Rule 1 holding at each step. -/
 theorem d1_continues : transitions D1.all = [.continuation, .continuation, .continuation] ∧
-    PronominalizationConstraint D1.a D1.b ∧ PronominalizationConstraint D1.b D1.c ∧
-      PronominalizationConstraint D1.c D1.d := by
+    Rule1 D1.a D1.b ∧ Rule1 D1.b D1.c ∧
+      Rule1 D1.c D1.d := by
   decide
 
 /-- Discourse (2) keeps John as backward-looking center; its pronoun in (2b) violates Rule 1, and
 that in (2d) lies outside the forward-looking centers of (2c) (section 7). -/
 theorem d2_retains : cbs D2.all = [some .john, some .john, some .john] ∧
     transitions D2.all = [.retaining, .continuation, .retaining] ∧
-      ¬ PronominalizationConstraint D1.a D2.b ∧ ¬ ∃ e ∈ D1.c.cf, D2.d.Pronominalizes e := by
+      ¬ Rule1 D1.a D2.b ∧ ¬ ∃ e ∈ D1.c.cf, D2.d.Pronominalizes pronouns e := by
   decide
 
 /-- Discourse (1) is a sequence of continuations, which Rule 2 prefers to the transitions of (2)
@@ -139,7 +153,7 @@ pronominalized and which is the subject of (c). -/
 namespace D7
 
 /-- (a) Susan gave Betsy a pet hamster. -/
-def a : Utt := ⟨[name .susan .subject, name .betsy .object, name .hamster .other]⟩
+def a : Utt := ⟨[name .susan .subject, name .betsy .object, desc .hamster .other]⟩
 
 /-- (b) She reminded her that such hamsters were quite shy. -/
 def b : Utt := ⟨[pron .susan .subject, pron .betsy .object]⟩
@@ -171,20 +185,20 @@ theorem c7_continues_c8_retains :
 /-- Rule 1 separates the variants as the paper's acceptability ordering does: (7) and (8)
 pronominalize the center, (9) and (10) pronominalize Betsy while naming Susan. -/
 theorem rule1_separates_variants :
-    PronominalizationConstraint D7.b D7.c7 ∧ PronominalizationConstraint D7.b D7.c8 ∧
-      ¬ PronominalizationConstraint D7.b D7.c9 ∧ ¬ PronominalizationConstraint D7.b D7.c10 := by
+    Rule1 D7.b D7.c7 ∧ Rule1 D7.b D7.c8 ∧
+      ¬ Rule1 D7.b D7.c9 ∧ ¬ Rule1 D7.b D7.c10 := by
   decide
 
 namespace D11
 
 /-- (11c) She just gave Betsy a wonderful bottle of wine. -/
-def c : Utt := ⟨[pron .susan .subject, name .betsy .object, name .wine .other]⟩
+def c : Utt := ⟨[pron .susan .subject, name .betsy .object, desc .wine .other]⟩
 
 /-- (11d) She told her it was quite rare. -/
 def d : Utt := ⟨[pron .susan .subject, pron .betsy .object, pron .wine .other]⟩
 
 /-- (11e) She knows a lot about wine, read with Susan as the subject. -/
-def e11 : Utt := ⟨[pron .susan .subject, name .wine .other]⟩
+def e11 : Utt := ⟨[pron .susan .subject, desc .wine .other]⟩
 
 /-- (12e) Wine collecting gives her expertise that's fun to share, read with Susan as the
 object. -/
@@ -202,10 +216,10 @@ theorem subject_preference : D11.d.cp = some .susan ∧ cb D11.c D11.d = some .s
 namespace D13
 
 /-- (13c) Susie prefers the green plastic tugboat to the teddy bear. -/
-def c : Utt := ⟨[name .susie .subject, name .boat .object, name .bear .other]⟩
+def c : Utt := ⟨[name .susie .subject, desc .boat .object, desc .bear .other]⟩
 
 /-- (13d) and (14d), first clause: Tommy likes it better than the bear too. -/
-def d : Utt := ⟨[name .tommy .subject, pron .boat .object, name .bear .other]⟩
+def d : Utt := ⟨[name .tommy .subject, pron .boat .object, desc .bear .other]⟩
 
 end D13
 
@@ -231,7 +245,7 @@ end D15
 /-- (15c) violates Rule 1: Mike is pronominalized while the center John is named, though
 (15b) satisfied it. -/
 theorem d15_violates_rule1 : cb D15.b D15.c = some .john ∧
-    PronominalizationConstraint D15.a D15.b ∧ ¬ PronominalizationConstraint D15.b D15.c := by
+    Rule1 D15.a D15.b ∧ ¬ Rule1 D15.b D15.c := by
   decide
 
 namespace D16
@@ -253,22 +267,22 @@ end D16
 (15c) violated. -/
 theorem d16_repairs : cbs D16.all = [some .john, some .mike, some .mike] ∧
     transitions D16.all = [.continuation, .shifting, .continuation] ∧
-      PronominalizationConstraint D16.c D16.d := by
+      Rule1 D16.c D16.d := by
   decide
 
 namespace D17
 
 /-- (17b) I took him to the vet the other day. -/
-def b : Utt := ⟨[pron .speaker .subject, pron .dog .object, name .vet .other]⟩
+def b : Utt := ⟨[pron .speaker .subject, pron .dog .object, desc .vet .other]⟩
 
 /-- (17c) The mangy old beast always hates these visits. -/
-def c : Utt := ⟨[name .dog .subject]⟩
+def c : Utt := ⟨[desc .dog .subject]⟩
 
 end D17
 
 /-- Rule 1 does not preclude a description for the center, as in (17c), where no pronoun is used. -/
 theorem full_noun_phrase_cb : cb D17.b D17.c = some .dog ∧
-    PronominalizationConstraint D17.b D17.c := by
+    Rule1 D17.b D17.c := by
   decide
 
 namespace D20
@@ -296,8 +310,8 @@ end D20
 Rule 1 holding throughout. -/
 theorem d20_transitions :
     transitions D20.all = [.continuation, .continuation, .retaining, .shifting] ∧
-      PronominalizationConstraint D20.a D20.b ∧ PronominalizationConstraint D20.b D20.c ∧
-        PronominalizationConstraint D20.c D20.d ∧ PronominalizationConstraint D20.d D20.e := by
+      Rule1 D20.a D20.b ∧ Rule1 D20.b D20.c ∧
+        Rule1 D20.c D20.d ∧ Rule1 D20.d D20.e := by
   decide
 
 /-! ### Comparison with Sidner, section 9
@@ -308,7 +322,7 @@ exams, but I think he went to the Cape with Linda.* -/
 namespace D34
 
 /-- Sidner's utterances over her entities. -/
-abbrev SUtt := Utterance Sidner1979.Entity GrammaticalRole
+abbrev SUtt := Utterance Sidner1979.Entity GrammaticalRole Head
 
 /-- (34a) I haven't seen Jeff for several days. -/
 def a : SUtt := ⟨[pron .speaker .subject, name .jeff .object]⟩
@@ -328,11 +342,11 @@ end D34
 /-- On the centering account Jeff is the center at (34b), and the pronoun of (34c) that
 continues him satisfies Rule 1: there is no problem. -/
 theorem d34_jeff_cb : cb D34.a D34.b = some .jeff ∧ cb D34.b D34.c = some .jeff ∧
-    PronominalizationConstraint D34.b D34.c := by
+    Rule1 D34.b D34.c := by
   decide
 
 theorem d34_two_pronouns : cb D34.b D34.c' = some .carl ∧
-    PronominalizationConstraint D34.b D34.c' := by
+    Rule1 D34.b D34.c' := by
   decide
 
 /-- After (34b), Sidner's discourse focus is Jeff and her actor focus is Carl, and (34a) and (34b)

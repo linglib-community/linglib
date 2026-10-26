@@ -165,37 +165,37 @@ end Transition
 
 /-! ### Scanning a discourse -/
 
-variable {R : Type*} [LinearOrder R]
+variable {R F : Type*} [LinearOrder R]
 
 /-- The transition into `cur` from `prev`, given the backward-looking center of `prev`. -/
-def transition (prevCb : Option E) (prev cur : Utterance E R) : Transition :=
+def transition (prevCb : Option E) (prev cur : Utterance E R F) : Transition :=
   .ofCenters prevCb (cb prev cur) cur.cp
 
 /-- The backward-looking center of each utterance of `d` after the first. -/
-def cbs (d : List (Utterance E R)) : List (Option E) := List.zipWith cb d d.tail
+def cbs (d : List (Utterance E R F)) : List (Option E) := List.zipWith cb d d.tail
 
 /-- The transition into each utterance of `d` after the first, the first of them with no prior
 center. -/
-def transitions (d : List (Utterance E R)) : List Transition :=
+def transitions (d : List (Utterance E R F)) : List Transition :=
   List.zipWith3 transition (none :: cbs d) d d.tail
 
-@[simp] theorem cbs_nil : cbs ([] : List (Utterance E R)) = [] := rfl
+@[simp] theorem cbs_nil : cbs ([] : List (Utterance E R F)) = [] := rfl
 
-@[simp] theorem cbs_singleton (u : Utterance E R) : cbs [u] = [] := rfl
+@[simp] theorem cbs_singleton (u : Utterance E R F) : cbs [u] = [] := rfl
 
-@[simp] theorem cbs_cons_cons (u₁ u₂ : Utterance E R) (d : List (Utterance E R)) :
+@[simp] theorem cbs_cons_cons (u₁ u₂ : Utterance E R F) (d : List (Utterance E R F)) :
     cbs (u₁ :: u₂ :: d) = cb u₁ u₂ :: cbs (u₂ :: d) := rfl
 
-@[simp] theorem length_cbs (d : List (Utterance E R)) : (cbs d).length = d.length - 1 := by
+@[simp] theorem length_cbs (d : List (Utterance E R F)) : (cbs d).length = d.length - 1 := by
   simp [cbs, List.length_zipWith]
 
-@[simp] theorem transitions_nil : transitions ([] : List (Utterance E R)) = [] := rfl
+@[simp] theorem transitions_nil : transitions ([] : List (Utterance E R F)) = [] := rfl
 
-@[simp] theorem transitions_singleton (u : Utterance E R) : transitions [u] = [] := rfl
+@[simp] theorem transitions_singleton (u : Utterance E R F) : transitions [u] = [] := rfl
 
-@[simp] theorem length_transitions (d : List (Utterance E R)) :
+@[simp] theorem length_transitions (d : List (Utterance E R F)) :
     (transitions d).length = d.length - 1 := by
-  rw [transitions, ← List.zipWith_zipWith_left (fun (f : Utterance E R → Transition) ↦ f)
+  rw [transitions, ← List.zipWith_zipWith_left (fun (f : Utterance E R F → Transition) ↦ f)
     transition]
   simp [List.length_zipWith]
 
