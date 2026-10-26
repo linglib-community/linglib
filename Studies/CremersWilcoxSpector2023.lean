@@ -10,73 +10,45 @@ public import Linglib.Semantics.Exhaustification.Finite
 /-!
 # Exhaustivity and anti-exhaustivity in the Rational Speech Act framework
 
-A listener who hears *A* where *A and B* was available infers that B is false. In the baseline
-Rational Speech Act model a prior biased towards the world of both A and B reverses the
-inference: the listener is anti-exhaustive exactly when the log odds of the prior exceed the cost
-disadvantage of *A and not B* over *A and B*, whatever the rationality. Lexical uncertainty over
-free strengthenings and the wonky-world models stay anti-exhaustive for suitable priors.
-Grammatical lexical uncertainty and the lexical-intentions speaker keep the posterior of both
-below the prior whenever *A and B* costs no more than *A and not B*, and the supervaluationist
-model, which resolves the ambiguity through the question under discussion, does so whatever the
-costs. The experiment finds no anti-exhaustivity. Each model's section ends in its verdict, that
-its listener's posterior after *A* is `AntiExhaustive` exactly when a condition holds or always
-`Exhaustive`, except Degen and colleagues' wonky model, whose posterior (A.5a) the paper evaluates
-numerically.
+This file formalizes the Rational Speech Act models that Cremers, Wilcox and Spector compare on
+the symmetry problem: after *A*, where *A and B* was available, does the listener's belief in the
+world of both rise above its prior? Each model's section ends in its verdict, stated with
+`Setting.AntiExhaustive` and `Setting.Exhaustive` (6b).
 
 ## Main statements
 
-* `antiExhaustive_listener_iff`: the baseline listener is anti-exhaustive exactly when the prior
-  log odds exceed the cost disadvantage of *A and not B* (6b).
-* `antiExhaustive_bayesWonkyListener_iff`: the Bayesian wonky listener is, exactly when *A*'s use
-  in the world of both exceeds its use in the world of A alone, averaged over backgrounds (A.2).
-* `exhaustive_svListener`: the supervaluationist listener is exhaustive, whatever the costs (A.3).
-* `exhaustive_luListener`: the grammatical lexical-uncertainty listener is exhaustive (§4.3).
-* `exhaustive_liListener`: the lexical-intentions listener is exhaustive (§4.4).
+* `antiExhaustive_listener_iff`: the baseline listener's condition, on prior log odds and costs.
+* `antiExhaustive_bayesWonkyListener_iff`: the Bayesian wonky listener's condition (A.2).
+* `exhaustive_svListener`: the supervaluationist listener is exhaustive (A.3).
+* `exhaustive_luListener`: so is the grammatical lexical-uncertainty listener (§4.3).
+* `exhaustive_liListener`: so is the lexical-intentions listener (§4.4).
 
 ## Implementation notes
 
-* The supervaluationist speaker is `RSA.speaker` against the literal listeners of the
-  interpretations, mapped to her answer and taken as one listener on pairs, as in `Spector2017`,
-  under any prior on exhaustification. The paper fixes `P(i_exh) = 1/2` in its fit (Appendix
-  B.3); Appendix A.3 needs only `P(i_exh) > 0`, and so do the theorems.
-* The wonky models take the listener's prior on the backgrounds as a measure, the paper's `ω`
-  being its mass on the wonky background. They share one speaker on pairs of a world and a
-  background and differ only in the listener's prior there, so their posteriors are (A.5a) and
-  (A.5b) (`wonkyListener_fst_real_wab`, `bayesWonkyListener_real_wab`).
-* Lexical uncertainty and lexical intentions take the interpretations equiprobable, as the paper's
-  fits do (Appendices B.4, B.5). Each model's two descriptions in the paper, a joint posterior and
-  the inverse of the averaged speaker, agree (`luJointListener_fst`, `bayesWonkyJointListener_fst`).
+* The supervaluationist speaker takes any prior on exhaustification; the paper fixes
+  `P(i_exh) = 1/2` only in its fit (Appendix B.3).
+* The wonky models share one speaker on worlds and backgrounds, and their posteriors are (A.5a)
+  and (A.5b). Lexical uncertainty and intentions take the interpretations equiprobable.
 
 ## Errata
 
-* Appendix A.2 defines anti-exhaustivity as `L1(w_ab|A) > P(w_ab|b1)` and calls the right-hand
-  side the measured prior, but `b1` is the wonky background (§4.1, Appendix B.2); the measured
-  prior is `P(w_ab|b2) = p`, which the theorems use.
-* Appendix B.2's posteriors `L1(w_ab|A)` pair `p` and the numerator with `S1(A|w_a, ·)`; with
-  `w_a` and `w_ab` exchanged they are (A.5).
-* Item 7 of the §4.2 model takes the logarithm of a sum of logarithms, and item 7 of the §4.3
-  model has `L_n(w|u) ∝ log(S_n(w|u))` for `P(w) S_n(u|w)`, as item 9 of §4.4 has it.
+* Appendix A.2 writes `P(w_ab|b1)` for the measured prior, which is `P(w_ab|b2)`.
+* Appendix B.2's `L1(w_ab|A)` exchanges `w_a` and `w_ab`; corrected, it is (A.5).
+* Item 7 of the §4.2 model takes the log of a sum of logs, and item 7 of §4.3 has `L_n ∝ log S_n`.
 
 ## TODO
 
-* The verdict on Degen and colleagues' model, which Appendix A.2 reaches numerically from (A.5a):
-  anti-exhaustivity for `p < .04` and `p ∈ [.57, .95]` at `ω = 0.1`; and the Bayesian model's
-  wonkiness threshold, about `0.9` (both checked numerically).
-* The second-level speakers, the production models svRSA1, svRSA2 and RSA-LI2 (Appendix B), and
-  the experiment's results (§5).
+* The verdict on Degen and colleagues' model and the Bayesian wonkiness threshold (A.2).
+* The second-level speakers, the production models of Appendix B, and the data of §5.
 
 ## References
 
-* [A. Cremers, E. G. Wilcox, B. Spector, *Exhaustivity and anti-exhaustivity in the RSA
-  framework* (2023)][cremers-wilcox-spector-2023]
-* [M. C. Frank, N. D. Goodman, *Predicting pragmatic reasoning in language games*
-  (2012)][frank-goodman-2012]
-* [J. Degen et al., *Wonky worlds* (2015)][degen-etal-2015]
-* [B. Spector, *The pragmatics of plural predication* (2017)][spector-2017]
-* [L. Bergen, R. Levy, N. D. Goodman, *Pragmatic reasoning through semantic inference*
-  (2016)][bergen-levy-goodman-2016]
-* [M. Franke, L. Bergen, *Theory-driven statistical modeling for semantics and pragmatics*
-  (2020)][franke-bergen-2020]
+* [cremers-wilcox-spector-2023]
+* [frank-goodman-2012]
+* [degen-etal-2015]
+* [spector-2017]
+* [bergen-levy-goodman-2016]
+* [franke-bergen-2020]
 -/
 
 @[expose] public section
@@ -127,14 +99,12 @@ def exh (u : Message) (w : World) : Bool :=
 
 theorem exh_a : exh .a = truth .aAndNotB := by decide
 
-/-- *A and B* has no stronger alternative. -/
 theorem exh_aAndB : exh .aAndB = truth .aAndB := by decide
 
-/-- *A and not B* has no stronger alternative. -/
 theorem exh_aAndNotB : exh .aAndNotB = truth .aAndNotB := by decide
 
-/-- An interpretation function under which every message is true somewhere and every world
-is described by some message, so that the literal listener and the speaker are defined. -/
+/-- An interpretation function under which every message is true somewhere and every world is
+described by some message. -/
 structure Meaning where
   /-- The truth value of a message at a world. -/
   sat : Message → World → Bool
@@ -169,8 +139,7 @@ def literal : Meaning := ⟨truth, by decide, by decide⟩
 /-- The exhaustified interpretation, *A* read as *A and not B*. -/
 def exhaustified : Meaning := ⟨exh, by decide, by decide⟩
 
-/-- The anti-exhaustive interpretation of the free lexical-uncertainty model, *A* read as
-*A and B*. -/
+/-- The anti-exhaustive interpretation, *A* read as *A and B*. -/
 def antiExhaustive : Meaning :=
   ⟨fun u w ↦ match u with | .a => truth .aAndB w | u => truth u w, by decide, by decide⟩
 
@@ -203,8 +172,8 @@ def FreeInterpretation.meaning : FreeInterpretation → Meaning
   | .exh => exhaustified
   | .antiExh => antiExhaustive
 
-/-- The wonky-world listener considers two backgrounds, in which the speaker assumes a uniform
-prior or the measured one. -/
+/-- The backgrounds of the wonky-world models, in which the speaker assumes a uniform prior or the
+measured one. -/
 inductive Background where
   | wonky
   | measured
@@ -212,8 +181,7 @@ inductive Background where
 
 instance : MeasurableSpace Background := ⊤
 
-/-- The question under discussion asks whether A holds, which the two worlds answer alike, or
-which world obtains. -/
+/-- The questions under discussion: whether A holds, and which world obtains. -/
 inductive QUD where
   | coarse
   | fine
@@ -249,8 +217,8 @@ end Sums
 
 /-! ### Priors and parameters -/
 
-/-- A model is fixed by the prior probability of both A and B, the rationality, and the costs
-of the two conjunctions, *A* itself costing nothing. -/
+/-- The parameters of a model: the prior of the world of both, the rationality, and the costs of
+the two conjunctions, *A* costing nothing. -/
 structure Setting where
   /-- The prior probability of the world where both A and B hold. -/
   p : ℝ
@@ -277,7 +245,7 @@ def cost : Message → ℝ
   | .aAndB => s.cAndB
   | .aAndNotB => s.cAndNotB
 
-/-- The cost factor of a message is the exponential of its cost scaled by the rationality. -/
+/-- The exponential of a message's cost, scaled by the rationality. -/
 noncomputable abbrev costFactor (u : Message) : ℝ≥0∞ :=
   ENNReal.ofReal (Real.exp (-(s.lam * s.cost u)))
 
@@ -290,7 +258,7 @@ theorem costFactor_toReal (u : Message) :
     (s.costFactor u).toReal = Real.exp (-(s.lam * s.cost u)) :=
   ENNReal.toReal_ofReal (Real.exp_pos _).le
 
-/-- The paper's `f_λ` is the logistic function with rate the rationality. -/
+/-- The logistic function with rate the rationality, the paper's `f_λ`. -/
 noncomputable def logistic (x : ℝ) : ℝ := Real.sigmoid (s.lam * x)
 
 theorem logistic_nonneg (x : ℝ) : 0 ≤ s.logistic x := Real.sigmoid_nonneg _
@@ -336,11 +304,12 @@ theorem prior_real_wa : s.prior.real {.wa} = 1 - s.p := by
 theorem prior_real_wab : s.prior.real {.wab} = s.p := by
   rw [measureReal_def, prior_wab, ENNReal.toReal_ofReal s.p_pos.le]
 
-/-- A posterior over the worlds after *A* is anti-exhaustive when it puts more on the world of
-both than the prior does (6b). -/
+/-- A posterior over the worlds is anti-exhaustive when it puts more on the world of both than the
+prior does (6b). -/
 def AntiExhaustive (μ : Measure World) : Prop := s.prior.real {.wab} < μ.real {.wab}
 
-/-- It is exhaustive when it puts less. -/
+/-- A posterior over the worlds is exhaustive when it puts less on the world of both than the prior
+does. -/
 def Exhaustive (μ : Measure World) : Prop := μ.real {.wab} < s.prior.real {.wab}
 
 end Setting
@@ -387,8 +356,7 @@ theorem L0_literal_a [IsProbabilityMeasure P] (w : World) : L0 P literal .a {w} 
 
 variable (s : Setting)
 
-/-- The speaker is the softmax of the literal listener's log probability less the cost, scaled
-by the rationality (eqs. 2 and 3). -/
+/-- The speaker under an interpretation (eqs. 2 and 3). -/
 noncomputable def speaker : Kernel World Message := RSA.speaker s.lam s.cost (L0 P m) Measure.dirac
 
 instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
@@ -436,7 +404,6 @@ theorem speaker_ne_zero {u : Message} {w : World} (h : m.sat u w = true) :
     speaker P m s w {u} ≠ 0 :=
   RSA.speaker_dirac_apply_singleton_ne_zero s.lam_pos.le (L0_ne_zero P hP m h)
 
-/-- Between two messages true at a world, the speaker prefers the one of higher utility. -/
 theorem speaker_real_singleton_lt_iff {u v : Message} {w : World} (hu : m.sat u w = true)
     (hv : m.sat v w = true) :
     (speaker P m s w).real {u} < (speaker P m s w).real {v} ↔
@@ -523,8 +490,6 @@ section Baseline
 
 variable (s : Setting)
 
-/-- In the world of both, the speaker prefers *A* to *A and B* iff the information *A and B* adds
-does not exceed its cost (6a). -/
 theorem baseline_aAndB_lt_a_iff :
     (s.speaker literal .wab).real {.aAndB} < (s.speaker literal .wab).real {.a} ↔
       -s.cAndB < Real.log s.p := by
@@ -533,8 +498,6 @@ theorem baseline_aAndB_lt_a_iff :
     ENNReal.toReal_one, Real.log_one, Setting.cost, ← measureReal_def, Setting.prior_real_wab,
     zero_sub, sub_zero]
 
-/-- In the world of A alone, the speaker prefers *A and not B* to *A* exactly when the
-negated log prior exceeds its cost (7). -/
 theorem baseline_a_lt_aAndNotB_iff :
     (s.speaker literal .wa).real {.a} < (s.speaker literal .wa).real {.aAndNotB} ↔
       Real.log (1 - s.p) < -s.cAndNotB := by
@@ -560,8 +523,8 @@ theorem antiExhaustive_listener_iff_speaker_lt :
   exact real_lt_posterior_real_singleton_iff_of_pair (s.speaker literal) s.prior (by decide)
     s.prior_support (comp_speaker_literal_ne_zero s _) (s.prior_ne_zero _) (s.prior_ne_zero _)
 
-/-- The listener is anti-exhaustive iff the prior log odds exceed the cost disadvantage of *A and
-not B* over *A and B*, whatever the rationality (6b). -/
+/-- The baseline listener is anti-exhaustive iff the prior log odds exceed the cost disadvantage of
+*A and not B* over *A and B*. -/
 theorem antiExhaustive_listener_iff :
     s.AntiExhaustive (listener s .a) ↔
       s.cAndNotB - s.cAndB < Real.log s.p - Real.log (1 - s.p) := by
@@ -580,12 +543,10 @@ end Baseline
 
 /-! ### The wonky-world models (§4.1)
 
-The listener is unsure which prior over the worlds the speaker assumes: the measured one, or the
-uniform prior of a wonky background. Both models share the speaker, who assumes her background's
-prior (items 1 to 3), and differ only in the listener's prior over worlds and backgrounds. In
-Degen and colleagues' model she draws the background and then the world under it (item 4); in the
-Bayesian version she keeps the measured prior on the worlds, independent of the background (items
-4 and 5). Her prior on the backgrounds is `β`, whose mass on the wonky one is the paper's `ω`. -/
+The listener is unsure whether the speaker assumes the measured prior or the uniform prior of a
+wonky background. The two models share the speaker and differ in the listener's prior: a
+background and then a world in Degen and colleagues' model, the measured prior on worlds in the
+Bayesian one. -/
 
 section Wonky
 
@@ -604,8 +565,7 @@ theorem worldPrior_ne_zero (b : Background) (w : World) : worldPrior s b {w} ≠
   · exact wonkyPrior_ne_zero w
   · exact s.prior_ne_zero w
 
-/-- The speaker under a background, with the background's prior in the literal listener
-(items 1 to 3 of the §4.1 model). -/
+/-- The speaker who assumes a background's prior (items 1 to 3 of the §4.1 model). -/
 noncomputable def bgSpeaker (b : Background) : Kernel World Message :=
   speaker (worldPrior s b) literal s
 
@@ -650,35 +610,30 @@ noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountab
 instance : IsMarkovKernel (worldKernel s) :=
   ⟨fun b ↦ by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
-/-- The prior of Degen and colleagues' listener draws the background, then the world under it
-(item 4 of the §4.1 model). -/
+/-- The prior of Degen and colleagues' listener: a background, then a world under it (item 4). -/
 noncomputable def wonkyJoint : Measure (World × Background) :=
   (β ⊗ₘ worldKernel s).map Prod.swap
 
-/-- The listener of Degen and colleagues' model (item 4 of the §4.1 model). -/
+/-- The listener of Degen and colleagues' model (item 4). -/
 noncomputable def wonkyListener : Kernel Message (World × Background) :=
   RSA.listener (wonkyJoint s β) (wonkySpeaker s)
 
-/-- The Bayesian listener keeps the measured prior on the worlds, independent of the background
-(item 4 of the Bayesian §4.1 model). -/
+/-- The Bayesian listener, whose prior on the worlds is the measured one (item 4). -/
 noncomputable def bayesWonkyJointListener : Kernel Message (World × Background) :=
   RSA.listener (s.prior.prod β) (wonkySpeaker s)
 
-/-- The speaker averaged over the backgrounds (item 5 of the Bayesian §4.1 model). -/
+/-- The speaker averaged over the backgrounds (item 5). -/
 noncomputable def bayesWonkySpeaker : Kernel World Message := ∑ b, β {b} • bgSpeaker s b
 
-/-- The Bayesian listener as the inverse of the averaged speaker (item 5 of the Bayesian §4.1
-model). -/
+/-- The Bayesian listener as the inverse of the averaged speaker (item 5). -/
 noncomputable def bayesWonkyListener : Kernel Message World :=
   RSA.listener s.prior (bayesWonkySpeaker s β)
 
-/-- The speaker who surely assumes the measured prior is the baseline speaker (§4.1). -/
 theorem bayesWonkySpeaker_dirac_measured :
     bayesWonkySpeaker s (Measure.dirac .measured) = s.speaker literal := by
   ext1 w
   simp [bayesWonkySpeaker, sum_background, bgSpeaker, worldPrior]
 
-/-- The two descriptions of the Bayesian model agree (items 4 and 5). -/
 theorem bayesWonkyJointListener_fst :
     (bayesWonkyJointListener s β).fst = bayesWonkyListener s β := by
   rw [bayesWonkyJointListener, RSA.listener_prod_fst, bayesWonkyListener]
@@ -712,7 +667,6 @@ theorem bayesWonkySpeaker_real_singleton (w : World) (u : Message) :
       (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
     ENNReal.toReal_mul, ENNReal.toReal_mul]
 
-/-- In Degen and colleagues' model the posterior on the world of both after *A* is (A.5a). -/
 theorem wonkyListener_fst_real_wab :
     (wonkyListener s β .a).fst.real {.wab} =
       (β.real {.measured} * s.p * s.logistic (s.cAndB + Real.log s.p) +
@@ -728,7 +682,6 @@ theorem wonkyListener_fst_real_wab :
     Setting.prior_real_wab]
   ring
 
-/-- In the Bayesian model the posterior on the world of both after *A* is (A.5b). -/
 theorem bayesWonkyListener_real_wab :
     (bayesWonkyListener s β .a).real {.wab} =
       s.p * (β.real {.measured} * s.logistic (s.cAndB + Real.log s.p) +
@@ -743,8 +696,8 @@ theorem bayesWonkyListener_real_wab :
     Setting.prior_real_wa, Setting.prior_real_wab]
   ring
 
-/-- The Bayesian listener is anti-exhaustive exactly when the excess of *A*'s use in the world of
-both over the world of A alone, averaged over the backgrounds, is positive (Appendix A.2). -/
+/-- The Bayesian wonky listener is anti-exhaustive iff *A* is used more in the world of both than
+in the world of A alone, averaged over the backgrounds. -/
 theorem antiExhaustive_bayesWonkyListener_iff [IsProbabilityMeasure β] :
     s.AntiExhaustive (bayesWonkyListener s β .a) ↔
       0 < β.real {.measured} * (s.logistic (s.cAndB + Real.log s.p) -
@@ -777,12 +730,8 @@ end Wonky
 
 /-! ### The supervaluationist model (§4.2)
 
-The model is Spector's 2017 first speaker applied to exhaustification. The literal listener of an
-interpretation is uncertain about the world and the question jointly (item 3). The speaker, who
-knows her world and the question she addresses, maximizes her expected utility over the
-interpretations under a prior on exhaustification, the utility of each being the literal
-listener's probability of her answer (items 4 and 5), and the pragmatic listener infers the world
-and the question (item 6). -/
+Spector's 2017 first speaker, applied to exhaustification: she addresses a question and maximizes
+her expected utility over the interpretations. -/
 
 section Supervaluationist
 
@@ -796,23 +745,21 @@ def answer (x : World × QUD) : Option World × QUD := (x.2.answer x.1, x.2)
 
 variable (s : Setting) (ρ : Measure QUD) (ν : Measure Interpretation)
 
-/-- The prior over worlds and questions, independent (items 3 and 6 of the §4.2 model). -/
+/-- The prior over worlds and questions (items 3 and 6 of the §4.2 model). -/
 noncomputable def svJoint : Measure (World × QUD) := s.prior.prod ρ
 
 instance [IsFiniteMeasure ρ] : IsFiniteMeasure (svJoint s ρ) := by
   unfold svJoint; infer_instance
 
-/-- The literal listener of an interpretation, uncertain about the world and the question (item 3
-of the §4.2 model). -/
+/-- The literal listener of an interpretation, over worlds and questions (item 3). -/
 noncomputable def svL0 (i : Interpretation) : Kernel Message (World × QUD) :=
   RSA.listener (svJoint s ρ) (RSA.truthful fun u ↦ Prod.fst ⁻¹' i.meaning.extension u)
 
 instance (i : Interpretation) : IsFiniteKernel (svL0 s ρ i) :=
   inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
 
-/-- The supervaluationist speaker, at a world and a question, maximizes her expected utility over
-the interpretations under the prior `ν` on them, the utility of each being the literal listener's
-probability of her answer (items 4 and 5 of the §4.2 model). -/
+/-- The supervaluationist speaker, who maximizes her expected utility over the interpretations
+under the prior `ν` (items 4 and 5). -/
 noncomputable def svSpeaker : Kernel (World × QUD) Message :=
   RSA.speaker s.lam s.cost (RSA.parseListener fun i ↦ (svL0 s ρ i).map answer)
     fun x ↦ ν.prod (Measure.dirac (answer x))
@@ -820,7 +767,7 @@ noncomputable def svSpeaker : Kernel (World × QUD) Message :=
 instance : IsFiniteKernel (svSpeaker s ρ ν) :=
   inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
-/-- The pragmatic listener, jointly over worlds and questions (item 6 of the §4.2 model). -/
+/-- The pragmatic listener over worlds and questions (item 6). -/
 noncomputable def svListener : Kernel Message (World × QUD) :=
   RSA.listener (svJoint s ρ) (svSpeaker s ρ ν)
 
@@ -861,8 +808,6 @@ theorem svL0_map_answer_eq_zero_iff (i : Interpretation) (u : Message) (w : Worl
 
 variable [IsFiniteMeasure ν]
 
-/-- The speaker never uses a message that an interpretation of positive prior makes false
-throughout the cell of her world in her question: Truth on all parses, relative to the question. -/
 theorem svSpeaker_apply_singleton_eq_zero_iff (w : World) (q : QUD) (u : Message) :
     svSpeaker s ρ ν (w, q) {u} = 0 ↔
       ∃ i, ν {i} ≠ 0 ∧ ∀ v, q.answer v = q.answer w → i.meaning.sat u v = false := by
@@ -882,8 +827,6 @@ theorem svSpeaker_fine_ne_zero {w : World} {u : Message} (hl : truth u w = true)
   · exact Bool.false_ne_true ((h w rfl).symm.trans hl)
   · exact Bool.false_ne_true ((h w rfl).symm.trans he)
 
-/-- Under either question, *A* is used no more in the world of both than in the world of A alone,
-whatever the priors (Appendix A.3, the speaker). -/
 theorem svSpeaker_wab_le_wa (hν : ν {.exh} ≠ 0) (q : QUD) :
     svSpeaker s ρ ν (.wab, q) {.a} ≤ svSpeaker s ρ ν (.wa, q) {.a} := by
   cases q
@@ -897,8 +840,7 @@ theorem comp_svSpeaker_ne_zero (u : Message) :
     (by rw [svJoint_apply_singleton]; exact mul_ne_zero (s.prior_ne_zero w) (hρ .fine))
     (svSpeaker_fine_ne_zero hρ hw.1 hw.2)
 
-/-- In the question-sensitive model the posterior of both A and B falls below its prior, for every
-prior, cost and prior on exhaustification that gives it positive mass (Appendix A.3). -/
+/-- The supervaluationist listener is exhaustive. -/
 theorem exhaustive_svListener [IsProbabilityMeasure ρ] (hν : ν {.exh} ≠ 0) :
     s.Exhaustive (svListener s ρ ν .a).fst := by
   have hm : 0 < ∑ p, (svJoint s ρ).real {p} * (svSpeaker s ρ ν p).real {.a} := by
@@ -921,10 +863,8 @@ end Supervaluationist
 
 /-! ### Lexical uncertainty (§4.3)
 
-The listener holds independent priors over worlds and interpretation functions, infers both from
-the message and marginalizes on the interpretation, which is to invert the speaker averaged over
-the interpretations (item 4). The grammatical version (EXH-LU) has the literal and the
-exhaustified interpretations, and the free version (FREE-LU) adds the anti-exhaustive one. -/
+The listener infers the world and an interpretation from the message. The grammatical version has
+the literal and exhaustified interpretations, the free version also the anti-exhaustive one. -/
 
 section LexicalUncertainty
 
@@ -967,14 +907,14 @@ the two. -/
 noncomputable def luJointListener : Kernel Message (World × I) :=
   RSA.listener (s.prior.prod (uniformOn Set.univ)) fun p ↦ s.speaker (meaning p.2) p.1
 
-/-- The joint posterior marginalized on interpretation functions is the listener of item 4: the
-two descriptions of the model in §4.3 agree. -/
 theorem luJointListener_fst : (luJointListener s meaning).fst = luListener s meaning := by
   rw [luJointListener, RSA.listener_prod_fst, luListener]
   congr 1
   ext w : 1
   simp [luSpeaker]
 
+/-- The grammatical lexical-uncertainty listener is exhaustive when *A and B* costs no more than
+*A and not B*. -/
 theorem exhaustive_luListener (hc : s.cAndB ≤ s.cAndNotB) :
     s.Exhaustive (luListener s Interpretation.meaning .a) := by
   rw [Setting.Exhaustive, luListener,
@@ -1109,8 +1049,6 @@ theorem comp_liMessageSpeaker_ne_zero (u : Message) :
 noncomputable def liListener : Kernel Message World :=
   RSA.listener s.prior (liMessageSpeaker s)
 
-/-- When *A and B* costs no more than *A and not B*, the speaker uses *A* less in the world of both
-than in the world of A alone (§4.4). -/
 theorem liMessageSpeaker_wab_lt_wa (hc : s.cAndB ≤ s.cAndNotB) :
     (liMessageSpeaker s .wab).real {.a} < (liMessageSpeaker s .wa).real {.a} := by
   rw [liMessageSpeaker_real_wab_a, liMessageSpeaker_real_wa_a,
@@ -1123,7 +1061,8 @@ theorem liMessageSpeaker_wab_lt_wa (hc : s.cAndB ≤ s.cAndNotB) :
   have h₄ := Real.exp_pos (s.lam * Real.log (1 - s.p))
   nlinarith [mul_lt_mul_of_pos_right h₁ h₃, mul_pos h₄ (Real.exp_pos (-(s.lam * s.cAndB)))]
 
-/-- So the listener is never anti-exhaustive (§4.4). -/
+/-- The lexical-intentions listener is exhaustive when *A and B* costs no more than *A and not B*.
+-/
 theorem exhaustive_liListener (hc : s.cAndB ≤ s.cAndNotB) :
     s.Exhaustive (liListener s .a) := by
   rw [Setting.Exhaustive, liListener,
