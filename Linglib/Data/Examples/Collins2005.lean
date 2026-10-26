@@ -262,6 +262,19 @@ def ex56d : Datum :=
     readings := []
     paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("evacuated", "true"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
 
+def ex60a : Datum :=
+  { id := "collins2005_ex60a"
+    source := ⟨"collins-2005", "(60a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A gift was given by every student to his professor."
+    glossedTokens := []
+    context := "A quantifier in the by-phrase binding a pronoun in a PP that follows it, evacuated before the remnant PartP fronted."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "every student"), ("patient", "a gift"), ("pp", "to his professor")] }
+
 def ex72a : Datum :=
   { id := "collins2005_ex72a"
     source := ⟨"collins-2005", "(72a)"⟩
@@ -300,6 +313,19 @@ def ex75 : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "given"), ("agent", "every boy"), ("patient", "money"), ("pp", "to his mother")] }
+
+def ex76a : Datum :=
+  { id := "collins2005_ex76a"
+    source := ⟨"collins-2005", "(76a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The magazines were sent to Mary's mother by her yesterday."
+    glossedTokens := []
+    context := "Principle C with the name inside the fronted PartP and a coindexed pronoun in the by-phrase."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "sent"), ("agent", "her"), ("patient", "the magazines"), ("pp", "to Mary's mother"), ("felicity", "infelicitous")] }
 
 def ex80a : Datum :=
   { id := "collins2005_ex80a"
@@ -340,6 +366,32 @@ def ex85b : Datum :=
     readings := []
     paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "him"), ("patient", "the book"), ("pp", "to John's mother")] }
 
-def all : List Datum := [ex9a, ex9b, ex10a, ex10b, ex10c, ex10d, ex15a, ex15b, ex18a, ex18b, ex23a, ex23b, ex23c, ex23d, ex27a, ex27b, ex29, ex56c, ex56d, ex72a, ex74a, ex75, ex80a, ex85a, ex85b]
+def ex91a : Datum :=
+  { id := "collins2005_ex91a"
+    source := ⟨"collins-2005", "(91a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Books were given by the students to each other."
+    glossedTokens := []
+    context := "A reciprocal in a PP that follows the by-phrase, evacuated before the remnant PartP fronted."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "the students"), ("patient", "books"), ("pp", "to each other")] }
+
+def ex91b : Datum :=
+  { id := "collins2005_ex91b"
+    source := ⟨"collins-2005", "(91b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Books were given to the students by each other."
+    glossedTokens := []
+    context := "A reciprocal in the by-phrase with its antecedent in a PP inside the fronted PartP, which does not c-command the external argument."
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "pp"), ("dependent", "external"), ("evacuated", "false"), ("verb", "given"), ("agent", "each other"), ("patient", "books"), ("pp", "to the students")] }
+
+def all : List Datum := [ex9a, ex9b, ex10a, ex10b, ex10c, ex10d, ex15a, ex15b, ex18a, ex18b, ex23a, ex23b, ex23c, ex23d, ex27a, ex27b, ex29, ex56c, ex56d, ex60a, ex72a, ex74a, ex75, ex76a, ex80a, ex85a, ex85b, ex91a, ex91b]
 
 end Collins2005.Examples

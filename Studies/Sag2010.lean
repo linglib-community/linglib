@@ -381,8 +381,6 @@ def clauses : List (String × FGClause) :=
 def cats : List (String × Cat) :=
   [("NP", .NP), ("PP", .PP), ("AP", .AP), ("AdvP", .AdvP), ("VP", .VP), ("S", .S), ("CP", .CP)]
 
-def bools : List (String × Bool) := [("true", true), ("false", false)]
-
 def whForms : List (String × WhForm) :=
   [("who", .who), ("whose", .whose), ("what", .what), ("whatA", .whatA), ("which", .which),
     ("how", .how), ("when", .when), ("where", .«where»), ("why", .why)]
@@ -444,7 +442,7 @@ the definite degree marker if it contains comparative *the*, and none otherwise.
 def fillerMarkers (x : Datum) : List Marker :=
   match whWord? x with
   | some (f, cat) => markers f cat
-  | none => if (x.parse? "the" bools).getD false then [.the] else [.none]
+  | none => if (x.bool? "the").getD false then [.the] else [.none]
 
 theorem distinguished :
     ∀ x ∈ probing .distinguished, ∀ c, clause? x = some c →
