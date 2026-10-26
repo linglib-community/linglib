@@ -16,12 +16,15 @@ phrase PartP moves to the specifier of a VoiceP headed by *by*, carrying the obj
 external argument so that Infl can attract it. This file builds the passive and its rivals, head
 movement of the verb and no movement, as derivations, and checks the paper's examples against the
 sentences they pronounce, against Infl's probe search, and against the binding conditions of
-`Syntax/Binding` evaluated at the surface or at some stage of the derivation.
+`Syntax/Binding` evaluated at the surface or at some stage of the derivation. What holds of the
+template clause of a shape holds of every clause of that shape, since its derivations are the
+template's with the tokens renamed.
 
 ## Main statements
 
-* `Collins2005.active_shares_vP`: the active and the passive share the derivation through vP (§2).
-* `Collins2005.ex9_converges_iff`: only PartP movement lets Infl find the object (§5).
+* `Collins2005.converges_iff`: in every clause only PartP movement lets Infl find the object (§5).
+* `Collins2005.commands_external_pp_iff`: the external argument commands a PP at the surface
+  exactly when the PP has left PartP (§7, §10).
 * `Collins2005.order_rows`: a passive is acceptable when a converging derivation pronounces it.
 * `Collins2005.licensing_rows`: the c-command and binding judgments of (10) and (60)–(91).
 * `Collins2005.fitsAt_rExpression_iff`: (76a) puts Principle C at the surface (§9.2).
@@ -228,8 +231,6 @@ theorem ex23_active :
     ex23.active.surfacePhon.flatMap (Gloss.tokens ·) = Gloss.tokens Examples.ex23a.primaryText := by
   decide
 
-/-- The active and the passive share the derivation through vP, so the external argument is
-Merged in Spec,vP in both (§2). -/
 theorem active_shares_vP (p : Clause) (a : Analysis) :
     p.active.take (p.vP false).length = (p.passive a false).take (p.vP false).length := by
   simp [Clause.active, Clause.passive, Clause.preRaising, Clause.fronted, Clause.voiceP]
@@ -241,42 +242,153 @@ theorem cCommandsAt_vP_iff (p : Clause) (a : Analysis) {x y : SyntacticObject} :
 
 example : ex9.active.CCommandsAt (ex9.vP false).length ex9.agent ex9.patient := by decide
 
+/-! ### Every clause of a shape
+
+A clause's derivations differ from those of the template of its shape only in their words, so they
+are the template's derivations renamed (`passive_eq_map`), and the substrate's invariance under
+renaming carries each fact checked on the template to every clause. -/
+
+/-- The template of the clauses whose complement has the shape of `particle` and `pp`, with empty
+words and a pronounced external argument. -/
+def Clause.template (particle pp : Option String) : Clause :=
+  .of "" "x" "" (particle.map fun _ ↦ "") (pp.map fun _ ↦ "")
+
+/-- The renaming that takes the tokens of `T` to those of `p`, a product of swaps of tokens that
+share an index. -/
+def Clause.renaming (T p : Clause) : Equiv.Perm LexicalItem.Token :=
+  Equiv.swap T.verb p.verb * Equiv.swap T.agent p.agent * Equiv.swap T.patient p.patient *
+    Equiv.swap T.be p.be * Equiv.swap T.voice p.voice *
+    match T.complement, p.complement with
+    | some c, some c' => Equiv.swap c.token c'.token
+    | _, _ => 1
+
+section Shape
+
+variable (verb agent patient be : String) (particle pp : Option String)
+
+local notation "σ" =>
+  Clause.renaming (Clause.template particle pp) (Clause.of verb agent patient particle pp be)
+
+theorem renaming_preservesSelection : LexicalItem.Token.PreservesSelection σ := by
+  have swap {a b : LexicalItem.Token} (hc : a.item.cat = b.item.cat)
+      (hs : a.item.sel = b.item.sel) (ha : a ≠ .bareTrace) (hb : b ≠ .bareTrace) :
+      LexicalItem.Token.PreservesSelection (Equiv.swap a b) :=
+    ⟨fun t ↦ by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hc],
+      fun t ↦ by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hs],
+      Equiv.swap_apply_of_ne_of_ne ha.symm hb.symm⟩
+  cases particle <;> cases pp <;>
+    simp only [Clause.renaming, Clause.template, Clause.of, Option.map_some, Option.map_none,
+      Equiv.Perm.coe_mul] <;>
+    refine .comp (.comp (.comp (.comp (.comp ?_ ?_) ?_) ?_) ?_) ?_ <;>
+    first
+    | exact .id
+    | exact swap rfl rfl (by simp [Clause.voice, Complement.token, LexicalItem.Token.bareTrace])
+        (by simp [Clause.voice, Complement.token, LexicalItem.Token.bareTrace])
+
+theorem renaming_patient : σ (Clause.template particle pp).patient =
+    (Clause.of verb agent patient particle pp be).patient := by
+  cases particle <;> cases pp <;>
+    simp [Clause.renaming, Clause.template, Clause.of, Clause.voice, Complement.token,
+      Equiv.swap_apply_of_ne_of_ne]
+
+theorem renaming_agent : σ (Clause.template particle pp).agent =
+    (Clause.of verb agent patient particle pp be).agent := by
+  cases particle <;> cases pp <;>
+    simp [Clause.renaming, Clause.template, Clause.of, Clause.voice, Complement.token,
+      Equiv.swap_apply_of_ne_of_ne]
+
+theorem renaming_infl₀ : σ infl₀ = infl₀ := by
+  cases particle <;> cases pp <;>
+    simp [Clause.renaming, Clause.template, Clause.of, Clause.voice, Complement.token, infl₀,
+      Equiv.swap_apply_of_ne_of_ne]
+
+theorem preRaising_eq_map (a : Analysis) (ev : Bool) :
+    (Clause.of verb agent patient particle pp be).preRaising a ev =
+      ((Clause.template particle pp).preRaising a ev).map σ := by
+  cases particle <;> cases pp <;> cases a <;> cases ev <;>
+    simp [Clause.preRaising, Clause.fronted, Clause.voiceP, Clause.vP, Clause.vpSteps,
+      Clause.evacuation, Clause.evacuee?, Clause.partP, Derivation.map, Derivation.append,
+      Step.map, Clause.renaming, Clause.template, Clause.of, Clause.voice, Complement.token,
+      part₀, v₀, x₀, infl₀, Equiv.swap_apply_of_ne_of_ne,
+      LinearizedSyntacticObject.toSyntacticObject_merge]
+
+theorem passive_eq_map (a : Analysis) (ev : Bool) :
+    (Clause.of verb agent patient particle pp be).passive a ev =
+      ((Clause.template particle pp).passive a ev).map σ := by
+  rw [Clause.passive, Clause.passive, preRaising_eq_map, Derivation.append_map]
+  simp [Step.map, renaming_patient]
+
+theorem length_voiceP (ev : Bool) :
+    ((Clause.of verb agent patient particle pp be).voiceP ev).length =
+      ((Clause.template particle pp).voiceP ev).length := by
+  cases particle <;> cases pp <;> cases ev <;>
+    simp [Clause.voiceP, Clause.vP, Clause.vpSteps, Clause.evacuation, Clause.evacuee?,
+      Clause.template, Clause.of, Derivation.length, Derivation.append]
+
 /-! ### Smuggling (§5, §6) -/
 
-theorem partP_smuggles :
-    (ex9.passive .partP false).IsSmugglingStep (ex9.voiceP false).length ex9.patient
-        ex9.agent ∧
-      ¬ (ex9.passive .headMovement false).IsSmugglingStep (ex9.voiceP false).length
-        ex9.patient ex9.agent := by
-  decide
+theorem converges_iff_template (a : Analysis) (ev : Bool) :
+    (Clause.of verb agent patient particle pp be).Converges a ev ↔
+      (Clause.template particle pp).Converges a ev := by
+  have hsel := renaming_preservesSelection verb agent patient be particle pp
+  have hpat := renaming_patient verb agent patient be particle pp
+  have hinfl := renaming_infl₀ verb agent patient be particle pp
+  rw [Clause.Converges, Clause.InflFinds, Clause.Converges, Clause.InflFinds, preRaising_eq_map,
+    Derivation.externalize?_map (Equiv.injective _) (fun s ↦ s.selHead_map hsel)]
+  generalize σ = f at hsel hpat hinfl ⊢
+  cases ((Clause.template particle pp).preRaising a ev).externalize? with
+  | none => simp
+  | some t =>
+    simp only [Option.map_some, Option.mem_def, Option.some.injEq, exists_eq_left']
+    rw [← hpat, ← map_leaf f (Clause.template particle pp).patient]
+    conv_lhs => rw [← hinfl, ← map_leaf f infl₀]
+    exact LinearizedSyntacticObject.mem_goals_leafProbe_map_iff (Equiv.injective f) hsel.cat
 
-/-- Under Relativized Minimality only PartP smuggling converges, so head movement and
-*The book was by John written* (9a), (36), both fail (§5). -/
-theorem ex9_converges_iff (a : Analysis) : ex9.Converges a false ↔ a = .partP := by
-  cases a <;> decide
+/-- In every clause only PartP smuggling converges under Relativized Minimality, so head movement
+and *The book was by John written* (9a), (36), both fail (§5). -/
+theorem converges_iff (a : Analysis) (ev : Bool) :
+    (Clause.of verb agent patient particle pp be).Converges a ev ↔ a = .partP := by
+  rw [converges_iff_template]
+  cases particle <;> cases pp <;> simp only [Clause.template, Option.map_some, Option.map_none] <;>
+    cases a <;> cases ev <;> decide +kernel
+
+theorem isSmugglingStep_iff (a : Analysis) (ev : Bool) :
+    ((Clause.of verb agent patient particle pp be).passive a ev).IsSmugglingStep
+        ((Clause.of verb agent patient particle pp be).voiceP ev).length
+        (Clause.of verb agent patient particle pp be).patient
+        (Clause.of verb agent patient particle pp be).agent ↔ a = .partP := by
+  rw [length_voiceP, ← renaming_patient, ← renaming_agent,
+    ← map_leaf _ (Clause.template particle pp).patient,
+    ← map_leaf _ (Clause.template particle pp).agent, passive_eq_map,
+    Derivation.isSmugglingStep_map_iff (Equiv.injective _) (renaming_preservesSelection ..)]
+  cases particle <;> cases pp <;> simp only [Clause.template, Option.map_some, Option.map_none] <;>
+    cases a <;> cases ev <;> decide +kernel
+
+theorem converges_iff_not_obeysFreezing (a : Analysis) (ev : Bool) :
+    (Clause.of verb agent patient particle pp be).Converges a ev ↔
+      ¬ ((Clause.of verb agent patient particle pp be).passive a ev).ObeysFreezing := by
+  rw [converges_iff_template, passive_eq_map, Derivation.obeysFreezing_map_iff (Equiv.injective _)]
+  cases particle <;> cases pp <;> simp only [Clause.template, Option.map_some, Option.map_none] <;>
+    cases a <;> cases ev <;> decide +kernel
+
+theorem isRemnantStep_iff (w : String) (a : Analysis) (ev : Bool) :
+    ((Clause.of verb agent patient (pp := w) (be := be)).passive a ev).IsRemnantStep
+        ((Clause.of verb agent patient (pp := w) (be := be)).voiceP ev).length ↔
+      a = .partP ∧ ev = true := by
+  rw [length_voiceP, passive_eq_map, Derivation.isRemnantStep_map_iff (Equiv.injective _)
+    (renaming_preservesSelection ..)]
+  simp only [Clause.template, Option.map_some, Option.map_none]
+  cases a <;> cases ev <;> decide +kernel
+
+end Shape
 
 /-- Smuggling brings the object level with the external argument, not past it: once PartP has
 moved, Infl's probe finds both. -/
 example : ex9.InflFinds .partP false ex9.agent := by decide +kernel
 
-theorem ex9_converges_iff_not_obeysFreezing (a : Analysis) :
-    ex9.Converges a false ↔ ¬ (ex9.passive a false).ObeysFreezing := by
-  cases a
-  · refine iff_of_true ((ex9_converges_iff _).2 rfl) ?_
-    exact (show (ex9.preRaising .partP false).IsSmugglingStep (ex9.voiceP false).length
-      ex9.patient ex9.agent by decide).not_obeysFreezing_append_im .left
-  all_goals decide
-
 theorem ex45_surfacePhon (a : Analysis) :
     (ex45.passive a false).surfacePhon = (ex45.passive .partP false).surfacePhon := by
   cases a <;> decide
-
-theorem ex45_converges_iff (a : Analysis) : ex45.Converges a false ↔ a = .partP := by
-  cases a <;> decide
-
-theorem ex56_isRemnantStep :
-    (ex56.passive .partP true).IsRemnantStep (ex56.voiceP true).length := by
-  decide
 
 /-! ### *By* takes a vP (§4) -/
 
@@ -363,6 +475,60 @@ instance (ℓ : Level) (p : Clause) (d : Derivation) (x y : Position) (c : Bindi
     Decidable (ℓ.Condition p d x y c) := by
   unfold Level.Condition; infer_instance
 
+theorem Level.cCommands_map_iff {f : LexicalItem.Token → LexicalItem.Token}
+    (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) (ℓ : Level)
+    (d : Derivation) (x y : SyntacticObject) :
+    ℓ.CCommands (d.map f) (x.map f) (y.map f) ↔ ℓ.CCommands d x y := by
+  cases ℓ
+  · exact Derivation.bindsAtSurface_map_iff hf hsel
+  · exact Derivation.bindsAtSomeStage_map_iff hf hsel
+
+section Shape
+
+variable (verb agent patient be : String) (particle pp : Option String)
+
+theorem commands_passive_iff (ℓ : Level) (ev : Bool) (x y : Position) :
+    (ℓ.configuration (.of verb agent patient particle pp be)
+        ((Clause.of verb agent patient particle pp be).passive .partP ev)).commands x y ↔
+      (ℓ.configuration (.template particle pp)
+        ((Clause.template particle pp).passive .partP ev)).commands x y := by
+  have hsel := renaming_preservesSelection verb agent patient be particle pp
+  have hat (z : Position) : (Clause.of verb agent patient particle pp be).at? z =
+      ((Clause.template particle pp).at? z).map
+        (Clause.renaming (.template particle pp) (.of verb agent patient particle pp be)) := by
+    cases z <;> cases particle <;> cases pp <;>
+      simp [Clause.at?, Clause.renaming, Clause.template, Clause.of, Clause.voice,
+        Complement.token, Equiv.swap_apply_of_ne_of_ne]
+  rw [passive_eq_map]
+  generalize Clause.renaming (.template particle pp) (.of verb agent patient particle pp be) = f
+    at hsel hat ⊢
+  simp only [Level.configuration, Binding.Configuration.monoclausal, hat]
+  cases (Clause.template particle pp).at? x <;> cases (Clause.template particle pp).at? y <;>
+    simp only [Option.map_some, Option.map_none, Option.mem_def, Option.some.injEq,
+      exists_eq_left', reduceCtorEq, false_and, exists_false]
+  rw [← map_leaf, ← map_leaf]
+  exact Level.cCommands_map_iff (Equiv.injective f) hsel ℓ _ _ _
+
+/-- In every passive with a PP, the external argument commands the PP exactly when binding is
+evaluated at some stage, or once the PP has left PartP (§7, §10). -/
+theorem commands_external_pp_iff (w : String) (ℓ : Level) (ev : Bool) :
+    (ℓ.configuration (.of verb agent patient (pp := w) (be := be))
+        ((Clause.of verb agent patient (pp := w) (be := be)).passive .partP ev)).commands
+      .external .pp ↔ ℓ = .anyStage ∨ ev = true := by
+  rw [commands_passive_iff]
+  simp only [Clause.template, Option.map_some, Option.map_none]
+  cases ℓ <;> cases ev <;> decide +kernel
+
+theorem not_commands_pp_external (w : String) (ℓ : Level) (ev : Bool) :
+    ¬ (ℓ.configuration (.of verb agent patient (pp := w) (be := be))
+        ((Clause.of verb agent patient (pp := w) (be := be)).passive .partP ev)).commands
+      .pp .external := by
+  rw [commands_passive_iff]
+  simp only [Clause.template, Option.map_some, Option.map_none]
+  cases ℓ <;> cases ev <;> decide +kernel
+
+end Shape
+
 /-- A dependency the rows test, the binding condition of a nominal's binding class, a bound
 variable, a negative polarity item, or *the other*. -/
 inductive Dependency
@@ -398,6 +564,10 @@ instance : ∀ (v : Verdict) (j : Judgment), Decidable (v.Admits j)
   | .licensed, _ => inferInstanceAs (Decidable (_ = _))
   | .reconstructed, _ => inferInstanceAs (Decidable (_ ∧ _))
   | .excluded, _ => inferInstanceAs (Decidable (_ = _))
+
+theorem acceptable_iff_of_admits_ofProp {P : Prop} [Decidable P] {j : Judgment}
+    (h : (ofProp P).Admits j) : j = .acceptable ↔ P := by
+  by_cases hP : P <;> simp_all [ofProp, Admits]
 
 end Verdict
 
@@ -466,7 +636,7 @@ def Licensing.verdict (c : Licensing) : Verdict :=
 theorem licensing_rows :
     (∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.verdict.Admits row.judgment) ∧
       Datum.ReadCount Licensing.ofRow Examples.all 14 := by
-  decide
+  decide +kernel
 
 /-- The rows of a binding class fit its condition evaluated at level `ℓ`, each row acceptable
 exactly when the condition holds. -/
@@ -478,14 +648,36 @@ def FitsAt (cls : Binding.BindingClass) (ℓ : Level) : Prop :=
 instance (cls : Binding.BindingClass) (ℓ : Level) : Decidable (FitsAt cls ℓ) := by
   unfold FitsAt; infer_instance
 
+theorem not_fitsAt {cls : Binding.BindingClass} {ℓ : Level} {row : Datum}
+    (hrow : row ∈ Examples.all)
+    (h : ∃ c ∈ Licensing.ofRow row, c.dependency = .condition cls ∧
+      ¬ (row.judgment = .acceptable ↔
+        ℓ.Condition c.clause c.derivation c.antecedent c.dependent cls)) :
+    ¬ FitsAt cls ℓ :=
+  fun hf ↦ let ⟨c, hc, hd, hn⟩ := h; hn (hf row hrow c hc hd)
+
 theorem fitsAt_pronoun_iff (ℓ : Level) : FitsAt .pronoun ℓ ↔ ℓ = .anyStage := by
-  cases ℓ <;> decide
+  cases ℓ
+  · exact iff_of_false (not_fitsAt (row := Examples.ex80a)
+      (by simp only [Examples.all, List.mem_cons, true_or, or_true]) (by decide +kernel))
+      (by decide)
+  · refine iff_of_true (fun row hrow c hc hd ↦ ?_) rfl
+    have h := licensing_rows.1 row hrow c hc
+    rw [Licensing.verdict, hd] at h
+    exact Verdict.acceptable_iff_of_admits_ofProp h
 
 /-- The name rows fit Principle C exactly at the surface, (76a) excluding obligatory
 reconstruction, as the pronoun rows fit Principle B exactly at every stage
 (`fitsAt_pronoun_iff`) (§9). -/
 theorem fitsAt_rExpression_iff (ℓ : Level) : FitsAt .rExpression ℓ ↔ ℓ = .surface := by
-  cases ℓ <;> decide
+  cases ℓ
+  · refine iff_of_true (fun row hrow c hc hd ↦ ?_) rfl
+    have h := licensing_rows.1 row hrow c hc
+    rw [Licensing.verdict, hd] at h
+    exact Verdict.acceptable_iff_of_admits_ofProp h
+  · exact iff_of_false (not_fitsAt (row := Examples.ex76a)
+      (by simp only [Examples.all, List.mem_cons, true_or, or_true]) (by decide +kernel))
+      (by decide)
 
 /-! ### Participle licensing (§3, (23)–(28)) -/
 
