@@ -328,7 +328,7 @@ theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
 /-- *Wandelen* takes *hebben*, with *zijn* under a directional phrase and *hebben* under a
 locational one (§2.2, (273)–(275)). -/
 example : perfectAuxiliary wandelen .intransitive = .have ∧
-    perfectAuxiliary (wandelen.withPath Adposition.into) .intransitive = .be ∧
+    perfectAuxiliary (wandelen.withPath (.ofCase .ill)) .intransitive = .be ∧
     perfectAuxiliary (wandelen.withPath Adposition.behind) .intransitive = .have := by
   decide
 
