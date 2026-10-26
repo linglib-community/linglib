@@ -48,10 +48,12 @@ presupposition universally, as the Weak Kleene quantifiers over the subtype of `
 ## Errata
 
 * The paper says after (9) that, other than the includable alternatives, it follows Bassi, Del
-  Pinal and Sauerland (2021), but (20) has the presupposition of `pex^{IE+II}[□(T ∧ B)]`
-  project from under negation, which needs the trivalent entry the earlier paper sets aside in
-  its footnote 15. With that paper's falsity conditions, those of the prejacent
-  (`Exhaustification.pexIE`), `¬pex^{IE+II}[□(T ∧ B)]` would be true wherever `¬□T ∨ ¬□B` is.
+  Pinal and Sauerland (2021), whose trivalent entry (14) leaves the falsity conditions of the
+  prejacent unchanged. But (20) has the presupposition of `pex^{IE+II}[□(T ∧ B)]` project from
+  under negation, which needs the analogue for includable alternatives of the entry the earlier
+  paper sets aside in its footnote 15. With the falsity conditions of the prejacent
+  (`Exhaustification.pexIE`), `¬pex^{IE+II}[□(T ∧ B)]` would be true wherever `¬□T ∨ ¬□B` is. The
+  paper does not discuss trivalent falsity conditions, so this is an undisclosed departure.
 
 ## References
 

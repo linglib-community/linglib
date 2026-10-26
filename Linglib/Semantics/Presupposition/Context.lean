@@ -24,11 +24,17 @@ connectives, Peters' Middle Kleene connectives, are admittance in it
 in it (`Semantics/Dynamic/Partial.lean`), and Schlenker derives it from transparency. They part at
 disjunction, where the table is asymmetric and symmetric filtering is `TwoDim.orKPSymmetric`.
 
+Accommodating a presupposition restricts the context to where the sentence is defined, and
+Doron and Wehbe require that the sentence then still be informative, which holds exactly when it
+is false somewhere in the context.
+
 ## Main declarations
 
 * `Connective.localContext`: the local context of the second argument of a connective.
 * `subset_support_meetMiddle_iff`, `subset_support_neg_joinMiddle_iff`,
   `subset_support_joinMiddle_iff`: the filtering connectives are admittance in the local contexts.
+* `PostAccommodationInformative`, `postAccommodationInformative_iff`: informativity after
+  accommodation is falsity somewhere in the context.
 
 ## References
 
@@ -39,6 +45,8 @@ disjunction, where the table is asymmetric and symmetric filtering is `TwoDim.or
 * [karttunen-1974-presupposition]
 * [peters-1979]
 * [schlenker-2009]
+* [doron-wehbe-2022]
+* [spector-2025]
 -/
 
 @[expose] public section
@@ -99,5 +107,29 @@ theorem subset_support_joinMiddle_iff :
   refine ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw h1 ↦ ?_⟩, fun h w hw ↦ ⟨h.1 w hw, ?_⟩⟩
   · exact (h w hw).2 (by have := (h w hw).1; cases hp : p w <;> simp_all)
   · exact fun _ ↦ h.2 w hw (by intro h1; simp_all)
+
+/-! ### Informativity after accommodation
+
+Accommodating the presupposition of a sentence restricts the context to where the sentence is
+defined. Doron and Wehbe's constraint asks that the sentence still be informative there. -/
+
+/-- A sentence is informative after accommodation in `C`, [doron-wehbe-2022]'s
+Post-Accommodation Informativity, when the context with its presupposition accommodated does not
+entail it. -/
+def PostAccommodationInformative (C : Set W) (p : W → SignType) : Prop :=
+  ¬ C ∩ Function.support p ⊆ posExt p
+
+/-- A sentence is informative after accommodation exactly when it is false somewhere in the
+context ([spector-2025], (3) and (4)). -/
+theorem postAccommodationInformative_iff :
+    PostAccommodationInformative C p ↔ ∃ w ∈ C, p w = -1 := by
+  simp only [PostAccommodationInformative, Set.subset_def, Set.mem_inter_iff,
+    Function.mem_support, mem_posExt, not_forall, exists_prop, and_assoc]
+  exact exists_congr fun w ↦ and_congr_right fun _ ↦ by cases p w <;> decide
+
+theorem PostAccommodationInformative.mono {C' : Set W} (h : PostAccommodationInformative C p)
+    (hC : C ⊆ C') : PostAccommodationInformative C' p :=
+  let ⟨w, hw, hp⟩ := postAccommodationInformative_iff.1 h
+  postAccommodationInformative_iff.2 ⟨w, hC hw, hp⟩
 
 end Presupposition

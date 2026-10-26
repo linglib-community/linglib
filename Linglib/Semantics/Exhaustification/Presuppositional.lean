@@ -47,7 +47,8 @@ prejacent. Del Pinal, Bassi and Sauerland state `pex^{IE+II}` as an assertion an
 presupposition and say that, other than the includable alternatives, they follow the earlier
 paper; their negative free choice under negation, `¬pex^{IE+II}[□(T ∧ B)]` (their (20)), has the
 presupposition `□T ↔ □B` project from under negation although `□T` and `□B` are weaker than the
-prejacent, which takes the set-aside entry. `pexIEII` follows the later paper.
+prejacent, which takes the analogue of the set-aside entry for includable alternatives. `pexIEII`
+follows the later paper.
 
 ## References
 
