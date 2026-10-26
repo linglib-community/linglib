@@ -28,13 +28,15 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 * `Minor2022.sentence`: a subject over a distributivity operator over a verb and its object.
 * `Minor2022.max`, `Minor2022.detPl`, `Minor2022.detSg`: maximization over assignments (106) and the
   plural and singular quantificational determiners (108), (109).
+* `Minor2022.stateMax`: the state-level maximization of Brasoveanu that fn. 42 contrasts with (106).
 
 ## Main results
 
 * `Minor2022.exh_vp`: Exh with Generalized Strength (89) negates the singular alternative (115).
 * `Minor2022.dependent_iff`: the truth conditions (129) of a bare plural under floating *all*.
 * `Minor2022.detPl_most_iff`: the truth conditions of *most* with a bare plural object (131).
-* `Minor2022.detSg_every_iff`: the truth conditions of *every* with a bare plural object (174).
+* `Minor2022.max_dist`: maximization (106) is at the level of assignments, unlike the state-level
+  maximization of Brasoveanu (fn. 42).
 * `Minor2022.judgments`: in the context of the girl-and-hat examples, the analysis predicts the
   judgments of (3), (4), (10b), (11a), (12b) and (13).
 
@@ -526,6 +528,84 @@ theorem singleton_mem_max_iff {k : S} {J : Set S} :
     rw [val_extend_self]
     exact h y hdom
 
+/-- Maximization (106) is at the level of assignments (fn. 42): maximizing a distributive update
+is maximizing at every assignment separately. -/
+theorem max_dist (u : R) (D : Update (Set S)) : max u (dist D) = dist (max u D) := by
+  ext ⟨I, J⟩
+  constructor
+  · rintro ⟨⟨ρ, hne, rfl, rfl, hD⟩, hmax⟩
+    refine ⟨ρ, hne, rfl, rfl, fun p hp ↦ singleton_mem_max_iff.2 ⟨hD p hp, fun y hy ↦ ?_⟩⟩
+    classical
+    let f : S → S := fun k ↦ extend k u (if k = p.1 then y else val u k)
+    have hf {k : S} (hk : k ≠ p.1) : f k = k := by simp [f, hk, extend_eq_self]
+    have hdom : f '' ρ.dom ∈ (dist D).dom := by
+      refine (dom_dist D).symm ▸ ⟨⟨_, Set.mem_image_of_mem f ⟨p.2, hp⟩⟩, ?_⟩
+      rintro _ ⟨k, ⟨L, hkL⟩, rfl⟩
+      by_cases hk : k = p.1
+      · subst hk
+        simpa [f] using hy
+      · rw [hf hk]
+        exact ⟨L, hD _ hkL⟩
+    simpa [f, val_extend_self] using hmax _ ⟨f, fun k _ ↦ ⟨_, rfl⟩, rfl⟩ hdom p.1 ⟨p.2, hp⟩ _
+      (Set.mem_image_of_mem f ⟨p.2, hp⟩) ⟨_, rfl⟩
+  · rintro ⟨ρ, hne, rfl, rfl, hD⟩
+    refine ⟨⟨ρ, hne, rfl, rfl, fun p hp ↦ (singleton_mem_max_iff.1 (hD p hp)).1⟩, ?_⟩
+    rintro I' - hI' i ⟨L, hiL⟩ _ hi' ⟨e, rfl⟩
+    rw [val_extend_self]
+    rw [dom_dist] at hI'
+    exact (singleton_mem_max_iff.1 (hD (i, L) hiL)).2 e (hI'.2 _ hi')
+
+/-- State-level maximization, (41) of [brasoveanu-2008], which fn. 42 contrasts with (106):
+introduce `u` and update with `D`, keeping the outputs whose set of values of `u` contains that of
+every output. -/
+def stateMax (u : R) (D : Update (Set S)) : Update (Set S) :=
+  {(I, J) | I ~[PCDRT.intro u ○ D] J ∧
+    ∀ K, I ~[PCDRT.intro u ○ D] K → (PCDRT.value u K : Set E) ⊆ PCDRT.value u J}
+
+omit [PartialOrder E] in
+/-- State-level maximization is not at the level of assignments ([brasoveanu-2008], p. 149): when
+only `a` and `b` satisfy `P`, the output where only the second of two inputs has a successor storing
+`b` is maximal, but maximizing at each input separately rejects it. -/
+theorem stateMax_not_dist {a b : E} {i₀ i₁ : S} (hab : a ≠ b) (ha : P a)
+    (hb : P b) (hP : ∀ x, P x → x = a ∨ x = b) (h : ∀ x y, extend i₀ u x ≠ extend i₁ u y) :
+    {i₀, i₁} ~[stateMax u (test (lex P u))]
+        {extend i₀ u a, extend i₁ u a, extend i₁ u b} ∧
+      ¬{i₀, i₁} ~[dist (stateMax u (test (lex P u)))]
+        {extend i₀ u a, extend i₁ u a, extend i₁ u b} := by
+  refine ⟨⟨mem_comp_test.2 ⟨⟨?_, ?_⟩, mem_lex.2 ⟨⟨a, _, Or.inl rfl, val_extend_self _ _ _⟩, ?_⟩⟩,
+    fun K hK ↦ ?_⟩, ?_⟩
+  · rintro _ (rfl | rfl)
+    exacts [⟨_, Or.inl rfl, a, rfl⟩, ⟨_, Or.inr (Or.inl rfl), a, rfl⟩]
+  · rintro _ (rfl | rfl | rfl)
+    exacts [⟨i₀, Or.inl rfl, a, rfl⟩, ⟨i₁, Or.inr rfl, a, rfl⟩, ⟨i₁, Or.inr rfl, b, rfl⟩]
+  · rintro _ ⟨_, (rfl | rfl | rfl), rfl⟩ <;> simpa [val_extend_self]
+  · obtain ⟨-, hK⟩ := mem_lex.1 (mem_comp_test.1 hK).2
+    rw [PCDRT.value_eq_image, PCDRT.value_eq_image]
+    intro x hx
+    obtain rfl | rfl := hP x (hK hx)
+    exacts [⟨_, Or.inl rfl, val_extend_self _ _ _⟩,
+      ⟨_, Or.inr (Or.inr rfl), val_extend_self _ _ _⟩]
+  · rintro ⟨ρ, -, hdom, hcod, hρ⟩
+    obtain ⟨L, hL⟩ : i₀ ∈ ρ.dom := by
+      rw [hdom]
+      exact Or.inl rfl
+    obtain ⟨hL', hmax⟩ := hρ _ hL
+    have hK : {i₀} ~[PCDRT.intro u ○ test (lex P u)] {extend i₀ u b} :=
+      mem_comp_test.2 ⟨PCDRT.singleton_mem_intro i₀ u b,
+        singleton_mem_lex_iff.2 (by rwa [val_extend_self])⟩
+    have hbL := hmax _ hK
+    rw [PCDRT.value_eq_image, PCDRT.value_eq_image, Set.image_singleton, val_extend_self,
+      Set.singleton_subset_iff] at hbL
+    obtain ⟨l, hl, rfl⟩ := hbL
+    obtain ⟨i, hi, e, he⟩ := (mem_comp_test.1 hL').1.2 l hl
+    rw [Set.mem_singleton_iff.1 hi] at he
+    subst he
+    have hlJ : extend i₀ u e ∈ ⋃₀ ρ.cod := ⟨L, ⟨i₀, hL⟩, hl⟩
+    rw [hcod] at hlJ
+    rcases hlJ with h' | h' | h'
+    · exact hab (by rw [h', val_extend_self])
+    exacts [h e a h', h e _ h']
+
 variable {u'' : R}
 
 /-- The schema (105) at a one-assignment input: values `x'` of `u'` and `x` of `u` pass the test
@@ -774,5 +854,19 @@ theorem judgments :
     obtain ⟨g, -, rfl⟩ := ha
     obtain ⟨c, rfl⟩ := exists_eq_singleton_of_verb hb
     exact hat (atom_iff_isAtom.2 (Finset.isAtom_singleton c))
+
+/-- Brasoveanu's example of state-level maximization in the model: two girls and the hats `3` and
+`4`. -/
+example (i₀ i₁ : Dref → Finset Thing) (h₀ : i₀ .subj = {0}) (h₁ : i₁ .subj = {1}) :
+    ¬{i₀, i₁} ~[dist (stateMax Dref.obj
+      (test (lex (· ∈ ({{3}, {4}} : Set (Finset Thing))) Dref.obj)))]
+    {extend i₀ Dref.obj {3}, extend i₁ Dref.obj {3}, extend i₁ Dref.obj {4}} := by
+  refine (stateMax_not_dist (· ∈ ({{3}, {4}} : Set (Finset Thing))) (u := Dref.obj) (a := {3})
+    (b := {4}) (i₀ := i₀) (i₁ := i₁) (by decide) (Or.inl rfl) (Or.inr rfl) (fun _ h ↦ h)
+    fun _ _ h ↦ ?_).2
+  have hne : Dref.subj ≠ Dref.obj := nofun
+  have := congrArg (val Dref.subj) h
+  rw [val_extend_of_ne _ _ _ _ hne, val_extend_of_ne _ _ _ _ hne] at this
+  exact absurd (h₀.symm.trans (this.trans h₁)) (by decide)
 
 end Minor2022

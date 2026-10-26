@@ -309,8 +309,8 @@ theorem singleton_mem_strictLift_iff {i : S} :
   rintro ⟨j, hj, rfl⟩
   exact ⟨fun _ ↦ j, fun k hk ↦ by rwa [Set.mem_singleton_iff.1 hk], Set.image_singleton⟩
 
-/-- The distributivity operator of [brasoveanu-2008] ([minor-2022] (94)) updates the singleton state
-of every input row separately and glues the outputs together. -/
+/-- The distributivity operator (39) of [brasoveanu-2008] ([minor-2022] (94)) updates the singleton
+state of every input row separately and glues the outputs together. -/
 def dist (D : Update (Set S)) : Update (Set S) :=
   {(I, J) | ∃ ρ : SetRel S (Set S), ρ.Nonempty ∧ ρ.dom = I ∧ ⋃₀ ρ.cod = J ∧
     ∀ p ∈ ρ, ({p.1}, p.2) ∈ D}
