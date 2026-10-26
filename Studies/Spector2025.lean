@@ -174,8 +174,7 @@ def raised : Tree Unit QWord := .bin (.leaf .quant) (.binder 1 (.bin (.tr 1) (.l
 of the values its denotation collects. -/
 def parses (lex : QWord → Option (Denotation E Unit SetM)) (g : Assignment E)
     (t : Tree Unit QWord) : Set Prop :=
-  {b | (⟨.t, b⟩ : Denotation E Unit Id) ∈
-    Tree.readings (fun w ↦ {d | ∃ X, lex w = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run}) g t}
+  {b | (⟨.t, b⟩ : Denotation E Unit Id) ∈ Tree.readings (Tree.wordReadings lex) g t}
 
 /-- The parses of a raised quantifier read the scalar predicate at one standard for every entity. -/
 theorem parses_raised (g : Assignment E) :

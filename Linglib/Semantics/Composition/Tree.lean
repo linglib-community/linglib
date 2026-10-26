@@ -773,18 +773,22 @@ section SetEffect
 
 variable {C : Type} {L : Type*} {E W : Type} {S : Sorts}
 
-/-- The readings of a tree under the readings of a set-valued lexicon are among the values the
-engine computes for it under the set effect. -/
+/-- The readings of a word under a set-valued lexicon: its denotations at each of its values. -/
+def wordReadings (lex : L → Option (Denotation E W SetM S)) (w : L) : Set (Denotation E W Id S) :=
+  {d | ∃ X, lex w = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run}
+
+/-- The readings of a tree under the readings of a set-valued lexicon's words are among the values
+the engine computes for it under the set effect. -/
 theorem mem_interp_setM_of_mem_readings (lex : L → Option (Denotation E W SetM S))
     (g : Assignment E) {t : Tree C L} {d : Denotation E W Id S}
-    (hd : d ∈ readings (fun w ↦ {d | ∃ X, lex w = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run}) g t) :
+    (hd : d ∈ readings (wordReadings lex) g t) :
     ∃ X, interp lex g t = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run := by
   obtain ⟨r, rfl, hr⟩ := hd
   rw [interp_map]
   simp only [interp] at hr ⊢
   obtain ⟨⟨τ, u⟩, hu, hev⟩ := Option.bind_eq_some_iff.1 hr
   have hrel : ∀ (p : {p : L × Denotation E W Id S //
-      p.2 ∈ (fun w ↦ {d | ∃ X, lex w = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run}) p.1}) d',
+      p.2 ∈ wordReadings lex p.1}) d',
       (lex ∘ fun x ↦ x.1.1) p = some d' →
         ∃ c, some p.1.2 = some ⟨d'.1, c⟩ ∧ c ∈ SetM.run d'.2 := by
     rintro ⟨⟨w, ⟨τ', c⟩⟩, X, hX, hc⟩ d' hd'
