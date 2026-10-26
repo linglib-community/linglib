@@ -29,6 +29,7 @@ with the convention.
 * `courtAt₁_true_iff`, `courtAt₂_true_iff`: the truth conditions of (85) and (86).
 * `courtAt₂_pretty_true_iff`: (5) under the narrow-scope indefinite.
 * `courtAt₂_come₂_true_iff`: (97), the reading of (6) on which the woman varies.
+* `determiner_every_iff`: on a non-empty restrictor, (83) is the generalized determiner (77).
 * `readings`: the readings of (5) and (6) on p. 444.
 
 ## Implementation notes
@@ -37,13 +38,12 @@ with the convention.
   so they are false of ★ (fn. 5).
 * The lexical entries keep the distributivity operators that (85), (86), (95) and (96) omit as
   redundant, and `every` is (83), with the operators (74) that the paper substitutes for those of
-  (75) on a non-empty restrictor. The truth conditions hold without the constraint of fn. 12 that
-  a new dref takes ★ only when necessary.
+  (75) on a non-empty restrictor (`determiner_every_iff`). The truth conditions hold without the
+  constraint of fn. 12 that a new dref takes ★ only when necessary.
 * *The banquet* of (6b) is folded into the relation `Model.come`, as on p. 473.
 
 ## TODO
 
-* The general determiner (77) with the operator (75), and its reduction to (83) (p. 470).
 * Negation (52), the definite articles (53), (54), (78), (79), and the donkey sentences and
   anaphora to quantifier domains of §2.3.
 * Intensional PCDRT (§3) and the entailment particles of §4.
@@ -219,7 +219,8 @@ theorem value_subset_valueCol : value Dref.u₃ valueCol ⊆ value Dref.u₁ val
 theorem value_subset_structCol : value Dref.u₃ structCol ⊆ value Dref.u₁ structCol := by
   intro x
   simp only [structCol, mem_value, embed_flat, Set.mem_insert_iff, Set.mem_singleton_iff,
-    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj, Flat.bot_ne_coe, false_or]
+    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj, Flat.bot_ne_coe,
+    false_or]
   rintro (rfl | rfl | rfl) <;> simp
 
 /-- The value-inclusion column pairs `α₁` with `β₃`, a dependency (63a) never established. -/
@@ -249,6 +250,12 @@ theorem structCol_keeps_dep : dep Dref.u₃ Dref.u₂ structCol ⊆ dep Dref.u�
 for those of (75) on a non-empty restrictor. -/
 def every (d d' : Dref) (P : Pred E) : Quant E := fun P' ↦
   max d (distrib d (P d)) ○ maxSub d' d (distrib d' (P' d')) ○ test (det GQ.every d d')
+
+/-- On a non-empty restrictor, (83) is the generalized determiner (77) at `EVERY` (p. 470). -/
+theorem determiner_every_iff {d d' : Dref} (hd : d ≠ d') {P P' : Pred E} {I J : Set (Row E)}
+    (hI : ∃ K, I ~[intro d ○ distrib d (P d)] K) :
+    I ~[determiner GQ.every d d' P P'] J ↔ I ~[every d d' P P'] J :=
+  mem_determiner_iff (fun _ ⟨x, hx⟩ h ↦ h x hx) hd hI
 
 /-- (80): `court-at¹` gives its first object scope over its second. -/
 def courtAt₁ (R : E → E → E → Prop) (Q' Q'' : Quant E) : Pred E :=

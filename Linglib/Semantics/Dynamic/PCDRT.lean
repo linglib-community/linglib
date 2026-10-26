@@ -42,7 +42,9 @@ and a static determiner relating the values of two drefs.
 * `PCDRT.atom`, `PCDRT.sing`, `PCDRT.det`: distributive predication, singular number, and a static
   determiner over the values of two drefs.
 * `PCDRT.structSub`, `PCDRT.structSubAll`: structured inclusion.
-* `PCDRT.max`, `PCDRT.maxSub`, `PCDRT.dist`, `PCDRT.distrib`: maximization and distributivity.
+* `PCDRT.max`, `PCDRT.maxSub`, `PCDRT.dist`, `PCDRT.distrib`, `PCDRT.distribOrId`: maximization
+  and distributivity.
+* `PCDRT.determiner`: the generalized determiner.
 * `PCDRT.copy`: a dref copying another's value in every row.
 * `PCDRT.Preserves`: an update leaves the values of some drefs in place row for row.
 
@@ -58,6 +60,8 @@ and a static determiner relating the values of two drefs.
   union-closed condition stores every individual that satisfies it, with every input row.
 * `PCDRT.mem_maxSub_test_copy`: a structured subset that copies its superset row for row is
   maximal when it passes the test.
+* `PCDRT.mem_determiner_iff`: on a non-empty restrictor and a static determiner false of an empty
+  nuclear scope, the generalized determiner needs only the distributivity operator `distrib`.
 
 ## References
 
@@ -314,6 +318,11 @@ theorem value_cell (h : x ∈ value u I) : value u (cell u x I) = {x} :=
 theorem nonDummy_mono (h : I ⊆ J) : nonDummy u I ⊆ nonDummy u J :=
   fun _ hi ↦ ⟨h hi.1, hi.2⟩
 
+theorem nonDummy_nonempty_iff : (nonDummy u I).Nonempty ↔ (value u I).Nonempty := by
+  refine ⟨fun ⟨i, hi, hne⟩ ↦ ?_, fun ⟨x, i, hi, hx⟩ ↦ ⟨i, hi, hx ▸ Flat.coe_ne_bot⟩⟩
+  obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 hne
+  exact ⟨x, i, hi, hx⟩
+
 theorem tuples_singleton_of_eq_bot {i : S} (k : ι) (h : val (w k) i = ⊥) :
     tuples w {i} = (∅ : Set (ι → E)) :=
   Set.eq_empty_of_forall_notMem fun _ hy ↦ by simp_all
@@ -424,6 +433,29 @@ theorem distrib_test_atom_self (P : (Fin 1 → E) → Prop) (u : R) :
   refine and_congr_right fun _ ↦ forall₂_congr fun x hx ↦ ?_
   simp [value_cell hx]
 
+/-- The distributivity operator `⟨u⟩(D)` ((75)): as `distrib u D` where `u` has a value, and the
+identity on a state where it has none. -/
+def distribOrId (u : R) (D : Update (Set S)) : Update (Set S) :=
+  {(I, J) | cell u ⊥ I = cell u ⊥ J ∧ (value u I = ∅ → I = J) ∧
+    ((value u I).Nonempty → nonDummy u I ~[dist u D] nonDummy u J)}
+
+/-- `⟨u⟩(D)` is `_u(D)`, or the identity where `u` has no value. -/
+theorem mem_distribOrId_iff :
+    I ~[distribOrId u D] J ↔ I ~[distrib u D] J ∨ value u I = ∅ ∧ I = J := by
+  rcases (value u I).eq_empty_or_nonempty with h | h
+  · refine ⟨fun ⟨_, hIJ, _⟩ ↦ .inr ⟨h, hIJ h⟩, ?_⟩
+    rintro (⟨-, hne, -⟩ | ⟨-, rfl⟩)
+    · exact absurd h hne.ne_empty
+    · exact ⟨rfl, fun _ ↦ rfl, fun hne ↦ absurd h hne.ne_empty⟩
+  · refine ⟨fun ⟨hbot, _, hd⟩ ↦ .inl ⟨hbot, h, hd h⟩, ?_⟩
+    rintro (⟨hbot, -, hd⟩ | ⟨h', -⟩)
+    · exact ⟨hbot, fun h' ↦ absurd h' h.ne_empty, fun _ ↦ hd⟩
+    · exact absurd h' h.ne_empty
+
+theorem distrib_subset_distribOrId (u : R) (D : Update (Set S)) :
+    distrib u D ⊆ distribOrId u D :=
+  fun _ h ↦ mem_distribOrId_iff.2 (.inl h)
+
 /-! ### Maximization -/
 
 /-- Maximization `max^u(D)` ((69)): introduce `u` and update with `D`, keeping the outputs whose
@@ -443,6 +475,30 @@ theorem max_subset (u : R) (D : Update (Set S)) : max u D ⊆ intro u ○ D :=
 theorem mem_max_of_forall_subset (hJ : I ~[intro u ○ D] J)
     (h : ∀ K, I ~[intro u ○ D] K → nonDummy u K ⊆ nonDummy u J) : I ~[max u D] J :=
   mem_max.2 ⟨hJ, fun K hK _ ↦ h K hK⟩
+
+/-- Adding outputs on which `u` has no value does not change maximization, where some output already
+gives `u` a value. -/
+theorem mem_max_iff_of_subset (hDD' : D ⊆ D')
+    (h : ∀ K, I ~[intro u ○ D'] K → ¬I ~[intro u ○ D] K → nonDummy u K = ∅)
+    (hne : ∃ K, I ~[intro u ○ D] K ∧ (nonDummy u K).Nonempty) :
+    I ~[max u D'] J ↔ I ~[max u D] J := by
+  have hsub : intro u ○ D ⊆ intro u ○ D' := comp_subset_comp_right hDD'
+  obtain ⟨K₀, hK₀, hne₀⟩ := hne
+  simp only [mem_max]
+  constructor
+  · intro hJ
+    have hJD : I ~[intro u ○ D] J := by
+      by_contra hJD
+      have h₀ := h J hJ.prop hJD
+      have := hJ.le_of_le (hsub hK₀) (by simp [h₀])
+      rw [h₀, Set.subset_empty_iff] at this
+      exact hne₀.ne_empty this
+    exact ⟨hJD, fun K hK hle ↦ hJ.le_of_le (hsub hK) hle⟩
+  · intro hJ
+    refine ⟨hsub hJ.prop, fun K hK hle ↦ ?_⟩
+    by_cases hKD : I ~[intro u ○ D] K
+    · exact hJ.le_of_le hKD hle
+    · simp [h K hK hKD]
 
 /-- Maximization of a union-closed condition stores every individual that satisfies it (p. 466):
 the non-dummy substate of a maximal output contains that of every output. -/
@@ -544,6 +600,12 @@ theorem mem_maxSub_test_copy (hC : copy u' u I ∈ C) :
 
 end Copy
 
+/-- The generalized determiner `det^{u, u'⊑u}` ((77)): `u` stores the maximal restrictor set and
+`u'` its maximal structured subset satisfying the nuclear scope, each updated under `⟨·⟩`, and the
+static determiner `q` relates the two. -/
+def determiner (q : Quantifier.GQ E) (u u' : R) (P P' : R → Update (Set S)) : Update (Set S) :=
+  max u (distribOrId u (P u)) ○ maxSub u' u (distribOrId u' (P' u')) ○ test (det q u u')
+
 theorem Preserves.max (h : ∀ k, w k ≠ u) (hD : Preserves w D) : Preserves w (max u D) :=
   fun _ _ hIJ ↦ ((preserves_intro h).comp hD) (max_subset u D hIJ)
 
@@ -559,6 +621,75 @@ theorem Preserves.distrib (hD : Preserves w D) : Preserves w (distrib u D) := by
     ((Set.liftRel_eq.2 rfl).biUnion fun x hx y _ hxy ↦ ?_)
   subst hxy
   exact hD (hc x hx)
+
+theorem Preserves.distribOrId (hD : Preserves w D) : Preserves w (distribOrId u D) := by
+  intro I J hIJ
+  rcases mem_distribOrId_iff.1 hIJ with h | ⟨-, rfl⟩
+  · exact hD.distrib h
+  · exact Set.liftRel_refl_of_refl_on fun _ _ _ ↦ rfl
+
+/-- An output of introducing `u` and updating under `⟨u⟩` that `_u` does not reach leaves `u`
+without a value. -/
+private theorem nonDummy_eq_empty_of_distribOrId {C : Condition (Set S)}
+    (hK : I ~[intro u ○ (test C ○ distribOrId u D)] K)
+    (hK' : ¬I ~[intro u ○ (test C ○ distrib u D)] K) : nonDummy u K = ∅ := by
+  obtain ⟨L, hIL, M, ⟨rfl, hC⟩, hLK⟩ := hK
+  rcases mem_distribOrId_iff.1 hLK with h | ⟨h, rfl⟩
+  · exact absurd ⟨L, hIL, L, ⟨rfl, hC⟩, h⟩ hK'
+  · exact Set.not_nonempty_iff_eq_empty.1 fun hne ↦
+      (Set.nonempty_iff_ne_empty.1 (nonDummy_nonempty_iff.1 hne)) h
+
+/-- On a non-empty restrictor, the distributivity operators `⟨·⟩` of the generalized determiner
+(77) can be replaced by `_·` (p. 470) when the static determiner is false of an empty nuclear scope,
+as `EVERY` is. -/
+theorem mem_determiner_iff {q : Quantifier.GQ E} {P P' : R → Update (Set S)}
+    (hq : ∀ A : Set E, A.Nonempty → ¬q (· ∈ A) (· ∈ (∅ : Set E))) (huu' : u ≠ u')
+    (hI : ∃ K, I ~[intro u ○ distrib u (P u)] K) :
+    I ~[determiner q u u' P P'] J ↔
+      I ~[max u (distrib u (P u)) ○ maxSub u' u (distrib u' (P' u')) ○ test (det q u u')] J := by
+  have hres (K : Set S) :
+      I ~[max u (distribOrId u (P u))] K ↔ I ~[max u (distrib u (P u))] K := by
+    refine mem_max_iff_of_subset (distrib_subset_distribOrId _ _) (fun K hK hK' ↦ ?_) ?_
+    · obtain ⟨L, hIL, hLK⟩ := hK
+      rcases mem_distribOrId_iff.1 hLK with h | ⟨h, rfl⟩
+      · exact absurd ⟨L, hIL, h⟩ hK'
+      · exact Set.not_nonempty_iff_eq_empty.1 fun hne ↦
+          (Set.nonempty_iff_ne_empty.1 (nonDummy_nonempty_iff.1 hne)) h
+    · obtain ⟨K, L, hIL, hLK⟩ := hI
+      obtain ⟨-, hne, hv, -⟩ := mem_distrib.1 hLK
+      exact ⟨K, ⟨L, hIL, hLK⟩, nonDummy_nonempty_iff.2 (hv ▸ hne)⟩
+  have hscope (K : Set S) (hK : (value u K).Nonempty) :
+      K ~[maxSub u' u (distribOrId u' (P' u'))] J ∧ J ∈ det q u u' ↔
+        K ~[maxSub u' u (distrib u' (P' u'))] J ∧ J ∈ det q u u' := by
+    by_cases hex : ∃ K', K ~[intro u' ○ (test (structSubAll u' u) ○ distrib u' (P' u'))] K'
+    · rw [maxSub, maxSub, mem_max_iff_of_subset
+        (comp_subset_comp_right (distrib_subset_distribOrId _ _))
+        (fun K' hK' hK'' ↦ nonDummy_eq_empty_of_distribOrId hK' hK'')]
+      obtain ⟨K', L, hKL, M, ⟨rfl, hC⟩, hLK'⟩ := hex
+      obtain ⟨-, hne, hv, -⟩ := mem_distrib.1 hLK'
+      exact ⟨K', ⟨L, hKL, L, ⟨rfl, hC⟩, hLK'⟩, nonDummy_nonempty_iff.2 (hv ▸ hne)⟩
+    · refine ⟨fun ⟨hJ, hdet⟩ ↦ absurd ?_ (hq (value u J) ?_), fun ⟨hJ, _⟩ ↦
+        absurd ⟨J, max_subset _ _ hJ⟩ hex⟩
+      all_goals obtain ⟨L, hKL, M, ⟨rfl, hC⟩, hLJ⟩ := max_subset _ _ hJ
+      all_goals rcases mem_distribOrId_iff.1 hLJ with h | ⟨h, rfl⟩
+      · exact absurd ⟨J, L, hKL, L, ⟨rfl, hC⟩, h⟩ hex
+      · simpa [h] using hdet
+      · exact absurd ⟨J, L, hKL, L, ⟨rfl, hC⟩, h⟩ hex
+      · rwa [value_intro_of_ne huu' hKL]
+  have hval (K : Set S) (hK : I ~[max u (distrib u (P u))] K) : (value u K).Nonempty := by
+    obtain ⟨L, -, hLK⟩ := max_subset _ _ hK
+    obtain ⟨-, hne, hv, -⟩ := mem_distrib.1 hLK
+    exact hv ▸ hne
+  simp only [determiner, mem_comp_test]
+  constructor
+  · rintro ⟨⟨K, hK, hKJ⟩, hdet⟩
+    have hK' := (hres K).1 hK
+    obtain ⟨hKJ', hdet'⟩ := (hscope K (hval K hK')).1 ⟨hKJ, hdet⟩
+    exact ⟨⟨K, hK', hKJ'⟩, hdet'⟩
+  · rintro ⟨⟨K, hK, hKJ⟩, hdet⟩
+    obtain ⟨hKJ', hdet'⟩ := (hscope K (hval K hK)).2 ⟨hKJ, hdet⟩
+    exact ⟨⟨K, (hres K).2 hK, hKJ'⟩, hdet'⟩
+
 
 end Flat
 
