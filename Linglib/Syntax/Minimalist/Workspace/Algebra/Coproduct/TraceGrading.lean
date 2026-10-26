@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.Trace
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceConservation
 
 @[expose] public section
 
@@ -48,9 +49,8 @@ Per [marcolli-chomsky-berwick-2025] p. 37, Lemma 1.2.10:
 This file defines the graded subspaces and proves the coproduct half of
 the grading compatibility (`comulCAlgHomN_of'_mem_gradedSpan`); the
 product half is edge-count additivity over disjoint union
-(`Multiset.map_add, Multiset.sum_add`), and edge conservation through the trace cut
-machinery is `cutSummandsCN_numEdges`
-(`Core/Combinatorics/RootedTree/Cut.lean`). -/
+(`Multiset.map_add, Multiset.sum_add`), and edge conservation through the trace cuts is
+`cutSummandsCN_numEdges` (`Coproduct/TraceConservation.lean`). -/
 
 /-- The graded piece `V_n` is the subspace of `ConnesKreimer R (UnorderedTree X)`
     spanned by forests with exactly `n` edges. -/
@@ -114,11 +114,9 @@ private theorem comulCTreeN_mem (τ : UnorderedTree (α ⊕ β) → β)
   · refine multiset_sum_mem _ ?_
     intro c hc
     obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp hc
-    have hcons := cutSummandsCN_numEdges τ T p hp
-    have hpos := UnorderedTree.numNodes_pos p.2
     refine Submodule.subset_span ⟨p.1, {p.2}, ?_, rfl⟩
-    rw [Multiset.map_singleton, Multiset.sum_singleton, UnorderedTree.numEdges_eq_numNodes_sub_one]
-    omega
+    rw [Multiset.map_singleton, Multiset.sum_singleton]
+    exact cutSummandsCN_numEdges τ T p hp
 
 /-- Forest-level membership: `Δ^c` of a forest is homogeneous of degree
     its edge count. -/

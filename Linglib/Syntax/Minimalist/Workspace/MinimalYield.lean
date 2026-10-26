@@ -215,7 +215,7 @@ theorem MinimalYield.em_pair (lbl : α) (S S' : UnorderedTree (α ⊕ β)) :
 /-- External Merge of two objects that are not traces satisfies Minimal Yield under trace
     counting. -/
 theorem MinimalYield.em_pair_accessibleCount (lbl : α) {S S' : UnorderedTree (α ⊕ β)}
-    (hS : S.traceLeafCount < S.numNodes) (hS' : S'.traceLeafCount < S'.numNodes) :
+    (hS : S.numTraces < S.numNodes) (hS' : S'.numTraces < S'.numNodes) :
     MinimalYield UnorderedTree.accessibleCount ({S, S'} : Forest (UnorderedTree (α ⊕ β)))
       {UnorderedTree.node (Sum.inl lbl) {S, S'}} := by
   classical
@@ -270,8 +270,8 @@ theorem accessibleCount_im_of_cut (lbl a₀ : α) (τ : UnorderedTree (α ⊕ β
     (UnorderedTree.node (Sum.inl lbl) {v, p.2}).accessibleCount =
       (UnorderedTree.node (Sum.inl a₀) F₀).accessibleCount + 1 := by
   rw [UnorderedTree.accessibleCount_merge lbl v p.2
-    (cutSummandsCN_crown_traceLeafCount_lt_numNodes τ _ p hp v (hv ▸ Multiset.mem_singleton_self v))
-    (UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
+    (cutSummandsCN_crown_numTraces_lt_numNodes τ _ p hp v (hv ▸ Multiset.mem_singleton_self v))
+    (UnorderedTree.numTraces_lt_numNodes_of_rootInl p.2 a₀
       ((cutSummandsCN_trunk_value τ _ p hp).trans (by rw [UnorderedTree.value_node])))]
   have := cutSummandsCN_accessibleCount τ (UnorderedTree.value_node _ _) hp
   simp only [hv, Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at this

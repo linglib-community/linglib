@@ -16,7 +16,7 @@ non-root vertices `(F.map UnorderedTree.numEdges).sum`, and its number of vertic
 summed `numNodes`, which is `card F` plus the summed `numEdges`. Under the trace-preserving
 coproduct a cut leaves a trace leaf that is not an accessible term,
 so the trace-aware count discounts trace leaves:
-`accessibleCount T = numEdges T − traceLeafCount T` on a tree, summed over a forest, and
+`accessibleCount T = numEdges T − numTraces T` on a tree, summed over a forest, and
 `accessibleSize F = card F + accessibleCount F`. The extraction identities say how a Δ^c cut of
 a lexical-rooted object splits its accessible terms between crown and trunk, one contraction per
 cut.
@@ -45,9 +45,9 @@ namespace UnorderedTree
 
 variable {α β : Type*}
 
-/-- `accessibleCount T = numEdges T − traceLeafCount T`, the accessible terms of `T` that are
+/-- `accessibleCount T = numEdges T − numTraces T`, the accessible terms of `T` that are
     not traces. -/
-def accessibleCount (t : UnorderedTree (α ⊕ β)) : ℕ := t.numEdges - t.traceLeafCount
+def accessibleCount (t : UnorderedTree (α ⊕ β)) : ℕ := t.numEdges - t.numTraces
 
 @[simp] theorem accessibleCount_leaf_inl (a : α) :
     (leaf (Sum.inl a) : UnorderedTree (α ⊕ β)).accessibleCount = 0 := rfl
@@ -73,7 +73,7 @@ private theorem numEdges_sub_countP_leaves_node_pair (p : α → Prop) [Decidabl
 
 /-- External Merge adds two accessible terms. -/
 theorem accessibleCount_merge (a : α) (l r : UnorderedTree (α ⊕ β))
-    (hl : l.traceLeafCount < l.numNodes) (hr : r.traceLeafCount < r.numNodes) :
+    (hl : l.numTraces < l.numNodes) (hr : r.numTraces < r.numNodes) :
     (UnorderedTree.node (Sum.inl a) {l, r}).accessibleCount
       = l.accessibleCount + r.accessibleCount + 2 :=
   numEdges_sub_countP_leaves_node_pair (fun x : α ⊕ β => x.isRight = true) _ l r (by simp) hl hr
@@ -126,9 +126,9 @@ variable {α β : Type*}
 
 /-- A tree that is not a single trace splits its vertices into the root, its accessible terms and
     its trace leaves. -/
-private theorem accessibleCount_add_traceLeafCount_add_one {t : UnorderedTree (α ⊕ β)}
-    (h : t.traceLeafCount < t.numNodes) :
-    t.accessibleCount + t.traceLeafCount + 1 = t.numNodes := by
+private theorem accessibleCount_add_numTraces_add_one {t : UnorderedTree (α ⊕ β)}
+    (h : t.numTraces < t.numNodes) :
+    t.accessibleCount + t.numTraces + 1 = t.numNodes := by
   simp only [UnorderedTree.accessibleCount, UnorderedTree.numEdges]
   omega
 
@@ -140,24 +140,24 @@ theorem cutSummandsCN_accessibleCount (τ : UnorderedTree (α ⊕ β) → β)
     T.accessibleCount =
       (p.1.map UnorderedTree.accessibleCount).sum + p.2.accessibleCount + Multiset.card p.1 := by
   have hw := cutSummandsCN_numNodes τ T p hp
-  have hl := cutSummandsCN_traceLeafCount τ T p hp
-  have hT' := accessibleCount_add_traceLeafCount_add_one
-    (UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT)
-  have hp2 := accessibleCount_add_traceLeafCount_add_one
-    (UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
+  have hl := cutSummandsCN_numTraces τ T p hp
+  have hT' := accessibleCount_add_numTraces_add_one
+    (UnorderedTree.numTraces_lt_numNodes_of_rootInl T a₀ hT)
+  have hp2 := accessibleCount_add_numTraces_add_one
+    (UnorderedTree.numTraces_lt_numNodes_of_rootInl p.2 a₀
       ((cutSummandsCN_trunk_value τ T p hp).trans hT))
-  have hcrown : ∀ m : Multiset (UnorderedTree (α ⊕ β)), (∀ c ∈ m, c.traceLeafCount < c.numNodes) →
-      (m.map UnorderedTree.accessibleCount).sum + (m.map UnorderedTree.traceLeafCount).sum +
+  have hcrown : ∀ m : Multiset (UnorderedTree (α ⊕ β)), (∀ c ∈ m, c.numTraces < c.numNodes) →
+      (m.map UnorderedTree.accessibleCount).sum + (m.map UnorderedTree.numTraces).sum +
         Multiset.card m = (m.map UnorderedTree.numNodes).sum := by
     intro m hm
     induction m using Multiset.induction with
     | empty => simp
     | cons c m ih =>
-      have := accessibleCount_add_traceLeafCount_add_one (hm c (Multiset.mem_cons_self _ _))
+      have := accessibleCount_add_numTraces_add_one (hm c (Multiset.mem_cons_self _ _))
       have := ih fun d hd ↦ hm d (Multiset.mem_cons_of_mem hd)
       simp only [Multiset.map_cons, Multiset.sum_cons, Multiset.card_cons]
       omega
-  have := hcrown p.1 fun c hc ↦ cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp c hc
+  have := hcrown p.1 fun c hc ↦ cutSummandsCN_crown_numTraces_lt_numNodes τ T p hp c hc
   omega
 
 /-- A Δ^c cut of a lexical-rooted object splits its size `σ` exactly between its crown and its
@@ -188,16 +188,16 @@ variable {τ : UnorderedTree (α ⊕ β) → β} {F : Multiset (UnorderedTree (�
 
 /-- A tree in the crown of a choice of trace cuts is not a trace, when the trees cut or taken whole
     are not traces. -/
-theorem traceLeafCount_lt_numNodes_of_mem_crown (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
+theorem numTraces_lt_numNodes_of_mem_crown (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a)
-    {S : UnorderedTree (α ⊕ β)} (hS : S ∈ s.crown) : S.traceLeafCount < S.numNodes := by
+    {S : UnorderedTree (α ⊕ β)} (hS : S ∈ s.crown) : S.numTraces < S.numNodes := by
   obtain ⟨x, hx, hSx⟩ := CutChoice.mem_crown.mp hS
   rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h | ⟨p, hp, h⟩
   · obtain ⟨a, ha⟩ := hF x hx (by rw [h]; exact Multiset.singleton_ne_zero _)
     rw [h, Multiset.mem_singleton] at hSx
-    exact hSx ▸ UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl _ a ha
+    exact hSx ▸ UnorderedTree.numTraces_lt_numNodes_of_rootInl _ a ha
   · rw [← h] at hSx
-    exact cutSummandsCN_crown_traceLeafCount_lt_numNodes τ x.1 p hp S hSx
+    exact cutSummandsCN_crown_numTraces_lt_numNodes τ x.1 p hp S hSx
 
 /-- Merging the two trees of the crown of a choice of trace cuts adds two accessible terms, when
     the trees cut or taken whole are not traces. -/
@@ -207,8 +207,8 @@ theorem accessibleCount_merge_of_crown_eq (a : α) (hs : s ∈ forestCutChoicesG
     (UnorderedTree.node (Sum.inl a) {S, S'}).accessibleCount =
       S.accessibleCount + S'.accessibleCount + 2 :=
   UnorderedTree.accessibleCount_merge a S S'
-    (traceLeafCount_lt_numNodes_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
-    (traceLeafCount_lt_numNodes_of_mem_crown hs hF
+    (numTraces_lt_numNodes_of_mem_crown hs hF (hK ▸ Multiset.mem_cons_self _ _))
+    (numTraces_lt_numNodes_of_mem_crown hs hF
       (hK ▸ Multiset.mem_cons_of_mem (Multiset.mem_singleton_self _)))
 
 /-- A choice of trace cuts costs one accessible term for each tree it extracts, when the trees it
