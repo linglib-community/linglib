@@ -359,8 +359,8 @@ theorem pre_of_post :
     ∀ a ∈ inventory, a.IsPostposition → a.IsPreposition ∨ a.toAdposition = af.toAdposition := by
   decide
 
-theorem circum_iff_isComplex :
-    ∀ a ∈ inventory, a.IsCircumposition ↔ a.IsComplex := by
+theorem circum_iff_not_isSimple :
+    ∀ a ∈ inventory, a.IsCircumposition ↔ ¬ a.IsSimple := by
   decide
 
 theorem complements_of_circum :
