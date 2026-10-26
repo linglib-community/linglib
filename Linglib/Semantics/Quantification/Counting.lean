@@ -445,6 +445,18 @@ theorem some_ne_no : some.{u} ≠ no.{u} := fun h ↦ by
   have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ True) fun _ ↦ True) h
   simp [some, no, GQ.some, GQ.no] at this
 
+theorem no_ne_every : no.{u} ≠ every.{u} := fun h ↦ by
+  have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ True) fun _ ↦ True) h
+  simp [no, every, GQ.no, GQ.every] at this
+
+theorem most_ne_every : most.{u} ≠ every.{u} := fun h ↦ by
+  have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ False) fun _ ↦ False) h
+  simp [most, every, GQ.every, most_apply] at this
+
+theorem few_ne_every : few.{u} ≠ every.{u} := fun h ↦ by
+  have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ False) fun _ ↦ False) h
+  simp [few, every, GQ.every, few_apply] at this
+
 @[simp]
 theorem compl_some : some.{u}ᶜ = no.{u} := by
   funext _ _; exact GQ.compl_some

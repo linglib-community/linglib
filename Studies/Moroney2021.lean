@@ -8,7 +8,6 @@ public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Genericity.MeaningPreservation
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.German.Determiners
-public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Fragments.Thai.Determiners
 public import Linglib.Fragments.Shan.Determiners
 public import Studies.Jenks2018
