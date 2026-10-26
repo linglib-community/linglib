@@ -54,7 +54,7 @@ likely to win as not; the lottery's probability measure makes the first true and
 * [lassiter-2015]
 * [kratzer-1991]
 * [kratzer-2012]
-* [lewis-1973]
+* [lewis-1973b]
 * [halpern-1997]
 * [holliday-icard-2013]
 * [yalcin-2010]

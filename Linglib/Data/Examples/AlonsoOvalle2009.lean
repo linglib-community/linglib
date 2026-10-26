@@ -151,7 +151,7 @@ def ex_34 : Datum :=
 
 def ex_36 : Datum :=
   { id := "alonsoovalle2009_36"
-    source := ⟨"lewis-1973", "p. 1"⟩
+    source := ⟨"lewis-1973b", "p. 1"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(36)"⟩
     language := "stan1293"
     primaryText := "If kangaroos had no tails, they would topple over."
@@ -164,7 +164,7 @@ def ex_36 : Datum :=
 
 def ex_41b : Datum :=
   { id := "alonsoovalle2009_41b"
-    source := ⟨"lewis-1973", "p. 9"⟩
+    source := ⟨"lewis-1973b", "p. 9"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(41b)"⟩
     language := "stan1293"
     primaryText := "If kangaroos had no tails but used crutches, they would topple over."
@@ -203,7 +203,7 @@ def ex_40b : Datum :=
 
 def ex_42a : Datum :=
   { id := "alonsoovalle2009_42a"
-    source := ⟨"lewis-1973", "p. 33"⟩
+    source := ⟨"lewis-1973b", "p. 33"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(42a)"⟩
     language := "stan1293"
     primaryText := "If Hoover had been born in Russia, he would have been a Communist."
@@ -216,7 +216,7 @@ def ex_42a : Datum :=
 
 def ex_42b : Datum :=
   { id := "alonsoovalle2009_42b"
-    source := ⟨"lewis-1973", "p. 33"⟩
+    source := ⟨"lewis-1973b", "p. 33"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(42b)"⟩
     language := "stan1293"
     primaryText := "If Hoover had been a Communist, he would have been a traitor."
@@ -229,7 +229,7 @@ def ex_42b : Datum :=
 
 def ex_42c : Datum :=
   { id := "alonsoovalle2009_42c"
-    source := ⟨"lewis-1973", "p. 33"⟩
+    source := ⟨"lewis-1973b", "p. 33"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(42c)"⟩
     language := "stan1293"
     primaryText := "If Hoover had been born in Russia, he would have been a traitor."

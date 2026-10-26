@@ -54,7 +54,7 @@ comparisons (3)–(6), which the paper doubts speakers find inconsistent.
 * [yalcin-2010]
 * [kratzer-1991]
 * [kratzer-2012]
-* [lewis-1973]
+* [lewis-1973b]
 * [halpern-2003]
 * [van-der-hoek-1996]
 * [kraft-pratt-seidenberg-1959]

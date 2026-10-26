@@ -46,7 +46,7 @@ information of Veltman's expectation states.
 ## References
 
 * [lewis-1981]
-* [lewis-1973]
+* [lewis-1973b]
 * [kratzer-2012]
 * [portner-rubinstein-2020]
 -/

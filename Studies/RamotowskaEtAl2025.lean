@@ -41,7 +41,7 @@ of §5 and §6 are not restated.
 ## References
 
 * [ramotowska-marty-romoli-santorio-2025]
-* [lewis-1973]
+* [lewis-1973b]
 * [kratzer-2012]
 * [stalnaker-1968]
 * [von-fintel-1997]

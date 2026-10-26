@@ -49,7 +49,7 @@ the probability space account validates V1–V12 and none of I1–I3 or E1.
 
 * [yalcin-2010]
 * [kratzer-1991]
-* [lewis-1973]
+* [lewis-1973b]
 * [hamblin-1959]
 * [halpern-2003]
 -/

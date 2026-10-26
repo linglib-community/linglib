@@ -28,7 +28,7 @@ antisymmetric desirability relation cannot make both `p` and `¬p` wanted.
 
 * [heim-1992]
 * [stalnaker-1968]
-* [lewis-1973]
+* [lewis-1973b]
 * [von-fintel-1999]
 -/
 

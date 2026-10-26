@@ -25,7 +25,7 @@ proposition's counterfactual holds, false when none does, and indeterminate othe
 * [L. Alonso-Ovalle, *Counterfactuals, correlatives, and disjunction* (2009)][alonso-ovalle-2009]
 * [P. Santorio, *Alternatives and truthmakers in conditional semantics* (2018)][santorio-2018]
 * [F. Cariani and S. Goldstein, *Conditional heresies* (2020)][cariani-goldstein-2020]
-* [D. Lewis, *Counterfactuals* (1973)][lewis-1973]
+* [D. Lewis, *Counterfactuals* (1973)][lewis-1973b]
 -/
 
 @[expose] public section

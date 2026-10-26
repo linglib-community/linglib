@@ -41,7 +41,7 @@ the Hintikka-style rule (27) with the comparative semantics (31) on similarity, 
 * [asher-1987]
 * [stalnaker-1984]
 * [stalnaker-1968]
-* [lewis-1973]
+* [lewis-1973b]
 -/
 
 @[expose] public section
