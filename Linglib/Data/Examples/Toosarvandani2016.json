@@ -1,0 +1,325 @@
+[
+  {
+    "id": "toosarvandani2016_39a",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(39a)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=tɨɨtsi-’yu naatsi’i nabagia-wɨnnɨ-na, su=ddoogga u=bbuni-katɨ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=tɨɨtsi-’yu", "NOM=little-NOM"], ["naatsi’i", "boy"],
+      ["nabagia-wɨnnɨ-na", "bathe-PROG-SIM"], ["su=ddoogga", "NOM=dog"],
+      ["u=bbuni-katɨ", "3SG.ACC=see-sit.IPFV"]
+    ],
+    "translation": "While the little boy is bathing, the dog is sitting and looking at him.",
+    "context": "The boy is bathing. The dog is sitting and looking at him in the bathtub.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "sim"],
+      ["aspect", "prog"],
+      ["markedEvent", "bathe"],
+      ["unmarkedAspect", "ipfv"],
+      ["unmarkedEvent", "watch"]
+    ],
+    "comment": "Judged true in a context provided by an image from Mercer Mayer's Frog, where are you?",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_39b",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(39b)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=tɨɨtsi-’yu naatsi’i nabagia-hu-si, su=ddoogga u=bbuni-katɨ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=tɨɨtsi-’yu", "NOM=little-NOM"], ["naatsi’i", "boy"], ["nabagia-hu-si", "bathe-PFV-SEQ"],
+      ["su=ddoogga", "NOM=dog"], ["u=bbuni-katɨ", "3SG.ACC=see-sit.IPFV"]
+    ],
+    "translation": "After the little boy bathed, the dog is sitting and looking at him.",
+    "context": "The boy is bathing. The dog is sitting and looking at him in the bathtub.",
+    "judgment": "acceptable",
+    "verdict": false,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "bathe"],
+      ["unmarkedAspect", "ipfv"],
+      ["unmarkedEvent", "watch"]
+    ],
+    "comment": "Printed with # and judged false in the context of (39a); a speaker comments that nabagiahusi means he is through bathing.",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_40b",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(40b)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=naatsi’i tɨ=kaadzi madabbui-wɨnnɨ-na, yaisi hubiadu-wɨnnɨ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=naatsi’i", "NOM=boy"], ["tɨ=kaadzi", "REFL=car"], ["madabbui-wɨnnɨ-na", "fix-PROG-SIM"],
+      ["yaisi", "PTC"], ["hubiadu-wɨnnɨ", "sing-PROG"]
+    ],
+    "translation": "While the boy is fixing his car, he is singing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "sim"],
+      ["aspect", "prog"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_40c",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(40c)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=nana tɨ=kaadzi madabbui-hu-na, yaisi hubiadu-wɨnnɨ.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=nana", "NOM=man"], ["tɨ=kaadzi", "REFL=car"], ["madabbui-hu-na", "fix-PFV-SIM"],
+      ["yaisi", "PTC"], ["hubiadu-wɨnnɨ", "sing-PROG"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "sim"],
+      ["aspect", "pfv"]
+    ],
+    "comment": "The source prints no translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_47a",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(47a)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=naatsi’i tɨbuni-hu-si, tɨ=pa’mogo yaa-hu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=naatsi’i", "NOM=boy"], ["tɨbuni-hu-si", "wake.up-PFV-SEQ"], ["tɨ=pa’mogo", "REFL=frog"],
+      ["yaa-hu", "miss-PFV"]
+    ],
+    "translation": "After the boy woke up, he missed his frog.",
+    "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "wakeUp"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "miss"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_47b",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(47b)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=naatsi’i tɨbuni-wɨnnɨ-na, tɨ=pa’mogo yaa-hu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=naatsi’i", "NOM=boy"], ["tɨbuni-wɨnnɨ-na", "wake.up-PROG-SIM"],
+      ["tɨ=pa’mogo", "REFL=frog"], ["yaa-hu", "miss-PFV"]
+    ],
+    "translation": "While the boy was waking up, he missed his frog.",
+    "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
+    "judgment": "acceptable",
+    "verdict": false,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "sim"],
+      ["aspect", "prog"],
+      ["markedEvent", "wakeUp"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "miss"]
+    ],
+    "comment": "Printed with # and judged false; the translation is the intended one.",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_66a",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(66a)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=pa’mogo wadzi-mia-hu-si, yaisi su=naatsi’i tɨbuni-hu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=pa’mogo", "NOM=frog"], ["wadzi-mia-hu-si", "hide-go-PFV-SEQ"], ["yaisi", "PTC"],
+      ["su=naatsi’i", "NOM=boy"], ["tɨbuni-hu", "wake.up-PFV"]
+    ],
+    "translation": "After the frog escaped, the boy woke up.",
+    "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "escape"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "wakeUp"]
+    ],
+    "comment": "The marked clause precedes the unmarked clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_66b",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(66b)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=naatsi’i tɨbuni-hu, su=tɨɨtsi-’yu pa’mogo wadzi-mia-hu-si.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=naatsi’i", "NOM=boy"], ["tɨbuni-hu", "wake.up-PFV"],
+      ["su=tɨɨtsi-’yu", "NOM=little-NOM"], ["pa’mogo", "frog"],
+      ["wadzi-mia-hu-si", "hide-go-PFV-SEQ"]
+    ],
+    "translation": "After the little frog escaped, the boy woke up.",
+    "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "escape"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "wakeUp"]
+    ],
+    "comment": "The marked clause follows the unmarked clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_66c",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(66c)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=naatsi’i tɨbuni-hu-si, su=pa’mogo wadzi-mia-hu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=naatsi’i", "NOM=boy"], ["tɨbuni-hu-si", "wake.up-PFV-SEQ"], ["su=pa’mogo", "NOM=frog"],
+      ["wadzi-mia-hu", "hide-go-PFV"]
+    ],
+    "translation": "After the frog escaped, the boy woke up.",
+    "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
+    "judgment": "acceptable",
+    "verdict": false,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "wakeUp"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "escape"]
+    ],
+    "comment": "Printed with # and judged false; the translation is the intended one, the description of the context. The marked clause precedes the unmarked clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_66d",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(66d)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=pa’mogo wadzi-mia-hu, su=tɨɨtsi-’yu naatsi’i tɨbuni-hu-si.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=pa’mogo", "NOM=frog"], ["wadzi-mia-hu", "hide-go-PFV"],
+      ["su=tɨɨtsi-’yu", "NOM=little-NOM"], ["naatsi’i", "boy"],
+      ["tɨbuni-hu-si", "wake.up-PFV-SEQ"]
+    ],
+    "translation": "After the frog escaped, the little boy woke up.",
+    "context": "While the boy is asleep, the frog escapes. After the boy wakes up, he notices the frog is gone.",
+    "judgment": "acceptable",
+    "verdict": false,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "wakeUp"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "escape"]
+    ],
+    "comment": "Printed with # and judged false; the translation is the intended one, the description of the context. The marked clause follows the unmarked clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_71a",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(71a)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=naatsi’i ti’atia-hu-si, su=tsɨa’a nɨga-hu-si, su=mogo’ni nobi-ggwe iga-hu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=naatsi’i", "NOM=boy"], ["ti’atia-hu-si", "play-PFV-SEQ"], ["su=tsɨa’a", "NOM=girl"],
+      ["nɨga-hu-si", "dance-PFV-SEQ"], ["su=mogo’ni", "NOM=woman"], ["nobi-ggwe", "house-LOC"],
+      ["iga-hu", "enter-PFV"]
+    ],
+    "translation": "After the boy played and the girl danced, the woman came home.",
+    "context": "The boy and girl are at home. Instead of studying, he is playing and she is dancing at the same time. They both stop before their mother comes home.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "play"],
+      ["markedEvent", "dance"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "enter"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "toosarvandani2016_71b",
+    "source": {"bibkey": "toosarvandani-2016", "paperLabel": "(71b)"},
+    "reportedIn": null,
+    "language": "nort2954",
+    "primaryText": "Su=tsɨa’a nɨga-hu-si, su=naatsi’i ti’atia-hu-si, su=mogo’ni nobi-ggwe iga-hu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su=tsɨa’a", "NOM=girl"], ["nɨga-hu-si", "dance-PFV-SEQ"], ["su=naatsi’i", "NOM=boy"],
+      ["ti’atia-hu-si", "play-PFV-SEQ"], ["su=mogo’ni", "NOM=woman"], ["nobi-ggwe", "house-LOC"],
+      ["iga-hu", "enter-PFV"]
+    ],
+    "translation": "After the girl danced and the boy played, the woman came home.",
+    "context": "The boy and girl are at home. Instead of studying, he is playing and she is dancing at the same time. They both stop before their mother comes home.",
+    "judgment": "acceptable",
+    "verdict": true,
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["suffix", "seq"],
+      ["aspect", "pfv"],
+      ["markedEvent", "dance"],
+      ["markedEvent", "play"],
+      ["unmarkedAspect", "pfv"],
+      ["unmarkedEvent", "enter"]
+    ],
+    "comment": "A speaker comments that (71a) and (71b) mean the same thing.",
+    "verified": "page-image"
+  }
+]
