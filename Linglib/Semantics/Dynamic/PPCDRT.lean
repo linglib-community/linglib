@@ -209,7 +209,7 @@ def introPartial (u : Var) : Update (PluralAssign Var D) :=
   {p | p.2.Nonempty ∧ p ∈ Update.cumul (extend u)}
 
 theorem introPartial_subset_intro [DecidableEq Var] :
-    introPartial u ⊆ PCDRT.intro (S := PartialAssign Var D) (E := D) u :=
+    introPartial u ⊆ PCDRT.intro (S := PartialAssign Var D) (V := Flat D) u :=
   fun _ hp ↦ Update.cumul_mono extend_subset_randomAssign hp.2
 
 end Introduction

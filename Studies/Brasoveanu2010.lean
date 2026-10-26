@@ -212,14 +212,14 @@ def structCol : Set (Row Ind) :=
 /-- Both columns store a subset of the conventions (65). -/
 theorem value_subset_valueCol : value Dref.u₃ valueCol ⊆ value Dref.u₁ valueCol := by
   intro x
-  simp only [valueCol, mem_value, Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj]
+  simp only [valueCol, mem_value, embed_flat, Set.mem_insert_iff, Set.mem_singleton_iff,
+    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj]
   rintro (rfl | rfl | rfl | rfl) <;> simp
 
 theorem value_subset_structCol : value Dref.u₃ structCol ⊆ value Dref.u₁ structCol := by
   intro x
-  simp only [structCol, mem_value, Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj, Flat.bot_ne_coe, false_or]
+  simp only [structCol, mem_value, embed_flat, Set.mem_insert_iff, Set.mem_singleton_iff,
+    exists_eq_or_imp, exists_eq_left, val_apply, row_u₁, row_u₃, Flat.coe_inj, Flat.bot_ne_coe, false_or]
   rintro (rfl | rfl | rfl) <;> simp
 
 /-- The value-inclusion column pairs `α₁` with `β₃`, a dependency (63a) never established. -/
@@ -333,7 +333,7 @@ private theorem convention_mem_value {J₂ J₃ : Set (Row E)} (hJ₂ : J₂.Non
   simp only [mem_value, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨_, ⟨j, -, x, hx, rfl⟩, hc⟩
-    rw [val_extend_self, Flat.coe_inj] at hc
+    rw [val_extend_self, embed_flat, Flat.coe_inj] at hc
     simpa [hc] using hx
   · exact fun hc ↦ ⟨_, ⟨i, hi, c, by simpa using hc, rfl⟩, val_extend_self ..⟩
 
@@ -591,7 +591,7 @@ theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
             exact ⟨_, ⟨c, hc, .inl rfl⟩, hx⟩
           · rintro ⟨_, ⟨c, hc, rfl | rfl⟩, hx⟩ <;> exact ⟨_, ⟨c, hc, rfl⟩, hx⟩
         · rintro c ⟨_, ⟨c', hc', rfl⟩, h⟩
-          simp only [val_apply, row_u₃, Flat.coe_inj] at h
+          simp only [val_apply, row_u₃, embed_flat, Flat.coe_inj] at h
           subst h
           rw [hcellK c' hc', hcellJ c' hc']
           exact hD c' hc'

@@ -12,8 +12,11 @@ public import Mathlib.Data.Fin.VecNotation
 Compositional DRT over plural information states ([van-den-berg-1996], [brasoveanu-2007],
 [brasoveanu-2010]). An information state is a set of CDRT states, a matrix whose rows are
 assignments and whose columns are drefs: a dref stores the set of its values in the rows, and the
-rows store the dependencies between the values of different drefs. A dref takes the dummy value ★
-in the rows where it has none; here its register holds a `Flat E` and ★ is `⊥`.
+rows store the dependencies between the values of different drefs. A register holds a content of
+some type `V` into which the individuals `E` embed (`ValueEmbedding`): in [brasoveanu-2010] a dref
+takes the dummy value ★ in the rows where it has none, so `V` is `Flat E` and ★ is `⊥`, while in
+[minor-2022] every content is an individual and the embedding is the identity. The cells, ★ and
+the quantificational operators built on them are stated for `Flat E`.
 
 Every CDRT update lifts to plural states cumulatively: the lift is the relation lifting
 `Set.LiftRel` of the update, which is the cumulation `**` of [beck-sauerland-2000], each input row
@@ -31,6 +34,7 @@ and a static determiner relating the values of two drefs.
 
 ## Main definitions
 
+* `PCDRT.ValueEmbedding`: the individuals among a register's contents.
 * `PCDRT.value`, `PCDRT.cell`, `PCDRT.nonDummy`, `PCDRT.dep`, `PCDRT.tuples`: a dref's values,
   the rows where it holds a given value or ★, the rows where it has one, and the values that two
   or more drefs take together in a row.
@@ -67,6 +71,7 @@ and a static determiner relating the values of two drefs.
   (2020)][haug-dalrymple-2020]
 * [B. Spector, *Trivalence and transparency: A non-dynamic approach to anaphora*
   (2026)][spector-2026]
+* [S. Minor, *Dependent plurals and three levels of multiplicity* (2022)][minor-2022]
 -/
 
 @[expose] public section
@@ -75,13 +80,196 @@ namespace PCDRT
 
 open DynamicSemantics DynamicSemantics.Update SetRel RegisterStructure
 
+/-- The individuals that registers with contents `V` hold: an embedding of `E` into `V`. Contents
+outside its image, such as the dummy ★ of [brasoveanu-2010] in `Flat E`, are no individual;
+where every content is an individual, as in [minor-2022], it is the identity. -/
+class ValueEmbedding (E : outParam Type*) (V : Type*) where
+  /-- The register content of an individual. -/
+  embed : E → V
+  embed_injective : Function.Injective embed
+
+open ValueEmbedding (embed embed_injective)
+
+instance (E : Type*) : ValueEmbedding E (Flat E) := ⟨(↑), Flat.coe_injective⟩
+
+instance (priority := low) (V : Type*) : ValueEmbedding V V := ⟨id, Function.injective_id⟩
+
+@[simp] theorem embed_inj {E V : Type*} [ValueEmbedding E V] {x y : E} :
+    (embed x : V) = embed y ↔ x = y :=
+  embed_injective.eq_iff
+
+@[simp] theorem embed_flat {E : Type*} (x : E) : (embed x : Flat E) = ↑x := rfl
+
+@[simp] theorem embed_self {V : Type*} (x : V) : (embed x : V) = x := rfl
+
+section Core
+
+variable {R S V E ι : Type*} [RegisterStructure R S V] [ValueEmbedding E V] {u u' v : R}
+  {w : ι → R} {I J K : Set S} {D D' : Update (Set S)} {C : Condition (Set S)} {x : E}
+
+/-! ### Values and dependencies -/
+
+/-- The values of `u` in `I`, `uI` ([brasoveanu-2010] (16), (38)); a content that is no individual,
+such as ★, is no value. -/
+def value (u : R) (I : Set S) : Set E := {x | ∃ i ∈ I, val u i = embed x}
+
+/-- The dependency between `u` and `v` that `I` stores is the set of pairs of their values in a
+row. -/
+def dep (u v : R) (I : Set S) : SetRel E E :=
+  {p | ∃ i ∈ I, val u i = embed p.1 ∧ val v i = embed p.2}
+
+/-- The tuples of values that the drefs `w` take together in a row of `I`; a row where some `wₖ`
+is no individual contributes none, so these are read off the substate `I_{u₁≠★,…,uₙ≠★}` ((33)). -/
+def tuples (w : ι → R) (I : Set S) : Set (ι → E) :=
+  {y | ∃ i ∈ I, ∀ k, val (w k) i = embed (y k)}
+
+@[simp] theorem mem_value : x ∈ value u I ↔ ∃ i ∈ I, val u i = embed x := Iff.rfl
+
+@[simp] theorem mem_tuples {y : ι → E} :
+    y ∈ tuples w I ↔ ∃ i ∈ I, ∀ k, val (w k) i = embed (y k) :=
+  Iff.rfl
+
+theorem value_eq_preimage_image (u : R) (I : Set S) :
+    value u I = embed ⁻¹' (val u '' I) :=
+  rfl
+
+/-- Where every register content is an individual, the values of `u` are the image of its
+register. -/
+theorem value_eq_image {R S V : Type*} [RegisterStructure R S V] (u : R) (I : Set S) :
+    value u I = val u '' I := by
+  ext; simp [eq_comm]
+
+theorem dep_eq_image {R S V : Type*} [RegisterStructure R S V] (u v : R) (I : Set S) :
+    dep u v I = (fun i ↦ (val u i, val v i)) '' I := by
+  ext; simp [dep, Prod.ext_iff, eq_comm]
+
+theorem value_singleton_of_eq {i : S} (h : val u i = embed x) : value u {i} = {x} := by
+  ext y
+  simp [h, eq_comm]
+
+theorem dep_singleton_of_eq {i : S} {x y : E} (hu : val u i = embed x) (hv : val v i = embed y) :
+    dep u v {i} = {(x, y)} := by
+  ext ⟨a, b⟩
+  simp [dep, hu, hv, eq_comm]
+
+theorem fst_mem_value_of_mem_dep {p : E × E} (h : p ∈ dep u v I) : p.1 ∈ value u I :=
+  let ⟨i, hi, hu, _⟩ := h; ⟨i, hi, hu⟩
+
+theorem snd_mem_value_of_mem_dep {p : E × E} (h : p ∈ dep u v I) : p.2 ∈ value v I :=
+  let ⟨i, hi, _, hv⟩ := h; ⟨i, hi, hv⟩
+
+theorem value_mono (h : I ⊆ J) : value u I ⊆ value u J :=
+  fun _ ⟨i, hi, hx⟩ ↦ ⟨i, h hi, hx⟩
+
+theorem dep_mono (h : I ⊆ J) : dep u v I ⊆ dep u v J :=
+  fun _ ⟨i, hi, hu, hv⟩ ↦ ⟨i, h hi, hu, hv⟩
+
+@[simp] theorem tuples_union (w : ι → R) (I J : Set S) :
+    tuples w (I ∪ J) = tuples w I ∪ tuples w J := by
+  ext
+  simp [or_and_right, exists_or]
+
+theorem tuples_singleton_of_eq {i : S} {y : ι → E} (h : ∀ k, val (w k) i = embed (y k)) :
+    tuples w {i} = {y} := by
+  ext z; simp [h, funext_iff, eq_comm]
+
+theorem tuples_vec1 (u : R) (I : Set S) : tuples ![u] I = (fun x ↦ ![x]) '' value u I := by
+  ext y; simp [funext_iff]
+
+theorem tuples_vec2 (u v : R) (I : Set S) :
+    tuples ![u, v] I = (fun p ↦ ![p.1, p.2]) '' dep u v I := by
+  ext y; simp [funext_iff, Fin.forall_fin_two, dep]
+
+/-! ### Dref introduction and conditions -/
+
+/-- Dref introduction `[u]` ([brasoveanu-2010] (18)): the cumulative lift of CDRT's random
+assignment. -/
+def intro (u : R) : Update (Set S) := cumul (randomAssign u)
+
+theorem singleton_mem_intro (i : S) (u : R) (e : V) :
+    {i} ~[intro u] {extend i u e} :=
+  ⟨fun _ hi ↦ ⟨_, rfl, e, by rw [hi]⟩, fun _ hj ↦ ⟨i, rfl, e, by rw [hj]⟩⟩
+
+/-- The atomic condition `P{u₁, …, uₙ}` ((30), (32), (34)) holds when some row values every `wₖ`
+and the values in every such row satisfy `P`. -/
+def atom (P : (ι → E) → Prop) (w : ι → R) : Condition (Set S) :=
+  {I | (tuples w I).Nonempty ∧ ∀ y ∈ tuples w I, P y}
+
+@[simp] theorem mem_atom {P : (ι → E) → Prop} :
+    I ∈ atom P w ↔ (tuples w I).Nonempty ∧ ∀ y ∈ tuples w I, P y :=
+  Iff.rfl
+
+theorem supClosed_atom (P : (ι → E) → Prop) (w : ι → R) : SupClosed (atom P w : Set (Set S)) :=
+  fun _ ⟨hI, hP⟩ _ ⟨_, hQ⟩ ↦ ⟨by simpa using Or.inl hI,
+    by simpa using fun y h ↦ h.elim (hP y) (hQ y)⟩
+
+theorem singleton_mem_atom_iff {P : (ι → E) → Prop} {i : S} {y : ι → E}
+    (h : ∀ k, val (w k) i = embed (y k)) : {i} ∈ atom P w ↔ P y := by
+  simp [tuples_singleton_of_eq h]
+
+theorem mem_atom_vec1 {P : (Fin 1 → E) → Prop} :
+    I ∈ atom P ![u] ↔ (value u I).Nonempty ∧ ∀ x ∈ value u I, P ![x] := by
+  simp only [mem_atom, tuples_vec1, Set.image_nonempty, Set.forall_mem_image]
+
+theorem mem_atom_vec2 {P : (Fin 2 → E) → Prop} :
+    I ∈ atom P ![u, v] ↔ (dep u v I).Nonempty ∧ ∀ p ∈ dep u v I, P ![p.1, p.2] := by
+  simp only [mem_atom, tuples_vec2, Set.image_nonempty, Set.forall_mem_image]
+
+/-- Singular number `sing(u)` ((39)) holds when `u` has exactly one value. -/
+def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
+
+/-- The determiner condition `DET{u, u'}` ((76)): the static determiner `q` relates the values of
+`u` and `u'`. -/
+def det (q : Quantifier.GQ E) (u u' : R) : Condition (Set S) :=
+  {I | q (· ∈ value u I) (· ∈ value u' I)}
+
+@[simp] theorem mem_det {q : Quantifier.GQ E} :
+    I ∈ det q u u' ↔ q (· ∈ value u I) (· ∈ value u' I) :=
+  Iff.rfl
+
+/-! ### Preservation -/
+
+/-- An update preserves the drefs `w` when its inputs and outputs match row for row on them:
+every input row has an output row and every output row an input row with the same values for
+every `wₖ`. -/
+def Preserves (w : ι → R) (D : Update (Set S)) : Prop :=
+  ∀ ⦃I J⦄, I ~[D] J → Set.LiftRel (fun i j ↦ ∀ k, val (w k) i = val (w k) j) I J
+
+theorem Preserves.value_eq (h : Preserves ![v] D) (hIJ : I ~[D] J) : value v J = value v I := by
+  ext x
+  refine ⟨fun ⟨j, hj, hx⟩ ↦ ?_, fun ⟨i, hi, hx⟩ ↦ ?_⟩
+  · obtain ⟨i, hi, hij⟩ := (h hIJ).2 j hj
+    exact ⟨i, hi, (hij 0).trans hx⟩
+  · obtain ⟨j, hj, hij⟩ := (h hIJ).1 i hi
+    exact ⟨j, hj, (hij 0).symm.trans hx⟩
+
+theorem Preserves.comp (h₁ : Preserves w D) (h₂ : Preserves w D') : Preserves w (D ○ D') :=
+  fun _ _ ⟨_, hIK, hKJ⟩ ↦ (Set.liftRel_comp.2 ⟨_, h₁ hIK, h₂ hKJ⟩).imp
+    fun ⟨_, h, h'⟩ k ↦ (h k).trans (h' k)
+
+theorem preserves_test (w : ι → R) (C : Condition (Set S)) : Preserves w (test C) :=
+  fun _ _ ⟨hIJ, _⟩ ↦ hIJ ▸ Set.liftRel_refl_of_refl_on fun _ _ _ ↦ rfl
+
+theorem preserves_cumul {D : Update S} (h : ∀ k, Fixes (w k) D) : Preserves w (cumul D) :=
+  fun _ _ hIJ ↦ hIJ.imp fun hij k ↦ (h k _ _ hij).symm
+
+theorem preserves_intro (h : ∀ k, w k ≠ u) : Preserves w (intro u : Update (Set S)) :=
+  preserves_cumul fun k ↦ fixes_randomAssign_of_ne (h k)
+
+theorem value_intro_of_ne (h : v ≠ u) (hIJ : I ~[intro u] J) : value v J = value v I :=
+  (preserves_intro (w := ![v]) (Fin.forall_fin_one.2 h)).value_eq hIJ
+
+end Core
+
+section Flat
+
+/-! ### Cells and the dummy ★
+
+From here on a register holds an individual or the dummy ★ of [brasoveanu-2010], `⊥` in
+`Flat E`. -/
+
 variable {R S E ι : Type*} [RegisterStructure R S (Flat E)] {u u' v : R} {w : ι → R}
   {I J K : Set S} {D D' : Update (Set S)} {C : Condition (Set S)} {x : E}
-
-/-! ### Values, rows and cells -/
-
-/-- The values of `u` in `I`, `uI` ([brasoveanu-2010] (16), (38)); ★ is not a value. -/
-def value (u : R) (I : Set S) : Set E := {x | ∃ i ∈ I, val u i = ↑x}
 
 /-- The rows of `I` where `u` holds `e`, `I_{u=e}` ((71)); at `e = ★` the rows where `u` has no
 value. -/
@@ -90,27 +278,9 @@ def cell (u : R) (e : Flat E) (I : Set S) : Set S := {i ∈ I | val u i = e}
 /-- The rows of `I` where `u` has a value, the non-dummy substate `I_{u≠★}` ((29)). -/
 def nonDummy (u : R) (I : Set S) : Set S := {i ∈ I | val u i ≠ ⊥}
 
-/-- The dependency between `u` and `v` that `I` stores is the set of pairs of their values in a
-row. -/
-def dep (u v : R) (I : Set S) : SetRel E E :=
-  {p | ∃ i ∈ I, val u i = ↑p.1 ∧ val v i = ↑p.2}
-
-/-- The tuples of values that the drefs `w` take together in a row of `I`; a row where some `wₖ`
-is ★ contributes none, so these are read off the substate `I_{u₁≠★,…,uₙ≠★}` ((33)). -/
-def tuples (w : ι → R) (I : Set S) : Set (ι → E) := {y | ∃ i ∈ I, ∀ k, val (w k) i = ↑(y k)}
-
-@[simp] theorem mem_value : x ∈ value u I ↔ ∃ i ∈ I, val u i = ↑x := Iff.rfl
-
 @[simp] theorem mem_cell {e : Flat E} {i : S} : i ∈ cell u e I ↔ i ∈ I ∧ val u i = e := Iff.rfl
 
 @[simp] theorem mem_nonDummy {i : S} : i ∈ nonDummy u I ↔ i ∈ I ∧ val u i ≠ ⊥ := Iff.rfl
-
-@[simp] theorem mem_tuples {y : ι → E} : y ∈ tuples w I ↔ ∃ i ∈ I, ∀ k, val (w k) i = ↑(y k) :=
-  Iff.rfl
-
-theorem value_eq_preimage_image (u : R) (I : Set S) :
-    value u I = (↑) ⁻¹' (val u '' I) :=
-  rfl
 
 theorem cell_coe_eq_empty (h : x ∉ value u I) : cell u x I = ∅ :=
   Set.eq_empty_of_forall_notMem fun i hi ↦ h ⟨i, hi⟩
@@ -141,49 +311,12 @@ theorem value_cell (h : x ∈ value u I) : value u (cell u x I) = {x} :=
 @[simp] theorem cell_coe_nonDummy : cell u x (nonDummy u I) = cell u x I :=
   Set.ext fun _ ↦ ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, h.2 ▸ Flat.coe_ne_bot⟩, h.2⟩⟩
 
-theorem value_singleton_of_eq {i : S} (h : val u i = ↑x) : value u {i} = {x} := by
-  ext y
-  simp [h, eq_comm]
-
-theorem dep_singleton_of_eq {i : S} {x y : E} (hu : val u i = ↑x) (hv : val v i = ↑y) :
-    dep u v {i} = {(x, y)} := by
-  ext ⟨a, b⟩
-  simp [dep, hu, hv, eq_comm]
-
-theorem fst_mem_value_of_mem_dep {p : E × E} (h : p ∈ dep u v I) : p.1 ∈ value u I :=
-  let ⟨i, hi, hu, _⟩ := h; ⟨i, hi, hu⟩
-
-theorem snd_mem_value_of_mem_dep {p : E × E} (h : p ∈ dep u v I) : p.2 ∈ value v I :=
-  let ⟨i, hi, _, hv⟩ := h; ⟨i, hi, hv⟩
-
-theorem value_mono (h : I ⊆ J) : value u I ⊆ value u J :=
-  fun _ ⟨i, hi, hx⟩ ↦ ⟨i, h hi, hx⟩
-
-theorem dep_mono (h : I ⊆ J) : dep u v I ⊆ dep u v J :=
-  fun _ ⟨i, hi, hu, hv⟩ ↦ ⟨i, h hi, hu, hv⟩
-
 theorem nonDummy_mono (h : I ⊆ J) : nonDummy u I ⊆ nonDummy u J :=
   fun _ hi ↦ ⟨h hi.1, hi.2⟩
-
-@[simp] theorem tuples_union (w : ι → R) (I J : Set S) :
-    tuples w (I ∪ J) = tuples w I ∪ tuples w J := by
-  ext
-  simp [or_and_right, exists_or]
-
-theorem tuples_singleton_of_eq {i : S} {y : ι → E} (h : ∀ k, val (w k) i = ↑(y k)) :
-    tuples w {i} = {y} := by
-  ext z; simp [h, funext_iff, eq_comm]
 
 theorem tuples_singleton_of_eq_bot {i : S} (k : ι) (h : val (w k) i = ⊥) :
     tuples w {i} = (∅ : Set (ι → E)) :=
   Set.eq_empty_of_forall_notMem fun _ hy ↦ by simp_all
-
-theorem tuples_vec1 (u : R) (I : Set S) : tuples ![u] I = (fun x ↦ ![x]) '' value u I := by
-  ext y; simp [funext_iff]
-
-theorem tuples_vec2 (u v : R) (I : Set S) :
-    tuples ![u, v] I = (fun p ↦ ![p.1, p.2]) '' dep u v I := by
-  ext y; simp [funext_iff, Fin.forall_fin_two, dep]
 
 /-- Where every row valuing `u` also values `v`, the values of `u` are the domain of the
 dependency between them. -/
@@ -209,55 +342,8 @@ theorem value_eq_pluralAssign_value {Var D : Type*} [DecidableEq Var] (G : Plura
     (x : Var) : value x G = G.value x :=
   rfl
 
-/-! ### Dref introduction and conditions -/
-
-/-- Dref introduction `[u]` ([brasoveanu-2010] (18)): the cumulative lift of CDRT's random
-assignment. -/
-def intro (u : R) : Update (Set S) := cumul (randomAssign u)
-
-theorem singleton_mem_intro (i : S) (u : R) (e : Flat E) :
-    {i} ~[intro u] {extend i u e} :=
-  ⟨fun _ hi ↦ ⟨_, rfl, e, by rw [hi]⟩, fun _ hj ↦ ⟨i, rfl, e, by rw [hj]⟩⟩
-
-/-- The atomic condition `P{u₁, …, uₙ}` ((30), (32), (34)) holds when some row values every `wₖ`
-and the values in every such row satisfy `P`. -/
-def atom (P : (ι → E) → Prop) (w : ι → R) : Condition (Set S) :=
-  {I | (tuples w I).Nonempty ∧ ∀ y ∈ tuples w I, P y}
-
-@[simp] theorem mem_atom {P : (ι → E) → Prop} :
-    I ∈ atom P w ↔ (tuples w I).Nonempty ∧ ∀ y ∈ tuples w I, P y :=
-  Iff.rfl
-
-theorem supClosed_atom (P : (ι → E) → Prop) (w : ι → R) : SupClosed (atom P w : Set (Set S)) :=
-  fun _ ⟨hI, hP⟩ _ ⟨_, hQ⟩ ↦ ⟨by simpa using Or.inl hI,
-    by simpa using fun y h ↦ h.elim (hP y) (hQ y)⟩
-
-theorem singleton_mem_atom_iff {P : (ι → E) → Prop} {i : S} {y : ι → E}
-    (h : ∀ k, val (w k) i = ↑(y k)) : {i} ∈ atom P w ↔ P y := by
-  simp [tuples_singleton_of_eq h]
-
-theorem mem_atom_vec1 {P : (Fin 1 → E) → Prop} :
-    I ∈ atom P ![u] ↔ (value u I).Nonempty ∧ ∀ x ∈ value u I, P ![x] := by
-  simp only [mem_atom, tuples_vec1, Set.image_nonempty, Set.forall_mem_image]
-
-theorem mem_atom_vec2 {P : (Fin 2 → E) → Prop} :
-    I ∈ atom P ![u, v] ↔ (dep u v I).Nonempty ∧ ∀ p ∈ dep u v I, P ![p.1, p.2] := by
-  simp only [mem_atom, tuples_vec2, Set.image_nonempty, Set.forall_mem_image]
-
-/-- Singular number `sing(u)` ((39)) holds when `u` has exactly one value. -/
-def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
-
 theorem mem_sing_iff {Var D : Type*} [DecidableEq Var] {G : PluralAssign Var D} {x : Var} :
     G ∈ sing x ↔ ∃ d, G.value x = {d} :=
-  Iff.rfl
-
-/-- The determiner condition `DET{u, u'}` ((76)): the static determiner `q` relates the values of
-`u` and `u'`. -/
-def det (q : Quantifier.GQ E) (u u' : R) : Condition (Set S) :=
-  {I | q (· ∈ value u I) (· ∈ value u' I)}
-
-@[simp] theorem mem_det {q : Quantifier.GQ E} :
-    I ∈ det q u u' ↔ q (· ∈ value u I) (· ∈ value u' I) :=
   Iff.rfl
 
 /-! ### Structured inclusion -/
@@ -458,38 +544,6 @@ theorem mem_maxSub_test_copy (hC : copy u' u I ∈ C) :
 
 end Copy
 
-/-! ### Preservation -/
-
-/-- An update preserves the drefs `w` when its inputs and outputs match row for row on them:
-every input row has an output row and every output row an input row with the same values for
-every `wₖ`. -/
-def Preserves (w : ι → R) (D : Update (Set S)) : Prop :=
-  ∀ ⦃I J⦄, I ~[D] J → Set.LiftRel (fun i j ↦ ∀ k, val (w k) i = val (w k) j) I J
-
-theorem Preserves.value_eq (h : Preserves ![v] D) (hIJ : I ~[D] J) : value v J = value v I := by
-  ext x
-  refine ⟨fun ⟨j, hj, hx⟩ ↦ ?_, fun ⟨i, hi, hx⟩ ↦ ?_⟩
-  · obtain ⟨i, hi, hij⟩ := (h hIJ).2 j hj
-    exact ⟨i, hi, (hij 0).trans hx⟩
-  · obtain ⟨j, hj, hij⟩ := (h hIJ).1 i hi
-    exact ⟨j, hj, (hij 0).symm.trans hx⟩
-
-theorem Preserves.comp (h₁ : Preserves w D) (h₂ : Preserves w D') : Preserves w (D ○ D') :=
-  fun _ _ ⟨_, hIK, hKJ⟩ ↦ (Set.liftRel_comp.2 ⟨_, h₁ hIK, h₂ hKJ⟩).imp
-    fun ⟨_, h, h'⟩ k ↦ (h k).trans (h' k)
-
-theorem preserves_test (w : ι → R) (C : Condition (Set S)) : Preserves w (test C) :=
-  fun _ _ ⟨hIJ, _⟩ ↦ hIJ ▸ Set.liftRel_refl_of_refl_on fun _ _ _ ↦ rfl
-
-theorem preserves_cumul {D : Update S} (h : ∀ k, Fixes (w k) D) : Preserves w (cumul D) :=
-  fun _ _ hIJ ↦ hIJ.imp fun hij k ↦ (h k _ _ hij).symm
-
-theorem preserves_intro (h : ∀ k, w k ≠ u) : Preserves w (intro u : Update (Set S)) :=
-  preserves_cumul fun k ↦ fixes_randomAssign_of_ne (h k)
-
-theorem value_intro_of_ne (h : v ≠ u) (hIJ : I ~[intro u] J) : value v J = value v I :=
-  (preserves_intro (w := ![v]) (Fin.forall_fin_one.2 h)).value_eq hIJ
-
 theorem Preserves.max (h : ∀ k, w k ≠ u) (hD : Preserves w D) : Preserves w (max u D) :=
   fun _ _ hIJ ↦ ((preserves_intro h).comp hD) (max_subset u D hIJ)
 
@@ -505,5 +559,7 @@ theorem Preserves.distrib (hD : Preserves w D) : Preserves w (distrib u D) := by
     ((Set.liftRel_eq.2 rfl).biUnion fun x hx y _ hxy ↦ ?_)
   subst hxy
   exact hD (hc x hx)
+
+end Flat
 
 end PCDRT

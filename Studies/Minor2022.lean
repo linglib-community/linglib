@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Minor2022
-public import Linglib.Semantics.Dynamic.RegisterStructure
+public import Linglib.Semantics.Dynamic.PCDRT
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Plurality.Cumulativity
 public import Mathlib.Data.Set.Card
@@ -49,6 +49,8 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 
 * Assignments come from any register structure and values from any partial order, whose atoms are
   `Mereology.Atom`. The examples take finite sets of atoms, whose sum is union.
+* Every register content is an individual, so the lexical relations (63) are Plural CDRT's atomic
+  conditions `PCDRT.atom` at the identity `PCDRT.ValueEmbedding`.
 * The event dref of event closure (72) is folded into a verb relating the values of the agent and
   the theme: in every derivation formalized here it is introduced together with the object.
 * A model fixes the object noun and the verb. A meaning varying with the model is read as a set of
@@ -121,16 +123,24 @@ theorem singleton_mem_cumul_randomAssign_pair {x y : E} (hxy : x ≠ y) :
 
 /-! ### Lexical relations (§4.4) -/
 
-/-- A lexical relation `R{u}` (63) holds of a state when `u` has values there and they satisfy
-it. -/
-def lex (P : E → Prop) (u : R) : Condition (Set S) :=
-  {I | (val u '' I).Nonempty ∧ val u '' I ⊆ {x | P x}}
+/-- A lexical relation `R{u}` (63) is Plural CDRT's atomic condition, at registers whose every
+content is an individual. -/
+def lex (P : E → Prop) (u : R) : Condition (Set S) := PCDRT.atom (fun x ↦ P (x 0)) ![u]
 
-/-- A two-place lexical relation `R{u, u'}` (63) holds of a state when the pairs of values of `u`
-and `u'` exist and satisfy it. -/
+/-- A two-place lexical relation `R{u, u'}` (63). -/
 def lex₂ (P : E → E → Prop) (u u' : R) : Condition (Set S) :=
-  {I | ((fun i ↦ (val u i, val u' i)) '' I).Nonempty ∧
-    (fun i ↦ (val u i, val u' i)) '' I ⊆ {p | P p.1 p.2}}
+  PCDRT.atom (fun x ↦ P (x 0) (x 1)) ![u, u']
+
+theorem mem_lex {P : E → Prop} :
+    I ∈ lex P u ↔ (val u '' I).Nonempty ∧ val u '' I ⊆ {x | P x} := by
+  rw [lex, PCDRT.mem_atom_vec1, PCDRT.value_eq_image]
+  rfl
+
+theorem mem_lex₂ {P : E → E → Prop} : I ∈ lex₂ P u u' ↔
+    ((fun i ↦ (val u i, val u' i)) '' I).Nonempty ∧
+      (fun i ↦ (val u i, val u' i)) '' I ⊆ {p | P p.1 p.2} := by
+  rw [lex₂, PCDRT.mem_atom_vec2, PCDRT.dep_eq_image]
+  rfl
 
 /-! ### The distributivity operator (94) -/
 
@@ -209,11 +219,11 @@ def sentence (P : E → Prop) (d : Update (Set S) → Update (Set S)) (M : Model
 variable {P : E → Prop} {M : Model E} {C : Condition (Set S)} {D : Update (Set S)}
 
 theorem singleton_mem_lex_iff {j : S} : {j} ∈ lex P u ↔ P (val u j) := by
-  simp [lex]
+  simp [mem_lex]
 
 theorem singleton_mem_lex₂_iff {P : E → E → Prop} {j : S} :
     {j} ∈ lex₂ P u u' ↔ P (val u j) (val u' j) := by
-  simp [lex₂]
+  simp [mem_lex₂]
 
 theorem singleton_mem_dom_intro_comp_iff :
     {i} ∈ (intro u ○ test C ○ D).dom ↔ ∃ x, {extend i u x} ∈ C ∧ {extend i u x} ∈ D.dom := by
@@ -295,7 +305,7 @@ theorem exh_vp {y : E} (hy : ¬ Atom y) (i : S) :
         acrossModels fun M : Model E ↦ vp u u' M ○ test (bare (S := S) u') := by
   refine exh_acrossModels_comp_test (comp_test_lt ⟨fun _ ↦ True, fun _ _ ↦ True⟩ fun h ↦ hy ?_)
   have hp : ({i}, {extend i u' y}) ∈ vp u u' ⟨fun _ ↦ True, fun _ _ ↦ True⟩ :=
-    ⟨_, singleton_mem_intro_iff.2 ⟨y, rfl⟩, rfl, by simp [lex, lex₂]⟩
+    ⟨_, singleton_mem_intro_iff.2 ⟨y, rfl⟩, rfl, by simp [mem_lex, mem_lex₂]⟩
   have := (mem_comp_test.1 (h hp)).2.1
   simpa [atomic, val_extend_self] using this
 
@@ -407,7 +417,7 @@ theorem singleton_mem_dom_distW_iff (huu' : u ≠ u') :
         (∀ a ∈ atomsBelow (val u k), M.noun (b a) ∧ M.verb a (b a)) ∧
         (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ C := by
   rw [vp, singleton_mem_dom_distW_intro_iff]
-  simp only [lex, lex₂, Set.mem_inter_iff, Set.mem_ofPred_eq, dom_test, Set.image_nonempty,
+  simp only [mem_lex, mem_lex₂, Set.mem_inter_iff, Set.mem_ofPred_eq, dom_test, Set.image_nonempty,
     Set.subset_def, Set.forall_mem_image, val_extend_self, val_extend_of_ne _ _ _ _ huu']
   exact exists_congr fun b ↦ ⟨fun ⟨⟨⟨hne, hn⟩, _, hv⟩, hC⟩ ↦ ⟨hne, fun a ha ↦ ⟨hn ha, hv ha⟩, hC⟩,
     fun ⟨hne, h, hC⟩ ↦ ⟨⟨⟨hne, fun a ha ↦ (h a ha).1⟩, hne, fun a ha ↦ (h a ha).2⟩, hC⟩⟩
