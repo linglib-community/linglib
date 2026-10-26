@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.Basic
-public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceConservation
+public import Linglib.Syntax.Minimalist.Workspace.Merge.Basic
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
 public import Linglib.Core.Combinatorics.RootedTree.Crown
 public import Linglib.Core.Algebra.RootedTree.HopfAlgebra

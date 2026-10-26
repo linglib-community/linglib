@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.Trace
-public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceConservation
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Trace
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
 
 /-!
 # Edge-count grading of the Δ^c bialgebra
