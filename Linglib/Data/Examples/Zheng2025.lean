@@ -26,7 +26,7 @@ def ex1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
 def ex2 : Datum :=
   { id := "zheng2025_ex2"
@@ -39,7 +39,7 @@ def ex2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
 def ex3 : Datum :=
   { id := "zheng2025_ex3"
@@ -52,7 +52,7 @@ def ex3 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
 
 def ex4b : Datum :=
   { id := "zheng2025_ex4b"
@@ -65,7 +65,7 @@ def ex4b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
 def ex5_ctx1 : Datum :=
   { id := "zheng2025_ex5_ctx1"
@@ -78,7 +78,7 @@ def ex5_ctx1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "true")] }
 
 def ex5_ctx2 : Datum :=
   { id := "zheng2025_ex5_ctx2"
@@ -91,7 +91,7 @@ def ex5_ctx2 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
 
 def ex5_ctx3 : Datum :=
   { id := "zheng2025_ex5_ctx3"
@@ -104,7 +104,7 @@ def ex5_ctx3 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
 def ex6_ctx1 : Datum :=
   { id := "zheng2025_ex6_ctx1"
@@ -117,7 +117,7 @@ def ex6_ctx1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "true"), ("unexpected_evidence", "true")] }
 
 def ex6_ctx2 : Datum :=
   { id := "zheng2025_ex6_ctx2"
@@ -130,7 +130,7 @@ def ex6_ctx2 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "true"), ("epistemic_bias", "false"), ("unexpected_evidence", "false")] }
 
 def ex4a : Datum :=
   { id := "zheng2025_ex4a"
@@ -143,7 +143,7 @@ def ex4a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
+    paperFeatures := [("clause_type", "polar"), ("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")] }
 
 def ex12a : Datum :=
   { id := "zheng2025_ex12a"

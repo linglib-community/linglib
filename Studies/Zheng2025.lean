@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.Zheng2025
 public import Linglib.Fragments.Mandarin.QuestionParticles
 public import Linglib.Semantics.Modality.Kernel
 public import Linglib.Semantics.Questions.Bias
@@ -20,8 +21,9 @@ before the evidence, the beliefs, norms, desires or default expectations of the 
 instantiations of the question's highlighted property, (13), the first condition requires
 every instantiation to follow from the evidence (`nandaoQFelicitous`), which reduces to (11)
 for a polar question (`nandaoQFelicitous_singleton`) and excludes a wh-question one of whose
-instantiations no evidence supports (`not_nandaoQFelicitous_of_unsupported`), the paper's
-derivation of the distribution recorded in the fragment (`nandao_distribution`, (12)).
+instantiations no evidence supports (`not_nandaoQFelicitous_of_unsupported`), the paper's account
+of why *nandao* selects polar questions only (`nandao_distribution`), which matches the rows of
+(12) (`nandao_distribution_judgments`).
 
 The dripping-raincoat scenario of (2), (3) and (5) is a four-world model: the question is
 felicitous whether the conflicting state is a belief that it is not raining or the default
@@ -41,6 +43,12 @@ the argument of the paper's footnote on (17).
 * The information state `U` is a list of propositions, like the kernel; the default state of the
   paper's footnote is one such proposition.
 * Highlighted properties enter only through their set of instantiations.
+
+## TODO
+
+* Why-questions, every instantiation of which may follow from the evidence, are excluded in §4 by
+  the requirement that the instantiation learnt resolve the conflict between `K` and `U`, which is
+  not encoded, so `not_nandaoQFelicitous_of_unsupported` covers the other wh-questions only.
 
 ## References
 
@@ -69,7 +77,7 @@ def evidenceRaises (p φ : Set W) : Prop :=
 instance (p φ : W → Prop) [Fintype W] [DecidablePred p] [DecidablePred φ] :
     Decidable (evidenceRaises p φ) :=
   decidable_of_iff
-    ((Finset.univ.filter λ w => p w ∧ φ w).card * Fintype.card W >
+    ((Finset.univ.filter fun w ↦ p w ∧ φ w).card * Fintype.card W >
       (Finset.univ.filter φ).card * (Finset.univ.filter p).card) <| by
     show _ ↔ {w | p w ∧ φ w}.ncard * Nat.card W > {w | φ w}.ncard * {w | p w}.ncard
     simp [Set.ncard_eq_toFinset_card', Nat.card_eq_fintype_card]
@@ -115,11 +123,20 @@ theorem not_nandaoQFelicitous_of_unsupported {k : Kernel W} {u : Set (W → Prop
   rintro ⟨⟨p, hp, hall⟩, -, -⟩
   exact h p hp (hall φ hφ)
 
-/-- *Nandao* combines with polar questions only, (12), as the fragment records. -/
-theorem nandao_distribution :
-    .declarative ∉ Mandarin.QuestionParticles.nandao.distribution.possible.dom ∧
-      .polar ∈ Mandarin.QuestionParticles.nandao.distribution.possible.dom ∧
-      .constituent ∉ Mandarin.QuestionParticles.nandao.distribution.possible.dom := by
+open Mandarin.QuestionParticles (nandao) in
+/-- *Nandao* selects polar questions only, (12). -/
+theorem nandao_distribution : nandao.distribution.possible.dom = {.polar} := by
+  ext t; cases t <;> decide
+
+/-- The sentence type of a row, the polar question of the nandao-questions and the declarative
+and wh-question of (12). -/
+def sentenceType? (e : Datum) : Option Clause.SentenceType :=
+  e.parse? "clause_type"
+    [("declarative", .declarative), ("polar", .polar), ("wh-question", .constituent)]
+
+open Mandarin.QuestionParticles (nandao) in
+theorem nandao_distribution_judgments : ∀ e ∈ Examples.all, ∀ t ∈ sentenceType? e,
+    (t ∈ nandao.distribution.possible.dom ↔ e.judgment ≠ .ungrammatical) := by
   decide
 
 /-- The bias profile of *nandao* requires contextual evidence for the prejacent, the paper's
@@ -136,14 +153,14 @@ inductive World
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- B enters wearing a dripping raincoat. -/
-abbrev wearingRaincoat : World → Prop := λ w => w = .rain ∨ w = .sprinkler
+abbrev wearingRaincoat : World → Prop := fun w ↦ w = .rain ∨ w = .sprinkler
 
 /-- A's belief that it is not raining, (2). -/
-abbrev expectDry : World → Prop := λ w => w = .dry ∨ w = .unknown
+abbrev expectDry : World → Prop := fun w ↦ w = .dry ∨ w = .unknown
 
 /-- The default expectation that people do not wear raincoats, the state of (3) and of
 context 1 of (5). -/
-abbrev expectNoRaincoat : World → Prop := λ w => ¬ wearingRaincoat w
+abbrev expectNoRaincoat : World → Prop := fun w ↦ ¬ wearingRaincoat w
 
 /-- It is raining outside, the prejacent. -/
 abbrev isRaining : World → Prop := (· = .rain)
@@ -155,7 +172,7 @@ private theorem raincoat_unexpected_of {u : World → Prop} (h : ∀ w, wearingR
     unexpected raincoatK {u} := by
   simp only [unexpected, raincoatK, Kernel.base_singleton, sInf_singleton,
     Set.disjoint_left]
-  exact λ w hw => h w hw
+  exact fun w hw ↦ h w hw
 
 private theorem raincoat_not_settled : ¬ raincoatK.directlySettles isRaining := by
   simp only [raincoatK, Kernel.directlySettles_singleton, Set.ofPred_subset_ofPred,
