@@ -150,6 +150,11 @@ def occurrencesWith (P : LexicalItem.Token → Prop) [DecidablePred P] : List Tr
 
 theorem occurrencesWith_eq : occurrencesWith t (· = tok) = occurrences t tok := rfl
 
+variable {t tok} in
+@[simp] theorem mem_occurrences {p : TreePath} :
+    p ∈ occurrences t tok ↔ (p, tok) ∈ tokenList t.val := by
+  simp [occurrences]
+
 /-- The positions of the deleted copies of `tok`. -/
 def traces : List TreePath :=
   (traceList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
