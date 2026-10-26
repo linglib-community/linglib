@@ -5,30 +5,25 @@ public import Linglib.Syntax.Case.Basic
 /-!
 # Georgian case
 
-Georgian has seven cases, the nominative, vocative, dative, ergative, genitive, instrumental and
-adverbial, in essentially one declension for all nouns ([hewitt-1995] §3.1, p. 33). The modern
-plural adds the same endings to the plural suffix *-eb-*. The older plural, still found in
-archaising styles, has its own nominative and vocative and one portmanteau for the other cases,
-rare if attested at all in the instrumental and the adverbial (pp. 33–34).
+Hewitt's grammar gives Georgian seven cases, the nominative, vocative, dative, ergative,
+genitive, instrumental and adverbial, in essentially one declension for all nouns. Besides the
+functions of its name, the dative marks location with a few nouns, where the language otherwise
+uses the postpositions *-ši* 'in' and *-ze* 'on', and the adverbial marks both the state and the
+change of state of a predication, as in *gvel-i kva-d (gada-)i-kc-a* 'the snake turned into
+stone'. The paradigms that distinguish the seven cases are in `Georgian.Declension`.
 
 ## Main definitions
 
-* `Georgian.Case`, `Georgian.Case.label`: the seven cases, and the comparative value each is named
-  for.
-* `Georgian.kaci`: the declension of *k'ac-i* 'man', singular, plural and older plural (p. 34).
-
-## Main results
-
-* `Georgian.singular_kaci_injective`, `Georgian.plural_kaci_injective`: the modern declension
-  keeps the seven cases apart in both numbers.
-* `Georgian.oldPlural_kaci_oblique`: the older plural has one form for the dative, ergative and
-  genitive.
+* `Georgian.Case`: the seven cases, in Hewitt's order.
+* `Georgian.Case.label`, `Georgian.Case.functions`: the comparative value each case is named for,
+  and the values it expresses.
 
 ## Implementation notes
 
-The forms are Hewitt's, with the long variants of the four endings that have them in
-parentheses. The older plural of the instrumental and the adverbial, which Hewitt gives in
-parentheses as rarely attested, is left out.
+`functions` leaves out the subject and the objects, whose case changes with the series of the
+verb (`Georgian.pattern`), and time, which Hewitt gives to the nominative, the dative and the
+instrumental. Hewitt also lists among the case functions an ablative, the instrumental followed
+by *-gan* 'from', which is not one of the seven cases, so `functions` has no source.
 
 ## References
 
@@ -53,7 +48,7 @@ inductive Case where
   | gen
   /-- The instrumental. -/
   | inst
-  /-- The adverbial, as in *briq'v-ada* 'as an idiot' (p. 34). -/
+  /-- The adverbial, as in *briq'v-ada* 'as an idiot'. -/
   | adv
   deriving DecidableEq, Fintype, Repr
 
@@ -69,43 +64,16 @@ def label : Case → _root_.Case
   | inst => .inst
   | adv => .ess
 
-/-- `forms nom voc dat erg gen inst adv` assigns each case its form. -/
-def forms {α : Type*} (nom voc dat erg gen inst adv : α) : Case → α
-  | .nom => nom
-  | .voc => voc
-  | .dat => dat
-  | .erg => erg
-  | .gen => gen
-  | .inst => inst
-  | .adv => adv
+/-- The comparative values a case expresses: the dative also expresses location with a few nouns
+([hewitt-1995] pp. 531–532), and the adverbial the change of state (p. 534). -/
+def functions : Case → Finset _root_.Case
+  | dat => {.dat, .loc}
+  | adv => {.ess, .transl}
+  | c => {c.label}
+
+theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
 
 end Case
-
-/-- The singular of *k'ac-i* 'man'. -/
-def kaci.singular : Case → String :=
-  Case.forms "k'ac-i" "k'ac-o" "k'ac-s(a)" "k'ac-ma" "k'ac-is(a)" "k'ac-it(a)" "k'ac-ad(a)"
-
-/-- The plural of *k'ac-i* 'man'. -/
-def kaci.plural : Case → String :=
-  Case.forms "k'ac-eb-i" "k'ac-eb-o" "k'ac-eb-s(a)" "k'ac-eb-ma" "k'ac-eb-is(a)" "k'ac-eb-it(a)"
-    "k'ac-eb-ad(a)"
-
-/-- The older plural of *k'ac-i* 'man', where it is attested. -/
-def kaci.oldPlural : Case → Option String :=
-  Case.forms (some "k'ac-n-i") (some "k'ac-n-o") (some "k'ac-t(a)") (some "k'ac-t(a)")
-    (some "k'ac-t(a)") none none
-
-/-- The modern singular keeps the seven cases apart. -/
-theorem singular_kaci_injective : Function.Injective kaci.singular := by
-  decide
-
-/-- The modern plural keeps the seven cases apart. -/
-theorem plural_kaci_injective : Function.Injective kaci.plural := by
-  decide
-
-/-- The older plural has one form for the dative, ergative and genitive. -/
-theorem oldPlural_kaci_oblique :
-    kaci.oldPlural .dat = kaci.oldPlural .erg ∧ kaci.oldPlural .erg = kaci.oldPlural .gen := by
-  decide
 
 end Georgian
