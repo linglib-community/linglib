@@ -35,7 +35,7 @@ licensing distributions.
 namespace HindiUrdu.Particles
 
 /-- *ki* is the general subordinator, distinct from the homophonous
-disjunction *ki* of alternative questions. -/
+disjunction `HindiUrdu.Coordination.ki` of alternative questions. -/
 def ki : Particle where
   form := "ki"
   position := some .clauseInitial
