@@ -11,6 +11,7 @@
     "context": "A and B are talking about a colleague, Lee, who is going to work on Sunday. B does not think people usually go to work on Sunday.",
     "judgment": "acceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "true"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "true"]
@@ -31,6 +32,7 @@
     "context": "A sits in a windowless room working. A believes it is not raining. At 10, B enters the room with a dripping raincoat.",
     "judgment": "acceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "true"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "true"]
@@ -51,6 +53,7 @@
     "context": "A sits in a windowless room working. A has no expectation about the weather. At 10, B enters the room with a dripping raincoat.",
     "judgment": "acceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "true"],
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "true"]
@@ -71,6 +74,7 @@
     "context": "The speaker believes that there is no one in a room.",
     "judgment": "acceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "false"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "false"]
@@ -91,6 +95,7 @@
     "context": "A is sitting in a windowless room working. A doesn't know the weather or have any expectations that people will wear raincoats. At 10, B enters the room with a dripping raincoat.",
     "judgment": "acceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "true"],
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "true"]
@@ -111,6 +116,7 @@
     "context": "A is sitting in a windowless room working. A doesn't know the weather or have any expectations that people will wear raincoats. At 10, B enters the room.",
     "judgment": "unacceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "false"],
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "false"]
@@ -131,6 +137,7 @@
     "context": "A thinks it will not rain today. At 10, B enters the room.",
     "judgment": "unacceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "false"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "false"]
@@ -150,6 +157,7 @@
     "context": "A says Lee is planning to work on weekends too. B does not think that people, including Lee, usually go to work on Sunday.",
     "judgment": "acceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "true"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "true"]
@@ -169,6 +177,7 @@
     "context": "A says Lee is planning to work on weekends too. B knows Lee usually goes to work on Sunday.",
     "judgment": "unacceptable",
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "true"],
       ["epistemic_bias", "false"],
       ["unexpected_evidence", "false"]
@@ -192,6 +201,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["clause_type", "polar"],
       ["evidential_bias", "false"],
       ["epistemic_bias", "true"],
       ["unexpected_evidence", "false"]
