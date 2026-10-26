@@ -261,7 +261,9 @@ def render_table(tb: dict, types: Types, where: str) -> str:
             for j, f in enumerate(fields[1:], 1):
                 end = "," if j < len(fields) - 1 else f"⟩{sep}"
                 body += wrap_field(f, end)
-    defn = [doc(f"The {len(rows)} rows of {tb['locator']}, in the paper's order; {status}."),
+    lede = (f"The row of {tb['locator']}" if len(rows) == 1
+            else f"The {len(rows)} rows of {tb['locator']}, in the paper's order")
+    defn = [doc(f"{lede}; {status}."),
             f"def {tb['name']} : List {tb['structure']} :=", *body]
     return "\n".join(struct) + "\n\n" + "\n".join(defn)
 

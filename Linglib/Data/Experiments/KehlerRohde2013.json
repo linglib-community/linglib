@@ -1,7 +1,7 @@
 {
   "meta": {
     "bibkey": "kehler-rohde-2013",
-    "description": "The passage-completion results the paper synthesizes from the authors' earlier experiments: an aspect manipulation, an instruction manipulation, a prompt manipulation and a voice manipulation, each reporting proportions of Source interpretations, coherence relations, next mentions or pronominalized references. Proportions are printed to two places; the paper prints the Violated Expectation relation as Violated Exp in Tables 3, 4 and 6. The first-mention rates of the prompt manipulation are printed in the text, not in a table."
+    "description": "The passage-completion results the paper synthesizes from the authors' earlier experiments: an aspect manipulation, an instruction manipulation, a prompt manipulation and a voice manipulation, each reporting proportions of Source interpretations, coherence relations, next mentions or pronominalized references. Proportions are printed to two places; the paper prints the Violated Expectation relation as Violated Exp in Tables 3, 4 and 6. The first-mention rates of the prompt manipulation and the figures of the worked example from Arnold (2001)'s Source-Goal data are printed in the text, not in a table."
   },
   "types": [
     {
@@ -667,6 +667,69 @@
           "voice": "Passive",
           "predicted": "0.59",
           "actual": "0.60"
+        }
+      ]
+    },
+    {
+      "name": "arnoldPronominalizations",
+      "structure": "ArnoldPronominalized",
+      "doc": "the proportion of references to a position that were pronominalized in Arnold (2001)'s Source-Goal contexts, the subject being the Source and the non-subject the Goal, printed in the text.",
+      "locator": "p. 15",
+      "verified": "page-image",
+      "key": [
+        "position"
+      ],
+      "columns": [
+        {
+          "name": "position",
+          "type": "Position",
+          "doc": "The position of the referent."
+        },
+        {
+          "name": "proportion",
+          "type": "decimal",
+          "doc": "The proportion of references that are pronouns."
+        }
+      ],
+      "rows": [
+        {
+          "position": "Surface Subject",
+          "proportion": "0.76"
+        },
+        {
+          "position": "Surface Non-Subject",
+          "proportion": "0.20"
+        }
+      ]
+    },
+    {
+      "name": "arnoldPrediction",
+      "structure": "ArnoldPrediction",
+      "doc": "the worked example of Equation (11) on Arnold (2001)'s data, printed in the text: the next-mention probability of the Goal, the probability of a pronoun, and the predicted interpretation bias of a pronoun toward the Goal.",
+      "locator": "p. 15",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "goalNextMention",
+          "type": "decimal",
+          "doc": "P(Goal), the next-mention probability of the Goal."
+        },
+        {
+          "name": "pronounRate",
+          "type": "decimal",
+          "doc": "P(pronoun), the probability of pronominalization."
+        },
+        {
+          "name": "goalInterpretation",
+          "type": "decimal",
+          "doc": "The interpretation bias toward the Goal that Equation (11) predicts."
+        }
+      ],
+      "rows": [
+        {
+          "goalNextMention": "0.86",
+          "pronounRate": "0.28",
+          "goalInterpretation": "0.61"
         }
       ]
     }
