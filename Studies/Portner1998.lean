@@ -23,8 +23,9 @@ oncoming bus* (39) true, the latter under a base that includes the bus; [no sing
 both](##not_prog_crossing_and_walkIntoBus). A Mary of ordinary abilities was not wiping out the
 Roman army, whose defeat no world compatible with her abilities contains; a Mary who did wipe it out
 has the abilities that put such worlds in the base. These scenarios [decide the paper's
-judgments](##truthValue_rows), where the imperfective of the event semantics, the progressive over
-a totally realistic base (`Aspect.PROG_subset_IMPF`), gets (11) wrong.
+judgments](##truthValue_rows), where the imperfective of the event semantics over the actual world
+alone, inside which the progressive over a totally realistic base falls
+(`Aspect.PROG_subset_IMPF`), gets (11) wrong.
 
 ## Implementation notes
 
@@ -127,8 +128,10 @@ theorem not_dowtyProg_bus :
     iv 0 1 ∉ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf crossing) .hit :=
   fun ⟨_, _, h⟩ ↦ let ⟨_, ⟨h1, _⟩, _⟩ := h .hit rfl; absurd h1 (by decide)
 
-theorem impf_crossing_eq_empty : Aspect.IMPF (T := ℕ) crossing Bus.hit = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ ⟨_, _, h, _⟩ ↦ absurd h (by decide)
+theorem impf_crossing_eq_empty :
+    Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) crossing Bus.hit = ∅ := by
+  rw [Aspect.impf_singleton]
+  exact Set.eq_empty_of_forall_notMem fun _ ⟨_, _, h, _⟩ ↦ absurd h (by decide)
 
 /-! ### The Roman army (18)
 
@@ -191,7 +194,7 @@ theorem truthValue_rows :
         Examples.ex18_hero.feature? "truthValue" = some "true") ∧
       ¬ (iv 0 1 ∈ Dowty1979.prog (fun _ _ ↦ {Bus.hit}) (Landman1992.sentenceOf crossing) .hit ↔
         Examples.ex11.feature? "truthValue" = some "true") ∧
-      ¬ ((Aspect.IMPF (T := ℕ) crossing Bus.hit).Nonempty ↔
+      ¬ ((Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) crossing Bus.hit).Nonempty ↔
         Examples.ex11.feature? "truthValue" = some "true") := by
   refine ⟨iff_of_true prog_crossing (by decide), iff_of_true prog_walkIntoBus (by decide),
     iff_of_false (not_prog_ordinary _) (by decide), iff_of_true prog_hero (by decide),

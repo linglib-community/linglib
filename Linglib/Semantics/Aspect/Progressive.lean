@@ -15,9 +15,9 @@ was drawing a circle* does not entail *Mary drew a circle*. As an interval prope
 progressive holds at the run times of the events in progress, and composes with the perfect and
 the tenses like the other viewpoint operators.
 
-The imperfective, which requires an actual event of the type, is the case of a totally realistic
-modal base, where the actual world is the only best world: there the progressive [falls inside the
-imperfective](##PROG_subset_IMPF), and the inference from progressive to perfective returns.
+Over a totally realistic modal base the actual world is the only best world: there the progressive
+[falls inside the imperfective over the actual world alone](##PROG_subset_IMPF), which requires an
+actual event of the type, and the inference from progressive to perfective returns.
 
 ## Main definitions
 
@@ -82,11 +82,13 @@ theorem InProgress.exists_of_isTotallyRealistic (hf : (circ e P).IsTotallyRealis
     (h : InProgress circ ni e P w) : ∃ e', NonfinalPart e e' ∧ P w e' :=
   hf.necessity_le_id (ni e) _ w h
 
-/-- Over totally realistic modal bases the progressive falls inside the imperfective. -/
+/-- Over totally realistic modal bases the progressive falls inside the imperfective over the world
+of evaluation alone. -/
 theorem PROG_subset_IMPF (hf : ∀ e, (circ e P).IsTotallyRealistic) :
-    PROG circ ni P w ⊆ IMPF P w := by
+    PROG circ ni P w ⊆ IMPF (fun w _ ↦ {w}) P w := by
   rintro _ ⟨e, he, rfl⟩
   obtain ⟨e', he', hP⟩ := he.exists_of_isTotallyRealistic (hf e)
-  exact ⟨e', he'.lt, hP⟩
+  rw [impf_singleton]
+  exact ⟨e', he'.lt.le, hP⟩
 
 end Aspect

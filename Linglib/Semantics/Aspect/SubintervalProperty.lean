@@ -35,14 +35,14 @@ are the set itself.
 
 * `Aspect.hasSubintervalProperty_iff_witnesses`: every subinterval of the run time of an event of
   the predicate is the run time of an event of the predicate.
-* `Aspect.HasSubintervalProperty.impf_subset_prfv`: the imperfective entails the perfective.
+* `Aspect.HasSubintervalProperty.impf_subset_prfv`: over a modal domain containing the world of
+  evaluation, the imperfective entails the perfective.
 * `Aspect.not_hasSubintervalProperty_snd_eq`: the predicate of events that end when a durative
   event ends lacks the property.
-* `Aspect.exists_prfv_of_impf_not_hasSubintervalProperty`: a predicate may validate the
+* `Aspect.exists_prfv_of_unbounded_not_hasSubintervalProperty`: a predicate may validate the
   entailment and lack the property.
-* `Aspect.isLowerSet_impf`, `Aspect.isLowerSet_compl_prfv`: the imperfective and the negated
-  perfective have the property as interval properties, as the non-strict imperfective does
-  (`Aspect.isLowerSet_unbounded`).
+* `Aspect.isLowerSet_compl_prfv`: the negated perfective has the property as an interval property,
+  as the extensional imperfective does (`Aspect.isLowerSet_unbounded`).
 * `Aspect.durative_eq_of_isLowerSet`, `Aspect.perfect_eq_of_isLowerSet`: for an interval property
   with the property, the durative claim and the perfect are the property itself.
 
@@ -92,9 +92,11 @@ theorem unbounded_subset_prfv (h : HasSubintervalProperty P) (w : W) :
     UNBOUNDED P w ⊆ PRFV P w := fun _ ht ↦
   let ⟨e, hP, hτ⟩ := h.mem_image_of_unbounded ht; ⟨e, hτ.le, hP⟩
 
-/-- Under the subinterval property the imperfective entails the perfective. -/
-theorem impf_subset_prfv (h : HasSubintervalProperty P) (w : W) : IMPF P w ⊆ PRFV P w :=
-  (impf_subset_unbounded P w).trans (h.unbounded_subset_prfv w)
+/-- Under the subinterval property, the imperfective over a modal domain containing the world of
+evaluation entails the perfective, Dowty's entailment from *x is V-ing* to *x has V-ed*. -/
+theorem impf_subset_prfv (h : HasSubintervalProperty P) {acc : W → NonemptyInterval T → Set W}
+    {w : W} (hw : ∀ t, w ∈ acc w t) : IMPF acc P w ⊆ PRFV P w :=
+  fun t ht ↦ h.unbounded_subset_prfv w (mem_unbounded_of_mem_impf (hw t) ht)
 
 end HasSubintervalProperty
 
@@ -107,13 +109,13 @@ theorem not_hasSubintervalProperty_snd_eq [Nonempty W] {e : E} (he : (τ e).fst 
   rw [hτ] at hP
   exact he.ne hP
 
-/-- The entailment from the imperfective to the perfective does not characterize the subinterval
-property. The predicate of events that are instantaneous or run from `0` to `2` validates it,
-every reference time containing an instant, and the interval from `0` to `1` is a subinterval
-of one of its run times without being one. -/
-theorem exists_prfv_of_impf_not_hasSubintervalProperty :
+/-- The entailment from the extensional imperfective to the perfective does not characterize the
+subinterval property. The predicate of events that are instantaneous or run from `0` to `2`
+validates it, every reference time containing an instant, and the interval from `0` to `1` is a
+subinterval of one of its run times without being one. -/
+theorem exists_prfv_of_unbounded_not_hasSubintervalProperty :
     ∃ P : Unit → NonemptyInterval ℤ → Prop,
-      (∀ w, IMPF P w ⊆ PRFV P w) ∧ ¬ HasSubintervalProperty P := by
+      (∀ w, UNBOUNDED P w ⊆ PRFV P w) ∧ ¬ HasSubintervalProperty P := by
   refine ⟨fun _ e ↦ e.IsPoint ∨ e = ⟨⟨0, 2⟩, by decide⟩,
     fun _ t _ ↦ ⟨.pure t.fst, NonemptyInterval.le_def.2 ⟨le_rfl, t.fst_le_snd⟩, .inl rfl⟩,
     fun h ↦ ?_⟩
@@ -127,11 +129,6 @@ theorem exists_prfv_of_impf_not_hasSubintervalProperty :
   · exact absurd (congrArg (·.snd) hP) (by decide)
 
 /-! ### Interval properties -/
-
-variable (P w) in
-/-- The imperfective has the subinterval property whatever the predicate. -/
-theorem isLowerSet_impf : IsLowerSet (IMPF P w) :=
-  fun _ _ hle ⟨e, he, hP⟩ ↦ ⟨e, hle.trans_lt he, hP⟩
 
 variable (P w) in
 /-- Negation yields the subinterval property, since an interval containing no event of the

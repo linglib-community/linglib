@@ -13,18 +13,22 @@ public import Linglib.Semantics.Tense.Allen
 This file defines viewpoint aspect, which in Smith's theory, following Klein, relates the topic
 time to the situation time. A relation between the reference time and the run time of an event
 gives an operator from event predicates to interval properties, at each world a set of reference
-intervals, and the operator of a viewpoint is that of its relation; the imperfective, perfective
-and prospective operators of Knick and Sharf are instances. The perfect takes an interval
-property to a set of world-time points through a perfect time span, which a perfect-level
-adverbial in the sense of Iatridou, Anagnostopoulou and Izvorski restricts. An interval adverbial
-is read durative, the predicate holding at every subinterval of its interval, or inclusive, at
-some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
+intervals, and the operator of a viewpoint is that of its relation; the perfective and prospective
+operators of Knick and Sharf are instances. The imperfective is modal: the reference interval lies
+within the run time of an event of the predicate in every world of a modal domain fixed by the
+world of evaluation and the reference interval, so that an event in progress need never be
+completed. Over the domain of the world of evaluation alone it is the extensional imperfective.
+The perfect takes an interval property to a set of world-time points through a perfect time span,
+which a perfect-level adverbial in the sense of Iatridou, Anagnostopoulou and Izvorski restricts.
+An interval adverbial is read durative, the predicate holding at every subinterval of its interval,
+or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
 
 ## Main definitions
 
 * `Aspect.ViewpointType.cell`: the cell of Allen relations a viewpoint imposes between the topic
   time and the situation time.
-* `Aspect.ofRel`: the operator of a relation between reference time and run time.
+* `Aspect.ofRel`: the operator of a relation between reference time and run time, and
+  `Aspect.modalOfRel` the operator of a relation over a modal domain.
 * `Aspect.IMPF`: the imperfective.
 * `Aspect.PRFV`: the perfective.
 * `Aspect.UNBOUNDED`: Pancheva's non-strict imperfective.
@@ -39,6 +43,8 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
   run times.
 * `Aspect.unbounded_eq_lowerClosure`: the non-strict imperfective holds on their lower closure.
 * `Aspect.inclusive_eq_upperClosure`: the inclusive reading is the upper closure.
+* `Aspect.impf_singleton`: over the world of evaluation alone, the imperfective is the
+  extensional one.
 * `Aspect.ViewpointType.denote_eq_preimage`, `Aspect.unbounded_eq_preimage`,
   `Aspect.perfect_eq_preimage`: the operators are preimages under Allen cells, so complex aspects
   compose by `Allen.comp`.
@@ -46,7 +52,12 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
 ## Implementation notes
 
 * Of Klein's relations, TT INCL TSit is the imperfective, TT AT TSit the perfective, TT AFTER
-  TSit the perfect and TT BEFORE TSit the prospective. Smith's neutral viewpoint includes the
+  TSit the perfect and TT BEFORE TSit the prospective. Knick and Sharf's imperfective, (25),
+  includes the reference time properly, `ViewpointType.imperfective.denote`; the modal imperfective
+  includes it, as Kratzer's and Ferreira's do.
+* The modal domain of the imperfective is a set of worlds for each world and reference interval:
+  Ferreira's best worlds of a circumstantial base, Deo's inertia histories, or the language-specific
+  modal bases of Arregui, Rivero and Salanova. Smith's neutral viewpoint includes the
   initial point of the situation and at least one internal stage.
 * The operators follow Knick and Sharf's equations, with a boundary a time point where the
   paper has a final or initial subinterval. The predicate applies to the outer reference time,
@@ -64,6 +75,9 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
 
 * [smith-1997]
 * [klein-1994]
+* [ferreira-2016]
+* [deo-2009]
+* [arregui-rivero-salanova-2014]
 * [knick-sharf-2026]
 * [pancheva-2003]
 * [iatridou-anagnostopoulou-izvorski-2001]
@@ -128,17 +142,42 @@ theorem ofRel_mono {R S : NonemptyInterval T → NonemptyInterval T → Prop}
     (h : ∀ t s, R t s → S t s) (P : W → E → Prop) (w : W) : ofRel R P w ⊆ ofRel S P w :=
   fun _ ⟨e, hR, hP⟩ ↦ ⟨e, h _ _ hR, hP⟩
 
+/-- The aspect operator of a relation `R` over a modal domain `acc` gives, at each world `w`, the
+reference intervals `t` that stand in `R` to the run time of some event of the predicate in every
+world of `acc w t`. -/
+def modalOfRel (acc : W → NonemptyInterval T → Set W)
+    (R : NonemptyInterval T → NonemptyInterval T → Prop) (P : W → E → Prop) :
+    W → Set (NonemptyInterval T) :=
+  fun w ↦ {t | ∀ v ∈ acc w t, t ∈ ofRel R P v}
+
+section ModalOfRel
+
+variable {acc acc' : W → NonemptyInterval T → Set W}
+  {R : NonemptyInterval T → NonemptyInterval T → Prop}
+
+@[simp] theorem mem_modalOfRel :
+    t ∈ modalOfRel acc R P w ↔ ∀ v ∈ acc w t, ∃ e : E, R t (τ e) ∧ P v e := Iff.rfl
+
+/-- Over the domain of the world of evaluation alone, the operator of a relation is extensional. -/
+@[simp] theorem modalOfRel_singleton (R : NonemptyInterval T → NonemptyInterval T → Prop)
+    (P : W → E → Prop) : modalOfRel (fun w _ ↦ {w}) R P = ofRel R P := by
+  ext w t
+  simp [modalOfRel]
+
+theorem modalOfRel_anti (h : ∀ w t, acc w t ⊆ acc' w t) :
+    modalOfRel acc' R P w ⊆ modalOfRel acc R P w :=
+  fun t ht v hv ↦ ht v (h w t hv)
+
+theorem mem_ofRel_of_mem_modalOfRel (hw : w ∈ acc w t) (h : t ∈ modalOfRel acc R P w) :
+    t ∈ ofRel R P w :=
+  h w hw
+
+end ModalOfRel
+
 /-- The operator of a viewpoint is the operator of its relation between the topic time and the
 situation time. -/
 def ViewpointType.denote (v : ViewpointType) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   ofRel v.ttTSitRelation P
-
-/-- The imperfective, (25), holds where the reference time is properly contained in the run time
-of an event of the predicate. The event is actual, so wherever the imperfective holds the
-perfective does too: read as a progressive, it validates the imperfective paradox, which the
-modal progressive `Aspect.PROG` does not. -/
-def IMPF (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  ViewpointType.imperfective.denote P
 
 /-- The perfective, (28), holds where the run time of an event of the predicate is contained in
 the reference time. -/
@@ -154,7 +193,18 @@ contained, not necessarily properly, in the run time of an event of the predicat
 def UNBOUNDED (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   ofRel (· ≤ ·) P
 
-theorem mem_impf : t ∈ IMPF P w ↔ ∃ e : E, t < τ e ∧ P w e := Iff.rfl
+/-- The imperfective holds at a reference interval when, in every world of the modal domain
+`acc w t`, the interval lies within the run time of an event of the predicate. The event need not
+be actual, so an event in progress need never be completed. -/
+def IMPF (acc : W → NonemptyInterval T → Set W) (P : W → E → Prop) :
+    W → Set (NonemptyInterval T) :=
+  modalOfRel acc (· ≤ ·) P
+
+theorem mem_impf {acc : W → NonemptyInterval T → Set W} :
+    t ∈ IMPF acc P w ↔ ∀ v ∈ acc w t, ∃ e : E, t ≤ τ e ∧ P v e := Iff.rfl
+
+theorem mem_denote_imperfective :
+    t ∈ ViewpointType.imperfective.denote P w ↔ ∃ e : E, t < τ e ∧ P w e := Iff.rfl
 
 theorem mem_prfv : t ∈ PRFV P w ↔ ∃ e : E, τ e ≤ t ∧ P w e := Iff.rfl
 
@@ -174,7 +224,19 @@ theorem unbounded_eq_preimage (P : W → E → Prop) (w : W) :
   ext t
   simp [UNBOUNDED, ofRel, SetRel.preimage, and_comm]
 
-theorem impf_subset_unbounded (P : W → E → Prop) (w : W) : IMPF P w ⊆ UNBOUNDED P w :=
+/-- Over the world of evaluation alone, the imperfective is the extensional one, the reference
+interval within the run time of an actual event of the predicate. -/
+@[simp] theorem impf_singleton (P : W → E → Prop) : IMPF (fun w _ ↦ {w}) P = UNBOUNDED P :=
+  modalOfRel_singleton _ P
+
+/-- Where the modal domain contains the world of evaluation, the imperfective requires an actual
+event of the predicate in progress. -/
+theorem mem_unbounded_of_mem_impf {acc : W → NonemptyInterval T → Set W} (hw : w ∈ acc w t)
+    (h : t ∈ IMPF acc P w) : t ∈ UNBOUNDED P w :=
+  mem_ofRel_of_mem_modalOfRel hw h
+
+theorem denote_imperfective_subset_unbounded (P : W → E → Prop) (w : W) :
+    ViewpointType.imperfective.denote P w ⊆ UNBOUNDED P w :=
   ofRel_mono (R := (· < ·)) (S := (· ≤ ·)) (fun _ _ ↦ le_of_lt) P w
 
 /-- The non-strict imperfective holds on the lower closure of the predicate's run times. -/
