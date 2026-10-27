@@ -13,27 +13,29 @@ import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 # Kehler and Rohde (2013): A Probabilistic Reconciliation of Coherence-Driven and Centering-Driven Theories of Pronoun Interpretation
 
 This file models pronoun interpretation as Bayes' rule over one joint measure
-`μ ⊗ₘ (η ×ₖ σ)` on referent, coherence relation and form of reference, built from a next-mention
-prior `μ`, a relation kernel `η` and a production kernel `σ`, so that relation and form are
-independent given the referent. Its production marginal does not depend on `η`; conditioned on a
-pronoun, its referent marginal is the interpretation (13) and its relation marginal the
-bidirectional dependency of (12). The inert pronoun of a Hobbsian analysis, an interpretation
-heuristic blind to the relation, and a pronominalization rate fixed by Centering status are
-model classes that Tables 6, 5 and 9 rule out.
+$\mu \otimes (\eta \times \sigma)$ on referent, coherence relation and form of reference, built
+from a next-mention prior $\mu$, a relation kernel $\eta$ and a production kernel $\sigma$, so that
+relation and form are independent given the referent. [Its production marginal does not depend on
+$\eta$](##map_production_compProd_prod); [conditioned on a pronoun](##map_cond_compProd_prod), its
+referent marginal is the interpretation and its relation marginal the bidirectional dependency
+between relation and referent. The paper's passage-completion data rule out three model classes:
+[the inert pronoun of a Hobbsian analysis](##not_inert), [an interpretation heuristic blind to the
+relation](##not_heuristic), and [a pronominalization rate fixed by Centering
+status](##not_cbFactored).
 
 ## Implementation notes
 
-* The referents are the Source and the Goal of the transfer contexts of Tables 1–6 and of
-  Arnold's data, the Source being the subject, and the two positions of Tables 7–10.
+* The referents are the Source and the Goal of the transfer contexts and of Arnold's data, the
+  Source being the subject, and the two positions of the voice manipulation.
 * A pronoun prompt conditions the joint on the form; a no-pronoun prompt does not.
 * Priors and production rates enter in percent. Relation frequencies are finite measures of the
-  printed mass (.98 in Table 2, .90 and 1.01 in Table 3); the refutations read single cells.
-* Arnold's printed rates are rounded, and their posterior is .618 (`arnold_prediction`); his
-  counts in Figure 3, 19 of 25 Source subjects and 30 of 149 Goal objects pronominalized, give
-  the paper's .86, .28 and .61.
-* Table 10's predictions were estimated per participant and item, so they exceed the posterior of
-  the aggregate rates (`bayesSubject_lt_predicted`).
-* `FocusesEndState` holding of Occasion and Result reads "such as Occasion and Result" (pp. 9–10).
+  printed mass, which need not sum to one; the refutations read single cells.
+* Arnold's printed rates are rounded, and [their posterior is .618](##arnold_prediction); his
+  counts, 19 of 25 Source subjects and 30 of 149 Goal objects pronominalized, give the paper's
+  .86, .28 and .61.
+* The paper's predictions for the voice manipulation were estimated per participant and item, so
+  they [exceed the posterior of the aggregate rates](##bayesSubject_lt_predicted).
+* `FocusesEndState` holding of Occasion and Result reads "such as Occasion and Result".
 
 ## References
 
