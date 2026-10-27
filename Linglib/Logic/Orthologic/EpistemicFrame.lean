@@ -12,10 +12,10 @@ public import Mathlib.Order.BooleanAlgebra.Basic
 This file builds Holliday and Mandelkern's possibility model for epistemic modals out of a Boolean
 algebra `B` of non-modal propositions. A possibility is an interval `[a, i]` of `B` with `a ≠ ⊥`:
 `a` settles how things are and might be, and the information state `i` settles what must be the
-case. Two possibilities are compatible when their lower ends are consistent and their intervals
-overlap, and a possibility accesses the possibilities whose intervals lie within its own. Access
-is then reflexive and transitive, R-regular and knowable, so the regular propositions of this
-*epistemic frame* form an S5 epistemic ortholattice, the *epistemic extension* of `B`.
+case. Two possibilities are compatible when their first components are consistent and their
+intervals overlap, and a possibility accesses the possibilities whose intervals lie within its
+own. Access is then reflexive and transitive, R-regular and knowable, so the regular propositions
+of this *epistemic frame* form an S5 epistemic ortholattice, the *epistemic extension* of `B`.
 
 `B` embeds into its epistemic extension, preserving every meet and join that exists in `B` and
 sending complements to orthocomplements. On an embedded proposition the modals reduce to `B`:
@@ -41,9 +41,10 @@ restricted diamond distributivity.
 
 ## Implementation notes
 
-A possibility is a `NonemptyInterval` with nonzero lower end. The order on intervals is inclusion,
-so access is `≥` and its reflexivity and transitivity are those of the order, and the second
-clause of compatibility is `NonemptyInterval.Overlaps`.
+A possibility extends `NonemptyInterval`, so its first and second components are the interval's
+ends `fst` and `snd`, and it coerces to its interval. Possibilities are ordered by inclusion of
+their intervals, so access is `≥` and its reflexivity and transitivity are those of the order, and
+the second clause of compatibility is `NonemptyInterval.Overlaps`.
 
 ## References
 
@@ -58,30 +59,45 @@ open SetRel ModalLogic
 
 variable {B : Type*} [BooleanAlgebra B]
 
-variable (B) in
 /-- A possibility of the epistemic frame of `B` is an interval `[a, i]` of `B` with `a ≠ ⊥`
-([holliday-mandelkern-2024] Definition 5.1). -/
-abbrev Possibility : Type _ := {s : NonemptyInterval B // s.fst ≠ ⊥}
+([holliday-mandelkern-2024] Definition 5.1). Its first component `a` settles how things are and
+might be, and its second component `i`, an information state, settles what must be the case. -/
+structure Possibility (B : Type*) [BooleanAlgebra B] extends NonemptyInterval B where
+  fst_ne_bot : fst ≠ ⊥
 
 namespace Possibility
 
+attribute [coe] toNonemptyInterval
+
+instance : CoeOut (Possibility B) (NonemptyInterval B) := ⟨toNonemptyInterval⟩
+
+theorem toNonemptyInterval_injective :
+    Function.Injective (toNonemptyInterval : Possibility B → NonemptyInterval B) :=
+  fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by congr
+
+/-- A possibility is an interval with nonzero first component. -/
+def equivSubtype : Possibility B ≃ {s : NonemptyInterval B // s.fst ≠ ⊥} where
+  toFun x := ⟨x, x.fst_ne_bot⟩
+  invFun s := ⟨s.1, s.2⟩
+
+instance [DecidableEq B] : DecidableEq (Possibility B) := toNonemptyInterval_injective.decidableEq
+
+instance [Fintype (NonemptyInterval B)] [DecidableEq B] : Fintype (Possibility B) :=
+  .ofEquiv _ equivSubtype.symm
+
+/-- Possibilities are ordered by inclusion of their intervals. -/
+instance : PartialOrder (Possibility B) := .lift _ toNonemptyInterval_injective
+
+instance [DecidableLE B] : DecidableLE (Possibility B) :=
+  fun x y ↦ inferInstanceAs (Decidable ((x : NonemptyInterval B) ≤ y))
+
 variable (x y : Possibility B)
 
-/-- The lower end `a` of `[a, i]` settles how things are and might be. -/
-abbrev truth : B := x.1.fst
+theorem snd_ne_bot : x.snd ≠ ⊥ := ne_bot_of_le_ne_bot x.fst_ne_bot x.fst_le_snd
 
-/-- The upper end `i` of `[a, i]`, its information state, settles what must be the case. -/
-abbrev info : B := x.1.snd
-
-theorem truth_ne_bot : x.truth ≠ ⊥ := x.2
-
-theorem truth_le_info : x.truth ≤ x.info := x.1.fst_le_snd
-
-theorem info_ne_bot : x.info ≠ ⊥ := ne_bot_of_le_ne_bot x.truth_ne_bot x.truth_le_info
-
-/-- Two possibilities are compatible when their lower ends are consistent and their intervals
-overlap ([holliday-mandelkern-2024] Definition 5.1.2). -/
-def compat : Prop := ¬ Disjoint x.truth y.truth ∧ x.1.Overlaps y.1
+/-- Two possibilities are compatible when their first components are consistent and their
+intervals overlap ([holliday-mandelkern-2024] Definition 5.1.2). -/
+def compat : Prop := ¬ Disjoint x.fst y.fst ∧ x.Overlaps y
 
 /-- A possibility accesses the possibilities whose intervals lie within its own
 ([holliday-mandelkern-2024] Definition 5.1.3). -/
@@ -92,45 +108,47 @@ variable {x y}
 @[simp] theorem access_iff : x ~[access] y ↔ y ≤ x := Iff.rfl
 
 instance [DecidableEq B] [DecidableLE B] : Decidable (compat x y) :=
-  haveI : Decidable (Disjoint x.truth y.truth) := decidable_of_iff' _ disjoint_iff
+  haveI : Decidable (Disjoint x.fst y.fst) := decidable_of_iff' _ disjoint_iff
   inferInstanceAs (Decidable (¬ _ ∧ _))
 
 instance [DecidableLE B] : Decidable (x ~[access] y) := inferInstanceAs (Decidable (y ≤ x))
 
-/-- A possibility is compatible with any possibility whose interval contains its lower end. -/
-theorem compat_of_truth_mem (h : x.truth ∈ y.1) : compat x y :=
-  ⟨fun hd ↦ y.truth_ne_bot (hd.eq_bot_of_ge h.1), h.2, h.1.trans x.truth_le_info⟩
+/-- A possibility is compatible with any possibility whose interval contains its first
+component. -/
+theorem compat_of_fst_mem (h : x.fst ∈ (y : NonemptyInterval B)) : compat x y :=
+  ⟨fun hd ↦ y.fst_ne_bot (hd.eq_bot_of_ge h.1), h.2, h.1.trans x.fst_le_snd⟩
 
-/-- `x.withTruth c` is `[c, i]` for `x = [a, i]` and a nonzero `c ≤ a`. -/
-def withTruth (x : Possibility B) (c : B) (hc : c ≤ x.truth) (hc' : c ≠ ⊥) : Possibility B :=
-  ⟨⟨(c, x.info), hc.trans x.truth_le_info⟩, hc'⟩
+/-- `x.withFst c` is `[c, i]` for `x = [a, i]` and a nonzero `c ≤ a`. -/
+def withFst (x : Possibility B) (c : B) (hc : c ≤ x.fst) (hc' : c ≠ ⊥) : Possibility B :=
+  ⟨⟨(c, x.snd), hc.trans x.fst_le_snd⟩, hc'⟩
 
-@[simp] theorem truth_withTruth {c : B} (hc : c ≤ x.truth) (hc' : c ≠ ⊥) :
-    (x.withTruth c hc hc').truth = c := rfl
+@[simp] theorem fst_withFst {c : B} (hc : c ≤ x.fst) (hc' : c ≠ ⊥) :
+    (x.withFst c hc hc').fst = c := rfl
 
-@[simp] theorem info_withTruth {c : B} (hc : c ≤ x.truth) (hc' : c ≠ ⊥) :
-    (x.withTruth c hc hc').info = x.info := rfl
+@[simp] theorem snd_withFst {c : B} (hc : c ≤ x.fst) (hc' : c ≠ ⊥) :
+    (x.withFst c hc hc').snd = x.snd := rfl
 
-theorem compat_withTruth {c : B} (hc : c ≤ x.truth) (hc' : c ≠ ⊥) :
-    compat x (x.withTruth c hc hc') :=
-  compat_of_truth_mem ⟨hc, x.truth_le_info⟩
+theorem compat_withFst {c : B} (hc : c ≤ x.fst) (hc' : c ≠ ⊥) :
+    compat x (x.withFst c hc hc') :=
+  compat_of_fst_mem ⟨hc, x.fst_le_snd⟩
 
 /-- `pure a ha` is the point interval `[a, a]`, which knows everything it settles. -/
 def pure (a : B) (ha : a ≠ ⊥) : Possibility B := ⟨.pure a, ha⟩
 
-@[simp] theorem truth_pure (a : B) (ha : a ≠ ⊥) : (pure a ha).truth = a := rfl
+@[simp] theorem fst_pure (a : B) (ha : a ≠ ⊥) : (pure a ha).fst = a := rfl
 
-@[simp] theorem info_pure (a : B) (ha : a ≠ ⊥) : (pure a ha).info = a := rfl
+@[simp] theorem snd_pure (a : B) (ha : a ≠ ⊥) : (pure a ha).snd = a := rfl
 
 /-- A possibility is compatible with the point `[c, c]` iff `c` lies in its interval. -/
-theorem compat_pure_iff {c : B} (hc : c ≠ ⊥) : compat x (pure c hc) ↔ c ∈ x.1 :=
-  ⟨And.right, fun h ↦ ⟨fun hd ↦ x.truth_ne_bot (hd.eq_bot_of_le h.1), h⟩⟩
+theorem compat_pure_iff {c : B} (hc : c ≠ ⊥) :
+    compat x (pure c hc) ↔ c ∈ (x : NonemptyInterval B) :=
+  ⟨And.right, fun h ↦ ⟨fun hd ↦ x.fst_ne_bot (hd.eq_bot_of_le h.1), h⟩⟩
 
-theorem compat_pure_truth : compat x (pure x.truth x.truth_ne_bot) :=
-  (compat_pure_iff _).2 ⟨le_rfl, x.truth_le_info⟩
+theorem compat_pure_fst : compat x (pure x.fst x.fst_ne_bot) :=
+  (compat_pure_iff _).2 ⟨le_rfl, x.fst_le_snd⟩
 
-theorem compat_pure_info : compat x (pure x.info x.info_ne_bot) :=
-  (compat_pure_iff _).2 ⟨x.truth_le_info, le_rfl⟩
+theorem compat_pure_snd : compat x (pure x.snd x.snd_ne_bot) :=
+  (compat_pure_iff _).2 ⟨x.fst_le_snd, le_rfl⟩
 
 end Possibility
 
@@ -141,21 +159,21 @@ variable (B) in
 ([holliday-mandelkern-2024] Definition 5.1). -/
 def epistemicFrame : CompatFrame (Possibility B) where
   compat := compat
-  compat_refl := ⟨fun x ↦ ⟨mt disjoint_self.1 x.truth_ne_bot, NonemptyInterval.overlaps_refl x.1⟩⟩
+  compat_refl := ⟨fun x ↦ ⟨mt disjoint_self.1 x.fst_ne_bot, NonemptyInterval.overlaps_refl _⟩⟩
   compat_symm := ⟨fun _ _ h ↦ ⟨fun hd ↦ h.1 hd.symm, NonemptyInterval.overlaps_symm h.2⟩⟩
 
 instance [DecidableEq B] [DecidableLE B] : DecidableRel (epistemicFrame B).compat :=
   inferInstanceAs (DecidableRel (compat (B := B)))
 
-/-- Refinement in the epistemic frame keeps the lower end and narrows the information state,
-`[a, i] ⊑ [a', i']` iff `a = a'` and `i ≤ i'` ([holliday-mandelkern-2024] Lemma 5.2). -/
+/-- Refinement in the epistemic frame keeps the first component and narrows the information
+state, `[a, i] ⊑ [a', i']` iff `a = a'` and `i ≤ i'` ([holliday-mandelkern-2024] Lemma 5.2). -/
 theorem refines_iff (y x : Possibility B) :
-    refines (epistemicFrame B) y x ↔ y.truth = x.truth ∧ y.info ≤ x.info := by
+    refines (epistemicFrame B) y x ↔ y.fst = x.fst ∧ y.snd ≤ x.snd := by
   refine ⟨fun h ↦ ⟨le_antisymm (by_contra fun hyx ↦ ?_) ?_, ?_⟩, fun ⟨ht, hi⟩ z hz ↦ ?_⟩
-  · exact (h _ (y.compat_withTruth sdiff_le (mt sdiff_eq_bot_iff.1 hyx))).1
+  · exact (h _ (y.compat_withFst sdiff_le (mt sdiff_eq_bot_iff.1 hyx))).1
       disjoint_sdiff_self_right
-  · exact ((compat_pure_iff _).1 (h _ y.compat_pure_truth)).1
-  · exact ((compat_pure_iff _).1 (h _ y.compat_pure_info)).2
+  · exact ((compat_pure_iff _).1 (h _ y.compat_pure_fst)).1
+  · exact ((compat_pure_iff _).1 (h _ y.compat_pure_snd)).2
   · exact ⟨fun hd ↦ hz.1 (hd.mono_left ht.le), ht.ge.trans hz.2.1, hz.2.2.trans hi⟩
 
 instance : (access (B := B)).IsRefl := ⟨fun _ ↦ access_iff.2 le_rfl⟩
@@ -167,33 +185,33 @@ instance : (access (B := B)).IsTrans :=
 ([holliday-mandelkern-2024] Theorem 5.7.1). -/
 instance : IsRRegular (epistemicFrame B) access where
   rRegular x y' y hxy' hy'y := by
-    let z := pure (x.truth ⊔ y.truth) (ne_bot_of_le_ne_bot x.truth_ne_bot le_sup_left)
-    refine ⟨z, (compat_pure_iff _).2 ⟨le_sup_left, sup_le x.truth_le_info
-      (hy'y.2.2.trans hxy'.2)⟩, fun x'' hx'' ↦ ⟨z, ⟨hx''.2.2, hx''.2.1⟩, compat_of_truth_mem ?_⟩⟩
-    exact ⟨le_sup_right, sup_le (hxy'.1.trans hy'y.2.1) y.truth_le_info⟩
+    let z := pure (x.fst ⊔ y.fst) (ne_bot_of_le_ne_bot x.fst_ne_bot le_sup_left)
+    refine ⟨z, (compat_pure_iff _).2 ⟨le_sup_left, sup_le x.fst_le_snd
+      (hy'y.2.2.trans hxy'.2)⟩, fun x'' hx'' ↦ ⟨z, ⟨hx''.2.2, hx''.2.1⟩, compat_of_fst_mem ?_⟩⟩
+    exact ⟨le_sup_right, sup_le (hxy'.1.trans hy'y.2.1) y.fst_le_snd⟩
 
 /-- Epistemic access is knowable, witnessed by the point `[a, a]` ([holliday-mandelkern-2024]
 Theorem 5.7.1). -/
 instance : IsKnowable (epistemicFrame B) access where
-  knowable x := ⟨pure x.truth x.truth_ne_bot, fun z hz ↦ (refines_iff z x).2
-    ⟨le_antisymm (z.truth_le_info.trans hz.2) hz.1, hz.2.trans x.truth_le_info⟩⟩
+  knowable x := ⟨pure x.fst x.fst_ne_bot, fun z hz ↦ (refines_iff z x).2
+    ⟨le_antisymm (z.fst_le_snd.trans hz.2) hz.1, hz.2.trans x.fst_le_snd⟩⟩
 
 /-! ### The embedding of `B` -/
 
-/-- `embed b` is the regular proposition `e_B(b)` of the possibilities whose lower end entails
-`b`, regular since a possibility `[a, i]` outside it is compatible with `[a \ b, i]`, which is
-compatible with nothing inside it ([holliday-mandelkern-2024] Theorem 5.7.2). -/
+/-- `embed b` is the regular proposition `e_B(b)` of the possibilities whose first component
+entails `b`, regular since a possibility `[a, i]` outside it is compatible with `[a \ b, i]`,
+which is compatible with nothing inside it ([holliday-mandelkern-2024] Theorem 5.7.2). -/
 def embed (b : B) : (epistemicFrame B).Regular :=
-  (epistemicFrame B).regOf {x | x.truth ≤ b} fun x ↦ or_iff_not_imp_left.2 fun hx ↦
-    ⟨_, x.compat_withTruth sdiff_le (mt sdiff_eq_bot_iff.1 hx),
+  (epistemicFrame B).regOf {x | x.fst ≤ b} fun x ↦ or_iff_not_imp_left.2 fun hx ↦
+    ⟨_, x.compat_withFst sdiff_le (mt sdiff_eq_bot_iff.1 hx),
       fun _ hz hzb ↦ hz.1 (disjoint_sdiff_self_left.mono_right hzb)⟩
 
-@[simp] theorem mem_embed {b : B} {x : Possibility B} : x ∈ embed b ↔ x.truth ≤ b := Iff.rfl
+@[simp] theorem mem_embed {b : B} {x : Possibility B} : x ∈ embed b ↔ x.fst ≤ b := Iff.rfl
 
-@[simp] theorem coe_embed (b : B) : (embed b : Set (Possibility B)) = {x | x.truth ≤ b} := rfl
+@[simp] theorem coe_embed (b : B) : (embed b : Set (Possibility B)) = {x | x.fst ≤ b} := rfl
 
 instance [DecidableLE B] (b : B) : DecidablePred (· ∈ (embed b : Set (Possibility B))) :=
-  fun x ↦ inferInstanceAs (Decidable (x.truth ≤ b))
+  fun x ↦ inferInstanceAs (Decidable (x.fst ≤ b))
 
 theorem embed_mono : Monotone (embed (B := B)) := fun _ _ h _ hx ↦ hx.trans h
 
@@ -219,12 +237,12 @@ theorem isLUB_embed_image {s : Set B} {a : B} (h : IsLUB s a) :
     IsLUB (embed '' s) (embed a) := by
   refine ⟨Set.forall_mem_image.2 fun _ hb ↦ embed_mono (h.1 hb), fun U hU x hx ↦
     (U.isRegular x).resolve_right fun ⟨y, hxy, hy⟩ ↦ ?_⟩
-  obtain ⟨b, hb, hcb⟩ : ∃ b ∈ s, ¬ Disjoint (x.truth ⊓ y.truth) b := by
+  obtain ⟨b, hb, hcb⟩ : ∃ b ∈ s, ¬ Disjoint (x.fst ⊓ y.fst) b := by
     by_contra! hc
-    have hca : Disjoint (x.truth ⊓ y.truth) a :=
+    have hca : Disjoint (x.fst ⊓ y.fst) a :=
       le_compl_iff_disjoint_left.1 (h.2 fun b hb ↦ (hc b hb).le_compl_left)
     exact hxy.1 (disjoint_iff.2 (hca.eq_bot_of_le (inf_le_left.trans hx)))
-  exact hy _ (y.compat_withTruth (inf_le_left.trans inf_le_right) (mt disjoint_iff.2 hcb))
+  exact hy _ (y.compat_withFst (inf_le_left.trans inf_le_right) (mt disjoint_iff.2 hcb))
     (hU (Set.mem_image_of_mem _ hb) (show _ ≤ b from inf_le_right))
 
 theorem embed_inf (b c : B) : embed (b ⊓ c) = embed b ⊓ embed c :=
@@ -237,7 +255,7 @@ theorem embed_top : embed (⊤ : B) = ⊤ :=
   SetLike.coe_injective (Set.eq_univ_of_forall fun _ ↦ le_top)
 
 theorem embed_bot : embed (⊥ : B) = ⊥ :=
-  SetLike.coe_injective <| by ext x; simp [x.truth_ne_bot]
+  SetLike.coe_injective <| by ext x; simp [x.fst_ne_bot]
 
 /-- `embed` sends complements to orthocomplements ([holliday-mandelkern-2024] Theorem 5.7.2). -/
 theorem embed_compl (b : B) : embed bᶜ = (embed b)ᶜ := by
@@ -245,28 +263,28 @@ theorem embed_compl (b : B) : embed bᶜ = (embed b)ᶜ := by
   simp only [CompatFrame.Regular.coe_compl, coe_embed, Set.mem_ofPred_eq, mem_orthoNeg]
   refine ⟨fun hx y hxy hy ↦ hxy.1 (disjoint_compl_left.mono hx hy), fun h ↦ ?_⟩
   refine le_compl_iff_disjoint_right.2 (by_contra fun hd ↦ ?_)
-  exact h _ (x.compat_withTruth inf_le_left (mt disjoint_iff.2 hd)) inf_le_right
+  exact h _ (x.compat_withFst inf_le_left (mt disjoint_iff.2 hd)) inf_le_right
 
 /-- `b` must be the case at `[a, i]` iff `i ≤ b` ([holliday-mandelkern-2024] Lemma 5.8.2). -/
 theorem mem_core_embed {b : B} {x : Possibility B} :
-    x ∈ access.core (embed b) ↔ x.info ≤ b :=
-  ⟨fun h ↦ @h (pure x.info x.info_ne_bot) ⟨x.truth_le_info, le_rfl⟩,
-    fun h y hy ↦ (y.truth_le_info.trans hy.2).trans h⟩
+    x ∈ access.core (embed b) ↔ x.snd ≤ b :=
+  ⟨fun h ↦ @h (pure x.snd x.snd_ne_bot) ⟨x.fst_le_snd, le_rfl⟩,
+    fun h y hy ↦ (y.fst_le_snd.trans hy.2).trans h⟩
 
 /-- `b` cannot be the case at `[a, i]` iff `i` is disjoint from `b`, since `¬◇b = □bᶜ`. -/
 theorem mem_orthoNeg_diamond_embed {b : B} {x : Possibility B} :
     x ∈ orthoNeg (epistemicFrame B) (diamond (epistemicFrame B) access (embed b)) ↔
-      Disjoint x.info b := by
+      Disjoint x.snd b := by
   rw [orthoNeg_diamond, ← CompatFrame.Regular.coe_compl, ← embed_compl, mem_core_embed,
     le_compl_iff_disjoint_right]
 
 /-- `b` might be the case at `[a, i]` iff `a` is not disjoint from `b`
 ([holliday-mandelkern-2024] Lemma 5.8.3). -/
 theorem mem_diamond_embed {b : B} {x : Possibility B} :
-    x ∈ diamond (epistemicFrame B) access (embed b) ↔ ¬ Disjoint x.truth b := by
+    x ∈ diamond (epistemicFrame B) access (embed b) ↔ ¬ Disjoint x.fst b := by
   rw [diamond, ← orthoNeg_diamond, mem_orthoNeg]
   simp only [mem_orthoNeg_diamond_embed]
-  exact ⟨fun h hd ↦ h _ compat_pure_truth hd, fun h _ hxy hd ↦ h (hd.mono_left hxy.2.1)⟩
+  exact ⟨fun h hd ↦ h _ compat_pure_fst hd, fun h _ hxy hd ↦ h (hd.mono_left hxy.2.1)⟩
 
 /-- The diamond of an embedded proposition other than `⊥` and `⊤` strictly extends it, as the
 point `[⊤, ⊤]` witnesses ([holliday-mandelkern-2024] Theorem 5.7.4). -/
@@ -290,9 +308,9 @@ Theorem 5.7.3). -/
 theorem subset_core_diamond (U : Set (Possibility B)) :
     U ⊆ access.core (diamond (epistemicFrame B) access U) := by
   intro x hx x' hxx' x'' hc hbox
-  refine @hbox (pure (x.truth ⊔ x''.truth) (ne_bot_of_le_ne_bot x.truth_ne_bot le_sup_left))
-    ⟨le_sup_right, sup_le (hxx'.1.trans hc.2.1) x''.truth_le_info⟩ x
-    (compat_of_truth_mem ⟨le_sup_left, sup_le x.truth_le_info (hc.2.2.trans hxx'.2)⟩) hx
+  refine @hbox (pure (x.fst ⊔ x''.fst) (ne_bot_of_le_ne_bot x.fst_ne_bot le_sup_left))
+    ⟨le_sup_right, sup_le (hxx'.1.trans hc.2.1) x''.fst_le_snd⟩ x
+    (compat_of_fst_mem ⟨le_sup_left, sup_le x.fst_le_snd (hc.2.2.trans hxx'.2)⟩) hx
 
 /-- The 5 principle `◇U ≤ □◇U` in the epistemic extension of `B`, which is with T and 4 an S5
 epistemic ortholattice ([holliday-mandelkern-2024] Theorem 5.7.3). -/
@@ -321,17 +339,17 @@ theorem restricted_diamond_distributivity_embed {ι : Sort*} {κ : ι → Type*}
   simp only [Set.mem_iInter, mem_diamond_embed, mem_orthoNeg, SetLike.mem_coe, mem_embed,
     not_forall, not_not, exists_prop, Set.mem_inter_iff] at hb hd ⊢
   intro y hxy
-  obtain ⟨j, z, hwz, hzb⟩ := hb _ (x.compat_withTruth inf_le_left (mt disjoint_iff.2 hxy.1))
-  have hj : x.truth ⊓ y.truth ⊓ b j ≠ ⊥ := fun h ↦ hwz.1 ((disjoint_iff.2 h).mono_right hzb)
-  have hle : x.truth ⊓ y.truth ⊓ b j ⊔ Finset.univ.sup (fun k ↦ x.truth ⊓ c j k) ≤ y.info :=
-    sup_le ((inf_le_left.trans inf_le_right).trans y.truth_le_info)
+  obtain ⟨j, z, hwz, hzb⟩ := hb _ (x.compat_withFst inf_le_left (mt disjoint_iff.2 hxy.1))
+  have hj : x.fst ⊓ y.fst ⊓ b j ≠ ⊥ := fun h ↦ hwz.1 ((disjoint_iff.2 h).mono_right hzb)
+  have hle : x.fst ⊓ y.fst ⊓ b j ⊔ Finset.univ.sup (fun k ↦ x.fst ⊓ c j k) ≤ y.snd :=
+    sup_le ((inf_le_left.trans inf_le_right).trans y.fst_le_snd)
       (Finset.sup_le fun _ _ ↦ inf_le_left.trans hxy.2.1)
-  refine ⟨j, ⟨⟨(_, y.info), hle⟩, ne_bot_of_le_ne_bot hj le_sup_left⟩,
+  refine ⟨j, ⟨⟨(_, y.snd), hle⟩, ne_bot_of_le_ne_bot hj le_sup_left⟩,
     ⟨fun h ↦ hj (disjoint_self.1 (h.mono (inf_le_left.trans inf_le_right) le_sup_left)),
-      y.truth_le_info, hle⟩,
+      y.fst_le_snd, hle⟩,
     sup_le inf_le_right (Finset.sup_le fun k _ ↦ inf_le_right.trans (hc j k)), fun k h ↦ ?_⟩
   refine hd j k (disjoint_iff.2 (disjoint_self.1 (h.mono ?_ inf_le_right)))
-  exact (Finset.le_sup (f := fun k ↦ x.truth ⊓ c j k) (Finset.mem_univ k)).trans le_sup_right
+  exact (Finset.le_sup (f := fun k ↦ x.fst ⊓ c j k) (Finset.mem_univ k)).trans le_sup_right
 
 /-- Box distributivity: `(U₁ ∨ U₂) ∧ □V ≤ (U₁ ∧ □V) ∨ (U₂ ∧ □V)`
 ([holliday-mandelkern-2024] Proposition 5.12.2). -/
@@ -343,9 +361,9 @@ theorem box_distributivity_embed (b₁ b₂ c : B) :
   rintro x ⟨hx, hc⟩ x' hxx'
   obtain ⟨x'', hx'x'', hb⟩ := hx x' hxx'
   let z : Possibility B :=
-    ⟨⟨(x'.truth ⊓ x''.truth, x'.truth), inf_le_left⟩, mt disjoint_iff.2 hx'x''.1⟩
+    ⟨⟨(x'.fst ⊓ x''.fst, x'.fst), inf_le_left⟩, mt disjoint_iff.2 hx'x''.1⟩
   have hz : z ∈ access.core (embed c) := mem_core_embed.2 (hxx'.2.2.trans (mem_core_embed.1 hc))
-  exact ⟨z, compat_of_truth_mem ⟨inf_le_left, le_rfl⟩,
+  exact ⟨z, compat_of_fst_mem ⟨inf_le_left, le_rfl⟩,
     hb.imp (⟨inf_le_right.trans ·, hz⟩) (⟨inf_le_right.trans ·, hz⟩)⟩
 
 /-- Inheritance: `U ∧ ◇V ≤ ◇(U ∧ V)` ([holliday-mandelkern-2024] Proposition 5.12.3). -/
@@ -367,7 +385,7 @@ theorem diamond_disjunctive_syllogism_a_embed (b c : B) :
   rintro x ⟨hx, hc⟩
   rw [mem_orthoNeg_diamond_embed] at hc
   refine by_contra fun hxb ↦ ?_
-  obtain ⟨z, hwz, hz | hz⟩ := hx _ (x.compat_withTruth sdiff_le (mt sdiff_eq_bot_iff.1 hxb))
+  obtain ⟨z, hwz, hz | hz⟩ := hx _ (x.compat_withFst sdiff_le (mt sdiff_eq_bot_iff.1 hxb))
   · exact hwz.1 (disjoint_sdiff_self_left.mono_right hz)
   · exact mem_diamond_embed.1 hz (hc.mono_left hwz.2.2)
 
@@ -378,9 +396,9 @@ theorem diamond_disjunctive_syllogism_b_embed (b c : B) :
   rw [← embed_compl, ← SetLike.coe_subset_coe]
   simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup,
     CompatFrame.coe_diamondHom_necHom, disj_eq_regularClosure_union]
-  rintro x ⟨hx, hb : x.truth ≤ bᶜ⟩
+  rintro x ⟨hx, hb : x.fst ≤ bᶜ⟩
   refine mem_diamond_embed.2 fun hd ↦ ?_
-  obtain ⟨z, hz, hzb | hzc⟩ := hx _ compat_pure_truth
+  obtain ⟨z, hz, hzb | hzc⟩ := hx _ compat_pure_fst
   · exact hz.1 (disjoint_compl_left.mono hb hzb)
   · exact mem_diamond_embed.1 hzc (hd.mono_left hz.2.2)
 
