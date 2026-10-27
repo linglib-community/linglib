@@ -6,11 +6,11 @@ public import Linglib.Syntax.Category.Noun.Basic
 /-!
 # Czech nouns
 
-This file defines the Czech noun as a lexical entry with its controller gender, its declension
-class and the nominative plural it takes lexically, and gives the model nouns of Short's
-declension tables and *kluk* 'boy', the nouns the grammars name as changing class with number,
-and the nouns of Stump's tables of Czech heteroclisis, whose classes follow from Short's grammar
-and the Academy grammar *Mluvnice češtiny*.
+This file defines the Czech noun as a lexical entry with its declension class, whose table fixes
+its controller gender, and the nominative plural it takes lexically, and gives the model nouns of
+Short's declension tables and *kluk* 'boy', the nouns the grammars name as changing class with
+number, and the nouns of Stump's tables of Czech heteroclisis, whose classes follow from Short's
+grammar and the Academy grammar *Mluvnice češtiny*.
 
 A noun's class is that of its singular, and its plural follows the same class unless the noun
 changes class with number: "Modern masculines like *den* 'day' and *kořen* 'root' generally
@@ -27,8 +27,8 @@ vocative plural.
 
 ## Main definitions
 
-* `Czech.Noun`: a noun with its controller gender, its class in each number and its lexical
-  nominative plural
+* `Czech.Noun`: a noun with its class in each number, which fixes its controller gender, and its
+  lexical nominative plural
 * `Czech.Noun.clsAt`, `Czech.Noun.stem`: the class of a number, and the stem
 * `Czech.Noun.endingsIn`, `Czech.Noun.endings`, `Czech.Noun.forms`: a noun's endings in a class,
   its endings and its forms
@@ -38,7 +38,6 @@ vocative plural.
 
 * `Czech.stem_append_nomSg`: every entry's citation form is its stem followed by the nominative
   singular ending of its class
-* `Czech.gender_eq_cls_gender`: every entry has the gender of its class's table
 * `Czech.isVelar_stem_iff`, `Czech.isSome_ofChars_forms`: the velar stems are those of *kluk*,
   *sluha* and *filolog*, and every form is written in Czech letters
 * `Czech.forms_examples`: the forms the grammars give Stump's nouns in the cells where they
@@ -67,9 +66,10 @@ namespace Czech
 
 open Declension
 
-/-- A Czech noun with its controller gender, its declension class in each number, and the
-nominative plural it takes lexically. -/
+/-- A Czech noun with its declension class in each number, which fixes its controller gender, and
+the nominative plural it takes lexically. -/
 structure Noun extends GenderedNoun Gender.Value where
+  gender := cls.gender
   /-- The class of the singular. -/
   cls : Class
   /-- The class of the plural, that of the singular unless the noun changes class. -/
@@ -106,60 +106,60 @@ def Noun.forms (n : Noun) (σ : Cell) : List (List String) :=
 
 /-- *chlap* 'fellow', the hard masculine animate model (Table 9.2, p. 465). -/
 def chlap : Noun :=
-  { form := "chlap", gloss := "fellow", gender := .mascAnimate, referentGender := some .male,
+  { form := "chlap", gloss := "fellow", referentGender := some .male,
     cls := .chlap }
 
 /-- *hrad* 'castle', the hard masculine inanimate model (Table 9.2, p. 465). -/
-def hrad : Noun := { form := "hrad", gloss := "castle", gender := .mascInanimate, cls := .hrad }
+def hrad : Noun := { form := "hrad", gloss := "castle", cls := .hrad }
 
 /-- *muž* 'man', the soft masculine animate model (Table 9.3, p. 466). Short's table gives the
 nominative plural *muži* alone, and *Mluvnice češtiny* says that "jméno muž může mít podobu
 obojí, -ové i -i" 'the noun *muž* can have both forms, *-ové* and *-i*' (p. 298). -/
 def muz : Noun :=
-  { form := "muž", gloss := "man", gender := .mascAnimate, referentGender := some .male,
+  { form := "muž", gloss := "man", referentGender := some .male,
     cls := .muz, nomPlural := some [["i"], ["o", "v", "é"]] }
 
 /-- *stroj* 'machine', the soft masculine inanimate model (Table 9.3, p. 466). -/
 def stroj : Noun :=
-  { form := "stroj", gloss := "machine", gender := .mascInanimate, cls := .stroj }
+  { form := "stroj", gloss := "machine", cls := .stroj }
 
 /-- *město* 'town', the neuter o-stem model (Table 9.4, p. 467). -/
-def mesto : Noun := { form := "město", gloss := "town", gender := .neuter, cls := .mesto }
+def mesto : Noun := { form := "město", gloss := "town", cls := .mesto }
 
 /-- *srdce* 'heart', the neuter jo-stem model (Table 9.4, p. 467). -/
-def srdce : Noun := { form := "srdce", gloss := "heart", gender := .neuter, cls := .srdce }
+def srdce : Noun := { form := "srdce", gloss := "heart", cls := .srdce }
 
 /-- *učení* 'study', the neuter ьjo-stem model (Table 9.4, p. 467). -/
-def uceni : Noun := { form := "učení", gloss := "study", gender := .neuter, cls := .uceni }
+def uceni : Noun := { form := "učení", gloss := "study", cls := .uceni }
 
 /-- *žena* 'woman', the hard feminine a-stem model (Table 9.5, p. 468). -/
 def zena : Noun :=
-  { form := "žena", gloss := "woman", gender := .feminine, referentGender := some .female,
+  { form := "žena", gloss := "woman", referentGender := some .female,
     cls := .zena }
 
 /-- *hrdina* 'hero', the hard masculine a-stem model (Table 9.5, p. 468). -/
 def hrdina : Noun :=
-  { form := "hrdina", gloss := "hero", gender := .mascAnimate, cls := .hrdina }
+  { form := "hrdina", gloss := "hero", cls := .hrdina }
 
 /-- *duše* 'soul', the soft feminine ja-stem model (Table 9.5, p. 468). -/
-def duse : Noun := { form := "duše", gloss := "soul", gender := .feminine, cls := .duse }
+def duse : Noun := { form := "duše", gloss := "soul", cls := .duse }
 
 /-- *paní* 'lady', "a unique item" (p. 468), the one ьja-stem (Table 9.5, p. 468). -/
 def pani : Noun :=
-  { form := "paní", gloss := "lady", gender := .feminine, referentGender := some .female,
+  { form := "paní", gloss := "lady", referentGender := some .female,
     cls := .pani }
 
 /-- *kost* 'bone', the i-stem model (Table 9.6, p. 469). -/
-def kost : Noun := { form := "kost", gloss := "bone", gender := .feminine, cls := .kost }
+def kost : Noun := { form := "kost", gloss := "bone", cls := .kost }
 
 /-- *jehně* 'lamb', the neuter t-stem model (Table 9.7, p. 470). -/
-def jehne : Noun := { form := "jehně", gloss := "lamb", gender := .neuter, cls := .jehne }
+def jehne : Noun := { form := "jehně", gloss := "lamb", cls := .jehne }
 
 /-- *kluk* 'boy', a hard masculine animate with a velar stem, whose vocative singular *kluku* Short
 gives as a survival of the u-stem vocative, "chiefly as a means to avoid palatalization of velar
 stems" (p. 465). -/
 def kluk : Noun :=
-  { form := "kluk", gloss := "boy", gender := .mascAnimate, referentGender := some .male,
+  { form := "kluk", gloss := "boy", referentGender := some .male,
     cls := .chlap }
 
 /-! ### Nouns that change class with number -/
@@ -167,13 +167,13 @@ def kluk : Noun :=
 /-- *den* 'day', which follows *stroj* in the singular and *hrady* in the plural (Short, p. 469),
 and whose oblique stem is *dn-* (Short, p. 463). -/
 def den : Noun :=
-  { form := "den", gloss := "day", gender := .mascInanimate, cls := .stroj, clsPlural := .hrad }
+  { form := "den", gloss := "day", cls := .stroj, clsPlural := .hrad }
 
 /-- *kořen* 'root', which follows *stroj* in the singular and *hrady* in the plural (Short,
 p. 469), and which *Mluvnice češtiny* lists among the masculines with a stem in *-en-* that
 decline soft in the singular and hard in the plural (p. 310). -/
 def koren : Noun :=
-  { form := "kořen", gloss := "root", gender := .mascInanimate, cls := .stroj,
+  { form := "kořen", gloss := "root", cls := .stroj,
     clsPlural := .hrad }
 
 /-- *pramen* 'spring', which follows *stroj* in the singular and *hrady* in the plural.
@@ -184,7 +184,7 @@ jména mají dnes v sg tvary shodné se skloňováním měkkým, v pl se skloňo
 singular and of the hard declension in the plural (the hard forms also entering the singular)'
 (p. 310). Short does not mention it. -/
 def pramen : Noun :=
-  { form := "pramen", gloss := "spring", gender := .mascInanimate, cls := .stroj,
+  { form := "pramen", gloss := "spring", cls := .stroj,
     clsPlural := .hrad }
 
 /-! ### Stump's nouns -/
@@ -195,20 +195,20 @@ animates) and the final consonant of the *stroj* type soft (p. 309), and the nou
 the type include *kraj*, *boj* and *orloj*, in *j* like *pokoj* (p. 309). It names no soft
 consonants, nor *pokoj* itself. -/
 def pokoj : Noun :=
-  { form := "pokoj", gloss := "room", gender := .mascInanimate, cls := .stroj }
+  { form := "pokoj", gloss := "room", cls := .stroj }
 
 /-- *most* 'bridge', a masculine inanimate declined as *hrad*. -/
-def most : Noun := { form := "most", gloss := "bridge", gender := .mascInanimate, cls := .hrad }
+def most : Noun := { form := "most", gloss := "bridge", cls := .hrad }
 
 /-- *předseda* 'chairman', a masculine a-stem declined as *hrdina*, of "the masculine
 a-declension" (Short, p. 467), and the model noun of *Mluvnice češtiny*'s third type of the
 masculine animates (p. 290). -/
 def predseda : Noun :=
-  { form := "předseda", gloss := "chairman", gender := .mascAnimate, cls := .hrdina }
+  { form := "předseda", gloss := "chairman", cls := .hrdina }
 
 /-- *sluha* 'servant', a masculine a-stem declined as *hrdina*, whose locative plural both
 grammars give as *sluzích* (Short, p. 467; *Mluvnice češtiny*, pp. 292, 300). -/
-def sluha : Noun := { form := "sluha", gloss := "servant", gender := .mascAnimate, cls := .hrdina }
+def sluha : Noun := { form := "sluha", gloss := "servant", cls := .hrdina }
 
 /-- *filosof* 'philosopher', a masculine animate declined as *chlap*, the hard subtype taking
 every noun whose stem ends in *b*, *f*, *m*, *p* or *v* (*Mluvnice češtiny*, p. 294). Its
@@ -216,7 +216,7 @@ nominative plural is in neither grammar: Short does not place it among the subcl
 or *-ové* (p. 466), and *Mluvnice češtiny* mentions the noun once, spelled *filozof*, among the
 Latin borrowings that lost *-us* (p. 340). -/
 def filosof : Noun :=
-  { form := "filosof", gloss := "philosopher", gender := .mascAnimate, cls := .chlap }
+  { form := "filosof", gloss := "philosopher", cls := .chlap }
 
 /-- *filolog* 'philologist', a masculine animate declined as *chlap*, with a velar stem, which
 takes the vocative singular *-u* (Short, p. 465; *Mluvnice češtiny*, p. 292) and the locative
@@ -225,7 +225,7 @@ plural *filolozích* (*Mluvnice češtiny*, p. 295). Its nominative plural is *-
 masculines in *-log*, naming *filolog* (p. 296), although it gives *filolog – filolozi* as its
 example of the alternation of *g* before the nominative plural *-i* (p. 294). -/
 def filolog : Noun :=
-  { form := "filolog", gloss := "philologist", gender := .mascAnimate, cls := .chlap,
+  { form := "filolog", gloss := "philologist", cls := .chlap,
     nomPlural := some [["o", "v", "é"]] }
 
 /-- The entries are the model nouns of Short's tables, *kluk*, *den*, *kořen* and *pramen*, and
@@ -249,9 +249,6 @@ theorem isVelar_stem_iff :
 theorem isSome_ofChars_forms :
     ∀ n ∈ nouns, ∀ σ, ∀ w ∈ n.forms σ, (Phonology.ofChars (w.flatMap String.toList)).isSome := by
   decide +kernel
-
-/-- Every entry has the gender of its class's table. -/
-theorem gender_eq_cls_gender : ∀ n ∈ nouns, n.gender = n.cls.gender := by decide
 
 /-- The entries give *muži*, *mužové* (p. 298), *filologové* (p. 296), *filolozích* (p. 295),
 *sluzích* (pp. 292, 300), *filologu* (p. 292) and *pramene*, *prameny* (p. 310) as *Mluvnice
