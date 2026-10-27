@@ -205,9 +205,9 @@ variable {I : Type*}
 /-- The illocutionary force linking principle (56): the default force of a root sentence,
 assertion, interrogation or direction, is fixed by the type of its denotation. -/
 def Denotation.defaultForce : Denotation I W T → Discourse.SpeechAct.Force
-  | .proposition _ => .declarative
-  | .question _ => .interrogative
-  | .property _ => .imperative
+  | .proposition _ => .assertion
+  | .question _ => .question
+  | .property _ => .directive
 
 namespace Scoreboard
 

@@ -163,8 +163,8 @@ random choice, a circumstantial flavor, the assertion and the order the primary 
 declarative and imperative speech acts, and a belief state an epistemic flavor. -/
 def Ev.flavor : Ev → ModalFlavor
   | .vp => .circumstantial
-  | .assertion => Force.declarative.primaryFlavor.get rfl
-  | .order => Force.imperative.primaryFlavor.get rfl
+  | .assertion => Force.assertion.primaryFlavor.get rfl
+  | .order => Force.directive.primaryFlavor.get rfl
   | .belief => .epistemic
 
 /-- `Claim s e` is the claim of a *yalnhej* DP over the whole domain, anchored to `e`. -/

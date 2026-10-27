@@ -8,30 +8,41 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Speech acts
 
-This file defines the illocutionary force of an utterance and the preparatory conditions of a
-request for information. The force is the act an utterance performs, the F in F(p): asserting,
-asking, commanding, promising or exclaiming. Each sentence type conventionally performs one
-force, `Clause.SentenceType.force`, the three interrogatives all asking, and a form used for
-another act, a rising declarative that asks or an interrogative that requests, is a mismatch
-between that pairing and the act. Lakoff assigns each force the participant with epistemic
-authority over its content, the addressee for a question and the speaker otherwise. A speech
-act is felicitous only if its preparatory conditions hold, as Searle observes; for a request,
-that the addressee is able to do what is requested. The preparatory conditions of a request for
-information, in the inventory of Francik and Clark, are the obstacles a speaker may see to
-getting the information, partially ordered by specificity.
+The *illocutionary force* of an utterance is the act it performs, the $F$ in $F(p)$: an assertion,
+a question, a directive, a promise or an exclamation. Each sentence type
+[conventionally performs one force](##Clause.SentenceType.force), every interrogative a question,
+and a form used for another act, a rising declarative that asks or an interrogative that
+requests, departs from that pairing. The *epistemic authority* of an act is the participant whose
+commitment to its content the act projects, [the speaker of an assertion and the addressee of a
+question](##Discourse.SpeechAct.Force.authority). A request is felicitous only if its
+*preparatory conditions* hold, first among them that the addressee is able to do what is
+requested; a question is a request for information, and the conditions on giving information are
+[ordered by specificity](##Discourse.SpeechAct.PreparatoryCondition.le), knowing it being a way
+of being able to give it.
 
 ## Main definitions
 
-* `Discourse.SpeechAct.Force`, `Discourse.SpeechAct.Force.authority`: the forces and Lakoff's
-  epistemic authority.
+* `Discourse.SpeechAct.Force`: the illocutionary forces.
+* `Discourse.SpeechAct.Force.authority`: the epistemic authority of an assertion or a question.
 * `Clause.SentenceType.force`: the force a sentence type conventionally performs.
-* `Discourse.SpeechAct.PreparatoryCondition`, with its `PartialOrder`.
+* `Discourse.SpeechAct.PreparatoryCondition`: the preparatory conditions of a request, with their
+  `PartialOrder`.
+
+## Implementation notes
+
+The authority is partial. Coppock and Wechsler assign it for declaratives and polar
+interrogatives, and Theiler's source of information is the same participant for assertions and
+questions. For imperatives the sources diverge: Speas and Tenny's seat of knowledge, which
+Coppock and Wechsler equate with the authority, is the hearer, who is to realize the content,
+while Searle's command requires the speaker's authority over the hearer, a deontic notion.
 
 ## References
 
 * [searle-1969]
 * [sadock-zwicky-1985]
-* [lakoff-1970]
+* [speas-tenny-2003]
+* [coppock-wechsler-2018]
+* [theiler-2021]
 * [francik-clark-1985]
 -/
 
@@ -41,30 +52,45 @@ namespace Discourse.SpeechAct
 
 /-! ### Illocutionary force -/
 
-/-- The illocutionary force of an utterance is the act it performs, the F in F(p), which its
+/-- The illocutionary force of an utterance is the act it performs, the $F$ in $F(p)$, which its
 sentence type conventionally fixes and which form and use may pull apart. -/
 inductive Force where
-  | declarative
-  | interrogative
-  | imperative
-  | promissive
-  | exclamative
+  /-- Putting the content forward as true. -/
+  | assertion
+  /-- Asking the addressee for information. -/
+  | question
+  /-- Trying to get the addressee to act, as a command or a request does. -/
+  | directive
+  /-- Committing the speaker to act. -/
+  | promise
+  /-- Expressing the speaker's attitude to the content. -/
+  | exclamation
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- The participant Lakoff gives epistemic authority over the content of a force is the
-addressee for a question and the speaker otherwise. -/
-def Force.authority : Force → Discourse.Role
-  | .declarative => .speaker
-  | .interrogative => .addressee
-  | .imperative => .speaker
-  | .promissive => .speaker
-  | .exclamative => .speaker
+namespace Force
+
+/-- The epistemic authority of an act is the participant whose commitment to its content the act
+projects: the speaker of an assertion and the addressee of a question. The other acts have
+none. -/
+def authority : Force → Option Discourse.Role
+  | assertion => some .speaker
+  | question => some .addressee
+  | directive | promise | exclamation => none
+
+@[simp] theorem authority_assertion : assertion.authority = some .speaker := rfl
+
+@[simp] theorem authority_question : question.authority = some .addressee := rfl
+
+end Force
 
 /-! ### Preparatory conditions -/
 
-/-- A preparatory condition of a request for information, an obstacle to compliance. -/
+/-- A preparatory condition of a request is one that must hold for the addressee to comply: that
+the addressee is able and willing to do what is requested, and, when what is requested is
+information, the ways of being able to give it and the speaker's not having asked for it
+already. -/
 inductive PreparatoryCondition where
-  /-- The addressee is able to supply the information. -/
+  /-- The addressee is able to do what is requested. -/
   | ability
   /-- The addressee knows the information. -/
   | knowledge
@@ -72,9 +98,9 @@ inductive PreparatoryCondition where
   | memory
   /-- The addressee has noticed the source of the information. -/
   | source
-  /-- The addressee is allowed to give the information. -/
+  /-- The addressee is allowed to do what is requested. -/
   | permission
-  /-- The addressee is willing to give the information. -/
+  /-- The addressee is willing to do what is requested. -/
   | willingness
   /-- The speaker has not already asked for the information. -/
   | speakerMemory
@@ -83,8 +109,11 @@ inductive PreparatoryCondition where
 namespace PreparatoryCondition
 
 /-- Satisfying the first condition is a way of satisfying the second: knowing, remembering,
-having noticed the source and being allowed to tell are ways of being able to supply the
-information, and remembering or having noticed the source are ways of knowing it. -/
+having noticed the source and being allowed to tell are ways of being able to give the
+information, and remembering or having noticed the source are ways of knowing it. Willingness
+and the speaker's memory stand apart, so the order has neither a top nor a bottom. Being allowed
+falls under being able as in Francik and Clark's gloss of an addressee unable to tell, although
+their scenarios on it were written as borderline between ability and willingness. -/
 protected def le : PreparatoryCondition → PreparatoryCondition → Prop
   | .knowledge, .ability | .memory, .ability | .source, .ability | .permission, .ability
   | .memory, .knowledge | .source, .knowledge => True
@@ -113,18 +142,22 @@ end Discourse.SpeechAct
 
 /-! ### The conventional force of a sentence type -/
 
-/-- The force a sentence type conventionally performs, asking for the three interrogatives and
-the act of its name for each other type. -/
-def Clause.SentenceType.force : Clause.SentenceType → Discourse.SpeechAct.Force
-  | .declarative => .declarative
-  | .polar | .alternative | .constituent => .interrogative
-  | .imperative => .imperative
-  | .exclamative => .exclamative
-  | .promissive => .promissive
+namespace Clause.SentenceType
 
-theorem Clause.SentenceType.force_surjective : Function.Surjective Clause.SentenceType.force := by
-  decide
+open Discourse.SpeechAct (Force)
 
-theorem Clause.SentenceType.force_eq_interrogative_iff (t : Clause.SentenceType) :
-    t.force = .interrogative ↔ t.IsInterrogative := by
-  cases t <;> simp [Clause.SentenceType.force, Clause.SentenceType.IsInterrogative]
+/-- The force a sentence type conventionally performs: a question for each of the three
+interrogatives, and for each other type the act it is named for. -/
+def force : SentenceType → Force
+  | declarative => .assertion
+  | polar | alternative | constituent => .question
+  | imperative => .directive
+  | exclamative => .exclamation
+  | promissive => .promise
+
+theorem force_surjective : Function.Surjective force := by decide
+
+theorem force_eq_question_iff {t : SentenceType} : t.force = .question ↔ t.IsInterrogative := by
+  cases t <;> simp [force, IsInterrogative]
+
+end Clause.SentenceType
