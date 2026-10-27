@@ -18,11 +18,11 @@ preposed particle (*wa* future, *né* continuous), the subject clitic
 conditioned by voicing of the preceding segment and tense–lax vowel
 harmony (§1.19–1.20).
 
-The `subjectVE` field records the (23)–(24) generalization: the
-subject's final vowel elides unless *wa*, *né*, or *-n* intervenes —
-the morphological ground for the focus-marking asymmetry between
-perfective and progressive clauses in [hartmann-zimmermann-2004].
-[jungraithmayr-1991] is the lexical companion source.
+The `subjectVE` field records whether Kidda's examples show the subject's final vowel eliding
+before the verb. It elides in the perfective and not where *wa*, *né* or *-n* intervenes
+(`subjectVE_iff_no_marker`), the morphological ground for the focus-marking asymmetry between
+perfective and progressive clauses in [hartmann-zimmermann-2004]. [jungraithmayr-1991] is the
+lexical companion source.
 -/
 
 @[expose] public section
@@ -42,46 +42,46 @@ inductive Marker where
   | subjectClitic (form : String)
   deriving DecidableEq, Repr
 
-/-- One row of [kidda-1985]'s tense–aspect paradigm: the verb-final
-suffix alternants and the distinctive marker. `subjectVE` is the
-(23)–(24) generalization: the preceding subject's final vowel elides
-iff no marker intervenes. -/
+/-- One row of [kidda-1985]'s tense–aspect paradigm: the verb-final suffix alternants, the
+distinctive marker, and whether the preceding subject's final vowel elides where an example shows
+it, (23) and (24a–c). -/
 structure TAMEntry where
   tam : TAM
   suffixAlternants : List String
   marker : Marker
-  subjectVE : Bool
+  subjectVE : Option Bool
   deriving DecidableEq, Repr
 
 /-- Perfective, singular-object suffix set (voicing × harmony
 alternants). -/
 def perfectiveSg : TAMEntry :=
-  ⟨.perfective, ["kó", "kọ́", "gó", "gọ́"], .none, true⟩
+  ⟨.perfective, ["kó", "kọ́", "gó", "gọ́"], .none, some true⟩
 
 /-- Perfective, plural-object suffix set — the *o → u* raising variant
 of the singular. -/
 def perfectivePl : TAMEntry :=
-  ⟨.perfective, ["kú", "kụ́", "gú", "gụ́"], .none, true⟩
+  ⟨.perfective, ["kú", "kụ́", "gú", "gụ́"], .none, some true⟩
 
 /-- Perfective for action performed at a location different from the
 speaker's. -/
-def perfectiveDistal : TAMEntry := ⟨.perfective, ["ná"], .none, true⟩
+def perfectiveDistal : TAMEntry := ⟨.perfective, ["ná"], .none, none⟩
 
-/-- Imperfective imperative. -/
-def imperative : TAMEntry := ⟨.imperative, ["u", "ụ"], .none, true⟩
+/-- Imperfective imperative, which has no overt subject. -/
+def imperative : TAMEntry := ⟨.imperative, ["u", "ụ"], .none, none⟩
 
 /-- Future: *-é* plus preposed *wa*. -/
-def future : TAMEntry := ⟨.future, ["é", "ẹ́"], .preposed "wa", false⟩
+def future : TAMEntry := ⟨.future, ["é", "ẹ́"], .preposed "wa", some false⟩
 
 /-- Continuous: *-é* plus preposed *né* — the progressive of
 [hartmann-zimmermann-2004]'s focus examples. -/
-def continuous : TAMEntry := ⟨.continuous, ["é", "ẹ́"], .preposed "né", false⟩
+def continuous : TAMEntry := ⟨.continuous, ["é", "ẹ́"], .preposed "né", some false⟩
 
 /-- Habitual: *-é* plus *-n* cliticized to the subject. -/
-def habitual : TAMEntry := ⟨.habitual, ["é", "ẹ́"], .subjectClitic "n", false⟩
+def habitual : TAMEntry := ⟨.habitual, ["é", "ẹ́"], .subjectClitic "n", some false⟩
 
-/-- Subjunctive: *-é* with no distinctive marker. -/
-def subjunctive : TAMEntry := ⟨.subjunctive, ["é", "ẹ́"], .none, true⟩
+/-- Subjunctive: *-é* with no distinctive marker. Its example (24d) has no overt subject of its
+own, the elided *Lak* standing before the matrix verb. -/
+def subjunctive : TAMEntry := ⟨.subjunctive, ["é", "ẹ́"], .none, none⟩
 
 /-- The full tense–aspect paradigm. -/
 def tamEntries : List TAMEntry :=
@@ -94,10 +94,9 @@ theorem imperfectives_share_suffix :
        e.tam = .subjunctive) →
       e.suffixAlternants = ["é", "ẹ́"] := by decide
 
-/-- Subject-final vowel elision is blocked exactly by an intervening
-marker ((23)–(24)): *wa*, *né*, and *-n* protect the subject's final
-vowel; bare-suffix aspects elide it. -/
+/-- Where an example shows it, the subject's final vowel elides exactly when no marker
+intervenes: it elides in the perfective (23) and not before *wa*, *né* or *-n* (24a–c), p. 37. -/
 theorem subjectVE_iff_no_marker :
-    ∀ e ∈ tamEntries, e.subjectVE ↔ e.marker = .none := by decide
+    ∀ e ∈ tamEntries, ∀ b ∈ e.subjectVE, b = true ↔ e.marker = .none := by decide
 
 end Tangale
