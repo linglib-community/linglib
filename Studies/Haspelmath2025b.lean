@@ -268,7 +268,7 @@ instance : PartialOrder Value where
   le_trans _ _ _ h h' := h.trans h'
   le_antisymm _ _ h _ := h
 
-instance : DecidableLE Value := λ a b => inferInstanceAs (Decidable (a = b))
+instance : DecidableLE Value := fun a b ↦ inferInstanceAs (Decidable (a = b))
 
 /-- A tier description is a value, or `⊥` for an open variable. -/
 abbrev Slot := WithBot Value
@@ -291,6 +291,7 @@ def nounVerb : ConstructionMorphology.Schema RootVar Slot where
     | .verbCategory => ↑(Value.category .action)
     | _ => ⊥
   opens := {.nounMeaning, .verbMeaning, .shape}
+  opens_subset := by rintro _ (rfl | rfl | rfl) <;> rfl
 
 /-- The subscripting of the tiers of the noun schema by the variables of (21). -/
 def nounSub : Tier → RootVar
@@ -342,13 +343,11 @@ def hammerRoots : RootVar → Slot
 from the other. -/
 theorem hammer_sisters :
     nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun hammerVerb) :=
-  ⟨hammerRoots, λ v => by cases v <;> first | exact bot_le | exact le_rfl,
-    funext λ t => by rcases t with t | t <;> cases t <;> rfl⟩
+  ⟨hammerRoots, fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
+    funext fun t ↦ by rcases t with t | t <;> cases t <;> rfl⟩
 
 theorem hammer_dance_not_sisters :
     ¬ nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun danceVerb) :=
-  λ h => by
-    simpa [hammerNoun, danceVerb] using
-      (ConstructionMorphology.Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 .phonology .phonology rfl
+  fun h ↦ by simpa [hammerNoun, danceVerb] using h.sumElim_apply_eq .phonology .phonology rfl
 
 end Haspelmath2025b

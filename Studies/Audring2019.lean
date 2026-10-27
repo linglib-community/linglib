@@ -123,11 +123,11 @@ between stored words therefore licenses no novel word, and productivity needs a 
 variable. -/
 theorem word_generates_iff (b a : String) {Λ : Set (Fin 2 → Flat String)}
     {w : Fin 2 → Flat String} :
-    (⟨word b a, ∅⟩ : Schema (Fin 2) (Flat String)).Generates Λ w ↔ w = word b a := by
+    (Schema.nonproductive (word b a)).Generates Λ w ↔ w = word b a := by
   have hmax : ∀ v, IsMax (word b a v) := fun v ↦ by fin_cases v <;> exact Flat.isMax_coe _
   refine ⟨fun h ↦ (Schema.instantiates_iff_eq_of_forall_isMax hmax).1 h.instantiates, ?_⟩
   rintro rfl
-  exact ⟨le_rfl, fun v hv _ ↦ by fin_cases v <;> exact absurd hv Flat.coe_ne_bot⟩
+  exact ⟨le_rfl, fun v hv ↦ by fin_cases v <;> exact absurd hv.1 Flat.coe_ne_bot⟩
 
 /-! ### The second-order schema `[N -ful]A ≈ [N -less]A` -/
 
@@ -141,7 +141,7 @@ inductive FulLessVar
 /-- The second-order schema (14) is the two schemas with their coindexed base as one
 description. -/
 def fulLess : Schema FulLessVar (Flat String) :=
-  ⟨fun | .base => ⊥ | .ful => ↑"ful" | .less => ↑"less", {.base}⟩
+  ⟨fun | .base => ⊥ | .ful => ↑"ful" | .less => ↑"less", {.base}, by rintro _ rfl; rfl⟩
 
 /-- The subscripting of the slots of `[N -ful]A` by the variables of (14). -/
 def fulSub : Fin 2 → FulLessVar := ![.base, .ful]
@@ -174,7 +174,7 @@ differently. -/
 theorem not_careful_clueless_pairs :
     ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
       (Sum.elim Wordlist.careful.slots Wordlist.clueless.slots) :=
-  fun h ↦ absurd ((Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 0 0 rfl) (by decide)
+  fun h ↦ absurd (h.sumElim_apply_eq 0 0 rfl) (by decide)
 
 /-- A mother of the two schemas would be the meet of their descriptions, which over these slots
 is empty. It holds nothing but the categories, which the slots do not record. -/
@@ -184,10 +184,7 @@ theorem fulLess_mother_eq_bot : fulSchema.body ⊓ lessSchema.body = ⊥ := by
 
 /-- The mother is instantiated by every word, so it states nothing the sisters do not. -/
 theorem fulLess_mother_instantiates (w : Fin 2 → Flat String) :
-    (⟨fulSchema.body ⊓ lessSchema.body, ∅⟩ : Schema (Fin 2) (Flat String)).Instantiates
-      w := by
-  show fulSchema.body ⊓ lessSchema.body ≤ w
-  rw [fulLess_mother_eq_bot]
-  exact bot_le
+    (Schema.nonproductive (fulSchema.body ⊓ lessSchema.body)).Instantiates w :=
+  Schema.instantiates_iff.2 (fulLess_mother_eq_bot.trans_le bot_le)
 
 end Audring2019

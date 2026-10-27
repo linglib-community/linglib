@@ -53,7 +53,7 @@ namespace Bybee1995
 
 open ConstructionMorphology
 
-variable {P α : Type*} [PartialOrder α]
+variable {P α : Type*} [PartialOrder α] [OrderBot α]
 
 /-! ### Type frequency and token frequency -/
 
@@ -82,7 +82,7 @@ theorem typeFrequency_mono {s t : Schema P α} [DecidablePred s.Instantiates]
   unfold typeFrequency
   rw [Multiset.countP_eq_card_filter, Multiset.countP_eq_card_filter]
   exact Multiset.card_le_card
-    (Multiset.monotone_filter_right _ λ _ hw => Schema.body_le_body_iff.1 h hw)
+    (Multiset.monotone_filter_right _ fun _ hw ↦ Schema.body_le_body_iff.1 h hw)
 
 end Frequency
 
@@ -98,7 +98,7 @@ theorem edSchema_isProductive : edSchema.IsProductive := Schema.isProductive_pro
 
 /-- The product-oriented schema of the *strung* class over onset, nucleus and coda: the
 nucleus pinned to /ʌ/, the onset open, the coda a closed variable filled from the class. -/
-def strungSchema : Schema (Fin 3) (Flat String) := ⟨![⊥, ↑"ʌ", ⊥], {0}⟩
+def strungSchema : Schema (Fin 3) (Flat String) := ⟨![⊥, ↑"ʌ", ⊥], {0}, by rintro _ rfl; rfl⟩
 
 /-- The stored members of the class. -/
 def strungClass : Set (Fin 3 → Flat String) :=
@@ -122,7 +122,8 @@ inductive PairVar
 /-- A source-oriented schema pairing a base in /ɪ/ with a past in /ʌ/ over a shared onset and
 coda: the generalization over pairs such as *string*, *strung*. -/
 def sourceOriented : Schema PairVar (Flat String) :=
-  ⟨λ | .base => ↑"ɪ" | .past => ↑"ʌ" | _ => ⊥, {.onset, .coda}⟩
+  ⟨fun | .base => ↑"ɪ" | .past => ↑"ʌ" | _ => ⊥, {.onset, .coda},
+    by rintro _ (rfl | rfl) <;> rfl⟩
 
 /-- The subscripting of the base's positions. -/
 def baseSub : Fin 3 → PairVar := ![.onset, .base, .coda]
@@ -133,9 +134,9 @@ def pastSub : Fin 3 → PairVar := ![.onset, .past, .coda]
 theorem string_strung_pairs :
     sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
       (Sum.elim Wordlist.string.slots Wordlist.strung.slots) :=
-  ⟨λ | .onset => ↑"str" | .coda => ↑"ŋ" | .base => ↑"ɪ" | .past => ↑"ʌ",
-    λ v => by cases v <;> decide,
-    funext λ p => by rcases p with p | p <;> fin_cases p <;> decide⟩
+  ⟨fun | .onset => ↑"str" | .coda => ↑"ŋ" | .base => ↑"ɪ" | .past => ↑"ʌ",
+    fun v ↦ by cases v <;> decide,
+    funext fun p ↦ by rcases p with p | p <;> fin_cases p <;> decide⟩
 
 theorem not_sourceOriented_pairs :
     ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
@@ -144,7 +145,7 @@ theorem not_sourceOriented_pairs :
         (Sum.elim Wordlist.sneak.slots Wordlist.snuck.slots) ∧
       ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
         (Sum.elim Wordlist.drag.slots Wordlist.drug.slots) := by
-  refine ⟨λ h => ?_, λ h => ?_, λ h => ?_⟩ <;>
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_, fun h ↦ ?_⟩ <;>
     exact absurd (Flat.coe_le_iff.1 ((Schema.instantiatesAt_elim_iff.1 h).1 1)) (by decide)
 
 end Bybee1995

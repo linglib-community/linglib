@@ -156,8 +156,7 @@ def compoundFamily : CompoundNode → Schema CompoundVar (Flat Cat)
 /-- The hierarchical lexicon of English compounds, ordered by the generality of the schemas. -/
 instance : PartialOrder CompoundNode := Schema.generalityOrder compoundFamily (by decide)
 
-instance : DecidableLE CompoundNode := fun a b ↦
-  inferInstanceAs (Decidable ((compoundFamily b).body ≤ (compoundFamily a).body))
+instance : DecidableLE CompoundNode := Schema.decidableLEGeneralityOrder compoundFamily (by decide)
 
 instance : DecidableLT CompoundNode := decidableLTOfDecidableLE
 
@@ -173,7 +172,7 @@ theorem covBy_nominal :
 the subscripting of (6), the whole's category is the head's. -/
 theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat Cat}
     (h : (compoundFamily n).InstantiatesAt compoundSub w) : w 2 = w 1 :=
-  (Schema.instantiatesAt_iff.1 h).2 (by decide)
+  h.factorsThrough (by decide)
 
 theorem blackbird_instantiatesAt :
     (compoundFamily .an).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] ∧
@@ -213,14 +212,13 @@ def baarSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ba
 /-- The description at each node: the schema, or a word with no variable. -/
 def baarFamily : BaarNode → Schema (Fin 2) (Flat String)
   | .schema => baarSchema
-  | .leesbaar => ⟨Wordlist.leesbaar.slots, ∅⟩
-  | .werkbaar => ⟨Wordlist.werkbaar.slots, ∅⟩
+  | .leesbaar => Schema.nonproductive Wordlist.leesbaar.slots
+  | .werkbaar => Schema.nonproductive Wordlist.werkbaar.slots
 
 /-- The *-baar* hierarchy, ordered by the generality of the descriptions. -/
 instance : PartialOrder BaarNode := Schema.generalityOrder baarFamily (by decide)
 
-instance : DecidableLE BaarNode := fun a b ↦
-  inferInstanceAs (Decidable ((baarFamily b).body ≤ (baarFamily a).body))
+instance : DecidableLE BaarNode := Schema.decidableLEGeneralityOrder baarFamily (by decide)
 
 theorem le_schema : ∀ n : BaarNode, n ≤ .schema := by decide
 
@@ -262,8 +260,8 @@ def onbaarSchema : Schema (Fin 3) (Flat String) := Schema.productive ![↑"on", 
 /-- The two-slot *-baar* schema of the hierarchy is the three-slot one read at base and
 suffix. -/
 theorem baarSchema_eq_comap : baarSchema₃.comap ![1, 2] = baarSchema :=
-  Schema.ext (funext fun i ↦ by fin_cases i <;> rfl)
-    (Set.ext fun i ↦ by fin_cases i <;> simp [baarSchema₃, baarSchema])
+  (Schema.comap_productive _ _).trans <|
+    congrArg Schema.productive <| funext fun i ↦ by fin_cases i <;> rfl
 
 /-- The *on-* and *-baar* descriptions unify into the *on-V-baar* description (16). -/
 theorem onbaar_unifies :
