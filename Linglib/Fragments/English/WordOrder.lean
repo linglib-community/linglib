@@ -9,9 +9,9 @@ This file records where the finite verb of Standard English and of Belfast Engli
 left periphery, as a distribution over sentence types and embedding contexts. Standard English
 moves the verb, an auxiliary, only in matrix wh-questions and yes/no-questions, the
 subject–auxiliary inversion; declaratives, exclamatives, imperatives and embedded clauses are
-not verb second. Belfast English adds imperatives, *Bring you that with you!*, and embedded
-root-like yes/no-questions, *They asked me was I going to the party*, the examples Henry
-reports; Westergaard notes that the imperative movement may target a lower head.
+not verb second. Belfast English adds imperatives, *Bring you that with you!*, and an embedded
+yes/no-question that no complementizer introduces, *They asked me was I going to the party*, the
+examples Henry reports; Westergaard notes that the imperative movement may target a lower head.
 
 ## References
 
@@ -38,11 +38,15 @@ def verbSecond : Distribution
   | .constituent, .subordinated => some .excluded
   | _, _ => none
 
-/-- Belfast English is Standard English with verb movement in imperatives and in embedded
-root-like yes/no-questions. -/
+/-- Belfast English is Standard English with verb movement in imperatives. -/
 def Belfast.verbSecond : Distribution
   | .imperative, .matrix => some .obligatory
-  | .polar, .quasiSubordinated => some .obligatory
   | t, e => English.verbSecond t e
+
+/-- Belfast English moves the auxiliary in the complement of a rogative verb that no
+complementizer introduces. -/
+def Belfast.verbSecondWithoutComplementizer : Distribution
+  | .polar, .quasiSubordinated => some .obligatory
+  | _, _ => none
 
 end English

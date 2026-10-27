@@ -78,7 +78,7 @@ def ex_5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variety", "Belfast English"), ("clause", "embedded question"), ("order", "V2")] }
+    paperFeatures := [("variety", "Belfast English"), ("clause", "embedded question"), ("complementizer", "none"), ("order", "V2")] }
 
 def ex_6 : Datum :=
   { id := "westergaard2009_6"
@@ -104,7 +104,20 @@ def ex_7 : Datum :=
     judgment := .acceptable
     alternatives := [("Han sa at han kommer ikke.", .acceptable)]
     readings := []
-    paperFeatures := [("clause", "embedded declarative"), ("order", "non-V2 or V2")] }
+    paperFeatures := [("clause", "embedded declarative"), ("embedding", "bridge verb"), ("order", "non-V2 or V2")] }
+
+def ex_27 : Datum :=
+  { id := "westergaard2009_27"
+    source := ⟨"westergaard-2009", "ch. 2 (36)"⟩
+    reportedIn := none
+    language := "norw1258"
+    primaryText := "Han sa han ikke kommer."
+    glossedTokens := [("Han", "he"), ("sa", "said"), ("han", "he"), ("ikke", "not"), ("kommer", "comes")]
+    context := ""
+    judgment := .acceptable
+    alternatives := [("Han sa han kommer ikke.", .acceptable)]
+    readings := []
+    paperFeatures := [("clause", "embedded declarative"), ("embedding", "bridge verb"), ("complementizer", "none"), ("order", "non-V2 or V2")] }
 
 def ex_8 : Datum :=
   { id := "westergaard2009_8"
@@ -353,6 +366,6 @@ def ex_26 : Datum :=
     readings := []
     paperFeatures := [("variety", "Tromsø"), ("clause", "subject question"), ("som", "inserted")] }
 
-def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_27, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26]
 
 end Westergaard2009.Examples
