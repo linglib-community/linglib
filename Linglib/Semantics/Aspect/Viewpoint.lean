@@ -134,7 +134,8 @@ def ViewpointType.denote (v : ViewpointType) (P : W → E → Prop) : W → Set 
   ofRel v.ttTSitRelation P
 
 /-- The imperfective, (25), holds where the reference time is properly contained in the run time
-of an event of the predicate. -/
+of an event of the predicate. The event is actual, so wherever the imperfective holds the
+perfective does too: read as a progressive, it validates the imperfective paradox. -/
 def IMPF (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   ViewpointType.imperfective.denote P
 
