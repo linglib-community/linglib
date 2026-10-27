@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Mereology
-public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Mathlib.Data.Finset.Card
 
 /-!

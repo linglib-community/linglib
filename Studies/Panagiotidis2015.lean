@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 
 /-!
 # Panagiotidis (2015): Categorial Features

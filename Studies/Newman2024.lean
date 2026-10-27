@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Max
-public import Linglib.Syntax.Minimalist.Category.Basic
+public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Tree.Projection
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Dependent

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.List.Chain
 public import Mathlib.Data.List.DropRight

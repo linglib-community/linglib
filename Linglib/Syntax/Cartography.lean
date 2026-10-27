@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Mathlib.Tactic.DeriveFintype
 

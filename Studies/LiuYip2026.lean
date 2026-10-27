@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Fragments.Mandarin.Adverbs
