@@ -13,7 +13,11 @@ traces bind, the abstraction over such a variable, and the composition of two te
 denotation under an assignment of the variables (`Montague.Term.eval`), whose variable and
 abstraction cases are Heim and Kratzer's Traces and Pronouns Rule and Predicate Abstraction; the
 denotation under an applicative effect, where abstraction needs the effect to distribute over
-functions (`Montague.Term.evalM`); and the partial denotation of `Composition/Partial.lean`. Trees translate
+functions (`Montague.Term.evalM`); the intension under an interpretation of the constants as
+intensions, the denotation relative to a world of [von-fintel-heim-2011]
+(`Montague.Term.intension`), of which the pure denotation is
+[the case of constants that do not vary with the world](##intension_const_interp); and the partial
+denotation of `Composition/Partial.lean`. Trees translate
 to terms in `Composition/Tree.lean`.
 
 ## Main definitions
@@ -21,6 +25,7 @@ to terms in `Composition/Tree.lean`.
 * `Montague.Term`: the terms over a signature of constants.
 * `Montague.Term.eval`, `Montague.Term.evalM`: the denotation of a term, pure and under an
   applicative effect.
+* `Montague.Term.intension`: the intension of a term, its denotation at each world.
 
 ## Main results
 
@@ -120,6 +125,31 @@ theorem eval_lam (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignmen
     {τ : Ty} (b : Term K τ) : (lam n b).eval I g = lambdaAbsG n (fun g' ↦ b.eval I g') g :=
   rfl
 
+/-- The intension of a term under an interpretation `I` of the constants as intensions and an
+assignment of the variables: at each world, a constant denotes its intension's value there and a
+composition composes the daughters' intensions by its mode (`Mode.intension`). -/
+def intension (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S) (g : Assignment E) :
+    {ty : Ty} → Term K ty → W → Ty.Domain E W ty S
+  | _, const c => I c
+  | _, var n => fun _ ↦ g n
+  | _, lam n b => fun w x ↦ intension I (g[n ↦ x]) b w
+  | _, comp m l r => m.intension (intension I g l) (intension I g r)
+
+/-- Under constants that do not vary with the world, a term's intension is constant at its
+denotation, so the evaluation `eval` is the case of a lexicon of rigid intensions. -/
+@[simp] theorem intension_const_interp (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S)
+    (g : Assignment E) {ty : Ty} (t : Term K ty) (w : W) :
+    t.intension (fun c _ ↦ I c) g w = t.eval I g := by
+  induction t generalizing g w with
+  | const c => rfl
+  | var n => rfl
+  | lam n b ih => funext x; exact ih _ w
+  | comp m l r ihl ihr =>
+    simp only [intension, eval]
+    rw [show l.intension (fun c _ ↦ I c) g = fun _ ↦ l.eval I g from funext (ihl g),
+      show r.intension (fun c _ ↦ I c) g = fun _ ↦ r.eval I g from funext (ihr g),
+      Mode.intension_const]
+
 /-- `evalM I g t` is the denotation of `t` under an applicative effect, given an interpretation
 `I` of the constants as computations and an assignment `g`. A composition runs its left daughter
 first, and an abstraction distributes the effect over the entities. -/
@@ -149,6 +179,15 @@ theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty 
   | var n => rfl
   | lam n b ih => funext x; exact ih _
   | comp m l r ihl ihr => simp only [map, eval, ihl, ihr]
+
+theorem intension_map (I : ∀ {ty : Ty}, K' ty → W → Ty.Domain E W ty S)
+    (f : ∀ {ty : Ty}, K ty → K' ty) (g : Assignment E) {ty : Ty} (t : Term K ty) :
+    (t.map f).intension I g = t.intension (fun c ↦ I (f c)) g := by
+  induction t generalizing g with
+  | const c => rfl
+  | var n => rfl
+  | lam n b ih => funext w x; exact congrFun (ih _) w
+  | comp m l r ihl ihr => simp only [map, intension, ihl, ihr]
 
 theorem evalM_map {M : Type → Type} [Applicative M] [Distributive M]
     (I : ∀ {ty : Ty}, K' ty → M (Ty.Domain E W ty S)) (f : ∀ {ty : Ty}, K ty → K' ty)

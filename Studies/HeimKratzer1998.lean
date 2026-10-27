@@ -18,13 +18,20 @@ denotations, with a Fregean definite article that may leave a node undefined. Th
 engines `Tree.interp` and `Tree.interpPartial` implement these rules. Here the book's rules are
 transcribed as interpretation relations that the engines extend, and the engines are run on the
 toy model for the book's definite descriptions (Chapter 4), relative clauses (Chapter 5) and
-quantifier scope (Chapter 7).
+quantifier scope (Chapter 7). For attitude reports (Chapter 12) the interpretation is relative to a
+world (`Tree.intension`), and Intensional Functional Application feeds *believes* the intension of
+its complement, so that *Mary believes Jan is loyal* and *Jan is loyal*, *Dick is deceitful* can
+be true while *Mary believes Dick is deceitful* is false. Interpreted at one world, a complement of
+*believes* is its truth value, and the verb's complement is a nonextensional context exactly when
+the subject's beliefs leave open another world.
 
 ## Implementation notes
 
 The toy fragment's words stand in for the book's: *student who sleeps* for *house which is
 empty*, *every person sees some person* for "Some publisher offended every linguist". With
-`interpTy .t = Prop` the engines produce truth conditions as propositions.
+`interpTy .t = Prop` the engines produce truth conditions as propositions. In Chapter 12 *is* is
+the identity on predicates, the book's emptiness of *is*, and (11d) is the falsity of (10) at the
+actual world, since the fragment has no negation.
 
 ## References
 
@@ -785,5 +792,91 @@ example (g : Assignment ToyEntity) :
   exact fun _ hx ↦ hx.1
 
 end LogicalForm
+
+/-! ### Intensional semantics (Chapter 12)
+
+The interpretation function depends on a world as well as an assignment, predicates vary with
+the world, and an attitude verb is necessity along what its subject believes, knows or hopes,
+taking a proposition of type `⟨s,t⟩`. Intensional Functional Application feeds the verb its
+complement's intension, which `Tree.intension` computes. -/
+
+section Intensional
+
+open ModalLogic SetRel
+
+variable {E W : Type} (loyal deceitful : W → E → Prop) (believes : E → SetRel W W)
+  (mary jan dick : E)
+
+/-- The fragment's words as intensions: names are constant, *loyal* and *deceitful* are easy
+predicates, *is* is empty, and *believes* is necessity along what its subject believes. -/
+def intensionalLexicon : String → Option (Σ ty, W → Ty.Domain E W ty)
+  | "Mary" => some ⟨.e, fun _ ↦ mary⟩
+  | "Jan" => some ⟨.e, fun _ ↦ jan⟩
+  | "Dick" => some ⟨.e, fun _ ↦ dick⟩
+  | "is" => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, fun _ P ↦ P⟩
+  | "loyal" => some ⟨.e ⇒ .t, fun w x ↦ loyal w x⟩
+  | "deceitful" => some ⟨.e ⇒ .t, fun w x ↦ deceitful w x⟩
+  | "believes" => some ⟨.intens .t ⇒ .e ⇒ .t, fun w p x ↦ □[believes x] p w⟩
+  | _ => none
+
+/-- *Jan is loyal*. -/
+def janIsLoyal : Tree Unit String := .bin (.leaf "Jan") (.bin (.leaf "is") (.leaf "loyal"))
+
+/-- *Dick is deceitful*. -/
+def dickIsDeceitful : Tree Unit String :=
+  .bin (.leaf "Dick") (.bin (.leaf "is") (.leaf "deceitful"))
+
+/-- *Mary believes Jan is loyal*. -/
+def maryBelievesJanIsLoyal : Tree Unit String :=
+  .bin (.leaf "Mary") (.bin (.leaf "believes") janIsLoyal)
+
+/-- *Mary believes Dick is deceitful*. -/
+def maryBelievesDickIsDeceitful : Tree Unit String :=
+  .bin (.leaf "Mary") (.bin (.leaf "believes") dickIsDeceitful)
+
+-- (8), p. 308: true at `w` iff Jan is loyal at every world compatible with what Mary believes
+-- in `w`
+theorem intension_maryBelievesJanIsLoyal (g : Assignment E) :
+    Tree.intension (intensionalLexicon loyal deceitful believes mary jan dick) g
+      maryBelievesJanIsLoyal = some ⟨.t, fun w ↦ □[believes mary] (loyal · jan) w⟩ :=
+  rfl
+
+-- p. 300: interpreted at the lexicon's values at one world, a complement of *believes* is its
+-- truth value, so two true complements make the reports agree
+theorem interp_maryBelieves_eq {w : W} (g : Assignment E) (h : loyal w jan ↔ deceitful w dick) :
+    let lex := fun s ↦ (intensionalLexicon loyal deceitful believes mary jan dick s).map
+      fun d ↦ (⟨d.1, d.2 w⟩ : Denotation E W)
+    Tree.interp lex g maryBelievesJanIsLoyal = Tree.interp lex g maryBelievesDickIsDeceitful := by
+  change (some ⟨.t, □[believes mary] (fun _ ↦ loyal w jan) w⟩ : Option (Denotation E W)) =
+    some ⟨.t, □[believes mary] (fun _ ↦ deceitful w dick) w⟩
+  rw [propext h]
+
+/-- An attitude verb's complement is a nonextensional context at `w` exactly when the subject's
+attitude at `w` leaves open a world other than `w`, so the truth value of the complement fixes the
+report only for a subject who rules out every other world (p. 300). -/
+theorem believes_isExtensionalAt_iff {x : E} {w : W} :
+    Montague.IsExtensionalAt (fun p w' ↦ □[believes x] p w') w ↔ ∀ v, w ~[believes x] v → v = w :=
+  Montague.isExtensionalAt_box_iff
+
+/-- The two worlds of the model for (11). -/
+inductive Ch12World | actual | other
+
+/-- The individuals of the model for (11). -/
+inductive Ch12Person | mary | jan | dick
+
+/-- (11), p. 309: Jan is loyal and Dick deceitful at the actual world, Mary believes that Jan is
+loyal, and she does not believe that Dick is deceitful, since her beliefs leave open a world where
+he is not. -/
+theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person) :
+    let lex := intensionalLexicon (W := Ch12World) (fun _ x ↦ x = .jan)
+      (fun w x ↦ w = .actual ∧ x = .dick) (fun _ ↦ Set.univ) .mary .jan .dick
+    (∃ p, Tree.intension lex g janIsLoyal = some ⟨.t, p⟩ ∧ p .actual) ∧
+      (∃ p, Tree.intension lex g dickIsDeceitful = some ⟨.t, p⟩ ∧ p .actual) ∧
+      (∃ p, Tree.intension lex g maryBelievesJanIsLoyal = some ⟨.t, p⟩ ∧ p .actual) ∧
+      ∃ p, Tree.intension lex g maryBelievesDickIsDeceitful = some ⟨.t, p⟩ ∧ ¬ p .actual :=
+  ⟨⟨_, rfl, rfl⟩, ⟨_, rfl, rfl, rfl⟩, ⟨_, rfl, fun _ _ ↦ rfl⟩,
+    ⟨_, rfl, fun h ↦ nomatch (h .other trivial).1⟩⟩
+
+end Intensional
 
 end HeimKratzer1998

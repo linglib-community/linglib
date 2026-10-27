@@ -23,10 +23,13 @@ effect over the entities (`Distributive`).
 * `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its leaves alone.
 * `PhraseStructure.Tree.readings`: the readings of a tree under a lexicon of sets of readings.
 * `PhraseStructure.Tree.HoldsAt`: the truth of a tree under a lexicon and an assignment.
+* `PhraseStructure.Tree.intension`: the intension of a tree under a lexicon of intensions.
 
 ## Main results
 
 * `interp_eq_eval_translate`: a tree's denotation is the evaluation of its term.
+* `intension_const`: under a lexicon of rigid intensions a tree's intension is constant at its
+  denotation.
 * `interp_map_fst`: the type of a tree's denotation is the type `ty?` computes.
 * `interp_congr_of_agree` and its corollaries: Heim and Kratzer's theorems on variable binding.
 * `readings_eq_of_choice`, `mem_readings_node_binary`: readings extend the engine and compose
@@ -835,6 +838,43 @@ theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S
 
 end Translation
 
+/-! ### Intensions -/
+
+section Intension
+
+variable {C : Type} {K : Ty → Type*} {L : Type*} {E W : Type} {S : Sorts}
+
+/-- The intension of a tree under a lexicon of intensions and an assignment, the intension of its
+term ([von-fintel-heim-2011]). -/
+def intension (lex : L → Option (Σ ty, W → Ty.Domain E W ty S)) (g : Assignment E)
+    (t : Tree C L) : Option (Σ ty, W → Ty.Domain E W ty S) :=
+  (translate (K := fun ty ↦ W → Ty.Domain E W ty S) lex t).map fun d ↦
+    ⟨d.1, d.2.intension (fun c ↦ c) g⟩
+
+theorem intension_eq_intension_translate (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S)
+    (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (t : Tree C L) :
+    intension (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
+      (translate lex t).map fun d ↦ ⟨d.1, d.2.intension I g⟩ := by
+  simp only [intension, translate_map_const]
+  cases translate lex t with
+  | none => rfl
+  | some d => simp [Term.intension_map]
+
+/-- Under a lexicon of rigid intensions, a tree's intension is constant at its denotation. -/
+theorem intension_const (lex : L → Option (Σ ty, Ty.Domain E W ty S)) (g : Assignment E)
+    (t : Tree C L) :
+    intension (fun x ↦ (lex x).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) g t =
+      (interp (M := Id) lex g t).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩ := by
+  have h : interp (M := Id) lex g t = (translate lex t).map fun d ↦ ⟨d.1, d.2.eval (fun c ↦ c) g⟩ :=
+    by simpa [Sigma.eta] using
+      interp_eq_eval_translate (K := fun ty ↦ Ty.Domain E W ty S) (fun c ↦ c) lex g t
+  rw [intension_eq_intension_translate (K := fun ty ↦ Ty.Domain E W ty S) (fun c _ ↦ c), h]
+  cases translate lex t with
+  | none => rfl
+  | some d =>
+    simp only [Option.map_some]; congr; funext w; exact Term.intension_const_interp _ _ _ w
+
+end Intension
 
 /-! ### Truth -/
 
