@@ -5,25 +5,31 @@ public import Linglib.Syntax.Clause.Basic
 /-!
 # Danish word order
 
-This file records where the finite verb of Danish moves to the left periphery, as
-distributions over sentence types and embedding contexts. A main clause is verb second: the
-finite verb follows one constituent in a declarative or a wh-question, begins a
-yes/no-question, and precedes the sentence adverbials. Danish has no verb movement to I, so a
-subordinate clause has the finite verb after the sentence adverbials, *Vi ved at Peter ofte
-drikker kaffe*. Embedded verb second is limited by the matrix verb: the complement of a bridge
-verb such as *påstå* 'claim', *sige* 'say' or *vide* 'know' may be verb second or not, while that
-of *bevise* 'prove' or *beklage* 'regret' may not, so that verb second is optional in the
-complement of a bridge verb and excluded under subordination elsewhere. Embedded verb second
-also needs the complementizer *at*, without which it is marginal, although *at* is optional in
-an embedded clause that is not verb second. An embedded question is never verb second, and an
-*at*-clause used as an exclamation, *At du da ikke kan holde din mund!*, keeps the subordinate
-order. Some types of exclamative are verb second, *Hvor er han sød!*, though not all, and
-imperatives are not, by Westergaard's description.
+Danish is a verb-second language: in a main clause the finite verb follows exactly one constituent,
+*Kaffe drikker Peter ofte om morgenen* 'Coffee Peter often drinks in the morning', and begins a
+yes/no-question, *Drikker Peter ofte kaffe om morgenen?* 'Does Peter often drink coffee in the
+morning?'. Since the verb does not otherwise leave the verb phrase, a subordinate clause places it
+after the sentence adverbials, *Vi ved at Peter ofte drikker kaffe* 'We know that Peter often
+drinks coffee'. Some types of exclamative are verb second, *Hvor er han sød!* 'How nice he is!',
+though not all, and imperatives are not, by Westergaard's description.
+
+Verb second in a subordinate clause is what Vikner calls *limited embedded V2*: it depends on the
+matrix verb. The complement of a *bridge verb* such as *påstå* 'claim', *sige* 'say' or *vide*
+'know' may be verb second, *Watson påstod at disse penge havde Moriarty stjålet* 'Watson claimed
+that this money Moriarty had stolen', while that of *bevise* 'prove' or *beklage* 'regret' may not.
+Embedded verb second also needs the complementizer *at*, which is otherwise optional: *Hun sagde at
+vi skulle ikke købe denne bog* 'She said that we should not buy this book' is verb second, and
+without *at* the same order is marginal. Embedded questions are never verb second, nor is an
+*at*-clause used as an exclamation, *At du da ikke kan holde din mund!* 'I wish you hadn't said
+that!'.
 
 ## Implementation notes
 
-The comments locate each cell: V cites Vikner by numbered example or page, W cites the third
-chapter of Westergaard by example, note or table.
+Verb second is a `Clause.Distribution` over sentence types and embedding contexts. The complement
+of a bridge verb is the quasi-subordinated context, whose cell combines the clauses with and
+without *at*; other subordinate clauses are subordinated. The comments locate each cell: V cites
+Vikner by numbered example or page, W cites the third chapter of Westergaard by example, note or
+table.
 
 ## References
 
@@ -37,22 +43,19 @@ namespace Danish
 
 open Clause
 
-/-- In the complement of a bridge verb with *at* verb second is optional, *Watson påstod at disse
-penge havde Moriarty stjålet* beside *Watson påstod at Moriarty kun havde stjålet pengene*. -/
+/-- Verb second in a subordinate clause introduced by *at*: optional after a bridge verb. -/
 def verbSecondWithComplementizer : Distribution
   | .declarative, .quasiSubordinated => some .optional  -- V (13a), (14a), (54a), (54c)
   | _, _ => none
 
-/-- Without *at* the complement of a bridge verb is not verb second,
-*??Hun sagde vi skulle ikke købe denne bog*. -/
+/-- Verb second in a subordinate clause without a complementizer: excluded after a bridge verb,
+where it needs *at*. -/
 def verbSecondWithoutComplementizer : Distribution
   | .declarative, .quasiSubordinated => some .excluded  -- V (54b), (81b)
   | _, _ => none
 
-/-- Danish requires verb second in the three root clause types and allows it in exclamatives and
-in the complement of a bridge verb, combining the cases with and without *at*; it excludes it
-in imperatives, embedded questions, other subordinate declaratives, and an *at*-clause used as an
-exclamation. -/
+/-- Verb second in Danish: required in root declaratives and questions, optional in exclamatives
+and after a bridge verb, and excluded in the other clauses recorded. -/
 def verbSecond : Distribution
   | .declarative, .matrix => some .obligatory  -- V (33c)–(33e)
   | .polar, .matrix => some .obligatory  -- V (33b)
