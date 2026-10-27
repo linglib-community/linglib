@@ -112,23 +112,23 @@ def toponymsD : Set (Fin 4 → Flat String) :=
 
 -- (18a)
 theorem morrisMountain_generates : toponymA.Generates toponymsA Wordlist.morrisMountain.slots :=
-  ⟨fun i ↦ bot_le, fun i _ hi ↦ by
+  ⟨fun i ↦ bot_le, fun i hi ↦ by
     fin_cases i
-    · exact absurd (Set.mem_singleton _) hi
+    · exact absurd (Set.mem_singleton _) hi.2
     · exact ⟨Wordlist.loonMountain.slots, ⟨by simp [toponymsA], fun _ ↦ bot_le⟩, by decide⟩⟩
 
 -- (18b)
 theorem mountMorris_generates : toponymB.Generates toponymsB Wordlist.mountMorris.slots :=
-  ⟨fun i ↦ bot_le, fun i _ hi ↦ by
+  ⟨fun i ↦ bot_le, fun i hi ↦ by
     fin_cases i
     · exact ⟨Wordlist.mountEverest.slots, ⟨by simp [toponymsB], fun _ ↦ bot_le⟩, by decide⟩
-    · exact absurd (Set.mem_singleton _) hi⟩
+    · exact absurd (Set.mem_singleton _) hi.2⟩
 
 -- (18b)
 theorem not_mountainMorris_generates :
     ¬ toponymB.Generates toponymsB ![↑"Mountain", ↑"Morris"] := by
   rintro ⟨-, h⟩
-  obtain ⟨w, ⟨hw, -⟩, hw0⟩ := h 0 rfl (by simp [toponymB])
+  obtain ⟨w, ⟨hw, -⟩, hw0⟩ := h 0 ⟨rfl, by simp [toponymB]⟩
   simp only [toponymsB, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
   rcases hw with rfl | rfl | rfl <;> exact absurd hw0 (by decide)
 
@@ -136,7 +136,7 @@ theorem not_mountainMorris_generates :
 theorem not_mountOfHalle_generates :
     ¬ toponymD.Generates toponymsD ![↑"the", ↑"Mount", ↑"of", ↑"Halle"] := by
   rintro ⟨-, h⟩
-  obtain ⟨w, ⟨hw, -⟩, hw1⟩ := h 1 rfl (by simp [toponymD])
+  obtain ⟨w, ⟨hw, -⟩, hw1⟩ := h 1 ⟨rfl, by simp [toponymD]⟩
   simp only [toponymsD, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
   rcases hw with rfl | rfl | rfl | rfl <;> exact absurd hw1 (by decide)
 

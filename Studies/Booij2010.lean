@@ -173,7 +173,7 @@ theorem covBy_nominal :
 the subscripting of (6), the whole's category is the head's. -/
 theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat Cat}
     (h : (compoundFamily n).InstantiatesAt compoundSub w) : w 2 = w 1 :=
-  (Schema.instantiatesAt_iff.1 h).2 (by decide)
+  h.factorsThrough (by decide)
 
 theorem blackbird_instantiatesAt :
     (compoundFamily .an).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] ∧

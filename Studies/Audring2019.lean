@@ -127,7 +127,7 @@ theorem word_generates_iff (b a : String) {Λ : Set (Fin 2 → Flat String)}
   have hmax : ∀ v, IsMax (word b a v) := fun v ↦ by fin_cases v <;> exact Flat.isMax_coe _
   refine ⟨fun h ↦ (Schema.instantiates_iff_eq_of_forall_isMax hmax).1 h.instantiates, ?_⟩
   rintro rfl
-  exact ⟨le_rfl, fun v hv _ ↦ by fin_cases v <;> exact absurd hv Flat.coe_ne_bot⟩
+  exact ⟨le_rfl, fun v hv ↦ by fin_cases v <;> exact absurd hv.1 Flat.coe_ne_bot⟩
 
 /-! ### The second-order schema `[N -ful]A ≈ [N -less]A` -/
 
@@ -174,7 +174,7 @@ differently. -/
 theorem not_careful_clueless_pairs :
     ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
       (Sum.elim Wordlist.careful.slots Wordlist.clueless.slots) :=
-  fun h ↦ absurd ((Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 0 0 rfl) (by decide)
+  fun h ↦ absurd (h.apply_eq_of_elim 0 0 rfl) (by decide)
 
 /-- A mother of the two schemas would be the meet of their descriptions, which over these slots
 is empty. It holds nothing but the categories, which the slots do not record. -/

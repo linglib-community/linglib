@@ -13,34 +13,43 @@ public import Mathlib.Order.Lattice
 /-!
 # Constructional schemas
 
-This file defines the schemas of Construction Morphology and Relational Morphology: lexical
-entries with variables. A *schema* assigns each slot a value in a partial order with a bottom `⊥`
-and marks some slots as open. A slot above `⊥` is a *constant*; a slot at `⊥` is a *variable*,
-*open* if marked and *closed* otherwise. An item *instantiates* a schema if it lies above the
-schema's description at every slot; equivalently, unifying the two returns the item.
+This file defines the schemas of Construction Morphology and Relational Morphology, which are
+lexical entries with variables. A schema assigns each slot a value in a partial order with a
+bottom `⊥`. A slot above `⊥` is a constant and a slot at `⊥` is a variable, open if the schema
+marks it and closed otherwise. An item instantiates a schema if it lies above the schema's
+description at every slot.
 
-Over a lexicon of stored items, a schema *relates* the stored items that instantiate it and
-*generates* the possibly novel items whose closed variables take fillers attested among those
-stored instances. Every related item is generated, a generated item is related once stored, and a
-schema is productive (every variable open) iff it generates its own description over the empty
-lexicon.
+Unification is the partial join of descriptions and Structural Intersection is their meet. The
+instances of a successful unification are
+[the common instances of its arguments](##instantiates_iff_of_unify_eq_coe), and the intersection
+of two items [instantiates exactly the schemas that both instantiate](##instantiates_inf_iff). It
+is their least general generalization in Plotkin's sense, which Jackendoff and Audring compare to
+Albright and Hayes's minimal generalization.
 
-## Main declarations
+Over a lexicon of stored items, a schema relates the stored items that instantiate it and
+generates the instances whose closed variables take fillers attested among those stored items, so
+it [relates exactly the stored items it generates](##relates_iff_mem_and_generates). A schema is
+productive if it has no closed variable, which holds exactly when
+[it generates its own description over the empty lexicon](##isProductive_iff_generates_empty).
 
-* `Schema`: a slot-indexed description with a set of open variables.
-* `Schema.Instantiates`: instantiation, equivalently unification (`Schema.instantiates_iff_unify`).
-* `Schema.InstantiatesAt`: instantiation by an item whose positions are coindexed with variables.
-* `Schema.generalityOrder`: a family of schemas ordered by generality.
-* `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the two roles, and productivity.
-* `Instantiation`, `Contrast`: links between two items that agree outside a set of slots.
-* `Schema.instantiates_inf_iff`: the meet of two items is their least general generalization,
-  the Structural Intersection of Relational Morphology.
+## Main definitions
+
+* `Schema`: A schema is a slot-indexed description with a set of slots marked open.
+* `Schema.Instantiates`: An item lies above a schema's description at every slot.
+* `Schema.InstantiatesAt`: An item instantiates a schema through a map from positions to slots.
+* `Schema.Relates`: A schema relates a stored item that instantiates it.
+* `Schema.Generates`: A schema generates an instance whose closed variables take attested fillers.
+* `Schema.IsProductive`: A schema has no closed variable.
+* `Instantiation`: Two items agree except at some slots, where the second is strictly above.
+* `Contrast`: Two items agree except at some slots, where they are incompatible.
 
 ## Implementation notes
 
-Productivity is a property of variables rather than of a schema as a whole: constants need no
-attested fillers, and `Schema.IsProductive` is the case in which every variable is open. Marking a
-constant slot as open has no effect.
+Openness is marked on variables rather than on a schema as a whole, following Jackendoff and
+Audring, and marking a constant has no effect. The items a schema generates form
+[a product of slotwise filler sets](##generates_iff_mem_pi), so a schema with two closed variables
+generates unstored combinations of attested fillers. The toponym and idiom schemas that motivate
+closed variables have one each.
 
 ## References
 
@@ -72,8 +81,8 @@ namespace Schema
 section PartialOrder
 variable [PartialOrder α] {s t : Schema V α} {w w₁ w₂ : V → α}
 
-/-- An item `w` instantiates the schema `s` if `w` lies above the description of `s` at every slot,
-so that it matches each constant and fills each variable. -/
+/-- An item `w` instantiates the schema `s` if `w` lies above the description of `s` at every
+slot. -/
 def Instantiates (s : Schema V α) (w : V → α) : Prop := s.body ≤ w
 
 instance decidablePredInstantiates [DecidableLE (V → α)] (s : Schema V α) :
@@ -94,26 +103,36 @@ theorem body_le_body_iff :
     t.body ≤ s.body ↔ ∀ ⦃w⦄, s.Instantiates w → t.Instantiates w :=
   ⟨fun h _ hw ↦ h.trans hw, fun h ↦ h s.instantiates_body⟩
 
+end PartialOrder
+
+/-! ### Unification and Structural Intersection -/
+
+section Unify
+variable [Fintype V] [PartialOrder α] [PartialUnify α] {s t u : Schema V α} {w : V → α}
+
 /-- An item instantiates a schema exactly when unifying it with the description returns the
 item. -/
-theorem instantiates_iff_unify [Fintype V] [PartialUnify α] :
-    s.Instantiates w ↔ PartialUnify.unify s.body w = ↑w :=
+theorem instantiates_iff_unify : s.Instantiates w ↔ PartialUnify.unify s.body w = ↑w :=
   PartialUnify.unify_eq_right.symm
 
-/-- The instances of a unified description are the common instances of its two conjuncts. -/
-theorem instantiates_iff_of_unify_eq_coe [Fintype V] [PartialUnify α] {u : Schema V α}
-    (h : PartialUnify.unify s.body t.body = ↑u.body) :
+/-- The instances of a successful unification of two descriptions are their common instances. -/
+theorem instantiates_iff_of_unify_eq_coe (h : PartialUnify.unify s.body t.body = ↑u.body) :
     u.Instantiates w ↔ s.Instantiates w ∧ t.Instantiates w := by
   rw [Instantiates, ← WithTop.coe_le_coe, ← h, PartialUnify.unify_le_coe_iff]
   rfl
 
-end PartialOrder
+end Unify
+
+/-- The Structural Intersection of two items instantiates exactly the schemas that both
+instantiate. -/
+theorem instantiates_inf_iff [SemilatticeInf α] {s : Schema V α} {w₁ w₂ : V → α} :
+    s.Instantiates (w₁ ⊓ w₂) ↔ s.Instantiates w₁ ∧ s.Instantiates w₂ :=
+  le_inf_iff
 
 /-! ### The generality order of a family -/
 
-/-- In the generality order of a family of schemas with distinct descriptions, `i ≤ j` when the
-description of `j` lies below that of `i`, so that `j` is at least as general. The schemas of a
-hierarchical lexicon inherit defeasible properties by default inheritance along this order. -/
+/-- The generality order on a family of schemas with distinct descriptions, in which `i ≤ j` when
+the description of `j` lies below that of `i`. -/
 abbrev generalityOrder {ι : Type*} [PartialOrder α] (family : ι → Schema V α)
     (hinj : Function.Injective fun i ↦ (family i).body) : PartialOrder ι :=
   PartialOrder.lift (fun i ↦ OrderDual.toDual (family i).body)
@@ -121,13 +140,13 @@ abbrev generalityOrder {ι : Type*} [PartialOrder α] (family : ι → Schema V 
 
 /-! ### Positions and coindexation
 
-An item over positions is read against a schema over variables through a *subscripting*, a map
-from positions to variables; positions with the same subscript are *coindexed* and must be filled
-alike. Two items form a *paired instantiation* when their sum instantiates the schema through the
-sum of their subscriptings; the relation is symmetric. -/
+An item over positions is read against a schema over variables through a subscripting, which is
+a map from positions to variables. Positions with the same subscript are coindexed and must be
+filled alike. Two items form a paired instantiation when their sum instantiates the schema through
+the sum of their subscriptings. -/
 
-/-- Pull the schema `s` back along the subscripting `pos`, reading its description and open
-variables at positions and forgetting which positions are coindexed. -/
+/-- Pull back the schema `s` along the subscripting `pos`, forgetting which positions are
+coindexed. -/
 def comap (s : Schema V α) (pos : P → V) : Schema P α :=
   ⟨s.body ∘ pos, pos ⁻¹' s.opens⟩
 
@@ -154,15 +173,18 @@ theorem Instantiates.instantiatesAt {u : V → α} (h : s.Instantiates u) (pos :
 @[simp] theorem instantiatesAt_id {w : V → α} : s.InstantiatesAt id w ↔ s.Instantiates w :=
   ⟨fun ⟨_, hu, hw⟩ ↦ hw ▸ hu, fun h ↦ ⟨w, h, rfl⟩⟩
 
+theorem InstantiatesAt.factorsThrough (h : s.InstantiatesAt pos w) : w.FactorsThrough pos := by
+  obtain ⟨u, -, rfl⟩ := h
+  exact fun _ _ h ↦ congrArg u h
+
 /-- An item instantiates a schema through a subscripting exactly when it instantiates the
 pulled-back description and fills coindexed positions alike. -/
 theorem instantiatesAt_iff :
     s.InstantiatesAt pos w ↔ (s.comap pos).Instantiates w ∧ w.FactorsThrough pos := by
-  constructor
-  · rintro ⟨u, hu, rfl⟩
-    exact ⟨fun p ↦ hu (pos p), fun _ _ h ↦ congrArg u h⟩
-  · rintro ⟨hc, hf⟩
-    refine ⟨Function.extend pos w s.body, fun v ↦ ?_, (hf.extend_comp _).symm⟩
+  refine ⟨fun h ↦ ⟨?_, h.factorsThrough⟩, fun ⟨hc, hf⟩ ↦ ?_⟩
+  · obtain ⟨u, hu, rfl⟩ := h
+    exact fun p ↦ hu (pos p)
+  · refine ⟨Function.extend pos w s.body, fun v ↦ ?_, (hf.extend_comp _).symm⟩
     by_cases hv : ∃ p, pos p = v
     · obtain ⟨p, rfl⟩ := hv
       rw [hf.extend_apply]
@@ -193,6 +215,11 @@ theorem instantiatesAt_elim_iff :
     simp only [Instantiates, comap_body, Sum.comp_elim, Pi.le_def, Sum.forall, Sum.elim_inl,
       Sum.elim_inr]
   rw [instantiatesAt_iff, Function.factorsThrough_sumElim_iff, h, and_assoc]
+
+theorem InstantiatesAt.apply_eq_of_elim
+    (h : s.InstantiatesAt (Sum.elim pos₁ pos₂) (Sum.elim w₁ w₂)) (a : P₁) (b : P₂)
+    (hab : pos₁ a = pos₂ b) : w₁ a = w₂ b :=
+  (instantiatesAt_elim_iff.1 h).2.2.2.2 a b hab
 
 theorem instantiatesAt_elim_swap :
     s.InstantiatesAt (Sum.elim pos₂ pos₁) (Sum.elim w₂ w₁) ↔
@@ -226,8 +253,7 @@ end Positions
 section PartialOrder
 variable [PartialOrder α] {s : Schema V α} {w : V → α} {Λ Λ' : Set (V → α)} {v : V}
 
-/-- In its relational role, a schema `s` relates `w` over the lexicon `Λ` if `w` is stored in `Λ`
-and instantiates `s`. -/
+/-- A schema `s` relates `w` over the lexicon `Λ` if `w` is stored in `Λ` and instantiates `s`. -/
 def Relates (s : Schema V α) (Λ : Set (V → α)) (w : V → α) : Prop :=
   w ∈ Λ ∧ s.Instantiates w
 
@@ -238,8 +264,8 @@ theorem Relates.mono (h : Λ ⊆ Λ') (hw : s.Relates Λ w) : s.Relates Λ' w :=
 theorem Instantiates.relates_insert (h : s.Instantiates w) : s.Relates (insert w Λ) w :=
   ⟨Set.mem_insert _ _, h⟩
 
-/-- The fillers attested at slot `v` are the values the stored instances of `s` take at `v`. A
-closed variable admits only these. -/
+/-- The fillers attested at slot `v` are the values that the stored instances of `s` take at
+`v`. -/
 def attested (s : Schema V α) (Λ : Set (V → α)) (v : V) : Set α :=
   {a | ∃ w, s.Relates Λ w ∧ w v = a}
 
@@ -256,17 +282,16 @@ theorem attested_mono (h : Λ ⊆ Λ') (v : V) : s.attested Λ v ⊆ s.attested 
 
 end PartialOrder
 
-/-- A schema is instantiated by the meet of two items exactly when it is instantiated by both, so
-the meet is their least general generalization, the Structural Intersection of Relational
-Morphology. -/
-theorem instantiates_inf_iff [SemilatticeInf α] {s : Schema V α} {w₁ w₂ : V → α} :
-    s.Instantiates (w₁ ⊓ w₂) ↔ s.Instantiates w₁ ∧ s.Instantiates w₂ :=
-  le_inf_iff
-
 /-! ### The generative role -/
 
 section OrderBot
 variable [PartialOrder α] [OrderBot α] {s : Schema V α} {w : V → α} {Λ Λ' : Set (V → α)}
+  {v : V}
+
+/-- The closed variables of `s` are its variables not marked open. -/
+def closed (s : Schema V α) : Set V := {v | s.body v = ⊥ ∧ v ∉ s.opens}
+
+@[simp] theorem mem_closed : v ∈ s.closed ↔ s.body v = ⊥ ∧ v ∉ s.opens := Iff.rfl
 
 /-- The schema with description `body` and every variable open. -/
 def productive (body : V → α) : Schema V α := ⟨body, {v | body v = ⊥}⟩
@@ -277,18 +302,20 @@ def productive (body : V → α) : Schema V α := ⟨body, {v | body v = ⊥}⟩
     (productive body).opens = {v | body v = ⊥} :=
   rfl
 
-/-- In its generative role, a schema `s` generates `w` over the lexicon `Λ` if `w` instantiates `s`
-and fills each closed variable of `s` (a slot at `⊥` not marked open) with a filler attested in `Λ`.
-The item `w` need not be stored. -/
+@[simp] theorem closed_productive (body : V → α) : (productive body).closed = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ h ↦ h.2 h.1
+
+/-- A schema `s` generates `w` over the lexicon `Λ` if `w` instantiates `s` and fills each closed
+variable of `s` with a filler attested in `Λ`. The item `w` need not be stored. -/
 def Generates (s : Schema V α) (Λ : Set (V → α)) (w : V → α) : Prop :=
-  s.Instantiates w ∧ ∀ v, s.body v = ⊥ → v ∉ s.opens → w v ∈ s.attested Λ v
+  s.Instantiates w ∧ ∀ v ∈ s.closed, w v ∈ s.attested Λ v
 
 theorem Generates.instantiates (h : s.Generates Λ w) : s.Instantiates w := h.1
 
 /-- The values a schema admits at slot `v` over the lexicon `Λ` are any value at an open variable,
 an attested filler at a closed one, and any value above a constant. -/
 def fillers (s : Schema V α) (Λ : Set (V → α)) (v : V) : Set α :=
-  {a | s.body v ≤ a ∧ (s.body v = ⊥ → v ∉ s.opens → a ∈ s.attested Λ v)}
+  {a | s.body v ≤ a ∧ (v ∈ s.closed → a ∈ s.attested Λ v)}
 
 /-- The items a schema generates are the product of its slotwise filler sets. -/
 theorem generates_iff_mem_pi : s.Generates Λ w ↔ w ∈ Set.pi Set.univ (s.fillers Λ) := by
@@ -296,37 +323,40 @@ theorem generates_iff_mem_pi : s.Generates Λ w ↔ w ∈ Set.pi Set.univ (s.fil
   exact ⟨fun h v ↦ ⟨h.1 v, h.2 v⟩, fun h ↦ ⟨fun v ↦ (h v).1, fun v ↦ (h v).2⟩⟩
 
 theorem fillers_eq_singleton_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a)
-    {v : V} (hv : s.body v ≠ ⊥) :
-    s.fillers Λ v = {s.body v} := by
+    (hv : s.body v ≠ ⊥) : s.fillers Λ v = {s.body v} := by
   ext a
   simp only [fillers, Set.mem_ofPred_eq, Set.mem_singleton_iff]
-  exact ⟨fun h ↦ le_antisymm (hα _ hv h.1) h.1,
-    fun h ↦ ⟨h.ge, fun h' ↦ absurd h' hv⟩⟩
+  exact ⟨fun h ↦ le_antisymm (hα _ hv h.1) h.1, fun h ↦ ⟨h.ge, fun h' ↦ absurd h'.1 hv⟩⟩
 
 theorem Relates.generates (h : s.Relates Λ w) : s.Generates Λ w :=
-  ⟨h.2, fun v _ _ ↦ h.apply_mem_attested v⟩
+  ⟨h.2, fun v _ ↦ h.apply_mem_attested v⟩
+
+/-- A schema relates exactly the stored items it generates. -/
+theorem relates_iff_mem_and_generates : s.Relates Λ w ↔ w ∈ Λ ∧ s.Generates Λ w :=
+  ⟨fun h ↦ ⟨h.1, h.generates⟩, fun h ↦ ⟨h.1, h.2.instantiates⟩⟩
 
 theorem Generates.relates_insert (h : s.Generates Λ w) : s.Relates (insert w Λ) w :=
   h.instantiates.relates_insert
 
 theorem Generates.mono (h : Λ ⊆ Λ') (hw : s.Generates Λ w) : s.Generates Λ' w :=
-  ⟨hw.1, fun v hv hvo ↦ attested_mono h v (hw.2 v hv hvo)⟩
+  ⟨hw.1, fun v hv ↦ attested_mono h v (hw.2 v hv)⟩
 
-/-- A schema is productive if every variable (every slot at `⊥`) is open. -/
-def IsProductive (s : Schema V α) : Prop := ∀ v, s.body v = ⊥ → v ∈ s.opens
+/-- A schema is productive if it has no closed variable. -/
+def IsProductive (s : Schema V α) : Prop := s.closed = ∅
 
-theorem isProductive_productive (body : V → α) : (productive body).IsProductive := fun _ h ↦ h
+theorem isProductive_productive (body : V → α) : (productive body).IsProductive :=
+  closed_productive body
 
 theorem IsProductive.generates_iff (hs : s.IsProductive) :
     s.Generates Λ w ↔ s.Instantiates w :=
-  ⟨Generates.instantiates, fun h ↦ ⟨h, fun v hv hvo ↦ absurd (hs v hv) hvo⟩⟩
+  ⟨Generates.instantiates, fun h ↦ ⟨h, fun v hv ↦ absurd (hs ▸ hv) (Set.notMem_empty v)⟩⟩
 
 /-- A schema is productive exactly when it generates its own description over the empty
 lexicon. -/
 theorem isProductive_iff_generates_empty : s.IsProductive ↔ s.Generates ∅ s.body := by
-  refine ⟨fun hs ↦ ⟨le_rfl, fun v hv hvo ↦ absurd (hs v hv) hvo⟩, fun h v hv ↦ ?_⟩
-  by_contra hvo
-  obtain ⟨w, ⟨hw, -⟩, -⟩ := h.2 v hv hvo
+  refine ⟨fun hs ↦ hs.generates_iff.2 s.instantiates_body, fun h ↦ ?_⟩
+  refine Set.eq_empty_of_forall_notMem fun v hv ↦ ?_
+  obtain ⟨w, ⟨hw, -⟩, -⟩ := h.2 v hv
   exact hw
 
 theorem isProductive_iff_forall_generates_iff :
@@ -343,11 +373,10 @@ end Schema
 
 Two items over the same positions are the same except at `S` when they agree outside `S`. The link
 between them is an *instantiation* if the second is strictly above the first at every position of
-`S`, and a *contrast* if the two are incompatible at every position of `S`. An elaboration, one
-item the same as the other plus something more, is an instantiation read from the elaborated item.
-If every value other than `⊥` is maximal, a filled item instantiates a schema iff it is an
-instantiation of the description at the variables
-(`Schema.instantiates_iff_instantiation_of_forall_isMax`). -/
+`S`, and a *contrast* if the two are incompatible at every position of `S`. An elaboration is an
+instantiation from an item that is `⊥` throughout `S`. If every value other than `⊥` is maximal,
+a filled item instantiates a schema exactly when it is an instantiation of the description at the
+variables. -/
 
 section RelationalLinks
 variable {f g : P → α} {S : Set P}
@@ -358,7 +387,7 @@ variable [PartialOrder α]
 /-- `Instantiation f g S` holds when `g` agrees with `f` outside `S` and is strictly above `f` at
 every position of `S`. This is the link from a schema's description to its instances. -/
 def Instantiation (f g : P → α) (S : Set P) : Prop :=
-  Set.EqOn f g Sᶜ ∧ StrongLT (S.domRestrict f) (S.domRestrict g)
+  Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, f p < g p
 
 /-- `Contrast f g S` holds when `f` and `g` agree outside `S` and are incompatible at every position
 of `S`. This is the link between sister words. -/
@@ -369,11 +398,8 @@ theorem Contrast.symm (h : Contrast f g S) : Contrast g f S :=
   ⟨h.1.symm, fun p hp hc ↦ h.2 p hp hc.symm⟩
 
 theorem Instantiation.instantiates {s : Schema P α} {w : P → α}
-    (h : Instantiation s.body w S) : s.Instantiates w := by
-  intro p
-  by_cases hp : p ∈ S
-  · exact (h.2 ⟨p, hp⟩).le
-  · exact (h.1 hp).le
+    (h : Instantiation s.body w S) : s.Instantiates w := fun p ↦
+  (em (p ∈ S)).elim (fun hp ↦ (h.2 p hp).le) fun hp ↦ (h.1 hp).le
 
 end PartialOrder
 
@@ -385,21 +411,13 @@ theorem contrast_iff_of_forall_isMax (hα : ∀ a : α, a ≠ ⊥ → IsMax a) :
       Set.EqOn f g Sᶜ ∧ ∀ p ∈ S, f p ≠ ⊥ ∧ g p ≠ ⊥ ∧ f p ≠ g p :=
   and_congr_right' (forall₂_congr fun _ _ ↦ not_compat_iff_of_forall_isMax hα)
 
-namespace Schema
-
-theorem instantiates_iff_instantiation_of_forall_isMax
-    (hα : ∀ a : α, a ≠ ⊥ → IsMax a) {s : Schema P α} {w : P → α}
-    (hw : ∀ p, w p ≠ ⊥) :
+theorem Schema.instantiates_iff_instantiation_of_forall_isMax
+    (hα : ∀ a : α, a ≠ ⊥ → IsMax a) {s : Schema P α} {w : P → α} (hw : ∀ p, w p ≠ ⊥) :
     s.Instantiates w ↔ Instantiation s.body w {p | s.body p = ⊥} := by
-  refine ⟨fun h ↦ ⟨fun p hp ↦ ?_, fun p ↦ ?_⟩, Instantiation.instantiates⟩
-  · simp only [Set.mem_compl_iff, Set.mem_ofPred_eq] at hp
-    exact le_antisymm (h p) (hα _ hp (h p))
-  · have hp : s.body p = ⊥ := p.2
-    show s.body p < w p
-    rw [hp]
-    exact bot_lt_iff_ne_bot.2 (hw p)
-
-end Schema
+  refine ⟨fun h ↦ ⟨fun p hp ↦ le_antisymm (h p) (hα _ hp (h p)), fun p hp ↦ ?_⟩,
+    Instantiation.instantiates⟩
+  rw [show s.body p = ⊥ from hp]
+  exact bot_lt_iff_ne_bot.2 (hw p)
 
 end OrderBot
 
