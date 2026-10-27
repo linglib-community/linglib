@@ -12,8 +12,8 @@ public import Linglib.Data.Examples.Landman1992
 interrupted. This is the imperfective paradox, and it rules out the extensional analysis of
 Bennett and Partee, on which a progressive is true at an interval that a longer interval of the
 sentence's truth in the actual world extends into the future. The imperfective of the event
-semantics, true at an interval properly inside the run time of an actual event of its type, is
-extensional in the same way, so [it makes every progressive entail its
+semantics over the actual world alone, true at an interval inside the run time of an actual event
+of its type, is extensional in the same way, so [it makes every progressive entail its
 perfective](##prfv_nonempty_of_impf_nonempty). Landman takes the
 progressive instead to relate an actual event in progress to a possibly non-actual complete event
 of its type, and builds the relation from two operations. Within a world, an event grows into the
@@ -186,13 +186,14 @@ def sentenceOf {E W T : Type*} [LE T] [TemporalTrace E T] (P : W → E → Prop)
     Dowty1979.Sentence W T :=
   fun v ↦ τ '' {e | P v e}
 
-/-- The imperfective of the event semantics holds at an interval inside the run time of an actual
-event of its type, like Bennett and Partee's progressive, so wherever it holds the perfective
-holds too: it validates the inference from (3) to (4) that the imperfective paradox rejects. -/
+/-- Over the actual world alone, the imperfective of the event semantics holds at an interval
+inside the run time of an actual event of its type, like Bennett and Partee's progressive, so
+wherever it holds the perfective holds too: it validates the inference from (3) to (4) that the
+imperfective paradox rejects. -/
 theorem prfv_nonempty_of_impf_nonempty {E W T : Type*} [LinearOrder T]
-    [Event.TemporalTrace E T] {P : W → E → Prop} {w : W} (h : (Aspect.IMPF P w).Nonempty) :
-    (Aspect.PRFV (T := T) P w).Nonempty :=
-  let ⟨_, e, _, he⟩ := h; ⟨Event.τ e, e, le_rfl, he⟩
+    [Event.TemporalTrace E T] {P : W → E → Prop} {w : W}
+    (h : (Aspect.IMPF (fun w _ ↦ {w}) P w).Nonempty) : (Aspect.PRFV (T := T) P w).Nonempty :=
+  let ⟨_, ht⟩ := h; let ⟨e, _, he⟩ := ht w rfl; ⟨Event.τ e, e, le_rfl, he⟩
 
 /-! ### Interrupted processes -/
 
@@ -349,8 +350,10 @@ theorem progAt_interrupted_zero_nonempty : ((interrupted 0 R).progAt (complete 0
     ⟨rfl, (reach_of_le le_rfl).ge⟩ (NonemptyInterval.le_def.2 ⟨le_rfl, Nat.zero_le _⟩)
     ⟨rfl, le_rfl⟩⟩, rfl⟩
 
-theorem impf_complete_eq_empty (hn : 0 < n) : Aspect.IMPF (T := ℕ) (complete n) 0 = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ ⟨_, _, _, h⟩ ↦ hn.not_ge h
+theorem impf_complete_eq_empty (hn : 0 < n) :
+    Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) (complete n) 0 = ∅ := by
+  rw [Aspect.impf_singleton]
+  exact Set.eq_empty_of_forall_notMem fun _ ⟨_, _, _, h⟩ ↦ hn.not_ge h
 
 theorem prfv_complete_eq_empty (hn : 0 < n) : Aspect.PRFV (T := ℕ) (complete n) 0 = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨_, _, _, h⟩ ↦ hn.not_ge h
@@ -398,7 +401,7 @@ theorem truthValue_rows :
         Examples.ex18.feature? "truthValue" = some "true") ∧
       ((hopeless.progAt (complete 5) 0).Nonempty ↔
         Examples.ex20.feature? "truthValue" = some "true") ∧
-      ¬ ((Aspect.IMPF (T := ℕ) (complete 1) 0).Nonempty ↔
+      ¬ ((Aspect.IMPF (T := ℕ) (fun w _ ↦ {w}) (complete 1) 0).Nonempty ↔
         Examples.ex3.feature? "truthValue" = some "true") := by
   have hu (n : ℕ) : Set.Icc 1 n ⊆ (Set.univ : Set ℕ) := Set.subset_univ _
   have hh : ¬ Set.Icc 1 5 ⊆ Set.Iic (2 : ℕ) := fun h ↦ absurd (h ⟨by decide, by decide⟩ :

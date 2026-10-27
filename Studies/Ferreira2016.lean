@@ -16,7 +16,9 @@ in every best world of a circumstantial modal base for the event description at 
 interval, ranked by an ordering source of propositions that the eventuality is not interrupted.
 The mereological ingredient is a number parameter: the singular operator keeps the minimal events
 of the description, and the plural operator its sums of non-overlapping events, so that the
-progressive is about a single ongoing event and the habitual about an ongoing plurality.
+progressive is about a single ongoing event and the habitual about an ongoing plurality. The
+operator is the modal imperfective of the event semantics, `Aspect.IMPF`, over Portner's best
+worlds, applied to the description refined for number.
 
 So *John was crossing the street* is true when a bus stops him, but *John was crossing the
 Atlantic* is false of an ordinary swimmer, and *John plays soccer* is true of a regular player
@@ -35,8 +37,8 @@ the run time of an actual event.
 * The modal base and ordering source are `Modality.Background`s projected from the description
   and the reference interval, as in (53), and the progressive's event-relative form is
   `Aspect.InProgress`.
-* Ongoingness is inclusion, `i ⊆ τ(e)`, the substrate's `Aspect.UNBOUNDED`, not the strict
-  `Aspect.IMPF`.
+* Ongoingness is inclusion, `i ⊆ τ(e)`, the relation of `Aspect.IMPF`; over the world of
+  evaluation alone it is Kratzer's extensional `Aspect.UNBOUNDED` (`Aspect.impf_singleton`).
 * The run time of a sum is the convex hull of the run times of its parts, so Ferreira's inclusion
   of an interval in a plural interval (31) is inclusion in the hull, and (33) holds. The habitual
   scenario takes its events to be sets of games ordered by inclusion.
@@ -99,24 +101,30 @@ interval lies within the run time of an event of type `N (P v)`. -/
 def IMP (N : (E → Prop) → E → Prop)
     (circ ord : (W → E → Prop) → NonemptyInterval T → Background W) (P : W → E → Prop) :
     W → Set (NonemptyInterval T) :=
-  fun w ↦ {t | necessity (circ P t) (ord P t) (fun v ↦ t ∈ Aspect.UNBOUNDED (fun v ↦ N (P v)) v) w}
+  Aspect.IMPF (fun w t ↦ bestWorlds (circ P t) (ord P t) w) fun v ↦ N (P v)
 
 variable {N : (E → Prop) → E → Prop} {circ ord : (W → E → Prop) → NonemptyInterval T → Background W}
   {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 
 theorem mem_IMP_iff : t ∈ IMP N circ ord P w ↔
     ∀ v ∈ bestWorlds (circ P t) (ord P t) w, ∃ e, t ≤ τ e ∧ N (P v) e :=
-  necessity_iff ..
+  Iff.rfl
 
 /-- Over a modal base that admits only the world of evaluation, the imperfective is Kratzer's
 extensional one: the reference interval lies within the run time of an actual event. -/
 theorem IMP_eq_unbounded_of_isTotallyRealistic (h : ∀ P t, (circ P t).IsTotallyRealistic) :
     IMP N circ ord P w = Aspect.UNBOUNDED (fun v ↦ N (P v)) w := by
+  rw [← Aspect.impf_singleton]
   ext t
-  refine ⟨fun ht ↦ (h P t).necessity_le_id (ord P t) _ w ht, fun ht v hv ↦ ?_⟩
-  have hacc : v ∈ (circ P t).accessibleWorlds w := (mem_bestWorlds.1 hv).1
-  rw [h P t w, Set.mem_singleton_iff] at hacc
-  exact hacc ▸ ht
+  have hbest : bestWorlds (circ P t) (ord P t) w = {w} := by
+    refine Set.eq_singleton_iff_unique_mem.2 ⟨mem_bestWorlds.2 ⟨by rw [h P t w]; rfl,
+      fun v hv _ ↦ ?_⟩, fun v hv ↦ ?_⟩
+    · rw [h P t w, Set.mem_singleton_iff] at hv
+      exact hv ▸ (premisePreorder _).le_refl _
+    · have := (mem_bestWorlds.1 hv).1
+      rwa [h P t w, Set.mem_singleton_iff] at this
+  change (∀ v ∈ bestWorlds (circ P t) (ord P t) w, _) ↔ ∀ v ∈ ({w} : Set W), _
+  rw [hbest]
 
 /-- A non-atomic description, every event of which has a proper part of the same description, as
 statives are (94), has no progressive imperfective wherever the modal base has a best world. -/

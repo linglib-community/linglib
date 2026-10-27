@@ -15,6 +15,9 @@ rules it out there. Among the focus alternatives, a domain further in the past i
 
 ## Implementation notes
 
+* Knick and Sharf's imperfective, (25), properly includes the reference interval in the run time of
+  an actual event: it is the extensional `Aspect.ViewpointType.imperfective.denote`, not the modal
+  `Aspect.IMPF`.
 * A left boundary is a time point, where the paper's left boundary is a subinterval of `tᵣ`; the
   paper's `PERF_XN` is the perfect over the spans whose left boundary lies in `tᵣ`.
 * `later_lb_stronger_prfv`, the reversed ordering under the perfective, is not drawn in the paper.
@@ -58,7 +61,7 @@ def evalFut (p : Set (Index W T)) (tc : T) (w : W) : Prop :=
 /-- The simple present is `PRES(atPoint(IMPF(V)))`, so *John runs* holds at speech time when
 some event `e` with `[tc, tc] ⊂ τ(e)` satisfies `V`. -/
 def simplePresent (V : W → E → Prop) (tc : T) (w : W) : Prop :=
-  evalPres (atPoint (IMPF V)) tc w
+  evalPres (atPoint (ViewpointType.imperfective.denote V)) tc w
 
 /-- The simple past is `PAST(atPoint(PRFV(V)))`, so *John ran* holds when some `t < tc` and some
 event `e` with `τ(e) ⊆ [t, t]` satisfy `V`. -/
@@ -68,7 +71,7 @@ def simplePast (V : W → E → Prop) (tc : T) (w : W) : Prop :=
 /-- The present perfect progressive is `PRES(PERF(IMPF(V)))`, so *John has been running* holds
 at `tc` when some perfect time span right-bounded by `tc` satisfies `IMPF(V)`. -/
 def presPerfProg (V : W → E → Prop) (tc : T) (w : W) : Prop :=
-  evalPres (PERF (IMPF V)) tc w
+  evalPres (PERF (ViewpointType.imperfective.denote V)) tc w
 
 /-- The present perfect simple is `PRES(PERF(PRFV(V)))`, so *John has run* holds at `tc` when
 some perfect time span right-bounded by `tc` satisfies `PRFV(V)`. -/
@@ -79,12 +82,12 @@ def presPerfSimple (V : W → E → Prop) (tc : T) (w : W) : Prop :=
 U-perfect reading of [knick-sharf-2026]; *John has been running since Monday* restricts the left
 boundary of the perfect time span to `tᵣ`. -/
 def presPerfProgXN (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) : Prop :=
-  evalPres (PERF ((·.fst) ⁻¹' tᵣ ∩ IMPF V ·)) tc w
+  evalPres (PERF ((·.fst) ⁻¹' tᵣ ∩ ViewpointType.imperfective.denote V ·)) tc w
 
 /-- The past perfect progressive is `PAST(PERF(IMPF(V)))`, so *John had been running* holds when
 some `t < tc` satisfies `PERF(IMPF(V))`. -/
 def pastPerfProg (V : W → E → Prop) (tc : T) (w : W) : Prop :=
-  evalPast (PERF (IMPF V)) tc w
+  evalPast (PERF (ViewpointType.imperfective.denote V)) tc w
 
 /-! ### Unfolding -/
 
@@ -95,7 +98,8 @@ theorem simplePresent_unfold (V : W → E → Prop) (tc : T) (w : W) :
 
 -- (39b)
 theorem presPerfProgXN_iff (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) :
-    presPerfProgXN V tᵣ tc w ↔ ∃ pts ∈ IMPF V w, pts.fst ∈ tᵣ ∧ pts.snd = tc :=
+    presPerfProgXN V tᵣ tc w ↔
+      ∃ pts ∈ ViewpointType.imperfective.denote V w, pts.fst ∈ tᵣ ∧ pts.snd = tc :=
   ⟨fun ⟨pts, ⟨h₁, h₂⟩, h₃⟩ ↦ ⟨pts, h₂, h₁, h₃⟩, fun ⟨pts, h₂, h₁, h₃⟩ ↦ ⟨pts, ⟨h₁, h₂⟩, h₃⟩⟩
 
 /-! ### Results -/

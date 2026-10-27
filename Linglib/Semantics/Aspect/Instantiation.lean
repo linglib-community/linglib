@@ -101,10 +101,10 @@ theorem at_eventive_withTop_iff_prfv {i : NonemptyInterval T} :
     At ↑i.withTop w (.eventive P) ↔ i ∈ PRFV P w := by
   simp [At, mem_prfv, and_comm]
 
-theorem at_stative_withTop_of_impf {i : NonemptyInterval T} (h : i ∈ IMPF P w) :
+theorem at_stative_withTop_of_unbounded {i : NonemptyInterval T} (h : i ∈ UNBOUNDED P w) :
     At ↑i.withTop w (.stative P) := by
-  obtain ⟨e, hlt, he⟩ := h
-  have hle := NonemptyInterval.le_def.1 hlt.le
+  obtain ⟨e, hle, he⟩ := h
+  have hle := NonemptyInterval.le_def.1 hle
   refine ⟨e, he, Interval.not_disjoint_iff.2 ⟨↑i.fst, ?_, ?_⟩⟩
   · exact NonemptyInterval.mem_withTop.2 ⟨WithTop.coe_le_coe.2 hle.1,
       WithTop.coe_le_coe.2 (le_trans i.fst_le_snd hle.2)⟩
