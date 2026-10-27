@@ -100,6 +100,21 @@ jobs:
       - name: Build the evaluations page from the verdict theorems
         run: python3 scripts/gen_eval_page.py --export
 
+      - name: Report duplicate definitions (informational)
+        continue-on-error: true
+        run: |
+          lake env lean --run scripts/find_duplicates.lean > duplicates.txt
+          cat duplicates.txt
+
+      - name: Upload the duplicate report
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: duplicate-definitions
+          path: duplicates.txt
+          if-no-files-found: ignore
+
       - name: Check for sorries (informational)
         run: |
           echo "=== Files with sorry ==="
