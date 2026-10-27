@@ -152,10 +152,15 @@ theorem allowed_union (o o' : Occurrence) : (o.union o').allowed = o.allowed ∪
 end Occurrence
 
 /-- A distribution records the occurrence of an element or process in each cell; `none` means
-that the source records nothing for the cell, not that it is excluded. -/
-abbrev Distribution := SentenceType → EmbeddingContext → Option Occurrence
+that the source records nothing for the cell, not that it is excluded. It is a `def`, as `Set` is,
+so that it does not inherit the instances of functions into `Option`, whose `⊔` would keep a cell
+only one of two distributions records. -/
+def Distribution := SentenceType → EmbeddingContext → Option Occurrence
 
 namespace Distribution
+
+instance : DecidableEq Distribution :=
+  inferInstanceAs (DecidableEq (SentenceType → EmbeddingContext → Option Occurrence))
 
 variable (d : Distribution)
 
