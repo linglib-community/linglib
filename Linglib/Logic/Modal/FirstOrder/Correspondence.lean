@@ -4,29 +4,33 @@ public import Linglib.Core.ModelTheory.Binders
 public import Linglib.Logic.Modal.FirstOrder.Semantics
 
 /-!
-# The correspondence language and the standard translation
+# The standard translation
 
-The standard translation of quantified modal logic into first-order logic,
-for an arbitrary signature: modal formulas over `L` translate into plain
-mathlib first-order formulas over the correspondence language
-`L.correspondence` — every symbol world-relativized to one arity higher,
-plus a binary accessibility relation and an individual-sort predicate —
-interpreted on the two-sorted-as-one carrier `W ⊕ M`. `realize_st` is
-satisfaction preservation.
+The *standard translation* rewrites a modal formula as a first-order formula about worlds and
+individuals, so that results about first-order logic apply to modal logic. A formula over a
+signature `L` becomes a formula over the *correspondence language* of `L`, which has, for each
+symbol of `L`, a symbol taking a world as an extra first argument, together with a binary
+accessibility relation and a predicate true of individuals. Necessity becomes universal
+quantification over the accessible worlds, and the quantifiers range over individuals. A Kripke
+model becomes a single first-order structure whose domain contains both its worlds and its
+individuals, and the translation [preserves satisfaction](##realize_st): a modal formula holds at
+a world exactly when its translation holds with the current-world variable assigned that world.
 
-## Main declarations
+## Main definitions
 
-* `Language.correspondence` — the correspondence language of `L`;
-  `ModalStructure.correspondence` — the `W ⊕ M` encoding of a modal
-  structure as one mathlib structure.
-* `ModalFormula.st` — the standard translation, total: the current world is
-  the free variable `Sum.inr k`, and `box` introduces the fresh world
-  variable `Sum.inr (k + 1)`.
-* `realize_st` — satisfaction preservation: Kripke satisfaction at `w` is
-  first-order realization over `correspondence` at any sorted valuation
-  pinning `Sum.inr k` to `w`.
-* `stClose` — sort-guarded existential closure of the current-world
-  variable, turning translations into sentence candidates.
+* `FirstOrder.Language.correspondence`: the correspondence language of a signature.
+* `FirstOrder.Language.ModalStructure.correspondence`: a Kripke model as one first-order
+  structure on its worlds and individuals.
+* `FirstOrder.Language.ModalFormula.st`: the standard translation.
+* `FirstOrder.Language.stClose`: the existential closure of the current-world variable over
+  worlds.
+
+## Implementation notes
+
+World variables are numbered: the current world is the variable `Sum.inr k`, and necessity
+quantifies the fresh variable `Sum.inr (k + 1)`. Worlds and individuals share the carrier
+`W ⊕ M`, sorted by the predicate true of individuals; an atom applied to arguments of the wrong
+sort is false, and a function symbol applied to them takes a default value.
 
 ## References
 
@@ -41,9 +45,9 @@ variable {W M Var : Type*}
 
 /-! ### The correspondence language -/
 
-/-- The correspondence language of `L` has an `(n + 1)`-ary symbol for
-    each `n`-ary `L`-symbol — the new first argument the world — together
-    with an individual-sort predicate and an accessibility relation. -/
+/-- The correspondence language of `L`: an `(n + 1)`-ary symbol for each `n`-ary symbol of `L`,
+whose first argument is a world, together with a predicate true of individuals and an
+accessibility relation. -/
 def correspondence (L : Language) : Language where
   Functions := fun n ↦ match n with
     | 0 => PEmpty
@@ -58,7 +62,7 @@ abbrev corrFunc (f : L.Functions n) : L.correspondence.Functions (n + 1) := f
 
 abbrev corrRel (R : L.Relations n) : L.correspondence.Relations (n + 1) := Sum.inl R
 
-/-- The individual-sort predicate. -/
+/-- The predicate true of individuals. -/
 abbrev corrIndiv : L.correspondence.Relations 1 := Sum.inr PUnit.unit
 
 /-- The accessibility relation symbol. -/
@@ -70,8 +74,8 @@ abbrev corrWorldVar (k : ℕ) : L.correspondence.Term (Var ⊕ ℕ) := Term.var 
 
 /-! ### Sorted valuations -/
 
-/-- The sorted valuation of an individual assignment `v` and a world
-    assignment `u`. `realize_st` evaluates translations at these. -/
+/-- The assignment to individual and world variables given by an assignment `v` of
+individuals and an assignment `u` of worlds. -/
 def stVal (v : Var → M) (u : ℕ → W) : Var ⊕ ℕ → W ⊕ M :=
   Sum.elim (Sum.inr ∘ v) (Sum.inl ∘ u)
 
@@ -93,18 +97,17 @@ theorem stVal_update_world [DecidableEq Var] (v : Var → M) (u : ℕ → W) (j 
 
 /-! ### The translation -/
 
-/-- `stTerm` translates terms: a variable stays put; a function symbol
-    applies its world-relativized form at the current world variable. -/
+/-- The translation of terms: a variable is unchanged, and a function symbol takes the current
+world as its first argument. -/
 def stTerm (k : ℕ) : L.Term Var → L.correspondence.Term (Var ⊕ ℕ)
   | .var x => corrIndivVar x
   | .func f args =>
       Term.func (corrFunc f) (Fin.cons (corrWorldVar k) fun i ↦ stTerm k (args i))
 
-/-- The standard translation `ST_k` of [blackburn-derijke-venema-2001].
-    The current world is the free variable `Sum.inr k`; atoms
-    world-relativize; `box` relativizes a fresh world variable
-    `Sum.inr (k + 1)` along accessibility; quantifiers relativize to the
-    individual sort. -/
+/-- The standard translation $ST_k$ [blackburn-derijke-venema-2001], with the current world
+the variable `Sum.inr k`. Atoms take the current world as their first argument, necessity
+quantifies the variable `Sum.inr (k + 1)` over the worlds accessible from the current one, and
+the quantifiers range over individuals. -/
 def ModalFormula.st [DecidableEq Var] (k : ℕ) :
     ModalFormula L Var → L.correspondence.Formula (Var ⊕ ℕ)
   | .equal t₁ t₂ => Term.equal (stTerm k t₁) (stTerm k t₂)
@@ -119,10 +122,10 @@ def ModalFormula.st [DecidableEq Var] (k : ℕ) :
 
 /-! ### Sort-guarded sentence closure -/
 
-/-- `stClose` closes the current-world variable `Sum.inr k` under a
-    sort-guarded existential, `∃z(¬IsIndiv(z) ∧ ψ)`. The guard is
-    load-bearing on the mixed carrier — a bare `ex₁` could be witnessed by
-    a junk individual-as-world, which satisfies `□⊥` vacuously. -/
+/-- The existential closure of the current-world variable `Sum.inr k` over worlds,
+$\exists z \, (\neg \mathrm{Indiv}(z) \land \psi)$. Without the restriction to worlds an
+individual could witness the quantifier, and an individual accesses no world, so it satisfies
+$\Box \bot$. -/
 def stClose [DecidableEq Var] (k : ℕ) (ψ : L.correspondence.Formula (Var ⊕ ℕ)) :
     L.correspondence.Formula (Var ⊕ ℕ) :=
   Formula.ex₁ (Sum.inr k)
@@ -140,11 +143,9 @@ theorem realize_stClose [DecidableEq Var] [L.correspondence.Structure (W ⊕ M)]
 
 variable [Inhabited M] (K : ModalStructure L W M)
 
-/-- `K.correspondence` encodes a modal structure as a single mathlib
-    structure on `W ⊕ M` — the structure half of `Language.correspondence`:
-    worlds and individuals share the carrier, sorted by `corrIndiv`;
-    relational guards make all off-sort atoms false, and off-sort function
-    arguments default. -/
+/-- A Kripke model as one structure for the correspondence language on its worlds and
+individuals. An atom applied to arguments of the wrong sort is false, and a function symbol
+applied to them takes a default value. -/
 @[instance_reducible] def ModalStructure.correspondence :
     L.correspondence.Structure (W ⊕ M) where
   funMap := fun {n} f z ↦ match n, f with
@@ -207,10 +208,9 @@ private theorem realize_stTerm {k : ℕ} {v : Var → M} {u : ℕ → W} :
         (fun i ↦ by simpa [Fin.cons_succ] using realize_stTerm (args i))]
     rfl
 
-/-- The standard translation preserves satisfaction. Kripke satisfaction at the world pinned at
-    index `k` is first-order realization over `K.correspondence` at the sorted valuation. Off-sort
-    quantifier instances are discharged by the relational guards, and `box`'s fresh world variable
-    `k + 1` leaves index `k` untouched. -/
+/-- The standard translation preserves satisfaction: a modal formula holds at a world exactly
+when its translation holds in the model's first-order structure with the current-world variable
+assigned that world. -/
 theorem realize_st [DecidableEq Var] {φ : ModalFormula L Var} {k : ℕ}
     {v : Var → M} {u : ℕ → W} :
     φ.Realize K (u k) v ↔

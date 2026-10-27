@@ -80,7 +80,7 @@ theorem forall_largeScope_box_iff_smallScope_box_iff :
     (∀ P, largeScope □[R] P t w ↔ smallScope □[R] P t w) ↔
       Set.EqOn t (fun _ ↦ t w) {v | w ~[R] v} :=
   ⟨fun h v hv ↦ (h fun e _ ↦ e = t w).1 (fun _ _ ↦ rfl) v hv, fun h _ ↦
-    forall₂_congr fun _ hv ↦ by simp only [h hv]⟩
+    iff_of_eq (largeScope_eq_smallScope_of_dependsOn (dependsOn_box_iff.2 subset_rfl) h _)⟩
 
 theorem isRigid_iff_largeScope_eq_smallScope :
     IsRigid t ↔ ∀ P, largeScope □[Set.univ] P t = smallScope □[Set.univ] P t :=

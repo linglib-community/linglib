@@ -6,35 +6,34 @@ public import Linglib.Logic.Modal.FirstOrder.Syntax
 /-!
 # Constant-domain Kripke semantics
 
-`[UPSTREAM]` candidates for `Mathlib/ModelTheory`, which is classical: one
-structure, no accessibility. A `ModalStructure L W M` — the modal analogue
-of `L.Structure` — is a `W`-indexed family of `L`-structures on a constant
-domain `M` together with `Finset`-valued accessibility; `ModalFormula L α` is the quantified modal
-language in `BoundedFormula`'s basis, and `ModalFormula.Realize` is
-Kripke satisfaction `K, w ⊨_v φ`.
+A Kripke model for quantified modal logic has a set of worlds, an accessibility relation between
+them, and at each world a first-order structure. In a *constant-domain* model every world has
+the same domain of individuals, and only the interpretation of the symbols varies from world to
+world. A formula is satisfied at a world under an assignment of individuals to its free
+variables: atomic formulas are evaluated in the world's structure, necessity quantifies over the
+accessible worlds, and the quantifiers range over the common domain. Because the domain does not
+vary, the [Barcan formula](##realize_barcan) $\forall x \, \Box \varphi \to \Box \forall x \,
+\varphi$ and [its converse](##realize_converseBarcan) hold in every model.
 
-## Main declarations
+## Main definitions
 
-* `ModalStructure` — accessibility plus a world-indexed family of
-  first-order structures on a constant domain, so that terms and plain formulas
-  realize at a world by `Term.realizeAt` and `Formula.RealizeAt`.
-* `ModalFormula.Realize` — Kripke satisfaction for the modal language of
-  `Syntax.lean`, with the `realize_*` simp set and the Barcan laws.
+* `FirstOrder.Language.ModalStructure`: a constant-domain Kripke model.
+* `FirstOrder.Language.ModalFormula.Realize`: satisfaction of a modal formula at a world.
 
 ## Implementation notes
 
-* Accessibility is `Finset`-valued (computability-first, matching the
-  team-semantics consumers); generalize to a `Prop`-valued relation when a
-  consumer needs infinite branching.
-* `ModalFormula` quantifiers bind **named** variables with
-  `Function.update` semantics (the `Formula.all₁` / `ex₁` convention of
-  `Core/ModelTheory/Binders.lean`), not de Bruijn indices: the modal
-  layer's consumers carry named variables.
+* `[UPSTREAM]` candidate for mathlib's `ModelTheory`, whose semantics has one structure and no
+  accessibility relation.
+* Accessibility is `Finset`-valued, for computation, as the team-semantics consumers require; it
+  can be generalized to a `Prop`-valued relation when a consumer needs infinite branching.
+* Quantifiers bind named variables and update the assignment with `Function.update`, as
+  `Formula.all₁` and `Formula.ex₁` of `Core/ModelTheory/Binders.lean` do, rather than de Bruijn
+  indices, since the consumers carry named variables.
 
 ## References
 
-* [fitting-mendelsohn-2023] — constant-domain models, world-relative
-  interpretation, the Barcan formulas
+* [fitting-mendelsohn-2023] — constant-domain models, world-relative interpretation, the Barcan
+  formulas
 -/
 
 @[expose] public section
@@ -43,13 +42,12 @@ namespace FirstOrder.Language
 
 variable {L : Language} {W M α : Type*}
 
-/-- A structure for the quantified modal language — the model object of
-    constant-domain Kripke semantics: `Finset`-valued accessibility plus a
-    `W`-indexed family of `L`-structures on the domain `M`. -/
+/-- A constant-domain Kripke model: an accessibility relation on the worlds `W` and, at each
+world, an `L`-structure on the domain `M`. -/
 structure ModalStructure (L : Language) (W M : Type*) where
-  /-- Accessibility relation (per-world set of accessible worlds). -/
+  /-- The worlds accessible from each world. -/
   access : W → Finset W
-  /-- World-indexed interpretation of the signature. -/
+  /-- The structure at each world. -/
   interp : W → L.Structure M
 
 namespace ModalStructure
@@ -95,8 +93,7 @@ namespace ModalFormula
 
 variable [DecidableEq α]
 
-/-- Kripke satisfaction `K, w ⊨_v φ`, under which atoms evaluate at the world's structure,
-    `□` quantifies over accessible worlds, and named quantifiers update the valuation. -/
+/-- Satisfaction of a modal formula at a world under an assignment, $K, w \vDash_v \varphi$. -/
 def Realize (K : ModalStructure L W M) :
     W → ModalFormula L α → (α → M) → Prop
   | w, .equal t₁ t₂, v => t₁.realizeAt K.interp w v = t₂.realizeAt K.interp w v
@@ -167,8 +164,7 @@ variable (K : ModalStructure L W M) (w : W) (v : α → M)
 
 /-! ### The Barcan laws
 
-Constant domains validate the Barcan formula and its converse: `□` and `∀`
-are both world-independent universal quantifiers, so they commute. -/
+In a constant-domain model necessity and universal quantification commute. -/
 
 theorem realize_barcan (x : α) (φ : ModalFormula L α) :
     (all x (box φ)).Realize K w v → (box (all x φ)).Realize K w v :=

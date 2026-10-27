@@ -6,22 +6,40 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Lattice
 
 /-!
-# Modal logic over accessibility relations
+# Accessibility and the strength of modals
 
-This file proves the order theory of `□` and `◇` beyond their Galois connection
-(`diamond_box_gc`): antitonicity in the relation (conversational backgrounds
-strengthen necessity by shrinking accessibility), necessity along the transitive closure as the
-infinite conjunction of iterated necessity, and the modal square of opposition. It also defines
-the bundled frame classes `IsS5Frame`, `IsKD45Frame`, `IsK45Frame`, `IsKTBFrame`, and the
-indicial operators, with Montague's S5 `□`/`◇` as the universal-accessibility case
-`R = .univ`. On propositions as sets necessity along the transitive closure is mathlib's
+Necessity grows stronger as accessibility shrinks:
+[necessity is antitone in the accessibility relation](##box_restrict) and possibility is
+monotone, so a conversational background that rules out more worlds yields a stronger necessity
+modal. Necessity along the transitive closure of a relation
+[is the infinite conjunction](##box_transGen_iff) $\Box p \land \Box \Box p \land \cdots$, which
+is the shape of common knowledge. Along a serial relation $\Box p$, $\Box \neg p$, $\Diamond p$
+and $\neg \Box p$ [form a square of opposition](##modalSquare_relations).
+
+The standard modal systems are named by the axioms their frames validate. An S5 frame is
+reflexive and Euclidean, a K45 frame transitive and Euclidean, a KD45 frame, the frame of belief,
+serial, transitive and Euclidean, and a KTB frame reflexive and symmetric. An operator on
+propositions is *indicial* when it is necessity along some accessibility relation. Montague's
+necessity, true of a proposition true at every world, is the indicial operator of the universal
+relation. Not every operator is indicial: Gallin's example is Scott's present progressive.
+
+## Main definitions
+
+* `ModalLogic.modalSquare`: the modal square of opposition along a relation.
+* `ModalLogic.IsS5Frame`, `ModalLogic.IsKD45Frame`, `ModalLogic.IsK45Frame`,
+  `ModalLogic.IsKTBFrame`: the frames of the standard systems.
+* `ModalLogic.IsIndicial`: necessity along some relation.
+
+## Implementation notes
+
+On propositions as sets, necessity along the transitive closure is mathlib's
 `SetRel.core_transGen`.
 
 ## References
 
 * [kratzer-1981] — necessity strengthened by restricting accessibility
 * [carnielli-pizzi-2008] — the modal square of opposition
-* [gallin-1975] — the indicial operator hierarchy
+* [gallin-1975] — indicial operators
 * [dowty-wall-peters-1981] — Montague's S5 operators
 -/
 
@@ -45,7 +63,8 @@ theorem compl_box_compl (R : SetRel W W) (p : W → Prop) : (□[R] pᶜ)ᶜ = �
   funext w
   simp [not_box]
 
-/-- The **modal square of opposition** over `R`: `A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`. -/
+/-- The modal square of opposition along `R`, with corners $\Box p$, $\Box \neg p$, $\Diamond p$
+and $\neg \Box p$. -/
 def modalSquare (R : SetRel W W) (p : W → Prop) : Aristotelian.Square (W → Prop) where
   A := □[R] p
   E := □[R] pᶜ
@@ -94,31 +113,26 @@ theorem box_transGen_iff {p : W → Prop} {w : W} :
 
 /-! ### Bundled frame classes -/
 
-/-- `R` is an **S5 frame** if it is reflexive and Euclidean. -/
+/-- `R` is an *S5 frame* when it is reflexive and Euclidean. -/
 class IsS5Frame : Prop extends R.IsRefl, IsEuclidean R
 
-/-- `R` is a **KD45 frame**, the doxastic frame, if it is serial, transitive, and Euclidean. -/
+/-- `R` is a *KD45 frame*, the frame of belief, when it is serial, transitive and Euclidean. -/
 class IsKD45Frame : Prop extends IsSerial R, R.IsTrans, IsEuclidean R
 
-/-- `R` is a **K45 frame** if it is transitive and Euclidean. -/
+/-- `R` is a *K45 frame* when it is transitive and Euclidean. -/
 class IsK45Frame : Prop extends R.IsTrans, IsEuclidean R
 
-/-- `R` is a **KTB frame** if it is reflexive and symmetric. -/
+/-- `R` is a *KTB frame* when it is reflexive and symmetric. -/
 class IsKTBFrame : Prop extends R.IsRefl, R.IsSymm
 
 theorem diamond_box_iff [IsKD45Frame R] {p : W → Prop} {w : W} :
     ◇[R] (□[R] p) w ↔ □[R] p w :=
   ⟨box_of_diamond_box, diamond_box_of_box⟩
 
-/-! ### The Gallin hierarchy
+/-! ### Indicial operators -/
 
-Operators `(W → Prop) → W → Prop` form a three-level hierarchy ([gallin-1975]): arbitrary
-operators, the **indicial** (Kripke-definable) ones, `□[R]` for some accessibility relation,
-and S5, the indicial case `R = .univ`. Tense and other non-Kripke operators live outside
-`IsIndicial`. -/
-
-/-- An operator on world-propositions is **indicial** (Kripke-definable) if it is `□[R]` for
-some accessibility relation `R`. -/
+/-- An operator on propositions is *indicial* when it is necessity along some accessibility
+relation [gallin-1975]. -/
 def IsIndicial (N : (W → Prop) → W → Prop) : Prop := ∃ R : SetRel W W, N = □[R]
 
 theorem box_isIndicial : IsIndicial □[R] := ⟨R, rfl⟩

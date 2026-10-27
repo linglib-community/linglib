@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Data.Set.Image
+public import Linglib.Semantics.Composition.Extensional
 
 /-!
 # Rigid designation
@@ -21,8 +22,9 @@ of identity.
 An operator `O` governing the predication of `P` of a designator `f` has a large scope reading,
 which evaluates `f` at the index of the whole sentence, and a small scope reading, which
 evaluates it at each index the operator reaches. The large scope reading of `f` is the small
-scope reading of the designator whose reference `f` fixes at that index, so the two readings
-coincide for a rigid designator.
+scope reading of the designator whose reference `f` fixes at that index. The two readings
+coincide when `f` is constant on the indices on which the operator's value depends: under every
+operator when `f` is rigid, and for every designator when the operator is extensional.
 
 ## Main definitions
 
@@ -35,7 +37,11 @@ coincide for a rigid designator.
 * `isRigid_iff_subsingleton_range`: the mathlib face.
 * `IsRigid.eq_of_apply_eq`: the necessity of identity.
 * `largeScope_eq_smallScope_const`: the large scope reading as fixing the reference.
+* `largeScope_eq_smallScope_of_dependsOn`: the scope readings coincide for a designator constant
+  on the indices the operator reads.
 * `largeScope_eq_smallScope`: the scope readings coincide for a rigid designator.
+* `Montague.IsExtensionalAt.largeScope_eq_smallScope`: the scope readings coincide under an
+  extensional operator.
 
 ## References
 
@@ -97,6 +103,20 @@ theorem largeScope_eq_smallScope_const (O : (W → Prop) → W → Prop) (P : τ
     (f : W → τ) (w : W) : largeScope O P f w = smallScope O P (fun _ ↦ f w) w :=
   rfl
 
+/-- The two scope readings of `f` coincide at `w` when `f` is constant on a set of indices on
+which the operator's value at `w` depends. -/
+theorem largeScope_eq_smallScope_of_dependsOn {O : (W → Prop) → W → Prop} {s : Set W} {w : W}
+    (hO : DependsOn (O · w) s) (hf : Set.EqOn f (fun _ ↦ f w) s) (P : τ → W → Prop) :
+    largeScope O P f w = smallScope O P f w :=
+  hO fun v hv ↦ congrArg (P · v) (hf hv).symm
+
 theorem largeScope_eq_smallScope (h : IsRigid f) (O : (W → Prop) → W → Prop)
     (P : τ → W → Prop) : largeScope O P f = smallScope O P f :=
-  funext fun w ↦ (congrArg (smallScope O P · w) (h.eq_const w)).symm
+  funext fun w ↦ largeScope_eq_smallScope_of_dependsOn (dependsOn_univ _) (fun v _ ↦ h v w) P
+
+/-- The two scope readings of every designator coincide under an operator extensional at `w`. -/
+theorem Montague.IsExtensionalAt.largeScope_eq_smallScope {O : (W → Prop) → W → Prop} {w : W}
+    (h : Montague.IsExtensionalAt O w) (P : τ → W → Prop) (f : W → τ) :
+    largeScope O P f w = smallScope O P f w :=
+  largeScope_eq_smallScope_of_dependsOn (Montague.isExtensionalAt_iff_dependsOn.1 h)
+    (Set.eqOn_singleton.2 rfl) P

@@ -2,37 +2,47 @@ module
 
 public import Linglib.Core.Relation.SetRel
 public import Mathlib.Order.GaloisConnection.Basic
+public import Mathlib.Logic.Function.DependsOn
 
 /-!
-# Modal operators and frame conditions
+# Necessity and possibility in Kripke frames
 
-This file defines the necessity and possibility operators of Kripke semantics along an
-accessibility relation `R : SetRel W' W`, as operators on propositions `W → Prop`: `□[R] p w`
-holds when `p` holds at every `R`-successor of `w`, and `◇[R] p w` when it holds at some. It proves
-the axioms K, T, D, B, 4, 5 and Alt₁ over their frames, and that each axiom defines its frame
-condition.
+In Kripke semantics a proposition is *necessary* at a world when it is true at every world
+accessible from it, and *possible* when it is true at some. The accessibility relation fixes the
+kind of modality: for knowledge it relates a world to the worlds compatible with what is known
+there, for obligation to the worlds where the obligations are met. Necessity distributes over
+implication along every relation, which is axiom K, and the other axioms hold along relations with
+a matching property: T, $\Box p \to p$, along reflexive relations; D, $\Box p \to \Diamond p$,
+along serial ones; B, $p \to \Box \Diamond p$, along symmetric ones; 4,
+$\Box p \to \Box \Box p$, along transitive ones; and 5, $\Diamond p \to \Box \Diamond p$, along
+Euclidean ones. Each axiom holds along a relation
+[exactly when the relation has its property](##box_T_iff).
+
+Possibility along a relation is
+[left adjoint to necessity along the converse relation](##diamond_box_gc), which gives the
+monotonicity and distribution laws, and necessity along a composite relation is
+[nested necessity](##box_comp). Necessity at a world depends on its argument
+[at exactly the worlds the world accesses](##dependsOn_box_iff). Some laws hold at a world exactly when the world has few
+successors. Excluded middle for necessity, $\Box p \lor \Box \neg p$ for every $p$, holds at a
+world [exactly when it accesses at most one world](##box_or_box_not_at_iff), and Negation Swap,
+$\Box \neg p \leftrightarrow \neg \Box p$, holds everywhere
+[exactly when the relation is the graph of a function](##box_compl_eq_iff), along which necessity
+is [precomposition](##box_graph).
 
 ## Main definitions
 
-* `ModalLogic.Box`, `ModalLogic.Diamond`, with notation `□[R]` and `◇[R]`.
+* `ModalLogic.Box`, `ModalLogic.Diamond`: necessity and possibility along a relation, with
+  notation `□[R]` and `◇[R]`.
 * `ModalLogic.IsSerial`, `ModalLogic.IsEuclidean`: the frame conditions of D and 5.
-
-## Main statements
-
-* `ModalLogic.diamond_box_gc`: `◇` along `R` is left adjoint to `□` along its converse, which
-  gives monotonicity and the normality laws for a relation between any two types.
-* `ModalLogic.box_T_iff` and siblings: each axiom defines its frame condition.
-* `ModalLogic.box_comp`: necessity along a composite relation is nested necessity.
-* `ModalLogic.box_not_iff_not_box_at_iff`, `ModalLogic.box_compl_eq_iff`, `ModalLogic.box_graph`:
-  Negation Swap, `□¬p ↔ ¬□p` for every `p`, holds iff the relation is the graph of a function,
-  along which necessity is precomposition.
 
 ## Implementation notes
 
-`□[R]` and `◇[R]` are mathlib's `SetRel.core` and `SetRel.preimage` read on predicates
-(`box_iff_mem_core`, `diamond_iff_mem_preimage`), so propositions stated as sets use mathlib's
-`SetRel.image_core_gc`, `SetRel.core_mono`, `SetRel.core_inter`, `SetRel.core_univ` and
-`SetRel.preimage_union`. Reflexivity, symmetry and transitivity are mathlib's.
+Necessity and possibility are operators on propositions `W → Prop` along a relation
+`R : SetRel W' W`, which may relate two types. They are mathlib's `SetRel.core` and
+`SetRel.preimage` read on predicates (`box_iff_mem_core`, `diamond_iff_mem_preimage`), so
+propositions stated as sets use mathlib's `SetRel.image_core_gc`, `SetRel.core_mono`,
+`SetRel.core_inter`, `SetRel.core_univ` and `SetRel.preimage_union`. Reflexivity, symmetry and
+transitivity are mathlib's.
 
 ## References
 
@@ -52,10 +62,10 @@ section Operators
 
 variable {W W' : Type*} (R : SetRel W' W) (p : W → Prop) (w : W')
 
-/-- Necessity along `R` holds of `p` at `w` when `p` holds at every `R`-successor of `w`. -/
+/-- `p` is necessary at `w` along `R` when it holds at every world `w` accesses. -/
 def Box : Prop := ∀ v, w ~[R] v → p v
 
-/-- Possibility along `R` holds of `p` at `w` when `p` holds at some `R`-successor of `w`. -/
+/-- `p` is possible at `w` along `R` when it holds at some world `w` accesses. -/
 def Diamond : Prop := ∃ v, w ~[R] v ∧ p v
 
 @[inherit_doc] scoped notation:max "□[" R "]" => Box R
@@ -79,8 +89,8 @@ theorem diamond_iff_mem_preimage : ◇[R] p w ↔ w ∈ R.preimage {v | p v} :=
   simp [Box, Diamond, not_and]
 
 variable (R) in
-/-- Necessity distributes over conjunction ([hintikka-1962]'s
-`a believes A and B ↔ a believes A and a believes B`). -/
+/-- Necessity distributes over conjunction. For belief this is [hintikka-1962]'s principle that
+*a* believes *A and B* exactly when *a* believes *A* and *a* believes *B*. -/
 theorem box_and (q : W → Prop) : □[R] (fun v ↦ p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w := by
   simp only [Box, imp_and, forall_and]
 
@@ -91,6 +101,14 @@ theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w �
 
 theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
   forall_congr' fun v ↦ imp_congr_left (h v)
+
+/-- Necessity at `w` depends on its argument at a set of worlds exactly when the set contains every
+world `w` accesses. -/
+theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R] v} ⊆ s := by
+  refine ⟨fun h v hv ↦ by_contra fun hvs ↦ ?_, fun h p q hpq ↦
+    propext <| forall₂_congr fun v hv ↦ iff_of_eq (hpq v (h hv))⟩
+  have := @h (· ≠ v) (fun _ ↦ True) fun u hu ↦ eq_true (ne_of_mem_of_not_mem hu hvs)
+  exact this.mpr (fun _ _ ↦ trivial) v hv rfl
 
 end Operators
 
@@ -119,8 +137,9 @@ theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
 theorem box_top : □[R] ⊤ = ⊤ := by
   simpa using (diamond_box_gc R.inv).u_top
 
-/-- Over any relation, `p ≤ □_{R⁻¹} ◇_R p`, which is Prior's tense axiom of conversion `A ⊃ G P A`.
-This is the unit of the adjunction. -/
+/-- Along any relation $p$ entails $\Box_{R^{-1}} \Diamond_R p$, the unit of the adjunction. For
+tense this is Prior's axiom of conversion $A \supset GPA$: what is the case will always have been
+the case. -/
 theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
   (diamond_box_gc R).le_u_l p
 
@@ -137,11 +156,11 @@ theorem diamond_comp (S : SetRel W W) (p : W → Prop) : ◇[R ○ S] p = ◇[R]
 
 /-! ### Frame conditions -/
 
-/-- `R` is *serial* if every world accesses at least one world. -/
+/-- `R` is *serial* when every world accesses some world. -/
 class IsSerial : Prop where
   serial : ∀ w, ∃ v, w ~[R] v
 
-/-- `R` is *Euclidean* if any two `R`-successors of a world access each other. -/
+/-- `R` is *Euclidean* when any two worlds accessed from one world access each other. -/
 class IsEuclidean : Prop where
   eucl : ∀ w v u, w ~[R] v → w ~[R] u → v ~[R] u
 
@@ -181,8 +200,8 @@ theorem box_T [R.IsRefl] (h : □[R] p w) : p w := h w R.rfl
 theorem box_D [IsSerial R] (h : □[R] p w) : ◇[R] p w :=
   let ⟨v, hwv⟩ := IsSerial.serial (R := R) w; ⟨v, hwv, h v hwv⟩
 
-/-- If some `R`-successor of `w` is also an `S`-successor, then `□[R] p` at `w` gives `◇[S] p`
-at `w`; `box_D` is the case `S = R`. -/
+/-- If `w` accesses some world along both `R` and `S`, then necessity along `R` at `w` entails
+possibility along `S`; `box_D` is the case `S = R`. -/
 theorem diamond_of_box {S : SetRel W W} (h : ◇[R] (w ~[S] ·) w) (hp : □[R] p w) : ◇[S] p w :=
   let ⟨v, hR, hS⟩ := h; ⟨v, hS, hp v hR⟩
 
