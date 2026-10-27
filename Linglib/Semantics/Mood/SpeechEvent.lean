@@ -32,8 +32,8 @@ off that component.
 ## Implementation notes
 
 * Speas and Tenny derive four speech acts, declarative, interrogative, imperative and
-  subjunctive; `Discourse.SpeechAct.Force` has no subjunctive and adds the promissive and the
-  exclamative.
+  subjunctive; `Discourse.SpeechAct.Force` has no counterpart of the subjunctive and adds the
+  promise and the exclamation.
 * Hacquard gives content only to declaratives and imperatives, so an interrogative induces the
   initial state and its component licenses no flavor.
 * Which event binds a modal is the business of `Semantics/Modality/EventRelativity.lean`.
@@ -62,19 +62,19 @@ variable {W : Type*}
 /-! ### The component of a force -/
 
 /-- The component of the mood state a force relates to, Portner's classification of the
-sentence moods: the declarative relates to the context set and the imperative to the ordering.
-The promissive is a jussive with the imperative, added to the speaker's To-Do List rather than
-the addressee's ([zanuttini-pak-portner-2012], their (49)), and the interrogative relates to the
-inquiry. The exclamative relates to none: its widening acts on the domain of its wh-operator
+sentence moods: an assertion relates to the context set and a directive to the ordering. A
+promise is jussive like a directive, its content added to the speaker's To-Do List rather than
+the addressee's ([zanuttini-pak-portner-2012], their (49)), and a question relates to the
+inquiry. An exclamation relates to none: its widening acts on the domain of its wh-operator
 ([zanuttini-portner-2003]). -/
 def _root_.Discourse.SpeechAct.Force.target : Force → Option Component
-  | .declarative => some .informational
-  | .imperative | .promissive => some .preferential
-  | .interrogative => some .inquisitive
-  | .exclamative => none
+  | .assertion => some .informational
+  | .directive | .promise => some .preferential
+  | .question => some .inquisitive
+  | .exclamation => none
 
 theorem _root_.Discourse.SpeechAct.Force.target_eq_none_iff {f : Force} :
-    f.target = none ↔ f = .exclamative := by
+    f.target = none ↔ f = .exclamation := by
   cases f <;> simp [Force.target]
 
 /-! ### Speech events -/
@@ -90,12 +90,12 @@ structure SpeechEvent (W : Type*) where
 /-- In a declarative speech event `CON(e*)` is the speaker's beliefs
 ([hacquard-2006], her (222)). -/
 def SpeechEvent.declarative (beliefs : W → List (W → Prop)) : SpeechEvent W :=
-  ⟨.declarative, beliefs⟩
+  ⟨.assertion, beliefs⟩
 
 /-- In an imperative speech event `CON(e*)` is the addressee's To-Do
 List ([hacquard-2006] after [portner-2004]). -/
 def SpeechEvent.imperative (todo : W → List (W → Prop)) : SpeechEvent W :=
-  ⟨.imperative, todo⟩
+  ⟨.directive, todo⟩
 
 /-! ### The induced state -/
 
@@ -196,14 +196,14 @@ theorem Component.target_of_mem_flavor {c : Component} {φ : ModalFlavor} (h : �
     φ.target = c := by
   cases c <;> cases h <;> rfl
 
-@[simp] theorem primaryFlavor_declarative :
-    Force.declarative.primaryFlavor = some .epistemic := rfl
+@[simp] theorem primaryFlavor_assertion :
+    Force.assertion.primaryFlavor = some .epistemic := rfl
 
-@[simp] theorem primaryFlavor_imperative :
-    Force.imperative.primaryFlavor = some .deontic := rfl
+@[simp] theorem primaryFlavor_directive :
+    Force.directive.primaryFlavor = some .deontic := rfl
 
 theorem speech_act_determines_flavor :
-    Force.declarative.primaryFlavor ≠ Force.imperative.primaryFlavor := by decide
+    Force.assertion.primaryFlavor ≠ Force.directive.primaryFlavor := by decide
 
 /-! ### Worked example: "You can leave"
 

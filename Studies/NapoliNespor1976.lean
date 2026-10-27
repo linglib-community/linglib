@@ -250,7 +250,7 @@ agrees with it (18); a question asks rather than contradicts, so the belief cann
 listener it asks (10)–(14); an indirect question raises its proposition without asserting it
 (89). -/
 def Contradicts : Prop :=
-  if s.force = .interrogative then s.holder ≠ .addressee
+  if s.force = .question then s.holder ≠ .addressee
   else s.construction = .indirectQuestion ∨ s.matrix = .positive
 
 instance : Decidable s.Contradicts := by unfold Contradicts; infer_instance
@@ -265,7 +265,7 @@ instance : Decidable s.DemandsPrecision := by unfold DemandsPrecision; infer_ins
 /-- The sentence asks the listener to confirm a comparison with the listener's present belief,
 which one does not ask of someone who does not hold it (12a). -/
 def AsksHolder : Prop :=
-  s.force = .interrogative ∧ s.holder = .addressee ∧ s.standard = some .belief
+  s.force = .question ∧ s.holder = .addressee ∧ s.standard = some .belief
 
 instance : Decidable s.AsksHolder := by unfold AsksHolder; infer_instance
 
@@ -304,12 +304,12 @@ variable {s}
 
 /-- *Non₂* does not follow a negated declarative matrix ((18), (20)), though it does follow the
 matrix of an indirect question (89). -/
-theorem not_contradicts_of_negative (hf : s.force = .declarative)
+theorem not_contradicts_of_negative (hf : s.force = .assertion)
     (hc : s.construction ≠ .indirectQuestion) (hm : s.matrix = .negative) : ¬ s.Contradicts := by
   simp [Contradicts, hf, hc, hm]
 
 -- (10), (14)
-theorem contradicts_iff_of_interrogative (hf : s.force = .interrogative) :
+theorem contradicts_iff_of_question (hf : s.force = .question) :
     s.Contradicts ↔ s.holder ≠ .addressee := by
   simp [Contradicts, hf]
 
@@ -354,7 +354,7 @@ end Sentence
 def sentence? (d : Datum) : Option Sentence := do
   let moods := [("indicative", Mood.Grammatical.indicative), ("subjunctive", .subjunctive)]
   let force ← d.parse? "force"
-    [("declarative", Force.declarative), ("interrogative", .interrogative)]
+    [("declarative", Force.assertion), ("interrogative", .question)]
   let matrix ← d.parse? "matrix" [("positive", Polarity.positive), ("negative", .negative)]
   let construction ← d.parse? "construction" [("piu", Construction.inequality),
     ("meno", .inequality), ("tanto", .equality), ("indirectQuestion", .indirectQuestion)]

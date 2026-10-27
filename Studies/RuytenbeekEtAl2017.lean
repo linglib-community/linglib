@@ -99,14 +99,14 @@ theorem conventionalised : Conventionalised .canYou ∧ ¬ Conventionalised .isI
 directive force or the construction is a conventionalised indirect request; any other
 directive reading is secondary and activates the encoded force. -/
 def Literalist.DirectivePrimary (c : Construction) : Prop :=
-  c.sentenceType.force = .imperative ∨ Conventionalised c
+  c.sentenceType.force = .directive ∨ Conventionalised c
 
 /-- Under non-literalism a directive reading is primary when the construction shares the
 imperative's directive-making semantics: the imperative's own deontic necessity, the
 questioning of the addressee's ability, or a possibility modal's enablement. -/
 def NonLiteralist.DirectivePrimary (c : Construction) : Prop :=
   c.sentenceType = .imperative ∨
-    (∃ m ∈ c.modal, ∃ φ ∈ primaryFlavor .imperative, (.necessity, φ) ∈ m.meaning) ∨
+    (∃ m ∈ c.modal, ∃ φ ∈ primaryFlavor .directive, (.necessity, φ) ∈ m.meaning) ∨
     c.queriedPrep = some .ability ∨ ∃ m ∈ c.modal, .possibility ∈ m.forces
 
 instance (c : Construction) : Decidable (Literalist.DirectivePrimary c) := by
