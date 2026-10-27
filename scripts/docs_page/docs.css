@@ -57,6 +57,8 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .cite.self { color: var(--primary); }
 .refs li { margin: 0 0 4px; }
 .refs .rt { color: var(--secondary); }
+.doc .refs a.study { margin-left: 4px; font-size: 13px; color: var(--secondary); text-decoration-color: var(--study); }
+.doc .refs a.study:hover { color: var(--primary); }
 
 /* Declarations */
 .decls h2 { font-size: 21px; margin: 40px 0 6px; scroll-margin-top: 12px; }

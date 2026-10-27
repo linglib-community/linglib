@@ -40,8 +40,12 @@ THEORY = ("Semantics", "Syntax", "Pragmatics", "Morphology", "Phonology", "Proce
 KW = {"def": "def", "theorem": "theorem", "inductive": "inductive", "instance": "instance",
       "structure": "structure", "abbrev": "abbrev", "class": "class", "axiom": "axiom",
       "opaque": "opaque"}
-# A definition's docstring that opens with a paper locator ("Table 1:", "(9):") shows it apart.
-LOC = re.compile(r"^<p>((?:Tables? \d|\(\d)[^:<.]{0,36}):\s*(\w)")
+# A definition's docstring that opens with a paper locator ("(9):", "Eq. (12):", "Table 1:") shows
+# it apart. A bare number is a numbered example; any other display carries its kind.
+KIND = (r"Tables?|Tableau|Figures?|Fig\.|Eqs?\.|Equations?|Ex\.|Examples?|Def\.|Definitions?"
+        r"|Sections?|§")
+NUM = r"\(?\d+(?:\.\d+)*[a-z′]*\)?\*?"
+LOC = re.compile(rf"^<p>((?:(?:{KIND})\s*|(?=\()){NUM}(?:\s*(?:,|and|to|–)\s*{NUM})*):\s*(\w)")
 CITE_LINK = re.compile(r'<a href="([^"]*references\.html#ref_([^"]+))" title="[^"]*" id="[^"]*">'
                        r'(\[[^\]]+\])</a>', re.S)
 HEADING = re.compile(r'<h\d id="([^"]+)"[^>]*>(.*?)(?: <a class="hover-link"|</h\d>)', re.S)
@@ -293,15 +297,20 @@ class StudyPage:
         self.fold()
 
     def ref_list(self, m):
-        """The References list: each entry's label, then its title."""
+        """The References list: each entry's label, linked to its bibliography entry, its title,
+        and a link to the study formalizing it, if another study does."""
         def item(li):
             study = re.search(r'href="([A-Z]\w+)\.html"', li.group(1))
             key = re.search(r'bibliography/#([\w-]+)', li.group(1))
             k = key.group(1) if key else self.lib.study_key.get(study.group(1)) if study else self.key
-            if k not in self.lib.bib:
+            b = self.lib.bib.get(k)
+            if not b:
                 return li.group(0)
-            title = esc(text(self.lib.bib[k]["title"]))
-            return f'<li>{li.group(1)}<span class="rt">, {title}</span></li>'
+            out = (f'<li>{link(f"{self.root}bibliography/#{k}", esc(b["label"]))}'
+                   f'<span class="rt">, {esc(text(b["title"]))}</span>')
+            if b["study"] and b["study"] != self.study:
+                out += f' {link(b["study"] + ".html", "formalized", "study")}'
+            return out + "</li>"
         items = re.sub(r"<li>(.*?)</li>", item, m.group(2), flags=re.S)
         return f'{m.group(1)}<ul class="refs">{items}</ul>'
 
@@ -395,11 +404,16 @@ class StudyPage:
         return (f'<details class="eq-more"><summary>Equations</summary>'
                 f'<ul class="eq">{items}</ul></details>')
 
+    def loc(self, d):
+        """A declaration's paper locator, naming the paper on hover."""
+        if not d["loc"]:
+            return ""
+        paper = self.lib.bib.get(self.key, {}).get("label", "the paper")
+        return f'<span class="loc" title="{esc(d["loc"])} in {esc(paper)}">{esc(d["loc"])}</span>'
+
     def toggle(self, u):
-        loc = self.by_id[u]["loc"]
         return (f'<button type="button" class="tg" data-open="{esc(u)}" aria-expanded="false">'
-                f'{esc(self.by_id[u]["name"])}' + (f'<span class="loc">{esc(loc)}</span>' if loc else "")
-                + "</button>")
+                f'{esc(self.by_id[u]["name"])}{self.loc(self.by_id[u])}</button>')
 
     def extras(self, d):
         """Below a declaration: what `deriving` made of it, its instances, and who uses it."""
@@ -447,7 +461,7 @@ class StudyPage:
         lede = ""
         if head:
             lede, doc = f'<div class="lede">{d["doc"]}</div>\n', ""
-        loc = f'<span class="loc">{esc(d["loc"])}</span>' if d["loc"] else ""
+        loc = self.loc(d)
         copy = (f'<button class="copy" type="button" data-copy="{esc(d["id"])}" '
                 f'aria-label="Copy the name {esc(d["id"])}" title="Copy name">copy</button>')
         src = ""
@@ -579,7 +593,9 @@ class StudyPage:
             return (f'<li class="s" data-node="{esc(s)}">'
                     f'{link(s + ".html", esc(nodes[s]["l"]), "nd")}{note}</li>')
 
-        by_year = (lambda s: (year_of(s) or 0, s))
+        def by_year(s):
+            return (year_of(s) or 0, s)
+
         mine = lib.uses.get(me, set())
         score = defaultdict(float)
         for n in mine:

@@ -32,6 +32,10 @@ above where a reference page needs it:
   declaration is a one-line row that opens in place.
 - Color for the kind of node (study, theory, fragment) and solid against dashed for formalized
   or proved against not yet, the same vocabulary as the bibliography's roles.
+- Every entry of a References list links to its bibliography entry, the study's own paper too;
+  a paper another study formalizes adds a "formalized" link to that study.
+- A definition's docstring that opens with a paper locator shows it as a tag naming the paper on
+  hover. A bare number is a numbered example; any other display names its kind (`Eq. (12)`).
 - The page's own styles and script are the shared files `docs_page/docs.css` and `docs.js`, since
   a thousand pages carry them.
 
