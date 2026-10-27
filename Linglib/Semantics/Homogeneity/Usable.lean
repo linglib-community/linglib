@@ -20,7 +20,6 @@ of addressing, holding when the issue decides the proposition (`Setoid.Decides`)
 * `sufficientlyTrue`, `addressesIssue`, `usable`: Križ's weakened Quality.
 * `communicatedContent`: worlds compatible with what is communicated.
 * `isStronglyRelevantProp`: constancy on issue cells.
-* `bivalentPred`: `Bool`-valued truth predicate of a bivalent proposition.
 
 ## References
 
@@ -156,10 +155,5 @@ theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Se
 theorem exact_stronglyRelevantSet_eq (candidates : Set (W → Prop)) :
     stronglyRelevantSet ⊥ candidates = candidates :=
   Set.sep_eq_self_iff_mem_true.2 fun p _ ↦ exact_all_relevant p
-
-/-- The `Bool` truth predicate of a proposition. Bridges the trivalent Addressing constraint
-to bivalent strong-relevance filtering ([kriz-spector-2021]). -/
-def bivalentPred (p : W → SignType) : W → Bool :=
-  fun w ↦ p w == 1
 
 end Homogeneity

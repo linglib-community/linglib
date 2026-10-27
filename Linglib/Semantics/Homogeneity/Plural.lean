@@ -189,11 +189,6 @@ theorem allPlural_eq_neg_one_iff (w : W) :
   rw [← allPlural_eq_one_iff P x w]
   rcases isBivalent_allPlural P x w with h | h <;> simp [h]
 
-theorem bivalentPred_allPlural_iff (w : W) :
-    bivalentPred (allPlural P x) w = true ↔ ∀ a ∈ x, P a w := by
-  simp only [bivalentPred, beq_iff_eq]
-  exact allPlural_eq_one_iff P x w
-
 /-- If an *all*-sentence is usable at `w`, all atoms satisfy `P` at `w`, since bivalence turns
 usability's not-false clause into literal truth. -/
 theorem allPlural_prevents_nonmax (q : Setoid W) (w : W)
