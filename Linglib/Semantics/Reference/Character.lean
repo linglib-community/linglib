@@ -21,17 +21,27 @@ evaluated at the context world is Kaplan's `dthat[the φ]`. A proper name has th
 character (`Character.const`), rigid also as a function of the context in the sense of
 `IsRigid`.
 
+Given the world, or more generally the index, of each context, a character has a *diagonal*: the
+value at each context of what is said there, evaluated at the context's own index
+(`Character.diag`). For a sentence it is truth at a context, and when the contexts are the
+worlds themselves it is the diagonal proposition of [stalnaker-1978]'s propositional concepts. A
+sentence is *a priori*, valid in Kaplan's logic of demonstratives, when its diagonal holds at
+every context, and *necessary* when what it says at every context is true at every world; the
+two notions come apart in both directions.
+
 ## Main definitions
 
 * `Character C W E`, `Content W E`
 * `Character.IsDirectlyReferential`
 * `Character.dthat`, `Character.const`
-* `Character.HoldsAt`: the evaluation of a root sentence at a context.
+* `Character.diag`: the diagonal along the index of the context.
+* `Character.IsAPriori`, `Character.IsNecessary`
 
 ## References
 
 * [kaplan-1989]
 * [kripke-1980]
+* [stalnaker-1978]
 -/
 
 @[expose] public section
@@ -72,9 +82,34 @@ theorem const_isDirectlyReferential (e : E) :
     (const e : Character C W E).IsDirectlyReferential :=
   dthat_isDirectlyReferential _
 
-/-- A character holds at a context when its content is true at the world of that context: the
-evaluation of a root sentence. -/
-def HoldsAt (world : C → W) (χ : Character C W Prop) (c : C) : Prop := χ c (world c)
+/-! ### The diagonal -/
+
+/-- The diagonal of a character along `ι`, the index of each context, is the value at each
+context of what is said there, at the context's own index: the truth of a sentence at a context,
+and the diagonal proposition when contexts are worlds. -/
+def diag (ι : C → W) (χ : Character C W E) : C → E := fun c ↦ χ c (ι c)
+
+@[simp] theorem diag_apply (ι : C → W) (χ : Character C W E) (c : C) : χ.diag ι c = χ c (ι c) :=
+  rfl
+
+@[simp] theorem diag_dthat (ι : C → W) (f : C → E) : (dthat f : Character C W E).diag ι = f := rfl
+
+@[simp] theorem diag_const (ι : C → W) (e : E) :
+    (const e : Character C W E).diag ι = fun _ ↦ e :=
+  rfl
+
+/-! ### A priori and necessary truth -/
+
+/-- A sentence is a priori, valid in the logic of demonstratives, when its diagonal holds at every
+context. -/
+def IsAPriori (ι : C → W) (χ : Character C W Prop) : Prop := ∀ c, χ.diag ι c
+
+/-- A sentence is necessary when what it says at every context is true at every world. -/
+def IsNecessary (χ : Character C W Prop) : Prop := ∀ c w, χ c w
+
+theorem IsNecessary.isAPriori {χ : Character C W Prop} (h : χ.IsNecessary) (ι : C → W) :
+    χ.IsAPriori ι :=
+  fun c ↦ h c _
 
 end Character
 
