@@ -30,11 +30,9 @@ may or may not apply to ∩.
   ranking is written as the predicate of its upper tier, Chierchia's `(· = .down)` and Dayal's
   `(· ≠ .exists)`. Whether ∩ is defined is a hypothesis, since it fails for plural properties
   anchored to particular entities, fn. 1.
-* The substrate's `Determiner.Inventory.Blocks` ignores the domain clause of the Blocking
-  Principle, (39a): English *a* takes only singulars and so leaves ∃ open to a bare plural, but
-  `Blocks .exists` holds of the English inventory outright. The bare-plural theorems therefore take
-  the blocking of ∃ as a hypothesis, and the English fragment is read only for *the* and for the
-  bare singular.
+* Blocking applies within a determiner's domain, the clause "for any set X in its domain" of
+  (39a): English *a* selects the singular, so it blocks ∃ for a bare singular and leaves ∃ to a
+  bare plural or a mass noun (`Determiner.Inventory.Blocks`).
 * Which side of the cut-off each sampled language falls on is the paper's analysis
   (`lexicalizationOf`); that ι is lexicalized exactly where the fragment's inventory blocks ι is
   checked (`iota_mem_lexicalized_iff`).
@@ -65,51 +63,64 @@ open Genericity Determiner
 
 /-! ### Revised Meaning Preservation (Section 2.5) -/
 
-variable {ds : Inventory} {down : Prop}
+variable {ds : Inventory} {num : Number} {down : Prop}
 
 /-- Where ι is unblocked, a bare nominal for which ∩ is defined is a kind or a definite and never an
 indefinite (39c). -/
-theorem kind_and_definite (hι : ¬ ds.Blocks .iota) (hdown : down) :
-    MaximalFor (ds.Available down) (· ≠ .exists) .down ∧
-      MaximalFor (ds.Available down) (· ≠ .exists) .iota ∧
-      ¬ MaximalFor (ds.Available down) (· ≠ .exists) .exists := by
+theorem kind_and_definite (hι : ¬ ds.Blocks num .iota) (hdown : down) :
+    MaximalFor (ds.Available num down) (· ≠ .exists) .down ∧
+      MaximalFor (ds.Available num down) (· ≠ .exists) .iota ∧
+      ¬ MaximalFor (ds.Available num down) (· ≠ .exists) .exists := by
   simp [hι, hdown]
 
 /-- Under Chierchia's ranking, a bare nominal for which ∩ is defined is never a definite, against
 (17) and (18). -/
 theorem chierchia_not_definite (hdown : down) :
-    ¬ MaximalFor (ds.Available down) (· = .down) .iota := by
+    ¬ MaximalFor (ds.Available num down) (· = .down) .iota := by
   simp [hdown]
 
 /-- Where ∩ is undefined, ι outranks ∃ under Dayal's ranking, so the Hindi bare plural is a definite
 with no wide-scope existential reading (45). -/
-theorem definite_not_indefinite (hι : ¬ ds.Blocks .iota) (hex : ¬ ds.Blocks .exists)
+theorem definite_not_indefinite (hι : ¬ ds.Blocks num .iota) (hex : ¬ ds.Blocks num .exists)
     (hdown : ¬ down) :
-    MaximalFor (ds.Available down) (· ≠ .exists) .iota ∧
-      ¬ MaximalFor (ds.Available down) (· ≠ .exists) .exists ∧
-      MaximalFor (ds.Available down) (· = .down) .exists := by
+    MaximalFor (ds.Available num down) (· ≠ .exists) .iota ∧
+      ¬ MaximalFor (ds.Available num down) (· ≠ .exists) .exists ∧
+      MaximalFor (ds.Available num down) (· = .down) .exists := by
   simp [hι, hex, hdown]
 
 /-- The two rankings choose alike for English bare nominals, so (43) and (44) do not decide between
 them. -/
-theorem english_chierchia_iff_dayal (down : Prop) (τ : CovertShift) :
-    MaximalFor (English.Determiners.inventory.Available down) (· = .down) τ ↔
-      MaximalFor (English.Determiners.inventory.Available down) (· ≠ .exists) τ :=
-  CovertShift.maximalFor_available_eq_down_iff_ne_exists (by decide) (by decide)
+theorem english_chierchia_iff_dayal (num : Number) (down : Prop) (τ : CovertShift) :
+    MaximalFor (English.Determiners.inventory.Available num down) (· = .down) τ ↔
+      MaximalFor (English.Determiners.inventory.Available num down) (· ≠ .exists) τ :=
+  CovertShift.maximalFor_available_eq_down_iff_ne_exists
+    ((Inventory.blocks_iff_lexicalizes (by decide)).2 (by decide))
+    ((Inventory.blocks_iff_lexicalizes (by decide)).2 (by decide))
 
 /-- With ι and ι^x blocked and ∃ open, ∃ applies exactly where ∩ is undefined ((43), (44); p. 443,
 supported by (90), (91), contradicted by (94)). -/
-theorem exists_iff_not_down (hι : ds.Blocks .iota) (hx : ds.Blocks .iotaAnaphoric)
-    (hex : ¬ ds.Blocks .exists) :
-    MaximalFor (ds.Available down) (· ≠ .exists) .exists ↔ ¬ down := by
+theorem exists_iff_not_down (hι : ds.Blocks num .iota) (hx : ds.Blocks num .iotaAnaphoric)
+    (hex : ¬ ds.Blocks num .exists) :
+    MaximalFor (ds.Available num down) (· ≠ .exists) .exists ↔ ¬ down := by
   simp [hι, hx, hex]
 
 /-- An English bare singular has no shift, (88a), since ∩ is undefined for it, *the* blocks ι and
 ι^x, and *a* blocks ∃. -/
 theorem english_bare_singular :
-    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available False)
+    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular False)
       (· ≠ .exists) τ := by
   decide
+
+/-- An English bare plural or mass noun takes ∃ exactly where ∩ is undefined, as *parts of this
+machine* does in (43): *the* blocks ι and ι^x, and *a*, which selects the singular, leaves ∃
+open. -/
+theorem english_bare_plural_exists_iff {num : Number} (hnum : num ≠ .singular) :
+    MaximalFor (English.Determiners.inventory.Available num down) (· ≠ .exists) .exists ↔
+      ¬ down := by
+  have key : ∀ n : Number, n ≠ .singular → ¬ English.Determiners.inventory.Blocks n .exists := by
+    decide
+  exact exists_iff_not_down ((Inventory.blocks_iff_lexicalizes (by decide)).2 (by decide))
+    ((Inventory.blocks_iff_lexicalizes (by decide)).2 (by decide)) (key num hnum)
 
 /-! ### Singular kinds (Section 3.4) -/
 
@@ -228,10 +239,10 @@ def lexicalizationOf : Glottocode → Option Lexicalization
 
 open Lexicalization in
 theorem iota_mem_lexicalized_iff :
-    (.iota ∈ english.lexicalized ↔ English.Determiners.inventory.Blocks .iota) ∧
-      (.iota ∈ romance.lexicalized ↔ Italian.Determiners.inventory.Blocks .iota) ∧
-      (.iota ∈ german.lexicalized ↔ German.Determiners.inventory.Blocks .iota) ∧
-      (.iota ∈ articleless.lexicalized ↔ Mandarin.Determiners.inventory.Blocks .iota) := by
+    (.iota ∈ english.lexicalized ↔ English.Determiners.inventory.Lexicalizes .iota) ∧
+      (.iota ∈ romance.lexicalized ↔ Italian.Determiners.inventory.Lexicalizes .iota) ∧
+      (.iota ∈ german.lexicalized ↔ German.Determiners.inventory.Lexicalizes .iota) ∧
+      (.iota ∈ articleless.lexicalized ↔ Mandarin.Determiners.inventory.Lexicalizes .iota) := by
   decide
 
 /-! ### The data -/

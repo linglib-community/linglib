@@ -24,12 +24,12 @@ with its own account of when a presupposition is marked.
 ## Main declarations
 
 * `Determiner` is the base record, and `Determiner.toWord` realizes it as a word.
-* `Article` records definiteness, the exponent and the definite uses the article obligatorily
-  expones; `DemonstrativeDeterminer`, `Quantifier` and `PossessiveDeterminer` are the
-  other specializations.
+* `Article` records definiteness, the exponent, the definite uses the article obligatorily
+  expones and the number it selects; `DemonstrativeDeterminer`, `Quantifier` and
+  `PossessiveDeterminer` are the other specializations.
 * `Determiner.Entry` is an occurrence of one of the four kinds in an inventory, `Entry.kind`
-  is its kind together with an article's definiteness, and `Entry.strengths` the strengths it
-  marks.
+  is its kind together with an article's definiteness, `Entry.strengths` the strengths it
+  marks, and `Entry.Selects` the numbers of the nominals it applies to.
 * `Determiner.Inventory` is a language's declared inventory, and `Inventory.strengths` the
   strengths its entries mark; `Inventory.Marks` and `Inventory.IsSyncretic` lift the entry
   predicates.
@@ -101,6 +101,9 @@ structure Article extends Determiner where
   exponent : Determiner.Exponent
   /-- The definite uses the article obligatorily expones. -/
   uses : Finset DefiniteDescription.Use := ∅
+  /-- The grammatical number the article selects, or none when it is number-neutral, as English
+  *a* selects the singular. -/
+  numberRestriction : Option Number := none
   deriving DecidableEq
 
 /-- A demonstrative determiner carries its deictic content, the participant sets of the referents
@@ -161,7 +164,19 @@ def uses : Entry → Finset DefiniteDescription.Use
   | .article a => a.uses
   | .demonstrative _ | .quantifier _ | .possessive _ => ∅
 
+/-- The grammatical number an entry selects is an article's or a quantifier's restriction; a
+demonstrative or possessive selects none. -/
+def numberRestriction : Entry → Option Number
+  | .article a => a.numberRestriction
+  | .quantifier q => q.numberRestriction
+  | .demonstrative _ | .possessive _ => none
+
 variable (e : Entry)
+
+/-- An entry applies to a nominal of number `num` when it selects that number or none. -/
+def Selects (num : Number) : Prop := ∀ n ∈ e.numberRestriction, n = num
+
+instance (num : Number) : Decidable (e.Selects num) := by unfold Selects; infer_instance
 
 /-- The strengths an entry marks are those its definite uses call for. -/
 def strengths : Finset DefiniteDescription.Strength := e.uses.image DefiniteDescription.Use.strength

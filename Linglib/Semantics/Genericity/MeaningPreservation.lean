@@ -58,25 +58,22 @@ open Genericity
 
 namespace Determiner.Inventory
 
-/-- A covert shift is available to a bare nominal in a language with the determiners `ds` when it
-is defined for the nominal, ∩ only where `down` holds, and no determiner blocks it. ∩ is
-undefined for a singular count noun and for a property anchored to particular entities such as
-*parts of this machine* ([dayal-2004]'s fn. 1). -/
-def Available (ds : Inventory) (down : Prop) (τ : CovertShift) : Prop :=
-  (τ = .down → down) ∧ ¬ ds.Blocks τ
+/-- A covert shift is available to a bare nominal of number `num` in a language with the
+determiners `ds` when it is defined for the nominal, ∩ only where `down` holds, and no determiner
+blocks it for that number. ∩ is undefined for a singular count noun and for a property anchored to
+particular entities such as *parts of this machine* ([dayal-2004]'s fn. 1). -/
+def Available (ds : Inventory) (num : Number) (down : Prop) (τ : CovertShift) : Prop :=
+  (τ = .down → down) ∧ ¬ ds.Blocks num τ
 
-instance (ds : Inventory) (down : Prop) [Decidable down] : DecidablePred (ds.Available down) :=
+instance (ds : Inventory) (num : Number) (down : Prop) [Decidable down] :
+    DecidablePred (ds.Available num down) :=
   fun _ ↦ by unfold Available; infer_instance
 
-variable {ds : Inventory} {down : Prop}
+variable {ds : Inventory} {num : Number} {down : Prop} {τ : CovertShift}
 
-/-- A definite shift is available exactly when the inventory leaves its strength unmarked, ι for
-uniqueness and ι^x for familiarity. -/
-theorem available_iota_iff : ds.Available down .iota ↔ ¬ ds.Marks .uniqueness :=
-  (and_iff_right nofun).trans (not_congr ds.blocks_iota_iff)
-
-theorem available_iotaAnaphoric_iff : ds.Available down .iotaAnaphoric ↔ ¬ ds.Marks .familiarity :=
-  (and_iff_right nofun).trans (not_congr ds.blocks_iotaAnaphoric_iff)
+/-- A shift other than ∩ is available exactly when it is not blocked. -/
+theorem available_iff_of_ne_down (h : τ ≠ .down) : ds.Available num down τ ↔ ¬ ds.Blocks num τ :=
+  and_iff_right fun h' ↦ absurd h' h
 
 end Determiner.Inventory
 
@@ -109,47 +106,47 @@ instance [DecidablePred A] : DecidablePred (MaximalFor A (· ≠ CovertShift.exi
 
 open Determiner.Inventory
 
-variable {ds : Determiner.Inventory} {down : Prop}
+variable {ds : Determiner.Inventory} {num : Number} {down : Prop}
 
 /-- Under Dayal's ranking ∩ applies wherever it is defined, since no determiner blocks it. -/
 @[simp] theorem maximalFor_available_ne_exists_down :
-    MaximalFor (ds.Available down) (· ≠ .exists) .down ↔ down := by
+    MaximalFor (ds.Available num down) (· ≠ .exists) .down ↔ down := by
   simp [maximalFor_ne_exists_iff, Available, not_blocks_down]
 
 @[simp] theorem maximalFor_available_ne_exists_iota :
-    MaximalFor (ds.Available down) (· ≠ .exists) .iota ↔ ¬ ds.Blocks .iota := by
+    MaximalFor (ds.Available num down) (· ≠ .exists) .iota ↔ ¬ ds.Blocks num .iota := by
   simp [maximalFor_ne_exists_iff, Available]
 
 @[simp] theorem maximalFor_available_ne_exists_exists :
-    MaximalFor (ds.Available down) (· ≠ .exists) .exists ↔
-      ¬ ds.Blocks .exists ∧ ¬ down ∧ ds.Blocks .iota ∧ ds.Blocks .iotaAnaphoric := by
+    MaximalFor (ds.Available num down) (· ≠ .exists) .exists ↔
+      ¬ ds.Blocks num .exists ∧ ¬ down ∧ ds.Blocks num .iota ∧ ds.Blocks num .iotaAnaphoric := by
   simp only [maximalFor_ne_exists_iff, Available, ne_eq, not_true_eq_false, false_or]
   refine ⟨fun ⟨⟨_, h⟩, h'⟩ ↦ ⟨h, fun hd ↦ ?_, not_not.1 fun hι ↦ ?_, not_not.1 fun hx ↦ ?_⟩,
     fun ⟨h, hd, hι, hx⟩ ↦ ⟨⟨nofun, h⟩, fun σ ⟨hσ, hb⟩ ↦ ?_⟩⟩
-  · exact absurd (h' .down ⟨fun _ ↦ hd, ds.not_blocks_down⟩) nofun
+  · exact absurd (h' .down ⟨fun _ ↦ hd, ds.not_blocks_down num⟩) nofun
   · exact absurd (h' .iota ⟨nofun, hι⟩) nofun
   · exact absurd (h' .iotaAnaphoric ⟨nofun, hx⟩) nofun
   · cases σ <;> simp_all
 
 /-- Under Chierchia's ranking, too, ∩ applies wherever it is defined. -/
 @[simp] theorem maximalFor_available_eq_down_down :
-    MaximalFor (ds.Available down) (· = .down) .down ↔ down := by
+    MaximalFor (ds.Available num down) (· = .down) .down ↔ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
 
 @[simp] theorem maximalFor_available_eq_down_iota :
-    MaximalFor (ds.Available down) (· = .down) .iota ↔ ¬ ds.Blocks .iota ∧ ¬ down := by
+    MaximalFor (ds.Available num down) (· = .down) .iota ↔ ¬ ds.Blocks num .iota ∧ ¬ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
 
 @[simp] theorem maximalFor_available_eq_down_exists :
-    MaximalFor (ds.Available down) (· = .down) .exists ↔ ¬ ds.Blocks .exists ∧ ¬ down := by
+    MaximalFor (ds.Available num down) (· = .down) .exists ↔ ¬ ds.Blocks num .exists ∧ ¬ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
 
 /-- Where the determiners block ι and ι^x, as a definite article used anaphorically does, the two
 rankings select the same shifts. -/
-theorem maximalFor_available_eq_down_iff_ne_exists (hι : ds.Blocks .iota)
-    (hx : ds.Blocks .iotaAnaphoric) :
-    MaximalFor (ds.Available down) (· = .down) τ ↔
-      MaximalFor (ds.Available down) (· ≠ .exists) τ := by
+theorem maximalFor_available_eq_down_iff_ne_exists (hι : ds.Blocks num .iota)
+    (hx : ds.Blocks num .iotaAnaphoric) :
+    MaximalFor (ds.Available num down) (· = .down) τ ↔
+      MaximalFor (ds.Available num down) (· ≠ .exists) τ := by
   cases τ
   case iotaAnaphoric =>
     simp [maximalFor_eq_down_iff, maximalFor_ne_exists_iff, Available, hx]

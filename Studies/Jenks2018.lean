@@ -26,8 +26,10 @@ marked familiarity](##isUpperSet_marked) and no language marks uniqueness alone.
 
 ## Implementation notes
 
-* The Blocking Principle (23) is the theory layer's `Determiner.Inventory.Blocks`, under which an
-  article blocks ι when it marks uniqueness and a demonstrative blocks nothing.
+* The Blocking Principle (23) is the theory layer's, under which an article blocks ι when it marks
+  uniqueness and a demonstrative blocks nothing. No definite article selects a number, so ι is
+  blocked for a bare noun of any number exactly when it is lexicalized
+  (`Determiner.Inventory.blocks_iff_lexicalizes`).
 * The environments are the paper's six, read as `DefiniteDescription.Use`s, the donkey environment
   being an anaphoric use under quantification, and mapped to Schwarz's presupposition types by
   `DefiniteDescription.Use.strength`. The marked form is the language's form for the
@@ -79,7 +81,7 @@ instance (inv : Inventory) : DecidablePred (HasForm inv) := fun p ↦ by
 marking uniqueness, and, by Index! (50), no indexed form competes, or when the description is a
 continuing topic (Section 5.3). -/
 def BareLicit (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) : Prop :=
-  ¬ inv.Blocks .iota ∧ (¬ (IndexAvailable env ∧ HasForm inv .familiarity) ∨ t = .continuing)
+  ¬ inv.Lexicalizes .iota ∧ (¬ (IndexAvailable env ∧ HasForm inv .familiarity) ∨ t = .continuing)
 
 /-- The marked form is licit when the inventory has a form for the environment's presupposition. -/
 def MarkedLicit (inv : Inventory) (env : DefiniteDescription.Use) : Prop := HasForm inv env.strength
@@ -104,11 +106,11 @@ theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : DefiniteDescrip
 
 /-- Mandarin has no overt exponent of uniqueness, so its bare nouns are unique definites by the
 covert ι. -/
-theorem not_blocks_iota_mandarin : ¬ Mandarin.Determiners.inventory.Blocks .iota := by
+theorem not_lexicalizes_iota_mandarin : ¬ Mandarin.Determiners.inventory.Lexicalizes .iota := by
   decide
 
 /-- Cantonese [Clf-N] marks uniqueness, so its bare nouns have no definite shift. -/
-theorem blocks_iota_cantonese : Cantonese.Determiners.inventory.Blocks .iota := by
+theorem lexicalizes_iota_cantonese : Cantonese.Determiners.inventory.Lexicalizes .iota := by
   decide
 
 /-! ### The data -/
@@ -198,12 +200,13 @@ environments that call for it. -/
 def Marked (inv : Inventory) (p : Strength) : Prop :=
   ∀ env : DefiniteDescription.Use, env.strength = p → ¬ BareLicit inv env .none
 
-theorem marked_uniqueness_iff (inv : Inventory) : Marked inv .uniqueness ↔ inv.Blocks .iota := by
+theorem marked_uniqueness_iff (inv : Inventory) :
+    Marked inv .uniqueness ↔ inv.Lexicalizes .iota := by
   refine ⟨fun h ↦ not_not.1 fun hι ↦ h .largerSituation rfl ⟨hι, .inl nofun⟩,
     fun hι _ _ h ↦ h.1 hι⟩
 
 theorem marked_familiarity_iff (inv : Inventory) :
-    Marked inv .familiarity ↔ inv.Blocks .iota ∨ HasForm inv .familiarity := by
+    Marked inv .familiarity ↔ inv.Lexicalizes .iota ∨ HasForm inv .familiarity := by
   refine ⟨fun h ↦ ?_, fun h env he hb ↦ ?_⟩
   · by_contra hn
     exact h .anaphoric rfl ⟨(not_or.1 hn).1, .inl fun hx ↦ (not_or.1 hn).2 hx.2⟩

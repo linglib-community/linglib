@@ -148,7 +148,8 @@ distance-neutral, so it covers every participant set; and the possessive *mein*.
 def inventory : Determiner.Inventory :=
   [ .article contracted,
     .article nonContracted,
-    .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme },
+    .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme,
+               numberRestriction := some .singular },
     .demonstrative { form := dieser (.sg .masc) .nom, deixis := Finset.univ },
     .possessive { form := "mein" } ]
 
