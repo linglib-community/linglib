@@ -13,11 +13,13 @@ This file defines the determiner as a lexical object and the determiner inventor
 language. The base `Determiner` carries only a surface form, and the four specializations
 `Article`, `DemonstrativeDeterminer`, `Quantifier` and `PossessiveDeterminer` extend
 it. An inventory is
-a list of `Determiner.Entry` occurrences. An entry marks an article strength when one of the
-definite uses it obligatorily expones calls for that strength, and an inventory marks the strengths
-its entries mark (`Inventory.strengths`). The typologies of definiteness marking, Jenks's and
-Moroney's types and Patel-Grosz and Grosz's article systems, are conditions on these strengths and
-on syncretism, stated in their studies.
+a list of `Determiner.Entry` occurrences. An article marks a strength when one of the definite uses
+it obligatorily expones calls for that strength, and an inventory marks the strengths its articles
+mark (`Inventory.strengths`). A demonstrative marks none: whether a language's demonstrative is
+obligatory in a definite use is not lexical but follows from a theory of competition between forms,
+as Jenks's Index! and the Blocking Principle are. The typologies of definiteness marking, Jenks's
+and Moroney's types and Patel-Grosz and Grosz's article systems, are stated in their studies, each
+with its own account of when a presupposition is marked.
 
 ## Main declarations
 
@@ -102,14 +104,10 @@ structure Article extends Determiner where
   deriving DecidableEq
 
 /-- A demonstrative determiner carries its deictic content, the participant sets of the referents
-in whose vicinity it locates its referent. Its `uses` are the definite uses it obligatorily
-expones, as Mandarin *na* expones the anaphoric use, and they are empty for a demonstrative that
-merely can be used anaphorically. -/
+in whose vicinity it locates its referent. -/
 structure DemonstrativeDeterminer extends Determiner where
   /-- The participant sets of the referents in whose vicinity the form locates its referent. -/
   deixis : Finset (Finset Discourse.Role)
-  /-- The definite uses the demonstrative obligatorily expones. -/
-  uses : Finset DefiniteDescription.Use := ∅
   deriving DecidableEq
 
 /-- A quantificational determiner records only what its generalized-quantifier denotation
@@ -157,12 +155,11 @@ def kind : Entry → Kind
   | .quantifier _ => .quantifier
   | .possessive _ => .possessive
 
-/-- The definite uses an entry obligatorily expones are an article's `uses` and a
-demonstrative's `uses`; a quantifier or possessive expones none. -/
+/-- The definite uses an entry obligatorily expones are an article's `uses`; a demonstrative,
+quantifier or possessive expones none by its lexicon. -/
 def uses : Entry → Finset DefiniteDescription.Use
   | .article a => a.uses
-  | .demonstrative d => d.uses
-  | .quantifier _ | .possessive _ => ∅
+  | .demonstrative _ | .quantifier _ | .possessive _ => ∅
 
 variable (e : Entry)
 

@@ -181,11 +181,9 @@ end QuantityWord
 /-- *zhè* 这 'this', the proximal demonstrative, which stands before a classifier. -/
 def zhe : DemonstrativeDeterminer := { form := "zhè", deixis := Person.first.participantSets }
 
-/-- *nà* 那 'that', the distal demonstrative and the obligatory exponent of anaphoric definites,
-donkey anaphora and producer–product bridging included ([jenks-2018]). -/
-def na : DemonstrativeDeterminer :=
-  { form := "nà", deixis := Person.first.participantSetsᶜ,
-    uses := {.anaphoric, .bridging .relational} }
+/-- *nà* 那 'that', the distal demonstrative, which [jenks-2018] finds required in anaphoric
+definites outside a continuing topic, donkey anaphora and producer–product bridging included. -/
+def na : DemonstrativeDeterminer := { form := "nà", deixis := Person.first.participantSetsᶜ }
 
 /-- *de* 的, the marker of possession and of nominal modification. -/
 def de : PossessiveDeterminer := { form := "de" }
@@ -195,7 +193,5 @@ marker, there being no articles. -/
 def inventory : Determiner.Inventory :=
   [.demonstrative zhe, .demonstrative na] ++
     QuantityWord.toList.map (.quantifier ·.toQuantifier) ++ [.possessive de]
-
-theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Mandarin.Determiners

@@ -73,10 +73,10 @@ variable {ds : Inventory} {down : Prop}
 /-- A definite shift is available exactly when the inventory leaves its strength unmarked, ι for
 uniqueness and ι^x for familiarity. -/
 theorem available_iota_iff : ds.Available down .iota ↔ ¬ ds.Marks .uniqueness :=
-  and_iff_right nofun
+  (and_iff_right nofun).trans (not_congr ds.blocks_iota_iff)
 
 theorem available_iotaAnaphoric_iff : ds.Available down .iotaAnaphoric ↔ ¬ ds.Marks .familiarity :=
-  and_iff_right nofun
+  (and_iff_right nofun).trans (not_congr ds.blocks_iotaAnaphoric_iff)
 
 end Determiner.Inventory
 

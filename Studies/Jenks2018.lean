@@ -20,17 +20,19 @@ over a language's determiner inventory derive the distribution. The Blocking Pri
 available exactly when no overt determiner marks uniqueness, as in Mandarin but not in Cantonese,
 whose [Clf-N] marks both presuppositions; ι^x is never a covert shift (Section 4.2); and Index!
 (50) requires the indexed form wherever an index is available, unless the description is a
-continuing topic (Section 5.3).
+continuing topic (Section 5.3). The types of Table 2 are read off these principles: a
+presupposition is marked where the bare noun cannot express it, so [a marked uniqueness brings a
+marked familiarity](##isUpperSet_marked) and no language marks uniqueness alone.
 
 ## Implementation notes
 
-* The Blocking Principle (23) is the theory layer's `Determiner.Inventory.Blocks`, under which a
-  determiner blocks ι when it obligatorily expones a use calling for uniqueness.
+* The Blocking Principle (23) is the theory layer's `Determiner.Inventory.Blocks`, under which an
+  article blocks ι when it marks uniqueness and a demonstrative blocks nothing.
 * The environments are the paper's six, read as `DefiniteDescription.Use`s, the donkey environment
   being an anaphoric use under quantification, and mapped to Schwarz's presupposition types by
-  `DefiniteDescription.Use.strength`. The marked form is the language's obligatory exponent of the
-  environment's presupposition, the demonstrative in Mandarin and [Clf-N] in Cantonese, so
-  Cantonese's restricted demonstrative (57) is not modelled.
+  `DefiniteDescription.Use.strength`. The marked form is the language's form for the
+  environment's presupposition: an article marking it or, for familiarity, a demonstrative, whose
+  description is the strong article's. Cantonese's restricted demonstrative (57) is not modelled.
 * Jenks types the index of ι^x as a property (Section 4.4); `DefiniteDescription.anaphoric` carries
   an individual index, so Section 4.4 is not formalized.
 
@@ -63,14 +65,24 @@ inductive Topic
 prior mention of the referent or, in producer-product bridging, of its argument. -/
 def IndexAvailable (env : DefiniteDescription.Use) : Prop := env.strength = .familiarity
 
+/-- An inventory has a form for a presupposition when an article marks it or, for familiarity,
+when it has a demonstrative, whose description is the strong article's
+(`DemonstrativeDeterminer.denote_selector_eq_anaphoric`) and so supplies the index of ι^x. -/
+def HasForm (inv : Inventory) : DefiniteDescription.Strength → Prop
+  | .uniqueness => inv.Marks .uniqueness
+  | .familiarity => inv.Marks .familiarity ∨ inv.Realizes .demonstrative
+
+instance (inv : Inventory) : DecidablePred (HasForm inv) := fun p ↦ by
+  cases p <;> unfold HasForm <;> infer_instance
+
 /-- The bare noun is licit when the Blocking Principle (23) leaves ι available, no overt determiner
 marking uniqueness, and, by Index! (50), no indexed form competes, or when the description is a
 continuing topic (Section 5.3). -/
 def BareLicit (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) : Prop :=
-  ¬ inv.Blocks .iota ∧ (¬ (IndexAvailable env ∧ inv.Marks .familiarity) ∨ t = .continuing)
+  ¬ inv.Blocks .iota ∧ (¬ (IndexAvailable env ∧ HasForm inv .familiarity) ∨ t = .continuing)
 
-/-- The marked form is licit when the inventory marks the environment's presupposition. -/
-def MarkedLicit (inv : Inventory) (env : DefiniteDescription.Use) : Prop := inv.Marks env.strength
+/-- The marked form is licit when the inventory has a form for the environment's presupposition. -/
+def MarkedLicit (inv : Inventory) (env : DefiniteDescription.Use) : Prop := HasForm inv env.strength
 
 instance (env : DefiniteDescription.Use) : Decidable (IndexAvailable env) := by
   unfold IndexAvailable; infer_instance
@@ -84,7 +96,7 @@ instance (inv : Inventory) (env : DefiniteDescription.Use) : Decidable (MarkedLi
 
 theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : DefiniteDescription.Use}
     {t : Topic}
-    (h : IndexAvailable env) (hm : inv.Marks .familiarity) (ht : t ≠ .continuing) :
+    (h : IndexAvailable env) (hm : HasForm inv .familiarity) (ht : t ≠ .continuing) :
     ¬ BareLicit inv env t :=
   fun ⟨_, h'⟩ ↦ h'.elim (fun h'' ↦ h'' ⟨h, hm⟩) ht
 
@@ -181,46 +193,60 @@ section Typology
 
 open DefiniteDescription (Strength)
 
-variable (ds : Inventory)
+/-- A presupposition is marked when, outside a topic, the bare noun cannot express it in the
+environments that call for it. -/
+def Marked (inv : Inventory) (p : Strength) : Prop :=
+  ∀ env : DefiniteDescription.Use, env.strength = p → ¬ BareLicit inv env .none
 
-/-- A bipartite inventory marks both presuppositions, with distinct forms. -/
-def IsBipartite : Prop := ds.strengths = Finset.univ ∧ ¬ ds.IsSyncretic
+theorem marked_uniqueness_iff (inv : Inventory) : Marked inv .uniqueness ↔ inv.Blocks .iota := by
+  refine ⟨fun h ↦ not_not.1 fun hι ↦ h .largerSituation rfl ⟨hι, .inl nofun⟩,
+    fun hι _ _ h ↦ h.1 hι⟩
 
-/-- A marked-anaphoric inventory marks the anaphoric presupposition only. -/
-def IsMarkedAnaphoric : Prop := ds.strengths = {.familiarity}
+theorem marked_familiarity_iff (inv : Inventory) :
+    Marked inv .familiarity ↔ inv.Blocks .iota ∨ HasForm inv .familiarity := by
+  refine ⟨fun h ↦ ?_, fun h env he hb ↦ ?_⟩
+  · by_contra hn
+    exact h .anaphoric rfl ⟨(not_or.1 hn).1, .inl fun hx ↦ (not_or.1 hn).2 hx.2⟩
+  · rcases h with h | h
+    · exact hb.1 h
+    · exact hb.2.elim (fun hn ↦ hn ⟨he, h⟩) nofun
+
+instance (inv : Inventory) : DecidablePred (Marked inv)
+  | .uniqueness => decidable_of_iff _ (marked_uniqueness_iff inv).symm
+  | .familiarity => decidable_of_iff _ (marked_familiarity_iff inv).symm
+
+/-- Since a bare noun without ι has no definite reading, a marked uniqueness brings a marked
+familiarity: the marked presuppositions form an upper set in every language (p. 530). -/
+theorem isUpperSet_marked (inv : Inventory) : IsUpperSet {p | Marked inv p} :=
+  Strength.isUpperSet_iff.2 fun h ↦
+    (marked_familiarity_iff inv).2 (.inl ((marked_uniqueness_iff inv).1 h))
+
+variable (M : Strength → Prop) (ds : Inventory)
 
 /-- A generally marked inventory marks both presuppositions with one form. -/
-def IsGenerallyMarked : Prop := ds.IsSyncretic
+def IsGenerallyMarked : Prop := M .uniqueness ∧ M .familiarity ∧ ds.IsSyncretic
+
+/-- A bipartite inventory marks both presuppositions, with distinct forms. -/
+def IsBipartite : Prop := M .uniqueness ∧ M .familiarity ∧ ¬ ds.IsSyncretic
 
 /-- A marked-unique inventory marks the unique presupposition only. -/
-def IsMarkedUnique : Prop := ds.strengths = {.uniqueness}
+def IsMarkedUnique : Prop := M .uniqueness ∧ ¬ M .familiarity
 
-/-- The fragments derive Table 2's columns, German being bipartite, Mandarin marked anaphoric, and
-Cantonese and English generally marked. -/
+/-- A marked-anaphoric inventory marks the anaphoric presupposition only. -/
+def IsMarkedAnaphoric : Prop := ¬ M .uniqueness ∧ M .familiarity
+
+theorem not_isMarkedUnique (inv : Inventory) : ¬ IsMarkedUnique (Marked inv) :=
+  fun ⟨hu, hf⟩ ↦ hf (isUpperSet_marked inv (by decide : Strength.uniqueness ≤ .familiarity) hu)
+
+/-- The fragments derive Table 2's columns, German being bipartite, Mandarin and Akan marked
+anaphoric, and Cantonese and English generally marked. -/
 theorem table2 :
-    IsBipartite German.Determiners.inventory ∧ IsMarkedAnaphoric Mandarin.Determiners.inventory ∧
-      IsGenerallyMarked Cantonese.Determiners.inventory ∧
-      IsGenerallyMarked English.Determiners.inventory :=
-  ⟨⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
-    Mandarin.Determiners.strengths_inventory, Cantonese.Determiners.isSyncretic_inventory,
-    English.Determiners.isSyncretic_inventory⟩
-
-theorem not_isMarkedUnique_of_isUpperSet (h : IsUpperSet (ds.strengths : Set Strength)) :
-    ¬ IsMarkedUnique ds := fun hu ↦ by
-  have := Strength.isUpperSet_iff.1 h
-  rw [IsMarkedUnique] at hu
-  simp [hu] at this
-
-/-- Table 2's languages with a fragment are German and Lakhota, Mandarin and Akan, and Cantonese
-and English. -/
-def table2Inventories : List Inventory :=
-  [German.Determiners.inventory, Lakhota.Determiners.inventory, Mandarin.Determiners.inventory,
-    Akan.Determiners.inventory, Cantonese.Determiners.inventory, English.Determiners.inventory]
-
-/-- In each language of Table 2 the marked presuppositions form an upper set (p. 530). -/
-theorem isUpperSet_strengths :
-    ∀ ds ∈ table2Inventories, IsUpperSet (ds.strengths : Set Strength) := by
-  simp only [Strength.isUpperSet_iff, Finset.mem_coe]
+    IsBipartite (Marked German.Determiners.inventory) German.Determiners.inventory ∧
+      IsMarkedAnaphoric (Marked Mandarin.Determiners.inventory) ∧
+      IsMarkedAnaphoric (Marked Akan.Determiners.inventory) ∧
+      IsGenerallyMarked (Marked Cantonese.Determiners.inventory) Cantonese.Determiners.inventory ∧
+      IsGenerallyMarked (Marked English.Determiners.inventory) English.Determiners.inventory := by
+  simp only [IsBipartite, IsMarkedAnaphoric, IsGenerallyMarked]
   decide
 
 end Typology
