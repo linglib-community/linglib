@@ -1,13 +1,14 @@
 module
 
 public import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
+public import Linglib.Core.ModelTheory.LanguageMap
 public import Mathlib.Data.Set.Card
 
 /-!
 # The Ehrenfeucht–Fraïssé game on monadic structures
 
-`[UPSTREAM]` candidate. A language is monadic when its only symbols are unary relation symbols, so
-each element of a structure has a unary type, the set of symbols holding of it. On monadic
+`[UPSTREAM]` candidate. In a monadic language (`IsMonadic`), whose only symbols are unary relation
+symbols, each element of a structure has a unary type, the set of symbols holding of it. On monadic
 structures the Ehrenfeucht–Fraïssé game is decided by counting: duplicator answers a played
 element by its partner and a fresh element by a fresh element of the same type, which is possible
 while, for each type, the unplayed elements on the two sides are equinumerous or both at least the
@@ -20,9 +21,6 @@ van Benthem's characterization of the first-order definable determiners.
 
 ## Main definitions
 
-* `FirstOrder.Language.IsMonadic`: the language has only unary relation symbols.
-* `FirstOrder.Language.monadic`, `FirstOrder.Language.monadicStructure`: the monadic language on
-  an index type and the structure given by a family of predicates.
 * `FirstOrder.Language.unaryType`: the unary relation symbols holding of an element.
 * `FirstOrder.Language.MonadicMatch`: tuples with the same equality pattern and unary types.
 
@@ -32,7 +30,7 @@ van Benthem's characterization of the first-order definable determiners.
 * `FirstOrder.Language.DuplicatorWins.min_encard_eq`: conversely, any winning position satisfies the
   counting condition.
 * `FirstOrder.Language.elementarilyEquivalentUpTo_iff_min_encard_eq`,
-  `FirstOrder.Language.elementarilyEquivalentUpTo_monadicStructure_iff`: the `t`-equivalence
+  `FirstOrder.Language.elementarilyEquivalentUpTo_monadic_structure_iff`: the `t`-equivalence
   criterion.
 * `FirstOrder.Language.foDefinable_iff_exists_min_encard_eq`: a class of structures for a finite
   monadic signature is definable within `K` iff it is invariant under agreement of the unary type
@@ -54,25 +52,6 @@ open BoundedFormula CategoryTheory
 
 variable (L : Language.{u, v}) {M : Type w} {N : Type w'} [L.Structure M] [L.Structure N]
 
-/-- A language is monadic when its only symbols are unary relation symbols. -/
-class IsMonadic : Prop where
-  isEmpty_functions : ∀ n, IsEmpty (L.Functions n)
-  isEmpty_relations : ∀ n, n ≠ 1 → IsEmpty (L.Relations n)
-
-instance (priority := 100) IsMonadic.isRelational [L.IsMonadic] : L.IsRelational :=
-  IsMonadic.isEmpty_functions
-
-/-- The relation symbols of the monadic language on `ι`, one unary symbol for each `i : ι`. -/
-inductive monadicRel (ι : Type v) : ℕ → Type v
-  | pred (i : ι) : monadicRel ι 1
-
-/-- The monadic language with one unary relation symbol for each `i : ι`. -/
-protected def monadic (ι : Type v) : Language.{0, v} := ⟨fun _ => Empty, monadicRel ι⟩
-
-instance {ι : Type v} : (Language.monadic ι).IsMonadic where
-  isEmpty_functions _ := inferInstanceAs (IsEmpty Empty)
-  isEmpty_relations _ hl := ⟨fun r => by cases r; exact hl rfl⟩
-
 instance {ι : Type v} [Finite ι] : Finite (Language.monadic ι).Symbols := by
   have : Finite (Σ l, (Language.monadic ι).Relations l) :=
     Finite.of_surjective (fun i : ι => (⟨1, .pred i⟩ : Σ l, (Language.monadic ι).Relations l))
@@ -89,33 +68,11 @@ structure MonadicMatch {n : ℕ} (v : Fin n → M) (w : Fin n → N) : Prop wher
   eq_iff : ∀ i j, v i = v j ↔ w i = w j
   unaryType_eq : ∀ i, L.unaryType (v i) = L.unaryType (w i)
 
-section monadicStructure
-
-variable {ι : Type v} (M)
-
-/-- The structure on `M` interpreting each symbol `pred i` as the predicate `P i`. -/
-@[instance_reducible]
-def monadicStructure (P : ι → M → Prop) : (Language.monadic ι).Structure M where
-  RelMap | .pred i => fun x => P i (x 0)
-
-variable {M} {P : ι → M → Prop} {Q : ι → N → Prop}
-
-@[simp] theorem relMap_monadicStructure (i : ι) (x : Fin 1 → M) :
-    @Structure.RelMap _ M (monadicStructure M P) 1 (.pred i) x ↔ P i (x 0) := Iff.rfl
-
-theorem unaryType_monadicStructure_eq_iff (a : M) (S : (Language.monadic ι).Relations 1 → Prop) :
-    @unaryType _ M (monadicStructure M P) a = S ↔ ∀ i, P i a ↔ S (.pred i) :=
+theorem unaryType_monadic_structure_eq_iff {ι : Type v} {P : ι → M → Prop} (a : M)
+    (S : (Language.monadic ι).Relations 1 → Prop) :
+    @unaryType _ M (monadic.structure P) a = S ↔ ∀ i, P i a ↔ S (.pred i) :=
   ⟨fun h i => Iff.of_eq (congrFun h (.pred i)),
     fun h => funext fun | .pred i => propext (h i)⟩
-
-/-- A bijection carrying each predicate `P i` to `Q i` is an isomorphism of the monadic
-structures. -/
-def monadicStructureEquiv (e : M ≃ N) (h : ∀ i x, Q i (e x) ↔ P i x) :
-    @Language.Equiv (Language.monadic ι) M N (monadicStructure M P) (monadicStructure N Q) :=
-  @Language.Equiv.mk _ M N (monadicStructure M P) (monadicStructure N Q) e
-    (fun f => isEmptyElim f) (fun | .pred i => fun x => h i (x 0))
-
-end monadicStructure
 
 variable {L} {n : ℕ} {v : Fin n → M} {w : Fin n → N}
 
@@ -293,19 +250,19 @@ theorem foDefinable_iff_exists_min_encard_eq [L.IsMonadic] [Finite L.Symbols]
 /-- Monadic structures `(M, P)` and `(N, Q)` are `t`-equivalent iff each cell of the predicates'
 partition has equal size or at least `t` in both ([peters-westerstahl-2006] Theorem 13 with
 condition (13.7), first-order case). -/
-theorem elementarilyEquivalentUpTo_monadicStructure_iff {ι : Type v} [Finite ι]
+theorem elementarilyEquivalentUpTo_monadic_structure_iff {ι : Type v} [Finite ι]
     {P : ι → M → Prop} {Q : ι → N → Prop} {t : ℕ} :
-    @ElementarilyEquivalentUpTo _ t M N (monadicStructure M P) (monadicStructure N Q) ↔
+    @ElementarilyEquivalentUpTo _ t M N (monadic.structure P) (monadic.structure Q) ↔
       ∀ S : ι → Prop, min (t : ℕ∞) {x | ∀ i, P i x ↔ S i}.encard =
         min (t : ℕ∞) {y | ∀ i, Q i y ↔ S i}.encard := by
   have hM (S : (Language.monadic ι).Relations 1 → Prop) :
-      @unaryType _ M (monadicStructure M P) ⁻¹' {S} = {x | ∀ i, P i x ↔ S (.pred i)} :=
-    Set.ext fun x => unaryType_monadicStructure_eq_iff x S
+      @unaryType _ M (monadic.structure P) ⁻¹' {S} = {x | ∀ i, P i x ↔ S (.pred i)} :=
+    Set.ext fun x => unaryType_monadic_structure_eq_iff x S
   have hN (S : (Language.monadic ι).Relations 1 → Prop) :
-      @unaryType _ N (monadicStructure N Q) ⁻¹' {S} = {y | ∀ i, Q i y ↔ S (.pred i)} :=
-    Set.ext fun y => unaryType_monadicStructure_eq_iff y S
-  refine (@elementarilyEquivalentUpTo_iff_min_encard_eq _ M N (monadicStructure M P)
-    (monadicStructure N Q) _ _ t).trans ⟨fun h S => ?_, fun h S => ?_⟩
+      @unaryType _ N (monadic.structure Q) ⁻¹' {S} = {y | ∀ i, Q i y ↔ S (.pred i)} :=
+    Set.ext fun y => unaryType_monadic_structure_eq_iff y S
+  refine (@elementarilyEquivalentUpTo_iff_min_encard_eq _ M N (monadic.structure P)
+    (monadic.structure Q) _ _ t).trans ⟨fun h S => ?_, fun h S => ?_⟩
   · simpa only [hM, hN] using h fun | .pred i => S i
   · simpa only [hM, hN] using h fun i => S (.pred i)
 

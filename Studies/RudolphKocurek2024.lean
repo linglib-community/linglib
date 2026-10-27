@@ -1145,10 +1145,11 @@ inductive Pred | linguist | philosopher
   deriving DecidableEq, Repr, Fintype
 
 /-- *Ann is a linguist*. -/
-abbrev La : ComparativeFormula (Language.monadic Pred) Entity := .matom Pred.linguist .ann
+abbrev La : ComparativeFormula (Language.monadic Pred) Entity := .matom (.pred Pred.linguist) .ann
 
 /-- *Ann is a philosopher*. -/
-abbrev Pa : ComparativeFormula (Language.monadic Pred) Entity := .matom Pred.philosopher .ann
+abbrev Pa : ComparativeFormula (Language.monadic Pred) Entity :=
+  .matom (.pred Pred.philosopher) .ann
 
 /-- Ann is a philosopher at `i0`, a linguist at `i1`, both at `i2`. -/
 @[instance_reducible] def both : I3 → W → (Language.monadic Pred).Structure Entity :=
@@ -1231,10 +1232,10 @@ inductive Pred1 | tall
   deriving DecidableEq, Repr, Fintype
 
 /-- *Ann is tall*. -/
-abbrev Ta : ComparativeFormula (Language.monadic Pred1) Entity2 := .matom Pred1.tall .ann
+abbrev Ta : ComparativeFormula (Language.monadic Pred1) Entity2 := .matom (.pred Pred1.tall) .ann
 
 /-- *Ben is tall*. -/
-abbrev Tb : ComparativeFormula (Language.monadic Pred1) Entity2 := .matom Pred1.tall .ben
+abbrev Tb : ComparativeFormula (Language.monadic Pred1) Entity2 := .matom (.pred Pred1.tall) .ben
 
 /-- The nested extensions of *tall* have nobody at `i0`, Ann at `i1` and both at `i2`. -/
 @[instance_reducible] def nested : I3 → W → (Language.monadic Pred1).Structure Entity2 :=
@@ -1243,7 +1244,7 @@ abbrev Tb : ComparativeFormula (Language.monadic Pred1) Entity2 := .matom Pred1.
     | .i1 => {.ann}
     | .i2 => {.ann, .ben}
 
-theorem noReversal_nested : NoReversal nested ord₃ Pred1.tall .w0 .ben .ann := by decide
+theorem noReversal_nested : NoReversal nested ord₃ (.pred Pred1.tall) .w0 .ben .ann := by decide
 
 theorem ann_taller_nested :
     Eval nested (.comp Ta Tb) ord₃ .i1 .w0 ∧ ∀ i : I3, ¬ Eval nested (.comp Tb Ta) ord₃ i .w0 := by
@@ -1257,12 +1258,12 @@ theorem ann_taller_nested :
     | .i2 => {.ann, .ben}
 
 theorem diverge_without_noReversal :
-    ¬ NoReversal reversing ord₃ Pred1.tall .w0 .ben .ann ∧
+    ¬ NoReversal reversing ord₃ (.pred Pred1.tall) .w0 .ben .ann ∧
     ¬ Eval reversing (.comp Ta Tb) ord₃ .i2 .w0 ∧
-    (interpretationDelineation reversing ord₃ Pred1.tall .w0 .i2).Comparative
+    (interpretationDelineation reversing ord₃ (.pred Pred1.tall) .w0 .i2).Comparative
       .ann .ben :=
   ⟨by decide, by decide,
-    (delineation_comparative_iff reversing ord₃ Pred1.tall .w0 .i2 .ann .ben).mpr
+    (delineation_comparative_iff reversing ord₃ (.pred Pred1.tall) .w0 .i2 .ann .ben).mpr
       ⟨.i0, by decide, by decide, by decide⟩⟩
 
 /-! ### Equative transitivity -/
@@ -1295,9 +1296,12 @@ philosopher at `j`, a linguist and a psychologist at `k`, and a philosopher and 
     | _, _ => ∅
 
 /-- *Ann is a linguist*, *a philosopher*, *a psychologist*. -/
-abbrev La₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.linguist .ann
-abbrev Pa₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.philosopher .ann
-abbrev Ca₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.psychologist .ann
+abbrev La₄ : ComparativeFormula (Language.monadic Pred3) Entity :=
+  .matom (.pred Pred3.linguist) .ann
+abbrev Pa₄ : ComparativeFormula (Language.monadic Pred3) Entity :=
+  .matom (.pred Pred3.philosopher) .ann
+abbrev Ca₄ : ComparativeFormula (Language.monadic Pred3) Entity :=
+  .matom (.pred Pred3.psychologist) .ann
 
 /-- The basic equative is not transitive, as Ann's case at the top of Figure 1 shows. -/
 theorem equi_not_trans :

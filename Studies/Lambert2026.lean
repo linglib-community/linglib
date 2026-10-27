@@ -492,17 +492,17 @@ theorem luganda_isPiecewiseTestable : luganda.IsPiecewiseTestable 3 :=
       (isPiecewiseTestable_shuffleIdeal (by decide)))
 
 /-- A tone as a timing unit's association state, low read as unspecified (§5.1). -/
-def Tone.toTBU : Tone → _root_.Tone.TBU
+def Tone.toAssociationState : Tone → _root_.Tone.AssociationState
   | .high => .H
   | .low => .O
 
 theorem plateauing_iff_mem_range_utp (w : List Tone) :
     w ∉ shuffleIdeal [.high, .low, .high] ↔
-      w.map Tone.toTBU ∈ Set.range _root_.Tone.utp.map := by
-  have hinj : Function.Injective Tone.toTBU := fun a b h ↦ by
+      w.map Tone.toAssociationState ∈ Set.range _root_.Tone.utp.map := by
+  have hinj : Function.Injective Tone.toAssociationState := fun a b h ↦ by
     cases a <;> cases b <;> first | rfl | cases h
   rw [_root_.Tone.utp.mem_range_map_iff, not_iff_not]
-  refine ⟨fun h ↦ h.map Tone.toTBU, fun h ↦ ?_⟩
+  refine ⟨fun h ↦ h.map Tone.toAssociationState, fun h ↦ ?_⟩
   obtain ⟨l, hl, he⟩ := sublist_map_iff.mp h
   rwa [show l = [.high, .low, .high] from (map_injective_iff.mpr hinj) he.symm] at hl
 
