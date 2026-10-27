@@ -53,5 +53,5 @@ structure Particle where
   position : Option Particle.Position := none
   /-- The recorded occurrence of the particle in each cell; `none` where the source records
       nothing. -/
-  distribution : Clause.Distribution := fun _ _ ↦ none
+  distribution : Clause.Distribution := .empty
   deriving DecidableEq

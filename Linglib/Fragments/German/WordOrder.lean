@@ -38,28 +38,36 @@ namespace German
 
 open Clause
 
+/-- With *dass* the complement of a bridge verb is not verb second,
+*\*Sie sagte, daß sie würde kommen*. -/
+def verbSecondWithComplementizer : Distribution
+  | .declarative, .quasiSubordinated => some .excluded  -- W (17a); V (13b), (52b)
+  | _, _ => none
+
+/-- Without *dass* the complement of a bridge verb must be verb second,
+*Sie sagte, sie würde kommen* against *\*Sie sagte, sie kommen würde*. -/
+def verbSecondWithoutComplementizer : Distribution
+  | .declarative, .quasiSubordinated => some .obligatory  -- W (17b); V (52)
+  | _, _ => none
+
 /-- German requires verb second in the three root clause types and allows it in the complement
-of a bridge verb; it excludes it in exclamatives, imperatives, embedded questions, other
-subordinate declaratives, and a subordinate form used as a root utterance. -/
+of a bridge verb, combining the cases with and without *dass*; it excludes it in exclamatives,
+imperatives, embedded questions, other subordinate declaratives, and a subordinate form used as a
+root utterance. -/
 def verbSecond : Distribution
   | .declarative, .matrix => some .obligatory
   | .polar, .matrix => some .obligatory
   | .constituent, .matrix => some .obligatory
   | .exclamative, .matrix => some .excluded
   | .imperative, .matrix => some .excluded
-  | .declarative, .quasiSubordinated => some .optional  -- V (13b), (14b), list (17); W (17)
+  | t, .quasiSubordinated =>  -- V list (17)
+    verbSecondWithComplementizer.union verbSecondWithoutComplementizer t .quasiSubordinated
   | .declarative, .subordinated => some .excluded  -- V (15b), (16b), list (18)
   | .polar, .subordinated => some .excluded  -- V p. 84
   | .constituent, .subordinated => some .excluded  -- V p. 84
   | .declarative, .insubordinated => some .excluded
   | .polar, .insubordinated => some .excluded
   | .constituent, .insubordinated => some .excluded
-  | _, _ => none
-
-/-- Without *dass* the complement of a bridge verb must be verb second,
-*Sie sagte, sie würde kommen* against **Sie sagte, sie kommen würde*. -/
-def verbSecondWithoutComplementizer : Distribution
-  | .declarative, .quasiSubordinated => some .obligatory  -- W (17b); V (52)
   | _, _ => none
 
 end German
