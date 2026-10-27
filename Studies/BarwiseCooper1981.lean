@@ -761,7 +761,7 @@ theorem no_tree_means_most {C X : Type}
     (words : X → Option (Σ ty, FirstOrderConstant (Language.monadic (Fin 2)) ty)) :
     ¬ ∃ t : PhraseStructure.Tree C X, ∀ (M : Type) [Fintype M] [Nonempty M]
       (S : (Language.monadic (Fin 2)).Structure M) (g : Assignment M),
-        Tree.HoldsAt ((Model.ofStructure M S).lexicon words ()) g (fun _ ↦ ()) t ↔
+        Tree.HoldsAt ((Model.ofStructure M S).lexicon words ()) g t ↔
           Quantifier.GQ.most (fun x ↦ S.RelMap (.pred 1) ![x])
             (fun x ↦ S.RelMap (.pred 0) ![x]) := by
   rintro ⟨t, ht⟩
@@ -781,9 +781,8 @@ theorem no_tree_means_most {C X : Type}
   have key (a : M) := Term.realizes_readback (m.interp ()) (default : Empty → M)
     (FirstOrderConstant.realizes_readback m () default) u (n := 1)
     (ρ := fun _ ↦ Language.Term.var (.inr 0)) (xs := Fin.snoc default a) (g := fun _ ↦ a)
-    (fun _ ↦ ()) (fun _ ↦ rfl) 1 le_rfl (Fin.snoc default a) rfl
-  have hold (a : M) :=
-    (Tree.holdsAt_iff_eval m () hu (fun _ ↦ a) fun _ ↦ ()).symm.trans (ht M S fun _ ↦ a)
+    default (fun _ ↦ rfl) 1 le_rfl (Fin.snoc default a) rfl
+  have hold (a : M) := (Tree.holdsAt_iff_eval m () hu fun _ ↦ a).symm.trans (ht M S fun _ ↦ a)
   refine BoundedFormula.realize_all.trans ⟨fun h ↦ ?_, fun h a ↦ (key a).2 ((hold a).2 h)⟩
   exact (hold (Classical.arbitrary M)).1 ((key _).1 (h _))
 

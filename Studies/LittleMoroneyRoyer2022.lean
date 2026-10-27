@@ -102,33 +102,31 @@ def cholTree : Tree Unit String := .bin cholNumClf (.leaf "ts'i'")
 
 /-- The Ch'ol root is the noun measure-modified by the atom count to two ((51)). -/
 theorem cholTree_interp :
-    cholTree.interp (cholLex dog) g default = some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 2⟩ :=
+    cholTree.interp (cholLex dog) g = some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 2⟩ :=
   rfl
 
 /-- Numeral and classifier compose without a noun, into a measure phrase that restricts any
 predicate to its pluralities of two atoms ((45)–(46), Prediction 4). -/
 theorem chol_numClf_composes :
-    cholNumClf.interp (cholLex dog) g default =
+    cholNumClf.interp (cholLex dog) g =
       some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, fun P ↦ QMOD P Finset.card 2⟩ :=
   rfl
 
 /-- The classifier, a measure of type `⟨e,n⟩`, cannot compose with the noun
 without the numeral ((43a)). -/
 theorem chol_clfNoun_fails :
-    Tree.interp (cholLex dog) g default
-      (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) = none :=
+    Tree.interp (cholLex dog) g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) = none :=
   rfl
 
 /-- *ocho* composes with the noun directly ((33), Prediction 1). -/
 theorem chol_ocho_composes :
-    Tree.interp (cholLex dog) g default (.bin (.leaf "ocho") (.leaf "ts'i'")) =
+    Tree.interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
       some ⟨.e ⇒ .t, QMOD (dogs dog) Finset.card 8⟩ :=
   rfl
 
 /-- *ocho* rejects the classifier ((34), Prediction 1). -/
 theorem chol_ocho_clf_fails :
-    Tree.interp (cholLex dog) g default
-      (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) = none :=
+    Tree.interp (cholLex dog) g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) = none :=
   rfl
 
 /-! ### Shan: classifier-for-noun -/
@@ -152,20 +150,19 @@ def shanTree : Tree Unit String := .bin (.leaf "sɔ̌ŋ") shanClfNoun
 
 /-- The Shan root is the partition numeral over the atomized noun ((52)). -/
 theorem shanTree_interp :
-    shanTree.interp (shanLex dog) g default = some ⟨.e ⇒ .t, cardMod 2 (atomize (dogs dog))⟩ :=
+    shanTree.interp (shanLex dog) g = some ⟨.e ⇒ .t, cardMod 2 (atomize (dogs dog))⟩ :=
   rfl
 
 /-- Classifier and noun compose without a numeral, yielding the atoms
 ((42), Prediction 3). -/
 theorem shan_clfNoun_composes :
-    shanClfNoun.interp (shanLex dog) g default = some ⟨.e ⇒ .t, atomize (dogs dog)⟩ :=
+    shanClfNoun.interp (shanLex dog) g = some ⟨.e ⇒ .t, atomize (dogs dog)⟩ :=
   rfl
 
 /-- Numeral and classifier, both `⟨⟨e,t⟩,⟨e,t⟩⟩`, do not compose without the
 noun ((48)–(49)). -/
 theorem shan_numClf_fails :
-    Tree.interp (shanLex dog) g default
-      (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.«to».form)) = none :=
+    Tree.interp (shanLex dog) g (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.«to».form)) = none :=
   rfl
 
 /-! ### One denotation for *two dogs* -/

@@ -215,10 +215,10 @@ variable (P : W → D →. Prop) (R : D → W → Prop) (w : W) (g : Assignment 
 
 open Classical in
 -- (67)
-theorem interpPartial_clause : interpPartial (lexicon P R w) g default (clause d) =
+theorem interpPartial_clause : interpPartial (lexicon P R w) g (clause d) =
     some ⟨.t, (if R d w then P w d else Part.some False).map Not⟩ := by
   classical
-  have : interpPartial (lexicon P R w) g default (clause d) =
+  have : interpPartial (lexicon P R w) g (clause d) =
       some ⟨.t, (if R d w then P w d else Part.some False).bind fun p ↦ Part.some (¬ p)⟩ := by
     simp only [clause, vp, interpPartial_node_binary, interpPartial_terminal, interpPartial_bind,
       interpPartial_trace, lexicon, Option.bind_some, Option.map_some, Mode.combine?_fn_left,
@@ -238,9 +238,9 @@ theorem ofPart_clause :
 /-- The clause fails exactly where the enrichment holds and the predicate is undefined ((68),
 (70)). -/
 theorem presupFailure_clause :
-    PresupFailure (lexicon P R w) g default (clause d) ↔ R d w ∧ ¬ (P w d).Dom := by
+    PresupFailure (lexicon P R w) g (clause d) ↔ R d w ∧ ¬ (P w d).Dom := by
   classical
-  rw [presupFailure_iff_ofPart_eq_zero _ _ _ (interpPartial_clause P R w g d), ofPart_clause]
+  rw [presupFailure_iff_ofPart_eq_zero _ _ (interpPartial_clause P R w g d), ofPart_clause]
   simp [and_comm]
 
 /-- With an enrichment trivial at `Y` and entailing the presupposition at `X`, the clause shared
@@ -248,13 +248,13 @@ by the antecedent and the elided clause fails at `Y` exactly where the presuppos
 never fails at `X` ((66)–(70)). -/
 theorem clause_projects_and_accommodates {X Y : D} (hY : ∀ w, R Y w)
     (hX : ∀ w, R X w → (P w X).Dom) :
-    (PresupFailure (lexicon P R w) g default (clause Y) ↔ ¬ (P w Y).Dom) ∧
-      ¬ PresupFailure (lexicon P R w) g default (clause X) := by
+    (PresupFailure (lexicon P R w) g (clause Y) ↔ ¬ (P w Y).Dom) ∧
+      ¬ PresupFailure (lexicon P R w) g (clause X) := by
   simp only [presupFailure_clause]
   exact ⟨and_iff_right (hY w), fun h ↦ h.2 (hX w h.1)⟩
 
 theorem presupFailure_clause_iff_mem_gapExt [DecidablePred (R d)] :
-    PresupFailure (lexicon P R w) g default (clause d) ↔
+    PresupFailure (lexicon P R w) g (clause d) ↔
       w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ ofPart (P w d) := by
   rw [presupFailure_clause, gapExt_ofProp_inf, Set.mem_inter_iff, mem_gapExt,
     ofPart_eq_zero_iff, Set.mem_ofPred_eq]
