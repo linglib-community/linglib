@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Data.Examples.BrananErlewine2023
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Tree.Basic
 

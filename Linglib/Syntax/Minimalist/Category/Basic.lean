@@ -28,45 +28,74 @@ namespace Minimalist
 /-- The categorial features, the head categories of the clausal spine and the nominal and
     adpositional extended projections. -/
 inductive Cat where
-  | V     -- verb
-  | N     -- noun
-  | A     -- adjective
-  | P     -- preposition
-  | D     -- determiner
-  | T     -- tense
-  | C     -- complementizer
-  | v     -- little v: the verbal categorizer, or the light verb above the root
-  | n     -- nominal categorizer / gender (little-n, [marantz-2001]; Distributed Morphology)
-  | a     -- adjectival categorizer (little-a, [panagiotidis-2015]; DegP complement)
-  | Place -- locational head ([dendikken-2010]; PlaceP, F1 in adpositional EP)
-  | Path  -- directional head ([dendikken-2010] [svenonius-2010]; PathP, F2 in adpositional EP)
-  | Num   -- number ([ritter-1991]; NumP between nP and QP/DP)
-  | Dem   -- demonstrative ([cinque-2005]; DemP above NumP in the nominal extended projection)
-  | Q     -- quantity / classifier ([borer-2005]; QP between NumP and DP)
-  | Voice -- Voice head ([kratzer-1996]; [schaefer-2008])
-  | Appl  -- Applicative head ([pylkkanen-2008]; [cuervo-2003])
-  | Foc   -- focus ([rizzi-1997] split-CP; hosts [FoC] feature, triggers A-bar movement)
-  | Top   -- topic ([rizzi-1997] split-CP; hosts [G]/givenness, topic fronting)
-  | Fin   -- finiteness ([rizzi-1997] split-CP; allocutive probe in Magahi/Galician)
-  | SA    -- speech act head ([speas-tenny-2003]; hosts speaker/addressee)
+  /-- The verb. -/
+  | V
+  /-- The noun. -/
+  | N
+  /-- The adjective. -/
+  | A
+  /-- The adposition. -/
+  | P
+  /-- The determiner. -/
+  | D
+  /-- Tense. -/
+  | T
+  /-- The complementizer. -/
+  | C
+  /-- Little v, the verbal categorizer or the light verb above the root. -/
+  | v
+  /-- Little n, the nominal categorizer ([marantz-2001]), also the head that bears gender. -/
+  | n
+  /-- Little a, the adjectival categorizer ([panagiotidis-2015]). -/
+  | a
+  /-- The locational head of the adposition ([dendikken-2010]). -/
+  | Place
+  /-- The directional head of the adposition, above Place ([dendikken-2010], [svenonius-2010]). -/
+  | Path
+  /-- Number ([ritter-1991]), Borer's counting head, above the dividing head `Q`
+  ([borer-2005]). -/
+  | Num
+  /-- The demonstrative, above number ([cinque-2005]). -/
+  | Dem
+  /-- Borer's dividing head, the classifier position, between little n and `Num`
+  ([borer-2005]). -/
+  | Q
+  /-- Voice, which introduces the external argument ([kratzer-1996], [schaefer-2008]). -/
+  | Voice
+  /-- The applicative head ([pylkkanen-2008], [cuervo-2003]). -/
+  | Appl
+  /-- Focus, in Rizzi's split complementizer system ([rizzi-1997]). -/
+  | Foc
+  /-- Topic, in Rizzi's split complementizer system ([rizzi-1997]). -/
+  | Top
+  /-- Finiteness, the lowest head of Rizzi's split complementizer system ([rizzi-1997]). -/
+  | Fin
+  /-- The speech-act head, which hosts the speaker and the addressee ([speas-tenny-2003]). -/
+  | SA
   /-- The say/assertion layer ([major-2021], [krifka-2023], [moulton-2009]), embedding the
-      content of a verbal or representational sign. Unlike the root illocutionary layer `SA`, it
-      is clause-internal, in the embedded left periphery with Say > Foc > T, and requires no CP
-      ([kiss-2023], [egressy-2026]). -/
+  content of a verbal or representational sign. Unlike the root illocutionary layer `SA`, it is
+  clause-internal, in the embedded left periphery with Say > Foc > T, and requires no CP
+  ([kiss-2023], [egressy-2026]). -/
   | Say
-  | Force -- force ([rizzi-1997] split-CP; clause-typing [decl]/[interrog])
-  | Neg   -- negation ([pollock-1989]; [zanuttini-1997]; hosts [±neg])
-  | Mod   -- modality ([cinque-1999]; modal auxiliaries)
-  | Rel   -- relative (cartographic left periphery, [rizzi-1997])
-  | Pol   -- polarity ([laka-1990]; ΣP for affirmation/negation)
-  | Asp   -- outer aspect ([cinque-1999]; above Voice, inflectional)
+  /-- Force, the clause-typing head at the top of Rizzi's split complementizer system
+  ([rizzi-1997]). -/
+  | Force
+  /-- Negation ([pollock-1989], [zanuttini-1997]). -/
+  | Neg
+  /-- Modality ([cinque-1999]). -/
+  | Mod
+  /-- Polarity, Laka's Σ, for affirmation and negation ([laka-1990]). -/
+  | Pol
+  /-- Outer aspect, inflectional and above Voice ([cinque-1999]). -/
+  | Asp
   /-- Inner aspect ([travis-2010]): Aktionsart in the v shell, below Voice. -/
   | InnerAsp
-  | Evid  -- evidential mood ([cinque-1999]; inflectional)
+  /-- Evidential mood, inflectional ([cinque-1999]). -/
+  | Evid
   /-- Mood ([cinque-1999]): the speech-act, evaluative and irrealis moods, inflectional. -/
   | Mood
   /-- The nominalizer ([keine-2020]): the Hindi nominalized clause, a clause type distinct from
-      CP. -/
+  CP. -/
   | Nmlz
   /-- The inherent-case shell ([newman-2024]): KP wraps DP for oblique or inherent case. -/
   | K

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Mathlib.Tactic.DeriveFintype
 
@@ -22,8 +22,8 @@ form the interval `Set.Ioc a b` (`Set.Iic_sdiff_Iic`). A later proposal that add
 Cinque's refines the order: its hierarchy receives an order embedding of `Cartography.Head`, and a
 head it places immediately above or below one of Cinque's covers it or is covered by it. The
 categorial features of `Minimalist.Cat` coarsen the order: `Cartography.Head.cat` sends each head
-to its category, and a higher head's category is at least as high in the functional sequence,
-so each level of the sequence is an interval of the hierarchy. Cinque's own kinds of head are not:
+to its category, and a higher head's category has at least as high an F-value in the verbal
+extended projection, so each F-value is taken by an interval of the hierarchy. Cinque's own kinds of head are not:
 moods, modalities, tenses and aspects interleave.
 
 ## Main definitions

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Borer2013
-public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category.ExtendedProjection
 public import Studies.Embick2010
 
 /-!
