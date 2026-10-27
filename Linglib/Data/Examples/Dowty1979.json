@@ -1,0 +1,77 @@
+[
+  {
+    "id": "dowty1979_coin_heads",
+    "source": {
+      "bibkey": "dowty-1979",
+      "paperLabel": "p. 147"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The coin is coming up heads.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "(24) requires that The coin is coming up heads and The coin is coming up tails should both be true, but this is a counterintuitive result (p. 147); the relevant worlds include both outcomes, so neither counts as true (p. 148).",
+    "verified": "page-image"
+  },
+  {
+    "id": "dowty1979_coin_tails",
+    "source": {
+      "bibkey": "dowty-1979",
+      "paperLabel": "p. 147"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The coin is coming up tails.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A coin is being flipped but has not yet landed, and nothing else about the situation predetermines how it will land.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "As for heads (pp. 147-148).",
+    "verified": "page-image"
+  },
+  {
+    "id": "dowty1979_ex28",
+    "source": {
+      "bibkey": "dowty-1979",
+      "paperLabel": "(28)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John was watching television when he fell asleep.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John fell asleep while watching television, so his watching did not extend beyond the time he fell asleep.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "(28) clearly does not require us to suppose that the period of John's watching television extended beyond the time of his falling asleep, but Bennett and Partee's analysis would require that it did (p. 150).",
+    "verified": "page-image"
+  }
+]
