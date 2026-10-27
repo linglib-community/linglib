@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Sharvit2014
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Semantics.Tense.Allen
+public import Linglib.Core.Order.Interval.Allen
 public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Semantics.Tense.RunTimes
 public import Studies.Sharvit2003

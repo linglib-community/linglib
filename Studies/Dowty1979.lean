@@ -31,6 +31,8 @@ them.
 
 ## Implementation notes
 
+* Dowty's relation of an interval to a longer one, "`I ⊂ I'` and `I` is not a final subinterval for
+  `I'`", is `NonemptyInterval.NonfinalSubinterval` (`NonemptyInterval.nonfinalSubinterval_iff`).
 * Sentences are sets of intervals at each world, the interval properties the aspect operators of
   the event semantics produce. Time is a linear order; the scenarios use the natural numbers, where
   Dowty takes the reals.
@@ -77,32 +79,20 @@ variable {W T : Type*} [LinearOrder T]
 /-- A sentence is true at some intervals of each world. -/
 abbrev Sentence (W T : Type*) [LE T] := W → Set (NonemptyInterval T)
 
-/-- `I'` extends `I` into the future (p. 145): `I` is a proper subinterval of `I'` and not a
-final subinterval of it. -/
-def Extends (I I' : NonemptyInterval T) : Prop := I < I' ∧ ¬ I.FinalSubinterval I'
-
-theorem extends_iff {I I' : NonemptyInterval T} : Extends I I' ↔ I ≤ I' ∧ I.snd < I'.snd := by
-  rw [Extends, lt_iff_le_and_ne, NonemptyInterval.FinalSubinterval]
-  constructor
-  · rintro ⟨⟨hle, -⟩, hfin⟩
-    exact ⟨hle, (NonemptyInterval.le_def.1 hle).2.lt_of_ne fun h ↦ hfin ⟨hle, h⟩⟩
-  · rintro ⟨hle, hlt⟩
-    exact ⟨⟨hle, fun h ↦ hlt.ne (h ▸ rfl)⟩, fun h ↦ hlt.ne h.2⟩
-
 /-- Bennett and Partee's progressive (p. 145): some longer interval of the sentence's truth extends
 the interval into the future. -/
 def bennettPartee (φ : Sentence W T) : Sentence W T :=
-  fun w ↦ {I | ∃ I', Extends I I' ∧ I' ∈ φ w}
+  fun w ↦ {I | ∃ I', I.NonfinalSubinterval I' ∧ I' ∈ φ w}
 
 /-- The progressive (24): the sentence is true at a longer interval of some world exactly like the
 actual one up to the interval. -/
 def possibleProg (history : HistoricalAlternatives W T) (φ : Sentence W T) : Sentence W T :=
-  fun w ↦ {I | ∃ I', Extends I I' ∧ ∃ w' ∈ history.metaphysicalBase w I.snd, I' ∈ φ w'}
+  fun w ↦ {I | ∃ I', I.NonfinalSubinterval I' ∧ ∃ w' ∈ history.metaphysicalBase w I.snd, I' ∈ φ w'}
 
 /-- The progressive (25): some longer interval is one of the sentence's truth in every inertia
 world for the world and the interval. -/
 def prog (inertia : W → NonemptyInterval T → Set W) (φ : Sentence W T) : Sentence W T :=
-  fun w ↦ {I | ∃ I', Extends I I' ∧ ∀ w' ∈ inertia w I, I' ∈ φ w'}
+  fun w ↦ {I | ∃ I', I.NonfinalSubinterval I' ∧ ∀ w' ∈ inertia w I, I' ∈ φ w'}
 
 /-- The branching-time progressive (p. 152), histories read as worlds: in each inertia world some
 interval of which the interval is a proper subinterval is one of the sentence's truth. -/
@@ -124,7 +114,7 @@ theorem exists_mem_of_mem_bennettPartee (h : I ∈ bennettPartee φ w) : ∃ I',
 
 theorem prog_subset_branchingProg (inertia : W → NonemptyInterval T → Set W) :
     prog inertia φ w ⊆ branchingProg inertia φ w :=
-  fun _ ⟨I', hI', h⟩ w' hw' ↦ ⟨I', hI'.1, h w' hw'⟩
+  fun _ ⟨I', hI', h⟩ w' hw' ↦ ⟨I', hI'.lt, h w' hw'⟩
 
 /-- An activity true at an interval is true at its subintervals larger than a moment (Taylor's
 (57), p. 166). When the inertia worlds are exactly like the actual one up to an interval larger
@@ -138,7 +128,7 @@ theorem mem_of_mem_prog {history : HistoricalAlternatives W T}
     (hne : (inertia w I).Nonempty) (hI : ¬ I.IsPoint) (h : I ∈ prog inertia φ w) : I ∈ φ w :=
   let ⟨v, hv⟩ := hne
   let ⟨_, hI', hall⟩ := h
-  (hagree v (hInr w I hv)).1 (hsub v I _ (extends_iff.1 hI').1 hI (hall v hv))
+  (hagree v (hInr w I hv)).1 (hsub v I _ hI'.1 hI (hall v hv))
 
 end Defs
 
@@ -153,9 +143,9 @@ def iv (a b : ℕ) (h : a ≤ b := by decide) : NonemptyInterval ℕ := ⟨(a, b
 
 @[simp] theorem iv_snd (a b : ℕ) (h : a ≤ b) : (iv a b h).snd = b := rfl
 
-theorem extends_iv {a b c d : ℕ} (h₁ : a ≤ b) (h₂ : c ≤ d) (hca : c ≤ a) (hbd : b < d) :
-    Extends (iv a b h₁) (iv c d h₂) :=
-  extends_iff.2 ⟨NonemptyInterval.le_def.2 ⟨hca, hbd.le⟩, hbd⟩
+theorem nonfinalSubinterval_iv {a b c d : ℕ} (h₁ : a ≤ b) (h₂ : c ≤ d) (hca : c ≤ a)
+    (hbd : b < d) : (iv a b h₁).NonfinalSubinterval (iv c d h₂) :=
+  ⟨NonemptyInterval.le_def.2 ⟨hca, hbd.le⟩, hbd⟩
 
 /-- Worlds alike up to time `0` and different afterwards. -/
 def splitAfterZero : HistoricalAlternatives Bool ℕ :=
@@ -173,7 +163,7 @@ def heads : Sentence Bool ℕ := fun w ↦ {I | w = true ∧ I = iv 0 1}
 def tails : Sentence Bool ℕ := fun w ↦ {I | w = false ∧ I = iv 0 1}
 
 theorem possibleProg_heads (w : Bool) : iv 0 0 ∈ possibleProg splitAfterZero heads w :=
-  ⟨iv 0 1, extends_iv _ _ le_rfl (by decide), true,
+  ⟨iv 0 1, nonfinalSubinterval_iv _ _ le_rfl (by decide), true,
     by simp [HistoricalAlternatives.metaphysicalBase, splitAfterZero], rfl, rfl⟩
 
 theorem not_prog_heads (w : Bool) : iv 0 0 ∉ prog (fun _ _ ↦ Set.univ) heads w :=
@@ -196,10 +186,10 @@ def splitAfterOne : HistoricalAlternatives Bool ℕ :=
   fun i ↦ if i.2 ≤ 1 then Set.univ else {i.1}
 
 theorem not_bennettPartee_watch : iv 1 1 ∉ bennettPartee watch true :=
-  fun ⟨_, hI', h⟩ ↦ absurd ((extends_iff.1 hI').2.trans_le h) (by simp)
+  fun ⟨_, hI', h⟩ ↦ absurd (hI'.2.trans_le h) (by simp)
 
 theorem possibleProg_watch : iv 1 1 ∈ possibleProg splitAfterOne watch true :=
-  ⟨iv 0 3, extends_iv _ _ (by decide) (by decide), false, by
+  ⟨iv 0 3, nonfinalSubinterval_iv _ _ (by decide) (by decide), false, by
     simp [HistoricalAlternatives.metaphysicalBase, splitAfterOne], by simp [watch]⟩
 
 /-! #### A circle completed at different times
@@ -217,8 +207,8 @@ theorem not_branchingProg_subset_prog :
   intro h
   have hb : iv 0 0 ∈ branchingProg (fun _ _ ↦ Set.univ) drawCircle true := by
     rintro (_ | _) -
-    · exact ⟨iv 0 2, (extends_iv _ _ le_rfl (by decide)).1, rfl⟩
-    · exact ⟨iv 0 1, (extends_iv _ _ le_rfl (by decide)).1, rfl⟩
+    · exact ⟨iv 0 2, (nonfinalSubinterval_iv _ _ le_rfl (by decide)).lt, rfl⟩
+    · exact ⟨iv 0 1, (nonfinalSubinterval_iv _ _ le_rfl (by decide)).lt, rfl⟩
   obtain ⟨I', -, hall⟩ := h hb
   have h1 : I' = iv 0 1 := hall true trivial
   have h2 : I' = iv 0 2 := hall false trivial
@@ -233,8 +223,8 @@ def waltz : Sentence Unit ℕ := fun _ ↦ {I | I.fst + 3 ≤ I.snd ∧ I.snd �
 
 theorem prog_waltz_not_past :
     iv 0 1 ∈ prog (fun w _ ↦ {w}) waltz () ∧ ∀ J, J.snd ≤ 1 → J ∉ waltz () := by
-  refine ⟨⟨iv 0 3, extends_iv _ _ (by decide) (by decide), fun _ _ ↦ ⟨le_rfl, by decide⟩⟩,
-    fun J hJ h ↦ ?_⟩
+  refine ⟨⟨iv 0 3, nonfinalSubinterval_iv _ _ (by decide) (by decide),
+    fun _ _ ↦ ⟨le_rfl, by decide⟩⟩, fun J hJ h ↦ ?_⟩
   have := h.1
   omega
 
