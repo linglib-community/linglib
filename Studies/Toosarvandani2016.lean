@@ -45,7 +45,7 @@ open scoped SetRel
 for the imperfective, whose meaning is the progressive's (35), (41), and around it for the
 perfective (36). -/
 def cell : Perfectivity → Finset Allen.Relation
-  | .imperfective => Allen.le \ Allen.finalSubinterval
+  | .imperfective => Allen.nonfinalSubinterval
   | .perfective => Aspect.ViewpointType.perfective.cell
 
 /-- The suffixes of a marked clause, the simultaneous *-na* and the sequential *-si*. -/
@@ -84,11 +84,7 @@ variable {T : Type*} [LinearOrder T] {t₁ t s : NonemptyInterval T}
 
 @[simp] theorem mem_cell_imperfective :
     (t, s) ∈ Allen.toSetRel (cell .imperfective) ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
-  simp only [cell, Allen.mem_toSetRel, Finset.mem_sdiff, Allen.relation_mem_le,
-    Allen.relation_mem_finalSubinterval, NonemptyInterval.FinalSubinterval,
-    NonemptyInterval.le_def]
-  exact ⟨fun ⟨⟨h₁, h₂⟩, h₃⟩ ↦ ⟨h₁, h₂.lt_of_ne fun h ↦ h₃ ⟨⟨h₁, h₂⟩, h⟩⟩,
-    fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₁, h₂.le⟩, fun h ↦ h₂.ne h.2⟩⟩
+  simp [cell, NonemptyInterval.NonfinalSubinterval]
 
 @[simp] theorem mem_cell_perfective :
     (t, s) ∈ Allen.toSetRel (cell .perfective) ↔ t.fst ≤ s.fst ∧ s.snd ≤ t.snd := by

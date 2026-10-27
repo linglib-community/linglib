@@ -11,7 +11,9 @@ This file defines the relations between two nonempty intervals of an ordered typ
 a null element. Two intervals overlap when neither lies strictly beyond the other, `i₁` precedes
 `i₂` when it ends strictly before `i₂` starts, and `IsBefore` lets the endpoints touch. `During`
 and `FinalSubinterval` refine containment, and `IsPoint` singles out the intervals with a single
-element. In a linear order two intervals overlap exactly when neither precedes the other.
+element. A nonfinal subinterval lies within an interval and ends before it, the subinterval into
+which a longer one extends into the future. In a linear order two intervals overlap exactly when
+neither precedes the other.
 
 Containment, the subinterval order and point intervals are mathlib's own (`t ∈ i`, `i₁ ≤ i₂`,
 `pure t`); `lt_def` unfolds strict containment to endpoints. On `Interval α`, where `≤` is
@@ -23,7 +25,8 @@ into `WithTop α`, and `Interval.Ici a` is the ray `[a, ⊤]`.
 
 * `NonemptyInterval.Overlaps`, `NonemptyInterval.Precedes`, `NonemptyInterval.IsBefore`: the
   order of two intervals.
-* `NonemptyInterval.During`, `NonemptyInterval.FinalSubinterval`: refinements of containment.
+* `NonemptyInterval.During`, `NonemptyInterval.FinalSubinterval`,
+  `NonemptyInterval.NonfinalSubinterval`: refinements of containment.
 * `Interval.Precedes`, `Interval.Ici`: pointwise precedence and rays on intervals with a null
   element.
 
@@ -98,12 +101,30 @@ def Precedes (i₁ i₂ : NonemptyInterval α) : Prop :=
 def During (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₂.fst < i₁.fst ∧ i₁.snd < i₂.snd
 
+/-- `i₁` is a nonfinal subinterval of `i₂` when it starts no earlier than `i₂` and ends strictly
+before it. -/
+def NonfinalSubinterval (i₁ i₂ : NonemptyInterval α) : Prop :=
+  i₂.fst ≤ i₁.fst ∧ i₁.snd < i₂.snd
+
 instance [DecidableLE α] : Decidable (i₁.Precedes i₂) :=
   decidable_of_iff' _ lt_iff_le_not_ge
 
 instance [DecidableLE α] : Decidable (i₁.During i₂) :=
   @instDecidableAnd _ _ (decidable_of_iff' _ lt_iff_le_not_ge)
     (decidable_of_iff' _ lt_iff_le_not_ge)
+
+instance [DecidableLE α] : Decidable (i₁.NonfinalSubinterval i₂) :=
+  @instDecidableAnd _ _ inferInstance (decidable_of_iff' _ lt_iff_le_not_ge)
+
+theorem NonfinalSubinterval.le (h : i₁.NonfinalSubinterval i₂) : i₁ ≤ i₂ :=
+  le_def.2 ⟨h.1, h.2.le⟩
+
+theorem NonfinalSubinterval.lt (h : i₁.NonfinalSubinterval i₂) : i₁ < i₂ :=
+  lt_iff_le_not_ge.2 ⟨h.le, fun h' ↦ (le_def.1 h').2.not_gt h.2⟩
+
+theorem NonfinalSubinterval.not_finalSubinterval (h : i₁.NonfinalSubinterval i₂) :
+    ¬ i₁.FinalSubinterval i₂ :=
+  fun h' ↦ h.2.ne h'.2
 
 theorem during_irrefl (i : NonemptyInterval α) : ¬ i.During i := fun h ↦ lt_irrefl _ h.1
 
@@ -143,6 +164,11 @@ variable {α : Type*} [LinearOrder α] {i₁ i₂ : NonemptyInterval α}
 theorem lt_def : i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁.snd < i₂.snd) := by
   rw [lt_iff_le_not_ge]
   exact and_congr_right' (by rw [le_def, not_and_or, not_le, not_le])
+
+/-- A nonfinal subinterval is a proper subinterval that is not final. -/
+theorem nonfinalSubinterval_iff : i₁.NonfinalSubinterval i₂ ↔ i₁ < i₂ ∧ ¬ i₁.FinalSubinterval i₂ :=
+  ⟨fun h ↦ ⟨h.lt, h.not_finalSubinterval⟩, fun ⟨hlt, hfin⟩ ↦
+    ⟨(le_def.1 hlt.le).1, (le_def.1 hlt.le).2.lt_of_ne fun h ↦ hfin ⟨hlt.le, h⟩⟩⟩
 
 theorem notMem_iff {a : α} {i : NonemptyInterval α} : a ∉ i ↔ a < i.fst ∨ i.snd < a := by
   rw [mem_def, not_and_or, not_le, not_le]

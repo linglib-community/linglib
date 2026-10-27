@@ -23,8 +23,8 @@ their converses and composites, and chains of cells.
 * `Allen.Relation`, `Allen.relation`, `Allen.atoms`: the relations and the realizable ones.
 * `Allen.toSetRel`, `Allen.inv`, `Allen.comp`: a cell as a relation, its converse and composite.
 * `Allen.precedes`, `Allen.isBefore`, `Allen.le`, `Allen.lt`, `Allen.overlaps`,
-  `Allen.startsWithin`, `Allen.finalSubinterval`, `Allen.eq`, `Allen.pure`, `Allen.ofPosition`:
-  named cells.
+  `Allen.startsWithin`, `Allen.finalSubinterval`, `Allen.nonfinalSubinterval`, `Allen.eq`,
+  `Allen.pure`, `Allen.ofPosition`: named cells.
 * `Allen.HoldsAlong`, `Allen.compAlong`: chains of cells and their composites.
 * `NonemptyInterval.position`: the position of two intervals.
 
@@ -296,6 +296,10 @@ def startsWithin : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt �
 @[irreducible]
 def finalSubinterval : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd = .eq
 
+/-- The first interval lies within the second and ends before it. -/
+@[irreducible]
+def nonfinalSubinterval : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd = .lt
+
 theorem comp_precedes_precedes : comp precedes precedes = precedes := by decide +kernel
 
 /-- The position of the first interval relative to the second: before it, after it, or
@@ -406,6 +410,11 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
   simp only [relation, ofEndpoints, NonemptyInterval.FinalSubinterval, NonemptyInterval.le_def,
     ne_eq, compare_eq_iff_eq, ← compare_ge_iff_ge (a := i.fst)]
   exact ⟨fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₁, h₂.le⟩, h₂⟩, fun ⟨⟨h₁, _⟩, h₂⟩ ↦ ⟨h₁, h₂⟩⟩
+
+@[simp] theorem relation_mem_nonfinalSubinterval :
+    relation i j ∈ nonfinalSubinterval ↔ i.NonfinalSubinterval j := by
+  rw [nonfinalSubinterval, relation_mem_filter]
+  simp [relation, ofEndpoints, NonemptyInterval.NonfinalSubinterval, compare_lt_iff_lt]
 
 @[simp] theorem relation_mem_ofPosition {C : Finset Ordering} :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by

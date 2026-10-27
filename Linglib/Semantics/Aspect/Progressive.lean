@@ -21,15 +21,14 @@ imperfective](##PROG_subset_IMPF), and the inference from progressive to perfect
 
 ## Main definitions
 
-* `Aspect.NonfinalPart`: an event includes another as a part whose run time is not final in its.
+* `Aspect.NonfinalPart`: an event includes another as a part whose run time is a nonfinal
+  subinterval of its own.
 * `Aspect.InProgress`: an event is in progress toward an event type.
 * `Aspect.PROG`: the progressive as an interval property.
 
 ## Implementation notes
 
-* Events are ordered by part-of, the mereological order of the event domain. The collapse to the
-  imperfective assumes that the temporal trace preserves parthood, a law the event semantics
-  states as a hypothesis where it is needed.
+* Events are ordered by part-of, the mereological order of the event domain.
 * The modal base depends on the event and on its description, the ordering source on the event
   alone.
 
@@ -49,9 +48,9 @@ open Modality
 
 variable {E W T : Type*} [PartialOrder E] [LinearOrder T] [Event.TemporalTrace E T]
 
-/-- `e'` includes `e` as a nonfinal part: `e` is part of `e'`, and the run time of `e` is not a
-final subinterval of that of `e'`. -/
-def NonfinalPart (e e' : E) : Prop := e ≤ e' ∧ ¬ (τ e).FinalSubinterval (τ e')
+/-- `e'` includes `e` as a nonfinal part: `e` is part of `e'`, and the run time of `e` is a
+nonfinal subinterval of that of `e'`. -/
+def NonfinalPart (e e' : E) : Prop := e ≤ e' ∧ (τ e).NonfinalSubinterval (τ e')
 
 /-- `e` is in progress toward the event type `P` at `w` when in every best world of the
 circumstantial base `circ e P` under the ordering source `ni e`, the propositions that `e` is not
@@ -75,9 +74,7 @@ theorem inProgress_iff :
 
 theorem mem_PROG : t ∈ PROG circ ni P w ↔ ∃ e, InProgress circ ni e P w ∧ τ e = t := Iff.rfl
 
-theorem NonfinalPart.lt (hτ : Monotone (τ : E → NonemptyInterval T)) (h : NonfinalPart e e') :
-    τ e < τ e' :=
-  (hτ h.1).lt_of_ne fun heq ↦ h.2 ⟨heq.le, congrArg (fun s ↦ s.snd) heq⟩
+theorem NonfinalPart.lt (h : NonfinalPart e e') : τ e < τ e' := h.2.lt
 
 /-- Over a totally realistic modal base, an event in progress toward `P` is part of an actual
 event of type `P`. -/
@@ -86,10 +83,10 @@ theorem InProgress.exists_of_isTotallyRealistic (hf : (circ e P).IsTotallyRealis
   hf.necessity_le_id (ni e) _ w h
 
 /-- Over totally realistic modal bases the progressive falls inside the imperfective. -/
-theorem PROG_subset_IMPF (hτ : Monotone (τ : E → NonemptyInterval T))
-    (hf : ∀ e, (circ e P).IsTotallyRealistic) : PROG circ ni P w ⊆ IMPF P w := by
+theorem PROG_subset_IMPF (hf : ∀ e, (circ e P).IsTotallyRealistic) :
+    PROG circ ni P w ⊆ IMPF P w := by
   rintro _ ⟨e, he, rfl⟩
   obtain ⟨e', he', hP⟩ := he.exists_of_isTotallyRealistic (hf e)
-  exact ⟨e', he'.lt hτ, hP⟩
+  exact ⟨e', he'.lt, hP⟩
 
 end Aspect
