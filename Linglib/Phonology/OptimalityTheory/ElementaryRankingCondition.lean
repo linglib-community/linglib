@@ -29,7 +29,8 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
   separate algebra.
 * `ERC.satisfiedBy_iff_exists_isMinOn`, `ERC.card_filter_satisfiedBy_mul_card` — a ranking
   satisfies an ERC iff its earliest non-neutral constraint is winner-preferring, so the rankings
-  satisfying it are the fraction `|W| / |W ∪ L|` of all rankings.
+  satisfying it are the fraction `|W| / |W ∪ L|` of all rankings; by `ERC.not_satisfiedBy_neg` an
+  ERC with a non-neutral constraint and its antithesis hold under no common ranking.
 * `ercOfProfiles`, `tableauERC` — ERCs from violation vectors and winner–loser
   pairs; `satisfiedBy_ercOfProfiles_iff_le` bridges to the Core lex order, and
   `Tableau.ofRanking_mem_optimal_iff_satisfiedBy` identifies optimality with ERC satisfaction.
@@ -162,6 +163,19 @@ theorem satisfiedBy_iff_exists_isMinOn (hα : ∃ k, α k ≠ .e) :
   · refine (isMinOn_iff.1 hmin c (by simp [hc])).lt_of_ne fun h ↦ ?_
     obtain rfl := r.symm.injective h
     simp [hc] at hx
+
+/-- An ERC with a non-neutral constraint and its antithesis ([prince-2002] §2) hold under no
+common ranking: they share their earliest non-neutral constraint, which prefers the winner of only
+one of them. -/
+theorem not_satisfiedBy_neg (hα : ∃ k, α k ≠ .e) (h : α.SatisfiedBy r) : ¬ (-α).SatisfiedBy r := by
+  have hset : ({k | (-α) k ≠ .e} : Finset ι) = {k | α k ≠ .e} := by ext; simp
+  obtain ⟨x, hx, hxm⟩ := (satisfiedBy_iff_exists_isMinOn hα).1 h
+  rw [satisfiedBy_iff_exists_isMinOn (by simpa using hα), hset]
+  rintro ⟨y, hy, hym⟩
+  rw [Pi.neg_apply, neg_eq_iff_eq_neg] at hy
+  obtain rfl : x = y := r.symm.injective <| le_antisymm
+    (isMinOn_iff.1 hxm y (by simp [hy])) (isMinOn_iff.1 hym x (by simp [hx]))
+  simp [hx] at hy
 
 open Finset in
 /-- The rankings satisfying an ERC, counted against all rankings: their number times the number

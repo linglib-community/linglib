@@ -8,6 +8,7 @@ public import Linglib.Phonology.Tone.Constraints
 public import Linglib.Phonology.Tone.Grammatical
 public import Linglib.Fragments.Poko.Tone
 public import Linglib.Phonology.Autosegmental.Floating
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Mathlib.Tactic.Linarith
 
 /-!
@@ -16,15 +17,15 @@ public import Mathlib.Tactic.Linarith
 This file formalizes the argument of [mcpherson-lamont-2026] that Poko postlexical tone
 resists global constraint evaluation. No ranking or weighting of the paper's four
 faithfulness constraints derives both *nān + rī^H + nā* 'I ate a pig' and *kāk^H + rī^H*
-'his pig': the ranking argument is an inconsistent set of elementary ranking conditions
-derived from the candidates' violation profiles (`parallel_OT_inadequate`), and the
-weighting argument a contradiction in which one constraint's weight must both exceed and
-fall below a sum of others (`weighted_HG_inadequate`). Directional Harmonic Serialism after
-[lamont-2022b], with the constraint against floating tones evaluated left to right,
-converges on every attested form, whereas right-to-left evaluation converges on the wrong
-form and a count-based constraint yields a divergent tie ([pruitt-2009]); the further
-tableaux show the repair of falling contours, the blocking of crowding, and forced
-tautomorphemic docking. Every step witness is decided.
+'his pig'. The violation profiles of the attested forms and their rivals give [antithetical
+elementary ranking conditions, which no ranking satisfies](##parallel_OT_inadequate), and
+[no weighting makes both attested forms the more harmonic](##weighted_HG_inadequate), since
+the weight of MAX(H) would have to exceed the sum of the other three and fall below it.
+Directional Harmonic Serialism after [lamont-2022b], with the constraint against floating tones
+evaluated left to right, converges on every attested form, whereas right-to-left evaluation
+converges on the wrong form and a count-based constraint yields a divergent tie
+([pruitt-2009]); the further tableaux show the repair of falling contours, the blocking of
+crowding, and forced tautomorphemic docking. Every step witness is decided.
 
 ## Implementation notes
 
@@ -33,11 +34,21 @@ sponsored by its position in the phrase, as the source colours each stem; the ta
 rankings, and serial derivations are the substrate's harmonic-serialism and tableau
 apparatus.
 
+## Errata
+
+* For `/kāk^H + rī^H/` the paragraph introducing the support (59) requires the weight of MAX(H)
+  to be less than half the sum of the other three weights. The violation profiles of (58b) and
+  (58c) require only that it be less than the sum, since (58b) also deletes an H; that no
+  weighting fits both inputs is unaffected.
+* Row (59a) writes the loser (57b) before the winner (57c), the reverse of row (59b), though its
+  W and L are read with (57c) as the winner.
+
 ## References
 
 * [mcpherson-lamont-2026]
 * [lamont-2022b]
 * [pruitt-2009]
+* [prince-2002]
 -/
 
 @[expose] public section
@@ -45,110 +56,7 @@ apparatus.
 namespace McPhersonLamont2026
 
 open OptimalityTheory
-open OptimalityTheory Autosegmental Poko Tone
-
-/-! ### Candidates (eqs. 57, 58) -/
-
-/-- Winner/loser candidate pairs from [mcpherson-lamont-2026] eqs. 57 and 58. -/
-inductive Cand
-  /-- (57c) winner of `/nān + rī^H + nā/`: rī's H docks rightward onto nā. -/
-  | nanWinner
-  /-- In the (57b) loser, the floating H deletes instead. -/
-  | nanLoser
-  /-- (58c) winner of `/kāk^H + rī^H/`: both floating Hs delete. -/
-  | kakWinner
-  /-- In the unattested MAX(H)-dominant winner (58b), one H docks and one deletes. -/
-  | kakLoser
-  deriving DecidableEq
-
-/-! ### Constraints (eq. 7, eq. 59 columns) -/
-
-/-- `MAX(H)` (eq. 7c): one violation per H tone deleted by GEN. -/
-def maxH : Constraint Cand :=
-  fun
-    | .nanWinner => 0   -- H docks rightward (preserved)
-    | .nanLoser  => 1   -- H deleted
-    | .kakWinner => 2   -- both Hs deleted
-    | .kakLoser  => 1   -- one H docks, one deletes
-
-/-- `DEP(link)/H` (eq. 7a): one violation per inserted H-associated link. -/
-def depLinkH : Constraint Cand :=
-  fun
-    | .nanWinner => 1   -- new H link inserted (docking)
-    | .nanLoser  => 0
-    | .kakWinner => 0
-    | .kakLoser  => 1
-
-/-- `MAX(M)` (eq. 7c analogue): one violation per M tone deleted. -/
-def maxM : Constraint Cand :=
-  fun
-    | .nanWinner => 1   -- M overwritten by docking H
-    | .nanLoser  => 0
-    | .kakWinner => 0
-    | .kakLoser  => 1
-
-/-- `MAX(link)/M` (eq. 7b analogue): one violation per deleted M-tone link. -/
-def maxLinkM : Constraint Cand :=
-  fun
-    | .nanWinner => 1
-    | .nanLoser  => 0
-    | .kakWinner => 0
-    | .kakLoser  => 1
-
-/-- The eq. 59 columns; `*FLOAT` factored out per the paper's candidate restriction. -/
-def ranking : List (Constraint Cand) := [maxH, depLinkH, maxM, maxLinkM]
-
-abbrev numConstraints : Nat := 4
-
-example : ranking.length = numConstraints := rfl
-
-/-- Constraint indices in `ranking`. -/
-abbrev maxHIdx       : Fin numConstraints := 0
-abbrev depLinkHIdx   : Fin numConstraints := 1
-abbrev maxMIdx       : Fin numConstraints := 2
-abbrev maxLinkMIdx   : Fin numConstraints := 3
-
-/-! ### Derived ERCs -/
-
-/-- ERC of a winner/loser pair via `ercOfProfiles` ([prince-2002]). -/
-def ercFor (winner loser : Cand) : ERC (Fin numConstraints) :=
-  ercOfProfiles (toLex (ranking.get · winner))
-    (toLex (ranking.get · loser))
-
-/-- ERC for the `/nān + rī^H + nā/` winner-loser pair. -/
-def ercA : ERC (Fin numConstraints) := ercFor .nanWinner .nanLoser
-
-/-- ERC for the `/kāk^H + rī^H/` winner-loser pair. -/
-def ercB : ERC (Fin numConstraints) := ercFor .kakWinner .kakLoser
-
-/-- The ranking-paradox support. -/
-def pokoSupport : Finset (ERC (Fin numConstraints)) := {ercA, ercB}
-
-/-- The derived `ercA` matches eq. 59 row a: `[W, L, L, L]`. -/
-example : ercA maxHIdx = .W ∧ ercA depLinkHIdx = .L ∧
-          ercA maxMIdx = .L ∧ ercA maxLinkMIdx = .L := by decide
-
-/-- The derived `ercB` matches eq. 59 row b: `[L, W, W, W]`. -/
-example : ercB maxHIdx = .L ∧ ercB depLinkHIdx = .W ∧
-          ercB maxMIdx = .W ∧ ercB maxLinkMIdx = .W := by decide
-
-/-! ### The ranking paradox (eq. 59) -/
-
-/-- **Parallel OT cannot model Poko** (eq. 59): the derived support is ERC-inconsistent, since no
-ranking of the four constraints satisfies both of its ERCs. -/
-theorem parallel_OT_inadequate : ¬ (ERC.linearExtensions pokoSupport).Nonempty := by
-  decide +kernel
-
-/-! ### Weighted HG inadequacy -/
-
-/-- Weighted HG cannot model Poko, since `MAX(H)` must both exceed and undercut the other
-    three weights' sum (paper p. 32) and no ℚ-weighting satisfies both. -/
-theorem weighted_HG_inadequate :
-    ¬ ∃ w : Fin numConstraints → ℚ,
-        w maxHIdx > w depLinkHIdx + w maxMIdx + w maxLinkMIdx ∧
-        w depLinkHIdx + w maxMIdx + w maxLinkMIdx > w maxHIdx := by
-  rintro ⟨_, h₁, h₂⟩
-  linarith
+open OptimalityTheory Autosegmental HarmonicGrammar Poko Tone
 
 /-! ### Shared fig. 2 ranking -/
 
@@ -419,6 +327,109 @@ theorem eq22_step1 :
 theorem eq22_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq22
+
+/-! ### Eqs. (57)–(59): parallel evaluation -/
+
+/-- The four faithfulness constraints of the parallel tableaux (57) and (58), in their column
+    order. `*FLOAT` is left out, since every candidate the support (59) compares satisfies it. -/
+def faithfulness {u : Form ℕ} : ConstraintSet (Candidate u) (Fin 4) :=
+  ![maxTone TRN.H, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M]
+
+/-- The ERC of a winner over a loser on `faithfulness` ([prince-2002]). -/
+def ercFor {u : Form ℕ} (winner loser : Candidate u) : ERC (Fin 4) :=
+  ercOfProfiles (faithfulness · winner) (faithfulness · loser)
+
+namespace Eq57
+
+/-- (57b), the rival of the attested `Eq24.attestedForm` (57c): the floating H of rī deletes. -/
+def loser : Candidate Eq24.eq24Input := Eq24.eq24.deleteTierElem 2
+
+-- (57c)
+theorem faithfulness_attestedForm (i : Fin 4) :
+    faithfulness i Eq24.attestedForm = ![0, 1, 1, 1] i := by
+  revert i; decide
+
+-- (57b)
+theorem faithfulness_loser (i : Fin 4) : faithfulness i loser = ![1, 0, 0, 0] i := by
+  revert i; decide
+
+end Eq57
+
+namespace Eq58
+
+/-- Eq. (58) input `/kāk^H + rī^H/`: each M linked, each H floating. -/
+def eq58Input : Form ℕ := kak 0 * ri 1
+
+instance : NeZero eq58Input.upper.length := ⟨by decide⟩
+instance : NeZero eq58Input.lower.length := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def eq58 : Candidate eq58Input := .input _
+
+/-- (58c), attested `[kāk rī]`: both floating Hs delete. -/
+def attestedForm : Candidate eq58Input := (eq58.deleteTierElem 1).deleteTierElem 3
+
+/-- (58b): the H of kāk docks onto rī, whose M and H both delete. -/
+def loser : Candidate eq58Input := ((eq58.insertLink 1 1).deleteTierElem 2).deleteTierElem 3
+
+-- (58c)
+theorem faithfulness_attestedForm (i : Fin 4) :
+    faithfulness i attestedForm = ![2, 0, 0, 0] i := by
+  revert i; decide
+
+-- (58b)
+theorem faithfulness_loser (i : Fin 4) : faithfulness i loser = ![1, 1, 1, 1] i := by
+  revert i; decide
+
+end Eq58
+
+-- the candidates the support (59) compares satisfy *FLOAT
+example : starFloatCount Eq24.attestedForm = 0 ∧ starFloatCount Eq57.loser = 0 ∧
+    starFloatCount Eq58.attestedForm = 0 ∧ starFloatCount Eq58.loser = 0 := by
+  decide
+
+/-- Row (59a): the attested form of `/nān + rī^H + nā/` over its rival (57b). -/
+def ercA : ERC (Fin 4) := ercFor Eq24.attestedForm Eq57.loser
+
+/-- Row (59b): the attested form of `/kāk^H + rī^H/` over its rival (58b). -/
+def ercB : ERC (Fin 4) := ercFor Eq58.attestedForm Eq58.loser
+
+-- (59a)
+theorem ercA_eq : ercA = ![.W, .L, .L, .L] := by
+  funext i
+  simp only [ercA, ercFor, Eq57.faithfulness_attestedForm, Eq57.faithfulness_loser]
+  revert i; decide
+
+-- (59b)
+theorem ercB_eq_neg : ercB = -ercA := by
+  rw [ercA_eq]
+  funext i
+  simp only [ercB, ercFor, Eq58.faithfulness_attestedForm, Eq58.faithfulness_loser]
+  revert i; decide
+
+/-- **Parallel OT cannot model Poko**: the two rows of the support (59) are antithetical, so no
+ranking of the four faithfulness constraints derives both attested forms. -/
+theorem parallel_OT_inadequate : ¬ (ERC.linearExtensions {ercA, ercB}).Nonempty := by
+  rintro ⟨r, hr⟩
+  rw [ERC.mem_linearExtensions] at hr
+  refine ERC.not_satisfiedBy_neg ⟨0, by rw [ercA_eq]; decide⟩
+    (hr ercA (Finset.mem_insert_self _ _)) ?_
+  rw [← ercB_eq_neg]
+  exact hr ercB (Finset.mem_insert_of_mem (Finset.mem_singleton_self _))
+
+/-- **Harmonic Grammar cannot model Poko**: no weighting of the four faithfulness constraints
+makes both attested forms more harmonic than their rivals in (57) and (58), since MAX(H) would
+have to outweigh the other three together for `/nān + rī^H + nā/` and weigh less than them for
+`/kāk^H + rī^H/`. -/
+theorem weighted_HG_inadequate :
+    ¬ ∃ w : Fin 4 → ℝ, harmonyDominates faithfulness w Eq24.attestedForm Eq57.loser ∧
+      harmonyDominates faithfulness w Eq58.attestedForm Eq58.loser := by
+  rintro ⟨w, h₁, h₂⟩
+  simp only [harmonyDominates_iff, harmonyScore_eq_neg_sum, Fin.sum_univ_four,
+    Eq57.faithfulness_attestedForm, Eq57.faithfulness_loser, Eq58.faithfulness_attestedForm,
+    Eq58.faithfulness_loser] at h₁ h₂
+  norm_num at h₁ h₂
+  linarith
 
 /-! ### Deferred: GEN shift and insert-and-associate ops, L% boundary tone, §§3.3–3.4 tableaux -/
 
