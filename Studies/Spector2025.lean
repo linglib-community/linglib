@@ -161,7 +161,7 @@ def raised : Tree Unit QWord := .bin (.leaf .quant) (.binder 1 (.bin (.tr 1) (.l
 of the values its denotation collects. -/
 def parses (lex : QWord → Option (Denotation E Unit SetM)) (g : Assignment E)
     (t : Tree Unit QWord) : Set Prop :=
-  {b | (⟨.t, b⟩ : Denotation E Unit Id) ∈ Tree.readings (Tree.wordReadings lex) g t}
+  {b | (⟨.t, b⟩ : Denotation E Unit Id) ∈ Tree.readings (Tree.wordReadings lex) g default t}
 
 theorem parses_raised (g : Assignment E) :
     parses (lexicon Q p) g raised =
@@ -196,7 +196,7 @@ theorem parses_raised (g : Assignment E) :
         rfl, rfl⟩, rfl⟩
 
 theorem interp_raised (g : Assignment E) :
-    Tree.interp (lexicon Q p) g raised = some ⟨.t,
+    Tree.interp (lexicon Q p) g default raised = some ⟨.t,
       (Set.range fun c : E → Designation ↦ Q fun x ↦ (c x).threshold ≤ p x : Set Prop)⟩ := by
   refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM)) ?_
   simp only [Mode.evalM, Set.pure_def, Set.fmap_eq_image, Set.image_singleton, Term.evalM,
@@ -208,7 +208,7 @@ theorem interp_raised (g : Assignment E) :
 
 /-- Under the universal, the set effect computes the Strong Kleene universal. -/
 example [Fintype E] [DecidableEq E] (g : Assignment E) {X : SetM Prop}
-    (hX : Tree.interp (lexicon (fun P ↦ ∀ x, P x) p) g raised = some ⟨.t, X⟩) :
+    (hX : Tree.interp (lexicon (fun P ↦ ∀ x, P x) p) g default raised = some ⟨.t, X⟩) :
     SignType.supervaluationOn X.run id = Trivalent.forallStrong p := by
   obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised _ p g)))
   dsimp only [SetM.run]
@@ -219,7 +219,7 @@ variable {Q}
 
 /-- Under a raised monotone quantifier, truth on all parses is the Strong Kleene value. -/
 theorem supervaluationOn_parses_eq_of_monotone (hQ : Monotone Q) (g : Assignment E)
-    {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g raised = some ⟨.t, X⟩) :
+    {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g default raised = some ⟨.t, X⟩) :
     SignType.supervaluationOn (parses (lexicon Q p) g raised) id =
       SignType.supervaluationOn X.run id := by
   obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised Q p g)))
@@ -229,7 +229,7 @@ theorem supervaluationOn_parses_eq_of_monotone (hQ : Monotone Q) (g : Assignment
   exact (Trivalent.supervaluationOn_pi_eq_const_of_monotone p hQ).symm
 
 theorem supervaluationOn_parses_eq_of_antitone (hQ : Antitone Q) (g : Assignment E)
-    {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g raised = some ⟨.t, X⟩) :
+    {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g default raised = some ⟨.t, X⟩) :
     SignType.supervaluationOn (parses (lexicon Q p) g raised) id =
       SignType.supervaluationOn X.run id := by
   obtain rfl := sigma_mk_injective (Option.some_injective _ (hX.symm.trans (interp_raised Q p g)))
@@ -490,7 +490,7 @@ and undefined entity-wise: reading *some* with the operator for one of the two w
 problem leaves exactly two. -/
 theorem exactlyTwo_parses_false_entitywise_undefined (g : Assignment (Fin 3)) {X : SetM Prop}
     (hX : PhraseStructure.Tree.interp (lexicon (fun P ↦ {x | P x}.ncard = 2)
-      fun x ↦ meaning .some (solved x)) g raised = some ⟨.t, X⟩) :
+      fun x ↦ meaning .some (solved x)) g default raised = some ⟨.t, X⟩) :
     SignType.supervaluationOn (parses (lexicon (fun P ↦ {x | P x}.ncard = 2)
       fun x ↦ meaning .some (solved x)) g raised) id = -1 ∧
       SignType.supervaluationOn X.run id = 0 := by

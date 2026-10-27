@@ -185,13 +185,16 @@ def FirstOrderConstant.readback : {ty : Ty} → (n : ℕ) → FirstOrderConstant
 /-- The readback of a term in the syntactic model, given readbacks of its constants, with `n`
 bound variables in scope and a valuation `ρ` of its variables in terms. An abstraction reads back
 to a function at every larger number of bound variables, under `ρ` carried there and updated at
-its variable. -/
+its variable. Worlds are trivial in the syntactic model, so an abstraction over a world variable
+reads back to a function that ignores its world. -/
 def Term.readback {K : Ty → Type*} (R : ∀ {ty : Ty} (n : ℕ), K ty → Ty.SyntacticDomain L α ty n)
     (n : ℕ) (ρ : ℕ → L.Term (α ⊕ Fin n)) : {ty : Ty} → Term K ty → Ty.SyntacticDomain L α ty n
   | _, .const c => R n c
   | _, .var i => ρ i
   | _, .lam i b => fun k hk x ↦
       readback R k (Function.update (fun j ↦ (ρ j).relabel (Sum.map id (Fin.castLE hk))) i x) b
+  | _, .wvar _ => PUnit.unit
+  | _, .wlam _ b => fun k hk _ ↦ readback R k (fun j ↦ (ρ j).relabel (Sum.map id (Fin.castLE hk))) b
   | _, .comp μ l r => μ.readback (readback R n ρ l) (readback R n ρ r)
 
 end Readback
@@ -287,20 +290,25 @@ theorem Term.realizes_readback {K : Ty → Type*}
     {I : ∀ {ty : Ty}, K ty → Ty.Domain M W ty Q}
     (hR : ∀ {ty : Ty} (c : K ty) (n : ℕ) (xs : Fin n → M), Ty.Realizes S v ty n xs (R n c) (I c))
     {ty : Ty} (u : Term K ty) {n : ℕ} {ρ : ℕ → L.Term (α ⊕ Fin n)} {xs : Fin n → M}
-    {g : Assignment M} (hρ : ∀ i, Ty.Realizes (W := W) (Q := Q) S v .e n xs (ρ i) (g i)) :
-    Ty.Realizes S v ty n xs (u.readback R n ρ) (u.eval I g) := by
+    {g : Assignment M} (gw : Assignment W)
+    (hρ : ∀ i, Ty.Realizes (W := W) (Q := Q) S v .e n xs (ρ i) (g i)) :
+    Ty.Realizes S v ty n xs (u.readback R n ρ) (u.eval I g gw) := by
   let := S
-  induction u generalizing n ρ xs g with
+  induction u generalizing n ρ xs g gw with
   | const c => exact hR c n xs
   | var i => exact hρ i
   | lam i b ih =>
     intro k hk ys hys x a hx
-    refine ih fun j ↦ ?_
+    refine ih gw fun j ↦ ?_
     rcases eq_or_ne j i with rfl | hji
     · simpa using hx
     · simp only [Function.update_of_ne hji]
       exact (realize_relabel_castLE S v hk (ρ j) ys).trans (hys ▸ hρ j)
-  | comp μ l r ihl ihr => exact μ.realizes_readback S v (ihl hρ) (ihr hρ)
+  | wvar _ => trivial
+  | wlam i b ih =>
+    intro k hk ys hys _ a _
+    exact ih _ fun j ↦ (realize_relabel_castLE S v hk (ρ j) ys).trans (hys ▸ hρ j)
+  | comp μ l r ihl ihr => exact μ.realizes_readback S v (ihl gw hρ) (ihr gw hρ)
 
 /-- The readbacks of the first-order constants realize their denotations in a composition
 model at a world. -/
@@ -362,10 +370,10 @@ theorem FirstOrderConstant.realizes_readback (m : Model L) (w : m.W) (v : α →
 /-- A first-order logical form denotes, at a world of a composition model and under an
 assignment, the realization of its readback there. -/
 theorem Term.realizeAt_toFormula (m : Model L) (w : m.W) (u : Term (FirstOrderConstant L) .t)
-    (g : Assignment m.E) :
-    u.toFormula.RealizeAt m.interp w g ↔ u.eval (FirstOrderConstant.interp m w) g :=
+    (g : Assignment m.E) (gw : Assignment m.W) :
+    u.toFormula.RealizeAt m.interp w g ↔ u.eval (FirstOrderConstant.interp m w) g gw :=
   Term.realizes_readback (m.interp w) g (FirstOrderConstant.realizes_readback m w g) u
-    (n := 0) (ρ := fun i ↦ Language.Term.var (.inl i)) (xs := default) (g := g) (fun _ ↦ rfl) 0
+    (n := 0) (ρ := fun i ↦ Language.Term.var (.inl i)) (xs := default) (g := g) gw (fun _ ↦ rfl) 0
     le_rfl default (Subsingleton.elim _ _)
 
 end Soundness
@@ -393,8 +401,8 @@ variable {words : X → Option (Σ ty, FirstOrderConstant L ty)}
 
 theorem holdsAt_iff_eval (m : Model L) (w : m.W) {t : Tree C X}
     {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
-    (g : Assignment m.E) :
-    HoldsAt (m.lexicon words w) g t ↔ u.eval (FirstOrderConstant.interp m w) g := by
+    (g : Assignment m.E) (gw : Assignment m.W) :
+    HoldsAt (m.lexicon words w) g gw t ↔ u.eval (FirstOrderConstant.interp m w) g gw := by
   unfold HoldsAt Model.lexicon
   rw [Tree.interp_eq_eval_translate (FirstOrderConstant.interp m w), h]
   simp
@@ -403,9 +411,9 @@ theorem holdsAt_iff_eval (m : Model L) (w : m.W) {t : Tree C X}
 logical form is realized. -/
 theorem holdsAt_iff_realizeAt (m : Model L) (w : m.W) {t : Tree C X}
     {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
-    (g : Assignment m.E) :
-    HoldsAt (m.lexicon words w) g t ↔ u.toFormula.RealizeAt m.interp w g :=
-  (holdsAt_iff_eval m w h g).trans (Term.realizeAt_toFormula m w u g).symm
+    (g : Assignment m.E) (gw : Assignment m.W) :
+    HoldsAt (m.lexicon words w) g gw t ↔ u.toFormula.RealizeAt m.interp w g :=
+  (holdsAt_iff_eval m w h g gw).trans (Term.realizeAt_toFormula m w u g gw).symm
 
 /-- First-order consequence between the readbacks of two trees yields entailment between the
 trees in every composition model, at every world and under every assignment. -/
@@ -413,8 +421,8 @@ theorem holdsAt_of_models {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderCo
     (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩)
     (hmod : ∀ (M : Type) (S : L.Structure M) (v : ℕ → M),
       @Formula.Realize L M S ℕ u₁.toFormula v → @Formula.Realize L M S ℕ u₂.toFormula v)
-    (m : Model L) (w : m.W) (g : Assignment m.E) :
-    HoldsAt (m.lexicon words w) g t₁ → HoldsAt (m.lexicon words w) g t₂ := by
+    (m : Model L) (w : m.W) (g : Assignment m.E) (gw : Assignment m.W) :
+    HoldsAt (m.lexicon words w) g gw t₁ → HoldsAt (m.lexicon words w) g gw t₂ := by
   rw [holdsAt_iff_realizeAt m w h₁, holdsAt_iff_realizeAt m w h₂]
   exact hmod m.E (m.interp w) g
 
@@ -441,10 +449,10 @@ private theorem modelEmpty (M : Type) [L₀.Structure M] : M ⊨ (∅ : L₀.The
 theorem models_imp_iff_entails {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderConstant L₀) .t}
     (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩) :
     (∅ : L₀.Theory) ⊨ᵇ u₁.toFormula.imp u₂.toFormula ↔
-      ∀ (m : Model L₀), Nonempty m.E → ∀ (w : m.W) (g : Assignment m.E),
-        HoldsAt (m.lexicon words w) g t₁ → HoldsAt (m.lexicon words w) g t₂ := by
+      ∀ (m : Model L₀), Nonempty m.E → ∀ (w : m.W) (g : Assignment m.E) (gw : Assignment m.W),
+        HoldsAt (m.lexicon words w) g gw t₁ → HoldsAt (m.lexicon words w) g gw t₂ := by
   constructor
-  · intro hmod m hne w g
+  · intro hmod m hne w g gw
     rw [holdsAt_iff_realizeAt m w h₁, holdsAt_iff_realizeAt m w h₂]
     let := m.interp w
     have : m.E ⊨ (∅ : L₀.Theory) := inferInstance
@@ -453,7 +461,7 @@ theorem models_imp_iff_entails {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOr
   · intro hent M v xs
     obtain rfl : xs = default := funext fun i ↦ i.elim0
     rw [BoundedFormula.realize_imp]
-    have := hent (Model.ofStructure M M.struc) M.nonempty' () v
+    have := hent (Model.ofStructure M M.struc) M.nonempty' () v fun _ ↦ ()
     rwa [holdsAt_iff_realizeAt (Model.ofStructure M M.struc) () h₁,
       holdsAt_iff_realizeAt (Model.ofStructure M M.struc) () h₂] at this
 
@@ -464,14 +472,14 @@ theorem holdsAt_compactness {ι : Type} {trees : ι → Tree C X}
     {us : ι → Term (FirstOrderConstant L₀) .t}
     (hc : ∀ i, Tree.translate words (trees i) = some ⟨.t, us i⟩)
     (hcl : ∀ i, (us i).toFormula.freeVarFinset = ∅) :
-    (∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E),
-        ∀ i, HoldsAt (m.lexicon words w) g (trees i)) ↔
+    (∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E) (gw : Assignment m.W),
+        ∀ i, HoldsAt (m.lexicon words w) g gw (trees i)) ↔
       ∀ s : Finset ι,
-        ∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E),
-          ∀ i ∈ s, HoldsAt (m.lexicon words w) g (trees i) := by
+        ∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E) (gw : Assignment m.W),
+          ∀ i ∈ s, HoldsAt (m.lexicon words w) g gw (trees i) := by
   constructor
-  · rintro ⟨m, hne, w, g, hall⟩ s
-    exact ⟨m, hne, w, g, fun i _ ↦ hall i⟩
+  · rintro ⟨m, hne, w, g, gw, hall⟩ s
+    exact ⟨m, hne, w, g, gw, fun i _ ↦ hall i⟩
   · intro hfin
     have hsat : Theory.IsSatisfiable
         (L := L₀) (Set.range fun i ↦ (us i).toFormula.toSentence (hcl i)) := by
@@ -479,7 +487,7 @@ theorem holdsAt_compactness {ι : Type} {trees : ι → Tree C X}
       intro T₀ hT₀
       classical
       choose f hf using fun (x : T₀) ↦ hT₀ x.2
-      obtain ⟨m, hne, w, g, hs⟩ := hfin (Finset.univ.image f)
+      obtain ⟨m, hne, w, g, gw, hs⟩ := hfin (Finset.univ.image f)
       let := m.interp w
       have : Nonempty m.E := hne
       have : m.E ⊨ (T₀ : L₀.Theory) := by
@@ -488,13 +496,13 @@ theorem holdsAt_compactness {ι : Type} {trees : ι → Tree C X}
           ⟨⟨ψ, hψ⟩, hf ⟨ψ, hψ⟩⟩
         rw [Formula.realize_toSentence (v := g)]
         have hold := hs (f x) (Finset.mem_image_of_mem f (Finset.mem_univ x))
-        rwa [holdsAt_iff_realizeAt m w (hc (f x)) g] at hold
+        rwa [holdsAt_iff_realizeAt m w (hc (f x)) g gw] at hold
       exact Theory.Model.isSatisfiable m.E
     obtain ⟨N⟩ := hsat
     let := N.struc
     have := N.nonempty'
     refine ⟨Model.ofStructure N N.struc, N.nonempty', (), fun _ ↦ Classical.arbitrary N,
-      fun i ↦ ?_⟩
+      fun _ ↦ (), fun i ↦ ?_⟩
     rw [holdsAt_iff_realizeAt (Model.ofStructure N N.struc) () (hc i)]
     have : (N : Type) ⊨ (us i).toFormula.toSentence (hcl i) :=
       N.is_model.realize_of_mem _ (Set.mem_range_self i)

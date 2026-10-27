@@ -928,9 +928,9 @@ open PhraseStructure.Tree (interp) in
 /-- One set of premises yields, by its two proofs, what Heim and Kratzer's engine computes from
     their two Quantifier Raising trees. -/
 theorem interp_qr_eq_eval :
-    interp HeimKratzer1998.lex HeimKratzer1998.g₀ HeimKratzer1998.tree_surface =
+    interp HeimKratzer1998.lex HeimKratzer1998.g₀ default HeimKratzer1998.tree_surface =
         some ⟨.t, surface.eval (scopeEnv person sees)⟩ ∧
-      interp HeimKratzer1998.lex HeimKratzer1998.g₀ HeimKratzer1998.tree_inverse =
+      interp HeimKratzer1998.lex HeimKratzer1998.g₀ default HeimKratzer1998.tree_inverse =
         some ⟨.t, inverse.eval (scopeEnv person sees)⟩ :=
   ⟨HeimKratzer1998.interp_computes_surface, HeimKratzer1998.interp_computes_inverse⟩
 

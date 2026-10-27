@@ -629,7 +629,7 @@ def nobodyMet : Tree Unit Word :=
   .bin (.leaf .nobody) (.binder 0 (.bin (.tr 0) (.bin (.leaf .met) (.leaf .aPhonologist))))
 
 theorem interp_nobodyMet (g : Assignment E) :
-    Tree.interp (lexicon human phon met) g nobodyMet = some ⟨.t,
+    Tree.interp (lexicon human phon met) g default nobodyMet = some ⟨.t,
       ((fun P ↦ ¬ ∃ x ∈ human, P x) '' Set.univ.pi fun x ↦ (fun y ↦ met y x) '' phon :
         Set Prop)⟩ := by
   refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM)) ?_
@@ -640,7 +640,7 @@ theorem interp_nobodyMet (g : Assignment E) :
 
 -- (77)
 theorem sSup_interp_nobodyMet_iff (hphon : phon.Nonempty) (g : Assignment E) {X : SetM Prop}
-    (hX : Tree.interp (lexicon human phon met) g nobodyMet = some ⟨.t, X⟩) :
+    (hX : Tree.interp (lexicon human phon met) g default nobodyMet = some ⟨.t, X⟩) :
     sSup X.run ↔ ¬ ∃ x ∈ human, ∀ y ∈ phon, met y x := by
   obtain rfl := sigma_mk_injective (Option.some_injective _
     (hX.symm.trans (interp_nobodyMet human phon met g)))
@@ -662,7 +662,7 @@ theorem sSup_interp_nobodyMet_iff (hphon : phon.Nonempty) (g : Assignment E) {X 
       fun ⟨x, hx, hm⟩ ↦ hn x hx hm⟩
 
 theorem readings_nobodyMet (g : Assignment E) :
-    Tree.readings (Tree.wordReadings (lexicon human phon met)) g nobodyMet =
+    Tree.readings (Tree.wordReadings (lexicon human phon met)) g default nobodyMet =
       (fun y ↦ (⟨.t, ¬ ∃ x ∈ human, met y x⟩ : Denotation E Unit Id)) '' phon := by
   ext d
   simp only [nobodyMet, Tree.mem_readings_node_binary, Tree.readings_terminal,
@@ -707,7 +707,7 @@ theorem readings_nobodyMet (g : Assignment E) :
 phonologist nobody met, the wide-scope reading of the indefinite. -/
 theorem sSup_readings_nobodyMet_iff (g : Assignment E) :
     sSup {b : Prop | (⟨.t, b⟩ : Denotation E Unit Id) ∈
-      Tree.readings (Tree.wordReadings (lexicon human phon met)) g nobodyMet} ↔
+      Tree.readings (Tree.wordReadings (lexicon human phon met)) g default nobodyMet} ↔
       ∃ y ∈ phon, ¬ ∃ x ∈ human, met y x := by
   simp only [readings_nobodyMet, Set.mem_image, Sigma.mk.inj_iff, heq_eq_eq, true_and,
     sSup_Prop_eq, Set.mem_ofPred_eq]

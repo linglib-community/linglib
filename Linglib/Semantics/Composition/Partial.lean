@@ -109,25 +109,38 @@ def Interpretation.partial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part 
   const := I
   var x := Part.some x
   lam f := Part.some f
+  WVar := W
+  wvar v := Part.some v
+  wlam f := Part.some f
   mode m := m.evalPartial
 
-/-- The partial denotation of a term under a partial interpretation of the constants and an
-assignment. -/
+/-- The partial denotation of a term under a partial interpretation of the constants and
+assignments of the variables and world variables. -/
 def Term.evalPartial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S))
-    (g : Assignment E) {ty : Ty} (t : Term K ty) : Part (Ty.PDomain E W ty S) :=
-  t.realize (.partial I) g
+    (g : Assignment E) (gw : Assignment W) {ty : Ty} (t : Term K ty) :
+    Part (Ty.PDomain E W ty S) :=
+  t.realize (.partial I) g gw
 
-@[simp] theorem Term.evalPartial_lam {K : Ty → Type*}
-    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : Assignment E) (n : ℕ) {τ : Ty}
-    (b : Term K τ) :
-    (Term.lam n b).evalPartial I g = Part.some fun x ↦ b.evalPartial I (g[n ↦ x]) :=
+section EvalPartial
+
+variable {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : Assignment E)
+  (gw : Assignment W)
+
+@[simp] theorem Term.evalPartial_lam (n : ℕ) {τ : Ty} (b : Term K τ) :
+    (Term.lam n b).evalPartial I g gw = Part.some fun x ↦ b.evalPartial I (g[n ↦ x]) gw :=
   rfl
 
-@[simp] theorem Term.evalPartial_comp {K : Ty → Type*}
-    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : Assignment E) {σ₁ σ₂ τ : Ty}
-    (m : Mode σ₁ σ₂ τ) (l : Term K σ₁) (r : Term K σ₂) :
-    (Term.comp m l r).evalPartial I g = m.evalPartial (l.evalPartial I g) (r.evalPartial I g) :=
+@[simp] theorem Term.evalPartial_wlam (n : ℕ) {τ : Ty} (b : Term K τ) :
+    (Term.wlam n b).evalPartial I g gw = Part.some fun v ↦ b.evalPartial I g (gw[n ↦ v]) :=
   rfl
+
+@[simp] theorem Term.evalPartial_comp {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) (l : Term K σ₁)
+    (r : Term K σ₂) :
+    (Term.comp m l r).evalPartial I g gw =
+      m.evalPartial (l.evalPartial I g gw) (r.evalPartial I g gw) :=
+  rfl
+
+end EvalPartial
 
 end Evaluation
 
@@ -307,15 +320,18 @@ def LiftsConst (ty : Ty) (c : Id (Ty.Domain E W ty S)) (c' : Part (Ty.PDomain E 
   ∃ y, c' = Part.some y ∧ Ty.Lifts ty c y
 
 theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty S)) ty}
-    {u' : Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty} (h : Term.Rel LiftsConst u u')
-    (g : Assignment E) :
-    ∃ z, u'.evalPartial (fun c ↦ c) g = Part.some z ∧ Ty.Lifts ty (u.eval (fun c ↦ c) g) z :=
-  h.realize (A := .total fun c ↦ c) (B := .partial fun c ↦ c)
-    (fun ty x (y : Part (Ty.PDomain E W ty S)) ↦ LiftsConst ty x y) (· = ·) (fun _ _ hc ↦ hc)
-    (fun x _ h ↦ by subst h; exact ⟨x, rfl, rfl⟩) (fun _ f' h ↦ ⟨f', rfl, fun x y hxy ↦ h x y hxy⟩)
+    {u' : Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty} (hu : Term.Rel LiftsConst u u')
+    (g : Assignment E) (gw : Assignment W) :
+    ∃ z, u'.evalPartial (fun c ↦ c) g gw = Part.some z ∧
+      Ty.Lifts ty (u.eval (fun c ↦ c) g gw) z :=
+  hu.realize (A := .total fun c ↦ c) (B := .partial fun c ↦ c)
+    (fun ty x (y : Part (Ty.PDomain E W ty S)) ↦ LiftsConst ty x y) (· = ·) (· = ·)
+    (fun _ _ hc ↦ hc) (fun x _ h ↦ by subst h; exact ⟨x, rfl, rfl⟩)
+    (fun _ f' h ↦ ⟨f', rfl, fun x y hxy ↦ h x y hxy⟩) (fun x _ h ↦ by subst h; exact ⟨x, rfl, rfl⟩)
+    (fun _ f' h ↦ ⟨f', rfl, fun x y hxy ↦ h x y hxy⟩)
     (fun m _ _ _ _ ⟨_, hzl, hll⟩ ⟨_, hzr, hlr⟩ ↦ by
       subst hzl hzr; exact m.lifts_evalPartial hll hlr)
-    fun _ ↦ rfl
+    (fun _ ↦ rfl) fun _ ↦ rfl
 
 variable {L : Type*} {lex : L → Option (Denotation E W Id S)}
 
@@ -346,51 +362,52 @@ variable {C : Type} {L : Type*}
 word's partial denotation its constant. A terminal denotes what its leaf interpretation gives it, a
 binary node what the mode its daughters' types select composes, a trace the value of its index, and
 a binder the partial function abstracting over its index in the body. -/
-def interpPartial (lex : L → Option (PDenotation E W S)) (g : Assignment E) (t : Tree C L) :
-    Option (PDenotation E W S) :=
+def interpPartial (lex : L → Option (PDenotation E W S)) (g : Assignment E) (gw : Assignment W)
+    (t : Tree C L) : Option (PDenotation E W S) :=
   (translate (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex t).map fun d ↦
-    ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩
+    ⟨d.1, d.2.evalPartial (fun c ↦ c) g gw⟩
 
-private theorem map_bind_combine (g : Assignment E)
+private theorem map_bind_combine (g : Assignment E) (gw : Assignment W)
     (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty)) :
     (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W S)) =
-      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₁ ↦
-        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₂ ↦
+        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g gw⟩ : PDenotation E W S)) =
+      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g gw⟩).bind fun d₁ ↦
+        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g gw⟩).bind fun d₂ ↦
           Mode.combine? Mode.evalPartial d₁ d₂ := by
   rcases t₁ with _ | ⟨τ₁, u₁⟩ <;> rcases t₂ with _ | ⟨τ₂, u₂⟩ <;> try rfl
   simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
   rfl
 
-variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
+variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E) (gw : Assignment W)
 
 @[simp] theorem interpPartial_terminal (c : C) (w : L) :
-    interpPartial lex g (.terminal c w : Tree C L) = lex w := by
+    interpPartial lex g gw (.terminal c w : Tree C L) = lex w := by
   simp only [interpPartial, translate_terminal, Option.map_map]
   cases lex w <;> rfl
 
 @[simp] theorem interpPartial_node_unary (c : C) (t : Tree C L) :
-    interpPartial lex g (.node c (t :: [])) = interpPartial lex g t := rfl
+    interpPartial lex g gw (.node c (t :: [])) = interpPartial lex g gw t := rfl
 
 @[simp] theorem interpPartial_adjoin_unary (c : C) (t : Tree C L) :
-    interpPartial lex g (.adjoin c (t :: [])) = interpPartial lex g t := rfl
+    interpPartial lex g gw (.adjoin c (t :: [])) = interpPartial lex g gw t := rfl
 
 @[simp] theorem interpPartial_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    interpPartial lex g (.node c (t₁ :: t₂ :: [])) = (interpPartial lex g t₁).bind fun d₁ ↦
-      (interpPartial lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
-  map_bind_combine g _ _
+    interpPartial lex g gw (.node c (t₁ :: t₂ :: [])) = (interpPartial lex g gw t₁).bind fun d₁ ↦
+      (interpPartial lex g gw t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
+  map_bind_combine g gw _ _
 
 @[simp] theorem interpPartial_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
-    interpPartial lex g (.adjoin c (t₁ :: t₂ :: [])) = (interpPartial lex g t₁).bind fun d₁ ↦
-      (interpPartial lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
-  map_bind_combine g _ _
+    interpPartial lex g gw (.adjoin c (t₁ :: t₂ :: [])) = (interpPartial lex g gw t₁).bind fun d₁ ↦
+      (interpPartial lex g gw t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
+  map_bind_combine g gw _ _
 
 @[simp] theorem interpPartial_trace (n : ℕ) (c : C) :
-    interpPartial lex g (.trace n c : Tree C L) = some ⟨.e, Part.some (g n)⟩ := rfl
+    interpPartial lex g gw (.trace n c : Tree C L) = some ⟨.e, Part.some (g n)⟩ := rfl
 
 @[simp] theorem interpPartial_bind (n : ℕ) (c : C) (body : Tree C L) :
-    interpPartial lex g (.bind n c body) = (interpPartial lex g body).map fun d ↦
-      ⟨.fn .e d.1, Part.some fun x ↦ valueAtPartial d.1 (interpPartial lex (g[n ↦ x]) body)⟩ := by
+    interpPartial lex g gw (.bind n c body) = (interpPartial lex g gw body).map fun d ↦
+      ⟨.fn .e d.1,
+        Part.some fun x ↦ valueAtPartial d.1 (interpPartial lex (g[n ↦ x]) gw body)⟩ := by
   simp only [interpPartial, translate_bind, Option.map_map]
   rcases translate (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex body with _ | ⟨τ, b⟩
   · rfl
@@ -398,35 +415,35 @@ variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
 
 theorem interpPartial_junk {l : PhraseStructure.Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ PhraseStructure.Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    interpPartial lex g (RoseTree.node l cs) = none := by
+    interpPartial lex g gw (RoseTree.node l cs) = none := by
   simp only [interpPartial, translate_junk _ h, Option.map_none]
 
 /-! ### Uninterpretability and presupposition failure -/
 
 /-- A tree is uninterpretable when the engine assigns it no denotation. -/
-def Uninterpretable (t : Tree C L) : Prop := interpPartial lex g t = none
+def Uninterpretable (t : Tree C L) : Prop := interpPartial lex g gw t = none
 
 /-- A tree is a presupposition failure when its denotation is undefined. -/
-def PresupFailure (t : Tree C L) : Prop := ∃ d, interpPartial lex g t = some d ∧ ¬ d.2.Dom
+def PresupFailure (t : Tree C L) : Prop := ∃ d, interpPartial lex g gw t = some d ∧ ¬ d.2.Dom
 
 /-- A sentence fails exactly where its three-valued readout is undefined, so the engine's
 denotations and Strong Kleene propositions agree on presupposition failure. -/
 theorem presupFailure_iff_ofPart_eq_zero {t : Tree C L} {v : Part Prop}
-    (h : interpPartial lex g t = some ⟨.t, v⟩) :
-    PresupFailure lex g t ↔ SignType.ofPart v = 0 := by
+    (h : interpPartial lex g gw t = some ⟨.t, v⟩) :
+    PresupFailure lex g gw t ↔ SignType.ofPart v = 0 := by
   rw [PresupFailure, SignType.ofPart_eq_zero_iff, h]
   simp
 
 theorem interpPartial_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1))
     (t : Tree C L) :
-    (interpPartial lex g t).map (·.1) = (interpPartial lex' g' t).map (·.1) := by
+    (interpPartial lex g gw t).map (·.1) = (interpPartial lex' g' gw t).map (·.1) := by
   simp only [interpPartial, Option.map_map, Function.comp_def]
   exact translate_map_fst lex h t
 
 /-- Uninterpretability is decided by the leaves' types alone. -/
 theorem uninterpretable_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
-    Uninterpretable lex g t ↔ Uninterpretable lex' g' t := by
-  have := interpPartial_map_fst_congr lex lex' g g' h t
+    Uninterpretable lex g gw t ↔ Uninterpretable lex' g' gw t := by
+  have := interpPartial_map_fst_congr lex lex' g g' gw h t
   constructor
   · intro hn; rw [hn] at this; exact Option.map_eq_none_iff.mp this.symm
   · intro hn; rw [hn] at this; exact Option.map_eq_none_iff.mp this
@@ -441,17 +458,17 @@ variable {C : Type} {L : Type*} {lex : L → Option (Denotation E W Id S)}
 /-- On a lexicon lifting a total one, every value of the partial engine is defined and lifts the
 pure engine's value at that node. -/
 theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d')
-    (g : Assignment E) (t : Tree C L) {d' : PDenotation E W S}
-    (h : interpPartial lex' g t = some d') :
-    ∃ d, Tree.interp lex g t = some d ∧ d.Lifts d' := by
+    (g : Assignment E) (gw : Assignment W) (t : Tree C L) {d' : PDenotation E W S}
+    (h : interpPartial lex' g gw t = some d') :
+    ∃ d, Tree.interp lex g gw t = some d ∧ d.Lifts d' := by
   have hrel : ∀ w d', lex' w = some d' → ∃ c, lex w = some ⟨d'.1, c⟩ ∧ LiftsConst d'.1 c d'.2 := by
     intro w d' hd'
     obtain ⟨d, hd, hl⟩ := hlex w d' hd'
     cases hl with | @mk ty x y hxy => exact ⟨x, hd, y, rfl, hxy⟩
   obtain ⟨⟨τ, u'⟩, ht', rfl⟩ := Option.map_eq_some_iff.1 h
   obtain ⟨u, hu, hr⟩ := translate_rel lex hrel t ht'
-  obtain ⟨z, hz, hl⟩ := hr.lifts g
-  refine ⟨⟨τ, u.eval (fun c ↦ c) g⟩, ?_, ?_⟩
+  obtain ⟨z, hz, hl⟩ := hr.lifts g gw
+  refine ⟨⟨τ, u.eval (fun c ↦ c) g gw⟩, ?_, ?_⟩
   · simp [Tree.interp, hu, evalAt]; rfl
   · simp only [hz]
     exact .mk hl
@@ -459,16 +476,16 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
 /-- A lexicon lifting a total one has no presupposition failures. -/
 theorem not_presupFailure_of_lifts
     (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d') (g : Assignment E)
-    (t : Tree C L) : ¬ PresupFailure lex' g t := by
+    (gw : Assignment W) (t : Tree C L) : ¬ PresupFailure lex' g gw t := by
   rintro ⟨d', hd', hdom⟩
-  obtain ⟨d, -, hl⟩ := interpPartial_lifts hlex g t hd'
+  obtain ⟨d, -, hl⟩ := interpPartial_lifts hlex g gw t hd'
   cases hl
   exact hdom trivial
 
 theorem not_presupFailure_map_toPartial (h : ∀ w d, lex w = some d → d.1.FirstOrder)
-    (g : Assignment E) (t : Tree C L) :
-    ¬ PresupFailure (fun w ↦ (lex w).map Denotation.toPartial) g t :=
-  not_presupFailure_of_lifts (lifts_map_toPartial h) g t
+    (g : Assignment E) (gw : Assignment W) (t : Tree C L) :
+    ¬ PresupFailure (fun w ↦ (lex w).map Denotation.toPartial) g gw t :=
+  not_presupFailure_of_lifts (lifts_map_toPartial h) g gw t
 
 end Total
 
