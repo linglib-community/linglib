@@ -2,7 +2,7 @@ module
 
 public import Studies.Owusu2022
 public import Studies.Zimmermann2008
-public import Linglib.Logic.Modal.Extensional
+public import Linglib.Semantics.Reference.Rigidity
 
 /-!
 # Zimmermann (2026): African Lambdas I, The Nominal Domain
@@ -57,13 +57,19 @@ theorem bi_reading_not_narrow {S E : Type*} (f : S → ChoiceFunction E) {s : S}
   have h' := (Owusu2022.negation_narrow_iff f ⟨a, ha⟩).mp h
   hab ((h' a ha).trans (h' b hb).symm)
 
-/-- Under negation, the bound and free construals of the situation argument of *bí* coincide, as the
-explanation of (15) requires. -/
-theorem bi_negation_construals_collapse {S E : Type*}
-    (f : S → ChoiceFunction E) (s₀ : S) (P : S → E → Prop) (VP : E → S → Prop) :
-    (fun p s ↦ ¬ p s) (fun s ↦ VP (f s (P s)) s) s₀ ↔
-      (fun p s ↦ ¬ p s) (fun s ↦ VP (f s₀ (P s₀)) s) s₀ :=
-  iff_of_eq <| ModalLogic.isExtensionalAt_iff_forall_diag.mp ModalLogic.IsExtensionalAt.neg
-    fun σ s ↦ VP (f σ (P σ)) s
+/-- Under an operator that is not intensional, such as negation, the bound and free construals of
+the situation argument of *bí* (16a) coincide, so that the operator cannot shift it, as the
+explanation of (15) requires (p. 7). -/
+theorem bi_construals_collapse {S E : Type*} {O : (S → Prop) → S → Prop} {s₀ : S}
+    (hO : ModalLogic.IsExtensionalAt O s₀) (f : S → ChoiceFunction E) (P : S → E → Prop)
+    (VP : E → S → Prop) :
+    smallScope O VP (fun s ↦ f s (P s)) s₀ = largeScope O VP (fun s ↦ f s (P s)) s₀ :=
+  (hO.largeScope_eq_smallScope VP _).symm
+
+example {S E : Type*} (f : S → ChoiceFunction E) (s₀ : S) (P : S → E → Prop)
+    (VP : E → S → Prop) :
+    smallScope (fun p s ↦ ¬ p s) VP (fun s ↦ f s (P s)) s₀ =
+      largeScope (fun p s ↦ ¬ p s) VP (fun s ↦ f s (P s)) s₀ :=
+  bi_construals_collapse ModalLogic.isExtensionalAt_not f P VP
 
 end Zimmermann2026

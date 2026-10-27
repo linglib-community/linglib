@@ -28,6 +28,14 @@ two agree. Before this, Kamp argues that no many-valued logic handles borderline
   asymmetric, and the witness shows the incomparability and the forced verdict, not the
   paper's specific outcome.
 
+## Errata
+
+* Definition (7) asks for a single function $F'$ on extensions with $F(P)(w) = F'(P(w))$ at
+  every world, while the gloss after it and the claim that every predicative adjective is
+  extensional need $F'$ to vary with the world. A predicative adjective whose property differs
+  between worlds, such as `grayAdj`, satisfies (4) and the gloss but not (7) as printed. The
+  study reads (7) by its gloss, `ModalLogic.IsExtensional`.
+
 ## References
 
 * [kamp-1975]
@@ -224,35 +232,38 @@ inductive W2 | w₁ | w₂
 /-- Three entities suffice for all witness constructions. -/
 inductive E3 | a | b | c
 
--- UNVERIFIED: Kamp's definition numbers (4)–(6) below; the paper is not available to check.
+/-- *gray* is predicative, Kamp's definition (4) (p. 124), since it conjoins a property with the
+noun, so *gray cat* entails both *gray* and *cat*. Only `a` is gray, and only at `w₁`. -/
+def grayAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦ (w = .w₁ ∧ x = .a) ∧ N w x
 
-/-- *gray* is predicative, Kamp's definition (4), since it conjoins a fixed property with the
-noun, so *gray cat* entails both *gray* and *cat*. -/
-def grayAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
-  (match x with | .a => True | _ => False) ∧ N w x
-
-/-- Each class has a member, and extensionality is independent of subsectivity. -/
 theorem gray_intersective : IsIntersective grayAdj :=
-  Modifier.isIntersective_iff_exists_forall.mpr
-    ⟨fun _ x ↦ match x with | .a => True | _ => False,
-     fun N w x ↦ by cases x <;> simp [grayAdj]⟩
+  ⟨fun w x ↦ w = .w₁ ∧ x = .a, fun _ ↦ rfl⟩
 
 /-- *gray* is therefore also extensional and subsective. -/
 example : ModalLogic.IsExtensional grayAdj :=
   Modifier.IsIntersective.isExtensional gray_intersective
 example : IsSubsective grayAdj := gray_intersective.isSubsective
 
-/-- *fake* is privative, Kamp's definition (5), so *fake gun* entails *not a gun*. Kamp doubts
-that any English adjective is privative "in all of its possible uses". -/
+/-- No single function on extensions gives *gray*, so the predicative *gray* is not extensional by
+(7) as printed (p. 125). -/
+theorem not_exists_forall_grayAdj_eq :
+    ¬ ∃ F' : (E3 → Prop) → E3 → Prop, ∀ N w, grayAdj N w = F' (N w) := by
+  rintro ⟨F', hF'⟩
+  have h := (congrFun (hF' (fun _ _ ↦ True) .w₁) .a).trans
+    (congrFun (hF' (fun _ _ ↦ True) .w₂) .a).symm
+  simp [grayAdj] at h
+
+/-- *fake* is privative, Kamp's definition (5) (p. 125), so *fake gun* entails *not a gun*. Kamp
+doubts that any English adjective is privative "in all of its possible uses". -/
 def fakeAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
   (match x with | .b => True | _ => False) ∧ ¬ N w x
 
 theorem fake_privative : IsPrivative fakeAdj :=
   Modifier.isPrivative_iff_forall.mpr fun _ _ _ h ↦ h.2
 
-/-- *skillful* is affirmative, Kamp's definition (6), but not extensional. A skillful surgeon
-is a surgeon, yet skill depends on the noun's intension and not just its current extension, as
-in the case of cobblers and darts players that Kamp credits to Lewis. -/
+/-- *skillful* is affirmative, Kamp's definition (6) (p. 125), but not extensional (7). A
+skillful surgeon is a surgeon, yet skill depends on the noun's intension and not just its current
+extension, as in the case of cobblers and darts players that Kamp credits to Lewis. -/
 def skillfulAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
   N w x ∧ match x with
     | .a => N .w₁ .a  -- a's skill assessment depends on N's intension
@@ -269,12 +280,12 @@ theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
     | _, _    => True
   have hagree : N₁ .w₂ = N₂ .w₂ := by
     funext x; cases x <;> simp [N₁, N₂]
-  have h := hext .w₂ N₁ N₂ hagree
+  have h := hext .w₂ hagree
   have hLHS : skillfulAdj N₁ .w₂ .a := ⟨trivial, trivial⟩
   exact (congrFun h .a ▸ hLHS).2
 
-/-- *alleged* satisfies no meaning postulate, Kamp's opening example (1) being that *every
-alleged thief is a thief* is no logical truth. -/
+/-- *alleged* satisfies no meaning postulate, Kamp's opening example (1) (p. 123) being that
+*every alleged thief is a thief* is no logical truth. -/
 def allegedAdj : Modifier (W2 → E3 → Prop) := fun _N _ x ↦
   match x with | .a => True | _ => False
 

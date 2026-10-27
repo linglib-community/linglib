@@ -5,11 +5,24 @@ public import Mathlib.ModelTheory.Syntax
 /-!
 # The quantified modal language
 
-`ModalFormula L α`: modal formulas over `L` with named free variables `α`,
-in mathlib's `BoundedFormula` basis — atomic `equal`/`rel`, `falsum`,
-`imp` — plus `□` and named universal quantification, with `∼`, `⊤`, `⊓`,
-`⊔`, `ex`, and `diamond` derived exactly as for `BoundedFormula`.
-`[UPSTREAM]` candidate for `Mathlib/ModelTheory`.
+Quantified modal logic adds a necessity operator to first-order logic. Its formulas over a
+signature `L`, with free variables in `α`, are built as mathlib's first-order formulas are, from
+equations between terms, relation symbols applied to terms, falsity and implication, together
+with necessity and universal quantification over a named variable. Negation, the other
+connectives, existential quantification and possibility are defined from these exactly as for
+first-order formulas.
+
+## Main definitions
+
+* `FirstOrder.Language.ModalFormula L α`: the formulas of quantified modal logic.
+
+## Implementation notes
+
+`[UPSTREAM]` candidate for mathlib's `ModelTheory`.
+
+## References
+
+* [fitting-mendelsohn-2023]
 -/
 
 @[expose] public section
@@ -18,10 +31,7 @@ namespace FirstOrder.Language
 
 variable {L : Language} {α : Type*}
 
-/-- Modal formulas over `L` with named free variables `α`: mathlib's
-    `BoundedFormula` basis — atomic `equal`/`rel`, `falsum`, `imp` — plus
-    `□` and named quantification; `∼`, `⊤`, `⊓`, `⊔`, `ex`, and `diamond` are
-    derived exactly as for `BoundedFormula`. -/
+/-- A formula of quantified modal logic over `L` with free variables in `α`. -/
 inductive ModalFormula (L : Language) (α : Type*) where
   /-- The proposition that two terms are equal. -/
   | equal (t₁ t₂ : L.Term α) : ModalFormula L α
@@ -52,12 +62,12 @@ instance : Min (ModalFormula L α) := ⟨fun φ ψ => (φ.imp ψ.not).not⟩
 
 instance : Max (ModalFormula L α) := ⟨fun φ ψ => φ.not.imp ψ⟩
 
-/-- Existential quantification of a named variable, derived: `∃x := ∼∀x∼`. -/
+/-- Existential quantification of a named variable, defined as $\neg \forall x \neg$. -/
 @[match_pattern]
 protected def ex (x : α) (φ : ModalFormula L α) : ModalFormula L α :=
   (all x φ.not).not
 
-/-- Possibility, derived: `◇φ := ∼□∼φ` — to `box` what `ex` is to `all`. -/
+/-- Possibility, defined as $\neg \Box \neg$. -/
 @[match_pattern]
 def diamond (φ : ModalFormula L α) : ModalFormula L α := (box φ.not).not
 

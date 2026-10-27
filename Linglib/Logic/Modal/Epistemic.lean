@@ -4,31 +4,36 @@ public import Linglib.Discourse.CommonGround
 public import Linglib.Logic.Modal.Basic
 
 /-!
-# Multi-agent epistemic logic
+# Group knowledge
 
-The group knowledge operators of [fagin-halpern-moses-vardi-1995] over agent-indexed
-accessibility `Rs : E → SetRel W W` are boxes along lattice combinations of the agents'
-relations: agent `i` knows `p` at `w` when `□[Rs i] p w`, everyone in `G` knows it when
-`□[⋃ i ∈ G, Rs i] p w`, it is distributed knowledge when `□[⋂ i ∈ G, Rs i] p w`, and the
-hierarchy `C_G ≤ E_G ≤ Kᵢ ≤ D_G` is antitonicity in the relation (`ModalLogic.box_restrict`).
-Common knowledge is the box along the transitive closure of the union: `p` holds at every world
-reachable by a chain of members' accessibility ([lederman-2014] Appendix 2.B's construction),
-equivalently the infinite conjunction `E_G p ∧ E_G (E_G p) ∧ ⋯`
-(`commonKnowledge_iff_forall_iterate`). Belief is the same operator over a KD45 frame
-(`ModalLogic.IsKD45Frame`).
+In epistemic logic an agent *knows* a proposition at a world when the proposition is true at
+every world the agent cannot tell apart from it. A group of agents gives rise to three further
+notions. A proposition is known by *everyone* in the group when each member knows it; it is
+*distributed knowledge* when it is true at every world that all the members consider possible, so
+that it follows from what they know together; and it is *common knowledge* when everyone knows
+it, everyone knows that everyone knows it, and so on without end. Each is necessity along a
+relation built from the members' relations: their union for everyone's knowledge, their
+intersection for distributed knowledge, and the transitive closure of their union for common
+knowledge, which [is the infinite conjunction of iterated knowledge by
+everyone](##commonKnowledge_iff_forall_iterate). Since necessity is antitone in the relation, common knowledge entails everyone's knowledge,
+which entails each member's knowledge, which entails distributed knowledge. Belief is the same
+operator along a KD45 frame.
+
+A common ground is *grounded in* common knowledge when the worlds it leaves open are exactly
+those at which every proposition it accepts is common knowledge.
 
 ## Main definitions
 
-* `ModalLogic.CommonKnowledge`: `C_G`.
-* `Filter.GroundedIn`: a common ground whose context set is exactly what is common
-  knowledge ([stalnaker-2002]).
+* `ModalLogic.CommonKnowledge`: common knowledge in a group.
+* `Filter.GroundedIn`: a common ground grounded in common knowledge.
 
 ## References
 
 * [fagin-halpern-moses-vardi-1995] — group knowledge and its reachability semantics
 * [halpern-2003] — the same operators in the uncertainty setting
 * [fagin-halpern-1994] — the probabilistic extension, `Studies/FaginHalpern1994.lean`
-* [hintikka-1962] — knowledge as `□`
+* [hintikka-1962] — knowledge as necessity
+* [lederman-2014] — common knowledge as reachability (UNVERIFIED: Appendix 2.B)
 * [stalnaker-2002] — common ground as common knowledge
 -/
 
@@ -41,8 +46,8 @@ open SetRel
 variable {W E : Type*} {Rs : E → SetRel W W} {i : E} {G : Set E} {p : W → Prop} {w : W}
 
 variable (Rs G) in
-/-- Common knowledge among `G`: `p` holds at every world reachable from `w` by a chain of
-members' accessibility. -/
+/-- `p` is common knowledge among `G` at `w` when it holds at every world reachable from `w`
+by a chain of worlds each accessible to some member from the one before. -/
 def CommonKnowledge (p : W → Prop) (w : W) : Prop := □[transGen (⋃ i ∈ G, Rs i)] p w
 
 theorem box_of_commonKnowledge (hi : i ∈ G) (h : CommonKnowledge Rs G p w) : □[Rs i] p w :=
@@ -61,9 +66,9 @@ namespace Filter
 
 variable {W E : Type*}
 
-/-- A common ground `cg : Filter W` is grounded in common knowledge when its context set
-`cg.ker` is exactly the set of worlds where each accepted proposition is common knowledge
-among `G` ([stalnaker-2002]). -/
+/-- A common ground `cg` is grounded in common knowledge among `G` when its context set
+`cg.ker` is exactly the set of worlds at which every proposition it accepts is common knowledge
+[stalnaker-2002]. -/
 def GroundedIn (cg : Filter W) (Rs : E → SetRel W W) (G : Set E) : Prop :=
   ∀ w, w ∈ cg.ker ↔ ∀ p ∈ cg, ModalLogic.CommonKnowledge Rs G (· ∈ p) w
 

@@ -62,10 +62,8 @@ theorem isPrivative_iff_forall :
 
 /-- Intersective modifiers are extensional, since the meet with a fixed property reads the noun
 only through its extension at each world. -/
-theorem IsIntersective.isExtensional (h : IsIntersective adj) : ModalLogic.IsExtensional adj := by
-  obtain ⟨Q, hQ⟩ := h
-  intro w N₁ N₂ hN
-  simp only [hQ, Pi.inf_apply, hN]
+theorem IsIntersective.isExtensional (h : IsIntersective adj) : ModalLogic.IsExtensional adj :=
+  h.elim fun Q hQ ↦ ModalLogic.isExtensional_iff_exists_eq_piMap.2 ⟨fun w ↦ (Q w ⊓ ·), funext hQ⟩
 
 /-- A privative modifier that holds of something is not subsective. -/
 theorem IsPrivative.not_isSubsective (hp : IsPrivative adj) (hne : ∃ N w x, adj N w x) :
