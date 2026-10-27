@@ -53,8 +53,8 @@ concedes and `exceptiveSkeleton_most_not_isLAnalytic` states.
 ## Implementation notes
 
 * The paper's type hierarchy has `e`, `t` and function types only; `permLift` extends it to
-  the rest of `Montague.Ty` by the identity at the degree, cardinality and eventuality sorts
-  and pointwise at intensions, with `Unit` as the inert index sort of the extensional
+  the rest of `Montague.Ty` by the identity at the degree, cardinality, eventuality and world
+  sorts, so pointwise at intensions, with `Unit` as the inert index sort of the extensional
   fragment.
 * The denotation of *but* is the paper's schema factored compositionally, but where the
   printed uniqueness clause reads `g ⊆ j` the least-exception schema it factors requires
@@ -111,8 +111,8 @@ def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
   | .d => Equiv.refl _
   | .n => Equiv.refl _
   | .v => Equiv.refl _
+  | .s => Equiv.refl _
   | .fn a b => (permLift π a).arrowCongr (permLift π b)
-  | .intens a => (Equiv.refl Unit).arrowCongr (permLift π a)
 
 @[simp] theorem permLift_et_apply (π : Equiv.Perm E) (P : E → Prop) :
     permLift π Ty.et P = P ∘ ⇑π.symm :=

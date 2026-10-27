@@ -6,21 +6,13 @@ public import Linglib.Logic.Modal.Basic
 /-!
 # Group knowledge
 
-In epistemic logic an agent *knows* a proposition at a world when the proposition is true at
-every world the agent cannot tell apart from it. A group of agents gives rise to three further
-notions. A proposition is known by *everyone* in the group when each member knows it; it is
-*distributed knowledge* when it is true at every world that all the members consider possible, so
-that it follows from what they know together; and it is *common knowledge* when everyone knows
-it, everyone knows that everyone knows it, and so on without end. Each is necessity along a
-relation built from the members' relations: their union for everyone's knowledge, their
-intersection for distributed knowledge, and the transitive closure of their union for common
-knowledge, which [is the infinite conjunction of iterated knowledge by
-everyone](##commonKnowledge_iff_forall_iterate). Since necessity is antitone in the relation, common knowledge entails everyone's knowledge,
-which entails each member's knowledge, which entails distributed knowledge. Belief is the same
-operator along a KD45 frame.
-
-A common ground is *grounded in* common knowledge when the worlds it leaves open are exactly
-those at which every proposition it accepts is common knowledge.
+In epistemic logic an agent *knows* a proposition at a world when it is true at every world the
+agent cannot tell apart from it. A group's *everyone*, *distributed* and *common knowledge* are
+necessity along the union, the intersection and the transitive closure of the union of its
+members' relations, and common knowledge [is the infinite conjunction of iterated knowledge by
+everyone](##commonKnowledge_iff_forall_iterate). Belief is the same operator along a KD45 frame.
+A common ground is *grounded in* common knowledge when the worlds it leaves open are exactly those
+at which every proposition it accepts is common knowledge.
 
 ## Main definitions
 

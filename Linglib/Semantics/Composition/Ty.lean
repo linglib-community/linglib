@@ -7,16 +7,18 @@ public import Mathlib.Order.CompleteBooleanAlgebra
 # Semantic types and denotation domains
 
 In Montague semantics every expression has a *semantic type*, which fixes the kind of thing it
-denotes: an individual ($e$), a truth value ($t$), a function from denotations of type $a$ to
-denotations of type $b$ ($\langle a,b\rangle$), or an *intension* ($\langle s,a\rangle$), a
-function from worlds to denotations of type $a$. Later work adds sorts for degrees, cardinalities,
-and events and states. Each type has a *domain* of possible denotations, built from a set of
-individuals and a set of worlds, and the domain of a type that ends in $t$ is a Boolean algebra,
-pointwise.
+denotes: an individual ($e$), a truth value ($t$), a world ($s$), or a function from denotations
+of type $a$ to denotations of type $b$ ($\langle a,b\rangle$). An *intension*, of type
+$\langle s,a\rangle$, is a function from worlds; Montague's intensional logic has no type $s$ of
+its own, and the two-sorted type theory of Gallin adds it. Later work adds sorts for degrees,
+cardinalities, and events and states. Each type has a *domain* of possible denotations, built from
+a set of individuals and a set of worlds, and the domain of a type that ends in $t$ is a Boolean
+algebra, pointwise.
 
 ## Main definitions
 
 * `Montague.Ty`: semantic types.
+* `Montague.Ty.intens`: intensions, the functions from worlds.
 * `Montague.Sorts`: the carriers of the degree and eventuality sorts.
 * `Montague.Ty.Domain E W ty S`: the denotation domain of `ty`.
 * `Montague.Denotation E W M S`: a semantic type with an `M`-computation in its domain.
@@ -44,13 +46,14 @@ composition engine's dispatch on types at run time.
 
 namespace Montague
 
-/-- The semantic types are Montague's `e`, `t`, `fn a b` (⟨a,b⟩) and `intens a` (⟨s,a⟩), the
-degree sort `d` ([heim-2001], [wellwood-2015]), the cardinality sort `n` ([sudo-2016],
-[scontras-2014], [little-moroney-royer-2022]), and the eventuality sort `v` ([davidson-1967],
-[parsons-1990]). Kratzer's type `s` of events, of which actions and states are subkinds
-([kratzer-1996]), is `v`, as are Hanink and Koontz-Garboden's states
-([hanink-koontz-garboden-2025]); events and states are distinguished within it
-([yu-ausensi-smith-2023]), not as two types. -/
+/-- The semantic types are the entities `e`, the truth values `t`, the worlds `s`, and the
+functions `fn a b` (⟨a,b⟩) of two-sorted type theory ([gallin-1975]), in which Montague's
+intensions ⟨s,a⟩ are the functions from worlds (`Ty.intens`), together with the degree sort `d`
+([heim-2001], [wellwood-2015]), the cardinality sort `n` ([sudo-2016], [scontras-2014],
+[little-moroney-royer-2022]), and the eventuality sort `v` ([davidson-1967], [parsons-1990]).
+Kratzer's type `s` of events, of which actions and states are subkinds ([kratzer-1996]), is `v`,
+not the worlds `s`, as are Hanink and Koontz-Garboden's states ([hanink-koontz-garboden-2025]);
+events and states are distinguished within it ([yu-ausensi-smith-2023]), not as two types. -/
 inductive Ty where
   /-- Entities. -/
   | e
@@ -62,13 +65,16 @@ inductive Ty where
   | n
   /-- Eventualities, events and states alike. -/
   | v
+  /-- Worlds, or situations: the indices of evaluation. -/
+  | s
   /-- Functions `⟨a,b⟩`. -/
   | fn : Ty → Ty → Ty
-  /-- Intensions `⟨s,a⟩`. -/
-  | intens : Ty → Ty
   deriving Repr, DecidableEq
 
 @[inherit_doc] scoped infixr:25 " ⇒ " => Ty.fn
+
+/-- Intensions `⟨s,a⟩`, the functions from worlds. -/
+@[match_pattern] abbrev Ty.intens (a : Ty) : Ty := .fn .s a
 
 /-- `⟨e,t⟩`, properties of individuals. -/
 abbrev Ty.et : Ty := .e ⇒ .t
@@ -92,7 +98,8 @@ structure Sorts where
   eventuality : Type := Empty
 
 /-- The type `e` denotes in `E`, `t` in `Prop`, `d` in the scale of degrees, `n` in `ℕ`, `v` in
-the eventualities, `⟨a,b⟩` in `Ty.Domain a → Ty.Domain b` and `⟨s,a⟩` in `W → Ty.Domain a`. -/
+the eventualities, `s` in `W`, and `⟨a,b⟩` in `Ty.Domain a → Ty.Domain b`, so that an intension
+`⟨s,a⟩` denotes in `W → Ty.Domain a`. -/
 abbrev Ty.Domain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   match ty with
   | .e => E
@@ -100,8 +107,8 @@ abbrev Ty.Domain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   | .d => S.degree
   | .n => ℕ
   | .v => S.eventuality
+  | .s => W
   | .fn a b => Ty.Domain E W a S → Ty.Domain E W b S
-  | .intens a => W → Ty.Domain E W a S
 
 /-- A denotation in the Montague type system is a semantic type together with an `M`-computation
 in the domain of that type. `M := Id` is the pure [heim-kratzer-1998] carrier; effectful
@@ -119,9 +126,6 @@ def Ty.Domain.completeBooleanAlgebra? (E W : Type) (ty : Ty) (S : Sorts := {}) :
   | .t => some inferInstance
   | .fn _ b =>
     (completeBooleanAlgebra? E W b S).map fun (i : CompleteBooleanAlgebra (Ty.Domain E W b S)) =>
-      letI := i; inferInstance
-  | .intens a =>
-    (completeBooleanAlgebra? E W a S).map fun (i : CompleteBooleanAlgebra (Ty.Domain E W a S)) =>
       letI := i; inferInstance
   | _ => none
 

@@ -57,8 +57,8 @@ abbrev Ty.PDomain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   | .d => S.degree
   | .n => ℕ
   | .v => S.eventuality
+  | .s => W
   | .fn a b => Ty.PDomain E W a S →. Ty.PDomain E W b S
-  | .intens a => W →. Ty.PDomain E W a S
 
 /-- A partial denotation is a semantic type with a possibly undefined value in its partial
 domain. -/
@@ -167,8 +167,8 @@ def Ty.Lifts : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty S → Prop
   | .d, x, y => x = y
   | .n, x, y => x = y
   | .v, x, y => x = y
+  | .s, x, y => x = y
   | .fn a b, f, f' => ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z
-  | .intens a, f, f' => ∀ w, ∃ z, f' w = Part.some z ∧ Ty.Lifts a (f w) z
 
 @[simp] theorem Ty.lifts_e {x y : E} : Ty.Lifts (E := E) (W := W) (S := S) .e x y ↔ x = y :=
   Iff.rfl
@@ -214,15 +214,16 @@ def Ty.Domain.toPartial : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty
   | .d, x => x
   | .n, x => x
   | .v, x => x
+  | .s, x => x
   | .fn .e b, f => PFun.lift fun x ↦ toPartial b (f x)
-  | .fn _ _, _ => fun _ ↦ Part.none
   | .intens a, f => PFun.lift fun w ↦ toPartial a (f w)
+  | .fn _ _, _ => fun _ ↦ Part.none
 
 theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty S) :
     Ty.Lifts ty x (Ty.Domain.toPartial ty x) := by
   induction h with
   | fn _ ih => exact Ty.lifts_lift fun x ↦ ih _
-  | intens _ ih => exact fun w ↦ ⟨_, rfl, ih _⟩
+  | intens _ ih => exact fun _ _ hw ↦ ⟨_, hw ▸ rfl, ih _⟩
   | _ => rfl
 
 /-- The partial denotation a total one lifts to. -/
@@ -244,9 +245,11 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
   | functionalLeft => simpa [evalPartial, eval] using ha b b' hb
   | functionalRight => simpa [evalPartial, eval] using hb a a' ha
   | intensionalLeft =>
-    simpa [evalPartial, eval] using ha (fun _ ↦ b) (fun _ ↦ Part.some b') fun _ ↦ ⟨b', rfl, hb⟩
+    simpa [evalPartial, eval] using
+      ha (fun _ ↦ b) (fun _ ↦ Part.some b') fun _ _ _ ↦ ⟨b', rfl, hb⟩
   | intensionalRight =>
-    simpa [evalPartial, eval] using hb (fun _ ↦ a) (fun _ ↦ Part.some a') fun _ ↦ ⟨a', rfl, ha⟩
+    simpa [evalPartial, eval] using
+      hb (fun _ ↦ a) (fun _ ↦ Part.some a') fun _ _ _ ↦ ⟨a', rfl, ha⟩
   | predicateModification =>
     refine ⟨_, by simp [evalPartial]; rfl, Ty.lifts_fn.mpr fun x y hxy ↦ ?_⟩
     obtain ⟨p, hp, hlp⟩ := ha x y hxy

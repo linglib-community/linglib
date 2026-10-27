@@ -6,13 +6,10 @@ public import Linglib.Logic.Modal.FirstOrder.Syntax
 /-!
 # Constant-domain Kripke semantics
 
-A Kripke model for quantified modal logic has a set of worlds, an accessibility relation between
-them, and at each world a first-order structure. In a *constant-domain* model every world has
-the same domain of individuals, and only the interpretation of the symbols varies from world to
-world. A formula is satisfied at a world under an assignment of individuals to its free
-variables: atomic formulas are evaluated in the world's structure, necessity quantifies over the
-accessible worlds, and the quantifiers range over the common domain. Because the domain does not
-vary, the [Barcan formula](##realize_barcan) $\forall x \, \Box \varphi \to \Box \forall x \,
+A *constant-domain* Kripke model for quantified modal logic has a set of worlds, an accessibility
+relation between them, and at each world a first-order structure on one shared domain of
+individuals. Necessity quantifies over the accessible worlds and the quantifiers over the shared
+domain, so the [Barcan formula](##realize_barcan) $\forall x \, \Box \varphi \to \Box \forall x \,
 \varphi$ and [its converse](##realize_converseBarcan) hold in every model.
 
 ## Main definitions
