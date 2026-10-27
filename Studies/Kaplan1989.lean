@@ -30,24 +30,7 @@ necessary.
 namespace Kaplan1989
 
 open Kaplan ContextTower
-
-/-! ### Validity and necessity -/
-
-section Character
-
-variable {C W : Type*}
-
-/-- A character is a priori, valid, when it holds at every context. -/
-def IsAPriori (world : C → W) (χ : Character C W Prop) : Prop := ∀ c, χ.HoldsAt world c
-
-/-- A character is necessary when its content at every context is true at every world. -/
-def IsNecessary (χ : Character C W Prop) : Prop := ∀ (c : C) (w : W), χ c w
-
-theorem IsNecessary.isAPriori {χ : Character C W Prop} (h : IsNecessary χ) (world : C → W) :
-    IsAPriori world χ :=
-  fun c ↦ h c _
-
-end Character
+open Kaplan.Character (IsAPriori IsNecessary)
 
 /-! ### Proper contexts -/
 

@@ -1,0 +1,59 @@
+[
+  {
+    "id": "stalnaker1978_fool",
+    "source": {"bibkey": "stalnaker-1978", "paperLabel": "p. 317"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You are a fool.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Said to O'Leary, who is a fool. Daniels, who is no fool, is standing nearby and thinks he is the one addressed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["truthValue", "true"]
+    ],
+    "comment": "What I said was true, although O'Leary, who understood what I said, and Daniels, who did not, both thought it false.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stalnaker1978_meter",
+    "source": {"bibkey": "stalnaker-1978", "paperLabel": "p. 321"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This bar is one meter long.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Said by an authority fixing the reference of 'one meter' by means of a certain metal bar.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["truthValue", "true"]
+    ],
+    "comment": "The proposition expressed might have been false, although the authority could not have expressed a false proposition in that utterance.",
+    "verified": "page-image"
+  },
+  {
+    "id": "stalnaker1978_holmes",
+    "source": {"bibkey": "stalnaker-1978", "paperLabel": "p. 330"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sherlock Holmes does not exist.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Said in the actual world by a speaker who has heard three rumors about the origin of the Sherlock Holmes stories and does not know which is true.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["truthValue", "true"]
+    ],
+    "comment": "Diagonalization yields the intuitively right result: true in the actual world, false in the worlds where the name refers to someone who exists.",
+    "verified": "page-image"
+  }
+]

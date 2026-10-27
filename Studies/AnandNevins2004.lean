@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Context.Overwrite
 public import Studies.Schlenker2003
+public import Studies.Stalnaker1978
 public import Linglib.Data.Examples.AnandNevins2004
 
 /-!
@@ -70,11 +71,13 @@ def say (acc : E → Context W E P T → Set (Context W E P T)) (x : E)
 
 variable (acc : E → Context W E P T → Set (Context W E P T)) (x : E)
 
-/-- `OP∀` is Stalnaker's diagonal operator, evaluating its prejacent at the index taken as its own
-context (fn. 7). -/
-theorem shiftyOp_opAll_iff_holdsAt (χ : Character (Context W E P T) (Context W E P T) Prop)
-    (c i : Context W E P T) : shiftyOp opAll χ c i ↔ χ.HoldsAt id i := by
-  simp [Character.HoldsAt]
+/-- `OP∀` is Stalnaker's dagger, evaluating its prejacent at the index taken as its own context
+(fn. 7). -/
+theorem shiftyOp_opAll_eq_dagger :
+    (shiftyOp opAll : Character (Context W E P T) (Context W E P T) α → _) =
+      Stalnaker1978.dagger := by
+  ext χ c i
+  simp
 
 -- (26), (28)
 theorem say_shiftyOp_opAll (χ : Character (Context W E P T) (Context W E P T) Prop)

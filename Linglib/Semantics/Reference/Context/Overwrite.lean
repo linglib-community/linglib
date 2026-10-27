@@ -34,7 +34,7 @@ after a sequence of overwrites it reads the context of the last overwrite that t
 * `apply_overwrite_of_subset`, `apply_overwrite_of_disjoint`: an expression reads the overwriting
   context when its coordinates are overwritten, the original one when none is.
 * `apply_foldl_overwrite`: Local Determination.
-* `shiftyOp_shiftyOp`, `holdsAt_shiftyOp`: stacked shifty operators compose to the one overwriting
+* `shiftyOp_shiftyOp`, `diag_shiftyOp`: stacked shifty operators compose to the one overwriting
   the union of their coordinates, and unembedded a shifty operator is vacuous.
 
 ## References
@@ -219,10 +219,9 @@ variable (s t : Finset Coord) (χ : Character (Context W E P T) (Context W E P T
 @[simp] theorem shiftyOp_shiftyOp : shiftyOp t (shiftyOp s χ) = shiftyOp (t ∪ s) χ := by
   ext; simp [overwrite_overwrite]
 
-/-- Unembedded, a shifty operator is vacuous: a sentence holds at a context, taken as its own
-index, iff its complement does. -/
-theorem holdsAt_shiftyOp (χ : Character (Context W E P T) (Context W E P T) Prop)
-    (c : Context W E P T) : (shiftyOp s χ).HoldsAt id c ↔ χ.HoldsAt id c := by
-  simp [Character.HoldsAt]
+/-- Unembedded, a shifty operator is vacuous: at a context taken as its own index, it has the
+value of its complement. -/
+theorem diag_shiftyOp : (shiftyOp s χ).diag id = χ.diag id := by
+  ext; simp
 
 end Kaplan

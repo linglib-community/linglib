@@ -102,10 +102,10 @@ theorem stack_eq (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) �
 
 /-- Unembedded, a stack of operators is vacuous (65), since a sentence's truth at a context is its
 truth at that context as index (64). -/
-theorem holdsAt_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) Prop)
-    (c : Context W E P T) : (stack n χ).HoldsAt id c ↔ χ.HoldsAt id c := by
+theorem diag_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) α) :
+    (stack n χ).diag id = χ.diag id := by
   rw [stack_eq]
-  exact Kaplan.holdsAt_shiftyOp _ χ c
+  exact Kaplan.diag_shiftyOp _ χ
 
 /-- (G2): in a complement of any size, an indexical class shifts only if every class below it in
 the sequence shifts as well (§4.4). -/
