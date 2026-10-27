@@ -241,14 +241,6 @@
   requestAnimationFrame(track);
   if (location.hash && holder(decodeURIComponent(location.hash.slice(1)))) go(decodeURIComponent(location.hash.slice(1)), false);
 
-  // ---- copy a declaration's full name
-  document.addEventListener("click", (ev) => {
-    const b = ev.target.closest("[data-copy]");
-    if (!b) return;
-    const done = () => { b.textContent = "copied"; setTimeout(() => { b.textContent = "copy"; }, 1200); };
-    try { navigator.clipboard.writeText(b.dataset.copy).then(done, () => {}); } catch (e) {}
-  });
-
   // ---- previews of the declarations a link names
   const pop = $("pop");
   let timer = null;

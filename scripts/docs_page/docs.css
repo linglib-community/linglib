@@ -72,9 +72,6 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .dh .attr, .dh .kw { color: var(--secondary); }
 .dh .nm { font-weight: 650; color: var(--primary); overflow-wrap: anywhere; }
 .decl.def .nm, .decl.inst .nm { font-weight: 500; }
-.dh .copy { font: 12px var(--sans, inherit); color: var(--secondary); opacity: 0; transition: opacity .12s; }
-.dh .copy:hover { color: var(--primary); }
-.decl:hover .copy, .copy:focus-visible { opacity: 1; }
 .dh .src { margin-left: auto; font-size: 12px; color: var(--secondary); font-variant-numeric: tabular-nums; }
 .dh .src:hover { color: var(--primary); }
 .dh .loc { margin-left: auto; font-size: 12px; color: var(--secondary); }
@@ -136,7 +133,7 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .row .opener::after { content: "+"; margin-left: auto; padding-left: 10px; font-size: 13px; color: var(--secondary); }
 .row.open > .dh .opener::after { content: "−"; }
 .row .opener:hover .nm { text-decoration: underline; text-underline-offset: 3px; }
-.row:not(.open) .copy, .row:not(.open) .src { display: none; }
+.row:not(.open) .src { display: none; }
 .row .src { margin-left: 12px; }
 .row .body { padding: 0 0 2px; }
 .bf { margin: 10px 0 0; font-size: 14px; line-height: 1.7; color: var(--secondary); }
@@ -147,7 +144,6 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
 .tg .loc { margin-left: 5px; font-size: 12px; color: var(--secondary); }
 .bf-area > .decl { margin: 8px 0 2px 2px; padding: 0 0 6px 14px; border-top: 0; border-left: 1px solid var(--tertiary); }
 .bf-area > .decl::before { display: none; }
-.bf-area > .decl .copy { display: none; }
 .bf-area > .decl .ddoc { font-size: 15px; }
 .bf-area > .decl .sig { font-size: 13px; }
 
@@ -273,7 +269,6 @@ a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost)
   .decl { padding-left: 11px; }
   .sig { font-size: 12.5px; padding: 7px 9px 7px calc(9px + 3ex); text-indent: -3ex; }
   .dh { font-size: 14px; }
-  .dh .copy { display: none; }
   .ddoc { font-size: 15.5px; }
   .lede { font-size: 16.5px; }
   .tg { white-space: normal; }

@@ -462,8 +462,6 @@ class StudyPage:
         if head:
             lede, doc = f'<div class="lede">{d["doc"]}</div>\n', ""
         loc = self.loc(d)
-        copy = (f'<button class="copy" type="button" data-copy="{esc(d["id"])}" '
-                f'aria-label="Copy the name {esc(d["id"])}" title="Copy name">copy</button>')
         src = ""
         if d["src"]:
             src = f'<a class="src" href="{esc(d["src"])}" title="Source, lines {lines}">{lines}</a>'
@@ -477,12 +475,12 @@ class StudyPage:
         if head:
             return (f'<article class="decl {cls}" id="{esc(d["id"])}" {data}>\n{lede}'
                     f'<header class="dh">{attrs}<span class="kw">{kw}</span> '
-                    f'{link("#" + d["id"], esc(d["name"]), "nm")}{copy}{loc}{src}</header>\n'
+                    f'{link("#" + d["id"], esc(d["name"]), "nm")}{loc}{src}</header>\n'
                     f'{doc}{rest}</article>')
         return (f'<article class="decl {cls}" id="{esc(d["id"])}" {data}>\n'
                 f'<header class="dh"><button class="opener" type="button" aria-expanded="false">{attrs}'
                 f'<span class="kw">{kw}</span> <span class="nm">{esc(d["name"])}</span>{loc}'
-                f'</button>{copy}{src}</header>\n<div class="body" hidden>{doc}{rest}</div></article>')
+                f'</button>{src}</header>\n<div class="body" hidden>{doc}{rest}</div></article>')
 
     def body(self):
         out = []
