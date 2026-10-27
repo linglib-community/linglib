@@ -8,19 +8,14 @@ public import Mathlib.Control.Monad.Writer
 A computation of the writer monad `Writer ω` yields a value and logs output in `ω`. Giorgolo and
 Asudeh model conventional implicature this way, in Shan's monadic program: the value of an
 expression is its at-issue content, the log collects the side-issue propositions of its parts,
-`pure` logs nothing and `bind` appends the logs. Forgetting the log is a monad morphism to `Id`,
-and `bind` only extends the log, so content flows from the at-issue dimension into the side-issue
-one and never back.
+`pure` logs nothing and `bind` appends the logs. [Forgetting the log](##val_bind) is a monad
+morphism to `Id`, and [`bind` only extends the log](##log_prefix_bind), so content flows from the
+at-issue dimension into the side-issue one and never back.
 
 ## Main definitions
 
 * `Writer.val`, `Writer.log`: the value and the log of a computation.
 * `WriterT.instLawfulMonadList`: the monad laws for list logs, over any lawful monad.
-
-## Main results
-
-* `Writer.val_pure`, `Writer.val_bind`: forgetting the log is a monad morphism.
-* `Writer.log_prefix_bind`: the log of `m` is a prefix of the log of `m >>= f`.
 
 ## Implementation notes
 
@@ -60,7 +55,7 @@ namespace Writer
 
 variable {ω A B : Type u}
 
-/-- `Writer.mk a w` is the computation with value `a` and log `w`. -/
+/-- The computation with value `a` and log `w`. -/
 protected def mk (a : A) (w : ω) : Writer ω A := WriterT.mk (a, w)
 
 /-- The value of a computation is the first component of its run. -/

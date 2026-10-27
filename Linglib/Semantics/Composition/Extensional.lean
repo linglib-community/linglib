@@ -6,29 +6,14 @@ public import Linglib.Logic.Modal.Defs
 /-!
 # Extensional operators
 
-An operator on intensions is *extensional* at an index when the value it yields there depends only
-on the extension of its argument at that index. Negation is extensional: whether *it is not
-raining* is true at a world depends only on whether *it is raining* is true there. Necessity is
-not, since whether *it must be raining* is true at a world depends on whether *it is raining* is
-true at the worlds accessible from it. Among adjectives, which map properties to properties,
-*gray* is extensional and *skillful* is not: where the cobblers are exactly the darts players, the
-gray cobblers are the gray darts players, but the skillful cobblers need not be the skillful darts
-players.
-
-An operator is extensional exactly when it is
-[a function on extensions applied index by index](##isExtensional_iff_exists_eq_piMap). At an
-index where it is extensional, an operator
-[gives the same value on an intension and on the constant intension with the same
-extension](##isExtensionalAt_iff_forall_const), and so
-[cannot tell a variable it binds from one fixed at that index](##isExtensionalAt_iff_forall_diag):
-a situation variable bound under negation reads as if it were free. The truth-functional
-connectives are extensional, and so are composites of extensional operators.
-
-In general the value of an operator at an index depends on its argument at some set of indices,
-and the operator is extensional there when that set can be taken to be the index alone. Necessity
-in a Kripke frame depends at a world on
-[exactly the worlds accessible from it](##ModalLogic.dependsOn_box_iff), so it is
-[extensional only at a world that accesses no world but itself](##isExtensionalAt_box_iff).
+An operator on intensions is *extensional* at an index when its value there depends only on its
+argument's extension there: negation is extensional, necessity is not, and among adjectives
+*gray* is and *skillful* is not. An operator is extensional exactly when it is
+[a function on extensions applied index by index](##isExtensional_iff_exists_eq_piMap), and at an
+index where it is extensional it
+[cannot tell a variable it binds from one fixed there](##isExtensionalAt_iff_forall_diag).
+Necessity is [extensional only at a world that accesses no world but
+itself](##isExtensionalAt_box_iff).
 
 ## Main definitions
 

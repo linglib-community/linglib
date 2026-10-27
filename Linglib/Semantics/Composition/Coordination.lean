@@ -6,26 +6,27 @@ public import Linglib.Semantics.Composition.Tree
 /-!
 # Coordination in the composition engine
 
-This file adds coordination to the composition engine of `Composition/Tree.lean` as a binary
-mode beside functional application, intensional application and predicate modification. Two
-sisters of the same conjoinable type combine by what their coordinator denotes on the pair,
-`Coordinator.denote`, in the pointwise complete Boolean algebra of that type, which the mode
-finds at runtime through `Ty.Domain.completeBooleanAlgebra?`. Predicate modification is the
-conjunctive case at `⟨e,t⟩`, so the engine's modification mode already agrees with the
-coordinator's denotation.
+Two sisters of the same conjoinable type, a type that ends in $t$, can combine by coordination:
+their coordinator's denotation applies to the pair in the pointwise Boolean algebra of the type,
+so that *and* conjoins truth values, predicates and quantifiers alike. Coordination is a mode
+beside functional application, intensional application and predicate modification, and
+predicate modification is
+[the conjunctive case at the type of predicates](##combine?_eq_coordinate?_of_conjunctive), so
+the engine's modification mode agrees with what *and* denotes.
 
 ## Main definitions
 
 * `Coordinator.coordinate?`: the coordination mode.
 
-## Main results
+## Implementation notes
 
-* `Coordinator.combine?_eq_coordinate?_of_conjunctive`: predicate modification is conjunctive
-  coordination at `⟨e,t⟩`.
+The mode finds the Boolean algebra of its daughters' type at run time, through
+`Ty.Domain.completeBooleanAlgebra?`; `Coordinator.denote` is the coordinator's denotation.
 
 ## References
 
 * [heim-kratzer-1998]
+* [partee-rooth-1983]
 -/
 
 @[expose] public section
@@ -34,9 +35,9 @@ namespace Coordinator
 
 open Montague
 
-/-- `coordinate? c d1 d2` combines two sisters of the same conjoinable type by what the
-coordinator `c` denotes on the pair, in the complete Boolean algebra of their type, threaded
-through the effect `M`, and is `none` on sisters of different or non-conjoinable types. -/
+/-- The coordination of two sisters of the same conjoinable type by what the coordinator `c`
+denotes on the pair, in the complete Boolean algebra of their type and through the effect `M`;
+`none` on sisters of different or non-conjoinable types. -/
 def coordinate? {E W : Type} {M : Type → Type} [Applicative M] (c : Coordinator)
     (d1 d2 : Denotation E W M) : Option (Denotation E W M) :=
   if h : d1.1 = d2.1 then

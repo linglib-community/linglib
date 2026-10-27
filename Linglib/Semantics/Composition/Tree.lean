@@ -4,48 +4,39 @@ public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Composition.Term
 
 /-!
-# Type-driven interpretation
+# Type-driven interpretation of trees
 
-This file interprets phrase-structure trees by type-driven composition over an effect functor
-`M`. A tree translates to a term of the composition modes (`PhraseStructure.Tree.translate`), and
-its denotation is the evaluation of that term (`PhraseStructure.Tree.interp`), as in Montague's
-theory of translation. The modes are Heim and Kratzer's, with the intensional application of von
-Fintel and Heim and the event identification of Kratzer; the effect functor follows Bumford and
-Charlow. Translation is the only type-driven step, and Predicate Abstraction distributes the
-effect over the entities (`Distributive`).
+Type-driven interpretation gives each node of a tree the meaning that the mode its daughters'
+types select makes of its daughters' meanings, with traces and binders interpreted by an
+assignment as in Heim and Kratzer. As in Montague's theory of translation,
+[a tree's denotation is the evaluation of the term it translates to](##interp_eq_eval_translate),
+and [it depends on the assignment only at the tree's free traces](##interp_congr_of_agree).
+Denotations may be computations under an effect, after Bumford and Charlow, and under a lexicon of
+intensions a tree has an intension, [constant at its denotation when no word varies with the
+world](##intension_const).
 
 ## Main definitions
 
-* `Montague.Lexicon`: a string-keyed lexicon of effectful denotations.
+* `Montague.Lexicon`: a lexicon of effectful denotations, keyed by strings.
 * `PhraseStructure.Tree.translate`: the term a tree translates to.
-* `PhraseStructure.Tree.interp`: the denotation of a tree under an assignment, the evaluation of
-  its term; a binary node composes by the mode `Montague.Ty.mode?` selects.
-* `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its leaves alone.
+* `PhraseStructure.Tree.interp`: the denotation of a tree under an assignment.
+* `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its words alone.
 * `PhraseStructure.Tree.readings`: the readings of a tree under a lexicon of sets of readings.
 * `PhraseStructure.Tree.HoldsAt`: the truth of a tree under a lexicon and an assignment.
 * `PhraseStructure.Tree.intension`: the intension of a tree under a lexicon of intensions.
 
-## Main results
-
-* `interp_eq_eval_translate`: a tree's denotation is the evaluation of its term.
-* `intension_const`: under a lexicon of rigid intensions a tree's intension is constant at its
-  denotation.
-* `interp_map_fst`: the type of a tree's denotation is the type `ty?` computes.
-* `interp_congr_of_agree` and its corollaries: Heim and Kratzer's theorems on variable binding.
-* `readings_eq_of_choice`, `mem_readings_node_binary`: readings extend the engine and compose
-  pointwise.
-* `translate_map_const`, `translate_rel`: translation respects renaming and relating constants.
-
 ## Implementation notes
 
 The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.interp lex g` works.
-Binary nodes sequence effects left to right, whichever daughter is the function, so at
-`M = Cont R` the engine derives surface scope only: inverse scope needs an evaluation order
-chosen per node, which the engine does not provide (`Studies/Barker2002.lean` marks each rule
-with a permutation of its daughters). Predicate Abstraction needs the effect to distribute over
-functions, `(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`. The abstraction's fallback value
-`valueAt` is never reached, since types do not depend on the assignment. The category of a node
-is ignored, composition being type-driven.
+Translation is the only type-driven step, and translation respects renaming and relating
+constants (`translate_map_const`, `translate_rel`). Binary nodes sequence effects left to right,
+whichever daughter is the function, so at `M = Cont R` the engine derives surface scope only:
+inverse scope needs an evaluation order chosen per node, which the engine does not provide
+(`Studies/Barker2002.lean` marks each rule with a permutation of its daughters). Predicate
+Abstraction needs the effect to distribute over functions,
+`(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`. The abstraction's fallback value `valueAt` is
+never reached, since types do not depend on the assignment. The category of a node is ignored,
+composition being type-driven.
 
 ## References
 
@@ -117,7 +108,7 @@ section Translate
 
 variable {C : Type} {K : Ty → Type*} {L : Type*}
 
-/-- Translate the tree `t` into a term by the composition principles of [heim-kratzer-1998]. A
+/-- The term a tree translates to, by the composition principles of [heim-kratzer-1998]. A
 terminal goes to its word's constant, a non-branching node to its daughter's term, a binary node to
 its daughters' terms composed by the mode their types select, a trace to the variable of its index,
 and a binder to the abstraction over that variable. -/

@@ -8,40 +8,31 @@ public import Linglib.Semantics.Composition.Extensional
 /-!
 # Composition modes
 
-A *composition mode* of type `Mode σ₁ σ₂ τ` composes a left daughter of type `σ₁` and a right
-daughter of type `σ₂` into a mother of type `τ`. The modes are Heim and Kratzer's, with the
-intensional application of von Fintel and Heim and the event identification of Kratzer;
-functional application, intensional application and event identification come in both orders.
-The daughters' types select the mode (`Ty.mode?`): the first that applies among functional
-application, intensional application, predicate modification and event identification.
-
-A mode denotes an operation on the denotation domains (`Mode.eval`). Relative to a world it
-composes the daughters' intensions (`Mode.intension`), and intensional application, unlike the
-other modes, gives the function its argument's whole intension rather than the argument's value at
-the world. `Mode.eval` is the case of daughters that do not vary with the world, where intensional
-application sees a constant intension; the two
-[agree on every argument exactly when the function is extensional at the
-world](##forall_eval_intensionalLeft_eq_iff). Under an applicative effect a mode composes the
-daughters' computations in linear order, whichever daughter is the function (`Mode.evalM`). In any
-family of values indexed by types, `Mode.combine?` composes two values by the mode their types
-select.
+A *composition mode* is a rule by which the meanings of two sisters combine into the meaning of
+their mother, selected by the daughters' types: functional application, predicate modification,
+Kratzer's event identification, and von Fintel and Heim's intensional application, which gives a
+function its argument's intension rather than its value. Relative to a world, intensional
+application on daughters that do not vary with the world sees only a constant intension, and it
+[agrees with the general case on every argument exactly when the function is
+extensional](##forall_eval_intensionalLeft_eq_iff).
 
 ## Main definitions
 
-* `Montague.Mode`: the composition modes as typed binary operations.
+* `Montague.Mode`: the composition modes, typed by the two daughters and the mother.
 * `Montague.Ty.mode?`, `Montague.Ty.combine?`: the mode two daughters' types select, and the type
   they compose to.
-* `Montague.Mode.eval`, `Montague.Mode.evalM`: the denotation of a mode, pure and under an
-  applicative effect.
+* `Montague.Mode.eval`: composition of daughters that do not vary with the world.
 * `Montague.Mode.intension`: the mother's intension from the daughters' intensions.
-* `Montague.Mode.combine?`: composition by the selected mode in a family of values.
+* `Montague.Mode.evalM`: composition under an applicative effect.
+* `Montague.Mode.combine?`: composition, by the mode their types select, in a family of values.
 
-## Main results
+## Implementation notes
 
-* `Montague.Mode.combine?_map`: composing commutes with every map of families that commutes with
-  the modes.
-* `Montague.Mode.combine?_map_fst`: the type of a composed value is `Ty.combine?` of the
-  daughters' types.
+The daughters' types select the first mode that applies among functional application,
+intensional application, predicate modification and event identification. In any family of
+values indexed by types, [composing commutes with every map of families that commutes with the
+modes](##combine?_map), and [the type of the result depends only on the daughters'
+types](##combine?_map_fst).
 
 ## References
 

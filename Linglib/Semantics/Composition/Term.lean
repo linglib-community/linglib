@@ -5,20 +5,15 @@ public import Linglib.Semantics.Composition.Mode
 public import Linglib.Semantics.Composition.Assignment
 
 /-!
-# Terms of the composition modes
+# Logical forms as terms
 
-A logical form is a term: the constants its words translate to, the variables of type `e` its
-traces bind, the abstraction over such a variable, and the composition of two terms by a mode
-(`Montague.Term`). Every interpretation of the trees is an evaluation of their terms: the
-denotation under an assignment of the variables (`Montague.Term.eval`), whose variable and
-abstraction cases are Heim and Kratzer's Traces and Pronouns Rule and Predicate Abstraction; the
-denotation under an applicative effect, where abstraction needs the effect to distribute over
-functions (`Montague.Term.evalM`); the intension under an interpretation of the constants as
-intensions, the denotation relative to a world of [von-fintel-heim-2011]
-(`Montague.Term.intension`), of which the pure denotation is
-[the case of constants that do not vary with the world](##intension_const_interp); and the partial
-denotation of `Composition/Partial.lean`. Trees translate
-to terms in `Composition/Tree.lean`.
+A logical form is a term, built from the constants its words translate to, variables for the
+individuals its traces denote, abstraction, and composition by a mode. Its denotation under an
+assignment follows [the Traces and Pronouns Rule](##eval_var) and
+[Predicate Abstraction](##eval_lam), and its intension, under words interpreted as intensions, is
+its denotation at every world; the denotation is
+[the case of words that do not vary with the world](##intension_const_interp). Under an effect,
+such as a set of readings, a term denotes a computation.
 
 ## Main definitions
 
@@ -27,18 +22,11 @@ to terms in `Composition/Tree.lean`.
   applicative effect.
 * `Montague.Term.intension`: the intension of a term, its denotation at each world.
 
-## Main results
-
-* `Montague.Term.eval_var`, `Montague.Term.eval_lam`: a variable denotes the value of its index and
-  an abstraction by `lambdaAbsG`.
-* `Montague.Term.evalM_id`: at the identity effect, evaluation is the pure denotation.
-* `Montague.Term.evalM_congr_of_agree`: a term's denotation depends on the assignment only at its
-  free variables.
-
 ## Implementation notes
 
 Variables are named by the trace indices, so a binder with index `n` translates to the
-abstraction over the variable `n`, and translation needs no fresh names.
+abstraction over the variable `n`, and translation needs no fresh names. Trees translate to terms
+in `Composition/Tree.lean`, and the partial denotation of a term is in `Composition/Partial.lean`.
 
 Under an effect, the body of an abstraction is a computation at each entity, and the abstract is
 the computation of a function that `Distributive` gives. Scope effects such as continuations do
@@ -51,6 +39,7 @@ more than the constant functions (`SetM.not_preservesConst`).
 
 * [heim-kratzer-1998]
 * [montague-1973]
+* [von-fintel-heim-2011]
 * [kratzer-shimoyama-2002]
 * [shan-2004]
 * [charlow-2020]
@@ -78,7 +67,7 @@ namespace Term
 
 variable {K K' : Ty → Type*}
 
-/-- Rename the constants of a term. -/
+/-- The term with its constants renamed by `f`. -/
 def map (f : ∀ {ty : Ty}, K ty → K' ty) : {ty : Ty} → Term K ty → Term K' ty
   | _, const c => const (f c)
   | _, var n => var n
@@ -150,9 +139,9 @@ denotation, so the evaluation `eval` is the case of a lexicon of rigid intension
       show r.intension (fun c _ ↦ I c) g = fun _ ↦ r.eval I g from funext (ihr g),
       Mode.intension_const]
 
-/-- `evalM I g t` is the denotation of `t` under an applicative effect, given an interpretation
-`I` of the constants as computations and an assignment `g`. A composition runs its left daughter
-first, and an abstraction distributes the effect over the entities. -/
+/-- The denotation of a term under an applicative effect, given an interpretation `I` of the
+constants as computations and an assignment `g`. A composition runs its left daughter first, and
+an abstraction distributes the effect over the entities. -/
 def evalM {M : Type → Type} [Applicative M] [Distributive M]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) (g : Assignment E) :
     {ty : Ty} → Term K ty → Option (M (Ty.Domain E W ty S))

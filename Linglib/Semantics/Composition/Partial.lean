@@ -7,19 +7,13 @@ public import Linglib.Semantics.Composition.Tree
 /-!
 # Partial interpretation
 
-This file is Heim and Kratzer's composition engine on partial denotations. A function denotes a
-partial function, mathlib's `PFun`, whose domain is the definedness condition the book attaches
-to a lexical entry, and a node denotes a `Part` value of its type, defined when its daughters are
-and the function among them is defined at its argument. The engine evaluates the term a tree
-translates to (`PhraseStructure.Tree.translate`), so it composes by the same modes as the total
-engine (`Montague.Mode.evalPartial`); a trace denotes the value of its index and a binder
-abstracts over its index, the abstract being a partial function that is undefined wherever the
-body is. Predicate Abstraction therefore needs no distributor.
-
-The book's distinction between uninterpretability and presupposition failure (§4.4.4) is the
-difference between the engine returning no denotation and returning an undefined one:
-`Uninterpretable` is decided by the types of the leaves alone (`uninterpretable_congr`), and
-`PresupFailure` asks after the denotations.
+A word with a definedness condition, such as the definite article, denotes a partial function in
+Heim and Kratzer. A node has a value only where its daughters do and the function among them is
+defined at its argument, and a sentence that composes but has no value suffers presupposition
+failure, as distinct from uninterpretability, where the types do not compose.
+[Every mode is strict](##dom_right_of_dom_evalPartial), and on a lexicon lifting a total one
+[the partial engine's values lift the total engine's](##interpPartial_lifts), so such a lexicon
+[has no presupposition failure](##not_presupFailure_of_lifts).
 
 ## Main definitions
 
@@ -32,25 +26,18 @@ difference between the engine returning no denotation and returning an undefined
 * `Montague.Ty.Lifts`, `Montague.Denotation.Lifts`: the relation of a total denotation to a
   partial one lifting it, with `Montague.Ty.Domain.toPartial` the lift at a first-order type.
 
-## Main results
-
-* `Montague.Mode.dom_left_of_dom_evalPartial`, `Montague.Mode.dom_right_of_dom_evalPartial`:
-  every mode is strict, so no word turns an undefined argument into a defined value.
-* `PhraseStructure.Tree.uninterpretable_congr`: uninterpretability depends on the leaves' types
-  alone.
-* `PhraseStructure.Tree.interpPartial_lifts`: on a lexicon lifting a total one the partial
-  engine's values lift the pure engine's, every mode preserving the lift
-  (`Montague.Mode.lifts_evalPartial`), so such a lexicon has no presupposition failure
-  (`PhraseStructure.Tree.not_presupFailure_of_lifts`).
-
 ## Implementation notes
 
-`Ty.PDomain` interprets a function type by the partial functions `a → Part b`, with partiality
-inside the arrow: the call-by-value monadic interpretation of the types at `Part`, of which
-`Ty.Domain` is the case at `Id`. The effectful engine of `Composition/Tree.lean` at `M = Part` is
-a different engine, with partiality outside the arrow, `Part (a → b)`. There a Fregean definite,
-defined on some predicates and undefined on others, has no value, and Predicate Abstraction would
-be defined only where the body is defined at every entity.
+A partial function is mathlib's `PFun`, and a node denotes a `Part` value of its type. The engine
+evaluates the term a tree translates to (`PhraseStructure.Tree.translate`), so Predicate
+Abstraction needs no distributor; uninterpretability is the engine returning no denotation, and
+presupposition failure its returning an undefined one. `Ty.PDomain` interprets a function type by
+the partial functions `a → Part b`, with partiality inside the arrow: the call-by-value monadic
+interpretation of the types at `Part`, of which `Ty.Domain` is the case at `Id`. The effectful
+engine of `Composition/Tree.lean` at `M = Part` is a different engine, with partiality outside the
+arrow, `Part (a → b)`. There a Fregean definite, defined on some predicates and undefined on
+others, has no value, and Predicate Abstraction would be defined only where the body is defined
+at every entity.
 
 ## References
 
