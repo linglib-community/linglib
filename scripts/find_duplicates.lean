@@ -8,6 +8,10 @@ and set-builder plumbing are unfolded, so that `Set α` reads as `α → Prop`. 
 equal normalized type and value are a duplicate pair; a definition whose value is another constant
 is an alias. Hashing uses Lean's structural hash, which ignores binder names and respects sharing.
 
+Two modules that declare the same name cannot be imported together. Such clashes are read off the
+olean headers and reported first; the side with fewer dependents is then left out, with its
+dependents, so that the rest of the library can be loaded and compared.
+
 Run after `lake build`, informational only:
 
     lake env lean --run scripts/find_duplicates.lean [Module ...]
@@ -97,6 +101,37 @@ def discover : IO (Array Name) := do
       mods := mods.push (((s.splitOn ".lean").headD s).replace "/" ".").toName
   return mods.qsort (·.toString < ·.toString)
 
+/-- The library modules reachable from `mods`, with their imports and declared names, read from
+the olean headers. -/
+partial def readGraph (mods : Array Name) : IO (Std.HashMap Name (Array Name × Array Name)) := do
+  let g ← IO.mkRef ({} : Std.HashMap Name (Array Name × Array Name))
+  let rec visit (m : Name) : IO Unit := do
+    if (← g.get).contains m then return
+    unless m.getRoot == `Linglib || m.getRoot == `Studies do return
+    let (d, _) ← readModuleData (← findOLean m)
+    let imps := d.imports.map (·.module)
+    g.modify (·.insert m (imps, d.constNames))
+    for i in imps do visit i
+  for m in mods do visit m
+  g.get
+
+/-- The modules that import any of `ms`, transitively, together with `ms`. -/
+def dependents (graph : Std.HashMap Name (Array Name × Array Name)) (ms : Array Name) : NameSet :=
+  let rev : Std.HashMap Name (Array Name) := graph.fold (init := {}) fun acc m (imps, _) =>
+    imps.foldl (fun acc i => acc.insert i ((acc.getD i #[]).push m)) acc
+  Id.run do
+    let mut seen : NameSet := {}
+    let mut todo := ms.toList
+    for _ in [0:graph.size + ms.size] do
+      match todo with
+      | [] => break
+      | m :: rest =>
+        todo := rest
+        if seen.contains m then continue
+        seen := seen.insert m
+        todo := (rev.getD m #[]).toList ++ todo
+    return seen
+
 def line (g : Array Row) : String :=
   " == ".intercalate (g.toList.map fun r => s!"{r.name} ({r.module})")
 
@@ -107,6 +142,25 @@ unsafe def main (args : List String) : IO UInt32 := do
   initSearchPath (← findSysroot)
   enableInitializersExecution
   let mods ← if args.isEmpty then discover else pure (args.map String.toName).toArray
+  let graph ← readGraph mods
+  let owners : Std.HashMap Name (Array Name) := graph.fold (init := {}) fun acc m (_, cs) =>
+    cs.foldl (fun acc c => acc.insert c ((acc.getD c #[]).push m)) acc
+  let mut pairs : Std.HashMap (Name × Name) (Array Name) := {}
+  for (c, ms) in owners do
+    if ms.size > 1 then
+      let ms := ms.qsort (·.toString < ·.toString)
+      pairs := pairs.insert (ms[0]!, ms[1]!) ((pairs.getD (ms[0]!, ms[1]!) #[]).push c)
+  IO.println s!"# Names declared in two modules ({pairs.size} module pairs)"
+  let mut dropped := #[]
+  for ((a, b), cs) in pairs do
+    let shown := cs.filter (!·.isInternalDetail) |>.qsort (·.toString < ·.toString)
+    IO.println s!"{a} and {b}: {", ".intercalate (shown.toList.take 5 |>.map toString)}"
+    let da := (dependents graph #[a]).size
+    let db := (dependents graph #[b]).size
+    dropped := dropped.push (if da ≤ db then a else b)
+  let excluded := dependents graph dropped
+  let mods := mods.filter (!excluded.contains ·)
+  IO.println s!"left out to load the rest: {excluded.size} modules\n"
   let imports := mods.map fun m => ({ module := m } : Import)
   let env ← importModules imports {} (trustLevel := 1024) (loadExts := true)
   let ctx : Core.Context :=
