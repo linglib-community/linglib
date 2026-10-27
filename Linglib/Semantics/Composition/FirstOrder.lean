@@ -101,13 +101,24 @@ so that terms and bounded formulas share it. -/
 
 /-- In the syntactic model of the types over the free variables `α`, with `n` bound variables in
 scope, an entity is a term, and a truth value and a function are given at every larger number of
-bound variables, as a bounded formula and as a function on the values there. -/
+bound variables, as a bounded formula and as a function on the values there. The other sorts,
+worlds among them, are trivial, so an intension is a function that ignores its world. -/
 abbrev Ty.SyntacticDomain (L : Language.{u, u}) (α : Type w) : Ty → ℕ → Type (max u w)
   | .e, i => L.Term (α ⊕ Fin i)
   | .t, i => ∀ k, i ≤ k → L.BoundedFormula α k
   | .fn σ τ, i => ∀ k, i ≤ k → Ty.SyntacticDomain L α σ k → Ty.SyntacticDomain L α τ k
-  | .intens σ, i => Ty.SyntacticDomain L α σ i
   | _, _ => PUnit
+
+/-- A value of the syntactic model with `i` bound variables in scope, carried to `k ≥ i`. -/
+def Ty.SyntacticDomain.mono {L : Language.{u, u}} {α : Type w} :
+    (ty : Ty) → {i k : ℕ} → i ≤ k → Ty.SyntacticDomain L α ty i → Ty.SyntacticDomain L α ty k
+  | .e, _, _, h, x => x.relabel (Sum.map id (Fin.castLE h))
+  | .t, _, _, h, φ => fun j hj ↦ φ j (h.trans hj)
+  | .fn _ _, _, _, h, f => fun j hj ↦ f j (h.trans hj)
+  | .d, _, _, _, x => x
+  | .n, _, _, _, x => x
+  | .v, _, _, _, x => x
+  | .s, _, _, _, x => x
 
 /-- A predicate of the syntactic model applied to the next bound variable, with `j + 1` bound
 variables in scope, as a determiner applies its restrictor and scope to the variable it binds. -/
@@ -119,7 +130,7 @@ def Ty.SyntacticDomain.applyNext {L : Language.{u, u}} {α : Type w} {k j : ℕ}
 under a valuation `v` of the free variables and `xs` of the `n` bound ones. A term realizes the
 entity it denotes, a formula realizes a truth value with `xs` extended to any larger number of
 bound variables, a function realizes a function that sends realized arguments to realized values
-with `xs` so extended, and an intension is realized at every world. -/
+with `xs` so extended. -/
 def Ty.Realizes {L : Language.{u, u}} {α : Type w} {M W : Type} {Q : Sorts} (S : L.Structure M)
     (v : α → M) :
     (ty : Ty) → (n : ℕ) → (Fin n → M) → Ty.SyntacticDomain L α ty n → Ty.Domain M W ty Q → Prop
@@ -128,7 +139,6 @@ def Ty.Realizes {L : Language.{u, u}} {α : Type w} {M W : Type} {Q : Sorts} (S 
       (letI := S; (φ k hk).Realize v ys ↔ p)
   | .fn σ τ, i, xs, f, f' => ∀ k (hk : i ≤ k) (ys : Fin k → M), ys ∘ Fin.castLE hk = xs →
       ∀ x a, Ty.Realizes S v σ k ys x a → Ty.Realizes S v τ k ys (f k hk x) (f' a)
-  | .intens σ, i, xs, x, a => ∀ w, Ty.Realizes S v σ i xs x (a w)
   | _, _, _, _, _ => True
 
 section SyntacticModel
@@ -140,15 +150,15 @@ section Readback
 variable {α : Type w}
 
 /-- In the syntactic model a mode applies at the current number of bound variables, the
-intensional modes to the argument itself, and predicate modification and event identification
-conjoin pointwise. -/
+intensional modes to the argument carried to every larger number, and predicate modification and
+event identification conjoin pointwise. -/
 def Mode.readback {σ₁ σ₂ τ : Ty} {n : ℕ} :
     Mode σ₁ σ₂ τ → Ty.SyntacticDomain L α σ₁ n → Ty.SyntacticDomain L α σ₂ n →
       Ty.SyntacticDomain L α τ n
   | .functionalLeft, f, a => f n le_rfl a
   | .functionalRight, a, f => f n le_rfl a
-  | .intensionalLeft, f, a => f n le_rfl a
-  | .intensionalRight, a, f => f n le_rfl a
+  | .intensionalLeft, f, a => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
+  | .intensionalRight, a, f => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
   | .predicateModification, p, q => fun k hk x j hj ↦ p k hk x j hj ⊓ q k hk x j hj
   | .eventIdentificationLeft, f, p => fun k hk x j hj e i hi ↦
       f k hk x j hj e i hi ⊓ p j (hk.trans hj) e i hi
@@ -216,6 +226,19 @@ private theorem realize_relabel_castLE {n k : ℕ} (hk : n ≤ k) (x : L.Term (�
       x.realize (Sum.elim v (ys ∘ Fin.castLE hk)) := by
   rw [Term.realize_relabel, Sum.elim_comp_map, Function.comp_id]
 
+theorem Ty.Realizes.mono {ty : Ty} {n k : ℕ} {xs : Fin n → M} {x : Ty.SyntacticDomain L α ty n}
+    {a : Ty.Domain M W ty Q} (h : Ty.Realizes S v ty n xs x a) (hk : n ≤ k) {ys : Fin k → M}
+    (hys : ys ∘ Fin.castLE hk = xs) :
+    Ty.Realizes S v ty k ys (Ty.SyntacticDomain.mono ty hk x) a := by
+  cases ty with
+  | e =>
+    change (letI := S; (x.relabel (Sum.map id (Fin.castLE hk))).realize (Sum.elim v ys)) = a
+    rw [realize_relabel_castLE S v hk x ys, hys]
+    exact h
+  | t => exact fun j hj zs hzs ↦ h j (hk.trans hj) zs (comp_castLE_trans hys hzs)
+  | fn σ τ => exact fun j hj zs hzs ↦ h j (hk.trans hj) zs (comp_castLE_trans hys hzs)
+  | _ => trivial
+
 private theorem realize_applyNext {k j : ℕ} {ys : Fin k → M}
     {P : Ty.SyntacticDomain L α (.e ⇒ .t) k}
     {P' : Ty.Domain M W (.e ⇒ .t) Q} (hP : Ty.Realizes S v (.e ⇒ .t) k ys P P') (h : k ≤ j)
@@ -234,8 +257,10 @@ theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) 
   cases μ with
   | functionalLeft => exact ha n le_rfl xs rfl b b' hb
   | functionalRight => exact hb n le_rfl xs rfl a a' ha
-  | intensionalLeft => exact ha n le_rfl xs rfl b (fun _ ↦ b') fun _ ↦ hb
-  | intensionalRight => exact hb n le_rfl xs rfl a (fun _ ↦ a') fun _ ↦ ha
+  | intensionalLeft =>
+    exact ha n le_rfl xs rfl _ (fun _ ↦ b') fun _ hk _ hys _ _ _ ↦ hb.mono S v hk hys
+  | intensionalRight =>
+    exact hb n le_rfl xs rfl _ (fun _ ↦ a') fun _ hk _ hys _ _ _ ↦ ha.mono S v hk hys
   | predicateModification =>
     intro k hk ys hys x c hx j hj zs hzs
     simp only [Mode.readback, Mode.eval, BoundedFormula.realize_inf,

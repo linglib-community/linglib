@@ -7,14 +7,10 @@ public import Linglib.Logic.Modal.FirstOrder.Semantics
 # The standard translation
 
 The *standard translation* rewrites a modal formula as a first-order formula about worlds and
-individuals, so that results about first-order logic apply to modal logic. A formula over a
-signature `L` becomes a formula over the *correspondence language* of `L`, which has, for each
-symbol of `L`, a symbol taking a world as an extra first argument, together with a binary
-accessibility relation and a predicate true of individuals. Necessity becomes universal
-quantification over the accessible worlds, and the quantifiers range over individuals. A Kripke
-model becomes a single first-order structure whose domain contains both its worlds and its
-individuals, and the translation [preserves satisfaction](##realize_st): a modal formula holds at
-a world exactly when its translation holds with the current-world variable assigned that world.
+individuals, over the *correspondence language*, which gives each symbol a world argument and adds
+an accessibility relation and a predicate true of individuals. Necessity becomes quantification
+over the accessible worlds, a Kripke model becomes one first-order structure on its worlds and
+individuals, and the translation [preserves satisfaction](##realize_st).
 
 ## Main definitions
 

@@ -8,26 +8,14 @@ public import Mathlib.Logic.Function.DependsOn
 # Necessity and possibility in Kripke frames
 
 In Kripke semantics a proposition is *necessary* at a world when it is true at every world
-accessible from it, and *possible* when it is true at some. The accessibility relation fixes the
-kind of modality: for knowledge it relates a world to the worlds compatible with what is known
-there, for obligation to the worlds where the obligations are met. Necessity distributes over
-implication along every relation, which is axiom K, and the other axioms hold along relations with
-a matching property: T, $\Box p \to p$, along reflexive relations; D, $\Box p \to \Diamond p$,
-along serial ones; B, $p \to \Box \Diamond p$, along symmetric ones; 4,
-$\Box p \to \Box \Box p$, along transitive ones; and 5, $\Diamond p \to \Box \Diamond p$, along
-Euclidean ones. Each axiom holds along a relation
-[exactly when the relation has its property](##box_T_iff).
-
-Possibility along a relation is
-[left adjoint to necessity along the converse relation](##diamond_box_gc), which gives the
-monotonicity and distribution laws, and necessity along a composite relation is
-[nested necessity](##box_comp). Necessity at a world depends on its argument
-[at exactly the worlds the world accesses](##dependsOn_box_iff). Some laws hold at a world exactly when the world has few
-successors. Excluded middle for necessity, $\Box p \lor \Box \neg p$ for every $p$, holds at a
-world [exactly when it accesses at most one world](##box_or_box_not_at_iff), and Negation Swap,
+accessible from it, and *possible* when it is true at some; the accessibility relation fixes the
+kind of modality. Each of the axioms T, D, B, 4 and 5 holds along a relation
+[exactly when the relation is reflexive](##box_T_iff), serial, symmetric, transitive or Euclidean
+respectively. Possibility is [left adjoint to necessity along the converse
+relation](##diamond_box_gc), necessity at a world
+[depends on exactly the worlds it accesses](##dependsOn_box_iff), and Negation Swap,
 $\Box \neg p \leftrightarrow \neg \Box p$, holds everywhere
-[exactly when the relation is the graph of a function](##box_compl_eq_iff), along which necessity
-is [precomposition](##box_graph).
+[exactly when the relation is the graph of a function](##box_compl_eq_iff).
 
 ## Main definitions
 

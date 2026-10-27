@@ -8,20 +8,14 @@ public import Mathlib.Order.Lattice
 /-!
 # Accessibility and the strength of modals
 
-Necessity grows stronger as accessibility shrinks:
-[necessity is antitone in the accessibility relation](##box_restrict) and possibility is
-monotone, so a conversational background that rules out more worlds yields a stronger necessity
-modal. Necessity along the transitive closure of a relation
-[is the infinite conjunction](##box_transGen_iff) $\Box p \land \Box \Box p \land \cdots$, which
-is the shape of common knowledge. Along a serial relation $\Box p$, $\Box \neg p$, $\Diamond p$
-and $\neg \Box p$ [form a square of opposition](##modalSquare_relations).
-
-The standard modal systems are named by the axioms their frames validate. An S5 frame is
-reflexive and Euclidean, a K45 frame transitive and Euclidean, a KD45 frame, the frame of belief,
-serial, transitive and Euclidean, and a KTB frame reflexive and symmetric. An operator on
-propositions is *indicial* when it is necessity along some accessibility relation. Montague's
-necessity, true of a proposition true at every world, is the indicial operator of the universal
-relation. Not every operator is indicial: Gallin's example is Scott's present progressive.
+[Necessity is antitone in the accessibility relation](##box_restrict), so a conversational
+background that rules out more worlds yields a stronger modal, and necessity along the transitive
+closure of a relation [is the infinite conjunction](##box_transGen_iff)
+$\Box p \land \Box \Box p \land \cdots$, the shape of common knowledge. An operator on
+propositions is *indicial* when it is necessity along some accessibility relation, after Gallin:
+Montague's necessity is the indicial operator of the universal relation, and Scott's present
+progressive is not indicial. Along a serial relation $\Box p$, $\Box \neg p$, $\Diamond p$ and
+$\neg \Box p$ [form a square of opposition](##modalSquare_relations).
 
 ## Main definitions
 
