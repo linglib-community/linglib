@@ -42,7 +42,8 @@ def inventory : Determiner.Inventory :=
                uses := {.immediateSituation, .largerSituation, .anaphoric} },
     .article { form := "k'uŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} },
-    .article { form := "waŋ", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
+    .article { form := "waŋ", definiteness := .indefinite, exponent := .dedicatedMorpheme,
+               numberRestriction := some .singular } ]
 
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 

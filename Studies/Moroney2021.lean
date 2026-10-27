@@ -86,30 +86,32 @@ open scoped SetRel Denotes
 /-! ### Type-shift selection -/
 
 theorem shan_iota_english_none :
-    MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .iota ∧
-      ∀ τ, ¬ English.Determiners.inventory.Available False τ := by
-  decide
+    MaximalFor (Shan.Determiners.inventory.Available .general False) (· ≠ .exists) .iota ∧
+      ∀ num down, ¬ English.Determiners.inventory.Available num down .iota :=
+  ⟨by decide, fun _ _ h ↦ h.2 ((blocks_iff_lexicalizes (by decide)).2 (by decide))⟩
 
 theorem shan_kind_ambiguity :
-    MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .down ∧
-      MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .iota ∧
-      MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .iotaAnaphoric := by
+    MaximalFor (Shan.Determiners.inventory.Available .general True) (· ≠ .exists) .down ∧
+      MaximalFor (Shan.Determiners.inventory.Available .general True) (· ≠ .exists) .iota ∧
+      MaximalFor (Shan.Determiners.inventory.Available .general True) (· ≠ .exists)
+        .iotaAnaphoric := by
   decide
 
 theorem shan_exists_is_last_resort :
-    Shan.Determiners.inventory.Available False .exists ∧
-      ¬ MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .exists := by
+    Shan.Determiners.inventory.Available .general False .exists ∧
+      ¬ MaximalFor (Shan.Determiners.inventory.Available .general False) (· ≠ .exists) .exists := by
   decide
 
 /-! ### The revised typology -/
 
 open DefiniteDescription (Strength)
 
-/-- In Moroney's analysis a presupposition is marked when the Blocking Principle removes the covert
-shift that would express it, ι for uniqueness and ι^x for familiarity. -/
+/-- In Moroney's analysis a presupposition is marked when a determiner lexicalizes the covert shift
+that would express it, ι for uniqueness and ι^x for familiarity, so that the Blocking Principle
+removes it. -/
 def Marked (ds : Inventory) : Strength → Prop
-  | .uniqueness => ds.Blocks .iota
-  | .familiarity => ds.Blocks .iotaAnaphoric
+  | .uniqueness => ds.Lexicalizes .iota
+  | .familiarity => ds.Lexicalizes .iotaAnaphoric
 
 instance (ds : Inventory) : DecidablePred (Marked ds) := fun p ↦ by
   cases p <;> unfold Marked <;> infer_instance
@@ -174,27 +176,37 @@ theorem shan_anaphoric_without_article :
 
 /-! ### Definite shifts by type (Tables 4.7 to 4.9) -/
 
-variable {ds : Inventory} {down : Prop}
+section Shifts
+
+variable {ds : Inventory} {num : Number} {down : Prop}
 
 -- Table 4.9
 theorem available_of_isUnmarked (h : IsUnmarked (Marked ds)) :
-    ds.Available down .iota ∧ ds.Available down .iotaAnaphoric :=
-  ⟨⟨nofun, h.1⟩, ⟨nofun, h.2⟩⟩
+    ds.Available num down .iota ∧ ds.Available num down .iotaAnaphoric :=
+  ⟨⟨nofun, fun hb ↦ h.1 hb.lexicalizes⟩, ⟨nofun, fun hb ↦ h.2 hb.lexicalizes⟩⟩
+
+variable (hn : ∀ e ∈ ds, e.numberRestriction = none)
+include hn
 
 -- Table 4.8
 theorem available_of_isMarkedAnaphoric (h : IsMarkedAnaphoric (Marked ds)) :
-    ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric :=
-  ⟨⟨nofun, h.1⟩, fun h' ↦ h'.2 h.2⟩
+    ds.Available num down .iota ∧ ¬ ds.Available num down .iotaAnaphoric :=
+  ⟨⟨nofun, fun hb ↦ h.1 hb.lexicalizes⟩,
+    fun h' ↦ h'.2 ((blocks_iff_lexicalizes fun e he _ ↦ hn e he).2 h.2)⟩
 
 -- Table 4.7
 theorem not_available_of_marked (hu : Marked ds .uniqueness) (hf : Marked ds .familiarity) :
-    ¬ ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric :=
-  ⟨fun h ↦ h.2 hu, fun h ↦ h.2 hf⟩
+    ¬ ds.Available num down .iota ∧ ¬ ds.Available num down .iotaAnaphoric :=
+  ⟨fun h ↦ h.2 ((blocks_iff_lexicalizes fun e he _ ↦ hn e he).2 hu),
+    fun h ↦ h.2 ((blocks_iff_lexicalizes fun e he _ ↦ hn e he).2 hf)⟩
 
+omit hn in
 theorem akan_iota_not_iotaAnaphoric :
-    Akan.Determiners.inventory.Available False .iota ∧
-      ¬ Akan.Determiners.inventory.Available False .iotaAnaphoric :=
-  available_of_isMarkedAnaphoric (by simp only [IsMarkedAnaphoric]; decide)
+    Akan.Determiners.inventory.Available .general False .iota ∧
+      ¬ Akan.Determiners.inventory.Available .general False .iotaAnaphoric :=
+  available_of_isMarkedAnaphoric (by decide) (by simp only [IsMarkedAnaphoric]; decide)
+
+end Shifts
 
 /-! ### Shan count nouns are cumulative but not homogeneous -/
 

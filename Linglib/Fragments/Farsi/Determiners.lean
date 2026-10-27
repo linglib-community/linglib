@@ -41,6 +41,7 @@ def i : Article :=
 /-- *čand-ta* چندتا 'some', the quantity word *čand* with the classifier *-ta*, marks a plural
 indefinite. -/
 def candTa : Article :=
-  { form := "čand-ta", definiteness := .indefinite, exponent := .numeralClassifier }
+  { form := "čand-ta", definiteness := .indefinite, exponent := .numeralClassifier,
+    numberRestriction := some .plural }
 
 end Farsi.Determiners

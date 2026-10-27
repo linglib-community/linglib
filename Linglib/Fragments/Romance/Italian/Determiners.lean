@@ -194,7 +194,7 @@ def inventory : Determiner.Inventory :=
         uses := {.immediateSituation, .largerSituation, .anaphoric} },
     .article
       { form := indefinite .masculine .consonant, definiteness := .indefinite,
-        exponent := .dedicatedMorpheme },
+        exponent := .dedicatedMorpheme, numberRestriction := some .singular },
     .article
       { form := partitive (.sg, .masculine) .consonant, definiteness := .indefinite,
         exponent := .dedicatedMorpheme },

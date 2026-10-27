@@ -163,37 +163,45 @@ covert shifts it blocks, and with the mapping which bare nominals it admits as a
 blocked: all three of Chierchia's shifts are available to Mandarin and Japanese bare nouns. -/
 theorem argOnly_blocks_nothing :
     ∀ l : Language, l.nominalMapping = .argOnly →
-      ¬ l.determiners.Blocks .iota ∧ ¬ l.determiners.Blocks .exists := by
+      ¬ l.determiners.Lexicalizes .iota ∧ ¬ l.determiners.Lexicalizes .exists := by
   decide
 
-theorem argOnly_licensesBare (down : Prop) :
-    (nominalMapping .mandarin).LicensesBare (determiners .mandarin) down ∧
-      (nominalMapping .japanese).LicensesBare (determiners .japanese) down := by
+theorem argOnly_licensesBare (num : Number) (down : Prop) :
+    (nominalMapping .mandarin).LicensesBare (determiners .mandarin) num down ∧
+      (nominalMapping .japanese).LicensesBare (determiners .japanese) num down := by
   simp [NominalMapping.LicensesBare, nominalMapping]
 
 /-- The [−arg, +pred] languages of the sample have a definite article and so block ι. -/
 theorem predOnly_blocks_iota :
-    ∀ l : Language, l.nominalMapping = .predOnly → l.determiners.Blocks .iota := by
+    ∀ l : Language, l.nominalMapping = .predOnly → l.determiners.Lexicalizes .iota := by
   decide
 
-theorem predOnly_not_licensesBare (down : Prop) :
-    ¬ (nominalMapping .french).LicensesBare (determiners .french) down ∧
-      ¬ (nominalMapping .italian).LicensesBare (determiners .italian) down := by
+theorem predOnly_not_licensesBare (num : Number) (down : Prop) :
+    ¬ (nominalMapping .french).LicensesBare (determiners .french) num down ∧
+      ¬ (nominalMapping .italian).LicensesBare (determiners .italian) num down := by
   simp [NominalMapping.LicensesBare, nominalMapping]
 
-/-- English, [+arg, +pred] with *the* and *a* blocking ι and ∃, admits exactly the bare nominals
-kind formation is defined for. -/
-theorem english_licensesBare_iff (down : Prop) :
-    (nominalMapping .english).LicensesBare (determiners .english) down ↔ down :=
+/-- English, [+arg, +pred] with *the* blocking ι and *a* blocking ∃ for singulars, admits a bare
+singular exactly where kind formation is defined for it. -/
+theorem english_licensesBare_singular_iff (down : Prop) :
+    (nominalMapping .english).LicensesBare (determiners .english) .singular down ↔ down :=
   NominalMapping.argAndPred_licensesBare_iff (by decide) (by decide)
+
+/-- English admits every bare plural and mass noun, by ∃ where kind formation is undefined, since
+*a* selects the singular. -/
+theorem english_licensesBare_of_ne_singular {num : Number} (hnum : num ≠ .singular)
+    (down : Prop) : (nominalMapping .english).LicensesBare (determiners .english) num down := by
+  have key : ∀ n : Number, n ≠ .singular → ¬ (determiners .english).Blocks n .exists := by
+    decide
+  exact ⟨by decide, .inr (.inr (.inr (key num hnum)))⟩
 
 open Mereology in
 /-- English admits no bare singular count noun, (24b), since ∩ is undefined for it. -/
 theorem english_not_licensesBare_singular {S E : Type*} [PartialOrder E]
     {K : Set (S → Option E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
     (hP : ∀ s, ∀ x ∈ P s, Atom x) :
-    ¬ (nominalMapping .english).LicensesBare (determiners .english) (down P ∈ K) :=
-  (english_licensesBare_iff _).not.2 (down_notMem_of_atom hK hP)
+    ¬ (nominalMapping .english).LicensesBare (determiners .english) .singular (down P ∈ K) :=
+  (english_licensesBare_singular_iff _).not.2 (down_notMem_of_atom hK hP)
 
 /-! ### Bare plurals in generic and episodic sentences, §4.1 -/
 

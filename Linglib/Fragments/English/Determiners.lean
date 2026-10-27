@@ -146,7 +146,8 @@ def indefinite : Phonology.Onset → String
 
 /-- *A* is the singular indefinite article, under its form before a consonant. -/
 def a : Article :=
-  { form := indefinite .consonant, definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form := indefinite .consonant, definiteness := .indefinite, exponent := .dedicatedMorpheme,
+    numberRestriction := some .singular }
 
 open Phonology in
 example : [[smallCapitalI, d, i, schwa, t], [wedge, ŋ, k, l], [j, u, n, smallCapitalI, t],

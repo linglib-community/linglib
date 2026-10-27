@@ -35,7 +35,8 @@ language every bare nominal, and a [−arg, +pred] language none.
 
 Whether ∩ is defined for a nominal is a proposition `down` that the consumer supplies, as for
 `Determiner.Inventory.Available`. It depends on the nominal's denotation and not on its number
-and countability alone, since a plural property anchored to particular entities has no kind.
+and countability alone, since a plural property anchored to particular entities has no kind. The
+nominal's number is supplied too, since blocking applies only within a determiner's domain.
 `DirectedOn.iota_isGreatest_isSome` and `IsAntichain.iota_isGreatest_eq_none` decide it for
 cumulative extensions and for extensions of two or more atoms.
 
@@ -256,25 +257,50 @@ namespace Determiner.Inventory
 
 open Genericity (CovertShift)
 
-/-- The Blocking Principle of [chierchia-1998]: a covert shift is blocked when a determiner of
-the inventory lexicalizes it. An article marking familiarity alone, as Akan *nó*, leaves ι to the
-bare noun, and a demonstrative blocks nothing. -/
-def Blocks (ds : Inventory) (τ : CovertShift) : Prop := ∃ e ∈ ds, e.Lexicalizes τ
+/-- An inventory lexicalizes a covert shift when one of its determiners does. -/
+def Lexicalizes (ds : Inventory) (τ : CovertShift) : Prop := ∃ e ∈ ds, e.Lexicalizes τ
 
-instance (ds : Inventory) : DecidablePred ds.Blocks := fun _ ↦ by unfold Blocks; infer_instance
+instance (ds : Inventory) : DecidablePred ds.Lexicalizes := fun _ ↦ by
+  unfold Lexicalizes; infer_instance
 
-theorem not_blocks_down (ds : Inventory) : ¬ ds.Blocks .down :=
+theorem not_lexicalizes_down (ds : Inventory) : ¬ ds.Lexicalizes .down :=
   fun ⟨e, _, h⟩ ↦ e.not_lexicalizes_down h
 
-theorem blocks_exists_iff (ds : Inventory) : ds.Blocks .exists ↔ ds.Realizes .indefinite :=
+theorem lexicalizes_exists_iff (ds : Inventory) :
+    ds.Lexicalizes .exists ↔ ds.Realizes .indefinite :=
   exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_exists_iff
 
-theorem blocks_iota_iff (ds : Inventory) : ds.Blocks .iota ↔ ds.Realizes .unique :=
+theorem lexicalizes_iota_iff (ds : Inventory) : ds.Lexicalizes .iota ↔ ds.Realizes .unique :=
   exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_iota_iff
 
-theorem blocks_iotaAnaphoric_iff (ds : Inventory) :
-    ds.Blocks .iotaAnaphoric ↔ ds.Realizes .anaphoric :=
+theorem lexicalizes_iotaAnaphoric_iff (ds : Inventory) :
+    ds.Lexicalizes .iotaAnaphoric ↔ ds.Realizes .anaphoric :=
   exists_congr fun e ↦ and_congr_right fun _ ↦ e.lexicalizes_iotaAnaphoric_iff
+
+/-- The Blocking Principle of [chierchia-1998], (39a) of [dayal-2004]: a covert shift is blocked
+for a nominal of number `num` when a determiner whose domain holds such nominals lexicalizes it.
+English *a* selects the singular, so it blocks ∃ for a bare singular and leaves ∃ to a bare plural
+or a mass noun. An article marking familiarity alone, as Akan *nó*, leaves ι to the bare noun, and
+a demonstrative blocks nothing. -/
+def Blocks (ds : Inventory) (num : Number) (τ : CovertShift) : Prop :=
+  ∃ e ∈ ds, e.Selects num ∧ e.Lexicalizes τ
+
+instance (ds : Inventory) (num : Number) : DecidablePred (ds.Blocks num) := fun _ ↦ by
+  unfold Blocks; infer_instance
+
+variable {ds : Inventory} {num : Number} {τ : CovertShift}
+
+theorem Blocks.lexicalizes (h : ds.Blocks num τ) : ds.Lexicalizes τ :=
+  let ⟨e, he, _, h⟩ := h; ⟨e, he, h⟩
+
+theorem not_blocks_down (ds : Inventory) (num : Number) : ¬ ds.Blocks num .down :=
+  fun h ↦ ds.not_lexicalizes_down h.lexicalizes
+
+/-- Where no determiner lexicalizing a shift selects a number, as no definite article in the
+fragments does, a shift is blocked exactly when it is lexicalized. -/
+theorem blocks_iff_lexicalizes (h : ∀ e ∈ ds, e.Lexicalizes τ → e.numberRestriction = none) :
+    ds.Blocks num τ ↔ ds.Lexicalizes τ :=
+  ⟨Blocks.lexicalizes, fun ⟨e, he, hl⟩ ↦ ⟨e, he, fun n hn ↦ by simp [h e he hl] at hn, hl⟩⟩
 
 end Determiner.Inventory
 
@@ -283,30 +309,31 @@ namespace Genericity.NominalMapping
 /-! ### Bare arguments -/
 
 /-- A language with the setting `m` and the determiners `ds` admits as an argument a bare
-nominal for which ∩ is defined just when `down` holds: it must be [+arg], and if it is also
-[+pred], so that its nouns are predicates, ∩ must be defined for the nominal or ι or ∃ must be
-unblocked. -/
-def LicensesBare (m : NominalMapping) (ds : Determiner.Inventory) (down : Prop) : Prop :=
-  .kind ∈ m ∧ (.property ∉ m ∨ down ∨ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists)
+nominal of number `num` for which ∩ is defined just when `down` holds: it must be [+arg], and if it
+is also [+pred], so that its nouns are predicates, ∩ must be defined for the nominal or ι or ∃ must
+be unblocked for its number. -/
+def LicensesBare (m : NominalMapping) (ds : Determiner.Inventory) (num : Number) (down : Prop) :
+    Prop :=
+  .kind ∈ m ∧ (.property ∉ m ∨ down ∨ ¬ ds.Blocks num .iota ∨ ¬ ds.Blocks num .exists)
 
-instance (m : NominalMapping) (ds : Determiner.Inventory) (down : Prop) [Decidable down] :
-    Decidable (m.LicensesBare ds down) := by
+instance (m : NominalMapping) (ds : Determiner.Inventory) (num : Number) (down : Prop)
+    [Decidable down] : Decidable (m.LicensesBare ds num down) := by
   unfold LicensesBare; infer_instance
 
-variable {m : NominalMapping} {ds : Determiner.Inventory} {down : Prop}
+variable {m : NominalMapping} {ds : Determiner.Inventory} {num : Number} {down : Prop}
 
 /-- With ι and ∃ blocked, a [+arg, +pred] language admits exactly the bare nominals ∩ is
 defined for. -/
-theorem argAndPred_licensesBare_iff (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
-    argAndPred.LicensesBare ds down ↔ down := by
+theorem argAndPred_licensesBare_iff (hι : ds.Blocks num .iota) (hex : ds.Blocks num .exists) :
+    argAndPred.LicensesBare ds num down ↔ down := by
   simp [LicensesBare, hι, hex]
 
 theorem argAndPred_licensesBare_false_iff :
-    argAndPred.LicensesBare ds False ↔ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists := by
+    argAndPred.LicensesBare ds num False ↔ ¬ ds.Blocks num .iota ∨ ¬ ds.Blocks num .exists := by
   simp [LicensesBare]
 
 /-- A language admits a bare nominal with a kind iff it is [+arg]. -/
-theorem licensesBare_true_iff : m.LicensesBare ds True ↔ .kind ∈ m := by
+theorem licensesBare_true_iff : m.LicensesBare ds num True ↔ .kind ∈ m := by
   simp [LicensesBare]
 
 end Genericity.NominalMapping

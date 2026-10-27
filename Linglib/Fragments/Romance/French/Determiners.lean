@@ -88,7 +88,8 @@ end QuantityWord
 def un : Article :=
   { form := "un"
   , definiteness := .indefinite
-  , exponent := .dedicatedMorpheme }
+  , exponent := .dedicatedMorpheme
+  , numberRestriction := some .singular }
 
 /-- *les* — definite plural article. -/
 def les : Article :=

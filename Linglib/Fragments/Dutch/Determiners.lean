@@ -88,7 +88,8 @@ def de : Article :=
 /-- The indefinite article *een* occurs with singular count nouns, since indefinite plural and
 mass noun phrases are bare. -/
 def een : Article :=
-  { form := "een", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+  { form := "een", definiteness := .indefinite, exponent := .dedicatedMorpheme,
+    numberRestriction := some .singular }
 
 /-- The negative article *geen* occurs with singular, plural and mass nouns alike, and the
 grammar argues that it is a quantifier rather than an article. -/
