@@ -160,7 +160,7 @@ theorem mem_usedTo_iff : p ∈ usedTo P w ↔ ∃ e, P w e ∧ (τ e).fst < p.fs
 intervals overlapping the perspective time, and none of these serves the retrospective. -/
 theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retro A w :=
   fun ⟨i, hi, hp⟩ ↦
-    NonemptyInterval.precedes_not_overlaps
+    NonemptyInterval.Precedes.not_overlaps
       (Tense.Perspective.presup_precedes.1 (Tense.Perspective.mem_toSetRel.1 hp)) (h i hi)
 
 /-- The universal perfect over a span begun before its time of tense entails *used to*, which

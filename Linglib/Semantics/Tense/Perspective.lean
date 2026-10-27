@@ -153,7 +153,7 @@ theorem exists_restricted_ofPosition_iff [Nontrivial T] {D : Finset Ordering} :
         ∃ o ∈ C, o ∈ D ∨ .eq ∈ D := by
   simp only [Restricted, presup_ofPosition]
   refine ⟨fun ⟨π, r, th, hr, hle, hth⟩ ↦ ⟨_, hr, ?_⟩, fun ⟨o, ho, h⟩ ↦ ?_⟩
-  · rcases NonemptyInterval.position_eq_or_eq_eq_of_le (j := π) hle with h | h <;> rw [h] at hth
+  · rcases NonemptyInterval.position_eq_or_eq_eq_of_le (i₂ := π) hle with h | h <;> rw [h] at hth
     exacts [.inl hth, .inr hth]
   obtain ⟨a, b, hab⟩ := exists_pair_lt T
   obtain ⟨x, y, hxy⟩ : ∃ x y : T, compare x y = o := by

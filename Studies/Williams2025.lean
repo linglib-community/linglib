@@ -27,7 +27,7 @@ complement holds, while a plain infinitive contradicts it and needs the modal.
   equality with the embedded event in (28b), so a complement here is the predicate of events itself
   (`Complement`), and closure binds its event (`Complement.closure`).
 * mathlib orders intervals by inclusion: the paper's `τ(e) ⊆ t` is `(τ e) ≤ t`, its `t' < t` in
-  (30a) and (30b) is `t'.Precedes t`, the `t ≤ t'` of (37) is `t.IsBefore t'`, and `LB` is `.fst`.
+  (30a) and (30b) is `t'.Precedes t`, the `t ≤ t'` of (37) is `t.snd ≤ t'.fst`, and `LB` is `.fst`.
 * Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`, shared with
   `Studies/Bondarenko2020`. (28b) as printed binds the complement's time existentially, and so bound
   it cannot tell the plain infinitive from the anterior complements (`exists_anterior_iff`). The
@@ -97,7 +97,7 @@ def anterior (C : Complement W E T) : Complement W E T :=
 its plan the complement holds at a time from `t` on. -/
 def mod (plan : E → NonemptyInterval T → W → Set W) (C : Complement W E T) :
     Complement W E T :=
-  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.IsBefore t' ∧ C.closure w' t'
+  fun w t s ↦ ∀ w' ∈ plan s t w, ∃ t', t.snd ≤ t'.fst ∧ C.closure w' t'
 
 /-! ### Pre-existence -/
 

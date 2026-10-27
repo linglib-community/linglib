@@ -99,7 +99,7 @@ instance (L : List (NonemptyInterval ℕ)) : Decidable (Disjoint L) :=
 
 theorem Disjoint.not_nested {L : List (NonemptyInterval ℕ)} (h : Disjoint L) : ¬ Nested L :=
   fun ⟨a, ha, b, hb, hab⟩ ↦ (h a ha b hb fun e ↦ NonemptyInterval.during_irrefl b (e ▸ hab)).elim
-    (NonemptyInterval.not_precedes_of_during hab).1 (NonemptyInterval.not_precedes_of_during hab).2
+    hab.not_precedes hab.not_precedes'
 
 /-- An annotated sentence records its dependencies and the spans of its relative clauses over
 the lexical positions. -/

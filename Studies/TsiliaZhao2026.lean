@@ -173,7 +173,7 @@ theorem accepted_iff_exists_restricted [Nontrivial T] :
 -- (112), (114), (115)
 theorem not_restricted_past_of_le (hth : th ≤ π) :
     ¬ Restricted (Allen.ofPosition ⟦past⟧) B π r th :=
-  fun ⟨hr, hle, _⟩ ↦ NonemptyInterval.precedes_not_overlaps (presup_past.1 hr)
+  fun ⟨hr, hle, _⟩ ↦ NonemptyInterval.Precedes.not_overlaps (presup_past.1 hr)
     (NonemptyInterval.overlaps_of_le (hle.trans hth))
 
 -- (114), (115)

@@ -85,8 +85,8 @@ def ViewpointType.ttTSitRelation {T : Type*} [LinearOrder T]
   match v with
   | .imperfective => tt < tsit
   | .perfective => tsit ≤ tt
-  | .perfect => tsit.IsBefore tt
-  | .prospective => tt.IsBefore tsit
+  | .perfect => tsit.snd ≤ tt.fst
+  | .prospective => tt.snd ≤ tsit.fst
   | .neutral => tsit.fst ∈ tt
 
 instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInterval T) :
@@ -158,7 +158,7 @@ theorem mem_impf : t ∈ IMPF P w ↔ ∃ e : E, t < τ e ∧ P w e := Iff.rfl
 
 theorem mem_prfv : t ∈ PRFV P w ↔ ∃ e : E, τ e ≤ t ∧ P w e := Iff.rfl
 
-theorem mem_prosp : t ∈ PROSP P w ↔ ∃ e : E, t.IsBefore (τ e) ∧ P w e := Iff.rfl
+theorem mem_prosp : t ∈ PROSP P w ↔ ∃ e : E, t.snd ≤ (τ e).fst ∧ P w e := Iff.rfl
 
 theorem mem_unbounded : t ∈ UNBOUNDED P w ↔ ∃ e : E, t ≤ τ e ∧ P w e := Iff.rfl
 
@@ -218,9 +218,8 @@ def perfect (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T
 theorem perf_eq_atPoint_perfect (p : W → Set (NonemptyInterval T)) :
     PERF p = atPoint (perfect p) := by
   refine Set.ext fun s ↦ exists_congr fun pts ↦ and_congr_right fun _ ↦ ?_
-  change pts.snd = s.time ↔ NonemptyInterval.pure s.time ≤ pts ∧ s.time = pts.snd
-  rw [NonemptyInterval.le_def]
-  exact ⟨fun h ↦ ⟨⟨h ▸ pts.fst_le_snd, h.ge⟩, h.symm⟩, fun h ↦ h.2.symm⟩
+  change pts.snd = s.time ↔ pts.fst ≤ s.time ∧ s.time = pts.snd
+  exact ⟨fun h ↦ ⟨h ▸ pts.fst_le_snd, h.symm⟩, fun h ↦ h.2.symm⟩
 
 /-- The perfect is the preimage of the perfect time spans under the final-subinterval cell, so
 the perfect of a viewpoint relates its reference interval to the run time as the composite of

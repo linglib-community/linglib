@@ -173,7 +173,7 @@ private theorem exists_span (i : NonemptyInterval T) (a : T) :
     ∃ pts : NonemptyInterval T, i.FinalSubinterval pts ∧ pts.fst < a := by
   obtain ⟨b, hb⟩ := exists_lt (min i.fst a)
   exact ⟨⟨(b, i.snd), (hb.le.trans (min_le_left _ _)).trans i.fst_le_snd⟩,
-    ⟨NonemptyInterval.le_def.2 ⟨hb.le.trans (min_le_left _ _), le_rfl⟩, rfl⟩,
+    ⟨hb.le.trans (min_le_left _ _), rfl⟩,
     hb.trans_le (min_le_right _ _)⟩
 
 /-- The neutral experiential asserts exactly that an eventuality has begun by the right boundary

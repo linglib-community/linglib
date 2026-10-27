@@ -66,7 +66,7 @@ theorem notAfter_of_precedes {t t₀ : NonemptyInterval T} (h : t.Precedes t₀)
   precedes_asymm h
 
 theorem notAfter_of_overlaps {t t₀ : NonemptyInterval T} (h : t.Overlaps t₀) : NotAfter t t₀ :=
-  λ h' => precedes_not_overlaps h' (overlaps_symm h)
+  λ h' => Precedes.not_overlaps h' (overlaps_symm h)
 
 /-! ### Logical forms -/
 
@@ -220,7 +220,7 @@ theorem snd_lt_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAcces
 -- (38)
 theorem not_def_doubleAccess_of_backshifting (h0 : g 0 = c.time)
     (hf : ∀ s, (c.concept s).Precedes s.time) : ¬ Def M c (doubleAccess x v) g w := λ h =>
-  precedes_not_overlaps (precedes_trans (hf ⟨w, g 1⟩) ((def_doubleAccess M c x v g w h0).1 h).1)
+  Precedes.not_overlaps (precedes_trans (hf ⟨w, g 1⟩) ((def_doubleAccess M c x v g w h0).1 h).1)
     (overlaps_of_def_doubleAccess M c x v g w h0 h)
 
 /-! ### Section 3: the affixes and the Tense Licensing Condition -/

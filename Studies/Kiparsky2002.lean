@@ -152,7 +152,7 @@ theorem le_runtime_of_presentState (h : presentState.mapping s d) : s.R ≤ d.ru
 -- §1
 theorem not_existential_of_presentState (h : presentState.mapping s d) :
     ¬ existential.mapping s d :=
-  λ he => precedes_not_overlaps (precedes_of_existential he)
+  λ he => Precedes.not_overlaps (precedes_of_existential he)
     (overlaps_symm (overlaps_of_le (le_runtime_of_presentState h)))
 
 /-! ### The sequence of tense puzzle, §2 -/
@@ -165,12 +165,12 @@ theorem no_sequenceOfTense_of_resultative (h : resultative.mapping s d) (hP : s.
     s.P ≤ d.runtime ∧ ¬ d.runtime.Precedes s.P :=
   have hPd : s.P ≤ d.runtime :=
     le_trans hP (le_runtime_of_presentState (presentState_of_resultative h))
-  ⟨hPd, λ hlt => precedes_not_overlaps hlt (overlaps_symm (overlaps_of_le hPd))⟩
+  ⟨hPd, λ hlt => Precedes.not_overlaps hlt (overlaps_symm (overlaps_of_le hPd))⟩
 
 /-! ### The present perfect puzzle, §3 -/
 
 theorem present_perfect_puzzle (hP : s.Present) : ¬ s.Past :=
-  λ hpast => precedes_not_overlaps hpast (overlaps_symm (overlaps_of_le hP))
+  λ hpast => Precedes.not_overlaps hpast (overlaps_symm (overlaps_of_le hP))
 
 /-! ### The Wh-puzzle, §4 -/
 
@@ -184,7 +184,7 @@ theorem phases_le_of_existential (h : existential.mapping s (.complex rt p ha hr
 theorem resultative_distinguishes (h : resultative.mapping s (.complex rt p ha hr)) :
     p.activityTrace ≤ s.E ∧ ¬ p.resultTrace ≤ s.E :=
   have ⟨h₁, _, h₃⟩ := h
-  ⟨h₁, λ hle => precedes_not_overlaps s.perfect
+  ⟨h₁, λ hle => Precedes.not_overlaps s.perfect
     (overlaps_symm (overlaps_of_le (le_trans h₃ hle)))⟩
 
 end Kiparsky2002
