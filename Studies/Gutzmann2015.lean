@@ -34,8 +34,9 @@ rows of `Data.Examples.Gutzmann2015`.
 Truckenbrodt's five clause types are read off the library's clause cells, `ClauseType.ofCell`:
 the finite verb moves to C in a root declarative or interrogative, while a *dass*-clause or a
 deliberative *ob*- or wh-question used as a root utterance, Evans's insubordination, keeps it
-last, and the imperative stands apart, (5.39). On the cells both classify, Truckenbrodt's verb
-movement is the verb-second requirement of `German.verbSecond`, `verbInC_iff_required`; the
+last, and the imperative moves its verb to C by a trigger of its own, (5.39) and §5.3.5. On the
+cells both classify, Truckenbrodt's verb movement is the verb-second requirement of
+`German.verbSecond`, `verbInC_iff_required`; the
 sentence types in which Durrell licenses *wohl* all have a clause type carrying the epistemic
 modifier, `wohl_licensed_hasEpistemic`; and where Durrell excludes a modal particle from a cell
 the book's row there is unacceptable, `excluded_rows`.
@@ -80,7 +81,7 @@ inductive ClauseType where
 
 /-- The clause type of a cell. The finite verb moves to C in a root declarative or
 interrogative, a *dass*-clause or an interrogative used as a root utterance keeps it last, and
-the imperative stands apart. -/
+the imperative moves its verb to C by a trigger of its own. -/
 def ClauseType.ofCell : SentenceType → EmbeddingContext → Option ClauseType
   | .declarative, .matrix => some .v2Declarative
   | .polar, .matrix | .alternative, .matrix | .constituent, .matrix => some .v2Interrogative
@@ -90,7 +91,7 @@ def ClauseType.ofCell : SentenceType → EmbeddingContext → Option ClauseType
     some .vlInterrogative
   | _, _ => none
 
-/-- The finite verb has moved to C, (5.39), in the v2 types and in the imperative. -/
+/-- The finite verb has moved to C, (5.39) and §5.3.5, in the v2 types and in the imperative. -/
 def ClauseType.VerbInC : ClauseType → Prop
   | .v2Declarative | .v2Interrogative | .imperative => True
   | .dassVL | .vlInterrogative => False
@@ -99,10 +100,11 @@ instance : DecidablePred ClauseType.VerbInC
   | .v2Declarative | .v2Interrogative | .imperative => isTrue trivial
   | .dassVL | .vlInterrogative => isFalse id
 
-/-- On the cells both classify, imperatives apart as in (5.39), Truckenbrodt's verb movement is
-the verb-second requirement of the German fragment. -/
+/-- On the cells both classify, Truckenbrodt's verb movement is the verb-second requirement of
+the German fragment, the imperative included: (5.39) sets the imperative apart only because its
+verb moves to C by a different trigger (§5.3.5). -/
 theorem verbInC_iff_required :
-    ∀ t e, t ≠ .imperative → (t, e) ∈ German.verbSecond.recorded →
+    ∀ t e, (t, e) ∈ German.verbSecond.recorded →
       ∀ ct ∈ ClauseType.ofCell t e, (ct.VerbInC ↔ (t, e) ∈ German.verbSecond.required) := by
   decide
 

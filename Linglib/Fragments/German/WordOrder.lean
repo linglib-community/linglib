@@ -8,9 +8,10 @@ public import Linglib.Syntax.Clause.Basic
 German is a verb-second language in main clauses: the finite verb follows exactly one constituent
 in a declarative or a wh-question, *Die Kinder haben diesen Film gesehen* 'The children have seen
 this film', *Was haben die Kinder gesehen?* 'What have the children seen?', and comes first in a
-yes/no-question. In a subordinate clause it comes last, *Er sagt, daß die Kinder diesen Film
-gesehen haben* 'He says that the children have seen this film'. Exclamatives and imperatives are
-not verb second.
+yes/no-question and in an imperative, *Tritt bitte von der Bahnsteigkante zurück!* 'Please step
+back from the edge of the track!'. In a subordinate clause it comes last, *Er sagt, daß die Kinder
+diesen Film gesehen haben* 'He says that the children have seen this film'. Exclamatives are not
+verb second.
 
 Verb second in a subordinate clause depends on the matrix verb: the complement of a *bridge verb*
 such as *behaupten* 'claim' or *sagen* 'say' may be verb second, that of *beweisen* 'prove' or
@@ -25,12 +26,11 @@ of Gutzmann's minimal pairs.
 
 ## Implementation notes
 
-Verb second is a `Clause.Distribution` over sentence types and embedding contexts. The complement
-of a bridge verb is the quasi-subordinated context, whose cell combines the clauses with and
-without *dass*, and a subordinate form used as a root utterance is insubordinated. The
-yes/no-question cell records verb fronting that surfaces as V1, with an empty specifier. The
-comments locate the embedded cells: V cites Vikner by numbered example or page, W cites the second
-chapter of Westergaard by example.
+Each cell records the left edges the language admits, written `⟨complementizer, verbSecond⟩` as a
+`Clause.LeftEdge`, and verb second is read off them. The complement of a bridge verb is the
+quasi-subordinated context, and a subordinate form used as a root utterance is insubordinated. The
+comments locate each cell: V cites Vikner by numbered example or page, W cites Westergaard by
+second-chapter example or table, G cites Gutzmann by example or page.
 
 ## References
 
@@ -46,33 +46,24 @@ namespace German
 
 open Clause
 
-/-- Verb second in a subordinate clause introduced by *dass*: excluded after a bridge verb. -/
-def verbSecondWithComplementizer : Distribution
-  | .declarative, .quasiSubordinated => some .excluded  -- W (17a); V (13b), (52b)
+/-- The left edges of German clauses, written `⟨complementizer, verbSecond⟩`. -/
+def leftEdges : LeftEdge.Table
+  | .declarative, .matrix => some {⟨false, true⟩}  -- V (36a)
+  | .polar, .matrix => some {⟨false, true⟩}  -- V (42c)
+  | .constituent, .matrix => some {⟨false, true⟩}  -- V (37d)
+  | .exclamative, .matrix => some {⟨false, false⟩}  -- W Table 3.1
+  | .imperative, .matrix => some {⟨false, true⟩}  -- G (5.53), pp. 193–194
+  | .declarative, .quasiSubordinated => some {⟨true, false⟩, ⟨false, true⟩}  -- W (17); V (52)
+  | .declarative, .subordinated => some {⟨true, false⟩}  -- V (15b), (16b)
+  | .polar, .subordinated => some {⟨true, false⟩}  -- V (45c)
+  | .constituent, .subordinated => some {⟨false, false⟩}  -- V (43c), (44c)
+  | .declarative, .insubordinated => some {⟨true, false⟩}  -- G (5.44)
+  | .polar, .insubordinated => some {⟨true, false⟩}  -- G (5.36b)
+  | .constituent, .insubordinated => some {⟨false, false⟩}  -- G (5.48)
   | _, _ => none
 
-/-- Verb second in a subordinate clause without a complementizer: required after a bridge verb,
-*Sie sagte, sie würde kommen* against *\*Sie sagte, sie kommen würde*. -/
-def verbSecondWithoutComplementizer : Distribution
-  | .declarative, .quasiSubordinated => some .obligatory  -- W (17b); V (52)
-  | _, _ => none
-
-/-- Verb second in German: required in root declaratives and questions, optional after a bridge
-verb, and excluded in the other clauses recorded. -/
-def verbSecond : Distribution
-  | .declarative, .matrix => some .obligatory
-  | .polar, .matrix => some .obligatory
-  | .constituent, .matrix => some .obligatory
-  | .exclamative, .matrix => some .excluded
-  | .imperative, .matrix => some .excluded
-  | t, .quasiSubordinated =>  -- V list (17)
-    verbSecondWithComplementizer.union verbSecondWithoutComplementizer t .quasiSubordinated
-  | .declarative, .subordinated => some .excluded  -- V (15b), (16b), list (18)
-  | .polar, .subordinated => some .excluded  -- V p. 84
-  | .constituent, .subordinated => some .excluded  -- V p. 84
-  | .declarative, .insubordinated => some .excluded
-  | .polar, .insubordinated => some .excluded
-  | .constituent, .insubordinated => some .excluded
-  | _, _ => none
+/-- Verb second in German: required in root declaratives, questions and imperatives, optional after
+a bridge verb, and excluded in the other clauses recorded. -/
+def verbSecond : Distribution := leftEdges.verbSecond
 
 end German

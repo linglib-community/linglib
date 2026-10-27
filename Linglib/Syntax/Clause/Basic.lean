@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Core.Relation.SetRel
 public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.Option.NAry
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.Basic
 public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
@@ -25,10 +25,12 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
   cells of root and subordinated clauses.
 * `Clause.Occurrence`, `Clause.Distribution`: the value of a cell, ordered by how far it is
   required, and a table of cells.
-* `Clause.Occurrence.allowed`, `Clause.Distribution.union`: the presence values an occurrence
-  allows, and the distribution over contexts divided into two parts.
+* `Clause.Occurrence.allowed`, `Clause.Occurrence.ofAllowed`: the presence values an occurrence
+  allows, and the occurrence allowing a set of them.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
+* `Clause.LeftEdge`, `Clause.LeftEdge.Table`: whether a complementizer introduces a clause and
+  whether its finite verb is fronted, and the left edges a language admits in each cell.
 * `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects.
 
 ## References
@@ -38,6 +40,8 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
 * [bhatt-dayal-2020]
 * [dayal-2025]
 * [evans-2007]
+* [hohle-1992]
+* [faarlund-lie-vannebo-1997]
 -/
 
 @[expose] public section
@@ -140,14 +144,18 @@ def allowed : Occurrence → Finset Bool
 
 theorem allowed_injective : Function.Injective allowed := by decide
 
-/-- The occurrence allowing what either of two allows, as over a context made of two parts: their
-common value if they agree, otherwise `optional`. It is not their supremum `o ⊔ o'`, the more
-required of the two. -/
-def union (o o' : Occurrence) : Occurrence := if o = o' then o else .optional
+/-- The occurrence allowing exactly the presence values in `a`: obligatory for presence alone,
+excluded for absence alone, optional for both, and excluded for the empty set. -/
+def ofAllowed (a : Finset Bool) : Occurrence :=
+  if true ∈ a then if false ∈ a then .optional else .obligatory else .excluded
 
-@[simp]
-theorem allowed_union (o o' : Occurrence) : (o.union o').allowed = o.allowed ∪ o'.allowed := by
-  decide +revert
+@[simp] theorem ofAllowed_allowed (o : Occurrence) : ofAllowed o.allowed = o := by decide +revert
+
+theorem allowed_ofAllowed {a : Finset Bool} (h : a.Nonempty) : (ofAllowed a).allowed = a := by
+  obtain ⟨b, hb⟩ := h
+  ext x
+  by_cases ht : true ∈ a <;> by_cases hf : false ∈ a <;> cases x <;> cases b <;>
+    simp_all [ofAllowed, allowed]
 
 end Occurrence
 
@@ -166,12 +174,6 @@ variable (d : Distribution)
 
 /-- The distribution recording no cell. -/
 def empty : Distribution := fun _ _ ↦ none
-
-/-- The distribution over contexts each divided into two parts, from the distributions `d` and
-`d'` over the parts: a cell allows what either part allows, so that an element obligatory in one
-part and excluded in the other is optional, and a cell either leaves unrecorded is unrecorded. -/
-def union (d' : Distribution) : Distribution :=
-  fun t e ↦ Option.map₂ Occurrence.union (d t e) (d' t e)
 
 /-- The cells whose recorded occurrence lies in `s`, the preimage of `s` under `d` read as a
 partial function on cells. -/
@@ -223,6 +225,50 @@ instance : DecidablePred (· ∈ d.possible) := inferInstanceAs (DecidablePred (
 instance : DecidablePred (· ∈ d.required) := inferInstanceAs (DecidablePred (· ∈ d.preimage _))
 
 end Distribution
+
+/-! ### Left edges
+
+In the topological field model the finite verb of a clause either stands at its left edge, after
+at most one constituent, or later, and a complementizer may introduce the clause. German has one
+position for both, Höhle's Φ, which holds the complementizer or the fronted finite verb; in
+Norwegian, Faarlund, Lie and Vannebo's connector field holds the complementizer, and schema A
+fronts the verb after it, so that the two can co-occur. A language admits a set of left edges in
+each cell, and the distributions of verb second and of the complementizer are read off it. -/
+
+/-- The left edge of a clause, written `⟨complementizer, verbSecond⟩`: whether a complementizer
+introduces it, and whether its finite verb is fronted. Verb second is meant broadly, as the verb
+in C, so that the verb-first order of a yes/no-question counts. -/
+structure LeftEdge where
+  complementizer : Bool
+  verbSecond : Bool
+  deriving DecidableEq, Repr, Fintype
+
+/-- The left edges a language admits in each cell; `none` means that the source records nothing
+for the cell. -/
+def LeftEdge.Table := SentenceType → EmbeddingContext → Option (Finset LeftEdge)
+
+namespace LeftEdge.Table
+
+variable (T : LeftEdge.Table)
+
+/-- The distribution of a property of left edges: in a recorded cell, the occurrence allowing
+the values the property takes on the edges admitted there. -/
+def occurrence (p : LeftEdge → Bool) : Distribution :=
+  fun t e ↦ (T t e).map fun s ↦ .ofAllowed (s.image p)
+
+/-- The distribution of verb second. -/
+def verbSecond : Distribution := T.occurrence LeftEdge.verbSecond
+
+/-- The distribution of the complementizer. -/
+def complementizer : Distribution := T.occurrence LeftEdge.complementizer
+
+/-- The left edges with a complementizer, for `b = true`, or without one; a cell admitting none of
+them is unrecorded. -/
+def restrict (b : Bool) : LeftEdge.Table := fun t e ↦
+  (T t e).bind fun s ↦ if (s.filter (·.complementizer = b)).Nonempty then
+    some (s.filter (·.complementizer = b)) else none
+
+end LeftEdge.Table
 
 /-! ### Selections
 

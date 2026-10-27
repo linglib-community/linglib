@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
+public import Linglib.Fragments.German.WordOrder
 
 /-!
 # Höhle (1992): Über Verum-Fokus im Deutschen
@@ -15,18 +16,19 @@ reading of VERUM as an illocution-type operator: verum focus occurs in embedded 
 clauses and on complementizers, and in *er HÖRT ihr nicht zu* VERUM lies in the scope of the
 negation, so it must be a truth predicate whose scope follows from the syntax.
 
-The scope rule (60) lets the meaning element of a constituent `K₁` lie in the scope of that of
-`K₂` iff `K₁` stands in a structural relation SR to `K₂`; `SR` reads it as c-command with
-reconstruction of a fronted finite verb to its trace. On the peripheral structure of (76), a
-clause `[Φ Π]` whose position Φ is filled by a complementizer or by a finite verb binding a trace
-in Π, the negation in Π c-commands the verb's trace but not Φ, so `Scoping.negOverVerum` is
-admissible for verum focus on the finite verb and not for verum focus on *daß*. The felicity
-condition is that the background thought, the argument of VERUM, is known from the context
-(`Appropriate`); this derives the contrast of (55): after *ich hoffe, daß Karl ihr zuhört*, the
-verb-second reply is appropriate and the *daß* reply is not. `IntroducesVerum` is the
-non-segmental rule (97) of the final section, which introduces VERUM over any bare Π next to a
-non-empty sister; it decides which accents yield verum focus across complementizers, fronted
-verbs, relative and interrogative pronouns without a particle, and verb-final verbs.
+The scope rule (60) lets the meaning element of a constituent `K₁` lie in the scope of that of `K₂`
+iff `K₁` stands in a structural relation SR to `K₂`; `SR` reads it as c-command with reconstruction
+of a fronted finite verb to its trace. On the peripheral structure of (76), a clause `[Φ Π]` whose
+position Φ is filled by a complementizer or by a finite verb binding a trace in Π, the negation in
+Π c-commands the verb's trace but not Φ, so `Scoping.negOverVerum` is admissible for verum focus on
+the finite verb and not for verum focus on *daß*. Since Φ holds a C-word or a fronted finite verb,
+[no German clause has both](##not_complementizer_and_verbSecond). The felicity condition is that
+the background thought, the argument of VERUM, is known from the context (`Appropriate`); this
+derives the contrast of (55): after *ich hoffe, daß Karl ihr zuhört*, the verb-second reply is
+appropriate and the *daß* reply is not. `IntroducesVerum` is the non-segmental rule (97) of the
+final section, which introduces VERUM over any bare Π next to a non-empty sister; it decides which
+accents yield verum focus across complementizers, fronted verbs, relative and interrogative
+pronouns without a particle, and verb-final verbs.
 
 ## Implementation notes
 
@@ -108,6 +110,12 @@ def finalClause : Tree Node String :=
   .node .clause [.terminal .phi "daß",
     .node .pi [.terminal .other "sie", .terminal .other "damit", .terminal .other "auf",
       .terminal .verb "hört"]]
+
+/-- Φ holds a C-word or a fronted finite verb, never both, (76ii) and (76iii): no left edge of a
+German clause has a complementizer and a fronted verb. -/
+theorem not_complementizer_and_verbSecond :
+    ∀ t e, ∀ s ∈ German.leftEdges t e, ∀ x ∈ s, ¬ (x.complementizer ∧ x.verbSecond) := by
+  decide
 
 /-! ### The scope rule (60) -/
 
