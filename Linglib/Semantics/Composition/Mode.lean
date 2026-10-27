@@ -3,37 +3,36 @@ module
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Semantics.Modification.Basic
+public import Linglib.Semantics.Composition.Extensional
 
 /-!
 # Composition modes
 
-A *composition mode* of type `Mode σ₁ σ₂ τ` composes a left daughter of type `σ₁` and a right
-daughter of type `σ₂` into a mother of type `τ`. The modes are Heim and Kratzer's, with the
-intensional application of von Fintel and Heim and the event identification of Kratzer;
-functional application, intensional application and event identification come in both orders.
-The daughters' types select the mode (`Ty.mode?`): the first that applies among functional
-application, intensional application, predicate modification and event identification.
-
-A mode denotes an operation on the denotation domains (`Mode.eval`). Under an applicative effect a
-mode composes the daughters' computations in linear order, whichever daughter is the function
-(`Mode.evalM`). In any family of values indexed by types, `Mode.combine?` composes two values by
-the mode their types select.
+A *composition mode* is a rule by which the meanings of two sisters combine into the meaning of
+their mother, selected by the daughters' types: functional application, predicate modification,
+Kratzer's event identification, and von Fintel and Heim's intensional application, which gives a
+function its argument's intension rather than its value. Relative to a world, intensional
+application on daughters that do not vary with the world sees only a constant intension, and it
+[agrees with the general case on every argument exactly when the function is
+extensional](##forall_eval_intensionalLeft_eq_iff).
 
 ## Main definitions
 
-* `Montague.Mode`: the composition modes as typed binary operations.
+* `Montague.Mode`: the composition modes, typed by the two daughters and the mother.
 * `Montague.Ty.mode?`, `Montague.Ty.combine?`: the mode two daughters' types select, and the type
   they compose to.
-* `Montague.Mode.eval`, `Montague.Mode.evalM`: the denotation of a mode, pure and under an
-  applicative effect.
-* `Montague.Mode.combine?`: composition by the selected mode in a family of values.
+* `Montague.Mode.eval`: composition of daughters that do not vary with the world.
+* `Montague.Mode.intension`: the mother's intension from the daughters' intensions.
+* `Montague.Mode.evalM`: composition under an applicative effect.
+* `Montague.Mode.combine?`: composition, by the mode their types select, in a family of values.
 
-## Main results
+## Implementation notes
 
-* `Montague.Mode.combine?_map`: composing commutes with every map of families that commutes with
-  the modes.
-* `Montague.Mode.combine?_map_fst`: the type of a composed value is `Ty.combine?` of the
-  daughters' types.
+The daughters' types select the first mode that applies among functional application,
+intensional application, predicate modification and event identification. In any family of
+values indexed by types, [composing commutes with every map of families that commutes with the
+modes](##combine?_map), and [the type of the result depends only on the daughters'
+types](##combine?_map_fst).
 
 ## References
 
@@ -47,7 +46,7 @@ the mode their types select.
 namespace Montague
 
 /-- The composition modes, typed by the two daughters and the mother, are functional application,
-intensional application of a daughter expecting an intension to the rigid intension of its sister
+intensional application of a daughter expecting an intension to the intension of its sister
 ([von-fintel-heim-2011]), predicate modification of two predicates of one sort, and event
 identification of a role head with a predicate of eventualities, Kratzer's (23) ([kratzer-1996]).
 All but predicate modification come in both orders. -/
@@ -149,8 +148,10 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
 
 variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
-/-- The denotation of a mode is application, application to the rigid intension of the argument,
-intersection of two predicates, or event identification. -/
+/-- The denotation of a mode is application, application to the constant intension of the
+argument, intersection of two predicates, or event identification. The constant intension is the
+argument's intension when the argument does not vary with the world; `Mode.intension` is the
+general case. -/
 @[simp] def eval : Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ S → Ty.Domain E W σ₂ S → Ty.Domain E W τ S
   | functionalLeft, f, a => f a
   | functionalRight, a, f => f a
@@ -159,6 +160,35 @@ intersection of two predicates, or event identification. -/
   | predicateModification, p, q => Modifier.intersective p q
   | eventIdentificationLeft, f, p => ArgumentStructure.eventIdentification f p
   | eventIdentificationRight, p, f => ArgumentStructure.eventIdentification f p
+
+/-- The intension of the mother, given the intensions of the daughters. At each world functional
+application, predicate modification and event identification compose the daughters' values there,
+and intensional application applies the function's value there to the argument's whole intension
+([von-fintel-heim-2011]'s Intensional Functional Application). -/
+@[simp] def intension :
+    Mode σ₁ σ₂ τ → (W → Ty.Domain E W σ₁ S) → (W → Ty.Domain E W σ₂ S) → W → Ty.Domain E W τ S
+  | functionalLeft, f, a => fun w ↦ f w (a w)
+  | functionalRight, a, f => fun w ↦ f w (a w)
+  | intensionalLeft, f, a => fun w ↦ f w a
+  | intensionalRight, a, f => fun w ↦ f w a
+  | predicateModification, p, q => fun w ↦ Modifier.intersective (p w) (q w)
+  | eventIdentificationLeft, f, p => fun w ↦ ArgumentStructure.eventIdentification (f w) (p w)
+  | eventIdentificationRight, p, f => fun w ↦ ArgumentStructure.eventIdentification (f w) (p w)
+
+/-- On daughters that do not vary with the world, the mother's intension is constant at the
+mode's denotation. -/
+@[simp] theorem intension_const (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S)
+    (b : Ty.Domain E W σ₂ S) (w : W) : m.intension (fun _ ↦ a) (fun _ ↦ b) w = m.eval a b := by
+  cases m <;> rfl
+
+/-- Applying a function to the constant intension of its argument's value at `w` agrees with
+intensional application at `w` for every argument exactly when the function, read as an operator
+on intensions, is extensional at `w`. -/
+theorem forall_eval_intensionalLeft_eq_iff {σ τ : Ty} {f : W → (W → Ty.Domain E W σ S) →
+    Ty.Domain E W τ S} {w : W} :
+    (∀ a, intensionalLeft.intension f a w = intensionalLeft.eval (f w) (a w)) ↔
+      IsExtensionalAt (fun a w' ↦ f w' a) w :=
+  isExtensionalAt_iff_forall_const.symm
 
 /-- The denotation of a mode under an applicative effect, which runs the left daughter's
 computation first. -/

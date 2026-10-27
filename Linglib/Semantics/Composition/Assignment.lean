@@ -6,33 +6,26 @@ public import Mathlib.Logic.Function.DependsOn
 /-!
 # Assignment-relative denotations
 
-This file defines the denotation of binders relative to a variable assignment `g : ℕ → E`, which
-gives each index a value. In the textbook of Heim and Kratzer, the Traces and Pronouns Rule has a
-pronoun or trace with index `n` denote `g n`, the evaluation `Function.eval n` of the assignment,
-and Predicate Abstraction has a binder at `n` abstract over the value of `n` by updating `g`. An
-assignment-relative denotation in `α` is a function `Assignment E → α`, a computation of Lean's
-reader monad `ReaderM (Assignment E)`. Charlow factors the standard theory through this monad: its
-`pure`, `<*>` and `joinM` are his lift `ρ`, application `⊛` and flattener `μ`, and `lambdaAbsG` is
-his categorematic abstraction `Λᵢ`.
-
-The indices a denotation reads are those it depends on, in the sense of mathlib's `DependsOn`. An
-abstraction over `n` reads the indices its body reads other than `n`, and abstracting over an
-index the body does not read gives a constant function.
+A *variable assignment* gives each index a value. A pronoun or trace with index $n$ denotes the
+value it gives $n$, by Heim and Kratzer's Traces and Pronouns Rule, and a binder with index $n$
+abstracts over that value, by Predicate Abstraction; Charlow factors both through the reader monad.
+An abstraction over $n$ [reads the indices its body reads other than $n$](##dependsOn_lambdaAbsG),
+and abstracting over an index the body does not read
+[gives a constant function](##lambdaAbsG_eq_const_iff).
 
 ## Main definitions
 
-* `lambdaAbsG`: abstraction over an index.
-
-## Main results
-
-* `dependsOn_lambdaAbsG`: abstraction over `n` removes `n` from the indices a body depends on.
-* `lambdaAbsG_eq_const_iff`: abstraction over `n` is constant at every assignment exactly when
-  the body does not depend on `n`.
+* `Montague.lambdaAbsG`: abstraction over an index.
 
 ## Implementation notes
 
-Assignments are total, where Heim and Kratzer's are partial, so a pronoun denotes at every
-assignment. Nothing fixes `E` to entities: at an assignment of situations, a pronoun is a
+An assignment is a function `g : ℕ → E`, and a pronoun with index `n` denotes `g n`, the
+evaluation `Function.eval n` of the assignment. An assignment-relative denotation in `α` is a
+function `Assignment E → α`, a computation of Lean's `ReaderM (Assignment E)`, whose `pure`, `<*>`
+and `joinM` are Charlow's lift `ρ`, application `⊛` and flattener `μ`, and `lambdaAbsG` is his
+`Λᵢ`. The indices a denotation reads are those it depends on in the sense of mathlib's
+`DependsOn`. Assignments are total, where Heim and Kratzer's are partial, so a pronoun denotes at
+every assignment. Nothing fixes `E` to entities: at an assignment of situations, a pronoun is a
 situation pronoun.
 
 ## References
@@ -50,8 +43,8 @@ open scoped Assignment
 
 variable {E α : Type*} {n : ℕ}
 
-/-- `lambdaAbsG n body` is the abstraction of `body` over index `n`, which at the assignment `g`
-maps `x` to the value of `body` at `g[n ↦ x]`. -/
+/-- The abstraction of `body` over the index `n`: at the assignment `g` it maps `x` to the value
+of `body` at `g[n ↦ x]`. -/
 def lambdaAbsG (n : ℕ) (body : Assignment E → α) : Assignment E → E → α :=
   fun g x ↦ body (g[n ↦ x])
 

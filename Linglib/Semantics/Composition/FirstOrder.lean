@@ -10,13 +10,12 @@ public import Mathlib.Tactic.FinCases
 /-!
 # The first-order fragment of type-driven composition
 
-The first-order constants over a signature are its constant and relation symbols, the
-determiners *every*, *some* and *no*, negation, conjunction and disjunction. Every logical form
-over them reads back to a first-order formula whose realization is the logical form's
-denotation. The readback evaluates the logical form in a syntactic model built from mathlib's
-terms and bounded formulas, and a logical relation with the standard model proves it sound, so
-first-order consequence between readbacks is entailment between trees, as
-`Semantics/Dynamic/DRS/Reduction.lean` shows for DRT.
+A logical form built only from names, predicates, the determiners *every*, *some* and *no*, and
+the truth-functional connectives reads back to a first-order formula with the same truth
+conditions, [soundly](##realizes_readback). So
+[a tree holds exactly where its readback is true](##holdsAt_iff_realizeAt),
+[entailment between trees is first-order consequence](##models_imp_iff_entails), and
+[families of trees satisfy compactness](##holdsAt_compactness).
 
 ## Main definitions
 
@@ -27,19 +26,10 @@ first-order consequence between readbacks is entailment between trees, as
 * `Term.readback`, `Term.toFormula`: the readback of a logical form.
 * `Ty.Realizes`: the logical relation between the syntactic and the standard model.
 
-## Main results
-
-* `Term.realizes_readback`: a logical form's readback realizes its denotation whenever the
-  readbacks of its constants realize theirs.
-* `Term.realizeAt_toFormula`: a first-order logical form denotes the realization of its readback.
-* `PhraseStructure.Tree.holdsAt_iff_realizeAt`, `PhraseStructure.Tree.holdsAt_of_models`,
-  `PhraseStructure.Tree.models_imp_iff_entails`, `PhraseStructure.Tree.holdsAt_compactness`: a
-  tree holds (`PhraseStructure.Tree.HoldsAt`) where its readback is realized, entailment between
-  trees is first-order consequence, and families of trees satisfy compactness.
-
 ## Implementation notes
 
-The syntactic model is indexed by the number of bound variables in scope, and gives truth values
+The syntactic model is built from mathlib's terms and bounded formulas, and indexed by the
+number of bound variables in scope, and gives truth values
 and functions at every larger number, so a determiner binds the next de Bruijn variable of
 `BoundedFormula` without computing a fresh name. Formulas are never carried to more bound
 variables, since `BoundedFormula.castLE` keeps the index an inner quantifier binds. *Most* is not

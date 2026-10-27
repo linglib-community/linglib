@@ -6,26 +6,29 @@ public import Mathlib.Order.CompleteBooleanAlgebra
 /-!
 # Semantic types and denotation domains
 
-Montague's semantic types and their denotation domains. `Ty` has Montague's `e`, `t`, `⟨a,b⟩`
-and `⟨s,a⟩` together with the degree, cardinality and eventuality sorts of later work, and
-`Ty.Domain E W ty S` is the domain of possible denotations of a type, given an entity type `E`
-and an index type `W`, as in Montague's universal grammar, and the carriers `S` of the later
-sorts. Functions denote in function spaces and intensions in `W`-indexed families, so a
-denotation is an ordinary Lean term and composition is function application.
-
-`Ty.Domain` is reducible: a denotation of type `⟨e,t⟩` *is* an `E → Prop` to every tactic and
-instance, and the pointwise Boolean algebra of a type that ends in `t` is mathlib's `Pi`
-instance. `Ty.Domain.completeBooleanAlgebra?` computes that algebra, which is complete, by
-recursion on the type, for the composition engine's runtime type dispatch.
+In Montague semantics every expression has a *semantic type*, which fixes the kind of thing it
+denotes: an individual ($e$), a truth value ($t$), a function from denotations of type $a$ to
+denotations of type $b$ ($\langle a,b\rangle$), or an *intension* ($\langle s,a\rangle$), a
+function from worlds to denotations of type $a$. Later work adds sorts for degrees, cardinalities,
+and events and states. Each type has a *domain* of possible denotations, built from a set of
+individuals and a set of worlds, and the domain of a type that ends in $t$ is a Boolean algebra,
+pointwise.
 
 ## Main definitions
 
-* `Ty`: semantic types.
-* `Sorts`: the carriers of the degree and eventuality sorts.
-* `Ty.Domain E W ty S`: the denotation domain of `ty`.
-* `Denotation E W M S`: a semantic type with an `M`-computation in its domain.
-* `Ty.Domain.completeBooleanAlgebra?`: the pointwise complete Boolean algebra of a conjoinable
-  type, `none` on a type that does not end in `t`.
+* `Montague.Ty`: semantic types.
+* `Montague.Sorts`: the carriers of the degree and eventuality sorts.
+* `Montague.Ty.Domain E W ty S`: the denotation domain of `ty`.
+* `Montague.Denotation E W M S`: a semantic type with an `M`-computation in its domain.
+* `Montague.Ty.Domain.completeBooleanAlgebra?`: the pointwise complete Boolean algebra of a
+  type that ends in `t`, `none` on any other type.
+
+## Implementation notes
+
+`Ty.Domain` is reducible: a denotation of type `⟨e,t⟩` *is* an `E → Prop` to every tactic and
+instance, and the Boolean algebra of a type that ends in `t` is mathlib's `Pi` instance.
+`Ty.Domain.completeBooleanAlgebra?` computes that algebra by recursion on the type, for the
+composition engine's dispatch on types at run time.
 
 ## References
 

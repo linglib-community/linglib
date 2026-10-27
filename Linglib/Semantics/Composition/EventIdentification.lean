@@ -3,35 +3,26 @@ module
 public import Linglib.Semantics.Modification.Basic
 
 /-!
-# Event Identification
+# Event identification
 
-This file defines Event Identification, the composition principle by which Kratzer adds an
-argument-introducing head to a predicate of events. The head denotes a relation between
-individuals and events, the predicate a set of events, and the two combine by conjunction at the
-event, leaving the individual argument open: an agent head and *feed the dog* yield the relation
-that holds of an individual and an event when the individual is the agent of the event and the
-event is a feeding of the dog. Event Identification is meet with the predicate lifted to a
-relation constant in the individual, so it is the relational counterpart of predicate
-modification, and repeated applications chain conditions on the same event.
+*Event identification* is Kratzer's rule for adding an argument-introducing head to a predicate
+of events: the head's relation between individuals and events and the predicate's set of events
+combine by conjunction at the event, leaving the individual open. It is
+[meet with the predicate lifted to a relation](##eventIdentification_eq_inf), the relational
+counterpart of predicate modification, and
+[two applications conjoin their predicates](##eventIdentification_eventIdentification).
 
 ## Main definitions
 
 * `ArgumentStructure.eventIdentification`: the combination of a relation and a predicate.
 
-## Main results
-
-* `eventIdentification_eq_inf`, `eventIdentification_eq_comp`: Event Identification is meet
-  with the lifted predicate, and predicate modification of each section of the relation.
-* `eventIdentification_eventIdentification`: two applications conjoin the predicates.
-* `eventIdentification_eq_bot_iff`: the result is empty exactly when, for every individual, the
-  relation's events and the predicate's are disjoint.
-
 ## Implementation notes
 
 Kratzer's rule is partial: it is undefined when the two inputs restrict the event to disjoint
-sorts, actions and states. Here it is total, and such inputs yield the empty relation
-(`eventIdentification_eq_bot_iff`). The carrier is any pair of types, so that the type-driven
-composition engine, whose events share the domain of individuals, uses the same operation.
+sorts, actions and states. Here it is total, and such inputs
+[yield the empty relation](##eventIdentification_eq_bot_iff). The carrier is any pair of types,
+so that the type-driven composition engine, whose events share the domain of individuals, uses
+the same operation.
 
 ## References
 

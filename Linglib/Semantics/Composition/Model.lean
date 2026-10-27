@@ -4,25 +4,28 @@ public import Linglib.Semantics.Composition.Ty
 public import Mathlib.ModelTheory.Basic
 
 /-!
-# Model-theoretic semantics for type-driven composition
+# Models for type-driven composition
 
-A composition model is a mathlib first-order structure on one entity domain at each world of a
-world set. The symbols of the signature denote what the structure gives them, read off through
-`Structure.funMap` and `Structure.RelMap` as DRT reads off the truth of atomic conditions
-(`Semantics/Dynamic/DRS/`), and world dependence stays in the `.intens` types. The words of a
-first-order fragment translate to these symbols (`Composition/FirstOrder.lean`).
+A *model* for a first-order fragment has a domain of individuals, a set of worlds, and at each
+world an interpretation of the fragment's names and predicates: a name denotes an individual
+there, and a predicate the individuals, or pairs of individuals, that it holds of there. The
+individuals are the same at every world, as in a constant-domain Kripke model, while what a
+predicate holds of varies from world to world. The words of a first-order fragment translate to
+the model's symbols in `Composition/FirstOrder.lean`.
 
 ## Main definitions
 
-* `Model`: an entity domain `E`, worlds `W`, and a structure `interp w` at each world.
-* `Model.const`, `Model.pred₁`, `Model.pred₂`: the denotations of a constant and of unary
-  and binary relation symbols at a world.
+* `Montague.Model`: an entity domain `E`, worlds `W`, and a structure `interp w` at each world.
+* `Montague.Model.const`, `Montague.Model.pred₁`, `Montague.Model.pred₂`: the denotations of a
+  constant and of unary and binary relation symbols at a world.
 
 ## Implementation notes
 
-`interp : W → L.Structure E` carries structures as terms rather than instances, since a
-world-indexed family of structures on one carrier cannot be instance-based; formulas are
-realized at a world by `Formula.RealizeAt m.interp w`. The concrete toy model of
+The interpretation at a world is a mathlib first-order structure `L.Structure E`, carried as a
+term rather than an instance, since a family of structures on one carrier indexed by worlds
+cannot be found by instance search. Symbols are read off through `Structure.funMap` and
+`Structure.RelMap`, as DRT reads off the truth of atomic conditions (`Semantics/Dynamic/DRS/`),
+and a formula is realized at a world by `Formula.RealizeAt m.interp w`. The concrete toy model of
 `Studies/HeimKratzer1998` follows mathlib's concrete-language idiom.
 
 ## References

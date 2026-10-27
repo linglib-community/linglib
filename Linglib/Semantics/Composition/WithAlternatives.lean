@@ -17,27 +17,27 @@ A meaning in alternative semantics is a pair: an ordinary denotation, and a set 
 that focus features and operators manipulate while leaving the ordinary denotation alone.
 `WithAlternatives` is that pair. It is the product of the identity monad and the set monad, so the
 two-dimensional recursion of alternative semantics is `<$>` and `<*>` of a lawful `Monad`, and the
-two dimensions are its two monad morphisms. The monad lives in one universe; binary composition
-across universes is `WithAlternatives.map₂`, the same composition with `Set.image2` as its
-alternatives.
+two dimensions are its two monad morphisms: an application's ordinary value is the
+application of the ordinary values, and
+[its alternatives are the applications of the alternatives](##mem_alternatives_seq).
+[Composition does not depend on the order of the daughters](##seq_eq_bind_seq_pure), so an
+application can bind its argument first, and
+[a Given function contributes only its ordinary value](##Given.alternatives_seq).
 
 ## Main definitions
 
-* `WithAlternatives` — an ordinary value together with the alternatives it evokes
-* `WithAlternatives.unfeatured`, `WithAlternatives.focused` — the meanings of an unfocused and
-  of an F-marked expression, evoking only their own value and every value respectively
-* `WithAlternatives.WellFormed` — the containment constraint: the alternatives include the
-  ordinary value
-* `WithAlternatives.Given` — the alternatives have collapsed to a singleton
-* `WithAlternatives.map₂` — binary composition, alternatives composed pointwise
+* `WithAlternatives`: an ordinary value together with the alternatives it evokes.
+* `WithAlternatives.unfeatured`, `WithAlternatives.focused`: the meanings of an unfocused and of
+  an F-marked expression, evoking only their own value and every value respectively.
+* `WithAlternatives.WellFormed`: the containment constraint, that the alternatives include the
+  ordinary value.
+* `WithAlternatives.Given`: the alternatives have collapsed to a singleton.
+* `WithAlternatives.map₂`: binary composition, alternatives composed pointwise.
 
-## Main results
+## Implementation notes
 
-* `ordinary_seq`, `mem_alternatives_seq` — the two dimensions of Hamblin composition
-* `alternatives_seq` — the alternatives of an application are those of the `Set` applicative
-* `CommApplicative WithAlternatives`, `seq_eq_bind_seq_pure` — composition does not depend on the
-  order of the daughters, so an application can bind its argument first
-* `Given.alternatives_seq` — a Given function contributes only its ordinary value
+The monad lives in one universe; binary composition across universes is `WithAlternatives.map₂`,
+the same composition with `Set.image2` as its alternatives.
 
 ## References
 
@@ -54,8 +54,8 @@ alternatives.
 structure WithAlternatives (α : Type*) where
   /-- The denotation the expression would have with no focus on it. -/
   ordinary : α
-  /-- The alternatives, which by Rooth's containment constraint include the ordinary value — see
-  `WellFormed`, kept a predicate rather than a field so that the composition engine below is a
+  /-- The alternatives the expression evokes. Rooth's containment constraint, that they include
+  the ordinary value, is the predicate `WellFormed` rather than a field, so that composition is a
   `Monad`. -/
   alternatives : Set α
 
