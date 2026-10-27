@@ -46,15 +46,16 @@ complementizer fills (p. 40), as in German's verb-second complement and Belfast 
 inversion. They are read off each fragment's distribution in embedded clauses without a
 complementizer, at the `quasiSubordinated` cells of Bhatt and Dayal, where the complements of
 bridge and rogative verbs lie; her Wh⁰ is the yes/no cell her Belfast example instantiates. A
-fragment's own embedded cells range over complements with and without a complementizer, so German
-verb second is optional there, alternating with *dass*, and so is Norwegian verb second after a
-bridge verb (36), which her table marks as no movement to Fin⁰. Danish is the one variety whose
-table entry is not the fragment's required heads but its possible heads, since only some Danish
-exclamatives are verb second; the Danish fragment takes its exclamative and imperative cells from
-Westergaard and the others from Vikner. The cues (57) and (60) for verb movement to I°, which she
-motivates with Icelandic, the cue for English inflectional elements, *som*-insertion,
-focus-sensitive adverbs, *kanskje*, and the acquisition chapters are not formalized; the Tromsø
-rows have no fragment and enter only the *wh*-word model.
+fragment's cell for the complement of a bridge verb combines its cases with and without the
+complementizer, so German verb second is optional there, excluded with *dass* and required without
+it, while Norwegian verb second is optional both with and without *at* (36), which her table marks
+as no movement to Fin⁰. Danish is the one variety whose table entry is not the fragment's required
+heads but its possible heads, since only some Danish exclamatives are verb second; the Danish
+fragment takes its exclamative and imperative cells from Westergaard and the others from Vikner.
+The cues (57) and (60) for verb movement to I°, which she motivates with Icelandic, the cue for
+English inflectional elements, *som*-insertion, focus-sensitive adverbs, *kanskje*, and the
+acquisition chapters are not formalized; the Tromsø rows have no fragment and enter only the
+*wh*-word model.
 
 ## References
 
@@ -101,7 +102,7 @@ abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar,
 /-- The heads a variety's fragments set at the occurrences in `s`: the root clause-type heads
 read off its verb-second distribution `d`, and Fin⁰ and Wh⁰ read off its distribution `bare` in
 embedded clauses without a complementizer, none where that is not recorded. -/
-def heads (s : Set Occurrence) (d : Distribution) (bare : Distribution := fun _ _ ↦ none) :
+def heads (s : Set Occurrence) (d : Distribution) (bare : Distribution := .empty) :
     V2Grammar :=
   {c ∈ d.preimage s | c.2 = .matrix} ∪ bare.preimage s
 
@@ -185,10 +186,7 @@ instance (lang : V2Grammar) (c : MicroCue) [Decidable (c.target ∈ lang)] :
 
 theorem not_expresses_both (lang : V2Grammar) {c c' : MicroCue} (ht : c.target = c'.target)
     (hv : c.verbInHead ≠ c'.verbInHead) : ¬ (Expresses lang c ∧ Expresses lang c') :=
-  fun ⟨h, h'⟩ ↦ hv (by
-    unfold Expresses at h h'
-    rw [ht] at h
-    cases hc : c.verbInHead <;> cases hc' : c'.verbInHead <;> simp_all)
+  fun ⟨h, h'⟩ ↦ hv <| Bool.eq_iff_iff.2 <| h.symm.trans (ht ▸ h')
 
 /-- The four cues of Table 3.2. -/
 def tableCues : List MicroCue := [cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
@@ -208,45 +206,40 @@ theorem norwegian_nonV2_cues :
 
 /-! ### The rows -/
 
-/-- The cell a row's `clause` or `wh` feature records; an embedded declarative after a bridge
-verb is quasi-subordinated, and an embedded question is Belfast's yes/no-question. -/
+/-- The cells of the `clause` values; an embedded question is Belfast's yes/no-question. -/
+def clauseCells : List (String × SentenceType × EmbeddingContext) :=
+  [("declarative", root .declarative), ("subject-initial declarative", root .declarative),
+    ("non-subject-initial declarative", root .declarative), ("wh-question", root .constituent),
+    ("yes/no-question", root .polar), ("imperative", root .imperative),
+    ("exclamative", root .exclamative), ("embedded declarative", embedded .declarative),
+    ("embedded question", (.polar, .quasiSubordinated))]
+
+/-- The cell a row records: that of its `clause` feature, or a root wh-question for a row with a
+`wh` feature only, in the quasi-subordinated context when it follows a bridge verb. -/
 def cellOf (r : Datum) : Option (SentenceType × EmbeddingContext) :=
-  match r.feature? "clause", r.feature? "wh" with
-  | some "declarative", _ | some "subject-initial declarative", _
-  | some "non-subject-initial declarative", _ => some (root .declarative)
-  | some "wh-question", _ | none, some _ => some (root .constituent)
-  | some "yes/no-question", _ => some (root .polar)
-  | some "imperative", _ => some (root .imperative)
-  | some "exclamative", _ => some (root .exclamative)
-  | some "embedded declarative", _ =>
-    if r.feature? "embedding" = some "bridge verb" then some (.declarative, .quasiSubordinated)
-    else some (embedded .declarative)
-  | some "embedded question", _ => some (.polar, .quasiSubordinated)
-  | _, _ => none
+  let cell := match r.feature? "clause" with
+    | some s => clauseCells.lookup s
+    | none => (r.feature? "wh").map fun _ ↦ root .constituent
+  cell.map fun c ↦ (r.parse? "embedding" [("bridge verb", .quasiSubordinated)]).elim c (c.1, ·)
 
-/-- A row records the verb as moved, as in V2 and in the V1 of a yes/no-question, as unmoved,
-or as either. -/
-inductive Order
-  | moved | unmoved | either
-  deriving DecidableEq, Repr
-
-/-- The order a row's `order` feature records. -/
-def orderOf (r : Datum) : Option Order :=
+/-- The orders a row's `order` feature attests, as an occurrence of verb movement: the moved
+order alone, as in V2 and in the V1 of a yes/no-question, the unmoved one alone, or both. -/
+def orderOf (r : Datum) : Option Occurrence :=
   r.parse? "order"
-    [("V2", .moved), ("V1", .moved), ("non-V2", .unmoved), ("non-V2 or V2", .either),
-      ("V2 or non-V2", .either)]
+    [("V2", .obligatory), ("V1", .obligatory), ("non-V2", .excluded), ("non-V2 or V2", .optional),
+      ("V2 or non-V2", .optional)]
 
 /-- The fragments of a row's variety, Standard Norwegian, Nordmøre, Standard or Belfast English
 or Danish: its verb-second distribution and its distribution in embedded clauses without a
 complementizer. The Tromsø rows have none. -/
 def fragmentsOf (r : Datum) : Option (Distribution × Distribution) :=
   match r.feature? "variety", r.language with
-  | some "Nordmøre", _ => some (Norwegian.Nordmore.verbSecond, fun _ _ ↦ none)
+  | some "Nordmøre", _ => some (Norwegian.Nordmore.verbSecond, Distribution.empty)
   | some "Belfast English", _ =>
     some (English.Belfast.verbSecond, English.Belfast.verbSecondWithoutComplementizer)
   | some "Standard Norwegian", _ | none, "norw1258" =>
     some (Norwegian.verbSecond, Norwegian.verbSecondWithoutComplementizer)
-  | none, "stan1293" => some (English.verbSecond, fun _ _ ↦ none)
+  | none, "stan1293" => some (English.verbSecond, Distribution.empty)
   | none, "dani1285" => some (Danish.verbSecond, Danish.verbSecondWithoutComplementizer)
   | _, _ => none
 
@@ -255,24 +248,13 @@ when the row has none, otherwise its verb-second distribution. -/
 def grammarOf (r : Datum) : Option Distribution :=
   (fragmentsOf r).map fun p ↦ if r.feature? "complementizer" = some "none" then p.2 else p.1
 
-/-- An order is consistent with a distribution at a cell when a moved verb sits where verb
-second is possible, an unmoved one where it is not required, and either where it is optional. -/
-def Order.Consistent (d : Distribution) (c : SentenceType × EmbeddingContext) : Order → Prop
-  | .moved => c ∈ d.possible
-  | .unmoved => c ∉ d.required
-  | .either => c ∈ d.possible ∧ c ∉ d.required
-
-instance (d : Distribution) (c : SentenceType × EmbeddingContext) :
-    DecidablePred (Order.Consistent d c)
-  | .moved => inferInstanceAs (Decidable (_ ∈ _))
-  | .unmoved => inferInstanceAs (Decidable (_ ∉ _))
-  | .either => inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Every judged word order in the data is consistent with the fragment of its variety, apart
-from the *kanskje* rows, which the chapter treats as a lexical exception. -/
+/-- Every judged word order in the data falls on a cell the fragment of its variety records and
+is allowed there, apart from the *kanskje* rows, which the chapter treats as a lexical
+exception. -/
 theorem rows_consistent :
     ∀ r ∈ Examples.all, r.feature? "adverb" = none →
-      ∀ d ∈ grammarOf r, ∀ c ∈ cellOf r, ∀ o ∈ orderOf r, o.Consistent d c := by
+      ∀ d ∈ grammarOf r, ∀ c ∈ cellOf r, ∀ o ∈ orderOf r,
+        ∃ o' ∈ d c.1 c.2, o.allowed ⊆ o'.allowed := by
   decide +kernel
 
 /-! ### *Wh*-heads and information structure (§3.2, §3.3) -/

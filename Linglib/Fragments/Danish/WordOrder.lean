@@ -37,26 +37,34 @@ namespace Danish
 
 open Clause
 
-/-- Danish requires verb second in the three root clause types and allows it in exclamatives and
-in the complement of a bridge verb; it excludes it in imperatives, embedded questions, other
-subordinate declaratives, and an *at*-clause used as an exclamation. -/
-def verbSecond : Distribution
-  | .declarative, .matrix => some .obligatory  -- V (33c)–(33e)
-  | .polar, .matrix => some .obligatory  -- V (33b)
-  | .constituent, .matrix => some .obligatory  -- V (37c), (38c)
-  | .exclamative, .matrix => some .optional  -- W (17), note 1
-  | .imperative, .matrix => some .excluded  -- W Table 3.1
-  | .declarative, .quasiSubordinated => some .optional  -- V (13a), (14a), list (17)
-  | .declarative, .subordinated => some .excluded  -- V (15a), (16a), list (18)
-  | .polar, .subordinated => some .excluded  -- V p. 85
-  | .constituent, .subordinated => some .excluded  -- V p. 85
-  | .declarative, .insubordinated => some .excluded  -- V (79a)
+/-- In the complement of a bridge verb with *at* verb second is optional, *Watson påstod at disse
+penge havde Moriarty stjålet* beside *Watson påstod at Moriarty kun havde stjålet pengene*. -/
+def verbSecondWithComplementizer : Distribution
+  | .declarative, .quasiSubordinated => some .optional  -- V (13a), (14a), (54a), (54c)
   | _, _ => none
 
 /-- Without *at* the complement of a bridge verb is not verb second,
 *??Hun sagde vi skulle ikke købe denne bog*. -/
 def verbSecondWithoutComplementizer : Distribution
   | .declarative, .quasiSubordinated => some .excluded  -- V (54b), (81b)
+  | _, _ => none
+
+/-- Danish requires verb second in the three root clause types and allows it in exclamatives and
+in the complement of a bridge verb, combining the cases with and without *at*; it excludes it
+in imperatives, embedded questions, other subordinate declaratives, and an *at*-clause used as an
+exclamation. -/
+def verbSecond : Distribution
+  | .declarative, .matrix => some .obligatory  -- V (33c)–(33e)
+  | .polar, .matrix => some .obligatory  -- V (33b)
+  | .constituent, .matrix => some .obligatory  -- V (37c), (38c)
+  | .exclamative, .matrix => some .optional  -- W (17), note 1
+  | .imperative, .matrix => some .excluded  -- W Table 3.1
+  | t, .quasiSubordinated =>  -- V list (17)
+    verbSecondWithComplementizer.union verbSecondWithoutComplementizer t .quasiSubordinated
+  | .declarative, .subordinated => some .excluded  -- V (15a), (16a), list (18)
+  | .polar, .subordinated => some .excluded  -- V p. 85
+  | .constituent, .subordinated => some .excluded  -- V p. 85
+  | .declarative, .insubordinated => some .excluded  -- V (79a)
   | _, _ => none
 
 end Danish

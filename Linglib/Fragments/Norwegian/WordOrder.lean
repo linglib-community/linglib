@@ -45,27 +45,34 @@ namespace Norwegian
 
 open Clause
 
-/-- Standard Norwegian requires verb second in root declaratives, yes/no-questions and
-wh-questions and allows it in the complement of a bridge verb; it excludes it in exclamatives,
-imperatives, embedded questions, other subordinate declaratives, and an *at*-clause used as an
-exclamation. -/
-def verbSecond : Distribution
-  | .declarative, .matrix => some .obligatory  -- FLV p. 859, W (5)–(7)
-  | .polar, .matrix => some .obligatory  -- FLV p. 863, W (8)
-  | .constituent, .matrix => some .obligatory  -- FLV p. 863, W (9), (10)
-  | .exclamative, .matrix => some .excluded  -- W (13)
-  | .imperative, .matrix => some .excluded  -- W Table 3.1
+/-- In the complement of a bridge verb with *at* verb second is optional, *Han sa at han ikke
+kommer* beside *Han sa at han kommer ikke*. -/
+def verbSecondWithComplementizer : Distribution
   | .declarative, .quasiSubordinated => some .optional  -- FLV pp. 866–867, W (36)
-  | .declarative, .subordinated => some .excluded  -- FLV p. 866
-  | .polar, .subordinated => some .excluded  -- FLV p. 865
-  | .constituent, .subordinated => some .excluded  -- FLV p. 864, W (12)
-  | .declarative, .insubordinated => some .excluded  -- FLV p. 864
   | _, _ => none
 
 /-- Without its complementizer the complement of a bridge verb is still optionally verb second,
 *Han sa han ikke kommer* beside *Han sa han kommer ikke*. -/
 def verbSecondWithoutComplementizer : Distribution
   | .declarative, .quasiSubordinated => some .optional  -- W (36)
+  | _, _ => none
+
+/-- Standard Norwegian requires verb second in root declaratives, yes/no-questions and
+wh-questions and allows it in the complement of a bridge verb, combining the cases with and
+without *at*; it excludes it in exclamatives, imperatives, embedded questions, other subordinate
+declaratives, and an *at*-clause used as an exclamation. -/
+def verbSecond : Distribution
+  | .declarative, .matrix => some .obligatory  -- FLV p. 859, W (5)–(7)
+  | .polar, .matrix => some .obligatory  -- FLV p. 863, W (8)
+  | .constituent, .matrix => some .obligatory  -- FLV p. 863, W (9), (10)
+  | .exclamative, .matrix => some .excluded  -- W (13)
+  | .imperative, .matrix => some .excluded  -- W Table 3.1
+  | t, .quasiSubordinated =>
+    verbSecondWithComplementizer.union verbSecondWithoutComplementizer t .quasiSubordinated
+  | .declarative, .subordinated => some .excluded  -- FLV p. 866
+  | .polar, .subordinated => some .excluded  -- FLV p. 865
+  | .constituent, .subordinated => some .excluded  -- FLV p. 864, W (12)
+  | .declarative, .insubordinated => some .excluded  -- FLV p. 864
   | _, _ => none
 
 /-- Nordmøre Norwegian differs from Standard Norwegian in root clauses only in its wh-questions,

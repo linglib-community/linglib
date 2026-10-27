@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Core.Relation.SetRel
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Option.NAry
 public import Mathlib.Order.Basic
 public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
@@ -24,6 +25,8 @@ of a complement clause are in `Syntax/Clause/Complementation.lean`.
   cells of root and subordinated clauses.
 * `Clause.Occurrence`, `Clause.Distribution`: the value of a cell, ordered by how far it is
   required, and a table of cells.
+* `Clause.Occurrence.allowed`, `Clause.Distribution.union`: the presence values an occurrence
+  allows, and the distribution over contexts divided into two parts.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
 * `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects.
@@ -128,6 +131,24 @@ instance : BoundedOrder Occurrence where
   top := .obligatory
   le_top o := by cases o <;> decide
 
+/-- The values an occurrence allows the presence of the element to take: presence where it is
+obligatory, absence where it is excluded, either where it is optional. -/
+def allowed : Occurrence → Finset Bool
+  | .obligatory => {true}
+  | .excluded => {false}
+  | .optional => .univ
+
+theorem allowed_injective : Function.Injective allowed := by decide
+
+/-- The occurrence allowing what either of two allows, as over a context made of two parts: their
+common value if they agree, otherwise `optional`. It is not their supremum `o ⊔ o'`, the more
+required of the two. -/
+def union (o o' : Occurrence) : Occurrence := if o = o' then o else .optional
+
+@[simp]
+theorem allowed_union (o o' : Occurrence) : (o.union o').allowed = o.allowed ∪ o'.allowed := by
+  decide +revert
+
 end Occurrence
 
 /-- A distribution records the occurrence of an element or process in each cell; `none` means
@@ -137,6 +158,15 @@ abbrev Distribution := SentenceType → EmbeddingContext → Option Occurrence
 namespace Distribution
 
 variable (d : Distribution)
+
+/-- The distribution recording no cell. -/
+def empty : Distribution := fun _ _ ↦ none
+
+/-- The distribution over contexts each divided into two parts, from the distributions `d` and
+`d'` over the parts: a cell allows what either part allows, so that an element obligatory in one
+part and excluded in the other is optional, and a cell either leaves unrecorded is unrecorded. -/
+def union (d' : Distribution) : Distribution :=
+  fun t e ↦ Option.map₂ Occurrence.union (d t e) (d' t e)
 
 /-- The cells whose recorded occurrence lies in `s`, the preimage of `s` under `d` read as a
 partial function on cells. -/
