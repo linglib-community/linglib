@@ -13,17 +13,13 @@ constituents is the case of a two-element set, so one operation conjoins truth v
 predicates and generalized quantifiers, coordinates lists of any length, and builds the
 quantifiers that Japanese *ka* and *mo* form from indeterminate pronouns. The composition engine
 applies it to two sisters of one conjoinable type in `Semantics/Composition/Coordination.lean`.
+[Coordinating a constituent alone returns it](##denote_singleton), as
+[coordinating it with itself does](##denote_pair_self), except under negative coordination, and
+[the coordination of functions is computed pointwise](##denote_apply).
 
 ## Main definitions
 
 * `Coordinator.denote`: what a coordinator denotes on a set of coordinands.
-
-## Main results
-
-* `Coordinator.denote_of_conjunctive` and its siblings: the denotation by semantic type.
-* `Coordinator.denote_singleton`, `Coordinator.denote_pair_self`: coordinating a constituent
-  alone or with itself returns it, except under negative coordination.
-* `Coordinator.denote_apply`: the coordination of functions is computed pointwise.
 
 ## Implementation notes
 
