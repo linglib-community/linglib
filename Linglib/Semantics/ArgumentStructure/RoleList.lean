@@ -59,13 +59,12 @@ those pattern with the psych-state templates. -/
 def achievementSubjectProfile : EntailmentProfile :=
   {.movement, .independentExistence, .changeOfState}
 
-/-- The accomplishment template's subject, a full proto-agent with volition, sentience, causation,
-movement and independent existence. Dowty confirms it at the class level: the primary transitive
-verbs of [dowty-1991] (35) (*build*, *write*, *murder*, *eat*, *wash*) have subjects with "volition,
-sentience, causation, and movement" and no Proto-Patient entailments (p. 577); independent existence
-is the parenthesized (27e). -/
-def accomplishmentSubjectProfile : EntailmentProfile :=
-  {.volition, .sentience, .causation, .movement, .independentExistence}
+/-- The accomplishment template's subject is a full proto-agent, the whole agent cluster: volition,
+sentience, causation, movement and independent existence. Dowty confirms it at the class level: the
+primary transitive verbs of [dowty-1991] (35) (*build*, *write*, *murder*, *eat*, *wash*) have
+subjects with "volition, sentience, causation, and movement" and no Proto-Patient entailments
+(p. 577); independent existence is the parenthesized (27e). -/
+def accomplishmentSubjectProfile : EntailmentProfile := ProtoRoleFeature.agentCluster
 
 /-- The accomplishment template's object, a result patient that changes state and is causally
 affected. Dowty confirms it at the class level: the (35) objects have "change, causally affected"
