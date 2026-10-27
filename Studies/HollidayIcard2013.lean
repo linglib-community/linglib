@@ -273,8 +273,8 @@ theorem measure_le_of_matchingLift [Fintype W] [MeasurableSpace W] [MeasurableSi
 Worlds are `Fin 4`, with `0` the best; `ge_w u v` is `u ≤ v`. -/
 
 theorem chain_pair_gt_pair :
-    Strict (MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} ∧
-      Strict (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} := by
+    AsymmRel (MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} ∧
+      AsymmRel (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} := by
   have hm : MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {0, 1} {1, 2} :=
     ⟨fun b ↦ b - 1, fun b hb ↦ by
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb
@@ -290,7 +290,7 @@ theorem chain_pair_gt_pair :
   exact ⟨⟨hm, fun h ↦ hl h.lewisLift⟩, ⟨hm.lewisLift, hl⟩⟩
 
 theorem chain_singleton_vs_pair :
-    Strict (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0} {1, 2} ∧
+    AsymmRel (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0} {1, 2} ∧
       ¬ MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {0} {1, 2} ∧
       ¬ MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {1, 2} {0} := by
   refine ⟨⟨fun b _ ↦ ⟨0, rfl, Fin.zero_le b⟩, fun hd ↦ ?_⟩, fun h ↦ ?_, ?_⟩
@@ -332,14 +332,14 @@ theorem fa_representable_iff_card_lt_five (n : ℕ) :
 
 /-- No finite measure satisfies the World Cup comparisons (3)–(6). -/
 theorem worldCup_not_finitelyAdditive (μ : Measure (Fin 5)) [IsFiniteMeasure μ] :
-    ¬ (Strict μ.inducedGe {0, 4} {2, 3} ∧ Strict μ.inducedGe {1, 2} {0, 3} ∧
-      Strict μ.inducedGe {3} {0, 2} ∧ Strict μ.inducedGe {0, 2, 3} {1, 4}) := by
+    ¬ (AsymmRel μ.inducedGe {0, 4} {2, 3} ∧ AsymmRel μ.inducedGe {1, 2} {0, 3} ∧
+      AsymmRel μ.inducedGe {3} {0, 2} ∧ AsymmRel μ.inducedGe {0, 2, 3} {1, 4}) := by
   have pair : ∀ a b : Fin 5, a ≠ b → μ.real {a, b} = μ.real {a} + μ.real {b} := fun a b hab ↦ by
     rw [Set.insert_eq, measureReal_union (Set.disjoint_singleton.mpr hab) (.singleton b)]
   have triple : μ.real ({0, 2, 3} : Set (Fin 5)) = μ.real {0} + μ.real {2} + μ.real {3} := by
     rw [Set.insert_eq, measureReal_union (Set.disjoint_singleton_left.mpr (by simp)) .of_discrete,
       pair 2 3 (by decide), add_assoc]
-  simp only [Strict, Measure.inducedGe_iff_real, not_le, triple,
+  simp only [AsymmRel, Measure.inducedGe_iff_real, not_le, triple,
     pair 0 4 (by decide), pair 2 3 (by decide), pair 1 2 (by decide), pair 0 3 (by decide),
     pair 0 2 (by decide), pair 1 4 (by decide)]
   intro ⟨⟨_, h1⟩, ⟨_, h2⟩, ⟨_, h3⟩, ⟨_, h4⟩⟩
