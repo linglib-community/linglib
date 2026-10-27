@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Nat.Notation
-public import Linglib.Syntax.Minimalist.Category.Basic
+public import Linglib.Syntax.Minimalist.Category
 
 /-!
 # Lexical items

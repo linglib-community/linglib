@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Hewett2026
-public import Linglib.Syntax.Minimalist.Category.Basic
+public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Tactic.DeriveFintype

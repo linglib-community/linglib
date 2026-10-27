@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Anaphora.Basic
-public import Linglib.Syntax.Minimalist.Category.Basic
+public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Data.Examples.Landau2026
 public import Mathlib.Data.Finset.Disjoint
 

@@ -5,7 +5,7 @@ public import Linglib.Fragments.Uyghur.Complementizers
 public import Linglib.Fragments.Washo.Clause
 public import Linglib.Semantics.Presupposition.Verb
 public import Studies.BakerVinokurova2010
-public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 
 /-!
 # Major (2024): Re-analyzing 'say' complementation: Implications for case theory and beyond
@@ -115,14 +115,15 @@ theorem washo_parallel :
 /-! ### Two heights -/
 
 theorem adjoined_below :
-    ∀ h ∈ [Cat.v, .Asp, .Neg, .T], Cat.V.fValue < h.fValue ∧ ¬ Cat.T.fValue < h.fValue := by
-  decide
+    ∀ h ∈ [Cat.v, .Asp, .Neg, .T],
+      AsymmRel Cat.ExtendsTo .V h ∧ ¬ AsymmRel Cat.ExtendsTo .T h := by
+  decide +kernel
 
 theorem height_diagnostics :
     ∀ r ∈ Examples.all, ∀ s ∈ r.parse? "height" [("VP", Cat.V), ("TP", .T)],
       ∃ h ∈ r.parse? "diagnostic" [("nci", Cat.Neg), ("proform", .v)],
-        (r.judgment = .acceptable ↔ s.fValue < h.fValue) := by
-  decide
+        (r.judgment = .acceptable ↔ AsymmRel Cat.ExtendsTo s h) := by
+  decide +kernel
 
 /-! ### Accusative from `v` -/
 

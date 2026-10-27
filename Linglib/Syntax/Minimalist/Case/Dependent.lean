@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Case.Dependent
-public import Linglib.Syntax.Minimalist.Category.Basic
+public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!

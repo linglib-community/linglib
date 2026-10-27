@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.OrdConnected
-public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Category
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Mathlib.Tactic.DeriveFintype
 
@@ -20,10 +20,10 @@ A clause that projects up to a head contains every head below it, so the heads o
 `h` are the lower set `Set.Iic h`, and the heads in a clause of size `b` but not in one of size `a`
 form the interval `Set.Ioc a b` (`Set.Iic_sdiff_Iic`). A later proposal that adds heads to
 Cinque's refines the order: its hierarchy receives an order embedding of `Cartography.Head`, and a
-head it places immediately above or below one of Cinque's covers it or is covered by it. The
-categorial features of `Minimalist.Cat` coarsen the order: `Cartography.Head.cat` sends each head
-to its category, and a higher head's category is at least as high in the functional sequence,
-so each level of the sequence is an interval of the hierarchy. Cinque's own kinds of head are not:
+head it places immediately above or below one of Cinque's covers it or is covered by it.
+`Cartography.Head.cat` sends each head to its category in `Minimalist.Cat`, and the list
+`Cartography.Head.hierarchy` of the heads bottom-up is one of the structures the extension order
+of `Minimalist.Cat` is read from. Cinque's own kinds of head are not intervals of the hierarchy:
 moods, modalities, tenses and aspects interleave.
 
 ## Main definitions
@@ -31,11 +31,12 @@ moods, modalities, tenses and aspects interleave.
 * `Cartography.Head`: the heads of the universal hierarchy, with its linear order.
 * `Cartography.Head.family`: the kind of head, `Cartography.Family`.
 * `Cartography.Head.cat`: the category of a head in `Minimalist.Cat`.
+* `Cartography.Head.hierarchy`: the heads bottom-up, as a list.
 
 ## Main statements
 
-* `Cartography.Head.monotone_fValue_cat`: the F-values of the categories are monotone in the
-  hierarchy.
+* `Cartography.Head.mem_hierarchy`, `Cartography.Head.pairwise_hierarchy`: the list holds every
+  head once, in order.
 * `Cartography.Head.not_isContiguous_family`: the kinds of head are not intervals of it.
 
 ## Implementation notes
@@ -48,12 +49,14 @@ moods, modalities, tenses and aspects interleave.
 * Cinque marks the pairing of *characteristically* with generic or progressive aspect, and the
   head of *always*, as uncertain.
 * `Head.cat` sends Cinque's four aspect heads below Voice to inner aspect, the aspect of the v
-  shell, the other aspect heads to outer aspect, and the moods other than the evidential to
-  `Cat.Mood`.
+  shell, the other aspect heads to outer aspect, the speech-act mood to the speech-act head, as
+  Speas and Tenny project their speech-act phrase from Cinque's speech-act mood head, and the
+  other moods but the evidential to `Cat.Mood`.
 
 ## References
 
 * [cinque-1999]
+* [speas-tenny-2003]
 -/
 
 @[expose] public section
@@ -154,18 +157,19 @@ def cat : Head → Minimalist.Cat
   | tAnterior | tFuture | tPast => .T
   | modVolitional | modPossibility | modNecessity | modEpistemic => .Mod
   | moodEvidential => .Evid
-  | moodIrrealis | moodEvaluative | moodSpeechAct => .Mood
+  | moodSpeechAct => .SA
+  | moodIrrealis | moodEvaluative => .Mood
   | _ => .Asp
 
 theorem family_cat (h : Head) : h.cat.family = .verbal := by
   cases h <;> rfl
 
-theorem monotone_fValue_cat : Monotone fun h : Head ↦ h.cat.fValue := by
-  unfold Monotone
-  decide
+/-- The heads, bottom-up. -/
+def hierarchy : List Head := (List.range 30).map Head.ofNat
 
-theorem isContiguous_fValue_cat : IsContiguous fun h : Head ↦ h.cat.fValue :=
-  monotone_fValue_cat.isContiguous
+theorem mem_hierarchy (h : Head) : h ∈ hierarchy := by cases h <;> decide
+
+theorem pairwise_hierarchy : hierarchy.Pairwise (· < ·) := by decide
 
 /-- No order on the kinds of head is coarsened by the hierarchy
 (`isContiguous_iff_exists_monotone`): the anterior tense and the volitional modality sit among the

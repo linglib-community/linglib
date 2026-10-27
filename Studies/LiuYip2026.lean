@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Fragments.Mandarin.Adverbs
@@ -42,8 +42,8 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
 
 ## Main definitions
 
-* `AspProjection`, `AspProjection.level` — the outer and inner aspect projections of the split
-  aspect approach and their heights in the functional sequence.
+* `AspProjection`, `AspProjection.head` — the outer and inner aspect projections of the split
+  aspect approach and their heads.
 * `Contains`, `ExceptionalScope` — a complement size contains an aspect projection, and an
   element associated with it takes exceptional scope across it.
 * `Again`, `Again.projection`, `Again.NeedsDynamic` — the six *again*-elements, the projection each
@@ -56,12 +56,11 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
 
 ## Implementation notes
 
-The two projections are the binary split of Travis, MacDonald, Tsai and Sybesma; their
-heights are those of `Cat.Asp` and `Cat.InnerAsp` in the functional sequence, outer aspect at
-the level of T and inner aspect at the level of v, so containment is a
-comparison of levels. Chomsky's defective intervention is not a
-relation between heads: an embedded projection blocks association whatever its features, which
-is the paper's claim. The semicomplementizer and Exfoliation, the restitutive reading, the
+The two projections are the binary split of Travis, MacDonald, Tsai and Sybesma; their heads
+are `Cat.Asp` and `Cat.InnerAsp`, outer aspect level with T and inner aspect below v as (1a) draws
+it, so containment is the extension order of `Minimalist.Cat`. Chomsky's defective intervention
+is not a relation between heads: an embedded projection blocks association whatever its features,
+which is the paper's claim. The semicomplementizer and Exfoliation, the restitutive reading, the
 Italian parallel and the crosstype ambiguity of *dasuan* 'plan' are not represented.
 
 ## References
@@ -91,10 +90,10 @@ inductive AspProjection where
   | inner
   deriving DecidableEq, Repr
 
-/-- The height of a projection in the functional sequence, that of outer and of inner aspect. -/
-def AspProjection.level : AspProjection → ℕ
-  | .outer => Cat.fValue .Asp
-  | .inner => Cat.fValue .InnerAsp
+/-- The head of a projection, outer or inner aspect. -/
+def AspProjection.head : AspProjection → Cat
+  | .outer => .Asp
+  | .inner => .InnerAsp
 
 /-- Type I, the finite CP. -/
 def typeI : ComplementSize := .cP
@@ -105,17 +104,19 @@ def typeII : ComplementSize := .tP
 /-- Type III, the nonfinite vP with aspect restructuring. -/
 def typeIII : ComplementSize := .vP
 
-/-- A complement of size `s` contains the aspect projection `f` when it reaches the
-projection's height, the level of T for the outer one and the level of v for the inner one. -/
-def Contains (s : ComplementSize) (f : AspProjection) : Prop := f.level ≤ s.fLevel
+/-- A complement of size `s` contains the aspect projection `f` when it reaches the projection's
+head, outer aspect at the level of T and inner aspect below v. -/
+def Contains (s : ComplementSize) (f : AspProjection) : Prop := ⟨f.head⟩ ≤ s
 
 instance (s : ComplementSize) (f : AspProjection) : Decidable (Contains s f) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-theorem contains_inner {s : ComplementSize} (h : ComplementSize.vP ≤ s) : Contains s .inner := h
+theorem contains_inner {s : ComplementSize} (h : ComplementSize.vP ≤ s) : Contains s .inner :=
+  le_trans (show (⟨.InnerAsp⟩ : ComplementSize) ≤ .vP by decide +kernel) h
 
 theorem contains_outer_iff (s : ComplementSize) : Contains s .outer ↔ ComplementSize.tP ≤ s :=
-  Iff.rfl
+  ⟨le_trans (show ComplementSize.tP ≤ ⟨.Asp⟩ by decide +kernel),
+    le_trans (show (⟨.Asp⟩ : ComplementSize) ≤ .tP by decide +kernel)⟩
 
 /-- An element associated with the projection `f` takes exceptional scope across a
 complement of size `s`, skipping the matrix predicate or lowering onto it, when the complement
@@ -131,11 +132,13 @@ hierarchy, so what crosses a larger complement crosses a smaller one. -/
 theorem antitone_exceptionalScope (f : AspProjection) : Antitone (ExceptionalScope f) :=
   fun _ _ h hs hc ↦ hs (hc.trans h)
 
-/-- Outer-associated elements take exceptional scope across a complement smaller than a TP,
-the vP, and across nothing larger. -/
-theorem exceptionalScope_outer_iff (s : ComplementSize) :
-    ExceptionalScope .outer s ↔ s < ComplementSize.tP :=
-  Nat.not_le
+/-- Outer-associated elements take exceptional scope across a verbal complement smaller than a
+TP, the vP, and across nothing larger. -/
+theorem exceptionalScope_outer_iff {s : ComplementSize} (hs : s.highestHead.family = .verbal) :
+    ExceptionalScope .outer s ↔ s < ComplementSize.tP := by
+  rw [ExceptionalScope, contains_outer_iff, lt_iff_le_not_ge, iff_and_self]
+  obtain ⟨c⟩ := s
+  cases c <;> first | exact absurd hs (by decide) | decide +kernel
 
 /-- Inner-associated elements never take exceptional scope, since every complement contains
 inner aspect, so vP is the minimal size of a nonfinite clause. -/
@@ -148,7 +151,7 @@ a finite CP. -/
 theorem generalization_II :
     ExceptionalScope .outer typeIII ∧ ¬ ExceptionalScope .outer typeII ∧
       ¬ ExceptionalScope .outer typeI := by
-  decide
+  decide +kernel
 
 /-- The sizes a clausal complement of the frame can have, a CP (Type I) for a finite clause and
 a TP (Type II) or a vP (Type III) for a nonfinite one. -/
@@ -159,12 +162,12 @@ theorem vP_le_of_mem_sizes {fr : ArgumentFrame} {s : ComplementSize} (h : s ∈ 
     ComplementSize.vP ≤ s := by
   unfold sizes at h
   split_ifs at h <;> simp only [Finset.mem_singleton, Finset.mem_insert,
-    Finset.notMem_empty] at h <;> rcases h with rfl | rfl <;> decide
+    Finset.notMem_empty] at h <;> rcases h with rfl | rfl <;> decide +kernel
 
 theorem exists_mem_sizes_exceptionalScope_outer_iff (fr : ArgumentFrame) :
     (∃ s ∈ sizes fr, ExceptionalScope .outer s) ↔ fr.HasClausal ∧ ¬ fr.HasFinite := by
   unfold sizes
-  split_ifs <;> simp_all <;> decide
+  split_ifs <;> simp_all <;> decide +kernel
 
 /-! ### The *again*-elements and their projections -/
 
@@ -210,27 +213,29 @@ def Again.Skips (a : Again) : Prop :=
 
 instance : DecidablePred Again.Skips := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem skips_iff (a : Again) : a.Skips ↔ a.projection = some .outer := by cases a <;> decide
+theorem skips_iff (a : Again) : a.Skips ↔ a.projection = some .outer := by
+  cases a <;> decide +kernel
 
 /-- Generalization I says that exceptional scope is found with *you* but not with *zai*. -/
-theorem generalization_I : Again.you.Skips ∧ ¬ Again.zai.Skips := by decide
+theorem generalization_I : Again.you.Skips ∧ ¬ Again.zai.Skips := by decide +kernel
 
 /-- In Cantonese *-faan* lowers, repetitive *-gwo* does not, and neither preverbal adverb has
 exceptional scope. -/
 theorem cantonese_lowering :
     Again.faan.Skips ∧ ¬ Again.gwo.Skips ∧ ¬ Again.jau.Skips ∧ ¬ Again.zoi.Skips := by
-  decide
+  decide +kernel
 
 /-- Correlation I says that a Mandarin *again*-element has exceptional scope iff it cannot
 surface in an embedded nonfinite clause without a dynamic aspect, that is, iff it carries
 `[u+D]`. -/
-theorem correlation_I : ∀ a ∈ [Again.you, Again.zai], (a.Skips ↔ a.NeedsDynamic) := by decide
+theorem correlation_I : ∀ a ∈ [Again.you, Again.zai], (a.Skips ↔ a.NeedsDynamic) := by
+  decide +kernel
 
 /-- Correlation II says that an *again*-element has exceptional scope iff its projection is at
-least as high as the aspectual heads, the level of `Asp` in the functional sequence. -/
+least as high as the aspectual heads, so that its head extends outer aspect. -/
 theorem correlation_II (a : Again) :
-    a.Skips ↔ ∃ f ∈ a.projection, Cat.fValue .Asp ≤ f.level := by
-  cases a <;> decide
+    a.Skips ↔ ∃ f ∈ a.projection, Cat.Asp.ExtendsTo f.head := by
+  cases a <;> decide +kernel
 
 /-! ### Aspect suffixes and phase complements -/
 
@@ -250,7 +255,7 @@ predicate, and the continuous *-zyu* alone is not. -/
 theorem aspect_lowering :
     ∀ m ∈ Cantonese.Aspect.markers,
       (ExceptionalScope (aspectProjection m) typeIII ↔ m ≠ Cantonese.Aspect.zyu) := by
-  decide
+  decide +kernel
 
 /-- No phase complement lowers across any complement. -/
 theorem no_phaseComplement_lowering (pc : Cantonese.ResultativeComplements.PhaseComplement)
@@ -284,7 +289,7 @@ instance : DecidablePred Complement.LicensesDynamic := fun _ ↦ inferInstanceAs
 exceptional scope across it, and an embedded *you* blocks aspect lowering. -/
 theorem not_exceptionalScope_of_licensesDynamic {c : Complement} (h : c.LicensesDynamic) :
     ¬ ExceptionalScope .outer c.size := by
-  rcases h with rfl | rfl <;> decide
+  rcases h with rfl | rfl <;> decide +kernel
 
 /-- The three Mandarin predicates of the selectional table. -/
 inductive Pred where
@@ -322,7 +327,7 @@ instance : DecidablePred Pred.SkipsYou := fun _ ↦ inferInstanceAs (Decidable (
 theorem embedsYou :
     (¬ Pred.xiang.EmbedsYou ∧ Pred.xiang.SkipsYou) ∧ (Pred.rang.EmbedsYou ∧ Pred.rang.SkipsYou) ∧
       (Pred.xiangxin.EmbedsYou ∧ ¬ Pred.xiangxin.SkipsYou) := by
-  decide
+  decide +kernel
 
 theorem Pred.size_mem_sizes (p : Pred) :
     ∀ c ∈ p.selects, ∃ fr ∈ p.entry.valency.frames, c.size ∈ sizes fr := by
@@ -360,7 +365,7 @@ theorem not_gwo_crossesComplement (v : Verb) : ¬ Again.gwo.CrossesComplement v 
 theorem faan_ambiguous {fr : ArgumentFrame} (hc : fr.HasClausal) (hf : ¬ fr.HasFinite) :
     (∃ s ∈ sizes fr, Contains s .outer) ∧ ∃ s ∈ sizes fr, ExceptionalScope .outer s := by
   simp only [sizes, hf, hc, ↓reduceIte]
-  decide
+  decide +kernel
 
 open Cantonese.Verbs in
 /-- An embedded *-faan* scopes over the nonfinite-complement verbs of (79) and not over the
@@ -368,7 +373,7 @@ finite-complement verbs of (80). -/
 theorem faan_lowering :
     (∀ v ∈ [soeng, hyun, bik, giu, daasyun], Again.faan.CrossesComplement v) ∧
       ∀ v ∈ [seon, gong, geidak], ¬ Again.faan.CrossesComplement v := by
-  decide
+  decide +kernel
 
 /-! ### The implicational complementation hierarchy -/
 
@@ -379,7 +384,7 @@ def minimalSize : Clause.Size → ComplementSize
   | .situation => .tP
   | .proposition => .cP
 
-theorem monotone_minimalSize : Monotone minimalSize := by decide
+theorem monotone_minimalSize : Monotone minimalSize := by decide +kernel
 
 theorem exceptionalScope_of_le {f : AspProjection} {c c' : Clause.Size} (h : c ≤ c')
     (hs : ExceptionalScope f (minimalSize c')) : ExceptionalScope f (minimalSize c) :=

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
+public import Linglib.Syntax.Minimalist.ExtendedProjection
 
 /-!
 # Panagiotidis (2015): Categorial Features
@@ -91,8 +91,9 @@ theorem chomsky_panagiotidis_agree (c₁ c₂ : Cat) :
     categorialFeatures c₁ = categorialFeatures c₂ ↔ c₁.features = c₂.features := by
   rw [categorialFeatures_eq_iff, Cat.features_eq_iff]
 
-theorem fValue_of_isCategorizer {c : Cat} (h : IsCategorizer c) : c.fValue = 1 := by
-  cases c <;> first | rfl | exact h.elim
+/-- A categorizer merges directly with the root, the lexical head of its family. -/
+theorem step_of_isCategorizer {c : Cat} (h : IsCategorizer c) : c.family.lexical.Step c := by
+  cases c <;> first | decide +kernel | exact h.elim
 
 /-- A category-neutral root with the surface words it projects across the lexical categories,
 each stamped with its Universal Dependencies category ([marantz-1997]). -/
