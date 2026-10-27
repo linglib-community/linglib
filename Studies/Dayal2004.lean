@@ -36,7 +36,7 @@ may or may not apply to ∩.
   the blocking of ∃ as a hypothesis, and the English fragment is read only for *the* and for the
   bare singular.
 * Which side of the cut-off each sampled language falls on is the paper's analysis
-  (`lexicalizationOf`); that ι is lexicalized exactly where the fragment has a definite article is
+  (`lexicalizationOf`); that ι is lexicalized exactly where the fragment's inventory blocks ι is
   checked (`iota_mem_lexicalized_iff`).
 * A mass term is number-neutral, fn. 25, and so is a Chinese noun, which aligns with plurals,
   p. 413; both have the general number.

@@ -182,9 +182,10 @@ end QuantityWord
 def zhe : DemonstrativeDeterminer := { form := "zhè", deixis := Person.first.participantSets }
 
 /-- *nà* 那 'that', the distal demonstrative and the obligatory exponent of anaphoric definites,
-donkey anaphora included ([jenks-2018]). -/
+donkey anaphora and producer–product bridging included ([jenks-2018]). -/
 def na : DemonstrativeDeterminer :=
-  { form := "nà", deixis := Person.first.participantSetsᶜ, uses := {.anaphoric} }
+  { form := "nà", deixis := Person.first.participantSetsᶜ,
+    uses := {.anaphoric, .bridging .relational} }
 
 /-- *de* 的, the marker of possession and of nominal modification. -/
 def de : PossessiveDeterminer := { form := "de" }

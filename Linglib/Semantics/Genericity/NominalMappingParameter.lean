@@ -123,11 +123,13 @@ namespace Determiner.Inventory
 open Genericity (CovertShift)
 
 /-- The Blocking Principle of [chierchia-1998]: a covert shift is blocked when a determiner of
-the inventory lexicalizes it. A definite article is ι and an indefinite article ∃; a determiner
-that obligatorily expones anaphoric definiteness is ι^x ([moroney-2021]); no determiner is ∩. -/
+the inventory lexicalizes it. A determiner that obligatorily expones a use calling for uniqueness
+is ι, one that obligatorily expones a use calling for familiarity is ι^x ([moroney-2021]), and an
+indefinite article is ∃; no determiner is ∩. An article marking familiarity alone, as Akan *nó*,
+leaves ι to the bare noun. -/
 def Blocks (ds : Inventory) : CovertShift → Prop
   | .down => False
-  | .iota => ∃ e ∈ ds, e.kind = .article .definite
+  | .iota => ds.Marks .uniqueness
   | .iotaAnaphoric => ds.Marks .familiarity
   | .exists => ∃ e ∈ ds, e.kind = .article .indefinite
 
@@ -137,6 +139,9 @@ instance (ds : Inventory) : DecidablePred ds.Blocks := fun τ ↦ by
 theorem not_blocks_down (ds : Inventory) : ¬ ds.Blocks .down := nofun
 
 theorem blocks_exists_iff (ds : Inventory) : ds.Blocks .exists ↔ ds.Realizes .indefinite :=
+  Iff.rfl
+
+theorem blocks_iota_iff (ds : Inventory) : ds.Blocks .iota ↔ ds.Realizes .unique :=
   Iff.rfl
 
 theorem blocks_iotaAnaphoric_iff (ds : Inventory) :
