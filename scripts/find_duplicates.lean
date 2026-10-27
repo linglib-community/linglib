@@ -115,6 +115,14 @@ partial def readGraph (mods : Array Name) : IO (Std.HashMap Name (Array Name × 
   for m in mods do visit m
   g.get
 
+/-- Names Lean generates on demand in each module that needs them, such as equation and congruence
+lemmas; the same such name in two modules is no clash. -/
+def generated (n : Name) : Bool :=
+  n.isInternalDetail || match n with
+    | .str _ s => s == "congr_simp" || s == "eq_def" || s == "eq_unfold" || s == "sizeOf_spec" ||
+        (s.startsWith "eq_" && (s.drop 3).all Char.isDigit)
+    | _ => false
+
 /-- The modules that import any of `ms`, transitively, together with `ms`. -/
 def dependents (graph : Std.HashMap Name (Array Name × Array Name)) (ms : Array Name) : NameSet :=
   let rev : Std.HashMap Name (Array Name) := graph.fold (init := {}) fun acc m (imps, _) =>
@@ -147,7 +155,7 @@ unsafe def main (args : List String) : IO UInt32 := do
     cs.foldl (fun acc c => acc.insert c ((acc.getD c #[]).push m)) acc
   let mut pairs : Std.HashMap (Name × Name) (Array Name) := {}
   for (c, ms) in owners do
-    if ms.size > 1 then
+    if ms.size > 1 && !generated c then
       let ms := ms.qsort (·.toString < ·.toString)
       pairs := pairs.insert (ms[0]!, ms[1]!) ((pairs.getD (ms[0]!, ms[1]!) #[]).push c)
   IO.println s!"# Names declared in two modules ({pairs.size} module pairs)"
