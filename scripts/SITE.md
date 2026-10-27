@@ -19,3 +19,21 @@ The look is that of Hugo's PaperMod theme, which the site began on:
 
 Mockups are read for structure and copy, not for type or color. Check a page at 1440px and 390px
 wide, in light and dark mode, before opening a PR.
+
+## The docs pages
+
+`gen_docs_pages.py` rebuilds doc-gen4's study pages from its output (read by `docgen_index.py`)
+into `/docs-new/`, beside doc-gen4's `/docs/` until they replace it. They depart from the rules
+above where a reference page needs it:
+
+- Three columns up to 1340px wide, prose still at 720px: the file's map at left, the declarations
+  in the middle, where the file sits in the library at right. Readers scan and jump.
+- A study's headline theorems, the theorems with a docstring, are open cards. Every other
+  declaration is a one-line row that opens in place.
+- Color for the kind of node (study, theory, fragment) and solid against dashed for formalized
+  or proved against not yet, the same vocabulary as the bibliography's roles.
+- The page's own styles and script are the shared files `docs_page/docs.css` and `docs.js`, since
+  a thousand pages carry them.
+
+Every declaration doc-gen4 indexes keeps its anchor on the rebuilt page, so search and `find/`
+links still land; `--check` confirms it.
