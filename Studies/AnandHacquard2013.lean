@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Modality.DomainSemantics
 public import Linglib.Data.Examples.AnandHacquard2013
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Basic.Nontrivial.Defs
@@ -12,24 +13,42 @@ public import Mathlib.Tactic.DeriveFintype
 Epistemic modals are acceptable in the complements of attitudes of acceptance (*think*, *say*,
 *realize*), unacceptable under desideratives and directives, and acceptable under emotive
 doxastics (*hope*, *fear*) and dubitatives (*doubt*) with possibility but not necessity force, in
-seven-point acceptability surveys of French, Italian, and Spanish. The account combines Yalcin's
-information-state semantics, on which an epistemic quantifies over a state `S` anaphoric to the
-embedding attitude and presupposes `S ≠ ∅`, with Bolinger's split of attitudes: representational
-attitudes pass their doxastic state as `S`; non-representational ones set `S = ∅` and combine
-with their complement by Villalta's comparison against the Heimian alternative `¬φ`, so an
-embedded epistemic is never defined. Emotive doxastics and dubitatives are hybrids — a doxastic
+seven-point acceptability surveys of French, Italian, and Spanish.
+
+The account adopts Yalcin's domain semantics, on which an epistemic quantifies over an information
+state $S$ anaphoric to the embedding attitude, and adds Geurts's presupposition that $S$ is not
+empty: an epistemic is undefined at the empty state and elsewhere [is Yalcin's
+modal](##truth_might) on the truth of its complement. Following Bolinger, representational
+attitudes pass their doxastic state as $S$ and [are true where that state accepts the
+complement](##representational_eq_one_iff); non-representational ones set $S = \emptyset$ and
+compare the complement with its negation by Villalta's ordering, so [an embedded epistemic is never
+defined](##preferential_modal_eq_zero). Emotive doxastics and dubitatives are hybrids: a doxastic
 possibility assertion, a comparison of the complement's verifiers with its falsifiers, and an
-uncertainty presupposition demanding both — and the doxastic assertion of an embedded necessity
-modal contradicts that presupposition, while an embedded possibility modal contributes nothing
-new. Italian *pensare* selects the subjunctive yet licenses epistemics, so subjunctive is an
+uncertainty presupposition demanding both. The doxastic assertion of an embedded necessity modal
+[contradicts that presupposition](##hope_must_ne_one), and so does a negated possibility modal,
+[a universal assertion](##neg_might_ofSet), while [an embedded possibility modal contributes
+nothing new](##hope_might). Together these [derive the distribution](##rows_track_licensing).
+Italian *pensare* selects the subjunctive yet licenses epistemics, so the subjunctive is an
 imperfect correlate.
 
-## Main definitions
+## Implementation notes
 
-* `SProp`: a complement relative to an information state `S`, with `might`, `must`, `ofSet`.
-* `Better`: Villalta's lift of an ordering to propositions; `verifiers` the sub-states settled
-  on a complement.
-* `Licensed`: whether some context makes an embedded epistemic defined and true.
+* A complement is a trivalent proposition for each information state, `Set W → W → SignType`,
+  with `0` for undefined.
+* The paper does not say how an attitude treats a partial complement. A representational attitude
+  is the Weak Kleene universal over its domain. A non-representational one compares two sets of
+  worlds, so it is defined only when its complement, at the empty state, is defined at every world:
+  the reading on which an embedded epistemic is undefined whatever the world of evaluation.
+* Villalta's alternative set is Heim's $\{\varphi, \neg\varphi\}$, as the paper assumes.
+
+## Errata
+
+* The verifier set (50) as printed contains the empty state, which meets its condition vacuously,
+  so the uncertainty condition (54) would hold of every complement and the contradiction (58)
+  draws for necessity modals would not arise. The prose's "excluding ∅" is needed, and `verifiers`
+  follows it.
+* (63) states the preference assertion and the verifier set for an unmodalized `p`, as in (56),
+  although the entry is for `ϕ`; `doubt` reads `ϕ`.
 
 ## References
 
@@ -48,6 +67,8 @@ imperfect correlate.
 
 namespace AnandHacquard2013
 
+open DomainSemantics
+
 variable {W : Type*}
 
 /-! ### Complements relative to an information state -/
@@ -56,30 +77,33 @@ variable {W : Type*}
 trivalent proposition for each `S`. -/
 abbrev SProp (W : Type*) := Set W → W → SignType
 
+/-- Where a complement is true, a sentence of Yalcin's domain semantics. -/
+def truth (φ : SProp W) : DomainSemantics.Sentence W := fun S w ↦ φ S w = 1
+
 open Classical in
 /-- An unmodalized complement ignores the information state. -/
 noncomputable def ofSet (p : Set W) : SProp W := fun _ w ↦ SignType.ofProp (w ∈ p)
 
 open Classical in
-/-- Epistemic possibility (37a) presupposes `S ≠ ∅` and is true iff `S` contains a
-`p`-world. -/
-noncomputable def might (p : Set W) : SProp W :=
-  fun S ↦ {_w | S.Nonempty}.indicator fun _ ↦ SignType.ofProp (S ∩ p).Nonempty
+/-- Epistemic possibility (37a) presupposes `S ≠ ∅` and is otherwise Yalcin's *might* (26) on
+the truth of its complement. -/
+noncomputable def might (φ : SProp W) : SProp W :=
+  fun S ↦ {_w | S.Nonempty}.indicator fun w ↦ SignType.ofProp ((truth φ).might S w)
 
 open Classical in
-/-- Epistemic necessity (37b) presupposes `S ≠ ∅` and is true iff `S ⊆ p`. -/
-noncomputable def must (p : Set W) : SProp W :=
-  fun S ↦ {_w | S.Nonempty}.indicator fun _ ↦ SignType.ofProp (S ⊆ p)
-
-/-- Negation of a complement, keeping its presupposition. -/
-def neg (φ : SProp W) : SProp W := fun S ↦ -φ S
+/-- Epistemic necessity (37b) presupposes `S ≠ ∅` and is otherwise Yalcin's *must* on the truth
+of its complement. -/
+noncomputable def must (φ : SProp W) : SProp W :=
+  fun S ↦ {_w | S.Nonempty}.indicator fun w ↦ SignType.ofProp ((truth φ).must S w)
 
 /-- Conjunction of complements, defined where both are (Weak Kleene). -/
 def conj (φ ψ : SProp W) : SProp W := fun S w ↦ (φ S w).meetWeak (ψ S w)
 
 section Values
 
-variable {p S : Set W} {w : W}
+variable {φ : SProp W} {p S : Set W} {w : W}
+
+@[simp] theorem truth_apply : truth φ S w ↔ φ S w = 1 := .rfl
 
 @[simp] theorem ofSet_eq_one_iff : ofSet p S w = 1 ↔ w ∈ p := by simp [ofSet]
 
@@ -87,25 +111,51 @@ variable {p S : Set W} {w : W}
 
 @[simp] theorem ofSet_ne_zero : ofSet p S w ≠ 0 := by simp [ofSet]
 
-@[simp] theorem might_eq_one_iff : might p S w = 1 ↔ (S ∩ p).Nonempty := by
-  simpa [might] using fun h : (S ∩ p).Nonempty ↦ h.mono Set.inter_subset_left
+theorem truth_ofSet (p : Set W) : truth (ofSet p) = Sentence.ofProp p := by
+  funext S w; simp [Sentence.ofProp]
 
-@[simp] theorem might_eq_neg_one_iff : might p S w = -1 ↔ S.Nonempty ∧ ¬ (S ∩ p).Nonempty := by
-  simp [might]
+theorem neg_ofSet (p : Set W) : -ofSet p = ofSet pᶜ := by
+  funext S w; by_cases h : w ∈ p <;> simp [ofSet, h]
 
-@[simp] theorem might_eq_zero_iff : might p S w = 0 ↔ S = ∅ := by
+@[simp] theorem might_eq_one_iff : might φ S w = 1 ↔ ∃ w' ∈ S, φ S w' = 1 := by
+  simpa [might, Sentence.might] using fun w' hw' _ ↦ ⟨w', hw'⟩
+
+@[simp] theorem might_eq_neg_one_iff :
+    might φ S w = -1 ↔ S.Nonempty ∧ ∀ w' ∈ S, φ S w' ≠ 1 := by
+  simp [might, Sentence.might]
+
+@[simp] theorem might_eq_zero_iff : might φ S w = 0 ↔ S = ∅ := by
   simp [might, Set.nonempty_iff_ne_empty]
 
-@[simp] theorem must_eq_one_iff : must p S w = 1 ↔ S.Nonempty ∧ S ⊆ p := by simp [must]
+@[simp] theorem must_eq_one_iff : must φ S w = 1 ↔ S.Nonempty ∧ ∀ w' ∈ S, φ S w' = 1 := by
+  simp [must, Sentence.must]
 
-@[simp] theorem must_eq_neg_one_iff : must p S w = -1 ↔ S.Nonempty ∧ ¬ S ⊆ p := by simp [must]
+@[simp] theorem must_eq_neg_one_iff :
+    must φ S w = -1 ↔ S.Nonempty ∧ ∃ w' ∈ S, φ S w' ≠ 1 := by
+  simp [must, Sentence.must]
 
-@[simp] theorem must_eq_zero_iff : must p S w = 0 ↔ S = ∅ := by
+@[simp] theorem must_eq_zero_iff : must φ S w = 0 ↔ S = ∅ := by
   simp [must, Set.nonempty_iff_ne_empty]
 
-@[simp] theorem neg_apply (φ : SProp W) : neg φ S w = -φ S w := rfl
-
 end Values
+
+/-- Wherever epistemic possibility is defined it is [yalcin-2007]'s: its truth is the
+domain-semantic *might* of the truth of its complement. -/
+theorem truth_might (φ : SProp W) : truth (might φ) = (truth φ).might := by
+  funext S w; simp [Sentence.might]
+
+theorem acceptedIn_truth_must (φ : SProp W) {S : Set W} :
+    (truth (must φ)).AcceptedIn S ↔ (truth φ).AcceptedIn S :=
+  ⟨fun h w hw ↦ (must_eq_one_iff.1 (h w hw)).2 w hw, fun h _ hw ↦ must_eq_one_iff.2 ⟨⟨_, hw⟩, h⟩⟩
+
+theorem neg_might_ofSet (p : Set W) : -might (ofSet p) = must (ofSet pᶜ) := by
+  funext S w
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;> simp
+
+theorem neg_must_ofSet (p : Set W) : -must (ofSet p) = might (ofSet pᶜ) := by
+  funext S w
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) ?_
+  simpa using fun x hx _ ↦ ⟨x, hx⟩
 
 /-- An *according to X* phrase evaluates its complement at `X`'s own information state (39). -/
 def accordingTo (T : Set W) (φ : SProp W) : SProp W := fun _ => φ T
@@ -117,9 +167,13 @@ inductive Force
   deriving DecidableEq, Fintype
 
 /-- The epistemic of a given force. -/
-noncomputable def Force.modal : Force → Set W → SProp W
+noncomputable def Force.modal : Force → SProp W → SProp W
   | .possibility => might
   | .necessity => must
+
+@[simp] theorem Force.modal_eq_zero_iff {f : Force} {φ : SProp W} {S : Set W} {w : W} :
+    f.modal φ S w = 0 ↔ S = ∅ := by
+  cases f <;> simp [Force.modal]
 
 /-! ### Representational and non-representational attitudes -/
 
@@ -129,29 +183,32 @@ domain. -/
 noncomputable def representational (dox : W → Set W) (φ : SProp W) : W → SignType :=
   fun w ↦ Trivalent.forallWeak fun v : dox w ↦ φ (dox w) v
 
+theorem representational_eq_one_iff (dox : W → Set W) (φ : SProp W) (w : W) :
+    representational dox φ w = 1 ↔ (truth φ).AcceptedIn (dox w) := by
+  rw [representational, Trivalent.forallWeak_eq_one_iff, Subtype.forall]; rfl
+
 -- (35)
-theorem representational_must_eq_one_iff (dox : W → Set W) (p : Set W) (w : W) :
-    representational dox (must p) w = 1 ↔ dox w ⊆ p := by
-  simp only [representational, Trivalent.forallWeak_eq_one_iff, must_eq_one_iff, Subtype.forall]
-  exact ⟨fun h v hv ↦ (h v hv).2 hv, fun h v hv ↦ ⟨⟨v, hv⟩, h⟩⟩
+theorem representational_must_eq_one_iff (dox : W → Set W) (φ : SProp W) (w : W) :
+    representational dox (must φ) w = 1 ↔ representational dox φ w = 1 := by
+  rw [representational_eq_one_iff, representational_eq_one_iff, acceptedIn_truth_must]
 
 -- (23b)
 theorem imagine_epistemic_eq_neg_one (dox : W → Set W) (p : Set W) {w : W}
     (h : (dox w).Nonempty) :
-    representational dox (conj (ofSet p) (might pᶜ)) w = -1 := by
-  have hm (u : W) : might pᶜ (dox w) u ≠ 0 := by simpa [Set.nonempty_iff_ne_empty] using h
+    representational dox (conj (ofSet p) (might (ofSet pᶜ))) w = -1 := by
+  have hm (u : W) : might (ofSet pᶜ) (dox w) u ≠ 0 := by
+    simpa [Set.nonempty_iff_ne_empty] using h
   rw [representational, Trivalent.forallWeak_eq_neg_one_iff]
   refine ⟨fun u ↦ by simp [conj, hm], ?_⟩
   by_cases hp : dox w ⊆ p
   · obtain ⟨v, hv⟩ := id h
-    exact ⟨⟨v, hv⟩, by simp [conj, h, Set.inter_compl_nonempty_iff, hp, hp hv]⟩
+    exact ⟨⟨v, hv⟩, by simpa [conj, h, hp hv] using fun _ hu ↦ hp hu⟩
   · obtain ⟨u, hu, hup⟩ := Set.not_subset.1 hp
     exact ⟨⟨u, hu⟩, by simp [conj, hm, hup]⟩
 
 /-- Villalta's lift of a strict ordering to sets (32b) requires that every member of `q` is
-bettered by some
-member of `p`, and some member of `p` is bettered by no member of `q`. Applied to sets of sets
-it is the ordering of (52). -/
+bettered by some member of `p`, and some member of `p` is bettered by no member of `q`. Applied
+to sets of sets it is the ordering of (52). -/
 def Better {α : Type*} (r : α → α → Prop) (p q : Set α) : Prop :=
   (∀ v ∈ q, ∃ u ∈ p, r u v) ∧ ∃ u ∈ p, ∀ v ∈ q, ¬ r v u
 
@@ -168,75 +225,72 @@ open Classical in
 /-- Under a non-representational attitude (36) the information state is reset to `∅`, and the
 complement evaluated there is compared with its negation — Villalta's comparison over the
 Heimian alternative set `{φ, ¬φ}`, with `des w` the desirability ordering at `w`, setting the
-worlds where the complement is true against those where its negation is. -/
+worlds where the complement is true against those where it is false. The comparison is between
+sets of worlds, so it is defined only when the complement is defined at every world. -/
 noncomputable def preferential (des : W → W → W → Prop) (φ : SProp W) : W → SignType :=
-  (Function.support (φ ∅)).indicator fun w ↦
-    SignType.ofProp (Better (des w) (posSupport (φ ∅)) (posSupport (neg φ ∅)))
+  {_w | Trivalent.IsBivalent (φ ∅)}.indicator fun w ↦
+    SignType.ofProp (Better (des w) (posSupport (φ ∅)) (negSupport (φ ∅)))
 
--- (38)
-theorem preferential_modal_eq_zero (des : W → W → W → Prop) (f : Force) (p : Set W)
-    (w : W) : preferential des (f.modal p) w = 0 := by
-  cases f <;> simp [preferential, Force.modal]
+/-- An epistemic embedded under a desiderative or directive is undefined, whatever its
+complement (38). -/
+theorem preferential_modal_eq_zero (des : W → W → W → Prop) (f : Force) (φ : SProp W)
+    (w : W) : preferential des (f.modal φ) w = 0 :=
+  Set.indicator_of_notMem (fun h ↦ h.ne_zero w (by simp)) _
 
 -- (39)
 theorem preferential_accordingTo_ne_zero_iff (des : W → W → W → Prop) (T : Set W) (f : Force)
-    (p : Set W) (w : W) :
-    preferential des (accordingTo T (f.modal p)) w ≠ 0 ↔ T.Nonempty := by
-  cases f <;> simp [preferential, accordingTo, Force.modal, Set.nonempty_iff_ne_empty]
+    (φ : SProp W) (w : W) :
+    preferential des (accordingTo T (f.modal φ)) w ≠ 0 ↔ T.Nonempty := by
+  simp only [preferential, accordingTo, ne_eq, Set.indicator_apply_eq_zero, Set.mem_ofPred_eq,
+    SignType.ofProp_ne_zero, imp_false, not_not, Trivalent.isBivalent_iff_forall_ne_zero,
+    Force.modal_eq_zero_iff, Set.nonempty_iff_ne_empty]
+  exact ⟨fun h ↦ h w, fun h _ ↦ h⟩
 
 /-! ### Verifiers and falsifiers -/
 
 /-- The nonempty sub-states of `A`. -/
 def subStates {α : Type*} (A : Set α) : Set (Set α) := {X | X ⊆ A ∧ X.Nonempty}
 
-/-- The `φ`-verifiers in `S` (50) are the nonempty sub-states of `S` on all of whose sub-states
-`φ` holds throughout. -/
+/-- The `φ`-verifiers in `S` (50) are the nonempty sub-states of `S` that accept `φ` and are
+certain about it: each of their own sub-states accepts `φ` as well. -/
 def verifiers (φ : SProp W) (S : Set W) : Set (Set W) :=
-  {X | X ⊆ S ∧ X.Nonempty ∧ ∀ Y ⊆ X, ∀ w ∈ Y, φ Y w = 1}
+  {X | X ⊆ S ∧ X.Nonempty ∧ ∀ Y ⊆ X, (truth φ).AcceptedIn Y}
 
 /-- The `φ`-falsifiers in `S` are the `¬φ`-verifiers. -/
-def falsifiers (φ : SProp W) (S : Set W) : Set (Set W) := verifiers (neg φ) S
+def falsifiers (φ : SProp W) (S : Set W) : Set (Set W) := verifiers (-φ) S
 
 theorem verifiers_eq {φ : SProp W} {q : Set W}
-    (h : ∀ X : Set W, (∀ Y ⊆ X, ∀ w ∈ Y, φ Y w = 1) ↔ X ⊆ q) (S : Set W) :
+    (h : ∀ X : Set W, (∀ Y ⊆ X, (truth φ).AcceptedIn Y) ↔ X ⊆ q) (S : Set W) :
     verifiers φ S = subStates (S ∩ q) := by
   ext X; simp only [verifiers, subStates, Set.mem_ofPred_eq, h, Set.subset_inter_iff]; tauto
 
+theorem verifiers_must (φ : SProp W) (S : Set W) : verifiers (must φ) S = verifiers φ S := by
+  simp only [verifiers, acceptedIn_truth_must]
+
 -- Figure 3
 theorem verifiers_ofSet (p S : Set W) : verifiers (ofSet p) S = subStates (S ∩ p) :=
-  verifiers_eq (φ := ofSet p) (q := p) (fun X => ⟨fun h _ hw => ofSet_eq_one_iff.1
-    (h X Set.Subset.rfl _ hw), fun h _ hY _ hw => ofSet_eq_one_iff.2 (h (hY hw))⟩) S
+  verifiers_eq (fun X ↦ by
+    simp only [truth_ofSet, Sentence.acceptedIn_ofProp_iff]
+    exact ⟨fun h ↦ h X subset_rfl, fun h _ hY ↦ hY.trans h⟩) S
 
-theorem verifiers_might (p S : Set W) : verifiers (might p) S = subStates (S ∩ p) :=
-  verifiers_eq (φ := might p) (q := p) (fun X => ⟨fun h w hw => by
-      obtain ⟨v, hv, hvp⟩ := might_eq_one_iff.1
-        (h {w} (Set.singleton_subset_iff.mpr hw) w (Set.mem_singleton w))
-      exact Set.mem_singleton_iff.mp hv ▸ hvp,
-    fun h _ hY w hw => might_eq_one_iff.2 ⟨w, hw, h (hY hw)⟩⟩) S
-
-theorem verifiers_must (p S : Set W) : verifiers (must p) S = subStates (S ∩ p) :=
-  verifiers_eq (φ := must p) (q := p) (fun X => ⟨fun h _ hw =>
-    (must_eq_one_iff.1 (h X Set.Subset.rfl _ hw)).2 hw,
-    fun h _ hY _ hw => must_eq_one_iff.2 ⟨⟨_, hw⟩, hY.trans h⟩⟩) S
+theorem verifiers_might (p S : Set W) : verifiers (might (ofSet p)) S = subStates (S ∩ p) :=
+  verifiers_eq (fun X ↦ by
+    simp only [truth_might, truth_ofSet, Sentence.acceptedIn_might_iff]
+    refine ⟨fun h w hw ↦ ?_, fun h Y hY ↦
+      Y.eq_empty_or_nonempty.imp_right fun ⟨w, hw⟩ ↦ ⟨w, hw, h (hY hw)⟩⟩
+    obtain ⟨v, hv, hvp⟩ :=
+      (h {w} (Set.singleton_subset_iff.2 hw)).resolve_left (Set.singleton_ne_empty w)
+    exact Set.mem_singleton_iff.1 hv ▸ hvp) S
 
 -- Figure 3
-theorem falsifiers_ofSet (p S : Set W) : falsifiers (ofSet p) S = subStates (S ∩ pᶜ) :=
-  verifiers_eq (φ := neg (ofSet p)) (q := pᶜ) (fun X => ⟨fun h _ hw => by
-    simpa using h X Set.Subset.rfl _ hw, fun h _ hY _ hw => by simpa using h (hY hw)⟩) S
+theorem falsifiers_ofSet (p S : Set W) : falsifiers (ofSet p) S = subStates (S ∩ pᶜ) := by
+  rw [falsifiers, neg_ofSet, verifiers_ofSet]
 
-theorem falsifiers_might (p S : Set W) : falsifiers (might p) S = subStates (S ∩ pᶜ) :=
-  verifiers_eq (φ := neg (might p)) (q := pᶜ) (fun _ => ⟨fun h w hw hp => by
-      simpa [hp] using h {w} (Set.singleton_subset_iff.mpr hw) w (Set.mem_singleton w),
-    fun h _ hY w hw => by
-      rw [neg_apply, SignType.neg_eq_one_iff, might_eq_neg_one_iff]
-      exact ⟨⟨w, hw⟩, fun ⟨_, hvY, hvp⟩ => h (hY hvY) hvp⟩⟩) S
+theorem falsifiers_might (p S : Set W) : falsifiers (might (ofSet p)) S = subStates (S ∩ pᶜ) := by
+  rw [falsifiers, neg_might_ofSet, verifiers_must, verifiers_ofSet]
 
-theorem falsifiers_must (p S : Set W) : falsifiers (must p) S = subStates (S ∩ pᶜ) :=
-  verifiers_eq (φ := neg (must p)) (q := pᶜ) (fun _ => ⟨fun h w hw hp => by
-      simpa [hp] using h {w} (Set.singleton_subset_iff.mpr hw) w (Set.mem_singleton w),
-    fun h _ hY w hw => by
-      rw [neg_apply, SignType.neg_eq_one_iff, must_eq_neg_one_iff]
-      exact ⟨⟨w, hw⟩, fun hYp => h (hY hw) (hYp hw)⟩⟩) S
+theorem falsifiers_must (p S : Set W) : falsifiers (must (ofSet p)) S = subStates (S ∩ pᶜ) := by
+  rw [falsifiers, neg_must_ofSet, verifiers_might]
 
 -- footnote 19
 theorem better_subStates_iff {α : Type*} (r : α → α → Prop) (A B : Set α) :
@@ -262,7 +316,7 @@ theorem prefers_iff {φ : SProp W} {p S : Set W} (r : W → W → Prop)
   rw [hv, hf, better_subStates_iff]
 
 theorem prefers_modal_iff (r : W → W → Prop) (p S : Set W) (f : Force) :
-    Better (Better r) (verifiers (f.modal p) S) (falsifiers (f.modal p) S) ↔
+    Better (Better r) (verifiers (f.modal (ofSet p)) S) (falsifiers (f.modal (ofSet p)) S) ↔
       Better (Better r) (verifiers (ofSet p) S) (falsifiers (ofSet p) S) := by
   cases f <;> simp only [Force.modal, verifiers_might, verifiers_must, falsifiers_might,
     falsifiers_must, verifiers_ofSet, falsifiers_ofSet]
@@ -270,8 +324,7 @@ theorem prefers_modal_iff (r : W → W → Prop) (p S : Set W) (f : Force) :
 /-! ### Emotive doxastics and dubitatives -/
 
 /-- The uncertainty condition (54) demands that the complement has both verifiers and
-falsifiers in the
-doxastic state. -/
+falsifiers in the doxastic state. -/
 def Uncertain (φ : SProp W) (S : Set W) : Prop :=
   (verifiers φ S).Nonempty ∧ (falsifiers φ S).Nonempty
 
@@ -310,50 +363,51 @@ theorem doubt_eq_one_iff : doubt r dox φ w = 1 ↔ Uncertain φ (dox w) ∧ Pos
 end Values
 
 -- (58)
-theorem uncertain_must_not_possible {p S : Set W} (hu : Uncertain (must p) S) :
-    ¬ Possible (must p) S := by
-  intro hp
-  obtain ⟨_, _, hS⟩ := hp
-  obtain ⟨_, hf⟩ := hu
-  rw [falsifiers_must] at hf
-  obtain ⟨X, hX, v, hv⟩ := hf
-  exact (hX hv).2 ((must_eq_one_iff.1 hS).2 (hX hv).1)
+theorem uncertain_must_not_possible {p S : Set W} (hu : Uncertain (must (ofSet p)) S) :
+    ¬ Possible (must (ofSet p)) S := fun ⟨_, _, hS⟩ ↦ by
+  obtain ⟨X, hX, v, hv⟩ := falsifiers_must p S ▸ hu.2
+  exact (hX hv).2 (ofSet_eq_one_iff.1 ((must_eq_one_iff.1 hS).2 v (hX hv).1))
 
+/-- An emotive doxastic never makes an embedded necessity modal true: the doxastic assertion
+contradicts the uncertainty condition (58). -/
 theorem hope_must_ne_one (des : W → W → W → Prop) (dox : W → Set W) (p : Set W) (w : W) :
-    hope des dox (must p) w ≠ 1 := fun h ↦
+    hope des dox (must (ofSet p)) w ≠ 1 := fun h ↦
   let ⟨hu, hp, _⟩ := hope_eq_one_iff.1 h
   uncertain_must_not_possible hu hp
 
 theorem doubt_must_ne_one (prob : W → W → W → Prop) (dox : W → Set W) (p : Set W)
-    (w : W) : doubt prob dox (must p) w ≠ 1 := fun h ↦
+    (w : W) : doubt prob dox (must (ofSet p)) w ≠ 1 := fun h ↦
   let ⟨hu, hp, _⟩ := doubt_eq_one_iff.1 h
   uncertain_must_not_possible hu hp
 
 -- (74)
 theorem hope_neg_might_ne_one (des : W → W → W → Prop) (dox : W → Set W) (p : Set W)
-    (w : W) : hope des dox (neg (might p)) w ≠ 1 := by
-  intro h
-  obtain ⟨⟨-, X, hXS, ⟨v, hv⟩, hX⟩, ⟨_, _, hS⟩, -⟩ := hope_eq_one_iff.1 h
-  have hX : (X ∩ p).Nonempty := by simpa using hX X Set.Subset.rfl v hv
-  have hS : (dox w).Nonempty ∧ ¬ (dox w ∩ p).Nonempty := by simpa using hS
-  exact hS.2 (hX.mono (Set.inter_subset_inter_left p hXS))
+    (w : W) : hope des dox (-might (ofSet p)) w ≠ 1 :=
+  neg_might_ofSet p ▸ hope_must_ne_one des dox pᶜ w
 
-theorem possible_might_iff (p S : Set W) : Possible (might p) S ↔ Possible (ofSet p) S := by
+theorem possible_might_iff (p S : Set W) :
+    Possible (might (ofSet p)) S ↔ Possible (ofSet p) S := by
   simp only [Possible, might_eq_one_iff, ofSet_eq_one_iff]
-  exact ⟨fun ⟨_, _, v, hv⟩ => ⟨v, hv.1, hv.2⟩, fun ⟨w, hw, hp⟩ => ⟨w, hw, w, hw, hp⟩⟩
+  exact ⟨fun ⟨_, _, h⟩ ↦ h, fun ⟨w, hw, hp⟩ ↦ ⟨w, hw, w, hw, hp⟩⟩
 
 open Classical in
--- (59), (57)
+/-- *Hope that might p* is *hope that p* (59): the verifiers, the falsifiers and the doxastic
+assertion all coincide (57). -/
 theorem hope_might (des : W → W → W → Prop) (dox : W → Set W) (p : Set W) :
-    hope des dox (might p) = hope des dox (ofSet p) := by
+    hope des dox (might (ofSet p)) = hope des dox (ofSet p) := by
   simp only [hope, Uncertain, verifiers_might, verifiers_ofSet, falsifiers_might,
     falsifiers_ofSet, possible_might_iff]
 
 open Classical in
 theorem doubt_might (prob : W → W → W → Prop) (dox : W → Set W) (p : Set W) :
-    doubt prob dox (might p) = doubt prob dox (ofSet p) := by
+    doubt prob dox (might (ofSet p)) = doubt prob dox (ofSet p) := by
   simp only [doubt, Uncertain, verifiers_might, verifiers_ofSet, falsifiers_might,
     falsifiers_ofSet, possible_might_iff]
+
+-- footnote 25: a necessity modal under negation is predicted licensed; (i) is judged marginal
+theorem hope_neg_must (des : W → W → W → Prop) (dox : W → Set W) (p : Set W) :
+    hope des dox (-must (ofSet p)) = hope des dox (ofSet pᶜ) := by
+  rw [neg_must_ofSet, hope_might]
 
 /-! ### The distribution -/
 
@@ -396,7 +450,7 @@ noncomputable def Kind.entry : Kind → (W → W → W → Prop) → (W → Set 
 state, prejacent, and world make the embedding defined and true. -/
 def Licensed (W : Type*) (k : Kind) (f : Force) : Prop :=
   ∃ (r : W → W → W → Prop) (dox : W → Set W) (p : Set W) (w : W),
-    k.entry r dox (f.modal p) w = 1
+    k.entry r dox (f.modal (ofSet p)) w = 1
 
 theorem licensed_acceptance [Nontrivial W] (f : Force) :
     Licensed W .acceptance f := by
@@ -405,19 +459,19 @@ theorem licensed_acceptance [Nontrivial W] (f : Force) :
   cases f <;> simp [Kind.entry, Force.modal, representational]
 
 theorem not_licensed_preferenceOriented (f : Force) : ¬ Licensed W .preferenceOriented f :=
-  fun ⟨r, _, p, w, h⟩ => absurd ((preferential_modal_eq_zero r f p w).symm.trans h) (by decide)
+  fun ⟨r, _, p, w, h⟩ => absurd ((preferential_modal_eq_zero r f _ w).symm.trans h) (by decide)
 
 theorem licensed_emotiveDoxastic_possibility [Nontrivial W] :
     Licensed W .emotiveDoxastic .possibility := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne W
   refine ⟨fun _ u v => u = a ∧ v ≠ a, fun _ => Set.univ, {a}, a, hope_eq_one_iff.2 ⟨?_,
-    ⟨a, trivial, might_eq_one_iff.2 ⟨a, trivial, rfl⟩⟩, ?_⟩⟩
-  · show Uncertain (might {a}) Set.univ
+    ⟨a, trivial, might_eq_one_iff.2 ⟨a, trivial, by simp⟩⟩, ?_⟩⟩
+  · show Uncertain (might (ofSet {a})) Set.univ
     rw [Uncertain, verifiers_might, falsifiers_might, Set.univ_inter, Set.univ_inter]
     exact ⟨⟨{a}, Set.Subset.rfl, Set.singleton_nonempty a⟩,
       ⟨{b}, Set.singleton_subset_iff.mpr hab.symm, Set.singleton_nonempty b⟩⟩
-  · show Better (Better fun u v => u = a ∧ v ≠ a) (verifiers (might {a}) Set.univ)
-      (falsifiers (might {a}) Set.univ)
+  · show Better (Better fun u v => u = a ∧ v ≠ a) (verifiers (might (ofSet {a})) Set.univ)
+      (falsifiers (might (ofSet {a})) Set.univ)
     rw [prefers_iff _ (verifiers_might _ _) (falsifiers_might _ _), Set.univ_inter,
       Set.univ_inter]
     exact ⟨fun v hv => ⟨a, rfl, rfl, hv⟩, a, rfl, fun v hv h => hv h.1⟩
@@ -428,13 +482,13 @@ theorem not_licensed_emotiveDoxastic_necessity : ¬ Licensed W .emotiveDoxastic 
 theorem licensed_dubitative_possibility [Nontrivial W] : Licensed W .dubitative .possibility := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne W
   refine ⟨fun _ u v => u ≠ a ∧ v = a, fun _ => Set.univ, {a}, a, doubt_eq_one_iff.2 ⟨?_,
-    ⟨a, trivial, might_eq_one_iff.2 ⟨a, trivial, rfl⟩⟩, ?_⟩⟩
-  · show Uncertain (might {a}) Set.univ
+    ⟨a, trivial, might_eq_one_iff.2 ⟨a, trivial, by simp⟩⟩, ?_⟩⟩
+  · show Uncertain (might (ofSet {a})) Set.univ
     rw [Uncertain, verifiers_might, falsifiers_might, Set.univ_inter, Set.univ_inter]
     exact ⟨⟨{a}, Set.Subset.rfl, Set.singleton_nonempty a⟩,
       ⟨{b}, Set.singleton_subset_iff.mpr hab.symm, Set.singleton_nonempty b⟩⟩
-  · show Better (Better fun u v => u ≠ a ∧ v = a) (falsifiers (might {a}) Set.univ)
-      (verifiers (might {a}) Set.univ)
+  · show Better (Better fun u v => u ≠ a ∧ v = a) (falsifiers (might (ofSet {a})) Set.univ)
+      (verifiers (might (ofSet {a})) Set.univ)
     rw [falsifiers_might, verifiers_might, better_subStates_iff, Set.univ_inter, Set.univ_inter]
     exact ⟨fun v hv => ⟨b, hab.symm, hab.symm, hv⟩, b, hab.symm, fun v hv h => h.1 hv⟩
 
@@ -468,6 +522,8 @@ def Force.ofString? : String → Option Force
   | "necessity" => some .necessity
   | _ => none
 
+/-- An epistemic embedded under an attitude is judged acceptable exactly when the attitude's
+class licenses its force. -/
 theorem rows_track_licensing [Nontrivial W] :
     ∀ r ∈ Examples.all, r.feature? "anchor" = some "attitude" →
       r.feature? "modal_flavor" = some "epistemic" →
