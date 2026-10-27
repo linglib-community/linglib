@@ -21,14 +21,10 @@ donkey anaphora and producer–product bridging included, and possession is mark
 
 namespace Thai.Determiners
 
-/-- The Thai determiners are the demonstrative *nán*, the obligatory exponent of anaphoric
-definites, and the possessive *khɔ̌ɔng*. -/
+/-- The Thai determiners are the demonstrative *nán* and the possessive *khɔ̌ɔng*. -/
 def inventory : Determiner.Inventory :=
   [ .demonstrative
-      { form := "nán", deixis := Person.first.participantSetsᶜ,
-        uses := {.anaphoric, .bridging .relational} },
+      { form := "nán", deixis := Person.first.participantSetsᶜ },
     .possessive { form := "khɔ̌ɔng" } ]
-
-theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Thai.Determiners

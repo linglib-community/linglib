@@ -18,13 +18,15 @@ public import Studies.Schwarz2013
 # Moroney (2021): definiteness and quantification in Shan
 
 Moroney shows that Shan (Southwestern Tai) bare nouns express both unique and anaphoric
-definiteness. Shan has no articles, so no covert type shift is blocked: ι, ι^x and ∩ are all
-available to bare nouns, and a bare noun takes those maximal under Dayal's Meaning Preservation.
-Shan [falls in none of the four types](##shan_refutes_jenks_typology) of Jenks's typology of
-definiteness marking, and with an unmarked type added [the typology covers every
-inventory](##typology_complete). The type then fixes the definite shifts of a bare noun: [both in
-an unmarked language](##available_of_isUnmarked), ι alone where only anaphora is marked, and
-neither where both are.
+definiteness. Shan has no articles, and its demonstratives block no covert type shift, so ι, ι^x and
+∩ are all available to bare nouns, which take those maximal under Dayal's Meaning Preservation. A
+presupposition is marked where the Blocking Principle removes the covert shift that would express
+it. Shan marks neither and so [falls in none of the four types](##shan_refutes_jenks_typology) of
+Jenks's typology, which an unmarked type completes. Jenks's own principles fare worse: Index! takes
+Shan's demonstratives for the indexed forms it calls for and so [excludes Shan's anaphoric bare
+nouns](##jenks_excludes_shan_bare_anaphora). Neither account tells Shan from Thai, [to which each
+assigns Shan's type](##thai_shan_same_type), though Thai's demonstrative is obligatory and Shan's
+optional.
 
 The optional demonstratives *nâj* 'this' and *nân* 'that' presuppose what the bare definite does,
 a unique referent in the situation, and [refer to it when it lies in their deictic
@@ -50,10 +52,13 @@ cumulative but have identifiable atomic parts (`maa_cumulative_not_divisive`).
   two vicinities may overlap here, as when the addressee stands by the speaker.
 * Moroney's Lakhota is Schwarz's tentative construal of *kiŋ* as a weak article only. The Lakhota
   fragment also gives *kiŋ* its anaphoric uses, so by the fragment Lakhota is generally marked.
-* The Mandarin and Thai fragments follow Jenks in making the demonstrative obligatory in the
-  anaphoric uses, so both are marked anaphoric, as Mandarin is in Jenks's typology. Moroney argues
-  that both are unmarked once an economy principle chooses between the bare noun and the
-  demonstrative; the inventories do not model that principle.
+* A determiner blocks a shift when it denotes what the shift denotes, the theory layer's
+  `Determiner.Entry.Lexicalizes`, so a demonstrative, whose deictic presupposition can fail where
+  the definite's does not, blocks nothing.
+* No fragment records a demonstrative as obligatory, obligatoriness being each account's
+  prediction. Under Index! Mandarin and Thai are marked anaphoric, as Jenks reports; under the
+  Blocking Principle both are unmarked, as Moroney concludes once an economy principle chooses
+  between the bare noun and the demonstrative, a principle not modelled here.
 
 ## TODO
 
@@ -91,11 +96,6 @@ theorem shan_kind_ambiguity :
       MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .iotaAnaphoric := by
   decide
 
-theorem shan_thai_anaphoric_contrast :
-    Shan.Determiners.inventory.Available False .iotaAnaphoric ∧
-      ¬ Thai.Determiners.inventory.Available False .iotaAnaphoric := by
-  decide
-
 theorem shan_exists_is_last_resort :
     Shan.Determiners.inventory.Available False .exists ∧
       ¬ MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .exists := by
@@ -105,48 +105,67 @@ theorem shan_exists_is_last_resort :
 
 open DefiniteDescription (Strength)
 
-variable {ds : Inventory} {down : Prop}
+/-- In Moroney's analysis a presupposition is marked when the Blocking Principle removes the covert
+shift that would express it, ι for uniqueness and ι^x for familiarity. -/
+def Marked (ds : Inventory) : Strength → Prop
+  | .uniqueness => ds.Blocks .iota
+  | .familiarity => ds.Blocks .iotaAnaphoric
+
+instance (ds : Inventory) : DecidablePred (Marked ds) := fun p ↦ by
+  cases p <;> unfold Marked <;> infer_instance
 
 /-- An unmarked inventory marks neither presupposition. -/
-def IsUnmarked (ds : Inventory) : Prop := ds.strengths = ∅
+def IsUnmarked (M : Strength → Prop) : Prop := ¬ M .uniqueness ∧ ¬ M .familiarity
 
-/-- Shan's inventory falls in none of the four types of Jenks's typology (Table 4.1). -/
+/-- Shan marks neither presupposition and so falls in none of the four types of Jenks's typology
+(Table 4.1). -/
 theorem shan_refutes_jenks_typology :
-    ¬ (IsBipartite Shan.Determiners.inventory ∨ IsMarkedAnaphoric Shan.Determiners.inventory ∨
-      IsGenerallyMarked Shan.Determiners.inventory ∨
-        IsMarkedUnique Shan.Determiners.inventory) := by
-  simp only [IsBipartite, IsMarkedAnaphoric, IsGenerallyMarked, IsMarkedUnique,
-    Shan.Determiners.strengths_inventory]
+    ¬ (IsGenerallyMarked (Marked Shan.Determiners.inventory) Shan.Determiners.inventory ∨
+      IsBipartite (Marked Shan.Determiners.inventory) Shan.Determiners.inventory ∨
+      IsMarkedUnique (Marked Shan.Determiners.inventory) ∨
+      IsMarkedAnaphoric (Marked Shan.Determiners.inventory)) := by
+  simp only [IsBipartite, IsMarkedAnaphoric, IsGenerallyMarked, IsMarkedUnique]
   decide
 
-/-- With the unmarked type added, the typology of Table 4.5 covers every inventory: it marks both
-presuppositions with one form or with two, one of them, or neither. -/
-theorem typology_complete (ds : Inventory) :
-    IsGenerallyMarked ds ∨ IsBipartite ds ∨ IsMarkedUnique ds ∨ IsMarkedAnaphoric ds ∨
-      IsUnmarked ds := by
-  by_cases h : ds.IsSyncretic
-  · exact .inl h
-  have : ∀ t : Finset Strength,
-      t = .univ ∨ t = {.uniqueness} ∨ t = {.familiarity} ∨ t = ∅ := by decide
-  rcases this ds.strengths with h' | h' | h' | h'
-  exacts [.inr (.inl ⟨h', h⟩), .inr (.inr (.inl h')), .inr (.inr (.inr (.inl h'))),
-    .inr (.inr (.inr (.inr h')))]
+/-- Under Jenks's principles Shan's demonstratives supply the index that Index! calls for, so Shan
+is marked anaphoric and its anaphoric bare nouns, as in (489)–(491), are excluded. -/
+theorem jenks_excludes_shan_bare_anaphora :
+    IsMarkedAnaphoric (Jenks2018.Marked Shan.Determiners.inventory) ∧
+      ¬ Jenks2018.BareLicit Shan.Determiners.inventory .anaphoric .none := by
+  simp only [IsMarkedAnaphoric]
+  decide
+
+/-- Each account gives Thai Shan's type, unmarked under the Blocking Principle and marked anaphoric
+under Index!, though Jenks reports Thai's demonstrative obligatory in the anaphoric uses and Moroney
+finds Shan's optional: the contrast lies outside the inventories (p. 193). -/
+theorem thai_shan_same_type :
+    IsUnmarked (Marked Thai.Determiners.inventory) ∧
+      IsUnmarked (Marked Shan.Determiners.inventory) ∧
+      IsMarkedAnaphoric (Jenks2018.Marked Thai.Determiners.inventory) ∧
+      IsMarkedAnaphoric (Jenks2018.Marked Shan.Determiners.inventory) := by
+  simp only [IsUnmarked, IsMarkedAnaphoric]
+  decide
+
+-- Table 4.5
+theorem typology_complete (M : Strength → Prop) (ds : Inventory) :
+    IsGenerallyMarked M ds ∨ IsBipartite M ds ∨ IsMarkedUnique M ∨ IsMarkedAnaphoric M ∨
+      IsUnmarked M := by
+  simp only [IsGenerallyMarked, IsBipartite, IsMarkedUnique, IsMarkedAnaphoric, IsUnmarked]
+  tauto
 
 -- Table 4.5; Hausa, both marked with different forms, p. 186
 theorem table4_5 :
-    IsGenerallyMarked Cantonese.Determiners.inventory ∧
-      IsGenerallyMarked English.Determiners.inventory ∧
-      IsBipartite German.Determiners.inventory ∧
-      IsBipartite Schwarz2013.lakhotaWeakStrongConstrual ∧
-      IsBipartite Hausa.Determiners.inventory ∧
-      IsMarkedAnaphoric Akan.Determiners.inventory ∧
-      IsMarkedAnaphoric MauritianCreole.Determiners.inventory ∧
-      IsUnmarked Shan.Determiners.inventory :=
-  ⟨Cantonese.Determiners.isSyncretic_inventory, English.Determiners.isSyncretic_inventory,
-    ⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
-    Schwarz2013.construal_two_articles, Schwarz2013.hausa_two_articles,
-    Akan.Determiners.strengths_inventory, MauritianCreole.Determiners.strengths_inventory,
-    Shan.Determiners.strengths_inventory⟩
+    IsGenerallyMarked (Marked Cantonese.Determiners.inventory) Cantonese.Determiners.inventory ∧
+      IsGenerallyMarked (Marked English.Determiners.inventory) English.Determiners.inventory ∧
+      IsBipartite (Marked German.Determiners.inventory) German.Determiners.inventory ∧
+      IsBipartite (Marked Schwarz2013.lakhotaWeakStrongConstrual)
+        Schwarz2013.lakhotaWeakStrongConstrual ∧
+      IsBipartite (Marked Hausa.Determiners.inventory) Hausa.Determiners.inventory ∧
+      IsMarkedAnaphoric (Marked Akan.Determiners.inventory) ∧
+      IsMarkedAnaphoric (Marked MauritianCreole.Determiners.inventory) ∧
+      IsUnmarked (Marked Shan.Determiners.inventory) := by
+  simp only [IsGenerallyMarked, IsBipartite, IsMarkedAnaphoric, IsUnmarked]
+  decide
 
 theorem shan_anaphoric_without_article :
     ¬ Shan.Determiners.inventory.Realizes .anaphoric ∧
@@ -155,27 +174,27 @@ theorem shan_anaphoric_without_article :
 
 /-! ### Definite shifts by type (Tables 4.7 to 4.9) -/
 
-/-- In an unmarked language a bare noun takes both definite shifts, ι and ι^x (Table 4.9). -/
-theorem available_of_isUnmarked (h : IsUnmarked ds) :
-    ds.Available down .iota ∧ ds.Available down .iotaAnaphoric := by
-  simp [available_iota_iff, available_iotaAnaphoric_iff, marks_iff_mem_strengths,
-    show ds.strengths = ∅ from h]
+variable {ds : Inventory} {down : Prop}
+
+-- Table 4.9
+theorem available_of_isUnmarked (h : IsUnmarked (Marked ds)) :
+    ds.Available down .iota ∧ ds.Available down .iotaAnaphoric :=
+  ⟨⟨nofun, h.1⟩, ⟨nofun, h.2⟩⟩
 
 -- Table 4.8
-theorem available_of_isMarkedAnaphoric (h : IsMarkedAnaphoric ds) :
-    ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric := by
-  simp [available_iota_iff, available_iotaAnaphoric_iff, marks_iff_mem_strengths,
-    show ds.strengths = {.familiarity} from h]
+theorem available_of_isMarkedAnaphoric (h : IsMarkedAnaphoric (Marked ds)) :
+    ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric :=
+  ⟨⟨nofun, h.1⟩, fun h' ↦ h'.2 h.2⟩
 
 -- Table 4.7
-theorem not_available_of_strengths_eq_univ (h : ds.strengths = .univ) :
-    ¬ ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric := by
-  simp [available_iota_iff, available_iotaAnaphoric_iff, marks_iff_mem_strengths, h]
+theorem not_available_of_marked (hu : Marked ds .uniqueness) (hf : Marked ds .familiarity) :
+    ¬ ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric :=
+  ⟨fun h ↦ h.2 hu, fun h ↦ h.2 hf⟩
 
 theorem akan_iota_not_iotaAnaphoric :
     Akan.Determiners.inventory.Available False .iota ∧
       ¬ Akan.Determiners.inventory.Available False .iotaAnaphoric :=
-  available_of_isMarkedAnaphoric Akan.Determiners.strengths_inventory
+  available_of_isMarkedAnaphoric (by simp only [IsMarkedAnaphoric]; decide)
 
 /-! ### Shan count nouns are cumulative but not homogeneous -/
 
