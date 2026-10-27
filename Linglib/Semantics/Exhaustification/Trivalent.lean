@@ -17,8 +17,7 @@ the alternatives it denies (`exh2_eq_zero_iff`).
 ## Implementation notes
 
 The innocently excludable alternatives are `Exhaustification.innocent.excluded` applied to the
-classical parts of the trivalent propositions, where the classical part sends `1` to `true` and
-both `-1` and `0` to `false`.
+positive supports of the trivalent propositions (`posSupport`), the worlds where each is `1`.
 
 ## References
 
@@ -34,14 +33,10 @@ open Exhaustification
 
 variable {W : Type} [Fintype W] [DecidableEq W]
 
-/-- The classical truth conditions of a trivalent proposition hold exactly where it is `1`. -/
-def classicalPart (p : W → SignType) : W → Bool :=
-  fun w ↦ decide (p w = 1)
-
 /-- The innocently excludable alternatives of a trivalent prejacent, computed classically. -/
 def excluded (alts : List (W → SignType)) (p : W → SignType) :
     Finset (Finset W) :=
-  innocent.excluded (altsFromPreds (alts.map classicalPart)) (predToFinset (classicalPart p))
+  innocent.excluded (alts.map fun q ↦ (posSupport q).toFinset).toFinset (posSupport p).toFinset
 
 /-- Weak-negation exhaustification is `1` where the prejacent is `1` and no excludable
 alternative is, `-1` where the prejacent is `-1` or some excludable alternative is `1`, and `0`
@@ -53,7 +48,7 @@ def exh1 (alts : List (W → SignType)) (p : W → SignType) :
     | .neg => -1
     | .pos =>
       if alts.all fun q ↦
-        if predToFinset (classicalPart q) ∈ excluded alts p then q w != 1 else true
+        if (posSupport q).toFinset ∈ excluded alts p then q w != 1 else true
       then 1
       else -1
 
@@ -63,14 +58,14 @@ otherwise. -/
 def exh2 (alts : List (W → SignType)) (p : W → SignType) :
     W → SignType :=
   fun w ↦
-    if alts.any fun q ↦ predToFinset (classicalPart q) ∈ excluded alts p ∧ q w == 0
+    if alts.any fun q ↦ (posSupport q).toFinset ∈ excluded alts p ∧ q w == 0
     then 0
     else match p w with
       | .zero => 0
       | .neg => -1
       | .pos =>
         if alts.all fun q ↦
-          if predToFinset (classicalPart q) ∈ excluded alts p then q w == -1 else true
+          if (posSupport q).toFinset ∈ excluded alts p then q w == -1 else true
         then 1
         else -1
 
@@ -82,7 +77,7 @@ theorem exh1_eq_zero_iff : exh1 alts p w = 0 ↔ p w = 0 := by
 theorem exh2_eq_zero_iff :
     exh2 alts p w = 0 ↔
       p w = 0 ∨
-        ∃ q ∈ alts, predToFinset (classicalPart q) ∈ excluded alts p ∧ q w = 0 := by
+        ∃ q ∈ alts, (posSupport q).toFinset ∈ excluded alts p ∧ q w = 0 := by
   unfold exh2
   simp only [List.any_eq_true, decide_eq_true_eq, beq_iff_eq]
   split
