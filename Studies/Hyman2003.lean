@@ -425,8 +425,7 @@ theorem causative_applicative :
     chichewa.outputs [.C, .A] = {[.C, .A]} ∧ chichewa.outputs [.A, .C] = {[.C, .A]} := by
   decide +kernel
 
-/-- A reciprocal inside an applicative inside a causative surfaces in the templatic order, not the
-compositional one (8). -/
+-- (8)
 theorem reciprocal_applicative_causative :
     [.C, .A, .R] ∈ chichewa.outputs [.R, .A, .C] ∧
       [.R, .A, .C] ∉ chichewa.outputs [.R, .A, .C] := by
@@ -439,7 +438,7 @@ theorem applicative_reciprocal :
       chichewa.outputs [.R, .A] = {[.A, .R], [.R, .A, .R]} := by
   decide +kernel
 
-/-- No output repeats an extension, Menn and MacWhinney's Repeated Morph Constraint (18). -/
+-- (18)
 theorem repeated_morph (G : Grammar) (i : Input) (x : Ext) : [x, x] ∉ G.outputs i :=
   fun h ↦ by simpa using outputs_isChain_ne h
 

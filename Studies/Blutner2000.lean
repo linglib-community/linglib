@@ -215,7 +215,7 @@ local instance : DecidableLT (ℕ ×ₗ Finset World) := Prod.Lex.decidable _ _
 
 No binder is available, so every site accommodates Peter's cat and BeStrong decides. -/
 
-/-- In (17) the global outcome is the strongest and the intermediate one the weakest. -/
+-- (17)
 theorem dog_outcome_ssubset :
     ProjectionSite.global.outcome .univ ⊂ ProjectionSite.local.outcome .univ ∧
       ProjectionSite.local.outcome .univ ⊂ ProjectionSite.intermediate.outcome .univ := by
@@ -237,8 +237,7 @@ def catAvoidA : ProjectionSite → ℕ
   | .intermediate => 0
   | _ => 1
 
-/-- In (18) the global outcome is stronger than the intermediate one, and the local and
-intermediate outcomes coincide, as the paper's footnote notes. -/
+-- (18)
 theorem cat_outcome :
     ProjectionSite.global.outcome catWorlds ⊂ ProjectionSite.intermediate.outcome catWorlds ∧
       ProjectionSite.local.outcome catWorlds = ProjectionSite.intermediate.outcome catWorlds := by

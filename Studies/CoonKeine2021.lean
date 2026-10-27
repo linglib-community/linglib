@@ -217,8 +217,7 @@ theorem not_gluttonous_of_subset {hi lo : Goal} (h : geo lo ⊆ geo hi) :
     ¬ Gluttonous geo P [hi, lo] :=
   fun hg ↦ let ⟨_, _, _, hsh, hsl⟩ := gluttonous_pair_iff.1 hg; hsh (h hsl)
 
-/-- A probe over at most one goal never gluttons, as in the repairs of §3.5 and with the multiply
-agreed-with DP of (86). -/
+-- §3.5, (86)
 theorem not_gluttonous_of_length_le_one (h : goals.length ≤ 1) : ¬ Gluttonous geo P goals := by
   rintro ⟨t, ht, u, hu, hne⟩
   have ht' := (mem_agreed.1 ht).1
@@ -228,7 +227,7 @@ theorem not_gluttonous_of_length_le_one (h : goals.length ≤ 1) : ¬ Gluttonous
   · exact hne ((List.mem_singleton.1 ht').trans (List.mem_singleton.1 hu').symm)
   · simp at h
 
-/-- A single-segment probe never gluttons (fn. 21). -/
+-- fn. 21
 theorem not_gluttonous_singleton : ¬ Gluttonous geo [s] goals := by
   rintro ⟨t, ht, u, hu, hne⟩
   simp only [mem_agreed, List.mem_singleton, exists_eq_left] at ht hu
@@ -270,23 +269,22 @@ def meFirstProbe : Articulation := [.pi, .speaker]
 datives, and Slovenian's reversible Strong PCC (fn. 26). -/
 def branchingProbe : Articulation := [.pi, .participant, .speaker, .addressee]
 
-/-- The Weak PCC (22) bans *3 > 1/2. -/
+-- (22)
 theorem weak_pcc : ∀ s ∈ PCC.cliticPairs,
     PCCViolation weakProbe false s ↔ s.high = .third ∧ s.low ≠ .third := by
   decide +kernel
 
-/-- Datives that expose their person node alone yield the Strong PCC, *1/2/3 > 1/2 (§3.4.1). -/
+-- §3.4.1
 theorem strong_pcc : ∀ s ∈ PCC.cliticPairs, PCCViolation weakProbe true s ↔ s.low ≠ .third := by
   decide +kernel
 
-/-- The Ultrastrong PCC (39b) has the Weak bans and *2 > 1. -/
+-- (39b)
 theorem ultrastrong_pcc : ∀ s ∈ PCC.cliticPairs,
     PCCViolation ultrastrongProbe false s ↔
       s.high = .third ∧ s.low ≠ .third ∨ s.high = .second ∧ s.low = .first := by
   decide +kernel
 
-/-- The Me-First probe (39c) bans exactly a 1st person direct object under a 2nd or 3rd person
-indirect object. -/
+-- (39c)
 theorem meFirst_pcc : ∀ s ∈ PCC.cliticPairs,
     PCCViolation meFirstProbe false s ↔ s.low = .first ∧ s.high ≠ .first := by
   decide +kernel
@@ -295,16 +293,14 @@ theorem branching_pcc : ∀ s ∈ PCC.cliticPairs,
     PCCViolation branchingProbe false s ↔ s.low ≠ .third ∧ s.high ≠ s.low := by
   decide +kernel
 
-/-- No probe bans a direct or balanced configuration (§3.4.2), since a 3rd person direct object
-exposes nothing the indirect object lacks. -/
+-- §3.4.2
 theorem direct_never_banned (P : Articulation) (b : Bool) (io : Person) :
     ¬ PCCViolation P b ⟨io, .third⟩ :=
   not_gluttonous_of_subset fun s hs ↦ by
     rw [show (dp .third).personSegments = [.pi] from rfl, List.mem_singleton] at hs
     exact hs ▸ pi_mem_personSegments _
 
-/-- A probe rooted in [uPERS] that bans a cluster also bans its direct object under a 3rd person
-indirect object (§3.4.2). -/
+-- §3.4.2
 theorem pccViolation_third_of_pccViolation {P : Articulation} (hpi : PersonSegment.pi ∈ P)
     {b : Bool} {s : Clause.Scenario Person} (h : PCCViolation P b s) :
     PCCViolation P false ⟨.third, s.low⟩ :=
@@ -335,8 +331,7 @@ theorem meFirst_typology :
 
 end Typology
 
-/-- In the Reverse PCC (44)–(45), the branching probe bans the lower [PART] DP whichever object it
-is, so Slovenian's Strong PCC is that probe (fn. 26). -/
+-- (44), (45), fn. 26
 theorem reverse_pcc :
     Gluttonous Goal.personSegments branchingProbe [dp .third, dp .second] ∧
     Gluttonous Goal.personSegments branchingProbe [dp .second, dp .first] ∧
@@ -355,8 +350,7 @@ instance (F? : Option BejarRezac2003.Head) (ns : List BejarRezac2003.Nominal) :
     Decidable (RevisedPLC F? ns) := by
   unfold RevisedPLC; infer_instance
 
-/-- Basque 3DAT > 1ABS clusters (10) are gluttonous only in finite clauses, while the original
-condition needs the restriction of (9) to exempt nonfinite ones. -/
+-- (10), (9)
 theorem nonfinite_obviation :
     PCCViolation weakProbe true ⟨.third, .first⟩ ∧
     ¬ Gluttonous Goal.personSegments [] [dat .third, dp .first] ∧
@@ -377,8 +371,7 @@ probe sees after the person probe. -/
 def afterDoubling (P : Articulation) (goals : List Goal) : List Goal :=
   (goals.zipIdx.filter (· ∉ agreed Goal.personSegments P goals)).map (·.1)
 
-/-- There is no Number Case Constraint, since the person probe doubles the higher of two objects
-((40)–(42)). -/
+-- (40), (42)
 theorem no_number_case_constraint {P : Articulation} (hpi : PersonSegment.pi ∈ P)
     {goals : List Goal} (h : goals.length ≤ 2) :
     ¬ Gluttonous Goal.numberSegments (numberProbe P) (afterDoubling P goals) := by
@@ -392,15 +385,13 @@ theorem no_number_case_constraint {P : Articulation} (hpi : PersonSegment.pi ∈
       decide_false, Bool.false_eq_true, ↓reduceIte, List.length_map]
     exact (List.length_filter_le _ _).trans (by simpa using h)
 
-/-- With a third accessible DP (43), the number probe sees two goals after doubling and gluttons
-over SG > PL. -/
+-- (43)
 theorem three_goal_number :
     Gluttonous Goal.numberSegments (numberProbe weakProbe)
       (afterDoubling weakProbe [dp .third, dp .third, dpPl .third]) := by
   decide
 
-/-- German copulas double nothing, so the number probe sees both nominatives (67), with gluttony
-in SG > PL (64) but not in PL > SG. -/
+-- (67), (64)
 theorem copula_number :
     Gluttonous Goal.numberSegments (numberProbe weakProbe) [dp .third, dpPl .third] ∧
     ¬ Gluttonous Goal.numberSegments (numberProbe weakProbe) [dpPl .third, dp .third] := by
@@ -527,8 +518,7 @@ instance (a : Aftermath) (P : Articulation) (goals : List Goal) :
     Decidable (a.Converges P goals) := by
   cases a <;> simp only [Aftermath.Converges] <;> infer_instance
 
-/-- In the Icelandic past mediopassive (76)–(85), a 1st plural nominative crashes (83), a 2nd plural
-one converges (85), and the singular is unrestricted. -/
+-- (76), (85), (83)
 theorem icelandic_syncretism :
     ¬ (Aftermath.realize .icelandicMediopassivePast).Converges weakProbe
         [dat .third, dpPl .first] ∧
@@ -545,8 +535,7 @@ def kicheanAgentFocus : RuleSet (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
 def kicheanGoals (s o : numberSystem.values) : List Goal :=
   [⟨.third, s, false⟩, ⟨.third, o, false⟩]
 
-/-- In omnivorous number (§5.2), a number probe gluttonous over SG > PL converges on the plural
-item, deriving the table of (88). -/
+-- §5.2, (88)
 theorem kichean_omnivorous :
     Gluttonous Goal.numberSegments (numberProbe weakProbe)
       (kicheanGoals (numberSystem.value .singular) (numberSystem.value .plural)) ∧

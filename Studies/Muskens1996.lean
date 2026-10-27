@@ -231,7 +231,7 @@ theorem dom_npCoord_no (h : u₁ ≠ u₂) (john : E) (girl boy : Set E) (admire
 def reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) : Update S :=
   (name bill * name sue : DynQuant S E) (ofStatic₂ owns (indef u₃ (ofStatic donkey)))
 
-/-- Sentence (66) translates as (67), whose second box reassigns `u₃`. -/
+-- (66), (67)
 theorem reassignment_eq (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
     (reassignment u₃ bill sue donkey owns : Update S) =
       box {u₃} (val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ○
@@ -373,8 +373,6 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   show Function.update g₁ 0 1 0 = 1
   simp
 
-/-- Under the partial semantics the re-declaration of `x` is inert, so the witness says that
-every man is mortal, which fails in the model. -/
 theorem fn4_not_isTrue : ¬ fn4.IsTrue (Fin 2) := by
   rintro ⟨g', -, hdom, himp, -⟩
   have hg' : g' = ⊥ :=

@@ -119,13 +119,13 @@ def sevenVowelHigh : Finset Segment :=
 /-- The five-vowel system /i e a o u/, outside the typology. -/
 def fiveVowel : Finset Segment := {vowel .«i», vowel .«e», vowel .«a», vowel .«o», vowel .«u»}
 
-/-- The 5Ht system (1a) is Akan's vowel inventory. -/
+-- (1a)
 theorem nineVowel_eq : nineVowel = Akan.vowels := by decide
 
-/-- The 4Ht(M) system (1b) is Yoruba's vowel inventory. -/
+-- (1b)
 theorem sevenVowelMid_eq : sevenVowelMid = Yoruba.vowels := by decide
 
-/-- The schematic inventories of (1) receive their types, and the five-vowel system none. -/
+-- (1)
 theorem inventoryType?_schematic :
     inventoryType? nineVowel = some .fiveHeight ∧
       inventoryType? sevenVowelHigh = some .fourHeightHigh ∧

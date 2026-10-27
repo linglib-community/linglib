@@ -265,14 +265,12 @@ instance : DecidablePred Surveyed := fun _ =>
 theorem surveyedCloser_irrefl : ∀ a : BybeeCategory, ¬ SurveyedCloser a a := by
   decide
 
-/-- `SurveyedCloser` is transitive — the §6 survey tested every pair among its
-categories, so the confirmed dominances compose. -/
+-- §6
 theorem surveyedCloser_trans : ∀ a b c : BybeeCategory,
     SurveyedCloser a b → SurveyedCloser b c → SurveyedCloser a c := by
   decide
 
-/-- `SurveyedCloser` is total on the surveyed categories, so the §6 survey alone fixes a strict
-total order on them. -/
+-- §6
 theorem surveyedCloser_total : ∀ a b : BybeeCategory,
     Surveyed a → Surveyed b → a ≠ b → SurveyedCloser a b ∨ SurveyedCloser b a := by
   decide

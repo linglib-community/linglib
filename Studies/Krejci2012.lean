@@ -105,31 +105,29 @@ variable {M manip S} {x y z : Entity} {e : E}
 
 theorem eat_eq_anticausative : eat M manip S = anticausative M manip S := rfl
 
-/-- The eater manipulates food ((39a)). -/
+-- (39a)
 theorem exists_manip_of_eat (h : eat M manip S x e) : ∃ w, manip x w ∧ w ~[M.cause] e :=
   exists_cause_of_anticausative h
 
-/-- The feeder manipulates food ((45)). -/
+-- (45)
 theorem exists_manip_of_feed (h : feed M manip S y x e) : ∃ w, manip y w ∧ w ~[M.cause] e :=
   let ⟨w, h₁, h₂, _⟩ := h; ⟨w, h₁, h₂⟩
 
-/-- Whoever is fed comes to potential digestion ((44c)). -/
+-- (44c)
 theorem inchoative_of_feed (h : feed M manip S y x e) : M.vBecome S x e :=
   let ⟨_, _, _, h⟩ := h; h
 
-/-- Whoever is made to eat manipulates food ((47a)). -/
+-- (47a)
 theorem exists_manip_of_makeEat (h : makeEat M manip S z x e) :
     ∃ w, manip x w ∧ w ~[M.cause] e :=
   let ⟨_, _, _, h⟩ := h; exists_manip_of_eat h
 
-/-- Under causer addition the causative entails the simple form, so denying the one while
-asserting the other is contradictory ((95)). -/
+-- (95)
 theorem ingest_of_causerAddition {ingest : Entity → E → Prop}
     (h : causerAddition M ingest y x e) : ingest x e :=
   let ⟨_, _, _, h⟩ := h; h
 
-/-- Eating licenses *by itself* ((114a)), having a causing subevent whose effector is the
-eater, once manipulating food makes one an effector. -/
+-- (114a)
 theorem licensesBySelf_eat (h : ∀ x w, manip x w → M.effector x w) :
     LicensesBySelf M (eat M manip S) :=
   fun _ _ he ↦ let ⟨w, hm, hc⟩ := exists_manip_of_eat he; ⟨w, hc, h _ _ hm⟩
@@ -212,7 +210,7 @@ theorem feed_not_makeEat :
       ¬ makeEat spoonFeeding spoonManip digesting .mary .john e₀ :=
   ⟨not_eat_and_feed.2, fun ⟨_, _, _, h⟩ ↦ not_eat_and_feed.1 h⟩
 
-/-- Making eat is not feeding ((48)), since Mary made John eat without touching any food. -/
+-- (48)
 theorem makeEat_not_feed :
     makeEat supervising supManip digesting .mary .john e₀ ∧
       ¬ feed supervising supManip digesting .mary .john e₀ :=
@@ -220,8 +218,7 @@ theorem makeEat_not_feed :
       ⟨⟨w₀, Or.inl rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩,
     fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h⟩
 
-/-- Being fed does not license *by itself* ((113d)), since John reaches the state but the
-effector of the causing event is Mary. -/
+-- (113d)
 theorem not_licensesBySelf_inchoative :
     ¬ LicensesBySelf spoonFeeding (spoonFeeding.vBecome digesting) := fun h ↦
   let ⟨_, _, hw⟩ := h .john e₀ ⟨2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩

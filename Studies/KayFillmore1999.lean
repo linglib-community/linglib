@@ -62,7 +62,7 @@ def wxdyConstruction : Construction Unit :=
   , meaning := ()
   , pragmaticPoint := true }
 
-/-- The form carries the two indices of Figure 12, #1 and #2. -/
+-- Figure 12
 theorem wxdy_refGroupCount : refGroupCount wxdyConstruction.form = 2 := by decide
 
 /-- In WXDY the first constituent `X` bears the index of the subject requirement of the last, `Y`,
@@ -145,29 +145,28 @@ def negatedComplementTokens : List (Tree Unit Word) :=
     .leaf (.mk' "what" .PRON),
     .node () [.leaf negator, .leaf (.mk' "soaking" .VERB), .leaf (.mk' "water" .NOUN)] ]
 
-/-- The construction licenses the canonical (3a) and the stative (14a): WXDY does not encode
-progressive aspect. -/
+-- (3a), (14a)
 theorem wxdy_matches_canonical :
     FormMatches wxdyConstruction.form scratchTokens ∧
       FormMatches wxdyConstruction.form stativeTokens := by
   decide
 
-/-- The present participle is frozen: bare-stem *do* is rejected, (12a). -/
+-- (12a)
 theorem wxdy_rejects_bare_stem :
     ¬ FormMatches wxdyConstruction.form bareStemTokens := by
   decide
 
-/-- *doing* must complement copular BE: *keep doing* is no instance, (13a). -/
+-- (13a)
 theorem wxdy_rejects_non_copula :
     ¬ FormMatches wxdyConstruction.form nonCopulaTokens := by
   decide
 
-/-- WXDY-*what* does not accept *else*, (15f): the slot is lexically fixed. -/
+-- (15f)
 theorem wxdy_rejects_what_else :
     ¬ FormMatches wxdyConstruction.form whatElseTokens := by
   decide
 
-/-- Negation of *doing* is rejected, (17b), while negation inside `Y` is licensed, (17c). -/
+-- (17b), (17c)
 theorem wxdy_negation_contrast :
     ¬ FormMatches wxdyConstruction.form negatedDoingTokens ∧
       FormMatches wxdyConstruction.form negatedComplementTokens := by

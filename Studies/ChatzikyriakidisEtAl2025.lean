@@ -175,7 +175,7 @@ def complement : Set (lang.Atom Label) :=
 def relabelling : Equiv.Perm Label :=
   Equiv.swap .x .«idᵢ.x» * Equiv.swap .c .«idᵢ.e» * Equiv.swap .e .«idⱼ.e»
 
-/-- Relabelling (34) by (35a) gives the fields of (32), the type (35b). -/
+-- (34), (35a), (32), (35b)
 theorem relabelling_smul_complement : relabelling • complement = belief := by
   simp [relabelling, complement, belief, Set.smul_set_insert, Atom.smul_def, Atom.map,
     Matrix.comp_vecCons, Matrix.comp_vecEmpty, Equiv.swap_apply_def]

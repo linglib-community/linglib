@@ -185,8 +185,7 @@ theorem notMem_dom_intro_test_of_injOn (hwy : w ≠ y) (hH : Set.InjOn (val w) H
   rintro ⟨_, _, ⟨J, hJ, rfl, hJC⟩, -⟩
   exact hC hJC (Set.InjOn.factorsThrough_domRestrict (injOn_of_mem_intro hwy hH hJ))
 
-/-- An atomic plural scoping over *want* without a licensor is contradictory ((117)–(121)), since
-at a single assignment it is unique. -/
+-- (117), (121)
 theorem notMem_dom_intro_test_singleton (hwy : w ≠ y) (hC : C ⊆ (Team.dep (val w) (val y))ᶜ) :
     {k} ∉ (intro y ○ test C ○ D).dom :=
   notMem_dom_intro_test_of_injOn hwy (Set.injOn_singleton _ _) hC
@@ -301,8 +300,7 @@ theorem injOn_val_split : Set.InjOn (val u) (split u {k}) := by
   simp only [val_extend_self] at h
   rw [h]
 
-/-- An atomic plural under *want* alone is contradictory ((115), (116)), since the attitude tells
-the assignments of its complement apart by their worlds. -/
+-- (115), (116)
 theorem notMem_dom_want_atomicPlural (hw'y : w' ≠ y) (hC : C ⊆ (Team.dep (val w') (val y))ᶜ) :
     {k} ∉ (want w w' x bul (intro y ○ test C ○ D)).dom := by
   rintro ⟨out, _, ⟨_, hK, rfl, -⟩, hD⟩
@@ -359,8 +357,7 @@ def wide (M : IModel E) (P : E → Prop) (d : Update (Set S) → Update (Set S))
   intro x ○ test (lex P x) ○ d (intro y ○ test (lex₂ M.inst w y ∩ C) ○
     want w w' x M.bul (test (𝒫 {j | M.meet (val w' j) (val x j) (val y j)})))
 
-/-- Without a weakly distributive licensor an atomic plural cannot scope over *want*, so wide scope
-in *Miles wants to meet policemen* is contradictory ((117)–(121)). -/
+-- (117), (121)
 theorem notMem_dom_wide_atomicPlural (hwy : w ≠ y) (M : IModel E) (P : E → Prop) :
     {i} ∉ (wide w w' x y M P id (atomic y ∩ (Team.dep (val w) (val y))ᶜ)).dom := by
   rw [wide, singleton_mem_dom_intro_comp_iff]

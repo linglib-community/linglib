@@ -96,8 +96,7 @@ theorem expected_glaUpdate_eq_self_iff (p : O → ℝ) (hp : ∑ h, p h = 1) (c 
 
 variable {I : Type*} [MeasurableSpace O] [MeasurableSingletonClass O] {n : ℕ}
 
-/-- The derivative of an observation's log probability in weight j is its expected minus observed
-violations of constraint j (equation (2)). -/
+-- (2)
 theorem hasDerivAt_log_maxEnt_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (j : Fin n) (i : I) (o : O) (t : ℝ) :
     HasDerivAt
@@ -195,8 +194,7 @@ theorem produced_stages :
 
 theorem cv_unmarked : ∀ i : Syl, ∀ k : Fin 5, k ≠ 0 → con k (i, cv) = 0 := by decide
 
-/-- From the initial state, a learner producing CV with certainty lowers each markedness rank by the
-plasticity times the observation's violations (1). -/
+-- (1)
 theorem initial_glaUpdate (r η : ℝ) (o : Syl) (k : Fin 5) (hk : k ≠ 0) :
     ∑ h, Pi.single (M := fun _ ↦ ℝ) cv 1 h * glaUpdate r η (con k (o, o)) (con k (o, h)) =
       r - η * con k (o, o) := by

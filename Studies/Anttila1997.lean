@@ -70,7 +70,7 @@ others O. -/
 def Sonority.ofVowel (v : Phonology.Segment) : Sonority :=
   if v.HasValue .low true then .a else if v.HasValue .high true then .i else .o
 
-/-- The high vowels /i u y/ are I, the mid vowels /o ö/ O, and the low vowels /a ä/ A (§2.2). -/
+-- §2.2
 theorem Sonority.ofVowel_finnish :
     [Finnish.i, Finnish.u, Finnish.y, Finnish.o, Finnish.ö, Finnish.a, Finnish.ä].map ofVowel =
       [.i, .i, .i, .o, .o, .a, .a] := by
@@ -178,7 +178,7 @@ def Constraint.set : Constraint → Fin 5
   | .collision .heavy | .stressWeight true .heavy | .clash false => 3
   | _ => 4
 
-/-- Finnish only adds rankings to (28), reversing no universal ranking across strata. -/
+-- (28)
 theorem set_mono : ∀ a b, Universal a b → a.set ≤ b.set := by decide
 
 /-- The roster in the column order of (50). -/
@@ -279,31 +279,27 @@ def rankings : Finset (Ranking (Fin 20) 20) := consistentTotalOrders finnishGram
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
   ∀ σ ∈ rankings, PicksAt ⟨Shape.cands, tableauCon⟩ σ s cand
 
-/-- Monosyllabic stems take the strong variant (32), *mai.den* and not *ma.jen* (33). -/
+-- (32), (33)
 theorem maa_strong : Shape.Categorical .maa [H', H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- Disyllabic CV-final stems take the weak variant (34), *ka.lo.jen* and not *ka.loi.den*
-(35). -/
+-- (34), (35)
 theorem kala_weak : Shape.Categorical .kala [X', L, H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- A heavy antepenult in a 4-syllabic stem is stressed and forces a light penult (38), giving
-*mar.ga.rii.ni.en* only (40). -/
+-- (38), (40)
 theorem margariini_weak : Shape.Categorical .margariini [X', X, H', L, H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- A light ante-antepenult before a heavy antepenult likewise forces a light penult (41),
-giving *i.ta.li.aa.no.jen* only (44). -/
+-- (41), (44)
 theorem italiaano_weak : Shape.Categorical .italiaano [X', X, L, H', L, H] := fun _ hσ =>
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- After a light antepenult, or a heavy one after a heavy ante-antepenult, the stress constraints
-tie, so secondary stress is optional ((36), (38), (41)). -/
+-- (36), (38), (41)
 theorem stress_tie :
     ∀ s ∈ [Shape.maailma, .ministeri, .aleksanteri, .koordinaatisto],
       ∀ o ∈ s.cands, ∀ o' ∈ s.cands, ∀ c, stratumOf c ≤ 1 →
@@ -389,8 +385,7 @@ theorem card_wins_strong_of {m : Motif} {n t : ℕ} (hp : predictedStrong m = (n
   subst hn ht
   exact h
 
-/-- The shares of (52) are decided in Set 3 after a light antepenult and for *h.tii*, and in Set 4
-for *h.taa* and *h.too*. -/
+-- (52)
 theorem card_wins_strong : ∀ m : Motif,
     (wins m .strong).card * (predictedStrong m).2 = rankings.card * (predictedStrong m).1
   | (.light, .i) => card_wins_strong_of rfl
@@ -436,7 +431,7 @@ theorem card_wins_weak {m : Motif}
   zify [hle] at h ⊢
   linear_combination (-1 : ℤ) * h
 
-/-- Each variant wins the share of rankings (52) predicts. -/
+-- (52)
 theorem card_wins (m : Motif) :
     ∀ v, (wins m v).card * (predicted m v).2 = rankings.card * (predicted m v).1
   | .strong => card_wins_strong m
@@ -481,7 +476,7 @@ def tenths? (s : String) : Option ℕ :=
     if int.all Char.isDigit && d.isDigit then some (10 * digits int + digits [d]) else none
   | _ => none
 
-/-- The predicted percentage of Table (53) is the share of (52) to the nearest percent. -/
+-- (53), (52)
 theorem rows_predicted :
     ∀ r ∈ Examples.all, r.feature? "syllables" = some "3" →
       ∀ mv ∈ (r.feature? "motif" >>= Motif.parse?).toList,
@@ -491,7 +486,7 @@ theorem rows_predicted :
             200 * (predicted mv.1 mv.2).1 ≤ (2 * p + 1) * (predicted mv.1 mv.2).2 := by
   decide +kernel
 
-/-- In Tables (48) and (53) the variant the grammar favors is the more frequent one. -/
+-- (48), (53)
 theorem rows_frequency :
     ∀ r ∈ Examples.all, r.feature? "syllables" = some "3" →
       ∀ mv ∈ (r.feature? "motif" >>= Motif.parse?).toList,
@@ -500,8 +495,7 @@ theorem rows_frequency :
             (2 * (predicted mv.1 mv.2).1 < (predicted mv.1 mv.2).2 → q < 500) := by
   decide +kernel
 
-/-- In (6) the stems ending in a high vowel prefer the weak variant, and those ending in a low
-vowel the strong one. -/
+-- (6)
 theorem rows_final_vowel :
     ∀ r ∈ Examples.all, r.source.paperLabel ∈ ["(6a)", "(6b)", "(6c)"] →
       ∀ v ∈ (r.feature? "stem" >>= (·.toList.getLast?) >>= Finnish.ofChar).toList,

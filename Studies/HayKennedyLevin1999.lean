@@ -90,14 +90,12 @@ theorem increase_iff_differentialComparative [AddCommGroup δ] {φ : α → T �
     {t₀ t₁ : T} : Increase φ x d t₀ t₁ ↔ DifferentialComparative (φ x) t₁ t₀ d := by
   rw [Increase, DifferentialComparative, sub_eq_iff_eq_add', eq_comm]
 
-/-- Given the difference value, an event's end degree is determined by its start degree (§3). -/
+-- §3
 theorem Increase.end_unique [Add δ] {φ : α → T → δ} {x : α} {d : δ}
     {t₀ t₁ t₂ : T} (h₁ : Increase φ x d t₀ t₁) (h₂ : Increase φ x d t₀ t₂) :
     φ x t₁ = φ x t₂ :=
   h₁.symm.trans h₂
 
-/-- In a group a description holds exactly when the difference between the final and the
-    initial degree is one of its difference values. -/
 theorem describes_iff_sub_mem [AddCommGroup δ] {φ : α → T → δ} {x : α} {D : Set δ}
     {t₀ t₁ : T} : Describes φ x D t₀ t₁ ↔ φ x t₁ - φ x t₀ ∈ D :=
   ⟨fun ⟨_, hd, h⟩ ↦ by rwa [← h, add_sub_cancel_left], fun h ↦ ⟨_, h, add_sub_cancel _ _⟩⟩
@@ -137,8 +135,7 @@ theorem isBounded_completely [IsOrderedAddMonoid δ] {top i : δ} (hi : i < top)
 theorem isBounded_significantly {s : δ} (hs : 0 < s) : IsBounded (significantly s) :=
   ⟨s, hs, fun _ hd ↦ hd⟩
 
-/-- A lower set of difference values, like *slightly*'s, sets no bound on positive increases (§3.1).
--/
+-- §3.1
 theorem not_isBounded_inter_someAmount [DenselyOrdered δ] {D : Set δ} (hD : IsLowerSet D)
     {d : δ} (hd : d ∈ D) (hd₀ : 0 < d) : ¬ IsBounded (D ∩ someAmount) := by
   rintro ⟨b, hb, hlow⟩
@@ -196,14 +193,14 @@ def HasAtelic (c : Context δ) (i : δ) (m : Modifier δ) : Prop :=
 
 variable {c : Context δ} {i : δ}
 
-/-- A measure phrase makes the predicate telic, whatever the base adjective ((18)–(20)). -/
+-- (18), (20)
 theorem hasTelic_measure {m : δ} (hm : 0 < m) : HasTelic c i (.measure m) :=
   ⟨_, rfl, isBounded_measurePhrase hm⟩
 
 theorem not_hasAtelic_measure {m : δ} (hm : 0 < m) : ¬ HasAtelic c i (.measure m) :=
   fun ⟨_, hD, h⟩ ↦ h (Set.mem_singleton_iff.1 hD ▸ isBounded_measurePhrase hm)
 
-/-- *Completely* makes the predicate telic and leaves no atelic reading ((21)–(22), (35)). -/
+-- (21), (22), (35)
 theorem hasTelic_completely [IsOrderedAddMonoid δ] {top : δ} (hc : c.scaleMax = some top)
     (hi : i < top) :
     HasTelic c i .completely :=
@@ -216,15 +213,15 @@ theorem not_hasAtelic_completely [IsOrderedAddMonoid δ] {top : δ} (hc : c.scal
   simp only [readings, hc, Option.map_some, Option.getD_some, Set.mem_singleton_iff] at hD
   exact h (hD ▸ isBounded_completely hi)
 
-/-- *Completely* has no reading on an open-range base ((25b)). -/
+-- (25b)
 theorem readings_completely_open (hc : c.scaleMax = none) : readings c i .completely = ∅ := by
   simp [readings, hc]
 
-/-- *Significantly* makes the predicate telic ((23)). -/
+-- (23)
 theorem hasTelic_significantly {s : δ} (hs : 0 < s) : HasTelic c i (.significantly s) :=
   ⟨_, rfl, isBounded_significantly hs⟩
 
-/-- *Slightly* leaves the predicate atelic ((24)). -/
+-- (24)
 theorem hasAtelic_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
     HasAtelic c i (.slightly s) :=
   ⟨_, rfl, not_isBounded_slightly hs⟩
@@ -233,19 +230,16 @@ theorem not_hasTelic_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
     ¬ HasTelic c i (.slightly s) :=
   fun ⟨_, hD, h⟩ ↦ not_isBounded_slightly hs (Set.mem_singleton_iff.1 hD ▸ h)
 
-/-- With a salient bound, from a closed-range base or from convention, an unmodified degree
-    achievement has a telic reading ((26), (28), (34a)). -/
+-- (26), (28), (34a)
 theorem hasTelic_of_bound [IsOrderedAddMonoid δ] {b : δ} (hb : c.bound = some b) (hi : i < b) :
     HasTelic c i .none :=
   ⟨completely b i, by simp [readings, hb], isBounded_completely hi⟩
 
-/-- The literal reading is always available, so the implicated bound can be cancelled and the
-    for-adverbial is felicitous ((32), (34b)). -/
+-- (32), (34b)
 theorem hasAtelic_none [DenselyOrdered δ] : HasAtelic c i .none :=
   ⟨someAmount, by simp [readings], not_isBounded_someAmount⟩
 
-/-- Without a salient bound an unmodified degree achievement has only the atelic reading
-    ((27), (30), (31)). -/
+-- (27), (30), (31)
 theorem not_hasTelic_none [DenselyOrdered δ] (hb : c.bound = none) : ¬ HasTelic c i .none := by
   rintro ⟨D, hD, h⟩
   simp only [readings, hb, Option.map_none, Option.getD_none, Set.union_empty,
@@ -254,8 +248,7 @@ theorem not_hasTelic_none [DenselyOrdered δ] (hb : c.bound = none) : ¬ HasTeli
 
 /-! ### Cancellability (§3.3, (32)–(33)) -/
 
-/-- A bound supplied by overt material cannot be cancelled, so a rope straightened
-    completely is completely straight ((33)). -/
+-- (33)
 theorem completely_not_cancellable {φ : α → T → δ} {x : α} {top : δ}
     {t₀ t₁ : T} (h : Describes φ x (completely top (φ x t₀)) t₀ t₁) :
     ¬ φ x t₁ < top := by
@@ -265,8 +258,7 @@ theorem completely_not_cancellable {φ : α → T → δ} {x : α} {top : δ}
   rw [← hinc] at hlt
   exact lt_irrefl _ hlt
 
-/-- A bound that is only implicated can be cancelled, the literal "some amount" being
-    consistent with the maximal value not having been reached ((32)). -/
+-- (32)
 theorem someAmount_cancellable [IsOrderedAddMonoid δ] [DenselyOrdered δ] {i top : δ}
     (hi : i < top) :
     ∃ φ : Unit → Bool → δ,
@@ -287,23 +279,15 @@ def closedRange : List GradableAdjective :=
 def openRange : List GradableAdjective :=
   open English.Adjectives in [long, wide, short]
 
-/-- The fragment's adjectives agree with the paper's classification, a closed-range adjective
-    having a scale with a maximum and an open-range one a scale without. -/
 theorem fragment_range :
     (∀ a ∈ closedRange, a.boundedness.HasMax) ∧ ∀ a ∈ openRange, ¬ a.boundedness.HasMax := by
   decide
 
-/-- The fragment's degree achievements measure change on scales of the same kind as their base
-    adjectives, *straighten*, *dry* and *flatten* on a scale with a maximum and *lengthen* and
-    *widen* on one without. -/
 theorem fragment_verbs :
     (∀ v ∈ [Verbs.straighten, Verbs.dry, Verbs.flatten], ∃ b ∈ v.changeScale, b.HasMax) ∧
     ∀ v ∈ [Verbs.lengthen, Verbs.widen], ∃ b ∈ v.changeScale, ¬ b.HasMax := by
   decide
 
-/-- The default telicity the fragment derives for a degree achievement is the telicity of the
-    unmodified reading in a context whose only salient bound is the scale's maximum, when it
-    has one. -/
 theorem defaultTelicity_iff (d : ScalarDimension) (i top : ℚ) (hi : i < top) :
     d.defaultTelicity = .telic ↔
       HasTelic ⟨if d.boundedness.HasMax then some top else none, none⟩ i .none := by

@@ -600,12 +600,12 @@ def traceA : List (Rule Agent Fact Q) :=
 def traceB : List (Rule Agent Fact Q) :=
   [.pendingUpdate u₀ .A .B, .parameterFocussing george u₁]
 
-/-- (91b): A's gameboard. -/
+-- (91b)
 theorem dgb_A : run traceA initial = some
     { speaker := .B, addressee := .A, pending := [u₁], qud := [⟨.polar .georgeHere, ∅⟩],
       moves := [w₀] } := by decide
 
-/-- (91c): B's gameboard. -/
+-- (91c)
 theorem dgb_B : run traceB initial = some
     { speaker := .B, addressee := .A, pending := [u₀], qud := [⟨.whoAsked, {george}⟩],
       moves := [u₁] } := by decide
@@ -616,8 +616,6 @@ theorem differ : ∀ dA ∈ run traceA initial, ∀ dB ∈ run traceB initial,
   rintro _ rfl _ rfl
   decide
 
-/-- A integrates B's request by CR Accommodation: the focussed question becomes
-MaxQUD and the request is no longer pending. -/
 theorem accommodate :
     (run (traceA ++ [.crAccommodation george]) initial).map
         (fun d ↦ (d.qud.map (·.question), d.pending)) =

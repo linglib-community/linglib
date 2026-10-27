@@ -79,7 +79,7 @@ def selectsClause : AspectualHead → Complementizer → Prop
 instance (h : AspectualHead) (c : Complementizer) : Decidable (selectsClause h c) := by
   cases h <;> unfold selectsClause <;> infer_instance
 
-/-- A *pu*-complement forces the stative head (§2.3). -/
+-- §2.3
 theorem pu_requires_stative {h : AspectualHead} (hp : selectsClause h pu) : h = .vState := by
   cases h
   · rfl
@@ -111,8 +111,7 @@ def Complementizer.ofString? : String → Option Complementizer
   | "pu" => some pu
   | _ => none
 
-/-- Every unconfounded verb–complementizer pairing is acceptable exactly when predicted from the
-verb's sort and Vendler class, including *simveni* (fn. 14). -/
+-- fn. 14
 theorem rows_track_selection :
     ∀ r ∈ Examples.all, r.feature? "confound" = none →
       ∀ e ∈ ((r.feature? "verb").bind fun name ↦ lexicon.lookup name).toList,
@@ -120,8 +119,7 @@ theorem rows_track_selection :
           (r.judgment = .acceptable ↔ Predicted e.1 e.2 c) := by
   decide +kernel
 
-/-- Under a manner adverb or an in-adverbial, a *pu*-complement is never acceptable while an
-*oti*-complement of an eventive verb is (§2.3). -/
+-- §2.3
 theorem rows_stativity :
     ∀ r ∈ Examples.all, r.feature? "confound" = some "manner_adverb" →
       ∀ c ∈ ((r.feature? "complementizer").bind Complementizer.ofString?).toList,
@@ -177,8 +175,7 @@ def ClausePosition.ofString? : String → Option ClausePosition
   | "p_complement" => some .pComplement
   | _ => none
 
-/-- Across the bare clauses, grammaticality in a position coincides with incorporation licensing
-from it, nominalized clauses being exempt (§5). -/
+-- §5
 theorem rows_track_licensing :
     ∀ r ∈ Examples.all, r.feature? "nominalized" = none →
       ∀ pos ∈ ((r.feature? "position").bind ClausePosition.ofString?).toList,
@@ -192,8 +189,7 @@ def NominalSort.ofString? : String → Option NominalSort
   | "situation" => some .situation
   | _ => none
 
-/-- On nouns and nominalized verbs, truth predicates accept content and reject situations, and
-occurrence predicates do the reverse ((33)–(34), (36)–(37)). -/
+-- (33), (34), (36), (37)
 theorem rows_sort_diagnostics :
     ∀ r ∈ Examples.all, ∀ s ∈ ((r.feature? "nounSort").bind NominalSort.ofString?).toList,
       (r.feature? "diagnostic" = some "truth-predicates" →
@@ -206,8 +202,7 @@ theorem situation_clause_factive :
     ∀ c ∈ complementizers, clauseSort c = some .situation → c.factive = true := by
   decide
 
-/-- *oti* and *pu* are distinct lexical items here (content vs situation) as in
-[roussou-2010] (indefinite vs definite), against fn. 17's allomorphy alternative. -/
+-- fn. 17 [roussou-2010]
 theorem oti_pu_lexically_distinct :
     clauseSort oti ≠ clauseSort pu ∧ Roussou2010.profile oti ≠ Roussou2010.profile pu := by
   decide
@@ -219,15 +214,14 @@ evaluation situation. -/
 def Anchored {S X : Type*} (verb : X → SituationIndividual S → S → Prop) : Prop :=
   ∀ a xs s, verb a xs s → xs.sit s
 
-/-- An anchored verb's *pu*-report entails its complement — *pu*'s factivity from situation
-semantics (38b). -/
+-- (38b)
 theorem pu_report_factive {S X : Type*} {verb : X → SituationIndividual S → S → Prop}
     (h : Anchored verb) (a : X) (q : S → Prop) (s : S) : existsClosure verb a q s → q s := by
   rintro ⟨xs, hv, hq⟩
   rw [← show xs.sit = q from hq]
   exact h a xs s hv
 
-/-- Content reports carry no such entailment (38a). -/
+-- (38a)
 theorem content_report_not_factive :
     ¬ ∀ (verb : Unit → ContentIndividual Bool → Bool → Prop) (a : Unit) (p : Bool → Prop)
         (w : Bool), existsClosure verb a p w → p w :=

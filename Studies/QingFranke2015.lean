@@ -177,7 +177,6 @@ theorem speaker_eq_softmax (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goa
   · rw [literal, listener_truthful_apply_singleton_of_notMem μ _ (by simpa using h),
       ENNReal.log_zero, EReal.coe_mul_bot_of_pos hlam, EReal.bot_sub]
 
-/-- Of two words true of an object the speaker prefers the one of greater utility. -/
 theorem speaker_lt_iff (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
     (hu' : t ∈ ⟦u'⟧ᴹ) :
     (speaker g μ lam c t).real {u} < (speaker g μ lam c t).real {u'} ↔
@@ -252,8 +251,6 @@ theorem prefers_unique_colour_iff (hlam : 0 < lam) (g : Goal) :
   simp only [cost, Nat.cast_one, Nat.cast_ofNat, inv_one]
   constructor <;> intro h <;> linarith
 
-/-- At the green square it prefers *square*, which only it satisfies, to *green* exactly when the
-adjective is not cheaper than the noun by the informativity gap. -/
 theorem prefers_unique_shape_iff (hlam : 0 < lam) (g : Goal) :
     (speaker g (uniformOn .univ) lam c .greenSquare).real {.green} <
       (speaker g (uniformOn .univ) lam c .greenSquare).real {.square} ↔ -g.gap < c := by
@@ -306,8 +303,7 @@ private theorem literal_salience_green :
     show ⟦Word.green⟧ᴹ = {.greenSquare, .greenCircle} by decide, Finset.sum_pair (by decide)]
   norm_num [listenerChoice]
 
-/-- With the salience prior (7), the belief-oriented speaker prefers *blue* to *circle* at the blue
-circle iff the adjective costs less than `log (169 / 139)`. -/
+-- (7)
 theorem salience_prefers_unique_colour_iff (hlam : 0 < lam) :
     (speaker .belief salience lam c .blueCircle).real {.circle} <
       (speaker .belief salience lam c .blueCircle).real {.blue} ↔ c < log (169 / 139) := by
@@ -318,9 +314,6 @@ theorem salience_prefers_unique_colour_iff (hlam : 0 < lam) :
     (by norm_num : (169 : ℝ) ≠ 0)]
   constructor <;> intro h <;> linarith
 
-/-- At the green circle it prefers the adjective *green*, which sets the green circle against the
-less salient of its two rivals, to *circle* exactly when the adjective costs less than
-`log (169 / 101)`. -/
 theorem salience_prefers_adjective_iff (hlam : 0 < lam) :
     (speaker .belief salience lam c .greenCircle).real {.circle} <
       (speaker .belief salience lam c .greenCircle).real {.green} ↔ c < log (169 / 101) := by
@@ -331,8 +324,6 @@ theorem salience_prefers_adjective_iff (hlam : 0 < lam) :
     log_div (by norm_num : (30 : ℝ) ≠ 0) (by norm_num : (101 : ℝ) ≠ 0)]
   constructor <;> intro h <;> linarith
 
-/-- The first threshold lies inside the paper's cost support `(-0.4, 0.4)` and the second beyond
-it, so at every cost in the support this speaker prefers the adjective at the green circle. -/
 theorem salience_thresholds : log (169 / 139) < 0.4 ∧ (0.4 : ℝ) < log (169 / 101) := by
   refine ⟨?_, ?_⟩
   · rw [log_lt_iff_lt_exp (by norm_num)]
@@ -390,8 +381,6 @@ theorem uniform_listener_narrows_circle (hlam : 0 < lam) (g : Goal) :
     uniformOn_univ_real_singleton, circle_greenCircle hlam]
   exact mul_lt_mul_of_pos_left (sigmoid_lt (by nlinarith [g.gap_pos])) (by positivity)
 
-/-- Hearing *green* it prefers the green circle, since for the green square the speaker had
-*square*. -/
 theorem uniform_listener_narrows_green (hlam : 0 < lam) (g : Goal) :
     (listener (uniformOn .univ) (speaker g (uniformOn .univ) lam c) .green).real {.greenSquare} <
       (listener (uniformOn .univ) (speaker g (uniformOn .univ) lam c) .green).real
@@ -400,8 +389,6 @@ theorem uniform_listener_narrows_green (hlam : 0 < lam) (g : Goal) :
     uniformOn_univ_real_singleton, green_greenCircle hlam]
   exact mul_lt_mul_of_pos_left (sigmoid_lt (by nlinarith [g.gap_pos])) (by positivity)
 
-/-- A listener with the salience prior who hears *circle* prefers the salient blue circle exactly
-when its salience outweighs the speaker's preference for *blue* there. -/
 theorem salience_listener_circle_iff (hlam : 0 < lam) (g : Goal) :
     (listener salience (speaker g (uniformOn .univ) lam c) .circle).real {.greenCircle} <
       (listener salience (speaker g (uniformOn .univ) lam c) .circle).real {.blueCircle} ↔
@@ -410,8 +397,6 @@ theorem salience_listener_circle_iff (hlam : 0 < lam) (g : Goal) :
     salience_real_singleton, circle_blueCircle hlam]
   simp only [listenerChoice, Nat.cast_ofNat]
 
-/-- Hearing *green* it prefers the green circle to the more salient green square exactly when the
-speaker's preference for *square* there outweighs the salience. -/
 theorem salience_listener_green_iff (hlam : 0 < lam) (g : Goal) :
     (listener salience (speaker g (uniformOn .univ) lam c) .green).real {.greenSquare} <
       (listener salience (speaker g (uniformOn .univ) lam c) .green).real {.greenCircle} ↔
@@ -445,8 +430,7 @@ theorem frankGoodman_listener_green :
     one_mul, sigmoid_def, neg_neg, exp_log two_pos]
   norm_num [listenerChoice]
 
-/-- With the salience prior and the action-oriented speaker, the action-oriented listener (14)
-follows salience on *circle* and narrows on *green* at every rationality. -/
+-- (14)
 theorem action_listener_window (hlam : 0 < lam) {lamL : ℝ} (hlamL : 0 < lamL)
     {ρ : Kernel (Word Colour Shape) Object}
     (hρ : ρ = policy lamL (listener salience (speaker .action (uniformOn .univ) lam 0))

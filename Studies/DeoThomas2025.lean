@@ -88,8 +88,7 @@ theorem WiderThan.irrefl (P : Question W) : ¬ WiderThan P P :=
 theorem WiderThan.asymm {P Q : Question W} (h : WiderThan P Q) : ¬ WiderThan Q P :=
   fun ⟨_, h', _⟩ ↦ let ⟨p, hp, q, hq, hpq⟩ := h.2.2; h' p hp q hq hpq
 
-/-- The trivial construal, the disjunction of all possible causes of §4.4, is narrower than any
-other construal of the same common ground. -/
+-- §4.4
 theorem widerThan_ofSet {P : Question W} {s p : Set W} (hs : P.info = s) (hp : p ∈ alt P)
     (hne : p ≠ s) : WiderThan P (ofSet s) := by
   have hsub : ∀ q ∈ alt P, q ⊆ s := fun q hq ↦
@@ -137,13 +136,13 @@ variable {c q}
 theorem IsWidest.unique {q' : Question W} (h : c.IsWidest q) (h' : c.IsWidest q') : q = q' :=
   by_contra fun hne ↦ (c.comparable q h.1 q' h'.1 hne).elim (h'.2 q h.1) (h.2 q' h'.1)
 
-/-- The optimal construal is unique, as the definite description of (35) requires. -/
+-- (35)
 theorem IsOptimal.unique {q' : Question W} (h : c.IsOptimal q) (h' : c.IsOptimal q') :
     q = q' :=
   by_contra fun hne ↦
     (c.comparable q h.1 q' h'.1 hne).elim (h'.2.2 q h.1 h.2.1) (h.2.2 q' h'.1 h'.2.1)
 
-/-- The widest construal, when answerable, is the optimal one, (37a). -/
+-- (37a)
 theorem IsWidest.isOptimal (h : c.IsWidest q) (ha : c.Answerable q) : c.IsOptimal q :=
   ⟨h.1, ha, fun q' hq' _ ↦ h.2 q' hq'⟩
 

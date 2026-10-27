@@ -282,7 +282,7 @@ theorem isFlat_support_of_neFree_gdFree (hNE : φ.NEFree) (hGD : φ.GDFree) :
 
 /-! ### BSML is not complete for union-closed properties -/
 
-/-- A BSML formula with the empty-state property is downward closed (Lemma 3.18). -/
+-- Lemma 3.18
 theorem isLowerSet_of_support_empty (hGD : φ.GDFree) (hE : φ.EmptFree) :
     (support M φ ∅ → ∀ s t : Finset W, t ⊆ s → support M φ s → support M φ t) ∧
     (antiSupport M φ ∅ → ∀ s t : Finset W, t ⊆ s → antiSupport M φ s → antiSupport M φ t) := by

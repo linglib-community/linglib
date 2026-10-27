@@ -81,8 +81,6 @@ theorem not_scopeAntitone_exhaustified {Q : GQ α} {C : Set (GQ α)} {A P : α �
 theorem no_strong : ScopeAntitone (exhaustified (no : GQ α) {everyᶜ}) := by
   rw [exhaustified_no]; exact scopeAntitone_no
 
-/-- Exhaustified *not every* is not downward entailing, since at the empty scope the stronger
-scale-mate *no* is true and excluded. -/
 theorem notEvery_not_strong [Nontrivial α] :
     ¬ ScopeAntitone (exhaustified (everyᶜ : GQ α) {no}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
@@ -159,8 +157,6 @@ theorem strawsonAA_not_sufficient :
     fun h ↦ Conditional.not_antitone_posExt_horizonCounterfactual (h _ _),
     fun h ↦ not_antitone_posExt_regret (h _ _ _)⟩
 
-/-- *No* is the only one of the paper's licensers whose enriched meaning is downward
-entailing. -/
 theorem licensed_strong_iff (L : Licenser) : Licensed L .strong ↔ L = .no := by
   cases L with
   | no => exact iff_of_true (fun {_} ↦ no_strong) rfl
@@ -170,8 +166,6 @@ theorem licensed_strong_iff (L : Licenser) : Licensed L .strong ↔ L = .no := b
   | conditional => exact iff_of_false strawsonAA_not_sufficient.2.2.2.2.1 nofun
   | sorryThat => exact iff_of_false strawsonAA_not_sufficient.2.2.2.2.2 nofun
 
-/-- *Some* is the only one of the paper's licensers whose plain meaning is not Strawson
-downward entailing. -/
 theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := by
   cases L with
   | no => exact iff_of_true (fun {_} ↦ scopeAntitone_no) nofun

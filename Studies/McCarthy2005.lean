@@ -314,8 +314,7 @@ where
   short : List Seg := [.f, .a, .ayn, .a, .l]
   diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 5
 
-/-- (12): the long vowel of /faʕaːl/ is shortened throughout the paradigm, ⟨faʕala, faʕaltu⟩ —
-overapplication of closed-syllable shortening, under OP-IDENT-WT >> IO-IDENT-WT. -/
+-- (12)
 theorem shortening_overapplies : (tableau long {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
@@ -334,8 +333,7 @@ where
   /-- A vowel epenthesized into the final cluster. -/
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
 
-/-- (13): epenthesis into the final cluster of /faʕl/ carries through the paradigm,
-⟨faʕila, faʕiltu⟩, under OP-DEP-V >> IO-DEP-V. -/
+-- (13)
 theorem epenthesis_overapplies : (tableau cluster {.a, .b, .c, .d} ranking).optimal = {.a} := by
   decide
 
@@ -349,7 +347,7 @@ where
   input : List Seg := [.f, .a, .ayn, .a, .l]
   syncopated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (4, 3)]
 
-/-- (17): SWP cannot force syncope, IO-MAX-V >> SWP. -/
+-- (17)
 theorem no_syncope : (tableau syncope {.a, .b} ranking).optimal = {.a} := by decide
 
 /-- The noun /fʕal/ with the case suffixes in (24): epenthesis, or the initial cluster. -/
@@ -361,8 +359,7 @@ where
   cases : List Seg := [.u, .a, .i]
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4)]
 
-/-- (24): a [CCV noun stem is broken up by epenthesis, which SWP does not block in a
-prefixless paradigm, ALIGN-L(Stem, σ) >> IO-DEP-V. -/
+-- (24)
 theorem noun_epenthesis : (tableau noun {.a, .b} ranking).optimal = {.a} := by decide
 
 /-- The four representative cells of a verbal paradigm: the perfectives *-a*, *-tu* and the
@@ -389,8 +386,7 @@ where
   diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 6
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6)]
 
-/-- In (25), the ranking OP-DEP-V >> SWP >> ALIGN-L(Stem, σ) selects attraction to the unmarked,
-*ftaʕala* keeping its misaligned cluster. -/
+-- (25)
 theorem attraction_to_the_unmarked :
     (tableau eighth {.a, .b, .c} ranking).optimal = {.a} := by decide
 
@@ -421,7 +417,7 @@ where
   diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 7
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7)]
 
-/-- In (27), different members attract different edges under the single ranking (21). -/
+-- (27), (21)
 theorem two_attractors : (tableau tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
   decide
 
@@ -445,8 +441,7 @@ where
   diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 6
   deleted : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 3), (5, 4)]
 
-/-- (29): normal application — neither levelling wins, the vowel/zero alternation staying in
-the paradigm, \*.CᵢV.CᵢV >> IO-MAX-V, OP-MAX-V. -/
+-- (29)
 theorem geminate_alternation :
     (tableau geminate {.a, .b}
       (markedness (fun c s ↦ identicalOnsets (c.word s)) :: ranking)).optimal = {.a} := by
@@ -513,7 +508,7 @@ def moveSchwa : List Seg → List Seg
   | [c₁, c₂, .schwa, c₃] => [c₁, .schwa, c₂, c₃]
   | w => w
 
-/-- In (30) SONCON prefers each noun to the word with its schwa moved. -/
+-- (30)
 theorem sonCon_nouns :
     ∀ f ∈ Wordlist.all, ∃ w ∈ f.segments.mapM Seg.ofIPA?, sonCon w < sonCon (moveSchwa w) := by
   decide +kernel
@@ -545,8 +540,7 @@ def drink : Cand → Paradigm Seg (List Seg)
 where
   input : List Seg := [.sh, .schwa, .r, .b]
 
-/-- In (32), majority rules, the unaffixed *ʃrəb* joining the five CCəC members against the two CəCC
-members. -/
+-- (32)
 theorem majority_rules : (tableau drink {.a, .b, .c, .d} moroccanRanking).optimal = {.a} := by
   decide
 
@@ -592,13 +586,11 @@ where
   epenthesized : List Seg := [.glide, .vowel, x, .vowel, y]
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4)]
 
-/-- (33): *jibkɛ ~ jeːbk* 'cry' — the cluster is kept, overapplication of epenthesis being
-blocked. -/
+-- (33)
 theorem cry : (tableau (jussive .spirant .stop) {.a, .b, .c} ranking).optimal = {.a} := by
   decide
 
-/-- fn. 34: *jɛɣlɛ ~ jɛɣɛl* 'uncover' — into a rising-sonority cluster epenthesis applies in
-the jussive alone, OP-MAX-V being dominated by SON-CON. -/
+-- fn. 34
 theorem uncover :
     (tableau (jussive .spirant .liquid) {.a, .b, .c} ranking).optimal = {.c} := by decide
 

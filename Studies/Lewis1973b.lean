@@ -76,8 +76,7 @@ variable {I W : Type*} {access : I → Set W} {ord : I → Preorder W} {i : I} {
 theorem mem_variablyStrictImp_iff_mem_necessityFilter :
     i ∈ variablyStrictImp access ord p q ↔ q ∈ necessityFilter (ord i) (access i ∩ p) := Iff.rfl
 
-/-- The *might* counterfactual holds when the consequent holds at antecedent-worlds however close
-one comes (§1.5). -/
+-- §1.5
 theorem mem_might_variablyStrictImp_iff {access : W → Set W} {ord : W → Preorder W} {w : W} :
     w ∈ might (variablyStrictImp access ord) p q ↔
       ∃ᶠ v in necessityFilter (ord w) (access w ∩ p), v ∈ q := Iff.rfl
@@ -190,7 +189,6 @@ variable {a : ℝ}
 theorem abs_sub_eq (ha : a ≤ 1) {x : ℝ} (hx : 1 < x) : |x - a| = x - a :=
   abs_of_pos (by linarith)
 
-/-- No length over an inch is closest to an actual length of at most an inch. -/
 theorem minimals_lineSim (ha : a ≤ 1) : (lineSim a).minimals (Ioi 1) = ∅ := by
   refine eq_empty_of_forall_notMem fun x hx ↦ ?_
   have hx1 : (1 : ℝ) < x := hx.1
@@ -221,7 +219,6 @@ theorem not_mem_variablyStrictImp_line_two (ha : a ≤ 1) :
   rw [mem_singleton_iff] at h2
   linarith
 
-/-- It makes *if the line were over an inch long, it would be under an inch and a half* true. -/
 theorem mem_variablyStrictImp_line (ha : a ≤ 1) :
     a ∈ variablyStrictImp (fun _ ↦ .univ) lineSim (Ioi 1) (Iio (3 / 2)) := fun u hu ↦ by
   have hu1 : (1 : ℝ) < u := hu.2
@@ -284,9 +281,7 @@ theorem variablyStrictImp_eq_ofDomain_selection {access : W → Set W} {ord : W 
     mem_variablyStrictImp_iff_mem_orderingImp fun _ hB ↦
       (Preorder.minimals_nonempty_iff (hwf _)).2 hB⟩
 
-/-- Two tied closest antecedent-worlds falsify conditional excluded middle, as when Bizet and
-Verdi are compatriots at equally close worlds where both are Italian and where both are French
-(§3.4). -/
+-- §3.4
 theorem not_cem_of_tie {v v' : W} (hv : v ∈ (ord i).minimals (access i ∩ p))
     (hv' : v' ∈ (ord i).minimals (access i ∩ p)) (hne : v ≠ v') :
     i ∉ variablyStrictImp access ord p {v} ∧ i ∉ variablyStrictImp access ord p {v}ᶜ :=
@@ -485,8 +480,6 @@ theorem Provable.sound {A : Formula α} (h : Provable L A) : Valid.{u} L A := by
     rw [← hI.eval_eq (Set.ext fun x ↦ mem_eval_iff.1 (ihAB x))]
     exact ihC w
 
-/-- Under the Limit Assumption a formula expresses what it does on Stalnaker's reading, with the
-closest accessible antecedent-worlds as the selected worlds. -/
 theorem eval_eq_formula_eval
     (hlim : ∀ w B, (access w ∩ B).Nonempty → ((ord w).minimals (access w ∩ B)).Nonempty)
     (A : Formula α) :
@@ -501,8 +494,6 @@ theorem eval_eq_formula_eval
     rw [ihA, ihB]
     exact mem_variablyStrictImp_iff_mem_orderingImp (hlim w)
 
-/-- On a total preorder with a closest accessible antecedent-world whenever there is an accessible
-one, the closest accessible antecedent-worlds satisfy Stalnaker's conditions. -/
 theorem isSelectionFunction_of_stalnaker (hR : ∀ w, w ∈ access w) (hc : IsCentered ord)
     (htot : ∀ w, Std.Total (ord w).le)
     (hS : ∀ w p, (access w ∩ p).Nonempty → ∃ v, (ord w).minimals (access w ∩ p) = {v}) :

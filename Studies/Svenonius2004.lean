@@ -127,7 +127,7 @@ namespace Structure
 def prefixes (s : Structure) : List (Morph × PrefixClass) :=
   s.outer.map (fun p ↦ (p.1, .superlexical p.2)) ++ (s.result.map (·, .lexical)).toList
 
-/-- A linearized structure is well-stacked, the stacking generalization (4). -/
+-- (4)
 theorem wellStacked_prefixes (s : Structure) : WellStacked s.prefixes := by
   rw [WellStacked, prefixes, List.pairwise_append]
   refine ⟨List.pairwise_map.2 (List.pairwise_of_forall fun _ _ _ ↦ trivial), ?_, ?_⟩
@@ -136,7 +136,7 @@ theorem wellStacked_prefixes (s : Structure) : WellStacked s.prefixes := by
     obtain ⟨p, _, rfl⟩ := List.mem_map.1 ha
     trivial
 
-/-- A linearized structure has at most one lexical prefix, by structural uniqueness (4.4). -/
+-- (4.4)
 theorem lexicals_length_le_one (s : Structure) : (lexicals s.prefixes).length ≤ 1 := by
   rw [lexicals, prefixes, List.filter_append, List.length_append]
   have h : (s.outer.map (fun p ↦ (p.1, PrefixClass.superlexical p.2))).filter
@@ -202,7 +202,6 @@ def morphs (a : Analysis) : List Morph := a.prefixes.map Prod.fst ++ a.stem.morp
 def tree (a : Analysis) : Tree Morph :=
   .attachAll (Morph.root a.stem.form) (a.prefixes.reverse.map fun p ↦ (.before, p.1))
 
-/-- Every analysis tree is concatenative, since prefixation is. -/
 theorem tree_isConcatenative (a : Analysis) : a.tree.IsConcatenative :=
   Tree.isConcatenative_attachAll _ _
 
@@ -290,7 +289,7 @@ theorem starred_not_structured (a : Analysis) (ha : a ∈ starred) :
   have h : ¬ WellStacked a.prefixes := by fin_cases ha <;> decide
   exact ⟨h, fun h' ↦ h ((Structure.exists_prefixes_eq_iff _ _).1 h').1⟩
 
-/-- The starred forms reverse the prefixes of (4a) and (4c). -/
+-- (4a), (4c)
 theorem starred_prefixes : starred.map (·.prefixes) = [a4a, a4c].map (·.prefixes.reverse) := rfl
 
 /-- Outside the past tense, as in (1) and (4c), every analysis spells out its attested form ((4a),

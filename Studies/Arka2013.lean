@@ -127,8 +127,7 @@ instance {T : Type*} [LinearOrder T] (f : ReichenbachFrame T) :
     Decidable (englishPresentPerfect f) := by
   unfold englishPresentPerfect; infer_instance
 
-/-- With a past reference time, the English present perfect is contradictory while *sudah* is
-satisfiable, as in (5b). -/
+-- (5b)
 theorem klein_puzzle_dissolved :
     (∀ f : ReichenbachFrame ℤ, englishPresentPerfect f → f.referencePosition ≠ .lt) ∧
       ∃ f : ReichenbachFrame ℤ, frame sudah.viewpoint f ∧ f.referencePosition = .lt :=
@@ -179,23 +178,20 @@ theorem rows_finiteness :
 
 /-! ### Morphosemantic TAM: *=nya* nominalisation (§4) -/
 
-/-- The default past axis of a nominalisation is cancelled exactly by a future adjunct
-(34)–(36). -/
+-- (34), (36)
 theorem rows_nya_default_past :
     ∀ r ∈ Examples.all, r.feature? "nominalised" = some "true" →
       ∀ axis ∈ (r.feature? "axis").toList,
         (axis = "future" ↔ r.feature? "adjunct" = some "nanti") := by
   decide +kernel
 
-/-- A bare modal evaluates a future state of affairs; its nominalisation a past or present
-one (37)–(39). -/
+-- (37), (39)
 theorem rows_modal_nominalisation :
     ∀ r ∈ Examples.all, ∀ soa ∈ (r.feature? "soa").toList,
       (soa = "future" ↔ r.feature? "nominalised" = some "false") := by
   decide +kernel
 
-/-- The copula *adalah* and the negator *bukan* take nominal predicates only, the
-nominalisations among them (44)–(48). -/
+-- (44), (48)
 theorem rows_equational :
     ∀ r ∈ Examples.all, ∀ key ∈ ["adalah", "bukan"], ∀ j ∈ (r.feature? key).toList,
       (j = "acceptable" ↔ r.feature? "predicate" = some "nominal") := by

@@ -413,7 +413,7 @@ def expandedLabials : Feature → List (Option Bool)
   | .voice => [⊖, ⊕, ⊖, ⊕, ⊕, ⊕]
   | _ => [○, ○, ○, ○, ○, ○]
 
-/-- Without /p/ and /v/ the expanded columns are the labial columns of (8). -/
+-- (8)
 theorem expandedLabials_restrict : ∀ g ∈ Feature.all,
     [1, 2, 4, 5].map ((expandedLabials g).getD · ○) =
       [col b, col f, col m, col w].map ((matrix g).getD · ○) := by

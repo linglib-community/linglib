@@ -76,7 +76,6 @@ def weak : Set D := Set.Ici s.weakThreshold
 /-- The denotation of the stronger term. -/
 def strong : Set D := Set.Ici s.strongThreshold
 
-/-- The stronger term entails the weaker. -/
 theorem strong_subset_weak : s.strong ⊆ s.weak := Set.Ici_subset_Ici.2 s.le
 
 /-- The upper-bounding inference: the weaker term strengthened by the negation of the stronger,
@@ -97,7 +96,6 @@ section Bounded
 
 variable {E : Type*} [PartialOrder E] [OrderTop E] (s : LexicalScale E)
 
-/-- On a bounded scale the stronger term denotes the end point alone. -/
 theorem LexicalScale.strong_eq_singleton_top (h : s.IsBounded) : s.strong = {⊤} := by
   rw [strong, h, Set.Ici_top]
 

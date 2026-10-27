@@ -1258,8 +1258,7 @@ private theorem receiverStep_one : game.receiverStep {r₁} = {r₁} := by
     · exact ⟨_, rfl, s₁, rfl, 0, 1, rfl, by
         fin_cases c <;> fin_cases a' <;> simp_all [game, r₁] <;> norm_num⟩
 
-/-- In Example 4, the pragmatically rationalizable sender uses *some* exactly when not all is true,
-and every such receiver reads *some* as *not all*. -/
+-- Example 4
 theorem some_implicates_not_all : game.prsS = {fun _ w ↦ if w = 0 then 0 else 2} ∧
     game.prsR = {fun _ f ↦ if f = 0 then 0 else 1} := by
   have h1 : game.icrR 1 = {r₁} := by rw [SemanticGame.icrR_succ, icrR_zero, receiverStep_zero]
@@ -1497,8 +1496,7 @@ private theorem icrR_three : game.icrR 3 = game.icrR 2 := by
     have : f ≠ a' := fun h ↦ ha' (h ▸ rfl)
     exact ⟨f, rfl, _, hs, (), f, rfl, by simp [game, this]⟩
 
-/-- Horn's division of pragmatic labor holds (Example 6), the cheap form marking the frequent world
-and the costly form the rare one. -/
+-- Example 6
 theorem division_of_pragmatic_labor :
     game.prsS = {fun _ w ↦ w} ∧ game.prsR = {fun _ f ↦ f} := by
   have h : IsFixedPt game.receiverStep (game.icrR 2) := by
@@ -1850,8 +1848,7 @@ private theorem receiverStep_one (hc0 : 0 < c) : (game c).receiverStep {rB} = {r
     · exact ⟨_, rfl, sA, rfl, (), 1, rfl, by fin_cases a' <;> simp_all [game, rB]⟩
     · exact ⟨_, rfl, sA, rfl, (), 0, rfl, by fin_cases a' <;> simp_all [game, rB]⟩
 
-/-- Under iterated cautious response (Example 10), the receiver reads *some* as *not all* and the
-sender uses *some* when not all is true. -/
+-- Example 10
 theorem icr_some_implicates_not_all (hc0 : 0 < c) (hc1 : c < 1) :
     (game c).prsS = {fun _ w ↦ if w = 0 then 1 else 0} ∧
       (game c).prsR = {fun _ f ↦ if f = 1 then 0 else 1} := by

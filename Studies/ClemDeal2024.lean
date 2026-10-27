@@ -235,8 +235,7 @@ theorem oagrOnS_isSome {subj obj : Person} {n : Number} {pos : ObjectPosition}
     Ergative subj obj pos ∧ .speaker ∈ spec subj ∧ obj = .second := by
   cases pos <;> revert subj obj n <;> decide +kernel
 
-/-- Object agreement on the subject surfaces with a first-person exclusive subject and second-person
-object (12), but not at 2→1 (11) or 1→3 (23a). -/
+-- (12), (11), (23a)
 theorem oagrOnS_examples :
     oagrOnS .firstExclusive .second .augmented .high = some "-((n)ke)ma'" ∧
     oagrOnS .second .firstExclusive .minimal .high = none ∧
@@ -322,7 +321,7 @@ def kolymaYukaghirAccusative (subj obj : Person) : Option String :=
     | [s] => some (if .participant ∈ spec s then "-ul" else "-gele")
     | _ => none
 
-/-- The accusative is *-gele* at 3→1 and *-ul* at 1→2, and there is none at 1→3 (49). -/
+-- (49)
 theorem kolymaYukaghirAccusative_49 :
     kolymaYukaghirAccusative .third .first = some "-gele" ∧
     kolymaYukaghirAccusative .first .second = some "-ul" ∧

@@ -348,7 +348,7 @@ def doofus : Persona := ⟨{.incompetent, .friendly}, by decide +kernel⟩
 /-- The arrogant asshole, incompetent and aloof. -/
 def asshole : Persona := ⟨{.incompetent, .aloof}, by decide +kernel⟩
 
-/-- The four personae of example (6) are the maximal consistent sets of the property space. -/
+-- (6)
 theorem personae_eq : (Finset.univ : Finset Persona) = {coolGuy, sternLeader, doofus, asshole} := by
   decide +kernel
 
@@ -380,10 +380,10 @@ theorem ing : ingField.Complementary .velar .apical where
 
 @[simp] theorem ing_symm_persona : ing.symm.persona = doofus := rfl
 
-/-- *-ing* meets every persona but the doofus (Table 1). -/
+-- Table 1
 theorem personae_velar : ingField.personae .velar = {doofus}ᶜ := ing.personae_eq_compl
 
-/-- *-in'* meets every persona but the stern leader (Table 1). -/
+-- Table 1
 theorem personae_apical : ingField.personae .apical = {sternLeader}ᶜ := ing.symm.personae_eq_compl
 
 /-! #### Style shifting
@@ -484,7 +484,7 @@ selection only dilutes the cool guy's preference and *-in'* stays the likelier v
 persona has. -/
 def obamaValue (π : Persona) : ℝ := (π.1 ∩ {.competent, .friendly}).card
 
-/-- With persona selection *-in'* remains the more likely variant at the barbecue (p. 438). -/
+-- p. 438
 theorem obama_apical : 1 / 2 < (S1 ingField 6 casual ∘ₘ select 6 obamaValue).real {.apical} := by
   have hs : share ing.symm casual 6 = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := by
     rw [← S1_real_singleton_of_ne ing.symm apical_or_velar (by norm_num) (casual_ne_zero coolGuy)
@@ -524,7 +524,7 @@ private theorem uniform_ne_zero : ∀ π, uniform {π} ≠ 0 :=
 /-- Social classes are ordered from the highest, `upperMiddle < lowerMiddle < working < lower`. -/
 instance : LinearOrder SocialClass := LinearOrder.lift' SocialClass.ctorIdx (by decide)
 
-/-- Labov's rate of *-in'* rises as the class falls (Table 7). -/
+-- Table 7
 theorem ingByClass_strictMono : StrictMono fun c ↦ (ingByClass c).percent := by decide
 
 /-- The classes Table 8 gives values for, every class of Table 7 but the lower class. -/
@@ -679,15 +679,13 @@ private theorem rice_real (π : Persona) : rice.real {π} / rice.real Set.univ =
   rw [ofWeights_real_singleton, ofWeights_real_univ, show ∑ _ : Persona, 1 = 4 by decide +kernel]
   norm_num
 
-/-- At every rationality Rice's speaker releases /t/ half the time for a persona both variants
-convey (Table 11). -/
+-- Table 11
 theorem rice_S1 (hα : 0 < α) {p : Persona} (hl : p ≠ articulateAloof)
     (hr : p ≠ inarticulateFriendly) : (S1 field α rice p).real {.released} = 1 / 2 := by
   rw [S1_real_singleton_of_ne release released_or_flapped hα (rice_ne_zero p) hl hr,
     share_eq_half release (rice_ne_zero _) rice_eq]
 
-/-- After released /t/ the listener doubles her belief in the articulate aloof persona and rules out
-the inarticulate friendly one (Table 12). -/
+-- Table 12
 theorem rice_released (hα : 0 < α) :
     (L1 field α rice .released).real {articulateAloof} = 1 / 2 ∧
       (L1 field α rice .released).real {articulateFriendly} = 1 / 4 ∧
@@ -705,7 +703,7 @@ theorem rice_released (hα : 0 < α) :
   · rw [hn _ (by decide) (by decide), rice_real]
   · rw [hn _ (by decide) (by decide), rice_real]
 
-/-- The flap mirrors released /t/ (Table 12). -/
+-- Table 12
 theorem rice_flapped (hα : 0 < α) :
     (L1 field α rice .flapped).real {articulateAloof} = 0 ∧
       (L1 field α rice .flapped).real {articulateFriendly} = 1 / 4 ∧
@@ -723,7 +721,7 @@ theorem rice_flapped (hα : 0 < α) :
     rw [hl, mul_div_assoc, rice_real]
     norm_num
 
-/-- After released /t/ the listener is 75% sure Rice is articulate, after a flap 25% (p. 442). -/
+-- p. 442
 theorem rice_articulate (hα : 0 < α) :
     (L1 field α rice .released).real {articulateAloof} +
         (L1 field α rice .released).real {articulateFriendly} = 3 / 4 ∧
@@ -774,8 +772,7 @@ theorem pelosi_symm_share : share release.symm pelosi 6 = 11 ^ 6 / (19 ^ 6 + 11 
     show pelosiWeight inarticulateFriendly = 9 by decide +kernel]
   norm_num
 
-/-- After released /t/ the listener is over 80% sure Pelosi is inarticulate and aloof, and after the
-flap over 95% sure she is inarticulate and friendly (Table 14, p. 443). -/
+-- Table 14, p. 443
 theorem pelosi_L1 : 4 / 5 < (L1 field 6 pelosi .released).real {inarticulateAloof} ∧
     19 / 20 < (L1 field 6 pelosi .flapped).real {inarticulateFriendly} := by
   have h₁ := mul_L1_real_singleton release released_or_flapped (by norm_num : (0 : ℝ) < 6)

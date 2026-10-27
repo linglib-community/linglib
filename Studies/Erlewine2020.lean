@@ -172,8 +172,7 @@ def store : LexicalItem.Token := ⟨.of .P [] "to the store", 34⟩
 def fortunately : LexicalItem.Token := ⟨.of .Mod [.T] "fortunately", 35⟩
 def quickly : LexicalItem.Token := ⟨.of .Mod [.Asp] "quickly", 36⟩
 
-/-- (13a): the adverb *tomorrow* projects between TP and CP, so the subject crosses it too; without
-it, the subject crosses only TP. -/
+-- (13a)
 theorem ex13a : (Examples.ex13a.judgment = .acceptable ↔
       Derived Examples.ex13a ⟨who, regret, words, true, some (.high, tomorrow), false⟩) ∧
     (Examples.ex13a_noadverb.judgment = .acceptable ↔

@@ -245,9 +245,7 @@ def resolvable? (row : Datum) : Option Bool := do
   guard (row.feature? "scenario" = some "freeChoice59")
   (hamblinOf row).map fun H => decide (IsExhaustivelyResolvableOn (ofFinset H) ↑freeChoice.1)
 
-/-- In (60)–(63) the embedded questions are felicitous in (59) iff their interrogative ranges
-over disjunctions (`isExhaustivelyResolvable_box_iff` relates this to the question with
-*must*). -/
+-- (60), (63), (59)
 theorem scenario_rows : Datum.ChecksVerdict resolvable? id Examples.all 4 := by decide +kernel
 
 end AlonsoOvalleMoghiseh2025b

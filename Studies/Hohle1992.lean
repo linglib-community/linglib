@@ -149,14 +149,12 @@ def Scoping.Admissible (c : Configuration) : Scoping → Prop
 instance (c : Configuration) (s : Scoping) : Decidable (s.Admissible c) := by
   cases s <;> unfold Scoping.Admissible <;> infer_instance
 
-/-- The negation of (55a) c-commands the trace of the fronted verb, so VERUM may lie in its
-scope. -/
+-- (55a)
 theorem negOverVerum_admissible_negatedF : Scoping.negOverVerum.Admissible negatedF := by decide
 
 theorem verumOverNeg_admissible_negatedF : Scoping.verumOverNeg.Admissible negatedF := by decide
 
-/-- The complementizer of (55b) neither is c-commanded by the negation nor binds a trace, so
-VERUM cannot lie in the negation's scope. -/
+-- (55b)
 theorem not_negOverVerum_admissible_negatedC : ¬ Scoping.negOverVerum.Admissible negatedC := by
   decide
 
@@ -227,13 +225,11 @@ theorem appropriate_negatedC_iff (known : Set (Set W)) (p : Set W) :
     · exact hb
   · exact fun h ↦ ⟨.verumOverNeg, verumOverNeg_admissible_negatedC, h⟩
 
-/-- In (55a) after (55c), *ich hoffe, daß Karl ihr zuhört* makes the thought known, and the
-verb-second reply *er HÖRT ihr nicht zu* is appropriate. -/
+-- (55a), (55c)
 theorem appropriate_negatedF_singleton (p : Set W) : Appropriate {p} negatedF p :=
   (appropriate_negatedF_iff _ p).2 (Or.inl rfl)
 
-/-- In (55b) after (55c), *daß er ihr nicht zuhört* is inappropriate, since the negated thought is
-not known. -/
+-- (55b), (55c)
 theorem not_appropriate_negatedC_singleton [Nonempty W] (p : Set W) :
     ¬ Appropriate {p} negatedC p := by
   rw [appropriate_negatedC_iff, Set.mem_singleton_iff]
@@ -273,27 +269,25 @@ def IntroducesVerum (t : Tree Node String) (kj : TreePath) : Prop :=
 instance (t : Tree Node String) (kj : TreePath) : Decidable (IntroducesVerum t kj) := by
   unfold IntroducesVerum; split <;> infer_instance
 
-/-- The fronted finite verb of (55a) is the non-empty sister of Π. -/
+-- (55a)
 theorem introducesVerum_fClause_phi : IntroducesVerum fClause ⟨[1, 0]⟩ := by decide
 
-/-- The complementizer of (55b) is the non-empty sister of Π. -/
+-- (55b)
 theorem introducesVerum_cClause_phi : IntroducesVerum cClause ⟨[0]⟩ := by decide
 
-/-- In (77a) the relative particle *wo* filling Φ carries VERUM. -/
+-- (77a)
 theorem introducesVerum_woClause_phi : IntroducesVerum woClause ⟨[1, 0]⟩ := by decide
 
-/-- In (82a) the relative pronoun in front of an empty Φ carries VERUM, the RW-verum focus of
-§9. -/
+-- (82a), §9
 theorem introducesVerum_rwClause_front : IntroducesVerum rwClause ⟨[0]⟩ := by decide
 
-/-- In (80a), with the particle *wo* filling Φ, the relative pronoun's sister is not a bare Π, so
-its accent yields no verum focus. -/
+-- (80a)
 theorem not_introducesVerum_woClause_front : ¬ IntroducesVerum woClause ⟨[0]⟩ := by decide
 
-/-- In (81) the interrogative pronoun in front of a fronted verb yields no verum focus. -/
+-- (81)
 theorem not_introducesVerum_whClause_front : ¬ IntroducesVerum whClause ⟨[0]⟩ := by decide
 
-/-- In (68b) the verb-final finite verb inside Π yields no verum focus. -/
+-- (68b)
 theorem not_introducesVerum_finalClause_verb : ¬ IntroducesVerum finalClause ⟨[1, 3]⟩ := by
   decide
 

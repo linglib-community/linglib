@@ -230,16 +230,13 @@ theorem policy_eq_sigmoid (a : Action) :
 
 theorem policy_pos (a : Action) : 0 < S.policy U q a := Real.softmax_pos _ a
 
-/-- A player certain that the opponent will steal cooperates at most half the time (3.1). -/
+-- (3.1)
 theorem policy_cooperate_le_half_of_belief_eq_zero (hb : q.belief = 0) (hd : 0 ≤ q.base .dia) :
     S.policy S.expectedBaseUtility q .cooperate ≤ 1 / 2 := by
   rw [policy_eq_sigmoid, Action.other_cooperate, one_div, ← Real.sigmoid_zero,
     Real.sigmoid_le_iff, expectedBaseUtility_cooperate_sub_defect, hb]
   nlinarith [mul_nonneg S.lam_pos.le (mul_nonneg hd S.ν_pot_nonneg)]
 
-/-- A player certain that the opponent will split prefers to cooperate exactly when the
-advantageous-inequity cost of stealing outweighs the money it gains. This is the Fehr–Schmidt
-account of cooperation. -/
 theorem half_le_policy_cooperate_iff (hb : q.belief = 1) :
     1 / 2 ≤ S.policy S.expectedBaseUtility q .cooperate ↔
       q.base .money * (S.ν (S.pot - q.reference) - S.ν (S.pot / 2 - q.reference)) ≤
@@ -330,7 +327,7 @@ def VariesOnly (d : Domain) : Prop :=
   ∀ ω ω', (∀ d', d' ≠ d → (p ω).base d' = (p ω').base d') ∧ (p ω).belief = (p ω').belief ∧
     (p ω).reference = (p ω').reference
 
-/-- A cooperator is inferred to be more averse to advantageous inequity (Figure 2). -/
+-- Figure 2
 theorem expectation_aia_defect_le_cooperate (h : VariesOnly p .aia) (hb : ∀ ω, 0 ≤ (p ω).belief) :
     S.expectation S.expectedBaseUtility p μ (·.base .aia) .defect ≤
       S.expectation S.expectedBaseUtility p μ (·.base .aia) .cooperate := by
@@ -343,7 +340,7 @@ theorem expectation_aia_defect_le_cooperate (h : VariesOnly p .aia) (hb : ∀ ω
   refine le_of_not_gt fun hlt ↦ ?_
   nlinarith [mul_le_mul_of_nonneg_left hlt.le (mul_nonneg (hb j) S.ν_pot_nonneg)]
 
-/-- A cooperator is inferred to be less motivated by money (Figure 2). -/
+-- Figure 2
 theorem expectation_money_cooperate_le_defect (h : VariesOnly p .money)
     (hb : ∀ ω, 0 ≤ (p ω).belief) :
     S.expectation S.expectedBaseUtility p μ (·.base .money) .cooperate ≤
@@ -362,7 +359,7 @@ theorem expectation_money_cooperate_le_defect (h : VariesOnly p .money)
   nlinarith [mul_le_mul_of_nonneg_left (neg_lt_neg_iff.1 hlt).le
     (mul_nonneg (hb j) (sub_nonneg.2 hν))]
 
-/-- A cooperator is inferred to be less averse to disadvantageous inequity (Figure 2). -/
+-- Figure 2
 theorem expectation_dia_cooperate_le_defect (h : VariesOnly p .dia)
     (hb : ∀ ω, (p ω).belief ≤ 1) :
     S.expectation S.expectedBaseUtility p μ (·.base .dia) .cooperate ≤
@@ -452,8 +449,7 @@ def agentCounterfactual (U : Player → Action → ℝ) (a₁ a₂ : Action) (d 
 /-- The absolute prediction error of the opponent's action, `|PE_{π_{a₂}}|`. -/
 def beliefError (a₂ : Action) : ℝ := |1 - q.beliefOn a₂|
 
-/-- A cooperator whose opponent stole is in a more disadvantageous position than expected, the first
-loading of envy (Figure 5b). -/
+-- Figure 5b
 theorem predictionError_dia_cooperate_defect_nonpos (hd : 0 ≤ q.base .dia)
     (hb : 0 ≤ q.belief) : S.predictionError q .cooperate .defect .dia ≤ 0 := by
   have hpot := S.pot_pos.le
@@ -461,8 +457,7 @@ theorem predictionError_dia_cooperate_defect_nonpos (hd : 0 ≤ q.base .dia)
     Player.beliefOn, feature_dia_cooperate_cooperate, feature_dia_cooperate_defect hpot, S.ν_zero]
   nlinarith [mul_nonneg hb (mul_nonneg hd S.ν_pot_nonneg)]
 
-/-- Had the opponent split, the cooperator would have been in a less disadvantageous position, the
-second loading of envy (Figure 5b). -/
+-- Figure 5b
 theorem opponentCounterfactual_dia_cooperate_defect_nonneg (hd : 0 ≤ q.base .dia)
     (hb : 0 ≤ q.belief) : 0 ≤ S.opponentCounterfactual q .cooperate .defect .dia := by
   have hpot := S.pot_pos.le

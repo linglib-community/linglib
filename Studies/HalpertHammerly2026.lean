@@ -122,8 +122,7 @@ theorem animal_mem_category {s : Spec} (h₁ : .human ∈ category s)
 and negative on every feature below it. -/
 def contrast (p : Primitive) : Spec := fun q ↦ some (decide (p ≤ q))
 
-/-- At the limit each primitive defines its own category, the leaves of the contrastive
-hierarchy (4). -/
+-- (4)
 theorem category_contrast (p : Primitive) : category (contrast p) = {p} := by
   ext x
   simp only [mem_category, contrast, Option.some.injEq, Set.mem_singleton_iff]
@@ -181,16 +180,14 @@ def animal : Core := ⟨{.animate}, by decide⟩
 /-- INANIMATE, [−Animate, −Human]. -/
 def inanimate : Core := ⟨∅, by decide⟩
 
-/-- HUMAN denotes every primitive down to the local persons, so its class contains the speech-act
-participants ((8), (10)). -/
+-- (8), (10)
 theorem category_spec_human : category human.1.spec = Set.Iic .human := by
   ext x
   simp only [mem_category, Set.mem_Iic]
   revert x
   decide
 
-/-- INANIMATE is the conflation of natural forces, concrete things, and abstract things, the
-GENERIC INANIMATE of (5). -/
+-- (5)
 theorem category_spec_inanimate : category inanimate.1.spec = Set.Ioi .animal := by
   ext x
   simp only [mem_category, Set.mem_Ioi]
@@ -216,8 +213,7 @@ def ofGender (g : Xhosa.Gender) : Option Core :=
   | .interpretable .inanimate => some inanimate
   | _ => none
 
-/-- The classes of (19) agree with the fragment's semantic cores, the gender a core class is spelled
-out in bearing that core. -/
+-- (19)
 theorem ofGender_gender : ∀ c : Core, ofGender c.gender = some c := by decide
 
 theorem gender_eq_of_ofGender {g : Xhosa.Gender} {c : Core} (h : ofGender g = some c) :
@@ -235,8 +231,7 @@ def finalVowel (c : Core) : FinalVowel := if .human ∈ c.1 then .i else .o
 theorem finalVowel_eq_i_iff (c : Core) : c.finalVowel = .i ↔ c.gender = .genderA := by
   revert c; decide
 
-/-- An exponent conditioned on [±Animate] alone, like Swahili animacy override (13), treats humans
-and animals alike (5). -/
+-- (13), (5)
 theorem eq_of_factorsThrough_animate {β : Type*} {f : Core → β}
     (hf : Function.FactorsThrough f (decide <| .animate ∈ ·.1)) : f human = f animal :=
   hf (a := human) (b := animal) (by decide)
@@ -248,8 +243,7 @@ theorem not_factorsThrough_gender :
 /-- The plural subject marker of a core class's gender. -/
 def pluralSubjPrefix (c : Core) : String := c.gender.plSubjPrefix
 
-/-- The Xhosa plural subject marker is conditioned on [±Human] alone, so classes 8 and 10 share
-*zi-* (footnote 7). -/
+-- footnote 7
 theorem pluralSubjPrefix_factorsThrough :
     Function.FactorsThrough pluralSubjPrefix (decide <| .human ∈ ·.1) := by
   intro a b; revert a b; decide
@@ -263,8 +257,7 @@ def personSpec (pf : Person.Features) : Spec := fun q ↦
   if q = .addressee then some (decide (.participant ∈ pf))
   else if q = .author then some (decide (.author ∈ pf)) else none
 
-/-- A participant's category lies inside HUMAN, so a class 1/2 probe finds local persons ((8), (10),
-section 3.2). -/
+-- (8), (10)
 theorem category_personSpec_subset {pf : Person.Features} (h : .participant ∈ pf) :
     category (personSpec pf) ⊆ category Core.human.1.spec := by
   rw [Core.category_spec_human]
@@ -295,12 +288,11 @@ theorem prefixGender_eq_gender {e : Xhosa.Noun} {n : Nominal Core} (h : ofEntry 
   obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.mp h
   simpa [prefixGender] using Core.gender_eq_of_ofGender hs
 
-/-- *Isikhohleli* 'coughing person' (28) is a human core under a class 7 secondary n. -/
+-- (28)
 theorem ofEntry_isikhohleli :
     ofEntry Xhosa.Nouns.isikhohleli = some ⟨Core.human, some Core.inanimate⟩ := by decide
 
-/-- In (27a) and (27c) *umkhohleli* 'coughing person' and *isikhohlela* 'phlegm' are aligned, the
-prefix class the core's own. -/
+-- (27a), (27c)
 theorem ofEntry_aligned :
     ofEntry Xhosa.Nouns.umkhohleli = some ⟨Core.human, none⟩ ∧
       ofEntry Xhosa.Nouns.isikhohlela = some ⟨Core.inanimate, none⟩ := by decide
@@ -319,8 +311,7 @@ def agreement (p : Probe Core) (n : Nominal Core) : Option Xhosa.Gender :=
 theorem agreement_flat (n : Nominal Core) : agreement flat n = some (prefixGender n) := by
   rcases n with ⟨c, _ | s⟩ <;> rfl
 
-/-- With an inanimate secondary n over an animate core (28), the Swahili animate probe searches past
-the secondary n to the core (29b). -/
+-- (28), (29b)
 theorem animateProbe_search {n : Nominal Core} (hc : .animate ∈ n.core.1)
     (hs : ∀ s ∈ n.outer, .animate ∉ s.1) :
     animateProbe.search n.genders.reverse = some n.core := by
@@ -334,8 +325,7 @@ theorem agreement_animateProbe {n : Nominal Core} (hc : .animate ∈ n.core.1)
     agreement animateProbe n = some n.core.gender := by
   rw [agreement, animateProbe_search hc hs, Option.map_some]
 
-/-- In Nyaturu object doubling (14), the [+Animate] object probe is valued by an aligned noun iff
-its core is animate. -/
+-- (14)
 theorem animateProbe_search_isSome (c : Core) :
     (animateProbe.search (Nominal.mk c none).genders.reverse).isSome ↔ .animate ∈ c.1 := by
   simp [Nominal.genders, animateProbe]

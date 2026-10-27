@@ -81,7 +81,7 @@ def modifierOf : String → Option EndpointModifier
 
 /-! ### The scale of *believe* (§2) -/
 
-/-- *Believe* is gradable: the predicate of every degree construction in (7)–(10) has a scale. -/
+-- (7), (10)
 theorem degreeConstruction_rows :
     ∀ row ∈ Examples.all, row.feature? "degreeConstruction" ≠ none →
       ∀ f ∈ row.feature? "predicate", gradabilityIn verbs f ≠ none := by
@@ -100,8 +100,7 @@ excludes a minimum. -/
 theorem fitsModifierRows_iff {b : Boundedness} : FitsModifierRows b ↔ b = .upperClosed := by
   cases b <;> decide
 
-/-- The argument of §2: a scale that fits the judgments takes the maximum as its default standard,
-the strong force of (1). -/
+-- §2, (1)
 theorem defaultStandard_eq_maxEndpoint_of_fitsModifierRows {b : Boundedness}
     (h : FitsModifierRows b) : b.defaultStandard = .maxEndpoint :=
   Boundedness.defaultStandard_eq_maxEndpoint_iff.2
@@ -177,8 +176,7 @@ instance (σ : String → Option PositiveStandard) : Decidable (EntailmentRows �
 instance (σ : String → Option PositiveStandard) : Decidable (DoubleDenialRows σ) := by
   unfold DoubleDenialRows; infer_instance
 
-/-- The fragment's standards predict the judgments of (13a), (13b, fn. 6), (14b), (15a), (16a),
-(17a) and (15b)–(17b), though the fragment has no *likely* (14a). -/
+-- (13a), fn. 6, (14b), (15a), (16a), (17a), (15b), (17b), (14a)
 theorem rows_standardOf :
     ComparisonClassRows standardOf ∧ EntailmentRows standardOf ∧ DoubleDenialRows standardOf := by
   decide
@@ -198,16 +196,14 @@ theorem furtherEvidence_iff {s t : PositiveStandard} :
 section Credence
 variable {α D : Type*} [LinearOrder D] [OrderTop D] (Cr : α → D)
 
-/-- *Believe* at the maximum of a credence scale and *doubt* at the minimum of its dual are
-contradictory (17). -/
+-- (17)
 theorem isCompl_maxStandard_minStandard_dual :
     IsCompl (Cr ⁻¹' Set.Ici ⊤) ((OrderDual.toDual ∘ Cr) ⁻¹' Set.Ioi ⊥) :=
   (Kennedy2007.antonyms_isCompl (OrderDual.toDual ∘ Cr)).symm
 
 end Credence
 
-/-- On [lassiter-2017]'s closed probability scale, Interpretive Economy gives *doubt* the dual
-maximum, so (17) needs a lexical minimum or no minimum (fn. 4). -/
+-- (17), fn. 4 [lassiter-2017]
 theorem not_complementary_probability :
     ¬ (Boundedness.ofOrder Lassiter2017.Probability).defaultStandard.Complementary
         (Boundedness.ofOrder Lassiter2017.Probability).dual.defaultStandard := by

@@ -66,8 +66,7 @@ open SocialMeaning Data.Experiments
 /-! ### The variants -/
 
 open Degree in
-/-- The underspecified durations report the precise ones at the grain of ten minutes, each the
-multiple of ten closest to it (p. 807). -/
+-- p. 807
 theorem underspecified_eq_representative (e : Experiment) :
     ((stimuli e .underspecified).before : ℚ) =
         representative 10 ((stimuli e .precise).before : ℚ) ∧
@@ -84,8 +83,7 @@ section Truth
 
 open Degree
 
-/-- Read literally, the underspecified description is false of a trip taking the precise duration,
-on either meaning of the bare numeral (p. 807). -/
+-- p. 807
 theorem precise_not_mem_underspecified (e : Experiment) :
     (stimuli e .precise).after ∉ Comparison.eq.interval (stimuli e .underspecified).after ∪
       Comparison.ge.interval (stimuli e .underspecified).after := by
@@ -144,8 +142,7 @@ theorem SeparateLoci.not_antipodal {F : AssociationField Variant Dimension SignT
   obtain ⟨⟨d, hp, ha0⟩, -⟩ := h
   exact hp (by rw [ha, Pi.neg_apply, ha0, neg_zero])
 
-/-- The underspecified variant is rated strictly between the precise and the approximate ones on
-every dimension in both experiments (p. 827). -/
+-- p. 827
 theorem underspecified_mem_uIoo (e : Experiment) (d : Dimension) :
     means e .underspecified d ∈ Set.uIoo (means e .precise d) (means e .approximate d) := by
   cases e <;> cases d <;>
@@ -160,7 +157,7 @@ theorem antipodal_contrastField (e : Experiment) :
     (contrastField e).Antipodal .precise .approximate :=
   AssociationField.antipodal_signs_contrast_iff.2 fun d ↦ .inl (underspecified_mem_uIoo e d)
 
-/-- Experiment 2 replicates the opposition of Experiment 1 (p. 825). -/
+-- p. 825
 theorem contrastField_exp2 : contrastField .exp2 = contrastField .exp1 := by
   ext v d; revert v d; decide +kernel
 

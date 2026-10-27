@@ -126,7 +126,6 @@ theorem necessity_implicature_ne_exact (m : ℕ) :
   · have := hall (m + 1) (Or.inr rfl)
     simp at this
 
-/-- Under negation the scale reverses: the alternative with the next numeral is weaker. -/
 theorem neg_reversal (m k : ℕ) :
     k ∉ Comparison.ge.interval m → k ∉ Comparison.ge.interval (m + 1) :=
   fun h h' ↦ h (antitone_atLeast k (Nat.le_succ m) h')

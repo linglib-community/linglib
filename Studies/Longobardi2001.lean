@@ -192,7 +192,7 @@ theorem contrast_iff (e : Environment) :
       Environment.StageLevel, Environment.Characterizing]
   decide
 
-/-- Greek bare nouns read as Romance ones, (63). -/
+-- (63)
 theorem greek_eq_romance (e : Environment) : bnReadings greek e = bnReadings romance e := rfl
 
 /-- The species reading of an anaphor, (22), (24), (37): available to a bare-noun antecedent

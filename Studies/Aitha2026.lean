@@ -262,7 +262,7 @@ theorem weak_violates_aba :
     ¬ IsContiguous fun c : ParadigmCell ↦ weakN (caseSuffix c) := by
   decide
 
-/-- The strong paradigm of *illu* (1) is contiguous on the containment hierarchy. -/
+-- (1)
 theorem strong_contiguous :
     IsContiguous fun c : ParadigmCell ↦ strongN .house c.label := by
   decide
@@ -282,8 +282,7 @@ def numItems : List (VocabularyItem NumContext String) := [{.afterAm} ⟷ "ni", 
 def numSg (nExponent : String) : Option String :=
   subsetPrinciple numItems (if nExponent = "am" then {.afterAm} else ∅ : Finset NumContext)
 
-/-- Weak nouns take *-ni* and strong nouns the null singular, so the underlying weak singular
-is *samudr-am-ni-K* ((41)). -/
+-- (41)
 theorem numSg_am : numSg "am" = some "ni" ∧ numSg "lu" = some "ø" := by decide
 
 /-! ### Stem-level phonology (§5.1) -/
@@ -307,7 +306,7 @@ def stemRanking : List (Constraint StemCandidate) :=
   [fun c ↦ (c.toFooting.nonBimoraicFeet id).length, fun c ↦ c.toFooting.strays.length,
     fun c ↦ c.toFooting.footOffsets.sum]
 
-/-- The Stem parses as two moraic trochees, (ˈsa.mu)(ˌdram) ((49)). -/
+-- (49)
 theorem stem_optimal : (Tableau.ofList Finset.univ stemRanking).optimal = {.trochees} := by decide
 
 /-! ### Word- and Phrase-level rankings (§5.2–5.3)
@@ -397,8 +396,7 @@ def WordCandQ.marks : WordCandQ → Con → ℕ
   | .deleteIMResyllabify, .max => 2
   | _, _ => 0
 
-/-- Before the heavy *an* the stressed *-ni* is again deleted, leaving the coda /m/ before an
-onsetless syllable ((63)). -/
+-- (63)
 theorem wordQ_optimal :
     (Tableau.ofOrder wordOrder WordCandQ.marks).optimal = {.deleteNi} := by
   decide
@@ -439,7 +437,7 @@ def PhraseCandP.marks : PhraseCandP → Con → ℕ
   | .faithful, .alignR => 2
   | _, _ => 0
 
-/-- Across the postposition boundary the /mn/ contact is kept ((66)). -/
+-- (66)
 theorem phraseP_optimal :
     (Tableau.ofOrder phraseOrder PhraseCandP.marks).optimal = {.faithful} := by
   decide
@@ -460,8 +458,7 @@ def PhraseCandQ.marks : PhraseCandQ → Con → ℕ
   | .degenerateFoot, .maxMora => 1
   | _, _ => 0
 
-/-- The coda /m/ resyllabifies as the onset of *an*, shifting stress, *samudra.man.ta.ṭi.ni*
-without compensatory lengthening ((67)). -/
+-- (67)
 theorem phraseQ_optimal :
     (Tableau.ofOrder phraseOrder PhraseCandQ.marks).optimal = {.resyllabify} := by
   decide
@@ -483,8 +480,7 @@ theorem prosodic_segmental_reranked :
       Reranked Con.maxMora .identLength wordOrder phraseOrder := by
   decide
 
-/-- IDENT-STRESS outranks ONSET at the Word level and is outranked at the Phrase level, so *an* of
-(63) resyllabifies only in (67). -/
+-- (63), (67)
 theorem identStress_onset_reranked : Reranked Con.identStress .onset wordOrder phraseOrder := by
   decide
 

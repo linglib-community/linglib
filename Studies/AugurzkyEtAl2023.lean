@@ -119,7 +119,7 @@ def Context.designation : Context → Designation
 or which of them opened all. -/
 def Context.issue (ctx : Context) : Setoid Display := Setoid.ker (resolve ctx.designation)
 
-/-- Over one boy the issue is the partition of (12) or (13). -/
+-- (12), (13)
 theorem issue_singleton (ctx : Context) (v v' : SignType) :
     ctx.issue [v] [v'] ↔ (ctx.designation.threshold ≤ v ↔ ctx.designation.threshold ≤ v') := by
   simp [Setoid.ker_def, resolve]
@@ -452,7 +452,7 @@ instance : (q : Quantifier) → DecidableRel q.enriched
   | .no => inferInstanceAs (DecidableRel NumberTree.no)
   | .notEvery => fun a b ↦ inferInstanceAs (Decidable (a ≠ 0 ∧ b ≠ 0))
 
-/-- Together with its implicature *not every* is non-monotonic, the observation of §4.2. -/
+-- §4.2
 theorem enriched_notEvery_nonmonotone :
     ¬ Quantifier.notEvery.enriched.ScopeMonotone ∧ ¬ Quantifier.notEvery.enriched.ScopeAntitone :=
   ⟨fun h ↦ (h 0 1 ⟨one_ne_zero, one_ne_zero⟩).1 rfl,

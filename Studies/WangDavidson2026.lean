@@ -65,7 +65,7 @@ def FiltersRL (f : SignType → SignType → SignType) : Prop := ∃ b, f 0 b �
 /-- A connective filters when it does so in either direction. -/
 def Filters (f : SignType → SignType → SignType) : Prop := FiltersLR f ∨ FiltersRL f
 
-/-- Strong Kleene inclusive disjunction filters in both directions (Table 1). -/
+-- Table 1
 theorem filtersLR_sup : FiltersLR (· ⊔ ·) := ⟨1, by decide⟩
 
 theorem filtersRL_sup : FiltersRL (· ⊔ ·) := ⟨1, by decide⟩
@@ -85,7 +85,7 @@ abbrev Val := Bool × Bool
 def orAlts : Finset (Finset Val) :=
   altsFromPreds [fun v ↦ v.1 || v.2, Prod.fst, Prod.snd, fun v ↦ v.1 && v.2]
 
-/-- Only the conjunction is innocently excludable (3b). -/
+-- (3b)
 theorem excluded_or :
     innocent.excluded orAlts (predToFinset fun v : Val ↦ v.1 || v.2)
       = {predToFinset fun v : Val ↦ v.1 && v.2} := by

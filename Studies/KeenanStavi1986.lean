@@ -154,7 +154,6 @@ theorem isAtom_iff {f : ConsGQ α} :
     have hfe : f = ⟨atom p q, conservative_atom p q⟩ := Subtype.ext hf
     exact hfe ▸ isAtom_atom hqp
 
-/-- Every conservative function is the join of the atoms at the pairs where it holds (Appendix). -/
 theorem eq_iSup_atom {f : GQ α} (hf : Conservative f) :
     f = ⨆ pq ∈ {pq : (α → Prop) × (α → Prop) | f pq.1 pq.2}, atom pq.1 pq.2 := by
   funext R T
@@ -165,7 +164,6 @@ theorem eq_iSup_atom {f : GQ α} (hf : Conservative f) :
   · rintro ⟨p, q, h, rfl, rfl⟩
     exact (hf _ _).mpr h
 
-/-- Every atom is a meet of the generators `Sₐ`, `Eₐ` and their complements (Appendix). -/
 theorem atom_eq_iInf (p q : α → Prop) :
     atom p q = (⨅ a ∈ {a | q a}, someOf a) ⊓
       (⨅ a ∈ {a | p a ∧ ¬ q a}, (someOf a)ᶜ ⊓ (allOf a)ᶜ) ⊓
@@ -347,11 +345,11 @@ theorem existentialSubalgebra_le :
     existentialSubalgebra ≤ (conservativeSubalgebra : BooleanSubalgebra (GQ α)) :=
   fun _ hf ↦ hf.conservative
 
-/-- *At least n* is existential ((99)–(100)). -/
+-- (99), (100)
 theorem existential_atLeast (n : ℕ) : Existential (atLeast (α := α) n) := fun R T ↦ by
   simp only [atLeast_apply, and_true]
 
-/-- *Every* is not existential (Section 3.3). -/
+-- Section 3.3
 theorem not_existential_every [Nonempty α] : ¬ Existential (every : GQ α) := fun h ↦ by
   obtain ⟨b⟩ := ‹Nonempty α›
   exact absurd ((h (fun _ ↦ True) (· ≠ b)).mpr fun _ _ ↦ trivial) fun h' ↦ (h' b trivial) rfl
@@ -374,7 +372,7 @@ theorem theN_two_eq_both [Finite α] : theN 2 = (both : GQ α) := by
   change _ ↔ {x | R x ∧ ¬ T x}.ncard = 0 ∧ {x | R x ∧ T x}.ncard = 2
   omega
 
-/-- *The n* is not existential when `n` is below the universe size (Section 3.3). -/
+-- Section 3.3
 theorem not_existential_theN [Fintype α] {n : ℕ} (hn : n < Fintype.card α) :
     ¬ Existential (theN (α := α) n) := fun h ↦ by
   have h1 : theN (α := α) n (fun x ↦ True ∧ segment n x) (fun _ ↦ True) := by
@@ -389,7 +387,7 @@ theorem not_existential_theN [Fintype α] {n : ℕ} (hn : n < Fintype.card α) :
 /-- *no ... but J* holds when restrictor and scope meet in exactly the individual `a` ((42)). -/
 def noBut (a : α) : GQ α := fun R T ↦ R ⊓ T = ident a
 
-/-- *no ... but John* is existential ((103)). -/
+-- (103)
 theorem existential_noBut (a : α) : Existential (noBut a) := fun R T ↦ by
   show R ⊓ T = ident a ↔ (R ⊓ T) ⊓ (⊤ : α → Prop) = ident a
   rw [inf_top_eq]
@@ -432,7 +430,6 @@ def cardinalSubalgebra : BooleanSubalgebra (GQ α) where
 @[simp] theorem mem_cardinalSubalgebra {f : GQ α} : f ∈ cardinalSubalgebra ↔ Cardinal f :=
   Iff.rfl
 
-/-- A cardinal function is existential (PROP 14(c)). -/
 theorem Cardinal.existential {f : GQ α} (hf : Cardinal f) : Existential f := fun R T ↦
   hf R T _ _ (Nat.card_congr (Equiv.subtypeEquivRight fun _ ↦ (iff_of_eq (and_true _)).symm))
 
@@ -507,7 +504,6 @@ theorem card_cardinal [Fintype α] :
   rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop,
     Nat.card_eq_fintype_card, Fintype.card_fin]
 
-/-- The atoms of the cardinal algebra are the *exactly k*, as the Appendix remarks. -/
 theorem isAtom_cardinal_iff [Fintype α] {f : cardinalSubalgebra (α := α)} :
     IsAtom f ↔ ∃ k : Fin (Fintype.card α + 1), f.1 = exactly (k : ℕ) := by
   rw [← OrderIso.isAtom_iff cardinalOrderIso f, Set.isAtom_iff]
@@ -566,8 +562,7 @@ theorem cardinalSubalgebra_le_logical :
     cardinalSubalgebra ≤ (logicalSubalgebra : BooleanSubalgebra (GQ α)) :=
   fun _ hf ↦ ⟨(Cardinal.existential hf).conservative, Cardinal.quantityInvariant hf⟩
 
-/-- Beyond one individual the cardinal functions are a proper subclass of the logical ones,
-witnessed by *every* (Section 3.5). -/
+-- Section 3.5
 theorem cardinalSubalgebra_lt_logical [Nontrivial α] :
     cardinalSubalgebra < (logicalSubalgebra : BooleanSubalgebra (GQ α)) := by
   refine cardinalSubalgebra_le_logical.lt_of_ne fun h ↦ not_cardinal_every (α := α) ?_
@@ -642,7 +637,6 @@ theorem card_logical [Fintype α] :
 def exactlyOfThe (m n : ℕ) : GQ α := fun R T ↦
   Nat.card {x // R x} = n ∧ Nat.card {x // R x ∧ T x} = m
 
-/-- The atoms of the logical algebra are the *exactly m of the n*, as the Appendix remarks. -/
 theorem isAtom_logical_iff [Fintype α] {f : logicalSubalgebra (α := α)} :
     IsAtom f ↔ ∃ mm : Triangle (Fintype.card α), f.1 = exactlyOfThe mm.1.2 mm.1.1 := by
   rw [← OrderIso.isAtom_iff logicalOrderIso f, Set.isAtom_iff]

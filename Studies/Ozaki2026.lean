@@ -79,8 +79,7 @@ theorem alternation_verbs_unaccusative :
         v.passivizable = false := by
   decide
 
-/-- The direct passive requires a verb introducing an external argument, which the
-non-thematic head does not provide, so (20) is out. -/
+-- (20)
 theorem not_directPassivizable :
     ¬ Japanese.DirectPassivizable Japanese.hanareru ∧ ¬ anticausative.AssignsTheta := by
   decide

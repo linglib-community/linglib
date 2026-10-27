@@ -152,7 +152,7 @@ theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition C k
     IsAntichain (· ≤ ·) {x | Q x} :=
   (setOfPred_maximal_antichain _).subset h
 
-/-- The members of a non-overlapping partition (66) form an antichain. -/
+-- (66)
 theorem isAntichain_of_disjointPred [NoBotOrder E] {Q : E → Prop}
     (h : DisjointPred Overlap {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
   fun x hx y hy hxy hle ↦ h ⟨x, hx, y, hy, hxy, .of_le (not_isBot x) hle⟩

@@ -65,7 +65,6 @@ def IsScale (P : Fin (n + 1) → Set W) : Prop := StrictAnti P
 
 variable {P : Fin (n + 1) → Set W}
 
-/-- The stronger member entails the weaker. -/
 theorem IsScale.subset (h : IsScale P) {i j : Fin (n + 1)} (hij : i ≤ j) : P j ⊆ P i :=
   h.antitone hij
 
@@ -106,7 +105,7 @@ theorem atLeast_succ_ssubset (m : ℕ) :
     Comparison.ge.interval (m + 1) ⊂ Comparison.ge.interval m :=
   Set.Ici_ssubset_Ici.2 m.lt_succ_self
 
-/-- (1.59b): negating a cardinal contradicts its lower bound, *fewer than m*. -/
+-- (1.59b)
 theorem compl_atLeast_eq_fewerThan (m : ℕ) :
     (Comparison.ge.interval m)ᶜ = Comparison.lt.interval m :=
   Set.compl_Ici
@@ -115,14 +114,12 @@ theorem bare_eq_atLeast_inter_atMost (m : ℕ) :
     Comparison.eq.interval m = Comparison.ge.interval m ∩ Comparison.le.interval m := by
   simp [Set.Ici_inter_Iic]
 
-/-- (1.60a): *I have three children, in fact more* is consistent, so the upper bound is no
-entailment. -/
+-- (1.60a)
 theorem atLeast_consistent_with_more (m : ℕ) :
     (Comparison.ge.interval m ∩ Comparison.gt.interval m).Nonempty :=
   ⟨m + 1, by simp⟩
 
-/-- (1.60b): *I have only three children, in fact fewer* is contradictory, since *only* asserts
-the upper bound. -/
+-- (1.60b)
 theorem only_inconsistent_with_fewer (m : ℕ) :
     Disjoint (Comparison.ge.interval m ∩ Comparison.le.interval m) (Comparison.lt.interval m) := by
   simp [Set.Ici_inter_Iic]
@@ -150,8 +147,7 @@ instance : DecidablePred (· ∈ mostQ n) := fun c ↦ decidable_of_iff (n < 2 *
 
 instance : DecidablePred (· ∈ allQ n) := fun c ↦ decidable_of_iff (c.val = n) Iff.rfl
 
-/-- The positive scale (2.4a) on its proportional members: on a domain of at least three
-individuals *all* strictly entails *most*, which strictly entails *some*. -/
+-- (2.4a)
 theorem allQ_ssubset_mostQ (hn : 3 ≤ n) : allQ n ⊂ mostQ n :=
   ⟨λ c hc => by simp only [allQ, mostQ, Set.mem_ofPred_eq] at hc ⊢; omega, λ h => by
     have := h (a := ⟨n - 1, by omega⟩) (by simp only [mostQ, Set.mem_ofPred_eq]; omega)
@@ -168,12 +164,11 @@ theorem allQ_subset_someQ (hn : 1 ≤ n) : allQ n ⊆ someQ n := λ c hc => by
 theorem someQ_not_subset_notAllQ (hn : 1 ≤ n) : ¬ someQ n ⊆ notAllQ n := λ h =>
   h (a := Fin.last n) (by simp [someQ]; omega) (by simp)
 
-/-- (2.24b): *some but not all* is not redundant, so *not all* is an implicature of *some*
-rather than an entailment. -/
+-- (2.24b)
 theorem some_notAll_not_redundant (hn : 1 ≤ n) : ¬ Redundant (someQ n) (notAllQ n) := by
   rw [redundant_iff_subset]; exact someQ_not_subset_notAllQ hn
 
-/-- (2.24a): *somebody left, in fact everyone did* is consistent. -/
+-- (2.24a)
 theorem someQ_inter_allQ_nonempty (hn : 1 ≤ n) : (someQ n ∩ allQ n).Nonempty :=
   ⟨Fin.last n, by simp [someQ]; omega, by simp [allQ]⟩
 
@@ -304,8 +299,7 @@ theorem orConn_compatible : CompatibleConn orConn := ⟨.onlyA, trivial, trivial
 theorem andConn_not_compatible : ¬ CompatibleConn andConn := by
   rintro ⟨w, hw, hw'⟩; cases w <;> simp [andConn, ConnWorld.swap] at hw hw'
 
-/-- (2.46)–(2.48): *and* entails *or*, and *or* implicates rather than entails *not and*, the
-implicature being cancelled by *or both*. -/
+-- (2.46), (2.48)
 theorem orConn_not_subset_compl_andConn : ¬ ∀ w, orConn w → ¬ andConn w :=
   λ h => h .both trivial trivial
 
@@ -355,13 +349,11 @@ def cardinal? (e : Datum) : Option (CardinalTest × ℕ) := do
         ("contradicting the assertion of only", .contradictOnly)],
     ← e.nat? "base")
 
-/-- The cardinal test rows of Section 1.21: a row is acceptable exactly where its test's claim
-holds at its base numeral. -/
+-- Section 1.21
 theorem cardinal_rows :
     Datum.Checks cardinal? (fun p ↦ .ofProp (p.1.claim p.2)) Examples.all 4 := by decide
 
-/-- (2.46): *and* entails *or*, and *or* only implicates *not and*, since the world of both
-disjuncts verifies *or*. -/
+-- (2.46)
 theorem connective_scale_row :
     ex2_46.judgment = .acceptable ∧ (∀ w, andConn w → orConn w) ∧
       ¬ ∀ w, orConn w → ¬ andConn w :=
@@ -392,14 +384,11 @@ def quantifier? (e : Datum) : Option RowQuantifier :=
   e.parse? "quantifier"
     [("all", .all), ("most", .most), ("half", .half), ("some", .some)]
 
-/-- The lower-negation rows (4.56) and the *some* of (4.60a): a row is acceptable exactly where
-its quantifier is compatible with a lower negation. -/
+-- (4.56), (4.60a)
 theorem compatibility_rows :
     Datum.Checks quantifier? (fun q ↦ .ofProp (Compatible q.set)) Examples.all 5 := by decide
 
-/-- (4.57): whatever expected size *many* demands, it is monotone in the count, so *many* and
-*not many* cannot both accept a lower negation (`not_compatible_compl`), and the pair splits as
-the judgments do. -/
+-- (4.57)
 theorem many_rows {Q : Set (Fin (n + 1))} (hQ : IsUpward Q) :
     ex4_57a.judgment = .acceptable ∧
       ex4_57a_prime.judgment = .ungrammatical ∧
@@ -445,9 +434,7 @@ def lexicalization? (e : Datum) : Option (RowConnective × NegationRoute) := do
       [("and", .and), ("both", .and), ("or", .or), ("either", .or), ("either...or", .or)],
     ← e.parse? "route" [("inner", .inner), ("outer", .outer)])
 
-/-- The connective lexicalization rows (4.49), (4.50) and (4.60f): a negated connective
-lexicalizes exactly on the route its compatibility licenses, so *nor* and *neither* exist while
-*nand* and *noth* do not. -/
+-- (4.49), (4.50), (4.60f)
 theorem lexicalization_rows :
     Datum.Checks lexicalization? (fun p ↦ .ofProp (p.2.licensed p.1)) Examples.all 5 := by
   decide

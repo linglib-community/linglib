@@ -177,8 +177,7 @@ def CG (G : Rep Seg Seg) : Prop := (∃ γs, G = gen γs) ∧ G.Free voicingGram
 /-- R(CG(φ_apba)) (Def. 25), on boundary-augmented strings. -/
 def voicing (w v : List Seg) : Prop := relRep CG (.lb :: w ++ [.rb]) (.lb :: v ++ [.rb])
 
-/-- Def. 25 unwound: `(w, v)` is in the relation iff some Γ-string spells both and its
-graph is free of the grammar. -/
+-- Def. 25
 theorem voicing_iff {w v : List Seg} :
     voicing w v ↔ ∃ γs, γs.map Pair.input = w ∧ γs.map Pair.output = v ∧
       (gen γs).Free voicingGrammar := by
@@ -236,7 +235,7 @@ def voiceRule (w : List Seg) : List Seg :=
 theorem voiceRule_rows : ∀ r ∈ rows, voiceRule r.input = r.output ↔ r.inRvoice = true := by
   decide
 
-/-- The grammar admits `bpa ↦ bba`: no subgraph of (7.22) mentions a `b` beside the target. -/
+-- (7.22)
 theorem voicing_bpa_bba : voicing [.b, .p, .a] [.b, .b, .a] := by decide
 
 /-- So the identity `R(CG(φ_apba)) = Rvoice` that the text leaves to the reader fails: the

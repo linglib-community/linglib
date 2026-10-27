@@ -87,7 +87,7 @@ def freeForms : Inventory Morph where
     if m = husband ∨ m = cafe then some .object
     else if m = work then some .action else if m = nice then some .property else none
 
-/-- On these free forms the roots of Definition 6 are the contentful morphs. -/
+-- Definition 6
 theorem roots_contentful :
     ∀ m ∈ freeForms.forms.flatten,
       freeForms.IsRoot m ↔ freeForms.IsContentful m := by

@@ -220,8 +220,7 @@ theorem weak_pronoun_outer_only (overt : Prop) :
   ⟨(derivable_inner_iff _).2 (by simp [Complement.IsBarrier]), derivable_outer _,
     fun h ↦ ((derivable_inner_iff _).1 h).2.1 trivial⟩
 
-/-- In (161) and (162), weak pronouns are also barred from the inner order of prepositional and
-infinitival complex constructions. -/
+-- (161), (162)
 theorem weak_pronoun_complex (overt : Prop) :
     ¬ Derivable (.sc .adpositional) overt True False .inner :=
   fun h ↦ ((derivable_inner_iff _).1 h).2.1 trivial
@@ -252,8 +251,7 @@ section Extraction
 
 variable (k : Complement) {overt weak modified : Prop}
 
-/-- In a nominal complex particle construction without overt incorporation, the predicate cannot be
-extracted (60). -/
+-- (60)
 theorem not_predicateExtractable_of_isBarrier (hk : k.IsBarrier) {s : Strategy}
     (hs : Licensed k overt weak modified s) (ho : ¬ overt) : ¬ PredicateExtractable s := by
   cases s

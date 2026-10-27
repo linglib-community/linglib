@@ -299,7 +299,6 @@ theorem IsNull.isCount (h : X.IsNull) : X.IsCount := by
   rw [IsCount, h]
   exact pairwiseDisjoint_empty
 
-/-- Null i-sets are neat, and they are mess by definition. -/
 theorem IsNull.isNeat (h : X.IsNull) : X.IsNeat := by
   rw [IsNeat, h]
   exact ⟨fun _ hb ↦ hb.elim, pairwiseDisjoint_empty.subset fun _ hz ↦ hz.1.1⟩
@@ -421,7 +420,6 @@ def sumNeutral (X₀ : Set B) : ISet B := singular (sumClosure X₀)
 /-- An i-set is sum neutral, like *poultry*, if it is `⟨*X₀, *X₀⟩` for a disjoint set `X₀`. -/
 def IsSumNeutral (X : ISet B) : Prop := ∃ X₀ : Set B, X₀.PairwiseDisjoint id ∧ X = sumNeutral X₀
 
-/-- Sum neutral i-sets are neat. -/
 theorem IsSumNeutral.isNeat (h : X.IsSumNeutral) : X.IsNeat := by
   obtain ⟨X₀, hX₀, rfl⟩ := h
   have hsub : X₀ \ {⊥} ⊆ sumClosure X₀ := sdiff_subset.trans (sumClosure.le_closure X₀)

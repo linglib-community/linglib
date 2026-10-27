@@ -162,8 +162,6 @@ felicitous only where the speaker holds the attitude; any other sentence is feli
 everywhere. -/
 def expressiveCI (φ : Tree Cat EWord) : Set World := {w | HasEpithet φ → w = true}
 
-/-- The epithet sentence has stronger content than the bare one, since its felicity set is a
-proper subset. -/
 theorem epithet_ciStronger_than_bare :
     expressiveCI bastardJohnArrived ⊂ expressiveCI johnArrived :=
   LE.le.ssubset_of_not_superset (fun _ _ h ↦ absurd h (by decide))

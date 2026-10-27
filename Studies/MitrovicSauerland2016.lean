@@ -78,15 +78,13 @@ def mu (R S : α → Prop) : Prop := R ≤ S
 /-- The shift from an individual to its characteristic property, the singleton. -/
 def shift (a : α) : α → Prop := (· = a)
 
-/-- The subset relation is the generalized quantifier *every*, so a μ particle on a restrictor
-is a universal quantifier, (15). -/
+-- (15)
 theorem mu_eq_every : (mu : GQ α) = GQ.every := rfl
 
 theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=
   funext fun _ ↦ propext ⟨fun h ↦ h a rfl, fun h _ hx ↦ hx ▸ h⟩
 
-/-- J′ applied to the μ phrases of two shifted individuals gives the meet of their Montague lifts
-(13). -/
+-- (13)
 theorem conjunction_eq {j : Coordinator} (hj : j.role = .conjunctive) (a b : α) :
     j.denote {mu (shift a), mu (shift b)} = NP.individual a ⊓ NP.individual b := by
   rw [mu_shift, mu_shift, Coordinator.denote_of_conjunctive hj, sInf_pair]
@@ -117,8 +115,7 @@ theorem muPrime_iff_mem_lowerClosure : muPrime x P ↔ x ∈ lowerClosure {y | P
 
 theorem muPrime_of_le (hxy : x ≤ y) (hy : P y) : muPrime x P := ⟨y, sup_eq_left.2 hxy, hy⟩
 
-/-- The conjunction of two μ′ phrases, (21), holds of a predicate true of their sum, the
-collective reading of (19). -/
+-- (21), (19)
 theorem muPrime_of_collective {a b : α} (h : P (a ⊔ b)) : muPrime a P ∧ muPrime b P :=
   ⟨muPrime_of_le le_sup_left h, muPrime_of_le le_sup_right h⟩
 
@@ -143,12 +140,12 @@ theorem mu_of_conjunctive_particle {q : IndeterminateQuantifier}
   rw [IndeterminateQuantifier.reading_of_conjunctive hq]
   rfl
 
-/-- The universal reading of Japanese *dare-mo* 'everyone' is μ, (1a). -/
+-- (1a)
 theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
     (h : d ∈ ⟦Japanese.Determiners.dareMo⟧) : d α = mu :=
   mu_of_conjunctive_particle rfl h
 
-/-- Latin *quis-que* 'each' is μ on the indeterminate *quis*, (40). -/
+-- (40)
 theorem quisque_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
     (h : d ∈ ⟦Latin.Determiners.quisque⟧) : d α = mu :=
   mu_of_conjunctive_particle rfl h

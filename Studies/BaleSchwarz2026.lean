@@ -58,7 +58,7 @@ variable {E : Type*} {w : World E} {D D₁ D₂ : QuantityDimension} {x y : E} {
 
 /-! ### Multiplication only -/
 
-/-- The pure number `μ_dim(r)(y) / r` is the unique `n` with `n ⋅ r = μ_dim(r)(y)` ((21)). -/
+-- (21)
 theorem anaphoricPer_eq_pure_iff :
     anaphoricPer w r y = pure n ↔ pure n * r.quantity = w.quantity r.dimension y :=
   r.isUnit_quantity.div_eq_iff.trans eq_comm

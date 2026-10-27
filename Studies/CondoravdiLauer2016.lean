@@ -107,27 +107,22 @@ downward and upward entailing, `WantSufficient.anti` and `WantNecessary.mono`. T
 mere-desire and effective readings that [hare-1971] and [levinson-2003] observe are two
 backgrounds for one predicate. -/
 
-/-- Exact-match *want*, (71c), is not upward entailing in its complement, §5.5: the single
-preference `{w}` is not a preference for `Set.univ`. -/
+-- (71c), §5.5
 theorem not_monotone_want [Nontrivial W] :
     ¬ Monotone (Want (fun (_ : Unit) _ ↦ .single {w}) () · w) := fun h ↦
   Set.singleton_ne_univ w (h (Set.subset_univ {w}) ⟨rfl, fun _ _ h ↦ h⟩).1.symm
 
-/-- Nor is it downward entailing, since the single preference `Set.univ` is not a preference for
-`{w}`. -/
 theorem not_antitone_want [Nontrivial W] :
     ¬ Antitone (Want (fun (_ : Unit) _ ↦ .single Set.univ) () · w) := fun h ↦
   Set.singleton_ne_univ w (h (Set.subset_univ {w}) ⟨rfl, fun _ _ h ↦ h⟩).1
 
-/-- Wanting `p` and wanting `q` are compatible even when `p` and `q` are not, on the mere-desire
-reading of (52) and (53) (§2.3, §5.4). -/
+-- (52), (53), §2.3, §5.4
 theorem want_both (p q : Set W) :
     Want (fun (_ : Unit) _ ↦ .discrete {p, q}) () p w ∧
       Want (fun (_ : Unit) _ ↦ .discrete {p, q}) () q w := by
   simp [Want]
 
-/-- Under consistency, three effective wants are jointly compatible with the agent's beliefs, as in
-Paris and Rome (56), (58) (§5.2). -/
+-- (56), (58), §5.2
 theorem no_third_effective {r : Set W} (hC : (P a w).Consistent (B w)) (hp : Want P a p w)
     (hq : Want P a q w) (hr : Want P a r w) : (B w ∩ (p ∩ q ∩ r)).Nonempty :=
   hC.inter_sInter_maxElts_nonempty.mono <| Set.inter_subset_inter_right _ <|
@@ -139,8 +134,7 @@ inconsistent. -/
 def threeWay : PreferenceStructure (Fin 3) :=
   .discrete {{w | w ≠ 2}, {w | w ≠ 0}, {w | w ≠ 1}}
 
-/-- By footnote 29, consistency (66) is stronger than pairwise compatibility, which is what the
-weaker version of [condoravdi-lauer-2011] leaves. -/
+-- footnote 29, (66) [condoravdi-lauer-2011]
 theorem threeWay_pairwise_not_consistent :
     (∀ p ∈ threeWay.prefs, ∀ q ∈ threeWay.prefs, (p ∩ q).Nonempty) ∧
       ¬ threeWay.Consistent Set.univ := by
@@ -153,8 +147,7 @@ theorem threeWay_pairwise_not_consistent :
 
 /-! ### Previous approaches -/
 
-/-- Necessity under the designated-goal ordering source `{p}` is [von-fintel-iatridou-2005]'s *have
-to* on reading (26) (§3.2.2), unlike the world-varying source of (88) (footnote 46). -/
+-- (26), §3.2.2, (88), footnote 46 [von-fintel-iatridou-2005]
 theorem necessity_designatedGoal_iff_haveTo {f : Background W} {p r : W → Prop}
     (h : ((f.restrict p).accessibleWorlds w).Nonempty) :
     necessity f (fun _ ↦ {p}) r w ↔ VonFintelIatridou2005.haveTo f p r w := by
@@ -164,8 +157,7 @@ theorem necessity_designatedGoal_iff_haveTo {f : Background W} {p r : W → Prop
 
 /-! ### Double-modal structure -/
 
-/-- A single necessity modal restricted by the antecedent validates the strengthening that
-[kaufmann-schwager-2009] reject, unlike (81) to (83) and the double-modal (76b) (§6.2). -/
+-- (81), (83), (76b), §6.2 [kaufmann-schwager-2009]
 theorem single_modal_strengthening {f g : Background W} {α β γ : W → Prop}
     (h₁ : conditionalNecessity f g α γ w)
     (h₂ : conditionalNecessity f g (fun v ↦ α v ∧ β v) (fun v ↦ ¬ γ v) w) :
@@ -184,8 +176,7 @@ maximal preferences of `P a v`, so that `orderingSource EP a` is the paper's `g_
 def orderingSource (P : A → W → PreferenceStructure W) (a : A) : Background W :=
   fun v ↦ (P a v).maxElts
 
-/-- Under consistency, the best worlds are the accessible worlds realizing every maximal preference
-(§2.3). -/
+-- §2.3
 theorem bestWorlds_orderingSource {f : Background W} {v : W}
     (hC : (P a v).Consistent (f.accessibleWorlds v)) :
     bestWorlds f (orderingSource P a) v = f.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts := by
@@ -200,15 +191,13 @@ private theorem mem_bestWorlds_bot_restrict {α : W → Prop} {v : W} (hα : α 
   rw [bestWorlds_bot, Background.mem_accessibleWorlds_restrict]
   exact ⟨by simp, hα⟩
 
-/-- By (90), under consistency, an effective preference for `p` excludes one for any `q` the agent
-believes incompatible with `p`. -/
+-- (90)
 theorem want_disjoint (hC : ∀ w, (P a w).Consistent (B w)) (h : ∀ w, B w ∩ (p ∩ q) = ∅) :
     Disjoint {w | Want P a p w} {w | Want P a q w} :=
   Set.disjoint_left.2 fun w hp hq ↦
     ((hC w).inter_inter_nonempty_of_mem_maxElts hp hq).ne_empty (h w)
 
-/-- The antecedent's restriction removes every world with a conflicting effective preference,
-§7.1.1, so an actual preference for Hoboken never reaches the priority modal. -/
+-- §7.1.1
 theorem not_want_of_mem_restricted {f : Background W} (hC : ∀ w, (P a w).Consistent (B w))
     (h : ∀ w, B w ∩ (p ∩ q) = ∅) {v : W}
     (hv : v ∈ (f.restrict (Want P a p)).accessibleWorlds w) : ¬ Want P a q v :=
@@ -319,8 +308,7 @@ theorem harlem_inter_hoboken : harlem ∩ hoboken = ∅ := by
   ext
   simp [harlem, hoboken]
 
-/-- By (90), the Hoboken world is in the speaker's belief state but outside the antecedent's
-restriction of it (§7.1.1). -/
+-- (90), §7.1.1
 theorem w₀_excluded :
     w₀ ∈ fBelS.accessibleWorlds w₀ ∧
       w₀ ∉ (fBelS.restrict (Want ep () harlem)).accessibleWorlds w₀ :=
@@ -347,7 +335,7 @@ theorem anankastic_harlem :
       (necessity fHist (orderingSource ep ()) (· ∈ aTrain)) w :=
   anankastic_dest fun u hu ↦ by simp [harlem, aTrain, hu]
 
-/-- The Hoboken sentence (15) is true alongside it. -/
+-- (15)
 theorem anankastic_hoboken :
     conditionalNecessity fBelS ⊥ (Want ep () hoboken)
       (necessity fHist (orderingSource ep ()) (· ∈ path)) w :=
@@ -364,8 +352,7 @@ theorem not_possibility_path :
   have := (mem_fHist.1 hu.1).2
   simp_all [Goal.dest, harlem, path]
 
-/-- On the mere-desire construal of (105), the Harlem sentence is false at the Hoboken world
-(§7.2.1). -/
+-- (105), §7.2.1
 theorem not_anankastic_desire :
     ¬ conditionalNecessity fBelS ⊥ (Want desire () harlem)
       (necessity fHist (orderingSource ep ()) (· ∈ aTrain)) w₀ := fun h ↦
@@ -378,14 +365,13 @@ private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource 
     ((consistent_ep w₀).mono fun _ hu ↦ mem_fBelS.2 (mem_fHist.1 hu).2)]
   exact ⟨mem_fBelS.2 rfl, by simp [ep, w₀]; exact nofun⟩
 
-/-- On Sæbø's analysis (§2.3), adding Harlem to the bouletic ordering source makes the Harlem
-sentence false at the Hoboken world. -/
+-- §2.3
 theorem saebo_harlem :
     ¬ necessity fBelS ((orderingSource ep ()).restrict (· ∈ harlem)) (· ∈ aTrain) w₀ :=
   not_necessity_insert (q := (· ∈ hoboken)) ⟨rfl, fun _ _ h ↦ h⟩
     (fun _ h h' ↦ h h') w₀_mem_bestWorlds nofun nofun
 
-/-- On the same analysis (14) comes out true, since some best world takes the PATH train. -/
+-- (14)
 theorem saebo_path :
     possibility fBelS ((orderingSource ep ()).restrict (· ∈ harlem)) (· ∈ path) w₀ :=
   ⟨w₀, mem_bestWorlds_insert (q := (· ∈ hoboken)) ⟨rfl, fun _ _ h ↦ h⟩
@@ -436,7 +422,6 @@ theorem comfort_ne_cheap : comfort ≠ cheap :=
 /-- The addressee's preferences. -/
 def prefs : Set (Set World) := {vladivostok, comfort, cheap}
 
-/-- Unranked, the three preferences are inconsistent, so an effective structure must rank them. -/
 theorem not_consistent_discrete : ¬ (PreferenceStructure.discrete prefs).Consistent Set.univ :=
   fun h ↦ by
     obtain ⟨u, -, hu⟩ := h.inter_sInter_maxElts_nonempty
@@ -493,7 +478,6 @@ theorem haveTo_chinese_comfortFirst :
   have h₂ : u ∈ comfort := hu _ ⟨.inr (.inl rfl), comfort_ne_cheap⟩
   cases u <;> simp_all [vladivostok, comfort, takeChinese]
 
-/-- With cost ranked over comfort the addressee has to take the Russian train instead. -/
 theorem haveTo_russian_costFirst :
     conditionalNecessity ⊥ ⊥ (Want costFirst () vladivostok)
       (necessity ⊥ (orderingSource costFirst ()) (· ∈ takeRussian)) w := by
@@ -504,8 +488,7 @@ theorem haveTo_russian_costFirst :
   have h₃ : u ∈ cheap := hu _ ⟨.inr (.inr rfl), comfort_ne_cheap.symm⟩
   cases u <;> simp_all [vladivostok, cheap, takeRussian]
 
-/-- So with cost ranked over comfort (92) is false, the judgment von Fintel and Iatridou report,
-§7.1.1. -/
+-- (92), §7.1.1
 theorem not_haveTo_chinese_costFirst :
     ¬ conditionalNecessity ⊥ ⊥ (Want costFirst () vladivostok)
       (necessity ⊥ (orderingSource costFirst ()) (· ∈ takeChinese)) w := fun h ↦ by
@@ -574,7 +557,7 @@ theorem should_vaccine :
     exacts [rfl, fun _ ↦ rfl]
   · exact (hu safe ⟨.inr rfl, fun _ _ h ↦ h⟩) (hu travel ⟨.inl rfl, fun _ _ h ↦ h⟩)
 
-/-- On the strong construal (29b) is false, since some way of travelling skips the vaccine. -/
+-- (29b)
 theorem not_should_vaccine_strong :
     ¬ conditionalNecessity ⊥ ⊥ (Want strong () travel)
       (necessity ⊥ (orderingSource strong ()) (· ∈ vaccinated)) w := fun h ↦
@@ -683,8 +666,7 @@ theorem should_ride :
   · exact h
   · exact nomatch h.symm.trans ((mem_fHist.1 hu).1.trans hvr)
 
-/-- A single modal restricted by both antecedents and ordered by the addressee's goals cannot make
-(83a) and (83b) both true. -/
+-- (83a), (83b)
 theorem not_single_modal :
     ¬ (conditionalNecessity ⊥ (orderingSource ep ()) (Want ep () noon) (· ∈ byTrain) w ∧
       conditionalNecessity ⊥ (orderingSource ep ()) (fun v ↦ Want ep () noon v ∧ v ∈ repairs)
@@ -753,15 +735,13 @@ def Construal.ofRow (row : Datum) : Option Construal := do
       ("nearAnankastic", .nearAnankastic), ("nonAnankastic", .nonAnankastic)],
     ← row.parse? "implication" implications⟩
 
-/-- An anankastic interpretation requires effective *want* and a teleological modal over effective
-preferences (88) (§7.2.1). -/
+-- (88), §7.2.1
 theorem anankastic_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "construal" →
     ∃ c ∈ Construal.ofRow row,
       (c.interpretation = .anankastic → c.want = .effective ∧ c.modal = .teleological) := by
   decide
 
-/-- With effective *want* and a teleological modal, a row is anankastic iff it invites a means or a
-precondition, unlike the near-anankastics of §4 (§7.1.2). -/
+-- §4, §7.1.2
 theorem implication_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "construal" →
     ∃ c ∈ Construal.ofRow row, c.want = .effective → c.modal = .teleological →
       (c.interpretation = .anankastic ↔
@@ -773,8 +753,7 @@ def WantReading.ofRow (row : Datum) : Option WantReading := do
   guard (row.feature? "construction" = some "incompatibleWants")
   row.parse? "construal" [("mere", WantReading.mere), ("effective", .effective)]
 
-/-- In (52) to (55), two wants known to be incompatible are felicitous exactly on the mere-desire
-reading. -/
+-- (52), (55)
 theorem incompatible_rows : ∀ row ∈ Examples.all,
     row.feature? "construction" = some "incompatibleWants" →
     ∃ r ∈ WantReading.ofRow row, (row.JudgedFelicitous ↔ r = .mere) := by
@@ -785,8 +764,7 @@ def moodOfRow (row : Datum) : Option Mood.Grammatical := do
   guard (row.feature? "construction" = some "mood")
   row.parse? "mood" [("indicative", Mood.Grammatical.indicative), ("subjunctive", .subjunctive)]
 
-/-- In (91) and (98), a conditional or purpose construction is acceptable exactly in the
-subjunctive. -/
+-- (91), (98)
 theorem mood_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "mood" →
     ∃ m ∈ moodOfRow row, (row.judgment = .acceptable ↔ m = .subjunctive) := by
   decide
@@ -796,7 +774,7 @@ def Implication.ofRow (row : Datum) : Option Implication := do
   guard (row.feature? "construction" = some "purpose")
   row.parse? "implication" implications
 
-/-- Purpose constructions are acceptable exactly with means and preconditions (§7.1.3). -/
+-- §7.1.3
 theorem purpose_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "purpose" →
     ∃ i ∈ Implication.ofRow row,
       (row.judgment = .acceptable ↔ i = .means ∨ i = .precondition) := by

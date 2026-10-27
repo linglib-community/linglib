@@ -135,7 +135,7 @@ def cnpc (f : Filler) (np : IslandNP) : Stimulus :=
 /-- The baseline of (48) has the which-N filler, as in *Emma doubted that we had captured __*. -/
 def cnpcBaseline : Stimulus := ⟨.whichN, [.name, .other, .that, .pronoun, .other, .other]⟩
 
-/-- A which-N filler eases the complex-NP island for every island NP (§5.2). -/
+-- §5.2
 theorem cnpc_which_easier (np : IslandNP) : (cnpc .whichN np).profile < (cnpc .bare np).profile :=
   which_easier _
 
@@ -163,7 +163,7 @@ def whIsland (f : Filler) : Stimulus := ⟨f, [.other, .name, .other, .whether, 
 /-- The baseline of (49) has the bare filler, as in *did Albert learn that they dismissed __*. -/
 def whIslandBaseline : Stimulus := ⟨.bare, [.other, .name, .other, .that, .pronoun, .other]⟩
 
-/-- A which-N filler eases the wh-island (§6.2). -/
+-- §6.2
 theorem whIsland_which_easier : (whIsland .whichN).profile < (whIsland .bare).profile :=
   which_easier _
 

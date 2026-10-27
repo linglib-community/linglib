@@ -90,13 +90,11 @@ def Odd (Wck : Set W) (ALT : Set (Set W)) (φ : Set W) : Prop :=
 private theorem disjoint_diff_iff {s t u : Set W} : Disjoint (s \ t) u ↔ s ∩ u ⊆ t := by
   simp only [disjoint_left, subset_def, mem_sdiff, mem_inter_iff, and_imp, not_imp_not]
 
-/-- (34), (82): against one alternative that `φ` can hold without, `φ` is odd exactly when common
-knowledge makes it entail the alternative. -/
+-- (34), (82)
 theorem odd_pair_iff (h : (φ \ ψ).Nonempty) : Odd Wck {φ, ψ} φ ↔ φ ∩ Wck ⊆ ψ := by
   rw [Odd, exhIE_pair_sdiff φ h, disjoint_diff_iff]
 
-/-- (53), (97), (109): against the alternatives `ψP i`, blind strengthening denies them all when
-`φ` can hold with all of them false. -/
+-- (53), (97), (109)
 theorem exhIE_insert_range {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i, ψP i).Nonempty) :
     exhIE (insert φ (range ψP)) φ = φ \ ⋃ i, ψP i := by
   have hexh : exh (insert φ (range ψP)) φ = φ \ ⋃ i, ψP i := by
@@ -134,7 +132,7 @@ def exhR (R : Set W → Prop) (ALT : Set (Set W)) (φ : Set W) : Set W :=
 
 variable {R : Set W → Prop} {ALT : Set (Set W)}
 
-/-- (45): an alternative equivalent to the utterance given common knowledge is relevant. -/
+-- (45)
 theorem IsRelevance.relevant (hR : IsRelevance Wck φ R) (h : ψ ∩ Wck = φ ∩ Wck) : R ψ :=
   (hR.congr h).2 hR.uttered
 
@@ -198,8 +196,7 @@ each `N`. -/
 def alts (N : E → Prop) (D : I → Prop) (R : E → I → Prop) : Set (Set (E → I → Prop)) :=
   insert (narrowSome N D) (range fun d : {d // N d} ↦ definite R d)
 
-/-- (52), (96), (108): the definite alternatives together amount to the reading with the
-existential taking widest scope, (51), (95), (107). -/
+-- (52), (96), (108), (51), (95), (107)
 theorem iUnion_definite :
     ⋃ d : {d // N d}, definite R d = {f | GQ.some N fun d ↦ GQ.every (R d) (f d)} := by
   ext f
@@ -296,7 +293,7 @@ section IndividualLevel
 variable {E T : Type*} {span : E → Set T} {Wck : Set (E → T → Prop)} {f : E → T → Prop} {j : E}
   {C D : T → Prop} {t₁ t₂ : T}
 
-/-- (71): a permanent predicate is homogeneous over any restrictor within a lifespan. -/
+-- (71)
 theorem homogeneous_of_permanent (hf : Permanent span f) {d : E} {A : T → Prop}
     (hA : ∀ t, A t → t ∈ span d) : Homogeneous A (f d) :=
   hf.forall_or_forall_not (A := {t | A t}) hA
@@ -383,7 +380,7 @@ def world98 (d : Fireman) (t : Fin 3) : Prop := t = d.tallAt
 abbrev alts98 : Set (Set (Fireman → Fin 3 → Prop)) :=
   alts (fun _ ↦ True) (fun _ ↦ True) fun d t ↦ True ∧ t ∈ lifespan d
 
-/-- The world (98) verifies the existential reading and falsifies every definite alternative. -/
+-- (98)
 theorem world98_mem : world98 ∈ narrowSome (fun _ ↦ True) (fun _ ↦ True) \
     ⋃ d : {_d : Fireman // True}, definite (fun d t ↦ True ∧ t ∈ lifespan d) d := by
   simp only [world98, narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq,
@@ -395,13 +392,11 @@ about its predicate, in the model of (98). -/
 def ExistentialOdd (Wck : Set (Fireman → Fin 3 → Prop)) : Prop :=
   Odd Wck alts98 (narrowSome (fun _ ↦ True) fun _ ↦ True)
 
-/-- (84b): the existential reading of *Firemen are tall* is odd, since common knowledge makes an
-individual-level predicate permanent (70). -/
+-- (84b), (70)
 theorem existentialOdd_permanent : ExistentialOdd {f | Permanent lifespan f} :=
   existential_odd (fun _ h ↦ h) ⟨0, trivial⟩ ⟨_, world98_mem⟩
 
-/-- The existential reading of *Firemen are available* is fine, since the world (98) is compatible
-with common knowledge (84a). -/
+-- (98), (84a)
 theorem not_existentialOdd_univ : ¬ ExistentialOdd univ := by
   rw [ExistentialOdd, alts98, alts, odd_insert_range_iff ⟨_, world98_mem⟩]
   exact fun h ↦ world98_mem.2 (h ⟨world98_mem.1, trivial⟩)

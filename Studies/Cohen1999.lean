@@ -164,12 +164,11 @@ theorem gen_iff_most : gen domain ψ alt φ ↔ most (fun x ↦ x ∈ domain ∧
   omega
 
 omit [MeasurableSingletonClass α] [DecidablePred φ] in
-/-- gen is the adverb usually (definition 10, p. 128; p. 131). -/
+-- p. 128, p. 131
 theorem gen_iff_freq : gen domain ψ alt φ ↔ freq domain ψ alt φ (2⁻¹ < ·) :=
   Iff.rfl
 
-/-- The absolute reading is conservative: intersecting the scope with the restrictor
-changes nothing (p. 54, after Wilkinson). -/
+-- p. 54
 theorem gen_conservativity :
     gen domain ψ alt (fun x ↦ ψ x ∧ φ x) ↔ gen domain ψ alt φ := by
   have : (domain.filter fun x ↦ ψ x ∧ alt x).filter (fun x ↦ ψ x ∧ φ x) =
@@ -178,8 +177,7 @@ theorem gen_conservativity :
   unfold gen
   rw [uniformOn_finset_setOf, uniformOn_finset_setOf, this]
 
-/-- A generic whose scope exhausts its alternatives is true on any inhabited reference
-class, the reading of refutation statements, whose negation denies existence (§5.7). -/
+-- §5.7
 theorem gen_self (hR : (domain.filter fun x ↦ ψ x ∧ φ x).Nonempty) : gen domain ψ φ φ := by
   rw [gen_iff_card, Finset.filter_true_of_mem (s := domain.filter fun x ↦ ψ x ∧ φ x) (p := φ)
     fun x hx ↦ (Finset.mem_filter.1 hx).2.2]
@@ -204,7 +202,7 @@ theorem gen_proportional {β : Type*} [Fintype β] [MeasurableSpace β] [Measura
 
 /-! ### Homogeneity is degenerate unrestricted (definition 4, p. 82) -/
 
-/-- Salmon's two trivial cases are the only homogeneous reference classes (p. 82). -/
+-- p. 82
 theorem homogeneous_iff (hR : (domain.filter ψ).Nonempty) :
     Homogeneous domain ψ φ ↔
       no (fun x ↦ x ∈ domain ∧ ψ x) φ ∨ every (fun x ↦ x ∈ domain ∧ ψ x) φ := by
@@ -342,8 +340,7 @@ theorem brazilians_relative_rejected :
   rw [genRelative_iff_card (by decide) (by decide)]
   decide
 
-/-- The relative reading is not conservative (p. 55): intersecting the scope with the
-restrictor flips the verdict. -/
+-- p. 55
 theorem genRelative_not_conservative :
     ¬ (genRelative Finset.univ brazilian soccerPlayer (fun x ↦ brazilian x ∧ lousy x) ↔
         genRelative Finset.univ brazilian soccerPlayer lousy) := by

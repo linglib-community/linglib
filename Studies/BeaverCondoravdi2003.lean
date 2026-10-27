@@ -102,19 +102,17 @@ theorem uniform_gt_iff_after (hB : ∃ e, IsLeast (timeTrace B) e) :
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦
     ⟨fun ⟨_, he', h⟩ ↦ by rwa [he.unique he'], fun h ↦ ⟨e, he, h⟩⟩
 
-/-- The temporal clause of Anscombe's *before* is downward entailing, the NPI-licensing
-environment (29). -/
+-- (29)
 theorem anscombe_before_complement_DE (h : timeTrace B' ⊆ timeTrace B) :
     beforeEver A B → beforeEver A B' :=
   fun ⟨t, ht, hall⟩ ↦ ⟨t, ht, fun t' ht' ↦ hall t' (h ht')⟩
 
-/-- The temporal clause of Anscombe's *after* is upward entailing (31). -/
+-- (31)
 theorem anscombe_after_complement_UE (h : timeTrace B ⊆ timeTrace B') :
     Anscombe.after A B → Anscombe.after A B' :=
   fun ⟨t, ht, t', ht', hlt⟩ ↦ ⟨t, ht, t', h ht', hlt⟩
 
-/-- With a never-instantiated temporal clause, Anscombe's *before* holds of any instantiated main
-clause, the overgeneration of (32) and (33). -/
+-- (32), (33)
 theorem anscombe_before_of_empty (hB : timeTrace B = ∅) (hA : (timeTrace A).Nonempty) :
     beforeEver A B :=
   let ⟨t, ht⟩ := hA
@@ -217,8 +215,7 @@ abbrev after (A B : Set (W × T)) (alt : HistoricalAlternatives W T) (w : W) : P
 
 variable {cmp : T → T → Prop} {A B : Set (W × T)} {alt : HistoricalAlternatives W T} {w : W}
 
-/-- With the world as its own only alternative, (47) is the uniform connective (45) on the times
-of the world. -/
+-- (47), (45)
 theorem connective_iff_uniform_of_eq_singleton (h : ∀ t, alt (w, t) = {w}) :
     connective cmp A B alt w ↔ uniform cmp {t | (w, t) ∈ A} {t | (w, t) ∈ B} := by
   have hs (t : T) : instTimes (alt (w, t)) B = {t' | (w, t') ∈ B} := by
@@ -227,7 +224,7 @@ theorem connective_iff_uniform_of_eq_singleton (h : ∀ t, alt (w, t) = {w}) :
     simp [instTimes]
   simp only [connective, uniform, hs, Set.mem_ofPred_eq]
 
-/-- Even a non-veridical *before* places its temporal clause on an alternative, (49). -/
+-- (49)
 theorem connective_alt_inst (h : connective cmp A B alt w) :
     ∃ t, (w, t) ∈ A ∧ ∃ w' ∈ alt (w, t), Inst B w' :=
   let ⟨t, htA, e, ⟨⟨w', hw', hB⟩, _⟩, _⟩ := h
@@ -327,8 +324,7 @@ theorem veridical_inter_after (a : Alternatives F B) (hB : RespectsHistory F B) 
     Veridical B (c ∩ {w | after A B a.alt w}) :=
   fun _ hw ↦ after_veridical a hB hw.2
 
-/-- Every world of a context updated with *A before B* has, at a main-clause time, an
-alternative instantiating `B`, (49). -/
+-- (49)
 theorem alt_inst_of_mem_inter_before {alt : HistoricalAlternatives W T} {c : Set W} {w : W}
     (hw : w ∈ c ∩ {w | before A B alt w}) :
     ∃ t, (w, t) ∈ A ∧ ∃ w' ∈ alt (w, t), Inst B w' :=

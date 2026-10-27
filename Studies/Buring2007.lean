@@ -257,13 +257,10 @@ theorem negationInside_box :
   rw [negationInside_iff (monotone_box R w), not_box]
   simp [not_lt]
 
-/-- With an existential modal the two readings exchange: the outside reading becomes the weaker
-one, about the maximum permitted length of a drawbridge. -/
 theorem negationOutside_diamond :
     negationOutside (fun p => ◇[R] p w) μ c ↔ ◇[R] (fun v => c ≤ μ v) w :=
   negationOutside_iff (monotone_diamond R w)
 
-/-- And the inside reading becomes the stronger one, about the minimum permitted length. -/
 theorem negationInside_diamond :
     negationInside (fun p => ◇[R] p w) μ c ↔ □[R] (fun v => c ≤ μ v) w := by
   rw [negationInside_iff (monotone_diamond R w), not_diamond]

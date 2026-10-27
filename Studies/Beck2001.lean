@@ -80,8 +80,7 @@ theorem otherOnesAmongThem_subset (A : Finset α) (x : α) :
     otherOnesAmongThem A x ⊆ A :=
   Finset.erase_subset x A
 
-/-- On a plural antecedent the definite is defined (nonempty) at every member — the
-    plurality presupposition ((115), §4.3.1). -/
+-- (115), §4.3.1
 theorem otherOnesAmongThem_nonempty (A : Finset α) (x : α) (hne : 1 < A.card) :
     (otherOnesAmongThem A x).Nonempty := by
   obtain ⟨y, hy, hyx⟩ := A.exists_mem_ne hne x

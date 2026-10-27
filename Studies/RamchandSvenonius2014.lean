@@ -130,7 +130,7 @@ def cod : Head → Zone
   | finStar | epistemic => .proposition
   | adverb z => z
 
-/-- Compositional Coherence (29): a head yields a sort at least as high as it takes. -/
+-- (29)
 theorem dom_le_cod (h : Head) : h.dom ≤ h.cod := by
   cases h <;> first | decide | exact le_rfl
 

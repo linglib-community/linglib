@@ -162,8 +162,7 @@ def attested (c : EmbeddedClauseType) : Set Diagnostic :=
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
   unfold attested; infer_instance
 
-/-- Only the untensed subjunctive attests no free subject (12), (18), strict ellipsis (30), (32) or
-non-c-commanding antecedent (43), (45), against (19), (33), (44), (46). -/
+-- (12), (18), (30), (32), (43), (45), (19), (33), (44), (46)
 theorem attested_eq_empty_iff (c : EmbeddedClauseType) :
     attested c = ∅ ↔ c = .untensedSubjunctive := by
   rw [Set.eq_empty_iff_forall_notMem]
@@ -178,7 +177,7 @@ theorem isObligatory_iff (c : EmbeddedClauseType) :
     smpmProfile c = Set.univ ↔ c = .untensedSubjunctive := by
   rw [smpmProfile, ofAttested_eq_univ_iff, attested_eq_empty_iff]
 
-/-- Untensed subjunctives reject partial control (37). -/
+-- (37)
 theorem partialControl_rows : ∀ row ∈ Examples.all,
     row.feature? "diagnostic" = some "partialControl" →
       clauseTypeOf row = some .untensedSubjunctive ∧ row.judgment = .ungrammatical := by
@@ -209,8 +208,7 @@ theorem landau_predicts_control_iff (agr : Bool) :
 
 /-! ### Against movement (§6) -/
 
-/-- Exempt anaphors reject quantified antecedents in simple clauses (75) but accept quantified
-controllers of untensed subjunctives ((86), (87)). -/
+-- (75), (86), (87)
 theorem exemptAnaphor_rows : ∀ row ∈ Examples.all,
     row.feature? "diagnostic" = some "exemptAnaphor" →
       (row.judgment = .acceptable ↔ clauseTypeOf row = some .untensedSubjunctive) := by
@@ -297,8 +295,7 @@ outside attitude reports, and unable to bear focus, so the scope-sensitive alter
 null PRO is unavailable. -/
 def smpmCopyControlType : CopyControlType := .obligatoryPronominal
 
-/-- A non-clitic embedded subject, a clitic strengthened by the article or a demonstrative, is out
-exactly in untensed subjunctives ((67), (68)). -/
+-- (67), (68)
 theorem nonclitic_rows : ∀ row ∈ Examples.all,
     row.feature? "embeddedSubject" = some "nonclitic" →
       (row.judgment = .acceptable ↔ clauseTypeOf row = some .tensedSubjunctive) := by
@@ -308,8 +305,7 @@ theorem nonclitic_rows : ∀ row ∈ Examples.all,
 forms are ungrammatical there (`nonclitic_rows`). -/
 def controlledSubjectStrength : Pronoun.Strength := .clitic
 
-/-- The pronouns that can be controlled subjects are exactly the clitics, none of which bears focus
-(65), (66). -/
+-- (65), (66)
 theorem controlledSubject_iff_mem_clitics :
     ∀ p ∈ pronouns, p.strength = some controlledSubjectStrength ↔ p ∈ clitics := by
   decide

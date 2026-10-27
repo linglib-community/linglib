@@ -253,8 +253,7 @@ theorem djadja_precedence :
       system.assign sem declension djadja = .masc := by
   decide
 
-/-- *vrač* 'doctor' as a lexeme is not sex-differentiable, so the declension decides; the
-conflict when it denotes a woman is the hybrid pattern of §8.1. -/
+-- §8.1
 theorem vrac_by_declension : system.assign sem declension vrač = .masc := by decide
 
 end Russian
@@ -344,7 +343,7 @@ namespace Romanian
 
 open _root_.Romanian.Gender
 
-/-- Figure 6.1 is a crossed system. -/
+-- Figure 6.1
 theorem crossed :
     Gender.Crossed (Value.adjForm · (numberSystem.value .singular))
       (Value.adjForm · (numberSystem.value .plural)) := by
@@ -356,7 +355,7 @@ theorem card_range_adjForm :
         Fintype.card (Gender.targetGenders Value.adjForm (numberSystem.value .plural)) = 2 := by
   decide
 
-/-- Every fragment noun takes, in each number, the form of its gender, (5) to (10). -/
+-- (5), (10)
 theorem rows : ∀ row ∈ Examples.all, row.language = "roma1327" →
     ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
       ∀ pl ∈ row.parse? "number"
@@ -382,8 +381,7 @@ end French
 namespace German
 
 open _root_.German.Determiners in
-/-- The definite article has three forms for the three genders in the nominative singular and
-one in the plural (Figure 6.7). -/
+-- Figure 6.7
 theorem convergent :
     Gender.Convergent (fun g ↦ definite (.sg g) .nom) fun _ ↦ definite .pl .nom := by
   decide
@@ -419,8 +417,7 @@ def Value.plMarker : Value → Marker
   | .I | .II | .III => .bW
   | .IV => .dR
 
-/-- Figure 6.10 is a crossed system, with three target genders in the singular and two in the
-plural. -/
+-- Figure 6.10
 theorem crossed : Gender.Crossed Value.sgMarker Value.plMarker := by decide
 
 theorem card_plMarker_le :
@@ -478,7 +475,7 @@ namespace Tamil
 
 open _root_.Tamil.Gender
 
-/-- In Figure 6.8 three singular target genders converge on two in the plural. -/
+-- Figure 6.8
 theorem convergent : Gender.Convergent Value.sgConcord Value.plConcord := by decide
 
 theorem card_plConcord_lt :
@@ -669,8 +666,7 @@ theorem fine_rows : ∀ row ∈ Examples.all, ∀ h ∈ fineHybridNames, row.fea
       (row.judgment = .acceptable ↔ ∃ a ∈ h.2 t, a.Allows k) := by
   decide +kernel
 
-/-- Every row naming a hybrid names one of Table 8.1 or one of §8.3, at a position one of
-the two theorems reads. -/
+-- Table 8.1, §8.3
 theorem hybrid_rows_covered : ∀ row ∈ Examples.all, ∀ n ∈ row.feature? "hybrid",
     (n ∈ hybridNames.map Prod.fst ∨ n ∈ fineHybridNames.map Prod.fst) ∧
       ∀ t ∈ row.feature? "target", t ∈ finePositionNames.map Prod.fst := by
@@ -713,10 +709,10 @@ mixture has no resolved form. -/
 def rules : List (ResolutionRule Value PlConcord) :=
   [.all Rational .rational, .all (¬ Rational ·) .neuter]
 
-/-- Masculine and feminine together resolve to the rational form, (16). -/
+-- (16)
 theorem resolve_masc_fem : resolve rules [.masc, .fem] = some .rational := by decide
 
-/-- A rational and a non-rational cannot be resolved, (18). -/
+-- (18)
 theorem resolve_masc_neut : resolve rules [.masc, .neut] = none := by decide
 
 theorem resolve_factorsThrough :
@@ -769,8 +765,7 @@ def rulesA : List (ResolutionRule Value Value) := [.any (· = .masc) .masc, othe
 otherwise. -/
 def rulesB : List (ResolutionRule Value Value) := [.all (· = .fem) .fem, otherwise .masc]
 
-/-- With exactly two genders the two formulations are logically equivalent (p. 280), the
-feminine being the complement of the masculine. -/
+-- p. 280
 theorem resolve_rulesA_eq_rulesB (cs : List Value) : resolve rulesA cs = resolve rulesB cs :=
   resolve_any_otherwise fun c ↦ by cases c <;> decide
 
@@ -785,8 +780,7 @@ theorem resolve_numbers :
     ∀ a b, numbers.resolve a b = if a = .singular ∧ b = .singular then .dual else .plural := by
   decide
 
-/-- A coordination with a non-plural conjunct takes the resolution of its conjuncts, so the number
-forms are semantically justified (p. 264). -/
+-- p. 264
 theorem numberResolve_eq_resolve (c d : Number) (cs : List Number)
     (h : ∃ x ∈ c :: d :: cs, x ≠ .plural) :
     numberResolve numbers (c :: d :: cs) = some ((d :: cs).foldl numbers.resolve c) := by
@@ -815,8 +809,7 @@ theorem numberResolve_ne_resolve (rs : List (ResolutionRule Number Number)) :
 in which the neuter never results from resolution. -/
 def rules : List (ResolutionRule Value Value) := [.all (· = .fem) .fem, otherwise .masc]
 
-/-- Three neuter singulars take the masculine plural, gender resolution triggered by number
-resolution, (52). -/
+-- (52)
 theorem resolve_neuters :
     resolve rules [.neut, .neut, .neut] = some .masc ∧
       numberResolve numbers [.singular, .singular, .singular] = some .plural := by
@@ -883,8 +876,7 @@ animate or all are masculine, and the feminine otherwise. -/
 def rules : List (ResolutionRule Romanian.Gender.Noun Value) :=
   [.any MaleAnimate .masc, .all (·.gender = .masc) .masc, otherwise .fem]
 
-/-- A masculine and a neuter inanimate resolve to the feminine, the form the neuter takes in
-the plural, (69). -/
+-- (69)
 theorem resolve_perete_scaun : resolve rules [perete, scaun] = some .fem := by decide
 
 end Romanian
@@ -899,7 +891,7 @@ def stage2 : List (List (ResolutionRule (Slovene.Value × Bool) Slovene.Value)) 
   [[.all (fun c ↦ c.1 = .fem ∧ c.2) .fem, .all (·.1 = .fem) .fem, otherwise .masc],
     [.all (fun c ↦ c.1 = .fem ∧ c.2) .fem, otherwise .masc]]
 
-/-- Feminine inanimates may take the masculine, (77) and (78). -/
+-- (77), (78)
 theorem feminine_inanimates_masc :
     ∃ g ∈ stage2, resolve g [(.fem, false), (.fem, false)] = some .masc := by
   decide

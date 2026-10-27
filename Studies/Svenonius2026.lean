@@ -118,10 +118,10 @@ example : Examples.ex13b.glossedTokens.map (·.1) = ["Walaa", "to", "ndur-ot-on-
 example : (word13b.filterMap (·.exp)).map Exp.form = ["ndur", "ot", "on", "ɗi"] := by
   simp [word13b, Exp.form]
 
-/-- (13a): the attested word with elsewhere -ay is a joint spell-out. -/
+-- (13a)
 theorem joint_word13a : IsJointSpellout vocabulary Exp.phon word13a := by decide
 
-/-- (13b): the attested word with prevocalic -ot is a joint spell-out. -/
+-- (13b)
 theorem joint_word13b : IsJointSpellout vocabulary Exp.phon word13b := by decide
 
 /-- (13b) as a complex head before insertion: the root realized, the suffixes bare. -/
@@ -133,7 +133,7 @@ def head13b : ComplexHead (Morpheme Feat Exp) (Morpheme Feat Exp) :=
 def insideOut13b : ComplexHead (Morpheme Feat Exp) (Morpheme Feat Exp) :=
   head13b.insertAll (fun _ ↦ False) vocabulary .hierarchical Exp.phon .nondeletion
 
-/-- Inside-out insertion realizes (13b) with the elsewhere *-ay*, as *ndur-ay-on-ɗi*. -/
+-- (13b)
 theorem exponents_insideOut13b : insideOut13b.exponents = [.ndur, .ay, .on, .«ɗi»] := by decide
 
 theorem not_joint_insideOut13b :
@@ -198,8 +198,7 @@ example : (returnDual.filterMap (·.exp)).map Exp.form = ["nuːŋ", "s", "i", "g
 example : (returnPlural.filterMap (·.exp)).map Exp.form = ["nuːks", "i", "ge"] := by
   simp [returnPlural, Exp.form]
 
-/-- Both attested forms of *return*, *nuːŋ-* and *nuːks-*, are joint spell-outs, which inside-out
-insertion cannot state (fn. 7). -/
+-- fn. 7
 theorem joint_return :
     IsJointSpellout vocabulary Exp.phon returnDual ∧
       IsJointSpellout vocabulary Exp.phon returnPlural := by decide

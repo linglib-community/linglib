@@ -693,7 +693,7 @@ instance : IsProbabilityMeasure (meanings d) := by unfold meanings; infer_instan
 private theorem indep : (fun ω : Fin 2 → Bool ↦ ω 0) ⟂ᵢ[meanings d] fun ω ↦ ω 1 :=
   (iIndepFun_bits _).indepFun (i := 0) (j := 1) (by decide)
 
-/-- Voice and tense agree with probability `1 - d`, as in the probabilities of Table 4. -/
+-- Table 4
 theorem meanings_real (v t : Bool) :
     (meanings d).real {ω | voice ω = v ∧ tense ω = t} = (if v = t then 1 - (d : ℝ) else d) / 2 := by
   have : {ω : Fin 2 → Bool | voice ω = v ∧ tense ω = t} = {![v, xor v t]} := by
@@ -993,7 +993,7 @@ private theorem entropy_fair {i : Fin 3} (hi : i ≠ 2) :
   rw [meanings, entropy_bit]
   fin_cases i <;> simp_all [half]
 
-/-- Aspect and tense agree with probability `1 - d`, as in the probabilities of Table 5. -/
+-- Table 5
 theorem meanings_real (v a t : Bool) :
     (meanings d).real {ω | voice ω = v ∧ aspect ω = a ∧ tense ω = t}
       = (if a = t then 1 - (d : ℝ) else d) / 4 := by

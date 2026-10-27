@@ -92,13 +92,12 @@ theorem singleton_mem_intro_iff : {i} ~[intro u] J ↔ ∃ x, J = {extend i u x}
   · rintro ⟨x, rfl⟩
     exact ⟨_, ⟨x, rfl⟩, rfl⟩
 
-/-- Introduction never enlarges a state (fn. 28). -/
+-- fn. 28
 theorem encard_le_of_mem_intro (h : I ~[intro u] J) : J.encard ≤ I.encard := by
   obtain ⟨f, -, rfl⟩ := h
   exact Set.encard_image_le f I
 
-/-- The cumulative dref introduction of [brasoveanu-2008], (i) of fn. 28, can split one
-assignment into two, which (60) cannot. -/
+-- (i), fn. 28, (60) [brasoveanu-2008]
 theorem singleton_mem_cumul_randomAssign_pair {x y : E} (hxy : x ≠ y) :
     {i} ~[cumul (randomAssign u)] {extend i u x, extend i u y} ∧
       ¬ {i} ~[intro u] {extend i u x, extend i u y} := by
@@ -159,18 +158,15 @@ theorem acrossModels_subset_iff {M : Type*} {D D' : M → Update (Set S)} :
     acrossModels D ⊆ acrossModels D' ↔ D ≤ D' :=
   ⟨fun h m p hp ↦ h (a := (m, p)) hp, fun h w hw ↦ h w.1 hw⟩
 
-/-- Strict inclusion across models is Generalized Strength (89), the pointwise order on meanings
-as functions of the model. -/
+-- (89)
 theorem acrossModels_ssubset_iff {M : Type*} {D D' : M → Update (Set S)} :
     acrossModels D ⊂ acrossModels D' ↔ D < D' := by
   rw [Set.ssubset_def, acrossModels_subset_iff, acrossModels_subset_iff, lt_iff_le_not_ge]
 
-/-- Adding a test that fails in some model gives a stronger meaning. -/
 theorem comp_test_lt {M : Type*} {D : M → Update (Set S)} {C : Condition (Set S)} (m : M)
     (h : ¬ D m ⊆ D m ○ test C) : (fun m ↦ D m ○ test C) < D :=
   lt_of_le_not_ge (fun _ _ hp ↦ (mem_comp_test.1 hp).1) fun h' ↦ h (h' m)
 
-/-- Exh against a stronger alternative that adds the test `C` adds the negated test. -/
 theorem exh_acrossModels_comp_test {M : Type*} {D : M → Update (Set S)} {C : Condition (Set S)}
     (h : (fun m ↦ D m ○ test C) < D) :
     Exhaustification.exh {acrossModels fun m ↦ D m ○ test C} (acrossModels D) =
@@ -252,8 +248,7 @@ def cardinal (p : ℕ → Prop) (u : R) : Condition (Set S) :=
 negating the singular. -/
 def bare (u : R) : Condition (Set S) := (atomic u ∩ unique u)ᶜ
 
-/-- On a nonempty state with non-null values of `u`, atomicity and uniqueness hold iff the values
-sum to an atom, the singular (74) (§5.1). -/
+-- (74), §5.1
 theorem mem_atomic_inter_unique_iff (hI : I.Nonempty) (hu : ∀ i ∈ I, ¬ IsBot (val u i)) :
     I ∈ atomic u ∩ unique u ↔ ∃ a, Atom a ∧ IsLUB (val u '' I) a := by
   refine ⟨fun ⟨hA, hU⟩ ↦ ?_, fun ⟨a, ha, hlub⟩ ↦ ?_⟩
@@ -307,7 +302,7 @@ theorem image_val_split_singleton : val u '' split u {i} = atomsBelow (val u i) 
 theorem split_singleton_of_atom (h : Atom (val u i)) : split u {i} = {i} := by
   rw [split_singleton, atomsBelow_of_atom h, Set.image_singleton, extend_eq_self]
 
-/-- Splitting twice splits once (92). -/
+-- (92)
 theorem split_split (u : R) (I : Set S) : split u (split u I) = split u I := by
   refine Set.Subset.antisymm (fun j hj ↦ ?_) fun j hj ↦
     mem_split.2 ⟨j, hj, val u j, ⟨atom_of_mem_split hj, le_rfl⟩, extend_eq_self ..⟩
@@ -328,18 +323,17 @@ theorem mem_distW : I ~[distW u D] J ↔ split u I ~[D] J := by
 theorem mem_distS : I ~[distS u D] J ↔ split u I ~[dist D] J := by
   simp [distS]
 
-/-- Weak distributivity is idempotent (98a). -/
+-- (98a)
 theorem distW_distW (u : R) (D : Update (Set S)) : distW u (distW u D) = distW u D := by
   ext ⟨I, J⟩
   simp only [mem_distW, split_split]
 
-/-- Weak over strong distributivity is strong distributivity (98c). -/
+-- (98c)
 theorem distW_distS (u : R) (D : Update (Set S)) : distW u (distS u D) = distS u D := by
   ext ⟨I, J⟩
   simp only [mem_distW, mem_distS, split_split]
 
-/-- Strong distributivity is idempotent (98b): on a split state every row is its own split, and
-`Update.dist` is idempotent. -/
+-- (98b)
 theorem distS_distS (u : R) (D : Update (Set S)) : distS u (distS u D) = distS u D := by
   ext ⟨I, J⟩
   simp only [mem_distS]
@@ -351,7 +345,7 @@ theorem distS_distS (u : R) (D : Update (Set S)) : distS u (distS u D) = distS u
   exact ⟨fun ⟨ρ, hne, hdom, hcod, hD⟩ ↦ ⟨ρ, hne, hdom, hcod, fun p hp ↦ (key hdom hp).1 (hD p hp)⟩,
     fun ⟨ρ, hne, hdom, hcod, hD⟩ ↦ ⟨ρ, hne, hdom, hcod, fun p hp ↦ (key hdom hp).2 (hD p hp)⟩⟩
 
-/-- Strong over weak distributivity is strong distributivity (98d). -/
+-- (98d)
 theorem distS_distW (u : R) (D : Update (Set S)) : distS u (distW u D) = distS u D := by
   ext ⟨I, J⟩
   simp only [mem_distS]
@@ -368,8 +362,7 @@ theorem singleton_mem_dom_distS_iff :
   simp only [mem_dom, mem_distS, ← mem_dom (R := dist D), dom_dist, Set.mem_ofPred_eq,
     split_singleton, Set.image_nonempty, Set.forall_mem_image]
 
-/-- A singular restrictor under weak distributivity leaves the sum at most one atomic part (§6.4.3).
--/
+-- §6.4.3
 theorem singleton_mem_dom_distW_test_iff :
     {k} ∈ (distW u (test (atomic u ∩ unique u))).dom ↔ (atomsBelow (val u k)).Subsingleton := by
   simp only [mem_dom, mem_distW, mem_test_iff_left, exists_eq_left', Set.mem_inter_iff, atomic,
@@ -408,8 +401,6 @@ theorem singleton_mem_dom_distW_iff (huu' : u ≠ u') :
   exact exists_congr fun b ↦ ⟨fun ⟨⟨⟨hne, hn⟩, _, hv⟩, hC⟩ ↦ ⟨hne, fun a ha ↦ ⟨hn ha, hv ha⟩, hC⟩,
     fun ⟨hne, h, hC⟩ ↦ ⟨⟨⟨hne, fun a ha ↦ (h a ha).1⟩, hne, fun a ha ↦ (h a ha).2⟩, hC⟩⟩
 
-/-- Over a split state, the bare plural condition says the object is not one and the same atom at
-every atomic part of the subject. -/
 theorem image_mem_bare_iff {u u' : R} {k : S} {b : E → E} :
     (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ bare u' ↔
       ¬((∀ a ∈ atomsBelow (val u k), Atom (b a)) ∧ (b '' atomsBelow (val u k)).Subsingleton) := by
@@ -419,16 +410,14 @@ theorem image_mem_bare_iff {u u' : R} {k : S} {b : E → E} :
 
 variable (P M)
 
-/-- On the cumulative reading (116) of *Three students carried boxes*, a sum satisfying the
-subject carried a non-atomic sum of boxes. -/
+-- (116)
 theorem cumulative_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P id M (bare u')).dom ↔
       ∃ x, P x ∧ ∃ y, M.noun y ∧ M.verb x y ∧ ¬ Atom y := by
   simp only [singleton_mem_dom_sentence_iff, id, singleton_mem_dom_vp_iff huu', bare,
     Set.mem_compl_iff, singleton_mem_atomic_inter_unique_iff, val_extend_self]
 
-/-- Without a distributivity operator a cardinality condition counts the whole object, as on the
-cumulative reading of *The girls were wearing several hats* (4). -/
+-- (4)
 theorem cumulative_cardinal_iff (huu' : u ≠ u') (p : ℕ → Prop) :
     {i} ∈ (sentence u u' P id M (cardinal p u')).dom ↔
       ∃ x, P x ∧ ∃ y, M.noun y ∧ M.verb x y ∧ p (atomCount E y) := by
@@ -450,8 +439,7 @@ theorem dependent_iff (huu' : u ≠ u') :
   simpa only [val_extend_self] using
     image_mem_bare_iff (u := u) (k := extend i u x) (u' := u') (b := b)
 
-/-- Under weak distributivity a cardinality condition counts at every atomic part of the
-subject (148), the Ban on Numerals. -/
+-- (148)
 theorem distW_cardinal_iff (huu' : u ≠ u') (p : ℕ → Prop) :
     {i} ∈ (sentence u u' P (distW u) M (cardinal p u')).dom ↔
       ∃ x, P x ∧ (atomsBelow x).Nonempty ∧
@@ -468,8 +456,7 @@ theorem distW_cardinal_iff (huu' : u ≠ u') (p : ℕ → Prop) :
     exact ⟨b, hne, fun a ha ↦ ⟨(hb a ha).1, (hb a ha).2.1⟩,
       fun a ha ↦ by simpa [val_extend_self] using (hb a ha).2.2⟩
 
-/-- Under strong distributivity a bare plural is non-atomic at every atomic part of the subject
-(170), the Ban on Singular Licensors. -/
+-- (170)
 theorem distS_bare_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P (distS u) M (bare u')).dom ↔
       ∃ x, P x ∧ (atomsBelow x).Nonempty ∧
@@ -514,8 +501,6 @@ def detSg (q : R → R → Condition (Set S)) (u' u : R) (P P' : R → Update (S
     Update (Set S) :=
   intro u' ○ intro u ○ test (q u' u) ○ max u' (distS' u' (P u')) ○ max u (distS u (P u ○ P' u))
 
-/-- On a one-assignment state, maximization compares the value of `u` with those of its
-`u`-variants on which the update succeeds. -/
 theorem singleton_mem_max_iff {k : S} {J : Set S} :
     {k} ~[max u D] J ↔ {k} ~[D] J ∧ ∀ y, {extend k u y} ∈ D.dom → y ≤ val u k := by
   refine ⟨fun ⟨hD, hmax⟩ ↦ ⟨hD, fun y hy ↦ ?_⟩,
@@ -563,9 +548,7 @@ def stateMax (u : R) (D : Update (Set S)) : Update (Set S) :=
     ∀ K, I ~[PCDRT.intro u ○ D] K → (PCDRT.value u K : Set E) ⊆ PCDRT.value u J}
 
 omit [PartialOrder E] in
-/-- State-level maximization is not at the level of assignments ([brasoveanu-2008], p. 149): when
-only `a` and `b` satisfy `P`, the output where only the second of two inputs has a successor storing
-`b` is maximal, but maximizing at each input separately rejects it. -/
+-- p. 149 [brasoveanu-2008]
 theorem stateMax_not_dist {a b : E} {i₀ i₁ : S} (hab : a ≠ b) (ha : P a)
     (hb : P b) (hP : ∀ x, P x → x = a ∨ x = b) (h : ∀ x y, extend i₀ u x ≠ extend i₁ u y) :
     {i₀, i₁} ~[stateMax u (test (lex P u))]
@@ -608,9 +591,7 @@ theorem stateMax_not_dist {a b : E} {i₀ i₁ : S} (hab : a ≠ b) (ha : P a)
 
 variable {u'' : R}
 
-/-- The schema (105) at a one-assignment input: values `x'` of `u'` and `x` of `u` pass the test
-`q`, `x'` is the greatest value of `u'` passing `T`, and `x` the greatest value of `u` on which `D`
-succeeds. -/
+-- (105)
 theorem singleton_mem_dom_schema_iff {q T : Condition (Set S)} (h₁ : u' ≠ u) :
     {i} ∈ (intro u' ○ intro u ○ test q ○ max u' (test T) ○ max u D).dom ↔
       ∃ x' x, {extend (extend i u' x') u x} ∈ q ∧ {extend (extend i u' x') u x} ∈ T ∧
@@ -642,14 +623,12 @@ theorem mem_dom_distW_test_comp {C : Condition (Set S)} :
   simp only [mem_dom, mem_distW, mem_test_comp]
   exact ⟨fun ⟨J, hC, hD⟩ ↦ ⟨hC, J, hD⟩, fun ⟨hC, J, hD⟩ ↦ ⟨J, hC, hD⟩⟩
 
-/-- A restrictor under weak distributivity holds of every atomic part of the value. -/
 theorem singleton_mem_dom_distW_lex_iff {k : S} {P : E → Prop} :
     {k} ∈ (distW u (test (lex P u))).dom ↔
       (atomsBelow (val u k)).Nonempty ∧ ∀ a ∈ atomsBelow (val u k), P a := by
   simp only [mem_dom, mem_distW, mem_test_iff_left, exists_eq_left', mem_lex,
     image_val_split_singleton, Set.subset_def, Set.mem_ofPred_eq]
 
-/-- A singular restrictor under strong distributivity holds of every atomic part of the value. -/
 theorem singleton_mem_dom_distS_lex_iff {k : S} {P : E → Prop} :
     {k} ∈ (distS u (test (atomic u ∩ unique u ∩ lex P u))).dom ↔
       (atomsBelow (val u k)).Nonempty ∧ ∀ a ∈ atomsBelow (val u k), P a := by
@@ -659,9 +638,6 @@ theorem singleton_mem_dom_distS_lex_iff {k : S} {P : E → Prop} :
     val_extend_self]
   exact and_iff_right ha.1
 
-/-- A restrictor and a nuclear scope with a bare plural object under weak distributivity: every
-atomic part of the value satisfies the restrictor and `verb`s a sum of `noun`s, not one and the same
-atom for all of them. -/
 theorem singleton_mem_dom_distW_scope_iff {k : S} {P : E → Prop} (h : u ≠ u'') :
     {k} ∈ (distW u (test (lex P u) ○ (vp u u'' M ○ test (bare u'')))).dom ↔
       (atomsBelow (val u k)).Nonempty ∧ (∀ a ∈ atomsBelow (val u k), P a) ∧
@@ -674,9 +650,6 @@ theorem singleton_mem_dom_distW_scope_iff {k : S} {P : E → Prop} (h : u ≠ u'
   exact ⟨fun ⟨⟨hne, hP⟩, b, _, hb, hbare⟩ ↦ ⟨hne, hP, b, hb, hbare⟩,
     fun ⟨hne, hP, b, hb, hbare⟩ ↦ ⟨⟨hne, hP⟩, b, hne, hb, hbare⟩⟩
 
-/-- A singular restrictor and a nuclear scope with a bare plural object under strong
-distributivity: every atomic part of the value satisfies the restrictor and `verb`s a non-atomic
-sum of `noun`s. -/
 theorem singleton_mem_dom_distS_scope_iff {k : S} {P : E → Prop} (h : u ≠ u'') :
     {k} ∈ (distS u (test (atomic u ∩ unique u ∩ lex P u) ○
       (vp u u'' M ○ test (bare u'')))).dom ↔
@@ -711,9 +684,7 @@ theorem detPl_most_iff (h₁ : u' ≠ u) (h₂ : u ≠ u'') :
   exact ⟨fun ⟨hq, hR, hR', hC, hC'⟩ ↦ ⟨⟨hR, hR'⟩, ⟨hC, hC'⟩, hq⟩,
     fun ⟨⟨hR, hR'⟩, ⟨hC, hC'⟩, hq⟩ ↦ ⟨hq, hR, hR', hC, hC'⟩⟩
 
-/-- The singular determiner *every* over a singular restrictor `P` with a bare plural object (174),
-(177): the greatest sum of `P`-atoms each of which `verb`s a non-atomic sum of `noun`s has as many
-atoms as the greatest sum of `P`-atoms, so every `P`-atom does (p. 491). -/
+-- (174), (177), p. 491
 theorem detSg_every_iff (h₁ : u' ≠ u) (h₂ : u ≠ u'') :
     {i} ∈ (detSg every u' u (fun v ↦ test (atomic v ∩ unique v ∩ lex P v))
       (fun v ↦ vp v u'' M ○ test (bare u''))).dom ↔

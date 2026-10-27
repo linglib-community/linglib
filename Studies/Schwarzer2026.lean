@@ -67,13 +67,12 @@ def Order.phrases : Order → List Cat
   | .dpFirst => [N, .C]
   | .cpFirst => [.C, N]
 
-/-- The bottom-up analyses admit the selected noun phrase first, after a verb that does not select
-a clause, whatever the verb's position, (10b). -/
+-- (10b)
 theorem structural_admits_iff (o : Order) :
     Admits (Licensed (List.take 1) {N}) o.phrases ↔ o = .dpFirst := by
   cases o <;> decide
 
-/-- The closeness analyses admit the clause first before the verb, (10a). -/
+-- (10a)
 theorem closeness_embedded_iff (o : Order) :
     Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases ↔ o = .cpFirst := by
   cases o <;> decide
@@ -101,8 +100,7 @@ def Selection.verbs : Selection → List German.Verb
   | .no => [German.Verbs.beenden, German.Verbs.streichen, German.Verbs.uebereilen,
       German.Verbs.entwickeln]
 
-/-- Each predicate's entry takes a noun phrase, and a clause exactly when the paper classes it as
-selecting one (p. 7). -/
+-- p. 7
 theorem selects_verbs (s : Selection) :
     ∀ v ∈ s.verbs, selects v = if s = .yes then {N, .C} else {N} := by
   cases s <;> decide
@@ -152,7 +150,7 @@ def Position.direction : Position → HeadDirection
 def preferred (p : Position) : Order :=
   if (choices p .cpFirst).count < (choices p .dpFirst).count then .dpFirst else .cpFirst
 
-/-- The noun phrase first is preferred in both positions, chosen 23 times of 30 (p. 13). -/
+-- p. 13
 theorem preferred_eq (p : Position) : preferred p = .dpFirst := by
   cases p <;> decide
 

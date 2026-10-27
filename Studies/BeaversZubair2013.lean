@@ -108,18 +108,16 @@ instance : DecidableLE CauserSort := fun s t ↦
 
 instance : DecidableLT CauserSort := decidableLTOfDecidableLE
 
-/-- The typology (81) is a tree whose leaves are the events, the states and the individuals. -/
+-- (81)
 theorem covBy_tree :
     event ⋖ eventuality ∧ state ⋖ eventuality ∧ eventuality ⋖ any ∧ individual ⋖ any := by
   decide
 
-/-- Causer suppression (77) applies to the roots whose causer sort includes the individuals,
-those that select the individuals or the whole domain. -/
+-- (77)
 theorem individual_le_iff {s : CauserSort} : individual ≤ s ↔ s = individual ∨ s = any := by
   cases s <;> decide
 
-/-- The volitive (71) applies to predicates whose subject sort includes events, those of *murder*,
-*destroy* and *break* verbs (§7.3). -/
+-- (71), §7.3
 theorem event_le_iff {s : CauserSort} :
     event ≤ s ↔ s = event ∨ s = eventuality ∨ s = any := by
   cases s <;> decide
@@ -229,15 +227,13 @@ theorem anticausativizes_iff_alternates (r : Root) :
     Anticausativizes r ↔ r.verb.Alternates Voice.anticausative := by
   cases r <;> decide
 
-/-- Inchoatives are always involitive (fn. 7): a diathesis the anticausative derives carries the
-involitive form, *Nimal giluna*, never the volitive *\*giluwa* ((3)). -/
+-- fn. 7, (3)
 theorem inchoative_involitive (r : Root) :
     ∀ c ∈ r.verb.valency.diatheses, ∀ d ∈ r.verb.valency.diatheses,
       Voice.anticausative.Relates c d → d.form.isSome := by
   cases r <;> decide
 
-/-- A root that anticausativizes has an involitive stem, where its inchoative surfaces since the
-volitive is barred (§7.3). -/
+-- §7.3
 theorem hasInvolitive_of_anticausativizes {r : Root} (h : Anticausativizes r) :
     HasInvolitive r.verb :=
   let ⟨c, hc, d, hd, hr⟩ := (anticausativizes_iff_alternates r).1 h

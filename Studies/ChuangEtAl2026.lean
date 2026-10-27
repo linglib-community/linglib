@@ -77,8 +77,7 @@ abbrev ContextualEmbedding : Type := MeaningVector CKIPGPT2HiddenDim
 The comprehension matrix `F` predicts a `ContextualEmbedding` `cF` from a `PitchContour` `c`,
 and the production matrix `G` a contour `sG` from an embedding `s` (§3.3–3.4). -/
 
-/-- No comprehension matrix maps the fifty-dimensional contour space onto the 768-dimensional
-embedding space (§3.3.2, fn. 29). -/
+-- §3.3.2, fn. 29
 theorem comprehension_not_surjective
     (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
     ¬ Function.Surjective F.vecMulLinear := fun h ↦ by

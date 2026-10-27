@@ -162,8 +162,7 @@ theorem phon_rnrE : rnrE.phon = rnrMD.phon := by decide
 theorem licensed_rnrMD : rnrMD.Licensed := by decide
 theorem licensed_rnrE : rnrE.Licensed := by decide
 
-/-- Neither derives a gap in the second conjunct (89), and multidominance without pruning
-tangles. -/
+-- (89)
 theorem not_licensed_leftNode :
     ¬ leftNodeMD.Licensed ∧ ¬ leftNodeE.Licensed ∧
       ¬ (⟨rnrMD.input, [], []⟩ : Derivation).Licensed := by
@@ -332,7 +331,7 @@ theorem pivotOnset_finite :
       ¬ finiteShareVP.Licensed ∧ ¬ finiteSharePP.Licensed := by
   decide
 
-/-- The rivals obey the pruning rule at every step; only (26) excludes them. -/
+-- (26)
 theorem mayPrune_finiteRivals : ∀ d ∈ [finiteShareVP, finiteSharePP],
     ∀ x ∈ d.prunings.zipIdx, MayPrune d.input (d.prunings.take x.2) x.1.1 x.1.2 := by
   decide

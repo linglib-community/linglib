@@ -65,19 +65,17 @@ def trisyllabicConditions : List (List Syllable.Weight) :=
    [.light, .heavy, .heavy], [.light, .heavy, .light],
    [.light, .light, .heavy], [.light, .light, .light]]
 
-/-- The AAR and the LSR agree on six of the eight trisyllabic weight
-    conditions and diverge exactly on HLH and LLH (Table 1). -/
+-- Table 1
 theorem aar_lsr_mismatches :
     trisyllabicConditions.filter (fun w ↦ defaultAccentAAR w != latinStressRule w) =
       [[.heavy, .light, .heavy], [.light, .light, .heavy]] := by decide
 
-/-- On HLH the AAR accents σ₂ and the LSR the antepenult σ₁ (Table 1c). -/
+-- Table 1c
 theorem aar_lsr_mismatch_hlh :
     defaultAccentAAR [.heavy, .light, .heavy] = some 1 ∧
       latinStressRule [.heavy, .light, .heavy] = some 0 := by decide
 
-/-- On LLH the AAR accents σ₂ and the LSR σ₁ (Table 1g: `LL'H` vs
-    `L'LH`). -/
+-- Table 1g
 theorem aar_lsr_mismatch_llh :
     defaultAccentAAR [.light, .light, .heavy] = some 1 ∧
       latinStressRule [.light, .light, .heavy] = some 0 := by decide
@@ -112,22 +110,19 @@ def makudonarudo : ProsodicEntry :=
 def amerika : ProsodicEntry :=
   { form := "amerika", gloss := "America", accentMora := none, nMorae := 4 }
 
-/-- The accented loanwords of (10) carry the accent the AAR assigns. -/
+-- (10)
 theorem loanwords_match_aar :
     defaultAccentAAR (lightProfile kurisumasu) = kurisumasu.accentMora ∧
       defaultAccentAAR (lightProfile asufaruto) = asufaruto.accentMora ∧
       defaultAccentAAR (lightProfile makudonarudo) = makudonarudo.accentMora := by decide
 
-/-- On all-light profiles the LSR agrees with the AAR, so the (10)
-    loanwords match it as well (§2.3). -/
+-- (10), §2.3
 theorem loanwords_match_lsr :
     latinStressRule (lightProfile kurisumasu) = kurisumasu.accentMora ∧
       latinStressRule (lightProfile asufaruto) = asufaruto.accentMora ∧
       latinStressRule (lightProfile makudonarudo) = makudonarudo.accentMora := by decide
 
-/-- Neither default rule derives *amerika*'s unaccentedness, as neither
-    produces unaccented outputs (§2.3 n. 10). Four-mora light-final
-    unaccentedness is §2.4's separate generalization. -/
+-- §2.3, n. 10, §2.4
 theorem amerika_beyond_default_rules :
     defaultAccentAAR (lightProfile amerika) ≠ amerika.accentMora ∧
       latinStressRule (lightProfile amerika) ≠ amerika.accentMora := by decide
@@ -159,18 +154,15 @@ def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
 def accentToTones (accentMora : Option ℕ) (nMorae : ℕ) : List LevelTone :=
   (((List.range nMorae).map (toneSpec accentMora)).scanl (fun t o ↦ o.getD t) .H).tail
 
-/-- Unaccented *ame(+ga)* 'candy' surfaces LHH by initial rise and
-    spreading ((6b)). -/
+-- (6b)
 theorem ameCandy_ga_tones : accentToTones ameCandy.accentMora 3 = [.L, .H, .H] := by
   decide
 
-/-- Initially-accented *a'me(+ga)* 'rain' surfaces HLL, since the accentual
-    HL blocks the initial rise ((5b), (8)). -/
+-- (5b), (8)
 theorem ameRain_ga_tones : accentToTones ameRain.accentMora 3 = [.H, .L, .L] := by
   decide
 
-/-- A trisyllable's unaccented, initial and medial contours are distinct, and final accent
-neutralizes with unaccentedness ((3), §1.4). -/
+-- (3), §1.4
 theorem trisyllabic_tone_patterns :
     [accentToTones none 3, accentToTones (some 0) 3, accentToTones (some 1) 3].Nodup ∧
       accentToTones none 3 = accentToTones (some 2) 3 := by decide
@@ -296,28 +288,23 @@ def longN2CompoundAccent (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) : Optio
 def nonFinality : Constraint (Option ℕ × ℕ) :=
   Constraint.binary fun an ↦ an.1.map (· + 1) = some an.2
 
-/-- In *fa'asuto+ki'su → faasuto+ki'su* 'first kiss', the short N2 retains
-    its accent on *ki* ((21a)). -/
+-- (21a)
 theorem faasuto_kisu_compound : shortN2Retain 4 (some 0) = some 4 := rfl
 
-/-- In *ka'buto+musi → kabuto'+musi* 'beetle', the pre-accenting short N2
-    puts the accent on N1-final *to* ((22a)). -/
+-- (22a)
 theorem kabuto_musi_compound : shortN2PreAccent 3 = some 2 := rfl
 
-/-- In *si'n+yokohama → sin+yo'kohama* 'Shin-Yokohama', the unaccented long
-    N2 receives N2-initial accent ((23a)). -/
+-- (23a)
 theorem sin_yokohama_compound : longN2CompoundAccent 2 4 none = some 2 := rfl
 
-/-- In *si'n+tamane'gi → sin+tamane'gi* 'new onion', the long N2 retains
-    its nonfinal accent ((24a)). -/
+-- (24a)
 theorem sin_tamanegi_compound : longN2CompoundAccent 2 4 (some 2) = some 4 := rfl
 
 @[simp] theorem nonFinality_eq_zero {acc : Option ℕ} {n : ℕ} :
     nonFinality (acc, n) = 0 ↔ acc.map (· + 1) ≠ some n := by
   simp [nonFinality, Constraint.binary]
 
-/-- Short-N2 pre-accenting never yields final accent, since the new accent
-    lands on the N1-final position and N2 intervenes (§4.1). -/
+-- §4.1
 theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (h : 1 ≤ n2Morae) :
     nonFinality (shortN2PreAccent n1Morae, n1Morae + n2Morae) = 0 := by
   rcases n1Morae with _ | k
@@ -325,9 +312,7 @@ theorem shortN2_preaccent_nonfinal (n1Morae n2Morae : ℕ) (h : 1 ≤ n2Morae) :
   · simp [shortN2PreAccent, Nat.ppred_succ]
     omega
 
-/-- Long-N2 compound accent never yields final accent, since retention is
-    filtered to N2-nonfinal accents and the N2-initial default is nonfinal
-    in a trimoraic-or-longer N2 (§4.2). -/
+-- §4.2
 theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) (h2 : 3 ≤ n2Morae) :
     nonFinality (longN2CompoundAccent n1Morae n2Morae n2Accent, n1Morae + n2Morae) = 0 := by
   rcases hX : n2Accent.filter (· + 1 != n2Morae) with _ | pos

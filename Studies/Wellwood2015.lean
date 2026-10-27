@@ -176,8 +176,7 @@ theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
       some ⟨.t, pure (matrixClause role P μ0 a δ)⟩ :=
   rfl
 
-/-- The engine derives the than-clause pointwise in the degree; abstraction over it (40),
-(47), (63) is the metalanguage's. -/
+-- (40), (47), (63)
 theorem than_derivation_denotes (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
     (b : Ent) (d : ℚ) (g : Assignment Ent) :
     interp (lexicon role P μ0 b d) g thanTree =

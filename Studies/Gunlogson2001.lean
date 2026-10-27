@@ -100,7 +100,6 @@ theorem isJoint_of_mem_jointContents (hne : ∀ x, (commitmentSet K x).Nonempty)
 @[simp] theorem isResolved_compl : IsResolved K pᶜ ↔ IsResolved K p := by
   simp [IsResolved, or_comm]
 
-/-- A resolved proposition is controversial for no one, so a resolved context is neutral. -/
 theorem IsResolved.isNeutral (h : IsResolved K p) : IsNeutral K p :=
   ⟨fun hc ↦ hc.2.1 h, fun hc ↦ hc.2.1 (isResolved_compl.2 h)⟩
 
@@ -131,14 +130,10 @@ theorem isBiased_of_commitmentSet_eq {K' : State Role W} {y : Role}
   · exact (h.not_subset hu hne y.other).1 (hx ▸ (hj y.other).2)
   · exact hnot y (hj y).2
 
-/-- A falling declarative in a neutral, unresolved, nonempty context biases it toward its
-content. -/
 theorem isBiased_falling (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (falling K p) p :=
   isBiased_of_commitmentSet_eq h hu hne (commitmentSet_falling K p).1 (commitmentSet_falling K p).2
 
-/-- A rising declarative in a neutral, unresolved, nonempty context biases it toward its
-content. -/
 theorem isBiased_rising (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (rising K p) p :=
   isBiased_of_commitmentSet_eq h hu hne (commitmentSet_rising K p).1 (commitmentSet_rising K p).2
@@ -251,7 +246,7 @@ def update (p : Set W) : Locution → State Role W → State Role W
 
 variable (L : Locution)
 
-/-- The locution applies its sentence meaning to the targeted commitment set (81). -/
+-- (81)
 theorem commitmentSet_update_target :
     commitmentSet (L.update p K) L.target =
       L.sentenceType.update p (commitmentSet K L.target) := by
@@ -260,7 +255,7 @@ theorem commitmentSet_update_target :
   · exact (commitmentSet_falling K p).1
   · rfl
 
-/-- The other commitment set is unchanged (81). -/
+-- (81)
 theorem commitmentSet_update_of_ne {x : Role} (h : x ≠ L.target) :
     commitmentSet (L.update p K) x = commitmentSet K x := by
   cases L <;> cases x <;>
@@ -311,8 +306,7 @@ theorem isBiasingIn_of_decl (hL : L.sentenceType = .decl) (h : IsNeutral K p)
   · exact isBiased_falling h hu hne
   · exact absurd hL (by decide)
 
-/-- No interrogative is biasing, since it leaves the context as it is and a neutral context is not
-biased (92). -/
+-- (92)
 theorem not_isBiasingIn_risingInterr : ¬ risingInterr.IsBiasingIn K p :=
   fun h ↦ h.1.not_isBiased h.2
 
@@ -331,8 +325,7 @@ theorem not_expressesCommitment_risingInterr (h₀ : p.Nonempty) (h₁ : pᶜ.No
   · obtain ⟨x, -, hx⟩ := hc.1
     exact hx (by simp [update] : w₁ ∈ commitmentSet (risingInterr.update p ∅) x) hw₁
 
-/-- As literally defined, a falling declarative does not express commitment (93), inheriting the gap
-in (91). -/
+-- (93), (91)
 theorem not_expressesCommitment_fallingDecl (h₀ : p.Nonempty) :
     ¬ fallingDecl.ExpressesCommitment p := by
   intro h
@@ -387,8 +380,7 @@ theorem uninformative_iff_of_decl (hL : L.sentenceType = .decl) {x : Role} :
   rw [Uninformative, hL]
   exact SentenceType.entails_decl_iff
 
-/-- A falling declarative reiterating the speaker's commitment is entailed by the context yet
-informative with respect to the addressee (100). -/
+-- (100)
 theorem entails_and_informativeIn_fallingDecl (hs : commitmentSet K .speaker ⊆ p)
     (ha : ¬ commitmentSet K .addressee ⊆ p) :
     fallingDecl.Entails K p ∧ fallingDecl.InformativeIn K p :=
@@ -402,8 +394,7 @@ theorem uninformative_of_isCommitmentOf {x : Role} (h : IsCommitmentOf K x p) :
   · rw [Uninformative, hL]
     rfl
 
-/-- A locution whose content is a joint commitment is vacuous; it is then uninformative with respect
-to the context and entailed by it (101). -/
+-- (101)
 theorem uninformativeIn_and_entails_of_isJoint (h : IsJoint K p) :
     L.UninformativeIn K p ∧ L.Entails K p :=
   ⟨fun x ↦ L.uninformative_of_isCommitmentOf (h x),
@@ -416,17 +407,15 @@ addressee's commitment set, the Uninformativeness Condition (104) taken as neces
 sufficient (132). -/
 def IsPolarQuestion (K : State Role W) (p : Set W) : Prop := L.Uninformative K .addressee p
 
-/-- Every rising interrogative is a polar question (131). -/
+-- (131)
 theorem isPolarQuestion_risingInterr : risingInterr.IsPolarQuestion K p := rfl
 
-/-- By the Contextual Bias Condition (105), a declarative is a polar question only where the
-addressee is already committed to its content. -/
+-- (105)
 theorem isPolarQuestion_iff_of_decl (hL : L.sentenceType = .decl) :
     L.IsPolarQuestion K p ↔ commitmentSet K .addressee ⊆ p :=
   uninformative_iff_of_decl L hL
 
-/-- A rising declarative that is a polar question has the effect of the interrogative with the same
-content, none (133). -/
+-- (133)
 theorem entails_of_isPolarQuestion_risingDecl (h : risingDecl.IsPolarQuestion K p) :
     risingDecl.Entails K p :=
   (entails_iff _).2 h

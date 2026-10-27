@@ -180,7 +180,6 @@ theorem unerg_specific_blocks : dGoals (unerg SubjD) T₀ = {↑SubjD} := by dec
 
 theorem unerg_nonspecific_psr_closest : dGoals (unerg SubjN) T₀ = {↑Psr} := by decide +kernel
 
-/-- A specific theme c-commanding the locative PP raises instead of the possessor. -/
 theorem theme_specific_blocks : dGoals (themeLoc ThemeD) T₀ = {↑ThemeD} := by decide +kernel
 
 theorem theme_nonspecific_psr_closest : dGoals (themeLoc ThemeN) T₀ = {↑Psr} := by

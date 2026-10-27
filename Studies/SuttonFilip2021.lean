@@ -155,7 +155,6 @@ def unitShift (E : Entry α) (D : Set α) (h : IsMaxDisjointIn Overlap D E.frame
     Entry α :=
   ⟨E.frame, true, true, some D, fun _ hD ↦ Option.some_inj.1 hD ▸ h⟩
 
-/-- The unit shift is the generalized `[−O,−S]` to `[+O,+S]` shift (9.5.4). -/
 theorem features_unitShift (E : Entry α) (D : Set α)
     (h : IsMaxDisjointIn Overlap D E.frame.objects) :
     (unitShift E D h).features = (true, true) := rfl

@@ -132,13 +132,13 @@ abbrev mono : Foot Unit ⊕ Unit := .inl (Foot.monosyllable ())
 /-- A string of `n` unfooted syllables. -/
 def strays (n : ℕ) : Footing Unit := List.replicate n stray
 
-/-- `Parse(σ)⇒` orders the placements of a trochee, the leftmost best ((13a)). -/
+-- (13a)
 theorem parseLR_orders_trochees :
     vec (parseLR 4) [troch, stray, stray] < vec (parseLR 4) [stray, troch, stray] ∧
       vec (parseLR 4) [stray, troch, stray] < vec (parseLR 4) [stray, stray, troch] := by
   decide +kernel
 
-/-- `Parse(σ)⇐` orders them the other way, the rightmost best ((14a)). -/
+-- (14a)
 theorem parseRL_orders_trochees :
     vec (parseRL 4) [stray, stray, troch] < vec (parseRL 4) [stray, troch, stray] ∧
       vec (parseRL 4) [stray, troch, stray] < vec (parseRL 4) [troch, stray, stray] := by
@@ -154,11 +154,11 @@ def murinbata (n : ℕ) : HSDerivation (Footing Unit) :=
 def pintupi (n : ℕ) : HSDerivation (Footing Unit) :=
   ⟨gen, trochee n ++ parseLR n ++ iamb n⟩
 
-/-- (23i): the first step parses a trochee at the left edge. -/
+-- (23i)
 theorem step_23i : (murinbata 4).stepOptimum (strays 4) = {[troch, stray, stray]} := by
   decide +kernel
 
-/-- (23m): the second step foots the remaining two syllables. -/
+-- (23m)
 theorem step_23m : (murinbata 4).stepOptimum [troch, stray, stray] = {[troch, troch]} := by
   decide +kernel
 
@@ -182,12 +182,12 @@ theorem monosyllable_never_optimal :
       m ∉ (HSDerivation.mk gen r).stepOptimum (strays 4) := by
   decide +kernel
 
-/-- (24): with `Parse(σ)` dominant, the final syllable of an odd-parity word is footed. -/
+-- (24)
 theorem step_24 :
     (murinbata 5).stepOptimum [troch, troch, stray] = {[troch, troch, mono]} := by
   decide +kernel
 
-/-- (25): with `Trochee` dominant, it stays unfooted and the derivation has converged. -/
+-- (25)
 theorem converged_25 : (pintupi 5).Converged [troch, troch, stray] := by decide +kernel
 
 /-! ### Non-iterative footing (§2.2)
@@ -200,7 +200,7 @@ stress. -/
 def macedonian (n : ℕ) : HSDerivation (Footing Unit) :=
   ⟨gen, hdWord :: trochee n ++ nonFinality :: iamb n ++ parseLR n⟩
 
-/-- (29f): the trochee surfaces one syllable from the right edge. -/
+-- (29f)
 theorem step_29f : (macedonian 4).stepOptimum (strays 4) = {[stray, troch, stray]} := by
   decide +kernel
 
@@ -225,7 +225,7 @@ theorem step_33i :
     (garawa 7).stepOptimum (troch :: strays 3 ++ [troch]) = {[troch, stray, troch, troch]} := by
   decide +kernel
 
-/-- (33j): the third syllable stays unfooted, `Trochee` dominating `Parse(σ)`. -/
+-- (33j)
 theorem converged_33 : (garawa 7).Converged [troch, stray, troch, troch] := by decide +kernel
 
 /-- `NonFinality ≫ *FootFoot ≫ Parse(σ)⇐ ≫ Trochee ≫ Iamb`: Cayuvava's dactyls. -/
@@ -297,8 +297,7 @@ abbrev trochSf : Foot Morph ⊕ Morph := .inl (Foot.trochee .suffix .suffix)
 /-- A monosyllabic foot over a stem syllable. -/
 abbrev monoSt : Foot Morph ⊕ Morph := .inl (Foot.monosyllable .stem)
 
-/-- (43): a pentasyllabic stem is footed from the right edge, then from the left, and a
-monosyllabic foot surfaces word-medially. -/
+-- (43)
 theorem steps_43 :
     (waorani 5).stepOptimum [st, st, st, st, st] = {[st, st, st, trochSt]} ∧
     (waorani 5).stepOptimum [st, st, st, trochSt] = {[trochSt, st, trochSt]} ∧
@@ -306,8 +305,7 @@ theorem steps_43 :
     (waorani 5).Converged [trochSt, monoSt, trochSt] := by
   decide +kernel
 
-/-- In the derivation (44) of a pentasyllabic suffix string, the head foot comes first at the right
-edge and one suffix syllable stays unfooted. -/
+-- (44)
 theorem steps_44 :
     (waorani 10).stepOptimum [st, st, st, st, st, sf, sf, sf, sf, sf] =
         {[st, st, st, st, st, sf, sf, sf, trochSf]} ∧

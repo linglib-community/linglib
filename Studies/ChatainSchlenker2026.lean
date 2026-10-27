@@ -124,8 +124,7 @@ theorem enrichment_by_definedness (P : E → W → SignType) :
     (fun x w ↦ ofProp (P x w ≠ 0) ⊓ P x w) = fun x w ↦ ofProp (P x w = 1) :=
   funext fun _ ↦ funext fun _ ↦ ofProp_ne_zero_inf_self _
 
-/-- Enrichment by `R` is the conjunction of `R` with the predicate in Middle Kleene as in Strong
-Kleene, the paraphrases (75). -/
+-- (75)
 theorem enrichment_eq_meetMiddle (R : Prop) [Decidable R] (a : SignType) :
     ofProp R ⊓ a = meetMiddle (ofProp R) a :=
   (meetMiddle_eq_inf_of_left_ne_zero _ _ ofProp_ne_zero).symm
@@ -232,8 +231,7 @@ def clause (d : D) : Tree Unit (Word D) := .bin (.leaf (.day d)) vp
 variable (P : W → D →. Prop) (R : D → W → Prop) (w : W) (g : Assignment D) (d : D)
 
 open Classical in
-/-- The engine's denotation of the clause is the negated enriched predicate at its subject,
-(67). -/
+-- (67)
 theorem interpPartial_clause : interpPartial (lexicon P R w) g (clause d) =
     some ⟨.t, (if R d w then P w d else Part.some False).map Not⟩ := by
   classical
@@ -272,8 +270,6 @@ theorem clause_projects_and_accommodates {X Y : D} (hY : ∀ w, R Y w)
   simp only [presupFailure_clause]
   exact ⟨and_iff_right (hY w), fun h ↦ h.2 (hX w h.1)⟩
 
-/-- The clause fails where the Strong Kleene enrichment of the predicate's three-valued value is
-undefined, so the engine agrees with `enrichment_projects_and_accommodates`. -/
 theorem presupFailure_clause_iff_mem_gapExt [DecidablePred (R d)] :
     PresupFailure (lexicon P R w) g (clause d) ↔
       w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ ofPart (P w d) := by

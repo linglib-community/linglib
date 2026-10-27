@@ -202,15 +202,12 @@ def apply : Segment := σ.features.piecewise src tgt
 theorem apply_eqOn : Set.EqOn (σ.apply src tgt) src ↑σ.features :=
   fun _ hf ↦ Finset.piecewise_eq_of_mem _ _ _ hf
 
-/-- Single-feature spreading overwrites the target's value at the feature with the source's. -/
 theorem apply_feature (f : Feature) :
     (feature f).apply src tgt = Function.update tgt f (src f) :=
   Finset.piecewise_singleton _ _ _
 
 variable {σ} {f g : Feature} {b c : Node}
 
-/-- A spreading that carries two features hanging from distinct class nodes spreads a node
-dominating both. -/
 theorem exists_eq_node (hf : classNode? f = some b) (hg : classNode? g = some c) (hbc : b ≠ c)
     (h₁ : f ∈ σ.features) (h₂ : g ∈ σ.features) : ∃ a, σ = .node a ∧ a ≤ b ∧ a ≤ c := by
   cases σ with
@@ -226,8 +223,7 @@ end Spreading
 
 variable {σ : Spreading} {f g : Feature}
 
-/-- Place spreading carries `[anterior]` and `[distributed]` together and leaves `[nasal]`
-alone, so (12) is a single-node rule while the `[αnasal]` variant of (14) is not. -/
+-- (12), (14)
 theorem anterior_distributed_subset_place :
     {Feature.anterior, Feature.distributed} ⊆ featureClass classNode? Node.place := by
   decide

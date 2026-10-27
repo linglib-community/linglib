@@ -140,8 +140,7 @@ reading is out ((66)). -/
 theorem meaning_nword_marker : meaning [.nword .u A, .marker .i] P ↔ every A fun x ↦ P [x] := by
   simp [meaning, interp, NegElement.feature, every, GQ.some]
 
-/-- Standard Dutch *Niemand loopt niet* 'everybody walks' ((84)): both negative elements carry
-`[iNEG]`. -/
+-- (84)
 theorem meaning_dn_nword_marker : meaning [.nword .i A, .marker .i] P ↔ every A fun x ↦ P [x] := by
   simp [meaning, interp, NegElement.feature, every, no]
 

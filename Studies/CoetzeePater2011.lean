@@ -80,8 +80,7 @@ open scoped NNReal ENNReal
 /-- The percentage of t/d that dialect `d` deletes before `ctx`, read from (10). -/
 def observedRate (d : Dialect) (ctx : Context) : ℕ := (contextRates d ctx).percent
 
-/-- Every dialect of (10) deletes most before a consonant, Labov's cross-dialectal
-generalization. -/
+-- (10)
 theorem observedRate_le_preC (d : Dialect) (ctx : Context) :
     observedRate d ctx ≤ observedRate d .preC := by
   cases d <;> cases ctx <;> decide
@@ -90,13 +89,12 @@ theorem observedRate_pause_lt_preV_iff (d : Dialect) :
     observedRate d .pause < observedRate d .preV ↔ d = .chicano ∨ d = .philadelphia := by
   cases d <;> decide
 
-/-- The other dialects of (10) delete more before a pause than before a vowel. -/
+-- (10)
 theorem observedRate_preV_lt_pause_iff (d : Dialect) :
     observedRate d .preV < observedRate d .pause ↔ d ≠ .chicano ∧ d ≠ .philadelphia := by
   cases d <;> decide
 
-/-- In every dialect of (7) a regular past suffix deletes least and a monomorpheme most, with
-semi-weak pasts in between, as Guy found. -/
+-- (7)
 theorem morphRates_lt :
     ∀ r ∈ morphRates, r.regularPast < r.semiWeakPast ∧ r.semiWeakPast < r.monomorpheme := by
   decide
@@ -163,8 +161,7 @@ theorem deletes_pause_iff :
 /-- The categorical system of `σ` is the set of contexts in which it deletes. -/
 def system (σ : Ranking (Fin 4) 4) : Finset Context := univ.filter (Deletes σ)
 
-/-- The five systems of (12), rows (a)–(e), from no deletion to deletion in all three
-contexts. -/
+-- (12)
 theorem image_system :
     univ.image system = {∅, {.pause, .preC}, {.preV, .preC}, {.preC}, univ} := by decide
 
@@ -205,8 +202,7 @@ that delete (9). -/
 noncomputable def deletionProb (g : ImposedRanking) (ctx : Context) : ℝ :=
   (uniformOn (extensions g : Set (Ranking (Fin 4) 4))).real {σ | Deletes σ ctx}
 
-/-- A probability of (9) is a count of deleting linear extensions over a count of all of
-them. -/
+-- (9)
 private theorem deletionProb_eq_div {g : ImposedRanking} {ctx : Context} {q : ℝ} (k m : ℕ)
     (hk : ((extensions g).filter (Deletes · ctx)).card = k := by decide)
     (hm : (extensions g).card = m := by decide) (hq : (k : ℝ) / m = q := by norm_num) :
@@ -221,13 +217,13 @@ theorem deletionProb_none (ctx : Context) :
     show tdDeletion.con = con from rfl, favoring_eq,
     card_singleton, Nat.cast_one, one_div]
 
-/-- Row (a) of (13) prints the counts of (9). -/
+-- (13), (9)
 theorem deletionProb_none_eq_pocRates (ctx : Context) :
     deletionProb .none ctx = (pocRates .none ctx).rankings / (pocRates .none ctx).total := by
   rw [deletionProb_none]
   cases ctx <;> norm_num [active_preV, active_pause, active_preC, pocRates]
 
-/-- Every grammar of (13) has the printed number of linear extensions, 24 or 12. -/
+-- (13)
 theorem card_extensions (g : ImposedRanking) (ctx : Context) :
     (extensions g).card = (pocRates g ctx).total := by
   cases g <;> cases ctx <;> decide
@@ -272,7 +268,7 @@ theorem deletionProb_maxPreVOverStarCT_preC_not_mem :
   rw [deletionProb_maxPreVOverStarCT.2.2]
   norm_num
 
-/-- A POC grammar giving some output probability .01 has at least five constraints (§3.3). -/
+-- §3.3
 theorem five_le_of_real_picksAt_eq {n : ℕ} {Input Output : Type*} [DecidableEq Output]
     {S : ConstraintSystem Input Output (Fin n)}
     {r : Fin n → Fin n → Prop} [DecidableRel r] {i : Input} {o : Output}
@@ -307,8 +303,7 @@ theorem uniformOn_univ_real_picksAt_ne {Input Output : Type*} [DecidableEq Outpu
 
 /-! ### The restriction shared by POC and stochastic OT (§3.2, §4.4) -/
 
-/-- A ranking that deletes before a vowel or a pause also deletes before a consonant (rows (b),
-(c) and (e) of (12)). -/
+-- (12)
 theorem deletes_preC_of_deletes {σ : Ranking (Fin 4) 4} {ctx : Context} (h : Deletes σ ctx) :
     Deletes σ .preC := by
   cases ctx
@@ -316,8 +311,7 @@ theorem deletes_preC_of_deletes {σ : Ranking (Fin 4) 4} {ctx : Context} (h : De
   · exact (deletes_preC_iff σ).mpr ((deletes_pause_iff σ).mp h).1
   · exact h
 
-/-- Any distribution over rankings, a POC grammar's (p. 11) or stochastic OT's (p. 21), deletes at
-least as often before a consonant as elsewhere. -/
+-- p. 11, p. 21
 theorem measure_deletes_le_preC (μ : Measure (Ranking (Fin 4) 4)) (ctx : Context) :
     μ {σ | Deletes σ ctx} ≤ μ {σ | Deletes σ .preC} :=
   measure_mono fun _ ↦ deletes_preC_of_deletes
@@ -375,15 +369,13 @@ theorem hgDeletes_preC_of_hgDeletes (hw : 0 ≤ w) {ctx : Context} (h : HGDelete
   · rw [hgDeletes_pause_iff] at h; linarith [show 0 ≤ w 3 from hw 3]
   · rwa [hgDeletes_preC_iff] at h
 
-/-- The systems of (12) are the sets of contexts in which deletion anywhere entails deletion
-before a consonant. -/
+-- (12)
 theorem image_system_eq_filter :
     univ.image system = univ.filter fun S : Finset Context ↦ S.Nonempty → .preC ∈ S := by
   rw [image_system]
   decide
 
-/-- Categorical HG with non-negative weights generates exactly the five systems of (12) (footnote
-8). -/
+-- (12), footnote 8
 theorem setOf_hgDeletes_eq :
     {S : Finset Context | ∃ w : Fin 4 → ℝ, 0 ≤ w ∧ ∀ ctx, HGDeletes w ctx ↔ ctx ∈ S} =
       ↑(univ.image system) := by
@@ -402,19 +394,17 @@ theorem setOf_hgDeletes_eq :
       · cases ctx <;> simp [protect, h] <;> linarith [show (0 : ℝ) ≤ protect .preC by
           unfold protect; split_ifs <;> norm_num]
 
-/-- Noisy HG with negative noisy weights set to zero (p. 19) deletes at least as often before a
-consonant as elsewhere. -/
+-- p. 19
 theorem weightNoise_hgDeletes_le_preC (w : Fin 4 → ℝ) (v : ℝ≥0) (ctx : Context) :
     weightNoise (Fin 4) v {η | HGDeletes (w + η)⁺ ctx} ≤
       weightNoise (Fin 4) v {η | HGDeletes (w + η)⁺ .preC} :=
   measure_mono fun _ ↦ hgDeletes_preC_of_hgDeletes (posPart_nonneg _)
 
-/-- A negative MAX-PRE-V weight rewards pre-vocalic deletion, giving deletion pre-vocalically
-alone (§4.4). -/
+-- §4.4
 theorem hgDeletes_neg (ctx : Context) : HGDeletes ![0, 0, -1, 0] ctx ↔ ctx = .preV := by
   cases ctx <;> simp [Matrix.cons_val_two, Matrix.cons_val_three]
 
-/-- Deletion pre-vocalically alone is not among the systems of (12). -/
+-- (12)
 theorem singleton_preV_not_mem : {Context.preV} ∉ univ.image system := by decide
 
 /-! ### MaxEnt Harmonic Grammar (§4.3–4.4) -/
@@ -432,7 +422,7 @@ theorem maxEntProb_eq_sigmoid (w : Fin 4 → ℝ) (ctx : Context) :
       sigmoid (harmonyScore con w (ctx, .delete) - harmonyScore con w (ctx, .retain)) :=
   maxEnt_real_singleton_of_pair _ _ (a := Output.delete) (b := .retain) (by decide) (by decide)
 
-/-- Non-negative contextual faithfulness keeps MaxEnt within the restriction (§4.4). -/
+-- §4.4
 theorem maxEntProb_le_preC (hw : 0 ≤ w) (ctx : Context) :
     maxEntProb w ctx ≤ maxEntProb w .preC := by
   rw [maxEntProb_eq_sigmoid, maxEntProb_eq_sigmoid, sigmoid_le_iff]
@@ -443,8 +433,7 @@ theorem maxEntProb_preV_lt_pause_iff (w : Fin 4 → ℝ) :
   rw [maxEntProb_eq_sigmoid, maxEntProb_eq_sigmoid, sigmoid_lt_iff]
   simp
 
-/-- In every grammar of (23), MAX-PRE-V outweighs MAX-FINAL iff deletion is rarer before a vowel
-than before a pause (p. 20). -/
+-- (23), p. 20
 theorem learnedGrammars_maxFinal_lt_maxPreV_iff (d : Dialect) (m : Model) :
     (learnedGrammars d m).maxFinal.toRat < (learnedGrammars d m).maxPreV.toRat ↔
       observedRate d .preV < observedRate d .pause := by
@@ -455,7 +444,7 @@ noncomputable def meWeights (d : Dialect) : Fin 4 → ℝ :=
   let g := learnedGrammars d .meHG
   ![g.starCT.toRat, g.maxC.toRat, g.maxPreV.toRat, g.maxFinal.toRat]
 
-/-- The MaxEnt grammars of (23) order each dialect's three contexts as its observed rates do. -/
+-- (23)
 theorem maxEntProb_meWeights_lt_iff (d : Dialect) (ctx ctx' : Context) :
     maxEntProb (meWeights d) ctx < maxEntProb (meWeights d) ctx' ↔
       observedRate d ctx < observedRate d ctx' := by
@@ -468,8 +457,7 @@ noncomputable def tejanoPrimeWeights : Fin 4 → ℝ :=
   let g := tejanoPrimeGrammars .meHG
   ![g.starCT.toRat, g.maxC.toRat, g.maxPreV.toRat, g.maxFinal.toRat]
 
-/-- Negative weights reward pre-vocalic and phrase-final deletion, so the MaxEnt grammar of
-Tejano′ orders the contexts as Tejano′ does, pre-consonantal deletion rarest (§4.4). -/
+-- §4.4
 theorem maxEntProb_tejanoPrimeWeights_lt_iff (ctx ctx' : Context) :
     maxEntProb tejanoPrimeWeights ctx < maxEntProb tejanoPrimeWeights ctx' ↔
       tejanoPrime ctx < tejanoPrime ctx' := by
@@ -518,8 +506,7 @@ def loanwordDevoicing : RealizationProblem Loan Voicing (Fin 3) where
     | _ => .voiced
   target_mem _ _ := mem_univ _
 
-/-- The weights of (18)–(19), IDENT-VOICE 1.5 over OCP-VOICE 1 and \*VOICED-GEMINATE 1, realize the
-loanword devoicing pattern. -/
+-- (18), (19)
 theorem loanwordDevoicing_realizedByWeighting :
     loanwordDevoicing.realizedByWeighting ![3/2, 1, 1] := by
   refine fun i _ ↦ Finset.argmax_eq_singleton_iff.2 ⟨mem_univ _, fun o _ hne ↦ ?_⟩
@@ -533,8 +520,7 @@ theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizab
 def Devoices (σ : Ranking (Fin 3) 3) (l : Loan) : Prop :=
   PicksAt loanwordDevoicing.toConstraintSystem σ l .devoiced
 
-/-- A ranking devoices *guddo* exactly when it devoices *bobu* or *webbu*, when OCP-VOICE or
-\*VOICED-GEMINATE outranks IDENT-VOICE (p. 18). -/
+-- p. 18
 theorem setOf_devoices_guddo :
     {σ | Devoices σ .guddo} = {σ | Devoices σ .bobu} ∪ {σ | Devoices σ .webbu} := by
   ext σ
@@ -542,8 +528,7 @@ theorem setOf_devoices_guddo :
   unfold Devoices
   decide
 
-/-- No distribution over rankings devoices *guddo* more often than *bobu* and *webbu* together, so
-stochastic OT cannot learn (21) (p. 18). -/
+-- (21), p. 18
 theorem measure_devoices_guddo_le (μ : Measure (Ranking (Fin 3) 3)) :
     μ {σ | Devoices σ .guddo} ≤ μ {σ | Devoices σ .bobu} + μ {σ | Devoices σ .webbu} := by
   rw [setOf_devoices_guddo]
@@ -557,8 +542,7 @@ example : (devoicingRates .bobu).learningData.toRat + (devoicingRates .webbu).le
       (devoicingRates .bobu).stOT.toRat + (devoicingRates .webbu).stOT.toRat := by
   decide +kernel
 
-/-- In Noisy HG, *guddo* devoices with probability ½ whenever IDENT-VOICE weighs the sum of the
-other two weights (p. 18). -/
+-- p. 18
 theorem weightNoiseChoiceProb_guddo (w : Fin 3 → ℝ) (hw : w 0 = w 1 + w 2) (v : ℝ≥0)
     (hv : v ≠ 0) :
     weightNoiseChoiceProb (fun k o ↦ loanwordDevoicing.con k (.guddo, o)) w v .devoiced =
@@ -578,8 +562,7 @@ example : ∀ g ∈ loanwordWeights, g.model = .nHG →
     g.identVoice.toRat = g.ocpVoice.toRat + g.voicedGeminate.toRat := by
   decide +kernel
 
-/-- With IDENT-VOICE weighted 2 over 1 and 1, *guddo* and *gutto* tie at harmony −2 and MaxEnt
-gives each probability ½ (tableau (22)). -/
+-- (22)
 theorem guddo_maxEnt_half (o : Voicing) :
     (maxEnt (loanwordDevoicing.con.comap (.guddo, ·)).violations ![2, 1, 1]).real {o} = 2⁻¹ := by
   have h : harmonyScore (loanwordDevoicing.con.comap (.guddo, ·)) ![2, 1, 1] =
@@ -597,8 +580,7 @@ one factor weight for each contextual factor present, all as factors `p`. -/
 noncomputable def variableRule {ι : Type*} [Fintype ι] (p : ι → ℝ) : ℝ :=
   (∏ i, p i) / ((∏ i, p i) + ∏ i, (1 - p i))
 
-/-- The variable-rule probability is the logistic of the summed log-odds of its factors, the
-logistic regression Goldvarb runs (p. 21–22). -/
+-- p. 21–22
 theorem variableRule_eq_sigmoid {ι : Type*} [Fintype ι] (p : ι → ℝ)
     (hp : ∀ i, p i ∈ Set.Ioo 0 1) :
     variableRule p = sigmoid (∑ i, logit (p i)) := by
@@ -623,8 +605,7 @@ example : variableRule ![((goldvarbInputs .tejano).p0.toRat : ℝ),
   norm_num [variableRule, Fin.prod_univ_succ, goldvarbInputs, goldvarbFactors,
     informalRegisterFactor, Decimal.toRat]
 
-/-- One factor group with input probability ½ fits any rates, so the variable rules fit Tejano′
-as well as Tejano ((25)) and impose no typological restriction. -/
+-- (25)
 theorem exists_variableRule_eq (q : Context → ℝ) :
     ∃ p₀ : ℝ, ∃ p : Context → ℝ, ∀ ctx, variableRule ![p₀, p ctx] = q ctx := by
   refine ⟨2⁻¹, q, fun ctx ↦ ?_⟩
@@ -633,8 +614,7 @@ theorem exists_variableRule_eq (q : Context → ℝ) :
   rw [show 2⁻¹ * q ctx + (1 - 2⁻¹) * (1 - q ctx) = (2⁻¹ : ℝ) by ring, div_eq_iff (by norm_num)]
   ring
 
-/-- In a variable rule, the context with the lower factor weight deletes less in every register (p.
-24–25). -/
+-- p. 24–25
 theorem variableRule_lt_iff {p₀ c c' s : ℝ} (h₀ : p₀ ∈ Set.Ioo 0 1) (hc : c ∈ Set.Ioo 0 1)
     (hc' : c' ∈ Set.Ioo 0 1) (hs : s ∈ Set.Ioo 0 1) :
     variableRule ![p₀, c, s] < variableRule ![p₀, c', s] ↔ c < c' := by
@@ -646,8 +626,7 @@ theorem variableRule_lt_iff {p₀ c c' s : ℝ} (h₀ : p₀ ∈ Set.Ioo 0 1) (h
     add_lt_add_iff_left]
   rw [← sigmoid_lt_iff, sigmoid_logit hc, sigmoid_logit hc']
 
-/-- In style-sensitive HG (28), a style sensitivity on MAX-FINAL alone lets two registers order
-pre-vowel and pre-pause deletion oppositely (p. 25). -/
+-- (28), p. 25
 theorem exists_styleSensitive_reorders :
     ∃ w sens : Fin 4 → ℝ, sens 2 = 0 ∧
       maxEntProb (w + (0 : ℝ) • sens) .preV < maxEntProb (w + (0 : ℝ) • sens) .pause ∧
@@ -688,8 +667,7 @@ theorem indexedTableau_most (ctx : Context) :
   funext k o
   rcases k with _ | ⟨_ | _, k⟩ <;> rfl
 
-/-- If each faithfulness weight indexed to *feast* exceeds the one indexed to *most*, Noisy HG
-deletes less from *feast* in every context (p. 29). -/
+-- p. 29
 theorem weightNoiseChoiceProb_feast_lt_most {w : Option (Lexeme × Fin 3) → ℝ}
     (hw : ∀ k, w (some (.most, k)) < w (some (.feast, k))) {v : ℝ≥0} (hv : v ≠ 0)
     (ctx : Context) :
@@ -726,8 +704,7 @@ theorem weightNoiseChoiceProb_feast_lt_most {w : Option (Lexeme × Fin 3) → �
     simpa [d, ConstraintSet.violationDiff, indexedTableau, indexedCon, indexed, con, maxC]
       using hw 0
 
-/-- The grammar learned in (32) deletes less from *feast* than from *most* in every context, as
-its learning data do. -/
+-- (32)
 theorem weightNoiseChoiceProb_indexedWeights {v : ℝ≥0} (hv : v ≠ 0) (ctx : Context) :
     weightNoiseChoiceProb (indexedTableau .feast ctx) indexedWeights v .delete <
       weightNoiseChoiceProb (indexedTableau .most ctx) indexedWeights v .delete :=

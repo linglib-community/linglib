@@ -125,21 +125,20 @@ theorem agentive_possessor_rows :
       (r.judgment = .acceptable ↔ (AgentLicensed r.spine ∨ c = .agentive)) := by
   decide
 
-/-- A derived nominal is a root noun, (8): no v, so no agent-licensing Voice. -/
+-- (8)
 theorem derivedNominal_not_agentLicensed :
     ∀ r ∈ rows, r.construction = .derivedNominal → ¬ AgentLicensed r.spine := by
   decide
 
 /-! ### Inner and outer heads, (13)–(15) -/
 
-/-- The gerund's n is not local to the root ((9), (14)), whereas the derived nominal's n is ((8),
-(13)). -/
+-- (9), (14), (8), (13)
 theorem gerund_n_not_rootLocal :
     ∀ r ∈ rows, ∀ i : Fin r.spine.heads.length, r.spine.heads[i] = .n →
       (r.spine.RootLocal cyclic i ↔ r.construction = .derivedNominal) := by
   decide
 
-/-- Tense and aspect outside the verbalizer are local to the root, (15): *ben-t*, *brok-en*. -/
+-- (15)
 theorem inflection_rootLocal :
     ∀ r ∈ rows, r.construction = .inflected → ∀ i : Fin r.spine.heads.length,
       r.spine.RootLocal cyclic i := by

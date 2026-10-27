@@ -77,7 +77,7 @@ variable (excl) in
 def Harmony : Prop :=
   ∀ ⦃w e : E⦄, Maximal (· ∈ possible excl) w → ¬ Conflict excl w e → e ∈ possible excl
 
-/-- An event is possible exactly when it coheres with some world (Theorem 8.3). -/
+-- Theorem 8.3
 theorem mem_possible_iff_exists_world [Std.Symm excl] (hC : Cosmopolitan excl)
     (hH : Harmony excl) {e : E} :
     e ∈ possible excl ↔ ∃ w, ¬ Conflict excl e w ∧ Maximal (· ∈ possible excl) w := by
@@ -108,8 +108,7 @@ theorem neg_singleton (f : E) : neg excl {f} = {e | ∃ g ≤ f, excl e g} := by
   · intro hg
     exact ⟨fun _ ↦ e, fun f' hf' ↦ Set.mem_singleton_iff.1 hf' ▸ hg, by simp⟩
 
-/-- No possible event contains both a verifier of `φ` and a verifier of its negation. The paper
-states this for worlds (Theorem 9.4). -/
+-- Theorem 9.4
 theorem not_mem_upperClosure_neg {φ : Set E} {s : E} (hs : s ∈ possible excl)
     (hφ : s ∈ upperClosure φ) : s ∉ upperClosure (neg excl φ) := by
   intro hn
@@ -118,7 +117,7 @@ theorem not_mem_upperClosure_neg {φ : Set E} {s : E} (hs : s ∈ possible excl)
   obtain ⟨g, hgf, hx⟩ := hh f hf
   exact hs ⟨h f, (le_sSup (Set.mem_image_of_mem h hf)).trans hle, g, hgf.trans hfs, hx⟩
 
-/-- Every world contains a verifier of `φ` or a verifier of its negation (Theorem 9.3). -/
+-- Theorem 9.3
 theorem mem_upperClosure_or_neg (hH : Harmony excl) (hR : PossibleFusion excl) {w : E}
     (hw : Maximal (· ∈ possible excl) w) (φ : Set E) :
     w ∈ upperClosure φ ∨ w ∈ upperClosure (neg excl φ) := by

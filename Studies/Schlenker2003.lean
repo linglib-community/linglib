@@ -93,8 +93,7 @@ theorem not_stable_amharicI [Nontrivial E] [Nonempty W] [Nonempty P] [Nonempty T
   obtain ⟨w⟩ := ‹Nonempty W›; obtain ⟨p⟩ := ‹Nonempty P›; obtain ⟨t⟩ := ‹Nonempty T›
   exact fun h ↦ hab (h ⟨a, a, w, t, p⟩ ⟨b, a, w, t, p⟩)
 
-/-- (3): bound to a context whose agent is not the speaker, Amharic *I* and English *I* resolve
-differently. -/
+-- (3)
 theorem amharicI_ne_I (h : c.agent ≠ τ.origin.agent) :
     amharicI.resolve (τ.push c) ≠
       Kaplan.I.resolve (τ.push c) := by
@@ -120,13 +119,11 @@ instance [DecidableEq E] (d : DepthSpec) (x : E) (t : ContextTower (Context W E 
     Decidable (Logophoric d x t) :=
   inferInstanceAs (Decidable (AuthorAt d x t ∧ ¬ AuthorAt .origin x t))
 
-/-- Bound to a context whose agent is not the speaker, that agent is logophoric at the local
-depth. -/
 theorem logophoric_local_of_ne (h : c.agent ≠ τ.origin.agent) :
     Logophoric .local c.agent (τ.push c) :=
   ⟨by simp [AuthorAt, AccessPattern.resolve], by simpa [AuthorAt, AccessPattern.resolve] using h⟩
 
-/-- (81): the actual speaker is never logophoric, so no logophoric pronoun is first person. -/
+-- (81)
 theorem not_logophoric_origin_agent (d : DepthSpec) : ¬ Logophoric d τ.origin.agent τ :=
   fun h ↦ h.2 rfl
 
@@ -159,8 +156,7 @@ def isHappy : Person → World → Prop
   | .alice, w => w = .w0
   | _, _ => True
 
-/-- (3): *Bob says that I am happy* is false read with English *I*, Alice, and true read with
-Amharic *I*, Bob. -/
+-- (3)
 theorem english_amharic_differ :
     ¬ Say tellsAlice .bob () .w0 (fun τ ↦ isHappy (Kaplan.I.resolve τ) τ.innermost.world)
         (.root speechCtx) ∧

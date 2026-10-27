@@ -81,15 +81,14 @@ theorem mem_mentionSome {p : Set W} : p ∈ mentionSome α ↔ ∃ β, {w | β �
 theorem mem_stronglyExhaustive {p : Set W} : p ∈ stronglyExhaustive α ↔ ∃ S, α ⁻¹' {S} = p :=
   Set.mem_range
 
-/-- Groenendijk and Stokhof's true strongly exhaustive answer, George's (125), is the worlds where
-the abstract has the same extension. -/
+-- (125)
 theorem strongAnswer_mentionSome : strongAnswer (mentionSome α) w = α ⁻¹' {α w} := by
   ext v
   simp only [mem_strongAnswer, mentionSome, Set.forall_mem_range, Set.mem_ofPred_eq,
     Set.mem_preimage, Set.mem_singleton_iff, Set.ext_iff]
   exact forall_congr' fun _ ↦ Iff.comm
 
-/-- The weakly exhaustive answer (130) is the worlds whose extension includes this one's. -/
+-- (130)
 theorem weakAnswer_mentionSome : weakAnswer (mentionSome α) w = α ⁻¹' Set.Ici (α w) := by
   ext v
   simp [mentionSome, Set.subset_def]
@@ -97,7 +96,7 @@ theorem weakAnswer_mentionSome : weakAnswer (mentionSome α) w = α ⁻¹' Set.I
 theorem strongAnswer_mentionSome_mem : strongAnswer (mentionSome α) w ∈ stronglyExhaustive α :=
   ⟨α w, (strongAnswer_mentionSome α w).symm⟩
 
-/-- Only one strongly exhaustive answer is true at a world (p. 41). -/
+-- p. 41
 theorem trueAnswers_stronglyExhaustive :
     trueAnswers (stronglyExhaustive α) w = {strongAnswer (mentionSome α) w} := by
   ext p
@@ -109,8 +108,7 @@ theorem trueAnswers_stronglyExhaustive :
   · rintro rfl
     exact ⟨⟨α w, rfl⟩, rfl⟩
 
-/-- The partition (129) relates the worlds where the abstract has the same extension, so its
-cells partition the worlds (p. 70). -/
+-- (129), p. 70
 theorem partition_mentionSome : partition (mentionSome α) = Setoid.ker α := by
   ext v w
   rw [← Setoid.mem_cell, ← strongAnswer_eq_cell, strongAnswer_mentionSome]
@@ -138,8 +136,7 @@ theorem mentionSome_nonempty_iff : (mentionSome α).Nonempty ↔ Nonempty τ :=
 theorem classes_ker_subset_stronglyExhaustive : (Setoid.ker α).classes ⊆ stronglyExhaustive α :=
   Setoid.classes_ker_subset_fiber_set α
 
-/-- The contradiction is a strongly exhaustive answer exactly when some extension is realized
-in no world, the dissertation's (128). -/
+-- (128)
 theorem empty_mem_stronglyExhaustive_iff :
     ∅ ∈ stronglyExhaustive α ↔ ¬ Function.Surjective α := by
   simp only [mem_stronglyExhaustive, Function.Surjective, not_forall, Set.preimage_eq_empty_iff,
@@ -148,7 +145,7 @@ theorem empty_mem_stronglyExhaustive_iff :
 /-- The weakly exhaustive answers (131) are the weak answers of the worlds. -/
 def weaklyExhaustive : Set (Set W) := Set.range (weakAnswer (mentionSome α))
 
-/-- A world's weakly exhaustive answer is the least true member of (131), not its only one. -/
+-- (131)
 theorem isStrongestTrueAnswer_weaklyExhaustive :
     IsStrongestTrueAnswer (weaklyExhaustive α) w (weakAnswer (mentionSome α) w) :=
   ⟨⟨⟨w, rfl⟩, self_mem_weakAnswer _ w⟩, by
@@ -156,8 +153,7 @@ theorem isStrongestTrueAnswer_weaklyExhaustive :
     simp only [weakAnswer_mentionSome, Set.mem_preimage, Set.mem_Ici] at hv ⊢
     exact Set.preimage_mono (Set.Ici_subset_Ici.2 hv)⟩
 
-/-- The weak answers true at `w` are those of the worlds with smaller extensions, so a world has
-several true weakly exhaustive answers (p. 76). -/
+-- p. 76
 theorem weakAnswer_mem_trueAnswers_weaklyExhaustive_iff (v : W) :
     weakAnswer (mentionSome α) v ∈ trueAnswers (weaklyExhaustive α) w ↔ α v ⊆ α w := by
   simp [weaklyExhaustive, weakAnswer_mentionSome]
@@ -194,7 +190,7 @@ def part : ClosureOperator (Set (Set W)) :=
 
 theorem mem_part {P : Set (Set W)} {q : Set W} : q ∈ part P ↔ ∃ T ⊆ P, ⋃₀ T = q := Iff.rfl
 
-/-- Every mention-some answer is a partial answer to the strongly exhaustive answers (117d). -/
+-- (117d)
 theorem mentionSome_subset_part : mentionSome α ⊆ part (stronglyExhaustive α) := by
   rintro p ⟨β, rfl⟩
   refine mem_part.2 ⟨(fun S ↦ α ⁻¹' {S}) '' {S | β ∈ S}, Set.image_subset_range _ _, ?_⟩
@@ -206,7 +202,7 @@ theorem empty_mem_part (P : Set (Set W)) : ∅ ∈ part P :=
 
 theorem sUnion_mem_part (P : Set (Set W)) : ⋃₀ P ∈ part P := mem_part.2 ⟨P, le_rfl, rfl⟩
 
-/-- The disjunction of all strongly exhaustive answers is the tautology (123b). -/
+-- (123b)
 theorem sUnion_stronglyExhaustive : ⋃₀ stronglyExhaustive α = Set.univ :=
   Set.eq_univ_of_forall fun w ↦ ⟨_, ⟨α w, rfl⟩, rfl⟩
 
@@ -226,8 +222,7 @@ theorem supported_stronglyExhaustive_nonempty_iff :
     · exact ⟨α ⁻¹' {∅}, ⟨∅, rfl⟩, Set.empty_subset _⟩
     · exact ⟨α ⁻¹' {α u}, ⟨α u, rfl⟩, fun v hv ↦ h ⟨v, hv, rfl⟩ ⟨u, hu, rfl⟩⟩
 
-/-- With the actual world in the state, supporting a strongly exhaustive answer is entailing
-the true one (p. 41). -/
+-- p. 41
 theorem supported_stronglyExhaustive_nonempty_iff_subset (hw : w ∈ σ) :
     (supported (stronglyExhaustive α) σ).Nonempty ↔ σ ⊆ strongAnswer (mentionSome α) w := by
   rw [strongAnswer_mentionSome]
@@ -272,8 +267,7 @@ theorem reducible_iff :
     Reducible R RQ ↔ ∀ a b, (∀ p, R p a ↔ R p b) → ∀ P, RQ P a ↔ RQ P b := by
   simp [Reducible, Function.FactorsThrough, Set.ext_iff]
 
-/-- A question relation computed from the answer set and the propositions an individual is
-related to is reducible, as every reductive account's is (p. 117). -/
+-- p. 117
 theorem reducible_of_profile (Φ : Set (Set W) → Set (Set W) → Prop) :
     Reducible R fun P x ↦ Φ P {p | R p x} :=
   fun _ _ h ↦ by simp only [h]
@@ -292,8 +286,7 @@ the baseline rule and Lahiri's quantification over true answers. -/
 theorem reducible_embed (f : Set (Set W) → Set (Set W)) : Reducible R fun P x ↦ embed R (f P) x :=
   reducible_of_profile fun P S ↦ ∃ p ∈ f P, p ∈ S
 
-/-- Checking the predicate against "the answer" is reducible (p. 119), whichever answer operator
-picks it. -/
+-- p. 119
 theorem reducible_answer (ans : Set (Set W) → Set W) : Reducible R fun P x ↦ R (ans P) x :=
   reducible_of_profile fun P S ↦ ans P ∈ S
 
@@ -334,13 +327,12 @@ embedded as the singleton of its proposition (§4.5.3.6). -/
 @[simp] theorem question_singleton : R.question {p} x ↔ R.proposition p x := by
   simp [question, proposition, and_comm]
 
-/-- A trivial universal relation, as for *be certain* (98)–(99), gives back the embedding rule. -/
+-- (98), (99)
 theorem question_of_universal_true {S : Set W → E → Prop} :
     (⟨S, fun _ _ ↦ True⟩ : TwinRelations W E).question P x ↔ embed S P x := by
   simp [question, embed]
 
-/-- A predicate with all its content in the universal relation, like Italian *ignorare* (100)–(101),
-denies the embedding rule on nonempty answer sets. -/
+-- (100), (101)
 theorem question_of_existential_true {S : Set W → E → Prop} (hP : P.Nonempty) :
     (⟨fun _ _ ↦ True, fun p x ↦ ¬ S p x⟩ : TwinRelations W E).question P x ↔ ¬ embed S P x := by
   simp only [question, embed, and_true, not_exists, not_and]
@@ -351,12 +343,12 @@ universal one. -/
 def know (knows believes : Set W → E → Prop) (w : W) : TwinRelations W E :=
   ⟨knows, fun p x ↦ believes p x → w ∈ p⟩
 
-/-- Knowing a question is knowing some answer and believing no false one (71). -/
+-- (71)
 theorem know_question {knows believes : Set W → E → Prop} {w : W} :
     (know knows believes w).question P x ↔
       (∀ p ∈ P, believes p x → w ∈ p) ∧ ∃ p ∈ P, knows p x := Iff.rfl
 
-/-- As knowledge entails truth, the propositional use of *know* is knowledge (84). -/
+-- (84)
 theorem know_proposition {knows believes : Set W → E → Prop} {w : W}
     (hT : ∀ p x, knows p x → w ∈ p) :
     (know knows believes w).proposition p x ↔ knows p x :=
@@ -429,7 +421,7 @@ theorem mentionSome_sells :
     · exact ⟨false, by simp [sells]⟩
     · exact ⟨true, by simp [sells]⟩
 
-/-- Red and Janna know the same propositions (35a), (35c). -/
+-- (35a), (35c)
 theorem knows_janna_iff_red (p : Set World) : knows p .janna ↔ knows p .red := by
   simp only [knows, believes, state, Set.subset_def, Set.mem_ofPred_eq, and_imp, Prod.forall,
     actual]
@@ -442,12 +434,12 @@ theorem knows_janna_iff_red (p : Set World) : knows p .janna ↔ knows p .red :=
     · exact hab ▸ ha
     · exact h a true hab rfl
 
-/-- (33) is true. -/
+-- (33)
 theorem janna_knows : know.question (mentionSome sells) .janna := by
   rw [mentionSome_sells, TwinRelations.know_question]
   refine ⟨fun p hp hb ↦ hb rfl, {w | w.1 = true}, Set.mem_insert _ _, fun _ h ↦ h, rfl⟩
 
-/-- (34) is untrue, since Red believes the false Newstopia answer. -/
+-- (34)
 theorem red_not_knows : ¬ know.question (mentionSome sells) .red := by
   rw [mentionSome_sells, TwinRelations.know_question]
   rintro ⟨h, -⟩
@@ -525,20 +517,20 @@ theorem applicant_image_not_subsingleton : ¬ (applicant '' listed).Subsingleton
     h ⟨robinRejected, by decide, rfl⟩ ⟨robinAbsent, by decide, rfl⟩
   absurd (h₁ ▸ (by decide : (2 : Fin 4) ∈ applicant robinRejected)) (by decide)
 
-/-- (12) is true on the strongly exhaustive reading. -/
+-- (12)
 theorem maggie_knows_admitted :
     (supported (stronglyExhaustive admittedApplicant) listed).Nonempty := by
   rw [supported_stronglyExhaustive_nonempty_iff, funext admittedApplicant_eq]
   exact admitted_image_subsingleton
 
-/-- (13) is false on the strongly exhaustive reading, by domain uncertainty. -/
+-- (13)
 theorem maggie_not_knows_notAdmitted :
     ¬ (supported (stronglyExhaustive notAdmittedApplicant) listed).Nonempty := fun h ↦
   applicant_image_not_subsingleton
     ((restricted_compl_subsingleton_iff admitted_subset_applicant admitted_image_subsingleton).1
       (supported_stronglyExhaustive_nonempty_iff.1 h))
 
-/-- Nor any mention-some answer (p. 86). -/
+-- p. 86
 theorem maggie_not_knows_notAdmitted_mentionSome :
     ¬ (supported (mentionSome notAdmittedApplicant) listed).Nonempty := by
   rintro ⟨_, ⟨x, rfl⟩, h⟩
@@ -548,7 +540,7 @@ theorem maggie_not_knows_notAdmitted_mentionSome :
 theorem rupert_knows_admitted : (supported (stronglyExhaustive admitted) listed).Nonempty :=
   supported_stronglyExhaustive_nonempty_iff.2 admitted_image_subsingleton
 
-/-- Read as complementation, *which weren't admitted* is known too, by (9). -/
+-- (9)
 theorem rupert_knows_compl_admitted :
     (supported (stronglyExhaustive fun w ↦ (admitted w)ᶜ) listed).Nonempty :=
   negation_generalization admitted ▸ rupert_knows_admitted
@@ -557,8 +549,7 @@ private def jonathanRejected : World := ![.admitted, .admitted, .waitlisted, .re
 
 private def jonathanWaitlisted : World := ![.admitted, .admitted, .waitlisted, .waitlisted]
 
-/-- Read as *were rejected*, *which weren't admitted* is not known, the complementation failure
-of (17)–(20). -/
+-- (17), (20)
 theorem rupert_not_knows_rejected :
     ¬ (supported (stronglyExhaustive rejected) listed).Nonempty := fun h ↦
   have h₁ : rejected jonathanRejected = rejected jonathanWaitlisted :=
@@ -587,22 +578,19 @@ def alex : Set World := {w | ∀ x, w x = true}
 /-- Alex knows what his state entails and is true. -/
 def knows (p : Set World) : Prop := alex ⊆ p ∧ actual ∈ p
 
-/-- (21d) is false on the strongly exhaustive reading, since Alex knows no strongly exhaustive
-answer. -/
+-- (21d)
 theorem not_knows_stronglyExhaustive : ¬ ∃ p ∈ stronglyExhaustive spy, knows p := by
   rintro ⟨_, ⟨S, rfl⟩, hσ, hw⟩
   have h₁ : spy (fun _ ↦ true) = S := hσ fun _ ↦ rfl
   have h₂ : spy actual = S := hw
   exact absurd (congrArg (2 ∈ ·) (h₁.trans h₂.symm)) (by simp [spy, actual])
 
-/-- Yet Alex knows the weakly exhaustive answer (21b), so a weakly exhaustive *know* wrongly
-makes (21d) true. -/
+-- (21b), (21d)
 theorem knows_weakAnswer : knows (weakAnswer (mentionSome spy) actual) := by
   rw [weakAnswer_mentionSome]
   exact ⟨fun w hw x _ ↦ hw x, Set.mem_Ici.2 le_rfl⟩
 
-/-- Spector's repair, (71) over the mention-some answers, makes (21d) false, since Alex believes
-the false answer that Andrew is a spy. -/
+-- (71), (21d)
 theorem not_know_question_mentionSome :
     ¬ (TwinRelations.know (fun p _ ↦ knows p) (fun p _ ↦ alex ⊆ p) actual).question
       (mentionSome spy) () := by
@@ -655,7 +643,7 @@ theorem mentionSome_sells : mentionSome sells = {{w | w.1 = true}, {w | w.2 = tr
     · exact ⟨false, by simp [sells]⟩
     · exact ⟨true, by simp [sells]⟩
 
-/-- (44a) is true. -/
+-- (44a)
 theorem janna_forgot : forgotEntry.question (mentionSome sells) .janna := by
   rw [mentionSome_sells]
   refine ⟨fun p hp hk ↦ ⟨hk, fun h ↦ ?_⟩, {w | w.1 = true}, Set.mem_insert _ _,
@@ -664,14 +652,13 @@ theorem janna_forgot : forgotEntry.question (mentionSome sells) .janna := by
   · exact Bool.false_ne_true (h (Set.mem_univ (false, true)))
   · exact Bool.false_ne_true (hk (show (true, false) ∈ past .janna from rfl))
 
-/-- (44b) is untrue, since Red still knows the Cellulose City answer. -/
+-- (44b)
 theorem red_not_forgot : ¬ forgotEntry.question (mentionSome sells) .red := by
   rw [mentionSome_sells]
   rintro ⟨h, -⟩
   exact (h {w | w.2 = true} (Set.mem_insert_of_mem _ rfl) fun _ hw ↦ hw.2).2 fun _ hw ↦ hw
 
-/-- In a state model Red has also forgotten the conjunction (47c), so the scenario is not a
-counterexample to reducibility, as George anticipates (p. 138). -/
+-- (47c), p. 138
 theorem forgot_ne : ¬ ∀ p, forgot p .janna ↔ forgot p .red := fun h ↦
   have hred : forgot {w | w.1 = true ∧ w.2 = true} .red :=
     ⟨fun _ hw ↦ hw, fun h ↦ Bool.false_ne_true (h (show (false, true) ∈ present .red from rfl)).1⟩

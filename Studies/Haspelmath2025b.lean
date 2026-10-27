@@ -123,8 +123,7 @@ def ru : Form := ⟨.suff "ru", none⟩
 /-- The Japanese free forms `yom-u` 'read' and `yom-ase-ru` 'make read'. -/
 def japanese : Inventory Form := inventory [[yom, u], [yom, ase, ru]]
 
-/-- The causative `-ase` is contentful but never occurs without another contentful form, so
-it is not a root, while `yom` is (§2). -/
+-- §2
 theorem ase_not_root : japanese.IsContentful ase ∧ ¬ japanese.IsRoot ase ∧
     japanese.IsRoot yom := by
   decide
@@ -148,15 +147,13 @@ def ed : Form := ⟨.suff "ed", none⟩
 def english : Inventory Form := inventory
   [[geo, logy], [hello], [hammerN], [hammerN, s], [hammerV], [hammerV, ed]]
 
-/-- `geo-` is not a root, though it is a morphological core under the formal base definition (§2).
--/
+-- §2
 theorem geo_not_root :
     ¬ english.IsRoot geo ∧
       geo.shape.IsCoreIn (english.forms.map shapes) (english.forms.map shapes) := by
   decide
 
-/-- `hello` is a free form without a lexical meaning, hence not a root, although it is a
-morphological core (fn. 10). -/
+-- fn. 10
 theorem hello_not_root :
     ¬ english.IsRoot hello ∧
       hello.shape.IsCoreIn (english.forms.map shapes) (english.forms.map shapes) := by
@@ -174,7 +171,7 @@ def uAcc : Form := ⟨.suff "u", none⟩
 /-- The Sorbian free forms `žon-a`, `žon-y`, `žon-u` (§3). -/
 def sorbian : Inventory Form := inventory [[žon, a], [žon, y], [žon, uAcc]]
 
-/-- `žon-` always occurs with an inflectional affix, yet it is a root (§3, fn. 2). -/
+-- §3, fn. 2
 theorem žon_bound_root : sorbian.IsRoot žon ∧ sorbian.IsBound žon := by decide
 
 /-! ### Roots as concrete forms (§4) -/
@@ -193,7 +190,7 @@ def ge : Form := ⟨.pref "ge", none⟩
 /-- The German verb forms of (5) are `lauf-e`, `lauf-en`, `lauf`, `ge-lauf-en`, `lief`. -/
 def german : Inventory Form := inventory [[lauf, e], [lauf, en], [lauf], [ge, lauf, en], [lief]]
 
-/-- With no replacive morphs, `lauf` and `lief` are two roots (§4). -/
+-- §4
 theorem lauf_lief_roots :
     german.IsRoot lauf ∧ german.IsRoot lief ∧ lauf ≠ lief := by
   decide

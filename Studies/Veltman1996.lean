@@ -129,8 +129,7 @@ theorem not_consistent_up_might_neg : ¬Consistent [CCP.up c, CCP.might (CCP.neg
     simp only [List.foldl_cons, List.foldl_nil, might_neg_up_up] at h
     exact Set.not_nonempty_empty h
 
-/-- Right monotonicity fails: *might ¬p ⊩ might ¬p*, but *might ¬p, p ⊮ might ¬p*
-(Example 2.7(ii)). -/
+-- Example 2.7
 theorem valid₁_might_neg :
     [CCP.might (CCP.neg (CCP.up c))] ⊩₁ CCP.might (CCP.neg (CCP.up c)) :=
   entailsFrom_append_self (ψs := []) (might_idem _)
@@ -143,7 +142,7 @@ theorem not_valid₁_might_neg_up (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
   rw [might_neg_up_up, might_neg_up_top hc'] at h'
   exact Set.not_nonempty_empty (h' ▸ up_top_nonempty hc)
 
-/-- Left monotonicity fails: *⊩ might p*, but *¬p ⊮ might p* (Example 2.7(iii)). -/
+-- Example 2.7
 theorem valid₁_might (hc : c.Nonempty) : [] ⊩₁ CCP.might (CCP.up c) :=
   CCP.guard_pos (up_top_nonempty hc)
 
@@ -469,8 +468,7 @@ theorem coherent_cons_iff {R : List (Rule W)} (hR : Coherent (Frame.ofRules R)) 
       · exact fun h ↦ absurd h hsub
       · exact ((normal_ofRules_iff ..).1 hw.2).2 r' hr'
 
-/-- Weakening the Consequent is almost valid, since a state accepting `φ ⇝ ψ` never crashes on `φ ⇝
-(ψ ∨ χ)` (§5). -/
+-- §5
 theorem weakenConsequent_applies {R : List (Rule W)} (hR : Coherent (Frame.ofRules R))
     {φ ψ χ : Finset W} (hψ : ⟨φ, ψ⟩ ∈ R) (hne : (φ ∩ ψ).Nonempty) :
     Applies (Frame.ofRules R) [⟨φ, ψ ∪ χ⟩] φ := by
@@ -597,44 +595,36 @@ def p : Finset World := Finset.univ.filter (·.val % 2 = 1)
 def q : Finset World := Finset.univ.filter (·.val / 2 % 2 = 1)
 def r : Finset World := Finset.univ.filter (·.val / 4 % 2 = 1)
 
-/-- An exception to *normally p* for `q` is acceptable, but a further exception for `¬q`, or
-*normally q*, is not (Examples 4.8(i)–(iii)). -/
+-- Examples 4.8, (iii)
 theorem ex48 :
     (State.init |> normally p |> rule q pᶜ) ≠ State.absurd ∧
       (State.init |> normally p |> rule q pᶜ |> rule qᶜ pᶜ) = State.absurd ∧
       (State.init |> normally p |> rule q pᶜ |> normally q) = State.absurd := by
   decide +kernel
 
-/-- The more specific rule takes precedence, and an exception to an exception restores the general
-verdict (Examples 4.11(i)–(iii), the verdicts of §4). -/
+-- Examples 4.11, (iii), §4
 theorem ex411_specificity :
     Valid [normally p, rule q pᶜ, fact q] (presumably pᶜ) ∧
       Valid [normally p, rule q pᶜ, fact (q ∩ r)] (presumably pᶜ) ∧
       Valid [normally p, rule q pᶜ, rule (q ∩ r) p, fact (q ∩ r)] (presumably p) := by
   decide +kernel
 
-/-- Neither rule is more specific, yet in the context `p ∧ q` only `q ⇝ (p ∧ ¬r)` applies (Example
-4.11(iv)). -/
+-- Example 4.11
 theorem ex411_iv : Valid [rule p r, rule q (p ∩ rᶜ), fact (p ∩ q)] (presumably rᶜ) := by
   decide +kernel
 
-/-- In the Nixon diamond `p ⇝ r`, `q ⇝ ¬r`, `p ∧ q`, neither `r` nor `¬r` is presumed (Example
-4.11(v), §5). -/
+-- Example 4.11, §5
 theorem nixon :
     ¬Valid [rule p r, rule q rᶜ, fact (p ∩ q)] (presumably r) ∧
       ¬Valid [rule p r, rule q rᶜ, fact (p ∩ q)] (presumably rᶜ) := by
   decide +kernel
 
-/-- The defeasible Hypothetical Syllogism holds, `q ⇝ p`, `p ⇝ r`, `q ⊩ presumably r` (Example
-4.11(vi), the `(*)` of §5). -/
+-- Example 4.11, §5
 theorem ex411_vi : Valid [rule q p, rule p r, fact q] (presumably r) := by
   decide +kernel
 
 /-! ### Comparisons (§5) -/
 
-/-- Students are normally adults (`q ⇝ p`), students are normally not employed (`q ⇝ ¬r`), and
-adults are normally employed (`p ⇝ r`). John, a student, is presumably an unemployed adult, since `q
-⇝ ¬r` overrides `p ⇝ r` in the presence of `q ⇝ p`. -/
 theorem students : Valid [rule p r, rule q rᶜ, rule q p, fact q] (presumably (p ∩ rᶜ)) := by
   decide +kernel
 

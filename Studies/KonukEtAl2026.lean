@@ -490,7 +490,7 @@ def otherColor : Urn₂ → Finset Urn₂
   | a | b => {c, d}
   | c | d => {a, b}
 
-/-- Each urn wins with its partner, or the urns of the other color win, (1). -/
+-- (1)
 theorem conditions_eq_partner (X : Urn₂) :
     conditions = {{X, partner X}, otherColor X} ∧ X ≠ partner X ∧ X ∉ otherColor X ∧
       partner X ∉ otherColor X := by
@@ -582,13 +582,12 @@ theorem triple_positive_abnormal_inflation (hs : s < 1) :
 
 /-! #### The losing rounds -/
 
-/-- In the all-white round, no single white ball is necessary for the classical loss (p. 467). -/
+-- p. 467
 theorem white_ball_redundant (μ : Measure (Urn₂ → Bool)) (i : Urn₂) :
     necessity μ (fun _ ↦ false) (win conditions)ᶜ {i} = 0 :=
   necessity_eq_zero (by revert i; decide)
 
-/-- In the round where every urn gave a white ball, every white ball is necessary for the
-homogeneous loss (p. 467). -/
+-- p. 467
 theorem white_ball_indispensable (hs : s < 1) (i : Urn₂) :
     necessity (sampling s prior₂ fun _ ↦ false) (fun _ ↦ false)
       (homogeneousLoss conditions fun _ ↦ false) {i} = 1 :=

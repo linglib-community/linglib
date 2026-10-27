@@ -145,8 +145,7 @@ def negReading : Mode → (α → Prop) → (α → Prop) → Prop
 theorem negReading_iteration_iff : negReading .iteration A S ↔ GQ.some A S := by
   simp [negReading, no, GQ.some]
 
-/-- Absorbed into the n-word's resumption, the negator adds nothing, as *sans* in *Anne est
-partie sans rien dire* 'Anne left without saying anything' ((56)). -/
+-- (56)
 theorem negReading_resumption_iff : negReading .resumption A S ↔ no A S := Iff.rfl
 
 end TypeZero

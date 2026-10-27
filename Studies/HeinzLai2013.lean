@@ -98,8 +98,7 @@ def ofAnalysis (a : Wordlist.Analysis) : List Seg × List Seg :=
   ((a.underlying.toList.filter fun c ↦ c != '/' && c != '-').map ofLetter,
     a.form.segments.map fun s ↦ (s.toList.headD ' ' |> ofLetter))
 
-/-- Progressive harmony takes the underlying form of each Turkish genitive of Table 2 to its
-surface form. -/
+-- Table 2
 theorem ph_forms : ∀ a ∈ Wordlist.analyses, ph.run (ofAnalysis a).1 = (ofAnalysis a).2 := by
   decide
 

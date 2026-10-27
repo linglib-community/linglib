@@ -86,12 +86,12 @@ open Modality Degree
 section Binders
 variable {α D : Type*} [LinearOrder D] [OrderBot D] {θ θ' : D}
 
-/-- The positive morpheme binds the degree argument at *should*'s threshold, (32)–(33). -/
+-- (32), (33)
 theorem pos_iff (μ : α → D) (x : α) :
     (∃ d, μ x = d ∧ θ ≤ d) ↔ μ x ∈ ModalForce.standard θ θ' .weakNecessity := by
   simp [ModalForce.standard]
 
-/-- Existential closure strengthened above the least degree, (48). -/
+-- (48)
 theorem closure_iff (μ : α → D) (x : α) :
     (∃ d, μ x = d ∧ ⊥ < d) ↔ μ x ∈ ModalForce.standard θ θ' .possibility := by
   simp [ModalForce.standard]
@@ -109,9 +109,7 @@ theorem unselective_iff (μ : α → D) (A B : α → Prop) :
       ∀ x, A x ∧ μ x ∈ ModalForce.standard θ θ' .possibility → B x := by
   simp [ModalForce.standard]
 
-/-- The restriction of (62) fixes the degree as the measure, so the pairs an unselective binder
-counts are as many as the individuals, and a proportional adverb such as *for the most part*
-(66) gives the possibility reading as well. -/
+-- (62), (66)
 theorem ncard_pairs (μ : α → D) (A : α → Prop) :
     {q : α × D | A q.1 ∧ μ q.1 = q.2 ∧ ⊥ < q.2}.ncard = {x | A x ∧ ⊥ < μ x}.ncard := by
   have : {q : α × D | A q.1 ∧ μ q.1 = q.2 ∧ ⊥ < q.2} =
@@ -175,13 +173,11 @@ def readings : Modal → Position → Finset ModalForce
   | .should, _ => English.Auxiliaries.should.forcesOf .deontic
   | .null, p => (available p).image Binder.force
 
-/-- The silent modal has the possibility reading exactly where its nominal is not under a strong
-quantifier. -/
 theorem possibility_mem_readings_null_iff {p : Position} :
     .possibility ∈ readings .null p ↔ p ≠ .strong := by
   cases p <;> decide
 
-/-- The positive morpheme being always available, so is the weak necessity reading (p. 739). -/
+-- p. 739
 theorem weakNecessity_mem_readings_null (p : Position) : .weakNecessity ∈ readings .null p := by
   cases p <;> decide
 
@@ -190,9 +186,7 @@ def lexicalForce (m : ModalItem) : ModalForce :=
   if .possibility ∈ m.forces then .possibility
   else if .weakNecessity ∈ m.forces then .weakNecessity else .necessity
 
-/-- Overt *should* has a scalemate of possibility force among the English modals, a dedicated
-possibility modal sharing its deontic flavour, which blocks existential closure of its degree
-argument (§4.5). -/
+-- §4.5
 theorem exists_possibility_scalemate :
     ∃ m ∈ English.Auxiliaries.modals.map (·.toModalItem),
       ModalItem.Scalemates lexicalForce English.Auxiliaries.should.toModalItem m ∧
@@ -216,9 +210,7 @@ def JointlyPermissible (θ : D) : Prop := ∀ p q, θ ≤ μ p → θ ≤ μ q �
 
 variable {μ adopt} {θ θ' : D} {f : ModalForce}
 
-/-- On a scale where propositions meeting the weak necessity threshold are jointly permissible,
-two cats meeting the standard of a force stronger than possibility contradict the preamble, as
-the continuations of (9) do. -/
+-- (9)
 theorem not_atMostOne (h : JointlyPermissible μ θ) (hθθ' : θ ≤ θ') (hf : f ≠ .possibility)
     (h2 : TwoMeet μ adopt (ModalForce.standard θ θ' f)) : ¬ AtMostOne μ adopt := by
   obtain ⟨a, b, hab, ha, hb⟩ := h2
@@ -227,8 +219,7 @@ theorem not_atMostOne (h : JointlyPermissible μ θ) (hθθ' : θ ≤ θ') (hf :
     exacts [fun x hx ↦ hθθ'.trans hx, fun x hx ↦ hx, absurd rfl hf]
   exact fun hm ↦ (h _ _ (key _ ha) (key _ hb)).ne' (hm a b hab)
 
-/-- On a scale whose measure of a conjunction is the lesser measure, possibility agglomerates
-too, so the continuations of (8) would contradict the preamble. -/
+-- (8)
 theorem not_atMostOne_of_inf (hμ : ∀ p q, μ (p ⊓ q) = min (μ p) (μ q))
     (h2 : TwoMeet μ adopt (ModalForce.standard θ θ' .possibility)) : ¬ AtMostOne μ adopt := by
   obtain ⟨a, b, hab, ha, hb⟩ := h2
@@ -249,9 +240,6 @@ def adoptCat : Bool → Finset (Fin 4)
   | false => {1, 3}
   | true => {2, 3}
 
-/-- With the threshold above half the permissible worlds, the counting measure makes
-propositions meeting it jointly permissible, and two cats meet the standard of possibility
-consistently with the preamble. -/
 theorem countingModel :
     JointlyPermissible count 2 ∧ AtMostOne count adoptCat ∧
       TwoMeet count adoptCat (ModalForce.standard 2 2 .possibility) :=
@@ -324,15 +312,13 @@ theorem not_admits_contextual {D : Type*} [LinearOrder D] [OrderBot D] :
 section Errata
 variable {β D : Type*} [LinearOrder D] [OrderBot D]
 
-/-- (72) as printed binds the degree outside Gen with `= d`, so every relevant firefighter's
-measure is one degree. -/
+-- (72)
 theorem eq72_uniform {F : β → Prop} {ν : β → D} (h : ∃ d, ⊥ < d ∧ ∀ y, F y → ν y = d)
     {y y' : β} (hy : F y) (hy' : F y') : ν y = ν y' := by
   obtain ⟨d, -, hd⟩ := h
   rw [hd y hy, hd y' hy']
 
-/-- The gloss of (72), "meets or exceeds d", holds of two firefighters of different positive
-degrees, of which the printed formula fails. -/
+-- (72)
 theorem eq72_gloss_weaker :
     (∃ d : ℕ, ⊥ < d ∧ ∀ y : Fin 2, d ≤ ![1, 2] y) ∧
       ¬ ∃ d : ℕ, ⊥ < d ∧ ∀ y : Fin 2, ![1, 2] y = d :=

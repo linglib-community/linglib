@@ -277,9 +277,6 @@ theorem iconsBias_eq :
 
 theorem agentEvocator_dual : ICaus judgment .np2 ∧ ICons judgment .np2 := by decide
 
-/-- Where the accounts part on agent-patient verbs: the agent is a cause on the
-One-Mechanism reading, so that account predicts a subject bias, but no argument carries a
-slot, so the Two-Mechanism Account predicts no I-Caus bias and no preferred relation. -/
 theorem agentPat_balanced :
     ICausOne mannerContact .np1 ∧ (∀ a, ¬ ICaus mannerContact a) ∧
     twoMechanism mannerContact = none := by

@@ -277,7 +277,7 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nasalSubstitution �
   have h_p := place_t_implies_p σ h_t
   exact ⟨h_p, h_t, h_k, h_b, h_d, h⟩
 
-/-- Some ranking substitutes on every stop, pattern (j) of Table 5. -/
+-- Table 5
 theorem pattern_j_witness :
     ∃ σ : Equiv.Perm (Fin 6),
       PicksAt nasalSubstitution σ .p .yes ∧ PicksAt nasalSubstitution σ .t .yes ∧

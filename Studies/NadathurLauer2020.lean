@@ -158,12 +158,10 @@ instance : circuit.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide
 /-- In the situation (20b) switch 1 is down and switch 2 is up. -/
 def actual : Context := ⟨false, true⟩
 
-/-- (26a) *Turning the second switch on makes the light go off* is true when switch 1 is known
-to be down. -/
+-- (26a)
 theorem make : Make circuit [.S₁ ← false] actual .S₂ true .L false := by decide
 
-/-- (26b) *Turning the second switch on causes the light to go off* is true when switch 1 is known
-to be down. -/
+-- (26b)
 theorem cause : Cause circuit [.S₁ ← false] actual .S₂ true .L false := by decide +kernel
 
 end Circuit
@@ -216,11 +214,10 @@ theorem power_of_fire {s : V → Flat Bool} (hs : s .F = ⊥)
   h.parent_eq hs (by decide) fun _ y hy ↦ by
     simpa using (Bool.and_eq_true_iff.1 (Bool.and_eq_true_iff.1 hy).1).2
 
-/-- (31a) *#Restoring power made the field catch fire* is infelicitous, since with the line open
-the power is not sufficient for the fire. -/
+-- (31a)
 theorem not_make : ¬ Make fireModel s_b actual .P true .F true := by decide
 
-/-- *Restoring power caused the field to catch fire* (31b) is felicitous. -/
+-- (31b)
 theorem cause : Cause fireModel s_b actual .P true .F true :=
   ⟨⟨by decide, ⟨[.D ← true, .G ← true, .P ← true, .L ← true], by decide, by decide, by decide⟩,
     fun _ _ ↦ power_of_fire⟩, by decide, by decide⟩
@@ -273,11 +270,10 @@ def actual : Context := ⟨true, true, true⟩
 /-- The background `s_b` fixes the visit and the forecast. -/
 def s_b : V → Flat Bool := [.Vis ← true, .Rn ← true]
 
-/-- (33a) *Ava's training made Lia take the bus to work* is felicitous. -/
+-- (33a)
 theorem make : Make busModel s_b actual .Tr true .Bs true := by decide
 
-/-- *#Ava's training caused Lia to take the bus to work* (33b) is infelicitous, since the training
-is not necessary. -/
+-- (33b)
 theorem not_cause : ¬ Cause busModel s_b actual .Tr true .Bs true := fun h ↦
   absurd (h.1.2.2 [.Vis ← true, .Rn ← true, .Bk ← false] (by decide) (by decide) (by decide))
     (by decide)
@@ -328,26 +324,22 @@ theorem storms_of_collapse {s : V → Flat Bool} (hs : s .L = ⊥)
     (h : lighthouseModel.CausallyEntails s .L true) : lighthouseModel.CausallyEntails s .S true :=
   h.parent_eq hs (by decide) fun _ y hy ↦ by simpa using (Bool.and_eq_true_iff.1 hy).2
 
-/-- (35a) *The earthquake caused the tower to collapse* is felicitous relative to the empty
-situation. -/
+-- (35a)
 theorem cause_earthquake : Cause lighthouseModel ⊥ actual .Q true .L true :=
   ⟨⟨by decide, ⟨[.Q ← true, .S ← true], by decide, by decide, by decide⟩,
     fun _ _ ↦ earthquake_of_collapse⟩, by decide, by decide⟩
 
-/-- (35b) *The storms caused the tower to collapse* is felicitous relative to the empty
-situation. -/
+-- (35b)
 theorem cause_storms : Cause lighthouseModel ⊥ actual .S true .L true :=
   ⟨⟨by decide, ⟨[.Q ← true, .S ← true], by decide, by decide, by decide⟩,
     fun _ _ ↦ storms_of_collapse⟩, by decide, by decide⟩
 
-/-- *The storms made the tower collapse* (35d) is felicitous relative to the earthquake, a
-background meeting the temporal location constraint. -/
+-- (35d)
 theorem make_storms : TemporalLocationConstraint time (time .S) ([.Q ← true] : V → Flat Bool) ∧
     Make lighthouseModel [.Q ← true] actual .S true .L true := by
   decide
 
-/-- *#The earthquake made the tower collapse* (35c) is infelicitous, since no background meeting the
-temporal location constraint makes the earthquake sufficient. -/
+-- (35c)
 theorem not_make_earthquake (s : V → Flat Bool)
     (hs : TemporalLocationConstraint time (time .Q) s) :
     ¬ Make lighthouseModel s actual .Q true .L true := by
@@ -438,33 +430,28 @@ instance : DecidableRel persuasion.graph.Adj := fun w v ↦
 
 instance : persuasion.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-/-- In the permission scenario (40) the eager children dance once Gurung permits it, and his
-permission is sufficient for the dancing. -/
+-- (40)
 theorem make_permission : Make permission [.WD ← true] ⟨true, true⟩ .G true .D true := by
   decide
 
-/-- In the permission scenario of *??Gurung made the children dance* (40a) the constraint on
-volitional action fails, the context where *let* is felicitous (46). -/
+-- (40a), (46)
 theorem not_volitionalActionConstraint_permission :
     ¬ VolitionalActionConstraint permission [.WD ← true] .G .D .WD := by
   decide
 
-/-- In the command scenarios, with the children reluctant (41) or eager (42), Gurung's command is
-sufficient for the dancing. -/
+-- (41), (42)
 theorem make_command (b : Bool) : Make command [.WD ← b] ⟨b, true⟩ .G true .D true := by
   cases b <;> decide
 
-/-- In the command scenarios of *Gurung made the children dance* ((41a), (42a)) the constraint on
-volitional action holds, and *let* is out (46). -/
+-- (41a), (42a), (46)
 theorem volitionalActionConstraint_command (b : Bool) :
     VolitionalActionConstraint command [.WD ← b] .G .D .WD := by
   cases b <;> decide
 
-/-- In the persuasion scenario (44) Gurung's song is sufficient for the dancing. -/
+-- (44)
 theorem make_persuasion : Make persuasion ⊥ ⟨true⟩ .G true .D true := by decide
 
-/-- In the persuasion scenario of *Gurung made the children dance* (44a) the constraint on
-volitional action holds, and *let* is out (46). -/
+-- (44a), (46)
 theorem volitionalActionConstraint_persuasion :
     VolitionalActionConstraint persuasion ⊥ .G .D .WD := by
   decide

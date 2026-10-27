@@ -92,8 +92,7 @@ def pluralPrefixes (L : RuleSet (LexicalEntry (Option NCFeature) String)) (base 
   exponents L [.cls base, .num] <|>
     (exponents L [.cls spec, .num]).bind fun outer ↦ (exponents L [.cls base]).map (outer ++ ·)
 
-/-- A plural has a single prefix if an entry lexicalizes the Specifier on the singular's classifier,
-and otherwise stacks prefixes (75). -/
+-- (75)
 theorem pluralPrefixes_eq (h : treeSpellout L (leaf (some .num)) = none) (base spec : ℕ) :
     pluralPrefixes L base spec =
       (((treeSpellout L (plTree base)).map fun x ↦ [x]) <|>
@@ -132,8 +131,7 @@ theorem outer_prefix_is_plural (h : treeSpellout L (leaf (some .num)) = none)
         exact ⟨e, he, hw.1.2, rfl⟩
   · simp [hb] at hr
 
-/-- Where the plural entry's own classifier merges with the root, (82)–(83), the Specifier and
-the last resort are one derivation, so nothing stacks. -/
+-- (82), (83)
 theorem pluralPrefixes_self (L : RuleSet (LexicalEntry (Option NCFeature) String)) (n : ℕ) :
     pluralPrefixes L n n = exponents L [.cls n, .num] := by
   rw [pluralPrefixes]
@@ -163,8 +161,7 @@ def ClassPair.pl (p : ClassPair) : LexicalEntry (Option NCFeature) String :=
 def lexicon (ps : List ClassPair) : RuleSet (LexicalEntry (Option NCFeature) String) :=
   ps.map (·.sg) ++ ps.map (·.pl)
 
-/-- No class prefix lexicalizes the number head alone, every stored tree bottoming out in a
-classifier (67). -/
+-- (67)
 theorem treeSpellout_lexicon_num (ps : List ClassPair) :
     treeSpellout (lexicon ps) (leaf (some .num)) = none := by
   refine treeSpellout_eq_none_iff.2 fun e he hm ↦ ?_
@@ -202,8 +199,7 @@ def xhosaGenders : List Xhosa.Gender := [.genderA, .genderB, .genderC, .genderD,
 def xhosaPrefixes : RuleSet (LexicalEntry (Option NCFeature) String) :=
   lexicon (xhosaGenders.map xhosa)
 
-/-- `[N₁]` is lexicalized as *m*, the singular entry winning over *ba* as the smaller match,
-and `[# N₁]` as *ba* (48). -/
+-- (48)
 theorem xhosa_genderA :
     exponents xhosaPrefixes [.cls 1] = some ["m"] ∧
       exponents xhosaPrefixes [.cls 1, .num] = some ["ba"] := by
@@ -213,14 +209,13 @@ theorem xhosa_sharesClassifierN (g : Xhosa.Gender) :
     SharesClassifierN (xhosaSg g) (xhosaPl g) ↔ g ∈ [.genderA, .genderD, .genderE] := by
   cases g <;> decide
 
-/-- Every Xhosa plural, including genders B and C, has a single prefix ((82)–(83)). -/
+-- (82), (83)
 theorem xhosa_plurals :
     xhosaGenders.map (fun g ↦ pluralPrefixes xhosaPrefixes (xhosa g).plN (xhosa g).plN) =
       [some ["ba"], some ["mi"], some ["ma"], some ["zi"], some ["zi"]] := by
   decide
 
-/-- The class-prefix entries lexicalize the Fragment's subject concords of classes 5, 7, 2
-and 8, so one set of entries serves prefixes and concords (60)–(61). -/
+-- (60), (61)
 theorem xhosa_prefix_sc_identity :
     exponents xhosaPrefixes [.cls 5] = (Xhosa.subjPrefix .cl5).map ([·]) ∧
       exponents xhosaPrefixes [.cls 7] = (Xhosa.subjPrefix .cl7).map ([·]) ∧

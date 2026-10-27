@@ -294,9 +294,6 @@ def exponentOf : SalienceClass → String
   | .agentPatient => "=∅"
   | .patient => "=s"
 
-/-- Predicted derivational behaviour decomposes as the class's transitiviser followed by the
-positional derivation when the signature licenses it: the applicability profile is the
-classification, plus the cross-cutting positional diagnostic. -/
 theorem predictedExponents_eq (r : SampledRoot) :
     predictedExponents r =
       (predictedClass r).toList.map exponentOf ++
@@ -319,8 +316,6 @@ theorem agentPatientSalient_class :
 theorem patientSalient_class :
     ∀ r ∈ patientSalientRoots, predictedClass r = some .patient := by decide
 
-/-- The `=∅` class is not signature-homogeneous, *p'is* manner-only against *k'os* manner and
-result: root transitivity is carried by valency, not by any feature configuration. -/
 theorem rootTransitives_not_signature_uniform :
     ∃ r ∈ agentPatientSalientRoots, ∃ r' ∈ agentPatientSalientRoots, r.kinds ≠ r'.kinds := by
   decide
@@ -359,8 +354,6 @@ theorem positional_crosscuts_transitiviser_classes :
 
 /-! ### Closure robustness -/
 
-/-- For cause-free roots, every root in this sample, collocational closure does not change the
-predicted class. -/
 theorem predictedClass_closure_invariant (r : SampledRoot) (h : Root.Kind.cause ∉ r.kinds) :
     SalienceClass.ofKinds r.closedKinds (valency r) = predictedClass r :=
   SalienceClass.ofKinds_close r.kinds (valency r) h

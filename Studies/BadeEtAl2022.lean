@@ -113,7 +113,6 @@ theorem allowed_excludable (hw : ∃ w ∈ a ∩ R.preimage b, w ∉ R.preimage 
   rintro q (rfl | rfl)
   exacts [Or.inl subset_rfl, Or.inr hwa]
 
-/-- The revised flat premise `a ∧ ◇(a ∧ b)` entails `◇a` under every frame. -/
 theorem revised_flat_subset : a ∩ R.preimage (a ∩ b) ⊆ R.preimage a :=
   fun _ hw ↦ SetRel.preimage_mono inter_subset_left hw.2
 
@@ -130,8 +129,6 @@ end Flat
 
 section Relational
 
-/-- With an ordering source, actuality entails best-worlds possibility when the actual world
-also verifies the ordering source at itself. -/
 theorem possibility_of_isRealistic {f g : Background W} {p : W → Prop}
     {w : W} (hf : f.IsRealistic) (hw : ∀ q ∈ g w, q w) (hp : p w) : possibility f g p w :=
   ⟨w, ⟨hf w, fun _ _ _ q hq _ ↦ hw q hq⟩, hp⟩
@@ -167,7 +164,7 @@ end InqB
 
 /-! ### The experiment and the anatomy of the illusion (§2.3, §3.2) -/
 
-/-- The design crosses modal, structure and conjunct order into twelve conditions (§2.3.1). -/
+-- §2.3.1
 theorem conditions_card : Fintype.card (Modal × Structure × Order) = 12 := rfl
 
 /-- Criteria A–C of §3.2 are read off the paper's verdicts on its own contrasts: more fallacies
@@ -189,16 +186,15 @@ theorem might_anatomy : Anatomy .epistemic := by decide
 /-- *allowed to* does not (§3.2). -/
 theorem allowed_not_anatomy : ¬ Anatomy .deontic := by decide
 
-/-- The deontic fallacies fail the order and the dynamics criteria (§2.4). -/
+-- §2.4
 theorem allowed_fails_order_and_dynamics :
     (contrasts .deontic .canonicalVsReversed).verdict = .noDifference ∧
       (contrasts .deontic .flatVsBaseline).verdict ≠ .noDifference := by decide
 
-/-- Deontic targets drew more fallacious endorsements than epistemic ones in every structure
-(Table 5). -/
+-- Table 5
 theorem deontic_more_fallacies : ∀ s, (modalContrasts s).verdict = .lower := by decide
 
-/-- The epistemic order contrast is the marginal one (Table 2), the caveat on criterion B. -/
+-- Table 2
 theorem might_order_marginal :
     (contrasts .epistemic .canonicalVsReversed).verdict = .marginallyHigher := rfl
 

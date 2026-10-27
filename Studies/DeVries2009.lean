@@ -222,19 +222,18 @@ theorem remergedYield_double : remergedYield List.getLast? double = [δ₁, g, �
 
 /-! ### Internal and external remerge -/
 
-/-- (42), (48), (52) and (66) remerge externally only: no parent of a node dominates another. -/
+-- (42), (48), (52), (66)
 theorem sharing_examples : ∀ t ∈ [ex42, ex48, ex52, ex66], ∀ s ∈ t.val.subtrees,
     ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s, IsSubtree g g' → g = g' := by
   decide +kernel
 
-/-- (41), (47), (51) and (60) remerge internally only: the parents of each node are ordered by
-dominance, and no node is merged with itself. -/
+-- (41), (47), (51), (60)
 theorem movement_examples : ∀ t ∈ [ex41, ex47, ex51, ex60],
     (∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' ∨ IsSubtree g' g) ∧ ∀ g ∈ t.val.subtrees, g.children.Nodup := by
   decide +kernel
 
-/-- (54) remerges α both ways, so it is neither. -/
+-- (54)
 theorem not_sharing_not_movement_ex54 :
     ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
       IsSubtree g g' → g = g') ∧

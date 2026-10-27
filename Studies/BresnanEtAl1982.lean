@@ -211,18 +211,17 @@ theorem Spine.complete_and_coherent_iff (s : Spine) (hv : 1 ≤ s.verbs) :
   · intro h
     exact ⟨fun i _ => by omega, fun i _ => by omega⟩
 
-/-- Every matched tree is well formed; (26) is `dutch 1`. -/
+-- (26)
 theorem dutch_wellFormed (n : ℕ) :
     (Spine.ofTree (dutch n)).Complete ∧ (Spine.ofTree (dutch n)).Coherent :=
   (Spine.complete_and_coherent_iff _ (by simp [dutch])).mpr (by simp [dutch])
 
-/-- In (43) *dat Jan Piet Marie zag helpen laten zwemmen* the extra verb's OBJ has no value. -/
+-- (43)
 theorem extra_verb_incomplete : ¬ (Spine.ofTree (tree 1 3)).Complete := fun h => by
   have := h 2
   simp [Spine.GovernsObj, Spine.HasObj] at this
 
-/-- In (46) *dat Jan Piet Marie Hans zag helpen zwemmen* the extra NP is an OBJ the final verb
-does not subcategorize. -/
+-- (46)
 theorem extra_np_incoherent : ¬ (Spine.ofTree (tree 2 2)).Coherent := fun h => by
   have := h 2
   simp [Spine.GovernsObj, Spine.HasObj] at this

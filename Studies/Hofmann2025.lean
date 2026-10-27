@@ -78,15 +78,13 @@ def CounterfactualIndiv (φ_DC : PVar) (v : IVar) (i : State W E) : Prop :=
 def CounterfactualProp (φ_DC δ : PVar) (i : State W E) : Prop :=
   i.prop φ_DC ∩ i.prop δ = ∅
 
-/-- Under consistent commitments a counterfactual dref is not veridical, so it is hypothetical,
-"more specifically, counterfactual" (16). -/
+-- (16)
 theorem CounterfactualIndiv.not_veridicalIndiv {φ_DC : PVar} {v : IVar} {i : State W E}
     (hc : CounterfactualIndiv φ_DC v i) (hDC : (i.prop φ_DC).Nonempty) :
     ¬VeridicalIndiv φ_DC v i := fun hv ↦
   let ⟨w, hw⟩ := hDC; hv w hw (hc w hw)
 
-/-- Negation under assertion makes its prejacent counterfactual, since the commitments entail the
-negation's context (the condition of assertion, (20a)), the complement of the prejacent's. -/
+-- (20a)
 theorem counterfactualProp_of_mem_eqCompl {φ_DC φ φ' : PVar} {i : State W E}
     (hc : i ∈ eqCompl φ φ') (hdec : i ∈ incl φ_DC φ) : CounterfactualProp φ_DC φ' i :=
   Set.eq_empty_of_forall_notMem fun _ ⟨hw, hw'⟩ ↦ (hc ▸ hdec hw) hw'
@@ -348,7 +346,7 @@ theorem veridical_veridicalIndiv : VeridicalIndiv φDC υ j₆ := by
     State.updateProp_prop_self] at hw
   cases w <;> simp_all [j₆, bathroomRef]
 
-/-- The veridical anaphor is accessible (Figure 6). -/
+-- Figure 6
 theorem veridical_accessible : Accessible φ₃ υ φDC j₆ :=
   ⟨fun w hw ↦ by
     simp only [j₆, State.updateProp_prop_self] at hw
@@ -356,8 +354,7 @@ theorem veridical_accessible : Accessible φ₃ υ φDC j₆ :=
    ⟨w_bu, by simp [j₆, init, State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₃),
      State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₁)]⟩⟩
 
-/-- Under pragmatic maximization (35), the commitment set of Figure 6 is maximal among the outputs
-of the discourse. -/
+-- (35), Figure 6
 theorem veridical_maximal (dc : Set World) (h : State World Ent)
     (hrun : init dc ~[veridical] h) : ¬ (j₆.prop φDC ⊂ h.prop φDC) := by
   obtain ⟨h₁, ⟨k₁, hk₁, hmax₁⟩, ⟨k₂, hk₂, hmax₂⟩⟩ := hrun
@@ -434,8 +431,7 @@ theorem negated_isComplement : j₇ ∈ eqCompl φ₁ φ₂ := by
   cases w <;> simp [j₇, State.updateProp_prop_self,
     State.updateProp_prop_of_ne _ (by decide : φ₁ ≠ φ₂)]
 
-/-- Every output of (41) makes the prejacent counterfactual, since the commitments entail the
-assertion's context, the complement of the prejacent's. -/
+-- (41)
 theorem negated_counterfactualProp {i j : State World Ent} (h : i ~[negated] j) :
     CounterfactualProp φDC φ₂ j := by
   obtain ⟨k, hk, hmax⟩ := h
@@ -478,7 +474,7 @@ theorem negated_row4 : init Set.univ ~[negated] jRow4 := by
     · simp [jRow4, init, null, State.updateProp_prop_self]
     · simp [jRow4, State.updateProp_prop_self] at hw
 
-/-- Maximizing the prejacent's context over the whole assertion selects Figure 7. -/
+-- Figure 7
 theorem negated_max : init {w_u, w_0} ~[maxAt φ₂ negated] j₇ := by
   refine mem_maxAt_prop.mpr ⟨negated_run, fun k hk hlt ↦ ?_⟩
   obtain ⟨k₁, ⟨_, _⟩, hmax⟩ := hk
@@ -543,7 +539,7 @@ theorem doubleNeg_veridicalIndiv : VeridicalIndiv φDC υ j₈ := by
     State.updateProp_prop_self] at hw
   cases w <;> simp_all [j₈, bathroomRef]
 
-/-- The veridical anaphor is accessible after double negation (§4.1). -/
+-- §4.1
 theorem doubleNeg_accessible : Accessible φ₃ υ φDC j₈ :=
   ⟨fun w hw ↦ by
     simp only [j₈, State.updateIndiv_prop, State.updateProp_prop_self] at hw
@@ -612,8 +608,7 @@ theorem bathDisj_union : j₉.prop φ₁ = j₉.prop φ₂ ∪ j₉.prop φ₃ :
     State.updateProp_prop_of_ne _ (by decide : φ₂ ≠ φ₃),
     State.updateProp_prop_of_ne _ (by decide : φ₃ ≠ φ₄)]
 
-/-- The dref is counterfactual for the speaker yet accessible in the second disjunct (§4.2),
-since the disjuncts' contexts need not overlap the commitment set. -/
+-- §4.2
 theorem bathDisj_accessible : Accessible φ₃ υ φDC j₉ :=
   ⟨fun w hw ↦ by
     simp only [j₉, State.updateIndiv_prop, State.updateProp_prop_self,
@@ -689,8 +684,7 @@ theorem disagree_veridical_B : VeridicalIndiv φDCB υ j₁₀ := by
     State.updateProp_prop_self] at hw
   cases w <;> simp_all [j₁₀, bathroomRef]
 
-/-- Both interlocutors keep consistent commitments although they contradict each other, and
-`B`'s anaphor is accessible (§4.3). -/
+-- §4.3
 theorem disagree_accessible :
     (j₁₀.prop φDCA).Nonempty ∧ Accessible φ₃ υ φDCB j₁₀ :=
   ⟨⟨w_u, by simp [j₁₀, init₂, State.updateIndiv_prop,

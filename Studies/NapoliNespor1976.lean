@@ -317,7 +317,7 @@ theorem not_contradicts_of_negative (hf : s.force = .declarative)
     (hc : s.construction ≠ .indirectQuestion) (hm : s.matrix = .negative) : ¬ s.Contradicts := by
   simp [Contradicts, hf, hc, hm]
 
-/-- A question contradicts the belief of anyone but the listener it asks (10)–(14). -/
+-- (10), (14)
 theorem contradicts_iff_of_interrogative (hf : s.force = .interrogative) :
     s.Contradicts ↔ s.holder ≠ .addressee := by
   simp [Contradicts, hf]
@@ -328,28 +328,27 @@ theorem not_felicitous_abstract_of_demandsPrecision (h : s.DemandsPrecision) (e 
     ¬ s.Felicitous .abstract e := fun ⟨hp, _, ha⟩ ↦ by
   simpa [hp h] using (ha rfl).1
 
-/-- *Affatto* is out in every *non₂*-comparative (footnote 13). -/
+-- footnote 13
 theorem not_felicitous_abstract_of_affatto (h : .affatto ∈ s.elements) (e : Evidence) :
     ¬ s.Felicitous .abstract e :=
   not_felicitous_abstract_of_demandsPrecision (.inr ⟨_, h, trivial⟩) e
 
 /-! ### The syntactic diagnostics -/
 
-/-- *Che* introduces a comparative clause only under the abstract structure (§3.24). -/
+-- §3.24
 theorem plainGrade_eq_out_of_che (h : s.complementizer = .che) : s.plainGrade = .out := by
   simp [plainGrade, h]
 
-/-- The clitic *lo* stands for the predicate only under the abstract structure (79). -/
+-- (79)
 theorem plainGrade_eq_out_of_lo (h : s.predicate = some .lo) : s.plainGrade = .out := by
   simp [plainGrade, h]
 
-/-- A predicate after *che* is out, since *che* blocks *quanto* (80b), (81), (82c). -/
+-- (80b), (81), (82c)
 theorem abstractGrade_eq_out_of_che (h : s.complementizer = .che) (hp : s.predicate.isSome) :
     s.abstractGrade = .out := by
   simp [abstractGrade, h, hp]
 
-/-- *Pur* and *neanche* are polarity items in the fragment, so a plain comparative clause, which
-nothing negates, excludes them (48a), (52a). -/
+-- (48a), (52a)
 theorem plainGrade_eq_out_of_npi {e : Element} (he : e ∈ s.elements) (hn : e.IsNPI)
     (hs : s.negation = .none) : s.plainGrade = .out := by
   rw [plainGrade, ite_eq_right_iff]

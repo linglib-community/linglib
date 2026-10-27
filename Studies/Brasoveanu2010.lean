@@ -147,8 +147,7 @@ def wolfDiscourse (wolf comeIn : E → Prop) (eat : E → E → Prop) (harvey : 
     Update (Set (Row E)) :=
   indef .u (noun wolf) (noun comeIn) ○ pron .u (transVerb eat (name harvey .u'))
 
-/-- The truth conditions of (27) at the dummy state (35): the discourse can update `{i★}` exactly
-when some wolf came in and ate Harvey. -/
+-- (27), (35)
 theorem wolfDiscourse_true_iff (wolf comeIn : E → Prop) (eat : E → E → Prop) (harvey : E) :
     {iStar} ∈ (wolfDiscourse wolf comeIn eat harvey).dom ↔
       ∃ x, wolf x ∧ comeIn x ∧ eat x harvey := by
@@ -179,8 +178,7 @@ theorem wolfDiscourse_true_iff (wolf comeIn : E → Prop) (eat : E → E → Pro
     · simp only [pron, transVerb, name, mem_test_comp, mem_comp_test, mem_atom_vec2, hd]
       exact ⟨⟨x, hv₁⟩, ⟨singleton_mem_intro _ _ _, hv₂⟩, by simp [he]⟩
 
-/-- A pronoun out of the blue is infelicitous (§2.2): its singular number fails at the dummy
-state, where its dref has no value. -/
+-- §2.2
 theorem pron_not_true_at_iStar (d : Dref) (P : Pred E) : {iStar} ∉ (pron d P).dom := by
   rintro ⟨J, K, ⟨rfl, x, hx⟩, -⟩
   have : value d ({iStar} : Set (Row E)) = ∅ := by
@@ -209,7 +207,7 @@ def valueCol : Set (Row Ind) :=
 def structCol : Set (Row Ind) :=
   {row α₁ β₁ α₁ ⊥ ⊥, row α₂ β₂ α₂ ⊥ ⊥, row α₃ β₃ ⊥ ⊥ ⊥, row α₄ β₄ α₄ ⊥ ⊥}
 
-/-- Both columns store a subset of the conventions (65). -/
+-- (65)
 theorem value_subset_valueCol : value Dref.u₃ valueCol ⊆ value Dref.u₁ valueCol := by
   intro x
   simp only [valueCol, mem_value, embed_flat, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -223,17 +221,17 @@ theorem value_subset_structCol : value Dref.u₃ structCol ⊆ value Dref.u₁ s
     false_or]
   rintro (rfl | rfl | rfl) <;> simp
 
-/-- The value-inclusion column pairs `α₁` with `β₃`, a dependency (63a) never established. -/
+-- (63a)
 theorem valueCol_scrambles_dep :
     ¬dep Dref.u₃ Dref.u₂ valueCol ⊆ dep Dref.u₁ Dref.u₂ valueCol := fun h ↦ by
   simpa [dep, valueCol] using h (show (α₁, β₃) ∈ dep Dref.u₃ Dref.u₂ valueCol by
     simp [dep, valueCol])
 
-/-- The value-inclusion column is not a structured subset (66). -/
+-- (66)
 theorem valueCol_not_structSub : valueCol ∉ structSub Dref.u₃ Dref.u₁ := fun h ↦ by
   simpa using h (row α₂ β₂ α₃ ⊥ ⊥) (by simp [valueCol])
 
-/-- The structured column is a fully structured subset (68). -/
+-- (68)
 theorem structCol_structSubAll : structCol ∈ structSubAll Dref.u₃ Dref.u₁ := by
   refine ⟨fun i hi ↦ ?_, fun i hi x hx hix ↦ ?_⟩ <;>
     simp only [structCol, Set.mem_insert_iff, Set.mem_singleton_iff] at hi <;>
@@ -344,8 +342,7 @@ private theorem convention_mem_value {J₂ J₃ : Set (Row E)} (hJ₂ : J₂.Non
     simpa [hc] using hx
   · exact fun hc ↦ ⟨_, ⟨i, hi, c, by simpa using hc, rfl⟩, val_extend_self ..⟩
 
-/-- Every output of (85) at `I★` stores the conventions in `u₃` and, in `u₄` and in the cell of
-each convention, one woman whom Harvey courts at all of them. -/
+-- (85)
 theorem courtAt₁_output (hJ : {iStar} ~[courtSentence M courtAt₁] J) :
     ∃ w, M.woman w ∧ (∀ c, M.convention c → M.courtAt M.harvey w c) ∧
       value Dref.u₃ J = {c | M.convention c} ∧ value Dref.u₄ J = {w} ∧
@@ -391,8 +388,7 @@ theorem courtAt₁_output (hJ : {iStar} ~[courtSentence M courtAt₁] J) :
     · simp [h] at hk₃
   rwa [hv₂] at this
 
-/-- Every output of (86) at `I★` stores the conventions in `u₃` and, in the cell of each
-convention, one woman whom Harvey courts there. -/
+-- (86)
 theorem courtAt₂_output (hJ : {iStar} ~[courtSentence M courtAt₂] J) :
     value Dref.u₃ J = {c | M.convention c} ∧ ∀ c, M.convention c →
       ∃ w, M.woman w ∧ M.courtAt M.harvey w c ∧ value Dref.u₄ (cell Dref.u₃ c J) = {w} := by
@@ -435,7 +431,7 @@ theorem courtAt₂_output (hJ : {iStar} ~[courtSentence M courtAt₂] J) :
     obtain rfl : w' = w := hw'
     exact ⟨w', by simpa using (mem_atom_vec1.1 hwoman).2 w' (by simp [hw]), hcw, hw⟩
 
-/-- (87): a woman whom Harvey courts at every convention gives an output of (85). -/
+-- (87), (85)
 theorem exists_courtAt₁_output (hc : ∃ c, M.convention c) {w : E} (hw : M.woman w)
     (h : ∀ c, M.convention c → M.courtAt M.harvey w c) :
     ∃ J, {iStar} ~[courtSentence M courtAt₁] J ∧ value Dref.u₄ J = {w} := by
@@ -500,7 +496,7 @@ theorem exists_courtAt₁_output (hc : ∃ c, M.convention c) {w : E} (hw : M.wo
     rw [value_copy_of_ne (by decide), value_copy_self]
     exact fun _ h ↦ h
 
-/-- (88): a woman `f c` whom Harvey courts at each convention `c` gives an output of (86). -/
+-- (88), (86)
 theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
     (hf : ∀ c, M.convention c → M.woman (f c) ∧ M.courtAt M.harvey (f c) c) :
     ∃ J, {iStar} ~[courtSentence M courtAt₂] J ∧ value Dref.u₄ J = f '' {c | M.convention c} ∧
@@ -741,9 +737,7 @@ private theorem mem_dom_comp_iff {D D' : Update (Set (Row E))} :
     {iStar} ∈ (D ○ D').dom ↔ ∃ J, {iStar} ~[D] J ∧ J ∈ D'.dom :=
   ⟨fun ⟨_, J, hJ, hK⟩ ↦ ⟨J, hJ, _, hK⟩, fun ⟨J, hJ, K, hK⟩ ↦ ⟨K, J, hJ, hK⟩⟩
 
-/-- A state that stores the conventions in `u₃` and a single woman `w` in `u₄`, in the cell of
-every convention as well, makes the second sentence of (6) true under either scoping exactly
-when `w` comes to the banquet at every convention. -/
+-- (6)
 private theorem comeSentence_iff {w : E} (hc : ∃ c, M.convention c)
     (hv₃ : value Dref.u₃ J = {c | M.convention c}) (hv₄ : value Dref.u₄ J = {w})
     (hcell : ∀ c, M.convention c → value Dref.u₄ (cell Dref.u₃ c J) = {w}) :
@@ -801,8 +795,7 @@ theorem courtAt₂_true_iff (hc : ∃ c, M.convention c) :
         simpa [hc] using (h c hc).choose_spec
     exact ⟨J, hJ⟩
 
-/-- Discourse (5) under the wide-scope indefinite (85) + (89): a single woman whom Harvey courts
-at every convention is very pretty. -/
+-- (5), (85), (89)
 theorem courtAt₁_pretty_true_iff (hc : ∃ c, M.convention c) :
     {iStar} ∈ (courtSentence M courtAt₁ ○ prettySentence M).dom ↔
       ∃ w, M.woman w ∧ (∀ c, M.convention c → M.courtAt M.harvey w c) ∧ M.veryPretty w := by
@@ -863,7 +856,7 @@ theorem courtAt₂_come₂_true_iff (hc : ∃ c, M.convention c) :
     rw [hcell, Set.mem_singleton_iff] at this
     exact ⟨w, hcell, this ▸ (hf c hc₃).2.2⟩
 
-/-- Discourse (6) under (85) + (95): the indefinite takes wide scope (p. 474). -/
+-- (6), (85), (95), p. 474
 theorem courtAt₁_come₁_true_iff (hc : ∃ c, M.convention c) :
     {iStar} ∈ (courtSentence M courtAt₁ ○ comeSentence M come₁).dom ↔
       ∃ w, M.woman w ∧ ∀ c, M.convention c → M.courtAt M.harvey w c ∧ M.come w c := by
@@ -879,7 +872,7 @@ theorem courtAt₁_come₁_true_iff (hc : ∃ c, M.convention c) :
     obtain rfl : w' = w := Set.singleton_injective (hv₄'.symm.trans hv₄)
     exact ⟨J, hJ, (comeSentence_iff M hc hv₃ hv₄ hcell).1.2 fun c hc ↦ (h c hc).2⟩
 
-/-- Discourse (6) under (85) + (96): the indefinite takes wide scope (p. 474). -/
+-- (6), (85), (96), p. 474
 theorem courtAt₁_come₂_true_iff (hc : ∃ c, M.convention c) :
     {iStar} ∈ (courtSentence M courtAt₁ ○ comeSentence M come₂).dom ↔
       ∃ w, M.woman w ∧ ∀ c, M.convention c → M.courtAt M.harvey w c ∧ M.come w c := by
@@ -895,8 +888,7 @@ theorem courtAt₁_come₂_true_iff (hc : ∃ c, M.convention c) :
     obtain rfl : w' = w := Set.singleton_injective (hv₄'.symm.trans hv₄)
     exact ⟨J, hJ, (comeSentence_iff M hc hv₃ hv₄ hcell).2.2 fun c hc ↦ (h c hc).2⟩
 
-/-- Discourse (6) under (86) + (95): the singular pronoun outscoping the adverb makes the
-indefinite take wide scope (p. 474). -/
+-- (6), (86), (95), p. 474
 theorem courtAt₂_come₁_true_iff (hc : ∃ c, M.convention c) :
     {iStar} ∈ (courtSentence M courtAt₂ ○ comeSentence M come₁).dom ↔
       ∃ w, M.woman w ∧ ∀ c, M.convention c → M.courtAt M.harvey w c ∧ M.come w c := by

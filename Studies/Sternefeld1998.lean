@@ -74,7 +74,7 @@ variable [DecidableEq α] [DecidableEq β]
 
 /-! ### Weak distributivity and weak reciprocity -/
 
-/-- Weak distributivity (2b) is `⟨A, B⟩ ∈ **R` (26a) between nonempty pluralities. -/
+-- (2b), (26a)
 theorem cumulation_map_iff (R : α → β → Prop) {A : Finset α} (hA : A.Nonempty) (B : Finset β) :
     Cumulation (Relation.Map R ({·}) ({·})) A B ↔ Set.LiftRel R ↑A ↑B :=
   (cumulation_map_singleton R A B).trans (and_iff_right hA)
@@ -84,8 +84,7 @@ conjoined into the relation before cumulation. -/
 def WR (R : Finset α → Finset α → Prop) (A : Finset α) : Prop :=
   Cumulation (fun x y ↦ R x y ∧ x ≠ y) A A
 
-/-- Langendoen's weak reciprocity (25b) between individuals entails (26b), for any relation
-over pluralities. -/
+-- (25b), (26b)
 theorem wr_of_weakReciprocity {R : Finset α → Finset α → Prop} {A : Finset α}
     (hA : A.Nonempty) (h : WeakReciprocity (fun a b ↦ R {a} {b}) A) : WR R A := by
   have := (cumulation_map_singleton (fun a b ↦ R {a} {b} ∧ a ≠ b) A A).2
@@ -94,7 +93,7 @@ theorem wr_of_weakReciprocity {R : Finset α → Finset α → Prop} {A : Finset
   rintro x y ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
   exact ⟨hab, Finset.singleton_injective.ne hne⟩
 
-/-- For a relation between individuals, (26b) is Langendoen's (25b). -/
+-- (26b), (25b)
 theorem wr_map_iff (R : α → α → Prop) {A : Finset α} (hA : A.Nonempty) :
     WR (Relation.Map R ({·}) ({·})) A ↔ WeakReciprocity R A := by
   have : (fun x y : Finset α ↦ Relation.Map R ({·}) ({·}) x y ∧ x ≠ y) =
@@ -129,7 +128,7 @@ theorem langendoenModel_ne_map (R : Fin 3 → Fin 3 → Prop) :
   revert a
   decide
 
-/-- (26b) holds in Langendoen's model. -/
+-- (26b)
 theorem wr_langendoenModel : WR langendoenModel Finset.univ := by
   have h₁ : ({0, 1} : Finset (Fin 3)) ⊔ ({2} ⊔ {2}) = Finset.univ := by decide
   have h₂ : ({2} : Finset (Fin 3)) ⊔ ({0} ⊔ {1}) = Finset.univ := by decide
@@ -139,7 +138,7 @@ theorem wr_langendoenModel : WR langendoenModel Finset.univ := by
       (Cumulation.of_rel (x := {2}) (y := {1}) (by decide)))
   simpa only [WR, h₁, h₂] using h
 
-/-- (25b) fails in Langendoen's model. -/
+-- (25b)
 theorem not_weakReciprocity_langendoenModel :
     ¬ WeakReciprocity (fun a b ↦ langendoenModel {a} {b}) Finset.univ := by
   decide
@@ -156,14 +155,14 @@ def SR (R : α → α → Prop) (A : Finset α) : Prop :=
   AlgClosure (fun x : Finset α ↦
     AlgClosure (Relation.Map R ({·}) ({·}) x) (A.filter fun b ↦ ({b} : Finset α) ≠ x)) A
 
-/-- (7) is Langendoen's strong distributivity (2a) between nonempty pluralities. -/
+-- (7), (2a)
 theorem sd_iff (R : α → β → Prop) {A : Finset α} {B : Finset β} (hA : A.Nonempty)
     (hB : B.Nonempty) : SD R A B ↔ ∀ a ∈ A, ∀ b ∈ B, R a b := by
   rw [SD, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R fun _ ↦ B),
     and_iff_right hA]
   exact forall₂_congr fun a _ ↦ (algClosure_map_iff R a B).trans (and_iff_right hB)
 
-/-- (48b) is strong reciprocity, Langendoen's (3a) on a plurality of two or more. -/
+-- (48b), (3a)
 theorem sr_iff (R : α → α → Prop) {A : Finset α} : SR R A ↔ StrongReciprocity R A := by
   rw [SR, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R _),
     strongReciprocity_iff, ← Finset.one_lt_card_iff_nontrivial]

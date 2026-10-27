@@ -206,8 +206,7 @@ theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop}
 /-- The stems of the appendix. -/
 def sample : Set PropertyConcept := {e | e ∈ propertyConcepts}
 
-/-- No stem is of the speed category, which Washo expresses only by tempo suffixes on verbs of
-motion (74). -/
+-- (74)
 theorem category_ne_speed : ∀ e ∈ propertyConcepts, e.category ≠ .speed := by
   decide
 

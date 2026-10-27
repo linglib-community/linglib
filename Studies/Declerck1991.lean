@@ -198,8 +198,7 @@ theorem realizes_future_iff : Realizes .future (.pure t₀) [x] ↔ t₀ ≤ x.f
   simp [Realizes, show chain .future = [.posterior] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.IsBefore]
 
-/-- A situation-TO that reaches up to t₀, as in a continuative perfect, realizes the present
-perfect and not the preterit (p. 338). -/
+-- p. 338
 theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
     Realizes .presentPerfect (.pure t₀) [x] ∧ ¬ Realizes .simplePast (.pure t₀) [x] := by
   rw [realizes_presentPerfect_iff, realizes_simplePast_iff, h]

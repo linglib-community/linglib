@@ -311,7 +311,7 @@ theorem hamblin_V3 : ChancyDisjunctionIntro m.likelihood := chancyDisjunctionInt
 theorem hamblin_V4 : Minimality m.likelihood := minimality
 theorem hamblin_V5 : Maximality m.likelihood := maximality
 
-/-- V6 holds for the quantificational *must* of §4, simple necessity over the whole space. -/
+-- §4
 theorem hamblin_V6 : MustToProbably m.likelihood (· = Set.univ) := mustToProbably
 
 theorem hamblin_V7 : ProbablyToMight m.likelihood Set.Nonempty :=
@@ -446,7 +446,7 @@ theorem prob_refutes_I3 : ¬HamblinCollapse (uniformOn (Set.univ : Set (Fin 3)))
   rw [uniform_inducedGe_iff, hA] at this
   simp at this
 
-/-- The twelve-sided die of §4 refutes Conjunctivitis for the probability space semantics. -/
+-- §4
 theorem prob_refutes_E1 : ¬Conjunctivitis (uniformOn (Set.univ : Set (Fin 12))).inducedGe := by
   intro h
   have hcard : ∀ A : Set (Fin 12), A.ncard + Aᶜ.ncard = 12 := fun A ↦ by

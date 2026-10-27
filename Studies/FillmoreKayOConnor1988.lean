@@ -295,8 +295,7 @@ abbrev MadeRank : Rank → LowerSet Rank → Prop := (· ∈ ·)
 
 theorem isBot_secondLieutenant : IsBot Rank.secondLieutenant := fun _ ↦ Nat.zero_le _
 
-/-- In (107), *He wasn't even a commissioned officer, let alone a second lieutenant*, the fragment
-names the lowest point. -/
+-- (107)
 theorem anomaly_107 : ¬ Felicitous MadeRank .negative .secondLieutenant .secondLieutenant :=
   not_felicitous_of_isBot isScalarModel_mem isBot_secondLieutenant
 
@@ -362,8 +361,7 @@ abbrev CanRead : Linguist × Lang → LowerSet (Linguist × Lang) → Prop := (�
 def table2c : LowerSet (Linguist × Lang) :=
   .Iic (.apotheosis, .french) ⊔ .Iic (.brilliant, .english)
 
-/-- In Table 2c, *Brilliant can read English* holds and *Brilliant can read Greek* does not, so the
-second strictly entails the first (Appendix). -/
+-- Table 2c
 theorem brilliant_english_greek :
     CanRead (.brilliant, .english) table2c ∧ ¬ CanRead (.brilliant, .greek) table2c ∧
       CanRead (.brilliant, .greek) < CanRead (.brilliant, .english) :=
@@ -373,8 +371,7 @@ theorem brilliant_english_greek :
         exact absurd (LowerSet.mem_Iic_iff.1 h) (by decide),
     isScalarModel_mem.lt_iff.2 (by decide)⟩
 
-/-- At the corners of Table 1, *Dimm can read Hittite* entails that all read all, and *Apotheosis
-can't read English* that none reads any. -/
+-- Table 1
 theorem corners (p : Linguist × Lang) :
     CanRead (.dimm, .hittite) ≤ CanRead p ∧
       (¬ CanRead (.apotheosis, .english) ·) ≤ (¬ CanRead p ·) :=
@@ -382,7 +379,7 @@ theorem corners (p : Linguist × Lang) :
   have h₀ : (.apotheosis, .english) ≤ p := by revert p; decide
   ⟨fun s h ↦ s.lower h₁ h, fun s h hp ↦ h (s.lower h₀ hp)⟩
 
-/-- In (109)–(112) each (a) sentence is strictly more informative than its (b) sentence. -/
+-- (109), (112)
 theorem informativeness_109_112 :
     CanRead (.brilliant, .hittite) < CanRead (.brilliant, .french) ∧
       (¬ CanRead (.brilliant, .french) ·) < (¬ CanRead (.brilliant, .hittite) ·) ∧

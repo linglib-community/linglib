@@ -139,8 +139,7 @@ third-plural object. -/
 def bring : ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   word "tɸ" {classII} {first, sg} {third, pl}
 
-/-- In (9b) the Class II marker sees the root's diacritic inward, past the tense suffix already
-rewritten as *-s-*, and both agreement nodes outward, bare. -/
+-- (9b)
 theorem class_marker_context :
     stepContext vocab bring .rewriting 1 =
       ⟨{classMarker}, [{item "s"}, {classII, item "tɸ"}],

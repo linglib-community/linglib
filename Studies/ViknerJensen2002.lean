@@ -53,7 +53,7 @@ the definite as possessee quantifier. -/
 def clitic (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
   PossNP Q the (fun u x ↦ R u x s) (fun _ ↦ True)
 
-/-- *Q's R is P* holds iff `Q` holds of having exactly one `R`, which is `P` (16). -/
+-- (16)
 theorem clitic_apply (Q : NP E) (R : E → E → S → Prop) (s : S) (P : E → Prop) :
     clitic Q R s P ↔ Q (fun u ↦ ∃ x, (∀ y, R u y s ↔ y = x) ∧ P x) := by
   simp only [clitic, PossNP, dom, the, π_apply, Pi.inf_apply, inf_Prop_eq, true_and]
@@ -184,7 +184,7 @@ theorem favourite_rel {R : E → E → S → Prop} {y x : E} {s : S} (h : favour
     R y x s :=
   h.1
 
-/-- Under an asymmetric preference the favourite is unique (footnote 21). -/
+-- footnote 21
 theorem favourite_subsingleton {R : E → E → S → Prop} {y : E} {s : S}
     (h : ∀ T T', prefer T T' y s → ¬ prefer T' T y s) :
     {x | favourite prefer R y x s}.Subsingleton :=

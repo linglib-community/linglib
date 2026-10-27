@@ -76,12 +76,11 @@ theorem greek_maxRealizations : nominal.maxRealizations = 5 := by decide
 /-- Eight declensions exceed the five rival realizations of the most varied cell. -/
 theorem greek_not_paradigmEconomy : ¬ nominal.ParadigmEconomy := by decide
 
-/-- Table 3's Greek row counts twelve realizations over the eight cells. -/
+-- Table 3
 theorem greek_realization_count : (Finset.univ.biUnion nominal.realizations).card = 12 := by
   decide
 
-/-- Eight classes against the 25600 the per-cell realizations of Table 1 would allow ("it has
-fewer inflection classes than it could"). -/
+-- Table 1
 theorem greek_classes_vs_product :
     (Finset.univ.image nominal).card = 8 ∧ ∏ c, (nominal.realizations c).card = 25600 := by
   decide
@@ -93,11 +92,8 @@ theorem greek_predicts :
       nominal.Predicts {accPl} nomPl := by
   decide
 
-/-- The accusative plural does not predict the genitive singular; after *-a* two genitives
-remain. -/
 theorem greek_not_predicts : ¬ nominal.Predicts {accPl} genSg := by decide
 
-/-- An accusative plural in *-i* fixes the genitive singular in *-us*. -/
 theorem greek_accPl_i_genSg : ∀ d, nominal d accPl = "-i" → nominal d genSg = "-us" := by decide
 
 /-- Nominative singular, genitive singular, and accusative plural are principal parts; the
@@ -111,17 +107,13 @@ theorem greek_not_clear : ¬ nominal.IsVocabularClear := by decide
 
 /-! ### Modern Greek: entropy -/
 
-/-- The declension entropy of the eight classes is `log 8` nats, the paper's 3 bits. -/
 theorem greek_declensionEntropy : Hm[(uniformOn Set.univ : Measure (Fin 8))] = log 8 := by
   simpa using measureEntropy_uniformOn (A := (Finset.univ : Finset (Fin 8)))
     Finset.univ_nonempty
 
-/-- The genitive plural has a single realization and no entropy. -/
 theorem greek_cellEntropy_genPl : H[(nominal · genPl) ; uniformOn Set.univ] = 0 :=
   entropy_eq_zero_of_card_realizations_le_one _ (by decide)
 
-/-- Because the accusative plural predicts the nominative plural, the latter's conditional
-entropy given it vanishes. -/
 theorem greek_condEntropy_nomPl_accPl :
     H[(nominal · nomPl) | (nominal · accPl) ; uniformOn Set.univ] = 0 :=
   condEntropy_eq_zero_of_predicts _ (by decide)
@@ -184,10 +176,9 @@ theorem greek_avgCondEntropy :
 
 /-! ### Burmeso -/
 
-/-- Every cell identifies the class. -/
 theorem burmeso_clear : objectAgreement.IsVocabularClear := by decide
 
-/-- Table 3's Burmeso row counts six realizations, at most two per cell. -/
+-- Table 3
 theorem burmeso_realizations :
     (Finset.univ.biUnion objectAgreement.realizations).card = 6 ∧
       objectAgreement.maxRealizations = 2 := by
@@ -201,7 +192,6 @@ theorem burmeso_avgCondEntropy : objectAgreement.avgCondEntropy (uniformOn Set.u
 
 theorem mazatec_vowels_not_clear : ¬ finalVowels.IsVocabularClear := by decide
 
-/-- The first and second person plural vowels are constant across classes. -/
 theorem mazatec_vowels_constant :
     H[(finalVowels · .pl1) ; uniformOn Set.univ] = 0 ∧
       H[(finalVowels · .pl2) ; uniformOn Set.univ] = 0 :=

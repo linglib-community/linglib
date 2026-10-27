@@ -126,14 +126,13 @@ def all : List Utt := [D1.a, b, D1.c, d]
 
 end D2
 
-/-- Discourse (1) centers on John by three continuations, Rule 1 holding at each step. -/
+-- (1), Rule 1
 theorem d1_continues : transitions D1.all = [.continuation, .continuation, .continuation] ∧
     Rule1 D1.a D1.b ∧ Rule1 D1.b D1.c ∧
       Rule1 D1.c D1.d := by
   decide
 
-/-- Discourse (2) keeps John as backward-looking center; its pronoun in (2b) violates Rule 1, and
-that in (2d) lies outside the forward-looking centers of (2c) (section 7). -/
+-- (2), (2b), Rule 1, (2d), (2c)
 theorem d2_retains : cbs D2.all = [some .john, some .john, some .john] ∧
     transitions D2.all = [.retaining, .continuation, .retaining] ∧
       ¬ Rule1 D1.a D2.b ∧ ¬ ∃ e ∈ D1.c.cf, D2.d.Pronominalizes pronouns e := by
@@ -176,7 +175,7 @@ theorem susan_cb : cb D7.b D7.c7 = some .susan ∧ cb D7.b D7.c8 = some .susan �
     cb D7.b D7.c9 = some .susan ∧ cb D7.b D7.c10 = some .susan := by
   decide
 
-/-- (7c) continues Susan as center; (8c) merely retains her. -/
+-- (7c), (8c)
 theorem c7_continues_c8_retains :
     transition (cb D7.a D7.b) D7.b D7.c7 = .continuation ∧
       transition (cb D7.a D7.b) D7.b D7.c8 = .retaining := by
@@ -206,9 +205,6 @@ def e12 : Utt := ⟨[pron .susan .object]⟩
 
 end D11
 
-/-- Subject position ranks Susan first among the forward-looking centers of (d), so the
-preferred reading of the pronoun in (e), Susan in either grammatical position, keeps her as
-the center: the preference is for the subject, not for parallelism. -/
 theorem subject_preference : D11.d.cp = some .susan ∧ cb D11.c D11.d = some .susan ∧
     cb D11.d D11.e11 = some .susan ∧ cb D11.d D11.e12 = some .susan := by
   decide
@@ -223,8 +219,7 @@ def d : Utt := ⟨[name .tommy .subject, pron .boat .object, desc .bear .other]�
 
 end D13
 
-/-- The boat is the backward-looking center of (d), continued in (13) and in conflict with
-pragmatics in (14). -/
+-- (13), (14)
 theorem boat_cb : cb D13.c D13.d = some .boat := by decide
 
 /-! ### Applications of the rules, section 7 -/
@@ -242,8 +237,7 @@ def c : Utt := ⟨[name .john .subject, pron .mike .object]⟩
 
 end D15
 
-/-- (15c) violates Rule 1: Mike is pronominalized while the center John is named, though
-(15b) satisfied it. -/
+-- (15c), Rule 1, (15b)
 theorem d15_violates_rule1 : cb D15.b D15.c = some .john ∧
     Rule1 D15.a D15.b ∧ ¬ Rule1 D15.b D15.c := by
   decide
@@ -263,8 +257,7 @@ def all : List Utt := [a, D15.b, c, d]
 
 end D16
 
-/-- The intervening (16c) shifts the center to Mike, so the pronoun in (16d) satisfies Rule 1, which
-(15c) violated. -/
+-- (16c), (16d), Rule 1, (15c)
 theorem d16_repairs : cbs D16.all = [some .john, some .mike, some .mike] ∧
     transitions D16.all = [.continuation, .shifting, .continuation] ∧
       Rule1 D16.c D16.d := by
@@ -280,7 +273,7 @@ def c : Utt := ⟨[desc .dog .subject]⟩
 
 end D17
 
-/-- Rule 1 does not preclude a description for the center, as in (17c), where no pronoun is used. -/
+-- Rule 1, (17c)
 theorem full_noun_phrase_cb : cb D17.b D17.c = some .dog ∧
     Rule1 D17.b D17.c := by
   decide
@@ -306,8 +299,7 @@ def all : List Utt := [a, b, c, d, e]
 
 end D20
 
-/-- In (20), John continues in (c), is retained in (d), and the center shifts to Mike in (e), with
-Rule 1 holding throughout. -/
+-- (20), Rule 1
 theorem d20_transitions :
     transitions D20.all = [.continuation, .continuation, .retaining, .shifting] ∧
       Rule1 D20.a D20.b ∧ Rule1 D20.b D20.c ∧

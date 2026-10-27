@@ -174,8 +174,7 @@ def layerOf (p : Particle) : Option PeripheryLayer :=
   else if .matrix ∈ p.distribution.possible.cod then some .sap
   else none
 
-/-- Japanese *ka* types the clause at CP, Hindi-Urdu *kya:* at PerspP, and *kke* and *quick* at SAP
-((15)–(19)). -/
+-- (15), (19)
 theorem layers_derived :
     layerOf ka = some .cp ∧ layerOf kya = some .perspP ∧
       layerOf kke = some .sap ∧ layerOf quick = some .sap := by
@@ -193,18 +192,16 @@ def knows : Set W := {w | KnowsAnswer H w Dox}
 aside. -/
 def forgets : Set W := (knows H Dox)ᶜ
 
-/-- Bare *know* and *remember* reject quasi-subordination in every context ((26d), (42a)). -/
+-- (26d), (42a)
 theorem not_possiblyIgnorant_knows : ¬ PossiblyIgnorant H (c ∩ knows H Dox) Dox :=
   not_possiblyIgnorant_inter_of_subset subset_rfl
 
-/-- Negated *remember* and bare *forget* quasi-subordinate exactly in the contexts where the
-center may be ignorant, as in (42b) and (43). -/
+-- (42b), (43)
 theorem possiblyIgnorant_forgets_iff :
     PossiblyIgnorant H (c ∩ forgets H Dox) Dox ↔ PossiblyIgnorant H c Dox :=
   possiblyIgnorant_inter_compl_iff
 
-/-- Under a polar question either answer is at issue, so the same holds of
-*Does Sue remember?* (42c). -/
+-- (42c)
 theorem possiblyIgnorant_knows_question_iff :
     PossiblyIgnorant H (c ∩ (knows H Dox ∪ (knows H Dox)ᶜ)) Dox ↔ PossiblyIgnorant H c Dox :=
   possiblyIgnorant_inter_union_compl_iff
@@ -273,20 +270,18 @@ def Derivable (f : WHFeature) (p : PerspFeature) (sa : Illocution) : Prop :=
 instance (f : WHFeature) (p : PerspFeature) (sa : Illocution) : Decidable (Derivable f p sa) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- With interrogative syntax a neutral question is derivable, and with declarative syntax only
-the combined act of a biased question is (64). -/
+-- (64)
 theorem english_declarative_biased :
     Derivable .plusWH .cq .ask ∧ Derivable .minusWH .cp .assertAsk ∧
       ∀ p, ¬ Derivable .minusWH p .ask := by
   decide
 
-/-- Where C may stay untyped, a declarative question has both readings (66). -/
+-- (66)
 theorem delayed_typing_neutral :
     Derivable .alphaWH .cq .ask ∧ Derivable .alphaWH .cp .assertAsk := by
   decide
 
-/-- Without SAP a question needs Persp_CQ, which declarative syntax cannot host, so
-declarative questions do not quasi-subordinate (67). -/
+-- (67)
 theorem no_quasi_declarative_question : ¬ AgreesC .minusWH .cq := by decide
 
 /-- A language may type a bare polar clause at C (§4.4) by a polar complementizer
@@ -309,16 +304,14 @@ def italian : PolarTyping := ⟨true, false⟩
 def japanese : PolarTyping := ⟨false, true⟩
 def hindiUrdu : PolarTyping := ⟨false, false⟩
 
-/-- English and Italian subordinate simplex polar questions and Hindi-Urdu does not, while
-every language quasi-subordinates them, as in (69)–(71). -/
+-- (69), (71)
 theorem simplex_polar :
     (∀ e, Typed english e ∧ Typed italian e ∧ Typed japanese e) ∧
       ¬ Typed hindiUrdu .subordinated ∧ Typed hindiUrdu .quasiSubordinated ∧
         Typed hindiUrdu .matrix := by
   decide
 
-/-- The fragment's *ya: nahĩ:* is obligatory exactly where nothing else types the clause
-(71). -/
+-- (71)
 theorem ya_nahi_obligatory_iff :
     ∀ e, ya_nahi.distribution .polar e = some .obligatory ↔ ¬ Typed hindiUrdu e := by
   decide
@@ -343,8 +336,7 @@ def Fine (j : Judgment) : Prop := j = .acceptable ∨ j = .marginal
 
 instance (j : Judgment) : Decidable (Fine j) := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Outside quasi-subordination, an English predicate embeds an interrogative iff its lexical class
-selects the context's layer ((8)–(9), (11), (24), (84)–(85)). -/
+-- (8), (9), (11), (24), (84), (85)
 theorem selection_rows :
     ∀ row ∈ Examples.all, ∀ v ∈ verbs, ∀ e,
       row.feature? "verb" = some v.form → (row.feature? "embedding").bind contextOf = some e →
@@ -359,9 +351,7 @@ def assertsKnowledge : String → Bool
   | "remember" => true
   | _ => false
 
-/-- Outside the invested rows of §3.3, quasi-subordination is licensed iff the class selects PerspP
-and a responsive does not assert knowledge of the answer ((8)–(9), (38), (40), (43), (45)–(46),
-(84)–(85)). -/
+-- §3.3, (8), (9), (38), (40), (43), (45), (46), (84), (85)
 theorem quasi_rows :
     ∀ row ∈ Examples.all, ∀ v ∈ verbs,
       row.feature? "verb" = some v.form →
@@ -382,8 +372,7 @@ def declarativeC : String → Option WHFeature
   | "ital1282" => some .alphaWH
   | _ => none
 
-/-- A declarative question has a neutral reading iff its language's C may stay untyped, and
-always has a biased one, as in (62)–(63). -/
+-- (62), (63)
 theorem declarative_question_rows :
     ∀ row ∈ Examples.all, ∀ f, row.feature? "syntax" = some "declarative" →
       row.feature? "embedding" = some "matrix" → declarativeC row.language = some f →
@@ -399,8 +388,7 @@ def typingOf : String → Option PolarTyping
   | "hind1269" => some hindiUrdu
   | _ => none
 
-/-- A simplex polar clause is acceptable in a context iff it is clause-typed there, as in
-(69)–(71). -/
+-- (69), (71)
 theorem simplex_rows :
     ∀ row ∈ Examples.all, ∀ L e, row.feature? "simplex" = some "true" →
       typingOf row.language = some L → (row.feature? "embedding").bind contextOf = some e →

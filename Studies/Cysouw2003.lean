@@ -705,15 +705,13 @@ theorem rows_rare_of_not_respectsHorizontalHierarchy :
     ∀ r ∈ rows, ¬ r.syncretism.RespectsHorizontalHierarchy → r.ubiquity = .rare := by
   decide +kernel
 
-/-- By Table 4.2's first "nonesuch", under a minimal/augmented inclusive no chapter-4 paradigm
-breaks the horizontal hierarchy. -/
+-- Table 4.2
 theorem rows_respectsHorizontalHierarchy_of_minimalAugmented :
     ∀ r ∈ rows, r.chapter = 4 → r.syncretism.weMarking = .minimalAugmented →
       r.syncretism.RespectsHorizontalHierarchy := by
   decide +kernel
 
-/-- By Table 4.2's second "nonesuch", there is no singular homophony under any
-inclusive/exclusive opposition. -/
+-- Table 4.2
 theorem rows_unified_of_singularHomophony :
     ∀ r ∈ rows, r.chapter = 4 → r.syncretism.SingularHomophony →
       r.syncretism.weMarking = .unified := by

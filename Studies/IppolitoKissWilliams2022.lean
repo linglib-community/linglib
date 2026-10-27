@@ -104,15 +104,13 @@ theorem Agree.symm (h : c.Agree s t) : c.Agree t s :=
 theorem Disagree.symm (h : c.Disagree s t) : c.Disagree t s :=
   ⟨h.2.1, h.1, λ h' => h.2.2 h'.symm⟩
 
-/-- Disagreement is the stronger relation. -/
 theorem Disagree.not_agree (h : c.Disagree s t) : ¬ c.Agree s t := h.2.2
 
 theorem Ma.of_but (h : c.But S) : c.Ma S :=
   let ⟨hS, p, hp, hr, hd⟩ := h
   ⟨hS, p, hp, hr, hd.not_agree⟩
 
-/-- A declarative argument supports an answer when the speaker believes it and it provides
-evidence for the answer (Section 3.2.3). -/
+-- Section 3.2.3
 @[simp] theorem qSupports_ofSet_iff {q r : Set W} :
     c.QSupports (ofSet q) r ↔ c.dox ⊆ q ∧ c.Evidence q r := by
   simp [QSupports]
@@ -121,30 +119,28 @@ theorem not_qSupports_of_no_belief (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) (r : Se
     ¬ c.QSupports S r :=
   λ ⟨q, hq, hd, _⟩ => h q hq hd
 
-/-- Out of the blue, with nothing salient, *ma* is not licensed (BAKERY, (7) and (36)). -/
+-- (7), (36)
 theorem not_ma_of_salient_empty (h : c.salient = ∅) : ¬ c.Ma S :=
   λ ⟨_, p, hp, _⟩ => by simp [h] at hp
 
 theorem not_but_of_salient_empty (h : c.salient = ∅) : ¬ c.But S :=
   λ hb => not_ma_of_salient_empty h (Ma.of_but hb)
 
-/-- With a question the speaker has no belief about, any salient relevant proposition licenses *ma*
-((26), (27), (28), (35)). -/
+-- (26), (27), (28), (35)
 theorem ma_of_no_belief (hS : S.IsRelevantTo c.issues) (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) {p : Set W}
     (hp : p ∈ c.salient) (hr : (ofSet p).IsRelevantTo c.issues) : c.Ma S :=
   ⟨hS, p, hp, hr, λ ⟨r, _, _, hq⟩ => not_qSupports_of_no_belief h r hq⟩
 
-/-- With such a question *but* is never licensed: (31), (32), (33) and (37). -/
+-- (31), (32), (33), (37)
 theorem not_but_of_no_belief (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) : ¬ c.But S :=
   λ ⟨_, _, _, _, _, ⟨r, _, hq⟩, _⟩ => not_qSupports_of_no_belief h r hq
 
-/-- A question agreeing with every salient proposition does not license *ma* (Section 3.3, (38)). -/
+-- Section 3.3, (38)
 theorem not_ma_of_agree (h : ∀ p ∈ c.salient, c.Agree (c.Supports p) (c.QSupports S)) :
     ¬ c.Ma S :=
   λ ⟨_, p, hp, _, hn⟩ => hn (h p hp)
 
-/-- With a polar question under discussion, a salient proposition and a question supporting opposite
-answers license both particles ((25), (30)). -/
+-- (25), (30)
 theorem but_of_polar {α : Set W} (hqud : c.qud = polar α) (hne : α ≠ ∅) (hnu : α ≠ Set.univ)
     (hS : S.IsRelevantTo c.issues) {p : Set W} (hp : p ∈ c.salient)
     (hr : (ofSet p).IsRelevantTo c.issues) (hpα : c.Evidence p α) (hpα' : ¬ c.Evidence p αᶜ)

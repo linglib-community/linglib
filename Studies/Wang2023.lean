@@ -58,10 +58,10 @@ open OptimalityTheory
 
 /-! ### The recruited values are the least specified cells (§4.1) -/
 
-/-- The plural is the least specified number cell, the empty bundle (54). -/
+-- (54)
 theorem plural_eq_bot : Number.pluralF = ⊥ := rfl
 
-/-- The third person is the least specified person cell, the empty bundle (55). -/
+-- (55)
 theorem third_eq_bot : Person.toFeatures .third = ⊥ := Person.toFeatures_third
 
 /-! ### The Taboo of Directness and Maximize Presupposition! (§4.2) -/
@@ -140,8 +140,7 @@ theorem tod_mp_general (candidates : Finset Number.Features)
   exact ⟨tod_mp_only_minimal candidates hWF hMin c,
     fun h ↦ h ▸ tod_mp_minimal_mem_optimal candidates hMin⟩
 
-/-- With the taboo on top, the most specified cell is never optimal beside a less specified
-competitor, so those honorifics are unattested (28). -/
+-- (28)
 theorem maximal_not_optimal_of_tod_top (candidates : Finset Number.Features)
     (rest : List (Constraint Number.Features))
     (hMin : Number.pluralF ∈ candidates) :

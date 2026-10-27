@@ -81,8 +81,7 @@ abbrev goHarlem : Hoboken → Prop := takeA
 /-- The actual goal in every world is to go to Hoboken. -/
 abbrev goals : Background Hoboken := fun _ ↦ {goHoboken}
 
-/-- On the obvious analysis (11) the Harlem sentence is false, since the best *want-Harlem* world
-takes the PATH train. -/
+-- (11)
 theorem not_obvious : ¬ conditionalNecessity ⊥ goals wantHarlem takeA wantA := by
   simp only [conditionalNecessity_iff_necessity_of_finite,
     necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
@@ -152,8 +151,7 @@ def goals : Background Nested
 Hoboken. -/
 abbrev closeness : Background Nested := fun _ ↦ {goHoboken}
 
-/-- On the nested analysis (16) the Harlem sentence is false, since the PATH train remains among the
-best worlds. -/
+-- (16)
 theorem not_nested :
     ¬ conditionalNecessity ⊥ closeness wantHarlem
       (fun w' ↦ necessity ⊥ goals takeA w') actual := by
@@ -189,12 +187,11 @@ theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := fun u hu �
     haveTo_iff.1 h z (Background.mem_accessibleWorlds_restrict.1 hz).1
       (Background.mem_accessibleWorlds_restrict.1 hz).2⟩
 
-/-- A necessary condition of the goal is trivially something you have to do (34). -/
+-- (34)
 theorem haveTo_of_imp (h : ∀ v, p v → q v) : haveTo f p q w :=
   haveTo_iff.2 fun v _ hp ↦ h v hp
 
-/-- In Sloman's London example (23), *you ought to take the train, but you don't have to* is true,
-the train being the best means but not the only one. -/
+-- (23)
 theorem exists_oughtTo_not_haveTo :
     oughtTo (⊥ : Background Bool) (fun _ ↦ {(· = true)}) (fun _ ↦ True) (· = true) true ∧
       ¬ haveTo (⊥ : Background Bool) (fun _ ↦ True) (· = true) true := by
@@ -208,8 +205,7 @@ theorem exists_oughtTo_not_haveTo :
     and_true]
   decide
 
-/-- With going to Harlem the designated goal (25), you have to take the A train whatever your actual
-goals. -/
+-- (25)
 theorem Hoboken.haveTo_takeA : haveTo ⊥ Hoboken.goHarlem Hoboken.takeA Hoboken.wantA :=
   haveTo_of_imp fun _ h ↦ h
 
@@ -281,8 +277,7 @@ theorem isEssentialPart_of_exists (h : ∃ v ∈ f.accessibleWorlds w, ¬ q v �
   · simp only [sInf_union, sInf_singleton, Pi.inf_apply, inf_Prop_eq]
     exact ⟨hv, Or.inr hq⟩
 
-/-- In Nissenbaum's scenario, staying home neither kisses Pedro nor reaches Harlem, so kissing
-Pedro counts as essential by (42). -/
+-- (42)
 theorem Pedro.isEssentialPart_kissPedro :
     IsEssentialPart ⊥ Pedro.goHarlem Pedro.kissPedro Pedro.aTrain :=
   isEssentialPart_of_exists ⟨Pedro.home, by simp, by decide⟩

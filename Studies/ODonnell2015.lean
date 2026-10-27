@@ -236,8 +236,7 @@ Equation 3.14, the exchangeable partition probability function of [pitman-2006].
 noncomputable def pypFactor (a : G.NT) (y : Multiset ℕ) : ℝ :=
   pitmanYorEPPF (M.discount a) (M.concentration a) y
 
-/-- The Pitman–Yor factor of some table sizes is the probability under the seating plan of any set
-partition with those block sizes ([pitman-2006] Theorem 3.2). -/
+-- Theorem 3.2 [pitman-2006]
 theorem pitmanYor_real_singleton_eq_pypFactor (a : G.NT) {n : ℕ}
     (P : Finpartition (Finset.univ : Finset (Fin n))) :
     (pitmanYor (M.discount a) (M.concentration a) n).real {P} = M.pypFactor a P.partSizes :=

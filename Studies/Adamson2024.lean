@@ -219,8 +219,7 @@ theorem agreementClasses_targetArticle :
   simp only [Setoid.ker_def]
   cases c <;> cases c' <;> decide
 
-/-- A possessed kinship term takes the proprial article *e*, (50), and one under the alienator
-takes *o*, (51). -/
+-- (50), (51)
 theorem kinship (r : Root) :
     subsetPrinciple articles (insert .proper (classFeatures (classOf r ipossessed)) :
         Finset ArticleFeature) = some .e ∧

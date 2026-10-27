@@ -98,8 +98,7 @@ def Wordlist.RootClass.LicensesTransitiveVoice (rc : RootClass) : Prop := rc = .
 instance : DecidablePred RootClass.LicensesTransitiveVoice :=
   fun rc ↦ inferInstanceAs (Decidable (rc = .tv))
 
-/-- √TV and √ITV share type and valency, after [davis-1997]; compatibility with external
-causation by an agent alone separates them, §3.3. -/
+-- §3.3 [davis-1997]
 theorem tv_itv_differ_only_in_voice :
     RootClass.tv.ty = RootClass.itv.ty ∧ RootClass.tv.valency = RootClass.itv.valency ∧
       RootClass.tv.LicensesTransitiveVoice ∧ ¬ RootClass.itv.LicensesTransitiveVoice :=
@@ -132,18 +131,16 @@ def V.AssignsErgative (v : V) : Prop := v = .transitive
 
 instance : DecidablePred V.AssignsErgative := fun v ↦ inferInstanceAs (Decidable (v = _))
 
-/-- The two agent-introducing heads are one Voice cell and differ in inherent ergative case
-alone, footnote 10. -/
+-- footnote 10
 theorem w_head_eq : V.w.head = V.transitive.head ∧ ¬ V.w.AssignsErgative ∧
     V.transitive.AssignsErgative :=
   ⟨rfl, by decide, rfl⟩
 
-/-- Every head but -ch, whose specifier hosts the implicit agent of (64), is D-coherent. -/
+-- (64)
 theorem dCoherent : (∀ v : V, v ≠ .ch → v.head.DCoherent) ∧ ¬ V.ch.head.DCoherent :=
   ⟨fun v ↦ by cases v <;> decide, by decide⟩
 
-/-- Every head but -j and the null intransitive head introduces an external argument, and only -ch
-an implicit one (78). -/
+-- (78)
 theorem head_table :
     (∀ v : V, v.head.IsThematic ↔ v ≠ .intransitive ∧ v ≠ .j) ∧
       ∀ v : V, v.head.ExternalImplicit ↔ v = .ch := by
@@ -239,47 +236,41 @@ def FormsStem (rc : RootClass) (v : V) : Prop := ∃ i, WellFormed rc v i
 instance (rc : RootClass) (v : V) : Decidable (FormsStem rc v) := by
   unfold FormsStem; infer_instance
 
-/-- √TV takes every head but the null intransitive one ((45), (59) to (60)), √ITV only that one
-(47), and √POS and √NOM only -w (45), apart from forms like (71). -/
+-- (45), (59), (60), (47), (71)
 theorem formsStem_iff :
     (∀ v, FormsStem .tv v ↔ v ≠ .intransitive) ∧ (∀ v, FormsStem .itv v ↔ v = .intransitive) ∧
       (∀ v, FormsStem .pos v ↔ v = .w) ∧ ∀ v, FormsStem .nom v ↔ v = .w := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> intro v <;> cases v <;> decide
 
-/-- The voices of a transitive root's stems are exactly the five voices of the fragment, markers
-aside, the fragment keeping *-waj* and *-chaj* undecomposed ((56), (58)). -/
+-- (56), (58)
 theorem stemVoice_image :
     (Finset.univ.filter fun p : V × Internal ↦ WellFormed .tv p.1 p.2).image
         (fun p ↦ stemVoice p.1 p.2) = Chuj.voices.image (·.marked []) := by
   decide
 
-/-- A transitive root's stem has a full DP under the transitive head and both passives, and a bare
-NP or an implicit argument under -w ((78), (79)). -/
+-- (78), (79)
 theorem tv_stems :
     Finset.univ.filter (fun p : V × Internal ↦ WellFormed .tv p.1 p.2) =
       {(.transitive, .dp), (.ch, .dp), (.j, .dp), (.w, .np), (.w, .implicit)} := by
   decide
 
-/-- No stem of -w has a full DP internal argument (37), since Infl⁰ is taken by the agent. -/
+-- (37)
 theorem w_no_dp (rc : RootClass) : ¬ WellFormed rc .w .dp := by
   cases rc <;> decide
 
-/-- A transitive root under -w requires its complement, (38), and a nominal root rejects one,
-(39), so the difference lies in the root. -/
+-- (38), (39)
 theorem w_complement : ¬ WellFormed .tv .w .absent ∧ ¬ WellFormed .nom .w .np := by decide
 
-/-- -w selects intransitive roots yet forms no stem on one (47), since the root's DP argument goes
-unlicensed (§3.3). -/
+-- (47), §3.3
 theorem itv_no_w : (∀ i, ¬ WellFormed .itv .w i) ∧ V.w.Selects .itv :=
   ⟨fun i ↦ by cases i <;> decide, trivial⟩
 
-/-- Every class forms a verb stem with some head, so root class is not surface category (§5). -/
+-- §5
 theorem every_class_verbalizes (rc : RootClass) : ∃ v, FormsStem rc v := by
   cases rc
   exacts [⟨.transitive, by decide⟩, ⟨.intransitive, by decide⟩, ⟨.w, by decide⟩, ⟨.w, by decide⟩]
 
-/-- Table (78) assigns each argument of a transitive root's stems its licenser, Voice⁰ or Infl⁰, or
-none for the passives' external argument. -/
+-- (78)
 theorem licenser_table :
     licenser .transitive .dp .external = .voice ∧ licenser .transitive .dp .internal = .infl ∧
       licenser .ch .dp .external = .unlicensed ∧ licenser .j .dp .external = .unlicensed ∧
@@ -295,16 +286,12 @@ def AgentiveIntransitive (v : V) (i : Internal) : Prop :=
 instance (v : V) (i : Internal) : Decidable (AgentiveIntransitive v i) := by
   unfold AgentiveIntransitive; infer_instance
 
-/-- Only -w forms agentive intransitive stems, those with an agent lacking ergative case ((49),
-§3.4.2). -/
+-- (49), §3.4.2
 theorem agentiveIntransitive_iff (v : V) (i : Internal) :
     AgentiveIntransitive v i ↔ v = .w ∧ i ≠ .dp := by
   cases v <;> cases i <;> decide
 
-/-- The type of voice alternation of a transitive root's stem follows from its head (§4.1, (78)):
-a head that merges no external argument gives a decausativization, the agentless passive in -j,
-one that merges an implicit agent a passivization, -chaj, and the agentive intransitive stems are
-the antipassivizations, -w and -waj. -/
+-- §4.1, (78)
 theorem stemVoice_types (v : V) (i : Internal) (hw : WellFormed .tv v i) :
     ((stemVoice v i).IsDecausativization ↔ ¬ v.head.IsThematic) ∧
       ((stemVoice v i).IsPassivization ↔ v.head.ExternalImplicit) ∧
@@ -328,14 +315,12 @@ instance (v : V) (i : Internal) (a : ArgPosition) : Decidable (Implicit v i a) :
 
 instance (v : V) (i : Internal) : Decidable (Aj v i) := by unfold Aj; infer_instance
 
-/-- Table (58) puts -aj on the -chaj passive and the -waj antipassive, but not on the -j passive or
-the incorporation antipassive (footnote 28). -/
+-- (58), footnote 28
 theorem aj_table :
     Aj .ch .dp ∧ Aj .w .implicit ∧ ¬ Aj .j .dp ∧ ¬ Aj .w .np ∧ ¬ Aj .transitive .dp := by
   decide
 
-/-- -aj appears on exactly the stems of a transitive root whose voice leaves a participant
-implicit, the overt reflex of its existential binding, which an oblique DP can name (§4.2). -/
+-- §4.2
 theorem aj_iff_implicit (v : V) (i : Internal) (hw : WellFormed .tv v i) :
     Aj v i ↔ ∃ j, (stemVoice v i).derived.construction j = .implicit := by
   cases v <;> cases i <;> first | exact absurd hw (by decide) | decide
@@ -353,8 +338,7 @@ inductive ObliqueReading
 def V.obliqueReading (v : V) : ObliqueReading :=
   if v.head.ExternalImplicit then .agent else .cause
 
-/-- -ch is thematic and reads its oblique as an agent, (62) and (63), while -j is not and reads it
-as a cause, (65) and (67) (§4.1). -/
+-- (62), (63), (65), (67), §4.1
 theorem passive_contrast :
     V.ch.head.IsThematic ∧ ¬ V.j.head.IsThematic ∧
       V.obliqueReading .ch = .agent ∧ V.obliqueReading .j = .cause := by
@@ -386,9 +370,7 @@ variable that the closure -aj spells out binds; the truth conditions coincide wi
 root, the difference of locus that footnote 28 draws being what `aj` records. -/
 def absolutiveStem : S → Prop := close P
 
-/-- Every stem of a transitive root composes with an internal argument (§5). Each describes
-events in which the root relation holds of some entity, so the transitive and incorporation
-stems entail the absolutive one, a corollary the paper does not draw. -/
+-- §5
 theorem stems_close :
     (∀ e, transitiveStem P a e → absolutiveStem P e) ∧
       ∀ e, incorporationStem P Q e → absolutiveStem P e :=
@@ -426,8 +408,7 @@ def Stem.ofRow (row : Datum) : Option Stem := do
       [("dp", Internal.dp), ("np", .np), ("implicit", .implicit), ("none", .absent)],
     ← row.parse? "aj" [("yes", true), ("no", false)]⟩
 
-/-- For the stems of §2 to §4 and (79), a row is grammatical iff its stem is well-formed, and bears
--aj iff its stem has an implicit argument. -/
+-- §2, §4, (79)
 theorem stem_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "stem" →
     ∃ s ∈ Stem.ofRow row,
       (row.judgment ≠ .ungrammatical ↔ WellFormed s.root s.head s.internal) ∧
@@ -439,8 +420,7 @@ def diagnosticHead (row : Datum) : Option V := do
   guard (row.feature? "construction" = some "diagnostic")
   row.parse? "head" heads
 
-/-- Agent-oriented adverbs and purpose clauses are admitted exactly under a head with an agent
-((63), (67)). -/
+-- (63), (67)
 theorem diagnostic_rows : ∀ row ∈ Examples.all,
     row.feature? "construction" = some "diagnostic" →
     ∃ v ∈ diagnosticHead row, (row.judgment ≠ .ungrammatical ↔ v.head.IsThematic) := by
@@ -452,8 +432,7 @@ def obliqueRow (row : Datum) : Option (V × ObliqueReading) := do
   return (← row.parse? "head" heads,
     ← row.parse? "oblique" [("agent", ObliqueReading.agent), ("cause", .cause)])
 
-/-- The -uj phrase names the agent under -ch and a cause under -j ((62), (65), (66), (70),
-(73)). -/
+-- (62), (65), (66), (70), (73)
 theorem oblique_rows : ∀ row ∈ Examples.all, (row.feature? "oblique").isSome = true →
     ∃ p ∈ obliqueRow row, p.2 = p.1.obliqueReading := by
   decide

@@ -114,7 +114,6 @@ noncomputable def listener [MeasurableSpace R] (μ : Measure M) (f : R → U →
 
 variable (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ)
 
-/-- A speaker with utterance prior `π` is the speaker with cost `−log π / α` (Appendix A.1). -/
 theorem S1_eq_ofWeights_prior (hα : α ≠ 0) {π : U → ℝ≥0∞} (hπ0 : ∀ u, π u ≠ 0)
     (hπ : ∀ u, π u ≠ ∞) (r : R) :
     S1 μ f α (fun u ↦ -Real.log (π u).toReal / α) r =
@@ -323,8 +322,6 @@ end AffectAware
 
 /-! #### A literal listener beyond question-under-discussion RSA -/
 
-/-- At a fixed prior, question-under-discussion RSA has finitely many literal listeners over all
-Boolean meanings, questions and utterances (eq. 24). -/
 theorem finite_setOf_qudListener (μ : Measure M) :
     {ν : Measure M | ∃ (sem : U → Set M) (X : Type*) (q : M → X) (u : U),
       ν = qudListener (RSA.listener μ (truthful sem)) q u}.Finite :=

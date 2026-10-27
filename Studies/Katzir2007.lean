@@ -82,7 +82,7 @@ def someButNotAllSentence : Tree Cat Word :=
         .node .Neg [.terminal .Neg .not_, .terminal .Det .all_]],
       .terminal .N .cake]]
 
-/-- (25b) is (25a) with *all* substituted for *some*. -/
+-- (25b), (25a)
 theorem leafSubst_some_all : someSentence.leafSubst .some_ .all_ .Det = allSentence := rfl
 
 /-- (25b) is a structural alternative of (25a), since the determiners are same-category items of
@@ -101,7 +101,7 @@ theorem some_all_equalComplexity :
     · rfl
     · simp [substitutionSource, lexicon]
 
-/-- No item of the substitution source of (25a) contains a conjunction phrase. -/
+-- (25a)
 theorem source_lacks_conjP : ∀ t ∈ substitutionSource lexicon someSentence,
     ∀ s ∈ t.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = Cat.Conj) :=
   forall_mem_substitutionSource.2 ⟨by decide, by decide⟩

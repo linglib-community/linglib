@@ -288,8 +288,6 @@ theorem anEx_w : anEx {w, s, n, e} w = (s ∩ n) \ e := by
   simp only [mem_inter_iff, mem_sdiff, mem_compl_iff, mem_union]
   tauto
 
-/-- When the strongest alternative is stronger than the conjunction of the middle ones, the
-second layer asserts both and denies the strongest. -/
 theorem exhIter_two_eq (hne : ((s ∩ n) \ e).Nonempty) :
     exhIter {w, s, n, e} 2 w = (s ∩ n) \ e := by
   rw [exhIter_two_eq_anEx _ _ (h.anEx_w ▸ hne), h.anEx_w]

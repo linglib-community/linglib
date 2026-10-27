@@ -283,8 +283,7 @@ theorem setA_realize (c : PronCell) :
       = (insert1 (vnTerminal c)).map ([·]) := by
   cases c <;> decide
 
-/-- *chin* and *qin* compete (Table 4.10). Both realize first-person singular, the Infl-specified
-item wins on Infl, and only the context-free base is available off it. -/
+-- Table 4.10
 theorem chin_beats_qin :
     insert1 (copied .firstSg ++ [.head .infl]) = some (.free "chin") ∧
       insert1 (copied .firstSg) = some (.free "qin") := by
@@ -363,22 +362,18 @@ theorem form_rule93 :
 /-- An argument in a cell takes the form flagged by the probe that agreed with it. -/
 def formAt (r : ArgumentRole) (c : PronCell) : List Morph := form (agreedBy r) c
 
-/-- Reduction is nominatively aligned ((3), (8)), as subjects take the reduced series and the
-object the independent series. -/
+-- (3), (8)
 theorem formAt_eq (c : PronCell) :
     formAt .S c = morphemes (subjPossOf c) ∧ formAt .A c = morphemes (subjPossOf c) ∧
       formAt .P c = morphemes (independentOf c) :=
   ⟨form_flagged .infl c, form_flagged .vn c, form_unflagged c⟩
 
-/-- The disagreement generalization ([noyer-1992], §4.3.3), read off the fragment. A cell's
-independent pronoun contains the enclitic exactly when its author and participant features
-disagree. -/
+-- §4.3.3 [noyer-1992]
 theorem encl_mem_independent_iff (c : PronCell) :
     Morph.encl "i" ∈ morphemes (independentOf c) ↔ c.sign .author ≠ c.sign .participant := by
   cases c <;> decide
 
-/-- Reduction is first-personhood, as the subject and possessor pronoun differs from the
-independent one exactly at the [+author] cells (Table 4.1). -/
+-- Table 4.1
 theorem reduced_iff_author (c : PronCell) :
     subjPossOf c ≠ independentOf c ↔ c.sign .author = true := by
   cases c <;> decide

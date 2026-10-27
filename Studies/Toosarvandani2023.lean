@@ -132,7 +132,7 @@ theorem singular_containing (X : Finset Ind) : singular (containing X univ) = X.
   · rintro ⟨a, ha, rfl⟩
     exact ⟨⟨a, by simp [ha]⟩, a, rfl⟩
 
-/-- A feature composed by `⊻` after *singular* restores pluralities (63). -/
+-- (63)
 theorem pair_mem_sups_singular {X : Finset Ind} {x : Ind} (hx : x ∈ X) (y : Ind) :
     ({x, y} : Finset Ind) ∈ Ioc ∅ X ⊻ singular piDen := by
   rw [insert_eq]
@@ -272,8 +272,7 @@ theorem AgreesUnder.mono {R R' : Finset Feature} {s : Scenario Pronoun} (h : R �
   mem_inter.2 ⟨(mem_inter.1 (ha (mem_inter.2 ⟨(mem_inter.1 hf).1, h (mem_inter.1 hf).2⟩))).1,
     (mem_inter.1 hf).2⟩
 
-/-- The Laxopa probe does not see *elder*, so elder and nonelder human clitics combine
-freely, where Yalálag's full relativization blocks (79b). -/
+-- (79b)
 theorem laxopa_human_elder :
     AgreesUnder {.speaker, .participant, .human, .animate, .pi} ⟨.thirdHuman, .thirdElder⟩ ∧
       ¬ Agrees ⟨.thirdHuman, .thirdElder⟩ := by

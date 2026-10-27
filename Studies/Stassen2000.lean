@@ -264,10 +264,10 @@ theorem adjacent_scheme_iff (a : Arrangement Constituent 3) :
     (scheme a).Adjacent .subject .comitative ↔ ¬ a.IsMedial .verb :=
   Arrangement.adjacent_iff_not_isMedial (z := Slot.verb) (by decide) (by decide) (by decide)
 
-/-- In an SVO language the verb separates the two NPs, (107). -/
+-- (107)
 theorem not_adjacent_scheme_svo : ¬ (scheme .svo).Adjacent .subject .comitative := by decide
 
-/-- SOV and VSO schemes are contiguous already, (123) and (124). -/
+-- (123), (124)
 theorem adjacent_scheme_sov : (scheme .sov).Adjacent .subject .comitative := by decide
 
 theorem adjacent_scheme_vso : (scheme .vso).Adjacent .subject .comitative := by decide

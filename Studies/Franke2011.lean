@@ -265,7 +265,7 @@ theorem bestResponseBy_congr {key' : α → β'} (h : ∀ s : Finset α, s.argma
     bestResponseBy key lit = bestResponseBy key' lit := by
   funext X c; simp only [bestResponseBy, h]
 
-/-- Best responses respect literal meaning when the type does (Lemma 2). -/
+-- Lemma 2
 theorem bestResponse_subset (h : ∀ a, ∀ c ∈ X a, a ∈ lit c) (c : γ) :
     bestResponse lit X c ⊆ lit c := by
   unfold bestResponse; split_ifs
@@ -330,13 +330,12 @@ theorem senderChainBy_congr {β' : Type*} [LinearOrder β'] {key : T → β} {ke
 variable {den}
 
 omit [Fintype T] in
-/-- A sender who believes every interpretation true only sends true messages (Lemma 2). -/
+-- Lemma 2
 theorem senderStep_subset {R : M → Finset T} (hR : ∀ m, R m ⊆ den m) (t : T) :
     senderStep den R t ⊆ inverse den t :=
   bestResponse_subset (fun m _ ht ↦ mem_inverse.mpr (hR m ht)) t
 
-/-- A receiver who believes every message sent true only assigns true interpretations
-(Lemma 2). -/
+-- Lemma 2
 theorem receiverStep_subset {S : T → Finset M} (hS : ∀ t, S t ⊆ inverse den t) (m : M) :
     receiverStep den S m ⊆ den m :=
   bestResponse_subset (fun t _ hm ↦ mem_inverse.mp (hS t hm)) m
@@ -347,8 +346,7 @@ theorem receiverStepBy_subset {key : T → β} {S : T → Finset M}
 
 variable (den)
 
-/-- The first sophisticated receiver reads a message as its true states that make fewest messages
-true (107). -/
+-- (107)
 theorem receiverStep_inverse (m : M) :
     receiverStep den (inverse den) m = (den m).argmin fun t ↦ (inverse den t).card := by
   rw [receiverStep, bestResponse, inverse_inverse]
@@ -374,13 +372,13 @@ theorem senderChainBy_succ (key : T → β) (n : ℕ) :
       senderStep den (receiverStepBy den key (senderChainBy den key n)) :=
   iterate_succ_apply' _ _ _
 
-/-- Truth is preserved along the receiver chain (Lemma 2). -/
+-- Lemma 2
 theorem receiverChain_subset (n : ℕ) (m : M) : receiverChain den n m ⊆ den m := by
   induction n generalizing m with
   | zero => exact le_rfl
   | succ n ih => rw [receiverChain_succ]; exact receiverStep_subset (senderStep_subset ih) m
 
-/-- Truth is preserved along the sender chain (Lemma 2). -/
+-- Lemma 2
 theorem senderChain_subset (n : ℕ) (t : T) : senderChain den n t ⊆ inverse den t := by
   induction n generalizing t with
   | zero => exact le_rfl
@@ -474,8 +472,7 @@ theorem scalar_implicature :
         fun m ↦ {scalarReceiver m} := by
   decide
 
-/-- No chain reaches the reversed play, which reads "all" where it is false, since reasoning that
-starts from literal meaning keeps to it (Lemma 2). -/
+-- Lemma 2
 theorem receiverChain_ne_reversed (n : ℕ) :
     receiverChain game.trueStates n ≠ fun m ↦ {reversedReceiver m} := fun h ↦ by
   have := receiverChain_subset game.trueStates n .all
@@ -543,8 +540,7 @@ def crossedReceiver : Message → State
   | .second => .onlyB
   | .either => .onlyA
 
-/-- The free choice play and the crossed play both communicate perfectly, so both are Nash
-equilibria and no refinement by payoffs separates them (§7). -/
+-- §7
 theorem isNashEquilibrium_freeChoice_and_crossed :
     game.IsNashEquilibrium freeChoiceSender freeChoiceReceiver ∧
       game.IsNashEquilibrium crossedSender crossedReceiver :=
@@ -561,7 +557,7 @@ theorem free_choice :
         fun m ↦ {freeChoiceReceiver m} := by
   decide
 
-/-- On the way the disjunction is a surprise message to `R₂`, read literally (137). -/
+-- (137)
 theorem receiverChain_one_either :
     receiverChain game.trueStates 1 .either = {.onlyA, .onlyB, .both} := by
   decide
@@ -608,16 +604,14 @@ def table : State → Message → BeliefValue
 /-- This is the game of Figure 6 with `a = b`. -/
 noncomputable def game : InterpGame State Message := ofTable table (uniformOn Set.univ)
 
-/-- The states of Figure 6 are the belief-value vectors of the nonempty sets of states of
-Figure 4 (66). -/
+-- Figure 6, Figure 4, (66)
 theorem exists_table_eq_iff (v : Message → BeliefValue) :
     (∃ t, table t = v) ↔
       ∃ X : Finset SomeAll.State,
         X.Nonempty ∧ v = fun m ↦ beliefValue X (SomeAll.game.trueStates m) := by
   revert v; decide
 
-/-- With flat priors both chains settle at their first sophisticated level on reading "some" as
-the speaker not believing "all" (Figure 8). -/
+-- Figure 8
 theorem general :
     receiverChain game.trueStates 1 .some = {.t10, .t1u} ∧
       IsFixedPt (receiverStep game.trueStates ∘ senderStep game.trueStates)
@@ -687,8 +681,7 @@ def table : State → Message → BeliefValue
 /-- This is the game of table (87) with `a = b = c` in (88). -/
 noncomputable def game : InterpGame State Message := ofTable table (uniformOn Set.univ)
 
-/-- The states of (87) are the belief-value vectors of the nonempty sets of states of
-(85) (66). -/
+-- (87), (85), (66)
 theorem exists_table_eq_iff (v : Message → BeliefValue) :
     (∃ t, table t = v) ↔ ∃ X : Finset TwoDisjuncts.State,
       X.Nonempty ∧ v = fun m ↦ beliefValue X (TwoDisjuncts.game.trueStates m) := by
@@ -879,15 +872,13 @@ def table : State → Message → BeliefValue
 /-- The game of table (92) has flat priors. -/
 noncomputable def game : InterpGame State Message := ofTable table (uniformOn Set.univ)
 
-/-- The states of (92) are the belief-value vectors of the nonempty sets of states of
-(89) (66). -/
+-- (92), (89), (66)
 theorem exists_table_eq_iff (v : Message → BeliefValue) :
     (∃ t, table t = v) ↔ ∃ X : Finset TwoDisjuncts.State,
       X.Nonempty ∧ v = fun m ↦ beliefValue X (DisjunctionConj.game.trueStates m) := by
   revert v; decide
 
-/-- With flat priors the chain from the literal sender reads the disjunction as the speaker not
-believing `A ∧ B` (Figure 14). -/
+-- Figure 14
 theorem exclusivity :
     receiverStep game.trueStates (senderChain game.trueStates 1) .either = {.tuu01, .tuuu1} := by
   decide
@@ -985,14 +976,14 @@ noncomputable def game : InterpGame State Message := ofTable table (uniformOn Se
 noncomputable def pruned : InterpGame {t : State // t ≠ .t001} Message :=
   ofTable (table ·.1) (uniformOn Set.univ)
 
-/-- The full game reads the sentence as a mixed group (Figure 17). -/
+-- Figure 17
 theorem mixed_group :
     receiverStep game.trueStates (senderChain game.trueStates 0) .either = {.t001} ∧
     IsFixedPt (senderStep game.trueStates ∘ receiverStep game.trueStates)
       (senderChain game.trueStates 1) := by
   decide
 
-/-- Pruned, the sentence conveys that everybody may take either (102). -/
+-- (102)
 theorem universal_free_choice :
     receiverStep pruned.trueStates (senderChain pruned.trueStates 1) .either =
       {⟨.t111, by decide⟩} := by
@@ -1163,8 +1154,7 @@ theorem receiverResponse_subset_inverse [IsFiniteMeasure G.prior] (hprior : ∀ 
       fun t _ ht ↦ by rw [unbiased_real_of_notMem (mt mem_inverse.mpr ht), mul_zero]]
   exact argmax_subset
 
-/-- A receiver who believes every message sent true only assigns true interpretations
-(Lemma 2). -/
+-- Lemma 2
 theorem receiverResponse_subset [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0)
     {S : T → Finset M} (hS : ∀ t, S t ⊆ G.trueMessages t) (m : M) :
     receiverResponse G S m ⊆ G.trueStates m := by
@@ -1175,8 +1165,7 @@ theorem receiverResponse_subset [IsFiniteMeasure G.prior] (hprior : ∀ t, G.pri
 
 /-! ### Theorems 1 and 2: the light system is the heavy system with flat or near-flat priors -/
 
-/-- Against the unbiased belief in a truth-respecting receiver, the heavy sender is the light sender
-((76), (129)). -/
+-- (76), (129)
 theorem senderResponse_eq_senderStep {R : M → Finset T} (hR : ∀ m, R m ⊆ G.trueStates m) :
     senderResponse G R = senderStep G.trueStates R := by
   funext t
@@ -1242,8 +1231,7 @@ theorem argmax_prior_mul_uniform_of_nearFlat [IsFiniteMeasure G.prior]
       exact mul_le_mul_of_nonneg_right (hpr t' ⟨ht', fun t'' ht'' ↦ h ▸ hmin t'' ht''⟩)
         (by positivity)
 
-/-- Under near-flat priors the heavy receiver is the light receiver refined by the prior
-(Theorem 2). -/
+-- Theorem 2
 theorem receiverResponse_eq_receiverStepBy [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0)
     (hnf : NearFlat G) :
     receiverResponse G = receiverStepBy G.trueStates (fun t ↦ G.prior.real {t}) := by
@@ -1259,7 +1247,7 @@ theorem nearFlat_of_forall_eq [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior
     (hflat : ∀ t t', G.prior {t} = G.prior {t'}) : NearFlat G := fun t t' ↦ by
   rw [prior_real_eq hflat t' t]; linarith [prior_real_pos hprior t]
 
-/-- Under flat priors the heavy receiver is the light receiver (77). -/
+-- (77)
 theorem receiverResponse_eq_receiverStep [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0)
     (hflat : ∀ t t', G.prior {t} = G.prior {t'}) :
     receiverResponse G = receiverStep G.trueStates := by
@@ -1278,8 +1266,7 @@ theorem receiverLevel_eq_receiverChainBy [IsFiniteMeasure G.prior] (hprior : ∀
       comp_apply, senderResponse_eq_senderStep (receiverChainBy_subset _ _ n),
       receiverResponse_eq_receiverStepBy hprior hnf]
 
-/-- Under near-flat priors the sender chain of the heavy system is the light chain with its
-receivers refined by the prior (Theorem 2). -/
+-- Theorem 2
 theorem senderLevel_eq_senderChainBy [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0)
     (hnf : NearFlat G)
     (n : ℕ) : senderLevel G n = senderChainBy G.trueStates (fun t ↦ G.prior.real {t}) n := by
@@ -1335,16 +1322,14 @@ private theorem sum_mul_le_senderResponse {S : T → Finset M} {t : T}
 variable [IsFiniteMeasure G.prior]
 
 omit [DecidableEq T] in
-/-- A level-`k + 1` sender does at least as well against `R` as any truthful sender type
-(Lemma 3 (i)). -/
+-- Lemma 3, (i)
 theorem expectedGain_le_senderResponse {S : T → Finset M} (hS : ∀ t, S t ⊆ G.trueMessages t)
     (R : M → Finset T) : expectedGain G S R ≤ expectedGain G (senderResponse G R) R := by
   rw [expectedGain_eq_sum, expectedGain_eq_sum]
   exact sum_le_sum fun t _ ↦
     mul_le_mul_of_nonneg_left (sum_mul_le_senderResponse (hS t) R) measureReal_nonneg
 
-/-- A level-`k + 1` receiver does at least as well against `S` as any receiver type
-(Lemma 3 (ii)). -/
+-- Lemma 3, (ii)
 theorem expectedGain_le_receiverResponse (S : T → Finset M) (R : M → Finset T) :
     expectedGain G S R ≤ expectedGain G S (receiverResponse G S) := by
   rw [expectedGain_eq_sum, expectedGain_eq_sum]
@@ -1451,12 +1436,12 @@ theorem exists_isFixedPt_iterate (hprior : ∀ t, G.prior {t} ≠ 0) (R : M → 
     _ = receiverResponse G (senderResponse G (x 0)) := congrArg _ h1
     _ = x 1 := (hsucc 0).symm
 
-/-- The receiver chain of the heavy system reaches a fixed point (Theorem 3). -/
+-- Theorem 3
 theorem exists_isFixedPt_receiverLevel (hprior : ∀ t, G.prior {t} ≠ 0) :
     ∃ n, IsFixedPt (receiverResponse G ∘ senderResponse G) (receiverLevel G n) :=
   exists_isFixedPt_iterate hprior _
 
-/-- The sender chain of the heavy system reaches a fixed point (Theorem 3). -/
+-- Theorem 3
 theorem exists_isFixedPt_senderLevel (hprior : ∀ t, G.prior {t} ≠ 0) :
     ∃ n, IsFixedPt (senderResponse G ∘ receiverResponse G) (senderLevel G n) := by
   obtain ⟨n, hn⟩ := exists_isFixedPt_iterate hprior (receiverResponse G G.trueMessages)
@@ -1612,8 +1597,7 @@ end Counting
 
 namespace TwoDisjuncts
 
-/-- With the flat priors of Figure 5, the heavy system's second receiver reads the disjunction
-literally (137) and its fourth as free choice (139). -/
+-- Figure 5, (137), (139)
 theorem receiverLevel_free_choice :
     receiverLevel game 1 .either = {.onlyA, .onlyB, .both} ∧
       receiverLevel game 2 = fun m ↦ {freeChoiceReceiver m} := by
@@ -1673,8 +1657,7 @@ end Exhaustification
 
 namespace TwoDisjuncts
 
-/-- In the free choice game, exhaustification by minimal models is the first sophisticated
-receiver's reading (footnote 37; §10, Figure 7). -/
+-- footnote 37, §10, Figure 7
 theorem exhMW_eq_receiverStep (m : Message) :
     exhMW (alternatives game) {t | game.meaning m t} =
       ↑(receiverStep game.trueStates (inverse game.trueStates) m) := by
@@ -1705,8 +1688,7 @@ variable {W : Type*} (ALT : Set (Set W)) (φ : Set W)
 `w` is true at `v`, `A` at `w` forces `A` at `v`. -/
 def MonotoneDetermined (A : Set W) : Prop := ∀ w v, leALT ALT w v → w ∈ A → v ∈ A
 
-/-- Adding a monotonically determined alternative leaves the order on worlds unchanged
-(Fact 2). -/
+-- Fact 2
 theorem ltALT_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined ALT A) :
     ltALT (insert A ALT) = ltALT ALT := by
   have key : ∀ w v, leALT (insert A ALT) w v ↔ leALT ALT w v := fun w v ↦
@@ -1718,8 +1700,7 @@ theorem exhMW_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined 
     exhMW (insert A ALT) φ = exhMW ALT φ := by
   unfold exhMW; rw [ltALT_insert_of_monotoneDetermined ALT hA]
 
-/-- Fact 2 as printed fails. Over two worlds with one alternative, adding its negation, which
-the alternative determines but not monotonically, removes the strict order between them. -/
+-- Fact 2
 theorem not_ltALT_insert_compl :
     ltALT ({(· = true)} : Set (Set Bool)) false true ∧
       ¬ ltALT (insert (· = false) {(· = true)}) false true := by
@@ -1775,9 +1756,7 @@ theorem exhMW_alt₂ : exhMW alt₂ (A ∪ B) = exhMW alt₁ (A ∪ B) :=
   exhMW_insert_of_monotoneDetermined _ _ fun _ _ h hw ↦
     ⟨h A (by simp [alt₁]) hw.1, h B (by simp [alt₁]) hw.2⟩
 
-/-- Minimal-models exhaustification ignores the conjunctive alternative and matches innocent
-exclusion over the larger set, while innocent exclusion over the smaller set excludes nothing (113).
--/
+-- (113)
 theorem exhaustivity_operators :
     exhMW alt₁ (A ∪ B) = exhMW alt₂ (A ∪ B) ∧ exhMW alt₂ (A ∪ B) = exhIE alt₂ (A ∪ B) ∧
       exhIE alt₂ (A ∪ B) ⊂ exhIE alt₁ (A ∪ B) := by

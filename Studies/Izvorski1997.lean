@@ -67,27 +67,24 @@ noncomputable def must (f g : Background W) (p : W → Prop) : W → SignType :=
 
 variable {f f' g : Background W} {p : W → Prop} {w : W}
 
-/-- The evidential and *must* assert the same universal claim (8a), so wherever the evidential
-is defined it has the value of *must*. -/
+-- (8a)
 theorem ev_eq_must_of_ne_zero (h : Ev f g p w ≠ 0) : Ev f g p w = must f g p w := by
   rw [Ev, Set.indicator_apply_ne_zero] at h
   rw [Ev, Set.indicator_of_mem h.1, must]
 
-/-- The accessible worlds of *must* lie among the evidential's, its background being at least as
-rich ((10), (11)). -/
+-- (10), (11)
 theorem accessible_must_subset (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   Background.accessibleWorlds_anti h
 
-/-- With no evidence the evidential is undefined where *must* is not, as in (12) and (13). -/
+-- (12), (13)
 theorem ev_eq_zero_of_no_evidence (h : f w = ∅) : Ev f g p w = 0 :=
   Set.indicator_of_notMem (fun hp ↦ hp.1.ne_empty h) _
 
-/-- Evidence establishing `p`, as witnessing it does, is not indirect (14). -/
+-- (14)
 theorem ev_eq_zero_of_known (h : Known f w p) : Ev f g p w = 0 :=
   Set.indicator_of_notMem (fun hp ↦ hp.2 h) _
 
-/-- The presupposition projects through negation, so negating or denying an evidential statement
-targets the proposition and not the evidence, as in (15) and (16). -/
+-- (15), (16)
 theorem support_neg_ev : Function.support (-Ev f g p) = Function.support (Ev f g p) := by
   ext w; simp
 
@@ -110,7 +107,7 @@ theorem ev_ne_zero_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : ¬ Kn
   rw [Ev, Set.indicator_of_mem (s := {w | (f w).Nonempty ∧ ¬ Known f w p}) ⟨⟨_, hp'⟩, hnot⟩]
   simp
 
-/-- Like *must*, the evidential does not entail its prejacent (9). -/
+-- (9)
 theorem ev_not_entails :
     ∃ (f : Background (Fin 2)) (g : Background (Fin 2)) (p : Fin 2 → Prop) (w : Fin 2),
       Ev f g p w = 1 ∧ ¬ p w := by

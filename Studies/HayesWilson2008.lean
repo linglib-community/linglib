@@ -212,13 +212,13 @@ def table1 : Fin 2 → Cx :=
 /-- The weights of Table 1 are written in hundredths. -/
 def table1W : Fin 2 → ℕ := ![300, 200]
 
-/-- Table 1 scores `CV` 0, `CVC` 2.0, and `V` 3.0. -/
+-- Table 1
 theorem table1_scores :
     score CV.spec table1 table1W [.C, .V] = 0 ∧
       score CV.spec table1 table1W [.C, .V, .C] = 200 ∧
         score CV.spec table1 table1W [.V] = 300 := by decide
 
-/-- Table 1 gives `CV`, `CVC`, and `V` the maxent values 1, `exp (−2)`, and `exp (−3)`. -/
+-- Table 1
 theorem table1_maxentValues :
     maxentValue (score CV.spec table1 table1W [.C, .V]) = 1 ∧
       maxentValue (score CV.spec table1 table1W [.C, .V, .C]) = exp (-2) ∧
@@ -368,7 +368,7 @@ def attested : List (List Seg) :=
   Examples.all.filterMap fun e ↦
     if e.feature? "corpus" = some "(11)" then Seg.parse e.primaryText.toList else none
 
-/-- Every attested onset is penalized by at most 4.53; most score 0 (§5.3.1). -/
+-- §5.3.1
 theorem attested_le : ∀ o ∈ attested, h o ≤ 453 := by decide
 
 /-- Exactly ten attested onsets, the rarest ones, receive penalties ((11), §5.3.1). -/
@@ -382,16 +382,14 @@ def twelve : List (List Seg) :=
   [[s, t, w], [d, l], [hh, l], [hh, r], [v, l], [v, r], [sh, l], [sh, w], [s, r], [f, w], [p, w],
     [s, p, w]]
 
-/-- The twelve accidental gaps score from 3.76 for [stw] to 4.96 for [fw], [pw] and [spw] (§5.3.1).
--/
+-- §5.3.1
 theorem twelve_scores :
     twelve.map h = [376, 440, 482, 482, 484, 484, 484, 484, 490, 496, 496, 496] := by decide
 
 theorem h_rt : h [r, t] = 2181 ∧ viol 2 [r, t] = 1 ∧ viol 5 [r, t] = 1 ∧ viol 6 [r, t] = 1 ∧
     viol 9 [r, t] = 1 := by decide
 
-/-- In the gang of §5.2, constraints #8, #14, and #22, each weighted below the threshold of
-    about 4, together give *[stʃ] the bad score 6.21. -/
+-- §5.2
 theorem stch_gang :
     h [s, ch] = 621 ∧ viol 7 [s, ch] = 1 ∧ viol 13 [s, ch] = 1 ∧ viol 21 [s, ch] = 1 ∧
       table4W 7 < 400 ∧ table4W 13 < 400 ∧ table4W 21 < 400 := by decide
@@ -443,7 +441,7 @@ def onsetCon : ConstraintSet candidates (Fin 23) := fun k o ↦ viol k o
 noncomputable def onsetProb (o : candidates) : ℝ :=
   (maxEnt onsetCon.violations fun k ↦ (table4W k : ℝ) / 100).real {o}
 
-/-- The probability (6) is the softmax of the negated scores (4). -/
+-- (6), (4)
 theorem onsetProb_eq_softmax : onsetProb = softmax fun o : candidates ↦ -(h o : ℝ) / 100 := by
   funext o
   rw [onsetProb, maxEnt_real_singleton, harmony_violations]
@@ -454,7 +452,7 @@ theorem onsetProb_eq_softmax : onsetProb = softmax fun o : candidates ↦ -(h o 
     Finset.sum_div]
   exact congrArg Neg.neg (Finset.sum_congr rfl fun i _ ↦ by ring)
 
-/-- On the candidate set, the probability (6) orders forms as the score does. -/
+-- (6)
 theorem onsetProb_lt_iff {o₁ o₂ : candidates} : onsetProb o₁ < onsetProb o₂ ↔ h o₂ < h o₁ := by
   rw [onsetProb_eq_softmax, softmax_lt_softmax_iff, div_lt_div_iff_of_pos_right (by norm_num),
     neg_lt_neg_iff, Nat.cast_lt]

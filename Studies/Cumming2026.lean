@@ -137,19 +137,17 @@ theorem ney_present_derived : (ney ⟦present⟧).derived = ⟦present⟧ := com
 
 theorem ney_future_derived : (ney ⟦future⟧).derived = ⟦future⟧ := comp_present_right _
 
-/-- Downstream evidence acquired by the time of speech is for a nonfuture event ((17)). -/
+-- (17)
 theorem l_nonfuture_derived : (l ⟦future⟧ᶜ).derived = ⟦future⟧ᶜ :=
   comp_compl_future_compl_future
 
-/-- Prospective evidence acquired by the time of speech leaves the utterance perspective open, so
-the future under *-l* describes yesterday's forecast rain ((16)). -/
+-- (16)
 theorem l_future_derived : (l ⟦future⟧).derived = ⊤ := by
   show comp ⟦future⟧ ⟦future⟧ᶜ = ⊤
   rw [← past_sup_present, comp_sup_right]
   simp
 
-/-- Cumming's nonfuture cell under *-l* holds exactly when Koev's null past or null present
-does (footnote 7). -/
+-- footnote 7
 theorem holds_l_nonfuture_iff {f : EvidentialFrame T} :
     (l ⟦future⟧ᶜ).Holds f ↔ (l ⟦past⟧).Holds f ∨ (l ⟦present⟧).Holds f := by
   rw [← past_sup_present]
@@ -157,27 +155,24 @@ theorem holds_l_nonfuture_iff {f : EvidentialFrame T} :
 
 /-! ### Downstream evidence, obviation and the true future (§5, §7) -/
 
-/-- Across the three languages, the nonfuture tenses require downstream evidence, the
-constraint (10). -/
+-- (10)
 theorem nonfuture_downstream {f : EvidentialFrame T} :
     ∀ c ∈ [simplePast, presentProgressive, te ⟦past⟧, te ⟦present⟧, ney ⟦past⟧, ney ⟦present⟧,
       l ⟦future⟧ᶜ], c.Holds f → f.Downstream := fun c hc ↦
   Constraint.downstream_of_holds (by revert c; decide)
 
-/-- The prospective cells of Korean, Bulgarian and English *will* fall outside both options of
-Cariani's obviation (§5). -/
+-- §5
 theorem prospective_beyond_obviation :
     ∀ c ∈ [te ⟦future⟧, ney ⟦future⟧, l ⟦future⟧, willHave, willNow],
       c.eventToAcquisition ≠ ⟦future⟧ᶜ ∧ c.eventToAcquisition ≠ ⊤ := by
   decide
 
-/-- Under a future restricted to downstream evidence, speech time precedes acquisition time (§7). -/
+-- §7
 theorem speechTime_lt_acquisitionTime {f : EvidentialFrame T}
     (h : (⟨⟦future⟧ᶜ, ⊤, ⟦future⟧⟩ : Constraint).Holds f) : f.speechTime < f.acquisitionTime :=
   lt_of_lt_of_le ((compare_mem_future _ _).1 h.2.2) ((compare_mem_compl_future _ _).1 h.1)
 
-/-- Past-directed *will have* and the simple past assert the same proposition, so *will have* is no
-necessity modal (23). -/
+-- (23)
 theorem willHave_meaning_eq_simplePast_meaning {W : Type*} {f f' : EvidentialFrame T}
     (φ : W → Prop) (h : willHave.Holds f) (h' : simplePast.Holds f') :
     meaning willHave f φ = meaning simplePast f' φ := by
@@ -210,8 +205,7 @@ instance : DecidablePred Scheduled := fun _ ↦ inferInstanceAs (Decidable (_ = 
 theorem cell?_frame?_isSome : ∀ e ∈ Examples.all, (cell? e).isSome ∧ (frame? e).isSome := by
   decide
 
-/-- An assertion is felicitous exactly when its cell holds on the scenario's frame, planned
-or scheduled events exempt (§6). -/
+-- §6
 theorem judgment_iff : ∀ e ∈ Examples.all, ∀ c ∈ cell? e, ∀ f ∈ frame? e,
     (e.JudgedFelicitous ↔ Scheduled e ∨ c.Holds f) := by
   decide

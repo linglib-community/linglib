@@ -170,7 +170,7 @@ def cand : Cand4 → Correspondence Role Seg
   | .d => paradigm [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r]
       (diagonalPairs 4) (diagonalPairs 3) (diagonalPairs 3)
 
-/-- Under recursive evaluation the underapplication paradigm *L[æ]rry ~ L[æ]r* wins ((16), (29)). -/
+-- (16), (29)
 theorem underapplication :
     (tableau cand {.a, .b, .c, .d} recursive ranking ()).optimal = {.d} := by decide
 
@@ -231,8 +231,7 @@ def word : Cand4 → List Seg
   | .c => [.nasalC, .nasalV, .oralC, .nasalV, .oralC]
   | .d => [.nasalC, .nasalV, .oralC, .oralV, .oralC]
 
-/-- In (47), whatever the input's vowels, `*NVORAL >> *VNAS >> IO-IDENT[NAS]` selects
-*ŋãtur*, so markedness decides allophony over the rich input. -/
+-- (47)
 theorem allophony : ∀ input ∈ inputs,
     (Tableau.ofList {.a, .b, .c, .d}
       [Constraint.comap word nvOral, Constraint.comap word vNas,
@@ -263,8 +262,7 @@ def plural : Cand4 → Correspondence Role Seg
       [.nasalV, .oralC, .nasalC, .nasalV, .nasalV, .oralC]
       [.nasalC, .nasalV, .oralC, .nasalV, .nasalV, .oralC] (diagonalPairs 4) infixIO infixOO
 
-/-- In (52) nasal spread overapplies in the plural: *ɲĩãr ~ ɲ-ãl-ĩãr* wins, its root vowels
-nasal in oral context to match the base. -/
+-- (52)
 theorem overapplication :
     (tableau plural {.a, .b, .c, .d} recursive ranking ()).optimal = {.d} := by decide
 
@@ -289,8 +287,7 @@ where
   base : List Seg := [.oralC, .oralV, .laryngeal, .oralV, .oralC]
   input : List Seg := [.nasalV, .nasalC, .oralC, .oralV, .laryngeal, .oralV, .oralC]
 
-/-- In (55) harmony applies normally under a nasal affix, *dəhəs ~ d-um-ə̃hə̃s*: OO-Identity
-gives way to `*NVORAL`, and `*VNAS` keeps the infix vowel oral. -/
+-- (55)
 theorem normalApplication :
     (tableau approach {.a, .b, .c, .d} recursive ranking ()).optimal = {.c} := by decide
 
@@ -301,12 +298,11 @@ def baseChoice : Cand3 → Correspondence Role Seg
       [.oralC, .oralV, .nasalC, .nasalV, .laryngeal, .nasalV, .oralC] (diagonalPairs 5) umIO umOO
   | _ => approach .c
 
-/-- In (56) the base cannot misapply, since its `*VNAS` marks fall in the dominant recursion. -/
+-- (56)
 theorem base_priority :
     (tableau baseChoice {.a, .b} recursive ranking ()).optimal = {.b} := by decide
 
-/-- In (57) the non-recursive tally wrongly prefers the overapplying base, which satisfies
-`*NVORAL` and OO-Identity outright. -/
+-- (57)
 theorem base_overapplies_nonrecursive :
     (tableau baseChoice {.a, .b} nonrecursive ranking ()).optimal = {.a} := by decide
 
@@ -386,8 +382,7 @@ def sonCon (w : List Seg) : ℕ :=
   | some (x, y) => if Sonority.profile sonority x y = .lt then 1 else 0
   | none => 0
 
-/-- In the markedness relation TETRU makes emerge (§4.3.2), `SON-CON` marks a subset of the
-codas `*COMPLEX-CODA` marks. -/
+-- §4.3.2
 theorem sonCon_le_complexCoda (w : List Seg) : sonCon w ≤ complexCoda w := by
   unfold sonCon complexCoda
   cases finalCluster w with
@@ -435,14 +430,12 @@ where
   /-- An IO correspondence with a vowel epenthesized after the third segment. -/
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 4), (4, 5)]
 
-/-- In (87) epenthesis underapplies in *yiš.bē ~ yišb* 'take captive', the complex coda kept
-to give every jussive segment a base correspondent. -/
+-- (87)
 theorem epenthesis_underapplies :
     (tableau captive {.a, .b, .c, .d} recursive epenthesis .jussive).optimal = {.d} := by
   decide
 
-/-- In (88) the non-recursive tally prefers epenthesis overapplying in the base,
-*yi.šə.bē ~ yi.šeb*. -/
+-- (88)
 theorem epenthesis_overapplies_nonrecursive :
     (tableau captive {.a, .b, .c, .d} nonrecursive epenthesis .jussive).optimal = {.a} := by
   decide
@@ -461,8 +454,7 @@ def uncover : Cand3 → Correspondence Role Seg
 where
   input : List Seg := [.glide, .vowel, .spirant, .liquid, .vowel]
 
-/-- By TETRU, epenthesis applies normally in *yiɣ.lē ~ yi.ɣel* 'uncover' (92), with `SON-CON`
-outranking OOJ-DEP. -/
+-- (92)
 theorem tetru :
     (tableau uncover {.a, .b, .c} recursive epenthesis .jussive).optimal = {.b} := by decide
 
@@ -483,13 +475,12 @@ where
   epenthesizes a vowel before the stop. -/
   truncated : List (ℕ × ℕ) := [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 6)]
 
-/-- In (118) spirantization underapplies in *šāmaʕtī ~ šāmaʕat* 'I/you (fs) heard', the
-post-vocalic stop matching the base's. -/
+-- (118)
 theorem spirantization_underapplies :
     (tableau heard {.a, .b, .c} recursive spirantization .jussive).optimal = {.c} := by
   decide
 
-/-- In (119) the non-recursive tally prefers spirantization overapplying in the base. -/
+-- (119)
 theorem spirantization_overapplies_nonrecursive :
     (tableau heard {.a, .b, .c} nonrecursive spirantization .jussive).optimal = {.a} := by
   decide
@@ -509,9 +500,7 @@ where
   imperativeIO : List (ℕ × ℕ) := [(2, 0), (3, 2), (4, 3), (5, 4)]
   imperativeOO : List (ℕ × ℕ) := [(2, 0), (3, 2), (4, 3), (5, 4)]
 
-/-- In (135) spirantization applies normally in the imperative *yixtōβ ~ kəθōβ* 'write'
-under the same ranking (137), the imperative's OO-Identity ranked below the spirantization
-constraints. -/
+-- (135), (137)
 theorem imperative_normalApplication :
     (tableau write {.a, .b, .c} recursive spirantization .imperative).optimal = {.c} := by
   decide

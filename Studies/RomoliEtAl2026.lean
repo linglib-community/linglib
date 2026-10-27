@@ -131,8 +131,7 @@ section StrongKleene
 
 variable {d : Display}
 
-/-- Under *every* the sentence is defined where every boy opened all of his presents or some boy
-opened none, (25a). -/
+-- (25a)
 theorem pointwise_all_ne_zero_iff :
     pointwise NumberTree.all d ≠ 0 ↔ (∀ v ∈ d, v = 1) ∨ -1 ∈ d := by
   rw [KrizChemla2015.pointwise_eq_supervaluation_of_scopeMonotone NumberTree.scopeMonotone_all,
@@ -145,8 +144,7 @@ theorem pointwise_all_ne_zero_iff :
   · exact iff_of_true (fun v hv ↦ by simp [h v hv]) h
   · exact iff_of_false (fun h' ↦ h' _ h rfl) fun h' ↦ by simpa using h' _ h
 
-/-- Under *no* the sentence is defined where every boy opened none of his presents or some boy
-opened all, (25b). -/
+-- (25b)
 theorem pointwise_no_ne_zero_iff :
     pointwise NumberTree.no d ≠ 0 ↔ (∀ v ∈ d, v = -1) ∨ 1 ∈ d := by
   rw [KrizChemla2015.pointwise_eq_supervaluation_of_scopeAntitone NumberTree.scopeAntitone_no,
@@ -159,8 +157,7 @@ theorem pointwise_no_ne_zero_iff :
   · exact iff_of_true h fun v hv ↦ by simp [h v hv]
   · exact iff_of_false (fun h' ↦ by simpa using h' _ h) fun h' ↦ h' _ h rfl
 
-/-- Under *not every* the sentence is defined where some boy opened none of his presents or every
-boy opened all, (25c). -/
+-- (25c)
 theorem pointwise_notAll_ne_zero_iff :
     pointwise NumberTree.notAll d ≠ 0 ↔ -1 ∈ d ∨ ∀ v ∈ d, v = 1 := by
   have h : pointwise NumberTree.notAll d = pointwise NumberTree.allᶜ d := rfl
@@ -356,8 +353,7 @@ theorem asymmetric_iff_of_scopeAntitone (hq : q.ScopeAntitone) :
     resolve_lp_pexCell]
   rfl
 
-/-- Under a monotone quantifier the asymmetric verdict is that of the implicature approach as
-[augurzky-etal-2023] state it. -/
+-- [augurzky-etal-2023]
 theorem asymmetric_iff_implicature [Decidable q.ScopeAntitone]
     (hq : q.ScopeMonotone ∨ q.ScopeAntitone) :
     asymmetric q ctx opened ↔ AugurzkyEtAl2023.implicature q ctx (opened.map cell) := by
@@ -374,14 +370,13 @@ theorem localAccommodation_iff_symmetric :
   refine iff_of_eq (congrArg _ (List.map_congr_left fun n _ ↦ ?_))
   simp [pexCell_eq_one_iff, AugurzkyEtAl2023.designated_cell]
 
-/-- After accommodation *no boy opened his presents* says that no boy opened any of them, (26). -/
+-- (26)
 theorem asymmetric_no_iff : asymmetric NumberTree.no ctx opened ↔ ∀ n ∈ opened, n = 0 := by
   rw [asymmetric_iff_of_scopeAntitone ctx opened NumberTree.scopeAntitone_no, someReading,
     KrizChemla2015.reading_no]
   simp [cell_eq_neg_one_iff]
 
-/-- After accommodation *not every boy opened his presents* says that some boy opened none of
-them, (27). -/
+-- (27)
 theorem asymmetric_notAll_iff : asymmetric NumberTree.notAll ctx opened ↔ 0 ∈ opened := by
   rw [asymmetric_iff_of_scopeAntitone ctx opened NumberTree.scopeAntitone_notAll, someReading,
     ← NumberTree.compl_all]
@@ -391,8 +386,7 @@ theorem asymmetric_notAll_iff : asymmetric NumberTree.notAll ctx opened ↔ 0 �
 
 variable {ctx}
 
-/-- With no alternative pruned, *every boy opened his presents* says after accommodation that
-every boy opened all of them, (28). -/
+-- (28)
 theorem asymmetric_all_universal_iff :
     asymmetric NumberTree.all .universal opened ↔ ∀ n ∈ opened, 9 ≤ n := by
   rw [asymmetric_iff_of_scopeMonotone _ opened NumberTree.scopeMonotone_all,
@@ -407,8 +401,7 @@ theorem asymmetric_exactlyTwo_universal_iff :
   rw [asymmetric, List.map_congr_left fun n _ ↦ pexCell_universal n]
   exact pointwise_exactlyTwo_eq_one_iff
 
-/-- With no alternative pruned, local accommodation makes *no boy opened his presents* say that no
-boy opened all of them, (35). -/
+-- (35)
 theorem localAccommodation_no_universal_iff :
     localAccommodation NumberTree.no .universal opened ↔ ∀ n ∈ opened, n < 9 := by
   have hk : AugurzkyEtAl2023.Context.universal.threshold nine = 9 := by
@@ -419,13 +412,12 @@ end Asymmetric
 
 /-! ### The experiments -/
 
-/-- On its target pictures every sentence denotes # (§3.2.1). -/
+-- §3.2.1
 theorem targets_gap : ∀ p ∈ pictures, ∀ pol ∈ p.targetFor,
     pointwise (sentences p.experiment pol).quantifier.tree p.display = 0 := by
   decide
 
-/-- A target picture of Experiment 1 for one sentence makes the other false under any resolution of
-its definite (§3.3.1). -/
+-- §3.3.1
 theorem targets_unanalysed : ∀ p ∈ pictures, p.experiment = .one → p.picture = .target →
     ∀ pol, pol ∉ p.targetFor →
     pointwise (sentences p.experiment pol).quantifier.tree p.display = -1 := by

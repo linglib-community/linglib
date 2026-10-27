@@ -214,8 +214,7 @@ theorem antiLocality_fits_iff : ∀ d ∈ Examples.all, IsExtraction d →
           (e.intervener = none ∨ (e.form = .transitive ∧ ∃ i ∈ e.intervener, i.TakesClause))) := by
   decide +kernel
 
-/-- The adverbs that take a clause in the embedding examples are those `Intervener.TakesClause`
-names (§5.1, §5.3). -/
+-- §5.1, §5.3
 theorem embedding_rows : ∀ d ∈ Examples.all, d.feature? "construction" = some "embedding" →
     ∃ i ∈ d.parse? "adverb" intervenerTable, (d.judgment = .acceptable ↔ i.TakesClause) := by
   decide

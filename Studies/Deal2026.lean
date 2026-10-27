@@ -93,7 +93,7 @@ def RelativeEmbedding (v : Verb) : Prop :=
 instance (v : Verb) : Decidable (RelativeEmbedding v) :=
   inferInstanceAs (Decidable (∃ row ∈ Examples.all, _))
 
-/-- The relative-embedding predicates take no noun-phrase object, (41). -/
+-- (41)
 theorem nominal_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "nominalComplement" →
       ∀ v ∈ verbs, row.feature? "verb" = some v.form →
@@ -112,9 +112,7 @@ theorem projection_rows :
       (row.projective? = some true ↔ v.IsFactive) := by
   decide
 
-/-- *cuukwe* 'know' projects from a third-person conditional antecedent (68), which
-[karttunen-1971b]'s semi-factive postulates, built on first-person conditionals (25), do not
-predict. -/
+-- (68), (25) [karttunen-1971b]
 theorem cuukwe_conditional_projects :
     ¬ Karttunen1971b.Projects .semi .conditionalAntecedent ∧
       (∃ row ∈ Examples.all, row.environment? = some .conditionalAntecedent ∧
@@ -178,8 +176,7 @@ theorem deto_rows :
           ∀ a ∈ row.alternatives, a.2 = .acceptable := by
   decide
 
-/-- The nominal paraphrases (59) take the preposition *za* and no other, the adpositional frame
-of the Fragment's emotive factives. -/
+-- (59)
 theorem zaPhrase_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "zaPhrase" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
@@ -187,16 +184,14 @@ theorem zaPhrase_rows :
           ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
   decide
 
-/-- In Krapova's factivity tests (57a–b) the complement survives negation and a question exactly
-for the factive predicates. -/
+-- (57a–b)
 theorem krapova_projection_rows :
     ∀ row ∈ Krapova2010.Examples.all, ∀ _ ∈ row.environment?,
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
         (row.projective? = some true ↔ v.IsFactive) := by
   decide
 
-/-- In Krapova's contradiction tests (57c) and footnote 46, a continuation denying the
-complement is starred exactly under a factive predicate, under *deto* and *če* alike. -/
+-- (57c), footnote 46
 theorem krapova_contradiction_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →

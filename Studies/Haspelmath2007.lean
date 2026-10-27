@@ -88,7 +88,7 @@ open Coordinator (Pattern)
 
 /-! ### Binary patterns, (17) -/
 
-/-- Monosyndetic coordination is universally asymmetric, §1.2, with one coordinand bare. -/
+-- §1.2
 theorem monosyndetic_bare {p : Pattern} (h : p.syndesis = 1) : p.1 = none ∨ p.2 = none := by
   rcases p with ⟨_ | _, _ | _⟩ <;> simp_all [Pattern.syndesis]
 
@@ -154,7 +154,6 @@ def keepFirst : List (Option Morph.Side) → List (Option Morph.Side)
   | none :: l => none :: keepFirst l
   | s :: l => s :: l.map fun _ ↦ none
 
-/-- A construction with omission has at most one coordinator left. -/
 theorem keepFirst_countP (l : List (Option Morph.Side)) :
     (keepFirst l).countP Option.isSome ≤ 1 := by
   induction l with
@@ -172,8 +171,7 @@ alternative of (36), which p. 13 sets against Table 1.1. -/
 def omittedFirst (p : Pattern) (n : ℕ) : Option (List (Option Morph.Side)) :=
   (full p n).map keepFirst
 
-/-- Table 1.1 for four coordinands gives the full pattern and the pattern with coordinator
-omission of each of the five binary patterns it lists. -/
+-- Table 1.1
 theorem table_1_1 :
     full (none, some .before) 4 = some [none, some .before, some .before, some .before] ∧
       omitted (none, some .before) 4 = some [none, none, none, some .before] ∧
@@ -202,7 +200,7 @@ def pattern? (d : Datum) : Option Pattern := d.parse? "pattern" patternLabels
 /-- Whether the chapter presents a row as emphatic, where it says. -/
 def emphatic? (d : Datum) : Option Bool := d.parse? "emphatic" [("yes", true), ("no", false)]
 
-/-- Every pattern label of the rows is one of (17). -/
+-- (17)
 theorem pattern?_isSome :
     ∀ d ∈ Examples.all, (d.feature? "pattern").isSome → (pattern? d).isSome := by
   decide
@@ -210,15 +208,13 @@ theorem pattern?_isSome :
 theorem pattern?_ne_coAB : ∀ d ∈ Examples.all, pattern? d ≠ some (some .before, none) := by
   decide
 
-/-- Prepositive bisyndesis occurs only as emphatic coordination, §1.3 after [stassen-2000]. -/
+-- §1.3 [stassen-2000]
 theorem prepositive_bisyndetic_emphatic :
     ∀ d ∈ Examples.all, pattern? d = some (some .before, some .before) →
       emphatic? d = some true := by
   decide
 
-/-- Classical Tibetan and Amharic, (36), both with the basic pattern A-co B, keep the first
-coordinator of a multiple coordination, A-co B C …, which is not the omission Table 1.1 derives
-for their pattern. -/
+-- (36), Table 1.1
 theorem allButFirst_ne_omitted :
     ∀ d ∈ Examples.all, d.feature? "omission" = some "allButFirst" →
       ∀ p ∈ pattern? d, ∀ n ∈ d.nat? "coordinands",
@@ -226,16 +222,13 @@ theorem allButFirst_ne_omitted :
           omittedFirst p n ≠ omitted p n := by
   decide
 
-/-- The Yoruba lists of [rowlands-1969], p. 14: *epo, ẹran, ata àti àlùbọ́sà* 'palm-oil, meat,
-pepper and onions' keeps *àti* on the last of four coordinands only, the omission Table 1.1
-derives for A àti B; Rowlands suspects an imitation of English usage. -/
+-- p. 14, Table 1.1 [rowlands-1969]
 theorem deletion_omitted :
     ∃ p ∈ pattern? Examples.deletion, ∃ n ∈ Examples.deletion.nat? "coordinands",
       omitted p n = some [none, none, none, some .before] := by
   decide
 
-/-- Comitative-sourced coordinators show harmonic comitative patterns, except Tauya *-sou* (85b),
-doubled (§5.1), and Amele *ca* (81) and Huallaga Quechua *-wan* (86). -/
+-- (85b), §5.1, (81), (86)
 theorem comitative_patterns : ∀ d ∈ Examples.all, d.feature? "source" = some "comitative" →
     ∀ p ∈ pattern? d,
       (∃ a m, (DiachronicSource.comitative a m).Harmonic ∧
@@ -352,8 +345,7 @@ theorem comitative_source_isAlsoComitative :
         Lango.Adpositions.kede.functions := by
   decide
 
-/-- Classical Tibetan *-daŋ* and Turkish *-le*, which come from a former case-marker, (41), are
-still comitative markers, the accompaniment role particle and the comitative postposition. -/
+-- (41)
 theorem former_case_marker_isAlsoComitative :
     ClassicalTibetan.Coordination.dang.IsAlsoComitative
         (ClassicalTibetan.Case.exponents .accompaniment)
@@ -405,18 +397,17 @@ def correlatives : List (String × Coordinator.Correlative × CorrelativeShape) 
     ("Finnish", Finnish.Coordination.sekaEtta, .allDifferent),
     ("Indonesian", ⟨[.free "baik"], [.free "maupun"], co (.free "dan")⟩, .allDifferent) ]
 
-/-- The letters of (45) are the shapes the forms give. -/
+-- (45)
 theorem correlatives_classified :
     ∀ r ∈ correlatives, CorrelativeShape.classify r.2.1 = r.2.2 := by
   decide
 
-/-- The correlative coordinators of (45) emphasize a conjunction or a disjunction. -/
+-- (45)
 theorem correlatives_conjunctive_or_disjunctive : ∀ r ∈ correlatives,
     r.2.1.single.role = .conjunctive ∨ r.2.1.single.role = .disjunctive := by
   decide
 
-/-- Yoruba *àtí … àtí*, the emphatic construction of the attestations, has the shape of
-(45a). -/
+-- (45a)
 theorem yoruba_bothSingle :
     CorrelativeShape.classify Yoruba.Coordination.atiAti = .bothSingle := by
   decide
@@ -430,7 +421,7 @@ def yorubaContrasts : List (Datum × Coordinator) :=
   [(Examples.ex59a, Yoruba.Coordination.ati), (Examples.ex59b, Yoruba.Coordination.ti),
     (Examples.ex59c, Yoruba.Coordination.si)]
 
-/-- The three coordinand types of (59) each take their own conjunctive coordinator. -/
+-- (59)
 theorem yorubaContrasts_distinct :
     (yorubaContrasts.map fun r ↦ r.1.feature? "coordinands").Nodup ∧
       (yorubaContrasts.map fun r ↦ r.2.morph).Nodup ∧
@@ -462,8 +453,7 @@ def Contiguous (r : Finset CoordinandType) : Prop :=
 
 instance : DecidablePred Contiguous := fun _ ↦ by unfold Contiguous; infer_instance
 
-/-- The NP against event split of Korean *-(k)wa* and *-ko*, (57), and Turkish *-la* and
-*-ıp*, (58): two contiguous ranges. -/
+-- (57), (58)
 theorem np_event_contiguous : Contiguous {.np} ∧ Contiguous {.vp, .s} := by decide
 
 theorem tinrin_not_contiguous : ¬ Contiguous {.s, .np} := by decide

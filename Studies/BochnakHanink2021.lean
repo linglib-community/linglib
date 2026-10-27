@@ -71,12 +71,12 @@ def modifierSpine : ClauseSpine := ClauseSpine.tP
 def spine (v : Washo.Verb) : ClauseSpine :=
   if Selects v then complementSpine else modifierSpine
 
-/-- The embedded clause projects D, and then also C, iff it bears the nominalizer (Table 2). -/
+-- Table 2
 theorem spine_projects_D_iff :
     ∀ v ∈ verbs, (.D ∈ spine v ↔ v.typer = ge) ∧ (.C ∈ spine v ↔ v.typer = ge) := by
   decide
 
-/-- 'Dream' selects without the reflexive and not with it ((53)–(55)). -/
+-- (53), (55)
 theorem suus_selects_gumsuus_not : Selects suus ∧ ¬ Selects gumsuus := by
   decide
 
@@ -90,12 +90,11 @@ def fprop : E → Prop := fun x ↦ cont x = p
 /-- The nominalized complement with index `d`, the familiar DP over FPROP (77). -/
 def complement : DefiniteDescription E W := .anaphoric (fun _ _ x ↦ fprop cont p x) d
 
-/-- The complement denotes the familiar individual whose content is the embedded proposition
-(78). -/
+-- (78)
 theorem denote_complement :
     ⟦complement cont p d⟧ g s = iota fun x ↦ cont x = p ∧ Hanink2021.idxVar d g x := rfl
 
-/-- The complement is defined iff its antecedent has the embedded content (§5.3). -/
+-- §5.3
 theorem denote_complement_isSome_iff : (⟦complement cont p d⟧ g s).isSome ↔ cont (g d) = p :=
   DefiniteDescription.denote_anaphoric_isSome_iff _ _ _ _
 
@@ -110,8 +109,7 @@ theorem not_factive :
 /-- The dependent mood is generalized conjunction (75). -/
 def dependentMood {α : Type*} (P Q : α → Prop) : α → Prop := P ⊓ Q
 
-/-- A dependent-mood clause equates the content of the event it modifies with its proposition
-(92). -/
+-- (92)
 theorem dependentMood_fprop (V : E → Prop) (x : E) :
     dependentMood (fprop cont p) V x ↔ cont x = p ∧ V x := Iff.rfl
 

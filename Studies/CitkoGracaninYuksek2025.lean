@@ -322,8 +322,7 @@ def cwhCandidates : List LinearizedSyntacticObject := [cwh, cwhEllipsis, cwhBulk
 
 theorem cwh_pf : pfPhon cwh = ["what", "when", "should", "you", "teach"] := by decide
 theorem pfPhon_cwhCandidates : ∀ t ∈ cwhCandidates, pfPhon t = pfPhon cwh := by decide
-/-- A pronounced complementizer in the first conjunct only precedes the second wh-phrase
-(footnote 15). -/
+-- footnote 15
 theorem cwhNullCSecond_pf : pfPhon cwhNullCSecond = ["what", "should", "when", "you", "teach"] := by
   decide
 theorem cwhTwoAux_pf : pfPhon cwhTwoAux = ["what", "should", "when", "will", "you", "teach"] := by
@@ -334,7 +333,7 @@ theorem cwhBulk_paired : ItReading cwhBulk := by decide
 
 theorem cwhBulk_lt_cwh : cost cwhBulk < cost cwh := by decide
 
-/-- In the bulk-sharing object only the shared vP edge's asterisk reaches PF ((37b)). -/
+-- (37b)
 theorem pfAsterisks_cwhBulk : pfAsterisks cwhBulk = {.v} := by decide
 
 theorem convergesIn_cwhBulk_iff {mwf : Finset Cat} : ConvergesIn mwf cwhBulk ↔ .v ∉ mwf := by
@@ -350,10 +349,10 @@ theorem optimal_cwh_iff : ∀ t ∈ cwhCandidates,
       (Optimal englishB cwhCandidates t ↔ t = cwh) := by
   decide
 
-/-- In a language with multiple wh-fronting bulk sharing is optimal (footnote 14). -/
+-- footnote 14
 theorem optimal_cwhBulk_romanian : Optimal romanian cwhCandidates cwhBulk := by decide
 
-/-- With the complementizer null in both conjuncts, it is shared (15). -/
+-- (15)
 theorem cwhEmbedded_lt_twoC :
     pfPhon cwhEmbeddedTwoC = pfPhon cwhEmbedded ∧
       cost cwhEmbedded < cost cwhEmbeddedTwoC := by
@@ -371,7 +370,7 @@ theorem paired_csCandidates :
     ∀ t ∈ csCandidates, ItReading t ↔ t = cs ∨ t = csEllipsis ∨ t = csTwoC := by
   decide
 
-/-- The shared vP edge hosts two wh-specifiers, the asterisk of (26b). -/
+-- (26b)
 theorem v_mem_asterisked_cs : v ∈ asterisked cs := by decide
 theorem pfAsterisks_csCandidates : ∀ t ∈ csCandidates, pfAsterisks t = ∅ := by decide
 
@@ -397,18 +396,17 @@ theorem csEllipsis_admissible_not_optimal (mwf : Finset Cat) :
   ⟨⟨by decide, convergesIn_of_pfAsterisks_eq_empty (pfAsterisks_csCandidates _ (by decide)) _⟩,
     fun h ↦ absurd ((optimal_cs_iff mwf csEllipsis (by decide)).1 h) (by decide)⟩
 
-/-- The shared verb is silenced though it occurs outside the elided TP, so the nonpaired sluice
-cannot surface as a coordinated wh-question (footnote 30). -/
+-- footnote 30
 theorem csnr_silences_shared :
     (∃ p ∈ occurrences csnr teach, ∀ K ∈ elidedDomains csnr, ¬ K ≤ p) ∧
       IsSilenced csnr teach := by decide
 
 /-! ### Multiple questions and multiple sluices (§3.2.2) -/
 
-/-- Both phase edges of a multiple question reach PF with two wh-specifiers ((28b)). -/
+-- (28b)
 theorem pfAsterisks_multipleQuestion : pfAsterisks (multipleQuestion c) = {.v, .C} := by decide
 
-/-- Multiple sluicing elides the vP edge but not the CP edge ((29b)). -/
+-- (29b)
 theorem pfAsterisks_multipleSluice : pfAsterisks (multipleQuestion cE) = {.C} := by decide
 
 theorem convergesIn_multipleQuestion_iff {mwf : Finset Cat} :

@@ -146,8 +146,6 @@ def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) 
 def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   retro (UNBOUNDED P)
 
-/-- *Used to* relates the perspective time to the run time of its state through the composite of
-the retrospective's cell and the imperfective's. -/
 theorem usedTo_eq_preimage : usedTo P w = (Allen.toSetRel (Allen.inv Allen.precedes)).preimage
     ((Allen.toSetRel Allen.le).preimage (τ '' {e | P w e})) := by
   rw [usedTo, retro, Tense.Perspective.toSetRel_eq_inv, ← Allen.toSetRel_inv,
@@ -271,7 +269,7 @@ theorem hab_of_single_trip :
   rintro _ _ ⟨rfl, -⟩ ⟨rfl, -⟩
   rfl
 
-/-- (18) and (19) verify *used to* in the context of (42), judged false in (42c). -/
+-- (18), (19), (42), (42c)
 theorem usedTo_hab_of_single_trip : .pure 5 ∈ usedTo (Hab gnomic indicating bus) false :=
   mem_usedTo_iff.2 ⟨habit, hab_of_single_trip.1, by decide⟩
 

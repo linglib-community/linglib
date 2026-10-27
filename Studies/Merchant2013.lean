@@ -240,8 +240,7 @@ theorem voice_between_boundaries :
       ∀ m : Mismatch, m ≠ .voice → m.head ∈ clausalSpine.below .Voice :=
   ⟨rfl, fun m hm ↦ by cases m <;> first | exact absurd rfl hm | decide⟩
 
-/-- Distinct active and passive Voice heads (Step 1) outside VPE's deletion domain (Step 2) make
-both voice mismatches grammatical (Step 3; [kratzer-1996], [merchant-2013]). -/
+-- [kratzer-1996] [merchant-2013]
 theorem end_to_end_voice_chain :
     -- Step 1: Active and passive are distinct Voice flavors
     agentive ≠ passive ∧
@@ -253,7 +252,7 @@ theorem end_to_end_voice_chain :
   refine ⟨?_, by decide, rfl, rfl⟩
   intro h; cases h
 
-/-- Under VPE only repetitive *again* survives, so VPE targets vP rather than VP (§4). -/
+-- §4
 theorem again_confirms_vp_boundary :
     vpEllipsis.Spares AgainReading.repetitive.site ∧
       ¬ vpEllipsis.Spares AgainReading.restitutive.site := by decide

@@ -167,7 +167,7 @@ theorem available_iff_logophoric {r : Table80Row}
   · exact ⟨_, _, _, hw, fun h ↦
       absurd (h (a := 0) (b := 1) (c := 3) ⟨2, by simp⟩ ⟨2, by simp⟩) (by decide)⟩
 
-/-- Table (80) separates the tiers on every row. -/
+-- (80)
 theorem table80_complementary (r : Table80Row) :
     r.Available .logophoric ↔ ¬ r.Available .predicative := by
   cases r

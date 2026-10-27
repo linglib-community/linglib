@@ -97,8 +97,6 @@ theorem profile_le_of_atLeastAsGoodAs {G : List (Index W T → Prop)} {c c' : In
   List.Forall₂.le <| List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <|
     List.forall₂_same.2 h
 
-/-- Goal-relative preference refines Kratzer's strict ordering: a circumstance realizing
-strictly more goals than another has a strictly better profile. -/
 theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Index W T}
     (h : (c <[{p | p ∈ G}] c')) : profile G c' < profile G c :=
   List.Forall₂.lt_of_ne

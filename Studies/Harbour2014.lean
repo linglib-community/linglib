@@ -164,7 +164,7 @@ theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
     nonMinimalOf_iterate, atomize_region fun _ _ ↦ Nat.zero_le _, atomize_le]
   simp [region]
 
-/-- `(+minimal(+atomic(P)))` holds of exactly the atoms, the singular of (30). -/
+-- (30)
 theorem atomize_atomsOf (s : Finset α) :
     atomize (atomsOf Finset.Nonempty) s ↔ s.card = 1 := by
   have ha : atomsOf (1 ≤ ·) = ((· = 1) : ℕ → Prop) := by
@@ -181,12 +181,11 @@ section Orders
 
 variable {D : Type*} [SemilatticeSup D]
 
-/-- `(αatomic(ᾱatomic(P)))` is empty, so `[±atomic]*` adds nothing (§4.1, n. 15). -/
+-- §4.1, n. 15
 theorem not_atomsOf_nonAtomsOf (P : D → Prop) (x : D) : ¬ atomsOf (nonAtomsOf P) x :=
   fun h ↦ h.1.2 h.2
 
-/-- `(+atomic(−minimal(P)))` is empty when `P` excludes the null individual, since an atom of `P`
-is minimal in it (§4.3). -/
+-- §4.3
 theorem not_atomsOf_nonMinimalOf {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) (x : D) :
     ¬ atomsOf (nonMinimalOf P) x :=
   fun h ↦ h.1.2 (Number.singular_subset_minimal hP ⟨h.1.1, h.2⟩)
@@ -215,8 +214,7 @@ theorem not_additiveIn_band [Infinite α] {lo hi : ℕ} (hlo : 1 ≤ lo) (s : Fi
   rw [Finset.sup_eq_union, Finset.union_sdiff_of_subset hsu, hu] at this
   omega
 
-/-- Every element above a cut is additive in the region above it (10), whose complement below
-the cut is thereby complement-complete (11). -/
+-- (10), (11)
 theorem additiveIn_le_card {c : ℕ} {s : Finset α} (hs : c ≤ s.card) :
     additiveIn (c ≤ ·.card) s :=
   ⟨hs, fun _ _ ↦ hs.trans (Finset.card_le_card Finset.subset_union_left)⟩
@@ -226,16 +224,14 @@ theorem additiveIn_le_card' {i : α} {c : ℕ} {s : Finset α} (hi : i ∈ s) (h
   ⟨⟨hi, hs⟩, fun _ _ ↦ ⟨Finset.mem_union_left _ hi,
     hs.trans (Finset.card_le_card Finset.subset_union_left)⟩⟩
 
-/-- The least element `B` of the person lattice over `B` is additive, so the singulars and the
-inclusive minimal are `[+additive]` (n. 23). -/
+-- n. 23
 theorem additiveIn_atomize_superset (B : Finset α) : additiveIn (atomize (B ⊆ ·)) B := by
   have hB : atomize (B ⊆ ·) B := ⟨subset_rfl, fun _ hy _ ↦ hy⟩
   refine ⟨hB, fun y hy ↦ ?_⟩
   rw [le_antisymm (hy.2 subset_rfl hy.1) hy.1, sup_idem]
   exact hB
 
-/-- On the third-person lattice the singular is `[−additive]`, since two atoms join to a dyad
-(n. 23). -/
+-- n. 23
 theorem not_additiveIn_atomize_nonempty [Nontrivial α] (s : Finset α) :
     ¬ additiveIn (atomize Finset.Nonempty) s := by
   have key : ∀ t : Finset α, atomize Finset.Nonempty t ↔ t.card = 1 := fun t ↦ by
@@ -270,7 +266,7 @@ theorem plusAdditive_nonempty_iff [Infinite α] {c : ℕ} (hc : 1 ≤ c) (s : Fi
   exact ⟨fun h ↦ h.elim (fun h ↦ (not_additiveIn_band le_rfl s h).elim) (·.1),
     fun h ↦ .inr (additiveIn_le_card h)⟩
 
-/-- So `{±additive}` cuts the third-person lattice convexly (33), into paucal and plural. -/
+-- (33)
 theorem ordConnected_plusAdditive_nonempty [Infinite α] {c : ℕ} (hc : 1 ≤ c) :
     {s : Finset α | PlusAdditive c Finset.Nonempty s}.OrdConnected := by
   simp only [plusAdditive_nonempty_iff hc]
@@ -539,8 +535,7 @@ theorem Bundle.exact_le {D : Type*} [SemilatticeSup D] (b : Bundle) (P : D → P
 
 theorem bound_strata_le : ∀ b : Bundle, ∀ p ≤ 2, (b.strata (.ray p)).bound ≤ 4 := by decide
 
-/-- The axiom of extension caps exact numbers at three atoms, so there is no dyad augmented (§4.2).
--/
+-- §4.2
 theorem le_three_of_strata_eq_point (b : Bundle) {p : ℕ} (hp : p ≤ 2) {n : ℕ}
     (h : b.strata (.ray p) = .point n) : n ≤ 3 := by
   have := bound_strata_le b p hp
@@ -746,13 +741,12 @@ theorem nodup_values : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive 
     (σ.values c 0).Nodup := by
   decide +kernel
 
-/-- `[±atomic]*` adds no number to `[±atomic]` (§4.1). -/
+-- §4.1
 theorem values_atomic_recursive : ∀ m d : Activation, ∀ c : Convention,
     (Setting.mk .recursive m d).values c 0 = (Setting.mk .active m d).values c 0 := by
   decide +kernel
 
-/-- `[±atomic]` and `[±minimal]` cut the third-person lattice alike but differ on the inclusive
-lattice (p. 203). -/
+-- p. 203
 theorem system_atomic_minimal :
     (⟨.active, .inactive, .inactive⟩ : Setting).system 0 = [{(.atomic, true)}, {(.atomic, false)}] ∧
       (⟨.inactive, .active, .inactive⟩ : Setting).system 0 =
@@ -767,7 +761,7 @@ example : ({(.minimal, true), (.minimal, false), (.minimal, false), (.atomic, fa
     {(.minimal, true), (.minimal, false), (.atomic, false)} := by
   decide
 
-/-- A system has at most two approximative numbers (p. 205). -/
+-- p. 205
 theorem length_approximative_le_two : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive →
     ((σ.values c 0).filter (· ∈ [.paucal, .greaterPaucal, .greaterPlural])).length ≤ 2 := by
   decide +kernel
@@ -815,7 +809,7 @@ theorem satisfiesTable1_toSystem_iff : ∀ σ : Setting, ∀ c : Convention, c.F
       ¬ (σ.atomic = .inactive ∧ σ.minimal = .recursive ∧ σ.additive ≠ .inactive)) := by
   decide +kernel
 
-/-- Every system of [corbett-2000]'s sequences of choices satisfies Table 1. -/
+-- Table 1 [corbett-2000]
 theorem satisfiesTable1_corbett (c : Corbett2000.Choices) : SatisfiesTable1 c.toSystem.values := by
   obtain ⟨⟨d, p, gp⟩, g, f⟩ := c
   change SatisfiesTable1 (Corbett2000.Choices.mk ⟨d, p, gp⟩ .none 0).toSystem.values
@@ -856,7 +850,7 @@ attribute [local instance high] List.decidableBAll
 theorem table3_generated : ∀ r ∈ table3, (r.1.toSystem r.2.1).values = r.2.2 := by
   decide +kernel
 
-/-- Every row of Table 3 is a legitimate setting under a convention that fits it. -/
+-- Table 3
 theorem table3_legitimate : ∀ r ∈ table3, r.2.1.Fits r.1.additive ∧ r.1.Legitimate := by
   decide
 
@@ -903,7 +897,7 @@ theorem not_requires_unitAugmented_augmented : ¬ Requires .unitAugmented .augme
   absurd (requires_iff.1 h ⟨.inactive, .recursive, .active⟩ (.one .low) trivial (by decide)
     (by decide)) (by decide)
 
-/-- With a number, a system of Table 3 has every number it requires. -/
+-- Table 3
 theorem mem_table3_of_requires {b a : Number} (h : Requires b a) {r} (hr : r ∈ table3)
     (hb : b ∈ r.2.2) : a ∈ r.2.2 := by
   rw [← table3_generated r hr] at hb ⊢
@@ -932,8 +926,7 @@ end Table3
 
 /-! ### Composed number (§5.2) -/
 
-/-- In the Yimas and Motuna system the paucal shares `[−additive]` with the dual and `[−minimal]`
-with the plural ((38)–(40), (44)–(45)). -/
+-- (38), (40), (44), (45)
 theorem yimas_system :
     (((⟨.active, .active, .active⟩ : Setting).system 0).map
       fun b ↦ (b.label (.one .low), b)).Perm
@@ -946,8 +939,7 @@ theorem yimas_system :
 /-- Mele-Fila's setting is `{±additive*, ±minimal, ±atomic}`, with a low and a high cut. -/
 abbrev meleFila : Setting := ⟨.active, .active, .recursive⟩
 
-/-- Mele-Fila's five numbers have the bundles of Table 4, the plural carrying both values of
-`[±additive]`. -/
+-- Table 4
 theorem meleFila_system :
     ((meleFila.system 0).map fun b ↦ (b.label (.two .high), b)).Perm
     [(.singular, {(.atomic, true), (.minimal, true), (.additive, false)}),

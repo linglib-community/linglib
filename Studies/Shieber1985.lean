@@ -221,7 +221,7 @@ theorem claims_countMatched : Claims id countMatched where
   exists_mem m n := ⟨clause m n m n, fun _ ↦ by simp [count_clause], by simp⟩
   count_eq s hs hsch := by simpa using hs (by simpa using hsch)
 
-/-- Claim 3 excludes the full language, which is context-free. -/
+-- Claim 3
 theorem not_claims_top : ¬ Claims id (⊤ : Language Letter) := fun h ↦ by
   simpa [count_clause] using
     h.count_eq (clause 1 0 0 0) trivial (by simpa using clause_mem_schema 1 0 0 0)

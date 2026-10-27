@@ -165,8 +165,7 @@ theorem sentence_ne_zero_iff (σ : S → S) (f vp : E → S → Prop) (s : S) :
   rw [sentence, Ne, presupOfReferent_eq_zero_iff, ← Ne, Option.ne_none_iff_isSome]
   exact the_isSome_iff f (σ s)
 
-/-- Where the description denotes an individual, the sentence says the predicate of that individual
-((12) of ch. 5). -/
+-- (12)
 theorem sentence_eq_one_iff (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
     (h : description σ f s = some x) : sentence σ f vp s = 1 ↔ vp x s := by
   simp [sentence, presupOfReferent_of_some h]
@@ -230,8 +229,7 @@ complement is true throughout the verb's own alternatives, doxastic for *believe
 noncomputable def attitude (dox R : S → Set S) (p : S → SignType) : S → SignType :=
   {s | ∀ w ∈ dox s, p w ≠ 0}.indicator fun s ↦ SignType.ofProp (∀ w ∈ R s, p w = 1)
 
-/-- *Hans wants the ghost in his attic to be quiet* presupposes Hans's belief in exactly one such
-ghost ((40)–(41) of ch. 8). -/
+-- (40), (41)
 theorem attitude_ne_zero_iff (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
     attitude dox R (sentence id f vp) s ≠ 0 ↔ ∀ w ∈ dox s, ∃! x, f x w := by
   simp only [attitude, ne_eq, Set.indicator_apply_eq_zero, Set.mem_ofPred_eq,
@@ -250,8 +248,7 @@ theorem attitude_eq_zero_of_agnostic (dox R : S → Set S) (f vp : E → S → P
 def russellian (R : S → Set S) (f vp : E → S → Prop) (s : S) : Prop :=
   ∀ w ∈ R s, ∃ x, f x w ∧ (∀ y, f y w → y = x) ∧ vp x w
 
-/-- The existence presupposition of a description in a conditional antecedent projects to the whole
-conditional ((39) of ch. 8). -/
+-- (39)
 theorem conditional_ne_zero_iff (f vp : E → S → Prop) (q : S → SignType) (s : S) :
     (-sentence id f vp s).joinWeak (q s) ≠ 0 ↔ (∃! x, f x s) ∧ q s ≠ 0 := by
   rw [Ne, SignType.joinWeak_eq_zero_iff, SignType.neg_eq_zero_iff, not_or, ← Ne,
@@ -267,8 +264,7 @@ theorem russellian_consistent :
   ⟨fun _ ↦ Set.univ, fun _ ↦ {true}, fun _ w ↦ w = true, fun _ _ ↦ True,
     ⟨false, Set.mem_univ _, by simp⟩, fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl, trivial⟩⟩
 
-/-- Under an attitude verb, the description presupposes a fountain of youth for the subject, not the
-speaker ((36) of ch. 8). -/
+-- (36)
 theorem attitude_ne_zero_not_speaker :
     ∃ (dox R : Bool → Set Bool) (f vp : Unit → Bool → Prop) (s : Bool),
       attitude dox R (sentence id f vp) s ≠ 0 ∧ ¬ ∃ x, f x s :=
@@ -384,7 +380,7 @@ theorem the_donkey_minimal (x y : E) :
     Fact.donkey.injEq] at hz
   exact hz
 
-/-- Every minimal situation of a farmer owning a donkey contains exactly one donkey (§6.2). -/
+-- §6.2
 theorem existsUnique_donkey_of_minimal (w : Village E) (x : E) {s' : Village E}
     (hs : Minimal (fun s' ↦ s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s') :
     ∃! z, Fact.donkey z ∈ s' := by
@@ -468,8 +464,7 @@ noncomputable def relDescription {S : Type*} (rel : E → E → S → Prop) (np 
     (s : S) : Option E :=
   iota fun x ↦ np x s ∧ rel x v s
 
-/-- The relation-variable description covaries with its individual variable, which licenses a sloppy
-reading for (17b) of ch. 9 but wrongly also for (17a). -/
+-- (17b), (17a)
 theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop)
     (v : E) (s : S) (x : E) :
     relDescription rel np v s = some x ↔
@@ -532,10 +527,7 @@ inductive DescriptionType where
 def descriptionType? (e : Datum) : Option DescriptionType :=
   e.parse? "description" [("the donkey", .bare), ("the donkey he owns", .relational)]
 
-/-- The sloppy-identity rows (17) of ch. 9: the strict reading is always available, and the
-sloppy reading is out for the bare description, both occurrences bound to one minimal situation
-(`everyOwnerBeatsTheDonkeyAndThePriestToo_iff`), and in for the relational one, which covaries
-with its bound variable (`relDescription_eq_some_iff`). -/
+-- (17)
 theorem sloppy_rows : ∀ e ∈ Examples.all, ∀ d ∈ descriptionType? e,
     (∀ j ∈ e.readings.lookup "strict", j.band = .accepted) ∧
       ∀ j ∈ e.readings.lookup "sloppy",
@@ -544,9 +536,7 @@ theorem sloppy_rows : ∀ e ∈ Examples.all, ∀ d ∈ descriptionType? e,
 
 theorem sloppy_read : Datum.ReadCount descriptionType? Examples.all 2 := by decide
 
-/-- The contrast rows of ch. 8, (22) and (31) with (33): the description under an agnostic
-attitude is infelicitous (`attitude_eq_zero_of_agnostic`) while its Russellian paraphrase, the
-row's alternative, is consistent (`russellian_consistent`). -/
+-- (22), (31), (33)
 theorem contrast_rows : ∀ e ∈ Examples.all, (e.feature? "contrast").isSome →
     ¬ e.JudgedFelicitous ∧ ∀ a ∈ e.alternatives, a.2 = .acceptable := by
   decide

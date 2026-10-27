@@ -113,11 +113,9 @@ theorem part_iff_atelic {o : Object} (hn : ¬ o.negated) (hd : o.definite) :
   rw [case_eq_part_iff, IsPartitive]
   simp [hn, hd]
 
-/-- A negated sentence has a partitive object whatever the nominal. -/
 theorem case_eq_part_of_negated {o : Object} (h : o.negated) : o.case = .part :=
   (case_eq_part_iff o).mpr (Or.inl h)
 
-/-- A personal pronoun is a total object in the accusative alone. -/
 theorem case_of_personalPronoun {o : Object} (h : o.nominal = .personalPronoun)
     (hp : ¬ o.IsPartitive) : o.case = .acc := by
   rw [case, ite_eq_right hp, totalCase, h]
@@ -229,7 +227,6 @@ def Word.ofForm (f : Form Wordlist.Cell) : Option Word := do
     (c.map (⟨_, .case ·⟩)).toList ++ (p.map (⟨_, .possessive ·⟩)).toList ++
     (k.map (⟨_, .clitic ·⟩)).toList⟩
 
-/-- Every form of the tables is a word. -/
 theorem isSome_ofForm : ∀ f ∈ Wordlist.all, (Word.ofForm f).isSome := by
   decide +kernel
 

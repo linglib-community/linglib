@@ -158,10 +158,8 @@ def perfEnding (a : Agr) : List String :=
 def coepRealize : CoepStem → SysCell → List String
   | _, σ => ["c", "o", "e", "p"] ++ perfEnding σ.agr
 
-/-- COEPISSE is defective because its present-system cells lack a stem. -/
 theorem coepisse_defective : coepisseLinkage.IsDefective := ⟨.coepisse, ⟨.pres, .s1⟩, rfl⟩
 
-/-- The third singular present-system content cell has no realization. -/
 theorem coepisse_present_no_realization :
     coepisseLinkage.realized coepRealize .coepisse ⟨.pres, .s3⟩ = ∅ := by decide
 
@@ -172,7 +170,6 @@ theorem coepisse_perfect_realized (a : Agr) :
       {(attested "begin" (a.cell { system := ↑Wordlist.System.perf }), ⟨.perf, a⟩)} := by
   revert a; decide
 
-/-- COEPISSE keeps a single stem, so it is stem-invariant. -/
 theorem coepisse_stemInvariant : coepisseLinkage.IsStemInvariant := by decide
 
 /-- COEPISSE is defective without being suppletive, deviating on totality but not on stem
@@ -252,8 +249,6 @@ syncretism. -/
 theorem bellum_nom_acc_syncretic : bellumLinkage.IsSyncretic :=
   ⟨.bellum, ⟨.nom, .sg⟩, ⟨.acc, .sg⟩, by decide, by decide⟩
 
-/-- The dative and ablative singular share a form correspondent, a nondirectional
-syncretism. -/
 theorem bellum_dat_abl_syncretic : bellumLinkage.IsSyncretic :=
   ⟨.bellum, ⟨.dat, .sg⟩, ⟨.abl, .sg⟩, by decide, by decide⟩
 
@@ -264,13 +259,11 @@ theorem bellum_nom_acc_realize_eq :
       bellumLinkage.realized bellRealize .bellum ⟨.acc, .sg⟩ :=
   bellumLinkage.realized_eq_of_corr_eq bellRealize (by decide)
 
-/-- The nominative singular realizes through the accusative form cell. -/
 theorem bellum_nom_realizes_acc :
     bellumLinkage.realized bellRealize .bellum ⟨.nom, .sg⟩ =
       {(attested "war" { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing }, ⟨.acc, .sg⟩)} := by
   decide
 
-/-- BELLUM's linkage is not injective, since syncretism is a failure of injectivity. -/
 theorem bellum_not_injective : ¬ bellumLinkage.IsInjective :=
   bellumLinkage.not_isInjective_iff.mpr bellum_nom_acc_syncretic
 
@@ -337,7 +330,6 @@ active content cells to passive. -/
 theorem hortari_unfaithful : latinLinkage.IsUnfaithful id :=
   ⟨.hortari, ⟨.active, .s1⟩, by decide⟩
 
-/-- Every active content cell of HORTĀRĪ has a passive form correspondent. -/
 theorem hortari_active_realized_by_passive (a : Agr) :
     (latinLinkage.corr .hortari ⟨.active, a⟩).image (·.2.voice) = {.passive} := by
   revert a; decide
@@ -441,12 +433,10 @@ def enRealize : CaseStem → HuProp → List String
   | z, .agr pn => attested z.pid pn.cell
   | _, _ => []
 
-/-- The inessive of ÉN corresponds to the 1sg form cell of *benn*, the paper's (38). -/
+-- (38)
 theorem en_inessive_corr : enLinkage.corr .en .inessive = {(.benn, .agr .p1sg)} := by
   decide
 
-/-- Every oblique case content cell has the case's postpositional stem, so the pronouns'
-linkage is total. -/
 theorem en_isTotal : enLinkage.IsTotal := by decide
 
 /-- The reversal is unfaithful, since the correspondent's property set is the pronoun's, not
@@ -460,7 +450,6 @@ theorem en_pm_lexeme_sensitive :
     enLinkage.pm .en .inessive ≠ enLinkage.pm .te .inessive := by
   decide
 
-/-- The inessive of ÉN and of TE realize as the first and second person forms of *benn*. -/
 theorem inessive_realizes :
     enLinkage.realized enRealize .en .inessive =
         {(attested "benn" PersNum.p1sg.cell, .agr .p1sg)} ∧
@@ -489,12 +478,8 @@ def ferreLinkage : Linkage FerreLex FerreStem SysCell SysCell where
   realize _ σ := match σ.sys with | .pres => {.fer} | .perf => {.tul}
   pm _ σ := σ
 
-/-- FERRE is suppletive because its present- and perfect-system cells draw on different
-stems. -/
 theorem ferre_suppletive : ferreLinkage.IsSuppletive .ferre := by decide
 
-/-- FERRE is property-preserving, since with no override the default rule preserves the
-content cell's property set. -/
 theorem ferre_propertyPreserving : ferreLinkage.IsPropertyPreserving id := fun _ _ ↦ rfl
 
 /-- FERRE is suppletive yet property-preserving, so the two axes are independent. -/
@@ -546,10 +531,8 @@ def thurfaRealize : ThurfaStem → TCell → List String
   | .strong, τ => attested "need" (τ.agr.cell { tense := ↑UD.Tense.Pres })
   | .weak, τ => attested "need" (τ.agr.cell { tense := ↑UD.Tense.Past })
 
-/-- ÞURFA is suppletive because its present and past draw on different stems. -/
 theorem thurfa_suppletive : thurfaLinkage.IsSuppletive .thurfa := by decide
 
-/-- ÞURFA is unfaithful because a present content cell maps to a past form cell. -/
 theorem thurfa_unfaithful : thurfaLinkage.IsUnfaithful id := ⟨.thurfa, ⟨.pres, .s1⟩, by decide⟩
 
 /-- ÞURFA's linkage compounds suppletion with a deponent tense mapping. -/
@@ -557,8 +540,6 @@ theorem thurfa_suppletive_and_unfaithful :
     thurfaLinkage.IsSuppletive .thurfa ∧ thurfaLinkage.IsUnfaithful id :=
   ⟨thurfa_suppletive, thurfa_unfaithful⟩
 
-/-- The present content cell realizes as *þarf* through the strong stem at the past form
-cell, and the past content cell as *þurfta* through the weak stem. -/
 theorem thurfa_realizes :
     thurfaLinkage.realized thurfaRealize .thurfa ⟨.pres, .s1⟩ =
         {(attested "need" (Agr.s1.cell { tense := ↑UD.Tense.Pres }), ⟨.past, .s1⟩)} ∧

@@ -249,8 +249,7 @@ variable (V Pr : ℕ) (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeat
 the bound context variable, pronounced with the features of the diacritic. -/
 def deSe : Formula := .att V i t w k (.atom Pr (.coord k) (.base (.coord k)) (.coord k))
 
-/-- A de se report holds iff some attitude has the agent of every compatible context satisfy the
-predicate at its time and world (13b). -/
+-- (13b)
 theorem deSe_holds_iff :
     (deSe V Pr i t w k).Holds M s ↔
       ∃ A ∈ attAt M s V i t w, ∀ c ∈ A, M.pred Pr c.agent c.time c.world := by
@@ -260,8 +259,7 @@ theorem deSe_weird_iff [Preorder T] :
     (deSe V Pr i t w k).Weird M c₀ s ↔ ArgsWeird M c₀ s i t w := by
   simp [deSe, Formula.Weird, ArgsWeird, Term.Weird, TimeTerm.Weird]
 
-/-- Interpreting the past feature on the de se time coordinate presupposes that every compatible
-context's time precedes the utterance time (17b), (18). -/
+-- (17b), (18)
 theorem past_coord_weird_iff [Preorder T] :
     (Formula.att V i t w k (.atom Pr (.coord k) (.base (.feat .past (.coord k)))
         (.coord k))).Weird M c₀ s ↔
@@ -278,8 +276,7 @@ theorem past_coord_weird [Preorder T]
   obtain ⟨A, hA, ⟨c, hc⟩, hlt⟩ := h
   exact (past_coord_weird_iff M c₀ s V Pr i t w k).2 (Or.inr ⟨A, hA, c, hc, (hlt c hc).not_gt⟩)
 
-/-- Interpreting a masculine feature on the de se subject presupposes that every compatible agent is
-male, which a hope to become a woman refutes (16). -/
+-- (16)
 theorem he_coord_weird [Preorder T]
     (hex : ∀ x, M.female x c₀.time c₀.world → ¬ M.male x c₀.time c₀.world)
     (h : ∃ A ∈ attAt M s V i t w, A.Nonempty ∧ ∀ c ∈ A, M.female c.agent c₀.time c₀.world) :
@@ -312,12 +309,12 @@ strictly after; for worlds, distinct. -/
 def ULC (beyond : α → α → Prop) (κ : C → α) (d : C → Set α) (c : C) : Prop :=
   ¬ ∀ x ∈ d c, beyond (κ c) x
 
-/-- (38): a time description satisfies the constraint iff it reaches the local time. -/
+-- (38)
 theorem ulc_time_iff [LinearOrder T] (d : Context W E P T → Set T) (c : Context W E P T) :
     ULC (· < ·) Context.time d c ↔ ∃ t ∈ d c, t ≤ c.time := by
   simp [ULC, not_lt]
 
-/-- (40): a world description satisfies the constraint iff it contains the local world. -/
+-- (40)
 theorem ulc_world_iff (e : Context W E P T → Set W) (c : Context W E P T) :
     ULC (· ≠ ·) Context.world e c ↔ c.world ∈ e c := by
   simp [ULC]

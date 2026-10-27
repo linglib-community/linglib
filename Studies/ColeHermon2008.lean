@@ -255,29 +255,29 @@ def ex81 : Clause := .of TobaBatak.actorVoice "atuk" "dakdanak-on" "biang-i"
 /-- (85) *Si-John mang-alean aha tu si-Mary* 'What did John give to Mary?'. -/
 def ex85 : Clause := .of TobaBatak.actorVoice "alean" "si-John" "aha" "tu si-Mary"
 
-/-- The monotransitive VOS clause (49) and the passive (67). -/
+-- (49), (67)
 theorem vos_orders :
     ex49.vos.surfacePhon = ["mang-", "ida", "si-Mary", "si-John"] ∧
       ex67.vos.surfacePhon = ["di-", "ida", "si-Torus", "dirina"] := by
   decide
 
-/-- The ditransitive V-O-S-IO clause (56), the goal evacuated before the subject. -/
+-- (56)
 theorem ex56_vosi :
     ex56.vos.surfacePhon = ["mang-", "alean", "buku", "si-John", "tu si-Mary"] := by decide
 
-/-- The passive (13) and, with the subject evacuated first, the marked (14). -/
+-- (13), (14)
 theorem ex13_orders :
     ex13.vos.surfacePhon = ["di-", "lean", "si-John", "buku", "tu si-Mary"] ∧
       ex13.vois.surfacePhon = ["di-", "lean", "si-John", "tu si-Mary", "buku"] := by
   decide
 
-/-- In both orders of (81), the SVO derivation raises the subject past the fronted VoiceP. -/
+-- (81)
 theorem ex81_orders :
     ex81.vos.surfacePhon = ["mang-", "atuk", "biang-i", "dakdanak-on"] ∧
       ex81.svo.surfacePhon = ["dakdanak-on", "mang-", "atuk", "biang-i"] := by
   decide
 
-/-- The SVO ditransitive (85), S-V-O-IO. -/
+-- (85)
 theorem ex85_svoi :
     ex85.svo.surfacePhon = ["si-John", "mang-", "alean", "aha", "tu si-Mary"] := by decide
 
@@ -502,8 +502,7 @@ theorem table1 : ∀ row ∈ Examples.all, ∀ a ∈ Reflexivization.ofRow row,
       a.grade = g := by
   decide
 
-/-- In the passive (67)–(68), (72)–(74), (75)–(77), agent and patient each c-command the other only
-at intermediate stages, and neither does at the surface. -/
+-- (67), (68), (72), (74), (75), (77)
 theorem passive_stages :
     (ex67.vos.CCommandsAt 6 ex67.agent ex67.patient ∧
       ¬ ex67.vos.CCommandsAt ex67.svoStage.length ex67.agent ex67.patient) ∧
@@ -556,7 +555,7 @@ def englishPassive : Derivation :=
   ⟨wasInjured,
     [.em .right byHimself, .em .left theBoy, .em .left v₀, .em .left (F 1), .im theBoy]⟩
 
-/-- (95) externalizes. -/
+-- (95)
 theorem english_order :
     englishPassive.surfacePhon = ["the boy", "was injured", "by himself"] := by decide
 

@@ -157,8 +157,7 @@ restrictor analysis of conditionals (cf. [kratzer-1986]), the antecedent of
 conditional necessity is classically DE once the modal base is fixed, so
 widening the antecedent domain strengthens the conditional. -/
 
-/-- Conditional necessity is downward entailing in its antecedent, so widening strengthens K&L's
-(143). -/
+-- (143)
 theorem conditional_satisfies_strengthening {W : Type*}
     (domain : W → Set W) (β : Set W) :
     Antitone (Conditional.strictImp domain · β) :=
@@ -283,7 +282,7 @@ theorem widenAlong_weakens_precise {Property : Type*}
     (widenAlong X onDimension).precise ⊆ X.precise :=
   fun _ ⟨h, _⟩ ↦ h
 
-/-- Widening expands the domain, so the restriction cannot undo its effect (K&L §3.5.3). -/
+-- §3.5.3
 theorem widenAlong_expands_domain {Property Entity : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (apply : Property → Set Entity) :

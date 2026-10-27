@@ -733,13 +733,12 @@ theorem case1_para_syn : run [r40, r34a] prefix3S3S = ⟨[], [], third ++ singul
 /-- (35) removes the agent that (32a) needs, so applying it first bleeds (32a). -/
 theorem r40_bleeds_r34a : Bleeds Rule.apply Rule.Fires r40 r34a prefix3S3S := by decide
 
-/-- The block architecture keeps the object's third person, which (31) would expone as *m*. -/
+-- (31)
 theorem case1_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r40, r34a]) :
     (run l prefix3S3S).object = third ++ singular := by
   rw [run_eq_of_paraThenSyn r40_paradigmatic r34a_syntagmatic hl hperm, case1_para_syn]
 
-/-- The same holds for the 3S:3I prefix and (34b). Syntagmatic first, the object loses
-`[−participant]`; paradigmatic first, it keeps it. -/
+-- (34b)
 theorem case1_inverse :
     run [r34b, r40] prefix3S3I = ⟨[], [], [.author false, .inverse]⟩ ∧
       run [r40, r34b] prefix3S3I = ⟨[], [], third ++ inverse⟩ := by
@@ -767,7 +766,7 @@ theorem case2_singular_para_syn :
     run [r40, r34a, r45a] prefix3S3S = ⟨[], [], third ++ singular⟩ := by
   decide
 
-/-- (35) removes the singular agent that (36a) needs, so applying it first bleeds (36a). -/
+-- (35), (36a)
 theorem r40_bleeds_r45b : Bleeds Rule.apply Rule.Fires r40 r45b prefix3Sno := by decide
 
 theorem case2_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r40, r45b]) :
@@ -791,7 +790,7 @@ theorem case3_syn_para : (run [r46, r11a] prefix2S3S).agent = [.author false, .a
 theorem case3_para_syn : (run [r11a, r46] prefix2S3S).agent = (run [r11a] prefix2S).agent := by
   decide
 
-/-- (39) removes the `[+participant]` that (37) needs, so applying it first bleeds (37). -/
+-- (39), (37)
 theorem r11a_bleeds_r46 : Bleeds Rule.apply Rule.Fires r11a r46 prefix2S3S := by decide
 
 theorem case3_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r11a, r46]) :
@@ -816,15 +815,15 @@ theorem case4_para_syn :
     run [r26, r32] prefix1S3S = ⟨[], first ++ [.minimal true], third ++ singular⟩ := by
   decide
 
-/-- (43) makes the goal non-singular, so applying it first bleeds (40). -/
+-- (43), (40)
 theorem r26_bleeds_r32 : Bleeds Rule.apply Rule.Fires r26 r32 prefix1S3S := by decide
 
-/-- The block architecture keeps the object's third person, which (31) would expone as *m*. -/
+-- (31)
 theorem case4_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r26, r32]) :
     (run l prefix1S3S).object = third ++ singular := by
   rw [run_eq_of_paraThenSyn r26_paradigmatic r32_syntagmatic hl hperm, case4_para_syn]
 
-/-- Ordering (33) before (32) keeps the third person of the object of *opénôm* (Table 21). -/
+-- (33), (32), Table 21
 theorem r33_bleeds_r32 :
     (run [r33, r32] prefix1D3S3S).object = third ++ singular ∧
       (run [r32, r33] prefix1D3S3S).object = singular := by
@@ -1273,7 +1272,7 @@ theorem derive_unaccounted :
       ["kǫ", "kǫ", "kǫ", "kǫ", "îw", "ímo", "ónóm", "ónóm", "ónów"] := by
   decide +kernel
 
-/-- With (40) and (26) as printed, the same cells derive. -/
+-- (40), (26)
 theorem derive_eq_form_printed :
     ∀ r ∈ Taos.prefixes, r.1 ∉ unaccounted →
       r.2 = deriveWith (impoverishmentPrinted false) r.1 ∨
@@ -1308,7 +1307,7 @@ theorem metathesis_prefix1D3no :
         .dummy] := by
   decide +kernel
 
-/-- Without (24), (23) finds `[−participant]` in the way and does nothing. -/
+-- (24), (23)
 theorem metathesis_without_r24 :
     let p := run [r1, r4, r9, r12, r33, r34a, r34b, r14, r35, r46, r2, r7b, r7a, r32, r15,
         r26, r45a, r45b, r40, r47, r3, r11a, r11b, r29 .agent, r29 .goal, r43, r44, r38b, r42,
@@ -1430,8 +1429,7 @@ theorem ondarru_markedness_then_linear :
       [clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩]), pastT] := by
   decide
 
-/-- In Ondarru with the linear module first, T is stranded initial, giving Arregi and Nevins's (17b)
-*eu-su-n*. -/
+-- (17b)
 theorem ondarru_linear_then_markedness :
     linearThenMarkedness ondarru auxiliary17 =
       [pastT, clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩])] := by
@@ -1449,8 +1447,7 @@ theorem zamudio_markedness_then_linear :
       [lSupport, pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by
   decide
 
-/-- In Zamudio with the linear module first, the ergative clitic is fronted and then obliterated,
-stranding T initial in the form §6.2.4 rejects. -/
+-- §6.2.4
 theorem zamudio_linear_then_markedness :
     linearThenMarkedness zamudio auxiliary19 =
       [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by

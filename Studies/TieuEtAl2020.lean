@@ -71,16 +71,14 @@ def singular : Set ℕ := {1}
 
 /-! ### The implicature approach (section 1.2.2) -/
 
-/-- Exhaustifying the weak plural against its singular alternative yields the multiplicity
-inference, (13)–(15). -/
+-- (13), (15)
 theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
   rw [exhIE_pair_sdiff (φ := weak) (d := singular) ⟨2, by simp [weak, singular]⟩]
   ext n
   simp only [weak, singular, strong, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   omega
 
-/-- Under negation the singular alternative is entailed by the negated plural, so nothing is
-excluded and the sentence conveys that no giraffe was fed, (16)–(17). -/
+-- (16), (17)
 theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ := by
   ext n
   rw [mem_exhIE_iff]
@@ -110,7 +108,7 @@ theorem exhIE_some {k : ℕ} (hk : 2 ≤ k) :
 The Strongest Meaning Hypothesis (7) prefers, among the readings of a plural sentence, the one
 entailing all the others: the least reading under inclusion, `IsLeast`. -/
 
-/-- In a positive sentence the strong reading is preferred, (5). -/
+-- (5)
 theorem isLeast_strong : IsLeast {weak, strong} strong :=
   ⟨by simp, by
     rintro r (rfl | rfl)
@@ -119,7 +117,7 @@ theorem isLeast_strong : IsLeast {weak, strong} strong :=
       omega
     · exact le_rfl⟩
 
-/-- Under negation the negated weak reading is preferred, (6). -/
+-- (6)
 theorem isLeast_compl_weak : IsLeast {weakᶜ, strongᶜ} weakᶜ :=
   ⟨by simp, by
     rintro r (rfl | rfl)
@@ -138,8 +136,7 @@ def homogeneous (n : ℕ) : SignType :=
 theorem homogeneous_eq_one_iff {n : ℕ} : homogeneous n = 1 ↔ 2 ≤ n := by
   rcases n with _ | _ | n <;> simp [homogeneous]
 
-/-- Negation leaves undefinedness untouched, so the negated sentence is true of no giraffe fed,
-(23)–(24). -/
+-- (23), (24)
 theorem neg_homogeneous_eq_one_iff {n : ℕ} : -homogeneous n = 1 ↔ n = 0 := by
   rcases n with _ | _ | n <;> simp [homogeneous]
 

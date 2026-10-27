@@ -141,7 +141,7 @@ def veggieWrapForm : TypedForm String :=
   [ { filler := .fixed "veggie" }
   , { filler := .fixed "wrap", isHead := true } ]
 
-/-- The constructicon realizes Table 8's grid of degrees of abstraction. -/
+-- Table 8
 theorem table8_specificity :
     derivedSpecificity veggieWrapForm = .lexicallySpecified ∧
     aSimplePALConstruction.specificity = .partiallyOpen ∧
@@ -332,10 +332,6 @@ def palMeaning (W : Type*) (situationType headNoun : W → Prop) :
 
 /-! ### Irreducibility -/
 
-/-- The PAL construction is not fully compositional. Pairing
-phrase-in-a-word-slot form with a presumed-familiarity function is a
-construction-specific pragmatic function, so PAL cannot be decomposed into
-the three universal combination schemata (see `Construction.IsFullyCompositional`). -/
 theorem pal_irreducible :
     ¬ palConstruction.IsFullyCompositional := by decide
 
@@ -384,7 +380,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- The English tokens of (1a)–(1c), Table 2, and Table 3. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- PALs are attested in every word-class slot (Table 2). -/
+-- Table 2
 theorem rows_position : ∀ p : PALPosition, ∃ r ∈ rows, r.position = p := by decide
 
 /-- A PAL takes the inflection of the slot it fills (Table 3). -/

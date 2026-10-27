@@ -115,8 +115,7 @@ def intro (x y z : E) : Set (Set (E × E × E)) := atom (x, y, z)
 introductions. -/
 def scenario : Set (E × E × E) := {(m, b, s), (m, t, s)}
 
-/-- The focus semantic value of *introduced [Bill]F to Sue* (5a) is the set of propositions *Mary
-introduced y to Sue*. -/
+-- (5a)
 theorem vp_objectFocus :
     ((fun y ↦ intro m y s) <$> focused b).alternatives = Set.range fun y ↦ intro m y s :=
   alternatives_map_focused _ _
@@ -148,8 +147,7 @@ inductive Verb where
 /-- The fact that `x` stands in relation `v` to `y`. -/
 def rel (v : Verb) (x y : E) : Set (Set (Verb × E × E)) := atom (v, x, y)
 
-/-- The focus semantic value of *[read]F The Recognitions* with Mary as subject (8) ranges over
-every relation, so it contains the trivial proposition. -/
+-- (8)
 theorem univ_mem_vp_verbFocus :
     Set.univ ∈ ((fun R : E → E → Set (Set (Verb × E × E)) ↦ R m c) <$>
       focused (rel .read)).alternatives := by
@@ -186,8 +184,7 @@ variable {E W : Type} (farmer american canadian : E → Set W)
 /-- The intersective N' *P farmer*. -/
 def nbar (P : E → Set W) : E → Set W := fun x ↦ P x ∩ farmer x
 
-/-- 'Canadian farmer' is a property of the form 'P farmer', so it can be the antecedent for the
-focus on *[American]F farmer* (15). -/
+-- (15)
 theorem farmer_contrast (h : nbar farmer canadian ≠ nbar farmer american) :
     SquiggleInd (nbar farmer american) ((nbar farmer <$> focused american).alternatives)
       (nbar farmer canadian) := by
@@ -214,7 +211,7 @@ def pass (g : Finset E) : Set (Grades E) := {w | ∀ x ∈ g, 1 ≤ w x}
 /-- `x` aced. -/
 def ace (x : E) : Set (Grades E) := {w | 2 ≤ w x}
 
-/-- Acing entails passing and not conversely (18). -/
+-- (18)
 theorem ace_ssubset_pass : ace m ⊂ pass {m} := by
   refine ⟨fun w h ↦ ?_, fun h ↦ ?_⟩
   · intro x hx
@@ -238,8 +235,7 @@ theorem verbFocus_scale :
   · exact ⟨fun _ ↦ ace m, rfl⟩
   · exact ⟨pass, rfl⟩
 
-/-- The scale of group propositions of the form 'x passed' lies inside the focus semantic value
-of *[I]F passed* (21). -/
+-- (21)
 theorem subjectFocus_scale :
     Set.range pass ⊆ ((pass (E := E)) <$> focused {m}).alternatives := by
   rw [alternatives_map_focused]

@@ -171,7 +171,7 @@ theorem xFelicitous_iff (hA : ¬ Disjoint S.antecedent S.domain)
     (hX : ∃ D, S.domain ⊂ D ∧ ¬ D ⊆ S.consequent) : S.XFelicitous κ ↔ κ = .weak := by
   cases κ <;> simp [XFelicitous, Counterfactuality.Admits, hA, hX]
 
-/-- X-marking stands or falls together in any two such scenarios (§4.2). -/
+-- §4.2
 theorem xFelicitous_iff_xFelicitous {W' : Type*} {S' : Scenario W'}
     (hA : ¬ Disjoint S.antecedent S.domain) (hX : ∃ D, S.domain ⊂ D ∧ ¬ D ⊆ S.consequent)
     (hA' : ¬ Disjoint S'.antecedent S'.domain) (hX' : ∃ D, S'.domain ⊂ D ∧ ¬ D ⊆ S'.consequent) :
@@ -215,42 +215,39 @@ def jones : Scenario Jones := .ofDatedFacts [(1, symptoms)] 1 {.arsenic} symptom
 theorem mem_live_jones {v : Jones} {t : ℤ} : v ∈ jones.live t ↔ (1 ≤ t → v ≠ .unpoisoned) := by
   simp [jones, Scenario.mem_live_ofDatedFacts, symptoms]
 
-/-- Over `D` the consequent is settled, since the symptoms are established (§2). -/
+-- §2
 theorem domain_subset_consequent_jones : jones.domain ⊆ jones.consequent :=
   fun _ hv ↦ mem_live_jones.1 hv le_rfl
 
-/-- An O-marked Anderson conditional is true for any antecedent, the triviality behind the
-infelicity of (2). -/
+-- (2)
 theorem oMarking_trivial (A : Set Jones) : jones.time ∈ strictImp jones.live A jones.consequent :=
   mem_strictImp_of_subset domain_subset_consequent_jones
 
 theorem unpoisoned_not_mem_domain : Jones.unpoisoned ∉ jones.domain :=
   fun h ↦ mem_live_jones.1 h le_rfl rfl
 
-/-- X-marking can expand the domain so as to leave the consequent open (§2). -/
+-- §2
 theorem exists_ssuperset_jones : ∃ D, jones.domain ⊂ D ∧ ¬ D ⊆ jones.consequent :=
   ⟨Set.univ, Set.ssubset_univ_iff.2 fun h ↦ unpoisoned_not_mem_domain (h ▸ trivial),
     fun h ↦ h (Set.mem_univ Jones.unpoisoned) rfl⟩
 
-/-- The historical-present shift to time `0` strictly expands the domain, since the live
-possibilities shrink as facts are established (§3.3). -/
+-- §3.3
 theorem domain_ssubset_live_zero : jones.domain ⊂ jones.live 0 :=
   (Set.ssubset_iff_of_subset (jones.antitone_live zero_le_one)).2
     ⟨.unpoisoned, mem_live_jones.2 (by decide), unpoisoned_not_mem_domain⟩
 
-/-- After the historical-present shift the consequent is open (§3.3). -/
+-- §3.3
 theorem not_live_zero_subset_consequent : ¬ jones.live 0 ⊆ jones.consequent :=
   fun h ↦ h (mem_live_jones.2 (by decide)) rfl
 
-/-- A true Anderson conditional at the shifted time excludes a live possibility, so "one can make
-a meaningful, contingent claim" (§2). -/
+-- §2
 theorem not_live_zero_subset_of_mem_strictImp {A : Set Jones}
     (h : 0 ∈ strictImp jones.live A jones.consequent) : ¬ jones.live 0 ⊆ A :=
   not_subset_of_mem_strictImp h not_live_zero_subset_consequent
 
 theorem mimic_mem_domain : Jones.mimic ∈ jones.domain := mem_live_jones.2 nofun
 
-/-- That Jones took arsenic is a live possibility, as the follow-up (1b) requires. -/
+-- (1b)
 theorem antecedent_live_jones : ¬ Disjoint jones.antecedent jones.domain :=
   Set.not_disjoint_iff.2 ⟨.arsenic, rfl, mem_live_jones.2 nofun⟩
 
@@ -275,8 +272,7 @@ theorem oFelicitous_jones_iff_not {κ : Counterfactuality} :
 /-- The Jones scenario once it is established that he took the mimic poison. -/
 def jonesIdentified : Scenario Jones := .ofDatedFacts [(1, {.mimic})] 1 {.arsenic} symptoms
 
-/-- Once the mimic poison is identified, a strongly counterfactual X-marking is felicitous, as with
-*-ta* in (4a) (§3.2). -/
+-- (4a), §3.2
 theorem xFelicitous_strong_identified : jonesIdentified.XFelicitous .strong := by
   have hD : jonesIdentified.domain = {.mimic} := by
     ext v; simp [jonesIdentified, Scenario.mem_live_ofDatedFacts]
@@ -309,7 +305,7 @@ theorem mem_domain_party {v : Party} : v ∈ party.domain ↔ v ≠ .cancelled :
 theorem not_domain_subset_consequent_party : ¬ party.domain ⊆ party.consequent :=
   fun h ↦ absurd (h ((mem_domain_party (v := .dull)).2 nofun)) (by simp [party])
 
-/-- That John comes is a live possibility, as the follow-up (8b) requires. -/
+-- (8b)
 theorem antecedent_live_party : ¬ Disjoint party.antecedent party.domain :=
   Set.not_disjoint_iff.2 ⟨.johnComes, rfl, mem_domain_party.2 nofun⟩
 
@@ -398,7 +394,7 @@ def xExponent : Glottocode → Option XMarkingExponent
   | "mand1415" => some ⟨"le", [.perfective]⟩
   | _ => none
 
-/-- Every sampled language has an X-marking exponent, the Japanese one the fake past of (3). -/
+-- (3)
 theorem xExponent_isSome : (∀ e ∈ Examples.all, (xExponent e.language).isSome) ∧
     ∃ e ∈ Examples.all, e.JudgedFelicitous ∧
       e.feature? "x_exponent" = Japanese.Conditionals.xMarking.map (·.form) := by

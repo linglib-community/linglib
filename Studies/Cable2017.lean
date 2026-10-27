@@ -72,7 +72,7 @@ theorem expressed_iff (ff : ForceFlavor) :
 def lexicalForce (m : ModalItem) : ModalForce :=
   if .necessity ∈ m.forces then .necessity else .possibility
 
-/-- Table 2: each Tlingit modal has one force, its lexical force, and one flavor. -/
+-- Table 2
 theorem forces_eq : ∀ m ∈ Tlingit.modals, m.forces = {lexicalForce m} ∧ m.flavors.card = 1 := by
   decide
 
@@ -101,8 +101,7 @@ theorem dubitatives_fixed_force :
   simp only [ServesIn, flexible_iff]
   decide
 
-/-- In the restriction of *ldakát* 'all', the past potential serves for possibility and not for
-necessity ((54) and (55)). -/
+-- (54), (55)
 theorem potential_universal_restriction :
     ServesIn lexicalForce Tlingit.modals .negative potentialMode .possibility ∧
       ¬ ServesIn lexicalForce Tlingit.modals .negative potentialMode .necessity := by

@@ -339,8 +339,7 @@ theorem globalConstrual_ne_supervaluation_iff :
     simp_all [globalConstrual, globalExh, supervaluation_eq_one_iff, supervaluation_eq_neg_one_iff,
       supervaluation_eq_zero_iff]
 
-/-- In the scope of a scope-monotone quantifier such as *every*, the literal-against-global
-construal is the supervaluation (§6.1.3). -/
+-- §6.1.3
 theorem globalConstrual_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
     globalConstrual q d = supervaluation q d :=
   not_not.1 fun h ↦ (globalConstrual_ne_supervaluation_iff.1 h).elim fun hs ha ↦
@@ -579,7 +578,7 @@ instance (e : Embedding) (d : Display) : Decidable (strong e d) := by
 excludes. -/
 def misprinted : Item := ⟨.exactly, .gapQ, [5, 5, 9, 9], .used⟩
 
-/-- The item is printed in Table 13. -/
+-- Table 13
 theorem misprinted_mem : misprinted ∈ items := by decide
 
 /-- The item realizes the GAP?? pattern, its all-variant true and its some-variant false. -/
@@ -611,7 +610,7 @@ tests. -/
 theorem found_iff : ∀ t ∈ gapTests, (t.found = .yes ↔ t.condition ≠ .gapQ) ↔ ¬ t.Discounted := by
   decide
 
-/-- Table 2 tests only the gap conditions. -/
+-- Table 2
 theorem gapTests_condition : ∀ t ∈ gapTests, t.condition ∈ [.gap, .gapQ, .gapQQ] := by decide
 
 theorem supervaluation_eq_one_iff_weak (e : Embedding) (d : Display) :
@@ -654,8 +653,7 @@ theorem globalConstrual_misfit_iff : ∀ i ∈ tested, i.status ≠ .faulty → 
         (i.embedding.tree.ScopeAntitone ∧ i.condition = .gap) ∨ i.condition = .gapQQ) := by
   decide
 
-/-- Universal projection predicts a presupposition failure on a FALSE item of *all*, which subjects
-judged false (42). -/
+-- (42)
 theorem universalPresupposition_false_item :
     ∃ i ∈ items, i.embedding = .all ∧ i.condition = .clearlyFalse ∧
       universalPresupposition i.embedding.tree i.display = 0 := by
@@ -676,8 +674,7 @@ theorem atLeastTwo_gapQ : ∀ i ∈ items, i.condition = .gapQ → i ≠ misprin
     supervaluation atLeastTwo i.display = 0 := by
   decide
 
-/-- On the at-least reading the FALSE items of *exactly* with three or more full cells are true,
-matching the elevated true responses of Fig. 10. -/
+-- Fig. 10
 theorem atLeastTwo_false : ∀ i ∈ items, i.embedding = .exactly → i.condition = .clearlyFalse →
     (supervaluation atLeastTwo i.display = 1 ↔ 3 ≤ i.cells.count 9) := by
   decide

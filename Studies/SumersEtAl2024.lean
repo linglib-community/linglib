@@ -137,7 +137,6 @@ instance [Nonempty U] : IsMarkovKernel (speaker βS lam cost sem π R) :=
   Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary U, EReal.coe_ne_bot _⟩)
     (fun _ _ ↦ EReal.coe_ne_top _)
 
-/-- Row preference of the speaker is comparison of combined utility. -/
 theorem speaker_real_lt_iff (hβ : 0 < βS) :
     (speaker βS lam cost sem π R w).real {u} < (speaker βS lam cost sem π R w).real {u'} ↔
       combinedUtility lam cost sem π R u w < combinedUtility lam cost sem π R u' w := by
@@ -379,8 +378,6 @@ theorem expectedReward_prior : expectedReward prior (reward val fs) u a = 0 := b
   simp
   exact fun _ ↦ sum_val
 
-/-- Two utterances after which every action's expected reward agrees up to a shift are
-equally useful in the context. -/
 theorem actionUtility_eq_prior_of_expectedReward {c : ℝ}
     (h : ∀ a, expectedReward listener (reward val fs) u a = c) :
     actionUtility (policy β listener (reward val fs)) (reward val fs) u world =
@@ -388,7 +385,7 @@ theorem actionUtility_eq_prior_of_expectedReward {c : ℝ}
   actionUtility_policy_eq_of_expectedReward_eq_add listener (reward val fs) fun a ↦ by
     rw [h a, expectedReward_prior, zero_add]
 
-/-- The three mushrooms of Figure 6B earn `1`, `0` and `-3` at the world. -/
+-- Figure 6
 theorem reward_world :
     reward val feat 0 world = 1 ∧ reward val feat 1 world = 0 ∧ reward val feat 2 world = -3 := by
   simp [reward, feat, world, val]; norm_num

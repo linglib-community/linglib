@@ -119,8 +119,7 @@ theorem entailment_settling_gap :
       k.FollowsFrom φ ∧ ¬ k.directlySettles φ :=
   ⟨mastermindK, blue, mastermind_blue_follows, mastermind_blue_unsettled⟩
 
-/-- Indirectness and assertion strength are orthogonal dimensions, since must can be defined and
-true, undefined, or defined and false (§4.1). -/
+-- §4.1
 theorem indirectness_neq_weakness :
     kernelMust mastermindK blue .w0 = 1 ∧ kernelMust mastermindK red .w0 = 0 ∧
       kernelMust indirectK blue .w0 = -1 := by

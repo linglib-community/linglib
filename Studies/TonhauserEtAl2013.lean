@@ -110,14 +110,12 @@ theorem obligatoryLocalEffect_iff :
     ObligatoryLocalEffect R m Acc ↔ ∀ c, Acc c → R.image c ⊆ m :=
   forall₂_congr fun _ _ ↦ SetRel.image_subset_iff.symm
 
-/-- A local-context constraint on an embedded sentence projects to the embedding one along a
-reflexive relation (24). -/
+-- (24)
 theorem StrongContextualFelicity.of_image [R.IsRefl] (h : StrongContextualFelicity m Acc)
     (hloc : ∀ c, Acc' c → Acc (R.image c)) : StrongContextualFelicity m Acc' :=
   fun c hc ↦ (SetRel.self_subset_image c).trans (h _ (hloc c hc))
 
-/-- A constraint that must be met in the local context of a belief report gives the content
-obligatory local effect, (41). -/
+-- (41)
 theorem StrongContextualFelicity.obligatoryLocalEffect (h : StrongContextualFelicity m Acc)
     (hloc : ∀ c, Acc' c → Acc (R.image c)) : ObligatoryLocalEffect R m Acc' :=
   obligatoryLocalEffect_iff.2 fun c hc ↦ h _ (hloc c hc)

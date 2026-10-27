@@ -266,10 +266,10 @@ def sovTV : Cat Atom := (S \ NP) \ NP
 (17)), which Dutch main-clause verbs share and which English gapping reveals. -/
 def vsoTV : Cat Atom := (S / NP) / NP
 
-/-- Over a verb-final verb the cluster looks rightward for the verb (chapter 7 (3b)). -/
+-- (3b)
 theorem cluster_sov : cluster sovTV = some (S / sovTV) := by decide
 
-/-- Over a verb-initial verb the cluster looks leftward (chapter 7 (18b)). -/
+-- (18b)
 theorem cluster_vso : cluster vsoTV = some (S \ vsoTV) := by decide
 
 theorem cluster_svo : cluster TV = none := by decide
@@ -318,8 +318,7 @@ def gappingDirection (v : Cat Atom) : Option GappingDirection :=
     | .rslash .. => .backward
     | _ => .forward
 
-/-- The direction of gapping follows the verb's direction of combination, backward for verb-final
-and forward for verb-initial orders (chapter 7 (77)). -/
+-- (77)
 theorem gappingDirection_transitiveCat (a : Arrangement Constituent 3) :
     gappingDirection (transitiveCat a) =
       if a.IsFinal .verb then some .backward else if a.IsInitial .verb then some .forward
@@ -354,8 +353,7 @@ instance : DecidablePred RevealedResidue
   | .lslash x _ y => inferInstanceAs (Decidable (x = S ∧ RightwardInto S y))
   | .rslash .. | .atom _ => isFalse id
 
-/-- The revealing rule exposes exactly the verb-initial transitive verbs, so an SVO clause gaps over
-a virtual verb-initial verb (chapter 7 (62)). -/
+-- (62)
 theorem rightwardInto_transitiveCat_iff (a : Arrangement Constituent 3) :
     RightwardInto S (transitiveCat a) ↔ a.IsInitial .verb := by
   revert a; decide
@@ -455,8 +453,7 @@ theorem crossSerial_derived :
         ["ik", "Cecilia", "Henk", "de nijlpaarden", "zag", "helpen", "voeren"]) := by
   decide
 
-/-- The restriction of crossed composition to VP complements keeps a raised argument from
-crossed-composing into a verb, as chapter 6 notes of (14). -/
+-- (14)
 theorem not_dutchRules_raised :
     ¬ dutchRules (S \ NP) ⟨.right, .dot, (S \ NP) \ NP⟩ [⟨.left, .dot, NP⟩] := by
   decide
@@ -671,8 +668,7 @@ def mannyThemeAccents : AccentAssignment String := fun w ↦
   | "Manny" => some (.leading .L .H)
   | _ => none
 
-/-- Under the mirror tune the theme is the applicative constituent *married MANNY*, and the composed
-*ANNA married* of (14) carries the rheme. -/
+-- (14)
 theorem married_manny_theme :
     (Derivation.fapp (R := .multimodal) (.lex "married" TV) (.lex "Manny" NP)).infoFeature
         mannyThemeAccents = some .θ ∧

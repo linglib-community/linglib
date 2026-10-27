@@ -156,14 +156,10 @@ variable {S : Type*} [LinearOrder S] [BoundedOrder S]
 @[reducible] def SemiDesignated (x : S ⊙ S) : Prop :=
   x.con ≤ x.pro ∧ ⊥ < x.pro
 
-/-- The footnote characterization of designation: a value is designated iff it is
-knowledge-above the truth top, `DES = {x | t ≤ₖ x}`. -/
 theorem designated_iff_top_kLE {x : S ⊙ S} :
     Designated x ↔ (⊤ : S ⊙ S) ≤ₖ x :=
   ⟨fun h ↦ ⟨h.ge, bot_le⟩, fun h ↦ le_antisymm le_top h.1⟩
 
-/-- A value is semi-designated iff it is truer than its negation and carries some information
-(the footnote characterization). -/
 theorem semiDesignated_iff {x : S ⊙ S} :
     SemiDesignated x ↔ xᶜ ≤ x ∧ (⊥ : Know (S ⊙ S)) < toKnow x := by
   constructor
@@ -173,25 +169,19 @@ theorem semiDesignated_iff {x : S ⊙ S} :
     refine ⟨hneg.1, bot_lt_iff_ne_bot.mpr fun hp ↦ hlt.ne' ?_⟩
     exact Prod.ext hp (le_bot_iff.mp (hneg.1.trans hp.le))
 
-/-- The designated subspace of `PRESUP` is `{T, D⁺, I}`. -/
 theorem designated_cases :
     ∀ x : PRESUP, Designated x ↔ x = PRESUP.T ∨ x = PRESUP.Dplus ∨ x = PRESUP.I := by
   decide
 
-/-- The semi-designated subspace of `PRESUP` is `{P⁺, C, T, D⁺, I}`. -/
 theorem semiDesignated_cases :
     ∀ x : PRESUP, SemiDesignated x ↔ x = PRESUP.Pplus ∨ x = PRESUP.C ∨ x = PRESUP.T
       ∨ x = PRESUP.Dplus ∨ x = PRESUP.I := by
   decide
 
-/-- On `FOUR`, with no defeasible evidence, semi-designation collapses to designation,
-`SEMI = DES`. -/
 theorem four_semiDesignated_iff_designated :
     ∀ x : FOUR, SemiDesignated x ↔ Designated x := by
   decide
 
-/-- The consistent fragment of `FOUR` is closed under negation, the truth operations and
-consensus `⊓ₖ`. -/
 theorem four_consistent_closed :
     ∀ x y : FOUR, IsConsistent x → IsConsistent y →
       IsConsistent xᶜ ∧ IsConsistent (x ⊓ y) ∧ IsConsistent (x ⊔ y) ∧ IsConsistent (x ⊓ₖ y) :=
@@ -201,8 +191,6 @@ theorem four_consistent_not_closed_kSup :
     ¬ ∀ x y : FOUR, IsConsistent x → IsConsistent y → IsConsistent (x ⊔ₖ y) :=
   fun h ↦ absurd (h FOUR.T FOUR.F (by decide) (by decide)) (by decide)
 
-/-- The classical fragment of `FOUR` is closed under negation and the truth operations, and so
-supports classical logic. -/
 theorem four_isClassical_closed :
     ∀ x y : FOUR, IsExact x → IsExact y → IsExact xᶜ ∧ IsExact (x ⊓ y) ∧ IsExact (x ⊔ y) :=
   fun _ _ hx hy ↦ ⟨hx.compl, hx.inf hy, hx.sup hy⟩
@@ -251,15 +239,13 @@ theorem weight_dplus : weight PRESUP.Dplus = PRESUP.T := by decide
 
 theorem weight_dminus : weight PRESUP.Dminus = PRESUP.F := by decide
 
-/-- `ω` maps `PRESUP` onto the seven constants of [ginsberg-1988]'s bilattice `DEFAULT` (§3.5.3,
-Figure 3.5). -/
+-- §3.5.3, Figure 3.5 [ginsberg-1988]
 theorem weight_mem_default :
     ∀ x : PRESUP, weight x ∈ [PRESUP.U, PRESUP.Pminus, PRESUP.Pplus, PRESUP.C,
       PRESUP.F, PRESUP.T, PRESUP.I] := by
   decide
 
-/-- The mapping onto `DEFAULT` is not a homomorphism (§3.5.3): it fails to commute with
-gullibility `⊔ₖ`. -/
+-- §3.5.3
 theorem weight_not_kSup_hom :
     ¬ ∀ x y : PRESUP, weight (x ⊔ₖ y) = weight x ⊔ₖ weight y := by
   decide
@@ -361,15 +347,12 @@ theorem step_closureAt : step L i (closureAt L i I) = closureAt L i I := by
   rw [closureAt, ← Function.iterate_succ_apply' (step L i)]
   exact ((exists_iterate_step_eq L i I).choose_spec _ (Nat.le_succ _)).symm
 
-/-- A round that is a fixed point is the closure. -/
 theorem closureAt_eq_iterate {k : ℕ} (h : step L i ((step L i)^[k] I) = (step L i)^[k] I) :
     closureAt L i I = (step L i)^[k] I := by
   have hn := (exists_iterate_step_eq L i I).choose_spec
   rw [closureAt, hn _ (Nat.le_add_right _ k), Function.iterate_add_apply,
     (Function.IsFixedPt.iterate h _).eq]
 
-/-- On `PRESUP` closure runs level `1` and then level `½`, each settling within the given numbers
-of rounds. -/
 theorem closure_eq_iterate {L : Finset (Link α (Fin 3))} {I : α → Know (Fin 3 ⊙ Fin 3)} {m n : ℕ}
     (h₂ : step L 2 ((step L 2)^[m] I) = (step L 2)^[m] I)
     (h₁ : step L 1 ((step L 1)^[n] ((step L 2)^[m] I)) = (step L 1)^[n] ((step L 2)^[m] I)) :
@@ -421,8 +404,6 @@ theorem con_weight_eq_top {x : S ⊙ S} (h : x.con = ⊤) : (weight x).con = ⊤
 
 variable [DecidableEq α] {J : α → Know (S ⊙ S)}
 
-/-- A setup holding the infons of a full assertion makes the formula designated, and one holding
-those of a full denial makes its negation designated. -/
 theorem designated_eval_of_infons_le :
     ∀ (φ : Formula α) (b : Bool), φ.infons ⊤ b ≤ J →
       Designated (bif b then φ.eval J else (φ.eval J)ᶜ)
@@ -555,7 +536,7 @@ def implication (φ ψ : Formula α) : Finset (Link α (Fin 3)) :=
 def presupposition (φ ψ : Formula α) : Finset (Link α (Fin 3)) :=
   {φ ⇀ ψ, (neg φ ⇀ ψ).presumably half, neg ψ ⇀ neg φ}
 
-/-- The links of entailment are among those of presupposition (§6.2.3). -/
+-- §6.2.3
 theorem implication_subset_presupposition (φ ψ : Formula α) :
     implication φ ψ ⊆ presupposition φ ψ := by
   simp [implication, presupposition, Finset.insert_subset_iff]
@@ -567,7 +548,7 @@ inductive Exam
   deriving DecidableEq, Fintype
 
 open Exam in
-/-- (6.1) and (6.2): passing implies taking, by modus ponens and by modus tollens. -/
+-- (6.1), (6.2)
 theorem implication_rows :
     (atom take).eval (closure (implication (atom pass) (atom take))
       ((atom pass).infons ⊤ true)) = PRESUP.T ∧
@@ -604,15 +585,12 @@ theorem presupposition_rows :
   refine ⟨?_, ?_, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩ <;>
     rw [closure_eq_iterate (m := 2) (n := 2)] <;> decide
 
-/-- A link passes a presumed antecedent on as a presumed consequent (the discussion after
-Definition 3.28): presumably John regrets failing the exam, so presumably he failed it. -/
+-- Definition 3.28
 theorem link_carries_presumption :
     (atom fail).eval (closure regretLinks ((atom regret).infons half true)) = PRESUP.Pplus := by
   rw [closure_eq_iterate (m := 2) (n := 2)] <;> decide
 
-/-- (6.12c) asserts the consistent `R ∧ ¬F`, which has no defeasible part, into `E⊥`, and both
-conjuncts, whose truth meet is the value of the conjunction (Definition 3.21, clause 3), come out
-`I`. -/
+-- (6.12c), Definition 3.21
 theorem consistent_assertion_eq_I :
     (atom regret).eval (closure regretLinks
         ((atom regret).infons ⊤ true ⊔ (neg (atom fail)).infons ⊤ true)) ⊓
@@ -629,15 +607,12 @@ section Guard
 open Formula
 
 open FOUR (U T F I) in
-/-- The guard's four-valued table (Table 6.1): a true or overdefined presupposition passes the
-carrier through, and an unknown or false one gaps the compound. -/
+-- Table 6.1
 theorem guard_table :
     ∀ y : FOUR, Product.guard T y = y ∧ Product.guard U y = U ∧ Product.guard F y = U ∧
       Product.guard I y = y := by
   decide
 
-/-- The truth-gap intuition: when the presupposition is false the guarded carrier is the gap,
-whatever the carrier's value. -/
 theorem guard_truth_gap {α : Type*} {I : α → Know PRESUP} {φ ψ : Formula α}
     (h : φ.eval I = PRESUP.F) : (guard φ ψ).eval I = PRESUP.U :=
   (congrArg (Product.guard · (ψ.eval I)) h).trans (Product.guard_of_pro_bot rfl _)
@@ -647,8 +622,6 @@ open Regret
 /-- "John regrets failing the exam" with its presupposition as a guard, `F : R`. -/
 abbrev guarded : Formula Regret := guard (atom fail) (atom regret)
 
-/-- The salient presuppositional intuition: asserting the guarded carrier or its negation makes
-the presupposition true. -/
 theorem guard_presupposes_alike :
     (atom fail).eval (guarded.infons (⊤ : Fin 3) true) = PRESUP.T ∧
     (atom fail).eval ((neg guarded).infons (⊤ : Fin 3) true) = PRESUP.T := by

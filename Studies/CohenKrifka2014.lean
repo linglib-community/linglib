@@ -144,8 +144,7 @@ theorem committed_mem_root_exclude_iff (hK : denials O a φ s ∪ C.root ∈ C)
   rw [root_exclude O C a φ s hK]
   exact (or_iff_left (hroot m)).trans hinj.mem_set_image
 
-/-- The exclusion moves the root, so its denegation keeps the root and commits the speaker to
-nothing (§5.2.2). -/
+-- §5.2.2
 theorem root_notMem_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, committed O a (φ m)ᶜ ∉ C.root) :
     C.root ∉ exclude O C a φ s :=
   let ⟨m, hm⟩ := hne
@@ -160,8 +159,7 @@ theorem coe_exclude (hne : s.Nonempty) (hK : denials O a φ s ∪ C.root ∈ C) 
   rw [C.coe_update_sSup (hne.image _) h, Set.biInter_image]
   rfl
 
-/-- In (44) and (49) each conjunct is the denegation of the GRANT of `φ(m)`, which is the
-assertion of its denial by (40). -/
+-- (44), (49), (40)
 theorem coe_exclude_eq_iInter_sdiff_grant (hne : s.Nonempty)
     (hroot : ∀ m ∈ s, committed O a (φ m)ᶜ ∉ C.root) (hK : denials O a φ s ∪ C.root ∈ C)
     (hmem : ∀ m ∈ s, insert (committed O a (φ m)ᶜ) C.root ∈ C) :
@@ -179,14 +177,12 @@ theorem sdiff_coe_exclude (hne : s.Nonempty) (hroot : ∀ m ∈ s, committed O a
   exact Set.iUnion₂_congr fun m hm ↦
     (C.coe_denegate_of_root_notMem (mt (C.root_mem_assert_iff O a _).1 (hroot m hm))).symm
 
-/-- Excluding more values is the stronger speech act ((86)), since its update is included in the
-weaker one's. -/
+-- (86)
 theorem exclude_anti {s t : Set ι} (hst : s ⊆ t) (hK : denials O a φ t ∪ C.root ∈ C) :
     exclude O C a φ t ≤ exclude O C a φ s :=
   C.update_le_update (Set.image_mono hst) (root_exclude_mem O C a φ t hK)
 
-/-- The exclusion commits the speaker to the conjunction of the asserted denials, the derived
-truth conditions of §3.2 ((52)). -/
+-- §3.2, (52)
 theorem sInter_root_exclude (hK : denials O a φ s ∪ C.root ∈ C) :
     ⋂₀ (exclude O C a φ s).root = committed O a (⋂ m ∈ s, (φ m)ᶜ) ∩ ⋂₀ C.root := by
   rw [root_exclude O C a φ s hK, Set.sInter_union, denials, Set.sInter_image]
@@ -212,12 +208,12 @@ theorem atMost_mono {n n' : ι} (hnn : n ≤ n') (hK : denials O a φ (Set.Ioi n
     atMost O C a φ n ≤ atMost O C a φ n' :=
   exclude_anti O C a φ (Set.Ioi_subset_Ioi hnn) hK
 
-/-- A higher bound makes *at least* stronger ((86)). -/
+-- (86)
 theorem atLeast_anti {n n' : ι} (hnn : n ≤ n') (hK : denials O a φ (Set.Iio n') ∪ C.root ∈ C) :
     atLeast O C a φ n' ≤ atLeast O C a φ n :=
   exclude_anti O C a φ (Set.Iio_subset_Iio hnn) hK
 
-/-- The value `n` is the greatest whose GRANT *at most `n`* leaves performable ((43), (60b)). -/
+-- (43), (60b)
 theorem atMost_isGreatest (hK : denials O a φ (Set.Ioi n) ∪ C.root ∈ C)
     (hroot : ∀ m, committed O a (φ m)ᶜ ∉ C.root)
     (hinj : Function.Injective fun m ↦ committed O a (φ m)ᶜ) :
@@ -228,7 +224,7 @@ theorem atMost_isGreatest (hK : denials O a φ (Set.Ioi n) ∪ C.root ∈ C)
       Set.mem_Ioi, not_lt, Set.mem_Iic]
   exact hs ▸ isGreatest_Iic
 
-/-- The value `n` is the least whose GRANT *at least `n`* leaves performable ((48), (60a)). -/
+-- (48), (60a)
 theorem atLeast_isLeast (hK : denials O a φ (Set.Iio n) ∪ C.root ∈ C)
     (hroot : ∀ m, committed O a (φ m)ᶜ ∉ C.root)
     (hinj : Function.Injective fun m ↦ committed O a (φ m)ᶜ) :
@@ -277,8 +273,7 @@ theorem sInter_root_atLeast_exactly (f : W → ℕ)
   exact ⟨fun h ↦ not_lt.1 fun hlt ↦ h (f w) hlt rfl,
     fun h m hm e ↦ absurd hm (not_lt.2 (e ▸ h))⟩
 
-/-- A pointwise larger count strengthens *at most*, so denying counts of visitors ever entails
-denying counts last year ((84b), (87)). -/
+-- (84b), (87)
 theorem sInter_root_atMost_exactly_anti {f g : W → ℕ} (hfg : ∀ w, g w ≤ f w)
     (hf : denials O a (exactly f) (Set.Ioi n) ∪ C.root ∈ C)
     (hg : denials O a (exactly g) (Set.Ioi n) ∪ C.root ∈ C) :
@@ -341,23 +336,21 @@ theorem rabbits_root_fresh (m : ℕ) :
     committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ ∉ rabbits.root :=
   Set.notMem_empty _
 
-/-- (1a) commits the speaker to the classical *at least three* ((82)). -/
+-- (1a), (82)
 theorem sInter_root_rabbits_atLeast :
     ⋂₀ (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root =
       committed Index.access .speaker (Index.fact ⁻¹' Comparison.ge.interval 3) := by
   rw [sInter_root_atLeast_exactly _ _ _ _ _ (Set.empty_subset _)]
   simp [rabbits]
 
-/-- (1a) commits the speaker to John's not having petted exactly two rabbits ((52a)), so that
-two petted rabbits make it false. -/
+-- (1a), (52a)
 theorem rabbits_atLeast_committed_two :
     ⋂₀ (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root ⊆
       committed Index.access .speaker (exactly Index.fact 2)ᶜ := by
   rw [sInter_root_rabbits_atLeast]
   exact committed_mono fun w hw e ↦ absurd hw (by simp [exactly] at e; simp [e])
 
-/-- (1a) does not commit the speaker to John's not having petted exactly four rabbits ((53)),
-so that its truth at four is implicature, not entailment. -/
+-- (1a), (53)
 theorem rabbits_atLeast_not_committed_four :
     ¬ ⋂₀ (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root ⊆
       committed Index.access .speaker (exactly Index.fact 4)ᶜ := by
@@ -371,7 +364,7 @@ theorem rabbits_atLeast_not_committed_four :
   exact (mem_committed_preimage (X := {4}ᶜ)).1 (h h4)
     (show 4 ∈ (only 4 4).commitmentSet .speaker from rfl) rfl
 
-/-- The denial of four is not among the speaker's commitments ((53)). -/
+-- (53)
 theorem rabbits_atLeast_grant_four :
     committed Index.access Discourse.Role.speaker (exactly Index.fact 4)ᶜ ∉
       (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root := by
@@ -379,14 +372,14 @@ theorem rabbits_atLeast_grant_four :
     _ (Set.empty_subset _) rabbits_root_fresh denial_injective]
   decide
 
-/-- Three is the least value the speaker leaves grantable ((48), (60a)). -/
+-- (48), (60a)
 theorem rabbits_atLeast_isLeast :
     IsLeast {m | committed Index.access Discourse.Role.speaker (exactly Index.fact m)ᶜ ∉
       (atLeast Index.access rabbits .speaker (exactly Index.fact) 3).root} 3 :=
   atLeast_isLeast Index.access rabbits .speaker (exactly Index.fact) 3 (Set.empty_subset _)
     rabbits_root_fresh denial_injective
 
-/-- Denegating (1a) leaves the disjunction of the three GRANTs ((89b), (97)–(98)). -/
+-- (1a), (89b), (97), (98)
 theorem rabbits_sdiff_atLeast :
     (rabbits : Set (Set (Set Count))) \
         ↑(atLeast Index.access rabbits .speaker (exactly Index.fact) 3) =
@@ -394,8 +387,7 @@ theorem rabbits_sdiff_atLeast :
   sdiff_coe_exclude Index.access rabbits .speaker (exactly Index.fact) _ ⟨0, by decide⟩
     (fun m _ ↦ rabbits_root_fresh m) (Set.empty_subset _)
 
-/-- The denegation keeps the root ((98)), so the negated superlative asserts nothing, which is
-why superlative quantifiers resist downward-entailing contexts (§5.2.2). -/
+-- (98), §5.2.2
 theorem rabbits_root_notMem_atLeast :
     rabbits.root ∉ atLeast Index.access rabbits .speaker (exactly Index.fact) 3 :=
   root_notMem_exclude Index.access rabbits .speaker (exactly Index.fact) _ ⟨0, by decide⟩
@@ -440,8 +432,7 @@ theorem granting_consistent : ∀ d ∈ granting,
     · exact committed_raining_ne_compl h₂.symm
     · exact Set.notMem_empty _ h₂
 
-/-- Granting `raining` strictly includes its assertion, so the grant does not enforce the assertion
-((39), p. 54). -/
+-- (39), p. 54
 theorem granting_assert_lt_grant :
     granting.assert Index.access .speaker raining < grant Index.access granting .speaker raining :=
   IsConcreteLE.lt_iff_le_and_exists.2

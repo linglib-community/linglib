@@ -91,13 +91,13 @@ use-conditional dimension. -/
 @[simps] def toTwoDim (m : Outlook W O) (o : O) : TwoDim W (W → Prop) :=
   ⟨m.prejacent, m.evaluation o⟩
 
-/-- Negation, and so denial, leaves the counterstance presupposition in place ((40)–(41)). -/
+-- (40), (41)
 theorem support_neg_toTrivalent (m : Outlook W O) :
     Function.support (-m.toTrivalent) = {w | m.counterstance w} := by
   ext w
   simp [toTrivalent]
 
-/-- Negation leaves the stance layer in place at every outlook ((40)–(41)). -/
+-- (40), (41)
 theorem toTwoDim_neg_notAtIssue (m : Outlook W O) (o : O) :
     (m.toTwoDim o).neg.notAtIssue = m.evaluation o := rfl
 
@@ -191,7 +191,7 @@ instance (row : Datum) : Decidable (PriorityRow row) := by
   unfold PriorityRow
   split <;> infer_instance
 
-/-- *Nanka* combines with modals of every flavor ((45)). -/
+-- (45)
 theorem nanka_unrestricted :
     ∀ row ∈ Examples.all, row.feature? "marker" = some "nanka" →
       row.feature? "phenomenon" = some "modalInteraction" → row.judgment = .acceptable := by

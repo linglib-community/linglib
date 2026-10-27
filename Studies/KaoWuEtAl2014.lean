@@ -76,7 +76,6 @@ theorem isRound_round (p : Price) : p.round.IsRound := by cases p <;> decide
 
 @[simp] theorem round_round (p : Price) : p.round.round = p.round := by cases p <;> rfl
 
-/-- `round` is the substrate rounding to the nearest multiple of ten. -/
 theorem value_round (p : Price) :
     (p.round.value : ℚ) = Degree.representative 10 (p.value : ℚ) := by
   cases p <;> norm_num [round, value, Degree.representative]
@@ -117,7 +116,6 @@ def project (g : Goal) (m : Meaning) : Option Price × Option Bool :=
   (if g.2 = .affect then none else some (Price.project g.1 m.1),
     if g.2 = .price then none else some m.2)
 
-/-- The two affect-only goals coincide, as the paper notes. -/
 theorem project_affect (f f' : Precision) : project (f, .affect) = project (f', .affect) :=
   rfl
 
@@ -205,8 +203,6 @@ section Halo
 
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (c : ℝ)
 
-/-- At an approximate price goal, the literal listener who hears a price of positive prior is
-certain of the answer at every meaning of the same round price. -/
 theorem map_L0_approximate {u p : Price} (hμ : μ (sem u) ≠ 0) (hp : u.round = p.round)
     (a : Bool) : (L0 μ).map (project (.approximate, .price)) u
       {project (.approximate, .price) (p, a)} = 1 := by

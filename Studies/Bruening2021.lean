@@ -184,8 +184,7 @@ theorem objectDrop_secondObject :
       ∃ a, v.Alternates (.leaveImplicit .np 0 (some a))).map (·.form) = ["write"] := by
   decide +kernel
 
-/-- *melt* and *build*, the base transitives of (7) and (8), leave their object implicit and
-have a double object construction. -/
+-- (7), (8)
 theorem melt_build : ∀ v ∈ [melt, build],
     (∃ a, v.Alternates (.leaveImplicit .np 0 (some a))) ∧ .np_np ∈ v.valency.frames := by
   decide +kernel
@@ -202,8 +201,7 @@ theorem dropsInBothFrames :
       ∃ a, v.Alternates (Argument.directObject.leaveImplicit a)).map (·.form) = ["write"] := by
   decide +kernel
 
-/-- In (63)–(65), a double object verb leaves its direct object implicit beside a first object or a
-PP iff the example is acceptable. -/
+-- (63), (65)
 theorem implicit_rows : ∀ v ∈ verbs, .np_np ∈ v.valency.frames → ∀ row ∈ Examples.all,
     row.feature? "verb" = some v.form → ∀ x,
       (row.feature? "implicit").bind Argument.ofString? = some x →

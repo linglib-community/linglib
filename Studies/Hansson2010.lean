@@ -263,8 +263,7 @@ theorem mem_language_iff_anticipatory_eq (w : List Segment) :
     w ∈ navajoSibilantHarmony.language ↔ anticipatory w = w :=
   ⟨anticipatory_eq_self_of_mem, fun h ↦ h ▸ anticipatory_mem_language w⟩
 
-/-- In the neutralization of (4), prefixes whose sibilants differ only in [anterior] surface
-alike once a sibilant follows. -/
+-- (4)
 theorem anticipatory_cons_eq {a b : Segment} {w : List Segment} (ha : OnTier a) (hb : OnTier b)
     (hab : ∀ f ≠ .anterior, a f = b f) (hw : sibilants w ≠ []) :
     anticipatory (a :: w) = anticipatory (b :: w) := by
@@ -289,8 +288,7 @@ example (w : List Segment) (hw : sibilants w ≠ []) :
 
 /-! ### The examples -/
 
-/-- On the anticipatory examples of (3), (4), (6), (11), (13), and (15) the map takes each
-underlying form to the classes of its surface sibilants. -/
+-- (3), (4), (6), (11), (13), (15)
 theorem anticipatory_rows :
     ∀ e ∈ Examples.all, e.feature? "directionality" = some "anticipatory" →
       (anticipatory (ur e)).map sibilantClass = (sr e).map sibilantClass := by
@@ -303,7 +301,7 @@ theorem perseveratory_rows :
       (anticipatory (ur e)).map sibilantClass ≠ (sr e).map sibilantClass := by
   decide
 
-/-- The underlying form of (6a) is disharmonic. -/
+-- (6a)
 theorem ur_ex6a_ii_violates : ur Examples.ex6a_ii ∉ navajoSibilantHarmony.language := by
   rw [mem_language_iff_anticipatory_eq]
   decide

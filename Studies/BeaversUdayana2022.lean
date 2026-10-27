@@ -87,10 +87,10 @@ def Converges (v : Head) (o : ObjectRealization) : Prop := Xor v.HasD (o = .dp �
 instance (v : Head) (o : ObjectRealization) : Decidable (Converges v o) :=
   inferInstanceAs (Decidable (Xor _ _))
 
-/-- *meN-* projects its agent whatever its object, which stays in situ (37a). -/
+-- (37a)
 theorem converges_meN (o : ObjectRealization) : Converges meN o := by decide +revert
 
-/-- *di-*, with its implicit agent, needs a DP object, which raises to subject (37b). -/
+-- (37b)
 theorem converges_passive_iff (o : ObjectRealization) : Converges passive o ↔ o = .dp := by
   decide +revert
 
@@ -206,20 +206,18 @@ def anticausative : MiddleType := ⟨.dp, .unspecified⟩
 
 variable (V : E → E → Prop) (P : E → Prop) (s : E)
 
-/-- A dispositional middle says that something other than the subject acted on it (55). -/
+-- (55)
 theorem denote_dispositional : dispositional.denote V P s ↔ ∃ z, z ≠ s ∧ V s z :=
   Reading.resolve_disjoint
 
-/-- An inherent reflexive says that the subject acted on itself (56). -/
+-- (56)
 theorem denote_reflexive : reflexive.denote V P s ↔ V s s := Reading.resolve_coreferent
 
-/-- An incorporation middle says that the subject acted on something else that the noun
-describes (52). -/
+-- (52)
 theorem denote_incorporation : incorporation.denote V P s ↔ ∃ z, z ≠ s ∧ V z s ∧ P z :=
   Reading.resolve_disjoint
 
-/-- An incorporated reflexive says that the subject acted on itself and that the noun describes
-it (53). -/
+-- (53)
 theorem denote_incorporationReflexive : incorporationReflexive.denote V P s ↔ V s s ∧ P s :=
   Reading.resolve_coreferent
 
@@ -354,7 +352,7 @@ instance : ∀ f d, Decidable (Form.Passes f d)
   | _, .oleh | _, .rationale | _, .sendirinya | _, .causerDenial => by
     unfold Form.Passes; infer_instance
 
-/-- The dispositional middle fails every diagnostic (§2.1). -/
+-- §2.1
 theorem not_passes_dispositional (d : Diagnostic) : ¬ (Form.middle dispositional).Passes d := by
   cases d <;> decide
 
@@ -461,8 +459,6 @@ def acted : Entity → Entity → Prop
 instance : DecidableRel acted := fun x y ↦ by
   cases x <;> cases y <;> unfold acted <;> infer_instance
 
-/-- The car has a dispositional middle and no reflexive one, Ali a reflexive one and no
-dispositional one, and Tono the incorporation middle with a noun true of the car. -/
 theorem model :
     dispositional.denote acted diri .car ∧ ¬ reflexive.denote acted diri .car ∧
       reflexive.denote acted diri .ali ∧ ¬ dispositional.denote acted diri .ali ∧
@@ -473,8 +469,7 @@ theorem model :
 
 /-! ### Relational nouns (§4) -/
 
-/-- *ber-* over a relational noun such as *topi* 'hat' suppresses the possessum, so *Tono bertopi*
-says that Tono has some hat on (65). -/
+-- (65)
 theorem denote_relationalNoun {E : Type*} (π : E → E → Prop) (N : E → Prop) (s : E) :
     incorporation.denote (flip π) N s ↔ ∃ z, z ≠ s ∧ π s z ∧ N z :=
   denote_incorporation _ _ _

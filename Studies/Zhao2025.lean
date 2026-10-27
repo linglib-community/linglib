@@ -92,13 +92,12 @@ theorem atomDist_ofPred_mem (hτ : Function.Surjective τ) {S : Set (NonemptyInt
   rw [atomDist_ofPred_iff, ← preimage, image_preimage_eq S hτ]
   exact hS
 
-/-- A state that holds throughout `I` holds at every subinterval of `I`, (5.38). -/
+-- (5.38)
 theorem atomDist_ofPred_le (hτ : Function.Surjective τ) (I : NonemptyInterval α) :
     AtomDist τ (.ofPred (τ · ≤ I)) :=
   atomDist_ofPred_mem hτ (isLowerSet_Iic I)
 
-/-- The degree events above a standard `m`, as in the bare comparative *bǐ Yángjiǎn gāo* 'taller
-than Yangjian', are atomically distributive, (5.53). -/
+-- (5.53)
 theorem atomDist_ofPred_lt_fst (hτ : Function.Surjective τ) (m : α) :
     AtomDist τ (.ofPred fun e ↦ m < (τ e).fst) :=
   atomDist_ofPred_mem (S := {i | m < i.fst}) hτ fun _ _ hba ha ↦
@@ -118,8 +117,7 @@ theorem not_atomDist_ofPred (hne : ∃ e, P e) (hP : ∀ e, P e → ¬ (τ e).Is
 def Surpasses (τ : E → NonemptyInterval α) (θ : E → α) (e : E) : Prop :=
   (τ e).fst < θ e ∧ θ e < (τ e).snd
 
-/-- The quantifier over surpassing events that *guò* introduces, (6.44), is never atomically
-distributive. -/
+-- (6.44)
 theorem not_atomDist_ofPred_surpasses {θ : E → α} (hne : ∃ e, P e)
     (hP : ∀ e, P e → Surpasses τ θ e) : ¬ AtomDist τ (.ofPred P) :=
   not_atomDist_ofPred hne fun e he h ↦
@@ -134,8 +132,7 @@ theorem hasSubintervalProperty_iff_forall_atomDist {W T : Type*} [LinearOrder T]
     Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist τ (.ofPred (P w)) :=
   forall_congr' fun _ ↦ atomDist_ofPred_iff.symm
 
-/-- A duration argument or a measure phrase gives the trace a positive length, so the description
-is not atomically distributive, (5.44), (5.57). -/
+-- (5.44), (5.57)
 theorem not_atomDist_ofPred_length [AddCommGroup α] [PartialOrder α] [IsOrderedAddMonoid α]
     {τ : E → NonemptyInterval α} {P : E → Prop} {d : α} (hd : 0 < d)
     (hne : ∃ e, P e ∧ (τ e).length = d) :
@@ -174,7 +171,7 @@ theorem not_le_dom_of_le (hτ : Function.Surjective τ) (I : NonemptyInterval α
     ¬ (le τ (.ofPred (τ · ≤ I)) p).Dom :=
   not_not_intro (atomDist_ofPred_le hτ I)
 
-/-- The bare comparative is a presupposition failure of *le*, (5.46). -/
+-- (5.46)
 theorem not_le_dom_of_lt_fst (hτ : Function.Surjective τ) (m : α) :
     ¬ (le τ (.ofPred fun e ↦ m < (τ e).fst) p).Dom :=
   not_not_intro (atomDist_ofPred_lt_fst hτ m)

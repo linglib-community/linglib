@@ -312,7 +312,7 @@ abbrev off : Set Switch := {w | w.light w.up₁ w.up₂ = false}
 /-- Both switches up, and the light on exactly when the switches agree. -/
 def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
 
-/-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario. -/
+-- (76)
 theorem sda_actual :
     actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
@@ -320,8 +320,7 @@ theorem sda_actual :
     ⟨⟨true, false, fun x y ↦ !x && !y⟩, by decide⟩ ⟨actual, by decide⟩]
   decide
 
-/-- *If switch A or switch B or both were down, the light would be off* (78) is false in the
-scenario. -/
+-- (78)
 theorem orBoth_actual :
     actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by

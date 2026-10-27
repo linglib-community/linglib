@@ -82,8 +82,7 @@ def SClass.marking (m : ArgumentRole → κ) : SClass → ArgumentRole → κ
     | .so => m .P
   | _, r => m r
 
-/-- A split system mixes the two simple patterns (§4.1.1), accusative over Sa verbs and ergative
-over So verbs, whenever A and O are distinguished. -/
+-- §4.1.1
 theorem marking_sa_so {m : ArgumentRole → κ} (h : m .A ≠ m .P) :
     IsAccusative (SClass.sa.marking m) ∧ IsErgative (SClass.so.marking m) :=
   ⟨⟨rfl, h⟩, ⟨rfl, h.symm⟩⟩
@@ -177,8 +176,7 @@ theorem IsErgative.of_le [Preorder H] (h : Fits (split acc erg))
   rw [isErgative_split_iff] at *
   exact ⟨fun hp ↦ hq.1 (h.1 hpq hp), h.2 hpq hq.2⟩
 
-/-- In a fitting split, an overlap of the markings and a gap between them exclude each other (type
-(d) versus (g), Appendix to Chapter 4). -/
+-- Chapter 4
 theorem not_isTripartite_and_isNeutral [LinearOrder H] (h : Fits (split acc erg))
     (ht : IsTripartite (split acc erg · p)) (hn : IsNeutral (split acc erg · q)) : False := by
   rw [fits_split_iff] at h
@@ -218,16 +216,12 @@ def latin : ArgumentRole → Nominal → Option Case := split (.common .human �
 common nouns accusatively, so that the left and middle of the hierarchy are tripartite. -/
 def wagaWaga : ArgumentRole → Nominal → Option Case := split (.common .human ≤ ·) (fun _ ↦ True)
 
-/-- Every split of §4.2 fits the Nominal Hierarchy. -/
+-- §4.2
 theorem splits_fit : Fits dyirbal ∧ Fits cashinawa ∧ Fits yidiny ∧ Fits latin ∧ Fits wagaWaga :=
   ⟨fits_ofCutoffs _ _, fits_ofCutoffs _ _, fits_ofCutoffs _ _,
     (fits_split_iff _ _).2 ⟨isUpperSet_Ici _, isLowerSet_empty⟩,
     (fits_split_iff _ _).2 ⟨isUpperSet_Ici _, isLowerSet_univ⟩⟩
 
-/-- The cutoffs induce the alignments of the types. Dyirbal's markings meet at third person
-pronouns, type (c); Cashinawa and Yidiny overlap in tripartite zones, type (d); Latin leaves
-neuter nouns neutral, type (a); and Waga-Waga is tripartite down to human nouns and ergative
-below, type (f). -/
 theorem patterns :
     (∀ p, ¬ IsTripartite (dyirbal · p) ∧ ¬ IsNeutral (dyirbal · p)) ∧
       IsAccusative (dyirbal · .secondPerson) ∧ IsErgative (dyirbal · .thirdPerson) ∧
@@ -290,8 +284,7 @@ theorem not_admits_iff :
       ∀ r ∈ ArgumentRole.core, ¬ Pivot.SO.Admits r ↔ r = .A := by
   decide
 
-/-- Only passive feeds an S/A pivot for an O NP and only antipassive an S/O pivot for an A NP
-(§6.2.1, §6.2.2, §6.2.3). -/
+-- §6.2.1, §6.2.2, §6.2.3
 theorem feeds_iff :
     (∀ d, Feeds .SA d .P ↔ d = .passive) ∧ (∀ d, Feeds .SO d .A ↔ d = .antipassive) ∧
       ¬ Feeds .SA .passive .A ∧ ¬ Feeds .SO .antipassive .P :=
@@ -305,7 +298,7 @@ def swapAO : ArgumentRole → ArgumentRole
   | .P => .A
   | r => r
 
-/-- Passive and antipassive are parallel with A and O interchanged, §6.1. -/
+-- §6.1
 theorem apply_swapAO (r : ArgumentRole) :
     Derivation.passive.apply r = Derivation.antipassive.apply (swapAO r) := by
   cases r <;> rfl

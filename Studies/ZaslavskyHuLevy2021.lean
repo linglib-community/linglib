@@ -83,7 +83,7 @@ variable [Nonempty M] [IsProbabilityMeasure P] (S : Kernel M U) [IsMarkovKernel 
   (hL : ∀ u, (S ∘ₘ P) {u} ≠ 0 → RSA.listener P S u ≪ L u)
 include hL
 
-/-- Against a fixed speaker her Bayesian listener maximizes the expected utility (12). -/
+-- (12)
 theorem expectedUtility_le_listener :
     RSA.expectedUtility P Kernel.id C S L ≤
       RSA.expectedUtility P Kernel.id C S (RSA.listener P S) := by

@@ -180,7 +180,7 @@ theorem prior_iff_mem_pair {u : W} : Prior D w v u ↔ v ∈ D w {v, u} := by
   rw [hM.cso w {v, u} A (by rw [hA]; simp) ((hM.subset w _).trans (Set.pair_subset hvA huA)), hA]
   rfl
 
-/-- Condition (3) puts the base world first in priority. -/
+-- (3)
 theorem prior_base (w u : W) : Prior D w w u :=
   ⟨{w, u}, hM.centering w _ (by simp), by simp⟩
 
@@ -190,7 +190,6 @@ theorem prior_self_of_mem (hv : v ∈ R w) : Prior D w v v := by
   obtain rfl := Set.mem_singleton_iff.1 (hM.subset w {v} hy)
   exact .of_mem (hM.subsingleton w _) hy rfl
 
-/-- Defined necessity, `¬A > A`, is necessity over the selected worlds. -/
 theorem mem_ofDomain_compl_iff : w ∈ ofDomain D pᶜ p ↔ ∀ v, Prior D w v v → v ∈ p := by
   refine ⟨fun h v hv ↦ by_contra fun hvp ↦ ?_, fun h y hy ↦
     h y (.of_mem (hM.subsingleton w _) hy (hM.subset w _ hy))⟩
@@ -427,7 +426,6 @@ theorem mem_ofDomain_compl_minimals_iff {ord : W → Preorder W}
       have hv : v ∈ (ord w).minimals (R w ∩ A) := by simp only at hA; rw [hA]; rfl
       exact h ((ord w).minimals_subset _ hv).1⟩
 
-/-- Under Stalnaker's assumption, `□A ⊃ □□A` holds when relative possibility is transitive. -/
 theorem box_imp_box_box_minimals {ord : W → Preorder W}
     (hM : IsSelectionFunction R fun w A ↦ (ord w).minimals (R w ∩ A))
     (htrans : ∀ w v, v ∈ R w → R v ⊆ R w) (A : Formula α) (V : α → Set W) :
@@ -476,8 +474,6 @@ theorem isSelectionFunction_inaccessibleSelection :
     · exact subset_antisymm (Set.subset_inter h₂ Set.inter_subset_right)
         (Set.subset_inter h₁ Set.inter_subset_right)
 
-/-- Footnote 7 fails: with relative possibility the identity, transitive and symmetric, a
-selection function can make `□A` true and `□□A` false. -/
 theorem exists_not_box_imp_box_box :
     ∃ (R : Fin 3 → Set (Fin 3)) (D : Fin 3 → Set (Fin 3) → Set (Fin 3)),
       IsSelectionFunction R D ∧ (∀ w, R w = {w}) ∧

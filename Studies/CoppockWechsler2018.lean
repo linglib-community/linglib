@@ -151,8 +151,6 @@ def ask (K : Table E W) (c : Context W E P T) (φ : CenteredProp W E) : Table E 
 
 variable {K : Table E W}
 
-/-- If the only answer to the issue on top of the Table is the empty proposition, the
-conversation has no consistent continuation. -/
 theorem inCrisis_push_ofSet_empty : (K.push (ofSet (∅ : Set W))).InCrisis := by
   refine (Table.inCrisis_iff _).2 fun f hf ↦ ?_
   obtain ⟨⟨g, -, q, hq, rfl⟩, hne⟩ := hf
@@ -177,8 +175,6 @@ theorem ask_ego_of_eq (h : t c c.authority = c.authority) :
     ask K c (ego V t c) = K.polarQuestion {w | V c.authority w} := by
   rw [ask, uncenter_ego_of_eq h, uncenter_neg_ego_of_eq h]; rfl
 
-/-- With the subject as authority, an egophoric assertion on an empty Table is consistent if the
-common ground allows the property. -/
 theorem not_inCrisis_assert_ego (h : t c c.authority = c.authority) (hK : K.IsStable)
     (hV : K.commonGround ⊓ 𝓟 {w | V c.authority w} ≠ ⊥) :
     ¬ (assert K c (ego V t c)).InCrisis := by
@@ -186,8 +182,6 @@ theorem not_inCrisis_assert_ego (h : t c c.authority = c.authority) (hK : K.IsSt
     Table.projectedSet_of_isStable hK, Table.project_singleton_ofSet hV]
   exact fun hf ↦ hV (hf _ rfl)
 
-/-- With the subject as authority, an egophoric question on an empty Table is consistent if the
-common ground leaves the property open. -/
 theorem not_inCrisis_ask_ego (h : t c c.authority = c.authority) (hK : K.IsStable)
     (hV : K.commonGround ⊓ 𝓟 {w | V c.authority w} ≠ ⊥)
     (hV' : K.commonGround ⊓ 𝓟 {w | V c.authority w}ᶜ ≠ ⊥) :

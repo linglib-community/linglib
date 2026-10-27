@@ -93,8 +93,7 @@ theorem limitedSymmetry_occurrences_iff {C : Set W} {F : Formula Atom} :
       ∀ t ∈ F.triggers, LimitedSymmetryAt I C t.1 t.2.1 :=
   Formula.forall_mem_occurrences
 
-/-- The parsing points after a trigger are those up to the last item after the gap (Definition
-3.4.4). -/
+-- Definition 3.4.4
 theorem limitedSymmetryAt_iff_forall_le {C : Set W} {K : SyntacticEnvironment Atom} {p : Atom} :
     LimitedSymmetryAt I C K p ↔
       ∀ n ≤ K.rightItems, StablyTransparent C (K.continuations I n) (I p) := by
@@ -316,7 +315,7 @@ theorem limitedSymmetry_or_left :
   · have hq : w ∈ I q := by_contra fun hq ↦ hp (h hw hq)
     ls_points
 
-/-- `(if p'p. q)` requires the context to entail `p'` (Fact 3.4.4, p. 128). -/
+-- Fact 3.4.4, p. 128
 theorem limitedSymmetry_if_left :
     LimitedSymmetry C (Formula.occurrences I (.bin .cond (.trigger p a) (.atom q))) ↔ C ⊆ I p := by
   rw [limitedSymmetry_of_triggers I (K := [.left .cond (.atom q)]) (a := a) rfl,
@@ -325,7 +324,7 @@ theorem limitedSymmetry_if_left :
   have := h w hw hp 0 (Nat.zero_le _)
   ls_at this
 
-/-- `(if q. p'p)` requires the context to entail `q → p'` (Fact 3.4.5, p. 129). -/
+-- Fact 3.4.5, p. 129
 theorem limitedSymmetry_if_right :
     LimitedSymmetry C (Formula.occurrences I (.bin .cond (.atom q) (.trigger p a))) ↔
       C ⊆ {w | w ∈ I q → w ∈ I p} := by
@@ -337,8 +336,7 @@ theorem limitedSymmetry_if_right :
   · have hq : w ∉ I q := fun hq ↦ hp (h hw hq)
     ls_points
 
-/-- `(if (not p'p). q)` requires the context to entail `¬q → p'`, as `(p'p or q)` does (the first
-half of Fact 3.4.10, p. 136). -/
+-- Fact 3.4.10, p. 136
 theorem limitedSymmetry_if_not_left :
     LimitedSymmetry C (Formula.occurrences I (.bin .cond (.not (.trigger p a)) (.atom q))) ↔
       C ⊆ {w | w ∉ I q → w ∈ I p} := by
@@ -356,8 +354,7 @@ theorem limitedSymmetry_if_not_left_iff_or :
       LimitedSymmetry C (Formula.occurrences I (.bin .disj (.trigger p a) (.atom q))) := by
   rw [limitedSymmetry_if_not_left, limitedSymmetry_or_left]
 
-/-- `(if ((not p'p) and q). r)` requires the context to entail `(q ∧ ¬r) → p'`. Fact 3.4.8 (p. 134)
-prints `(q ∧ r) → p'` and omits the derivation (`not_limitedSymmetry_if_not_and_of_printed`). -/
+-- Fact 3.4.8, p. 134
 theorem limitedSymmetry_if_not_and :
     LimitedSymmetry C (Formula.occurrences I
         (.bin .cond (.bin .conj (.not (.trigger p a)) (.atom q)) (.atom r))) ↔
@@ -372,7 +369,7 @@ theorem limitedSymmetry_if_not_and :
       ls_points
     · ls_points
 
-/-- The condition `(q ∧ r) → p'` printed in Fact 3.4.8 does not imply the constraint. -/
+-- Fact 3.4.8
 theorem not_limitedSymmetry_if_not_and_of_printed {w : W} (hq : w ∈ I q) (hr : w ∉ I r)
     (hp : w ∉ I p) :
     {w} ⊆ {w | w ∈ I q → w ∈ I r → w ∈ I p} ∧
@@ -384,8 +381,7 @@ theorem not_limitedSymmetry_if_not_and_of_printed {w : W} (hq : w ∈ I q) (hr :
   subst hv
   exact fun _ hr' ↦ absurd hr' hr
 
-/-- In `(p'p and q'q)` the first trigger requires the context to entail `p'` (Fact 3.4.11, p.
-137). -/
+-- Fact 3.4.11, p. 137
 theorem limitedSymmetryAt_and_first :
     LimitedSymmetryAt I C [.left .conj (.trigger q b)] p ↔ C ⊆ I p := by
   rw [limitedSymmetryAt_iff_funs]
@@ -393,8 +389,7 @@ theorem limitedSymmetryAt_and_first :
   have := h w hw hp 1 (by simp [rightItems, Step.rightItems, Connective.rightItems])
   ls_at this
 
-/-- In `((not p'p) and q'q)` the first trigger requires the context to entail `q'q → p'` (Fact
-3.4.12, p. 137). -/
+-- Fact 3.4.12, p. 137
 theorem limitedSymmetryAt_not_and_first :
     LimitedSymmetryAt I C [.not, .left .conj (.trigger q b)] p ↔
       C ⊆ {w | w ∈ I q → w ∈ I b → w ∈ I p} := by
@@ -407,8 +402,7 @@ theorem limitedSymmetryAt_not_and_first :
       ls_points
     · ls_points
 
-/-- In `((not p'p) and q'q)` the second trigger requires the context to entail `(not p'p) → q'`,
-where Fact 3.4.12 (p. 137) prints `p'p → q'`. -/
+-- Fact 3.4.12, p. 137
 theorem limitedSymmetryAt_not_and_second :
     LimitedSymmetryAt I C [.right .conj (.not (.trigger p a))] q ↔
       C ⊆ {w | w ∉ I p ∩ I a → w ∈ I q} := by
@@ -420,8 +414,7 @@ theorem limitedSymmetryAt_not_and_second :
     obtain ⟨hp, ha⟩ := hpa
     ls_points
 
-/-- In `(p'p or q'q)` the first trigger requires the context to entail `p' or q'q` (Fact 3.4.13, p.
-138). -/
+-- Fact 3.4.13, p. 138
 theorem limitedSymmetryAt_or_first :
     LimitedSymmetryAt I C [.left .disj (.trigger q b)] p ↔ C ⊆ {w | w ∈ I p ∨ w ∈ I q ∩ I b} := by
   rw [limitedSymmetryAt_iff_funs]
@@ -435,8 +428,7 @@ theorem limitedSymmetryAt_or_first :
   · obtain ⟨hq, hb⟩ := (h hw).resolve_left hp
     ls_points
 
-/-- In `(p'p or q'q)` the second trigger requires the context to entail `q' or p'p` (Fact 3.4.13, p.
-138). -/
+-- Fact 3.4.13, p. 138
 theorem limitedSymmetryAt_or_second :
     LimitedSymmetryAt I C [.right .disj (.trigger p a)] q ↔ C ⊆ {w | w ∈ I q ∨ w ∈ I p ∩ I a} := by
   rw [limitedSymmetryAt_iff_funs]
@@ -450,8 +442,7 @@ theorem limitedSymmetryAt_or_second :
   · obtain ⟨hp, ha⟩ := (h hw).resolve_left hq
     ls_points
 
-/-- In `((not p'p) or q'q)` the first trigger requires the context to entail `p'` (Fact 3.4.14, p.
-138). -/
+-- Fact 3.4.14, p. 138
 theorem limitedSymmetryAt_not_or_first :
     LimitedSymmetryAt I C [.not, .left .disj (.trigger q b)] p ↔ C ⊆ I p := by
   rw [limitedSymmetryAt_iff_funs]
@@ -459,7 +450,7 @@ theorem limitedSymmetryAt_not_or_first :
   have := h w hw hp 1 (by simp [rightItems, Step.rightItems, Connective.rightItems])
   ls_at this
 
-/-- `((p'p and q) or r)` requires the context to entail `q → (p' ∨ r)` (Fact 3.4.15, p. 138). -/
+-- Fact 3.4.15, p. 138
 theorem limitedSymmetry_and_or :
     LimitedSymmetry C
         (Formula.occurrences I (.bin .disj (.bin .conj (.trigger p a) (.atom q)) (.atom r))) ↔
@@ -476,7 +467,7 @@ theorem limitedSymmetry_and_or :
       ls_points
     · ls_points
 
-/-- The condition printed in Fact 3.4.12 for the second trigger does not imply the constraint. -/
+-- Fact 3.4.12
 theorem not_limitedSymmetryAt_not_and_second_of_printed {w : W} (hp : w ∉ I p) (hq : w ∉ I q) :
     {w} ⊆ {w | w ∈ I p ∩ I a → w ∈ I q} ∧
       ¬ LimitedSymmetryAt I {w} [.right .conj (.not (.trigger p a))] q := by

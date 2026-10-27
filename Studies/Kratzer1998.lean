@@ -92,7 +92,7 @@ theorem zeroTense_presup [LinearOrder T] (n : ℕ) (g : Assignment T) (w : W) :
     (zeroTense n).presup g w := by
   simp
 
-/-- A zero tense with a binder index makes its clause a property of times (31). -/
+-- (31)
 theorem zeroTense_abstract [LT T] (n : ℕ) (g : Assignment T) (t : T) (w : W) :
     lambdaAbsG n (fun g ↦ (zeroTense n).selector g w) g t = some t := by
   simp
@@ -316,8 +316,7 @@ theorem southGerman_transparent :
 theorem english_transparent :
     ¬ english.IsTenseFaithful ∧ ¬ english.IsPerfectCompositional := by decide +kernel
 
-/-- The backward-shifted reading (42) is the past with the perfect, spelled out by the English but
-not the German simple past. -/
+-- (42)
 theorem backwardShifted :
     english.SpellsOut .simplePast ⟦past⟧ .perfect ∧
       ¬ standardGerman.SpellsOut .simplePast ⟦past⟧ .perfect ∧
@@ -338,7 +337,7 @@ theorem rows_outOfTheBlue :
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
-/-- The rows of (40) are in the forms they are labelled with. -/
+-- (40)
 theorem rows_realize :
     (∀ f ∈ English.Tense.tenseForms,
       ((∃ ws ∈ English.Verbs.build.tenseForm (English.Auxiliaries.cell .third .singular) f,

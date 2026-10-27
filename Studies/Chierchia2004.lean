@@ -105,13 +105,10 @@ theorem Meaning.mem_strengthen_strong :
       w ∈ sm.strong ∧ ∀ a ∈ sm.alternatives, a ⊂ sm.plain → w ∉ a := by
   simp [Meaning.strengthen]
 
-/-- Strengthening preserves the Strength Condition. -/
 theorem Meaning.StrengthCondition.strengthen (h : sm.StrengthCondition) :
     sm.strengthen.StrengthCondition :=
   λ _ hw => h hw.1
 
-/-- Strengthening is proper whenever some activated alternative is strictly
-stronger and consistent. -/
 theorem Meaning.strengthen_strong_ssubset (hsc : sm.StrengthCondition)
     (h : ∃ a ∈ sm.alternatives, a ⊂ sm.plain ∧ a.Nonempty) :
     sm.strengthen.strong ⊂ sm.plain := by
@@ -129,16 +126,13 @@ theorem Meaning.strengthen_strong_eq_of_isGreatest {a₀ : Set World}
   exact ⟨λ ⟨hw, hall⟩ => ⟨hw, hall a₀ h.1.1 h.1.2⟩,
     λ ⟨hw, h₀⟩ => ⟨hw, λ a haA haφ hwa => h₀ (h.2 ⟨haA, haφ⟩ hwa)⟩⟩
 
-/-- A node none of whose alternatives is strictly stronger strengthens
-vacuously — the strongest member of a scale triggers no implicature ((130)). -/
+-- (130)
 theorem Meaning.strengthen_strong_eq_of_not_ssubset
     (h : ∀ a ∈ sm.alternatives, ¬a ⊂ sm.plain) :
     sm.strengthen.strong = sm.strong :=
   Set.ext λ _ => ⟨λ hw => hw.1,
     λ hw => mem_strengthen_strong.2 ⟨hw, λ a ha hss => absurd hss (h a ha)⟩⟩
 
-/-- Strengthening over a pair scale whose second member is strictly stronger:
-the classic "φ but not ψ" implicature. -/
 theorem Meaning.strengthen_strong_lexical_pair {φ ψ : Set World} (h : ψ ⊂ φ) :
     (Meaning.lexical φ {φ, ψ}).strengthen.strong = φ \ ψ := by
   rw [Set.sdiff_eq]
@@ -161,8 +155,7 @@ structure IsScaleSelection (lexicalScale chosen : Set (Set World)) (utt : Set Wo
   lexical scale offers a stronger one — the "if possible" proviso. -/
   not_strongest : (∃ a ∈ lexicalScale, a ⊂ utt) → ∃ a ∈ chosen, a ⊂ utt
 
-/-- Under the scale axioms, a stronger lexical alternative guarantees proper
-strengthening — the point of the (99c) proviso. -/
+-- (99c)
 theorem IsScaleSelection.strengthen_ssubset {lex chosen : Set (Set World)} {utt : Set World}
     (h : IsScaleSelection lex chosen utt) (hstr : ∃ a ∈ lex, a ⊂ utt)
     (hne : ∀ a ∈ chosen, a ⊂ utt → a.Nonempty) :
@@ -173,14 +166,13 @@ theorem IsScaleSelection.strengthen_ssubset {lex chosen : Set (Set World)} {utt 
 
 /-! ### Downward entailingness suspends implicatures -/
 
-/-- A DE function maps the strengthened argument to a weaker value, so DE embedding suspends
-implicatures, the Generalization on SIs (53). -/
+-- (53)
 theorem si_npi_generalization {f : Set World → Set World} (hDE : Antitone f)
     (hsc : sm.StrengthCondition) :
     f sm.plain ⊆ f sm.strong :=
   hDE hsc
 
-/-- Instantiation of (53) at strengthened arguments. -/
+-- (53)
 theorem de_blocks_direct_si {f : Set World → Set World} (hDE : Antitone f)
     (hsc : sm.StrengthCondition) :
     f sm.plain ⊆ f sm.strengthen.strong :=
@@ -211,8 +203,7 @@ theorem mem_strongApplyDE_strong :
       w ∈ fS g.plain ∧ ∀ a ∈ g.alternatives, f a ⊂ f g.plain → w ∉ f a := by
   simp [strongApplyDE, Meaning.map, Meaning.weaken]
 
-/-- (84) at a lexical argument: apply plainly and re-run Krifka's rule over the
-image scale. -/
+-- (84)
 theorem strongApplyDE_lexical (f : Set World → Set World) (φ : Set World)
     (ALT : Set (Set World)) :
     strongApplyDE f f (.lexical φ ALT) = (Meaning.lexical (f φ) (f '' ALT)).strengthen :=
@@ -225,15 +216,13 @@ theorem strongApplyDE_strong_eq_of_isGreatest {ψ₀ : Set World}
     (strongApplyDE f fS g).strong = fS g.plain ∩ ψ₀ᶜ :=
   Meaning.strengthen_strong_eq_of_isGreatest (sm := g.weaken.map f fS) h
 
-/-- The non-DE clause of (84) preserves the Strength Condition when `f` is UE
-and its strengthening entails it. -/
+-- (84)
 theorem Meaning.map_strengthCondition (hf : Monotone f) (hfS : fS ≤ f)
     (hg : g.StrengthCondition) :
     (g.map f fS).StrengthCondition :=
   λ _ hw => hf hg (hfS _ hw)
 
-/-- The DE clause of (84) satisfies the Strength Condition by construction: it
-falls back to the plain argument before re-strengthening. -/
+-- (84)
 theorem strongApplyDE_strengthCondition (hfS : fS ≤ f) :
     (strongApplyDE f fS g).StrengthCondition :=
   Meaning.StrengthCondition.strengthen (hfS g.plain)
@@ -306,8 +295,7 @@ def someAndCompetitor : Meaning (Bool × Bool × Bool) :=
 theorem ateCake_ne_drankC1 : ateCake ≠ drankC1 :=
   λ h => by simpa [ateCake, drankC1] using Set.ext_iff.1 h (true, false, false)
 
-/-- (129b): the competitor's strong meaning — doubt the conjunction yet believe
-John did one of the two. -/
+-- (129b)
 theorem someAndCompetitor_strong :
     someAndCompetitor.strong = (ateCake ∩ drankC1)ᶜ ∩ (ateCake ∪ drankC1) := by
   have h : (ateCake ∪ drankC1)ᶜ ⊂ (ateCake ∩ drankC1)ᶜ :=
@@ -325,8 +313,7 @@ theorem and_blocks_any : ¬anyAndClosure ⊆ someAndCompetitor.strong := by
   have := (someAndCompetitor_strong ▸ h hw).2
   simp [ateCake, drankC1] at this
 
-/-- The closure does entail the competitor's *plain* meaning: competition with
-plain meanings ((122)-style) would wrongly license *any* under *and*. -/
+-- (122)
 theorem and_any_entails_plain : anyAndClosure ⊆ (ateCake ∩ drankC1)ᶜ :=
   λ _ hw => hw.1.1
 
@@ -341,8 +328,7 @@ def someOrCompetitor : Meaning (Bool × Bool × Bool) :=
   strongApplyDE compl compl
     (.lexical (ateCake ∪ drankC1) {ateCake ∩ drankC1, ateCake ∪ drankC1})
 
-/-- (130): the or-competitor's strong meaning is its plain meaning — the
-strongest member of a scale triggers no implicature. -/
+-- (130)
 theorem someOrCompetitor_strong :
     someOrCompetitor.strong = (ateCake ∪ drankC1)ᶜ := by
   simp only [someOrCompetitor]

@@ -42,18 +42,17 @@ open QBSML Degree FirstOrder Language
 
 /-! ### Superlative modifiers as disjunctions -/
 
-/-- *At least n* means *exactly n or more than n*, (14). -/
+-- (14)
 theorem atLeast_eq_bare_union_moreThan (m : ℕ) :
     Comparison.ge.interval m = Comparison.eq.interval m ∪ Comparison.gt.interval m := by
   simp [Set.Ioi_insert]
 
-/-- *At most n* means *exactly n or fewer than n*, (16). -/
+-- (16)
 theorem atMost_eq_bare_union_fewerThan (m : ℕ) :
     Comparison.le.interval m = Comparison.eq.interval m ∪ Comparison.lt.interval m := by
   simp [Set.Iio_insert]
 
-/-- Superlative rows carry the ignorance inference in unembedded position and
-    comparative rows never do (the contrast of (2)–(7)). -/
+-- (2), (7)
 theorem modifier_rows :
     ∀ row ∈ Examples.all, ∀ m ∈ row.feature? "modifier", ∀ i ∈ row.feature? "inference",
       (m = "comparative" → i = "none") ∧
@@ -87,8 +86,7 @@ def more : Formula Var Const Predicate := .pred .more .x
 theorem three_neFree : (three (Const := Const)).NEFree := .pred _ _
 theorem more_neFree : (more (Const := Const)).NEFree := .pred _ _
 
-/-- By Proposition 4.1, a state supports the NE-free `∀x(three(x) ∨ more(x))` iff its
-    first-order translation, computed by `rfl`, is true at every index. -/
+-- Proposition 4.1
 theorem classicality_univ {v : Index W Var Domain → Var → Domain}
     (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support M (.univ .x (.disj three more)) s ↔
@@ -102,46 +100,41 @@ theorem classicality_univ {v : Index W Var Domain → Var → Domain}
 
 /-! ### The results (56)–(61) -/
 
-/-- Ignorance (56), Fact 3, is `[three ∨ more]⁺ ⊨ ◇three ∧ ◇more` on a state-based
-    accessibility relation, the paper's epistemic reading. -/
+-- (56), Fact 3
 theorem ignorance (hSB : Team.IsStateBased M.access (State.worldProj s))
     (h : support M (threeOrMore c).enrich s) :
     support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
   QBSML.ignorance M hSB h
 
-/-- At a state of maximal information, a single index, `[∀x(three(x) ∨ more(x))]⁺`
-    supports `∃x three(x) ∧ ∃x more(x)`, the distribution of (51) (Fact 5). -/
+-- (51), Fact 5
 theorem distribution {i : Index W Var Domain}
     (h : support M (Formula.univ .x (.disj three more)).enrich {i}) :
     support M (.exi .x three) {i} ∧ support M (.exi .x more) {i} :=
   QBSML.distribution M three_neFree more_neFree h
 
-/-- Distribution under partial information (58), Fact 6, yields the modalized conclusion
-    `∃x◇three(x) ∧ ∃x◇more(x)` on a state-based accessibility relation. -/
+-- (58), Fact 6
 theorem distributionEpi (hSB : Team.IsStateBased M.access (State.worldProj s))
     (h : support M (Formula.univ .x (.disj three more)).enrich s) :
     support M (.exi .x (.poss three)) s ∧ support M (.exi .x (.poss more)) s :=
   QBSML.distributionEpi M hSB h
 
-/-- Free choice under necessity (59), Fact 7, is `[□(three ∨ more)]⁺ ⊨ ◇three ∧ ◇more`. -/
+-- (59), Fact 7
 theorem boxFreeChoice (h : support M (Formula.enrich (Formula.nec (threeOrMore c))) s) :
     support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
   QBSML.boxFC M (.predc _ _) (.predc _ _) h
 
-/-- Free choice under possibility (60), Fact 8, is `[◇(three ∨ more)]⁺ ⊨ ◇three ∧ ◇more`. -/
+-- (60), Fact 8
 theorem diamondFreeChoice (h : support M (Formula.enrich (.poss (threeOrMore c))) s) :
     support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
   QBSML.narrowScopeFC M (.predc _ _) (.predc _ _) h
 
-/-- Universal free choice (63), Fact 9, is `[∀x◇(three(x) ∨ more(x))]⁺ ⊨
-    ∀x◇three(x) ∧ ∀x◇more(x)`, the inference [chemla-2009b] attests. -/
+-- (63), Fact 9 [chemla-2009b]
 theorem universalFreeChoice
     (h : support M (Formula.univ .x (.poss (.disj three more))).enrich s) :
     support M (.univ .x (.poss three)) s ∧ support M (.univ .x (.poss more)) s :=
   QBSML.universalFC M three_neFree more_neFree h
 
-/-- Under negation the enrichment is inert, `[¬(three ∨ more)]⁺ ⊨ ¬three ∧ ¬more` ((61),
-    Fact 10), so the simpler *fewer than three* blocks (61a). -/
+-- (61), Fact 10, (61a)
 theorem negation (h : support M (Formula.enrich (.neg (threeOrMore c))) s) :
     support M (.neg (.predc .three c)) s ∧ support M (.neg (.predc .more c)) s :=
   QBSML.negationStrip M (.predc _ _) (.predc _ _) h
@@ -170,13 +163,11 @@ def fig14Index : Index (Finset (Predicate × Entity)) Var Entity := (wPaQb, fun 
 
 def fig14State : Finset (Index (Finset (Predicate × Entity)) Var Entity) := {fig14Index}
 
-/-- The accessibility is state-based on the Fig. 14 state, so obviation is not an
-    artefact of dropping the frame condition behind ignorance. -/
+-- Fig. 14
 theorem fig14_stateBased :
     Team.IsStateBased fig14Model.access (State.worldProj fig14State) := by decide
 
-/-- As Fig. 15 shows, the universal extension splits into the `x/a` index supporting
-    `[three(x)]⁺` and the `x/b` index supporting `[more(x)]⁺`. -/
+-- Fig. 15
 theorem fig14_premise :
     support fig14Model (Formula.univ .x (.disj three more)).enrich fig14State := by
   refine ⟨?_, Finset.singleton_nonempty _⟩
@@ -196,8 +187,7 @@ theorem fig14_premise :
     decide
   · decide
 
-/-- As Fig. 16 shows, at the `x/b` index the only accessible world is `w_{PaQb}`, where
-    `three` holds of `a` alone, so `◇three(x)` fails. -/
+-- Fig. 16
 theorem fig14_conclusion_fails :
     ¬ support fig14Model (.univ .x (.conj (.poss three) (.poss more))) fig14State := by
   intro h
@@ -210,8 +200,7 @@ theorem fig14_conclusion_fails :
   obtain rfl := Option.some.inj hd
   simp [fig14Model, wPaQb, Index.world] at hP
 
-/-- The universal quantifier obviates ignorance, `[∀x(three(x) ∨ more(x))]⁺ ⊭
-    ∀x(◇three(x) ∧ ◇more(x))` ((57), Fact 4). -/
+-- (57), Fact 4
 theorem obviation :
     ∃ (M : Model (Finset (Predicate × Entity)) Entity Entity Predicate)
       (s : Finset (Index (Finset (Predicate × Entity)) Var Entity)),

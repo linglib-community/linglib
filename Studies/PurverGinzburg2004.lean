@@ -120,12 +120,11 @@ theorem definitenessPrinciple_phrase : (phrase c s head nonHead).DefinitenessPri
 theorem strong_word_iff : (word c s).Strong ↔ Disjoint c s :=
   Finset.subset_sdiff.trans (and_iff_right subset_rfl)
 
-/-- A phrase that stores none of its content holds the strong hypothesis (§4.5). -/
+-- §4.5
 theorem strong_phrase (h : Disjoint c s) : (phrase c s head nonHead).Strong :=
   (Finset.sdiff_eq_self_of_disjoint h).ge.trans Finset.subset_union_left
 
-/-- A phrase inherits the contextual parameters of each daughter (73), which gives its reprises
-their sub-constituent readings. -/
+-- (73)
 theorem cparams_subset_cparams_phrase {d : Sign} {params : Finset Kind}
     (hd : d ∈ insert head nonHead) : d.cparams ⊆ (phrase c s head nonHead params).cparams :=
   (Finset.subset_biUnion_of_mem _ hd).trans Finset.subset_union_right
@@ -161,17 +160,16 @@ stores `store`. It stores both when existentially quantified (92) and neither wh
 (93), and the variant (94) stores the complement set alone. -/
 def pair (store : Finset Kind) : Sign := .phrase {.individual, .complement} store cn {det}
 
-/-- Common nouns hold the strong hypothesis (§3.3). -/
+-- §3.3
 theorem strong_cn : cn.Strong := Sign.strong_word_iff.2 (Finset.disjoint_empty_right _)
 
 /-- Definite noun phrases hold the strong hypothesis (§4.4.2). -/
 theorem strong_np : (np .definite).Strong := Sign.strong_phrase (Finset.disjoint_empty_right _)
 
-/-- An indefinite stores its witness set, so no reprise of it queries a referent (§4.2). -/
+-- §4.2
 theorem indefinite_no_referent : Kind.individual ∉ (np .indefinite).cparams := by decide
 
-/-- The generalized-quantifier alternative makes the same parameters available as the
-witness-set account (§4.4.1). -/
+-- §4.4.1
 theorem cparams_gq (d : Definiteness) : (gq d).cparams = (np d).cparams := by
   cases d <;> decide
 
@@ -179,14 +177,13 @@ theorem cparams_gq (d : Definiteness) : (gq d).cparams = (np d).cparams := by
 only the weak hypothesis (§4.4.1). -/
 theorem not_strong_gq (d : Definiteness) : ¬ (gq d).Strong := by cases d <;> decide
 
-/-- The functional analysis of attributive definites holds only the weak hypothesis (§4.1.3). -/
+-- §4.1.3
 theorem not_strong_attributive : ¬ attributive.Strong := by decide
 
-/-- An attributive definite neither abstracts nor stores its content, only the function and the
-situation (§4.5). -/
+-- §4.5
 theorem attributive_not_definitenessPrinciple : ¬ attributive.DefinitenessPrinciple := by decide
 
-/-- The referential pair holds the strong hypothesis (93). -/
+-- (93)
 theorem strong_pair : (pair ∅).Strong := Sign.strong_phrase (Finset.disjoint_empty_right _)
 
 /-! ### The corpus readings -/
@@ -220,8 +217,7 @@ deriving Decidable
 theorem rows_predicted : ∀ r ∈ Examples.all, ∃ s ∈ r.parse? "np" signOfNP, s.Predicts r := by
   decide
 
-/-- Storing the complement set (94) does not predict the complement-set reading of (90), which needs
-abstraction of both members (93). -/
+-- (94), (90), (93)
 theorem not_predicts_ex90 : ¬ (pair {.complement}).Predicts ex90 := by decide
 
 /-! ### Witness sets and truth conditions -/
@@ -230,14 +226,12 @@ section Witness
 
 variable {α : Type*} {Q : NP α} {A X : α → Prop}
 
-/-- A quantifier true of the empty set has a witness inside every predicate, so (85) cannot
-represent *few* or *no* (§5.5). -/
+-- (85), §5.5
 theorem witness_subset_of_empty (hQ : Q fun _ ↦ False) (X : α → Prop) :
     ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
   ⟨fun _ ↦ False, ⟨fun _ ↦ False.elim, hQ⟩, fun _ ↦ False.elim⟩
 
-/-- The equivalence (24) of increasing quantifiers fails of a quantifier that holds of the empty
-set and not of every predicate. -/
+-- (24)
 theorem not_witness_iff_of_empty (hQ : Q fun _ ↦ False) (hX : ¬ Q X) :
     ¬ ∀ Y, Q Y ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → Y x :=
   fun h ↦ hX ((h X).2 (witness_subset_of_empty hQ X))

@@ -116,8 +116,7 @@ theorem denn_pair_not_denn_singleton (h : ∀ s, Proceed s ↔ s ⊆ p ∨ s ⊆
   · exact ⟨p, by simp, hp⟩
   · exact ⟨q, by simp, hq'⟩
 
-/-- In Two Annas ((4), (20)), *denn* is licensed in the wh-question *which Anna do you mean* and not
-in the polar question. -/
+-- (4), (20)
 theorem twoAnnas (hp : p ≠ Set.univ) :
     Denn (· ∈ polar p) {p, pᶜ} ∧ ¬ Denn (· ∈ polar p) {p} :=
   denn_pair_not_denn_singleton (λ _ => mem_polar)

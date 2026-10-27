@@ -54,8 +54,7 @@ variable {W : Type*} (w : W)
 
 /-! ### The denotation -/
 
-/-- (26): *whether p* has the alternatives `p` and its negation, and at a `p`-world denotes
-the singleton of `p`. -/
+-- (26)
 theorem trueAnswers_pair_of_mem {p : Set W} (h : w ∈ p) : trueAnswers {p, pᶜ} w = {p} := by
   ext q
   simp only [mem_trueAnswers, Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -83,8 +82,7 @@ theorem trueAnswers_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.uni
 
 variable {E : Type*} (D : Set E) (P : E → Set W)
 
-/-- (34): *which girl sleeps*, with one alternative per girl, denotes the propositions that a
-sleeping girl sleeps. -/
+-- (34)
 theorem mem_trueAnswers_image_iff (q : Set W) :
     q ∈ trueAnswers (P '' D) w ↔ ∃ e ∈ D, w ∈ P e ∧ q = P e := by
   simp only [mem_trueAnswers, Set.mem_image]

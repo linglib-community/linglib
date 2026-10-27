@@ -107,7 +107,6 @@ theorem before_of_beforeEver (hB : (timeTrace B).Nonempty) :
   fun ⟨a, ha, h⟩ => let ⟨b, hb⟩ := hB
     ⟨a, ⟨ha, fun haB => lt_irrefl a (h a haB)⟩, b, hb, h b hb⟩
 
-/-- For a non-repeating *q*, *before* is *before ever* (§V). -/
 theorem before_iff_beforeEver (hB : (timeTrace B).OrdConnected) :
     Anscombe.before A B ↔ Tense.beforeEver A B ∧ (timeTrace B).Nonempty :=
   ⟨fun ⟨a, ⟨ha, haB⟩, b, hb, hab⟩ =>
@@ -121,7 +120,6 @@ theorem before_not_beforeEver :
 
 /-! ### Instantaneous events (§VI–§VIII) -/
 
-/-- When *p* reports an instantaneous event, *p after q* is *q before p* (§X, case 2). -/
 theorem after_iff_before_of_instantaneous (hA : Instantaneous A) :
     Anscombe.after A B ↔ Anscombe.before B A := by
   obtain ⟨a, ha⟩ := hA
@@ -129,7 +127,6 @@ theorem after_iff_before_of_instantaneous (hA : Instantaneous A) :
     Set.mem_sdiff]
   exact ⟨fun ⟨b, hb, h⟩ => ⟨b, ⟨hb, h.ne⟩, h⟩, fun ⟨b, ⟨hb, _⟩, h⟩ => ⟨b, hb, h⟩⟩
 
-/-- An instantaneous *p* is not both before and after a non-repeating *q* (§X, case 1). -/
 theorem not_after_of_before_of_instantaneous (hA : Instantaneous A)
     (hB : (timeTrace B).OrdConnected) (h : Anscombe.before A B) : ¬ Anscombe.after A B := by
   obtain ⟨a, ha⟩ := hA
@@ -139,7 +136,6 @@ theorem not_after_of_before_of_instantaneous (hA : Instantaneous A)
   subst ht ha'
   exact ha'B (hB.out hb hb' ⟨hbt.le, ha'b'.le⟩)
 
-/-- A stretch can be both before and after an instantaneous event (§X, case 1). -/
 theorem after_and_before_of_extended :
     ∃ A B : Set (NonemptyInterval ℤ), Instantaneous B ∧ Anscombe.before A B ∧ Anscombe.after A B :=
   ⟨Set.Iic ⟨(1, 7), by decide⟩, {pure 4}, ⟨4, by simp⟩,
@@ -156,14 +152,13 @@ theorem before_iff_lt_least {lb : T} (hB : (timeTrace B).OrdConnected)
     (hlb : IsLeast (timeTrace B) lb) : Anscombe.before A B ↔ ∃ t ∈ timeTrace A, t < lb := by
   rw [before_iff_beforeEver hB, beforeEver_iff_of_isLeast hlb, and_iff_left ⟨lb, hlb.1⟩]
 
-/-- *p after q* is *p after q began* (§III (3), §X case 3a); *q before p* gives it too
-(`after_of_before`, case 3b). -/
+-- (3)
 theorem after_iff_least_lt {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     Anscombe.after A B ↔ ∃ t ∈ timeTrace A, lb < t :=
   ⟨fun ⟨a, ha, _, ht', h⟩ => ⟨a, ha, (hlb.2 ht').trans_lt h⟩,
     fun ⟨a, ha, h⟩ => ⟨a, ha, lb, hlb.1, h⟩⟩
 
-/-- *p after q stopped* gives *p after q* (§III (4) to (3), §X case 3c). -/
+-- (4), (3)
 theorem after_of_greatest_lt {ub : T} (hub : IsGreatest (timeTrace B) ub) :
     (∃ t ∈ timeTrace A, ub < t) → Anscombe.after A B :=
   fun ⟨a, ha, h⟩ => ⟨a, ha, ub, hub.1, h⟩

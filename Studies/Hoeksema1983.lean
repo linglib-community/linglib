@@ -66,7 +66,7 @@ unions and complements, which is (22). -/
 def npComparative : CompleteLatticeHom (Set (Set Entity)) (Set Entity) :=
   setPreimage fun x ↦ μ ⁻¹' Set.Iio (μ x)
 
-/-- The NP-comparative is monotone increasing (Fact 3), as every homomorphism is. -/
+-- Fact 3
 theorem npComparative_monotone : Monotone (npComparative μ) :=
   OrderHomClass.mono _
 
@@ -85,13 +85,13 @@ holds exactly when `a` falls under `f` of the quantifier that the name of `b` de
 def PreservesOrdering (f : Set (Set Entity) → Set Entity) : Prop :=
   ∀ a b, μ b < μ a ↔ a ∈ f (NP.individual b)
 
-/-- The NP-comparative preserves the ordering, as the truth conditions of (30) require. -/
+-- (30)
 theorem npComparative_preservesOrdering : PreservesOrdering μ (npComparative μ) :=
   fun _ _ ↦ Iff.rfl
 
 variable {μ}
 
-/-- Two maps that preserve the ordering agree on every proper name (Fact 1). -/
+-- Fact 1
 theorem PreservesOrdering.apply_individual {f g : Set (Set Entity) → Set Entity}
     (hf : PreservesOrdering μ f) (hg : PreservesOrdering μ g) (b : Entity) :
     f (NP.individual b) = g (NP.individual b) :=

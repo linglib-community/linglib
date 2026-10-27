@@ -166,8 +166,7 @@ theorem disjoint_privativeE (N : DualContent W E) :
 theorem privativeE_le_compl (N : DualContent W E) : privativeE made r g N ≤ (N.quale r)ᶜ :=
   inf_le_left.trans inf_le_right
 
-/-- For an artifact, whose agentive is being made for its function as in (8), a fake was not made
-to serve the function (10). -/
+-- (8), (10)
 theorem fake_not_made_for_function {N : DualContent W E}
     (h : N.quale .agentive = made (N.quale .telic)) :
     (fake made N).extension ≤ (made (N.quale .telic))ᶜ :=
@@ -216,14 +215,14 @@ theorem fake_not_formal_not_telic :
   ⟨fun _ ↦ ⊤, ⟨fun _ x ↦ x, fun | .telic => ⊤ | _ => ⊥⟩, false,
     by simp [fake, privativeE], by simp, trivial⟩
 
-/-- A fake N need not be made to function like an N, which a counterfeit N is (footnote 14). -/
+-- footnote 14
 theorem fake_not_counterfeit :
     ∃ (made : (Unit → Bool → Prop) → Unit → Bool → Prop) (N : DualContent Unit Bool) (x : Bool),
       (fake made N).extension () x ∧ ¬ counterfeitE made N () x :=
   ⟨id, ⟨fun _ x ↦ x, fun | .formal => ⊤ | _ => ⊥⟩, false,
     by simp [fake, privativeE], by simp [counterfeitE, privativeE]⟩
 
-/-- An artificial N need not be made to look like an N, which fakes and counterfeits are (12). -/
+-- (12)
 theorem artificial_not_fake_not_counterfeit :
     ∃ (made : (Unit → Bool → Prop) → Unit → Bool → Prop) (N : DualContent Unit Bool) (x : Bool),
       artificialE made N () x ∧ ¬ (fake made N).extension () x ∧ ¬ counterfeitE made N () x :=
@@ -231,7 +230,7 @@ theorem artificial_not_fake_not_counterfeit :
     by simp [artificialE, privativeE], by simp [fake, privativeE],
     by simp [counterfeitE, privativeE]⟩
 
-/-- A fake N may have an N's constitution, as a fake gun may be made of gun parts (footnote 17). -/
+-- footnote 17
 theorem fake_constitutive :
     ∃ (made : (Unit → Bool → Prop) → Unit → Bool → Prop) (N : DualContent Unit Bool) (x : Bool),
       (fake made N).extension () x ∧ N.quale .constitutive () x :=
@@ -249,8 +248,7 @@ theorem fake_bracketing (B N : DualContent W E) :
   ⟨le_inf inf_le_right (inf_le_left.trans (disjoint_privativeE B).le_compl_right),
     disjoint_privativeE _⟩
 
-/-- On [fake [B N]], something not from the brand B and made to look like a B N is a fake B N (p.
-7:15). -/
+-- p. 7
 theorem fake_brand_counterfeit_reading {B N : DualContent W E} {w : W} {x : E}
     (hB : ¬ B.extension w x) (hA : ¬ B.quale .agentive w x)
     (hF : made (B.quale .formal ⊓ N.quale .formal) w x) :

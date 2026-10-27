@@ -68,7 +68,7 @@ def bonaFideGeneric (w : W) : Prop := □[R] (fun v ↦ ∀ a ∈ k v, P a v) w
 predicate distributes over its members. -/
 abbrev distributiveKindPred (w : W) : Prop := ∀ a ∈ k w, P a w
 
-/-- The generic parse is Distributive Kind Predication at every accessible world (28). -/
+-- (28)
 theorem bonaFideGeneric_iff :
     bonaFideGeneric R k P w ↔ ∀ v, w ~[R] v → distributiveKindPred k P v :=
   Iff.rfl
@@ -88,8 +88,7 @@ theorem not_bonaFideGeneric_of_exception {v : W} (hv : w ~[R] v) {a : Atom} (ha 
 def singularIndefiniteGeneric (N : Atom → W → Prop) (w : W) : Prop :=
   □[R] (fun v ↦ ∀ a, N a v → P a v) w
 
-/-- The generic parse of a kind-denoting plural is the singular indefinite generic over kind
-membership (28a). -/
+-- (28a)
 theorem bonaFideGeneric_iff_singularIndefiniteGeneric :
     bonaFideGeneric R k P w ↔ singularIndefiniteGeneric R P (fun a v ↦ a ∈ k v) w :=
   Iff.rfl
@@ -124,8 +123,7 @@ theorem cumulativeKindPred_of_cumulativeBelowGen [R.IsRefl] (hne : (k w).Nonempt
 /-- Derived Property Predication (105b) is the low-scoped existential over a property. -/
 def dpp (N : Atom → W → Prop) (w : W) : Prop := ∃ a, N a w ∧ P a w
 
-/-- Distributive Kind Predication entails Derived Property Predication over the same noun once the
-kind has members (105). -/
+-- (105)
 theorem dpp_of_distributiveKindPred (hne : (k w).Nonempty)
     (h : distributiveKindPred k P w) : dpp P (fun a v ↦ a ∈ k v) w :=
   let ⟨a, ha⟩ := hne

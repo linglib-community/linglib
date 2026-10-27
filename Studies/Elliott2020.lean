@@ -164,7 +164,7 @@ def IsFalse (m : StateSet D SignType) (g : PartialAssign ℕ D) : Prop :=
 def IsIndet (m : StateSet D SignType) (g : PartialAssign ℕ D) : Prop :=
   extension 1 m g = ∅ ∧ extension (-1) m g = ∅ ∧ (extension 0 m g).Nonempty
 
-/-- `m` is true or false at `g` iff it has a positive or a negative output (Def. 3.2). -/
+-- Def. 3.2
 theorem isTrue_or_isFalse_iff {m : StateSet D SignType} {g : PartialAssign ℕ D} :
     IsTrue m g ∨ IsFalse m g ↔
       (extension 1 m g).Nonempty ∨ (extension (-1) m g).Nonempty := by
@@ -248,14 +248,14 @@ def exists_ (e : Existential) (n : ℕ) (m : StateSet D SignType) : StateSet D S
       (IsIndet m g ∧ p = (0, g)) := by
   simp only [positiveClosure, Set.mem_union, Set.mem_ofPred_eq, or_assoc]
 
-/-- Positive closure keeps the positive extension ((19a)). -/
+-- (19a)
 @[simp] theorem extension_true_positiveClosure (m : StateSet D SignType) (g : PartialAssign ℕ D) :
     extension 1 (positiveClosure m) g = extension 1 m g := by
   ext h
   simp only [mem_extension, mem_positiveClosure, true_and, Prod.mk.injEq]
   exact ⟨by rintro (h | ⟨-, ⟨⟩, -⟩ | ⟨-, ⟨⟩, -⟩); exact h, Or.inl⟩
 
-/-- The negative extension of a positive closure is the input, when `m` is false ((19b)). -/
+-- (19b)
 theorem extension_false_positiveClosure (m : StateSet D SignType) (g : PartialAssign ℕ D) :
     extension (-1) (positiveClosure m) g = {h | IsFalse m g ∧ h = g} := by
   ext h
@@ -333,7 +333,7 @@ theorem not_exists_bind_eq_positiveClosure :
 At `1` the relation a sentence induces (`StateT.rel`) is its positive extension, a DPL
 relation between assignments. -/
 
-/-- The positive extension of a conjunction is the DPL composition of its conjuncts' ((26a)). -/
+-- (26a)
 theorem rel_true_conj (m n : StateSet D SignType) :
     StateT.rel (conj m n) 1 = StateT.rel m 1 ○ StateT.rel n 1 := by
   rw [conj, StateT.rel_map_seq]
@@ -341,7 +341,7 @@ theorem rel_true_conj (m n : StateSet D SignType) :
   simp only [Set.mem_iUnion, exists_prop, SignType.inf_eq_one_iff]
   exact ⟨fun ⟨_, _, ⟨rfl, rfl⟩, h⟩ ↦ h, fun h ↦ ⟨_, _, ⟨rfl, rfl⟩, h⟩⟩
 
-/-- The negative extension of a disjunction is the DPL composition of its disjuncts' ((32b)). -/
+-- (32b)
 theorem rel_false_disj (m n : StateSet D SignType) :
     StateT.rel (disj m n) (-1) = StateT.rel m (-1) ○ StateT.rel n (-1) := by
   rw [disj, StateT.rel_map_seq]
@@ -349,7 +349,7 @@ theorem rel_false_disj (m n : StateSet D SignType) :
   simp only [Set.mem_iUnion, exists_prop, SignType.sup_eq_neg_one_iff]
   exact ⟨fun ⟨_, _, ⟨rfl, rfl⟩, h⟩ ↦ h, fun h ↦ ⟨_, _, ⟨rfl, rfl⟩, h⟩⟩
 
-/-- A negated existential is a test, by positive closure ((22a)). -/
+-- (22a)
 theorem isTest_rel_true_neg_exists (e : Existential) (n : ℕ) (m : StateSet D SignType) :
     Update.IsTest (StateT.rel (neg (exists_ e n m)) 1) := by
   rintro ⟨g, h⟩ hgh
@@ -358,8 +358,7 @@ theorem isTest_rel_true_neg_exists (e : Existential) (n : ℕ) (m : StateSet D S
   rw [exists_, extension_false_positiveClosure] at this
   exact this.2.symm
 
-/-- A negated DPL existential is not a test, since it resets its variable to the individuals its
-scope is false of ((18)). -/
+-- (18)
 theorem not_isTest_rel_true_neg_dplExists [Nonempty D] :
     ¬ Update.IsTest (StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) 1) := by
   obtain ⟨x⟩ := ‹Nonempty D›
@@ -375,8 +374,7 @@ theorem not_isTest_rel_true_neg_dplExists [Nonempty D] :
 
 /-! ### The extensions of the connectives -/
 
-/-- An output verifies `m ∨ n` iff either `m` is verified and `n` has an output, or `m` has an
-output and `n` is verified ((32a)). -/
+-- (32a)
 theorem mem_extension_true_disj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
     i ∈ extension 1 (disj m n) g ↔
       (∃ h ∈ extension 1 m g, ∃ u, (u, i) ∈ n h) ∨
@@ -384,7 +382,7 @@ theorem mem_extension_true_disj {m n : StateSet D SignType} {g i : PartialAssign
   simp only [mem_extension, disj, Set.mk_mem_stateT_map_seq]
   grind [SignType.sup_eq_one_iff]
 
-/-- An output falsifies `m ∨ n` when it falsifies `n` after an output falsifying `m` ((32b)). -/
+-- (32b)
 theorem mem_extension_false_disj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
     i ∈ extension (-1) (disj m n) g ↔ ∃ h ∈ extension (-1) m g, i ∈ extension (-1) n h := by
   have : (g, i) ∈ StateT.rel (disj m n) (-1) ↔
@@ -392,8 +390,7 @@ theorem mem_extension_false_disj {m n : StateSet D SignType} {g i : PartialAssig
     rw [rel_false_disj]
   simpa [SetRel.mem_comp] using this
 
-/-- An output verifies `m → n` iff either `m` is falsified and `n` has an output, or `m` has an
-output and `n` is verified ((38a)). -/
+-- (38a)
 theorem mem_extension_true_imp {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
     i ∈ extension 1 (imp m n) g ↔
       (∃ h ∈ extension (-1) m g, ∃ u, (u, i) ∈ n h) ∨
@@ -401,8 +398,7 @@ theorem mem_extension_true_imp {m n : StateSet D SignType} {g i : PartialAssign 
   simp only [mem_extension, imp, Set.mk_mem_stateT_map_seq]
   grind [SignType.sup_eq_one_iff, neg_eq_iff_eq_neg]
 
-/-- An output falsifies `m ∧ n` iff either `m` is falsified and `n` has an output, or `m` has an
-output and `n` is falsified ((26b)). -/
+-- (26b)
 theorem mem_extension_false_conj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
     i ∈ extension (-1) (conj m n) g ↔
       (∃ h ∈ extension (-1) m g, ∃ u, (u, i) ∈ n h) ∨
@@ -464,7 +460,7 @@ theorem neg_atom (n : ℕ) : neg (atom W n) = atom Wᶜ n := by
   exact ⟨by rintro ⟨t, ⟨rfl, rfl⟩, rfl⟩; exact ⟨key, rfl⟩,
     by rintro ⟨rfl, rfl⟩; exact ⟨_, ⟨rfl, rfl⟩, key.symm⟩⟩
 
-/-- The positive extension of `εₙ W n` consists of the resets of `n` to a `W` ((17a)). -/
+-- (17a)
 theorem extension_true_dplExists_atom (hf : e.Fresh g n) :
     extension 1 (dplExists e n (atom W n)) g = {h | ∃ x ∈ W, h = g.update n x} := by
   ext h
@@ -474,7 +470,7 @@ theorem extension_true_dplExists_atom (hf : e.Fresh g n) :
   · rintro ⟨x, hx, rfl⟩; exact ⟨x, SignType.ofProp_eq_one_iff.1 hx.symm, rfl⟩
   · rintro ⟨x, hx, rfl⟩; exact ⟨x, by simp [hx], rfl⟩
 
-/-- The negative extension of `εₙ W n` consists of the resets of `n` to a non-`W` ((17b)). -/
+-- (17b)
 theorem extension_false_dplExists_atom (hf : e.Fresh g n) :
     extension (-1) (dplExists e n (atom W n)) g = {h | ∃ x ∉ W, h = g.update n x} := by
   ext h
@@ -494,7 +490,7 @@ theorem extension_indet_dplExists_atom (hf : e.Fresh g n) :
   rw [mem_atom_update] at hx
   exact SignType.ofProp_ne_zero hx.1.symm
 
-/-- The positive extension of `∃ₙ W n` ((20a)). -/
+-- (20a)
 theorem extension_true_exists_atom (hf : e.Fresh g n) :
     extension 1 (exists_ e n (atom W n)) g = {h | ∃ x ∈ W, h = g.update n x} := by
   rw [exists_, extension_true_positiveClosure, extension_true_dplExists_atom W hf]
@@ -517,14 +513,12 @@ theorem extension_false_exists_atom [Nonempty D] (hf : e.Fresh g n) :
   ext h
   simp only [Set.mem_ofPred_eq, isFalse_dplExists_atom_iff W hf, and_comm]
 
-/-- The negation of an existential is a test, whose positive extension is the input when nothing
-is a `W` ((22a)). -/
+-- (22a)
 theorem extension_true_neg_exists_atom [Nonempty D] (hf : e.Fresh g n) :
     extension 1 (neg (exists_ e n (atom W n))) g = {h | h = g ∧ W = ∅} := by
   rw [extension_neg, extension_false_exists_atom W hf]
 
-/-- The negative extension of `¬ ∃ₙ W n` resets `n` to the `W`s, the outputs double negation
-passes on ((22b)). -/
+-- (22b)
 theorem extension_false_neg_exists_atom (hf : e.Fresh g n) :
     extension (-1) (neg (exists_ e n (atom W n))) g = {h | ∃ x ∈ W, h = g.update n x} := by
   rw [extension_neg, _root_.neg_neg, extension_true_exists_atom W hf]
@@ -581,22 +575,19 @@ theorem extension_false_bathroom (hf : e.Fresh g 1) :
   · rintro ⟨x, hxB, hxU, rfl⟩
     exact ⟨g.update 1 x, ⟨x, hxB, rfl⟩, by rw [mem_extension, mem_atom_update]; simp [hxU]⟩
 
-/-- The donkey conditional `∃₁ B 1 → U 1` has the bathroom sentence's positive extension, hence
-existential truth conditions ((42)). -/
+-- (42)
 theorem extension_true_donkey [Nonempty D] (hf : e.Fresh g 1) :
     extension 1 (imp (exists_ e 1 (atom B 1)) (atom U 1)) g =
       {h | h = g ∧ B = ∅} ∪ {h | ∃ x ∈ B, x ∈ U ∧ h = g.update 1 x} := by
   rw [imp_eq_disj_neg, extension_true_bathroom B U hf]
 
-/-- The donkey conditional is falsified by the resets of 1 to someone outside and unhappy
-((43)). -/
+-- (43)
 theorem extension_false_donkey (hf : e.Fresh g 1) :
     extension (-1) (imp (exists_ e 1 (atom B 1)) (atom U 1)) g =
       {h | ∃ x ∈ B, x ∉ U ∧ h = g.update 1 x} := by
   rw [imp_eq_disj_neg, extension_false_bathroom B U hf]
 
-/-- A pronoun before its indefinite, `P 1 ∧ ∃₁ Q 1`, is never verified at an input not valuing
-1 ((27)). -/
+-- (27)
 theorem extension_true_conj_atom_exists (P Q : Set D) (hg : g 1 = ⊥) :
     extension 1 (conj (atom P 1) (exists_ e 1 (atom Q 1))) g = ∅ := by
   ext i
@@ -618,8 +609,7 @@ theorem extension_true_conj_exists_atom (P Q : Set D) (hf : e.Fresh g 1) :
   · rintro ⟨x, hxP, hxQ, rfl⟩
     exact ⟨g.update 1 x, ⟨x, hxP, rfl⟩, by rw [mem_extension, mem_atom_update]; simp [hxQ]⟩
 
-/-- `∃₁ P 1 ∧ Q 1` is falsified by the input if nothing is a `P` and by the resets of 1 to a `P`
-that is not a `Q` ((30), (31)). -/
+-- (30), (31)
 theorem extension_false_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fresh g 1) :
     extension (-1) (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
       {h | h = g ∧ P = ∅} ∪ {h | ∃ x ∈ P, x ∉ Q ∧ h = g.update 1 x} := by
@@ -751,8 +741,7 @@ theorem ne_bot_of_mem_extension_true_exists {e : Existential} {n : ℕ} {m : Sta
 
 /-! ### The guarded existential and the dynamic Hurford constraint -/
 
-/-- With the guarded existential, *a linguist is here and a philosopher is here* with one index is
-never true (fn. 26 and (61)). -/
+-- fn. 26, (61)
 theorem extension_true_conj_exists_guarded (L P : Set D) (g : PartialAssign ℕ D) :
     extension 1 (conj (exists_ .guarded 1 (atom L 1)) (exists_ .guarded 1 (atom P 1))) g =
       ∅ := by
@@ -787,8 +776,7 @@ theorem fresh_of_isFalse_dplExists {e : Existential} {n : ℕ} {m : StateSet D S
   · exact hf hf'
   · exact absurd (Prod.mk.inj hj).1 (by decide)
 
-/-- With the guarded existential, (70) marks *either someone is in the audience, or they're sitting
-down* odd ((65)). -/
+-- (70), (65)
 theorem hurfordOdd_someone_or_they :
     HurfordOdd (fun M : Set D × Set D ↦ exists_ .guarded 1 (atom M.1 1)) (fun M ↦ atom M.2 1) := by
   refine .inl fun M g ↦ ?_
@@ -801,8 +789,7 @@ theorem hurfordOdd_someone_or_they :
   rw [mem_extension, mem_atom, valueAt_of_eq_bot _ hg] at hi
   simp at hi
 
-/-- With the guarded existential, (70) marks the bathroom sentence *either there is no bathroom, or
-it's upstairs* odd. -/
+-- (70)
 theorem hurfordOdd_bathroom :
     HurfordOdd (fun M : Set D × Set D ↦ neg (exists_ .guarded 1 (atom M.1 1)))
       (fun M ↦ atom M.2 1) := by
@@ -816,8 +803,7 @@ theorem hurfordOdd_bathroom :
   rw [extension_neg, mem_extension, mem_atom, valueAt_of_eq_bot _ hg] at hi
   simp at hi
 
-/-- With the destructive existential, (70) does not mark (65) odd, because its first test is
-verified where 1 is already valued. -/
+-- (70), (65)
 theorem not_hurfordOdd_someone_or_they_destructive :
     ¬ HurfordOdd (fun M : Set Bool × Set Bool ↦ exists_ .destructive 1 (atom M.1 1))
       (fun M ↦ atom M.2 1) := by
@@ -841,7 +827,7 @@ theorem not_hurfordOdd_someone_or_they_destructive :
         valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
       simp
 
-/-- With the destructive existential, (70) does not mark the bathroom sentence odd. -/
+-- (70)
 theorem not_hurfordOdd_bathroom_destructive :
     ¬ HurfordOdd (fun M : Set Bool × Set Bool ↦ neg (exists_ .destructive 1 (atom M.1 1)))
       (fun M ↦ atom M.2 1) := by
@@ -865,8 +851,7 @@ theorem not_hurfordOdd_bathroom_destructive :
         valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
       simp
 
-/-- (70) marks the Hurford disjunction *either someone is in the audience, or someone in the
-audience is sitting down* odd, for either existential ((68)). -/
+-- (70), (68)
 theorem hurfordOdd_someone_or_someone_sitting [Nonempty D] (e : Existential) :
     HurfordOdd (fun M : Set D × Set D ↦ exists_ e 1 (atom M.1 1))
       (fun M ↦ exists_ e 2 (conj (atom M.1 2) (atom M.2 2))) := by
@@ -910,24 +895,21 @@ theorem Existential.fresh_of_eq_bot {e : Existential} {g : PartialAssign ℕ D} 
   · trivial
   · exact h
 
-/-- After an existential its variable is familiar, so the familiarity presupposition of a later
-pronoun is satisfied (§3.5). -/
+-- §3.5
 theorem familiar_update_exists (e : Existential) (n : ℕ) (c : State W ℕ D)
     (φ : W → StateSet D SignType) (hφ : ∀ w, Expanding (φ w)) :
     State.Familiar (update c fun w ↦ exists_ e n (φ w)) n := by
   rintro ⟨w, h⟩ ⟨-, ⟨w', g⟩, -, rfl, hh⟩
   exact ne_bot_of_mem_extension_true_exists (hφ _) hh
 
-/-- Familiarity persists through the update with any sentence whose outputs value what their
-inputs value (§3.5). -/
+-- §3.5
 theorem familiar_update {c : State W ℕ D} {n : ℕ} (h : State.Familiar c n)
     {φ : W → StateSet D SignType} (hφ : ∀ w, Expanding (φ w)) :
     State.Familiar (update c φ) n := by
   rintro ⟨w, i⟩ ⟨-, ⟨w', g⟩, hq, rfl, hi⟩
   exact (hφ w').domain_subset hi (h _ hq)
 
-/-- A pronoun out of the blue is neither true nor false, so the initial state does not admit it
-((11a)). -/
+-- (11a)
 theorem not_defined_initial_atom [Nonempty W] (P : W → Set D) :
     ¬ Defined (⊤ : State W ℕ D) fun w ↦ atom (P w) 1 := by
   obtain ⟨w⟩ := ‹Nonempty W›
@@ -995,8 +977,7 @@ theorem isTrue_or_isFalse_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fr
   · by_cases hQ : x ∈ Q
     exacts [.inl ⟨_, x, hx, hQ, rfl⟩, .inr ⟨_, .inr ⟨x, hx, hQ, rfl⟩⟩]
 
-/-- The initial state admits *a philosopher₁ is attending this talk and she₁'s sitting in the back*
-((10a)). -/
+-- (10a)
 theorem defined_initial_someone_and_they [Nonempty D] (P Q : W → Set D) :
     Defined (⊤ : State W ℕ D) fun w ↦ conj (exists_ e 1 (atom (P w) 1)) (atom (Q w) 1) :=
   fun _ hp ↦ isTrue_or_isFalse_conj_exists_atom _ _
@@ -1011,14 +992,12 @@ theorem isTrue_or_isFalse_bathroom [Nonempty D] (B U : Set D) (hf : e.Fresh g 1)
   · by_cases hU : x ∈ U
     exacts [.inl ⟨_, .inr ⟨x, hx, hU, rfl⟩⟩, .inr ⟨_, x, hx, hU, rfl⟩]
 
-/-- The initial state admits the bathroom sentence *either there is no₁ bathroom, or it₁'s
-upstairs*, although its pronoun follows a negated indefinite ((33)). -/
+-- (33)
 theorem defined_initial_bathroom [Nonempty D] (B U : W → Set D) :
     Defined (⊤ : State W ℕ D) fun w ↦ disj (neg (exists_ e 1 (atom (B w) 1))) (atom (U w) 1) :=
   fun _ hp ↦ isTrue_or_isFalse_bathroom _ _ (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
 
-/-- After *nobody is here*, in a state with a world where nobody is here, 1 is not familiar ((4),
-(5)). -/
+-- (4), (5)
 theorem not_familiar_update_neg_exists [Nonempty D] (P : W → Set D) {w : W} (hw : P w = ∅) :
     ¬ State.Familiar (update (⊤ : State W ℕ D) fun w ↦ neg (exists_ e 1 (atom (P w) 1))) 1 := by
   intro hfam

@@ -134,7 +134,6 @@ theorem S1_real_singleton_lt_iff (hα : 0 < α) :
   rw [S1, Kernel.softmax_coe_real_singleton_lt_iff (fun _ m ↦ α * groupUtility νS G m),
     mul_lt_mul_iff_right₀ hα]
 
-/-- A message every member of a group prefers is the one the speaker favours. -/
 theorem S1_real_singleton_lt_of_forall (hα : 0 < α) (hG : G ≠ 0)
     (h : ∀ L ∈ G, socialUtility νS L m < socialUtility νS L m') :
     (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} :=
@@ -346,8 +345,6 @@ theorem dogwhistles_to_antiVaxxers (hα : 0 < α) (hG : G ≠ 0) (h : ∀ L ∈ 
     obtain rfl := h L hL
     linarith [advantage_antiVaxxer, log_savvy_bounds.1]
 
-/-- A savvy pro-vaxxer weighs more against the dogwhistle than an unsavvy one: where Stein
-disavows to a group with an unsavvy pro-vaxxer, she disavows to it with a savvy one instead. -/
 theorem disavows_of_savvy_for_unsavvy (hα : 0 < α)
     (h : (S1 α 0 (unsavvyProVaxxer ::ₘ G) π).real {.bigPharma} <
       (S1 α 0 (unsavvyProVaxxer ::ₘ G) π).real {.corporateScientists}) :

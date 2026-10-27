@@ -135,8 +135,7 @@ theorem unmarkedOrders_participial :
         [.N, .A, .rc .participialStage, .Num, .Dem]].map (·.map Slot.token) := by
   decide +kernel
 
-/-- Restrictives are merged below the demonstrative and non-restrictives above it, as in the orders
-of (171)–(175). -/
+-- (171), (175)
 theorem unmarkedOrders_dem :
     unmarkedOrders [.rc .restrictive, .Dem] =
         [[.Dem, .rc .restrictive, .N], [.N, .rc .restrictive, .Dem]].map (·.map Slot.token) ∧
@@ -246,8 +245,7 @@ instance (r : RC) : Decidable r.WellFormed := decidable_of_iff _ r.wellFormed_if
 
 variable {r : RC}
 
-/-- The gap strategy is well formed exactly with an internal Head the size of the external one
-(§4.2). -/
+-- §4.2
 theorem RC.wellFormed_iff_of_invariantRelativizer (hs : r.strategy = .invariantRelativizer) :
     r.WellFormed ↔ r.type.Admits r.derivation ∧ r.internalHead = r.type.externalHead := by
   simp [RC.wellFormed_iff, hs]

@@ -310,8 +310,7 @@ theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" �
     some "argument", some "ellipsis", some "prenominal", some "displacement"] := by
   decide
 
-/-- The model decides the coordinated predicates, each of which must meet the selector's
-restrictions ((20)–(22)). -/
+-- (20), (22)
 theorem predicate_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "predicate" →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
       (Admits (Satisfies (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
@@ -324,30 +323,27 @@ theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some
       (Admits (Licensed (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
   decide
 
-/-- The accounts that make the first conjunct prominent get every coordination before its
-selector backwards ((41)–(43)). -/
+-- (41), (43)
 theorem argument_rows_first : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
     side? e = some .headFinal → 2 ≤ (e.features "conjunct").length →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
       (Admits (Licensed (List.take 1) cats) ps ↔ e.judgment ≠ .acceptable) := by
   decide
 
-/-- The model decides the fragment answers and split questions, which strand a phrase by
-ellipsis of its selector ((54)–(55), (60), (62), (76)). -/
+-- (54), (55), (60), (62), (76)
 theorem ellipsis_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "ellipsis" →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
       (Admits (Licensed (fun _ ↦ []) cats) ps ↔ e.judgment = .acceptable) := by
   decide
 
-/-- The model decides the prenominal modifiers, alone or coordinated ((44), p. 15,
-(56a), (57a)). -/
+-- (44), p. 15, (56a), (57a)
 theorem prenominal_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "prenominal" →
     ∃ ms ∈ modifiers? e,
       ((ms = [none] ∨ ∃ m₁ m₂, ms = [m₁, m₂] ∧ NominalCoordination m₁ m₂) ↔
         e.judgment = .acceptable) := by
   decide
 
-/-- The model decides the displaced prenominal modifiers ((56b)–(57c)). -/
+-- (56b), (57c)
 theorem displacement_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "displacement" →
     ∃ ms ∈ modifiers? e, ((∃ m, ms = [m] ∧ Displaced m) ↔ e.judgment = .acceptable) := by
   decide

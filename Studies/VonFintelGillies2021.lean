@@ -46,7 +46,7 @@ abbrev notBlue : World → Prop := (· ≠ .w1)
 
 variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
-/-- When can't `φ` is true (`B_K ⊆ ⟦¬φ⟧`), might `φ` is false (Observation 5). -/
+-- Observation 5
 theorem cant_might_exclusion (hCant : kernelCant k φ w = 1) : kernelMight k φ w = -1 := by
   rw [kernelMight_eq_neg_kernelCant, Pi.neg_apply, hCant]
 

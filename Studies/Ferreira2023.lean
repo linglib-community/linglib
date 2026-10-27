@@ -140,7 +140,7 @@ theorem strongNecessity_revise (sim : Background W) (h : strongNecessity f g q w
 betterness. -/
 def bestOf (R : W → W → Prop) (D : Set W) : Set W := {u | u ∈ D ∧ ∀ v ∈ D, ¬ R v u}
 
-/-- Under the betterness of an ordering source (130), the best worlds are the substrate's. -/
+-- (130)
 theorem bestOf_strictlyBetter (A : Set (W → Prop)) (D : Set W) :
     bestOf (fun u v ↦ u <[A] v) D = (premisePreorder A).minimals D :=
   Set.ext fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦ not_and_not_right
@@ -151,8 +151,7 @@ def starstar (g : Background W) (p : W → Prop) (w : W) (D : Set W) (u v : W) :
   (u <[g w] v) ∨ (p u ∧ ¬ p v ∧
     u ∈ (premisePreorder (g w)).minimals D ∧ v ∈ (premisePreorder (g w)).minimals D)
 
-/-- The best worlds under the ∗∗-revision are the `p`-best of the best, the lexicographic
-refinement of (129b). -/
+-- (129b)
 theorem bestOf_starstar (g : Background W) (p : W → Prop) (w : W) (D : Set W) :
     bestOf (starstar g p w D) D =
       (premisePreorder {p}).minimals ((premisePreorder (g w)).minimals D) := by
@@ -222,7 +221,7 @@ theorem minimals_univ_g₃ : (premisePreorder (g₃ 0)).minimals Set.univ = {0, 
   revert u
   decide
 
-/-- (131) has no solution on the three-world frame. -/
+-- (131)
 theorem not_domainIndependent_starstar : ¬ DomainIndependent (starstar g₃ (· = 1) 0) := by
   intro h
   have h₁ := (domainIndependent_starstar_iff g₃ (· = 1) 0).1 h (D := {0, 1}) (D' := Set.univ)
@@ -300,7 +299,7 @@ theorem Vertex.Entails.trans {u v x : Vertex} (h₁ : u.Entails v) (h₂ : v.Ent
     u.Entails x :=
   fun _ sim hc f g p q w h ↦ h₂ _ sim hc f g p q w (h₁ _ sim hc f g p q w h)
 
-/-- X-marking the ordering source weakens, at either value of the other parameter (29). -/
+-- (29)
 theorem Vertex.entails_xg (xf : Bool) : Vertex.Entails ⟨xf, false⟩ ⟨xf, true⟩ :=
   fun _ _ _ _ _ _ _ _ h ↦ (Vertex.necessity_xg_true xf).2
     (strong_entails_weak _ _ _ _ _ ((Vertex.necessity_xg_false xf).1 h))
@@ -473,8 +472,7 @@ theorem Vertex.entails_iff (v v' : Vertex) :
   · rintro (rfl | rfl | ⟨rfl, rfl⟩)
     exacts [.refl _, entails_of_sn _, entails_xg true]
 
-/-- In (82) the X-marked and unmarked weak necessities are independent, and of the strong ones only
-the unmarked entails the other, against (82b). -/
+-- (82), (82b)
 theorem entails_82 :
     (¬ Vertex.Entails ⟨false, true⟩ ⟨true, true⟩ ∧ ¬ Vertex.Entails ⟨true, true⟩ ⟨false, true⟩) ∧
       (Vertex.Entails ⟨false, false⟩ ⟨true, false⟩ ∧
@@ -504,13 +502,11 @@ def modalAt : Vertex → ModalAuxiliary
 /-- The modal item at a vertex. -/
 def square (v : Vertex) : ModalItem := (modalAt v).toModalItem
 
-/-- The fragment's modal at a vertex is in the past imperfect exactly when the modal base is
-X-marked (135). -/
+-- (135)
 theorem tense_square : ∀ v : Vertex, (modalAt v).features .tense = some .Imp ↔ v.xf = true := by
   decide
 
-/-- The fragment's force at a vertex is weak necessity exactly when the ordering source is
-X-marked (83), (135). -/
+-- (83), (135)
 theorem forces_square :
     ∀ v : Vertex, (square v).forces = {if v.xg then .weakNecessity else .necessity} := by
   decide
@@ -735,7 +731,6 @@ theorem Pattern.consistent_iff (pat : Pattern) :
     exact ⟨Bool, f, g, p, q, true, hne, (Conjunct.holds_iff_evalP _ _ _ _ _ _).2 h₁,
       (Conjunct.holds_iff_evalP _ _ _ _ _ _).2 h₂⟩
 
-/-- A conjunct entails another exactly when it does on every valid profile. -/
 theorem Conjunct.entails_iff (c₁ c₂ : Conjunct) :
     c₁.Entails c₂ ↔ ∀ π : Profile, π.Valid → c₁.evalP π = true → c₂.evalP π = true := by
   constructor
@@ -892,7 +887,7 @@ private theorem minimals_workday_sim (w : Day) :
     ]
   cases o <;> cases h <;> cases o' <;> cases h' <;> decide
 
-/-- In (81), suspending that Peter is not in his office makes every world accessible. -/
+-- (81)
 private theorem accessibleWorlds_revise_checked (w : Day) :
     (revise sim checked atOffice).accessibleWorlds w = Set.univ := by
   rw [accessibleWorlds_revise, accessibleWorlds_checked]
@@ -901,8 +896,7 @@ private theorem accessibleWorlds_revise_checked (w : Day) :
     Set.mem_univ, iff_true]
   cases o <;> cases h <;> decide
 
-/-- In (80), suspending that Peter is not in his office on a holiday adds only holiday
-worlds. -/
+-- (80)
 private theorem accessibleWorlds_revise_holidayInfo (w : Day) :
     (revise sim holidayInfo atOffice).accessibleWorlds w = {v | v.holiday = true} := by
   rw [accessibleWorlds_revise, accessibleWorlds_holidayInfo]
@@ -910,7 +904,7 @@ private theorem accessibleWorlds_revise_holidayInfo (w : Day) :
   simp only [Set.mem_union, Set.mem_ofPred_eq, minimals_atOffice_sim, Set.mem_singleton_iff]
   cases o <;> cases h <;> decide
 
-/-- Suspending the holiday information instead makes every world accessible (footnote 18). -/
+-- footnote 18
 private theorem accessibleWorlds_revise_workday (w : Day) :
     (revise sim holidayInfo workday).accessibleWorlds w = Set.univ := by
   rw [accessibleWorlds_revise, accessibleWorlds_holidayInfo]

@@ -186,14 +186,12 @@ variable {f : Context W E P T → α} {k : Coord} (hf : DependsOn (f ∘ equivPi
   (c x i : Context W E P T)
 include hf
 
-/-- In a complement, an indexical whose operator sits below the complementizer reads the centered
-index: TP⟨author(i), addr(i), …⟩ in Nez Perce (145). -/
+-- (145)
 theorem apply_complementContext_of_mem_deSe (h : k ∈ deSe n p) :
     f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f i :=
   Kaplan.Context.apply_overwrite_of_subset hf (by simpa using h) _ _
 
-/-- An indexical whose operator sits above the complementizer reads the attitude event:
-TP⟨…, LOC(e)⟩ in Nez Perce (145). -/
+-- (145)
 theorem apply_complementContext_of_mem_eventShifted (h : k ∈ eventShifted n p) :
     f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f x := by
   have hk : k ∉ deSe n p := fun hk ↦
@@ -227,7 +225,7 @@ abbrev opPers : Finset Coord := {.agent, .addressee}
 /-- OP_ADV, the Korean bundle of OP_LOC and OP_TIME (§4.2.2). -/
 abbrev opAdv : Finset Coord := {.position, .time}
 
-/-- (172): OP_PERS is the composition of OP_ADDR and OP_AUTH. -/
+-- (172)
 theorem shiftyOp_opPers (χ : Character (Context W E P T) (Context W E P T) α) :
     shiftyOp {.addressee} (shiftyOp {.agent} χ) = shiftyOp opPers χ := by
   rw [Kaplan.shiftyOp_shiftyOp]

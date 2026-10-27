@@ -105,16 +105,14 @@ theorem condAssert_lp_meetBelnap_left :
     condAssert .lp (meetBelnap a b) c = condAssert .lp (a ⊓ b) c :=
   condAssert_congr_left (by simp) c
 
-/-- For classical values, a Cooper conjunction of conditionals asserts the conjoined material
-conditionals on the disjoined antecedents (**Conjunction**, Proposition 1). -/
+-- Proposition 1
 theorem meetBelnap_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) (hd : d ≠ 0) :
     meetBelnap (condAssert .lp a b) (condAssert .lp c d) =
       condAssert .lp (joinBelnap a c)
         (meetBelnap (joinBelnap (-a) b) (joinBelnap (-c) d)) := by
   revert ha hb hc hd; cases a <;> cases b <;> cases c <;> cases d <;> decide
 
-/-- Dually, a Cooper disjunction of conditionals asserts the disjoined conjunctions on the disjoined
-antecedents (**Disjunction**, Proposition 1). -/
+-- Proposition 1
 theorem joinBelnap_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) (hd : d ≠ 0) :
     joinBelnap (condAssert .lp a b) (condAssert .lp c d) =
       condAssert .lp (joinBelnap a c) (joinBelnap (meetBelnap a b) (meetBelnap c d)) := by
@@ -137,8 +135,7 @@ theorem sk_fails_conjunction :
           (meetBelnap (joinBelnap (-a) b) (joinBelnap (-c) d)) := by
   decide
 
-/-- **Left-Nesting** (Proposition 1): a conditional antecedent with classical consequent supposes
-exactly what the material conditional supposes. -/
+-- Proposition 1
 theorem condAssert_condAssert_material (hb : b ≠ 0) :
     condAssert .lp (condAssert .lp a b) c = condAssert .lp (joinBelnap (-a) b) c := by
   revert hb; cases a <;> cases b <;> cases c <;> decide
@@ -148,7 +145,7 @@ theorem left_nesting_needs_boolean :
       condAssert .lp (condAssert .lp a b) c = condAssert .lp (joinBelnap (-a) b) c := by
   decide
 
-/-- De Finetti's conditional identifies left with right nesting on classical values (footnote 6). -/
+-- footnote 6
 theorem condAssert_k3_left_eq_nested (ha : a ≠ 0) (hb : b ≠ 0) :
     condAssert .k3 (condAssert .k3 a b) c = condAssert .k3 a (condAssert .k3 b c) := by
   revert ha hb; cases a <;> cases b <;> cases c <;> decide
@@ -163,14 +160,12 @@ theorem condAssert_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c �
       condAssert .lp (meetBelnap (joinBelnap (-a) b) c) d := by
   revert ha hb hc hd; cases a <;> cases b <;> cases c <;> cases d <;> decide
 
-/-- Under Strong Kleene disjunction, `(A → B) ∨ (B → A)` is never false at either designation
-standard (footnote 3). -/
+-- footnote 3
 theorem zero_le_sup_condAssert (d : Trivalent.Designation) (a b : SignType) :
     0 ≤ condAssert d a b ⊔ condAssert d b a := by
   cases d <;> cases a <;> cases b <;> decide
 
-/-- When `c` is true and `a` false, `(a → b) ∧ c` is `c`, so McGee's Independence Principle fails
-(footnote 11). -/
+-- footnote 11
 theorem meetBelnap_condAssert_of_false (b : SignType) :
     meetBelnap (condAssert .lp (-1) b) 1 = 1 :=
   rfl
@@ -338,7 +333,7 @@ theorem cooperEval_flat (φ : Formula ι) (v : ι → Bool) :
       simpa using condAssert_condAssert_condAssert (hφ.1.cooperEval_ne_zero v)
         (hφ.2.cooperEval_ne_zero v) (hψ.1.cooperEval_ne_zero v) (hψ.2.cooperEval_ne_zero v)
 
-/-- The flat fragment is as expressive as the whole language, Theorem 1 in the paper's form. -/
+-- Theorem 1
 theorem reduction (φ : Formula ι) :
     ∃ A B : Formula ι, NoCond A ∧ NoCond B ∧ CooperEquiv φ (.cond A B) :=
   ⟨_, _, (noCond_flat φ).1, (noCond_flat φ).2, cooperEval_flat φ⟩

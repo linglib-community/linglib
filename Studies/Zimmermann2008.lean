@@ -103,7 +103,7 @@ did. -/
 theorem wani_narrow_scope_false : ¬ ¬ ∃ x : Faasinjee, Daura x :=
   λ h => h ⟨.audu, trivial⟩
 
-/-- The two readings of *wani* under verb-phrase negation come apart on the model, (69). -/
+-- (69)
 theorem wani_ambiguity_witness :
     GQ.some (λ _ : Faasinjee => True) (¬ Daura ·) ∧ ¬ ¬ ∃ x : Faasinjee, Daura x :=
   ⟨wani_wide_scope, wani_narrow_scope_false⟩

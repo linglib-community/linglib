@@ -66,8 +66,7 @@ variable {S W D : Type*} [Preorder S] [Preorder D] {θ : S → Set W} {μ : S �
 /-! ### The comparative and the positive form -/
 
 omit [Preorder S] in
-/-- With one state per theme, the comparative (47) compares the two states' measures, so σ's
-confidence that `p` exceeds the than-clause degree (37). -/
+-- (47), (37)
 theorem maxComparative_theme_iff (hθ : θ.Injective) (s t : S) :
     MaxComparative .gt (θ · = θ s) (θ · = θ t) μ ↔ μ t < μ s := by
   simp only [hθ.eq_iff]
@@ -102,14 +101,12 @@ theorem image_Ici_ne_ge_over [MeasurableSpace W] (P : Measure W) (t : ℝ≥0∞
 
 /-! ### *Certain* and *confident* (§5.2) -/
 
-/-- On a total ordering, *certain* entails *confident* once *certain*'s contrast state is maximal
-((65b), (66b)). -/
+-- (65b), (66b)
 theorem image_Ici_subset_image_Ici_of_isMax [@Std.Total S (· ≤ ·)] {m : S} (hm : IsMax m)
     (c : S) : θ '' Ici m ⊆ θ '' Ici c :=
   image_mono (Ici_subset_Ici.2 ((total_of (· ≤ ·) c m).elim id fun h ↦ hm h))
 
-/-- If *confident*'s contrast state is not above *certain*'s, confidence does not entail certainty
-((65a), (66a)). -/
+-- (65a), (66a)
 theorem not_image_Ici_subset_image_Ici (hθ : θ.Injective) {c m : S} (hmc : ¬ m ≤ c) :
     ¬ θ '' Ici c ⊆ θ '' Ici m :=
   fun h ↦ hmc (Ici_subset_Ici.1 ((image_subset_image_iff hθ).1 h))
@@ -128,8 +125,7 @@ example : confident.dimension = certain.dimension ∧ confident.boundedness = .u
     certain.standard = .maxEndpoint ∧ confident.standard = .contextual := by
   decide
 
-/-- On a total ordering the region above a maximal contrast state (71) is the set of maximal
-states, what *certain* denotes in Figure 3. -/
+-- (71), Figure 3
 theorem Ici_eq_setOf_isMax [@Std.Total S (· ≤ ·)] {m : S} (hm : IsMax m) :
     Ici m = {s | IsMax s} := by
   ext s
@@ -144,8 +140,7 @@ theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone �
     let ⟨y, _, hlt⟩ := h.exists_lt hsp
     (hμ ((total_of (· ≤ ·) y s).elim id fun h ↦ hs h)).not_gt hlt
 
-/-- Under admissibility alone (68) fails, since a maximal state measured below another state
-makes σ certain of its theme and more confident of the other's. -/
+-- (68)
 theorem maxComparative_of_isMax (hθ : θ.Injective) {s t : S} (hs : IsMax s) (hlt : μ s < μ t) :
     θ s ∈ θ '' {s | IsMax s} ∧ MaxComparative .gt (θ · = θ t) (θ · = θ s) μ :=
   ⟨⟨s, hs, rfl⟩, (maxComparative_theme_iff hθ t s).2 hlt⟩

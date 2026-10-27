@@ -105,8 +105,7 @@ theorem cum_pluralize_ofAtoms (D : World → Set Atom) (w : World) :
 
 /-! ### Kind reference -/
 
-/-- The down operator (77) is not confined to cumulative properties: in a world with exactly one
-dog, `∩[one dog]` is that dog. -/
+-- (77)
 theorem iota_isGreatest_withNumber_one {D : World → Set Atom} {w : World} {a : Atom}
     (h : D w = {a}) :
     iota (IsGreatest (withNumber 1 (ofAtoms D) w)) = some {a} :=
@@ -149,12 +148,10 @@ def movedNeutral (d : Den E) (V : E → Prop) : Option (Den E) := (d.app (vp V))
 to the abstract over the trace. -/
 def movedEntity (d : Den E) (V : E → Prop) : Option (Den E) := d.app (pred fun x ↦ ¬ V x)
 
-/-- In *Dogs are barking* (69), a bare noun phrase meets the verbal predicate by the existential
-shift. -/
+-- (69)
 theorem app_pred_vp (P V : E → Prop) : (pred P).app (vp V) = some (tv (∃ x, P x ∧ V x)) := rfl
 
-/-- In *Dogs aren't barking* (70), a bare noun phrase moved over negation still scopes below it,
-since the shift applies at the trace. -/
+-- (70)
 theorem movedNeutral_pred (P V : E → Prop) :
     movedNeutral (pred P) V = some (tv (¬ ∃ x, P x ∧ V x)) := rfl
 

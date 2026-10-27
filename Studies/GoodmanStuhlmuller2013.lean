@@ -308,8 +308,6 @@ private theorem informed_one_one : (informed NumUtt.extension α 1).real {.one} 
 private theorem informed_one_two : (informed NumUtt.extension α 1).real {.two} = 0 :=
   RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ (by decide)
 
-/-- The fully informed speaker at two objects prefers *two* to *one*, the more informative
-numeral. -/
 private theorem informed_two_lt :
     (informed NumUtt.extension α 2).real {.one} <
       (informed NumUtt.extension α 2).real {.two} :=

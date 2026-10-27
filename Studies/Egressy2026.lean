@@ -88,7 +88,7 @@ def ClauseType.size : ClauseType → ComplementSize
   | .nonSpeechReporting => .tP
   | .speechReporting => ⟨.Say⟩
 
-/-- Speech-reporting clauses are the larger ones (§3.1). -/
+-- §3.1
 theorem size_nonSpeech_lt_speech :
     ClauseType.nonSpeechReporting.size.fLevel < ClauseType.speechReporting.size.fLevel := by
   decide
@@ -101,23 +101,22 @@ def WilliamsCycle (x y : Cat) : Prop := y.fValue ≤ x.fValue
 
 instance (x y : Cat) : Decidable (WilliamsCycle x y) := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- A projection of the dependency's own category is crossed. -/
 theorem WilliamsCycle.refl (x : Cat) : WilliamsCycle x x := le_rfl
 
 theorem WilliamsCycle.of_le {x y y' : Cat} (h : y'.fValue ≤ y.fValue) (hxy : WilliamsCycle x y) :
     WilliamsCycle x y' :=
   h.trans hxy
 
-/-- (24)–(25), [egressy-2025]: focus and wh-movement to Spec,FocP escape a TP. -/
+-- (24), (25) [egressy-2025]
 theorem focus_crosses_TP : WilliamsCycle .Foc .T := by decide
 
-/-- (24)–(25): movement to Spec,FocP cannot leave a SayP, whose Say is above Foc. -/
+-- (24), (25)
 theorem focus_blocked_by_SayP : ¬ WilliamsCycle .Foc .Say := by decide
 
-/-- (27): raising to Spec,TP crosses a TP. -/
+-- (27)
 theorem raising_crosses_TP : WilliamsCycle .T .T := WilliamsCycle.refl _
 
-/-- (28), the ban on hyperraising: raising to Spec,TP cannot cross a CP. -/
+-- (28)
 theorem raising_blocked_by_CP : ¬ WilliamsCycle .T .C := by decide
 
 /-- The complement size crossed in a raising row. -/
@@ -135,8 +134,7 @@ def HostsEvaluativeAdverb (cs : ComplementSize) : Prop := Cat.fValue .Say ≤ cs
 instance (cs : ComplementSize) : Decidable (HostsEvaluativeAdverb cs) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- The complements of *mond*, *hall* and *gondol* in (23) host *sajnos*; the TP complement of
-*álmodik* cannot. -/
+-- (23)
 theorem hostsEvaluativeAdverb_iff (ct : ClauseType) :
     HostsEvaluativeAdverb ct.size ↔ ct = .speechReporting := by
   cases ct <;> decide
@@ -163,14 +161,12 @@ def SOTRule.Applicable (a : Attachment) (cs : ComplementSize) : Prop := a.level 
 instance (a : Attachment) (cs : ComplementSize) : Decidable (SOTRule.Applicable a cs) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- Under size-dependent adjunction, the Sequence of Tense Rule applies exactly where the Williams
-Cycle lets T search the clause (§3.3, §4). -/
+-- §3.3, §4
 theorem applicable_sizeDependent_iff (cs : ComplementSize) :
     SOTRule.Applicable .sizeDependent cs ↔ WilliamsCycle .T cs.highestHead :=
   Iff.rfl
 
-/-- With the embedded clause inside the VP, the rule applies to English CP complements, which the
-Williams Cycle would keep from T (§4). -/
+-- §4
 theorem applicable_vpInternal_cP :
     SOTRule.Applicable .vpInternal .cP ∧ ¬ WilliamsCycle .T .C := by
   decide
@@ -190,8 +186,7 @@ theorem not_applicable_speech :
     ¬ SOTRule.Applicable .sizeDependent ClauseType.speechReporting.size := by
   decide
 
-/-- The core asymmetry (§2.4) is that the simultaneous reading is available exactly in
-non-speech-reporting clauses. -/
+-- §2.4
 theorem simultaneous_iff (ct : ClauseType) :
     .eq ∈ readings .sizeDependent ct.size ↔
       ct = .nonSpeechReporting := by
@@ -201,7 +196,7 @@ theorem shifted_mem (a : Attachment) (cs : ComplementSize) :
     .lt ∈ readings a cs :=
   lt_mem_pastUnderPast
 
-/-- (19): an English past-under-past complement has the simultaneous reading. -/
+-- (19)
 theorem english_simultaneous :
     .eq ∈ readings .vpInternal .cP := by
   decide
@@ -314,20 +309,16 @@ instance (r : ClauseRole) (v : _root_.Verb) : Decidable (r.FrameOf v) :=
   | .subject => inferInstanceAs (Decidable (∃ fr ∈ _, _))
   | .adjunct => inferInstanceAs (Decidable (∃ fr ∈ _, _))
 
-/-- The verb, clause-role and clause-type readers read every single-embedding row. -/
 theorem singleRows_readCounts :
     Datum.ReadCount matrixVerb? singleRows 12 ∧ Datum.ReadCount clauseRole? singleRows 12 ∧
       Datum.ReadCount clauseType? singleRows 12 := by
   decide +kernel
 
-/-- The expletive's case diagnoses the clause's grammatical role, and the role matches a frame
-of the row's matrix verb, both read off the row's own gloss line. -/
 theorem clauseRole_frames : ∀ e ∈ singleRows, ∀ v, matrixVerb? e = some v →
     ∀ r ∈ clauseRole? e, r.FrameOf v.toVerb := by
   decide +kernel
 
-/-- No assignment of clause types to matrix verbs fits the rows: two rows share their matrix
-verb, *hall* 'hear' in (5) and (13), and differ in clause type (§2.2). -/
+-- (5), (13), §2.2
 theorem clauseType_not_of_verb :
     ¬ ∀ e₁ ∈ singleRows, ∀ e₂ ∈ singleRows,
       ((matrixVerb? e₁).map (·.toVerb.form) == (matrixVerb? e₂).map (·.toVerb.form)) = true →
@@ -361,22 +352,19 @@ def profile (a : Attachment) : Finset Ordering → List Clause → List (Finset 
 /-- The chain of a two-level Hungarian row, from its two clause-type features. -/
 def chain (ct₁ ct₂ : ClauseType) : List Clause := [⟨⟦past⟧, ct₁.size⟩, ⟨⟦past⟧, ct₂.size⟩]
 
-/-- (16): shout > see > be. The speech-reporting intermediate clause is backshifted; the
-non-speech-reporting deepest clause is simultaneous with it. -/
+-- (16)
 theorem ex16_profile :
     profile .sizeDependent ⟦past⟧ (chain .speechReporting .nonSpeechReporting) =
       [⟦past⟧, ⟦past⟧ ⊔ ⟦present⟧] := by
   decide
 
-/-- (17): hear > shout > be, the mirror image of (16): only adjacent clauses interact, and a
-speech-reporting clause is backshifted whatever contains it. -/
+-- (17), (16)
 theorem ex17_profile :
     profile .sizeDependent ⟦past⟧ (chain .nonSpeechReporting .speechReporting) =
       [⟦past⟧ ⊔ ⟦present⟧, ⟦past⟧] := by
   decide
 
-/-- The two-level rows (10), (15), (16) and (17) are predicted level by level, direct perception
-narrowing the level of the perceiving clause. -/
+-- (10), (15), (16), (17)
 theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁ ct₂ : ClauseType,
     e.parse? "intermediateClauseType" clauseTypeTable = some ct₁ →
     e.parse? "deepestClauseType" clauseTypeTable = some ct₂ →
@@ -386,8 +374,7 @@ theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁
           ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 1 ⊥)) := by
   decide
 
-/-- In English past under *will* under past (18), the deepest past has no simultaneous reading
-([ogihara-1996]). -/
+-- (18) [ogihara-1996]
 theorem ex18_profile :
     profile .vpInternal ⟦past⟧ [⟨⟦future⟧, .cP⟩, ⟨⟦past⟧, .cP⟩] = [⊥, ⟦past⟧] := by
   decide
@@ -406,8 +393,7 @@ theorem sotProbe_clauseTypes :
       ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]).label := by
   decide
 
-/-- A FocP clause is transparent to the horizon probe yet beyond T under the Williams Cycle, so the
-horizon account is less restrictive (§4, footnote 9). -/
+-- §4, footnote 9
 theorem horizon_admits_FocP :
     sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]).label ∧ ¬ WilliamsCycle .T .Foc := by
   decide
@@ -545,20 +531,15 @@ def witnessRows : List (Datum × LinearizedSyntacticObject) :=
   [(ex_4, w4), (ex_5, w5), (ex_6, w6), (ex_7, w7), (ex_8, w8), (ex_9, w9), (ex_11a, w11a),
     (ex_11b, w11b), (ex_11c, w11c), (ex_12, w12), (ex_13, w13), (ex_14, w14)]
 
-/-- Each witness draws its items from the lexicon and pronounces, word for word, its row's gloss
-line. -/
 theorem witnesses_spell : ∀ p ∈ witnessRows,
     Minimalist.SpellsOut p.2 lexicon (Minimalist.pfPhon p.2) ∧
       (Minimalist.pfPhon p.2).flatMap (Gloss.tokens ·) = p.1.glossStream := by
   decide +kernel
 
-/-- Each witness's pre-complementizer verb pronounces the glossed word the matrix-verb reader
-identifies. -/
 theorem witnesses_verb : ∀ p ∈ witnessRows,
     (matrixToken? p.2).map (·.item.phonForm.toList) = (matrixWord? p.1).map (·.1.wordform) := by
   decide +kernel
 
-/-- Each witness's expletive cell names the clause role the gloss reader finds. -/
 theorem witnesses_role : ∀ p ∈ witnessRows, roleOf p.2 = clauseRole? p.1 := by
   decide +kernel
 

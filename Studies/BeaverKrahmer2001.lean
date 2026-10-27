@@ -650,8 +650,6 @@ example : incoherence KingOfFrance.preferred = 2 := by decide
 example : incoherence (conn .disj .weak (assert (transpl (atom .q) (atom .p)))
     (transpl (atom .r) (neg (atom .p))) : Formula Atom) = 1 := by decide
 
-/-- Preference is not a total order, since two optimal translations with equally many
-assertions tie. -/
 theorem prefers_not_total :
     ∃ (S : List (Formula Atom)) (γ δ : Formula Atom), γ ≠ δ ∧ γ ∈ S ∧ δ ∈ S ∧
       ¬ Prefers S γ δ ∧ ¬ Prefers S δ γ := by

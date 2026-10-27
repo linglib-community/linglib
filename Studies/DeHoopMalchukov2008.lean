@@ -108,15 +108,13 @@ end Constraints
 def asymmetrical : Finset (Option Unit × Strength) :=
   {(some (), .strong), (some (), .weak), (none, .strong), (none, .weak)}
 
-/-- IDENTIFY over ECONOMY marks the strong argument in either position (Tableaux (18), (31) and
-(39)). -/
+-- (18), (31), (39)
 theorem identify_marks_strong :
     superoptimal asymmetrical (profile [identify () .strong, economy]) =
       {(some (), .strong), (none, .weak)} := by
   decide
 
-/-- DISTINGUISHABILITY over ECONOMY marks the confusable argument (Tableaux (21), (26), (32) and
-(35)). -/
+-- (21), (26), (32), (35)
 theorem distinguish_marks_confusable (pos : Position) :
     superoptimal asymmetrical (profile [distinguish pos.confusable, economy]) =
       {(some (), pos.confusable), (none, pos.confusable.opposite)} := by
@@ -144,8 +142,7 @@ def symmetrical : Finset (Option Overt × Strength) :=
   {(some .identifying, .strong), (some .identifying, .weak), (some .other, .strong),
     (some .other, .weak)}
 
-/-- In a symmetrical system IDENTIFY pairs each overt case with a strength, as in Lezgian and
-Finnish (Tableaux (24) and (29)). -/
+-- (24), (29)
 theorem symmetrical_identify :
     superoptimal symmetrical (profile [identify .identifying .strong, economy]) =
       {(some .identifying, .strong), (some .other, .weak)} := by

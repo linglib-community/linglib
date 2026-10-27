@@ -101,31 +101,26 @@ def Padwiyatuhu : Yield := [2, 1, 1, 1, 1]
 syllable light by Mora Extrametricality. -/
 def sajaratuhuma : Yield := [1, 1, 1, 1, 1, 1]
 
-/-- *kátaba* has antepenultimate stress (12c.ii), (15d), parsing as `(ká.ta)ba` with the
-rightmost foot heading the antepenult and the final light stray. -/
+-- (12c.ii), (15d)
 theorem gridColumns_kataba : Tree.columns (parse kataba) = [3, 1, 1] := by decide
 
-/-- *mudárris* has penultimate stress on a heavy penult (12b), (15b), parsing as `mu(dár)ri`. -/
+-- (12b), (15b)
 theorem gridColumns_mudarris : Tree.columns (parse mudarris) = [1, 3, 1] := by decide
 
-/-- The count restarts after a heavy, with secondary stress (12c.ii), (15d), so *ʔinkásara*
-parses as `(ʔìn)(ká.sa)ra`. -/
+-- (12c.ii), (15d)
 theorem gridColumns_Pinkasara : Tree.columns (parse Pinkasara) = [2, 3, 1, 1] := by decide
 
-/-- *katábt* has final stress on a superheavy (12a), (15a), parsing as `ka(tábt)`. -/
+-- (12a), (15a)
 theorem gridColumns_katabt : Tree.columns (parse katabt) = [1, 3] := by decide
 
-/-- *mudarrísit* has a stray initial light before a heavy (12c.i), (15c), parsing as
-`mu(dàr)(rí.si)t`. -/
+-- (12c.i), (15c)
 theorem gridColumns_mudarrisit : Tree.columns (parse mudarrisit) = [1, 2, 3, 1] := by decide
 
-/-- *ʔadwiyatúhu* shows even parity after a heavy (12c.i), (15c), parsing as
-`(ʔàd)(wì.ya)(tú.hu)`. -/
+-- (12c.i), (15c)
 theorem gridColumns_Padwiyatuhu : Tree.columns (parse Padwiyatuhu) = [2, 2, 1, 3, 1] := by
   decide
 
-/-- *šaǰaratuhúma:* shows even parity from the left edge (12c.i), (15c), parsing as
-`(šà.ja)(rà.tu)(hú.ma)`. -/
+-- (12c.i), (15c)
 theorem gridColumns_sajaratuhuma :
     Tree.columns (parse sajaratuhuma) = [2, 1, 2, 1, 3, 1] := by decide
 
@@ -153,9 +148,7 @@ def promotedKataba : Marks := [[true, true, true], [true, false, false], [false,
 
 theorem promotedKataba_not_continuous : ¬ Marks.IsContinuous promotedKataba := by decide
 
-/-- The peak retracts off the right edge. The final stray light of *kátaba* is strictly weaker
-than the primary, unlike the uniform right-strong words of [prince-1983], whose grids peak at
-the edge. -/
+-- [prince-1983]
 theorem kataba_final_below_peak :
     (Tree.columns (parse kataba)).getLast?.getD 0 < Grid.peak (Tree.columns (parse kataba)) := by
   decide

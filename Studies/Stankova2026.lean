@@ -189,8 +189,7 @@ theorem particle_signatures_distinct (pos pos' : Position)
   revert h1 h2 h3
   cases pos <;> cases pos' <;> decide
 
-/-- *copak* is outside Table 1, appearing in positive and negative PQs
-alike (Staňková and Šimík's exs. 19a-b). -/
+-- Table 1
 theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 
 /-! ### Word order and PQ-form typology
@@ -239,8 +238,7 @@ theorem czech_refines_nonPreposed :
     licensed .inner ≠ licensed .medial :=
   ⟨rfl, by decide, by decide⟩
 
-/-- Obligatory focus singles out outer negation ([stankova-2026]
-§3.2). -/
+-- §3.2 [stankova-2026]
 theorem only_outer_requires_focus (p : Position) : p.RequiresFocus → p = .outer := by
   cases p <;> simp [Position.RequiresFocus]
 

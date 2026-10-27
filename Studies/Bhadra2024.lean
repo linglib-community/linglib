@@ -185,7 +185,7 @@ def reSem (k : StateFunction Entity State T) (vro : VerbOutcomes E Entity State)
     resState k e' x ∈ vro.thresholds) ∧
   vro.verb e x
 
-/-- A root whose outcome set is not multi-membered cannot host *un-* (67). -/
+-- (67)
 theorem subsingleton_blocks_un (k : StateFunction Entity State T)
     (vro : VerbOutcomes E Entity State) (h : ¬ vro.outcomes.Nontrivial)
     (e : E) (x : Entity) : ¬ unSem k vro e x :=
@@ -209,7 +209,7 @@ theorem un_requires_multi (k : StateFunction Entity State T)
   let ⟨_, _, _, _, hnt, _⟩ := h
   OutcomeCardinality.ofSet_eq_multi hnt
 
-/-- A base action whose result is never an admissible start state blocks *re-* (72). -/
+-- (72)
 theorem not_reSem_of_outcome_not_threshold (k : StateFunction Entity State T)
     (vro : VerbOutcomes E Entity State) (x : Entity)
     (h : ∀ e', vro.verb e' x → resState k e' x ∉ vro.thresholds) (e : E) :
@@ -260,7 +260,7 @@ def foldVRO : VerbOutcomes (NonemptyInterval ℤ) Unit ParchmentState where
 theorem fold_outcomes_multi : foldVRO.outcomes.Nontrivial :=
   ⟨.slightlyCreased, by simp [foldVRO], .folded, by simp [foldVRO], by decide⟩
 
-/-- *Veena unfolded the parchment* is true in the scenario, the worked derivation of (66). -/
+-- (66)
 theorem fold_un : unSem (andBack .flat .folded) foldVRO ev₂ () :=
   ⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl, fold_outcomes_multi, rfl⟩
 
@@ -286,17 +286,17 @@ def breakSewerVRO : VerbOutcomes (NonemptyInterval ℤ) Unit LimbState where
   outcomes := {.broken}
   thresholds := {.intact}
 
-/-- *#Unbreak a limb* fails, the outcome set being a singleton (67). -/
+-- (67)
 theorem breakLimb_not_un (k : StateFunction Unit LimbState ℤ) (e : NonemptyInterval ℤ) :
     ¬ unSem k breakLimbVRO e () :=
   singleton_blocks_un k breakLimbVRO .broken rfl e ()
 
-/-- *Rebreak a limb* is true in the scenario (73a). -/
+-- (73a)
 theorem breakLimb_re : reSem (twice .intact .broken) breakLimbVRO ev₂ () :=
   ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
       by simp [breakLimbVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
 
-/-- *#Rebreak a sewer* fails, since a broken sewer is not an admissible start state (73a). -/
+-- (73a)
 theorem breakSewer_not_re (e : NonemptyInterval ℤ) :
     ¬ reSem (twice .intact .broken) breakSewerVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
@@ -313,13 +313,12 @@ def hitVRO : VerbOutcomes (NonemptyInterval ℤ) Unit SurfaceState where
   outcomes := {.surfaceAltered}
   thresholds := {.unaltered}
 
-/-- *\*Unhit* fails (25). -/
+-- (25)
 theorem hit_not_un (k : StateFunction Unit SurfaceState ℤ) (e : NonemptyInterval ℤ) :
     ¬ unSem k hitVRO e () :=
   singleton_blocks_un k hitVRO .surfaceAltered rfl e ()
 
-/-- *\*Rehit* fails, since impingement leaves the surface altered and never again unaltered (48).
--/
+-- (48)
 theorem hit_not_re (e : NonemptyInterval ℤ) :
     ¬ reSem (twice .unaltered .surfaceAltered) hitVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
@@ -336,7 +335,7 @@ def loadVRO : VerbOutcomes (NonemptyInterval ℤ) Unit TruckState where
   outcomes := {.full}
   thresholds := {.empty, .full}
 
-/-- *Raj reloaded the truck* is true in the scenario (69a). -/
+-- (69a)
 theorem load_re : reSem (twice .empty .full) loadVRO ev₂ () :=
   ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
       by simp [loadVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
@@ -351,7 +350,7 @@ def shatterVRO : VerbOutcomes (NonemptyInterval ℤ) Unit MirrorState where
   outcomes := {.shattered}
   thresholds := {.intact}
 
-/-- *#The children reshattered the mirror* fails (69b). -/
+-- (69b)
 theorem shatter_not_re (e : NonemptyInterval ℤ) :
     ¬ reSem (twice .intact .shattered) shatterVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
@@ -382,15 +381,13 @@ inductive BeaversDegree : OutcomeClass → AffectednessDegree → Prop
   /-- *See* and *laugh at* are unspecified for change ((20c)). -/
   | noChange : BeaversDegree .noChange .unspecified
 
-/-- Potential-for-change and impingement-effecting verbs share a degree of affectedness but not an
-outcome tier, which is why the paper separates them (§2.4.2, (62)). -/
+-- §2.4.2, (62)
 theorem potentialForChange_impingement :
     (∃ d, BeaversDegree .potentialForChange d ∧ BeaversDegree .impingement d) ∧
       OutcomeClass.potentialForChange.tier ≠ OutcomeClass.impingement.tier :=
   ⟨⟨.potential, .potentialForChange, .impingement⟩, by decide⟩
 
-/-- Consumption verbs and degree achievements share the singleton tier but not a degree of
-affectedness ((62)). -/
+-- (62)
 theorem consumption_degreeAchievement :
     OutcomeClass.consumption.tier = OutcomeClass.degreeAchievement.tier ∧
       ∃ d d', d ≠ d' ∧ BeaversDegree .consumption d ∧ BeaversDegree .degreeAchievement d' :=

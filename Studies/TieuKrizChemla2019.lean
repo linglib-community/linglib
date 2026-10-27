@@ -256,8 +256,7 @@ theorem value_homogeneous (hx : x.Nonempty) :
 
 end
 
-/-- A GAP context is where (8a) and (8b) disagree, so where the presupposition that all or none
-of the objects have the property fails. -/
+-- (8a), (8b)
 theorem isGap_iff_not_homogeneous (hx : x.Nonempty) :
     IsGap x w ↔ ¬ Homogeneous {{w | ∃ a ∈ x, a ∈ w}, {w | x ⊆ w}} w := by
   obtain ⟨b, hb⟩ := hx
@@ -276,8 +275,7 @@ theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
   simp [barePlural, Construal.Holds, Construal.gq, Force.gq, GQ.every,
     SignType.supervaluation_eq_one_iff]
 
-/-- A child restricting the plurality to its verifying objects ((19), (20)) accepts both sentences
-in a GAP context, a pattern no child showed. -/
+-- (19), (20)
 theorem domainRestriction_of_isGap (hw : IsGap x w) :
     Reading.homogeneous.value (x.filter (· ∈ w)) .positive w = 1 ∧
       Reading.homogeneous.value (x.filter (· ∉ w)) .negative w = 1 := by
@@ -340,7 +338,7 @@ theorem exh_mates_weak_of_notMem (hA : .strong ∉ A) : exh (mates A) (primal wk
   exh_mates_weak_of_forall fun i hi ↦ by
     cases i <;> first | exact subset_rfl | exact absurd hi hA
 
-/-- With *all* among its alternatives, *some* is strengthened to *some but not all*, (10). -/
+-- (10)
 theorem exh_mates_weak_of_mem (hA : .strong ∈ A) (h : (wk \ st).Nonempty) :
     exh (mates A) (primal wk st) .weak = wk \ st := by
   have hne : wk ≠ st := fun e ↦ by simp [e] at h
@@ -356,8 +354,7 @@ theorem exh_mates_weak_of_mem (hA : .strong ∈ A) (h : (wk \ st).Nonempty) :
   rw [innocent_exh_erase_entailed subset_rfl (h.mono Finset.sdiff_subset), himg,
     innocent_exh_singleton h]
 
-/-- The strengthened definite (11) is computed from the exhaustified *some* (10), so the *not all*
-implicature is part of the homogeneity implicature. -/
+-- (11), (10)
 theorem strengthened_mates_mystery :
     strengthened (mates A) (primal wk st) .mystery =
       innocent.exh {exh (mates A) (primal wk st) .weak} wk := by
@@ -370,7 +367,7 @@ theorem strengthened_mates_mystery_of_notMem (hA : .strong ∉ A) :
   rw [strengthened_mates_mystery, exh_mates_weak_of_notMem hA]
   exact innocent_exh_eq_self_of_forall_subset (by simp)
 
-/-- With *all* among the alternatives the definite is universal, (11). -/
+-- (11)
 theorem strengthened_mates_mystery_of_mem (hA : .strong ∈ A) (h : st ⊆ wk) (hne : st.Nonempty) :
     strengthened (mates A) (primal wk st) .mystery = st := by
   rw [strengthened_mates_mystery]

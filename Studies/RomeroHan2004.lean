@@ -106,7 +106,7 @@ theorem denotation_eq (f : Form) :
   unfold denotation pronounced
   split_ifs <;> simp
 
-/-- The positive reading and the *really*-question denote the same partition (84), (85). -/
+-- (84), (85)
 theorem denotation_pi_eq_really :
     denotation epi conv cg p .pi = denotation epi conv cg p .really := by
   simp [denotation_eq, prejacent]
@@ -181,14 +181,13 @@ def Row.ofDatum (e : Datum) : Row where
 /-- The paper's examples. -/
 def data : List Row := Examples.all.map Row.ofDatum
 
-/-- Licensing predicts every *too* and *either* judgment on (6), (7) and (77) to (80). -/
+-- (6), (7), (77), (80)
 theorem licensed_iff_acceptable :
     ∀ d ∈ data, ∀ e ∈ d.item.toList, ∀ f ∈ d.form.toList,
       (Licensed e f ↔ d.judgment = .acceptable) := by
   decide
 
-/-- Preposed negation carries a positive bias in every language of the survey, (1), (5) and
-(14) to (18), and non-preposed negation none. -/
+-- (1), (5), (14), (18)
 theorem bias_of_negation :
     ∀ d ∈ data, ∀ n ∈ d.negation.toList, ∀ b ∈ d.bias.toList,
       (n = some .preposed → b = 1) ∧ (n = some .nonPreposed → b = 0) := by

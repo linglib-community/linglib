@@ -170,8 +170,6 @@ theorem seqWeight_pair_alternation [DecidableEq U] (r : R) (a b : U) :
   simp [seqWeight, Fin.prod_univ_two, alternation]
   ring
 
-/-- Under the paper's language model the sequence speaker's order preference compares the
-utilities accumulated along the two production paths. -/
 theorem seqWeight_pair_lt_iff [DecidableEq U] (r : R) (a b : U) :
     seqWeight μ sem β cost (alternation a b) r [a, b] <
         seqWeight μ sem β cost (alternation a b) r [b, a] ↔
@@ -180,8 +178,6 @@ theorem seqWeight_pair_lt_iff [DecidableEq U] (r : R) (a b : U) :
   rw [seqWeight_pair_alternation, alternation_comm, seqWeight_pair_alternation]
   exact mul_lt_mul_left_iff (by simp) (by simp)
 
-/-- With an order-blind listener, the sequence speaker's preference between the two orders is
-its preference between their first words, the discriminatory strength of the first word. -/
 theorem seqWeight_pair_lt_iff_of_l0_eq [DecidableEq U] [IsProbabilityMeasure μ] (hβ : 0 ≤ β)
     (hcost : ∀ n, cost n ≠ ∞) (hl : l0 μ sem [a, b] = l0 μ sem [b, a])
     (hne : utility μ sem β cost [a, b] r ≠ 0) :
@@ -281,7 +277,6 @@ noncomputable def uttSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : Lis
 
 variable {μ sem}
 
-/-- An order preference of the sequence speaker is a weight comparison; normalization cancels. -/
 theorem seqSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
     (hp : ∀ us u, pLang us u ≠ ∞) {n : ℕ}
     (h0 : ∃ v : Fin n → U, seqWeight μ sem β cost pLang r (List.ofFn v) ≠ 0) {v v' : Fin n → U} :
@@ -294,14 +289,13 @@ theorem seqSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost
     (ENNReal.sum_ne_top.mpr fun _ _ => ENNReal.prod_ne_top fun _ _ =>
       ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))
 
-/-- A global speaker (row (3)) cannot prefer an order the listener cannot distinguish. -/
+-- (3)
 theorem globalSpeaker_apply_singleton_eq {n : ℕ} {P : (Fin n → U) → ℝ≥0∞} {v v' : Fin n → U}
     (hl : l0 μ sem (List.ofFn v) = l0 μ sem (List.ofFn v')) (hP : P v = P v') :
     globalSpeaker μ sem β cost P r {v} = globalSpeaker μ sem β cost P r {v'} := by
   simp only [globalSpeaker, Kernel.ofWeights_apply_singleton, utility, hl, hP, List.length_ofFn]
 
-/-- The order preference of the utterance speaker (row (6)) is the sequence speaker's, weighed
-against the utterance prior. -/
+-- (6)
 theorem uttSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
     (hp : ∀ us u, pLang us u ≠ ∞) {α : ℝ} (hα : 0 ≤ α) {n : ℕ} {P : (Fin n → U) → ℝ≥0∞}
     (hP : ∀ v, P v ≠ ∞)

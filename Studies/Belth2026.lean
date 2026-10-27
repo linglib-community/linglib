@@ -356,7 +356,7 @@ theorem not_tolerates_8_4 : ¬ Yang2016.tolerates 8 4 := by
   push_cast
   linarith [Real.log_two_gt_d9]
 
-/-- With Yang's Tolerance Principle as the criterion, D2L learns rule (33a) from (20). -/
+-- (33a), (20)
 theorem Toy.learn_tolerates :
     @D2L.Problem.learn _ _ Toy.problem .agree Yang2016.tolerates
       (fun _ _ ↦ Classical.propDecidable _) = some Toy.rule33 :=
@@ -462,8 +462,7 @@ def segments (cs : List Char) : List Segment := cs.filterMap ofChar
 /-- The underlying form of a stem with the essive -nA. -/
 def ur (form : String) : List Segment := segments (stem form) ++ [n, A]
 
-/-- Rule (52), the search-and-copy reading of the fragment's harmony, derives the four forms of
-(51). -/
+-- (52), (51)
 theorem rows : ∀ f ∈ forms Examples.ex_51,
     palatalHarmony.searchCopy.apply (ur f) = segments f.toList := by
   decide
@@ -497,8 +496,7 @@ def ur (form : String) : List Segment :=
   | [] => []
   | stem :: affixes => stem.filterMap ofChar ++ affixes.flatMap (·.filterMap ofAffixChar)
 
-/-- Rule (49a) is the fragment's two harmonies applied in turn and derives the forms of (46) and
-(47). -/
+-- (49a), (46), (47)
 theorem rows : ∀ e ∈ [Examples.ex_46, Examples.ex_47], ∀ f ∈ forms e,
     surface (ur f) = segments f := by
   decide +kernel

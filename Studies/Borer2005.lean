@@ -140,7 +140,7 @@ with a plural is possible (38). -/
 theorem not_wellFormed_of_divides {d : Determiner} (hd : d.divides = true) :
     ¬ Nominal.WellFormed ⟨some d, true⟩ := fun h ↦ h.1 ⟨rfl, d, rfl, hd⟩
 
-/-- A divider that counts takes a bare stem of either sort, *a boy* and *one meat* (30a). -/
+-- (30a)
 theorem wellFormed_divider {d : Determiner} (hq : d.quantity = .count) (hd : d.divides = true) :
     Nominal.WellFormed ⟨some d, false⟩ := by
   simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
@@ -156,8 +156,7 @@ theorem wellFormed_neutral {d : Determiner} (hq : d.quantity = .either) (hd : d.
     (p : Bool) : Nominal.WellFormed ⟨some d, p⟩ ∧ (Nominal.Divided ⟨some d, p⟩ ↔ p = true) := by
   cases p <;> simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
 
-/-- The two principles derive the distribution of the determiner classes of (20) over bare stems
-and plurals. -/
+-- (20)
 theorem determiner_classes :
     (Nominal.WellFormed ⟨some much, false⟩ ∧ ¬ Nominal.WellFormed ⟨some much, true⟩) ∧
       (¬ Nominal.WellFormed ⟨some cardinal, false⟩ ∧ Nominal.WellFormed ⟨some cardinal, true⟩) ∧
@@ -244,11 +243,10 @@ theorem q_below_num : status [.N, .n, .Q, .Num] = some .quantity ∧
     status [.N, .n, .Num, .Q] = none := by
   decide
 
-/-- The quantity head alone over undivided stuff is quantified mass, *much salt* projecting no
-classifier phrase (28). -/
+-- (28)
 theorem quantified_mass : status [.N, .n, .Num] = some .quantity := by decide
 
-/-- Of the truncations, the bare stem is mass and the divided stem a bare plural (27). -/
+-- (27)
 theorem status_truncations :
     status [.N, .n] = some .stuff ∧ status [.N, .n, .Q] = some .divided := by
   decide

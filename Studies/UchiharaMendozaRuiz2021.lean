@@ -127,7 +127,6 @@ theorem isPerfect_iff {fc : Word} (hpos : ∀ s ∈ fc.strays, s ≠ 0) :
       · simp [allFeetRight, Footing.feet] at ha
       · simp [Footing.strays] at hs
 
-/-- A perfect word violates none of the restrictors. -/
 theorem IsPerfect.restrictors_eq_zero {fc : Word} (h : IsPerfect fc) :
     ∀ i, restrictors i fc = 0
   | 0 => h.ftBin

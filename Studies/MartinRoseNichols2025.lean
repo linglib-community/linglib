@@ -117,7 +117,6 @@ def Reading.holds : Reading → E → E → Prop
   | .production, s, o => C.Produces s o
   | .dependence, s, o => C.Depends s o
 
-/-- Production is the stronger reading. -/
 theorem Reading.holds_dependence_of_production (h : Reading.production.holds C s o) :
     Reading.dependence.holds C s o :=
   C.depends_of_produces h

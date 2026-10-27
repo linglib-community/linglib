@@ -222,16 +222,14 @@ def MiDefined (c : Context A W) (ALT : Set (Set W)) (p : Set W) : Prop :=
 
 variable {c : Context A W} {ALT : Set (Set W)} {p q : Set W}
 
-/-- The witness of (37) differs from the scope, as the paper's prose requires, whenever its
-exhaustification is consistent. -/
+-- (37)
 theorem ne_of_exhIE_subset_compl (h : exhIE ALT q ⊆ pᶜ) (hne : (exhIE ALT q).Nonempty) :
     q ≠ p := by
   rintro rfl
   obtain ⟨w, hw⟩ := hne
   exact h hw (Exhaustification.exhIE_subset ALT q hw)
 
-/-- When nothing on record addresses the question under discussion, *=mi* is undefined ((7), (28),
-(8), (29)). -/
+-- (7), (28), (8), (29)
 theorem not_miDefined_of_addressers (h : ∀ m ∈ c.moves, m.addressers = ∅) :
     ¬ MiDefined c ALT p := by
   rintro ⟨q, -, ⟨⟨m, hm, hq⟩, -⟩, -⟩
@@ -242,7 +240,7 @@ vacuous, and (37) asks for a highlighted proposition entailing `¬p`. -/
 theorem miDefined_univ_iff : MiDefined c Set.univ p ↔ ∃ q, Highlighted c q ∧ q ⊆ pᶜ := by
   simp [MiDefined, Exhaustification.exhIE_univ]
 
-/-- A highlighted `¬p` licenses clausal *=mi* on `p` ((43), (44)). -/
+-- (43), (44)
 theorem miDefined_of_highlighted_compl (h : Highlighted c pᶜ) : MiDefined c Set.univ p :=
   miDefined_univ_iff.2 ⟨pᶜ, h, subset_rfl⟩
 
@@ -275,8 +273,7 @@ theorem miDefined_of_isInnocentlyExcludable (hq : q ∈ ALT) (hh : Highlighted c
     (h : IsInnocentlyExcludable ALT q p) : MiDefined c ALT p :=
   ⟨q, hq, hh, h.exhIE_subset_compl⟩
 
-/-- When no highlighted proposition is among the alternatives, *=mi* is undefined, as in the
-corrections (27c) and (27d). -/
+-- (27c), (27d)
 theorem not_miDefined_of_disjoint (h : ∀ q, Highlighted c q → q ∉ ALT) :
     ¬ MiDefined c ALT p := by
   rintro ⟨q, hq, hh, -⟩
@@ -297,31 +294,27 @@ theorem contextSetOf_update {m : Move A W} {w : W} :
 
 variable (S : TwoDim W (Set W))
 
-/-- Asserting `p` and then `¬p` is inconsistent (18a), as is the *-rka* counterpart of footnote 9.
--/
+-- (18a), footnote 9
 theorem contextSetOf_assert_assert_compl :
     ((c.update (.assert s S)).update (.assert s (pure S.atIssueᶜ))).contextSetOf s = ∅ :=
   contextSetOf_eq_empty (m := .assert s S) (m' := .assert s (pure S.atIssueᶜ)) (p := S.atIssue)
     (by simp [Context.update]) (by simp [Context.update]) rfl rfl (by simp [Move.assert])
     (by simp [Move.assert])
 
-/-- Presenting `p` and then asserting `¬p` is consistent wherever the speaker's evidence for `p`
-is compatible with `¬p` (19a). -/
+-- (19a)
 theorem mem_contextSetOf_present_assert_compl {w : W} (hc : w ∈ c.contextSetOf s)
     (hN : S.notAtIssue w) (hA : w ∉ S.atIssue) :
     w ∈ ((c.update (.present s S)).update (.assert s (pure S.atIssueᶜ))).contextSetOf s := by
   simp [contextSetOf_update, Move.assert, Move.present, hc, hN, hA]
 
-/-- Denying the evidence a declarative commits to is inconsistent, after an assertion (18b) or a
-presentation (19b). -/
+-- (18b), (19b)
 theorem contextSetOf_update_assert_compl_notAtIssue {m : Move A W} (hs : m.speaker = s)
     (hm : Set.ofPred S.notAtIssue ∈ m.commitments) :
     ((c.update m).update (.assert s (pure (Set.ofPred S.notAtIssue)ᶜ))).contextSetOf s = ∅ :=
   contextSetOf_eq_empty (m' := .assert s (pure (Set.ofPred S.notAtIssue)ᶜ))
     (by simp [Context.update]) (by simp [Context.update]) hs rfl hm (by simp [Move.assert])
 
-/-- Confirming a presented `p` with *=mi* asserts it, so denying it afterwards is inconsistent
-(footnote 10). -/
+-- footnote 10
 theorem contextSetOf_present_assert_assert_compl :
     (((c.update (.present s S)).update (.assert s (pure S.atIssue))).update
       (.assert s (pure S.atIssueᶜ))).contextSetOf s = ∅ :=

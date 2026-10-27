@@ -67,7 +67,7 @@ def maxMora (input : List ℕ) : Constraint Tree := fun t ↦
 def footing (input : List ℕ) : List (Constraint Tree) :=
   [finalLong, maxMora input, parseInto .ft, iamb]
 
-/-- Trochaic reversal `(σˌσː)(ˈσσ)` is the optimal footing of `/σσσσ/` (Table 2). -/
+-- Table 2
 theorem table2 :
     (Tableau.ofList
       {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true]],
@@ -77,8 +77,7 @@ theorem table2 :
       {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]} := by
   decide
 
-/-- The lexical long vowel of `/σσσːσ/` heads a monosyllabic foot in the optimal `(σˌσː)(ˈσː)σ`
-(Table 4). -/
+-- Table 4
 theorem table4 :
     (Tableau.ofList
       {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]],
@@ -88,8 +87,7 @@ theorem table4 :
       {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 2 true], .σ 1]} := by
   decide
 
-/-- A lexical long vowel shortens phrase-finally (Table 6), so `/σσː/` surfaces as the trochee
-    `(ˈσσ)` because *V:]φ dominates Max-μ. -/
+-- Table 6
 theorem table6 :
     (Tableau.ofList {.om [.ft true [.σ 1, .σ 2 true]], .om [.ft true [.σ 1 true, .σ 1]]}
       (footing [1, 2])).optimal = {.om [.ft true [.σ 1 true, .σ 1]]} := by
@@ -116,7 +114,7 @@ theorem columns_words :
       Tree.columns annatto = [1, 3, 1] := by
   decide
 
-/-- Each word's primary stress, the head of its head foot (p. 2365), is its unique head terminal. -/
+-- p. 2365
 theorem headTerminals_words :
     Tree.headTerminals fell = [.σ 2 true] ∧ Tree.headTerminals weFell = [.σ 1 true] ∧
       Tree.headTerminals annatto = [.σ 2 true] := by
@@ -291,7 +289,7 @@ theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .al
 
 end ToneDomain
 
-/-- In isolation the High target is the primary stress itself (Table 7). -/
+-- Table 7
 theorem tone_in_isolation :
     (toneTableau fell toneRanking).optimal = {⟨(3, 3), le_rfl⟩} ∧
       (toneTableau weFell toneRanking).optimal = {⟨(4, 4), le_rfl⟩} ∧
@@ -312,13 +310,12 @@ def friendHasBeenInjured : Tree :=
   .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true]],
     .om [.ft true [.σ 1, .σ 2 true], .σ 1]]
 
-/-- The head of a trochee blocks the domain (Fig. 9), so the High target stays on the primary
-    stress *tɔ́ː*. -/
+-- Fig. 9
 theorem tone_blocked_by_trochee_head :
     (toneTableau friendInjured toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
   by rw [toneTableau_optimal (by decide) rfl]; decide
 
-/-- The short *hɛ* joins the tone domain as the dependent of an iamb (Fig. 10, §1). -/
+-- Fig. 10, §1
 theorem tone_crosses_iamb_dependent :
     (toneTableau friendHasBeenInjured toneRanking).optimal = {⟨(1, 2), by decide⟩} :=
   by rw [toneTableau_optimal (by decide) rfl]; decide
@@ -329,8 +326,7 @@ def manHasBeenHeard : Tree :=
   .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true], Tree.σ 1],
     .om [.ft true [.σ 1, .σ 2 true], .σ 1]]
 
-/-- The domain left-aligns to *tɔː* and takes in the unstressed *tɔ* and *tá* (Table 14),
-    stopping before the iamb head *pɨː*. -/
+-- Table 14
 theorem table14 : (toneTableau manHasBeenHeard toneRanking).optimal = {⟨(1, 3), by decide⟩} :=
   by rw [toneTableau_optimal (by decide) rfl]; decide
 
@@ -340,8 +336,7 @@ def annattoFell : Tree :=
   .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true], Tree.σ 1],
     .om [.σ 1, .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]]
 
-/-- In Fig. 3 the tone domain runs from the primary stress *mɨː* to *lá*, so the High target is an
-unstressed syllable (§1, §7). -/
+-- Fig. 3, §1, §7
 theorem stress_tone_incoherence :
     head annattoFell = 1 ∧ (toneTableau annattoFell toneRanking).optimal = {⟨(1, 4), by decide⟩} ∧
       ¬ Stressed annattoFell 4 ∧ Stressed annattoFell 5 :=

@@ -159,7 +159,7 @@ theorem completionInvisible_iff (ai : AspectualInterpretation) :
     CompletionInvisible ai ↔ ai.situationType.telicity = .telic ∧ ai.viewpoint ≠ .perfective := by
   rw [CompletionInvisible, showsFinalPoint_iff]
 
-/-- *We were walking to school*, (47): an accomplishment under the imperfective. -/
+-- (47)
 theorem walking_to_school : CompletionInvisible ⟨.accomplishment, .imperfective⟩ :=
   (completionInvisible_iff _).mpr ⟨rfl, by decide⟩
 

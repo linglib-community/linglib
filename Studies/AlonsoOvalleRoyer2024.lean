@@ -290,8 +290,7 @@ theorem cualquiera_selective (s : Scenario) (w : World) :
   refine ⟨?_, ?_, by decide⟩ <;>
     simp [ModalIndefinite.denotation, cualquiera, Scenario.Normative]
 
-/-- *N'importe quel* conveys random choice and is undefined anchored to the assertion
-(120). -/
+-- (120)
 theorem nimporteQuel_selective (s : Scenario) (w : World) :
     nimporteQuel.denotation (scenario (some nonempty)) .vp {0} = 1 ∧
       nimporteQuel.denotation s .assertion w = 0 :=

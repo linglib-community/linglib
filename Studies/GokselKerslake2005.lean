@@ -87,8 +87,7 @@ theorem followers_table :
     followers e = [e, i] ∧ followers i = [e, i] ∧ followers ö = [e, ü] ∧ followers ü = [e, ü] := by
   decide
 
-/-- The second-person possessive -(I)n on *kız*, *el*, *kol* and *göz* surfaces with each of the
-four high vowels (§3.2.1). -/
+-- §3.2.1
 theorem iType :
     realize [k, ı, z] [(possessive (.personNumber .second .singular)).form] =
         [k, ı, z, ı, n] ∧
@@ -100,15 +99,13 @@ theorem iType :
         [g, ö, z, ü, n] := by
   decide
 
-/-- The last vowel of a stem decides, so the disharmonic loan *otobüs* takes *-ler*
-(Chapter 3). -/
+-- Chapter 3
 theorem last_vowel_decides :
     realize [o, t, o, b, ü, s] [plural.form] =
       [o, t, o, b, ü, s, l, e, r] := by
   decide
 
-/-- In *üz-ül-dü-nüz* 'you became sad' rounding is copied through three suffixes, and the `D`
-of -DI is voiced after `l` (§3.2). -/
+-- §3.2
 theorem iterated :
     realize [ü, z] [passive.form, di.form, (person .one (.personNumber .second .plural)).form] =
       [ü, z, ü, l, d, ü, n, ü, z] := by
@@ -131,8 +128,7 @@ theorem palatal_l :
       [h, a, l', i, m] := by
   decide
 
-/-- The `D` of -DI is `d` after a voiced segment and `t` after a voiceless one, as in *kal-dı*
-and *düş-tü* (§6.1.2). -/
+-- §6.1.2
 theorem voicing_of_D :
     realize [k, a, l] [di.form] = [k, a, l, d, ı] ∧
     realize [d, ü, ş] [di.form] = [d, ü, ş, t, ü] := by
@@ -245,8 +241,7 @@ theorem negative_raised :
       [s, ö, y, l, e, m, i, y, o, r] := by
   decide
 
-/-- The word *ev-ler-imiz-de-ymiş-ler* 'apparently they are at our homes' is a nominal string, the
-evidential copula and a group-2 person marker (§8.1 (2)). -/
+-- §8.1, (2)
 theorem nominal_predicate :
     realize [e, v] [plural.form, (possessive (.personNumber .first .plural)).form, locative.form,
         evidentialCopula.form, (person .two (.personNumber .third .plural)).form] =
@@ -269,7 +264,7 @@ theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) 
 
 /-! ### The order of suffixes (Chapter 8) -/
 
-/-- *çocuk-lar-ın-a* 'to your children' has the order number, possession, case (§8.1 (1)). -/
+-- §8.1, (1)
 theorem nominal :
     Nominal.template.Licensed (E := Nominal.Exponent)
       [⟨_, .plural⟩, ⟨_, .possessive (.personNumber .second .singular)⟩, ⟨_, .dative⟩] := by
@@ -285,8 +280,7 @@ theorem finite_verb :
         ⟨_, .dir⟩] := by
   decide
 
-/-- *Bitir-e-me-miş-tir*, *Oku-yabil-ecek-miş* and *git-ti-ydi-n* fill positions 1-3-5, 2-3-4,
-and 3-4 with a group-1 person marker (§8.2.3 (11), (12), §8.2.3.3). -/
+-- §8.2.3, (11), (12), §8.2.3.3
 theorem tam_positions :
     Verb.template.Licensed (E := Verb.Exponent)
       [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
@@ -296,8 +290,7 @@ theorem tam_positions :
       [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.personNumber .second .singular)⟩] := by
   decide
 
-/-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and
-the copular markers follow that marker (§8.2.3), so the reversed orders are unlicensed. -/
+-- §8.2.2, §8.2.3
 theorem reversed_orders :
     ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .negative⟩, ⟨_, .causative⟩] ∧
     ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .di⟩, ⟨_, .negative⟩] ∧

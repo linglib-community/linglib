@@ -252,8 +252,7 @@ private theorem mem_u₁ : ∀ v, v ∈ ({u₁} : Set ℕ) ↔ v ∈ [u₁] := b
 
 private theorem mem_empty : ∀ v, v ∈ (∅ : Set ℕ) ↔ v ∈ ([] : List ℕ) := by simp
 
-/-- Read as (24), (23a) has `they` bound by `the lawyers`, one secretary per lawyer under
-`δ_{u₁}`, and no group identity under the distribution. -/
+-- (24), (23a)
 theorem lawyers_bound :
     bindingCond u₃ u₁ (ofRows lawyersBound) {u₁} ∧
       atomsCond 1 u₂ (ofRows lawyersBound) {u₁} ∧
@@ -261,8 +260,7 @@ theorem lawyers_bound :
   rw [bindingCond_ofRows, atomsCond_ofRows mem_u₁, groupIdentityCond_ofRows mem_u₁]
   decide
 
-/-- Read as (31), (23b) has group identity without binding and one secretary per lawyer, but fails
-group identity under the distribution operator of (14) (§2.3). -/
+-- (31), (23b), (14), §2.3
 theorem lawyers_group :
     groupIdentityCond u₃ u₁ (ofRows lawyersGroup) {u₁} ∧
       atomsCond 1 u₂ (ofRows lawyersGroup) {u₁} ∧
@@ -513,8 +511,7 @@ def girlsWide : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (w, .world1), (u₂, .girl1)],
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
-/-- Under the distribution induced by the attitude verb, (49) has group identity without binding and
-(51) binding without group identity, the two readings of (44) (§3.1). -/
+-- (49), (51), (44), §3.1
 theorem win_readings :
     (groupIdentityCond u₂ u₁ (ofRows girlsNarrow) {u₁, w} ∧
         ¬ bindingCond u₂ u₁ (ofRows girlsNarrow) {u₁, w}) ∧
@@ -543,23 +540,21 @@ def sawCrossed : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .girl1), (w, .world1)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .girl2), (w, .world2)]]
 
-/-- By §3.2, (53) satisfies (52), group identity of the pronoun and reciprocity of the
-reciprocal under the distribution. -/
+-- §3.2, (53), (52)
 theorem saw_narrow :
     groupIdentityCond u₂ u₁ (ofRows sawNarrow) {u₁, w} ∧
       reciprocityCond u₃ u₂ (ofRows sawNarrow) {u₁, w} := by
   rw [groupIdentityCond_ofRows mem_u₁w, reciprocityCond_ofRows mem_u₁w]
   decide
 
-/-- By §3.2, (55) satisfies (54), binding of the pronoun and reciprocity in the matrix. -/
+-- §3.2, (55), (54)
 theorem saw_wide :
     bindingCond u₂ u₁ (ofRows sawWide) ∅ ∧
       reciprocityCond u₃ u₂ (ofRows sawWide) ∅ := by
   rw [bindingCond_ofRows, reciprocityCond_ofRows mem_empty]
   decide
 
-/-- By §3.3, the crossed state satisfies (56), group identity of the pronoun with reciprocity
-in the matrix, but not the binding of (54). -/
+-- §3.3, (56), (54)
 theorem saw_crossed :
     groupIdentityCond u₂ u₁ (ofRows sawCrossed) ∅ ∧
       reciprocityCond u₃ u₂ (ofRows sawCrossed) ∅ ∧
@@ -585,8 +580,7 @@ def beatModal : List (PartialAssign ℕ Ind) :=
    row [(u₁, .tracy), (u₂, .chris), (w, .world2)],
    row [(u₁, .chris), (u₂, .tracy), (w, .world2)]]
 
-/-- By §3.4, with the reciprocal above the modal, every accessible world contains both
-directions of `beat`, the contradiction that makes (64) strange. -/
+-- §3.4, (64)
 theorem beat_modal :
     reciprocityCond u₂ u₁ (ofRows beatModal) ∅ ∧
       ∀ s ∈ beatModal,
@@ -605,8 +599,7 @@ def scratchMixed : List (PartialAssign ℕ Ind) :=
    row [(u₁, .child2), (u₂, .child3)],
    row [(u₁, .child3), (u₂, .child2)]]
 
-/-- By §4.2, the mixed construal satisfies the underspecified meaning (79b) but neither
-reciprocity nor reflexive binding. -/
+-- §4.2, (79b)
 theorem scratch_mixed :
     underspecifiedCond u₂ u₁ (ofRows scratchMixed) ∅ ∧
       ¬ reciprocityCond u₂ u₁ (ofRows scratchMixed) ∅ ∧
@@ -627,8 +620,7 @@ def picturesSubject : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .girl1), (u₂, .girl2), (u₃, .picture1), (u₄, .girl2)],
    row [(u₁, .girl2), (u₂, .girl1), (u₃, .picture2), (u₄, .girl1)]]
 
-/-- The two readings of (84) give the second reciprocal different antecedents, and each state fails
-the other's distinctness condition (§4.4). -/
+-- (84), §4.4
 theorem pictures_readings :
     (reciprocityCond u₂ u₁ (ofRows picturesSecond) ∅ ∧
         reciprocityCond u₄ u₂ (ofRows picturesSecond) ∅ ∧
@@ -670,8 +662,7 @@ def sailors : List (PartialAssign ℕ Ind) :=
    row [(u₁, .sailor2), (u₂, .ship2), (u₃, .sailor3)],
    row [(u₁, .sailor3), (u₂, .ship3), (u₃, .sailor1)]]
 
-/-- By §4.6, the collective antecedent `∪u₁` of `work.together` is the group of all three
-sailors while the reciprocal holds pointwise; the distinctness does no work. -/
+-- §4.6
 theorem sailors_collective :
     reciprocityCond u₃ u₁ (ofRows sailors) ∅ ∧ atomsCond 3 u₁ (ofRows sailors) ∅ := by
   rw [reciprocityCond_ofRows mem_empty, atomsCond_ofRows mem_empty]
@@ -787,8 +778,7 @@ instance : DecidableRel pairs := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _
 instance : DecidableRel most := fun _ _ ↦ inferInstanceAs (Decidable (_ < _))
 instance : DecidableRel few := fun _ _ ↦ inferInstanceAs (Decidable (_ < _))
 
-/-- In the clique scenario of (102), *most people know each other* is true and *few know each other*
-false, and in the two-pairs scenario both are neither true nor false ((110), (111)). -/
+-- (102), (110), (111)
 theorem street_scenarios :
     truthValue most clique Finset.univ = 1 ∧ truthValue few clique Finset.univ = -1 ∧
       truthValue most pairs Finset.univ = 0 ∧ truthValue few pairs Finset.univ = 0 := by
@@ -910,8 +900,7 @@ def classmates : List (PartialAssign ℕ Ind) :=
 /-- The three classmates. -/
 def trio : Finset Ind := {.tracy, .chris, .matty}
 
-/-- Both reciprocal relations of (134) are strongly reciprocal on the classmates, though no row
-relates all three classmates (§6.2). -/
+-- (134), §6.2
 theorem classmates_pairwise :
     StrongReciprocity (fun a b ↦ (a, b) ∈ dep u₁ u₂ (ofRows classmates)) trio ∧
       StrongReciprocity (fun a b ↦ (a, b) ∈ dep u₂ u₄ (ofRows classmates)) trio ∧
@@ -930,8 +919,7 @@ def praisedWide : List (PartialAssign ℕ Ind) :=
    row [(u₁, .matty), (u₂, .matty), (u₃, .chris), (w, .world3)],
    row [(u₁, .matty), (u₂, .matty), (u₃, .tracy), (w, .world3)]]
 
-/-- In the wide reading (136) the pronoun is bound, the matrix reciprocal holds, and in each girl's
-world the reciprocal covers the two others (§6.3). -/
+-- (136), §6.3
 theorem praised_wide :
     bindingCond u₂ u₁ (ofRows praisedWide) ∅ ∧
       reciprocityCond u₃ u₂ (ofRows praisedWide) ∅ ∧

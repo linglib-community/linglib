@@ -74,7 +74,6 @@ instance : ∀ π g fo, Decidable (StrongerIn π g fo)
 
 variable {f p}
 
-/-- Over a consistent base, a stronger claim entails a weaker one. -/
 theorem smul_claim_subset (hf : ModalLogic.IsSerial f.accessible) {π : Polarity} {g fo : ModalForce}
     (h : StrongerIn π g fo) : π • claim f p g ⊆ π • claim f p fo := by
   have hnec : claim f p .necessity ⊆ claim f p .possibility := fun w hw ↦
@@ -176,7 +175,7 @@ which appears to express possibility, *'ax̂*, which speakers judge equivalent t
 epistemic particles 'maybe'. -/
 def lexicalForce (_ : ModalItem) : ModalForce := .possibility
 
-/-- *O'qa* is a quantifier without a scale (§2.6). -/
+-- §2.6
 theorem oqa_scaleFree :
     ¬ ModalItem.HasScalemate lexicalForce NezPerce.modals NezPerce.oqa := by
   decide
@@ -214,7 +213,7 @@ theorem rows_resolve :
       (e.parse? "environment" polarityTable).isSome := by
   decide
 
-/-- *O'qa* is accepted exactly when it serves for the force of the English modal there (§1, §3). -/
+-- §1, §3
 theorem rows :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable,
       ∀ π ∈ e.parse? "environment" polarityTable,

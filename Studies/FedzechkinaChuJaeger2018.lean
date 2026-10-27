@@ -103,24 +103,21 @@ theorem verbDependencyLength_eq {d : HeadDirection} {a : Arrangement Constituent
     simp only [language_headFinal, Finset.mem_insert, Finset.mem_singleton] at hb
     rcases hb with rfl | rfl <;> rfl
 
-/-- In the verb-final language of Fig. 1, subject-first order is shorter exactly when the subject
-is the longer argument, long before short. -/
+-- Fig. 1
 theorem long_before_short_head_final (ℓ : Constituent → ℕ) :
     verbDependencyLength .sov ℓ < verbDependencyLength .osv ℓ ↔ ℓ .object < ℓ .subject := by
   rw [verbDependencyLength_eq (d := .headFinal) (by decide),
     verbDependencyLength_eq (d := .headFinal) (by decide)]
   simp [Arrangement.sov, Arrangement.osv]
 
-/-- In the verb-initial language of Fig. 1, subject-first order is shorter exactly when the
-subject is the shorter argument, short before long. -/
+-- Fig. 1
 theorem short_before_long_head_initial (ℓ : Constituent → ℕ) :
     verbDependencyLength .vso ℓ < verbDependencyLength .vos ℓ ↔ ℓ .subject < ℓ .object := by
   rw [verbDependencyLength_eq (d := .headInitial) (by decide),
     verbDependencyLength_eq (d := .headInitial) (by decide)]
   simp [Arrangement.vso, Arrangement.vos]
 
-/-- With arguments of equal length the measure makes no ordering prediction (the baseline of
-Fig. 4). -/
+-- Fig. 4
 theorem verbDependencyLength_eq_of_subject_eq_object {d : HeadDirection}
     {a b : Arrangement Constituent 3} (ha : a ∈ language d) (hb : b ∈ language d)
     {ℓ : Constituent → ℕ}
@@ -152,7 +149,7 @@ theorem fig1_isTree_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso, fig1Vos
     g.IsTree ∧ g.IsProjective := by
   decide +kernel
 
-/-- The eight arrows of Fig. 1 are the yield distances from the verb. -/
+-- Fig. 1
 theorem fig1_yieldDist :
     let ℓ := Function.update (1 : Constituent → ℕ) .object 4
     fig1Sov.yieldDist 5 0 = Arrangement.sov.boundaryDist ℓ .verb .subject ∧
@@ -305,8 +302,7 @@ private theorem abs_integral_sub (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) :
       measureReal_compl (.of_discrete), probReal_univ, ← abs_neg]
     ring_nf
 
-/-- Without a length-based ordering preference, the mean dependency length is `(L + 5) / 2` at any
-order frequency, the dashed line of Fig. 5. -/
+-- Fig. 5
 theorem integral_dependencyLength_of_indepFun (hlang : ∀ᵐ x ∂P, x.2 ∈ language d)
     (h : IndepFun Prod.fst Prod.snd P) : ∫ x, dependencyLength L x ∂P = ((L : ℝ) + 5) / 2 := by
   have hAB : IndepSet (long .subject) subjectFirst P := by
@@ -405,7 +401,7 @@ theorem integral_dependencyLength_eq_lower_iff (hL : 1 < L)
 
 end Prediction
 
-/-- Every point of the lower lines of Fig. 5 is reached by some verb-final learner. -/
+-- Fig. 5
 theorem exists_integral_dependencyLength_eq_lower (p : unitInterval) :
     ∃ P : Measure Production, IsProbabilityMeasure P ∧ P.fst = uniformOn {.subject, .object} ∧
       (∀ᵐ x ∂P, x.2 ∈ language .headFinal) ∧ P.real subjectFirst = p ∧

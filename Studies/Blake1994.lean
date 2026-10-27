@@ -275,8 +275,7 @@ theorem latin_dat_functions_ssubset_ancient_greek :
 
 /-! ### The other case inventories of the fragments -/
 
-/-- Modern Greek, Modern Standard Arabic, Hindi, Telugu and the Slavic languages conform, with
-Blake's case counts for Greek and Arabic ([blake-2001] p. 156) and Hindi–Urdu (p. 10). -/
+-- p. 156, p. 10 [blake-2001]
 theorem fragments_conform :
     ∀ inv ∈ [Finset.univ.image Greek.StandardModern.Case.label,
       Finset.univ.image Arabic.ModernStandard.Case.label, Finset.univ.image HindiUrdu.Case.label,

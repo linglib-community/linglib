@@ -322,8 +322,7 @@ theorem chanceUnfalsified_two_of_twentyfour : chanceUnfalsified 24 2 21 = 11 / 1
     show Nat.choose 24 21 = 2024 by decide]
   norm_num
 
-/-- With the twenty-second order accepted as attested the chance drops to one in 276, the
-paper's (20). -/
+-- (20)
 theorem chanceUnfalsified_two_of_twentyfour' : chanceUnfalsified 24 2 22 = 1 / 276 := by
   rw [chanceUnfalsified, show 24 - 2 = 22 from rfl, show Nat.choose 22 22 = 1 by decide,
     show Nat.choose 24 22 = 276 by decide]

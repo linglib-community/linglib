@@ -111,23 +111,22 @@ def vocabulary : RuleSet (VocabularyItem SiteFeature String) :=
 def spellout (c : Arguments Number) (r : Root) : Option String :=
   subsetPrinciple vocabulary (site c r)
 
-/-- Singular subject → *vuite* ((6a)). -/
+-- (6a)
 theorem run_sg : spellout (unaccusative .singular) run = some "vuite" := by decide
 
-/-- Plural subject → *tenne* ((6b)). -/
+-- (6b)
 theorem run_pl : spellout (unaccusative .plural) run = some "tenne" := by decide
 
-/-- No number-bearing argument (the impersonal passive) → *tenne*, the
-Elsewhere form (fn. 16). -/
+-- fn. 16
 theorem run_impersonal : spellout empty run = some "tenne" := by decide
 
-/-- *weye*/*kaate* with a singular/plural subject ((26)). -/
+-- (26)
 theorem walk_sg_pl :
     spellout (unaccusative .singular) walk = some "weye" ∧
       spellout (unaccusative .plural) walk = some "kaate" := by
   decide
 
-/-- *mea*/*sua* with a singular/plural object, whatever the subject ((27)). -/
+-- (27)
 theorem kill_sgObj_plObj :
     spellout (transitive .singular .plural) kill = some "mea" ∧
       spellout (transitive .plural .singular) kill = some "sua" := by
@@ -135,14 +134,12 @@ theorem kill_sgObj_plObj :
 
 /-! ### §2.1–2.2 Individuation is not phonological -/
 
-/-- One index has two phonologically unrelated forms, so a root identified by
-its form would split √322 in two (§2.2). -/
+-- §2.2
 theorem run_two_forms :
     spellout (unaccusative .singular) run ≠ spellout (unaccusative .plural) run := by
   decide
 
-/-- The suppletive items compete only at their own index, so a non-suppletive intransitive root
-receives no exponent (§2.1). -/
+-- §2.1
 theorem index_local (c : Arguments Number) : spellout c sing = none := by
   unfold spellout site
   rcases h : c .internal with _ | n

@@ -118,8 +118,7 @@ theorem nullAffix_of (hc : M.cause e e₁ e₂) (h2 : R2 e₂ ys) (h1 : R1 e₁ 
     nullAffix M R2 R1 e ys :=
   ⟨e₁, e₂, xs, hc, h2, h1⟩
 
-/-- The sole argument of an unaccusative compound may be the agent of V1 (219), so a
-subject-oriented resultative needs no reflexive. -/
+-- (219)
 theorem nullAffix_of_agent {R2 R1 : E → (Fin 1 → D) → Prop} {y : D} (hc : M.cause e e₁ e₂)
     (h2 : R2 e₂ ![y]) (h1 : R1 e₁ ![y]) : nullAffix M R2 R1 e ![y] :=
   nullAffix_of hc h2 h1

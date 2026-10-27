@@ -234,7 +234,7 @@ def greyGluing : Theory greyCtx :=
 theorem isGluing_grey : greyCover.IsGluing (presheaf lang Var) greySections greyGluing := by
   decide +kernel
 
-/-- The two covers give Example 3's readings, *it* as the donkey and not as John. -/
+-- Example 3
 theorem ex3_readings :
     (Examples.ex3.readings.lookup "it = the donkey" = some .acceptable ↔
       ∃ s, greyCover.IsGluing (presheaf lang Var) greySections s) ∧
@@ -291,7 +291,7 @@ theorem isGluing_broke :
     ∀ b, (brokeCover b).IsGluing (presheaf lang Var) brokeSections (brokeGluing b) := by
   decide +kernel
 
-/-- Both readings of Example 4 glue. -/
+-- Example 4
 theorem ex4_readings :
     (Examples.ex4.readings.lookup "it = the cup" = some .acceptable ↔
       ∃ s, (brokeCover .cup).IsGluing (presheaf lang Var) brokeSections s) ∧

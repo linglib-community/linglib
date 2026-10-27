@@ -78,7 +78,7 @@ def murderer : Ent → Ent → Unit → Prop := fun v y _ ↦
 /-- `R_POSS` holds of Petja and the hireling, whom Petja controls. -/
 def rPoss : Ent → Ent → Unit → Prop := fun p y _ ↦ p = petja ∧ y = hireling
 
-/-- *ubijca Peti* (25a), the relational noun applied to Petja, is the killer. -/
+-- (25a)
 theorem ubijcaPeti_iff (y : Ent) : murderer petja y () ↔ y = killer := by
   unfold murderer; decide +revert
 

@@ -140,8 +140,7 @@ theorem willIf_compl : willIf s f A Bᶜ = (willIf s f A B)ᶜ := will_compl s
 theorem willIf_excluded_middle : Valid2 fun s f ↦ willIf s f A B ∪ willIf s f A Bᶜ :=
   fun s f ↦ will_excluded_middle s (f ∩ A)
 
-/-- Under modal subordination, *If A, will B. Will C* is equivalent to *if A, will (B and C)* ((24)
-of §5.3.1). -/
+-- (24), §5.3.1
 theorem willIf_inter : willIf s f A B ∩ willIf s f A C = willIf s f A (B ∩ C) :=
   (map_inf _ B C).symm
 
@@ -158,7 +157,7 @@ section Contexts
 
 variable {T : Type*} [Preorder T] {F : Temporal.TWFrame W T} {t : T}
 
-/-- At a context *will A* is true exactly when `A` is, the collapse (18). -/
+-- (18)
 theorem mem_will_alternatives_iff : w ∈ will s (F.alternatives (w, t)) A ↔ w ∈ A :=
   mem_will_of_mem s Temporal.TWFrame.mem_alternatives_self
 
@@ -193,8 +192,7 @@ theorem necessity_compl_eq_iff {f g : Background W} :
   obtain ⟨σ, hσ⟩ := ModalLogic.box_compl_eq_iff.1 h
   exact ⟨σ, fun p ↦ by rw [← ModalLogic.box_graph σ p, hσ]; rfl⟩
 
-/-- If the best worlds include an `A`-world and a non-`A`-world, universal *will* verifies neither
-*will A* nor *will not A* (§2.4). -/
+-- §2.4
 theorem not_necessity_or_necessity_compl {f g : Background W} {v v' : W}
     (hv : v ∈ bestWorlds f g w) (hv' : v' ∈ bestWorlds f g w) (hA : v ∈ A) (hA' : v' ∉ A) :
     ¬ (necessity f g (· ∈ A) w ∨ necessity f g (· ∈ Aᶜ) w) := by
@@ -245,8 +243,7 @@ def warriorsCap : Set W := {.cw}
 /-- The proposition that Cynthia wears some cap, Warriors or Giants. -/
 def wearsCap : Set W := {.cw, .cg}
 
-/-- *Cynthia will wear a Warriors cap* is true at the Warriors-cap context and false at the
-Giants-cap context, so its truth value is indeterminate (§3, §6). -/
+-- §3, §6
 theorem will_warriorsCap_indeterminate (s : SelectionFunction W) :
     .cw ∈ will s (frame.alternatives (.cw, 0)) warriorsCap ∧
       .cg ∉ will s (frame.alternatives (.cg, 0)) warriorsCap := by
@@ -272,8 +269,7 @@ private theorem cynthiaCredence_real (S : Set W) : cynthiaCredence.real S = S.nc
   rw [cynthiaCredence, uniformOn_univ_real_apply, show Fintype.card W = 3 from rfl,
     Nat.cast_ofNat]
 
-/-- Whatever the selection function and the world of the context, *Cynthia will wear a Warriors
-cap* has credence 1/3, that of its prejacent (§8.1). -/
+-- §8.1
 theorem credence_will_warriorsCap (s : SelectionFunction W) (w : W) :
     cynthiaCredence.real (will s (frame.alternatives (w, 0)) warriorsCap) = 1 / 3 := by
   rw [measureReal_def, measure_will s cynthiaCredence (f := frame.alternatives (w, 0)) (by simp),
@@ -287,15 +283,13 @@ def histBase : Background W := .ofRel (.ofSuccessors fun w ↦ frame.alternative
 @[simp] theorem accessibleWorlds_histBase (w : W) : histBase.accessibleWorlds w = Set.univ := by
   simp [histBase]
 
-/-- On the universal reading over the historical modal base, *Cynthia will wear a Warriors cap*
-has credence 0 (§2.3). -/
+-- §2.3
 theorem credence_necessity_warriorsCap :
     cynthiaCredence {w | necessity histBase ⊥ (· ∈ warriorsCap) w} = 0 :=
   measure_necessity_eq_zero _ <| .of_forall fun _ h ↦ by
     simpa [warriorsCap] using h (show W.cg ∈ bestWorlds histBase ⊥ _ by simp)
 
-/-- On the universal reading, *Cynthia will wear a Warriors cap* and *Cynthia will not wear a
-Warriors cap* are both false at every world (§2.4). -/
+-- §2.4
 theorem not_necessity_warriorsCap_or_compl (w : W) :
     ¬ (necessity histBase ⊥ (· ∈ warriorsCap) w ∨ necessity histBase ⊥ (· ∈ warriorsCapᶜ) w) :=
   not_necessity_or_necessity_compl (v := .cw) (v' := .cg) (by simp) (by simp)
@@ -314,8 +308,7 @@ theorem not_conditionalNecessity_wearsCap_or_compl (w : W) :
 
 The cap-conditional is (31) of §8.2. -/
 
-/-- *If Cynthia wears a cap, she will wear a Warriors cap* is true exactly at the Warriors-cap world
-and at a no-cap world selecting it (footnote 32). -/
+-- footnote 32
 theorem mem_willIf_wearsCap_warriorsCap (s : SelectionFunction W) (w v : W) :
     v ∈ willIf s (frame.alternatives (w, 0)) wearsCap warriorsCap ↔
       v = .cw ∨ v = .cn ∧ s.sel .cn wearsCap = .cw := by

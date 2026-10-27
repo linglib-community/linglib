@@ -115,8 +115,7 @@ theorem nestedDomain {pre post : List H} {β : H} (hβ : β ∉ pre) :
     have ha : a ≠ β := fun h ↦ hβ (h ▸ List.mem_cons.2 (Or.inl rfl))
     simpa [ha] using ih fun h ↦ hβ (List.mem_cons_of_mem _ h)
 
-/-- In trees (2)–(3), an intervener `δ` above the goal `β` of the first probe lies outside the
-domain of every probe nested under `β`. -/
+-- (2), (3)
 theorem notMem_nestedDomain {pre post : List H} {β δ : H}
     (hnd : (pre ++ β :: post).Nodup) (hδ : δ ∈ pre) :
     δ ∉ (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) := by
@@ -253,25 +252,22 @@ def ariellese : List FeatureType := [.person, .infl]
 /-- In Perf's domain in (10) the subject is c-commanded first, then v. -/
 example : domain isPhase (perfSpine ⟨.transitive, none⟩) = [.dpSbj, .v] := rfl
 
-/-- In (10) and (18), `[∗Infl:perf∗]` finds v, and `[∗π:_∗]`, nested under it, agrees with v across
-the subject, for transitive, unergative and reflexive v alike. -/
+-- (10), (18)
 theorem perf_targets_v (c : TransitivityClass) (hc : c ≠ .unaccusative) (p : Person) :
     (perfCycle standardItalian ⟨c, none⟩ p).1 = [some .v, some .v] := by
   revert c p; decide
 
-/-- In (15) π-Agree on Perf fails, since the defective v bears no person feature and the raised
-theme in Spec,v is above the Nested-Agree goal. -/
+-- (15)
 theorem perf_unaccusative (p : Person) :
     (perfCycle standardItalian ⟨.unaccusative, none⟩ p).1 = [some .v, none] := by
   revert p; decide
 
-/-- In (20) both probes on Perf target Voice_imp, whose person feature is unvalued. -/
+-- (20)
 theorem perf_impersonal (c : TransitivityClass) (p : Person) :
     (perfCycle standardItalian ⟨c, some .impersonal⟩ p).1 = [some .voice, some .voice] := by
   revert c p; decide
 
-/-- In (11) T assigns nominative to the subject and, nested under that dependency, ϕ-agrees with it
-rather than with the higher Perf. -/
+-- (11)
 theorem t_targets_subject (p : Person) :
     (tCycle standardItalian ⟨.transitive, none⟩ p).1 = [some .dpSbj, some .dpSbj] := by
   revert p; decide
@@ -280,13 +276,12 @@ theorem t_targets_subject (p : Person) :
 def standardItalianAux (s : State Head) : PerfectAuxiliary :=
   if (s .perf .person).isValued then .have else .be
 
-/-- As in (4)–(5), the derivation yields HAVE with transitives and unergatives and BE with
-unaccusatives and reflexives, for every subject person. -/
+-- (4), (5)
 theorem standardItalian_aux (c : TransitivityClass) (p : Person) :
     standardItalianAux (derive standardItalian ⟨c, none⟩ p) = c.canonicalSelection := by
   revert c p; decide
 
-/-- Under Voice_imp or Voice_pass the auxiliary is BE whatever the verb ((5d), fn. 18). -/
+-- (5d), fn. 18
 theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
     (hf : f = .impersonal ∨ f = .passive) (p : Person) :
     standardItalianAux (derive standardItalian ⟨c, some f⟩ p) = .be := by
@@ -296,8 +291,7 @@ theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
 def arielleseAux (s : State Head) : PerfectAuxiliary :=
   if s .perf .person = .valued .third then .have else .be
 
-/-- Under the ordering (22) the auxiliary follows the subject's person alone (21), BBH whatever the
-argument structure (§3.5). -/
+-- (22), (21), §3.5
 theorem ariellese_aux (c : TransitivityClass) (p : Person) :
     arielleseAux (derive ariellese ⟨c, none⟩ p) = if p = .third then .have else .be := by
   revert c p; decide
@@ -306,7 +300,7 @@ theorem ariellese_aux (c : TransitivityClass) (p : Person) :
 def tufilleseAux (s : State Head) : PerfectAuxiliary :=
   if (s .perf .person).isValued ∧ s .t .person = .valued .third then .have else .be
 
-/-- The mixed system has BBH where Standard Italian has HAVE and BE where it has BE (§3.5). -/
+-- §3.5
 theorem tufillese_aux (c : TransitivityClass) (p : Person) :
     tufilleseAux (derive standardItalian ⟨c, none⟩ p) =
       if c.canonicalSelection = .have ∧ p = .third then .have else .be := by
@@ -358,30 +352,28 @@ def agreement (o : ProbeOrder) (applDat : Bool) : ArgumentRole → Bool
   | .T => phiGoal o applDat = some .dpT
   | _ => true
 
-/-- Example (25) has indirective case and agreement, v's ϕ-probe reaching the theme across the
-recipient. -/
+-- (25)
 theorem ditransitive_caseFirst_dat :
     IsIndirective (caseMarking .caseFirst true) ∧ IsIndirective (agreement .caseFirst true) ∧
       phiGoal .caseFirst true = some .dpT := by
   decide
 
-/-- Example (26) has secundative case and agreement. -/
+-- (26)
 theorem ditransitive_caseFirst_noDat :
     IsSecundative (caseMarking .caseFirst false) ∧ IsSecundative (agreement .caseFirst false) := by
   decide
 
-/-- Example (27) has indirective case and secundative agreement. -/
+-- (27)
 theorem ditransitive_phiFirst_dat :
     IsIndirective (caseMarking .phiFirst true) ∧ IsSecundative (agreement .phiFirst true) := by
   decide
 
-/-- Example (28) has secundative case and agreement again. -/
+-- (28)
 theorem ditransitive_phiFirst_noDat :
     IsSecundative (caseMarking .phiFirst false) ∧ IsSecundative (agreement .phiFirst false) := by
   decide
 
-/-- Table 1's gap ([barany-2024]). Under either ordering and either Appl setting, indirective
-agreement comes only with indirective case. -/
+-- Table 1 [barany-2024]
 theorem isIndirective_caseMarking_of_agreement (o : ProbeOrder) (d : Bool) :
     IsIndirective (agreement o d) → IsIndirective (caseMarking o d) := by
   revert o d; decide
@@ -417,16 +409,15 @@ def icelandicOrder : ProbeOrder → List FeatureType
 def icelandic (k : Clausal) (o : ProbeOrder) : FeatureSlot FeatureType.number.ValueOf :=
   (run icelandicActive .t [.dpDat, .dpNom] (icelandicOrder o) (icelandicInitial k)).2 .t .number
 
-/-- In (29a) with case first, T assigns nominative to the object and then ϕ-agrees with it across
-the dative (*líka*). -/
+-- (29a)
 theorem icelandic_monoclausal_caseFirst :
     icelandic .monoclausal .caseFirst = .valued .plural := by decide
 
-/-- In (29a) with ϕ first, the dative intervenes defectively, giving default agreement (*líkar*). -/
+-- (29a)
 theorem icelandic_monoclausal_phiFirst : icelandic .monoclausal .phiFirst = .unvalued := by
   decide
 
-/-- In (29b), matrix T's case probe finds no goal, so agreement is default under either ordering. -/
+-- (29b)
 theorem icelandic_biclausal (o : ProbeOrder) : icelandic .biclausal o = .unvalued := by
   revert o; decide
 
@@ -447,8 +438,7 @@ def lak (ps po : Person) : FeatureSlot FeatureType.person.ValueOf :=
   (run allActive .asp (domain isPhase [⟨[.dpSbj], .v⟩, ⟨[], .dpObj⟩]) [.infl, .person] s).2
     .asp .person
 
-/-- In (31c)–(31d) the perfective auxiliary carries the internal argument's person, whatever the
-external argument's. -/
+-- (31c), (31d)
 theorem lak_agrees_with_object (ps po : Person) : lak ps po = .valued po := by
   revert ps po; decide
 
@@ -462,8 +452,7 @@ def vosInitial : Head → FeatureBundle
   | .dpSbj => ofList [⟨.case, .unvalued⟩, person .third]
   | _ => ⊥
 
-/-- In (33) the case-marked object is no goal for nominative, and ϕ-Agree, nested under case
-assignment, targets the subject. -/
+-- (33)
 theorem vos_subject_agreement :
     (run allActive .t [.dpObj, .dpSbj] [.case, .person] vosInitial).1 =
       [some .dpSbj, some .dpSbj] := by decide
@@ -480,8 +469,7 @@ def bulgarianInitial : Head → FeatureBundle
 def bulgarianDomain : List Head :=
   domain isPhase [⟨[.whSbj], .t⟩, ⟨[.whObj], .v⟩, ⟨[], .verb⟩]
 
-/-- In (35) the object fronts first, the subject lands in the outer specifier, and the base order is
-preserved. -/
+-- (35)
 theorem bulgarian_order : whFronting bulgarianInitial .c bulgarianDomain = [.whObj, .whSbj] := by
   decide
 
@@ -523,17 +511,15 @@ def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Va
     (hindiInitial k ps po)).2
   (run allActive .t (domain isPhase (hindiSpine k)) [.infl, .person] s).2 .t .person
 
-/-- In (37), starting from Asp, ϕ-Agree skips the ergative subject and reaches v's copy of the
-object's features. -/
+-- (37)
 theorem hindi_object_agreement (ps po : Person) : hindi .ergSubject ps po = .valued po := by
   revert ps po; decide
 
-/-- In (38a), with both DPs case-marked above Asp, only v's unvalued slot remains, giving default
-agreement. -/
+-- (38a)
 theorem hindi_default_agreement (ps po : Person) : hindi .bothMarked ps po = .unvalued := by
   revert ps po; decide
 
-/-- In (38b) an unmarked subject in Spec,v is the first ϕ-goal below Asp. -/
+-- (38b)
 theorem hindi_subject_agreement (ps po : Person) :
     hindi .unmarkedSubject ps po = .valued ps := by
   revert ps po; decide

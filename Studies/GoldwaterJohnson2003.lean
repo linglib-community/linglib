@@ -148,7 +148,7 @@ private theorem strictConvexOn_sum_sq_div {σ : ℝ} (hσ : σ ≠ 0) :
     rw [mul_div_assoc', mul_div_assoc', ← add_div, div_lt_div_iff_of_pos_right hc]
     exact this
 
-/-- With the Gaussian prior the objective (3) is strictly concave in the weights. -/
+-- (3)
 theorem strictConcaveOn_regularizedObjective (con : ConstraintSet (I × O) (Fin n))
     (data : List (I × O)) {σ : ℝ} (hσ : σ ≠ 0) :
     StrictConcaveOn ℝ Set.univ fun w ↦ regularizedObjective con w data σ :=
@@ -168,8 +168,7 @@ section MaximumEntropy
 variable [MeasurableSpace I] [Fintype I] [MeasurableSingletonClass I]
   (con : ConstraintSet (I × O) (Fin n)) (data : List (I × O))
 
-/-- The log pseudo-likelihood (2) is the number of training pairs times the conditional
-log-likelihood of their empirical distribution. -/
+-- (2)
 theorem logPseudoLikelihood_eq (h : data ≠ []) (w : Fin n → ℝ) :
     logPseudoLikelihood con w data =
       data.length * condLogLikelihood con.violations (empirical data) w := by

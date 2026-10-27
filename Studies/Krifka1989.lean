@@ -106,14 +106,13 @@ variable {α M : Type*} [SemilatticeSup α] [HasRemainders α] [AddCommMonoid M]
 omit [HasRemainders α] in
 theorem barePlural_cum (P : α → Prop) : CUM (AlgClosure P) := algClosure_cum
 
-/-- The measure construction (4) quantizes a cumulative noun with two distinct instances (D 28), so
-measure phrases cannot stack (3c). -/
+-- (4), (3c)
 theorem measure_qmod {P : α → Prop} (hP : CUM P) {x y : α} (hx : P x) (hy : P y) (hxy : x ≠ y)
     (μ : α → M) [IsExtensiveMeasure μ] (n : M) : ¬ QUA P ∧ QUA (QMOD P μ n) :=
   ⟨fun hQ ↦ qua_cum_incompatible hQ hx hy hxy hP,
     qmod_qua ((IsExtensiveMeasure.strictMono μ).strictMonoOn _) n⟩
 
-/-- A count noun (6), a classifier construction with a built-in natural unit, is quantized. -/
+-- (6)
 theorem countNoun_qua (P : α → Prop) (NU : α → M) [IsExtensiveMeasure NU] (n : M) :
     QUA (QMOD P NU n) :=
   qmod_qua ((IsExtensiveMeasure.strictMono NU).strictMonoOn _) n
@@ -237,8 +236,7 @@ section Adverbials
 
 variable {E T M : Type*} [SemilatticeSup T]
 
-/-- A durative adverbial (15) quantizes events through an extensive measure of the temporal trace (D
-41). -/
+-- (15)
 theorem durative_qua [SemilatticeSup E] [HasRemainders E] [AddCommMonoid M] [PartialOrder M]
     [AddLeftStrictMono M] (P : E → Prop) (μ' : E → M) [IsExtensiveMeasure μ'] (n : M) :
     QUA (QMOD P μ' n) :=
@@ -249,7 +247,7 @@ measure. -/
 def inSpan (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) (n : M) : E → Prop :=
   fun e ↦ P e ∧ ∃ t, Conv t ∧ μ t = n ∧ τ e ≤ t
 
-/-- Time-span adverbials are upward entailing in their number (17). -/
+-- (17)
 theorem inSpan_mono (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) {n n' : M}
     (h : ∀ t, Conv t → μ t = n → ∃ t', Conv t' ∧ μ t' = n' ∧ t ≤ t') :
     ∀ e, inSpan P τ Conv μ n e → inSpan P τ Conv μ n' e := by

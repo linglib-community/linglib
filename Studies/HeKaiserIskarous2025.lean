@@ -304,8 +304,6 @@ theorem speaker_real_pos {u : Utterance} {st : State} (h : 0 < m u st) (hst : P 
     0 < (speaker P m s st).real {u} :=
   ENNReal.toReal_pos (speaker_ne_zero P m s h hst) (measure_ne_top _ _)
 
-/-- Between two utterances holding at a state, the speaker prefers the one of higher
-utility. -/
 theorem speaker_real_lt_iff {u v : Utterance} {st : State} (hu : 0 < m u st) (hv : 0 < m v st)
     (hst : P {st} ≠ 0) :
     (speaker P m s st).real {u} < (speaker P m s st).real {v} ↔
@@ -396,8 +394,6 @@ theorem likelihood_boolean_neg_eq_pos {s' : Setting} (hα : s.α = s'.α) (hc : 
   rw [likelihood_boolean, likelihood_boolean, ← hα, ← hc, hp]
   simp only [State.utterance, hcost]
 
-/-- The Boolean speaker prefers silence to the positive sentence at the positive state exactly
-when the state's prior exceeds the exponential of the cost saved by silence. -/
 theorem speaker_boolean_pos_lt_null_iff :
     (s.speaker boolean .pos).real {.pos} < (s.speaker boolean .pos).real {.null} ↔
       Real.exp (s.cost .null - s.cost .pos) < s.p := by
@@ -441,8 +437,6 @@ theorem one_sub_p_lt_L0_fuzzy_neg_iff {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 
     1 - s.p < (L0 s.prior (fuzzy n σ) .neg {.neg}).toReal ↔ 1 / 2 < n :=
   s.statePrior_lt_L0_real_iff (fuzzy_nonneg hn0 hn1 hσ0 hσ1) (u := .neg) (by simp [fuzzy]) .neg
 
-/-- At the positive state, the fuzzy speaker prefers silence to a positive sentence of degree
-at most one half whenever the sentence costs more than silence. -/
 theorem speaker_fuzzy_pos_lt_null {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (hσ0 : 0 < σ)
     (hσ : σ ≤ 1 / 2) (hc : s.cost .null < s.cost .pos) :
     (s.speaker (fuzzy n σ) .pos).real {.pos} < (s.speaker (fuzzy n σ) .pos).real {.null} := by
@@ -462,8 +456,7 @@ theorem speaker_fuzzy_pos_lt_null {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (
 the sigmoid degree at the measured prior of the positive state. -/
 noncomputable def fuzzyMeaning (θ : Sigmoid) (n : ℝ) : Meaning := fuzzy n (θ.eval s.p)
 
-/-- Below the threshold prior, the fuzzy speaker prefers silence to the positive sentence at the
-positive state (§4.1). -/
+-- §4.1
 theorem speaker_fuzzyMeaning_pos_lt_null (θ : Sigmoid) {n : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1)
     (hk : 0 < θ.k) (hL : 0 < θ.L) (hc0 : 0 ≤ θ.c) (hc : θ.c < 1 / 2) (hLc : 1 / 2 < θ.L + θ.c)
     (hp : s.p < θ.threshold) (hcost : s.cost .null < s.cost .pos) :
@@ -648,8 +641,7 @@ theorem wonkiness_boolean_pos {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : S
   have := hpos .normal
   positivity
 
-/-- After a state's sentence, wonkiness exceeds its prior iff the state's prior exceeds one half
-(§5.3, Figure 6). -/
+-- §5.3, Figure 6
 theorem lt_wonkiness_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
     ω < s.wonkiness (fun _ ↦ boolean) ω st ↔ 1 / 2 < s.statePrior st := by
   rw [wonkiness_boolean s hω0 hω1,
@@ -668,8 +660,7 @@ theorem lt_wonkiness_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State)
   rw [lt_div_iff₀ hden, key, hSw, hSn, Real.sigmoid_lt_iff, mul_lt_mul_iff_of_pos_left s.α_pos,
     sub_lt_sub_iff_left, Real.log_lt_log_iff (by norm_num) (s.statePrior_pos st)]
 
-/-- After a state's sentence, its expected typicality exceeds its prior iff the prior is below one
-half (§5.3, Figure 5). -/
+-- §5.3, Figure 5
 theorem statePrior_lt_expectedTypicality_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
     s.statePrior st < s.expectedTypicality (fun _ ↦ boolean) ω st ↔ s.statePrior st < 1 / 2 := by
   have := s.isProbabilityMeasure_wonkyListener_boolean hω0 st
@@ -694,8 +685,7 @@ of the positive state. -/
 noncomputable def funkyMeaning (θ : Sigmoid) (n : ℝ) (w : World) : Meaning :=
   fuzzy n (θ.eval ((s.worldPrior w).real {.pos}))
 
-/-- In the normal world the funky speaker is the fuzzy speaker, so the two models agree on
-utterance likelihood (§6.2). -/
+-- §6.2
 theorem wonkySpeaker_funkyMeaning_normal (θ : Sigmoid) (n : ℝ) (st : State) :
     s.wonkySpeaker (s.funkyMeaning θ n) (st, .normal) = s.speaker (s.fuzzyMeaning θ n) st := by
   rw [wonkySpeaker_apply, funkyMeaning, worldPrior_real_normal]

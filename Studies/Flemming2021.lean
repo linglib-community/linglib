@@ -121,8 +121,7 @@ theorem probit_choiceProb_pi_gaussianReal (con : ConstraintSet (Fin 2) (Fin n)) 
 changes by `Δh` and the noise standard deviation from `σ` to `σ'` (38a). -/
 noncomputable def probitChange (h Δh σ σ' : ℝ) : ℝ := (h + Δh) / σ' - h / σ
 
-/-- The change decomposes into a term proportional to the initial harmony difference and the
-rescaled harmony change (38b). -/
+-- (38b)
 theorem probitChange_eq (h Δh : ℝ) {σ σ' : ℝ} (hσ : 0 < σ) (hσ' : 0 < σ') :
     probitChange h Δh σ σ' = h * (σ - σ') / (σ * σ') + Δh / σ' := by
   unfold probitChange
@@ -208,7 +207,7 @@ theorem diff_eq : ∀ u o f, List.ofFn (diff ⟨u, o, f⟩) =
 noncomputable def harmonyDiff (x : Context) (w : Fin 6 → ℝ) : ℝ :=
   harmonyScore (constraints x) w 0 - harmonyScore (constraints x) w 1
 
-/-- The harmony difference is the weighted difference tableau, as in (29)–(34). -/
+-- (29), (34)
 theorem harmonyDiff_eq_sum (x : Context) (w : Fin 6 → ℝ) :
     harmonyDiff x w = ∑ k, w k * diff x k := by
   simp only [harmonyDiff, harmonyScore_sub, dotProduct, ConstraintSet.violationDiff, diff,
@@ -269,8 +268,7 @@ theorem logit_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
 noncomputable def weightNoiseProb (x : Context) (w : Fin 6 → ℝ) (σ : ℝ) : ℝ :=
   (weightNoiseChoiceProb (constraints x) w (.mk (σ ^ 2) (sq_nonneg σ)) 0).toReal
 
-/-- The squared length of the violation difference (37) is the number of differing constraints, 4
-with the \*Clash difference and 3 without (Table 3). -/
+-- (37), Table 3
 theorem dotProduct_violationDiff_self (x : Context) :
     ((constraints x).violationDiff 0 1 ⬝ᵥ (constraints x).violationDiff 0 1 : ℝ) =
       if x.following = .monosyllable then 4 else 3 := by
@@ -280,7 +278,7 @@ theorem dotProduct_violationDiff_self (x : Context) :
     simp [ConstraintSet.violationDiff, constraints, noSchwa, starCCC, starClash, maxSchwa,
       depSchwa, starCluster] <;> norm_num
 
-/-- The NHG probit of the schwa candidate is its harmony difference over `σ_d` (36). -/
+-- (36)
 theorem probit_weightNoiseProb (x : Context) (w : Fin 6 → ℝ) {σ : ℝ} (hσ : 0 < σ) :
     probit (weightNoiseProb x w σ) =
       harmonyDiff x w / (σ * √(if x.following = .monosyllable then 4 else 3)) := by
@@ -293,8 +291,7 @@ theorem probit_weightNoiseProb (x : Context) (w : Fin 6 → ℝ) {σ : ℝ} (hσ
     Real.sqrt_sq hσ.le]
   rfl
 
-/-- The probit gain from the \*Clash violation is (38a) with `Δh` the weight of \*Clash, `σ_d = σ√3`
-and `σ_d' = 2σ`. -/
+-- (38a)
 theorem probit_gain_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) {σ : ℝ}
     (hσ : 0 < σ) :
     probit (weightNoiseProb ⟨u, o, .monosyllable⟩ w σ) -
@@ -325,8 +322,7 @@ theorem clash_gain_ordered (w : Fin 6 → ℝ) {σ : ℝ} (hσ : 0 < σ) (hw : 0
   simp only [gain, probit_gain_following _ _ _ hσ]
   exact ⟨hanti (by linarith), hanti (by linarith), hanti (by linarith)⟩
 
-/-- For pairs differing in preceding consonants, the NHG probit gain is the rescaled harmony change
-(41), larger before a monosyllable. -/
+-- (41)
 theorem probit_gain_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) {σ : ℝ}
     (hσ : 0 < σ) :
     probit (weightNoiseProb ⟨u, .cc, f⟩ w σ) - probit (weightNoiseProb ⟨u, .c, f⟩ w σ) =
@@ -360,8 +356,7 @@ theorem onset_effect_larger_for_words : ∀ f,
   intro f
   cases f <;> simp only [odds, observedRate] <;> decide +kernel
 
-/-- In the fits of Table 2 censored NHG fits best and MaxEnt next, normal MaxEnt worse, and NHG
-worst. -/
+-- Table 2
 theorem deviance_order :
     (deviances .censoredNhg).deviance.toRat < (deviances .maxEnt).deviance.toRat ∧
       (deviances .maxEnt).deviance.toRat < (deviances .normalMaxEnt).deviance.toRat ∧
@@ -420,8 +415,7 @@ theorem table45_harmony :
       harmonyScore tableCon tableW 2 = -16 := by
   simp [harmonyScore_eq_neg_sum, Fin.sum_univ_three, tableCon, tableW]; norm_num
 
-/-- MaxEnt gives `a` the probability `e⁻¹⁵ / (e⁻¹⁵ + 2e⁻¹⁶) = 1 / (1 + 2e⁻¹)`, 0.58, and `b` and
-`c` equal probabilities (5). -/
+-- (5)
 theorem table45_maxent :
     (maxEnt tableCon.violations tableW).real {0} = 1 / (1 + 2 * exp (-1)) ∧
       (maxEnt tableCon.violations tableW).real {1} =

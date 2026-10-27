@@ -183,7 +183,7 @@ theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : ClauseSpine} {n :
 
 /-! ### Multiple exponence (§3.1, §5.2) -/
 
-/-- Within a clause the sites are Voice⁰ and each directional, `n + 1` of them (45). -/
+-- (45)
 theorem sites_monoclausal (n : ℕ) :
     sites [spine finiteClause n] = (0, .cat .Voice) :: List.replicate n (0, .dir) := by
   simp [sites, path, spine, finiteClause, BearsA, HostsReflex, List.map_replicate]
@@ -196,12 +196,10 @@ theorem sites_monoclausal_length (n : ℕ) : (sites [spine finiteClause n]).leng
 dependency are the sublists of its sites. -/
 def patterns (d : Dependency) : List (List (ℕ × Head)) := (sites d).sublists
 
-/-- In (22), with one directional, the enclitic may appear on both hosts, on neither, or on either
-alone, four combinations. -/
+-- (22)
 theorem patterns_length_22 : (patterns [spine finiteClause 1]).length = 4 := by decide
 
-/-- In (63) there are more sites than intervening DPs, so leapfrogging over DPs
-([keine-zeijlstra-2025]) yields too few stopovers (§5.2). -/
+-- (63), §5.2 [keine-zeijlstra-2025]
 theorem sites_exceed_interveners : 1 < (sites [spine finiteClause 2]).length := by
   rw [sites_monoclausal_length]
   decide
@@ -217,13 +215,11 @@ def CopyLicensed (d : Dependency) (i : ℕ) : Prop :=
 instance (d : Dependency) (i : ℕ) : Decidable (CopyLicensed d i) :=
   inferInstanceAs (Decidable (_ ∨ _ ∧ _ ∧ _))
 
-/-- By the Fronting Particle Generalization (54), over a single embedded clause the matrix reflex is
-contingent on the embedded clause projecting C. -/
+-- (54)
 theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .cat .C ∈ e := by
   simp [CopyLicensed]
 
-/-- Applied to Mam, copy spellout allows a single reflex in a monoclausal dependency, whereas
-Ā-agreement gives one per Voice⁰ and Dir⁰ (§3.1, §5.1). -/
+-- §3.1, §5.1
 theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine finiteClause n] i → i = 0) ∧
     (sites [spine finiteClause n]).length = n + 1 :=
   ⟨fun i h ↦ h.elim id fun h' ↦ by
@@ -232,29 +228,25 @@ theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine finiteClause n]
     simp only [List.length_singleton] at h2
     omega, sites_monoclausal_length n⟩
 
-/-- Over an aspectless complement (31), copy spellout predicts no matrix reflex, since the
-complement has no Spec,CP, whereas Ā-agreement predicts one at the matrix Voice⁰. -/
+-- (31)
 theorem copy_fails_aspectless :
     ¬ CopyLicensed [spine aspectlessClause 0, spine finiteClause 0] 1 ∧
       Licensed [spine aspectlessClause 0, spine finiteClause 0] 1 := by
   decide
 
-/-- Over a nonfinite complement (34), copy spellout predicts a reflex in the complement, where the
-base copy sits, whereas Ā-agreement finds no Voice⁰ there. -/
+-- (34)
 theorem copy_fails_nonfinite :
     CopyLicensed [spine nonfiniteClause 0, spine finiteClause 0] 0 ∧
       ¬ Licensed [spine nonfiniteClause 0, spine finiteClause 0] 0 := by
   decide
 
-/-- Ā-agreement through the verbal domain would wrongly license a matrix reflex over a K'ichean AspP
-complement (53), but copy spellout does not. -/
+-- (53)
 theorem agree_fails_fpg :
     Licensed [spine aspP 0, spine finiteClause 0] 1 ∧
       ¬ CopyLicensed [spine aspP 0, spine finiteClause 0] 1 := by
   decide
 
-/-- =(y)a' is licensed in every clause of the path (24), unlike the clause-bound antipassive (38).
--/
+-- (24), (38)
 theorem origin_only_fails :
     Licensed [spine finiteClause 0, spine finiteClause 0] 1 ∧ (1 : ℕ) ≠ 0 := by
   decide
@@ -296,7 +288,7 @@ instance : DecidablePred Mover.IsLow
   | .adjunct _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
   | .none | .absolutive | .ergative => inferInstanceAs (Decidable False)
 
-/-- By Table 4, the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
+-- Table 4
 theorem table4 (m : Mover) :
     ¬ (m.BearsObl ↔ m.IsLow) ↔
       m = .adjunct .reason ∨ m = .adjunct .purpose ∨ m = .adjunct .manner := by
@@ -323,15 +315,13 @@ theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
         Mam.Extraction.realize s := by
   decide +revert
 
-/-- The K'iche' fragment puts *wi* on the verbal complex exactly for the low movers, Agent Focus
-being a reflex on the verb (§5.1, §5.3). -/
+-- §5.1, §5.3
 theorem kiche_mem_realize_iff (c : Mayan.VerbClass) (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verbalComplex [Kiche.Extraction.wi] ∈ Kiche.Extraction.realize c s ↔
       (Mover.ofSite s).IsLow := by
   decide +revert
 
-/-- The Kaqchikel fragment marks every extraction but the transitive subject's as the K'iche' one
-does, the pattern of the K'ichean rows (51) and (64). -/
+-- (51), (64)
 theorem kaqchikel_realize_eq_kiche (c : Mayan.VerbClass) (agent patient : Person)
     {s : Mayan.ExtractionSite} (hs : s ≠ .argument .A) :
     Kaqchikel.Extraction.realize c agent patient s = Kiche.Extraction.realize c s := by
@@ -370,8 +360,7 @@ def moverTable : List (String × Mover) :=
 /-- Whether the reflex may appear, as recorded in the rows. -/
 def reflexTable : List (String × Bool) := [("licensed", true), ("blocked", false)]
 
-/-- In the monoclausal Mam rows of §2 and §3.5–3.6, the enclitic is licensed exactly for the movers
-bearing [obl]. -/
+-- §2, §3.5
 theorem mamRows_realizable :
     ∀ e ∈ [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b,
         ex_19b, ex_20b, ex_21b, ex_35c, ex_37, ex_65],
@@ -380,14 +369,13 @@ theorem mamRows_realizable :
         (b = true ↔ Realizable m [spine finiteClause 0] 0) := by
   decide
 
-/-- In the K'ichean rows, (51) for K'iche' and (64) for Patzún Kaqchikel, *wi* is licensed exactly
-for the low adjuncts. -/
+-- (51), (64)
 theorem kicheanRows_low :
     ∀ e ∈ [ex_51, ex_64], ∀ m, e.parse? "mover" moverTable = some m →
       ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ m.IsLow) := by
   decide
 
-/-- The rows with directionals, (22) and (63), have one host per Voice⁰ and directional. -/
+-- (22), (63)
 theorem directionalRows_sites :
     ∀ e ∈ [ex_22, ex_63], ∀ n, e.nat? "directionals" = some n →
       ∀ k, e.nat? "hosts" = some k → (sites [spine finiteClause n]).length = k := by
@@ -403,15 +391,14 @@ def dependencyOf (e : Datum) : Option Dependency :=
   (e.parse? "embeddedSize" sizeTable).bind fun s ↦
     e.parse? "landing" [("embedded", [spine s 0]), ("matrix", [spine s 0, spine finiteClause 0])]
 
-/-- The long-distance Mam rows (24), (26), (31) and (34), Table 3: the reflex in each clause
-follows from Ā-agreement along the path. -/
+-- (24), (26), (31), (34), Table 3
 theorem mamLD_licensed :
     ∀ e ∈ [ex_24, ex_26, ex_31, ex_34], ∀ d, dependencyOf e = some d →
       (∀ b, e.parse? "embeddedReflex" reflexTable = some b → (b = true ↔ Licensed d 0)) ∧
         ∀ b, e.parse? "matrixReflex" reflexTable = some b → (b = true ↔ Licensed d 1) := by
   decide
 
-/-- The long-distance K'iche' rows (52) and (53) follow from copy spellout. -/
+-- (52), (53)
 theorem kicheLD_copy :
     ∀ e ∈ [ex_52, ex_53], ∀ d, dependencyOf e = some d →
       (∀ b, e.parse? "embeddedReflex" reflexTable = some b →

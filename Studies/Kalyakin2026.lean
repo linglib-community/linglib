@@ -86,8 +86,7 @@ theorem causative_alternation_blocked_english :
 
 /-! ### Antipassive blocking -/
 
-/-- Antipassive roots in Muira Dargwa are coerced to v-adjunction, outside vVPE's deletion domain,
-    so they cannot be elided (§5). -/
+-- §5
 theorem antipassive_blocks_vVPE : vStrandingVPE.Spares (rootSite .adjoined) := by decide
 
 theorem change_of_state_allows_vVPE : vStrandingVPE.Deletes (rootSite .complement) := by decide
@@ -121,8 +120,7 @@ theorem sluicing_voice_blocked_convergent :
 
 /-! ### The *again* diagnostic -/
 
-/-- Under vVPE both the repetitive and the restitutive *again* survive ((52a–b);
-[toosarvandani-2009] (90)). -/
+-- (52a–b), (90) [toosarvandani-2009]
 theorem vVPE_both_again :
     vStrandingVPE.Spares AgainReading.repetitive.site ∧
       vStrandingVPE.Spares AgainReading.restitutive.site := by decide
@@ -177,11 +175,11 @@ theorem deletes_rootSite_position_iff (r : Root) :
   · exact iff_of_false (by decide) (not_not.2 h)
   · exact iff_of_true (by decide) h
 
-/-- The change-of-state roots are elided with the object, (36a) and (52). -/
+-- (36a), (52)
 theorem deletes_wana : vStrandingVPE.Deletes (rootSite (position wana)) :=
   (deletes_rootSite_position_iff _).2 (by decide)
 
-/-- The manner roots are not, (57)–(59). -/
+-- (57), (59)
 theorem not_deletes_tah : ¬ vStrandingVPE.Deletes (rootSite (position tah)) :=
   fun h ↦ (deletes_rootSite_position_iff _).1 h (by decide)
 

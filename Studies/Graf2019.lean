@@ -81,7 +81,6 @@ kernel. -/
 def FeasiblyMonotone {ι F : Type*} [Preorder ι] (p : ι → F) : Prop :=
   ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j
 
-/-- Over a linear order with finite lower intervals, contiguity is feasible monotonicity. -/
 theorem isContiguous_iff_feasiblyMonotone {ι F : Type*} [LinearOrder ι]
     [LocallyFiniteOrderBot ι] (p : ι → F) : IsContiguous p ↔ FeasiblyMonotone p :=
   isContiguous_iff_exists_monotone p
@@ -210,7 +209,6 @@ instance : DecidableLE NaiveCombination := fun p q ↦
 well-formed ones, Table 4's cells. -/
 abbrev PCC := Combination → Bool
 
-/-- There are sixty-four conceivable constraints. -/
 theorem card_pcc : Fintype.card PCC = 64 := by decide
 
 /-- `PCC.ofGrammar g` is the constraint a grammar of the P-Constraint family predicts. -/

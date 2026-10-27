@@ -177,8 +177,7 @@ def moveToVoice (c : Arguments Number) : T :=
   | none => .node .voice [.node .root [.trace 0 .root],
       .adjoin .voice [.terminal .root .root, .terminal .voice .voice]]
 
-/-- Moved to Voice, the Root may be conditioned by the external argument under (1) but not under
-(1′). -/
+-- (1)
 theorem mayCondition_moveToVoice (e : Number) :
     MayCondition (moveToVoice (unergative e)) ⟨[1, 1, 0]⟩ ⟨[0]⟩ ∧
       ¬ MayCondition' (moveToVoice (unergative e)) ⟨[1, 1, 0]⟩ ⟨[0]⟩ := by
@@ -258,8 +257,7 @@ theorem mayCondition'_iff_configuration (n : Number) (k : Configuration) :
     MayCondition' (k.tree n) k.rootPos ⟨[0]⟩ ↔ k = .sister := by
   cases n <;> cases k <;> decide
 
-/-- Under (1) the internal argument may condition the Root except when adjoined to a low projection.
--/
+-- (1)
 theorem mayCondition_iff_configuration (n : Number) (k : Configuration) :
     MayCondition (k.tree n) k.rootPos ⟨[0]⟩ ↔ k ≠ .lowAdjunct := by
   cases n <;> cases k <;> decide

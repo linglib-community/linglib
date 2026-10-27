@@ -60,6 +60,9 @@ jobs:
       - name: Check example literals in studies
         run: python3 scripts/check_examples.py
 
+      - name: Check headline theorems in studies
+        run: python3 scripts/check_headliners.py
+
       - name: Check that the bibliography page renders every entry's TeX
         run: python3 scripts/gen_bibliography_page.py --check
 

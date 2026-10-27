@@ -121,8 +121,7 @@ theorem altQ_not_kyaDefined {p q : Set W} (hpq : ¬p ⊆ q) (hqp : ¬q ⊆ p) :
   not_kyaDefined_of_mem_alt (mem_alt_altQ_left hpq) (mem_alt_altQ_right hqp)
     fun h ↦ hpq h.le
 
-/-- Disjunction inside a polar question keeps a singleton, the yes/no reading of *p or q*,
-(45). -/
+-- (45)
 theorem kya_polar_disjunction (p q : Set W) : KyaDefined (ofSet (p ∪ q)) := kya_polar _
 
 /-! ### Distribution -/

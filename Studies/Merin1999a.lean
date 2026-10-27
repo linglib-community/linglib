@@ -346,7 +346,7 @@ interpretation. -/
 abbrev defaultButCtx (μ : Measure W) (b : Set W) (hb : MeasurableSet b) : Context W :=
   ⟨bᶜ, hb.compl, μ⟩
 
-/-- When the issue is ¬B, A and B are issue-conditionally independent for every A (Theorem 9). -/
+-- Theorem 9
 theorem condIndepIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {a b : Set W}
     (ham : MeasurableSet a) (hbm : MeasurableSet b) :
     CondIndepIssue (defaultButCtx μ b hbm) a b := by
@@ -361,15 +361,14 @@ theorem condIndepIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {a b 
     · simp [cond_eq_zero_of_meas_eq_zero h0]
     · rw [cond_apply_self h0 (measure_ne_top _ _), mul_one, Set.inter_comm, cond_inter_self hbm]
 
-/-- Theorem 10(a): when the issue is ¬B, B disconfirms it. -/
+-- Theorem 10
 theorem negRelevant_defaultButCtx (μ : Measure W) {b : Set W} (hbm : MeasurableSet b) :
     negRelevant (defaultButCtx μ b hbm) b := by
   show μ[|bᶜ] b / μ[|bᶜᶜ] b < 1
   rw [cond_apply hbm.compl, Set.compl_inter_self]
   simp
 
-/-- Theorem 10(b): when the issue is ¬B and A∧B is possible, B and A∧B confirm B infinitely,
-hence more than A confirms ¬B. -/
+-- Theorem 10
 theorem bayesFactor_lt_swapIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ]
     {a b : Set W} (hbm : MeasurableSet b) (hab : μ (a ∩ b) ≠ 0) :
     bayesFactor (defaultButCtx μ b hbm) a < bayesFactor (swapIssue (defaultButCtx μ b hbm)) b ∧
@@ -392,8 +391,7 @@ theorem bayesFactor_lt_swapIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure
     ENNReal.div_zero (cond_apply_self hb (measure_ne_top _ _) ▸ one_ne_zero), ENNReal.div_zero hne]
   exact ⟨hfin, hfin⟩
 
-/-- When the issue is ¬B, an A that confirms it makes B unexpected (Theorem 10(c), from Theorem 8,
-Theorem 9 and Theorem 10(a)). -/
+-- Theorem 10, Theorem 8, Theorem 9
 theorem cond_lt_of_posRelevant_defaultButCtx (μ : Measure W) [IsProbabilityMeasure μ]
     {a b : Set W} (ham : MeasurableSet a) (hbm : MeasurableSet b)
     (hpos : posRelevant (defaultButCtx μ b hbm) a) (hab : μ (a ∩ b) ≠ 0) :
@@ -406,8 +404,7 @@ theorem cond_lt_of_posRelevant_defaultButCtx (μ : Measure W) [IsProbabilityMeas
   exact (cond_lt_iff_hContrary _ ham (condIndepIssue_defaultButCtx μ ham hbm) ha hb).mpr
     (.inl ⟨hpos, negRelevant_defaultButCtx μ hbm⟩)
 
-/-- Theorem 10(d): when the issue is ¬B, relevance is additive over A∧B (Fact 5 by
-Theorem 9). -/
+-- Theorem 10, Fact 5, Theorem 9
 theorem bayesFactor_inter_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {a b : Set W}
     (ham : MeasurableSet a) (hbm : MeasurableSet b) (hb : μ b ≠ 0) :
     bayesFactor (defaultButCtx μ b hbm) (a ∩ b) =
@@ -422,8 +419,7 @@ no instance Qa makes another instance Qb less probable. -/
 def NonnegInstantialRelevance {E : Type*} (μ : Measure W) (Q : E → Set W) : Prop :=
   ∀ i j, μ (Q j) ≤ μ[|Q i] (Q j)
 
-/-- Under non-negative instantial relevance and the Conditional Independence Presumption, *Qa but
-Qb* is infelicitous (Corollary 11, Theorem 8). -/
+-- Corollary 11, Theorem 8
 theorem not_butFelicitous_of_nonnegInstantialRelevance {E : Type*} (ctx : Context W)
     [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate] {Q : E → Set W}
     (hQ : NonnegInstantialRelevance ctx.prior Q) {i j : E} (hm : MeasurableSet (Q i))
@@ -432,7 +428,7 @@ theorem not_butFelicitous_of_nonnegInstantialRelevance {E : Type*} (ctx : Contex
     ¬ ButFelicitous ctx (Q i) (Q j) := fun h ↦
   (hQ i j).not_gt ((cond_lt_iff_hContrary ctx hm hcip hi hj).mpr (.inl ⟨h.1, h.2.1⟩))
 
-/-- Corollary 11 at the default issue ¬Qb, where the presumption holds by Theorem 9. -/
+-- Corollary 11, Theorem 9
 theorem not_butFelicitous_defaultButCtx {E : Type*} (μ : Measure W) [IsProbabilityMeasure μ]
     {Q : E → Set W} (hQ : NonnegInstantialRelevance μ Q) {i j : E} (hmi : MeasurableSet (Q i))
     (hmj : MeasurableSet (Q j)) (hi : μ (Q i) ≠ 0) (hj : μ (Q j) ≠ 0) (hjc : μ (Q j)ᶜ ≠ 0) :
@@ -462,8 +458,7 @@ theorem isPresupposed_iff {μ : Measure W} [IsProbabilityMeasure μ] {a : Set W}
 
 variable {ctx : Context W} {a : Set W}
 
-/-- A presupposed proposition factors out of any conjunction: A∧B is exactly as relevant as B
-(the step of Fact 17's proof). -/
+-- Fact 17
 theorem IsPresupposed.bayesFactor_inter [IsProbabilityMeasure ctx.prior]
     (h : IsPresupposed ctx.prior a) (ha : MeasurableSet a) (b : Set W) :
     bayesFactor ctx (a ∩ b) = bayesFactor ctx b := by
@@ -481,8 +476,7 @@ theorem IsPresupposed.irrelevant [IsProbabilityMeasure ctx.prior] [ctx.Nondegene
     ENNReal.inv_mul_cancel Context.Nondegenerate.topic_ne_zero (measure_ne_top _ _),
     ENNReal.inv_mul_cancel Context.Nondegenerate.compl_ne_zero (measure_ne_top _ _), div_one]
 
-/-- Fact 17: conditioning on A makes relevance additive over A∧B, with no independence
-assumption. -/
+-- Fact 17
 theorem IsPresupposed.bayesFactor_inter_eq_mul [IsProbabilityMeasure ctx.prior]
     [ctx.Nondegenerate] (h : IsPresupposed ctx.prior a) (ha : MeasurableSet a) (b : Set W) :
     bayesFactor ctx (a ∩ b) = bayesFactor ctx a * bayesFactor ctx b := by
@@ -509,7 +503,7 @@ def ButAlsoFelicitous (ctx₀ ctx : Context W) (ba bb : Set W) : Prop :=
   TopicAnaphoricallySalient ctx₀ ctx ba bb ∧
     compare (bayesFactor ctx₀ ba) 1 = (compare (bayesFactor ctx bb) 1).swap
 
-/-- The antecedent of *also* is not an instance of the focus itself (Corollary 15). -/
+-- Corollary 15
 theorem TopicAnaphoricallySalient.ne {E : Type*} {ctx₀ : Context W}
     [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate] {B : E → Set W} {i j : E}
     (h : TopicAnaphoricallySalient ctx₀ ctx (B i) (B j)) (hm : MeasurableSet (B i)) : i ≠ j := by
@@ -530,7 +524,7 @@ probable. -/
 def PrimaFacieCause (μ : Measure W) (a b : Set W) : Prop :=
   μ b < μ[|a] b
 
-/-- Corollary 16: a presupposed proposition is prima facie causally responsible for nothing. -/
+-- Corollary 16
 theorem IsPresupposed.not_primaFacieCause {μ : Measure W} (h : IsPresupposed μ a)
     (b : Set W) : ¬ PrimaFacieCause μ a b := by
   rw [PrimaFacieCause, h]

@@ -107,8 +107,6 @@ theorem cast_sub_sub_cast_sub (a b : ℕ) : ((a - b : ℕ) : ℝ) - ((b - a : �
   · rw [Nat.sub_eq_zero_of_le h, Nat.cast_sub h]; push_cast; ring
   · rw [Nat.sub_eq_zero_of_le h, Nat.cast_sub h]; push_cast; ring
 
-/-- The harmony difference between the two orders is the weighted sum of the two signed
-preferences. -/
 theorem score_diff_eq_components (wH wN : ℝ) (p : Pair) :
     harmonyScore con (weights wH wN) (p, .themeLast) -
       harmonyScore con (weights wH wN) (p, .goalLast) = wH * heavyDiff p + wN * newDiff p := by
@@ -121,7 +119,6 @@ theorem score_diff_eq_components (wH wN : ℝ) (p : Pair) :
   push_cast
   linear_combination wH * h
 
-/-- The theme-last order wins exactly when the weighted preferences sum in its favour. -/
 theorem themeLast_iff (wH wN : ℝ) (p : Pair) :
     harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
       0 < wH * heavyDiff p + wN * newDiff p := by
@@ -175,8 +172,7 @@ theorem rows_heavier_last :
       ∀ c ∈ (constituents r).toList, c.1 ≤ c.2 := by
   decide +kernel
 
-/-- The examples set aside, *That brings to the plate Barry Bonds* and (17), put the lighter
-constituent last. -/
+-- (17)
 theorem rows_exceptions_lighter_last :
     ∀ r ∈ Examples.all, (r.feature? "exception").isSome →
       ∀ c ∈ (constituents r).toList, c.2 < c.1 := by

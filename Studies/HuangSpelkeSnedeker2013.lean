@@ -90,8 +90,7 @@ theorem choice_eq_visible_right_iff :
     reduceCtorEq, not_true_eq_false, not_false_eq_true, and_self, and_false, false_and, iff_false]
   exact fun h ↦ h₂ (h ▸ h₁)
 
-/-- Strengthening the reading can only move the referent to the covered box or resolve a tie,
-which is the design of Section 1.4. -/
+-- Section 1.4
 theorem choice_covered_of_le {R' : α → Prop} [DecidablePred R'] (h : ∀ x, R' x → R x)
     (hc : choice R t = some .covered) : choice R' t = some .covered := by
   rw [choice_eq_covered_iff] at hc ⊢
@@ -116,7 +115,6 @@ theorem choice_exhNumeral_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
     ⟨by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega,
       by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega⟩
 
-/-- In two(1,2) an exact match is visible against a smaller set, and both readings pick it. -/
 theorem choice_one_two_bare :
     choice (· ∈ Comparison.eq.interval 2) ⟨1, 2⟩ = some (.visible 2) := by decide
 

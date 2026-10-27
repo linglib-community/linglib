@@ -107,7 +107,7 @@ theorem informative_subset (c : Set Index) (φ : Index → Prop) : informative c
 theorem commits_of_mem_assert (h : i ∈ assert M s c J) : M.commits s i (J s) :=
   let ⟨_, _, h⟩ := h; M.succ_holds _ _ _ h
 
-/-- The communicated meaning (27): the commitment and, by closure, the judgement. -/
+-- (27)
 theorem mem_assertClosed_iff :
     i ∈ assertClosed M s c J ↔ (∃ i₀ ∈ c, M.succ i₀ (comP M J s) i) ∧ J s i :=
   Iff.rfl
@@ -123,20 +123,17 @@ theorem commits_certainly (h : i ∈ assert M s c (certainly M J)) :
     M.commits s i λ i => M.cert s i (J s) :=
   commits_of_mem_assert h
 
-/-- After commitment closure the certainty holds, which is the condition of judgement closure
-(44), the step that introduces the proposition itself. -/
+-- (44)
 theorem cert_of_mem_assertClosed (h : i ∈ assertClosed M s c (certainly M J)) :
     M.cert s i (J s) :=
   h.2
 
-/-- Asserting a reportative (53) commits the speaker to the authority's commitment, a
-dependent commitment that leaves the authority to blame. -/
+-- (53)
 theorem commits_according {x : Judge} (h : i ∈ assert M s c (according M x J)) :
     M.commits s i λ i => M.commits x i (J x) :=
   commits_of_mem_assert h
 
-/-- Evidentials scope over epistemics (91): *laut Eva sicherlich* has Eva certain, *sicherlich
-laut Eva* has the speaker certain of Eva's commitment. -/
+-- (91)
 theorem according_certainly (x : Judge) :
     (according M x (certainly M J) = λ _ i => M.commits x i λ i => M.cert x i (J x)) ∧
       (certainly M (according M x J) = λ j i => M.cert j i λ i => M.commits x i (J x)) :=
@@ -224,8 +221,7 @@ def Licensed (m : Modifier) (p : Predicate) : Prop := m.layer ≤ p.selects
 instance (m : Modifier) (p : Predicate) : Decidable (Licensed m p) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- No modifier under *abhängen* (95); judgement modifiers but no affirmatives under *glauben*
-(100); both under *sagen* (110). -/
+-- (95), (100), (110)
 theorem licensed_iff :
     (∀ m, ¬ Licensed m .abhaengen) ∧ (∀ m, Licensed m .glauben ↔ m.layer = .jp) ∧
       (∀ m, Licensed m .sagen ↔ m.layer ≠ .actP) := by

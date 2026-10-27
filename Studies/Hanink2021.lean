@@ -174,8 +174,7 @@ theorem idxExponent_distribution :
       idxExponent ⟨{.idx, .dep}, [], [{.np}]⟩ = some "" := by
   decide
 
-/-- On the accusative bare definite the Subset Principle alone picks *ge* by vocabulary order,
-whereas the ordering (118) makes the null entry win. -/
+-- (118)
 theorem subsetPrinciple_accusative_bare :
     subsetPrinciple idxItems ⟨{.idx, .dep}, [], [{.np}]⟩ = some "ge" := by
   decide

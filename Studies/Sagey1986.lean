@@ -132,7 +132,6 @@ def feature? : Node → Option Feature
 /-- The articulator nodes under place, whose distinct combinations are the complex segments. -/
 def articulators : Finset Node := {.labial, .coronal, .dorsal}
 
-/-- Neither of two distinct articulators dominates the other. -/
 theorem not_le_of_mem_articulators {a b : Node} (ha : a ∈ articulators) (hb : b ∈ articulators)
     (hab : a ≠ b) : ¬ a ≤ b := by
   revert a b; decide
@@ -252,7 +251,6 @@ theorem Association.Valid.not_crosses {a b : Association T} (ha : a.Valid) (hb :
 cross. -/
 def IsNoCrossing (S : Set (Association T)) : Prop := S.Pairwise fun a b ↦ ¬ a.Crosses b
 
-/-- Any set of valid associations satisfies the No-Crossing Constraint. -/
 theorem isNoCrossing_of_forall_valid {S : Set (Association T)} (h : ∀ a ∈ S, a.Valid) :
     IsNoCrossing S :=
   fun _ ha _ hb _ ↦ (h _ ha).not_crosses (h _ hb)
@@ -283,8 +281,6 @@ def TierRealization.canonical : TierRealization ℤ where
   timing_precedes h := by simp only [NonemptyInterval.Precedes]; omega
   melody_precedes h := by simp only [NonemptyInterval.Precedes]; omega
 
-/-- Every diagonal link is valid under the canonical realisation, so the hypothesis of
-`isNonCrossing_of_valid` is satisfiable. -/
 theorem canonical_diagonal_valid (n : ℕ) : (TierRealization.canonical.assoc n n).Valid := by
   simp only [Association.Valid, TierRealization.canonical, TierRealization.assoc,
     NonemptyInterval.Overlaps]
@@ -296,9 +292,6 @@ def assoc (ts tf ms mf : ℤ) (ht : ts ≤ tf := by omega) (hm : ms ≤ mf := by
     Association ℤ :=
   ⟨⟨⟨ts, tf⟩, ht⟩, ⟨⟨ms, mf⟩, hm⟩⟩
 
-/-- A contour segment, two melodies sequenced within one timing slot, and a geminate, one
-melody spanning two timing slots, are both pairs of valid associations, which simultaneity
-would forbid by identifying the two melodies, or the two slots. -/
 theorem contour_geminate_valid :
     ((assoc 0 4 0 2).Valid ∧ (assoc 0 4 2 4).Valid) ∧
       ((assoc 0 1 0 3).Valid ∧ (assoc 2 3 0 3).Valid) := by

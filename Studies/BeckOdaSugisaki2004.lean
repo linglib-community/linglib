@@ -91,8 +91,7 @@ theorem pos_iff_mem_over (μ : Entity → D) (c : D) (x : Entity) :
     pos μ c x ↔ x ∈ μ ⁻¹' Set.Ioi c := by
   simp only [pos_iff_lt, Set.mem_preimage, Set.mem_Ioi]
 
-/-- `max S > c` (23) holds of an `S` with a greatest element iff some `d ∈ S` exceeds `c` (footnote
-7). -/
+-- (23), footnote 7
 theorem maxIn_Ioi_iff_of_isGreatest {S : Set D} {m : D} (h : IsGreatest S m) (c : D) :
     MaxIn (Set.Ioi c) S ↔ ∃ d ∈ S, c < d :=
   ⟨fun ⟨_, hc, h'⟩ => ⟨_, h'.1, hc⟩,
@@ -120,8 +119,7 @@ theorem theC_eq_some_iff (C : Set Entity) (P : Entity → Prop) (y : Entity) :
     theC C P = some y ↔ (y ∈ C ∧ P y) ∧ ∀ z, z ∈ C → P z → z = y := by
   simp only [theC, iota_eq_some_iff, and_imp]
 
-/-- If `Y` is the maximal `P`-plurality, then the greatest `n` for which some `P`-plurality
-has at least `n` members is the cardinality of `Y` (41a). -/
+-- (41a)
 theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}
     {Y : Finset Atom} (h : IsGreatest {S | P S} Y) :
     IsGreatest {n | ∃ S, P S ∧ n ≤ S.card} Y.card :=
@@ -137,8 +135,7 @@ theorem pos_ne_subcomparative :
 
 /-! ### Negative islands -/
 
-/-- On a scale without a top the negated *than*-clause, the degrees `d` such that nobody
-bought a `d`-expensive book (11), has no greatest degree (12). -/
+-- (11), (12)
 theorem not_isGreatest_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity → D) :
     ¬ ∃ m, IsGreatest (scopeDegrees (no bought) (Set.Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (antitone_no bought) (fun _ ↦ isLowerSet_Iic _)

@@ -317,8 +317,7 @@ theorem derivation_26 :
       (inflP .plain ⟨bare .prox, bare .anim⟩).copies inflHead = phiFeatures .prox := by
   decide +kernel
 
-/-- In (27), ergative Voice copies nothing, so its theme sign is the inverse ([oxford-2019]), and
-the proximate patient moves over the agent and again to Infl. -/
+-- (27) [oxford-2019]
 theorem derivation_27 :
     (voiceP .ergative ⟨bare .anim, bare .prox⟩).obj =
         {↑patient, {↑agent, {↑voiceHead, {.traceOf patient, ↑stem}}}} ∧
@@ -328,8 +327,7 @@ theorem derivation_27 :
       (inflP .ergative ⟨bare .anim, bare .prox⟩).copies inflHead = phiFeatures .prox := by
   decide +kernel
 
-/-- In (28), Voice moves the second-person patient into a second specifier, and Infl Agrees with
-Voice and both arguments and moves neither. -/
+-- (28)
 theorem derivation_28 :
     (voiceP .plain ⟨bare .part, bare .addr⟩).obj =
         {↑patient, {↑agent, {↑voiceHead, {.traceOf patient, ↑stem}}}} ∧
@@ -339,8 +337,7 @@ theorem derivation_28 :
       (inflP .plain ⟨bare .part, bare .addr⟩).copies inflHead = phiFeatures .addr := by
   decide +kernel
 
-/-- In (29), Voice leaves the proximate patient in place, and Infl Agrees with the local agent and
-with Voice and moves the agent. -/
+-- (29)
 theorem derivation_29 :
     (voiceP .plain ⟨bare .part, bare .prox⟩).obj = {↑agent, {↑voiceHead, vP}} ∧
       (voiceP .plain ⟨bare .part, bare .prox⟩).copies voiceHead = phiFeatures .prox ∧
@@ -390,8 +387,7 @@ theorem canTarget_localPatient : ∀ ia, .part ≤ ia → ∀ r, CanTarget cEpp 
 def argumentOrder (t : LinearizedSyntacticObject) : List LexicalItem.Token :=
   t.yield.filter (· ∈ [agent, patient])
 
-/-- In the nonlocal configurations the proximate precedes the obviative, PROX V OBV (9), (11); the
-verb's position is not modelled. -/
+-- (9), (11)
 theorem argumentOrder_nonlocal :
     ∀ δe δi,
       argumentOrder (cP cEpp .plain (clause .prox .anim δe δi)).obj = [agent, patient] ∧

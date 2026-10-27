@@ -195,8 +195,7 @@ slot of the construction. -/
 def kickLF : LinkedFrame :=
   { frame := .np, roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, true⟩)] }
 
-/-- The fragment's *kick* derives the book's construal, with kicker fused to agent and kicked to
-patient (p. 54). -/
+-- p. 54
 theorem kick_linkedFrame : English.Verbs.kick.linkedFrame? = some kickLF := by decide
 
 /-- *kick* fuses with the ditransitive in only one way, kicker with agent and kicked with patient:
@@ -205,8 +204,7 @@ theorem fusions_kick : fusions kickLF (ditransitive .actual).meaning.link =
     {{(external, external), (complement 0, complement 1)}} := by
   decide +kernel
 
-/-- The ditransitive contributes the recipient to *kick*: "Crucially, the recipient role is
-contributed by the construction" (p. 54). -/
+-- p. 54
 theorem contributed_kick :
     contributed (ditransitive .actual).meaning.link
       {(external, external), (complement 0, complement 1)} = {complement 0} := by
@@ -223,13 +221,11 @@ def handLF : LinkedFrame :=
     roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.recipient}, true⟩),
       (complement 1, ⟨{.patient}, true⟩)] }
 
-/-- *hand* fuses with the ditransitive in one way, each of its roles with the matching argument
-role (Fig. 2.5). -/
+-- Fig. 2.5
 theorem fusions_hand : fusions handLF (ditransitive .actual).meaning.link = {diag₃} := by
   decide +kernel
 
-/-- The profiled participant roles of *hand* fuse with the profiled argument roles of the
-ditransitive, which contributes nothing (p. 51). -/
+-- p. 51
 theorem corresponds_hand : Corresponds handLF (ditransitive .actual).meaning.link diag₃ ∧
     contributed (ditransitive .actual).meaning.link diag₃ = ∅ := by
   decide
@@ -270,8 +266,7 @@ theorem fusions_mail :
       {mailFusion, mailFusion.erase (complement 1, complement 0)} := by
   decide +kernel
 
-/-- The ditransitive "imposes a profiled status" on the mailee, which fuses with the profiled
-recipient (p. 53). -/
+-- p. 53
 theorem mailee_profiled :
     complement 1 ∉ mailLF.obligatory ∧ (complement 1, complement 0) ∈ mailFusion ∧
       (ditransitive .actual).meaning.link.IsProfiled (complement 0) := by
@@ -282,8 +277,7 @@ with the cause (Fig. 2.10). -/
 def sneezeLF : LinkedFrame :=
   { frame := .intransitive, roles := [(external, ⟨causers, true⟩)] }
 
-/-- *sneeze* fuses its sneezer with the cause, and caused motion contributes the goal and the
-theme (Fig. 2.10). -/
+-- Fig. 2.10
 theorem fusions_sneeze : fusions sneezeLF causedMotion.meaning.link = {{(external, external)}} ∧
     contributed causedMotion.meaning.link {(external, external)} =
       {complement 0, complement 1} := by
@@ -329,18 +323,16 @@ def aimLF : LinkedFrame :=
   { frame := .pp (some English.Adpositions.at_)
     roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.theme}, false⟩)] }
 
-/-- *aim* fuses with the conative as an instance of it (Fig. 2.14). -/
+-- Fig. 2.14
 theorem fusions_aim :
     fusions aimLF conative.meaning.link = {{(external, external), (complement 0, complement 0)}} ∧
       Corresponds aimLF conative.meaning.link {(external, external), (complement 0, complement 0)} ∧
       .subtype ∈ conative.meaning.relations := by
   decide +kernel
 
-/-- *kick*, construed as in Fig. 2.9, has no fusion with the conative of Fig. 2.13, whose example
-is *Sam kicked at Bill* (p. 4): its kicked role is a patient, not a theme. -/
+-- Fig. 2.9, Fig. 2.13, p. 4
 theorem fusions_kick_conative : fusions kickLF conative.meaning.link = ∅ := by decide +kernel
 
-/-- Each verb's construal is over a frame its fragment entry lists. -/
 theorem mem_frames :
     ∀ x ∈ [(English.Verbs.hand, handLF), (English.Verbs.put, putLF), (English.Verbs.mail, mailLF),
       (English.Verbs.sneeze, sneezeLF), (English.Verbs.wipe, wipeLF), (English.Verbs.talk, talkLF),

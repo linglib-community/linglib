@@ -610,7 +610,6 @@ private theorem pairPrior_real (π : Finset World → ℕ) (w : World) (C : Fins
     (h : w ∈ C) : (pairPrior π).real {(w, C)} = π C := by
   rw [measureReal_def, pairPrior_singleton, ite_eq_left h, ENNReal.toReal_natCast]
 
-/-- Listener preference between two pairs is prior-weighted share preference. -/
 private theorem listener_lt_iff (q : QUD) (π : Finset World → ℕ) {α : ℝ} (w₁ w₂ : World)
     (C₁ C₂ : Finset World) (h₁ : w₁ ∈ C₁) (h₂ : w₂ ∈ C₂) :
     (listener q π α notStopped).real {(w₁, C₁)} < (listener q π α notStopped).real {(w₂, C₂)}
@@ -743,8 +742,7 @@ theorem now_universe_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0)
     mul_div_assoc', mul_one_div, div_lt_div_iff₀ (by positivity) (by positivity)]
   nlinarith
 
-/-- The common-ground prior (8) meets the hypotheses, since the observed context sets outweigh
-*change* and the universe weighs under three halves of a single observation. -/
+-- (8)
 theorem cgWeight_facts :
     cgWeight pastT ≠ 0 ∧ cgWeight nowF ≤ cgWeight pastT ∧ cgWeight nowT ≤ cgWeight pastT ∧
       cgWeight change ≤ cgWeight pastT ∧ 2 * cgWeight Finset.univ ≤ 3 * cgWeight pastT := by

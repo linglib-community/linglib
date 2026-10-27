@@ -202,7 +202,7 @@ def starredForm : Candidate fig3Input :=
 
 /-! ### Step witnesses -/
 
-/-- In LR step 1, H-kāk deletes, since *TAUTDOCK and *CROWD block its dockings (60b). -/
+-- (60b)
 theorem fig3_LR_step1 :
     derivationLR.stepOptimum fig3 = {fig3.deleteTierElem 1} := by decide
 
@@ -285,11 +285,11 @@ def attestedForm : Candidate eq24Input :=
     |>.insertLink 2 2      -- dock H-rī rightward to nã
     |>.deleteTierElem 3    -- delete M-nã (repair HM contour)
 
-/-- In step 1, H-rī docks rightward onto nã (24d). -/
+-- (24d)
 theorem eq24_step1 :
     derivationLR.stepOptimum eq24 = {eq24.insertLink 2 2} := by decide
 
-/-- In step 2, *FALL repairs the contour by deleting M-nã, as MAX(H) ≫ MAX(M) (24g). -/
+-- (24g)
 theorem eq24_step2 :
     derivationLR.stepOptimum (eq24.insertLink 2 2) =
       {(eq24.insertLink 2 2).deleteTierElem 3} := by decide
@@ -317,11 +317,11 @@ def derivationLR : HSDerivation (Candidate eq21Input) := lrDerivation eq21Input
 /-- Attested `[nãn rī]`: the floating H deletes. -/
 def attestedForm : Candidate eq21Input := eq21.deleteTierElem 2
 
-/-- In step 1, H-rī deletes (21b). -/
+-- (21b)
 theorem eq21_step1 :
     derivationLR.stepOptimum eq21 = {eq21.deleteTierElem 2} := by decide
 
-/-- LR converges on `attestedForm` (21d). -/
+-- (21d)
 theorem eq21_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq21
@@ -345,11 +345,11 @@ def derivationLR : HSDerivation (Candidate eq27Input) := lrDerivation eq27Input
 /-- Attested `[kāk kǎ]`: H-kāk deletes; the MH contour survives. -/
 def attestedForm : Candidate eq27Input := eq27.deleteTierElem 1
 
-/-- In step 1, H-kāk deletes, since *CROWD blocks docking onto the two-tone kǎ (27b). -/
+-- (27b)
 theorem eq27_step1 :
     derivationLR.stepOptimum eq27 = {eq27.deleteTierElem 1} := by decide
 
-/-- LR converges on `attestedForm` (27e). -/
+-- (27e)
 theorem eq27_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq27
@@ -382,12 +382,11 @@ def derivationLR : HSDerivation (Candidate eq30Input) where
 /-- Attested `[kǎk ìlí]`: H-kāk docks onto its own TBU, making an MH contour. -/
 def attestedForm : Candidate eq30Input := eq30.insertLink 1 0
 
-/-- In step 1, the tone docks tautomorphemically, since deletion would create M◁L tier
-    adjacency (30c). -/
+-- (30c)
 theorem eq30_step1 :
     derivationLR.stepOptimum eq30 = {eq30.insertLink 1 0} := by decide
 
-/-- LR converges despite the standing *TAUTDOCK violation (30e). -/
+-- (30e)
 theorem eq30_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq30
@@ -411,7 +410,6 @@ def derivationLR : HSDerivation (Candidate eq22Input) := lrDerivation eq22Input
 /-- Attested `[nãn rī né]`: H-rī docks onto toneless ne. -/
 def attestedForm : Candidate eq22Input := eq22.insertLink 2 2
 
-/-- In step 1, H-rī docks onto ne, as HAVETONE prefers docking over deletion. -/
 theorem eq22_step1 :
     derivationLR.stepOptimum eq22 = {eq22.insertLink 2 2} := by decide
 

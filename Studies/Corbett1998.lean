@@ -108,12 +108,12 @@ namespace Russian
 
 open _root_.Russian.Agreement
 
-/-- The attributive adjective is inflected for case, (5). -/
+-- (5)
 theorem case_mem_inflection_longAdjective : .case ∈ longAdjective.inflection := by decide
 
 theorem not_isAgreementFeature_case : ¬ IsAgreementFeature .case := by decide
 
-/-- The attributive adjective agrees in number and gender, (1)–(5). -/
+-- (1), (5)
 theorem agreementFeatures_longAdjective :
     agreementFeatures longAdjective.inflection = {.number, .gender} := by decide
 
@@ -125,7 +125,7 @@ namespace CoastalMarind
 
 open _root_.CoastalMarind
 
-/-- The infixed vowel of *ak-k* 'light' distinguishes all four genders, (6)–(9). -/
+-- (6), (9)
 theorem faithful_light : Function.Injective (light · (numberSystem.value .singular)) := by decide
 
 theorem not_faithful_demonstrative :
@@ -140,8 +140,7 @@ namespace Russian
 
 open _root_.Russian.Gender _root_.Russian.Agreement
 
-/-- Adjectives distinguish gender only in the singular, (1)–(4), a convergent system, with the
-inanimate nouns of the examples. -/
+-- (1), (4)
 theorem convergent :
     Gender.Convergent (longEnding · .inanimate (numberSystem.value .singular) .nom)
       (longEnding · .inanimate (numberSystem.value .plural) .nom) := by
@@ -161,8 +160,7 @@ namespace Somali
 
 open _root_.Somali.Gender
 
-/-- The verbal prefix is not polar, (11)–(14), the plural prefix of either gender being the
-masculine singular's. -/
+-- (11), (14)
 theorem not_polar_verbPrefix : ¬ Morphology.Polar Value.verbPrefix := by decide
 
 theorem verbPrefix_plural (g : Value) :
@@ -224,8 +222,7 @@ namespace Latin
 
 open _root_.Latin.Gender
 
-/-- In Table 9.2 the nominative singular forms of *facilis* factor through those of *acer*, not
-conversely. -/
+-- Table 9.2
 theorem facilis_factorsThrough_acer :
     Function.FactorsThrough facilis.nomSg acer.nomSg ∧
       ¬ Function.FactorsThrough acer.nomSg facilis.nomSg := by decide
@@ -255,7 +252,7 @@ def semanticRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
 def rules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
   sharedFormRules ++ semanticRules
 
-/-- Syncretism licenses agreement, (18) and (19), conjuncts sharing a form taking it. -/
+-- (18), (19)
 theorem resolve_of_shared {cs : List Chichewa.Gender.Noun} (hne : cs ≠ []) {f : SubjPrefix}
     (h : ∀ c ∈ cs, c.gender.plSubjPrefix = f) : resolve rules cs = some f := by
   obtain ⟨c, hc⟩ := List.exists_mem_of_ne_nil cs hne
@@ -287,8 +284,7 @@ end Chichewa
 
 /-! ### The chapter's examples -/
 
-/-- In the Russian adjectives of (1)–(5) the ending is the fragment's by gender, number and case,
-the nouns *avtomobil'*, *mašina* and *taksi* being inanimate. -/
+-- (1), (5)
 theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
     ∀ g ∈ row.parse? "gender"
       [("masc", _root_.Russian.Gender.Value.masc), ("fem", .fem), ("neut", .neut)],
@@ -301,8 +297,7 @@ theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
       e = _root_.Russian.Agreement.longEnding g .inanimate n c := by
   decide +kernel
 
-/-- In the Russian verbs of §2.3, *beru*, *bereš'* and *beret* 'take', of the first
-conjugation, the ending is the fragment's by person and number. -/
+-- §2.3
 theorem russian_verb_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
     ∀ p ∈ row.parse? "person" [("1", Person.first), ("2", .second), ("3", .third)],
     ∀ n ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
@@ -312,7 +307,7 @@ theorem russian_verb_rows : ∀ row ∈ Examples.all, row.language = "russ1263" 
       e = _root_.Russian.Agreement.nonpastEnding .first p n := by
   decide +kernel
 
-/-- In the Marind rows (6)–(9) the adjective and the demonstrative are the fragment's by gender. -/
+-- (6), (9)
 theorem marind_rows : ∀ row ∈ Examples.all, row.language = "nucl1622" →
     ∀ g ∈ row.parse? "gender"
       [("I", CoastalMarind.Gender.gI), ("II", .gII), ("III", .gIII), ("IV", .gIV)],
@@ -322,7 +317,7 @@ theorem marind_rows : ∀ row ∈ Examples.all, row.language = "nucl1622" →
           d = CoastalMarind.demonstrative g (CoastalMarind.numberSystem.value .singular) := by
   decide +kernel
 
-/-- In the Upper Sorbian row (17) each target agrees in the features the row records for it. -/
+-- (17)
 theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = "uppe1395" →
     ∀ t : UpperSorbian.Target, ∀ D ∈ row.parse? t.key
       [("number,person", ({.number, .person} : Finset Dimension)),
@@ -330,8 +325,7 @@ theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = "uppe1395" 
       UpperSorbian.features t = D := by
   decide +kernel
 
-/-- In the Somali rows (11)–(14) and *nin* the article is the noun's by number and the verbal
-prefix the gender's. -/
+-- (11), (14)
 theorem somali_rows : ∀ row ∈ Examples.all, row.language = "soma1255" →
     ∀ n ∈ row.parse? "noun" (_root_.Somali.Gender.allNouns.map fun n ↦ (n.form, n)),
     ∀ pl ∈ row.parse? "number" [("sg", _root_.Somali.Gender.numberSystem.value .singular),
@@ -342,8 +336,7 @@ theorem somali_rows : ∀ row ∈ Examples.all, row.language = "soma1255" →
         v = n.gender.verbPrefix pl := by
   decide +kernel
 
-/-- In the Chichewa rows (18) and (19) the verb's prefix is the rules' resolution of the
-conjuncts. -/
+-- (18), (19)
 theorem chichewa_rows : ∀ row ∈ Examples.all, row.language = "nyan1308" →
     ∀ a ∈ row.parse? "conjunct1" (_root_.Chichewa.Gender.allNouns.map fun n ↦ (n.form, n)),
     ∀ b ∈ row.parse? "conjunct2" (_root_.Chichewa.Gender.allNouns.map fun n ↦ (n.form, n)),

@@ -110,7 +110,7 @@ theorem SEquiv.of_eq (h : φ = ψ) : SEquiv φ ψ := h ▸ rfl
 variable {φ ψ} in
 theorem PEquiv.of_eq (h : φ = ψ) : PEquiv φ ψ := h ▸ rfl
 
-/-- s-equivalence and p-equivalence together do not give equivalence (Fact 3). -/
+-- Fact 3
 theorem exists_sEquiv_pEquiv_ne {E : Type*} [Nontrivial E] :
     ∃ φ ψ : Update (Assignment E), SEquiv φ ψ ∧ PEquiv φ ψ ∧ φ ≠ ψ := by
   have hself (g : Assignment E) : g ~[dexists 0 (test Set.univ)] g :=
@@ -126,7 +126,7 @@ theorem exists_sEquiv_pEquiv_ne {E : Type*} [Nontrivial E] :
 
 variable {φ ψ}
 
-/-- On tests, equivalence, s-equivalence, and p-equivalence coincide (Fact 4). -/
+-- Fact 4
 theorem sEquiv_iff_eq_of_isTest (hφ : IsTest φ) (hψ : IsTest ψ) : SEquiv φ ψ ↔ φ = ψ :=
   ⟨fun h ↦ (hφ.eq_test_dom.trans (congrArg test h)).trans hψ.eq_test_dom.symm, .of_eq⟩
 
@@ -338,16 +338,16 @@ which the conclusion succeeds (Definition 20). -/
 def Entails : Prop := φ.cod ⊆ ψ.dom
 
 variable {φ ψ} in
-/-- Meaning inclusion (Definition 19) implies s-entailment (Fact 10). -/
+-- Definition 19, Fact 10
 theorem SEntails.of_subset (h : φ ⊆ ψ) : SEntails φ ψ :=
   fun _ ⟨k, hk⟩ ↦ ⟨k, h hk⟩
 
-/-- The deduction theorem (Fact 11) says that `φ ⊨ ψ` iff `φ → ψ` is valid. -/
+-- Fact 11
 theorem entails_iff_valid_impl : Entails φ ψ ↔ Valid (φ ⇒ ψ) := by
   simp only [Valid, dom_test]
   exact ⟨fun h _ _ hk ↦ h ⟨_, hk⟩, fun h _ ⟨g, hk⟩ ↦ h g hk⟩
 
-/-- s-entailment is dynamic entailment from the closed premiss (Fact 12). -/
+-- Fact 12
 theorem sEntails_iff_entails_close : SEntails φ ψ ↔ Entails ◇φ ψ := by
   rw [Entails, cod_test, SEntails]
 
@@ -366,8 +366,6 @@ theorem entails_exists_atom (p : E → Prop) :
   rintro _ ⟨_, _, -, rfl, hp⟩
   exact ⟨_, rfl, hp⟩
 
-/-- `Px ⊨ ∃xPx` as well, so the two entail each other yet are not equivalent, the atom being a
-test and the existential not. Mutual entailment is weaker than equivalence. -/
 theorem entails_atom_exists (p : E → Prop) :
     Entails (test {g : Assignment E | p (g x)}) (dexists x (test {g | p (g x)})) := by
   rintro _ ⟨h, rfl, hp⟩
@@ -381,7 +379,7 @@ theorem not_sEntails_exists_atom [Nontrivial E] :
   obtain ⟨_, rfl, hb⟩ := h (a := fun _ ↦ b) ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   exact hab (by simpa using hb.symm)
 
-/-- Dynamic entailment is not reflexive, as `Px ∧ ∃xQx` shows (cf. Fact 15). -/
+-- Fact 15
 theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Entails φ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨test {g | g 0 = a} ○ dexists 0 (test Set.univ), fun h ↦ ?_⟩
@@ -391,8 +389,7 @@ theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Ent
   obtain ⟨_, _, ⟨rfl, hb⟩, -⟩ := h ⟨_, hb⟩
   exact hab (by simpa using hb.symm)
 
-/-- Dynamic entailment is not transitive, since `¬¬∃xPx ⊨ ∃xPx` and `∃xPx ⊨ Px` but `¬¬∃xPx ⊭ Px`
-(cf. Fact 16). -/
+-- Fact 16
 theorem not_entails_trans [Nontrivial E] :
     ∃ p : E → Prop, ¬ Entails ∼∼(dexists 0 (test {g : Assignment E | p (g 0)}))
       (test {g | p (g 0)}) := by
@@ -479,14 +476,14 @@ theorem conjNbf_conjNbf : conjNbf (conjNbf φ ψ) ρ = conjNbf φ (conjNbf ψ ρ
 theorem impNbf_conjNbf : impNbf (conjNbf φ ψ) ρ = impNbf φ (impNbf ψ ρ) := by
   induction φ generalizing ψ ρ <;> simp_all [conjNbf, impNbf]
 
-/-- Clauses 7(a) and 7(b) of Definition 24. -/
+-- Definition 24
 theorem nbf_conj_conj : nbf ((φ ⋏ ψ) ⋏ χ) = nbf (φ ⋏ (ψ ⋏ χ)) := by
   simp only [nbf, conjNbf_conjNbf]
 
 theorem nbf_ex_conj : nbf ((∃[x] φ) ⋏ ψ) = ∃[x] (nbf (φ ⋏ ψ)) := by
   simp only [nbf, conjNbf]
 
-/-- Clauses 8(a) and 8(b) of Definition 24. -/
+-- Definition 24
 theorem nbf_conj_imp : nbf ((φ ⋏ ψ) ⟿ χ) = nbf (φ ⟿ (ψ ⟿ χ)) := by
   simp only [nbf, impNbf_conjNbf]
 
@@ -545,12 +542,12 @@ under conditions on the two sets. -/
 
 variable {M φ ψ χ} {g h : V → M}
 
-/-- The truth of a formula depends only on its free variables (Fact 8). -/
+-- Fact 8
 theorem dependsOn_dom_eval : DependsOn (· ∈ (φ.eval M).dom) (↑φ.fv : Set V) := by
   rw [← context_I]
   exact (φ.hasContext_eval M).dependsOn_dom
 
-/-- A formula changes the values of its active quantifier variables only (Fact 9). -/
+-- Fact 9
 theorem eqOn_of_eval (hgh : g ~[φ.eval M] h) : Set.EqOn g h (↑φ.aqv : Set V)ᶜ := by
   rw [← context_B]
   exact (φ.hasContext_eval M).blocks hgh
@@ -559,20 +556,18 @@ theorem mem_dom_eval_iff (hd : Disjoint φ.aqv ψ.fv) (hgh : g ~[φ.eval M] h) :
     g ∈ (ψ.eval M).dom ↔ h ∈ (ψ.eval M).dom :=
   (φ.hasContext_eval M).mem_dom_iff (ψ.hasContext_eval M) (by rwa [context_B, context_I]) hgh
 
-/-- s-entailment and entailment coincide when the premiss binds nothing in the conclusion
-(Fact 13). -/
+-- Fact 13
 theorem sEntails_iff_entails (hd : Disjoint φ.aqv ψ.fv) :
     SEntails (φ.eval M) (ψ.eval M) ↔ Entails (φ.eval M) (ψ.eval M) :=
   ⟨fun hs _ ⟨_, hgh⟩ ↦ (mem_dom_eval_iff hd hgh).mp (hs ⟨_, hgh⟩),
     fun he _ ⟨_, hgh⟩ ↦ (mem_dom_eval_iff hd hgh).mpr (he ⟨_, hgh⟩)⟩
 
-/-- Meaning inclusion gives entailment when the premiss binds nothing in the conclusion
-(Fact 14). -/
+-- Fact 14
 theorem entails_of_subset (hd : Disjoint φ.aqv ψ.fv) (hsub : φ.eval M ⊆ ψ.eval M) :
     Entails (φ.eval M) (ψ.eval M) :=
   (sEntails_iff_entails hd).mp (SEntails.of_subset hsub)
 
-/-- A formula that binds none of its own free variables entails itself (Fact 15). -/
+-- Fact 15
 theorem entails_self (hd : Disjoint φ.aqv φ.fv) : Entails (φ.eval M) (φ.eval M) :=
   entails_of_subset hd subset_rfl
 
@@ -581,8 +576,7 @@ theorem entails_conj_right (hd : Disjoint ψ.aqv ψ.fv) :
   rintro _ ⟨_, _, _, hkh⟩
   exact (mem_dom_eval_iff hd hkh).mp ⟨_, hkh⟩
 
-/-- Entailment is transitive when the first step fixes the variables the middle formula binds in
-the conclusion (Fact 16). -/
+-- Fact 16
 theorem EntailsOn.trans (h₁ : EntailsOn (ψ.aqv ∩ χ.fv) (φ.eval M) (ψ.eval M))
     (h₂ : Entails (ψ.eval M) (χ.eval M)) : Entails (φ.eval M) (χ.eval M) := by
   intro g hg
@@ -608,7 +602,7 @@ theorem eval_conjNbf : (conjNbf φ ψ).eval M = φ.eval M ○ ψ.eval M := by
 theorem eval_impNbf : (impNbf φ ψ).eval M = test (impl (φ.eval M) (ψ.eval M)) := by
   induction φ generalizing ψ <;> simp_all [impNbf, dexists, dforall, impl_comp]
 
-/-- A formula is equivalent to its normal binding form (Fact 17). -/
+-- Fact 17
 theorem eval_nbf : (nbf φ).eval M = φ.eval M := by
   induction φ <;> simp_all [nbf, eval_conjNbf, eval_impNbf]
 
@@ -620,7 +614,7 @@ theorem isScopeBound_impNbf (hφ : φ.IsScopeBound) (hψ : ψ.IsScopeBound) :
     (impNbf φ ψ).IsScopeBound := by
   induction φ generalizing ψ <;> simp_all [impNbf, IsScopeBound, aqv]
 
-/-- In a normal binding form every variable a quantifier binds is in its scope (Fact 18). -/
+-- Fact 18
 theorem isScopeBound_nbf : (nbf φ).IsScopeBound := by
   induction φ with
   | conj φ ψ ihφ ihψ => exact isScopeBound_conjNbf _ _ ihφ ihψ
@@ -646,8 +640,7 @@ theorem mem_dom_eval_staticForm_iff {g : V → M} :
     g ∈ ((staticForm φ).eval M).dom ↔ φ.toFormula.Realize g :=
   ((isScopeBound_staticForm φ).mem_dom_eval_iff M).trans (realize_toFormula_staticForm M φ)
 
-/-- A scope-bound formula is valid in dynamic predicate logic iff it is in predicate logic
-(Fact 23). -/
+-- Fact 23
 theorem valid_eval_iff (hφ : φ.IsScopeBound) :
     Valid (φ.eval M) ↔ ∀ g : V → M, φ.toFormula.Realize g :=
   forall_congr' fun _ ↦ hφ.mem_dom_eval_iff M
@@ -683,8 +676,6 @@ theorem mem_dom_eval_neg_neg_ex_conj_atom :
     dom_comp, preimage_test, dom_test, dom_dexists, Set.mem_inter_iff, mem_cyl]
   simp
 
-/-- `∃y Py ∧ Qx`, an alphabetic variant of `∃x Px ∧ Qx`, has the truth conditions of the doubly
-negated formula. -/
 theorem mem_dom_eval_ex_conj_atom_of_ne (hxy : x ≠ y) :
     g ∈ (((∃[y] (atom P y)) ⋏ atom Q x).eval M).dom ↔
       (∃ d : M, Language.Structure.RelMap P fun _ ↦ d) ∧
@@ -784,7 +775,7 @@ private theorem eval_toDPL_of_conditions (K : DRS L V)
   simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifiesTotal_iff, Set.mem_ofPred_eq]
   exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
 
-/-- The translation of a condition is the test of its verification (Fact 25 for conditions). -/
+-- Fact 25
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
     c.toDPL.eval M = test {f : V → M | VerifiesConditionTotal f c} := by
   induction c with

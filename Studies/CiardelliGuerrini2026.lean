@@ -60,8 +60,7 @@ variable {World : Type*} (R : SetRel World World) (A B : Set World)
 /-- Universal accessibility on two worlds, the countermodels' frame. -/
 abbrev universalAccess : SetRel Bool Bool := .univ
 
-/-- May-or-may, (2): possibility distributes over disjunction, so this is the one cell of the
-paradigm where the scope ambiguity is invisible to truth conditions. -/
+-- (2)
 theorem poss_union_eq : R.preimage (A ∪ B) = R.preimage A ∪ R.preimage B := preimage_union ..
 
 theorem exists_not_poss_union_subset_inter :
@@ -70,8 +69,7 @@ theorem exists_not_poss_union_subset_inter :
         universalAccess.preimage A ∩ universalAccess.preimage B :=
   ⟨Set.univ, ∅, fun h ↦ by simpa using (@h true (by simp)).2⟩
 
-/-- Must-or-must, (5): the narrow-scope disjunctive obligation follows from the wide-scope
-disjunction of obligations. -/
+-- (5)
 theorem nec_union_subset_nec_union : R.core A ∪ R.core B ⊆ R.core (A ∪ B) := core_union_subset
 
 theorem exists_not_nec_union_subset :
@@ -80,13 +78,11 @@ theorem exists_not_nec_union_subset :
   ⟨{true}, {false}, fun h ↦ by
     simpa [Bool.forall_bool] using @h true (by simp)⟩
 
-/-- May-and-may, (7): the narrow-scope conjunctive permission entails the wide-scope
-conjunction of permissions. -/
+-- (7)
 theorem poss_inter_subset_poss_inter : R.preimage (A ∩ B) ⊆ R.preimage A ∩ R.preimage B :=
   preimage_inter_subset R
 
-/-- Joint permissibility does not follow from two permissions, which makes the conjunctive reading
-of (9b) absurd. -/
+-- (9b)
 theorem exists_not_poss_inter_subset :
     ∃ A B : Set Bool,
       ¬ universalAccess.preimage A ∩ universalAccess.preimage B ⊆
@@ -155,16 +151,14 @@ theorem concord_of_checks {op f₁ f₂ : ModalFeature} (h₁ : op.Checks f₁) 
     Concord f₁ f₂ :=
   ⟨h₁.2.1, h₂.2.1, h₁.2.2.symm.trans h₂.2.2⟩
 
-/-- An interpreted feature is never checked, so non-auxiliary modals such as *be allowed* admit
-no narrow-scope LF, (19) and (20). -/
+-- (19), (20)
 theorem not_checks_of_interpretable (op : ModalFeature) {f : ModalFeature}
     (h : f.interp = .interpretable) : ¬ op.Checks f := by
   intro hc
   have := hc.2.1
   simp [h] at this
 
-/-- In the fragment *may* concords with *may* and *can* (footnote 4, [alonso-ovalle-2006]), *must*
-with *must*, and *may* not with *must*. -/
+-- footnote 4 [alonso-ovalle-2006]
 theorem fragment_concord :
     (∀ f ∈ auxiliaryFeatures may, ∀ g ∈ auxiliaryFeatures may, Concord f g) ∧
       (∀ f ∈ auxiliaryFeatures must, ∀ g ∈ auxiliaryFeatures must, Concord f g) ∧
@@ -174,8 +168,7 @@ theorem fragment_concord :
 
 /-! ### Concord across negation (§4.2) -/
 
-/-- The negated feature of *need* in (28) is checked by a silent possibility operator (29a), not a
-necessity one (29c). -/
+-- (28), (29a), (29c)
 theorem need_not :
     ∀ f ∈ auxiliaryFeatures need,
       ModalFeature.Checks ⟨.possibility, .interpretable⟩ f.negated ∧

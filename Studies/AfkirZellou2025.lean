@@ -282,7 +282,7 @@ def spirants : Finset Segment := ⟨↑[β, θ, ð, «ðˤ»], by decide +kernel
 def harden (x : Segment) : Segment :=
   (x.setFeature .continuant false).setFeature .delayedRelease false
 
-/-- The labial and dental stops are fricatives except when geminated (p. 9). -/
+-- p. 9
 theorem spirantization : ∀ x ∈ spirants, harden x ∈ geminates ∧ x ∉ geminates := by
   decide +kernel
 

@@ -114,19 +114,16 @@ theorem forall_mem_readings_iff : (∀ d, w ∈ readings m d σ) ↔ m σ w = 1 
 theorem readings_lp : readings m .lp σ = {w | m σ w ≠ -1} := by
   ext; simp [readings]
 
-/-- The LP reading is the weaker. -/
 theorem readings_k3_subset_lp : readings m .k3 σ ⊆ readings m .lp σ := fun _ h ↦
   (show Trivalent.Designation.lp.threshold ≤ Trivalent.Designation.k3.threshold by decide).trans h
 
 variable {ALT : U → Set (Set W)} {lit : U → Set W}
 
-/-- The K3 reading of `pex` is its parse with the exhaustivity operator. -/
 theorem readings_pexIE_k3 :
     readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) .k3 σ = exhIE (ALT σ) (lit σ) := by
   have h1 (a : SignType) : 1 ≤ a ↔ a = 1 := by cases a <;> decide
   ext; simp [readings, h1, pexIE_eq_one_iff_mem_exhIE subset_rfl]
 
-/-- The LP reading of `pex` is its parse without the exhaustivity operator. -/
 theorem readings_pexIE_lp : readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ)) .lp σ = lit σ := by
   ext; simp [readings, pexIE_eq_neg_one_iff]
 
@@ -177,7 +174,6 @@ def parses (lex : QWord → Option (Denotation E Unit SetM)) (g : Assignment E)
     (t : Tree Unit QWord) : Set Prop :=
   {b | (⟨.t, b⟩ : Denotation E Unit Id) ∈ Tree.readings (Tree.wordReadings lex) g t}
 
-/-- The parses of a raised quantifier read the scalar predicate at one standard for every entity. -/
 theorem parses_raised (g : Assignment E) :
     parses (lexicon Q p) g raised =
       Set.range fun d : Designation ↦ Q fun x ↦ d.threshold ≤ p x := by
@@ -210,8 +206,6 @@ theorem parses_raised (g : Assignment E) :
       ⟨.bin (.tr 1) (.leaf ⟨(.scalar, ⟨.e ⇒ .t, fun x ↦ d.threshold ≤ p x⟩), _, rfl, d, rfl⟩),
         rfl, rfl⟩, rfl⟩
 
-/-- Under the set effect the raised quantifier reads the scalar predicate at a standard for each
-entity. -/
 theorem interp_raised (g : Assignment E) :
     Tree.interp (lexicon Q p) g raised = some ⟨.t,
       (Set.range fun c : E → Designation ↦ Q fun x ↦ (c x).threshold ≤ p x : Set Prop)⟩ := by
@@ -245,7 +239,6 @@ theorem supervaluationOn_parses_eq_of_monotone (hQ : Monotone Q) (g : Assignment
     SignType.supervaluationOn_image]
   exact (Trivalent.supervaluationOn_pi_eq_const_of_monotone p hQ).symm
 
-/-- Under a raised antitone quantifier, truth on all parses is the Strong Kleene value. -/
 theorem supervaluationOn_parses_eq_of_antitone (hQ : Antitone Q) (g : Assignment E)
     {X : SetM Prop} (hX : Tree.interp (lexicon Q p) g raised = some ⟨.t, X⟩) :
     SignType.supervaluationOn (parses (lexicon Q p) g raised) id =
@@ -282,13 +275,11 @@ instance (μ : Measure W) (α : ℝ) (C : U → ℝ) (parse : ι → U → Set W
 
 variable {μ : Measure W} {α : ℝ} {C : U → ℝ} {parse : ι → U → Set W} {w : W} {σ τ : U}
 
-/-- The MaxiMin speaker weighs a message at a world by the least mass the literal listener of one
-of its parses gives the world, to the power of the rationality, times the cost weight (28). -/
+-- (28)
 theorem speaker_eq_ofWeights : speaker μ α C parse = Kernel.ofWeights fun w σ ↦
     (⨅ i, listener μ (truthful (parse i)) σ {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C σ))) := by
   simp [speaker, maximinSpeaker, essInf_prod_dirac_parseListener]
 
-/-- The MaxiMin speaker is the same whatever prior of full support she holds over the parses. -/
 theorem speaker_eq_maximinSpeaker (ν : Measure ι) (hν : ∀ i, ν {i} ≠ 0) :
     speaker μ α C parse = maximinSpeaker α C (parseListener fun i ↦ listener μ (truthful (parse i)))
       fun w ↦ ν.prod (Measure.dirac w) := by
@@ -312,8 +303,6 @@ theorem speaker_apply_singleton_eq_zero (hα : 0 < α) {i : ι} (h : w ∉ parse
 
 variable [Nonempty ι]
 
-/-- The speaker uses a message at a world of positive prior mass exactly when it is true there on
-all its parses, the principle of Truth on all parses. -/
 theorem speaker_apply_singleton_ne_zero_iff (hα : 0 < α) (hw : μ {w} ≠ 0) :
     speaker μ α C parse w {σ} ≠ 0 ↔ ∀ i, w ∈ parse i σ := by
   rw [speaker, ne_eq, maximinSpeaker_parseListener_apply_singleton_eq_zero_iff _ hα
@@ -359,8 +348,6 @@ private theorem weight_toReal (hw : μ {w} ≠ 0) (h : ∀ i, w ∈ parse i σ) 
     Real.log_mul (inv_pos.2 hM).ne' hμw.ne', Real.log_inv]
   ring_nf
 
-/-- Among messages true on all their parses at a world, the speaker ranks by the surprisal of the
-least informative parse less the cost, whatever the world and the rationality. -/
 theorem speaker_real_lt_iff (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : ∀ i, w ∈ parse i σ)
     (hτ : ∀ i, w ∈ parse i τ) :
     (speaker μ α C parse w).real {σ} < (speaker μ α C parse w).real {τ} ↔
@@ -382,9 +369,7 @@ theorem speaker_real_lt_iff (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : ∀ i, w �
     weight_toReal hw hσ, weight_toReal hw hτ, Real.exp_lt_exp, mul_lt_mul_iff_of_pos_left hα]
   constructor <;> intro h <;> linarith
 
-/-- A message true on all its parses loses to the null message, true everywhere and free, exactly
-when one of its parses has prior probability above the cost weight: every parse must be
-informative enough (§6). -/
+-- §6
 theorem speaker_real_lt_null_iff [IsProbabilityMeasure μ] {ν : U} (hν : ∀ i, parse i ν = .univ)
     (hCν : C ν = 0) (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : ∀ i, w ∈ parse i σ) :
     (speaker μ α C parse w).real {σ} < (speaker μ α C parse w).real {ν} ↔
@@ -396,9 +381,7 @@ theorem speaker_real_lt_null_iff [IsProbabilityMeasure μ] {ν : U} (hν : ∀ i
   constructor <;> intro h <;> linarith
 
 omit [IsFiniteMeasure μ] in
-/-- The MaxiMin speaker uses the messages that the speaker of [spector-2017] and
-[cremers-wilcox-spector-2023] uses, who maximizes the expected utility over the parses under a prior
-of full support, so that speaker too derives Truth on all parses (footnote 12). -/
+-- footnote 12 [spector-2017] [cremers-wilcox-spector-2023]
 theorem speaker_apply_singleton_eq_zero_iff_speaker (ν : Measure ι) [IsFiniteMeasure ν]
     (hν : ∀ i, ν {i} ≠ 0) (hα : 0 < α) :
     speaker μ α C parse w {σ} = 0 ↔ RSA.speaker α C (parseListener fun i ↦
@@ -411,12 +394,10 @@ theorem speaker_apply_singleton_eq_zero_iff_speaker (ν : Measure ι) [IsFiniteM
 
 variable {m : U → W → SignType}
 
-/-- The speaker uses a message exactly where it is true. -/
 theorem speaker_readings_ne_zero_iff (hα : 0 < α) (hw : μ {w} ≠ 0) :
     speaker μ α C (readings m) w {σ} ≠ 0 ↔ m σ w = 1 := by
   rw [speaker_apply_singleton_ne_zero_iff hα hw, forall_mem_readings_iff]
 
-/-- The listener reads a message as true. -/
 theorem listener_readings_ne_zero_iff (hα : 0 < α) :
     listener μ (speaker μ α C (readings m)) σ {w} ≠ 0 ↔ μ {w} ≠ 0 ∧ m σ w = 1 := by
   rw [listener_apply_singleton_ne_zero_iff_forall_mem hα, forall_mem_readings_iff]
@@ -543,8 +524,7 @@ theorem exactlyTwo_parses_false_entitywise_undefined (g : Assignment (Fin 3)) {X
     exact Set.ncard_pair (by decide)
   · simp [hk3]
 
-/-- Negation does not see the exhaustivity operator: *it is not the case that some* is true by
-Strong Kleene exactly where none, (22). -/
+-- (22)
 theorem not_some_eq_one_iff (w : World) :
     Trivalent.Formula.eval .strongKleene (meaning · w) (.neg (.atom .some)) = 1 ↔ w = .none := by
   simp [meaning, pexIE_eq_neg_one_iff, literal]
@@ -581,10 +561,7 @@ theorem judgments_11 (hα : 0 < α) (hsome : μ {.justSome} ≠ 0) (hnone : μ {
       (meaning_someButNotAll_eq_one_iff.2 rfl), readings_lp_meaning, readings_lp_meaning]
     exact neg_log_sub_lt_iff hjs (measureReal_literal_pos (by simp [literal]) hsome)
 
-/-- Where the common ground makes *some* nearly certain, *some* loses to silence once the
-probability that some marble sank exceeds its cost weight, and where the common ground entails
-*some*, its `pex` reading is not informative after accommodation, the prediction of Wehbe and Doron
-([wehbe-doron-2025]): both accounts reject (14a) (§1.2, §3). -/
+-- (14a), §1.2, §3 [wehbe-doron-2025]
 theorem judgments_14 [IsProbabilityMeasure μ] (hα : 0 < α) (hsome : μ {.justSome} ≠ 0)
     (hCnull : C .null = 0) :
     Examples.ex_14a.judgment = .unacceptable ∧
@@ -602,10 +579,7 @@ theorem judgments_14 [IsProbabilityMeasure μ] (hα : 0 < α) (hsome : μ {.just
   · obtain ⟨w, hw, hf⟩ := postAccommodationInformative_iff.1 h
     cases w <;> simp_all [meaning, pexIE_eq_neg_one_iff, literal]
 
-/-- (15) extends the contrast of (14) between *some* and *not all* to a context where *some* is not
-wholly uninformative: a speaker who knows that not all talks were in English prefers *not all*
-exactly when its literal meaning, weighted by its extra cost, is less probable than that of
-*some*. -/
+-- (15), (14)
 theorem judgments_15 (hα : 0 < α) (hsome : μ {.justSome} ≠ 0) :
     Examples.ex_15a.judgment = .unacceptable ∧ Examples.ex_15c.judgment = .acceptable ∧
       ((speaker μ α C (readings meaning) .justSome).real {.some} <
@@ -666,12 +640,7 @@ theorem meaning_aAndNotB_eq_one_iff {w : World} : meaning .aAndNotB w = 1 ↔ w 
     exhIE_eq_self_of_forall _ _ fun a ha _ ↦ (Set.mem_singleton_iff.1 ha).ge]
   cases w <;> simp [literal, truth]
 
-/-- Spector does not work (19) out in §6; this is his model on the messages of Cremers, Wilcox and
-Spector. *The blue marble sank* (19b) never conveys that both marbles sank: false there, it is not
-used there, so the listener gives that world no mass after it at any prior, rationality and costs,
-where the baseline listener raises it for a prior biased enough
-(`CremersWilcoxSpector2023.prior_lt_listener_iff`). Where only the blue marble sank, the speaker
-prefers *only the blue marble sank* exactly when the baseline speaker does. -/
+-- (19), §6, (19b)
 theorem judgments_19 (s : Setting) :
     Examples.ex_19b.judgment = .unacceptable ∧
       listener s.prior (speaker s.prior s.lam s.cost (readings meaning)) .a {.wab} = 0 ∧

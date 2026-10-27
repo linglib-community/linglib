@@ -106,8 +106,7 @@ theorem inter_compl_cosOccurs_eq_empty {F : Set ι} (hF : F ⊆ cosOccurs t R P)
     F ∩ (cosOccurs t R P)ᶜ = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨h, hn⟩ ↦ hn (hF h)
 
-/-- In *John didn't stop smoking*, with the Fragment's *stop*, John's having smoked is consistent
-with the negated trigger (§3.1). -/
+-- §3.1
 theorem stop_mem_cosPrecondition_diff_cosOccurs {i i' : ι} (hr : i ~[R] i') (h' : P i')
     (h : P i) :
     ∃ t, English.Verbs.stop.phasal = some t ∧ i ∈ cosPrecondition t R P \ cosOccurs t R P :=
@@ -149,8 +148,7 @@ theorem uniformOn_raining_compl_knows :
     Set.ncard_singleton, Set.ncard_pair (show Cell.rainUnknown ≠ .noRain from nofun)]
   norm_num
 
-/-- The affirmative *Jane knows that it's raining* is informative relative to either context
-(§3.1). -/
+-- §3.1
 theorem uniformOn_knows_lt_one :
     (uniformOn Set.univ).real knows < 1 ∧ (uniformOn raining).real knows < 1 := by
   have h₁ : Set.univ ∩ knows = {.rainKnown} := Set.univ_inter _
@@ -164,19 +162,16 @@ On the projective reading the speaker presumes a context `C` entailing the preco
 the event they raise, `C ⊆ pre` (§3.1); suppression is the case in which that presumption cannot
 be attributed to them. -/
 
-/-- Projection is suppressed when someone who must accept the presumed context doubts the
-precondition, as in (23) and (24) (cases 1 and 2 of §3.2.1). -/
+-- (23), (24), §3.2.1
 theorem not_presumes_of_doubt {C S pre : Set ι} (hS : S ⊆ C) (h : ¬ S ⊆ pre) : ¬ C ⊆ pre :=
   fun hp ↦ h (hS.trans hp)
 
-/-- Presuming a precondition that is an alternative of the question under discussion resolves it, so
-projection is suppressed in (25) (case 3 of §3.2.1). -/
+-- (25), §3.2.1
 theorem resolves_of_presumes {C pre : Set ι} {Q : Question ι} (h : pre ∈ alt Q) (hp : C ⊆ pre) :
     C ∈ Q :=
   mem_of_exists_alt_subset ⟨_, h, hp⟩
 
-/-- A speaker who presumes she is ignorant whether `P` cannot presume `P` ((28c), (29), after
-[stalnaker-1974]). -/
+-- (28c), (29) [stalnaker-1974]
 theorem not_subset_of_presumes_ignorance {Dox : ι → Set ι} {C P : Set ι} {w : ι} (hw : w ∈ C)
     (hbel : Dox w ⊆ C) (hign : C ⊆ {v | ¬ Dox v ⊆ P}) : ¬ C ⊆ P :=
   fun hP ↦ hign hw (hbel.trans hP)
@@ -198,8 +193,7 @@ theorem localContext_subset {C A pre : Set ι} :
       (Aᶜ ⊆ pre → Connective.disj.localContext C A ⊆ pre) :=
   ⟨fun h ↦ ⟨fun _ hw ↦ h hw.2, fun _ hw ↦ h hw.2⟩, fun h _ hw ↦ h hw.2⟩
 
-/-- In a context leaving the precondition open, a disjunctive antecedent whose other disjunct
-negates it filters it, and a simple antecedent does not (44). -/
+-- (44)
 theorem disjunctive_antecedent_filters {C pre : Set ι} (hopen : ¬ C ⊆ pre) :
     Connective.disj.localContext C preᶜ ⊆ pre ∧ ¬ Connective.cond.localContext C Set.univ ⊆ pre :=
   ⟨fun _ hw ↦ not_not.mp hw.2, fun h ↦ hopen fun _ hw ↦ h ⟨hw, trivial⟩⟩

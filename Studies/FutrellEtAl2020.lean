@@ -106,14 +106,13 @@ def shortBeforeLong : Graph 7 :=
 def longBeforeShort : Graph 7 :=
   shortBeforeLong.reorderDependents 0 (.swap ⟨1, by decide⟩ ⟨4, by decide⟩)
 
-/-- Short-before-long minimizes dependency length in head-initial contexts, so (7a) beats (7b) (7).
--/
+-- (7a), (7b), (7)
 theorem short_before_long_head_initial :
     shortBeforeLong.totalLength < longBeforeShort.totalLength :=
   (Graph.totalLength_lt_reorderDependents_iff (by decide +kernel) (by decide +kernel)
     (by decide +kernel) (by decide +kernel)).2 (by decide +kernel)
 
-/-- In head-final contexts, the mirror image, long-before-short minimizes dependency length (8). -/
+-- (8)
 theorem long_before_short_head_final :
     shortBeforeLong.mirror.totalLength < longBeforeShort.mirror.totalLength := by
   simpa [Graph.totalLength_mirror] using short_before_long_head_initial
@@ -130,8 +129,7 @@ def mixedChain : Graph 4 :=
   .ofArcs [tok "A", tok "C", tok "D", tok "B"]
     0 [(0, 3, .dep), (3, 1, .dep), (1, 2, .dep)]
 
-/-- (9): consistent head direction minimizes chain dependency length —
-    the DLM route to the Greenbergian harmonic correlations. -/
+-- (9)
 theorem consistent_chain_shorter :
     consistentChain.totalLength < mixedChain.totalLength := by decide
 
@@ -145,9 +143,7 @@ def dependentsSplit : Graph 4 :=
   .ofArcs [tok "B", tok "A", tok "C", tok "D"]
     1 [(1, 0, .dep), (1, 2, .dep), (2, 3, .dep)]
 
-/-- (10): with several short dependents, splitting them across the head
-    beats consistency ([gildea-temperley-2010]), predicting the documented
-    exceptions (e.g. prenominal determiners in head-initial Spanish). -/
+-- (10) [gildea-temperley-2010]
 theorem split_beats_consistency :
     dependentsSplit.totalLength < dependentsSameSide.totalLength := by decide
 

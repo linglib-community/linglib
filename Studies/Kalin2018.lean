@@ -458,8 +458,7 @@ theorem rows_agree : ∀ r ∈ rows, ∀ subject : Bool,
   exact ⟨h₁.trans exists_economical_iff.symm,
     fun S hS ↦ h₂ S (Finset.mem_powerset.2 hS.subset_toFinset) hS⟩
 
-/-- In the imperfective a specific object is licensed by the secondary T (47), and a nonspecific one
-activates nothing and goes unlicensed (48). -/
+-- (47), (48)
 theorem imperfective_object (subject : Bool) :
     Economical domains imperfective (transitive subject true) {tImpf} ∧
       (license domains (activate imperfective {tImpf})

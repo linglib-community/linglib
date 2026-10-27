@@ -131,7 +131,7 @@ unembedded item is read as the speaker's (10a). -/
 def Configurational (D : List Reading) : Prop :=
   ∀ r ∈ D, r.response ≠ .speaker → r.embedded = true
 
-/-- An epithet in a matrix clause read from another's perspective (11) and (12). -/
+-- (11), (12)
 theorem exists_unembedded_subject :
     ∃ r ∈ readings, r.embedded = false ∧ r.response = .subject := by decide
 

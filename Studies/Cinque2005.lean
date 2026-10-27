@@ -182,13 +182,13 @@ def derivation6n : Derivation :=
   ⟨leaf tokN, [.em .left tokA, .em .left tokNum,
     .im (tokA * tokN : LinearizedSyntacticObject), .em .left tokDem]⟩
 
-/-- With nothing moved the order is (6a), Dem Num A N. -/
+-- (6a)
 theorem surfaceCats_mergeOrder : mergeOrder.surfaceCats = [.Dem, .Num, .A, .N] := by decide
 
-/-- Pied-piping of the whose-picture type gives (6o), Dem N A Num. -/
+-- (6o)
 theorem surfaceCats_derivation6o : derivation6o.surfaceCats = [.Dem, .N, .A, .Num] := by decide
 
-/-- Pied-piping of the picture-of-who type gives (6n), Dem A N Num. -/
+-- (6n)
 theorem surfaceCats_derivation6n : derivation6n.surfaceCats = [.Dem, .A, .N, .Num] := by decide
 
 /-! ### Markedness and frequency (7b) -/
@@ -212,8 +212,7 @@ theorem markedOptions_eq_stated :
 consistent with (7b-v) listing it as partial. -/
 theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by decide +kernel
 
-/-- (6p), N Dem A Num, for which the paper states no count, has one marked option, the
-extraction of the noun past Dem. -/
+-- (6p)
 theorem markedOptions_p : markedOptions [.N, .Dem, .A, .Num] = some 1 := by decide +kernel
 
 theorem markedness_extremes :

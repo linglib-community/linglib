@@ -278,9 +278,6 @@ theorem licenses_not_monotone :
       english.Licenses .plural ∧ ¬ hebrew.Licenses .plural := by
   decide
 
-/-- In the Language × Meaning interaction of experiments 6a and 10a–12a, English speakers
-prefer doubled plurals and Hebrew speakers doubled diminutives, under either ranking and
-for any constituents. -/
 theorem doubling_dissociation (f : Meaning) (h : x ≠ y) (r : Ranking (Fin 2) 2) :
     ((∃ p ∈ (tableau x y (english.level f) r).optimal, p.surface = [x, x]) ↔ f = .plural) ∧
       ((∃ p ∈ (tableau x y (hebrew.level f) r).optimal, p.surface = [x, x]) ↔

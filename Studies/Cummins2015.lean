@@ -218,15 +218,13 @@ def atLeast22 : Context := { lo := some 22 }
 /-- The same, with 21 contextually salient. -/
 def atLeast22Primed : Context := { atLeast22 with primedNumeral := some 21 }
 
-/-- Unprimed, ranking informativeness above salience selects *more than 21* and the reverse ranking
-*more than 20* (Table 3.1), and priming never decides (Table 3.3). -/
+-- Table 3.1, Table 3.3
 theorem atLeast22_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (toy atLeast22) r {moreThan 21, moreThan 20}).optimal =
       if r.Dominates 0 1 then {moreThan 21} else {moreThan 20} := by
   revert r; decide
 
-/-- With 21 salient (Table 3.2), only a speaker ranking salience above both informativeness
-and priming keeps *more than 20* (Table 3.3). -/
+-- Table 3.2, Table 3.3
 theorem atLeast22Primed_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (toy atLeast22Primed) r {moreThan 21, moreThan 20}).optimal =
       if r.Dominates 1 0 ∧ r.Dominates 1 2 then {moreThan 20} else {moreThan 21} := by
@@ -235,8 +233,6 @@ theorem atLeast22Primed_optimal (r : Ranking (Fin 3) 3) :
 /-- Priming over salience over informativeness, the last ranking of Table 3.3. -/
 def primingFirst : Ranking (Fin 3) 3 := Equiv.swap 0 2
 
-/-- A speaker ranking priming over salience over informativeness prefers *more than 20*
-unprimed and *more than 21* primed: variation within a speaker across contexts. -/
 theorem primingFirst_optimal :
     (Tableau.ofRanking (toy atLeast22) primingFirst {moreThan 21, moreThan 20}).optimal =
         {moreThan 20} ∧
@@ -267,8 +263,7 @@ def Situation.info : Situation → Constraint Candidate
 simplicity. -/
 def approx (s : Situation) : ConstraintSet Candidate (Fin 3) := ![s.info, nsal, qsimp]
 
-/-- For an exact value the rounder numeral harmonically bounds a less round one, as *50*
-bounds *51* (Table 3.4). -/
+-- Table 3.4
 theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < roundness n)
     (r : Ranking (Fin 3) 3) {cands : Finset Candidate} (hc : bare n ∈ cands) :
     bare m ∉ (Tableau.ofRanking (approx (.exact n)) r cands).optimal := by
@@ -285,29 +280,25 @@ theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < rou
   · show 4 - roundness n < 4 - roundness m
     have := roundness_le_four n; omega
 
-/-- For the exact value 51, informativeness above salience prefers *51* and salience above
-informativeness *50* (Table 3.5). -/
+-- Table 3.5
 theorem exact51_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (approx (.exact 51)) r {bare 50, bare 51}).optimal =
       if r.Dominates 0 1 then {bare 51} else {bare 50} := by
   revert r; decide
 
-/-- For the exact value 100, the winner is *exactly 100* when informativeness dominates simplicity,
-and *100* otherwise (Table 3.6). -/
+-- Table 3.6
 theorem exact100_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (approx (.exact 100)) r {bare 100, exactly 100, about 100, about 99}).optimal
       = if r.Dominates 0 2 then {exactly 100} else {bare 100} := by
   revert r; decide
 
-/-- For the approximate value 100, informativeness above simplicity prefers *about 100* and
-simplicity above informativeness *100* (Table 3.7). -/
+-- Table 3.7
 theorem about100_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (approx (.about 100)) r {bare 100, about 100}).optimal =
       if r.Dominates 0 2 then {about 100} else {bare 100} := by
   revert r; decide
 
-/-- For the exact value 99, the winner is *99*, *100* or *about 100* as informativeness dominates
-salience, simplicity dominates informativeness, or neither (Table 3.8). -/
+-- Table 3.8
 theorem exact99_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (approx (.exact 99)) r {bare 99, exactly 99, bare 100, about 100}).optimal
       = if r.Dominates 0 1 then {bare 99}
@@ -366,7 +357,7 @@ def table3_10 : ConstraintSet Correction (Fin 4) :=
 
 -- `Matrix.cons_val_two`/`three` are named because the `Matrix.cons_val` simproc panics on an
 -- over-applied vector at a literal index of two or more.
-/-- The corrections' violations after *more than n* are those of Table 3.9. -/
+-- Table 3.9
 theorem corrOn_moreThan {n : ℕ} (hn : 1 ≤ n) :
     corrOn (correctionContext n .moreThan n) n = table3_9 := by
   obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
@@ -376,7 +367,7 @@ theorem corrOn_moreThan {n : ℕ} (hn : 1 ≤ n) :
     simp [corrOn, corr, table3_9, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
       Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
 
-/-- The corrections' violations after *at least n − 1* are those of Table 3.10. -/
+-- Table 3.10
 theorem corrOn_atLeast {n : ℕ} (hn : 1 ≤ n) :
     corrOn (correctionContext n .atLeast (n - 1)) n = table3_10 := by
   obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hn
@@ -412,9 +403,7 @@ def StrongerAlternative (ctx : Context) (n m : ℕ) : Prop :=
 instance (ctx : Context) (n m : ℕ) : Decidable (StrongerAlternative ctx n m) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- A stronger alternative *more than m* below the speaker's bound bounds *more than n* when `n`
-is not primed, so *more than n* implicates that *more than m* was not assertable, the
-granularity-scale implicature of [cummins-sauerland-solt-2012]. -/
+-- [cummins-sauerland-solt-2012]
 theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral ≠ some n)
     (r : Ranking (Fin 6) 6) {cands : Finset Candidate} (hc : moreThan m ∈ cands) :
@@ -444,8 +433,7 @@ theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = so
   · show info ctx (moreThan m) < info ctx (moreThan n)
     simp only [info, moreThan, hlo]; omega
 
-/-- With `n` primed, *more than n* alone wins iff priming dominates informativeness and, if `m` is
-rounder, salience, sharpening the book's condition (§5.4). -/
+-- §5.4
 theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral = some n)
     (r : Ranking (Fin 6) 6) :

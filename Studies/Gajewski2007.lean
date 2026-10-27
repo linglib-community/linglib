@@ -127,7 +127,7 @@ theorem nrp_self_eq_neg_one_iff :
 successors of a world, as a function on propositions. -/
 def every (R : SetRel W W) (s : Set W) : Set W := {w | (∃ u, w ~[R] u) ∧ □[R] (· ∈ s) w}
 
-/-- Universal quantification over an anti-additive environment is anti-additive (92a). -/
+-- (92a)
 theorem isAntiAdditive_every {V : Type*} {g : Set V → Set W} (hg : IsAntiAdditive g) :
     IsAntiAdditive (every R ∘ g) := by
   rw [isAntiAdditive_iff_mem] at hg ⊢
@@ -141,12 +141,12 @@ open Classical in
 def negNR (R H : SetRel W W) (p : Set W) : Set W :=
   Trivalent.posExt (-nrp R H fun u ↦ SignType.ofProp (u ∈ p))
 
-/-- A negated neg-raising predicate is the universal over the negated complement (61). -/
+-- (61)
 theorem negNR_eq (R H : SetRel W W) (p : Set W) : negNR R H p = every R pᶜ := by
   ext w
   simp [negNR, nrp_eq_neg_one_iff, every, Box]
 
-/-- *Bill doesn't think Mary is here* entails *Bill thinks Mary is not here* (1). -/
+-- (1)
 theorem negNR_subset (R H : SetRel W W) (p : Set W) : negNR R H p ⊆ {w | □[R] (· ∉ p) w} :=
   fun _ hw ↦ ((negNR_eq R H p).subset hw).2
 
@@ -159,7 +159,7 @@ theorem isAntiAdditive_negNR (R H : SetRel W W) : IsAntiAdditive (negNR R H) := 
 *not required* and *not certain*. -/
 def negUniversal (R : SetRel W W) (p : Set W) : Set W := {w | ¬ □[R] (· ∈ p) w}
 
-/-- *Bill didn't say that Mary is here* does not entail *Bill said that Mary isn't here* (2). -/
+-- (2)
 theorem not_negUniversal_subset :
     ¬ ∀ (W : Type) (R : SetRel W W) (p : Set W), negUniversal R p ⊆ {w | □[R] (· ∉ p) w} :=
   fun h ↦ h Bool .univ {true}
@@ -178,7 +178,7 @@ theorem not_isAntiAdditive_negUniversal :
 /-- The environment of a negated existential, as in *not a single*, *not allowed* and *can't*. -/
 def negExistential (R : SetRel W W) (p : Set W) : Set W := {w | ¬ ◇[R] (· ∈ p) w}
 
-/-- A negated existential is anti-additive ((51a), (52), (71)). -/
+-- (51a), (52), (71)
 theorem isAntiAdditive_negExistential (R : SetRel W W) :
     IsAntiAdditive (negExistential R) := by
   rw [isAntiAdditive_iff_mem]
@@ -195,7 +195,7 @@ operator cancels the excluded middle (fn. 7 (ii)). -/
 def negNRStressed (R : SetRel W W) (p : Set W) : Set W :=
   Trivalent.posExt fun w ↦ -SignType.ofProp (nrp R R (fun u ↦ SignType.ofProp (u ∈ p)) w = 1)
 
-/-- Without its presupposition a negated neg-raising predicate is a negated universal (§2.1.3). -/
+-- §2.1.3
 theorem negNRStressed_eq (R : SetRel W W) : negNRStressed R = negUniversal R := by
   ext p w
   simp only [negNRStressed, negUniversal, nrp, Trivalent.mem_posExt, SignType.neg_eq_one_iff,
@@ -209,7 +209,7 @@ substrate's negated factive. -/
 def negKnow (R : SetRel W W) (p : Set W) : Set W :=
   Trivalent.posExt (TwoDim.negFactive (pure (· ∈ p) : TwoDim W (W → Prop)) (Box R)).toTrivalent
 
-/-- Negated *know* is not anti-additive (58b). -/
+-- (58b)
 theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) .univ) := by
   rw [isAntiAdditive_iff_mem]
   intro h
@@ -230,7 +230,7 @@ def noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) : Set W :
   Trivalent.posExt fun w ↦
     -Trivalent.existsWeak fun x : O ↦ nrp (B x) (B x) (fun u ↦ SignType.ofProp (u ∈ p)) w
 
-/-- *No one thinks p* is *everyone thinks not-p* ((87)–(89)). -/
+-- (87), (89)
 theorem noOneNR_eq {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
     noOneNR O B p = {w | ∀ x ∈ O, w ∈ every (B x) pᶜ} := by
   ext w
@@ -254,8 +254,7 @@ def negStack (R₁ H₁ R₂ H₂ : SetRel W W) (p : Set W) : Set W :=
   Trivalent.posExt (-nrp R₁ H₁ (nrp R₂ H₂ fun u ↦ SignType.ofProp (u ∈ p)))
 
 open Classical in
-/-- Under a predicate whose heritage base is its modal base, such as *think*, the negation goes all
-the way down ((107)–(110)). -/
+-- (107), (110)
 theorem negStack_self_eq (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
     negStack R₁ R₁ R₂ H₂ p = every R₁ (every R₂ pᶜ) := by
   ext w
@@ -265,8 +264,7 @@ theorem negStack_self_eq (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
   simp only [negStack, Trivalent.mem_posExt, Pi.neg_apply, SignType.neg_eq_one_iff,
     nrp_self_eq_neg_one_iff, h, every, Box, Set.mem_ofPred_eq]
 
-/-- *I don't believe Bill wanted Harry to die* entails *I believe Bill wanted Harry not to die*
-(95). -/
+-- (95)
 theorem negStack_self_subset (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
     negStack R₁ R₁ R₂ H₂ p ⊆ {w | □[R₁] (□[R₂] (· ∉ p)) w} := fun _ hw ↦
   fun u hu ↦ (((negStack_self_eq R₁ R₂ H₂ p).subset hw).2 u hu).2
@@ -278,8 +276,7 @@ theorem isAntiAdditive_negStack_self (R₁ R₂ H₂ : SetRel W W) :
     funext (negStack_self_eq R₁ R₂ H₂)]
   exact isAntiAdditive_every (isAntiAdditive_every isAntiAdditive_compl)
 
-/-- With equal inner bases, the negated stack holds iff the inner subject is settled and the inner
-predicate fails throughout the outer bases ((111)–(113)). -/
+-- (111), (113)
 theorem negStack_eq (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
     negStack R₁ H₁ R₂ R₂ p = {w | (∀ u, w ~[H₁] u → □[R₂] (· ∈ p) u ∨ □[R₂] (· ∉ p) u) ∧
       (∃ u, w ~[R₁] u) ∧ □[R₁] (fun u ↦ ¬ □[R₂] (· ∈ p) u) w} := by
@@ -322,8 +319,7 @@ private theorem belFred_not_box {s : Set (Fin 5)} {x : Fin 5} (hx : x = 2 ∨ x 
   rintro u ⟨-, rfl⟩ hall
   exact hxs (hall x (.inl ⟨rfl, hx⟩))
 
-/-- *I don't want Bill to believe Harry died* does not entail *I want Bill to believe Harry didn't
-die* ((96), (114)). -/
+-- (96), (114)
 theorem not_negStack_subset :
     ¬ negStack desJohn belJohn belFred belFred {2} ⊆
       {w | □[desJohn] (□[belFred] (· ∉ ({2} : Set (Fin 5)))) w} :=

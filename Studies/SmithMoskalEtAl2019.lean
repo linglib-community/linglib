@@ -237,9 +237,7 @@ theorem wardaman_aab_generated :
       Setoid.ker (realize wardamanVocab) = Setoid.ker Paradigm.aab := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- The same vocabulary satisfies neither structural adjacency nor [bobaljik-2012]'s
-markedness condition (202), so the attested pronominal AAB refutes both as conditions on
-suppletion in general. -/
+-- (202) [bobaljik-2012]
 theorem wardaman_not_adjacent_not_grounded :
     ¬ Adjacent wardamanVocab ∧ ¬ Grounded wardamanVocab := by
   refine ⟨?_, ?_⟩ <;> decide

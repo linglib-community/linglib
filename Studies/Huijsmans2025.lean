@@ -173,7 +173,7 @@ def mb : Set (ℤ → Unit → Prop) := {q | ∃ o ∈ c.onsets, q = from' o}
 def frame : EvidentialFrame ℤ :=
   { speechTime := c.speech, eventTime := c.prejacent, acquisitionTime := c.acquisition }
 
-/-- In the form of the diagrams, (35) says that every onset precedes the prejacent's. -/
+-- (35)
 theorem futurePresup_iff :
     FuturePresup c.mb (from' c.prejacent) () ↔ ∀ o ∈ c.onsets, o < c.prejacent := by
   constructor
@@ -183,7 +183,7 @@ theorem futurePresup_iff :
   · rintro h q ⟨o, ho, rfl⟩
     exact ⟨o, c.prejacent, isEarliest_from' o, isEarliest_from' _, h o ho⟩
 
-/-- In the form of the diagrams, (36) says that some onset is at or after the prejacent's. -/
+-- (36)
 theorem inferentialPresup_iff :
     InferentialPresup c.mb (from' c.prejacent) () ↔ ∃ o ∈ c.onsets, c.prejacent ≤ o := by
   constructor
@@ -268,15 +268,14 @@ theorem driveway_inferential : InferentialPresup driveway.mb (from' driveway.pre
 
 theorem bear_not_future : ¬ FuturePresup bear.mb (from' bear.prejacent) () := by decide
 
-/-- In (57) evidence on both sides of the prejacent forces the inferential. -/
+-- (57)
 theorem homeFromWork_inferential :
     InferentialPresup homeFromWork.mb (from' homeFromWork.prejacent) () := by decide
 
 theorem homeFromWork_not_future :
     ¬ FuturePresup homeFromWork.mb (from' homeFromWork.prejacent) () := by decide
 
-/-- In (59)–(60), with the smell in the modal base the inferential is licensed, and with it set
-aside the future is. -/
+-- (59), (60)
 theorem ovenAndSmell_inferential :
     InferentialPresup ovenAndSmell.mb (from' ovenAndSmell.prejacent) () := by decide
 

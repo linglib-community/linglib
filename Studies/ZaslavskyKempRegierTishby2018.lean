@@ -268,8 +268,6 @@ own update. -/
 def IsIBOptimum (β : ℝ) : Prop := encoder = ibUpdate meanings source encoder β
 
 omit [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
-/-- Eq. 7 pointwise: each word's probability decays exponentially, at rate `β`, in the
-divergence between the meaning and the word's interpretation. -/
 theorem ibUpdate_real_singleton (β : ℝ) (m : M) (w : W) :
     (ibUpdate meanings source encoder β m).real {w} =
       (encoder ∘ₘ source).real {w}

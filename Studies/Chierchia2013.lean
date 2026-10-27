@@ -71,14 +71,11 @@ it is at least as strong as its embedding of the other reading. -/
 def IsStrongest (C : Set W → Set W) (r : DisjunctionReading) : Prop :=
   ∀ r' : DisjunctionReading, C (r.denotation p q) ⊆ C (r'.denotation p q)
 
-/-- Under a monotone embedding the implicature still strengthens, so the exclusive reading is
-preferred. -/
 theorem isStrongest_exclusive {C : Set W → Set W} (hC : Monotone C) :
     IsStrongest p q C .exclusive
   | .inclusive => hC (exclusive_subset_inclusive p q)
   | .exclusive => subset_rfl
 
-/-- Under an antitone embedding the implicature weakens, so the inclusive reading is preferred. -/
 theorem isStrongest_inclusive {C : Set W → Set W} (hC : Antitone C) :
     IsStrongest p q C .inclusive
   | .inclusive => subset_rfl

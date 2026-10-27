@@ -103,8 +103,7 @@ theorem eachOtherLF_singleton (a : A) (R : A → A → Prop) :
   rw [Finset.mem_singleton] at hx hz1
   exact absurd (hz1.trans hx.symm) hz2
 
-/-- (68) *They are taller than each other* is contradictory, since each∘other over an asymmetric
-relation fails on every plurality ((69)/(70), (71)/(72)). -/
+-- (68), (69), (70), (71), (72)
 theorem eachOtherLF_asymmetric_contradictory
     {np : Finset A} {R : A → A → Prop}
     (hasym : ∀ x y, R x y → ¬ R y x) (hcard : 2 ≤ np.card) :
@@ -198,9 +197,7 @@ instance : DecidablePred PronounConstrual.HostsDistributor
 instance : DecidablePred PronounConstrual.AvailableInPreposedAdjunct := fun c ↦
   inferInstanceAs (Decidable (c.anaphoraType = .coreference))
 
-/-- The preposed-adjunct diagnostic isolates exactly the bound-variable
-    construals: what (60) loses relative to (57) is the I and you
-    readings. -/
+-- (60), (57)
 theorem not_availableInPreposedAdjunct_iff (c : PronounConstrual) :
     ¬ c.AvailableInPreposedAdjunct ↔ c.reading = .I ∨ c.reading = .you := by
   cases c <;> decide
@@ -233,23 +230,20 @@ def ScopeWellFormed : EachAttachment → PronounConstrual → Prop
   | .embedded, c => ¬ c.DenotesAtom ∧ ¬ c.HostsDistributor
   | .matrix, c => c = .distributor
 
-/-- Narrow scope forces a coreferential pronoun ((67a)). -/
+-- (67a)
 theorem narrow_forces_coreference (c : PronounConstrual)
     (h : ScopeWellFormed .embedded c) :
     c.anaphoraType = .coreference := by
   cases c <;> simp_all [ScopeWellFormed, PronounConstrual.DenotesAtom,
     PronounConstrual.anaphoraType]
 
-/-- Broad scope forces a bound-variable pronoun (67b), so scope and
-    anaphora type covary, the paper's answer to Williams's nonscope
-    alternative (§4.1). -/
+-- (67b), §4.1
 theorem broad_forces_bound_variable (c : PronounConstrual)
     (h : ScopeWellFormed .matrix c) :
     c.anaphoraType = .boundVariable := by
   cases c <;> simp_all [ScopeWellFormed, PronounConstrual.anaphoraType]
 
-/-- Under embedded attachment exactly one construal survives: plain
-    range coreference — (67a)'s indexing is forced. -/
+-- (67a)
 theorem embedded_unique_construal (c : PronounConstrual) :
     ScopeWellFormed .embedded c ↔ c = .range := by
   cases c <;> simp [ScopeWellFormed, PronounConstrual.DenotesAtom,

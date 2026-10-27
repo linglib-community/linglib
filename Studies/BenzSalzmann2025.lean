@@ -67,8 +67,7 @@ theorem n_stranding_is_xStranding :
 theorem clausal_nominal_parallel :
     clausalSpine.Deletes .v (.head .V) ∧ nominalSpine.Deletes .n (.head .N) := by decide
 
-/-- Under N-stranding the noun's dependents are deleted while n, the numeral and the determiner are
-pronounced, as in *zwei Professoren* (6a). -/
+-- (6a)
 theorem nStranding_domain :
     nStrandingNPE.Deletes (.head .N) ∧ nStrandingNPE.Spares (.adjunct .N) ∧
       nStrandingNPE.Spares (.head .n) ∧ nStrandingNPE.Spares (.head .Num) ∧

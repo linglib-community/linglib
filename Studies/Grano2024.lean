@@ -134,7 +134,7 @@ theorem MoodHead.isRight_denote {W Ev : Type*} {m : MoodHead} {P : W → Ev → 
     (m.denote P).isRight ↔ m.Opens := by
   unfold MoodHead.denote; split <;> simp [*]
 
-/-- (87a) and (88a): the indicative and the first subjunctive denote alike. -/
+-- (87a), (88a)
 theorem MoodHead.denote_indic_eq_sbjv₁ {W Ev : Type*} (P : W → Ev → Prop) :
     MoodHead.indic.denote P = MoodHead.sbjv₁.denote P := rfl
 
@@ -237,7 +237,7 @@ theorem abstraction_accepts_open :
       ∃ r ∈ rows, r.cls = c ∧ r.complement.Abstracts ∧ r.judgment = .acceptable := by
   decide +kernel
 
-/-- 'want' rejects the indicative throughout, the idle desire of (128) included. -/
+-- (128)
 theorem want_rejects_indicative :
     ∀ r ∈ rows, r.cls = .want → r.complement = .indicative → r.judgment ≠ .acceptable := by
   decide +kernel
@@ -376,8 +376,7 @@ theorem Report.report₃ (h : F.Report x P w) : F.Report₃ x (fun y t ↦ closu
   let ⟨s, hs, hx, hc⟩ := h
   ⟨s, hs, hx, fun c hcs ↦ let ⟨e, _, t, ht, hP⟩ := hc c hcs; ⟨t, ht, e, hP⟩⟩
 
-/-- When every state causes every eventuality, (79) is equivalent to (78) of the closed complement.
--/
+-- (79), (78)
 theorem report_iff_report₃ (h : ∀ s e w, s ~[F.causeStar w] e) :
     F.Report x P w ↔ F.Report₃ x (fun y t ↦ closure (P y t)) w :=
   ⟨Report.report₃, fun ⟨s, hs, hx, hc⟩ ↦

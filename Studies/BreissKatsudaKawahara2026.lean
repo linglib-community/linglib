@@ -161,7 +161,7 @@ theorem harmony_apply (w : Weights) (it : Item) (v : Velar) :
         w.compound * (activation it.compound * idNasal it.compound v)) := by
   simp [harmony, dotProduct, Fin.sum_univ_three, violations, activations, con, Weights.vec]
 
-/-- Scaling the violations by the activations is scaling the weights by them (§4.2, §6.3). -/
+-- §4.2, §6.3
 theorem harmony_violations_eq (w : Weights) (it : Item) :
     harmony (violations it) w.vec = harmonyScore (con it) (w.vec * activations it) := by
   funext v
@@ -199,7 +199,7 @@ theorem pNasal_novel (w : Weights) (a : ℝ) :
     pNasal w (novel a) = sigmoid (w.markedness - w.n2 * a) := by
   simp [pNasal_eq_sigmoid, novel, sub_eq_add_neg]
 
-/-- A bound N2 (5) has no free base. -/
+-- (5)
 theorem pNasal_bound (w : Weights) (b : ℝ) :
     pNasal w (bound b) = sigmoid (w.markedness + w.compound * b) := by
   simp [pNasal_eq_sigmoid, bound]
@@ -245,8 +245,7 @@ theorem bound_half_le (w : Weights) (hM : 0 ≤ w.markedness) (hC : 0 ≤ w.comp
   rw [pNasal_bound, ← sigmoid_zero]
   exact sigmoid_le (add_nonneg hM (mul_nonneg hC hb))
 
-/-- With `*INTERNAL-[g]` at zero weight nasalisation is the majority outcome exactly when the
-compound base's weighted activation exceeds the N2 base's (§5.1, §6.2). -/
+-- §5.1, §6.2
 theorem zero_markedness_iff (w : Weights) (hM : w.markedness = 0) (a b : ℝ) :
     2⁻¹ < pNasal w (existing a b) ↔ w.n2 * a < w.compound * b := by
   rw [pNasal_existing, ← sigmoid_zero, sigmoid_lt_iff, hM]
@@ -296,7 +295,7 @@ theorem tableau8 :
   norm_num [harmony_apply, sigmoid_lt_iff, idNasal, activation, existing, freeN2, storedCompound,
     w78]
 
-/-- The probability of (8b) is below 0.905, so it rounds to 0.90, not to the printed 0.91. -/
+-- (8b)
 theorem pNasal_tableau8b_lt : pNasal w78 (existing 0.5 0.7) < 0.905 := by
   have he : exp 2.2 < 9.3 := by
     have h1 := exp_one_lt_d9

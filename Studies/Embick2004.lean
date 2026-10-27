@@ -125,7 +125,6 @@ def moveRoot : Tree Cat Word → Tree Cat Word
 def headDaughter? (t : Tree Cat Word) : Option (Tree Cat Word) :=
   t.headIndex?.bind (t.children[·]?)
 
-/-- Head movement of a Root complement builds exactly the complex head of Direct Merge. -/
 theorem headDaughter?_moveRoot (r : Root) :
     headDaughter? (moveRoot (rootComplement r)) = some (directMerge r) := rfl
 
@@ -238,16 +237,14 @@ theorem isSome_interp_iff (p : FientP) : (p.interp M).isSome ↔ p.Interpretable
 theorem Interpretable.satisfiesFient {p : FientP} (h : p.Interpretable) : p.SatisfiesFient := by
   rcases p with ⟨_ | x, _ | m, _ | _ | _, _ | _ | _⟩ <;> simp_all [Interpretable, SatisfiesFient]
 
-/-- A resultative participle with a single DP violates the condition on v[FIENT] wherever the DP is
-generated (57b). -/
+-- (57b)
 theorem not_satisfiesFient_participle (x : DP) (m : Option Root) (r : Root)
     (μ : Option MeansRule) :
     ¬ (⟨some x, m, .participle none r, μ⟩ : FientP).SatisfiesFient ∧
       ¬ (⟨none, m, .participle (some x) r, μ⟩ : FientP).SatisfiesFient := by
   simp [SatisfiesFient]
 
-/-- A Root complement names the state the transition reaches: *The metal is hammered* is
-`FIENT(Hammer(the metal))` (44). -/
+-- (44)
 theorem interp_rootComplement (x : DP) {r : Root} (hr : TakesArgument r) (μ : Option MeansRule) :
     interp M ⟨some x, none, .root r, μ⟩ = some (M.fient (M.pred r (M.dp x))) := by
   simp [interp, hr]
@@ -258,8 +255,7 @@ theorem interp_directMerge (x : DP) (m a : Root) :
     interp M ⟨some x, some m, .aP a, some .argument⟩ =
       some (M.by_ (M.pred m (M.dp x)) (M.fient (M.pred a (M.dp x)))) := rfl
 
-/-- A Root merged without an argument is no predicate of the DP, so *John smoked himself thin* is
-`BY(Smoke, FIENT(Thin(himself)))` (52). -/
+-- (52)
 theorem interp_directMerge_noArgument (x : DP) (m a : Root) :
     interp M ⟨some x, some m, .aP a, some .noArgument⟩ =
       some (M.by_ (M.prop m) (M.fient (M.pred a (M.dp x)))) := rfl

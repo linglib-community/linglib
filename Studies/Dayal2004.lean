@@ -205,13 +205,11 @@ instance : Decidable (l.BareKind num) := by unfold BareKind; infer_instance
 theorem bareKind_or_definiteKind : l.BareKind num ∨ l.DefiniteKind num :=
   (em _).imp_right fun h ↦ l.blocked_subset (not_not.1 h)
 
-/-- Singular kind terms are never optionally definite, (87), since the canonical ι is blocked
-wherever it is lexicalized. -/
+-- (87)
 theorem bareKind_singular_iff : l.BareKind .singular ↔ ¬ l.DefiniteKind .singular :=
   ⟨fun h h' ↦ h (l.iota_mem_blocked h'), fun h h' ↦ h (l.blocked_subset h')⟩
 
-/-- A language can have bare singular kind terms only if it allows plural and mass kind terms to
-be bare, p. 422. -/
+-- p. 422
 theorem bareKind_of_bareKind_singular (h : l.BareKind .singular) : l.BareKind num := by
   rcases kindShift_eq_down_or_iota num with hk | hk <;> rw [BareKind, hk]
   · exact fun hd ↦ h (l.iota_mem_blocked (l.iota_mem_of_down_mem (l.blocked_subset hd)))

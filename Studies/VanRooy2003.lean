@@ -335,7 +335,7 @@ theorem bestPlace_questionR :
     · exact ⟨⟨.station, by simp⟩, .station, by simp⟩
     · exact ⟨⟨.palace, by simp⟩, .palace, by simp⟩
 
-/-- The rule of footnote 28 adds the trivial answer, which is why the paper rejects it. -/
+-- footnote 28
 theorem bestPlace_overlapCells :
     overlapCells (optimalValues (fun _ ↦ Set.univ) bestPlace) =
       {{.station, .both}, {.palace, .both}, Set.univ} := by
@@ -378,8 +378,6 @@ theorem optimalValues_gt_eq_empty (jump : W → ℕ) (w : W) :
     optimalValues (fun w ↦ {n | jump w < n}) (fun _ ↦ id) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun n ⟨hn, h⟩ ↦ h (n + 1) (by grind) (Nat.lt_succ_self n)
 
-/-- With the preferences reversed, the unique optimal answer to *How many meters can't you jump?*
-is the first number of meters you cannot jump. -/
 theorem optimalValues_gt_toDual (jump : W → ℕ) (w : W) :
     optimalValues (fun w ↦ {n | jump w < n}) (fun _ ↦ OrderDual.toDual) w = {jump w + 1} := by
   ext n

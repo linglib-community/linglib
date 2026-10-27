@@ -96,15 +96,14 @@ theorem truth_dia_conj_neg (p q : At) :
       {w | (R w ∩ (V p \ V q)).Nonempty} :=
   truth_possibility_of_alt_eq_singleton R _ (alt_inf_compl_atom _ _)
 
-/-- The meta-linguistic Independence inferences for `□` (§4): the relevant worlds meet both
-relative complements. -/
+-- §4
 theorem box_meta_independence (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     (hw : w ∈ truth (Formula.eval V R (.box (.disj (.atom p) (.atom q))))) :
     (R w ∩ (V p \ V q)).Nonempty ∧ (R w ∩ (V q \ V p)).Nonempty := by
   rw [truth_box_disj V R h] at hw
   exact ((isMinCover_pair_iff_inter_sdiff h.ne).1 hw).2
 
-/-- The meta-linguistic Independence inferences for `◇` (§4). -/
+-- §4
 theorem dia_meta_independence (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     (hw : w ∈ truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q))))) :
     (R w ∩ (V p \ V q)).Nonempty ∧ (R w ∩ (V q \ V p)).Nonempty := by
@@ -237,14 +236,14 @@ theorem box_independence_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
   rw [truth_dia_conj_neg]
   exact fun _ hw ↦ (box_meta_independence V R h hw).1
 
-/-- **Fact 1**, `□(p ∨ q) ⊨ ◇(q ∧ ¬p)`. -/
+-- Fact 1
 theorem box_independence_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.diamond (.conj (.atom q) (.neg (.atom p))))) := by
   rw [truth_dia_conj_neg]
   exact fun _ hw ↦ (box_meta_independence V R h hw).2
 
-/-- **Fact 1**, `◇(p ∨ q) ⊨ ◇(p ∧ ¬q)`. -/
+-- Fact 1
 theorem dia_independence_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) := by
@@ -278,7 +277,7 @@ theorem box_conditional_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
   obtain ⟨v, hvR, -, hvp⟩ := hmc.2.2
   exact ⟨⟨v, hvR, hvp⟩, fun u hu ↦ (hmc.1 hu.1).resolve_left hu.2⟩
 
-/-- **Fact 2**, `□(p ∨ q) ⊨ ¬q → □p`. -/
+-- Fact 2
 theorem box_conditional_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.cond (.neg (.atom q)) (.box (.atom p)))) := by
@@ -291,7 +290,7 @@ theorem box_conditional_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
   obtain ⟨v, hvR, -, hvq⟩ := hw.2.1
   exact ⟨⟨v, hvR, hvq⟩, fun u hu ↦ (hw.1 hu.1).resolve_right hu.2⟩
 
-/-- **Fact 2**, `◇(p ∨ q) ⊨ ¬p → ◇q`. -/
+-- Fact 2
 theorem dia_conditional_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.cond (.neg (.atom p)) (.diamond (.atom q)))) := by
@@ -523,7 +522,7 @@ theorem incomp : IncompRel (· ⊆ ·) vp vq :=
 
 theorem incomp_val : IncompRel (· ⊆ ·) (val true) (val false) := incomp
 
-/-- Figure 2: `{⟦p⟧, ⟦q⟧}` minimally covers the three `p ∨ q`-worlds. -/
+-- Figure 2
 theorem isMinCover_r₃ : IsMinCover {vp, vq} (r₃ (true, true)) := by
   rw [isMinCover_pair_iff incomp.ne]
   refine ⟨subset_rfl, fun h ↦ ?_, fun h ↦ ?_⟩
@@ -537,24 +536,23 @@ theorem diversity_without_independence :
     ⟨(true, true), rfl, rfl⟩⟩,
     fun h ↦ ((isMinCover_pair_iff incomp.ne).1 h).2.1 subset_rfl⟩
 
-/-- Figure 2: `□(p ∨ q)` is true. -/
+-- Figure 2
 theorem box_pOrQ :
     (true, true) ∈ truth (Formula.eval val r₃ (.box (.disj (.atom true) (.atom false)))) := by
   rw [truth_box_disj val r₃ incomp_val]
   exact isMinCover_r₃
 
-/-- Figure 1: `□p` is true. -/
+-- Figure 1
 theorem box_p : (true, true) ∈ truth (Formula.eval val rP (.box (.atom true))) := by
   rw [truth_box_atom]
   exact ⟨⟨(true, true), rfl⟩, subset_rfl⟩
 
-/-- Figure 1: `◇q` is true. -/
+-- Figure 1
 theorem diamond_q : (true, true) ∈ truth (Formula.eval val rP (.diamond (.atom false))) := by
   rw [truth_dia_atom]
   exact ⟨(true, true), rfl, rfl⟩
 
-/-- Figure 1: `◇(q ∧ ¬p)` is not true, so the Diversity inference `◇q` holds without its
-Independence counterpart. -/
+-- Figure 1
 theorem not_diamond_qAndNotP :
     (true, true) ∉
       truth (Formula.eval val rP (.diamond (.conj (.atom false) (.neg (.atom true))))) := by
@@ -562,8 +560,7 @@ theorem not_diamond_qAndNotP :
   rintro ⟨v, hvR, -, hv⟩
   exact hv hvR
 
-/-- The extended Ross argument (8) is invalid: `□p` and `◇q` are true on Figure 1, `□(p ∨ q)`
-is not. -/
+-- (8), Figure 1
 theorem extended_ross :
     (true, true) ∈ truth (Formula.eval val rP (.box (.atom true))) ∩
         truth (Formula.eval val rP (.diamond (.atom false))) ∧

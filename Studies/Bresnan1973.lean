@@ -117,8 +117,7 @@ def suppletion : Clitic → Q → Option Form
 def QP.suppletion (qp : QP) : Option Form :=
   qp.det.clitic.bind (Bresnan1973.suppletion · qp.q)
 
-/-- *More intelligent dogs* (232) has a count and a mass source, which the suppletion of (7) does
-not distinguish. -/
+-- (232), (7)
 theorem more_ambiguous :
     ∃ q q' : Q, q.SelectsCount ∧ ¬ q.SelectsMass ∧ q'.SelectsMass ∧ ¬ q'.SelectsCount ∧
       suppletion .er q = suppletion .er q' :=
@@ -249,20 +248,17 @@ def Formation (h : Head) (c : Supply) : Prop :=
 
 instance (h : Head) (c : Supply) : Decidable (Formation h c) := by unfold Formation; infer_instance
 
-/-- (286b), (287b): no NP is equated with a measure category, so an NP standard never serves a
-QP head, `*John is more than Bill tall`. -/
+-- (286b), (287b)
 theorem not_formation_of_np {h : Head} {c : Supply} (hh : h.cat = .qp) (hc : c.cat = .np) :
     ¬ Formation h c :=
   λ ⟨hs, _, _⟩ => by simp [Cat.Similar, hh, hc] at hs
 
-/-- (297): a QP head modifying a privative adjective admits no definite measure in the
-clause, `*more than five feet short`. -/
+-- (297)
 theorem not_formation_of_privative {h : Head} {c : Supply} (hh : h.cat = .qp)
     (hp : h.Privative) (hc : c.site = .measure) : ¬ Formation h c :=
   λ ⟨_, _, hm⟩ => hm hh hc hp
 
-/-- With the AP as head, comparative formation holds of the AP whatever the definiteness of its Q,
-as in *shorter than five feet* (296b). -/
+-- (296b)
 theorem formation_ap_measure (site : Position) (polarity : Option Polarity) :
     Formation ⟨.ap, site, polarity⟩ ⟨.ap, .measure⟩ :=
   ⟨.inl rfl, λ h => Cat.noConfusion h, λ h => Cat.noConfusion h⟩
@@ -383,34 +379,30 @@ def Anomalous (e : Datum) : Prop := e.feature? "anomalous" = some "yes"
 
 instance : DecidablePred Anomalous := λ _ => by unfold Anomalous; infer_instance
 
-/-- (4)–(5), (107), (117)–(119), (224): the Det inventory of the QP. -/
+-- (4), (5), (107), (117), (119), (224)
 theorem det_rows : ∀ e ∈ rows "det", ¬ Starred e ↔ ∃ qp ∈ qpOf e, qp.WellFormed := by
   decide +kernel
 
-/-- A prenominal QP surface is acceptable iff Much Deletion and simple comparative formation license
-it ((1)–(19), (84)–(85), (275)–(279)). -/
+-- (1), (19), (84), (85), (275), (279)
 theorem surface_rows :
     ∀ e ∈ rows "surface", ¬ Starred e ↔
       ∃ qp ∈ qpOf e, ∃ p ∈ positionOfRow e, ∃ s ∈ surfaceOf e, s.Licit qp p := by
   decide +kernel
 
-/-- (111)–(116), (125)–(127), (217)–(218): the AP shifts around the article exactly when the
-QP raises, on an empty Det. -/
+-- (111), (116), (125), (127), (217), (218)
 theorem shift_rows :
     ∀ e ∈ rows "shift",
       ¬ Starred e ↔ ∃ qp ∈ qpOf e, ∃ o ∈ orderOf e, o.Licit qp := by
   decide +kernel
 
-/-- A comparative is acceptable iff Comparative Formation finds a nondistinct constituent and
-contraction avoids the removal site ((242)–(300), (252)–(255), (280)–(283)). -/
+-- (242), (300), (252), (255), (280), (283)
 theorem formation_rows :
     ∀ e ∈ rows "formation", ¬ Starred e ↔
       ∃ h ∈ headOf e, ∃ c ∈ supplyOf e,
         Formation h c ∧ (Contracted e → ContractionLicit h) := by
   decide +kernel
 
-/-- (242d) implies that my mother is a man because its head is the predicative NP of (243), unlike
-the AP head of (251). -/
+-- (242d), (243), (251)
 theorem taller_man_rows :
     ∀ e ∈ rows "formation", Anomalous e ↔
       ∃ h ∈ headOf e, h.cat = .np ∧

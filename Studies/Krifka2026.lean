@@ -117,8 +117,7 @@ theorem they_eq_it_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w
   unfold they it
   simp only [fun w ↦ (h w).supClosure_eq]
 
-/-- The kind of a finite, nonempty, cumulative concept is defined, the finite case of the
-sufficient condition for σ stated after (13). -/
+-- (13)
 theorem it_isSome_of_supClosed {P : World → Set E} {w : World} (hfin : (P w).Finite)
     (hne : (P w).Nonempty) (hcum : SupClosed (P w)) : (it P w).isSome :=
   hcum.directedOn.iota_isGreatest_isSome hfin hne
@@ -171,14 +170,13 @@ theorem test_apply_eq {C : Condition (HAssign World E)} {g h : HAssign World E}
     (hTest : g ~[test C] h) (n : ℕ) : h n = g n :=
   congrFun hTest.1.symm n
 
-/-- A concept referent presupposed in the input survives an island ((5a), (25), (45)). -/
+-- (5a), (25), (45)
 theorem concept_survives_test {n : ℕ} {P : World → Set E} {noun : English.Nouns.Noun}
     {C : Condition (HAssign World E)} {g h : HAssign World E}
     (hPresup : g n = .concept P noun) (hTest : g ~[test C] h) : h n = .concept P noun :=
   (test_apply_eq hTest n).trans hPresup
 
-/-- An entity referent novel in the input, introduced only inside the island, is still undefined
-after it (5c). -/
+-- (5c)
 theorem entity_trapped_by_test {n : ℕ} {C : Condition (HAssign World E)}
     {g h : HAssign World E} (hNovel : g n = .undef) (hTest : g ~[test C] h) : h n = .undef :=
   (test_apply_eq hTest n).trans hNovel

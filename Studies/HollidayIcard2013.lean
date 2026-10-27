@@ -154,7 +154,7 @@ private theorem uniform3_not_pair_univ : ¬(uniform3).inducedGe {0, 1} Set.univ 
     Nat.card_eq_fintype_card, Fintype.card_fin]
   omega
 
-/-- The uniform measure on three worlds refutes each of I1–I3 (Fact 2). -/
+-- Fact 2
 theorem measures_refute_I_patterns :
     (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬RightUnion μ.inducedGe) ∧
     (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬EquiprobabilityCollapse μ.inducedGe) ∧
@@ -174,8 +174,7 @@ theorem qualAddMeasure_validities (m : QualAddMeasure K W) :
     maximality, mustToProbably, probablyToMight, positiveFormTransfer, complementTransfer,
     strictDisjunctionIntro⟩
 
-/-- The uniform measure, read as a qualitatively additive measure, refutes each of I1–I3
-(Fact 3). -/
+-- Fact 3
 theorem qualAddMeasures_refute_I_patterns :
     (∃ m : QualAddMeasure ℝ (Fin 3), ¬RightUnion m.inducedGe) ∧
     (∃ m : QualAddMeasure ℝ (Fin 3), ¬EquiprobabilityCollapse m.inducedGe) ∧
@@ -185,8 +184,7 @@ theorem qualAddMeasures_refute_I_patterns :
   exacts [uniform3_not_I1, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1),
     fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)]
 
-/-- Every FA order on a finite set of worlds is represented by a qualitatively additive measure
-(Theorem 6, after van der Hoek). -/
+-- Theorem 6
 theorem fa_qualAdd_complete [Fintype W] (r : Set W → Set W → Prop) [IsQualitativeProbability r] :
     ∃ m : QualAddMeasure ℚ W, ∀ A B, r A B ↔ m.inducedGe A B :=
   exists_qualAddMeasure_repr r
@@ -305,7 +303,7 @@ theorem chain_singleton_vs_pair :
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hmem
     rcases hmem with h | h <;> rw [h] at hle <;> exact absurd hle (by decide)
 
-/-- The m-lifting is not total, even over a linearly ordered set of worlds (before Fact 5). -/
+-- Fact 5
 theorem mLift_not_total :
     ∃ (W : Type) (ge_w : W → W → Prop), IsLinearOrder W ge_w ∧
       ∃ A B : Set W, ¬MatchingLift ge_w A B ∧ ¬MatchingLift ge_w B A := by

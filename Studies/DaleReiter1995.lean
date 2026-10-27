@@ -100,8 +100,7 @@ theorem distinguishing_iff {kb : KB E A V} {r : E} {C : Finset E} {L : Descripti
 def rulesOut [DecidableEq V] (kb : KB E A V) (C : Finset E) (p : A × V) : Finset E :=
   C.filter (¬ Applies kb · p)
 
-/-- A description distinguishes when its pairs' `rulesOut` sets cover the contrast set, the
-set-cover problem of §2.2. -/
+-- §2.2
 theorem distinguishing_iff_biUnion [DecidableEq E] [DecidableEq V] (kb : KB E A V) (r : E)
     (C : Finset E) (L : Description A V) :
     Distinguishing kb r C L ↔
@@ -158,8 +157,7 @@ theorem noUnnecessary_iff_minimal :
     exact ⟨q, mem_erase.mpr ⟨fun h ↦ hp' (h ▸ hq), hle hq⟩, hcq⟩
   · exact notMem_erase p L (h.2 hd (erase_subset p L) hp)
 
-/-- A shortest description has no unnecessary pair, so Full Brevity never includes an
-unnecessary modifier (§3.2.1). -/
+-- §3.2.1
 theorem IsShortest.noUnnecessary (h : IsShortest kb r C L) : NoUnnecessary kb r C L :=
   ⟨h.1, λ _ hp => h.not_prop_of_lt (card_erase_lt_of_mem hp)⟩
 
@@ -174,7 +172,7 @@ theorem IsShortest.locallyBrief (h : IsShortest kb r C L) : LocallyBrief kb r C 
 and a shortest description of `nl` pairs (§3.1.1). -/
 def fullBrevitySteps (na nl : ℕ) : ℕ := ∑ i ∈ Icc 1 nl, na.choose i
 
-/-- The paper's four counts, six for §2.2's example, 175, over 6,000 and over 2,000,000. -/
+-- §2.2
 theorem fullBrevitySteps_values :
     fullBrevitySteps 3 2 = 6 ∧ fullBrevitySteps 10 3 = 175 ∧
       6000 < fullBrevitySteps 20 4 ∧ 2000000 < fullBrevitySteps 50 5 := by
@@ -333,7 +331,7 @@ def step (r : E) (a : A) (C : Finset E) (L : Description A V) :
     | some v =>
       if (d.rulesOut C a v).Nonempty then (C \ d.rulesOut C a v, insert (a, v) L) else (C, L)
 
-/-- A step never retracts a pair (§4.3). -/
+-- §4.3
 theorem step_subset (r : E) (a : A) (C : Finset E) (L : Description A V) :
     L ⊆ (d.step r a C L).2 := by
   unfold step
@@ -385,8 +383,7 @@ def makeReferringExpression (r : E) (C : Finset E) (P : List A) :
     Option (Description A V) :=
   d.loop r C P ∅
 
-/-- The loop returns a description that never retracts a pair, rules out every distractor and adds
-only pairs known to hold (§3.2.1, §4.3). -/
+-- §3.2.1, §4.3
 theorem loop_spec (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description A V),
     d.loop r C P L = some L' → ∃ L₀, L' = d.withType r L₀ ∧ L ⊆ L₀ ∧
       (∀ c ∈ C, ∃ p ∈ L₀, d.userKnows c p.1 p.2 = .fails) ∧
@@ -407,15 +404,14 @@ theorem loop_spec (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description 
         λ c hc => d.step_ruledOut r a C L hc λ h => hC ⟨c, h⟩,
         λ p hp => d.step_mem r a C L hp⟩
 
-/-- Fig. 6's output rules out every member of the contrast set (§4.3). -/
+-- Fig. 6, §4.3
 theorem makeReferringExpression_rulesOut {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
     ∀ c ∈ C, ∃ p ∈ L, d.userKnows c p.1 p.2 = .fails := by
   obtain ⟨L₀, rfl, -, hrule, -⟩ := d.loop_spec r P C ∅ L h
   exact λ c hc => (hrule c hc).imp λ p hp => ⟨d.withType_subset r _ hp.1, hp.2⟩
 
-/-- Every pair of Fig. 6's output except the final head noun is known to the user to hold of the
-referent (§4.3). -/
+-- Fig. 6, §4.3
 theorem makeReferringExpression_mem {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
     ∀ p ∈ L, d.userKnows r p.1 p.2 = .holds ∨ d.basicLevel r p.1 = some p.2 := by
@@ -423,8 +419,7 @@ theorem makeReferringExpression_mem {r : E} {C : Finset E} {P : List A}
   exact λ p hp => (d.withType_mem r L₀ hp).elim
     (λ h => .inl ((hadm p h).resolve_left (by simp))) .inr
 
-/-- Fig. 6's output carries a head noun whenever the referent has a basic-level type
-(§4.3). -/
+-- Fig. 6, §4.3
 theorem makeReferringExpression_type {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L)
     (hb : (d.basicLevel r d.type).isSome) : ∃ v, (d.type, v) ∈ L := by
@@ -436,7 +431,7 @@ theorem makeReferringExpression_type {r : E} {C : Finset E} {P : List A}
   · obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hb
     exact ⟨b, by simp [hb]⟩
 
-/-- Under the accuracy user model the output is a distinguishing description (§2.2). -/
+-- §2.2
 theorem flat_distinguishing {kb : KB E A V} {t : A} {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : (flat kb t).makeReferringExpression r C P = some L) :
     Distinguishing kb r C L := by
@@ -525,26 +520,23 @@ def domain : Domain Animal Attr Value where
 /-- The contrast set. -/
 def contrast : Finset Animal := {.object2, .object3}
 
-/-- *The black dog* and *the small dog* are distinguishing descriptions of Object1 (§2.2). -/
+-- §2.2
 theorem black_dog_distinguishing :
     Distinguishing basicLevel .object1 contrast {(.type, .dog), (.property .color, .black)} ∧
     Distinguishing basicLevel .object1 contrast {(.type, .dog), (.property .size, .small)} := by
   decide +kernel
 
-/-- No single pair distinguishes Object1, so *the black dog* is a shortest description
-(§3.1.1's six steps). -/
+-- §3.1.1
 theorem black_dog_isShortest :
     IsShortest basicLevel .object1 contrast {(.type, .dog), (.property .color, .black)} :=
   isShortest_of_card_two black_dog_distinguishing.1 (by decide +kernel) (by decide +kernel)
     (by decide +kernel)
 
-/-- The breed rules out no more distractors than the basic-level type, so `FindBestValue`
-keeps *dog* (§4.4). -/
+-- §4.4
 theorem findBestValue_type :
     domain.findBestValue .object1 contrast .type 1 .dog = some .dog := by decide +kernel
 
-/-- With the preference order type, colour, size the algorithm returns *the black dog*; with
-type, size, colour it returns *the small dog* (§4.4). -/
+-- §4.4
 theorem makeReferringExpression_animal :
     domain.makeReferringExpression .object1 contrast
         [.type, .property .color, .property .size] =
@@ -598,22 +590,20 @@ def properties : List (Attr × Value) :=
   [.property .size, .property .color, .property .material].filterMap λ a =>
     (kb .object1 a).map ((a, ·))
 
-/-- The greedy heuristic selects plastic first, then large and red, giving *the large red
-plastic cup* once the head noun is added (§3.1.2). -/
+-- §3.1.2
 theorem greedy_cups :
     greedy kb contrast properties =
       some {(.property .material, .plastic), (.property .size, .large),
         (.property .color, .red)} := by
   decide +kernel
 
-/-- *The large red cup* is the shortest description (§3.1.2). -/
+-- §3.1.2
 theorem large_red_isShortest :
     IsShortest kb .object1 contrast {(.property .size, .large), (.property .color, .red)} :=
   isShortest_of_card_two (by decide +kernel) (by decide +kernel) (by decide +kernel)
     (by decide +kernel)
 
-/-- The greedy result distinguishes Object1 but carries an unnecessary pair (§3.1.2,
-§3.2.1). -/
+-- §3.1.2, §3.2.1
 theorem greedy_not_noUnnecessary :
     Distinguishing kb .object1 contrast
         {(.property .material, .plastic), (.property .size, .large),
@@ -647,8 +637,7 @@ def kb : KB Picture Attr Value
 /-- The contrast set. -/
 def contrast : Finset Picture := {.blackCup, .whiteCup}
 
-/-- The algorithm outputs *white bird* only with colour before type in the preference order
-(§3.2.1). -/
+-- §3.2.1
 theorem makeReferringExpression_picture :
     (Domain.flat kb .type).makeReferringExpression .bird contrast [.property .color, .type] =
       some {(.property .color, .white), (.type, .bird)} ∧
@@ -656,8 +645,7 @@ theorem makeReferringExpression_picture :
       some {(.type, .bird)} := by
   decide +kernel
 
-/-- The colour-first output contains an unnecessary modifier, the behaviour of
-Observation 1 that Full Brevity and Local Brevity never produce (§3.2.1). -/
+-- Observation 1, §3.2.1
 theorem white_bird_not_noUnnecessary :
     ¬ NoUnnecessary kb .bird contrast {(.property .color, .white), (.type, .bird)} ∧
     NoUnnecessary kb .bird contrast {(.type, .bird)} := by

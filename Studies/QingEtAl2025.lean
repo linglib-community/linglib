@@ -242,8 +242,7 @@ theorem nondistributive_rows :
           r'.feature? "clause" = some "constituent" ∧ r'.verdict = some true := by
   decide +kernel
 
-/-- Turkish *diye* clauses combine with *um-* 'hope', *kork-* 'fear', and an intransitive verb alike
-((71), (73), (75), (76)). -/
+-- (71), (73), (75), (76)
 theorem diye_rows :
     ∀ r ∈ Examples.all, r.feature? "embedding" = some "diye" → r.judgment = .acceptable := by
   decide +kernel
@@ -271,13 +270,12 @@ theorem turkish_forms :
           ∃ t ∈ r.glossedTokens, Turkish.Phonology.ofSegmented? t.1 = some (v.inflect sfx) := by
   decide +kernel
 
-/-- The verb of (73) is intransitive, so its *diye* clause is no argument. -/
+-- (73)
 theorem dolan_isIntransitive : Turkish.dolan.IsIntransitive := by decide
 
 /-! ### Non-canonical composition (§4) -/
 
-/-- A degree-comparison predicate composed with the highlighted content of *whether p* means its
-declarative (70), the first candidate analysis of §4.2. -/
+-- (70), §4.2
 theorem highlighted_eq_declarative (μ : E → W → Set W → ℝ) (θ : Set (Set W) → ℝ)
     (C : Set (Set W)) (x : E) (p : Set W) (w : W) :
     degreeComparison μ θ C x {p} w ↔ p ∈ preferred μ θ C x w :=
@@ -309,8 +307,7 @@ theorem hopes_negation {G : Set (V → Prop)} (hG : HopefulGoals (fun v ↦ ¬ p
   · exact absurd hp₁ hg₁
   · exact absurd hg₁ hn₁
 
-/-- Fear constrains no goal (87), and knowing whether `p` makes coming to believe `p` strictly
-better than remaining undecided. -/
+-- (87)
 theorem fears (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) (hn₂ : ¬ Bnp v₂) :
     v₁ <[{fun v ↦ Bp v ∨ Bnp v}] v₂ := by
   simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
@@ -319,8 +316,7 @@ theorem fears (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) (hn₂ : ¬ Bnp v₂) :
 
 end Asymmetry
 
-/-- In the polar cases a positive predicate holds iff the attitude targets the radical, and a
-negative one holds either way ((45), (50), (62), (63), (75), (76), (78), (79)). -/
+-- (45), (50), (62), (63), (75), (76), (78), (79)
 theorem asymmetry_rows :
     ∀ r ∈ Examples.all, ∀ t ∈ r.feature? "target", ∀ v ∈ valence? r,
       (v = .positive → (Holds r ↔ t = "radical")) ∧ (v = .negative → Holds r) := by

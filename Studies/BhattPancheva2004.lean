@@ -200,13 +200,12 @@ variable {Entity D : Type*}
 proper subset of its second. -/
 def erSem (A B : Set D) : Prop := A ⊂ B
 
-/-- On [kennedy-1999]'s positive extents `-er` compares the measures, (85). -/
+-- (85) [kennedy-1999]
 theorem erSem_Iic_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     erSem (Iic (μ b)) (Iic (μ a)) ↔ μ b < μ a :=
   Iic_ssubset_Iic
 
-/-- Trace Conversion of an early-merged degree clause intersects it into the second argument,
-and `A ⊂ A ∩ B` is a contradiction, (86) and (87). -/
+-- (86), (87)
 theorem erSem_inter_contradictory (A B : Set D) : ¬ erSem A (A ∩ B) :=
   fun h ↦ h.not_subset inter_subset_left
 

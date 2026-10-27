@@ -331,8 +331,6 @@ theorem mongolian_differs_from_sakha_in_dat_only :
     grammar.agreeCase = BakerVinokurova2010.grammar.agreeCase :=
   ⟨rfl, rfl, funext fun c ↦ by cases c <;> rfl⟩
 
-/-- On Baker and Vinokurova's Sakha ditransitive, the theme shifted, the Mongolian grammar values
-    nothing dative, and so not the goal that the Sakha grammar values dative. -/
 theorem mongolian_derives_no_dative :
     (∀ s ∈ casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false, ∀ p ∈ s,
       p.2.map (·.1) ≠ some .dat) ∧

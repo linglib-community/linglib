@@ -184,7 +184,6 @@ def Performance.Assertion (u : Performance W) : Prop :=
   ∀ K : Table Discourse.Role W, ∃ q, (u.update K).stack = Question.ofSet q :: K.stack ∧
     q ∈ (u.update K).discourseCommitments .speaker
 
-/-- A performance that leaves the Table as it is raises no issue. -/
 private theorem not_asking_of_stack {u : Performance W}
     (h : ∀ K : Table Discourse.Role W, (u.update K).stack = K.stack) : ¬ u.Asking :=
   λ ha => let ⟨i, hi, _⟩ := ha Table.empty; List.cons_ne_nil i [] ((h _).symm.trans hi).symm

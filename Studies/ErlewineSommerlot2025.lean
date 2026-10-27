@@ -489,7 +489,7 @@ theorem overt_voice_paradox (c : Clause) (e : Exponence) (hv : e.voice.isSome = 
       (List.singleton_sublist.mpr
         (List.mem_filter.mpr ⟨by simp [Clause.voiceP], by simpa using hnot⟩))
 
-/-- The agent of a bare passive cannot be Ā-extracted, whether Voice is overt or null (60). -/
+-- (60)
 theorem bare_passive_agent_paradox (c : Clause) (e : Exponence) (ha : c.agentProjected = true)
     (hsp : c.spec = .theme) (he : c.extracted = some (.nominal .agent))
     (hs : c.subject = some .theme) : ¬ Consistent (c.phases e) := by
@@ -517,15 +517,13 @@ theorem bare_passive_agent_paradox (c : Clause) (e : Exponence) (ha : c.agentPro
 
 /-! ### The predictions of §5 -/
 
-/-- With *N-* on v, object extraction crosses an *N-* verb, as in Kuching Malay; with *N-* on
-Voice it cannot, as in Jakarta Indonesian (§5.2). -/
+-- §5.2
 theorem n_on_v_allows_object_extraction :
     kuching.Generates (some (.nominal .theme)) [.dp .theme, .dp .agent, .aux, .verb] [.n] ∧
       ¬ jakarta.Generates (some (.nominal .theme)) [.dp .theme, .dp .agent, .aux, .verb] [.n] := by
   decide +kernel
 
-/-- The registers of Madurese differ in the bare passive and object extraction alone, both of
-which need a null Voice (§5.3). -/
+-- §5.3
 theorem madurese_registers :
     politeMadurese.Generates none [.dp .theme, .aux, .dp .agent, .verb] [] ∧
       politeMadurese.Generates (some (.nominal .theme)) [.dp .theme, .dp .agent, .aux, .verb] [] ∧

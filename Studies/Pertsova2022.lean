@@ -78,8 +78,7 @@ theorem no_partial_conflation (F : Finset ThreeFeature) (hF : Active F) :
   simp only [generated_r_iff]
   revert F; decide
 
-/-- Harbour's bivalent geometry (9) admits the author bipartition, which the hierarchy (4)
-excludes: the two differ only in whether AUTHOR depends on PARTICIPANT. -/
+-- (9), (4)
 theorem admissible_authorBipartition : Admissible {.author} ∧ ¬ Active {.author} := by decide
 
 end Pertsova2022

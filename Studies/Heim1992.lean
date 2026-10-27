@@ -159,8 +159,7 @@ def sick : Set HealthWorld | .w0 | .w2 => True | _ => False
 instance : DecidablePred (· ∈ recovered) := fun w ↦ by
   cases w <;> first | exact isTrue trivial | exact isFalse id
 
-/-- The naive Hintikka rule (27), rejected on [asher-1987]'s Concorde case (32), predicts `wants
-recovered` false under the belief state `sick`. -/
+-- (27), (32) [asher-1987]
 theorem not_sick_subset_recovered : ¬ sick ⊆ recovered := fun h ↦ @h .w2 trivial
 
 /-- Every world is equally similar to every other. -/

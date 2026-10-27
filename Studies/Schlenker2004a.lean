@@ -244,7 +244,7 @@ theorem realize_strip (φ : Formula W E P T) (sE : Assignment E) (sT : Assignmen
     φ.strip.Realize sE sT ct ↔ φ.Realize sE sT ct := by
   induction φ generalizing sE sT <;> simp_all [strip, Realize]
 
-/-- A past and a present tense under one time abstraction cannot both be defined (28c). -/
+-- (28c)
 theorem not_defined_lamT_and_past_pres [Preorder T] (t : Term (Context W E P T) T)
     (R R' : T → W → Prop) :
     ¬ (lamT t k (.and (.atom₀ R (.past k)) (.atom₀ R' (.pres k)))).Defined sE sT cu ct := by
@@ -267,8 +267,7 @@ def lamPast [LT T] (f : T → T) (R : T → W → Prop) (k : ℕ) : Formula W E 
     (lamPast f R k).Defined sE sT cu ct ↔ f ct.time < cu.time := by
   simp [lamPast, Defined]
 
-/-- (1) is true iff the predicate holds at the adverbial's time in the world of the Context of
-Thought. -/
+-- (1)
 @[simp] theorem realize_lamPast_iff [LT T] :
     (lamPast f R k).Realize sE sT ct ↔ R (f ct.time) ct.world := by
   simp [lamPast, Realize]
@@ -302,14 +301,11 @@ at the adverbial's time. -/
     (lamPres f Q i k).Defined sE sT cu ct ↔ i.Defined sE cu ∧ f ct.time = cu.time := by
   simp [lamPres, Defined]
 
-/-- (29c): (2) is true exactly when the predicate holds of the individual at the adverbial's
-time in the world of the Context of Thought. -/
+-- (29c), (2)
 @[simp] theorem realize_lamPres_iff :
     (lamPres f Q i k).Realize sE sT ct ↔ Q (i.value sE ct) (f ct.time) ct.world := by
   simp [lamPres, Realize]
 
-/-- Against a single context, a present tense under an adverbial that moves the time is
-contradictory. -/
 theorem not_defined_lamPres_name_self (hf : ∀ t, f t ≠ t) (a : E) :
     ¬ (lamPres f Q (.name a) k).Defined sE sT c c := by
   simpa using hf c.time

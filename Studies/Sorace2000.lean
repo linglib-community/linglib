@@ -203,8 +203,6 @@ def Cutoff (l : Language) (k : AuxiliarySelectionHierarchy) : Prop :=
 
 instance : Decidable (Cutoff l k) := inferInstanceAs (Decidable (∀ r ∈ baseRows l, _))
 
-/-- Under a cutoff point, a sentence preferring *be* has a verb no lower on the hierarchy than a
-sentence preferring *have*. -/
 theorem Cutoff.le_of_prefers (h : Cutoff l k) {r s : Row} (hr : r ∈ baseRows l)
     (hs : s ∈ baseRows l) (hbe : r.Prefers .be .have) (hhave : s.Prefers .have .be) :
     r.position ≤ s.position :=

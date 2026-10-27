@@ -275,8 +275,7 @@ def paperSesothoTemplate : AffixTemplate Sesotho.Verb.Slot :=
   { Sesotho.Verb.template with
     suffixSlots := [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative] }
 
-/-- Demuth's *pheh-ets-w-e* (44), the perfect before the passive, is licensed by the Fragment
-and not by the paper's order. -/
+-- (44)
 theorem demuth_perfect_passive :
     Sesotho.Verb.template.Licensed (sesothoAffixes Examples.so6) ∧
       ¬ paperSesothoTemplate.Licensed (sesothoAffixes Examples.so6) := by

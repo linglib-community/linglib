@@ -129,15 +129,13 @@ domain. -/
 noncomputable def representational (dox : W → Set W) (φ : SProp W) : W → SignType :=
   fun w ↦ Trivalent.forallWeak fun v : dox w ↦ φ (dox w) v
 
-/-- Vacuous quantification (35) — an embedded necessity epistemic claims that the domain is
-included in its prejacent. -/
+-- (35)
 theorem representational_must_eq_one_iff (dox : W → Set W) (p : Set W) (w : W) :
     representational dox (must p) w = 1 ↔ dox w ⊆ p := by
   simp only [representational, Trivalent.forallWeak_eq_one_iff, must_eq_one_iff, Subtype.forall]
   exact ⟨fun h v hv ↦ (h v hv).2 hv, fun h v hv ↦ ⟨⟨v, hv⟩, h⟩⟩
 
-/-- *Imagine that it is raining but it might not be* (23b) is contradictory whenever the imagination
-state is nonempty. -/
+-- (23b)
 theorem imagine_epistemic_eq_neg_one (dox : W → Set W) (p : Set W) {w : W}
     (h : (dox w).Nonempty) :
     representational dox (conj (ofSet p) (might pᶜ)) w = -1 := by
@@ -175,14 +173,12 @@ noncomputable def preferential (des : W → W → W → Prop) (φ : SProp W) : W
   (Function.support (φ ∅)).indicator fun w ↦
     SignType.ofProp (Better (des w) (Trivalent.posExt (φ ∅)) (Trivalent.posExt (neg φ ∅)))
 
-/-- In (38) an epistemic embedded under a non-representational attitude inherits the empty
-information state and fails its non-triviality presupposition. -/
+-- (38)
 theorem preferential_modal_eq_zero (des : W → W → W → Prop) (f : Force) (p : Set W)
     (w : W) : preferential des (f.modal p) w = 0 := by
   cases f <;> simp [preferential, Force.modal]
 
-/-- The escape hatch (39) is an *according to X* phrase making the embedded epistemic defined
-exactly when `X`'s information state is nonempty. -/
+-- (39)
 theorem preferential_accordingTo_ne_zero_iff (des : W → W → W → Prop) (T : Set W) (f : Force)
     (p : Set W) (w : W) :
     preferential des (accordingTo T (f.modal p)) w ≠ 0 ↔ T.Nonempty := by
@@ -206,8 +202,7 @@ theorem verifiers_eq {φ : SProp W} {q : Set W}
     verifiers φ S = subStates (S ∩ q) := by
   ext X; simp only [verifiers, subStates, Set.mem_ofPred_eq, h, Set.subset_inter_iff]; tauto
 
-/-- By Figure 3 the verifiers of `p`, `might p`, and `must p` in `S` are all the nonempty
-sub-states of `S ∩ p`. -/
+-- Figure 3
 theorem verifiers_ofSet (p S : Set W) : verifiers (ofSet p) S = subStates (S ∩ p) :=
   verifiers_eq (φ := ofSet p) (q := p) (fun X => ⟨fun h _ hw => ofSet_eq_one_iff.1
     (h X Set.Subset.rfl _ hw), fun h _ hY _ hw => ofSet_eq_one_iff.2 (h (hY hw))⟩) S
@@ -224,8 +219,7 @@ theorem verifiers_must (p S : Set W) : verifiers (must p) S = subStates (S ∩ p
     (must_eq_one_iff.1 (h X Set.Subset.rfl _ hw)).2 hw,
     fun h _ hY _ hw => must_eq_one_iff.2 ⟨⟨_, hw⟩, hY.trans h⟩⟩) S
 
-/-- By Figure 3 the falsifiers of `p`, `might p`, and `must p` in `S` are all the nonempty
-sub-states of `S ∩ pᶜ`. -/
+-- Figure 3
 theorem falsifiers_ofSet (p S : Set W) : falsifiers (ofSet p) S = subStates (S ∩ pᶜ) :=
   verifiers_eq (φ := neg (ofSet p)) (q := pᶜ) (fun X => ⟨fun h _ hw => by
     simpa using h X Set.Subset.rfl _ hw, fun h _ hY _ hw => by simpa using h (hY hw)⟩) S
@@ -244,8 +238,7 @@ theorem falsifiers_must (p S : Set W) : falsifiers (must p) S = subStates (S ∩
       rw [neg_apply, SignType.neg_eq_one_iff, must_eq_neg_one_iff]
       exact ⟨⟨w, hw⟩, fun hYp => h (hY hw) (hYp hw)⟩⟩) S
 
-/-- Comparing families of nonempty sub-states under the lifted ordering is comparing the states
-themselves (footnote 19). -/
+-- footnote 19
 theorem better_subStates_iff {α : Type*} (r : α → α → Prop) (A B : Set α) :
     Better (Better r) (subStates A) (subStates B) ↔ Better r A B := by
   constructor
@@ -262,14 +255,12 @@ theorem better_subStates_iff {α : Type*} (r : α → α → Prop) (A B : Set α
     obtain ⟨v, hv, hvr⟩ := hqu.1 u (Set.mem_singleton u)
     exact hr v (hq.1 hv) hvr
 
-/-- In (51) the preference component of an emotive doxastic compares `S ∩ p` with `S ∩ pᶜ`. -/
+-- (51)
 theorem prefers_iff {φ : SProp W} {p S : Set W} (r : W → W → Prop)
     (hv : verifiers φ S = subStates (S ∩ p)) (hf : falsifiers φ S = subStates (S ∩ pᶜ)) :
     Better (Better r) (verifiers φ S) (falsifiers φ S) ↔ Better r (S ∩ p) (S ∩ pᶜ) := by
   rw [hv, hf, better_subStates_iff]
 
-/-- The preference component does not see the modal, so *hopes p*, *hopes might p*, and
-*hopes must p* all prefer the `p`-verifying doxastic alternatives. -/
 theorem prefers_modal_iff (r : W → W → Prop) (p S : Set W) (f : Force) :
     Better (Better r) (verifiers (f.modal p) S) (falsifiers (f.modal p) S) ↔
       Better (Better r) (verifiers (ofSet p) S) (falsifiers (ofSet p) S) := by
@@ -318,8 +309,7 @@ theorem doubt_eq_one_iff : doubt r dox φ w = 1 ↔ Uncertain φ (dox w) ∧ Pos
 
 end Values
 
-/-- In (58) with *must*, the doxastic assertion of an embedded necessity epistemic contradicts the
-uncertainty presupposition. -/
+-- (58)
 theorem uncertain_must_not_possible {p S : Set W} (hu : Uncertain (must p) S) :
     ¬ Possible (must p) S := by
   intro hp
@@ -339,8 +329,7 @@ theorem doubt_must_ne_one (prob : W → W → W → Prop) (dox : W → Set W) (p
   let ⟨hu, hp, _⟩ := doubt_eq_one_iff.1 h
   uncertain_must_not_possible hu hp
 
-/-- In (74) a possibility epistemic scoping under negation is a universal claim and fails like
-*must*. -/
+-- (74)
 theorem hope_neg_might_ne_one (des : W → W → W → Prop) (dox : W → Set W) (p : Set W)
     (w : W) : hope des dox (neg (might p)) w ≠ 1 := by
   intro h
@@ -354,8 +343,7 @@ theorem possible_might_iff (p S : Set W) : Possible (might p) S ↔ Possible (of
   exact ⟨fun ⟨_, _, v, hv⟩ => ⟨v, hv.1, hv.2⟩, fun ⟨w, hw, hp⟩ => ⟨w, hw, w, hw, hp⟩⟩
 
 open Classical in
-/-- Under an emotive doxastic, *might p* and bare *p* have the same uncertainty presupposition,
-doxastic assertion, and preference, so (59) is (57) — modal concord. -/
+-- (59), (57)
 theorem hope_might (des : W → W → W → Prop) (dox : W → Set W) (p : Set W) :
     hope des dox (might p) = hope des dox (ofSet p) := by
   simp only [hope, Uncertain, verifiers_might, verifiers_ofSet, falsifiers_might,
@@ -453,8 +441,7 @@ theorem licensed_dubitative_possibility [Nontrivial W] : Licensed W .dubitative 
 theorem not_licensed_dubitative_necessity : ¬ Licensed W .dubitative .necessity :=
   fun ⟨r, dox, p, w, h⟩ => doubt_must_ne_one r dox p w h
 
-/-- Table 3, derived — epistemics are licensed by representational attitudes, by no
-preferential attitude, and by the hybrids only with possibility force. -/
+-- Table 3
 theorem licensed_iff [Nontrivial W] (k : Kind) (f : Force) :
     Licensed W k f ↔ k ≠ .preferenceOriented ∧ (k = .acceptance ∨ f = .possibility) := by
   cases k <;> cases f <;>
@@ -489,8 +476,7 @@ theorem rows_track_licensing [Nontrivial W] :
         (r.judgment = .acceptable ↔ Licensed W c.kind f) := by
   simp only [licensed_iff]; decide +kernel
 
-/-- Every unacceptable attitude-anchored epistemic in the Romance data sits in a subjunctive
-complement (§5.1); the converse fails at (18), (20), and (65). -/
+-- §5.1, (18), (20), (65)
 theorem unacceptable_rows_subjunctive :
     ∀ r ∈ Examples.all, r.feature? "anchor" = some "attitude" → r.judgment = .unacceptable →
       r.feature? "mood" = none ∨ r.feature? "mood" = some "subjunctive" := by

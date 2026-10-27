@@ -108,7 +108,7 @@ theorem may_eq : may = {(.possibility, .epistemic), (.possibility, .deontic)} :=
 
 theorem ka_eq : ka = {(.necessity, .epistemic), (.possibility, .epistemic)} := by decide
 
-/-- Table 1: *may* varies in flavor and *k'a* in force, each on a single axis. -/
+-- Table 1
 theorem singleAxis_may_ka : SingleAxis may ∧ SingleAxis ka := by
   rw [may_eq, ka_eq]; decide
 
@@ -352,8 +352,7 @@ def mought : Meaning := {(.possibility, .epistemic), (.necessity, .deontic)}
 /-- The hypothetical *notcirc* of Table 2, everything but circumstantial. -/
 def notcirc : Meaning := forces ×ˢ {.epistemic, .deontic}
 
-/-- Over the six-point space *may* is *w ∧ ¬c*, two atoms, where Table 2's four-flavor space
-needs three. -/
+-- Table 2
 theorem complexity_may : complexity may = 2 := by
   rw [may_eq, complexity_eq_iff (by decide)]; decide +kernel
 
@@ -369,8 +368,7 @@ theorem complexity_notcirc : complexity notcirc = 1 := by
 /-- Complexity of a language, the sum over its modals, Equation (1). -/
 def totalComplexity (L : Multiset Meaning) : ℕ := (L.map complexity).sum
 
-/-- Table 2's language costs seven atoms over the experiment's space, one fewer than the
-paper's eight over its illustration space. -/
+-- Table 2
 theorem totalComplexity_table2 : totalComplexity {may, mought, notcirc} = 7 := by
   simp [totalComplexity, complexity_may, complexity_mought, complexity_notcirc]
 
@@ -455,8 +453,7 @@ theorem listen_product {F : Finset ModalForce} {Φ : Finset ModalFlavor} {p : Fo
   push_cast
   rw [e1, e2]
 
-/-- Table 2's *may* and *mought* have two points each; the IFF one is the more informative,
-sharing an axis with any guess. -/
+-- Table 2
 theorem listen_may_mought :
     listen may (.possibility, .epistemic) = 3 / 4 ∧
       listen mought (.possibility, .epistemic) = 1 / 2 := by

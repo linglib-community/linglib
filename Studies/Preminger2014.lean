@@ -149,8 +149,7 @@ theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc
   by_cases hs : s.IsSAP <;> by_cases ho : o.IsSAP <;>
     simp [Bundle.visibleTo, hs, ho]
 
-/-- The marker is undefined exactly when the person restriction is violated; two plural
-arguments in particular are never excluded (77). -/
+-- (77)
 theorem afMarker_eq_none_iff (s o : Bundle) : afMarker s o = none ↔ ¬ PersonRestriction s o := by
   rw [afMarker, personRestriction_iff_plc]
   split_ifs with h <;> simp [h]

@@ -135,7 +135,7 @@ contrast set. -/
 def exhAnswer (u : Use) : Set Alt :=
   excludes (ctx u).contrastSet answer.ordinary
 
-/-- The exhaustified answer is the bare true answer in all four uses (§3.2). -/
+-- §3.2
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
   have key : excludes ({{Alt.ans}, {Alt.alt}} : Set (Set Alt))
       {Alt.ans} = {Alt.ans} := by
@@ -218,7 +218,7 @@ def hzMatrix : List FocusUtterance :=
   [exSitu_newInfo, exSitu_corrective, exSitu_selective, exSitu_contrastive,
    inSitu_newInfo, inSitu_corrective, inSitu_selective, inSitu_contrastive]
 
-/-- Every cell of the §3.2 matrix is Hausa-licensed. -/
+-- §3.2
 theorem all_hzMatrix_IsHausaLicensed :
     ∀ u ∈ hzMatrix, u.IsHausaLicensed := by decide
 
@@ -232,7 +232,7 @@ theorem strategy_does_not_determine_pragType :
         (fun u ↦ u.1.cfg.strategy) :=
   fun h ↦ absurd (@h ⟨exSitu_newInfo, by decide⟩ ⟨exSitu_corrective, by decide⟩ rfl) (by decide)
 
-/-- The refutation persists when restricted to in-situ utterances, by (23) against (25). -/
+-- (23), (25)
 theorem strategy_underdetermines_pragType_inSitu :
     ¬ Function.FactorsThrough
         (fun u : {u : FocusUtterance // u.IsHausaLicensed ∧ u.cfg.strategy = .inSitu} ↦
@@ -242,8 +242,7 @@ theorem strategy_underdetermines_pragType_inSitu :
 
 /-! ## Subject-focus generalization (§2.2.2) -/
 
-/-- Focused subjects front (§2.2.2); unpacks the second conjunct of
-`IsHausaLicensed`. -/
+-- §2.2.2
 theorem subject_focus_only_exSitu (u : FocusUtterance)
     (h : u.IsHausaLicensed) (hSubj : u.focused = .subject) :
     u.cfg.strategy = .exSitu := h.2 hSubj
@@ -309,7 +308,7 @@ reflex either. -/
 theorem hausa_falsifies_UniversalBFR : ¬ UniversalBFR :=
   fun h ↦ absurd (h inSitu_newInfo (by decide)) (by decide)
 
-/-- The subject-side counterexample, (8). -/
+-- (8)
 theorem exSitu_subject_future_no_reflex :
     ¬ exSitu_subject_future.HasMorphosyntacticReflex := by decide
 
@@ -331,8 +330,7 @@ theorem hausa_refutes_perceptibility :
 /-- The rows' tone labels. -/
 def toneTable : List (String × Tone.TRN) := [("H", .H), ("L", .L)]
 
-/-- In (3a) and (3b) the stabilizer's tone is polar to the host's final tone, high after
-*Kandè* and low after *Kiifii*. -/
+-- (3a), (3b)
 theorem stab_tone_polar :
     ∀ e ∈ [Examples.ex3a, Examples.ex3b],
       e.parse? "stab_tone" toneTable = (e.parse? "host_tone" toneTable).map polarOf := by
@@ -378,7 +376,7 @@ theorem cells_match_rows :
       p.2.feature? "focused" = some (focusedLabel p.1.focused) ∧
       p.2.feature? "stabilizer" = some (stabLabel p.1.cfg) := by decide
 
-/-- (8) carries no pragmatic tag; its other tags agree with its cell. -/
+-- (8)
 theorem ex8_matches_row :
     Examples.ex8.feature? "strategy" = some (strategyLabel exSitu_subject_future.cfg.strategy) ∧
       Examples.ex8.feature? "focused" = some (focusedLabel exSitu_subject_future.focused) ∧

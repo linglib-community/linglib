@@ -435,34 +435,29 @@ theorem spreading_not_qf :
 /-! ### Drubea utterances -/
 
 open Drubea in
-/-- (11) /ꜜɳi ꜜmwa ꜜɳii ꜜme/ 'They said that…': four downsteps terrace, the first
-unrealized — [ɳi4 mwa3 ɳii2 me1]. -/
+-- (11)
 theorem ex11_levels : realize (derive [] [ni3pl, mwaPfv, niiSay, meThat]) = [4, 3, 2, 2, 1] := by
   decide
 
 open Drubea in
-/-- (19) /ꜜtaa dɪɪ bee/ 'one small fish': the initial downstep unrealized and no final
-raising, everything at the baseline — [taa4 dɪɪ4 bee4]. -/
+-- (19)
 theorem ex19_levels : realize (derive [] [taaOne, diiSmall, beeFish]) = [4, 4, 4, 4, 4, 4] := by
   decide
 
 open Drubea in
-/-- (20) /ꜜtaa bee pwi + ꜛ%/ 'one cooked fish': h% raises the final registerless syllable —
-[taa4 bee4 pwi5]. -/
+-- (20)
 theorem ex20_levels :
     realize (derive [finalRaising] [taaOne, beeFish, pwiCooked]) = [4, 4, 4, 4, 5] := by
   decide
 
 open Drubea in
-/-- (30) /ko te tɪɪ-ɽe kuɽe/ 'I look at the bush.': registerless throughout, the baseline
-throughout — [ko4 te4 tɪɪ4 -ɽe4 kuɽe4]. -/
+-- (30)
 theorem ex30_levels :
     realize (derive [] [ko1sg, teDescr, tiiLook, reAct, kureForest]) = [4, 4, 4, 4, 4, 4, 4] := by
   decide
 
 open Drubea in
-/-- Before a downstep, initial registerless /goo/ in (32) is raised above the baseline but
-downstepped /ꜜgoo/ in (33) is not (§3.5, §4.5). -/
+-- (32), (33), §3.5, §4.5
 theorem ex32_ex33_contrast :
     (∃ x ∈ realize (derive [raising] [gooHibbertia, mieWet]), baseline < x) ∧
       (∀ x ∈ realize (derive [raising] [gooTree, mieWet]), x ≤ baseline) ∧
@@ -470,15 +465,14 @@ theorem ex32_ex33_contrast :
   decide
 
 open Drubea in
-/-- (32) and (33) differ in h-epenthesis alone: the surface tiers of (64) and (65). -/
+-- (32), (33), (64), (65)
 theorem ex32_ex33_tiers :
     (derive [raising] [gooHibbertia, mieWet]).tier = [[], [.upstep], [.downstep], []] ∧
       (derive [raising] [gooTree, mieWet]).tier = [[.downstep], [], [.downstep], []] := by
   decide
 
 open Drubea in
-/-- In (53), the CVꜜV downstep displaces onto the next syllable, single on registerless /kwɛ/ and
-double on downstepped /ꜜkwe/ (§3.7, §4.6). -/
+-- (53), §3.7, §4.6
 theorem ex53_displacement :
     (derive [spreadL, delinkL, raising] [kooPlace, kweDance, reAct]).tier =
         [[], [.upstep], [.downstep], []] ∧
@@ -489,8 +483,7 @@ theorem ex53_displacement :
   decide
 
 open Drubea in
-/-- In (46) /ɲi beꜜe ŋa-ɽe/ 'he doesn't work', undisplaced /beꜜe/ raises its first mora and lowers
-its second. -/
+-- (46)
 theorem ex46_undisplaced :
     (derive [raising] [ni3sg, beeNeg, ngaWork, reAct]).tier =
         [[], [.upstep], [.downstep], [], []] ∧
@@ -503,23 +496,20 @@ def copyPrefix (prefix_ verb : Registered Syllable) : Registered Syllable :=
   ⟨prefix_.syllables, prefix_.tier.map fun _ ↦ verb.tier.getD 0 []⟩
 
 open Drubea in
-/-- (56): /ʈa-uɽu/ 'cut by hand' stays registerless, /ʈa-ꜜtie/ 'tear by hand' becomes
-/ꜜʈa-ꜜtie/. -/
+-- (56)
 theorem ex56_copy :
     (copyPrefix taHand uruCut).tier = [[]] ∧
       (copyPrefix taHand tieTear).tier = [[.downstep]] := by
   decide
 
 open Drubea in
-/-- In (57) /ko te ʈa-ꜜtie-ɽe/ 'I tear by hand', the copied downstep raises the preceding marker and
-still drops before the verb. -/
+-- (57)
 theorem ex57_levels :
     realize (derive [raising] [ko1sg, teDescr, copyPrefix taHand tieTear, tieTear, reAct]) =
       [4, 5, 4, 3, 3, 3] := by
   decide
 
-/-- (16): spreading h-epenthesis raises the whole registerless stretch before /maꜜa/'s
-downstep, the two morae of /ŋe-ɽe/ and the first of /maꜜa/, across the syllable boundary. -/
+-- (16)
 theorem spreading_stretch :
     spreading.map [none, some [], some [], none, some [], some [.downstep]] =
       [none, some [.upstep], some [.upstep], none, some [.upstep], some [.downstep]] := by
@@ -528,16 +518,14 @@ theorem spreading_stretch :
 /-! ### Numèè utterances -/
 
 open Numee in
-/-- (24) /jaa ɲĩ + ꜜ%/ 'coconut juice': l% docks on the light registerless final and raises
-the syllable before — [ɟaa5 ɲĩ4]. -/
+-- (24)
 theorem ex24_levels :
     (derive [finalLowering] [jaaJuice, niCoconut]).tier = [[], [], [.downstep]] ∧
       realize (derive [finalLowering, raising] [jaaJuice, niCoconut]) = [4, 5, 4] := by
   decide
 
 open Numee in
-/-- In (25) 'breast milk', l% stacks a second downstep on a downstepped final, realized below the
-registerless final of (24). -/
+-- (25), (24)
 theorem ex25_double :
     (derive [finalLowering, raising] [jaaJuice, niBreast]).tier =
         [[], [.upstep], [.downstep, .downstep]] ∧
@@ -545,14 +533,14 @@ theorem ex25_double :
   decide
 
 open Numee in
-/-- (26) /dɛɳʊ a mii + ꜜ%/ 'lower jaw': a heavy final blocks l% — [dɛ4 ɳʊ4 a4 mii4]. -/
+-- (26)
 theorem ex26_heavy_blocks :
     derive [finalLowering] [denuJaw, aRel, miiLow] = concat [denuJaw, aRel, miiLow] ∧
       realize (derive [finalLowering] [denuJaw, aRel, miiLow]) = [4, 4, 4, 4, 4] := by
   decide
 
 open Numee in
-/-- (28) and (29): a downstepped syllable before the final blocks l%. -/
+-- (28), (29)
 theorem ex28_ex29_after_downstep_blocks :
     derive [finalLowering] [teeGirl, eProx, noGrill, betiiThree, kuYam] =
         concat [teeGirl, eProx, noGrill, betiiThree, kuYam] ∧
@@ -561,24 +549,21 @@ theorem ex28_ex29_after_downstep_blocks :
   decide
 
 open Numee in
-/-- In (38) 'The rat escaped safe and sound', l% falls on the final and h-epenthesis precedes each
-downstep. -/
+-- (38)
 theorem ex38_levels :
     realize (derive [finalLowering, raising] [ciibuRat, mwaPfv, kuFlee, mworoAlive]) =
       [4, 4, 5, 4, 3, 4, 3] := by
   decide
 
 open Numee in
-/-- In (52) 'We will not arrive', both CVꜜV downsteps displace onto downstepped /ꜜmẽ/ as double
-downsteps, while /ɲa.ꜜi/ keeps its own (§4.6). -/
+-- (52), §4.6
 theorem ex52_double :
     (derive [spreadL, delinkL, raising] [yaaNeg, meThat, gee1plExcl, meFut, nyaiArrive]).tier =
       [[], [.upstep], [.downstep, .downstep], [], [.upstep], [.downstep, .downstep],
         [.upstep], [.downstep]] := by
   decide
 
-/-- In (18) 'They go', h-epenthesis on a downstepped mora makes an `lh` contour that lifts the
-register the next downstep lowers (63). -/
+-- (18), (63)
 theorem ex18_contour :
     RegisterTier.realize baseline
         (unmark (neutralization.map

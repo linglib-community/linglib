@@ -528,7 +528,7 @@ def máMunster : Form Morpheme := particle .cond .m .á * historic Morpheme.cond
 
 /-! ### Figure 1 -/
 
-/-- Each historic-tense form of Figure 1 has exactly one surface form. -/
+-- Figure 1
 theorem card_surfaces_historic :
     ∀ s ∈ [bog, ól, fág], (surfaces (.input (historic Morpheme.hist * s))).card = 1 := by
   decide
@@ -575,7 +575,7 @@ theorem historic_rith : ∀ c ∈ surfaces (.input (historic Morpheme.hist * rit
     ¬ Realizes c (.seg .d) ∧ Realizes c .L := by
   decide
 
-/-- The forms of Figures 1, 2 and 5 are strict CV forms. -/
+-- Figures 1, 2 and 5
 theorem isStrict_forms : ∀ s ∈ [bog, ól, fág, freagair, rith],
     StrictCV.IsStrict (historic Morpheme.hist * s) ∧
       StrictCV.IsStrict (historic Morpheme.hist * (emptyCV Morpheme.pstImpers * s)) := by
@@ -583,8 +583,7 @@ theorem isStrict_forms : ∀ s ∈ [bog, ól, fág, freagair, rith],
 
 /-! ### Figure 5 and the past-tense impersonal -/
 
-/-- In Figure 5 the past-tense impersonals *bogadh*, *óladh* and *fágadh* are neither lenited
-nor preceded by *d'* ((27)). -/
+-- Figure 5, (27)
 theorem historic_pstImpers : ∀ s ∈ [bog, ól, fág],
     ∀ c ∈ surfaces (.input (historic Morpheme.hist * (emptyCV Morpheme.pstImpers * s))),
       c.IsFloating (d _) ∧ c.IsFloating (bundle _) :=
@@ -626,8 +625,7 @@ theorem munster_iff_historic : ∀ v ∈ [bog, ól, fág],
       ∀ c ∈ surfaces (.input (historic Morpheme.hist * v)), Realizes c (.seg .d) := by
   decide
 
-/-- In Table 2, Standard *ní fhásann* lenites without *d'*, and Munster has *dh' imigh*,
-*ní dh' fhásann* and *má dh' fhanann*. -/
+-- Table 2
 theorem table2 : (∀ c ∈ surfaces (.input (ní * fás)), ¬ Realizes c (.seg .d) ∧ Realizes c .L) ∧
     (∀ c ∈ surfaces (.input (historic Morpheme.hist * imigh)), Realizes c (.seg .d)) ∧
     (∀ c ∈ surfaces (.input (níMunster * fás)), Realizes c (.seg .d) ∧ Realizes c .L) ∧

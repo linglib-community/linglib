@@ -111,8 +111,7 @@ theorem inference_subset_weak (n : Number) : inference n ⊆ weak := fun _ hk �
 theorem compl_weak : weakᶜ = {0} := by
   ext k; simp [weak]
 
-/-- The singular's inference is its weak meaning exhaustified against (4), *two*, whose meaning
-is the plural's inference. -/
+-- (4)
 theorem exhIE_weak_inference_plural :
     exhIE {weak, inference .plural} weak = inference .singular := by
   rw [inference_plural, inference_singular,
@@ -121,13 +120,11 @@ theorem exhIE_weak_inference_plural :
   simp only [weak, strong, singular, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   omega
 
-/-- The plural's inference is its weak meaning exhaustified against the enriched singular. -/
 theorem exhIE_weak_inference_singular :
     exhIE {weak, inference .singular} weak = inference .plural := by
   simpa using TieuEtAl2020.exhIE_weak
 
-/-- Under negation every competitor is entailed, so nothing is excluded and either number
-conveys that there is no witness, (2)–(3). -/
+-- (2), (3)
 theorem exhIE_compl (m : Number) : exhIE {weakᶜ, (inference m)ᶜ} weakᶜ = {0} := by
   rw [← compl_weak]
   ext k
@@ -173,8 +170,7 @@ private theorem indefiniteRows_eq :
       ⟨.singular, .negative, {0}⟩, ⟨.plural, .negative, {0}⟩,
       ⟨.singular, .negative, {0}⟩, ⟨.plural, .negative, {0}⟩] := rfl
 
-/-- A positive indefinite carries the inference of its number and a negated one the empty
-witness set, whatever its number, (1)–(3). -/
+-- (1), (3)
 theorem indefiniteRows_inference : ∀ r ∈ indefiniteRows,
     r.inference = if r.polarity = .positive then inference r.number else {0} := by
   rw [indefiniteRows_eq]
@@ -193,13 +189,11 @@ theorem negated_ne_zero_iff {K : Set ℕ} {n : Number} {k : ℕ} :
     negated K n k ≠ 0 ↔ (K ∩ inference n).Nonempty := by
   simp [negated]
 
-/-- Both numbers assert the same thing under negation, so they agree wherever both are
-defined. -/
 theorem negated_eq_negated {K : Set ℕ} {n n' : Number} {k : ℕ} (h : negated K n k ≠ 0)
     (h' : negated K n' k ≠ 0) : negated K n k = negated K n' k := by
   simp_all [negated]
 
-/-- The presupposition projects through negation and out of a conditional antecedent (§2). -/
+-- §2
 theorem support_negated_projects (K : Set ℕ) (n : Number) (q : ℕ → SignType) :
     Function.support (-negated K n) = Function.support (negated K n) ∧
       Function.support (fun k ↦ (-negated K n k).joinMiddle (q k)) ⊆
@@ -212,7 +206,7 @@ def tableOfContents : Set ℕ := Set.Iic 1
 /-- A book never has a single chapter. -/
 def chapters : Set ℕ := {1}ᶜ
 
-/-- The singular presupposition of *table of contents* is met and the plural one fails, (5). -/
+-- (5)
 theorem negated_tableOfContents :
     negated tableOfContents .singular 0 ≠ 0 ∧ negated tableOfContents .plural 0 = 0 := by
   refine ⟨negated_ne_zero_iff.2 ⟨1, Set.mem_Iic.2 le_rfl, by simp [singular]⟩,
@@ -221,7 +215,7 @@ theorem negated_tableOfContents :
   simp only [tableOfContents, inference_plural, strong, Set.mem_Iic, Set.mem_ofPred_eq] at hk h
   omega
 
-/-- The plural presupposition of *chapters* is met and the singular one fails, (6). -/
+-- (6)
 theorem negated_chapters :
     negated chapters .plural 0 ≠ 0 ∧ negated chapters .singular 0 = 0 := by
   refine ⟨negated_ne_zero_iff.2 ⟨2, by simp [chapters], by simp [strong]⟩, not_not.1 fun h ↦ ?_⟩
@@ -251,7 +245,7 @@ private theorem bookRows_eq :
       ⟨tableOfContents, .plural, .unacceptable⟩, ⟨chapters, .singular, .unacceptable⟩,
       ⟨chapters, .plural, .acceptable⟩] := rfl
 
-/-- The judgments of (5)–(6) are the conceivability presupposition. -/
+-- (5), (6)
 theorem bookRows_judgment :
     ∀ r ∈ bookRows, r.judgment = .acceptable ↔ negated r.noun r.number 0 ≠ 0 := by
   rw [bookRows_eq]
@@ -281,7 +275,7 @@ def ContinuationRow.ofDatum (ex : Datum) : Option ContinuationRow := do
 /-- The examples (18)–(19) give the continuation rows. -/
 def continuationRows : List ContinuationRow := Examples.all.filterMap ContinuationRow.ofDatum
 
-/-- A pronoun resuming a negated indefinite bears its number, (18)–(19). -/
+-- (18), (19)
 theorem continuationRows_match :
     ∀ r ∈ continuationRows, r.judgment = .acceptable ↔ r.pronoun.number = some r.antecedent := by
   decide
@@ -297,8 +291,7 @@ theorem usable_iff {n : Number} (hn : n ∈ numberSystem.values) {k : ℕ} :
   rcases (by simpa [numberSystem] using hn : n = .singular ∨ n = .plural) with rfl | rfl
   exacts [⟨it, by decide, rfl, rfl, hk⟩, ⟨they, by decide, rfl, rfl, hk⟩]
 
-/-- With two or more circles the singular has no licit pronoun, so the denier of (22) cannot resume
-the referent. -/
+-- (22)
 theorem not_usable_singular_of_two_le {k : ℕ} (hk : 2 ≤ k) : ¬ Usable .singular k := by
   rw [usable_iff (by decide)]
   grind [inference_singular, singular]
@@ -312,8 +305,7 @@ theorem useful_iff_negated_ne_zero {n : Number} (hn : n ∈ numberSystem.values)
     (k : ℕ) : Useful K n ↔ negated K n k ≠ 0 := by
   simp only [negated_ne_zero_iff, Useful, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
 
-/-- Where both numbers are conceivable, (23) cannot be obeyed, since each number's referent cannot
-be resumed in some conceivable situation with a witness. -/
+-- (23)
 theorem exists_not_usable {K : Set ℕ} (hsg : (K ∩ inference .singular).Nonempty)
     (hpl : (K ∩ inference .plural).Nonempty) {n : Number} (hn : n ∈ numberSystem.values) :
     ∃ k ∈ K, 1 ≤ k ∧ ¬ Usable n k := by
@@ -421,7 +413,6 @@ theorem unblocked_mpPresup_singular (S : Set Condition) :
   · exact hss.ne rfl
   · exact hss.not_subset (Set.subset_univ _)
 
-/-- The plural is used exactly where the singular's presupposition fails. -/
 theorem unblocked_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
     unblocked englishAlts (mpPresup S) .plural = Sᶜ := by
   rw [Competition.unblocked_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
@@ -446,8 +437,6 @@ produces a negated indefinite usable there. -/
 def Follows (U : Number → Set Condition) (κ : Kernel Condition Production) : Prop :=
   ∀ c, ∀ᵐ p ∂(κ c)[|indefinite], ∀ n, p = some n → c ∈ U n
 
-/-- A speaker following use conditions that allow one number in a condition produces it there
-with certainty. -/
 theorem Follows.eq_dirac {U : Number → Set Condition} (h : Follows U κ) {c : Condition}
     [IsProbabilityMeasure (κ c)[|indefinite]] {n : Number} (hn : ∀ m, c ∈ U m ↔ m = n) :
     (κ c)[|indefinite] = Measure.dirac (some n) :=
@@ -455,8 +444,7 @@ theorem Follows.eq_dirac {U : Number → Set Condition} (h : Follows U κ) {c : 
     filter_upwards [h c, ae_cond_mem .of_discrete] with p hp ⟨m, hm⟩
     rw [← hm, (hn m).1 (hp m hm.symm)]
 
-/-- Maximize Presupposition with the singular presupposing that uniqueness dominates, (8) read
-as uniqueness in most situations, yields H1 (§4.1). -/
+-- (8), §4.1
 theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
     (h : Follows (unblocked englishAlts (mpPresup (Set.Iio .mix))) κ) : H1 κ := fun c ↦
   h.eq_dirac fun m ↦ by
@@ -485,7 +473,6 @@ theorem ineffability_singular (μ : Measure ℕ) : ineffability μ .singular = �
     Set.mem_compl_iff, Set.mem_singleton_iff]
   omega
 
-/-- Given a witness exactly one number fits it, so the two chances of ineffability sum to one. -/
 theorem ineffability_singular_add_plural (μ : Measure ℕ) [IsFiniteMeasure μ] (hμ : μ weak ≠ 0) :
     ineffability μ .singular + ineffability μ .plural = 1 := by
   have := cond_isProbabilityMeasure hμ
@@ -510,7 +497,6 @@ ineffability (§5.3). -/
 def BestGuess (μ : Measure ℕ) (n : Number) : Prop :=
   IsMinOn (ineffability μ) {m | m ∈ numberSystem.values} n
 
-/-- The plural is a best guess exactly when multiples are at least as likely as not. -/
 theorem bestGuess_plural_iff (μ : Measure ℕ) [IsFiniteMeasure μ] (hμ : μ weak ≠ 0) :
     BestGuess μ .plural ↔ 1 / 2 ≤ μ[strong | weak] := by
   have hsum := ineffability_singular_add_plural μ hμ

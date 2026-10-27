@@ -173,22 +173,18 @@ theorem the_eq_zero_iff : the P x = 0 ↔ ¬ WeakUnique P ∨ P x = 0 := by
 theorem the_ne_zero_iff : the P x ≠ 0 ↔ WeakUnique P ∧ P x ≠ 0 := by
   rw [ne_eq, the_eq_zero_iff, not_or, not_not]
 
-/-- The uniqueness presupposition projects through negation, (45)–(46), so the negated
-definite is undefined exactly where the definite is. -/
+-- (45), (46)
 theorem neg_the_eq_zero_iff : -the P x = 0 ↔ ¬ WeakUnique P ∨ P x = 0 :=
   SignType.neg_eq_zero_iff.trans the_eq_zero_iff
 
-/-- The definite of an empty noun is false rather than undefined, the predicative reading of (13).
--/
+-- (13)
 theorem the_neg_one (x : E) : the (fun _ ↦ -1) x = -1 :=
   congrFun (the_eq_of_weakUnique fun _ h ↦ by simp at h) x
 
-/-- Existence does not project, (45a), so *that is not the heart* is true when there are no
-hearts. -/
+-- (45a)
 theorem neg_the_neg_one (x : E) : -the (fun _ ↦ -1) x = 1 := by rw [the_neg_one]; rfl
 
-/-- Two subjects of a true predicative definite coincide. Weak uniqueness is what makes
-Löbner's negation test contradictory and his conjunction test equivalent, (114)–(115). -/
+-- (114), (115)
 theorem eq_of_the_eq_one {a b : E} (ha : the P a = 1) (hb : the P b = 1) : a = b := by
   have hne : the P a ≠ 0 := by rw [ha]; decide
   have hU : WeakUnique P := (the_ne_zero_iff.1 hne).1
@@ -197,8 +193,7 @@ theorem eq_of_the_eq_one {a b : E} (ha : the P a = 1) (hb : the P b = 1) : a = b
 
 variable [DecidableRel (Exclusive (E := E))]
 
-/-- The uniqueness presupposition of *the* is trivially satisfied by an *only* phrase, so
-*the only P* means *only P*, (60). -/
+-- (60)
 theorem the_only (P : (E → SignType)) : the (only P) = only P :=
   the_eq_of_weakUnique (weakUnique_only P)
 
@@ -253,7 +248,7 @@ theorem atMostOne_eq_ofProp {P : E → SignType} [Decidable (WeakUnique P)]
       exact ⟨⟨x₀, fun h ↦ h.elim hx₀ fun hy ↦ hx₀ (hy x₀)⟩,
         fun x ⟨hx, y, hy, hxy⟩ ↦ hxy (hu hx hy)⟩
 
-/-- The definite article is the paper's entry (50) pointwise. -/
+-- (50)
 theorem the_eq_meetWeak_atMostOne [DecidablePred (WeakUnique (E := E))] (P : E → SignType)
     (x : E) :
     the P x = meetWeak (atMostOneFormula P ⊔ 0) (P x) := by
@@ -278,7 +273,7 @@ theorem exclusiveFormula_eq_ofProp {P : (E → SignType)} {x : E} [Decidable (Ex
     · intro he
       exact ⟨⟨x, by simp [h]⟩, fun y ⟨hxy, hy⟩ ↦ he y (Ne.symm hxy) hy⟩
 
-/-- Adjectival *only* is the paper's entry (57) pointwise. -/
+-- (57)
 theorem only_eq_meetWeak_exclusiveFormula [DecidableRel (Exclusive (E := E))] (P : (E → SignType))
     (x : E) : only P x = meetWeak (P x ⊔ 0) (exclusiveFormula P x) := by
   by_cases h : P x = 1
@@ -308,8 +303,6 @@ theorem mem_atLeast_answer {w : Set E} {x : E} :
     exact hwX (Set.singleton_subset_iff.1 (hXx Set.self_mem_Ici))
   · exact fun hx ↦ ⟨answer {x}, ⟨{x}, rfl⟩, Set.singleton_subset_iff.2 hx, subset_rfl⟩
 
-/-- No true answer is stronger than the prejacent exactly when the `P`s are contained in
-`{x}`, so the schema's assertion is exclusivity. -/
 theorem mem_atMost_answer {w : Set E} {x : E} :
     w ∈ Focus.Particles.atMost (· ⊆ ·) (Set.range answer) (answer {x}) ↔ w ⊆ {x} := by
   simp only [Focus.Particles.mem_atMost, Set.forall_mem_range]
@@ -417,7 +410,7 @@ theorem presupposesUniqueness_theFregean : PresupposesUniqueness (theFregean (E 
 theorem presupposesExistence_theFregean : PresupposesExistence (theFregean (E := E)) :=
   fun _ _ h ↦ (theFregean_ne_zero_iff.1 h).1.exists
 
-/-- Lowering the Russellian quantifier by `be` presupposes nothing (Table 2). -/
+-- Table 2
 theorem not_presupposesUniqueness_be_theRussellianGQ [Nontrivial E] :
     ¬ PresupposesUniqueness (fun P : (E → SignType) ↦ be (theRussellianGQ P)) :=
   not_presupposesUniqueness_of_ne_zero (x := Classical.arbitrary E)
@@ -446,8 +439,7 @@ theorem identIota_ne_zero_iff {P : (E → SignType)} {x : E} :
   rw [identIota, ← _root_.iota_isSome_iff]
   cases _root_.iota (P · = 1) <;> simp
 
-/-- Lowering the individual-denoting Fregean entry by `ident` presupposes both existence and
-uniqueness (Table 2). -/
+-- Table 2
 theorem presupposesUniqueness_identIota : PresupposesUniqueness (identIota (E := E)) :=
   fun _ _ h _ ha _ hb ↦ (identIota_ne_zero_iff.1 h).unique ha hb
 
@@ -575,7 +567,7 @@ theorem iota_isSome_iff (P : (E → SignType)) : (iota P).isSome ↔ ∃! x, P x
 theorem iota_eq_none_iff (P : (E → SignType)) : iota P = none ↔ ¬ ∃! x, P x = 1 := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
 
-/-- On the argumental reading of (14), the empty restrictor has no referent. -/
+-- (14)
 theorem iota_neg_one : iota (fun _ ↦ -1 : (E → SignType)) = none :=
   (iota_eq_none_iff _).2 fun ⟨_, hx, _⟩ ↦ by simp at hx
 
@@ -587,8 +579,7 @@ theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : (E → SignType)) :
         simp [the_eq_zero_of_not_weakUnique h] at hx,
       (iota_eq_none_iff _).2 fun hu ↦ h fun _ ha _ hb ↦ hu.unique ha hb]
 
-/-- On the determinate reading (87), undefinedness of the individual percolates (86), so the
-sentence is classical exactly when the description has exactly one satisfier. -/
+-- (87), (86)
 theorem elim_iota_ne_zero_iff (P : (E → SignType)) (f : E → SignType) (hf : ∀ x, f x ≠ 0) :
     (iota P).elim 0 f ≠ 0 ↔ ∃! x, P x = 1 := by
   rw [← iota_isSome_iff]
@@ -608,8 +599,7 @@ def scopeInside (T : E → E → SignType) (Q : (E → SignType) → SignType)
     (E → SignType) :=
   fun x ↦ Q fun z ↦ M (fun y ↦ T z y) x
 
-/-- Where some world of the context lacks a unique satisfier, the determinate reading has no
-defined update (§3.2–3.3). -/
+-- §3.2
 theorem not_update_dom_iota {C : Set W} {π : W → (E → SignType)} (G : W → E → SignType) {w : W}
     (hw : w ∈ C) (h : ¬ ∃! x, π w x = 1) :
     ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim 0 (G w)) C).Dom := fun hd ↦
@@ -650,8 +640,7 @@ section AntiUniqueness
 variable [DecidablePred (WeakUnique (E := E))] [DecidableRel (Exclusive (E := E))]
   {P Q : (E → SignType)}
 
-/-- By Quantifier Projection (A.4.2), negated *the only P* under the existential shift presupposes a
-`P` and denies that any sole `P` bears `Q` ((89)–(94)). -/
+-- (89), (94)
 theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
     -ex (the (only P)) Q =
       meetWeak (existsHaug fun x ↦ P x ⊔ 0)
@@ -663,14 +652,12 @@ theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
   rw [existsHaug_meetWeak_presuppose hP hψ,
     neg_meetWeak_of_ne_neg_one (existsHaug_presuppose_ne_neg_one _)]
 
-/-- The argumental reading presupposes a `P`, not an only `P` (§3.2), so it is undefined
-exactly when there is no `P`. -/
+-- §3.2
 theorem argumental_anti_uniqueness_presup (hQ : IsBivalent Q) :
     -ex (the (only P)) Q = 0 ↔ ∀ x, P x ≠ 1 := by
   simp [ex, the_only, only, hQ.ne_zero, nonpos_iff_ne_one]
 
-/-- The argumental anti-uniqueness reading is true exactly when there is a `P` and no sole `P` bears
-`Q`, as in (80a). -/
+-- (80a)
 theorem argumental_anti_uniqueness (hQ : IsBivalent Q) :
     -ex (the (only P)) Q = 1 ↔
       (∃ x, P x = 1) ∧ ∀ x, P x = 1 → Exclusive P x → Q x ≠ 1 := by
@@ -686,15 +673,13 @@ followed. -/
 def toRelational (poss : E → E → SignType) (P : (E → SignType)) (y : E) : (E → SignType) :=
   fun x ↦ meetWeak (P x) (poss x y)
 
-/-- A possessive predicate presupposes nothing beyond its parts (§4.1, §4.3). It is classical
-wherever noun and possession are, so predicative possessives signal no uniqueness. -/
+-- §4.1, §4.3
 theorem isBivalent_toRelational {poss : E → E → SignType} {P : E → SignType}
     (hP : IsBivalent P)
     (hposs : ∀ x y, poss x y ≠ 0) (y : E) : IsBivalent (toRelational poss P y) :=
   (isBivalent_iff_forall_ne_zero _).2 fun x ↦ by simp [toRelational, hP.ne_zero x, hposs x y]
 
-/-- Possessives do not compete with the definite article, since a possessive predicate is not
-classically equivalent to *the* (§4). -/
+-- §4
 theorem possessive_not_competitor [DecidableEq E]
     [DecidablePred (WeakUnique (E := E))] {poss : E → E → SignType} {x y : E}
     (h : poss x y = -1) : ¬ ClassicallyEquivalent (fun P ↦ toRelational poss P y) the := by
@@ -713,8 +698,7 @@ theorem possessive_not_competitor [DecidableEq E]
   rw [h₁, h₂] at this
   exact absurd this (by decide)
 
-/-- On the indeterminate reading of an argumental possessive (134), *he didn't make his only
-appearance* presupposes an appearance and denies he made any sole one. -/
+-- (134)
 theorem possessive_anti_uniqueness [DecidableRel (Exclusive (E := E))]
     {poss : E → E → SignType} {P Q : E → SignType} (hQ : IsBivalent Q)
     (hposs : ∀ x y, poss x y ≠ 0) (y : E) :
@@ -756,11 +740,11 @@ noncomputable def sentence (α : (Book → SignType) → (Book → SignType)) : 
 private theorem sentence_an_eq_one (w : World) : sentence an w = 1 :=
   existsHaug_eq_one_iff.2 ⟨.one, by cases w <;> decide⟩
 
-/-- Once the context settles that Frida wrote exactly one book, *the* blocks *a*, (73b). -/
+-- (73b)
 theorem blocks_of_one : Blocks {World.oneBook} sentence the an :=
   blocks_of_weakUnique (fun w P ↦ ex P (reading w)) wrote (by decide)
 
-/-- While the context leaves the number of books open, *a* is not blocked, (73a). -/
+-- (73a)
 theorem not_blocks_of_open : ¬ Blocks Set.univ sentence the an :=
   not_blocks_of_not_weakUnique (fun w P ↦ ex P (reading w)) wrote (fun w ↦ ex_zero_left _)
     (Set.mem_univ World.twoBooks) (by decide) fun w _ ↦

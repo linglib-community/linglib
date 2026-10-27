@@ -71,7 +71,7 @@ def triphone : Fin 6 → Augmented Phone :=
 at width 3. -/
 def toyForms (i : Fin 3) : FormVector 6 := cueVector 3 triphone (word i)
 
-/-- The DLM's cue coding reproduces the form matrix (2). -/
+-- (2)
 theorem toyForms_eq :
     toyForms = ![![1, 1, 1, 1, 0, 0], ![0, 0, 1, 1, 1, 1], ![1, 1, 1, 1, 0, 0]] := by
   funext i j
@@ -316,8 +316,7 @@ private theorem W_eq : W = (71 : ℝ)⁻¹ • intW.map (Int.castRingHom ℝ) :=
   rw [W, inv_eq_right_inv gramU_mul_inv, Matrix.mul_smul, Matrix.smul_mul, U_eq_map,
     ← transpose_map, ← Matrix.map_mul, ← Matrix.map_mul, h]
 
-/-- `W` solves `UW = U`, so each word's prediction strength in an utterance containing it is `1`
-((7), (8)). -/
+-- (7), (8)
 theorem U_mul_W : U * W = U := by
   rw [W_eq_conjTranspose]; exact mul_conjTranspose_mul_inv_mul isUnit_det_gramU
 
@@ -333,7 +332,7 @@ theorem not_existsUnique_isELTrained :
     (hG 1 (isTrained_of_mul_eq _ _ _ (Matrix.mul_one U))).symm) 0) 0) ?_
   rw [W_eq]; norm_num [intW]
 
-/-- The diagonal entry of each column of `W` is its largest, as the paper observes of (6). -/
+-- (6)
 theorem le_diag_W (i j : Fin 9) : W j i ≤ W i i := by
   have h : ∀ i j : Fin 9, intW j i ≤ intW i i := by decide +kernel
   rw [W_eq]
@@ -352,8 +351,7 @@ theorem diag_W_mem_Icc (i : Fin 9) : W i i ∈ Set.Icc 0 1 :=
 right skew of the diagonal values and a power to finish it. -/
 def cind (d : ℝ) : ℝ := Real.log (1 / d) ^ (1 / 4 : ℝ)
 
-/-- `Cind` is strictly antitone on `(0, 1)`, which gives the sign of its correlation with frequency
-in Fig. 2. -/
+-- (0, 1), Fig. 2
 theorem strictAntiOn_cind : StrictAntiOn cind (Set.Ioo 0 1) := fun a ha b hb hab ↦ by
   unfold cind
   refine Real.rpow_lt_rpow (Real.log_nonneg ?_)

@@ -54,8 +54,7 @@ theorem german_fering_two_articles :
   ⟨⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
     ⟨Fering.Determiners.strengths_inventory, Fering.Determiners.not_isSyncretic_inventory⟩⟩
 
-/-- In German (16) and Fering (17), part-whole bridging takes the weak article and producer bridging
-the strong one (§3.2). -/
+-- (16), (17), §3.2
 theorem bridging_split :
     DefiniteDescription.Bridging.strength .partWhole = .uniqueness ∧
     DefiniteDescription.Bridging.strength .relational = .familiarity :=
@@ -70,8 +69,7 @@ theorem exclusively_anaphoric :
 
 /-! ### Languages with two articles (§4.2) -/
 
-/-- Hausa's two overt articles split into weak *-n* and strong *ɗîn*, as German and Fering do
-(§4.2.2). -/
+-- §4.2.2
 theorem hausa_two_articles :
     Hausa.Determiners.inventory.strengths = Finset.univ ∧
       ¬ Hausa.Determiners.inventory.IsSyncretic :=
@@ -98,8 +96,7 @@ theorem anaphoric_kin_syncretic :
 
 /-! ### Haitian Creole: a different type of contrast (§4.3) -/
 
-/-- Haitian Creole *la* marks both strengths ((39) to (42)), matching neither the §4.1 nor the §4.2
-pattern. -/
+-- (39), (42), §4.1, §4.2
 theorem haitian_one_article : HaitianCreole.Determiners.inventory.IsSyncretic :=
   HaitianCreole.Determiners.isSyncretic_inventory
 

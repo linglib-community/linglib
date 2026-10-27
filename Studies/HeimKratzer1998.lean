@@ -501,7 +501,7 @@ def tree_johnSeesT : Tree Unit String :=
 def tree_whichJohnSees : Tree Unit String :=
   .binder 1 (.node () (tree_johnSeesT :: []))
 
-/-- The subject relative denotes what *sleeps* denotes, at every assignment (p. 101). -/
+-- p. 101
 theorem interp_whoSleeps (g : Assignment ToyEntity) :
     interp toyLexicon g tree_whoSleeps = some ⟨.e ⇒ .t, Toy.sleeps⟩ := rfl
 
@@ -516,7 +516,7 @@ theorem denotes_studentWhoSleeps (g : Assignment ToyEntity) :
   .pm (.tn rfl) <| .pa (τ := .t) fun x ↦ .nn <|
     .faRight (lex := toyLexicon) (σ := .e) (τ := .t) (a := x) (f := Toy.sleeps) .trace (.tn rfl)
 
-/-- The open sentence has a value only relative to an assignment (definition (9), p. 94). -/
+-- (9), p. 94
 theorem interp_johnSeesT (g : Assignment ToyEntity) :
     interp toyLexicon g tree_johnSeesT = some ⟨.t, Toy.sees (g 1) .john⟩ := rfl
 
@@ -530,8 +530,7 @@ theorem interp_johnSeesT_ne :
 theorem interp_whichJohnSees (g : Assignment ToyEntity) :
     interp toyLexicon g tree_whichJohnSees = some ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ := rfl
 
-/-- The relative clause *which John sees t* denotes the things John sees, derived as on pp. 96-98.
--/
+-- pp. 96-98
 theorem denotes_whichJohnSees (g : Assignment ToyEntity) :
     Denotes toyLexicon g tree_whichJohnSees ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ :=
   .pa (τ := .t) fun x ↦ .nn <|
@@ -726,8 +725,7 @@ theorem object_entry_in_subject_uninterpretable :
       (.bin (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))) (.leaf (.inr "sleeps"))) =
       none := rfl
 
-/-- `[S John [VP sees [DP some person]]]` with basic entries is uninterpretable, the type mismatch
-of §7.1. -/
+-- §7.1
 theorem basic_entry_in_object_uninterpretable :
     interp (resolve fun _ ↦ False) g₀ (.bin (.leaf (.inr "John"))
       (.bin (.leaf (.inr "sees")) (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))))) =

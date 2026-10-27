@@ -163,8 +163,7 @@ theorem ivek_all_and_iff :
       (∃ v, w ~[F.access φ x] v ∧ p v) ∧ ∃ v, w ~[F.access φ x] v ∧ q v :=
   and_congr ivek_all_iff ivek_all_iff
 
-/-- On the identity cover, (8b) says the beliefs leave open that the ball is not white and that it
-is not black (Option 1 of (13)). -/
+-- (8b), (13)
 theorem ex8b_identity_iff {white black : W → Prop} :
     ¬ F.ivek φ .identity white x w ∧ ¬ F.ivek φ .identity black x w ↔
       (∃ v, w ~[F.access φ x] v ∧ ¬ white v) ∧ ∃ v, w ~[F.access φ x] v ∧ ¬ black v := by

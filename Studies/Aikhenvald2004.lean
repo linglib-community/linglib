@@ -179,7 +179,6 @@ namespace Realizes
 
 variable {es : List Evidential} {k k' : Kind}
 
-/-- An inventory realizes at most one kind. -/
 theorem eq (h : Realizes es k) (h' : Realizes es k') : k = k' := by
   obtain ⟨r, hr, hp⟩ := h
   obtain ⟨r', hr', hp'⟩ := h'

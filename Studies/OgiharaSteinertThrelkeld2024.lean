@@ -98,8 +98,7 @@ theorem not_settled_mozart :
   have := (h .early rfl .later (mem_alternatives_of_le_one le_rfl _ _)).1 rfl
   simp [dies, World.death] at this
 
-/-- Alternatives parting before the main-clause time may instantiate the temporal clause before it,
-and then *A before B* fails (§2). -/
+-- §2
 theorem not_lt_of_isLeast_of_lt {alt : HistoricalAlternatives W T} {v : W} {t t' e : T}
     (hv : v ∈ alt (w, t)) (hB : (v, t') ∈ B) (ht' : t' < t)
     (he : IsLeast (instTimes (alt (w, t)) B) e) : ¬ t < e :=
@@ -162,8 +161,7 @@ end EventFrame
 def HoldsAbutting (e : E) (I₀ : NonemptyInterval T) : Prop :=
   ∃ J : NonemptyInterval T, J.snd = I₀.fst ∧ (J : Set T) ⊆ ↑(τ e)
 
-/-- An eventuality holds throughout an interval abutting `I₀` iff it is ongoing at the start of `I₀`
-(fn. 23). -/
+-- fn. 23
 theorem holdsAbutting_iff {e : E} {I₀ : NonemptyInterval T} :
     HoldsAbutting e I₀ ↔ I₀.fst ∈ τ e := by
   refine ⟨fun ⟨J, hJ, h⟩ ↦ ?_, fun h ↦ ⟨.pure I₀.fst, rfl, by simpa using h⟩⟩
@@ -346,8 +344,7 @@ theorem rows_bcCounterexample :
       r.judgment = .acceptable := by
   decide
 
-/-- An anti-veridical *before* is acceptable iff an eventuality at its time could lead to its
-temporal clause ((6a), (14)). -/
+-- (6a), (14)
 theorem rows_precursor :
     ∀ r ∈ Examples.all, r.feature? "precursor" ≠ none →
       (r.judgment = .acceptable ↔ r.feature? "precursor" = some "true") := by

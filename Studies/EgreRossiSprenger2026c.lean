@@ -161,14 +161,13 @@ theorem cond_apply_of_notMem (h : w ∉ update s φ) : cond φ ψ s w = 0 := ite
 theorem cond_apply_of_not_exists (h : ¬ ∃ w ∈ s, φ s w = 1) (w : W) : cond φ ψ s w = 0 :=
   cond_apply_of_notMem (by rw [update_of_not_exists h]; exact Set.notMem_empty w)
 
-/-- Negation commutes with the conditional (Negation Commutation, §2). -/
+-- §2
 theorem neg_cond (φ ψ : Sentence W) : -cond φ ψ = cond φ (-ψ) := by
   funext s w
   simp only [Pi.neg_apply, cond]
   split_ifs <;> simp
 
-/-- With a classical antecedent and a context-free consequent, the conditional is Cooper's at
-every world of the context, as §2 represents it. -/
+-- §2
 theorem cond_ofSet_apply {p : Set W} (hψ : ContextFree ψ) (hw : w ∈ s) :
     cond (ofSet p) ψ s w = condAssert .lp (ofSet p s w) (ψ s w) := by
   by_cases hp : w ∈ p
@@ -233,7 +232,7 @@ theorem avoidsVoid_box_iff : AvoidsVoid s (box φ) ↔ AvoidsVoid s φ := by
   · rintro ⟨w, hw, h⟩
     exact ⟨w, hw, fun h' ↦ h ((Sentence.box_eq_zero_iff hw).1 h' w hw)⟩
 
-/-- Accepting `A` is accepting `□A` (§3, after Definition 3.1). -/
+-- §3, Definition 3.1
 theorem accepts_box_iff : Accepts s (box φ) ↔ Accepts s φ :=
   and_congr Sentence.accepts_box_iff avoidsVoid_box_iff
 
@@ -310,8 +309,7 @@ theorem Presupposes.cond_left (h : Presupposes φ ψ) (χ : Sentence W) :
   rw [h s hs w' hw'] at h'
   exact absurd h' (by decide)) w
 
-/-- Where a presupposition of `A` fails, asserting `¬A`, `◇A` or `A → C` violates Avoid Void
-(**Proposition 5.1**). -/
+-- Proposition 5.1
 theorem not_avoidsVoid_of_presupposes (h : Presupposes φ ψ) (hs : ¬ Accepts s ψ)
     (χ : Sentence W) :
     ¬ AvoidsVoid s (-φ) ∧ ¬ AvoidsVoid s (dia φ) ∧ ¬ AvoidsVoid s (cond φ χ) :=
@@ -321,8 +319,7 @@ theorem not_avoidsVoid_of_presupposes (h : Presupposes φ ψ) (hs : ¬ Accepts s
 theorem presupposes_cond_dia (φ ψ : Sentence W) : Presupposes (cond φ ψ) (dia φ) :=
   fun _ hs w _ ↦ cond_apply_of_not_exists (fun h ↦ hs (accepts_dia_iff.2 h)) w
 
-/-- The compatibility presupposition projects through negation, *might* and the antecedent of a
-conditional (**Fact 4.6**). -/
+-- Fact 4.6
 theorem presupposes_cond_dia_projects (φ ψ χ : Sentence W) :
     Presupposes (-cond φ ψ) (dia φ) ∧ Presupposes (dia (cond φ ψ)) (dia φ) ∧
       Presupposes (cond (cond φ ψ) χ) (dia φ) :=
@@ -421,8 +418,7 @@ theorem presupposes_forallInstances_dia (A : D → Set W) (ψ : D → Sentence W
   ⟨fun _ hs w _ ↦ forallHaug_eq_zero_iff.2 fun d ↦ cond_ofSet_eq_zero_of_not_accepts hs d w,
     fun _ hs w _ ↦ existsHaug_eq_zero_iff.2 fun d ↦ cond_ofSet_eq_zero_of_not_accepts hs d w⟩
 
-/-- A context can fail to accept `∃xAx` at one world while an `A` that is a `B` makes `∀x(Ax → Bx)`
-and `∃x(Ax → Bx)` true at another, so **Fact 4.5** fails as printed. -/
+-- Fact 4.5
 theorem not_presupposes_forallInstances_exists :
     ¬ Presupposes (forallInstances fun _ : Unit ↦ cond (ofSet {true}) (ofSet .univ))
         (ofSet (⋃ _ : Unit, {true})) ∧
@@ -646,7 +642,7 @@ section Contradiction
 
 variable {s : Set W}
 
-/-- Sequential update on `¬p ∧ ◇p` collapses (§5.3). -/
+-- §5.3
 theorem update_update_neg_dia (s p : Set W) :
     update (update s (-ofSet p)) (dia (ofSet p)) = ∅ := by
   apply update_of_not_exists
@@ -664,7 +660,7 @@ private theorem dia_ofSet_eq_neg_one {p : Set W} {w : W} (hw : w ∈ s) (h : ∀
   · obtain ⟨x, hx, hxp⟩ := (Sentence.dia_eq_one_iff hw).1 hv
     exact absurd (by simpa using hxp) (h x hx)
 
-/-- No context accepts `¬p ∧ ◇p` (footnote 6). -/
+-- footnote 6
 theorem not_accepts_neg_conj_dia (s p : Set W) :
     ¬ Accepts s (conj (-ofSet p) (dia (ofSet p))) := by
   rintro ⟨h, w, hw, -⟩
@@ -682,8 +678,7 @@ theorem not_accepts_neg_conj_dia (s p : Set W) :
     · rw [show (-ofSet p) s w = 1 by simp [hwp]] at this
       exact absurd this (by decide)
 
-/-- The update of Definition 3.2 on `¬p ∧ ◇p` keeps the `¬p`-worlds where `p` is open (footnote 6).
--/
+-- Definition 3.2, footnote 6
 theorem update_neg_conj_dia {p : Set W} (h : (s ∩ p).Nonempty) (h' : (s \ p).Nonempty) :
     update s (conj (-ofSet p) (dia (ofSet p))) = s \ p := by
   obtain ⟨y, hy, hyp⟩ := h
@@ -700,8 +695,7 @@ theorem update_neg_conj_dia {p : Set W} (h : (s ∩ p).Nonempty) (h' : (s \ p).N
   simp only [mem_restrict, Set.mem_sdiff]
   exact and_congr_right fun hw ↦ by rw [hv w hw]; simp
 
-/-- Definition 3.2 updates `¬p ∧ ◇p` to a world where it is false, while the update of
-[egre-rossi-sprenger-2026b] collapses (footnote 6). -/
+-- Definition 3.2, footnote 6 [egre-rossi-sprenger-2026b]
 theorem update_contra_footnote6 :
     update Set.univ (conj (-ofSet {true}) (dia (ofSet {true}))) = {false} ∧
       conj (-ofSet {true}) (dia (ofSet {true})) {false} false = -1 ∧
@@ -746,7 +740,7 @@ theorem not_presupposes_cond_dia_of_restrict :
     at this
   simp at this
 
-/-- Under Definition 3.2 the same conditional is void throughout every context. -/
+-- Definition 3.2
 theorem cond_zero_left (ψ : Sentence W) (s : Set W) (w : W) : cond 0 ψ s w = 0 :=
   cond_apply_of_not_exists (fun ⟨_, _, h⟩ ↦ by simp at h) w
 
@@ -775,8 +769,7 @@ theorem entailsSharp_iff : EntailsSharp Γ ψ ↔
     Entails Γ ψ ∧ ∃ s, ∃ w ∈ s, (∀ φ ∈ Γ, 0 ≤ φ s w) ∧ ψ s w ≠ 0 := by
   simp only [EntailsSharp, not_forall, exists_prop]
 
-/-- For context-free premises and conclusion, Definition 6.1's second clause is its gloss, that
-given C-validity some premise-compatible pair makes the conclusion true. -/
+-- Definition 6.1
 theorem entailsSharp_iff_of_contextFree (hΓ : ∀ φ ∈ Γ, ContextFree φ) (hψ : ContextFree ψ) :
     EntailsSharp Γ ψ ↔ Entails Γ ψ ∧ ∃ s, ∃ w ∈ s, (∀ φ ∈ Γ, 0 ≤ φ s w) ∧ ψ s w = 1 := by
   rw [entailsSharp_iff]
@@ -879,8 +872,7 @@ theorem entailsSharp_or_to_if {p q : Set W} {w : W} (hp : w ∉ p) (hq : w ∈ q
   · rw [cond_apply_of_mem (by rw [Sentence.neg_ofSet, update_ofSet]; exact ⟨rfl, hp⟩)]
     simp
 
-/-- [gibbard-1981]'s notes `p → q` and `p → ¬q` are accepted together by no context, so in C♭ they
-entail anything (§6, (33)–(34)). -/
+-- §6, (33), (34) [gibbard-1981]
 theorem not_accepts_cond_cond_neg (s p q : Set W) :
     ¬ (Accepts s (cond (ofSet p) (ofSet q)) ∧ Accepts s (cond (ofSet p) (-ofSet q))) := by
   rintro ⟨h₁, h₂⟩
@@ -909,7 +901,7 @@ theorem entailsSharp_reductio {p q : Set W} {w : W} (hw : w ∉ p) :
       exact hw hu.2
     rcases hφ with rfl | rfl <;> rw [cond_apply_of_notMem hu]
 
-/-- C# is not monotone, since `p` entails `p` but `p, ¬p` does not (footnote 15). -/
+-- footnote 15
 theorem entailsSharp_ofSet_self {p : Set W} {w : W} (hw : w ∈ p) :
     EntailsSharp {ofSet p} (ofSet p) ∧ ¬ EntailsSharp {ofSet p, -ofSet p} (ofSet p) := by
   refine ⟨entailsSharp_iff.2 ⟨EgreRossiSprenger2026b.entails_refl _, {w}, w, rfl,
@@ -920,7 +912,7 @@ theorem entailsSharp_ofSet_self {p : Set W} {w : W} (hw : w ∈ p) :
     have h₂ := hΓ _ (.inr rfl)
     by_cases hx : x ∈ p <;> simp_all
 
-/-- C# is not reflexive, since `p ∧ ¬p` does not entail itself (footnote 15). -/
+-- footnote 15
 theorem not_entailsSharp_contradiction (p : Set W) :
     ¬ EntailsSharp {conj (ofSet p) (-ofSet p)} (conj (ofSet p) (-ofSet p)) := fun ⟨_, h⟩ ↦
   h fun s x _ hΓ ↦ by
@@ -928,7 +920,7 @@ theorem not_entailsSharp_contradiction (p : Set W) :
     rw [Sentence.neg_ofSet, EgreRossiSprenger2026b.conj_ofSet, Set.inter_compl_self] at this
     simp at this
 
-/-- The entailment C# is not transitive (footnote 15). -/
+-- footnote 15
 theorem not_entailsSharp_trans {p q : Set W} {w w' : W} (hw : w ∈ p) (hw' : w' ∉ p)
     (hq : w' ∈ q) :
     EntailsSharp {ofSet p} (disj (ofSet p) (ofSet q)) ∧

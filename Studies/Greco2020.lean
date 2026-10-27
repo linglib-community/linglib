@@ -296,15 +296,13 @@ theorem rows_sneg {p : LexicalItem.Token} (hp : Closed p) :
       (r.judgment = .acceptable ↔ Allows p q) :=
   fun r hr hc q hq ↦ (rows_sneg_fin r hr hc q hq).trans (allows_of_closed phase_heads.1 hp q)
 
-/-- Section 4.2.5's premise, (83) to (85): an embedded clause admits the focalization of a
-constituent of TP, never of the whole TP. -/
+-- Section 4.2.5, (83), (85)
 theorem embedded_focus :
     ∀ r ∈ rows, r.construction = .embeddedFocus →
       (r.judgment = .acceptable ↔ r.focus ≠ some .T) := by
   decide
 
-/-- In Table 2's Sneg row, the strong class licenses no polarity class and the closed v*P excludes
-negative-scope elements ((9a) to (9d)). -/
+-- Table 2, (9a), (9d)
 theorem table2_snegs {p : LexicalItem.Token} (hp : Closed p) (c : PolarityClass) :
     c ∉ ENEnvironment.snegs.strength.licensed ∧ ¬ Allows p .negScope ∧
       ∃ r ∈ rows, r.polarity = some c ∧ r.requirement = some .negScope ∧

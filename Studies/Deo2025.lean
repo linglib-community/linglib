@@ -117,14 +117,11 @@ commitment, the speaker's preferential commitment to the uptake of `p` (20). -/
 def bara : State Holder W :=
   insert (((.speaker, .preferential), .selfGenerated), uptake K p f) (utter K p f w)
 
-/-- *Bərə* augments the force rather than modifying it (§4), so whatever the plain utterance
-commits a holder to, the *bərə*-utterance commits it to. -/
+-- §4
 theorem commitmentSet_bara_subset (k : Holder) :
     (bara K p f w).commitmentSet k ⊆ (utter K p f w).commitmentSet k :=
   State.commitmentSet_anti (Set.subset_insert _ _)
 
-/-- *Bərə*'s own effect narrows the speaker's preferential commitment set by the uptake and keeps
-the doxastic one. -/
 theorem bara_commitmentSets :
     (bara K p f w).commitmentSet ((.speaker, .preferential), .selfGenerated) =
         uptake K p f ∩ (utter K p f w).commitmentSet ((.speaker, .preferential), .selfGenerated) ∧
@@ -132,8 +129,7 @@ theorem bara_commitmentSets :
         (utter K p f w).commitmentSet ((.speaker, .doxastic), .selfGenerated) :=
   ⟨State.commitmentSet_insert_self, State.commitmentSet_insert_of_ne (by simp)⟩
 
-/-- A *bərə*-declarative, (22), commits the speaker to believing the content and to preferring
-its uptake. -/
+-- (22)
 theorem declarative_commitmentSets :
     (bara K p .doxastic w).commitmentSet ((.speaker, .doxastic), .selfGenerated) =
         p ∩ (K w).commitmentSet ((.speaker, .doxastic), .selfGenerated) ∧
@@ -141,8 +137,7 @@ theorem declarative_commitmentSets :
         uptake K p .doxastic ∩ (K w).commitmentSet ((.speaker, .preferential), .selfGenerated) := by
   simp [bara, utter, State.commitmentSet_insert_of_ne]
 
-/-- A *bərə*-imperative, (23), commits the speaker to preferring the content and its uptake and
-to believing nothing new. -/
+-- (23)
 theorem imperative_commitmentSets :
     (bara K p .preferential w).commitmentSet ((.speaker, .preferential), .selfGenerated) =
         uptake K p .preferential ∩
@@ -151,8 +146,7 @@ theorem imperative_commitmentSets :
         (K w).commitmentSet ((.speaker, .doxastic), .selfGenerated) := by
   simp [bara, utter, State.commitmentSet_insert_of_ne]
 
-/-- Once the addressee takes up a *bərə*-utterance's content, it joins the joint commitments under
-its attitude (§4). -/
+-- §4
 theorem mem_joint_insert (s : Source) :
     p ∈ joint (insert (((.addressee, f), s), p) (bara K p f w)) f :=
   Set.mem_iInter.2 fun x ↦ match x with
@@ -180,13 +174,10 @@ def Defers : Prop := Want P .speaker (uptake K p f)ᶜ w
 
 variable {P K B benefits g p f w}
 
-/-- A sincere *bərə*-utterance is an effective preference for the uptake. -/
 theorem want_uptake_of_sincere (h : Sincere (effectivePreference P ∘ Prod.fst) (bara K p f w) w) :
     Want P .speaker (uptake K p f) w :=
   h.mem (Set.mem_insert _ _)
 
-/-- The *bərə*-utterance is sincere when the speaker effectively prefers the uptake, prefers the
-content if the clause is an imperative, and was sincere before. -/
 theorem sincere_bara_iff :
     Sincere (effectivePreference P ∘ Prod.fst) (bara K p f w) w ↔ Want P .speaker (uptake K p f) w ∧
       (f = .preferential → Want P .speaker p w) ∧
@@ -205,24 +196,21 @@ theorem inter_uptake_eq_empty (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     B ∩ uptake K p f = ∅ :=
   Set.eq_empty_of_forall_notMem fun v hv ↦ hv.2.2 (h v hv.1)
 
-/-- If the addressee is already a source for `p` by the speaker's information, *bərə* is
-infelicitous ((11b), (11c), (15), (9), (16), §3.4). -/
+-- (11b), (11c), (15), (9), (16), §3.4
 theorem not_felicitous_of_isSource (benefits : Set W → Role → Prop) (g : Set W) (f : Force)
     (hC : (P .speaker w).Consistent B) (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     ¬ Felicitous P K B benefits g p f w :=
   fun hf ↦ hC.realistic _ (want_uptake_of_sincere hf.1).1
     (by rw [Set.inter_comm]; exact inter_uptake_eq_empty h)
 
-/-- When the speaker defers to the addressee, *bərə* is infelicitous, as in an offer or invitation
-((11a), §3.4). -/
+-- (11a), §3.4
 theorem not_felicitous_of_defers (benefits : Set W → Role → Prop) (g : Set W)
     (hC : (P .speaker w).Consistent B) (h : Defers P K p f w) :
     ¬ Felicitous P K B benefits g p f w :=
   fun hf ↦ (hC.inter_inter_nonempty_of_mem_maxElts (want_uptake_of_sincere hf.1) h).ne_empty
     (by rw [Set.inter_compl_self, Set.inter_empty])
 
-/-- A goal that does not benefit the addressee rules out *bərə* (§3.4), as a request or plea serves
-the speaker alone (10) and a curse harms the addressee (11d). -/
+-- §3.4, (10), (11d)
 theorem not_felicitous_of_not_benefits (P : Role → W → PreferenceStructure W)
     (K : W → State Holder W) (B p : Set W) (f : Force) (w : W) (h : ¬ benefits g .addressee) :
     ¬ Felicitous P K B benefits g p f w :=
@@ -300,8 +288,7 @@ theorem mem_uptake_sunnyTomorrow {v : Weather} :
     v ∈ uptake state sunnyTomorrow .doxastic ↔ v.upSunny := by
   simp [uptake, IsDependent, mem_state_sunnyTomorrow, not_isSource]
 
-/-- The warning of (5a) is felicitous, since Anu may yet drive without taking Bilal's word on the
-rain. -/
+-- (5a)
 theorem felicitous_raining : Felicitous prefs state info benefit safe raining .doxastic w₀ := by
   refine ⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, nofun, fun _ _ hq ↦ by
     obtain ⟨h, -⟩ := hq; simp only at h; subst h; trivial⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl,
@@ -311,8 +298,7 @@ theorem felicitous_raining : Felicitous prefs state info benefit safe raining .d
   · intro h
     simpa [w₀] using mem_uptake_raining.1 (h (show w₀ ∈ info from ⟨rfl, rfl, fun h ↦ (h rfl).elim⟩))
 
-/-- The warning of (5b) is not felicitous, since Anu can stay safe without taking Bilal's word on
-tomorrow's weather. -/
+-- (5b)
 theorem not_felicitous_sunnyTomorrow :
     ¬ Felicitous prefs state info benefit safe sunnyTomorrow .doxastic w₀ := fun h ↦ by
   have hv : (⟨true, true, false, true, false⟩ : Weather) ∈ info ∩ safe :=
@@ -371,8 +357,7 @@ theorem mem_latent {v : Car} :
 theorem mem_uptake {v : Car} : v ∈ uptake latent taking .preferential ↔ v.up := by
   simp [uptake, IsDependent, mem_latent, not_isSource]
 
-/-- In the first context of (15), Bilal's preference for the car is latent, and the recommendation
-with *bərə* is felicitous. -/
+-- (15)
 theorem felicitous_latent :
     Felicitous prefs latent info benefit taking taking .preferential w₀ ∧
       Want prefs .addressee taking w₀ := by
@@ -381,8 +366,7 @@ theorem felicitous_latent :
     fun v hv ↦ mem_uptake.2 (hv.1 hv.2), fun h ↦ ?_⟩, ⟨rfl, fun _ _ h ↦ h⟩⟩
   simpa [w₀] using mem_uptake.1 (h (show w₀ ∈ info from fun h ↦ h))
 
-/-- In the second context of (15), Bilal's revealed preference makes *bərə* infelicitous under any
-consistent effective preferences of Anu's. -/
+-- (15)
 theorem not_felicitous_revealed (P : Role → Car → PreferenceStructure Car)
     (hC : (P .speaker w₀).Consistent info) :
     ¬ Felicitous P revealed info benefit taking taking .preferential w₀ :=

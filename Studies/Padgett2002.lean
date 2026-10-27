@@ -282,8 +282,7 @@ def cand14c : Candidate 2 :=
 def cand14d : Candidate 2 :=
   cand { starts := {0, 1}, value := ![true, true] } { starts := {0, 1}, value := ![true, false] }
 
-/-- The violations of (14) and (17a,b), IDENT_Rt first: partial class spreading (14b) violates
-SPREAD(COLOR) twice, and no harmony (14d) four times. -/
+-- (14), (17a,b), (14b), (14d)
 theorem profile_14 :
     ofLex ((tableau sonlAr 1).profile cand14a) = ![0, 2, 0, 2] ∧
       ofLex ((tableau sonlAr 1).profile cand14b) = ![0, 1, 2, 2] ∧
@@ -291,7 +290,7 @@ theorem profile_14 :
       ofLex ((tableau sonlAr 1).profile cand14d) = ![0, 1, 4, 2] := by
   decide
 
-/-- Partial class spreading (14b) is the sole winner over every candidate. -/
+-- (14b)
 theorem optimal_sonlAr : (tableau sonlAr 1).optimal = {cand14b} := by
   decide +kernel
 
@@ -308,7 +307,7 @@ def cand20c : Candidate 3 :=
   cand { starts := {0}, value := ![true, true, true] }
     { starts := {0, 1, 2}, value := ![true, false, true] }
 
-/-- In (20) the attested form violates SPREAD(COLOR) three times and the transparent (20c) six. -/
+-- (20), (20c)
 theorem profile_20 :
     ofLex ((tableau pullArIn 1).profile cand20b) = ![0, 0, 3, 4] ∧
       ofLex ((tableau pullArIn 1).profile cand20c) = ![0, 0, 6, 4] := by
@@ -337,8 +336,7 @@ def cand22d : Candidate 3 :=
   cand { starts := {0, 1}, value := ![true, false, false] }
     { starts := {0, 2}, value := ![true, true, false] }
 
-/-- The violations of (22), the lateral counted. The paper marks four IDENT violations on (22b)
-and (22c), where counting by segment and feature gives three. -/
+-- (22), (22b), (22c)
 theorem profile_22 :
     ofLex ((tableau petrolI 2).profile cand22a) = ![0, 1, 3, 2] ∧
       ofLex ((tableau petrolI 2).profile cand22b) = ![1, 1, 0, 3] ∧
@@ -346,7 +344,7 @@ theorem profile_22 :
       ofLex ((tableau petrolI 2).profile cand22d) = ![0, 1, 6, 2] := by
   decide
 
-/-- (22a) is the sole winner: [back] and [round] spread from different segments. -/
+-- (22a)
 theorem optimal_petrolI : (tableau petrolI 2).optimal = {cand22a} := by
   decide +kernel
 
@@ -402,7 +400,6 @@ theorem predictTotal_son_lAr : predictTotal [o, A'] 1 = {[o, o]} ∧
 /-- Spreading the Color node of (3) from `src` onto `tgt`. -/
 def colorSpreading (src tgt : Segment) : Segment := (featureClass node .color).piecewise src tgt
 
-/-- Spreading a Color node is all or none: the target takes both features of Color. -/
 theorem eqOn_colorSpreading (src tgt : Segment) :
     Set.EqOn (colorSpreading src tgt) src ↑color :=
   classes_eq_featureClass.2.2.2.2 ▸ eqOn_piecewise_of_le src tgt le_rfl

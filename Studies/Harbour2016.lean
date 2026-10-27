@@ -117,7 +117,7 @@ def ℒpt : Finset (Finset Ω) := {{0}, {1}, {0, 1}}
 /-- The π lattice has every nonempty set of referents as a group. -/
 def ℒπ  : Finset (Finset Ω) := Ioc ∅ univ
 
-/-- The lattices are egocentrically nested, `ℒau ⊆ ℒpt ⊆ ℒπ` (p. 74). -/
+-- p. 74
 theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide
 
 /-! #### Quadripartition — author composes outermost ([harbour-2016] §4.3.5) -/
@@ -144,8 +144,6 @@ def thirdP : Finset (Finset Ω) := quadCell false false
 
 /-! The inclusive and the exclusive come out as distinct, disjoint cells by construction. -/
 
-/-- The exclusive never contains the addressee `u`, so it is `−participant` in Harbour's sense,
-the case a membership decomposition collapses. -/
 theorem exclusive_excludes_addressee : ∀ s ∈ exclusive, (1 : Ω) ∉ s := by decide
 
 theorem exclusive_includes_speaker : ∀ s ∈ exclusive, (0 : Ω) ∈ s := by decide

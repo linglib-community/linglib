@@ -86,8 +86,7 @@ theorem not_restricted_now_past : ¬ Restricted Past.past.cell Demonstrative.now
   fun ⟨hr, hle, hJ⟩ ↦ NonemptyInterval.precedes_not_overlaps (presup_precedes.1 hr)
     (NonemptyInterval.overlaps_of_le (hle.trans (presup_le.1 hJ)))
 
-/-- *then* is incompatible with R-PAST (p. 31): a reference within the assessment time would make
-the *then*-interval containing it overlap the assessment time. -/
+-- p. 31
 theorem not_restricted_then_remote : ¬ Restricted Past.remote.cell Demonstrative.then.cell a r J :=
   fun ⟨hr, hle, hJ⟩ ↦ presup_then.1 hJ
     ((NonemptyInterval.overlaps_of_le (presup_le.1 hr)).mono_left hle)
@@ -99,7 +98,6 @@ that precede the time `τ₀` of the most recent eventuality. -/
 def Cats (a u τ₀ : NonemptyInterval T) : Prop :=
   a = u ∨ ∀ t : NonemptyInterval T, t.Precedes a ↔ t.Precedes τ₀
 
-/-- A time is preceded by exactly the times that precede another when the two start together. -/
 theorem forall_precedes_iff_iff_fst_eq :
     (∀ t : NonemptyInterval T, t.Precedes a ↔ t.Precedes τ₀) ↔ a.fst = τ₀.fst := by
   refine ⟨fun h ↦ le_antisymm ?_ ?_, fun h t ↦ by rw [NonemptyInterval.Precedes, h]; rfl⟩

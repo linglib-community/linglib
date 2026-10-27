@@ -89,7 +89,7 @@ bound `φ` fails and at whose right bound it holds, no proper subinterval being 
 def DowtyAchievement (φ : T → Prop) (t : NonemptyInterval T) : Prop :=
   ¬ φ t.fst ∧ φ t.snd ∧ ¬ ∃ t' < t, ¬ φ t'.fst ∧ φ t'.snd
 
-/-- An interval satisfying Dowty's semantics consists of two adjacent moments (footnote 7). -/
+-- footnote 7
 theorem dowtyAchievement_iff : DowtyAchievement φ t ↔ ¬ φ t.fst ∧ φ t.snd ∧ t.fst ⋖ t.snd := by
   constructor
   · rintro ⟨h₁, h₂, h₃⟩
@@ -123,7 +123,7 @@ def Achievement (φ : T → Prop) (m : T) : Prop :=
 theorem achievement_rat : Achievement (fun q : ℚ ↦ 0 ≤ q) 0 :=
   ⟨⟨-1, by norm_num, by norm_num, fun _ _ h ↦ not_le.2 h⟩, le_rfl⟩
 
-/-- A predicate true only of moments is quantized (12). -/
+-- (12)
 theorem qua_of_isPoint (Q : NonemptyInterval T → Prop) (h : ∀ t, Q t → t.IsPoint) :
     Mereology.QUA Q := by
   intro a ha b hb hab hle
@@ -138,21 +138,19 @@ end Achievements
 
 /-! ### Tenses and auxiliaries -/
 
-/-- The pluperfect *John had called* (27) places the calling before the speech time. -/
+-- (27)
 theorem pluperfect_before_speech
     (h : ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] P) s) : ∃ t < s, P t := by
   simpa using diamond_diamond_toSetRel h
 
-/-- Without a restriction on *have*, the future perfect *John will have left at six* (55) can
-place the leaving before the speech time. -/
+-- (55)
 theorem exists_future_perfect_before_speech :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
       ◇[toSetRel ⟦future⟧] (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] leave t) s ∧
         ∀ t, leave t → t < s :=
   ⟨0, 6, (· = -1), by simp, fun _ ht ↦ by omega⟩
 
-/-- With the content of *will* added to the restriction of *have* (57), the future perfect places
-the leaving after the speech time. -/
+-- (57)
 theorem future_perfect_after_speech {six : T}
     (h : ◇[toSetRel ⟦future⟧]
       (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] (fun t' ↦ s < t' ∧ P t') t) s) :
@@ -161,7 +159,7 @@ theorem future_perfect_after_speech {six : T}
 
 /-! ### Temporal adverbials -/
 
-/-- The extended-now perfect (28) at the speech time is the perfect of `Aspect`. -/
+-- (28)
 theorem xn_iff_perf {W : Type*} (p : W → Set (NonemptyInterval T)) (w : W) :
     .pure s ∈ perfect p w ↔ (w, s) ∈ PERF p := by
   rw [perf_eq_atPoint_perfect]; rfl
@@ -176,8 +174,7 @@ theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T)
   let ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
   hs (NonemptyInterval.mem_def.2 ⟨h₁.trans (t.fst_le_snd.trans e.le), e ▸ h₂⟩)
 
-/-- The sentence *Mary had left at six* (43) has a reference-time reading that can hold while its
-event-time reading fails. -/
+-- (43)
 theorem reference_time_reading_not_event_time_reading :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
       ◇[toSetRel ⟦past⟧] (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] leave t) s ∧
@@ -196,14 +193,13 @@ section Quantified
 
 variable (sunday work : NonemptyInterval T → Prop) {σ : NonemptyInterval T}
 
-/-- *John worked on every Sunday* with the quantifier under the Past (44a) entails a past time
-on every Sunday. -/
+-- (44a)
 theorem past_time_on_every_sunday
     (h : ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
     ∃ t, ∀ t', sunday t' → t ≤ t' :=
   let ⟨t, _, h⟩ := h; ⟨t, fun t' ht' ↦ (h t' ht').1⟩
 
-/-- With the quantifier over the Past (44b) it entails that every Sunday contains a past time. -/
+-- (44b)
 theorem every_sunday_contains_past_time
     (h : ∀ t', sunday t' → ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ work t) σ) :
     ∀ t', sunday t' → ∃ t, t.Precedes σ ∧ t ≤ t' :=
@@ -258,13 +254,12 @@ theorem restrictedPast_Iic_iff_prfv (h : Perspective.Presup Allen.precedes σ t�
   ⟨fun ⟨t, _, ht, hQ⟩ ↦ ⟨t, ht, hQ⟩, fun ⟨t, ht, hQ⟩ ↦ ⟨t, Perspective.presup_precedes.2
     (NonemptyInterval.precedes_of_le_of_precedes ht (Perspective.presup_precedes.1 h)), ht, hQ⟩⟩
 
-/-- The negation of the unrestricted Past (46b) entails that of the restricted Past (54). -/
+-- (46b), (54)
 theorem not_restrictedPast_of_not_past (h : ¬ ◇[Perspective.toSetRel Allen.precedes] Q σ) :
     ¬ RestrictedPast K Q σ :=
   fun ⟨t, hts, _, hQ⟩ ↦ h ⟨t, hts, hQ⟩
 
-/-- The converse fails, so (46b) is too strong, as when the stove was turned off before the
-interval the speaker has in mind. -/
+-- (46b)
 theorem exists_not_restrictedPast_past :
     ∃ (σ : NonemptyInterval ℤ) (K : Set (NonemptyInterval ℤ)) (Q : NonemptyInterval ℤ → Prop),
       ¬ RestrictedPast K Q σ ∧ ◇[Perspective.toSetRel Allen.precedes] Q σ := by
@@ -273,8 +268,7 @@ theorem exists_not_restrictedPast_past :
   rintro ⟨t, -, hK, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 hK).1 (by decide)
 
-/-- The sentence *It didn't rain today* with negation over the indefinite Past (58) entails its
-Perfective analysis (59) at any past reference time today. -/
+-- (58), (59)
 theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.toSetRel Allen.precedes]
       (fun t ↦ t ≤ today ∧ rain w t) σ)
     (h₅ : Perspective.Presup Allen.precedes σ t₅) (h₅' : t₅ ≤ today) : t₅ ∉ PRFV rain w :=
@@ -294,8 +288,7 @@ theorem exists_not_prfv_past :
   rintro ⟨t, ht, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 ht).2 (by decide)
 
-/-- With the reference time as long as possible, containing every past subinterval of today,
-the referential analysis (59) is the indefinite one (58). -/
+-- (59), (58)
 theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.Precedes σ → t ≤ t₅)
     (h₅ : Perspective.Presup Allen.precedes σ t₅) (h₅' : t₅ ≤ today) :
     t₅ ∉ PRFV rain w ↔ ¬ ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ today ∧ rain w t) σ :=
@@ -310,8 +303,7 @@ section Scope
 
 variable {X : Type*} (boot : X → Prop) (polish : X → T → Prop)
 
-/-- *John polished every boot* with the Past over the quantifier entails the reading with the
-quantifier over the Past (61). -/
+-- (61)
 theorem forall_past_of_past_forall
     (h : ◇[toSetRel ⟦past⟧] (fun t ↦ ∀ x, boot x → polish x t) s) :
     ∀ x, boot x → ◇[toSetRel ⟦past⟧] (polish x) s :=
@@ -380,15 +372,13 @@ theorem anaphoric_report_iff (Dox : T → SetRel W W) {five six : T} (hne : five
   · rintro ⟨hs, he⟩
     exact ⟨five, hs, rfl, fun w' hw' ↦ absurd hw' (he w')⟩
 
-/-- With the complement a property of times (78), (79), Mary at five consistently locates herself
-at six. -/
+-- (78), (79)
 theorem exists_lewis_report :
     ∃ Dox : SetRel (Index Unit ℤ) (Index Unit ℤ), (∃ i, ((), 5) ~[Dox] i) ∧
       ◇[toSetRel ⟦past⟧] (fun t ↦ t = 5 ∧ □[Dox] (fun i ↦ i.time = 6) ((), t)) 7 :=
   ⟨{p | p.2.time = 6}, ⟨((), 6), rfl⟩, 5, by decide, rfl, fun _ h ↦ h⟩
 
-/-- In (82) *would* binds the relative-clause tense, so the fish may be alive only after the speech
-time. -/
+-- (82)
 theorem exists_bound_relative_after_speech :
     ∃ (Dox : SetRel (Index Unit ℤ) (Index Unit ℤ)) (fish : Unit → Prop)
       (alive buy : Unit → ℤ → Prop),
@@ -408,8 +398,7 @@ section Before
 
 variable {W : Type*} (leave arrive : T → Prop)
 
-/-- With trivial historical alternatives, the *before* of [beaver-condoravdi-2003] makes *Mary left
-before John arrived* (92) mean that Mary left before John's earliest past arrival. -/
+-- (92) [beaver-condoravdi-2003]
 theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
     (h : ∀ t, alt ⟨w, t⟩ = {w}) :
     BeaverCondoravdi2003.before {i : Index W T | i.time < s ∧ leave i.time}
@@ -418,8 +407,7 @@ theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
   rw [BeaverCondoravdi2003.before, BeaverCondoravdi2003.connective_iff_uniform_of_eq_singleton h]
   simp only [BeaverCondoravdi2003.uniform, Set.mem_ofPred_eq, Kaplan.Index.time_mk]
 
-/-- With *will* in the adjunct (84e), the relevant times have no earliest member in dense time, so
-EARLIEST is undefined. -/
+-- (84e)
 theorem not_exists_earliest_will [DenselyOrdered T] :
     ¬ ∃ m, IsLeast {t | s < t ∧ ∃ t', t < t' ∧ leave t'} m := by
   rintro ⟨m, ⟨hsm, t', hmt, hl⟩, hmin⟩

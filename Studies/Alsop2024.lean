@@ -113,8 +113,7 @@ def LiterallyTrue (s : State) : Prop := ∃ p, p.utt = .mayAny ∧ meaning p s
 
 instance : DecidablePred LiterallyTrue := fun _ => inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
-/-- The strong parse (34b) entails the weak parse (34a), so *may any* is literally true
-exactly where Szabolcsi's meaning holds. -/
+-- (34b), (34a)
 theorem literallyTrue_iff (s : State) : LiterallyTrue s ↔ meaning .anyA s := by
   revert s; decide
 
@@ -209,8 +208,7 @@ def observedLiteral (row : Datum) : Bool :=
   | some j => j == .acceptable
   | none => row.judgment == .acceptable
 
-/-- In every fixed-state scenario, *may any* is literally true and has the exclusiveness reading
-(34b) exactly where the judgments say. -/
+-- (34b)
 theorem rows_agree : ∀ row ∈ Examples.all, ∀ s ∈ rowState row,
     (LiterallyTrue s ↔ observedLiteral row = true) ∧
       ∀ j ∈ row.readings.lookup "exclusiveness", (meaning .anyB s ↔ j = .acceptable) := by

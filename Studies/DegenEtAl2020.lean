@@ -196,7 +196,6 @@ theorem S1_real_div (hα : 0 ≤ α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u
     ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
     L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
-/-- The speaker prefers the expression of greater utility. -/
 theorem S1_real_lt_iff (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
     (hu' : 0 < m u' o) :
     (S1 α C m o).real {u} < (S1 α C m o).real {u'} ↔

@@ -249,8 +249,7 @@ theorem sat_congr : ∀ (φ : Formula) {g : ℕ → E} {e e' : Stream' E},
       exact h _ (by simp only [domain, range] at hi ⊢; omega)
     · simp only [domain, range] at hi ⊢; omega
 
-/-- Implication satisfaction, Observation 3: every witness sequence for the antecedent extends
-to one for the consequent, so the antecedent's existentials are read universally. -/
+-- Observation 3
 theorem sat_impl (g : ℕ → E) (e : Stream' E) (φ ψ : Formula) :
     sat M g e (φ ⟶ ψ) ↔
       ∀ c : List E, c.length = φ.domain → sat M g (c ++ₛ e) φ →
@@ -332,14 +331,13 @@ end Formula
 
 open Formula
 
-/-- (6) *There is a boy in the garden. He sneezes.* is satisfied by a sequence headed by a boy
-in the garden who sneezes. -/
+-- (6)
 theorem example6 (M : Model E) (g : ℕ → E) (e : Stream' E) :
     sat M g e (exists_ 0 (atom "BG" [.var 0]) ⋀ atom "S" [.pron 0]) ↔
       M.interp "BG" [e.get 0] ∧ M.interp "S" [e.get 0] := by
   simp [sat, domain, Term.eval]
 
-/-- (9) is equivalent to its pronoun-free rendering `∃y∃x(((Mx ∧ Wx) ∧ Dy) ∧ (Fyx ∧ Cxy))`. -/
+-- (9)
 theorem example9 :
     Equiv ((exists_ 0 (atom "M" [.var 0] ⋀ atom "W" [.var 0]) ⋀ exists_ 1 (atom "D" [.var 1])) ⋀
         (atom "F" [.pron 0, .pron 1] ⋀ atom "C" [.pron 1, .pron 0]))
@@ -348,16 +346,14 @@ theorem example9 :
   intro E M g e
   simp [sat, domain, Term.eval, Stream'.get_drop]
 
-/-- The donkey antecedent (12) is satisfied by the sequence of a donkey and, before it, a
-farmer who owns it. -/
+-- (12)
 theorem sat_donkey_antecedent (M : Model E) (g : ℕ → E) (e : Stream' E) :
     sat M g e (exists_ 0 (atom "F" [.var 0] ⋀
         exists_ 1 (atom "D" [.var 1] ⋀ atom "O" [.var 0, .var 1]))) ↔
       M.interp "F" [e.get 0] ∧ M.interp "D" [e.get 1] ∧ M.interp "O" [e.get 0, e.get 1] := by
   simp [sat, domain, Term.eval]
 
-/-- (12) The donkey sentence *If a farmer owns a donkey, he beats it* means the same as
-`∀x∀y((Fx ∧ (Dy ∧ Oxy)) → Bxy)`. -/
+-- (12)
 theorem example12 :
     Equiv (exists_ 0 (atom "F" [.var 0] ⋀ exists_ 1 (atom "D" [.var 1] ⋀
           atom "O" [.var 0, .var 1])) ⟶ atom "B" [.pron 0, .pron 1])
@@ -410,7 +406,7 @@ private def counterModel : Model (Fin 2) where
 /-- The sequence `0, 1, 1, …` of the counterexamples. -/
 private def counterSeq : Stream' (Fin 2) := λ i => if i = 0 then 0 else 1
 
-/-- Repeating (14) *She is seeing a woman* yields a stronger text than saying it once. -/
+-- (14)
 theorem not_idempotent :
     let φ := exists_ 1 (atom "W" [.var 1] ⋀ atom "S" [.pron 0, .var 1])
     ¬ Equiv (φ ⋀ φ) φ := by
@@ -439,15 +435,14 @@ def Entails (φ ψ : Formula) : Prop :=
 
 @[inherit_doc] scoped infix:50 " ⊨ " => Entails
 
-/-- Conservative entailment, Observation 10: on a pronoun-free conclusion dynamic entailment is
-the classical preservation of truth. -/
+-- Observation 10
 theorem entails_iff_of_pronounFree {φ ψ : Formula} (hψ : ψ.PronounFree) :
     φ ⊨ ψ ↔ ∀ {E : Type} (M : Model E) (g : ℕ → E) (e : Stream' E),
       IsTrue M g e φ → IsTrue M g e ψ :=
   ⟨λ h _ M g e ⟨c, hc, hsat⟩ => (isTrue_congr M hψ g _ e).1 (h M g e c hc hsat),
     λ h _ M g e c hc hsat => (isTrue_congr M hψ g e _).1 (h M g e ⟨c, hc, hsat⟩)⟩
 
-/-- The deduction theorem, Observation 11. -/
+-- Observation 11
 theorem entails_conj_iff (φ χ ψ : Formula) : (φ ⋀ χ) ⊨ ψ ↔ φ ⊨ (χ ⟶ ψ) := by
   constructor
   · intro h E M g e c hc hφ
@@ -472,8 +467,7 @@ theorem entails_conj_iff (φ χ ψ : Formula) : (φ ⋀ χ) ⊨ ψ ↔ φ ⊨ (�
     rw [Stream'.nil_append_stream, sat_impl] at himpl
     exact himpl _ ht hχ
 
-/-- Heim's inference (15) from *there is a man from Athens here* to *he is not from Rhodes* is
-valid. -/
+-- (15)
 theorem heim :
     ((exists_ 0 (atom "M" [.var 0] ⋀ atom "A" [.var 0]) ⟶ ∼(atom "R" [.pron 0])) ⋀
       exists_ 0 (atom "M" [.var 0] ⋀ atom "A" [.var 0])) ⊨ (∼(atom "R" [.pron 0])) := by
@@ -550,8 +544,7 @@ theorem sat_update (M : Model E) : ∀ (φ : Formula) (n j : ℕ) {g : ℕ → E
       ← Stream'.append_append_stream (c.drop ψ.domain) c']
     exact sat_update M ψ n (j + φ.domain) ht (by simp [hdr, hc', Nat.add_comm]) hd
 
-/-- Acute identity, Observation 12: a formula entails itself once its pronouns are updated for
-its own witnesses. -/
+-- Observation 12
 theorem entails_update_self (φ : Formula) : φ ⊨ φ.update φ.domain 0 := by
   intro E M g e c hc hsat
   refine ⟨c, by rw [domain_update, hc], ?_⟩
@@ -633,8 +626,7 @@ private theorem update_apply_world (g : ℕ → W → E) (x : ℕ) (b : W → E)
     (λ y => Function.update g x b y w) = Function.update (λ y => g y w) x (b w) := by
   funext y; simp only [Function.update_apply]; split_ifs <;> rfl
 
-/-- Proper contents, Observation 15: the content of a formula is the set of worlds at which
-the extensional model, assignment and witnesses satisfy it. -/
+-- Observation 15
 theorem content_eq : ∀ (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W → E)),
     content M g γ φ = {w | Formula.sat (M w) (λ x => g x w) (γ.map (· w)) φ}
   | .atom _ _, _, _ => rfl
@@ -653,8 +645,7 @@ theorem content_eq : ∀ (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W �
     simp only [content, content_eq φ, content_eq ψ, Set.mem_inter_iff, Set.mem_ofPred_eq,
       Formula.sat, Stream'.drop_map]
 
-/-- Proper update, Observation 16: an update is intersection with the content, the classical
-`CCP.up`. -/
+-- Observation 16
 theorem update_eq : ∀ (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W → E)) (τ : Set W),
     update M g γ τ φ = DynamicSemantics.CCP.up (content M g γ φ) τ
   | .atom _ _, _, _, _ => rfl
@@ -669,8 +660,7 @@ theorem update_eq : ∀ (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W �
     simp only [update, content, update_eq φ, update_eq ψ, DynamicSemantics.CCP.up,
       Set.inter_assoc]
 
-/-- Proper support, Observation 17: a state supports a formula iff it is included in the
-formula's content. -/
+-- Observation 17
 theorem supports_iff : ∀ (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W → E)) (σ : Set W),
     Supports M g γ σ φ ↔ σ ⊆ content M g γ φ
   | .atom _ _, _, _, _ => Iff.rfl
@@ -686,7 +676,7 @@ theorem supports_iff : ∀ (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W
   | .conj φ ψ, g, γ, σ => by
     simp only [Supports, content, supports_iff φ, supports_iff ψ, Set.subset_inter_iff]
 
-/-- Support is a fixed point of update, the second half of Observation 17. -/
+-- Observation 17
 theorem supports_iff_update_eq (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W → E))
     (σ : Set W) : Supports M g γ σ φ ↔ update M g γ σ φ = σ := by
   rw [supports_iff, update_eq]
@@ -699,8 +689,7 @@ theorem supports_neg_iff (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W �
     Set.mem_ofPred_eq, Set.eq_empty_iff_forall_notMem, Set.mem_inter_iff, not_and, not_exists]
   exact ⟨λ h c hc w hw => h w hw c hc, λ h w hw c hc => h c hc w hw⟩
 
-/-- Supported updates, Observation 18: a hearer who accepts what a speaker's information
-supports keeps every world they shared. -/
+-- Observation 18
 theorem inter_subset_update {φ : Formula} {g : ℕ → W → E} {γ : Stream' (W → E)} {σ : Set W}
     (h : Supports M g γ σ φ) (τ : Set W) : σ ∩ τ ⊆ update M g γ τ φ := by
   rw [update_eq, DynamicSemantics.CCP.up, Set.inter_comm]

@@ -97,7 +97,7 @@ variable [LawfulLift δ Δ] (ia : Atom → δ) (ie : ℕ → δ)
 
 /-! ### Facts 1 and 2 -/
 
-/-- Fact 1: a lawful lifted interpretation validates double-negation elimination. -/
+-- Fact 1
 theorem liftInterp_neg_neg (φ : Formula Atom) :
     liftInterp (Δ := Δ) ia ie (.neg (.neg φ)) = liftInterp ia ie φ :=
   LawfulLift.neg_neg (liftInterp ia ie φ)
@@ -118,7 +118,7 @@ inductive DoubleNegFree : Formula Atom → Prop where
   | neg_conj {φ ψ : Formula Atom} :
     DoubleNegFree φ → DoubleNegFree ψ → DoubleNegFree (.neg (.conj φ ψ))
 
-/-- Fact 2.i: a negation-free formula's lifted meaning is the lift of its substrate meaning. -/
+-- Fact 2
 theorem liftInterp_eq_up_interp_of_negFree {φ : Formula Atom} (h : NegFree φ) :
     liftInterp (Δ := Δ) ia ie φ = self.up (interp ia ie φ) := by
   induction h with
@@ -130,8 +130,7 @@ theorem liftInterp_eq_up_interp_of_negFree {φ : Formula Atom} (h : NegFree φ) 
     rw [ihφ, ihψ, LawfulLift.down_up, LawfulLift.down_up]
     rfl
 
-/-- Fact 2.ii: a double-negation-free formula's lifted meaning lowers to its substrate
-meaning. -/
+-- Fact 2
 theorem down_liftInterp_eq_interp_of_doubleNegFree {φ : Formula Atom} (h : DoubleNegFree φ) :
     self.down (liftInterp ia ie φ) = interp ia ie φ := by
   induction h with
@@ -221,8 +220,7 @@ theorem encodeCanonical_swap (s : δ ⊕ δ) :
     show self.up m = self.neg (self.neg (self.up m))
     rw [LawfulLift.neg_neg]
 
-/-- Fact 4 as factorization: every lawful lifted interpretation is the encoding of the
-canonical form, which depends on the substrate alone. -/
+-- Fact 4
 theorem liftInterp_eq_encodeCanonical (φ : Formula Atom) :
     liftInterp (Δ := Δ) ia ie φ = encodeCanonical Δ (canonicalize ia ie φ) := by
   induction φ with
@@ -243,7 +241,7 @@ theorem liftInterp_eq_of_canonicalize_eq {φ ψ : Formula Atom}
     liftInterp (Δ := Δ) ia ie φ = liftInterp ia ie ψ := by
   rw [liftInterp_eq_encodeCanonical, liftInterp_eq_encodeCanonical, h]
 
-/-- The corollary of Fact 4: two lawful lifts of one substrate lower every formula alike. -/
+-- Fact 4
 theorem down_liftInterp_eq_down_liftInterp (Δ' : Type*) [Lift δ Δ'] [LawfulLift δ Δ']
     (φ : Formula Atom) :
     Lift.down (liftInterp (Δ := Δ) ia ie φ) = Lift.down (liftInterp (Δ := Δ') ia ie φ) := by
@@ -452,7 +450,7 @@ instance : LawfulLift δ (Canonical δ) where
 
 variable {Atom : Type*} (ia : Atom → δ) (ie : ℕ → δ)
 
-/-- Fact 3, one inclusion: every lifted meaning is a tagged substrate meaning. -/
+-- Fact 3
 theorem liftInterp_eq (φ : Formula Atom) :
     ∃ (b : Bool) (ψ : Formula Atom),
       liftInterp (Δ := Canonical δ) ia ie φ = ⟨b, interp ia ie ψ⟩ := by
@@ -484,8 +482,7 @@ theorem canonicalize_guard (φ : Formula Atom) :
     rfl
 
 include hone hid in
-/-- With a right identity for conjunction, every tagged meaning lifts the guarded formula or its
-negation (Fact 3). -/
+-- Fact 3
 theorem exists_liftInterp_eq (b : Bool) (ψ : Formula Atom) :
     ∃ φ, liftInterp (Δ := Canonical δ) ia ie φ = ⟨b, interp ia ie ψ⟩ := by
   cases b

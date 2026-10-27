@@ -313,8 +313,7 @@ variable {I} {o : Order} {c : Set (Assign V Δ E × W)} {g : Assign V Δ E} {w :
       (fun a ↦ p.Realize I (g.pair δ x a) w ∧ q.Realize I (g.pair δ x a) w) :=
   Iff.rfl
 
-/-- A quantifier is satt iff, at each individual's paired assignment, its restrictor and junction
-are satt and familiar variables keep their values (p. 1114). -/
+-- p. 1114
 theorem satt_quant {Q : Quantifier.NumberTree} {δ : Δ} :
     (quant Q x δ p q).Satt I o c g w ↔ ∀ a,
       p.Satt I o c (g.pair δ x a) w ∧
@@ -357,15 +356,13 @@ theorem satt_disj :
 
 @[simp] theorem satt_neg : (neg p).Satt I o c g w ↔ p.Satt I o c g w := Iff.rfl
 
-/-- An indefinite is satt iff its body is satt somewhere and, if the indefinite is true, its body is
-true and satt (p. 1114). -/
+-- p. 1114
 theorem satt_indef :
     (indef x p q).Satt I o c g w ↔ (∃ g', (conj p q).Satt I o c g' w) ∧
       ((indef x p q).Realize I g w → (conj p q).Realize I g w ∧ (conj p q).Satt I o c g w) :=
   Iff.rfl
 
-/-- A definite is satt iff its restrictor leaves the context unchanged and, if the restrictor is
-true, its scope is satt at `cᵖ` (p. 1114). -/
+-- p. 1114
 theorem satt_iota :
     (iota x p q).Satt I o c g w ↔
       update I o c p = c ∧ (p.Realize I g w → q.Satt I o (update I o c p) g w) :=
@@ -416,21 +413,20 @@ theorem posExt_iota_of_update_eq (h : update I o c p = c) :
     Set.mem_inter_iff, Set.mem_ofPred_eq, true_and]
   tauto
 
-/-- A definite whose restrictor changes the context is satt nowhere (p. 1104). -/
+-- p. 1104
 theorem posExt_iota_eq_empty (h : update I o c p ≠ c) :
     posExt ((iota x p q).toTrivalent I o c) = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hi ↦
     h ((satt_iota (x := x) (q := q)).1 (toTrivalent_eq_one_iff.1 hi).1).1
 
-/-- Double negation changes neither dimension of a meaning (p. 1109). -/
+-- p. 1109
 @[simp] theorem toTrivalent_neg_neg :
     (neg (neg p)).toTrivalent I o c = p.toTrivalent I o c :=
   funext fun _ ↦ SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp)
 
 /-! ### The update calculus -/
 
-/-- A conjunction updates in sequence, the reason the paper's points carry over to sequences
-(fn. 20). -/
+-- fn. 20
 theorem update_conj : update I .asymmetric c (conj p q) =
     update I .asymmetric (update I .asymmetric c p) q := by
   rw [update_eq_inter_posExt, posExt_conj, ← Set.inter_assoc, ← update_eq_inter_posExt,
@@ -452,7 +448,7 @@ theorem update_iota_of_update_eq (h : update I .asymmetric c p = c) :
   rw [update_conj, h, update_eq_inter_posExt, posExt_iota_of_update_eq h,
     ← Set.inter_assoc, Set.inter_eq_left.2 hp, ← update_eq_inter_posExt]
 
-/-- A definite whose restrictor is not idle on the context empties it (p. 1104). -/
+-- p. 1104
 theorem update_iota_eq_empty (h : update I o c p ≠ c) : update I o c (iota x p q) = ∅ := by
   rw [update_eq_inter_posExt, posExt_iota_eq_empty h, Set.inter_empty]
 
@@ -564,14 +560,13 @@ theorem posExt_indef_atom₁ :
   rw [posExt_indef_of_ne_bot fun _ _ ↦ ne_bot_of_realize_atom₁, posExt_conj, posExt_atom₁,
     posExt_atom₁, valuedIn_inter_valuedIn]
 
-/-- Updating with `ɜx(Fx, Gx)` keeps the points whose `x` is an `F` and a `G` (p. 1103). -/
+-- p. 1103
 theorem update_indef_atom₁ :
     update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)) =
       c ∩ valuedIn x (extension I F ⊓ extension I G) := by
   rw [update_eq_inter_posExt, posExt_indef_atom₁]
 
-/-- Once some world has an `F` that is `G`, the null context does not admit `ɜx(Fx, Gx)` in
-Stalnaker's sense (p. 1103). -/
+-- p. 1103
 theorem not_univ_subset_support_indef_atom₁
     (h : ∃ w, (extension I F w ∩ extension I G w).Nonempty) :
     ¬ Set.univ ⊆ Function.support (toTrivalent I .asymmetric (Set.univ : Set (Assign V Δ E × W))
@@ -584,8 +579,7 @@ theorem not_univ_subset_support_indef_atom₁
     ⟨a, realize_atom₁.2 ⟨a, hF, by simp⟩, realize_atom₁.2 ⟨a, hG, by simp⟩⟩
   exact ne_bot_of_realize_atom₁ (realize_conj_of_satt_indef hs hr).1 rfl
 
-/-- After `ɜx(Fx, Gx)`, the definite `ιx(Fx, Hx)` is familiar, and true and satt where `x` is an
-`F` and an `H` (p. 1104). -/
+-- p. 1104
 theorem posExt_iota_after_indef_atom₁ :
     posExt ((iota x (atom₁ F x) (atom₁ H x)).toTrivalent I
         .asymmetric (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)))) =
@@ -597,8 +591,7 @@ theorem posExt_iota_after_indef_atom₁ :
   rw [posExt_iota_of_update_eq (update_atom₁_of_subset hc), setOf_realize_atom₁,
     posExt_atom₁, valuedIn_inter_valuedIn]
 
-/-- After `ɜx(Fx, Gx)`, the pronoun `ιx(⊤x, Hx)` is familiar, and true and satt where `x` is an
-`H` (p. 1104). -/
+-- p. 1104
 theorem posExt_iota_top_after_indef_atom₁ :
     posExt ((iota x (top x) (atom₁ H x)).toTrivalent I
         .asymmetric (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)))) =
@@ -616,8 +609,7 @@ theorem satt_iota_top_after_indef_atom₁ : (iota x (top x) (atom₁ H x)).Satt 
     rw [update_indef_atom₁] at hi; exact valuedIn_mono inf_le_left hi.2]
   exact ⟨rfl, satt_atom₁.2⟩
 
-/-- *There is a cat. The cat is tabby.* keeps the points whose `x` is a cat that exists and is
-tabby (p. 1104). -/
+-- p. 1104
 theorem update_indef_then_the :
     update I .asymmetric (update I .asymmetric c (indef x (atom₁ F x) (atom₁ G x)))
       (iota x (atom₁ F x) (atom₁ H x)) =
@@ -635,8 +627,7 @@ theorem update_indef_then_it :
 
 /-! ### Negated indefinites (§5.5) -/
 
-/-- A negated indefinite is true and satt where the negated existential is true, at the worlds
-with no `F` that is `G` (pp. 1106–1107). -/
+-- pp. 1106–1107
 theorem posExt_neg_indef_atom₁ [Nonempty E] :
     posExt ((neg (indef x (atom₁ F x) (atom₁ G x))).toTrivalent I .asymmetric c) =
       {i | extension I F i.2 ∩ extension I G i.2 = ∅} := by
@@ -645,8 +636,7 @@ theorem posExt_neg_indef_atom₁ [Nonempty E] :
     realize_indef_atom₁, Set.mem_ofPred_eq, Set.not_nonempty_iff_eq_empty]
   exact ⟨And.right, fun hr ↦ ⟨fun h ↦ absurd hr h.ne_empty, hr⟩⟩
 
-/-- If some world has no `F` that is `G`, updating the null context with `¬ɜx(Fx, Gx)` and then a
-pronoun on `x` leaves nothing (19) (p. 1106). -/
+-- (19), p. 1106
 theorem update_null_neg_indef_then_it (h : ∃ w, extension I F w ∩ extension I G w = ∅) :
     update I .asymmetric (update I .asymmetric (Set.univ : Set (Assign V Δ E × W))
       (neg (indef x (atom₁ F x) (atom₁ G x))))
@@ -694,7 +684,7 @@ theorem boundEntails_iff : BoundEntails I o p q ↔
 
 instance (o : Order) : Std.Refl (BoundEntails (V := V) (Δ := Δ) I o) := ⟨BoundEntails.refl o⟩
 
-/-- The bounded logic extends the logic (p. 1109). -/
+-- p. 1109
 theorem LogicallyEntails.boundEntails (h : LogicallyEntails I p q) (o : Order) :
     BoundEntails I o p q :=
   boundEntails_iff.2 fun _ g w _ _ ↦ h g w
@@ -754,22 +744,22 @@ theorem boundEntails_ex20a_ex20c (hF : ∀ g w, F.Realize I g w → g x ≠ ⊥)
   obtain ⟨a, haF, haG, -⟩ := hr
   exact ⟨⟨a, haF, haG⟩, hF g w hFg, hH⟩
 
-/-- (20-a) and (20-b) are bound-equivalent when the restrictor's truth values `x` (p. 1108). -/
+-- (20-a), (20-b), p. 1108
 theorem boundEquiv_ex20a_ex20b (hF : ∀ g w, F.Realize I g w → g x ≠ ⊥) :
     BoundEquiv I .asymmetric (ex20a x F G H) (ex20b x F G H) :=
   ⟨boundEntails_ex20a_ex20b, boundEntails_ex20b_ex20a hF⟩
 
-/-- (20-b) and (20-c) are bound-equivalent when the restrictor's truth values `x` (p. 1108). -/
+-- (20-b), (20-c), p. 1108
 theorem boundEquiv_ex20b_ex20c (hF : ∀ g w, F.Realize I g w → g x ≠ ⊥) :
     BoundEquiv I .asymmetric (ex20b x F G H) (ex20c x F G H) :=
   ⟨boundEntails_ex20b_ex20c hF, boundEntails_ex20c_ex20b⟩
 
-/-- (20-a) and (20-c) are bound-equivalent when the restrictor's truth values `x` (p. 1108). -/
+-- (20-a), (20-c), p. 1108
 theorem boundEquiv_ex20a_ex20c (hF : ∀ g w, F.Realize I g w → g x ≠ ⊥) :
     BoundEquiv I .asymmetric (ex20a x F G H) (ex20c x F G H) :=
   ⟨boundEntails_ex20a_ex20c hF, boundEntails_ex20c_ex20a⟩
 
-/-- At a point of its context, (20-a) bound-entails (20-c) for any formulae. -/
+-- (20-a), (20-c)
 theorem realize_ex20c_of_realize_ex20a (hc : (g, w) ∈ c)
     (hs : (ex20a x F G H).Satt I .asymmetric c g w)
     (hs' : (ex20c x F G H).Satt I .asymmetric c g w) (hr : (ex20a x F G H).Realize I g w) :
@@ -782,7 +772,7 @@ theorem realize_ex20c_of_realize_ex20a (hc : (g, w) ∈ c)
       ⟨⟨hFg, hG⟩, (hw ⟨a, haF, haG, haH⟩).2.1, (hw ⟨a, haF, haG, haH⟩).2.2.1⟩⟩
   exact ⟨⟨a, haF, haG⟩, ((satt_iota.1 hs'.2).1.ge hmem).2.1, hH⟩
 
-/-- At a point of its context, (20-b) bound-entails (20-c) for any formulae. -/
+-- (20-b), (20-c)
 theorem realize_ex20c_of_realize_ex20b (hc : (g, w) ∈ c)
     (hs : (ex20b x F G H).Satt I .asymmetric c g w)
     (hs' : (ex20c x F G H).Satt I .asymmetric c g w) (hr : (ex20b x F G H).Realize I g w) :
@@ -791,7 +781,7 @@ theorem realize_ex20c_of_realize_ex20b (hc : (g, w) ∈ c)
 
 variable (F G H : L.Relations 1)
 
-/-- (20-a) is true and satt exactly where `x` is an `F`, a `G` and an `H` (p. 1108). -/
+-- (20-a), p. 1108
 theorem posExt_ex20a :
     posExt ((ex20a x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
@@ -799,23 +789,21 @@ theorem posExt_ex20a :
     posExt_conj, posExt_atom₁, posExt_atom₁, posExt_atom₁, ← Set.inter_assoc,
     valuedIn_inter_valuedIn, valuedIn_inter_valuedIn]
 
-/-- So is (20-b) (p. 1108). -/
+-- (20-b), p. 1108
 theorem posExt_ex20b :
     posExt ((ex20b x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
   rw [ex20b, posExt_conj, posExt_indef_atom₁, posExt_iota_after_indef_atom₁,
     valuedIn_inter_valuedIn, ← inf_inf_distrib_left, ← inf_assoc]
 
-/-- (20-c) is satt and true exactly where `x` is an `F` that is `G` and `H`, so (20-a)–(20-c) update
-alike (p. 1108, footnote 23). -/
+-- (20-c), (20-a), p. 1108, footnote 23
 theorem posExt_ex20c :
     posExt ((ex20c x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
   rw [ex20c, posExt_conj, posExt_indef_atom₁, posExt_iota_top_after_indef_atom₁,
     valuedIn_inter_valuedIn]
 
-/-- The formulations of (20) differ, since where some `F` is `G` and `H` but `x` is not `H`, (20-a)
-is true and (20-b) false (p. 1108). -/
+-- (20), (20-a), (20-b), p. 1108
 theorem realize_ex20a_and_not_realize_ex20b
     (h : (extension I F w ∩ extension I G w ∩ extension I H w).Nonempty) {b : E}
     (hb : g x = b) (hH : b ∉ extension I H w) :
@@ -832,27 +820,26 @@ end OpenScope
 
 section Classicality
 
-/-- `¬¬p` and `p` are logically, hence bound-, equivalent (p. 1109). -/
+-- p. 1109
 theorem boundEquiv_neg_neg : BoundEquiv I o (neg (neg p)) p :=
   ⟨LogicallyEntails.boundEntails (fun _ _ ↦ by simp) o,
     LogicallyEntails.boundEntails (fun _ _ ↦ by simp) o⟩
 
-/-- `¬p ∨ q` and `¬p ∨ (p & q)` are logically, hence bound-, equivalent (p. 1109). -/
+-- p. 1109
 theorem boundEquiv_disj_neg_conj : BoundEquiv I o (disj (neg p) q) (disj (neg p) (conj p q)) :=
   ⟨LogicallyEntails.boundEntails (fun _ _ ↦ by simp; tauto) o,
     LogicallyEntails.boundEntails (fun _ _ ↦ by simp; tauto) o⟩
 
 variable (F G H : L.Relations 1)
 
-/-- A doubly negated indefinite licenses a subsequent definite as the indefinite does (p. 1109). -/
+-- p. 1109
 theorem update_neg_neg_indef_then_the :
     update I .asymmetric (update I .asymmetric c (neg (neg (indef x (atom₁ F x) (atom₁ G x)))))
         (iota x (atom₁ F x) (atom₁ H x)) =
       c ∩ valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
   rw [update_neg_neg, update_indef_then_the]
 
-/-- The bathroom disjunction is true and satt exactly where Susie is childless or `x` is her child
-at boarding school (p. 1109). -/
+-- p. 1109
 theorem posExt_bathroom [Nonempty E] :
     posExt ((disj (neg (indef x (atom₁ F x) (atom₁ G x)))
         (iota x (atom₁ F x) (atom₁ H x))).toTrivalent I .asymmetric c) =
@@ -888,8 +875,7 @@ theorem posExt_bathroom [Nonempty E] :
       · exact ⟨fun a hF hG ↦ (hA a hF hG).elim, .inl hA⟩
       · exact ⟨fun _ _ _ ↦ hFG, .inr ⟨hFG.1, hH⟩⟩
 
-/-- (16-a) *Either there isn't a bathroom, or it is upstairs* is felicitous in the null context (p.
-1105). -/
+-- (16-a), p. 1105
 theorem felicitous_bathroom [Nonempty W] [Nonempty E] : Felicitous I .asymmetric Set.univ
     (disj (neg (indef x (atom₁ F x) (atom₁ G x))) (iota x (top x) (atom₁ H x)) :
       Formula L V Δ) := by
@@ -1002,13 +988,12 @@ def ex22b (Q : Quantifier.NumberTree) : Formula L V Δ :=
 
 variable {Pa Ch Of Lv x y δ} {Q : Quantifier.NumberTree}
 
-/-- (21-b) is satt only if `y` is valued at every point of the context where `x` is a parent (p.
-1111). -/
+-- (21-b), p. 1111
 theorem familiar_of_satt_ex21b (a : E) (h : (ex21b Pa Lv x y δ Q).Satt I o c g w) :
     ∀ j ∈ c, (atom₁ Pa x).Realize I j.1 j.2 → j.1 y ≠ ⊥ := fun j hj hP ↦
   ((Order.junct_right (h a).2.1).1 j ⟨hj, hP, satt_atom₁.2 (ne_bot_of_realize_atom₁ hP)⟩).1
 
-/-- So in the null context (21-b) is infelicitous once some world has a parent (p. 1111). -/
+-- (21-b), p. 1111
 theorem not_felicitous_ex21b (hxy : x ≠ y) (hP : ∃ (w : W) (a : E), (I w).RelMap Pa ![a]) :
     ¬ Felicitous I o Set.univ (ex21b Pa Lv x y δ Q) := by
   rintro ⟨i, -, hi⟩
@@ -1050,8 +1035,7 @@ theorem satt_hasChildOf_iff [Nonempty E] :
   obtain ⟨a, b, ha, hb, -⟩ := realize_atom₂.1 (h hr).2
   exact hj g (by rw [ha]; exact Flat.coe_ne_bot) (by rw [hb]; exact Flat.coe_ne_bot)
 
-/-- (22-b) is satt, even with `y` novel, iff its pairing gives each individual with a child one of
-its children and fixes familiar variables (p. 1110). -/
+-- (22-b), p. 1110
 theorem satt_ex22b_iff [Nonempty E] :
     (ex22b Ch Of Lv x y δ Q).Satt I o c g w ↔ ∀ a,
       ((hasChildOf Ch Of x y).Realize I (g.pair δ x a) w →
@@ -1148,7 +1132,7 @@ theorem satt_bearsNothing_bot (r : Bool) (c) (w : Bool) :
 local notation "F₀" => bearsNothing false
 local notation "H₀" => bearsNothing true
 
-/-- (20-b) is satt and true at every context and the empty assignment. -/
+-- (20-b)
 theorem holds_ex20b (c) (w : Bool) :
     (ex20b 0 F₀ F₀ H₀).Satt I₂ .asymmetric c ⊥ w ∧ (ex20b 0 F₀ F₀ H₀).Realize I₂ ⊥ w :=
   ⟨⟨⟨⟨⊥, satt_bearsNothing_false _ _ _, satt_bearsNothing_false _ _ _⟩, fun _ ↦
@@ -1169,30 +1153,27 @@ theorem satt_ex20a (c) (w : Bool) : (ex20a 0 F₀ F₀ H₀).Satt I₂ .asymmetr
       realize_bearsNothing_bot _ _⟩, satt_bearsNothing_bot _ _ _, satt_bearsNothing_bot _ _ _,
       satt_bearsNothing_bot _ _ _⟩⟩
 
-/-- (20-c) is satt but false at the empty context and assignment, where its pronoun's variable
-is unvalued. -/
+-- (20-c)
 theorem satt_ex20c (w : Bool) : (ex20c 0 F₀ F₀ H₀).Satt I₂ .asymmetric ∅ ⊥ w :=
   ⟨(holds_ex20b ∅ w).1.1, fun _ hi ↦ absurd hi.1 (Set.notMem_empty _), fun h ↦ (h rfl).elim⟩
 
 theorem not_realize_ex20c (w : Bool) : ¬ (ex20c 0 F₀ F₀ H₀).Realize I₂ ⊥ w :=
   fun h ↦ h.2.1 rfl
 
-/-- (20-b) does not bound-entail (20-a) when the restrictor is `¬ɜy(⊤y, R(x, y))`. -/
+-- (20-b), (20-a)
 theorem not_boundEntails_ex20b_ex20a :
     ¬ BoundEntails I₂ .asymmetric (ex20b 0 F₀ F₀ H₀) (ex20a 0 F₀ F₀ H₀) :=
   fun h ↦ Bool.noConfusion <| (realize_ex20a_iff true).1 <|
     boundEntails_iff.1 h Set.univ ⊥ true (holds_ex20b _ _).1 (satt_ex20a _ _)
       (holds_ex20b Set.univ _).2
 
-/-- (20-a) does not bound-entail (20-c) for the same restrictor, though it does at points of the
-context. -/
+-- (20-a), (20-c)
 theorem not_boundEntails_ex20a_ex20c :
     ¬ BoundEntails I₂ .asymmetric (ex20a 0 F₀ F₀ H₀) (ex20c 0 F₀ F₀ H₀) :=
   fun h ↦ not_realize_ex20c false <|
     boundEntails_iff.1 h ∅ ⊥ false (satt_ex20a _ _) (satt_ex20c _) ((realize_ex20a_iff false).2 rfl)
 
-/-- Nor does (20-b) bound-entail (20-c), again at a point outside the empty context
-(`realize_ex20c_of_realize_ex20b`). -/
+-- (20-b), (20-c)
 theorem not_boundEntails_ex20b_ex20c :
     ¬ BoundEntails I₂ .asymmetric (ex20b 0 F₀ F₀ H₀) (ex20c 0 F₀ F₀ H₀) :=
   fun h ↦ not_realize_ex20c true <|

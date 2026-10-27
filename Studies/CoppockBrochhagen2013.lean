@@ -71,7 +71,7 @@ variable {W α : Type*} [Preorder α] {P : α → Set W}
 /-- The ranking of the answers of an indexed question by their index. -/
 abbrev ranking (P : α → Set W) : Set W → Set W → Prop := Relation.Map (· ≥ ·) P P
 
-/-- *At least* the answer for `a` is the union of the answers from `a` up (30). -/
+-- (30)
 theorem atLeast_map (hP : Function.Injective P) (a : α) :
     atLeast (ranking P) (range P) (P a) = ⋃ i ∈ Ici a, P i := by
   ext w
@@ -83,7 +83,7 @@ theorem atLeast_map (hP : Function.Injective P) (a : α) :
   · rintro ⟨i, hai, hw⟩
     exact ⟨i, hw, i, a, hai, rfl, rfl⟩
 
-/-- *At most* the answer for `a` excludes every answer not below `a` (31). -/
+-- (31)
 theorem atMost_map (hP : Function.Injective P) (a : α) :
     atMost (ranking P) (range P) (P a) = (⋃ i ∈ (Iic a)ᶜ, P i)ᶜ := by
   ext w
@@ -145,15 +145,14 @@ theorem atMost_oneSided (hμ : Function.Surjective μ) (a : α) :
     mem_Iic]
   exact ⟨fun h ↦ not_lt.1 fun hax ↦ h x hax le_rfl, fun h i hai hix ↦ (hai.trans_le hix).not_ge h⟩
 
-/-- *At most* weakens as the number grows, so *at most two* entails *at most three* (32). -/
+-- (32)
 theorem atMost_twoSided_mono (hμ : Function.Surjective μ) {a b : α} (hab : a ≤ b) :
     atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) ⊆
       atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ b) := by
   rw [atMost_twoSided hμ, atMost_twoSided hμ]
   exact preimage_mono (Iic_subset_Iic.2 hab)
 
-/-- On mutually exclusive answers *at least* widens its prejacent, as *at least an assistant
-professor* is true of a full professor (59). -/
+-- (59)
 theorem twoSided_ssubset_atLeast (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
     twoSided μ a ⊂ atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) := by
   rw [atLeast_twoSided hμ]
@@ -220,8 +219,7 @@ theorem sUnion_atMostInq : ⋃₀ atMostInq S C p = atMost S C p ∩ ⋃₀ C :=
   · rintro ⟨hmax, q, hq, hw⟩
     exact ⟨q, ⟨hq, hmax q hq hw⟩, hw, hmax⟩
 
-/-- Applying the choice-function entry (53) pointwise to a nonempty set of answers returns that
-set: every member is the value of some choice function. -/
+-- (53)
 theorem range_choice_apply {T : Set (Set W)} (hT : T.Nonempty) :
     range (fun f : {f : Set (Set W) → Set W // ∀ U : Set (Set W), U.Nonempty → f U ∈ U} ↦
       f.1 T) = T := by
@@ -236,8 +234,7 @@ theorem range_choice_apply {T : Set (Set W)} (hT : T.Nonempty) :
 
 variable {S C p}
 
-/-- On nested answers *at least* is attentive, raising a stronger answer inside its prejacent
-(58). -/
+-- (58)
 theorem isAttentive_atLeastInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
     IsAttentive (atLeastInq (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a)) := by
@@ -247,8 +244,7 @@ theorem isAttentive_atLeastInq_oneSided {α : Type*} [LinearOrder α] {μ : W �
   have := hmax.2 ⟨⟨μ w, rfl⟩, μ w, μ w, le_rfl, rfl, rfl⟩ hle (mem_Ici.2 le_rfl : μ w ∈ Ici (μ w))
   exact (not_le.2 hab) this
 
-/-- On mutually exclusive answers *at least* is inquisitive, raising two maximal possibilities
-(59b). -/
+-- (59b)
 theorem isInquisitive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
     IsInquisitive (atLeastInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a)) := by
@@ -263,7 +259,7 @@ theorem isInquisitive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W 
   refine ⟨twoSided μ a, hmax a le_rfl, twoSided μ b, hmax b hab.le, fun h ↦ hab.ne ?_⟩
   exact twoSided_injective hμ h
 
-/-- On one-sided answers *at most a* raises the preimage of `[i, a]` for each `i ≤ a` (64). -/
+-- (64)
 theorem atMostInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : Function.Surjective μ)
     (a : α) :
     atMostInq (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) =
@@ -281,7 +277,7 @@ theorem atMostInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : 
     exact ⟨oneSided μ i, ⟨⟨i, rfl⟩, a, i, hia, rfl, rfl⟩,
       by rw [oneSided, ← preimage_inter, Ici_inter_Iic]⟩
 
-/-- On two-sided answers *at most a* raises each answer up to `a` unchanged (63). -/
+-- (63)
 theorem atMostInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : Function.Surjective μ)
     (a : α) :
     atMostInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) = twoSided μ '' Iic a := by
@@ -298,7 +294,7 @@ theorem atMostInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : 
     exact ⟨twoSided μ i, ⟨⟨i, rfl⟩, a, i, hia, rfl, rfl⟩,
       inter_eq_left.2 (preimage_mono (singleton_subset_iff.2 (mem_Iic.2 hia)))⟩
 
-/-- On counts *at most a* raises `[i, a]` for each `i ≤ a` (64). -/
+-- (64)
 theorem atMostInq_oneSided_id (a : ℕ) :
     atMostInq (ranking (oneSided (id : ℕ → ℕ))) (range (oneSided id)) (oneSided id a) =
       (Icc · a) '' Iic a :=
@@ -349,8 +345,7 @@ theorem split_oneSided {W α : Type*} [LinearOrder α] {μ : W → α} {b : α} 
   · exact Or.inr (eq_empty_of_subset_empty fun w ⟨hw, hwi⟩ ↦
       (not_le.2 h) ((hkb hw : μ w = b) ▸ mem_Ici.1 (mem_preimage.1 hwi)))
 
-/-- A speaker who knows that hexagons have six sides violates Interactive Sincerity with *at least
-five* (70a). -/
+-- (70a)
 theorem not_interactiveSincerity_hexagon {W : Type*} {μ : W → ℕ} (hμ : Function.Surjective μ)
     {k : Set W} (hk : k ≠ ∅) (hk6 : k ⊆ μ ⁻¹' {6}) :
     ¬ InteractiveSincerity (atLeastInq (ranking (twoSided μ)) (range (twoSided μ))
@@ -373,8 +368,7 @@ theorem not_interactiveSincerity_hexagon {W : Type*} {μ : W → ℕ} (hμ : Fun
     rw [hr] at this
     exact this.not_subsingleton subsingleton_singleton
 
-/-- *More than four* raises one possibility, so it satisfies Interactive Sincerity, and on counts it
-has the content of *at least five* ((72), (73)). -/
+-- (72), (73)
 theorem moreThan_interactiveSincerity {W : Type*} {μ : W → ℕ} (hμ : Function.Surjective μ)
     (k : Set W) :
     InteractiveSincerity {μ ⁻¹' Ioi 4} k ∧
@@ -396,8 +390,7 @@ def ann : Set World := {w | w.1}
 def bill : Set World := {w | w.2}
 def whoSnores : Set (Set World) := {ann, bill, ann ∩ bill}
 
-/-- Exhaustifying *Ann snores* excludes that Bill snores, and exhaustifying *at least Ann
-snores*, on the entailment scale, does not (Figure 4). -/
+-- Figure 4
 theorem exh_contrast :
     ⋃₀ exh {ann} whoSnores ⊆ billᶜ ∧
       (true, true) ∈ ⋃₀ exh (atLeastInq (· ⊆ ·) whoSnores ann) whoSnores := by

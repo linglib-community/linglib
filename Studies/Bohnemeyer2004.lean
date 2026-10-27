@@ -321,8 +321,7 @@ theorem linking_markers :
     (addedRole causativeLinking).bind markerOf = some .setA ∧
     (originalRole causativeLinking).bind markerOf = some .setB := by decide
 
-/-- Both transitivizations are valency-increasing, which the detransitivizations of (28)–(30) are
-not — the two halves of the system are one mechanism read in two directions. -/
+-- (28), (30)
 theorem transitivizations_increase_valency :
     applicativeLinking.IsValencyIncreasing ∧ causativeLinking.IsValencyIncreasing := by decide
 
@@ -387,7 +386,7 @@ theorem suffix_underdetermines_linking :
     transitivizerSuffix meyah = transitivizerSuffix balak' ∧
     addedTermRole meyah ≠ addedTermRole balak' := ⟨rfl, by decide⟩
 
-/-- *Balak'* and *péek* share stem class and causation type but differ in suffix ((8), (10)). -/
+-- (8), (10)
 theorem suffix_not_predictable :
     balak'.stemClass = péek.stemClass ∧ balak'.causationType = péek.causationType ∧
     transitivizerSuffix balak' ≠ transitivizerSuffix péek := ⟨rfl, rfl, by decide⟩
@@ -399,8 +398,7 @@ theorem documented_linking :
 
 /-! ### Degree achievements: event type vs aspect -/
 
-/-- Degree achievements such as *ka'n* have a result state, as *-a'n* (19) and *láah* (20) attest,
-despite behaving atelically under (15) (§5). -/
+-- (19), (20), (15), §5
 theorem kaan_is_state_change : (stemTemplate ka'n.stemClass).HasResultState := by decide
 
 theorem naak_is_state_change : (stemTemplate na'k.stemClass).HasResultState := by decide
@@ -442,8 +440,7 @@ def DetransitivizationType.toVoice : DetransitivizationType → Voice
   | .anticausative => Voice.anticausative
   | .passive => Voice.passive
 
-/-- All three detransitivizations are valency-decreasing, as in the antipassive *p'èeh*, the
-passive *p'e'h-el* and the anticausative *p'éeh-el* of *p'eh* 'chip' (12). -/
+-- (12)
 theorem detransitivizations_decrease_valency :
     (DetransitivizationType.toVoice .antipassive).IsValencyDecreasing ∧
     (DetransitivizationType.toVoice .anticausative).IsValencyDecreasing ∧
@@ -479,8 +476,7 @@ def DetransitivizationType.template (d : DetransitivizationType) :
     Template .event → Option (Template .event) :=
   d.retained.of
 
-/-- Rules (28)–(30) presuppose that only verbs encoding a causal relation between two subevents
-detransitivize. -/
+-- (28), (30)
 theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType)
     (t : Template .event) :
     (d.template t).isSome ↔ ∃ c e, t = .cause c e := by
@@ -556,7 +552,7 @@ theorem haanEat_defies_transitiviser_diagnostic :
     transitivizerSuffix hàan = some .applicativeT ∧
     salienceClassOf hàan.stemClass = some .patient := ⟨rfl, rfl⟩
 
-/-- This paper classifies *péek* as agent salient, and Lucy's (4) as patient salient. -/
+-- (4)
 theorem peek_stem_vs_root_class_divergence :
     salienceClassOf péek.stemClass = some .agent ∧
     Lucy1994.predictedClass Lucy1994.peek = some .patient := ⟨rfl, rfl⟩

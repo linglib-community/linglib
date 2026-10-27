@@ -241,14 +241,14 @@ theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) : dare .
     (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
       (h.1 .positive rfl).2) _
 
-/-- In (34c) NRV is nevertheless causally necessary for COM. -/
+-- (34c)
 theorem nrv_necessary_for_com :
     dreyfusModel.CausallyNecessary dreyfusModel.IsExogenousSettlement dreyfusBg .NRV true .COM
       true :=
   ⟨by decide, ⟨resolved, by decide, by decide, by decide⟩, fun _ hset hc h ↦
     nrv_of_msg (hset.eq_bot (by decide) ⟨.INT, by decide⟩) (msg_of_com hc h)⟩
 
-/-- In (34d) NRV is nevertheless causally necessary for SPY. -/
+-- (34d)
 theorem nrv_necessary_for_spy :
     dreyfusModel.CausallyNecessary dreyfusModel.IsExogenousSettlement dreyfusBg .NRV true .SPY
       true :=
@@ -269,8 +269,7 @@ ungarbled. -/
 def messageSent : V → Flat Bool :=
   [.INT ← true, .SEC ← true, .MSG ← true, .LST ← true, .BRK ← false]
 
-/-- Over consistent supersituations NRV is still causally necessary for MSG (34a), NRV being a
-parent of MSG. -/
+-- (34a)
 theorem nrv_necessary_for_msg :
     dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV true
       .MSG true :=
@@ -284,8 +283,7 @@ theorem not_nrv_necessary_for_com :
       true .COM true :=
   fun h ↦ absurd (h.2.2 messageSent (by decide) (by decide) (by decide)) (by decide)
 
-/-- Over consistent supersituations NRV is not causally necessary for SPY, against the paper's
-verdict on (34d), since settling the message reaches spying without the nerve. -/
+-- (34d)
 theorem not_nrv_necessary_for_spy :
     ¬ dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV
       true .SPY true :=

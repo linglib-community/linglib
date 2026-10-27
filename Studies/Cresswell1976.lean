@@ -64,7 +64,7 @@ theorem ErThan.asAs (h : ErThan ω ω') : AsAs ω ω' :=
 theorem Exactly.asAs (h : Exactly ω ω') : AsAs ω ω' :=
   ⟨h.1, h.2.1, fun a ha b hb ↦ .inr (h.2.2 a ha b hb).symm⟩
 
-/-- A phrasal comparative compares its two degrees ((13), (18)). -/
+-- (13), (18)
 @[simp] theorem erThan_singleton : ErThan {a} {b} ↔ b < a := by simp [ErThan]
 
 theorem erThan_singleton_toDual : ErThan {toDual a} {toDual b} ↔ a < b :=
@@ -75,8 +75,7 @@ theorem erThan_singleton_toDual : ErThan {toDual a} {toDual b} ↔ a < b :=
 omit [LT D] in
 @[simp] theorem exactly_singleton : Exactly {a} {b} ↔ a = b := by simp [Exactly]
 
-/-- A disjoined standard is compared universally, so *taller than Arabella or Clarissa* is taller
-than both (footnote 10). -/
+-- footnote 10
 theorem erThan_union (h₁ : ω₁.Nonempty) (h₂ : ω₂.Nonempty) :
     ErThan ω (ω₁ ∪ ω₂) ↔ ErThan ω ω₁ ∧ ErThan ω ω₂ :=
   ⟨fun ⟨h, _, hlt⟩ ↦ ⟨⟨h, h₁, fun a ha b hb ↦ hlt a ha b (.inl hb)⟩,
@@ -84,8 +83,7 @@ theorem erThan_union (h₁ : ω₁.Nonempty) (h₂ : ω₂.Nonempty) :
    fun ⟨⟨h, _, hlt₁⟩, ⟨_, _, hlt₂⟩⟩ ↦
     ⟨h, h₁.inl, fun a ha b hb ↦ hb.elim (hlt₁ a ha b) (hlt₂ a ha b)⟩⟩
 
-/-- Reading a scale downward reverses the comparison, so *shorter than* is *taller than* with the
-terms exchanged ((39), (72)). -/
+-- (39), (72)
 theorem erThan_image_toDual : ErThan (toDual '' ω) (toDual '' ω') ↔ ErThan ω' ω := by
   simp only [ErThan, Set.image_nonempty, Set.forall_mem_image, toDual_lt_toDual, and_left_comm]
   exact and_congr_right fun _ ↦ and_congr_right fun _ ↦ forall₂_comm
@@ -96,7 +94,7 @@ section Substrate
 
 variable {E α : Type*} {μ : E → α} {x y : E}
 
-/-- On one scale the equative is the weak comparison of the two measures (2.7). -/
+-- (2.7)
 theorem asAs_singleton_iff_le [PartialOrder α] : AsAs {μ x} {μ y} ↔ μ y ≤ μ x :=
   asAs_singleton.trans le_iff_lt_or_eq.symm
 
@@ -108,13 +106,12 @@ section Scales
 
 variable {ι : Type*} {P : ι → Type*} [∀ i, LT (P i)] {ω ω' : Set (Σ i, P i)}
 
-/-- Compared degrees lie on one scale (2.3). -/
+-- (2.3)
 theorem ErThan.fst_eq (h : ErThan ω ω') {a b : Σ i, P i} (ha : a ∈ ω) (hb : b ∈ ω') :
     a.1 = b.1 :=
   (Sigma.lt_def.1 (h.2.2 a ha b hb)).1.symm
 
-/-- Degree properties on distinct scales are never compared, which is the anomaly of (23), (65)
-and (69). -/
+-- (23), (65), (69)
 theorem not_erThan_of_fst_ne (h : ∀ a ∈ ω, ∀ b ∈ ω', a.1 ≠ b.1) : ¬ ErThan ω ω' :=
   fun he ↦ let ⟨a, ha⟩ := he.1; let ⟨b, hb⟩ := he.2.1; h a ha b hb (he.fst_eq ha hb)
 
@@ -183,8 +180,7 @@ def tot : Set D := {u | IsGreatest {d | ∃ c, ω' c ∧ ω c d} u}
 /-- *Est* holds when `a` bears a unique degree at or above every degree of anything (2.6). -/
 def Est (a : E) : Prop := ∃! b, ω a b ∧ b ∈ upperBounds {d | ∃ c, ω c d}
 
-/-- The superlative of a measure holds of a greatest value, ties allowed as in (2.6), as in
-*tallest spy* (27). -/
+-- (2.6), (27)
 theorem est_iff (μ : E → D) (a : E) : Est (fun c d ↦ μ c = d) a ↔ ∀ c, μ c ≤ μ a := by
   simp [Est, upperBounds, ExistsUnique]
 
@@ -197,8 +193,7 @@ variable {E D : Type*} [PartialOrder D] {ω : E → D → Prop} {ω' : E → Pro
 theorem tot_eq_singleton {u : D} (h : IsGreatest {d | ∃ c, ω' c ∧ ω c d} u) : tot ω ω' = {u} :=
   Set.eq_singleton_iff_unique_mem.2 ⟨h, fun _ h' ↦ h'.unique h⟩
 
-/-- The comparative of two totalities compares their greatest degrees, so *more water ebbs than
-mud flows* compares two volumes ((42), (44)). -/
+-- (42), (44)
 theorem erThan_tot_tot {E' : Type*} {ω₁ : E' → D → Prop} {ω₁' : E' → Prop} {u u₁ : D}
     (h : IsGreatest {d | ∃ c, ω' c ∧ ω c d} u) (h₁ : IsGreatest {d | ∃ c, ω₁' c ∧ ω₁ c d} u₁) :
     ErThan (tot ω ω') (tot ω₁ ω₁') ↔ u₁ < u := by
@@ -219,8 +214,7 @@ def Pl (a : Finset E) (n : ℕ) : Prop := a ⊆ noun ∧ a.Nonempty ∧ a.card =
 def All {A B : Type*} (ω : A → B → Prop) (ω' : A → Prop) : Prop :=
   (∃ a b, ω a b) ∧ ∀ a, (∃ b, ω a b) → ω' a
 
-/-- The totality of sets satisfying a distributive predicate is the number of things satisfying it,
-so *more men walk* counts the walking men ((54), (55)). -/
+-- (54), (55)
 theorem tot_pl [DecidablePred pred] (h : (noun.filter pred).Nonempty) :
     tot (Pl noun) (fun a ↦ ∀ x ∈ a, pred x) = {(noun.filter pred).card} := by
   refine tot_eq_singleton ⟨⟨noun.filter pred, fun _ hx ↦ (Finset.mem_filter.1 hx).2,
@@ -228,16 +222,14 @@ theorem tot_pl [DecidablePred pred] (h : (noun.filter pred).Nonempty) :
   rintro _ ⟨a, ha, hsub, -, rfl⟩
   exact Finset.card_le_card fun x hx ↦ Finset.mem_filter.2 ⟨hsub hx, ha x hx⟩
 
-/-- *More men walk than birds fly* holds when the walking men outnumber the flying birds ((52),
-(55)). -/
+-- (52), (55)
 theorem erThan_tot_pl (man bird : Finset E) (walk fly : E → Prop) [DecidablePred walk]
     [DecidablePred fly] (hw : (man.filter walk).Nonempty) (hf : (bird.filter fly).Nonempty) :
     ErThan (tot (Pl man) (fun a ↦ ∀ x ∈ a, walk x)) (tot (Pl bird) (fun a ↦ ∀ x ∈ a, fly x)) ↔
       (bird.filter fly).card < (man.filter walk).card := by
   rw [tot_pl _ _ hw, tot_pl _ _ hf, erThan_singleton]
 
-/-- Given that there are men, plural *all men walk* and count-noun *every man walks* (3.8) are
-synonymous ((56), (57)). -/
+-- (3.8), (56), (57)
 theorem all_pl_iff_forall :
     All (Pl noun) (fun a ↦ ∀ x ∈ a, pred x) ↔ noun.Nonempty ∧ ∀ x ∈ noun, pred x :=
   ⟨fun ⟨⟨_, _, hsub, hne, _⟩, h⟩ ↦
@@ -249,8 +241,7 @@ end Plural
 
 /-! ### Degrees from comparisons (§4) -/
 
-/-- On the degrees a comparison relation constructs, the comparative is the relation itself, as
-in *Arabella is more beautiful than Clarissa* ((62), (4.2)). -/
+-- (62), (4.2)
 theorem erThan_singleton_mk {E : Type*} (φ : E → E → Prop) (a b : E) :
     ErThan ({⟦a⟧} : Set (CresswellDegree φ)) {⟦b⟧} ↔ φ a b :=
   erThan_singleton.trans CresswellDegree.mk_lt_mk
@@ -262,8 +253,7 @@ section Counterfactual
 variable {W D : Type*} [Preorder D] (s : Conditional.SelectionFunction W) (height : W → D)
   (smokes : Set W) (w : W)
 
-/-- *If Bill had been a smoker he would be shorter than he is* holds when his height at the nearest
-smoking world is below his actual height (71). -/
+-- (71)
 theorem erThan_sel :
     ErThan {toDual (height (s.sel w smokes))} {toDual (height w)} ↔
       height (s.sel w smokes) < height w :=

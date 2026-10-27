@@ -482,8 +482,7 @@ theorem no_reversal_needed_truth_based (f : AnswerFeature) : f.answer (.height .
 
 /-! ### Japanese (Section 4.1) -/
 
-/-- With low negation, Japanese *un* confirms that he does not drink coffee and *uun* that he does
-(Section 4.10). -/
+-- Section 4.10
 theorem japanese_negative_question :
     (feature .un).answer (.height .low) = some .negative ∧
       (feature .uun).answer (.height .low) = some .positive := by
@@ -595,7 +594,7 @@ def Row.Predicted (r : Row) : Prop :=
 
 instance : DecidablePred Row.Predicted := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The rows include *Har Johan inte kommit?* answered by *\*Ja* and by *Jo* (Section 4.5). -/
+-- Section 4.5
 theorem kommit_mem_rows :
     ⟨.height .middle, feature .ja, none, .ungrammatical⟩ ∈ rows ∧
       ⟨.height .middle, feature .jo, some .positive, .acceptable⟩ ∈ rows := by

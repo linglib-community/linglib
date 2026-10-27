@@ -87,8 +87,7 @@ theorem sieve_principalFilter (hB : ∃ x, B x) : Sieve (principalFilter B) :=
   ⟨⟨fun _ ↦ True, fun _ _ ↦ trivial⟩,
     ⟨fun _ ↦ False, fun h ↦ let ⟨x, hx⟩ := hB; h x hx⟩⟩
 
-/-- A mixed conjunction of an increasing and a decreasing quantifier, *John and no woman*, is
-neither increasing nor decreasing (§4.10). -/
+-- §4.10
 theorem not_monotone_mixed_conjunction :
     ¬ Monotone (individual true ⊓ no (· = false)) ∧
     ¬ Antitone (individual true ⊓ no (· = false)) := by
@@ -129,7 +128,7 @@ theorem there_of_positiveStrong (hc : Conservative D) (h : PositiveStrong D) (A 
     D A (fun _ ↦ True) :=
   (livesOn_apply_iff ((conservative_iff_livesOn D).1 hc A)).1 (h A)
 
-/-- The *there*-sentence of a negative strong determiner is a contradiction (§4.6). -/
+-- §4.6
 theorem not_there_of_negativeStrong (hc : Conservative D) (h : NegativeStrong D)
     (A : α → Prop) : ¬ D A (fun _ ↦ True) :=
   fun hA ↦ h A ((livesOn_apply_iff ((conservative_iff_livesOn D).1 hc A)).2 hA)
@@ -226,26 +225,24 @@ section English
 open English.Determiners (QuantityWord)
 open scoped Denotes
 
-/-- On its proportional reading `few` is negative strong, though B&C's Table II lists *few* as weak.
--/
+-- Table II
 theorem few_negativeStrong : NegativeStrong (few : GQ α) := fun A hA ↦ by
   simp [few_apply] at hA
 
-/-- *Some* is weak (Table II), since *some N is a N* is contingent. -/
+-- Table II
 theorem some_weak [Nonempty α] : Weak (GQ.some : GQ α) := by
   rintro (h | h)
   · obtain ⟨x, hx, -⟩ := h (fun _ ↦ False)
     exact hx
   · exact h (fun _ ↦ True) ⟨Classical.arbitrary α, trivial, trivial⟩
 
-/-- *No* is weak (Table II), since *no N is a N* is contingent. -/
+-- Table II
 theorem no_weak [Nonempty α] : Weak (no : GQ α) := by
   rintro (h | h)
   · exact h (fun _ ↦ True) (Classical.arbitrary α) trivial trivial
   · exact h (fun _ ↦ False) (fun x hx ↦ hx.elim)
 
-/-- *Exactly half*, the non-monotone determiner of §4.7, is weak, since *half the N are N* is
-contingent, witnessed over `Fin 3`. -/
+-- §4.7
 theorem half_weak : Weak (half : GQ (Fin 3)) := by
   rintro (h | h)
   · exact absurd (h (fun x : Fin 3 ↦ x = 0)) (by decide)
@@ -257,8 +254,7 @@ def atLeastHalf : GQ α := (NumberTree.ofSizes fun x p ↦ p ≤ 2 * x).toGQ
 /-- The upper half of *exactly half* puts at most half the restrictor in the scope. -/
 def atMostHalf : GQ α := (NumberTree.ofSizes fun x p ↦ 2 * x ≤ p).toGQ
 
-/-- *Exactly half* is the meet of *at least half* and *at most half*, an increasing and a decreasing
-determiner (U6, §4.8). -/
+-- §4.8
 theorem half_eq_meet : (half : GQ α) = (atLeastHalf ⊓ atMostHalf) := by
   rw [half, atLeastHalf, atMostHalf, ← NumberTree.toGQ_inf]
   congr 1
@@ -275,14 +271,14 @@ theorem atMostHalf_scopeDown : ScopeAntitone (atMostHalf (α := α)) :=
   (NumberTree.scopeAntitone_ofSizes (c := fun x p ↦ 2 * x ≤ p) fun _ _ _ hxy h ↦
     (Nat.mul_le_mul_left 2 hxy).trans h).toGQ
 
-/-- Every available reading of *all* is positive strong (Table II). -/
+-- Table II
 theorem all_positiveStrong {d : GQ.Family} (h : d ∈ ⟦QuantityWord.all⟧) :
     PositiveStrong (d α) := by
   obtain rfl : d = GQ.Family.every := h
   exact positiveStrong_every
 
 open Classical in
-/-- *Most* is positive strong on nonempty restrictors (Table II; Appendix B's SP1). -/
+-- Table II
 theorem most_apply_self {d : GQ.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A : α → Prop)
     (h : ∃ x, A x) : d α A A := by
   obtain rfl : d = GQ.Family.most := hd
@@ -354,8 +350,7 @@ private theorem min_eq_min_of_le {t k : ℕ} {s s' : Set (Fin k)} (h : (t : ℕ�
     (h' : (t : ℕ∞) ≤ s'.encard) : min (t : ℕ∞) s.encard = min (t : ℕ∞) s'.encard := by
   rw [min_eq_left h, min_eq_left h']
 
-/-- The two models of B&C's (5) are `(m - 1)`-equivalent for quantifier rank whenever `2m ≤ k`,
-where B&C take `k ≥ 3m`. -/
+-- (5)
 theorem elementarilyEquivalentUpTo_struc (m k : ℕ) (hm : 0 < m) (hk : 2 * m ≤ k) :
     @ElementarilyEquivalentUpTo _ (m - 1) (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) := by
   refine elementarilyEquivalentUpTo_monadicStructure_iff.2 fun S ↦ ?_
@@ -499,8 +494,7 @@ noncomputable def star : ∀ {n : ℕ}, QFormula n → (Language.monadic (Fin 2)
   | n, .qx f => (Relations.boundedFormula₁ (L := Language.monadic (Fin 2)) (.pred 1) &(Fin.last n) ⊔
       ((BoundedFormula.iSup fun i : Fin n ↦ (&(Fin.last n)).bdEqual &i.castSucc) ⊔ star f)).all
 
-/-- The translation adds no quantifier nesting beyond `ψ`'s quantifier count, a form of B&C's
-`c(ψ*) = c(ψ)` (p. 215). -/
+-- p. 215
 theorem qr_star_le : ∀ {n : ℕ} (ψ : QFormula n), (star ψ).qr ≤ numQ ψ
   | _, .falsum => le_rfl
   | _, .equal _ _ => Nat.zero_le _
@@ -515,8 +509,7 @@ theorem qr_star_le : ∀ {n : ℕ} (ψ : QFormula n), (star ψ).qr ≤ numQ ψ
         ((BoundedFormula.qr_iSup_le (k := 0) fun _ ↦ le_rfl).trans (Nat.zero_le _))
         (qr_star_le f))) 1
 
-/-- `L(Q)`-realization is invariant under automorphisms of the monadic model
-(B&C's "trivial automorphism argument", p. 215). -/
+-- p. 215
 theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E)
     (hU : ∀ x, U (σ x) ↔ U x) (hV : ∀ x, V (σ x) ↔ V x) :
     ∀ {n : ℕ} (f : QFormula n) (xs : Fin n → E),
@@ -573,8 +566,7 @@ private theorem swap_pred_iff {E : Type} [DecidableEq E] {P V : E → Prop}
     exact iff_of_false (fun h ↦ h₀ (hPV _ h)) (fun h ↦ h₁ (hPV _ h))
   · rw [Equiv.swap_apply_of_ne_of_ne hx1 hx2]
 
-/-- On models with `U ⊆ V` and domain at least twice `|V|` plus the complexity of `ψ`, the
-`Q`-elimination `star` is correct (property (P), p. 215). -/
+-- p. 215
 theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
     (hUV : ∀ x, U x → V x) :
     ∀ {n : ℕ} (ψ : QFormula n),

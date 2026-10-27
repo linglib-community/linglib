@@ -88,14 +88,14 @@ theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k C
 
 variable [DecidableEq V]
 
-/-- Global sufficiency entails local sufficiency (22a). -/
+-- (22a)
 theorem LocallySufficient.of_globally [Inhabited U] (hCE : C ≠ E)
     (h : GloballySufficient M C c E e) : LocallySufficient M C c E e :=
   ⟨default, [C ← c], by rw [Function.update_of_ne hCE.symm]; rfl,
     Function.update_self .., h _ _ (by rw [Function.update_of_ne hCE.symm]; rfl)
       (Function.update_self ..)⟩
 
-/-- Global necessity entails local necessity (21a). -/
+-- (21a)
 theorem LocallyNecessary.of_globally [Inhabited U] (hCE : C ≠ E)
     (h : GloballyNecessary M C c E e) : LocallyNecessary M C c E e :=
   LocallySufficient.of_globally hCE h
@@ -159,13 +159,12 @@ theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L t
   fun h ↦ absurd (h ⟨true, false⟩ [.S1 ← true] (by decide) (by decide))
     (by decide)
 
-/-- Knowing only that switch 1 is off, it caused the light to be off (Table 2, bottom right). -/
+-- Table 2
 theorem s1_off_causes_off_uncertain :
     Cause light [.S1 ← false] .S1 false .L false :=
   cause_update_bot_iff.2 s1_off_globallySufficient
 
-/-- Knowing only that switch 1 is on, one cannot say it caused the light to be on (Table 2,
-bottom left). -/
+-- Table 2
 theorem not_s1_on_causes_on_uncertain :
     ¬ Cause light [.S1 ← true] .S1 true .L true :=
   fun h ↦ s1_on_not_globallySufficient (cause_update_bot_iff.1 h)
@@ -173,7 +172,7 @@ theorem not_s1_on_causes_on_uncertain :
 /-- The background with both switches on. -/
 def bothOn : V → Flat Bool := [.S1 ← true, .S2 ← true]
 
-/-- With both switches known to be on, switch 1 caused the light to be on (Table 2, top left). -/
+-- Table 2
 theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by
   refine ⟨by decide, fun u I hk hL ↦ ?_⟩
   have h1 : I .S1 = ↑true := Flat.coe_le_iff.1 ((by decide : bothOn .S1 = ↑true) ▸ hk .S1)

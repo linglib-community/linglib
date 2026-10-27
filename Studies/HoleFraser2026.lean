@@ -310,7 +310,6 @@ theorem gerund_rows : ∀ d ∈ Examples.all, ∀ a ∈ alternantOf d, ∀ h ∈
     (d.judgment = .acceptable ↔ h ≤ size a) := by
   decide +kernel
 
-/-- The heads a non-base gerund projects and a base one does not (`Set.Iic_sdiff_Iic`). -/
 theorem mem_Ioc_size_iff (h : Head) : h ∈ Set.Ioc (size .base) (size .nonBase) ↔
     h ∈ ({scalarity, cinque .modEpistemic, cinque .moodEvidential, mirative} : Finset Head) := by
   rw [size_base, size_nonBase, Set.mem_Ioc]

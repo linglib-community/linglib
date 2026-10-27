@@ -81,8 +81,7 @@ alternative to `α` in `C` ((72)). -/
 noncomputable def quantifierOnly (C : Set σ) (α : σ) (β : σ → Set W) : W → SignType :=
   (β α).indicator fun w ↦ SignType.ofProp (∀ γ ∈ C, γ ≠ α → w ∉ β γ)
 
-/-- The quantificational particle is the operator *only* of (73) restricted to the alternatives
-that differ from the prejacent in the particle's sister alone. -/
+-- (73)
 theorem quantifierOnly_eq_only (hα : α ∈ C) (hβ : Set.InjOn β C) :
     quantifierOnly C α β = only (· = ·) (β '' C) (β α) := by
   have hL : β α = atLeast (· = ·) (β '' C) (β α) := Set.ext fun _ ↦
@@ -118,8 +117,7 @@ inductive Deed | read (b : Book) | swim
 def read (b : Book) : Set (Set Deed) := {w | .read b ∈ w}
 def swam : Set (Set Deed) := {w | .swim ∈ w}
 
-/-- If Peter read Hamlet and swam, the quantificational reading of the particle is true and the
-operator reading over predicate alternatives false ((79)–(81)). -/
+-- (79), (81)
 theorem peter_read_only_hamlet :
     quantifierOnly Set.univ Book.hamlet read {.read .hamlet, .swim} = 1 ∧
       only (· = ·) {read .hamlet, read .macbeth, swam} (read .hamlet)
@@ -210,8 +208,7 @@ theorem leftAlignedOn_self : LeftAlignedOn m X X ↔ (leftmost m X).isSome :=
   ⟨fun ⟨a, ha, _⟩ ↦ Option.isSome_iff_exists.2 ⟨a, ha⟩,
     fun h ↦ let ⟨a, ha⟩ := Option.isSome_iff_exists.1 h; ⟨a, ha, a, ha, .refl a⟩⟩
 
-/-- A constituent containing no prominent phrase, as a lexical verb does not, is left-aligned
-with nothing (n. 45). -/
+-- n. 45
 theorem not_leftAlignedOn_of_leftmost_eq_none (h : leftmost m Y = none) : ¬ LeftAlignedOn m X Y :=
   fun ⟨_, _, b, hb, _⟩ ↦ by simp [h] at hb
 
@@ -250,7 +247,6 @@ theorem Favors.allows (h : r.Favors m host focus) : r.Allows m host focus := by
   cases r
   exacts [h, LeftAlignedOn.symmGen_le h, h]
 
-/-- A phrase that may host the particle overlaps the focus. -/
 theorem Allows.symmGen_le (h : r.Allows m host focus) : Relation.SymmGen (· ≤ ·) host focus := by
   cases r
   exacts [LeftAlignedOn.symmGen_le h, h, h]
@@ -419,39 +415,34 @@ def heightOfTheLettering : Frame where
 
 /-! ### The leftmost effect in a clause -/
 
-/-- Under the strong variant, a verb-final clause marks sentence focus at its subject and predicate
-focus at its object, as with Miyara Yaeyaman *du* (64). -/
+-- (64)
 theorem sov_strong :
     sov.Allows .strong .subject .sentence ∧ ¬ sov.Allows .strong .object .sentence ∧
       sov.Allows .strong .object .predicate ∧ ¬ sov.Allows .strong .subject .predicate := by
   decide +kernel
 
-/-- The object of a verb-medial predicate counts as its leftmost phrase, the verb being on the
-spine (n. 17). -/
+-- n. 17
 theorem svo_strong :
     svo.Allows .strong .object .predicate ∧ ¬ svo.Allows .strong .subject .predicate := by
   decide +kernel
 
-/-- A non-prominent subject is skipped, so sentence focus is marked at the object and not at the
-subject (§6.1). -/
+-- §6.1
 theorem sov_strong_skipped :
     sov.Allows .strong .object .sentence [.subject] ∧
       ¬ sov.Allows .strong .subject .sentence [.subject] := by
   decide +kernel
 
-/-- No phrase is left-aligned with a narrowly focused verb (n. 45). -/
+-- n. 45
 theorem sov_verb (c : Part) : ¬ sov.Allows .strong c .verb := by
   cases c <;> decide +kernel
 
-/-- Under the strong variant, *to which student's friend* is left-aligned with its question word
-only if the light preposition's phrase is skipped (123). -/
+-- (123)
 theorem toWhichStudentsFriend_strong :
     toWhichStudentsFriend.Allows .strong .phrase .wh [.phrase] ∧
       ¬ toWhichStudentsFriend.Allows .strong .phrase .wh := by
   decide +kernel
 
-/-- The phrases fronted in a Russian question and an English relative clause are ones the strong
-variant excludes ((125), (126)). -/
+-- (125), (126)
 theorem not_strong_of_free :
     ¬ naSestreDrugaCejMateri.Allows .strong .phrase .wh ∧
       ¬ heightOfTheLettering.Allows .strong .phrase .wh := by
@@ -547,7 +538,6 @@ theorem acceptable_iff_favors :
       (rd.2 = .acceptable ↔ r.Favors d.prominent d.host rd.1) := by
   decide +kernel
 
-/-- A reading the paper marks as dispreferred marks its focus at a phrase the variant allows. -/
 theorem allows_of_marginal :
     ∀ d ∈ data, ∀ r ∈ d.requirement, ∀ rd ∈ d.readings,
       rd.2 = .marginal → r.Allows d.prominent d.host rd.1 := by
@@ -562,8 +552,7 @@ theorem mismatch_holds :
     ∀ d ∈ data, ∀ k ∈ d.mismatch, ∀ rd ∈ d.readings, k.Holds d.host rd.1 := by
   decide +kernel
 
-/-- Particle placement and movement each mark the focus itself, a phrase containing it, and a
-phrase it contains ((1)–(8)). -/
+-- (1), (8)
 theorem exists_mismatch (p : Process) (k : Mismatch) :
     ∃ d ∈ data, d.process = p ∧ d.mismatch = some k := by
   cases p <;> cases k <;> decide +kernel

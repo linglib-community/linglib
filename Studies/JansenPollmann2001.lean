@@ -374,8 +374,7 @@ def pairData : List (ℕ × ℕ × Bool) := Examples.all.filterMap pairRow
 theorem pair_rows : ∀ d ∈ pairData, d.2.2 = true ↔ SeqPair .revised d.1 d.2.1 := by
   decide +kernel
 
-/-- Each of the paper's example numbers has the 10-ness, 2-ness and 5-ness the paper assigns it (p.
-198). -/
+-- p. 198
 theorem kness_examples :
     (HasKness 1 40 ∧ HasKness 2 40 ∧ HasKness 5 40) ∧
     (HasKness 1 8 ∧ HasKness 2 8 ∧ ¬ HasKness 5 8) ∧

@@ -159,11 +159,10 @@ theorem exh_primal_weak (h : (wk \ st).Nonempty) :
   rw [innocent_exh_erase_entailed subset_rfl (h.mono sdiff_subset), erase_insert (by simpa),
     innocent_exh_singleton h]
 
-/-- The weak pole excludes nothing when the strong pole is not stronger. -/
 theorem exh_primal_weak_of_subset (h : wk ⊆ st) : exh primalMates (primal wk st) .weak = wk :=
   innocent_exh_eq_self_of_forall_subset (by simp [primal, primalMates, h])
 
-/-- The core of (53b) and (37): double strengthening conjoins the item with the strong pole. -/
+-- (53b), (37)
 theorem strengthened_primal_mystery (h₁ : (wk \ st).Nonempty) (h₂ : (wk ∩ st).Nonempty) :
     strengthened primalMates (primal wk st) .mystery = wk ∩ st := by
   show innocent.exh (({.weak} : Finset Item).image (exh primalMates (primal wk st)))
@@ -193,13 +192,13 @@ theorem strengthened_primal_not_mystery (h : st ⊆ wk) :
   rw [compl_comp_primal]
   exact strengthened_primal_mystery_of_subset (compl_subset_compl.2 h)
 
-/-- (55b): in an upward-entailing environment the dual item shows its strong meaning. -/
+-- (55b)
 theorem strengthened_dual_mystery (h : st ⊆ wk) :
     strengthened dualMates (dual wk st) .mystery = st := by
   rw [strengthened_dual]
   exact strengthened_primal_mystery_of_subset h
 
-/-- (55a): under negation the dual item strengthens to the negation of the weak pole. -/
+-- (55a)
 theorem strengthened_dual_not_mystery (h : st ⊆ wk) (h₁ : (wk \ st).Nonempty)
     (h₂ : wkᶜ.Nonempty) : strengthened dualMates (compl ∘ dual wk st) .mystery = wkᶜ := by
   rw [compl_comp_dual, strengthened_dual]
@@ -249,7 +248,6 @@ theorem mem_all {s : Finset D} : s ∈ all D ↔ s = univ := by
   exact ⟨fun h ↦ eq_univ_of_card s (le_antisymm (card_le_univ s) h),
     fun h ↦ by subst h; exact Finset.card_univ.ge⟩
 
-/-- A higher threshold is stronger. -/
 theorem atLeast_subset_atLeast {m n : ℕ} (h : m ≤ n) : atLeast D n ⊆ atLeast D m := fun _ hs ↦
   mem_atLeast.2 (h.trans (mem_atLeast.1 hs))
 
@@ -258,8 +256,7 @@ theorem atLeast_nonempty {n : ℕ} (h : n ≤ Fintype.card D) : (atLeast D n).No
 
 variable [DecidableEq D]
 
-/-- An item meaning a lower threshold whose Horn-mate is a higher threshold strengthens to the
-higher one ((27), (34)). -/
+-- (27), (34)
 theorem strengthened_atLeast {m n : ℕ} (hmn : m ≤ n) (hn : n ≤ Fintype.card D) :
     strengthened primalMates (primal (atLeast D m) (atLeast D n)) .mystery = atLeast D n :=
   strengthened_primal_mystery_eq_strong (atLeast_subset_atLeast hmn) (atLeast_nonempty hn)
@@ -269,7 +266,7 @@ theorem the_eq_all [Nonempty D] :
     strengthened primalMates (primal (some D) (all D)) .mystery = all D :=
   strengthened_atLeast Fintype.card_pos le_rfl
 
-/-- (35): *Mary didn't see the boys* is *Mary saw none of the boys*. -/
+-- (35)
 theorem not_the_eq_not_some [Nonempty D] :
     strengthened primalMates (compl ∘ primal (some D) (all D)) .mystery = (some D)ᶜ :=
   strengthened_primal_not_mystery (atLeast_subset_atLeast Fintype.card_pos)
@@ -306,8 +303,7 @@ def uniqueSolverAll : Finset (S → Finset P) :=
 
 variable {S P}
 
-/-- The last step of (37): exactly one solved some and exactly one solved all iff at most one
-solved some and one solved all. -/
+-- (37)
 theorem exactlyOneSome_inter_exactlyOneAll [Nonempty P] :
     exactlyOneSome S P ∩ exactlyOneAll S P = uniqueSolverAll S P := by
   ext w
@@ -379,8 +375,7 @@ def conj : ConjItem → Finset (Finset Boy)
   | .right => univ.filter (.bill ∈ ·)
   | .or => some Boy
 
-/-- (71): one exhaustification of the negated sentences; unfocused conjunction excludes nothing,
-since denying either negated conjunct forces the other. -/
+-- (71)
 theorem exh_not_conj :
     exh conjMates (compl ∘ conj) .andF = (all Boy)ᶜ ∩ some Boy ∧
       exh conjMates (compl ∘ conj) .andUnF = (all Boy)ᶜ ∧

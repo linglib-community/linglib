@@ -65,7 +65,7 @@ theorem not_isTrans_symmGen_marginallyLT (ml : MarginalScale α) :
   obtain ⟨z, hxz, -⟩ := (ml.decomposition h).1
   exact (htr x z x (.inl hxz) (.inr hxz)).elim (fun h ↦ h.lt.false) fun h ↦ h.lt.false
 
-/-- Large difference is never transitive, strengthening the counterexample of fn. 9. -/
+-- fn. 9
 theorem not_isTrans_symmGen_largelyLT (ml : MarginalScale α) :
     ¬ IsTrans α (Relation.SymmGen ml.LargelyLT) := fun ⟨htr⟩ ↦ by
   obtain ⟨x, y, h⟩ := ml.exists_large
@@ -77,7 +77,7 @@ example : IsEmpty (MarginalScale ℕ) := inferInstance
 
 /-! ### The simplified theory -/
 
-/-- An ML scale satisfies the eleven axioms of [dinis-jacinto-2025], Theorem 2.2 among them. -/
+-- Theorem 2.2 [dinis-jacinto-2025]
 theorem isMLModel (ml : MarginalScale α) :
     DinisJacinto2025.IsMLModel (· < ·) ml.MarginallyLT ml.LargelyLT where
   isStrictWeakOrder := isStrictWeakOrder_of_isOrderConnected
@@ -130,8 +130,7 @@ theorem setOf_positive_subset_gt_over :
     {x | Positive ml μ norm w x} ⊆ (μ w) ⁻¹' Set.Ioi norm :=
   fun _ h ↦ h.lt
 
-/-- An object whose degree exceeds the standard only marginally is not in the positive form's
-extension (Figure 5). -/
+-- Figure 5
 theorem not_positive_of_marginallyLT (h : ml.MarginallyLT norm (μ w a)) :
     ¬ Positive ml μ norm w a :=
   h.not_largelyLT
@@ -142,14 +141,12 @@ theorem comparative_of_positive_of_not_positive (h₁ : Positive ml μ norm u a)
     (h₂ : ¬ Positive ml μ norm v a) : Comparative μ u a v a :=
   lt_of_not_ge fun h ↦ h₂ (isUpperSet_setOf_largelyLT norm h h₁)
 
-/-- Objects whose degrees differ at most marginally are both in the positive form's extension
-or both out of it, Fara's similarity constraint (§6.1). -/
+-- §6.1
 theorem positive_iff_of_atMostMarginal (h : ml.AtMostMarginal (μ w a) (μ w b)) :
     Positive ml μ norm w a ↔ Positive ml μ norm w b :=
   h.largelyLT_congr_right
 
-/-- However many marginal steps separate two objects' degrees, the objects are alike for the
-positive form (§6.1). -/
+-- §6.1
 theorem positive_iff_of_reflTransGen (h : Relation.ReflTransGen ml.MarginallyLT (μ w a) (μ w b)) :
     Positive ml μ norm w a ↔ Positive ml μ norm w b := by
   rw [Relation.reflTransGen_eq_reflGen] at h
@@ -173,7 +170,7 @@ from the degree of something that has it (§3). -/
 def Clustered (B : O → Prop) (δ : O → α) : Prop :=
   ∀ x, B x ↔ ∃ y, B y ∧ ml.AtMostMarginal (δ y) (δ x)
 
-/-- Clustered degrees imply degree tolerance, without the ML axioms (§3). -/
+-- §3
 theorem Clustered.tolerance {B : O → Prop} {δ : O → α} (h : Clustered ml B δ) :
     (¬ B a → ml.MarginallyLT (δ a) (δ b) → ¬ B b) ∧ (B a → ml.MarginallyLT (δ b) (δ a) → B b) :=
   ⟨fun ha hm hb ↦ ha ((h a).2 ⟨b, hb, .single (.inr hm)⟩),
@@ -189,8 +186,7 @@ theorem setOf_positive_eq_gt_over {f : α → ℚ ×ₗ ℤ} (hf : ml.IsHom (lex
       (fun x ↦ (ofLex (f (μ w x))).1) ⁻¹' Set.Ioi (ofLex (f norm)).1 :=
   Set.ext fun _ ↦ hf.largelyLT_iff.symm.trans lex_largelyLT_iff
 
-/-- Every countable, finitely marginal scale has a representation under which the positive form
-compares blocks (§5.2). -/
+-- §5.2
 theorem exists_isHom_setOf_positive_eq [Countable α] (hf : DinisJacinto2025.FinitelyMarginal ml) :
     ∃ f : α → ℚ ×ₗ ℤ, ml.IsHom (lex ℚ ℤ) f ∧ ∀ (μ : C → O → α) (norm : α) (w : C),
       {x | Positive ml μ norm w x} =
@@ -198,8 +194,7 @@ theorem exists_isHom_setOf_positive_eq [Countable α] (hf : DinisJacinto2025.Fin
   let ⟨f, hf⟩ := DinisJacinto2025.exists_isHom_lex_rat_int hf
   ⟨f, hf, fun _ _ _ ↦ setOf_positive_eq_gt_over hf⟩
 
-/-- If a representation puts the standard and Ronaldo in block `0` and Zidane in block `1`, Zidane
-is balder and only Zidane is bald (§5.2). -/
+-- §5.2
 theorem zidane_ronaldo {f : α → ℚ ×ₗ ℤ} (hf : ml.IsHom (lex ℚ ℤ) f) {zidane ronaldo : O}
     (hz : (ofLex (f (μ w zidane))).1 = 1) (hr : (ofLex (f (μ w ronaldo))).1 = 0)
     (hn : (ofLex (f norm)).1 = 0) :
@@ -211,8 +206,7 @@ theorem zidane_ronaldo {f : α → ℚ ×ₗ ℤ} (hf : ml.IsHom (lex ℚ ℤ) f
 
 end Account
 
-/-- On the two-scale alternative of §5.4, an object can leave the positive form's extension without
-being greater on the precise scale. -/
+-- §5.4
 theorem exists_twoScale_not_comparative : ∃ (ρ : Bool → Unit → ℕ) (τ : Bool → ℕ → ℚ ×ₗ ℤ),
     Positive (lex ℚ ℤ) (fun w x ↦ τ w (ρ w x)) (toLex (0, 0)) true () ∧
       ¬ Positive (lex ℚ ℤ) (fun w x ↦ τ w (ρ w x)) (toLex (0, 0)) false () ∧

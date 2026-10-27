@@ -107,7 +107,7 @@ namespace Charlow2020
 
 open Quantifier Quantifier.NP
 
-/-- The closure `⇓` (19), `T ∈ m`, is the supremum of a set of truth values. -/
+-- (19)
 theorem sSup_iff_true_mem (m : Set Prop) : sSup m ↔ True ∈ m := by
   rw [sSup_Prop_eq]
   exact ⟨fun ⟨p, hp, h⟩ ↦ eq_true h ▸ hp, fun h ↦ ⟨True, h, trivial⟩⟩
@@ -135,8 +135,7 @@ theorem bind_pure_left (x : α) : (fun f : α → Set β ↦ pure x >>= f) = fun
 theorem plusWh_some (m : Set α) : plusWh (GQ.some m) = fun f : α → Set β ↦ m >>= f := by
   funext f; ext y; simp [plusWh, GQ.some, Set.bind_def]; rfl
 
-/-- Applying `+wh` to the Montague lift gives the lift at result type `Set β`, the last face of
-Figure 4. -/
+-- Figure 4
 theorem plusWh_individual (x : α) : plusWh (individual x) = fun f : α → Set β ↦ f x := by
   funext f; ext y; simp [plusWh, individual]
 
@@ -165,13 +164,13 @@ theorem exceptional_scope :
       (fun x ↦ cond (dies x) house) '' rel := by
   ext q; simp [closureCond, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
 
-/-- Pied-piping the island is scoping the indefinite out of it directly (Figure 7). -/
+-- Figure 7
 theorem exceptional_scope_eq_wide :
     (rel >>= fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
       rel >>= fun x ↦ closureCond cond (pure (dies x)) (pure house) := by
   simp only [bind_assoc, pure_bind]
 
-/-- Closing the island off in the antecedent gives the narrow reading `if ≫ ∃` (13). -/
+-- (13)
 theorem narrow_scope :
     closureCond cond (rel >>= fun x ↦ pure (dies x)) (pure house) =
       {cond (∃ x ∈ rel, dies x) house} := by
@@ -193,7 +192,7 @@ theorem intermediate_scope :
       {∀ y ∈ student, ∃ c ∈ rel, argue y (wrong c)} := by
   simp [det, GQ.every, Set.bind_def, sSup_Prop_eq, -eq_iff_iff]
 
-/-- The island of (3) can also scope over *each student*. -/
+-- (3)
 theorem widest_scope :
     (rel >>= fun c ↦ pure (wrong c)) >>= (fun p ↦ det GQ.every student fun y ↦ pure (argue y p)) =
       (fun c ↦ ∀ y ∈ student, argue y (wrong c)) '' rel := by
@@ -201,7 +200,7 @@ theorem widest_scope :
 
 end Conditional
 
-/-- The intermediate and widest readings of (3) differ. -/
+-- (3)
 theorem intermediate_ne_widest : ¬ ∀ (student rel : Set Bool) (wrong : Bool → Prop)
     (argue : Bool → Prop → Prop),
     sSup (det GQ.every student fun y ↦ (rel >>= fun c ↦ pure (wrong c)) >>=
@@ -236,7 +235,7 @@ def two (P : Set A) : Set (Finset A) := {X | X.card = 2 ∧ ∀ x ∈ X, x ∈ P
 to satisfy the closed scope `f`. -/
 def distr (f : A → Set Prop) (X : Finset A) : Set Prop := pure (∀ x ∈ X, sSup (f x))
 
-/-- With `∆`, *two linguists wrote something* gets its distributive reading (Figure 9, left). -/
+-- Figure 9
 theorem two_wrote_something (ling something : Set A) (wrote : A → A → Prop) :
     two ling >>= distr (fun x ↦ something >>= fun y ↦ pure (wrote y x)) =
       (fun X ↦ ∀ x ∈ X, ∃ y ∈ something, wrote y x) '' two ling := by
@@ -250,8 +249,7 @@ theorem two_island (rel : Set A) (die : A → Prop) :
       (fun X ↦ cond (∀ x ∈ X, die x) house) '' two rel := by
   ext q; simp [distr, closureCond, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
 
-/-- The reading of (39) with `∆` above the conditional, which would need the plural to scope out
-of the island, differs from the derived one. -/
+-- (39)
 theorem two_island_ne_distr_wide : ¬ ∀ (rel : Set Bool) (die : Bool → Prop) (house : Prop),
     sSup ((two rel >>= distr fun x ↦ pure (die x)) >>=
         fun p ↦ closureCond (· → ·) (pure p) (pure house)) ↔
@@ -281,7 +279,7 @@ right, with the relative in the outer layer. -/
 def relativeOuter : Set (Set Prop) :=
   rel >>= fun y ↦ pure (lawyer >>= fun x ↦ pure (visits y x))
 
-/-- Pied-piping the flat island scopes both indefinites over the conditional (44). -/
+-- (44)
 theorem both_wide :
     (lawyer >>= fun x ↦ rel >>= fun y ↦ pure (visits y x)) >>=
         (fun p ↦ closureCond cond (pure p) (pure house)) =
@@ -302,7 +300,7 @@ theorem lawyer_wide :
       (fun x ↦ cond (∃ y ∈ rel, visits y x) house) '' lawyer := by
   ext q; simp [lawyerOuter, closureCond, Set.bind_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
 
-/-- Flattening a higher-order island gives the point-wise island (11) and forgets the layers. -/
+-- (11)
 theorem joinM_lawyerOuter :
     joinM (lawyerOuter lawyer rel visits) = pure visits <*> rel <*> lawyer := by
   ext q; simp [lawyerOuter, joinM, Set.bind_def, Set.seq_eq_set_seq, Set.mem_seq_iff]; aesop
@@ -323,7 +321,7 @@ theorem seminar_paper (grad seminar paper : Set E) (disc : E → E → Prop) (jo
 
 end Selectivity
 
-/-- The two selective readings of (43) differ, as in `Examples.ex43`. -/
+-- (43)
 theorem lawyer_wide_ne_relative_wide : ¬ ∀ visits : Fin 4 → Fin 4 → Prop,
     sSup (lawyerOuter {0, 1} {2, 3} visits >>= fun m ↦ closureCond (· → ·) m (pure False)) ↔
       sSup (relativeOuter {0, 1} {2, 3} visits >>= fun m ↦ closureCond (· → ·) m (pure False)) := by
@@ -392,15 +390,14 @@ def det (D : GQ E) (P : Set E) (f : E → ReaderT (Assignment E) Set Prop) :
 
 variable (ling : Set E) (cited : E → E → Prop)
 
-/-- *A linguist cited her₀* leaves the pronoun free, (59) and Figure 12, left. -/
+-- (59), Figure 12
 theorem ling_cited_her :
     (monadLift ling : ReaderT (Assignment E) Set E) >>=
         (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
       fun g ↦ (fun x ↦ cited (g 0) x) '' ling := by
   funext g; ext q; simp [eq_comm, -eq_iff_iff]
 
-/-- In *a linguist β⁰ cited herself₀* the pronoun is bound, and the meaning is the same at every
-assignment (Figure 12, right). -/
+-- Figure 12
 theorem ling_cited_herself :
     (monadLift ling : ReaderT (Assignment E) Set E) >>=
         beta 0 (fun x ↦ pro 0 >>= fun y ↦ pure (cited y x)) =
@@ -439,7 +436,7 @@ theorem paper_wide :
       fun g ↦ (fun x ↦ ¬ ∃ y ∈ cand, subm x y) '' {x | x ∈ paper ∧ wrote x (g 0)} := by
   funext g; ext q; simp [paperBy, det, GQ.no, sSup_Prop_eq, eq_comm, -eq_iff_iff]
 
-/-- Below the indefinite, `β⁰` does nothing (Figure 14). -/
+-- Figure 14
 theorem paper_wide_beta :
     paperBy paper wrote >>= (fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y))) =
       paperBy paper wrote >>= fun x ↦ det GQ.no cand fun y ↦ pure (subm x y) :=
@@ -516,7 +513,7 @@ propositions. -/
 def that (r l : ReaderT (Assignment E) Set Prop) : ReaderT (Assignment E) Set Prop :=
   fun g ↦ Set.image2 (· ∧ ·) (l g) (r g)
 
-/-- The determiner scoping over its noun gives the set-denoting indefinite (85). -/
+-- (85)
 theorem a_pure (ling : Set E) : a (fun x ↦ pure (x ∈ ling)) = monadLift ling := by
   funext g; ext x; simp [a, sSup_Prop_eq, -eq_iff_iff]
 
@@ -563,7 +560,7 @@ theorem nobody_met_iff (human phon : Set E) (met : E → E → Prop) (hphon : ph
         exact ⟨f, hf ▸ hn⟩
     exact ⟨_, ⟨_, ⟨f, rfl⟩, rfl⟩, fun ⟨x, hx, hfx⟩ ↦ hf ⟨x, hx⟩ hfx⟩
 
-/-- The first line of (74) is among the second, the engine's abstraction. -/
+-- (74)
 theorem abstractChoice_subset_distribute (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
     (g : Assignment E) (hm : ∀ x, (m (g[n ↦ x])).Nonempty) :
     abstractChoice n m g ⊆ (distribute (M := SetM) fun x ↦ m (g[n ↦ x])).run := by
@@ -582,9 +579,7 @@ theorem abstractChoice_eq_distribute (n : ℕ) (m : ReaderT (Assignment E) Set P
     hm fun x ↦ (· = P x)).2 fun x ↦ ⟨P x, SetM.mem_run_distribute.1 hP x, rfl⟩
   exact ⟨f, funext hf⟩
 
-/-- Where everyone met some but not all linguists, `[λ₀ t₀ met a linguist]` has both truth values
-as alternatives at every value of the variable: the first line of (74) gives it the constant
-predicates, the second every predicate. -/
+-- (74)
 theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
     (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
     abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g = Set.range (Function.const E) ∧
@@ -602,9 +597,7 @@ theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
   obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq (N := fun _ : Prop ↦ True) (x := p) trivial
   exact ⟨f, hf ▸ hp⟩
 
-/-- Footnote 25 asks only for nonempty alternatives, but a choice function picks the same member
-from equal sets: with two individuals who each met some but not all linguists, the two lines of
-(74) differ. -/
+-- (74)
 theorem abstractChoice_ne_distribute [Nontrivial E] (ling : Set E) (met : E → E → Prop)
     (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
     abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g ≠
@@ -615,8 +608,7 @@ theorem abstractChoice_ne_distribute [Nontrivial E] (ling : Set E) (met : E → 
   obtain ⟨p, hp⟩ : (· = a) ∈ Set.range (Function.const E) := hc ▸ Set.mem_univ _
   exact hab (((congrFun hp b).symm.trans (congrFun hp a)).mpr rfl).symm
 
-/-- The right-hand side of (75), a Skolemized choice function attached to the restrictor, is the
-second line of (74). -/
+-- (75), (74)
 theorem range_skolem_eq_distribute (ling : Set E) (met : E → E → Prop) (hling : ling.Nonempty) :
     Set.range (fun F : E → ChoiceFunction E ↦ fun x ↦ met (F x (· ∈ ling)) x) =
       (distribute (M := SetM) fun x ↦ (fun y ↦ met y x) '' ling).run := by
@@ -670,8 +662,7 @@ theorem interp_nobodyMet (g : Assignment E) :
     Mode.eval, Option.getD_some, Set.image_image]
   rfl
 
-/-- With the engine's abstraction, (77) has a true alternative exactly when nobody met every
-phonologist. -/
+-- (77)
 theorem sSup_interp_nobodyMet_iff (hphon : phon.Nonempty) (g : Assignment E) {X : SetM Prop}
     (hX : Tree.interp (lexicon human phon met) g nobodyMet = some ⟨.t, X⟩) :
     sSup X.run ↔ ¬ ∃ x ∈ human, ∀ y ∈ phon, met y x := by

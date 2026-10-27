@@ -167,8 +167,7 @@ theorem cohen_fails_nickel_succeeds_on_conjunction :
     nickelConjunctiveGEN elephantNormalIn ways isElephant livesInAfrica livesInAsia :=
   ⟨cohen_fails_elephant_asia, nickel_handles_elephant_conjunction⟩
 
-/-- The bears conjunction (2a) fails for the majority view on every conjunct, since each of the
-four habitats is a minority. -/
+-- (2a)
 theorem cohen_fails_all_bear_habitats :
     ¬ Cohen1999.gen .univ isBear bearHabitat bearNA ∧
     ¬ Cohen1999.gen .univ isBear bearHabitat bearSA ∧

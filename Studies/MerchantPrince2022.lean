@@ -262,9 +262,7 @@ private theorem eq_of_forall_apply_eq (hf : Instantiates π c (f c)) (l : Rankin
     exact h₃.trans (ih (t + 1) (by omega) (by omega) ν'
       (apply_eq_of_lt_succ htn rfl h₁ fun j hj ↦ (h₂ j hj).trans (hν j hj)))
 
-/-- Under instantiating functions, within the top `k` constraints of `l` every leg's row either
-matches that of `l`, via a block agreeing with `l`, or lies lexicographically above it (Lemma
-(287)). -/
+-- (287)
 private theorem filtration (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι n) :
     ∀ k ≤ n, ∀ μ : Ranking ι n,
       (∃ j : Fin n, j.val < k ∧ (∀ j' < j, f (l j') μ = f (l j') l) ∧ f (l j) l < f (l j) μ) ∨
@@ -355,7 +353,7 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
   obtain ⟨h₁, h₂, -⟩ := Pi.eq_and_lt_and_gt_of_toLex_comp_swap r hcov hlt hlt'
   exact ⟨x, hx, y, hy, h₁, h₂⟩
 
-/-- A typology has an acyclic GMOAT (the left-to-right half of Theorem (290)). -/
+-- (290)
 theorem IsTypology.isAcyclic (h : IsTypology π) : IsAcyclic π := by
   obtain ⟨I, O, S, rfl⟩ := h
   intro c
@@ -450,8 +448,7 @@ def partition164 : Setoid (Ranking Con 3) := Setoid.ker (· ∈ blockO)
 theorem partition164_iff {r s : Ranking Con 3} : partition164 r s ↔ (r ∈ blockO ↔ s ∈ blockO) :=
   Setoid.ker_def.trans eq_iff_iff
 
-/-- The GEPO of `X` in (164) has a cycle through the border point pairs `{XZY, ZXY}` and `{ZXY,
-ZYX}`. -/
+-- (164)
 theorem htcLT_X_cycle : HtcLT partition164 .X (leg .X .Z .Y) (leg .X .Z .Y) := by
   have h₁ : BorderLT partition164 .X (leg .X .Z .Y) (leg .Z .X .Y) :=
     ⟨0, by decide, by decide, by decide, by rw [partition164_iff]; decide⟩
@@ -462,7 +459,7 @@ theorem htcLT_X_cycle : HtcLT partition164 .X (leg .X .Z .Y) (leg .X .Z .Y) := b
   exact .tail (.single ⟨_, _, Setoid.refl' _ _, h₁, Setoid.refl' _ _⟩)
     ⟨_, _, Setoid.refl' _ _, h₂, h₃⟩
 
-/-- The partition (164) is not a typology. -/
+-- (164)
 theorem not_isTypology_partition164 : ¬ IsTypology partition164 :=
   fun h ↦ h.isAcyclic .X _ htcLT_X_cycle
 
@@ -488,7 +485,7 @@ theorem language_uvt166 (r : Ranking Con 3) :
   revert r
   decide +kernel
 
-/-- The tableau (166) generates the partition (165). -/
+-- (166), (165)
 theorem typology_uvt166 : uvt166.typology = typology165 := by
   refine Setoid.ext fun r s ↦ ?_
   have key (r : Ranking Con 3) :
@@ -503,7 +500,7 @@ theorem typology_uvt166 : uvt166.typology = typology165 := by
 theorem isTypology_typology165 : IsTypology typology165 :=
   ⟨Unit, Row, uvt166, typology_uvt166⟩
 
-/-- The GMOAT of the typology (165) is acyclic; in particular `<π.bp.X` is an order. -/
+-- (165)
 theorem isAcyclic_typology165 : IsAcyclic typology165 :=
   isTypology_typology165.isAcyclic
 

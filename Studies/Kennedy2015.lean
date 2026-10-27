@@ -96,8 +96,7 @@ section Modals
 
 variable {W : Type*} (R : W → Prop) (count : W → ℕ) (m : ℕ)
 
-/-- Under a modal the bare numeral keeps its two-sided content in each accessible
-world ((33a), (34a)). -/
+-- (33a), (34a)
 theorem narrow_scope_two_sided (Q : NP W) :
     LowScope (MaxIn {m}) Q (Iic ∘ count) ↔ Q fun w ↦ count w = m :=
   lowScope_maxIn

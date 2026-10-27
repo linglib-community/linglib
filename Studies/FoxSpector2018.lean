@@ -82,7 +82,6 @@ variable {S conts C A}
 theorem GloballyVacuous.globallyWeakening (h : GloballyVacuous S C A) :
     GloballyWeakening S C A := h.symm.subset
 
-/-- The first version of the condition, on vacuity, follows from the second. -/
 theorem not_licensed_of_incrementallyVacuous (h : IncrementallyVacuous conts C A) :
     ¬ Licensed conts C A := fun hl ↦ hl fun S hS ↦ (h S hS).globallyWeakening
 
@@ -148,8 +147,6 @@ theorem singh_reverse (h' : ((p ∪ q) \ (p ∩ q)).Nonempty) :
     · exact Or.inl hpq
     · exact Or.inr ⟨hw, hpq⟩
 
-/-- For distant entailing disjuncts in reverse order, `exh` on the final weak disjunct is
-licensed when the exhaustified disjunction is strictly stronger than the bare one. -/
 theorem licensed_orRight_of_ssubset (h : q ∪ exhIE C p ⊂ q ∪ p) : Licensed (orRight q) C p :=
   licensed_orRight_iff.2 (ssubset_def ▸ h).2
 

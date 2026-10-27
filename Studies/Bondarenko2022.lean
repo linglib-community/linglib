@@ -214,7 +214,7 @@ def saturatesTheta (ct : ClauseType) (_ : ThetaHead) : Prop :=
 instance (ct : ClauseType) (θ : ThetaHead) : Decidable (saturatesTheta ct θ) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- Bare CPs satisfy no Θ-head (§4.4). -/
+-- §4.4
 theorem bareCP_satisfies_no_theta (θ : ThetaHead) :
     ¬ saturatesTheta .predicateOfSituations θ :=
   SemType.noConfusion
@@ -355,8 +355,7 @@ theorem content_iff_contExponent_mem :
     ∀ d ∈ shapeData, ∀ c ∈ buryatAnalysis.contExponent, (d.sort = .content ↔ c ∈ d.typers) := by
   decide
 
-/-- Each frame of *hanaxa* takes exactly one typer, the bare frame *-žA* and the nominalized one
-*-Aːša* (§4.4.3). -/
+-- §4.4.3
 theorem hanaxa_typers :
     (ArgumentFrame.finiteClause.Takes zha ∧ ¬ ArgumentFrame.finiteClause.Takes aasha) ∧
       (nominalizedFrame.Takes aasha ∧ ¬ nominalizedFrame.Takes zha) ∧

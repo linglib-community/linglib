@@ -65,8 +65,7 @@ def fig3 : Tree 4 :=
       Word.mk' "mine" .PRON]
     1 [(1, 0, .amod), (0, 3, .advmod), (3, 2, .mark)])
 
-/-- Figure 3 is nonprojective: *dogs* lies between the head *bigger* and its dependent *mine*
-without being dominated by *bigger*. -/
+-- Figure 3
 theorem fig3_not_isArcProjective : ¬ fig3.IsArcProjective :=
   λ h => (by decide : ¬ Dominates fig3.toGraph 0 1)
     (h (by decide : fig3.Adj 0 3) 1 (Set.mem_uIcc.2 (Or.inl ⟨by decide, by decide⟩)))
@@ -92,8 +91,7 @@ def ex1b : Tree 9 :=
     1 [(1, 8, .advcl), (8, 5, .mark), (8, 6, .nsubj), (8, 7, .aux), (1, 0, .nsubj),
       (1, 4, .obl), (4, 2, .case), (4, 3, .det)])
 
-/-- §3.1: the two orders of (1) have identical dependency representations: (1b) is (1a)
-relabelled along the rotation of the positions by five. -/
+-- §3.1, (1), (1b), (1a)
 theorem ex1b_eq_map : ex1b.toGraph = ex1a.toGraph.map (Equiv.addRight 5) := by
   rw [Graph.ext_iff]; decide
 
@@ -127,8 +125,7 @@ def ex3b : Tree 5 :=
       Word.mk' "bin" .NOUN, Word.mk' "out" .ADP]
     1 [(1, 0, .nsubj), (1, 4, .compound), (1, 3, .obj), (3, 2, .det)])
 
-/-- Postposing the particle lengthens the dependencies of *threw* by four words in (2) and one in
-(3), so [temperley-2007]'s minimization prefers (2a) (§3.2). -/
+-- (2), (3), (2a), §3.2 [temperley-2007]
 theorem particle_shift_length :
     ex2b.totalLength - ex2a.totalLength = 4 ∧ ex3b.totalLength - ex3a.totalLength = 1 := by
   decide
@@ -149,8 +146,7 @@ def ex4b : Tree 9 :=
     6 [(6, 1, .nsubj), (1, 0, .det), (1, 3, .acl), (3, 2, .nsubj), (3, 5, .obj), (5, 4, .det),
       (6, 8, .obj), (8, 7, .det)])
 
-/-- *Who* is three positions from *attacked* in the object relative (4a) and adjacent in the subject
-relative (4b) of (4), the locality behind [gibson-1998]'s penalty. -/
+-- (4a), (4b), (4) [gibson-1998]
 theorem relative_filler_distance :
     Nat.dist (ex4a.headOf 2) 2 = 3 ∧ Nat.dist (ex4b.headOf 2) 2 = 1 := by decide
 
@@ -189,8 +185,7 @@ def fig4b : Tree 8 :=
   .mk' (.ofArcs fig4Words 1 [(1, 0, .nsubj), (1, 5, .ccomp), (5, 2, .mark), (5, 3, .nsubj),
     (5, 4, .aux), (5, 7, .obl), (7, 6, .case)])
 
-/-- Figure 4: the content-word-headed tree satisfies §4.5's principle and the
-function-word-headed tree does not, *that*, *will* and *on* heading *will*, *rely* and *her*. -/
+-- Figure 4, §4.5
 theorem fig4_contentWordsHigher :
     ContentWordsHigher fig4b.toGraph ∧ ¬ ContentWordsHigher fig4a.toGraph := by decide
 
@@ -215,8 +210,7 @@ def IsContentSkeleton {m n : ℕ} (t : Fin m → Fin n) (g₁ : Graph m) (g₂ :
   (∀ v w, g₂.label (t v) (t w) = g₁.label v w) ∧ (∀ v, (g₂.words (t v)).cat.isOpenClass) ∧
     ∀ u, (g₂.words u).cat.isOpenClass → ∃ v, t v = u
 
-/-- In Figure 7, Finnish is the content-word skeleton of the English sentence, whose function words
-attach below its content words (§4). -/
+-- Figure 7, §4
 theorem fig7_parallel :
     IsContentSkeleton ![1, 3, 5, 9] fig7fi.toGraph fig7en.toGraph ∧
       ContentWordsHigher fig7en.toGraph := by
@@ -243,8 +237,7 @@ def fig9Enhanced : Graph 12 :=
     (2, 4, .xcomp), (4, 3, .mark), (5, 10, .obj), (10, 6, .det), (10, 7, .amod),
     (10, 9, .amod), (7, 9, .conj), (9, 8, .cc), (5, 11, .punct)]
 
-/-- The enhanced representation is not a tree, since *students* has three heads and lies on a cycle
-(§4.4). -/
+-- §4.4
 theorem fig9Enhanced_not_isTree :
     ¬ fig9Enhanced.IsTree ∧ (fig9Enhanced.parents 0).card = 3 ∧
       Relation.TransGen fig9Enhanced.Adj 0 0 := by

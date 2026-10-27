@@ -59,8 +59,7 @@ variable {E : Type*}
 
 /-! ### Partitions and the Disjointness Condition (§3.1) -/
 
-/-- A family of subkinds ((16), (28)) covers the kind without overlap iff every realization lies in
-exactly one subkind. -/
+-- (16), (28)
 theorem cover_and_noOverlap_iff {c : Set (Set E)} :
     ((∀ x, ∃ y ∈ c, x ∈ y) ∧ ∀ x, ∀ y ∈ c, x ∈ y → ¬ ∃ z ∈ c, y ≠ z ∧ x ∈ z) ↔
       ∀ x, ∃! y ∈ c, x ∈ y := by
@@ -106,8 +105,7 @@ structure Dog where
 /-- Fido, a border collie and a watch-dog, (14b). -/
 def fido : Dog := ⟨.borderCollie, .watchDog, 0⟩
 
-/-- With only Fido in the room (14b), *two kinds of dog are sitting in the next room* is false for
-every partition. -/
+-- (14b)
 theorem ncard_realized_fido_le (s : Setoid Dog) : (realized s.classes {fido}).ncard ≤ 1 :=
   (ncard_realized_classes_le s (Set.finite_singleton fido)).trans (Set.ncard_singleton fido).le
 
@@ -121,8 +119,7 @@ private theorem borderCollies_ne_watchDogs : borderCollies ≠ watchDogs := fun 
   have : (⟨.borderCollie, .guideDog, 0⟩ : Dog) ∈ watchDogs := h ▸ rfl
   simp [watchDogs] at this
 
-/-- Fido alone realizes both the border collies and the watch-dogs, so counting these
-two subkinds would make (14) true (14b). -/
+-- (14), (14b)
 theorem ncard_realized_borderCollies_watchDogs :
     (realized {borderCollies, watchDogs} {fido}).ncard = 2 := by
   have : realized {borderCollies, watchDogs} {fido} = {borderCollies, watchDogs} := by
@@ -130,8 +127,7 @@ theorem ncard_realized_borderCollies_watchDogs :
     rintro y (rfl | rfl) <;> exact ⟨fido, rfl, rfl⟩
   rw [this, Set.ncard_pair borderCollies_ne_watchDogs]
 
-/-- The border collies and the watch-dogs overlap in Fido (14b), so they form no partition and
-the Disjointness Condition excludes them. -/
+-- (14b)
 theorem not_partition_borderCollies_watchDogs :
     ¬ ∀ x, ∃! y ∈ ({borderCollies, watchDogs} : Set (Set Dog)), x ∈ y := fun h ↦
   borderCollies_ne_watchDogs ((h fido).unique ⟨by simp, rfl⟩ ⟨by simp, rfl⟩)
@@ -141,8 +137,7 @@ def room14a : Set Dog :=
   {⟨.bulldog, .guideDog, 0⟩, ⟨.bulldog, .guideDog, 1⟩, ⟨.bulldog, .guideDog, 2⟩,
     ⟨.beagle, .guideDog, 0⟩, ⟨.beagle, .guideDog, 1⟩}
 
-/-- The dogs of the room (14a) realize two subkinds of the breed partition, so (14) is
-true. -/
+-- (14a), (14)
 theorem ncard_realized_room14a : (realized (Setoid.ker Dog.breed).classes room14a).ncard = 2 := by
   have hne : {z : Dog | z.breed = .bulldog} ≠ {z | z.breed = .beagle} := fun h ↦ by
     have : (⟨.bulldog, .guideDog, 0⟩ : Dog) ∈ {z : Dog | z.breed = .beagle} := h ▸ rfl
@@ -154,15 +149,13 @@ theorem ncard_realized_room14a : (realized (Setoid.ker Dog.breed).classes room14
 
 /-! ### Subkind reference (§3.2.2) -/
 
-/-- The demonstrative *that (kind of) dog* (31b), the ι of the cells containing the demonstrated
-dog, always refers, to that dog's cell. -/
+-- (31b)
 theorem that_eq (s : Setoid E) (a : E) :
     iota (fun y ↦ y ∈ s.classes ∧ a ∈ y) = some {x | s x a} :=
   (iota_eq_some_iff _).2 ⟨⟨s.mem_classes a, s.refl' a⟩,
     fun _ hy ↦ (Setoid.classes_eqv_classes a).unique hy ⟨s.mem_classes a, s.refl' a⟩⟩
 
-/-- *The kind of dog* (32b), the ι of the cells alone, fails once the partition has two
-cells. -/
+-- (32b)
 theorem the_kind_eq_none (s : Setoid E) {a b : E} (h : ¬ s a b) :
     iota (· ∈ s.classes) = none :=
   (iota_eq_none_iff _).2 fun ⟨y, hy, hu⟩ ↦ h <| s.rel_iff_exists_classes.2
@@ -172,12 +165,11 @@ theorem the_kind_eq_none (s : Setoid E) {a b : E} (h : ¬ s a b) :
 restrictor `P`. -/
 def kappaPlus (s : Setoid E) (P : Set E) : Set (Set E) := {y ∈ s.classes | P ⊆ y}
 
-/-- With no restrictor κ+ is κ, the partition itself (footnote 9). -/
+-- footnote 9
 @[simp] theorem kappaPlus_empty (s : Setoid E) : kappaPlus s ∅ = s.classes := by
   simp [kappaPlus]
 
-/-- Restricted to the demonstrated individual, κ+ gives the cells whose ι (31b) takes
-(footnote 9), so the demonstrative is the definite over κ+. -/
+-- (31b), footnote 9
 @[simp] theorem kappaPlus_singleton (s : Setoid E) (a : E) :
     kappaPlus s {a} = {y ∈ s.classes | a ∈ y} := by
   simp [kappaPlus]
@@ -196,8 +188,7 @@ theorem the_kappaPlus_eq_none (s : Setoid E) {P : Set E} {a b : E} (ha : a ∈ P
   (iota_eq_none_iff _).2 fun ⟨y, ⟨hy, hPy⟩, _⟩ ↦
     h (s.rel_iff_exists_classes.2 ⟨y, hy, hPy ha, hPy hb⟩)
 
-/-- Under the partition by a function `f` ((36), (37), footnote 11), the definite with a cell's
-restrictor refers to that cell. -/
+-- (36), (37), footnote 11
 theorem the_kappaPlus_ker {β : Type*} (f : E → β) (a : E) :
     iota (· ∈ kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) = some (f ⁻¹' {f a}) :=
   the_kappaPlus_eq_some _ rfl fun _ h ↦ h
@@ -220,15 +211,13 @@ structure Lion where
 /-- *Lions that eat people*, (21b), sharpened as footnote 11 requires. -/
 def eatPeople : Set Lion := Lion.diet ⁻¹' {.people}
 
-/-- The partition of lions by subspecies cannot serve *the lions that eat people*, since
-there are people-eating lions of both subspecies (p. 604). -/
+-- p. 604
 theorem the_kappaPlus_subspecies :
     iota (· ∈ kappaPlus (Setoid.ker Lion.subspecies) eatPeople) = none :=
   the_kappaPlus_eq_none _ (a := ⟨.african, .people, 0⟩) (b := ⟨.asiatic, .people, 0⟩) rfl rfl
     (by simp [Setoid.ker_def])
 
-/-- The partition by what lions eat serves it (37), and the definite refers to the
-people-eating lions. -/
+-- (37)
 theorem the_kappaPlus_diet :
     iota (· ∈ kappaPlus (Setoid.ker Lion.diet) eatPeople) = some eatPeople :=
   the_kappaPlus_ker Lion.diet ⟨.african, .people, 0⟩

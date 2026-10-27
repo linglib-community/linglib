@@ -168,8 +168,7 @@ theorem rows_agree :
 
 /-! ### Demonstratives are strict (Section 4.3) -/
 
-/-- A demonstrative description denotes the value of its index wherever its restrictor holds of it,
-(27) to (30). -/
+-- (27), (30)
 theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
     (s : W) (x : E) :
     ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=

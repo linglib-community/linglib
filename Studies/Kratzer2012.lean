@@ -93,19 +93,18 @@ theorem evidence_realistic : evidence.IsRealistic := by decide_worlds
 
 theorem content_not_realistic : ¬ content.IsRealistic := by decide_worlds
 
-/-- The reportative reading of (8b) holds at every world, a lie included, because it reports
-the rumor's content. -/
+-- (8b)
 theorem sollen_holds (w : World) : simpleNecessity content chief w := by
   decide_worlds
 
-/-- On shaky evidence (8a) fails, so Roger need not have been elected chief. -/
+-- (8a)
 theorem not_must_chief (w : World) : ¬ simpleNecessity evidence chief w := by
   revert w; decide_worlds
 
 theorem can_chief (w : World) (h : rumor w) : simplePossibility evidence chief w := by
   revert h w; decide_worlds
 
-/-- If the background records that the rumor is reliable, (8a) holds. -/
+-- (8a)
 theorem must_of_reliable {W : Type*} (rumor chief reliable : W → Prop) (f : Background W)
     (hf : ∀ w, rumor w → rumor ∈ f w ∧ reliable ∈ f w)
     (hrel : ∀ v, reliable v → rumor v → chief v) (w : W) (hw : rumor w) :
@@ -154,8 +153,7 @@ theorem Superincreasing.measure_lt_iff [LinearOrder α] [Finite α] (hμ : Super
 
 variable [MeasurableSingletonClass α] [IsFiniteMeasure μ]
 
-/-- No measure giving `c` positive weight preserves comparative possibility when `a` and `b` are
-tied and `c` is not strictly better than `a` (p. 41). -/
+-- p. 41
 theorem not_kratzerLift_iff_measure_le {r : α → α → Prop} {a b c : α}
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) (hab' : ¬ (r a b ∧ ¬ r b a))
     (hba : ¬ (r b a ∧ ¬ r a b)) (hca : ¬ (r c a ∧ ¬ r a c)) (hc : μ {c} ≠ 0) :
@@ -188,8 +186,7 @@ theorem kratzerLift_iff_measure_le_iff [LinearOrder α] :
 
 end Measures
 
-/-- Under the Limit Assumption, necessity and possibility coincide when the accessible worlds are
-strictly totally ordered (§2.5). -/
+-- §2.5
 theorem humanNecessity_iff_humanPossibility {W : Type*} {f g : Background W}
     {w : W} (p : W → Prop) (hlim : LimitAssumption f g w) (hne : (f.accessibleWorlds w).Nonempty)
     (htot : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (u ≤[g w] v) ∨ (v ≤[g w] u))
@@ -230,8 +227,7 @@ def BetterPossibility (p q : Set World) : Prop :=
 noncomputable def prob : Measure World :=
   ∑ i : World, (2 ^ (i : ℕ) / 15 : ℝ≥0∞) • Measure.dirac i
 
-/-- The probability of a proposition is the sum of `2ⁱ` over its worlds `wᵢ`, divided by 15,
-which is the table of p. 42. -/
+-- p. 42
 theorem prob_coe (s : Finset World) : prob s = ((∑ i ∈ s, 2 ^ (i : ℕ) : ℕ) : ℝ≥0∞) / 15 := by
   simp [prob, Set.indicator_apply, Finset.sum_ite_mem, ENNReal.sum_div]
 
@@ -248,8 +244,7 @@ theorem superincreasing_prob : Superincreasing prob := by
   revert a
   decide
 
-/-- One proposition is a better possibility than another exactly when it is more probable, so
-the measure preserves comparative possibility (p. 43). -/
+-- p. 43
 theorem betterPossibility_iff (p q : Set World) : BetterPossibility p q ↔ prob q < prob p := by
   have hr : (premisePreorder (ideal 0)).le = (· ≥ ·) :=
     funext₂ fun w z ↦ propext (atLeastAsGoodAs_ideal_iff 0 w z)
@@ -299,8 +294,7 @@ private theorem humanPossibility_iff_exists {g : Background World} (p : World �
     humanPossibility ⊥ g p 0 ↔ ∃ v ∈ bestWorlds ⊥ g 0, p v := by
   rw [humanPossibility_iff_possibility (.of_finite _ _ _), possibility_iff]
 
-/-- A proposition is necessary under `O₁` exactly when its probability is at least `8/15`
-(§2.5). -/
+-- §2.5
 theorem humanNecessity_iff (p : World → Prop) :
     humanNecessity ⊥ ideal p 0 ↔ 8 / 15 ≤ prob {w | p w} := by
   classical
@@ -310,8 +304,7 @@ theorem humanNecessity_iff (p : World → Prop) :
     ← Nat.cast_ofNat (R := ℝ≥0∞) (n := 8), Nat.cast_lt, not_lt, h, Set.mem_toFinset]
   simp
 
-/-- A proposition is possible under `O₁` exactly when it is necessary, so exactly when its
-probability is at least `8/15` (§2.5). -/
+-- §2.5
 theorem humanPossibility_iff (p : World → Prop) :
     humanPossibility ⊥ ideal p 0 ↔ 8 / 15 ≤ prob {w | p w} := by
   refine (humanNecessity_iff_humanPossibility p (.of_finite _ _ _)
@@ -322,29 +315,26 @@ theorem humanPossibility_iff (p : World → Prop) :
   · exact le_antisymm ((atLeastAsGoodAs_ideal_iff 0 v u).1 h')
       ((atLeastAsGoodAs_ideal_iff 0 u v).1 h)
 
-/-- Under `O₃` the necessary propositions are those containing `w₂` and `w₃` (p. 44). -/
+-- p. 44
 theorem humanNecessity_tied_iff (p : World → Prop) :
     humanNecessity ⊥ tied p 0 ↔ p 2 ∧ p 3 := by
   simp [humanNecessity_iff_forall, bestWorlds_tied]
 
-/-- The propositions necessary under `O₃` are those necessary however the tie is resolved, under
-both `O₁` and `O₂` (p. 44). -/
+-- p. 44
 theorem humanNecessity_tied_iff_and (p : World → Prop) :
     humanNecessity ⊥ tied p 0 ↔
       humanNecessity ⊥ ideal p 0 ∧ humanNecessity ⊥ swapped p 0 := by
   simp [humanNecessity_iff_forall, bestWorlds_tied, bestWorlds_ideal, bestWorlds_swapped,
     and_comm]
 
-/-- Resolving the tie collapses possibility into necessity, so the propositions possible under
-both `O₁` and `O₂` are those necessary under both (p. 45). -/
+-- p. 45
 theorem humanPossibility_and_iff (p : World → Prop) :
     humanPossibility ⊥ ideal p 0 ∧ humanPossibility ⊥ swapped p 0 ↔
       humanNecessity ⊥ ideal p 0 ∧ humanNecessity ⊥ swapped p 0 := by
   simp [humanNecessity_iff_forall, humanPossibility_iff_exists, bestWorlds_ideal,
     bestWorlds_swapped]
 
-/-- Under `O₃` the merely possible propositions, possible but not necessary, are those containing
-exactly one of `w₂` and `w₃` (p. 45). -/
+-- p. 45
 theorem merelyPossible_tied_iff (p : World → Prop) :
     (humanPossibility ⊥ tied p 0 ∧ ¬ humanNecessity ⊥ tied p 0) ↔
       Xor (p 2) (p 3) := by
@@ -368,8 +358,7 @@ instance : IsProbabilityMeasure probTied where
       show (∑ i : World, (![1, 2, 4, 4] : World → ℕ) i : ℕ) = 11 from rfl]
     exact ENNReal.div_self (by norm_num) (by norm_num)
 
-/-- Under `O₃` a proposition is necessary exactly when its probability is at least `8/11`
-(p. 46). -/
+-- p. 46
 theorem humanNecessity_tied_iff_probTied (p : World → Prop) :
     humanNecessity ⊥ tied p 0 ↔ 8 / 11 ≤ probTied {w | p w} := by
   classical
@@ -380,8 +369,7 @@ theorem humanNecessity_tied_iff_probTied (p : World → Prop) :
     ← Nat.cast_ofNat (R := ℝ≥0∞) (n := 8), Nat.cast_lt, not_lt, h]
   simp
 
-/-- Under `O₃` a proposition is possible exactly when its probability is at least `4/11`
-(p. 46). -/
+-- p. 46
 theorem humanPossibility_tied_iff_probTied (p : World → Prop) :
     humanPossibility ⊥ tied p 0 ↔ 4 / 11 ≤ probTied {w | p w} := by
   classical
@@ -392,8 +380,7 @@ theorem humanPossibility_tied_iff_probTied (p : World → Prop) :
     ← Nat.cast_ofNat (R := ℝ≥0∞) (n := 4), Nat.cast_lt, not_lt, h]
   simp
 
-/-- No measure giving `w₁` positive weight, the measure of p. 46 among them, preserves the
-comparative possibility of `O₃`. -/
+-- p. 46
 theorem not_kratzerLift_tied_iff (μ : Measure World) [IsFiniteMeasure μ] (h : μ {1} ≠ 0) :
     ¬ ∀ A B : Set World, KratzerLift (premisePreorder (tied 0)).le A B ↔ μ B ≤ μ A := by
   refine not_kratzerLift_iff_measure_le (a := 2) (b := 3) (c := 1) (by decide) (by decide)

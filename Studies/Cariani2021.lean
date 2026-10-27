@@ -84,19 +84,18 @@ variable {T : Type*} [LinearOrder T] {A : T → Prop} {t : T}
 
 @[simp] theorem linearWill_iff : linearWill A t ↔ ∃ u > t, A u := Tense.diamond_toSetRel_future
 
-/-- *Will* and *was* are mirror images: *will* is *was* on the reversed time line (p. 10). -/
+-- p. 10
 theorem linearWill_iff_linearWas_toDual :
     linearWill A t ↔ linearWas (T := Tᵒᵈ) (A ∘ OrderDual.ofDual) (OrderDual.toDual t) := by
   simp only [linearWill_iff, linearWas_iff]
   exact ⟨fun ⟨u, hu, h⟩ ↦ ⟨OrderDual.toDual u, hu, h⟩, fun ⟨u, hu, h⟩ ↦ ⟨u.ofDual, hu, h⟩⟩
 
-/-- (1a) is valid: a future of a future is a future, by the composition of the future cell with
-itself. -/
+-- (1a)
 theorem linearWill_linearWill (h : linearWill (linearWill A) t) : linearWill A t := by
   have := Tense.diamond_diamond_toSetRel h
   rwa [Tense.comp_future_future] at this
 
-/-- (1b) is invalid: what is true now need not be true at a later time. -/
+-- (1b)
 theorem not_forall_imp_linearWill : ¬ ∀ (A : ℤ → Prop) (t : ℤ), A t → linearWill A t :=
   fun h ↦ let ⟨_, hu, hA⟩ := linearWill_iff.1 (h (· = 0) 0 rfl); lt_irrefl (0 : ℤ) (hA ▸ hu)
 
@@ -109,7 +108,7 @@ theorem forall_imp_linearWill_linearWas_iff :
   · obtain ⟨u, hu⟩ := exists_gt t
     exact linearWill_iff.2 ⟨u, hu, linearWas_iff.2 ⟨t, hu, hA⟩⟩
 
-/-- (1d) is valid on a time line exactly when it has no first moment (p. 9). -/
+-- (1d), p. 9
 theorem forall_imp_linearWas_linearWill_iff :
     (∀ (A : T → Prop) (t : T), A t → linearWas (linearWill A) t) ↔ NoMinOrder T := by
   refine ⟨fun h ↦ ⟨fun t ↦ ?_⟩, fun _ A t hA ↦ ?_⟩
@@ -118,13 +117,13 @@ theorem forall_imp_linearWas_linearWill_iff :
   · obtain ⟨u, hu⟩ := exists_lt t
     exact linearWas_iff.2 ⟨u, hu, linearWill_iff.2 ⟨t, hu, hA⟩⟩
 
-/-- (2a): given a future, what is true will have been true (p. 10). -/
+-- (2a), p. 10
 theorem linearWill_linearWas (hA : A t) (h : linearWill (fun _ ↦ True) t) :
     linearWill (linearWas A) t :=
   let ⟨u, hu, _⟩ := linearWill_iff.1 h
   linearWill_iff.2 ⟨u, hu, linearWas_iff.2 ⟨t, hu, hA⟩⟩
 
-/-- (2b): given a past, what is true was going to be true (p. 10). -/
+-- (2b), p. 10
 theorem linearWas_linearWill (hA : A t) (h : linearWas (fun _ ↦ True) t) :
     linearWas (linearWill A) t :=
   let ⟨u, hu, _⟩ := linearWas_iff.1 h
@@ -182,8 +181,7 @@ theorem forall_not_hybrid_and_not_iff {i : W × T} :
       (h (v := (s.sel i.1 H, u)) ⟨rfl, hu⟩ (u := (s.sel i.1 H, u')) ⟨rfl, hu'⟩),
       fun h _ ⟨hw, hu⟩ _ ⟨hw', hu'⟩ ↦ Prod.ext (hw.trans hw'.symm) (h hu hu')⟩
 
-/-- In the tacos model, *I will have tacos* and *I will not have tacos* are both true on Monday (p.
-83). -/
+-- p. 83
 theorem hybrid_tacos (s : SelectionFunction Unit) :
     hybrid s .univ (fun j : Unit × ℕ ↦ j.2 = 1) ((), 0) ∧
       hybrid s .univ (fun j : Unit × ℕ ↦ ¬ j.2 = 1) ((), 0) :=
@@ -238,8 +236,7 @@ theorem hybrid_iff_linearWill {A : W × T → Prop} {w : W} {t : T} (hw : w ∈ 
   · rintro ⟨u, hu, hA⟩
     exact ⟨(w, u), ⟨(s.centering w H hw).symm, hu⟩, hA⟩
 
-/-- Symmetric *will* has no present-directed use, though *The laundry will be done by now* is true
-(p. 46). -/
+-- p. 46
 theorem not_linearWill_now {A : T → Prop} {now : T} :
     ¬ linearWill (fun u ↦ u = now ∧ A u) now :=
   fun h ↦ let ⟨_, hu, hnow, _⟩ := linearWill_iff.1 h; lt_irrefl now (hnow ▸ hu)
@@ -277,8 +274,7 @@ def historical : SetRel World World := {p | p.1 = .w4 ↔ p.2 = .w4}
 
 instance : historical.IsRefl := ⟨fun _ ↦ Iff.rfl⟩
 
-/-- Over the historical possibilities as a fixed domain, *it is possible that Oedipus will avoid
-incest* is false at the actual world (p. 95). -/
+-- p. 95
 theorem not_diamond_will_fixed (s : SelectionFunction World) :
     ¬ ◇[epistemic] (· ∈ CarianiSantorio2018.will s historicalPossibilities avoidIncest) .w0 := by
   rintro ⟨v, -, hv⟩
@@ -287,8 +283,7 @@ theorem not_diamond_will_fixed (s : SelectionFunction World) :
   rw [hv] at this
   simp [historicalPossibilities] at this
 
-/-- Over the historical modal base, *it is possible that Oedipus will avoid incest* is true at
-the actual world, `w4` witnessing it (p. 106). -/
+-- p. 106
 theorem diamond_will_historical (s : SelectionFunction World) :
     ◇[epistemic] (· ∈ s.modal historical avoidIncest) .w0 :=
   ⟨.w4, trivial, by rw [modal_eq_id]; rfl⟩
@@ -423,8 +418,7 @@ theorem not_pres_WOLL_and_neg {w₁ w₂ : W} (h₁ : w₁ ∈ MB w now) (h₂ :
   rw [Condoravdi2002.pres_woll_iff, Condoravdi2002.pres_woll_iff]
   exact ⟨fun h ↦ hQ₂ (h w₂ h₂), fun h ↦ h w₁ h₁ hQ₁⟩
 
-/-- Over a realistic base selectional WOLL at the present is the prejacent at the world itself
-throughout the forward interval (p. 128). -/
+-- p. 128
 theorem pres_woll_iff_of_mem (h : w ∈ MB w now) :
     PRES now (woll s MB Q) w ↔ At (Interval.Ici ↑now) w Q := by
   rw [pres_woll_iff, s.centering w _ h]
@@ -433,13 +427,12 @@ theorem pres_woll_of_pres_WOLL (h : w ∈ MB w now) (hW : PRES now (WOLL MB Q) w
     PRES now (woll s MB Q) w :=
   (pres_woll_iff_of_mem h).2 (Condoravdi2002.pres_woll_iff.1 hW w h)
 
-/-- Present-directed *will* validates excluded middle (§5.7, (5), p. 87), unlike Condoravdi's
-universal WOLL, which like *must* in (6) does not. -/
+-- §5.7, (5), p. 87, (6)
 theorem pres_woll_or_neg : PRES now (woll s MB Q) w ∨ PRES now (woll s MB (neg Q)) w := by
   rw [pres_woll_neg_iff]
   exact em _
 
-/-- Outermost *by now* is idle in the present tense (p. 129). -/
+-- p. 129
 theorem pres_frame_now_iff (X : SortedProperty W E T) :
     PRES now (frame (Interval.pure ↑now) X) w ↔ PRES now X w := by
   simp only [PRES, frame, At, inf_idem]
@@ -503,14 +496,13 @@ theorem willIf_univ_eq_selectionConditional (hA : A.Nonempty) (B : Set W) :
   ext ⟨_, _⟩
   simp
 
-/-- *If A, might B* alone entails *might (A and B)*, so semi-closure, Fact 8.2 (p. 142), holds
-for the restrictor analysis of *if*. -/
+-- Fact 8.2, p. 142
 theorem diamond_of_diamond_inter {w : W} {p : W → Prop}
     (h : ◇[R ∩ Set.univ ×ˢ A] p w) : ◇[R] (fun v ↦ v ∈ A ∧ p v) w :=
   let ⟨v, ⟨hwv, _, hv⟩, hp⟩ := h
   ⟨v, hwv, hv, hp⟩
 
-/-- No nonempty eligible state accepts both *if A, will B* and *if A, might not B*, Fact 8.3. -/
+-- Fact 8.3
 theorem not_accepts_willIf_and_mightIf_not [R.IsRefl] {S : Set W} (hS : IsEligible R S)
     (hne : S.Nonempty) : ¬ (S ⊆ willIf s R A B ∧ S ⊆ (R ∩ Set.univ ×ˢ A).preimage Bᶜ) := by
   rintro ⟨hwill, hmight⟩

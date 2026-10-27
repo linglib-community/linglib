@@ -111,8 +111,7 @@ def passive (x : Entity) (e : E) : Prop := ∃ y, causative M M.effector P y x e
 
 variable {M θ agent P}
 
-/-- A derived inchoative entails the causative with its subject as its own causer, the special
-kind of causative that §3.5 finds the inchoative to entail. -/
+-- §3.5
 theorem causative_self_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : causative M θ P x x e := h
 
@@ -190,8 +189,7 @@ theorem not_licensesBySelf_passive :
   let ⟨_, _, hw⟩ := h .vaso e₀ ⟨.juan, e₀, rfl, trivial, (), trivial, rfl⟩
   Participant.noConfusion hw
 
-/-- The CAUSE-less representation of an internally caused verb ((65), (67)), the head
-`vBecome` alone, does not license *por sí solo*. -/
+-- (65), (67)
 theorem not_licensesBySelf_inchoative :
     ¬ LicensesBySelf breakingByJuan (breakingByJuan.vBecome broken) := fun h ↦
   let ⟨_, _, hw⟩ := h .vaso e₀ ⟨(), trivial, rfl⟩
@@ -238,8 +236,7 @@ def causer (v : Verb) : Option Causer :=
   (v.slotProfile? .external).bind fun p ↦
     if .volition ∈ p then some .agent else if .causation ∈ p then some .effector else none
 
-/-- Among the fragment's verbs with a causer, the alternating ones are the EFFECTOR verbs
-(§3.1–§3.2). -/
+-- §3.1, §3.2
 theorem alternates_iff_effector :
     ∀ v ∈ allVerbs, ∀ c ∈ causer v, (v.Alternates Voice.anticausative ↔ c = .effector) := by
   decide

@@ -165,8 +165,6 @@ noncomputable def literalScore (classPrior : ComparisonClass → Measure X) (u :
 
 variable (classPrior : ComparisonClass → Measure X) {α : ℝ}
 
-/-- Comparison-class preference of the pragmatic listener reduces to the kind-prior-weighted
-speaker shares, since the flat class prior and the observation marginal cancel. -/
 theorem L1_snd_real_lt_iff (κ : Measure X) [IsFiniteMeasure κ] (u : Utterance)
     (c₁ c₂ : ComparisonClass) :
     (L1 deg α classPrior κ u).snd.real {c₁} < (L1 deg α classPrior κ u).snd.real {c₂} ↔

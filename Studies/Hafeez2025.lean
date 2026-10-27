@@ -320,7 +320,7 @@ theorem exists_clip_prototypical (r : ResponseType) (hr : prototype r ≠ none) 
     ∃ c ∈ clips, Prototypical r c.scene := by
   cases r <;> first | decide +kernel | exact absurd (by decide +kernel) hr
 
-/-- Table 19 prints each response type's peak, except that it swaps those of NCA and NCrA. -/
+-- Table 19
 theorem summary_percent :
     ∀ row ∈ summary, row.responseType ≠ .nca → row.responseType ≠ .ncrA →
       some row.percent = (peakLeaf row.responseType).map (·.ceilingPercent) := by
@@ -332,7 +332,7 @@ theorem summary_percent_swapped :
       (row.responseType = .ncrA → some row.percent = (peakLeaf .nca).map (·.ceilingPercent)) := by
   decide +kernel
 
-/-- Tables 19 and 25 print the same prototypes. -/
+-- Tables 19 and 25
 theorem summary_prototype_eq : ∀ row ∈ summary,
     ∃ c ∈ comparison, c.responseType = row.responseType ∧ c.prototype = row.prototype := by
   decide +kernel

@@ -243,7 +243,7 @@ could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), 
 theorem judgment_differs_make_force :
     Examples.cwl2025_ex8a.judgment ≠ Examples.cwl2025_ex8b.judgment := by decide
 
-/-- In the gym triplets (5)–(7), *caused* stays acceptable while *forced* switches. -/
+-- (5), (7)
 theorem gym_grades_stronger_verbs :
     Examples.cwl2025_ex5a.judgment = Examples.cwl2025_ex6a.judgment ∧
       Examples.cwl2025_ex6a.judgment = Examples.cwl2025_ex7a.judgment ∧

@@ -357,7 +357,7 @@ def Config.verdict (c : Config) : Bool :=
 theorem rows_agree : ∀ e ∈ Examples.all, e.FitsVerdict config Config.verdict := by
   decide
 
-/-- The simultaneous suffix takes the imperfective (40b) and not the perfective (40c). -/
+-- (40b), (40c)
 theorem selection :
     (Examples.ex_40b.judgment = .acceptable ↔ Suffix.sim.Selects .imperfective) ∧
       (Examples.ex_40c.judgment = .ungrammatical ↔ ¬ Suffix.sim.Selects .perfective) := by

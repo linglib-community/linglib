@@ -98,14 +98,13 @@ theorem king_admits_iff (c : Set W) :
     kingHasSon, kingsSonBald, Connective.localContext]
 
 open Classical in
-/-- (3) presupposes that there is a king, which (1) presupposes in its antecedent. -/
+-- (3), (1)
 theorem king_presupposes :
     Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ SignType.ofProp (king w)) :=
   (presupposes_ofProp_iff _ _).2 fun c h ↦ (king_admits_iff c).1 h
 
 open Classical in
-/-- (3) does not presuppose that the king has a son, as soon as some world has a sonless
-    king. -/
+-- (3)
 theorem not_presupposes_son (h : ∃ w, king w ∧ ¬ son w) :
     ¬ Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ SignType.ofProp (son w)) := by
   rw [presupposes_ofProp_iff]
@@ -157,15 +156,13 @@ open scoped Classical in
 noncomputable def preferGlobal (k g l : Set W) : Set W :=
   if (g ∩ k).Nonempty then g ∩ k else l ∩ k
 
-/-- In (16) in isolation nothing contradicts the global result, so the preferred reading
-    entails that France has a king. -/
+-- (16)
 theorem preferGlobal_univ_subset {c g : Set W} (l : Set W) (hg : g ∈ globalNeg φ p c)
     (hne : g.Nonempty) : preferGlobal Set.univ g l ⊆ p := by
   rw [preferGlobal, Set.inter_univ, ite_eq_left hne]
   exact globalNeg_entails hg
 
-/-- When (16) is continued with *because France doesn't have a king*, the continuation is
-    inconsistent with the global result, so the preferred reading is the local one. -/
+-- (16)
 theorem preferGlobal_compl {c g : Set W} (l : Set W) (hg : g ∈ globalNeg φ p c) :
     preferGlobal pᶜ g l = l ∩ pᶜ := by
   rw [preferGlobal, globalNeg_disjoint hg, ite_eq_right Set.not_nonempty_empty]
@@ -230,8 +227,7 @@ theorem every_admits_iff (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) (c : F
     (every i A B).Admits c ↔ ∃ h : A.Admits c, B.Admits ((A c).get h) :=
   Iff.rfl
 
-/-- With restrictor `A xᵢ` and scope presupposing `pre xᵢ`, every pair of the file satisfying `A`
-must satisfy `pre` ((ii) of §3.2). -/
+-- (ii), §3.2
 theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M W) :
     (every i (atom A i) (atomP pre B i)).Admits c ↔
       ∀ gw ∈ c, A (gw.1 i) gw.2 → pre (gw.1 i) gw.2 :=
@@ -251,8 +247,7 @@ theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W �
   · rintro h ⟨g, w⟩ hgw hn
     exact h w ⟨g, hgw⟩ _ hn
 
-/-- A presupposition in the restrictor projects universally (23), contrary to the prediction of
-[karttunen-peters-1979]. -/
+-- (23) [karttunen-peters-1979]
 theorem every_restrictor_presupposes (i : ℕ) (hasKing serves rewarded : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
     (every i (atomP hasKing serves i) (atom rewarded i)).Admits c ↔
@@ -456,8 +451,7 @@ def fatManBicycle (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
     CCP.Partial ((ℕ → M) × W) :=
   seq (atom fatMan i) (atomP hasBicycle pushing i)
 
-/-- Without accommodation, (25) carries the universal presupposition that every fat man had
-    a bicycle by (22), which is prima facie too strong. -/
+-- (25), (22)
 theorem fatManBicycle_admits_iff (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
     (fatManBicycle i fatMan hasBicycle pushing).Admits c ↔
@@ -499,8 +493,7 @@ end Files
 
 /-! ### The conjunction filter of Karttunen (1973) -/
 
-/-- Admittance of the sequenced update is [karttunen-1974-presupposition]'s satisfaction condition
-for conjunction, equivalent to [karttunen-1973]'s filter relativized to the context ((8)–(14)). -/
+-- (8), (14) [karttunen-1973]
 theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → SignType) :
     (seq (ofTrivalent p) (ofTrivalent q)).Admits c ↔
       ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofTrivalent p)

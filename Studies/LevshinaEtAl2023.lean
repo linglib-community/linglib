@@ -107,7 +107,7 @@ end Entropy
 theorem subject_usually_first : ∀ r ∈ subjectObjectCounts, r.objectFirst < r.subjectFirst := by
   decide
 
-/-- Across the corpora of Figure 1, ranking by entropy is ranking by proportion reversed. -/
+-- Figure 1
 theorem orderEntropy_lt_iff_of_mem {r s : SubjectObjectCounts} (hr : r ∈ subjectObjectCounts)
     (hs : s ∈ subjectObjectCounts) :
     orderEntropy r < orderEntropy s ↔ proportion s < proportion r :=

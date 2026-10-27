@@ -111,8 +111,7 @@ instance : LinearOrder KillingEvent :=
   linearOrderOfCovers KillingEvent.Causes (OrderDual.toDual ∘ KillingEvent.ctorIdx) (by decide)
     (by decide)
 
-/-- In (313) *John killed the water deer by hiring a poacher*, the hiring is the onset of the
-denoted chain. -/
+-- (313)
 theorem onsetCondition_hiring : OnsetCondition (Set.univ : Set KillingEvent) .hiring :=
   isLeast_univ_iff.2 fun e ↦ by cases e <;> decide
 

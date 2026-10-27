@@ -218,7 +218,7 @@ theorem judgment_iff_expected :
       (d.judgment = .acceptable ↔ c.Expects x) := by
   decide
 
-/-- Every class of Figure 3 is attested among the examples. -/
+-- Figure 3
 theorem class_attested : ∀ c : Class, ∃ d ∈ data, d.strategy.class? = some c := by
   decide
 

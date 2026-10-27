@@ -161,7 +161,7 @@ def violator : Fin 3 → Candidate
 
 theorem violated_injective : Function.Injective Candidate.violated := by decide
 
-/-- The cells of tableau (39), in which each candidate violates one constraint, once. -/
+-- (39)
 theorem con_apply : ∀ (i : Fin 3) (c : Candidate), con i c = if i = c.violated then 1 else 0 := by
   decide
 
@@ -279,7 +279,7 @@ def con : ConstraintSet Candidate (Fin 3) :=
     fun c ↦ codas Seg.IsVowel c.surface,
     fun c ↦ c.correspondence.maxViol .base .reduplicant]
 
-/-- The cells of tableau (106). -/
+-- (106)
 theorem con_apply :
     (con · .unfaithfulBase) = ![1, 2, 0] ∧ (con · .exactCopy) = ![0, 4, 0] ∧
       (con · .codalessReduplicant) = ![0, 3, 1] := by
@@ -358,8 +358,7 @@ def ocpCoronal : List Segment → ℕ
       ocpCoronal (c₂ :: v₂ :: rest)
   | _ => 0
 
-/-- *kita* obeys OCP(+cor) and *tɕita* violates it, while a word with two palatal syllables obeys it
-(127). -/
+-- (127)
 theorem ocpCoronal_kita :
     ocpCoronal [k, i, FeatureMatrix.«t».toSegment, a] = 0 ∧
       ocpCoronal [tcCurl, i, FeatureMatrix.«t».toSegment, a] = 1 ∧
@@ -408,7 +407,7 @@ def con : ConstraintSet Candidate (Fin 4) :=
     fun c ↦ pal c.surface,
     fun c ↦ c.correspondence.maxViolFeature (·.HasValue .coronal false) .input .base]
 
-/-- The cells of tableau (131), with one mark where the paper prints three for OCP(+cor). -/
+-- (131)
 theorem con_apply :
     (con · .overapplication) = ![1, 0, 0, 1] ∧ (con · .normalApplication) = ![0, 1, 0, 0] ∧
       (con · .underapplication) = ![0, 0, 1, 0] := by

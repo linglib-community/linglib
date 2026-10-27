@@ -121,8 +121,7 @@ def tokyo : Marking ProsodicEntry ℕ where
   tbu := .mora
 
 open Japanese.Prosody in
-/-- The accent is an indication of pitch in the lexical realization of *a'me* 'rain', so
-Tokyo Japanese is tonal by (3). -/
+-- (3)
 theorem tokyo_tonal : Tonal (λ e : ProsodicEntry => e.accentMora) := ⟨ameRain, rfl⟩
 
 theorem tokyo_culminative : Culminative tokyo := λ e => by
@@ -134,7 +133,7 @@ open Japanese.Prosody in
 theorem tokyo_not_obligatory : ¬ Obligatory tokyo := λ h =>
   (h ameCandy).ne_empty (by decide)
 
-/-- Section 5.2: the classic pitch-accent language is tonal without stress accent. -/
+-- Section 5.2
 theorem tokyo_not_stressAccent : ¬ StressAccent tokyo := λ h => tokyo_not_obligatory h.2.1
 
 /-! ### Kinga -/
@@ -234,13 +233,13 @@ def seneca : Marking SenecaWord ℕ where
   marked_subset w := by cases w <;> decide
   tbu := .syllable
 
-/-- (23a): one H, obligatory and culminative for this word. -/
+-- (23a)
 theorem seneca_willing : seneca.marked .willing = {3} := by decide
 
-/-- (23b): two H tones. -/
+-- (23b)
 theorem seneca_busy : seneca.marked .busy = {1, 5} := by decide
 
-/-- (23c): no H, the footed syllables all open. -/
+-- (23c)
 theorem seneca_necktie : seneca.marked .necktie = ∅ := by decide
 
 theorem seneca_not_obligatory : ¬ Obligatory seneca := λ h =>
@@ -250,9 +249,7 @@ theorem seneca_not_culminative : ¬ Culminative seneca := λ h => absurd (h .bus
 
 /-! ### The cuts of Section 7 -/
 
-/-- The four restricted-H systems of Table II attest every combination of the two criteria:
-no hierarchical typology can take one criterion as its first cut and the other as its second.
--/
+-- Table II
 theorem tableII :
     (Obligatory kinga ∧ Culminative kinga) ∧ (Obligatory creek ∧ ¬ Culminative creek) ∧
       (¬ Obligatory tokyo ∧ Culminative tokyo) ∧ (¬ Obligatory seneca ∧ ¬ Culminative seneca) :=

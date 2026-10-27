@@ -196,8 +196,7 @@ theorem no_hierarchy_derives_both_changes (ℓ : SpecificityFunction → Fin n) 
 
 end EntryLoss
 
-/-- On Dekier's hierarchy, entry loss makes a specific unknown form epistemic ((3), (4)), but also
-derives two unattested changes. -/
+-- (3), (4)
 theorem entry_loss_derives_downward_changes :
     LossDerives layer .specificUnknown .epistemic ∧ LossDerives layer .specificKnown .specific ∧
       LossDerives layer .specific .unmarked :=

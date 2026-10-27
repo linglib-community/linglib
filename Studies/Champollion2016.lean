@@ -97,8 +97,7 @@ theorem mem_existentialRaising {N P : Set α} : P ∈ existentialRaising N ↔ �
 /-- **Minimization** (19) keeps the minimal sets of `Q`. -/
 def minimization (Q : Set (Set E)) : Set (Set E) := {P | Minimal (· ∈ Q) P}
 
-/-- A set survives Minimization iff it is in `Q` and none of its proper subsets is, the form
-(19b) of the operator. -/
+-- (19b)
 theorem mem_minimization_iff {Q : Set (Set E)} {P : Set E} :
     P ∈ minimization Q ↔ P ∈ Q ∧ ∀ P' ⊂ P, P' ∉ Q :=
   minimal_iff_forall_lt
@@ -121,8 +120,7 @@ def determinerFitting (D : GQ E) (A B : Set (Set E)) : Prop := D (⋃₀ A) (⋃
 
 /-! ### Raising and the Montague lift as upper closures -/
 
-/-- Existential Raising is the upper closure of the singletons of the noun, the sets that
-contain some man or other (13). -/
+-- (13)
 theorem existentialRaising_eq_upperClosure (N : Set α) :
     existentialRaising N = upperClosure ((fun x ↦ ({x} : Set α)) '' N) := by
   ext P; simp
@@ -142,8 +140,7 @@ theorem distributiveChoiceRaising_eq_Ici (f : ChoiceFunction (Set E)) (N : Set (
     distributiveChoiceRaising f N = Ici (f N) :=
   rfl
 
-/-- The alternative definition of Distributive Choice Raising through Predicate Distributivity
-(79), for a nonempty choice. -/
+-- (79)
 theorem distributiveChoiceRaising_eq_setOf (f : ChoiceFunction (Set E)) {N : Set (Set E)}
     (h : (f N).Nonempty) :
     distributiveChoiceRaising f N = {P | f N ∈ predicateDistributivity P} := by
@@ -162,8 +159,7 @@ theorem image_singleton_sups (N N' : Set E) :
   · rintro ⟨x, hx, y, hy, rfl⟩
     exact ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩
 
-/-- The conjunction *ER(man) and ER(woman)* is the upper closure of the pairs of a man and a
-woman, the sets that contain both (18). -/
+-- (18)
 theorem and_existentialRaising (N N' : Set E) :
     and_.denote {existentialRaising N, existentialRaising N'} =
       (upperClosure {P : Set E | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} : Set (Set E)) := by
@@ -201,8 +197,7 @@ theorem minimization_and_existentialRaising (N N' : Set E) :
       obtain rfl : b = y := (hle (mem_insert_of_mem a rfl)).resolve_left fun h ↦ hxN' (h ▸ hb)
       exact le_rfl
 
-/-- For disjoint nouns, Raising, Intersection and Minimization give the sets of one man and one
-woman, the meaning `mw-pair` of *man and woman* (10), (20). -/
+-- (10), (20)
 theorem minimization_and_existentialRaising_of_disjoint {N N' : Set E}
     (h : Disjoint N N') :
     minimization (and_.denote
@@ -212,8 +207,7 @@ theorem minimization_and_existentialRaising_of_disjoint {N N' : Set E}
     sdiff_eq_left.mpr h, sdiff_eq_left.mpr h.symm]
   simp
 
-/-- When the nouns coincide, only singletons survive Minimization, so that *A doctor and lawyer
-met* would be deviant like *#John met* (42). -/
+-- (42)
 theorem minimization_and_existentialRaising_self (N : Set E) :
     minimization (and_.denote
       {existentialRaising N, existentialRaising N}) =
@@ -222,8 +216,7 @@ theorem minimization_and_existentialRaising_self (N : Set E) :
   ext P
   simp [eq_comm]
 
-/-- When John is a man, *John and some man* minimizes to the singleton of John alone, so *John and
-some man met* (43) is deviant. -/
+-- (43)
 theorem minimization_and_individual_existentialRaising {N : Set E} {j : E}
     (hj : j ∈ N) :
     minimization (and_.denote {{P : Set E | individual j P},
@@ -234,8 +227,7 @@ theorem minimization_and_individual_existentialRaising {N : Set E} {j : E}
   ext P
   simp [hj]
 
-/-- The hydra *A man and woman who dated met* (24) is true iff the couple of some man and some
-woman both dated and met. -/
+-- (24)
 theorem mem_existentialRaising_minimization_inter_iff {N N' : Set E} (h : Disjoint N N')
     (R S : Set (Set E)) :
     S ∈ existentialRaising (minimization (and_.denote
@@ -249,8 +241,7 @@ theorem mem_existentialRaising_minimization_inter_iff {N N' : Set E} (h : Disjoi
   · rintro ⟨x, hx, y, hy, hR, hS⟩
     exact ⟨_, ⟨⟨x, hx, y, hy, rfl⟩, hR⟩, hS⟩
 
-/-- With Predicate Distributivity, *A man and woman had a beer* (29) is true iff some man and some
-woman each had a beer. -/
+-- (29)
 theorem predicateDistributivity_mem_existentialRaising_minimization_iff {N N' : Set E}
     (h : Disjoint N N') (S : Set E) :
     predicateDistributivity S ∈ existentialRaising (minimization
@@ -278,20 +269,18 @@ theorem minimization_and_Ici (a b : Set E) :
   rw [Ici_inter_Ici]
   exact minimal_ge_iff
 
-/-- Minimization of the conjoined Montague lifts of John and Mary keeps only their pair (40). -/
+-- (40)
 theorem minimization_and_individual (x y : E) :
     minimization (and_.denote {{P : Set E | individual x P},
       {P : Set E | individual y P}}) = {{x, y}} := by
   rw [setOf_individual, setOf_individual, minimization_and_Ici, singleton_union]
 
-/-- On a nonempty noun, Choice Closure directly above Choice Raising is Existential Raising
-(p. 583). -/
+-- p. 583
 theorem exists_mem_choiceRaising_iff {N P : Set E} (hN : N.Nonempty) :
     (∃ f : ChoiceFunction E, P ∈ choiceRaising f N) ↔ P ∈ existentialRaising N :=
   ChoiceFunction.exists_apply_iff_some hN P
 
-/-- With Choice Closure above Minimization, *John and some man* (53) holds of the pair of John
-and any man. -/
+-- (53)
 theorem exists_mem_minimization_individual_choiceRaising_iff {N P : Set E} (hN : N.Nonempty)
     (j : E) :
     (∃ f : ChoiceFunction E, P ∈ minimization (and_.denote
@@ -343,8 +332,7 @@ theorem exists_mem_minimization_distributiveChoiceRaising_iff {N N' : Set (Set E
       and_congr_right fun _ ↦ (ChoiceFunction.exists_apply_iff_some hN' fun W ↦
         P = M ∪ W).trans (exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm))
 
-/-- Under sentential Choice Closure (83), conjoined plural nouns hold of a scope iff the union of a
-plurality from each noun does. -/
+-- (83)
 theorem exists_mem_existentialRaising_minimization_distributiveChoiceRaising_iff
     {N N' : Set (Set E)} (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set (Set E)) :
     (∃ f₁ f₂ : ChoiceFunction (Set E), S ∈ existentialRaising (minimization
@@ -374,16 +362,14 @@ theorem minimization_or_existentialRaising (N N' : Set E) :
   rw [← existentialRaising_union, existentialRaising_eq_upperClosure]
   exact hanti.minimal_mem_upperClosure_iff_mem
 
-/-- Determiner Fitting does not change the indefinite article when the scope excludes the empty
-set (p. 604). -/
+-- p. 604
 theorem determinerFitting_some_iff {A B : Set (Set E)} (hB : ∅ ∉ B) :
     determinerFitting GQ.some A B ↔ GQ.some A B := by
   refine ⟨fun ⟨_, _, P, hP, _⟩ ↦ ⟨P, hP⟩, fun ⟨P, hA, hB'⟩ ↦ ?_⟩
   obtain ⟨x, hx⟩ := nonempty_iff_ne_empty.mpr fun h ↦ hB (h ▸ hB')
   exact ⟨x, ⟨P, hA, hx⟩, P, ⟨hA, hB'⟩, hx⟩
 
-/-- With Determiner Fitting, *No students met* (94) says that no student is in a set of students
-that met. -/
+-- (94)
 theorem determinerFitting_no_predicateDistributivity_iff (N : Set E) (S : Set (Set E)) :
     determinerFitting GQ.no (predicateDistributivity N) S ↔
       ¬ ∃ x ∈ N, ∃ P ∈ S, x ∈ P ∧ P ⊆ N := by
@@ -391,8 +377,7 @@ theorem determinerFitting_no_predicateDistributivity_iff (N : Set E) (S : Set (S
     singleton_subset_iff.2 hx⟩, mem_singleton x⟩ ⟨P, ⟨⟨⟨x, hxP⟩, hPN⟩, hPS⟩, hxP⟩,
     fun h x _ ⟨P, ⟨⟨_, hPN⟩, hPS⟩, hxP⟩ ↦ h ⟨x, hPN hxP, P, hPS, hxP, hPN⟩⟩
 
-/-- For disjoint nonempty nouns, Determiner Fitting of *every* to the collective *cat and dog*
-says that every cat and every dog is licensed (95). -/
+-- (95)
 theorem determinerFitting_every_minimization_and {N N' : Set E} (h : Disjoint N N')
     (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set E) :
     determinerFitting GQ.every (minimization (and_.denote
@@ -412,8 +397,7 @@ theorem determinerFitting_every_minimization_and {N N' : Set E} (h : Disjoint N 
     obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD z hz'
     exact hP hzP
 
-/-- Under its collective structure, *every cat or dog is licensed* (99) says that every cat and
-every dog is licensed. -/
+-- (99)
 theorem determinerFitting_every_minimization_or (N N' S : Set E) :
     determinerFitting GQ.every (minimization (or_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
@@ -435,8 +419,7 @@ theorem determinerFitting_every_and_iff_or {N N' : Set E} (h : Disjoint N N')
   (determinerFitting_every_minimization_and h hN hN' S).trans
     (determinerFitting_every_minimization_or N N' S).symm
 
-/-- *A cat and dog came running in* (97) says that a cat and a dog came, unlike *a cat or dog* (98).
--/
+-- (97), (98)
 theorem determinerFitting_some_minimization_and {N N' : Set E} (h : Disjoint N N')
     (S : Set E) :
     determinerFitting GQ.some (minimization (and_.denote
@@ -449,8 +432,7 @@ theorem determinerFitting_some_minimization_and {N N' : Set E} (h : Disjoint N N
   exact ⟨fun ⟨x, hx, y, hy, hxS, hyS⟩ ↦ ⟨⟨x, hx, hxS⟩, y, hy, hyS⟩,
     fun ⟨⟨x, hx, hxS⟩, y, hy, hyS⟩ ↦ ⟨x, hx, y, hy, hxS, hyS⟩⟩
 
-/-- When a cat came and no dog did, the disjunction (98) is true and the conjunction (97) is false.
--/
+-- (98), (97)
 theorem some_or_and_not_determinerFitting_some {N N' S : Set E} (h : Disjoint N N')
     {x : E} (hx : x ∈ N) (hxS : x ∈ S) (hN'S : Disjoint N' S) :
     GQ.some (or_.denote {N, N'}) S ∧
@@ -462,8 +444,7 @@ theorem some_or_and_not_determinerFitting_some {N N' S : Set E} (h : Disjoint N 
 
 /-! ### The collective theory -/
 
-/-- Heycock and Zamparelli's collective entry (101), the set product `Q ⊻ Q'`, holds wherever
-intersection does. -/
+-- (101)
 theorem and_subset_sups [Lattice α] (Q Q' : Set α) :
     and_.denote {Q, Q'} ⊆ Q ⊻ Q' := by
   rw [and_denote, sInf_pair]
@@ -477,8 +458,7 @@ theorem sups_eq_and [Lattice α] {Q Q' : Set α} (hQ : IsUpperSet Q)
   rintro _ ⟨a, ha, b, hb, rfl⟩
   exact ⟨hQ le_sup_left ha, hQ' le_sup_right hb⟩
 
-/-- *Man and woman* under the collective entry (102), with nouns as sets of singletons, is the
-meaning that Raising, Intersection and Minimization derive (20). -/
+-- (102), (20)
 theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
     {A | A.ncard = 1 ∧ A ⊆ N} ⊻ {B | B.ncard = 1 ∧ B ⊆ N'} =
       minimization (and_.denote {existentialRaising N,
@@ -508,8 +488,7 @@ theorem sups_noMan_noWoman {N N' : Set E} (h : Disjoint N N') {x y : E} (hx : x 
   · exact disjoint_left.mp h (eq_of_mem_singleton hzx ▸ hx) hz
   · exact (union_comm _ _).trans (singleton_union)
 
-/-- When Mary and someone else smiled, the collective entry still holds of the smilers in
-*Mary and nobody else smiled* (103b). -/
+-- (103b)
 theorem sups_individual_nobodyElse {x y : E} (hxy : x ≠ y) :
     {x, y} ∈ {P : Set E | individual y P} ⊻ {P | GQ.no (· ≠ y) P} ∧
       {x, y} ∉ and_.denote {{P : Set E | individual y P},

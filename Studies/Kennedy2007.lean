@@ -130,8 +130,7 @@ theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : EndpointModif
   cases p <;> cases b <;> cases m <;> decide
 
 open English.Adjectives in
-/-- The fragment's antonym pairs fill table (61) by their compatibility with maximizers and
-minimizers. -/
+-- (61)
 theorem fragment_pairs_table61 :
     full.boundedness.Licenses .maximizer ∧ empty.boundedness.Licenses .maximizer ∧
     wet.boundedness.Licenses .minimizer ∧ ¬ wet.boundedness.Licenses .maximizer ∧

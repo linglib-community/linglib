@@ -110,8 +110,7 @@ def items : List (VocabularyItem Feature String) :=
   [English.Pronouns.she, English.Pronouns.he, English.Pronouns.it, English.Pronouns.they].map
     vocabularyItem
 
-/-- The items are (11), *she* for [sg][fem], *he* for [sg][masc], *it* for [sg, inanim] and
-*they* elsewhere. -/
+-- (11)
 theorem items_eq :
     items = [{.sg, .fem} ⟷ "she", {.sg, .masc} ⟷ "he", {.sg, .inanim} ⟷ "it", ∅ ⟷ "they"] := by
   decide
@@ -221,8 +220,7 @@ def forms (s : Stage) (a : Antecedent) : List String := (bundles s a).filterMap 
 
 variable {s : Stage} {a : Antecedent}
 
-/-- A contrastive lexical gender is the only option, the source of (15) and (21) at Stages 1
-and 2. -/
+-- (15), (21)
 theorem lexical_forces_gender {g : Gender} (h : s.genderContrastivity = .contrastive)
     (hl : a.lexical = some (.gender g)) : s.genders a = [some g] := by
   simp [Stage.genders, Antecedent.Inanimate, Antecedent.lexicalGender, h, hl]
@@ -273,12 +271,11 @@ theorem none_mem_genders_two_iff (hi : ¬ a.Inanimate) :
 theorem none_mem_genders_three (hi : ¬ a.Inanimate) : none ∈ Stage.three.genders a := by
   simp [Stage.genders, Stage.genderContrastivity, hi]
 
-/-- At Stage 3 *they* is the default for every animate antecedent, (7) and (25). -/
+-- (7), (25)
 theorem stage3_they (hi : ¬ a.Inanimate) : "they" ∈ forms .three a :=
   they_mem_forms (.inl (none_mem_genders_three hi)) hi
 
-/-- A referential singular antecedent whose noun bears contrastive gender does not take *they*, at
-Stages 1 and 2 alike (§4.2). -/
+-- §4.2
 theorem they_not_mem_forms_of_lexical {g : Gender} (h : s.genderContrastivity = .contrastive)
     (hs : a.number = .singular) (hq : a.det = .referential) (hl : a.lexical = some (.gender g)) :
     "they" ∉ forms s a := by
@@ -305,8 +302,7 @@ theorem forms_three_lexical {l : Option Class} (hl : l ≠ some .inanim) (hi : �
   simp [forms, bundles, Stage.genders, Stage.genderContrastivity, Antecedent.numFeatures,
     Antecedent.Inanimate, hl, hi]
 
-/-- A singular inanimate antecedent is *it* at every stage, (10) and (13), since [inanim] sits on
-Num and is always copied. -/
+-- (10), (13)
 theorem it_of_inanimate (hs : a.number = .singular) (hi : a.Inanimate) :
     ∀ f ∈ forms s a, f = "it" := by
   intro f hf
@@ -369,8 +365,7 @@ abbrev BjorkmanCondition (pronoun antecedent : Finset Feature) : Prop := anteced
 def Antecedent.features (a : Antecedent) : Finset Feature :=
   a.numFeatures ∪ (a.lexicalGender.map Gender.feature).toFinset
 
-/-- In (23) the pronoun of *the women* bears <fem> without [sg], and no item spells that out but
-*they*. -/
+-- (23)
 theorem bjorkman_women_they : BjorkmanCondition {.fem} {.fem} ∧ spellout {.fem} = some "they" := by
   decide
 

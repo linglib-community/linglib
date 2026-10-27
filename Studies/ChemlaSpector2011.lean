@@ -200,8 +200,7 @@ instance : (ℓ : ReadingLabel) → (p : Picture3) → Decidable (reading ℓ p)
   | .global, p => inferInstanceAs (Decidable (global p))
   | .local_, p => inferInstanceAs (Decidable (local_ p))
 
-/-- Under *exactly one* the local reading does not entail the literal one, so no globalist
-derivation yields it (§5.1). -/
+-- §5.1
 theorem local_not_globallyDerivable : ¬ GloballyDerivable reading .local_ := by
   decide +kernel
 
@@ -327,8 +326,7 @@ theorem local_isReinforceable :
 
 /-! ### Experiment 2 -/
 
-/-- The condition where only the local reading of *certains* is true is rated above the one where
-only the literal reading is (Figure 12). -/
+-- Figure 12
 theorem exp2_local_gt_literal_some :
     ∃ l ∈ rating₂ .some .local_, ∃ t ∈ rating₂ .some .literal, t < l := by
   decide +kernel
@@ -364,14 +362,12 @@ theorem de_qLocal_lt_both (e : Experiment) (i : Item) :
     ∃ q ∈ ratingDE e i .qLocal, ∃ b ∈ ratingDE e i .both, q < b := by
   cases e <;> cases i <;> decide +kernel
 
-/-- The same controls are rated higher after Experiment 2's non-monotonic items than after
-Experiment 1 (§5.5.4). -/
+-- §5.5.4
 theorem de_qLocal_priming (i : Item) :
     ∃ a ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .two i .qLocal, a < b := by
   cases i <;> decide +kernel
 
-/-- Even primed, the local reading under negation stays below the local reading under *exactly
-one* (§5.5.4). -/
+-- §5.5.4
 theorem de_qLocal_lt_local (i : Item) :
     ∃ q ∈ ratingDE .two i .qLocal, ∃ l ∈ rating₂ i .local_, q < l := by
   cases i <;> decide +kernel

@@ -199,8 +199,7 @@ theorem participant_third_licit (t : PCCType) (io : Person) (h : io.IsSAP) :
     t.Licit ⟨io, .third⟩ := by
   revert h; cases t <;> cases io <;> decide
 
-/-- The strong PCC is Modern Greek's T coding in [haspelmath-2021]'s (45), the clitic being
-available exactly where the DO is aliophoric. -/
+-- (45) [haspelmath-2021]
 theorem strong_iff_greekT (s : Scenario Person) :
     PCCType.Licit .strong s ↔ Haspelmath2021.greekT (s.map Person.toClass) = 0 := by
   revert s; decide

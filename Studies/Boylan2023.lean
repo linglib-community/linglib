@@ -79,7 +79,7 @@ theorem nonempty_of_mem_partialAnswers {p : Finset W} (hp : p ∈ partialAnswers
   obtain ⟨q, hq⟩ := nonempty_iff_ne_empty.2 hne
   exact (nonempty_iff_ne_empty.2 (Q.ne_bot (hs hq))).mono (le_sup (f := id) hq)
 
-/-- Fact 1: a complete answer lies inside a partial answer or is disjoint from it. -/
+-- Fact 1
 theorem fact1 {p q : Finset W} (hp : p ∈ partialAnswers Q) (hq : q ∈ Q.parts) :
     q ⊆ p ∨ Disjoint q p := by
   obtain ⟨s, -, hs, rfl⟩ := mem_partialAnswers.1 hp
@@ -162,8 +162,7 @@ theorem not_better_of_le [IsTrans (Finset W) (ord w)] {p q : Finset W}
   λ r hr ⟨hrq, hqr⟩ =>
     hp r hr ⟨IsTrans.trans _ _ _ hrq hqp, λ hpr => hqr (IsTrans.trans _ _ _ hqp hpr)⟩
 
-/-- Fact 2: under a deontic transitive ordering whose *ought* is defined, exactly one
-complete answer is best. -/
+-- Fact 2
 theorem fact2 [IsTrans (Finset W) (ord w)] (hdeon : IsDeontic ord w Q)
     (hdef : Defined ord w Q) (hne : (PBEST ord w Q).Nonempty) :
     ∃ q ∈ Q.parts, q ∈ PBEST ord w Q ∧
@@ -177,8 +176,7 @@ theorem fact2 [IsTrans (Finset W) (ord w)] (hdeon : IsDeontic ord w Q)
   obtain ⟨v, hv⟩ := hdef q' hq'b q hqb
   exact Finset.disjoint_left.1 (Q.disjoint hq' hq hne) (mem_inter.1 hv).1 (mem_inter.1 hv).2
 
-/-- With a best complete answer `q` and *ought* defined, ⌜ought φ⌝ holds iff φ holds throughout `q`,
-the entry (59) relativized (Fact 3). -/
+-- (59), Fact 3
 theorem fact3 {q : Finset W} (hq : q ∈ Q.parts) (hqb : q ∈ PBEST ord w Q)
     (hdef : Defined ord w Q) (φ : W → Prop) : Ought ord w Q φ ↔ ∀ v ∈ q, φ v := by
   refine ⟨λ ⟨p, hp, hpφ⟩ v hv => ?_, λ h => ⟨q, hqb, h⟩⟩
@@ -187,7 +185,7 @@ theorem fact3 {q : Finset W} (hq : q ∈ Q.parts) (hqb : q ∈ PBEST ord w Q)
   · obtain ⟨u, hu⟩ := hdef q hqb p hp
     exact absurd (mem_inter.1 hu) (Finset.disjoint_left.1 hdisj (mem_inter.1 hu).1 ·.2)
 
-/-- Fact 4: deontic *ought*s agglomerate. -/
+-- Fact 4
 theorem fact4 [IsTrans (Finset W) (ord w)] (hdeon : IsDeontic ord w Q)
     (hdef : Defined ord w Q) (hne : (PBEST ord w Q).Nonempty) {φ ψ : W → Prop}
     (hφ : Ought ord w Q φ) (hψ : Ought ord w Q ψ) : Ought ord w Q (λ v => φ v ∧ ψ v) := by
@@ -272,8 +270,7 @@ end Conflict
 
 omit [DecidableEq W] in
 open Modality ModalLogic in
-/-- The classic entry (59), Kratzer necessity over the best worlds, agglomerates
-unconditionally, so it cannot fit The Office for any modal base and ordering source. -/
+-- (59)
 theorem classic_agglomerates {f g : Background W} {φ ψ : W → Prop} {w : W}
     (hφ : necessity f g φ w) (hψ : necessity f g ψ w) : necessity f g (φ ⊓ ψ) w := by
   rw [necessity, box_inf]; exact ⟨hφ, hψ⟩
@@ -307,26 +304,25 @@ def bobIn (w : World) : Prop := w.2 = true
 instance : DecidablePred aliceIn := λ w => inferInstanceAs (Decidable (w.1 = true))
 instance : DecidablePred bobIn := λ w => inferInstanceAs (Decidable (w.2 = true))
 
-/-- *ought* is defined in The Office: the best answers are pairwise consistent. -/
 theorem defined : Defined ordering (true, true) question := by decide +kernel
 
-/-- (2): Alice should be in the office today. -/
+-- (2)
 theorem alice_should_be_in : Ought ordering (true, true) question aliceIn := by decide +kernel
 
-/-- (3): Bob should be in the office today. -/
+-- (3)
 theorem bob_should_be_in : Ought ordering (true, true) question bobIn := by decide +kernel
 
-/-- (6) is false: no best answer entails that everyone is in. -/
+-- (6)
 theorem not_everyone_should_be_in :
     ¬ Ought ordering (true, true) question (λ v => aliceIn v ∧ bobIn v) := by decide +kernel
 
-/-- (66) is false: no best answer entails that Alice is absent. -/
+-- (66)
 theorem not_alice_should_be_out :
     ¬ Ought ordering (true, true) question (¬ aliceIn ·) := by decide +kernel
 
 theorem not_isDeontic : ¬ IsDeontic ordering (true, true) question := by decide +kernel
 
-/-- Fact 5: parameters on which two *ought*s are true and their conjunction false. -/
+-- Fact 5
 theorem fact5 :
     ∃ (ord : PropOrdering World) (_ : ∀ w, DecidableRel (ord w)) (w : World)
       (Q : Finpartition (univ : Finset World)) (φ ψ : World → Prop),
@@ -340,12 +336,11 @@ everyone in. -/
 def conflictBest : Finset (Finset World) :=
   {univ.filter aliceIn, univ.filter bobIn, univ.filter (λ v => ¬ (aliceIn v ∧ bobIn v))}
 
-/-- On the conflict account (6) comes out true: the set of everyone in is maximal consistent. -/
+-- (6)
 theorem conflict_everyone_in : ConflictOught conflictBest (λ v => aliceIn v ∧ bobIn v) := by
   decide +kernel
 
-/-- (67): the conflict account makes (2) and (66) both true, a dilemma The Office does not
-involve. -/
+-- (67), (2), (66)
 theorem conflict_dilemma :
     ConflictOught conflictBest aliceIn ∧ ConflictOught conflictBest (¬ aliceIn ·) := by
   decide +kernel
@@ -404,7 +399,7 @@ theorem indifference :
         ¬ Ought ordering .pie howGood (· = .cannoli) := by
   decide +kernel
 
-/-- Under *how good?*, ⌜ought φ⌝ holds exactly when φ holds throughout *pie or cannoli* (Fact 3). -/
+-- Fact 3
 theorem ought_iff (φ : World → Prop) :
     Ought ordering .pie howGood φ ↔ ∀ v ∈ ({.pie, .cannoli} : Finset World), φ v :=
   fact3 (by decide +kernel) (by decide +kernel) howGood_defined φ

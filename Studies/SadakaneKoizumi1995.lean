@@ -127,8 +127,7 @@ def Focusable (a : Attachment) : Prop := CaseAssignable a.phrase.cat ∧ a ≠ c
 
 instance : DecidablePred Focusable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- No particle both lets its noun phrase host a floating quantifier and lets its phrase be clefted
-(§4). -/
+-- §4
 theorem not_hostsQuantifier_and_focusable (a : Attachment) :
     ¬ (a.HostsQuantifier ∧ a.Focusable) :=
   fun ⟨h, _, hne⟩ ↦ hne (hostsQuantifier_iff.1 h)
@@ -235,8 +234,7 @@ theorem exists_passes_and_exists_passes_iff {S : List Particle} :
       caseMarker ∈ S ∧ postposition ∈ S := by
   simp only [passes_quantifierFloat_iff, passes_cleftWithParticle_iff, exists_eq_right]
 
-/-- A use of *ni* that can be read as the case marker or as the postposition passes every test
-((27)). -/
+-- (27)
 theorem exists_passes_of_ambiguous (t : Test) :
     ∃ p ∈ [caseMarker, postposition], p.Passes t := by
   cases t <;> decide
@@ -340,14 +338,13 @@ theorem judgment_eq_acceptable_iff :
       (x.judgment = .acceptable ↔ ∃ p ∈ particles x, p.Passes t) := by
   decide +kernel
 
-/-- The copula *da* takes an NP or a PP but not an AP ((10)). -/
+-- (10)
 theorem judgment_eq_acceptable_iff_caseAssignable :
     ∀ x ∈ Examples.all, ∀ c, x.parse? "focus" focusLabels = some c →
       (x.judgment = .acceptable ↔ CaseAssignable c) := by
   decide +kernel
 
-/-- Where the paper reads an example for affectedness, *ni* is the case marker on an affected
-reading and the postposition on a nonaffected one ((35)–(38)). -/
+-- (35), (38)
 theorem particles_eq_map_readings :
     ∀ x ∈ Examples.all, readings x ≠ [] → particles x = (readings x).map Reading.particle := by
   decide +kernel

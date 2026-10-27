@@ -211,8 +211,6 @@ def czechNouns : List (Paradigm Wordlist.Cell × _root_.Czech.Noun) :=
 theorem declines_czechNouns : ∀ x ∈ czechNouns, ∀ i, Declines x.2 x.1 i := by
   decide +kernel
 
-/-- The endings of Short's table on the bare stem do not give Caha's nominative *kluci* and
-locative *klucích*. -/
 theorem kluk_pl_not_mem_table :
     _root_.Czech.Declension.segments (form ces_kluk_pl.paradigm 0) ∉
         (_root_.Czech.Declension.Class.chlap.endings (.of .nom .plural)).map

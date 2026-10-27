@@ -413,7 +413,6 @@ theorem Term.Linear.count_eq (x : α) {T : GlueTy α} {t : Term Γ T} (ht : t.Li
   refine List.ext_getElem (by simp) fun i _ h ↦ ?_
   simp [countAt, List.getElem?_eq_getElem (by simpa using h : i < Γ.length)]
 
-/-- A formula derivable from a multiset has the multiset's total count of every atom. -/
 theorem Derivable.count_eq {M : Multiset (GlueTy α)} {C : GlueTy α} (h : Derivable M C)
     (x : α) : C.count x = (M.map (GlueTy.count x)).sum := by
   obtain ⟨Γ, rfl, t, ht⟩ := h
@@ -753,7 +752,6 @@ def Linking.equivLabel (L : S.Linking) (x : α) :
   left_inv v := by simp
   right_inv v := by simp
 
-/-- A sequent with a linking has a conclusion with its premises' total count of every atom. -/
 theorem Linking.count_eq {Γ : List (GlueTy α)} {C : GlueTy α} (L : (Sequent.of Γ C).Linking)
     (x : α) : C.count x = (Γ.map (GlueTy.count x)).sum := by
   have h := Fintype.card_congr (L.equivLabel x)

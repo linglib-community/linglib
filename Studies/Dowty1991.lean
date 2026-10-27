@@ -125,11 +125,10 @@ instance : Decidable (EitherObject p q) := by unfold EitherObject; infer_instanc
 theorem alternates_iff : Alternates p q ↔ ¬ Outranks p q ∧ ¬ Outranks q p := by
   unfold Alternates Outranks; omega
 
-/-- The principle does not select uniquely (34): a profile ties with itself, so a relation
-lexicalized twice with the arguments swapped is licensed. -/
+-- (34)
 theorem alternates_self : Alternates p p := ⟨rfl, rfl⟩
 
-/-- One Proto-Agent entailment against none qualifies an argument for subject (§8.2). -/
+-- §8.2
 theorem outranks_of_protoAgent_nonempty (hp : p.protoAgent.Nonempty) (hq : q.protoAgent = ∅) :
     Outranks p q :=
   .inl (by simpa [hq] using hp.card_pos)
@@ -155,8 +154,7 @@ theorem primary_transitives :
       Outranks (entailed Examples.washSubject) (entailed Examples.washObject) := by
   decide
 
-/-- By Corollary 2, the theme of *put* and *remove*, changed and affected, outranks the
-stationary goal or source for direct object (§8.2). -/
+-- Corollary 2, §8.2
 theorem put_remove :
     DirectObjectOver (entailed Examples.putTheme) (entailed Examples.putGoal) ∧
       DirectObjectOver (entailed Examples.removeTheme) (entailed Examples.removeSource) := by
@@ -175,8 +173,7 @@ theorem psych_doublet :
       Alternates (entailed Examples.pleaseObject) (entailed Examples.pleaseSubject) := by
   decide
 
-/-- Under the inchoative reading, the experiencer's change of state selects the stimulus as subject,
-as Croft's generalization states (§9.2). -/
+-- §9.2
 theorem inchoative_stimulus_subject :
     Outranks (entailed Examples.surpriseSubject) (entailed Examples.surpriseObjectInchoative) := by
   decide
@@ -189,15 +186,13 @@ def kissSubjectProfile : EntailmentProfile := entailed Examples.kissSubject
 /-- The object of *kiss*, not entailed volitional. -/
 def kissObjectProfile : EntailmentProfile := entailed Examples.kissObject
 
-/-- Volition, entailed for the subject alone, selects it, (43); with symmetric volition the
-collective subject of (42) is a tie. -/
+-- (43), (42)
 theorem kiss_subject_outranks :
     Outranks kissSubjectProfile kissObjectProfile ∧
       Alternates kissSubjectProfile kissSubjectProfile := by
   decide
 
-/-- The entailment distinguishing the subject of *collide* from its oblique is motion, not
-volition (45). -/
+-- (45)
 theorem collide_subject_outranks :
     Outranks (entailed Examples.collideSubject) (entailed Examples.collideObject) := by
   decide
@@ -256,8 +251,7 @@ theorem three_classes :
       EitherObject hitArg1 hitArg2 := by
   decide
 
-/-- In the hit class puzzle the instrument moves, a Proto-Agent entailment the principle leaves
-out of object selection (§9.3.3). -/
+-- §9.3.3
 theorem hit_instrument_moves : #hitArg2.protoAgent = 1 ∧ #hitArg1.protoAgent = 0 := by
   decide
 
@@ -327,8 +321,7 @@ theorem primary_transitives_match_templates :
 
 theorem hit_class_matches_contact_object : Matches Examples.hitObject contactObject := by decide
 
-/-- The single-entailment exemplars of (29) and (30) land in the perception and desire
-templates. -/
+-- (29), (30)
 theorem exemplars_match_templates :
     Matches Examples.seeSubject perception.subjectProfile ∧
       Matches Examples.needSubject desire.subjectProfile ∧
@@ -336,16 +329,14 @@ theorem exemplars_match_templates :
       desire.objectProfile.all (Matches Examples.seekObject ·) := by
   decide
 
-/-- The *like* experiencer fits the psych-state template (38), and the *need* subject fits only the
-desire template, with none of (27a) to (27d). -/
+-- (38), (27a), (27d)
 theorem psych_desire_split :
     Matches Examples.likeSubject psychState.subjectProfile ∧
       Matches Examples.needSubject desire.subjectProfile ∧
       ¬ Matches Examples.needSubject psychState.subjectProfile := by
   decide
 
-/-- The creation template omits (28d), which the object of *build* has, following the (35) hedge
-that creation objects are mostly stationary. -/
+-- (28d), (35)
 theorem build_object_stationary_divergence :
     ¬ Matches Examples.buildObject creationObject ∧
       Matches Examples.buildObject (insert .stationary creationObject) := by
@@ -356,8 +347,7 @@ theorem break_object_it_divergence :
       Matches Examples.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by
   decide
 
-/-- The object of *eat* matches both the consumption template and its extension by dependent
-existence (30e). -/
+-- (30e)
 theorem eat_object_de_open :
     Matches Examples.eatObject consumptionObject ∧
       Matches Examples.eatObject (insert .dependentExistence consumptionObject) := by

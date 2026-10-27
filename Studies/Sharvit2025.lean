@@ -298,8 +298,7 @@ def proudOfMoney (x : E) : TwoDim W (W → Prop) where
   atIssue w := proudOf w x
   notAtIssue w := hasMoney w x
 
-/-- The disjunction *penniless or proud of her money* is presupposition-free, (134a) and
-(135a). -/
+-- (134a), (135a)
 theorem orKPstar_penniless_proud (x : E) (w : W) :
     (orKPstar EP sim (penniless hasMoney x) (proudOfMoney hasMoney proudOf x)).notAtIssue w := by
   simp [orKPstar_notAtIssue, penniless, proudOfMoney, clos_subset]

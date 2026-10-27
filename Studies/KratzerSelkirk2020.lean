@@ -501,7 +501,7 @@ theorem not_representsContrast_overfocused [Nontrivial α] (hf : Function.Inject
   · rw [alternatives_pred₂ _ _ rfl rfl rfl]
     exact ⟨x, rfl, y', trivial, rfl⟩
 
-/-- (51) under a squiggle whose antecedent (50a) the surrounding window supplies is felicitous. -/
+-- (51), (50a)
 theorem felicitous_squiggle_narrow (hf : Function.Injective2 f) (x : α) {y y' : β} (hy : y' ≠ y)
     (w : Window) (hw : f x y' ∈ w.surrounding γ) :
     (squiggle {f x y'} (pred₂ f x y .bare .bare .bare .foc .bare) .bare).Felicitous w := by

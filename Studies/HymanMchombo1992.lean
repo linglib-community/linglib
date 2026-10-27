@@ -507,7 +507,7 @@ def Feature.form (f : Feature) : String := f.morphs.foldr (fun m w ↦ m.form ++
 /-- The intensive suffix as the source writes it, in capitals for its high tone. -/
 def intensiveForm : String := "ITS"
 
-/-- The intensive suffix is the causative morph with a high tone (5b). -/
+-- (5b)
 theorem intensiveForm_toList : intensiveForm.toList = causative.form.toList.map Char.toUpper := by
   decide +kernel
 

@@ -112,8 +112,7 @@ noncomputable def belnapSquare (C B : E → Prop) : Square SignType where
   I := restrictedExists C B
   O := restrictedExists C (fun x ↦ ¬B x)
 
-/-- All four forms share the assertiveness condition ∃xCx, so the square adds equi-assertiveness to
-its content relations (p. 8). -/
+-- p. 8
 theorem square_equiassertive :
     ((belnapSquare C B).A = 0 ↔ (belnapSquare C B).E = 0) ∧
     ((belnapSquare C B).A = 0 ↔ (belnapSquare C B).I = 0) ∧
@@ -143,8 +142,7 @@ theorem content_square_relations (hR : ∃ x : E, C x) :
 
 /-! ### Obversion, I-conversion, Barbara -/
 
-/-- Obversion is a strong equivalence (p. 8), since ∀x(Cx/¬¬Bx) and ∀x(Cx/Bx) are equi-assertive
-with identical content. -/
+-- p. 8
 theorem obversion : restrictedForall C (fun x ↦ ¬¬B x) = restrictedForall C B :=
   SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [every])
 
@@ -158,8 +156,7 @@ theorem i_conversion_not_equiassertive [Nonempty E] :
     ∃ C B : E → Prop, restrictedExists C B ≠ 0 ∧ restrictedExists B C = 0 :=
   ⟨fun _ ↦ True, fun _ ↦ False, by simp, by simp⟩
 
-/-- Barbara's minor propagates assertiveness, in that "for every w in which Barbara's minor is
-true_w, both her major and her conclusion are assertive_w" (p. 9). -/
+-- p. 9
 theorem barbara_assertive (A C B : E → Prop) (hMinor : restrictedForall A C = 1) :
     restrictedForall C B ≠ 0 ∧ restrictedForall A B ≠ 0 := by
   simp only [restrictedForall_eq_one_iff, every] at hMinor
@@ -174,8 +171,7 @@ theorem barbara (A C B : E → Prop) (hMinor : restrictedForall A C = 1) :
 
 /-! ### Contraposition and confirmation (§6) -/
 
-/-- The contrapositive ∀x(¬Bx/¬Cx) is assertive when there are nonblack things, and ∀x(Cx/Bx) when
-there are crows (p. 10). -/
+-- p. 10
 theorem contrapositive_different_assertiveness :
     (restrictedForall C B ≠ 0 ↔ ∃ x, C x) ∧
       (restrictedForall (fun x ↦ ¬B x) (fun x ↦ ¬C x) ≠ 0 ↔ ∃ x, ¬B x) := by

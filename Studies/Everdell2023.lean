@@ -193,7 +193,7 @@ theorem role_eq_none_iff : b.role = none ↔ maxArguments ≤ b.arguments := by
   rw [role_eq]; split_ifs <;> simp_all [maxArguments]
   omega
 
-/-- An exceptional transitive of Table 5.2 gains an agent like an intransitive. -/
+-- Table 5.2
 theorem role_eq_agent_of_nondistinct (h : b.verbClass.Nondistinct) (ho : b.objects = 1) :
     b.role = some .agent := by
   rw [role_eq_agent_iff]
@@ -204,7 +204,7 @@ theorem role_eq_beneficiary_of_denominal (h : b.verbClass = .denominal) (ho : b.
   rw [role_eq_beneficiary_iff]
   simp [arguments, Promotable, h, ho, he, Class.Nondistinct]
 
-/-- An entailed instrument is never promoted (§5.4.1). -/
+-- §5.4.1
 theorem role_ne_promoted_of_instrument (h : b.entailed = some .instrument) :
     b.role ≠ some .promoted := by
   rw [Ne, role_eq_promoted_iff]

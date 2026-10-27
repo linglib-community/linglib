@@ -107,13 +107,11 @@ theorem not_isPartition_range_level [DenselyOrdered D] (hε : 0 < ε) :
   rw [h₀.trans hm.symm, mem_level, sub_sub_cancel_left, abs_neg, abs_of_pos hε] at hmem
   exact lt_irrefl ε hmem
 
-/-- On a dense scale the infimum of the level is `d - ε`, the bound of the equative as computed in
-(46b). -/
+-- (46b)
 theorem isGLB_level [DenselyOrdered D] (hε : 0 < ε) : IsGLB (level ε d) (d - ε) :=
   isGLB_Ioo (Set.nonempty_Ioo.1 ⟨d, mem_level_self hε⟩)
 
-/-- On a dense scale the supremum of the level is `d + ε`, the bound of the comparative as computed
-in (50b). -/
+-- (50b)
 theorem isLUB_level [DenselyOrdered D] (hε : 0 < ε) : IsLUB (level ε d) (d + ε) :=
   isLUB_Ioo (Set.nonempty_Ioo.1 ⟨d, mem_level_self hε⟩)
 

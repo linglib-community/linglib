@@ -109,8 +109,7 @@ theorem personaShift_nerdy_eq_neg_chill :
     personaShift (some .nerdy) = -personaShift (some .chill) :=
   congrFun (BeltramaSoltBurnett2023.antipodal_contrastField .exp1) .competence
 
-/-- The Competence and the Warmth clusters predict the same shift, so the field cannot tell apart
-the two sources of the effect that §3 distinguishes. -/
+-- §3
 theorem personaShift_eq_neg_warmth (p : Persona) :
     personaShift (some p) = -precisionField p.variant .warmth := by
   cases p <;> decide +kernel
@@ -195,7 +194,7 @@ theorem observed_coveredScreen (p : Persona) :
     observed .coveredScreen p = personaShift (some p) := by
   cases p <;> decide +kernel
 
-/-- The Chill result of the Truth Value Judgment task runs as Hypothesis 2A predicts (§7). -/
+-- §7
 theorem observed_truthValueJudgment_chill :
     observed .truthValueJudgment .chill = personaShift (some .chill) := by decide +kernel
 

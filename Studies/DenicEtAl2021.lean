@@ -201,8 +201,7 @@ def licensingContext : Environment → Option LicensingContext
   | .only12 => some .onlyFocus
   | .positive | .every | .many | .exactly12 => none
 
-/-- *Any*, *ever* and *at all* are licensed in the downward-entailing environments, by the inner
-operator in doubly negative ones (§1, §5), and under *only 12*. -/
+-- §1, §5
 theorem licenses_of_mem_licensingContext {e : Environment} {c : LicensingContext}
     (h : c ∈ e.licensingContext) :
     c.licenser.Licenses any ∧ c.licenser.Licenses ever ∧ c.licenser.Licenses atAll := by
@@ -227,8 +226,7 @@ environment, (9). -/
 theorem monotone_wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) :
     Monotone (wideSome f saw) := fun _ _ hN ⟨y, hy, h⟩ ↦ ⟨y, hN hy, h⟩
 
-/-- In an upward-entailing environment the wide-scope reading (27) of *some doves* entails the
-narrow-scope sentence about birds, so (26a) entails (26b). -/
+-- (27), (26a), (26b)
 theorem narrow_of_wideSome {f : (ι → Prop) → Prop} (hf : Monotone f) {saw : ε → ι → Prop}
     {N N' : Set ε} (hN : N ⊆ N') (h : wideSome f saw N) :
     f (KadmonLandman1993.existsInDomain N' saw) :=
@@ -249,8 +247,7 @@ def directional : Direction → ℝ → ℝ
   | .subsetToSuperset, r => r
   | .supersetToSubset, r => 100 - r
 
-/-- A response bias enters the directional rating with the sign of the direction, so a yes-bias
-common to both directions cancels in their sum (§3.2). -/
+-- §3.2
 theorem directional_add (d : Direction) (r b : ℝ) :
     directional d (r + b) = directional d r + d.sign * b := by
   cases d <;> simp [directional, Direction.sign]; ring
@@ -267,8 +264,7 @@ open MeasureTheory ProbabilityTheory KadmonLandman1993
 
 variable {Ω ε : Type*} [MeasurableSpace Ω]
 
-/-- In the probabilistic downward inference (33), if `e` has probability zero given `s` and
-probability one given `u`, then `u` has probability zero given `s`. -/
+-- (33)
 theorem cond_eq_zero_of_cond_eq_one {μ : Measure Ω} [IsFiniteMeasure μ] {s e u : Set Ω}
     (hs : MeasurableSet s) (he : MeasurableSet e) (hu : MeasurableSet u) (h₁ : μ[e | s] = 0)
     (h₂ : μ[e | u] = 1) : μ[u | s] = 0 := by

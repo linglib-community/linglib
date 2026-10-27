@@ -54,8 +54,7 @@ variable {W E D : Type*} [LinearOrder D] (μ : E → W → Set W → D) (θ : Se
 
 /-! ### Triviality for non-veridical preferentials -/
 
-/-- With the comparison class drawn from the question, (30), Threshold Significance entails the
-assertion of *hope* with a question (36). -/
+-- (30), (36)
 theorem significance_entails_hope_question {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E) (w : W)
     (h : Degree.ThresholdSignificant (μ x w) θ C) : degreeComparison μ θ C x Q w :=
   (degreeComparison_iff_thresholdSignificant μ θ C hCQ x w).2 h

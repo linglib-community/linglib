@@ -184,7 +184,7 @@ theorem exists_mem_optimal_second_iff (h : c.stemBody ≠ []) :
     Set.subset_def, forall_option_prominence, forall_option_prominence]
   simp [h]
 
-/-- After a single-vowel prefix, either vowel can elide alone, as in tableaux (15) and (16). -/
+-- (15), (16)
 theorem exists_optimal_eq_of_vowelPrefix (h : c.stemBody = []) (hs : c.suffixBody ≠ [])
     (hl : c.left ≠ .root) (hr : c.right = .root) (e : ElidedVowel) :
     ∃ r, (tableau c r).optimal = {e} := by
@@ -244,8 +244,7 @@ theorem exists_mem_optimal_iff_of_isOfKind {k : Data.Hiatus.Juncture} (hc : IsOf
   · rw [exists_mem_optimal_second_iff hc.stemBody_ne_nil, hc.left, hc.right]
     simp
 
-/-- At a juncture of two lexical words no ranking elides the second vowel (10), while before a
-function word some ranking does (12). -/
+-- (10), (12)
 theorem schematic_second :
     (¬ ∃ r, .second ∈ (tableau (schematic .lexicalLexical) r).optimal) ∧
       ∃ r, .second ∈ (tableau (schematic .lexicalFunction) r).optimal := by
@@ -261,8 +260,7 @@ theorem lexical_on_top {r : Ranking (Option Prominence) 5}
     optimal_eq_singleton_of_forall_dominates (e' := .first) (by decide)
       (by simp [hc'.right, kinds]) (by simp [hc'.left, kinds]) hr⟩
 
-/-- Under the ranking sole segment ≫ lexical ≫ morpheme-initial, the first vowel elides before a
-one-segment suffix and the second before a longer one ((19), (20)). -/
+-- (19), (20)
 theorem soleSegment_over_lexical {r : Ranking (Option Prominence) 5}
     (h₁ : r.Dominates (some .soleSegment) (some .lexical))
     (h₂ : r.Dominates (some .lexical) (some .morphemeInitial)) (hc : IsOfKind c .rootSuffix) :

@@ -194,22 +194,21 @@ theorem TemplateDetermined.of_categoryDetermined {rows : List Row}
     (h : CategoryDetermined rows) : TemplateDetermined rows :=
   h.of_factorsThrough λ _ _ he => Prod.ext (congrArg (·.1) he) (congrArg (·.2.1) he)
 
-/-- √apologi selects *for* in every category (1). -/
+-- (1)
 theorem apologi_rootDetermined : RootDetermined (rows .apologi) := by decide
 
-/-- √fxr selects *b-* in every category (2). -/
+-- (2)
 theorem fxr_rootDetermined : RootDetermined (rows .fxr) := by decide
 
-/-- √xwf selects *min* in both templates (11), a template-independent l-selection. -/
+-- (11)
 theorem xwf_rootDetermined : RootDetermined (rows .xwf) := by decide
 
-/-- √prd selects *on*, *in* and *of* by category (5), so the root alone does not determine
-the preposition, though the root with its category does. -/
+-- (5)
 theorem prd_not_rootDetermined : ¬ RootDetermined (rows .prd) := by decide
 
 theorem prd_categoryDetermined : CategoryDetermined (rows .prd) := by decide
 
-/-- √brk selects *b-* as a verb and *ʕala* as a noun (6). -/
+-- (6)
 theorem brk_not_rootDetermined : ¬ RootDetermined (rows .brk) := by decide
 
 theorem brk_categoryDetermined : CategoryDetermined (rows .brk) := by decide
@@ -218,16 +217,16 @@ theorem brk_categoryDetermined : CategoryDetermined (rows .brk) := by decide
 determine the preposition. -/
 theorem krh_not_categoryDetermined : ¬ CategoryDetermined (rows .krh) := by decide
 
-/-- √dwr selects *b-* in XaYaZ and *ʕala* in XaYYaZ (13b). -/
+-- (13b)
 theorem dwr_not_categoryDetermined : ¬ CategoryDetermined (rows .dwr) := by decide
 
-/-- √ħkm selects *ʕala* in XaYaZ and no preposition in XaYYaZ (14). -/
+-- (14)
 theorem Hkm_not_categoryDetermined : ¬ CategoryDetermined (rows .Hkm) := by decide
 
-/-- √tpl selects *be-* in XiYeZ and suppresses it in the passive XuYaZ (17). -/
+-- (17)
 theorem tpl_not_categoryDetermined : ¬ CategoryDetermined (rows .tpl) := by decide
 
-/-- √ʃpʕ selects *al* in hiXYiZ and suppresses it in the passive huXYaZ (18). -/
+-- (18)
 theorem shps_not_categoryDetermined : ¬ CategoryDetermined (rows .shps) := by decide
 
 theorem data_templateDetermined : TemplateDetermined data := by decide
@@ -323,11 +322,10 @@ def derive (r : Root) (t : Template) : List SelectionalFeature :=
 def selected (r : Root) (t : Template) : List Prep :=
   (derive r t).filterMap λ f => if f.IsActive then some f.prep else none
 
-/-- In XaYaZ the root √dwr's feature for *b-* is activated and the one for *ʕala* is not
-(24). -/
+-- (24)
 theorem dwr_XaYaZ : selected .dwr .XaYaZ = [.b] := by decide
 
-/-- In XaYYaZ it is the feature for *ʕala* that is activated (25). -/
+-- (25)
 theorem dwr_XaYYaZ : selected .dwr .XaYYaZ = [.Eala] := by decide
 
 theorem selected_eq :

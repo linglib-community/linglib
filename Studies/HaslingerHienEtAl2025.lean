@@ -82,7 +82,6 @@ def QForall (P Q : Set α) : Prop := ∀ x, MaxNonOverlap P x → x ∈ Q
 
 theorem MaxNonOverlap.mem (h : MaxNonOverlap P x) : x ∈ P := h.1
 
-/-- A non-null maximal non-overlapping element is maximal in `P`. -/
 theorem MaxNonOverlap.maximal (hx : ¬ IsBot x) (h : MaxNonOverlap P x) : Maximal (· ∈ P) x :=
   ⟨h.1, fun y hy hle ↦ h.2 y hy ⟨x, hx, le_rfl, hle⟩⟩
 

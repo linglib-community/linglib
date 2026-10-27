@@ -66,8 +66,7 @@ def MustInView (f : Background W) (φ : W → Prop) (i : W) : Prop :=
 def CanInView (f : Background W) (φ : W → Prop) (i : W) : Prop :=
   ∃ B ∈ consistentSubsets (f i), ∀ C ∈ consistentSubsets (f i), B ⊆ C → ¬ Disjoint (sInf C) φ
 
-/-- On a consistent premise set the revised necessity is Definition 5: the premise set is
-itself the consistent subset that dominates every other. -/
+-- Definition 5
 theorem mustInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
     MustInView f φ i ↔ simpleNecessity f φ i := by
   rw [simpleNecessity_iff_sInf_le]
@@ -75,7 +74,7 @@ theorem mustInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
   obtain ⟨C, hC, -, hle⟩ := hAll (f i) ⟨subset_rfl, h⟩
   exact (sInf_le_sInf hC.1).trans hle
 
-/-- On a consistent premise set the revised possibility is Definition 6. -/
+-- Definition 6
 theorem canInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
     CanInView f φ i ↔ simplePossibility f φ i := by
   rw [simplePossibility_iff_not_disjoint]
@@ -95,13 +94,12 @@ theorem mustInView_iff_not_canInView_not (f : Background W) (φ : W → Prop) (i
   rw [canInView_iff_not_mustInView_not, not_not]
   simp only [not_not]
 
-/-- A premise in a consistent subset is possible under Definition 8: every consistent extension
-still contains it. -/
+-- Definition 8
 theorem canInView_of_mem {B : Set (W → Prop)} (hB : B ∈ consistentSubsets (f i)) (hφ : φ ∈ B) :
     CanInView f φ i :=
   ⟨B, hB, fun _ hC hBC hd ↦ hC.2 (hd.eq_bot_of_le (sInf_le (hBC hφ)))⟩
 
-/-- A premise of `f i` compatible with every consistent subset is necessary (Definition 7). -/
+-- Definition 7
 theorem mustInView_of_forall_not_disjoint (hφ : φ ∈ f i)
     (h : ∀ B ∈ consistentSubsets (f i), ¬ Disjoint (sInf B) φ) : MustInView f φ i := by
   intro B hB
@@ -150,14 +148,12 @@ def judgments : Set (World → Prop) := {p, q, qᶜ}
 theorem judgments_inconsistent : sInf judgments = ⊥ := by
   funext w; simp [judgments]
 
-/-- Under Definition 5 the inconsistent judgments make (7) true: it must be that murder is
-not a crime, by ex falso quodlibet. -/
+-- Definition 5, (7)
 theorem simpleNecessity_neg_p (w : World) :
     simpleNecessity (Function.const World judgments) pᶜ w := by
   rw [simpleNecessity_iff_sInf_le, Function.const_apply, judgments_inconsistent]; exact bot_le
 
-/-- Under Definition 6 nothing is compatible with the judgments, so (8) is false: deer cannot
-be personally responsible. -/
+-- Definition 6, (8)
 theorem not_simplePossibility_q (w : World) :
     ¬ simplePossibility (Function.const World judgments) q w := by
   rw [simplePossibility_iff_not_disjoint, Function.const_apply, judgments_inconsistent, not_not]
@@ -175,7 +171,7 @@ theorem must_p (w : World) : MustInView (Function.const World judgments) p w := 
   exact not_disjoint_sInf_iff.2 ⟨(true, w₀.2),
     forall_mem_of_eq judgments_snd hB.1 hw₀ rfl fun _ ↦ rfl, rfl⟩
 
-/-- (7), that murder must not be a crime, is false under Definition 7. -/
+-- (7), Definition 7
 theorem not_must_neg_p (w : World) :
     ¬ MustInView (Function.const World judgments) pᶜ w := fun h ↦ by
   obtain ⟨C, hC, -, hle⟩ := h ∅ ⟨Set.empty_subset _, by simp⟩
@@ -194,8 +190,7 @@ theorem can_neg_q (w : World) : CanInView (Function.const World judgments) qᶜ 
   canInView_of_mem (B := {qᶜ})
     ⟨by simp [judgments], sInf_ne_bot_iff.2 ⟨(true, false), by simp [q]⟩⟩ rfl
 
-/-- Definition 8 makes (13) false, it cannot be that murder is not a crime: the dual of
-(6). -/
+-- Definition 8, (13), (6)
 theorem not_can_neg_p (w : World) :
     ¬ CanInView (Function.const World judgments) pᶜ w :=
   (mustInView_iff_not_canInView_not _ _ _).mp (must_p w)

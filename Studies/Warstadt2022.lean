@@ -151,8 +151,6 @@ noncomputable def listener (α : ℝ) : Kernel U (W × Finset W) :=
 /-- The pairs whose world is `w`. -/
 def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image fun C ↦ (w, C)
 
-/-- The listener's preference between two worlds, marginalizing the context set, is the
-comparison of prior-weighted speaker shares summed over context sets. -/
 theorem listener_worldEvent_lt_iff {α : ℝ} {u : U} (w₁ w₂ : W) :
     (listener P cell sem q α u).real ↑(worldEvent w₁)
         < (listener P cell sem q α u).real ↑(worldEvent w₂)

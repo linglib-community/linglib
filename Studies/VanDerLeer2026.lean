@@ -139,7 +139,7 @@ def sincereRestrict
 
 variable {c a b π}
 
-/-- The sincere update preserves Sincerity — the reason Definition 6 exists. -/
+-- Definition 6
 theorem sincere_sincereRestrict (hs : c.Sincere)
     (h : ∀ w, ∃ v, w ~[c.belief a] v ∧ w ~[c.commitment (a, b)] v ∧ v ∈ π) :
     (sincereRestrict c a b π h).Sincere := by
@@ -157,7 +157,7 @@ theorem believes_sincereRestrict
     (sincereRestrict c a b π h).Believes a π w :=
   fun _ hv ↦ (hv.2 rfl).2 rfl
 
-/-- Definition 4 alone need not preserve Sincerity. -/
+-- Definition 4
 theorem exists_sincere_not_sincere_restrictCommitment :
     ∃ (c : Frame Bool Unit) (π : Set Bool),
       c.Sincere ∧ ¬ (c.restrictCommitment () () π).Sincere :=
@@ -338,7 +338,7 @@ noncomputable def update : SpeechAct W A → Space (Frame W A) → Space (Frame 
 @[simp] theorem root_assert : (assert C a b π).root = C.root.restrictCommitment a b π := rfl
 @[simp] theorem root_question : (question C a b π).root = C.root := rfl
 
-/-- No speech act enlarges a commitment relation of the root (Lemma 28). -/
+-- Lemma 28
 theorem root_update_commitment_le :
     (update α C).root.commitment (a, b) ≤ C.root.commitment (a, b) := by
   induction α generalizing C with
@@ -384,7 +384,7 @@ theorem committed_committed_assert (x y : A) :
       {v | (update (.assert a b π) C).root.Committed a b π v} w :=
   fun _ _ ↦ C.root.committed_restrictCommitment a b π _
 
-/-- Asserting `π` entails asserting any consequence `τ` (Theorem 29). -/
+-- Theorem 29
 theorem assert_assert_of_subset (h : π ⊆ τ) :
     update (.assert a b τ) (update (.assert a b π) C) = update (.assert a b π) C := by
   have hroot : (C.root.restrictCommitment a b π).restrictCommitment a b τ =
@@ -422,7 +422,7 @@ continuation of the root (Definition 15). -/
 def Cooperative : Prop :=
   update α C ≠ C ∧ ∃ c ∈ C, C.root ⊏ c ∧ (update α C).root ⊑ c
 
-/-- Inadmissibility of contradictions (Theorem 33). -/
+-- Theorem 33
 theorem violation_assert_empty : Violation (update (.assert a b ∅) C).root a b :=
   fun _ _ h ↦ h.2 rfl
 
@@ -475,7 +475,7 @@ theorem cooperative_assert_of_not_committed [Nonempty W] (hab : a ≠ b)
   · exact absurd ((congrArg (fun s ↦ (w, v) ∈ s.commitment (b, a)) e).mpr hwv) h₂
   · exact hlt.commitment_nonempty
 
-/-- `b` asserting `π` entails `a` having asked whether `π` (Theorem 35). -/
+-- Theorem 35
 theorem question_assert :
     update (.question a b π) (update (.assert b a π) C) = update (.assert b a π) C := by
   refine Space.ext fun c ↦ ?_

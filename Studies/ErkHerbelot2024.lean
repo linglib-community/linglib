@@ -377,8 +377,7 @@ private theorem bat_num (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- The posterior probability of the *stick* sense of *bat* in *a player was holding a bat* is `(α +
-1) / (2α + 1)` (Table 1). -/
+-- Table 1
 theorem batStick_real (α : ℝ) (hα : 0 < α) :
     ((batSDS α hα).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} =
       (α + 1) / (2 * α + 1) := by
@@ -392,20 +391,19 @@ theorem batStick_real (α : ℝ) (hα : 0 < α) :
     bat_den]
   field_simp
 
-/-- Table 1, `α = 0.5`: `P(stick) = 3/4` (paper's simulation: `0.82`). -/
+-- Table 1
 theorem batStick_half :
     ((batSDS (1 / 2) (by norm_num)).nodePosterior batLabel batRoles batLabels 2).real
       {.BAT_STICK} = 3 / 4 := by
   rw [batStick_real]; norm_num
 
-/-- Table 1, `α = 0.1`: `P(stick) = 11/12` (paper's simulation: `0.96`). -/
+-- Table 1
 theorem batStick_tenth :
     ((batSDS (1 / 10) (by norm_num)).nodePosterior batLabel batRoles batLabels 2).real
       {.BAT_STICK} = 11 / 12 := by
   rw [batStick_real]; norm_num
 
-/-- The posterior of the *stick* sense is strictly decreasing in the concentration parameter `α` (p.
-571). -/
+-- p. 571
 theorem batStick_strictAnti {α β : ℝ} (hα : 0 < α) (hαβ : α < β) :
     ((batSDS β (hα.trans hαβ)).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} <
       ((batSDS α hα).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} := by
@@ -600,8 +598,7 @@ private theorem star_den_ne_zero (α : ℝ) (hα : 0 < α) :
   have : (0 : ℝ) < 19 * (115 * α + 8) / (10584 * (2 * α + 1)) := by positivity
   linarith
 
-/-- The posterior probability of the *person* sense of *star* in *an astronomer married a star* is
-`105α / (115α + 8)` (Table 2). -/
+-- Table 2
 theorem starPerson_real (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).nodePosterior starLabel starRoles starLabels 2).real {.STAR_PERSON} =
       105 * α / (115 * α + 8) := by
@@ -618,19 +615,19 @@ theorem starSun_real (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- Table 2, `α = 0.5`: `P(person) = 105/131 ≈ 0.80` (paper's simulation: `0.82`). -/
+-- Table 2
 theorem starPerson_half :
     ((starSDS (1 / 2) (by norm_num)).nodePosterior starLabel starRoles starLabels 2).real
       {.STAR_PERSON} = 105 / 131 := by
   rw [starPerson_real]; norm_num
 
-/-- Table 2, `α = 0.1`: `P(person) = 7/13 ≈ 0.54` (paper's simulation: `0.57`). -/
+-- Table 2
 theorem starPerson_tenth :
     ((starSDS (1 / 10) (by norm_num)).nodePosterior starLabel starRoles starLabels 2).real
       {.STAR_PERSON} = 7 / 13 := by
   rw [starPerson_real]; norm_num
 
-/-- The posterior of the *sun* sense of *star* is strictly decreasing in `α` (p. 572). -/
+-- p. 572
 theorem starSun_strictAnti {α β : ℝ} (hα : 0 < α) (hαβ : α < β) :
     ((starSDS β (hα.trans hαβ)).nodePosterior starLabel starRoles starLabels 2).real
         {.STAR_SUN} <
@@ -641,8 +638,7 @@ theorem starSun_strictAnti {α β : ℝ} (hα : 0 < α) (hαβ : α < β) :
 
 /-! ### Figure 6: the two constraints on *star* conflict -/
 
-/-- Selectional side: MARRY-THEME prefers the *person* sense of *star* to the *sun* sense
-(p. 571: `0.475` against `0.05`). -/
+-- p. 571
 theorem marryTheme_prefers_person (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).selectional .marryTheme).real {.STAR_SUN} <
       ((starSDS α hα).selectional .marryTheme).real {.STAR_PERSON} := by
@@ -651,8 +647,7 @@ theorem marryTheme_prefers_person (α : ℝ) (hα : 0 < α) :
     ENNReal.toReal_ofNat, ENNReal.toReal_one]
   norm_num
 
-/-- Scenario side: a coherent STARGAZING scenario prefers the *sun* sense, which STAR-PERSON is
-excluded from (p. 571). -/
+-- p. 571
 theorem stargazing_prefers_sun (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).scenario .STARGAZING).real {.STAR_PERSON} <
       ((starSDS α hα).scenario .STARGAZING).real {.STAR_SUN} := by
@@ -661,8 +656,7 @@ theorem stargazing_prefers_sun (α : ℝ) (hα : 0 < α) :
     star_cards]
   norm_num
 
-/-- On the *star* node the selectional constraint prefers STAR-PERSON while the STARGAZING scenario
-prefers STAR-SUN (Figure 6). -/
+-- Figure 6
 theorem star_constraints_conflict (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).selectional .marryTheme).real {.STAR_SUN} <
         ((starSDS α hα).selectional .marryTheme).real {.STAR_PERSON} ∧

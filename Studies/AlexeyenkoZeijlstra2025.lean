@@ -229,7 +229,7 @@ def languageOf : String → Option Language
   | "kala1399" => some .kalaallisut | "basq1248" => some .basque
   | _ => none
 
-/-- On every language the paper discusses the generalization returns Table 3's verdict. -/
+-- Table 3
 theorem table3_predicted :
     ∀ s ∈ table3, ∀ l ∈ languageOf s.glottocode, (l.Possible s.side ↔ s.intervention) := by
   decide +kernel

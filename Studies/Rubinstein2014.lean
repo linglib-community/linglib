@@ -335,8 +335,7 @@ theorem strength_tests :
       (e.judgment = .acceptable ↔ (strategy? e).isSome) := by
   decide
 
-/-- Hebrew has neither a lexical nor a compositional weak necessity (§2.1), its route being the
-evaluative comparative. -/
+-- §2.1
 theorem hebrew_comparative_only :
     ∀ e ∈ Examples.all, e.language = "hebr1245" →
       ∀ s ∈ strategy? e, s = .evaluativeComparative := by

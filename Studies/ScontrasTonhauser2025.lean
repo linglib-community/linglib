@@ -96,8 +96,6 @@ instance (u : Utt) : DecidablePred (literal u) := by cases u <;> unfold literal 
 /-- The extension of an utterance. -/
 def sem (u : Utt) : Finset World := Finset.univ.filter (literal u)
 
-/-- Negated *think* is semantically stronger than negated *know*, since it also excludes the
-world in which Cole believes a false complement. -/
 theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by decide
 
 /-- The cell of a world under a question holds the worlds giving the same answer. -/
@@ -305,8 +303,7 @@ private theorem sum_real :
     refine Finset.sum_congr rfl fun b _ ↦ Finset.sum_congr rfl fun A _ ↦ ?_ <;>
     split_ifs <;> first | rfl | ring
 
-/-- The posterior probability of the complement (fn. 11) is its prior probability times the
-evidence for it, over the evidence for either value. -/
+-- fn. 11
 theorem L1_c_real :
     (L1 α k (β.prod γ) ν q u).real {p | p.1.complement = true}
       = γ.real {true} * cWeight α k ν β q u true

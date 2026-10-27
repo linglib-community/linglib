@@ -102,8 +102,7 @@ theorem man_and_not_man (j : Man.left) : ¬ (p Man j ∧ N.not Man (p Man) (Man.
 theorem not_not_man (j : Man.left) : ¬ N.not Man (p Man) (Man.hom j) :=
   fun h ↦ (N.l1 Man j).mp h trivial
 
-/-- "Tables do not talk" entails "red tables do not talk", by the coercion from red tables to
-tables alone ((31)–(33)). -/
+-- (31), (33)
 theorem tables_dont_talk_red (Red : Obj → Prop) (talk : Human.left → Prop)
     (h : ∀ x : Table.left, N.not Human talk (Table.hom x)) :
     ∀ y : {x : Table.left // Red (Table.hom x)}, N.not Human talk (Table.hom y.1) :=

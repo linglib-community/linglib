@@ -102,14 +102,12 @@ theorem neutral_iff {c x : E} : Neutral (Set.Iic c) x ↔ x ≤ c := Set.Iic_sub
 
 theorem domain_iff {c x : E} : Domain (Set.Iic c) x ↔ c < x := Set.Iic_ssubset_Iic
 
-/-- Under the convention (45) that height maps marked loci to proper parts, a marked presupposition
-met at one locus is met at every higher one (48). -/
+-- (45), (48)
 theorem domain_of_lt {H : Type*} [Preorder H] {ref : H → E} (hconv : StrictMono ref)
     {C : Set E} {k k' : H} (hk : Domain C (ref k)) (hkk' : k < k') : Domain C (ref k') :=
   hk.trans (Set.Iic_ssubset_Iic.2 (hconv hkk'))
 
-/-- A plane less an established locus sums with it to the plane, and a higher plane's remainder
-contains the neutral plane's (14). -/
+-- (14)
 theorem remainder {E : Type*} [GeneralizedCoheytingAlgebra E] {a d d' : E} (h : a ≤ d)
     (h' : d ≤ d') : a ⊔ d \ a = d ∧ d \ a ≤ d' \ a :=
   ⟨sup_sdiff_cancel_right h, sdiff_le_sdiff_right h'⟩
@@ -131,8 +129,7 @@ theorem fsAllOf_ixArc_eq_zero_iff {W ι : Type*} {g : ι → E} {C : Set E} {h :
   simp only [fsAllOf, presupOfReferent_eq_zero_iff, ixArc]
   split_ifs with hp <;> simp [hp]
 
-/-- Where the neutral pronoun denotes the sum of the context, `FS(ALL)-neutral` quantifies over
-the context, as in (50e). -/
+-- (50e)
 theorem fsAllOf_eq_one_iff {W : Type*} {pron : W → Option E} {Q : E → W → Prop} {w : W} {c : E}
     (h : pron w = some c) : fsAllOf pron Q w = 1 ↔ ∀ y ∈ Set.Iic c, Q y w := by
   simp only [fsAllOf, presupOfReferent_of_some h, SignType.ofProp_eq_one_iff]
@@ -150,8 +147,7 @@ theorem some_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
     GQ.some (partitive x) Q → GQ.some (partitive x') Q :=
   restrictorMonotone_some Q fun _ hy => le_trans hy h
 
-/-- Height is not intensification, unlike stress in [bergen-2016], since `SOMEONE-high` can be true
-where `SOMEONE-neutral` is false (section 4, after (36)). -/
+-- (36) [bergen-2016]
 theorem not_strengthening {x x' w : E} (hw : w ≤ x') (hwx : ¬ w ≤ x) :
     ¬ ∀ Q : E → Prop, GQ.some (partitive x') Q → GQ.some (partitive x) Q :=
   fun h ↦ let ⟨_, hy, e⟩ := h (· = w) ⟨w, hw, rfl⟩; hwx (e ▸ hy)
@@ -172,20 +168,18 @@ theorem realization_rows :
       (e.feature? "realization" = some "sequential" → q ∈ sequential) := by
   decide
 
-/-- A quantifier that incorporates the pronoun rejects a further height-marked `IX-arc`, as in
-(38). -/
+-- (38)
 theorem no_double_marking :
     ∀ e ∈ Examples.all, e.feature? "realization" = some "both" → e.judgment = .ungrammatical := by
   decide
 
-/-- Height marks a verb itself only in [padden-1988]'s directional class ((21)–(24)); a plain
-verb takes a separate `IX-arc`. -/
+-- (21), (24) [padden-1988]
 theorem verb_height_iff_directional :
     ∀ e ∈ Examples.all, e.feature? "heightOn" = some "verb" →
       (e.judgment = .acceptable ↔ e.feature? "verbClass" = some "directional") := by
   decide
 
-/-- Height on a bare noun has no widened-domain reading, as in (27). -/
+-- (27)
 theorem noun_no_widening :
     ∀ e ∈ Examples.all, e.feature? "heightOn" = some "noun" →
       e.readings.lookup "widened" = some .unacceptable := by

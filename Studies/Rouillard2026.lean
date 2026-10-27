@@ -106,7 +106,7 @@ theorem pos_iff {a b : T} : 0 < μ (Ioc a b) ↔ a < b :=
     fun h ↦ pos h⟩
 
 variable (μ) [IsOrderedCancelAddMonoid α] in
-/-- Moving the start of a span later shortens it, which is (7) for abutting spans. -/
+-- (7)
 theorem strictAntiOn (s : T) : StrictAntiOn (fun l ↦ μ (Ioc l s)) (Iic s) :=
   fun _ _ _ hb hab ↦ by
     dsimp only
@@ -198,8 +198,7 @@ theorem eTIA_monotone (Q : W → E → Prop) : Monotone (eTIA μ Q) := by
   obtain ⟨l, hl, hlm⟩ := IsTimeMeasure.exists_Ioc_eq_of_le hnm
   exact ⟨⟨⟨l, t.snd⟩, hl.trans t.fst_le_snd⟩, hlm, e, he, het.trans (le_def.2 ⟨hl, le_rfl⟩)⟩
 
-/-- Under the subinterval property the E-TIA property does not depend on the numeral, the
-information collapse of (83). -/
+-- (83)
 theorem eTIA_eq_of_hasSubintervalProperty {Q : W → E → Prop}
     (hQ : HasSubintervalProperty Q) (n m : α) : eTIA μ Q n = eTIA μ Q m := by
   suffices h : ∀ n m w, w ∈ eTIA μ Q n → w ∈ eTIA μ Q m from
@@ -250,8 +249,7 @@ theorem gTIANeg_antitone (P : W → E → Prop) (s : T) : Antitone (gTIANeg μ P
   fun _ _ h ↦ compl_subset_compl.2 (gTIA_monotone μ P s h)
 
 omit [CanonicallyOrderedAdd α] in
-/-- Under density every witnessing open span shrinks to a strictly smaller one, still
-positive in measure, that includes the same run time (§4.2.2). -/
+-- §4.2.2
 theorem exists_lt_of_mem_gTIA [DenselyOrdered T] {P : W → E → Prop} {s : T} {w : W}
     {n : α} (h : w ∈ gTIA μ P s n) : ∃ m, 0 < m ∧ m < n ∧ w ∈ gTIA μ P s m := by
   obtain ⟨l, rfl, e, he, hei⟩ := h
@@ -273,8 +271,7 @@ theorem not_isMIPLicensed_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T)
     ¬ IsMIPLicensed (gTIA μ P s) :=
   not_isMIPLicensed_of_not_isLeast (gTIA_monotone μ P s) (not_isLeast_gTIA μ P s)
 
-/-- If every `P`-event starts by `l₀` and one starts at `l₀` and ends before `s`, the greatest true
-numeral of the negated property is `μ (Ioc l₀ s)` (§4.2.2). -/
+-- §4.2.2
 theorem isGreatest_gTIANeg {P : W → E → Prop} {s : T} {w : W} {l₀ : T}
     (hall : ∀ e, P w e → (τ e).fst ≤ l₀) (hwit : ∃ e, P w e ∧ (τ e).fst = l₀ ∧ (τ e).snd < s) :
     IsGreatest {n | w ∈ gTIANeg μ P s n} (μ (Ioc l₀ s)) := by
@@ -347,8 +344,7 @@ theorem hasSubintervalProperty_ePerfFrame {P : W → E → Prop} {s : T}
     ⟨e', he'τ, he', l, he'τ ▸ (coe_subset_coe.2 ht).trans hei⟩
 
 omit [IsOrderedCancelAddMonoid α] in
-/-- For positive numerals the U-perfect E-TIA property (117) collapses to (118) and does not
-depend on the numeral. -/
+-- (117), (118)
 theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) {n m : α} (hn : 0 < n) (hm : 0 < m) :
     eTIA μ (uPerfFrame P s) n = eTIA μ (uPerfFrame P s) m := by
@@ -364,8 +360,7 @@ theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → E → Prop} {s : T}
     he'τ ▸ Ioo_subset_Icc_self⟩, he'τ ▸ le_def.2 ⟨le_max_right _ _, le_rfl⟩⟩
 
 omit [IsOrderedCancelAddMonoid α] in
-/-- For positive numerals the U-perfect G-TIA property (122) collapses to (123) and does not
-depend on the numeral. -/
+-- (122), (123)
 theorem uPerfGTIA_eq {P : W → E → Prop} {s : T} {n m : α} (hn : 0 < n) (hm : 0 < m) :
     uPerfGTIA μ P s n = uPerfGTIA μ P s m := by
   suffices h : ∀ n m : α, 0 < m → ∀ w, w ∈ uPerfGTIA μ P s n → w ∈ uPerfGTIA μ P s m from
@@ -403,7 +398,7 @@ private instance [NoMaxOrder α] : Nontrivial {n : α // 0 < n} :=
   let ⟨m, hm⟩ := exists_gt n
   ⟨⟨⟨n, hn⟩, ⟨m, hn.trans hm⟩, fun h ↦ hm.ne (congrArg Subtype.val h)⟩⟩
 
-/-- Every cell of Table 1 except negated G-TIA under perfective aspect is blocked. -/
+-- Table 1
 theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (h : (pol, a, v) ≠ (.negative, .gap, .pfv)) : ¬ IsMIPLicensed (reading μ P s pol a v) := by

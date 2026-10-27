@@ -100,8 +100,7 @@ def operatorModification (E : Type*) :
   { form := modificationForm
   , meaning := operatorRule E }
 
-/-- The two constructions share their form, one rule of syntactic formation with two semantic
-specifications (§1). -/
+-- §1
 theorem same_form (E : Type*) :
     (intersectiveModification E).form = (operatorModification E).form := rfl
 

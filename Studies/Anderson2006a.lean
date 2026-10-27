@@ -119,8 +119,7 @@ def InflectionPattern.ofString? : String → Option InflectionPattern
   | "splitDoubled" => some .splitDoubled
   | _ => none
 
-/-- The book's pattern label for each example is what (13) reads off its marking — except
-where the auxiliary's marking is only partial. -/
+-- (13)
 theorem rows_pattern :
     ∀ r ∈ Examples.all, r.feature? "aux_marking" = none →
       ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
@@ -128,7 +127,7 @@ theorem rows_pattern :
           m.pattern = p := by
   decide +kernel
 
-/-- Doyayo (15a) is split by (13), though the book files it under lex-headed. -/
+-- (15a), (13)
 theorem doyayo_split :
     ∀ m ∈ (InflectionalMarking.ofRow? Examples.doyayo_lexheaded).toList, m.pattern = .split := by
   decide +kernel
@@ -144,8 +143,7 @@ theorem splitDoubled_doubles_subject :
 
 /-! ### Negative auxiliaries -/
 
-/-- Negative auxiliaries head both aux-headed constructions, as in Udihe (49), and lex-headed ones,
-as in Kwerba (52) (§1.7.2). -/
+-- (49), (52), §1.7.2
 theorem negative_auxiliary_patterns :
     (∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
       (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .auxHeaded) ∧

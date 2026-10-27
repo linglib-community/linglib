@@ -83,7 +83,7 @@ def respect [DecidableEq ι] (i : ι) : ι → K := Pi.single i 1
 
 variable {k : ι → K} {v : Profile ι α K} {spatial : α → K} {x y : α}
 
-/-- *Completely* (20), (33) says that the disturbance exhausts the host's extent. -/
+-- (20), (33)
 theorem degree_eq_one_iff (hs : spatial x ≠ 0) : degree k v spatial x = 1 ↔ k ⬝ᵥ v x = spatial x :=
   div_eq_one_iff_eq hs
 
@@ -136,8 +136,7 @@ theorem more_iff_utilitarian (hs : spatial x = spatial y) (hs0 : 0 < spatial x) 
 
 variable [DecidableEq ι] {i j : ι}
 
-/-- In *more dented with respect to dent size* (28a), (42a), the comparative under a respect
-phrase compares the named dimension alone. -/
+-- (28a), (42a)
 theorem more_respect_iff (hs : spatial x = spatial y) (hs0 : 0 < spatial x) :
     More (respect i) v spatial x y ↔ v y i < v x i := by
   rw [More, degree_respect, degree_respect, ← hs, div_lt_div_iff_of_pos_right hs0]

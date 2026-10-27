@@ -105,7 +105,7 @@ theorem pairwiseProb_mono_iff (hx : 0 < v x) (hy : 0 < v y) (hz : 0 < v z) :
     div_le_div_iff₀ (add_pos hy hz) (add_pos hx hz)]
   constructor <;> intro h <;> nlinarith
 
-/-- A positive ratio scale is strongly stochastically transitive (Definition 2, p. 25). -/
+-- Definition 2, p. 25
 theorem pairwiseProb_sst (hx : 0 < v x) (hy : 0 < v y) (hz : 0 < v z)
     (hxy : 1 / 2 ≤ pairwiseProb v x y) (hyz : 1 / 2 ≤ pairwiseProb v y z) :
     max (pairwiseProb v x y) (pairwiseProb v y z) ≤ pairwiseProb v x z := by
@@ -122,7 +122,7 @@ theorem pairwiseProb_eq_pairwiseProb_iff {x' y' : A} (hx : 0 < v x)
     div_eq_div_iff (by linarith) (by linarith)]
   constructor <;> intro h <;> nlinarith
 
-/-- Pairwise choice is the sigmoid of the difference of the log scale values (§2.A.2). -/
+-- §2
 theorem pairwiseProb_eq_sigmoid (hx : 0 < v x) (hy : 0 < v y) :
     pairwiseProb v x y = Real.sigmoid (Real.log (v x) - Real.log (v y)) := by
   have := add_pos hx hy
@@ -170,8 +170,7 @@ theorem ratioProb_sum_eq_one (v : A → ℝ) (T : Finset A) (hT : ∑ b ∈ T, v
     ∑ a ∈ T, ratioProb v T a = 1 := by
   rw [Finset.sum_congr rfl fun a ha ↦ ratioProb_eq_div v T a ha, ← Finset.sum_div, div_self hT]
 
-/-- Within a set the odds of two alternatives are the ratio of their scale values (Lemma 3, p. 9).
--/
+-- Lemma 3, p. 9
 theorem ratioProb_ratio (v : A → ℝ) (T : Finset A) (a₁ a₂ : A) (h₁ : a₁ ∈ T) (h₂ : a₂ ∈ T) :
     ratioProb v T a₁ * v a₂ = ratioProb v T a₂ * v a₁ := by
   rw [ratioProb_eq_div v T a₁ h₁, ratioProb_eq_div v T a₂ h₂, div_mul_eq_mul_div,
@@ -181,7 +180,7 @@ theorem ratioProb_univ [Fintype A] (v : A → ℝ) : ratioProb v Finset.univ = (
   ext a
   simp [ratioProb, div_eq_inv_mul]
 
-/-- The ratio rule does not depend on the unit of the scale (Theorem 3, p. 23). -/
+-- Theorem 3, p. 23
 theorem ratioProb_smul {c : ℝ} (hc : c ≠ 0) (v : A → ℝ) (T : Finset A) :
     ratioProb (c • v) T = ratioProb v T := by
   ext a
@@ -195,7 +194,7 @@ theorem ratioProb_pair (v : A → ℝ) {x y : A} (hne : x ≠ y) :
   rw [ratioProb_eq_div v _ x (Finset.mem_insert_self x {y}), Finset.sum_pair hne]
   rfl
 
-/-- Under a positive ratio scale, `P_T(x) = 1 / ∑ y ∈ T, P(y, x) / P(x, y)` (Theorem 1, p. 16). -/
+-- Theorem 1, p. 16
 theorem ratioProb_eq_one_div_sum {v : A → ℝ} {T : Finset A} {x : A} (hv : ∀ a ∈ T, 0 < v a)
     (hx : x ∈ T) :
     ratioProb v T x = 1 / ∑ y ∈ T, pairwiseProb v y x / pairwiseProb v x y := by
@@ -207,8 +206,7 @@ theorem ratioProb_eq_one_div_sum {v : A → ℝ} {T : Finset A} {x : A} (hv : �
   rw [sum_congr rfl hodds, ← sum_div, ratioProb_eq_div v T x hx, one_div_div]
 
 open MeasureTheory ProbabilityTheory in
-/-- For a nonnegative scale `v`, choosing `a` from `T` by the ratio rule is conditioning on `T` the
-measure with point masses `v` (p. 24). -/
+-- p. 24
 theorem ratioProb_eq_cond [MeasurableSpace A] [MeasurableSingletonClass A] {v : A → ℝ}
     (hv : ∀ a, 0 ≤ v a) (T : Finset A) (a : A) :
     ratioProb v T a =
@@ -236,8 +234,7 @@ section ChoiceAxiomForms
 open MeasureTheory ProbabilityTheory Finset
 open scoped ENNReal
 
-/-- Two measures that give the same choice from `T` by conditioning agree on `T` up to a constant
-multiple (Theorem 3, p. 23). -/
+-- Theorem 3, p. 23
 theorem restrict_eq_smul_of_cond_eq {A : Type*} [MeasurableSpace A] {μ ν : Measure A} {T : Set A}
     (hμ₀ : μ T ≠ 0) (hμ : μ T ≠ ∞) (h : μ[|T] = ν[|T]) :
     μ.restrict T = (μ T / ν T) • ν.restrict T := by
@@ -335,8 +332,7 @@ theorem binary_complement {x y : A} (hxy : x ≠ y) : cf.binary x y + cf.binary 
   rw [binary, binary, pair_comm y x, ← sum_pair hxy (f := fun a ↦ (cf.prob {x, y}).real {a}),
     cf.sum_prob_real (insert_nonempty _ _)]
 
-/-- Choice from the singleton `{x}` gives `P(x, x) = 1`, where Luce sets `P(x, x) = 1/2` by
-convention (p. 5). -/
+-- p. 5
 theorem binary_self (x : A) : cf.binary x x = 1 := by
   rw [binary, insert_eq_of_mem (mem_singleton_self x), measureReal_def, ← coe_singleton,
     cf.prob_coe (singleton_nonempty x), ENNReal.toReal_one]
@@ -385,7 +381,7 @@ theorem HasRatioScale.binaryRatioScaleOn (h : cf.HasRatioScale) :
   rw [binary, hμ _ (insert_nonempty _ _), measureReal_cond_singleton (by simp), measureReal_def,
     measureReal_def, measure_pair hxy, ENNReal.toReal_add (hfin x) (hfin y), pairwiseProb]
 
-/-- A ratio scale satisfies Axiom 1, part ii vacuously since no discrimination is perfect. -/
+-- Axiom 1
 theorem HasRatioScale.hasChoiceAxiom (h : cf.HasRatioScale) : cf.HasChoiceAxiom := by
   obtain ⟨v, hv⟩ := h.binaryRatioScaleOn
   refine ⟨fun T _ R S hRS hST ↦ h.hasProductRule R S T hRS hST, fun T x _ y _ h0 ↦ ?_⟩
@@ -396,8 +392,7 @@ theorem HasRatioScale.hasChoiceAxiom (h : cf.HasRatioScale) : cf.HasChoiceAxiom 
   have hy := (hv Set.univ).1 y trivial
   exact absurd h0 (div_pos hx (add_pos hx hy)).ne'
 
-/-- When every choice probability is positive, the constant-ratio rule yields a ratio scale (p. 24).
--/
+-- p. 24
 theorem HasPairwiseIIA.hasRatioScale [Inhabited A] (hIIA : cf.HasPairwiseIIA)
     (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < (cf.prob T).real {a}) :
     cf.HasRatioScale := by
@@ -467,14 +462,12 @@ theorem hasRatioScale_iff_hasPairwiseIIA [Inhabited A]
     cf.HasRatioScale ↔ cf.HasPairwiseIIA :=
   ⟨HasRatioScale.hasPairwiseIIA, fun h ↦ h.hasRatioScale hpos⟩
 
-/-- Under Axiom 1 an alternative never chosen over another is never chosen at all (Lemma 1, p. 6).
--/
+-- Axiom 1, Lemma 1, p. 6
 theorem HasChoiceAxiom.prob_singleton_eq_zero (h : cf.HasChoiceAxiom) {T : Finset A} {x y : A}
     (hx : x ∈ T) (hy : y ∈ T) (h0 : cf.binary x y = 0) : cf.prob T {x} = 0 := by
   simpa using h.deletion T x hx y hy h0 {x} (singleton_subset_iff.2 hx)
 
-/-- Under Axiom 1 and imperfect discrimination throughout `T`, every alternative in `T` is chosen
-from `T` with positive probability. -/
+-- Axiom 1
 theorem HasChoiceAxiom.prob_singleton_ne_zero (h : cf.HasChoiceAxiom) {T : Finset A}
     (himp : cf.ImperfectOn T) {x : A} (hx : x ∈ T) : cf.prob T {x} ≠ 0 := by
   intro h0
@@ -491,8 +484,7 @@ theorem HasChoiceAxiom.prob_singleton_ne_zero (h : cf.HasChoiceAxiom) {T : Finse
   rw [← sum_measure_singleton, sum_eq_zero hall] at this
   exact zero_ne_one this
 
-/-- Under Axiom 1 and imperfect discrimination throughout `T`, choice from a nonempty `S ⊆ T` is
-choice from `T` conditioned on `S` (p. 24). -/
+-- Axiom 1, p. 24
 theorem HasChoiceAxiom.prob_eq_cond (h : cf.HasChoiceAxiom) {T S : Finset A}
     (himp : cf.ImperfectOn T) (hST : S ⊆ T) (hS : S.Nonempty) : cf.prob S = (cf.prob T)[|↑S] := by
   obtain ⟨b, hb⟩ := hS
@@ -506,15 +498,13 @@ theorem HasChoiceAxiom.prob_eq_cond (h : cf.HasChoiceAxiom) {T S : Finset A}
     mul_comm (cf.prob S {a}), ← mul_assoc, ENNReal.inv_mul_cancel hne (measure_ne_top _ _),
     one_mul]
 
-/-- Under Axiom 1 and imperfect discrimination on `T`, choice from each nonempty `S ⊆ T` is `P_T`
-conditioned on `S` (Theorem 3, p. 23). -/
+-- Axiom 1, Theorem 3, p. 23
 theorem HasChoiceAxiom.ratioScaleOn (h : cf.HasChoiceAxiom) {T : Finset A}
     (himp : cf.ImperfectOn T) :
     (∀ x ∈ T, cf.prob T {x} ≠ 0) ∧ ∀ S ⊆ T, S.Nonempty → cf.prob S = (cf.prob T)[|↑S] :=
   ⟨fun _ hx ↦ h.prob_singleton_ne_zero himp hx, fun _ hST hS ↦ h.prob_eq_cond himp hST hS⟩
 
-/-- Under Axiom 1 and imperfect discrimination throughout `T`, `v a = P_T(a)` is a binary ratio
-scale on `T` (Theorem 3, p. 23). -/
+-- Axiom 1, Theorem 3, p. 23
 theorem HasChoiceAxiom.binaryRatioScaleOn_prob (h : cf.HasChoiceAxiom) {T : Finset A}
     (himp : cf.ImperfectOn T) : cf.BinaryRatioScaleOn ↑T fun a ↦ (cf.prob T).real {a} := by
   refine ⟨fun x hx ↦ ENNReal.toReal_pos (h.prob_singleton_ne_zero himp hx) (measure_ne_top _ _),
@@ -529,8 +519,7 @@ theorem HasChoiceAxiom.binaryRatioScaleOn (h : cf.HasChoiceAxiom) {T : Finset A}
     (himp : cf.ImperfectOn T) : ∃ v : A → ℝ, cf.BinaryRatioScaleOn ↑T v :=
   ⟨_, h.binaryRatioScaleOn_prob himp⟩
 
-/-- Under Axiom 1 and imperfect discrimination on `{x, y, z}`, an intransitive cycle is as probable
-as its reverse (Theorem 2, p. 16). -/
+-- Axiom 1, Theorem 2, p. 16
 theorem HasChoiceAxiom.binary_mul_cycle (h : cf.HasChoiceAxiom) {x y z : A} (hxy : x ≠ y)
     (hyz : y ≠ z) (hxz : x ≠ z) (himp : cf.ImperfectOn {x, y, z}) :
     cf.binary x y * cf.binary y z * cf.binary z x =
@@ -575,8 +564,7 @@ def jndL (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
 def jndI (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
   1 - thr ≤ pairwiseProb v x y ∧ pairwiseProb v x y ≤ thr
 
-/-- Under a positive ratio scale, `x L(π) y` iff `v x > π / (1 - π) · v y` (proof of Theorem 5, p.
-35). -/
+-- Theorem 5, p. 35
 theorem jndL_iff (hx : 0 < v x) (hy : 0 < v y) (hthr : thr < 1) :
     jndL v thr x y ↔ thr / (1 - thr) * v y < v x := by
   rw [jndL, pairwiseProb, lt_div_iff₀ (add_pos hx hy), div_mul_eq_mul_div,
@@ -593,8 +581,7 @@ private theorem one_lt_odds (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1) : 1 < th
   rw [one_lt_div (by linarith)]
   linarith
 
-/-- Exactly one of `x L y`, `y L x` and `x I y` holds, which is the first semiorder axiom (Theorem
-5, p. 35). -/
+-- Theorem 5, p. 35
 theorem jnd_trichotomy (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1) :
     (jndL v thr x y ∧ ¬ jndL v thr y x ∧ ¬ jndI v thr x y) ∨
       (jndL v thr y x ∧ ¬ jndL v thr x y ∧ ¬ jndI v thr x y) ∨
@@ -607,15 +594,13 @@ theorem jnd_trichotomy (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : 
   rw [jndI_iff (hv x) (hv y)]
   tauto
 
-/-- Every alternative bears `I` to itself, which is the second semiorder axiom (Theorem 5, p. 35).
--/
+-- Theorem 5, p. 35
 theorem jndI_refl (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1) :
     jndI v thr x x := by
   rw [jndI_iff (hv x) (hv x), and_self, jndL_iff (hv x) (hv x) hthr₁, not_lt]
   nlinarith [one_lt_odds hthr₀ hthr₁, hv x]
 
-/-- `x L y`, `y I z` and `z L w` imply `x L w`, which is the third semiorder axiom (Theorem 5, p.
-35). -/
+-- Theorem 5, p. 35
 theorem jndL_interval (hv : ∀ a, 0 < v a) (hthr₁ : thr < 1) (hxy : jndL v thr x y)
     (hyz : jndI v thr y z) (hzw : jndL v thr z w) : jndL v thr x w := by
   rw [jndL_iff (hv _) (hv _) hthr₁] at hxy hzw ⊢
@@ -623,7 +608,7 @@ theorem jndL_interval (hv : ∀ a, 0 < v a) (hthr₁ : thr < 1) (hxy : jndL v th
   simp only [not_lt] at hyz
   linarith [hyz.2]
 
-/-- The relations `L` and `I` satisfy the fourth semiorder axiom (Theorem 5, p. 35). -/
+-- Theorem 5, p. 35
 theorem jndL_no_sandwich (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1)
     (hxy : jndL v thr x y) (hyz : jndL v thr y z) : ¬ (jndI v thr x w ∧ jndI v thr w z) := by
   have hk := one_lt_odds hthr₀ hthr₁
@@ -638,18 +623,17 @@ theorem jndL_no_sandwich (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ 
 def traceGe (v : A → ℝ) (x y : A) : Prop :=
   ∀ z : A, pairwiseProb v y z ≤ pairwiseProb v x z
 
-/-- Under a positive ratio scale the trace is the order of the scale (proof of Theorem 6, p. 37). -/
+-- Theorem 6, p. 37
 theorem traceGe_iff (hv : ∀ a, 0 < v a) : traceGe v x y ↔ v y ≤ v x :=
   ⟨fun h ↦ (pairwiseProb_mono_iff (hv x) (hv y) (hv y)).1 (h y),
     fun h z ↦ (pairwiseProb_mono_iff (hv x) (hv y) (hv z)).2 h⟩
 
-/-- Under a positive ratio scale the trace is a weak order (Theorem 6, p. 37). -/
+-- Theorem 6, p. 37
 theorem theorem6 (hv : ∀ a, 0 < v a) : Std.Total (traceGe v) ∧ IsTrans A (traceGe v) :=
   ⟨⟨fun _ _ ↦ (le_total _ _).imp (traceGe_iff hv).2 (traceGe_iff hv).2⟩,
     ⟨fun _ _ _ h₁ h₂ ↦ (traceGe_iff hv).2 (((traceGe_iff hv).1 h₂).trans ((traceGe_iff hv).1 h₁))⟩⟩
 
-/-- Under a positive ratio scale `x ≥ y` in the trace exactly when `P(x, y) ≥ 1/2` (corollary to
-Theorem 6, p. 37). -/
+-- Theorem 6, p. 37
 theorem traceGe_iff_pairwiseProb (hv : ∀ a, 0 < v a) :
     traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by
   rw [traceGe_iff hv, pairwiseProb_ge_half_iff (hv x) (hv y)]
@@ -674,8 +658,7 @@ private theorem exists_eq_mul_of_strictMono (h : ℝ →+ ℝ) (hh : StrictMono 
   refine ⟨h 1, by simpa using hh one_pos, fun s ↦ ?_⟩
   simpa [mul_comm] using map_real_smul h hcont s 1
 
-/-- If pairwise choice depends only on `u x - u y` and `v` is an increasing function of a surjective
-`u`, then `v` is exponential in `u` (§2.A.3, pp. 41–42). -/
+-- §2, pp. 41–42
 theorem logistic_unique {X : Type*} {v u : X → ℝ} {g F : ℝ → ℝ}
     (hu : Function.Surjective u) (hg_pos : ∀ r, 0 < g r) (hg : StrictMono g)
     (hv : ∀ x, v x = g (u x)) (hF : ∀ x y, v x / (v x + v y) = F (u x - u y)) :
@@ -728,7 +711,7 @@ noncomputable def powerScale (A C B x : ℝ) : ℝ := A * (x + C) ^ B
 
 variable {A C B x y p : ℝ}
 
-/-- On the power scale `P(x, y) = 1 / (1 + ((y + C) / (x + C))^B)` (p. 44). -/
+-- p. 44
 theorem pairwiseProb_powerScale (hA : 0 < A) (hx : 0 < x + C) (hy : 0 < y + C) :
     pairwiseProb (powerScale A C B) x y = 1 / (1 + ((y + C) / (x + C)) ^ B) := by
   have h₁ : 0 < (x + C) ^ B := rpow_pos_of_pos hx B
@@ -755,7 +738,7 @@ theorem pairwiseProb_powerScale_eq_iff (hA : 0 < A) (hB : 0 < B) (hp₀ : 0 < p)
   rw [hiff, eq_comm, ← rpow_inv_eq hq.le (div_pos hx hy).le hB.ne', eq_div_iff hy.ne', one_div]
   exact eq_comm
 
-/-- The power scale satisfies the linear generalization of Weber's law (p. 43). -/
+-- p. 43
 theorem powerScale_weber {c : ℝ} (hA : 0 < A) (hB : 0 < B) (hp₀ : 1 / 2 < p) (hp₁ : p < 1)
     (hc : 1 + c = (p / (1 - p)) ^ (1 / B)) :
     (∀ x y, 0 < x + C → 0 < y + C →
@@ -769,8 +752,7 @@ theorem powerScale_weber {c : ℝ} (hA : 0 < A) (hB : 0 < B) (hp₀ : 1 / 2 < p)
       one_div]
     field_simp
 
-/-- A positive scale, strictly increasing above `-C`, that makes pairwise choice a function of `(x +
-C) / (y + C)` is a power scale (p. 43). -/
+-- p. 43
 theorem powerScale_unique {v F : ℝ → ℝ} (hv_pos : ∀ x, 0 < x + C → 0 < v x)
     (hv : StrictMonoOn v (Ioi (-C)))
     (hF : ∀ x y, 0 < x + C → 0 < y + C → pairwiseProb v x y = F ((x + C) / (y + C))) :
@@ -808,8 +790,7 @@ power function of each variable with the other held fixed, and Luce assumes that
 coincide (p. 49). He reaches the form (8) by differentiating twice. Since the equation is affine in
 `log x` and `log ξ`, two of its values suffice here, with no assumption of differentiability. -/
 
-/-- If `A(ξ) x^B(ξ) = A*(x) ξ^B*(x)` for all positive `x` and `ξ`, both sides have the form of
-equation (8) (p. 50). -/
+-- (x), (8), p. 50
 theorem interaction_form {Aξ Bξ Ax Bx : ℝ → ℝ} (hA : ∀ ξ, 0 < ξ → 0 < Aξ ξ)
     (hA' : ∀ x, 0 < x → 0 < Ax x)
     (h : ∀ x ξ, 0 < x → 0 < ξ → Aξ ξ * x ^ Bξ ξ = Ax x * ξ ^ Bx x) :
@@ -834,8 +815,7 @@ theorem interaction_form {Aξ Bξ Ax Bx : ℝ → ℝ} (hA : ∀ ξ, 0 < ξ → 
     (rpow_pos_of_pos hx _).ne', log_mul (hA' 1 one_pos).ne' (rpow_pos_of_pos hξ _).ne',
     log_rpow hξ, log_rpow hx, h₁, hB]
 
-/-- At fixed `ξ` the scale of equation (8) is a power scale in `x` with exponent `B + C log ξ` (p.
-50). -/
+-- (8), p. 50
 theorem pairwiseProb_interaction {K b b' c ξ : ℝ} (hK : 0 < K) (hξ : 0 < ξ) (hx : 0 < x)
     (hy : 0 < y) :
     pairwiseProb (fun x ↦ K * ξ ^ b' * x ^ (b + c * log ξ)) x y =
@@ -941,8 +921,7 @@ private theorem theorem7_arith {px py pz qx qy qz : ℝ} (hpx : 0 < px) (hpy : 0
   have := ratio_largest_sub_smallest_ne hpx hpy hpz hne
   rwa [hp, div_one, ← hqx'] at this
 
-/-- If discrimination on `{x, y, z}` is imperfect and `P(x, y) + P(x, z) ≠ 1`, judging the largest
-and judging the smallest do not both satisfy Axiom 1 (Theorem 7, p. 57). -/
+-- Axiom 1, Theorem 7, p. 57
 theorem theorem7 {x y z : A} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (himp : (ofRandomUtility P hU hties).ImperfectOn {x, y, z})
     (hne : (ofRandomUtility P hU hties).binary x y + (ofRandomUtility P hU hties).binary x z ≠ 1) :
@@ -1038,8 +1017,7 @@ noncomputable def forcedChoiceProb (α v : ℝ) : Bool → ℝ
 
 variable {α v : ℝ}
 
-/-- In the Yes-No model under Axiom 1, the receiver operating characteristic is `α F / ((α - 1) F +
-1)` (p. 61). -/
+-- Axiom 1, p. 61
 theorem yesNoProb_roc (hα : 0 < α) (hv : 0 < v) :
     yesNoProb α v true = α * yesNoProb α v false / ((α - 1) * yesNoProb α v false + 1) := by
   have h : 1 + v ≠ 0 := by positivity
@@ -1047,8 +1025,7 @@ theorem yesNoProb_roc (hα : 0 < α) (hv : 0 < v) :
   rw [show (α - 1) * (1 / (1 + v)) + 1 = (α + v) / (1 + v) by field_simp; ring]
   field_simp
 
-/-- The forced choice is the Yes-No model with signal parameter `α²` and response bias `α v` (p.
-62). -/
+-- p. 62
 theorem forcedChoiceProb_eq_yesNoProb (hα : 0 < α) :
     forcedChoiceProb α v = yesNoProb (α ^ 2) (α * v) := by
   funext b
@@ -1057,8 +1034,7 @@ theorem forcedChoiceProb_eq_yesNoProb (hα : 0 < α) :
   · simp only [forcedChoiceProb, yesNoProb]
     rw [sq, ← mul_add, mul_div_mul_left _ _ hα.ne']
 
-/-- The axiom-1 forced choice has the receiver operating characteristic of the Yes-No model with
-`α²` in place of `α` (p. 62). -/
+-- p. 62
 theorem forcedChoiceProb_roc (hα : 0 < α) (hv : 0 < v) :
     forcedChoiceProb α v true =
       α ^ 2 * forcedChoiceProb α v false / ((α ^ 2 - 1) * forcedChoiceProb α v false + 1) := by
@@ -1269,16 +1245,14 @@ theorem isProbabilityMeasure_rankMeasure {v : A → ℝ} {T : Finset A} (hv : �
   ⟨by classical rw [rankMeasure_apply_of_pos hv, filter_true_of_mem fun _ _ ↦ Set.mem_univ _,
     sum_rankProb T hv, ENNReal.ofReal_one]⟩
 
-/-- Under the ranking postulate and a positive ratio scale, a ranking of `T` places `x` above `y`
-with probability `P(x, y)` (Theorem 9, p. 72). -/
+-- Theorem 9, p. 72
 theorem theorem9 {v : A → ℝ} {x y : A} (hxy : x ≠ y) {T : Finset A} (hx : x ∈ T) (hy : y ∈ T)
     (hv : ∀ a ∈ T, 0 < v a) :
     rankMeasure v T {r | [x, y].Sublist r} = ENNReal.ofReal (pairwiseProb v x y) := by
   rw [rankMeasure_apply_of_pos hv]
   exact congrArg ENNReal.ofReal (sum_rankProb_sublist hxy T hx hy hv)
 
-/-- Under Axiom 1, ranking `{x, y, z}` from the top and from the bottom gives `x > y > z` equal
-probability iff `P(x, y) = P(y, z)` (Theorem 8, p. 69). -/
+-- Axiom 1, Theorem 8, p. 69
 theorem theorem8 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) :
     x / (x + y + z) * (y / (y + z)) = x * y / (x * y + x * z + y * z) * (x / (x + y)) ↔
       x / (x + y) = y / (y + z) := by
@@ -1349,8 +1323,7 @@ structure DecomposablePreference (A E : Type*) [DecidableEq A] [DecidableEq E] [
   /-- `Q` satisfies Axiom 1. -/
   axiom1Q : Q.HasChoiceAxiom
 
-/-- Without its guard `a ≠ b`, Axiom 2 would force `P(aρa, aσa) = P(aσa, aρa) = 1`, since
-`P(a, a) = 1`. -/
+-- Axiom 2
 theorem axiom2_unguarded_false [Nontrivial E] [Inhabited A]
     (P : ChoiceFn (Alternative A E)) (Q : ChoiceFn E)
     (h : ∀ (a b : A) (ρ σ : E),
@@ -1381,8 +1354,7 @@ noncomputable def gam (g h : Gamble A E) : ℝ := dp.P.binary (.inl g) (.inl h)
 
 variable {dp}
 
-/-- If `P(a, b) = 1` then `P(aρb, aσb) = Q(ρ, σ)`, a step in the proofs of Theorems 13 and 14
-(pp. 87, 89). -/
+-- Theorems 13 and 14, pp. 87
 theorem gam_of_alt_eq_one {a b : A} (hab : a ≠ b) (h1 : dp.alt a b = 1)
     (ρ σ : E) : dp.gam ⟨a, ρ, b⟩ ⟨a, σ, b⟩ = dp.Q.binary ρ σ := by
   have hc := dp.P.binary_complement
@@ -1475,8 +1447,7 @@ private theorem gam_mix {a b : A} (hab : a ≠ b) {x y : E} (hxy : x ≠ y) :
       show dp.Q.binary y x = 1 - dp.Q.binary x y by linarith]
   ring
 
-/-- With `K = P(a, b)/P(b, a) - 1`, the event probabilities `Q` of three distinct events satisfy a
-quadratic identity in `K` (Lemma 5, p. 80). -/
+-- Lemma 5, p. 80
 theorem lemma5 {a b : A} (hab : a ≠ b)
     (h0 : dp.alt a b ≠ 0) (hhalf : dp.alt a b ≠ 1 / 2) (h1 : dp.alt a b ≠ 1)
     {ρ σ τ : E} (hρσ : ρ ≠ σ) (hστ : σ ≠ τ) (hρτ : ρ ≠ τ) :
@@ -1583,7 +1554,7 @@ theorem eventPref_trans (hnd : Nondegenerate dp)
       (show (0 : ℝ) ≤ q1 * q2 * q3 - (1 - q3) * (1 - q2) * (1 - q1) by
         nlinarith [s1, s2, s3])]
 
-/-- In a nondegenerate structure `≿` is a weak order (Lemma 6, p. 80). -/
+-- Lemma 6, p. 80
 theorem lemma6 (hnd : Nondegenerate dp) : Std.Total (EventPref dp) ∧ IsTrans E (EventPref dp) :=
   ⟨⟨eventPref_total⟩, ⟨fun _ _ _ ↦ eventPref_trans hnd⟩⟩
 
@@ -1601,8 +1572,7 @@ private theorem cubic_of_sum_eq {x y z : ℝ} (hx : 0 < x) (hy : 0 < y)
   field_simp at h
   linear_combination h
 
-/-- In a nondegenerate structure, of three distinct events among which discrimination is imperfect,
-two are equi-likely (Lemma 7, p. 81). -/
+-- Lemma 7, p. 81
 theorem lemma7 (hnd : Nondegenerate dp) {ρ σ τ : E} (hρσ : ρ ≠ σ) (hστ : σ ≠ τ)
     (hρτ : ρ ≠ τ) (himp : dp.Q.ImperfectOn {ρ, σ, τ}) :
     EventIndiff dp ρ σ ∨ EventIndiff dp σ τ ∨ EventIndiff dp ρ τ := by
@@ -1776,8 +1746,7 @@ private theorem no_chain_insert (hnd : Nondegenerate dp) {a b c ω : E}
     · exact no_four_chain hnd naω nab nac (N nbω) nbc haω hωb sbc
   · exact no_four_chain hnd (N naω) (N nbω) (N ncω) nab nbc hωa sab sbc
 
-/-- In a nondegenerate structure `∼` has at most three classes, so of any four events two are
-equi-likely (Lemma 8, p. 81). -/
+-- Lemma 8, p. 81
 theorem lemma8 (hnd : Nondegenerate dp) (ρ σ τ ω : E) :
     EventIndiff dp ρ σ ∨ EventIndiff dp ρ τ ∨ EventIndiff dp ρ ω ∨
       EventIndiff dp σ τ ∨ EventIndiff dp σ ω ∨ EventIndiff dp τ ω := by
@@ -1802,8 +1771,7 @@ theorem lemma8 (hnd : Nondegenerate dp) (ρ σ τ ω : E) :
       · exact no_strict_cycle hnd (ne_of_not_eventIndiff nστ) h1' h3 h2'
       · exact no_chain_insert hnd (N nστ) (N nρτ) nτω (N nρσ) nσω nρω h2' h1'
 
-/-- If some `P(a, b) ≠ 0, 1/2, 1`, equi-likelihood is an equivalence relation with at most three
-classes (Theorem 10, p. 80). -/
+-- Theorem 10, p. 80
 theorem theorem10 (hnd : Nondegenerate dp) :
     Equivalence (EventIndiff dp) ∧ ∀ ρ σ τ ω : E, EventIndiff dp ρ σ ∨ EventIndiff dp ρ τ ∨
       EventIndiff dp ρ ω ∨ EventIndiff dp σ τ ∨ EventIndiff dp σ ω ∨ EventIndiff dp τ ω :=
@@ -1833,8 +1801,7 @@ private theorem q_congr_left (hnd : Nondegenerate dp) {ρ ρ' σ : E}
   · nlinarith [mul_pos hpa hpb, sq_nonneg (dp.alt a b - dp.alt b a)]
   · linarith
 
-/-- In a nondegenerate structure, `Q(ρ, σ)` for `ρ ≠ σ` depends only on the indifference classes of
-`ρ` and `σ` (Theorem 11, p. 82). -/
+-- Theorem 11, p. 82
 theorem theorem11 (hnd : Nondegenerate dp) {ρ ρ' σ σ' : E}
     (h1 : EventIndiff dp ρ ρ') (h2 : EventIndiff dp σ σ')
     (hρσ : ρ ≠ σ) (hρ'σ' : ρ' ≠ σ') :
@@ -1850,8 +1817,7 @@ theorem theorem11 (hnd : Nondegenerate dp) {ρ ρ' σ σ' : E}
     have c2 := dp.Q.binary_complement hρ'σ'
     linarith [s1, s2, c1, c2]
 
-/-- If `Q(ρ, σ) = Q(σ, τ) = q` and `Q(ρ, τ) = 1`, then `3/4 < q < 1` and `P(a, b) = (1 ± √(4q - 3) /
-(2q - 1)) / 2` (§3.C.2, p. 85). -/
+-- §3, p. 85
 theorem abs_two_mul_alt_sub_one {a b : A} (hab : a ≠ b) (h0 : dp.alt a b ≠ 0)
     (hhalf : dp.alt a b ≠ 1 / 2) (h1 : dp.alt a b ≠ 1) {ρ σ τ : E} (hρσ : ρ ≠ σ) (hστ : σ ≠ τ)
     (hρτ : ρ ≠ τ) (hq : dp.Q.binary ρ σ = dp.Q.binary σ τ) (hρτ₁ : dp.Q.binary ρ τ = 1) :
@@ -1902,7 +1868,7 @@ def Complementation (dp : DecomposablePreference A E) : Prop :=
     x ≠ .inl ⟨a, ρ, b⟩ → x ≠ .inl ⟨b, ρᶜ, a⟩ →
       dp.P.binary (.inl ⟨a, ρ, b⟩) x = dp.P.binary (.inl ⟨b, ρᶜ, a⟩) x
 
-/-- Without its guards Axiom 3 would force `P(aρb, bρ̄a) = P(bρ̄a, aρb) = 1`. -/
+-- Axiom 3
 theorem complementation_unguarded_false [Nontrivial A]
     (dp : DecomposablePreference A E)
     (h : ∀ (a b : A) (ρ : E) (x : Alternative A E),
@@ -1928,7 +1894,7 @@ def NontrivialPreference (dp : DecomposablePreference A E) : Prop :=
   (∃ a b : A, a ≠ b ∧ dp.alt a b ≠ 1 / 2) ∧
     ∃ ρ σ : E, ρ ≠ σ ∧ dp.Q.binary ρ σ ≠ 1 / 2
 
-/-- Under Axioms 3 and 4, `Q(ρ, σ) = Q(σ̄, ρ̄)` (Lemma 9, p. 84). -/
+-- Axioms 3 and 4, Lemma 9, p. 84
 theorem lemma9 (ax3 : Complementation dp) (ax4 : NontrivialPreference dp) (ρ σ : E) :
     dp.Q.binary ρ σ = dp.Q.binary σᶜ ρᶜ := by
   rcases eq_or_ne ρ σ with rfl | hρσ
@@ -1980,7 +1946,7 @@ theorem neutral_compl_iff [Nontrivial E] (ρ : E) :
   rw [compl_compl]
   constructor <;> intro h <;> linarith
 
-/-- Distinct neutral events are equi-likely (Lemma 10, p. 84). -/
+-- Lemma 10, p. 84
 theorem neutral_indifferent [Nontrivial E] (hnd : Nondegenerate dp)
     (ax3 : Complementation dp) (ax4 : NontrivialPreference dp) {ρ σ : E}
     (hρ : Neutral dp ρ) (hσ : Neutral dp σ) (hρσ : ρ ≠ σ) :
@@ -1999,7 +1965,7 @@ theorem neutral_indifferent [Nontrivial E] (hnd : Nondegenerate dp)
 def HasNeutralEvent (dp : DecomposablePreference A E) : Prop :=
   ∃ ε : E, dp.Q.binary ε εᶜ = 1 / 2
 
-/-- An event equi-likely with a neutral event is neutral (Lemma 10, p. 84). -/
+-- Lemma 10, p. 84
 theorem neutral_of_indiff_neutral [Nontrivial E] (hnd : Nondegenerate dp)
     (ax3 : Complementation dp) (ax4 : NontrivialPreference dp) {ρ σ : E}
     (hρ : Neutral dp ρ) (h : EventIndiff dp σ ρ) : Neutral dp σ := by
@@ -2021,8 +1987,7 @@ private theorem exists_not_neutral [Nontrivial E] (hnd : Nondegenerate dp)
   obtain ⟨ρ₀, σ₀, hρσ₀, hq₀⟩ := ax4.2
   exact hq₀ (neutral_indifferent hnd ax3 ax4 (hall ρ₀) (hall σ₀) hρσ₀)
 
-/-- Under Axioms 3–5 a neutral event `ε`, a non-neutral event `ρ` and `ρ̄` lie in three distinct
-classes (Lemma 11, p. 85). -/
+-- Axioms 3–5, Lemma 11, p. 85
 theorem lemma11 [Nontrivial E] (hnd : Nondegenerate dp)
     (ax3 : Complementation dp) (ax4 : NontrivialPreference dp)
     (ax5 : HasNeutralEvent dp) :
@@ -2035,8 +2000,7 @@ theorem lemma11 [Nontrivial E] (hnd : Nondegenerate dp)
       (neutral_of_indiff_neutral hnd ax3 ax4 hε h.symm)),
     fun h ↦ hρ ((eventIndiff_iff_eq_half (compl_ne_self (a := ρ)).symm).mp h)⟩
 
-/-- In a nondegenerate structure satisfying Axioms 3–5, `∼` has exactly three classes (Theorem 12,
-p. 84). -/
+-- Axioms 3–5, Theorem 12, p. 84
 theorem theorem12 [Nontrivial E] (hnd : Nondegenerate dp)
     (ax3 : Complementation dp) (ax4 : NontrivialPreference dp)
     (ax5 : HasNeutralEvent dp) :
@@ -2055,8 +2019,7 @@ theorem theorem12 [Nontrivial E] (hnd : Nondegenerate dp)
   · exact absurd h n2
   · exact absurd h n3
 
-/-- Under the hypotheses of Theorem 12, there are `ρ ≻ σ ≻ τ` with `Q(ρ, σ) = Q(σ, τ) > 1/2` and
-`Q(ρ, τ) = 1` (§3.C.2, p. 85). -/
+-- Theorem 12, §3, p. 85
 theorem exists_class_representatives [Nontrivial E] (hnd : Nondegenerate dp)
     (ax3 : Complementation dp) (ax4 : NontrivialPreference dp) (ax5 : HasNeutralEvent dp) :
     ∃ ρ σ τ : E, ¬EventIndiff dp ρ σ ∧ ¬EventIndiff dp σ τ ∧ ¬EventIndiff dp ρ τ ∧
@@ -2096,8 +2059,7 @@ theorem exists_class_representatives [Nontrivial E] (hnd : Nondegenerate dp)
   exact ⟨ρ, ε, ρᶜ, nρε, nερ, nρρ, hq₁, hq,
     binary_eq_one_of_lt hnd nρε nρρ nερ hq₁ (by rwa [← hq])⟩
 
-/-- Under the hypotheses of Theorem 12, every `P(a, b) ≠ 0, 1/2, 1` equals `(1 ± √(4q - 3) / (2q -
-1)) / 2` for a single `q ∈ (3/4, 1)` (§3.C.2, p. 85). -/
+-- Theorem 12, §3, p. 85
 theorem exists_abs_two_mul_alt_sub_one [Nontrivial E] (hnd : Nondegenerate dp)
     (ax3 : Complementation dp) (ax4 : NontrivialPreference dp) (ax5 : HasNeutralEvent dp) :
     ∃ q : ℝ, 3 / 4 < q ∧ q < 1 ∧ ∀ a b : A, a ≠ b → dp.alt a b ≠ 0 → dp.alt a b ≠ 1 / 2 →
@@ -2120,8 +2082,7 @@ their preferred outcomes on the same event, choice between them is a step functi
 (Figure 7), and when they pay them on complementary events, the ratio scale obeys a product rule
 that suggests factoring it into outcome and event weights. -/
 
-/-- If `P(a, b) = P(c, d) = 1` and discrimination among the four gambles is imperfect, `P(aρb, cρd)
-= P(aσb, cσd)` (Theorem 13, p. 86). -/
+-- Theorem 13, p. 86
 theorem theorem13 {a b c d : A} {ρ σ : E}
     (hab : a ≠ b) (hcd : c ≠ d) (ha1 : dp.alt a b = 1) (hc1 : dp.alt c d = 1)
     (himp : dp.P.ImperfectOn
@@ -2155,8 +2116,7 @@ theorem theorem13 {a b c d : A} {ρ σ : E}
   exact ((pairwiseProb_eq_pairwiseProb_iff p1 p2 p3 p4).mp e1).trans (mul_comm _ _)
 
 variable [BooleanAlgebra E] in
-/-- Under Axiom 3, if `P(a, b) = P(d, c) = 1`, any ratio scale on the gambles has `v(aρb) v(dρ̄c) =
-v(aσb) v(dσ̄c)` (Theorem 14, p. 89, without Theorem 4's construction of the scale). -/
+-- Axiom 3, Theorem 14, p. 89, Theorem 4
 theorem theorem14 [Nontrivial E] (ax3 : Complementation dp) {a b c d : A} {ρ σ : E}
     {v : Alternative A E → ℝ} (hab : a ≠ b) (hcd : c ≠ d) (ha1 : dp.alt a b = 1)
     (hd1 : dp.alt d c = 1)
@@ -2228,8 +2188,7 @@ theorem theorem14 [Nontrivial E] (ax3 : Complementation dp) {a b c d : A} {ρ σ
   rw [hρc, hσc] at hcross
   linarith [hcross, mul_comm (v (.inl ⟨d, σᶜ, c⟩)) (v (.inl ⟨a, σ, b⟩))]
 
-/-- If `v(aρb) = w(a, b) φ(ρ)`, then `P(aρb, cρd) = w(a, b) / (w(a, b) + w(c, d))`, and the step
-function of Theorem 13 has at most one intermediate step (pp. 89–90). -/
+-- Theorem 13, pp. 89–90
 theorem gam_of_factored {S : Set (Gamble A E)} {v : Alternative A E → ℝ}
     {w : A → A → ℝ} {φ : E → ℝ}
     (hv : dp.P.BinaryRatioScaleOn (Sum.inl '' S) v) (hφ : ∀ τ, 0 < φ τ)
@@ -2276,8 +2235,7 @@ private theorem sum_mulVec_eq_sum_mul (M : Matrix A A ℝ) (v : A → ℝ) :
 
 variable [DecidableEq A]
 
-/-- The proportional change assumption holds exactly when every column of `M` sums to `a`
-(equation (1), p. 98). -/
+-- (1), p. 98
 theorem proportionalChange_iff {M : Matrix A A ℝ} {a : ℝ} :
     ProportionalChange M a ↔ ∀ j, ∑ i, M i j = a := by
   classical
@@ -2288,8 +2246,7 @@ theorem proportionalChange_iff {M : Matrix A A ℝ} {a : ℝ} :
   simp [mulVec_add, sum_add_distrib, mul_add, h₁] at h₂
   linarith
 
-/-- Under the proportional change assumption the probability operator of the alpha model is
-linear, with matrix `aᵢⱼ / a` (p. 97). -/
+-- p. 97
 theorem ProportionalChange.ratioProb_mulVec {M : Matrix A A ℝ} {a : ℝ}
     (h : ProportionalChange M a) (v : A → ℝ) :
     ratioProb (M *ᵥ v) univ = (a⁻¹ • M) *ᵥ ratioProb v univ := by
@@ -2298,8 +2255,7 @@ theorem ProportionalChange.ratioProb_mulVec {M : Matrix A A ℝ} {a : ℝ}
   simp only [ratioProb_univ, hsum, mulVec_smul, smul_mulVec, smul_smul, mul_inv]
   rw [mul_comm]
 
-/-- For two alternatives, the alpha model is the linear operator `P' = α P + (1 − α) λ` of
-[bush-mosteller-1955] (p. 99). -/
+-- p. 99 [bush-mosteller-1955]
 theorem ProportionalChange.pairwiseProb_mulVec {M : Matrix (Fin 2) (Fin 2) ℝ} {a : ℝ}
     (h : ProportionalChange M a) (ha : a ≠ 0) (hM : ∀ i j, 0 ≤ M i j) {v : Fin 2 → ℝ}
     (hv : v 0 + v 1 ≠ 0) :
@@ -2320,28 +2276,25 @@ theorem ProportionalChange.pairwiseProb_mulVec {M : Matrix (Fin 2) (Fin 2) ℝ} 
 
 /-! #### §4.D: The beta model -/
 
-/-- An operator on a response strength that is independent of the unit is multiplication by its
-value at `1` (p. 100). -/
+-- p. 100
 theorem eq_mul_of_independenceOfUnit {f : ℝ → ℝ} (h : ∀ k > 0, ∀ x > 0, f (k * x) = k * f x)
     {x : ℝ} (hx : 0 < x) : f x = f 1 * x := by
   simpa [mul_comm] using h x hx 1 one_pos
 
-/-- In probability terms the beta operator multiplies each probability by its `βᵢ` and
-renormalizes, `P'(i) = βᵢ·P(i) / ∑ⱼ βⱼ·P(j)` (p. 101). -/
+-- (i), p. 101
 theorem ratioProb_mul_ratioProb (β : A → ℝ) {v : A → ℝ} (hv : ∑ j, v j ≠ 0) :
     ratioProb (β * ratioProb v univ) univ = ratioProb (β * v) univ := by
   rw [ratioProb_univ v, show β * ((∑ j, v j)⁻¹ • v) = (∑ j, v j)⁻¹ • (β * v) from
     mul_smul_comm _ _ _, ratioProb_smul (inv_ne_zero hv)]
 
-/-- The beta operators commute on the probabilities, as they do on the strengths (p. 101). -/
+-- p. 101
 theorem ratioProb_mul_comm (β γ : A → ℝ) {p : A → ℝ} (hβ : ∑ j, β j * p j ≠ 0)
     (hγ : ∑ j, γ j * p j ≠ 0) :
     ratioProb (β * ratioProb (γ * p) univ) univ = ratioProb (γ * ratioProb (β * p) univ) univ := by
   rw [ratioProb_mul_ratioProb β (v := γ * p) hγ,
     ratioProb_mul_ratioProb γ (v := β * p) hβ, mul_left_comm]
 
-/-- In the simple beta model, `P'(i) = β·P(i) / (1 + (β − 1)·P(i))` and `P'(j) = P(j) / (1 + (β −
-1)·P(i))` for `j ≠ i` (p. 101). -/
+-- (i), p. 101
 theorem ratioProb_update_mul (i : A) (β : ℝ) {v : A → ℝ}
     (hv : ∑ j, v j ≠ 0) (j : A) :
     ratioProb (Function.update (1 : A → ℝ) i β * v) univ j =
@@ -2357,8 +2310,7 @@ theorem ratioProb_update_mul (i : A) (β : ℝ) {v : A → ℝ}
   rw [← ratioProb_mul_ratioProb _ hv, ratioProb_eq_div _ _ _ (mem_univ _)]
   simp only [Pi.mul_apply, hs]
 
-/-- With two alternatives the general beta model is the simple one with `β = β₁/β₂`
-(p. 102). -/
+-- p. 102
 theorem ratioProb_mul_fin_two (β : Fin 2 → ℝ) (hβ : β 1 ≠ 0) (v : Fin 2 → ℝ) :
     ratioProb (β * v) univ =
       ratioProb (Function.update (1 : Fin 2 → ℝ) 0 (β 0 / β 1) * v) univ := by
@@ -2368,8 +2320,7 @@ theorem ratioProb_mul_fin_two (β : Fin 2 → ℝ) (hβ : β 1 ≠ 0) (v : Fin 2
 
 /-! #### §4.E: The gamma model -/
 
-/-- In the gamma model the new choice probabilities are not a function of the old ones, so path
-independence fails for probabilities (p. 106). -/
+-- p. 106
 theorem not_exists_ratioProb_gamma [Nontrivial A] {β γ : A → ℝ} (hβ : ∀ i, 0 < β i)
     (hγ : ∀ i, 0 ≤ γ i) (hγ₀ : γ ≠ 0) :
     ¬∃ F : (A → ℝ) → A → ℝ, ∀ v : A → ℝ, (∀ i, 0 < v i) →
@@ -2428,8 +2379,7 @@ private theorem encard_le_of_isRoot {S : Set ℝ} {p : ℝ[X]} (hp : p ≠ 0) {n
       rw [Set.encard_coe_eq_coe_finsetCard]
       exact_mod_cast (Multiset.toFinset_card_le _).trans ((card_roots' p).trans hn)
 
-/-- If `P(a, b) = 1`, the product of the strengths of `aρb` and `aρ̄b` does not depend on `ρ`
-(Theorem 14, p. 108). -/
+-- Theorem 14, p. 108
 theorem DecomposablePreference.strength_mul_strength_compl {dp : DecomposablePreference A E}
     (ax3 : dp.Complementation) {a b : A} {ρ σ : E} {v : Alternative A E → ℝ} (hab : a ≠ b)
     (ha : dp.alt a b = 1)
@@ -2439,8 +2389,7 @@ theorem DecomposablePreference.strength_mul_strength_compl {dp : DecomposablePre
     v (.inl ⟨a, ρ, b⟩) * v (.inl ⟨a, ρᶜ, b⟩) = v (.inl ⟨a, σ, b⟩) * v (.inl ⟨a, σᶜ, b⟩) :=
   DecomposablePreference.theorem14 ax3 hab hab.symm ha ha hv
 
-/-- An alpha-model operator that fixes the product of the two strengths is the identity, the swap,
-or confines `v(aρb)` to at most four values (pp. 108–109). -/
+-- pp. 108–109
 theorem ProportionalChange.encard_le_four_or {M : Matrix (Fin 2) (Fin 2) ℝ} {a : ℝ}
     (h : ProportionalChange M a) (hM : ∀ i j, 0 ≤ M i j) {K : ℝ} (hK : 0 < K) :
     {x : ℝ | 0 < x ∧ (M *ᵥ ![x, K / x]) 0 * (M *ᵥ ![x, K / x]) 1 = K}.encard ≤ 4 ∨
@@ -2487,8 +2436,7 @@ theorem ProportionalChange.encard_le_four_or {M : Matrix (Fin 2) (Fin 2) ℝ} {a
       field_simp at hxK
       linear_combination hxK
 
-/-- A beta-model operator that fixes the product of the two strengths is the simple beta model with
-`β = β₁²` (p. 109). -/
+-- p. 109
 theorem ratioProb_mul_eq_of_mul_eq {β : Fin 2 → ℝ} {K x : ℝ} (hK : 0 < K) (hx : 0 < x)
     (h : β 0 * x * (β 1 * (K / x)) = K) (v : Fin 2 → ℝ) :
     ratioProb (β * v) univ = ratioProb (Function.update (1 : Fin 2 → ℝ) 0 (β 0 ^ 2) * v) univ := by
@@ -2499,8 +2447,7 @@ theorem ratioProb_mul_eq_of_mul_eq {β : Fin 2 → ℝ} {K x : ℝ} (hK : 0 < K)
   rw [ratioProb_mul_fin_two β h₁, show β 0 / β 1 = β 0 ^ 2 by
     rw [div_eq_iff h₁]; linear_combination -β 0 * hβ]
 
-/-- A gamma-model operator that fixes the product of the two strengths confines `v(aρb)` to at most
-two values, holds both strengths constant, or is a beta-model operator (p. 110). -/
+-- p. 110
 theorem encard_le_two_or_gamma {β γ : Fin 2 → ℝ} {K : ℝ} (hK : 0 < K) :
     {x : ℝ | 0 < x ∧ (β 0 * x + γ 0) * (β 1 * (K / x) + γ 1) = K}.encard ≤ 2 ∨
       (β = 0 ∧ γ 0 * γ 1 = K) ∨ (γ = 0 ∧ β 0 * β 1 = 1) := by
@@ -2595,7 +2542,7 @@ noncomputable def kernel : Kernel ℝ ℝ :=
     Kernel.withDensity (Kernel.deterministic (· - Real.log m.β₂₂) (measurable_sub_const _))
       (fun u _ ↦ ENNReal.ofReal ((1 - Real.sigmoid u) * (1 - m.π₂)))
 
-/-- Each row of the kernel is the four-point distribution of (7). -/
+-- (7)
 theorem kernel_apply (u : ℝ) : m.kernel u =
     ENNReal.ofReal (Real.sigmoid u * m.π₁) • Measure.dirac (u + Real.log m.β₁₁) +
     ENNReal.ofReal (Real.sigmoid u * (1 - m.π₁)) • Measure.dirac (u + Real.log m.β₁₂) +
@@ -2615,7 +2562,7 @@ private theorem w₃_nonneg (u : ℝ) : 0 ≤ (1 - Real.sigmoid u) * m.π₂ :=
 private theorem w₄_nonneg (u : ℝ) : 0 ≤ (1 - Real.sigmoid u) * (1 - m.π₂) :=
   mul_nonneg (sub_nonneg.2 (Real.sigmoid_le_one u)) (sub_nonneg.2 m.π₂_le_one)
 
-/-- The conditional expectation given the log ratio `u` averages over the four events of (7). -/
+-- (7)
 theorem integral_kernel (f : ℝ → ℝ) (u : ℝ) : ∫ x, f x ∂m.kernel u =
     Real.sigmoid u * m.π₁ * f (u + Real.log m.β₁₁) +
     Real.sigmoid u * (1 - m.π₁) * f (u + Real.log m.β₁₂) +
@@ -2714,7 +2661,7 @@ noncomputable def A (k : ℝ) : ℝ := m.π₁ * m.β₁₁ ^ k + (1 - m.π₁) 
 /-- The constant `B(k)` of (9) is `π₂/β₂₁ᵏ + (1 − π₂)/β₂₂ᵏ`. -/
 noncomputable def B (k : ℝ) : ℝ := m.π₂ / m.β₂₁ ^ k + (1 - m.π₂) / m.β₂₂ ^ k
 
-/-- Given `vₙ`, the expectation of `vₙ₊₁ᵏ` is `(A(k) − B(k))Pₙvₙᵏ + B(k)vₙᵏ` (8). -/
+-- (8)
 theorem integral_exp_kernel (k u : ℝ) : ∫ x, Real.exp (k * x) ∂m.kernel u =
     (m.A k - m.B k) * Real.sigmoid u * Real.exp (k * u) + m.B k * Real.exp (k * u) := by
   have up {β : ℝ} (hβ : 0 < β) : Real.exp (k * (u + Real.log β)) = Real.exp (k * u) * β ^ k := by
@@ -2724,7 +2671,7 @@ theorem integral_exp_kernel (k u : ℝ) : ∫ x, Real.exp (k * x) ∂m.kernel u 
   rw [integral_kernel, up m.β₁₁_pos, up m.β₁₂_pos, dn m.β₂₁_pos, dn m.β₂₂_pos, A, B]
   ring
 
-/-- The choice probability satisfies `Pₙvₙ = vₙ − Pₙ` (11). -/
+-- (11)
 theorem sigmoid_mul_exp (u : ℝ) : Real.sigmoid u * Real.exp u = Real.exp u - Real.sigmoid u := by
   rw [Real.sigmoid_def, Real.exp_neg]
   field_simp
@@ -2833,7 +2780,7 @@ theorem integrable_sigmoid_mul_exp_law (n : ℕ) (t : ℝ) :
     Integrable (fun u ↦ Real.sigmoid u * Real.exp (t * u)) (m.law μ₀ n) := by
   simpa using integrable_sigmoid_mul (m.integrable_exp_law hμ₀ n t) 1
 
-/-- Taking expectations in (8) gives `E(vₙ₊₁ᵏ) = (A(k) − B(k))E(Pₙvₙᵏ) + B(k)E(vₙᵏ)` (10). -/
+-- (8), (10)
 theorem integral_exp_law_succ (k : ℝ) (n : ℕ) :
     ∫ u, Real.exp (k * u) ∂m.law μ₀ (n + 1) =
       (m.A k - m.B k) * ∫ u, Real.sigmoid u * Real.exp (k * u) ∂m.law μ₀ n +
@@ -2850,8 +2797,7 @@ theorem integrable_id_law (n : ℕ) : Integrable (fun u ↦ u) (m.law μ₀ n) :
     (by fun_prop) (.of_forall fun u ↦ ?_)
   simpa using abs_le_exp_add_exp u
 
-/-- If `β₁₁, β₂₁ ≠ 1`, the expected log ratio changes by the coefficient of (16) times `E(Pₙ) − P*`.
--/
+-- (16)
 theorem integral_law_succ_sub [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ ≠ 1) (h₂ : m.β₂₁ ≠ 1)
     (hd : m.drift ≠ 0) (n : ℕ) :
     ∫ u, u ∂m.law μ₀ (n + 1) - ∫ u, u ∂m.law μ₀ n =
@@ -2883,7 +2829,7 @@ theorem integral_law_succ_sub [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ �
   rw [mul_sub, hP, hdr]
   ring
 
-/-- Multiplying (11) by `vₙᵗ` and integrating gives `E(Pₙvₙᵗ⁺¹) = E(vₙᵗ⁺¹) − E(Pₙvₙᵗ)`. -/
+-- (11)
 theorem integral_sigmoid_mul_exp_succ (t : ℝ) (n : ℕ) :
     ∫ u, Real.sigmoid u * Real.exp ((t + 1) * u) ∂m.law μ₀ n =
       ∫ u, Real.exp ((t + 1) * u) ∂m.law μ₀ n -
@@ -2894,7 +2840,7 @@ theorem integral_sigmoid_mul_exp_succ (t : ℝ) (n : ℕ) :
   rw [add_mul, one_mul, Real.exp_add]
   linear_combination Real.exp (t * u) * this
 
-/-- By (10) and (11) the first moment satisfies `E(vₙ₊₁) = A(1)E(vₙ) − (A(1) − B(1))E(Pₙ)`. -/
+-- (10), (11)
 theorem integral_exp_law_succ_one (n : ℕ) :
     ∫ u, Real.exp u ∂m.law μ₀ (n + 1) =
       m.A 1 * ∫ u, Real.exp u ∂m.law μ₀ n - (m.A 1 - m.B 1) * ∫ u, Real.sigmoid u ∂m.law μ₀ n := by
@@ -2909,7 +2855,7 @@ private theorem integrable_exp_map_neg :
   refine (integrable_map_equiv (MeasurableEquiv.neg ℝ) _).2 ?_
   simpa [Function.comp_def] using hμ₀ (-t)
 
-/-- The limit of `E(vₙʲ⁺¹)` determines that of `E(Pₙvₙʲ)` (17). -/
+-- (17)
 private theorem tendsto_sigmoid_mul_exp {j : ℕ} {L : ℝ}
     (hL : Tendsto (fun n ↦ ∫ u, Real.exp (((j + 1 : ℕ) : ℝ) * u) ∂m.law μ₀ n) atTop (𝓝 L))
     (hAB : m.A (j + 1 : ℕ) ≠ m.B (j + 1 : ℕ)) :
@@ -2927,8 +2873,7 @@ private theorem tendsto_sigmoid_mul_exp {j : ℕ} {L : ℝ}
   convert (hL.const_mul _).sub ((tendsto_add_atTop_iff_nat 1).2 hL) using 2
   ring
 
-/-- If the first `k` moments `E(vₙⁱ)` converge and `A(i) ∉ {1, B(i)}`, then `E(Pₙ)` converges and
-the `k`-th limit is a multiple of its limit (Theorem 15 (i), p. 114). -/
+-- Theorem 15, (i), p. 114
 theorem theorem15 [IsProbabilityMeasure μ₀] {k : ℕ} (hk : 1 ≤ k) {L : ℕ → ℝ}
     (hL : ∀ i ∈ Finset.Icc 1 k,
       Tendsto (fun n ↦ ∫ u, Real.exp (i * u) ∂m.law μ₀ n) atTop (𝓝 (L i)))
@@ -2982,8 +2927,7 @@ theorem theorem15 [IsProbabilityMeasure μ₀] {k : ℕ} (hk : 1 ≤ k) {L : ℕ
     field_simp at hs ⊢
     linear_combination -hs
 
-/-- The limits of the moments of `1/vₙ` satisfy Theorem 15 (ii) with factors `(A(−i) − 1)/(1 −
-B(−i))`, which the book misprints (p. 114). -/
+-- Theorem 15, (ii), p. 114
 theorem theorem15_inv [IsProbabilityMeasure μ₀] {k : ℕ} (hk : 1 ≤ k) {L : ℕ → ℝ}
     (hL : ∀ i ∈ Finset.Icc 1 k,
       Tendsto (fun n ↦ ∫ u, Real.exp (-i * u) ∂m.law μ₀ n) atTop (𝓝 (L i)))
@@ -3006,8 +2950,7 @@ theorem theorem15_inv [IsProbabilityMeasure μ₀] {k : ℕ} (hk : 1 ≤ k) {L :
     congr 2
     exact Finset.prod_congr rfl fun i _ ↦ by rw [swap_A, swap_B, e']
 
-/-- If `E(vₙ)` converges and `A(1) ≠ B(1)`, or `E(1/vₙ)` converges and `B(−1) ≠ A(−1)`, then `E(Pₙ)`
-converges (the corollary to Theorem 15, p. 115). -/
+-- Theorem 15, p. 115
 theorem theorem15_corollary [IsProbabilityMeasure μ₀]
     (h : (∃ L, Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 L)) ∧ m.A 1 ≠ m.B 1 ∨
       (∃ L, Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop (𝓝 L)) ∧
@@ -3046,8 +2989,7 @@ private theorem one_le_integral_exp_mul [IsProbabilityMeasure μ₀] (n : ℕ) :
         rw [← Real.exp_add, add_neg_cancel, Real.exp_zero]
     _ ≤ _ := mul_le_mul h₁ h₂ (Real.exp_pos _).le ((Real.exp_pos _).le.trans h₁)
 
-/-- If `E(vₙ)` converges to `L`, then `L = 0` implies `E(Pₙ) → 0`, and conversely when `A(1) ≠ 1`
-(Theorem 16 (i), p. 115). -/
+-- Theorem 16, (i), p. 115
 theorem theorem16 [IsProbabilityMeasure μ₀] {L : ℝ}
     (hL : Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 L)) :
     (L = 0 → Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 0) ∧
@@ -3070,8 +3012,7 @@ theorem theorem16 [IsProbabilityMeasure μ₀] {L : ℝ}
     have : (m.A 1 - 1) * L = 0 := by linear_combination -h
     exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hA)
 
-/-- If `E(1/vₙ)` converges to `L`, then `L = 0` implies `E(Pₙ) → 1`, and conversely when `B(−1) ≠ 1`
-(Theorem 16 (ii), p. 116). -/
+-- Theorem 16, (ii), p. 116
 theorem theorem16_inv [IsProbabilityMeasure μ₀] {L : ℝ}
     (hL : Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop (𝓝 L)) :
     (L = 0 → Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 1) ∧
@@ -3106,8 +3047,7 @@ private theorem tendsto_integral_exp_of_cesaro [IsProbabilityMeasure μ₀] {K :
     fun u ↦ ?_
   linarith [Real.add_one_le_exp (t * u)]
 
-/-- If `E(Pₙ) → p` and the coefficient of (16) is nonzero, then `p = P*` or `E(vₙ)` or `E(1/vₙ)`
-diverges (Theorem 17, p. 116). -/
+-- (16), Theorem 17, p. 116
 theorem theorem17 [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ ≠ 1) (h₂ : m.β₂₁ ≠ 1) (hd : m.drift ≠ 0)
     {p : ℝ} (hp : Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 p)) :
     p = m.Pstar ∨ Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop atTop ∨
@@ -3126,8 +3066,7 @@ theorem theorem17 [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ ≠ 1) (h₂ :
   · refine .inr (.inl ?_)
     simpa using m.tendsto_integral_exp_of_cesaro hμ₀ hK 1 (by simpa using hc)
 
-/-- If `E(vₙ)` and `E(1/vₙ)` converge, `A(1) ≠ B(1)` or `B(−1) ≠ A(−1)`, and the coefficient of (16)
-is nonzero, then `E(Pₙ) → P*` (corollary to Theorem 17, p. 117). -/
+-- (16), Theorem 17, p. 117
 theorem theorem17_corollary [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ ≠ 1) (h₂ : m.β₂₁ ≠ 1)
     (hd : m.drift ≠ 0) {L L' : ℝ}
     (hL : Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 L))
@@ -3156,8 +3095,7 @@ private theorem integral_exp_law_succ_mem (n : ℕ) :
   constructor <;> nlinarith [min_le_left (m.A 1) (m.B 1), min_le_right (m.A 1) (m.B 1),
     le_max_left (m.A 1) (m.B 1), le_max_right (m.A 1) (m.B 1)]
 
-/-- If `A(1), B(1) > 1` then `E(vₙ) → ∞`, if both are `< 1` then `E(vₙ) → 0`, and `E(vₙ) → ∞` forces
-`A(1) ≥ 1` (Theorem 18 (i), p. 117). -/
+-- Theorem 18, (i), p. 117
 theorem theorem18 [IsProbabilityMeasure μ₀] :
     (1 < m.A 1 → 1 < m.B 1 → Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop atTop) ∧
     (m.A 1 < 1 → m.B 1 < 1 → Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 0)) ∧
@@ -3210,8 +3148,7 @@ theorem theorem18 [IsProbabilityMeasure μ₀] :
     obtain ⟨n, hn, hnN⟩ := ((hL.eventually_gt_atTop (e N)).and (eventually_ge_atTop N)).exists
     linarith [hle n hnN]
 
-/-- If `A(−1), B(−1) > 1` then `E(1/vₙ) → ∞`, if both are `< 1` then `E(1/vₙ) → 0`, and `E(1/vₙ) →
-∞` forces `B(−1) ≥ 1` (Theorem 18 (ii), p. 117). -/
+-- Theorem 18, (ii), p. 117
 theorem theorem18_inv [IsProbabilityMeasure μ₀] :
     (1 < m.A (-1) → 1 < m.B (-1) →
       Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop atTop) ∧
@@ -3224,7 +3161,7 @@ theorem theorem18_inv [IsProbabilityMeasure μ₀] :
 
 end BetaLearner
 
-/-- For `x, y > 1`, `log x/(x − 1) < y log y/(y − 1)` (Lemma 12, p. 119). -/
+-- Lemma 12, p. 119
 theorem lemma12 {x y : ℝ} (hx : 1 < x) (hy : 1 < y) :
     Real.log x / (x - 1) < y / (y - 1) * Real.log y := by
   have h₁ := Real.log_lt_sub_one_of_pos (by linarith) (ne_of_gt hx)
@@ -3239,8 +3176,7 @@ theorem lemma12 {x y : ℝ} (hx : 1 < x) (hy : 1 < y) :
     _ < y / (y - 1) * Real.log y := by
       rw [div_mul_eq_mul_div, one_lt_div (by linarith)]; exact h₃
 
-/-- For `x > 1`, `y ∈ (0, 1)` and `σ = −log y/log x` as in (14), `σ/(σ + 1)` lies strictly between
-`(1 − y)/(x − y)` and `x` times it (Theorem 19, p. 119). -/
+-- (0, 1), (14), Theorem 19, p. 119
 theorem theorem19 {x y : ℝ} (hx : 1 < x) (hy₀ : 0 < y) (hy : y < 1) :
     (1 - y) / (x - y) < -Real.log y / Real.log x / (-Real.log y / Real.log x + 1) ∧
       -Real.log y / Real.log x / (-Real.log y / Real.log x + 1) < x * (1 - y) / (x - y) := by

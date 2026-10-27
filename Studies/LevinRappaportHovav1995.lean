@@ -129,8 +129,7 @@ theorem ranking_position_eq_external_iff {s : Finset Component} :
     ranking.position s = .external ↔ s = {.immediateCause} := by
   decide +revert
 
-/-- The order of the Directed Change and Existence rules, which the book leaves open (§4.2.4),
-does not affect the position of any argument. -/
+-- §4.2.4
 theorem position_swap :
     Ranking.position [.existence, .directedChange, .immediateCause] = ranking.position := by
   funext s
@@ -185,14 +184,12 @@ theorem unaccusative_iff {s : Finset Component} : Unaccusative s ↔ s ≠ {.imm
   rw [Unaccusative, ne_eq, ← ranking_position_eq_external_iff]
   cases ranking.position s <;> simp
 
-/-- A verb of directed change is unaccusative whatever its causation (§4.1.2, §4.2.1, §4.2.2,
-§4.2.3). -/
+-- §4.1.2, §4.2.1, §4.2.2, §4.2.3
 theorem unaccusative_of_directedChange_mem {s : Finset Component}
     (h : .directedChange ∈ s) : Unaccusative s :=
   unaccusative_iff.mpr (by rintro rfl; simp at h)
 
-/-- A verb whose argument's existence is at issue is unaccusative whatever its causation
-(§4.1.3, §4.2.4). -/
+-- §4.1.3, §4.2.4
 theorem unaccusative_of_existence_mem {s : Finset Component} (h : .existence ∈ s) :
     Unaccusative s :=
   unaccusative_iff.mpr (by rintro rfl; simp at h)
@@ -224,44 +221,39 @@ def components : LevinClass → List (Finset Component)
   | .entitySpecificChangeOfState => [{.immediateCause, .directedChange}]
   | _ => []
 
-/-- Verbs of emission are unergative (§4.1.1.1). -/
+-- §4.1.1.1
 theorem emission_not_unaccusative :
     ∀ c ∈ [LevinClass.lightEmission, .soundEmission, .smellEmission, .substanceEmission],
       ∀ s ∈ components c, ¬ Unaccusative s := by
   decide +kernel
 
-/-- Verbs of change of state are unaccusative, externally or internally caused (§4.1.2,
-§4.2.1). -/
+-- §4.1.2, §4.2.1
 theorem changeOfState_unaccusative :
     ∀ c ∈ [LevinClass.break_, .bend, .cooking, .otherChangeOfState,
       .entitySpecificChangeOfState], ∀ s ∈ components c, Unaccusative s := by
   decide +kernel
 
-/-- Verbs of inherently directed motion are unaccusative whether used agentively or not
-(§4.2.2). -/
+-- §4.2.2
 theorem directedMotion_unaccusative :
     ∀ s ∈ components .inherentlyDirectedMotion, Unaccusative s := by
   decide
 
-/-- Verbs of existence, appearance, occurrence and disappearance are unaccusative (§4.1.3), the
-verbs of existence whether used agentively or not (§4.2.4). -/
+-- §4.1.3, §4.2.4
 theorem existence_classes_unaccusative :
     ∀ c ∈ [LevinClass.exist, .appear, .occurrence, .disappearance],
       ∀ s ∈ components c, Unaccusative s := by
   decide +kernel
 
-/-- The run verbs are unergative (§4.1.4). -/
+-- §4.1.4
 theorem run_not_unaccusative : ∀ s ∈ components .run, ¬ Unaccusative s := by decide
 
-/-- The roll verbs are unaccusative when nonagentive, by the Default Linking Rule, and unergative
-when agentive (§4.1.4, §4.2.2). -/
+-- §4.1.4, §4.2.2
 theorem roll_variable :
     (∃ s ∈ components .roll, .immediateCause ∉ s ∧ Unaccusative s) ∧
       ∃ s ∈ components .roll, .immediateCause ∈ s ∧ ¬ Unaccusative s := by
   decide
 
-/-- Verbs of spatial configuration are unaccusative in their simple and assume position senses
-and unergative in their maintain position sense (§4.1.1.2, §4.2.3). -/
+-- §4.1.1.2, §4.2.3
 theorem spatialConfiguration_variable :
     (∃ s ∈ components .spatialConfiguration, .existence ∈ s ∧ Unaccusative s) ∧
       (∃ s ∈ components .spatialConfiguration, .directedChange ∈ s ∧ Unaccusative s) ∧

@@ -108,54 +108,49 @@ theorem strong_predictions :
     licitFinset strongGrammar = {⟨.first, .third⟩, ⟨.second, .third⟩, ⟨.third, .third⟩} := by
   decide
 
-/-- Under the ultra-strong PCC (14d), P-Primacy makes ⟨1, 2⟩ licit and ⟨2, 1⟩ not. -/
+-- (14d)
 theorem ultra_predictions :
     licitFinset ultraStrongGrammar =
       {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .third⟩,
         ⟨.third, .third⟩} := by
   decide
 
-/-- Under the weak PCC (14b), only a third-person indirect object with a local direct object is
-banned. -/
+-- (14b)
 theorem weak_predictions :
     licitFinset weakGrammar =
       {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .first⟩,
         ⟨.second, .second⟩, ⟨.second, .third⟩, ⟨.third, .third⟩} := by
   decide
 
-/-- Under the super-strong PCC (14e) the indirect object must be local and the direct object
-third person. -/
+-- (14e)
 theorem super_predictions :
     licitFinset superStrongGrammar = {⟨.first, .third⟩, ⟨.second, .third⟩} := by decide
 
-/-- Under the me-first PCC (14c), a first-person direct object needs a first-person indirect object,
-and ⟨1, 1⟩ falls to P-Uniqueness. -/
+-- (14c)
 theorem mefirst_predictions :
     licitFinset meFirstGrammar =
       {⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .second⟩, ⟨.second, .third⟩,
         ⟨.third, .second⟩, ⟨.third, .third⟩} := by
   decide
 
-/-- The first predicted variety (32a) has [+participant] prominence with P-Primacy. -/
+-- (32a)
 theorem pg1_predictions :
     licitFinset pg1Grammar =
       {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .third⟩} := by
   decide
 
-/-- The second predicted variety (32b) has [+participant] prominence without P-Uniqueness. -/
+-- (32b)
 theorem pg2_predictions :
     licitFinset pg2Grammar =
       {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .first⟩,
         ⟨.second, .second⟩, ⟨.second, .third⟩} := by
   decide
 
-/-- The third predicted variety (33) has [+author] prominence over an unrestricted domain, so
-only a first-person indirect object licenses, and P-Uniqueness then excludes ⟨1, 1⟩. -/
+-- (33)
 theorem pg3_predictions :
     licitFinset pg3Grammar = {⟨.first, .second⟩, ⟨.first, .third⟩} := by decide
 
-/-- Restricting the domain to participant applicatives with a [+participant] threshold yields the
-strong PCC's licit set (§4.5). -/
+-- §4.5
 theorem restricted_participant_surfaces_as_strong :
     licitFinset { prominence := .participant, restrictedDomain := true } =
       licitFinset strongGrammar := by
@@ -203,8 +198,7 @@ theorem italian_weak_tidat_lacl :
         IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
-/-- Spanish *te me* (23), second-person dative over first-person accusative, is licit in the
-weak variety: *te* can be the dative and *me* the accusative. -/
+-- (23)
 theorem spanish_weak_tedat_meacc :
     .dat ∈ Spanish.Clitics.te.cases ∧ .acc ∈ Spanish.Clitics.me.cases ∧
       ∃ io ∈ Spanish.Clitics.te.person, ∃ do_ ∈ Spanish.Clitics.me.person,
@@ -217,7 +211,7 @@ theorem spanish_weak_medat_teacc :
         IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
-/-- Spanish *me le* (24), third-person dative over first-person accusative, is banned. -/
+-- (24)
 theorem spanish_weak_ledat_meacc_banned :
     .dat ∈ Spanish.Clitics.le.cases ∧ .acc ∈ Spanish.Clitics.me.cases ∧
       ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
@@ -231,39 +225,34 @@ theorem french_strong_examples :
       IsLicit strongGrammar ⟨.third, .third⟩ := by
   decide
 
-/-- Catalan (20), an ultra-strong-PCC language, shows the ⟨1, 2⟩ against ⟨2, 1⟩ asymmetry that
-separates the ultra-strong from the strong variety. -/
+-- (20)
 theorem catalan_ultra_strong_examples :
     IsLicit ultraStrongGrammar ⟨.first, .second⟩ ∧
       ¬ IsLicit ultraStrongGrammar ⟨.second, .first⟩ := by
   decide
 
-/-- In Kambera (27), a super-strong-PCC language, the indirect object must be local and the
-direct object third person, so ⟨3, 3⟩ is banned as well. -/
+-- (27)
 theorem kambera_super_strong_examples :
     IsLicit superStrongGrammar ⟨.first, .third⟩ ∧ IsLicit superStrongGrammar ⟨.second, .third⟩ ∧
       ¬ IsLicit superStrongGrammar ⟨.third, .third⟩ ∧
       ¬ IsLicit superStrongGrammar ⟨.first, .second⟩ := by
   decide
 
-/-- In Bulgarian (29), a me-first-PCC language, ⟨3, 2⟩ is licit, where every [+proximate]
-variety bans it, and ⟨2, 1⟩ is not. -/
+-- (29)
 theorem bulgarian_me_first_examples :
     IsLicit meFirstGrammar ⟨.third, .second⟩ ∧ ¬ IsLicit meFirstGrammar ⟨.second, .first⟩ := by
   decide
 
 /-! ### The ⟨1, 1⟩ corner -/
 
-/-- Me-first bans two first-person arguments by P-Uniqueness on [+author], since neither is
-uniquely the perspectival source (§4.5). -/
+-- §4.5
 theorem mefirst_one_one_excluded : ¬ IsLicit meFirstGrammar ⟨.first, .first⟩ := by decide
 
 /-- The substrate's P-Primacy checks only the indirect object's [+author], so the ultra-strong
 grammar licenses ⟨1, 1⟩ where the descriptive statement (14d) bans it. -/
 theorem ultra_one_one_licensed : IsLicit ultraStrongGrammar ⟨.first, .first⟩ := by decide
 
-/-- Me-first shows no ⟨3, 3⟩ effect. Without a first-person argument the domain is exempt, so
-the spurious-*se* restriction of the [+proximate] varieties is unavailable (§4.4). -/
+-- §4.4
 theorem mefirst_three_three_exempt : IsLicit meFirstGrammar ⟨.third, .third⟩ := by decide
 
 end PanchevaZubizarreta2018

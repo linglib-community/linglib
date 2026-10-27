@@ -74,7 +74,7 @@ def attitude (con : E → Option (Set W)) (holds : E → W → Prop) (e : E) (p 
 variable {con : E → Option (Set W)} {holds : E → W → Prop} {f : E → Set W} {e : E}
   {q : W → Prop} {w : W} {C : Set W}
 
-/-- The epistemic modal base is the content of the event the modal is anchored to (51). -/
+-- (51)
 theorem must_iff_contentNecessity (h : con e = some (f e)) :
     must f q e ↔ contentNecessity con q e :=
   (contentNecessity_iff_of_eq_some h).symm
@@ -92,8 +92,7 @@ theorem attitude_can_iff (hC : con e = some C) :
       holds e w ∧ (C.Nonempty → ∃ w' ∈ C, q w') := by
   rw [attitude, contentNecessity_const hC, contentPossibility_iff_of_eq_some hC]
 
-/-- With consistent content, an embedded epistemic possibility says that `q` is compatible with the
-embedding event's content (54). -/
+-- (54)
 theorem attitude_can_iff_of_nonempty (hC : con e = some C) (hne : C.Nonempty) :
     attitude con holds e (fun _ ↦ contentPossibility con q e) w ↔
       holds e w ∧ ∃ w' ∈ C, q w' := by
@@ -129,8 +128,6 @@ theorem tPast_lt_iff_eq_modEpistemic {h : Cartography.Head} (hm : h.family = .mo
   revert h
   decide
 
-/-- The volitional head, the only root modal head the hierarchy places, is below habitual aspect.
--/
 theorem modVolitional_lt_aspHabitual : Cartography.Head.modVolitional < .aspHabitual := by
   decide
 

@@ -102,20 +102,17 @@ theorem composes_unergative_iff (a : ApplType) :
     (∃ τ ∈ sisterTy a, (Ty.combine? τ Ty.vt).isSome) ↔ a = .high := by
   cases a <;> simp [sisterTy] <;> decide
 
-/-- A low applicative composes with an unergative verb phrase at no stage of its saturation, in
-either order (17). -/
+-- (17)
 theorem lowAppl_not_composes_unergative :
     ∀ τ ∈ [lowApplTy, .e ⇒ Ty.evt ⇒ Ty.vt, Ty.evt ⇒ Ty.vt],
       Ty.combine? τ Ty.vt = none ∧ Ty.combine? Ty.vt τ = none := by
   decide
 
-/-- The low ApplP composes with a transitive verb, static or not, so the second diagnostic (18)
-is not a typing fact. -/
+-- (18)
 theorem lowApplP_composes_transitive : Ty.combine? (Ty.evt ⇒ Ty.vt) Ty.evt = some Ty.vt := by
   decide
 
-/-- In the derivation (16) of *Mary bought John the book*, low ApplP takes the verb and Voice adds
-the agent by Event Identification. -/
+-- (16)
 theorem voiceP_lowAppl (agent theme : Entity → E → Prop) (poss : Entity → Entity → Prop)
     (buying : E → Prop) (mary john book : Entity) (e : E) :
     eventIdentification agent
@@ -173,35 +170,30 @@ def table21 : List (Construction × Datum × Datum) :=
    (.lugandaBenefactive, ex23a, ex23b), (.vendaBenefactive, ex24a, ex24b),
    (.albanianBenefactive, ex25a, ex25b)]
 
-/-- In Table 2.1, test 1, the applicative attaches to an unergative in exactly the languages
-whose head composes with one. -/
+-- Table 2.1
 theorem table21_unergative :
     ∀ t ∈ table21, t.2.1.judgment = .acceptable ↔ t.1.ComposesUnergative := by
   decide
 
-/-- Across the six languages of Table 2.1 the static-verb test patterns with the unergative
-test, the correlation of §2.1.2. -/
+-- Table 2.1, §2.1.2
 theorem table21_static_iff_unergative :
     ∀ t ∈ table21, t.2.2.judgment = .acceptable ↔ t.2.1.judgment = .acceptable := by
   decide
 
-/-- The gapless Japanese adversity passive, a high applicative, composes with unergatives, while
-the gapped one, a low source applicative, does not (Table 2.5). -/
+-- Table 2.5
 theorem adversity_passives :
     Construction.japaneseGaplessAdversity.ComposesUnergative ∧
       ¬ Construction.japaneseGappedAdversity.ComposesUnergative := by
   decide
 
-/-- The transitivity restriction on Hebrew possessor datives (102), Table 2.2, follows from
-their low source analysis. -/
+-- (102), Table 2.2
 theorem possessor_dative_transitivity :
     ¬ Construction.hebrewPossessorDative.ComposesUnergative := by
   decide
 
 /-! ### Cause introduces a causing event, not a causer -/
 
-/-- With Cause (9), analysis (14) relates John to an event causing the melting (13b), and the θ-role
-analysis (16) relates him to the melting (15b). -/
+-- (9), (14), (13b), (16), (15b)
 theorem melted_readings (M : EventStructure.Interpretation Entity E E)
     (agent causer : Entity → E → Prop) (melt : E → Prop) (john : Entity) (e : E) :
     (eventIdentification agent (M.vCause melt) john e ↔
@@ -212,8 +204,7 @@ theorem melted_readings (M : EventStructure.Interpretation Entity E E)
 /-- `causeTy` is the type of Cause (9), `⟨⟨s,t⟩,⟨s,t⟩⟩`. -/
 abbrev causeTy : Ty := Ty.vt ⇒ Ty.vt
 
-/-- Cause applied to a verb phrase yields a predicate of events (18), while the causer head (16a)
-yields a relation still awaiting an individual (§3.2). -/
+-- (18), (16a), §3.2
 theorem unaccusative_causative :
     Ty.combine? causeTy Ty.vt = some Ty.vt ∧ Ty.combine? Ty.evt Ty.vt = some Ty.evt := by
   decide
@@ -258,13 +249,11 @@ def CauseHead.Embeds (c : CauseHead) (l : Layer) : Prop := l ≤ c.selects
 instance (c : CauseHead) (l : Layer) : Decidable (c.Embeds l) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- VP modifiers scope below Cause and verbal morphology intervenes below it exactly when Cause
-selects at least a verb (Table 3.2, rows 1 and 2). -/
+-- Table 3.2
 theorem embeds_verb_iff (c : CauseHead) : c.Embeds .verb ↔ c.selects ≠ .root := by
   obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide
 
-/-- Agent-oriented modifiers scope below Cause and high applicative morphology intervenes below it
-exactly when Cause selects a phase (Table 3.2, rows 3 and 4). -/
+-- Table 3.2
 theorem embeds_phase_iff (c : CauseHead) : c.Embeds .phase ↔ c.selects = .phase := by
   obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide
 
@@ -290,8 +279,7 @@ def japaneseLexical : CauseHead := ⟨.root, false⟩
 /-- The Finnish *-tta* causative is verb-selecting, with Cause independent of Voice. -/
 def finnishTta : CauseHead := ⟨.verb, false⟩
 
-/-- The English and Japanese root-selecting causatives differ on unergative bases, (95) and
-(96), exactly as `hasCauseePosition_iff` predicts. -/
+-- (95), (96)
 theorem root_causativized_unergative :
     (ex95.judgment = .acceptable ↔ englishZero.HasCauseePosition) ∧
       (ex96.judgment = .acceptable ↔ japaneseLexical.HasCauseePosition) := by

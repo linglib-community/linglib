@@ -120,7 +120,6 @@ theorem holds_someNot :
 theorem holds_no : Sentence.Holds ⟨.no, x, y⟩ s ↔ ∀ r ∈ s, x ∈ r.1 → y ∉ r.1 := by
   simp [Sentence.Holds, Quant.denote, GQ.no]
 
-/-- With existential import *all* entails *some*. -/
 theorem holds_some_of_holds_all (h : Sentence.Holds ⟨.all, x, y⟩ s) :
     Sentence.Holds ⟨.some, x, y⟩ s :=
   GQ.subalternation_a_i _ _ h.2 h.1
@@ -134,8 +133,7 @@ instance (p : Sentence) (s : State) : Decidable (p.Holds s) :=
   | ⟨.someNot, _, _⟩ => decidable_of_iff _ holds_someNot.symm
   | ⟨.no, _, _⟩ => decidable_of_iff _ holds_no.symm
 
-/-- The four sentences of Table 1 hold at its consistent states and fail at its inconsistent
-ones. -/
+-- Table 1
 theorem holds_table_one :
     Sentence.Holds ⟨.all, .A, .B⟩ {region {.A, .B}, region {.A, .B, .C}} ∧
       ¬ Sentence.Holds ⟨.all, .A, .B⟩ {region {.A}, region {.A, .B, .C}} ∧
@@ -189,7 +187,6 @@ noncomputable def listener (φ : ℝ≥0∞) (μ : Measure State) : Kernel (List
 
 instance : IsFiniteKernel (listener φ μ) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
-/-- Without noise the listener conditions the prior on the sentences heard. -/
 theorem listener_zero (μ : Measure State) :
     listener 0 μ = RSA.listener μ (truthful extension) := by
   rw [listener, listener_truthful_eq_ofDensity]
@@ -208,7 +205,6 @@ theorem isProbabilityMeasure_listener [IsProbabilityMeasure μ] (hφ : φ ≠ 0)
   exact NeZero.ne μ (Measure.measure_univ_eq_zero.1 (measure_mono_null
     (fun s _ ↦ show noisy φ us s ≠ 0 from pow_ne_zero _ hφ) h))
 
-/-- With noise any two posteriors of the listener have the same null sets. -/
 theorem listener_absolutelyContinuous [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (us us' : List Sentence) : listener φ μ us ≪ listener φ μ us' := by
   have : IsFiniteMeasure (μ.withDensity (noisy φ us')) :=
@@ -284,8 +280,6 @@ instance : IsFiniteKernel (beliefAlignment φ μ α) :=
 
 variable {φ μ α}
 
-/-- The belief-alignment speaker scores a conclusion by the negative divergence of the naive
-listener's beliefs from the reasoner's. -/
 theorem beliefAlignment_eq_softmax_klDiv [IsProbabilityMeasure μ] (hα : 0 < α) (hφ : φ ≠ 0)
     (hφ' : φ ≠ ∞) :
     beliefAlignment φ μ α = Kernel.softmax fun syl c ↦
@@ -331,7 +325,6 @@ private theorem weight_ne_top (β : ℝ≥0) (S : Kernel Syllogism Conclusion) [
     (syl : Syllogism) (c : Conclusion) : figuralWeight β syl c * S syl {c} ≠ ∞ :=
   ENNReal.mul_ne_top ENNReal.coe_ne_top (measure_ne_top _ _)
 
-/-- A speaker certain of *nothing follows* stays certain under the figural preference. -/
 theorem withFigure_apply_none_eq_one (h0 : S syl {none} ≠ 0) (h : ∀ c ≠ none, S syl {c} = 0) :
     withFigure β S syl {none} = 1 := by
   rw [withFigure, Kernel.ofWeights_apply_singleton, Finset.sum_eq_single none
@@ -356,8 +349,6 @@ section Noiseless
 
 variable {μ : Measure State} {α : ℝ} {β : ℝ≥0} {syl : Syllogism} {c c' : Conclusion}
 
-/-- Without noise the belief-alignment speaker believes the prior conditioned on the premises
-and addresses a literal listener. -/
 theorem beliefAlignment_zero (μ : Measure State) (α : ℝ) :
     beliefAlignment 0 μ α =
       speaker α 0 (RSA.listener μ (truthful fun c ↦ extension (Conclusion.said c)))
@@ -383,15 +374,12 @@ private theorem measure_lt_of_notMem (hμ : ∀ s, μ {s} ≠ 0) {A B : Set Stat
     _ = μ (A ∪ {s}) := (measure_union (Set.disjoint_singleton_right.2 hA) (.singleton s)).symm
     _ ≤ μ B := measure_mono (Set.union_subset hAB (Set.singleton_subset_iff.2 hB))
 
-/-- The speaker produces exactly the conclusions the premises entail. -/
 theorem beliefAlignment_zero_apply_singleton_eq_zero_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
     beliefAlignment 0 μ α syl {c} = 0 ↔
       ¬ extension syl.premises ⊆ extension (Conclusion.said c) := by
   rw [beliefAlignment_zero, speaker_cond_listener_truthful_apply_singleton_eq_zero_iff hα,
     ae_le_iff_subset hμ]
 
-/-- Among the conclusions the premises entail, the speaker prefers the one of smaller prior
-mass. -/
 theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α)
     (hne : (extension syl.premises).Nonempty)
     (hc : extension syl.premises ⊆ extension (Conclusion.said c))
@@ -424,7 +412,6 @@ def allAB_allCB : Syllogism := ⟨⟨.all, .A, .B⟩, ⟨.all, .C, .B⟩⟩
 theorem figuralWeight_barbara (q : Quant) : figuralWeight β barbara (ac q) = β := by
   simp [figuralWeight, Syllogism.subjects, barbara]
 
-/-- With both end terms in subject position there is no figural preference. -/
 theorem figuralWeight_allAB_allCB (c : Conclusion) : figuralWeight β allAB_allCB c = 1 := by
   obtain _ | ⟨⟨q, x, y⟩, h⟩ := c
   · rfl
@@ -464,8 +451,6 @@ theorem barbara_prefers_all (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) (hβ : 1 
   exact ⟨mul_lt_mul_of_pos_left h1 (by linarith), by
     simpa [figuralWeight] using h2.trans_le (le_mul_of_one_le_left measureReal_nonneg hβ')⟩
 
-/-- *All A are B, All C are B* entails no quantified conclusion, so the noiseless speaker answers
-*nothing follows*. -/
 theorem allAB_allCB_nothing_follows (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
     withFigure β (beliefAlignment 0 μ α) allAB_allCB {none} = 1 := by
   refine nothing_follows_of_invalid hμ hα fun c hc h ↦ ?_

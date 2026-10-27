@@ -180,7 +180,7 @@ def stressInitialCulminative : Language Syl := finnish ⊓ tierWord Syl.isStress
 theorem stressInitialCulminative_isBTK : IsBTK 2 stressInitialCulminative :=
   IsBTC.inter (isBTK_ofPrefix _ (by decide)) (isBTK_tierWord _ _ (by decide))
 
-/-- Culminative stress-final is not definite (§2.3). -/
+-- §2.3
 theorem stressFinalCulminative_not_isDefinite (k : ℕ) :
     ¬ stressFinalCulminative.IsDefinite k := by
   intro h
@@ -541,7 +541,7 @@ theorem prinmi_isPiecewiseTestable : prinmi.IsPiecewiseTestable 3 :=
     (isPiecewiseTestable_compl_shuffleIdeal (by decide))).inter
     (isPiecewiseTestable_compl_shuffleIdeal (by decide))
 
-/-- Prinmi is not multitier generalized definite (§5.2), by the Luganda witnesses. -/
+-- §5.2
 theorem prinmi_not_isBTLI (k : ℕ) : ¬ IsBTLI k prinmi :=
   not_isBTC_of_indist (tone_indist k)
     ⟨⟨sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)),
@@ -567,8 +567,7 @@ private lemma high_high_sublist_iff (w : List Tone) :
   ⟨fun h ↦ by simpa only [filter_cons_of_pos (by decide : Tone.isHigh .high = true), filter_nil]
     using h.filter Tone.isHigh, fun h ↦ h.trans filter_sublist⟩
 
-/-- Arigibi is tier-based co/finite (§5.3), since on the high tier the word is empty or a single
-high, which is culminativity on tone. -/
+-- §5.3
 theorem arigibi_isTierBased : IsTierBased IsFiniteOrCofinite arigibi := by
   refine ⟨Tone.isHigh, {xs | xs = [] ∨ xs = [.high]}, ?_,
     Or.inl ((Set.finite_singleton _).insert _)⟩
@@ -606,8 +605,7 @@ def chuave : Language Tone := shuffleIdeal [.high]
 theorem chuave_isPiecewiseTestable : chuave.IsPiecewiseTestable 1 :=
   isPiecewiseTestable_shuffleIdeal (by decide)
 
-/-- Chuave is also locally testable (§5.5), since a high mora anywhere in a word is a factor of
-it. -/
+-- §5.5
 theorem chuave_isLocallyTestable : chuave.IsLocallyTestable 1 := by
   convert isLocallyTestable_setOf_infix [Tone.high] using 1
   ext w
@@ -663,8 +661,7 @@ long as the window. An idempotent class of a nonempty word is the class of arbit
 so it is constrained whatever the window ((56)–(58)), and an idempotent that fails the equation
 refutes the class for every window at once. -/
 
-/-- Stress-penult is not 1-definite (§2.1), since the class `[σ]` is not a right zero, with
-`[σ] [σ] ≠ [σ]` in the context `σ́ __` (§6.2). -/
+-- §2.1, §6.2
 theorem amara_not_isDefinite_one : ¬ amara.IsDefinite 1 := fun h ↦ by
   have := h.isRightZero_syntacticClass (u := [.unstressed]) le_rfl
     (amara.syntacticClass [.unstressed])

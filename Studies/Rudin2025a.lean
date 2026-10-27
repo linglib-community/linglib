@@ -242,8 +242,6 @@ theorem predicts_khoo_ratings (s : Khoo2015.Sentence) (q : Khoo2015.Response) :
   · exact iff_of_false (by decide +kernel) (by simp [KhooVerdict, khooSentence, might, ofProp])
   · exact iff_of_true (by decide +kernel) (by simp [KhooVerdict, khooSentence, compatible_might])
 
-/-- Stalnakerian rejection, licensed when the rejector's state excludes every world at which the
-claim is true, misses Khoo's rejection of the *might* claim. -/
 theorem stalnakerian_mispredicts_khoo_ratings :
     ¬ ∀ s q, (Khoo2015.midpoint : ℚ) < Khoo2015.mean s q ↔
       KhooVerdict (fun φ ↦ Disjoint {false} {w | φ .univ w}) s q := by

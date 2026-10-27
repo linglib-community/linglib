@@ -73,22 +73,19 @@ def Result (m : S → α → T → D) (b : D) (x : α) (s : S) (g : D) (e : E) :
 
 variable {m : S → α → T → D} {b : D} {θ : α → S → E → Prop} {φ : α → E → Prop}
 
-/-- A non-quantized change entails that the theme ends the event with more of the property than it
-began with (59). -/
+-- (59)
 theorem exists_lt_of_nonQuantizedChange (h : NonQuantizedChange θ (Result m b) φ) {x : α}
     {e : E} (hx : φ x e) : ∃ s, θ x s e ∧ m s x (τ e).fst < m s x (τ e).snd :=
   let ⟨s, hs, _, h₁, h₂, h₃⟩ := h x e hx
   ⟨s, hs, h₁ ▸ h₃ ▸ h₂⟩
 
-/-- On a predicate whose only scale is `s₀`, a quantized change to `g` ends every event at `g`. -/
 theorem snd_eq_of_quantizedChange {s₀ : S} {g : D} (hθ : ∀ x s e, θ x s e → s = s₀)
     (h : QuantizedChange θ (Result m b) φ g) {x : α} {e : E} (hx : φ x e) :
     m s₀ x (τ e).snd = g :=
   let ⟨s, hs, _, _, h₃⟩ := h x e hx
   hθ x s e hs ▸ h₃
 
-/-- A predicate on a single scale with events ending at different goals effects no quantized change
-(p. 357). -/
+-- p. 357
 theorem not_quantizedChange_of_snd_ne {s₀ : S} (hθ : ∀ x s e, θ x s e → s = s₀) {x x' : α}
     {e e' : E} (hx : φ x e) (hx' : φ x' e') (hne : m s₀ x (τ e).snd ≠ m s₀ x' (τ e').snd) :
     ¬ ∃ g, QuantizedChange θ (Result m b) φ g := fun ⟨_, h⟩ ↦
@@ -103,8 +100,7 @@ section HayKennedyLevin
 variable [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D] {m : S → α → T → D} {b : D}
   {s₀ : S} {φ : α → E → Prop}
 
-/-- On scale `s₀`, a quantized change to `b + n` is the measure-phrase reading of
-[hay-kennedy-levin-1999] from source `b`, as in *the soup cooled 5 degrees* (58a). -/
+-- (58a) [hay-kennedy-levin-1999]
 theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
     QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ (b + n) ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
@@ -118,8 +114,7 @@ theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
   · rintro ⟨h₁, h₂⟩
     exact ⟨h₁, by rw [← h₂, h₁, add_sub_cancel]⟩
 
-/-- On scale `s₀`, a non-quantized change is the *some amount* reading of [hay-kennedy-levin-1999]
-from source `b`, as in *the soup cooled* (58b). -/
+-- (58b) [hay-kennedy-levin-1999]
 theorem nonQuantizedChange_iff_describes_someAmount :
     NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
@@ -143,9 +138,7 @@ open KennedyLevin2008 Degree
 
 variable [LinearOrder D] {m : S → α → T → D} {b : D} {s₀ : S} {φ : α → E → Prop}
 
-/-- From a source below the maximum, the telic reading of a degree achievement on a scale closed
-above, on which the theme reaches the maximum ([kennedy-levin-2008]), is exactly a quantized
-change to `⊤`, as for *straighten*. -/
+-- [kennedy-levin-2008]
 theorem quantizedChange_top_iff_maxStandard [OrderTop D] (hb : b ≠ ⊤) :
     QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ⊤ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
@@ -154,8 +147,7 @@ theorem quantizedChange_top_iff_maxStandard [OrderTop D] (hb : b ≠ ⊤) :
   simp only [Result, exists_eq_left, hb.lt_top, true_and]
   exact and_congr_right fun h ↦ by rw [preimage_measureOfChange_Ici_top (h ▸ hb)]; simp
 
-/-- The atelic reading of a degree achievement, on which the theme ends above where it began
-([kennedy-levin-2008]), is exactly a non-quantized change, as for *widen* or *cool*. -/
+-- [kennedy-levin-2008]
 theorem nonQuantizedChange_iff_minStandard :
     NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
@@ -181,20 +173,17 @@ def role (θ : α → S → β → Prop) (R : α → S → G → β → Prop) (�
 
 variable {θ : α → S → β → Prop} {R : α → S → G → β → Prop} {φ : α → β → Prop}
 
-/-- Every predicate's role is contentful, closed under entailment, since each degree entails the
-weaker ones ([beavers-2010] (67)). -/
+-- (67) [beavers-2010]
 theorem isLowerSet_role : IsLowerSet (role θ R φ) :=
   fun _ _ h ↦ AffectednessDegree.holds_antitone θ R φ h
 
-/-- A predicate has the role that [beavers-2010] names by the degree `d` exactly when its
-entailments are those at most as strong as `d`. -/
+-- [beavers-2010]
 theorem role_eq_entailments_iff {d : AffectednessDegree} :
     role θ R φ = d.entailments ↔
       ∀ e : AffectednessEntailment, AffectednessDegree.Holds θ R φ e.1 ↔ e.1 ≤ d := by
   simp [role, Set.ext_iff, AffectednessDegree.coe_entailments]
 
-/-- A set of affectedness entailments is the role of some predicate exactly when it is a lower set
-([beavers-2010] (66)–(67)). -/
+-- (66), (67) [beavers-2010]
 theorem exists_role_eq_iff (s : Set AffectednessEntailment) :
     (∃ (θ : Unit → Unit → Bool → Prop) (R : Unit → Unit → Bool → Bool → Prop)
       (φ : Unit → Bool → Prop), role θ R φ = s) ↔ IsLowerSet s := by

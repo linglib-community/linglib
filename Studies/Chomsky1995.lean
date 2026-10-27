@@ -337,17 +337,16 @@ def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.val.validPaths := by
     t.val.Positions :=
   ⟨⟨l⟩, h⟩
 
-/-- *Saw* projects to the root and *the* to its sister, the labels of (11). -/
+-- (11)
 theorem maximalProjectionAt_theManSawIt :
     maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[1, 0]⟩ = ⊥ ∧
       maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[0, 0]⟩ = ⟨[0]⟩ := by
   decide
 
-/-- The terms of (11), one per position, are seven, as (10) counts them. -/
+-- (11), (10)
 theorem card_positions_theManSawIt : Fintype.card theManSawIt.val.Positions = 7 := by decide
 
-/-- *It* and *man* are minimal and maximal, *saw* and *the* only minimal, and the X′ over *saw*
-neither, the levels of (9). -/
+-- (9)
 theorem levels_theManSawIt :
     (IsMinimalProjection (HeadDaughterAt theManSawIt) (position theManSawIt [1, 1]) ∧
         IsMaximalProjection (HeadDaughterAt theManSawIt) (position theManSawIt [1, 1])) ∧

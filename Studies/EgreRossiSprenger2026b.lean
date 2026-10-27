@@ -359,8 +359,7 @@ theorem update_eq_empty_of_forall_not_accepts (h : ∀ t : Set W, t.Nonempty →
     (s : Set W) : update s φ = ∅ :=
   Set.not_nonempty_iff_eq_empty.1 fun hne ↦ h _ hne (accepts_update s φ)
 
-/-- A context accepts `□A` exactly when it accepts `A`, which gives Łukasiewicz's Principle and
-Strong *must* (**Fact 7**). -/
+-- Fact 7
 theorem accepts_box_iff : Accepts s (box φ) ↔ Accepts s φ := by
   refine ⟨fun h w hw ↦ ?_, fun h w hw ↦ ?_⟩
   · rw [SignType.nonneg_iff_ne_neg_one]
@@ -547,7 +546,7 @@ theorem accepts_cond_dia_iff : Accepts s (cond φ (dia ψ)) ↔ Accepts s (dia (
   · have := h w (update_subset s φ hw)
     rwa [cond_apply_of_mem (update_subset s φ hw) hw] at this
 
-/-- **Fact 8**, the *must* half, is Theorem 1. -/
+-- Fact 8, Theorem 1
 theorem accepts_cond_box_iff_box_cond :
     Accepts s (cond φ (box ψ)) ↔ Accepts s (box (cond φ ψ)) :=
   accepts_cond_box_iff.trans accepts_box_cond_iff.symm
@@ -643,7 +642,7 @@ theorem not_accepts_contra {s : Set W} (hs : s.Nonempty) (p : Set W) :
   rw [((agrees_ofSet p).neg.conj (agrees_ofSet p).dia).accepts_iff]
   exact Yalcin2007.not_accepted_contra hs
 
-/-- ... and so is its mirror image `◇p ∧ ¬p`, the antecedent of (19). -/
+-- (19)
 theorem not_accepts_dia_conj_neg {s : Set W} (hs : s.Nonempty) (p : Set W) :
     ¬ Accepts s (conj (dia (ofSet p)) (-ofSet p)) := by
   rw [((agrees_ofSet p).dia.conj (agrees_ofSet p).neg).accepts_iff, inf_comm]
@@ -739,8 +738,7 @@ theorem entails_cond_dia (a b : Set W) :
   rw [accepts_cond_ofSet_iff, accepts_dia_ofSet_iff]
   exact fun hsa ↦ h₁ (hsa.mono Set.inter_subset_left)
 
-/-- Without the premise `◇A`, *if my team wins out, they might win it all* (27) does not entail
-(26). -/
+-- (27), (26)
 theorem not_entails_dia_conj :
     ¬ Entails {cond (ofSet (∅ : Set Unit)) (dia (ofSet Set.univ))}
       (dia (conj (ofSet ∅) (ofSet Set.univ))) := by
@@ -788,7 +786,7 @@ theorem not_entails_of_dia : ¬ Entails {dia (ofSet ({true} : Set Bool))} (ofSet
     exact fun _ ↦ ⟨true, Set.mem_univ _, rfl⟩
   exact absurd (accepts_ofSet_iff.1 this (Set.mem_univ false)) (by simp)
 
-/-- Replacement of Logical Equivalents fails for *must* (§5), since `□A ⊨ A` but `¬□A ⊭ ¬A`. -/
+-- §5
 theorem not_entails_neg_box : ¬ Entails {-box (ofSet ({true} : Set Bool))} (-ofSet {true}) := by
   intro h
   have := h Set.univ fun φ hφ w hw ↦ by
@@ -831,7 +829,7 @@ private theorem marble_must : Accepts Set.univ (cond (-ofSet {true}) (box (ofSet
 private theorem marble_not_must : Accepts Set.univ (-box (ofSet ({false} : Set Bool))) :=
   fun w _ ↦ by rw [neg_apply, marble_box]; decide
 
-/-- Modus tollens fails for a modal consequent in [yalcin-2012]'s marble case (28). -/
+-- (28) [yalcin-2012]
 theorem not_modus_tollens_box :
     ¬ Entails {cond (-ofSet {true}) (box (ofSet {false})), -box (ofSet {false})}
       (ofSet ({true} : Set Bool)) := by
@@ -850,7 +848,7 @@ theorem not_contraposition_box :
   rw [accepts_cond_iff, update_eq_self_of_accepts marble_not_must] at this
   exact absurd (accepts_ofSet_iff.1 this (Set.mem_univ false)) (by simp)
 
-/-- Uniform Substitution fails (Proposition 4). Although `p ⊨ p ∨ q` for conditional-free `p`... -/
+-- Proposition 4
 theorem entails_disj_ofSet (p q : Set W) : Entails {ofSet p} (disj (ofSet p) (ofSet q)) := by
   intro s h
   rw [disj_ofSet, accepts_ofSet_iff]
@@ -867,8 +865,7 @@ theorem not_entails_disj_cond :
   rw [cond_ofSet_empty, disj_apply] at h0
   exact absurd h0 (by simp)
 
-/-- Replacement of Logical Equivalents fails (Proposition 4). For conditional-free `p` and `q`,
-`p → q` and `¬p ∨ q` are equivalent... -/
+-- Proposition 4
 theorem entails_cond_iff_disj (p q : Set W) :
     Entails {cond (ofSet p) (ofSet q)} (disj (-ofSet p) (ofSet q)) ∧
       Entails {disj (-ofSet p) (ofSet q)} (cond (ofSet p) (ofSet q)) := by
@@ -891,8 +888,7 @@ theorem not_entails_neg_cond_neg_disj :
     accepts_ofSet_iff] at this
   exact this (Set.mem_univ ())
 
-/-- Conditional Proof fails with modal premises (§5). `q, ◇¬p, p ⊨ ¬q`, since no nonempty context
-accepts both `p` and `◇¬p`... -/
+-- §5
 theorem entails_of_dia_neg (p q : Set W) :
     Entails {ofSet p, ofSet q, dia (-ofSet p)} (-ofSet q) := by
   intro s h
@@ -903,7 +899,7 @@ theorem entails_of_dia_neg (p q : Set W) :
   obtain ⟨v, hvs, hvp⟩ := hd ⟨w, hw⟩
   exact absurd (hp hvs) hvp
 
-/-- ... yet `q, ◇¬p ⊭ p → ¬q`, in footnote 18's model of a `pq`-world and a `¬pq`-world. -/
+-- footnote 18
 theorem not_entails_cond_of_dia_neg :
     ¬ Entails {ofSet (Set.univ : Set Bool), dia (-ofSet {true})}
       (cond (ofSet {true}) (-ofSet Set.univ)) := by
@@ -1030,8 +1026,7 @@ theorem prob_cond_box_eq_prob_box_cond [IsFiniteMeasure μ] (h : Mirrors μ s) :
       h.prob_eq_one_iff.2 (accepts_box_cond_iff.2 ha)]
   · rw [prob_cond_box_eq_zero h ha, prob_box_cond_eq_zero h ha]
 
-/-- Under Definition 6 read literally, the probability half of Theorem 1 fails, since `p → □¬p` and
-`□(p → ¬p)` can differ in probability. -/
+-- Definition 6, Theorem 1
 theorem not_prob_cond_box_eq_of_literal :
     ∃ μ : Measure Bool, IsProbabilityMeasure μ ∧ μ Set.univ = 1 ∧
       prob μ (cond (ofSet {true}) (box (-ofSet {true})) Set.univ) ≠

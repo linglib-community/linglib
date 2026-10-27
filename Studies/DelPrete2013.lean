@@ -97,14 +97,13 @@ def Large (V₀ : E → Prop) (s : S) : Prop := ∀ b, Branch linear b s → ∀
 
 variable {linear τ}
 
-/-- HAB, §5: over a large situation, a covering event of a cumulative verb is plural. -/
+-- §5
 theorem isPlural_of_large {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {s : S}
     (hL : Large linear τ V₀ s) {b : S} (hb : Branch linear b s) {e : E}
     (he : AlgClosure V₀ e) (hbe : b ≤ τ e) : IsPlural V₀ e :=
   (isPlural_iff_of_atom hV₀).2 ⟨he, λ ha => hL b hb e (of_algClosure_of_atom he ha) hbe⟩
 
-/-- PROG, §5: over a small reference situation, a single singular event whose trace covers the
-expanded situation verifies the same denotation. -/
+-- §5
 theorem impf_of_le {V₀ : E → Prop} {fexp : S → S} {s : S} {e : E} (he : V₀ e)
     (hs : fexp s ≤ τ e) : IMPF linear τ fexp (AlgClosure V₀) s :=
   λ _ hb => ⟨e, .base he, hb.2.trans hs⟩
@@ -151,23 +150,20 @@ theorem ssp {x : I} (hx : Atom x) {e e' : E} (h : Th e = x) (he' : AtomicPart e'
     Th e' = x :=
   hx.eq (h ▸ OrderHomClass.monotone Th he'.2) (hTh e' he'.1)
 
-/-- The same-object effect, §5: an event of (24d) has one `N`-individual as the theme of each
-of its singular sub-events. -/
+-- §5, (24d)
 theorem soe {N : I → Prop} (hN : ∀ ⦃x⦄, N x → Atom x) {V : E → Prop} {e : E}
     (h : indefinite Th N V e) : ∃ x, N x ∧ ∀ e', AtomicPart e' e → Th e' = x :=
   let ⟨x, hx, _, h'⟩ := h; ⟨x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
 
 end SSP
 
-/-- (9a) entails (13), §3: a kind coerced indefinite over sub-kinds of the kind entails the
-bare plural. -/
+-- (9a), (13), §3
 theorem barePlural_of_kindIndefinite {K : I → Prop} {k : I} (hK : ∀ ⦃X⦄, K X → X ≤ k)
     {V : E → Prop} {e : E} (h : kindIndefinite Th K V e) : barePlural Th V k e :=
   let ⟨_, hX, hd⟩ := h
   λ e' he' => let ⟨x, ⟨hx, hxX⟩, hP⟩ := hd e' he'; ⟨x, ⟨hx, hxX.trans (hK hX)⟩, hP⟩
 
-/-- (13) does not entail (9a), footnote 12: Gianni smokes a Toscanello and a Mori, and no
-sub-kind of tuscan cigar is the kind he smokes. -/
+-- (13), (9a), footnote 12
 theorem not_kindIndefinite_of_barePlural :
     ∃ (E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
       (K : I → Prop) (k : I) (V : E → Prop) (e : E),
@@ -181,8 +177,7 @@ theorem sempre_of_forall_not {C : S → Prop} (hC : ∀ s, ¬ C s) (R : E → S 
     (P : E → Prop) (e₀ : E) : sempre C R P e₀ :=
   λ s hs => absurd hs (hC s)
 
-/-- (29) has no same-object effect, §6: with the indefinite in the scope of `sempre`, the books
-read on two occasions differ. -/
+-- (29), §6
 theorem sempre_indefinite_no_soe :
     ∃ (S E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
       (C : S → Prop) (R : E → S → Prop) (N : I → Prop) (V : E → Prop) (e₀ : E),
@@ -191,8 +186,7 @@ theorem sempre_indefinite_no_soe :
     λ _ => True, λ e s => e = {s}, λ x => x = {0} ∨ x = {1}, λ _ => True, {0, 1},
     by unfold sempre indefinite; decide, by unfold AtomicPart; decide⟩
 
-/-- (30) has no same-object effect, §6: the bare plural distributes, and two singular readings
-have different books as themes. -/
+-- (30), §6
 theorem barePlural_no_soe :
     ∃ (E I : Type) (_ : SemilatticeSup E) (_ : SemilatticeSup I) (Th : SupHom E I)
       (V : E → Prop) (k : I) (e : E),
@@ -221,8 +215,7 @@ theorem hab_soe {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {N 
   let ⟨e, ⟨x, hx, hcl, h'⟩, hbe⟩ := h b hb
   ⟨e, isPlural_of_large hV₀ hL hb hcl hbe, hbe, x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
 
-/-- By principle (O), (2b) is odd on HAB, since habitually reading philosophy books commonly
-involves different books (§7). -/
+-- (2b), §7
 theorem not_impf_indefinite {read₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, read₀ e → Atom e)
     {book : I → Prop} (hN : ∀ ⦃x⦄, book x → Atom x)
     (hCK : ∀ e, IsPlural read₀ e → ∀ x, book x → ∃ e', AtomicPart e' e ∧ Th e' ≠ x)
@@ -236,8 +229,7 @@ theorem not_impf_indefinite {read₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, read₀
 
 end SameObject
 
-/-- (2a) is good on HAB, §7: a plural event of driving one sports car covers the large expanded
-situation, and no common knowledge excludes it. -/
+-- (2a), §7
 theorem impf_indefinite_witness :
     ∃ (S E I : Type) (_ : SemilatticeSup S) (_ : SemilatticeSup E) (_ : SemilatticeSup I)
       (linear : S → Prop) (τ : SupHom E S) (Th : SupHom E I) (drive₀ : E → Prop)

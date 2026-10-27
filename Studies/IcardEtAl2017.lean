@@ -107,20 +107,18 @@ private theorem preimage_update_c (s : CausalStructure) (b : Bool) :
 
 /-! ### Necessity, sufficiency and the measure (Table 2, eqs. (2) and (3)) -/
 
-/-- When the causes are disjoined the focal cause is not necessary, since the alternative is
-present (Table 2). -/
+-- Table 2
 theorem necessity_disjunctive (μ : Measure (Cause → Bool)) :
     necessity μ (fun _ ↦ true) (effect .disjunctive) {c} = 0 :=
   necessity_eq_zero (by decide)
 
-/-- When the causes are conjoined the focal cause is fully necessary (Table 2). -/
+-- Table 2
 theorem necessity_conjunctive (hc : p c < 1) :
     necessity (prior p) (fun _ ↦ true) (effect .conjunctive) {c} = 1 :=
   necessity_eq_one (by decide)
     (by rw [measure_pi_compl_cause_singleton]; exact ber_false_ne_zero hc)
 
-/-- When the causes are conjoined the sufficiency of the focal cause is `P(A)`, and when they are
-disjoined it is one (Table 2). -/
+-- Table 2
 theorem sufficiency_collider (hc : p c < 1) (ha : p a < 1) :
     sufficiency (prior p) (fun _ ↦ true) (effect .conjunctive) {c} = Ber(true, false, p a) {true} ∧
       sufficiency (prior p) (fun _ ↦ true) (effect .disjunctive) {c} = 1 := by
@@ -132,8 +130,7 @@ theorem sufficiency_collider (hc : p c < 1) (ha : p a < 1) :
   refine ⟨by simp [measure_pi_cause], ?_⟩
   rw [← compl_eq_univ_sdiff, ENNReal.div_self ha' (measure_ne_top _ _)]
 
-/-- The measure is `P(C) P(A) + P(¬C)` when the causes are conjoined, eq. (3), and `P(C)` when they
-are disjoined, eq. (2). -/
+-- (3), (2)
 theorem strength_collider (hc : p c < 1) (ha : p a < 1) :
     strength p .conjunctive = Ber(true, false, p c) {true} * Ber(true, false, p a) {true} +
         Ber(true, false, p c) {false} ∧
@@ -416,7 +413,7 @@ theorem isProbabilityMeasure_step [IsProbabilityMeasure μ] (h₀ : μ (cause w�
       exact cond_isProbabilityMeasure (by assumption)⟩
   unfold step; infer_instance
 
-/-- The expected hit of a step is the actual causal strength, eq. (1). -/
+-- (1)
 theorem integral_hit_step [IsFiniteMeasure μ] :
     ∫ z, hit w₀ E S z ∂(step μ w₀ E S) = (score μ w₀ E S).toReal := by
   have h (b : Bool) : (fun w ↦ decide (w ∈ cause w₀ S)) ⁻¹' {b} =

@@ -90,7 +90,7 @@ def AroundEvent (d : X → ℕ) : Set (X × ℕ) := {p | d p.1 ≤ p.2}
 /-- The graded meaning of "around" is the prior mass of the radii reaching the value. -/
 noncomputable def aroundWeight (ν : Measure ℕ) (d : X → ℕ) (x : X) : ℝ≥0∞ := ν (Set.Ici (d x))
 
-/-- The closer a value is to the target, the likelier "around" is true of it (§3.2.1). -/
+-- §3.2.1
 theorem aroundWeight_le_of_le (ν : Measure ℕ) (d : X → ℕ) {x x' : X} (h : d x ≤ d x') :
     aroundWeight ν d x' ≤ aroundWeight ν d x :=
   measure_mono (Set.Ici_subset_Ici.mpr h)
@@ -197,14 +197,14 @@ theorem bir_unif_apply_singleton (n k : ℕ) :
   · rw [zero_mul, ENNReal.zero_div, Nat.sub_eq_zero_of_le (by unfold Nat.dist; omega),
       Nat.cast_zero, ENNReal.zero_div]
 
-/-- The posterior is symmetric about the target (§3.2.2 (i)). -/
+-- §3.2.2, (i)
 theorem bir_unif_symm {n j : ℕ} (h : j ≤ n) :
     bir (unif (2 * n)) (unif n) (Nat.dist n) {n + j} =
       bir (unif (2 * n)) (unif n) (Nat.dist n) {n - j} := by
   rw [bir_unif_apply_singleton, bir_unif_apply_singleton,
     show Nat.dist n (n + j) = Nat.dist n (n - j) by unfold Nat.dist; omega]
 
-/-- The farther a value from the target, the less probable it has become (§3.2.2 (i)). -/
+-- §3.2.2, (i)
 theorem bir_unif_antitone {n k k' : ℕ} (h : Nat.dist n k ≤ Nat.dist n k') :
     bir (unif (2 * n)) (unif n) (Nat.dist n) {k'} ≤
       bir (unif (2 * n)) (unif n) (Nat.dist n) {k} := by
@@ -219,8 +219,7 @@ theorem ofDensity_betweenMeaning (μ : Measure ℕ) :
       RSA.listener μ (RSA.truthful (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)) :=
   (RSA.listener_truthful_eq_ofDensity μ _).symm
 
-/-- Under a uniform prior "between" gives the step function uniform on its interval and zero
-outside it (§3.2.2 (ii)). -/
+-- §3.2.2, (ii)
 theorem listener_truthful_unif_betweenMeaning {N a b : ℕ} (hb : b ≤ N) (k : ℕ) :
     Kernel.ofDensity (unif N) betweenMeaning (a, b) {k} =
       if k ∈ Set.Icc a b then ((b + 1 - a : ℕ) : ℝ≥0∞)⁻¹ else 0 := by
@@ -271,8 +270,7 @@ theorem ratio_inequality {k₁ k₂ : ℕ} (h : k₁ < k₂) (hk : k₂ ≤ n) (
   rw [div_lt_div_iff₀ h₂ (mul_pos h₂ h₃)]
   nlinarith [mul_pos h₁ h₂]
 
-/-- "Between" leaves the odds unchanged, since for two values in its interval the ratio of
-posteriors is the ratio of priors (§4). -/
+-- §4
 theorem between_ratio {a b k₁ k₂ : ℕ} (hk₁ : k₁ ∈ Set.Icc a b) (hk₂ : k₂ ∈ Set.Icc a b)
     (hab : μ (Set.Icc a b) ≠ 0) :
     (Kernel.ofDensity μ betweenMeaning (a, b)).real {k₁} /
@@ -422,15 +420,14 @@ theorem table1_ac_around4 : table1 ≪ L0 .around4 :=
     · exact absurd (Nat.cast_eq_zero.mp h) (by have := x.isLt; unfold Nat.dist; omega)
     · exact absurd h (by norm_num)
 
-/-- "Between 1 and 7" excludes only values the belief of Table 1 excludes. -/
+-- Table 1
 theorem table1_ac_between1_7 : table1 ≪ L0 .between1_7 :=
   Measure.absolutelyContinuous_of_forall_singleton fun x hx ↦ by
     rw [L0_between1_7_apply_singleton] at hx
     rw [table1_apply_singleton]
     fin_cases x <;> simp_all +decide [table1Weight]
 
-/-- "Exactly 4" excludes values the belief of Table 1 leaves possible, so the speaker never uses
-it (footnote 17). -/
+-- Table 1, footnote 17
 theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
     RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) () {.exactly4} = 0 :=
   (RSA.speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 fun h ↦ by
@@ -493,8 +490,7 @@ variable [Fintype X] [MeasurableSingletonClass X] [Fintype M] [MeasurableSinglet
 meaning, which constrains the value alone. -/
 noncomputable def jointL0 : Kernel M (X × O) := Kernel.ofDensity P fun m p ↦ meaning m p.1
 
-/-- The value-marginal of the joint literal listener is the literal listener on the value-marginal
-prior (footnote 23). -/
+-- footnote 23
 theorem jointL0_map_fst (m : M) :
     (jointL0 P meaning m).map Prod.fst = Kernel.ofDensity (P.map Prod.fst) meaning m :=
   Kernel.ofDensity_map P (measurable_of_countable _).aemeasurable measurable_fst.aemeasurable

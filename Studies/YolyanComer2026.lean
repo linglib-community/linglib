@@ -251,8 +251,7 @@ def nasalization : Program Seg NasHead
   | .V' => .label vow x
   | .N' => .ite (.label vow x) (.label nas x.succ) (.label nas x)
 
-/-- On /bæn/ (Fig. 3) the output columns are V′ = ⊥⊤⊥ and N′ = ⊥⊤⊤, [bæ̃n], the æ nasalized
-by the following n. -/
+-- Fig. 3
 theorem nasalization_columns :
     (List.range 3).map (fun i ↦ nasalization.eval baen i (.call .V' x)) =
         [some false, some true, some false] ∧
@@ -294,8 +293,7 @@ def nasalizationChi : System Seg 1 where
   eqs _ := ((Formula.label vow).and (.dia (.label nas))).or (.label nas)
   out := 0
 
-/-- The modal (4) marks exactly positions 1 and 2 of /bæn/ nasal, agreeing with the
-BMRS N′ column. -/
+-- (4)
 theorem nasalizationChi_sat : ∀ i, nasalizationChi.Sat baen i ↔ i = 1 ∨ i = 2 := by
   intro i
   simp only [System.Sat]
@@ -386,7 +384,7 @@ theorem warao_le_sem : waraoU ≤ waraoChi.sem naote := by
 theorem warao_sem : waraoChi.sem naote = waraoU :=
   le_antisymm (waraoChi.sem_le naote warao_op_le) warao_le_sem
 
-/-- The modal (7) marks exactly positions 0, 1, 2 of /naote/ (Fig. 5). -/
+-- (7), Fig. 5
 theorem warao_sat {i : ℕ} : waraoChi.Sat naote i ↔ i < 3 := by
   rw [System.Sat, warao_sem]
   exact Iff.rfl

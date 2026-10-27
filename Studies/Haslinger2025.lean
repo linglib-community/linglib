@@ -106,8 +106,7 @@ def Plural.potential : Plural → ℕ
   | .all => 0
   | .defAll => 1
 
-/-- *The doors* and *all the doors* are incomparable, each better on one ordering, so neither blocks
-the other, (60). -/
+-- (60)
 theorem the_all_incomparable :
     ¬ manner Plural.complexity Plural.potential .the <
         manner Plural.complexity Plural.potential .all ∧
@@ -115,8 +114,7 @@ theorem the_all_incomparable :
         manner Plural.complexity Plural.potential .the := by
   simp [manner, Prod.lt_iff, Plural.complexity, Plural.potential]
 
-/-- A definite built on the quantifier is dominated by the quantifier, so it is blocked wherever the
-two are potentially p-equivalent, (8). -/
+-- (8)
 theorem defAll_blocked (PotEquiv : Plural → Plural → Prop) (h : PotEquiv .all .defAll) :
     Blocked Plural.complexity Plural.potential PotEquiv .defAll :=
   ⟨.all, h, by simp [manner, Prod.lt_iff, Plural.complexity, Plural.potential]⟩
@@ -203,8 +201,7 @@ def clock : Finset ℤ := {15, 5, 1}
 /-- The angle scales of (17) have widths ninety, ten, five and one degrees. -/
 def angle : Finset ℤ := {90, 10, 5, 1}
 
-/-- *10:45* is rounder than *10:46* on the clock-time scales, and *150* than *152* on the cardinal
-ones, (24). -/
+-- (24)
 theorem rounder_examples :
     (AtLeastAsRound (OnScale clock) 646 645 ∧ ¬ AtLeastAsRound (OnScale clock) 645 646) ∧
       AtLeastAsRound (OnScale decimal) 152 150 ∧ ¬ AtLeastAsRound (OnScale decimal) 150 152 := by
@@ -277,7 +274,7 @@ theorem tolerated_deviation_is_inferred_cell
 
 end Roundness
 
-/-- *more than n* is blocked by bare *n* at any positive deviation ((69)–(70)). -/
+-- (69), (70)
 theorem moreThan_blocked (n : ℤ) {m : ℚ} (hm : 0 < m) :
     Violates (moreThan n m) (numeral n m) := by
   refine ⟨false, fun d hd ↦ ?_, fun hall ↦ ?_, fun hall ↦ ?_⟩

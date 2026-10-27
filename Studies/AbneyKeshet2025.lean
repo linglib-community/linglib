@@ -332,7 +332,7 @@ def chasedACat : Tree (.fn .e .t) :=
   .pm (.lex (.pred .chaseEvt))
     (.fx (.lex (.role .hasPatient)) .c (.fa (.lex (.a .c)) (.lex (.pred .cat))))
 
-/-- (57): `λe(CHASE-EVT(e) ∧ HAS-PATIENT(e, c) ∧ CAT([c]))`. -/
+-- (57)
 theorem interp_chasedACat :
     interp [] chasedACat = fun e =>
       .conj (pred₁ .chaseEvt e)
@@ -346,8 +346,7 @@ def aFarmerWhoOwnsADonkey : Tree .t :=
       (.fa (.lex (.tense .o)) (.pm (.lex (.pred .ownEvt))
         (.fx (.lex (.role .hasPatient)) .d (.fa (.lex (.a .d)) (.lex (.pred .donkey)))))))))
 
-/-- (65): `FARMER([x]) ∧ DONKEY([d]) ∧ OWNS([o], x, d)`, the relative pronoun's variable
-replaced by the indefinite's index. -/
+-- (65)
 theorem interp_aFarmerWhoOwnsADonkey :
     interp [] aFarmerWhoOwnsADonkey =
       restricted .x fun y => .conj (pred₁ .farmer y)
@@ -366,7 +365,7 @@ def everyGirlWroteAPaper : Tree .t :=
       (.fa (.lex (.tense .u)) (.pm (.lex (.pred .writeEvt))
         (.fx (.lex (.role .hasPatient)) .p (.fa (.lex (.a .p)) (.lex (.pred .paper))))))))
 
-/-- (79): `EVERY(ΣgG, ΣgP) where G ≡ GIRL([g]), P ≡ (G ∧ PAPER([p]) ∧ WROTE([u], g, p))`. -/
+-- (79)
 theorem interp_everyGirlWroteAPaper :
     interp [] everyGirlWroteAPaper =
       .subset (SA .g .G (restricted .g (pred₁ .girl)))
@@ -377,14 +376,14 @@ theorem interp_everyGirlWroteAPaper :
 /-- (93): the simple pronoun "she_x". -/
 def sheX : Tree .e := .fa (.lex .she) (.lex (.core .x))
 
-/-- (94c): `x | FEM(x) ∧ SG(x)`. -/
+-- (94c)
 theorem interp_sheX :
     interp [] sheX = .presup (.var .x) (.conj (pred₁ .fem (.var .x)) (.sg (.var .x))) := rfl
 
 /-- (99): the summation pronoun "they^P_p" after (66). -/
 def theyP : Tree .e := .fa (.lex .they) (.sa .p .Y (.lex (.ldpTrace .P)))
 
-/-- (100): `(ΣpP) | PL(ΣpP)`, the label `Y` of the pronoun's summation defined as `P`. -/
+-- (100)
 theorem interp_theyP :
     interp [] theyP = .presup (SA .p .Y (.label .P)) (.pl (SA .p .Y (.label .P))) := rfl
 
@@ -865,7 +864,7 @@ def theyLoud : Fm :=
     (.conj (.labelDef .D (pred₁ .dog (.bvar .d)))
       (.labelDef .B (.conj (.label .D) (pred₁ .barks (.var .d)))))
 
-/-- (104): the pronoun denotes the sum of the barking dogs. -/
+-- (104)
 theorem expandSelf_theyLoud :
     theyLoud.expandSelf =
       .conj (.conj (.atom .most (.var .w) ![.sigma .d (pred₁ .dog (.bvar .d)),

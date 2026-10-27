@@ -256,13 +256,12 @@ external interpretations coincide (Fact 1). -/
 theorem knowInt_E_iff : knowInt dox (E P) x w ↔ know dox (E P) x w :=
   ⟨And.left, fun h ↦ ⟨h, fun _ hv ↦ h.of_mem hv⟩⟩
 
-/-- On strongly exhaustive readings the internal and external interpretations coincide, since
-on a partition nucleus the complete operator is the non-complete one (Fact 1). -/
+-- Fact 1
 theorem knowInt_Ecmp_iff_of_isPartition [Finite W] (h : P.IsPartition) :
     knowInt dox (Ecmp P) x w ↔ know dox (Ecmp P) x w := by
   rw [Ecmp_eq_E_of_isPartition h, knowInt_E_iff]
 
-/-- The factivity presupposition of *know* with a declarative complement, (41). -/
+-- (41)
 theorem knowFactive_ofSet_ne_zero_iff [Finite W] :
     knowFactive dox (E (ofSet q)) x w ≠ 0 ↔ w ∈ q := by
   simp [knowFactive, E_nonempty_iff, info_ofSet]
@@ -271,14 +270,12 @@ theorem knowFactive_ne_zero_of_isPartition [Finite W] (h : P.IsPartition) :
     knowFactive dox (E P) x w ≠ 0 := by
   simp [knowFactive, E_nonempty_iff, h.info_eq_univ]
 
-/-- The presupposition of *care* with a declarative complement, (69a), is that the subject
-knows the nucleus. -/
+-- (69a)
 theorem care_ofSet_ne_zero_iff [Finite W] (bou : X → W → Set W) :
     care dox (E (ofSet q)) x bou w ≠ 0 ↔ w ∈ q ∧ dox x w ⊆ q := by
   simp [care, E_nonempty_iff, info_ofSet, Set.subset_def]
 
-/-- *be surprised* is veridical, since its maximal truthful resolution witnesses the truth of
-the nucleus (65). -/
+-- (65)
 theorem mem_info_of_surprised [Finite W] {exp : X → W → Set W}
     (h : surprised dox (E P) x exp w) : w ∈ info P :=
   let ⟨_, hq, _, _⟩ := h
@@ -497,7 +494,7 @@ theorem cDistributive_know : CDistributive (know dox) := by
     obtain ⟨b, -, hb⟩ := hQ.2 u
     exact hwU ⟨m, hmS, ((hb m ⟨hS hmS, hum⟩).trans (hb c ⟨hc, hDc hu⟩).symm) ▸ hwc⟩
 
-/-- *know* is veridical for interrogatives, (45), by Fact 5. -/
+-- (45), Fact 5
 theorem intVeridical_know : IntVeridical (know dox) :=
   IntVeridical.of_cDistributive (cDistributive_know dox) (declVeridical_know dox)
 

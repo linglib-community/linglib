@@ -234,8 +234,7 @@ def soSoonAVisit : PhraseStructure.Tree Cat String :=
 /-- The site prenominal modifiers merge with is the nonmaximal noun of (104). -/
 abbrev nounSite : Site := .at onceAndFutureKing ⟨[1]⟩
 
-/-- An underspecified adverb merges with anything but a nonmaximal noun or a comparative, so *twice*
-precedes *as tall as* but not *taller* ((97)). -/
+-- (97)
 theorem adverb_mergesWith_iff {h : Site} :
     MergesWith [.adverb] h ↔
       ¬ (Selected.nonmaximal N).Matches h ∧ ¬ (Selected.degree .cmpr).Matches h := by
@@ -305,8 +304,7 @@ theorem argument_rows_2020 : ∀ e ∈ BrueningAlKhalaf2020.Examples.all,
           (∀ p ∈ ps, p ∈ cats) ∧ ∃ p ∈ ps, ∃ q ∈ ps, p ≠ q) := by
   decide
 
-/-- The revision admits *strengthen* and *withdraw* with a noun phrase coordinated with a clause,
-which the paper excludes semantically ((42c), §5.6). -/
+-- (42c), §5.6
 theorem semantic_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "semantic" →
     e.judgment ≠ .acceptable ∧ ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
       Admits (Satisfies (checkedOnce d) cats) ps := by

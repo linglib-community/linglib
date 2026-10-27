@@ -417,8 +417,7 @@ theorem integral_memoryMean_snoc {n : ℕ} (e : Fin (n + 1) → ℝ) :
   field_simp
   ring
 
-/-- The expected memory-weighted mean after `n` productions: each production moves it by the
-bias divided by the total memory weight (§3.2). -/
+-- §3.2
 theorem integral_memoryMean (n : ℕ) :
     ∫ e, memoryMean γ e ∂seqLaw (rule γ tgt ν bias seed) (n + 1) =
       seed + bias * ∑ k ∈ range n, (totalWeight γ (k + 2))⁻¹ := by
@@ -605,8 +604,7 @@ theorem integral_memoryMean_succ_sub (n : ℕ) :
   rw [integral_memoryMean hν hν0, integral_memoryMean hν hν0, sum_range_succ]
   ring
 
-/-- The more exemplars a speaker has stored, the less a production moves the expected mean
-(§3.2). -/
+-- §3.2
 theorem lenition_slows_with_experience :
     Antitone fun n ↦ |∫ e, memoryMean γ e ∂seqLaw (rule γ tgt ν bias seed) (n + 2) -
       ∫ e, memoryMean γ e ∂seqLaw (rule γ tgt ν bias seed) (n + 1)| := by
@@ -648,8 +646,7 @@ theorem entrenchment_narrows (n : ℕ) :
   exact mul_le_mul_of_nonneg_left (spreadGrowth_average_le_exemplar γ n)
     (add_nonneg (variance_nonneg _ _) (sq_nonneg _))
 
-/-- With entrenchment the expected spread never exceeds what noise and bias add at a single
-production, however long the change runs (§3.3). -/
+-- §3.3
 theorem integral_memorySpread_average_le (n : ℕ) :
     ∫ e, memorySpread γ e ∂seqLaw (rule γ .average ν bias seed) (n + 1) ≤
       Var[id; ν] + bias ^ 2 := by
