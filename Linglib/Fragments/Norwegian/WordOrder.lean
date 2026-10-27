@@ -5,26 +5,36 @@ public import Linglib.Syntax.Clause.Basic
 /-!
 # Norwegian word order
 
-This file records where the finite verb of Standard Norwegian and of the Nordmøre dialect
-stands, as distributions over sentence types and embedding contexts. Faarlund, Lie and Vannebo
-describe the Norwegian clause by two schemas. In schema A, the schema of main clauses, the finite
-verb follows a forefield of at most one constituent and precedes the sentence adverbials: a
-declarative or a wh-question fills the forefield and a yes/no-question leaves it empty, so that
-its verb comes first. In schema B, the schema of most subordinate clauses, the finite verb
-follows the subject and the sentence adverbials. Embedded questions take schema B, and so does
-an *at*-clause used as an exclamation, *At du vil gjøre det!*. An *at*-clause that reports a
-statement may take either schema, *Han sa at nå kunne de komme inn* beside *Han sa at de nå
-kunne komme inn*, so that verb second is optional in the complement of a bridge verb such as
-*si* 'say' and excluded under subordination elsewhere. Whether the complement keeps its
-complementizer does not matter: Westergaard gives both orders with and without *at*.
-Exclamatives are not verb second. Nordmøre Norwegian is strictly verb second in declaratives but
-lets the verb stay low in every wh-question, with short and long wh-phrases alike, the
-verb-second order remaining grammatical.
+Norwegian is a verb-second language: in a main clause the finite verb is preceded by exactly one
+constituent, *Da snakker han engelsk* 'Then he speaks English'. Faarlund, Lie and Vannebo describe
+the clause by two schemas. Schema A, the schema of main clauses, places the finite verb after the
+forefield, which holds at most one constituent, and before the sentence adverbials. A declarative
+or a wh-question fills the forefield; a yes/no-question leaves it empty, so that the verb comes
+first, *Liker du jordbær?* 'Do you like strawberries?'. Schema B, the schema of most subordinate
+clauses, places the finite verb after the subject and the sentence adverbials, *da han ikkje hadde
+eti middag den dagen* 'when he had not eaten dinner that day'. Exclamatives are not verb second,
+*Så fin du er!* 'How nice you look!'.
+
+Among subordinate clauses, schema A is found above all in an *at*-clause that reports a statement,
+the complement of a *bridge verb* such as *si* 'say', and even there schema B is possible: *Han sa
+at nå kunne de komme inn* beside *Han sa at de nå kunne komme inn* 'He said that now they could
+come in'. Whether the complementizer *at* is present does not matter, as Westergaard notes, *Han sa
+(at) han kommer ikke* 'He said (that) he isn't coming'. A conditional clause without a subjunction
+also takes schema A, *Kjem dei, går ikkje eg* 'If they come, I'm not going'. Embedded questions
+take schema B, as does an *at*-clause used on its own as an exclamation, *At du vil gjøre det!*
+'That you would do that!'.
+
+The Nordmøre dialect differs from Standard Norwegian in its wh-questions, where verb second is
+optional with short and long wh-phrases alike, *Kåles bil du kjøpte?* beside *Kåles bil kjøpte
+du?* 'Which car did you buy?'; its declaratives are strictly verb second.
 
 ## Implementation notes
 
-The comments locate each cell: FLV cites Faarlund, Lie and Vannebo by page, W cites
-Westergaard by chapter-2 example number or table.
+Verb second is a `Clause.Distribution` over sentence types and embedding contexts. The complement
+of a bridge verb is the quasi-subordinated context, whose cell combines the clauses with and
+without *at*; other subordinate clauses are subordinated, and conditional clauses have no cell. The
+comments locate each cell: FLV cites Faarlund, Lie and Vannebo by page, W cites the second chapter
+of Westergaard by example or the third by table.
 
 ## TODO
 
@@ -45,22 +55,19 @@ namespace Norwegian
 
 open Clause
 
-/-- In the complement of a bridge verb with *at* verb second is optional, *Han sa at han ikke
-kommer* beside *Han sa at han kommer ikke*. -/
+/-- Verb second in a subordinate clause introduced by *at*: optional after a bridge verb. -/
 def verbSecondWithComplementizer : Distribution
   | .declarative, .quasiSubordinated => some .optional  -- FLV pp. 866–867, W (36)
   | _, _ => none
 
-/-- Without its complementizer the complement of a bridge verb is still optionally verb second,
-*Han sa han ikke kommer* beside *Han sa han kommer ikke*. -/
+/-- Verb second in a subordinate clause without a complementizer: optional after a bridge verb,
+as with *at*. -/
 def verbSecondWithoutComplementizer : Distribution
   | .declarative, .quasiSubordinated => some .optional  -- W (36)
   | _, _ => none
 
-/-- Standard Norwegian requires verb second in root declaratives, yes/no-questions and
-wh-questions and allows it in the complement of a bridge verb, combining the cases with and
-without *at*; it excludes it in exclamatives, imperatives, embedded questions, other subordinate
-declaratives, and an *at*-clause used as an exclamation. -/
+/-- Verb second in Standard Norwegian: required in root declaratives and questions, optional
+after a bridge verb, and excluded in the other clauses recorded. -/
 def verbSecond : Distribution
   | .declarative, .matrix => some .obligatory  -- FLV p. 859, W (5)–(7)
   | .polar, .matrix => some .obligatory  -- FLV p. 863, W (8)
@@ -75,8 +82,8 @@ def verbSecond : Distribution
   | .declarative, .insubordinated => some .excluded  -- FLV p. 864
   | _, _ => none
 
-/-- Nordmøre Norwegian differs from Standard Norwegian in root clauses only in its wh-questions,
-where verb second is optional; its embedded clauses are not described. -/
+/-- Verb second in the Nordmøre dialect: as in Standard Norwegian in root clauses, except that it
+is optional in wh-questions. Subordinate clauses are not described. -/
 def Nordmore.verbSecond : Distribution
   | .constituent, .matrix => some .optional  -- W (37), (38)
   | t, .matrix => Norwegian.verbSecond t .matrix
