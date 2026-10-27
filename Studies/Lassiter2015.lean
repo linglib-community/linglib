@@ -555,7 +555,7 @@ theorem bestWorlds_crossed : bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
   decide
 
 theorem not_strict_kratzerLift_bestWorlds :
-    ¬Strict (KratzerLift (premisePreorder crossed).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
+    ¬AsymmRel (KratzerLift (premisePreorder crossed).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
       (bestWorlds ⊥ (fun _ ↦ crossed) 0)ᶜ := by
   rw [bestWorlds_crossed]
   refine fun ⟨_, h⟩ ↦ h ?_
@@ -586,7 +586,7 @@ theorem quant_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : P A �
   h (measure_eq_zero_iff_ae_notMem.2 (quant_must P (A := Aᶜ) hP hn))
 
 theorem quant_moreLikely_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w)
-    (h : Strict P.inducedGe A B) : humanPossibility f ⊥ (· ∈ A) w :=
+    (h : AsymmRel P.inducedGe A B) : humanPossibility f ⊥ (· ∈ A) w :=
   quant_might P hP fun h0 ↦ h.2 (by simp [Measure.inducedGe, h0])
 
 variable [IsProbabilityMeasure P]
@@ -629,7 +629,7 @@ theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) 
   rw [not_le]
   constructor <;> intro h <;> linarith
 
-theorem moreLikely_might (h : Strict P.inducedGe A B) : probMight P 1 A := by
+theorem moreLikely_might (h : AsymmRel P.inducedGe A B) : probMight P 1 A := by
   have hlt := h.2
   rw [Measure.inducedGe_iff_real, not_le] at hlt
   have := measureReal_nonneg (μ := P) (s := B)
@@ -638,7 +638,7 @@ theorem moreLikely_might (h : Strict P.inducedGe A B) : probMight P 1 A := by
 
 theorem weak_refutes_moreLikely_might :
     ∃ P : Measure (Fin 100), IsProbabilityMeasure P ∧ ∃ A B : Set (Fin 100),
-      Strict P.inducedGe A B ∧ ¬probMight P (9 / 10) A := by
+      AsymmRel P.inducedGe A B ∧ ¬probMight P (9 / 10) A := by
   have hpair : ({0, 1} : Set (Fin 100)).ncard = 2 := Set.ncard_pair (by decide)
   refine ⟨uniformOn Set.univ, inferInstance, {0, 1}, {0}, ⟨?_, ?_⟩, ?_⟩
   · exact measure_mono (Set.singleton_subset_iff.2 (by simp))

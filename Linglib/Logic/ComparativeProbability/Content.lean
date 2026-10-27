@@ -131,8 +131,8 @@ theorem inducedGe_iff_real (μ : Measure W) [IsFiniteMeasure μ] {A B : Set W} :
   (ENNReal.toReal_le_toReal (measure_ne_top μ B) (measure_ne_top μ A)).symm
 
 theorem strict_inducedGe_iff_real (μ : Measure W) [IsFiniteMeasure μ] {A B : Set W} :
-    Strict μ.inducedGe A B ↔ μ.real B < μ.real A := by
-  rw [Strict, μ.inducedGe_iff_real, μ.inducedGe_iff_real, not_le]
+    AsymmRel μ.inducedGe A B ↔ μ.real B < μ.real A := by
+  rw [AsymmRel, μ.inducedGe_iff_real, μ.inducedGe_iff_real, not_le]
   exact ⟨And.right, fun h ↦ ⟨h.le, h⟩⟩
 
 theorem measure_le_iff_sdiff_le [DiscreteMeasurableSpace W] (μ : Measure W) [IsFiniteMeasure μ]

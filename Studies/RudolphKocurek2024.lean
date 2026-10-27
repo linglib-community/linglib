@@ -179,7 +179,7 @@ def coneDiff (le : W → W → Prop) (P Q : W → Prop) (i : W) : Set W :=
 theorem strict_lewisLift_iff_below {below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (A B : Set W) :
-    Strict (LewisLift ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
+    AsymmRel (LewisLift ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
   rw [strict_lewisLift_iff hTotal]
   exact exists_congr fun a ↦ and_congr_right fun _ ↦ forall₂_congr fun b _ ↦ (hBelow b a).symm
 
@@ -187,7 +187,7 @@ theorem coneStrictLift_iff_strict_lewisLift {le below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (P Q : W → Prop) (i : W) :
     ConeStrictLift le below P Q i ↔
-      Strict (LewisLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
+      AsymmRel (LewisLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
   rw [strict_lewisLift_iff_below hTotal hBelow]
   unfold ConeStrictLift coneDiff
   simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
@@ -198,8 +198,8 @@ variable (le : W → W → Prop) (P Q : W → Prop) (i : W)
 true and `Q` false, ranks strictly above every member making `Q` true and `P` false, and ranks
 strictly above either every member making both true or every member making both false. -/
 def RevisedComp : Prop :=
-  ∃ a, le a i ∧ P a ∧ ¬ Q a ∧ (∀ b, le b i → Q b → ¬ P b → Strict le b a) ∧
-    ((∀ b, le b i → P b → Q b → Strict le b a) ∨ (∀ b, le b i → ¬ P b → ¬ Q b → Strict le b a))
+  ∃ a, le a i ∧ P a ∧ ¬ Q a ∧ (∀ b, le b i → Q b → ¬ P b → AsymmRel le b a) ∧
+    ((∀ b, le b i → P b → Q b → AsymmRel le b a) ∨ (∀ b, le b i → ¬ P b → ¬ Q b → AsymmRel le b a))
 
 /-- The revised equative clause of the supplement. Either every member of the cone below `i` making
 exactly one of `P` and `Q` true is matched, at least as high, by one making only the other true, or
@@ -218,7 +218,7 @@ instance [Fintype W] [DecidableRel le] [DecidablePred P] [DecidablePred Q] :
 variable {le P Q i}
 
 theorem revisedComp_iff : RevisedComp le P Q i ↔ ∃ a, le a i ∧ P a ∧ ¬ Q a ∧
-    ((∀ b, le b i → Q b → Strict le b a) ∨ (∀ b, le b i → ¬ P b → Strict le b a)) := by
+    ((∀ b, le b i → Q b → AsymmRel le b a) ∨ (∀ b, le b i → ¬ P b → AsymmRel le b a)) := by
   refine exists_congr fun a ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦
     and_congr_right fun _ ↦ ⟨?_, ?_⟩
   · rintro ⟨hd, hc | hc⟩
@@ -229,7 +229,7 @@ theorem revisedComp_iff : RevisedComp le P Q i ↔ ∃ a, le a i ∧ P a ∧ ¬ 
     · exact ⟨fun b hb _ hP ↦ h b hb hP, .inr fun b hb hP _ ↦ h b hb hP⟩
 
 theorem coneStrictLift_iff_revisedComp :
-    ConeStrictLift le (Strict le) P Q i ↔
+    ConeStrictLift le (AsymmRel le) P Q i ↔
       RevisedComp le (fun a ↦ P a ∧ ¬ Q a) (fun a ↦ Q a ∧ ¬ P a) i :=
   exists_congr fun _ ↦ and_congr_right fun _ ↦
     ⟨fun ⟨hP, hQ, hd⟩ ↦ ⟨⟨hP, hQ⟩, fun h ↦ hQ h.1, fun b hb h _ ↦ hd b hb h.1 h.2,
@@ -238,8 +238,8 @@ theorem coneStrictLift_iff_revisedComp :
 
 theorem revisedComp_iff_coneStrictLift :
     RevisedComp le P Q i ↔
-      ConeStrictLift le (Strict le) (fun a ↦ P a ∧ ¬ Q a) (fun a ↦ ¬ P a) i ∨
-        ConeStrictLift le (Strict le) (fun a ↦ P a ∧ ¬ Q a) Q i := by
+      ConeStrictLift le (AsymmRel le) (fun a ↦ P a ∧ ¬ Q a) (fun a ↦ ¬ P a) i ∨
+        ConeStrictLift le (AsymmRel le) (fun a ↦ P a ∧ ¬ Q a) Q i := by
   rw [revisedComp_iff]
   refine ⟨fun ⟨a, ha, hP, hQ, h⟩ ↦ h.elim (fun h ↦ .inr ?_) (fun h ↦ .inl ?_),
     fun h ↦ h.elim (fun ⟨a, ha, ⟨hP, hQ⟩, _, h⟩ ↦ ⟨a, ha, hP, hQ, .inr fun b hb hP ↦ ?_⟩)
@@ -474,7 +474,7 @@ def Realize : ComparativeFormula L E → (I → I → Prop) → I → W → Prop
   | .inf A B, le, i, w => Realize A le i w ∧ Realize B le i w
   | .sup A B, le, i, w => Realize A le i w ∨ Realize B le i w
   | .comp A B, le, i, w =>
-      ConeStrictLift le (Strict le) (Realize A le · w) (Realize B le · w) i
+      ConeStrictLift le (AsymmRel le) (Realize A le · w) (Realize B le · w) i
 
 instance instDec [Fintype I] [Fintype E] [DecidableEq E]
     [hA : DecidableAtoms interp] (le : I → I → Prop) [DecidableRel le] :
@@ -487,7 +487,7 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
   | .comp A B, i, w =>
       haveI : DecidablePred (Realize interp A le · w) := fun j ↦ instDec le A j w
       haveI : DecidablePred (Realize interp B le · w) := fun j ↦ instDec le B j w
-      inferInstanceAs (Decidable (ConeStrictLift le (Strict le)
+      inferInstanceAs (Decidable (ConeStrictLift le (AsymmRel le)
         (Realize interp A le · w) (Realize interp B le · w) i))
 
 variable {interp} {A B : ComparativeFormula L E} {le : I → I → Prop}
@@ -517,7 +517,7 @@ theorem ComparativeFree.realize_congr :
 
 theorem realize_comp_iff_strict_lewisLift :
     Realize interp (.comp A B) ord.le i w ↔
-    Strict (LewisLift (flip ord.le))
+    AsymmRel (LewisLift (flip ord.le))
       (coneDiff ord.le (Realize interp A ord.le · w) (Realize interp B ord.le · w) i)
       (coneDiff ord.le (Realize interp B ord.le · w) (Realize interp A ord.le · w) i) :=
   coneStrictLift_iff_strict_lewisLift (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl) _ _ _
@@ -739,7 +739,7 @@ variable (φ ψ : ComparativeFormula L E) (ord : SemanticOrdering I)
 
 theorem evalMuchMore_iff_strict_lewisLift :
     EvalMuchMore interp φ ψ ord d i w ↔
-    Strict
+    AsymmRel
       (LewisLift (fun a b ↦ ¬ FarBelow ord d a b))
       (coneDiff ord.le (Eval interp φ ord · w) (Eval interp ψ ord · w) i)
       (coneDiff ord.le (Eval interp ψ ord · w) (Eval interp φ ord · w) i) :=
@@ -750,7 +750,7 @@ theorem evalMuchMore_iff_strict_lewisLift :
 
 theorem evalMostly_iff_strict_lewisLift :
     EvalMostly interp φ ord d i w ↔
-    Strict
+    AsymmRel
       (LewisLift (fun a b ↦ ord.le b a))
       {x | ord.lt x i ∧ d.close i x ∧ ∀ j, ord.equiv j x → Eval interp φ ord j w}
       {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interp φ ord j w} := by

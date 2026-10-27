@@ -29,3 +29,7 @@ instance {α : Type*} (r : α → α → Prop) [DecidableRel r] (a b : α) :
 theorem AsymmRel.trans_le {α : Type*} {r : α → α → Prop} [IsTrans α r] {a b c : α}
     (h : AsymmRel r a b) (h' : r b c) : AsymmRel r a c :=
   ⟨IsTrans.trans _ _ _ h.1 h', fun hca ↦ h.2 (IsTrans.trans _ _ _ h' hca)⟩
+
+theorem asymmRel_of_rel_of_asymmRel {α : Type*} {r : α → α → Prop} [IsTrans α r] {a b c : α}
+    (h : r a b) (h' : AsymmRel r b c) : AsymmRel r a c :=
+  ⟨IsTrans.trans _ _ _ h h'.1, fun hca ↦ h'.2 (IsTrans.trans _ _ _ hca h)⟩
