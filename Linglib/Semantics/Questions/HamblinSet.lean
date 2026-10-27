@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Data.Finset.SetFamily
 public import Mathlib.Data.Finset.Basic
 public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Resolution
@@ -46,7 +47,7 @@ operator on the members of `H` true at `w`:
 - `KnowsSomeAnswer H w Dox`, mention-some knowledge of a true member, which knowing the answer
   implies when there is a true member and equals on a unique one;
 - `exhCell H p`, [fox-2018]'s cells;
-- `ofFinset F`, a finite family of finite propositions, on which the
+- `F.toSetFamily`, a finite family of finite propositions, on which the
   presuppositions are decidable.
 
 The presupposition holds exactly when the weak answer is itself a member
@@ -454,51 +455,44 @@ theorem dayalStrongAns_eq_some_iff {A : Set W} :
 /-! ### Finite Hamblin sets
 
 A finite family of finite propositions is the carrier on which the
-presupposition is decidable; `ofFinset` places it in the `Set (Set W)` API. -/
+presupposition is decidable; `Finset.toSetFamily` places it in the `Set (Set W)` API. -/
 
 section Finite
 
-/-- The Hamblin set of a finite family of finite propositions. -/
-def ofFinset (F : Finset (Finset W)) : Set (Set W) := ((↑) : Finset W → Set W) '' ↑F
-
-@[simp] theorem mem_ofFinset {F : Finset (Finset W)} {p : Set W} :
-    p ∈ ofFinset F ↔ ∃ q ∈ F, ↑q = p := by
-  simp [ofFinset]
-
-theorem isExhaustivelyResolvable_ofFinset_iff (F : Finset (Finset W)) (w : W) :
-    IsExhaustivelyResolvable (ofFinset F) w ↔ ∃ p ∈ F, w ∈ p ∧ ∀ q ∈ F, w ∈ q → p ⊆ q := by
+theorem isExhaustivelyResolvable_toSetFamily_iff (F : Finset (Finset W)) (w : W) :
+    IsExhaustivelyResolvable F.toSetFamily w ↔ ∃ p ∈ F, w ∈ p ∧ ∀ q ∈ F, w ∈ q → p ⊆ q := by
   constructor
   · rintro ⟨p, ⟨hp, hw⟩, hmin⟩
-    obtain ⟨p', hp', rfl⟩ := mem_ofFinset.1 hp
+    obtain ⟨p', hp', rfl⟩ := Finset.mem_toSetFamily.1 hp
     exact ⟨p', hp', hw, fun q hq hwq =>
-      Finset.coe_subset.1 (hmin ⟨mem_ofFinset.2 ⟨q, hq, rfl⟩, hwq⟩)⟩
+      Finset.coe_subset.1 (hmin ⟨Finset.mem_toSetFamily.2 ⟨q, hq, rfl⟩, hwq⟩)⟩
   · rintro ⟨p, hp, hw, hmin⟩
-    refine ⟨↑p, ⟨mem_ofFinset.2 ⟨p, hp, rfl⟩, hw⟩, ?_⟩
+    refine ⟨↑p, ⟨Finset.mem_toSetFamily.2 ⟨p, hp, rfl⟩, hw⟩, ?_⟩
     rintro q ⟨hq, hwq⟩
-    obtain ⟨q', hq', rfl⟩ := mem_ofFinset.1 hq
+    obtain ⟨q', hq', rfl⟩ := Finset.mem_toSetFamily.1 hq
     exact Finset.coe_subset.2 (hmin q' hq' hwq)
 
 instance [DecidableEq W] (F : Finset (Finset W)) (w : W) :
-    Decidable (IsExhaustivelyResolvable (ofFinset F) w) :=
-  decidable_of_iff _ (isExhaustivelyResolvable_ofFinset_iff F w).symm
+    Decidable (IsExhaustivelyResolvable F.toSetFamily w) :=
+  decidable_of_iff _ (isExhaustivelyResolvable_toSetFamily_iff F w).symm
 
-theorem isExhaustivelyResolvableOn_ofFinset_iff (F : Finset (Finset W)) (s : Finset W) :
-    IsExhaustivelyResolvableOn (ofFinset F) ↑s ↔
+theorem isExhaustivelyResolvableOn_toSetFamily_iff (F : Finset (Finset W)) (s : Finset W) :
+    IsExhaustivelyResolvableOn F.toSetFamily ↑s ↔
       ∃ p ∈ F, s ⊆ p ∧ ∀ q ∈ F, s ⊆ q → p ⊆ q := by
   constructor
   · rintro ⟨p, ⟨hp, hs⟩, hmin⟩
-    obtain ⟨p', hp', rfl⟩ := mem_ofFinset.1 hp
+    obtain ⟨p', hp', rfl⟩ := Finset.mem_toSetFamily.1 hp
     exact ⟨p', hp', Finset.coe_subset.1 hs, fun q hq hsq =>
-      Finset.coe_subset.1 (hmin ⟨mem_ofFinset.2 ⟨q, hq, rfl⟩, Finset.coe_subset.2 hsq⟩)⟩
+      Finset.coe_subset.1 (hmin ⟨Finset.mem_toSetFamily.2 ⟨q, hq, rfl⟩, Finset.coe_subset.2 hsq⟩)⟩
   · rintro ⟨p, hp, hs, hmin⟩
-    refine ⟨↑p, ⟨mem_ofFinset.2 ⟨p, hp, rfl⟩, Finset.coe_subset.2 hs⟩, ?_⟩
+    refine ⟨↑p, ⟨Finset.mem_toSetFamily.2 ⟨p, hp, rfl⟩, Finset.coe_subset.2 hs⟩, ?_⟩
     rintro q ⟨hq, hsq⟩
-    obtain ⟨q', hq', rfl⟩ := mem_ofFinset.1 hq
+    obtain ⟨q', hq', rfl⟩ := Finset.mem_toSetFamily.1 hq
     exact Finset.coe_subset.2 (hmin q' hq' (Finset.coe_subset.1 hsq))
 
 instance [DecidableEq W] (F : Finset (Finset W)) (s : Finset W) :
-    Decidable (IsExhaustivelyResolvableOn (ofFinset F) ↑s) :=
-  decidable_of_iff _ (isExhaustivelyResolvableOn_ofFinset_iff F s).symm
+    Decidable (IsExhaustivelyResolvableOn F.toSetFamily ↑s) :=
+  decidable_of_iff _ (isExhaustivelyResolvableOn_toSetFamily_iff F s).symm
 
 end Finite
 

@@ -46,9 +46,9 @@ def Excluder.preExhaustify (E : Excluder W) (ALT : Finset (Finset W)) : Finset (
   ALT.image (E.exh ALT)
 
 theorem asSetOfSets_preExhaustify_innocent (ALT : Finset (Finset W)) :
-    asSetOfSets (innocent.preExhaustify ALT) = preExhaustify exhIE (asSetOfSets ALT) := by
+    (innocent.preExhaustify ALT).toSetFamily = preExhaustify exhIE ALT.toSetFamily := by
   ext s
-  simp only [mem_asSetOfSets, Excluder.preExhaustify, Finset.mem_image, preExhaustify,
+  simp only [Finset.mem_toSetFamily, Excluder.preExhaustify, Finset.mem_image, preExhaustify,
     Set.mem_image]
   constructor
   · rintro ⟨_, ⟨a, ha, rfl⟩, rfl⟩
