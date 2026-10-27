@@ -72,7 +72,7 @@ theorem presup_then : Presup Demonstrative.then.cell a J ↔ ¬ J.Overlaps a := 
 /-- Only R-PAST is compatible with *now* (p. 24): a reference within the *now*-interval lies
 within the assessment time and cannot precede it. -/
 theorem not_restricted_now_past : ¬ Restricted Past.past.cell Demonstrative.now.cell a r J :=
-  fun ⟨hr, hle, hJ⟩ ↦ NonemptyInterval.precedes_not_overlaps (presup_precedes.1 hr)
+  fun ⟨hr, hle, hJ⟩ ↦ NonemptyInterval.Precedes.not_overlaps (presup_precedes.1 hr)
     (NonemptyInterval.overlaps_of_le (hle.trans (presup_le.1 hJ)))
 
 -- p. 31
@@ -99,7 +99,7 @@ theorem not_precedes_of_cats (h : Cats a u τ₀) (hr : r ≤ a) (hau : a.Preced
     ¬ r.Precedes τ₀ := by
   rcases h with rfl | h
   · exact absurd hau (NonemptyInterval.precedes_irrefl _)
-  · exact fun hrτ ↦ NonemptyInterval.precedes_not_overlaps ((h r).2 hrτ)
+  · exact fun hrτ ↦ NonemptyInterval.Precedes.not_overlaps ((h r).2 hrτ)
       (NonemptyInterval.overlaps_of_le hr)
 
 /-- Final *then*, (41): when the *then*-interval is the time of the most recent eventuality, CATS

@@ -143,7 +143,7 @@ variable [Preorder α] {τ : E → NonemptyInterval α} {V : EvQuant E} {P : E �
 that it applies to the events whose trace precedes `p`, the measurement of the evaluation
 argument. -/
 def le (τ : E → NonemptyInterval α) (V : EvQuant E) (p : α) : Part Prop :=
-  ⟨¬ AtomDist τ V, fun _ ↦ V fun e ↦ (τ e).IsBefore (.pure p)⟩
+  ⟨¬ AtomDist τ V, fun _ ↦ V fun e ↦ (τ e).snd ≤ p⟩
 
 /-- *Méi-yǒu*, (6.18), is the negation of *le*, with the same presupposition. -/
 def meiyou (τ : E → NonemptyInterval α) (V : EvQuant E) (p : α) : Part Prop :=
@@ -154,7 +154,7 @@ def meiyou (τ : E → NonemptyInterval α) (V : EvQuant E) (p : α) : Part Prop
 @[simp] theorem meiyou_dom : (meiyou τ V p).Dom ↔ ¬ AtomDist τ V := Iff.rfl
 
 @[simp] theorem le_get (h : (le τ V p).Dom) :
-    (le τ V p).get h ↔ V fun e ↦ (τ e).IsBefore (.pure p) := Iff.rfl
+    (le τ V p).get h ↔ V fun e ↦ (τ e).snd ≤ p := Iff.rfl
 
 @[simp] theorem meiyou_get (h : (meiyou τ V p).Dom) :
     (meiyou τ V p).get h ↔ ¬ (le τ V p).get h := Iff.rfl

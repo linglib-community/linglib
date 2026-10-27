@@ -67,7 +67,7 @@ theorem IsNonCrossing.of_intervals {I : ι → NonemptyInterval T} {J : κ → N
   intro x hx y hy hlt
   by_contra! hgt
   rcases IsIntervalOrder.two_plus_two (hI hlt) (hJ hgt) with h | h
-  exacts [precedes_not_overlaps h (hR x hx), precedes_not_overlaps h (overlaps_symm (hR y hy))]
+  exacts [Precedes.not_overlaps h (hR x hx), Precedes.not_overlaps h (overlaps_symm (hR y hy))]
 
 end Intervals
 
@@ -91,7 +91,7 @@ theorem hasIntervalOrder_of_intervals {T : Type*} [LinearOrder T] (I : X.Pos →
     (hI : ∀ i ⦃p q : Fin (X.word i).length⦄, p < q → (I ⟨i, p⟩).Precedes (I ⟨i, q⟩))
     (hA : ∀ ⦃v w⦄, X.assoc.Adj v w → (I v).Overlaps (I w)) : X.HasIntervalOrder :=
   ⟨InvImage Precedes I, isIntervalOrder_precedes.invImage I, hI,
-    fun _ _ h hp ↦ precedes_not_overlaps hp (hA h)⟩
+    fun _ _ h hp ↦ Precedes.not_overlaps hp (hA h)⟩
 
 /-- A representation with an interval order obeys the No-Crossing Constraint: two crossing
 lines would make the order of their tiers a `2 + 2`. -/

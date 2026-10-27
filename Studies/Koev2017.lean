@@ -60,7 +60,7 @@ instance [DecidableEq T] [DecidableEq L] (loc : E → L) (e₁ e₂ : E) :
 
 theorem temporallyDisjoint_of_precedes {e₁ e₂ : E} (h : (τ e₁).Precedes (τ e₂)) :
     temporallyDisjoint e₁ e₂ :=
-  NonemptyInterval.precedes_not_overlaps h
+  NonemptyInterval.Precedes.not_overlaps h
 
 /-- A learning scenario pairs the described event with the learning event through which the
 speaker acquired the evidence for the claim, (74b). -/

@@ -26,7 +26,6 @@ their converses and composites, and chains of cells.
   `Allen.startsWithin`, `Allen.finalSubinterval`, `Allen.nonfinalSubinterval`, `Allen.eq`,
   `Allen.pure`, `Allen.ofPosition`: named cells.
 * `Allen.HoldsAlong`, `Allen.compAlong`: chains of cells and their composites.
-* `NonemptyInterval.position`: the position of two intervals.
 
 ## Main results
 
@@ -311,56 +310,11 @@ section LinearOrder
 
 variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
 
-/-- The position of `i` relative to `j`: `lt` when `i` precedes `j`, `gt` when `j` precedes `i`,
-and `eq` when the two overlap. Two intervals of a linear order stand in exactly one of these, so
-that a set of admissible positions is a `Finset Ordering`, as a set of admissible comparisons of
-points is. -/
-def _root_.NonemptyInterval.position (i j : NonemptyInterval T) : Ordering :=
-  (relation i j).position
-
 theorem position_relation (i j : NonemptyInterval T) :
-    i.position j = (relation i j).position := rfl
-
-theorem _root_.NonemptyInterval.position_eq_ite :
-    i.position j = if i.Precedes j then .lt else if j.Precedes i then .gt else .eq := by
-  simp [NonemptyInterval.position, Relation.position, relation, ofEndpoints,
-    NonemptyInterval.Precedes, compare_gt_iff_gt, compare_lt_iff_lt]
+    i.position j = (relation i j).position := by
+  simp only [NonemptyInterval.position, Relation.position, relation, ofEndpoints,
+    NonemptyInterval.Precedes, compare_lt_iff_lt, compare_gt_iff_gt]
   split_ifs <;> rfl
-
-@[simp] theorem _root_.NonemptyInterval.position_eq_lt : i.position j = .lt ↔ i.Precedes j := by
-  rw [NonemptyInterval.position_eq_ite]; split_ifs <;> simp [*]
-
-@[simp] theorem _root_.NonemptyInterval.position_eq_gt : i.position j = .gt ↔ j.Precedes i := by
-  rw [NonemptyInterval.position_eq_ite]
-  split_ifs with h h'
-  · simp [NonemptyInterval.precedes_asymm h]
-  · simp [h']
-  · simp [h']
-
-@[simp] theorem _root_.NonemptyInterval.position_eq_eq : i.position j = .eq ↔ i.Overlaps j := by
-  rw [NonemptyInterval.overlaps_iff_not_precedes, NonemptyInterval.position_eq_ite]
-  split_ifs <;> simp [*]
-
-@[simp] theorem _root_.NonemptyInterval.position_self (i : NonemptyInterval T) :
-    i.position i = .eq :=
-  NonemptyInterval.position_eq_eq.2 (NonemptyInterval.overlaps_refl i)
-
-@[simp] theorem _root_.NonemptyInterval.position_pure (a b : T) :
-    (NonemptyInterval.pure a).position (.pure b) = compare a b := by
-  rcases lt_trichotomy a b with h | rfl | h
-  · rw [NonemptyInterval.position_eq_lt.2 (by exact h), compare_lt_iff_lt.2 h]
-  · rw [NonemptyInterval.position_self, compare_eq_iff_eq.2 rfl]
-  · rw [NonemptyInterval.position_eq_gt.2 (by exact h), compare_gt_iff_gt.2 h]
-
-/-- An interval containing `i` stands to `j` where `i` does, or overlaps it. -/
-theorem _root_.NonemptyInterval.position_eq_or_eq_eq_of_le {i' : NonemptyInterval T}
-    (hle : i ≤ i') : i'.position j = i.position j ∨ i'.position j = .eq := by
-  cases h : i'.position j with
-  | lt => exact .inl (NonemptyInterval.position_eq_lt.2 <|
-      NonemptyInterval.precedes_of_le_of_precedes hle (NonemptyInterval.position_eq_lt.1 h)).symm
-  | eq => exact .inr rfl
-  | gt => exact .inl (NonemptyInterval.position_eq_gt.2 <|
-      (NonemptyInterval.position_eq_gt.1 h).trans_le (NonemptyInterval.le_def.1 hle).1).symm
 
 end LinearOrder
 
@@ -384,9 +338,9 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
   rw [precedes, relation_mem_filter]
   simp [relation, ofEndpoints, NonemptyInterval.Precedes, compare_lt_iff_lt]
 
-@[simp] theorem relation_mem_isBefore : relation i j ∈ isBefore ↔ i.IsBefore j := by
+@[simp] theorem relation_mem_isBefore : relation i j ∈ isBefore ↔ i.snd ≤ j.fst := by
   rw [isBefore, relation_mem_filter]
-  simp [relation, ofEndpoints, NonemptyInterval.IsBefore, compare_le_iff_le]
+  simp [relation, ofEndpoints, compare_le_iff_le]
 
 @[simp] theorem relation_mem_le : relation i j ∈ le ↔ i ≤ j := by
   rw [le, relation_mem_filter]
@@ -407,9 +361,7 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
 @[simp] theorem relation_mem_finalSubinterval :
     relation i j ∈ finalSubinterval ↔ i.FinalSubinterval j := by
   rw [finalSubinterval, relation_mem_filter]
-  simp only [relation, ofEndpoints, NonemptyInterval.FinalSubinterval, NonemptyInterval.le_def,
-    ne_eq, compare_eq_iff_eq, ← compare_ge_iff_ge (a := i.fst)]
-  exact ⟨fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₁, h₂.le⟩, h₂⟩, fun ⟨⟨h₁, _⟩, h₂⟩ ↦ ⟨h₁, h₂⟩⟩
+  simp [relation, ofEndpoints, NonemptyInterval.FinalSubinterval, compare_lt_iff_lt]
 
 @[simp] theorem relation_mem_nonfinalSubinterval :
     relation i j ∈ nonfinalSubinterval ↔ i.NonfinalSubinterval j := by

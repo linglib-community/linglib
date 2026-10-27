@@ -182,16 +182,14 @@ theorem realizes_simplePast_iff : Realizes .simplePast (.pure t₀) [x] ↔ x.sn
     NonemptyInterval.Precedes]
 
 theorem realizes_presentPerfect_iff : Realizes .presentPerfect (.pure t₀) [x] ↔ x.snd ≤ t₀ := by
-  simp [Realizes, show chain .presentPerfect = [.anterior] from rfl, Allen.HoldsAlong, Link.cell,
-    NonemptyInterval.IsBefore]
+  simp [Realizes, show chain .presentPerfect = [.anterior] from rfl, Allen.HoldsAlong, Link.cell]
 
 theorem realizes_simplePresent_iff : Realizes .simplePresent (.pure t₀) [x] ↔ t₀ ∈ x := by
   simp [Realizes, show chain .simplePresent = [.around] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.le_def, NonemptyInterval.mem_def]
 
 theorem realizes_future_iff : Realizes .future (.pure t₀) [x] ↔ t₀ ≤ x.fst := by
-  simp [Realizes, show chain .future = [.posterior] from rfl, Allen.HoldsAlong, Link.cell,
-    NonemptyInterval.IsBefore]
+  simp [Realizes, show chain .future = [.posterior] from rfl, Allen.HoldsAlong, Link.cell]
 
 -- p. 338
 theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
@@ -203,7 +201,7 @@ theorem Realizes.precedes_of_pastPerfect {b to₂ ts : NonemptyInterval T}
     (h : Realizes .pastPerfect b [to₂, ts]) : ts.Precedes b := by
   simp only [Realizes, show chain .pastPerfect = [.past, .anterior] from rfl, List.map,
     Link.cell, Allen.HoldsAlong, Allen.mem_toSetRel, Allen.relation_mem_precedes,
-    Allen.relation_mem_isBefore, NonemptyInterval.Precedes, NonemptyInterval.IsBefore] at h
+    Allen.relation_mem_isBefore, NonemptyInterval.Precedes] at h
   exact (h.2.1.trans to₂.fst_le_snd).trans_lt h.1
 
 

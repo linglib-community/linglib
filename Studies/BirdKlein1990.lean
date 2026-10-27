@@ -128,7 +128,7 @@ theorem isEventStructure_intervals :
   exact { ov_refl := NonemptyInterval.overlaps_refl
           ov_symm _ _ := NonemptyInterval.overlaps_symm
           prec_asymm := h.prec_asymm
-          not_ov_of_prec _ _ := NonemptyInterval.precedes_not_overlaps
+          not_ov_of_prec _ _ := NonemptyInterval.Precedes.not_overlaps
           prec_of_prec_of_ov _ _ _ _ hwx hxy hyz := h.prec_of_prec_of_ov hwx
             (NonemptyInterval.overlaps_iff_not_precedes.1 hxy) hyz }
 
