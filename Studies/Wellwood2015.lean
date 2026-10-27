@@ -164,14 +164,14 @@ def thanTree : Tree Unit String :=
 /-- The engine derives the matrix clause (37), (45), (61). -/
 theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
     (a : Ent) (δ : ℚ) (g : Assignment Ent) :
-    interp (lexicon role P μ0 a δ) g matrixTree =
+    interp (lexicon role P μ0 a δ) g default matrixTree =
       some ⟨.t, pure (matrixClause role P μ0 a δ)⟩ :=
   rfl
 
 -- (40), (47), (63)
 theorem than_derivation_denotes (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
     (b : Ent) (d : ℚ) (g : Assignment Ent) :
-    interp (lexicon role P μ0 b d) g thanTree =
+    interp (lexicon role P μ0 b d) g default thanTree =
       some ⟨.t, pure (d ∈ thanClause role P μ0 b)⟩ :=
   rfl
 

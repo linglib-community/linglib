@@ -179,7 +179,7 @@ theorem toyLexicon_fst {s : String} {d : Denotation ToyEntity Unit} (h : toyLexi
 
 /-- "John sleeps" composes through `Tree.interp` over the toy lexicon to the model's fact. -/
 example :
-    Tree.interp toyLexicon (fun _ ↦ ToyEntity.john)
+    Tree.interp toyLexicon (fun _ ↦ ToyEntity.john) default
       (.bin (.leaf "John") (.leaf "sleeps") : Tree Unit String) =
         some ⟨.t, Toy.sleeps ToyEntity.john⟩ := rfl
 
@@ -274,7 +274,8 @@ inductive Denotes (lex : L → Option (Denotation E W)) :
 
 /-- Where the book assigns a denotation, the engine at `M = Id` computes it. -/
 theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment E}
-    {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) : interp lex g t = some d := by
+    {gw : Assignment W} {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) :
+    interp lex g gw t = some d := by
   induction h with
   | tn h => rw [interp_terminal]; exact h
   | nn _ ih => exact ih
@@ -293,15 +294,17 @@ theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment 
     have hg := ih (g n)
     rw [Function.update_eq_self] at hg
     simp only [interp_bind, hg, Option.bind_some]
-    show (some ⟨.e ⇒ τ, fun x ↦ valueAt τ (F (g n)) (interp lex (g[n ↦ x]) body)⟩ :
+    show (some ⟨.e ⇒ τ, fun x ↦ valueAt τ (F (g n)) (interp lex (g[n ↦ x]) gw body)⟩ :
       Option (Denotation E W)) = _
     congr 2
     funext x
     simp [ih x, valueAt]
 
-theorem Denotes.unique {lex : L → Option (Denotation E W)} {g : Assignment E} {t : Tree C L}
-    {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
-  Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
+theorem Denotes.unique [Nonempty W] {lex : L → Option (Denotation E W)} {g : Assignment E}
+    {t : Tree C L} {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') :
+    d = d' :=
+  Option.some.inj ((interp_of_denotes (gw := fun _ ↦ Classical.arbitrary W) h).symm.trans
+    (interp_of_denotes h'))
 
 end Reference
 
@@ -347,7 +350,7 @@ noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
 
 /-- *The student* is a presupposition failure in the toy model, which has two students. -/
 theorem the_student_fails :
-    PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
+    PresupFailure partialLex g₀ default (.bin (.leaf "the") (.leaf "student")) := by
   refine ⟨⟨.e, the (PFun.lift student)⟩, ?_, fun ⟨x, _, huniq⟩ ↦ ?_⟩
   · rw [interpPartial_node_binary, interpPartial_terminal, interpPartial_terminal]
     exact Mode.combine?_evalPartial_fn_left the (PFun.lift student)
@@ -356,7 +359,7 @@ theorem the_student_fails :
   exact ToyEntity.noConfusion (hj.trans hm.symm)
 
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
-theorem the_pizza : interpPartial partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
+theorem the_pizza : interpPartial partialLex g₀ default (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
   rw [interpPartial_node_binary, interpPartial_terminal, interpPartial_terminal]
   refine (Mode.combine?_evalPartial_fn_left the (PFun.lift Toy.pizza)).trans ?_
@@ -365,7 +368,7 @@ theorem the_pizza : interpPartial partialLex g₀ (.bin (.leaf "the") (.leaf "pi
 /-- *The John*, the article applied to an individual rather than a predicate, is
 uninterpretable, and the types alone decide it (§4.4.4). -/
 theorem the_john_uninterpretable :
-    Uninterpretable partialLex g₀ (.bin (.leaf "the") (.leaf "John")) := rfl
+    Uninterpretable partialLex g₀ default (.bin (.leaf "the") (.leaf "John")) := rfl
 
 end DefiniteArticle
 
@@ -416,8 +419,8 @@ inductive Denotes (lex : L → Option (PDenotation E W)) :
 
 /-- Where the book's revised rules assign a value, the partial engine computes it. -/
 theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment E}
-    {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
-    interpPartial lex g t = some d := by
+    {gw : Assignment W} {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
+    interpPartial lex g gw t = some d := by
   induction h with
   | tn h => rw [interpPartial_terminal]; exact h
   | nn _ ih => exact ih
@@ -439,9 +442,11 @@ theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment
     funext x
     simp [ih x, valueAtPartial]
 
-theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E} {t : Tree C L}
-    {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
-  Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
+theorem Denotes.unique [Nonempty W] {lex : L → Option (PDenotation E W)} {g : Assignment E}
+    {t : Tree C L} {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') :
+    d = d' :=
+  Option.some.inj ((interp_of_denotes (gw := fun _ ↦ Classical.arbitrary W) h).symm.trans
+    (interp_of_denotes h'))
 
 theorem denotes_the_pizza :
     Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) ⟨.e, Part.some .pizza⟩ := by
@@ -457,10 +462,11 @@ theorem denotes_the_student {v : Part ToyEntity}
   cases Option.some.inj ((interp_of_denotes h).symm.trans hd)
   exact hdom
 
-theorem toyLexicon_toPartial_noFailure (g : Assignment ToyEntity) (t : Tree Unit String) :
-    ¬ PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g t :=
+theorem toyLexicon_toPartial_noFailure (g : Assignment ToyEntity) (gw : Assignment Unit)
+    (t : Tree Unit String) :
+    ¬ PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g gw t :=
   not_presupFailure_map_toPartial (fun _ _ h ↦ by
-    rcases toyLexicon_fst h with h | h | h <;> rw [h] <;> repeat constructor) g t
+    rcases toyLexicon_fst h with h | h | h <;> rw [h] <;> repeat constructor) g gw t
 
 end Partial
 
@@ -495,12 +501,12 @@ def tree_whichJohnSees : Tree Unit String :=
 
 -- p. 101
 theorem interp_whoSleeps (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_whoSleeps = some ⟨.e ⇒ .t, Toy.sleeps⟩ := rfl
+    interp toyLexicon g default tree_whoSleeps = some ⟨.e ⇒ .t, Toy.sleeps⟩ := rfl
 
 /-- The relative clause modifies its head intersectively, restrictive relatives being "just
 another kind of intersective modifier" (p. 88). -/
 theorem interp_studentWhoSleeps (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_studentWhoSleeps =
+    interp toyLexicon g default tree_studentWhoSleeps =
       some ⟨.e ⇒ .t, (Modifier.intersective student Toy.sleeps : ToyEntity → Prop)⟩ := rfl
 
 theorem denotes_studentWhoSleeps (g : Assignment ToyEntity) :
@@ -510,17 +516,18 @@ theorem denotes_studentWhoSleeps (g : Assignment ToyEntity) :
 
 -- (9), p. 94
 theorem interp_johnSeesT (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_johnSeesT = some ⟨.t, Toy.sees (g 1) .john⟩ := rfl
+    interp toyLexicon g default tree_johnSeesT = some ⟨.t, Toy.sees (g 1) .john⟩ := rfl
 
 theorem interp_johnSeesT_ne :
-    interp toyLexicon (g₀[1 ↦ .mary]) tree_johnSeesT ≠ interp toyLexicon g₀ tree_johnSeesT := by
+    interp toyLexicon (g₀[1 ↦ .mary]) default tree_johnSeesT ≠
+      interp toyLexicon g₀ default tree_johnSeesT := by
   simp only [interp_johnSeesT, Function.update_self, ne_eq, Option.some.injEq, Sigma.mk.inj_iff,
     heq_eq_eq, true_and]
   intro h
   rcases cast h (.inl ⟨rfl, rfl⟩) with ⟨_, h⟩ | ⟨h, _⟩ <;> cases h
 
 theorem interp_whichJohnSees (g : Assignment ToyEntity) :
-    interp toyLexicon g tree_whichJohnSees = some ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ := rfl
+    interp toyLexicon g default tree_whichJohnSees = some ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ := rfl
 
 -- pp. 96-98
 theorem denotes_whichJohnSees (g : Assignment ToyEntity) :
@@ -548,14 +555,14 @@ theorem Partial.denotes_the_student_who_sleeps :
 /-- *The student who sleeps* denotes John, though *the student* is a presupposition failure (p. 88).
 -/
 theorem the_student_who_sleeps :
-    interpPartial partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps) =
+    interpPartial partialLex g₀ default (.bin (.leaf "the") tree_studentWhoSleeps) =
       some ⟨.e, Part.some .john⟩ :=
   Partial.interp_of_denotes Partial.denotes_the_student_who_sleeps
 
 /-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]` that §4.5 rejects, a sentence with the
 definite as subject is uninterpretable (p. 83). -/
 theorem det_noun_modifier_uninterpretable :
-    Uninterpretable partialLex g₀
+    Uninterpretable partialLex g₀ default
       (.bin (.bin (.bin (.leaf "the") (.leaf "student")) tree_whoSleeps) (.leaf "sleeps")) :=
   rfl
 
@@ -611,13 +618,14 @@ theorem inverse_entails_surface : inverseScopeProp → surfaceScopeProp :=
   iterate_every_some_of_some_every _ _ _
 
 theorem interp_computes_surface :
-    interp lex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+    interp lex g₀ default tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
 theorem interp_computes_inverse :
-    interp lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
+    interp lex g₀ default tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
 
 /-- The two QR derivations interpret to different meanings. -/
-theorem scope_ambiguity_computed : interp lex g₀ tree_surface ≠ interp lex g₀ tree_inverse := by
+theorem scope_ambiguity_computed :
+    interp lex g₀ default tree_surface ≠ interp lex g₀ default tree_inverse := by
   rw [interp_computes_surface, interp_computes_inverse]
   intro h
   have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
@@ -657,7 +665,7 @@ theorem lex_mem_lexReadings (w : QuantityWord ⊕ String) (d : Denotation ToyEnt
   | inr s => exact h
 
 theorem surfaceScopeProp_mem_readings :
-    ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexReadings g₀ tree_surface :=
+    ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexReadings g₀ default tree_surface :=
   Tree.interp_mem_readings lex_mem_lexReadings interp_computes_surface
 
 end Readings
@@ -701,25 +709,25 @@ def tree_inSitu : Tree Unit (QuantityWord ⊕ String) :=
     (.bin (.leaf (.inr "sees")) (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))))
 
 theorem interp_computes_inSitu :
-    interp (resolve (· = .some_)) g₀ tree_inSitu = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+    interp (resolve (· = .some_)) g₀ default tree_inSitu = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
 theorem inSitu_eq_surface :
-    interp (resolve (· = .some_)) g₀ tree_inSitu = interp lex g₀ tree_surface :=
+    interp (resolve (· = .some_)) g₀ default tree_inSitu = interp lex g₀ default tree_surface :=
   interp_computes_inSitu.trans interp_computes_surface.symm
 
 /-- The surface-scope reading is among the readings of the flat tree under the lexical rule. -/
 theorem surfaceScopeProp_mem_readings_inSitu :
-    ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexFlex g₀ tree_inSitu :=
+    ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexFlex g₀ default tree_inSitu :=
   Tree.interp_mem_readings (resolve_mem_lexFlex _) interp_computes_inSitu
 
 theorem object_entry_in_subject_uninterpretable :
-    interp (resolve (· = .some_)) g₀
+    interp (resolve (· = .some_)) g₀ default
       (.bin (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))) (.leaf (.inr "sleeps"))) =
       none := rfl
 
 -- §7.1
 theorem basic_entry_in_object_uninterpretable :
-    interp (resolve fun _ ↦ False) g₀ (.bin (.leaf (.inr "John"))
+    interp (resolve fun _ ↦ False) g₀ default (.bin (.leaf (.inr "John"))
       (.bin (.leaf (.inr "sees")) (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))))) =
       none := rfl
 
@@ -787,7 +795,8 @@ example : ∃ u, Tree.translate toyVocabulary everyStudentWhoSleepsLaughs = some
 /-- *Every student who sleeps laughs* holds in the toy model, where the students are the ones
 who laugh. -/
 example (g : Assignment ToyEntity) :
-    Tree.HoldsAt (toyModel.lexicon toyVocabulary ()) g everyStudentWhoSleepsLaughs := by
+    Tree.HoldsAt (toyModel.lexicon toyVocabulary ()) g (fun _ ↦ ())
+      everyStudentWhoSleepsLaughs := by
   rw [Tree.holdsAt_iff_eval toyModel () rfl]
   exact fun _ hx ↦ hx.1
 
@@ -836,17 +845,19 @@ def maryBelievesDickIsDeceitful : Tree Unit String :=
 
 -- (8), p. 308: true at `w` iff Jan is loyal at every world compatible with what Mary believes
 -- in `w`
-theorem intension_maryBelievesJanIsLoyal (g : Assignment E) :
-    Tree.intension (intensionalLexicon loyal deceitful believes mary jan dick) g
+theorem intension_maryBelievesJanIsLoyal (g : Assignment E) (gw : Assignment W) :
+    Tree.intension (intensionalLexicon loyal deceitful believes mary jan dick) g gw
       maryBelievesJanIsLoyal = some ⟨.t, fun w ↦ □[believes mary] (loyal · jan) w⟩ :=
   rfl
 
 -- p. 300: interpreted at the lexicon's values at one world, a complement of *believes* is its
 -- truth value, so two true complements make the reports agree
-theorem interp_maryBelieves_eq {w : W} (g : Assignment E) (h : loyal w jan ↔ deceitful w dick) :
+theorem interp_maryBelieves_eq {w : W} (g : Assignment E) (gw : Assignment W)
+    (h : loyal w jan ↔ deceitful w dick) :
     let lex := fun s ↦ (intensionalLexicon loyal deceitful believes mary jan dick s).map
       fun d ↦ (⟨d.1, d.2 w⟩ : Denotation E W)
-    Tree.interp lex g maryBelievesJanIsLoyal = Tree.interp lex g maryBelievesDickIsDeceitful := by
+    Tree.interp lex g gw maryBelievesJanIsLoyal =
+      Tree.interp lex g gw maryBelievesDickIsDeceitful := by
   change (some ⟨.t, □[believes mary] (fun _ ↦ loyal w jan) w⟩ : Option (Denotation E W)) =
     some ⟨.t, □[believes mary] (fun _ ↦ deceitful w dick) w⟩
   rw [propext h]
@@ -867,13 +878,14 @@ inductive Ch12Person | mary | jan | dick
 /-- (11), p. 309: Jan is loyal and Dick deceitful at the actual world, Mary believes that Jan is
 loyal, and she does not believe that Dick is deceitful, since her beliefs leave open a world where
 he is not. -/
-theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person) :
+theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person)
+    (gw : Assignment Ch12World) :
     let lex := intensionalLexicon (W := Ch12World) (fun _ x ↦ x = .jan)
       (fun w x ↦ w = .actual ∧ x = .dick) (fun _ ↦ Set.univ) .mary .jan .dick
-    (∃ p, Tree.intension lex g janIsLoyal = some ⟨.t, p⟩ ∧ p .actual) ∧
-      (∃ p, Tree.intension lex g dickIsDeceitful = some ⟨.t, p⟩ ∧ p .actual) ∧
-      (∃ p, Tree.intension lex g maryBelievesJanIsLoyal = some ⟨.t, p⟩ ∧ p .actual) ∧
-      ∃ p, Tree.intension lex g maryBelievesDickIsDeceitful = some ⟨.t, p⟩ ∧ ¬ p .actual :=
+    (∃ p, Tree.intension lex g gw janIsLoyal = some ⟨.t, p⟩ ∧ p .actual) ∧
+      (∃ p, Tree.intension lex g gw dickIsDeceitful = some ⟨.t, p⟩ ∧ p .actual) ∧
+      (∃ p, Tree.intension lex g gw maryBelievesJanIsLoyal = some ⟨.t, p⟩ ∧ p .actual) ∧
+      ∃ p, Tree.intension lex g gw maryBelievesDickIsDeceitful = some ⟨.t, p⟩ ∧ ¬ p .actual :=
   ⟨⟨_, rfl, rfl⟩, ⟨_, rfl, rfl, rfl⟩, ⟨_, rfl, fun _ _ ↦ rfl⟩,
     ⟨_, rfl, fun h ↦ nomatch (h .other trivial).1⟩⟩
 
