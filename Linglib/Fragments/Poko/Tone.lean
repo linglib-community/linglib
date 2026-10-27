@@ -18,8 +18,9 @@ three tone levels, H, M and L, beside toneless syllables and floating tones, and
 tone-bearing unit is the syllable. The tones of a stem form one of a few lexical melodies, `∅`,
 `M`, `MH`, `LM`, `LH` and `M^H`, and on disyllables also `^L∅^H`, none with more than two tones.
 H is never initial and L never final, floating or not, so the simple melodies `L` and `H` are
-missing: [mcpherson-2022] derives the gap from the edge constraints NonInitial(H) and
-NonFinal(L), and [mcpherson-lamont-2026] suggest an extreme response to the OCP.
+missing: [mcpherson-2022] accounts for the gap with the edge constraints Non-Initial(H) and
+Non-Final(L), each evaluated over the melody and over the tones linked to the stem, and
+[mcpherson-lamont-2026] suggest an extreme response to the OCP.
 
 The entries are the stems of [mcpherson-lamont-2026]'s tableaux. Each is a melody over the
 stem's syllables with its lexical pre-linking, in which the H of an `M^H` stem is the one
