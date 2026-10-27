@@ -592,12 +592,12 @@ section DomainSemantics
 open Sentence Classical
 
 /-- `φ` agrees with the domain-semantic sentence `ψ` at every world of every context. -/
-def Agrees (φ : Sentence W) (ψ : Yalcin2007.Sentence W) : Prop :=
+def Agrees (φ : Sentence W) (ψ : DomainSemantics.Sentence W) : Prop :=
   ∀ s, ∀ w ∈ s, φ s w = ofProp (ψ s w)
 
-variable {φ φ' : Sentence W} {ψ ψ' : Yalcin2007.Sentence W}
+variable {φ φ' : Sentence W} {ψ ψ' : DomainSemantics.Sentence W}
 
-theorem agrees_ofSet (p : Set W) : Agrees (ofSet p) (Yalcin2007.Sentence.ofProp p) :=
+theorem agrees_ofSet (p : Set W) : Agrees (ofSet p) (DomainSemantics.Sentence.ofProp p) :=
   fun _ _ _ ↦ rfl
 
 theorem Agrees.neg (h : Agrees φ ψ) : Agrees (-φ) ψᶜ := fun s w hw ↦ by
@@ -621,7 +621,7 @@ theorem Agrees.dia (h : Agrees φ ψ) : Agrees (dia φ) ψ.might := fun s w hw �
     rw [h s w' hw', ofProp_eq_one_iff]
 
 theorem Agrees.box (h : Agrees φ ψ) : Agrees (box φ) ψ.must := by
-  rw [box_eq_neg_dia_neg, Yalcin2007.Sentence.must_eq_compl_might_compl]
+  rw [box_eq_neg_dia_neg, DomainSemantics.Sentence.must_eq_compl_might_compl]
   exact h.neg.dia.neg
 
 theorem Agrees.accepts_iff (h : Agrees φ ψ) {s : Set W} : Accepts s φ ↔ ψ.AcceptedIn s :=
