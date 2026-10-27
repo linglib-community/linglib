@@ -65,7 +65,7 @@ namespace Det
 
 /-- `Q.toGQ α` holds of `(A, B)` iff the structure `(α, A, B)` is in the class `Q`. -/
 def toGQ (Q : Det.{u}) (α : Type u) : GQ α :=
-  fun A B => (⟨α, monadicStructure α ![A, B]⟩ : Bundled.{u} (Language.monadic (Fin 2)).Structure)
+  fun A B => (⟨α, monadic.structure ![A, B]⟩ : Bundled.{u} (Language.monadic (Fin 2)).Structure)
     ∈ Q.holds
 
 /-- Every realized Lindström quantifier satisfies `QuantityInvariant`, so `q A B` is invariant
@@ -74,7 +74,7 @@ permutation invariance, derived from `iso_inv` rather than stipulated on the den
 theorem realize_quantityInvariant (Q : Det.{u}) {α : Type u} :
     Quantifier.GQ.QuantityInvariant (Q.toGQ α) := by
   intro A B A' B' f hBij hA hB
-  refine Q.iso_inv ⟨monadicStructureEquiv (Equiv.ofBijective f hBij).symm
+  refine Q.iso_inv ⟨monadic.structureEquiv (Equiv.ofBijective f hBij).symm
     (Fin.forall_fin_two.2 ⟨fun x => ?_, fun x => ?_⟩)⟩
   · simpa [Equiv.ofBijective_apply_symm_apply] using (hA ((Equiv.ofBijective f hBij).symm x)).symm
   · simpa [Equiv.ofBijective_apply_symm_apply] using (hB ((Equiv.ofBijective f hBij).symm x)).symm

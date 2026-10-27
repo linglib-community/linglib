@@ -32,9 +32,9 @@ right-to-left pass decodes it.
 
 ## Implementation notes
 
-* A toneless unit is `Tone.TBU.O`, the paper's L. Since `SubsequentialTransducer.runRight`
-  reverses the run, B's blocks are written reversed. The figure gives B no H transition from
-  `q4`; A never writes an H there, and B keeps it.
+* A toneless unit is `Tone.AssociationState.O`, the paper's L. Since
+  `SubsequentialTransducer.runRight` reverses the run, B's blocks are written reversed. The figure
+  gives B no H transition from `q4`; A never writes an H there, and B keeps it.
 * The proof splits a word into Ls, an H, blocks `Lʲ H`, and Ls. A writes each block as H, HH or
   `Lʲ⁻² HLH`, and B, reading right to left, holds back at most one H.
 * Not formalized: §2, where first-last plateauing and double-edged spread are shown regular but
@@ -62,27 +62,27 @@ inductive MarkState
   deriving DecidableEq, Repr, Fintype
 
 /-- The transitions of A. -/
-@[simp] def markStep : MarkState → TBU → MarkState
+@[simp] def markStep : MarkState → AssociationState → MarkState
   | .q0, .O => .q0 | .q0, .H => .q1
   | .q1, .H => .q1 | .q1, .O => .q2
   | .q2, .H => .q1 | .q2, .O => .q3
   | .q3, .O => .q3 | .q3, .H => .q1
 
 /-- The blocks A writes. -/
-@[simp] def markOutput : MarkState → TBU → List TBU
+@[simp] def markOutput : MarkState → AssociationState → List AssociationState
   | .q0, a => [a]
   | .q1, .H => [.H] | .q1, .O => []
   | .q2, .H => [.H, .H] | .q2, .O => []
   | .q3, .O => [.O] | .q3, .H => [.H, .O, .H]
 
 /-- What A writes at the end of the word, the Ls it holds back. -/
-@[simp] def markFinal : MarkState → List TBU
+@[simp] def markFinal : MarkState → List AssociationState
   | .q2 => [.O]
   | .q3 => [.O, .O]
   | _ => []
 
 /-- Transducer A of Figure 1, the left-to-right pass. -/
-def markLeft : SubsequentialTransducer MarkState TBU TBU where
+def markLeft : SubsequentialTransducer MarkState AssociationState AssociationState where
   start := .q0
   step := markStep
   output := markOutput
@@ -100,7 +100,7 @@ inductive ResolveState
   deriving DecidableEq, Repr, Fintype
 
 /-- The transitions of B. -/
-@[simp] def resolveStep : ResolveState → TBU → ResolveState
+@[simp] def resolveStep : ResolveState → AssociationState → ResolveState
   | .q0, .O => .q0 | .q0, .H => .q1
   | .q1, .H => .q1 | .q1, .O => .q2
   | .q2, .O => .q4 | .q2, .H => .q3
@@ -108,7 +108,7 @@ inductive ResolveState
   | .q4, _ => .q4
 
 /-- The blocks B writes, each reversed. -/
-@[simp] def resolveOutput : ResolveState → TBU → List TBU
+@[simp] def resolveOutput : ResolveState → AssociationState → List AssociationState
   | .q0, .O => [.O] | .q0, .H => []
   | .q1, .H => [.H] | .q1, .O => []
   | .q2, .O => [.H, .O, .O] | .q2, .H => [.H, .H, .H]
@@ -116,13 +116,13 @@ inductive ResolveState
   | .q4, a => [a]
 
 /-- What B writes at the end of the word, reversed. -/
-@[simp] def resolveFinal : ResolveState → List TBU
+@[simp] def resolveFinal : ResolveState → List AssociationState
   | .q1 => [.H]
   | .q2 => [.H, .O]
   | _ => []
 
 /-- Transducer B of Figure 1, the right-to-left pass, as run by `runRight`. -/
-def resolveRight : SubsequentialTransducer ResolveState TBU TBU where
+def resolveRight : SubsequentialTransducer ResolveState AssociationState AssociationState where
   start := .q0
   step := resolveStep
   output := resolveOutput
@@ -142,7 +142,7 @@ example : markLeft.run [.H, .O, .H, .H, .O, .O, .O, .O, .H]
 /-! ### The first pass -/
 
 /-- What A writes for a block `Lʲ H` after an H. -/
-private def code : ℕ → List TBU
+private def code : ℕ → List AssociationState
   | 0 => [.H]
   | 1 => [.H, .H]
   | j + 2 => replicate j .O ++ [.H, .O, .H]
@@ -151,12 +151,12 @@ private theorem length_code (j : ℕ) : (code j).length = j + 1 := by
   rcases j with _ | _ | j <;> simp [code]
 
 /-- The blocks `Lʲ H`, one for each entry of `js`. -/
-private def blocks : List ℕ → List TBU
+private def blocks : List ℕ → List AssociationState
   | [] => []
   | j :: js => replicate j .O ++ .H :: blocks js
 
 /-- What A writes for `blocks js`. -/
-private def codes : List ℕ → List TBU
+private def codes : List ℕ → List AssociationState
   | [] => []
   | j :: js => code j ++ codes js
 
@@ -172,7 +172,7 @@ private theorem markLeft_replicate (s : MarkState) (hs : s = .q0 ∨ s = .q3) (k
   | zero => simp
   | succ k ih => rcases hs with rfl | rfl <;> simp [replicate_succ, ih.1, ih.2]
 
-private theorem markLeft_block (j : ℕ) (rest : List TBU) :
+private theorem markLeft_block (j : ℕ) (rest : List AssociationState) :
     markLeft.runFrom .q1 (replicate j .O ++ .H :: rest) = code j ++ markLeft.runFrom .q1 rest := by
   rcases j with _ | _ | j
   · simp [code]
@@ -193,7 +193,8 @@ private theorem markLeft_tail (t : ℕ) :
     have h := markLeft_replicate .q3 (.inr rfl) t
     simp only [markLeft_step, markStep, markLeft_output, markOutput, h.1, h.2,
       markLeft_finalOutput, markFinal, nil_append]
-    rw [show [TBU.O, TBU.O] = replicate 2 TBU.O from rfl, ← replicate_add]
+    rw [show [AssociationState.O, AssociationState.O] = replicate 2 AssociationState.O from rfl,
+      ← replicate_add]
     rfl
 
 private theorem markLeft_run (a : ℕ) (js : List ℕ) (t : ℕ) :
@@ -269,7 +270,8 @@ private theorem resolveRight_prefix (a : ℕ) :
     simp only [(resolveRight_replicate a).2.2, resolveRight_output, resolveOutput,
       resolveRight_step, resolveStep, nil_append, reverse_append, reverse_replicate, reverse_cons,
       reverse_nil]
-    rw [show ([TBU.O] ++ [TBU.O] ++ [TBU.H]) = replicate 2 TBU.O ++ [TBU.H] from rfl,
+    rw [show ([AssociationState.O] ++ [AssociationState.O] ++ [AssociationState.H]) =
+        replicate 2 AssociationState.O ++ [AssociationState.H] from rfl,
       ← append_assoc, ← replicate_add]
     rfl
 
@@ -277,7 +279,8 @@ private theorem resolve_mark (a : ℕ) (js : List ℕ) (t : ℕ) :
     resolveRight.runRight (markLeft.run (replicate a .O ++ .H :: (blocks js ++ replicate t .O)))
       = replicate a .O ++ .H :: (replicate (blocks js).length .H ++ replicate t .O) := by
   rw [markLeft_run, SubsequentialTransducer.runRight, SubsequentialTransducer.run]
-  have hrev : (replicate a TBU.O ++ TBU.H :: (codes js ++ replicate t .O)).reverse
+  have hrev :
+      (replicate a AssociationState.O ++ AssociationState.H :: (codes js ++ replicate t .O)).reverse
       = replicate t .O ++ ((codes js).reverse ++ [.H]) ++ replicate a .O := by simp
   obtain ⟨hg, n, hn, hc⟩ := resolveRight_codes (s := .q0) (.inl rfl) js
   obtain ⟨h1, h2⟩ := resolveRight_head hg
@@ -294,7 +297,8 @@ private theorem resolve_mark (a : ℕ) (js : List ℕ) (t : ℕ) :
 
 /-! ### Plateauing -/
 
-private theorem exists_blocks (u : List TBU) : ∃ js t, u = blocks js ++ replicate t .O := by
+private theorem exists_blocks (u : List AssociationState) :
+    ∃ js t, u = blocks js ++ replicate t .O := by
   induction u with
   | nil => exact ⟨[], 0, rfl⟩
   | cons x u ih =>
@@ -306,7 +310,7 @@ private theorem exists_blocks (u : List TBU) : ∃ js t, u = blocks js ++ replic
       | nil => exact ⟨[], t + 1, rfl⟩
       | cons j js => exact ⟨(j + 1) :: js, t, rfl⟩
 
-private theorem decomposition (w : List TBU) :
+private theorem decomposition (w : List AssociationState) :
     (∃ a, w = replicate a .O) ∨
       ∃ a js t, w = replicate a .O ++ .H :: (blocks js ++ replicate t .O) := by
   induction w with
@@ -340,7 +344,7 @@ private theorem utp_map_blocks (a : ℕ) (js : List ℕ) (t : ℕ) :
     simp [replicate_succ]
 
 /-- B after A computes unbounded tonal plateauing (Figure 1). -/
-theorem utp_map_eq_resolve_mark (w : List TBU) :
+theorem utp_map_eq_resolve_mark (w : List AssociationState) :
     utp.map w = resolveRight.runRight (markLeft.run w) := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
   · simp only [utp.map_toneless, SubsequentialTransducer.runRight, SubsequentialTransducer.run,
@@ -351,7 +355,7 @@ theorem utp_map_eq_resolve_mark (w : List TBU) :
   · rw [resolve_mark, utp_map_blocks]
 
 /-- A preserves length. -/
-theorem length_markLeft_run (w : List TBU) : (markLeft.run w).length = w.length := by
+theorem length_markLeft_run (w : List AssociationState) : (markLeft.run w).length = w.length := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
   · simp [SubsequentialTransducer.run, SubsequentialTransducer.runFrom,
       (markLeft_replicate .q0 (.inl rfl) a).1, (markLeft_replicate .q0 (.inl rfl) a).2]

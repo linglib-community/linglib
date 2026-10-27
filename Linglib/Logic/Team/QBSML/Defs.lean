@@ -317,7 +317,7 @@ abbrev Model (W : Type*) (Domain : Type*) (Const : Type*) (Pred : Type*) :=
 
 /-- The unary relation symbol of the predicate `P`. -/
 abbrev predSymb (P : Pred) : ((Language.monadic Pred)[[Const]]).Relations 1 :=
-  Sum.inl P
+  Sum.inl (.pred P)
 
 /-- The QBSML model with accessibility `access`, constant interpretation `κ`, and valuation
     `V`. -/
