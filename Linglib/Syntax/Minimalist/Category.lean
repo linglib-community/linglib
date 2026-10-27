@@ -80,8 +80,7 @@ inductive Cat where
   | Num
   /-- The demonstrative, above number ([cinque-2005]). -/
   | Dem
-  /-- Borer's dividing head, the classifier position, between little n and `Num`
-  ([borer-2005]). -/
+  /-- Borer's dividing head, the classifier position, below `Num` ([borer-2005]). -/
   | Q
   /-- Voice, which introduces the external argument ([kratzer-1996], [schaefer-2008]). -/
   | Voice

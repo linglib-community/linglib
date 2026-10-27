@@ -241,6 +241,6 @@ theorem status_truncations :
     status [.N, .n] = some .stuff ∧ status [.N, .n, .Q] = some .divided := by
   decide
 
-theorem fValue_Q_lt_Num : Cat.fValue .Q < Cat.fValue .Num := by decide
+theorem asymmRel_Q_Num : AsymmRel Cat.ExtendsTo .Q .Num := by decide +kernel
 
 end Borer2005

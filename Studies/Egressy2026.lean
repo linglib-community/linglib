@@ -30,7 +30,7 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 
 ## Implementation notes
 
-* Clause size is `Minimalist.ComplementSize` on the shared functional sequence `Cat.fValue`, where
+* Clause size is `Minimalist.ComplementSize` in the extension order of `Minimalist.Cat`, where
   `Cat.Say` sits at Say > Foc > T. The Williams Cycle (26) and its version for Agree (35) are one
   relation, `WilliamsCycle x y`, between the head of a dependency and the crossed projection.
 * Readings are positions of the embedded reference time against the attitude's now, an
@@ -90,34 +90,35 @@ def ClauseType.size : ClauseType → ComplementSize
 
 -- §3.1
 theorem size_nonSpeech_lt_speech :
-    ClauseType.nonSpeechReporting.size.fLevel < ClauseType.speechReporting.size.fLevel := by
-  decide
+    ClauseType.nonSpeechReporting.size < ClauseType.speechReporting.size := by
+  decide +kernel
 
 /-! ### The Williams Cycle (26) and the Williams Cycle in Agree (35) -/
 
 /-- A dependency headed at `x`, movement to Spec,XP or Agree from X or XP, may cross or search
 a projection of `y` unless Y is above X in the functional sequence. -/
-def WilliamsCycle (x y : Cat) : Prop := y.fValue ≤ x.fValue
+def WilliamsCycle (x y : Cat) : Prop := ¬ AsymmRel Cat.ExtendsTo x y
 
-instance (x y : Cat) : Decidable (WilliamsCycle x y) := inferInstanceAs (Decidable (_ ≤ _))
+instance (x y : Cat) : Decidable (WilliamsCycle x y) :=
+  inferInstanceAs (Decidable (¬ (x.ExtendsTo y ∧ ¬ y.ExtendsTo x)))
 
-theorem WilliamsCycle.refl (x : Cat) : WilliamsCycle x x := le_rfl
+theorem WilliamsCycle.refl (x : Cat) : WilliamsCycle x x := fun h ↦ h.2 h.1
 
-theorem WilliamsCycle.of_le {x y y' : Cat} (h : y'.fValue ≤ y.fValue) (hxy : WilliamsCycle x y) :
-    WilliamsCycle x y' :=
-  h.trans hxy
+theorem WilliamsCycle.of_extendsTo {x y y' : Cat} (h : y'.ExtendsTo y)
+    (hxy : WilliamsCycle x y) : WilliamsCycle x y' :=
+  fun hxy' ↦ hxy (hxy'.trans_le h)
 
 -- (24), (25) [egressy-2025]
-theorem focus_crosses_TP : WilliamsCycle .Foc .T := by decide
+theorem focus_crosses_TP : WilliamsCycle .Foc .T := by decide +kernel
 
 -- (24), (25)
-theorem focus_blocked_by_SayP : ¬ WilliamsCycle .Foc .Say := by decide
+theorem focus_blocked_by_SayP : ¬ WilliamsCycle .Foc .Say := by decide +kernel
 
 -- (27)
 theorem raising_crosses_TP : WilliamsCycle .T .T := WilliamsCycle.refl _
 
 -- (28)
-theorem raising_blocked_by_CP : ¬ WilliamsCycle .T .C := by decide
+theorem raising_blocked_by_CP : ¬ WilliamsCycle .T .C := by decide +kernel
 
 /-- The complement size crossed in a raising row. -/
 def crossed? (e : Datum) : Option ComplementSize :=
@@ -125,11 +126,11 @@ def crossed? (e : Datum) : Option ComplementSize :=
 
 theorem raising_rows : ∀ e ∈ [ex_27, ex_28], ∀ cs ∈ crossed? e,
     e.judgment = .acceptable ↔ WilliamsCycle .T cs.highestHead := by
-  decide
+  decide +kernel
 
 /-- (23): evaluative adverbs such as *sajnos* sit in the Say layer above foci, so a clause hosts
 one iff it is at least a SayP. -/
-def HostsEvaluativeAdverb (cs : ComplementSize) : Prop := Cat.fValue .Say ≤ cs.fLevel
+def HostsEvaluativeAdverb (cs : ComplementSize) : Prop := ⟨.Say⟩ ≤ cs
 
 instance (cs : ComplementSize) : Decidable (HostsEvaluativeAdverb cs) :=
   inferInstanceAs (Decidable (_ ≤ _))
@@ -137,7 +138,7 @@ instance (cs : ComplementSize) : Decidable (HostsEvaluativeAdverb cs) :=
 -- (23)
 theorem hostsEvaluativeAdverb_iff (ct : ClauseType) :
     HostsEvaluativeAdverb ct.size ↔ ct = .speechReporting := by
-  cases ct <;> decide
+  cases ct <;> decide +kernel
 
 /-! ### The Sequence of Tense Rule (31) and size-dependent adjunction (41) -/
 
@@ -149,17 +150,18 @@ inductive Attachment
   | vpInternal
   deriving DecidableEq
 
-/-- The functional-sequence level of the matrix projection an embedded clause attaches to. -/
-def Attachment.level : Attachment → ComplementSize → ℕ
-  | .sizeDependent, cs => cs.fLevel
-  | .vpInternal, _ => Cat.fValue .V
+/-- The head of the matrix projection an embedded clause attaches to. -/
+def Attachment.level : Attachment → ComplementSize → Cat
+  | .sizeDependent, cs => cs.highestHead
+  | .vpInternal, _ => .V
 
 /-- The Sequence of Tense Rule (31) can delete an embedded PAST iff the embedded T is contained
 in a projection of the matrix PAST T, that is, iff the clause attaches no higher than TP. -/
-def SOTRule.Applicable (a : Attachment) (cs : ComplementSize) : Prop := a.level cs ≤ Cat.fValue .T
+def SOTRule.Applicable (a : Attachment) (cs : ComplementSize) : Prop :=
+  WilliamsCycle .T (a.level cs)
 
 instance (a : Attachment) (cs : ComplementSize) : Decidable (SOTRule.Applicable a cs) :=
-  inferInstanceAs (Decidable (_ ≤ _))
+  inferInstanceAs (Decidable (WilliamsCycle _ _))
 
 -- §3.3, §4
 theorem applicable_sizeDependent_iff (cs : ComplementSize) :
@@ -169,7 +171,7 @@ theorem applicable_sizeDependent_iff (cs : ComplementSize) :
 -- §4
 theorem applicable_vpInternal_cP :
     SOTRule.Applicable .vpInternal .cP ∧ ¬ WilliamsCycle .T .C := by
-  decide
+  decide +kernel
 
 /-! ### Readings: the language-wide parameter realized clause-internally (§1, §2.4) -/
 
@@ -180,17 +182,17 @@ def readings (a : Attachment) (cs : ComplementSize) : Finset Ordering :=
 
 theorem applicable_nonSpeech :
     SOTRule.Applicable .sizeDependent ClauseType.nonSpeechReporting.size := by
-  decide
+  decide +kernel
 
 theorem not_applicable_speech :
     ¬ SOTRule.Applicable .sizeDependent ClauseType.speechReporting.size := by
-  decide
+  decide +kernel
 
 -- §2.4
 theorem simultaneous_iff (ct : ClauseType) :
     .eq ∈ readings .sizeDependent ct.size ↔
       ct = .nonSpeechReporting := by
-  cases ct <;> decide
+  cases ct <;> decide +kernel
 
 theorem shifted_mem (a : Attachment) (cs : ComplementSize) :
     .lt ∈ readings a cs :=
@@ -199,7 +201,7 @@ theorem shifted_mem (a : Attachment) (cs : ComplementSize) :
 -- (19)
 theorem english_simultaneous :
     .eq ∈ readings .vpInternal .cP := by
-  decide
+  decide +kernel
 
 /-! ### Direct perception (§2.1) -/
 
@@ -255,7 +257,7 @@ def singleRows : List Datum :=
 theorem singleRows_predicted :
     ∀ e ∈ singleRows, ∀ ct : ClauseType, clauseType? e = some ct →
       Agrees e "" (predicted e ct) := by
-  decide
+  decide +kernel
 
 /-- The matrix word of a row with its verb: among the words before the first complementizer
 glossed *that*, the past-tense one whose stem is a stem the fragment declares, so *álmod-t-a*
@@ -356,13 +358,13 @@ def chain (ct₁ ct₂ : ClauseType) : List Clause := [⟨⟦past⟧, ct₁.size
 theorem ex16_profile :
     profile .sizeDependent ⟦past⟧ (chain .speechReporting .nonSpeechReporting) =
       [⟦past⟧, ⟦past⟧ ⊔ ⟦present⟧] := by
-  decide
+  decide +kernel
 
 -- (17), (16)
 theorem ex17_profile :
     profile .sizeDependent ⟦past⟧ (chain .nonSpeechReporting .speechReporting) =
       [⟦past⟧ ⊔ ⟦present⟧, ⟦past⟧] := by
-  decide
+  decide +kernel
 
 -- (10), (15), (16), (17)
 theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁ ct₂ : ClauseType,
@@ -372,7 +374,7 @@ theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁
           ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 0 ⊥)) ∧
         Agrees e "deepest " (observed (DirectPerceptionAt e "deepestDirectPerception")
           ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 1 ⊥)) := by
-  decide
+  decide +kernel
 
 -- (18) [ogihara-1996]
 theorem ex18_profile :
@@ -383,7 +385,7 @@ theorem ex18_predicted : Agrees ex_18 "deepest " ⟦past⟧ := by decide
 
 /-! ### Rival mechanisms (§3.3, §4) -/
 
-theorem resMovement_blocked_by_TP : ¬ WilliamsCycle .V .T := by decide
+theorem resMovement_blocked_by_TP : ¬ WilliamsCycle .V .T := by decide +kernel
 
 /-- Sequence of Tense as a probe of [keine-2020]: a probe on T whose horizon is Say. -/
 def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
@@ -396,7 +398,7 @@ theorem sotProbe_clauseTypes :
 -- §4, footnote 9
 theorem horizon_admits_FocP :
     sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]).label ∧ ¬ WilliamsCycle .T .Foc := by
-  decide
+  decide +kernel
 
 /-! ### Recognition by witness
 
