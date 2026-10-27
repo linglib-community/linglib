@@ -101,9 +101,10 @@ def Precedes (i₁ i₂ : NonemptyInterval α) : Prop :=
 def During (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₂.fst < i₁.fst ∧ i₁.snd < i₂.snd
 
-/-- `i₁` is a nonfinal subinterval of `i₂` when it lies within `i₂` and ends before `i₂` does. -/
+/-- `i₁` is a nonfinal subinterval of `i₂` when it starts no earlier than `i₂` and ends strictly
+before it. -/
 def NonfinalSubinterval (i₁ i₂ : NonemptyInterval α) : Prop :=
-  i₁ ≤ i₂ ∧ i₁.snd < i₂.snd
+  i₂.fst ≤ i₁.fst ∧ i₁.snd < i₂.snd
 
 instance [DecidableLE α] : Decidable (i₁.Precedes i₂) :=
   decidable_of_iff' _ lt_iff_le_not_ge
@@ -115,15 +116,15 @@ instance [DecidableLE α] : Decidable (i₁.During i₂) :=
 instance [DecidableLE α] : Decidable (i₁.NonfinalSubinterval i₂) :=
   @instDecidableAnd _ _ inferInstance (decidable_of_iff' _ lt_iff_le_not_ge)
 
+theorem NonfinalSubinterval.le (h : i₁.NonfinalSubinterval i₂) : i₁ ≤ i₂ :=
+  le_def.2 ⟨h.1, h.2.le⟩
+
 theorem NonfinalSubinterval.lt (h : i₁.NonfinalSubinterval i₂) : i₁ < i₂ :=
-  lt_iff_le_not_ge.2 ⟨h.1, fun h' ↦ (le_def.1 h').2.not_gt h.2⟩
+  lt_iff_le_not_ge.2 ⟨h.le, fun h' ↦ (le_def.1 h').2.not_gt h.2⟩
 
 theorem NonfinalSubinterval.not_finalSubinterval (h : i₁.NonfinalSubinterval i₂) :
     ¬ i₁.FinalSubinterval i₂ :=
   fun h' ↦ h.2.ne h'.2
-
-theorem During.nonfinalSubinterval (h : i₁.During i₂) : i₁.NonfinalSubinterval i₂ :=
-  ⟨le_def.2 ⟨h.1.le, h.2.le⟩, h.2⟩
 
 theorem during_irrefl (i : NonemptyInterval α) : ¬ i.During i := fun h ↦ lt_irrefl _ h.1
 
@@ -167,7 +168,7 @@ theorem lt_def : i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁
 /-- A nonfinal subinterval is a proper subinterval that is not final. -/
 theorem nonfinalSubinterval_iff : i₁.NonfinalSubinterval i₂ ↔ i₁ < i₂ ∧ ¬ i₁.FinalSubinterval i₂ :=
   ⟨fun h ↦ ⟨h.lt, h.not_finalSubinterval⟩, fun ⟨hlt, hfin⟩ ↦
-    ⟨hlt.le, (le_def.1 hlt.le).2.lt_of_ne fun h ↦ hfin ⟨hlt.le, h⟩⟩⟩
+    ⟨(le_def.1 hlt.le).1, (le_def.1 hlt.le).2.lt_of_ne fun h ↦ hfin ⟨hlt.le, h⟩⟩⟩
 
 theorem notMem_iff {a : α} {i : NonemptyInterval α} : a ∉ i ↔ a < i.fst ∨ i.snd < a := by
   rw [mem_def, not_and_or, not_le, not_le]

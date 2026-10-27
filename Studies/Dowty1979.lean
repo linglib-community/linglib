@@ -128,7 +128,7 @@ theorem mem_of_mem_prog {history : HistoricalAlternatives W T}
     (hne : (inertia w I).Nonempty) (hI : ¬ I.IsPoint) (h : I ∈ prog inertia φ w) : I ∈ φ w :=
   let ⟨v, hv⟩ := hne
   let ⟨_, hI', hall⟩ := h
-  (hagree v (hInr w I hv)).1 (hsub v I _ hI'.1 hI (hall v hv))
+  (hagree v (hInr w I hv)).1 (hsub v I _ hI'.le hI (hall v hv))
 
 end Defs
 
@@ -145,7 +145,7 @@ def iv (a b : ℕ) (h : a ≤ b := by decide) : NonemptyInterval ℕ := ⟨(a, b
 
 theorem nonfinalSubinterval_iv {a b c d : ℕ} (h₁ : a ≤ b) (h₂ : c ≤ d) (hca : c ≤ a)
     (hbd : b < d) : (iv a b h₁).NonfinalSubinterval (iv c d h₂) :=
-  ⟨NonemptyInterval.le_def.2 ⟨hca, hbd.le⟩, hbd⟩
+  ⟨hca, hbd⟩
 
 /-- Worlds alike up to time `0` and different afterwards. -/
 def splitAfterZero : HistoricalAlternatives Bool ℕ :=

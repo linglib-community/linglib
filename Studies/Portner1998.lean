@@ -56,7 +56,7 @@ open Dowty1979 (iv)
 
 theorem nonfinalPart_iv {b d : ℕ} (hb : 0 ≤ b) (hd : 0 ≤ d) (hbd : b < d) :
     NonfinalPart (iv 0 b hb) (iv 0 d hd) :=
-  ⟨NonemptyInterval.le_def.2 ⟨le_rfl, hbd.le⟩, NonemptyInterval.le_def.2 ⟨le_rfl, hbd.le⟩, hbd⟩
+  ⟨NonemptyInterval.le_def.2 ⟨le_rfl, hbd.le⟩, le_rfl, hbd⟩
 
 /-! ### The bus (11), (39)
 

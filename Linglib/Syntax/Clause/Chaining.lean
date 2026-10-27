@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Union
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Order.Interval.Allen
+public import Linglib.Semantics.Tense.Allen
 
 /-!
 # Clause chaining

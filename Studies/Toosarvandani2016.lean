@@ -84,9 +84,7 @@ variable {T : Type*} [LinearOrder T] {t₁ t s : NonemptyInterval T}
 
 @[simp] theorem mem_cell_imperfective :
     (t, s) ∈ Allen.toSetRel (cell .imperfective) ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
-  simp only [cell, Allen.mem_toSetRel, Allen.relation_mem_nonfinalSubinterval,
-    NonemptyInterval.NonfinalSubinterval, NonemptyInterval.le_def]
-  exact ⟨fun ⟨⟨h₁, _⟩, h₂⟩ ↦ ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₁, h₂.le⟩, h₂⟩⟩
+  simp [cell, NonemptyInterval.NonfinalSubinterval]
 
 @[simp] theorem mem_cell_perfective :
     (t, s) ∈ Allen.toSetRel (cell .perfective) ↔ t.fst ≤ s.fst ∧ s.snd ≤ t.snd := by

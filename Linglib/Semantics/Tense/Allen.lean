@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.Compare
 public import Linglib.Core.Order.Interval.Basic
+public import Linglib.Semantics.Tense.Defs
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Pi
@@ -34,6 +35,7 @@ their converses and composites, and chains of cells.
   operators the cells induce on sets of intervals (`Allen.preimage_toSetRel_comp`).
 * `Allen.comp_precedes_precedes`: precedence is transitive, an entry of Allen's table that the
   kernel decides.
+* `Allen.comp_pure`: on points, Allen composition is the composition of comparison cells.
 * `Allen.mem_compAlong_iff`: on dense time, the composite of a chain is exactly realized.
 
 ## Implementation notes
@@ -298,9 +300,6 @@ def finalSubinterval : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .l
 @[irreducible]
 def nonfinalSubinterval : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd = .lt
 
-theorem le_sdiff_finalSubinterval : le \ finalSubinterval = nonfinalSubinterval := by
-  decide +kernel
-
 theorem comp_precedes_precedes : comp precedes precedes = precedes := by decide +kernel
 
 /-- The position of the first interval relative to the second: before it, after it, or
@@ -415,9 +414,7 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
 @[simp] theorem relation_mem_nonfinalSubinterval :
     relation i j ∈ nonfinalSubinterval ↔ i.NonfinalSubinterval j := by
   rw [nonfinalSubinterval, relation_mem_filter]
-  simp only [relation, ofEndpoints, NonemptyInterval.NonfinalSubinterval, NonemptyInterval.le_def,
-    ne_eq, compare_lt_iff_lt, ← compare_ge_iff_ge (a := i.fst)]
-  exact ⟨fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₁, h₂.le⟩, h₂⟩, fun ⟨⟨h₁, _⟩, h₂⟩ ↦ ⟨h₁, h₂⟩⟩
+  simp [relation, ofEndpoints, NonemptyInterval.NonfinalSubinterval, compare_lt_iff_lt]
 
 @[simp] theorem relation_mem_ofPosition {C : Finset Ordering} :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
@@ -427,7 +424,7 @@ end LinearOrder
 
 /-! ### Points
 
-The cells of point intervals are the comparison cells of their points. -/
+The comparison cells of the tenses are the cells of point intervals. -/
 
 /-- The two intervals are the same. -/
 @[irreducible]
@@ -452,6 +449,35 @@ variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
   simp [relation, ofEndpoints, NonemptyInterval.IsPoint]
 
 end LinearOrder
+
+private theorem exists_fin_of_mem_comp :
+    ∀ r s o : Ordering, o ∈ r.comp s →
+      ∃ x y z : Fin 6, compare x y = r ∧ compare y z = s ∧ compare x z = o := by
+  decide
+
+private theorem eq_of_mem_atoms_of_shapes :
+    ∀ t ∈ atoms, t.firstShape = .eq → t.secondShape = .eq →
+      t = ⟨t.fstFst, t.fstFst, t.fstFst, t.fstFst, .eq, .eq⟩ := by
+  decide +kernel
+
+/-- On points, Allen composition is the composition of comparison cells. -/
+theorem comp_pure (R S : Finset Ordering) : comp (pure R) (pure S) = pure (Tense.comp R S) := by
+  ext t
+  simp only [mem_comp, pure, Finset.mem_filter]
+  constructor
+  · rintro ⟨ht, e, -, -, -, ⟨-, h01, -, hR⟩, ⟨-, -, h45, hS⟩, rfl⟩
+    exact ⟨ht, h01, h45, Tense.compare_mem_comp hR hS⟩
+  · rintro ⟨ht, h1, h2, hc⟩
+    obtain ⟨r, hr, s, hs, ho⟩ := Tense.mem_comp.1 hc
+    obtain ⟨x, y, z, hxy, hyz, hxz⟩ := exists_fin_of_mem_comp r s _ ho
+    have hpt (a b : Fin 6) (C : Finset Ordering) (h : compare a b ∈ C) :
+        ofEndpoints a a b b ∈ atoms ∧ (ofEndpoints a a b b).firstShape = .eq ∧
+          (ofEndpoints a a b b).secondShape = .eq ∧ (ofEndpoints a a b b).fstFst ∈ C :=
+      ⟨relation_mem_atoms (.pure a) (.pure b), by simp [ofEndpoints], by simp [ofEndpoints], h⟩
+    refine ⟨ht, ![x, x, y, y, z, z], le_rfl, le_rfl, le_rfl, hpt x y R (hxy ▸ hr),
+      hpt y z S (hyz ▸ hs), ?_⟩
+    rw [eq_of_mem_atoms_of_shapes t ht h1 h2]
+    simp [ofEndpoints, hxz]
 
 /-! ### Chains
 

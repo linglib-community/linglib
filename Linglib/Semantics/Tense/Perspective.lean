@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Basic
-public import Linglib.Core.Order.Interval.Allen
+public import Linglib.Semantics.Tense.Allen
 public import Linglib.Semantics.Tense.Defs
 
 /-!
@@ -29,7 +29,6 @@ reference stands where the reference does, or overlaps `π`.
 
 ## Main results
 
-* `Allen.comp_pure`: on points, Allen composition is the composition of comparison cells.
 * `Tense.Perspective.Presup.restrict`: a time containing a reference stands to the perspective in
   the composite of containment with the reference's cell.
 * `Tense.Perspective.exists_restricted_iff`: on dense time, an adverb can restrict a tense exactly
@@ -47,39 +46,6 @@ reference stands where the reference does, or overlaps `π`.
 -/
 
 @[expose] public section
-
-namespace Allen
-
-private theorem exists_fin_of_mem_comp :
-    ∀ r s o : Ordering, o ∈ r.comp s →
-      ∃ x y z : Fin 6, compare x y = r ∧ compare y z = s ∧ compare x z = o := by
-  decide
-
-private theorem eq_of_mem_atoms_of_shapes :
-    ∀ t ∈ atoms, t.firstShape = .eq → t.secondShape = .eq →
-      t = ⟨t.fstFst, t.fstFst, t.fstFst, t.fstFst, .eq, .eq⟩ := by
-  decide +kernel
-
-/-- On points, Allen composition is the composition of comparison cells. -/
-theorem comp_pure (R S : Finset Ordering) : comp (pure R) (pure S) = pure (Tense.comp R S) := by
-  ext t
-  simp only [mem_comp, pure, Finset.mem_filter]
-  constructor
-  · rintro ⟨ht, e, -, -, -, ⟨-, h01, -, hR⟩, ⟨-, -, h45, hS⟩, rfl⟩
-    exact ⟨ht, h01, h45, Tense.compare_mem_comp hR hS⟩
-  · rintro ⟨ht, h1, h2, hc⟩
-    obtain ⟨r, hr, s, hs, ho⟩ := Tense.mem_comp.1 hc
-    obtain ⟨x, y, z, hxy, hyz, hxz⟩ := exists_fin_of_mem_comp r s _ ho
-    have hpt (a b : Fin 6) (C : Finset Ordering) (h : compare a b ∈ C) :
-        ofEndpoints a a b b ∈ atoms ∧ (ofEndpoints a a b b).firstShape = .eq ∧
-          (ofEndpoints a a b b).secondShape = .eq ∧ (ofEndpoints a a b b).fstFst ∈ C :=
-      ⟨relation_mem_atoms (.pure a) (.pure b), by simp [ofEndpoints], by simp [ofEndpoints], h⟩
-    refine ⟨ht, ![x, x, y, y, z, z], le_rfl, le_rfl, le_rfl, hpt x y R (hxy ▸ hr),
-      hpt y z S (hyz ▸ hs), ?_⟩
-    rw [eq_of_mem_atoms_of_shapes t ht h1 h2]
-    simp [ofEndpoints, hxz]
-
-end Allen
 
 namespace Tense
 

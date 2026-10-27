@@ -5,7 +5,7 @@ public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Reference.Context.Index
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Events.Basic
-public import Linglib.Core.Order.Interval.Allen
+public import Linglib.Semantics.Tense.Allen
 
 /-!
 # Viewpoint aspect
