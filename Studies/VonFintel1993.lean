@@ -19,22 +19,6 @@ instead names the exception set, the least set whose subtraction makes the quant
 *no* their intersection. Free exceptives like *except for John* carry subtraction with
 restrictiveness only (`Exceptive.Restrictive`), which is why they also occur with *most*.
 
-## Main statements
-
-* `GuaranteesException`: a determiner guarantees an exception set when every false
-  quantification has one. *Every* and *no* guarantee one, *some* never has one, and *most* has
-  none in the paper's five-student situation though it has one in a two-student limiting case;
-  the paper reads the co-occurrence restriction as a grammaticization of this contrast.
-* `not_isExceptionSet_of_lt`, `eq_of_isExceptionSet_ident`: the unique least exception blocks
-  the enlargement inference and the conjunction of two *but*-phrases.
-* `not_exists_nounModifier`: no operation on the restrictor alone yields the *but*-phrase's
-  truth conditions.
-* `isExceptionSet_every_of_restrictive`: with a universal determiner the free exceptive
-  pragmatically strengthens to the *but* reading.
-* `but_predicted`, `exceptFor_predicted`: the paper's exceptive examples, read through the
-  English fragment's determiner denotations, are judged acceptable exactly as the two
-  semantics predict.
-
 ## Implementation notes
 
 * Restrictor, scope and exception set are predicates ordered pointwise, so the truth
@@ -80,14 +64,12 @@ variable {α : Type*} {Q : GQ α} {A C B : α → Prop}
 
 /-! ### Truth conditions (§1.1, §1.5) -/
 
-/-- *Every student but John attended* says that the students who did not attend are John
-alone, (9) of the paper and the reading of `Examples.ex_1a`. -/
+-- (9)
 theorem isExceptionSet_every_ident_iff {j : α} :
     IsExceptionSet every A (ident j) B ↔ A \ B = ident j :=
   isExceptionSet_every_iff
 
-/-- *No student but John attended* says that the students who attended are John alone, (9) of
-the paper and the reading of `Examples.ex_2b`. -/
+-- (9)
 theorem isExceptionSet_no_ident_iff {j : α} :
     IsExceptionSet no A (ident j) B ↔ A ⊓ B = ident j :=
   isExceptionSet_no_iff
@@ -126,7 +108,7 @@ theorem not_guaranteesException_some : ¬ GuaranteesException (GQ.some : GQ α) 
 attended (`Examples.ex_25a`). -/
 abbrev attended : Fin 5 → Prop := (3 ≤ ·)
 
-/-- No set of students is the exception set of *most students attended* in situation (25). -/
+-- (25)
 theorem not_isExceptionSet_most (C : Fin 5 → Prop) : ¬ IsExceptionSet most ⊤ C attended := by
   rintro ⟨h1, h2⟩
   have hTJ : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended := by decide
@@ -173,8 +155,7 @@ theorem not_exists_nounModifier (hC : C ≠ ⊥) :
 
 /-! ### Free exceptives (§2) -/
 
-/-- In the situation of (25), *except for Tom and John, most students attended* holds where no
-*but*-phrase does (34c). -/
+-- (25), (34c)
 theorem restrictive_most :
     Restrictive most ⊤ (fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended :=
   ⟨by decide, fun h ↦ absurd h (by decide)⟩
@@ -185,7 +166,7 @@ theorem isExceptionSet_every_of_restrictive (h : Restrictive every A C B) (hC : 
     IsExceptionSet every A C B :=
   isExceptionSet_every_iff.2 (le_antisymm (restrictive_every_iff.1 h).1 hC)
 
-/-- With *no* the *but* reading is likewise the strengthening of the free exceptive (§2.3). -/
+-- §2.3
 theorem isExceptionSet_no_of_restrictive (h : Restrictive no A C B) (hC : C ≤ A ⊓ B) :
     IsExceptionSet no A C B :=
   isExceptionSet_no_iff.2 (le_antisymm (restrictive_no_iff.1 h).1 hC)

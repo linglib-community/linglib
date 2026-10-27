@@ -29,15 +29,6 @@ negates it.
 * `Determiner`, `Question` — the morphosyntactic probes and a probed question; the polarity items
   are the fragments' `either`, `too` and `brauchen`
 
-## Main results
-
-* `felicitous_none_iff`, `felicitous_some_positive_iff`, `felicitous_some_negative_iff` — the
-  three evidence conditions
-* `felicity_separates_readings` — no two question types share a felicity profile
-* `outer_is_interrogative_only` — only inner-negation determiners occur in declaratives
-* `polarity_eq_negative_of_isNPI`, `polarity_eq_positive_of_isPPI` — a polarity item forces the
-  reading the determiner gives
-
 ## References
 
 * [buring-gunlogson-2000]
@@ -178,20 +169,17 @@ instance : ∀ q : Question, Decidable q.WellFormed
     decidable_of_iff ((e.IsNPI → d.polarity = .negative) ∧ (e.IsPPI → d.polarity = .positive))
       (by simp [Question.WellFormed])
 
-/-- In *Is there no vegetarian restaurant either/\*too?* (14a) the inner-negation determiner takes
-the negative polarity item and refuses the positive one. -/
+-- (14a)
 theorem no_takes_either_not_too :
     (Question.mk .no (some either)).WellFormed ∧
       ¬ (Question.mk .no (some too)).WellFormed := by decide
 
-/-- In *Isn't there some vegetarian restaurant \*either/too?* (14b) the outer-negation determiner
-takes the positive polarity item and refuses the negative one. -/
+-- (14b)
 theorem notSome_takes_too_not_either :
     (Question.mk .notSome (some too)).WellFormed ∧
       ¬ (Question.mk .notSome (some either)).WellFormed := by decide
 
-/-- In *Brauchst du keine/\*nicht eine Entschuldigung mitzubringen?* (16) the German NPI likewise
-goes with the amalgamated determiner only. -/
+-- (16)
 theorem brauchen_takes_kein_not_nichtEin :
     (Question.mk .kein (some brauchen)).WellFormed ∧
       ¬ (Question.mk .nichtEin (some brauchen)).WellFormed := by decide

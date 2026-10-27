@@ -173,15 +173,13 @@ theorem rows_cover :
         ex.paperFeatures.lookup "construction" ≠ some "clausal" := by
   decide
 
-/-- **Clausal possession** ((91)): each relation's structure spells out as
-exactly the accepted verb. -/
+-- (91)
 theorem clausal_rows :
     ∀ r ∈ clausalRows,
       (spellout icelandicItems r.relation.attributive.context = some r.verb) = r.accepted := by
   decide
 
-/-- **Attributive possession** ((92), column C): a PP possessor is accepted
-exactly for the relations built under Pred. -/
+-- (92)
 theorem attributive_rows :
     ∀ r ∈ ppRows, decide r.relation.attributive.AllowsPP = r.accepted := by
   decide
@@ -199,8 +197,7 @@ def voiceAlloseme (eventiveVoiceP stative : Bool) : Voice.Alloseme :=
 *have* of (7a) and §4.1.1. -/
 theorem expletive_voice_passes_complement : voiceAlloseme false false = .expletive := by decide
 
-/-- Over an eventuality predicate Voice adds a θ-role, so light-verb and ECM *have* mean more than
-their complement ((7b), §4.1.2). -/
+-- (7b), §4.1.2
 theorem contentful_voice_adds_theta :
     (voiceAlloseme false true).AssignsTheta ∧ (voiceAlloseme true false).AssignsTheta := by
   decide

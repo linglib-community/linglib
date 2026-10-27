@@ -17,20 +17,6 @@ modalized universal over the restricted individuals within an interval. *Used to
 retrospective over the imperfective, placing the reference interval before the perspective
 time, and *would* is Gen with a restriction and an interval from the context.
 
-## Main statements
-
-* `not_hab_of_subsingleton`: a predicate no object satisfies twice has no habit, so an indefinite
-  over Hab is infelicitous.
-* `hab_of_single_trip`: a habit needs no iteration in the actual world.
-* `mem_usedTo_iff`: *used to* says only that a state began before the perspective time, so its
-  retrospectivity is an implicature; the composite of its two cells says so
-  (`comp_retro_imperfective`).
-* `not_mem_retro_of_overlaps`: no reference interval overlapping the perspective time serves the
-  retrospective.
-* `usedTo_of_universal`: the universal perfect entails *used to*, the scale of (32).
-* `restrictor_rows`, `perspective_rows`, `actualization_rows`: the judgments of (4)–(7), (30),
-  (33), (35) and (42).
-
 ## Implementation notes
 
 * States and events share one event domain with a temporal trace. The modal base `MB_{i,w}` is
@@ -146,8 +132,6 @@ def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) 
 def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   retro (UNBOUNDED P)
 
-/-- *Used to* relates the perspective time to the run time of its state through the composite of
-the retrospective's cell and the imperfective's. -/
 theorem usedTo_eq_preimage : usedTo P w = (Allen.toSetRel (Allen.inv Allen.precedes)).preimage
     ((Allen.toSetRel Allen.le).preimage (τ '' {e | P w e})) := by
   rw [usedTo, retro, Tense.Perspective.toSetRel_eq_inv, ← Allen.toSetRel_inv,
@@ -271,7 +255,7 @@ theorem hab_of_single_trip :
   rintro _ _ ⟨rfl, -⟩ ⟨rfl, -⟩
   rfl
 
-/-- (18) and (19) verify *used to* in the context of (42), judged false in (42c). -/
+-- (18), (19), (42), (42c)
 theorem usedTo_hab_of_single_trip : .pure 5 ∈ usedTo (Hab gnomic indicating bus) false :=
   mem_usedTo_iff.2 ⟨habit, hab_of_single_trip.1, by decide⟩
 

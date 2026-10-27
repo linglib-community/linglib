@@ -98,8 +98,7 @@ theorem bDn_off_at_uu :
 theorem aOrBdn_off_at_uu :
     .uu ∈ closestImp hammingSim aOrBdn lightOff := by decide
 
-/-- *If A and B were not both up, the light would be off* is predicted true at the actual world,
-though only a minority judged it true (Table 3). -/
+-- Table 3
 theorem notBothUp_off_at_uu :
     .uu ∈ closestImp hammingSim notBothUp lightOff := by decide
 

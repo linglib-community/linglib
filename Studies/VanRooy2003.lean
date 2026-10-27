@@ -18,23 +18,6 @@ consumed beyond this paper, is `Semantics/Questions/Value.lean`. A wh-question d
 propositions that some value is among the optimal true values of its predicate, those with no
 more relevant true value, and this one rule yields both mention-all and mention-some readings.
 
-## Main statements
-
-* `isResolved_iff_exists_subset_optimalityRegion`: information resolves the problem exactly
-  when it lies within the worlds where one action is optimal.
-* `newspaper_station_resolves`, `newspaper_betterAnswer`: in the Italian newspaper example the
-  partial answer *at least at the station* resolves the problem and is a better answer than the
-  complete one.
-* `questionR_entailment`, `bestPlace_questionR`: when relevance is informativity the rule gives the
-  mention-all partition, and the newspaper question has a mention-some meaning that Hamblin's rule
-  misses.
-* `killer_byName`, `killer_byMask`, `liveIn_visit`, `beatles_questionR`: the decision problem
-  decides the partition, by name or by mask for *Who killed spiderman?*, by city or by address for
-  *Where do you live?*, and by an autograph hierarchy for *Which Beatles' autograph do you have?*.
-* `killer_byName_eq_whoUnder`, `killer_byMask_eq_whoUnder`, `not_isCover_range_val`: with the
-  wh-phrase ranging over all four concepts, which form no conceptual cover, the partitions by name
-  and by mask are exactly Aloni's questions under the name cover and the cover by masks.
-
 ## Implementation notes
 
 A decision problem is a real utility on worlds and actions together with a prior measure, the
@@ -335,7 +318,7 @@ theorem bestPlace_questionR :
     · exact ⟨⟨.station, by simp⟩, .station, by simp⟩
     · exact ⟨⟨.palace, by simp⟩, .palace, by simp⟩
 
-/-- The rule of footnote 28 adds the trivial answer, which is why the paper rejects it. -/
+-- footnote 28
 theorem bestPlace_overlapCells :
     overlapCells (optimalValues (fun _ ↦ Set.univ) bestPlace) =
       {{.station, .both}, {.palace, .both}, Set.univ} := by
@@ -378,8 +361,6 @@ theorem optimalValues_gt_eq_empty (jump : W → ℕ) (w : W) :
     optimalValues (fun w ↦ {n | jump w < n}) (fun _ ↦ id) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun n ⟨hn, h⟩ ↦ h (n + 1) (by grind) (Nat.lt_succ_self n)
 
-/-- With the preferences reversed, the unique optimal answer to *How many meters can't you jump?*
-is the first number of meters you cannot jump. -/
 theorem optimalValues_gt_toDual (jump : W → ℕ) (w : W) :
     optimalValues (fun w ↦ {n | jump w < n}) (fun _ ↦ OrderDual.toDual) w = {jump w + 1} := by
   ext n

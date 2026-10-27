@@ -15,17 +15,6 @@ and the whole structure and nothing in between, which gives Kalenjin its marked 
 the Friulian verb *bati* a suffix in the second person alone. A suffix may store such a
 structure too, as in the Friulian verb *finî*.
 
-## Main results
-
-* `english_degrees`, `armenian_degrees`, `czech_degrees`: the lexicalization table of the
-  degrees of comparison.
-* `czech_declension`, `genitive_levels`: the genitive is *-a* in both noun classes, with the
-  same structure.
-* `kalenjin_number`, `peel_plural_overrides`: the root *peel* is bare in the plural and marked
-  in the singular.
-* `bati_present`, `fini_present`: the first and third person are alike and the second has a
-  suffix more.
-
 ## Implementation notes
 
 The chapter's prefixes are built in a workspace of their own, which the engine does not model.

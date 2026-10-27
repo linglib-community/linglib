@@ -17,10 +17,6 @@ checks the paper's claims against it. The paper argues from two cities of equal 
 the background is not linear, but its premises make the background total and refute only
 antisymmetry, the two states sharing one degree.
 
-## Main statements
-
-* `ne_and_antisymmRel_and_total`: the equal-temperature cities of §4 hold distinct, tied states
-  of a total background.
 * The examples check the inference (19) on a three-state model, the split verdict of the literal
   reading of §4, (24) against the English fragment, and the failure of the converse of (26).
 

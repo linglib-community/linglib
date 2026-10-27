@@ -20,15 +20,6 @@ outright. A determiner at the bottom of its Horn scale, *no*, is its own enriche
 licenses both; one above the bottom exhaustifies to a meaning with an upward-entailing conjunct;
 and a presupposition trigger's full meaning fails plain downward entailment.
 
-## Main results
-
-* `strawsonAA_not_sufficient`: *only*, *would* and *sorry* are Strawson anti-additive, yet their
-  meanings are not downward entailing outright.
-* `licensed_iff`: *no* is the only licenser of strong items and *some* the only non-licenser of
-  weak ones, and `rows_predicted` checks this against the paper's judgments.
-* `isIntolerant_of_isAntiAdditive`, `few_isIntolerant`, `atMostThree_not_isIntolerant`: Horn's
-  Intolerance sits strictly between anti-additivity and downward entailment.
-
 ## Implementation notes
 
 * Entailment between scale-mates holds the restrictor fixed and quantifies over scopes, so *no*
@@ -81,8 +72,6 @@ theorem not_scopeAntitone_exhaustified {Q : GQ α} {C : Set (GQ α)} {A P : α �
 theorem no_strong : ScopeAntitone (exhaustified (no : GQ α) {everyᶜ}) := by
   rw [exhaustified_no]; exact scopeAntitone_no
 
-/-- Exhaustified *not every* is not downward entailing, since at the empty scope the stronger
-scale-mate *no* is true and excluded. -/
 theorem notEvery_not_strong [Nontrivial α] :
     ¬ ScopeAntitone (exhaustified (everyᶜ : GQ α) {no}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
@@ -159,8 +148,6 @@ theorem strawsonAA_not_sufficient :
     fun h ↦ Conditional.not_antitone_posSupport_horizonCounterfactual (h _ _),
     fun h ↦ not_antitone_posSupport_regret (h _ _ _)⟩
 
-/-- *No* is the only one of the paper's licensers whose enriched meaning is downward
-entailing. -/
 theorem licensed_strong_iff (L : Licenser) : Licensed L .strong ↔ L = .no := by
   cases L with
   | no => exact iff_of_true (fun {_} ↦ no_strong) rfl
@@ -170,8 +157,6 @@ theorem licensed_strong_iff (L : Licenser) : Licensed L .strong ↔ L = .no := b
   | conditional => exact iff_of_false strawsonAA_not_sufficient.2.2.2.2.1 nofun
   | sorryThat => exact iff_of_false strawsonAA_not_sufficient.2.2.2.2.2 nofun
 
-/-- *Some* is the only one of the paper's licensers whose plain meaning is not Strawson
-downward entailing. -/
 theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := by
   cases L with
   | no => exact iff_of_true (fun {_} ↦ scopeAntitone_no) nofun
@@ -185,6 +170,8 @@ theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := b
   | conditional => exact iff_of_true Conditional.isStrawsonDE_horizonCounterfactual nofun
   | sorryThat => exact iff_of_true isStrawsonDE_regret nofun
 
+/-- *no* is the only licenser of strong items and *some* the only non-licenser of weak ones, and
+`rows_predicted` checks this against the paper's judgments. -/
 theorem licensed_iff (L : Licenser) (s : Strength) :
     Licensed L s ↔ (s = .weak ∧ L ≠ .some) ∨ (s = .strong ∧ L = .no) := by
   cases s <;> simp [licensed_weak_iff, licensed_strong_iff]

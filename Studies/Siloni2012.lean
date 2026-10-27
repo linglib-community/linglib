@@ -154,7 +154,6 @@ by (41b), (46b) and (47). -/
 def CrossedPair (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e₁ e₂ : E) : Prop :=
   e₁ ∈ V ∧ e₂ ∈ V ∧ ag e₁ = d₁ ∧ th e₁ = d₂ ∧ ag e₂ = d₂ ∧ th e₂ = d₁
 
-/-- A crossed pair read from the other participant's side. -/
 theorem CrossedPair.symm {e₁ e₂ : E} (h : CrossedPair V ag th d₁ d₂ e₁ e₂) :
     CrossedPair V ag th d₂ d₁ e₂ e₁ := by
   obtain ⟨h₁, h₂, ha₁, ht₁, ha₂, ht₂⟩ := h
@@ -179,7 +178,7 @@ def UnderlyingReading (GE : GroupStructure E) (V : Set E) (ag th : E → D)
     (d₁ d₂ : D) (e : E) : Prop :=
   ∃ e₁ e₂, GE.down e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
 
-/-- The content of (41b) is symmetric in the two participants. -/
+-- (41b)
 theorem UnderlyingReading.symm (h : UnderlyingReading GE V ag th d₁ d₂ e) :
     UnderlyingReading GE V ag th d₂ d₁ e := by
   obtain ⟨e₁, e₂, hd, hc⟩ := h
@@ -201,14 +200,12 @@ theorem SubEventReading.not_atom :
   · exact h₂.ne (by rw [h₃]; exact (sup_eq_right.mpr (hn _)).symm)
   · exact h₁.ne (ha.eq h₁.le hn)
 
-/-- Incomparable crossed sub-events yield the sub-event reading: the accumulation reading makes
-sub-events visible (46b). -/
+-- (46b)
 theorem subEventReading_of_crossedPair {e₁ e₂ : E} (h₁ : ¬ e₂ ≤ e₁)
     (h₂ : ¬ e₁ ≤ e₂) (hc : CrossedPair V ag th d₁ d₂ e₁ e₂) :
     SubEventReading V ag th d₁ d₂ (e₁ ⊔ e₂) :=
   ⟨e₁, e₂, left_lt_sup.2 h₁, right_lt_sup.2 h₂, rfl, hc⟩
 
-/-- On the singular-event reading too, counting sees one event: group events are atoms. -/
 theorem GroupEventReading.atom (hV : V ⊆ GE.sums) (h : GroupEventReading GE V ag th d₁ d₂ e) :
     Mereology.Atom e := by
   obtain ⟨_, _, rfl, hc⟩ := h
@@ -380,19 +377,16 @@ theorem Merger.length_le_one (h : Merger false before assigned after) :
     assigned.length ≤ 1 := by
   cases h <;> simp
 
-/-- Two θ-roles land on one argument only via the marked last resort, section 4.3's sole-role
-diagnosis, covering (63)'s ECM case where both roles are agentive. -/
+-- (63)
 theorem Merger.marked_of_two_roles (h : Merger m before assigned after)
     (h2 : 2 ≤ assigned.length) : m = true := by
   cases h <;> simp_all
 
-/-- A merger that assigns no role is movement and leaves the ledger intact: derived subjects
-never discharge a retained role ((45), section 3.4). -/
+-- (45)
 theorem Merger.eq_of_assigned_nil (h : Merger m before [] after) : after = before := by
   cases h; rfl
 
-/-- At the matrix TP, *se*-marked merger assigns the matrix external role of *entendre* together
-with the retained embedded Agent of *chanter* (63c). -/
+-- (63c)
 theorem ecm_parasitic : Merger true [.experiencer, .agent] [.experiencer, .agent] [] :=
   .parasitic _ _ (by simp)
 
@@ -622,7 +616,7 @@ theorem accumulated_injective : Function.Injective accumulated := by
 theorem accumulated_mem_sums (j : Fin 5) : accumulated j ∈ kissGroups.sums :=
   kissGroups.sup_mem_sums ⟨_, rfl⟩ ⟨_, rfl⟩
 
-/-- Five accumulation events, the five-count of (16b). -/
+-- (16b)
 theorem card_accumulated : (Finset.univ.image accumulated).card = 5 := by
   rw [Finset.card_image_of_injective _ accumulated_injective]
   simp
@@ -650,7 +644,7 @@ def mutualEvent (j : Fin 5) : KissEvent := kissGroups.up (accumulated j)
 theorem mutualEvent_injective : Function.Injective mutualEvent := fun _ _ h ↦
   accumulated_injective (kissGroups.injOn_up (accumulated_mem_sums _) (accumulated_mem_sums _) h)
 
-/-- Five mutual kissing events (15). -/
+-- (15)
 theorem card_mutualEvent : (Finset.univ.image mutualEvent).card = 5 := by
   rw [Finset.card_image_of_injective _ mutualEvent_injective]
   simp
@@ -659,7 +653,7 @@ theorem mutualEvent_down (j : Fin 5) :
     kissGroups.down (mutualEvent j) = directional (2 * j) ⊔ directional (2 * j + 1) :=
   kissGroups.down_up (accumulated_mem_sums j)
 
-/-- Each round's directional events underlie its mutual event (41b). -/
+-- (41b)
 theorem underlyingReading_mutualEvent (j : Fin 5) :
     UnderlyingReading kissGroups kiss kissAg kissTh dan rina (mutualEvent j) :=
   ⟨_, _, mutualEvent_down j, crossedPair_round j.isLt⟩

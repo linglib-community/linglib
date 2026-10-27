@@ -37,15 +37,6 @@ which *would* and *might* quantify.
 * `Kratzer1989.consistentPremiseSets`: the premise sets of the analysis of §4.2.
 * `Kratzer1989.IsCrucial`: membership in the crucial set of §4.6.
 
-## Main results
-
-* `Kratzer1989.Lumps.iff_of_isMin`: at a situation without proper parts lumping is joint truth.
-* `Kratzer1989.closedUnderConsequence_iff`: strong closure under logical consequence is closure
-  of the whole set.
-* `Kratzer1989.might_iff_not_would_compl`: *might* is the dual of *would*.
-* `Kratzer1989.might_consistentPremiseSets_atlantic`: the analysis of §4.2 validates (10a).
-* `Kratzer1989.not_might_crucialSet_atlantic`: the crucial set blocks it.
-
 ## Implementation notes
 
 The set `F` of propositions relevant at a world is a parameter. The paper requires its members
@@ -177,7 +168,7 @@ def crucialSet (F : Set (Set S)) (w : S) (p : Set S) : Set (Set (Set S)) := {A |
 
 @[simp] theorem mem_crucialSet : A ∈ crucialSet F w p ↔ IsCrucial F w p A := Iff.rfl
 
-/-- The crucial set refines the premise sets of §4.2 by the two closure conditions. -/
+-- §4.2
 theorem crucialSet_subset_consistentPremiseSets : crucialSet F w p ⊆ consistentPremiseSets F p :=
   fun _ h ↦ ⟨h.subset, h.antecedent_mem, h.consistent⟩
 
@@ -234,22 +225,20 @@ scoped macro "decide_sit" : tactic =>
       Set.mem_singleton_iff, Set.mem_inter_iff, Set.mem_sInter, Set.sInter_insert,
       Set.sInter_singleton, mem_worlds, Set.mem_compl_iff]) <;> decide))
 
-/-- The facts are true in the actual world and persistent, as §4.6 requires. -/
+-- §4.6
 theorem actual_mem_and_isUpperSet_of_mem_facts :
     ∀ q ∈ facts, Sit.actual ∈ q ∧ IsUpperSet q := by
   simp only [facts, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq, IsUpperSet]
   decide_sit
 
-/-- The disjunction lumps its first disjunct in the actual world (§4.4): the Atlantic is not
-drying up in any part of it. -/
+-- §4.4
 theorem lumps_paOrAd_pa : Lumps paOrAd pa Sit.actual := ⟨by decide_sit, by decide_sit⟩
 
-/-- Lumping is not logical implication (§2): the disjunction does not imply its first disjunct. -/
+-- §2
 theorem not_follows_paOrAd_pa : ¬ Follows {paOrAd} pa := fun h ↦
   absurd (h ⟨(by decide : IsMax Sit.atlantic), by decide_sit⟩) (by decide_sit)
 
-/-- Lumping is not material implication, since a part of the actual world supports the Atlantic's
-calm without the purchase (§2). -/
+-- §2
 theorem not_lumps_notAd_pa : ¬ Lumps notAd pa Sit.actual := fun h ↦
   (by decide_sit : Sit.calm ∉ pa) (h.localImpl (by decide) (by decide_sit))
 

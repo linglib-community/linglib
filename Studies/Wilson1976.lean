@@ -14,15 +14,6 @@ possessed noun.
 * `Relationship.hawaiian`: the particle of a relationship, rules (1)–(3) (p. 43).
 * `Relationship.fijian`: the Fijian prefix of a relationship (p. 47).
 
-## Main statements
-
-* `hawaiian_marker_eq`: rules (1)–(3) predict the particle of every Hawaiian example.
-* `not_exists_nounClass`: no assignment of particles to nouns fits the examples (p. 41).
-* `spear_predicts_both`: the feature-based theory predicts both particles for *spear* (p. 41).
-* `exists_ne_controlOnly`: an account by control alone mispredicts (p. 43).
-* `fijian_marker_eq`, `not_forall_o_iff_ke`: the Fijian examples, and Hawaiian *o* with Fijian
-  *no-* for locations (p. 47).
-
 ## Implementation notes
 
 The relationship of an example is the group under which the paper lists it; for the minimal
@@ -137,6 +128,7 @@ def fijianData : List Datum :=
 
 /-! ### The relation-based account -/
 
+/-- Rules (1)–(3) predict the particle of every Hawaiian example. -/
 theorem hawaiian_marker_eq :
     ∀ d ∈ hawaiianData, (group d).isSome ∧ marker d = (group d).map (·.relationship.hawaiian) := by
   decide +kernel
@@ -145,12 +137,14 @@ theorem exists_minimal_pair :
     ∃ d ∈ hawaiianData, ∃ d' ∈ hawaiianData, possessed d = possessed d' ∧ marker d ≠ marker d' := by
   decide +kernel
 
+/-- No assignment of particles to nouns fits the examples (p. 41). -/
 theorem not_exists_nounClass :
     ¬ ∃ f : String → Marker, ∀ d ∈ hawaiianData, marker d = (possessed d).map f := by
   rintro ⟨f, hf⟩
   obtain ⟨d, hd, d', hd', hp, hm⟩ := exists_minimal_pair
   exact hm (by rw [hf d hd, hf d' hd', hp])
 
+/-- An account by control alone mispredicts (p. 43). -/
 theorem exists_ne_controlOnly :
     ∃ d ∈ hawaiianData, marker d ≠ (group d).map (·.relationship.controlOnly) := by
   decide +kernel
@@ -177,6 +171,7 @@ def spear : List (Feature × Bool) :=
   [(.importantInOldCulture, true), (.inCloseContactWithBody, true), (.inherited, true),
     (.portable, true), (.subordinateToPossessor, true)]
 
+/-- The feature-based theory predicts both particles for *spear* (p. 41). -/
 theorem spear_predicts_both :
     Marker.o ∈ spear.map (fun p ↦ p.1.predicts p.2) ∧
       Marker.a ∈ spear.map (fun p ↦ p.1.predicts p.2) := by
@@ -184,6 +179,7 @@ theorem spear_predicts_both :
 
 /-! ### Fijian -/
 
+/-- The Fijian examples, and Hawaiian *o* with Fijian *no-* for locations (p. 47). -/
 theorem fijian_marker_eq :
     ∀ d ∈ fijianData,
       (group d).isSome ∧ fijianMarker d = (group d).map (·.relationship.fijian) := by

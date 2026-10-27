@@ -23,14 +23,6 @@ risen above the dative, as in French and Spanish but not in Icelandic.
 * `BejarRezac2003.Head.derive`: the derivation of a head's domain.
 * `BejarRezac2003.PLC`: the Person Licensing Condition.
 
-## Main results
-
-* `BejarRezac2003.applicative_derive`: a dative is what its own preposition's derivation yields.
-* `BejarRezac2003.doc_plc_iff`: the constraint in a double object construction.
-* `BejarRezac2003.pp_plc`: the prepositional construction escapes it.
-* `BejarRezac2003.dnc_plc_iff`: a dative–nominative construction obeys it iff the dative satisfies
-  the EPP and the nominative's φ-features stay below it.
-
 ## Implementation notes
 
 The number probe values Case after the projection's person probe has searched, where the paper
@@ -198,8 +190,7 @@ theorem applicative_derive (c : Bundle) : applicative.derive [caseless c] = [dat
 
 /-! ### The double object and prepositional constructions -/
 
-/-- In a double object construction the dative absorbs v's person probe and the number probe
-values accusative on the theme, whose person stays unlicensed ((8)–(10)). -/
+-- (8), (10)
 theorem v_derive_doc (cd ca : Bundle) :
     v.derive [dat cd, caseless ca] = [dat cd, ⟨.valued .acc ca, false⟩] := rfl
 
@@ -218,8 +209,7 @@ example :
       caseless (.personNumber .second .singular)]) := by
   decide
 
-/-- In the prepositional construction the theme is v's closest nominal and both its probes reach
-it ((11a)). -/
+-- (11a)
 theorem v_derive_pp (ct cg : Bundle) :
     v.derive [caseless ct, dat cg] = [⟨.valued .acc ct, true⟩, dat cg] := rfl
 
@@ -235,18 +225,15 @@ example : ¬ PLC (v.derive [caseless (.personNumber .first .singular),
 
 /-! ### Dative–nominative constructions -/
 
-/-- In Icelandic the dative stays the highest φ-bearer, absorbing both of T's person probes, and
-the nominative gets only T's number ((12), (25c)). -/
+-- (12), (25c)
 theorem icelandicT_derive (cd cn : Bundle) :
     icelandicT.derive [dat cd, caseless cn] = [dat cd, ⟨.valued .nom cn, false⟩] := rfl
 
-/-- In French the nominative moves over the dative to Spec,TP, and the projection of T licenses
-its person ((16), (17), (25b)). -/
+-- (16), (17), (25b)
 theorem frenchT_derive (cd cn : Bundle) :
     frenchT.derive [dat cd, caseless cn] = [⟨.valued .nom cn, true⟩, dat cd] := rfl
 
-/-- In Spanish the nominative's φ-features rise as a head above the dative in Spec,TP, and T
-licenses its person ((25a)). -/
+-- (25a)
 theorem spanishT_derive (cd cn : Bundle) :
     spanishT.derive [dat cd, caseless cn] = [⟨.valued .nom cn, true⟩, dat cd] := rfl
 

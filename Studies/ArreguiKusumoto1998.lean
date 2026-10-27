@@ -21,21 +21,6 @@ speech time, and *mae* and *ato* select a tensed clause directly, *mae* being st
 a variable. The logical forms are interpreted by Heim and Kratzer's type-driven composition,
 which gives a past under *mae* and a present under *ato* no denotation.
 
-## Main statements
-
-* `interpretable_selected`: of the four tensed clauses under *mae* and *ato*, the present under
-  *mae* and the past under *ato* compose.
-* `interpretable_iff_tense`, `relativeTense_iff_tense`: both accounts derive the tenses the
-  fragment records for *mae* and *ato*, and the selection account those of *toki*.
-* `beforeEver_of_before`, `not_forall_before_of_beforeEver`: on intervals (19) is strictly
-  stronger than Anscombe's *before ever*.
-* `extension_after_past`: on dense time *after* absorbs the past operator of the clause it
-  selects, the step the paper takes without comment, and on discrete time it does not.
-* `judgment_iff_relativeTense`: the relative-tense account errs on the past in a Japanese
-  *when*-clause and on the past and the future in a Polish *before*-clause, and nowhere else.
-* `not_exists_sot_polish`: no setting of the sequence-of-tense rule gives the relative-tense
-  account both the complements and the *before*-clauses of Polish.
-
 ## Implementation notes
 
 * A time is an interval of moments, with precedence and inclusion. The entity type of the
@@ -163,7 +148,7 @@ theorem before_iff_not_diamond :
     not_exists, not_and]
   exact forall_congr' fun _ ↦ not_imp_not.symm
 
-/-- *Before* is not veridical (18a), holding of every time when its clause has none. -/
+-- (18a)
 theorem before_of_forall_not (h : ∀ t', ¬ X t') (t : NonemptyInterval T) : before X t :=
   fun t' ht' ↦ absurd ht' (h t')
 
@@ -198,11 +183,11 @@ def clause : LF → LF → LF
   | .tr i, vp => .bin (.tr i) vp
   | τ, vp => .bin (.leaf .speechTime) (.bin τ vp)
 
-/-- A present clause is true when its verb phrase holds at the speech time (12). -/
+-- (12)
 theorem holds_present : M.Holds (clause presentVariable (.leaf (.vp k))) ↔ M.vp k M.speechTime :=
   .rfl
 
-/-- A past clause is true when its verb phrase holds at a time before the speech time (13). -/
+-- (13)
 theorem holds_past :
     M.Holds (clause pastOperator (.leaf (.vp k))) ↔ ∃ t, t.Precedes M.speechTime ∧ M.vp k t :=
   Perspective.diamond_toSetRel_past
@@ -226,15 +211,13 @@ def matrix (vp adjunct : LF) : LF := clause pastOperator (.bin vp adjunct)
 attribute [local simp] Model.Holds Model.extension Model.lex Model.denote Word.ty clause relative
   atTrace matrix pastOperator presentVariable
 
-/-- A past relative clause denotes the times before the speech time at which its verb phrase
-holds, whatever clause it modifies (16b). -/
+-- (16b)
 theorem extension_relative :
     M.extension (relative pastOperator (atTrace (.leaf (.vp k)))) t ↔
       t.Precedes M.speechTime ∧ M.vp k t := by
   simp [Diamond]
 
-/-- In *Satoshi left after Junko came* (24) both events precede the speech time, and the
-connective alone orders them. -/
+-- (24)
 theorem holds_after_relative :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .after) (relative pastOperator (atTrace (.leaf (.vp l)))))) ↔
@@ -242,7 +225,7 @@ theorem holds_after_relative :
         ∃ t', t'.Precedes M.speechTime ∧ M.vp l t' ∧ t'.Precedes t := by
   simp [Diamond, and_comm, and_left_comm]
 
-/-- In *Satoshi left before Junko came* (25) the leaving precedes every past coming. -/
+-- (25)
 theorem holds_before_relative :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .before) (relative pastOperator (atTrace (.leaf (.vp l)))))) ↔
@@ -250,14 +233,13 @@ theorem holds_before_relative :
         ∀ t', t'.Precedes M.speechTime → M.vp l t' → t.Precedes t' := by
   simp [Diamond, before]
 
-/-- With a past *when*-clause, *Junko was in her room when Satoshi came* (33) reports an episode
-at one past time. -/
+-- (33)
 theorem holds_when_relative :
     M.Holds (matrix (.leaf (.vp k)) (relative pastOperator (atTrace (.leaf (.vp l))))) ↔
       ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ M.vp l t := by
   simp [Diamond, and_left_comm]
 
-/-- An *after*-sentence entails that its clause held (18b). -/
+-- (18b)
 theorem exists_of_holds_after
     (h : M.Holds (matrix (.leaf (.vp k))
       (.bin (.leaf .after) (relative pastOperator (atTrace (.leaf (.vp l))))))) :
@@ -265,15 +247,14 @@ theorem exists_of_holds_after
   let ⟨_, _, _, t', _, h', _⟩ := holds_after_relative.1 h
   ⟨t', h'⟩
 
-/-- A *before*-sentence whose clause never held says what its matrix says (18a). -/
+-- (18a)
 theorem holds_before_of_forall_not (h : ∀ t, ¬ M.vp l t) :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .before) (relative pastOperator (atTrace (.leaf (.vp l)))))) ↔
       M.Holds (clause pastOperator (.leaf (.vp k))) := by
   simp [Diamond, before, h]
 
-/-- A present *after*- or *when*-clause that is a relative clause with a free present variable
-contradicts a past matrix (cf. (34)). -/
+-- (34)
 theorem not_holds_present_relative :
     ¬ M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .after) (relative presentVariable (atTrace (.leaf (.vp l)))))) ∧
@@ -305,7 +286,7 @@ theorem not_extension_after_past_int :
   exact ⟨⟨fun _ t ↦ t = .pure 0, fun _ X ↦ X, .pure 0⟩, .pure 1, ⟨.pure 0, by decide, rfl⟩,
     by simpa [Diamond, NonemptyInterval.Precedes] using key⟩
 
-/-- *Before* binds the present variable of the clause it selects (30). -/
+-- (30)
 theorem extension_before_present :
     M.extension (.bin (.leaf .before) (.binder 0 (.bin presentVariable (.leaf (.vp k))))) =
       before (M.vp k) :=
@@ -320,23 +301,20 @@ theorem interpretable_selected :
       ¬ Interpretable (.bin (.leaf .after) (.bin presentVariable (.leaf (.vp k)))) :=
   ⟨rfl, Bool.false_ne_true, rfl, Bool.false_ne_true⟩
 
-/-- On dense time, the logical form of *Satoshi left after Junko came* (28) has the paper's truth
-conditions. -/
+-- (28)
 theorem holds_after_selected [DenselyOrdered T] :
     M.Holds (matrix (.leaf (.vp k)) (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp l))))) ↔
       ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ ∃ t', t'.Precedes t ∧ M.vp l t' := by
   simp [↓Perspective.diamond_past_diamond_past, Diamond]
 
-/-- In Japanese, *Satoshi left before Junko came* (29) says that the leaving precedes every
-coming. -/
+-- (29)
 theorem holds_before_selected :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .before) (.binder 0 (.bin presentVariable (.leaf (.vp l)))))) ↔
       ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ ∀ t', M.vp l t' → t.Precedes t' := by
   simp [Diamond, before]
 
-/-- On dense time an *after*-sentence has the same truth conditions whether its clause is a
-relative clause (24) or is selected directly (28). -/
+-- (24), (28)
 theorem holds_after_relative_iff_selected [DenselyOrdered T] :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .after) (relative pastOperator (atTrace (.leaf (.vp l)))))) ↔
@@ -357,8 +335,7 @@ def amherst : Model ℤ where
   attitude _ X t := t = .pure 15 ∧ X t
   speechTime := .pure 20
 
-/-- Extracting the relative pronoun from the higher clause (15a) or the lower clause (15b) gives the
-saying-time or leaving-time reading respectively. -/
+-- (15a), (15b)
 theorem extension_upstairs_downstairs :
     let upstairs := relative pastOperator
       (atTrace (.bin (.leaf (.attitude 0)) (.bin pastOperator (.leaf (.vp 0)))))
@@ -379,16 +356,13 @@ theorem mem_freeIndices_selected :
 tense variable the adverb abstracts (34c). -/
 def quantificational (τ vp : LF) : LF := .bin (.leaf .adverb) (.binder 0 (.bin τ vp))
 
-/-- In *Junko was in her room whenever Satoshi came* (34), a covert adverb of quantification binds
-the clause's present variable. -/
+-- (34)
 theorem holds_whenever :
     M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) ↔
       ∃ t, t.Precedes M.speechTime ∧ ∀ t' ≤ t, M.vp l t' → ∃ t'' ≤ t', M.vp k t'' :=
   Perspective.diamond_toSetRel_past
 
-/-- The truth conditions (34b) hold as soon as some past time contains no time of the
-*when*-clause, the past tense quantifying over the domain of the adverb. The paper does not
-remark on this. -/
+-- (34b)
 theorem holds_whenever_of_forall_not (ht : t.Precedes M.speechTime)
     (h : ∀ t' ≤ t, ¬ M.vp l t') :
     M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) :=
@@ -501,8 +475,7 @@ def tenses : List (String × Tense) := [("past", .past), ("present", .present), 
 def positions : List (String × Ordering) :=
   [("shifted", .lt), ("simultaneous", .eq), ("posterior", .gt)]
 
-/-- Complement readings follow the language's sequence-of-tense rule for a past and the embedded
-tense otherwise ((1) to (4), (10)). -/
+-- (1), (4), (10)
 theorem complement_readings :
     ∀ r ∈ Examples.all, r.feature? "clause" = some "complement" →
       ∃ L ∈ languages.lookup r.language, ∃ τ ∈ r.parse? "embeddedTense" tenses, ∀ p ∈ positions,
@@ -511,8 +484,7 @@ theorem complement_readings :
         (τ = .past → p.2 ∈ pastUnderPast L.sot → r.readings.lookup p.1 = some .acceptable) := by
   decide
 
-/-- Acceptability of a past or present adjunct ((5a), (6b), (11c)) matches composition of its
-logical form, except for present relative *before*- and *after*-clauses ((11b), fn. 3 (i-b)). -/
+-- (5a), (6b), (11c), (11b), fn. 3
 theorem judgment_iff_interpretable :
     ∀ r ∈ Examples.all, ∀ rel ∈ r.parse? "clause" relations,
       ∀ τ ∈ r.parse? "embeddedTense" tenses, ∀ h ∈ head? τ, ∃ L ∈ languages.lookup r.language,
@@ -543,16 +515,14 @@ theorem not_exists_sot_polish :
         ({ polish with sot := sot } : Language).RelativeTense ⟦future⟧ .past) := by
   decide
 
-/-- An adjunct embedding a clause has the downstairs reading exactly when it is a relative clause
-rather than a selected one ((14), (20), (22), (32), (26)). -/
+-- (14), (20), (22), (32), (26)
 theorem downstairs_iff :
     ∀ r ∈ Examples.all, r.feature? "embeddedClauses" = some "2" →
       ∃ rel ∈ r.parse? "clause" relations, ∃ L ∈ languages.lookup r.language,
         (r.readings.lookup "downstairs" = some .acceptable ↔ rel ∉ L.tensed) := by
   decide
 
-/-- A Japanese *when*-clause or relative clause has the habitual reading exactly when its tense
-composes as the variable the adverb binds ((8), (9), (35), (36)). -/
+-- (8), (9), (35), (36)
 theorem habitual_iff :
     ∀ r ∈ Examples.all, r.language = "nucl1643" →
       r.feature? "clause" ∈ [some "when", some "relative"] →

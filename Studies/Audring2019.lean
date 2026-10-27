@@ -65,7 +65,6 @@ def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish
 def ishFamily : Set (Fin 2 → Flat String) :=
   {Wordlist.boyish.slots, Wordlist.foolish.slots, Wordlist.childish.slots}
 
-/-- Any word whose affix is *-ish* instantiates the mother. -/
 theorem ishSchema_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ish") :
     ishSchema.Instantiates w := by
   intro i
@@ -113,7 +112,6 @@ theorem ishSchema_relates {w : Fin 2 → Flat String} (hw : w ∈ ishFamily) :
   simp only [ishFamily, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
   rcases hw with rfl | rfl | rfl <;> exact ishSchema_instantiates (by decide)
 
-/-- The mother is productive, since its one variable is open. -/
 theorem ishSchema_isProductive : ishSchema.IsProductive := Schema.isProductive_productive _
 
 /-- The mother generates the novel *Trumpish* with nothing stored. -/

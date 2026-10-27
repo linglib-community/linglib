@@ -17,14 +17,6 @@ bindable present, and the fourth type is unattested, as the Embeddability Princi
 predicts: every matrix LF needs a content-matching λ0-abstract embeddable under an attitude
 verb, and the fourth type has no source of zero tense.
 
-## Main results
-
-* `embeddabilityPrinciple_iff`: a language meets the principle iff it provides a zero tense.
-* `boundPresent_nonpast`, `indexicalPresent_no_nonpast`, `not_doubleAccess_of_short`: the
-  readings of a bound and of an indexical present.
-* `lf7_iff`: the LF (7) of the nonpast reading of (1) denotes (10).
-* `nonpast_rows`: the typology predicts the nonpast readings of (1)–(6) and (12).
-
 ## Implementation notes
 
 * The semantic half of the Embeddability Principle (15) is met by the matrix LF's own
@@ -195,7 +187,7 @@ def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : Assignment
               (g₂ 0)) g₁)
           (g₁ 0)) g) t
 
-/-- The LF (7) has the interpretation (10). -/
+/-- The LF (7) has the interpretation (10) ((1)). -/
 theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
     (g : Assignment T) :
     lf7 decides tells miss g ↔
@@ -236,7 +228,7 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 theorem rows_complete : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome = true := by decide
 
 /-- The typology (11) predicts the paper's judgments, the nonpast reading being available exactly
-where the language provides a zero tense for the embedded morpheme. -/
+where the language provides a zero tense for the embedded morpheme ((1), (6), (12)). -/
 theorem nonpast_rows :
     ∀ r ∈ rows, r.nonpast = true ↔ NonpastAvailable r.language r.embedded := by
   decide

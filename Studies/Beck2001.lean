@@ -24,15 +24,6 @@ spatio-temporal relations (§6.3).
 * `SituationWeakReciprocity` — WR with cumulation over the situation argument ((193),
   bivalent, singleton covers).
 
-## Main results
-
-* `strongReciprocity_iff_otherOnes`, `collectiveReading_iff_strong` — SR is double
-  distribution over the definite ((81)); with a distributive relation the collective
-  schema collapses into SR.
-* `situationWR_imp_weakReciprocity` — under persistence, situation-based WR entails
-  WR: the right edge of the entailment chain SR → sitWR → WR feeding the Strongest
-  Meaning Hypothesis ((219), fn. 15).
-
 The six-scheme entailment lattice ((28)) and the WR-as-cumulation identity ((120),
 `weakReciprocity_iff_liftRel`) live in `Plurality/Reciprocal.lean` and are
 consumed here. The convergence with [haug-dalrymple-2020] on presuppositional
@@ -80,8 +71,7 @@ theorem otherOnesAmongThem_subset (A : Finset α) (x : α) :
     otherOnesAmongThem A x ⊆ A :=
   Finset.erase_subset x A
 
-/-- On a plural antecedent the definite is defined (nonempty) at every member — the
-    plurality presupposition ((115), §4.3.1). -/
+-- (115), §4.3.1
 theorem otherOnesAmongThem_nonempty (A : Finset α) (x : α) (hne : 1 < A.card) :
     (otherOnesAmongThem A x).Nonempty := by
   obtain ⟨y, hy, hyx⟩ := A.exists_mem_ne hne x

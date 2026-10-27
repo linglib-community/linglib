@@ -25,17 +25,6 @@ stronger local reading over the higher intermediate site that van der Sandt's an
 preference would choose. The Q-principle blocks accommodation when a non-triggering alternative
 expresses the same outcome.
 
-## Main statements
-
-* `strong_total_blocking`: strong bidirection blocks the marked form in every interpretation on
-  any generator in which both forms can express the stereotypical situation.
-* `marked_marked_mem_strongOptimalSet_iff`: strong bidirection pairs the marked form with the
-  marked situation only if the generator excludes both mixed pairs.
-* `weak_division_of_labour`: weak bidirection pairs the unmarked form with the stereotypical
-  situation and the marked form with the marked one.
-* `strength_local_height_intermediate`: without global accommodation, BeStrong selects the local
-  reading where the higher-site preference selects the intermediate one.
-
 ## Implementation notes
 
 * The markedness orders on forms and situations are pulled back from the violations of F and C.
@@ -215,7 +204,7 @@ local instance : DecidableLT (ℕ ×ₗ Finset World) := Prod.Lex.decidable _ _
 
 No binder is available, so every site accommodates Peter's cat and BeStrong decides. -/
 
-/-- In (17) the global outcome is the strongest and the intermediate one the weakest. -/
+-- (17)
 theorem dog_outcome_ssubset :
     ProjectionSite.global.outcome .univ ⊂ ProjectionSite.local.outcome .univ ∧
       ProjectionSite.local.outcome .univ ⊂ ProjectionSite.intermediate.outcome .univ := by
@@ -237,8 +226,7 @@ def catAvoidA : ProjectionSite → ℕ
   | .intermediate => 0
   | _ => 1
 
-/-- In (18) the global outcome is stronger than the intermediate one, and the local and
-intermediate outcomes coincide, as the paper's footnote notes. -/
+-- (18)
 theorem cat_outcome :
     ProjectionSite.global.outcome catWorlds ⊂ ProjectionSite.intermediate.outcome catWorlds ∧
       ProjectionSite.local.outcome catWorlds = ProjectionSite.intermediate.outcome catWorlds := by
@@ -264,6 +252,8 @@ def ProjectionSite.depth : ProjectionSite → ℕ
   | .intermediate => 1
   | .local => 2
 
+/-- Without global accommodation, BeStrong selects the local reading where the higher-site
+preference selects the intermediate one. -/
 theorem strength_local_height_intermediate :
     superoptimal boundSites (harmony (fun _ ↦ 1) .univ) = {((), .local)} ∧
       superoptimal boundSites (profile [fun _ ↦ 1, (·.2.depth)]) = {((), .intermediate)} := by

@@ -35,15 +35,6 @@ deterministic ones. In the bananas discourse the corpus frequencies weight the c
 image of that distribution along the gluing map ranks *ripe bananas, cheeky monkeys* first
 (`gluingMeasure_le`).
 
-## Main statements
-
-* `not_isSeparatedFor_beats`: Proposition 1 fails on Example 2.
-* `not_forall_exists_isGluing_of_disjoint`: disjoint vocabularies and a consistent candidate do
-  not make a gluing.
-* `map_restrict_eq_dirac_iff`: the multivalued gluings of point masses.
-* `gluingMeasure_le`, `gluingProbability_rounds_iff`: the most likely resolution, and the printed
-  distribution rounds the computed one except for `d(t₄) = 0.205`, which is `10/48 ≈ 0.208`.
-
 ## Implementation notes
 
 * `Var` is the paper's variable names; the substrate's sheaf theorem assumes infinitely many.
@@ -234,7 +225,7 @@ def greyGluing : Theory greyCtx :=
 theorem isGluing_grey : greyCover.IsGluing (presheaf lang Var) greySections greyGluing := by
   decide +kernel
 
-/-- The two covers give Example 3's readings, *it* as the donkey and not as John. -/
+-- Example 3
 theorem ex3_readings :
     (Examples.ex3.readings.lookup "it = the donkey" = some .acceptable ↔
       ∃ s, greyCover.IsGluing (presheaf lang Var) greySections s) ∧
@@ -291,7 +282,7 @@ theorem isGluing_broke :
     ∀ b, (brokeCover b).IsGluing (presheaf lang Var) brokeSections (brokeGluing b) := by
   decide +kernel
 
-/-- Both readings of Example 4 glue. -/
+-- Example 4
 theorem ex4_readings :
     (Examples.ex4.readings.lookup "it = the cup" = some .acceptable ↔
       ∃ s, (brokeCover .cup).IsGluing (presheaf lang Var) brokeSections s) ∧

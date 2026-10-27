@@ -137,8 +137,7 @@ def feynman : Idx → ℕ
 /-- *Feynman is tall* under a standard, in a world. -/
 abbrev feynmanTall (i w : Idx) : Prop := standard i ≤ feynman w
 
-/-- The descriptive update (17): with the two stricter standards admissible, the world in
-which Feynman is shortest is discarded. -/
+-- (17)
 theorem descUpdate_feynmanTall :
     (CommonGround.mk {0, 1} Finset.univ).descUpdate feynmanTall = ⟨{0, 1}, {0, 1}⟩ := by
   decide
@@ -152,11 +151,10 @@ abbrev popular (_ w : Idx) : Prop := w ≠ 2
 /-- *Madrigals are polyphonic* holds under the first two interpretations in every world. -/
 abbrev polyphonic (i _ : Idx) : Prop := i ≠ 2
 
-/-- The descriptive update (20) discards the world in which madrigals are not popular. -/
+-- (20)
 theorem descUpdate_popular : cg₀.descUpdate popular = ⟨Finset.univ, {0, 1}⟩ := by decide
 
-/-- The definitional update (21) discards the interpretation that admits monophonic
-madrigals. -/
+-- (21)
 theorem defUpdate_polyphonic : cg₀.defUpdate polyphonic = ⟨{0, 1}, Finset.univ⟩ := by decide
 
 end Krifka2013

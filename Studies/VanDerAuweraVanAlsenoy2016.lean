@@ -193,8 +193,7 @@ def welsh : System := ⟨none, some .optional⟩
 /-- (38): Western Armenian, optional concord preverbally and no postverbal position. -/
 def westernArmenian : System := ⟨some .optional, none⟩
 
-/-- Table 8: the subtypes with one position unavailable are non-strict, concord depending on
-word order even where it is obligatory. -/
+-- Table 8
 theorem isNonStrict_table8 :
     icelandic.IsNonStrict ∧ welsh.IsNonStrict ∧ westernArmenian.IsNonStrict := by
   decide

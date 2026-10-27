@@ -27,15 +27,6 @@ entailment, exactly when the preclusion it confers is its own incompatibility.
   confers.
 * `Score`, `assert`, `challenge`, `defer`, `disavow`: the scorekeeping moves.
 
-## Main statements
-
-* `Scorecard.Entitled.of_commitmentEntails`: in a coherent role commitment entailment preserves
-  entitlement.
-* `InferentialRole.coherent_iff_precludes_eq`: coherence is incompatibility as scorekeeping
-  confers it.
-* `InferentialRole.IsNegation.content_eq_compl`: a negation's content is the orthocomplement.
-* `barn_entitled`: entitlement to each of two incompatible claims, with commitment to neither.
-
 ## Implementation notes
 
 * Claims are an arbitrary type; `InferentialRole.ofWorlds` is a possible-worlds interpretation.
@@ -88,8 +79,7 @@ theorem content_le_iff {c : Concept P P R.incompatible} : R.content p ≤ c ↔ 
 theorem mem_content_self (p : P) : p ∈ R.content p :=
   R.content_le_iff.1 le_rfl
 
-/-- A claim is in the content of `p` when it incompatibility-entails `p`, that is, when everything
-incompatible with `p` is incompatible with it (p. 160). -/
+-- p. 160
 theorem mem_content_iff : q ∈ R.content p ↔ ∀ ⦃r⦄, R.incompatible p r → R.incompatible q r := by
   change q ∈ (R.content p).extent ↔ _
   simp [mem_lowerPolar_iff, mem_upperPolar_iff]
@@ -203,7 +193,7 @@ variable {R c}
 
 theorem committed_of_mem (h : p ∈ c.acknowledged) : c.Committed R p := ⟨p, h, .refl⟩
 
-/-- Committive inference preserves commitment (p. 186). -/
+-- p. 186
 theorem Committed.of_committive (h : c.Committed R p) (hpq : R.committive p q) :
     c.Committed R q :=
   let ⟨r, hr, hrp⟩ := h; ⟨r, hr, hrp.tail hpq⟩
@@ -211,19 +201,17 @@ theorem Committed.of_committive (h : c.Committed R p) (hpq : R.committive p q) :
 theorem Entitled.not_precluded (h : c.Entitled R p) : ¬ c.Precluded R p := by
   cases h <;> assumption
 
-/-- Commitment to one of two incompatible claims precludes entitlement to the other (p. 160). -/
+-- p. 160
 theorem not_entitled_of_incompatible (hr : c.Committed R r) (h : R.incompatible r p) :
     ¬ c.Entitled R p :=
   fun hp ↦ hp.not_precluded ⟨r, hr, h⟩
 
-/-- In a coherent role committive inference preserves entitlement, since whatever precludes the
-conclusion precludes the premise (p. 673 n. 27, p. 674 n. 43). -/
+-- p. 673, n. 27, p. 674, n. 43
 theorem Entitled.of_committive (hR : R.Coherent) (h : c.Entitled R p) (hpq : R.committive p q) :
     c.Entitled R q :=
   h.committive hpq fun ⟨r, hr, hrq⟩ ↦ h.not_precluded ⟨r, hr, symm (hR.incompatible hpq (symm hrq))⟩
 
-/-- Inference spreads entitlement but does not originate it (p. 176), so every entitlement descends
-along committive and permissive inference from a prima facie one. -/
+-- p. 176
 theorem Entitled.exists_primaFacie (h : c.Entitled R p) :
     ∃ q ∈ c.primaFacie, ReflTransGen (R.committive ⊔ R.permissive) q p := by
   induction h with
@@ -234,8 +222,7 @@ theorem Entitled.exists_primaFacie (h : c.Entitled R p) :
 theorem not_entitled_of_primaFacie_eq_empty (h : c.primaFacie = ∅) : ¬ c.Entitled R p := fun hp ↦
   let ⟨_, hq, _⟩ := hp.exists_primaFacie; (h ▸ hq : _ ∈ (∅ : Set P))
 
-/-- An avowal is attributed entitlement by default, unless an incompatible commitment defeats it
-(p. 177). -/
+-- p. 177
 theorem entitled_avow_iff : (c.avow p).Entitled R p ↔ ¬ (c.avow p).Precluded R p :=
   ⟨Entitled.not_precluded, .primaFacie (Set.mem_insert p _)⟩
 
@@ -278,8 +265,7 @@ theorem coherent_iff_precludes_eq : R.Coherent ↔ R.Precludes = R.incompatible 
   exact (congrFun₂ h p r).mp ⟨q, .single hpq, hqr⟩
 
 variable {R} in
-/-- The relations scorekeeping confers are coherent, since whatever a commitment-consequence
-precludes, its premise precludes (p. 673 n. 27). -/
+-- p. 673, n. 27
 theorem Precludes.of_commitmentEntails (hpq : R.CommitmentEntails p q) (hqr : R.Precludes q r) :
     R.Precludes p r :=
   fun c hp ↦ hqr c (hpq c hp)
@@ -379,8 +365,7 @@ def disavow (b : I) (p : P) : Score I P := fun k ↦
     (challenge R s a q b p k i).acknowledged = (s k i).acknowledged := by
   by_cases h : i = b <;> simp [challenge, h]
 
-/-- A challenged assertion with no other support is a commitment without entitlement (pp. 177–178).
--/
+-- pp. 177–178
 theorem challenge_committed_not_entitled (hb : (s k b).primaFacie = ∅) {q' : P}
     (ha : (assert s b p k a).Entitled R q) :
     (challenge R (assert s b p) a q b p k b).Committed R p ∧
@@ -390,18 +375,17 @@ theorem challenge_committed_not_entitled (hb : (s k b).primaFacie = ∅) {q' : P
   simp only [challenge, Function.update_self, assert_self, Scorecard.avow, hb] at hr
   exact hr.2 ha (Set.mem_singleton_iff.1 (by simpa using hr.1))
 
-/-- Deferral passes on the entitlement the scorekeeper attributes to the source (p. 175). -/
+-- p. 175
 theorem entitled_defer (hb : (s k b).Entitled R p) (hp : ¬ (defer R s a b p k a).Precluded R p) :
     (defer R s a b p k a).Entitled R p :=
   .primaFacie (by simp [defer, hb]) hp
 
-/-- Deferral to a source the scorekeeper takes to be unentitled confers no entitlement (p. 171). -/
+-- p. 171
 theorem not_entitled_defer (hb : ¬ (s k b).Entitled R p) (ha : (s k a).primaFacie = ∅) :
     ¬ (defer R s a b p k a).Entitled R q :=
   Scorecard.not_entitled_of_primaFacie_eq_empty <| by simp [defer, hb, ha]
 
-/-- A disavowal of `p` fails while a premise committing `b` to `p` stays acknowledged (pp.
-192–193). -/
+-- pp. 192–193
 theorem committed_disavow {q r : P} (hq : q ∈ (s k b).acknowledged) (hqp : q ≠ p)
     (h : ReflTransGen R.committive q r) : (disavow s b p k b).Committed R r :=
   ⟨q, by simp [disavow, hq, hqp], h⟩

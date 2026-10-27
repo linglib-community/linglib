@@ -72,12 +72,12 @@ instance : Decidable (DistributiveMight ord S C w) :=
 
 end
 
-/-- Simplification (27) says that the disjunctive counterfactual entails each disjunct's. -/
+-- (27)
 theorem simplification {A B : Finset W} (h : w ∈ distributiveImp ord {A, B} C) :
     w ∈ closestImp ord ↑A C ∧ w ∈ closestImp ord ↑B C :=
   mem_distributiveImp_pair.1 h
 
-/-- Simplification for *might* (54), the extension of §3.3. -/
+-- (54), §3.3
 theorem simplification_might {A B : Finset W} (h : DistributiveMight ord {A, B} C w) :
     w ∈ might (closestImp ord) ↑A C ∧ w ∈ might (closestImp ord) ↑B C :=
   ⟨h A (by simp), h B (by simp)⟩
@@ -207,8 +207,7 @@ abbrev newborn : Finset ForkWorld := {.baby}
 
 abbrev bent : Set ForkWorld := {.bookBent}
 
-/-- Under (52)–(53), (51) is true because the closest union-worlds are magic-book worlds, but false
-on the correlative analysis, with (58a) true and (58b) not. -/
+-- (52), (53), (51), (58a), (58b)
 theorem fork :
     .actual ∈ might (closestImp forkSim) ↑(hasBook ∪ newborn) bent ∧
       ¬ DistributiveMight forkSim {hasBook, newborn} bent .actual ∧

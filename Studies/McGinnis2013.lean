@@ -19,16 +19,6 @@ then shows only through [Multispeaker] in the prefix *gv-*. Each suffix discharg
 it spells out, so the third-person plural screeve suffix leaves no [Group] for *-t*, and *-t*
 leaves no [#] for the default *-s*.
 
-## Main results
-
-* `rows_realized`: a form of the pool is grammatical iff its prefix and suffixes are those the
-  analysis inserts.
-* `one_exponent_per_feature`: in every clause the suffixes realize disjoint parts of T's node, so
-  there is no double plural marking, which Fission alone would not exclude
-  (`fission_alone_allows_double_plural`).
-* `setB_realize`, `setA_realize`: the analysis yields the agreement affixes of the Fragment's two
-  sets, *gv-* without *-t* included.
-
 ## Implementation notes
 
 * An item's contextual features are read off the fused node as it stands before insertion, so
@@ -294,20 +284,17 @@ Principle specificity, its intrinsic features leading and its contextual ones br
 def rank (i : VocabularyItem Feature String) : ℕ ×ₗ ℕ ×ₗ ℕ :=
   toLex ((i.features.filter (·.IsInterpretable)).card, i.specificity)
 
-/-- Each screeve's Vocabulary descends in rank, since interpretable features are discharged as
-soon as possible ((10c), (13a)) and *-t* ranks above *-s* ((20)). -/
+-- (10c), (13a), (20)
 theorem vocabulary_ranked (s : Screeve) : s.vocabulary.Pairwise fun i j ↦ rank j < rank i := by
   cases s <;> decide
 
-/-- Ranking by intrinsic then contextual features puts *-t* (13c) above the null participant suffix
-(13d), and (13d) above *-s* (13e). -/
+-- (13c), (13d), (13e)
 theorem specificity_number :
     participantNumber.specificity < plural.specificity ∧
       defaultNumber.specificity < participantNumber.specificity := by
   decide
 
-/-- The geometry ranks the prefixes (9a) above (9b) above (9c) and (9d) above (9e) above (9f),
-Multispeaker depending on Speaker and Speaker on Participant. -/
+-- (9a), (9b), (9c), (9d), (9e), (9f)
 theorem prefix_ranking :
     m.features ⊆ gv.features ∧ g.features ⊆ m.features ∧
       participantNull.features ⊆ v.features ∧ elsewhere.features ⊆ participantNull.features := by
@@ -315,8 +302,7 @@ theorem prefix_ranking :
   exact ⟨site_subset_site (by decide) _, site_subset_site (by decide) _,
     site_subset_site (by decide) _, Finset.empty_subset _⟩
 
-/-- The geometry supplies the [#] of the revised *-t* (13c), the site of Group being
-[#, Group]. -/
+-- (13c)
 theorem plural_site : plural.features = {.node .individuation, .node .group} := by decide
 
 /-! ### The agreement sets -/
@@ -340,8 +326,7 @@ theorem setA_realize :
       setA.realize (.personNumber p n) = some (agreementAffixes ⟨p, n⟩ ⟨.third, .singular⟩) := by
   decide
 
-/-- The *-t* that Set B lists for the second person plural is T's, since a plural third-person
-subject's *-es* leaves none for the object ((3)). -/
+-- (3)
 theorem setB_plural_from_T :
     setB.realize (.personNumber .second .plural) = some [.pref "g", .suff "t"] ∧
       agreementAffixes ⟨.third, .plural⟩ ⟨.second, .plural⟩ = [.pref "g"] := by

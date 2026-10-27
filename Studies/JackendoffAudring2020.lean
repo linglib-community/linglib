@@ -110,23 +110,21 @@ def toponymsD : Set (Fin 4 → Flat String) :=
   {Wordlist.bayOfFundy.slots, Wordlist.gulfOfStLawrence.slots, Wordlist.capeOfGoodHope.slots,
     Wordlist.isleOfWight.slots}
 
-/-- *Morris Mountain* is licensed by (18a), since the name is open and *Mountain* is
-attested. -/
+-- (18a)
 theorem morrisMountain_generates : toponymA.Generates toponymsA Wordlist.morrisMountain.slots :=
   ⟨fun i ↦ bot_le, fun i _ hi ↦ by
     fin_cases i
     · exact absurd (Set.mem_singleton _) hi
     · exact ⟨Wordlist.loonMountain.slots, ⟨by simp [toponymsA], fun _ ↦ bot_le⟩, by decide⟩⟩
 
-/-- *Mount Morris* is licensed by (18b) likewise. -/
+-- (18b)
 theorem mountMorris_generates : toponymB.Generates toponymsB Wordlist.mountMorris.slots :=
   ⟨fun i ↦ bot_le, fun i _ hi ↦ by
     fin_cases i
     · exact ⟨Wordlist.mountEverest.slots, ⟨by simp [toponymsB], fun _ ↦ bot_le⟩, by decide⟩
     · exact absurd (Set.mem_singleton _) hi⟩
 
-/-- *Mountain Morris* is not licensed, since *Mountain* is not an attested feature of the
-pattern (18b). -/
+-- (18b)
 theorem not_mountainMorris_generates :
     ¬ toponymB.Generates toponymsB ![↑"Mountain", ↑"Morris"] := by
   rintro ⟨-, h⟩
@@ -134,8 +132,7 @@ theorem not_mountainMorris_generates :
   simp only [toponymsB, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
   rcases hw with rfl | rfl | rfl <;> exact absurd hw0 (by decide)
 
-/-- *The Mount of Halle* is not licensed by (18d), since *Mount* is not among its attested
-features. -/
+-- (18d)
 theorem not_mountOfHalle_generates :
     ¬ toponymD.Generates toponymsD ![↑"the", ↑"Mount", ↑"of", ↑"Halle"] := by
   rintro ⟨-, h⟩
@@ -394,8 +391,6 @@ def singSang : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"æ"
 /-- The *string*/*strung* subschema is (26) with /ʌ/ for /æ/. -/
 def stringStrung : Schema NucleusVar (Flat String) := nucleusPair ↑"ɪ" ↑"ʌ"
 
-/-- A syllable instantiates a nucleus pair's stem side exactly when its nucleus is the pinned
-one. -/
 theorem comap_stemSub_instantiates_iff {v w : Flat String} {s : Fin 3 → Flat String} :
     ((nucleusPair v w).comap stemSub).Instantiates s ↔ v ≤ s 1 :=
   ⟨fun h ↦ h 1, fun h i ↦ by fin_cases i <;> first | exact bot_le | exact h⟩
@@ -404,8 +399,6 @@ theorem comap_pastSub_instantiates_iff {v w : Flat String} {p : Fin 3 → Flat S
     ((nucleusPair v w).comap pastSub).Instantiates p ↔ w ≤ p 1 :=
   ⟨fun h ↦ h 1, fun h i ↦ by fin_cases i <;> first | exact bot_le | exact h⟩
 
-/-- A paired instantiation of a nucleus pair is a stem and a past that are the same except at
-the nucleus, with the pinned nuclei. -/
 theorem nucleusPair_iff {v w : Flat String} {s p : Fin 3 → Flat String} :
     (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) ↔
       v ≤ s 1 ∧ w ≤ p 1 ∧ Set.EqOn s p {1}ᶜ := by
@@ -438,8 +431,6 @@ theorem contrast_of_nucleusPair {v w : String} (hvw : v ≠ w) {s p : Fin 3 → 
   rw [hv, hw]
   exact ⟨Flat.coe_ne_bot, Flat.coe_ne_bot, fun h ↦ hvw (Flat.coe_injective h)⟩
 
-/-- Two syllables differing only in their nucleus are a paired instantiation of the subschema
-pinning those nuclei. -/
 theorem syllable_pairs (o v w c : String) :
     (nucleusPair ↑v ↑w).InstantiatesAt (Sum.elim stemSub pastSub)
       (Sum.elim ![↑o, ↑v, ↑c] ![↑o, ↑w, ↑c]) := by
@@ -447,8 +438,7 @@ theorem syllable_pairs (o v w c : String) :
   refine ⟨le_rfl, le_rfl, fun q hq ↦ ?_⟩
   fin_cases q <;> first | rfl | exact (hq rfl).elim
 
-/-- The pair *sing*/*sang*, (24), instantiates (26), *string*/*strung* instantiates its
-subschema, and the German *sprech-*/*sprich-* of (43) instantiates the shape of (45). -/
+-- (24), (26), (43), (45)
 theorem ablaut_words :
     singSang.InstantiatesAt (Sum.elim stemSub pastSub)
         (Sum.elim Wordlist.sing.slots Wordlist.sang.slots) ∧
@@ -509,7 +499,6 @@ def specialCells : Finset GCell := {(.second, .sg), (.third, .sg)}
 
 theorem sprechen_formCells : formCells sprechen .sprich = specialCells := by decide
 
-/-- The special cells are a value conjunction of neither feature. -/
 theorem specialCells_not_natural : ¬ IsValueConjunction gFeatures ↑specialCells := by
   rw [isValueConjunction_coe_iff]
   decide
@@ -577,7 +566,7 @@ theorem realize_eq_of_sameVerb {W : Type*} [DecidableEq W] (rf : Pivot → Tense
     linkage.realized rf l₁ σ = linkage.realized rf l₂ σ :=
   linkage.realized_eq_of_corr_eq rf (h σ)
 
-/-- Sameness of verb is nondirectional, so no use is the basic one, Section 3.6. -/
+-- Section 3.6
 theorem SameVerb.symm {l₁ l₂ : Lexeme} (h : SameVerb l₁ l₂) : SameVerb l₂ l₁ :=
   fun σ ↦ (h σ).symm
 

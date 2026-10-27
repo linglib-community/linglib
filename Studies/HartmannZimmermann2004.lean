@@ -103,14 +103,12 @@ def realize : Config → Finset (Reflex Focused)
   | ⟨_, .perfective, true⟩  => {.boundary .verb}
   | _                       => ∅
 
-/-- Focused subjects are overtly marked in every aspect — the paper's
-§6 subjects-vs-non-subjects generalization, shared with Hausa. -/
+-- §6
 theorem subject_always_marked :
     ∀ c : Config, c.focused = .subject → (realize c).Nonempty
   | ⟨_, _, _⟩, rfl => Finset.singleton_nonempty _
 
-/-- Progressive non-subject foci are wholly unmarked ((31)/(32a–c),
-contra Kidda 1993). -/
+-- (31), (32a–c)
 theorem progressive_nonsubject_unmarked (c : Config)
     (hs : c.focused ≠ .subject) (ha : c.tam = .continuous) :
     realize c = ∅ := by
@@ -118,8 +116,7 @@ theorem progressive_nonsubject_unmarked (c : Config)
   cases ha
   cases f <;> first | exact absurd rfl hs | rfl
 
-/-- Focus marking is not obligatory, since object focus in the progressive, (32a), is a
-well-formed focus configuration with no overt reflex. -/
+-- (32a)
 theorem focus_marking_not_obligatory :
     ∃ c : Config, c.WF ∧ ¬ (realize c).Nonempty :=
   ⟨⟨.object, .continuous, true⟩, ⟨fun _ ↦ rfl, Or.inr rfl⟩, Finset.not_nonempty_empty⟩
@@ -177,9 +174,7 @@ theorem separated_edge_wrapped_internal :
     (0, 2) ∉ Prosody.levelSpans .ph separated ∧ (0, 2) ∈ Prosody.levelSpans .ph wrapped := by
   decide
 
-/-- The prosodic reflex is audible, since the boundary-blocked perfective form differs from the
-phrase-medial elided form. [kidda-1985]'s elision cascade is what makes `Reflex.boundary`
-perceptible in the (25) cells. -/
+-- (25) [kidda-1985]
 theorem prosodic_reflex_audible :
     Tangale.blockedForm ≠ Tangale.elidedForm :=
   Tangale.boundary_audible.1

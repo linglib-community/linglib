@@ -23,17 +23,6 @@ each to exclude it. A present under a past then has no consistent reading in pla
 out de re, and the counterpart correspondence between the base world and the belief world leaves
 only the double access reading.
 
-## Main statements
-
-* `histories_subset_of_upperLimit`, `not_histories_subset_of_branching`: a time the upper limit
-  constraint admits lies on every history through the now, and a time after a branching does
-  not.
-* `PastConstraint.nonLocallyLicensed_of_coindexed`: a past coindexed with its local evaluation
-  time is licensed by a transmitted relation.
-* `expects_no_simultaneous`: under a present matrix an embedded past has no simultaneous
-  reading.
-* `doubleAccess_of_counterpart`: a present under a past has only the double access reading.
-
 ## Implementation notes
 
 * Relation variables are numbered by the paper's superscripts and times by its indices, `0`
@@ -63,8 +52,6 @@ variable {E W T : Type*}
 
 /-! ### De re interpretation across attitude contexts -/
 
-/-- On the simultaneous reading of *Mary believed it was raining* (`Examples.ex2`), the embedded
-past is de re under identity with the now. -/
 theorem simultaneous_deRe {C : Type*} (now : C → T) (rain : T → Set C) (A : Set C) (p : C) :
     AscribesUnder A p (some ∘ now) (now p) rain ↔ ∀ q ∈ A, q ∈ rain (now q) :=
   ascribesUnder_comp_some_apply
@@ -94,8 +81,6 @@ theorem not_histories_subset_of_branching (ht' : now ≤ t') (h : ¬ t ≤ t') (
 
 end Branching
 
-/-- On the forward-shifted reading of *he thought that a burglar attacked him* (`Examples.ex3_ULC`),
-the embedded past violates the upper limit constraint. -/
 theorem forwardShifted_not_upperLimit [LinearOrder T] {thinking opening : T}
     (h : thinking < opening) : compare opening thinking ∉ upperLimitConstraint := by
   simpa using h
@@ -178,8 +163,6 @@ theorem simultaneous_nonLocal [Preorder T] (h₁ : matrix.Con ρ g) (h₂ : embe
   ⟨by simpa [matrix, TemporalArgument.Con, pastConstraint_singleton.1 hp₁] using h₁,
     hp₂.nonLocallyLicensed_of_coindexed h₂ rfl⟩
 
-/-- On the narrow-scope reading of *John promised to talk about the topic that the participants were
-interested in* (`Examples.ex53`), the interest may follow the utterance time. -/
 theorem narrowScope_forward (k : ℕ) (hk : k ≠ 1) :
     ∃ (ρ : ℕ → ℤ → ℤ → Prop) (g : ℕ → ℤ), matrix.Con ρ g ∧
       (⟨k, 2, 2⟩ : TemporalArgument).Con ρ g ∧ PastConstraint ρ {1} ∧ PastConstraint ρ {1, k} ∧
@@ -194,8 +177,6 @@ theorem wideScope_precedes [Preorder T] {k i : ℕ}
     (hcon : (⟨k, i, 0⟩ : TemporalArgument).Con ρ g) (hp : PastConstraint ρ {k}) : g i < g 0 := by
   simpa [TemporalArgument.Con, pastConstraint_singleton.1 hp] using hcon
 
-/-- Under a present matrix, the past of *a man she met recently* (`Examples.ex60`) is local
-precedence, so the meeting precedes the marrying. -/
 theorem expects_local [Preorder T] (h₁ : matrix.Con ρ g) (hq : PresentConstraint ρ {1})
     (hp : PastConstraint ρ {1, 3}) (h₃ : (⟨3, 3, 2⟩ : TemporalArgument).Con ρ g) :
     g 3 < g 2 := by
@@ -217,8 +198,6 @@ theorem expects_no_simultaneous [Preorder T] (h₁ : matrix.Con ρ g)
 
 /-! ### Present under past -/
 
-/-- *John believed that Mary is pregnant* (`Examples.ex8_doubleAccess`) has no reading with the
-present in place. -/
 theorem presentUnderPast_false [Preorder T] (h₁ : matrix.Con ρ g) (hp : PastConstraint ρ {1})
     (hq : PresentConstraint ρ {1, 3}) : False :=
   hq.ne_lt (r := 1) (Finset.mem_insert_self _ _) h₁ (pastConstraint_singleton.1 hp)

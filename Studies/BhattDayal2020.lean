@@ -27,16 +27,6 @@ the other parse, with *kya:* on the second disjunct (52), is unavailable.
 * `selectsForceP`: the embedding contexts whose selecting predicate takes a ForceP
   complement.
 
-## Main results
-
-* `kya_polar`, `kya_not_wh`: the presupposition holds of a polar question and fails on a
-  constituent question with two answer cells.
-* `altQ_not_kyaDefined`: *kya:* over an alternative question fails.
-* `kyaDefined_iff_not_isInquisitive`: in the type-uniform setting the presupposition picks
-  out exactly the non-inquisitive contents, declaratives included.
-* `kya_licensed_iff_selectsForceP`, `kya_clause_types`: the fragment's embedding and
-  clause-type distributions.
-
 ## Implementation notes
 
 Questions are inquisitive contents, and the paper's Hamblin set is a content's set of
@@ -121,8 +111,7 @@ theorem altQ_not_kyaDefined {p q : Set W} (hpq : ¬p ⊆ q) (hqp : ¬q ⊆ p) :
   not_kyaDefined_of_mem_alt (mem_alt_altQ_left hpq) (mem_alt_altQ_right hqp)
     fun h ↦ hpq h.le
 
-/-- Disjunction inside a polar question keeps a singleton, the yes/no reading of *p or q*,
-(45). -/
+-- (45)
 theorem kya_polar_disjunction (p q : Set W) : KyaDefined (ofSet (p ∪ q)) := kya_polar _
 
 /-! ### Distribution -/

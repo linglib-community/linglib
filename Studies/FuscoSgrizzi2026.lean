@@ -77,7 +77,7 @@ def aP (circumstances : V → Background W) (inertia : V → Background W)
     (causeStar : W → SetRel V V) (P : W → V → Prop) (s : V) (w : W) : Prop :=
   necessity (circumstances s) (inertia s) (causedClosure causeStar s P) w
 
-/-- With no ordering, the head *a* is the causal subjunctive of [grano-2024]'s (134). -/
+-- (134) [grano-2024]
 theorem aP_bot (circumstances : V → Background W) (causeStar : W → SetRel V V)
     (P : W → V → Prop) (s : V) (w : W) :
     aP circumstances (fun _ ↦ ⊥) causeStar P s w ↔
@@ -161,8 +161,7 @@ def sizeOf (z : Complementizer) : Option ComplementSize :=
 def readings (v : Italian.Verb) : List Reading :=
   v.clauseTypers.filterMap fun z ↦ (sizeOf z).map readingFromSize
 
-/-- *convincere* has both readings, one per complementizer (4), and *pensare* alternates the same
-way. -/
+-- (4)
 theorem convincere_pensare_readings :
     readings convincere = [.belief, .intention] ∧ readings pensare = [.belief, .intention] := by
   decide

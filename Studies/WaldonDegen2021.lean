@@ -21,22 +21,6 @@ it, colour first. The Spanish alternatives are then the mirror image of the Engl
 size and colour exchanged, so the Spanish speaker in a scene is the English speaker in the
 counterpart of the scene with the two semantic values exchanged.
 
-## Main statements
-
-* `spanish_cs_production_eq_english_ss`, `spanish_ss_production_eq_english_cs`: for the small blue
-  pin, *pin blue small* in one scene of Spanish is as likely as *small blue pin* in the other
-  scene of English with the semantic values exchanged. With equal values, and so with Boolean
-  meanings, redundant size in Spanish is as likely as redundant colour in English, and redundant
-  colour in Spanish as redundant size in English.
-* `english_step_eq_sigmoid`: after *small*, the English speaker adds the redundant *blue* with a
-  probability that is a logistic function of the log of the gain of the redundant adjective, less
-  its cost.
-* `spanish_size_step_lt_english_color_step_iff`: the Spanish speaker adds the redundant size after
-  *pin blue* less readily than the English speaker adds the redundant colour after *small*
-  exactly when size is noisier than colour.
-* `meaning_perm`: the meaning of an utterance does not depend on the order of its words, so a
-  speaker who chooses among whole utterances cannot tell the two languages apart.
-
 ## Implementation notes
 
 * The word-level speaker `step` is the speaker of Degen and colleagues at the string meaning, so

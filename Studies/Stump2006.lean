@@ -60,35 +60,6 @@ one.
   the rules (20a,b), and the linkage of PRATYAÑC and AHAN.
 * `hrdLinkage`, `matLinkage`: Sanskrit HṚD(AYA) and Russian MAT'.
 
-## Main results
-
-* `realize_matches_tables`: the rules realize every attested form of the nine Czech nouns.
-* `czRealizeTable_stemFor_iff`: the fragment's endings alone miss exactly the six nominative and
-  vocative plurals of PŘEDSEDA, SLUHA and FILOSOF.
-* `predseda_eq_hrdina`, `sluha_eq_hrdina_iff`: rules (14) and (15) rebuild Short's paradigm of
-  the masculine a-stems, from which SLUHA's departs only in the locative plural.
-* `sluha_locPl`, `filolog_locPl`, `filologu_voc`: the grammars' velar forms, derived, the
-  locative plurals alike through the soft-masculine coradical and the hard-masculine stem.
-* `pramen_eq_koren_pattern`: rule (14) gives PRAMEN the classes the grammars give *kořen*.
-* `heteroclite_iff`, `segments_invariant`, `pramen_suppletive`: PRAMEN, PŘEDSEDA, SLUHA and
-  FILOLOG are heteroclite on form-identical stems, and heteroclisis is suppletion.
-* `degreeNum_eq_card_iff`: a category is an absolute correlate exactly when the class split
-  factors through it.
-* `pramen_degrees`, `predseda_degrees`, `sluha_degrees`, `filolog_degrees`: the paper's figures.
-* `isAbsoluteCorrelate_of_rules`: rules seeing only a category make it an absolute correlate.
-* `pcr`, `not_satisfiesPCR_hypothetical`: the Czech rules satisfy (40), and a case-only rule
-  would violate it.
-* `fractured_minimal_intersective_privileged`: claim (39) for the Czech nouns.
-* `rules_match_table9`, `rules_match_table10`: (19) and (20a,b) give PRATYAÑC's grades and
-  AHAN's stems at every cell of Tables 9 and 10.
-* `pratyanc_not_heteroclite`, `ahan_heteroclite`, `ahan_grade_eq_pratyancN`: one list of rules
-  makes AHAN heteroclite and PRATYAÑC not, with the same grades.
-* `ahan_degrees`, `ahan_fractured`: AHAN's paradigm is fractured, its case correlation .71.
-* `hrd_cloven`, `privileged_case`, `pcr_skt`: case, the absolute correlate of HṚD(AYA)'s cloven
-  paradigm, is privileged, and (20a,b) satisfy (40).
-* `hrd_form_suppletive`, `mat_suppletive_not_heteroclite`: suppletion with and without
-  heteroclisis.
-
 ## Implementation notes
 
 A Czech noun's segments are the stem of its entry in the Czech noun fragment, the citation form less
@@ -170,11 +141,8 @@ def attested (l : CzNoun) (σ : CzCell) : Finset (List String) :=
   ((czForms.filter fun f ↦ f.parameterId == l.paramId && caseOfForm f == some σ.case.label &&
       numberOfForm f == some σ.number).map (·.segments)).toFinset
 
-/-- Every cell has an attested form, so no statement about the attested forms holds for want
-of a row. -/
 theorem attested_nonempty : ∀ l σ, (attested l σ).Nonempty := by decide +kernel
 
-/-- FILOSOF's dative singular has two alternants, *filosofovi* and *filosofu*. -/
 theorem filosof_cellMates : 2 ≤ (attested .filosof (.of .dat .singular)).card := by decide
 
 /-! ### Stems and lexical entries -/
@@ -197,7 +165,6 @@ def Decl.toClass : Decl → Bool → Czech.Declension.Class
   | .hardMasc, false => .hrad
   | .hardFem, _ => .zena
 
-/-- For either animacy, distinct declensions are distinct classes of Short's. -/
 theorem Decl.toClass_injective (a : Bool) : Function.Injective (Decl.toClass · a) := by
   cases a <;> decide
 
@@ -211,7 +178,6 @@ def Decl.ofClass : Czech.Declension.Class → Option Decl
   | .zena | .hrdina => some .hardFem
   | _ => none
 
-/-- The root declension of the class a declension is, for either animacy, is that declension. -/
 theorem Decl.ofClass_toClass (d : Decl) (a : Bool) : Decl.ofClass (d.toClass a) = some d := by
   cases d <;> cases a <;> rfl
 
@@ -298,12 +264,11 @@ def Entry.hardMascStem (e : Entry) : Option Stem :=
 hard-masculine stem. -/
 def Entry.softMascCoradical (e : Entry) : Option Stem := e.hardMascStem.bind inferSoftMasc
 
-/-- Rule (18) supplies a soft-masculine coradical to SLUHA and FILOLOG and to no other noun. -/
+-- (18)
 theorem softMascCoradical_isSome_iff :
     ∀ l, (entry l).softMascCoradical.isSome ↔ l = .sluha ∨ l = .filolog := by
   decide
 
-/-- A hard-masculine coradical is a stem of its own noun. -/
 theorem Entry.lexeme_of_mem_hardMascCoradical {e : Entry} {z : Stem}
     (hz : z ∈ e.hardMascCoradical) : z.lexeme = e.lexeme := by
   unfold Entry.hardMascCoradical at hz
@@ -311,7 +276,6 @@ theorem Entry.lexeme_of_mem_hardMascCoradical {e : Entry} {z : Stem}
   · cases hz; rfl
   · cases hz
 
-/-- A soft-masculine coradical is a stem of its own noun. -/
 theorem Entry.lexeme_of_mem_softMascCoradical {e : Entry} {z : Stem}
     (hz : z ∈ e.softMascCoradical) : z.lexeme = e.lexeme := by
   obtain ⟨y, hy, hz⟩ := Option.mem_bind_iff.mp hz
@@ -377,10 +341,8 @@ applicable rule no applicable rule is narrower than, or the root where no rule a
 def stemFor (l : CzNoun) (σ : CzCell) : Stem :=
   Exponence.RuleSet.realizeMinimalD (czRules l) (·.dom) (fun _ ↦ czRoot l) σ
 
-/-- Every noun's entry describes that noun. -/
 @[simp] theorem entry_lexeme (l : CzNoun) : (entry l).lexeme = l := by cases l <;> rfl
 
-/-- Every rule for a noun assigns a stem of that noun. -/
 theorem lexeme_stem_of_mem_rulesFor {e : Entry} {r : CellRule} (hr : r ∈ rulesFor e) :
     r.exponent.lexeme = e.lexeme := by
   simp only [rulesFor, List.mem_append, Option.mem_toList] at hr
@@ -395,7 +357,6 @@ theorem lexeme_stem_of_mem_rulesFor {e : Entry} {r : CellRule} (hr : r ∈ rules
   · obtain ⟨z, hz, rfl⟩ := Option.mem_map.mp hr
     exact e.lexeme_of_mem_softMascCoradical hz
 
-/-- A noun's cells are all built on its own stems. -/
 theorem stemFor_lexeme (l : CzNoun) (σ : CzCell) : (stemFor l σ).lexeme = l :=
   Exponence.RuleSet.realizeMinimalD_induction (fun z ↦ z.lexeme = l) (entry_lexeme l)
     fun _ hr ↦ (lexeme_stem_of_mem_rulesFor hr).trans (entry_lexeme l)
@@ -469,7 +430,6 @@ def czRealizeTable (z : Stem) (σ : CzCell) : Finset (List String) :=
 preserves its property set. -/
 def czLinkage : Linkage CzNoun Stem CzCell CzCell := Linkage.ofRules id (·.dom) czRules czRoot
 
-/-- Each cell's selected stem realizes exactly the attested forms. -/
 theorem czRealize_stemFor : ∀ l σ, czRealize (stemFor l σ) σ = attested l σ := by
   decide +kernel
 
@@ -480,13 +440,10 @@ theorem realize_matches_tables (l : CzNoun) (σ : CzCell) :
   (Linkage.ofFun_realized _ _ czRealize l σ).trans <|
     congrArg (fun w ↦ {(w, σ)}) (czRealize_stemFor l σ)
 
-/-- Off the nominative and vocative plural, and for a noun whose endings there the study does
-not supply, a stem is realized by the fragment's endings alone. -/
 theorem czRealizeTable_eq_czRealize {z : Stem} {σ : CzCell}
     (h : σ ∉ nomVocPl ∨ suppliedNomPl z.lexeme = none) : czRealizeTable z σ = czRealize z σ := by
   rcases h with h | h <;> simp [czRealizeTable, czRealize, Stem.endings, h]
 
-/-- The study supplies the nominative plural of PŘEDSEDA, SLUHA and FILOSOF alone. -/
 theorem suppliedNomPl_eq_none_iff (l : CzNoun) :
     suppliedNomPl l = none ↔ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
   cases l <;> decide
@@ -506,8 +463,7 @@ theorem czRealizeTable_stemFor_iff (l : CzNoun) (σ : CzCell) :
     exact miss l σ hc.1 hc.2 h
   · rw [czRealizeTable_eq_czRealize (by rwa [stemFor_lexeme]), czRealize_stemFor]
 
-/-- The hard-masculine coradical of a PŘEDSEDA-subclass noun takes only -ovi in the dative and
-locative singular (n. 14; Short, Table 9.5, p. 467; *Mluvnice češtiny*, p. 292). -/
+-- n. 14, Table 9.5, p. 467, p. 292
 theorem coradical_no_u : ∀ l, (entry l).InPredsedaSubclass → ∀ σ ∈ datLocSg,
     czRealize ⟨l, .hardMasc⟩ σ = {(entry l).segments ++ ["o", "v", "i"]} := by
   decide
@@ -518,8 +474,7 @@ theorem predseda_eq_hrdina : ∀ σ, czRealize (stemFor .predseda σ) σ =
     ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset := by
   decide +kernel
 
-/-- PŘEDSEDA's paradigm agrees with *hrdina*'s outside the nominative and vocative plural, which
-take *chlapi*'s -i (Short, Table 9.2). -/
+-- Table 9.2
 theorem predseda_table_eq_hrdina_iff (σ : CzCell) : czRealizeTable (stemFor .predseda σ) σ =
     ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset ↔ σ ∉ nomVocPl := by
   rw [← predseda_eq_hrdina, czRealize_stemFor, czRealizeTable_stemFor_iff]
@@ -560,7 +515,6 @@ theorem filologu_voc :
 /-- `cellClass l σ` is the declension that the cell `σ` of `l` inflects in. -/
 def cellClass (l : CzNoun) (σ : CzCell) : Decl := (stemFor l σ).decl
 
-/-- PRAMEN is heteroclite, its paradigm drawing on stems of two declensions. -/
 theorem pramen_heteroclite : czLinkage.IsHeteroclite Stem.decl .pramen := by decide
 
 /-- Exactly PRAMEN, PŘEDSEDA, SLUHA and FILOLOG are heteroclite. -/
@@ -602,7 +556,6 @@ private theorem sup_card_le_card_fiber (A : C → V) (cls : C → K) (v : V) :
     univ.sup (fun k ↦ #{σ | A σ = v ∧ cls σ = k}) ≤ #{σ | A σ = v} :=
   Finset.sup_le fun _ _ ↦ card_le_card fun σ ↦ by simp +contextual
 
-/-- The count never exceeds the number of cells. -/
 theorem degreeNum_le_card (A : C → V) (cls : C → K) : degreeNum A cls ≤ Fintype.card C := by
   rw [← card_univ, card_eq_sum_card_fiberwise (f := A) (t := univ) (by simp)]
   exact sum_le_sum fun v _ ↦ sup_card_le_card_fiber A cls v
@@ -637,7 +590,6 @@ theorem degreeNum_eq_card_iff (A : C → V) (cls : C → K) :
 /-- The degree of `A`-correlation (p. 309) is the count over the number of cells. -/
 def degree (A : C → V) (cls : C → K) : ℚ := degreeNum A cls / Fintype.card C
 
-/-- The degree is one exactly when the class split factors through the category. -/
 theorem degree_eq_one_iff [Nonempty C] {A : C → V} {cls : C → K} :
     degree A cls = 1 ↔ cls.FactorsThrough A := by
   rw [degree, div_eq_one_iff_eq (Nat.cast_ne_zero.mpr Fintype.card_ne_zero), Nat.cast_inj,
@@ -687,7 +639,6 @@ classes, and lacks any absolute correlate (p. 309). -/
 def IsFractured (cls : A × B → K) : Prop :=
   (∃ σ τ, cls σ ≠ cls τ) ∧ ∀ c, ¬ IsAbsoluteCorrelate c cls
 
-/-- A class split factoring through both categories is constant. -/
 theorem cellClass_eq_of_isAbsoluteCorrelate {cls : A × B → K}
     (hn : IsAbsoluteCorrelate .number cls) (hc : IsAbsoluteCorrelate .case cls) (σ τ : A × B) :
     cls σ = cls τ :=
@@ -704,7 +655,6 @@ single inflection class C such that every cell in P realizing τ inflects as a m
 def IsIntersectiveCorrelate (cls : A × B → K) (S : Finset Category) : Prop :=
   cls.FactorsThrough (projOn S)
 
-/-- Cells agreeing in more categories agree in fewer. -/
 theorem projOn_eq_of_subset {S T : Finset Category} (hST : S ⊆ T) {σ τ : A × B}
     (h : projOn T σ = projOn T τ) : projOn S σ = projOn S τ := by
   simp only [projOn, Prod.mk.injEq] at h ⊢
@@ -716,26 +666,21 @@ theorem projOn_eq_of_subset {S T : Finset Category} (hST : S ⊆ T) {σ τ : A �
     · simpa [hn, hST hn] using h.2
     · simp [hn]
 
-/-- Adding categories to intersective correlates keeps them intersective correlates. -/
 theorem IsIntersectiveCorrelate.mono {cls : A × B → K} {S T : Finset Category}
     (h : IsIntersectiveCorrelate cls S) (hST : S ⊆ T) : IsIntersectiveCorrelate cls T :=
   fun _ _ hστ ↦ h (projOn_eq_of_subset hST hστ)
 
-/-- A single category is an intersective correlate exactly when it is an absolute one. -/
 theorem isIntersectiveCorrelate_singleton_iff {cls : A × B → K} {c : Category} :
     IsIntersectiveCorrelate cls {c} ↔ IsAbsoluteCorrelate c cls := by
   have key : ∀ σ τ : A × B, projOn {c} σ = projOn {c} τ ↔ c.proj σ = c.proj τ := by
     intro σ τ; cases c <;> simp [projOn, Category.proj]
   exact ⟨fun h _ _ hστ ↦ h ((key _ _).mpr hστ), fun h _ _ hστ ↦ h ((key _ _).mp hστ)⟩
 
-/-- Both categories together are an intersective correlate of every paradigm. -/
 theorem isIntersectiveCorrelate_univ (cls : A × B → K) : IsIntersectiveCorrelate cls univ :=
   fun σ τ h ↦ by
     simp only [projOn, mem_univ, ↓reduceIte, Prod.mk.injEq, Option.some.injEq] at h
     rw [Prod.ext h.1 h.2]
 
-/-- The minimal intersective correlate of a fractured paradigm is the pair of both
-categories. -/
 theorem minimal_univ_of_isFractured {cls : A × B → K} (h : IsFractured cls) :
     Minimal (IsIntersectiveCorrelate cls) univ := by
   refine ⟨isIntersectiveCorrelate_univ cls, fun S hS _ ↦ ?_⟩
@@ -772,12 +717,10 @@ category's degree of correlation in that paradigm" (p. 309). -/
 def IsMaximalCorrelate [Fintype K] [DecidableEq K] (c : Category) (cls : A × B → K) : Prop :=
   ∀ c' ≠ c, degreeNum c'.proj cls < degreeNum c.proj cls
 
-/-- A category is an absolute correlate exactly when its degree of correlation is one. -/
 theorem isAbsoluteCorrelate_iff_degree [Fintype K] [DecidableEq K] [Nonempty (A × B)]
     {c : Category} {cls : A × B → K} : IsAbsoluteCorrelate c cls ↔ degree c.proj cls = 1 :=
   degree_eq_one_iff.symm
 
-/-- An absolute correlate of a heteroclite paradigm is its maximal correlate. -/
 theorem IsAbsoluteCorrelate.isMaximalCorrelate [Fintype K] [DecidableEq K] {c : Category}
     {cls : A × B → K} (hl : ∃ σ τ, cls σ ≠ cls τ) (h : IsAbsoluteCorrelate c cls) :
     IsMaximalCorrelate c cls := by
@@ -845,27 +788,21 @@ theorem filolog_degrees : degree Category.number.proj (cellClass .filolog) = 13 
     degree Category.case.proj (cellClass .filolog) = 13 / 14 := by
   decide +kernel
 
-/-- PRAMEN's paradigm is cloven. -/
 theorem pramen_cloven : IsCloven (cellClass .pramen) := by decide
 
-/-- PŘEDSEDA's paradigm is fractured. -/
 theorem predseda_fractured : IsFractured (cellClass .predseda) := by decide
 
-/-- SLUHA's paradigm is fractured. -/
 theorem sluha_fractured : IsFractured (cellClass .sluha) := by decide
 
-/-- FILOLOG's paradigm is fractured. -/
 theorem filolog_fractured : IsFractured (cellClass .filolog) := by decide
 
-/-- Number is a maximal correlate of heteroclisis in the fractured paradigms of PŘEDSEDA and SLUHA
-((38), p. 312). -/
+-- (38), p. 312
 theorem number_maximal_predseda_sluha :
     IsMaximalCorrelate .number (cellClass .predseda) ∧
       IsMaximalCorrelate .number (cellClass .sluha) := by
   decide
 
-/-- FILOLOG's fractured paradigm has no maximal correlate, so (38) holds only as a tendency (p.
-313). -/
+-- (38), p. 313
 theorem filolog_no_maximal : ∀ c, ¬ IsMaximalCorrelate c (cellClass .filolog) := by decide
 
 /-! ### Rules sensitive to a category -/
@@ -878,30 +815,23 @@ theorem isAbsoluteCorrelate_of_rules {V : Type*} (l : CzNoun) (A : CzCell → V)
   (Exponence.RuleSet.realizeMinimalD_factorsThrough (fun _ _ _ ↦ rfl) fun r hr _ _ hA ↦
     Iff.of_eq (h r hr hA)).comp_left Stem.decl
 
-/-- A category is an absolute correlate of a noun's paradigm when none of its rules is
-sensitive to the other category. -/
 theorem isAbsoluteCorrelate_of_forall_not_sensitiveTo {c : Category} {l : CzNoun}
     (h : ∀ r ∈ czRules l, ¬ SensitiveTo r c.other) : IsAbsoluteCorrelate c (cellClass l) :=
   isAbsoluteCorrelate_of_rules _ _ fun r hr ↦ by simpa [SensitiveTo] using h r hr
 
-/-- Number is an absolute correlate of PRAMEN's heteroclisis because (14), its one
-language-specific rule, is insensitive to case, as is the default (5). -/
+-- (14), (5)
 theorem pramen_number_absolute : IsAbsoluteCorrelate .number (cellClass .pramen) :=
   isAbsoluteCorrelate_of_forall_not_sensitiveTo (by decide)
 
-/-- Number is a maximal correlate of heteroclisis in PRAMEN's paradigm, as of any paradigm it
-is an absolute correlate of. -/
 theorem number_maximal_pramen : IsMaximalCorrelate .number (cellClass .pramen) :=
   pramen_number_absolute.isMaximalCorrelate pramen_cloven.1
 
 /-! ### The privileged category restriction -/
 
-/-- Number is privileged for Czech nouns. -/
 theorem privileged_number : Privileged cellClass .number :=
   ⟨.pramen, pramen_cloven, pramen_number_absolute⟩
 
-/-- Case is not privileged, for "in Czech, for example, number is the only privileged
-inflectional category among the categories relevant for nominal inflection" (p. 316). -/
+-- p. 316
 theorem not_privileged_case : ¬ Privileged cellClass .case := by decide +kernel
 
 /-- The Czech rules (14), (15) and (17) satisfy (40) (p. 316). -/
@@ -992,7 +922,6 @@ abbrev SktForm : Type := SktFormCase × SktNumber
 /-- `ι σ` is the form property set specified exactly as the content property set `σ`. -/
 def ι (σ : SktCell) : SktForm := (.plain σ.1, σ.2)
 
-/-- Distinct content property sets have distinct identically specified form property sets. -/
 theorem ι_injective : Function.Injective ι := fun σ τ h ↦ by
   simp only [ι, Prod.mk.injEq, SktFormCase.plain.injEq] at h
   exact Prod.ext h.1 h.2
@@ -1034,7 +963,6 @@ def hrdLinkage : Linkage SktNoun SktStem SktCell SktForm where
 /-- `hrdClass σ` is the declension that the cell `σ` of HṚD(AYA) inflects in. -/
 def hrdClass (σ : SktCell) : SktDecl := (hrdStem σ).decl
 
-/-- HṚD(AYA) is heteroclite. -/
 theorem hrd_heteroclite : hrdLinkage.IsHeteroclite SktStem.decl .hrdaya := by decide
 
 /-- HṚD(AYA)'s stems also differ in form, its heteroclisis being an effect of stem suppletion,
@@ -1078,7 +1006,7 @@ def rule19a (g : SktGender) : Exponence.DomainRule SktCell Strength :=
 def rule19b (g : SktGender) : Exponence.DomainRule SktCell Strength :=
   ⟨{σ | g = .masc ∧ σ.1.1 = .acc ∧ σ.2.1 = .plural}, .weak⟩
 
-/-- The domain of clause (19b) is a proper subset of that of (19a) (n. 19). -/
+-- (19b), (19a), n. 19
 theorem rule19b_lt_rule19a : (rule19b .masc).dom ⊂ (rule19a .masc).dom := by decide
 
 /-- The strength of a property set is given by (19) (p. 294), which reads "Where α is masculine
@@ -1128,7 +1056,6 @@ def sktEndings (d : SktDecl) (g : SktGender) (τ : SktForm) : List (List String)
   | some pid => (sktRows pid g (τ.1.rowCase, τ.2)).map endingOf
   | none => []
 
-/-- The neuter nominative and accusative rows of every exemplar share their endings. -/
 theorem sktEndings_nomAcc : ∀ d (n : SktNumber),
     sktEndings d .neut (.nomAcc, n) = sktEndings d .neut (.plain ⟨.acc, by decide⟩, n) := by decide
 
@@ -1251,12 +1178,11 @@ def gradeOf : Wordlist.Grade → Grade
   | .middle => .middle
   | .weakest => .weakest
 
-/-- Every lexeme's Weakest coradical has one exemplar row at each cell, so the vowel test of
-(20a) never fails for want of a row. -/
+-- (20a)
 theorem sktEndings_length : ∀ l σ, ∀ z ∈ (sktEntry l).weakest,
     (sktEndings z.decl (sktEntry l).gender (f₁ (sktEntry l).gender σ)).length = 1 := by decide
 
-/-- Rule (20a) is narrower than (20b) for each lexeme (p. 295). -/
+-- (20a), (20b), p. 295
 theorem rule20a_lt_rule20b : ∀ l, ∀ a ∈ rule20a (sktEntry l), ∀ b ∈ rule20b (sktEntry l),
     a.dom ⊂ b.dom := by decide
 
@@ -1272,24 +1198,21 @@ theorem rules_match_table10 : ∀ σ,
 
 /-! ### Heteroclisis from stem alternation -/
 
-/-- The exponent of a rule of an entry is one of its stems. -/
 theorem SktEntry.exponent_mem_stems {e : SktEntry} {r : SktRule} (hr : r ∈ sktRulesFor e) :
     r.exponent ∈ e.stems := by
   rcases List.mem_append.mp hr with hr | hr <;>
     obtain ⟨z, hz, rfl⟩ := Option.map_eq_some_iff.mp (Option.mem_toList.mp hr) <;>
     simp [SktEntry.stems, hz]
 
-/-- Each cell is built on one of its lexeme's stems. -/
 theorem sktStem_mem_stems (l : SktLex) (σ : SktCell) : sktStem l σ ∈ (sktEntry l).stems :=
   Exponence.RuleSet.realizeMinimalD_induction (· ∈ (sktEntry l).stems) List.mem_cons_self
     fun _ hr ↦ SktEntry.exponent_mem_stems hr
 
-/-- A lexeme of §3.2 is heteroclite exactly when two of its cells differ in class. -/
+-- §3.2
 theorem sktLinkage_isHeteroclite_iff {l : SktLex} :
     sktLinkage.IsHeteroclite SktStem.decl l ↔ ∃ σ τ, sktClass l σ ≠ sktClass l τ := by
   simp [Linkage.IsHeteroclite, sktLinkage, sktClass]
 
-/-- A lexeme whose stems all follow one declension is not heteroclite. -/
 theorem not_isHeteroclite_of_stems {l : SktLex} {d : SktDecl}
     (h : ∀ z ∈ (sktEntry l).stems, z.decl = d) : ¬ sktLinkage.IsHeteroclite SktStem.decl l := by
   rintro ⟨σ, σ', z, hz, z', hz', hne⟩
@@ -1309,8 +1232,6 @@ theorem ahan_heteroclite : sktLinkage.IsHeteroclite SktStem.decl .ahan := by dec
 (p. 295). -/
 theorem ahan_grade_eq_pratyancN : ∀ σ, grade .ahan σ = grade .pratyancN σ := by decide
 
-/-- Fourteen of AHAN's cells inflect in the neuter an-stem declension and ten in the neuter
-as-stem declension. -/
 theorem ahan_class_counts : #{σ | sktClass .ahan σ = .anStem} = 14 ∧
     #{σ | sktClass .ahan σ = .asStem} = 10 := by decide
 
@@ -1323,30 +1244,22 @@ theorem ahan_degrees : degree Category.case.proj (sktClass .ahan) = 17 / 24 ∧
 /-- AHAN's paradigm is fractured, as Table 25 (p. 317) classes it. -/
 theorem ahan_fractured : IsFractured (sktClass .ahan) := by decide
 
-/-- Case is the maximal correlate of AHAN's heteroclisis, as Table 21 (p. 312) has it. -/
+-- Table 21, p. 312
 theorem ahan_case_maximal : IsMaximalCorrelate .case (sktClass .ahan) := by decide
 
 /-! ### The property mapping `f₁` -/
 
-/-- PRATYAÑC's masculine paradigm preserves property sets, `f₁` mapping every masculine
-property set to its identically specified form property set. -/
 theorem pratyancM_pm (σ : SktCell) : sktLinkage.pm .pratyancM σ = ι σ := rfl
 
-/-- The nominative and accusative cells of a neuter lexeme share their form correspondents,
-`f₁` joining their property sets and the rules selecting one stem for both. -/
 theorem neut_corr_nom_eq_acc : ∀ l, (sktEntry l).gender = .neut → ∀ n : SktNumber,
     sktLinkage.corr l (⟨.nom, by decide⟩, n) = sktLinkage.corr l (⟨.acc, by decide⟩, n) := by decide
 
-/-- The Sanskrit linkage is syncretic, AHAN's nominative and accusative singular sharing their
-form correspondent. -/
 theorem sktLinkage_isSyncretic : sktLinkage.IsSyncretic := by
   refine ⟨.ahan, .of .nom .singular, .of .acc .singular, by decide, ?_⟩
   rw [SktCell.of, SktCell.of, neut_corr_nom_eq_acc .ahan rfl, disjoint_self_iff_empty,
     ← not_nonempty_iff_eq_empty, not_not, Linkage.corr_nonempty]
   exact singleton_nonempty _
 
-/-- The Sanskrit linkage is unfaithful, the nominative singular of a neuter mapping to a form
-property set with the joined case [nominative ∨ accusative]. -/
 theorem sktLinkage_isUnfaithful : sktLinkage.IsUnfaithful ι :=
   ⟨.ahan, .of .nom .singular, by decide⟩
 
@@ -1366,8 +1279,6 @@ def sktNominalRules : SktNominal → List SktRule := Sum.elim (fun _ ↦ []) skt
 nouns" (p. 318), as the absolute correlate of HṚD(AYA)'s cloven paradigm. -/
 theorem privileged_case : Privileged sktClasses .case := ⟨.inl .hrdaya, hrd_cloven⟩
 
-/-- Number is not privileged for Sanskrit nominals, since HṚD(AYA)'s absolute correlate is
-case, PRATYAÑC is not heteroclite and AHAN's paradigm is fractured. -/
 theorem not_privileged_number : ¬ Privileged sktClasses .number := by
   rintro ⟨_ | l, hcl, hn⟩
   · obtain ⟨σ, τ, hne⟩ := hcl.1
@@ -1376,10 +1287,10 @@ theorem not_privileged_number : ¬ Privileged sktClasses .number := by
     case ahan => exact ahan_fractured.2 .number hn
     all_goals exact pratyanc_not_heteroclite _ (by simp) (sktLinkage_isHeteroclite_iff.mpr hcl.1)
 
-/-- Every Sanskrit rule, including (20a,b), is sensitive to case (p. 318). -/
+-- (20a,b), p. 318
 theorem sktRules_sensitiveTo_case : ∀ l, ∀ r ∈ sktRules l, SensitiveTo r .case := by decide
 
-/-- Rules (20a,b) are sensitive to number as well as to case. -/
+-- (20a,b)
 theorem sktRules_sensitiveTo_number : ∀ l, ∀ r ∈ sktRules l, SensitiveTo r .number := by decide
 
 /-- The Sanskrit rules satisfy (40), since each, though sensitive to number as well, is

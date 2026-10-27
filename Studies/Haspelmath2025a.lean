@@ -26,17 +26,6 @@ an equational, ascriptive or locational clause, and an existive is a copula foun
 existential and predpossessive clauses. A strategy is a way of building one type that is
 defined by form.
 
-## Main statements
-
-* `Construction.predicational_iff`: the types with a subject and a predicate are the
-  classificational, attributional, predlocative and appertentive ones.
-* `isExistive_iff`: a form is an existive exactly when it occurs in existential clauses and in
-  no clauses but existential and predpossessive ones.
-* `existive_gloss_hyparctic`: the Hamar form the paper glosses as an existive occurs in a
-  hyparctic clause, which the definition of an existive excludes.
-* `finnish_adessive`: the possessor and the location of the Finnish examples are adessives of
-  the Finnish fragment, and the adessive is a place case.
-
 ## Implementation notes
 
 * The definiteness of the second nominal, and of the located or possessed nominal, is an

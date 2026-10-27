@@ -24,16 +24,6 @@ positions has elements, more than one exactly for the two retrogressive forms.
 
 * `Reichenbach1947.structures`: the orders of S, R and E, as their three comparisons.
 
-## Main results
-
-* `Reichenbach1947.mem_structures`, `Reichenbach1947.exists_points`: the frame of three points
-  has one of the orders, and every order is realized by three points.
-* `Reichenbach1947.card_structures`, `Reichenbach1947.card_fundamentalForms`: thirteen orders
-  and nine fundamental forms.
-* `Reichenbach1947.card_filter_form`, `Reichenbach1947.one_lt_card_comp_iff`: a fundamental form
-  groups as many orders as its composition has elements, more than one exactly when the form is
-  the posterior past or the anterior future.
-
 ## Implementation notes
 
 Reichenbach's frames are the `ReichenbachFrame.root` frames, the perspective at the point of

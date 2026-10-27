@@ -135,8 +135,7 @@ theorem caseOf_qanjobal :
     ∀ r ∈ ArgumentRole.core, qanjobal.caseOf r = some (extendedErgative r) := by
   decide
 
-/-- Tojolabal patterns with Kaqchikel: the requirement, not the absolutive parameter,
-decides the type, (178). -/
+-- (178)
 theorem caseOf_tojolabal :
     ∀ r ∈ ArgumentRole.core, tojolabal.caseOf r = some (invertedErgative r) := by
   decide
@@ -155,12 +154,12 @@ theorem spellOut_qanjobal :
     ∀ r ∈ ArgumentRole.core, (qanjobal.caseOf r).bind spellOut = Qanjobal.markerSet .Prog r := by
   decide
 
-/-- (178): the subject is absolutive exactly when the requirement holds. -/
+-- (178)
 theorem caseOf_A_eq_abs_iff : L.caseOf .A = some .abs ↔ L.urn = .required := by
   unfold caseOf phaseHead
   split <;> simp_all
 
-/-- (178): the object is ergative exactly when the requirement holds. -/
+-- (178)
 theorem caseOf_P_eq_gen_iff : L.caseOf .P = some .gen ↔ L.urn = .required := by
   rcases L with ⟨urn, absPos, suffix⟩
   cases urn <;> simp [caseOf, phaseHead, caseless, VerbAssignsAbs]

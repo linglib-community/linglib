@@ -16,18 +16,6 @@ relevant one, an alternative being better (16) when it is at most as complex, in
 structural sense, and at least as strong. A `Scenario` collects the meanings and complexities of
 the alternatives, the context and the question, and `Felicitous` conjoins the two conditions.
 
-## Main results
-
-* `Scenario.better_trans`: being better is a strict order.
-* `Scenario.not_goodAnswer_of_stronger`: a true relevant alternative of no greater complexity
-  that is strictly stronger makes an answer needlessly weak, behind the *some*/*all* cases (17)
-  and (18) and Heim's Maximize Presupposition (21).
-* `Scenario.not_goodAnswer_disj`, `Scenario.not_goodAnswer_conj`: disjoining a stronger or
-  conjoining a weaker constituent makes an answer needlessly complex, Hurford's constraint (22).
-* `some_all_odd_of_settled`, `all_felicitous_some_odd`, `some_felicitous_all_odd`: the
-  one-answer question of (1) makes *some* and *all* alike odd, the open question of (17) leaves
-  *all* good and *some* odd where all holds, and the downward-entailing (18) reverses the verdict.
-
 ## Implementation notes
 
 A question is a family of answers, the alternatives of the assertion when no question is
@@ -131,7 +119,7 @@ theorem better_trans (h : s.Better u v) (h' : s.Better v x) : s.Better u x :=
   ⟨s.atLeastAsGood_trans h.1 h'.1, fun hx ↦ h.2 (s.atLeastAsGood_trans h'.1 hx)⟩
 
 /-- An answer is needlessly weak, and so not good, when a true relevant alternative of no greater
-complexity is strictly stronger. -/
+complexity is strictly stronger ((17), (18), (21)). -/
 theorem not_goodAnswer_of_stronger {w : W} (hc : s.complexity v ≤ s.complexity u)
     (hs : s.meaning v ⊂ s.meaning u) (hw : w ∈ s.meaning v) (hr : s.Relevant v) :
     ¬ s.GoodAnswer u w :=

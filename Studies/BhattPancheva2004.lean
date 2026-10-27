@@ -17,16 +17,6 @@ Williams's generalization: the degree head scopes at least as high as its clause
 countercyclic merger, and exactly as high, because Trace Conversion would otherwise intersect the
 clause into the second argument of the nonconservative *-er* and yield a contradiction.
 
-## Main results
-
-* `hkc_22`, `hkc_43`: the Heim–Kennedy constraint excludes the LFs (22b) and (43b).
-* `at_least_as_high`, `exactly_as_high`: the Extraposition-Scope Generalization, (39), on the
-  rows.
-* `ellipsisScope`: the Ellipsis-Scope Generalization, (59), on the LFs of (62).
-* `conditionC_scope`: the Condition C–Scope Generalization on the LFs of (69).
-* `erSem_not_conservative`: *-er* is not conservative, (86), so the clause merges only at the
-  DegP's scope position.
-
 ## Implementation notes
 
 * LFs are category-free trees at the paper's bracketing, `PhraseStructure.Tree Unit String`, with
@@ -200,13 +190,12 @@ variable {Entity D : Type*}
 proper subset of its second. -/
 def erSem (A B : Set D) : Prop := A ⊂ B
 
-/-- On [kennedy-1999]'s positive extents `-er` compares the measures, (85). -/
+-- (85) [kennedy-1999]
 theorem erSem_Iic_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     erSem (Iic (μ b)) (Iic (μ a)) ↔ μ b < μ a :=
   Iic_ssubset_Iic
 
-/-- Trace Conversion of an early-merged degree clause intersects it into the second argument,
-and `A ⊂ A ∩ B` is a contradiction, (86) and (87). -/
+-- (86), (87)
 theorem erSem_inter_contradictory (A B : Set D) : ¬ erSem A (A ∩ B) :=
   fun h ↦ h.not_subset inter_subset_left
 

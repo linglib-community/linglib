@@ -38,15 +38,6 @@ subject is new.
 * `TromsøWh`, `WhStatus`, `order`: the Tromsø *wh*-words, their status, and the word order of a
   monosyllabic *wh*-question.
 
-## Main results
-
-* `table_3_1_eq_required`, `danish_table_3_1`: Table 3.1 against the fragments.
-* `nordmore_english_mirror`, `embedded_german_polar_all`: the mirror image and the two
-  universals read off the fragments.
-* `table_3_2`, `not_expresses_both`: the four cues separate the five grammars.
-* `rows_consistent`: every judged word order in the data is consistent with its fragment.
-* `isV2_order_iff`: a Tromsø monosyllabic *wh*-question is verb second iff its subject is new.
-
 ## Implementation notes
 
 Westergaard's Fin⁰ and Wh⁰ heads are realized as the embedded root-like cells of Bhatt and

@@ -231,20 +231,17 @@ theorem cycle_of_cophonology_eq (d : Dialect) (h : cophonology d base s = wordLe
     · rfl
     · exact reduce_of_none rfl rfl _ _
 
-/-- Inflection triggers the word-level cophonology in Western Armenian whether or not the
-Prosodic Stem is misaligned, (76). -/
+-- (76)
 theorem cophonology_western_word (h : s.stratum = .word) :
     cophonology .western base s = wordLevel := by
   simp only [cophonology, h, Dialect.pstemLevel, ite_self]
 
-/-- Inflection over an aligned Prosodic Stem triggers the word-level cophonology in either
-dialect, (78). -/
+-- (78)
 theorem cophonology_word_of_not_misaligned (d : Dialect) (h : s.stratum = .word)
     (hm : ¬ Misaligned base s.segs) : cophonology d base s = wordLevel := by
   simp only [cophonology, h, ite_eq_right hm]
 
-/-- The dialects differ only where a misaligned Prosodic Stem triggers its cophonology under
-inflection, (76). -/
+-- (76)
 theorem cophonology_dialect_eq (h : s.stratum = .stem ∨ ¬ Misaligned base s.segs) :
     cophonology .eastern base s = cophonology .western base s := by
   unfold cophonology
@@ -254,18 +251,17 @@ theorem cophonology_dialect_eq (h : s.stratum = .stem ∨ ¬ Misaligned base s.s
     · rfl
     · rw [ite_eq_right h, ite_eq_right h]
 
-/-- Diphthong reduction is stem-level only, (76): no inflection triggers it. -/
+-- (76)
 theorem cophonology_word_ddr (d : Dialect) (h : s.stratum = .word) :
     (cophonology d base s).ddr = false := by
   simp only [cophonology, h]
   split <;> cases d <;> rfl
 
-/-- Inflection never reduces in Western Armenian, (7) and (37). -/
+-- (7), (37)
 theorem cycle_western_word (h : s.stratum = .word) : cycle .western base s = base ++ s.segs :=
   cycle_of_cophonology_eq base s _ (cophonology_western_word base s h)
 
-/-- Consonant-initial inflection, and inflection of a vowel-final base, never reduces in either
-dialect, (10e): the Prosodic Stem stays aligned. -/
+-- (10e)
 theorem cycle_word_of_not_misaligned (d : Dialect) (h : s.stratum = .word)
     (hm : ¬ Misaligned base s.segs) : cycle d base s = base ++ s.segs :=
   cycle_of_cophonology_eq base s d (cophonology_word_of_not_misaligned base s d h hm)
@@ -275,7 +271,7 @@ theorem cycle_dialect_eq (h : s.stratum = .stem ∨ ¬ Misaligned base s.segs) :
   unfold cycle
   rw [cophonology_dialect_eq base s h]
 
-/-- Inflection never reduces a destressed diphthong in either dialect, (12). -/
+-- (12)
 theorem cycle_word_diphthong (d : Dialect) (h : s.stratum = .word) {p : ℕ}
     (hp : stress base = some p) (hd : (base ++ s.segs)[p]? = some .uj) :
     cycle d base s = base ++ s.segs := by
@@ -301,24 +297,22 @@ def ov : Suffix := ⟨[.v, .c], .word⟩
 /-- *-ner*, the plural after polysyllables. -/
 def ner : Suffix := ⟨[.c, .v, .c], .word⟩
 
-/-- Derivation reduces in both dialects, (7a) and (77): *amusn-utjún*. -/
+-- (7a), (77)
 theorem amusin_utjun (d : Dialect) :
     derive d amusin [utjun] = [.v, .c, .h, .c, .c, .h, .c, .c, .h, .c] := by
   cases d <;> decide
 
-/-- Vowel-initial inflection reduces in Eastern Armenian alone, (10c) and (10d): *amusn-óv*
-against *amusin-óv*. -/
+-- (10c), (10d)
 theorem amusin_ov :
     derive .eastern amusin [ov] = [.v, .c, .h, .c, .c, .v, .c] ∧
       derive .western amusin [ov] = amusin ++ ov.segs := by
   decide
 
-/-- Consonant-initial inflection reduces in neither dialect, (10e): *amusin-nér*. -/
+-- (10e)
 theorem amusin_ner (d : Dialect) : derive d amusin [ner] = amusin ++ ner.segs :=
   cycle_word_of_not_misaligned amusin ner d rfl (by decide)
 
-/-- The derivations of (47): *hivánt* keeps its unstressed high vowel, *hankíst* reduces to
-schwa because deletion would leave an unsyllabifiable cluster, *amusín* deletes. -/
+-- (47)
 theorem forms_47 :
     derive .western [.c, .h, .c, .v, .c, .c] [anal] = [.c, .h, .c, .v, .c, .c] ++ anal.segs ∧
       derive .western [.c, .v, .c, .c, .h, .c, .c] [anal] =
@@ -326,35 +320,32 @@ theorem forms_47 :
       derive .western amusin [anal] = [.v, .c, .h, .c, .c] ++ anal.segs := by
   decide
 
-/-- *aznív* reduces to schwa before *-utjun*, (42b): the vowel is preceded by two consonants. -/
+-- (42b)
 theorem azniv_utjun :
     derive .western [.v, .c, .c, .h, .c] [utjun] = [.v, .c, .c, .schwa, .c] ++ utjun.segs := by
   decide
 
-/-- Unbounded cyclicity, (5a): *d͡zín*, *d͡zən-únt*, *d͡zən-ənt-agán*, each cycle destressing
-and reducing the vowel stressed in its base. -/
+-- (5a)
 theorem dzin :
     derive .western [.c, .h, .c] [⟨[.h, .c, .c], .stem⟩] = [.c, .schwa, .c, .h, .c, .c] ∧
       derive .western [.c, .h, .c] [⟨[.h, .c, .c], .stem⟩, ⟨[.v, .c, .v, .c], .stem⟩] =
         [.c, .schwa, .c, .schwa, .c, .c, .v, .c, .v, .c] := by
   decide
 
-/-- A destressed high vowel in a suffix reduces, (48a): *ázk*, *azk-ajín*, *azk-ajn-agán*. -/
+-- (48a)
 theorem azk :
     derive .western [.v, .c, .c] [⟨[.v, .c, .h, .c], .stem⟩, ⟨[.v, .c, .v, .c], .stem⟩] =
       [.v, .c, .c, .v, .c, .c, .v, .c, .v, .c] := by
   decide
 
-/-- The diphthong, (12) and (62): *zərújt͡s* reduces to *zərut͡s-él* in derivation, while Eastern
-vowel-initial inflection, which reduces high vowels, leaves *zərújt͡s-óv* alone. -/
+-- (12), (62)
 theorem zerujts :
     derive .eastern [.c, .schwa, .c, .uj, .c] [⟨[.v, .c], .stem⟩] =
         [.c, .schwa, .c, .h, .c, .v, .c] ∧
       derive .eastern [.c, .schwa, .c, .uj, .c] [ov] = [.c, .schwa, .c, .uj, .c] ++ ov.segs := by
   decide
 
-/-- The plural, (66): the monosyllable *tʰúxtʰ* takes *-er* and reduces, *tʰəxtʰ-ér*, while
-*amusín* takes *-ner* and does not; a following case suffix changes nothing. -/
+-- (66)
 theorem plurals :
     derive .eastern [.c, .h, .c, .c] [plural [.c, .h, .c, .c]] = [.c, .schwa, .c, .c, .v, .c] ∧
       derive .eastern amusin [plural amusin] = amusin ++ ner.segs ∧
@@ -363,7 +354,7 @@ theorem plurals :
       derive .eastern amusin [plural amusin, ov] = amusin ++ ner.segs ++ ov.segs := by
   decide
 
-/-- Western Armenian reduces before no case suffix, (65): *amusi.n-óv*, *amusi.n-í*. -/
+-- (65)
 theorem western_cases :
     derive .western amusin [ov] = amusin ++ ov.segs ∧
       derive .western amusin [⟨[.h], .word⟩] = amusin ++ [.h] :=

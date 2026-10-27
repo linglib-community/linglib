@@ -21,15 +21,6 @@ a question and the antecedent of a conditional conversationally imply only that 
 possible. The two classes therefore agree in assertions and come apart in the other
 environments.
 
-## Main statements
-
-* `Karttunen1971b.projects_iff`: the complement follows in every model exactly when the verb is
-  a true factive or the sentence is asserted or negated.
-* `Karttunen1971b.projection_rows`: the paper's judgments on *regret*, *realize* and *discover*
-  are these predictions.
-* `Karttunen1971b.emphatic_denial`: denying that a true factive sentence is true is consistent
-  with the falsity of its complement.
-
 ## Implementation notes
 
 * Possibility is read on an accessibility relation, of which the paper assumes only that what is
@@ -78,7 +69,7 @@ theorem postulates_full_iff : Postulates .full R A s ↔ ◇[R] (A · ≠ 0) ≤
 theorem postulates_full_iff_le_box : Postulates .full R A s ↔ (A · ≠ 0) ≤ □[R.inv] s :=
   postulates_full_iff.trans (diamond_box_gc R _ _)
 
-/-- The stronger postulates yield the weaker ones, since what is the case is possible (fn. 9). -/
+-- fn. 9
 theorem Postulates.semi [R.IsRefl] (h : Postulates .full R A s) : Postulates .semi R A s :=
   postulates_semi_iff.2 <| (diamond_T_iff.2 ‹_› _).trans (postulates_full_iff.1 h)
 
@@ -107,7 +98,7 @@ theorem Postulates.commitment_le [R.IsRefl] (h : Postulates c R A s)
   · cases c; exacts [h.semi.1, h.1]
   · cases c; exacts [h.semi.2, h.2]
 
-/-- The possibility of a semi-factive sentence does not entail its complement ((26b), (26c)). -/
+-- (26b), (26c)
 theorem exists_semi_not_diamond_le :
     ∃ (R : SetRel Bool Bool) (_ : R.IsRefl) (A : Bool → SignType) (s : Bool → Prop),
       Postulates .semi R A s ∧ ¬ ◇[R] (A · = 1) ≤ s :=
@@ -134,8 +125,7 @@ theorem Projects.commitment_le [R.IsRefl] (hp : Projects c e) (h : Postulates c 
     commitment R A e ≤ s :=
   h.commitment_le (projects_iff.1 hp)
 
-/-- If *some senators regret that they voted for the SST*, (5), or possibly regret it, (14), then
-some senators voted for it. -/
+-- (5), (14)
 theorem exists_complement {ι : Type*} {S : ι → Prop} {A : ι → W → SignType} {s : ι → W → Prop}
     [R.IsRefl] (hp : Projects c e) (hA : ∀ x, Postulates c R (A x) (s x)) {w : W}
     (h : ∃ x, S x ∧ commitment R (A x) e w) : ∃ x, S x ∧ s x w :=

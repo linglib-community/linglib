@@ -115,7 +115,7 @@ def table₁' : World → ℕ
   | (false, true) => 2
   | (false, false) => 1
 
-/-- In Example 6, a revision compatible with the basic postulates violates (C1) and (CR1). -/
+-- Example 6
 theorem example₆ :
     (∀ w, w ∈ (Preorder.lift table₁').minimals Set.univ ↔
       w ∈ (Preorder.lift table₁).minimals {w | ¬ (w ∈ first ∧ w ∈ second)}) ∧
@@ -139,7 +139,7 @@ def table₂' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- In Example 7, revising by `smart` violates (C2) and (CR2). -/
+-- Example 7
 theorem example₇ :
     (∀ w, w ∈ (Preorder.lift table₂').minimals Set.univ ↔
       w ∈ (Preorder.lift table₂).minimals {w | w ∉ first}) ∧
@@ -162,7 +162,7 @@ def table₃' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- In Example 8, revising by `bird` violates (C3) and (CR3). -/
+-- Example 8
 theorem example₈ :
     (∀ w, w ∈ (Preorder.lift table₃').minimals Set.univ ↔
       w ∈ (Preorder.lift table₃).minimals second) ∧
@@ -185,7 +185,7 @@ def table₄' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- In Example 9, revising by `shining_sun` violates (C4) and (CR4). -/
+-- Example 9
 theorem example₉ :
     (∀ w, w ∈ (Preorder.lift table₄').minimals Set.univ ↔
       w ∈ (Preorder.lift table₄).minimals second) ∧
@@ -196,8 +196,7 @@ theorem example₉ :
 
 /-! ### Boutilier's postulate forgets -/
 
-/-- Under (CB), finding a red bird not to be a bird leaves only the belief that it is not a bird,
-provided `¬bird` alone left the colour open (Example 10). -/
+-- Example 10
 theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {Ψ : S}
     {bird red : Set W} (hΨ : r.bel Ψ = bird) (hne : (bird ∩ red).Nonempty)
     (hΨ' : r.bel (r.revise Ψ birdᶜ) = birdᶜ) :
@@ -238,8 +237,7 @@ theorem not_spohnRevision_c6 : ¬ (spohnRevision (Fin 3)).C6 := by
   rw [spohn_table₇] at hlt
   exact absurd hlt (by decide)
 
-/-- (CB) implies (C1)–(C4) but is not implied by them (Section 7): Spohn's revision meets (C1)–(C4)
-and violates (CB), since it violates (C6). -/
+-- Section 7
 theorem spohnRevision_c1_c2_c3_c4_not_cb :
     (spohnRevision (Fin 3)).C1 ∧ (spohnRevision (Fin 3)).C2 ∧ (spohnRevision (Fin 3)).C3 ∧
       (spohnRevision (Fin 3)).C4 ∧ ¬ (spohnRevision (Fin 3)).CB :=
@@ -267,7 +265,7 @@ theorem diamond_of_notMem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw 
     diamond κ μ w = if κ w < 2 then κ w + 1 else κ w - 1 := by
   simp [diamond, hw]
 
-/-- The rankings' orderings represent `diamond`, so it satisfies the postulates (Theorem 6). -/
+-- Theorem 6
 theorem diamondRevision_faithful (W : Type*) :
     (diamondRevision W).Faithful (fun κ ↦ Preorder.lift κ) :=
   faithful_lift (fun _ _ _ hw ↦ diamond_of_mem hw)
@@ -276,7 +274,7 @@ theorem diamondRevision_faithful (W : Type*) :
 theorem diamondRevision_isAGM (W : Type*) : (diamondRevision W).IsAGM :=
   (diamondRevision_faithful W).isAGM
 
-/-- `diamond` satisfies (C1) (Theorem 6). -/
+-- Theorem 6
 theorem diamondRevision_c1 (W : Type*) : (diamondRevision W).C1 :=
   (diamondRevision_faithful W).c1_iff.2 fun κ μ ↦ agreesOn_lift κ μ fun _ _ _ hw ↦ diamond_of_mem hw
 
@@ -306,7 +304,7 @@ theorem diamond_table₅ : diamond table₅ μ₅ = table₅' := by
   match w with
   | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μ₅, table₅, table₅']
 
-/-- `diamond` violates (C3), by Table 5 (Theorem 6). -/
+-- Table 5, Theorem 6
 theorem not_diamondRevision_c3 : ¬ (diamondRevision (Fin 4)).C3 := by
   intro h
   have := h table₅ μ₅ α₅ (by
@@ -338,7 +336,7 @@ theorem diamond_table₆ : diamond table₆ μ₅ = table₆' := by
   match w with
   | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μ₅, table₆, table₆']
 
-/-- `diamond` violates (C4), by Table 6 (Theorem 6). -/
+-- Table 6, Theorem 6
 theorem not_diamondRevision_c4 : ¬ (diamondRevision (Fin 4)).C4 := by
   intro h
   refine h table₆ μ₅ α₅ ?_ ?_

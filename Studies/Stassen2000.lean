@@ -28,20 +28,6 @@ the comitative strategy contrast in four features whose sets form the Boolean la
 relevant to it, and a WITH-language otherwise. Pattern schemes place the subject and the
 comitative phrase by the basic word order.
 
-## Main results
-
-* `coAB_not_mem_patterns`, `postpositive_of_not_medial`: no example preposes a lone
-  coordinator on the first noun phrase, and the overt strategies other than a medial connective
-  postpose their coordinators (§3).
-* `attestations_side`: the Fragment coordinators of the examples stand where their morphs attach.
-* `Language.isAnd_iff_top_mem`, `Language.not_isAnd_of_forall_notMem`: AND- and WITH-languages.
-* `Language.relevant_le_insert_iff`: differentiating the linker of a hybrid gives every relevant
-  feature exactly when the hybrid is the most advanced one.
-* `english_and_not_isAlsoComitative`, `persian_not_isAlsoComitative`,
-  `hausa_da_isAlsoComitative`, `japanese_to_isAlsoComitative`, `yakut_lin_isAlsoComitative`:
-  whether the linker is the comitative marker.
-* `adjacent_scheme_iff`, `shift_scheme_svo`: contiguity in the pattern schemes and the shift.
-
 ## Implementation notes
 
 * The examples are those of §3, (9)–(53), in `Data/Examples/Stassen2000.json`. A medial
@@ -264,10 +250,10 @@ theorem adjacent_scheme_iff (a : Arrangement Constituent 3) :
     (scheme a).Adjacent .subject .comitative ↔ ¬ a.IsMedial .verb :=
   Arrangement.adjacent_iff_not_isMedial (z := Slot.verb) (by decide) (by decide) (by decide)
 
-/-- In an SVO language the verb separates the two NPs, (107). -/
+-- (107)
 theorem not_adjacent_scheme_svo : ¬ (scheme .svo).Adjacent .subject .comitative := by decide
 
-/-- SOV and VSO schemes are contiguous already, (123) and (124). -/
+-- (123), (124)
 theorem adjacent_scheme_sov : (scheme .sov).Adjacent .subject .comitative := by decide
 
 theorem adjacent_scheme_vso : (scheme .vso).Adjacent .subject .comitative := by decide

@@ -47,8 +47,7 @@ open Minimalist.Probe (depthFirst breadthFirst depth breadthFirst_lt_of_depth_lt
 variable {t : LinearizedSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
   {a b : t.val.Positions}
 
-/-- A satisfying potential goal c-commanding the goal that breadth-first search matches is that
-goal's sister, which derives Closest (2). -/
+-- (2)
 theorem eq_complement_of_finds_depth (ha : p.Finds s (depth ·.val) a) (hb : b ∈ s)
     (hsb : p.sat b) (hba : t.val.CCommands b.val a.val) : a.val = complement b.val := by
   have hb0 : b.val ≠ ⊥ := fun h ↦ hba.2.1 (h ▸ bot_le)
@@ -80,11 +79,11 @@ def β : tree7.val.Positions := ⟨⟨[1]⟩, rfl⟩
 /-- The probe [PROBE:F], matched by α and β. -/
 def probe7 : Probe tree7.val.Positions := .relativized (· ∈ [α, β])
 
-/-- (7a): depth-first search matches α, which β c-commands, against Closest (2). -/
+-- (7a), (2)
 theorem ex7a : probe7.Finds Set.univ (depthFirst ·.val) α ∧ tree7.val.CCommands β.val α.val := by
   decide +kernel
 
-/-- (7b): breadth-first search matches β. -/
+-- (7b)
 theorem ex7b : probe7.Finds Set.univ (breadthFirst ·.val) β ∧
     ¬ probe7.Finds Set.univ (breadthFirst ·.val) α := by
   decide +kernel
@@ -128,8 +127,7 @@ theorem lt_iff_toLex_lt {l m : List ℕ} (hl : RightBranching l) (hm : RightBran
       · simp [RightBranching] at hm
     · simp [RightBranching] at hl
 
-/-- On a right-branching search space depth-first and breadth-first search match the same goal
-(8). -/
+-- (8)
 theorem finds_depthFirst_iff (hs : ∀ q ∈ s, RightBranching q.val.toList) :
     p.Finds s (depthFirst ·.val) a ↔ p.Finds s (breadthFirst ·.val) a := by
   simp only [Probe.finds_iff, Probe.Inspects]
@@ -139,8 +137,7 @@ theorem finds_depthFirst_iff (hs : ∀ q ∈ s, RightBranching q.val.toList) :
 
 /-! ### Smuggling (9) -/
 
-/-- In (9), depth-first search from Infl matches the smuggled theme alone, while breadth-first
-search cannot prefer it. -/
+-- (9)
 theorem ex9 : ∃ t ∈ (Collins2005.ex9.preRaising .partP false).externalize?,
     ↑Collins2005.ex9.patient ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depthFirst ·.val) ∧
       ↑Collins2005.ex9.agent ∉ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depthFirst ·.val) ∧

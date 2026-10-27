@@ -325,14 +325,14 @@ def strParses : Str → List (Tree Cat String)
 /-- String complexity is the maximal node count over the string's parses, uniform here. -/
 def strSize (s : Str) : Nat := ((strParses s).map RoseTree.numNodes).foldr max 0
 
-/-- The dual parse of *tous les verres* is barred by (37), witnessed by *les deux verres*. -/
+-- (37)
 theorem tousDual_barred : BarredByAmbiguity strParses meaning strSize .tousV tousDualVerres := by
   decide
 
 theorem tousPl_not_barred : ¬ BarredByAmbiguity strParses meaning strSize .tousV tousVerres := by
   decide
 
-/-- A parse is pronounceable iff Avoid Ambiguity (37) does not block it. -/
+-- (37)
 theorem frenchPron_iff_not_barred : ∀ st : Str, ∀ p ∈ strParses st,
     (frenchPron p ↔ ¬ BarredByAmbiguity strParses meaning strSize st p) := by
   decide
@@ -355,8 +355,7 @@ theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLe
     (StructuralOp.subst (φ := tousLex) (ψ := tousDualLex) rfl ?_)
   exact Set.mem_union_left _ (by simp [frenchLex])
 
-/-- *les deux V* is in the indirect-alternative source of *tous V*, witnessed by the silent
-*tous_DUAL V* (43). -/
+-- (43)
 theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerres := by
   refine ⟨by decide, by decide, tousDualVerres, tousDual_katzir_alt, by decide, ?_⟩
   funext w; cases w <;> rfl
@@ -365,8 +364,6 @@ theorem lesDeux_mem_sameAssertion :
     lesDeuxVerres ∈ sameAssertion frenchIndirectSrc assertionFn tousVerres :=
   ⟨lesDeux_indirectAlt_tous, rfl⟩
 
-/-- The dual presupposition of *les deux V* is strictly stronger than the trivial one of
-*tous V*. -/
 theorem presupFn_lesDeux_ssubset_tous : presupFn lesDeuxVerres ⊂ presupFn tousVerres :=
   LE.le.ssubset_of_not_superset (fun w _ ↦ by cases w <;> rfl)
     (Set.not_subset.2 ⟨.w3, rfl, (by decide : ¬ meaning lesDeuxVerres .w3 = true)⟩)

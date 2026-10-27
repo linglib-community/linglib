@@ -142,8 +142,7 @@ inductive Three
 /-- `α` and `β` unvalued, `γ` valued. -/
 def three : State Three Tense := .lexical fun | .α => ⊥ | .β => ⊥ | .γ => ↑Tense.past
 
-/-- Two Agree steps value the unvalued `α` under feature sharing but not under assignment ((7)–(8)).
--/
+-- (7), (8)
 theorem ex7_8 :
     ((three.agree .α .β).bind (·.agree .β .γ)).map (·.valueAt .α) = some ↑Tense.past ∧
       ((three.assign .α .β).bind (·.assign .β .γ)).map (·.valueAt .α) = some ⊥ := by
@@ -172,12 +171,10 @@ on Tns and the subject's case at once. -/
 def finiteClause : Option (State Finite Tense) :=
   (finite.agree .tns .subject).bind (·.agree .tns .verb)
 
-/-- (10): the lexicon of a finite clause has interpretable unvalued and uninterpretable valued T,
-which the Biconditional (3) disallows. -/
+-- (10), (3)
 theorem ex10 : ¬ Biconditional Finite.Interp finite.value := by decide
 
-/-- (17): the first Agree leaves the subject's case unvalued, the second values it, and the result
-is radically interpretable, as the lexicon is not. -/
+-- (17)
 theorem ex17 : (finite.agree .tns .subject).map (·.valueAt .subject) = some ⊥ ∧
     finiteClause.map (·.valueAt .subject) = some ↑Tense.past ∧
     (∀ s ∈ finiteClause, RadicallyInterpretable Finite.Interp s) ∧
@@ -211,8 +208,7 @@ def infinitive : Option (State Raising Tense) :=
 def raised : Option (State Raising Tense) :=
   infinitive.bind (·.agree .tns .subject) |>.bind (·.agree .tns .verb)
 
-/-- The infinitive alone is not radically interpretable, but once its subject raises the finite verb
-values the subject's case and the infinitival Tns ((16), (18)). -/
+-- (16), (18)
 theorem ex16_ex18 : infinitive.map (·.valueAt .subject) = some ⊥ ∧
     (∀ s ∈ infinitive, ¬ RadicallyInterpretable Raising.Interp s) ∧
     raised.map (·.valueAt .subject) = some ↑Tense.past ∧

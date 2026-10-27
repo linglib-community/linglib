@@ -24,19 +24,6 @@ that has a presuppositionally stronger alternative. An utterance commits the spe
 information states and a context admits a set of them, so coherence is overlap, and the context
 entails a proposition when every state it admits believes the proposition.
 
-## Main statements
-
-* `obligatory_of_entailed`, `omitted_of_not_entailed`: the trigger is obligatory where the
-  context entails its presupposition and dropped where the context is silent about it.
-* `obligatory_of_positive_evidence`, `omitted_of_denied`, `omitted_of_ignorance`: against the
-  exhaustified alternative the trigger is obligatory under positive evidence for the
-  presupposition, and dropped where the context denies it or the speaker is ignorant of it.
-* `presup_beats_of_mp_over_fp`: were Maximize Presupposition ranked above Felicity
-  Presupposition, every trigger with an alternative would be obligatory.
-* `notNow_two_maxima`, `optional_of_two_readings`: the alternative of *buzai* 'no longer' has two
-  exhaustified readings, and the trigger is optional because it loses on one and wins on the
-  other.
-
 ## Implementation notes
 
 * Information states are nonempty sets of worlds; the belief operator `K p` is the set of
@@ -265,8 +252,7 @@ theorem optional_of_two_readings {ctx : Set (Set W)} {p a : Set W} (hposs : ctx 
   refine plain_beats_of_not_entailed rfl (Set.not_disjoint_iff.mpr ⟨s, hs, hne, hsa⟩) ?_ hp
   exact Set.not_disjoint_iff.mpr ⟨s, hs, hne, fun w hw ↦ ⟨(hsa hw).2, not_not_intro (hsa hw).1⟩⟩
 
-/-- In Tables 4.8 and 4.10 the context entails the presupposition, and the trigger wins on both
-readings of the alternative. -/
+-- Tables 4.8 and 4.10
 theorem obligatory_of_entailed_of_two_readings {ctx : Set (Set W)} {p a : Set W}
     (hp : ctx ⊆ K p) (hwit : ∃ s ∈ ctx, s ⊆ a) :
     Beats (ranking ctx (presupSentence p a)) (presupSentence p a) (plainExhBelowK a pᶜ) ∧
@@ -332,8 +318,7 @@ theorem isTrigger_of_entry {t : Trigger} {v : Verb} (h : t.entry = .inr v) :
     v.IsTrigger := by
   cases t <;> simp only [Trigger.entry, Sum.inr.injEq, reduceCtorEq] at h <;> subst h <;> decide
 
-/-- The replacement for *zhidao* is non-presuppositional, as (1) requires, since *renwei*
-'believe' is not a trigger. -/
+-- (1)
 theorem not_isTrigger_renwei : ¬ Mandarin.renwei.IsTrigger := by decide
 
 /-! ### The aspectual triggers
@@ -374,8 +359,7 @@ noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) :
   | .kaishi => Mandarin.kaishi.phasal.map (·.denote S P)
   | _ => none
 
-/-- An aspectual trigger whose alternative arises by deletion asserts its prejacent, as (1) requires
-of the alternative. -/
+-- (1)
 theorem eq_one_iff_of_altStructure_deletion (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) {w : W} (hw : φ w ≠ 0) : φ w = 1 ↔ P w := by
   cases t <;>
@@ -385,8 +369,7 @@ theorem eq_one_iff_buzai (h : Trigger.buzai.aspectual R S P = some φ) {w : W} (
     φ w = 1 ↔ ¬ P w := by
   cases h; simp_all [Phasal.denote]
 
-/-- An aspectual trigger asserting its prejacent is obligatory when the context entails its
-presupposition (Table 4.2). -/
+-- Table 4.2
 theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) (hp : ctx ⊆ K (Function.support φ))
     (hwit : ∃ s ∈ ctx, s ⊆ {w | P w}) :
@@ -394,8 +377,7 @@ theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
   rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_one_iff_of_altStructure_deletion h ht]
   exact obligatory_of_entailed hp hwit
 
-/-- An aspectual trigger asserting its prejacent loses to the sentence without it when the context
-does not entail its presupposition (Table 4.3). -/
+-- Table 4.3
 theorem aspectual_omitted_of_not_entailed (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K (Function.support φ))
     (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ Function.support φ ∩ {w | P w}) :
@@ -416,8 +398,7 @@ def exhMx (φ : Finset W) (M : Finset (Finset W)) : Finset W :=
   φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)
 
 open Exhaustification in
-/-- When the maximal consistent subset is unique, innocent exclusion, the operator of (20), and
-the operator of (24) agree, (25). -/
+-- (20), (24), (25)
 theorem exhIE_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
     (h₀ : IsMaximalExclusion alts φ M₀) (huniq : ∀ M, IsMaximalExclusion alts φ M → M = M₀) :
     exhIE alts.toSetFamily ↑φ = ↑(exhMx φ M₀) := by
@@ -436,8 +417,7 @@ def pAlt : Finset PQ := Finset.univ.filter (·.1 = true)
 /-- The alternative `q` of (26). -/
 def qAlt : Finset PQ := Finset.univ.filter (·.2 = true)
 
-/-- With alternatives `p`, `q` and `p ∧ q` (26), `p ∨ q` has two maximal consistent exclusions,
-yielding `q ∧ ¬p` and `p ∧ ¬q`. -/
+-- (26)
 theorem disjunction_two_maxima :
     Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
         {pAlt, pAlt ∩ qAlt} ∧

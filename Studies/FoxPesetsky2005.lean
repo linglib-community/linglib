@@ -30,18 +30,16 @@ variable {α : Type*} {X Y Z a : α}
 
 /-! ### Derivational scenarios -/
 
-/-- In Scenario 1 (13) leftward movement from the left edge of a domain converges. -/
+-- (13)
 theorem scenario1 [DecidableEq α] (hnd : [X, a, Y, Z].Nodup) :
     Consistent [[X, Y, Z], [X, a, Y, Z]] :=
   consistent_of_forall_sublist (by simp) hnd
 
-/-- In Scenario 2 (14) leftward movement from a non-edge position reorders the moved element and
-the edge, and the derivation crashes whatever else it contains. -/
+-- (14)
 theorem scenario2 : ¬ Consistent [[X, Y, Z], [Y, a, X, Z]] :=
   not_consistent_of_pair X Y ⟨[X, Y, Z], by simp, by simp⟩ ⟨[Y, a, X, Z], by simp, by simp⟩
 
-/-- In Scenario 3 (15) moving the edge material along with the non-edge element preserves their
-order, so the derivation converges. -/
+-- (15)
 theorem scenario3 [DecidableEq α] (hnd : [X, Y, a, Z].Nodup) :
     Consistent [[X, Y, Z], [X, Y, a, Z]] :=
   consistent_of_forall_sublist (by simp) hnd
@@ -56,32 +54,29 @@ section Holmberg
 
 variable {S V O adv C aux XP : α}
 
-/-- With the verb in C (20), VP orders the verb before the shifted object and CP keeps it so. -/
+-- (20)
 theorem objectShift_verbToC [DecidableEq α] (hnd : [S, V, O, adv].Nodup) :
     Consistent [[V, O], [S, V, O, adv]] :=
   consistent_of_forall_sublist (by
     simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
     exact ⟨(List.sublist_append_left [V, O] [adv]).cons S, .refl _⟩) hnd
 
-/-- In an embedded clause (21), where the verb stays in VP, the shifted object precedes the verb at
-CP against VP, and the derivation crashes. -/
+-- (21)
 theorem objectShift_embedded : ¬ Consistent [[V, O], [C, S, O, adv, V]] :=
   not_consistent_of_pair V O ⟨[V, O], by simp, by simp⟩
     ⟨[C, S, O, adv, V], by simp, by simp [List.sublist_cons_iff]⟩
 
-/-- Object Shift under an auxiliary in C (22) meets the same contradiction. -/
+-- (22)
 theorem objectShift_aux : ¬ Consistent [[V, O], [S, aux, O, adv, V]] :=
   not_consistent_of_pair V O ⟨[V, O], by simp, by simp⟩
     ⟨[S, aux, O, adv, V], by simp, by simp [List.sublist_cons_iff]⟩
 
-/-- Any VP-internal material preceding the object blocks Object Shift (24), with or without verb
-movement. -/
+-- (24)
 theorem objectShift_intervener : ¬ Consistent [[V, XP, O], [S, V, O, adv, XP]] :=
   not_consistent_of_pair XP O ⟨[V, XP, O], by simp, by simp⟩
     ⟨[S, V, O, adv, XP], by simp, by simp [List.sublist_cons_iff]⟩
 
-/-- An intervener that fronts through the VP edge (26) no longer blocks Object Shift: the order
-established at VP is the order at CP. -/
+-- (26)
 theorem objectShift_intervener_fronted [DecidableEq α] (hnd : [XP, V, S, O, adv].Nodup) :
     Consistent [[XP, V, O], [XP, V, S, O, adv]] :=
   consistent_of_forall_sublist (by

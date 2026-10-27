@@ -10,16 +10,6 @@ This file formalizes Smith's two-component theory, in which a sentence's aspectu
 combines a situation type (`VendlerClass`) and an independently chosen viewpoint
 (`ViewpointType`).
 
-## Main results
-
-* `showsInitialPoint_iff`, `showsFinalPoint_iff`, `presentsClosed_iff`,
-  `focusesPreliminaryStages_iff`: what each viewpoint makes visible (section 4.1).
-* `perfective_closed`, `imperfective_open`, `neutral_intermediate`,
-  `neutral_no_preliminary_stages`: the neutral viewpoint between the other two (section 4.2).
-* `completion_iff_telic`: the perfective conveys completion exactly for telic types.
-* `completionInvisible_iff`: the imperfective paradox (section 4.3.2).
-* `Language.system`: the viewpoint systems of the four languages of Part II.
-
 ## Implementation notes
 
 * A visibility property quantifies over every linear order, and is decided as the inclusion of
@@ -159,7 +149,7 @@ theorem completionInvisible_iff (ai : AspectualInterpretation) :
     CompletionInvisible ai ↔ ai.situationType.telicity = .telic ∧ ai.viewpoint ≠ .perfective := by
   rw [CompletionInvisible, showsFinalPoint_iff]
 
-/-- *We were walking to school*, (47): an accomplishment under the imperfective. -/
+-- (47)
 theorem walking_to_school : CompletionInvisible ⟨.accomplishment, .imperfective⟩ :=
   (completionInvisible_iff _).mpr ⟨rfl, by decide⟩
 

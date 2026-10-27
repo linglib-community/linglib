@@ -19,19 +19,6 @@ dissociation and epenthesis applied in the order "rules apply" gives, which make
 opaque in several forms. In the feature system the gutturals are no natural class, so the
 analysis needs the element.
 
-## Main statements
-
-* `not_isNaturalClass_gutturals`: the four gutturals are no natural class of Tigrinya's
-  consonants in the PHOIBLE features.
-* `rows_derived`: every attested form of the paper's paradigms is a realization of the
-  derivation of its underlying form.
-* `rows_unpredicted`: the forms whose retained position the analysis does not predict.
-* `syneresis_37a`: of the two economical realizations of (37a) under the Empty Category
-  Principle, the derivation yields the one that is not standard.
-* `rows_pronounced_eq_standard`: on every row the derivation pronounces the nuclei of the
-  standard realization, except in the configuration of (37a).
-* `governs_32a`: the forms need a final nucleus that does not govern.
-
 ## Implementation notes
 
 * The analysis runs over the paper's transcription, and its vowels and gutturals are the
@@ -377,8 +364,7 @@ def realizations (f : Form) : List (List Char) :=
   (List.range f.length).foldl (init := [[]]) fun acc i ↦
     acc.flatMap fun s ↦ (realizeNuc f i).map (s ++ consAt f i ++ ·)
 
-/-- After fusion no unfused low vowel is adjacent to an |A| consonant, since fusion always applies
-among two adjacent |A|s (§3.2.2). -/
+-- §3.2.2
 theorem fusion_fuses (f : Form) (i : Nat) (c : Cons) (v : Vowel)
     (h : (fusion f)[i]? = some ⟨c, .vowel v false⟩) :
     ¬ (IsLowA v ∧ (c.HasA ∨ HasAAt f (i + 1))) := by
@@ -392,8 +378,7 @@ theorem fusion_fuses (f : Form) (i : Nat) (c : Cons) (v : Vowel)
   · cases hu
     simp_all
 
-/-- Dissociation empties exactly the fused nuclei that are governed and not self-licensed
-((26c), (28)). -/
+-- (26c), (28)
 theorem dissociation_empty_iff (f : Form) (i : Nat) (u : CV) (h : f[i]? = some u) :
     (dissociation f)[i]? = some ⟨u.c, .empty⟩ ↔
       u.v = .empty ∨ ∃ v, u.v = .vowel v true ∧

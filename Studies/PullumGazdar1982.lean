@@ -250,8 +250,7 @@ private theorem exists_of_generated_C {w : List Sym} (h : Generated .C w) :
   · exact ⟨.a, rfl, Or.inl rfl⟩
   · exact ⟨.b, rfl, Or.inr rfl⟩
 
-/-- By soundness, a tree of grammar (9) rooted at a nonterminal yields what that nonterminal
-generates, which at `S` is a string of (8). -/
+-- (9), (8)
 theorem xy_sound {t : RoseTree (Symbol Sym xyGrammar.NT)} (ht : t.Licensed xyGrammar.Licenses) :
     ∀ N, t.value = .nonterminal N → Generated N t.yield := by
   induction ht using RoseTree.Licensed.grammar_induction with
@@ -503,7 +502,7 @@ private theorem derives_S₂ {x y : List Sym} (hx : AB x) (hy : AB y) (hlen : x.
       ((derives_B u d u' hu hd hu' hlen').append_right _).trans ((derives_A₁ he).append_left _)
   · exact absurd rfl hpq
 
-/-- By completeness, every string of (8) is derived. -/
+-- (8)
 theorem derives_xy {w : List Sym} (hw : IsXY w) :
     xyGrammar.Derives [.nonterminal .S] (w.map .terminal) := by
   obtain ⟨x, y, rfl, hx, hy, hne⟩ := hw
@@ -547,7 +546,7 @@ theorem respectively_converse :
       (¬ Langendoen ex19b ∧ ex19b.judgment = .acceptable) := by
   decide
 
-/-- (18b), the one string of (18) the characterization admits, is rejected. -/
+-- (18b), (18)
 theorem respectively_18b : Langendoen ex18b ∧ ex18b.judgment = .ungrammatical := by decide
 
 /-! ### §5: Dutch verb raising and grammar (29) -/
@@ -620,8 +619,7 @@ def IsVerbPhrase (w : List Cat) : Prop :=
   ∃ n h x v, w = List.replicate n .B ++ h :: x ++ [v] ∧ (h = .H ∨ h = .I) ∧
     (∀ c ∈ x, c = .F ∨ c = .G) ∧ (v = .D ∨ v = .E) ∧ n = objects (h :: x ++ [v])
 
-/-- By soundness, a tree of grammar (29) rooted at `C` yields a VP complement and one rooted at
-`A` a verb phrase. -/
+-- (29)
 theorem dutch_sound {t : RoseTree (Symbol Cat dutchGrammar.NT)}
     (ht : t.Licensed dutchGrammar.Licenses) :
     (t.value = .nonterminal .C → IsComplement t.yield) ∧

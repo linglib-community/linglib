@@ -40,20 +40,6 @@ the calculus predicts the judgment of every row it covers.
   in which a language incorporates its particles overtly, Norwegian's read off the contexts
   that take the compound participle in `Norwegian.Verb.participle`.
 
-## Main results
-
-* `derivable_inner_iff`, `derivable_outer`, `not_derivable_final`, `derivable_prefixed_iff`: the
-  placements a configuration derives.
-* `complex_paradigm`, `weak_pronoun_outer_only`, `modified_outer_only`: the chapter's paradigms.
-* `predicateExtractableFrom_iff`: the predicate extracts exactly from a derivable non-outer
-  placement.
-* `rows_derivable`, `rows_predicateExtraction`, `rows_subextraction`: every English and Norwegian
-  row is judged as the calculus predicts.
-* `rows_prefixed`: every prefixed particle is judged by the voices its language incorporates in.
-* `norwegian_incorporates`: Norwegian incorporates in the passive only, as the chapter states.
-* `rows_participle`: Åfarli's *sparke ut* rows show the participle the fragment gives for their
-  auxiliary exactly when they are judged acceptable.
-
 ## Implementation notes
 
 The calculus is stated over the parameters the chapter's principles read, not over trees: the
@@ -220,8 +206,7 @@ theorem weak_pronoun_outer_only (overt : Prop) :
   ⟨(derivable_inner_iff _).2 (by simp [Complement.IsBarrier]), derivable_outer _,
     fun h ↦ ((derivable_inner_iff _).1 h).2.1 trivial⟩
 
-/-- In (161) and (162), weak pronouns are also barred from the inner order of prepositional and
-infinitival complex constructions. -/
+-- (161), (162)
 theorem weak_pronoun_complex (overt : Prop) :
     ¬ Derivable (.sc .adpositional) overt True False .inner :=
   fun h ↦ ((derivable_inner_iff _).1 h).2.1 trivial
@@ -252,8 +237,7 @@ section Extraction
 
 variable (k : Complement) {overt weak modified : Prop}
 
-/-- In a nominal complex particle construction without overt incorporation, the predicate cannot be
-extracted (60). -/
+-- (60)
 theorem not_predicateExtractable_of_isBarrier (hk : k.IsBarrier) {s : Strategy}
     (hs : Licensed k overt weak modified s) (ho : ¬ overt) : ¬ PredicateExtractable s := by
   cases s

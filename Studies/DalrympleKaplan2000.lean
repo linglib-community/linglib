@@ -42,13 +42,6 @@ rules on every coordination, not only on the paper's tables of pairs: Hindi's, I
 (`Corbett1991.Icelandic.rules`), and Slovene's (`Corbett1991.Slovene.rules`) once the
 conjunction contributes a marker, which is where Slovene departs from same-gender congruence.
 
-## Main statements
-
-* `markers_sup`: union on person marker sets is the join of persons.
-* `Icelandic.map_resolve`: union of the marker sets (119) reproduces Corbett's Icelandic rules on
-  every coordination.
-* `Slovene.map_resolve`: with the conjunction's marker, union reproduces Corbett's Slovene rules.
-
 ## Implementation notes
 
 * The syncretism class is the maximal indeterminate value a form can bear; §4.5 leaves it to
@@ -110,31 +103,28 @@ abbrev Distributes {α : Type*} (P : α → Prop) (s : Finset α) : Prop := ∀ 
 
 /-! ### Indeterminacy: set values and membership (§§3–4) -/
 
-/-- The accusative and nominative requirements of the two verbs of (17) have no upper bound in the
-subsumption order. -/
+-- (17)
 theorem requirements_not_compatible :
     ¬ Compat (Morphology.Features.of (case := some .acc))
       (Morphology.Features.of (case := some .nom)) := by
   decide
 
 open German.Pronouns in
-/-- *wer* realizes the nominative, *wem* the dative, and *was* the nominative and the accusative
-((26), (32)). -/
+-- (26), (32)
 theorem german_cases :
     formCellsOf wer "wer" = {German.Case.nom} ∧ formCellsOf wer "wem" = {.dat} ∧
       formCellsOf was "was" = {.nom, .acc} := by
   decide
 
 open German.Pronouns in
-/-- The value of *was* is the least set containing both ACC and NOM ((28)–(31), (36)). -/
+-- (28), (31), (36)
 theorem was_isLeast :
     IsLeast {v | German.Case.acc ∈ v ∧ German.Case.nom ∈ v} (formCellsOf was "was") := by
   rw [german_cases.2.2]
   exact ⟨by simp, fun v ⟨ha, hn⟩ ↦ by simp [Finset.insert_subset_iff, ha, hn]⟩
 
 open German.Pronouns in
-/-- The only flat value extending both cases of *was* is ⊥ (22), which also admits contexts *was*
-cannot appear in (§3.2). -/
+-- (22), §3.2
 theorem underspecification_overgenerates :
     (∀ x : Flat German.Case, formCellsOf was "was" ⊆ x.extensions ↔ x = ⊥) ∧
       German.Case.dat ∈ (⊥ : Flat German.Case).extensions \ formCellsOf was "was" ∧
@@ -144,8 +134,7 @@ theorem underspecification_overgenerates :
     by decide, by decide⟩
 
 open German.Pronouns in
-/-- *was* meets the accusative requirement of *gegessen* and the nominative one of *übrig war*
-((28), (30)), and *wem* meets *vertraust* but not *muss* ((32), (33)). -/
+-- (28), (30), (32), (33)
 theorem free_relatives :
     AcceptableIff Examples.ex_17
         (German.Case.acc ∈ formCellsOf was "was" ∧
@@ -156,16 +145,14 @@ theorem free_relatives :
   decide
 
 open Polish.Pronouns in
-/-- The case value of *kogo* is the accusative and the genitive of *kto*, and that of *co* the
-nominative and the accusative ((40), (41), (46)). -/
+-- (40), (41), (46)
 theorem polish_cases :
     formCellsOf kto "kogo" = {Polish.Case.acc, .gen} ∧
       formCellsOf co "co" = {Polish.Case.nom, .acc} := by
   decide
 
 open Polish.Pronouns in
-/-- Fronted *kogo* meets the accusative of *lubi* and the genitive of *nienawidzi* in both
-conjuncts ((40), (46)), and *co* does not ((41)). -/
+-- (40), (46), (41)
 theorem polish_coordination :
     AcceptableIff Examples.ex_40
         (Polish.Case.acc ∈ formCellsOf kto "kogo" ∧
@@ -177,7 +164,7 @@ theorem polish_coordination :
 
 open English
 open English.Verbs hiding Verb
-/-- *set* realizes the base, the plain present, the past and the past participle ((50)). -/
+-- (50)
 theorem set_cells :
     formCells set_.realize "set" =
       {English.Verbs.Verb.Cell.base, .plainPresent, .past, .pastParticiple} := by
@@ -185,8 +172,7 @@ theorem set_cells :
 
 open English
 open English.Verbs hiding Verb
-/-- *will* requires the base form and *have* the past participle, which *set* both realizes ((49),
-(50)) and *clarify* does not ((47), (48)). -/
+-- (49), (50), (47), (48)
 theorem will_and_have :
     AcceptableIff Examples.ex_49 (English.Verbs.Verb.Cell.base ∈ formCells set_.realize "set" ∧
         English.Verbs.Verb.Cell.pastParticiple ∈ formCells set_.realize "set") ∧
@@ -198,15 +184,12 @@ theorem will_and_have :
           English.Verbs.Verb.Cell.pastParticiple ∈ formCells clarify.realize "clarified") := by
   decide
 
-/-- The plural subject prefix *zi-* of *zibomvu* 'are red' realizes genders 7/8 and 9/10 ((54),
-(56)). -/
+-- (54), (56)
 theorem zibomvu_genders :
     formCells Xhosa.Gender.plSubjPrefix "zi" = {Xhosa.Gender.genderD, .genderE} := by
   decide
 
-/-- Distributed over the conjuncts, *zibomvu*'s requirement is met by *izandla* and *iindlebe*
-((54)–(56)), while no determinate class-6 or class-8 requirement is met by *igqira* and *isanuse*
-((53)). -/
+-- (54), (56), (53)
 theorem xhosa_coordination :
     AcceptableIff Examples.ex_54
         (Distributes (· ∈ formCells Xhosa.Gender.plSubjPrefix "zi")
@@ -218,8 +201,7 @@ theorem xhosa_coordination :
   decide
 
 open Chichewa.Gender in
-/-- The Chichewa plural prefix *a-* serves genders 1/2 and 5/6, so its verbs agree with conjuncts of
-either gender or both ((57)–(59)). -/
+-- (57), (59)
 theorem chichewa_coordination :
     AcceptableIff Examples.ex_57
         (Distributes (· ∈ formCells Value.plSubjPrefix .a) {lalanje.gender, samba.gender}) ∧
@@ -230,16 +212,14 @@ theorem chichewa_coordination :
   decide
 
 open German.Verbs in
-/-- *kaufen* realizes the first and third plural, and *kauft* the second plural and third singular
-((62), (65)). -/
+-- (62), (65)
 theorem kaufen_cells :
     formCells kaufen (some "kaufen") = {(Person.first, Number.plural), (.third, .plural)} ∧
       formCells kaufen (some "kauft") = {(Person.second, Number.plural), (.third, .singular)} := by
   decide
 
 open German.Verbs in
-/-- Right-node-raised *kaufen* is satisfied by *wir* and *die Müllers* ((61), (63)), and *kauft* by
-*ihr* and *Franz* ((64)). -/
+-- (61), (63), (64)
 theorem right_node_raising :
     AcceptableIff Examples.ex_61 (Distributes (· ∈ formCells kaufen (some "kaufen"))
         {(Person.first, Number.plural), (.third, .plural)}) ∧
@@ -252,8 +232,7 @@ theorem right_node_raising :
 /-- A person value as a set of markers, the paper's S and H the two discourse roles (§6.1). -/
 abbrev PersonSet := Finset Discourse.Role
 
-/-- Two markers give exactly the four persons of the quadripartition, so no language resolves
-more than four (§6.3). -/
+-- §6.3
 theorem card_personSet : Fintype.card PersonSet = 4 := by
   rw [Fintype.card_finset, Discourse.Role.card]; rfl
 
@@ -284,20 +263,17 @@ def personAgreement : List (String × Person) :=
   [("1PL", .first), ("2PL", .second), ("2", .second), ("3", .third),
     ("1INCL.PL", .firstInclusive), ("1EXCL.PL", .firstExclusive)]
 
-/-- The Spanish, Slovak and Fula coordinations take the agreement form naming the union of the
-conjuncts' marker sets ((71), (76), (81)–(86), (88), (92), (95)–(99)). -/
+-- (71), (76), (81), (86), (88), (92), (95), (99)
 theorem person_rows : ∀ row ∈ Examples.all, ∀ cs ∈ row.parse? "conjuncts" personConjuncts,
     ∀ p ∈ row.parse? "agreement" personAgreement,
       (row.judgment = .acceptable ↔ cs.toFinset.sup markers = markers p) := by
   decide +kernel
 
-/-- *José y tú* has `{H}`, which fails the constraining equation `{S,H}` of first-plural
-*hablamos* ((95)–(98)). -/
+-- (95), (98)
 theorem jose_y_tu : [Person.third, .second].toFinset.sup markers ≠ markers .first := by
   decide
 
-/-- On the tripartition, inclusion of marker sets is the person hierarchy, so union picks the most
-prominent conjunct (fn. 12). -/
+-- fn. 12
 theorem markers_subset_iff_prominence : ∀ s t : PersonSet,
     markers (Person.tripartitionOf t) ⊆ markers (Person.tripartitionOf s) ↔
       (Person.tripartitionOf t).prominence ≤ (Person.tripartitionOf s).prominence := by
@@ -306,18 +282,16 @@ theorem markers_subset_iff_prominence : ∀ s t : PersonSet,
 /-- The dual assignment, each marker set's complement, its markers read as absences ((102)). -/
 def dual (p : Person) : PersonSet := (markers p)ᶜ
 
-/-- On the tripartition the dual is the assignment of Sag, Gazdar, Wasow and Weisler ((100)). -/
+-- (100)
 theorem dual_tripartition :
     dual .first = ∅ ∧ dual .second = {.speaker} ∧ dual .third = {.speaker, .addressee} := by
   decide
 
-/-- Intersection of the duals is the complement of the union, so the two analyses cover the
-same facts ((101), (103)). -/
+-- (101), (103)
 theorem inf_dual (s : Finset Person) : s.inf dual = (s.sup markers)ᶜ :=
   (Finset.compl_sup s markers).symm
 
-/-- Intersection with first person `{}` cannot tell *you and I* from *Bill and I*, but with Fula's
-dual first singular it can ((101) against (103)). -/
+-- (101), (103)
 theorem dual_first_absorbs :
     dual .first ∩ dual .second = dual .first ∩ dual .third ∧
       dual .firstExclusive ∩ dual .second ≠ dual .firstExclusive ∩ dual .third := by
@@ -353,8 +327,7 @@ private theorem of_sublists {univ : List G} {P : Option G → Finset G → Prop}
       Finset.ext fun c ↦ by simp only [List.mem_toFinset, hmem]]
     at this
 
-/-- Rules that union represents keep a shared gender whose marker set no other form of theirs
-has, the generalization (105b): union is idempotent. -/
+-- (105b)
 private theorem pair_self_of_union {mark : G → GenderSet} {g : G}
     (h : (resolve rs [g, g]).map mark = some ([g, g].toFinset.sup mark))
     (hinj : ∀ g' ∈ rs.map out, mark g' = mark g → g' = g) : resolve rs [g, g] = some g := by
@@ -387,12 +360,11 @@ theorem map_resolve {cs : List Value} (hcs : cs ≠ []) :
   of_sublists (univ := [.masc, .fem]) (P := fun r s ↦ r.map markers = some (s.sup markers))
     (by decide) hcs fun c _ ↦ by cases c <;> simp
 
-/-- A same-gender coordination keeps its gender ((105b), (110)). -/
+-- (105b), (110)
 theorem resolve_pair_self (g : Value) : resolve rules [g, g] = some g :=
   pair_self_of_union (map_resolve (by simp)) fun _ _ h ↦ markers_injective h
 
-/-- The feminine set is nested in the masculine, so the mixed coordination is masculine and
-Hindi needs no third gender ((105c), (110)). -/
+-- (105c), (110)
 theorem markers_fem_subset : markers .fem ⊆ markers .masc := by decide
 
 end Hindi
@@ -407,20 +379,19 @@ def markers : _root_.Icelandic.Gender.Value → GenderSet
 
 theorem markers_injective : Function.Injective markers := by decide
 
-/-- Union of the marker sets reproduces Corbett's rules on every coordination ((120)). -/
+/-- Union of the marker sets reproduces Corbett's rules on every coordination ((120)) ((119)). -/
 theorem map_resolve {cs : List _root_.Icelandic.Gender.Value} (hcs : cs ≠ []) :
     (resolve Corbett1991.Icelandic.rules cs).map markers = some (cs.toFinset.sup markers) :=
   of_sublists (univ := [.masculine, .feminine, .neuter])
     (P := fun r s ↦ r.map markers = some (s.sup markers)) (by decide) hcs
     fun c _ ↦ by cases c <;> simp
 
-/-- A same-gender coordination keeps its gender ((105b), (118)). -/
+-- (105b), (118)
 theorem resolve_pair_self (g : _root_.Icelandic.Gender.Value) :
     resolve Corbett1991.Icelandic.rules [g, g] = some g :=
   pair_self_of_union (map_resolve (by simp)) fun _ _ h ↦ markers_injective h
 
-/-- Masculine and feminine are incomparable, so their union is neither and a third gender must
-carry it, the neuter's set ((105c), (119)). -/
+-- (105c), (119)
 theorem needs_neuter :
     ¬ markers .masculine ⊆ markers .feminine ∧ ¬ markers .feminine ⊆ markers .masculine ∧
       markers .masculine ∪ markers .feminine = markers .neuter := by
@@ -444,8 +415,7 @@ theorem map_resolve {cs : List Corbett1991.Slovene.Value} (hcs : cs ≠ []) :
     (P := fun r s ↦ r.map markers = some (s.sup markers ∪ {.fem})) (by decide) hcs
     fun c _ ↦ by cases c <;> simp
 
-/-- Two Slovene neuters resolve masculine against (105b) ((123)), and without the conjunction's
-marker their union is the neuter's own set. -/
+-- (105b), (123)
 theorem neuters :
     resolve Corbett1991.Slovene.rules [.neut, .neut] = some .masc ∧
       [Corbett1991.Slovene.Value.neut, .neut].toFinset.sup markers = markers .neut := by
@@ -453,8 +423,7 @@ theorem neuters :
 
 end Slovene
 
-/-- In the Hindi rows the predicate's gender is the one whose marker set is the union of the
-conjuncts' ((107), (108), (113)). -/
+-- (107), (108), (113)
 theorem hindi_rows : ∀ row ∈ Examples.all, row.language = "hind1269" →
     ∀ cs ∈ row.parse? "conjuncts"
       [("MASC and FEM", [Hindi.Value.masc, .fem]), ("FEM and FEM", [.fem, .fem])],
@@ -462,8 +431,7 @@ theorem hindi_rows : ∀ row ∈ Examples.all, row.language = "hind1269" →
       (row.judgment = .acceptable ↔ cs.toFinset.sup Hindi.markers = Hindi.markers g) := by
   decide +kernel
 
-/-- In the Icelandic rows the predicate is neuter, the union of the conjuncts' marker sets
-((115)–(117)). -/
+-- (115), (117)
 theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
     ∀ cs ∈ row.parse? "conjuncts"
       [("MASC and FEM", [_root_.Icelandic.Gender.Value.masculine, .feminine]),
@@ -472,8 +440,7 @@ theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
       (row.judgment = .acceptable ↔ cs.toFinset.sup Icelandic.markers = Icelandic.markers g) := by
   decide +kernel
 
-/-- In the Slovene row the tree and the nest take the masculine, the union of the conjuncts' and
-the conjunction's marker sets ((123), (127)). -/
+-- (123), (127)
 theorem slovene_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
     ∀ cs ∈ row.parse? "conjuncts" [("NEUT and NEUT", [Corbett1991.Slovene.Value.neut, .neut])],
     ∀ g ∈ row.parse? "agreement" [("MASC", Corbett1991.Slovene.Value.masc)],
@@ -488,8 +455,7 @@ sets ((140)); an indeterminate gender would instead be this set of sets, on whic
 not resolve. -/
 def wah : Finset GenderSet := {Hindi.markers .masc, Hindi.markers .fem}
 
-/-- One disjunct serves each single agreement ((141)) and no disjunct serves both constraining
-equations at once ((128)), the equations checking the whole set ((113)). -/
+-- (141), (128), (113)
 theorem wah_examples :
     AcceptableIff Examples.ex_141a (∃ v ∈ wah, v = Hindi.markers .masc) ∧
       AcceptableIff Examples.ex_141b (∃ v ∈ wah, v = Hindi.markers .fem) ∧

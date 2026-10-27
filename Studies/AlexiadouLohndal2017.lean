@@ -26,18 +26,6 @@ modify v leaves v's complement free for an aP. Inserting Roots after syntax into
 that Primary Merge leaves derives that the material over a Root labels it, but not that a Root is
 categorized at all.
 
-## Main statements
-
-* `mayCondition'_tree27`: in the derivation of (27) the internal argument may condition the Root
-  under the refined locality condition, though the Root takes no complement, while in the
-  representation (26) it may not.
-* `deverbal_derives`: in a deverbal noun every configuration of the Root and its argument derives
-  the one-replacement contrast of (8) and selects the argument as the verb does.
-* `root_without_categorizer`: when Roots are inserted after syntax, a derivation builds a Root
-  from a resource with no categorizer.
-* `derives_iff`: of the four views only the one that merges some Roots as modifiers and others as
-  complements derives the contrast of (56).
-
 ## Implementation notes
 
 * The locality condition (25) is the one the chapter quotes from the manuscript of Bobaljik and

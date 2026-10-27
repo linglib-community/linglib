@@ -70,7 +70,7 @@ theorem not_isExhaustivelyResolvable_of_isNecessarilyOpen [DenselyOrdered D] {φ
     let ⟨y, hmy, hyd⟩ := exists_between (lt_of_not_ge fun h => hd (hφ.antitone h hm.1))
     not_le.2 hmy (hm.2 (hlt y hyd))
 
-/-- (42) for downward-monotone properties. -/
+-- (42)
 theorem not_isExhaustivelyResolvable_of_isNecessarilyOpenBelow [DenselyOrdered D] {φ : D → Set W}
     (hφ : StrictMono φ) (hopen : IsNecessarilyOpenBelow φ) (w : W) :
     ¬ IsExhaustivelyResolvable (range φ) w :=
@@ -82,8 +82,7 @@ theorem not_isExhaustivelyResolvable_of_isNecessarilyOpenBelow [DenselyOrdered D
 theorem isNecessarilyOpen_gt_over (μ : W → D) : IsNecessarilyOpen (μ ⁻¹' Set.Ioi ·) :=
   fun w => ⟨μ w, lt_irrefl _, fun _ h => h⟩
 
-/-- On a dense scale *more than d* has no most informative degree, so it carries no scalar
-implicature and rejects *only* ((2), (5), (7b–c)). -/
+-- (2), (5), (7b–c)
 theorem moreThan_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
     (hμ : Function.Surjective μ) (w : W) : ¬ IsExhaustivelyResolvable (range (μ ⁻¹' Set.Ioi ·)) w :=
   not_isExhaustivelyResolvable_of_isNecessarilyOpen
@@ -91,9 +90,6 @@ theorem moreThan_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
       ((Set.preimage_injective.2 hμ).comp Set.Ioi_injective))
     (isNecessarilyOpen_gt_over μ) w
 
-/-- Exhaustifying a strictly antitone degree property against its stronger members asserts that
-the prejacent is the most informative true degree, so *only* and the scalar implicature are
-MAXinf. -/
 theorem exhAgainst_lt_iff_isStrongestTrueAnswer {φ : D → Set W} (hφ : StrictAnti φ) {i : D}
     {w : W} :
     Exhaustification.exhAgainst (· < ·) (w ∈ φ ·) i ↔ IsStrongestTrueAnswer (range φ) w (φ i) := by
@@ -108,8 +104,7 @@ of some degree above `a`. -/
 abbrev requirementBase (φ : D → Set W) (a : D) : SetRel W W :=
   {p | ∃ d, a < d ∧ p.2 ∈ φ d}
 
-/-- (46) Under `requirementBase φ a`, *required to φ d* describes the closed interval
-`Iic a`. -/
+-- (46)
 theorem box_eq_Iic [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (a : D) (w : W) :
     {d | w ∈ (requirementBase φ a).core (φ d)} = Iic a := by
   ext d'
@@ -151,8 +146,7 @@ theorem isNecessarilyOpenBelow_lt_over (μ : W → D) :
     IsNecessarilyOpenBelow (μ ⁻¹' Set.Iio ·) :=
   isNecessarilyOpen_gt_over (toDual ∘ μ)
 
-/-- On a dense scale the negated degree property has no least true degree, so its degree question is
-undefined ((16), (19a), (25)). -/
+-- (16), (19a), (25)
 theorem negation_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
     (hμ : Function.Surjective μ) (w : W) : ¬ IsExhaustivelyResolvable (range (μ ⁻¹' Set.Iio ·)) w :=
   not_isExhaustivelyResolvable_of_isNecessarilyOpenBelow
@@ -160,14 +154,13 @@ theorem negation_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
       ((Set.preimage_injective.2 hμ).comp Set.Iio_injective))
     (isNecessarilyOpenBelow_lt_over μ) w
 
-/-- In *required not to φ d* a universal modal over a downward-monotone property closes the
-interval from below ((27b), (28a), (29a)). -/
+-- (27b), (28a), (29a)
 theorem isExhaustivelyResolvable_box_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
     (a : D) (w : W) :
     IsExhaustivelyResolvable (range fun d => SetRel.core {p | ∃ d, d < a ∧ p.2 ∈ φ d} (φ d)) w :=
   isExhaustivelyResolvable_box (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) (toDual a) w
 
-/-- *Allowed not to φ d* stays open from below ((28b), (29b), (47)). -/
+-- (28b), (29b), (47)
 theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
     (hopen : IsNecessarilyOpenBelow φ) (R : SetRel W W) (w : W) :
     ¬ ∃ m, IsLeast {d | w ∈ R.preimage (φ d)} m :=

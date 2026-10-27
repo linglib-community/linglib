@@ -24,17 +24,6 @@ every situation. The desires behind *hope* are consistent with the beliefs and t
 *want* need not be, so French *hope* takes the indicative, with the truth conditions Spanish
 *hope* has with the subjunctive.
 
-## Main results
-
-* `spanish_takes`, `french_takes`: the mood each verb takes in each language, which is the mood
-  its fragment entry records (`spanish_fragment`, `french_fragment`).
-* `french_hope_eq_spanish_hope`: French *hope* with the indicative means what Spanish *hope*
-  with the subjunctive means.
-* `want_alice_and_want_sue`, `bestWorlds_want_alice_eq_neg_one`: local necessity lets an agent
-  want each of two outcomes their beliefs rule out together, which von Fintel's best-worlds
-  *want* forbids.
-* `not_hope_both`: no one hopes for each of two outcomes their beliefs rule out together.
-
 ## Implementation notes
 
 * Backgrounds are relative to worlds rather than situations, and `Backgrounds` holds those of

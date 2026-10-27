@@ -17,25 +17,6 @@ only how the eventuality or the result state stands to the right boundary of the
 interval, and at a moment of reference the universal and the two experiential perfects are the
 three perfects of the older account by Iatridou, Anagnostopoulou and Izvorski.
 
-## Main statements
-
-* `universal_iff_unbounded`, `universal_at_rb`: the universal perfect asserts the eventuality
-  throughout the reference interval.
-* `neutral_experiential_iff`, `bounded_experiential_iff`: the neutral experiential says the
-  eventuality has begun by the right boundary of the reference interval, the bounded one that it
-  has ended by it.
-* `resultative_state_at_rb`, `resultative_perfect_iff`: the resultative perfect asserts the
-  result state at the right boundary and beyond.
-* `bounded_perfect_iff_prfv_perfect`: the proper containment of the bounded aspect makes no
-  difference under the perfect.
-* `bounded_experiential_of_ends_at_rb`: the bounded experiential is compatible with the
-  eventuality holding at the moment of reference.
-* `universal_iff_durative_unbounded`, `neutral_experiential_iff_inclusive_unbounded`,
-  `bounded_experiential_iff_inclusive_bounded`: at a moment of reference the three perfects are
-  those of Iatridou, Anagnostopoulou and Izvorski.
-* `neutral_span_not_covered`, `bounded_span_not_covered`: without the unbounded aspect no perfect
-  is universal.
-
 ## Implementation notes
 
 * The perfect is `Aspect.perfect` and the unbounded aspect `Aspect.UNBOUNDED`. The
@@ -134,7 +115,7 @@ def RESULTATIVE (P : W → S → E → Prop) : W → Set (NonemptyInterval T) :=
 
 variable {P : W → E → Prop} {Q : W → S → E → Prop} {w : W} {i : NonemptyInterval T} {t : T}
 
-/-- The bounded aspect is the perfective with proper containment, footnote 8. -/
+-- footnote 8
 theorem bounded_subset_prfv (P : W → E → Prop) (w : W) : BOUNDED P w ⊆ PRFV P w :=
   ofRel_mono (fun _ _ ↦ le_of_lt) P w
 
@@ -156,15 +137,13 @@ theorem universal_at_rb (h : i ∈ perfect (UNBOUNDED P) w) : ∃ e, P w e ∧ i
   ⟨e, hP, NonemptyInterval.mem_def.2
     ⟨(NonemptyInterval.le_def.1 hle).1.trans i.fst_le_snd, (NonemptyInterval.le_def.1 hle).2⟩⟩
 
-/-- On the neutral experiential (12), the eventuality has begun by the right boundary of the
-reference interval. -/
+-- (12)
 theorem neutral_experiential_begun_by_rb (h : i ∈ perfect (NEUTRAL P) w) :
     ∃ e, P w e ∧ (τ e).fst ≤ i.snd :=
   let ⟨_, ⟨e, hrel, hP⟩, hf⟩ := h
   ⟨e, hP, hf.2 ▸ hrel.1.2⟩
 
-/-- The bounded experiential, (15), places the whole event time inside the span, so the
-eventuality has ended by the right boundary of the reference interval. -/
+-- (15)
 theorem bounded_experiential_ended_by_rb (h : i ∈ perfect (BOUNDED P) w) :
     ∃ e, P w e ∧ (τ e).snd ≤ i.snd :=
   let ⟨_, ⟨e, hlt, hP⟩, hf⟩ := h
@@ -229,14 +208,13 @@ theorem bounded_perfect_iff_prfv_perfect : i ∈ perfect (BOUNDED P) w ↔ i ∈
   refine ⟨(perfect_mono (bounded_subset_prfv P) w ·), fun ⟨_, ⟨e, hle, hP⟩, hf⟩ ↦ ?_⟩
   exact bounded_experiential_iff.2 ⟨e, hP, hf.2 ▸ (NonemptyInterval.le_def.1 hle).2⟩
 
-/-- A universal perfect is also a neutral experiential one, so (13) is compatible with the
-eventuality holding at the utterance time and beyond. -/
+-- (13)
 theorem neutral_experiential_of_universal (h : i ∈ perfect (UNBOUNDED P) w) :
     i ∈ perfect (NEUTRAL P) w :=
   let ⟨e, hle, hP⟩ := universal_iff_unbounded.1 h
   neutral_experiential_iff.2 ⟨e, hP, (NonemptyInterval.le_def.1 hle).1.trans i.fst_le_snd⟩
 
-/-- The bounded experiential is the stronger of the two, (15b) over (12b). -/
+-- (15b), (12b)
 theorem neutral_experiential_of_bounded (h : i ∈ perfect (BOUNDED P) w) :
     i ∈ perfect (NEUTRAL P) w :=
   let ⟨e, hP, hle⟩ := bounded_experiential_ended_by_rb h
@@ -244,22 +222,19 @@ theorem neutral_experiential_of_bounded (h : i ∈ perfect (BOUNDED P) w) :
 
 /-! #### (13) against (16) -/
 
-/-- The neutral experiential is true of an eventuality going on at the moment of reference,
-*I have been sick lately*, (13). -/
+-- (13)
 theorem neutral_experiential_of_ongoing {e₀ : E} (h₁ : (τ e₀).fst ≤ t) (h₂ : t < (τ e₀).snd) :
     .pure t ∈ perfect (NEUTRAL fun (_ : W) e ↦ e = e₀) w ∧ t ∈ τ e₀ :=
   ⟨neutral_experiential_iff.2 ⟨e₀, rfl, h₁⟩, NonemptyInterval.mem_def.2 ⟨h₁, h₂.le⟩⟩
 
-/-- The neutral experiential is also true of an eventuality over before the moment of reference,
-so it does not assert the eventuality there, (13). -/
+-- (13)
 theorem neutral_experiential_of_over {e₀ : E} (h : (τ e₀).snd < t) :
     .pure t ∈ perfect (NEUTRAL fun (_ : W) e ↦ e = e₀) w ∧ t ∉ τ e₀ :=
   ⟨neutral_experiential_iff.2 ⟨e₀, rfl, (τ e₀).fst_le_snd.trans h.le⟩,
     fun hm ↦ h.not_ge (NonemptyInterval.mem_def.1 hm).2⟩
 
 omit [NoMinOrder T] in
-/-- The bounded experiential never lets the eventuality continue past the reference interval,
-*I have been sick previously*, (16). -/
+-- (16)
 theorem bounded_experiential_not_beyond_rb (h : i ∈ perfect (BOUNDED P) w) :
     ∃ e, P w e ∧ ¬ i.snd < (τ e).snd :=
   let ⟨e, hP, hle⟩ := bounded_experiential_ended_by_rb h

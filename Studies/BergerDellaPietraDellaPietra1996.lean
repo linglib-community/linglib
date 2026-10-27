@@ -19,18 +19,6 @@ phrases known the most uniform model is uniform; requiring `p(dans) + p(en) = 3/
 `3/20, 3/20, 7/30, 7/30, 7/30`; adding `p(dans) + p(à) = 1/2` gives the solution the paper leaves
 to the reader (§3.4), with `p(dans) = (9 − √51)/10`.
 
-## Main results
-
-* `isGreatest_uniform`, `isGreatest_two`, `isGreatest_three`: the maximum entropy models of §2.
-* `lagrangian_le_lagrangian_model`: the model `p_λ` of (10) maximizes the Lagrangian (8).
-* `lagrangian_model_eq_neg_logLik`: the value of the Lagrangian at `p_λ` is minus the
-  log-likelihood (13) of `p_λ`.
-* `model_mem_constraints`, `isGreatest_condEntropy_model`, `condEntropy_model_eq_neg_logLik`: the
-  Kuhn–Tucker conclusion of §3.5. The parameters of greatest likelihood give the maximum entropy
-  model in `C`, whose entropy is minus that likelihood.
-* `eq_model_of_condEntropy_eq`: the maximum entropy model is unique at the observed contexts.
-* `concaveOn_logLik_model`: the log-likelihood is concave in the parameters (§3.6).
-
 ## Implementation notes
 
 * Features are real-valued, `f : X × Y → ι → ℝ`, binary in the paper. The model (10) is
@@ -264,7 +252,7 @@ theorem lagrangian_le_lagrangian_model (θ : ι → ℝ) (q : Kernel X Y) [IsMar
   simp only [lagrangian, model, dotProduct_sub, neg_dotProduct] at h₁ h₂ ⊢
   linarith
 
-/-- The value of the Lagrangian at its maximizer is minus the log-likelihood of `p_θ`. -/
+/-- The value of the Lagrangian at its maximizer is minus the log-likelihood of `p_θ` ((13)). -/
 theorem lagrangian_model_eq_neg_logLik (θ : ι → ℝ) :
     lagrangian f p (model f θ) θ = -logLik p (model f θ) := by
   have h := condEntropy_condMaxEnt f (-θ) p.fst

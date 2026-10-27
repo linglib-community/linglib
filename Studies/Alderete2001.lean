@@ -23,23 +23,6 @@ evaluation are those of `Benua1997`.
 * `Japanese.grammar`, `Limburg.grammar`: the summary rankings (24) and (54), with the ranking of
   the anti-faithfulness constraint over its IO counterpart that they leave out.
 
-## Main results
-
-* `not_isFaithfulness_antifaithful_maxViol`, `not_isMarkedness_antifaithful_maxViol`:
-  anti-faithfulness is neither faithfulness nor markedness (§2.1.2).
-* `Luo.optimal_exchange`: under `¬F ≫ F` the winners are the derivatives with exactly one voicing
-  alternation in the base, so the plural of *bat* could as well be *pet-e* as *bed-e* (fn. 7).
-* `ooAnti_eq_of_take_eq`: strict base mutation (27); an OO constraint reads the derivative only
-  where it shares the base.
-* `maxViolFeature_base_le_input`: when the base surfaces as it is underlyingly, a derivative that
-  satisfies ¬OO-MAX violates IO-MAX, so a dominance effect needs ¬OO-MAX ≫ IO-MAX.
-* `Japanese.summary_mispredicts`, `Limburg.summary_mispredicts`: (24) and (54) leave that ranking
-  out, and rankings consistent with them keep the base accent of *kóobe-kko* and the dragging tone
-  of *káál-ə*.
-* `Japanese.rows`, `Limburg.rows`: with it, one ranking per language derives every word of the
-  data from its input over every candidate.
-* `Limburg.toneless_wins`: (53) also needs the tonic to bear a tone (§5.2.2).
-
 ## Implementation notes
 
 Accent and tone are read off the paper's transcription: an acute vowel bears the accent, and in
@@ -287,14 +270,13 @@ theorem optimal_exchange {b i : List Segment} {S : Finset (List Segment)}
   · rintro e ⟨-, he⟩
     omega
 
-/-- Under the exchange ranking, *bat* pluralizes as *bed-e* (11a). -/
+-- (11a)
 theorem bat_bede :
     (tableau (derivation (segments "bat") (segments "bat-e")) {segments "bed-e", segments "bet-e",
       segments "ped-e"} recursive exchange .exchange).optimal = {segments "bed-e"} := by
   decide
 
-/-- In (11b) the same ranking gives the other half of the exchange, *čogo* pluralizing as
-*čok-e*. -/
+-- (11b)
 theorem cogo_coke :
     (tableau (derivation (segments "čogo") (segments "čogo-e")) {segments "čok-e",
       segments "čog-e"} recursive exchange .exchange).optimal = {segments "čok-e"} := by
@@ -304,7 +286,7 @@ theorem cogo_coke :
 def pluralInput (r : CLDF.Wordlist.FormRelation Wordlist.Analysis) : List Segment :=
   (word r.form.form.form ++ suffix r.target.form.form).map segment
 
-/-- Every plural of (6) wins under the exchange ranking among all voicings of its segments. -/
+-- (6)
 theorem plurals : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .exchange →
     segments r.target.form.form ∈ (tableau (derivation (segments r.form.form.form) (pluralInput r))
       (voicings (segments r.target.form.form)) recursive exchange .exchange).optimal := by
@@ -318,8 +300,7 @@ theorem plurals : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some
   rw [optimal_exchange ⟨_, hmem, h1⟩]
   exact Finset.mem_filter.2 ⟨hmem, h1⟩
 
-/-- The plural of *bat* could as well be *pet-e*, since the exchange ranking fixes that one
-voicing alternation occurs and not where (fn. 7). -/
+-- fn. 7
 theorem pete_wins :
     segments "pet-e" ∈ (tableau (derivation (segments "bat") (segments "bat-e"))
       (voicings (segments "bed-e")) recursive exchange .exchange).optimal := by
@@ -409,12 +390,11 @@ def grammar : Ranking Con 8 :=
 
 theorem grammar_extends_summary : ∀ p ∈ summary, grammar.Dominates p.1 p.2 := by decide
 
-/-- The rankings `grammar` adds to (24). -/
+-- (24)
 theorem grammar_antiDomMax : grammar.Dominates .antiDomMax .ioMax ∧
     grammar.Dominates .antiDomMax .culmin := by decide
 
-/-- In (21) the dominant accented *-ppó* deletes the base accent and keeps its own,
-*ada-ppó-i*. -/
+-- (21)
 theorem dominant_accented :
     (tableau (derivation (word "adá") (word "adá+ppó+i"))
       {word "adá-ppo-i", word "ada-ppo-i", word "ada-ppó-i"} recursive
@@ -422,15 +402,14 @@ theorem dominant_accented :
       .dominant).optimal = {word "ada-ppó-i"} := by
   decide
 
-/-- In (22) the recessive *-tára* leaves the base accent, *yón-dara*. -/
+-- (22)
 theorem recessive :
     (tableau (derivation (word "yón-da") (word "yóm+tára")) {word "yon-dára", word "yón-dara"}
       recursive [ooIdentity OORelation.recessive maxAccent, ooAnti .recessive maxAccent]
       .recessive).optimal = {word "yón-dara"} := by
   decide
 
-/-- In (23) the dominant unaccented *-kko* deletes the base accent and, with IO-DEP(Ac) over
-CULMIN, nothing replaces it, *koobe-kko*. -/
+-- (23)
 theorem dominant_unaccented :
     (tableau (derivation (word "kóobe") (word "kóobe+kko"))
       {word "kóobe-kko", word "koobé-kko", word "koobe-kko"} recursive
@@ -438,8 +417,7 @@ theorem dominant_unaccented :
       .dominant).optimal = {word "koobe-kko"} := by
   decide
 
-/-- In (27), were a root dominant, ¬OO-MAX(Ac) would still delete the base accent and never the
-affix's, giving *root-áf* and not *róot-af*. -/
+-- (27)
 theorem root_dominance :
     (tableau (derivation (word "róot") (word "róot+áf")) {word "róot-af", word "root-áf"} recursive
       [ooAnti OORelation.dominant maxAccent, ooIdentity .dominant maxAccent] .dominant).optimal =
@@ -562,8 +540,7 @@ def grammar : Ranking Con 8 :=
 
 theorem grammar_extends_summary : ∀ p ∈ summary, grammar.Dominates p.1 p.2 := by decide
 
-/-- In (52) the dragging tone of *káál* loses its second link, *káal-ə*, not its first, which would
-leave the rising tone ALIGN-L bans. -/
+-- (52)
 theorem dragging_mutates :
     (tableau (derivation (word "káál") (word "káál+ə")) {word "káal-ə", word "káál-ə",
       word "kaál-ə"} recursive
@@ -571,8 +548,7 @@ theorem dragging_mutates :
       .dominant).optimal = {word "káal-ə"} := by
   decide
 
-/-- In (53) a falling tone cannot mutate, since losing its only link leaves a rising tone and
-spreading it violates NOSPREAD, so *stúur-ə* stays faithful. -/
+-- (53)
 theorem falling_stays :
     (tableau (derivation (word "stúur") (word "stúur+ə")) {word "stúur-ə", word "stúúr-ə",
       word "stuúr-ə"} recursive

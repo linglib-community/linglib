@@ -23,15 +23,6 @@ Mapping Parameter, (145), from the language and the noun's number.
 * `cumulativeBelowGen`: the rival with the cumulative operator below `Gen`, (74c).
 * `Parse.Available`: the parses a nominal has.
 
-## Main results
-
-* `distributiveKindPred_of_bonaFideGeneric`, `not_bonaFideGeneric_of_exception`: the generic
-  parse entails distribution at the actual world and fails at an accessible exception, (53).
-* `forall_of_cumulativeBelowGen`: the rival makes every member relate to every location, the
-  reason the paper rejects it for *elephants live in Africa and Asia*.
-* `Parse.available_iff`: the singular indefinite, whose kind formation is undefined, (16), has
-  only `Gen` and the existential of Derived Property Predication.
-
 ## Implementation notes
 
 `Gen` is the paper's black box: a universal over the worlds an accessibility relation reaches and
@@ -68,7 +59,7 @@ def bonaFideGeneric (w : W) : Prop := □[R] (fun v ↦ ∀ a ∈ k v, P a v) w
 predicate distributes over its members. -/
 abbrev distributiveKindPred (w : W) : Prop := ∀ a ∈ k w, P a w
 
-/-- The generic parse is Distributive Kind Predication at every accessible world (28). -/
+-- (28)
 theorem bonaFideGeneric_iff :
     bonaFideGeneric R k P w ↔ ∀ v, w ~[R] v → distributiveKindPred k P v :=
   Iff.rfl
@@ -88,8 +79,7 @@ theorem not_bonaFideGeneric_of_exception {v : W} (hv : w ~[R] v) {a : Atom} (ha 
 def singularIndefiniteGeneric (N : Atom → W → Prop) (w : W) : Prop :=
   □[R] (fun v ↦ ∀ a, N a v → P a v) w
 
-/-- The generic parse of a kind-denoting plural is the singular indefinite generic over kind
-membership (28a). -/
+-- (28a)
 theorem bonaFideGeneric_iff_singularIndefiniteGeneric :
     bonaFideGeneric R k P w ↔ singularIndefiniteGeneric R P (fun a v ↦ a ∈ k v) w :=
   Iff.rfl
@@ -124,8 +114,7 @@ theorem cumulativeKindPred_of_cumulativeBelowGen [R.IsRefl] (hne : (k w).Nonempt
 /-- Derived Property Predication (105b) is the low-scoped existential over a property. -/
 def dpp (N : Atom → W → Prop) (w : W) : Prop := ∃ a, N a w ∧ P a w
 
-/-- Distributive Kind Predication entails Derived Property Predication over the same noun once the
-kind has members (105). -/
+-- (105)
 theorem dpp_of_distributiveKindPred (hne : (k w).Nonempty)
     (h : distributiveKindPred k P w) : dpp P (fun a v ↦ a ∈ k v) w :=
   let ⟨a, ha⟩ := hne
@@ -194,7 +183,7 @@ instance (n : Nominal) : DecidablePred (Parse.Available n) := fun p ↦ by
   cases p <;> unfold Parse.Available <;> infer_instance
 
 /-- By (145) and Tables 1 and 2, the English bare plural has all four parses, the Italian definite
-plural all but `dpp`, and the others only `Gen` and `dpp`. -/
+plural all but `dpp`, and the others only `Gen` and `dpp` ((16)). -/
 theorem Parse.available_iff (p : Parse) :
     p.Available .englishBarePlural ∧ (p.Available .italianDefinitePlural ↔ p ≠ .dpp) ∧
       (p.Available .italianBarePlural ↔ p = .gen ∨ p = .dpp) ∧

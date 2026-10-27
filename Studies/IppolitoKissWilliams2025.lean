@@ -71,13 +71,11 @@ def CI (S' : Question W) : Prop :=
 
 variable {c} {S S' : Question W}
 
-/-- Section 5.2, (19b) and (6a): a left argument none of whose answers the speaker believes, a
-canonical question, leaves the sentence undefined. -/
+-- Section 5.2, (19b), (6a)
 theorem not_defined_of_no_belief (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) : ¬ c.Defined S S' :=
   λ ⟨_, _, α, _, hα⟩ => Context.not_qSupports_of_no_belief h α hα
 
-/-- (18): a canonical question as prejacent satisfies the second clause of the implicature for
-every answer, so the implicature reduces to its first clause. -/
+-- (18)
 theorem ci_iff_of_no_belief (h : ∀ q ∈ alt S', ¬ c.dox ⊆ q) :
     c.CI S' ↔ ∃ α ∈ alt c.qud,
       ∀ p ∈ c.partialAnswers, p ∉ alt c.qud → p ∉ alt S' → c.Supports p α :=
@@ -89,16 +87,14 @@ theorem not_agree_of_ci {α : Set W} (hS' : ¬ c.QSupports S' α)
     ¬ c.Agree (c.QSupports S) (c.QSupports S') :=
   λ ⟨r, hr, hSr, hS'r⟩ => hS' (hS r hr hSr ▸ hS'r)
 
-/-- Section 5.1: when the prejacent supports an answer of its own, the arguments disagree, the
-special case of lack of agreement. -/
+-- Section 5.1
 theorem disagree_of_ci {α : Set W} (hα : α ∈ alt c.qud) (hSα : c.QSupports S α)
     (hS' : ¬ c.QSupports S' α) (hS : ∀ r ∈ alt c.qud, c.QSupports S r → r = α)
     (hS'' : ∃ r ∈ alt c.qud, c.QSupports S' r) :
     c.Disagree (c.QSupports S) (c.QSupports S') :=
   ⟨⟨α, hα, hSα⟩, hS'', not_agree_of_ci hS' hS⟩
 
-/-- (18) and the prose of Section 5.2: with a canonical question as prejacent the arguments
-neither agree nor disagree. -/
+-- (18), Section 5.2
 theorem weak_non_agreement (h : ∀ q ∈ alt S', ¬ c.dox ⊆ q) :
     ¬ c.Agree (c.QSupports S) (c.QSupports S') ∧ ¬ c.Disagree (c.QSupports S) (c.QSupports S') :=
   ⟨λ ⟨r, _, _, hr⟩ => Context.not_qSupports_of_no_belief h r hr,
@@ -198,7 +194,7 @@ private theorem relevant_afford : (polar afford).IsRelevantTo ctx₁₇.issues :
     by simp [IppolitoKissWilliams2022.Context.issues, ctx₁₇],
     partiallyAnsweredBy_of_mem_alt ((mem_alt_polar_afford _).2 (Or.inl rfl))⟩
 
-/-- The speaker of (17) supports buying by the house's beauty. -/
+-- (17)
 private theorem supports_beautiful : ctx₁₇.QSupports (ofSet beautiful) buy :=
   ⟨beautiful, by simp, Set.inter_subset_left, Or.inl ⟨rfl, rfl⟩⟩
 
@@ -207,18 +203,17 @@ private theorem not_evidence_expensive_buy : ¬ Evidence expensive buy := by
   · exact beautiful_ne_expensive h.symm
   · exact buy_ne_compl h
 
-/-- The speaker of (17) does not support buying by the house's expense. -/
+-- (17)
 private theorem not_qSupports_expensive_buy : ¬ ctx₁₇.QSupports (ofSet expensive) buy := by
   rintro ⟨q, hq, -, hev⟩
   simp only [alt_ofSet, Set.mem_singleton_iff] at hq
   exact not_evidence_expensive_buy (hq ▸ hev)
 
-/-- (17): *the house is beautiful, only it's too expensive* is defined. -/
+-- (17)
 theorem defined₁₇ : ctx₁₇.Defined (ofSet beautiful) (ofSet expensive) :=
   ⟨relevant_beautiful, relevant_expensive, buy, buy_mem_alt, supports_beautiful⟩
 
-/-- (17): its implicature holds with buying as the answer beauty supports and expense does
-not. -/
+-- (17)
 theorem ci₁₇ : ctx₁₇.CI (ofSet expensive) := by
   refine ⟨buy, buy_mem_alt, ?_, ?_⟩
   · intro p hp _ hp'
@@ -229,7 +224,7 @@ theorem ci₁₇ : ctx₁₇.CI (ofSet expensive) := by
     · exact absurd rfl hp'
   · exact not_qSupports_expensive_buy
 
-/-- (17): the two arguments disagree, expense supporting not buying. -/
+-- (17)
 theorem disagree₁₇ :
     ctx₁₇.Disagree (ctx₁₇.QSupports (ofSet beautiful)) (ctx₁₇.QSupports (ofSet expensive)) := by
   refine Context.disagree_of_ci buy_mem_alt supports_beautiful not_qSupports_expensive_buy ?_ ?_
@@ -242,7 +237,7 @@ theorem disagree₁₇ :
   · exact ⟨buyᶜ, (mem_alt_polar_buy _).2 (Or.inr rfl), expensive, by simp,
       Set.inter_subset_right, Or.inr ⟨rfl, rfl⟩⟩
 
-/-- The speaker of (18) is neutral about affordability. -/
+-- (18)
 private theorem no_belief_afford : ∀ q ∈ alt (polar afford), ¬ ctx₁₈.dox ⊆ q := by
   intro q hq h
   rw [mem_alt_polar_afford] at hq
@@ -252,8 +247,7 @@ private theorem no_belief_afford : ∀ q ∈ alt (polar afford), ¬ ctx₁₈.do
   · exact absurd (h (show (⟨true, true, true, false⟩ : World) ∈ ctx₁₈.dox
       by simp [ctx₁₈, ctx₁₇, beautiful, expensive])) (by simp [afford])
 
-/-- (18): *the house is beautiful, only can we afford it?* is defined and carries its
-implicature, the canonical question supporting nothing. -/
+-- (18)
 theorem defined_ci₁₈ :
     ctx₁₈.Defined (ofSet beautiful) (polar afford) ∧ ctx₁₈.CI (polar afford) := by
   refine ⟨⟨relevant_beautiful, relevant_afford, buy, buy_mem_alt, supports_beautiful⟩, ?_⟩
@@ -262,14 +256,13 @@ theorem defined_ci₁₈ :
   simp only [ctx₁₈, Set.mem_singleton_iff] at hp
   exact hp ▸ Or.inl ⟨rfl, rfl⟩
 
-/-- (18): the arguments neither agree nor disagree. -/
+-- (18)
 theorem weak₁₈ :
     ¬ ctx₁₈.Agree (ctx₁₈.QSupports (ofSet beautiful)) (ctx₁₈.QSupports (polar afford)) ∧
       ¬ ctx₁₈.Disagree (ctx₁₈.QSupports (ofSet beautiful)) (ctx₁₈.QSupports (polar afford)) :=
   Context.weak_non_agreement no_belief_afford
 
-/-- (6a) and (19b): a speaker neutral about the house's beauty cannot ask whether it is
-beautiful as the left argument. -/
+-- (6a), (19b)
 theorem not_defined_neutral : ¬ ctxNeutral.Defined (polar beautiful) (ofSet expensive) := by
   refine Context.not_defined_of_no_belief λ q hq h => ?_
   rw [mem_alt_polar_beautiful] at hq
@@ -279,8 +272,7 @@ theorem not_defined_neutral : ¬ ctxNeutral.Defined (polar beautiful) (ofSet exp
   · exact absurd (h (show (⟨true, true, false, false⟩ : World) ∈ ctxNeutral.dox
       by simp [ctxNeutral, ctx₁₇, expensive])) (by simp [beautiful])
 
-/-- (6b) and (21): read rhetorically, by a speaker committed to the house's beauty, the same
-question is a fine left argument. -/
+-- (6b), (21)
 theorem defined_rhetorical : ctx₁₇.Defined (polar beautiful) (ofSet expensive) :=
   ⟨⟨beautiful, (mem_alt_polar_beautiful _).2 (Or.inl rfl), polar beautiful,
       by simp [IppolitoKissWilliams2022.Context.issues, ctx₁₇],

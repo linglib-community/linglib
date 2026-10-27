@@ -58,7 +58,6 @@ open Degree Tense Rett2020a
 the negation of the other. -/
 def Ambivalent (p q : Prop) : Prop := p ↔ ¬ q
 
-/-- Ambivalence is symmetric. -/
 theorem Ambivalent.symm {p q : Prop} (h : Ambivalent p q) : Ambivalent q p := h.not_left.symm
 
 /-! ### Degrees -/
@@ -114,7 +113,7 @@ theorem tallerNeg_iff [DenselyOrdered D] : tallerNeg μ a b ↔ μ b < μ a :=
 theorem tallerNeg_iff_taller [DenselyOrdered D] : tallerNeg μ a b ↔ taller μ a b :=
   (tallerNeg_iff μ a b).trans (taller_iff μ a b).symm
 
-/-- The comparative is downward entailing in its standard (80). -/
+-- (80)
 theorem taller_antitone {c : E} (h : μ b ≤ μ a) : taller μ c a → taller μ c b :=
   fun ht ↦ (taller_iff μ c b).mpr (h.trans_lt ((taller_iff μ c a).mp ht))
 
@@ -227,7 +226,7 @@ theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
   · rw [ht_eq] at htm
     exact absurd htm (not_lt.mpr (le_of_lt (hm_dom b hb_compl (Ne.symm hmb))))
 
-/-- *While* is not ambidirectional, so Hungarian *amíg* with negation reads only as *until* (74). -/
+-- (74)
 theorem while_not_ambidirectional [Inhabited T] :
     ¬ ∀ (A B : Set T), IsAmbidirectional (fun X ↦ ∀ t ∈ A, t ∈ X) B := by
   intro h

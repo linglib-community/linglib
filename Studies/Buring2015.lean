@@ -61,15 +61,13 @@ def clause (r r' : Restriction) : WithAlternatives (Ent × Rel × Obj) :=
 
 /-! ### The VP -/
 
-/-- Default *ordered BREAKfast* excludes the VP meanings composed of a relation other than
-*ordered* and *breakfast*, Büring's (5). -/
+-- (5)
 theorem compl_alternatives_vp_weak :
     (vp .weak).alternativesᶜ = {Rel.ordered}ᶜ ×ˢ {Obj.breakfast} := by
   ext ⟨r, o⟩
   simp [vp, compl_alternatives_node, propagated, eq_comm]
 
-/-- Reversed *ORDERED breakfast* allows only the VP meanings composed of a relation other than
-*ordered* and *breakfast*, Büring's (10). -/
+-- (10)
 theorem alternatives_vp_strong : (vp .strong).alternatives = {Rel.ordered}ᶜ ×ˢ {Obj.breakfast} := by
   ext ⟨r, o⟩
   simp [vp, alternatives_node bijective_uncurry_mk, alternatives_map₂, eq_comm]
@@ -94,8 +92,7 @@ def target (F : Finset Word) : Ent × Rel × Obj :=
 theorem wellFormed_clause_weak_weak : (clause .weak .weak).WellFormed :=
   .node_weak injective2_mk (.focused _) (.node_weak injective2_mk (.focused _) (.focused _))
 
-/-- Default *Smith ordered BREAKfast* excludes the propositions composed of an individual, a
-relation and *breakfast*, other than *Smith ordered breakfast* itself (Figure 2). -/
+-- Figure 2
 theorem compl_alternatives_clause_weak_weak :
     (clause .weak .weak).alternativesᶜ =
       {t | t.2.2 = .breakfast} \ {(.smith, .ordered, .breakfast)} := by
@@ -104,8 +101,7 @@ theorem compl_alternatives_clause_weak_weak :
   revert x r o
   decide
 
-/-- Default stress on the object allows exactly the foci containing the object, and the literal
-meaning (Figure 2). -/
+-- Figure 2
 theorem target_mem_clause_weak_weak (F : Finset Word) :
     target F ∈ (clause .weak .weak).alternatives ↔ .obj ∈ F ∨ F = ∅ := by
   rw [← compl_compl (clause .weak .weak).alternatives, compl_alternatives_clause_weak_weak]
@@ -113,8 +109,7 @@ theorem target_mem_clause_weak_weak (F : Finset Word) :
   revert F
   decide
 
-/-- *Smith ORDERED breakfast* allows the propositions in which any individual stands in a relation
-other than *ordered* to *breakfast* (Figure 4). -/
+-- Figure 4
 theorem alternatives_clause_weak_strong :
     (clause .weak .strong).alternatives = univ ×ˢ ({Rel.ordered}ᶜ ×ˢ {Obj.breakfast}) := by
   rw [clause, alternatives_node bijective_uncurry_mk, alternatives_map₂, focused_alternatives,
@@ -124,7 +119,7 @@ theorem alternatives_clause_weak_strong :
   revert x r o
   decide
 
-/-- Reversal on the verb allows the foci containing the verb but not the object (Figure 4). -/
+-- Figure 4
 theorem target_mem_clause_weak_strong (F : Finset Word) :
     target F ∈ (clause .weak .strong).alternatives ↔ .verb ∈ F ∧ .obj ∉ F := by
   rw [alternatives_clause_weak_strong]
@@ -132,8 +127,7 @@ theorem target_mem_clause_weak_strong (F : Finset Word) :
   revert F
   decide
 
-/-- *SMITH ordered breakfast* allows the propositions in which an individual other than Smith
-ordered breakfast (Figure 4). -/
+-- Figure 4
 theorem alternatives_clause_strong_weak :
     (clause .strong .weak).alternatives = {Ent.smith}ᶜ ×ˢ {(Rel.ordered, Obj.breakfast)} := by
   rw [clause, alternatives_node bijective_uncurry_mk, alternatives_map₂, focused_alternatives]
@@ -142,7 +136,7 @@ theorem alternatives_clause_strong_weak :
   revert x r o
   decide
 
-/-- Reversal on the subject allows only narrow subject focus (Figure 4). -/
+-- Figure 4
 theorem target_mem_clause_strong_weak (F : Finset Word) :
     target F ∈ (clause .strong .weak).alternatives ↔ F = {.subj} := by
   rw [alternatives_clause_strong_weak]
@@ -150,12 +144,11 @@ theorem target_mem_clause_strong_weak (F : Finset Word) :
   revert F
   decide
 
-/-- Reversal inside the demoted VP of a reversed clause leaves no focal target (Figure 5). -/
+-- Figure 5
 theorem alternatives_clause_strong_strong : (clause .strong .strong).alternatives = ∅ :=
   alternatives_node_left_strong_eq_empty (not_wellFormed_node_strong injective2_mk)
 
-/-- After Focus Reset at the VP the clause has only its literal meaning as alternative, as Büring's
-root condition requires (Figure 6). -/
+-- Figure 6
 theorem alternatives_reset_vp :
     (node Prod.mk .left .weak (.focused Ent.smith) (.unfeatured (vp .weak).ordinary)).alternatives =
       {(.smith, .ordered, .breakfast)} := by

@@ -220,8 +220,7 @@ theorem limitAssumption_injustice :
     LimitAssumption (Background.restrict ⊥ injustice) morallyGood none :=
   .of_finite _ _ _
 
-/-- Justice must be done (59), there being no injustice in the situations closest to the
-good. -/
+-- (59)
 theorem justice_must_be_done :
     necessity ⊥ morallyGood (fun s ↦ ¬ injustice s) none := by
   simp only [necessity, ModalLogic.Box, mem_bestAccessible, mem_bestWorlds_good_iff, forall_eq]

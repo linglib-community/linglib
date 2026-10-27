@@ -24,16 +24,6 @@ semantic agreement can surface on a concord reader only if it surfaces on the pr
 index readers form a lower set of [corbett-1991]'s Agreement Hierarchy however the open
 predicate position is resolved.
 
-## Main statements
-
-* `Regular.gender_derived`, `Regular.index_number` — the derivation claims of (26) and (24)
-* `hybrid_lexicon` — the hybrid nouns break exactly the links of Table 3
-* `cells_isInterval`, `predicted_patterns`, `three_type_patterns` — breaks cut the chain into
-  contiguous cells; the two-type and three-type counts of n. 3 and p. 824
-* `deca_mixed_agreement`, `relative_modifies_deca` — mixed agreement (41) and the relative
-  pronouns of (57)
-* `paired_agree`, `starred_fail` — the examples, paired with their glossed targets
-
 ## Implementation notes
 
 * Lexical entries carry the singular citation form's concord number for count nouns and the
@@ -173,7 +163,7 @@ theorem gender_derived (h : Regular n) (hd : n.decl = .II ∨ n.decl = .III) :
   simp only [linkHolds, DecCon, ConInd] at hdc hci
   rcases hd with hd | hd <;> rw [hd] at hdc <;> exact ⟨hdc, hci.2 ▸ hdc⟩
 
-/-- In a regular class I noun the concord gender is masculine or neuter (15). -/
+-- (15)
 theorem gender_of_declI (h : Regular n) (hd : n.decl = .I) :
     n.concord.gender = .Masc ∨ n.concord.gender = .Neut := by
   have hdc := h .decCon
@@ -340,7 +330,6 @@ def IsInterval (c : Finset (Fin 4)) : Prop := ∀ i ∈ c, ∀ j ∈ c, ∀ k, i
 
 instance : DecidablePred IsInterval := fun _ ↦ inferInstanceAs (Decidable (∀ _, _))
 
-/-- Breaking `k` links yields `k + 1` cells: a noun with `k` breaks shows `k + 1` types. -/
 theorem cells_card : ∀ B : Finset ChainLink, (cells B).card = B.card + 1 := by decide
 
 /-- "Only contiguous cells in a row are connected by constraints, so we predict exactly the
@@ -352,7 +341,7 @@ the cell of the declension position. -/
 def bipartitions : Finset (Finset (Fin 4)) :=
   Finset.univ.filter fun S ↦ (0 : Fin 4) ∈ S ∧ S ≠ Finset.univ
 
-/-- Seven patterns a priori (n. 3). -/
+-- n. 3
 theorem seven_patterns : bipartitions.card = 7 := by decide
 
 /-- The chain can produce exactly the bipartitions whose declension cell is an interval, the
@@ -421,7 +410,7 @@ def ovu : Bundle := concordBundle .acc ↑Number.singular ↑UD.Gender.Fem
 /-- *ona*: the neuter plural pronoun (41). -/
 def ona : Bundle := indexBundle ↑Person.third ↑Number.plural ↑UD.Gender.Neut
 
-/-- On a regular noun the two bundles agree with the same targets (6). -/
+-- (6)
 theorem knjiga_agrees :
     ConcordAgrees (concordBundle .nom ↑Number.singular ↑UD.Gender.Fem) knjiga .nom ∧
       IndexAgrees (indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem) knjiga := by
@@ -435,9 +424,7 @@ theorem deca_mixed_agreement :
       ¬ IndexAgrees (indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem) deca := by
   decide
 
-/-- On a noun observing `ConInd` a target marked only in number and gender cannot tell the
-routes apart: concord and index matching "gives the illusion (or so we claim) that a single
-feature bundle on the noun is responsible for all the agreeing items" (p. 806). -/
+-- p. 806
 theorem indexAgrees_iff_concordAgrees {n : Noun} (hn : ConInd n) (c : Case)
     (num : Flat Number) (g : Flat UD.Gender) :
     IndexAgrees (indexBundle ⊥ num g) n ↔ ConcordAgrees (concordBundle c num g) n c := by
@@ -486,8 +473,7 @@ theorem relative_modifies_deca :
     Modifies koja deca ∧ Modifies koju deca ∧ Modifies koje deca ∧ Modifies kojih deca := by
   decide
 
-/-- With a singular head the plural INDEX form fails while the concord-marked forms fit:
-the two halves of the division of labor on p. 821. -/
+-- p. 821
 theorem kojih_not_modifies_knjiga : ¬ Modifies kojih knjiga ∧ Modifies koje knjiga := by
   decide
 
@@ -586,8 +572,7 @@ theorem starred_fail :
       (r.ex.judgment = .unacceptable ∨ .unacceptable ∈ r.ex.alternatives.map Prod.snd) := by
   decide
 
-/-- (11b): the feminine pronoun with *devojče* is acceptable though index agreement fails;
-it is pragmatic agreement (§3.1–3.2), outside grammatical agreement. -/
+-- (11b), §3.1
 theorem pragmatic_devojče :
     ¬ IndexAgrees (indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem) devojče ∧
       ex_3.judgment = .acceptable := by

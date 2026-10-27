@@ -82,7 +82,7 @@ def exactlyOne : Finset Buy := prop (·.card = 1)
 def domainAlts : Finset (Finset Buy) :=
   (subdomainAlternatives .proper univ).image fun S => prop (claim buys S)
 
-/-- The pre-exhaustified domain alternatives are *only b₁* and *only b₂* (56f). -/
+-- (56f)
 theorem preExhaustify_domainAlts :
     innocent.preExhaustify domainAlts = {prop (· = {0}), prop (· = {1})} := by decide
 

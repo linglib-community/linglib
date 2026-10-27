@@ -325,11 +325,11 @@ def pluralMarking : Animacy → NPHead → Availability
   | .animate, _ => .rare
   | .inanimate, _ => .impossible
 
-/-- Pronouns require a plural marker to refer to more than one individual, (10c). -/
+-- (10c)
 theorem pluralMarking_pronoun (r : Animacy) : pluralMarking r .pronoun = .required := by
   cases r <;> rfl
 
-/-- Common nouns with inanimate referents reject plural markers, (8a) and (9b). -/
+-- (8a), (9b)
 theorem pluralMarking_inanimate (h : NPHead) (hh : h ≠ .pronoun) :
     pluralMarking .inanimate h = .impossible := by
   cases h <;> first | rfl | exact absurd rfl hh
@@ -388,8 +388,7 @@ theorem tachi_judgments :
       p.2.judgment.band = (pluralMarking p.1.animacy .commonNoun).band := by
   decide
 
-/-- A plural suffix and a classifier phrase can share a noun phrase, as in (2b): every human
-common noun of the fragment may take *-tachi* and is counted with a classifier. -/
+-- (2b)
 theorem plural_and_classifier :
     ∀ n ∈ Japanese.Nouns.nouns, n.animacy = .human →
       pluralMarking n.animacy .commonNoun = .possible ∧ n.classifiers.Nonempty := by
@@ -410,8 +409,7 @@ def Tracks (s : List Mention) : Prop :=
 
 instance : DecidablePred Tracks := fun s ↦ by unfold Tracks; infer_instance
 
-/-- The sequence of (16), a classifier phrase followed by plural-marked mentions, tracks, and
-its reverse does not. -/
+-- (16)
 theorem tracks_16 :
     Tracks [.classifierPhrase, .pluralMarked, .pluralMarked] ∧
       ¬ Tracks [.pluralMarked, .classifierPhrase] := by

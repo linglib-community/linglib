@@ -22,17 +22,6 @@ soft-optimality policy.
 The paper's in-text judgments, its examples (3)–(11), are rows in
 `Data/Examples/CaoWhiteLassiter2025.json`; the regression estimates stay in prose.
 
-## Main statements
-
-* `intentionDegree_eq_one_of_altCount_eq_zero`: an action with no alternative comes out maximally
-  intentional, so the simplified INT drops Frankfurt's alternative-possibilities condition and
-  ALT carries it instead
-* `suf_eq_one_of_make`: where Nadathur and Lauer's *make* holds, SUF is 1 under every
-  distribution over contexts
-* `judgment_differs_make_force`: the paper's (8) separates *make* from *force*
-* `ProbabilisticExample.suf_eq`: with an uncertain background, SUF is the background's
-  probability rather than 0 or 1
-
 ## References
 
 * [cao-white-lassiter-2025]
@@ -243,7 +232,7 @@ could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), 
 theorem judgment_differs_make_force :
     Examples.cwl2025_ex8a.judgment ≠ Examples.cwl2025_ex8b.judgment := by decide
 
-/-- In the gym triplets (5)–(7), *caused* stays acceptable while *forced* switches. -/
+-- (5), (7)
 theorem gym_grades_stronger_verbs :
     Examples.cwl2025_ex5a.judgment = Examples.cwl2025_ex6a.judgment ∧
       Examples.cwl2025_ex6a.judgment = Examples.cwl2025_ex7a.judgment ∧

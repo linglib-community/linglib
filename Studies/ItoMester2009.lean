@@ -83,7 +83,7 @@ def lexToOmega : Constraint Tree := Constraint.alignLeft.comap fun t ↦ (lex, l
 /-- The candidate set. -/
 def candidates : Finset Tree := {fullOmega, amalgamated, omegaAdjoined, phiAttached}
 
-/-- Each site violates exactly one of the four constraints, (20). -/
+-- (20)
 theorem one_violation_each :
     subminimalOmega fullOmega = 1 ∧ lexToOmega amalgamated = 1 ∧
       noRec omegaAdjoined = 1 ∧ parseInto .om phiAttached = 1 := by
@@ -106,8 +106,7 @@ theorem phiAttached_optimum :
       = {phiAttached} := by
   decide
 
-/-- With FtBin and Lex-to-ω alone ranked, the ω-adjoined and φ-attached sites tie, each
-fulfilling both, (33) and (34). -/
+-- (33), (34)
 theorem adjoined_attached_tie :
     (Tableau.ofList candidates [subminimalOmega, lexToOmega]).optimal
       = {omegaAdjoined, phiAttached} := by

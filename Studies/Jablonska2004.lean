@@ -24,19 +24,6 @@ property, or a path.
 * `Stem`: a fragment verb with the verbalizer class the paper assigns it.
 * `attested`, `starred`: the paper's analyses of the forms it accepts and rejects.
 
-## Main results
-
-* `wellFormed_iff`: the seven shapes of a well-formed derivation, whence `si_of_asp3`,
-  `eq_of_perf`, `denotesInterval_of_si` and Svenonius's stacking generalization, `wellStacked`.
-* `asp1Reading_iff_table2`: the readings of *po-* in Asp1 are those of Table 2.
-* `attested_wellFormed`, `starred_not_wellFormed`, `attested_readings`: the analyses hold.
-* `spells`: the analyses spell out the attested words.
-* `stem_perfectivity`, `stem_vendlerClass`: the aspect and the Vendler class the fragment records
-  for a stem are those the model derives for it.
-* `phaseTests_judgment`, `presentTests_reading`: the perfectivity the model derives predicts the
-  judgments of the paper's sentences with a phase verb and in the present tense, by the tests of
-  Section 2.1.
-
 ## Implementation notes
 
 * The Aktionsart profile of a bare stem is atelic throughout, the paper's unbounded bare stem;
@@ -316,7 +303,7 @@ section Generalizations
 
 variable {v : Verbalizer} {ls : List Layer} {m m' : Morph}
 
-/-- A bare stem is perfective exactly when it is a semelfactive, (46). -/
+-- (46)
 theorem perfective_nil_iff : Perfective v [] ↔ v.IsPunctual := by
   simp [Perfective, profile]
 
@@ -337,18 +324,15 @@ inchoatives, semelfactives, directed motion stems and statives ((59), (74), (76)
 theorem denotesInterval_of_si (h : WellFormed v ls) (hm : .si ∈ ls) : v.DenotesInterval := by
   shapes h <;> simp_all
 
-/-- A lexical prefix and *po-* in Asp1 both value [uPerf] against Asp1, so they do not co-occur,
-(42): no Multiple Agree. -/
+-- (42)
 theorem not_lexical_and_asp1 (h : WellFormed v ls) : ¬ (.lexical m ∈ ls ∧ .asp1 m' ∈ ls) := by
   shapes h <;> simp_all
 
-/-- *po-* in Asp3 makes the derivation perfective, (33). -/
+-- (33)
 theorem perfective_of_asp3 (h : WellFormed v ls) (hm : .asp3 m ∈ ls) : Perfective v ls := by
   shapes h <;> cases v <;> simp_all [Perfective, profile, Layer.merge]
 
-/-- A derivation closed by the Secondary Imperfective is imperfective: the
-attenuative-frequentative forms, (56) and (64), are imperfectives, and Asp3 *po-* selects for
-[-Perf], (25). -/
+-- (56), (64), (25)
 theorem not_perfective_of_getLast_si (h : WellFormed v ls) (hl : ls.getLast? = some .si) :
     ¬ Perfective v ls := by
   shapes h <;> cases v <;> simp_all [Perfective, profile, Layer.merge]
@@ -369,14 +353,12 @@ section Table2
 
 variable (v : Verbalizer) (m : Morph)
 
-/-- In the Asp2 column of Table 2, a purely perfectivizing prefix forms exactly on the telic,
-unbounded stems ((10), (67), (47)). -/
+-- Table 2, (10), (67), (47)
 theorem wellFormed_perf_iff :
     WellFormed v [.perf m] ↔ v = .processual ∨ v = .degree ∨ v = .inchoative := by
   cases v <;> simp [wellFormed_iff]
 
-/-- In Table 2, the processual and non-directed motion stems alone form a Secondary Imperfective, as
-they alone host Asp3 *po-* ((43), (83)). -/
+-- Table 2, (43), (83)
 theorem wellFormed_lexical_si_iff :
     WellFormed v [.lexical m, .si] ↔ v = .processual ∨ v = .nonDirectedMotion := by
   cases v <;> simp [wellFormed_iff]
@@ -442,7 +424,7 @@ theorem asp1Reading_iff_table2 (v : Verbalizer) (r : Reading) :
     Asp1Reading v true r ↔ r ∈ table2Asp1 v := by
   cases v <;> cases r <;> decide
 
-/-- Without a plural internal argument, *po-* in Asp1 has no distributive reading ((28c), (29)). -/
+-- (28c), (29)
 theorem not_asp1Reading_distributive (v : Verbalizer) : ¬ Asp1Reading v false .distributive := by
   simp [Asp1Reading]
 
@@ -699,7 +681,6 @@ def starred : List Analysis :=
    ⟨Wordlist.f_78, .gasnac, [.perf z, .si], false, []⟩,
    ⟨Wordlist.f_79b, .szepnac, [.lexical pod, .si], false, []⟩]
 
-/-- The attested forms are accepted and the starred ones rejected. -/
 theorem judgments :
     (∀ a ∈ attested, a.form.judgment = .acceptable) ∧
       ∀ a ∈ starred, a.form.judgment = .ungrammatical := by
@@ -715,7 +696,6 @@ theorem starred_not_wellFormed : ∀ a ∈ starred, ¬ WellFormed a.stem.verbali
 /-- The paper's readings of *po-* are the derived ones. -/
 theorem attested_readings : ∀ a ∈ attested, ∀ r ∈ a.readings, a.Available r := by decide
 
-/-- A prefixed attested form is imperfective exactly when the Secondary Imperfective closes it. -/
 theorem attested_perfective :
     ∀ a ∈ attested, a.layers ≠ [] →
       (Perfective a.stem.verbalizer a.layers ↔ a.layers.getLast? ≠ some .si) := by
@@ -772,7 +752,6 @@ def presentTests : List Test :=
    ⟨Examples.ex_46b, ⟨Wordlist.f_46b, .machnac, [], false, []⟩⟩,
    ⟨Examples.ex_80b, ⟨Wordlist.f_80b, .plywac, [.lexical do_, .si], false, []⟩⟩]
 
-/-- The tested forms are well-formed derivations. -/
 theorem tests_wellFormed :
     ∀ t ∈ phaseTests ++ presentTests, WellFormed t.verb.stem.verbalizer t.verb.layers := by
   decide
@@ -805,14 +784,12 @@ def gap56c : Analysis := ⟨Wordlist.f_56c, .chodzic, [.asp1 po, .si], false, []
 processual stem. -/
 def exception60 : Analysis := ⟨Wordlist.f_60_bare, .grac, [.si], false, []⟩
 
-/-- The gap (56c) is a well-formed derivation, since attenuative-frequentative formation is
-unproductive ((56) to (58)). -/
+-- (56c), (56), (58)
 theorem gap56c_wellFormed :
     gap56c.form.judgment = .ungrammatical ∧ WellFormed gap56c.stem.verbalizer gap56c.layers := by
   decide
 
-/-- The exception (60) is excluded by the requirement of (32) that the Secondary Imperfective find
-a delimited interval. -/
+-- (60), (32)
 theorem exception60_not_wellFormed :
     exception60.form.judgment = .acceptable ∧
       ¬ WellFormed exception60.stem.verbalizer exception60.layers := by

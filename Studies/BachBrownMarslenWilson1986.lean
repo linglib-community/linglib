@@ -19,15 +19,6 @@ An NP–verb binding is a permutation `σ : Equiv.Perm (Fin n)`: crossed is
 argument that crossed orders integrate each NP into the matrix structure as its
 verb arrives while nested orders hold every NP until the cluster ends.
 
-## Main statements
-
-* `totalIntegrationCost_refl`, `totalIntegrationCost_revPerm`: closed forms
-  `n(n−1)/2` (crossed) and `n(n−1)` (nested).
-* `cost_gap`: the gap equals the whole crossed cost — 1 at two verbs, where the
-  experiment finds no difference, 3 and 6 at Levels 3–4, where it does.
-* `nonprojective_is_cheaper`: the antitone (stack-parsable) binding is the
-  expensive one.
-
 ## References
 
 * [bach-brown-marslen-wilson-1986]: Crossed and nested dependencies in German

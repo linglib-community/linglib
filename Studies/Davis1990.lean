@@ -15,15 +15,6 @@ long, so that their first half has no onset to join. The one condition covers th
 words, the *s* clusters and the long consonants, and it sets the rare clusters apart where
 Radzinski's rule, *lo* before a cluster containing /s/, does not: *lo ftalacene* but *il Tlingit*.
 
-## Main results
-
-* `Davis1990.beginsWithOnset_ilClusters`, `Davis1990.not_beginsWithOnset_loOnsets`: the clusters
-  of (1) begin with an onset consonant and the onsets of (3) do not.
-* `Davis1990.not_beginsWithOnset_unusualClusters`: neither do the clusters without /s/ of (13a).
-* `Davis1990.ofSegment_le_of_sonority_le`: the hierarchy refines the modal one (note 6).
-* `Davis1990.onsetOf_eq_consonant_of_beginsWithOnset`: a word that begins with an onset consonant
-  is in the class of `Italian.Phonology.Onset` before which the fragment has *il*.
-
 ## Implementation notes
 
 The analysis puts *il* exactly before the words that begin with an onset consonant, so its
@@ -106,6 +97,7 @@ def loOnsets : List (List Segment) :=
 /-- The clusters that begin *ftalacene*, *pterodattilo*, *mnemometro* and *gnu*, (13a). -/
 def unusualClusters : List (List Segment) := [[f, t], [p, t], [m, n], [g, n]]
 
+/-- The clusters of (1) begin with an onset consonant and the onsets of (3) do not. -/
 theorem beginsWithOnset_ilClusters : ∀ c ∈ ilClusters, BeginsWithOnset (c ++ [a]) := by decide
 
 theorem not_beginsWithOnset_loOnsets : ∀ c ∈ loOnsets, ¬ BeginsWithOnset (c ++ [a]) := by decide

@@ -231,15 +231,13 @@ theorem filter_matchesLeft_single (k : Segment) (I : Finset Segment) :
     I.filter (fun x ↦ MatchesLeft [.seg k] [x]) = k.naturalClass I := by
   simp only [matchesLeft_single_iff]; rfl
 
-/-- From *vote* and *need* (6) the `-əd` rule learns what [t] and [d] share, a term whose natural
-class is exactly [t, d]. -/
+-- (6)
 theorem learned_vote_need :
     learned [vote, need] = [.seg (t ⊓ d)] ∧
       (t ⊓ d).naturalClass finals = {t, d} := by
   decide
 
-/-- The `-d` rule learned from *rub*, *sag* and *plan* covers [d], so it reaches *need* (footnote
-4). -/
+-- footnote 4
 theorem learned_rub_sag_plan :
     learned [rub, sag, plan] = [.seg (b ⊓ g ⊓ n)] ∧
       d ∈ (b ⊓ g ⊓ n).naturalClass finals := by
@@ -251,8 +249,7 @@ def voiced : Segment := Segment.ofSpecs [(.voice, true)]
 /-- The voiceless segments, as a description. -/
 def voiceless : Segment := Segment.ofSpecs [(.voice, false)]
 
-/-- The `-d` rule learned from *rub*, *sag*, *plan*, *love* and *flow* covers every voiced segment
-but /l/ (7b). -/
+-- (7b)
 theorem learned_voiced :
     learned [rub, sag, plan, love, flow] = [.seg (b ⊓ g ⊓ n ⊓ v ⊓ o)] ∧
       (b ⊓ g ⊓ n ⊓ v ⊓ o).naturalClass finals =
@@ -261,8 +258,7 @@ theorem learned_voiced :
         voiced.naturalClass finals := by
   decide
 
-/-- The `-t` rule learned from *jump*, *miss* and *laugh* covers every voiceless segment but /k/
-(7b). -/
+-- (7b)
 theorem learned_voiceless :
     learned [jump, miss, laugh] = [.seg (p ⊓ s ⊓ f)] ∧
       (p ⊓ s ⊓ f).naturalClass finals =
@@ -275,13 +271,12 @@ theorem learned_voiceless :
 def voicelessFricative : Segment :=
   Segment.ofSpecs [(.sonorant, false), (.continuant, true), (.voice, false)]
 
-/-- (8) is met by the four voiceless fricatives and nothing else. -/
+-- (8)
 theorem naturalClass_voicelessFricative :
     voicelessFricative.naturalClass finals = {f, θ, s, esh} := by
   decide
 
-/-- The rule learned from *miss*, *wish* and *laugh* lies inside the island (8), and further
-fricative-final forms widen it to the island. -/
+-- (8)
 theorem learned_le_voicelessFricative :
     learned [miss, wish, laugh] = [.seg (s ⊓ esh ⊓ f)] ∧ voicelessFricative ≤ s ⊓ esh ⊓ f := by
   decide
@@ -314,12 +309,12 @@ def value (key : String) (r : Datum) : ℕ := digits ((r.feature? key).getD "0")
 def statsOf (r : Datum) : Option Stats :=
   (r.nat? "ruleScope").bind fun s ↦ (r.nat? "ruleHits").map (⟨s, ·⟩)
 
-/-- In Table 4 the twelve regular islands all outscore the general rule. -/
+-- Table 4
 theorem table4_islands :
     ∀ r ∈ Examples.all, (r.feature? "island").isSome → ∀ s ∈ statsOf r, IsIsland s := by
   decide +kernel
 
-/-- Table 1 ranks *gleed*'s pasts by raw confidence, *gleed* below *gled* below *gleeded*. -/
+-- Table 1
 theorem gleed_ranking :
     ∀ s₁ ∈ statsOf Examples.a1_25_gleed, ∀ s₂ ∈ statsOf Examples.a1_25_gled,
       ∀ s₃ ∈ statsOf Examples.a1_25_gleeded, LessReliable s₁ s₂ ∧ LessReliable s₂ s₃ := by
@@ -342,8 +337,7 @@ def MeanGT (key : String) (A B : List Datum) : Prop :=
 instance (key : String) (A B : List Datum) : Decidable (MeanGT key A B) :=
   inferInstanceAs (Decidable (_ > _))
 
-/-- Novel regular pasts are rated higher and volunteered more often when the stem lies in an island
-of reliability for the regular change (Fig. 2). -/
+-- Fig. 2
 theorem regulars_ior :
     MeanGT "adjustedRating" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) ∧
       MeanGT "production" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by
@@ -372,8 +366,7 @@ theorem tradeoff :
 theorem ruleBased_islands :
     MeanGT "ruleBased" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by decide
 
-/-- On the twelve regular pasts in the best islands, the analogical model scores below both the
-participants and the rule-based model (Table 4). -/
+-- Table 4
 theorem analogical_misses_islands :
     ∀ r ∈ Examples.all, (r.feature? "island").isSome →
       value "analogical" r < value "adjustedRating" r ∧
@@ -388,7 +381,6 @@ theorem burnt_underestimated :
       total "adjustedRating" burnt < total "analogical" burnt := by
   decide
 
-/-- Participants preferred regular pasts overall. -/
 theorem regulars_preferred :
     MeanGT "rating" (Examples.all.filter fun r ↦ r.feature? "pastType" = some "regular")
       (Examples.all.filter fun r ↦ r.feature? "pastType" = some "irregular") := by

@@ -13,17 +13,6 @@ the Assumption that a proposition answering at some world answers wherever it is
 two schemes are intertranslatable, and the third commits the Unique Answer Fallacy. To know a
 question is to know some answer to it, which yields a necessary test for answerhood.
 
-## Main statements
-
-* `exists_eq_trueAnswers_iff`: the answers at each world are the true members of a Hamblin set
-  exactly under the Assumption (p. 173).
-* `weakAnswer_mem_iff_of_antichain`: Karttunen's answer is an answer exactly when the true answer
-  is unique (p. 174).
-* `InferenceFails.notMem`: the Distributivity Test (p. 177).
-* `knowsSomeAnswer_iff_knows`: on unique-answer questions the Distributivity Principle is
-  Karttunen's postulate for *know*.
-* `trueAnswers_quantifyIn_the`: *whether the king of France is bald* has no true answer (p. 181).
-
 ## Implementation notes
 
 A question is its Hamblin set, with Bennett's denotation `Question.trueAnswers` and Karttunen's
@@ -77,7 +66,7 @@ theorem trueAnswers_iUnion (hT : ∀ w, ∀ p ∈ Ans w, w ∈ p) (hA : Assumpti
   exact ⟨fun ⟨⟨_, hp⟩, hw⟩ ↦ hA hp hw, fun hp ↦ ⟨⟨w, hp⟩, hT w p hp⟩⟩
 
 /-- Answers at each world are the true members of a Hamblin set exactly when they are true and
-satisfy the Assumption. -/
+satisfy the Assumption (p. 173). -/
 theorem exists_eq_trueAnswers_iff :
     (∃ H, Ans = trueAnswers H) ↔ (∀ w, ∀ p ∈ Ans w, w ∈ p) ∧ Assumption Ans := by
   constructor
@@ -123,7 +112,7 @@ end Schemes
 /-! ### The Unique Answer Fallacy (§2.2) -/
 
 /-- On an antichain of answers, Karttunen's answer is an answer exactly when the true answer is
-unique. -/
+unique (p. 174). -/
 theorem weakAnswer_mem_iff_of_antichain {H : Set (Set W)} (hH : IsAntichain (· ⊆ ·) H) (w : W) :
     weakAnswer H w ∈ H ↔ ∃ p, trueAnswers H w = {p} :=
   (isExhaustivelyResolvable_iff H w).symm.trans
@@ -221,7 +210,7 @@ knows that `p` without knowing some answer to `H` (p. 177). -/
 def InferenceFails (p : Set W) (H : Set (Set W)) : Prop :=
   ∃ (K : SetRel W W) (w : W), K.IsRefl ∧ w ∈ K.core p ∧ ¬KnowsSomeAnswer H w K
 
-/-- A proposition for which the inference fails is not an answer. -/
+/-- A proposition for which the inference fails is not an answer (p. 177). -/
 theorem InferenceFails.notMem (h : InferenceFails p H) : p ∉ H := by
   obtain ⟨K, w, hK, hw, hn⟩ := h
   exact fun hp ↦ hn (knowsSomeAnswer_of_mem hp hw)
@@ -283,7 +272,7 @@ theorem exists_mem_of_mem_trueAnswers_every (hO : O ∈ trueAnswers (quantifyIn 
   obtain ⟨-, hf, hw⟩ := hall y (hdet y hy)
   exact ⟨_, hf, hw⟩
 
-/-- A question introducing *the* `cn` has no true answer where nothing is a `cn`. -/
+/-- A question introducing *the* `cn` has no true answer where nothing is a `cn` (p. 181). -/
 theorem trueAnswers_quantifyIn_the (h : ∀ y, w ∉ cn y) :
     trueAnswers (quantifyIn GQ.the cn φ) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, _, hO⟩, hw⟩ ↦ by

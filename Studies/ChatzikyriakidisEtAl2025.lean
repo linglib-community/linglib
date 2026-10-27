@@ -19,20 +19,6 @@ in an agent's context, from those that follow from it; on record types, what an 
 every modal system is exactly its actual beliefs up to relabelling. The datum is
 `Data/Examples/ChatzikyriakidisEtAl2025.json`.
 
-## Main statements
-
-* `forall_subtypeRelabel_recTypes_iff`: a belief type believes a type in every modal system
-  exactly when it contains the fields of some relabelling of it.
-* `Kim.believes`: a belief type with the fields of (32) believes (34) under every labelling of
-  (34), in every modal system.
-* `HobNob.believes_witch`, `HobNob.extension_witch_actual`: Hob believes that there is a witch,
-  and there is none.
-* `HobNob.atom_image_sameGlue`, `HobNob.same_witch`: gluing Hob's belief context and that of
-  Nob's question along a cover that identifies their witches gives the merge of their record
-  types, whose witnesses are the compatible pairs of local witnesses, so it is not true when
-  different witches did the deeds; along a cover that keeps the witches apart it is
-  (`HobNob.other_witch`).
-
 ## Implementation notes
 
 * A field `ℓ : P(ℓ₁, …, ℓₙ)` is the atom `P(ℓ, ℓ₁, …, ℓₙ)`, its witness first, and a record type
@@ -175,7 +161,7 @@ def complement : Set (lang.Atom Label) :=
 def relabelling : Equiv.Perm Label :=
   Equiv.swap .x .«idᵢ.x» * Equiv.swap .c .«idᵢ.e» * Equiv.swap .e .«idⱼ.e»
 
-/-- Relabelling (34) by (35a) gives the fields of (32), the type (35b). -/
+-- (34), (35a), (32), (35b)
 theorem relabelling_smul_complement : relabelling • complement = belief := by
   simp [relabelling, complement, belief, Set.smul_set_insert, Atom.smul_def, Atom.map,
     Matrix.comp_vecCons, Matrix.comp_vecEmpty, Equiv.swap_apply_def]

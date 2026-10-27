@@ -19,17 +19,8 @@ literal parse; lexical uncertainty, after Bergen, Levy and Goodman and Potts et 
 per speaker; the local- and global-implicature speakers choose an utterance together with a
 matrix-free or arbitrary parse, one softmax over pairs per world.
 
-## Main results
-
 * `table1_ss` and its siblings: the readings of every utterance under every parse, the paper's
   Table 1.
-* `vanilla_ss_prefers_wNA`, `gi_ss_prefers_wNS`: the global model corrects the interpretation of
-  *some of the aliens drank some of their water* that the vanilla model gets wrong.
-* `ss_m_parse_pref`, `m_ss_singleton`: its parse posterior peaks at the matrix-only parse, whose
-  reading singles out the world with none- and some-drinkers only, the paper's explanation of
-  the global model's win.
-* `perParse_ss_prefers_o`: under the per-parse normalization the paper rejects, exhaustifying
-  the outer quantifier beats exhaustifying the whole sentence at every rationality.
 
 ## Implementation notes
 
@@ -287,22 +278,21 @@ One characterization per utterance, total over all eight parses — the paper's
 row-groups appear as the guards. Each reading is a membership predicate on
 the world's alien-type set, not a truth vector. -/
 
-/-- In Table 1, NN excludes N-types, and matrix parses also exclude {wA}, the reading of fn. 7. -/
+-- Table 1, fn. 7
 theorem table1_nn : ∀ (p : Parse) (w : World),
     exhMeaning p .nn w ↔ (.E ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
 
-/-- In Table 1, NS holds literally at wN alone, inner EXH widens it to the worlds without an S-type,
-and matrix EXH then excludes wN. -/
+-- Table 1
 theorem table1_ns : ∀ (p : Parse) (w : World),
     exhMeaning p .ns w ↔
       if .inner ∈ p then .IO ∉ w ∧ (.matrix ∈ p → w ≠ wN)
       else w = wN := by decide +kernel
 
-/-- In Table 1, NA excludes A-types, and matrix EXH negates the stronger NS, which is {wN}. -/
+-- Table 1
 theorem table1_na : ∀ (p : Parse) (w : World),
     exhMeaning p .na w ↔ (.A ∉ w ∧ (.matrix ∈ p → w ≠ wN)) := by decide +kernel
 
-/-- In Table 1, SN requires an N-type, and outer or matrix EXH negates AN, which is {wN}. -/
+-- Table 1
 theorem table1_sn : ∀ (p : Parse) (w : World),
     exhMeaning p .sn w ↔
       (.E ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
@@ -316,22 +306,21 @@ theorem table1_ss : ∀ (p : Parse) (w : World),
       else if .matrix ∈ p then w = wNS
       else w ≠ wN := by decide +kernel
 
-/-- In Table 1, SA requires an A-type, and outer or matrix EXH excludes wA. -/
+-- Table 1
 theorem table1_sa : ∀ (p : Parse) (w : World),
     exhMeaning p .sa w ↔
       (.A ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wA)) := by decide +kernel
 
-/-- In Table 1, AN holds at wN alone under every parse. -/
+-- Table 1
 theorem table1_an : ∀ (p : Parse) (w : World), exhMeaning p .an w ↔ w = wN := by decide +kernel
 
-/-- In Table 1, AS excludes N-types; inner EXH pins wS, and matrix EXH without inner EXH negates
-AA, excluding wA. -/
+-- Table 1
 theorem table1_as : ∀ (p : Parse) (w : World),
     exhMeaning p .as w ↔
       if .inner ∈ p then w = wS
       else .E ∉ w ∧ (.matrix ∈ p → w ≠ wA) := by decide +kernel
 
-/-- In Table 1, AA holds at wA alone under every parse. -/
+-- Table 1
 theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide +kernel
 
 theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
@@ -340,9 +329,6 @@ theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
 /-- Under matrix EXH alone ⟦SS⟧ is {wNS}, the reading that singles out this world state (eq. 22). -/
 theorem m_ss_singleton : ∀ w, exhMeaning pM .ss w ↔ w = wNS := by decide +kernel
 
-/-- The matrix operator (eq. A2) is not innocent exclusion, since at MOI its strictly-stronger
-filter is empty and ⟦SS⟧^MOI keeps wSA, which innocent exclusion over the same alternatives
-excludes. -/
 theorem moi_ss_ne_innocent_exclusion :
     exhMeaning {.matrix, .outer, .inner} .ss wSA
       ∧ wSA ∉ Exhaustification.innocent.exh

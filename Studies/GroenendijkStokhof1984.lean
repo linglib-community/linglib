@@ -15,27 +15,6 @@ inside a set compatible with what they know, which contains the index (`Informat
 proposition answers a question for the individual when adding it to their information leaves
 the information inside one cell, and answers it partially when it rules out a cell.
 
-## Main statements
-
-* `Knows.mem_core`: to know the answer is to know every true proposition the question decides.
-* `not_knows_who_of_believes`: believing that someone walks who does not excludes knowing who
-  walks.
-* `who_compl`: *who walks* and *who doesn't walk* are one question.
-* `who_le_whichDeRe`, `whichDeRe_compl`, `Men.readings_independent`: *which man walks* read de
-  re follows from *who walks* and is *which man doesn't walk* read de re, while the de dicto
-  reading is independent of it.
-* `karttunen_knows_of_knows`, `Walkers.karttunen_knows`: Karttunen's postulate for *know*
-  follows from this one, but holds of someone who wrongly believes that Suzy walks.
-* `InformationSets.update`, `InformationSets.LetsKnow.givesTrueAnswer`: updating with a
-  proposition keeps information well formed, and a proposition that lets one know an answer
-  gives a true one.
-* `Figure13.letsKnow_byName`: of a name and a description that answer alike on someone's
-  beliefs, only the name, which is true, lets them know the answer.
-* `better_or_inter_or_union`: of two compatible partial answers, one is better, or their
-  conjunction or their disjunction is better than both.
-* `knowsSomeAnswer_of_knows`: knowing who has a pen gives the mention-some knowledge once someone
-  has a pen.
-
 ## Implementation notes
 
 Extensions are topical properties `E → Set W` and attitudes are `SetRel W W` read through
@@ -109,13 +88,12 @@ theorem whichDeRe_eq_partition (G P : E → Set W) (w : W) :
   ext v u
   simp only [whichDeRe_iff, partition_iff, Set.forall_mem_image, mem_extension]
 
-/-- *Who P?* is the meet of the polar questions whether each individual has `P` (chapter IV,
-p. 220). -/
+-- p. 220
 theorem who_eq_iInf_polar (P : E → Set W) : who P = ⨅ x, Setoid.polar (P x) :=
   Setoid.ext fun _ _ ↦
     who_iff.trans (Setoid.iInf_iff.trans (forall_congr' fun _ ↦ Setoid.polar_iff)).symm
 
-/-- *Who walks?* entails *Does John walk?* (chapter I, (5)). -/
+-- (5)
 theorem who_le_polar (P : E → Set W) (x : E) : who P ≤ Setoid.polar (P x) :=
   who_eq_iInf_polar P ▸ iInf_le _ x
 
@@ -141,8 +119,7 @@ theorem whichDeRe_compl (G P : E → Set W) (w : W) :
   ext v u
   simp only [whichDeRe_iff, Set.mem_compl_iff, not_iff_not]
 
-/-- *Which men walk* and *who are the men* together entail *which men don't walk*, all read de
-dicto (chapter I, (8)). -/
+-- (8)
 theorem whichDeDicto_inf_who_le (G P : E → Set W) :
     whichDeDicto G P ⊓ who G ≤ whichDeDicto G fun x ↦ (P x)ᶜ := fun _ _ ⟨h, hG⟩ ↦
   who_iff.2 fun x ↦ by
@@ -150,7 +127,7 @@ theorem whichDeDicto_inf_who_le (G P : E → Set W) :
     have := who_iff.1 hG x
     grind
 
-/-- Asking of each individual whom they love is asking who loves whom (chapter VI, pp. 447–449). -/
+-- pp. 447–449
 theorem iInf_who (R : E → E → Set W) : ⨅ x, who (R x) = who fun p : E × E ↦ R p.1 p.2 := by
   ext v u
   simp only [Setoid.iInf_iff, who_iff, Prod.forall]
@@ -189,8 +166,7 @@ example (h : Knows (Setoid.polar p ⊓ Setoid.polar q) w R) (hp : w ∉ p) (hq :
   h.mem_core ((polar_decides.mono inf_le_left).compl.inter (polar_decides.mono inf_le_right))
     ⟨hp, hq⟩
 
-/-- To know who walks is to know of each walker that they walk and of each non-walker that they
-don't (chapter II, p. 87). -/
+-- p. 87
 theorem knows_who_iff {P : E → Set W} :
     Knows (who P) w R ↔
       (∀ x, w ∈ P x → w ∈ R.core (P x)) ∧ ∀ x, w ∉ P x → w ∈ R.core (P x)ᶜ := by
@@ -217,8 +193,7 @@ theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows (partition H) w R)
   show trueAnswers H v = ∅
   rw [show trueAnswers H v = trueAnswers H w from h hv, h₀]
 
-/-- When nobody walks, Karttunen's postulate without its empty-answer clause counts anyone as
-knowing who walks (chapter II, pp. 92–93). -/
+-- pp. 92–93
 theorem knowsAnswer_of_forall_notMem {P : E → Set W} (h : ∀ x, w ∉ P x) :
     KnowsAnswer (Set.range P) w R := fun _ _ ↦ by
   rintro p ⟨⟨x, rfl⟩, hx⟩
@@ -331,7 +306,7 @@ theorem readings_independent :
     () rfl
   simp [walk] at this
 
-/-- Neither *which men walk?* nor *which men don't walk?* entails the other (chapter I, (7)). -/
+-- (7)
 theorem whichDeDicto_not_le :
     ¬ whichDeDicto man walk ≤ whichDeDicto man (fun x ↦ (walk x)ᶜ) ∧
       ¬ whichDeDicto man (fun x ↦ (walk x)ᶜ) ≤ whichDeDicto man walk := by
@@ -387,8 +362,7 @@ theorem offersAnswer_iff_mem_fromSetoid : OffersAnswer Q J ↔ J.Nonempty ∧ J 
   exact and_congr_right fun ⟨w, hw⟩ ↦ ⟨fun ⟨u, hu⟩ a ha b hb ↦ Q.trans' (hu ha) (Q.symm' (hu hb)),
     fun h ↦ ⟨w, fun a ha ↦ h a ha w hw⟩⟩
 
-/-- Less information offers an answer that more information offers, as long as it is not empty
-(chapter IV, (18)). -/
+-- (18)
 theorem OffersAnswer.anti (h : OffersAnswer Q K) (hJK : J ⊆ K) (hJ : J.Nonempty) :
     OffersAnswer Q J :=
   let ⟨_, u, hu⟩ := offersAnswer_iff.1 h
@@ -485,11 +459,11 @@ theorem knowsAnswer_iff : S.KnowsAnswer Q ↔ S.epistemic ⊆ Q.cell i :=
 theorem offersTrueAnswer_epistemic_iff : OffersTrueAnswer Q S.epistemic i ↔ S.KnowsAnswer Q :=
   offersTrueAnswer_iff_of_mem S.mem_epistemic
 
-/-- To know an answer is to have a true one (chapter IV, p. 226). -/
+-- p. 226
 theorem KnowsAnswer.hasTrueAnswer (h : S.KnowsAnswer Q) : S.HasTrueAnswer Q :=
   offersTrueAnswer_iff.2 (S.doxastic_subset.trans (knowsAnswer_iff.1 h))
 
-/-- To have a true answer is to have an answer (chapter IV, p. 226). -/
+-- p. 226
 theorem HasTrueAnswer.hasAnswer (h : S.HasTrueAnswer Q) : S.HasAnswer Q :=
   OffersAnswer.anti h (Set.subset_insert i S.doxastic) S.doxastic_nonempty
 
@@ -544,7 +518,7 @@ def LetsKnow (S : InformationSets i) (P : Set W) (Q : Setoid W) : Prop :=
 theorem LetsKnow.givesTrueAnswer (h : S.LetsKnow P Q) : S.GivesTrueAnswer P Q :=
   KnowsAnswer.hasTrueAnswer h
 
-/-- What gives a true answer gives an answer (chapter IV, (28)). -/
+-- (28)
 theorem GivesTrueAnswer.givesAnswer (h : S.GivesTrueAnswer P Q) : S.GivesAnswer P Q :=
   HasTrueAnswer.hasAnswer h
 
@@ -558,8 +532,7 @@ true answer (chapter IV, (32) and (33)). -/
 def GivesTruePartialAnswer (S : InformationSets i) (P : Set W) (Q : Setoid W) : Prop :=
   S.GivesPartialAnswer P Q ∧ GivesAccess Q (S.update P).doxastic i
 
-/-- A proposition that gives an answer to a question open on the individual's beliefs gives a
-partial answer (chapter IV, p. 235). -/
+-- p. 235
 theorem GivesAnswer.givesPartialAnswer (hQ : ¬ OffersAnswer Q S.doxastic)
     (h : S.GivesAnswer P Q) : S.GivesPartialAnswer P Q := by
   by_cases hne : (S.doxastic ∩ P).Nonempty
@@ -650,8 +623,6 @@ theorem hasAnswer_whoIsTheF : info.HasAnswer whoIsTheF ∧ ¬ info.HasTrueAnswer
   · have := whoIsTheF_iff.1 (offersTrueAnswer_iff.1 h (Set.mem_insert _ _))
     exact absurd this (by decide)
 
-/-- The two answers are logically independent, each combination of their truth values holding at
-some index. -/
 theorem independent :
     (byName ∩ byDescription).Nonempty ∧ (byName \ byDescription).Nonempty ∧
       (byDescription \ byName).Nonempty ∧ (byNameᶜ ∩ byDescriptionᶜ).Nonempty :=
@@ -699,7 +670,6 @@ theorem letsKnow_byName :
       simp [info]))
     exact absurd this (by decide)
 
-/-- The much weaker answer that if anyone G's the F does already gives a true answer. -/
 theorem givesTrueAnswer_ifAnyoneThenTheF : info.GivesTrueAnswer ifAnyoneThenTheF whoGs := by
   have h : info.doxastic ∩ ifAnyoneThenTheF = {(0, {0})} :=
     doxastic_inter_eq (fun _ ↦ by decide) (by simp [ifAnyoneThenTheF])
@@ -779,9 +749,7 @@ theorem exhaustive_indefinite_partial_false :
     info_doxastic]
   decide
 
-/-- That at least an M G's gives a partial answer that is not true. It rules out of the beliefs
-only the actual cell, where only `2` G's, where the text says it rules out the cells where
-nobody and where only `1` G's (p. 236). -/
+-- p. 236
 theorem indefinite_partial_false :
     info.GivesPartialAnswer {w | 0 ∈ w ∨ 1 ∈ w} (who G) ∧
       ¬ GivesAccess (who G) (info.update {w | 0 ∈ w ∨ 1 ∈ w}).doxastic actual := by
@@ -824,8 +792,7 @@ def Better (Q : Setoid W) (P₁ P₂ : Set W) : Prop := MoreInformative Q P₁ P
 theorem determined_mono {P₁ P₂ : Set W} (h : P₁ ⊆ P₂) : determined Q P₁ ⊆ determined Q P₂ :=
   Set.sUnion_subset_sUnion fun _ ⟨hX, y, hyX, hyP⟩ ↦ ⟨hX, y, hyX, h hyP⟩
 
-/-- The answers compatible with a disjunction are those compatible with either disjunct (chapter
-V, appendix 2, (4)). -/
+-- (4)
 theorem determined_union (P₁ P₂ : Set W) :
     determined Q (P₁ ∪ P₂) = determined Q P₁ ∪ determined Q P₂ := by
   ext v
@@ -833,8 +800,7 @@ theorem determined_union (P₁ P₂ : Set W) :
     Set.Nonempty, Set.mem_inter_iff]
   grind
 
-/-- The answers compatible with a conjunction are compatible with each conjunct (chapter V,
-appendix 2, (3), which states an equation). -/
+-- (3)
 theorem determined_inter_subset (P₁ P₂ : Set W) :
     determined Q (P₁ ∩ P₂) ⊆ determined Q P₁ ∩ determined Q P₂ :=
   Set.subset_inter (determined_mono Set.inter_subset_left) (determined_mono Set.inter_subset_right)
@@ -898,20 +864,17 @@ theorem knowsSomeAnswer_of_knows {P : E → Set W} {x : E} (h : Knows (who P) w 
     (hx : w ∈ P x) : KnowsSomeAnswer (Set.range P) w R :=
   ⟨P x, ⟨⟨x, rfl⟩, hx⟩, h.mem_core (who_decides P x) hx⟩
 
-/-- When nobody has a pen, *John knows who has a pen* is false on its mention-some reading (chapter
-VI, p. 538). -/
+-- p. 538
 theorem not_knowsSomeAnswer {P : E → Set W} (h : ∀ x, w ∉ P x) :
     ¬ KnowsSomeAnswer (Set.range P) w R :=
   fun ⟨_, ⟨⟨x, rfl⟩, hx⟩, _⟩ ↦ h x hx
 
-/-- A true complete answer to *who has a pen* other than *nobody* is a true complete mention-some
-answer (chapter VI, p. 538). -/
+-- p. 538
 theorem mem_which_of_mem_fromSetoid {P : E → Set W} {s : Set W} {x : E}
     (hs : s ∈ fromSetoid (who P)) (hw : w ∈ s) (hx : w ∈ P x) : s ∈ which Set.univ P :=
   mem_which.2 (Or.inr ⟨x, trivial, fun v hv ↦ (who_iff.1 ((mem_fromSetoid.1 hs) v hv w hw) x).2 hx⟩)
 
-/-- A true complete mention-some answer gives a true partial answer to *who has a pen*, if someone
-could lack one (chapter VI, p. 538). -/
+-- p. 538
 theorem givesPartialSemanticAnswer_of_subset {P : E → Set W} {s : Set W} {x : E} {v : W}
     (hs : s ⊆ P x) (hw : w ∈ s) (hv : v ∉ P x) :
     GivesPartialSemanticAnswer s (who P) ∧ w ∈ determined (who P) s := by

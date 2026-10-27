@@ -32,17 +32,6 @@ extracted word is placed by a positional head outside the landmark tree.
   `Analysis.OrderedByPositionalHeads A`: `A` is ordered by the 2007 theory, by landmarks chosen as
   in the 2018 theory, and by the revision.
 
-## Main statements
-
-* `Analysis.isLandmark_iff`: the 2007 rules, stated as default inheritance, make `p` the landmark
-  of `w` exactly when `p` is a head of `w` not subordinate to another of its heads.
-* `Analysis.not_orderedByLandmarks_of_extraction`: an analysis is not ordered by the 2007 theory
-  when a word is extracted from a head that it heads and has another head as well.
-* `Analysis.OrderedByLandmarks.orderedByPositionalHeads`: the revision orders every analysis the
-  2007 theory orders.
-* `orderedByPositionalHeads_whatHeBoughtCostLots`, `not_orderedByLandmarks_whatHeBoughtCostLots`:
-  the revision orders the free relative *What he bought cost lots*, and the 2007 theory does not.
-
 ## Implementation notes
 
 * The landmark rules are a `DefaultInheritance` network over the concepts *parent* and
@@ -350,7 +339,7 @@ def theySeemedToDance : Analysis 4 where
   arcs := [(1, 0, .subj), (2, 0, .subj), (3, 0, .subj), (1, 2, .xcomp), (2, 3, .xcomp)]
   root := 1
 
-/-- The network of (9) is neither a tree nor projective, since the subject has three parents. -/
+-- (9)
 theorem not_isTree_parentGraph_theySeemedToDance :
     ¬ theySeemedToDance.parentGraph.IsTree ∧ ¬ theySeemedToDance.parentGraph.IsProjective := by
   decide
@@ -360,7 +349,7 @@ theorem isLandmark_theySeemedToDance :
       ¬ theySeemedToDance.IsLandmark 0 3 := by
   decide
 
-/-- The landmarks of (9) form a projective tree. -/
+-- (9)
 theorem orderedByLandmarks_theySeemedToDance : theySeemedToDance.OrderedByLandmarks := by
   decide
 
@@ -393,8 +382,7 @@ theorem not_orderedByLandmarks_whHeaded :
     Analysis.not_orderedByLandmarks_of_extraction (h := 3) (w := 1) (q := 0) (by decide)
       ⟨.comp, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
-/-- The revised theory also orders the wh-headed analysis, which the paper rejects on the
-distributional evidence of Section 4. -/
+-- Section 4
 theorem orderedByPositionalHeads_whHeaded : whHeaded.OrderedByPositionalHeads := by decide
 
 /-! ### Free relatives, (53), (55) to (58) -/
@@ -410,14 +398,14 @@ def iAteWhatTheyAte : Analysis 5 where
     (4, 3, .subj)]
   root := 1
 
-/-- The free relative (53) fails the 2007 theory whichever way it goes, as (55) does. -/
+-- (53), (55)
 theorem not_orderedByLandmarks_iAteWhatTheyAte :
     ¬ iAteWhatTheyAte.parentGraph.IsTree ∧ ¬ iAteWhatTheyAte.OrderedByLandmarks :=
   ⟨Analysis.not_isTree_parentGraph (p := 2) (w := 4) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 4) (w := 2) (q := 1) (by decide)
       ⟨.obj, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
-/-- The revised theory orders the free relative (53). -/
+-- (53)
 theorem orderedByPositionalHeads_iAteWhatTheyAte : iAteWhatTheyAte.OrderedByPositionalHeads := by
   decide
 
@@ -442,8 +430,7 @@ theorem not_orderedByLandmarks_whatHeBoughtCostLots :
     Analysis.not_orderedByLandmarks_of_extraction (h := 2) (w := 0) (q := 3) (by decide)
       ⟨.subj, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
-/-- In (57a) to (57f), *What* is the landmark of *bought*, *bought* the positional head of *What*,
-and *cost* the landmark of *What*. -/
+-- (57a), (57f)
 theorem landmarks_whatHeBoughtCostLots :
     whatHeBoughtCostLots.IsLandmark 2 0 ∧ whatHeBoughtCostLots.PositionalHead 0 2 ∧
       whatHeBoughtCostLots.IsLandmark 0 3 ∧ ¬ whatHeBoughtCostLots.IsLandmark 0 2 := by
@@ -465,13 +452,11 @@ def weSawWhatHappened : Analysis 4 where
   arcs := [(1, 0, .subj), (1, 2, .comp), (2, 3, .comp), (3, 2, .subj)]
   root := 1
 
-/-- The mutual dependency of (58) would make *what* and *happened* each other's landmark, as in
-(54). -/
+-- (58), (54)
 theorem not_isTree_parentGraph_weSawWhatHappened : ¬ weSawWhatHappened.parentGraph.IsTree :=
   Analysis.not_isTree_parentGraph (p := 2) (w := 3) ⟨.comp, by decide⟩ ⟨.subj, by decide⟩
 
-/-- The Subordinate Head Rule leaves *what* with its one landmark *saw*, and the 2007 theory
-orders the subject free relative (58). -/
+-- (58)
 theorem orderedByLandmarks_weSawWhatHappened : weSawWhatHappened.OrderedByLandmarks := by
   decide
 
@@ -527,8 +512,7 @@ def iWonderThenWhatHappened : Analysis 5 where
   arcs := [(1, 0, .subj), (1, 3, .comp), (4, 2, .preAdjunct), (3, 4, .comp), (4, 3, .subj)]
   root := 1
 
-/-- No choice of landmarks orders (11e), as the link from *then* to *happened* crosses the one from
-*what* to *wonder* (13). -/
+-- (11e), (13)
 theorem not_orderedByChosenLandmarks_iWonderThenWhatHappened :
     ¬ iWonderThenWhatHappened.OrderedByChosenLandmarks := by
   decide
@@ -541,7 +525,7 @@ def iWonderWhatTheySaw : Analysis 5 where
     (4, 3, .subj)]
   root := 1
 
-/-- The later theory cannot order the extraction in (14), and the revision orders it. -/
+-- (14)
 theorem not_orderedByChosenLandmarks_iWonderWhatTheySaw :
     ¬ iWonderWhatTheySaw.OrderedByChosenLandmarks ∧
       iWonderWhatTheySaw.OrderedByPositionalHeads := by

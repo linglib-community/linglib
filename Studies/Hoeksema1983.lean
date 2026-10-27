@@ -24,15 +24,6 @@ The two comparatives coincide on a proper name and the singleton of its degree.
 * `PreservesOrdering`: a map from quantifiers to predicates respects the grading relation on
   proper names (Definition 4).
 
-## Main results
-
-* `PreservesOrdering.eq`: two homomorphisms that preserve the ordering are equal (Fact 2).
-* `PreservesOrdering.eq_npComparative`: the NP-comparative is the only one (§3.5).
-* `not_antitone_npComparative`: the NP-comparative is not monotone decreasing (§3.6).
-* `gtOverSet_antitone`: the S-comparative is monotone decreasing (§3.8).
-* `npComparative_individual`: the two comparatives agree on proper names (§3.9).
-* `not_isAntiAdditive_notEveryDutchman`: *niet iedere Nederlander* is not anti-additive (§4.1).
-
 ## Implementation notes
 
 Degrees are values of a measure `μ` in a preorder rather than the equivalence classes of
@@ -66,7 +57,7 @@ unions and complements, which is (22). -/
 def npComparative : CompleteLatticeHom (Set (Set Entity)) (Set Entity) :=
   setPreimage fun x ↦ μ ⁻¹' Set.Iio (μ x)
 
-/-- The NP-comparative is monotone increasing (Fact 3), as every homomorphism is. -/
+-- Fact 3
 theorem npComparative_monotone : Monotone (npComparative μ) :=
   OrderHomClass.mono _
 
@@ -85,13 +76,13 @@ holds exactly when `a` falls under `f` of the quantifier that the name of `b` de
 def PreservesOrdering (f : Set (Set Entity) → Set Entity) : Prop :=
   ∀ a b, μ b < μ a ↔ a ∈ f (NP.individual b)
 
-/-- The NP-comparative preserves the ordering, as the truth conditions of (30) require. -/
+-- (30)
 theorem npComparative_preservesOrdering : PreservesOrdering μ (npComparative μ) :=
   fun _ _ ↦ Iff.rfl
 
 variable {μ}
 
-/-- Two maps that preserve the ordering agree on every proper name (Fact 1). -/
+-- Fact 1
 theorem PreservesOrdering.apply_individual {f g : Set (Set Entity) → Set Entity}
     (hf : PreservesOrdering μ f) (hg : PreservesOrdering μ g) (b : Entity) :
     f (NP.individual b) = g (NP.individual b) :=
@@ -142,7 +133,7 @@ def notEveryDutchman : Set Dutchman → Prop :=
   fun P ↦ ¬ GQ.every (fun _ ↦ True) (· ∈ P)
 
 /-- In the model (51), *niet iedere Nederlander* is not anti-additive, so by Zwarts's hypothesis it
-cannot trigger *ook maar* (45b). -/
+cannot trigger *ook maar* (45b) (§4.1). -/
 theorem not_isAntiAdditive_notEveryDutchman : ¬ IsAntiAdditive notEveryDutchman := by
   rw [isAntiAdditive_iff_gq]
   intro h

@@ -16,24 +16,6 @@ pairwise join `⊕` (50), mathlib's `⊻`, and Lexical Complementarity (52) rest
 what no more specified pronoun denotes. Because person and animacy features share one head, the
 condition on Agree behind the person-case constraint (86) compares them together.
 
-## Main results
-
-* `specification_eq_containing`: along an entailment chain, a specification denotes the groups
-  containing an atom of its most specific feature (53), (62).
-* `mixed_group_marked`, `mem_elder_lexComp_iff`: a mixed group takes the most marked pronoun, and
-  the local persons take the speaker and addressee away from the elder pronoun.
-* `singular_containing`, `exists_plural_sups_singular`: number composes by intersection after
-  person and animacy and cannot precede them (57), (63).
-* `gender_incomparable`: disjoint feature denotations give pronouns neither of which is the more
-  specified (71).
-* `Feature.le_iff_atoms_subset`, `Pronoun.le_iff_denotation_subset`: the feature chain is
-  semantic entailment and the hierarchy of pronouns is the inclusion of their denotations (58),
-  (60)–(62).
-* `agrees_iff`, `yalalag_rows`: Agree (86) fails exactly in the upstream scenarios, where the
-  object outranks the subject, as the Yalálag examples (77)–(81) show.
-* `AgreesUnder.mono`: a probe relativized to fewer animacy features, as in Laxopa and Zoogocho,
-  collapses the distinctions it does not see.
-
 ## Implementation notes
 
 Individuals are a finite type and a group a nonempty finite set of atoms, the join being union,
@@ -132,7 +114,7 @@ theorem singular_containing (X : Finset Ind) : singular (containing X univ) = X.
   · rintro ⟨a, ha, rfl⟩
     exact ⟨⟨a, by simp [ha]⟩, a, rfl⟩
 
-/-- A feature composed by `⊻` after *singular* restores pluralities (63). -/
+-- (63)
 theorem pair_mem_sups_singular {X : Finset Ind} {x : Ind} (hx : x ∈ X) (y : Ind) :
     ({x, y} : Finset Ind) ∈ Ioc ∅ X ⊻ singular piDen := by
   rw [insert_eq]
@@ -272,8 +254,7 @@ theorem AgreesUnder.mono {R R' : Finset Feature} {s : Scenario Pronoun} (h : R �
   mem_inter.2 ⟨(mem_inter.1 (ha (mem_inter.2 ⟨(mem_inter.1 hf).1, h (mem_inter.1 hf).2⟩))).1,
     (mem_inter.1 hf).2⟩
 
-/-- The Laxopa probe does not see *elder*, so elder and nonelder human clitics combine
-freely, where Yalálag's full relativization blocks (79b). -/
+-- (79b)
 theorem laxopa_human_elder :
     AgreesUnder {.speaker, .participant, .human, .animate, .pi} ⟨.thirdHuman, .thirdElder⟩ ∧
       ¬ Agrees ⟨.thirdHuman, .thirdElder⟩ := by

@@ -23,21 +23,6 @@ rejection, which returns to the space before the question. This is the bias of a
 matching question tag conjoins an assertion with the monopolar question of the same content, and
 a reverse tag disjoins it with the monopolar question of the negation.
 
-## Main statements
-
-* `not_coherent_committed_compl`, `not_coherent_committed_committed_compl`: committing to `φ`
-  while refusing to is incoherent, and so is committing to `φ` and to `¬φ`, which the paper
-  stipulates and which follow here from commitments being propositions and consistent.
-* `not_admits_monopolarQuestion_no`, `admits_bipolarQuestion_no`: *no* needs a prior rejection
-  after a monopolar question and none after a bipolar one.
-* `root_highNegationQuestion_update_no`, `not_admits_highNegationQuestion_yes`: after a question
-  with high negation *no* is admitted and keeps the refusal, while *yes* needs a rejection.
-* `root_reject_matchingTag_no`, `committed_speaker_mem_root_assert_assert`: rejecting an
-  assertion with a matching tag removes the speaker's commitment, which a plain assertion keeps
-  when the addressee contradicts it.
-* `sInter_root_assert_raining`, `sInter_root_update_assert_raining`: an assertion adds the
-  speaker's commitment to `φ` but not `φ`, which enters only with the second update (19).
-
 ## Implementation notes
 
 * A commitment `S⊢φ` is the proposition `Commitment.committed O S φ` over an accessibility for
@@ -93,11 +78,11 @@ def question (P : Set (Set X)) : Space (Set X) := C.restrict (upperClosure P)
 
 theorem mem_question : d ∈ question C P ↔ d = C.root ∨ d ∈ C ∧ ∃ p ∈ P, p ⊆ d := Iff.rfl
 
-/-- A question proposing one act is the root together with the update by that act (27). -/
+-- (27)
 theorem question_singleton (p : Set X) : question C {p} = C.restrict (C.update p) := by
   rw [question, restrict_coe_update, upperClosure_singleton, UpperSet.coe_Ici]
 
-/-- A question is the disjunction of the questions proposing its acts (31), (34). -/
+-- (31), (34)
 theorem coe_question_union (P Q : Set (Set X)) :
     (question C (P ∪ Q) : Set (Set X)) = ↑(question C P) ∪ ↑(question C Q) := by
   rw [question, upperClosure_union, UpperSet.coe_inf, coe_restrict_union]
@@ -105,7 +90,7 @@ theorem coe_question_union (P Q : Set (Set X)) :
 
 /-! ### Answers -/
 
-/-- A proposed act is performed as it would have been before the question (24), (28). -/
+-- (24), (28)
 theorem question_update_of_mem (hp : p ∈ P) : (question C P).update p = C.update p :=
   C.update_restrict_of_subset fun _ hd ↦ ⟨p, hp, hd.2⟩
 
@@ -176,14 +161,14 @@ theorem mem_monopolarQuestion :
     d ∈ monopolarQuestion O C a φ ↔ d = C.root ∨ d ∈ C ∧ committed O a φ ∈ d := by
   simp [monopolarQuestion, mem_question]
 
-/-- A bipolar question is the disjunction of the two monopolar questions (31). -/
+-- (31)
 theorem coe_bipolarQuestion :
     (bipolarQuestion O C a φ : Set (Set (Set W))) =
       ↑(monopolarQuestion O C a φ) ∪ ↑(monopolarQuestion O C a φᶜ) := by
   rw [bipolarQuestion, Set.insert_eq, coe_question_union]
   rfl
 
-/-- Answering *yes* to a monopolar question is asserting `φ` (28a). -/
+-- (28a)
 theorem monopolarQuestion_update_yes :
     (monopolarQuestion O C a φ).update {committed O a φ} = C.assert O a φ :=
   question_update_of_mem C (P := {{committed O a φ}}) rfl
@@ -250,7 +235,7 @@ section Predictions
 
 variable {A W : Type*} [Nonempty W] (O : A → SetRel W W) (a : A) (φ : Set W)
 
-/-- *Yes* to a monopolar question is admitted (28a). -/
+-- (28a)
 theorem admits_monopolarQuestion_yes (h : (committed O a φ).Nonempty) :
     Admits (monopolarQuestion O (coherent W) a φ) {committed O a φ} :=
   (admits_question_iff_of_mem (coherent W) (P := {{committed O a φ}}) rfl).2
@@ -263,7 +248,7 @@ theorem not_admits_monopolarQuestion_no [ModalLogic.IsSerial (O a)] :
     admits_coherent_iff.1 <|
       (admits_question_singleton_iff _ (not_subset_root_coherent _) {committed O a φ}).1 h
 
-/-- *Yes* to a bipolar question is admitted (24). -/
+-- (24)
 theorem admits_bipolarQuestion_yes (h : (committed O a φ).Nonempty) :
     Admits (bipolarQuestion O (coherent W) a φ) {committed O a φ} :=
   (admits_question_iff_of_mem (coherent W) (P := {{committed O a φ}, {committed O a φᶜ}})
@@ -275,8 +260,7 @@ theorem admits_bipolarQuestion_no (h : (committed O a φᶜ).Nonempty) :
   (admits_question_iff_of_mem (coherent W) (P := {{committed O a φ}, {committed O a φᶜ}})
     (Or.inr rfl)).2 (admits_coherent_iff.2 (coherent_singleton.2 h))
 
-/-- Answering *no* to a question with high negation is committing to `¬φ` while refusing to
-commit to `φ` (p. 340). -/
+-- p. 340
 theorem highNegationQuestion_update_no :
     (highNegationQuestion O (coherent W) a φ).update {committed O a φᶜ} =
       (coherent W).update {committed O a φᶜ, (committed O a φ)ᶜ} :=
@@ -289,7 +273,7 @@ theorem root_highNegationQuestion_update_no [ModalLogic.IsSerial (O a)]
       {committed O a φᶜ, (committed O a φ)ᶜ} := by
   rw [highNegationQuestion_update_no, root_update_coherent (coherent_committed_compl_compl h)]
 
-/-- *No* to a question with high negation is admitted (p. 340). -/
+-- p. 340
 theorem admits_highNegationQuestion_no [ModalLogic.IsSerial (O a)]
     (h : (committed O a φᶜ).Nonempty) :
     Admits (highNegationQuestion O (coherent W) a φ) {committed O a φᶜ} :=
@@ -333,8 +317,7 @@ end Development
 /-- A conversation starting from the coherent space. -/
 def start (W : Type*) [Nonempty W] : Development (Set (Set W)) := ⟨coherent W, []⟩
 
-/-- Rejecting a monopolar question and answering *no* leaves the addressee committed to `¬φ`
-and to nothing else (28b). -/
+-- (28b)
 theorem root_reject_monopolarQuestion_no {A W : Type*} [Nonempty W] (O : A → SetRel W W) (a : A)
     (φ : Set W) (h : (committed O a φᶜ).Nonempty) :
     (((start W).perform (monopolarQuestion O · a φ)).reject.perform
@@ -556,7 +539,7 @@ theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empt
 theorem raining_ne_univ : raining ≠ Set.univ := fun h ↦
   Weather.noConfusion (Set.eq_univ_iff_forall.1 h .noRain)
 
-/-- Licensing reproduces Table 1. -/
+-- Table 1
 theorem table1 (e : SignType) :
     (Licensed (evidence raining e) raining none ↔ e ≠ -1) ∧
       (Licensed (evidence raining e) raining (some .negative) ↔ e = -1) ∧
@@ -576,8 +559,6 @@ instance : MeasurableSpace Weather := ⊤
 
 instance : DiscreteMeasurableSpace Weather := ⟨fun _ ↦ trivial⟩
 
-/-- The evidence of each sign has that relevance sign for `raining`, in Merin's sense, under any
-finite prior on which the issue is live. -/
 theorem relevanceSign_evidence (μ : MeasureTheory.Measure Weather)
     [MeasureTheory.IsFiniteMeasure μ] [h : DTS.Context.Nondegenerate ⟨raining, .of_discrete, μ⟩]
     (e : SignType) : DTS.relevanceSign ⟨raining, .of_discrete, μ⟩ (evidence raining e) = e := by
@@ -601,7 +582,7 @@ def matchingTag : Set (Set (Set W)) :=
 def reverseTag : Set (Set (Set W)) :=
   ↑(C.assert O .speaker φ) ∪ ↑(monopolarQuestion O C .addressee φᶜ)
 
-/-- A matching tag is the single act committing both participants (p. 342). -/
+-- p. 342
 theorem matchingTag_eq (hk : committed O .speaker φ ∉ C.root)
     (h : Admits C {committed O .addressee φ, committed O .speaker φ}) :
     matchingTag O C φ = ↑(C.update {committed O .addressee φ, committed O .speaker φ}) := by
@@ -656,7 +637,7 @@ theorem isLeast_matchingTag (h : Coherent {committed O .addressee φ, committed 
   have h' := ((coherent W).update {committed O .addressee φ, committed O .speaker φ}).isLeast
   rwa [root_update_coherent h] at h'
 
-/-- After a matching tag *no* needs a prior rejection (p. 342). -/
+-- p. 342
 theorem not_admits_matchingTag_no [ModalLogic.IsSerial (O .addressee)]
     (h : Coherent {committed O .addressee φ, committed O .speaker φ}) :
     ¬ Admits ((coherent W).update {committed O .addressee φ, committed O .speaker φ})
@@ -680,8 +661,7 @@ theorem admits_assert_no (hs : (committed O .speaker φ).Nonempty)
   (admits_update_iff _ (admits_coherent_iff.2 (coherent_singleton.2 hs))).2
     (admits_coherent_iff.2 h)
 
-/-- After a reverse tag, the addressee's commitment to `φ` brings the speaker's with it
-(p. 343). -/
+-- p. 343
 theorem root_reverseTag_update_yes [ModalLogic.IsSerial (O .addressee)]
     (h : Coherent {committed O .addressee φ, committed O .speaker φ}) :
     ((question (coherent W) {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
@@ -696,7 +676,7 @@ theorem root_reverseTag_update_yes [ModalLogic.IsSerial (O .addressee)]
   rw [question_update_of_forall _ (not_subset_root_coherent _) (Or.inl rfl) h']
   exact root_update_coherent h
 
-/-- After a reverse tag, the addressee's *no* leaves the speaker uncommitted (p. 343). -/
+-- p. 343
 theorem root_reverseTag_update_no (h : (committed O .addressee φᶜ).Nonempty) :
     ((question (coherent W) {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
         {committed O .addressee φᶜ}).root = {committed O .addressee φᶜ} := by

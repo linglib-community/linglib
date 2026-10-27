@@ -184,8 +184,7 @@ def clause : LinearizedSyntacticObject := c * alpha
 theorem tBeta_isLabeled_iff (ag : Agreement) : IsLabeled ag tBeta tBeta ↔ ag = .rich := by
   cases ag <;> decide +kernel
 
-/-- (2): with the subject in its specifier, `α` is labeled by the φ-features T and the subject
-agree in: the EPP is met. -/
+-- (2)
 theorem ex2 : ∀ ag ∈ agreementOf Examples.ex2.language,
     (Examples.ex2.judgment = .acceptable ↔ IsLabeledAtPhase ag clause alpha) := by
   decide +kernel
@@ -232,8 +231,7 @@ theorem ex2prime :
 /-- (4): *who do you think read the book*, the complementizer deleted. -/
 def whoThinkNoC : LinearizedSyntacticObject := who * (think * (cNull * alphaWho))
 
-/-- In (4), the deleted complementizer passes phasehood to T, so *who* moves on from the specifier
-of T and `α` stays labeled at the phase level. -/
+-- (4)
 theorem ex4 : ¬ ViolatesPic Invisible whoThinkNoC whoD ∧
     ViolatesPic (· = vStar) whoThinkNoC whoD ∧ ¬ IsLabeled .weak whoThinkNoC alphaWho ∧
     ∀ ag ∈ agreementOf Examples.ex4.language,
@@ -261,14 +259,12 @@ def alphaObject : LinearizedSyntacticObject := john * (expect * infinitive)
 /-- (3): *they expected John to win*, `[δ v* [α John R [β t …]]]`. -/
 def expectRaised : LinearizedSyntacticObject := vStar * alphaObject
 
-/-- (3): the root merged with its complement is unlabeled in either language, since roots are
-weak. -/
+-- (3)
 theorem expect_not_isLabeled (ag : Agreement) :
     ¬ IsLabeled ag expectInSitu (expect * infinitive : LinearizedSyntacticObject) := by
   cases ag <;> decide +kernel
 
-/-- In (3), the object raised to the specifier of the root agrees in the φ-features labeling `α`, so
-raising to object is forced. -/
+-- (3)
 theorem ex3 : ∀ ag ∈ agreementOf Examples.ex3.language,
     (Examples.ex3.judgment = .acceptable ↔ IsLabeledAtPhase ag expectRaised alphaObject) := by
   decide +kernel
@@ -319,8 +315,7 @@ theorem alphaQ_isLabeledByFeature :
       IsLabeledAtPhase .weak wonderInSitu likes := by
   decide +kernel
 
-/-- In (1), with *which dog* raised out of its criterial position, the interrogative C labels `α` by
-itself at the next phase. -/
+-- (1)
 theorem ex1 : (∀ n, wonderRaised.termAt n = alphaQ → stageOf wonderRaised n = wonderRaised) ∧
     wonderRaised.IsLabeledBy alphaQ cQ ∧
     (Examples.ex1.judgment = .acceptable ↔

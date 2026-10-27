@@ -13,17 +13,6 @@ chapter: the twenty-five consonantal phonemes, the obstruents paired in [voice],
 the second palatalization of velars, and the reading of the spelling on the words the chapter
 prints, against its phonemic transcription where it gives one.
 
-## Main results
-
-* `card_consonants`: the twenty-five consonantal phonemes.
-* `voiced_mem_iff`, `devoiced_mem_iff`: the obstruents paired in [voice], all but *c*, *č*,
-  *ch* and *h*.
-* `secondPalatalization_mem`, `secondPalatalization_g`: the reflexes of the second
-  palatalization are coronal stridents with the voicing of their sources, and that of *g* is
-  that of *k* voiced and de-affricated.
-* `ofString?_eq_segments`: the spelling reads as the chapter's transcriptions, save that of
-  *oběd*, which has the final devoicing the reading leaves out (`ofString?_obed`).
-
 ## References
 
 * [short-1993-czech]
@@ -50,7 +39,7 @@ theorem voiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false → x.H
     (x.setFeature .voice true ∈ inventory ↔ x ≠ c ∧ x ≠ č ∧ x ≠ ch) := by
   decide +kernel
 
-/-- The counterparts in [voice] of *c*, *č* and *ch* are [dz], [dž] and [ɣ] (p. 458). -/
+-- p. 458
 theorem setFeature_voice_c_č_ch :
     c.setFeature .voice true = .ofChart .«dz» ∧ č.setFeature .voice true = .ofChart .«d̠ʒ» ∧
       ch.setFeature .voice true = .ofChart .«ɣ» := by
@@ -63,15 +52,14 @@ theorem devoiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false →
     x.HasValue .voice true → (x.setFeature .voice false ∈ inventory ↔ x ≠ h) := by
   decide +kernel
 
-/-- *h* and *ch* differ in [voice], [spread glottis], [consonantal], [dorsal] and the tongue-body
-features (p. 462). -/
+-- p. 462
 theorem h_ch : Finset.univ.filter (fun ft ↦ h ft ≠ ch ft) =
     {.consonantal, .voice, .spreadGlottis, .dorsal, .high, .low, .front, .back} := by
   decide +kernel
 
 /-! ### The second palatalization -/
 
-/-- The reflexes are *c*, *z* and *š* (p. 462). -/
+-- p. 462
 theorem image_secondPalatalization : palatalizing.image secondPalatalization = {c, z, š} := by
   decide +kernel
 
@@ -97,20 +85,20 @@ theorem secondPalatalization_g :
 
 /-! ### Spelling -/
 
-/-- *b*, *p*, *v*, *f* before *ě* are followed by /j/ and *m* by /ň/, matching Short's
-transcriptions of *pěna*, *věno*, *harfě* and *město* (p. 459). -/
+-- p. 459
+/-- The spelling reads as the chapter's transcriptions, save that of *oběd*, which has the final
+devoicing the reading leaves out (`ofString?_obed`). -/
 theorem ofString?_eq_segments : ∀ w ∈ [pena, veno, harfe, mesto],
     ofString? w.form = (w.segments.mapM ofString?).map List.flatten := by
   decide +kernel
 
-/-- *oběd* 'lunch' reads as /objed/, where Short's /objet/ has the final devoicing that
-`ofString?` leaves out (p. 459). -/
+-- p. 459
 theorem ofString?_obed :
     ofString? obed.form = some [o, b, j, e, d] ∧
       (obed.segments.mapM ofString?).map List.flatten = some [o, b, j, e, t] := by
   decide +kernel
 
-/-- Vowel length is phonemic, as in *dal* and *dál*, *dul* and *důl*, *ryby* and *rybí* (p. 456). -/
+-- p. 456
 theorem ofString?_length :
     ofString? dal.form = some [d, a, l] ∧ ofString? dal_long.form = some [d, a, a, l] ∧
       ofString? dul.form = some [d, u, l] ∧ ofString? dul_long.form = some [d, u, u, l] ∧
@@ -118,13 +106,12 @@ theorem ofString?_length :
       ofString? ryby_long.form = some [r, i, b, i, i] := by
   decide +kernel
 
-/-- The diphthong of *soud* 'court' against the vowel of *sud* 'barrel' (p. 456). -/
+-- p. 456
 theorem ofString?_diphthong :
     ofString? sud.form = some [s, u, d] ∧ ofString? soud.form = some [s, o, u, d] := by
   decide +kernel
 
-/-- *d* alternates with *ď* before a front vowel, as in *mladý*, *mladí*, *mladě* (p. 462), and *ď*
-is written before a back vowel, as in *ďábel* (p. 459). -/
+-- p. 462, p. 459
 theorem ofString?_d_ď :
     ofString? mlady.form = some [m, l, a, d, i, i] ∧
       ofString? mladi.form = some [m, l, a, ď, i, i] ∧
@@ -132,8 +119,7 @@ theorem ofString?_d_ď :
       ofString? dabel.form = some [ď, a, a, b, e, l] := by
   decide +kernel
 
-/-- The alternation of *t* with *ť*, in *krutý*, *krutí*, *krutě* 'cruel' (p. 462), and *ť*
-before a back vowel, as in *ťuhýk* 'shrike' (p. 459). -/
+-- p. 462, p. 459
 theorem ofString?_t_ť :
     ofString? kruty.form = some [k, r, u, t, i, i] ∧
       ofString? kruti.form = some [k, r, u, ť, i, i] ∧
@@ -141,7 +127,7 @@ theorem ofString?_t_ť :
       ofString? tuhyk.form = some [ť, u, h, i, i, k] := by
   decide +kernel
 
-/-- The alternation of *n* with *ň*, in *plný*, *plně* 'full' (p. 462). -/
+-- p. 462
 theorem ofString?_n_ň :
     ofString? plny.form = some [p, l, n, i, i] ∧ ofString? plne.form = some [p, l, ň, e] := by
   decide +kernel

@@ -36,20 +36,6 @@ German *irgend-*, Russian *koe-* and *-nibud'*, Kannada *-oo*, Italian *qualche-
 Haspelmath's map, the non-specific use being the irrealis function, and a series covers the uses
 whose functions lie in the region the book draws for it.
 
-## Main results
-
-* `renders_iff`: the three uses partition the teams, each team rendering the use `use` assigns
-  it.
-* `monotone_use`, `IndefiniteType.setOf_requires`: a requirement is the preimage of its profile
-  under a monotone map from the teams to the uses.
-* `IndefiniteType.ordConnected_requires_iff`: a requirement is convex exactly when its profile is
-  an interval, which every profile but the unattested one is
-  (`IndefiniteType.ordConnected_profile_iff`).
-* `ordConnected_requires_iff_connected`, `forall_ordConnected_requires_iff`: convexity is
-  contiguity on the map, whose order is the one on which contiguity forces convexity.
-* `sample_instantiates_ordConnected`: every series of the sample instantiates a type with a
-  convex requirement.
-
 ## TODO
 
 The paper extends the system with negation and modality to derive the licensing of non-specific
@@ -175,6 +161,7 @@ theorem renders_use (T : Finset (V → E)) (v x : V) : Renders T v x (use T v x)
 theorem renders_iff : Renders T v x u ↔ use T v x = u :=
   ⟨renders_unique (renders_use T v x), (· ▸ renders_use T v x)⟩
 
+/-- A requirement is the preimage of its profile under a monotone map from the teams to the uses. -/
 theorem monotone_use (v x : V) : Monotone (use (E := E) · v x) := fun T T' hT ↦ by
   have hc (h : Dep T' ∅ x) : Dep T ∅ x := h.subset hT
   have hv (h : Dep T' {v} x) : Dep T {v} x := h.subset hT

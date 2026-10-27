@@ -382,16 +382,14 @@ def eventStructure : Template .event := .act
 about the activity (42). -/
 def causativeEventStructure : Template .event := .cause .effector eventStructure
 
-/-- (50) is causative. -/
+-- (50)
 theorem causativeEventStructure_hasCause : causativeEventStructure.HasCause := by decide
 
-/-- (50) has no result state or location: the state is no subterm of it, so *again* has no
-restitutive attachment (57). -/
+-- (50), (57)
 theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
   fun h ↦ absurd (h.kinds_subset (Finset.mem_singleton_self _)) (by decide)
 
-/-- Nor does (50) entail a change: in some interpretation a cause brings about the activity
-with nothing giving rise to a state. -/
+-- (50)
 theorem not_forall_exists_become :
     ¬ ∀ (M : Interpretation Unit Unit Unit) P Q y x v,
       causativeEventStructure.denote M P Q y x v → ∃ s e, s ~[M.become] e :=

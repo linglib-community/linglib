@@ -21,18 +21,6 @@ pragmatic listener inverts that speaker jointly over worlds, interpretations and
 by the listener's beliefs about the world (`S2`), so that a truth-value judgment is a production
 decision.
 
-## Main results
-
-* `one_half_lt_S2_real_amb_iff`: the sentence is endorsed more often than not exactly when it is
-  produced at the observed world more often than on average.
-* `S2_real_amb_all`: once the question is whether all the horses jumped, the two interpretations
-  of *every horse didn't jump* produce alike and the scope prior does not affect endorsement.
-* `S2_real_amb_mono_baseRate`: production falls with the number of jumpers, so a higher success
-  base rate in the binomial world prior raises endorsement.
-* `share_twoAtLeast_le_share_twoExact`, `share_twoExact_lt_share_twoAtLeast`: with four horses
-  and two jumpers the surface speaker favors the exact reading whatever the question, while the
-  inverse speaker asked whether all jumped favors the at-least reading.
-
 ## Implementation notes
 
 * The rationality of `S1` and the priors on worlds, interpretations and questions are
@@ -154,23 +142,21 @@ theorem mem_ext_surface : w ∈ ext D n .surface .amb ↔ D w (n - w) := mem_ext
 
 theorem mem_ext_inverse : w ∈ ext D n .inverse .amb ↔ ¬ D (n - w) w := mem_ext
 
-/-- On its surface interpretation *every horse didn't jump* is true where none jumped (2). -/
+-- (2)
 theorem mem_ext_every_surface : w ∈ ext NumberTree.all n .surface .amb ↔ w = 0 := by
   simp only [mem_ext_surface, NumberTree.all, Fin.ext_iff, Fin.val_zero]
 
-/-- On its inverse interpretation *every horse didn't jump* is true where not all jumped (2). -/
+-- (2)
 theorem mem_ext_every_inverse : w ∈ ext NumberTree.all n .inverse .amb ↔ w ≠ Fin.last n := by
   simp only [mem_ext_inverse, NumberTree.all, Ne, Fin.ext_iff, Fin.val_last]
   omega
 
-/-- On its surface interpretation a numeral sentence is true where the number of non-jumpers
-stands in the numeral's comparison to its value (6). -/
+-- (6)
 theorem mem_ext_numeral_surface :
     w ∈ ext (numeral c k) n .surface .amb ↔ c.Rel (n - w) k := by
   simp only [mem_ext_surface, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
 
-/-- On its inverse interpretation a numeral sentence is true where the number of jumpers does
-not stand in the numeral's comparison to its value (6). -/
+-- (6)
 theorem mem_ext_numeral_inverse :
     w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.Rel (w : ℕ) k := by
   simp only [mem_ext_inverse, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
@@ -197,32 +183,26 @@ theorem numeral_ge_iff_all {a b : ℕ} (h : a + b = n) :
     Degree.Comparison.Rel]
   omega
 
-/-- With `n` horses, the exact-reading numeral sentence and *every horse didn't jump* have the same
-truth conditions on both interpretations (§4.2.1). -/
+-- §4.2.1
 theorem ext_numeral_eq_self (n : ℕ) : ext (numeral .eq n) n = ext NumberTree.all n :=
   funext₂ <| ext_congr fun _ _ ↦ numeral_eq_iff_all
 
-/-- With `n` horses, the at-least-reading numeral sentence and *every horse didn't jump* have the
-same truth conditions on both interpretations (§4.2.1). -/
+-- §4.2.1
 theorem ext_numeral_ge_self (n : ℕ) : ext (numeral .ge n) n = ext NumberTree.all n :=
   funext₂ <| ext_congr fun _ _ ↦ numeral_ge_iff_all
 
 end Ext
 
-/-- With four horses, the surface interpretation of exact *two horses didn't jump* is true only
-where exactly two jumped ((6), Figure 5). -/
+-- (6), Figure 5
 theorem ext_twoExact_surface : ext twoExact 4 .surface .amb = {2} := by decide
 
-/-- With four horses, the inverse interpretation of exact *two horses didn't jump* is true wherever
-the number of jumpers is not two (6). -/
+-- (6)
 theorem ext_twoExact_inverse : ext twoExact 4 .inverse .amb = {0, 1, 3, 4} := by decide
 
-/-- With four horses, *two horses didn't jump* on the at-least reading is true on its surface
-interpretation where fewer than three jumped (6). -/
+-- (6)
 theorem ext_twoAtLeast_surface : ext twoAtLeast 4 .surface .amb = {0, 1, 2} := by decide
 
-/-- With four horses, *two horses didn't jump* on the at-least reading is true on its inverse
-interpretation where fewer than two jumped (6). -/
+-- (6)
 theorem ext_twoAtLeast_inverse : ext twoAtLeast 4 .inverse .amb = {0, 1} := by decide
 
 /-- The projection of a question ((3), (7)) sends a world to its answer, the number of jumpers
@@ -317,13 +297,11 @@ instance : IsFiniteKernel (L1 D n α μ ν) := inferInstanceAs (IsFiniteKernel (
 to the world marginal of the pragmatic listener. -/
 noncomputable def S2 : Kernel (World n) Utt := speaker 1 0 (Kernel.fst (L1 D n α μ ν)) Measure.dirac
 
-/-- With as many horses as the numeral counts, the numeral model on the exact reading is the
-every-not model (§4.2.1). -/
+-- §4.2.1
 theorem S2_numeral_eq_self : S2 (numeral .eq n) n α μ ν = S2 NumberTree.all n α μ ν := by
   simp only [S2, L1, S1, L0, ext_numeral_eq_self]
 
-/-- With as many horses as the numeral counts, the numeral model on the at-least reading is the
-every-not model (§4.2.1). -/
+-- §4.2.1
 theorem S2_numeral_ge_self : S2 (numeral .ge n) n α μ ν = S2 NumberTree.all n α μ ν := by
   simp only [S2, L1, S1, L0, ext_numeral_ge_self]
 
@@ -550,8 +528,7 @@ theorem one_half_lt_endorse_iff (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hz0 : 0 < z) (h
 
 end Endorse
 
-/-- The endorsement probability at a world of positive prior is the production probability at
-the world played against its expectation under the world prior (§3.1). -/
+-- §3.1
 theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
     (hz0 : 0 < expectedProduction D n α μ ν) (hz1 : expectedProduction D n α μ ν < 1) :
     (S2 D n α μ ν w).real {.amb}
@@ -639,8 +616,7 @@ theorem map_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
       ⟨0, Finset.mem_coe.mpr (zero_mem_ext_every hn i)⟩ fun w' h ↦
       Finset.mem_coe.mpr ((hcell w').mpr (iff_of_false (hext w' (Finset.mem_coe.mp h)) hw))
 
-/-- Under the question *all?*, the two scope interpretations of *every horse didn't jump* are
-produced alike at every world (§3.2, §5.1). -/
+-- §3.2, §5.1
 theorem S1_all_scope (hn : 0 < n) (w : World n) :
     S1 NumberTree.all n α (w, (.surface, .all)) = S1 NumberTree.all n α (w, (.inverse, .all)) := by
   rw [S1_apply, S1_apply, speaker_dirac_eq_ofWeights, speaker_dirac_eq_ofWeights]
@@ -697,15 +673,13 @@ theorem S2_real_amb_all (hα : 0 < α) (hn : 0 < n) (μ : Measure (World n)) [Is
 private theorem ext_every_two (l : Scope × QUD) : 0 < (ext NumberTree.all 2 l.1 .amb).card :=
   ext_every_amb_card_pos two_pos l.1
 
-/-- At the not-all world with two horses, the question *all?* maximizes production of the sentence
-on either interpretation (§3.2, Figure 2). -/
+-- §3.2, Figure 2
 theorem share_le_share_all (hα : 0 < α) (i : Scope) (q : QUD) :
     share NumberTree.all 2 α (i, q) 1 ≤ share NumberTree.all 2 α (i, .all) 1 :=
   (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
     (by revert i q; decide)
 
-/-- At the not-all world, the question *none?* minimizes the production of the sentence under
-either interpretation (§3.2, Figure 2). -/
+-- §3.2, Figure 2
 theorem share_none_le_share (hα : 0 < α) (i : Scope) (q : QUD) :
     share NumberTree.all 2 α (i, .none) 1 ≤ share NumberTree.all 2 α (i, q) 1 :=
   (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr

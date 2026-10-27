@@ -203,47 +203,41 @@ def cholIntransitive : Clause := ⟨.chol, .unaccusative, none, some .aspectual�
 /-- The Q'anjob'al progressive of a transitive, (73a), the object licensed by *-on*. -/
 def qanjobalProgressive : Clause := ⟨.qanjobal, .transitive, none, some .aspectual⟩
 
-/-- The Kaqchikel-type alignment (4): set B on the subject, set A on the object, from a
-passive nominalization whose subject is the argument of *ajin*. -/
+-- (4)
 theorem kaqchikelProgressive_markers :
     kaqchikelProgressive.WellFormed ∧ kaqchikelProgressive.subjectMarker = some .setB ∧
       kaqchikelProgressive.objectMarker = some .setA := by
   decide
 
-/-- The unergative progressive, (91): set B on the subject, no genitive assigned inside. -/
+-- (91)
 theorem kaqchikelUnergative_markers :
     kaqchikelUnergative.WellFormed ∧ kaqchikelUnergative.subjectMarker = some .setB ∧
       kaqchikelUnergative.objectMarker = none := by
   decide
 
-/-- Unaccusative and passive bases cannot be embedded under *ajin*, (92) and (94): there is no
-external θ-role for its subject to control. -/
+-- (92), (94)
 theorem not_wellFormed_unaccusative_passive :
     ¬ kaqchikelUnaccusative.WellFormed ∧ ¬ kaqchikelPassive.WellFormed := by
   decide
 
-/-- In argument position the same unaccusative nominalizes, (69), its internal argument taking
-genitive from D. -/
+-- (69)
 theorem kaqchikelSubjectNominal_subject :
     kaqchikelSubjectNominal.WellFormed ∧ kaqchikelSubjectNominal.subject = some .gen := by
   decide
 
-/-- Under *chäp*, (98), the subject takes inherent ergative from the transitive matrix v, so
-subject and object alike are cross-referenced by set A. -/
+-- (98)
 theorem kaqchikelBegin_markers :
     kaqchikelBegin.WellFormed ∧ kaqchikelBegin.subjectMarker = some .setA ∧
       kaqchikelBegin.objectMarker = some .setA := by
   decide
 
-/-- Antipassive and incorporating nominalizations, (100) and (102), leave no DP for D to license,
-so no set A marker appears on the nominalized verb, (104). -/
+-- (100), (102), (104)
 theorem no_gen_antipassive_incorporation :
     kaqchikelAntipassive.WellFormed ∧ kaqchikelAntipassive.objectMarker = none ∧
       kaqchikelIncorporation.WellFormed ∧ kaqchikelIncorporation.objectMarker = none := by
   decide
 
-/-- In the Chol/Q'anjob'al-type alignment (5), the nominalized subject takes genitive from D and the
-object absolutive. -/
+-- (5)
 theorem chol_qanjobal_markers :
     cholProgressive.WellFormed ∧ cholProgressive.subjectMarker = some .setA ∧
       cholProgressive.objectMarker = some .setB ∧
@@ -252,13 +246,12 @@ theorem chol_qanjobal_markers :
       qanjobalProgressive.objectMarker = some .setB := by
   decide
 
-/-- The external argument never takes genitive from D under the restriction, (66) and (68). -/
+-- (66), (68)
 theorem subject_ne_gen (h : c.Restricted) : c.subject ≠ some .gen := by
   simp only [subject, ite_eq_left h]
   split <;> simp
 
-/-- A set B object marker in the nominalized clause requires a low absolutive language or the suffix
-((59), (60)). -/
+-- (59), (60)
 theorem absPos_low_or_suffix_of_object (h : c.object = some .absVoice) :
     c.lang.absPos = .low ∨ c.lang.suffix := by
   unfold object at h

@@ -25,18 +25,6 @@ inference at all; a conditional antecedent under a genuine ordering source is no
 entailing; and a superlative inside a definite description is not even Strawson downward
 entailing.
 
-## Main results
-
-* `isStrawsonUE_gladBetter`, `isStrawsonUE_regretBetter`: the set-comparison *glad* and *sorry*
-  are Strawson upward entailing, like the best-worlds *want* and *glad*.
-* `glad_eq_one_of_want_eq_one`, `not_gladBetter_of_want`: wanting and believing gives gladness
-  on the best-worlds semantics, not on the set comparison.
-* `not_isStrawsonDE_regretBetter`: the set-comparison *sorry* would not license.
-* `only68b_eq_zero`: the rejected entry for propositional *only* can assess no downward
-  inference within one set of alternatives.
-* `not_antitone_conditionalNecessity`, `not_isStrawsonDE_theSuperlativeExceeds`: the conditional
-  under an ordering source and the superlative description fail downward inference.
-
 ## TODO
 
 * The shifted-context readings of §3.4 and the expansion of the modal horizon in §4.3 need

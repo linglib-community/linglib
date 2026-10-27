@@ -22,17 +22,6 @@ noun instead. Conjugation classes pair the binyanim of an alternation, and two t
 against conjugating a binyan with itself and against mixing geminate and non-geminate templates,
 single out the natural pairs.
 
-## Main statements
-
-* `words_derived_seg`: over the fragment's roots and segments, every root-derived word of the
-  data is derived but five verbs whose guttural, metathesis or geminate-root phonology is not
-  modelled.
-* `spirantize_before_degeminate`: the opposite order would give \*sifer, \*qivel, \*hitraxex.
-* `denominals`: every noun-derived verb is a stem modification of its base, except the
-  {o, e} verbs of (41a, b), and none is the verb its base's root derives.
-* `conjugations_natural`: conjugation classes 1–4 are the natural pairs of (57), and 5 and 6
-  each break one tendency.
-
 ## Implementation notes
 
 * Root-to-template association follows McCarthy, as p. 43 says it does. CVCCVC and
@@ -199,8 +188,7 @@ def Binyan.Intransitive (b : Binyan) : Prop := b = .nvccvc ∨ b = .hitcvccvc
 
 instance : DecidablePred Binyan.Intransitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Voice is spelled out in every active binyan and in the passive exactly in the binyanim that (11)
-does not mark [−tr.]. -/
+-- (11)
 theorem realizeVoice_isSome :
     (∀ b v, (realizeVoice b v).isSome ↔ v = .active ∨ ¬b.Intransitive) ∧
       ∀ x ∈ realizeVoice .cvcvc .passive, x.1.Intransitive := by
@@ -362,8 +350,6 @@ theorem linked_map (f : α → β) (m : TemplateMatch α) :
   | none => rfl
   | some a => cases h : m.segmentAt a <;> simp [h]
 
-/-- Spirantization commutes with relabeling the underlying segments by `g` and the surface
-segments by `h`, where the two realizations agree. -/
 theorem spirantize_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
     (hf : ∀ b x, f' b (g x) = h (f b x)) (m : TemplateMatch α) :
     spirantize f' (m.map g) = (spirantize f m).map fun (i, a, x) ↦ (i, a, h x) := by
@@ -380,7 +366,6 @@ theorem surface_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β
     fun _ _ _ _ ↦ Iff.rfl, List.map_map, List.map_map]
   rfl
 
-/-- A verb over relabeled underlying segments is the relabeled surface verb. -/
 theorem verb_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
     (hf : ∀ b x, f' b (g x) = h (f b x)) (px : Prefixes α) (v : Vowel → α) (b : Binyan)
     (voice : Voice) (r : ConsonantalRoot α) :
@@ -413,8 +398,7 @@ theorem label_comp_numeralVowel (px : Prefixes α) (v : Vowel → α) (rad : Lis
   funext x
   cases x <;> rfl
 
-/-- In CVCCVC a triliteral root doubles its middle radical and a quadriliteral root fills every
-position, as in *tirgem* (p. 28). -/
+-- p. 28
 theorem consonantism_cvccvc (px : Prefixes α) (w x y z : α) :
     (consonantism px .cvccvc ⟨[x, y, z]⟩).spellout = [x, y, y, z] ∧
       (consonantism px .cvccvc ⟨[w, x, y, z]⟩).spellout = [w, x, y, z] := by
@@ -433,8 +417,7 @@ theorem consonantism_cvccvc (px : Prefixes α) (w x y z : α) :
   rw [this.1, this.2]
   exact ⟨rfl, rfl⟩
 
-/-- A binyan leaves two vowel positions free for Voice, while a mišqal fills its own (24), the
-noun–verb asymmetry of §2.5. -/
+-- (24), §2.5
 theorem freeBearers_vocalism (px : Prefixes α) (v : Vowel → α) (x y z : α) :
     (∀ b : Binyan, ((consonantism px b ⟨[x, y, z]⟩).freeBearers .vocalism).length = 2) ∧
       ∀ q : Mishqal, (nounStem px v q ⟨[x, y, z]⟩).freeBearers .vocalism = [] := by
@@ -529,26 +512,23 @@ def verbCell? (a : Wordlist.Analysis) : Option (Binyan × Voice × ConsonantalRo
 def nounCell? (a : Wordlist.Analysis) : Option (Mishqal × ConsonantalRoot String) :=
   (a.pattern.bind mishqal?).bind fun q ↦ (a.root.bind root?).map (q, ·)
 
-/-- Every verb with a root has its cell. -/
 theorem isSome_verbCell? : ∀ a ∈ Wordlist.analyses, a.root.isSome →
     a.form.lexeme.pos = ↑UD.UPOS.VERB → (verbCell? a).isSome := by
   decide +kernel
 
-/-- The derivation yields every root-derived verb of Ch. 2 and Ch. 7 except *hexšiv* and *histager*.
--/
+-- Ch. 2, Ch. 7
 theorem verbs_derived :
     (Wordlist.analyses.filter fun a ↦ a.conjugation = none ∧ ∃ x ∈ verbCell? a,
       verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some a.form.segments).map
         (·.form.form) = ["hexšiv", "histager"] := by
   decide +kernel
 
-/-- The derivation produces every noun of the data in a mišqal of (24a) or of Ch. 7, with the
-mišqal's own vowels. -/
+-- (24a), Ch. 7
 theorem nouns_derived : ∀ a ∈ Wordlist.analyses, ∀ x ∈ nounCell? a,
     surface fricative (nounStem transcribedPx Vowel.transcription x.1 x.2) = a.form.segments := by
   decide +kernel
 
-/-- The passive of *lamad* is the binyan nVCCVC, *nilmad* (25), (3). -/
+-- (25), (3)
 theorem passive_lamad :
     verb transcribedPx Vowel.transcription fricative .cvcvc .passive ⟨["l", "m", "d"]⟩ =
       some ["n", "i", "l", "m", "a", "d"] := by
@@ -625,8 +605,7 @@ theorem denominals :
           some rel.target.form.segments := by
   decide +kernel
 
-/-- Neither *misger* from *misgeret* without its stem boundary (fn. 2, p. 246) nor \*tilefon, which
-keeps a base vowel, is a stem modification. -/
+-- fn. 2, p. 246
 theorem not_isStemModification :
     ¬IsStemModification isVowel transcribedPx Vowel.transcription .cvccvc .active
       ["m", "i", "s", "g", "e", "r", "e", "t"] ["m", "i", "s", "g", "e", "r"] ∧
@@ -634,8 +613,7 @@ theorem not_isStemModification :
       ["t", "e", "l", "e", "f", "o", "n"] ["t", "i", "l", "e", "f", "o", "n"] := by
   decide +kernel
 
-/-- The borrowed verbs of (39) keep their bases' clusters, unlike phonotactically possible
-\*tirnsfer (p. 266), but *xarap* breaks that of *xrop* (29c). -/
+-- (39), p. 266, (29c)
 theorem keepsClusters :
     KeepsClusters isVowel ["t", "r", "a", "n", "s", "f", "e", "r"]
         ["t", "r", "i", "n", "s", "f", "e", "r"] ∧
@@ -671,7 +649,7 @@ instance : DecidablePred cyclic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _
 above the category head of the word it is formed from. -/
 def verbSpine (base : Option Head) : ComplexHead Root Head := ⟨⟨0⟩, base.toList ++ [.v, .voice]⟩
 
-/-- By (8), the v of a verb is local to the root exactly when the verb is root-derived. -/
+-- (8)
 theorem verbSpine_rootLocal : ∀ base : Option Head, (∀ c ∈ base, c = .n ∨ c = .a) →
     ∀ i : Fin (verbSpine base).heads.length, (verbSpine base).heads[i] = .v →
       ((verbSpine base).RootLocal cyclic i ↔ base = none) := by
@@ -696,7 +674,7 @@ instance (b b' : Binyan) : Decidable (Natural b b') := inferInstanceAs (Decidabl
 def natural57 : List (Sym2 Binyan) :=
   [s(.cvcvc, .nvccvc), s(.cvcvc, .hvccvc), s(.nvccvc, .hvccvc), s(.cvccvc, .hitcvccvc)]
 
-/-- The tendencies derive (57). -/
+-- (57)
 theorem natural_iff : ∀ b b', Natural b b' ↔ s(b, b') ∈ natural57 := by
   decide
 
@@ -708,8 +686,7 @@ def conjugations : List (String × Binyan × Binyan) :=
   (alts.filter (·.2.1)).flatMap fun (c, _, b) ↦
     (alts.filter fun a ↦ a.1 = c ∧ !a.2.1).map fun (_, _, b') ↦ (c, b, b')
 
-/-- The derivation yields the conjugation-class verbs except *namas* and *hemes*, the biliteral
-allomorphy of √mss (fn. 33), and *heʔedim*. -/
+-- fn. 33
 theorem conjugation_verbs_derived :
     (Wordlist.analyses.filter fun a ↦ a.conjugation ≠ none ∧ ∃ x ∈ verbCell? a,
       verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some a.form.segments).map
@@ -717,7 +694,7 @@ theorem conjugation_verbs_derived :
   decide +kernel
 
 /-- Conjugations 1–4 are exactly the natural pairs, and wherever (11) marks one alternant [−tr.],
-the causative is the other (p. 226). -/
+the causative is the other (p. 226) ((57)). -/
 theorem conjugations_natural :
     (∀ x ∈ conjugations, (Natural x.2.1 x.2.2 ↔ x.1 ∈ ["1", "2", "3", "4"]) ∧
       (x.2.1 = x.2.2 ↔ x.1 = "6") ∧ (¬(x.2.1.Geminated ↔ x.2.2.Geminated) ↔ x.1 = "5")) ∧
@@ -742,8 +719,6 @@ def fillContinuant (post : Bool) (s : Phonology.Segment) : Phonology.Segment :=
     else if post then Hebrew.Phonology.f else Hebrew.Phonology.p
   else s
 
-/-- The rule realizes each alternating stop as the one consonant that refines it with the
-contextual continuancy. -/
 theorem naturalClass_fillContinuant (post : Bool) :
     ∀ a ∈ [Hebrew.Phonology.B, Hebrew.Phonology.K, Hebrew.Phonology.P],
       (a.setFeature .continuant post).naturalClass Hebrew.Phonology.consonants =
@@ -794,14 +769,11 @@ theorem fillContinuant_eq_self {s : Phonology.Segment}
     fillContinuant post s = s := by
   simp [fillContinuant, h]
 
-/-- Only *b*, *k* and *p* read as alternating stops. -/
 theorem not_alternating_segment (x : String) (hp : x ≠ "p") (hb : x ≠ "b") (hk : x ≠ "k") :
     ¬((segment x).Unspecified .continuant ∧ (segment x).IsConsonant) := by
   unfold segment
   split <;> first | contradiction | decide +kernel
 
-/-- Filling continuancy over the fragment's segments agrees with spirantizing the
-transcription. -/
 theorem fillContinuant_segment (post : Bool) (x : String) :
     fillContinuant post (segment x) = surfaceSegment (fricative post x) := by
   cases post
@@ -825,7 +797,6 @@ def fragmentRoots : List (String × ConsonantalRoot Phonology.Segment) :=
     ("qpʔ", Hebrew.«qpʔ»), ("mss", Hebrew.mss), ("xmm", Hebrew.xmm), ("bhr", Hebrew.bhr),
     ("ʔdm", Hebrew.«ʔdm»)]
 
-/-- Each root of the transcription, read letter by letter, is the fragment's root. -/
 theorem root?_map_segment :
     ∀ p ∈ fragmentRoots, (root? p.1).map (·.map segment) = some p.2 := by
   simp only [fragmentRoots, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
@@ -898,8 +869,7 @@ def roots : Realization.Interpreted String String String String where
   realize := rootForms
   interp := rootMeanings
 
-/-- The roots √sgr, √qlt, √xšb and √šmn each mean different things in different patterns (Ch. 7
-(2)–(5)). -/
+-- Ch. 7, (2), (5)
 theorem roots_allosemous :
     roots.IsAllosemous "sgr" ∧ roots.IsAllosemous "qlt" ∧ roots.IsAllosemous "xšb" ∧
       roots.IsAllosemous "šmn" := by

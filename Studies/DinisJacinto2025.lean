@@ -20,16 +20,6 @@ two such maps differ by a transformation that rescales blocks and locations with
 Sorites whose series is infinite, being bald as not being largely less bald than the last member
 makes the premises jointly satisfiable.
 
-## Main statements
-
-* `instIsEmptyMarginalScale`: no conditionally complete order, such as the naturals or the
-  reals, carries an ML scale.
-* `exists_isHom_lex_rat_int`: every countable, finitely marginal ML scale maps homomorphically
-  into the representative model `ℚ ×ₗ ℤ`.
-* `heap_iff_bald`: Itzhaki's heaps are exactly what is not largely smaller than a clear case.
-* `not_transGen_marginallyLT`: no finite chain of marginal steps leads from someone not bald to
-  the last member of a Sorites series.
-
 ## Implementation notes
 
 * The project's ML scales are those of [dinis-jacinto-2026], over a linear order with marginally
@@ -103,7 +93,7 @@ instance instIsEmptyMarginalScale {α : Type*} [ConditionallyCompleteLinearOrder
   exact (csSup_le hS fun a ha ↦
     ((ml.irrelevance a hwl).1 (hly.largelyLT_congr_right.2 ha.2)).1.le).not_gt hwl.lt
 
-/-- Every ML scale is infinite (p. 521). -/
+-- p. 521
 theorem infinite_of_marginalScale (ml : MarginalScale α) : Infinite α :=
   let ⟨_, _, h⟩ := ml.exists_large
   Set.infinite_univ_iff.1 ((LargelyLT.infinite_Ioo h).mono (Set.subset_univ _))
@@ -211,8 +201,7 @@ theorem exists_isHom_lex_rat_int [Countable α] (hf : FinitelyMarginal ml) :
     exact ⟨e, e.strictMono⟩
   exact ⟨fun x ↦ toLex (F x, G x), isHom_lex_iff.2 ⟨hF, hG⟩⟩
 
-/-- Every countable ML scale maps homomorphically into rational-indexed blocks of
-rational-indexed locations (§4.4). -/
+-- §4.4
 theorem exists_isHom_lex_rat_rat [Countable α] : ∃ f : α → ℚ ×ₗ ℚ, ml.IsHom (lex ℚ ℚ) f := by
   obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.LargelyLT
   obtain ⟨G, hG⟩ := exists_lt_of_marginallyLT (γ := ℚ) fun q ↦ by
@@ -236,8 +225,7 @@ def CautiouslyMonotone (X : Set (β ×ₗ γ)) (τ : β ×ₗ γ → β ×ₗ γ
 
 variable [Nontrivial β] [Nonempty γ] [NoMaxOrder γ] [NoMinOrder γ]
 
-/-- A representation composed with a cautiously monotone-increasing transformation is a
-representation (Theorem 4.9). -/
+-- Theorem 4.9
 theorem IsHom.comp_cautiouslyMonotone {h : α → β ×ₗ γ} (hh : ml.IsHom (lex β γ) h)
     {τ : β ×ₗ γ → β ×ₗ γ} (hτ : CautiouslyMonotone (Set.range h) τ) :
     ml.IsHom (lex β γ) (τ ∘ h) := by
@@ -250,8 +238,7 @@ theorem IsHom.comp_cautiouslyMonotone {h : α → β ×ₗ γ} (hh : ml.IsHom (l
     simp only [Function.comp, hτ _ ⟨x, rfl⟩, hτ _ ⟨y, rfl⟩, ofLex_toLex, he]
     exact hg _ (by simp [← he]) ⟨y, rfl⟩ (hM hxy)
 
-/-- Any two representations differ by a cautiously monotone-increasing transformation
-(Theorem 4.9). -/
+-- Theorem 4.9
 theorem IsHom.exists_cautiouslyMonotone {h u : α → β ×ₗ γ} (hh : ml.IsHom (lex β γ) h)
     (hu : ml.IsHom (lex β γ) u) : ∃ τ, CautiouslyMonotone (Set.range h) τ ∧ u = τ ∘ h := by
   obtain ⟨hhL, -⟩ := isHom_lex_iff.1 hh
@@ -317,14 +304,13 @@ theorem infinitesimal_atMostMarginal_iff {x y : ℝ*} :
   rw [infinitesimal, ofAddSubgroup_atMostMarginal_iff, Itzhaki2021.InfinitesimallyClose,
     ← AddSubgroup.neg_mem_iff, neg_sub]
 
-/-- Itzhaki's finite closeness is at most marginal difference on the finite scale (§6). -/
+-- §6
 theorem finite_atMostMarginal_iff {x y : ℝ*} :
     finite.AtMostMarginal x y ↔ Itzhaki2021.FinitelyClose x y := by
   rw [finite, ofAddSubgroup_atMostMarginal_iff, Itzhaki2021.FinitelyClose,
     ← AddSubgroup.neg_mem_iff, neg_sub]
 
-/-- Being infinitely less, in Itzhaki's sense, is being largely smaller on the finite scale
-(§6). -/
+-- §6
 theorem finite_largelyLT_iff {x y : ℝ*} :
     finite.LargelyLT x y ↔ Itzhaki2021.InfinitelyLess x y := by
   rw [LargelyLT, Itzhaki2021.InfinitelyLess, marginallyLT_iff_lt_and_atMostMarginal,

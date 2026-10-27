@@ -427,8 +427,6 @@ theorem john_saw_no_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2
     (ChoiceFunction.exists_apply_iff_some hman (saw' · j)).not.trans
       (by simp [Quantifier.GQ.no, Quantifier.GQ.some])
 
-/-- The sets of choice functions that pick more than half of every property, at a nonempty
-restrictor in a finite domain, give the proportional *most*. -/
 theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x, N x) (V : E → Prop) :
     (∃ C : Set (ChoiceFunction E),
       (∀ P : E → Prop, {x | P x}.ncard < 2 * ((· P) '' C).ncard) ∧ ∀ f ∈ C, V (f N)) ↔
@@ -575,8 +573,7 @@ theorem ex27d (σ : Equiv.Perm (Fin 2)) :
   rw [eval, S, continuize_binary_of_pure_right _ _ _ rfl]
   rfl
 
-/-- With the subject taking priority, a coordination of verb phrases denotes their pointwise
-conjunction, the generalized conjunction of [partee-rooth-1983]. -/
+-- [partee-rooth-1983]
 theorem eval_S_coord_one (np : Deriv ι E) (P Q : E → Prop) :
     (S 1 np (coord (lex P) (lex Q))).eval = (S 1 np (lex (P ⊓ Q))).eval :=
   rfl

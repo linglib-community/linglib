@@ -24,17 +24,6 @@ does in (1).
 * `Analysis`: an attested form with its fragment verb and classified prefixes, outermost first.
 * `Spells`: morphs spell out a written form.
 
-## Main results
-
-* `Structure.exists_prefixes_eq_iff`: the prefix sequences of structures are the well-stacked
-  sequences with at most one lexical prefix, the resultative position being unique (4.4).
-* `analyses_structured`, `starred_not_structured`: every analysis of the paper has a structure,
-  and the starred reversals (4b) and (4d) have none.
-* `analyses_spells`: outside the past tense, which the fragments do not inflect, each analysis
-  spells out its form.
-* `superlexical_selects_imperfective`: diagnostic (56c) holds of the Russian analyses; the
-  Bulgarian stacks of (3), from Istratkova, attach to the perfective *razkaža*.
-
 ## Implementation notes
 
 The subtypes are the glosses of (57)–(58) together with Istratkova's terminative and
@@ -127,7 +116,7 @@ namespace Structure
 def prefixes (s : Structure) : List (Morph × PrefixClass) :=
   s.outer.map (fun p ↦ (p.1, .superlexical p.2)) ++ (s.result.map (·, .lexical)).toList
 
-/-- A linearized structure is well-stacked, the stacking generalization (4). -/
+-- (4)
 theorem wellStacked_prefixes (s : Structure) : WellStacked s.prefixes := by
   rw [WellStacked, prefixes, List.pairwise_append]
   refine ⟨List.pairwise_map.2 (List.pairwise_of_forall fun _ _ _ ↦ trivial), ?_, ?_⟩
@@ -136,7 +125,7 @@ theorem wellStacked_prefixes (s : Structure) : WellStacked s.prefixes := by
     obtain ⟨p, _, rfl⟩ := List.mem_map.1 ha
     trivial
 
-/-- A linearized structure has at most one lexical prefix, by structural uniqueness (4.4). -/
+-- (4.4)
 theorem lexicals_length_le_one (s : Structure) : (lexicals s.prefixes).length ≤ 1 := by
   rw [lexicals, prefixes, List.filter_append, List.length_append]
   have h : (s.outer.map (fun p ↦ (p.1, PrefixClass.superlexical p.2))).filter
@@ -148,7 +137,7 @@ theorem lexicals_length_le_one (s : Structure) : (lexicals s.prefixes).length �
   cases s.result <;> simp
 
 /-- The linearizations of structures over a stem are exactly the well-stacked sequences with
-at most one lexical prefix. -/
+at most one lexical prefix ((4.4)). -/
 theorem exists_prefixes_eq_iff (ps : List (Morph × PrefixClass)) (st : Verb) :
     (∃ s : Structure, s.stem = st ∧ s.prefixes = ps) ↔
       WellStacked ps ∧ (lexicals ps).length ≤ 1 := by
@@ -202,7 +191,6 @@ def morphs (a : Analysis) : List Morph := a.prefixes.map Prod.fst ++ a.stem.morp
 def tree (a : Analysis) : Tree Morph :=
   .attachAll (Morph.root a.stem.form) (a.prefixes.reverse.map fun p ↦ (.before, p.1))
 
-/-- Every analysis tree is concatenative, since prefixation is. -/
 theorem tree_isConcatenative (a : Analysis) : a.tree.IsConcatenative :=
   Tree.isConcatenative_attachAll _ _
 
@@ -290,7 +278,7 @@ theorem starred_not_structured (a : Analysis) (ha : a ∈ starred) :
   have h : ¬ WellStacked a.prefixes := by fin_cases ha <;> decide
   exact ⟨h, fun h' ↦ h ((Structure.exists_prefixes_eq_iff _ _).1 h').1⟩
 
-/-- The starred forms reverse the prefixes of (4a) and (4c). -/
+-- (4a), (4c)
 theorem starred_prefixes : starred.map (·.prefixes) = [a4a, a4c].map (·.prefixes.reverse) := rfl
 
 /-- Outside the past tense, as in (1) and (4c), every analysis spells out its attested form ((4a),
@@ -300,7 +288,7 @@ theorem analyses_spells : ∀ a ∈ analyses ++ starred,
   decide
 
 /-- Diagnostic (56c) holds of the Russian analyses: a superlexically prefixed verb is built on an
-imperfective stem. -/
+imperfective stem ((3)). -/
 theorem superlexical_selects_imperfective (a : Analysis) (ha : a ∈ russianAnalyses)
     (hs : ∃ p ∈ a.prefixes, p.2.IsSuperlexical) :
     a.stem.perfectivity = some .imperfective := by

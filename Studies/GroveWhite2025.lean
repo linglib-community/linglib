@@ -30,12 +30,6 @@ their mean answer and differ in spread.
 * `resolvedFactivity`, `unresolvedFactivity`: the completions of a norming model by factivity.
 * `discreteFactivity`, `whollyDiscrete`, `whollyGradient`, `discreteWorld`: the four models.
 
-## Main results
-
-* `discreteFactivity_eq_bind_update`, `whollyDiscrete_eq_bind_update`: the resolved models
-  draw a reading of (13) and answer from the common ground updated with it.
-* `discreteFactivity_eq`, `whollyDiscrete_eq`, `whollyGradient_eq`, `discreteWorld_eq`: the
-  models in closed form.
 * `integral_discreteFactivity` and its siblings: the four share the mean answer.
 * `variance_whollyGradient` and its siblings: only the models with a discrete component spread.
 
@@ -280,6 +274,7 @@ section Models
 
 variable (τ p : I)
 
+/-- The models in closed form. -/
 theorem discreteFactivity_eq : discreteFactivity τ p = Ber(1, p, τ) := by
   rw [discreteFactivity, resolvedFactivity_eq, normingGradient, bernoulliMeasure_def]
 

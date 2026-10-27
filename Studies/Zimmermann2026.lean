@@ -15,15 +15,6 @@ situation for *bí*, after Owusu, and an existential quantifier for *wani*, afte
 earlier work. It explains the scope of *bí* by negation not being an intensional operator, so
 that negation cannot shift the situation argument of the function.
 
-## Main results
-
-* `wani_scopings_diverge`: under the existential analysis the two scopings of *wani* under
-  negation differ, on the passenger model of `Zimmermann2008`.
-* `bi_reading_not_narrow`: under the choice-function analysis *bí* under negation does not give
-  the narrow reading when the restrictor has two members.
-* `bi_negation_construals_collapse`: under negation the free and bound construals of the
-  situation argument of *bí* coincide.
-
 ## Implementation notes
 
 * Only the comparison the review itself draws is formalized; the two analyses are consumed from

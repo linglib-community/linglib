@@ -170,34 +170,30 @@ def possessorObjectLow : Relative :=
 def possessorObjectHigh : Relative :=
   rel (bee * (tense * (littleV * (sting * possessed leg))))
 
-/-- (12): the subject is the closest DP, so SR relativizes it; an object below a high subject is
-not, so its relative takes NSR. -/
+-- (12)
 theorem ex12 : (Examples.ex12a.judgment = .acceptable ↔ Derived Examples.ex12a subject) ∧
     (Examples.ex12b.judgment = .acceptable ↔ Derived Examples.ex12b objectHigh) := by
   decide +kernel
 
-/-- (13), (14): a DP above a low indefinite subject is the closest DP, (10). -/
+-- (13), (14), (10)
 theorem ex13_ex14 :
     (Examples.ex13a.judgment = .acceptable ↔ Derived Examples.ex13a objectLow) ∧
     (Examples.ex14a.judgment = .acceptable ↔ Derived Examples.ex14a (temporal bomb explode)) ∧
     (Examples.ex14b.judgment = .acceptable ↔ Derived Examples.ex14b (temporal snow fall)) := by
   decide +kernel
 
-/-- (16): the possessor of the subject is as close as the subject, (11), so SR relativizes it and
-NSR is out. -/
+-- (16), (11)
 theorem ex16 :
     (Examples.ex16a.judgment = .acceptable ↔ Derived Examples.ex16a possessorSubject) ∧
     (Examples.ex16b.judgment = .acceptable ↔ Derived Examples.ex16b possessorSubject) := by
   decide +kernel
 
-/-- (17): the subject and its possessor both count as closest, since the subject does not
-c-command its possessor. -/
+-- (17)
 theorem ex17 : ∀ g ∈ possessorSubject.goals ⟨[0]⟩, g.2 = op ∨ g.2 = poss →
     possessorSubject.Closest ⟨[0]⟩ g := by
   decide +kernel
 
-/-- (18), (20): the possessor of an object is closest when the object has moved above a low
-subject, and not below a high one. -/
+-- (18), (20)
 theorem ex18_ex20 :
     (Examples.ex18.judgment = .acceptable ↔ Derived Examples.ex18 possessorObjectLow) ∧
     (Examples.ex18_nsr.judgment = .acceptable ↔ Derived Examples.ex18_nsr possessorObjectLow) ∧
@@ -292,7 +288,7 @@ def possessorObject : Relative :=
 def possessorObjectClitic : Relative :=
   rel (gi * (keme * (littleV * (lengthen * (op * (poss * age)))))) [keme]
 
-/-- (21)–(23): only the highest nominal is extracted, and a clitic subject does not count. -/
+-- (21), (23)
 theorem ex21_ex23 :
     (Examples.ex21a.judgment = .acceptable ↔ activeTheme.Converges) ∧
     (Examples.ex21b.judgment = .acceptable ↔ passiveTheme.Converges) ∧
@@ -300,8 +296,7 @@ theorem ex21_ex23 :
     (Examples.ex23b.judgment = .acceptable ↔ cliticAgent.Converges) := by
   decide +kernel
 
-/-- A DP at the edge of a clausal subject is the closest DP (27), and each *gi* attracts the closest
-DP ((26), (28)). -/
+-- (27), (26), (28)
 theorem ex26_ex28 :
     (Examples.ex26a.judgment = .acceptable ↔ (clausalSubject resumptive).Converges) ∧
     (Examples.ex26b.judgment = .acceptable ↔ (clausalSubject gap).Converges) ∧
@@ -309,7 +304,7 @@ theorem ex26_ex28 :
     (Examples.ex28b.judgment = .acceptable ↔ longTheme.Converges) := by
   decide +kernel
 
-/-- (29), (30): a possessor is extracted from the highest nominal only, (31). -/
+-- (29), (30), (31)
 theorem ex29_ex30 :
     (Examples.ex29a.judgment = .acceptable ↔ possessorSubject.Converges) ∧
     (Examples.ex29b.judgment = .acceptable ↔ possessorObject.Converges) ∧

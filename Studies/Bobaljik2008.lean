@@ -28,15 +28,6 @@ accusative case cannot be derived.
 * `controller`: the highest accessible noun phrase of a domain.
 * `controls`: whether an argument of a clause with the given alignment controls agreement.
 
-## Main results
-
-* `isUpperSet_accessible`: if a category is accessible, so is every category above it.
-* `isAccusative_controls_accusative`, `isErgative_controls_ergative_unmarked`,
-  `isAccusative_controls_ergative_dependent`: the predicted agreement alignments.
-* `not_isErgative_controls_accusative`: no setting derives ergative agreement from accusative
-  case.
-* `controller_quirky`: below a subject with lexical case the verb agrees with the object.
-
 ## Implementation notes
 
 Case is assigned by the dependent case rules of `Syntax/Case/Dependent.lean`. Case valued by

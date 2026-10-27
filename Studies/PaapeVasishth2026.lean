@@ -20,14 +20,6 @@ effect of context on attachment from an effect on reanalysis cost.
 * `tree`: the tree of Fig. 1, as a measure on routes.
 * `Costs.disambiguating`, `Costs.spillover`: the cost a route pays at each region.
 
-## Main results
-
-* `Condition.isMatch_iff`: the match coding of the design follows from `Supports`.
-* `tree_real_gardenPathed`, `tree_real_regresses`, `tree_real_accepts`: the tree's marginals.
-* `integral_disambiguating_tree`: the mean cost at the disambiguating region.
-* `means_not_identifiable`: halving the garden-path probability and halving the covert
-  reanalysis cost can leave every condition mean equal and the mixtures different.
-
 ## Implementation notes
 
 Which cells match is derived from when each analysis's definite refers: with two women the bare

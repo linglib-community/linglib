@@ -29,17 +29,6 @@ agreement.
 * `Rakosi2020.verbAgr?`, `Rakosi2020.semanticNumber?`: the person and number the verb agrees in,
   and the semantic number of the antecedent.
 
-## Main results
-
-* `Rakosi2020.reflexive_acceptable_iff_agree`, `Rakosi2020.not_factorsThrough_semanticNumber`: a
-  bound reflexive is acceptable exactly when it agrees with the verb, whatever its antecedent
-  denotes.
-* `Rakosi2020.reciprocal_acceptable_iff`, `Rakosi2020.not_factorsThrough_verbAgr`: the reciprocal
-  is acceptable exactly when its antecedent is semantically plural, whatever the verb agrees in.
-* `Rakosi2020.reciprocal_with_singular_verb`: in each of §§3–6 the reciprocal is accepted with a
-  singular verb and a semantically plural antecedent.
-* `Rakosi2020.inclusive_not_bound`: the inclusive reflexive of §2 is not a bound variable.
-
 ## References
 
 * [rakosi-2020]

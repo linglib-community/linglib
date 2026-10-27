@@ -91,8 +91,7 @@ instance : PartialOrder SemType where
 instance : DecidableRel (α := SemType) (· ≤ ·) :=
   λ a b => inferInstanceAs (Decidable (b ∈ a.ancestors))
 
-/-- The chains of (19) and (24): a Honda is a car is a vehicle, and the *Tractatus* is a book
-is a text. -/
+-- (19), (24)
 theorem chains :
     SemType.honda ≤ .car ∧ SemType.car ≤ .vehicle ∧ SemType.honda ≤ .vehicle ∧
       SemType.tractatus ≤ .book ∧ SemType.book ≤ .text := by

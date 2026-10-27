@@ -39,20 +39,6 @@ head, they do not differ in meaning.
 * `Converges`: the two PF conditions on the clitics of a clause.
 * `clusters`: the clitic clusters a clause surfaces with.
 
-## Main results
-
-* `isFissionApplicable_iff`: fission applies to the speaker and the addressee alone.
-* `clusters_marked`, `clusters_unmarked`: the typology of realizations. A marked anticausative
-  has the marker with a plain dative and, where fission applies, the fissioned dative with and
-  without the marker; an unmarked one has the plain dative alone.
-* `marker_optional_iff`: the marker can be absent exactly where fission applies.
-* `converges_of_fission`, `not_converges_singleton`: fission rescues a clause without the marker
-  because the dative is syncretic with the reflexive outside the third person, and an unfissioned
-  dative cannot, since it would leave the applicative head unpronounced.
-* `anticausative_rows`, `other_rows`: the judgments on the paper's clitic clusters.
-* `causer_reading_rows`: the unintentional causer reading arises only from the marked clause.
-* `isLicit_me_iff_nos`: no person case constraint separates *me le* from *nos le*.
-
 ## Implementation notes
 
 The verbal heads of a marked anticausative are a change and a result state and those of an

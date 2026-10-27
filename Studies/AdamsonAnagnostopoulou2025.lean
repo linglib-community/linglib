@@ -257,8 +257,7 @@ theorem inanimate_uniform_neuter :
       some .neuter := by
   decide
 
-/-- Closest conjunct agreement takes the PF features of the conjunct next to the predicate ((45),
-(46)). -/
+-- (45), (46)
 theorem closest_conjunct :
     (HeadDirection.headInitial.nearest
         [system.nominal megalofiia .man, system.nominal filos .man]).bind system.exponent =

@@ -18,15 +18,6 @@ predicate, so a bare plural takes narrow scope under negation even when moved ov
 determiner phrase scopes wide. Kind reference is Chierchia's down operator, which Krifka does not
 confine to cumulative properties.
 
-## Main results
-
-* `Krifka2003.isExtensiveMeasure_ofAtoms`: atom-counting nouns are extensive measures (53).
-* `Krifka2003.qua_withNumber_ofAtoms`, `Krifka2003.cum_pluralize_ofAtoms`: numeral phrases are
-  quantized and the semantic plural is cumulative.
-* `Krifka2003.iota_withNumber_one`: in a world with exactly one dog, ∩ of *one dog* is that dog.
-* `Krifka2003.bare_narrow`, `Krifka2003.indefinite_wide_numeral_narrow`: bare plurals scope
-  below negation, and *two dogs* scopes over it only as a determiner phrase.
-
 ## Implementation notes
 
 * Composition is stated on extensions at a world. The composition rule (51) is `Den.app`:
@@ -87,6 +78,7 @@ finite set of `n` atoms of `D`. -/
 def ofAtoms (D : World → Set Atom) : CountNoun World Atom :=
   fun w n ↦ {x | x ⊆ D w ∧ x.Finite ∧ x.ncard = n}
 
+/-- Atom-counting nouns are extensive measures (53). -/
 theorem isExtensiveMeasure_ofAtoms (D : World → Set Atom) : IsExtensiveMeasure (ofAtoms D) :=
   ⟨fun _ _ _ _ ⟨_, _, h⟩ ⟨_, _, h'⟩ ↦ h.symm.trans h',
     fun _ _ _ _ _ ⟨hx, hfx, hnx⟩ ⟨hy, hfy, hny⟩ hd ↦
@@ -105,8 +97,7 @@ theorem cum_pluralize_ofAtoms (D : World → Set Atom) (w : World) :
 
 /-! ### Kind reference -/
 
-/-- The down operator (77) is not confined to cumulative properties: in a world with exactly one
-dog, `∩[one dog]` is that dog. -/
+-- (77)
 theorem iota_isGreatest_withNumber_one {D : World → Set Atom} {w : World} {a : Atom}
     (h : D w = {a}) :
     iota (IsGreatest (withNumber 1 (ofAtoms D) w)) = some {a} :=
@@ -149,12 +140,10 @@ def movedNeutral (d : Den E) (V : E → Prop) : Option (Den E) := (d.app (vp V))
 to the abstract over the trace. -/
 def movedEntity (d : Den E) (V : E → Prop) : Option (Den E) := d.app (pred fun x ↦ ¬ V x)
 
-/-- In *Dogs are barking* (69), a bare noun phrase meets the verbal predicate by the existential
-shift. -/
+-- (69)
 theorem app_pred_vp (P V : E → Prop) : (pred P).app (vp V) = some (tv (∃ x, P x ∧ V x)) := rfl
 
-/-- In *Dogs aren't barking* (70), a bare noun phrase moved over negation still scopes below it,
-since the shift applies at the trace. -/
+-- (70)
 theorem movedNeutral_pred (P V : E → Prop) :
     movedNeutral (pred P) V = some (tv (¬ ∃ x, P x ∧ V x)) := rfl
 

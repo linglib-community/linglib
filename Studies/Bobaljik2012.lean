@@ -47,45 +47,6 @@ positive, is ABA without any homophony.
 * `MorphComparative`, `MorphSuperlative`, `Records`: a table row's `M`
   columns, and the synthetic extents of a language's adjectives they record.
 
-## Main results
-
-* `isContiguous_iff_ne_basque`, `ne_aab`, `abc_iff`: of the 73 adjectival
-  cognate triples of Table 4.1, read from `Data/Wordlist/Bobaljik2012`,
-  every one is contiguous but the Basque doublet (143b), no triple is AAB,
-  and the ABC ones are the triples (31) and p. 112 name.
-* `quantifier_isContiguous_iff`, `bulgarian_armenian_eq_abb_comp`,
-  `karelian_sources`, `exists_ungrammatical_of_not_isContiguous`: of the
-  quantifier triples of Table 4.2, all but the three of (165) are
-  contiguous; the Bulgarian and Armenian ones are ABB through a superlative
-  embedding the positive, and the Karelian one is contradicted by the
-  triple (170), its superlative rejected by the questionnaire.
-* `csg1_of_ne_basque`, `basque_not_realized`: CSG1 holds of every other
-  triple, and no antihomophonous vocabulary realizes the Basque one.
-* `bearsOnCSG_names`, `eurasia_of_suppletion`,
-  `exists_rootClasses_of_bearsOnCSG`: of the 148 languages of the broad
-  sample, read from `Data/StructureDataset/Bobaljik2012`, four have suppletion and
-  a morphological superlative, every language with suppletion is in Eurasia,
-  and each of the four has a triple in Table 4.1.
-* `exists_records_iff`, `ssg_exceptions`: a row records synthetic extents
-  exactly when it satisfies the SSG, and of the rows of Tables A.1 and B.1
-  only the four counterexamples §3.4.2 and §3.4.3 discuss fail it.
-* `english_ssg`, `english_rsg`: (3) and (4) on the English Fragment.
-* `czech_bad_abb`, `latin_realize_abc`, `welsh_good_abc`: the engine derives
-  the book's paradigms.
-* `aabContextual_not_adjacent`, `welshAAB_not_grounded`,
-  `fakeAba_not_antihomophonous`: each unattested shape violates exactly one
-  condition.
-* `latin_sprl_needs_portmanteau`: ABC needs a portmanteau ((199)).
-* `greek_comparative`: *pjo kak-ós*, not *pjo cheir-ós* ((94)).
-* `csg1_iff_one_le`: with a suppletive comparative, CSG1 holds of the
-  superlative exactly when its adjective word contains CMPR (§3.3.3).
-* `greek_superlative`, `russian_bad_eq_ploxoj`: the Greek superlative inherits
-  the suppletive root ((106a)) and the Russian one does not ((106d)), as the
-  Fragment's *samyj plox-oj* shows.
-* `periphrastic_of_aba`: on the Fragments a superlative on the positive's root
-  after a comparative on another is periphrastic.
-* `latin_ns_eq_dm`: nanosyntax and DM realize Latin alike.
-
 ## Implementation notes
 
 Lesslessness (5) — no language has a synthetic comparative of inferiority
@@ -148,9 +109,6 @@ theorem mergerReachable_Ioc [NeZero n] (t : Fin n) :
         Fin.le_def, Fin.val_succ, Fin.val_castSucc, Fin.val_zero]
       omega
 
-/-- The regions reachable by successive Merger are exactly the initial
-segments of the hierarchy, since the no-skipping condition forces every head
-below a merged head to be merged. -/
 theorem mergerReachable_iff [NeZero n] {R : Finset (Fin n)} :
     MergerReachable R ↔ ∃ t : Fin n, R = Finset.Ioc 0 t := by
   refine ⟨fun h ↦ ?_, fun ⟨t, ht⟩ ↦ ht ▸ mergerReachable_Ioc t⟩
@@ -175,9 +133,7 @@ theorem mergerReachable_iff [NeZero n] {R : Finset (Fin n)} :
       · exact Or.inl rfl
       · exact Or.inr ⟨hk0, (Finset.mem_Ioc.mp (hskip k hk0 hkh')).2⟩
 
-/-- Merged regions are downward closed in heads, so if the superlative head has merged, so has the
-comparative head below it. This is the core of the Synthetic Superlative Generalization of
-[bobaljik-2012] ch. 3. -/
+-- [bobaljik-2012]
 theorem MergerReachable.mem_of_le [NeZero n] {R : Finset (Fin n)}
     (hR : MergerReachable R) {h k : Fin n} (hk0 : 0 < k) (hkh : k ≤ h)
     (hh : h ∈ R) : k ∈ R := by
@@ -198,7 +154,6 @@ structure Synthesis (n : ℕ) where
 def Synthesis.region [NeZero n] (s : Synthesis n) : Finset (Fin n) :=
   Finset.Ioc 0 s.wordTop
 
-/-- A region is Merger-reachable iff it is the region of some synthetic extent. -/
 theorem mergerReachable_iff_exists_region [NeZero n] {R : Finset (Fin n)} :
     MergerReachable R ↔ ∃ s : Synthesis n, R = s.region :=
   mergerReachable_iff.trans
@@ -215,8 +170,6 @@ def Synthesis.SyntheticAt (s : Synthesis n) (g : Fin n) : Prop :=
 instance (s : Synthesis n) (g : Fin n) : Decidable (s.SyntheticAt g) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- Syntheticity is containment of the grade's heads in the merged
-region. -/
 theorem Synthesis.syntheticAt_iff_region [NeZero n] {s : Synthesis n} {g : Fin n} :
     s.SyntheticAt g ↔ Finset.Ioc 0 g ⊆ s.region := by
   refine ⟨fun h ↦ Finset.Ioc_subset_Ioc le_rfl h, fun hsub ↦ ?_⟩
@@ -225,9 +178,7 @@ theorem Synthesis.syntheticAt_iff_region [NeZero n] {s : Synthesis n} {g : Fin n
   · exact (Finset.mem_Ioc.mp
       (hsub (Finset.mem_Ioc.mpr ⟨(Fin.pos_iff_ne_zero' g).mpr hg, le_rfl⟩))).2
 
-/-- Synthesis is downward closed, so a synthetic superlative entails a synthetic comparative. This
-is the Synthetic Superlative Generalization of [bobaljik-2012] ch. 3, the grade-level shadow of
-`MergerReachable.mem_of_le`. -/
+-- [bobaljik-2012]
 theorem Synthesis.syntheticAt_of_le {s : Synthesis n} {g g' : Fin n}
     (h : s.SyntheticAt g) (h' : g' ≤ g) : s.SyntheticAt g' :=
   le_trans h' h
@@ -243,27 +194,20 @@ precomposed with a choice of word extent for each grade. -/
 def realizeIn (s : Synthesis n) (v : RuleSet (SpanRule n F)) : Paradigm n (Option F) :=
   fun g ↦ realize v (min g s.wordTop)
 
-/-- At a synthetic grade, word-internal realization is realization. -/
 theorem realizeIn_eq_realize_of_le {s : Synthesis n} {v : RuleSet (SpanRule n F)}
     {g : Fin n} (h : g ≤ s.wordTop) : realizeIn s v g = realize v g :=
   congrArg (realize v) (min_eq_left h)
 
-/-- At a periphrastic grade, the root's word realizes as at `wordTop`, the highest grade whose
-structure is word-internal. -/
 theorem realizeIn_eq_realize_wordTop_of_le {s : Synthesis n}
     {v : RuleSet (SpanRule n F)} {g : Fin n} (h : s.wordTop ≤ g) :
     realizeIn s v g = realize v s.wordTop :=
   congrArg (realize v) (min_eq_right h)
 
-/-- Word-internal realization is contiguous, since it is `realize` precomposed with the monotone
-regrading `min · wordTop`. -/
 theorem isContiguous_realizeIn {s : Synthesis n} {v : RuleSet (SpanRule n F)}
     (hAH : v.Antihomophonous) :
     IsContiguous (realizeIn s v) :=
   (isContiguous_realize hAH).comp_monotone fun _ _ h ↦ min_le_min_right _ h
 
-/-- A lexeme with no Merger at all (`wordTop = 0`, fully periphrastic
-paradigm) realizes the same root form at every grade. -/
 theorem realizeIn_const_of_wordTop_eq_zero {s : Synthesis n}
     {v : RuleSet (SpanRule n F)} (h : (s.wordTop : ℕ) = 0) (g g' : Fin n) :
     realizeIn s v g = realizeIn s v g' := by
@@ -272,10 +216,7 @@ theorem realizeIn_const_of_wordTop_eq_zero {s : Synthesis n}
   rw [realizeIn_eq_realize_wordTop_of_le (hle g),
     realizeIn_eq_realize_wordTop_of_le (hle g')]
 
-/-- Distinct root forms at two grades force Merger past their lower grade, so root suppletion at a
-grade requires that grade's word to be synthetic. This is the general form of the Root Suppletion
-Generalization of [bobaljik-2012] ch. 3; above `wordTop` the word realizes constantly
-(`realizeIn_eq_realize_wordTop_of_le`). -/
+-- [bobaljik-2012]
 theorem min_lt_wordTop_of_realizeIn_ne {s : Synthesis n}
     {v : RuleSet (SpanRule n F)} {g g' : Fin n}
     (h : realizeIn s v g ≠ realizeIn s v g') : min g g' < s.wordTop := by
@@ -285,9 +226,7 @@ theorem min_lt_wordTop_of_realizeIn_ne {s : Synthesis n}
     realizeIn_eq_realize_wordTop_of_le (hle.trans (min_le_right g g'))] at h
   exact h rfl
 
-/-- Root suppletion is limited to synthetic comparatives, the Root Suppletion Generalization of
-[bobaljik-2012] ch. 3. A lexeme showing distinct root forms at two grades has undergone Merger at
-least once, so its comparative is synthetic, which excludes *good – more bett*. -/
+-- [bobaljik-2012]
 theorem rsg {s : Synthesis 3} {v : RuleSet (SpanRule 3 F)} {g g' : Fin 3}
     (h : realizeIn s v g ≠ realizeIn s v g') : s.SyntheticAt 1 := by
   have hlt := min_lt_wordTop_of_realizeIn_ne h
@@ -299,8 +238,7 @@ end Merger
 
 /-! ### CSG1 -/
 
-/-- In a contiguous pattern a suppletive comparative, whose root differs from the positive's,
-forces a suppletive superlative. This is CSG1 (1). -/
+-- (1)
 theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p 0) :
     p 2 ≠ p 0 :=
   fun h2 ↦ h (hc (i := 0) (j := 1) (k := 2) (by decide) (by decide) h2.symm).symm
@@ -324,11 +262,10 @@ def Quantifier (r : CLDF.Wordlist.RootClasses Wordlist.Cell) : Prop :=
 instance : DecidablePred Quantifier := fun r ↦
   inferInstanceAs (Decidable (r.lexeme.parameterId ∈ _))
 
-/-- Of the more than 300 languages considered, 73 adjectival cognate triples (p. 105). -/
+-- p. 105
 theorem adjectival_length : (Wordlist.rootClasses.filter (¬ Quantifier ·)).length = 73 := by
   decide
 
-/-- Every triple has a suppletive comparative. -/
 theorem suppletive_comparative :
     ∀ r ∈ Wordlist.rootClasses, rootPattern r 1 ≠ rootPattern r 0 := by
   decide +kernel
@@ -454,8 +391,7 @@ synthetic. -/
 def Records (r : StructureDataset.Row) (S : Set (Synthesis 3)) : Prop :=
   (MorphComparative r ↔ ∃ s ∈ S, s.SyntheticAt 1) ∧ (MorphSuperlative r ↔ ∃ s ∈ S, s.SyntheticAt 2)
 
-/-- A recorded row obeys the SSG (89), since Merger reaches the comparative head before the
-superlative head (`Synthesis.syntheticAt_of_le`). -/
+-- (89)
 theorem Records.morphComparative {r : StructureDataset.Row} {S : Set (Synthesis 3)}
     (h : Records r S) (hs : MorphSuperlative r) : MorphComparative r :=
   let ⟨s, hS, h2⟩ := h.2.1 hs
@@ -483,7 +419,7 @@ theorem ssg_exceptions :
     ["Zulu", "Armenian (Western)", "Armenian (Eastern)", "Alutor"] := by
   decide
 
-/-- Koryak, whose longer description §3.4.3 sets beside Alutor's, has `M` in both columns. -/
+-- §3.4.3
 theorem koryak_morph : ∃ r ∈ StructureDataset.focusedSurvey, r.language.name = "Koryak" ∧
     MorphComparative r ∧ MorphSuperlative r := by
   decide +kernel
@@ -497,11 +433,10 @@ realized cells is the root pattern. -/
 /-- Czech BAD (39), with *hor-* under CMPR and *špatn-* elsewhere. -/
 def czechBad : RuleSet (SpanRule 3 String) := [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
 
-/-- The comparative allomorph is chosen in the superlative, *špatn-ý, hor-ší, nej-hor-ší*, since
-the superlative contains its context. -/
 theorem czech_bad_realize : realize czechBad = ![some "špatn", some "hor", some "hor"] := by
   decide
 
+/-- The engine derives the book's paradigms. -/
 theorem czech_bad_abb : Setoid.ker (realize czechBad) = Setoid.ker Paradigm.abb := by decide
 
 /-- English GOOD (203), with *bett-* under CMPR and *good* elsewhere. -/
@@ -533,15 +468,11 @@ theorem latin_bonus_realize : realize latinBonus = ![some "bon", some "mel", som
 
 theorem latin_realize_abc : Setoid.ker (realize latinBonus) = Setoid.ker Paradigm.abc := by decide
 
-/-- Latin satisfies every condition the CSG2 derivation uses. -/
 theorem latin_wellformed :
     Adjacent latinBonus ∧ Grounded latinBonus ∧ latinBonus.Antihomophonous := by decide
 
-/-- Latin is not terminal, and must not be, since terminal adjacent rules plateau at the
-comparative (`realize_const_of_terminal_adjacent`), which would exclude ABC. -/
 theorem latin_not_terminal : ¬ Terminal latinBonus := by decide
 
-/-- The superlative winner is the portmanteau *opt-*. -/
 theorem latin_superlative_portmanteau :
     latinBonus.selectBy SpanRule.threshold 2 = some ⟨"opt", 1, some 2⟩ := by
   decide
@@ -579,7 +510,7 @@ theorem welshAAB_realizes_aab : Setoid.ker (realize welshAAB) = Setoid.ker Parad
 excludes. -/
 theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 
-/-- By `realize_const_of_grounded`, the AAB cells refute Antihomophony and (202) together. -/
+-- (202)
 theorem welshAAB_blocked : ¬ (welshAAB.Antihomophonous ∧ Grounded welshAAB) :=
   fun ⟨hAH, hG⟩ ↦
     absurd (realize_const_of_grounded hAH hG (by decide) (by decide)) (by decide)
@@ -605,7 +536,6 @@ theorem greek_comparative :
       realizeIn (⟨0⟩ : Synthesis 3) greekBad 1 = some "kak" := by
   decide
 
-/-- Greek's distinct root forms certify its comparative as synthetic, by the engine's RSG. -/
 theorem greek_rsg : (Synthesis.mk 1 : Synthesis 3).SyntheticAt 1 :=
   rsg (s := ⟨1⟩) (v := greekBad) (g := 1) (g' := 0) (by decide)
 
@@ -617,7 +547,7 @@ locality (90) only the first inherits a suppletive comparative root, so CSG1
 holds of the first type and fails for the second. -/
 
 /-- With a suppletive comparative, CSG1 holds of the superlative exactly when the superlative's
-adjective word contains the comparative head. -/
+adjective word contains the comparative head (§3.3.3). -/
 theorem csg1_iff_one_le {F : Type*} {e : Fin 3 → Fin 3} (he : ∀ g, e g ≤ g)
     {v : RuleSet (SpanRule 3 F)} (hAH : v.Antihomophonous)
     (h : realize v (e 1) ≠ realize v (e 0)) :
@@ -657,13 +587,10 @@ theorem russian_bad_eq_ploxoj :
       .root Russian.Adjectives.ploxoj.form ∉ Russian.Adjectives.ploxoj.comparison.comparative := by
   decide
 
-/-- With a superlative embedding the comparative, as in Greek, the same vocabulary is ABB. -/
 theorem russian_bad_comparative_embedding :
     Setoid.ker (realizeIn ⟨1⟩ russianBad) = Setoid.ker Paradigm.abb := by
   decide
 
-/-- The literary synthetic superlative *nai-xud-š-ij* is built on the suppletive root, so the
-fully synthetic paradigm is ABB, as the locality condition predicts. -/
 theorem russian_bad_synthetic_abb : Setoid.ker (realize russianBad) = Setoid.ker Paradigm.abb := by
   decide
 
@@ -728,8 +655,6 @@ constituents, competing under the Superset Principle. -/
 /-- The Latin entries as a nanosyntax lexicon. -/
 def latinBonusNS : RuleSet (SupersetRule 3 String) := [⟨"bon", 0⟩, ⟨"mel", 1⟩, ⟨"opt", 2⟩]
 
-/-- Superset spellout derives the same paradigm with no contextual
-apparatus. -/
 theorem latin_ns_spellout : spellout latinBonusNS = ![some "bon", some "mel", some "opt"] := by
   decide
 

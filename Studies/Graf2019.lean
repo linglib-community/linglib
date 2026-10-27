@@ -22,22 +22,6 @@ constraint. A Person Case Constraint is a monotone map from the reduced dual per
 * `FeasiblyMonotone`: definition (6), some monotone score identifies the cells the map
   identifies.
 
-## Main results
-
-* `isContiguous_tfae`: the four characterizations coincide over a linear hierarchy.
-* `feasiblyMonotone_of_ne_basque`, `aba_not_feasiblyMonotone`: Table 1's adjectival patterns,
-  over the triples of [bobaljik-2012]'s Table 4.1.
-* `person_attested_feasiblyMonotone`, `personGap_not_feasiblyMonotone`: Table 2's person
-  systems over Zwicky's hierarchy.
-* `aab_feasiblyMonotone`, `aab_not_groundedly_realizable`: monotonicity leaves the
-  gradation-side *AAB to the realization engine.
-* `monotone_iff`: exactly nine of the 64 conceivable constraints are monotone, the four of Table 4
-  (`table4`) among them.
-* `unattested_singleton_class`: the two monotone constraints without an attested pattern single
-  out one combination.
-* `uPCC_not_monotone_naive`: over the naive product hierarchy (23) the ultrastrong constraint is
-  not monotone.
-
 ## Implementation notes
 
 The person hierarchy is `Person.prominence`, Zwicky's order 1 > 2 > 3, which on the three persons
@@ -81,7 +65,6 @@ kernel. -/
 def FeasiblyMonotone {ι F : Type*} [Preorder ι] (p : ι → F) : Prop :=
   ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j
 
-/-- Over a linear order with finite lower intervals, contiguity is feasible monotonicity. -/
 theorem isContiguous_iff_feasiblyMonotone {ι F : Type*} [LinearOrder ι]
     [LocallyFiniteOrderBot ι] (p : ι → F) : IsContiguous p ↔ FeasiblyMonotone p :=
   isContiguous_iff_exists_monotone p
@@ -210,7 +193,6 @@ instance : DecidableLE NaiveCombination := fun p q ↦
 well-formed ones, Table 4's cells. -/
 abbrev PCC := Combination → Bool
 
-/-- There are sixty-four conceivable constraints. -/
 theorem card_pcc : Fintype.card PCC = 64 := by decide
 
 /-- `PCC.ofGrammar g` is the constraint a grammar of the P-Constraint family predicts. -/
@@ -256,7 +238,7 @@ def allBut31 : PCC := fun p ↦ p.1 ≠ ⟨.third, .first⟩
 def attested : List PCC := [sPCC, uPCC, wPCC, mPCC, fPCC, iPCC, cPCC]
 
 /-- Exactly nine constraints are monotone over the hierarchy (27), the seven attested ones and
-the two of (32) (section 4.3). -/
+the two of (32) (section 4.3) (Table 4). -/
 theorem monotone_iff :
     ∀ c : PCC, Monotone c ↔ c ∈ attested ++ [only13, allBut31] := by
   decide

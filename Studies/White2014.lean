@@ -54,7 +54,7 @@ def Modalized (fr : ArgumentFrame) : Prop := ¬ fr.HasFinite
 
 instance : DecidablePred Modalized := fun _ ↦ inferInstanceAs (Decidable (¬ _))
 
-/-- The control infinitive of (1b) is modalized, the finite clause of (1a) not. -/
+-- (1b), (1a)
 theorem modalized_infinitival_not_finite :
     Modalized .infinitival ∧ ¬ Modalized .finiteClause := by
   decide
@@ -83,7 +83,7 @@ def restructure (att : (W → Prop) → E → W → Prop) (f : E → W → Prop)
     (w : W) : Prop :=
   ∃ e₁ e₂, e₀ = e₁ ⊔ e₂ ∧ att (f e₂) e₁ w
 
-/-- (28): *remember* restructured with the modalized complement. -/
+-- (28)
 theorem restructure_attitude_cMod (mem : E → W → Set W) (best : W → Set W)
     (vp : E → W → Prop) (e₀ : E) (w : W) :
     restructure (attitude mem) (cMod best vp) e₀ w ↔

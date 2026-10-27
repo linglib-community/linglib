@@ -23,19 +23,6 @@ they derive *kalla* and *ætla* where Table 17.1 has *kalli* and *ætli*.
 * `pfNinth`: the Sanskrit paradigm function (21), over the portmanteau block `[ii,i]` of (20).
 * `caseBlock`: a Sanskrit case block with the vocative rule of referral (17).
 
-## Main results
-
-* `pf_kalla`, `pf_gripa_imp`, `pf_fljuga`, `pf_gripa_pst`: (4a), (4c), (4d), and *greipst*.
-* `stem_gripa`, `stem_bita`, `strong1a_card`: (7c), (7d) and (10) are theorems of (8), and
-  (7c), (7d) and (7e) apply to three, twelve and twenty-seven cells.
-* `isPaniniWellFormed`: the rules (7) and each block of Table 17.3 have a narrowest applicable
-  rule at every cell of (3), no two of their rules alike.
-* `nar_aetla_imp`, `blockIII_narrowness`: the examples of (14) and (15).
-* `themeA_lt_sbjvI`, `pf_kalla_sbjv`, `pf_aetla_sbjv`: by clause (ii) of (15), `-a` preempts
-  `-i`, against Table 17.1 and the inputs *ætli-um*, *ætli-ið* of Table 17.4.
-* `as_portmanteau`, `kri_fcd`, `kri_composition`: (22) and (23) by the FCD (24), Table 17.5.
-* `voc_refers_to_nom`, `voc_du`: the vocative dual of DĀNA patterns after the nominative.
-
 ## Implementation notes
 
 The metageneralizations (18) are phonological, so the decided cells are ones they leave untouched,
@@ -188,7 +175,7 @@ def IsPaniniWellFormed {F : Type} (v : RuleSet (PFM.Rule Verb Features F)) : Pro
 instance {F : Type} (v : RuleSet (PFM.Rule Verb Features F)) : Decidable (IsPaniniWellFormed v) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The rules (7) and Blocks I–III meet the Pāṇinian well-formedness condition. -/
+/-- The rules (7) and Blocks I–III meet the Pāṇinian well-formedness condition (Table 17.3, (3)). -/
 theorem isPaniniWellFormed : IsPaniniWellFormed iceStems ∧ IsPaniniWellFormed blockI ∧
     IsPaniniWellFormed blockII ∧ IsPaniniWellFormed blockIII := by
   decide

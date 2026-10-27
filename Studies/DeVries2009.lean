@@ -18,17 +18,6 @@ node with several parents when no parent dominates the current one and either ev
 been traversed or the current parent dominates every parent not yet traversed; his algorithm (71)
 implements it by indexing each node when it is visited.
 
-## Main statements
-
-* `linearization_examples`: (71) yields the strings the paper intends for its examples.
-* `remergedYield_examples`: pronouncing each node under its highest mother pronounced last, the
-  spell-out of `Linearization/Multidominance.lean`, yields them too.
-* `linearization_double`, `remergedYield_double`: on a shared node whose other parent is itself
-  shared, (71) pronounces the node twice, the spell-out once.
-* `remergedYield_sharing`, `remergedYield_movement`: on the examples that remerge only externally
-  each node is pronounced at its last occurrence, and on those that remerge only internally at its
-  highest, whichever highest mother is chosen.
-
 ## Implementation notes
 
 * A remerged node stands at each of its occurrences in a linearized syntactic object; its parents
@@ -200,8 +189,11 @@ def examples : List (LinearizedSyntacticObject × List LexicalItem.Token) :=
     (ex53, [α, e₂, e₃]), (ex54, [y₁, z₁, α, y₂, z₂]), (ex59, [e₁, α, e₂, e₃, e₄, e₅]),
     (ex60, [X, Y, Z]), (ex64, [e₁, e₂, e₃, α, e₄]), (ex66, [a, b, c])]
 
+/-- (71) yields the strings the paper intends for its examples. -/
 theorem linearization_examples : ∀ e ∈ examples, linearization e.1 = e.2 := by decide +kernel
 
+/-- Pronouncing each node under its highest mother pronounced last, the spell-out of
+`Linearization/Multidominance.lean`, yields them too. -/
 theorem remergedYield_examples : ∀ e ∈ examples, remergedYield List.getLast? e.1 = e.2 := by
   decide +kernel
 
@@ -222,19 +214,18 @@ theorem remergedYield_double : remergedYield List.getLast? double = [δ₁, g, �
 
 /-! ### Internal and external remerge -/
 
-/-- (42), (48), (52) and (66) remerge externally only: no parent of a node dominates another. -/
+-- (42), (48), (52), (66)
 theorem sharing_examples : ∀ t ∈ [ex42, ex48, ex52, ex66], ∀ s ∈ t.val.subtrees,
     ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s, IsSubtree g g' → g = g' := by
   decide +kernel
 
-/-- (41), (47), (51) and (60) remerge internally only: the parents of each node are ordered by
-dominance, and no node is merged with itself. -/
+-- (41), (47), (51), (60)
 theorem movement_examples : ∀ t ∈ [ex41, ex47, ex51, ex60],
     (∀ s ∈ t.val.subtrees, ∀ g ∈ mothers t s, ∀ g' ∈ mothers t s,
       IsSubtree g g' ∨ IsSubtree g' g) ∧ ∀ g ∈ t.val.subtrees, g.children.Nodup := by
   decide +kernel
 
-/-- (54) remerges α both ways, so it is neither. -/
+-- (54)
 theorem not_sharing_not_movement_ex54 :
     ¬ (∀ s ∈ ex54.val.subtrees, ∀ g ∈ mothers ex54 s, ∀ g' ∈ mothers ex54 s,
       IsSubtree g g' → g = g') ∧

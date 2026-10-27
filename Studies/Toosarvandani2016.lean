@@ -17,17 +17,6 @@ thus holds just in case the marked event precedes the unmarked one (59), and a s
 of progressives just in case the two overlap (57); linear order plays no part (§4.2), and two
 sequential marked clauses are not ordered at all (§4.3).
 
-## Main statements
-
-* `holds_perm`: the truth of a chain does not depend on the order of its marked clauses.
-* `exists_holds_iff`, `mem_eventRel_iff`: a chain with one marked clause holds for some reference
-  times exactly when its events satisfy the truth condition of its suffix and aspects.
-* `sequential_iff`, `simultaneous_iff`: a sequential chain of perfectives holds just in case its
-  marked event precedes its unmarked one, and a simultaneous chain of progressives just in case
-  they overlap.
-* `sequential_unordered`: any two times precede a common later one.
-* `rows_agree`: the verdicts of (39), (47), (66) and (71) in their contexts.
-
 ## Implementation notes
 
 The suffixes are a `MedialForm` whose timing is their relative tense, each marked clause evaluated
@@ -147,6 +136,7 @@ def Holds (cs : List (Marked W E × NonemptyInterval T)) (b : Perfectivity) (Q :
   (∀ c ∈ cs, c.2 ∈ denote c.1.aspect c.1.pred w ∧
     (c.2, t) ∈ Allen.toSetRel (MedialForm.timing c.1.suffix)) ∧ t ∈ denote b Q w
 
+/-- The truth of a chain does not depend on the order of its marked clauses. -/
 theorem holds_perm {cs cs' : List (Marked W E × NonemptyInterval T)} (h : cs.Perm cs')
     {b : Perfectivity} {Q : W → E → Prop} {w : W} {t : NonemptyInterval T} :
     Holds cs b Q w t ↔ Holds cs' b Q w t := by
@@ -256,6 +246,8 @@ section
 variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T] {s : Suffix}
   {a b : Perfectivity} {P Q : W → E → Prop} {w : W}
 
+/-- A chain with one marked clause holds for some reference times exactly when its events satisfy
+the truth condition of its suffix and aspects. -/
 theorem exists_holds_iff :
     (∃ t₁ t : NonemptyInterval T, Holds [(⟨s, a, P⟩, t₁)] b Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e, τ e') ∈ eventRel s a b := by
@@ -286,6 +278,7 @@ theorem simultaneous_iff :
 
 end
 
+/-- Any two times precede a common later one. -/
 theorem sequential_unordered {T : Type*} [LinearOrder T] [NoMaxOrder T]
     (t₁ t₂ : NonemptyInterval T) :
     ∃ t, (t₁, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) ∧
@@ -357,7 +350,7 @@ def Config.verdict (c : Config) : Bool :=
 theorem rows_agree : ∀ e ∈ Examples.all, e.FitsVerdict config Config.verdict := by
   decide
 
-/-- The simultaneous suffix takes the imperfective (40b) and not the perfective (40c). -/
+-- (40b), (40c)
 theorem selection :
     (Examples.ex_40b.judgment = .acceptable ↔ Suffix.sim.Selects .imperfective) ∧
       (Examples.ex_40c.judgment = .ungrammatical ↔ ¬ Suffix.sim.Selects .perfective) := by

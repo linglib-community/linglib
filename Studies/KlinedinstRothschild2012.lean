@@ -128,17 +128,14 @@ theorem doubleEntailment_and : Use.doubleEntailment.interpret .and a b = conj a 
 
 theorem shift_disj : Use.shift.interpret .or a b = ifThen aᶜ b := rfl
 
-/-- The non-truth-tabular *and*, (1): the first conjunct only shifts the parameter, which is
-the conditional of (52). -/
+-- (1), (52)
 theorem shift_and : Use.shift.interpret .and a b = ifThen a b := rfl
 
-/-- The non-truth-tabular *or*, (2) and (66): the first disjunct is asserted, and the second
-under the parameter updated with its negation, (67). -/
+-- (2), (66), (67)
 theorem doubleEntailment_disj :
     Use.doubleEntailment.interpret .or a b = fun s w ↦ a s w ∧ b (update aᶜ s) w := rfl
 
-/-- *The police show up, and there might be trouble* is true iff some parameter world where the
-police show up has trouble ((61) and (62)). -/
+-- (61), (62)
 theorem cond_might_iff (p t : Set W) (s : Set W) (w : W) :
     ifThen (Sentence.ofProp p) (Sentence.ofProp t).might s w ↔
       ∃ w' ∈ s, w' ∈ p ∧ w' ∈ t := by

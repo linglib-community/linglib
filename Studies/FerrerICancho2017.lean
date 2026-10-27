@@ -330,10 +330,10 @@ def fig1 : Tree 9 :=
     1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .dep), (3, 5, .dep), (5, 4, .dep), (5, 7, .dep),
       (7, 6, .dep), (7, 8, .dep)])
 
-/-- Fig. 1 has `⟨k²⟩ = 4`. -/
+-- Fig. 1
 theorem fig1_sum_degree_sq : ∑ v, fig1.toGraph.toSimpleGraph.degree v ^ 2 = 36 := by decide
 
-/-- Eq. 3 gives Fig. 1 `C_pairs = 18`. -/
+-- Fig. 1
 theorem fig1_disjointLinkPairs : disjointLinkPairs fig1.toGraph = 18 := by
   have h := two_mul_disjointLinkPairs_add_sum_degree_sq_of_isTree fig1.isTree
   rw [fig1_sum_degree_sq] at h

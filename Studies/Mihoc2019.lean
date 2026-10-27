@@ -25,18 +25,6 @@ possibly partial for the comparative ones, which may prune. Under negation that 
 is vacuous, so the superlative numerals, which require their exhaustification to strengthen the
 prejacent, are deviant there.
 
-## Main statements
-
-* `Mihoc2019.Form.tc_iff_rel`: each form's truth conditions compare the maximum with the
-  numeral, strictly for the comparative operator and non-strictly for the superlative one.
-* `Mihoc2019.Ignorance.domainImplicatures_iff`: the implicatures from the subdomain alternatives
-  of one size hold exactly when the number of values the speaker considers possible is not that
-  size.
-* `Mihoc2019.Ignorance.forall_domainImplicatures_iff`: keeping every subdomain alternative
-  yields total ignorance.
-* `Mihoc2019.AntiNegativity.not_negExh_lt`: under negation the subdomain exhaustification does
-  not strengthen the prejacent.
-
 ## Implementation notes
 
 * The maximum of the counted degrees is abstracted to its value, so a truth condition is a
@@ -243,23 +231,21 @@ theorem mem_exh_moreThan_iff {S : Set ℕ} {n s : ℕ} (hs : s ∈ S) (hns : n <
   · have := hnext m hm
     omega
 
-/-- On the full scale *more than n* comes out 'exactly n + 1' (her Ch. 3 (24)). -/
+-- Ch. 3, (24)
 theorem mem_exh_moreThan_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.moreThan n).scalarAlts .univ) {d | (Form.moreThan n).tc d} ↔
       maxD = n + 1 := by
   rw [mem_exh_moreThan_iff (Set.mem_univ _) (Nat.lt_succ_self n) fun _ _ h ↦ h]
   omega
 
-/-- In [spector-2014]'s grading context (her Ch. 3 (33)), *John solved more than five problems* is
-exhaustified to between six and nine. -/
+-- Ch. 3, (33) [spector-2014]
 theorem mem_exh_moreThan_five {S : Set ℕ} (h9 : 9 ∈ S) (hgap : ∀ m ∈ S, 5 < m → 9 ≤ m)
     (maxD : ℕ) :
     maxD ∈ exh ((Form.moreThan 5).scalarAlts S) {d | (Form.moreThan 5).tc d} ↔
       5 < maxD ∧ maxD ≤ 9 :=
   mem_exh_moreThan_iff h9 (by omega) hgap maxD
 
-/-- On the full scale the bare numeral is the exhaustified numeral `Numerals.exhNumeral`, 'exactly
-n' (her Ch. 3 (2)). -/
+-- Ch. 3, (2)
 theorem mem_exh_bare_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.bare n).scalarAlts .univ) {d | (Form.bare n).tc d} ↔
       maxD ∈ Numerals.exhNumeral n := by
@@ -270,7 +256,7 @@ theorem mem_exh_bare_univ (n maxD : ℕ) :
   have := hS (le_refl maxD) n le_rfl
   omega
 
-/-- On the full scale *less than n* comes out 'exactly n − 1' (her Ch. 3 (25)). -/
+-- Ch. 3, (25)
 theorem mem_exh_lessThan_univ {n : ℕ} (hn : 1 ≤ n) (maxD : ℕ) :
     maxD ∈ exh ((Form.lessThan n).scalarAlts .univ) {d | (Form.lessThan n).tc d} ↔
       maxD = n - 1 := by
@@ -280,7 +266,7 @@ theorem mem_exh_lessThan_univ {n : ℕ} (hn : 1 ≤ n) (maxD : ℕ) :
   have := hS (Nat.lt_succ_self maxD) (n - 1) (by omega)
   omega
 
-/-- On the full scale *at least n* comes out 'exactly n' (her Ch. 3 (26)). -/
+-- Ch. 3, (26)
 theorem mem_exh_atLeast_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.atLeast n).scalarAlts .univ) {d | (Form.atLeast n).tc d} ↔ maxD = n := by
   simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
@@ -289,7 +275,7 @@ theorem mem_exh_atLeast_univ (n maxD : ℕ) :
   have := hS (le_refl maxD) n le_rfl
   omega
 
-/-- On the full scale *at most n* comes out 'exactly n' (her Ch. 3 (27)). -/
+-- Ch. 3, (27)
 theorem mem_exh_atMost_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.atMost n).scalarAlts .univ) {d | (Form.atMost n).tc d} ↔ maxD = n := by
   simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
@@ -397,14 +383,12 @@ private theorem ncard_possibleValues_bounds [IsSerial R] (hT : □[R] (μ · ∈
   ⟨(Set.ncard_pos (T.finite_toSet.subset (box_mem_iff.1 hT))).2 nonempty_possibleValues,
     by simpa using Set.ncard_le_ncard (box_mem_iff.1 hT)⟩
 
-/-- Keeping only the singleton subdomain alternatives rules out exactly the 'winner' state (her
-Table 4.1). -/
+-- Table 4.1
 theorem domainImplicatures_one_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w)
     (h : 1 < T.card) : DomainImplicatures R μ w T 1 ↔ ¬ Winner R μ w := by
   rw [domainImplicatures_iff hT h, winner_iff]
 
-/-- Keeping only the subdomain alternatives of size at least two admits exactly a 'winner' state and
-total ignorance (her Table 4.2). -/
+-- Table 4.2
 theorem forall_two_le_domainImplicatures_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w) :
     (∀ k, 2 ≤ k → k < T.card → DomainImplicatures R μ w T k) ↔
       Winner R μ w ∨ FreeChoice R w T (μ · = ·) := by
@@ -425,8 +409,7 @@ theorem forall_domainImplicatures_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : 
   by_contra hne
   exact (domainImplicatures_iff hT (by omega)).1 (h _ hpos (by omega)) rfl
 
-/-- The scalar implicature of `□_S` *less than n* against *less than n − 1* holds iff the largest
-value is possible (her Tables 4.1 and 4.2). -/
+-- Tables 4.1 and 4.2
 theorem not_box_lessThan_pred_iff {n : ℕ} (hT : possibleValues R μ w ⊆ Finset.range n) :
     ¬ □[R] (fun v ↦ (Form.lessThan (n - 1)).tc (μ v)) w ↔ n - 1 ∈ possibleValues R μ w := by
   simp only [tc_lessThan]

@@ -17,15 +17,6 @@ outer (PolP), medial (ModP) or inner (TP), and that the polarity items and the p
 Šimík's two readings of negation (`Position.ofReading`): medial negation is the paper's addition,
 low like inner negation but non-propositional like FALSUM.
 
-## Main results
-
-* `licensed_injective`, `particle_signatures_distinct`: Table 1 fingerprints the three
-  positions, and its three particle columns alone do.
-* `licenses_nciLicensed_iff_licensedAt`, `licenses_ppiOutscoping_iff_licensedAt`: the polarity
-  columns agree with Staňková and Šimík's licensing of the indefinites.
-* `czech_refines_nonPreposed`: Czech splits Romero's low negation form into inner and medial.
-* `examples_match_table1`: the paper's examples check against Table 1.
-
 ## References
 
 * [stankova-2026]
@@ -189,8 +180,7 @@ theorem particle_signatures_distinct (pos pos' : Position)
   revert h1 h2 h3
   cases pos <;> cases pos' <;> decide
 
-/-- *copak* is outside Table 1, appearing in positive and negative PQs
-alike (Staňková and Šimík's exs. 19a-b). -/
+-- Table 1
 theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 
 /-! ### Word order and PQ-form typology
@@ -239,8 +229,7 @@ theorem czech_refines_nonPreposed :
     licensed .inner ≠ licensed .medial :=
   ⟨rfl, by decide, by decide⟩
 
-/-- Obligatory focus singles out outer negation ([stankova-2026]
-§3.2). -/
+-- §3.2 [stankova-2026]
 theorem only_outer_requires_focus (p : Position) : p.RequiresFocus → p = .outer := by
   cases p <;> simp [Position.RequiresFocus]
 

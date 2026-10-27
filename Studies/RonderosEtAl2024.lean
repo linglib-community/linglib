@@ -21,13 +21,6 @@ should not. On the semantic account of Aparicio, Xiang and Kennedy a relative gr
 needs a comparison class from the display, which lowers the no-contrast baseline for scalar
 adjectives.
 
-## Main statements
-
-* `perceptual_matches`: the perceptual account predicts the effects found.
-* `pragmatic_fails`: the pragmatic account does not.
-* `baseline_higher_iff_not_requiresComparisonClass`: the baseline is higher exactly for the
-  adjective types whose interpretation needs no comparison class.
-
 ## Implementation notes
 
 * Kinds of object are named by a representative object. The perceptual factor attributes a

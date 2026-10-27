@@ -176,8 +176,7 @@ theorem eq_smul_of_forall_lt_imp_le {μ μ' : E →+ K} {u : E} (hu : 0 < μ u)
 
 variable {μ : C → E →+ K} {u : E}
 
-/-- An additive family (36) has no ordering subjectivity iff its measures differ in unit alone
-(section 5.1). -/
+-- (36)
 theorem forall_not_orderingSubjective_iff (hu : ∀ c, 0 < μ c u) :
     (∀ a b, ¬ OrderingSubjective (fun c ↦ ⇑(μ c)) a b) ↔
       ∀ c c', ⇑(μ c') = (μ c' u / μ c u) • ⇑(μ c) :=

@@ -226,7 +226,7 @@ theorem exhIE_notFull_notHalf (hm : (fullᶜ ∩ half).Nonempty) :
     exhIE {fullᶜ, halfᶜ} fullᶜ = fullᶜ ∩ half := by
   rw [exhIE_pair_sdiff fullᶜ (by rwa [sdiff_compl]), sdiff_compl]
 
-/-- That inference entails (32a), *not empty*, when no glass is both half filled and empty. -/
+-- (32a)
 theorem exhIE_notFull_notHalf_subset (h : Disjoint half empty) (hm : (fullᶜ ∩ half).Nonempty) :
     exhIE {fullᶜ, halfᶜ} fullᶜ ⊆ emptyᶜ :=
   (exhIE_notFull_notHalf hm).symm ▸ inter_subset_right.trans h.subset_compl_right

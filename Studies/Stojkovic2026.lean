@@ -24,13 +24,6 @@ One ranking per group then gives [u] before /-je-/ and the group's vowel before 
 rankings generates all of its forms (`existsUnique_generates`), the Bulgarian and Macedonian
 present in [uv] included, since its theme is /-a-/.
 
-## Main results
-
-* `optimal_eq`: the winner of each group's ranking in each context.
-* `image_pattern`: the factorial typology of the variable constraints, the paper's (31).
-* `existsUnique_generates`: each variety's forms single out its group.
-* `uv_bounds_ov`: over the paper's own constraints [uv] harmonically bounds [ov].
-
 ## Implementation notes
 
 The paper states MAX and DEP over the morphemic and phonetic structures of Containment Theory.
@@ -211,8 +204,6 @@ theorem optimal_eq (g : Group) (c : Context) : optimal c g.ranking = {g.form c} 
 def paperConstraints : List (Constraint Candidate) :=
   [noHiatus c, specify c, noShare c, depBack c, depNonhigh c, maxNode c]
 
-/-- Over the paper's constraints [uv] does at least as well as [ov] on every constraint and
-better on DEP[−high], before /-a-/. -/
 theorem uv_le_ov (s : Wordlist.Root) :
     (∀ con ∈ paperConstraints ⟨s, .a⟩, con (.fill true true) ≤ con (.fill true false)) ∧
       depNonhigh ⟨s, .a⟩ (.fill true true) < depNonhigh ⟨s, .a⟩ (.fill true false) := by
@@ -243,8 +234,6 @@ theorem image_pattern :
         ({.fill true true}, {.fill true true}), ({.fill true true}, {.fill false true})} := by
   decide
 
-/-- The rankings of the paper's three variable constraints derive only the two patterns with
-[uv]. -/
 theorem image_pattern_of_paperFamilies :
     ([noShare, depBack, depNonhigh].permutations'.map pattern).toFinset =
       {({.fill true true}, {.fill true true}), ({.fill true true}, {.fill false true})} := by

@@ -140,8 +140,7 @@ def RVG (row : Datum) : Prop :=
 
 instance (row : Datum) : Decidable (RVG row) := inferInstanceAs (Decidable (_ → _ → _))
 
-/-- In the Norwegian passives of *promise* (20) the personal passive bars implicit control and the
-impersonal one allows it. -/
+-- (20)
 theorem rvg_20 :
     RVG Examples.ex_20a ∧ RVG Examples.ex_20b ∧ Examples.ex_20b.judgment = .acceptable := by
   decide

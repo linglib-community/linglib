@@ -20,19 +20,6 @@ antonym's, at every rationality and every cost. Reversing the height scale excha
 so the two antonyms of a construction differ only through their costs. How strong each inference
 is, and so whether the model recovers Rett's categorical classification, is a numerical matter.
 
-## Main statements
-
-* `positive_evaluative`, `exactEquative_evaluative`: after either antonym of the positive
-  construction or of the exact equative, the listener expects the measured height on that antonym's
-  side of the class centre.
-* `expectedDeviation_antonym`: the negative antonym's expected deviation is minus the positive
-  antonym's with the two costs exchanged.
-* `antonymsExclusive_iff_not_isPolarInvariant`, `expectedDeviation_congr_of_antonymsExclusive`:
-  the antonyms exclude each other exactly in the constructions Rett classifies as polar-variant,
-  and there each antonym's listener ignores the other antonym's cost.
-* `evaluativity_balances`: weighted by how often the speaker makes each utterance, the listener's
-  expected deviations sum to zero, so an antonym said rarely carries the more extreme inference.
-
 ## Implementation notes
 
 * A world is the subject's deviation from the class centre, in `[-4, 4]`, together with the

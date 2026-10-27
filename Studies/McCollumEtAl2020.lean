@@ -31,15 +31,6 @@ composition theorem the map is regular.
 * `tutrugbu`: the harmony as a docking process
 * `markRight`, `resolveLeft`: the two passes of the mark-up analysis
 
-## Main results
-
-* `tutrugbu_map_forms`: the map takes every word of (1) to (8) and (27) to its surface form
-* `tutrugbu_requiresBothSides`, `tutrugbu_twoSidedUnboundedDependence`: unbounded
-  circumambience, (13)
-* `tutrugbu_not_isSubsequential`: no subsequential analysis in either direction, (27)
-* `tutrugbu_map_eq_resolve_mark`, `tutrugbu_isBimachineComputable`: the mark-up analysis, and
-  the regularity it shows
-
 ## Implementation notes
 
 * A word is its prefix vowels and its root, the consonants dropped as in the transducers of the

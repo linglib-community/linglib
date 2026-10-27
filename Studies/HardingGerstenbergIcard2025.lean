@@ -96,7 +96,6 @@ instance [Nonempty M] : IsMarkovKernel (speaker β cost π R) :=
 
 variable {β} {m m' : M} {a a' : A} {w : W}
 
-/-- Row preference of the speaker is comparison of utility less cost. -/
 theorem speaker_real_lt_iff :
     (speaker β cost π R w).real {m} < (speaker β cost π R w).real {m'} ↔
       β * actionUtility π R m w - cost m < β * actionUtility π R m' w - cost m' := by
@@ -183,7 +182,7 @@ instance : semConj.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide
 /-- In the context Bob knows, he was late and forgot the birthday. -/
 def context : Context := ⟨true, true⟩
 
-/-- "Because T" is true in both worlds and "because B" in the conjunctive world (Example 3). -/
+-- Example 3
 theorem actualCause_T_semT : actualCause semT context .T .C :=
   ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
@@ -193,8 +192,7 @@ theorem actualCause_T_semConj : actualCause semConj context .T .C :=
 theorem actualCause_B_semConj : actualCause semConj context .B .C :=
   ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
-/-- "Because B" is false in the tardiness-only world, since no path runs from the birthday to
-crossness (Example 3). -/
+-- Example 3
 theorem not_actualCause_B_semT : ¬ actualCause semT context .B .C := by
   rintro ⟨-, -, I, h1, h2⟩
   have hB : ¬ Relation.ReflTransGen semT.graph.Adj .B .C := by decide
@@ -254,8 +252,7 @@ theorem policy_prior_half (m : Msg) : (policy βL prior reward m).real {1} = 1 /
     expectedReward_prior, expectedReward_prior]
   simp [Real.sigmoid_zero]
 
-/-- By the speaker's utilities (4), "because T" is worth nothing, and "because B" is negative in the
-tardiness-only world and positive in the conjunctive one. -/
+-- (4)
 theorem utility_L0 :
     actionUtility (policy βL L0 reward) reward 0 0 = 0 ∧
       actionUtility (policy βL L0 reward) reward 0 1 = 0 ∧
@@ -452,8 +449,6 @@ theorem expectedReward_L0_C :
       measureReal_def, sem, reward]
   norm_num
 
-/-- After "because C and D" confronting both is the strictly preferred action; after
-"because C" it is tied with confronting Charlie. -/
 theorem policy_L0 {βL : ℝ} (hβ : 0 < βL) :
     (policy βL L0 reward 2).real {0} < (policy βL L0 reward 2).real {2} ∧
       ¬ (policy βL L0 reward 0).real {0} < (policy βL L0 reward 0).real {2} := by

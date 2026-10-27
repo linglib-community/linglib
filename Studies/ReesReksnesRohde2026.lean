@@ -15,19 +15,6 @@ knowledgeable speaker and, in the second, for a quiet one. Two verification expe
 opposite question polarity locate a cost when the inference is endorsed, which the paper
 attributes to considering the alternative situation.
 
-## Main statements
-
-* `Speaker.prior_lt_posterior_iff`: speaking raises the probability that the situation changed
-  exactly when the remark is trivial on its own and a change would make it worth making.
-* `Speaker.posterior_eq_prior_of_not_knowledgeable`: a speaker who does not know the situation
-  over time conveys nothing about its past by speaking.
-* `Speaker.prior_lt_posterior_of_bar_le`: a quieter speaker licenses whatever a more talkative
-  one does, as long as a change would still be worth mentioning to her.
-* `ResponseModel.exp3_no_eq_exp4_no`, `AdditiveModel.yes_eq_yes_of_no_eq_no`: if considering the
-  alternative is the cost, the *no* answers of the two experiments take equally long, as found;
-  separate costs of a negative answer and of the inference could not also give the slower
-  inference-endorsing *yes*.
-
 ## Implementation notes
 
 Conditioning on the decision to speak is Rohde, Hoek, Keshev and Franke's account of the

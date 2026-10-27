@@ -16,20 +16,6 @@ neither true nor false when some best worlds satisfy it and some do not. Weak ne
 from strong necessity by an operator picking out the unique minimal set of a quantifier, which
 possibility lacks.
 
-## Main results
-
-* `should_eq_zero_iff`, `should_not`: the gap arises exactly in mixed domains, and negation is
-  symmetric and hence scopeless.
-* `not_exists_of_should_not`, `must_false_of_indet`: a true negated *should* contradicts the
-  existential continuation, where a negated *must* does not.
-* `must_eq_metaAssert_should`, `necessarily_removes_gap`: *necessarily* removes the gap as *all*
-  does.
-* `exception_tolerance`, `two_doors`: Križ's usability gives the exception tolerance of the
-  perfect-grade scenario and the indeterminacy of the two-doors scenario.
-* `x_must`, `possibility_witnesses`: the derivation of weak necessity applies to necessity only.
-* `should_matches_grid`, `domainRestriction_fails_exactly_gap`: over the paper's grid of
-  judgments the plural semantics fits every cell, and domain restriction fails exactly the gaps.
-
 ## Implementation notes
 
 `should D p` is Križ's plural predication with the best worlds `D w` as atoms. The grid reads each

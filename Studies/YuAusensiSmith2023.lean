@@ -303,8 +303,7 @@ theorem available_modifier_iff : Available a c .modifier ↔ ¬ a.DescribesState
   exact ⟨.change, ⟨⟨.result, ⟨rfl, rfl⟩, .inl rfl⟩, by simp [scene]⟩,
     ⟨.result, .inr ⟨rfl, rfl⟩, rfl⟩, by simp [scene]⟩
 
-/-- The causative verb phrase over any root is realized, *Lucy broke the vase* (21) and *Kim
-opened the door* (22) among them. -/
+-- (21), (22)
 theorem available_durative : Available a c .durative := by
   refine available_of ⟨.causing, ?_, by simp [scene]⟩
   cases c
@@ -419,9 +418,7 @@ theorem realized_internal_relativize_iff :
       ∃ s, BeaversEtAl2021.resultStative N P x s := by
   rw [denote_relativize_beaversKoontzGarboden, realized_internal_liftState_iff]
 
-/-- In the interpretation in which every state arises from a change, Beavers and
-Koontz-Garboden's change-of-state root has the internal reading that the examples reject,
-(27)–(29). -/
+-- (27), (29)
 theorem changing_internal :
     Reading.internal.Realized (relativize BeaversKoontzGarboden2020.changing) ⊥
       (Analysis.beaversKoontzGarboden.denote (relativize BeaversKoontzGarboden2020.changing)
@@ -436,8 +433,7 @@ section Resultative
 
 variable {Entity Ev : Type*} {M : Model Entity Ev} {ρ : Entity → Ev → Prop} {L : Ev → Prop}
 
-/-- A resultative on any root entails that something came to be in the root's state, which the
-denials (36) and (37) contradict. -/
+-- (36), (37)
 theorem exists_of_resultative {e : Ev}
     (h : Event.closure (flip (eventIdentification ρ (M.causative L))) e) : ∃ y, ρ y e :=
   let ⟨y, hρ, _⟩ := h

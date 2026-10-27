@@ -202,17 +202,15 @@ theorem sNotElec_sufficient : IsSufficient model sNotElec doorOpens false := by 
 
 theorem sNotCirc_sufficient : IsSufficient model sNotCirc doorOpens false := by decide +kernel
 
-/-- (39b) as printed, without the effect fact, is not a sufficient set under Definition (30b),
-which puts the effect in every sufficient set. -/
+-- (39b), (30b)
 theorem not_sufficient_as_printed :
     ¬ IsSufficient model [handle ← false, electricity ← false] doorOpens false := by
   decide
 
-/-- *open the door* has a culmination procedure, so its progressive is felicitous (33a). -/
+-- (33a)
 theorem felicitous : Felicitous model doorOpens := ⟨sMech, sMech_sufficient⟩
 
-/-- The electronic procedure needs the button (footnote 39): without it the circuit, whose
-equation reads the button, is settled against an undetermined equation value. -/
+-- footnote 39
 theorem not_sufficient_without_button :
     ¬ IsSufficient model
       [lock ← false, electricity ← true, circuit ← true, doorOpens ← true]
@@ -242,8 +240,7 @@ intuition. -/
 theorem not_prog_realistic : ¬ Prog model doorOpens beforeSwitch realistic :=
   fun h ↦ h.2 (Or.inr ⟨sNotCirc, sNotCirc_sufficient, by decide⟩)
 
-/-- The door's being unlocked is globally necessary for it to open (42): the lock alone makes a
-sufficient set for non-culmination. -/
+-- (42)
 theorem lock_globallyNecessary : GloballyNecessary model doorOpens lock false := by
   decide +kernel
 

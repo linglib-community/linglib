@@ -413,8 +413,7 @@ theorem stimulus_tie (c : ℝ) :
         ∀ f ∈ ({.shape} : Finset Feature), d2 f = true
       decide
 
-/-- On the stimulus, a mixture speaker with `wS > 0` prefers the full description whenever the
-egocentric speaker does not prefer the bare shape (§2.4.1). -/
+-- §2.4.1
 theorem stimulus_prefers_full {c α wS : ℝ} (hα : 0 < α) (hw : 0 < wS)
     (hego : (stimulus c).egoUtility {.shape} ≤
       (stimulus c).egoUtility {.shape, .color, .texture}) :

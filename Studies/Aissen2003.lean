@@ -29,18 +29,11 @@ marking — the zone whose constraints strictly dominate \*STRUC_C. The paper's
 optional zones (constraints that rerank with \*STRUC_C, stochastically in
 Boersma's sense) are noted in docstrings but not represented.
 
-## Main results
-
-- `dom_fits`, `dom_obligatory_zone_upperSet` — the paper's (33b): every attested
-  system fits Figure 4's product prominence order (`Alignment.Fits`), its
-  obligatory zone an upper set.
 - `figure2_typology` / `figure2_languages` — the six interpolation points on
   the definiteness subhierarchy generate exactly the six cutoff systems,
   matched type-for-type to Kalkatungu, Catalan, Pitjantjatjara, Hebrew,
   Turkish, and Written Japanese.
 - `figure3_typology` / `figure3_languages` — likewise for the animacy scale.
-- `two_dimensional_systems` — Hindi and both stages of Spanish need both
-  scales.
 
 ## References
 
@@ -198,8 +191,7 @@ noncomputable def marking (z : Set (Animacy × DefinitenessScale)) :
   | .P, c => if c ∈ z then some () else none
   | _, _ => none
 
-/-- A DOM system fits the prominence order of Figure 4 exactly when its zone is an upper
-set. -/
+-- Figure 4
 theorem fits_marking_iff (z : Set (Animacy × DefinitenessScale)) :
     Fits (marking z) ↔ IsUpperSet z := by
   have hA : overt (marking z) .A = ∅ := by ext; simp [marking]
@@ -245,14 +237,14 @@ instance (z : Set (Animacy × DefinitenessScale)) [DecidablePred (· ∈ z)] :
     Decidable (DefinitenessOnly z) :=
   inferInstanceAs (Decidable (∀ _ _ _, _))
 
-/-- The Figure 2 and §5.3 systems are animacy-blind. -/
+-- Figure 2, §5.3
 theorem definiteness_systems_one_dimensional :
     DefinitenessOnly catalanDOM ∧ DefinitenessOnly pitjantjatjaraDOM ∧
       DefinitenessOnly hebrewDOM ∧ DefinitenessOnly turkishDOM ∧
       DefinitenessOnly persianDOM ∧ DefinitenessOnly writtenJapaneseDOM := by
   decide
 
-/-- The Figure 3 systems are definiteness-blind. -/
+-- Figure 3
 theorem animacy_systems_one_dimensional : AnimacyOnly ritharnguDOM ∧ AnimacyOnly dhargariDOM := by
   decide
 
@@ -293,8 +285,6 @@ def markedWins (ranking : List (Constraint (L × Bool))) (ℓ : L) : Bool :=
   decide ((Tableau.ofList {(ℓ, true), (ℓ, false)} ranking).optimal
     = {(ℓ, true)})
 
-/-- In Tableaux 1–2 the zero parse of a specific indefinite object wins in Hebrew and the marked
-parse in Turkish. -/
 theorem tableaux_1_2 :
     markedWins (interpolation DefinitenessScale.all 3) .indefiniteSpecific = false ∧
     markedWins (interpolation DefinitenessScale.all 4) .indefiniteSpecific = true := by
@@ -324,7 +314,7 @@ theorem figure2_languages :
       markedWins (interpolation DefinitenessScale.all 5) d) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- Persian's obligatory grid realizes the same interpolation type as Turkish's (§5.3). -/
+-- §5.3
 theorem persian_same_type_as_turkish :
     ∀ c, c ∈ persianDOM ↔ c ∈ turkishDOM := by decide
 

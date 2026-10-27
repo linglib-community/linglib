@@ -140,8 +140,7 @@ theorem interpret_interrogative_ofSet (α : Set W) (i : Intonation) :
     (Form.interrogative i).interpret (ofSet α) = (ofSet α).query := by
   cases i <;> simp [Form.interpret, Intonation.interpret, not_isInquisitive_ofSet]
 
-/-- Every form but the falling declarative expresses the same inquisitive proposition
-`{α, ᾱ}` for a radical `α` (43). -/
+-- (43)
 theorem interpret_eq_query_ofSet (α : Set W) (f : Form) (h : f ≠ .declarative .falling) :
     f.interpret (ofSet α) = (ofSet α).query := by
   rcases f with i | i | i
@@ -242,7 +241,7 @@ theorem utter_eq_basic_of_not_isMarked {f : Form} (h : ¬ f.IsMarked) (α : Set 
     K.utter x f α = K.basic x (f.interpret (ofSet α)) := by
   rcases f with i | i | i <;> cases i <;> simp_all [utter, Form.specialEffect, Form.IsMarked]
 
-/-- A marked form's effects include the basic convention (21b). -/
+-- (21b)
 theorem table_utter (f : Form) (α : Set W) :
     (K.utter x f α).table = f.interpret (ofSet α) :: K.table := by
   rcases f with i | i | i <;> cases i <;> rfl
@@ -267,8 +266,7 @@ theorem cs_basic_of_isInquisitive {φ : Question W} (h : φ.info = Set.univ) :
   simp only [cs, basic, h]
   rw [State.commitmentSet_insert_self, Set.univ_inter]
 
-/-- A marked form registers the highlighted alternative as evidenced with its credence
-interval, as in (52), (56) and (58). -/
+-- (52), (56), (58)
 theorem mem_evidence_utter {f : Form} {I : CredenceLevel × CredenceLevel}
     (h : f.specialEffect = some I) (α : Set W) :
     (α, Set.Icc I.1 I.2) ∈ (K.utter x f α).evidence x := by

@@ -283,8 +283,7 @@ def sex : Set Human := {.male, .female}
 /-- The choice set *age* of Figure 3.9. -/
 def age : Set Human := {.adult, .child}
 
-/-- Only one member of a choice set may be chosen (Section 3.3.2): no concept isA both
-*male* and *female*. -/
+-- Section 3.3.2
 theorem pairwiseDisjoint_sex : sex.PairwiseDisjoint Set.Iic := by
   have h : ∀ x : Human, x ≤ .male → x ≤ .female → False := by decide
   rintro a (rfl | rfl) b (rfl | rfl) hne
@@ -325,8 +324,7 @@ def grandmother : α → α → Prop := Relation.Comp (parent mother father) mot
 /-- Figure 3.17: a grandparent is a parent's parent. -/
 def grandparent : α → α → Prop := Relation.Comp (parent mother father) (parent mother father)
 
-/-- A grandparent's parent equals a parent's parent's parent, the great-grandparent of Figure 3.17
-(Section 3.5.2). -/
+-- Figure 3.17, Section 3.5.2
 theorem comp_grandparent_parent :
     Relation.Comp (grandparent mother father) (parent mother father) =
       Relation.Comp (parent mother father)
@@ -367,8 +365,7 @@ def uncle : α → α → Prop := Relation.Comp (parent mother father) (brother 
 
 def aunt : α → α → Prop := Relation.Comp (parent mother father) (sister mother father female)
 
-/-- A parent's brother is an uncle, though not conversely once Figure 8.16 (e) extends the
-relation to the husbands of aunts. -/
+-- Figure 8.16
 theorem uncle_of_parent_brother {x p u : α} (hp : parent mother father x p)
     (hb : brother mother father male p u) : uncle mother father male x u :=
   ⟨p, hp, hb⟩
@@ -410,8 +407,7 @@ theorem raise_le_of_raising {S : α → α → Prop} (hS : Raising valent S)
   | refl => exact hsubj _ _ hs
   | tail _ hv ih => exact hS _ _ _ hv ih
 
-/-- Section 7.2.6: the subject is shared down a chain of valents, however long, the
-recursion of Figure 7.12. -/
+-- Section 7.2.6, Figure 7.12
 theorem raise_of_transGen {h v s : α} (hs : subj h s) (hchain : Relation.TransGen valent h v) :
     raise valent subj v s :=
   ⟨h, hs, hchain.to_reflTransGen⟩

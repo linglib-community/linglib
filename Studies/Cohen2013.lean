@@ -82,8 +82,7 @@ quantifier object. -/
 def SHIFT {E : Type*} (V : E → E → Prop) : ((E → Prop) → Prop) → E → Prop :=
   fun Q x ↦ Q (fun y ↦ V x y)
 
-/-- Negating a shifted verb differs from shifting the negated verb, and only the first order is
-attested (25). -/
+-- (25)
 theorem not_shift_ne_shift_not :
     ∃ (V : Bool → Bool → Prop) (Q : (Bool → Prop) → Prop) (x : Bool),
       ¬ (¬ SHIFT V Q x ↔ SHIFT (fun a b ↦ ¬ V a b) Q x) :=
@@ -203,8 +202,7 @@ theorem cigarette_no_true_reading_available :
 /-- One brand, smoked at every occasion. -/
 abbrev smokesBrand : Fin 1 → Fin 3 → Prop := fun _ _ ↦ True
 
-/-- With a constant witness the same local shift yields a true reading: the brand
-variant (17b) is fine. -/
+-- (17b)
 theorem brand_true_reading_available :
     ∃ l, Device.typeShift.AppliesAt l ∧
       ∃ b : Fin 1, gamma inSpeechInterval (fun e ↦ smokesBrand b e) () :=
@@ -224,13 +222,12 @@ abbrev eatsNettles : Fin 5 → Prop := (·.val = 4)
 /-- Every cow eats something, the disjunction of the alternatives under object focus. -/
 abbrev eatsSomething : Fin 5 → Prop := fun _ ↦ True
 
-/-- With object focus the generic scopes over negation, and most eating cows avoid nettles
-((9a)). -/
+-- (9a)
 theorem cows_gen_over_neg :
     Cohen1999.gen Finset.univ (fun _ ↦ True) eatsSomething (fun x ↦ ¬ eatsNettles x) := by
   decide
 
-/-- With auxiliary focus, negation scopes over the generic, so the sentence is false (9b). -/
+-- (9b)
 theorem cows_neg_over_gen_false :
     Cohen1999.gen Finset.univ (fun _ ↦ True) eatsNettles eatsNettles :=
   Cohen1999.gen_self (by decide)

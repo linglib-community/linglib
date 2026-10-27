@@ -15,17 +15,6 @@ prefix, inserted last, sees nothing of the object. In Chukchi the third-person s
 object presents the same features whatever its subject, the trigger is the inserted item, an
 inward sensitivity.
 
-## Main statements
-
-* `Itelmen.rows_morphs`, `Chukchi.rows_morphs`: the Itelmen verbs and the Chukchi Past I
-  paradigm derive from one Vocabulary each.
-* `Itelmen.prefix_sees_no_object`: when the subject prefix is inserted, nothing of the object
-  agreement remains for it to be conditioned by; under non-deletion it would remain.
-* `Chukchi.object_features_cannot_bleed`: a deletion of *ne-* keyed to the object's features
-  overapplies under non-deletion and never applies under rewriting.
-* `Chukchi.ditransitive_retains_prefix`: when the verb agrees with a second-person dative, a
-  third-singular subject acting on a third-singular direct object keeps *ne-*.
-
 ## Implementation notes
 
 * Context is hierarchical. Mood is omitted, every form being realis or indicative, and the
@@ -139,8 +128,7 @@ third-plural object. -/
 def bring : ComplexHead (Morpheme Feature String) (Morpheme Feature String) :=
   word "tɸ" {classII} {first, sg} {third, pl}
 
-/-- In (9b) the Class II marker sees the root's diacritic inward, past the tense suffix already
-rewritten as *-s-*, and both agreement nodes outward, bare. -/
+-- (9b)
 theorem class_marker_context :
     stepContext vocab bring .rewriting 1 =
       ⟨{classMarker}, [{item "s"}, {classII, item "tɸ"}],

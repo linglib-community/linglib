@@ -37,18 +37,6 @@ status suffix; it frees the subject, licenses non-finite transitives (the Crazy 
 and as a last resort fails with reflexive and bare objects, which need no Case and let the
 subject of a regular transitive extract.
 
-## Main statements
-
-* `tada`: a registered language marks the extraction of a core argument from a finite transitive
-  exactly when the regular derivation fails, which for the subject is when the absolutive is
-  high.
-* `converges_iff_verbForm`: in Q'anjob'al the derivation that converges uses the verb form the
-  fragment records, Agent Focus in every non-finite transitive and under extraction of a
-  third-person subject.
-* `formallyTransitive_iff_hasSetA`, `formallyTransitive_iff_statusSuffix`: Agent Focus selects
-  intransitive v, so it has no Set A and takes the intransitive status suffix.
-* `analysed_rows`: every analysed example is grammatical exactly when its clause converges.
-
 ## Implementation notes
 
 * The paper's v sits above the substrate's Voice head and is formally transitive when Voice
@@ -226,7 +214,7 @@ def Trapped (c : Clause) : Prop :=
 
 instance : DecidablePred Trapped := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Where v licenses the object nothing is trapped (52): the object never raises. -/
+-- (52)
 theorem not_trapped_of_v {c : Clause} (h : c.licenser = .v) : ¬ Trapped c :=
   fun ht ↦ by simpa [Predicate.Raises, h] using ht.2
 
@@ -237,7 +225,7 @@ def SyntacticallyErgative (l : Licenser) : Prop :=
 
 instance : DecidablePred SyntacticallyErgative := fun _ ↦ inferInstanceAs (Decidable (Trapped _))
 
-/-- A language bans subject extraction exactly when Infl licenses the object ((19), (24)). -/
+-- (19), (24)
 theorem syntacticallyErgative_iff (l : Licenser) : SyntacticallyErgative l ↔ l = .infl := by
   cases l <;> decide
 
@@ -256,8 +244,7 @@ structure Configuration where
 /-- A configuration is morphologically ergative when v licenses the transitive subject. -/
 def Configuration.MorphologicallyErgative (k : Configuration) : Prop := k.subject = .v
 
-/-- Syntactic ergativity entails morphological ergativity (10), since Infl licensing the object
-leaves the subject to v. -/
+-- (10)
 theorem morphologicallyErgative_of_syntacticallyErgative (k : Configuration)
     (h : SyntacticallyErgative k.object) : k.MorphologicallyErgative := by
   rw [syntacticallyErgative_iff] at h
@@ -265,8 +252,7 @@ theorem morphologicallyErgative_of_syntacticallyErgative (k : Configuration)
   · exact absurd (k.infl_once hs) (by simp [h])
   · exact hs
 
-/-- The converse fails (10): the default-absolutive configuration is morphologically but not
-syntactically ergative. -/
+-- (10)
 theorem v_not_syntacticallyErgative :
     (⟨.v, .v, nofun⟩ : Configuration).MorphologicallyErgative ∧ ¬ SyntacticallyErgative .v :=
   ⟨rfl, by decide⟩
@@ -299,15 +285,13 @@ def Converges (c : Clause) : Prop :=
 
 instance : DecidablePred Converges := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Non-finite licensing (27): a regular transitive object survives without Infl exactly where
-v licenses it, and an absolutive intransitive subject only under finite Infl. -/
+-- (27)
 theorem nonfinite_licensing (l : Licenser) :
     ((Predicate.transitive agentive .dp).ObjectLicensed l false ↔ l = .v) ∧
       ¬ (Predicate.intransitive .setB).SubjectLicensed false := by
   cases l <;> decide
 
-/-- Agent Focus in a high-abs language frees the extracting subject (67) and licenses the object of
-a non-finite transitive (70), where the regular derivation crashes. -/
+-- (67), (70)
 theorem agent_focus :
     Converges ⟨.infl, true, .transitive voiceAF .dp, some .A, false⟩ ∧
     ¬ Converges ⟨.infl, true, .transitive agentive .dp, some .A, false⟩ ∧
@@ -315,8 +299,7 @@ theorem agent_focus :
     ¬ Converges ⟨.infl, false, .transitive agentive .dp, none, false⟩ := by
   decide
 
-/-- Agent Focus is barred without subject extraction in finite clauses, in low-abs languages, and
-with a caseless object (75b), where a regular transitive suffices (75a). -/
+-- (75b), (75a)
 theorem last_resort :
     ¬ Converges ⟨.infl, true, .transitive voiceAF .dp, none, false⟩ ∧
     ¬ Converges ⟨.v, true, .transitive voiceAF .dp, some .A, false⟩ ∧
@@ -324,8 +307,7 @@ theorem last_resort :
     Converges ⟨.infl, true, .transitive agentive .caseless, some .A, false⟩ := by
   decide
 
-/-- The antipassive frees the subject (60) on either count: its v is intransitive, and its
-oblique patient never raises to the edge. -/
+-- (60)
 theorem antipassive_frees (l : Licenser) :
     ¬ (Predicate.transitive antipassive .oblique).FormallyTransitive ∧
       ¬ (Predicate.transitive antipassive .oblique).Raises l ∧
@@ -439,13 +421,11 @@ instance : ∀ L r, Decidable (MarksExtraction L r)
 
 end Language
 
-/-- Every registered language but San Juan Atitán Mam, which is tripartite, marks its arguments
-ergatively in the perfective (§2.1). -/
+-- §2.1
 theorem isErgativePerfective_iff (L : Language) : L.IsErgativePerfective ↔ L ≠ .mam := by
   cases L <;> decide
 
-/-- Third person singular absolutive is null in every registered language ergative in the
-perfective (13); Mam's default Set B surfaces there. -/
+-- (13)
 theorem thirdSgZero_of_isErgativePerfective {L : Language} (h : L.IsErgativePerfective) :
     L.setB.IsThirdSgZero := by
   cases L <;> first | decide | exact absurd h (by decide)
@@ -465,8 +445,7 @@ theorem tsotsil_marks_free_extraction :
       Converges ⟨Language.tsotsil.licenser, true, .transitive agentive .dp, some .A, false⟩ := by
   decide
 
-/-- Yucatec is the outlier of (19): its absolutive is low, so the regular derivation extracts
-its transitive subject, yet it marks the extraction with Agent Focus. -/
+-- (19)
 theorem yukatek_marks_free_extraction :
     Language.yukatek.MarksExtraction .A ∧
       Converges ⟨Language.yukatek.licenser, true, .transitive agentive .dp, some .A, false⟩ := by

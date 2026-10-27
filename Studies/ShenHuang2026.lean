@@ -186,8 +186,7 @@ theorem pic_violated_iff (c : Config) :
   obtain ⟨f, o, v⟩ := c
   cases f <;> cases o <;> cases v <;> decide
 
-/-- With covert movement subject to the PIC, the LF-movement analysis wrongly predicts a Mandarin
-in-situ definite island removed by verbs of creation (§3, §5.2, Table 2). -/
+-- §3, §5.2, Table 2
 theorem violatesPIC_covertTree_iff (c : Config) :
     c.ViolatesPIC c.covertTree ↔ c.object = .definite ∧ c.creation = false := by
   obtain ⟨f, o, v⟩ := c
@@ -246,15 +245,13 @@ def Observed (account : Finset Constraint) : Prop :=
 instance (account : Finset Constraint) : Decidable (Observed account) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- DP phasehood alone predicts an island only for a fronted wh-phrase under a non-creation verb,
-and none in situ (Table 1). -/
+-- Table 1
 theorem phasehood_predictions :
     IslandEffect phasehood true false ∧ ¬ IslandEffect phasehood true true ∧
       VOCEffect phasehood true ∧ ∀ v, ¬ IslandEffect phasehood false v := by
   decide
 
-/-- The Specificity Condition alone (Table 1) predicts an island for fronted and in-situ
-wh-phrases under every verb class, and no verb-of-creation effect. -/
+-- Table 1
 theorem specificity_predictions :
     (∀ fronted v, IslandEffect specificity fronted v) ∧
       ∀ fronted, ¬ VOCEffect specificity fronted := by
@@ -275,8 +272,7 @@ def Config.ofDatum (ex : Datum) : Option Config := do
   let v ← ex.parse? "creation" [("yes", true), ("no", false)]
   pure ⟨f, o, v⟩
 
-/-- In the verb-of-creation contrasts of [davies-dubinsky-2003] ((52)–(54)), a row violating more
-constraints of the combined account is judged no better. -/
+-- (52), (54) [davies-dubinsky-2003]
 theorem stacking_daviesDubinsky :
     ∀ ex₁ ∈ DaviesDubinsky2003.Examples.all, ∀ ex₂ ∈ DaviesDubinsky2003.Examples.all,
       ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
@@ -344,21 +340,18 @@ def schedule (edge front : Bool) : List (ℕ × ℕ) :=
   [(embeddedStage edge, embeddedStage edge),
     ((derivation edge front).length, (derivation edge front).length)]
 
-/-- The embedded clause is spelled out with *what* first when it stops at the edge, and last when
-it stays in situ (27). -/
+-- (27)
 theorem embedded_spellout (edge front : Bool) :
     ((derivation edge front).spellout (embeddedStage edge) (embeddedStage edge)).filterMap
       Terminal.ofToken? =
       if edge then [what, mary, would, eat] else [mary, would, eat, what] := by
   cases edge <;> cases front <;> decide
 
-/-- When *what* stops at the edge of the embedded clause (27a), the order fixed there is preserved
-at the matrix Spell-out and the derivation linearizes. -/
+-- (27a)
 theorem edge_stop_linearizes : (derivation true true).Linearizes (schedule true true) := by
   decide
 
-/-- Leaving *what* in situ at the embedded Spell-out (27b) yields an ordering contradiction at the
-matrix Spell-out. -/
+-- (27b)
 theorem phase_skip_not_linearizes : ¬ (derivation false true).Linearizes (schedule false true) := by
   decide
 
@@ -383,8 +376,7 @@ instance : DecidablePred IsVerbOfCreation := fun v ↦ inferInstanceAs (Decidabl
 def Config.ofVerb (fronted : Bool) (o : Definiteness) (v : English.Verbs.Verb) : Config :=
   ⟨fronted, o, decide (IsVerbOfCreation v)⟩
 
-/-- In (25), *read that book about* violates both constraints and *write that book about* only the
-Specificity Condition. -/
+-- (25)
 theorem read_write :
     violations combined (Config.ofVerb true .definite English.Verbs.read) = 2 ∧
       violations combined (Config.ofVerb true .definite English.Verbs.write) = 1 := by

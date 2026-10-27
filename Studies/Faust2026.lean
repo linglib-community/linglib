@@ -18,15 +18,6 @@ and the feminine morph, inherent inflection on n, merges only with a nominal bas
 the distribution of the intruding [t] across the Amharic paradigms, which Broselow's default
 consonant left unexplained, and the No-Crossing Constraint keeps it out of the hollow verbs.
 
-## Main statements
-
-* `klj_spread_misaligned`: spreading the final consonant of √klj would misalign the root, so
-  the final slot stays vacant.
-* `isNonCrossing_melodyLinks_intrude`: the intruder's line crosses no root line.
-* `rows_surface`: the derivations reproduce the squib's paradigms.
-* `intruder_distribution`: the intruder occurs exactly in the nominal cells of the roots whose
-  final radical is barred.
-
 ## Implementation notes
 
 * The derivations run over the squib's transcription. `fragment_roots` shows that its roots,
@@ -79,8 +70,7 @@ theorem misaligned_append (m : TemplateMatch α) (l : List Association) :
         a.slotIndex + 1 = m.template.length := by
   simp only [Misaligned, List.mem_append, or_and_right, exists_or]
 
-/-- Lines from the affix tier never misalign the root, since the intruder "is not a radical" ((8),
-(10)). -/
+-- (8), (10)
 theorem misaligned_append_affix (m : TemplateMatch α) (l : List Association)
     (h : ∀ a ∈ l, a.source = .affix) :
     Misaligned { m with associations := m.associations ++ l } ↔ Misaligned m := by
@@ -230,8 +220,7 @@ theorem misaligned_intrudeAt (m : TemplateMatch String) (s : Nat) :
     Misaligned (intrudeAt m s) ↔ Misaligned m :=
   misaligned_append_affix m [⟨.affix, 0, s⟩] (by simp)
 
-/-- Intrusion is template satisfaction without misalignment, since the intruder never misaligns the
-root ((8), (10)). -/
+-- (8), (10)
 theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) ↔ Misaligned m := by
   unfold intrude
   split
@@ -259,8 +248,7 @@ def derive (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
   let m := associate p r
   if p.category = .noun ∧ ¬ m.allCSlotsFilled then intrude m else m
 
-/-- Only a nominal base merges with the feminine morph (11), so a verbal or adjectival base is
-realized as associated. -/
+-- (11)
 theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
     (h : p.category ≠ .noun) : derive p r = associate p r := by
   simp [derive, h]
@@ -379,8 +367,7 @@ def hebrewTaqtil : Pattern :=
   { template := [.C, .C, .V, .C], consonantal := [3], category := .noun, vocalism := ["i"],
     vocLines := [⟨.vocalism, 0, 2⟩], pre := ["ta"] }
 
-/-- √klt fills CaCaC[+c] radical by radical and √kl by spreading its final l, both without
-misalignment ((3a–b), (1)). -/
+-- (3a–b), (1)
 theorem klt_kl_satisfy :
     (derive hebrewPst klt).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst klt) ∧
     (derive hebrewPst kl).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst kl) ∧
@@ -395,14 +382,13 @@ theorem klj_spread_misaligned :
     realize hebrewPst ((derive hebrewPst klj).spread .root) = ["k", "a", "l", "a", "l"] := by
   decide
 
-/-- The final slots of QTiLa and QaTuL are unspecified, so j associates and surfaces (3c). -/
+-- (3c)
 theorem klj_qtila_qatul :
     (derive hebrewQtila klj).allCSlotsFilled ∧
     (derive hebrewQatul klj).allCSlotsFilled := by
   decide
 
-/-- √dmj satisfies taQTiL through the feminine morph's t rather than by misaligning spreading (10).
--/
+-- (10)
 theorem dmj_taqtil :
     (associate hebrewTaqtil dmj).unfilledCSlots = [3] ∧
     Misaligned ((associate hebrewTaqtil dmj).spread .root) ∧
@@ -433,8 +419,7 @@ def amharicInf : Pattern :=
     vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 3⟩], pre := ["mä"], joinsGlide := true }
 
-/-- In the PFV √fdj leaves its final slot vacant without misalignment, where spreading d would
-misalign (7). -/
+-- (7)
 theorem fdj_pfv :
     ⟨.root, 2, 2⟩ ∈ (derive amharicPfv fdj).associations ∧
     (derive amharicPfv fdj).unfilledCSlots = [4] ∧
@@ -442,15 +427,13 @@ theorem fdj_pfv :
     Misaligned ((derive amharicPfv fdj).spread .root) := by
   decide
 
-/-- The biradical √wd satisfies the PFV template by spreading its final d without misalignment and
-is OCP-clean, while [broselow-1984]'s √wdd is not (5b). -/
+-- (5b) [broselow-1984]
 theorem wd_pfv :
     (derive amharicPfv wd).allCSlotsFilled ∧ ¬ Misaligned (derive amharicPfv wd) ∧
     wd.IsOCPClean ∧ ¬ (⟨["w", "d", "d"]⟩ : ConsonantalRoot String).IsOCPClean := by
   decide
 
-/-- In the GRND the intruder fills the vacant final slot, satisfying the template without
-misalignment (8). -/
+-- (8)
 theorem fdj_grnd :
     ⟨.affix, 0, 3⟩ ∈ (derive amharicGrnd fdj).associations ∧
     (derive amharicGrnd fdj).allCSlotsFilled ∧
@@ -458,8 +441,7 @@ theorem fdj_grnd :
     IsNonCrossing (melodyLinks (derive amharicGrnd fdj) : SetRel ℕ ℕ) := by
   decide
 
-/-- Each INF derivation leaves a C-slot vacant, and the intruder fills it only when it is final,
-(13a) against (13b–c). -/
+-- (13a), (13b–c)
 theorem inf_intrusion :
     (associate amharicInf sma).unfilledCSlots = [4] ∧
     (associate amharicInf sam).unfilledCSlots = [2] ∧
@@ -598,8 +580,7 @@ theorem rows_surface :
       r.surface? = some r.form.toList := by
   decide
 
-/-- The final j of √klj surfaces in the action noun and the passive participle and not in the
-PST.3MSG (3). -/
+-- (3)
 theorem j_surfaces :
     ∀ r ∈ rows, r.lang = .hebrew →
       ('j' ∈ r.form.toList ↔ r.root = klj ∧ r.cell ≠ .pst3msg) := by
@@ -622,7 +603,7 @@ theorem intruder_distribution :
       ('t' ∈ r.form.toList ∧ "t" ∉ r.root.segments ↔ r.cell.IsNominal ∧ BarredFinal r.root) := by
   decide
 
-/-- A taQTiL noun whose last consonant is not [t] is masculine (9). -/
+-- (9)
 theorem masculine_of_not_t_final :
     ∀ r ∈ nounRows, r.form.toList.getLast? ≠ some 't' → r.gender = .Masc := by
   decide

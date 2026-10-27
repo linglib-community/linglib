@@ -19,18 +19,6 @@ which fits neither of the paper's hypotheses for that task. The paper suggests t
 is prejudicial there, blaming the speaker, though it then expects every condition to be judged
 more charitably, which it does not find.
 
-## Main statements
-
-* `ground_profile_subset_iff`: the traits each persona is introduced with index poles of
-  exactly the precision variant it embodies, in the field [beltrama-solt-burnett-2023] measured.
-* `Hypothesis1.rejects`, `rejects_imprecise_iff`: Hypothesis 1 as monotonicity of rejection in
-  strictness; the Imprecise screen is rejected at the paper's narrow range and accepted at its
-  wide one.
-* `observed_coveredScreen`, `not_hypothesis2A`, `not_hypothesis2B`: the Covered Screen results
-  bear out Hypothesis 1, and the Truth Value Judgment results fit neither Hypothesis 2A nor 2B.
-* `PrejudicialAccount.not_agrees`: no table of rejection rates that agrees with the printed
-  results satisfies the account of §7.
-
 ## Implementation notes
 
 * The precision field is the opposition reading of [beltrama-solt-burnett-2023], precise and
@@ -109,8 +97,7 @@ theorem personaShift_nerdy_eq_neg_chill :
     personaShift (some .nerdy) = -personaShift (some .chill) :=
   congrFun (BeltramaSoltBurnett2023.antipodal_contrastField .exp1) .competence
 
-/-- The Competence and the Warmth clusters predict the same shift, so the field cannot tell apart
-the two sources of the effect that §3 distinguishes. -/
+-- §3
 theorem personaShift_eq_neg_warmth (p : Persona) :
     personaShift (some p) = -precisionField p.variant .warmth := by
   cases p <;> decide +kernel
@@ -195,7 +182,7 @@ theorem observed_coveredScreen (p : Persona) :
     observed .coveredScreen p = personaShift (some p) := by
   cases p <;> decide +kernel
 
-/-- The Chill result of the Truth Value Judgment task runs as Hypothesis 2A predicts (§7). -/
+-- §7
 theorem observed_truthValueJudgment_chill :
     observed .truthValueJudgment .chill = personaShift (some .chill) := by decide +kernel
 

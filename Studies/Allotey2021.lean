@@ -73,8 +73,7 @@ open Binding.MinimalPronoun Control Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 
-/-- All pronominals except the second and third person and the subject-only impersonal *a* have one
-form in nominative, accusative and genitive (p. 25). -/
+-- p. 25
 theorem exists_syncretic_form_iff (r : Row) :
     (∃ f ∈ table (r, .subjective), ∀ k, f ∈ table (r, k)) ↔ r ≠ .sg2 ∧ r ≠ .sg3 ∧ r ≠ .imp := by
   cases r <;> decide
@@ -84,8 +83,7 @@ theorem objective_form_iff (r : Row) :
       r = .sg2 ∨ r = .sg3 := by
   cases r <;> decide
 
-/-- "The possessive form of pronominals also have an identical phonetic form to the nominative
-case pronominals" (p. 25). -/
+-- p. 25
 theorem possessive_subset_subjective (r : Row) :
     table (r, .possessive) ⊆ table (r, .subjective) := by
   cases r <;> decide
@@ -138,7 +136,7 @@ theorem proposition_iff_finite :
       (s = .proposition ↔ ∃ z ∈ complementizers, r.frame.Takes z ∧ z.IsFinite) := by
   decide
 
-/-- The inventory has both subject and object control (Table 2). -/
+-- Table 2
 theorem control_rows :
     (∃ v ∈ verbs, ∃ d ∈ v.valency.diatheses, d.controllerRole = some .S) ∧
       ∃ v ∈ verbs, ∃ d ∈ v.valency.diatheses, d.controllerRole = some .P := by
@@ -220,17 +218,13 @@ theorem subject_tone_rows :
 
 /-! ### The irrealis marker -/
 
-/-- The irrealis marker appears on the subject of the control frame and nowhere else in the
-complement data (exx 34, 88–89, 92, 100–103, 106, 109, 112, 117–119, 122), tracking the frame, not
-the verb (exx 43, 117a; ex 89a). -/
 theorem marker_rows :
     ∀ row ∈ Examples.all, row.feature? "clauseContext" ∈ [none, some "control"] →
       ∀ m ∈ row.feature? "irrealisMarker",
         (m = "present" ↔ (row.feature? "control").isSome) := by
   decide +kernel
 
-/-- In the implicative contrast (ex 89) the marker is absent exactly under the implicative verbs
-([karttunen-1971]). -/
+-- [karttunen-1971]
 theorem implicative_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "implicative" →
       ∀ v ∈ verbOf row,
@@ -250,7 +244,6 @@ theorem longDistance_rows :
       (row.judgment = .acceptable ↔ row.feature? "antecedent" = some "local") := by
   decide +kernel
 
-/-- Under ellipsis the controlled pronoun has the sloppy reading only (ex 52). -/
 theorem sloppy_only :
     ∃ row ∈ Examples.all, row.feature? "diagnostic" = some "ellipsis" ∧
       ("sloppy", .acceptable) ∈ row.readings ∧ ("strict", .unacceptable) ∈ row.readings := by
@@ -261,7 +254,6 @@ theorem free_reading_rows :
       (j = .acceptable ↔ c.complementizer.IsFinite) := by
   decide +kernel
 
-/-- Ex 53 witnesses the *de se* row, being infelicitous in its context. -/
 theorem deSe_witness :
     ∃ row ∈ Examples.all, row.feature? "diagnostic" = some "deSe" ∧
       row.judgment = .unacceptable ∧ row.context ≠ "" := by
@@ -368,14 +360,10 @@ def realization (ctx : IrrealisContext) : Finset Exponent :=
 theorem realization_control : realization .embeddedControl = {.subjectTone} := by
   decide +kernel
 
-/-- The embedded-control realization is unique among the five contexts; in
-    particular it lacks the subjunctive's doubled high tone (ex 88). -/
 theorem control_realization_unique (c : IrrealisContext) :
     realization c = realization .embeddedControl → c = .embeddedControl := by
   cases c <;> decide +kernel
 
-/-- Adding the verb's tone to the control clause (ex 88) or the subject's to the future (ex 96), or
-dropping the verb's from the subjunctive (ex 87), is ungrammatical. -/
 theorem realization_exact :
     (∃ row ∈ rowsIn .embeddedControl .ungrammatical, shows row .verbTone) ∧
     (∃ row ∈ rowsIn .future .ungrammatical, shows row .subjectTone) ∧

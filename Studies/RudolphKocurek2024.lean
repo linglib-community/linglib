@@ -24,14 +24,6 @@ The supplement strengthens the comparative so that the equative becomes transiti
 metalinguistic degrees, the classes of sets of interpretations under the revised equative, form a
 bounded linear order on which the revised comparative is the comparative of degree semantics.
 
-## Main results
-
-* `comp_trans`, `accepted_comp_of_accepted`: the comparative is transitive, and a sentence with
-  its negated rival entails it for acceptance but not for truth.
-* `evalVery_iff`: *very A* is truth at every reasonably close interpretation.
-* `evalRevised_equi_trans`: the revised equative is transitive, unlike the basic one.
-* `mc_iff_formulaDeg_lt`: the revised comparative compares metalinguistic degrees.
-
 ## Implementation notes
 
 * An interpretation is a world-indexed family of first-order structures. The comparative is the
@@ -291,8 +283,7 @@ section SemanticOrdering
 
 variable {ord : SemanticOrdering W} {R : W → Prop}
 
-/-- The revised comparative is transitive, the supplement's Fact 4: whichever witness ranks higher
-witnesses the composite. -/
+-- Fact 4
 theorem RevisedComp.trans (h₁ : RevisedComp ord.le P Q i) (h₂ : RevisedComp ord.le Q R i) :
     RevisedComp ord.le P R i := by
   obtain ⟨m₁, hm₁, hP₁, hQ₁, hd₁, he₁⟩ := h₁
@@ -310,7 +301,7 @@ theorem RevisedComp.trans (h₁ : RevisedComp ord.le P Q i) (h₂ : RevisedComp 
     exacts [ord.lt_of_lt_of_le (hd₁ b hb hQ hP) hle, hd₂ b hb hR hQ, h b hb hQ hR,
       hd₂ b hb hR hQ, ord.lt_of_lt_of_le (hd₁ b hb hQ hP) hle, h b hb hQ hR]
 
-/-- The revised comparative respects the revised equative on the right, the supplement's Fact 11. -/
+-- Fact 11
 theorem RevisedComp.of_revisedEqui_right (h : RevisedComp ord.le P Q i)
     (hQR : RevisedEqui ord.le Q R i) : RevisedComp ord.le P R i := by
   obtain ⟨m, hm, hP, hQ, hd, he | he⟩ := h
@@ -405,7 +396,7 @@ theorem revisedEqui_or_revisedComp_or_revisedComp [Finite W] (ord : SemanticOrde
   · exact (revisedEqui_or_revisedComp_of_max hm (not_not.1 (mt hPQ.2 hP)) hP
       fun a ha h ↦ hmax a ⟨ha, by tauto⟩).imp RevisedEqui.symm .inr
 
-/-- The revised equative is transitive, the supplement's Fact 6. -/
+-- Fact 6
 theorem RevisedEqui.trans [Finite W] (h₁ : RevisedEqui ord.le P Q i)
     (h₂ : RevisedEqui ord.le Q R i) : RevisedEqui ord.le P R i := by
   rcases revisedEqui_or_revisedComp_or_revisedComp ord P R i with h | h | h
@@ -617,8 +608,7 @@ theorem eval_comp_or_equi :
     Eval interp (.sup (.sup (.comp A B) (.comp B A)) (A.equi B)) ord i w :=
   (em _).elim (Or.inl ∘ Or.inl) fun h₁ ↦ (em _).elim (Or.inl ∘ Or.inr) fun h₂ ↦ Or.inr ⟨h₁, h₂⟩
 
-/-- *More `A` than not* holds at an index iff `A` holds at every interpretation tied with it (the
-supplement's Fact 1). -/
+-- Fact 1
 theorem eval_comp_not_iff :
     Eval interp (.comp A (.not A)) ord i w ↔ ∀ j, ord.equiv j i → Eval interp A ord j w :=
   ⟨fun ⟨a, ha, _, _, hd⟩ j hj ↦ of_not_not fun hA ↦
@@ -944,11 +934,6 @@ instance [Fintype I] [Fintype E] [DecidableEq E] [DecidableAtoms interp]
     Decidable (EvalMCond interp A B ord i w) := by
   unfold EvalMCond; infer_instance
 
-/-- For a consequent free of the comparative, the metalinguistic conditional is Stalnakerian
-entailment (`⊆`) of the consequent by the ranked cone of the antecedent. This is strictly weaker
-than the paper's reduction, which also assumes the antecedent free of the comparative. The
-antecedent may contain ≻ freely, since it is always evaluated at the full ordering and a consequent
-free of the comparative never consults the restricted one. -/
 theorem evalMCond_iff_entails (hB : B.ComparativeFree) :
     EvalMCond interp A B ord i w ↔
     {x | ord.le x i ∧ ComparativeFormula.Realize interp A ord.le x w} ⊆
@@ -1082,15 +1067,14 @@ private theorem mem_denotation_iff {φ : ComparativeFormula L E} {j : I} (hj : o
     EvalRevised interp φ ord j w ↔ j ∈ denotation ord i interp φ w :=
   (and_iff_right hj).symm
 
-/-- The revised comparative compares the denotations, the supplement's Fact 10. -/
+-- Fact 10
 theorem evalRevised_comp_iff_denotation : EvalRevised interp (.comp A B) ord i w ↔
     RevisedComp ord.le (· ∈ denotation ord i interp A w) (· ∈ denotation ord i interp B w) i :=
   RevisedComp.congr (fun _ ↦ mem_denotation_iff) fun _ ↦ mem_denotation_iff
 
 variable [Finite I]
 
-/-- The revised equative holds iff the two formulas have the same degree, the supplement's
-Fact 9. -/
+-- Fact 9
 theorem evalRevised_equi_iff_formulaDeg_eq :
     EvalRevised interp (A.equi B) ord i w ↔
       formulaDeg ord i interp A w = formulaDeg ord i interp B w := by
@@ -1163,8 +1147,7 @@ abbrev Pa : ComparativeFormula (Language.monadic Pred) Entity :=
     | .i0, .philosopher | .i1, .linguist => {.ann}
     | _, _ => ∅
 
-/-- *Ann is more a linguist than a philosopher* is consistent with her being both and with her being
-neither, Observation 1. -/
+-- Observation 1
 theorem comp_consistent_with_both_and_neither :
     (Eval both (.comp La Pa) ord₃ .i2 .w0 ∧ Eval both La ord₃ .i2 .w0 ∧
       Eval both Pa ord₃ .i2 .w0) ∧
@@ -1188,7 +1171,7 @@ instance : DecidableRel tiedOrd.le :=
     | .j0, .linguist | .j1, .philosopher => {.ann}
     | _, _ => ∅
 
-/-- *Ann is as much a linguist as not* is consistent, a borderline case, Observation 5. -/
+-- Observation 5
 theorem equi_not_consistent : Eval tied (La.equi (.not La)) tiedOrd .j0 .w0 := by decide
 
 theorem accepted_sup_not_accepted_comp :
@@ -1303,14 +1286,14 @@ abbrev Pa₄ : ComparativeFormula (Language.monadic Pred3) Entity :=
 abbrev Ca₄ : ComparativeFormula (Language.monadic Pred3) Entity :=
   .matom (.pred Pred3.psychologist) .ann
 
-/-- The basic equative is not transitive, as Ann's case at the top of Figure 1 shows. -/
+-- Figure 1
 theorem equi_not_trans :
     Eval counterexample (La₄.equi Pa₄) ord₄ .i .w0 ∧
       Eval counterexample (Pa₄.equi Ca₄) ord₄ .i .w0 ∧
       Eval counterexample (.comp La₄ Ca₄) ord₄ .i .w0 := by
   decide
 
-/-- The revised semantics makes Ann as much a linguist as a psychologist at the top of Figure 1. -/
+-- Figure 1
 theorem evalRevised_equi_counterexample :
     EvalRevised counterexample (La₄.equi Pa₄) ord₄ .i .w0 ∧
       EvalRevised counterexample (Pa₄.equi Ca₄) ord₄ .i .w0 ∧

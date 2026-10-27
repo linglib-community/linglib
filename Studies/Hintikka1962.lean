@@ -152,12 +152,12 @@ namespace ModelSystem
 
 variable {S : ModelSystem V A} {a : A} {p : Formula V A} {μ ν : S.sets}
 
-/-- (C.K*), from (C.KK*) and (C.K) (Section 3.4). -/
+-- Section 3.4
 theorem K_star (h : S.epi a μ ν) (hp : K a p ∈ (μ : Set (Formula V A))) :
     p ∈ (ν : Set (Formula V A)) :=
   (S.isModelSet ν).know (S.KK_star h hp)
 
-/-- (C.KK*dox), from (C.KK*) and (C.dox) (Section 3.6). -/
+-- Section 3.6
 theorem KK_star_dox (h : S.dox a μ ν) (hp : K a p ∈ (μ : Set (Formula V A))) :
     K a p ∈ (ν : Set (Formula V A)) :=
   S.KK_star (S.dox_le_epi a μ ν h) hp
@@ -188,8 +188,7 @@ def VirtuallyImplies (p q : Formula V A) : Prop := SelfSustaining (p ⟹ q)
 def VirtuallyEquivalent (p q : Formula V A) : Prop :=
   VirtuallyImplies p q ∧ VirtuallyImplies q p
 
-/-- An implication is self-sustaining once its antecedent with the negated consequent is
-indefensible (Section 3.10). -/
+-- Section 3.10
 theorem virtuallyImplies_of_indefensible {p q : Formula V A} (h : Indefensible {p, ∼q}) :
     VirtuallyImplies p q := by
   rintro ⟨S, μ, hμ⟩
@@ -394,11 +393,11 @@ abbrev mK : Model Unit (Fin 2) (Fin 3) where
 theorem not_virtuallyImplies_B_K_P : ¬ VirtuallyImplies (B 0 𝐩) (K 0 (P 0 𝐩)) :=
   mK.not_virtuallyImplies_of_sat (w := 0) (by decide)
 
-/-- Section 3.7: `B a p` does not virtually imply `K a (B a p)`. -/
+-- Section 3.7
 theorem not_virtuallyImplies_B_K_B : ¬ VirtuallyImplies (B 0 𝐩) (K 0 (B 0 𝐩)) :=
   mK.not_virtuallyImplies_of_sat (w := 0) (by decide)
 
-/-- (C.PK) rejected: (13), `p ⟹ K a (P a p)`, is not self-sustaining. -/
+-- (13)
 theorem not_virtuallyImplies_K_P : ¬ VirtuallyImplies 𝐩 (K 0 (P 0 𝐩)) :=
   mK.not_virtuallyImplies_of_sat (w := 0) (by decide)
 
@@ -406,8 +405,7 @@ end Countermodels
 
 /-! ### Chapter 4: knowing that others know -/
 
-/-- (20): knowledge is transmissible, `K a (K b p)` virtually implies `K a p` (Sections 4.1
-and 4.2), by (C.∼K), (C.P*), (C.K*) and (C.K). -/
+-- (20), Sections 4.1 and 4.2
 theorem virtuallyImplies_K_K_K : VirtuallyImplies (K a (K b p)) (K a p) :=
   virtuallyImplies_of_indefensible <| by
     rintro ⟨S, μ, hμ⟩
@@ -433,12 +431,11 @@ abbrev mB : Model Unit (Fin 2) (Fin 3) where
   dox_trans _ := ⟨by decide +revert⟩
   dox_le_epi _ _ _ := trivial
 
-/-- (27): belief is not transmissible, `B a (B b p)` does not virtually imply `B a p`
-(Section 4.3). -/
+-- (27), Section 4.3
 theorem not_virtuallyImplies_B_B_B : ¬ VirtuallyImplies (B 0 (B 1 𝐩)) (B 0 𝐩) :=
   mB.not_virtuallyImplies_of_sat (w := 0) (by decide)
 
-/-- Section 4.4: "I believe that you know that p" does not virtually imply "I know that p". -/
+-- Section 4.4
 theorem not_virtuallyImplies_B_K_K : ¬ VirtuallyImplies (B 0 (K 1 𝐩)) (K 0 𝐩) :=
   mK.not_virtuallyImplies_of_sat (w := 0) (by decide)
 
@@ -467,13 +464,12 @@ def mooreModel : Model V A Bool where
   dox_trans _ := ⟨λ _ _ _ _ h => h⟩
   dox_le_epi _ _ _ := trivial
 
-/-- (8) is defensible: the world `true` of `mooreModel a` satisfies `p ⋏ ∼B a p`. -/
+-- (8)
 theorem defensible_moore (v : V) : Defensible {(atom v : Formula V A) ⋏ ∼B a (atom v)} :=
   (mooreModel a).defensible_of_sat (w := true)
     ⟨rfl, λ h => Bool.false_ne_true (h false (Or.inl ⟨rfl, rfl⟩))⟩
 
-/-- (30)(a)*: the believed form of (8)(a) is defensible when the believer `b` is not the
-person `a` spoken about. -/
+-- (30), (8)
 theorem defensible_B_moore_of_ne (hab : b ≠ a) (v : V) :
     Defensible {B b ((atom v : Formula V A) ⋏ ∼B a (atom v))} :=
   (mooreModel a).defensible_of_sat (w := true) λ x hx => by
@@ -481,8 +477,7 @@ theorem defensible_B_moore_of_ne (hab : b ≠ a) (v : V) :
     · exact absurd rfl hab
     · exact ⟨rfl, λ h => Bool.false_ne_true (h false (Or.inl ⟨rfl, rfl⟩))⟩
 
-/-- (30)*: the believed Moore sentence is indefensible, by the reductive argument (33)–(39):
-(C.b*), (C.BB*), (C.&), (C.∼B), (C.C*), (C.B*), (C.&) and (C.∼). -/
+-- (30), (33), (39)
 theorem indefensible_B_moore : Indefensible {B a (p ⋏ ∼B a p)} := by
   rintro ⟨S, μ, hμ⟩
   obtain ⟨ν, hν, h₁⟩ := S.b_star μ (hμ (Set.mem_singleton _))
@@ -491,7 +486,7 @@ theorem indefensible_B_moore : Indefensible {B a (p ⋏ ∼B a p)} := by
     S.C_star ν ((S.isModelSet ν).neg_believe ((S.isModelSet ν).and h₁).2)
   exact (S.isModelSet ξ).neg ((S.isModelSet ξ).and (S.B_star hξ h₂)).1 h₃
 
-/-- `(p ⋏ ∼B a p) ⋏ B a (p ⋏ ∼B a p)` is indefensible without (C.BB*) (Section 4.7). -/
+-- Section 4.7
 theorem indefensible_moore_and_B_moore : Indefensible {(p ⋏ ∼B a p) ⋏ B a (p ⋏ ∼B a p)} := by
   rintro ⟨S, μ, hμ⟩
   obtain ⟨h₁, h₂⟩ := (S.isModelSet μ).and (hμ (Set.mem_singleton _))
@@ -499,11 +494,11 @@ theorem indefensible_moore_and_B_moore : Indefensible {(p ⋏ ∼B a p) ⋏ B a 
     S.C_star μ ((S.isModelSet μ).neg_believe ((S.isModelSet μ).and h₁).2)
   exact (S.isModelSet ν).neg ((S.isModelSet ν).and (S.B_star hν h₂)).1 h₃
 
-/-- Section 4.8: (8) is doxastically indefensible for its speaker to utter. -/
+-- Section 4.8, (8)
 theorem doxasticallyIndefensible_moore : DoxasticallyIndefensible a (p ⋏ ∼B a p) :=
   indefensible_B_moore a p
 
-/-- Section 4.9: `p` implies "I believe that p" doxastically. -/
+-- Section 4.9
 theorem doxasticallyImplies_B : DoxasticallyImplies a p (B a p) :=
   indefensible_B_moore a p
 
@@ -514,8 +509,7 @@ theorem doxasticallyImplies_B : DoxasticallyImplies a p (B a p) :=
 know it" epistemically (Sections 4.11 to 4.13). Knowledge and belief come apart in (44) and
 (45) (Section 4.14). -/
 
-/-- (41): `K a (p ⋏ ∼K a p)` is indefensible, by (C.K), (C.&), (C.∼K), (C.P*), (C.K*),
-(C.&) and (C.∼). -/
+-- (41)
 theorem indefensible_K_moore : Indefensible {K a (p ⋏ ∼K a p)} := by
   rintro ⟨S, μ, hμ⟩
   have h₁ := (S.isModelSet μ).and ((S.isModelSet μ).know (hμ (Set.mem_singleton _)))
@@ -523,7 +517,7 @@ theorem indefensible_K_moore : Indefensible {K a (p ⋏ ∼K a p)} := by
   exact (S.isModelSet ν).neg
     ((S.isModelSet ν).and (S.K_star hν (hμ (Set.mem_singleton _)))).1 h₂
 
-/-- (40)*: the known form of (9) is indefensible in the same way. -/
+-- (40), (9)
 theorem indefensible_K_moore_whether : Indefensible {K a (p ⋏ notKnowsWhether a p)} := by
   rintro ⟨S, μ, hμ⟩
   have h₁ := (S.isModelSet μ).and ((S.isModelSet μ).know (hμ (Set.mem_singleton _)))
@@ -532,12 +526,11 @@ theorem indefensible_K_moore_whether : Indefensible {K a (p ⋏ notKnowsWhether 
   exact (S.isModelSet ν).neg
     ((S.isModelSet ν).and (S.K_star hν (hμ (Set.mem_singleton _)))).1 h₂
 
-/-- Section 4.12: any sentence implies "I know that it" epistemically. -/
+-- Section 4.12
 theorem epistemicallyImplies_K : EpistemicallyImplies a p (K a p) :=
   indefensible_K_moore a p
 
-/-- (42)*: "a knows that p but b does not know it" is epistemically indefensible for `b` to
-utter (Section 4.13). -/
+-- (42), Section 4.13
 theorem epistemicallyIndefensible_K_neg_K : EpistemicallyIndefensible b (K a p ⋏ ∼K b p) := by
   rintro ⟨S, μ, hμ⟩
   have h₁ := (S.isModelSet μ).and ((S.isModelSet μ).know (hμ (Set.mem_singleton _)))
@@ -545,7 +538,7 @@ theorem epistemicallyIndefensible_K_neg_K : EpistemicallyIndefensible b (K a p �
   exact (S.isModelSet ν).neg ((S.isModelSet ν).know
     ((S.isModelSet ν).and (S.K_star hν (hμ (Set.mem_singleton _)))).1) h₂
 
-/-- (44): `K a (p ⋏ ∼B a p)` is indefensible, by (C.dox) (Section 4.14). -/
+-- (44), Section 4.14
 theorem indefensible_K_neg_B : Indefensible {K a (p ⋏ ∼B a p)} := by
   rintro ⟨S, μ, hμ⟩
   have h₁ := (S.isModelSet μ).and ((S.isModelSet μ).know (hμ (Set.mem_singleton _)))
@@ -553,7 +546,7 @@ theorem indefensible_K_neg_B : Indefensible {K a (p ⋏ ∼B a p)} := by
   exact (S.isModelSet ν).neg
     ((S.isModelSet ν).and (S.K_star_dox hν (hμ (Set.mem_singleton _)))).1 h₂
 
-/-- (46) virtually implies (47): `B a (p ⋏ ∼K a p)` virtually implies `B a p ⋏ ∼K a p`. -/
+-- (46), (47)
 theorem virtuallyImplies_B_and : VirtuallyImplies (B a (p ⋏ ∼K a p)) (B a p ⋏ ∼K a p) :=
   virtuallyImplies_of_indefensible <| by
     rintro ⟨S, μ, hμ⟩
@@ -566,7 +559,7 @@ theorem virtuallyImplies_B_and : VirtuallyImplies (B a (p ⋏ ∼K a p)) (B a p 
       exact (S.isModelSet ν).neg (S.KK_star_dox hν ((S.isModelSet μ).neg_neg h))
         ((S.isModelSet ν).and h₁).2
 
-/-- (47) implies (46) doxastically. -/
+-- (47), (46)
 theorem doxasticallyImplies_B_of_and :
     DoxasticallyImplies a (B a p ⋏ ∼K a p) (B a (p ⋏ ∼K a p)) := by
   rintro ⟨S, μ, hμ⟩
@@ -606,31 +599,30 @@ abbrev mWhether : Model Unit (Fin 2) (Fin 3) where
   dox_trans _ := ⟨λ _ _ _ h h' => h.trans h'⟩
   dox_le_epi a := by rintro ⟨w, v⟩ h; revert a w v h; decide
 
-/-- (43): "he knows whether p although I don't" is epistemically defensible (Section 4.13). -/
+-- (43), Section 4.13
 theorem defensible_K_knowsWhether :
     Defensible {K 1 (knowsWhether 0 𝐩 ⋏ ∼knowsWhether 1 𝐩)} :=
   mWhether.defensible_of_sat (w := 0) (by decide)
 
-/-- (45): `B a (p ⋏ ∼K a p)` is defensible (Section 4.14). -/
+-- (45), Section 4.14
 theorem defensible_B_neg_K : Defensible {B 0 (𝐩 ⋏ ∼K 0 𝐩)} :=
   mB.defensible_of_sat (w := 1) (by decide)
 
-/-- (48): the known form of (47), `K a (B a p ⋏ ∼K a p)`, is defensible. -/
+-- (48), (47)
 theorem defensible_K_B_neg_K : Defensible {K 0 (B 0 𝐩 ⋏ ∼K 0 𝐩)} :=
   mKB.defensible_of_sat (w := 0) (by decide)
 
-/-- (51), "I believe that p but I may be mistaken", is epistemically defensible
-(Section 4.16). -/
+-- (51), Section 4.16
 theorem defensible_K_B_P : Defensible {K 0 (B 0 𝐩 ⋏ P 0 ∼𝐩)} :=
   mKB.defensible_of_sat (w := 0) (by decide)
 
-/-- (51) is doxastically defensible. -/
+-- (51)
 theorem defensible_B_B_P : Defensible {B 0 (B 0 𝐩 ⋏ P 0 ∼𝐩)} :=
   mKB.defensible_of_sat (w := 0) (by decide)
 
 end Countermodels
 
-/-- (51)(c): `p ⋏ P a ∼p` is epistemically indefensible (Section 4.16). -/
+-- (51), Section 4.16
 theorem epistemicallyIndefensible_P : EpistemicallyIndefensible a (p ⋏ P a ∼p) := by
   rintro ⟨S, μ, hμ⟩
   obtain ⟨ν, hν, h₁⟩ :=
@@ -638,7 +630,7 @@ theorem epistemicallyIndefensible_P : EpistemicallyIndefensible a (p ⋏ P a ∼
   exact (S.isModelSet ν).neg
     ((S.isModelSet ν).and (S.K_star hν (hμ (Set.mem_singleton _)))).1 h₁
 
-/-- (51)(b): `p ⋏ C a ∼p` is epistemically indefensible. -/
+-- (51)
 theorem epistemicallyIndefensible_C : EpistemicallyIndefensible a (p ⋏ C a ∼p) := by
   rintro ⟨S, μ, hμ⟩
   obtain ⟨ν, hν, h₁⟩ :=
@@ -646,7 +638,7 @@ theorem epistemicallyIndefensible_C : EpistemicallyIndefensible a (p ⋏ C a ∼
   exact (S.isModelSet ν).neg
     ((S.isModelSet ν).and (S.K_star_dox hν (hμ (Set.mem_singleton _)))).1 h₁
 
-/-- (51)(b) is doxastically indefensible as well. -/
+-- (51)
 theorem doxasticallyIndefensible_C : DoxasticallyIndefensible a (p ⋏ C a ∼p) := by
   rintro ⟨S, μ, hμ⟩
   obtain ⟨ν, hν, h₁⟩ := S.b_star μ (hμ (Set.mem_singleton _))
@@ -654,7 +646,7 @@ theorem doxasticallyIndefensible_C : DoxasticallyIndefensible a (p ⋏ C a ∼p)
   exact (S.isModelSet ξ).neg
     ((S.isModelSet ξ).and (S.B_star hξ (S.BB_star hν (hμ (Set.mem_singleton _))))).1 h₂
 
-/-- (51)(a): `B a p ⋏ C a ∼p` is indefensible simpliciter. -/
+-- (51)
 theorem indefensible_B_C : Indefensible {B a p ⋏ C a ∼p} := by
   rintro ⟨S, μ, hμ⟩
   obtain ⟨h₁, h₂⟩ := (S.isModelSet μ).and (hμ (Set.mem_singleton _))
@@ -663,8 +655,7 @@ theorem indefensible_B_C : Indefensible {B a p ⋏ C a ∼p} := by
 
 /-! ### Chapter 5: knowing that one knows -/
 
-/-- (65)–(69): `K a p` virtually implies `K a (K a p)`, by (C.∼K), (C.P*) and (C.KK*)
-(Section 5.2). -/
+-- (65), (69), Section 5.2
 theorem virtuallyImplies_K_KK : VirtuallyImplies (K a p) (K a (K a p)) :=
   virtuallyImplies_of_indefensible <| by
     rintro ⟨S, μ, hμ⟩
@@ -678,13 +669,11 @@ theorem virtuallyImplies_KK_K : VirtuallyImplies (K a (K a p)) (K a p) :=
     exact (S.isModelSet μ).neg ((S.isModelSet μ).know (hμ (Set.mem_insert _ _)))
       (hμ (Set.mem_insert_of_mem _ (Set.mem_singleton _)))
 
-/-- (63) and (64) are virtually equivalent: knowing that one knows only differs in words from
-knowing (Section 5.4). -/
+-- (63), (64), Section 5.4
 theorem virtuallyEquivalent_K_KK : VirtuallyEquivalent (K a p) (K a (K a p)) :=
   ⟨virtuallyImplies_K_KK a p, virtuallyImplies_KK_K a p⟩
 
-/-- (72) virtually implies (73): `B a p` virtually implies `B a (B a p)`, by (C.BB*)
-(Section 5.10). -/
+-- (72), (73), Section 5.10
 theorem virtuallyImplies_B_BB : VirtuallyImplies (B a p) (B a (B a p)) :=
   virtuallyImplies_of_indefensible <| by
     rintro ⟨S, μ, hμ⟩
@@ -696,13 +685,11 @@ section Countermodels
 
 local notation "𝐩" => (Formula.atom () : Formula Unit (Fin 2))
 
-/-- Section 5.2: one may fail to know one's ignorance, `∼K a p` does not virtually imply
-`K a ∼K a p`. -/
+-- Section 5.2
 theorem not_virtuallyImplies_negK_K_negK : ¬ VirtuallyImplies (∼K 0 𝐩) (K 0 ∼K 0 𝐩) :=
   mK.not_virtuallyImplies_of_sat (w := 0) (by decide)
 
-/-- Section 5.10: (73) does not virtually imply (72), `B a (B a p)` does not virtually imply
-`B a p`. -/
+-- Section 5.10, (73), (72)
 theorem not_virtuallyImplies_BB_B : ¬ VirtuallyImplies (B 0 (B 0 𝐩)) (B 0 𝐩) :=
   mB.not_virtuallyImplies_of_sat (w := 0) (by decide)
 

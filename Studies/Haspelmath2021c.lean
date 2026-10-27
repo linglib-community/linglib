@@ -21,23 +21,6 @@ against the paper's examples and shows what its recursion needs: the inductive r
 affixes that occur only next to other affixes, and when markers separate roots the definition can
 have two incompatible solutions.
 
-## Main results
-
-* `latin_affixes`: Latin *-bi*, *-v*, *-s* and *-isti* are affixes, *-s* and *-isti* only
-  through *-bi* and *-v*.
-* `turkish_affixes`: Turkish *mu* is not an affix, so neither is *-sun*, written as a suffix,
-  while *-iyor* is.
-* `polish_scie_not_affix`, `english_article_not_affix`, `russian_li_not_affix`: bound forms on
-  roots of two classes are not affixes.
-* `italian_object_affixes`: the Italian object person forms are affixes on either side of the
-  verb, though the Italian fragment records *mi* as a clitic.
-* `variableOrder_affixes`: with two suffixes in either order, the least solution has no affix
-  and the greatest has both.
-* `separated_affixes`: when two markers separate two roots, each marker is an affix in some
-  solution but no solution has both.
-* `suffixBeforeRoot_not_affix`: occurrence on a root is adjacency on either side, so a suffix
-  followed by a root of another class is not an affix.
-
 ## Implementation notes
 
 Each example is an inventory of the paper's free forms, each a list of morphs with textbook

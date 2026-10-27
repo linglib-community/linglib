@@ -21,15 +21,6 @@ whose [Clf-N] marks both presuppositions; ι^x is never a covert shift (Section 
 (50) requires the indexed form wherever an index is available, unless the description is a
 continuing topic (Section 5.3).
 
-## Main results
-
-* `iotaAvailable_mandarin`, `not_iotaAvailable_cantonese`: the Blocking Principle.
-* `rows_agree`: the data (10) to (20), (49) and (51) to (56) agree with the prediction.
-* `demonstrative_rigid`, `bare_covaries`: a demonstrative cannot covary through the situation
-  pronoun and a bare noun can (Section 4.3).
-* `table2`, `isUpperSet_strengths`: Table 2's types as the fragments derive them, and its gap: the
-  marked presuppositions form an upper set, so no language is marked unique.
-
 ## Implementation notes
 
 * The environments are the paper's six, read as `DefiniteDescription.Use`s, the donkey environment
@@ -160,7 +151,7 @@ instance (p : Prop) [Decidable p] : ∀ o, Decidable (Agrees p o)
   | some _ => inferInstanceAs (Decidable (_ ↔ _))
 
 /-- Row by row, the paper judges the bare noun licit exactly when `BareLicit` holds and the marked
-form exactly when `MarkedLicit` does. -/
+form exactly when `MarkedLicit` does ((10), (20), (49), (51), (56)). -/
 theorem rows_agree :
     ∀ r ∈ rows, Agrees (BareLicit r.inventory r.env r.topic) r.bare ∧
       Agrees (MarkedLicit r.inventory r.env) r.marked := by
@@ -168,8 +159,7 @@ theorem rows_agree :
 
 /-! ### Demonstratives are strict (Section 4.3) -/
 
-/-- A demonstrative description denotes the value of its index wherever its restrictor holds of it,
-(27) to (30). -/
+-- (27), (30)
 theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
     (s : W) (x : E) :
     ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=

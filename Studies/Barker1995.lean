@@ -19,16 +19,6 @@ possessee, and the possessor-dominant and symmetric construals cannot be told
 apart truth-conditionally — uniqueness leaves one instance per case, which is
 the book's resolution of the perspective paradox.
 
-## Main statements
-
-* `most_planets_rings_icy`, `not_unnarrowed`: the planets-and-rings model —
-  narrowing is truth-conditionally active, and `Poss` builds it in via `dom`.
-* `symmetric_iff_possessor_dominant`: with a unique possessee per possessor,
-  *most* over possessor–possessee pairs agrees with `Poss most` — the
-  perspective paradox resolved.
-* `favorite_color_possessor_dominant`, `not_favorite_color_possessee_dominant`:
-  *most people's favorite color is blue* counts people, never colors.
-
 ## References
 
 * [barker-1995]: Possessive Descriptions. CSLI Publications.

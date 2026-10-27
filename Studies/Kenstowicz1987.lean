@@ -78,8 +78,7 @@ theorem elision_not_factor_through_wh : ¬ Function.FactorsThrough elides second
 theorem elision_tracks_government : ∀ j, elides j = governed j := by
   intro j; cases j <;> rfl
 
-/-- In (15d–f), the verb's blocked form before a wh-object differs audibly from its elided form, by
-[kidda-1985]'s cascade. -/
+-- (15d–f) [kidda-1985]
 theorem wh_object_cell_audible :
     Tangale.blockedForm ≠ Tangale.elidedForm :=
   Tangale.boundary_audible.1

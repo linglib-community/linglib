@@ -16,16 +16,6 @@ stress is built from the End Rule at an edge, extrametricality, Perfect Grid Con
 from an edge, and bipositional heavy syllables; together they derive the alternating systems of
 Garawa, Hawaiian and Winnebago and the quantity-sensitive systems of (98).
 
-## Main statements
-
-* `SWTree.uniform_rppr_iff`: under uniform labelling at either edge the RPPR is the End Rule.
-* `moveXL_getD_peak`, `Marks.not_isContinuous_move`: Move x never moves the peak, since the move
-  would leave a hole in a column.
-* `postpeninitial_iff`, `antepenultimate_iff`: stress three syllables from an edge comes only from
-  extrametricality and a trough-first sweep from that edge.
-* `hawaiian_eq`, `hawaiian_ne_alternating`: Hawaiian's initial dactyl needs the End Rule at both
-  edges before the sweep, and no perfect grid gives it.
-
 ## Implementation notes
 
 * A grid is the substrate's `Prosody.Grid`, a list of column heights, so the Continuous Column
@@ -300,8 +290,7 @@ theorem moveXL_eq_self_of_not_clash {n : ℕ} {g : Grid}
     (h : ∀ i < g.length, ∀ j < g.length, ¬ Clash g n i j) : moveXL n g = g :=
   (moveXL_eq_or n g).resolve_right fun ⟨i, j, _, hi, hj, hc, _⟩ ↦ h i hi j hj hc
 
-/-- Move x at level `n` never touches a column taller than `n`, so no entry is slid out from under
-a taller column (32). -/
+-- (32)
 theorem moveXL_getD_of_lt {n c : ℕ} {g : Grid} (hc : n < g.getD c 0) :
     (moveXL n g).getD c 0 = g.getD c 0 := by
   rcases moveXL_eq_or n g with h | ⟨i, -, k, -, -, -, hi, hk, h⟩
@@ -528,8 +517,7 @@ def startDist : Edge → ℕ → ℕ → ℕ
   | .left, _, i => i
   | .right, n, i => n - 1 - i
 
-/-- A sweep over an unstressed word from a peak stresses even distances from its edge, from a trough
-odd ones ((62), (62a), (62b), (62c), (62d)). -/
+-- (62), (62a), (62b), (62c), (62d)
 theorem pg_replicate_getD (d : Edge) (a : Altitude) {n i : ℕ} (hi : i < n) :
     (pg d a (List.replicate n 1)).getD i 0 =
       if (startDist d n i % 2 = 0 ↔ a = .peak) then 2 else 1 := by
@@ -844,8 +832,7 @@ def hawaiian (n : ℕ) : Grid :=
   elm .right (endRule .right 3 false ∘ pg .right .peak ∘ endRule .left 2 false ∘
     endRule .right 2 false) (List.replicate n 1)
 
-/-- In a three-syllable word (64a) the End Rule (Initial) is blocked by the clash it would create
-with the penultimate stress. -/
+-- (64a)
 theorem hawaiian_three : hawaiian 3 = [1, 3, 1] := by decide
 
 /-- After the End Rule stresses both edges, the sweep back from the penult leaves an initial dactyl
@@ -912,21 +899,19 @@ def antique : Grid := [2, 3]
 def dealer : Grid := [3, 1]
 def chair : Grid := [3]
 
-/-- Phrasal stress on *lens* creates a word-level clash with *-ma-* (29a), which Move x resolves
-by sliding the entry to the initial syllable (30a). -/
+-- (29a), (30a)
 theorem achromatic_lens :
     moveX .right 3 (endRule .right 4 false (achromatic ++ lens)) = [3, 1, 2, 1, 4] := by decide
 
-/-- Move x resolves the clash in *Dundee marmalade* the same way ((29b), (30b)). -/
+-- (29b), (30b)
 theorem dundee_marmalade :
     moveX .right 3 (endRule .right 4 false (dundee ++ marmalade)) = [3, 2, 4, 1, 2] := by decide
 
-/-- In the compound *antique dealer* (31a) the clashing entry sits under the phrasal peak, so
-Move x cannot touch it. -/
+-- (31a)
 theorem antique_dealer :
     moveX .right 3 (endRule .left 4 false (antique ++ dealer)) = [2, 4, 3, 1] := by decide
 
-/-- In the phrase *antique chair* (31b) the same clash is resolved. -/
+-- (31b)
 theorem antique_chair :
     moveX .right 3 (endRule .right 4 false (antique ++ chair)) = [3, 2, 4] := by decide
 
@@ -965,7 +950,7 @@ theorem qs_le_two (w : List Syllable.Weight) : ∀ x ∈ qs w, x ≤ 2 := fun _ 
 
 theorem qs_singleton (m : Syllable.Weight) : qs [m] = mora m := by simp [qs]
 
-/-- Heavy syllables never clash, since their nuclei are separated by their second positions (74). -/
+-- (74)
 theorem qs_isChain (w : List Syllable.Weight) : (qs w).IsChain (fun a b ↦ a < 2 ∨ b < 2) := by
   induction w with
   | nil => simp [qs]
@@ -1080,24 +1065,23 @@ private theorem mainStressAt_light {e : Edge} {w : List Syllable.Weight} (hw : w
   have hp : peak (qs w) = 1 := by rw [hq]; exact peak_replicate_one (List.length_pos_of_ne_nil hw)
   exact mainStressAt_endRule (by rw [hp]; decide) (by rwa [hp, hq])
 
-/-- In Khalkha Mongolian, Fore and Yana, (98) III.i, main stress falls on the first heavy
-syllable. -/
+-- (98)
 theorem khalkha_heavy {w : List Syllable.Weight} {k : ℕ} (hk : w.findIdx? (2 ≤ ·) = some k) :
     MainStressAt (defaultSame .left w) (nucleus w k) :=
   mainStressAt_of_edgeIdx? (qs_le_two w) (e := .left) (by rw [edgeIdx?, findIdx?_qs, hk]; rfl)
 
-/-- Lacking heavy syllables, main stress falls on the first syllable ((98) III.i). -/
+-- (98)
 theorem khalkha_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m ∈ w, m < 2) :
     MainStressAt (defaultSame .left w) 0 := by
   obtain ⟨n, hn⟩ := Nat.exists_eq_add_one_of_ne_zero (List.length_pos_of_ne_nil hw).ne'
   exact mainStressAt_light hw hl (by rw [hn]; rfl)
 
-/-- In Aguacatec and Golin, (98) III.ii, main stress falls on the last heavy syllable. -/
+-- (98)
 theorem aguacatec_heavy {w : List Syllable.Weight} {k : ℕ} (hk : lastIdx? (2 ≤ ·) w = some k) :
     MainStressAt (defaultSame .right w) (nucleus w k) :=
   mainStressAt_of_edgeIdx? (qs_le_two w) (e := .right) (by rw [edgeIdx?, lastIdx?_qs, hk]; rfl)
 
-/-- Lacking heavy syllables, main stress falls on the last syllable ((98) III.ii). -/
+-- (98)
 theorem aguacatec_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m ∈ w, m < 2) :
     MainStressAt (defaultSame .right w) (nucleus w (w.length - 1)) := by
   obtain ⟨n, hn⟩ := Nat.exists_eq_add_one_of_ne_zero (List.length_pos_of_ne_nil hw).ne'
@@ -1131,14 +1115,13 @@ theorem lastIdx?_endRule_left_of_some {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ 
   rw [lastIdx?_cons] at hp
   cases h : lastIdx? (2 ≤ ·) t <;> simp_all
 
-/-- In Classical Arabic, Eastern Cheremis, Chuvash, Hindi, Huasteco and Dongolese Nubian,
-(98) II.i, main stress falls on the last heavy syllable. -/
+-- (98)
 theorem cheremis_heavy {w : List Syllable.Weight} {k : ℕ} (hk : lastIdx? (2 ≤ ·) w = some k) :
     MainStressAt (defaultOpposite .right w) (nucleus w k) :=
   mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two w)) (e := .right)
     (lastIdx?_endRule_left_of_some (fun _ ↦ mem_qs) (by rw [lastIdx?_qs, hk]; rfl))
 
-/-- Lacking heavy syllables, main stress falls on the first syllable ((98) II.i). -/
+-- (98)
 theorem cheremis_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m ∈ w, m < 2) :
     MainStressAt (defaultOpposite .right w) 0 := by
   obtain ⟨n, hn⟩ := Nat.exists_eq_add_one_of_ne_zero (List.length_pos_of_ne_nil hw).ne'
@@ -1166,7 +1149,7 @@ theorem endRule_right_qs (v : List Syllable.Weight) (m : Syllable.Weight) :
       rw [ht, List.append_assoc, List.singleton_append, endRule_right_two le_rfl]
       simp
 
-/-- In Komi, (98) II.ii, main stress falls on the first heavy syllable. -/
+-- (98)
 theorem komi_heavy {w : List Syllable.Weight} {k : ℕ} (hk : w.findIdx? (2 ≤ ·) = some k) :
     MainStressAt (defaultOpposite .left w) (nucleus w k) := by
   have h1 : (qs w).findIdx? (2 ≤ ·) = some (nucleus w k) := by rw [findIdx?_qs, hk]; rfl
@@ -1179,7 +1162,7 @@ theorem komi_heavy {w : List Syllable.Weight} {k : ℕ} (hk : w.findIdx? (2 ≤ 
   · rw [qs_append, qs_singleton, mora_of_lt (Nat.not_le.1 hm), List.findIdx?_append] at h1
     simp_all [List.findIdx?_append, List.findIdx?_cons]
 
-/-- Lacking heavy syllables, main stress falls on the last syllable ((98) II.ii). -/
+-- (98)
 theorem komi_light {v : List Syllable.Weight} {m : Syllable.Weight}
     (hl : ∀ x ∈ v ++ [m], x < 2) :
     MainStressAt (defaultOpposite .left (v ++ [m])) (nucleus (v ++ [m]) v.length) := by
@@ -1189,8 +1172,7 @@ theorem komi_light {v : List Syllable.Weight} {m : Syllable.Weight}
     qs_eq_replicate fun x hx ↦ hl x (List.mem_append_left _ hx), List.findIdx?_append]
   simp [List.findIdx?_cons, List.findIdx?_replicate]
 
-/-- In West Greenlandic Eskimo, (98) I.ii, the last syllable is stressed and carries the main
-stress, whether heavy or light. -/
+-- (98)
 theorem westGreenlandic (v : List Syllable.Weight) (m : Syllable.Weight) :
     MainStressAt (fixedStress .right false (v ++ [m])) (nucleus (v ++ [m]) v.length) := by
   refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .right) ?_
@@ -1215,15 +1197,13 @@ theorem findIdx?_endRule_left_fco {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ x �
   · rw [endRule_left_of_two_le hx]
     simp [List.findIdx?_cons, hx]
 
-/-- In Koya, (98) I.i, the first syllable is stressed, with Forward Clash Override, and carries
-the main stress. -/
+-- (98)
 theorem koya {w : List Syllable.Weight} (hw : w ≠ []) :
     MainStressAt (fixedStress .left true w) 0 :=
   mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two w))
     (findIdx?_endRule_left_fco (fun _ ↦ mem_qs) (by rwa [Ne, qs_eq_nil_iff]))
 
-/-- In Malayalam the first syllable carries main stress unless it is light and the second heavy
-(§3.7). -/
+-- §3.7
 theorem malayalam_first {m : Syllable.Weight} {w : List Syllable.Weight}
     (h : ¬ (m < 2 ∧ ∃ m₁ ∈ w.head?, 2 ≤ m₁)) :
     MainStressAt (fixedStress .left false (m :: w)) 0 := by

@@ -43,24 +43,9 @@ are recorded here.
   and passive of (28)–(30), and the subevent each denotes, a projection of the base's template
   (`Subevent.of`).
 
-## Main results
-
-* `linking_derives_split`: the split follows from (31)–(33).
-* `aspect_conditioned_split_family`: under each status with a viewpoint, the marking has the
-  alignment Hindi case has under that viewpoint, the relation to Hindi of §4 (p. 84).
 * `causation_determines_linking` against `template_underdetermines_linking`,
   `stemClass_underdetermines_linking`, `suffix_underdetermines_linking`: what fixes the linking
   and what does not.
-* `linking_patterns_swap_roles`, `linking_markers`: the two alternations are mirror images, read
-  off their records rather than stipulated.
-* `degree_achievements_causativize`, `haanEat_applicative_despite_inactive`: the counterexamples
-  to aspect- and class-based linking.
-* `predictLinking_roles`, `pivotSourceRole_toVoice`: the roles of transitivization (26)–(27)
-  and of detransitivization (28)–(30) follow from the subevent a participant occupies, by the
-  hierarchy (31).
-* `passive_anticausative_distinct_by_A_fate`: the fate of the initial A separates the two.
-* `salience_agrees_on_shared_roots`, `haanEat_defies_transitiviser_diagnostic`: where this
-  classification meets Lucy's.
 
 ## References
 
@@ -261,7 +246,7 @@ def sMarkerFromViewpoint (v : Perfectivity) : Option MarkerSet :=
   markerOf (termRole (linkingDefault v))
 
 /-- Linking by viewpoint derives the split: under each status with a viewpoint aspect, the sole
-argument takes the marker set the viewpoint selects by (32). -/
+argument takes the marker set the viewpoint selects by (32) ((31), (33)). -/
 theorem linking_derives_split {s : StatusCategory} {v : Perfectivity}
     (h : s.viewpointAspect = some v) : markerSet s .S = sMarkerFromViewpoint v := by
   cases s <;> cases v <;> first | rfl | cases h
@@ -321,8 +306,7 @@ theorem linking_markers :
     (addedRole causativeLinking).bind markerOf = some .setA ∧
     (originalRole causativeLinking).bind markerOf = some .setB := by decide
 
-/-- Both transitivizations are valency-increasing, which the detransitivizations of (28)–(30) are
-not — the two halves of the system are one mechanism read in two directions. -/
+-- (28), (30)
 theorem transitivizations_increase_valency :
     applicativeLinking.IsValencyIncreasing ∧ causativeLinking.IsValencyIncreasing := by decide
 
@@ -387,7 +371,7 @@ theorem suffix_underdetermines_linking :
     transitivizerSuffix meyah = transitivizerSuffix balak' ∧
     addedTermRole meyah ≠ addedTermRole balak' := ⟨rfl, by decide⟩
 
-/-- *Balak'* and *péek* share stem class and causation type but differ in suffix ((8), (10)). -/
+-- (8), (10)
 theorem suffix_not_predictable :
     balak'.stemClass = péek.stemClass ∧ balak'.causationType = péek.causationType ∧
     transitivizerSuffix balak' ≠ transitivizerSuffix péek := ⟨rfl, rfl, by decide⟩
@@ -399,8 +383,7 @@ theorem documented_linking :
 
 /-! ### Degree achievements: event type vs aspect -/
 
-/-- Degree achievements such as *ka'n* have a result state, as *-a'n* (19) and *láah* (20) attest,
-despite behaving atelically under (15) (§5). -/
+-- (19), (20), (15), §5
 theorem kaan_is_state_change : (stemTemplate ka'n.stemClass).HasResultState := by decide
 
 theorem naak_is_state_change : (stemTemplate na'k.stemClass).HasResultState := by decide
@@ -442,8 +425,7 @@ def DetransitivizationType.toVoice : DetransitivizationType → Voice
   | .anticausative => Voice.anticausative
   | .passive => Voice.passive
 
-/-- All three detransitivizations are valency-decreasing, as in the antipassive *p'èeh*, the
-passive *p'e'h-el* and the anticausative *p'éeh-el* of *p'eh* 'chip' (12). -/
+-- (12)
 theorem detransitivizations_decrease_valency :
     (DetransitivizationType.toVoice .antipassive).IsValencyDecreasing ∧
     (DetransitivizationType.toVoice .anticausative).IsValencyDecreasing ∧
@@ -479,8 +461,7 @@ def DetransitivizationType.template (d : DetransitivizationType) :
     Template .event → Option (Template .event) :=
   d.retained.of
 
-/-- Rules (28)–(30) presuppose that only verbs encoding a causal relation between two subevents
-detransitivize. -/
+-- (28), (30)
 theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType)
     (t : Template .event) :
     (d.template t).isSome ↔ ∃ c e, t = .cause c e := by
@@ -518,6 +499,8 @@ theorem externally_caused_causativize :
 
 /-! ### Bridge to split ergativity -/
 
+/-- Under each status with a viewpoint, the marking has the alignment Hindi case has under that
+viewpoint, the relation to Hindi of §4 (p. 84). -/
 theorem aspect_conditioned_split_family {s : StatusCategory} {v : Perfectivity}
     (h : s.viewpointAspect = some v) : (HindiUrdu.alignment v).Classifies (markerSet s) := by
   cases s <;> cases v <;> first | decide | cases h
@@ -556,7 +539,7 @@ theorem haanEat_defies_transitiviser_diagnostic :
     transitivizerSuffix hàan = some .applicativeT ∧
     salienceClassOf hàan.stemClass = some .patient := ⟨rfl, rfl⟩
 
-/-- This paper classifies *péek* as agent salient, and Lucy's (4) as patient salient. -/
+-- (4)
 theorem peek_stem_vs_root_class_divergence :
     salienceClassOf péek.stemClass = some .agent ∧
     Lucy1994.predictedClass Lucy1994.peek = some .patient := ⟨rfl, rfl⟩

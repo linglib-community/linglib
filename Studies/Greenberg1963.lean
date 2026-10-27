@@ -19,17 +19,6 @@ universals are statements about `HeadDirection`: a verb-peripheral language's ad
 in the verb's direction (Universals 3 and 4), and the noun's direction towards its genitive is the
 adposition's (Universal 2).
 
-## Main statements
-
-* `subjectFirst_iff_mem_range`: the three basic types are exactly the subject-first orders, the
-  typology Universal 1 leaves.
-* `universal_3_4`: in the sample a verb-initial language is prepositional and a verb-final one
-  postpositional, its adposition a head in the verb's direction.
-* `universal_2`: the noun precedes or follows its genitive as the adposition precedes or follows
-  its noun phrase, but in Norwegian, which has both genitive orders.
-* `not_universal_23_as_printed`, `universal_23`: the data contradict Universal 23 as printed and
-  bear it out with its genitive orders exchanged.
-
 ## Implementation notes
 
 * A universal is a statement that every language of the sample with one property has another
@@ -131,8 +120,7 @@ theorem universal_3_4 (d : HeadDirection) :
     Universal (·.basicOrder.IsEnd .verb d) (·.adposition.headDirection = d) := by
   cases d <;> decide
 
-/-- A sentence-initial question particle occurs in a prepositional language and a final one in a
-postpositional language, Thai and Yoruba excepted (Universal 9, Table 2). -/
+-- Table 2
 theorem universal_9 :
     Universal (·.questionParticleSentence = some .initial) (·.adposition = .prepositions) ∧
       UniversalExcept (·.questionParticleSentence = some .final)
@@ -145,42 +133,36 @@ theorem universal_10 :
       Universal (·.questionParticleWord ≠ none) (¬ ·.basicOrder.IsInitial .verb) := by
   decide
 
-/-- Verb-initial languages put the interrogative word first, and verb-final ones never do
-(Universal 12, Table 3). -/
+-- Table 3
 theorem universal_12 :
     Universal (·.basicOrder.IsInitial .verb) (·.questionWordFirst = true) ∧
       Universal (·.basicOrder.IsFinal .verb) (·.questionWordFirst = false) := by
   decide
 
-/-- An inflected auxiliary precedes the main verb in a verb-initial language and follows it in a
-verb-final one (Universal 16, Table 4). -/
+-- Table 4
 theorem universal_16 :
     Universal (·.basicOrder.IsInitial .verb) (·.auxiliary ≠ some .follows) ∧
       Universal (·.basicOrder.IsFinal .verb) (·.auxiliary ≠ some .precedes) := by
   decide
 
-/-- The verb-initial languages of the sample have the adjective after the noun (Universal 17,
-Table 5). -/
+-- Table 5
 theorem universal_17 :
     Universal (·.basicOrder.IsInitial .verb) (·.adjective.headDirection? = some .headInitial) := by
   decide
 
-/-- When the adjective precedes the noun, so do the demonstrative and the numeral (Universal 18,
-Table 6). -/
+-- Table 6
 theorem universal_18 :
     Universal (·.adjective = .dependentFirst)
       (fun r ↦ r.demonstrative = .dependentFirst ∧ r.numeral = .dependentFirst) := by
   decide
 
-/-- Where some or all adverbs follow the adjective, the adjective follows the noun and the verb
-precedes its object (Universal 21, Table 7). -/
+-- Table 7
 theorem universal_21 :
     Universal (fun r ↦ r.adverbAdjective = some .adjectiveAdverb ∨ r.adverbAdjective = some .both)
       (fun r ↦ r.adjective = .nounFirst ∧ r.basicOrder.Precedes .verb .object) := by
   decide
 
-/-- Standard-marker-adjective, alone or as an alternative, goes with postpositions, and
-adjective-marker-standard alone with prepositions, Songhai excepted (Universal 22, Table 8). -/
+-- Table 8
 theorem universal_22 :
     Universal (fun r ↦ r.comparison = some .standardMarkerAdjective ∨ r.comparison = some .both)
         (·.adposition = .postpositions) ∧
@@ -203,15 +185,13 @@ theorem universal_23 :
         ["Guarani"] := by
   decide
 
-/-- A relative expression preceding the noun, alone or as an alternative, goes with
-postpositions or a preposed adjective (Universal 24, Table 10). -/
+-- Table 10
 theorem universal_24 :
     Universal (fun r ↦ r.relative = some .dependentFirst ∨ r.relative = some .both)
       (fun r ↦ r.adposition = .postpositions ∨ r.adjective = .dependentFirst) := by
   decide
 
-/-- An exclusively suffixing language is postpositional, and an exclusively prefixing one
-prepositional (Universal 27, Table 11). -/
+-- Table 11
 theorem universal_27 :
     Universal (·.affixing = .suffixingOnly) (·.adposition = .postpositions) ∧
       Universal (·.affixing = .prefixingOnly) (·.adposition = .prepositions) := by

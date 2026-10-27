@@ -46,19 +46,6 @@ rather than through an event predicate.
   the columns `alternating`, `thick`, `strongResultative`, `resultless`, `omissionSubject`.
 * `causativeMannerVerbs`, `thickState` — Embick's class and the thick verbs outside it.
 
-## Main results
-
-* `production_constraint` — with production promoted, the lexical form conveys production and
-  *cause* dependence; `lexical_dependence_of_not_promoted`, `anticausative_readings` — the
-  dependence reading survives where nothing promotes production.
-* `not_holds_of_not_physical` — under the production constraint no subject with abstract
-  reference satisfies the lexical causative; `sunburn` and `axle` are the paper's contrasts.
-* `causativeMannerVerbs_subset_thick`, `thickState_eq`, `strongResultative_sdiff_thick` — the
-  correlation between thickness and strong resultatives.
-* `thin_without_omission`, `thick_inter_omissionSubject` — omission subjects in the survey.
-* `alternating_iff_hasCausativeAlternation` — the alternation column agrees with the fragment's
-  diatheses.
-
 ## Implementation notes
 
 The proportions the paper reports (twelve of thirteen thick verbs with a strong resultative,
@@ -117,7 +104,6 @@ def Reading.holds : Reading → E → E → Prop
   | .production, s, o => C.Produces s o
   | .dependence, s, o => C.Depends s o
 
-/-- Production is the stronger reading. -/
 theorem Reading.holds_dependence_of_production (h : Reading.production.holds C s o) :
     Reading.dependence.holds C s o :=
   C.depends_of_produces h

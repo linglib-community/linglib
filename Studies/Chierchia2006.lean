@@ -31,27 +31,6 @@ and Shimoyama.
   consistent.
 * `Available`, `Excluded`: some admissible model makes a reading felicitous, or none does.
 
-## Main results
-
-* `evenEnrich_eq_or_eq_empty`, `evenEnrich_disj_eq_empty`, `evenEnrich_image_antitone_eq`: `E` is
-  vacuous or contradictory; it is contradictory at the existential and vacuous under negation,
-  (47)–(53).
-* `oMinus_biUnion`, `oMinus_biUnion_eq_inter_sInter`: `O⁻` gives an existential universal force
-  over its domain, (63), and there agrees with the simpler (62).
-* `oMinus_antitone_eq`, `not_oMinus_ssubset_of_antitone`: under negation the
-  free-choice implicature vanishes, so *qualunque* has no negative-polarity construal, (65)–(72).
-* `oMinus_biUnion_eq_empty_of_isActualist`: an episodic universal over a widened domain is never
-  true, (67).
-* `exh_atLeastTwo_eq_exactlyOne`, `oMinus_exactlyOne_eq_empty`: `O` against the scalar
-  alternative yields uniqueness, (81), and an existential free-choice item is then contradictory
-  in an episodic sentence, (82).
-* `oMinus_core_biUnion_subset`, `oMinus_core_exactlyOne_subset`,
-  `card_le_one_of_forall_mem_core_exactlyOne`: under a necessity modal `O⁻` yields free choice,
-  (93d) and (117), while letting the whole domain be an antecedent would leave room for a single
-  doctor only, (118).
-* `judgedReadings_predicted`, `judgedSentences_predicted`: every judgment in the paper's rows
-  follows from the item's profile.
-
 ## Implementation notes
 
 Propositions are sets of worlds, and "stronger relative to the common ground" in (50a) is
@@ -177,8 +156,7 @@ theorem evenEnrich_image_antitone_eq {C : Set W → Set W} (hC : Antitone C) {A 
   Set.Subset.antisymm (evenEnrich_subset _ _)
     fun _ hw ↦ ⟨hw, by rintro _ ⟨q, hq, rfl⟩; exact hC (hA q hq)⟩
 
-/-- If even-like enrichment strictly strengthens a proposition, it yields the contradiction, so pure
-negative-polarity items select the plain σ (footnote 33). -/
+-- footnote 33
 theorem eq_empty_of_evenEnrich_ssubset {C : Set (Set W)} {p : Set W}
     (h : evenEnrich C p ⊂ p) : evenEnrich C p = ∅ :=
   (evenEnrich_eq_or_eq_empty C p).resolve_left fun heq ↦ ssubset_irrefl p (by rwa [heq] at h)
@@ -228,8 +206,7 @@ section Necessity
 
 variable {R : SetRel W W} {w : W}
 
-/-- Under a necessity modal, the uniqueness and free-choice implicatures rule out any proper
-subdomain being necessary (117c). -/
+-- (117c)
 theorem notMem_core_exactlyOne (hw : w ∈ R.dom)
     (h : w ∈ oMinus (fun S ↦ R.core (exactlyOne P S)) D) (hS : S ⊂ D) (hS' : S.Nonempty) :
     w ∉ R.core (exactlyOne P S) := by
@@ -282,8 +259,7 @@ def accessible : SetRel (Fin 3) (Fin 3) := {p | p.1 = 0 ∧ p.2 ≠ 0}
 /-- Doctor `d` is married exactly in world `d + 1`, the distribution of (85). -/
 def married (d : Fin 2) : Set (Fin 3) := {d.succ}
 
-/-- Two doctors, each married in one accessible world, satisfy the enriched statement under a
-possibility modal, the rescue of (84)–(85). -/
+-- (84), (85)
 theorem zero_mem_oMinus_preimage_exactlyOne_married :
     0 ∈ oMinus (fun S ↦ accessible.preimage (exactlyOne married S)) .univ := by
   have key (T : Finset (Fin 2)) (hT : T.Nonempty) :
@@ -292,8 +268,7 @@ theorem zero_mem_oMinus_preimage_exactlyOne_married :
     ⟨d.succ, ⟨d, ⟨hd, rfl⟩, fun _ hy ↦ (Fin.succ_injective _ hy.2).symm⟩, rfl, d.succ_ne_zero⟩
   exact ⟨key _ Finset.univ_nonempty, fun _ _ T _ _ hT _ _ ↦ key T hT⟩
 
-/-- The same distribution satisfies the enriched statement under a necessity modal, (115)–(117):
-no single doctor is necessary, so the free-choice implicature holds vacuously. -/
+-- (115), (117)
 theorem zero_mem_oMinus_core_exactlyOne_married :
     0 ∈ oMinus (fun S ↦ accessible.core (exactlyOne married S)) .univ := by
   refine ⟨fun v hv ↦ ?_, fun S _ T _ _ ⟨d, hd⟩ hST h ↦ ?_⟩
@@ -303,7 +278,7 @@ theorem zero_mem_oMinus_core_exactlyOne_married :
     obtain rfl := Fin.succ_injective _ hdx
     exact absurd hd (Finset.disjoint_left.1 hST hx)
 
-/-- On the same model, asserting every alternative under the necessity modal fails, (118). -/
+-- (118)
 theorem not_forall_zero_mem_core_exactlyOne_married :
     ¬ ∀ T ⊆ .univ, T.Nonempty → 0 ∈ accessible.core (exactlyOne married T) := fun h ↦
   absurd (card_le_one_of_forall_mem_core_exactlyOne married
@@ -361,8 +336,7 @@ theorem Profile.statement_of_not_scalar {C : Set W → Set W} (hs : p.scalar = f
   · simp [hs] at h
   · rfl
 
-/-- Under an antitone operator a scalar item's statement is the plain existential, the
-`some_D` of (91). -/
+-- (91)
 theorem Profile.statement_antitone {C : Set W → Set W} (hC : Antitone C) (S : Finset E) :
     C (p.statement C P S) = C (⋃ x ∈ S, P x) := by
   unfold Profile.statement
@@ -403,8 +377,7 @@ noncomputable def Profile.sentence (p : Profile) (P : E → Set W) (D : Finset E
 def Profile.Felicitous (p : Profile) (P : E → Set W) (D : Finset E) (lf : LF W) : Prop :=
   p.freezer.Admits (p.frozen P D lf) (p.prejacent P lf D) ∧ (p.sentence P D lf).Nonempty
 
-/-- Under an antitone operator below σ the strong σ cannot freeze, so *qualunque* and *uno N
-qualsiasi* lack a negative-polarity construal (70)–(72), (90b). -/
+-- (70), (72), (90b)
 theorem not_felicitous_freeze_of_antitone {outer inner : Set W → Set W}
     (hmin : p.alternatives = .min) (hstrong : p.freezer = .strong) (hC : Antitone inner) :
     ¬ p.Felicitous P D (.freeze outer inner) := by
@@ -415,8 +388,7 @@ theorem not_felicitous_freeze_of_antitone {outer inner : Set W → Set W}
     Freezer.Admits] at h
   exact not_oMinus_ssubset_of_antitone P hC h
 
-/-- Freezing σ directly over a scalar item's statement is infelicitous by the clash of (82), so
-*irgendwas* under *könnte* has no universal reading (footnote 42). -/
+-- (82), footnote 42
 theorem not_felicitous_freeze_id_of_scalar {outer : Set W → Set W}
     (hmin : p.alternatives = .min) (hs : p.scalar) (hD : 1 < D.card) (hout : outer ∅ = ∅) :
     ¬ p.Felicitous P D (.freeze outer id) := by
@@ -426,8 +398,7 @@ theorem not_felicitous_freeze_id_of_scalar {outer : Set W → Set W}
     oMinus_exactlyOne_eq_empty P hD, hout] at h
   exact Set.not_nonempty_empty h
 
-/-- In an episodic sentence with an actualist scope and a widened domain the universal reading
-of a non-scalar item is never true, (67). -/
+-- (67)
 theorem not_felicitous_freeze_id_id_of_isActualist {actual : W → Set E}
     (hmin : p.alternatives = .min) (hs : p.scalar = false) (hP : IsActualist actual P)
     (hD : D.Nonempty) (hwide : ∀ w, ∃ a ∈ D, a ∉ actual w) :
@@ -898,8 +869,7 @@ theorem Profile.alternatives_of_ofKey {s : String} {p : Profile} (h : p ∈ Prof
   unfold Profile.ofKey at h
   split at h <;> simp_all <;> subst h <;> rfl
 
-/-- Under a necessity modal, the existential reading is available to the items of the covert-modal
-rows (4), (8a), (89). -/
+-- (4), (8a), (89)
 theorem covertModal_available : ∀ e ∈ Examples.all, e.feature? "device" = some "covertModal" →
     ∀ p ∈ (e.feature? "item").bind Profile.ofKey, Available p .necessity .existential :=
   fun _ _ _ _ hp ↦

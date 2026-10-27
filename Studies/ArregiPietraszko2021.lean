@@ -22,20 +22,6 @@ highest position if none is strong. A chain that ends in a strong verb splits wh
 intervenes or the verb phrase is elided or fronted, and the verb's terminal, an orphan in the
 half without the verb, is exponed as *do*.
 
-## Main statements
-
-* `HeadChain.terminals_ofHeads`, `HeadChain.isLeftComb_mvalue_ofHeads`: the Mirror Principle,
-  the terminals of a complex head ordered as its heads are, each attached outside the complex
-  head of the heads below it.
-* `doSupport_iff`: do-support arises exactly where the chain of a strong verb splits, whether
-  the complex head is otherwise pronounced low or high.
-* `fronted_forms`: the finite, pseudo-infinitive, infinitive and bare forms of a fronted verb
-  are what Vocabulary Insertion gives when its orphan T is ignored, disregarded at its own
-  insertion, impoverished or obliterated.
-* `mirror_class9`, `mul_not_assoc`: regular vowel coalescence derives the Ndebele class 9
-  relative prefix from the Mirror-obeying complex head and not from another bracketing of the
-  same terminals, which it could not tell apart if it were associative.
-
 ## Implementation notes
 
 * A `Context` holds what head displacement sees of a clause: the heads related to the verb,

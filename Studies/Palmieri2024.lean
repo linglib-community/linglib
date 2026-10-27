@@ -197,7 +197,7 @@ def VerbClass.readingsWithSe (c : VerbClass) : List SeReading :=
 def VerbClass.readingsWithoutSe (c : VerbClass) : List SeReading :=
   c.formations.flatMap Formation.readingsWithoutSe
 
-/-- A class-3 *se*-clause is three-ways ambiguous (56a), (57a). -/
+-- (56a), (57a)
 theorem class3_three_ways :
     VerbClass.reciprocalTransitive.readingsWithSe =
       [.pseudoReciprocal, .grammaticalReciprocal, .grammaticalReflexive] := by
@@ -230,8 +230,7 @@ theorem strongReciprocity_plainReciprocity {A : Type*} (R : A → A → Prop) :
     Winter2018.PlainReciprocity (StrongReciprocity R) R :=
   fun _ _ ↦ .rfl
 
-/-- Some collective predicate fails plain reciprocity for any relation, as with *divorce* (53) and
-*kiss* (54). -/
+-- (53), (54)
 theorem exists_collective_not_plain (R : Bool → Bool → Prop) :
     ∃ P : Finset Bool → Prop, ¬ Winter2018.PlainReciprocity P R :=
   ⟨fun X ↦ ¬ StrongReciprocity R X, fun h ↦ iff_not_self (h {true, false} (by decide)).symm⟩

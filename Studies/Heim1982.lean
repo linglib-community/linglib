@@ -184,7 +184,6 @@ theorem admits_every_of_mem {φ₁ φ₂ : LF M} {F F₁ : File W M} (h : F₁ �
     (h' : φ₂.fcp.Admits F₁) : (every φ₁ φ₂).fcp.Admits F :=
   Part.dom_iff_mem.mpr ⟨_, mem_fcp_every.mpr ⟨F₁, h, _, Part.get_mem h', rfl⟩⟩
 
-/-- Rule (III) is the negated conjunction `¬(φ₁ ∧ ¬φ₂)`. -/
 theorem every_eq_cond (φ₁ φ₂ : LF M) :
     (every φ₁ φ₂).fcp = FCP.cond (W := W) φ₁.fcp φ₂.fcp := by
   funext F
@@ -216,7 +215,7 @@ theorem fcp_isEliminative : ∀ φ : LF M, (φ.fcp : FCP W ℕ M).IsEliminative
   | every φ₁ φ₂ => by rw [every_eq_cond]; exact FCP.isEliminative_cond _ _
   | neg _ => FCP.isEliminative_neg _
 
-/-- Once false, always false (§3.2): every update of the absurd file is absurd. -/
+-- §3.2
 theorem fcp_empty (φ : LF M) {F' : File W M} (h : F' ∈ φ.fcp ∅) : F' = ∅ :=
   (fcp_isEliminative φ).eq_empty_of_mem h
 
@@ -316,8 +315,7 @@ def kingGlobal (m i : ℕ) : LF M := (indef i king).seq (neg (pred₂ lunch m i)
 
 variable {dog cameIn layDown woman person pretzel king bit hit bought ate lunch}
 
-/-- (9) is felicitous whenever card 1 is novel: the indefinite's card is
-familiar for the pronoun of the next sentence. -/
+-- (9)
 theorem admits_aDog {F : File W M} (h : State.Novel F 1) :
     (aDog dog cameIn layDown).fcp.Admits F := by
   unfold aDog
@@ -336,8 +334,7 @@ theorem not_admits_everyDog {F : File W M} (h : State.Novel F 1)
   have hf : State.Familiar _ 1 := hpro.1.1
   exact hf p hp (h p (subset_of_mem_fcp_every hF' hp))
 
-/-- (17) is infelicitous whenever card 1 is novel and the negated sentence is
-true, for the same reason. -/
+-- (17)
 theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
     (ht : FCP.trueIn F (neg ((indef 1 dog).seq (pred₁ cameIn 1))).fcp) :
     ¬ (noDog dog cameIn layDown).fcp.Admits F := by
@@ -348,7 +345,7 @@ theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
   have hf : State.Familiar _ 1 := hpro.1.1
   exact hf p hp (h p (FCP.subset_of_mem_neg hF' hp))
 
-/-- §2.4 (5) is felicitous whenever cards 1 and 2 are novel in the initial file. -/
+-- §2.4, (5)
 theorem admits_womanDog {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
     (womanDog dog woman bit hit).fcp.Admits F := by
   unfold womanDog
@@ -370,14 +367,12 @@ theorem admits_pretzel {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F
   exact admits_every_of_mem m1 (admits_seq_of_mem m2 (admits_seq_of_mem (Part.mem_some _)
     (admits_pro_seq f2 trivial)))
 
-/-- Accommodation in the auxiliary file of the negation leaves the initial file's novel cards novel,
-the narrow-scope reading (§5.2). -/
+-- §5.2
 theorem novel_of_mem_kingLocal {F F' : File W M} {m i : ℕ} (h : State.Novel F i)
     (hF' : F' ∈ (kingLocal king lunch m i).fcp F) : State.Novel F' i :=
   novel_of_mem (φ := kingLocal king lunch m i) (Set.notMem_empty i) h hF'
 
-/-- Accommodation in the initial file (§5.2) makes the king's card part of the resulting
-file, which thereby entails that there is a king. -/
+-- §5.2
 theorem familiar_of_mem_kingGlobal {F F' : File W M} {m i : ℕ}
     (hF' : F' ∈ (kingGlobal king lunch m i).fcp F) :
     State.Familiar F' i ∧ ∀ p ∈ F', ∃ x : M, p.assignment i = ↑x ∧ king x := by

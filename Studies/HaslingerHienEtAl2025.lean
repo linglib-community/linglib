@@ -30,18 +30,6 @@ presupposition failure is undefinedness rather than falsity.
 * `over`, `every`, `each`, `jeder`: the quantifier over a head, and the English and German
   structures as partial propositions.
 
-## Main results
-
-* `qForall_iff_of_disjoint`, `qForall_iff_of_supClosed`: the two halves of the generalization.
-* `each_le_every`: *each* is defined on fewer restrictors than *every* and agrees where both are.
-* `dng`, `qForall_twoStudents`: the generalization on one algebra of students, and the vacuity
-  of `Q∀` over *two students* when three students are salient.
-* `every_tenMinutes_dom`, `each_tenMinutes_undefined`: consecutive ten-minute intervals meet the
-  presupposition of *every* and fail that of *each*.
-* `one_iff_singular`: the English forms carrying a ONE head are the ones the fragment records as
-  selecting the singular.
-* `judgment_rows`: the paper's *ten minutes* judgments are the definedness predictions.
-
 ## Implementation notes
 
 The null individual is `IsBot`, the overlap relation `Mereology.Overlap`, and non-overlap of a
@@ -82,7 +70,6 @@ def QForall (P Q : Set α) : Prop := ∀ x, MaxNonOverlap P x → x ∈ Q
 
 theorem MaxNonOverlap.mem (h : MaxNonOverlap P x) : x ∈ P := h.1
 
-/-- A non-null maximal non-overlapping element is maximal in `P`. -/
 theorem MaxNonOverlap.maximal (hx : ¬ IsBot x) (h : MaxNonOverlap P x) : Maximal (· ∈ P) x :=
   ⟨h.1, fun y hy hle ↦ h.2 y hy ⟨x, hx, le_rfl, hle⟩⟩
 

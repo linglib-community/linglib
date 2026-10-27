@@ -36,23 +36,6 @@ affix order, so the Mirror Principle holds, if at all, as a violable constraint 
   outputs across its linear extensions.
 * `chichewa`, `chimwiini`, `passiveGrammar`: the grammars of §2, §3 and (12).
 
-## Main results
-
-* `mem_carp_language`, `licensedBy_template_iff`: the template admits exactly the strings rising
-  in its order, and those are what TEMPLATE alone licenses.
-* `licensedBy_iff_templatic`, `chimwiini_outputs`: among an input's candidates the template
-  alone licenses only the templatic realization, the only output of a template-only grammar
-  (19).
-* `outputs_isChain_ne`, `doubling_licensed`: no output repeats a suffix, and a doubled suffix
-  is a mirror override the template repairs.
-* `asymmetric_compositionality`, `causative_applicative`, `applicative_reciprocal`, `passive`:
-  (2), (3) with (7), (13) with (16), and (12).
-* `three_suffixes`: the appendix's table for three extensions.
-* `scope_not_recoverable`, `mirror_predicts_distinct_words`, `rows_passive`: one affix order
-  for two syntactic derivations (§3), which Baker's architecture would keep apart and
-  whose passives his rules derive from scope.
-* `rows_outputs`: the paper's forms.
-
 ## Implementation notes
 
 * Hyman's tableaux mark the sequences a licensor licenses rather than violations; the
@@ -354,6 +337,7 @@ theorem chimwiini_outputs (i : Input) : chimwiini.outputs i = {templatic i} := b
 
 /-! ### General properties of outputs -/
 
+/-- No output repeats a suffix, and a doubled suffix is a mirror override the template repairs. -/
 theorem outputs_isChain_ne {G : Grammar} {i : Input} {c : Candidate} (hc : c ∈ G.outputs i) :
     c.IsChain (· ≠ ·) := by
   obtain ⟨σ, -, hσ⟩ := Finset.mem_biUnion.mp hc
@@ -425,8 +409,7 @@ theorem causative_applicative :
     chichewa.outputs [.C, .A] = {[.C, .A]} ∧ chichewa.outputs [.A, .C] = {[.C, .A]} := by
   decide +kernel
 
-/-- A reciprocal inside an applicative inside a causative surfaces in the templatic order, not the
-compositional one (8). -/
+-- (8)
 theorem reciprocal_applicative_causative :
     [.C, .A, .R] ∈ chichewa.outputs [.R, .A, .C] ∧
       [.R, .A, .C] ∉ chichewa.outputs [.R, .A, .C] := by
@@ -439,7 +422,7 @@ theorem applicative_reciprocal :
       chichewa.outputs [.R, .A] = {[.A, .R], [.R, .A, .R]} := by
   decide +kernel
 
-/-- No output repeats an extension, Menn and MacWhinney's Repeated Morph Constraint (18). -/
+-- (18)
 theorem repeated_morph (G : Grammar) (i : Input) (x : Ext) : [x, x] ∉ G.outputs i :=
   fun h ↦ by simpa using outputs_isChain_ne h
 
@@ -492,6 +475,8 @@ instrument becoming subject under one scope and the causee under the other. [bak
 rules derive the subjects from the scope order, and his single-process architecture would
 have kept the two words apart. -/
 
+/-- One affix order for two syntactic derivations (§3), which Baker's architecture would keep apart
+and whose passives his rules derive from scope. -/
 theorem scope_not_recoverable :
     chichewa.outputs [.C, .A, .P] = {[.C, .A, .P]} ∧
       chichewa.outputs [.A, .C, .P] = {[.C, .A, .P]} := by

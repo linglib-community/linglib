@@ -27,23 +27,6 @@ property in every belief world.
 * `Aloni2001.whoUnder`: a constituent question under a cover.
 * `Aloni2001.DeReUnder`: a de re belief report under a cover.
 
-## Main statements
-
-* `Aloni2001.isCover_iff_existsUnique`: the existence and uniqueness conditions.
-* `Aloni2001.IsCover.equiv`: Proposition 4.1.2.
-* `Aloni2001.coverEquivPerm`, `Aloni2001.card_covers`: covers are the families of permutations
-  trivial at a base world, and Proposition 4.1.3.
-* `Aloni2001.coverEquivProper`: covers are the proper methods of cross-identification,
-  Propositions 4.2.2 and 4.2.4, the name cover giving the rigid method (`crossId_names`).
-* `Aloni2001.IsCover.eq_names`, `Aloni2001.isCover_iff_eq_names`: a cover of rigid concepts is the
-  name cover, and Corollary 4.1.4.
-* `Aloni2001.whoUnder_names`: under the name cover a question is Groenendijk and Stokhof's.
-* `Aloni2001.deReUnder_iff_exists_ascribesUnder`: a de re report under a cover is ascription
-  under one of its concepts.
-* `Aloni2001.Cards`: the cards of Sections 1.4.1 and 4.1, with their two covers, the
-  identification question (186), the de re report (189), and the collapse of the covers once
-  the cards are known.
-
 ## Implementation notes
 
 * Worlds and individuals are types and concepts total functions, as in Definition 4.1.1.
@@ -219,7 +202,7 @@ theorem IsCover.equivalence_crossId (h : IsCover C) : Equivalence (crossId C) wh
 /-- The method of cross-identification of a cover, as a setoid. -/
 def IsCover.crossIdSetoid (h : IsCover C) : Setoid (W × D) := ⟨crossId C, h.equivalence_crossId⟩
 
-/-- The method of cross-identification of a cover is proper (Proposition 4.2.2). -/
+-- Proposition 4.2.2
 theorem IsCover.isProper_crossIdSetoid (h : IsCover C) : IsProper h.crossIdSetoid := by
   intro w w' d
   obtain ⟨c, hc, e⟩ := (h w).surjOn (mem_univ d)
@@ -250,7 +233,7 @@ def IsProper.concepts (hR : IsProper R) : Set (W → D) :=
 theorem IsProper.transport_self (hR : IsProper R) (w : W) (d : D) : hR.transport w w d = d :=
   (hR.eq_transport (R.refl' (w, d))).symm
 
-/-- The concepts of a proper method form a cover (Proposition 4.2.4). -/
+-- Proposition 4.2.4
 theorem IsProper.isCover_concepts (hR : IsProper R) : IsCover hR.concepts := by
   intro w
   refine ⟨mapsTo_univ _ _, ?_, fun d _ ↦ ⟨_, ⟨(w, d), rfl⟩, hR.transport_self w d⟩⟩
@@ -373,8 +356,7 @@ theorem left_notMem_names : left ∉ (names : Set (World → Card)) := by
 theorem not_isCover_mixed : ¬ IsCover {left, Function.const World hearts} := fun h ↦ by
   obtain ⟨c, hc | hc, e⟩ := (h w₁).surjOn (mem_univ spades) <;> subst hc <;> cases e
 
-/-- There are exactly two covers, by position and by suit (Section 1.4.1), as Proposition 4.1.3
-counts. -/
+-- Section 1.4.1, Proposition 4.1.3
 theorem isCover_iff {C : Set (World → Card)} : IsCover C ↔ C = byPosition ∨ C = bySuit := by
   refine ⟨fun h ↦ ?_, by rintro (rfl | rfl); exacts [isCover_byPosition, isCover_names]⟩
   have h2 : Nat.card {C : Set (World → Card) // IsCover C} = 2 := by
@@ -399,13 +381,13 @@ theorem not_crossId_bySuit : ¬ crossId bySuit (w₁, hearts) (w₂, spades) := 
 Hearts. -/
 def isHearts (d : Card) : Set World := {_w | d = hearts}
 
-/-- Under the cover by position, (186) partitions the worlds into two blocks. -/
+-- (186)
 theorem whoUnder_byPosition : whoUnder byPosition isHearts = ⊥ :=
   Setoid.ext fun v w ↦ by
     rw [Setoid.bot_def, whoUnder_iff]
     cases v <;> cases w <;> simp [byPosition, isHearts, left, right]
 
-/-- Under the cover by suit, (186) is vacuous. -/
+-- (186)
 theorem whoUnder_bySuit : whoUnder bySuit isHearts = ⊤ :=
   Setoid.eq_top_iff.2 fun v w ↦ whoUnder_iff.2 fun c ⟨d, e⟩ ↦ by
     subst e
@@ -417,20 +399,18 @@ def marked (d : Card) : Set World := {w | left w = d}
 /-- Ralph believes that the Ace of Hearts is on the left. -/
 def ralph : Set World := {w₁}
 
-/-- *Ralph believes the Ace of Spades to be marked* (189) is true at `w₂` under the cover by
-position. -/
+-- (189)
 theorem deReUnder_byPosition : DeReUnder byPosition ralph spades marked w₂ :=
   ⟨left, .inl rfl, rfl, by rintro _ rfl; rfl⟩
 
-/-- (189) is false under the cover by suit, since Ralph does not take the Ace of Spades to be the
-card on the left. -/
+-- (189)
 theorem not_deReUnder_bySuit : ¬ DeReUnder bySuit ralph spades marked w₂ := by
   rintro ⟨_, ⟨d, rfl⟩, hd, h⟩
   obtain rfl : d = spades := hd
   have h₁ : left w₁ = spades := h w₁ rfl
   exact absurd h₁ (by decide)
 
-/-- Restricted to `{w₂}`, the covers by position and by suit coincide (Section 4.1). -/
+-- Section 4.1
 theorem restrict_byPosition_eq_restrict_bySuit :
     ({w₂} : Set World).domRestrict '' byPosition = ({w₂} : Set World).domRestrict '' bySuit :=
   (isCover_iff_eq_names.1 (isCover_byPosition.image_domRestrict _)).trans

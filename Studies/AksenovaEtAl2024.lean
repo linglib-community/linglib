@@ -24,15 +24,6 @@ patterns sharing a tier, the chapter's condition for one tier to suffice. Yakut'
 blockers are no segment-level participation, so its rounding is no pattern beside its fronting
 harmony.
 
-## Main statements
-
-* `lokaa_not_isStrictlyLocal`, `lokaa_language_eq_strictlyPiecewise`: Lokaa is SL at no width,
-  and its TSL₂ grammar and SP₂ grammar generate one language.
-* `buryat_language`, `buryat_not_isStrictlyPiecewise`: Buryat's grammar is ATR harmony and
-  blocked rounding harmony on one tier, and SP at no width.
-* `yakut_rounding_not_pattern`: no segment-level pattern beside fronting harmony gives Yakut.
-* `kikongo_not_isTierStrictlyLocal`: no single tier carries Kikongo's two harmonies.
-
 ## Implementation notes
 
 * A single-tier grammar's surface alphabet is `Option V` for its tier alphabet `V`, with `none`
@@ -95,8 +86,7 @@ private theorem harmonic_pair {α W : Type*} (p : Pattern α W) (x y : α) :
   by_cases hx : p.OnTier x <;> by_cases hy : p.OnTier y <;>
     simp [Pattern.Harmonic, Pattern.tier, hx, hy]
 
-/-- Two harmonies with the same transparent items fit on one TSL₂ tier banning what either bans
-(§34.3.1). -/
+-- §34.3.1
 theorem harmonic_and_iff_mem_tsl {α W W' : Type*} (p : Pattern α W) (q : Pattern α W')
     (h : ∀ s, p.OnTier s ↔ q.OnTier s) (w : List α) :
     p.Harmonic w ∧ q.Harmonic w ↔ w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs
@@ -135,7 +125,7 @@ instance : DecidableRel lokaaBanned := fun _ _ ↦ by unfold lokaaBanned; infer_
 
 abbrev lokaa : TierStrictlyLocalGrammar 2 (Option LokaaV) := tierGrammar lokaaBanned
 
-/-- The (3) forms are accepted and their starred counterparts rejected. -/
+-- (3)
 theorem lokaa_rows :
     (∀ f ∈ Wordlist.all, f.languageId = "loka1252" →
         read LokaaV.ofChar f.form.toList ∈ lokaa.language) ∧
@@ -193,7 +183,7 @@ instance : DecidableRel kirghizBanned := fun _ _ ↦ by unfold kirghizBanned; in
 
 abbrev kirghiz : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar kirghizBanned
 
-/-- The (5) forms are accepted and the starred forms of Figure 34.3 rejected. -/
+-- (5), Figure 34.3
 theorem kirghiz_rows :
     (∀ f ∈ Wordlist.all, f.languageId = "kirg1245" →
         read TurkicV.ofChar f.form.toList ∈ kirghiz.language) ∧
@@ -254,8 +244,7 @@ instance : DecidableRel buryatBanned := fun _ _ ↦ by unfold buryatBanned; infe
 
 abbrev buryat : TierStrictlyLocalGrammar 2 (Option BuryatV) := tierGrammar buryatBanned
 
-/-- The (9) forms are accepted, `ɔr-ʊːl-aːd` because the high causative blocks rounding, and
-their starred counterparts rejected. -/
+-- (9)
 theorem buryat_rows :
     (∀ f ∈ Wordlist.all, f.languageId = "russ1264" →
         read BuryatV.ofChar f.form.toList ∈ buryat.language) ∧
@@ -310,8 +299,7 @@ theorem yakut_rows :
         read TurkicV.ofChar f.form.toList ∉ yakut.language := by
   decide
 
-/-- **Harmonizing blockers block** (§34.2.2). Deleting the high vowel of `ojum-lar` (14g)
-leaves its low vowels disagreeing in rounding, `*oa`. -/
+-- §34.2.2, (14g)
 theorem yakut_not_isStrictlyPiecewise (k : ℕ) : ¬ yakut.language.IsStrictlyPiecewise k :=
   fun h ↦ (by decide : [some .o, some .a] ∉ yakut.language) <|
     h.isSublistClosed (by decide) (by decide : [some .o, some .u, some .a] ∈ yakut.language)
@@ -399,7 +387,7 @@ def kikongo : Language KikongoSeg := kikongoVowel.language ⊓ kikongoNasal.lang
 instance : DecidablePred (· ∈ kikongo) := fun w ↦
   inferInstanceAs (Decidable (w ∈ kikongoVowel.language ∧ w ∈ kikongoNasal.language))
 
-/-- The (16) and (18) forms are accepted and the starred forms of Figure 34.6 rejected. -/
+-- (16), (18), Figure 34.6
 theorem kikongo_rows :
     (∀ f ∈ Wordlist.all, f.languageId = "koon1247" →
         KikongoSeg.parse f.form.toList ∈ kikongo) ∧

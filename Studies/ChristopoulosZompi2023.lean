@@ -36,15 +36,9 @@ points: *pat-* needs the singular feature alongside k₀ (fn. 26), and *undz*
 needs k₁ (fn. 25). The Latvian stems are read off the segmented forms of
 `Latvian.Pronouns.pats`.
 
-## Main results
-
 * `noABA_scc` / `noABA_wcc` — the generic `Decomposition.noABA` (*ABA excluded
   under any decomposition nesting the middle cell) discharged for SCC and WCC by
   `decide` on the order-theoretic hypotheses
-* `ncc_aba_generable` — the two-rule NCC vocabulary generating A B A
-* `scc_nom_forces_empty` — SCC has no non-elsewhere nominative rules
-* `table25_generates` — each `table25` row's inventory generates its PATTERN
-  column
 * `latvian_stems` / `latvian_gender_blind` / `latvian_pat_needs_singular` —
   Table 20 under rules (7)
 * `yiddish_stems` / `undz_needs_k1` — the fn. 25 paradigm and its k₁ argument

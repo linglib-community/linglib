@@ -100,8 +100,7 @@ theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ Alg
     (hxC : x ∈ C) : C = {x} :=
   (hmin.eq_of_le (y := {x}) (.base (Set.mem_singleton x)) (Set.singleton_subset_iff.2 hxC)).symm
 
-/-- Under a cover by all parts of `x` (32), the reading is `⋆P` itself, false only where no part of
-`x` satisfies `P`. -/
+-- (32)
 theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     (hpow : ∀ y ⊆ x, y.Nonempty → y ∈ C) (hP : ∀ w, ¬ P ∅ w) :
     ⋂₀ readings (coverStar C P) x = {w | AlgClosure (P · w) x} ∧
@@ -125,8 +124,7 @@ theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     exact ⟨fun ⟨z, hzC, hzx, hPz⟩ ↦ ⟨z, hzx, hC z hzC, hPz⟩,
       fun ⟨z, hzx, hz, hPz⟩ ↦ ⟨z, hpow z hzx hz, hzx, hPz⟩⟩
 
-/-- Under the cover by the atoms of `x` (33), the reading is distributive, false only where no atom
-of `x` satisfies `P`. -/
+-- (33)
 theorem atomic_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∀ a ∈ x, P {a} w} ∧
       ⋃₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∃ a ∈ x, P {a} w} := by
@@ -141,8 +139,7 @@ theorem atomic_cover (hx : x.Nonempty) :
     ext w
     simp
 
-/-- Under the cover by `x` itself (34), the reading is collective, true exactly where `x` satisfies
-`P`. -/
+-- (34)
 theorem singleton_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar {x} P) x = {w | P x w} ∧
       ⋃₀ readings (coverStar {x} P) x = {w | P x w} := by
@@ -282,7 +279,7 @@ variable {C : Set (Finset Kid)} (hC : ∀ z ∈ C, z.Nonempty)
   (hpow : ∀ y : Finset Kid, y.Nonempty → y ∈ C)
 include hC hpow
 
-/-- The model reproduces the judgments of (3) on (3a) and its negation (3b). -/
+-- (3), (3a), (3b)
 theorem judgments_lift_the_table :
     (Examples.ex_3a.readings.lookup "true if half of the kids lifted the table together and the \
         other half did nothing" = some .acceptable ↔
@@ -297,8 +294,7 @@ theorem judgments_lift_the_table :
     iff_of_false (by decide) fun h ↦ h (lift_half_gap hC hpow).2,
     iff_of_true (by decide) (lift_true hC hpow _ (by simp))⟩
 
-/-- *The four kids didn't lift the table but they did together*, (13), is contradictory: lifting
-the table together makes the negated sentence false. -/
+-- (13)
 theorem judgments_13 :
     (Examples.ex_13_together.judgment = .acceptable ↔
       Lifting.together ∉ ⋃₀ readings (coverStar C lifted) (Finset.univ : Finset Kid)) ∧
@@ -312,8 +308,7 @@ theorem judgments_13 :
 
 end Judgments
 
-/-- Both versions of (17), *these two people don't weigh 250 lbs but they do together
-(individually)*, are consistent. -/
+-- (17)
 theorem judgments_17 :
     (Examples.ex_17_together.judgment = .acceptable ↔
       Weighing.each125 ∉ ⋃₀ readings (coverStar ((fun a ↦ {a}) '' ↑(Finset.univ : Finset (Fin 2)))

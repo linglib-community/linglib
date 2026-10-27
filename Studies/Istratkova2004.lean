@@ -22,17 +22,6 @@ AspP in the fixed order of the hierarchy (32): attenuative *po-*, inceptive *za-
 * `WellFormed`: a stack is well-stacked and ordered, distributive *po-* occurs only under
   completive *iz-*, (29), and delimitative *po-* stands alone, (26).
 
-## Main results
-
-* `homogeneous_imperfective`, `quantized_perfective`: each aspectless verb is a dictionary
-  imperfective and each quantized one a dictionary perfective.
-* `attested_wellFormed`, `starred_not_wellFormed`: the attested stacks of Sections 1, 4 and 5
-  conform, and the starred stacks that reverse two heads of the hierarchy do not.
-* `spells`, `judgments`: each analysis spells out its form, accepted or rejected.
-* `attenuative_outermost`: attenuative *po-* is outermost in any ordered stack.
-* `phaseTests_necessary`: the phase-verb test admits the imperfective complements of (17), and
-  is a necessary condition only, since (17b) is excluded by its meaning.
-
 ## Implementation notes
 
 * The surface prefix *po-* is classified as distributive under completive *iz-* and attenuative

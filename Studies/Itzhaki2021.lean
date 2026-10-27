@@ -22,23 +22,6 @@ A soritical argument is one schema, `Sorites`: a base case, tolerance along a st
 a counterexample. The classic and the reverse paradox of the heap are its instances along steps of
 one grain, read through either size map.
 
-## Main statements
-
-* `Itzhaki2021.Sorites.conclusion`, `Itzhaki2021.Sorites.false_of_total`: the conclusion of a
-  Sorites follows from its premises when the inverse of the size map is total, and the premises are
-  then inconsistent.
-* `Itzhaki2021.sorites_not_heap`, `Itzhaki2021.sorites_heap`: under the qualitative size, the
-  classic and the reverse paradox of the heap hold for any heap predicate with a heap and a
-  non-heap, while under the quantitative size of the model they are inconsistent
-  (`Itzhaki2021.Model55.not_sorites_size`).
-* `Itzhaki2021.induction_premise`, `Itzhaki2021.conclusion_tall`,
-  `Itzhaki2021.not_forall_sub_natCast_ge`: with an infinitesimal unit of change the premises of the
-  tall paradox hold, and with the quantitative unit its conclusion fails.
-* `Itzhaki2021.instIsTransInfinitelyLess`, `Itzhaki2021.merged_iff`,
-  `Itzhaki2021.not_merged_qualSize`: being infinitely less is transitive, and the merged paradox
-  of the small heap is satisfiable exactly when the qualitative sizes of its two heaps are
-  infinitely apart, which the qualitative size of the heap paradox never makes them.
-
 ## Implementation notes
 
 * The finite and the infinitesimal hyperreals are mathlib's subgroups of archimedean classes at
@@ -111,38 +94,36 @@ instance : IsEquiv ℝ* FinitelyClose where
   symm _ _ := FinitelyClose.symm
   trans _ _ _ := FinitelyClose.trans
 
-/-- Distinct reals are distinguishable (14), so a taller person's height is never
-indistinguishable from a shorter one's (67). -/
+-- (14), (67)
 theorem not_infinitesimallyClose_coe {r s : ℝ} (h : r ≠ s) :
     ¬ InfinitesimallyClose (r : ℝ*) s := by
   rw [InfinitesimallyClose, mem_infinitesimals, ← coe_sub, archimedeanClassMk_coe (sub_ne_zero.2 h)]
   exact lt_irrefl 0
 
-/-- The standard part of a real minus an infinitesimal is the real (22). -/
+-- (22)
 theorem stdPart_sub_infinitesimal (r : ℝ) {e : ℝ*} (he : e ∈ infinitesimals) :
     stdPart ((r : ℝ*) - e) = r := by
   rw [stdPart_sub_eq_left (mem_infinitesimals.1 he), stdPart_coe]
 
-/-- An infinite number times a nonzero finite one need not be infinite, against (9d) as
-printed. -/
+-- (9d)
 theorem not_forall_mk_mul_neg :
     ¬ ∀ H a : ℝ*, mk H < 0 → a ≠ 0 → 0 ≤ mk a → mk (H * a) < 0 := fun h ↦ by
   have := h ω ε archimedeanClassMk_omega_neg epsilon_ne_zero archimedeanClassMk_epsilon_pos.le
   rw [mul_comm, epsilon_mul_omega] at this
   simp at this
 
-/-- Every finite number is a difference of two infinite ones (§2.2.2). -/
+-- §2.2.2
 theorem exists_sub_of_mk_nonneg {a : ℝ*} (ha : 0 ≤ mk a) :
     ∃ G H : ℝ*, mk G < 0 ∧ mk H < 0 ∧ a = G - H :=
   ⟨a + ω, ω, by
     rw [add_comm, mk_add_eq_mk_left (archimedeanClassMk_omega_neg.trans_le ha)]
     exact archimedeanClassMk_omega_neg, archimedeanClassMk_omega_neg, by ring⟩
 
-/-- Adding a natural number keeps a number finite (38a). -/
+-- (38a)
 theorem mk_add_natCast_nonneg {a : ℝ*} (ha : 0 ≤ mk a) (n : ℕ) : 0 ≤ mk (a + n) :=
   (le_min ha (mk_natCast_nonneg n)).trans (min_le_mk_add a n)
 
-/-- Subtracting a natural number keeps a number infinite (38b). -/
+-- (38b)
 theorem mk_sub_natCast_neg {a : ℝ*} (ha : mk a < 0) (n : ℕ) : mk (a - n) < 0 := by
   rw [sub_eq_add_neg, mk_add_eq_mk_left (by rw [mk_neg]; exact ha.trans_le (mk_natCast_nonneg n))]
   exact ha
@@ -209,12 +190,12 @@ variable {heap known size H} {x y : De}
 theorem qualSize_of_not_heap (hx : ¬ heap x) : qualSize heap known size H x = size x := by
   simp [qualSize, hx]
 
-/-- What is not a heap has finite qualitative size (37a). -/
+-- (37a)
 theorem mk_qualSize_nonneg (hx : ¬ heap x) : 0 ≤ mk (qualSize heap known size H x) := by
   rw [qualSize_of_not_heap hx]
   exact mk_natCast_nonneg _
 
-/-- A heap has infinite qualitative size when `H` is infinite (37b). -/
+-- (37b)
 theorem mk_qualSize_neg (hH : mk H < 0) (hx : heap x) :
     mk (qualSize heap known size H x) < 0 := by
   unfold qualSize
@@ -222,8 +203,7 @@ theorem mk_qualSize_neg (hH : mk H < 0) (hx : heap x) :
   · exact (mk_add_eq_mk_left (hH.trans_le (mk_natCast_nonneg _))).symm ▸ hH
   · exact hH
 
-/-- A heap's qualitative size exceeds every natural number when `H` is positive and infinite
-(37b). -/
+-- (37b)
 theorem natCast_lt_qualSize (hH : mk H < 0) (hpos : 0 < H) (hx : heap x) (n : ℕ) :
     (n : ℝ*) < qualSize heap known size H x := by
   have hn : (n : ℝ*) < H := by
@@ -264,7 +244,7 @@ theorem sorites_heap (hH : mk H < 0) {g₁ g : De} (h₁ : ¬ heap g₁) (hg : h
     exact (mk_sub_natCast_neg (mk_qualSize_neg hH hx) 1).not_ge this
   counter := h₁
 
-/-- The size of a heap is nobody's qualitative size (47a). -/
+-- (47a)
 theorem natCast_size_notMem_range (hH : mk H < 0) (hs : Function.Injective size)
     (hx : heap x) : (size x : ℝ*) ∉ Set.range (qualSize heap known size H) := fun ⟨y, hy⟩ ↦ by
   by_cases hy' : heap y
@@ -273,7 +253,7 @@ theorem natCast_size_notMem_range (hH : mk H < 0) (hs : Function.Injective size)
   · rw [qualSize_of_not_heap hy', Nat.cast_inj] at hy
     exact hy' (hs hy ▸ hx)
 
-/-- `H` plus the size of a non-heap is nobody's qualitative size (47b). -/
+-- (47b)
 theorem add_natCast_size_notMem_range (hH : mk H < 0) (hs : Function.Injective size)
     (hx : ¬ heap x) (hpos : 0 < size x) :
     H + size x ∉ Set.range (qualSize heap known size H) := fun ⟨y, hy⟩ ↦ by
@@ -314,11 +294,11 @@ noncomputable abbrev qs : De → ℝ* := qualSize heap (fun _ ↦ True) Subtype.
 example : qs g₁ = 1 ∧ qs g₁₀₀₀₀ = ω + 10000 := by
   simp [qs, qualSize, heap, g₁, g₁₀₀₀₀]
 
-/-- The classic paradox of the heap holds of the qualitative size (52). -/
+-- (52)
 theorem sorites_qs : Sorites (¬ heap ·) (Step qs 1) g₁ g₁₀₀₀₀ :=
   sorites_not_heap archimedeanClassMk_omega_neg (by simp [heap, g₁]) rfl
 
-/-- The reverse paradox holds of the qualitative size (54). -/
+-- (54)
 theorem sorites_qs_reverse : Sorites heap (Step qs (-1)) g₁₀₀₀₀ g₁ :=
   sorites_heap archimedeanClassMk_omega_neg (by simp [heap, g₁]) rfl
 
@@ -341,8 +321,7 @@ end Model55
 smallest contextually relevant unit `U`, and `r` otherwise. -/
 noncomputable def qualUnit (U : ℝ) (e : ℝ*) (r : ℝ) : ℝ* := if r < U then e else r
 
-/-- A positive unit of change whose every multiple stays below a real bound is infinitesimal
-(61). -/
+-- (61)
 theorem mem_infinitesimals_of_forall_mul_le {u : ℝ*} {c : ℝ} (hu : 0 < u)
     (h : ∀ n : ℕ, (n : ℝ*) * u ≤ c) : u ∈ infinitesimals := by
   rw [mem_infinitesimals, ← mk_one, mk_lt_mk]
@@ -438,8 +417,7 @@ theorem LeUpToFinite.add_one {a S : ℝ*} (h : LeUpToFinite a S) : LeUpToFinite 
       ⟨(sub_pos.2 hlt).le, by linarith⟩
     simpa [FinitelyClose] using finites.neg_mem this
 
-/-- Of two heaps whose qualitative sizes are ordered, the larger is either finitely close or
-infinitely larger, never both (81). -/
+-- (81)
 theorem finitelyClose_or_infinitelyLess {a b : ℝ*} (h : a < b) :
     FinitelyClose a b ∨ InfinitelyLess a b :=
   (em _).imp_right (⟨h, ·⟩)

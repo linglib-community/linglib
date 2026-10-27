@@ -29,30 +29,6 @@ account, negation yields the subinterval property, so its durative *until* would
 perfective with no event at all, and Greek *para mono* is an exceptive whose meaning already
 gives the punctual one.
 
-## Main statements
-
-* `in_years_contradictory`: exhaustified, the positive perfective claim is contradictory when
-  the events are shorter than the span.
-* `negated_perfective_exh_vacuous`, `throughout_exh_vacuous`: exhaustification is vacuous for a
-  negated perfective and for a predicate holding throughout the span.
-* `not_throughout_exh_contradictory`: exhaustifying the claim that an imperfective predicate does
-  not hold throughout the span is contradictory.
-* `actuality_inference`, `event_near_lb`, `event_near_rb`: a widened span forces a relevant event
-  just beyond its widened boundary.
-* `beyond_expectation_inference`: the widened span contains every event-free alternative.
-* `widened_iff_maximal`: the widened span is the event-free span stretched until the sentence
-  would become false.
-* `not_widened_rb_of_finite`: in dense time no span is widened past finitely many events.
-* `two_until_overgenerates`: the durative *until* of the ambiguity account accepts a negated
-  perfective with no event at all.
-* `eventiveUntil_of_exceptive`: *para mono* with a temporal argument under negation, read as an
-  exceptive, entails the punctual *until* meaning, the event included.
-* `isLeast_rightBoundaries_prfv`, `isLeast_rightBoundaries_unbounded`: a perfective argument of
-  *until* sets the right boundary at the completion of its event, an imperfective one at the
-  onset.
-* `cancellation_rows`, `expectation_rows`, `grammaticality_rows`: the judgments of the example
-  rows against the widening and exhaustification results, over the integers.
-
 ## Implementation notes
 
 * Exhaustification is the shared `Exhaustification.exh` over the domain alternatives, the claim
@@ -297,8 +273,7 @@ theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
   obtain ⟨e, hP, hse, hlt⟩ := event_near_lb h hs
   exact (hsF e hP hlt).not_ge hse
 
-/-- A boundary adverbial naming its left boundary leaves the actuality inference cancelable
-((11)–(12), (23)). -/
+-- (11), (12), (23)
 theorem cancelable_of_lb {t : T} (s : T) (hs : s ≤ t) :
     (∃ P : W → E → Prop, ∃ τ : NonemptyInterval T, τ.fst = s ∧ τ.snd = t ∧ τ ∉ PRFV P w ∧
         ∀ e, ¬ P w e) ∧
@@ -332,8 +307,7 @@ theorem throughout_exh_vacuous :
     exh (domainAlternatives (UNBOUNDED P) τ) {v | τ ∈ UNBOUNDED P v} = {v | τ ∈ UNBOUNDED P v} :=
   exh_domainAlternatives_eq_self fun v ↦ isLowerSet_unbounded P v
 
-/-- With rich events, the not-throughout claim at one span entails it at another iff the first is
-contained in the second (142). -/
+-- (142)
 theorem not_unbounded_subset_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
     {v | τ₁ ∉ UNBOUNDED P v} ⊆ {v | τ₂ ∉ UNBOUNDED P v} ↔ τ₁ ≤ τ₂ := by
@@ -454,8 +428,6 @@ section Data
 
 open Examples
 
-/-- A widened perfect time span, its right boundary fixed by tense, forces a relevant event, since
-over the integers an event-free span could always widen further. -/
 theorem widener_forces_event {P : Unit → NonemptyInterval ℤ → Prop} {t : ℤ}
     {τ : NonemptyInterval ℤ} (h : Widened {τ' | τ'.snd = t} P () τ) : ∃ e, P () e := by
   have ht : τ.snd = t := h.1.1
@@ -466,8 +438,7 @@ theorem widener_forces_event {P : Unit → NonemptyInterval ℤ → Prop} {t : �
   dsimp at this
   omega
 
-/-- A widened until time span, its left boundary fixed contextually, forces a relevant event: the
-noncancelable inferences of (123) and (149). -/
+-- (123), (149)
 theorem widener_forces_event_until {P : Unit → NonemptyInterval ℤ → Prop} {t : ℤ}
     {τ : NonemptyInterval ℤ} (h : Widened {τ' | τ'.fst = t} P () τ) : ∃ e, P () e := by
   have ht : τ.fst = t := h.1.1
@@ -523,7 +494,7 @@ def BoundaryAdverbial.band : BoundaryAdverbial → Judgment.Band
 theorem cancellation_rows :
     Datum.Checks cancellation? (fun p ↦ p.1.band) Examples.all 4 := by decide +kernel
 
-/-- A named boundary admits the event-free model the cancellations of (11)–(12) describe. -/
+-- (11), (12)
 theorem lbNamed_cancellable :
     ∃ P : Unit → NonemptyInterval ℤ → Prop, ∃ τ : NonemptyInterval ℤ,
       τ.fst = 5 ∧ τ.snd = 10 ∧ τ ∉ PRFV P () ∧ ∀ e, ¬ P () e := by
@@ -560,8 +531,7 @@ example : (· = NonemptyInterval.pure (0 : ℤ)) ∉
     subst he
     decide
 
-/-- (83): the continuation *maybe she didn't leave at all* is a contradiction, which the
-durative *until* of the ambiguity account fails to predict (`two_until_overgenerates`). -/
+-- (83)
 theorem ambiguity_row : iz2021_s83.judgment = .unacceptable := rfl
 
 end Data

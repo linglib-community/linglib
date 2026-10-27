@@ -36,14 +36,6 @@ so it reads the domain alone.
 * `FBCViolation` — the categorical constraint (10)
 * `FBCPredictsIsland` — the constraint's prediction, the filler more focused than the subject
 
-## Main results
-
-* `fbcViolation_iff_lt` — on binary marks the categorical constraint is the strict inequality
-* `fbc_predicts_construction_dependence` — the constraint makes the effect turn on construction
-* `fbc_falsified` — an effect in relative clauses refutes it, in either formulation
-* `domain_only_predicts_invariance` — an account reading only the domain predicts invariance, so
-  the experiments leave it standing
-
 ## References
 
 * [cartner-et-al-2026]

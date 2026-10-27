@@ -17,14 +17,6 @@ partitive the measure is domain-restricted, and then the positive form reads pro
 while the comparative keeps its cardinal reading; the ambiguity account predicts that both lose
 it.
 
-## Main statements
-
-* `percent_iff_proportionalMeasure`: *n percent* is a point on the proportional scale.
-* `readings_diverge`: when the cardinal and proportional readings of a comparative come apart.
-* `restricted_asymmetry`: with only restricted measures, the comparative keeps its cardinal
-  reading and the positive form loses it.
-* `ambiguity_symmetric`: on the ambiguity account both forms read alike.
-
 ## Implementation notes
 
 The paper reports the populations of Ithaca and New York City in prose and no counts of

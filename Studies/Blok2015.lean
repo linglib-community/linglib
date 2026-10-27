@@ -96,8 +96,7 @@ theorem Ici_diff_sUnion_howMany : Ici m \ ⋃₀ {q ∈ howMany | ¬ Ici m ⊆ q
     rintro ⟨_, ⟨⟨j, rfl⟩, hj⟩, hkj⟩
     exact hj (Ici_subset_Ici.2 hkj)
 
-/-- Exhaustification turns the possibilities of *up to `n`* into those of exactly `m`, for `m`
-from the bottom of the scale to `n` (50), (51). -/
+-- (50), (51)
 theorem exh_upTo_howMany :
     Inquisitive.Unrestricted.exh (upTo s n) howMany = (fun m ↦ {m}) '' Icc s n := by
   simp only [Inquisitive.Unrestricted.exh, upTo, image_image, Ici_diff_sUnion_howMany]

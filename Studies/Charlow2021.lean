@@ -29,19 +29,8 @@ update semantics derives the cumulative reading from meanings of the pseudo-cumu
 * `maxAtU`, `exactlyU`, `sentenceU`: update-theoretic maximization (78), the quantifier (81) and
   the sentence (82).
 
-## Main results
-
-* `cumulative_scenarioA`, `cumulative_scenarioB`, `pseudoCumulative_scenarioB`: on the models of
-  Figure 1, (6) holds in Scenario A only, while (5) holds in Scenario B.
 * `scope27` through `scope33`: the six scopings of two higher-order quantifiers reduce to (27)–(30)
   and (32)–(33); four agree with (6) on Figure 1 and two are pseudo-cumulative.
-* `hasType_cumulative`, `not_hasType_pseudoCumulative`: (45) has type `T` and (46) has none.
-* `reify_sentencePS`: the post-suppositional sentence reifies to (6).
-* `lower_maxAtU_image`: the two maximizations are alphabetic variants (79).
-* `sentenceU_scenarioA`, `sentenceU_scenarioB`: (82) is cumulative on Figure 1, and
-  `down_sentenceULowered` recovers (5) once the object's maximization is lifted from its pointwise
-  counterpart, so that update-theoretic maximization is not distributive
-  (`not_isDistributive_maxAtU`).
 
 ## Implementation notes
 
@@ -138,7 +127,7 @@ theorem mem_comp_card {D : Update S} {v : R} {n : ℕ} {i j : S} :
     i ~[D ○ card v n] j ↔ i ~[D] j ∧ Mereology.atomCount E (val v j) = n :=
   mem_comp_test
 
-/-- Cardinality tests commute, so the order of the tests in (6) and (8) is immaterial (fn. 4). -/
+-- (6), (8), fn. 4
 theorem card_comp_card_comm (v u : R) (n m : ℕ) :
     (card v n ○ card u m : Update S) = card u m ○ card v n := by
   simp only [card, test_comp_test, Set.inter_comm]
@@ -173,8 +162,7 @@ above its trace. -/
 def exactlyHO (v : R) (n : ℕ) (P : E → Prop) : Cont (Update S) (Cont (Update S) R) :=
   fun c ↦ c (fun k ↦ maxAt v (Evar v P ○ k v)) ○ card v n
 
-/-- The map (26) from higher-order to ordinary quantifiers is the continuation monad's `joinM`, and
-sends both the Lift (23) of (3) and (24) to (3). -/
+-- (26), (23), (3), (24)
 theorem joinM_exactlyHO (v : R) (n : ℕ) (P : E → Prop) :
     joinM (exactlyHO (S := S) v n P) = exactly v n P := rfl
 
@@ -189,25 +177,24 @@ theorem scope27 :
     exactlyHO v n P (fun V ↦ exactlyHO u m Q fun U ↦ V fun a ↦ U fun b ↦ relTest b a r) =
       (cumulative v u P Q r n m : Update S) := rfl
 
-/-- The scoping (28) reverses the traces, and is (6) with the object's maximization outside. -/
+-- (28), (6)
 theorem scope28 :
     exactlyHO v n P (fun V ↦ exactlyHO u m Q fun U ↦ U fun b ↦ V fun a ↦ relTest b a r) =
       (cumulative u v Q P (flip r) m n : Update S) := by
   simp only [exactlyHO, cumulative, relTest, flip, SetRel.comp_assoc, card_comp_card_comm v u]
 
-/-- The scoping (29) reverses the quantifiers, which only reorders the tests of (27). -/
+-- (29), (27)
 theorem scope29 :
     exactlyHO u m Q (fun U ↦ exactlyHO v n P fun V ↦ V fun a ↦ U fun b ↦ relTest b a r) =
       (cumulative v u P Q r n m : Update S) := by
   simp only [exactlyHO, cumulative, SetRel.comp_assoc, card_comp_card_comm u v]
 
-/-- The scoping (30) reverses both. -/
+-- (30)
 theorem scope30 :
     exactlyHO u m Q (fun U ↦ exactlyHO v n P fun V ↦ U fun b ↦ V fun a ↦ relTest b a r) =
       (cumulative u v Q P (flip r) m n : Update S) := rfl
 
-/-- The scoping (32) puts the object under the subject's trace, giving the pseudo-cumulative (5).
--/
+-- (32), (5)
 theorem scope32 :
     exactlyHO v n P (fun V ↦ V fun a ↦ exactlyHO u m Q fun U ↦ U fun b ↦ relTest b a r) =
       (pseudoCumulative v u P Q r n m : Update S) := rfl
@@ -529,7 +516,7 @@ theorem update_update_apply (hab : a ≠ b) (i : St) (X Y : Finset Ent) :
     Function.update (Function.update i a X) b Y a = X := by
   rw [Function.update_of_ne hab, Function.update_self]
 
-/-- (6) is true exactly when all the boys are `n` and the movies they saw `m`. -/
+-- (6)
 theorem mem_dom_cumulative (hab : a ≠ b) (hw : σ.WellFormed) (ht : σ.Total)
     (hne : σ.boys.Nonempty) (n m : ℕ) (i : St) :
     i ∈ (cumulative (S := St) a b σ.Boys σ.Movies σ.Saw n m).dom ↔
@@ -550,7 +537,7 @@ theorem mem_dom_cumulative (hab : a ≠ b) (hw : σ.WellFormed) (ht : σ.Total)
     rw [hja]
     exact (mem_maxAt_object hab hw ht ⟨hne, le_rfl⟩).2 rfl
 
-/-- (5) is true exactly when some maximal plurality of boys who saw `m` movies is `n` boys. -/
+-- (5)
 theorem mem_dom_pseudoCumulative (hab : a ≠ b) (hw : σ.WellFormed) (ht : σ.Total) (n m : ℕ)
     (i : St) :
     i ∈ (pseudoCumulative (S := St) a b σ.Boys σ.Movies σ.Saw n m).dom ↔
@@ -617,8 +604,7 @@ theorem mem_maxAtU_object (hw : σ.WellFormed) (ht : σ.Total) (hne : σ.boys.No
     simp only [Function.update_self] at hlt
     exact hlt.not_subset (hsub hX' hY' h')
 
-/-- (82) is true exactly when all the boys are `n` and the movies they saw `m`, so it has the
-cumulative reading (§6.2). -/
+-- (82), §6.2
 theorem mem_down_sentenceU (hw : σ.WellFormed) (ht : σ.Total) (hne : σ.boys.Nonempty) (n m : ℕ)
     (i : St) :
     i ∈ CCP.down (sentenceU (S := St) Reg.v Reg.u σ.Boys σ.Movies σ.Saw n m) ↔
@@ -675,7 +661,7 @@ theorem cumulative_scenarioB (i : St) :
   fun h ↦ absurd ((mem_dom_cumulative (by decide) scenarioB_wellFormed scenarioB_total
     (by decide) 3 5 i).1 h) (by decide)
 
-/-- The pseudo-cumulative (5) is true in Scenario A as well (§1.1). -/
+-- (5), §1.1
 theorem pseudoCumulative_scenarioA (i : St) :
     i ∈ (pseudoCumulative (S := St) Reg.v Reg.u scenarioA.Boys scenarioA.Movies scenarioA.Saw
       3 5).dom :=
@@ -700,7 +686,7 @@ theorem pseudoCumulative_scenarioB (i : St) :
   (mem_dom_pseudoCumulative (by decide) scenarioB_wellFormed scenarioB_total 3 5 i).2
     ⟨_, maximal_b123, by decide⟩
 
-/-- The scopings (28) and (30) agree with (6) in Scenario A. -/
+-- (28), (30), (6)
 theorem cumulative_swap_scenarioA (i : St) :
     i ∈ (cumulative (S := St) Reg.u Reg.v scenarioA.Movies scenarioA.Boys (flip scenarioA.Saw)
       5 3).dom := by
@@ -708,7 +694,7 @@ theorem cumulative_swap_scenarioA (i : St) :
   exact (mem_dom_cumulative (by decide) scenarioA_swap_wellFormed scenarioA_swap_total
     (by decide) 5 3 i).2 (by decide)
 
-/-- The scopings (28) and (30) agree with (6) in Scenario B. -/
+-- (28), (30), (6)
 theorem cumulative_swap_scenarioB (i : St) :
     i ∉ (cumulative (S := St) Reg.u Reg.v scenarioB.Movies scenarioB.Boys (flip scenarioB.Saw)
       5 3).dom := by
@@ -729,7 +715,7 @@ theorem maximal_m12345 : Maximal (fun Y ↦ scenarioB.swap.Boys Y ∧ (scenarioB
     (hcover d hd).elim (fun h ↦ h ▸ hm6 c (hY.1.2 hcY) hcX ▸ hcY) (fun h ↦ hXY h)
   exact absurd (hall ▸ hY.2) (by decide)
 
-/-- The scoping (33) is pseudo-cumulative, and true in Scenario B. -/
+-- (33)
 theorem pseudoCumulative_swap_scenarioB (i : St) :
     i ∈ (pseudoCumulative (S := St) Reg.u Reg.v scenarioB.Movies scenarioB.Boys (flip scenarioB.Saw)
       5 3).dom := by

@@ -34,15 +34,6 @@ semantics is built on.
 * `counitMode`, `eject`, `ejectL`, `ejectR`: the modes an adjunction adds
 * `Ty`, `Eff`, `Combine`: the type-driven grammar of the book's Appendix B
 
-## Main results
-
-* `joinMode_mapL_ba`, `joinMode_mapR_fa`: join at the map modes is bind
-* `mapL_ejectR_counitMode`: the bind of the monad of any adjunction is a mode of combination
-* `mapL_ejectR_counitMode_outputInput`, `mapL_joinMode_mapL_ejectR_counitMode`: the state monad
-  and the state transformer come from `W ⊣ R`
-* `ejectL_structuredApp_joinMode_mapR`: the reader transformer comes from ejection
-* `Combine.reads`: crossover
-
 ## Implementation notes
 
 The storing effect `Output ι α = α × ι` is a functor and not mathlib's `WriterT`, whose functor
@@ -107,12 +98,12 @@ def mapL (star : σ → τ → ω) (e₁ : F σ) (e₂ : τ) : F ω := (fun a =>
 /-- Map Right `F̃` (2.17b): map the combinator over an effectful right daughter. -/
 def mapR (star : σ → τ → ω) (e₁ : σ) (e₂ : F τ) : F ω := (fun b => star e₁ b) <$> e₂
 
-/-- `F̃(>)` and `F̄(<)` are the functor's map (2.18). -/
+-- (2.18)
 theorem mapR_fa (f : α → β) (x : F α) : mapR fa f x = f <$> x := rfl
 
 theorem mapL_ba (x : F α) (f : α → β) : mapL ba x f = f <$> x := rfl
 
-/-- `F̃(F̃ >)` is the map of the composite functor (2.24): functors compose. -/
+-- (2.24)
 theorem mapR_mapR_fa {G : Type u → Type u} [Functor G] (f : α → β) (x : F (G α)) :
     mapR (mapR fa) f x = (f <$> Functor.Comp.mk x).run := rfl
 
@@ -202,7 +193,7 @@ def outputInput (ι : Type u) : ofTypeFunctor (Output ι) ⊣ ofTypeFunctor (Rea
 theorem outputInput_homEquiv_apply (f : Output ι α ⟶ β) (a : α) (x : ι) :
     (outputInput ι).homEquiv α β f a x = f (a, x) := rfl
 
-/-- The unit and co-unit of `W ⊣ R` (5.4): `η a = λx. ⟨a, x⟩` and `ε ⟨f, x⟩ = f x`. -/
+-- (5.4)
 theorem outputInput_unit_app (a : α) (x : ι) : (outputInput ι).unit.app α a x = (a, x) := rfl
 
 theorem outputInput_counit_app (f : ReaderM ι α) (x : ι) :
@@ -260,7 +251,7 @@ def eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) : (α → Γ β) ≃ Γ 
     rw [Equiv.apply_symm_apply]
     rfl
 
-/-- For the reader, eject swaps the arguments (5.22). -/
+-- (5.22)
 theorem eject_outputInput (k : α → ReaderM ι β) : eject (outputInput ι) k = fun i a => k a i :=
   rfl
 

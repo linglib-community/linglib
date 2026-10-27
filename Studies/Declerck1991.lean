@@ -20,12 +20,7 @@ part of its make-up.
   absolute sectors, and the absolute tenses.
 * `Declerck1991.Realizes`: the TOs that realize a tense, along the Allen cells of its links.
 
-## Main results
-
-* `Declerck1991.absolute_sector_bijective`: each absolute sector has one absolute tense.
 * `Declerck1991.realizes_simplePast_iff` and its siblings: the absolute tenses on intervals.
-* `Declerck1991.vague`, `Declerck1991.covers_retrogressive`: the tenses with an intermediate TO
-  are vague where [reichenbach-1947] counts three tenses (§5.1.2).
 
 ## Implementation notes
 
@@ -198,8 +193,7 @@ theorem realizes_future_iff : Realizes .future (.pure t₀) [x] ↔ t₀ ≤ x.f
   simp [Realizes, show chain .future = [.posterior] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.IsBefore]
 
-/-- A situation-TO that reaches up to t₀, as in a continuative perfect, realizes the present
-perfect and not the preterit (p. 338). -/
+-- p. 338
 theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
     Realizes .presentPerfect (.pure t₀) [x] ∧ ¬ Realizes .simplePast (.pure t₀) [x] := by
   rw [realizes_presentPerfect_iff, realizes_simplePast_iff, h]

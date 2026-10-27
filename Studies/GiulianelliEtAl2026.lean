@@ -62,8 +62,7 @@ variable {α : Type*} (μ : Measure (List α))
 noncomputable def prefixIndicator (a w _ : List α) : ℝ :=
   ({a' | w <+: a'} : Set (List α)).indicator 1 a
 
-/-- The expected prefix indicator is the conditional prefix probability of the target
-(eqs. (1), (2d)). -/
+-- (1), (2d)
 theorem integral_prefixIndicator (c w : List α) :
     ∫ a, prefixIndicator a w c ∂μ.continuation c =
       (μ[{y | c ++ w <+: y} | {y | c <+: y}]).toReal := by

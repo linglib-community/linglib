@@ -23,18 +23,6 @@ material conditional but not probabilistically sound, which is why the English i
 prints are unacceptable; what p-entailment does satisfy is the rules for conditionals of his
 natural deduction system.
 
-## Main results
-
-* `tfae_pEntails`: for factual formulas, logical consequence, p-entailment, the uncertainty bound
-  under every probability, and the preservation of certainty coincide.
-* `isPreferential_pEntails`: p-entailment from a set of conditionals is closed under the rules
-  for conditionals of Adams's natural deduction system.
-* `materially_valid_not_pEntailed`, `printed_inferences`: the patterns of conditional inference
-  Adams examines are valid for the material conditional but not p-entailed, and the English
-  inferences he prints are unacceptable instances of them.
-* `not_isRational_pEntails`: unlike the closest-worlds conditional on a total order,
-  p-entailment does not validate rational monotonicity.
-
 ## Implementation notes
 
 * Possible states of affairs form a measurable space, a formula is the set of states where it is
@@ -96,7 +84,7 @@ def PEntails (s : Finset ι) (X : ι → Formula Ω) (d : Formula Ω) : Prop :=
     (∀ i ∈ s, μ (X i).ante ≠ 0) → (∀ i ∈ s, 1 - δ ≤ μ[(X i).cons | (X i).ante]) →
       1 - ε ≤ μ[d.cons | d.ante]
 
-/-- A set p-entails each of its members (Theorem 4.1). -/
+-- Theorem 4.1
 theorem pEntails_of_mem {X : ι → Formula Ω} {i : ι} (hi : i ∈ s) : PEntails s X (X i) :=
   fun ε hε ↦ ⟨ε, hε, fun _ _ _ _ hp ↦ hp i hi⟩
 
@@ -107,7 +95,6 @@ theorem one_sub_le_cond_iff {μ : Measure Ω} [IsProbabilityMeasure μ] {A B : S
   rw [tsub_le_iff_tsub_le, ← prob_compl_eq_one_sub hB, cond_apply hA,
     ENNReal.inv_mul_le_iff h0 (measure_ne_top μ A), mul_comm]
 
-/-- A stricter premise bound gives a weaker hypothesis. -/
 private theorem premises_mono {X : ι → Formula Ω} {μ : Measure Ω} {δ δ' : ℝ≥0∞} (h : δ ≤ δ')
     (hp : ∀ i ∈ s, 1 - δ ≤ μ[(X i).cons | (X i).ante]) :
     ∀ i ∈ s, 1 - δ' ≤ μ[(X i).cons | (X i).ante] :=
@@ -126,8 +113,7 @@ theorem pEntails_fact_iff :
     forall₂_congr fun μ hμ ↦ ?_
   simp [Formula.fact, cond_univ]
 
-/-- The uncertainty of a logical consequence is at most the sum of the premises' uncertainties,
-the rule of Section I.1 that Theorem 3.1 generalizes. -/
+-- Section I, Theorem 3.1
 theorem uncertainty_le_sum (h : ⋂ i ∈ s, A i ⊆ B) (μ : Measure Ω) :
     μ Bᶜ ≤ ∑ i ∈ s, μ (A i)ᶜ :=
   calc μ Bᶜ ≤ μ (⋃ i ∈ s, (A i)ᶜ) := measure_mono fun w hw ↦ by
@@ -180,8 +166,7 @@ theorem tfae_pEntails (hA : ∀ i ∈ s, MeasurableSet (A i)) (hB : MeasurableSe
     exact absurd this (by norm_num)
   tfae_finish
 
-/-- Where the premises do not p-entail the conclusion, they can be arbitrarily probable while it is
-arbitrarily improbable (Theorem 3.2, for factual formulas). -/
+-- Theorem 3.2
 theorem exists_of_not_pEntails (hA : ∀ i ∈ s, MeasurableSet (A i)) (hB : MeasurableSet B)
     (h : ¬ PEntails s (fun i ↦ .fact (A i)) (.fact B)) (ε : ℝ≥0∞) :
     ∃ μ : Measure Ω, IsProbabilityMeasure μ ∧ (∀ i ∈ s, 1 - ε ≤ μ (A i)) ∧ μ B ≤ ε := by

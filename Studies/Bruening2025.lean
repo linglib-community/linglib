@@ -24,26 +24,6 @@ c-selectional features, which the next item merged checks off (§5.8). The examp
 * `CFeature`, `Modifier`: a modifier's category and c-selectional feature.
 * `MergesWith`: when a coordination of modifiers can merge with its site.
 
-## Main results
-
-* `selection_rows`: complements of one category and meaning differ in acceptability from verb
-  to verb, so c-selection is not semantic selection.
-* `argument_rows`, `argument_rows_licensed`, `argument_rows_2020`: the revision decides the
-  coordinated arguments, and it parts from the 2020 grammar exactly on coordinations of selected
-  phrases of different categories, in both papers' data.
-* `cp_subjects`, `exp1b_persisting`: speaker variation as the absence or the persistence of
-  S-features.
-* `mergesWith_iff_nominalCoordination`: on prenominal modifiers the analysis agrees with the 2020
-  one, with no null head.
-* `adverb_mergesWith_maximal`: an underspecified adverb merges with a maximal noun phrase and not
-  with a nonmaximal one, the distinction the analysis needs.
-* `mergesWith_cmpr_iff`: it extends to comparatives, where an adverb may also only be the
-  conjunct away from the comparative.
-* `modifier_rows`, `stacked_rows`, `prenominal_rows_2020`: it decides the examples and the 2020
-  paper's prenominal ones.
-* `exp1a_predictions`, `exp2_predictions`, `exp1b_predictions`: the survey conditions the
-  analysis admits, which are the ones rated higher (Tables 2, 4, 6).
-
 ## Implementation notes
 
 * S-features are present or absent. The superset requirement of §5.3 matters only for
@@ -234,8 +214,7 @@ def soSoonAVisit : PhraseStructure.Tree Cat String :=
 /-- The site prenominal modifiers merge with is the nonmaximal noun of (104). -/
 abbrev nounSite : Site := .at onceAndFutureKing ⟨[1]⟩
 
-/-- An underspecified adverb merges with anything but a nonmaximal noun or a comparative, so *twice*
-precedes *as tall as* but not *taller* ((97)). -/
+-- (97)
 theorem adverb_mergesWith_iff {h : Site} :
     MergesWith [.adverb] h ↔
       ¬ (Selected.nonmaximal N).Matches h ∧ ¬ (Selected.degree .cmpr).Matches h := by
@@ -305,8 +284,7 @@ theorem argument_rows_2020 : ∀ e ∈ BrueningAlKhalaf2020.Examples.all,
           (∀ p ∈ ps, p ∈ cats) ∧ ∃ p ∈ ps, ∃ q ∈ ps, p ≠ q) := by
   decide
 
-/-- The revision admits *strengthen* and *withdraw* with a noun phrase coordinated with a clause,
-which the paper excludes semantically ((42c), §5.6). -/
+-- (42c), §5.6
 theorem semantic_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "semantic" →
     e.judgment ≠ .acceptable ∧ ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
       Admits (Satisfies (checkedOnce d) cats) ps := by

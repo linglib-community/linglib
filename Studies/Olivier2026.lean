@@ -104,8 +104,7 @@ person/identity, and T carries the subject's. -/
 def compound (ea ia : Person) (cl : Clause) : PerfectAuxiliary :=
   insert (some (voicePerson ea ia cl)) (tPerson ea ia cl.verb)
 
-/-- (59)–(61): identity matching yields the canonical distribution — BE with unaccusatives
-and reflexives, HAVE with transitives and unergatives — for every pair of persons. -/
+-- (59), (61)
 theorem compound_eq_canonical (ea ia : Person) (c : TransitivityClass) :
     compound ea ia ⟨c, none⟩ = c.canonicalSelection := by
   revert ea ia c; decide
@@ -166,15 +165,13 @@ def Restructuring.Switch (ea ia : Person) (r : Restructuring) : Prop :=
 instance (ea ia : Person) (r : Restructuring) : Decidable (r.Switch ea ia) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- (69), (74): under KEEP vAux is featureless, so the modal takes HAVE and no clitic
-climbs. -/
+-- (69), (74)
 theorem keep_have (ea ia : Person) (r : Restructuring) (h : r.transfer = .keep) :
     r.matrixAux ea ia = .have ∧ ¬ r.climbs := by
   refine ⟨?_, fun hc ↦ TransferStyle.noConfusion (h.symm.trans hc.2)⟩
   simp [Restructuring.matrixAux, Restructuring.vAuxPerson, h, insert]
 
-/-- Under SHARE with no prepositional clitic, the modal switches to BE iff the infinitive selects BE
-(Condition 3; (71), (76) versus (61)). -/
+-- Condition 3, (71), (76), (61)
 theorem share_switch_iff_selectsBe (ea ia : Person) (c : TransitivityClass)
     (cl : Option Clitic) (hcl : cl ≠ some .detachedReflexive)
     (hp : (cl.map Clitic.prepositional).getD false = false) (rich : Bool) :
@@ -183,30 +180,26 @@ theorem share_switch_iff_selectsBe (ea ia : Person) (c : TransitivityClass)
   · revert ea ia c rich; decide
   · cases cl <;> first | exact absurd rfl hcl | (revert ea ia c rich; decide) | cases hp
 
-/-- With a reflexive infinitive, auxiliary switch obtains iff the reflexive clitic climbs
-((19b)/(20a) against (19a)/(20b); Condition α, Table 1). -/
+-- (19b), (20a), (19a), (20b), Table 1
 theorem reflexive_switch_iff_climbs (ea ia : Person) (t : TransferStyle) (rich : Bool) :
     Restructuring.Switch ea ia ⟨⟨.reflexive, some .reflexive⟩, t, rich⟩ ↔
       Restructuring.climbs ⟨⟨.reflexive, some .reflexive⟩, t, rich⟩ := by
   revert ea ia rich; cases t <;> decide
 
-/-- §7.2: with an unaccusative infinitive and no clitic nothing but the auxiliary
-distinguishes SHARE (75)/(76) from KEEP (73)/(74) — AS is optional. -/
+-- §7.2, (75), (76), (73), (74)
 theorem unaccusative_optional (ea ia : Person) (rich : Bool) :
     Restructuring.matrixAux ea ia ⟨⟨.unaccusative, none⟩, .share, rich⟩ = .be ∧
       Restructuring.matrixAux ea ia ⟨⟨.unaccusative, none⟩, .keep, rich⟩ = .have := by
   revert ea ia rich; decide
 
-/-- A prepositional clitic climbing from an unaccusative leaves HAVE if vAux has only its P-feature
-((25)–(27), (36)), BE if it also probes the internal argument ((28)–(30), (37a), §7.3). -/
+-- (25), (27), (36), (28), (30), (37a), §7.3
 theorem prepositional_climbing (ea ia : Person) (cl : Clitic) (hcl : cl.prepositional = true)
     (rich : Bool) :
     Restructuring.climbs ⟨⟨.unaccusative, some cl⟩, .share, rich⟩ ∧
       (Restructuring.Switch ea ia ⟨⟨.unaccusative, some cl⟩, .share, rich⟩ ↔ rich = true) := by
   revert ea ia cl rich; decide
 
-/-- An accusative clitic climbs out of a transitive infinitive without auxiliary switch ((31),
-[cardinaletti-shlonsky-2004]'s *lo sarei voluto andare a trovare* aside). -/
+-- (31) [cardinaletti-shlonsky-2004]
 theorem accusative_climbing (ea ia : Person) (rich : Bool) :
     Restructuring.climbs ⟨⟨.transitive, some .accusative⟩, .share, rich⟩ ∧
       Restructuring.matrixAux ea ia ⟨⟨.transitive, some .accusative⟩, .share, rich⟩ = .have := by
@@ -230,7 +223,7 @@ instance : (v : Variety) → (t : TransferStyle) → Decidable (v.admits t)
   | .modernFrench, _ | .sardinian, _ => inferInstanceAs (Decidable (_ = _))
   | .earlierFrench, _ | .standardItalian, _ => inferInstanceAs (Decidable (_ ∨ _))
 
-/-- (38): in Sardinian the reflexive clitic climbs and the modal takes BE, obligatorily. -/
+-- (38)
 theorem sardinian_reflexive (ea ia : Person) (r : Restructuring)
     (hv : Variety.sardinian.admits r.transfer)
     (he : r.embedded = ⟨.reflexive, some .reflexive⟩) : r.climbs ∧ r.Switch ea ia := by
@@ -239,8 +232,7 @@ theorem sardinian_reflexive (ea ia : Person) (r : Restructuring)
   have he' : e = ⟨.reflexive, some .reflexive⟩ := he
   subst ht he'; revert ea ia rich; decide
 
-/-- In Modern French KEEP yields neither climbing nor auxiliary switch ((2a), (3a)), the switch of
-§3.3 being the SHARE derivation (71). -/
+-- (2a), (3a), §3.3, (71)
 theorem modernFrench_no_switch (ea ia : Person) (r : Restructuring)
     (hv : Variety.modernFrench.admits r.transfer) : ¬ r.climbs ∧ ¬ r.Switch ea ia := by
   have hk : r.transfer = .keep := hv

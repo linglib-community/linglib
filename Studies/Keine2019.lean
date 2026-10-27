@@ -92,15 +92,13 @@ theorem three_locality_types :
       row phiProbe ≠ row ābarProbe := by
   decide
 
-/-- Finite clauses, edge included, are opaque to A-movement and φ-agreement but not to
-Ā-movement, (23) for the finite clause embedding (49). -/
+-- (23), (49)
 theorem finite_clauses_selectively_opaque :
     ¬ aProbe.TransparentTo cpLabel ∧ ¬ phiProbe.TransparentTo cpLabel ∧
       ābarProbe.TransparentTo cpLabel := by
   decide
 
-/-- A nonfinite clause small enough for A-extraction is a vP and transparent to φ-agreement, while
-Ā-movement also enters TP ((21), (50), (51)). -/
+-- (21), (50), (51)
 theorem a_extraction_forces_lda :
     (∀ L ∈ [tpLabel, vpLabel], aProbe.TransparentTo L → L = vpLabel ∧ phiProbe.TransparentTo L) ∧
       ābarProbe.TransparentTo tpLabel ∧ ¬ phiProbe.TransparentTo tpLabel := by
@@ -114,8 +112,7 @@ def englishAProbe : Probe.Profile := ⟨.T, some .C⟩
 /-- The English extraposition probe, on T⁰ with horizon T. -/
 def extrapositionProbe : Probe.Profile := ⟨.T, some .T⟩
 
-/-- No A-probe search enters a finite clause in English, while Ā-extraction is unaffected, and
-extraposition, with horizon T, cannot leave even a nonfinite clause (59). -/
+-- (59)
 theorem hyperraising_blocked :
     ¬ englishAProbe.TransparentTo cpLabel ∧ ābarProbe.TransparentTo cpLabel ∧
       ¬ extrapositionProbe.TransparentTo tpLabel := by
@@ -128,16 +125,16 @@ theorem hyperraising_iff (h : Option Cat) :
 
 /-! ### The Height-Locality Connection (Section 5) -/
 
-/-- A probe on C⁰ with horizon T finds its horizon in its sister and has no search space (63). -/
+-- (63)
 theorem vacuous_example : (⟨.C, some .T⟩ : Probe.Profile).IsVacuous := by decide
 
-/-- A nonvacuous probe on C⁰ has no horizon within TP, and one on T⁰ none within vP (65a). -/
+-- (65a)
 theorem height_to_locality (h : Cat) :
     (¬ (⟨.C, some h⟩ : Probe.Profile).IsVacuous → h ∉ tpLabel) ∧
       (¬ (⟨.T, some h⟩ : Probe.Profile).IsVacuous → h ∉ vpLabel) := by
   simp [Probe.Profile.IsVacuous, Probe.Profile.sisterLabel, tpLabel, vpLabel]
 
-/-- A probe with horizon T is vacuous on C⁰, and one with horizon v on T⁰ and C⁰ (65b). -/
+-- (65b)
 theorem locality_to_height :
     (⟨.C, some .T⟩ : Probe.Profile).IsVacuous ∧ (⟨.T, some .v⟩ : Probe.Profile).IsVacuous ∧
       (⟨.C, some .v⟩ : Probe.Profile).IsVacuous := by
@@ -152,8 +149,7 @@ theorem nonvacuous_transparent (h : Option Cat) :
   simp only [Probe.Profile.IsVacuous, Probe.Profile.sisterLabel, not_not, tpLabel, vpLabel]
   exact ⟨fun ht ↦ ⟨ht, ht.anti (ClauseSpine.le_def.1 ClauseSpine.vP_le_tP)⟩, id⟩
 
-/-- The four Hindi probes are nonvacuous, so the two on C⁰ search into TP and vP clauses and the two
-on T⁰ into vP clauses ((21), (66), (67)). -/
+-- (21), (66), (67)
 theorem hindi_consequences :
     (∀ p ∈ [phiProbe, aProbe, whLicensing, ābarProbe], ¬ p.IsVacuous) ∧
       (∀ p ∈ [whLicensing, ābarProbe], p.TransparentTo tpLabel ∧ p.TransparentTo vpLabel) ∧

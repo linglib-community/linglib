@@ -154,9 +154,7 @@ theorem person_only_exhaust :
       (l.rows.filterMap Row.cell).toFinset = l.active.lowerSubsets.erase ∅ := by
   decide
 
-/-- A language using only the Participant node has four geometries with it
-((26)): no such language has more than four first- and second-person
-pronouns. -/
+-- (26)
 theorem card_participant_geometries :
     (Lang.maxakali.active.lowerSubsets.filter (Node.participant ∈ ·)).card = 4 := by decide
 
@@ -164,15 +162,14 @@ theorem card_participant_geometries :
 
 variable {A : Finset Node} {p : Person} {n : Number}
 
-/-- Plural is dual with Minimal pruned ((32a)). -/
+-- (32a)
 theorem cell_plural_eq (A : Finset Node) (p : Person) :
     cell A p .plural = (cell A p .dual).map (·.filter λ b => ¬ Node.minimal ≤ b) := by
   cases p <;> by_cases hi : Node.individuation ∈ A <;>
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, ↓reduceIte] <;> decide
 
-/-- Singular is dual with Group pruned, in an inventory with a contrastive
-Minimal ((32a)). -/
+-- (32a)
 theorem cell_singular_eq (h : Node.minimal ∈ A) (p : Person) :
     cell A p .singular = (cell A p .dual).map (·.filter λ b => ¬ Node.group ≤ b) := by
   cases p <;> by_cases hi : Node.individuation ∈ A <;>
@@ -185,8 +182,7 @@ theorem cell_dual_eq (A : Finset Node) (p : Person) :
     simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def, Option.bind,
       hi, ↓reduceIte] <;> decide
 
-/-- Second person is inclusive with Speaker pruned, exclusive inclusive with
-Addressee pruned ((32b)). -/
+-- (32b)
 theorem cell_second_eq (A : Finset Node) (n : Number) :
     cell A .second n = (cell A .firstInclusive n).map (·.filter λ b => ¬ Node.speaker ≤ b) ∧
       cell A .firstExclusive n =
@@ -205,11 +201,11 @@ theorem licenses_of_map_filter {n' : Number} {p' : Person} {a : Node}
 theorem dual_needs_plural (h : Licenses A p .dual) : Licenses A p .plural :=
   licenses_of_map_filter (cell_plural_eq A p) h
 
-/-- **(18b)** No paucal without dual. -/
+-- (18b)
 theorem paucal_needs_dual (h : Licenses A p .paucal) : Licenses A p .dual :=
   licenses_of_map_filter (cell_dual_eq A p) h
 
-/-- **(18c)** No inclusive without second person — nor without exclusive. -/
+-- (18c)
 theorem inclusive_needs_second (h : Licenses A .firstInclusive n) :
     Licenses A .second n ∧ Licenses A .firstExclusive n :=
   ⟨licenses_of_map_filter (cell_second_eq A n).1 h,
@@ -228,8 +224,7 @@ theorem gendered_plural_needs_gendered_singular {g : Finset Node} (hg : g ∈ A.
       Node.group ∉ (g.filter λ b => ¬ Node.group ≤ b) :=
   ⟨Finset.filter_not_le_mem_lowerSubsets hg _, Finset.mem_filter.2 ⟨hc, by decide⟩, by simp⟩
 
-/-- The system (45) — gender only in nonsingular numbers — is impossible: an
-inventory whose every gendered geometry has Group has no gendered geometry. -/
+-- (45)
 theorem no_gender_only_in_plural
     (hall : ∀ g ∈ A.lowerSubsets, Node.nounClass ∈ g → Node.group ∈ g) :
     ∀ g ∈ A.lowerSubsets, Node.nounClass ∉ g := λ _ hg hc =>
@@ -246,15 +241,13 @@ theorem third_least_marked {g g' : Finset Node} (h : cell A .third n = some g)
       hi, hm, ↓reduceIte, Option.some.injEq,
       reduceCtorEq] at h h' <;> subst h h' <;> decide
 
-/-- In Daga, the first singular is less marked than the first plural — the
-default Speaker and Minimal nodes are not counted (§2.3). -/
+-- §2.3
 theorem daga_first_singular_lt_plural :
     ∀ g ∈ cell Lang.daga.active .first .singular,
       ∀ g' ∈ cell Lang.daga.active .first .plural, g.card < g'.card := by
   decide
 
-/-- The most marked pronoun, the Fijian first inclusive paucal, uses all eight
-person–number nodes (§2.8). -/
+-- §2.8
 theorem fijian_inclusive_paucal :
     cell Lang.fijian.active .firstInclusive .paucal = some Lang.fijian.active ∧
       Lang.fijian.active.card = 8 := by
@@ -274,8 +267,7 @@ theorem singular_before_plural (hm : Node.minimal ∉ A) (hi : Node.individuatio
   cases p <;> simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def,
     Option.bind, hi, hm, ↓reduceIte, Option.mem_def, Option.some.injEq, forall_eq'] <;> decide
 
-/-- Second person and third plural are incomparable, so their order varies
-((20b)). -/
+-- (20b)
 theorem second_third_plural_incomparable :
     ∀ g ∈ cell Lang.daga.active .second .singular,
       ∀ g' ∈ cell Lang.daga.active .third .plural, ¬ g ⊆ g' ∧ ¬ g' ⊆ g := by
@@ -283,8 +275,7 @@ theorem second_third_plural_incomparable :
 
 /-! ### Empty paradigm space (§4.1) -/
 
-/-- Maxakalí's first singular and first exclusive plural are distinct geometries with the same
-default-filled content ((27)). -/
+-- (27)
 theorem maxakali_coopts :
     ∀ g ∈ cell Lang.maxakali.active .first .singular,
       ∀ g' ∈ cell Lang.maxakali.active .firstExclusive .plural,

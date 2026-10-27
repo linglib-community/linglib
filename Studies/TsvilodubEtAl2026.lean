@@ -19,16 +19,6 @@ softmax policy over expected utility. Uncertainty therefore matters only while i
 cost of the exhaustive answer. With `c` read as the cost of asking, as the paper suggests, the gate
 softens the clarify-or-commit rule of Dong et al.
 
-## Main statements
-
-* `valueOfInformation_id_eq_expectedRegret`: the expected regret of a best action is the value of
-  perfect information.
-* `uncertainty_matters_most_when_costly`: uncertainty raises clarification when the exhaustive
-  answer is costly and leaves it unchanged when it is cheap.
-* `justListThemAll`: with a cheap exhaustive answer, higher uncertainty means more exhaustive
-  answers.
-* `half_lt_clarifyProb_iff`: the gate favours clarifying exactly when Dong et al.'s agent would.
-
 ## Implementation notes
 
 * The gate reads the expected regret of the best action in its value form, the value of

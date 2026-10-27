@@ -32,20 +32,6 @@ where its token frequency is high, and the Strong Verbs that regularized are the
 * `SurveyedCloser` — the stem-proximity order *derived from* `orderPairs`.
 * `strongStillStrong`, `strongRegularized` — the Ch 5 §6 strong-verb frequency table.
 
-## Main results
-
-* `valence_highest_when_derivOrInfl`, `valence_lowest_when_inflectional` — the
-  relevance and generality frequency predictions.
-* `predicted_outnumbers_counter`, `aspect_categorical_against_tense_and_mood` — the order
-  predictions.
-* `survey_order_iso_relevance` — on the surveyed categories `SurveyedCloser` and the hierarchy's
-  `<` coincide via `toRelevanceHierarchy`: the hierarchy is the order the §6 survey forces, not a
-  stipulated table.
-* `bybeeSurveyedOrder_respects_hierarchy` — the surveyed order is sorted by the hierarchy.
-* `strong_verbs_higher_frequency_than_regularized` — the Ch 5 §6 diachronic
-  claim: still-Strong verbs have a strictly higher mean token frequency than
-  the regularized ones.
-
 ## References
 
 * [bybee-1985]
@@ -265,14 +251,12 @@ instance : DecidablePred Surveyed := fun _ =>
 theorem surveyedCloser_irrefl : ∀ a : BybeeCategory, ¬ SurveyedCloser a a := by
   decide
 
-/-- `SurveyedCloser` is transitive — the §6 survey tested every pair among its
-categories, so the confirmed dominances compose. -/
+-- §6
 theorem surveyedCloser_trans : ∀ a b c : BybeeCategory,
     SurveyedCloser a b → SurveyedCloser b c → SurveyedCloser a c := by
   decide
 
-/-- `SurveyedCloser` is total on the surveyed categories, so the §6 survey alone fixes a strict
-total order on them. -/
+-- §6
 theorem surveyedCloser_total : ∀ a b : BybeeCategory,
     Surveyed a → Surveyed b → a ≠ b → SurveyedCloser a b ∨ SurveyedCloser b a := by
   decide
@@ -346,7 +330,7 @@ def strongRegularized : List VerbFrequency := [
 
 /-- The mean token frequency of the still-Strong verbs strictly exceeds that of
 the regularized ones — irregularity survives where lexical strength is high.
-Stated as the cross-multiplied sum comparison to stay in `Nat`. -/
+Stated as the cross-multiplied sum comparison to stay in `Nat` (§6). -/
 theorem strong_verbs_higher_frequency_than_regularized :
     (strongRegularized.map (·.tokenFreq)).sum * strongStillStrong.length
     < (strongStillStrong.map (·.tokenFreq)).sum * strongRegularized.length := by

@@ -16,22 +16,11 @@ facts from atoms to arbitrary non-Hurford disjunctions, resting on the compactne
 The closing reading of `□` as a collective predicate of the plurality of propositions a disjunction
 denotes (§4) is not formalized.
 
-## Main results
-
 Entailment over a model (Def 18) is inclusion of truth sets, and strong invalidity (Def 21) is
 disjointness of the premises' truth set from the conclusion's.
 
-* `kratzer_monotone`: Fact 1; `not_monotone_necessity`: Booth's necessity is not upward
-  monotonic. `truth_necessity_subset`: every Booth necessity is a Kratzerian one (Def 1).
-* `Formula.eval_neg_neg`: Fact 3, double negation.
-* `Formula.fg_eval`: Fact 5, both interpretations of every sentence finitely generated
-  (`Question.FG`); `Formula.truth_necessity_eq`: hence Def 14's necessity clause agrees with
-  [booth-2022a]'s on every sentence.
 * `ross_strongly_invalid_of_alt`, `inter_diff_truth_nonempty_of_alt` and their sentence forms
   `Formula.ross_strongly_invalid`, `Formula.independence`: the meta-language Facts 7 and 6.
-* `not_forall_disjoint_of_nonHurford`, `not_forall_independence_of_nonHurford`: Facts 7 and 6
-  as printed, for every non-Hurford disjunction of Def 22, are false.
-* `ross_strongly_invalid`, `extended_ross_strongly_invalid`: Facts 7 and 8 for atoms.
 * `independence_left`, `independence_right` (Fact 9), `free_choice_left`, `free_choice_right`
   (Fact 10), `independence_conditional_left`, `independence_conditional_right` (Fact 11),
   `unnecessity_distribution_left`, `unnecessity_distribution_right` (Fact 12),

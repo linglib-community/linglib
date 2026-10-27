@@ -26,16 +26,6 @@ over the whole lexicon.
 * `Binder`, `interps`, `Sluices`: the heads that leave an argument implicit, the
   interpretations they give an argument of each head, and whether it licenses sluicing.
 
-## Main results
-
-* `observed_firstObject`, `observed_of_ne_firstObject`: an implicit first object is definite,
-  any other implicit argument definite or indefinite.
-* `interps_eq_observed_iff`: these interpretations single out Appl as the head of the first
-  object and the verb as that of the others.
-* `sluiced_rows`: the sluicing judgments of (10) and (11) follow.
-* `objectDrop_secondObject`, `dropsInBothFrames`: a verb with an implicit transitive object has
-  no implicit second object, and no verb drops its direct object in both frames, except *write*.
-
 ## Implementation notes
 
 The fragment places an implicit argument where the construction it is understood in would
@@ -102,6 +92,7 @@ end Argument
 def observed (x : Argument) : Finset ImplicitInterp :=
   Finset.univ.filter fun a ↦ ∃ v ∈ verbs, v.Alternates (x.leaveImplicit a)
 
+/-- An implicit first object is definite, any other implicit argument definite or indefinite. -/
 theorem observed_firstObject : observed .firstObject = {.def} := by decide +kernel
 
 theorem observed_of_ne_firstObject {x : Argument} (hx : x ≠ .firstObject) :
@@ -184,8 +175,7 @@ theorem objectDrop_secondObject :
       ∃ a, v.Alternates (.leaveImplicit .np 0 (some a))).map (·.form) = ["write"] := by
   decide +kernel
 
-/-- *melt* and *build*, the base transitives of (7) and (8), leave their object implicit and
-have a double object construction. -/
+-- (7), (8)
 theorem melt_build : ∀ v ∈ [melt, build],
     (∃ a, v.Alternates (.leaveImplicit .np 0 (some a))) ∧ .np_np ∈ v.valency.frames := by
   decide +kernel
@@ -202,8 +192,7 @@ theorem dropsInBothFrames :
       ∃ a, v.Alternates (Argument.directObject.leaveImplicit a)).map (·.form) = ["write"] := by
   decide +kernel
 
-/-- In (63)–(65), a double object verb leaves its direct object implicit beside a first object or a
-PP iff the example is acceptable. -/
+-- (63), (65)
 theorem implicit_rows : ∀ v ∈ verbs, .np_np ∈ v.valency.frames → ∀ row ∈ Examples.all,
     row.feature? "verb" = some v.form → ∀ x,
       (row.feature? "implicit").bind Argument.ofString? = some x →

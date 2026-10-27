@@ -150,12 +150,10 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "lati1261" → (of
 def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × List String) :=
   (Examples.all.filter (·.language = "lati1261")).filterMap ofRow
 
-/-- With T[−past] pruned, the four tenses of (40) derive with Agr adjacent to Asp[perf] in the
-perfect and to T[+past] in the pluperfect (§7.3.2.1). -/
+-- (40), §7.3.2.1
 theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide +kernel
 
-/-- If insertion deleted synsem features, the first singular of the imperfect and the perfect would
-wrongly take the default *-ō* (§4.6.3). -/
+-- §4.6.3
 theorem rewriting_loses_conditioning :
     morphs .rewriting (word .imperfect true false false) = ["laud", "ā", "bā", "ō"] ∧
       morphs .rewriting (word .perfect true false false) = ["laud", "ā", "vi", "ō"] := by
@@ -205,11 +203,10 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "hung1274" → (of
 def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) :=
   (Examples.all.filter (·.language = "hung1274")).filterMap ofRow
 
-/-- The rows of (7) show outward conditioning by the possessive's feature. -/
+-- (7)
 theorem rows_plural : ∀ r ∈ rows, plural r.1 = some r.2 := by decide
 
-/-- When the plural is reached it sees outward only the features of the still-bare possessive (43a,
-b). -/
+-- (43a, b)
 theorem outward_features_only :
     ∀ r ∈ rows, (r.1.contextAt (· = "") .concatenation (fun _ ↦ ∅) 0).rightCtx =
       (r.1.heads.drop 1).map (·.feats) := by
@@ -266,8 +263,7 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "kore1280" → (of
 def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) :=
   (Examples.all.filter (·.language = "kore1280")).filterMap ofRow
 
-/-- The rows of (10) show the inward conditioning of (43d), by the host's phonology as visible
-through its realized exponent. -/
+-- (10), (43d)
 theorem rows_nominative : ∀ r ∈ rows, nominative r.1 = some r.2 := by decide
 
 end Korean

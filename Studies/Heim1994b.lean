@@ -169,7 +169,7 @@ theorem generalizedKnow_trueAnswers (H : Set (Set W)) :
     generalizedKnow Dox x w (trueAnswers H) ↔
       GroenendijkStokhof1984.Knows (partition H) w (Dox x) := Iff.rfl
 
-/-- Knowing a bigger answer set is knowing the smaller one (§3). -/
+-- §3
 theorem Karttunen.simplifiedKnow_of_subset {q q' : W → Set (Set W)} (h : q w ⊆ q' w)
     (hk : simplifiedKnow Dox x w q') : simplifiedKnow Dox x w q :=
   SetRel.core_mono (Set.sInter_subset_sInter h) hk
@@ -179,19 +179,19 @@ theorem Karttunen.simplifiedKnow_of_generalizedKnow {q : W → Set (Set W)}
     (hq : IsKarttunen q) (h : generalizedKnow Dox x w q) : simplifiedKnow Dox x w q :=
   SetRel.core_mono (fun _ hv ↦ ans₂_subset_ans₁ hq w (ker_le_ker_ans₁ q hv)) h
 
-/-- Hence (8) and (9) are equivalent, and the generalized analysis implies the actual one. -/
+-- (8), (9)
 theorem Karttunen.know_of_generalizedKnow {q : W → Set (Set W)} (hq : IsKarttunen q)
     (h : generalizedKnow Dox x w q) : know Dox x w q :=
   ⟨simplifiedKnow_of_generalizedKnow hq h, fun e ↦ by unfold generalizedKnow at h; rwa [e] at h⟩
 
-/-- With an empty answer set the actual analysis is the generalized one, (7). -/
+-- (7)
 theorem Karttunen.know_iff_generalizedKnow_of_eq_empty {q : W → Set (Set W)} (h : q w = ∅) :
     know Dox x w q ↔ generalizedKnow Dox x w q := by
   simp [know, simplifiedKnow, generalizedKnow, ans₁, h]
 
 /-! ### *Whether*-questions -/
 
-/-- Karttunen's *whether* has [groenendijk-stokhof-1982]'s (12) as its kernel. -/
+-- (12) [groenendijk-stokhof-1982]
 theorem Karttunen.ker_whether (φ : Set W) : Setoid.ker (whether φ) = Setoid.polar φ := by
   show partition {φ, φᶜ} = _
   ext v w
@@ -221,8 +221,7 @@ theorem knows_whether_tfae (φ : Set W) :
 
 /-! ### Constituent questions: Karttunen against Groenendijk and Stokhof -/
 
-/-- Groenendijk and Stokhof's partition by which students called, (13), is the kernel of the
-extension map. -/
+-- (13)
 theorem whichDeDicto_eq_ker (S C : E → Set W) :
     GroenendijkStokhof1984.whichDeDicto S C = Setoid.ker (extension S C) := rfl
 
@@ -237,7 +236,7 @@ theorem generalizedKnow_which_iff {S C : E → Set W} (hC : Function.Injective C
       GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeDicto S C) w (Dox x) := by
   rw [generalizedKnow_iff_know_ker, ker_which hC]
 
-/-- "Which A are B" and "which B are A" raise the same partition, §6's neutralization. -/
+-- §6
 theorem whichDeDicto_comm (S C : E → Set W) :
     GroenendijkStokhof1984.whichDeDicto S C = GroenendijkStokhof1984.whichDeDicto C S :=
   congrArg Setoid.ker (funext fun w ↦ Set.ext fun x ↦ by simp [Set.inter_comm])
@@ -275,7 +274,7 @@ theorem singleton_true_mem_which_true :
     ({true} : Set Bool) ∈ Karttunen.which (fun _ ↦ Set.univ) called true :=
   ⟨.mary, by simp [called, extension], rfl⟩
 
-/-- The actual analysis makes (1) true at `false`, where Mary did not call. -/
+-- (1)
 theorem karttunen_know :
     Karttunen.know agnostic () false (Karttunen.which (fun _ ↦ Set.univ) called) := by
   refine ⟨?_, fun h ↦ absurd h (by rw [which_false]; exact Set.singleton_ne_empty _)⟩
@@ -283,8 +282,7 @@ theorem karttunen_know :
   rw [which_false, Set.sInter_singleton, SetRel.core_univ]
   trivial
 
-/-- The generalized analysis makes (1) false there, since in the alternative `true` Mary
-called too, so the answer set differs. -/
+-- (1)
 theorem not_generalizedKnow :
     ¬ generalizedKnow agnostic () false (Karttunen.which (fun _ ↦ Set.univ) called) := by
   intro h
@@ -323,16 +321,14 @@ def called : Unit → Set Bool := fun _ ↦ Set.univ
 
 def agnostic : Unit → SetRel Bool Bool := fun _ ↦ Set.univ
 
-/-- Karttunen's actual analysis makes (1) true at `true`, where the one true answer is
-believed. -/
+-- (1)
 theorem karttunen_know : Karttunen.know agnostic () true (Karttunen.which student called) := by
   refine ⟨?_, fun h ↦ ?_⟩
   · intro v _
     simp [ans₁, Karttunen.which, extension, student, called]
   · exact absurd h (Set.Nonempty.ne_empty ⟨_, (), by simp [student, called, extension], rfl⟩)
 
-/-- The generalized analysis makes (1) false, since in the alternative `false` Mary is not a
-student, so the answer set differs. -/
+-- (1)
 theorem not_generalizedKnow :
     ¬ generalizedKnow agnostic () true (Karttunen.which student called) := by
   intro h
@@ -343,22 +339,20 @@ theorem not_generalizedKnow :
   rw [← e] at h1
   simp [Karttunen.which, extension, student] at h1
 
-/-- (6) "John knows who called" stays true on the generalized analysis. -/
+-- (6)
 theorem generalizedKnow_who :
     generalizedKnow agnostic () true (Karttunen.which (fun _ ↦ Set.univ) called) := by
   intro v _
   simp [Karttunen.which, extension, called]
 
-/-- At `false` there are callers but no student callers, and (6) is true on the actual
-analysis. -/
+-- (6)
 theorem karttunen_know_who :
     Karttunen.know agnostic () false (Karttunen.which (fun _ ↦ Set.univ) called) := by
   refine ⟨fun v _ ↦ ?_, fun h ↦ ?_⟩
   · simp [ans₁, Karttunen.which, extension, called]
   · exact absurd h (Set.Nonempty.ne_empty ⟨_, (), by simp [called, extension], rfl⟩)
 
-/-- With no student having called, the actual analysis makes (1) false there, so (6) does not entail
-(1). -/
+-- (1), (6)
 theorem not_karttunen_know_of_no_student :
     ¬ Karttunen.know agnostic () false (Karttunen.which student called) := by
   rintro ⟨-, hii⟩
@@ -392,7 +386,7 @@ theorem Karttunen.which_identicalWithSelf_of_not_exists {S : E → Set W} {w : W
   rw [which, extension_identicalWithSelf, Set.image_eq_empty]
   exact Set.eq_empty_of_forall_notMem fun x hx ↦ h ⟨x, hx⟩
 
-/-- Groenendijk and Stokhof read (21) as knowing what students there are, (22). -/
+-- (21), (22)
 theorem whichDeDicto_identicalWithSelf (S : E → Set W) :
     GroenendijkStokhof1984.whichDeDicto S identicalWithSelf = Setoid.ker fun w ↦ {x | w ∈ S x} :=
   congrArg Setoid.ker (funext (extension_identicalWithSelf S))
@@ -479,8 +473,7 @@ theorem extension_alt : extension student livesWithSpouse (false, true) = {.bill
   ext x
   cases x <;> simp [extension, student, livesWithSpouse]
 
-/-- The answer sets at the actual world and at John's alternative coincide, although Sue is a
-student in one and not the other, (26). -/
+-- (26)
 theorem which_eq :
     Karttunen.which student livesWithSpouse (false, true) =
       Karttunen.which student livesWithSpouse actual := by
@@ -489,13 +482,13 @@ theorem which_eq :
   simp only [Set.image_singleton, Set.mem_singleton_iff, Set.image_univ, Set.mem_range]
   exact ⟨fun h ↦ ⟨.bill, h.symm⟩, fun ⟨_, h⟩ ↦ h.symm⟩
 
-/-- The generalized analysis wrongly makes (24) true. -/
+-- (24)
 theorem generalizedKnow_holds :
     generalizedKnow john () actual (Karttunen.which student livesWithSpouse) := by
   rintro v (rfl : v = (false, true))
   exact which_eq
 
-/-- Groenendijk and Stokhof make (24) false, (25). -/
+-- (24), (25)
 theorem not_groenendijkStokhof_know :
     ¬ GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeDicto student livesWithSpouse)
       actual (john ()) := by
@@ -530,14 +523,14 @@ theorem Karttunen.which_eq_image_whichStructured (S C : E → Set W) (w : W) :
     which S C w = (fun p : E × (E → Set W) ↦ p.2 p.1) '' whichStructured S C w := by
   simp [which, whichStructured, Set.image_image]
 
-/-- On (21), structured answers withdraw the knowledge ascription. -/
+-- (21)
 theorem Identity.not_generalizedKnow_structured :
     ¬ generalizedKnow Identity.agnostic () true
       (whichStructured Identity.student identicalWithSelf) := by
   rw [generalizedKnow_iff_know_ker, ker_whichStructured]
   exact Identity.not_groenendijkStokhof_know
 
-/-- On (24), structured answers withdraw the knowledge ascription. -/
+-- (24)
 theorem Spouses.not_generalizedKnow_structured :
     ¬ generalizedKnow Spouses.john () Spouses.actual
       (whichStructured Spouses.student Spouses.livesWithSpouse) := by

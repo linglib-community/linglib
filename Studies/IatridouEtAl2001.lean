@@ -17,18 +17,6 @@ why the anteriority of the present perfect is derived rather than encoded. A bou
 that takes time holds throughout no span, so a perfect on a perfective participle, as in Greek,
 has no universal perfect, except where an activity fills the span exactly.
 
-## Main statements
-
-* `universal_at_rb`, `universal_at_lb`: the universal perfect holds at both boundaries of the
-  span.
-* `inclusive_silent_at_rb`, `unmodified_not_universal`: the inclusive perfect does not assert
-  the eventuality at the right boundary, so an unmodified perfect is never universal.
-* `span_lb_before_event`: the left boundary is the adverbial's and may precede the eventuality.
-* `no_universal_of_prfv`, `bounded_activity_fills`: a perfective participle blocks the universal
-  perfect except for an activity filling the span.
-* `experiential_ends_by_rb`, `universal_not_anterior`, `future_perfect_underspecified`: the
-  anteriority of the perfect is derived from the span and tense.
-
 ## Implementation notes
 
 * The features [unbounded] and [bounded] of the paper's footnote 5 are `Aspect.UNBOUNDED`, the
@@ -89,12 +77,11 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 The perfect asserts a span in or throughout which there is a bounded or unbounded eventuality,
 (43), and the four combinations are (44a–d). -/
 
-/-- An unbounded eventuality throughout the span, (44a), is one event whose run time contains
-the span. -/
+-- (44a)
 theorem durative_unbounded : durative (UNBOUNDED P) = UNBOUNDED P :=
   funext fun w ↦ durative_eq_of_isLowerSet (isLowerSet_unbounded P w)
 
-/-- An unbounded eventuality in the span, (44b), is one event whose run time overlaps it. -/
+-- (44b)
 theorem inclusive_unbounded_iff :
     i ∈ inclusive (UNBOUNDED P) w ↔ ∃ e, P w e ∧ (τ e).Overlaps i := by
   constructor
@@ -108,20 +95,18 @@ theorem inclusive_unbounded_iff :
     · exact NonemptyInterval.le_def.2 ⟨le_max_left _ _, min_le_left _ _⟩
     · exact NonemptyInterval.le_def.2 ⟨le_max_right _ _, min_le_right _ _⟩
 
-/-- A bounded eventuality in the span, (44c), is one event whose run time lies inside it. -/
+-- (44c)
 theorem inclusive_prfv : inclusive (PRFV P) = PRFV P :=
   funext fun w ↦ inclusive_eq_of_isUpperSet (isUpperSet_prfv P w)
 
-/-- A bounded eventuality that takes time, such as a telic one in (44d), holds throughout no span.
--/
+-- (44d)
 theorem not_durative_prfv (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
     i ∉ durative (PRFV P) w := fun hd ↦
   let ⟨e, hle, hP⟩ := hd (show NonemptyInterval.pure i.fst ∈ Set.Iic i from
     NonemptyInterval.le_def.2 ⟨le_rfl, i.fst_le_snd⟩)
   (h e hP).not_ge ((NonemptyInterval.le_def.1 hle).2.trans (NonemptyInterval.le_def.1 hle).1)
 
-/-- A bounded eventuality with the subinterval property whose run time is the span fills it,
-satisfying *throughout* and boundedness at once, the activity of (44d). -/
+-- (44d)
 theorem durative_prfv_of_eq (hP : HasSubintervalProperty P) {e : E} (he : P w e)
     (hτ : τ e = i) : i ∈ durative (PRFV P) w := fun j hj ↦
   let ⟨e', hτ', hP'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he j
@@ -154,8 +139,7 @@ theorem universal_at_lb (h : ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ dur
     ∃ e, P w e ∧ t₀ ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_lb h)
 
-/-- One eventuality covering the span from `t₀` to `t` makes the universal perfect with *since t₀*
-true at `t`, (2a) and (18a). -/
+-- (2a), (18a)
 theorem universal_of_covers {e : E} (he : P w e) (h₀ : t₀ ≤ t) (h₁ : (τ e).fst ≤ t₀)
     (h₂ : t ≤ (τ e).snd) : ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED P) ·) :=
   ⟨⟨(t₀, t), h₀⟩,

@@ -307,28 +307,25 @@ def ClauseType.mood : ClauseType → (W → Prop) → Deriv W C .t .t
 
 variable {M} {p : W → Prop} {c : C}
 
-/-- (5.83a) and (5.94): the truth conditions of every clause type are its content. -/
+-- (5.83a), (5.94)
 theorem mood_t (ct : ClauseType) : (ct.mood M p).eval.t = p := by
   cases ct <;> rfl
 
-/-- (5.83b): a root dass-clause or imperative is felicitous when the speaker holds a suitable
-deontic attitude toward its content. -/
+-- (5.83b)
 theorem deonticOnly_u : (deonticOnly M p).eval.u c ↔ deont M p c := by
   simp [deonticOnly, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop]
 
-/-- (5.95) and (5.96): a v2-declarative or vl-interrogative is felicitous when the speaker holds
-a deontic attitude toward the epistemically embedded content. -/
+-- (5.95), (5.96)
 theorem deonticEpistemic_u : (deonticEpistemic M p).eval.u c ↔ deont M (epis M p) c := by
   simp [deonticEpistemic, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop, E]
 
-/-- (5.100): a v2-interrogative adds that the addressee knows whether the content holds. -/
+-- (5.100)
 theorem v2InterrogativeMood_u :
     (v2InterrogativeMood M p).eval.u c ↔ M.knowsWhether c p ∧ deont M (epis M p) c := by
   simp [v2InterrogativeMood, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop,
     E, hknow]
 
-/-- (5.43), the root rule: the use conditions of every clause type include a deontic attitude
-of the speaker. -/
+-- (5.43)
 theorem exists_deont_of_mood_u (ct : ClauseType) (h : (ct.mood M p).eval.u c) :
     ∃ q, deont M q c := by
   cases ct
@@ -338,8 +335,7 @@ theorem exists_deont_of_mood_u (ct : ClauseType) (h : (ct.mood M p).eval.u c) :
   · exact ⟨_, deonticEpistemic_u.1 h⟩
   · exact ⟨p, deonticOnly_u.1 h⟩
 
-/-- (5.36), the Cuban cigar scenario: a v2-interrogative is felicitous exactly when the
-vl-interrogative with the same content is and the addressee knows the answer. -/
+-- (5.36)
 theorem v2Interrogative_mood_u_iff :
     (ClauseType.v2Interrogative.mood M p).eval.u c ↔
       (ClauseType.vlInterrogative.mood M p).eval.u c ∧ M.knowsWhether c p := by
@@ -393,31 +389,27 @@ def dennImperative (p : W → Prop) : Deriv W C .t .t :=
 
 variable {M}
 
-/-- (6.125) to (6.127): a *ja*-declarative is felicitous when the speaker wants the hearer to
-know its content and believes it common knowledge or verifiable. -/
+-- (6.125), (6.127)
 theorem jaDeclarative_u :
     (jaDeclarative M p).eval.u c ↔ M.commonKnowledge c p ∧ deont M (epis M p) c := by
   simp [jaDeclarative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop, E,
     jaEntry]
 
-/-- A *ja*-interrogative requires the speaker to want to know its content while believing it common
-knowledge and known to the hearer (6.129). -/
+-- (6.129)
 theorem jaInterrogative_u :
     (jaInterrogative M p).eval.u c ↔
       (M.commonKnowledge c p ∧ M.knowsWhether c p) ∧ deont M (epis M p) c := by
   simp [jaInterrogative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop, E,
     jaEntry, hknow]
 
-/-- (6.114) and (6.116): a *wohl*-declarative is true when its content is, and felicitous under
-a deontic attitude toward the epistemically embedded assumption of the content. -/
+-- (6.114), (6.116)
 theorem wohlDeclarative_u :
     (wohlDeclarative M p).eval.t = p ∧
       ((wohlDeclarative M p).eval.u c ↔ deont M (epis M (M.assume p)) c) :=
   ⟨rfl, by simp [wohlDeclarative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC,
     prop, E, wohlEntry]⟩
 
-/-- (6.136) and (6.137): a *denn*-interrogative adds that some common ground proposition is
-known by the hearer to be the reason for asking. -/
+-- (6.136), (6.137)
 theorem dennInterrogative_u :
     (dennInterrogative M p).eval.u c ↔
       (M.knowsWhether c p ∧ ∃ q ∈ M.commonGround c, M.knowsWhether c (M.reasonToAsk q p)) ∧
@@ -425,8 +417,7 @@ theorem dennInterrogative_u :
   simp [dennInterrogative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop,
     E, dennEntry, hknow]
 
-/-- (6.142): a *denn*-imperative would require the speaker to want some proposition to be the
-reason for asking whether its content holds. -/
+-- (6.142)
 theorem dennImperative_u :
     (dennImperative M p).eval.u c ↔
       deont M p c ∧ ∃ q ∈ M.commonGround c, deont M (M.reasonToAsk q p) c := by
@@ -468,14 +459,12 @@ private theorem derivable_deonticOnly_subset {σ : UCType}
       simp at iha
   | elim _ _ => simp
 
-/-- No derivation from a dass-clause or imperative with *wohl* and a proposition reaches the
-epistemic modifier's type (6.108). -/
+-- (6.108)
 theorem not_derivable_deonticOnly :
     ¬ Derivable ({func .t .u} ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) :=
   λ h => by simpa using derivable_deonticOnly_subset h
 
-/-- The epistemic modifier's type is derivable from a clause type's mood items with *wohl* and a
-proposition iff the clause type has the epistemic modifier (Section 6.5.1). -/
+-- Section 6.5.1
 theorem derivable_wohl_iff (ct : ClauseType) :
     Derivable (ct.moodTypes ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) ↔
       ct.HasEpistemic := by

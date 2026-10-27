@@ -160,8 +160,7 @@ def ipRegisterSpecsAcrossIps (ips : List IntermediatePhrase) : List (List TRN) :
 
 /-! ### The two systems -/
 
-/-- The ten accents that the system permits in principle: two single-tone accents and eight
-two-tone ones (§3.2). -/
+-- §3.2
 theorem card_pitchAccent : Fintype.card PitchAccent = 10 := rfl
 
 /-- Where a language's pitch-accent shapes come from (§2.1). With `lexical` a shape can be
@@ -213,8 +212,7 @@ def english : IntonationSystem :=
     apBoundaryLAlwaysPresent := false
     catathesisTiming := .afterAccent }
 
-/-- English uses exactly the pitch accents whose tones differ, lacking L*+L, L+L*, H*+H and H+H*
-(§3.2). -/
+-- §3.2
 theorem mem_english_accentShapes_iff (a : PitchAccent) :
     a ∈ english.accentShapes ↔ a.tones.Nodup := by
   revert a; decide

@@ -235,8 +235,7 @@ theorem stranded_delete (i : ℕ) :
     Finset.erase_eq_empty_iff]
   tauto
 
-/-- The onset-deletion asymmetry (§5.3.1). An onset bears no mora, so deleting it strands
-    nothing. -/
+-- §5.3.1
 theorem stranded_delete_of_isOnset {i : ℕ} (h : f.IsOnset i) :
     (f.delete i).stranded = f.stranded := by
   rw [stranded_delete, Finset.union_eq_left, Finset.subset_iff]
@@ -306,8 +305,7 @@ theorem not_noCrossing_link_of_onset {v c : ℕ} (hc : (σ v, c) ∈ f.links) (h
   notMem_window_of_mem_image_Ioi ⟨σ v, hm, hc⟩ hcv
     (noCrossing_link_iff.1 hp).2
 
-/-- A moraic coda between the nucleus and a stranded mora to its right blocks lengthening, so
-vowel-loss CL favours open syllables (68). -/
+-- (68)
 theorem not_noCrossing_link_of_coda {v c : ℕ} (hc : (μ c, c) ∈ f.links) (hv : v < c)
     (hm : c < m.slot) : ¬ (f.link m v).NoCrossing := fun hp ↦
   notMem_window_of_mem_image_Iio ⟨μ c, hm, hc⟩ hv
@@ -419,8 +417,7 @@ abbrev C (seg : Seg) : Seg × ℕ := (seg, 0)
 /-- Latin *kasnus* 'gray' ((12b)), CVC heavy. -/
 def kasnus : Form Seg := Underlying.syllabify [C k, V a, C s, C n, V u, C s] true
 
-/-- *s* deletes before an anterior sonorant on the segmental tier only ((17a)), stranding the
-    coda mora. -/
+-- (17a)
 theorem kasnus_stranded : (kasnus.delete 2).stranded = {μ 2} := by decide
 
 /-- In (17c) the stranded mora is filled by spreading from the left. -/
@@ -430,7 +427,7 @@ theorem kaanus_noCrossing : kaanus.NoCrossing := ((by decide : kasnus.NoCrossing
 
 theorem kaanus_surface : kaanus.surface = [(k, 1), (a, 2), (n, 1), (u, 1), (s, 1)] := by decide
 
-/-- Moraic Conservation (64) on the derivation. -/
+-- (64)
 theorem kaanus_moraCount : kaanus.moraCount = kasnus.moraCount := by simp [kaanus]
 
 /-! #### Onset deletion: Latin (14), (18) and Turkish -/
@@ -438,8 +435,7 @@ theorem kaanus_moraCount : kaanus.moraCount = kasnus.moraCount := by simp [kaanu
 /-- In Latin *smereō* 'deserve' ((14)), word-initial *s* is an onset. -/
 def smereo : Form Seg := Underlying.syllabify [C s, C m, V e, C r, V e, VV o] true
 
-/-- As in (18) for *snurus*, deleting the onset *s* strands nothing, so the convention has
-    nothing to fill. -/
+-- (18)
 theorem mereo_no_cl : (smereo.delete 0).cl fromLeft = smereo.delete 0 :=
   smereo.cl_delete_of_isOnset (by decide) (by decide) _
 
@@ -510,8 +506,7 @@ theorem la_free_stranded : la_free.stranded = {μ 0} := by decide
 theorem no_rightward_vowel_loss : ¬ (la_free.link (μ 0) 2).NoCrossing :=
   Form.not_noCrossing_link_of_onset (c := 1) (by decide) (by decide) (by decide)
 
-/-- The remaining option without crossings is (56), in which the *l* geminates with its first
-    half in its own syllable. -/
+-- (56)
 theorem lla_surface : ((la_free.cl fromRight).surface) = [(l, 2), (a, 1)] := by decide
 
 theorem lla_noCrossing : (la_free.cl fromRight).NoCrossing :=
@@ -526,8 +521,7 @@ def talp_free : Form Seg := (talpa.delete 4).parasitic
 theorem talp_no_vowel_lengthening : ¬ (talp_free.link (μ 4) 1).NoCrossing :=
   Form.not_noCrossing_link_of_coda (c := 2) (by decide) (by decide) (by decide)
 
-/-- The *l* could, at the price of a consonant linked to two morae of one syllable ((7)), the
-    configuration Estonian permits. -/
+-- (7)
 theorem talp_consonant_lengthening : (talp_free.link (μ 4) 2).NoCrossing := by decide
 
 theorem talp_consonant_length : (talp_free.link (μ 4) 2).length 2 = 2 := by decide

@@ -120,8 +120,7 @@ theorem nmlzP_cP_incomparable :
         LanguageProbeConfig.hindi.ābar].map (row hindiSizes)).Nodup := by
   decide
 
-/-- The Hindi A- and φ-probes coincide, while the Ā-probe has a different horizon, as a finite
-clause shows (231). -/
+-- (231)
 theorem a_movement_agreement_generalization :
     LanguageProbeConfig.hindi.aMove = LanguageProbeConfig.hindi.phi ∧
       LanguageProbeConfig.hindi.ābar.TransparentTo ClauseSpine.cP.label ∧
@@ -193,8 +192,7 @@ theorem mismatches (head : Cat) :
 
 /-! ### The Height–Locality Theorem (Section 3.5) -/
 
-/-- (274)–(278): a probe on C⁰ whose horizon is a category of its sister TP terminates there and
-is vacuous. -/
+-- (274), (278)
 theorem vacuous_on_C :
     ∀ h ∈ ClauseSpine.tP, (⟨.C, some h⟩ : Probe.Profile).IsVacuous := by
   decide
@@ -207,14 +205,13 @@ theorem hlt_location_to_horizon :
       ∀ h ∈ ClauseSpine.cP, (⟨.Force, some h⟩ : Probe.Profile).IsVacuous := by
   decide
 
-/-- (279b), horizon to location: a probe with horizon T is vacuous above T⁰, and one with
-horizon C above C⁰. -/
+-- (279b)
 theorem hlt_horizon_to_location :
     (∀ head ∈ [Cat.C, .Force], (⟨head, some .T⟩ : Probe.Profile).IsVacuous) ∧
       (⟨.Force, some .C⟩ : Probe.Profile).IsVacuous := by
   decide
 
-/-- The attested probes of (219), (241) and (367) are nonvacuous, as (279) requires. -/
+-- (219), (241), (367), (279)
 theorem attested_nonvacuous :
     ∀ p ∈ [LanguageProbeConfig.hindi.aMove, LanguageProbeConfig.hindi.phi,
       LanguageProbeConfig.hindi.wh, LanguageProbeConfig.hindi.ābar,
@@ -245,8 +242,7 @@ theorem improper_movement (h : Cat) (hh : h ∈ ClauseSpine.cP) :
     ¬ (⟨.T, some h⟩ : Probe.Profile).TransparentTo ClauseSpine.cP.label := by
   simpa using hh
 
-/-- The three A-probes of (300) with a horizon are blocked by CP, and the Hindi and English
-Ā-probes are not. -/
+-- (300)
 theorem improper_movement_attested :
     (∀ p ∈ [LanguageProbeConfig.hindi.aMove, LanguageProbeConfig.english.aMove, germanScr],
         ¬ p.TransparentTo ClauseSpine.cP.label) ∧

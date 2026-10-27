@@ -105,7 +105,7 @@ def scopeMarked : Set (Set World) := think '' whereMary
 /-- Mary is in Paris and John thinks she is in London. -/
 def w₀ : World := (.paris, .london)
 
-/-- (36b)/(37c): the Karttunen set of *Where is Mary?* at `w₀` keeps only the Paris member. -/
+-- (36b), (37c)
 theorem trueAnswers_whereMary : trueAnswers whereMary w₀ = {isAt .paris} := by
   ext p
   constructor
@@ -128,12 +128,12 @@ theorem trueAnswers_scopeMarked : trueAnswers scopeMarked w₀ = {think (isAt .l
     obtain rfl := mem_singleton_iff.1 hp
     exact ⟨⟨isAt .london, ⟨.london, rfl⟩, rfl⟩, fun _ hv => hv⟩
 
-/-- (35b): *John thinks Mary is in London* is a true answer although Mary is in Paris. -/
+-- (35b)
 theorem think_london_mem : think (isAt .london) ∈ trueAnswers scopeMarked w₀ := by
   rw [trueAnswers_scopeMarked]
   exact mem_singleton _
 
-/-- (36): composed from the Karttunen set instead, the question has no true member at `w₀`. -/
+-- (36)
 theorem trueAnswers_karttunen_composition :
     trueAnswers (think '' trueAnswers whereMary w₀) w₀ = ∅ := by
   rw [trueAnswers_whereMary, image_singleton]
@@ -142,7 +142,7 @@ theorem trueAnswers_karttunen_composition :
   rintro rfl hw
   exact absurd (hw (.london, .london) rfl) (by simp [isAt])
 
-/-- (37b): Ans-D returns John's thought about London. -/
+-- (37b)
 theorem dayalAns_scopeMarked : dayalAns scopeMarked w₀ = some (think (isAt .london)) := by
   rw [dayalAns_eq_some_iff, IsStrongestTrueAnswer, trueAnswers_scopeMarked]
   exact isLeast_singleton _
@@ -212,8 +212,7 @@ private theorem atom_of_subset {a c : E} (ha : IsAtom a) (hc : IsAtom c) {p q : 
   · exact (not_Ici_subset_compl a c h).elim
   · exact (ha.le_iff_eq hc.ne_bot).1 (Ici_subset_Ici.1 (compl_subset_compl.1 h))
 
-/-- (51b): with two women in the domain the singular polar-*wh* question has no strongest true
-member at any situation. -/
+-- (51b)
 theorem not_isExhaustivelyResolvable_polarWh_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b)
     (hab : a ≠ b) (w : E) : ¬ IsExhaustivelyResolvable (polarWh .singular) w := by
   rintro ⟨q, hq⟩
@@ -226,8 +225,7 @@ theorem not_isExhaustivelyResolvable_polarWh_singular {a b : E} (ha : IsAtom a) 
         (hq.2 ⟨mem_polarWh.2 ⟨x, hx, Or.inr rfl⟩, hxw⟩)
   exact hab ((key a ha).symm.trans (key b hb))
 
-/-- (51c): with two women in the domain the plural polar-*wh* question is answerable only when
-John likes everyone. -/
+-- (51c)
 theorem isExhaustivelyResolvable_polarWh_plural_iff {a b : E} (ha : IsAtom a) (hb : IsAtom b)
     (hab : a ≠ b) (w : E) : IsExhaustivelyResolvable (polarWh .plural) w ↔ w = ⊤ := by
   have htop : (⊤ : E) ≠ ⊥ := fun h => ha.ne_bot (le_bot_iff.1 (h ▸ le_top))
@@ -267,13 +265,11 @@ theorem sSup_domain_le (n : Number) (w : E) : sSup {x ∈ domain n | x ≤ w} = 
         ⟨⟨hw, le_rfl⟩, fun _ hx => hx.2⟩
       exact hg.isLUB.sSup_eq
 
-/-- (52): the intersection answer names the liked plurality whatever the number of the *wh*
-phrase, so Beck and Rullmann's operator cannot see number. -/
+-- (52)
 theorem weakAnswer_hamblin (n : Number) (w : E) : weakAnswer (hamblin n) w = Ici w := by
   rw [hamblin, weakAnswer_image_Ici, sSup_domain_le]
 
-/-- Ans-D is defined at `w` iff the situation has exactly one atom for a singular *wh* ((49), (65))
-and at least one otherwise ((50), (66)). -/
+-- (49), (65), (50), (66)
 theorem isExhaustivelyResolvable_hamblin_iff (n : Number) (w : E) :
     IsExhaustivelyResolvable (hamblin n) w ↔ w ∈ domain n := by
   rw [isExhaustivelyResolvable_iff, weakAnswer_hamblin, hamblin, Ici_injective.mem_set_image]
@@ -286,7 +282,7 @@ theorem isExhaustivelyResolvable_plural_iff (w : E) :
     IsExhaustivelyResolvable (hamblin .plural) w ↔ w ≠ ⊥ :=
   isExhaustivelyResolvable_hamblin_iff _ w
 
-/-- (49c), (50c), (65b), (66b): the answer names the liked plurality. -/
+-- (49c), (50c), (65b), (66b)
 theorem dayalAns_hamblin {n : Number} {w : E} (h : w ∈ domain n) :
     dayalAns (hamblin n) w = some (Ici w) :=
   (dayalAns_eq_some_iff _ _).2 <|
@@ -303,7 +299,7 @@ theorem strongAnswer_hamblin (n : Number) (w : E) : strongAnswer (hamblin n) w =
   · rintro rfl
     exact fun _ _ => Iff.rfl
 
-/-- (65c), (66c): Ans-D/H returns *only w*. -/
+-- (65c), (66c)
 theorem dayalStrongAns_hamblin {n : Number} {w : E} (h : w ∈ domain n) :
     dayalStrongAns (hamblin n) w = some {w} :=
   (dayalStrongAns_eq_some_iff _ _).2
@@ -325,8 +321,7 @@ theorem felicitous_plural_iff (w : E) : Felicitous .plural w ↔ w ≠ ⊥ ∧ �
 theorem felicitous_general_iff (w : E) : Felicitous .general w ↔ w ≠ ⊥ := by
   simp [Felicitous, isExhaustivelyResolvable_hamblin_iff, domain]
 
-/-- (57a), (65)–(66): with no witness no *wh* question is felicitous; *no one* is not an
-answer but a denial of the presupposition. -/
+-- (57a), (65), (66)
 theorem not_felicitous_bot (n : Number) : ¬ Felicitous n (⊥ : E) := by
   intro h
   have hb := (isExhaustivelyResolvable_hamblin_iff n ⊥).1 h.1
@@ -337,15 +332,14 @@ end Number
 
 /-! ### Beck and Rullmann's intersection on scales (53) -/
 
-/-- On an upward scale, the threshold's member is the strongest true member, agreeing with the
-intersection ((53a)–(53b)). -/
+-- (53a), (53b)
 theorem isStrongestTrueAnswer_range_Iic {α : Type*} [Preorder α] (t : α) :
     IsStrongestTrueAnswer (range (Iic : α → Set α)) t (Iic t) := by
   refine ⟨⟨⟨t, rfl⟩, le_rfl⟩, ?_⟩
   rintro q ⟨⟨n, rfl⟩, ht⟩
   exact Iic_subset_Iic.2 ht
 
-/-- On a downward scale, the count's member is the strongest true member ((53c)–(53d)). -/
+-- (53c), (53d)
 theorem isStrongestTrueAnswer_range_Ici {α : Type*} [Preorder α] (c : α) :
     IsStrongestTrueAnswer (range (Ici : α → Set α)) c (Ici c) := by
   refine ⟨⟨⟨c, rfl⟩, le_rfl⟩, ?_⟩
@@ -370,28 +364,26 @@ private theorem not_isAtom_pair {x y : Woman} (h : x ≠ y) : ¬ IsAtom ({x, y} 
   have hy : y ∈ ({z} : Set Woman) := hz ▸ mem_insert_of_mem x (mem_singleton y)
   exact h ((mem_singleton_iff.1 hx).trans (mem_singleton_iff.1 hy).symm)
 
-/-- (49): John likes Mary, and the singular question is answered by *John likes Mary*. -/
+-- (49)
 theorem ex49 : dayalAns (hamblin .singular) ({mary} : Set Woman) = some (Ici {mary}) :=
   dayalAns_hamblin (isAtom_singleton mary)
 
-/-- (49): John likes Mary and Sue, and the singular question has no answer. -/
+-- (49)
 theorem ex49_two : ¬ IsExhaustivelyResolvable (hamblin .singular) ({mary, sue} : Set Woman) :=
   fun h => not_isAtom_pair (by decide) ((isExhaustivelyResolvable_singular_iff _).1 h)
 
-/-- (50): John likes Mary and Betty, and the plural question is answered by the sum. -/
+-- (50)
 theorem ex50 : dayalAns (hamblin .plural) ({mary, betty} : Set Woman) = some (Ici {mary, betty}) :=
   dayalAns_hamblin (insert_nonempty _ _).ne_empty
 
-/-- (50): with only Mary liked the plural question is answered, by an atom, and the plurality
-implicature fails. -/
+-- (50)
 theorem ex50_one :
     dayalAns (hamblin .plural) ({mary} : Set Woman) = some (Ici {mary}) ∧
       ¬ Felicitous .plural ({mary} : Set Woman) :=
   ⟨dayalAns_hamblin (singleton_ne_empty _),
    fun h => ((felicitous_plural_iff _).1 h).2 (isAtom_singleton _)⟩
 
-/-- (51): with Mary and Sue in the domain, the singular polar-*wh* question is never answerable
-and the plural one only where John likes everyone. -/
+-- (51)
 theorem ex51 :
     (∀ w : Set Woman, ¬ IsExhaustivelyResolvable (polarWh .singular) w) ∧
       ∀ w : Set Woman, IsExhaustivelyResolvable (polarWh .plural) w ↔ w = univ :=
@@ -400,8 +392,7 @@ theorem ex51 :
   ⟨not_isExhaustivelyResolvable_polarWh_singular (isAtom_singleton mary) (isAtom_singleton sue) h,
    isExhaustivelyResolvable_polarWh_plural_iff (isAtom_singleton mary) (isAtom_singleton sue) h⟩
 
-/-- (52): Beck and Rullmann's intersection answers the singular question of (49) with *John likes
-Mary and Sue*, a member the singular Hamblin set lacks. -/
+-- (52), (49)
 theorem ex52 :
     weakAnswer (hamblin .singular) ({mary, sue} : Set Woman) = Ici {mary, sue} ∧
       Ici ({mary, sue} : Set Woman) ∉ hamblin .singular :=
@@ -443,8 +434,7 @@ theorem felicitous_coe_iff (n : Number) (s : Finset Woman) :
 instance (n : Number) (s : Finset Woman) : Decidable (Felicitous n (s : Set Woman)) :=
   decidable_of_iff _ (felicitous_coe_iff n s).symm
 
-/-- (41)–(42), (65)–(66): a question is acceptable in a situation iff the number of its *wh*
-phrase fits the plurality. -/
+-- (41), (42), (65), (66)
 theorem rows_agree :
     ∀ e ∈ Examples.all, ∀ (n : Number) (s : Finset Woman),
       (e.feature? "whNumber").bind number = some n →
@@ -452,8 +442,7 @@ theorem rows_agree :
       (e.judgment = .acceptable ↔ Felicitous n (s : Set Woman)) := by
   decide
 
-/-- (57)–(59): the existential presupposition is denied only across speakers and suspended only
-without a cleft. -/
+-- (57), (59)
 theorem existence_rows :
     ∀ e ∈ Examples.all, ∀ v, e.feature? "existence" = some v →
       (e.judgment = .acceptable ↔

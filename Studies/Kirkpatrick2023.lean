@@ -85,7 +85,7 @@ theorem update_of_forall (h : ∀ y ∈ σ, y ∉ R) : update N R σ = σ ∪ N.
 theorem update_empty : update N R ∅ = N.normal () R := by
   rw [update_of_forall fun _ h ↦ (notMem_empty _ h).elim, empty_union]
 
-/-- Expansion is one-way, fn. 24: the horizon never shrinks. -/
+-- fn. 24
 theorem subset_update : σ ⊆ update N R σ := subset_union_left
 
 theorem update_update : update N R (update N R σ) = update N R σ := by
@@ -139,8 +139,7 @@ theorem consistent_pair {g₁ g₂ : GenericSentence E} (h₁ : holds N g₁ ∅
   rw [update_empty, update_of_forall hdis] at hx
   exact hx.elim (fun hx ↦ (hdis x hx hxR).elim) ((holds_empty N g₂).1 h₂ ·)
 
-/-- §5.3: two generics true on their own whose restrictors exclude each other's normal
-instances are consistent in both orders, each expanding the horizon in turn. -/
+-- §5.3
 theorem consistent_both_orders {g₁ g₂ : GenericSentence E} (h₁ : holds N g₁ ∅)
     (h₂ : holds N g₂ ∅) (h₁₂ : ∀ e ∈ N.normal () g₁.restrictor, e ∉ g₂.restrictor)
     (h₂₁ : ∀ e ∈ N.normal () g₂.restrictor, e ∉ g₁.restrictor) :
@@ -164,13 +163,12 @@ namespace SobelPair
 
 variable (p : SobelPair N)
 
-/-- §5.1: a Sobel sequence whose generics are each true on their own is consistent, the
-exceptions being absent from the general's horizon. -/
+-- §5.1
 theorem consistent (hg : holds N p.general ∅) (he : holds N p.exception ∅) :
     Consistent N [p.general, p.exception] :=
   consistent_pair hg he p.abnormal
 
-/-- Once there is an exception, the reverse order is inconsistent (§5.2). -/
+-- §5.2
 theorem reverse_inconsistent (he : holds N p.exception ∅)
     (hne : (N.normal () p.exception.restrictor).Nonempty) :
     ¬ Consistent N [p.exception, p.general] := by
@@ -245,15 +243,14 @@ theorem holds_ravensAreBlack : holds ravenNormality ravensAreBlack ∅ :=
 theorem holds_albinoRavensArentBlack : holds ravenNormality albinoRavensArentBlack ∅ :=
   (holds_empty _ _).2 fun _ hx ↦ (mem_normal_albino.1 hx ▸ not_not.2 rfl : _)
 
-/-- (25) and (28): *Ravens are black; but albino ravens aren't* is consistent and its reverse
-is not, though each generic is true on its own. -/
+-- (25), (28)
 theorem ravens_order_sensitive :
     Consistent ravenNormality [ravensAreBlack, albinoRavensArentBlack] ∧
       ¬ Consistent ravenNormality [albinoRavensArentBlack, ravensAreBlack] :=
   ravenPair.order_sensitive holds_ravensAreBlack holds_albinoRavensArentBlack
     ⟨.albino, mem_normal_albino.2 rfl⟩
 
-/-- A static semantics accepts the reverse order, §3.1. -/
+-- §3.1
 theorem ravens_static :
     Static (holds ravenNormality · ∅) [albinoRavensArentBlack, ravensAreBlack] := by
   intro g hg

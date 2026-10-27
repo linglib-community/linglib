@@ -207,10 +207,10 @@ def entries : List (List Arg × Icelandic.Verbs.Verb) :=
 
 theorem fragment_cases : ∀ e ∈ entries, e.2.cases ∈ arrays e.1 .active := by decide
 
-/-- A dative experiencer subject leaves the nominative to the theme, (62b). -/
+-- (62b)
 theorem thykja_arrays : arrays Thematic.thykja .active = [[.dat, .nom]] := by decide
 
-/-- The passive of *hjálpa* has a dative subject and no nominative, (11a). -/
+-- (11a)
 theorem hjalpa_passive : arrays Thematic.hjalpa .passive = [[.dat]] := by decide
 
 /-- A dative–accusative verb has two passives: the goal as dative subject with the theme a
@@ -229,7 +229,7 @@ theorem oska_passive :
       ¬ IsSubject Thematic.oska .passive .theme := by
   decide
 
-/-- The impersonal passive of an intransitive has no NP, (9a). -/
+-- (9a)
 theorem dansa_passive : arrays Thematic.dansa .passive = [[]] := by decide
 
 /-! ### The rows -/

@@ -114,19 +114,16 @@ instance (D : Finset (Finset α)) : Decidable (CompsetAccessible D) :=
 theorem compsetAccessible_sieve : CompsetAccessible (sieve q S) ↔ q #S 0 := by
   simp [CompsetAccessible]
 
-/-- *Every N* makes the complement set inaccessible, the noun being nonempty, as in the paper's
-(49a), *All music lovers admire Reger. #They love Mozart.* -/
+-- (49a)
 theorem not_compsetAccessible_all (hS : S.Nonempty) :
     ¬ CompsetAccessible (sieve NumberTree.all S) := fun h ↦
   hS.card_pos.ne' ((compsetAccessible_sieve (q := NumberTree.all)).1 h)
 
-/-- *No N* makes the complement set accessible, the empty reference set being its denotation
-(§4.3). -/
+-- §4.3
 theorem compsetAccessible_no : CompsetAccessible (sieve NumberTree.no S) :=
   compsetAccessible_sieve.2 rfl
 
-/-- *Many N* makes the complement set inaccessible, as in the paper's (43b), *Many music lovers
-admire Reger. #They prefer Mozart.* -/
+-- (43b)
 theorem not_compsetAccessible_many (θ : ℕ) : ¬ CompsetAccessible (sieve (many θ) S) := fun h ↦
   Nat.not_lt_zero θ ((compsetAccessible_sieve (q := many θ)).1 h)
 

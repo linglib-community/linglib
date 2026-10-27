@@ -364,7 +364,7 @@ def rossModel : Model Unit Unit Unit RossPred :=
 /-- John's desire state is the desire world with the empty assignment. -/
 def rossState : Finset (Index Unit Var Unit) := {((), ⊥)}
 
-/-- The monotonic step (26a) to (26b) is semantically valid. -/
+-- (26a), (26b)
 theorem ross_monotone {s : Finset (Index Unit Var Unit)} (h : support rossModel sendL.nec s) :
     support rossModel (sendL.disj burnL).nec s :=
   nec_disj_intro rossModel (.predc _ _) h
@@ -442,18 +442,17 @@ abbrev asherPremise : Formula Var Unit AsherPred := (Formula.exi .x (within .fre
 /-- Nicholas wants a trip, `□∃x TRIP x`, (27b). -/
 abbrev asherConcl : Formula Var Unit AsherPred := (Formula.exi .x (.pred .trip .x)).nec
 
-/-- The side condition of Definition 32 holds globally. -/
+-- Definition 32
 theorem asher_isSubPred : IsSubPred (desireModel AsherPred.trip) .free .trip :=
   isSubPred_desireModel (by decide)
 
-/-- The monotonic step (27a) to (27b) is semantically valid on any model. -/
+-- (27a), (27b)
 theorem asher_monotone {W Domain : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
     (M : Model W Domain Unit AsherPred) {s : Finset (Index W Var Domain)}
     (h : support M asherPremise s) : support M asherConcl s :=
   nec_exi_within_mono M h
 
-/-- The enriched reinterpreted conclusion licenses being ok with a free trip, (27c), and with
-a non-free trip, (27d). -/
+-- (27c), (27d)
 theorem asher_fc {W Domain : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
     (M : Model W Domain Unit AsherPred) {s : Finset (Index W Var Domain)}
     (h : support M (Formula.enrich (reinterpret subFree .free asherConcl)) s) :
@@ -493,8 +492,7 @@ instance : DecidableRel subTuesday := λ _ _ => inferInstanceAs (Decidable (_ �
 /-- I want to teach next semester, `□∃x TEACH x`, (15b). -/
 abbrev heimConcl : Formula Var Unit HeimPred := (Formula.exi .x (.pred .teach .x)).nec
 
-/-- The enriched reinterpreted conclusion licenses being ok with teaching on a non-Tuesday,
-(16c). -/
+-- (16c)
 theorem heim_fc {W Domain : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
     (M : Model W Domain Unit HeimPred) {s : Finset (Index W Var Domain)}
     (h : support M (Formula.enrich (reinterpret subTuesday .tuesday heimConcl)) s) :

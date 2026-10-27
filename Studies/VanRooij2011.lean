@@ -17,18 +17,6 @@ If each adjective's scale is unique up to its own transformations, no comparison
 is meaningful. Bale's universal degrees normalize each adjective's ranking, and so make even ratios
 across adjectives meaningful from merely ordinal measures, which van Rooij counts against them.
 
-## Main statements
-
-* `comparative_ordinalLevel`, `not_comparative_ordinal`: *x is P-er than y is Q* survives one
-  strictly increasing map applied to every adjective, but not a separate map per adjective.
-* `differential_cardinalFull`, `factor_ratioFull`, `not_factor_cardinalFull`: a differential
-  across adjectives holds up to a common change of unit and origin, a factor across adjectives up to
-  a common change of unit, and not up to a change of origin.
-* `factor_universal_ordinal`: read through universal degrees, a factor across adjectives survives
-  a separate strictly increasing map per adjective.
-* `differenceComparative_cardinalUnit`: comparing differences on two adjectives survives a common
-  unit with a separate origin per adjective, the weaker co-interval scale of the paper's note 17.
-
 ## Implementation notes
 
 * A measure on individual–adjective pairs is a profile of `SocialChoice` with adjectives as its

@@ -25,14 +25,6 @@ out of the clause, gives both halves one verdict.
 * `Lechner2004.PhrasalComparative.gapped`, `Lechner2004.PhrasalComparative.direct`: the Gapped
   clause and the LF of the direct analysis.
 
-## Main results
-
-* `Lechner2004.resolution_fits_iff`: only reconstruction under vehicle change predicts (24)–(25).
-* `Lechner2004.PhrasalComparative.gapped_cCommands_iff`,
-  `Lechner2004.PhrasalComparative.cCommands_gapped_iff`: Prediction V.
-* `Lechner2004.analysis_fits_iff`, `Lechner2004.direct_same`: only the Gapped clause predicts the
-  minimal pairs (83)–(91).
-
 ## Implementation notes
 
 Trees carry categories only, and German clauses have their underlying hierarchy, subject over

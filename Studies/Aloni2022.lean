@@ -15,16 +15,6 @@ free-choice facts are proved here for arbitrary `NE`-free `α β`, and its figur
 `decide` on its four worlds `w_∅, w_a, w_b, w_ab`, each the set of atoms true at it, whose
 running state is `{w_a, w_b}`.
 
-## Main results
-
-* `modalDisjunction`, `narrowScopeFC`, `wideScopeFC`, `dualProhibition`, `doubleNegationFC`:
-  Facts 3, 4, 5, 11 and 12.
-* `epistemicContradiction`: the epistemic contradiction of §4.1.
-* `not_forall_support_neg_of_forall_disjoint`: incompatibility does not define negation.
-* `not_negativeFC_poss`, `not_negativeFC_nec`: BSML⁺ fails Negative FC (Fact 14).
-* `positiveFC_plus`, `not_positiveFC`, `addition`, `not_addition_plus`, `contraposition`,
-  `not_contraposition_plus`: Table 5's comparison of BSML∅ with BSML⁺.
-
 ## Implementation notes
 
 Facts 1, 2, 9, 10, 13 and the BSML* half of Fact 14 are in `Logic/Team/BSML/Enrichment.lean`,
@@ -231,6 +221,7 @@ Arabic". The countermodel is Figure 5(b)'s frame at the state `{w_a}`: inside
 `R[w_a] = {w_a}` anti-supports `a`. BSML* validates both inferences
 (`BSML.negativeFC_star_poss`, `BSML.negativeFC_star_nec`). -/
 
+/-- BSML⁺ fails Negative FC (Fact 14). -/
 theorem not_negativeFC_poss :
     ¬ ConsequencePlus (W := Finset Atom) (Atom := Atom)
       (.poss (.neg (.conj (.atom .a) (.atom .b)))) (.poss (.neg (.atom .a))) :=

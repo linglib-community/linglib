@@ -110,8 +110,7 @@ variable {acc w₀ R φ}
 theorem Quantized.nonquantized {g : G} (h : Quantized w₀ R φ g) : Nonquantized w₀ R φ :=
   fun x s e hx ↦ ⟨g, h x s e hx⟩
 
-/-- A nonquantized change entails potential for change when the actual world is accessible ((38a),
-(31b)). -/
+-- (38a), (31b)
 theorem Nonquantized.potential (hacc : acc w₀ w₀) (h : Nonquantized w₀ R φ) :
     Potential acc w₀ R φ :=
   fun x s e hx ↦ ⟨w₀, hacc, h x s e hx⟩
@@ -124,8 +123,6 @@ def Holds : AffectednessDegree → Prop
   | .nonquantized => Nonquantized w₀ R φ
   | .quantized => ∃ g, Quantized w₀ R φ g
 
-/-- Each degree entails every weaker one, given that the actual world is among the worlds the
-modality ranges over. -/
 theorem holds_antitone (hacc : acc w₀ w₀) : Antitone (Holds acc w₀ R φ) := by
   intro d d' h
   cases d <;> cases d' <;> first
@@ -140,8 +137,7 @@ variable (acc w₀ R φ) in
 /-- The role a predicate assigns its theme is the set of affectedness entailments it has ((65)). -/
 def role : Set AffectednessEntailment := {e | Holds acc w₀ R φ e.1}
 
-/-- Every predicate's role is contentful, closed under entailment ((67)), given that the actual
-world is among the worlds the modality ranges over. -/
+-- (67)
 theorem isLowerSet_role (hacc : acc w₀ w₀) : IsLowerSet (role acc w₀ R φ) :=
   fun _ _ h ↦ holds_antitone hacc h
 
@@ -165,13 +161,12 @@ instance {ρ : Type*} [Preorder ρ] [DecidableRel (· ⩿ · : ρ → ρ → Pro
     Decidable (MAP d o) := by
   unfold MAP; infer_instance
 
-/-- Minimal contrast of the roles of (66) is weak covering of their degrees. -/
+-- (66)
 theorem entailments_wcovBy_entailments_iff (d d' : AffectednessDegree) :
     d.entailments ⩿ d'.entailments ↔ d ⩿ d' :=
   apply_wcovBy_apply_iff AffectednessDegree.entailments
 
-/-- Under the MAP the oblique degree is at most the direct one, so the oblique's entailments are
-among the direct realization's (27). -/
+-- (27)
 theorem MAP.oblique_le {ρ : Type*} [Preorder ρ] {d o : ρ} (h : MAP d o) : o ≤ d :=
   h.le
 
@@ -241,16 +236,14 @@ def MapHolds (c : AlternationContrast) : Prop :=
 instance (c : AlternationContrast) : Decidable (MapHolds c) := by
   unfold MapHolds; infer_instance
 
-/-- The MAP holds of every attested contrast, each oblique realization being a minimal weakening
-of its direct counterpart or, as in (75), the same role. -/
+-- (75)
 theorem MAP_holds_all_alternations : ∀ c ∈ allContrasts, MapHolds c := by decide
 
 theorem MapHolds.oblique_le {c : AlternationContrast} (h : MapHolds c) :
     c.obliqueDegree ≤ c.directDegree :=
   MAP.oblique_le h
 
-/-- The three conatives realize exactly the covering pairs of the affectedness hierarchy,
-together tiling the chain (Table 3). -/
+-- Table 3
 theorem conatives_witness_all_covers :
     ∀ q r : AffectednessDegree, q ⋖ r ↔
       ∃ c ∈ [eatConative, cutConative, hitConative],
@@ -268,8 +261,6 @@ def skippingLocative : AlternationContrast :=
 
 theorem reversed_violates_MAP : ¬ MapHolds reversedConative := by decide
 
-/-- Skipping a level violates the MAP even though the degree order is respected, since `⊆_M`
-demands the next-weakest role, not any weaker one. -/
 theorem skipping_violates_MAP :
     ¬ MapHolds skippingLocative ∧
       skippingLocative.obliqueDegree ≤ skippingLocative.directDegree :=
@@ -288,8 +279,7 @@ def Role.totallyTraversed : Role := ↑(Sum.inr () : AffectednessEntailment ⊕ 
 
 example : Fintype.card Role = 5 := by decide
 
-/-- *Climbed the stairs* and *climbed up the stairs* ((81)–(84)) form a minimal contrast as the MAP
-(69) requires ((86), (87)). -/
+-- (81), (84), (69), (86), (87)
 theorem climb_map : MAP Role.totallyTraversed ⊥ := by
   refine CovBy.wcovBy ?_
   rw [Role.totallyTraversed, WithBot.bot_covBy_coe]
@@ -320,13 +310,12 @@ instance : LinearOrder DativeRole :=
 instance : DecidableRel (· ⩿ · : DativeRole → DativeRole → Prop) :=
   fun a b ↦ decidable_of_iff (a ≤ b ∧ ∀ c, a < c → ¬c < b) Iff.rfl
 
-/-- In *mailed Mary the letter* against *mailed the letter to Mary* ((88)–(89)), the indirect object
-adds prospective possession to arrival. -/
+-- (88), (89)
 theorem dative_map : MAP DativeRole.recipientGoal .goal := by decide
 
 /-! ### Bridge to [levin-1993]'s judgment rows -/
 
-/-- The conative alternation is attested for *cut* and *hit* (Table 3). -/
+-- Table 3
 theorem conative_data_attested :
     Levin1993.Examples.con_cut.judgment = .acceptable ∧
     Levin1993.Examples.con_hit.judgment = .acceptable := ⟨rfl, rfl⟩
@@ -334,7 +323,7 @@ theorem conative_data_attested :
 theorem break_no_conative :
     Levin1993.Examples.con_break.judgment = .ungrammatical := rfl
 
-/-- The locative alternation is attested for spray/load verbs (Table 4). -/
+-- Table 4
 theorem locative_data_attested :
     Levin1993.Examples.loc_spray.judgment = .acceptable ∧
     Levin1993.Examples.loc_load.judgment = .acceptable := ⟨rfl, rfl⟩

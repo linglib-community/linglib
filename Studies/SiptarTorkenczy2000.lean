@@ -169,7 +169,6 @@ theorem mem_places_insertLink {p : Place} {k : Fin w.upper.length} {i j : Fin w.
     Finset.mem_insert, Prod.mk.injEq]
   aesop
 
-/-- Inserting a line admitted by `MayLink` keeps the form sound. -/
 theorem Sound.insertLink {p : Place} {k : Fin w.upper.length} {i : Fin w.lower.length}
     (hs : Sound c) (hv : valueAt k = p) (hm : MayLink c p i) : Sound (c.insertLink k i) := by
   intro j ⟨hc, hd⟩

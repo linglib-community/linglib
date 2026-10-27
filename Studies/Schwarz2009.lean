@@ -27,18 +27,6 @@ the type-shifter Π (260), which picks out only parts of a relatum, so that it f
 The paper's examples agree with these predictions except where §6.4.1 says they do not: the strong
 article is predicted in part-whole bridging, where it is out.
 
-## Main results
-
-* `german_toDescriptions`, `fering_toDescriptions`, `english_toDescriptions`: the descriptions each
-  article form denotes.
-* `weak_eq_none_strong_eq_some`, `covarying_anaphora`: the contrast of §6.1, and its instance (31).
-* `weak_covaries`, `strong_isSome_iff`: the weak article covaries with the situation and the strong
-  article does not.
-* `relational_isSome_iff`, `relational_anaphora_coauthored`: relational anaphora is defined iff the
-  antecedent has exactly one relatum.
-* `exists_le_of_shift`, `unique_shift_eq_none`: Π picks out only parts of a relatum.
-* `rows_available`, `rows_unavailable`, `rows_strength`: the examples against the analysis.
-
 ## Implementation notes
 
 (309) leaves its relatum variable unbound and (310b) swaps the relation's arguments; both are read
@@ -251,14 +239,13 @@ theorem isLocal_authorOf : IsLocal authorOf := fun _ _ _ h ↦ h.2
 theorem not_le_of_authorOf {y x s : Sit} (h : authorOf y x s) : ¬ x ≤ y := by
   obtain ⟨⟨rfl, rfl⟩ | ⟨rfl, rfl | rfl⟩, -⟩ := h <;> decide
 
-/-- In (58) the fridge is the situation, and *im Gemüsefach* is its crisper. -/
+-- (58)
 theorem partWhole_bridging (g : Assignment Sit) :
     ⟦DefiniteDescription.unique (shift crisperOf)⟧ g fridge = some {.crisper} :=
   (DefiniteDescription.denote_unique_eq_some_iff _ _ _).2
     ⟨shift_of_le ⟨rfl, rfl, by decide⟩ le_rfl (by simp [fridge]), fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩
 
-/-- In (231) the situation is the train station, and *vom Bürgermeister* is the mayor of its town,
-who is not part of the situation. -/
+-- (231)
 theorem larger_situation (g : Assignment Sit) :
     ⟦DefiniteDescription.unique (shift mayorOf)⟧ g {.station} = some {.mayor} ∧
       ¬ ({.mayor} : Sit) ≤ {.station} :=
@@ -266,12 +253,12 @@ theorem larger_situation (g : Assignment Sit) :
     ⟨⟨town, ⟨rfl, rfl, by decide⟩, Mereology.Overlap.of_le (by simp) (by decide)⟩,
       fun _ ⟨_, ⟨_, h, _⟩, _⟩ ↦ h⟩, by decide⟩
 
-/-- In (62) and (275) *#vom Autor* is undefined, authors not being part of their books. -/
+-- (62), (275)
 theorem author_weak (g : Assignment Sit) (s : Sit) :
     ⟦DefiniteDescription.unique (shift authorOf)⟧ g s = none :=
   unique_shift_eq_none isLocal_authorOf (fun _ _ _ ↦ not_le_of_authorOf) g s
 
-/-- In (275), after *einen Roman*, *von dem Autor* is the novel's author. -/
+-- (275)
 theorem relational_anaphora :
     ⟦relational authorOf 1⟧ (fun _ ↦ {.novel}) Finset.univ = some {.author} :=
   (DefiniteDescription.denote_possessive_eq_some_iff _ _ _ _ _).2
@@ -289,14 +276,12 @@ theorem relational_anaphora_coauthored :
       (by decide),
     (DefiniteDescription.denote_anaphoric_eq_some_iff _ _ _ _).2 ⟨.inr rfl, rfl⟩⟩
 
-/-- In (231) the index of *#von dem Bürgermeister* is bound by the train station, which has no
-mayor, so the relational strong article is undefined. -/
+-- (231)
 theorem larger_situation_strong :
     ⟦relational mayorOf 1⟧ (fun _ ↦ {.station}) Finset.univ = none :=
   (iota_eq_none_iff _).2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
 
-/-- The relational strong article denotes the crisper in (58), where *#in dem Gemüsefach* is out, so
-the analysis overgenerates (§6.4.1). -/
+-- (58), §6.4.1
 theorem partWhole_bridging_strong :
     ⟦relational crisperOf 1⟧ (fun _ ↦ fridge) fridge = some {.crisper} :=
   (DefiniteDescription.denote_possessive_eq_some_iff _ _ _ _ _).2

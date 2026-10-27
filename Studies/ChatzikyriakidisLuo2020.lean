@@ -30,16 +30,6 @@ carrier, all five laws hold.
 * `SubSetoid A B sA sB`: `A` is a subtype of `B` whose identity criterion `sA` is inherited
   from `sB`.
 
-## Main statements
-
-* `range_sigma_comp`: intersective modification meets the noun's extension with the adjective's.
-* `not_forall_nonempty_hom_sigma`: subsective modification need not respect subtyping.
-* `forall_does_iff_mono`: law (A1) holds on a noun exactly when its embedding is a monomorphism.
-* `not_doesNot_comp_heq`, `not_forall_doesNot_of_sub_heq`, `not_exists_doesNot_of_sub_heq`: laws
-  (A3), (A4) and (A5) fail for `HEq`.
-* `three₀_iff_two_lt_card`: three objects distinct under an identity criterion satisfy a predicate
-  exactly when more than two of its identity classes do.
-
 ## Implementation notes
 
 * As in [chatzikyriakidis-luo-2017], a noun is an object of `Over Obj`, a type embedded in a type
@@ -98,7 +88,7 @@ instance mono_sigma_hom (A : Over Obj) (P : A.left → Prop) [Mono A.hom] : Mono
 
 variable {A B C : Over Obj}
 
-/-- Coercions into a noun with a monic embedding are unique, as coherence requires (p. 40). -/
+-- p. 40
 theorem subsingleton_hom [Mono B.hom] : Subsingleton (A ⟶ B) :=
   ⟨fun s t ↦ Over.OverMorphism.ext ((cancel_mono B.hom).1 ((Over.w s).trans (Over.w t).symm))⟩
 
@@ -149,21 +139,20 @@ def IsReal : (sum GR GF).left → Prop := Sum.elim (fun _ ↦ True) (fun _ ↦ F
 /-- A gun is fake when it comes from the fake guns (3.112). -/
 def IsFake : (sum GR GF).left → Prop := Sum.elim (fun _ ↦ False) (fun _ ↦ True)
 
-/-- Every gun is real or fake (3.120). -/
+-- (3.120)
 theorem isReal_or_isFake (g : (sum GR GF).left) : IsReal g ∨ IsFake g := by
   cases g <;> simp [IsReal, IsFake]
 
-/-- A gun is real exactly when it is not fake (p. 71). -/
+-- p. 71
 theorem isReal_iff_not_isFake (g : (sum GR GF).left) : IsReal g ↔ ¬ IsFake g := by
   cases g <;> simp [IsReal, IsFake]
 
-/-- A fake gun is not a real gun (3.121). -/
+-- (3.121)
 theorem not_isReal_sigmaFst (f : (sigma (sum GR GF) IsFake).left) :
     ¬ IsReal ((sigmaFst (sum GR GF) IsFake).left f) :=
   (isReal_iff_not_isFake f.1).1.mt (not_not_intro f.2)
 
-/-- When nothing is both a real and a fake gun, *fake* is privative relative to *real gun* (p. 72).
--/
+-- p. 72
 theorem disjoint_range_isFake [Mono (sum GR GF).hom] :
     Disjoint (Set.range (sigma (sum GR GF) IsFake).hom)
       (Set.range (sigma (sum GR GF) IsReal).hom) := by
@@ -194,7 +183,7 @@ theorem does_iff {P : A.left → Prop} {y : B.left} :
 theorem is_iff {y : B.left} : Is A y ↔ ∃ x, A.hom x = B.hom y := by
   simp [Is, DoesNot, p]
 
-/-- IS holds of every object of its own noun (p. 64). -/
+-- p. 64
 theorem is_self (a : A.left) : Is A a := is_iff.2 ⟨a, rfl⟩
 
 /-- Law (A1) holds on a noun exactly when its embedding is a monomorphism (p. 153). -/
@@ -221,8 +210,7 @@ theorem exists_doesNot_of_hom (s : A ⟶ B) (P : C.left → Prop)
   let ⟨x, hx⟩ := h
   ⟨s.left x, fun w hw ↦ hx w (hw.trans (over_w_apply s x))⟩
 
-/-- IS respects subtyping, as in the inference from "Teddy is a man" to "Teddy is a human"
-(p. 154). -/
+-- p. 154
 theorem is_of_hom (s : A ⟶ B) {z : C.left} (h : Is A z) : Is B z :=
   fun hB ↦ h (doesNot_comp s (p B) z hB)
 
@@ -234,8 +222,7 @@ theorem standardNeg_not_iff (P : A.left → Prop) (b : B.left) :
 def TypeDisjoint (A B : Over Obj) : Prop :=
   ∀ C : Over Obj, (C ⟶ A) → (C ⟶ B) → IsEmpty C.left
 
-/-- Two nouns are disjoint iff no object of the second is an object of the first ((3.66), (3.71)).
--/
+-- (3.66), (3.71)
 theorem typeDisjoint_iff : TypeDisjoint A B ↔ ∀ b : B.left, ¬ Is A b := by
   refine ⟨fun h b hb ↦ ?_, fun h C s t ↦ ⟨fun c ↦ h (t.left c) (is_iff.2 ⟨s.left c, ?_⟩)⟩⟩
   · obtain ⟨a, ha⟩ := is_iff.1 hb
@@ -243,8 +230,7 @@ theorem typeDisjoint_iff : TypeDisjoint A B ↔ ∀ b : B.left, ¬ Is A b := by
       (Over.homMk (↾fun _ ↦ a) (by ext; exact ha)) (Over.homMk (↾fun _ ↦ b))).false PUnit.unit
   · exact (over_w_apply s c).trans (over_w_apply t c).symm
 
-/-- No coercion leads from an inhabited noun to a disjoint one, so `talk(t)` is ill-typed for a
-table `t` ((3.5)–(3.7)). -/
+-- (3.5), (3.7)
 theorem isEmpty_hom_of_typeDisjoint (h : TypeDisjoint A B) [Nonempty A.left] : IsEmpty (A ⟶ B) :=
   ⟨fun s ↦ (h A (𝟙 A) s).false (Classical.arbitrary _)⟩
 
@@ -253,7 +239,7 @@ theorem isEmpty_hom_of_typeDisjoint (h : TypeDisjoint A B) [Nonempty A.left] : I
 def Alleged {Hum : Over Obj} (H : Hum.left → Prop → Prop) (M : Over Obj) (x : Hum.left) : Prop :=
   ∃ h, H h (Is M x)
 
-/-- An alleged `M` need not be an `M`, and an `M` may be alleged (3.122). -/
+-- (3.122)
 theorem alleged_noncommittal {Hum M : Over Obj} {x y : Hum.left} (hx : ¬ Is M x) (hy : Is M y) :
     (∃ H, Alleged H M x ∧ ¬ Is M x) ∧ ∃ H, Alleged H M y ∧ Is M y :=
   ⟨⟨fun _ _ ↦ True, ⟨x, trivial⟩, hx⟩, ⟨fun _ q ↦ q, ⟨y, hy⟩, hy⟩⟩
@@ -324,8 +310,7 @@ structure SubSetoid (A B : Over Obj) (sA : Setoid A.left) (sB : Setoid B.left) w
 def Three₀ (B : Over Obj) (sB : Setoid B.left) (P : B.left → Prop) : Prop :=
   ∃ x y z, ¬ sB x y ∧ ¬ sB y z ∧ ¬ sB x z ∧ P x ∧ P y ∧ P z
 
-/-- If men inherit the identity criterion of humans, three men who talk are three humans who talk
-(5.26). -/
+-- (5.26)
 theorem three₀_of_subSetoid {sA : Setoid A.left} {sB : Setoid B.left}
     (h : SubSetoid A B sA sB) (P : B.left → Prop) (hA : Three₀ A sA (P ∘ h.sub.left)) :
     Three₀ B sB P := by

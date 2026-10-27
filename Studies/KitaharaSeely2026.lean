@@ -70,17 +70,15 @@ def a : SyntacticObject := item 0
 @[inherit_doc a] def c : SyntacticObject := item 2
 @[inherit_doc a] def d : SyntacticObject := item 3
 
-/-- (17), (20), (21): External Merge of `a` and `b` in `[a, b, c]` gives `[{a, b}, c]`, raising
-accessibility from three to four. -/
+-- (17), (20), (21)
 theorem ex21 : ({a, b, c} : Workspace).merge a b = {merge a b, c} ∧
     accessibility {a, b, c} = 3 ∧ MinimalYield {a, b, c} (({a, b, c} : Workspace).merge a b) := by
   decide +kernel
 
-/-- (18): keeping `a` and `b` as members beside `{a, b}` makes each accessible twice. -/
+-- (18)
 theorem ex18 : ¬ MinimalYield {a, b, c} {a, b, merge a b, c} := by decide +kernel
 
-/-- (22): Internal Merge of `c` with `{a, {b, c}}` raises accessibility from five to six, the lower
-copy of `c` not counted. -/
+-- (22)
 theorem ex22 :
     ({merge a (merge b c)} : Workspace).merge c (merge a (merge b c)) =
       {merge c (merge a (merge b c))} ∧
@@ -95,14 +93,13 @@ example : {(Step.im c).apply (merge a (merge b c))} ≠
     ({merge a (merge b c)} : Workspace).merge c (merge a (merge b c)) := by
   decide +kernel
 
-/-- (23): Parallel or Sideward Merge of `a` with the `c` of `{b, c}` leaves `c` accessible twice,
-raising accessibility from four to six. -/
+-- (23)
 theorem ex23 : ({a, merge b c} : Workspace).merge a c = {merge a c, merge b c} ∧
     accessibility {a, merge b c} = 4 ∧ accessibility {merge a c, merge b c} = 6 ∧
     ¬ MinimalYield {a, merge b c} (({a, merge b c} : Workspace).merge a c) := by
   decide +kernel
 
-/-- (24): Late Merge of `{c, d}` with the `b` of `{a, b}` raises accessibility from six to eight. -/
+-- (24)
 theorem ex24 :
     ({merge a b, merge c d} : Workspace).merge b (merge c d) =
       {merge a b, merge b (merge c d)} ∧
@@ -110,8 +107,7 @@ theorem ex24 :
     accessibility {merge a b, merge b (merge c d)} = 8 := by
   decide +kernel
 
-/-- (25): Countercyclic Merge of `c` with `{b, {c, d}}` inside `{a, {b, {c, d}}}` raises
-accessibility from seven to thirteen. -/
+-- (25)
 theorem ex25 :
     ({merge a (merge b (merge c d))} : Workspace).merge c (merge b (merge c d)) =
       {merge c (merge b (merge c d)), merge a (merge b (merge c d))} ∧

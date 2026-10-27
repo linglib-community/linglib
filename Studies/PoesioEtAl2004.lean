@@ -328,8 +328,7 @@ inductive Ent14 where
   | patch
   deriving DecidableEq, Repr
 
-/-- The two definitions of the previous utterance after an adjunct clause pull in opposite
-directions in (14) and (16). -/
+-- (14), (16)
 theorem ex14_ex16 :
     let u1 : Utterance Ent14 GrammaticalRole Head := ⟨[⟨.john, .subject, .name⟩]⟩
     let u2 : Utterance Ent14 GrammaticalRole Head :=
@@ -355,8 +354,7 @@ inductive Ent23 where
   | pharmacist
   deriving DecidableEq, Repr
 
-/-- (23): with the second-person pronoun excluded, no utterance realizes a forward-looking
-center of the previous one, so entity coherence is absent throughout a coherent text. -/
+-- (23)
 theorem ex23 :
     let u1 : Utterance Ent23 GrammaticalRole Head :=
       ⟨[⟨.leaflet, .subject, .description⟩, ⟨.summary, .other, .description⟩,

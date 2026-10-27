@@ -22,17 +22,6 @@ Spell-out rules mention features with multiplicity, and Maximal Encoding uses th
 rule mentioning the most: Dutch has no rule mentioning two `PROX`, so *wij* realizes both the
 inclusive and the exclusive.
 
-## Main statements
-
-* `Layered.isSome_eval_iff`, `isSome_eval_layered_iff`: a feature structure has an output iff it
-  is no longer than its input is deep and only its last feature is `DIST`, which on the person
-  space leaves the four persons and the structure with no feature.
-* `mem_inventory_iff`: the seven pronouns are those with a denotation in some person space.
-* `canBeExpletive_iff`, `acceptable_iff_canBeExpletive`: only the third person singular can
-  denote the empty set, as the paper's expletive examples require.
-* `dutch_paradigm`, `dutch_referential`: the Dutch rules realize the inventory, each pronoun at
-  the referential categories its fragment entry records.
-
 ## Implementation notes
 
 * A layered set carries its predecessors, so the set a feature leaves unlayered has none. The

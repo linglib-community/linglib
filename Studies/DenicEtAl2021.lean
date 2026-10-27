@@ -22,17 +22,6 @@ built from the substrate's quantifiers, from which the paper's classes and valid
 The meaning route of §10.2 combines Kadmon and Landman's domain widening for *any* with Chater and
 Oaksford's probabilistic semantics of quantified sentences.
 
-## Main statements
-
-* `Environment.classifies_iff`: the class the paper gives each environment is the one its
-  denotation has, the doubly negative ones being upward entailing with the item in a
-  downward-entailing constituent (§3.1.2, §5).
-* `monotone_wideSome`: on its wide-scope reading *some* sits in an upward-entailing position
-  whatever the environment, the confound of (9) and (27).
-* `cond_eq_one_of_widen`, `exists_cond_lt_one_of_widen`: widening the domain of the object, (30),
-  weakens the bridge premise of the probabilistic downward inference (33), and strictly so for
-  some believer, (34).
-
 ## Implementation notes
 
 * The English fragment gives *many* no reading; a model fixes one of Partee's cardinal and
@@ -201,8 +190,7 @@ def licensingContext : Environment → Option LicensingContext
   | .only12 => some .onlyFocus
   | .positive | .every | .many | .exactly12 => none
 
-/-- *Any*, *ever* and *at all* are licensed in the downward-entailing environments, by the inner
-operator in doubly negative ones (§1, §5), and under *only 12*. -/
+-- §1, §5
 theorem licenses_of_mem_licensingContext {e : Environment} {c : LicensingContext}
     (h : c ∈ e.licensingContext) :
     c.licenser.Licenses any ∧ c.licenser.Licenses ever ∧ c.licenser.Licenses atAll := by
@@ -223,12 +211,11 @@ def wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) (N : Set ε
   ∃ y ∈ N, f (saw y)
 
 /-- On its wide-scope reading *some* sits in an upward-entailing position, whatever the
-environment, (9). -/
+environment, (9) ((27)). -/
 theorem monotone_wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) :
     Monotone (wideSome f saw) := fun _ _ hN ⟨y, hy, h⟩ ↦ ⟨y, hN hy, h⟩
 
-/-- In an upward-entailing environment the wide-scope reading (27) of *some doves* entails the
-narrow-scope sentence about birds, so (26a) entails (26b). -/
+-- (27), (26a), (26b)
 theorem narrow_of_wideSome {f : (ι → Prop) → Prop} (hf : Monotone f) {saw : ε → ι → Prop}
     {N N' : Set ε} (hN : N ⊆ N') (h : wideSome f saw N) :
     f (KadmonLandman1993.existsInDomain N' saw) :=
@@ -249,8 +236,7 @@ def directional : Direction → ℝ → ℝ
   | .subsetToSuperset, r => r
   | .supersetToSubset, r => 100 - r
 
-/-- A response bias enters the directional rating with the sign of the direction, so a yes-bias
-common to both directions cancels in their sum (§3.2). -/
+-- §3.2
 theorem directional_add (d : Direction) (r b : ℝ) :
     directional d (r + b) = directional d r + d.sign * b := by
   cases d <;> simp [directional, Direction.sign]; ring
@@ -267,8 +253,7 @@ open MeasureTheory ProbabilityTheory KadmonLandman1993
 
 variable {Ω ε : Type*} [MeasurableSpace Ω]
 
-/-- In the probabilistic downward inference (33), if `e` has probability zero given `s` and
-probability one given `u`, then `u` has probability zero given `s`. -/
+-- (33)
 theorem cond_eq_zero_of_cond_eq_one {μ : Measure Ω} [IsFiniteMeasure μ] {s e u : Set Ω}
     (hs : MeasurableSet s) (he : MeasurableSet e) (hu : MeasurableSet u) (h₁ : μ[e | s] = 0)
     (h₂ : μ[e | u] = 1) : μ[u | s] = 0 := by

@@ -24,17 +24,6 @@ letting null heads be transparent. The chapter ends on a problem it leaves open:
 are selected by the roots of *clarify* and *enlarge*, so a functor taking adjectives attaches to a
 bare root after all.
 
-## Main statements
-
-* `licenses_nominal_and_verbal_iff`: roots, and roots alone, occur both as nouns and as verbs,
-  which with the lexicon derives every judgment of the paradigm (`acceptable_iff_licensed`).
-* `complement_ne_none_of_wellFormed`: nothing that takes an adjective attaches to a bare root, so
-  no root selects its realization.
-* `not_exists_licensing`: no condition on the category of a complement both derives the paradigm
-  and lets the verbalizers of *clarify* and *enlarge* take their roots.
-* `dm_seesRoot`: in Distributed Morphology's representations no inflection sees its root unless
-  null heads are transparent.
-
 ## Implementation notes
 
 * The category of a core is an `Option CatFamily`, `none` for a root, and an example's frame is
@@ -100,8 +89,7 @@ theorem Licenses.eq_adjectival (hA : Licenses .adjectival κ) (h : Licenses e κ
     e = .adjectival := by
   cases κ <;> simp_all
 
-/-- A word that is both verbal and adjectival is listed under two categories, as the verbal *thin*
-and *yellow* must be (fn. 39). -/
+-- fn. 39
 theorem exists_ne_of_verbal_of_adjectival {l : List (Option CatFamily)}
     (hV : ∃ κ ∈ l, Licenses .verbal κ) (hA : ∃ κ ∈ l, Licenses .adjectival κ) :
     ∃ κ ∈ l, ∃ κ' ∈ l, κ ≠ κ' := by

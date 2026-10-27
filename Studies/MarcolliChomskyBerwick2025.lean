@@ -303,7 +303,6 @@ example :
   Step.noComplexityLoss (step := .em .left theAppleLinearized) (W := 0) (by simp [Step.Admissible])
     (by decide) (by simp only [Step.items, Multiset.mem_singleton, forall_eq]; decide)
 
-/-- The four pruning cuts of *the apple*. -/
 private theorem cutSummandsN_theApple : cutSummandsN theApple.val =
     {({theD.val, appleN.val}, UnorderedTree.leaf Vertex.bare),
       ({theD.val}, UnorderedTree.node Vertex.bare {appleN.val}),
@@ -318,7 +317,6 @@ private theorem cutSummandsN_theApple : cutSummandsN theApple.val =
   simp [Multiset.conv, Multiset.cons_product, -cutSummandsN_mk]
   exact Multiset.cons_swap _ _ _
 
-/-- The pruning cut extracting *the* from *the apple* is the only one with crown `{the}`. -/
 private theorem filter_cutSummandsN_theApple :
     (cutSummandsN theApple.val).filter (·.1 = {theD.val}) =
       {({theD.val}, UnorderedTree.node Vertex.bare {appleN.val})} := by
@@ -624,7 +622,7 @@ noncomputable def planarSum : ℕ → TreeAlgebra
 /-- The series `X = ∑ₗ Xₗ` of Proposition 1.10.2. -/
 noncomputable def mergeSolution : TreeAlgebra⟦X⟧ := PowerSeries.mk planarSum
 
-/-- The recursion of the proof of Proposition 1.10.2, `Xₙ = ∑_{j=1}^{n-1} 𝔐(Xⱼ, X_{n-j})`. -/
+-- Proposition 1.10.2
 theorem planarSum_add_two (n : ℕ) :
     planarSum (n + 2) =
       ∑ p ∈ antidiagonal n, mergeLin (planarSum (p.1 + 1)) (planarSum (p.2 + 1)) := by
@@ -694,16 +692,13 @@ theorem aeval_planarSum_succ (n : ℕ) :
     aeval (R := ℤ) (fun _ ↦ (1 : ℤ)) (planarSum (n + 1)) = catalan n := by
   simp [planarSum, BinaryTree.treesOfNumNodesEq_card_eq_catalan]
 
-/-- `X₁ = x`. -/
 theorem planarSum_one : planarSum 1 = generator := by
   simp [planarSum, generator, forgetPlanar]
 
-/-- `X₂ = {xx}`. -/
 theorem planarSum_two : planarSum 2 = mergeLin generator generator := by
   rw [planarSum_add_two]
   simp [planarSum_one]
 
-/-- `X₃ = {x{xx}} + {{xx}x} = 2{x{xx}}`. -/
 theorem planarSum_three :
     planarSum 3 = 2 • mergeLin generator (mergeLin generator generator) := by
   rw [planarSum_add_two]
@@ -800,13 +795,11 @@ theorem formSet_of' (a : α) (k : ℕ) (F : Forest (UnorderedTree α)) :
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun S _ ↦ ?_)
   simp [bPlus_of']
 
-/-- With fewer than `k` components there is nothing to group. -/
 theorem formSet_of'_of_card_lt (a : α) {k : ℕ} {F : Forest (UnorderedTree α)}
     (h : F.card < k) : formSet (R := R) a k (of' F) = 0 := by
   rw [formSet_of', Multiset.powersetCard_eq_empty _ h, Multiset.map_zero, Multiset.sum_zero]
 
-/-- With exactly `k` components FormSet groups the whole workspace, as in the unbounded
-unstructured sequences of p. 144. -/
+-- p. 144
 theorem formSet_of'_card (a : α) (F : Forest (UnorderedTree α)) :
     formSet (R := R) a F.card (of' F) = ofTree (.node a F) := by
   simp [formSet_of']
@@ -912,8 +905,7 @@ noncomputable def featureConsistency
     (P : Consistency →+ Consistency) (S : SyntacticObject) : Consistency :=
   birkhoffPlusTree φ P S.val
 
-/-- For unital `φ`, the feature-consistency map is the Birkhoff convolution `φ₊ = φ₋ ⋆ φ`
-(Definition 3.1.6, Proposition 3.1.9). -/
+-- Definition 3.1.6, Proposition 3.1.9
 theorem featureConsistency_eq_convMul
     (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
     (P : Consistency →+ Consistency) (hφ : φ 1 = 1) (S : SyntacticObject) :
@@ -952,8 +944,7 @@ noncomputable def headConsistency (Υ : LexicalItem.Token → Consistency) (S : 
     Consistency :=
   featureConsistency (headProbeChar Υ).toLinearMap (.id _) S
 
-/-- The head-driven verdict factors as the semiring Birkhoff convolution `φ₊ = φ₋ ⋆ φ` of the
-head-following character (Definition 3.1.6, Lemma 3.2.7). -/
+-- Definition 3.1.6, Lemma 3.2.7
 theorem headConsistency_eq_convMul (Υ : LexicalItem.Token → Consistency) (S : SyntacticObject) :
     (toConv (birkhoffMinus (headProbeChar Υ).toLinearMap (.id _)).toLinearMap
         * toConv (headProbeChar Υ).toLinearMap) (toCK S) = headConsistency Υ S :=
@@ -1009,7 +1000,6 @@ tree `T` to `t^{α(T)}`, multiplicatively over disjoint union. -/
 noncomputable def gradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R :=
   aeval fun T ↦ single (T.numEdges : ℤ) 1
 
-/-- `ϕt(F) = t^{α(F)}`, since `α` is additive over forests. -/
 theorem gradingChar_apply_of' (F : Forest (UnorderedTree α)) :
     gradingChar (R := R) (of' F) = single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
   rw [gradingChar, aeval_of']
@@ -1031,9 +1021,6 @@ theorem birkhoffPlus_gradingChar :
   birkhoffPlus_eq_self fun T ↦ by
     simpa [← of'_singleton] using truncLT_gradingChar_of' (R := R) {T}
 
-/-- The polar projection is not multiplicative: `t⁻² · t = t⁻¹` is polar while `t` is not, so a
-product can acquire a polar part that its factors lack. Hence `(1 − R) ∘ φ` need not be a
-character, and renormalization goes through the Birkhoff factorization. -/
 theorem truncLT_single_mul_ne [Nontrivial R] :
     truncLT 0 (single (-2 : ℤ) (1 : R) * single 1 1)
       ≠ truncLT 0 (single (-2 : ℤ) (1 : R)) * truncLT 0 (single 1 1) := by
@@ -1046,8 +1033,7 @@ private theorem isRotaBaxter_neg_polar : IsRotaBaxter (1 : ℕ) ⇑(-𝐑 : Laur
   rw [neg_neg] at h
   exact isRotaBaxter_one_iff.2 (isRotaBaxter_one_iff.1 h)
 
-/-- The negative part of every character into Laurent series is polar on nonempty forests, landing
-in the subalgebra `R(A[t⁻¹][[t]])` of Proposition 3.1.7. -/
+-- Proposition 3.1.7
 theorem truncLT_birkhoffMinus_of' (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R)
     {F : Forest (UnorderedTree α)} (hF : F ≠ 0) :
     truncLT 0 (birkhoffMinus φ.toLinearMap (-𝐑) (of' F))
@@ -1088,7 +1074,6 @@ noncomputable def triedToRead : SyntacticObject :=
   merge theMan (merge (leaf ⟨.of .V [.T] "tried", 2⟩) (merge (leaf ⟨.of .T [.V] "to", 3⟩)
     (merge theMan' (merge (leaf ⟨.of .V [.D] "read", 6⟩) aBook))))
 
-/-- The two inscriptions of *the man* are repetitions, structurally identical distinct tokens. -/
 theorem theMan_isRepetition : IsRepetition theMan theMan' :=
   ⟨structurallyIdentical_renumber 4 theMan, by simp [theMan, theMan', renumber, merge_eq_merge_iff]⟩
 

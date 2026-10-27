@@ -18,15 +18,6 @@ identified, except that it puts the lower completive below the lower repetitive 
 aspects, the conflict between Fula and Italian that Cinque leaves open (§4.27): no choice among the
 split heads of (92) keeps the chain of perfect, celerative, completive and repetitive aspect.
 
-## Main statements
-
-* `extends_evidence_first`: (96) extends the recapitulated pairs.
-* `extends_evidence_firstVariant`: so does an order with the opposite choice in (95).
-* `not_extends_suffixOrder_first`: (96) does not extend (19).
-* `extends_second`: (92) extends the pairs other than completive above repetitive and iterative
-  aspect, and (19).
-* `not_chain_second`: no choice of split heads in (92) keeps the Fula chain.
-
 ## Implementation notes
 
 * The heads are those of (96). A position of a stated order may hold several heads, ordered by
@@ -132,8 +123,10 @@ def suffixOrder : List (List Head) :=
     [moodIrrealis], [modRoot, aspHabitual, tAnterior], [aspPerfect],
     [aspProgressive, aspCompletive, voice]]
 
+/-- (96) extends the recapitulated pairs. -/
 theorem extends_evidence_first : Extends first evidence := by decide
 
+/-- So does an order with the opposite choice in (95). -/
 theorem extends_evidence_firstVariant : Extends firstVariant evidence := by decide
 
 theorem level_aspProspective_aspCompletive :
@@ -141,6 +134,7 @@ theorem level_aspProspective_aspCompletive :
       level firstVariant aspCompletive < level firstVariant aspProspective := by
   decide
 
+/-- (96) does not extend (19). -/
 theorem not_extends_suffixOrder_first : ¬ Extends first (pairs suffixOrder) := by decide
 
 /-! ### The second approximation -/
@@ -174,6 +168,7 @@ def SecondOrders (p : Head × Head) : Prop := ∀ a ∈ toSecond p.1, ∀ b ∈ 
 instance (p : Head × Head) : Decidable (SecondOrders p) := by
   unfold SecondOrders; infer_instance
 
+/-- (92) extends the pairs other than completive above repetitive and iterative aspect, and (19). -/
 theorem extends_second :
     (∀ p ∈ evidence, p ∉ [(aspCompletive, aspRepetitive), (aspCompletive, aspIterative)] →
         SecondOrders p) ∧
@@ -181,6 +176,7 @@ theorem extends_second :
       ∀ p ∈ pairs suffixOrder, SecondOrders p := by
   decide +kernel
 
+/-- No choice of split heads in (92) keeps the Fula chain. -/
 theorem not_chain_second :
     ∀ c ∈ [Cartography.Head.aspCelerativeI, .aspCelerativeII],
       ∀ k ∈ [Cartography.Head.aspSgCompletiveI, .aspSgCompletiveII, .aspPlCompletive],

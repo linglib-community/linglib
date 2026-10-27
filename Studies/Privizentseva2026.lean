@@ -38,16 +38,6 @@ the complementizer and the noun out of c-command. The appositive and restrictive
 relatives with ICA rule out a correlative or internally headed placement (section 3.3.1), and
 attraction is not ordered by a case hierarchy (section 3.5).
 
-## Main statements
-
-* `rows_predicted`: the analysis predicts every structural connectivity judgment of chapter 4.
-* `no_uniform_derivation`, `raising_only_fails`: the rivals the book rejects fail on the rows.
-* `inSitu_rows`: a relative stays in its base position exactly when its head's case probe is
-  still active there.
-* `raisingRelative_licensed`, `triggeredMerge_rejects_raisingRelative`: selection before
-  saturation licenses the raising derivation at every stage, which triggered Merge rejects though
-  it accepts the derived object.
-
 ## Implementation notes
 
 * Heights order the head's position in the relative clause below the main-clause position, with
@@ -117,8 +107,7 @@ def caseSite : Site → List Feature → Option Site
 
 theorem caseSite_ica : caseSite .rc [.case, .mergeCP] = some .rc := rfl
 
-/-- The reverse order, that of languages without ICA such as German and Polish
-([privizentseva-2026b], Table 2), values it in the main clause. -/
+-- Table 2 [privizentseva-2026b]
 theorem caseSite_external : caseSite .rc [.mergeCP, .case] = some .matrix := rfl
 
 /-! ### Derivations of the head noun phrase -/
@@ -325,8 +314,7 @@ example {t : Minimalist.LinearizedSyntacticObject} {v : Minimalist.LexicalItem.T
     t.IsLabeledBy (.merge (.leaf v) x) v :=
   Minimalist.LinearizedSyntacticObject.isLabeledBy_merge_head hex hx hv
 
-/-- Merging a relative determiner and a head noun that both have selection pending gives a zero
-selection product (Section 5.2.2). -/
+-- Section 5.2.2
 theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : Minimalist.LexicalItem.Token}
     (hd : d.item.sel ≠ []) (hn : n.item.sel ≠ []) :
     (Minimalist.SyntacticObject.merge (.leaf d) (.leaf n)).selCheck = 0 := by
@@ -481,8 +469,7 @@ def attractions : List (Case × Case) := Examples.all.filterMap fun ex ↦ do
   let int ← ex.parse? "internalCase" caseNames
   pure (ext, int)
 
-/-- ICA is not governed by a case hierarchy, since attraction runs both ways between the nominative
-and the genitive (Section 3.5). -/
+-- Section 3.5
 theorem not_hierarchy (r : Case → Case → Prop) [Std.Asymm r] :
     ¬ ∀ p ∈ attractions, r p.2 p.1 := by
   intro h
@@ -539,8 +526,7 @@ def ReadingsFit (p : Relativization.Placement) (s : Strategy) : Prop :=
 instance (p : Relativization.Placement) (s : Strategy) : Decidable (ReadingsFit p s) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Relatives with ICA fit exactly the externally headed placements, post-nominal and pre-nominal
-(Section 3.3.1). -/
+-- Section 3.3.1
 theorem fits_ica_iff (p : Relativization.Placement) :
     ReadingsFit p .ica ↔ p = .postNominal ∨ p = .preNominal := by
   revert p; decide
@@ -584,7 +570,7 @@ def islandRows : List (Option Strategy × Bool) := Examples.all.filterMap fun ex
 example : islandRows.length = 8 := by decide
 
 attribute [local instance high] List.decidableBAll in
-/-- Of the island rows, exactly the correlatives are accepted at the left edge (Section 3.3.2). -/
+-- Section 3.3.2
 theorem islandRows_accepted : ∀ x ∈ islandRows, x.2 = true ↔ x.1 = some .correlative := by
   decide
 

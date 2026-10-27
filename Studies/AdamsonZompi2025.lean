@@ -20,24 +20,6 @@ one. A person restriction is stated over a person valuation of pronoun entries (
 agreement valuation `Morphosyntactic` reads the fragments' `person` and the LF valuation
 `Syntacticosemantic` their `referentialPerson`.
 
-## Main results
-
-* `morphosyntactic_iff_of_ordinary`: the two valuations coincide on ordinary pronouns.
-* `morphosyntactic_lei_formal`, `syntacticosemantic_lei_formal`: agreement-keyed restrictions
-  treat LEI as *lei*, interpretation-keyed ones as *tu*.
-* `lei_accusative`: on the Weak and Strong grammars the interpretable valuation bans a third
-  person dative over accusative LEI, which the agreement valuation licenses, as do the accounts of
-  `deal_licenses_lei` and `gluttony_licenses_lei`.
-* `fancy_constraint`: the Fancy Constraint of *faire*-causatives gives the same cells.
-* `resolved_person`: coordination resolves LEI to second person on its interpretable value and to
-  third on its agreement value.
-* `usted_accusative`, `sie_accusative`: Spanish USTED and German SIE show the effect.
-* `assumed_identity`: under the German assumed-identity restriction, an exponence effect, SIE
-  behaves as third person plural.
-* `rows_predicted`, `morphosyntactic_misses`: every clitic-cluster judgment follows from the
-  interpretable valuation over the two grammars, while the agreement valuation licenses every
-  rejected row with a polite accusative.
-
 ## Implementation notes
 
 As in the paper, the rejection by some Weak-PCC speakers of a first person dative over accusative

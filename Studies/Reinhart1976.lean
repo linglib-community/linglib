@@ -66,13 +66,12 @@ instance (t : Tree Cat W) : DecidableRel (Commands t) := fun _ _ ↦ by
 instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := fun _ _ ↦ by
   unfold PrecedesAndCommands; infer_instance
 
-/-- C-command entails command (49) whenever every S node branches. -/
+-- (49)
 theorem cCommands_commands {t : Tree Cat W} {a b : TreePath}
     (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h : CCommands t a b) : Commands t a b :=
   ⟨upperPolar_anti _ hS h.1, h.2⟩
 
-/-- The c-command domain is a constituent (38). With `m` the first branching node dominating
-`a`, the nodes `a` c-commands, dominance aside, are those `m` dominates. -/
+-- (38)
 theorem cCommand_eq_Ici {t : Tree C W} {a m : TreePath} (hm : m < a) (hb : IsBranchingAt t m)
     (hmax : ∀ x < a, IsBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommand t} = Set.Ici m :=
   Set.ext fun _ ↦ mem_commandRelation_iff_le ⟨⟨hb, hm⟩, fun x hx ↦ hmax x hx.2 hx.1⟩
@@ -121,7 +120,7 @@ instance (R : TreePath → TreePath → Prop) [DecidableRel R] (pron : List Tree
     (a b : TreePath) : Decidable (Permits10a R pron a b) := by
   unfold Permits10a; infer_instance
 
-/-- Whatever (10a) blocks, (10b) blocks. -/
+-- (10a), (10b)
 theorem permits10a_of_permits {R : TreePath → TreePath → Prop} {pron : List TreePath}
     {a b : TreePath} (h : Permits R pron a b) : Permits10a R pron a b :=
   ⟨fun ⟨_, hb⟩ hab ↦ hb (h.1 hab), fun ⟨_, ha⟩ hba ↦ ha (h.2 hba)⟩
@@ -147,8 +146,7 @@ def domain (R : TreePath → TreePath → Prop) [DecidableRel R] (nodes : List T
     (a : TreePath) : List TreePath :=
   nodes.filter fun b ↦ decide (R a b)
 
-/-- In the precede-and-command domains of (37), table (39a), the domain of C is empty and that of D
-contains C. -/
+-- (37), (39a)
 theorem domain_precedesAndCommands_tree37 :
     domain (PrecedesAndCommands tree37) nodes37 ⟨[0]⟩ =
         [⟨[1]⟩, ⟨[2]⟩, ⟨[1, 0]⟩, ⟨[1, 1]⟩, ⟨[1, 1, 0]⟩, ⟨[1, 1, 1]⟩] ∧
@@ -161,8 +159,7 @@ theorem domain_precedesAndCommands_tree37 :
       domain (PrecedesAndCommands tree37) nodes37 ⟨[1, 1, 1]⟩ = [] := by
   decide
 
-/-- In the c-command domains of (37), table (39b), every domain is a constituent, C's is the whole
-sentence, and D's is B without C. -/
+-- (37), (39b)
 theorem domain_cCommands_tree37 :
     domain (CCommands tree37) nodes37 ⟨[0]⟩ =
         [⟨[1]⟩, ⟨[2]⟩, ⟨[1, 0]⟩, ⟨[1, 1]⟩, ⟨[1, 1, 0]⟩, ⟨[1, 1, 1]⟩] ∧
@@ -217,15 +214,13 @@ def tree51 : Tree Cat Unit :=
   .node .S [.node .V [.terminal .V (), .node .N [.terminal .N (), np]],
     .node .N [.terminal .N (), np]]
 
-/-- In (41) the subject c-commands the noun phrase of the preposed phrase, which precedes it, a
-pair of type I. -/
+-- (41)
 theorem typeI_tree41 : TypeI tree41 ⟨[1]⟩ ⟨[0, 1]⟩ := by decide
 
-/-- In (42) the object precedes and commands the possessor in the sentential phrase without
-c-commanding it, a pair of type III. -/
+-- (42)
 theorem typeIII_tree42 : TypeIII tree42 ⟨[1, 1]⟩ ⟨[2, 1, 0, 0]⟩ := by decide
 
-/-- (10a) does not cover two names, so it fails to block (11a) where (10b) blocks it. -/
+-- (10a), (11a), (10b)
 theorem permits10a_not_permits :
     Permits10a (CCommands tree9a) [] ⟨[0]⟩ ⟨[1, 1, 0]⟩ ∧
       ¬ Permits (CCommands tree9a) [] ⟨[0]⟩ ⟨[1, 1, 0]⟩ := by

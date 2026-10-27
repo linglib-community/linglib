@@ -21,15 +21,6 @@ through the outcomes its reading leaves open, and propose that a choice follows 
 the partial outcome a description makes salient, with *at most* but not *up to* making the
 complement set salient, following Blok.
 
-## Main statements
-
-* `outcomes_positive_eq_negative_iff`: the two frames leave open the same outcomes just in case
-  the numeral is read precisely, the premise of the arithmetic argument for their equivalence.
-* `no_reading_only_account`: no account that sees a modifier only through its truth-conditional
-  readings predicts the opposite effects of *bis zu* and *höchstens*.
-* `salienceEffect_eq_framingEffect`: the salience and valence account predicts the direction
-  of the framing effect in all six conditions.
-
 ## Implementation notes
 
 * The German modifiers are the German Fragment's entries, and for salience *bis zu* and
@@ -187,8 +178,7 @@ theorem no_reading_only_account (P : Set (_root_.Modifier (Set ℕ)) → SignTyp
   rw [framingEffect_bisZu, framingEffect_hoechstens] at this
   exact absurd this (by decide)
 
-/-- At the experiments' numbers, the range account mispredicts the framing effects of *genau* (p.
-4147) and *bis zu*. -/
+-- p. 4147
 theorem rangeEffect_fragment (s : Scenario) :
     (∀ m ∈ ⟦genau⟧,
       rangeEffect m s.total (s.number .positive) (s.number .negative) ≠ framingEffect s.genau) ∧
@@ -258,8 +248,7 @@ theorem salienceEffect_eq_framingEffect (s : Scenario) :
   · cases m <;> simp [salienceEffect, appraisal, salience_bisZu hp, salience_bisZu hq,
       salience_hoechstens, framingEffect_bisZu, framingEffect_hoechstens, Frame.valence]
 
-/-- On the Fragment's readings, *more than*, *at least* and *exactly* make the instances salient and
-*fewer than* and *at most* the complement (p. 4149). -/
+-- p. 4149
 theorem salience_raised (hn : 0 < n) :
     (∀ w ∈ [moreThan, atLeast, exactly], salience (raised w n) = 1) ∧
     ∀ w ∈ [fewerThan, atMost], salience (raised w n) = -1 := by

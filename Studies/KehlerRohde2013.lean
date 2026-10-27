@@ -21,14 +21,6 @@ bidirectional dependency of (12). The inert pronoun of a Hobbsian analysis, an i
 heuristic blind to the relation, and a pronominalization rate fixed by Centering status are
 model classes that Tables 6, 5 and 9 rule out.
 
-## Main statements
-
-* `map_production_compProd_prod`: the production marginal is `μ ⊗ₘ σ` (p. 18).
-* `map_cond_compProd_prod`: conditioned on the form, the joint is the posterior composed with `η`.
-* `not_inert`: no joint with an inert pronoun prints Table 6.
-* `not_heuristic`: no relation-blind interpretation prints Table 5.
-* `not_cbFactored`: no rate fixed by Centering status prints Table 9.
-
 ## Implementation notes
 
 * The referents are the Source and the Goal of the transfer contexts of Tables 1–6 and of

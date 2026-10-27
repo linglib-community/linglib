@@ -14,15 +14,6 @@ and is lost before the other sonorant consonants. In borrowings an initial *s* m
 *n*. This file checks the Indonesian phonology fragment against these rules, and against the
 forms Sneddon gives for them, each read through the glyphs of PHOIBLE's Indonesian inventory.
 
-## Main results
-
-* `juncture_of_vowel_or_h`, `juncture_of_obstruent`, `juncture_of_sonorant`, `fuse_eq`: the
-  rules for each class of base-initial sound.
-* `voicelessObstruents_sdiff_substituting`: the voiceless obstruents that keep their place are
-  *c* and the fricatives of loans.
-* `junctureRetained_s`: the nasal before a kept *s* is *n*.
-* `relations_prefixed`: each derived form in the table is its prefix on its base.
-
 ## References
 
 * [sneddon-1996]
@@ -40,7 +31,6 @@ open Phonology Indonesian.Phonology Sneddon1996.Wordlist CLDF.Wordlist
 def voicelessObstruent : Segment :=
   Segment.ofSpecs [(.consonantal, true), (.sonorant, false), (.voice, false)]
 
-/-- The substituting consonants are voiceless obstruents. -/
 theorem substituting_subset :
     substituting ⊆ voicelessObstruent.naturalClass consonants := by
   decide +kernel
@@ -50,7 +40,6 @@ theorem voicelessObstruents_sdiff_substituting :
     voicelessObstruent.naturalClass consonants \ substituting = {c, f, sy, kh} := by
   decide +kernel
 
-/-- A substituting consonant is replaced by one nasal. -/
 theorem juncture_of_mem_substituting {x : Segment} (hx : x ∈ substituting) :
     juncture x = fuse x := by
   simp only [juncture, hx, ↓reduceIte]
@@ -70,8 +59,7 @@ theorem juncture_of_obstruent :
     ∀ x ∈ consonants, x.IsObstruent → x ∉ substituting → juncture x = assimilate [ng, x] := by
   decide +kernel
 
-/-- Before a consonantal obstruent other than `s`, the nasal shares every place feature but
-[strident] (pp. 9–10). -/
+-- pp. 9–10
 theorem juncture_head_agrees :
     ∀ x ∈ consonants, x.IsConsonant → x.IsObstruent → x ≠ s →
       ∀ N ∈ (juncture x).head?, N.IsNasal ∧
@@ -94,8 +82,6 @@ def junctureRetained (x : Segment) : List Segment :=
 theorem junctureRetained_s : junctureRetained s = [n, s] := by
   decide +kernel
 
-/-- The place class alone makes the nasal before `s` strident, and the redundancy rule
-restores `n`. -/
 theorem placeAssimilation_s :
     (NasalSubstitution.placeAssimilation trigger).apply [ng, s]
         = [n.setFeature .strident true, s] ∧

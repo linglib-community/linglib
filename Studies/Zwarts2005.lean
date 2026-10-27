@@ -24,14 +24,6 @@ concatenation relation.
 * `towardsPP`: *towards*.
 * `IsTraceHom`: a trace homomorphism for concatenation.
 
-## Main results
-
-* `toPP_bounded`: strict goal phrases are bounded.
-* `towardsPP_cumulative`: *towards* is cumulative.
-* `toPP_not_quantized`: bounded phrases are not quantized.
-* `loops_cumulative`: loops are cumulative.
-* `vpp_toPP_bounded`: *walk to the house* is bounded.
-
 ## Implementation notes
 
 * The strict goal and source denotations enter through their endpoint content only.
@@ -118,8 +110,7 @@ theorem loops_cumulative (A : Loc) :
 /-- The weak goal-phrase denotation, (30c), holds of the paths ending at the reference object. -/
 def weakTo (x : Loc) : Set (Path Loc) := {p | p.goal = x}
 
-/-- The weak definition (30c) is cumulative, the wrong aspect for telic *to* and *into*, which is
-Zwarts's argument for the strict single-phase definitions (34)–(35). -/
+-- (30c), (34), (35)
 theorem weakTo_cumulative (x : Loc) : Cumulative Path.IsConcat (weakTo x) :=
   ⟨⟨_, Path.goal_const x, _, Path.goal_const x, _, Path.isConcat_const x⟩,
     λ _ _ _ hq _ hr => hr.goal_eq.trans hq⟩
@@ -141,8 +132,7 @@ theorem toPP_no_pairs (x : Loc) :
 theorem toPP_bounded (x : Loc) : Bounded Path.IsConcat (toPP x) :=
   bounded_of_no_pairs (toPP_no_pairs x)
 
-/-- Strict source phrases are bounded like goal phrases, so there is no aspectual asymmetry
-between source and goal, (12a). -/
+-- (12a)
 theorem fromPP_bounded (x : Loc) : Bounded Path.IsConcat (fromPP x) := by
   rintro ⟨⟨p, hp, q, hq, r, hr⟩, -⟩
   exact hp.2 (hr.1.trans hq.1)
@@ -209,7 +199,7 @@ inductive Star (X : Set (Path Loc)) : Path Loc → Prop
   | concat {p q r} (hp : Star X p) (hq : Star X q) (h : Path.IsConcat p q r) :
       Star X r
 
-/-- The star closure is cumulative, given any concatenable pair to seed it, (58). -/
+-- (58)
 theorem star_cumulative {X : Set (Path Loc)}
     (h : ∃ p ∈ X, ∃ q ∈ X, ∃ r, Path.IsConcat p q r) :
     Cumulative Path.IsConcat {p | Star X p} := by

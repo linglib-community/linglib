@@ -34,18 +34,6 @@ quantifier to that site give the same reading, so the split-scope reading (77b) 
 read zero books*, which the sentence lacks ((78)), is blocked only for the degree quantifier, by
 the Heim-Kennedy generalization ((80)).
 
-## Main results
-
-* `exhAgainst_zero_iff_no`, `zero_mem_countDegrees`: exhaustified *zero* is *no*, and the
-  unexhaustified *zero* is a tautology.
-* `not_licenses_zero`, `rows_predicted`: *zero* licenses no polarity item, *few* weak ones only
-  and *no* both, as the paper's judgments have it.
-* `kennedyZero_eq_nobody`: Kennedy's *zero* is the context of *no*.
-* `antitone_maxIn_countDegrees`, `not_antitone_maxIn_countDegrees_sdiff`: *fewer than ten* is
-  downward monotone with `×` and not with `*`.
-* `countDegrees_plural_eq_Iic_comp`: a count's measured degree property is that of its
-  pluralities under `×`.
-
 ## Implementation notes
 
 * Pluralities are the finite sets of atoms, and `plural Z` is `Mereology.FullAlgClosure` of
@@ -92,7 +80,7 @@ def plural (Z : Set α) : Set (Finset α) := {x | FullAlgClosure (· ∈ ({·} :
 @[simp] theorem mem_plural {Z : Set α} {x : Finset α} : x ∈ plural Z ↔ ↑x ⊆ Z :=
   fullAlgClosure_image_singleton Z x
 
-/-- Without the empty sum `×Z` is Link's `*Z` ((29)). -/
+-- (29)
 theorem plural_sdiff_empty (Z : Set α) :
     plural Z \ {∅} = {x | AlgClosure (· ∈ ({·} : α → Finset α) '' Z) x} := by
   ext x
@@ -109,8 +97,7 @@ are `C`, which a numeral `n` holds of at its lower bound ((27)) and Kennedy's nu
 over ((71)). -/
 def countDegrees (A : Set α) (C : Set (Finset α)) : Set ℕ := Finset.card '' (plural A ∩ C)
 
-/-- With a distributive predicate the degree property is a lower set, so the numeral has an at
-least reading ((20), (22)). -/
+-- (20), (22)
 theorem isLowerSet_countDegrees_plural (A B : Set α) : IsLowerSet (countDegrees A (plural B)) := by
   rw [countDegrees, plural_inter]
   rintro d e hed ⟨x, hx, rfl⟩
@@ -121,8 +108,7 @@ theorem countDegrees_singleton {A : Set α} {s : Finset α} (hs : ↑s ⊆ A) :
     countDegrees A {s} = {s.card} := by
   rw [countDegrees, inter_eq_right.2 (singleton_subset_iff.2 (mem_plural.2 hs)), image_singleton]
 
-/-- With `A ∩ B` finite, the degree property under `×` is `{0, …, n}` for `n` its cardinality (73).
--/
+-- (73)
 theorem countDegrees_plural_eq_Iic {A B : Set α} (h : (A ∩ B).Finite) :
     countDegrees A (plural B) = Iic (A ∩ B).ncard := by
   rw [countDegrees, plural_inter]
@@ -133,7 +119,7 @@ theorem countDegrees_plural_eq_Iic {A B : Set α} (h : (A ∩ B).Finite) :
 Under `*` the at least *zero* is a contradiction and under `×` a tautology; exhaustification
 against the higher numerals turns the tautology into *no*. -/
 
-/-- Under `*`, *zero A B* is a contradiction ((36)). -/
+-- (36)
 theorem zero_notMem_countDegrees_sdiff (A B : Set α) :
     0 ∉ countDegrees A (plural B \ {∅}) :=
   fun ⟨_, ⟨_, _, hne⟩, hx⟩ ↦ hne (Finset.card_eq_zero.1 hx)
@@ -147,7 +133,7 @@ theorem maxIn_singleton_iff_exhAgainst {D : Type*} [LinearOrder D] {P : Set D} {
   maxIn_singleton.trans <| and_congr_right' ⟨fun h _ hm hmP ↦ (h hmP).not_gt hm,
     fun h m hmP ↦ not_lt.1 fun hm ↦ h m hm hmP⟩
 
-/-- Under `×`, Kennedy's *zero A B* is *no A B* ((73)). -/
+-- (73)
 theorem maxIn_zero_countDegrees_iff {A B : Set α} :
     MaxIn {0} (countDegrees A (plural B)) ↔ GQ.no A B := by
   refine maxIn_singleton.trans ⟨fun h a ha hb ↦ ?_, fun h ↦ ⟨zero_mem_countDegrees A B, ?_⟩⟩
@@ -158,7 +144,7 @@ theorem maxIn_zero_countDegrees_iff {A B : Set α} :
     exact Nat.le_zero.2 <| Finset.card_eq_zero.2 <| Finset.eq_empty_of_forall_notMem
       fun a hx ↦ h a (mem_plural.1 hA hx) (mem_plural.1 hB hx)
 
-/-- Under `*`, Kennedy's *zero A B* is never true ((72)), since the degree property lacks `0`. -/
+-- (72)
 theorem not_maxIn_zero_countDegrees_sdiff (A B : Set α) :
     ¬ MaxIn {0} (countDegrees A (plural B \ {∅})) :=
   fun h ↦ zero_notMem_countDegrees_sdiff A B (maxIn_singleton.1 h).1
@@ -187,14 +173,14 @@ def zero : PolarityItem.Licenser :=
       fun p B ↦ 0 ∈ countDegrees p.A (plural B)⟩,
     fun p B ↦ exhAgainst (· < ·) (· ∈ countDegrees p.A (plural B)) 0⟩
 
-/-- Above the exhaustivity operator *zero* is *no*, non-trivially downward entailing ((54a)). -/
+-- (54a)
 theorem exhaustified_zero : zero.exhaustified = nobody.licenser := by
   simp only [zero, licenser, PolarityItem.Licenser.exhaustified]
   congr
   funext p B
   exact propext exhAgainst_zero_iff_no
 
-/-- Below it *zero* is a tautology, downward and upward entailing at once ((54b)). -/
+-- (54b)
 theorem isStrawsonUE_zero : zero.IsStrawsonUE :=
   fun p _ B _ _ ↦ zero_mem_countDegrees p.A B
 
@@ -266,6 +252,7 @@ end Polarity
 A degree quantifier at a lower set, *fewer than ten* or *at most ten*, is downward monotone in its
 scope under `×`, since `0` keeps the degree property nonempty, and not under `*` ((65), (66)). -/
 
+/-- *fewer than ten* is downward monotone with `×` and not with `*`. -/
 theorem antitone_maxIn_countDegrees {U : Set ℕ} (hU : IsLowerSet U) {A : Set α} (hA : A.Finite) :
     Antitone fun B ↦ MaxIn U (countDegrees A (plural B)) := fun _ _ hB h ↦ by
   dsimp only at h ⊢
@@ -310,8 +297,7 @@ theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Se
     (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=
   funext fun i ↦ countDegrees_plural_eq_Iic (h i)
 
-/-- Over *every student*, the split-scope reading (77b) is true and the reading (77a) false when one
-student read none and another four (78). -/
+-- (77b), (77a), (78)
 theorem highScope_every_not_lowScope :
     HighScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
       ¬ LowScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) :=

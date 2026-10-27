@@ -22,16 +22,6 @@ is ellipsis. Forced pruning comes first, so a constituent elided in the first co
 a multidominated pivot only at its right edge, and a finite pivot, which ellipsis cannot create,
 contains no further pivot.
 
-## Main statements
-
-* `licensed_rnrMD`, `licensed_rnrE`, `not_licensed_gapBeforePP`: multidominance and ellipsis
-  derive the same right-node raising, and neither leaves a gap before other material of the first
-  conjunct.
-* `licensed_pieBeforePim`, `not_licensed_pimBeforePie`: inside an elided pivot a multidominated
-  pivot may follow material that shows ellipsis, but not precede it.
-* `pivotOnset_nonfinite`, `pivotOnset_finite`: a nonfinite pivot has derivations with the break
-  before the auxiliary, the verb or the prepositional phrase; a finite pivot has only the first.
-
 ## Implementation notes
 
 * A derivation is a linearized syntactic object, multidominated material shared, with its forced and
@@ -162,8 +152,7 @@ theorem phon_rnrE : rnrE.phon = rnrMD.phon := by decide
 theorem licensed_rnrMD : rnrMD.Licensed := by decide
 theorem licensed_rnrE : rnrE.Licensed := by decide
 
-/-- Neither derives a gap in the second conjunct (89), and multidominance without pruning
-tangles. -/
+-- (89)
 theorem not_licensed_leftNode :
     ¬ leftNodeMD.Licensed ∧ ¬ leftNodeE.Licensed ∧
       ¬ (⟨rnrMD.input, [], []⟩ : Derivation).Licensed := by
@@ -332,7 +321,7 @@ theorem pivotOnset_finite :
       ¬ finiteShareVP.Licensed ∧ ¬ finiteSharePP.Licensed := by
   decide
 
-/-- The rivals obey the pruning rule at every step; only (26) excludes them. -/
+-- (26)
 theorem mayPrune_finiteRivals : ∀ d ∈ [finiteShareVP, finiteSharePP],
     ∀ x ∈ d.prunings.zipIdx, MayPrune d.input (d.prunings.take x.2) x.1.1 x.1.2 := by
   decide

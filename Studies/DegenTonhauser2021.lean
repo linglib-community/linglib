@@ -22,15 +22,6 @@ rational speech acts and Qing, Goodman and Lassiter's projection model: projecti
 posterior credence in the content, which by Bayes' rule is strictly increasing in the prior at
 fixed likelihoods, so a more likely content is taken to be more strongly committed to.
 
-## Main statements
-
-* `projection_strictMono`: the posterior credence in a content is strictly increasing in its
-  Bernoulli prior, whatever the speaker's production likelihoods.
-* `fact_raises_prior`: the fact manipulation raised every content's mean prior rating, in both
-  designs.
-* `prior_modulates_projection`: every predicate's complement was rated more projective under
-  the higher-prior fact, in both designs.
-
 ## Implementation notes
 
 * The means are the generated tables of `Data/Experiments/DegenTonhauser2021.json`, recomputed

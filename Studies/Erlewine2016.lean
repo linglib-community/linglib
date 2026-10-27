@@ -23,20 +23,6 @@ outranks both, so the full transitive returns when both arguments are first or s
 exception the paper argues no last-resort account of AF can make. Rerankings give the typology of
 Popti', Akatek and Ch'ol.
 
-## Main statements
-
-* `extractionTooClose_iff`: an extraction is too close exactly when the subject moves from Spec,TP
-  to the layer immediately above, read off the chain of the clause each derivation builds.
-* `rows_optimal`: every example is grammatical exactly when an optimal derivation realizes its
-  verb form.
-* `af_iff_immediately_preverbal`: with at most one participant argument, Kaqchikel AF is optimal
-  exactly when the subject moves to the layer immediately above TP.
-* `exists_optimal_agentFocus_iff`: the grammar derives the Kaqchikel fragment's Agent Focus
-  reflex for arguments of every person.
-* `lastResort_matches_iff`: the last-resort model of Coon, Mateo Pedro and Preminger, run on the
-  Kaqchikel examples, judges an example correctly exactly when its subject is not extracted past
-  an intervening layer and its arguments are not both participants.
-
 ## Implementation notes
 
 * A derivation builds the spine VP, vP, TP and the layers above TP, an adverb's projection after
@@ -320,26 +306,24 @@ theorem af_iff_immediately_preverbal :
 /-- Subject extraction to Spec,CP in a simple transitive clause. -/
 def subjectExtraction (s o : Person) : Input := ⟨true, [.cP], some (.subj, 0), s, o⟩
 
-/-- Without extraction, the optimal derivation moves the subject to Spec,TP (§5.1, §5.3). -/
+-- §5.1, §5.3
 theorem no_extraction_full (s o : Person) :
     (kaqchikel.tableau ⟨true, [.cP], none, s, o⟩).optimal = {⟨true, .obj⟩} := by
   cases s <;> cases o <;> decide
 
-/-- Under subject extraction with two third-person arguments, both AF derivations are optimal
-(§5.1). -/
+-- §5.1
 theorem subject_extraction_af :
     (kaqchikel.tableau (subjectExtraction .third .third)).optimal =
       {⟨false, .subj⟩, ⟨false, .obj⟩} := by
   decide
 
-/-- A participant argument breaks the tie, Set B cross-referencing it (§5.2). -/
+-- §5.2
 theorem participant_breaks_tie :
     (kaqchikel.tableau (subjectExtraction .second .third)).optimal = {⟨false, .subj⟩} ∧
       (kaqchikel.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} := by
   decide
 
-/-- With two participant arguments the full-agreement transitive is optimal (§5.2), the
-anti-locality violation notwithstanding. -/
+-- §5.2
 theorem participant_exception :
     (kaqchikel.tableau (subjectExtraction .first .second)).optimal = {⟨true, .obj⟩} := by
   decide
@@ -357,8 +341,7 @@ theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
   rw [h]
   cases s <;> cases o <;> decide
 
-/-- Object extraction and intransitive subject extraction cross enough structure (§4.2), and no
-optimal derivation bears the AF suffix. -/
+-- §4.2
 theorem no_af_without_short_step :
     (kaqchikel.tableau ⟨true, [.cP], some (.obj, 0), .third, .third⟩).optimal =
         {⟨true, .obj⟩} ∧
@@ -366,9 +349,7 @@ theorem no_af_without_short_step :
         ¬ c.AFSuffix (argsOf false) := by
   decide
 
-/-- The typology of rerankings (§6.1). Popti' keeps the full form when the subject is a
-participant and uses AF when it is not; Akatek uses AF for a participant subject; Ch'ol keeps
-the full form throughout. -/
+-- §6.1
 theorem typology :
     (popti.tableau (subjectExtraction .second .third)).optimal = {⟨true, .obj⟩} ∧
       (popti.tableau (subjectExtraction .third .second)).optimal = {⟨false, .obj⟩} ∧

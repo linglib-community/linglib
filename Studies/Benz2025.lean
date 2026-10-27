@@ -90,8 +90,7 @@ theorem adopted_unique (r : NominalizationReading) (v : Verbalizer.Alloseme)
     (v, n) = adoptedAllosemes r := by
   revert hr h; revert r v n; decide
 
-/-- An event reading arises only from contentful v with vacuous n, and a result or content reading
-only from the corresponding contentful n (§3.5). -/
+-- §3.5
 theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
     (readingFromAllosemes v n = some .complexEvent →
       v.introducesEvent = true ∧ n = .zero) ∧
@@ -129,14 +128,12 @@ theorem ofKinds_is_selectBy_winner (s : ArgumentStructure.Root.Kinds) :
   unfold Verbalizer.Alloseme.ofKinds; split_ifs with h <;> simp only [h, decide_true,
     decide_false] <;> rfl
 
-/-- Every attested *Beobachtung* reading ((32)) is available in the single structure: the
-engine licenses the allosemes and composition delivers the readings. -/
+-- (32)
 theorem beobachtung_readings_available :
     ∀ r ∈ beobachtungRows.filterMap readingOf, r ∈ availableReadings true := by
   decide
 
-/-- Without an event-entailing root neither the complex event nor the result reading is derivable,
-but the content reading is (Table 2). -/
+-- Table 2
 theorem nonEventive_readings :
     availableReadings false = [.content, .simpleEvent, .simpleState, .simpleEntity] := rfl
 
@@ -225,14 +222,12 @@ def denoteN (m : NominalizationModel E S) :
   | .zero _, .content => some { pred := m.hasContent }
   | _, _ => none
 
-/-- The two options for the result reading, eventive or vacuous v, agree on the entity predicate
-(§3.5, crediting [wood-2023]). -/
+-- §3.5 [wood-2023]
 theorem result_options_pred_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
     (denoteN m (denoteV ρ .eventive) .result).map (·.pred)
       = (denoteN m (denoteV ρ .zero) .result).map (·.pred) := rfl
 
-/-- The two options for the result reading disagree on argument structure, only eventive v leaving
-an internal-argument position (§3.5, following [wood-2023]). -/
+-- §3.5 [wood-2023]
 theorem result_options_disagree_on_arguments (m : NominalizationModel E S)
     (ρ : RootMeaning E S) :
     (∃ r, denoteN m (denoteV ρ .eventive) .result = some r ∧ r.internalArg.isSome)
@@ -243,8 +238,7 @@ theorem cen_retains_argument_structure (m : NominalizationModel E S) (ρ : RootM
     ∃ r, denoteN m (denoteV ρ .eventive) .zero = some r ∧ r.internalArg.isSome :=
   ⟨_, rfl, rfl⟩
 
-/-- No zero-v reading has an internal-argument position: none is
-introduced by v, so none is part of the denotation (§3.5). -/
+-- §3.5
 theorem zero_v_no_argument_structure (m : NominalizationModel E S) (ρ : RootMeaning E S)
     (n : Nominalizer.Alloseme) {r : NominalDenotation E S}
     (h : denoteN m (denoteV ρ .zero) n = some r) : r.internalArg = none := by
@@ -253,7 +247,7 @@ theorem zero_v_no_argument_structure (m : NominalizationModel E S) (ρ : RootMea
   · cases cn <;> simp only [denoteV, denoteN, Option.some.injEq, reduceCtorEq] at h <;>
       (try subst h) <;> rfl
 
-/-- Both options for v give the same content reading (§3.5). -/
+-- §3.5
 theorem content_options_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
     denoteN m (denoteV ρ .eventive) .content = denoteN m (denoteV ρ .zero) .content := rfl
 
@@ -343,8 +337,7 @@ instance : Decidable (InterpretivelyCompatible outer inner) :=
 
 instance : Decidable (Allowed outer inner) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The particle-over-prefix order is the one allowed combination ((84) *aus-er-wählen*,
-*an-ver-trauen*, *vor-ent-halten*). -/
+-- (84)
 theorem allowed_iff : Allowed outer inner ↔ outer = .prt ∧ inner = .pfx := by
   revert outer inner; decide
 
@@ -353,8 +346,7 @@ theorem two_factors_needed :
       (InterpretivelyCompatible .pfx .prt ∧ ¬ Allowed .pfx .prt) := by
   decide
 
-/-- A particle over a resultative is structurally but not interpretively excluded, though Table 3
-marks the merged row's interpretation cell excluded (§4.4). -/
+-- Table 3, §4.4
 theorem prt_rsp_particle_dependent :
     ¬ StructurallyCompatible .prt .rsp ∧ InterpretivelyCompatible .prt .rsp := by
   decide
@@ -401,8 +393,7 @@ def CellAcceptable (e : Datum) : Prop :=
 instance (e : Datum) : Decidable (CellAcceptable e) := by
   unfold CellAcceptable; split <;> infer_instance
 
-/-- Table 3 agrees with its examples ((81)–(84), (86)–(88)): a combination is acceptable exactly
-when both factors allow it. -/
+-- Table 3, (81), (84), (86), (88)
 theorem allowed_rows :
     ∀ e ∈ Examples.all, ∀ o ∈ (e.feature? "outer").bind elementOf,
       ∀ i ∈ (e.feature? "inner").bind elementOf, (Allowed o i ↔ CellAcceptable e) := by
@@ -427,8 +418,7 @@ theorem rsp_verb_classes :
       (e.feature? "verb_class" = some "unaccusative" ↔ v.toVerb.IsUnaccusative) := by
   decide
 
-/-- German allows non-unergative means predicates in resultatives ((115e) *frieren*), against
-weak-resultative reanalyses of the whole class. -/
+-- (115e)
 theorem unaccusative_means :
     ∃ e ∈ rspRows, ∃ v ∈ (e.feature? "m_predicate").bind entryOf, v.toVerb.IsUnaccusative := by
   decide
@@ -515,8 +505,7 @@ theorem nominalization_rows_have_entries :
       ((e.feature? "verb").bind entryOf).isSome := by
   decide
 
-/-- The Ch. 5 distribution ((193), (197), (198), (204), (212), (216), (218)): a nominalization
-is acceptable exactly when the account predicts it. -/
+-- Ch. 5, (193), (197), (198), (204), (212), (216), (218)
 theorem nominalization_rows :
     ∀ e ∈ Examples.all, (nominalizationOf e).isSome → (Predicted e ↔ e.judgment = .acceptable) := by
   decide

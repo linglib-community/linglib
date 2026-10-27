@@ -283,8 +283,7 @@ namespace Range
 along the hierarchy, downwards in the substrate's order. -/
 abbrev Respects (r : Range) : Prop := Monotone r
 
-/-- Constraint I follows, the positions where a value is distinguished forming a top
-segment. -/
+-- Constraint I
 theorem Respects.isUpperSet {r : Range} (h : r.Respects) : IsUpperSet {p | ⊥ < r p} :=
   (isUpperSet_Ioi _).preimage h
 
@@ -368,7 +367,7 @@ def profiles : List Profile :=
 
 theorem profiles_respect : ∀ p ∈ profiles, p.Respects := by decide
 
-/-- A dual wider than the plural is impossible (Figure 4.5). -/
+-- Figure 4.5
 theorem not_respects_dual_wider :
     ¬ Profile.Respects ⟨"", sanskrit,
       fun | .plural => .downTo .speaker .speaker
@@ -411,14 +410,14 @@ def Dispensable (c : Choices) (minor : List Number) : Prop :=
 instance (c : Choices) (minor : List Number) : Decidable (Dispensable c minor) := by
   unfold Dispensable; infer_instance
 
-/-- The Hebrew and Maltese minor dual, Figure 4.11. -/
+-- Figure 4.11
 theorem hebrew_dispensable : Dispensable sanskrit [.dual] := by decide
 
 theorem avar_dispensable : Dispensable walapai [.paucal] := by decide
 
 theorem mangarayi_dispensable : Dispensable dualTrial [.trial] := by decide
 
-/-- Constraint VII excludes a minor dual beside a major trial. -/
+-- Constraint VII
 theorem not_dispensable_dual_of_trial : ¬ Dispensable dualTrial [.dual] := by decide
 
 /-- The Hebrew dual, on a few nouns for measures of time and facultative there. -/
@@ -451,11 +450,11 @@ def Second.cells : Second → List (Finset Number)
   | .conflated c => [c.values.toFinset.erase .plural, {.plural}]
   | .mass => [{.singular}, {.plural}]
 
-/-- Qafar's nouns oppose general number to singular and plural (Figure 4.18). -/
+-- Figure 4.18
 theorem qafar_cells :
     (Second.regular japanese).cells = [{.general}, {.singular}, {.plural}] := by decide
 
-/-- Tuyuca's inanimates conflate three numbers against the plural, Figure 4.16. -/
+-- Figure 4.16
 theorem tuyuca_cells :
     (Second.conflated dualTrial).cells = [{.singular, .dual, .trial}, {.plural}] := by decide
 
@@ -502,8 +501,7 @@ theorem noun_conflates_verb_not :
 
 end Kiowa
 
-/-- The Teop articles of the a- and o-classes are polar (Table 5.15), like the Somali article (Table
-5.16), but the e-class breaks the polarity. -/
+-- Table 5.15, Table 5.16
 theorem teop_inverse :
     Morphology.Polar (fun (c : {c : Teop.NounClass // c ≠ .e}) pl ↦ Teop.headArticle c pl) ∧
       ¬ Morphology.Polar Teop.headArticle ∧ Gender.Faithful Teop.headArticle :=
@@ -590,8 +588,7 @@ end Differentiability
 
 /-! ### The syntax of number (chapter 6) -/
 
-/-- The three Bayso concords of Table 6.5 are the pronouns', masculine, feminine and
-plural. -/
+-- Table 6.5
 theorem bayso_pronounConcord_surjective :
     Function.Surjective (Function.uncurry Bayso.Gender.pronounConcord) := by decide
 
@@ -808,41 +805,38 @@ def rankNames : List (String × AnimacyHierarchy) :=
 def markingNames : List (String × Clause.Occurrence) :=
   [("obligatory", .obligatory), ("optional", .optional), ("excluded", .excluded)]
 
-/-- In Miya, (24) to (28), marking and agreement at each position are Table 3.6's. -/
+-- (24), (28), Table 3.6
 theorem miya_rows : ∀ row ∈ Examples.all, row.language = "miya1266" →
     ∀ p ∈ row.parse? "position" rankNames,
       (∀ m ∈ row.parse? "marking" markingNames, m = miyaMarking p) ∧
         ∀ a ∈ row.parse? "agreement" markingNames, a = miyaAgreement p := by
   decide +kernel
 
-/-- In Muna, (21) to (23), and Mayali, (5) and (6), each position's agreement is the one the
-language's profile gives. -/
+-- (21), (23), (5), (6)
 theorem agreement_rows : ∀ row ∈ Examples.all, ∀ p ∈ row.parse? "position" rankNames,
     ∀ a ∈ row.parse? "agreement" markingNames,
       (row.language = "muna1247" → a = munaAgreement p) ∧
         (row.language = "gunw1252" → a = mayaliAgreement p) := by
   decide +kernel
 
-/-- In Slave, (2) to (4), the plural suffix is optional, for dogs as a lexical exception. -/
+-- (2), (4)
 theorem slave_rows : ∀ row ∈ Examples.all, row.language = "slav1253" →
     ∀ p ∈ row.parse? "position" rankNames, ∀ m ∈ row.parse? "marking" markingNames,
       m = slave.range .plural p ∨ p = .higherAnimate := by
   decide +kernel
 
-/-- In Hebrew, (1) to (3) of chapter 4, the verb's number is the value its singular–plural
-system gives the controller's referent. -/
+-- (1), (3)
 theorem hebrew_rows : ∀ row ∈ Examples.all, row.language = "hebr1245" →
     ∀ c ∈ row.parse? "controller" numberNames, ∀ t ∈ row.parse? "target" numberNames,
       ({} : Choices).toSystem.coarsen c = t := by
   decide +kernel
 
-/-- The default number is singular in English and plural in Kiowa ((12) and (14) of chapter 6). -/
+-- (12), (14)
 theorem default_rows : ∀ row ∈ Examples.all, ∀ d ∈ row.parse? "default" numberNames,
     (row.language = "stan1293" → d = .singular) ∧ (row.language = "kiow1266" → d = .plural) := by
   decide +kernel
 
-/-- In Bayso, the noun's form in each number and its concord are the fragment's ((1) to (4) of
-chapter 2, (4) to (11) of chapter 6). -/
+-- (1), (4), (11)
 theorem bayso_rows : ∀ row ∈ Examples.all, row.language = "bais1246" →
     ∀ n ∈ row.parse? "noun" (Bayso.allNouns.map fun n ↦ (n.form, n)),
     ∀ v ∈ row.parse? "number" [("general", (⟨.general, by decide⟩ : Bayso.nounNumbers)),
@@ -853,15 +847,14 @@ theorem bayso_rows : ∀ row ∈ Examples.all, row.language = "bais1246" →
           ("plural", .plural)], c = n.gender.concord v := by
   decide +kernel
 
-/-- In Slovene, (34) to (37), the predicate's number is the resolution of the conjuncts'. -/
+-- (34), (37)
 theorem slovene_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
     ∀ cs ∈ row.parse? "conjuncts" [("sg+sg", [Number.singular, .singular]),
       ("du+sg", [.dual, .singular]), ("sg+sg+sg", [.singular, .singular, .singular])],
     ∀ r ∈ row.parse? "resolved" numberNames, r = resolveNumber slovene cs := by
   decide +kernel
 
-/-- In Macedonian, (28) to (30), each sub-position's agreement is one its availability allows;
-the book prints no starred form, so the rows are all acceptable. -/
+-- (28), (30)
 theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = "mace1250" →
     ∀ t ∈ row.parse? "target" [("verb", PredicateTarget.verb), ("participle", .participle),
       ("adjective", .adjective), ("noun", .noun)],
@@ -869,13 +862,13 @@ theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = "mace1250" �
       (row.judgment = .acceptable ↔ (macedonian.profile t).Allows k) := by
   decide +kernel
 
-/-- British *committee*, (19) to (22), takes the agreement each target allows. -/
+-- (19), (22)
 theorem committee_rows : ∀ row ∈ Examples.all, row.language = "stan1293" →
     ∀ t ∈ row.parse? "target" positionNames, ∀ k ∈ row.parse? "agreement" kindNames,
     ∀ a ∈ britishCommittee t, (row.judgment = .acceptable ↔ a.Allows k) := by
   decide +kernel
 
-/-- In Hopi, (40) to (42), the number is read off the pronoun's and the verb's marking. -/
+-- (40), (42)
 theorem hopi_rows : ∀ row ∈ Examples.all, row.language = "hopi1249" →
     ∀ p ∈ row.parse? "pronoun"
       [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
@@ -885,7 +878,7 @@ theorem hopi_rows : ∀ row ∈ Examples.all, row.language = "hopi1249" →
       Hopi.pronounNumber n = p ∧ Hopi.verbNumber n = v := by
   decide +kernel
 
-/-- In Kiowa, (21) to (23), the inverse suffix appears off the class's basic numbers. -/
+-- (21), (23)
 theorem kiowa_rows : ∀ row ∈ Examples.all, row.language = "kiow1266" →
     ∀ k ∈ row.parse? "class" [("animate", Kiowa.Class.animate), ("inanimate", .inanimate)],
     ∀ n ∈ row.parse? "number" numberNames,
@@ -893,15 +886,14 @@ theorem kiowa_rows : ∀ row ∈ Examples.all, row.language = "kiow1266" →
       (i = true ↔ Kiowa.Inverse k n) := by
   decide +kernel
 
-/-- In Hungarian, (40) and (41), plural resolution occurs only with animate conjuncts. -/
+-- (40), (41)
 theorem hungarian_rows : ∀ row ∈ Examples.all, row.language = "hung1274" →
     ∀ an ∈ row.parse? "animate" [("yes", true), ("no", false)],
     ∀ r ∈ row.parse? "agreement" numberNames,
       (row.judgment = .acceptable ↔ (r = .singular ∨ an = true)) := by
   decide +kernel
 
-/-- In Moroccan Arabic, (42) to (44), agreement is with the nearer conjunct only when the verb
-precedes. -/
+-- (42), (44)
 theorem moroccan_rows : ∀ row ∈ Examples.all, row.language = "moro1292" →
     ∀ vf ∈ row.parse? "verbFirst" [("yes", true), ("no", false)],
     ∀ a ∈ row.parse? "conjunctAgreement" [("nearest", ConjunctAgreement.nearest), ("all", .all)],

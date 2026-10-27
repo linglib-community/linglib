@@ -28,17 +28,6 @@ tenses alone, the effect noted by Stump. With the sequence-of-tense rule and the
 the present as parameters, the kind of tense gives the pattern of English, Japanese and Polish,
 a table of permissible languages, and three predictions.
 
-## Main statements
-
-* `IsEarliest.eq_fst_of_diamond`: on dense time the earliest moment of an existentially
-  quantified tense within an interval is the start of the interval, whatever the tense.
-* `Reading.fails_iff`, `Reading.stumpEffect_iff`: of the readings of a tensed clause under
-  *before*, the existential ones fail and the pronominal present has the Stump effect.
-* `judgment_iff`, `simultaneous_iff`: the parameters of English, Japanese and Polish give the
-  paper's judgments on *before*-clauses and attitude reports.
-* `pShiftable_present_of_wellFormed`, `simultaneous_past_of_pShiftable`,
-  `noPShiftability_past_of_not_simultaneous`: the three predictions.
-
 ## Implementation notes
 
 * A time is a closed interval of a dense linear order of moments, mathlib's `NonemptyInterval`,
@@ -139,8 +128,7 @@ theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
       Perspective.presup_ofPosition, hra, ← hpos], hq⟩
       (NonemptyInterval.le_def.2 ⟨le_rfl, C.fst_le_snd⟩) (NonemptyInterval.mem_pure_self _))
 
-/-- On dense time a clause with an existentially quantified tense never satisfies the presupposition
-of *before*, the inherent presupposition failure of (27). -/
+-- (27)
 theorem not_beforeDefined_diamond [DenselyOrdered M] {c : Finset Ordering} :
     ¬ BeforeDefined C {t | ◇[Perspective.toSetRel (Allen.ofPosition c)] (· ∈ q) t} :=
   fun ⟨_, h, hlt⟩ ↦ hlt.ne' h.eq_fst_of_diamond
@@ -257,14 +245,13 @@ theorem stumpEffect_iff {r : Reading} : r.StumpEffect ↔ r = .pronominal .prese
   · subst hr
     exact ht.trans_le (presup_cell_present.1 hd.1).2
 
-/-- The pronominal past has no p-shiftability, its earliest time preceding the speech time (35). -/
+-- (35)
 theorem noPShiftability_pronominal_past : (pronominal .past).NoPShiftability :=
   fun _ _ _ _ _ _ h ↦
     let ⟨_, ⟨ht, _⟩, hm⟩ := h.1
     hm.2.trans_lt (presup_cell_past.1 ht.1)
 
-/-- A tense with no meaning of its own is p-shiftable, in that the earliest time of its clause may
-follow the speech time (36). -/
+-- (36)
 theorem not_noPShiftability_null : ¬ null.NoPShiftability := fun h ↦
   absurd (h ℤ ⟨(0, 10), by decide⟩ (.pure 2) {.pure 5} 5 (isEarliest_fst_of_subset_singleton
     (d := .pure 5) (Set.mem_singleton _) subset_rfl (by decide))) (by decide)
@@ -404,14 +391,14 @@ theorem toSharvit2003_eq : english.toSharvit2003 = Sharvit2003.english ∧
     japanese.toSharvit2003 = Sharvit2003.hebrew ∧ polish.toSharvit2003 = Sharvit2003.hebrew :=
   ⟨rfl, rfl, rfl⟩
 
-/-- A Japanese past in a *before*-clause has only a reading that fails (34). -/
+-- (34)
 theorem japanese_past_fails {r : Reading} (h : japanese.Available .past r) : r.Fails := by
   rcases r with τ | τ | _
   · exact absurd h.2 (by decide)
   · exact Reading.fails_iff.2 ⟨τ, rfl⟩
   · exact absurd h.2 (by decide)
 
-/-- An English present in a *before*-clause has only the reading with the Stump effect (37). -/
+-- (37)
 theorem english_present_stumpEffect {r : Reading} (h : english.Available .present r) :
     r.StumpEffect := by
   rcases r with τ | τ | _
@@ -420,8 +407,7 @@ theorem english_present_stumpEffect {r : Reading} (h : english.Available .presen
   · exact absurd h.2.2 (by decide)
   · exact absurd h.2 (by decide)
 
-/-- A Polish present in a *before*-clause has the reading with the Stump effect and, with its
-evaluation index bound, a reading that fails (69b). -/
+-- (69b)
 theorem polish_present_fails_or_stumpEffect {r : Reading} (h : polish.Available .present r) :
     r.Fails ∨ r.StumpEffect := by
   rcases r with τ | τ | _
@@ -531,14 +517,12 @@ theorem noPShiftability_past_of_not_simultaneous (hw : L.WellFormed .past)
     (hs : ¬ L.Simultaneous .past) : L.NoPShiftability .past :=
   Language.noPShiftability_iff.2 ⟨hw, fun h ↦ hs (simultaneous_past_of_pShiftable h)⟩
 
-/-- A language with tenses and a simultaneous past-under-past reading has a well-formed past in
-*before*-clauses under a past (102). -/
+-- (102)
 theorem wellFormed_past_of_simultaneous (ht : L.pronominal ∨ L.quantificational)
     (h : L.Simultaneous .past) : L.WellFormed .past :=
   Language.wellFormed_iff.2 (ht.imp (⟨rfl, ·⟩) (⟨·, Language.simultaneous_past_iff.1 h⟩))
 
-/-- Modern Greek has the simultaneous reading (104) and no past in *before*-clauses (103), so no
-setting of the parameters gives its judgments. -/
+-- (104), (103)
 theorem not_exists_modernGreek :
     ¬ ∃ L : Language, (L.pronominal ∨ L.quantificational) ∧
       (Examples.ex_104.readings.lookup "simultaneous" = some .acceptable ↔ L.Simultaneous .past) ∧

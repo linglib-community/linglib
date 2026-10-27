@@ -16,12 +16,6 @@ threshold and an even prior, the posterior that an object is prohibited is the m
 The Goal Insensitive hypothesis is `γ = 1`; the experiment's Bayesian analysis estimates `γ` at
 about 0.76, with 1 outside the credible interval.
 
-## Main statements
-
-* `prohibitionPosterior_eq`: the posterior that an object is prohibited is its measure.
-* `not_threshold_shift`: one goal raising an object and lowering another is not a shift of the
-  standard of comparison.
-
 ## Implementation notes
 
 Objects and goals are types, and the category, feature and plausibility measures of the

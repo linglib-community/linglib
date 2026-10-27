@@ -213,7 +213,7 @@ theorem model_stages_of_kind {k : Individual} (hk : k = .dogs ∨ k = .mammals) 
     ∀ ⦃s⦄, s ~[model.R] k → s ~[model.R ○ ofKind] k :=
   fun s _ ↦ ⟨.dog s, Or.inl rfl, s, rfl, hk⟩
 
-/-- (135c) in the model: dogs are everywhere. -/
+-- (135c)
 theorem model_everywhere_dogs : model.Everywhere () .dogs :=
   fun p ↦ ⟨p, ⟨rfl, rfl⟩, Or.inr (Or.inl rfl)⟩
 

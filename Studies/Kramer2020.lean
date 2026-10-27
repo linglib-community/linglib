@@ -101,8 +101,7 @@ instance [DecidableEq G] : Decidable r.Novel :=
 
 instance [DecidableEq G] : Decidable r.Mixed := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The cell of Table 2 marked not applicable is empty, since a single remainder gender is
-recycled or novel but not both. -/
+-- Table 2
 theorem not_mixed_of_allSame (h : r.AllSame) : ¬ r.Mixed := by
   obtain ⟨g, hg⟩ := Finset.card_eq_one.mp h
   rintro ⟨hr, hn⟩
@@ -145,8 +144,7 @@ inductive BlackfootGender where
 the recycled animate one. -/
 def blackfoot : Remainder BlackfootGender := ⟨{.animate}, {.animate, .inanimate}⟩
 
-/-- Table 2 has one remainder gender recycled (Dieri) or novel (Tamil), and different
-remainder genders recycled (Spanish) or both (Blackfoot). -/
+-- Table 2
 theorem table2 :
     dieri.AllSame ∧ dieri.Recycled ∧ tamil.AllSame ∧ tamil.Novel ∧
       ¬ spanish.AllSame ∧ spanish.Recycled ∧ ¬ blackfoot.AllSame ∧ blackfoot.Mixed := by
@@ -168,8 +166,7 @@ def declensionGender : Russian.Gender.DeclClass → Russian.Gender.Value
   | .II | .III => .fem
   | .IV => .neut
 
-/-- (18) misassigns exactly the Class III nouns of (19), neuter *znamja*
-and masculine *put'*. -/
+-- (18), (19)
 theorem declension_exceptions :
     Russian.Gender.remainderNouns.filter
         (fun n ↦ n.declClass.map declensionGender ≠ some n.gender) =
@@ -183,8 +180,7 @@ masculine. -/
 def phonologicalRule (n : Hausa.Noun) : Hausa.Gender.Value :=
   if n.EndsInAa then .feminine else .masculine
 
-/-- In (22e) *kadā̀* 'crocodile' ends in *-ā* and is masculine, so (26) is
-false. -/
+-- (22e), (26)
 theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gender := by
   decide
 
@@ -245,8 +241,7 @@ theorem lexical_faithful (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
 theorem allNouns_not_hybrid : ∀ n ∈ allNouns, ¬ IsHybrid n := by
   decide
 
-/-- Human Cloning of *el estudiante* yields an entry of each gender: the lexical account
-derives *la estudiante* (14a). -/
+-- (14a)
 theorem estudiante_cloned :
     (lexicalEntry (estudiante .male)).humanCloning.map (·.humanGender.gender) =
       [.masc, .fem] := by
@@ -276,8 +271,7 @@ theorem nHead_mem_spanishHeads (n : Spanish.Gender.Noun) : nHead n ∈ spanishHe
   obtain ⟨⟨_, g, b⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
     simp [nHead, spanishHeads]
 
-/-- The n of either entry of *estudiante* bears an interpretable gender feature: its gender is
-its referent's (14a). -/
+-- (14a)
 theorem nHead_estudiante (x : ReferentGender) :
     (nHead (estudiante x)).gender.map (·.interp) = some .interpretable := by
   cases x <;> decide
@@ -314,7 +308,7 @@ theorem structural_faithful (n : Spanish.Gender.Noun) :
   obtain ⟨⟨_, g, b⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
     dsimp only [nHead] <;> decide
 
-/-- On Spanish the two accounts agree (§3.3), noun by noun, for every noun but a hybrid. -/
+-- §3.3
 theorem lexical_eq_structural (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     (lexicalEntry n).humanGender.gender = .fem ↔ determiner (nHead n) = some "la" := by
   rw [lexical_faithful n h, structural_faithful]
@@ -328,7 +322,6 @@ morphologically masculine Class I noun, take both genders in one phrase. -/
 def hybridTargets : List (String × Russian.Gender.Value) :=
   [("xoroš-aja", .fem), ("glavn-yj", .masc)]
 
-/-- A lexical account gives each entry one gender, so no entry supplies targets of two genders. -/
 theorem no_lexical_hybrid {E G : Type*} (gender : E → G) {targets : List (String × G)} {g g' : G}
     (hne : g ≠ g') (hf : ∃ t ∈ targets, t.2 = g) (hm : ∃ t ∈ targets, t.2 = g') :
     ¬ ∃ e, ∀ t ∈ targets, t.2 = gender e := by
@@ -337,7 +330,7 @@ theorem no_lexical_hybrid {E G : Type*} (gender : E → G) {targets : List (Stri
   obtain ⟨t', ht', rfl⟩ := hm
   exact hne ((he t ht).trans (he t' ht').symm)
 
-/-- (27) is such a case, for any lexical account of Russian gender. -/
+-- (27)
 theorem lexical_no_hybrid {E : Type*} (gender : E → Russian.Gender.Value) :
     ¬ ∃ e, ∀ t ∈ hybridTargets, t.2 = gender e :=
   no_lexical_hybrid gender (g := .fem) (g' := .masc) (by decide) ⟨_, List.mem_cons_self .., rfl⟩

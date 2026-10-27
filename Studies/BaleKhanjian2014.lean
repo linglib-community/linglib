@@ -33,19 +33,6 @@ definite singular.
 * `singularIndef`, `pluralIndef`, `singularDef`, `pluralDef`, `numeralSg`, `numeralPl`: the
   paper's structures.
 
-## Main results
-
-* `pluralIndef_not_alternative`: the plural indefinite has structure the singular indefinite
-  and the lexicon lack, so it is no structural alternative.
-* `pluralDef_alternative`, `numeralPl_alternative`: the definite and the numeral-modified
-  plurals are alternatives of the corresponding singulars.
-* `two_general_eq_two_strictPlural`: under a numeral the two nouns mean the same.
-* `strict_singular_iff`: the definite singular denotes one boy exactly when the definite
-  plural's presupposition fails.
-* `strictPlural_presupposition_stronger`: locally, the plural's presupposition is stronger.
-* `rows_predication`: the paper's predicative sentences are acceptable exactly when the
-  subject is in the predicate's denotation.
-
 ## References
 
 * [bale-khanjian-2014]

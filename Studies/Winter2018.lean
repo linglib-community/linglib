@@ -140,10 +140,8 @@ def Pr5 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
 
 variable {P : Finset A → Prop} {R : A → A → Prop}
 
-/-- (Pr₄) is stronger than (Pr₁). -/
 theorem Pr4.pr1 (h : Pr4 P R) : Pr1 P R := fun X hX hR ↦ h X hX (hR.mono fun _ _ ↦ .of_rel)
 
-/-- (Pr₂) is stronger than (Pr₅). -/
 theorem Pr2.pr5 (h : Pr2 P R) : Pr5 P R := fun X hX hP ↦ (h X hX hP).mono fun _ _ ↦ .of_rel
 
 theorem plainReciprocity_iff_pr1_pr2 : PlainReciprocity P R ↔ Pr1 P R ∧ Pr2 P R :=

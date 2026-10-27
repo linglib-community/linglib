@@ -17,13 +17,6 @@ described by what the paper states about it, as a region of the substrate's `Roo
 * `stimulus`: the instrument, object dimensionality and result the paper states for a clip
 * `tearing`, `pullingYarn`, `snapping`, `smashing`: the clips named for Dimensions 2 and 3
 
-## Main results
-
-* `dim1_not_factorsThrough`: the first dimension is a function neither of the instrument nor
-  of the object
-* `tear_overlaps_stimulus`, `not_cut_not_break_of_tearing`, `break_overlaps_stimulus`: the
-  English fragment's *tear*, *cut* and *break* agree with the descriptions the paper reports
-
 ## Implementation notes
 
 Clips are the appendix numbers. A dimension the paper leaves unstated is unconstrained, so a

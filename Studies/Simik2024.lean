@@ -166,8 +166,7 @@ theorem declNPQ_mem_iff :
     .declNPQ ∈ czechBiasProfile ev ob ↔ ev = -1 ∧ ob ≠ -1 := by
   decide +revert
 
-/-- InterNPQ conveys a prior for the prejacent, with neutral or conflicting evidence, or
-else positive evidence without a prior (the explanation-seeking (17)). -/
+-- (17)
 theorem interNPQ_mem_iff :
     .interNPQ ∈ czechBiasProfile ev ob ↔
       ob = 1 ∧ ev ≠ 1 ∨ ev = 1 ∧ ob = 0 := by
@@ -387,7 +386,7 @@ theorem serbian_hnpq_narrower_than_english :
     BuringGunlogson2000.Felicitous (some .positive) 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
   decide
 
-/-- The quiz rows of (31) carry the markers of the Table 1 strategies. -/
+-- (31), Table 1
 theorem ex31_markers :
     Examples.ex31a.feature? "particle" = some SerbianPQForm.daLiPPQ.particle.form ∧
     Examples.ex31b.feature? "particle" = some SerbianPQForm.jeLiPPQ.particle.form ∧

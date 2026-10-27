@@ -99,7 +99,7 @@ theorem pred1_unknownUpdate_of_novel (hx : State.Novel s x) :
 theorem pred1_positive_empty : (pred1 Q x (W := W)).positive ∅ = ∅ := Set.sep_empty _
 theorem pred1_negative_empty : (pred1 Q x (W := W)).negative ∅ = ∅ := Set.sep_empty _
 
-/-- The negative update of an existential keeps possibilities of the input state, (45). -/
+-- (45)
 theorem exists_negative_subset (φ : BUSDen W E) : (exists_ x φ).negative s ⊆ s :=
   Set.sep_subset _ _
 
@@ -107,8 +107,7 @@ theorem novel_exists_negative (hx : State.Novel s x) (φ : BUSDen W E) :
     State.Novel ((exists_ x φ).negative s) x :=
   hx.mono (exists_negative_subset φ)
 
-/-- A novel possibility subsists in the random-assignment update of a predication exactly when its
-world has a witness, (76). -/
+-- (76)
 theorem mem_lowerClosure_exists_positive_iff {p : Possibility W ℕ (Flat E)} (hp : p ∈ s)
     (hx : State.Novel s x) :
     p ∈ lowerClosure ((exists_ x (pred1 Q x)).positive s) ↔ ∃ e, Q e p.world := by
@@ -124,8 +123,7 @@ theorem mem_lowerClosure_exists_positive_iff {p : Possibility W ℕ (Flat E)} (h
       exact bot_le
     · simp [Possibility.update, Function.update_of_ne hv]
 
-/-- At a state where its referent is novel, an existential statement has an empty unknown update, so
-it is bivalent (55). -/
+-- (55)
 theorem exists_unknownUpdate_of_novel [Nonempty E] (hx : State.Novel s x) :
     (exists_ x (pred1 Q x)).unknownUpdate s = ∅ := by
   ext p
@@ -168,17 +166,16 @@ def box (φ : BUSDen W E) : BUSDen W E := ~(diamond (~φ))
 @[inherit_doc diamond] prefix:max "◇ᵇ" => diamond
 @[inherit_doc box] prefix:max "□ᵇ" => box
 
-/-- (77a): `s[□φ]⁺ = s[◇¬φ]⁻`. -/
+-- (77a)
 theorem box_positive (φ : BUSDen W E) : (□ᵇφ).positive s = (◇ᵇ(~φ)).negative s := rfl
 
-/-- (75): *maybe there isn't a bathroom* passes positively when some possibility has none. -/
+-- (75)
 theorem diamond_neg_exists_positive (B : E → W → Prop) :
     (◇ᵇ(~(exists_ x (pred1 B x)))).positive s =
       {_i ∈ s | ((exists_ x (pred1 B x)).negative s).Nonempty} :=
   rfl
 
-/-- Where the referent is novel, a negated existential is settled iff every possibility has a `B`
-(76). -/
+-- (76)
 theorem settled_neg_exists_iff (B : E → W → Prop) (hx : State.Novel s x) :
     Settled (~(exists_ x (pred1 B x))) s ↔ ∀ p ∈ s, ∃ e, B e p.world := by
   show lowerClosure s ≤ lowerClosure ((exists_ x (pred1 B x)).positive s) ↔ _
@@ -197,7 +194,7 @@ def disjPos1 (φ ψ : BUSDen W E) (s : BUSState W E) : BUSState W E :=
 def disjPos2 (φ ψ : BUSDen W E) (s : BUSState W E) : BUSState W E :=
   ψ.positive (φ.positive s) ∪ ψ.positive (φ.negative s) ∪ ψ.positive (φ.unknownUpdate s)
 
-/-- (92c): the positive update of disjunction (64) is the union of the two parts. -/
+-- (92c), (64)
 theorem disj_positive_eq (φ ψ : BUSDen W E) :
     (φ ⊕ ψ).positive s = disjPos1 φ ψ s ∪ disjPos2 φ ψ s := by
   ext p
@@ -235,8 +232,7 @@ theorem disjPos2_atom : disjPos2 (atom c) (atom t) s = (atom t (V := ℕ) (E := 
   simp only [atom, Set.mem_union, Set.mem_ofPred_eq, Set.mem_empty_iff_false, false_and, or_false]
   tauto
 
-/-- Free choice (84): *there might be coffee or tea* passes exactly when some possibility has
-coffee and some has tea. -/
+-- (84)
 theorem possible_disjModal_atom_iff :
     Possible (atom c ∨ᶠᶜ atom t) s ↔ Possible (atom c) s ∧ Possible (atom t) s := by
   have key : (disjPos1 (atom c) (atom t) s).Nonempty ∧ (disjPos2 (atom c) (atom t) s).Nonempty ↔
@@ -260,15 +256,14 @@ theorem lowerClosure_le_sep_iff (pred : W → Prop) :
   rintro ⟨q, ⟨-, hq⟩, hpq⟩
   exact (Possibility.le_def.mp hpq).1 ▸ hq
 
-/-- (88): *it's impossible that there's coffee or tea* passes exactly when no possibility has
-coffee or tea. -/
+-- (88)
 theorem settled_disjModal_atom_iff :
     Settled (atom c ∨ᶠᶜ atom t) s ↔ ∀ p ∈ s, ¬ c p.world ∧ ¬ t p.world := by
   show lowerClosure s ≤ lowerClosure {p ∈ {p ∈ s | ¬ c p.world} | ¬ t p.world} ↔ _
   rw [show {p ∈ {p ∈ s | ¬ c p.world} | ¬ t p.world} = {p ∈ s | ¬ c p.world ∧ ¬ t p.world} from
     Set.ext λ _ => and_assoc, lowerClosure_le_sep_iff (λ w => ¬ c w ∧ ¬ t w)]
 
-/-- Dual prohibition (80) is preserved: the negative update of modal disjunction is untouched. -/
+-- (80)
 theorem dual_prohibition (h : Settled (atom c ∨ᶠᶜ atom t) s) :
     Settled (atom c (V := ℕ) (E := E)) s ∧ Settled (atom t (V := ℕ) (E := E)) s := by
   rw [settled_disjModal_atom_iff] at h
@@ -283,16 +278,14 @@ section Bathroom
 
 variable (P Q : E → W → Prop)
 
-/-- Where the referent is novel, the first part of the bathroom disjunction is the negative update
-of the existential (93). -/
+-- (93)
 theorem disjPos1_bathroom (hx : State.Novel s x) :
     disjPos1 (~(exists_ x (pred1 P x))) (pred1 Q x) s = (exists_ x (pred1 P x)).negative s := by
   have hn := novel_exists_negative hx (pred1 P x)
   simp [disjPos1, neg, pred1_positive_of_novel Q hn, pred1_negative_of_novel Q hn,
     pred1_unknownUpdate_of_novel Q hn]
 
-/-- The second part of the bathroom disjunction is the positive update of the existential followed
-by the second disjunct (94). -/
+-- (94)
 theorem disjPos2_bathroom [Nonempty E] (hx : State.Novel s x) :
     disjPos2 (~(exists_ x (pred1 P x))) (pred1 Q x) s =
       (pred1 Q x).positive ((exists_ x (pred1 P x)).positive s) := by
@@ -303,23 +296,20 @@ theorem disjPos2_bathroom [Nonempty E] (hx : State.Novel s x) :
   rw [unknownUpdate_neg, exists_unknownUpdate_of_novel P hx, pred1_positive_empty,
     pred1_positive_of_novel Q hn, Set.empty_union, Set.union_empty]
 
-/-- The bathroom disjunction's positive update keeps the possibilities with no `P` and those with a
-`P` that is `Q`, giving existential truth conditions (70). -/
+-- (70)
 theorem bathroom_positive [Nonempty E] (hx : State.Novel s x) :
     ((~(exists_ x (pred1 P x))) ⊕ pred1 Q x).positive s =
       (exists_ x (pred1 P x)).negative s ∪
         (pred1 Q x).positive ((exists_ x (pred1 P x)).positive s) := by
   rw [disj_positive_eq, disjPos1_bathroom P Q hx, disjPos2_bathroom P Q hx]
 
-/-- The bathroom disjunction's negative update is the positive update of the existential followed by
-the denial of the second disjunct (66). -/
+-- (66)
 theorem bathroom_negative :
     ((~(exists_ x (pred1 P x))) ⊕ pred1 Q x).negative s =
       (pred1 Q x).negative ((exists_ x (pred1 P x)).positive s) :=
   rfl
 
-/-- A possible modalized bathroom disjunction makes possible both that there is no `P` and that some
-`P` is `Q` ((24) and (99)). -/
+-- (24), (99)
 theorem fc_with_anaphora [Nonempty E] (hx : State.Novel s x)
     (h : Possible ((~(exists_ x (pred1 P x))) ∨ᶠᶜ pred1 Q x) s) :
     ((exists_ x (pred1 P x)).negative s).Nonempty ∧
@@ -329,8 +319,7 @@ theorem fc_with_anaphora [Nonempty E] (hx : State.Novel s x)
   rw [disjPos2_bathroom P Q hx] at h₂
   exact ⟨h₁, h₂⟩
 
-/-- (25), (90c): the classical schema's second conclusion `◇Q(x)` is unsatisfiable at the same
-states, its pronoun being free. -/
+-- (25), (90c)
 theorem classical_conclusion_impossible (hx : State.Novel s x) : ¬ Possible (pred1 Q x) s := by
   rw [Possible, pred1_positive_of_novel Q hx]
   exact Set.not_nonempty_empty
@@ -339,8 +328,7 @@ end Bathroom
 
 /-! ### Double negation and Egli's theorem (§2.1, §3.3–3.4) -/
 
-/-- DNE is definitional in BUS (49), whereas in DPL a doubly negated existential differs from the
-existential, so no discourse referent escapes ([groenendijk-stokhof-1991]). -/
+-- (49) [groenendijk-stokhof-1991]
 theorem dne_bus_not_dpl [Nontrivial E] :
     (∀ φ : BUSDen W E, ~~φ = φ) ∧
       ∃ (x : ℕ) (φ : Update (Assignment E)),
@@ -348,8 +336,7 @@ theorem dne_bus_not_dpl [Nontrivial E] :
           Update.dexists x φ :=
   ⟨BilateralDen.neg_neg, GroenendijkStokhof1991.dne_fails_anaphora⟩
 
-/-- Egli's equivalence (59) fails for negative updates (62), which differ between `∃x(P(x) ∧ Q(x))`
-and `∃xP(x) ∧ Q(x)`. -/
+-- (59), (62)
 theorem negative_egli_fails :
     ∃ (W E : Type) (x : ℕ) (P Q : E → W → Prop) (s : BUSState W E),
       (exists_ x (pred1 P x ⊙ pred1 Q x)).negative s ≠
@@ -396,12 +383,12 @@ open PWorld in
 def s56 : BUSState PWorld PEntity :=
   {⟨wa, xTo .a⟩, ⟨wa, xTo .b⟩, ⟨wb, xTo .a⟩, ⟨wb, xTo .b⟩, ⟨w0, blank⟩}
 
-/-- (56a): `(wa, [x → a])` survives assertion. -/
+-- (56a)
 theorem mem_positive_s56 :
     (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).positive s56 :=
   ⟨by simp [s56], .a, by simp [xTo], trivial⟩
 
-/-- (56c): `(w0, [])` subsists in neither dimension, so it is unknown. -/
+-- (56c)
 theorem gap_mem_unknownUpdate_s56 :
     (⟨.w0, blank⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).unknownUpdate s56 := by
   refine ⟨by simp [s56], ?_, ?_⟩ <;>
@@ -412,7 +399,7 @@ theorem gap_mem_unknownUpdate_s56 :
         | exact absurd he Flat.bot_ne_coe
         | simp_all
 
-/-- (56): `P(x)` is not assertable at a partially familiar state, and `x` is not familiar. -/
+-- (56)
 theorem not_assertable_s56 : ¬ (pred1 pHolds 0).assertable s56 := λ h =>
   Set.notMem_empty _ (h ▸ gap_mem_unknownUpdate_s56)
 
@@ -424,8 +411,7 @@ open PWorld in
 with the same world. -/
 def s57 : BUSState PWorld PEntity := {⟨wa, xTo .a⟩, ⟨wa, blank⟩, ⟨wb, xTo .b⟩, ⟨wb, blank⟩}
 
-/-- Assertability is strictly weaker than familiarity (57): `P(x)` is assertable at `s57`,
-every possibility subsisting in the positive update, although `x` is not familiar there. -/
+-- (57)
 theorem assertable_s57_not_familiar :
     (pred1 pHolds 0).assertable s57 ∧ ¬ State.Familiar s57 0 := by
   refine ⟨?_, fun h ↦ h ⟨.wa, blank⟩ (show ⟨PWorld.wa, blank⟩ ∈ s57 by simp [s57]) rfl⟩
@@ -448,8 +434,7 @@ end PartialFamiliarity
 
 /-! ### Distributive inferences with anaphora (§5.2) -/
 
-/-- A possible universal over a modal disjunction has both parts consistent at the random-assignment
-update (121). -/
+-- (121)
 theorem distributive_preconditions (φ ψ : BUSDen W E) (y : ℕ)
     (h : Possible (forall_ y (φ ∨ᶠᶜ ψ)) s) :
     (disjPos1 φ ψ (State.randomAssign s y)).Nonempty ∧
@@ -468,7 +453,7 @@ def conjNeg1 (φ ψ : BUSDen W E) (s : BUSState W E) : BUSState W E :=
 def conjNeg2 (φ ψ : BUSDen W E) (s : BUSState W E) : BUSState W E :=
   ψ.negative (φ.negative s) ∪ ψ.negative (φ.positive s) ∪ ψ.negative (φ.unknownUpdate s)
 
-/-- The negative update of conjunction (61) is the union of the two parts. -/
+-- (61)
 theorem conj_negative_eq (φ ψ : BUSDen W E) :
     (φ ⊙ ψ).negative s = conjNeg1 φ ψ s ∪ conjNeg2 φ ψ s := by
   ext p
@@ -483,7 +468,7 @@ noncomputable def conjModal (φ ψ : BUSDen W E) : BUSDen W E where
   negative s :=
     if (conjNeg1 φ ψ s).Nonempty ∧ (conjNeg2 φ ψ s).Nonempty then (φ ⊙ ψ).negative s else ∅
 
-/-- (130): a possible negated modal conjunction has both parts consistent. -/
+-- (130)
 theorem negative_modal_conjunction (φ ψ : BUSDen W E) (h : Possible (~(conjModal φ ψ)) s) :
     (conjNeg1 φ ψ s).Nonempty ∧ (conjNeg2 φ ψ s).Nonempty := by
   unfold Possible neg conjModal at h
@@ -492,16 +477,14 @@ theorem negative_modal_conjunction (φ ψ : BUSDen W E) (h : Possible (~(conjMod
   · simp only [hc, ↓reduceIte] at h
     exact (Set.not_nonempty_empty h).elim
 
-/-- Dual permission (131) holds for eliminative conjuncts with a monotone second conjunct: a
-possible conjunction has both conjuncts possible. -/
+-- (131)
 theorem dual_permission (φ ψ : BUSDen W E) (hφ : CCP.IsEliminative φ.positive)
     (hm : Monotone ψ.positive) (he : CCP.IsEliminative ψ.positive) (h : Possible (φ ⊙ ψ) s) :
     Possible φ s ∧ Possible ψ s := by
   obtain ⟨p, hp⟩ := h
   exact ⟨⟨p, he _ hp⟩, ⟨p, hm (hφ s) hp⟩⟩
 
-/-- A possible negated modal conjunction makes possible both that there is no `A` and that some `A`
-is not `B` (129). -/
+-- (129)
 theorem negative_fc_with_anaphora [Nonempty E] (A B : E → W → Prop) (hx : State.Novel s x)
     (h : Possible (~(conjModal (exists_ x (pred1 A x)) (pred1 B x))) s) :
     ((exists_ x (pred1 A x)).negative s).Nonempty ∧

@@ -16,15 +16,6 @@ potential of the second sentence to the state the first expresses gives the stat
 The context change potentials of DRSs are regular (Definition 27) and relate to the states DRSs
 express relative to an assignment (Definition 29) as (44) states.
 
-## Main statements
-
-* `marble_worlds_eq_coin`, `marble_ne_coin`: the states of the two marble DRSs determine the same
-  proposition and differ.
-* `ccp_action`: updating the state of the first sentence of (43) with the second is the state of
-  their merge, as the chapter remarks after Definition 24.
-* `ccp_informative`: a context change potential only adds information (Definition 27(ii)).
-* `mem_ccp_iff_mem_relState`: (44).
-
 ## Implementation notes
 
 `DRS.ccp` is total on information states: on a state whose base misses a free referent, outside
@@ -177,8 +168,7 @@ theorem context_proper : context.IsProper := by decide
 
 theorem update_improper : ¬ update.IsProper := by decide
 
-/-- The update's free referents are in the context's universe, so the context change potential of
-Definition 24 is defined at the context's state. -/
+-- Definition 24
 theorem update_bound : update.freeVarFinset ⊆ context.referents := by
   simp [update, context]; decide
 
@@ -198,7 +188,7 @@ section Regular
 
 variable {L : Language} {V W M : Type*} (interp : W → L.Structure M) (K : DRS L V)
 
-/-- The base of the output state is the base of the input grown by the universe (p. 161, (ii)). -/
+-- p. 161, (ii)
 theorem ccp_base {X : Set V} {I : State W V M} (hI : State.UniformAt X I) :
     State.UniformAt (X ∪ ↑K.referents) (K.ccp interp I) := by
   intro q hq
@@ -206,17 +196,16 @@ theorem ccp_base {X : Set V} {I : State W V M} (hI : State.UniformAt X I) :
   have h := DRS.VerifiesAt.domain_eq interp hv
   rwa [Possibility.domain_assignment, Possibility.domain_assignment, hI p hp] at h
 
-/-- A context change potential is distributive (p. 161, (iii)). -/
+-- p. 161, (iii)
 theorem ccp_distributive : CCP.IsDistributive (K.ccp interp) :=
   Update.image_isDistributive _
 
 /-- A context change potential only adds information: its output carries at least as much
-information as its input (Definitions 25 and 27(ii)). -/
+information as its input (Definitions 25 and 27(ii)) (Definition 27). -/
 theorem ccp_informative (I : State W V M) : K.ccp interp I ≤ I :=
   DRS.ccp_le interp I
 
-/-- A context change potential is extensional: states that coincide at a world have values that
-coincide there (p. 162). -/
+-- p. 162
 theorem ccp_extensional {I I' : State W V M} {w : W}
     (h : ∀ p : Possibility W V (Flat M), p.world = w → (p ∈ I ↔ p ∈ I'))
     {q : Possibility W V (Flat M)} (hq : q.world = w) :

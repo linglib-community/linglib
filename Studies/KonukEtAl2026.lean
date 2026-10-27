@@ -19,22 +19,6 @@ Experiment 1 is a game won with two colored balls out of three urns, Experiment 
 its homogeneous negation, after the homogeneity of plural predication described by Križ and
 Spector, on which each winning condition's plural predication is false.
 
-## Main statements
-
-* `score_twoOrMore_pair`: in a two-of-three threshold game a pair scores the probability that its
-  urns agree; `intermediate_high_ranked_highest` and `low_high_outscores_low_intermediate_iff` give
-  the pair rankings of Experiment 1 as functions of the stability.
-* `mem_win_iff_barePlural`, `mem_homogeneousLoss_iff_barePlural`,
-  `not_mem_homogeneousLoss_iff_indet`: a win is the truth of some condition's plural predication,
-  the homogeneous loss the falsity of each, and the two losses differ where a predication falls in
-  the homogeneity gap.
-* `same_condition_pair_not_necessary`, `crossing_pair_necessary`, `partners_scored_alike`,
-  `pair_scores_one`, `idle_urn_not_necessary`, `triple_positive_abnormal_inflation`: the winning
-  rounds of Experiment 2.
-* `classical_abnormal_deflation`, `homogeneous_abnormal_inflation`, `homogeneous_lt_iff`,
-  `homogeneous_lt_of_ssubset`, `classical_triple_negative`, `homogeneousLoss_tripleNegative`: the
-  losing rounds.
-
 ## Implementation notes
 
 * Necessity holds the urns outside the plural at their actual draws, as in the worked example of
@@ -490,7 +474,7 @@ def otherColor : Urn₂ → Finset Urn₂
   | a | b => {c, d}
   | c | d => {a, b}
 
-/-- Each urn wins with its partner, or the urns of the other color win, (1). -/
+-- (1)
 theorem conditions_eq_partner (X : Urn₂) :
     conditions = {{X, partner X}, otherColor X} ∧ X ≠ partner X ∧ X ∉ otherColor X ∧
       partner X ∉ otherColor X := by
@@ -582,13 +566,12 @@ theorem triple_positive_abnormal_inflation (hs : s < 1) :
 
 /-! #### The losing rounds -/
 
-/-- In the all-white round, no single white ball is necessary for the classical loss (p. 467). -/
+-- p. 467
 theorem white_ball_redundant (μ : Measure (Urn₂ → Bool)) (i : Urn₂) :
     necessity μ (fun _ ↦ false) (win conditions)ᶜ {i} = 0 :=
   necessity_eq_zero (by revert i; decide)
 
-/-- In the round where every urn gave a white ball, every white ball is necessary for the
-homogeneous loss (p. 467). -/
+-- p. 467
 theorem white_ball_indispensable (hs : s < 1) (i : Urn₂) :
     necessity (sampling s prior₂ fun _ ↦ false) (fun _ ↦ false)
       (homogeneousLoss conditions fun _ ↦ false) {i} = 1 :=

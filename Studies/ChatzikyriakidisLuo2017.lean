@@ -20,14 +20,6 @@ which makes *small idiot* contradictory.
 * `NegOperator Obj`: a negation operator NOT satisfying the laws (L1) and (L2).
 * `Idiot Human STND`: the gradable noun *idiot*, a Σ-type indexed by degree.
 
-## Main statements
-
-* `standardNeg Obj`: a model of the laws (L1) and (L2).
-* `man_and_not_man`, `not_not_man`, `notll`, `nothl`, `not_human_not_man`: the chapter's Coq
-  examples, proved from the laws.
-* `no_aspect_map`: in general no map adds an informational aspect to a physical object.
-* `small_idiot_contradictory`: no degree is both above and below the standard.
-
 ## Implementation notes
 
 * A noun is an object `A` of `Over Obj`, a type `A.left` with an embedding `A.hom` into the type
@@ -102,8 +94,7 @@ theorem man_and_not_man (j : Man.left) : ¬ (p Man j ∧ N.not Man (p Man) (Man.
 theorem not_not_man (j : Man.left) : ¬ N.not Man (p Man) (Man.hom j) :=
   fun h ↦ (N.l1 Man j).mp h trivial
 
-/-- "Tables do not talk" entails "red tables do not talk", by the coercion from red tables to
-tables alone ((31)–(33)). -/
+-- (31), (33)
 theorem tables_dont_talk_red (Red : Obj → Prop) (talk : Human.left → Prop)
     (h : ∀ x : Table.left, N.not Human talk (Table.hom x)) :
     ∀ y : {x : Table.left // Red (Table.hom x)}, N.not Human talk (Table.hom y.1) :=

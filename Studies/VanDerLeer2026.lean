@@ -19,20 +19,6 @@ admissibility and possibility of a speech act are the three levels of the thesis
 discourse expectations, in which a cooperative act is admissible and every act is possible, but
 not conversely.
 
-## Main statements
-
-* `committed_assert`, `committed_update`: an assertion commits the speaker, and a commitment at
-  the root survives every later speech act.
-* `root_update_belief`: no speech act changes a belief relation of the root, so Sincerity and
-  Competence pass a commitment on to beliefs within a state (Theorem 26) but not across an update.
-* `committed_believes_of_sincere`, `exists_committed_believes_not_committed`: under Sincerity a
-  commitment entails a commitment to the corresponding belief, but not conversely, so Krifka's
-  "The buffet is open" is stronger than "I believe the buffet is open".
-* `admissible_of_cooperative`, `exists_admissible_not_cooperative`: cooperative speech acts are
-  admissible, and not conversely.
-* `cooperative_assert_of_not_committed`, `not_cooperative_assert_compl`: after an assertion,
-  the addressee's confirming it is cooperative and denying it is not.
-
 ## Implementation notes
 
 Propositions are world-sets, so the thesis's side condition that a proposition be
@@ -139,7 +125,7 @@ def sincereRestrict
 
 variable {c a b π}
 
-/-- The sincere update preserves Sincerity — the reason Definition 6 exists. -/
+-- Definition 6
 theorem sincere_sincereRestrict (hs : c.Sincere)
     (h : ∀ w, ∃ v, w ~[c.belief a] v ∧ w ~[c.commitment (a, b)] v ∧ v ∈ π) :
     (sincereRestrict c a b π h).Sincere := by
@@ -157,7 +143,7 @@ theorem believes_sincereRestrict
     (sincereRestrict c a b π h).Believes a π w :=
   fun _ hv ↦ (hv.2 rfl).2 rfl
 
-/-- Definition 4 alone need not preserve Sincerity. -/
+-- Definition 4
 theorem exists_sincere_not_sincere_restrictCommitment :
     ∃ (c : Frame Bool Unit) (π : Set Bool),
       c.Sincere ∧ ¬ (c.restrictCommitment () () π).Sincere :=
@@ -338,7 +324,7 @@ noncomputable def update : SpeechAct W A → Space (Frame W A) → Space (Frame 
 @[simp] theorem root_assert : (assert C a b π).root = C.root.restrictCommitment a b π := rfl
 @[simp] theorem root_question : (question C a b π).root = C.root := rfl
 
-/-- No speech act enlarges a commitment relation of the root (Lemma 28). -/
+-- Lemma 28
 theorem root_update_commitment_le :
     (update α C).root.commitment (a, b) ≤ C.root.commitment (a, b) := by
   induction α generalizing C with
@@ -353,7 +339,7 @@ theorem root_update_commitment_le :
     exacts [ihα C, ihβ C]
 
 /-- No speech act changes a belief relation of the root, since assertion is Definition 4, which
-leaves beliefs alone, and every other act keeps the root. -/
+leaves beliefs alone, and every other act keeps the root (Theorem 26). -/
 @[simp] theorem root_update_belief : (update α C).root.belief = C.root.belief := by
   induction α generalizing C with
   | assert => rfl
@@ -384,7 +370,7 @@ theorem committed_committed_assert (x y : A) :
       {v | (update (.assert a b π) C).root.Committed a b π v} w :=
   fun _ _ ↦ C.root.committed_restrictCommitment a b π _
 
-/-- Asserting `π` entails asserting any consequence `τ` (Theorem 29). -/
+-- Theorem 29
 theorem assert_assert_of_subset (h : π ⊆ τ) :
     update (.assert a b τ) (update (.assert a b π) C) = update (.assert a b π) C := by
   have hroot : (C.root.restrictCommitment a b π).restrictCommitment a b τ =
@@ -422,7 +408,7 @@ continuation of the root (Definition 15). -/
 def Cooperative : Prop :=
   update α C ≠ C ∧ ∃ c ∈ C, C.root ⊏ c ∧ (update α C).root ⊑ c
 
-/-- Inadmissibility of contradictions (Theorem 33). -/
+-- Theorem 33
 theorem violation_assert_empty : Violation (update (.assert a b ∅) C).root a b :=
   fun _ _ h ↦ h.2 rfl
 
@@ -475,7 +461,7 @@ theorem cooperative_assert_of_not_committed [Nonempty W] (hab : a ≠ b)
   · exact absurd ((congrArg (fun s ↦ (w, v) ∈ s.commitment (b, a)) e).mpr hwv) h₂
   · exact hlt.commitment_nonempty
 
-/-- `b` asserting `π` entails `a` having asked whether `π` (Theorem 35). -/
+-- Theorem 35
 theorem question_assert :
     update (.question a b π) (update (.assert b a π) C) = update (.assert b a π) C := by
   refine Space.ext fun c ↦ ?_

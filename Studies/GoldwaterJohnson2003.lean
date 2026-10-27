@@ -22,16 +22,6 @@ genitive plurals, a model choosing between two candidates sees their violations 
 difference vector, so Table 2's *naapuri* and *ministeri* classes, distinct in violations but not
 in differences, are one class for the learner.
 
-## Main results
-
-* `concaveOn_logPseudoLikelihood`, `eq_of_isMaxOn_regularizedObjective`: footnote 4.
-* `isGreatest_condEntropy_of_isMaxOn_logPseudoLikelihood`: section 2's maximum entropy, the most
-  likely grammar having the greatest conditional entropy among the models matching the training
-  data.
-* `regularizedObjective_replicate`: only nσ² matters.
-* `wolof_separated`: Table 1's weights are exponentially separated.
-* `maxEnt_pairConstraintSet_real_zero`, `rows_collapse`: a pair sees only differences (Table 3).
-
 ## Implementation notes
 
 Footnote 4 infers a single global maximum from concavity of the log conditional likelihood, but a
@@ -148,7 +138,7 @@ private theorem strictConvexOn_sum_sq_div {σ : ℝ} (hσ : σ ≠ 0) :
     rw [mul_div_assoc', mul_div_assoc', ← add_div, div_lt_div_iff_of_pos_right hc]
     exact this
 
-/-- With the Gaussian prior the objective (3) is strictly concave in the weights. -/
+-- (3)
 theorem strictConcaveOn_regularizedObjective (con : ConstraintSet (I × O) (Fin n))
     (data : List (I × O)) {σ : ℝ} (hσ : σ ≠ 0) :
     StrictConcaveOn ℝ Set.univ fun w ↦ regularizedObjective con w data σ :=
@@ -168,8 +158,7 @@ section MaximumEntropy
 variable [MeasurableSpace I] [Fintype I] [MeasurableSingletonClass I]
   (con : ConstraintSet (I × O) (Fin n)) (data : List (I × O))
 
-/-- The log pseudo-likelihood (2) is the number of training pairs times the conditional
-log-likelihood of their empirical distribution. -/
+-- (2)
 theorem logPseudoLikelihood_eq (h : data ≠ []) (w : Fin n → ℝ) :
     logPseudoLikelihood con w data =
       data.length * condLogLikelihood con.violations (empirical data) w := by
@@ -246,7 +235,7 @@ noncomputable def wolofWeights : Fin 5 → ℝ
 
 /-- The learned weights are exponentially separated, each exceeding the sum of all lower ones, the
 spacing under which Harmonic Grammar reproduces the strict domination of the ranking the Gradual
-Learning Algorithm finds ([johnson-2002], `Pi.strictMonoOn_sum_mul`). -/
+Learning Algorithm finds ([johnson-2002], `Pi.strictMonoOn_sum_mul`) (Table 1). -/
 theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := fun k ↦ by
   rw [← Finset.filter_lt_eq_Ioi]
   fin_cases k <;>

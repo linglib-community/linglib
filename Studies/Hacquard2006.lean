@@ -107,8 +107,7 @@ theorem actuality_of_rootNecessity (hid : IdentifiesAcrossWorlds occurs Q)
   obtain ⟨w', hw'⟩ := hne e
   exact ⟨e, hew, ht, hid e w' w (hocc e w' (hall w' hw')) hew (hall w' hw')⟩
 
-/-- Root necessity entails root possibility (89), so the desirability inference of (89b) is a scalar
-implicature from not asserting (89c). -/
+-- (89), (89b), (89c)
 theorem rootPossibility_of_rootNecessity {e : E} (hne : (f e).Nonempty)
     (h : rootNecessity f Q e) : rootPossibility f Q e :=
   let ⟨w', hw'⟩ := hne
@@ -164,7 +163,7 @@ example :
     positionPerspective .belowAsp = Scope.perfModal.perspective :=
   ⟨rfl, rfl⟩
 
-/-- The same modal gets different temporal perspectives from different positions (201). -/
+-- (201)
 theorem position_determines_perspective :
     positionPerspective .aboveAsp ≠ positionPerspective .belowAsp := nofun
 

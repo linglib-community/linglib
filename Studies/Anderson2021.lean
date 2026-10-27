@@ -66,8 +66,7 @@ theorem notMem_contextSet_updateCG_one (cg post : Measure W) {w : W} (h : post {
   rw [updateCG_one, ker_ae]
   exact fun hw => hw h
 
-/-- Below learning rate one the prior keeps every world it supports, so a world the posterior
-rules out can regain probability (footnote 7). -/
+-- footnote 7
 theorem mem_contextSet_updateCG (cg post : Measure W) {lr : ℝ≥0} (hlr : lr < 1) {w : W}
     (hcg : cg {w} ≠ 0) : w ∈ (ae (updateCG cg post lr)).ker := by
   rw [ker_ae]
@@ -83,7 +82,6 @@ theorem ae_updateCG (cg post : Measure W) {lr : ℝ≥0} (h0 : lr ≠ 0) (h1 : l
   rw [updateCG, ae_add_measure_eq, Measure.ae_smul_measure_eq (tsub_pos_of_lt h1).ne',
     Measure.ae_smul_measure_eq h0]
 
-/-- The context set of the update is the union of the prior's and the posterior's. -/
 theorem ker_ae_updateCG (cg post : Measure W) {lr : ℝ≥0} (h0 : lr ≠ 0) (h1 : lr < 1) :
     (ae (updateCG cg post lr)).ker = (ae cg).ker ∪ (ae post).ker := by
   rw [ae_updateCG cg post h0 h1, Filter.ker_sup]
@@ -102,18 +100,17 @@ since reductions are not assertable (footnote 14). -/
 noncomputable def differenceSample (bel cg : Measure W) (w : W) : ℝ :=
   max 0 (bel.real {w} - cg.real {w})
 
-/-- A speaker with uniform beliefs weights every world alike — the noncommittal speaker of
-Figure 12. -/
+-- Figure 12
 theorem weightedSample_uniformOn [Fintype W] [MeasurableSingletonClass W] (w w' : W) :
     weightedSample (uniformOn Set.univ) w = weightedSample (uniformOn Set.univ) w' := by
   simp [weightedSample, uniformOn_univ_real_singleton]
 
-/-- A threshold above one drops every world, and the speaker passes (Figure 13). -/
+-- Figure 13
 theorem thresholdedSample_eq_zero (bel : Measure W) [IsProbabilityMeasure bel] {θ : ℝ}
     (hθ : 1 < θ) (w : W) : thresholdedSample bel θ w = 0 :=
   ite_eq_right (not_le.mpr (lt_of_le_of_lt measureReal_le_one hθ))
 
-/-- Beliefs already in the common ground contribute nothing (Figure 14). -/
+-- Figure 14
 theorem differenceSample_self (cg : Measure W) (w : W) : differenceSample cg cg w = 0 := by
   simp [differenceSample]
 
@@ -251,8 +248,6 @@ end Agents
 /-- The empty common ground (Figure 2). -/
 noncomputable abbrev cg₁ : Measure World := uniformOn Set.univ
 
-/-- The first speaker never produces a false utterance, prefers a specific true utterance to
-the null one, and ties the two specific true utterances. -/
 theorem s1_turn1_informativity :
     (S1 cg₁ .nancy).real {.studyScience} = 0 ∧
     (S1 cg₁ .nancy).real {.null} < (S1 cg₁ .nancy).real {.studyHumanity} ∧
@@ -344,10 +339,6 @@ variable (hik : μ {.ina} = μ {.katie}) (hns : μ {.nancy} = μ {.sally})
 
 include hik hns hlt hi
 
-/-- Nancy's speaker now prefers *they like being outdoors* to re-asserting *they study a
-humanity*, and Ina's *they study a science* to *they like being indoors*. This is redundancy
-aversion, since the literal listener reads the common ground and an established utterance
-discriminates less. -/
 theorem s1_prefers_new :
     (S1 μ .nancy).real {.studyHumanity} < (S1 μ .nancy).real {.likeOutdoors} ∧
     (S1 μ .ina).real {.likeIndoors} < (S1 μ .ina).real {.studyScience} := by

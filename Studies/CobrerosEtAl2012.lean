@@ -42,25 +42,14 @@ borderline however he is classified.
 * `series`: the sorites series of §3.4.1 and §3.6, whose instances are the four-element model
   of p. 354 and the five-men model of §4.2.3.
 
-## Main results
-
 * `TModel.realize_mono` (Lemma 1), `isDual` (Remark 1), `tolerance_valid` (Fact 2),
   `st_two_step` (Fact 3).
-* `TModel.Borderline.exists_ne`: a model with a borderline case has two (footnote 4);
-  `TModel.eq_tolerant_of_realize_conj_neg`: a contradiction can only be tolerantly true.
 * `valid_tolerant_iff`, `unsat_strict_iff` (Theorem 1); `not_valid_strict`,
   `exists_realize_tolerant` (Theorem 2); `consequence_tolerant_iff_lp`,
   `consequence_strict_iff_k3` (Theorem 3).
 * `consequence_iff_dual` (Lemma 6), `Consequence.mono` (Lemma 7), `Consequence.restricted_iff`
   (Lemma 8), `not_consequence_tolerant_strict` (Lemma 9), `Consequence.iff_valid_imp`,
   `deductionTheorem_iff`, `Consequence.iff_valid_imp_of_restricted` (Lemma 10).
-* `not_cc_one_step`, `not_valid_classical_tolerance`, `not_sc_two_step`, `not_ct_two_step`:
-  the §3.4 distinctness of `cc`, `sc`, `ct` and `st`, on the four-element model.
-* `stdRefl_consequence_iff`, `Consequence.cut`, `isTrans_consequence_iff`: reflexivity and
-  transitivity of the nine relations (§§3.3.2, 3.4.1).
-* `not_st_version1`, `st_version2`, `not_series_realize_strict_tolerance`: the sorites of
-  §3.6.
-* `alxatibPelletier_median_borderline`: the five-men model of §4.2.3.
 
 ## Implementation notes
 
@@ -202,7 +191,7 @@ variable (M : TModel Pred C D)
 @[simp] theorem realize_disj (m : Mode) (φ ψ : Formula Pred C) :
     M.Realize m (φ.disj ψ) ↔ M.Realize m φ ∨ M.Realize m ψ := Iff.rfl
 
-/-- `M ⊨ᵐ φ → ψ` iff `M ⊨ⁿ ψ` whenever `M ⊨^{d(m)} φ` (the proof of Fact 3). -/
+-- Fact 3
 @[simp] theorem realize_cond (m : Mode) (φ ψ : Formula Pred C) :
     M.Realize m (φ.cond ψ) ↔ (M.Realize m.dual φ → M.Realize m ψ) := Iff.rfl
 
@@ -267,7 +256,7 @@ theorem eq_tolerant_of_realize_conj_neg {m : Mode} {φ : Formula Pred C}
   | classical => exact absurd h.1 h.2
   | strict => exact absurd (M.realize_mono φ (by decide : Mode.strict ≤ .tolerant) h.1) h.2
 
-/-- Excluded middle fails only strictly (§2.4). -/
+-- §2.4
 theorem realize_disj_neg {m : Mode} (hm : m ≠ .strict) (φ : Formula Pred C) :
     M.Realize m (φ.disj (.neg φ)) := by
   rw [realize_disj, realize_neg]
@@ -286,23 +275,23 @@ instance [Fintype D] [∀ P x y, Decidable (x ~[M.sim P] y)] [∀ P, DecidablePr
     (P : Pred) (d : D) : Decidable (M.Borderline P d) :=
   inferInstanceAs (Decidable (_ ∧ ¬ _))
 
-/-- A borderline case is one indifferent both from a `P` and from a non-`P` individual (p. 365). -/
+-- p. 365
 theorem borderline_iff (P : Pred) (d : D) : M.Borderline P d ↔
     (∃ e, d ~[M.sim P] e ∧ M.interp P e) ∧ ∃ e, d ~[M.sim P] e ∧ ¬ M.interp P e := by
   simp [Borderline, Box, Diamond]
 
-/-- A borderline case is tolerantly both `P` and `¬P` (Definition 10). -/
+-- Definition 10
 theorem borderline_iff_realize_conj_neg (P : Pred) (a : C) :
     M.Borderline P (M.const a) ↔
       M.Realize .tolerant (.conj (.atom (.pred P a)) (.neg (.atom (.pred P a)))) := Iff.rfl
 
-/-- A borderline case is neither strictly `P` nor strictly `¬P` (Definition 10). -/
+-- Definition 10
 theorem borderline_iff_not_realize_strict (P : Pred) (a : C) :
     M.Borderline P (M.const a) ↔
       ¬ M.Realize .strict (.atom (.pred P a)) ∧ ¬ M.Realize .strict (.neg (.atom (.pred P a))) := by
   simp [Borderline, and_comm]
 
-/-- Excluded middle fails strictly at a borderline case (§2.4). -/
+-- §2.4
 theorem Borderline.not_realize_strict_disj {P : Pred} {a : C} (h : M.Borderline P (M.const a)) :
     ¬ M.Realize .strict ((Trivalent.Formula.atom (.pred P a)).disj (.neg (.atom (.pred P a)))) := by
   rw [realize_disj, realize_neg]
@@ -329,7 +318,7 @@ abbrev TModels (Pred : Type*) (C : Type u) := (D : Type u) × TModel Pred C D
 /-- Truth in a bundled model. -/
 abbrev TModels.Realize (M : TModels Pred C) : Mode → Formula Pred C → Prop := M.2.Realize
 
-/-- Satisfaction is monotone in the mode, `strict ≤ classical ≤ tolerant` (Lemma 1). -/
+-- Lemma 1
 theorem TModels.realize_monotone : Monotone fun m (M : TModels Pred C) ↦ M.Realize m :=
   fun _ _ hm M φ ↦ M.2.realize_mono φ hm
 
@@ -346,15 +335,14 @@ abbrev Consequence (m n : Mode) (Γ Δ : List (Formula Pred C)) : Prop :=
 
 variable {m n : Mode} {Γ Δ : List (Formula Pred C)} {φ ψ : Formula Pred C}
 
-/-- `mn`-validity is `n`-validity (Definition 18). -/
+-- Definition 18
 theorem consequence_nil_singleton : Consequence m n [] [φ] ↔ Valid n φ :=
   mixedConsequence_nil_singleton
 
-/-- `mn`-unsatisfiability is `m`-unsatisfiability (Definition 18). -/
+-- Definition 18
 theorem consequence_singleton_nil : Consequence m n [φ] [] ↔ Unsat m φ :=
   mixedConsequence_singleton_nil
 
-/-- `φ` is `n`-unsatisfiable iff `¬φ` is `d(n)`-valid (Remark 1, for unsatisfiability). -/
 theorem unsat_iff_valid_neg (n : Mode) (φ : Formula Pred C) :
     Unsat n φ ↔ Valid n.dual (.neg φ) := by
   simp [Valid]
@@ -375,7 +363,7 @@ theorem consequence_iff_dual :
     Consequence m n Γ Δ ↔ Consequence n.dual m.dual (Δ.map .neg) (Γ.map .neg) :=
   mixedConsequence_iff_dual (isDual m) (isDual n)
 
-/-- `st`, `cc` and `ts`, the relations with `m = d(n)`, are self-dual (§3.1). -/
+-- §3.1
 theorem consequence_iff_dual_self (h : m = n.dual) :
     Consequence m n Γ Δ ↔ Consequence m n (Δ.map .neg) (Γ.map .neg) := by
   subst h
@@ -403,7 +391,7 @@ theorem Consequence.cut (h : n ≤ m) (h₁ : Consequence m n (φ :: Γ) Δ)
     (h₂ : Consequence m n Γ (φ :: Δ)) : Consequence m n Γ Δ :=
   MixedConsequence.cut (TModels.realize_monotone h) h₁ h₂
 
-/-- Transitivity in the simple form of footnote 14, when `n ≤ m` (§3.3.2). -/
+-- footnote 14, §3.3.2
 theorem isTrans_consequence (h : n ≤ m) :
     IsTrans (Formula Pred C) fun φ ψ ↦ Consequence m n [φ] [ψ] :=
   isTrans_mixedConsequence (TModels.realize_monotone h)
@@ -418,7 +406,7 @@ theorem tolerance_valid (P : Pred) (a b : C) : Valid .tolerant (tolerance P a b)
     TModel.realize_tolerant_pred]
   exact fun ⟨hs, hab⟩ ↦ ⟨M.const b, (M.sim P).refl _, hs _ hab⟩
 
-/-- `{Pa, a I_P b} ⊨ˢᶜ Pb` (§3.4). -/
+-- §3.4
 theorem sc_one_step (P : Pred) (a b : C) :
     Consequence .strict .classical [.atom (.pred P a), .atom (.sim P a b)] [.atom (.pred P b)] :=
   mixedConsequence_singleton_right.2 fun ⟨_, M⟩ h ↦ by
@@ -427,7 +415,7 @@ theorem sc_one_step (P : Pred) (a b : C) :
       TModel.realize_strict_pred, TModel.realize_sim] at h
     exact h.1 _ h.2
 
-/-- `{Pa, a I_P b} ⊨ᶜᵗ Pb` (§3.4). -/
+-- §3.4
 theorem ct_one_step (P : Pred) (a b : C) :
     Consequence .classical .tolerant [.atom (.pred P a), .atom (.sim P a b)] [.atom (.pred P b)] :=
   mixedConsequence_singleton_right.2 fun ⟨_, M⟩ h ↦ by
@@ -436,7 +424,7 @@ theorem ct_one_step (P : Pred) (a b : C) :
       TModel.realize_classical_pred, TModel.realize_sim] at h
     exact ⟨M.const a, (M.sim P).symm h.2, h.1⟩
 
-/-- Each step of a sorites is `st`-valid (§3.6). -/
+-- §3.6
 theorem st_one_step (P : Pred) (a b : C) :
     Consequence .strict .tolerant [.atom (.pred P a), .atom (.sim P a b)] [.atom (.pred P b)] :=
   (sc_one_step P a b).mono le_rfl (by decide)
@@ -470,7 +458,7 @@ def identity : TModel Pred C D :=
     sim := fun _ ↦ .id
     sim_ktb := fun _ ↦ { refl := fun _ ↦ rfl, symm := fun _ _ ↦ Eq.symm } }
 
-/-- In an identity model every mode agrees with classical truth (Lemma 2). -/
+-- Lemma 2
 theorem identity_realize (m : Mode) (φ : Formula Pred C) :
     M.identity.Realize m φ ↔ M.identity.Realize .classical φ := by
   induction φ generalizing m with
@@ -513,8 +501,7 @@ def allBorderline (Pred C : Type*) : TModel Pred C (Option C) where
   sim _ := .univ
   sim_ktb _ := { refl := fun _ ↦ trivial, symm := fun _ _ _ ↦ trivial }
 
-/-- In `allBorderline` nothing restricted is strictly true and everything restricted is
-tolerantly true (Lemma 3). -/
+-- Lemma 3
 theorem allBorderline_realize (hφ : IsRestricted φ) :
     ¬ (allBorderline Pred C).Realize .strict φ ∧ (allBorderline Pred C).Realize .tolerant φ := by
   induction φ with
@@ -538,8 +525,7 @@ theorem exists_realize_tolerant (hφ : IsRestricted φ) :
     ∃ M : TModels Pred C, M.Realize .tolerant φ :=
   ⟨⟨_, allBorderline Pred C⟩, (allBorderline_realize hφ).2⟩
 
-/-- On the restricted vocabulary `st`-consequence is classical consequence, the identity model
-of each classical countermodel being an `st`-countermodel (Lemma 8). -/
+-- Lemma 8
 theorem Consequence.classical_of_st (hΓ : ∀ γ ∈ Γ, IsRestricted γ) (hΔ : ∀ δ ∈ Δ, IsRestricted δ)
     (h : Consequence .strict .tolerant Γ Δ) : Consequence .classical .classical Γ Δ :=
   h.comap (fun M ↦ ⟨_, M.2.identity⟩)
@@ -570,7 +556,7 @@ noncomputable def toMV (M : TModel Pred C D) : Trivalent.Model (Atom Pred C)
     else if ◇[M.sim P] (M.interp P) (M.const a) then 0 else -1
   | .sim P a b => if (M.const a) ~[M.sim P] (M.const b) then 1 else -1
 
-/-- Tolerant truth is LP-truth and strict truth K3-truth in `toMV M` (Lemma 4). -/
+-- Lemma 4
 theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
     (M.Realize .tolerant φ ↔ toMV M ⊨[.strongKleene, .lp] φ) ∧
       (M.Realize .strict φ ↔ toMV M ⊨[.strongKleene, .k3] φ) := by
@@ -617,8 +603,7 @@ def ofMV (v : Trivalent.Model (Atom Pred C)) : TModel Pred C (C × Bool) where
   sim _ := {p | p.1.1 = p.2.1}
   sim_ktb _ := { refl := fun _ ↦ rfl, symm := fun _ _ ↦ Eq.symm }
 
-/-- On the restricted vocabulary, LP-truth in `v` is tolerant truth and K3-truth strict truth in
-`ofMV v` (Lemma 5). -/
+-- Lemma 5
 theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ) :
     ((ofMV v).Realize .tolerant φ ↔ v ⊨[.strongKleene, .lp] φ) ∧
       ((ofMV v).Realize .strict φ ↔ v ⊨[.strongKleene, .k3] φ) := by
@@ -766,8 +751,7 @@ theorem series_borderline (hi : 0 < i) (hin : i < n) (x : Fin n) :
     x.val + 1 < i from series_realize_strict hin x]
   omega
 
-/-- In the four-element model of p. 354, the strict, classical and tolerant extensions of `P` are
-`{a}`, `{a, b}` and `{a, b, c}`. -/
+-- p. 354
 theorem series_four_two (x : Fin 4) :
     ((series 4 2).Realize .strict (.atom (.pred () x)) ↔ x = 0) ∧
     ((series 4 2).Realize .classical (.atom (.pred () x)) ↔ x = 0 ∨ x = 1) ∧
@@ -775,7 +759,7 @@ theorem series_four_two (x : Fin 4) :
     ((series 4 2).Borderline () x ↔ x = 1 ∨ x = 2) := by
   revert x; decide
 
-/-- `b` is tolerantly both `P` and `¬P` in the four-element model (p. 356). -/
+-- p. 356
 theorem series_four_two_realize_conj_neg :
     (series 4 2).Realize .tolerant
       (.conj (.atom (.pred () 1)) (.neg (.atom (.pred () (1 : Fin 4))))) := by
@@ -807,8 +791,7 @@ theorem not_ct_two_step :
       [.atom (.pred () (3 : Fin 4))] :=
   fun h ↦ absurd (h ⟨_, series 4 2⟩ (by decide)) (by decide)
 
-/-- When `n < m`, some T-model makes `Pa` `m`-true but not `n`-true, so the three notions of truth
-come apart on every predication (§3.3.2). -/
+-- §3.3.2
 theorem exists_realize_pred_not_realize {m n : Mode} (P : Pred) (a : C) (h : n < m) :
     ∃ M : TModels Pred C, M.Realize m (.atom (.pred P a)) ∧ ¬ M.Realize n (.atom (.pred P a)) := by
   have hv := ofMV_realize (fun _ ↦ 0) (φ := .atom (.pred P a)) trivial
@@ -836,7 +819,7 @@ theorem stdRefl_consequence_iff {m n : Mode} [Nonempty Pred] [Nonempty C] :
   obtain ⟨M, hm, hn⟩ := exists_realize_pred_not_realize P a hnm
   exact hn (stdRefl_mixedConsequence_iff.1 h M _ hm)
 
-/-- `ct` is not transitive, failing along `b, c, d` of the four-element model (§3.4.1). -/
+-- §3.4.1
 theorem not_isTrans_ct :
     ¬ IsTrans (Formula Unit (Fin 4)) fun φ ψ ↦ Consequence .classical .tolerant [φ] [ψ] := by
   rintro ⟨h⟩
@@ -849,7 +832,7 @@ theorem not_isTrans_ct :
   exacts [⟨⟨M.const 1, (M.sim ()).symm h.2.1, h.1⟩, h.2.2⟩,
     ⟨M.const 2, (M.sim ()).symm h.2, h.1⟩]
 
-/-- `sc` is not transitive, failing along `a, b, c` of the four-element model (§3.4.1). -/
+-- §3.4.1
 theorem not_isTrans_sc :
     ¬ IsTrans (Formula Unit (Fin 4)) fun φ ψ ↦ Consequence .strict .classical [φ] [ψ] := by
   rintro ⟨h⟩
@@ -861,7 +844,7 @@ theorem not_isTrans_sc :
     TModel.realize_strict_pred, TModel.realize_classical_pred, TModel.realize_sim] at h ⊢
   exacts [⟨h.1 _ h.2.1, h.2.2⟩, h.1 _ h.2]
 
-/-- `st` is not transitive, and by Fact 3 a counterexample needs three similarity steps (§3.4.1). -/
+-- Fact 3, §3.4.1
 theorem not_isTrans_st :
     ¬ IsTrans (Formula Unit (Fin 4)) fun φ ψ ↦ Consequence .strict .tolerant [φ] [ψ] := by
   rintro ⟨h⟩

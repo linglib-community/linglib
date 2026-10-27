@@ -28,16 +28,6 @@ open, and a Slovene paradigm he passes over.
 * `czechCase`, `Declines`: the Czech case at each place of the sequence, and a noun of the Czech
   fragment declining a paradigm of the tables at a place
 
-## Main results
-
-* `exists_position_lt`: Blake's hierarchy orders the cases of the sequence as it does
-* `not_isContiguous_iff`: the paradigms of the tables that are not contiguous
-* `supersetSpellable_form`: Superset spellout generates the other paradigms
-* `isContiguous_analysis`: the underlying forms Caha gives are contiguous
-* `isNone_iff_adjacent`: the syncretisms (67) calls non-accidental are the adjacent ones
-* `declines_czechNouns`, `declines_hrad_mesto_iff`, `declines_colloquial_iff`: Caha's literary
-  Czech noun paradigms are the fragment's declensions after Short and *Mluvnice češtiny*
-
 ## Implementation notes
 
 Two cells are syncretic when their forms are identical, which ignores Caha's shading. The data
@@ -211,8 +201,6 @@ def czechNouns : List (Paradigm Wordlist.Cell × _root_.Czech.Noun) :=
 theorem declines_czechNouns : ∀ x ∈ czechNouns, ∀ i, Declines x.2 x.1 i := by
   decide +kernel
 
-/-- The endings of Short's table on the bare stem do not give Caha's nominative *kluci* and
-locative *klucích*. -/
 theorem kluk_pl_not_mem_table :
     _root_.Czech.Declension.segments (form ces_kluk_pl.paradigm 0) ∉
         (_root_.Czech.Declension.Class.chlap.endings (.of .nom .plural)).map

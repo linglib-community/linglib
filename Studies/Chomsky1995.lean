@@ -31,21 +31,6 @@ saw it*, violates it and comes out as *the saw* once *man* and *it* have raised.
   projections, and c-command by them, the book's (157).
 * `Chomsky1995.HeadDaughterAt`: the head relation on the positions of a linearized object.
 
-## Main results
-
-* `PhraseStructure.not_precedes_of_covBy`: sister terminals are unordered.
-* `PhraseStructure.not_linearizes_of_not_isMax`: the LCA fails on every tree in which every
-  node with a daughter branches, unless some terminal is exempt.
-* `PhraseStructure.Linearizes.not_mem_or_not_mem_of_covBy`: under the LCA one of two sister
-  terminals is exempt.
-* `PhraseStructure.precedes_of_spec`, `PhraseStructure.precedes_of_complement`,
-  `PhraseStructure.not_precedes_of_spec`: the specifier-head-complement order of (154).
-* `PhraseStructure.Linearizes.not_isVisible`: a branching specifier forces the X′ to be
-  invisible.
-* `PhraseStructure.linearizes_bareCCommand_image_iff`: order isomorphisms preserve the LCA, so
-  interchanging sisters does (note 108).
-* `Chomsky1995.not_linearizes_theManSawIt`, `Chomsky1995.linearizes_theManSawItRaised`: (11).
-
 ## Implementation notes
 
 * Positions individuate occurrences, so the LCA is read on the positions of a linearized object,
@@ -155,7 +140,7 @@ theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Pr
   simp only [e.lt_iff_lt, e.le_iff_le]
 
 /-- Bare c-command commutes with order isomorphisms, so the LCA in the bare theory ignores the
-order of sisters. -/
+order of sisters (note 108). -/
 theorem linearizes_bareCCommand_image_iff {β : Type*} [PartialOrder β] {H' : β → β → Prop}
     (e : α ≃o β) (hH : ∀ a b, H' (e a) (e b) ↔ H a b) :
     Linearizes (bareCCommand H') (e '' T) ↔ Linearizes (bareCCommand H) T := by
@@ -337,17 +322,16 @@ def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.val.validPaths := by
     t.val.Positions :=
   ⟨⟨l⟩, h⟩
 
-/-- *Saw* projects to the root and *the* to its sister, the labels of (11). -/
+-- (11)
 theorem maximalProjectionAt_theManSawIt :
     maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[1, 0]⟩ = ⊥ ∧
       maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[0, 0]⟩ = ⟨[0]⟩ := by
   decide
 
-/-- The terms of (11), one per position, are seven, as (10) counts them. -/
+-- (11), (10)
 theorem card_positions_theManSawIt : Fintype.card theManSawIt.val.Positions = 7 := by decide
 
-/-- *It* and *man* are minimal and maximal, *saw* and *the* only minimal, and the X′ over *saw*
-neither, the levels of (9). -/
+-- (9)
 theorem levels_theManSawIt :
     (IsMinimalProjection (HeadDaughterAt theManSawIt) (position theManSawIt [1, 1]) ∧
         IsMaximalProjection (HeadDaughterAt theManSawIt) (position theManSawIt [1, 1])) ∧

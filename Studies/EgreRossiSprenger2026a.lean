@@ -16,32 +16,6 @@ conditional, and the probability function validates Adams's Thesis and, through 
 Stalnaker's Thesis in full generality, escaping the triviality results by giving up classical
 conjunction and the Product Rule.
 
-## Main statements
-
-* `equiv_neg_cond`, `equiv_cond_cond`, `equiv_conj_cond`, `equiv_disj_cond`, `equiv_cond_left`:
-  Proposition 1, the five equivalences, each at the generality the paper claims for it, with
-  `conjunction_needs_boolean` and `sk_fails_conjunction` marking where the laws stop.
-* `cooperEval_flat`: the Reduction Theorem, by the appendix's recursion `flat`.
-* `prob_value_neg`, `prob_value_disj`: the second and third principles of trivalent probability;
-  `additivity_all_void` shows the third fails without properness, which the paper does not flag.
-* `ofAdams`, `exists_ofAdams_eq`, `ofAdams_eq_ofAdams_iff`, `prob_ofAdams`: an
-  [adams-1975] formula denotes the conditional event of its consequent on its antecedent, these
-  exhaust the trivalent propositions (the semantic content of the Reduction Theorem), and its
-  trivalent probability is Adams's conditional probability; hence `adams_thesis`, and
-  `pEntails_iff_prob` restates p-entailment in trivalent probabilities.
-* `cEntails_iff_forall_prob`: preserving probability 1 is preserving designated values, the
-  trivalent characterization of the logic C.
-* `prob_cond_eq_one_of_cEntails`, `prob_cond_congr_left`, `prob_cond_disj`: the axioms 3′, 4′ and
-  5′ of trivalent conditional probability; `axiom2'_all_void` and `additivity_cond_all_void` show
-  2′ and 5′ fail as printed in the all-void case.
-* `stalnaker_thesis`: `p_A(B → C) = p_{A ∧ B}(C)` with no hypotheses at all, since Import-Export
-  is a pointwise identity.
-* `prob_cond_material_eq`: learning a simple conditional is learning the material conditional
-  (Proposition 6).
-* `goldstein_santorio_die`, `santorio_wellwood_die`, `edgington_coin`: the die and coin examples
-  of [goldstein-santorio-2021], [santorio-wellwood-2023] and [edgington-1991], computed in the
-  fair models; `prob_conj_gt` is the failure of `p(X ∧ Y) ≤ p(X)`.
-
 ## Implementation notes
 
 * The language is the shared `Trivalent.Formula` and a Cooper valuation is its evaluation by
@@ -105,16 +79,14 @@ theorem condAssert_lp_meetBelnap_left :
     condAssert .lp (meetBelnap a b) c = condAssert .lp (a ⊓ b) c :=
   condAssert_congr_left (by simp) c
 
-/-- For classical values, a Cooper conjunction of conditionals asserts the conjoined material
-conditionals on the disjoined antecedents (**Conjunction**, Proposition 1). -/
+-- Proposition 1
 theorem meetBelnap_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) (hd : d ≠ 0) :
     meetBelnap (condAssert .lp a b) (condAssert .lp c d) =
       condAssert .lp (joinBelnap a c)
         (meetBelnap (joinBelnap (-a) b) (joinBelnap (-c) d)) := by
   revert ha hb hc hd; cases a <;> cases b <;> cases c <;> cases d <;> decide
 
-/-- Dually, a Cooper disjunction of conditionals asserts the disjoined conjunctions on the disjoined
-antecedents (**Disjunction**, Proposition 1). -/
+-- Proposition 1
 theorem joinBelnap_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) (hd : d ≠ 0) :
     joinBelnap (condAssert .lp a b) (condAssert .lp c d) =
       condAssert .lp (joinBelnap a c) (joinBelnap (meetBelnap a b) (meetBelnap c d)) := by
@@ -137,8 +109,7 @@ theorem sk_fails_conjunction :
           (meetBelnap (joinBelnap (-a) b) (joinBelnap (-c) d)) := by
   decide
 
-/-- **Left-Nesting** (Proposition 1): a conditional antecedent with classical consequent supposes
-exactly what the material conditional supposes. -/
+-- Proposition 1
 theorem condAssert_condAssert_material (hb : b ≠ 0) :
     condAssert .lp (condAssert .lp a b) c = condAssert .lp (joinBelnap (-a) b) c := by
   revert hb; cases a <;> cases b <;> cases c <;> decide
@@ -148,7 +119,7 @@ theorem left_nesting_needs_boolean :
       condAssert .lp (condAssert .lp a b) c = condAssert .lp (joinBelnap (-a) b) c := by
   decide
 
-/-- De Finetti's conditional identifies left with right nesting on classical values (footnote 6). -/
+-- footnote 6
 theorem condAssert_k3_left_eq_nested (ha : a ≠ 0) (hb : b ≠ 0) :
     condAssert .k3 (condAssert .k3 a b) c = condAssert .k3 a (condAssert .k3 b c) := by
   revert ha hb; cases a <;> cases b <;> cases c <;> decide
@@ -163,14 +134,12 @@ theorem condAssert_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c �
       condAssert .lp (meetBelnap (joinBelnap (-a) b) c) d := by
   revert ha hb hc hd; cases a <;> cases b <;> cases c <;> cases d <;> decide
 
-/-- Under Strong Kleene disjunction, `(A → B) ∨ (B → A)` is never false at either designation
-standard (footnote 3). -/
+-- footnote 3
 theorem zero_le_sup_condAssert (d : Trivalent.Designation) (a b : SignType) :
     0 ≤ condAssert d a b ⊔ condAssert d b a := by
   cases d <;> cases a <;> cases b <;> decide
 
-/-- When `c` is true and `a` false, `(a → b) ∧ c` is `c`, so McGee's Independence Principle fails
-(footnote 11). -/
+-- footnote 11
 theorem meetBelnap_condAssert_of_false (b : SignType) :
     meetBelnap (condAssert .lp (-1) b) 1 = 1 :=
   rfl
@@ -338,7 +307,7 @@ theorem cooperEval_flat (φ : Formula ι) (v : ι → Bool) :
       simpa using condAssert_condAssert_condAssert (hφ.1.cooperEval_ne_zero v)
         (hφ.2.cooperEval_ne_zero v) (hψ.1.cooperEval_ne_zero v) (hψ.2.cooperEval_ne_zero v)
 
-/-- The flat fragment is as expressive as the whole language, Theorem 1 in the paper's form. -/
+-- Theorem 1
 theorem reduction (φ : Formula ι) :
     ∃ A B : Formula ι, NoCond A ∧ NoCond B ∧ CooperEquiv φ (.cond A B) :=
   ⟨_, _, (noCond_flat φ).1, (noCond_flat φ).2, cooperEval_flat φ⟩

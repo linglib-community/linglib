@@ -244,7 +244,6 @@ theorem L1_fst_real_lt_iff (m : Msg) (v v' : World) :
   rw [L1, listener_fst_real_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
     uniformOn_univ_singleton_ne_zero]
 
-/-- Lexicon preference of the joint listener is the speaker preference pooled over states. -/
 theorem L1_snd_real_lt_iff (m : Msg) (l₁ l₂ : Lex) :
     (L1 α c m).snd.real {l₁} < (L1 α c m).snd.real {l₂} ↔
       ∑ w, (S1 α c l₁ w).real {m} < ∑ w, (S1 α c l₂ w).real {m} := by

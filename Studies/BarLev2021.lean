@@ -19,20 +19,6 @@ predication as well (`readings_subset_readings`); the question the context raise
 them, and a world is gappy when it verifies the reading one question selects and falsifies
 another's.
 
-## Main results
-
-* `exhIEII_eq_universal`, `exhIEII_compl_biUnion`: the maximality implicature, and its absence
-  under negation.
-* `exhIEII_pruned_eq_atLeast`, `isReading_polar_atLeast`: pruning yields the threshold
-  readings, and a polar question on a threshold selects it.
-* `gappy_iff_barePlural_eq_zero`: the gappy worlds are those where Križ's trivalent plural is
-  undefined; `neg_barePlural_eq_zero_and_notMem_exhIEII_compl`: the accounts part under negation.
-* `gappy_iff_krizChemla_gap`, `krizChemla_negation_residue`: on Križ and Chemla's unembedded
-  displays the account predicts their gaps for the positive sentence and misses those under
-  negation.
-* `disjunction_not_both`, `plural_both`, `reading_66`, `reading_80`, `reading_81`: the paper's
-  examples.
-
 ## Implementation notes
 
 `readings` are the threshold readings, obtained by pruning to a fixed subdomain size; the
@@ -125,14 +111,14 @@ theorem exhIEII_compl_biUnion {C : Set (Set W)} (hC : C ⊆ compl '' supClosure 
   obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq'
   exact Set.compl_subset_compl.2 (Set.biUnion_subset_biUnion_left hS)
 
-/-- The existential basic meaning does not entail that a given kid laughed, (6a). -/
+-- (6a)
 theorem exists_mem_biUnion_and_not (h : Separating D x P) {a : Atom} (ha : a ∈ x ∩ D)
     (h2 : 2 ≤ (x ∩ D).card) : ∃ w ∈ (⋃ b ∈ x ∩ D, atom P b), ¬ P a w := by
   obtain ⟨b, hb, hba⟩ := Finset.exists_mem_ne (by omega : 1 < (x ∩ D).card) a
   obtain ⟨w, hw⟩ := h.single b hb
   exact ⟨w, Set.mem_biUnion hb ((hw b hb).2 rfl), fun hPa ↦ hba ((hw a ha).1 hPa).symm⟩
 
-/-- Its negation entails that no given kid laughed, (6b). -/
+-- (6b)
 theorem not_of_notMem_biUnion {w : W} (hw : w ∉ ⋃ b ∈ x ∩ D, atom P b) {a : Atom}
     (ha : a ∈ x ∩ D) : ¬ P a w :=
   fun hPa ↦ hw (Set.mem_biUnion ha hPa)
@@ -423,8 +409,7 @@ theorem krizChemla_negation_residue :
 
 end KrizChemla
 
-/-- The paper's examples report gappiness for positive sentences and reduced gappiness for the
-negative (82b), the asymmetry `neg_barePlural_eq_zero_and_notMem_exhIEII_compl` idealizes. -/
+-- (82b)
 theorem rows_gappiness_positive : ∀ e ∈ Examples.all,
     e.feature? "gappiness" = some "yes" → e.feature? "polarity" = some "positive" := by
   decide

@@ -156,8 +156,7 @@ accommodated proposition, and the results join. -/
 def flex (χ ω : Set W) (φ ψ : CCP.Partial W) : CCP.Partial W :=
   fun s ↦ (φ (s ∩ χ)).bind fun a ↦ (ψ (s ∩ ω)).map (a ∪ ·)
 
-/-- (13) requires that the accommodated propositions cover the input. Under conflict each
-disjunct's negated rival presupposition covers every input. -/
+-- (13)
 theorem gapExt_union_gapExt_of_conflict (h : Conflict φ ψ) :
     Trivalent.gapExt ψ ∪ Trivalent.gapExt φ = Set.univ :=
   Set.eq_univ_of_forall fun w ↦ (h w).symm

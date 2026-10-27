@@ -88,7 +88,7 @@ theorem not_wellFormedAlts_of_subset {alts : Set (Set W)} {a b : Set W} (ha : a 
     (hb : b ∈ alts) (hne : a ≠ b) (h : a ⊆ b) (integ : Set W) : ¬ WellFormedAlts alts integ :=
   λ hw => not_semanticallyIndependent_of_subset h (hw.2 ha hb hne)
 
-/-- (9b): two disjoint non-empty alternatives under their union are well-formed. -/
+-- (9b)
 theorem wellFormedAlts_pair_of_disjoint {a b : Set W} (ha : a.Nonempty) (hb : b.Nonempty)
     (hab : Disjoint a b) : WellFormedAlts {a, b} (a ∪ b) := by
   refine ⟨λ c hc => ?_, ?_⟩
@@ -153,8 +153,7 @@ theorem presupposition_inAddition_eq_assertion_instead :
 `q₁` and `q₂`: the first conjunct confirms `q₁` and the second denies `q₂`. -/
 def ConfirmDeny (q₁ q₂ c₁ c₂ : Set W) : Prop := c₁ ⊆ q₁ ∧ c₂ ⊆ q₂ᶜ
 
-/-- (17b–d): confirming or denying both parts violates the condition whenever the parts hold
-somewhere; a *but*-sentence is no answer to a question it confirms twice. -/
+-- (17b–d)
 theorem not_confirmDeny_of_confirm_confirm {q₁ q₂ c₁ c₂ : Set W} (h₂ : c₂ ⊆ q₂)
     (hne : c₂.Nonempty) : ¬ ConfirmDeny q₁ q₂ c₁ c₂ :=
   λ h => hne.ne_empty (Set.subset_empty_iff.1 λ _ hw => (h.2 hw) (h₂ hw))

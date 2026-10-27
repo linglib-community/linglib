@@ -34,23 +34,6 @@ its probe, and so global case splits range over the hierarchy effects of agreeme
 * `oagrOnS`: object agreement on the subject, the object-agreement exponent of the flag.
 * `Locus`: the probe on v or on T, ordering the goals of a transitive clause.
 
-## Main results
-
-* `dependentCase_iff_licit`: with two goals, dependent case on the second is Deal's licit
-  Agree with both, so the PCC typology transfers to case splits.
-* `halt_of_spkr_object`, `narrow_of_part_object`, `flag_of_third_object`, `flag_of_low_object`:
-  the derivations (15), (17) and (19), (22), and (24) behind Table 4.
-* `table4`, `marking_optional_iff`, `ergative_of_fronted_or_dropped`: the distribution of
-  ergative, optionality as the structural ambiguity of third-person objects, and obligatory
-  ergative with a fronted or dropped object.
-* `oagrOnS_isSome`: object agreement on the subject only under ergative, and off the diagonal
-  only for a first-person subject and a second-person object.
-* `rule1_overgenerates`, `no_1_3_2_hierarchy`: the configurational rule fires where Shawi has
-  no ergative, and no grammar of the probe space yields a 1>3>2 hierarchy.
-* `dependentCase_noPCC`, `dependentCase_strong_iff`, `dependentCase_weak_iff`,
-  `dependentCase_sd_iff`, `dependentCase_sd_off_diagonal_iff`: Tables 6–7, the four splits in
-  either locus.
-
 ## Implementation notes
 
 * Table 4 has no reflexive rows. The mechanism predicts ergative at 2→2 and none at 1→1, where a
@@ -235,8 +218,7 @@ theorem oagrOnS_isSome {subj obj : Person} {n : Number} {pos : ObjectPosition}
     Ergative subj obj pos ∧ .speaker ∈ spec subj ∧ obj = .second := by
   cases pos <;> revert subj obj n <;> decide +kernel
 
-/-- Object agreement on the subject surfaces with a first-person exclusive subject and second-person
-object (12), but not at 2→1 (11) or 1→3 (23a). -/
+-- (12), (11), (23a)
 theorem oagrOnS_examples :
     oagrOnS .firstExclusive .second .augmented .high = some "-((n)ke)ma'" ∧
     oagrOnS .second .firstExclusive .minimal .high = none ∧
@@ -322,7 +304,7 @@ def kolymaYukaghirAccusative (subj obj : Person) : Option String :=
     | [s] => some (if .participant ∈ spec s then "-ul" else "-gele")
     | _ => none
 
-/-- The accusative is *-gele* at 3→1 and *-ul* at 1→2, and there is none at 1→3 (49). -/
+-- (49)
 theorem kolymaYukaghirAccusative_49 :
     kolymaYukaghirAccusative .third .first = some "-gele" ∧
     kolymaYukaghirAccusative .first .second = some "-ul" ∧

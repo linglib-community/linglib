@@ -27,19 +27,6 @@ non-specific function and a non-specific form has become epistemic by gaining th
 unknown one, so entry loss derives at most one of the two changes, whichever way the hierarchy
 is ordered.
 
-## Main results
-
-* `containment_of_two_exponents`, `no_containment_of_bottom_entries`: a layer with an exponent
-  of its own is a suffix on the form below it, and Dekier's lexicons have no such layer.
-* `ordConnected_coverage`: a hierarchy ordered either way along the map gives each form an
-  interval of the uses, so it excludes ABA as the semantic account does.
-* `no_hierarchy_derives_both_changes`, `entry_loss_is_weakening`: on no hierarchy does entry
-  loss derive both attested changes to the epistemic type, and what it derives is a semantic
-  weakening.
-* `specificUnknown_not_atomic`: no single restriction states the specific unknown type.
-* `coexpression_is_underspecification`: each form of the four coexpression patterns is a single
-  type.
-
 ## TODO
 
 The paper calls the change from a specific to an unmarked form attested in one sentence of its
@@ -196,8 +183,7 @@ theorem no_hierarchy_derives_both_changes (ℓ : SpecificityFunction → Fin n) 
 
 end EntryLoss
 
-/-- On Dekier's hierarchy, entry loss makes a specific unknown form epistemic ((3), (4)), but also
-derives two unattested changes. -/
+-- (3), (4)
 theorem entry_loss_derives_downward_changes :
     LossDerives layer .specificUnknown .epistemic ∧ LossDerives layer .specificKnown .specific ∧
       LossDerives layer .specific .unmarked :=

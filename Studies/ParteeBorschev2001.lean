@@ -21,14 +21,6 @@ forms are elliptical NPs and admit the noun's relation as well ((28)–(30), (32
 marks the split in form, postnominal genitive an argument and prenominal possessive a modifier,
 and on a relational noun the two constructions come apart (25).
 
-## Main statements
-
-* `elliptical_iff_bare` — predicated of a `P`, the elliptical NP *[John's P]* on its possession
-  reading and the bare predicate possessive agree: the reading the two forms share.
-* `ubijcaPeti_ne_petinUbijca` — *ubijca Peti* 'murderer of Petja' (the noun's own relation
-  applied to Petja) and *Petin ubijca* (the modifier over the possessor-closed noun) are distinct
-  predicates; the latter holds exactly of a murderer Petja controls (`petinUbijca_iff`).
-
 ## References
 
 * [partee-borschev-2001]
@@ -78,7 +70,7 @@ def murderer : Ent → Ent → Unit → Prop := fun v y _ ↦
 /-- `R_POSS` holds of Petja and the hireling, whom Petja controls. -/
 def rPoss : Ent → Ent → Unit → Prop := fun p y _ ↦ p = petja ∧ y = hireling
 
-/-- *ubijca Peti* (25a), the relational noun applied to Petja, is the killer. -/
+-- (25a)
 theorem ubijcaPeti_iff (y : Ent) : murderer petja y () ↔ y = killer := by
   unfold murderer; decide +revert
 

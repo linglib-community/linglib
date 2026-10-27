@@ -85,7 +85,7 @@ structure Category where
   bar : BarLevel
   deriving DecidableEq
 
-/-- Categorial identity is identity of categorial and bar-level features (21). -/
+-- (21)
 theorem Category.eq_iff (a b : Category) : a = b ↔ a.cf = b.cf ∧ a.bar = b.bar :=
   Category.ext_iff
 
@@ -128,8 +128,7 @@ theorem coordinate_eq_some_iff (X α β : Category) :
   · exact ⟨fun _ ↦ ⟨h.2.symm, h.1.symm⟩, fun _ ↦ rfl⟩
   · exact ⟨fun h' ↦ h'.elim, fun ⟨ha, hb⟩ ↦ (h ⟨hb.symm, ha.symm⟩).elim⟩
 
-/-- Applied to a single coordinand, the coordinator is the unsaturated `X/X` (66), the structure a
-sideward-moved coordinate phrase would land in (65). -/
+-- (66), (65)
 theorem coord_apply_single (X : Category) :
     (coord X).apply (.of X) = some (.slash (.of X) (.of X)) := by
   simp [coord, CGType.apply]
@@ -191,14 +190,12 @@ searching for `[+φ]` targets the coordinate structure and not a coordinand with
 def CoordStructure.Goal (cs : CoordStructure) (φ : CatFeature) (p : Position) : Prop :=
   φ ∈ cs.X.cf ∧ p = .whole
 
-/-- In Pattern 1 (51b), (53), neither coordinand is a goal, so the coordinands cannot move to
-separate specifiers, with or without the coordinate structure. -/
+-- (51b), (53)
 theorem CoordStructure.not_goal_coordinand (cs : CoordStructure) (φ : CatFeature) :
     ¬ cs.Goal φ .left ∧ ¬ cs.Goal φ .right :=
   ⟨fun h ↦ Position.noConfusion h.2, fun h ↦ Position.noConfusion h.2⟩
 
-/-- A probe for the unvalued case feature targets a DP coordination as a whole, so a single
-coordinand cannot raise to the subject position (59)–(62). -/
+-- (59), (62)
 theorem CoordStructure.goal_uCase (r : Coordinator.Role) :
     (CoordStructure.mk r ⟨{.D, .uCase}, .max⟩).Goal .uCase .whole ∧
       ¬ (CoordStructure.mk r ⟨{.D, .uCase}, .max⟩).Goal .uCase .left :=

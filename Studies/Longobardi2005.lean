@@ -187,24 +187,24 @@ instance : Decidable n.Denotes := inferInstanceAs (Decidable (_ ∨ _))
 
 variable {n}
 
-/-- (55): an argument with an empty D is a variable. -/
+-- (55)
 theorem isVariable_of_empty (h : n.Denotes) (hd : n.d = .empty) : n.IsVariable :=
   h.resolve_left fun hc ↦ DContent.noConfusion (hd.symm.trans hc)
 
-/-- (56b): an argument that is not a constant is a variable. -/
+-- (56b)
 theorem isVariable_of_not_isConstant (h : n.Denotes) (hc : ¬ n.IsConstant) : n.IsVariable :=
   h.resolve_left hc
 
 theorem isVariable_of_operator (h : n.Denotes) (hd : n.d = .operator) : n.IsVariable :=
   h.resolve_left fun hc ↦ DContent.noConfusion (hd.symm.trans hc)
 
-/-- (57a): a kind-naming noun denotes with any content of D, so a common noun need not raise. -/
+-- (57a)
 theorem denotes_of_kind (h : n.head = .kind) : n.Denotes := by
   by_cases hd : n.d = .referential
   · exact .inl hd
   · exact .inr ⟨hd, h⟩
 
-/-- An object-naming noun denotes only as a constant (57c). -/
+-- (57c)
 theorem denotes_iff_of_object (h : n.head = .object) : n.Denotes ↔ n.IsConstant :=
   ⟨fun hn ↦ hn.resolve_right fun hv ↦ Naming.noConfusion (h.symm.trans hv.2), .inl⟩
 
@@ -218,8 +218,7 @@ def MayRaise (h : Naming) : Prop := ¬ (⟨h, .empty⟩ : Nominal).Denotes
 
 instance (h : Naming) : Decidable (MayRaise h) := inferInstanceAs (Decidable (¬ _))
 
-/-- The answer to (57b) and (57c): a common noun may not raise, since it denotes without, and a
-proper name may raise, since it must. -/
+-- (57b), (57c)
 theorem mayRaise_iff (h : Naming) : MayRaise h ↔ h = .object := by
   cases h <;> decide
 
@@ -237,13 +236,12 @@ def Article.dContent : Article → DContent
   | .operator => .operator
   | .expletive => .referential
 
-/-- With an object-naming head, as in *la Maria*, the nominal denotes iff the article is expletive
-(26b). -/
+-- (26b)
 theorem denotes_iff_expletive (a : Article) :
     (⟨.object, a.dContent⟩ : Nominal).Denotes ↔ a = .expletive := by
   cases a <;> decide
 
-/-- With a kind-naming head either article yields a denoting argument ((59), (26a)). -/
+-- (59), (26a)
 theorem denotes_of_kind_article (a : Article) : (⟨.kind, a.dContent⟩ : Nominal).Denotes :=
   Nominal.denotes_of_kind rfl
 

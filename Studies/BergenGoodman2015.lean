@@ -21,15 +21,6 @@ exponentiated utility of a subject sentence is `exp (-binEntropy rate) / 2`, and
 that only Bob went prefers "BOB went" to "Bob went" (`Prosody.S1_bobWent_lt_BOB_went`), the form the
 paper's exhaustive row records (`Prosody.model_matches_stress_rows`).
 
-## Main results
-
-* `Ellipsis.L0_subject`, `Ellipsis.L1_subject` — a subject fragment is the point mass on its
-  source, for every positive deletion rate; `Ellipsis.S1_apply` — the speaker utters the full
-  sentence.
-* `Prosody.channelMix_eq_exp_neg_binEntropy` — a subject sentence's exponentiated utility is
-  `exp (-binEntropy rate) / 2`.
-* `Prosody.S1_bobWent_lt_BOB_went` — the knowledgeable speaker prefers the stressed form.
-
 ## Implementation notes
 
 Priors are unit weights, the rationality parameter is `1`, and costs are zero. The channel runs from
@@ -176,8 +167,6 @@ instance (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
     IsFiniteKernel (noisySpeaker N α C L) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
-/-- Row preference of the speaker reduces to comparing the weighted channel-mixed listener
-values; the normalization cancels. -/
 theorem noisySpeaker_real_singleton_lt_iff {N : Kernel I U} {α : ℝ} (hα : 0 ≤ α) {C : I → ℝ}
     {L : Kernel U W} [IsFiniteKernel L] {w : W}
     (h0 : ∃ u, channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) ≠ 0) {u u' : I} :
@@ -499,8 +488,6 @@ private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
         add_zero, zero_add, h1, h1', h2, h2', one_add_one_eq_two]
       simp only [ENNReal.ofReal_div_of_pos two_pos, ENNReal.ofReal_ofNat]
 
-/-- The exponentiated utility of a subject sentence at slip rate `r` for its unique true meaning is
-`exp (-binEntropy r) / 2` (eq. 7). -/
 theorem rpow_mul_rpow_eq_exp_neg_binEntropy {r : ℝ} (hr₀ : 0 < r) (hr₁ : r < 1) :
     ((1 - r) / 2) ^ (1 - r) * (r / 2) ^ r = exp (-binEntropy r) / 2 := by
   rw [rpow_def_of_pos (div_pos (by linarith) two_pos), rpow_def_of_pos (div_pos hr₀ two_pos),
@@ -559,8 +546,6 @@ def uttOf (row : Datum) : Option Utterance :=
   | some "none"    => some .bobWent
   | _              => none
 
-/-- A speaker with the exhaustive meaning prefers the stressed row's form to the unstressed
-row's, at the paper's rate. -/
 theorem model_matches_stress_rows :
     ∃ u_s u_u, uttOf Examples.stressed_subject = some u_s ∧
       uttOf Examples.unstressed_subject = some u_u ∧

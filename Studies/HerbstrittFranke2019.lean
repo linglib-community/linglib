@@ -204,7 +204,6 @@ belief after her observation and the literal listener's belief after the message
 noncomputable def utility (x : Obs × Access) (m : SimpleExpr) : ℝ :=
   -hellingerDist (belief P x.2 x.1) (L0 θ P m)
 
-/-- The utility is minus the Hellinger distance of the paper's footnote on utilities. -/
 theorem utility_eq (x : Obs × Access) (m : SimpleExpr) :
     utility θ P x m = -(√(∑ s, (√((belief P x.2 x.1).real {s}) - √((L0 θ P m).real {s})) ^ 2) /
       √2) := by
@@ -225,8 +224,6 @@ instance : IsMarkovKernel (speaker lam θ P) :=
   Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨.possibly, EReal.coe_ne_bot _⟩)
     fun _ _ ↦ EReal.coe_ne_top _
 
-/-- The speaker prefers the message of higher utility, whose literal listener lies closer to her
-belief. -/
 theorem speaker_real_lt_iff (hlam : 0 < lam) (x : Obs × Access) (m m' : SimpleExpr) :
     (speaker lam θ P x).real {m} < (speaker lam θ P x).real {m'} ↔
       utility θ P x m < utility θ P x m' := by
@@ -275,8 +272,6 @@ theorem speaker_full_lt_of_notMem_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m 
   have hs : 0 < P.real {s} := ENNReal.toReal_pos hP (measure_ne_top _ _)
   exact div_pos hs (hs.trans_le (measureReal_mono (Set.singleton_subset_iff.2 h')))
 
-/-- With complete access, among true messages the one whose extension carries less prior
-mass, the more informative one, is preferred. -/
 theorem speaker_full_lt_iff_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : SimpleExpr}
     (h : s ∈ θ.ext m) (h' : s ∈ θ.ext m') :
     (speaker lam θ P (s, 10)).real {m} < (speaker lam θ P (s, 10)).real {m'} ↔
@@ -292,9 +287,6 @@ theorem speaker_full_lt_iff_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : S
     sub_lt_sub_iff_left, Real.sqrt_lt_sqrt_iff (div_nonneg hs.le hE.le),
     div_lt_div_iff_of_pos_left hs hE hE']
 
-/-- With complete access and a prior positive on every state, a message strictly entailing
-another is preferred to it whenever both are true, the scalar implicature of the introductory
-example. -/
 theorem speaker_full_lt_of_ssubset (hlam : 0 < lam) (hP : ∀ s, P {s} ≠ 0) {m m' : SimpleExpr}
     (hsub : θ.ext m ⊂ θ.ext m') (h : s ∈ θ.ext m) :
     (speaker lam θ P (s, 10)).real {m'} < (speaker lam θ P (s, 10)).real {m} := by

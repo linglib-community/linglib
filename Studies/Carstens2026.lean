@@ -149,21 +149,19 @@ theorem bestSemanticMatch_eq :
       if a.core = b.core then some (pluralClass a.core) else none := by
   grind [bestSemanticMatch, Nominal.coreBundle, resolve_single]
 
-/-- Uniform conjuncts pair with gender-matching plural agreement exactly when their gender is
-interpretable, (52a–b) and (54). -/
+-- (52a–b), (54)
 theorem matching_iff (h : a.visible = b.visible) :
     highestWins status pluralClass a b = some (pluralClass a.visible) ↔
       interpretability (status a.visible) = .interpretable := by
   grind [highestWins_eq]
 
-/-- A u-gender stacked above a core is ignored, the cores alone valuing agreement (77). -/
+-- (77)
 theorem values_iff_of_uninterpretable
     (hu : interpretability (status a.visible) = .uninterpretable) (c : C) :
     Values status pluralClass a b c ↔ bestSemanticMatch pluralClass a b = some c := by
   grind [Values, highestWins_eq]
 
-/-- An interpretable-gender member over a core carries both i-genders to &P, and the two grammars
-value the visible and the core plural ((78)–(80)). -/
+-- (78), (80)
 theorem two_grammars {g : G} (ho : a.outer = some g)
     (hi : interpretability (status g) = .interpretable) :
     highestWins status pluralClass a a = some (pluralClass g) ∧
@@ -175,8 +173,7 @@ theorem highestWins_eq_bestSemanticMatch (ha : a.outer = none) (hb : b.outer = n
     highestWins status pluralClass a b = bestSemanticMatch pluralClass a b := by
   grind [highestWins_eq, bestSemanticMatch_eq, Nominal.visible]
 
-/-- With neither the visible genders nor the cores matching, no class values agreement and the
-conjunction is ineffable, (91)–(92) and (111)–(112). -/
+-- (91), (92), (111), (112)
 theorem not_values (hv : a.visible ≠ b.visible) (hc : a.core ≠ b.core) (c : C) :
     ¬ Values status pluralClass a b c := by
   grind [Values, highestWins_eq, bestSemanticMatch_eq]
@@ -191,7 +188,7 @@ def xhosaFlavor : Animacy → SemanticCore
   | .animate => .animal
   | .inanimate => .inanimate
 
-/-- Each flavor is borne by exactly one gender, A [human], E [animal] and D [inanimate] (71). -/
+-- (71)
 theorem xhosaFlavor_existsUnique (a : Animacy) :
     ∃! g : Xhosa.Gender, g.status = .interpretable (xhosaFlavor a) := by
   revert a; unfold ExistsUnique; decide
@@ -248,20 +245,19 @@ instance [DecidableEq C] (p : Nominal G × Nominal G) (e : Datum) :
 
 end Rows
 
-/-- The Xhosa rows are predicted, (6)–(9), (37)–(49), (55), (81)–(91) and (111). -/
+-- (6), (9), (37), (49), (55), (81), (91), (111)
 theorem xhosa_rows :
     ∀ e ∈ rows "xhos1239", ∃ p ∈ conjuncts Xhosa.Nouns.all (·.form) xhosaNominal e,
       Predicts Xhosa.Gender.status Xhosa.Gender.pluralClass Bantu.NounClass.ofNumeral? p e := by
   decide +kernel
 
-/-- The Shona rows are predicted, matching agreement confined to 1/2 and 7/8, (58)–(68). -/
+-- (58), (68)
 theorem shona_rows :
     ∀ e ∈ rows "shon1251", ∃ p ∈ conjuncts Shona.Nouns.all (·.form) shonaNominal e,
       Predicts Shona.Gender.status Shona.Gender.pluralClass Bantu.NounClass.ofNumeral? p e := by
   decide +kernel
 
-/-- Gender-matching agreement is chosen at least as often as default exactly in the cells whose
-gender is interpretable, Table 13 and (52a–b). -/
+-- Table 13, (52a–b)
 theorem table13 :
     ∀ e ∈ rows "xhos1239", ∀ m ∈ e.nat? "matching", ∀ d ∈ e.nat? "default",
       ∀ p ∈ conjuncts Xhosa.Nouns.all (·.form) xhosaNominal e,

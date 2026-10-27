@@ -70,11 +70,11 @@ structure IsTolerance (r : α → α → Prop) : Prop where
   le_of_rel {x y : α} : r x y → x ≤ y
   rel_of_le_of_le {x y z : α} : r x y → x ≤ z → z ≤ y → r z y
 
-/-- The identity relation of (16a), under which no proper part is similar enough. -/
+-- (16a)
 theorem isTolerance_eq : IsTolerance (α := α) (· = ·) :=
   ⟨fun _ ↦ rfl, fun h ↦ h ▸ le_rfl, fun h hxz hzy ↦ le_antisymm hzy (h ▸ hxz)⟩
 
-/-- Parthood itself, (16b), under which every part is similar enough. -/
+-- (16b)
 theorem isTolerance_le : IsTolerance (α := α) (· ≤ ·) :=
   ⟨fun _ ↦ le_rfl, id, fun _ _ hzy ↦ hzy⟩
 
@@ -83,7 +83,7 @@ part of `y` that is similar enough to `y`. -/
 def tolerant (r : α → α → Prop) (Q : α → Set W) (y : α) : Set W :=
   {w | ∃ z, r z y ∧ ¬ IsBot z ∧ w ∈ Q z}
 
-/-- Under the identity relation, (16a), the predication is maximal. -/
+-- (16a)
 theorem tolerant_eq (hy : ¬ IsBot y) : tolerant (· = ·) Q y = Q y := by
   ext
   simp only [tolerant]
@@ -239,7 +239,7 @@ def hasTwoMagnets (b : Box) : Prop := b < 4
 
 instance : DecidablePred hasTwoMagnets := fun b ↦ inferInstanceAs (Decidable (b < 4))
 
-/-- *jeder* in either use, (21c), is false in the scenario, since one box has one magnet. -/
+-- (21c)
 theorem jeder_rejects_magnets : ¬ ∀ b ∈ (Finset.univ : Finset Box), hasTwoMagnets b := by
   decide
 

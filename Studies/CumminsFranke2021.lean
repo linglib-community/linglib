@@ -117,7 +117,6 @@ theorem cond_moreThan100_le_moreThan110 :
   cond_le_cond_of_subset _ .of_discrete .of_discrete (Ioi_subset_Ioi (by norm_num))
     (inter_subset_left.trans (Ioi_subset_Ioi (by norm_num)))
 
-/-- Hence *more than 110* is semantically the stronger argument for success. -/
 theorem bayesFactor_moreThan100_lt_moreThan110 :
     bayesFactor success (Ioi 100) < bayesFactor success (Ioi 110) :=
   bayesFactor_lt_of_subset success .of_discrete (Ioi_subset_Ioi (by norm_num))
@@ -268,8 +267,6 @@ theorem posRelevant_assertable_moreThan110_iff (ρ : I) :
 
 /-! ### The reversal -/
 
-/-- When *more than 100* implicates *not more than c* for a cap `c` at or above the goal, it is
-the stronger pragmatic argument iff the rate times `c - 40` exceeds 80. -/
 theorem bayesFactor_assertable_lt_iff_of_le (ρ : I) {c : ℕ} (hc : 120 ≤ c) (hc' : c ≤ 200) :
     bayesFactor (assertability ρ) (assertable 110 120) <
         bayesFactor (assertability ρ) (assertable 100 c) ↔ 80 < ρ * ((c : ℝ) - 40) := by
@@ -366,10 +363,6 @@ private theorem not_hasKness_one {m : ℕ} (h₁ : 100 < m) (h₂ : m < 200) : �
   · have : 10 ^ 3 ≤ 10 ^ b := Nat.pow_le_pow_right (by norm_num) hb
     nlinarith
 
-/-- In Cummins's constraint-based account the stronger alternatives to *more than 100* begin at
-200 in every context, since an alternative must be entirely round like 100 and no numeral in
-between is, and those to *more than 110* begin at 120 in a context that sets a granularity
-level, the next points of the coarsest decimal scales. -/
 theorem isLeast_strongerAlternative (ctx : Cummins2015.Context) :
     IsLeast {m | Cummins2015.StrongerAlternative ctx 100 m} 200 ∧
       (ctx.granularity ≠ none → IsLeast {m | Cummins2015.StrongerAlternative ctx 110 m} 120) := by
@@ -390,8 +383,6 @@ theorem isLeast_strongerAlternative (ctx : Cummins2015.Context) :
 /-- The paper's illustrative enrichment rate of nine in ten. -/
 noncomputable abbrev nineTenths : I := ⟨9 / 10, by norm_num, by norm_num⟩
 
-/-- Semantically *more than 110* is the stronger argument for success, but pragmatically, at
-the paper's rate of nine in ten, the order reverses. -/
 theorem relevance_reversal :
     relevance success (Ioi 100) < relevance success (Ioi 110) ∧
       relevance (assertability nineTenths) (assertable 110 120) <

@@ -30,15 +30,6 @@ silent Adv head that ellipsis or a partial copy can leave out. The paper's examp
 * `checkedOnce`: the conjunct a selector checks its S-features against, once.
 * `NominalCoordination`, `Displaced`: an adverb's two escapes from the ban on modifying a noun.
 
-## Main results
-
-* `mem_cats_of_mem_nearest`: the phrase next to the selector is selected in its own category.
-* `mem_cats_or_of_admits`: the only violation is a clause where a noun phrase is selected.
-* `exists_admits_iff_admits_elided`: a phrase may violate selection in a coordination exactly when
-  ellipsis of the selector may strand it.
-* `mem_cats_of_admits_id`: speakers whose S-features persist admit no violation in coordination.
-* `nominalCoordination_iff`, `displaced_iff`: a non-*ly* adverb may modify a noun when coordinated
-  before an adjective or displaced.
 * `argument_rows` and its siblings: the model's verdict on each example is its judgment.
 
 ## Implementation notes
@@ -310,8 +301,7 @@ theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" �
     some "argument", some "ellipsis", some "prenominal", some "displacement"] := by
   decide
 
-/-- The model decides the coordinated predicates, each of which must meet the selector's
-restrictions ((20)–(22)). -/
+-- (20), (22)
 theorem predicate_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "predicate" →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
       (Admits (Satisfies (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
@@ -324,30 +314,27 @@ theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some
       (Admits (Licensed (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
   decide
 
-/-- The accounts that make the first conjunct prominent get every coordination before its
-selector backwards ((41)–(43)). -/
+-- (41), (43)
 theorem argument_rows_first : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
     side? e = some .headFinal → 2 ≤ (e.features "conjunct").length →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
       (Admits (Licensed (List.take 1) cats) ps ↔ e.judgment ≠ .acceptable) := by
   decide
 
-/-- The model decides the fragment answers and split questions, which strand a phrase by
-ellipsis of its selector ((54)–(55), (60), (62), (76)). -/
+-- (54), (55), (60), (62), (76)
 theorem ellipsis_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "ellipsis" →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
       (Admits (Licensed (fun _ ↦ []) cats) ps ↔ e.judgment = .acceptable) := by
   decide
 
-/-- The model decides the prenominal modifiers, alone or coordinated ((44), p. 15,
-(56a), (57a)). -/
+-- (44), p. 15, (56a), (57a)
 theorem prenominal_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "prenominal" →
     ∃ ms ∈ modifiers? e,
       ((ms = [none] ∨ ∃ m₁ m₂, ms = [m₁, m₂] ∧ NominalCoordination m₁ m₂) ↔
         e.judgment = .acceptable) := by
   decide
 
-/-- The model decides the displaced prenominal modifiers ((56b)–(57c)). -/
+-- (56b), (57c)
 theorem displacement_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "displacement" →
     ∃ ms ∈ modifiers? e, ((∃ m, ms = [m] ∧ Displaced m) ↔ e.judgment = .acceptable) := by
   decide

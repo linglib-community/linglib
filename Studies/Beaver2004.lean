@@ -23,15 +23,6 @@ in general. Because COT constraints are rerankable, demoting PRO-TOP below
 FAM-DEF (§4.1) recovers the coreferential reading of (2c) that BFP wrongly
 filters out.
 
-## Main statements
-
-* `cot_iff_bfp`: table (19) — for candidates tied on the four higher-ranked
-  constraints, the COT profile comparison is the BFP transition preference.
-* `d2_canonical_picks_two_marys`, `d2_demoted_picks_bound`: the §4.1
-  reranking flips (2c) from the two-Marys reading to the coreferential one.
-* `cohere_factors_through_cb`, `align_factors_through_cb_and_cp`: the reused
-  constraints see a candidate only through `cb` (and `cp`).
-
 ## References
 
 * [beaver-2004]: The optimization of discourse anaphora.
@@ -156,15 +147,13 @@ def bfpTransition [DecidableEq E] [LinearOrder R] (prev : Utterance E R Head)
     (priorTopic : Option E) (c : Candidate E R) : ExtendedTransition :=
   .ofTests ((cohere prev priorTopic) c = 0) ((align prev) c = 0)
 
-/-- COHERE and ALIGN are the tests of [brennan-friedman-pollard-1987] when the prior topic is
-defined (p. 17). -/
+-- p. 17 [brennan-friedman-pollard-1987]
 theorem bfpTransition_some [DecidableEq E] [LinearOrder R] {prev : Utterance E R Head} {p x : E}
     {c : Candidate E R} (h : cb prev c.utt = some x) :
     bfpTransition prev (some p) c = .ofCenters (some p) x c.utt.cp := by
   ext <;> simp [bfpTransition, ExtendedTransition.ofCenters, cohere, align, h] <;> exact eq_comm
 
-/-- With no prior topic COHERE fails (p. 17), where the first test of [walker-iida-cote-1994]
-passes. -/
+-- p. 17 [walker-iida-cote-1994]
 theorem bfpTransition_none_cohesion [DecidableEq E] [LinearOrder R] (prev : Utterance E R Head)
     (c : Candidate E R) : (bfpTransition prev none c).cohesion = false := by
   simp [bfpTransition, cohere, Option.isSome_iff_ne_none]
@@ -265,13 +254,11 @@ def d12_profile_l_eq_i : ViolationProfile 6 :=
 def d12_profile_l_eq_j : ViolationProfile 6 :=
   toLex ((cotRanking D12.b D12.priorTopic).get · D12.cand_l_eq_j)
 
-/-- Tableau (13): the her = Jane candidate wins the lexicographic
-comparison. -/
+-- (13)
 theorem d12_lex_picks_l_eq_i :
     d12_profile_l_eq_i < d12_profile_l_eq_j := by decide
 
-/-- The (12c) winner realizes a retain: Jane stays topic but leaves subject
-position. -/
+-- (12c)
 theorem d12_transition_retain :
     bfpTransition D12.b D12.priorTopic D12.cand_l_eq_i = .retain := by decide
 
@@ -329,9 +316,7 @@ theorem d2_demoted_picks_bound :
 
 /-! ### ALIGN and Strube's cheapness -/
 
-/-- ALIGN is satisfied exactly when the topic is defined and is the current
-preferred center — the within-utterance analogue of [strube-1998]'s cheap
-transitions, which test the same shape against the *previous* Cp. -/
+-- [strube-1998]
 theorem align_eq_zero_iff [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R Head) (c : Candidate E R) :
     (align prev) c = 0 ↔

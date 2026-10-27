@@ -27,17 +27,6 @@ distances blind to how frequent a construction is overall, standardizing distanc
 ranking, and the sign of a set of comparisons' mean standardized distance says whether its
 samples are more or less similar than the average pair.
 
-## Main statements
-
-* `Stage.eq_semPlus_of_admits_of_ne`: a construction that mixes ontologies emerges only in the
-  late grammar.
-* `standardizedDistance_const_mul_add_const`: rescaling a construction's frequencies across the
-  samples changes no standardized distance.
-* `standardizedDistance_le_standardizedDistance_iff`: the standardized distances rank the
-  comparisons as the cosine distances do.
-* `sign_integral_standardizedDistance`: the sign of a set of comparisons' mean standardized
-  distance says whether its samples are more or less similar than average.
-
 ## Implementation notes
 
 * Learned syntactic categories are rendered by the part of speech of their exemplars, noun phrase

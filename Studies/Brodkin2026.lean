@@ -27,23 +27,6 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
   SUBCAT (29b), Positional Minimality (26a), PRIORITY (60a), Match(ω, X⁰) (75a) and
   Match(φ, XP) (23b).
 
-## Main results
-
-* `optimal_joined_iff`: whether the head ends its φ follows from the syntax.
-* `optimal_exponent`: the calculus of top-down suppletion (88).
-* `suppletion_not_optimal_without_maxXP`: MAX-XP, which the tableaux of §3–§4 omit, is what keeps
-  a stranded head out of the next word's φ.
-* `rows_optimal`: the grammar inserts the attested allomorph in every example.
-* `optimal_item_eq_of_two_le`: only a monosyllabic unmarked allomorph suppletes.
-* `winner?_eq_some_item_of_mem_optimal`: PRIORITY undominated selects the Subset Principle's
-  winner.
-* `forms_not_function_of_constituency`, `forms_not_function_of_footed`: neither the syntax nor it
-  and the footing of the next syllable determine the attested allomorph, so no rule set reading
-  only these inserts it (`not_realizes_of_constituency`, `not_realizes_of_footed`), nor does the
-  Subset Principle over the heads' neighborhoods (`not_subsetPrinciple_eq_forms`).
-* `forms_not_function_of_cCommanded`: nor do the words a head c-commands in the ditransitive
-  clause (90), against insertion bounded by the c-command domain (92).
-
 ## Implementation notes
 
 * The input is the syntax of the head and the next word: the phrases over the two words, each
@@ -119,7 +102,6 @@ def neighborhood (h : Head) (verbalized : Bool) : Neighborhood (Finset Feature) 
 
 end Head
 
-/-- The pairs of the heads are the top-down suppletion relations of the forms table. -/
 theorem relations_eq : Wordlist.relations.map (fun r ↦ (r.form, r.target)) =
     [.thisInHand, .this, .that, .neg, .what, .which, .who].map fun h : Head ↦ (h.short, h.long) :=
   rfl
@@ -127,7 +109,6 @@ theorem relations_eq : Wordlist.relations.map (fun r ↦ (r.form, r.target)) =
 /-- The syllables of a form of (44), one to each vowel. -/
 def syllables (f : Form Wordlist.Cell) : ℕ := f.segments.countP (· ∈ ["a", "e", "i", "o", "u"])
 
-/-- Each unmarked allomorph is a monosyllable and each marked one longer. -/
 theorem syllables_short_long (h : Head) : syllables h.short = 1 ∧ 2 ≤ syllables h.long := by
   cases h <;> decide
 
@@ -141,7 +122,6 @@ def vocabulary : RuleSet Item :=
     [Head.thisInHand, .this, .that, .neg, .what, .which, .who].flatMap
       fun h ↦ [{Feature.head h} ⟷ h.short, {Feature.head h} ⟷ h.long]
 
-/-- The vocabulary is listed by non-increasing specificity. -/
 theorem vocabulary_pairwise : vocabulary.Pairwise fun i j ↦ j.specificity ≤ i.specificity := by
   decide
 
@@ -397,7 +377,7 @@ theorem optimal_exponent (h : Head) (footed sameMax : Bool) :
   decide +revert +kernel
 
 /-- Without MAX-XP, a suppleted head is optimal under no ranking with PRIORITY active, against
-(76a), (77a) and (78a). -/
+(76a), (77a) and (78a) (§3, §4). -/
 theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
     {Fs : List (Constraint Candidate)}
     (hFs : ∀ F ∈ Fs, F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
@@ -430,7 +410,6 @@ theorem mem_candidates : c ∈ candidates v x ↔
     c.item ∈ v.applicable x.neighborhood ∧ (c.phrasing = .lifted → x.sameMax) := by
   obtain ⟨i, _ | _ | _⟩ := c <;> obtain ⟨n, s, fo, _ | _⟩ := x <;> simp [candidates]
 
-/-- A candidate satisfies PRIORITY exactly when it inserts the first applicable item. -/
 theorem priority_eq_zero_iff (hi : (v.applicable x.neighborhood).head? = some i) :
     priority v x c = 0 ↔ c.item = i := by
   obtain ⟨l, hl⟩ := List.head?_eq_some_iff.1 hi
@@ -475,9 +454,6 @@ private theorem eq_zero_host {a : ℕ} (n : Neighborhood (Finset Feature)) (fo s
 
 end Configurations
 
-/-- In each of the paper's configurations, a head of at least two syllables has a phrasing that
-satisfies MAX-XP, SUBCAT and Positional Minimality: separate φs where the next word heads a phrase
-of its own, one φ where it heads the head's phrase or is a second-position element. -/
 theorem exists_phrasing_eq_zero
     (hs : x.constituency ∈ [Constituency.sisters, .adjunct, .complement, .host])
     (hk : 2 ≤ syllables i.exponent) :
@@ -509,8 +485,8 @@ theorem optimal_item_eq_of_two_le
   exact (priority_eq_zero_iff hi).1 (Nat.le_zero.1
     ((hmin _ (z (z (z hd h₁) h₂) h₃)).trans_eq ((priority_eq_zero_iff hi).2 rfl)))
 
-/-- With PRIORITY undominated and items listed by specificity, every optimal candidate inserts the
-Subset Principle's winner (§5, after [bonet-lloret-mascaro-2007]). -/
+-- §5 [bonet-lloret-mascaro-2007]
+/-- PRIORITY undominated selects the Subset Principle's winner. -/
 theorem winner?_eq_some_item_of_mem_optimal
     (hv : v.Pairwise fun i j ↦ j.specificity ≤ i.specificity) {Fs : List (Constraint Candidate)}
     (hc : c ∈ (Tableau.ofList (candidates v x) (priority v x :: Fs)).optimal) :
@@ -525,7 +501,6 @@ theorem winner?_eq_some_item_of_mem_optimal
     priority_eq_zero_iff hi] at h0
   rw [hi, h0]
 
-/-- The Mandar vocabulary under PRIORITY undominated inserts the Subset Principle's winner. -/
 theorem winner?_vocabulary_eq_some_item_of_mem_optimal {Fs : List (Constraint Candidate)}
     (hc : c ∈ (Tableau.ofList (candidates vocabulary x) (priority vocabulary x :: Fs)).optimal) :
     winner? vocabulary x.neighborhood = some c.item :=
@@ -653,12 +628,10 @@ def cCommanded? (ex : Datum) : Option (List String) := do
 def ditransitiveRows : List (Row × List String) :=
   Examples.all.filterMap fun ex ↦ do pure (← Row.ofDatum ex, ← cCommanded? ex)
 
-/-- In the ditransitive examples the stranded demonstrative c-commands no overt word: the applied
-argument lies outside its c-command domain. -/
 theorem cCommanded_ditransitiveRows : ∀ x ∈ ditransitiveRows, x.2 = [] := by decide
 
 /-- No function of a head's neighborhood and the words it c-commands gives the attested allomorphs
-((92), §4.3, (78a), (78b)). -/
+((92), §4.3, (78a), (78b)) ((90)). -/
 theorem forms_not_function_of_cCommanded :
     ¬ ∃ f : Neighborhood (Finset Feature) × List String → Form Wordlist.Cell,
       ∀ x ∈ ditransitiveRows, f (x.1.input.neighborhood, x.2) = x.1.form := by

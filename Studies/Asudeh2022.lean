@@ -28,18 +28,6 @@ but two proofs, one per scope reading. Asudeh also takes resource sensitivity to
 LFG's Completeness and Coherence, which the Dutch cross-serial clauses of Bresnan, Kaplan, Peters
 and Zaenen bear out.
 
-## Main statements
-
-* `Term.Linear.rename_perm`, `Term.not_linear_weaken`, `Term.Linear.not_linear_contract`:
-  reordering premises keeps a proof linear, while weakening and contraction never do.
-* `Term.Linear.count_eq`, `derivable_iff_complete_coherent`: linear proofs preserve the count
-  of every atom, and a Dutch clause's premises have a proof exactly when its f-structure is
-  complete and coherent.
-* `finnish_english`: the Finnish and English sentences instantiate the same premises.
-* `card_correct_loves`, `surface_eval`, `inverse_eval`, `interp_qr_eq_eval`: *Everybody loves
-  somebody* has exactly two correct proof nets, and its two proofs mean its surface and inverse
-  readings, which Heim and Kratzer derive from two Quantifier Raising trees.
-
 ## Implementation notes
 
 * Proofs are intrinsically typed λ-terms over a list of premises; the structural rules rename
@@ -413,7 +401,6 @@ theorem Term.Linear.count_eq (x : α) {T : GlueTy α} {t : Term Γ T} (ht : t.Li
   refine List.ext_getElem (by simp) fun i _ h ↦ ?_
   simp [countAt, List.getElem?_eq_getElem (by simpa using h : i < Γ.length)]
 
-/-- A formula derivable from a multiset has the multiset's total count of every atom. -/
 theorem Derivable.count_eq {M : Multiset (GlueTy α)} {C : GlueTy α} (h : Derivable M C)
     (x : α) : C.count x = (M.map (GlueTy.count x)).sum := by
   obtain ⟨Γ, rfl, t, ht⟩ := h
@@ -753,7 +740,6 @@ def Linking.equivLabel (L : S.Linking) (x : α) :
   left_inv v := by simp
   right_inv v := by simp
 
-/-- A sequent with a linking has a conclusion with its premises' total count of every atom. -/
 theorem Linking.count_eq {Γ : List (GlueTy α)} {C : GlueTy α} (L : (Sequent.of Γ C).Linking)
     (x : α) : C.count x = (Γ.map (GlueTy.count x)).sum := by
   have h := Fintype.card_congr (L.equivLabel x)

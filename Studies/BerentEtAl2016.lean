@@ -35,18 +35,6 @@ predictions hold under both rankings.
   morphologically and by reduplication, and the two transfer conditions on a morphological
   parse of doubling.
 
-## Main results
-
-* `Parse.surface_reduplicated`: the two parses of doubling share a surface form.
-* `optimal_phonology`, `optimal_morphology`: the control wins at the phonological level and
-  the reduplicative parse at the morphological level, under every ranking.
-* `SpokenLanguage.licenses_iff`: a language licenses a meaning when it reduplicates for it,
-  or reduplicates for nothing and marks it otherwise.
-* `exists_optimal_surface_iff`: doubling is preferred exactly for the licensed meanings.
-* `english_licenses_iff`, `hebrew_licenses_iff`, `licenses_not_monotone`: English licenses
-  the plural alone and Hebrew the diminutive alone, although Hebrew morphology extends
-  English morphology on both dimensions.
-
 ## Implementation notes
 
 The control XY is a single morpheme at both levels, and DEP counts the constituents of a
@@ -214,6 +202,8 @@ def Licenses (l : SpokenLanguage M) (f : M) : Prop :=
 instance [DecidableEq M] : DecidablePred l.Licenses :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
+/-- A language licenses a meaning when it reduplicates for it, or reduplicates for nothing and marks
+it otherwise. -/
 theorem licenses_iff :
     l.Licenses f ↔ f ∈ l.reduplicated ∨ l.reduplicated = ∅ ∧ f ∈ l.marked := by
   rw [Licenses, Finset.nonempty_iff_ne_empty]
@@ -264,6 +254,8 @@ def english : SpokenLanguage Meaning := ⟨{.plural}, ∅, Finset.empty_subset _
 by reduplication (*kelev* 'dog', *klavlav* 'puppy'), which never marks plurality. -/
 def hebrew : SpokenLanguage Meaning := ⟨{.plural, .diminutive}, {.diminutive}, by decide⟩
 
+/-- English licenses the plural alone and Hebrew the diminutive alone, although Hebrew morphology
+extends English morphology on both dimensions. -/
 theorem english_licenses_iff {f : Meaning} : english.Licenses f ↔ f = .plural := by
   simp [SpokenLanguage.licenses_iff_of_eq_empty, english]
 
@@ -278,9 +270,6 @@ theorem licenses_not_monotone :
       english.Licenses .plural ∧ ¬ hebrew.Licenses .plural := by
   decide
 
-/-- In the Language × Meaning interaction of experiments 6a and 10a–12a, English speakers
-prefer doubled plurals and Hebrew speakers doubled diminutives, under either ranking and
-for any constituents. -/
 theorem doubling_dissociation (f : Meaning) (h : x ≠ y) (r : Ranking (Fin 2) 2) :
     ((∃ p ∈ (tableau x y (english.level f) r).optimal, p.surface = [x, x]) ↔ f = .plural) ∧
       ((∃ p ∈ (tableau x y (hebrew.level f) r).optimal, p.surface = [x, x]) ↔

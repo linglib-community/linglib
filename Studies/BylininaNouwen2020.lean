@@ -35,14 +35,6 @@ Bylinina and Nouwen (2018): Kennedy's *zero A B* is *no A B* and licenses the ne
 items that *zero* does not, while with `MAX` apart from the numeral *zero* is a tautology below
 `MAX` and *no* above it, and licenses none.
 
-## Main results
-
-* `exhAgainst_poss_iff_highScope`: the exhaustified possibility reading of Spector is
-  Kennedy's (46).
-* `lowScope_some_not_highScope`: over *some students* the high reading (39) is strictly stronger.
-* `MAX_individual_iff_exhAgainst`: `MAX` of the lifted number is exhaustification at its site.
-* `not_licenses_zeroWithMAX`: with `MAX`, *zero* licenses no negative polarity item.
-
 ## Implementation notes
 
 * Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate
@@ -91,12 +83,11 @@ theorem mem_MANY {d : ℕ} {x : Finset α} : x ∈ MANY d ↔ x.card = d := Iff.
 /-- `CARD P` is the number of atoms every plurality in `P` has, `ιd. ∀x[P(x) → #x = d]` ((24)). -/
 noncomputable def CARD (P : Set (Finset α)) : Option ℕ := iota fun d ↦ ∀ x ∈ P, x.card = d
 
-/-- `CARD` recovers the number a modifier meaning counts ((25)), given a plurality of that size. -/
+-- (25)
 theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (α := α) n) = some n :=
   (iota_eq_some_iff _).2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
 
-/-- Numbers as classes of equinumerous pluralities ((17)) are faithful exactly when there are
-pluralities of every size. -/
+-- (17)
 theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite α := by
   refine ⟨fun h ↦ not_finite_iff_infinite.1 fun _ ↦ ?_, fun _ ↦ ?_⟩
   · have := Fintype.ofFinite α
@@ -124,7 +115,7 @@ theorem exhAgainst_poss_iff_highScope {W : Type*} {R : W → Prop} {count : W �
   simp only [Spector2013.poss, exists_mem_image, Comparison.interval_ge, mem_Ici, mem_ofPred_eq]
   exact exhAgainst_iff_highScope (Q := GQ.some R) (P := Iic ∘ count)
 
-/-- The exactly reading under the possibility modal, (36-a), is Kennedy's numeral in situ. -/
+-- (36-a)
 theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
     Spector2013.poss (count '' {w | R w}) (Comparison.eq.interval n) ↔
       LowScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
@@ -145,7 +136,7 @@ end Scope
 `BE` and `IOTA` take Kennedy's quantifier to the number as they take the lift of an entity to the
 entity ((48)–(50)), and send it where they send the lower-bound quantifier. -/
 
-/-- `BE` lowers the exactly-reading quantifier to the singleton of its number ((49)). -/
+-- (49)
 theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n :=
   funext fun x ↦ propext (maxIn_singleton.trans
     ⟨fun h ↦ (h.1 : n = x).symm, fun h ↦ h ▸ isGreatest_singleton⟩)
@@ -153,7 +144,7 @@ theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n :=
 theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (individual n) := by
   rw [BE_maxIn_singleton, BE_individual]
 
-/-- `IOTA(BE(twelve)) = 12` ((50)), as `IOTA(BE(λP.P(Mary))) = Mary` ((48)). -/
+-- (50), (48)
 theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (MaxIn {n})) = some n := by
   rw [BE_maxIn_singleton_eq_BE_individual]; exact Partee1987.iota_BE_lift n
 
@@ -170,8 +161,7 @@ The empty slot in the type landscape is a lower-bound degree quantifier, the Mon
 `λD λP. max(P) ∈ ∩D` ((53)). -/
 def MAX (D : Set (Set ℕ)) : Set ℕ → Prop := MaxIn (⋂₀ D)
 
-/-- `MAX` takes the lower-bound quantifier to Kennedy's ((54)), since the properties containing
-`n` intersect to `{n}`. -/
+-- (54)
 theorem MAX_individual (n : ℕ) : MAX (individual n) = MaxIn {n} :=
   congrArg MaxIn (sInter_individual n)
 
@@ -181,13 +171,11 @@ theorem MAX_individual_iff_exhAgainst {n : ℕ} {P : Set ℕ} :
     MAX (individual n) P ↔ exhAgainst (· < ·) (individual · P) n := by
   rw [MAX_individual]; exact maxIn_singleton_iff_exhAgainst
 
-/-- The exactly-reading quantifier is strictly stronger than the lower-bound one, so `MAX` does
-work: `{n, n + 1}` contains `n` without `n` being its greatest element. -/
 theorem maxIn_singleton_lt_individual (n : ℕ) : MaxIn {n} < (individual n : Set ℕ → Prop) :=
   lt_of_le_not_ge (fun _ h ↦ (maxIn_singleton.1 h).1) fun h ↦
     absurd ((maxIn_singleton.1 (h {n, n + 1} (Or.inl rfl))).2 (Or.inr rfl)) (by omega)
 
-/-- `MAX` of the lower-bound *zero A B* is Kennedy's *zero A B*, which is *no A B* ((51)). -/
+-- (51)
 theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :
     MAX (individual 0) (countDegrees A (plural B)) ↔ GQ.no A B := by
   rw [MAX_individual]; exact maxIn_zero_countDegrees_iff

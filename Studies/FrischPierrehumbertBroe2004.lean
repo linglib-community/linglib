@@ -38,13 +38,6 @@ five models of OCP-Place to the O/E of every pair (Table V), is printed data in
   feature.
 * `similarity`: the similarity of two consonants of the Arabic fragment, equation (7).
 
-## Main results
-
-* `similarities_rounds`: the matrix and the equation give every value of Table III.
-* `similarity_self`, `similarity_eq_zero`: identical consonants have similarity 1, and
-  nonhomorganic ones 0.
-* `expandedSimilarity_f_m`: the expanded labial inventory lowers the similarity of /f, m/.
-
 ## Implementation notes
 
 * A class is a set of columns of the matrix held as the bits of a natural number (`Mask`), so
@@ -413,7 +406,7 @@ def expandedLabials : Feature → List (Option Bool)
   | .voice => [⊖, ⊕, ⊖, ⊕, ⊕, ⊕]
   | _ => [○, ○, ○, ○, ○, ○]
 
-/-- Without /p/ and /v/ the expanded columns are the labial columns of (8). -/
+-- (8)
 theorem expandedLabials_restrict : ∀ g ∈ Feature.all,
     [1, 2, 4, 5].map ((expandedLabials g).getD · ○) =
       [col b, col f, col m, col w].map ((matrix g).getD · ○) := by

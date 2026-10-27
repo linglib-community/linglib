@@ -234,20 +234,18 @@ theorem targetRestricted_prefixClosed {α : Type*} (s : α) (d : ℕ) :
     PrefixClosed (RuleSystem.targetRestricted s d) :=
   fun _ _ _ _ hβ h ↦ ⟨hβ.length_le.trans h.1, h.2⟩
 
-/-- `G₁` is prefix-closed (Example 6). -/
+-- Example 6
 theorem exampleGrammar_prefixClosed : PrefixClosed exampleGrammar.rules :=
   targetRestricted_prefixClosed _ _
 
-/-- `G₁` is not without target restrictions (Example 8), since application of `S/C` to `C`
-is permitted but application of `B/C` to `C` is not. -/
+-- Example 8
 theorem exampleGrammar_not_withoutTargetRestrictions :
     ¬ WithoutTargetRestrictions exampleGrammar.rules :=
   fun h ↦ absurd (h Scat Bcat ⟨.right, .dot, Ccat⟩ [] ⟨Nat.zero_le _, rfl⟩).2 (by decide)
 
 /-! ### Generative-capacity result -/
 
-/-- `G₁` generates every nonempty word of `aⁿbⁿcⁿ` ([kuhlmann-koller-satta-2015], Example 2),
-the completeness half of the example. -/
+-- Example 2 [kuhlmann-koller-satta-2015]
 theorem anbncn_sub_one_subset_language :
     Language.anbncn Letter.a .b .c - 1 ≤ exampleGrammar.language := by
   rintro _ ⟨⟨n, rfl⟩, hn⟩

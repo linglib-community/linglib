@@ -96,8 +96,7 @@ def russian : List Series :=
 
 /-! ### Syncretism and its absence -/
 
-/-- The paradigms' coverage of the map gives the syncretism patterns of Table 1, English AAA,
-Yakut ABB and Latin AAB. -/
+-- Table 1
 theorem map_syncretism :
     Setoid.ker (pattern english) = Setoid.ker Paradigm.aaa ∧
       Setoid.ker (pattern yakut) = Setoid.ker Paradigm.abb ∧
@@ -112,24 +111,22 @@ theorem russian_elsewhere :
 
 theorem kannada_gap : pattern kannada 2 = none := by decide
 
-/-- The lexicon read off each paradigm reproduces it by spellout, for English (59), Yakut (67),
-Latin (70) and Kannada. -/
+-- (59), (67), (70)
 theorem spellout_lexicon :
     ∀ p ∈ [english, yakut, latin, kannada], spellout (lexicon p) = pattern p := by
   decide
 
-/-- Under the Elsewhere Principle spellout is contiguous, so ABA is ruled out (48). -/
+-- (48)
 theorem not_aba {v : RuleSet (SupersetRule 3 String)} (hv : v.Antihomophonous)
     (h : spellout v 0 = spellout v 2) : spellout v 0 = spellout v 1 :=
   isContiguous_spellout hv (by decide) (by decide) h
 
-/-- A paradigm gap sits above every filled layer (§6.3). -/
+-- §6.3
 theorem ne_none_of_le {v : RuleSet (SupersetRule 3 String)} {g g' : Fin 3} (h : g ≤ g')
     (hg' : spellout v g' ≠ none) : spellout v g ≠ none :=
   fun hg ↦ hg' (spellout_eq_none_of_le hg h)
 
-/-- With the interrogative as a lower layer ((78), (79)), Mandarin *shénme* spells out the
-interrogative and non-specific layers and Dutch *wat* all four. -/
+-- (78), (79)
 theorem interrogative_subset :
     spellout [(⟨"shénme", 1⟩ : SupersetRule 4 String)] =
         ![some "shénme", some "shénme", none, none] ∧
@@ -142,11 +139,11 @@ theorem interrogative_subset :
 def rowPattern (e : Datum) : Paradigm 3 (Option String) :=
   ![e.feature? "nonSpecific", e.feature? "specificUnknown", e.feature? "specificKnown"]
 
-/-- Every paradigm of the sample in Table 7 is contiguous, so none is ABA. -/
+-- Table 7
 theorem rows_contiguous : ∀ e ∈ Examples.all, IsContiguous (rowPattern e) := by
   decide
 
-/-- Every gap of the sample in Table 6 sits above the filled layers. -/
+-- Table 6
 theorem rows_gap_above : ∀ e ∈ Examples.all, ∀ g g' : Fin 3, g ≤ g' →
     rowPattern e g' ≠ none → rowPattern e g ≠ none := by
   decide

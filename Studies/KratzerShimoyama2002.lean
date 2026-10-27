@@ -96,16 +96,14 @@ theorem opExists_singleton (p : W → Prop) : opExists {p} = {p} := by simp [opE
 
 theorem opForall_singleton (p : W → Prop) : opForall {p} = {p} := by simp [opForall]
 
-/-- Alternatives are caught by the nearest operator (4), so a higher operator applied after closure
-changes nothing. -/
+-- (4)
 theorem opForall_opExists (A : Set (W → Prop)) : opForall (opExists A) = opExists A :=
   opForall_singleton _
 
 theorem opExists_opForall (A : Set (W → Prop)) : opExists (opForall A) = opForall A :=
   opExists_singleton _
 
-/-- Existential closure over the propositions a predicate yields from a set of individuals is
-ordinary existential quantification (§2). -/
+-- §2
 theorem opExists_image (P : E → W → Prop) (A : Set E) :
     opExists (P '' A) = {fun w ↦ ∃ x ∈ A, P x w} := by
   simp [opExists]
@@ -204,7 +202,7 @@ theorem kann_singleton (R : SetRel W W) (p : W → Prop) : kann R {p} = {◇[R] 
 theorem muss_singleton (R : SetRel W W) (p : W → Prop) : muss R {p} = {□[R] p} := by
   simp [muss]
 
-/-- *muss* does not entail the distribution requirement (§6). -/
+-- §6
 theorem not_distribution_of_muss :
     ∃ (R : SetRel Bool Bool) (A : Set (Bool → Prop)) (w : Bool),
       (∀ q ∈ muss R A, q w) ∧ ¬ distribution R A w :=
@@ -240,7 +238,7 @@ theorem kann_pair : (∀ q ∈ kann R {A, B}, q w) ↔ ◇[R] (fun w ↦ A w ∨
 theorem muss_pair : (∀ q ∈ muss R {A, B}, q w) ↔ □[R] (fun w ↦ A w ∨ B w) w := by
   simp [muss, Box]
 
-/-- In (16) the truth-conditional content with the implicature yields free choice. -/
+-- (16)
 theorem total_kann (hT : ◇[R] (fun w ↦ A w ∨ B w) w) (hI : ◇[R] A w ↔ ◇[R] B w) :
     ◇[R] A w ∧ ◇[R] B w := by
   obtain ⟨w', hw', h⟩ := hT
@@ -248,7 +246,7 @@ theorem total_kann (hT : ◇[R] (fun w ↦ A w ∨ B w) w) (hI : ◇[R] A w ↔ 
   · exact ⟨⟨w', hw', h⟩, hI.mp ⟨w', hw', h⟩⟩
   · exact ⟨hI.mpr ⟨w', hw', h⟩, ⟨w', hw', h⟩⟩
 
-/-- In (17) the total meaning implies both possibilities once some world is accessible. -/
+-- (17)
 theorem total_muss (hT : □[R] (fun w ↦ A w ∨ B w) w) (hI : □[R] A w ↔ □[R] B w)
     (hser : ∃ w', w ~[R] w') : ◇[R] A w ∧ ◇[R] B w := by
   obtain ⟨w₀, hw₀⟩ := hser
@@ -260,8 +258,7 @@ theorem total_muss (hT : □[R] (fun w ↦ A w ∨ B w) w) (hI : □[R] A w ↔ 
     obtain ⟨wb, hwb, hb⟩ := hB
     exact ⟨⟨wb, hwb, (hT wb hwb).resolve_right hb⟩, ⟨wa, hwa, (hT wa hwa).resolve_left ha⟩⟩
 
-/-- In (18), under negated possibility, every reason for widening is already entailed, so no
-strengthening is available. -/
+-- (18)
 theorem total_neg_kann (hT : ¬ ◇[R] (fun w ↦ A w ∨ B w) w) : ¬ ◇[R] A w ∧ ¬ ◇[R] B w :=
   ⟨fun ⟨w', hw', h⟩ ↦ hT ⟨w', hw', Or.inl h⟩, fun ⟨w', hw', h⟩ ↦ hT ⟨w', hw', Or.inr h⟩⟩
 
@@ -270,8 +267,7 @@ end FreeChoice
 /-! ### Selectivity and intervention (§9) -/
 
 open scoped Denotes in
-/-- Japanese indeterminates do not change shape (§9). *Dare-ka* and *dare-mo* share their
-indeterminate and differ in their readings, which their particles' coordinations supply. -/
+-- §9
 theorem japanese_same_base.{u} :
     Japanese.Determiners.dareKa.indeterminate = Japanese.Determiners.dareMo.indeterminate ∧
       (⟦Japanese.Determiners.dareKa⟧ : Set Quantifier.GQ.Family.{u}) ≠
@@ -280,8 +276,7 @@ theorem japanese_same_base.{u} :
   rw [Japanese.Determiners.denote_dareKa, Japanese.Determiners.denote_dareMo]
   exact fun h ↦ Quantifier.GQ.Family.some_ne_every (Set.singleton_eq_singleton_iff.1 h)
 
-/-- The Latvian series serve pairwise disjoint functions on [haspelmath-1997]'s map, so they are
-selective (§1, §9). -/
+-- §1, §9 [haspelmath-1997]
 theorem latvian_selective :
     Haspelmath1997.latvian.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
@@ -290,8 +285,7 @@ theorem japanese_series_disjoint :
     Haspelmath1997.japanese.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
-/-- In (23) and (24), a multiple question with an in-situ wh-phrase is ungrammatical iff an operator
-with an interpretable feature intervenes. -/
+-- (23), (24)
 theorem rows_beck :
     ∀ r ∈ Examples.all, (r.feature? "order").isSome →
       (r.judgment = .ungrammatical ↔

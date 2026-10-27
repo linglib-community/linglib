@@ -28,15 +28,6 @@ paper's readings, such as the exclusion of *de* by verbs of change.
 * `deAgentive`: *de* in a passive.
 * `Construal`: the agent's relation to the event, ordered by proto-agentivity.
 
-## Main results
-
-* `parCausal_net_of_deCausal`: a cause *de* names is, through its net force, one *par* names.
-* `voicePass_eventIdentification`: passive Voice's closure is redundant under a by-phrase.
-* `change_verbs_exclude_de`: verbs of change exclude *de*.
-* `psych_verbs_allow_both`: psych verbs allow both prepositions.
-* `dependsOnProximate_of_dependsOnDistal`: an effect depends on a distal cause only where it
-  depends on the proximate one.
-
 ## Implementation notes
 
 The paper gives no threshold between high and low proto-agentivity and reports an informal
@@ -199,13 +190,11 @@ instance : PartialOrder Construal where
 
 instance : DecidableLT Construal := decidableLTOfDecidableLE
 
-/-- By (34a), a construal bringing about a change is more proto-agentive than any that does
-not, whatever their volitionality and telicity. -/
+-- (34a)
 theorem lt_of_change : ∀ c d : Construal, c.change = false → d.change = true → c < d := by
   decide
 
-/-- By (34b), among construals that bring about no change, proto-agentivity is volitionality
-and telicity. -/
+-- (34b)
 theorem le_iff_of_not_change :
     ∀ c d : Construal, c.change = false → d.change = false →
       (c ≤ d ↔ (c.volition = true → d.volition = true) ∧ (c.telic = true → d.telic = true)) := by
@@ -251,23 +240,23 @@ theorem psych_verbs_allow_both :
 /-- The two senses of *suivre* are goal-directed following and the positional relation. -/
 def suivreSenses : List Verb := [suivreDyn, suivreStat]
 
-/-- *Par* selects the volitional sense of *suivre* (25b). -/
+-- (25b)
 theorem par_suivre : ParSelects suivreSenses suivreDyn ∧ ¬ ParSelects suivreSenses suivreStat := by
   decide
 
-/-- *De* selects the positional sense of *suivre* (26a). -/
+-- (26a)
 theorem de_suivre : DeSelects suivreSenses suivreStat ∧ ¬ DeSelects suivreSenses suivreDyn := by
   decide
 
 /-- The two senses of *abandonner* are the telic abandoning and the stative neglect. -/
 def abandonnerSenses : List Verb := [abandonner, abandonnerStat]
 
-/-- *Par* selects the telic sense of *abandonner* (31a). -/
+-- (31a)
 theorem par_abandonner :
     ParSelects abandonnerSenses abandonner ∧ ¬ ParSelects abandonnerSenses abandonnerStat := by
   decide
 
-/-- *De* selects the atelic sense of *abandonner* (31b). -/
+-- (31b)
 theorem de_abandonner :
     DeSelects abandonnerSenses abandonnerStat ∧ ¬ DeSelects abandonnerSenses abandonner := by
   decide

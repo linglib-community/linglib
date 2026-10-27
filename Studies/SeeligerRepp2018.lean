@@ -213,8 +213,7 @@ def MarkingRow.ofDatum (ex : Datum) : Option MarkingRow := do
 /-- The Swedish examples (7c), (8c), (8c′), (23) and (24). -/
 def markingRows : List MarkingRow := Examples.all.filterMap MarkingRow.ofDatum
 
-/-- The rows cover the three Swedish rejecting questions of (7) and (8) and the eight of (23)
-and (24). -/
+-- (7), (8), (23), (24)
 theorem markingRows_length : markingRows.length = 11 := by decide
 
 theorem marking_iff :

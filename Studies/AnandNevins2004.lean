@@ -21,17 +21,6 @@ operator that overwrites coordinates of the context with those of the index (2).
 * `readings e χ c j`: the values of `χ` under a verb with operator options `e` (39).
 * `Bound`: the binding account (19) with the constraint (22), on the context tower.
 
-## Main results
-
-* `shiftyOp_opAll_iff_holdsAt`: `OP∀` is Stalnaker's diagonal (fn. 7).
-* `isMonster_shiftyOp_of_agent_mem`, `not_isMonster_say`: the operators are monsters, the verbs not.
-* `readings_vano_prod`, `rows_mixed`: Shift-Together (16).
-* `say_shiftyOp_opAll_iff_say`: on a single report `OP∀` under *say* is Schlenker's quantification
-  over contexts (§3.4).
-* `localDepth_ne_zero`: after a shift in the intermediate report the lowest clause cannot read the
-  utterance context (32), which Schlenker's binding account allows (`say_say_bound_origin`).
-* `rows_reported`, `rows_utterance`, `rows_double_report`: the rows' judgments.
-
 ## Implementation notes
 
 Meanings are `Kaplan.Character`s whose index is a `Kaplan.Context`, and an operator is the set of
@@ -87,14 +76,12 @@ theorem shiftyOp_opAll_iff_holdsAt (χ : Character (Context W E P T) (Context W 
     (c i : Context W E P T) : shiftyOp opAll χ c i ↔ χ.HoldsAt id i := by
   simp [Character.HoldsAt]
 
-/-- (26)–(28): with `OP∀` as sister, *say* evaluates its complement at the reported contexts
-alone, so every indexical in it shifts. -/
+-- (26), (28)
 theorem say_shiftyOp_opAll (χ : Character (Context W E P T) (Context W E P T) Prop)
     (c i : Context W E P T) : say acc x (shiftyOp opAll χ) c i ↔ ∀ j ∈ acc x i, χ j j := by
   simp [say]
 
-/-- Within the scope of `OP∀` the utterance context is lost (§3.4): the operator's output does
-not depend on it. -/
+-- §3.4
 theorem shiftyOp_opAll_eq (χ : Character (Context W E P T) (Context W E P T) α)
     (c c' : Context W E P T) : shiftyOp opAll χ c = shiftyOp opAll χ c' := by
   ext; simp
@@ -104,7 +91,6 @@ comes from the operators, not the verbs. -/
 theorem not_isMonster_say : ¬ IsMonster (say acc x) :=
   fun h ↦ h ⟨fun _ f i ↦ ∀ j ∈ acc x i, f j, fun _ _ ↦ rfl⟩
 
-/-- Without an operator the context stays put. -/
 theorem not_isMonster_shiftyOp_empty :
     ¬ IsMonster (shiftyOp ∅ : Character (Context W E P T) (Context W E P T) α → _) :=
   fun h ↦ h ⟨fun _ f ↦ f, fun _ _ ↦ by ext; simp⟩
@@ -131,7 +117,7 @@ def you : Character (Context W E P T) (Context W E P T) E := Character.dthat Con
 attitude holder's counterpart, so they are read de se. -/
 def proSubj : Character (Context W E P T) (Context W E P T) E := fun _ i ↦ i.agent
 
-/-- A first person under `OP∀` is subject PRO: shifted, it is read de se (§5.1). -/
+-- §5.1
 theorem shiftyOp_opAll_I : shiftyOp opAll (I : Character (Context W E P T) _ E) = proSubj := by
   ext; simp [I, proSubj]
 
@@ -166,13 +152,12 @@ theorem readings_vano_prod (f : Context W E P T → α) (g : Context W E P T →
     readings vano (fun c _ ↦ (f c, g c)) c j = {(f c, g c), (f j, g j)} := by
   simp [readings, vano, Set.image_insert_eq]
 
-/-- (17), (38b): under Slave SAY the first person is the reported author and the second the
-utterance addressee, obligatorily. -/
+-- (17), (38b)
 theorem readings_slaveSay :
     readings slaveSay (fun c i ↦ (I c i, you c i)) c j = {(j.agent, c.addressee)} := by
   simp [readings, slaveSay, I, you]
 
-/-- (37), (38a): under Slave WANT the first person shifts optionally and the second never. -/
+-- (37), (38a)
 theorem readings_slaveWant :
     readings slaveWant (fun c i ↦ (I c i, you c i)) c j =
       {(c.agent, c.addressee), (j.agent, c.addressee)} := by
@@ -182,17 +167,13 @@ theorem readings_slaveWant :
 
 variable (j₁ j₂ : Context W E P T) (S₁ S₂ : Finset Coord)
 
-/-- Under two stacked reports, the lowest complement is evaluated at the utterance context
-overwritten first by the intermediate and then by the lowest operator (31). -/
+-- (31)
 theorem say_shiftyOp_say_shiftyOp (acc' : E → Context W E P T → Set (Context W E P T)) (y : E)
     (χ : Character (Context W E P T) (Context W E P T) Prop) (i : Context W E P T) :
     say acc x (shiftyOp S₁ (say acc' y (shiftyOp S₂ χ))) c i ↔
       ∀ j₁ ∈ acc x i, ∀ j₂ ∈ acc' y j₁, χ (overwrite S₂ (overwrite S₁ c j₁) j₂) j₂ := by
   simp [say]
 
-/-- The operator account reads the tower of reports at the depth its operators fix: after reports
-with operators and reported contexts `ops`, an expression reading only the coordinate `k` reads the
-tower's context at `localDepth`, where the binding account (`Bound`) may read any depth. -/
 theorem apply_foldl_overwrite_eq_contextAt {f : Context W E P T → α} {k : Coord}
     (hf : DependsOn (f ∘ equivPi.symm) {k}) (c : Context W E P T)
     (ops : List (Finset Coord × Context W E P T)) :
@@ -218,12 +199,12 @@ the context at some depth of the tower, and `f` takes the value `a` there. -/
 def Bound (t : ContextTower (Context W E P T)) (f : Context W E P T → α) (a : α) : Prop :=
   ∃ k ≤ t.depth, (AccessPattern.mk (.relative k) f).resolve t = a
 
-/-- On the binding account a clause can always read the utterance context, contrary to (32). -/
+-- (32)
 theorem bound_origin (t : ContextTower (Context W E P T)) (f : Context W E P T → α) :
     Bound t f (f t.origin) :=
   ⟨0, Nat.zero_le _, by simp [AccessPattern.resolve]⟩
 
-/-- Schlenker's English *I* and Amharic *I* are both bound readings of the first person (19). -/
+-- (19)
 theorem bound_I_amharicI (t : ContextTower (Context W E P T)) :
     Bound t Context.agent (Kaplan.I.resolve t) ∧
       Bound t Context.agent (Schlenker2003.amharicI.resolve t) :=

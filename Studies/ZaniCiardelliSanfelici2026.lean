@@ -80,8 +80,7 @@ private theorem exists_mem_minimals_le {S : Set W} {x : W} (hx : x ∈ S) :
     ∃ b ∈ (ord w).minimals S, (ord w).le b x :=
   Preorder.exists_le_mem_minimals (let := ord w; wellFounded_lt) hx
 
-/-- In case 2 of §2, when `A` is more realistic than `B`, the closest worlds of the disjunction
-are the closest `A`-worlds. -/
+-- §2
 theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
     (h : MoreRealistic ord A B w) : (ord w).minimals (A ∪ B) = (ord w).minimals A := by
   let := ord w
@@ -97,8 +96,7 @@ theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
     · obtain ⟨b, hb, hbu⟩ := exists_mem_minimals_le hu
       exact (hAB x ((Preorder.mem_minimals_iff_forall_le (htot w)).2 ⟨hx, hle⟩) b hb).le.trans hbu
 
-/-- When neither disjunct is more realistic, the closest worlds of the disjunction are those of the
-disjuncts together (case 1 of §2). -/
+-- §2
 theorem minimals_union_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
     (hAB : ¬ MoreRealistic ord A B w) (hBA : ¬ MoreRealistic ord B A w) :
     (ord w).minimals (A ∪ B) = (ord w).minimals A ∪ (ord w).minimals B := by
@@ -290,8 +288,7 @@ theorem closeness_item :
       .hare ∉ closestImp equal {.hare}ᶜ {.squirrel} := by
   decide
 
-/-- Accepting the closeness evaluation item makes the squirrel the more realistic winner,
-which is what licenses the asymmetric pattern of Table 3. -/
+-- Table 3
 theorem squirrel_moreRealistic : MoreRealistic nonEqual {.squirrel} {.tortoise} .hare := by
   simpa using moreRealistic_of_closeness nonEqual_total (H := {.hare}) (S := {.squirrel})
     (T := {.tortoise}) (by simpa using closeness_item.1) ⟨.squirrel, by simp⟩ (by decide)

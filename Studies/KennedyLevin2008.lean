@@ -86,21 +86,17 @@ def measureOfChange (m : α → T → δ) (x : α) (i : T) : T → Ici (m x i) :
 
 variable (m : α → T → δ) (x : α) (i : T)
 
-/-- Interpretive Economy admits the minimum standard on a measure of change, the maximum iff the
-adjective's scale has a greatest degree, and never the contextual one (§7.3.3). -/
+-- §7.3.3
 theorem admits_iff {s : PositiveStandard} :
     (Boundedness.ofOrder (Ici (m x i))).Admits s ↔
       s = .minEndpoint ∨ s = .maxEndpoint ∧ (Boundedness.ofOrder δ).HasMax := by
   rw [Boundedness.ofOrder_Ici, Boundedness.admits_withMin_iff]
 
-/-- Without a greatest degree only the minimum standard is admitted, so *widen* has no telic
-reading and does not mean *become wide* ((6)). -/
+-- (6)
 theorem admits_iff_of_noMaxOrder [NoMaxOrder δ] {s : PositiveStandard} :
     (Boundedness.ofOrder (Ici (m x i))).Admits s ↔ s = .minEndpoint := by
   simp [admits_iff]
 
-/-- The preferred standard on the scale of a measure of change is the maximum when the
-adjective's scale has one, and the minimum otherwise. -/
 theorem defaultStandard_eq :
     (Boundedness.ofOrder (Ici (m x i))).defaultStandard =
       if (Boundedness.ofOrder δ).HasMax then .maxEndpoint else .minEndpoint := by
@@ -114,22 +110,19 @@ section Readings
 
 variable {α δ T : Type*} [LinearOrder δ] {m : α → T → δ} {x : α} {i f : T}
 
-/-- The minimum-standard reading of a degree achievement (27) is the comparative with the degree
-the argument begins with: it holds iff the argument ends with more of the property. -/
+-- (27)
 theorem preimage_measureOfChange_Ioi_bot :
     measureOfChange m x i ⁻¹' Set.Ioi ⊥ = m x ⁻¹' Set.Ioi (m x i) :=
   preimage_projIci_comp_Ioi_bot
 
 variable [OrderTop δ]
 
-/-- Unless the argument begins at the greatest degree, the maximum-standard reading of a degree
-achievement (27) is its adjective's positive form at the end (§7.3.3). -/
+-- (27), §7.3.3
 theorem preimage_measureOfChange_Ici_top (h : m x i ≠ ⊤) :
     measureOfChange m x i ⁻¹' Set.Ici ⊤ = m x ⁻¹' Set.Ici ⊤ :=
   preimage_projIci_comp_Ici_top h
 
-/-- Unless the argument begins with the greatest degree, the telic reading entails the atelic
-one, which is why it is preferred (§7.3.3). -/
+-- §7.3.3
 theorem preimage_measureOfChange_Ici_top_subset (h : m x i ≠ ⊤) :
     measureOfChange m x i ⁻¹' Set.Ici ⊤ ⊆ measureOfChange m x i ⁻¹' Set.Ioi ⊥ :=
   Set.preimage_mono (Set.Ici_subset_Ioi.2 h.lt_top)
@@ -151,9 +144,7 @@ theorem coe_measureOfChange_sub : (measureOfChange m x i f : δ) - m x i = (m x 
   rw [measureOfChange, Function.comp_apply, coe_projIci, max_comm, sup_eq_add_posPart_sub,
     add_sub_cancel_left]
 
-/-- On positive difference values the two accounts agree: a description of
-[hay-kennedy-levin-1999] whose difference values are all positive holds exactly when the amount of
-change is one of them. -/
+-- [hay-kennedy-levin-1999]
 theorem describes_iff_of_subset_Ioi {D : Set δ} (hD : D ⊆ Ioi 0) :
     Describes m x D i f ↔ (measureOfChange m x i f : δ) - m x i ∈ D := by
   rw [describes_iff_sub_mem, coe_measureOfChange_sub]
@@ -169,39 +160,33 @@ theorem describes_interval_iff {c : Comparison} {n : δ} (hc : c.interval n ⊆ 
     Describes m x (c.interval n) i f ↔ c.Rel ((measureOfChange m x i f : δ) - m x i) n := by
   rw [describes_iff_of_subset_Ioi hc, Comparison.mem_interval]
 
-/-- The minimum-standard reading is the reading of [hay-kennedy-levin-1999] with the difference
-value "some amount". -/
+-- [hay-kennedy-levin-1999]
 theorem mem_preimage_Ioi_bot_iff_describes_someAmount :
     f ∈ measureOfChange m x i ⁻¹' Set.Ioi ⊥ ↔ Describes m x someAmount i f := by
   rw [preimage_measureOfChange_Ioi_bot, Set.mem_preimage, Set.mem_Ioi, describes_iff_sub_mem,
     someAmount, Comparison.mem_interval, Comparison.rel_gt, sub_pos]
 
-/-- For positive `n`, the amount of change is at least `n` iff the event is described by the
-difference values of at least `n` ((32)–(33)). -/
+-- (32), (33)
 theorem le_coe_measureOfChange_sub_iff {n : δ} (hn : 0 < n) :
     n ≤ (measureOfChange m x i f : δ) - m x i ↔ Describes m x (Comparison.ge.interval n) i f :=
   (describes_interval_iff (c := .ge) (Ici_subset_Ioi.2 hn)).symm
 
-/-- The measure phrase of [hay-kennedy-levin-1999] fixes the amount of change at exactly its
-degree, comparing by `Comparison.eq` where the measure phrase here compares by `Comparison.ge`. -/
+-- [hay-kennedy-levin-1999]
 theorem describes_measurePhrase_iff {n : δ} (hn : 0 < n) :
     Describes m x (measurePhrase n) i f ↔ (measureOfChange m x i f : δ) - m x i = n :=
   describes_interval_iff (c := .eq) (singleton_subset_iff.2 hn)
 
-/-- The exact difference value that [hay-kennedy-levin-1999] give a measure phrase entails the
-at-least reading. -/
+-- [hay-kennedy-levin-1999]
 theorem le_coe_measureOfChange_sub_of_describes_measurePhrase {n : δ} (hn : 0 < n)
     (h : Describes m x (measurePhrase n) i f) : n ≤ (measureOfChange m x i f : δ) - m x i :=
   ((describes_measurePhrase_iff hn).1 h).ge
 
-/-- Against a maximal degree `top` above the initial degree, the maximum-standard reading, which
-*completely* also gives ((34a)), is the reading of [hay-kennedy-levin-1999] with *completely*. -/
+-- (34a) [hay-kennedy-levin-1999]
 theorem coe_measureOfChange_eq_iff_describes_completely {top : δ} (h : m x i < top) :
     (measureOfChange m x i f : δ) = top ↔ Describes m x (completely top (m x i)) i f := by
   rw [completely, describes_measurePhrase_iff (sub_pos.2 h), sub_left_inj]
 
-/-- *Slightly*, a positive change up to a small degree `s` ((34b)), is the reading of
-[hay-kennedy-levin-1999] with *slightly*. -/
+-- (34b) [hay-kennedy-levin-1999]
 theorem mem_preimage_Ioi_bot_and_le_iff_describes_slightly (s : Ici (m x i)) :
     f ∈ measureOfChange m x i ⁻¹' Set.Ioi ⊥ ∧ measureOfChange m x i f ≤ s ↔
       Describes m x (slightly ((s : δ) - m x i)) i f := by
@@ -215,9 +200,6 @@ end Modifiers
 
 /-! ### The English degree achievements -/
 
-/-- For any measure function into a dimension's degrees, a degree achievement on the dimension
-is by default an accomplishment when the preferred standard on the scale of its measure of
-change is the maximum, and an activity otherwise. -/
 theorem defaultVendlerClass_eq {α T : Type*} (d : ScalarDimension) (m : α → T → d.Scale)
     (x : α) (i : T) :
     d.defaultVendlerClass =
@@ -235,7 +217,6 @@ def daVerbs : List Verb :=
    English.Verbs.lengthen.toVerb, English.Verbs.widen.toVerb,
    English.Verbs.cool.toVerb, English.Verbs.warm.toVerb]
 
-/-- Every degree achievement's Vendler class is the default of its base scale. -/
 theorem da_vendler_classes_agree :
     ∀ v ∈ daVerbs, v.vendlerClass = v.changeScale.map (·.defaultVendlerClass) := by
   decide
@@ -253,20 +234,16 @@ def pairs : List (GradableAdjective × Verb) :=
    (English.Adjectives.cool, English.Verbs.cool.toVerb),
    (English.Adjectives.warm, English.Verbs.warm.toVerb)]
 
-/-- A degree achievement measures on its adjective's scale. -/
 theorem adjective_verb_scales :
     ∀ p ∈ pairs, p.2.changeScale = some p.1.boundedness := by
   decide
 
-/-- A degree achievement takes *in X* exactly when its scale is closed above, and *for X*
-otherwise ((1), (6)). -/
+-- (1), (6)
 theorem inX_iff_hasMax (b : Boundedness) :
     (inXPrediction b.defaultVendlerClass = .accept ↔ b.HasMax) ∧
       (forXPrediction b.defaultVendlerClass = .accept ↔ ¬ b.HasMax) := by
   cases b <;> decide
 
-/-- On the fragment, *bend*, *boil*, *clean*, *dry*, *straighten*, *flatten* and *open* take
-*in X*, and *rust*, *increase*, *lengthen*, *widen*, *cool* and *warm* take *for X*. -/
 theorem diagnostics :
     ∀ v ∈ daVerbs, ∃ b ∈ v.changeScale,
       (v.vendlerClass.map inXPrediction = some .accept ↔ b.HasMax) ∧

@@ -17,15 +17,6 @@ goal. Each of the paper's examples is paired with what the grammar generates: th
 dependent, licensing by T and Voice, English agreement, Setswana subject markers and the conjoint
 verb form.
 
-## Main results
-
-* `Storment2026.ex122_licensed_iff`: only VP movement licenses the theme ((113), (116)).
-* `Storment2026.inversion_smugglesViaVoice`: inversion, like the passive, is voice (121).
-* `Storment2026.search_finds_theme`: depth-first search finds the theme ((118), (119), p. 35).
-* `Storment2026.agreesWith_iff_of_not_defective`: defective circumvention needs a defective
-  goal (59).
-* `Storment2026.acceptable_iff_generated`: the examples, acceptable exactly when generated.
-
 ## Implementation notes
 
 * The quote is outside the derivation (§3.5). A second DP sits in the VP as in (132) when it
@@ -222,7 +213,7 @@ theorem ex122_licensed_iff (a : Analysis) : ex122.Licensed a ↔ a = .vpMovement
   cases a <;> decide +kernel
 
 /-- Quotative inversion smuggles the theme past the agent via VoiceP, as the passive of
-[collins-2005] smuggles its object, and head movement of the verb does not (§4.3). -/
+[collins-2005] smuggles its object, and head movement of the verb does not (§4.3) ((121)). -/
 theorem inversion_smugglesViaVoice :
     SmugglesViaVoice (Collins2005.ex9.passive .partP false) Collins2005.ex9.patient
         Collins2005.ex9.agent ∧

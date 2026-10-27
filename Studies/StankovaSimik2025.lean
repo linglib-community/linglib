@@ -172,8 +172,7 @@ theorem nonV1_ppi_iff (ctx : SignType) :
 theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind 0 := by
   cases ind <;> decide
 
-/-- Czech FALSUM is broader than English high negation, being felicitous under positive evidence
-(14), unlike outer negation under [buring-gunlogson-2000]. -/
+-- (14) [buring-gunlogson-2000]
 theorem falsum_broader_than_english_outer :
     ¬ BuringGunlogson2000.Felicitous (some .positive) 1 ∧
       Felicitous .v1 .ppi 1 :=

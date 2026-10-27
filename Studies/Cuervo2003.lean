@@ -45,16 +45,6 @@ specifier, so an unergative takes a dative clitic and no dative DP (§4.3.2).
 * `Inventory`, `spanish`, `english`, `Inventory.Licenses`, `meanings`: which datives a language's
   applicative heads license and what they mean.
 
-## Main results
-
-* `not_licenses_low_of_biEventive`, `english_not_licenses_of_biEventive`,
-  `english_not_licenses_change`: no double object construction with a complex structure; no
-  dative at all in English causatives, inchoatives and simple verbs of change.
-* `unergative_clitic_only`: the only dative of a Spanish unergative is an animate ethical clitic.
-* `inchoative_meanings`: an animate dative with an inchoative is affected or experiencer, an
-  inanimate one affected alone.
-* `rows`: every example's acceptability and reported meaning are as `meanings` predicts.
-
 ## Implementation notes
 
 The merge site of the applicative and the three types of table (28) are the substrate's
@@ -303,8 +293,7 @@ theorem english_not_licenses_change {p : Predicate} {d : Dative} (hp : p.heads =
   · exact absurd (h.2.2.1 ha) (by decide)
   · exact absurd (h.2.2.2 hh).1 (by decide)
 
-/-- Spanish has the double object construction with a simple verb of change, against Baker's
-generalization, (93a). -/
+-- (93a)
 theorem spanish_change_low : spanish.Licenses llegar ⟨⟨[.vGO], []⟩, true, true⟩ := by decide
 
 /-! ### The ethical dative (§4.3) -/
@@ -319,7 +308,7 @@ theorem unergative_clitic_only {p : Predicate} (hp : p.heads = [.vDO])
     ApplSite.mk.injEq]
   rcases a with _ | ⟨v, a⟩ <;> rcases b with _ | ⟨w, b⟩ <;> simp
 
-/-- With an object the same verb takes a low dative DP, (67a). -/
+-- (67a)
 theorem transitive_low_dp :
     spanish.Licenses correrTransitive ⟨⟨[.vDO], []⟩, true, true⟩ := by decide
 
@@ -335,8 +324,7 @@ theorem inchoative_meanings {p : Predicate} (hp : p.heads = [.vGO, .vBE]) (dp : 
       LittleV.BiEventive, Predicate.ThemeIsRootComplement, ApplSite.Low, ApplSite.High,
       ApplSite.Affected, meaning]
 
-/-- A dative with a causative is affected alone: the high applicative over an activity licenses
-no full DP, (35), (90a). -/
+-- (35), (90a)
 theorem causative_meanings {p : Predicate} (hp : p.heads = [.vDO, .vBE]) :
     meanings spanish p true true = [.affected] := by
   simp [meanings, hp, ApplSite.all, List.range_succ, Inventory.Licenses, spanish,

@@ -15,17 +15,6 @@ and for verbs of movement it follows from expansion, adjacency, and the source a
 path. Quantized predicates are telic but not conversely, and cumulative predicates that apply to
 two non-contemporaneous events are atelic.
 
-## Main results
-
-* `eat_apples_cum`, `eat_two_apples_qua`: on a model of *eat*, *eat apples* is cumulative and
-  *eat two apples* is quantized.
-* `isTelic_vp_of_seinc`: expansion with mapping to objects makes the verb phrase of a quantized
-  object telic.
-* `isTelic_sourceGoal`: a movement with a specified source and goal is telic.
-* `Reading.not_isTelic_read`: incrementality does not guarantee telicity, since re-reading the end
-  of an article gives a reading with a non-final part that is also a reading.
-* `Movement`: the paper's movement diagrams, checked against adjacency on a finite model.
-
 ## Implementation notes
 
 * The model of *eat* identifies an event with the apples it consumes, so its verb phrases are the

@@ -15,17 +15,6 @@ through Klein's consistency constraints, the sound and complete delineations of
 incompatibility with absolute-standard predicates, and the crisp-judgment effect under the
 similarity constraint, stated with van Rooij's margin-of-error order.
 
-## Main statements
-
-* `comparative_ofMeasure_height_iff`: the conjoined comparison closes to Klein's comparative,
-  which for a measure-induced delineation is height comparison, with no degree variable.
-* `eq24a_bent_straight_fails`, `english_more_bent_succeeds`: on two bent rods every conjoined
-  pairing fails where the explicit comparative succeeds.
-* `crisp_pair_not_marginOrder`: a minimally different pair defeats implicit comparison at any
-  positive margin.
-* `cc_b_requires_shared_class`: the comparison entailment needs one comparison class shared by
-  both conjuncts.
-
 ## References
 
 * [bochnak-2015]
@@ -66,14 +55,12 @@ counts as G and `y` does not. No comparative morpheme, overt or covert, is invol
 def washoConjoined (del : Delineation E) (C : Set E) (x y : E) : Prop :=
   x ∈ del C ∧ y ∉ del C
 
-/-- Klein's existential comparative is the closure of (27) over contexts, since a conjoined
-comparison witnesses the discriminating class. -/
+-- (27)
 theorem washoConjoined_comparative (del : Delineation E) {C : Set E} {x y : E}
     (h : washoConjoined del C x y) : del.Comparative x y :=
   ⟨C, h⟩
 
-/-- Where the target does not count as G, as in the context (29), the conjoined comparison is false,
-so it is obligatorily norm-related. -/
+-- (29)
 theorem washoConjoined_norm_related (del : Delineation E) {C : Set E} {x y : E}
     (h : x ∉ del C) :
     ¬ washoConjoined del C x y :=
@@ -109,13 +96,13 @@ theorem eq24a_bent_straight_fails (_hx : bentPred curvature x)
     ¬ (bentPred curvature x ∧ straightPred curvature y) :=
   fun ⟨_, h⟩ => absurd h (Nat.pos_iff_ne_zero.mp hy)
 
-/-- *Bent ∧ ¬bent* (24b) fails, since the second rod is bent too. -/
+-- (24b)
 theorem eq24b_bent_notbent_fails (_hx : bentPred curvature x)
     (hy : bentPred curvature y) :
     ¬ (bentPred curvature x ∧ ¬ bentPred curvature y) :=
   fun ⟨_, h⟩ => h hy
 
-/-- *Straight ∧ ¬straight* (24c) fails, since the first rod is not straight. -/
+-- (24c)
 theorem eq24c_straight_notstraight_fails (hx : bentPred curvature x)
     (_hy : bentPred curvature y) :
     ¬ (straightPred curvature x ∧ ¬ straightPred curvature y) :=
@@ -145,17 +132,17 @@ variable (μ : E → ℕ) (ε : ℕ) {x y z v w : E}
 /-- In the margin-of-error order (60), `x` exceeds `y` by more than the margin of error `ε`. -/
 def marginOrder (x y : E) : Prop := μ y + ε < μ x
 
-/-- The margin-of-error order is irreflexive (58a). -/
+-- (58a)
 theorem marginOrder_irrefl : ¬ marginOrder μ ε x x := by
   simp [marginOrder]
 
-/-- The margin-of-error order is an interval order (58b). -/
+-- (58b)
 theorem marginOrder_intervalOrder (h₁ : marginOrder μ ε x y)
     (h₂ : marginOrder μ ε v w) :
     marginOrder μ ε x w ∨ marginOrder μ ε v y := by
   simp only [marginOrder] at *; omega
 
-/-- The margin-of-error order is semi-transitive (58c). -/
+-- (58c)
 theorem marginOrder_semitransitive (h₁ : marginOrder μ ε x y)
     (h₂ : marginOrder μ ε y z) (v : E) :
     marginOrder μ ε x v ∨ marginOrder μ ε v z := by
@@ -164,8 +151,7 @@ theorem marginOrder_semitransitive (h₁ : marginOrder μ ε x y)
 theorem marginOrder_zero_iff : marginOrder μ 0 x y ↔ μ y < μ x := by
   simp [marginOrder]
 
-/-- At `ε = 0` the order is almost connected (59c), and so, with irreflexivity and transitivity,
-the strict weak order of explicit comparison. -/
+-- (59c)
 theorem marginOrder_zero_almostConnected (h : marginOrder μ 0 x y) (z : E) :
     marginOrder μ 0 x z ∨ marginOrder μ 0 z y := by
   simp only [marginOrder] at *; omega

@@ -75,8 +75,7 @@ effective preference; a speaker commits to an effective preference only when hol
 
 /-! ### The conventions -/
 
-/-- A declarative under the convention (30) narrows the speaker's doxastic commitment set by its
-content and leaves the preferential one unchanged. -/
+-- (30)
 theorem declarative_commitmentSets (a : A) (p : Set W) (K : State (A × Force) W) :
     (insert ((a, .doxastic), p) K).commitmentSet (a, .doxastic) =
         p ∩ K.commitmentSet (a, .doxastic) ∧
@@ -84,8 +83,7 @@ theorem declarative_commitmentSets (a : A) (p : Set W) (K : State (A × Force) W
         K.commitmentSet (a, .preferential) :=
   ⟨State.commitmentSet_insert_self, State.commitmentSet_insert_of_ne (by simp)⟩
 
-/-- An imperative under the convention (47) narrows the speaker's preferential commitment set by
-its content and leaves the doxastic one unchanged (10). -/
+-- (47), (10)
 theorem imperative_commitmentSets (a : A) (p : Set W) (K : State (A × Force) W) :
     (insert ((a, .preferential), p) K).commitmentSet (a, .preferential) =
         p ∩ K.commitmentSet (a, .preferential) ∧
@@ -106,16 +104,14 @@ def DoxasticReduction (K : W → State (A × Force) W) : Prop :=
   ∀ w a p, ((a, .doxastic), {v | ((a, .preferential), p) ∈ K v}) ∈ K w →
     ((a, .preferential), p) ∈ K w
 
-/-- The doxastic commitment to `IMP(p)` that (30) assigns an imperative holds at the world of
-utterance, so it resists the challenges (23) to (25) (§3.3; cf. (47), §6). -/
+-- (30), (23), (25), §3.3, (47), §6
 theorem imp_self_verifying {K : W → State (A × Force) W} (hK : DoxasticReduction K)
     (h : ((a, .doxastic), imp K a p) ∈ K w) : w ∈ imp K a p :=
   hK w a p h
 
 /-! ### Directive uses -/
 
-/-- In a directive context, a sincere preferential commitment to `p` under (34) is an effective
-preference satisfied only if the addressee effectively prefers `p` (§3.4; cf. (32)). -/
+-- (34), §3.4, (32)
 theorem directive_want_addressee {K : State (A × Force) W} {ad : A}
     (hs : Sincere (effectivePreference P) K w) (hp : ((a, .preferential), p) ∈ K)
     (hii : p ⊆ {v | Want P ad p v}) :
@@ -124,16 +120,14 @@ theorem directive_want_addressee {K : State (A × Force) W} {ad : A}
 
 /-! ### Consistency -/
 
-/-- The preferential commitments of a sincere speaker with consistent effective preferences are
-jointly realizable in the information state, so successive imperatives are consistent (§2.1). -/
+-- §2.1
 theorem imperatives_consistent {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
     (hs : Sincere (effectivePreference P) K w) :
     (B ∩ K.commitmentSet (a, .preferential)).Nonempty :=
   hC.inter_sInter_maxElts_nonempty.mono
     (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter fun _ hp ↦ hs.want hp))
 
-/-- Two imperatives with incompatible contents are not both sincere at one time, (11) and (15),
-since the second revises the speaker's effective preferences, (12) to (14). -/
+-- (11), (15), (12), (14)
 theorem imperatives_revise {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
     (hp : ((a, .preferential), p) ∈ K) (hq : ((a, .preferential), q) ∈ K)
     (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere (effectivePreference P) K w :=
@@ -141,15 +135,13 @@ theorem imperatives_revise {K : State (A × Force) W} {B : Set W} (hC : (P a w).
 
 /-! ### Endorsement by advice, permission, and concession -/
 
-/-- In disinterested advice ((39), (40)), an effective goal adopted by cooperation is consistent
-with every preference of the agent. -/
+-- (39), (40)
 theorem advice_compatible {S : PreferenceStructure W} {B g : Set W} (hC : S.Consistent B)
     (hb : ∀ r ∈ S.prefs, ¬ S.prec r g) (hg : g ∈ S.maxElts) (hq : q ∈ S.prefs) :
     (B ∩ (g ∩ q)).Nonempty :=
   Set.nonempty_iff_ne_empty.2 fun h ↦ hb q hq (hC.prec_of_mem_maxElts hg hq h)
 
-/-- In a concession ((21), (22)), a preference conflicting with an effective one is not itself
-effective, so it survives only as a wish. -/
+-- (21), (22)
 theorem concession_not_want {S : PreferenceStructure W} {B : Set W} (hC : S.Consistent B)
     (hp : p ∈ S.maxElts) (hq : q ∈ S.prefs) (h : B ∩ (p ∩ q) = ∅) : q ∉ S.maxElts :=
   fun hq' ↦ hq'.2 p hp.1 (hC.prec_of_mem_maxElts hp hq h)
@@ -183,10 +175,6 @@ def Coherent (u : Use) (d : Denial) : Prop :=
   ∃ (S : PreferenceStructure W) (p q : Set W),
     S.Consistent Set.univ ∧ u.Holds S p ∧ p ∩ q = ∅ ∧ d.Against S q
 
-/-- A follow-up is coherent unless it denies an effective preference the utterance incurred,
-`concession_not_want`, or denies the content of disinterested advice at all,
-`advice_compatible`. A directive followed by a wish against its content is thereby predicted
-coherent, a case the paper does not discuss. -/
 theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
     Coherent W u d ↔ d = .none ∨ u = .assertion ∨ d ≠ .want ∧ u ≠ .advice := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne W
@@ -220,15 +208,13 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
 
 /-! ### Ordering-source affirmation -/
 
-/-- [schwager-2006]'s ordering-source affirmation, (19), read as a bouletic necessity of the
-content, predicts the consistency requirement that two affirmed contents share a best world. -/
+-- (19) [schwager-2006]
 theorem affirmation_consistent {f g : Background W}
     (hne : (bestWorlds f g w).Nonempty) (hp : necessity f g (· ∈ p) w)
     (hq : necessity f g (· ∈ q) w) : (p ∩ q).Nonempty :=
   let ⟨u, hu⟩ := hne; ⟨u, hp u hu, hq u hu⟩
 
-/-- The weaker affirmation (20) of [kaufmann-schwager-2009] affirms both a content and its negation
-whenever the best worlds leave it open, admitting the imperatives of (15). -/
+-- (20), (15) [kaufmann-schwager-2009]
 theorem weak_affirmation_compl {f g : Background W}
     (hp : ∃ u ∈ bestWorlds f g w, u ∈ p) (hq : ∃ u ∈ bestWorlds f g w, u ∉ p) :
     possibility f g (· ∈ p) w ∧ possibility f g (· ∈ pᶜ) w :=
@@ -236,8 +222,7 @@ theorem weak_affirmation_compl {f g : Background W}
 
 /-! ### To-Do Lists -/
 
-/-- Under [portner-2007]'s secondary update, the common ground need not entail *must p* when the
-ordering source already holds a proposition incompatible with `p` (§5.2). -/
+-- §5.2 [portner-2007]
 theorem todo_not_must {f g : Background W} {φ ψ : W → Prop} {u : W}
     (hψ : ψ ∈ g w) (hφψ : ∀ v, ψ v → ¬ φ v) (hu : u ∈ bestWorlds f g w) (huψ : ψ u) :
     ¬ necessity f (fun v ↦ insert φ (g v)) φ w :=
@@ -272,8 +257,7 @@ def Sequence.ofRow (row : Datum) : Option Sequence := do
     ← row.parse? "continuation"
       [("revising", Continuation.revising), ("conflicting", .conflicting)]⟩
 
-/-- In the sequences (11) to (16), a sequence is felicitous exactly when its second move is an
-assertion or its continuation revises. -/
+-- (11), (16)
 theorem sequence_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "sequence" →
     ∃ s ∈ Sequence.ofRow row,
       (row.JudgedFelicitous ↔ s.second = .assertion ∨ s.continuation = .revising) := by
@@ -294,8 +278,7 @@ def FollowUp.ofRow (row : Datum) : Option FollowUp := do
     ← row.parse? "denial"
       [("want", Denial.want), ("wish", .wish), ("deontic", .none), ("pastWant", .none)]⟩
 
-/-- The follow-ups of (17), (18), (21), (22) and (40) are acceptable exactly when coherent,
-`coherent_iff`. -/
+-- (17), (18), (21), (22), (40)
 theorem followUp_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "followUp" →
     ∃ c ∈ FollowUp.ofRow row, (row.judgment = .acceptable ↔ Coherent Bool c.use c.denial) := by
   simp only [coherent_iff]
@@ -312,7 +295,7 @@ def Form.ofRow (row : Datum) : Option Form := do
   return ← row.parse? "form"
     [("imperative", Form.imperative), ("performative", .performative), ("assertion", .assertion)]
 
-/-- Of the challenges (23) to (25), exactly those to an assertion of desire are acceptable. -/
+-- (23), (25)
 theorem challenge_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "challenge" →
     ∃ f ∈ Form.ofRow row, (row.judgment = .acceptable ↔ f = .assertion) := by
   decide

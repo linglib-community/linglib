@@ -342,8 +342,7 @@ def ex23 : Sentence Entity := ⟨.thereInsertion oldMan, [np oldMan .theme true,
 def ex24 : Sentence Entity :=
   ⟨.plain, [np linda .agent true, np dog .other true, np allDay .other]⟩
 
-/-- The expected foci of (22), (23) and (24): the theme, the subject of the there-insertion
-sentence, and the first non-agent phrase. -/
+-- (22), (23), (24)
 theorem expectedFocus_examples : ex22.expectedFocus = some sister ∧
     ex23.expectedFocus = some oldMan ∧ ex24.expectedFocus = some dog := by
   decide
@@ -435,8 +434,6 @@ def b' : Sentence Entity :=
 /-- The state after (D14-1). -/
 def afterA : State Entity := State.initial.step a
 
-/-- In agent position the actor focus, the speaker, fails the filters for *he*, and the potential
-actors follow in surface order: my dog, or the vet once dogs are found not to inject. -/
 theorem he : afterA.cospecify .agent (· ∈ [myDog, theVet]) = some myDog ∧
     afterA.cospecify .agent (· ∈ [theVet]) = some theVet := by
   decide

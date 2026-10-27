@@ -140,19 +140,16 @@ end Felicity
 theorem bare_not_hypothetical : ¬ Acceptable (.nested .bare) (· = .hypothetical) := by
   simp [acceptable_bare_iff]
 
-/-- A bare left-nested conditional is a premise conditional once its embedded conditional has
-been asserted, (11)–(13). -/
+-- (11), (13)
 theorem bare_premise : Acceptable (.nested .bare) (· = .premise) :=
   (acceptable_bare_iff _).2 rfl
 
-/-- The exception of section 3 is that a modal, quantificational, or generic embedded
-conditional admits the hypothetical reading, (40)–(43). -/
+-- (40), (43)
 theorem hypothetical_of_ne_bare (c : Content) (h : c ≠ .bare) :
     Acceptable (.nested c) (· = .hypothetical) :=
   (acceptable_iff_of_ne_bare (fun h' ↦ h (Shape.nested.inj h')) _).2 ⟨_, rfl⟩
 
-/-- Coordinated antecedents share a reading, so a conditional whose antecedents differ in
-discourse status has none, (33). -/
+-- (33)
 theorem not_acceptable_coordination_of_not_iff (s : Shape) {g₁ g₂ : Prop} (h : ¬ (g₁ ↔ g₂)) :
     ¬ Acceptable s fun ct ↦ anchoring g₁ ct ∧ anchoring g₂ ct :=
   fun ⟨_, _, h₁, h₂⟩ ↦ h (h₁.symm.trans h₂)

@@ -26,17 +26,6 @@ the Elsewhere Principle (118), derives where *gi* is overt. The examples are the
 absence of the head's φ-features on idx (91), which makes its relation to the head binding
 rather than Agree.
 
-## Main results
-
-* `denote_anaphoric_eq_iota`, `denote_demonstrative_eq_iota`: a familiar or demonstrative DP is
-  D's ι over the restriction modified by the index as a variable.
-* `idxBind_openClause`, `iota_idxBind`: the index as a binder yields the property and the
-  referent of the externally headed relative.
-* `idxBind_eq_const`: without a free occurrence of its index the binder binds nothing, which
-  leaves a perception nominalization a familiar DP (106).
-* `idxExponent_distribution`, `demonstrative_forms`: the Vocabulary derives the distribution of
-  *gi ~ ge* and the demonstratives *hádigi* and *wídigi*.
-
 ## Implementation notes
 
 The index is the substrate's assignment index, so the variable meaning is `idxVar` and the
@@ -174,8 +163,7 @@ theorem idxExponent_distribution :
       idxExponent ⟨{.idx, .dep}, [], [{.np}]⟩ = some "" := by
   decide
 
-/-- On the accusative bare definite the Subset Principle alone picks *ge* by vocabulary order,
-whereas the ordering (118) makes the null entry win. -/
+-- (118)
 theorem subsetPrinciple_accusative_bare :
     subsetPrinciple idxItems ⟨{.idx, .dep}, [], [{.np}]⟩ = some "ge" := by
   decide

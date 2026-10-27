@@ -25,15 +25,6 @@ says, and addition is coordination (§4).
 * `Equicardinal`: the countability presupposition (23).
 * `coordSem`: coordination of xNPs (52).
 
-## Main results
-
-* `cardMod_atoms_iff`: over the singletons of a set, `n` holds of its `n`-membered pluralities.
-* `cardMod_cardMod_atoms`, `iterated_matches_phrase`: iterated modification multiplies.
-* `predicate_conjunction_contradictory`, `predicate_theory_undershoots`: the predicate theory
-  contradicts itself or undercounts.
-* `cardMod_union_of_disjoint`, `no_joint_reading`: coordination adds on the full split, and the
-  joint reading is contradictory.
-
 ## Implementation notes
 
 Pluralities are finite sets, and the atoms over a set `S` of individuals are its singletons,

@@ -20,22 +20,6 @@ whether any or whether all presents were opened. Experiment 1 found the context 
 more than *no*, and Experiment 2 found it affecting *every* and *not every* alike, so each approach
 is challenged by one experiment.
 
-## Main results
-
-* `pictures_truth`: the TRUTH VALUE of each picture of Figures 1 and 4 is its sentence's
-  supervaluation.
-* `nonImplicature_iff`: Križ's usability relative to the context's question is truth at the
-  context's resolution; `not_addressesIssue_respected`: the question as §3 states it does not
-  serve.
-* `mem_reading_iff_designated_cell`: the reading Bar-Lev's pruning selects is that resolution.
-* `nonImplicature_nonmaximal_iff`, `implicature_nonmaximal_iff`, `table1`: Tables 1 and 2 on every
-  mixed display.
-* `implicature_existential_iff`, `krizChemla_asymmetry_of_existential`: in an existential context
-  the approaches agree, which yields Križ and Chemla's asymmetry between *every* and *no*.
-* `enriched_nonmaximal_iff`: the amendment of §4.2 accepts *every* and *not every* in their lax
-  contexts and *no* in neither.
-* `exactlyTwo_positive`, `exactlyTwo_negative`: the non-implicature prediction for the test (20).
-
 ## Implementation notes
 
 A picture is a display of Križ and Chemla, one trivalent cell per boy. The question §3 states,
@@ -119,7 +103,7 @@ def Context.designation : Context → Designation
 or which of them opened all. -/
 def Context.issue (ctx : Context) : Setoid Display := Setoid.ker (resolve ctx.designation)
 
-/-- Over one boy the issue is the partition of (12) or (13). -/
+-- (12), (13)
 theorem issue_singleton (ctx : Context) (v v' : SignType) :
     ctx.issue [v] [v'] ↔ (ctx.designation.threshold ≤ v ↔ ctx.designation.threshold ≤ v') := by
   simp [Setoid.ker_def, resolve]
@@ -165,7 +149,7 @@ to the question the context raises. -/
 def nonImplicature (ctx : Context) (d : Display) : Prop :=
   Homogeneity.usable ctx.issue (supervaluation q) d
 
-/-- The non-implicature verdict is truth at the resolution the context makes. -/
+/-- The non-implicature verdict is truth at the resolution the context makes (§3). -/
 theorem nonImplicature_iff (ctx : Context) (d : Display) :
     nonImplicature q ctx d ↔ reading q d ctx.designation :=
   usable_iff_reading q le_rfl (fun _ _ h ↦ Setoid.polar_iff.2 <|
@@ -452,7 +436,7 @@ instance : (q : Quantifier) → DecidableRel q.enriched
   | .no => inferInstanceAs (DecidableRel NumberTree.no)
   | .notEvery => fun a b ↦ inferInstanceAs (Decidable (a ≠ 0 ∧ b ≠ 0))
 
-/-- Together with its implicature *not every* is non-monotonic, the observation of §4.2. -/
+-- §4.2
 theorem enriched_notEvery_nonmonotone :
     ¬ Quantifier.notEvery.enriched.ScopeMonotone ∧ ¬ Quantifier.notEvery.enriched.ScopeAntitone :=
   ⟨fun h ↦ (h 0 1 ⟨one_ne_zero, one_ne_zero⟩).1 rfl,

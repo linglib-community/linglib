@@ -28,17 +28,6 @@ Pesetsky's cyclic linearization, which the paper adopts, nothing that ends up be
 particle and the verb shares in it. The Wolof relative clauses described by Sy and by Martinović
 show the same profile, the trigger moving instead of the target.
 
-## Main statements
-
-* `SandeClemDabkowski2026.Clause.harmony_iff_hasAux`: harmony applies exactly when an auxiliary
-  keeps the verb in v (44).
-* `SandeClemDabkowski2026.Clause.notMem_vP_of_between`: what stands between the particle and the
-  verb on the surface was not spelled out with them (41).
-* `SandeClemDabkowski2026.Clause.spellouts_eq_phases`: the derivations spell out the vP and CP
-  snapshots.
-* `SandeClemDabkowski2026.Clause.vPTableau_optimal`: the vP tableau gives the particle the value
-  harmony assigns.
-
 ## Implementation notes
 
 * The vP Spell-out is the vP's head and complement, the stage before the subject merges; the
@@ -120,8 +109,7 @@ theorem vP_sublist_cP : c.vP <+ c.cP := by
 theorem cP_nodup : c.cP.Nodup := by
   obtain ⟨_ | _, _ | _⟩ := c <;> decide
 
-/-- Every clause linearizes, since the particle is the left edge of the vP Spell-out and its
-fronting reverses no ordering statement (§6.2). -/
+-- §6.2
 theorem consistent : Consistent c.phases :=
   consistent_of_forall_sublist (by simpa [phases] using c.vP_sublist_cP) c.cP_nodup
 
@@ -154,8 +142,7 @@ structure Discontinuous {α : Type*} (phases : List (List α)) (a b : α) : Prop
   adjacent : ∃ p ∈ phases, [a, b] <:+: p
   separated : ∃ q ∈ phases, ∃ x, [a, x] <+ q ∧ [x, b] <+ q
 
-/-- Under discontinuous harmony, some Spell-out separates the two terminals by material the adjacent
-Spell-out lacked (§7). -/
+-- §7
 theorem Discontinuous.exists_notMem {α : Type*} {phases : List (List α)} {a b : α}
     (h : Discontinuous phases a b) :
     ∃ p ∈ phases, [a, b] <:+: p ∧ ∃ q ∈ phases, ∃ x ∈ q, x ∉ p := by
@@ -233,8 +220,7 @@ vowels included. -/
 def rootFreeTableau (input : List Phonology.Segment) : Tableau (List Phonology.Segment) 2 :=
   Tableau.ofList (revaluations input).toFinset [atrHarm, identIO input]
 
-/-- With the root free, the constraints repair /jɔkʊ-ni/ at the root, against (12a), and leave
-/mɛ-nu/ undecided, against (10e). -/
+-- (12a), (10e)
 theorem optimal_rootFree :
     (rootFreeTableau (jOkU.vowels ++ ni.vowels)).optimal = {[openO, upsilon, smallCapitalI]} ∧
       (rootFreeTableau (mE.vowels ++ nu.vowels)).optimal = {[e, u], [epsilon, upsilon]} := by
@@ -314,7 +300,7 @@ theorem spellouts_eq_phases :
 theorem linearizes : c.derivation.Linearizes (vPSchedule c.derivation) := by
   obtain ⟨_ | _, _ | _⟩ := c <;> decide +kernel
 
-/-- Focus fronting is remnant movement, the fronted VP holding the trace of the verb (§4.1). -/
+-- §4.1
 theorem isRemnantStep_derivation (h : c.fronted = true) :
     c.derivation.IsRemnantStep (c.derivation.length - 1) := by
   obtain ⟨_ | _, _ | _⟩ := c <;> simp at h <;> decide
@@ -327,8 +313,7 @@ def lateShift : Derivation :=
   ⟨Terminal.verb.token, vSteps ++ edgeSteps.take 1 ++ (Clause.mk true true).tSteps ++ cSteps ++
     edgeSteps.drop 1 ++ (Clause.mk true true).focusSteps⟩
 
-/-- If the object shifted only after C merged, fronting the particle past it would not linearize
-(§6.2). -/
+-- §6.2
 theorem not_linearizes_lateShift : ¬ lateShift.Linearizes (vPSchedule lateShift) := by
   decide
 

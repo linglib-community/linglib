@@ -23,21 +23,6 @@ paper ties the choice between the two to how affected the referent of the noun p
   classes pass which tests.
 * `Position`: the argument positions of the affectedness hierarchy (45).
 
-## Main statements
-
-* `Attachment.hostsQuantifier_iff`: a numeral quantifier and its host c-command each other exactly
-  when the particle cliticizes.
-* `Particle.passes_caseMarker`, `Particle.passes_postposition`, `Particle.passes_insertion`,
-  `Particle.not_passes_copula`: the tables (14), (29) and (32).
-* `exists_passes_and_exists_passes_iff`: a use of *ni* passing both of the first two tests is
-  ambiguous between the case marker and the postposition.
-* `judgment_eq_acceptable_iff`: every test example is acceptable exactly when its particle passes
-  the test.
-* `judgment_eq_acceptable_iff_affected`: a floating quantifier goes with a *ni* phrase exactly when
-  its referent may be affected.
-* `Position.lt_iff_cCommands`: the hierarchy (45) orders the arguments of Koizumi's tree (44) by
-  c-command.
-
 ## Implementation notes
 
 * A test is passed when the paper marks it OK without qualification, so the postposition's cleft
@@ -127,8 +112,7 @@ def Focusable (a : Attachment) : Prop := CaseAssignable a.phrase.cat ∧ a ≠ c
 
 instance : DecidablePred Focusable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- No particle both lets its noun phrase host a floating quantifier and lets its phrase be clefted
-(§4). -/
+-- §4
 theorem not_hostsQuantifier_and_focusable (a : Attachment) :
     ¬ (a.HostsQuantifier ∧ a.Focusable) :=
   fun ⟨h, _, hne⟩ ↦ hne (hostsQuantifier_iff.1 h)
@@ -235,8 +219,7 @@ theorem exists_passes_and_exists_passes_iff {S : List Particle} :
       caseMarker ∈ S ∧ postposition ∈ S := by
   simp only [passes_quantifierFloat_iff, passes_cleftWithParticle_iff, exists_eq_right]
 
-/-- A use of *ni* that can be read as the case marker or as the postposition passes every test
-((27)). -/
+-- (27)
 theorem exists_passes_of_ambiguous (t : Test) :
     ∃ p ∈ [caseMarker, postposition], p.Passes t := by
   cases t <;> decide
@@ -296,7 +279,7 @@ def site? : Position → Option TreePath
   | lowerAccusative => some ⟨[1, 0, 1, 0]⟩
 
 /-- Of two arguments of (44), the less affected c-commands the more affected, since
-[koizumi-1994] links an argument's structural height inversely to its affectedness (§4). -/
+[koizumi-1994] links an argument's structural height inversely to its affectedness (§4) ((45)). -/
 theorem lt_iff_cCommands :
     ∀ p q : Position, ∀ a ∈ p.site?, ∀ b ∈ q.site?, p < q ↔ CCommands tree44 a b := by
   decide
@@ -340,14 +323,13 @@ theorem judgment_eq_acceptable_iff :
       (x.judgment = .acceptable ↔ ∃ p ∈ particles x, p.Passes t) := by
   decide +kernel
 
-/-- The copula *da* takes an NP or a PP but not an AP ((10)). -/
+-- (10)
 theorem judgment_eq_acceptable_iff_caseAssignable :
     ∀ x ∈ Examples.all, ∀ c, x.parse? "focus" focusLabels = some c →
       (x.judgment = .acceptable ↔ CaseAssignable c) := by
   decide +kernel
 
-/-- Where the paper reads an example for affectedness, *ni* is the case marker on an affected
-reading and the postposition on a nonaffected one ((35)–(38)). -/
+-- (35), (38)
 theorem particles_eq_map_readings :
     ∀ x ∈ Examples.all, readings x ≠ [] → particles x = (readings x).map Reading.particle := by
   decide +kernel

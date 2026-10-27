@@ -19,21 +19,6 @@ Winter, derives the narrow reading under negation that *bí* lacks; that closing
 top, after Matthewson, derives no narrow reading of a conditional; and that the reading below
 *biara* is functional, the function's individual index being bound by the quantifier.
 
-## Main results
-
-* `closure_below_negation_iff`: closing the function below negation, (50), gives the narrow
-  reading.
-* `negation_narrow_iff`: under negation the free function of (67) gives the narrow reading for
-  every predicate only when the restrictor has a single member.
-* `closure_above_conditional_iff`: closing the function at the top of a conditional gives the
-  wide reading.
-* `wide_iff`, `functional_iff`: (55), the readings with the individual index free and bound.
-* `ex57_free_iff`, `ex57_bound_iff`, `Scenario58.free`, `Scenario58.bound`,
-  `Scenario58.not_narrow`: both construals of (57) say that every student kept back one of
-  their papers, which holds in the scenario (58) where the narrow reading fails.
-* `bi_not_narrow_under_negation`, `bare_narrow_under_negation`, `bi_narrow_under_every_iff`,
-  `bare_narrow_under_every`: the chapter's generalizations over its examples.
-
 ## Implementation notes
 
 * The presupposition of (67) is the type of `f`, a family `S → ChoiceFunction E`.

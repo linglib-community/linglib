@@ -138,7 +138,7 @@ theorem readings_telic : readings .telic = {.flv} := by decide
 
 theorem readings_ilStative : readings .ilStative = {.presCF} := by decide
 
-/-- A stage-level stative yields either reading, (64). -/
+-- (64)
 theorem readings_slStative : readings .slStative = {.flv, .presCF} := by decide
 
 theorem pastCF_notMem_readings (a : Aktionsart) : .pastCF ∉ readings a := by
@@ -190,8 +190,7 @@ def antecedentForm : SubjunctiveParadigm → Mood.Grammatical
   | .past => .subjunctive
   | .nonpastOnly | .none => .indicative
 
-/-- A counterfactual carries the subjunctive only in a language with a past subjunctive
-paradigm (Section 6.1). -/
+-- Section 6.1
 theorem antecedentForm_eq_subjunctive_iff {p : SubjunctiveParadigm} :
     antecedentForm p = .subjunctive ↔ p = .past := by
   cases p <;> simp [antecedentForm]
@@ -230,8 +229,6 @@ def aspectLanguage? (e : Datum) : Option AspectLanguage :=
 def layers? (e : Datum) : Option (CounterfactualType × ℕ) := do
   pure (← e.parse? "cf_type" cfTable, ← e.parse? "past_layers" [("1", 1), ("2", 2)])
 
-/-- Each row's layers of past morphology are its type's exclusion features: two for the past
-counterfactual, one otherwise. -/
 theorem layers_rows :
     Datum.Checks layers? (fun p ↦ .ofProp (p.1.dimensions.card = p.2)) Examples.all 8 := by
   decide
@@ -240,8 +237,7 @@ theorem layers_rows :
 def reading? (e : Datum) : Option (CounterfactualType × Aktionsart) := do
   pure (← e.parse? "cf_type" cfTable, ← e.parse? "aktionsart" aktionsartTable)
 
-/-- Each row's counterfactual type is a reading of its predicate's Aktionsart, Table 1 over the
-rows. -/
+-- Table 1
 theorem readings_rows :
     Datum.Checks reading? (fun p ↦ .ofProp (p.1 ∈ readings p.2)) Examples.all 8 := by decide
 
@@ -250,8 +246,7 @@ def evaluation? (e : Datum) : Option (Aktionsart × Evaluation) := do
   pure (← e.parse? "aktionsart" aktionsartTable,
     ← e.parse? "evaluation" [("future", Evaluation.future), ("now", .now)])
 
-/-- Each present-tense row's evaluation time is one its Aktionsart admits, Table 2 over the
-rows (65)–(67). -/
+-- Table 2, (65), (67)
 theorem evaluation_rows :
     Datum.Checks evaluation? (fun p ↦ .ofProp (p.2 ∈ p.1.evaluation)) Examples.all 4 := by
   decide
@@ -262,14 +257,12 @@ def aspect? (e : Datum) : Option (AspectLanguage × Bool) := do
   let _ ← e.parse? "cf_type" cfTable
   pure (← aspectLanguage? e, ← e.parse? "impf" [("yes", true), ("no", false)])
 
-/-- Each counterfactual row carries the imperfective exactly where its language requires it,
-Section 5 over the English, Greek and French rows. -/
+-- Section 5
 theorem aspect_rows : Datum.Checks aspect?
     (fun p ↦ .ofProp (p.1.cfAspect = .imperfective ↔ p.2 = true)) Examples.all 11 := by
   decide
 
-/-- (99): French, with a nonpast subjunctive only, puts the past indicative in its
-counterfactual antecedents, as `antecedentForm` chooses. -/
+-- (99)
 theorem french_row :
     ex99.feature? "paradigm" = some "nonpast subjunctive only" ∧
       ex99.feature? "mood" = some "past indicative" ∧

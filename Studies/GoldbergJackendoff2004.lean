@@ -29,14 +29,6 @@ intransitive property resultative.
 * `resultative`: the resultative over a path trace.
 * `Row.Coheres`: the coherence of a row's roles with those of its construction.
 
-## Main results
-
-* `qua_resultative`: an end-bounded result phrase makes the resultative telic.
-* `cum_resultative`: a result phrase that is not end-bounded leaves an activity atelic.
-* `rows_for_adverbial`: the for-adverbial is acceptable exactly on the atelic rows.
-* `coheres_noncausative_path`: the intransitive path resultative is the more liberal.
-* `rows_coherence`: outside the telicity tests, a row is acceptable exactly when its roles cohere.
-
 ## Implementation notes
 
 The verbal and constructional subevents are identified as one event, the paper's cotemporal means
@@ -256,8 +248,7 @@ theorem rows_coherence :
     ∀ r ∈ rows, r.endBounded = none → (r.judgment = .acceptable ↔ r.Coheres) := by
   decide +kernel
 
-/-- Where the fragment derives an object role label from the verb's basic frame, the label is among
-the paper's construals, though subject labels may differ, as in (48b). -/
+-- (48b)
 theorem rows_thetaLabel :
     ∀ r ∈ rows, ∀ ρs ∈ r.objectRole, ∀ s ∈ r.verb.coreSlots[1]?, ∀ ρ ∈ r.verb.thetaLabel s,
       ρ ∈ ρs := by

@@ -24,16 +24,6 @@ association itself.
   ones, `cStructure` the context-free c-structure grammar, `weakGrammar` the string grammar
 * `Spine`, `Spine.Complete`, `Spine.Coherent` — the f-structure spine and LFG's two conditions
 
-## Main results
-
-* `tree_licensed_cStructure` — the c-structure grammar generates every `tree k m`
-* `Spine.complete_and_coherent_iff` — Completeness and Coherence hold exactly when the objects
-  match the non-final verbs
-* `yield_dutch_mem_weakGrammar` — the matched strings are weakly context-free
-* `not_strongly_contextFree` — no context-free grammar's derivation trees relabel onto the matched
-  trees
-* `subjOfVerb_eq` — the `i`-th NP is the subject of the `i`-th verb
-
 ## References
 
 * [bresnan-etal-1982]
@@ -211,18 +201,17 @@ theorem Spine.complete_and_coherent_iff (s : Spine) (hv : 1 ≤ s.verbs) :
   · intro h
     exact ⟨fun i _ => by omega, fun i _ => by omega⟩
 
-/-- Every matched tree is well formed; (26) is `dutch 1`. -/
+-- (26)
 theorem dutch_wellFormed (n : ℕ) :
     (Spine.ofTree (dutch n)).Complete ∧ (Spine.ofTree (dutch n)).Coherent :=
   (Spine.complete_and_coherent_iff _ (by simp [dutch])).mpr (by simp [dutch])
 
-/-- In (43) *dat Jan Piet Marie zag helpen laten zwemmen* the extra verb's OBJ has no value. -/
+-- (43)
 theorem extra_verb_incomplete : ¬ (Spine.ofTree (tree 1 3)).Complete := fun h => by
   have := h 2
   simp [Spine.GovernsObj, Spine.HasObj] at this
 
-/-- In (46) *dat Jan Piet Marie Hans zag helpen zwemmen* the extra NP is an OBJ the final verb
-does not subcategorize. -/
+-- (46)
 theorem extra_np_incoherent : ¬ (Spine.ofTree (tree 2 2)).Coherent := fun h => by
   have := h 2
   simp [Spine.GovernsObj, Spine.HasObj] at this

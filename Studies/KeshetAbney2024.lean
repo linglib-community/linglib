@@ -303,8 +303,7 @@ theorem felicitous_discourseMight_iff (hw : h .w = world w₀) :
       ((∃ u e, S.acc w₀ u ∧ S.desc u e) → ∃! e, S.desc w₀ e) := by
   rw [expandSelf_discourseMight, felicitous_discourse_iff S h _ hw, realize_might S h hw]
 
-/-- (90): with `must`, the discourse is felicitous at `w₀` iff, whenever every
-world accessible from `w₀` has a satisfier, `w₀` has a unique one. -/
+-- (90)
 theorem felicitous_discourseMust_iff (hw : h .w = world w₀) :
     discourseMust.expandSelf.Felicitous S.model h ↔
       ((∀ u, S.acc w₀ u → ∃ e, S.desc u e) → ∃! e, S.desc w₀ e) := by

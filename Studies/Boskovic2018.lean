@@ -169,7 +169,7 @@ def subextraction (r : Route) : Derivation :=
         | .direct => subject who),
       .em .left cQ, .im who]⟩
 
-/-- Both routes derive the embedded clause of (17). -/
+-- (17)
 theorem subextraction_surfacePhon (r : Route) :
     (subextraction r).surfacePhon = ["who", "friends", "of", "hired", "Mary"] := by
   cases r <;> decide +kernel

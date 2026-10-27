@@ -17,17 +17,6 @@ The full system evaluates at plural assignments, where a free variable presuppos
 is atomic; it restores covariation, captures quantificational subordination and the weak reading
 of donkey sentences, and a strong-truth operator internalizes universal readings.
 
-## Main statements
-
-* `felicitous_forward_conj`, `felicitous_bathroom`, `not_felicitous_reverse_conj`: anaphora
-  across conjunction and in bathroom sentences, and its sensitivity to order.
-* `trueAtP_notExNotEx_iff`, `trueAtP_qs_iff`, `felicitousP_qs`: covariation and quantificational
-  subordination in the full system.
-* `trueAtP_donkey_iff`, `felicitousP_donkey`: the weak reading of donkey sentences, and
-  Transparency for their pronoun.
-* `stronglyTrueAt_ex_and_iff`: under Strong Truth, *there is a bathroom and it is upstairs* says
-  that every bathroom is upstairs.
-
 ## Implementation notes
 
 * One language serves both systems: `valued` is the paper's *U(x)* in the simplified system and
@@ -378,12 +367,12 @@ def FelicitousDiscourse (C : Set (W × A)) : List (Formula P R) → Prop
 
 end Felicity
 
-/-- *It is purple* out of the blue is infelicitous (§3.1). -/
+-- §3.1
 theorem not_felicitous_pred_null [Nonempty W] (Q : P) (x : ℕ) :
     ¬ Felicitous (eval M) nullCtx (.pred Q x) := fun h ↦
   not_transparent_id_null x (h (id, .valued x) (by simp [Formula.occurrences]))
 
-/-- *A table is in the room. It is purple.* is felicitous in every context (§3.1). -/
+-- §3.1
 theorem felicitousDiscourse_ex_pred (C : Set (W × PartialAssign ℕ D)) (T Q : P) (x : ℕ) :
     FelicitousDiscourse (eval M) C [.ex x (.pred T x), .pred Q x] := by
   refine ⟨fun o ho ↦ by simp [Formula.occurrences] at ho, fun o ho ↦ ?_, trivial⟩
@@ -416,8 +405,7 @@ theorem felicitous_bathroom (C : Set (W × PartialAssign ℕ D)) (B H : P) (x : 
   subst ho
   exact transparent_bathroom C B x
 
-/-- The reversed bathroom sentence is infelicitous in the null context, where there could be a
-bathroom ((12)). -/
+-- (12)
 theorem not_felicitous_reverse_bathroom (B H : P) (x : ℕ) (hw : ∃ w d, d ∈ M.pred B w) :
     ¬ Felicitous (eval M) nullCtx (.or (.pred H x) (.not (.ex x (.pred B x)))) := fun h ↦
   not_transparent_reverse_bathroom B x hw
@@ -455,13 +443,11 @@ theorem not_novel_of_mem_binders {S₁ S₂ : Formula P R} {x : ℕ} (h₁ : x �
   simp only [Novel, List.flatMap_cons, List.flatMap_nil, List.append_nil] at h
   exact List.disjoint_of_nodup_append h h₁ h₂
 
-/-- *Either the room is locked, or a female guitarist is playing. A woman is singing.* cannot
-reuse the indefinite's variable ((16)). -/
+-- (16)
 theorem not_novel_16 (L φ ψ : Formula P R) (x : ℕ) : ¬ Novel [.or L (.ex x φ), .ex x ψ] :=
   not_novel_of_mem_binders (x := x) (by simp [Formula.binders]) (by simp [Formula.binders])
 
-/-- A Stone disjunction with one variable, *Matt bought a train ticket or an airplane ticket. It
-was expensive.*, violates Novelty (fn. 15). -/
+-- fn. 15
 theorem not_novel_stone (T A E : P) (x : ℕ) :
     ¬ Novel [(Formula.or (.ex x (.pred T x)) (.ex x (.pred A x)) : Formula P R), .pred E x] := by
   simp [Novel, Formula.binders]
@@ -981,24 +967,20 @@ theorem felicitousP_qs (C : Set (W × PluralAssign ℕ D)) (Rd L : R) (hxy : x �
   obtain ⟨-, b, -, hb, -⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h1)
   rw [evalP_and, evalP_valued_eq_true_iff.2 ⟨_, hb⟩, SignType.meetMiddle_one_left]
 
-/-- With two individuals, *every student came. He …* is infelicitous in the null context
-((21)–(22)). -/
+-- (21), (22)
 theorem not_felicitousP_forall_conj {a b : D} (hab : a ≠ b) {P₀ Q : P}
     (hw : ∃ w, ∀ d, d ∈ M.pred P₀ w) :
     ¬ Felicitous (evalP M) Set.univ (.and (.all x (.pred P₀ x)) (.pred Q x)) := fun h ↦
   not_transparentP_forall_conj_univ hab x hw
     (h (fun χ ↦ .and (.all x (.pred P₀ x)) χ, .valued x) (by simp [Formula.occurrences]))
 
-/-- *A linguist came and not every linguist smiled*, with one variable, is never true over a
-domain with two individuals ((23)). -/
+-- (23)
 theorem evalP_ex_and_not_all_ne_true {a b : D} (hab : a ≠ b) (P₀ Q : P) (G : PluralAssign ℕ D) :
     evalP M (.and (.ex x (.pred P₀ x)) (.not (.all x (.pred Q x)))) w G ≠ 1 := by
   intro h
   rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_not, SignType.neg_eq_one_iff] at h
   exact not_singular_of_covers hab (evalP_all_eq_false_iff.1 h.2).1 (singular_of_evalP_ex_pred h.1)
 
-/-- Where one of two individuals is not a `P`, `∀x P(x)` is false but `¬∃x¬P(x)` is undefined
-(Remark 4). -/
 theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P)
     (hd : ∃ d, d ∉ M.pred P₀ w) :
     evalP M (.all x (.pred P₀ x)) w (covering D x) = -1 ∧
@@ -1024,8 +1006,7 @@ theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P
     rw [(PluralAssign.value_restrict_eq_singleton_iff.1 hd').2] at hm
     exact absurd hm hd
 
-/-- *Not every male student came. He stayed home.* is infelicitous, because the pronoun's atomicity
-fails (fn. 19). -/
+-- fn. 19
 theorem not_felicitousDiscourseP_not_all {a b : D} (hab : a ≠ b) (P₀ Q : P)
     (hd : ∃ d, d ∉ M.pred P₀ w) :
     ¬ FelicitousDiscourse (evalP M) Set.univ [.not (.all x (.pred P₀ x)), .pred Q x] := by
@@ -1059,8 +1040,7 @@ theorem update_single_apply_left (hxy : x ≠ y) (e v : D) :
     (PartialAssign.single x e).update y v x = ↑e := by
   simp [PartialAssign.update_of_ne hxy]
 
-/-- *Every student read a book and every student liked it* is true at a world exactly when every
-student read a book they liked ((31)). -/
+-- (31)
 theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠ y) :
     TrueAtP M (.and (.all x (.or (.not (.pred S x)) (.ex y (.and (.pred B y) (.rel Rd x y)))))
       (.all x (.or (.not (.pred S x)) (.rel L x y)))) w ↔
@@ -1111,8 +1091,7 @@ theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠
       · rw [evalP_or, evalP_not, evalP_pred_eq_false_iff.2 ⟨a, hsx, ha⟩, neg_neg,
           SignType.joinMiddle_one_left]
 
-/-- The pronoun of *every student read a book and every student liked it* satisfies
-Transparency in every context ((32)). -/
+-- (32)
 theorem felicitousP_qs_restricted (C : Set (W × PluralAssign ℕ D)) (S B : P) (Rd L : R)
     (hxy : x ≠ y) :
     Felicitous (evalP M) C
@@ -1132,8 +1111,7 @@ theorem felicitousP_qs_restricted (C : Set (W × PluralAssign ℕ D)) (S B : P) 
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h1.1
   exact evalP_valued_eq_true_iff.2 ⟨_, hb⟩
 
-/-- At a world with a non-student where every student read a book, the pronoun of *every student
-read a book and everyone liked it* fails Transparency ((33)–(34)). -/
+-- (33), (34)
 theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : R) (hxy : x ≠ y)
     {e₀ : D} (he₀ : e₀ ∉ M.pred S w)
     (hS : ∀ s ∈ M.pred S w, ∃ b ∈ M.pred B w, (s, b) ∈ M.rel Rd w) :
@@ -1342,8 +1320,7 @@ theorem felicitousP_donkey (C : Set (W × PluralAssign ℕ D)) (F Dn : P) (O Bt 
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h.2.1
   exact evalP_valued_eq_true_iff.2 ⟨_, hb⟩
 
-/-- *It is not true that Sue has a donkey and that she beats it* is weakly true iff Sue has no
-donkey or one she does not beat ((39)–(40)). -/
+-- (39), (40)
 theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
     TrueAtP M (.not (.and (.ex x (.and (.pred Dk x) (.pred OS x))) (.pred BS x))) w ↔
       (∀ d, ¬ (d ∈ M.pred Dk w ∧ d ∈ M.pred OS w)) ∨

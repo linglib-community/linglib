@@ -89,7 +89,6 @@ theorem nessSchema_body_eq_inf :
   funext i
   fin_cases i <;> decide
 
-/-- Any word whose affix is *-ness* instantiates the schema. -/
 theorem ness_instantiates {w : Fin 2 → Flat String} (h : w 1 = ↑"ness") :
     nessSchema.Instantiates w := by
   intro i
@@ -176,8 +175,6 @@ theorem compound_right_headed (n : CompoundNode) {w : Fin 3 → Flat Cat}
     (h : (compoundFamily n).InstantiatesAt compoundSub w) : w 2 = w 1 :=
   (Schema.instantiatesAt_iff.1 h).2 (by decide)
 
-/-- *blackbird*, an adjective and a noun making a noun, instantiates the AN subschema and not
-the NN subschema. -/
 theorem blackbird_instantiatesAt :
     (compoundFamily .an).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] ∧
       ¬ (compoundFamily .nn).InstantiatesAt compoundSub ![↑Cat.Adj, ↑Cat.N, ↑Cat.N] := by
@@ -225,7 +222,6 @@ instance : PartialOrder BaarNode := Schema.generalityOrder baarFamily (by decide
 instance : DecidableLE BaarNode := fun a b ↦
   inferInstanceAs (Decidable ((baarFamily b).body ≤ (baarFamily a).body))
 
-/-- Both words instantiate the schema, so the schema dominates them. -/
 theorem le_schema : ∀ n : BaarNode, n ≤ .schema := by decide
 
 /-- Whether the base verb is transitive: the schema's default is transitive, the regular
@@ -244,7 +240,6 @@ theorem leesbaar_inherits : inherited baseTransitive .leesbaar = {true} :=
 theorem werkbaar_overrides : inherited baseTransitive .werkbaar = {false} :=
   inherited_eq_singleton_of_eq_some (by decide)
 
-/-- The default fits the regular word: the fragment's *lezen* is transitive. -/
 theorem lezen_isTransitive : ∃ fr ∈ Dutch.Verbs.lezen.valency.frames, fr.IsTransitive := by
   decide
 

@@ -116,8 +116,7 @@ theorem presup_query_ofPolarity {r s t : Polarity} (a : A) {q : Question W}
   refine ⟨?_, by cases r <;> cases s <;> decide⟩
   rw [hq, smul_smul, ← mul_assoc, Polarity.mul_self, Polarity.positive_mul]
 
-/-- The alternative question *Is it even↑, or odd↓?* highlights two possibilities, so no
-relative feature, and no particle response, is licensed after it (51). -/
+-- (51)
 theorem not_relativePresup_disj [Nonempty W] (hodd : v o = (v e)ᶜ) (r : Polarity)
     (H : Set (Polarity × Set W)) :
     ¬ RelativePresup r H ((inqDisj (atom e) (atom o)).highlights v) := by
@@ -215,15 +214,13 @@ theorem english_usable : ∀ p ∈ english,
       p.Usable .positive .negative ∧ p.Usable .negative .positive := by
   decide
 
-/-- French [agree, +] responses take *oui*, [reverse, +] responses *si*, and [agree, −] and
-[reverse, −] responses *non* (119)–(122). -/
+-- (119), (122)
 theorem french_usable : ∀ p ∈ french,
     (p.Usable .positive .positive ↔ p = .oui) ∧ (p.Usable .negative .positive ↔ p = .si) ∧
       (p.Usable .positive .negative ↔ p = .non) ∧ (p.Usable .negative .negative ↔ p = .non) := by
   decide
 
-/-- German [agree, +] responses take *ja*, [reverse, +] responses *doch*, [reverse, −]
-responses *nein*, and [agree, −] responses *ja* or *nein* (124)–(127). -/
+-- (124), (127)
 theorem german_usable : ∀ p ∈ german,
     (p.Usable .positive .positive ↔ p = .ja) ∧ (p.Usable .negative .positive ↔ p = .doch) ∧
       (p.Usable .negative .negative ↔ p = .nein) ∧ (p.Usable .positive .negative ↔ p ≠ .doch) := by
@@ -334,8 +331,7 @@ def QuestionRow.Predicted : QuestionRow → Prop
 instance : DecidablePred QuestionRow.Predicted := fun r ↦ by
   obtain ⟨_ | ⟨t, a⟩, s, p, c, j⟩ := r <;> unfold QuestionRow.Predicted <;> infer_instance
 
-/-- The account predicts the judgment and the conveyed proposition of every response to the
-questions of (49)–(53). -/
+-- (49), (53)
 theorem questionRows_predicted : ∀ r ∈ questionRows, r.Predicted := by
   decide
 

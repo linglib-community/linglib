@@ -92,7 +92,7 @@ def Vague : Prop := c.adm.Nontrivial
 
 variable {c P}
 
-/-- The three cases of §4. -/
+-- §4
 theorem incoherent_or_sharp_or_vague : c.Incoherent ∨ c.Sharp ∨ c.Vague :=
   (Set.subsingleton_or_nontrivial c.adm).elim
     (fun h ↦ h.eq_empty_or_singleton.imp id Or.inl) (fun h ↦ Or.inr (Or.inr h))

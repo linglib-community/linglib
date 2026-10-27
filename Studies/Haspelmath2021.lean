@@ -266,15 +266,13 @@ instance (r : ArgumentRole) (c : α → L)
     [i : Decidable (∀ x y, r.MoreUsualFor x y → c x ≤ c y)] :
     Decidable (SingleArgumentUniversal r c) := i
 
-/-- For A and R, Universal 3 says the coding is longer for the less prominent argument, which is
-Universal 6 (21) and Universal 7 (26). -/
+-- (21), (26)
 theorem singleArgumentUniversal_iff_antitone {r : ArgumentRole} (h : r.IsHigherRanked)
     {c : α → L} : SingleArgumentUniversal r c ↔ Antitone c :=
   ⟨fun H ↦ antitone_iff_forall_lt.2 fun _ _ hab ↦ H (.inl ⟨h, hab⟩),
     fun H _ _ hst ↦ hst.elim (fun h ↦ H h.2.le) fun h' ↦ (h.not_isLowerRanked h'.1).elim⟩
 
-/-- For P and T, Universal 3 says the coding is longer for the more prominent argument, which is
-Universal 4 (14) and Universal 8 (27). -/
+-- (14), (27)
 theorem singleArgumentUniversal_iff_monotone {r : ArgumentRole} (h : r.IsLowerRanked)
     {c : α → L} : SingleArgumentUniversal r c ↔ Monotone c :=
   ⟨fun H ↦ monotone_iff_forall_lt.2 fun _ _ hab ↦ H (.inr ⟨h, hab⟩),
@@ -326,7 +324,7 @@ locuphoric R and an aliophoric T is coded no longer than any other. -/
 def PersonRoleUniversal (c : Scenario Person.Class → L) : Prop :=
   ∀ s, c ⟨.participant, .nonParticipant⟩ ≤ c s
 
-/-- Universal 9b is a special case of Universal 5 (§7.1). -/
+-- §7.1
 theorem personRoleUniversal_of_scenarioUniversal {c : Scenario Person.Class → L}
     (h : ScenarioUniversal c) : PersonRoleUniversal c :=
   fun _ ↦ scenarioUniversal_iff_antitone.1 h le_top
@@ -346,8 +344,7 @@ higher-ranked argument is given and the lower-ranked one new. -/
 def GivennessAlternationUniversal (rate : Scenario BinaryGivenness → F) : Prop :=
   ∀ s, rate ⟨.given, .new⟩ ≤ rate s
 
-/-- Universals 13 and 14 are special cases of the alternation universal (61), Universal 5 with usage
-rate as coding (§10.1). -/
+-- (61), §10.1
 theorem givennessAlternationUniversal_of_scenarioUniversal
     {rate : Scenario BinaryGivenness → F} (h : ScenarioUniversal rate) :
     GivennessAlternationUniversal rate :=
@@ -443,7 +440,7 @@ def akanT : Definiteness → ℕ := atLeast .definite
 /-- Georgian requires the reinforced form (`šeni tavi`) for a locuphoric T, as in (34). -/
 def georgianT : Person.Class → ℕ := atLeast .participant
 
-/-- The split P flagging systems obey Universal 4 (§4.1). -/
+-- §4.1
 theorem universal4_splitP :
     SingleArgumentUniversal .P sakhaP ∧ SingleArgumentUniversal .P sardinianP ∧
       SingleArgumentUniversal .P persianP ∧ SingleArgumentUniversal .P abruzzeseP ∧
@@ -452,21 +449,21 @@ theorem universal4_splitP :
     singleArgumentUniversal_atLeast (by decide) _, singleArgumentUniversal_atLeast (by decide) _,
     singleArgumentUniversal_atLeast (by decide) _⟩
 
-/-- The split A flagging systems obey Universal 6 (§4.2). -/
+-- §4.2
 theorem universal6_splitA :
     SingleArgumentUniversal .A godoberiA ∧ SingleArgumentUniversal .A warrgamayA ∧
       SingleArgumentUniversal .A mangarrayiA ∧ SingleArgumentUniversal .A tibetanA :=
   ⟨singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _,
     singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _⟩
 
-/-- The split R flagging systems obey Universal 7 (§5.1). -/
+-- §5.1
 theorem universal7_splitR :
     SingleArgumentUniversal .R frenchR ∧ SingleArgumentUniversal .R neoAramaicR ∧
       SingleArgumentUniversal .R yakkhaR ∧ SingleArgumentUniversal .R wolofR :=
   ⟨singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _,
     singleArgumentUniversal_below (by decide) _, singleArgumentUniversal_below (by decide) _⟩
 
-/-- The split T flagging systems obey Universal 8 (§5.2). -/
+-- §5.2
 theorem universal8_splitT :
     SingleArgumentUniversal .T eweT ∧ SingleArgumentUniversal .T akanT ∧
       SingleArgumentUniversal .T georgianT :=
@@ -512,7 +509,7 @@ def greekT : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.
 /-- Icelandic flags R with `fyrir` when T is animate, as in (46). -/
 def icelandicR : Scenario BinaryAnimacy → ℕ := atLeast .animate ∘ Scenario.low
 
-/-- The monotransitive scenario splits obey Universal 5 (§6), the monadic ones by fn. 18. -/
+-- §6, fn. 18
 theorem universal5_monotransitive :
     ScenarioUniversal yukaghirP ∧ ScenarioUniversal yurokP ∧
       ScenarioUniversal sahaptinA ∧ ScenarioUniversal khantyA ∧ ScenarioUniversal spanishP :=
@@ -521,7 +518,7 @@ theorem universal5_monotransitive :
     scenarioUniversal_comp_low (atLeast_monotone _),
     scenarioUniversal_comp_kind (below_antitone _)⟩
 
-/-- The ditransitive scenario splits obey Universal 5 (§7). -/
+-- §7
 theorem universal5_ditransitive :
     ScenarioUniversal bulgarianR ∧ ScenarioUniversal shambalaR ∧ ScenarioUniversal englishR ∧
       ScenarioUniversal americanEnglishR ∧ ScenarioUniversal greekT ∧
@@ -532,11 +529,11 @@ theorem universal5_ditransitive :
     scenarioUniversal_comp_low (atLeast_monotone _),
     scenarioUniversal_comp_low (atLeast_monotone _)⟩
 
-/-- Bulgarian's split of (39) obeys Universal 9b. -/
+-- (39)
 theorem universal9b_bulgarian : PersonRoleUniversal bulgarianR :=
   personRoleUniversal_of_scenarioUniversal (scenarioUniversal_comp_low (atLeast_monotone _))
 
-/-- Kolyma Yukaghir's split is monadic and Yurok's dyadic (fn. 18). -/
+-- fn. 18
 theorem yukaghir_monadic_yurok_dyadic :
     Monadic Scenario.high yukaghirP ∧
       ¬ Monadic Scenario.high yurokP ∧ ¬ Monadic Scenario.low yurokP :=
@@ -590,8 +587,7 @@ private theorem kashmiri_rank_eq :
   funext p; cases p <;> decide
 
 open Minimalist.CyclicAgree in
-/-- Kashmiri's dative P (47) falls exactly on the scenarios that the cyclic Agree of
-[bejar-rezac-2009] makes inverse (their Table 11). -/
+-- (47), Table 11 [bejar-rezac-2009]
 theorem kashmiriP_iff_isInverse (s : Scenario Person) :
     kashmiriP (s.map Person.prominence) = 1 ↔ BejarRezac2009.kashmiri.IsInverse s := by
   have hm : StrictMono (featuresUpTo · + 1) := by decide
@@ -603,7 +599,7 @@ theorem kashmiriP_iff_isInverse (s : Scenario Person) :
   generalize (s.map Person.prominence).kind = k
   revert k; decide
 
-/-- The relative scenario splits are relative and obey Universal 10 (§8). -/
+-- §8
 theorem universal10_relative :
     (Relative kashmiriP ∧ ScenarioUniversal kashmiriP) ∧
       (Relative foreA ∧ ScenarioUniversal foreA) ∧
@@ -614,8 +610,7 @@ theorem universal10_relative :
     ⟨relative_comp_kind _, scenarioUniversal_comp_kind (below_antitone _)⟩,
     ⟨relative_comp_kind _, scenarioUniversal_comp_kind (below_antitone _)⟩⟩
 
-/-- Kolyma Yukaghir's monadic split is not relative, since the two balanced person scenarios are
-coded differently (§8). -/
+-- §8
 theorem yukaghir_not_relative : ¬ Relative yukaghirP := by decide
 
 /-! ### Verbal voice coding (§9) -/
@@ -623,7 +618,7 @@ theorem yukaghir_not_relative : ¬ Relative yukaghirP := by decide
 /-- Itonama's inverse prefix `k'i-` appears in upstream scenarios, as in (55). -/
 def itonamaV : Scenario Person.Class → ℕ := below .balanced ∘ Scenario.kind
 
-/-- Itonama's inverse of (55) obeys the inverse universal. -/
+-- (55)
 theorem universal11_itonama : InverseUniversal itonamaV :=
   inverseUniversal_of_scenarioUniversal (scenarioUniversal_comp_kind (below_antitone _))
 
@@ -633,7 +628,7 @@ def makassarV : Definiteness → ℕ := atLeast .definite
 /-- Makassarese requires the applicative `-ang` on the verb for a person-form T, as in (56c). -/
 def makassarVNominality : BinaryNominality → ℕ := atLeast .personForm
 
-/-- Makassarese's verb coding is shaped like a split obeying Universal 8 (§9). -/
+-- §9
 theorem makassar_universal8 :
     SingleArgumentUniversal .T makassarV ∧ SingleArgumentUniversal .T makassarVNominality :=
   ⟨singleArgumentUniversal_atLeast (by decide) _, singleArgumentUniversal_atLeast (by decide) _⟩
@@ -665,8 +660,7 @@ def englishDoubleObject (s : Scenario BinaryNominality) : Prop := s ≠ ⟨.full
 
 instance : DecidablePred englishDoubleObject := fun s ↦ inferInstanceAs (Decidable (s ≠ _))
 
-/-- Lummi, Koyra Chiini and English have splitting alternations whose shortest available coding
-obeys Universal 5 (§10.2). -/
+-- §10.2
 theorem splittingAlternations_universal5 :
     (SplittingAlternation lummiActive lummiPassive ∧
         ScenarioUniversal (minimalCoding lummiActive)) ∧
@@ -690,7 +684,7 @@ def antiEfficientA : Markᵒᵈ → ℕ := atLeast (toDual .unfeatured)
 a definite P. -/
 def antiEfficientP : Definiteness → ℕ := below .definite
 
-/-- The unattested anti-efficient language violates Universals 6 and 4 (§11.3). -/
+-- §11.3
 theorem antiEfficient_violates :
     ¬ SingleArgumentUniversal .A antiEfficientA ∧
       ¬ SingleArgumentUniversal .P antiEfficientP := by
@@ -797,7 +791,7 @@ def focusTable : List (String × Markᵒᵈ) :=
 def Nominality.table : List (String × Nominality) :=
   [("pers", .pronoun), ("prop", .properName), ("common", .commonNoun)]
 
-/-- The P and A splits of §4.1 and §4.2 reproduce the examples. -/
+-- §4.1, §4.2
 theorem rows_splitP_splitA :
     Reproduces (rows "yaku1245" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows "nuor1238" "P" "animacy") (prominence? Animacy.table) sardinianP ∧
@@ -811,8 +805,7 @@ theorem rows_splitP_splitA :
       Reproduces (rows "cent2346" "A" "focus") (prominence? focusTable) tibetanA := by
   decide
 
-/-- The single-argument R and T splits of §5 and Makassarese's verb coding of §9 reproduce the
-paper's examples. -/
+-- §5, §9
 theorem rows_splitR_splitT :
     Reproduces (rows "telk1238" "R" "nominality") (prominence? BinaryNominality.table) neoAramaicR ∧
       Reproduces (rows "yakk1236" "R" "animacy") (prominence? BinaryAnimacy.table) yakkhaR ∧
@@ -825,8 +818,7 @@ theorem rows_splitR_splitT :
         makassarVNominality := by
   decide
 
-/-- The scenario splits of §6 and §7 and Itonama's inverse of §9 reproduce the examples, including
-the rows of (43) and (44). -/
+-- §6, §7, §9, (43), (44)
 theorem rows_scenario :
     Reproduces (rows "teop1238" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
       Reproduces (rows "sout2750" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
@@ -847,7 +839,7 @@ theorem rows_scenario :
       Reproduces (rows "iton1250" "verb" "person") (scenario? Person.Class.table) itonamaV := by
   decide
 
-/-- The splitting alternations of §10.2 and (4) reproduce the paper's examples. -/
+-- §10.2, (4)
 theorem rows_alternations :
     ReproducesAlternation (rows "lumm1243" "A" "nominality") (scenario? BinaryNominality.table)
         lummiActive lummiPassive ∧

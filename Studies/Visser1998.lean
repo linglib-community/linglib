@@ -78,7 +78,7 @@ theorem agreeOn_empty : agreeOn (E := E) ∅ = Set.univ := by
 
 /-! ### The equational form of Definition 3.4 -/
 
-/-- The paper's equational form of Definition 3.4. -/
+-- Definition 3.4
 theorem hasContext_iff_eq (R : Update (Assignment E)) (c : Context ℕ) :
     HasContext R c ↔
       R = (agreeOn ↑c.I ○ (R ○ agreeOn ↑c.O)) ∩ agreeOn (↑c.B)ᶜ := by
@@ -102,8 +102,7 @@ inductive DPLExpressible : Update (Assignment E) → Prop
   | comp {R S : Update (Assignment E)} :
       DPLExpressible R → DPLExpressible S → DPLExpressible (R ○ S)
 
-/-- Theorem 3.11: every DPL-expressible relation is an IBO-relation —
-typed by some context. -/
+-- Theorem 3.11
 theorem DPLExpressible.hasContext {R : Update (Assignment E)} (h : DPLExpressible R) :
     ∃ c, HasContext R c := by
   induction h with

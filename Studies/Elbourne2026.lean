@@ -18,17 +18,6 @@ feature that the copula cannot select for. The relational *local*, the scope con
 *young alleged murderer*, and gradable adjectives under a positive morpheme all stay within the
 type.
 
-## Main statements
-
-* `intersective_apply_time`: at each time an intersective adjective is the meet with the noun,
-  so predicate modification is not needed.
-* `fido_was_cute`, `fido_is_a_dog`, `john_was_a_former_judge`: predicative sentences.
-* `former_isPrivative`, `intersective_ne_former`: *former* is privative, so the ⟨e,t⟩ theory,
-  whose predicate modification is intersective, cannot express it.
-* `rows_licensed`: the selector features decide which positions an adjective appears in.
-* `exists_inner_not_committed`, `pos_gradable`: the scope contrast and gradable adjectives stay
-  within the type.
-
 ## Implementation notes
 
 * The carrier is the substrate's `Modifier (I → E → Prop)`, properties indexed by times, with
@@ -171,8 +160,7 @@ def Frame.transitive (F : Frame I E S) (P : S → Prop) (R : I → I → Prop) (
 def Frame.littleV (F : Frame I E S) (G : S → I → Prop) : I → E → Prop :=
   fun t x ↦ ∃ e, G e t ∧ F.agent e x
 
-/-- With the object raised lowest (20)–(21), *Every woman inspected some donkey* (14) has its
-inverse scope reading. -/
+-- (20), (21), (14)
 theorem inverse_scope [LT I] (F : Frame I E S) (woman donkey : I → E → Prop)
     (inspection : S → Prop) (t : I) :
     indefinite donkey
@@ -181,8 +169,7 @@ theorem inverse_scope [LT I] (F : Frame I E S) (woman donkey : I → E → Prop)
         ∃ e, inspection e ∧ F.theme e x ∧ F.cul e < t ∧ F.agent e y := by
   simp only [indefinite, every, Frame.littleV, Frame.transitive, and_assoc]
 
-/-- With the subject raised above the object, the sentence has its surface scope reading
-(22)–(23). -/
+-- (22), (23)
 theorem surface_scope [LT I] (F : Frame I E S) (woman donkey : I → E → Prop)
     (inspection : S → Prop) (t : I) :
     every woman
@@ -192,8 +179,7 @@ theorem surface_scope [LT I] (F : Frame I E S) (woman donkey : I → E → Prop)
         ∃ e, inspection e ∧ F.theme e x ∧ F.cul e < t ∧ F.agent e y := by
   simp only [indefinite, every, Frame.littleV, Frame.transitive, and_assoc]
 
-/-- In *Everyone entered a local bar* ((55)–(58)), the raised *everyone* binds the index on *local*.
--/
+-- (55), (58)
 theorem everyone_entered_a_local_bar [LT I] (F : Frame I E S) (person bar : I → E → Prop)
     (near : I → E → E → Prop) (entering : S → Prop) (t : I) :
     everyone person
@@ -319,8 +305,7 @@ section Replies
 
 variable {I E : Type*}
 
-/-- In *young alleged murderer* (92a) the intersective adjective scopes over the other modifier
-and so commits the speaker to its property. -/
+-- (92a)
 theorem intersective_outer (Y N : I → E → Prop) (M : Modifier (I → E → Prop)) (t : I) (x : E)
     (h : Modifier.intersective Y (M N) t x) : Y t x :=
   h.1

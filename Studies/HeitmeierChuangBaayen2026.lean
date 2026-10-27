@@ -34,19 +34,6 @@ The file also relates the book's three ways of estimating a mapping. Incremental
 updates the mapping at each usage event by the Widrow–Hoff rule, and the mappings of endstate
 and frequency-informed learning are the matrices at which those updates cancel (§1.3, §6.2).
 
-## Main results
-
-* `not_exists_paradigm_eq_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular
-  table is the paradigm of no linear mapping over imputed semantics, and training on it leaves
-  positive loss.
-* `exists_paradigm_imputed_eq_iff`: over jointly independent lexeme and function vectors, a
-  table is the paradigm of some linear mapping iff it is analogically regular.
-* `exists_paradigm_eq_of_linearIndependent`: over linearly independent word-specific
-  embeddings, every table is the paradigm of some linear mapping.
-* `pastTense_not_regular`: *walk, walked, go, went* violates proportional analogy.
-* `isTrained_iff_sum_update_sub_eq_zero`: a mapping matrix is trained iff the frequency-weighted
-  Widrow–Hoff updates of the usage events cancel at it.
-
 ## Implementation notes
 
 * The book describes endstate learning as the state incremental learning reaches after infinitely
@@ -142,23 +129,20 @@ section Incremental
 variable {m : ℕ} (data : TrainingExperience m n d) (q : FrequencyVector m)
   (G : Matrix (Fin d) (Fin n) ℝ) {η : ℝ}
 
-/-- The worked Widrow–Hoff step of the book's background box on the rule (§6.2). The book
-prints `0.4001` for the entry that the rule makes `0.401`. -/
+-- §6.2
 theorem update_example :
     update ((0.01 : ℝ) • 1) 1 ![0, 1] ![0.5, 0.5] !![1.2, -0.3; 0.4, 0.45] =
       !![1.2, -0.3; 0.401, 0.4505] := by
   ext i j
   fin_cases i <;> fin_cases j <;> norm_num [update_apply, vecMul, dotProduct]
 
-/-- One step scales the prediction error for its own input by `1 - η * x ⬝ᵥ x`. -/
 theorem sub_vecMul_update_smul_one (x : MeaningVector d) (y : FormVector n) :
     y - x ᵥ* update (η • 1) 1 x y G = (1 - η * x ⬝ᵥ x) • (y - x ᵥ* G) := by
   rw [sub_vecMul_update]
   ext j
   simp [mul_comm]
 
-/-- A learning step brings the next prediction closer to the target iff `η * x ⬝ᵥ x` lies strictly
-between `0` and `2` (§6.2). -/
+-- §6.2
 theorem abs_sub_vecMul_update_lt_iff {x : MeaningVector d} {y : FormVector n} {j : Fin n}
     (hj : y j ≠ (x ᵥ* G) j) :
     |y j - (x ᵥ* update (η • 1) 1 x y G) j| < |y j - (x ᵥ* G) j| ↔ |1 - η * x ⬝ᵥ x| < 1 := by
@@ -166,8 +150,7 @@ theorem abs_sub_vecMul_update_lt_iff {x : MeaningVector d} {y : FormVector n} {j
   simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul] at h
   rw [h, abs_mul, mul_lt_iff_lt_one_left (abs_pos.2 (sub_ne_zero.2 hj))]
 
-/-- For such a learning rate, "by redoing this step again and again, the error [...] will get
-smaller and smaller" (§6.2), and the prediction converges to the target. -/
+-- §6.2
 theorem tendsto_vecMul_iterate_update_smul_one {x : MeaningVector d} (y : FormVector n)
     (h : |1 - η * x ⬝ᵥ x| < 1) :
     Tendsto (fun k ↦ x ᵥ* (update (η • 1) 1 x y)^[k] G) atTop (𝓝 y) :=
@@ -189,7 +172,6 @@ theorem isTrained_iff_sum_update_sub_eq_zero (hη : η ≠ 0) :
     ring
   rw [isTrained_iff, key, smul_eq_zero, neg_eq_zero, or_iff_right hη]
 
-/-- A mapping matrix fits the experience exactly iff no usage event changes it. -/
 theorem mul_eq_iff_forall_update_eq_self (hη : η ≠ 0) (hS : ∀ i, data.S i ≠ 0) :
     data.S * G = data.C ↔ ∀ i, update (η • 1) 1 (data.S i) (data.C i) G = G := by
   refine ⟨fun h i ↦ update_eq_self_of_vecMul_eq _ _ (congrFun h i), fun h ↦ funext fun i ↦ ?_⟩
@@ -234,12 +216,10 @@ the fragment. -/
 def pastTense : ParadigmSystem (Fin 2) cells (FormVector 13) := fun v c ↦
   cueVector 3 trigram ((verb v).realize c).toList
 
-/-- Only the forms of *walk* carry the cue `#wa`. -/
 private theorem mem_cues_walk_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :
     trigram 0 ∈ cues 3 ((verb v).realize c).toList ↔ v = walk := by
   revert v c; decide +kernel
 
-/-- Only *walked*, the past and past participle of *walk*, carries the cue `ed#`. -/
 private theorem mem_cues_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :
     trigram 6 ∈ cues 3 ((verb v).realize c).toList ↔
       v = walk ∧ (c = .past ∨ c = .pastParticiple) := by

@@ -26,15 +26,6 @@ dogwhistles; a savvy pro-vaxxer weighs more against the dogwhistle than an unsav
 audience of 400 anti-vaxxers, 100 savvy and 4500 unsavvy pro-vaxxers she dogwhistles until 74 more
 savvy or 1314 more naive pro-vaxxers join it.
 
-## Main statements
-
-* `Listener.L0_eq_listener_truthful`: a likelihood that is zero or one gives Burnett's literal
-  listener.
-* `disavows_to_proVaxxers`, `dogwhistles_to_antiVaxxers`: the speaker disavows to any group of
-  pro-vaxxers and dogwhistles to any group of anti-vaxxers.
-* `dogwhistles_iff_savvy_lt`, `dogwhistles_iff_naive_lt`: she dogwhistles to the book's mixed
-  audience until 74 more savvy or 1314 more naive pro-vaxxers join it.
-
 ## Implementation notes
 
 * The book's probabilities are integer weights in twentieths, since the literal listener
@@ -134,7 +125,6 @@ theorem S1_real_singleton_lt_iff (hα : 0 < α) :
   rw [S1, Kernel.softmax_coe_real_singleton_lt_iff (fun _ m ↦ α * groupUtility νS G m),
     mul_lt_mul_iff_right₀ hα]
 
-/-- A message every member of a group prefers is the one the speaker favours. -/
 theorem S1_real_singleton_lt_of_forall (hα : 0 < α) (hG : G ≠ 0)
     (h : ∀ L ∈ G, socialUtility νS L m < socialUtility νS L m') :
     (S1 α νS G p).real {m} < (S1 α νS G p).real {m'} :=
@@ -346,8 +336,6 @@ theorem dogwhistles_to_antiVaxxers (hα : 0 < α) (hG : G ≠ 0) (h : ∀ L ∈ 
     obtain rfl := h L hL
     linarith [advantage_antiVaxxer, log_savvy_bounds.1]
 
-/-- A savvy pro-vaxxer weighs more against the dogwhistle than an unsavvy one: where Stein
-disavows to a group with an unsavvy pro-vaxxer, she disavows to it with a savvy one instead. -/
 theorem disavows_of_savvy_for_unsavvy (hα : 0 < α)
     (h : (S1 α 0 (unsavvyProVaxxer ::ₘ G) π).real {.bigPharma} <
       (S1 α 0 (unsavvyProVaxxer ::ₘ G) π).real {.corporateScientists}) :

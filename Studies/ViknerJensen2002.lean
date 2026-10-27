@@ -13,14 +13,6 @@ definite in the scope of the possessor (`clitic`, (16)). A sortal head noun is m
 Barker's relationalizer applied to one of its qualia or to the control relation (`Sense.shift`,
 `Sense.shiftWith`).
 
-## Main statements
-
-* `exists_clitic_ne_wideDefinite`: a definite scoping over a quantified possessor gives the
-  wrong truth conditions for *each girl's teacher* (11b).
-* `not_clitic_control`: an inanimate possessor has no control reading (Table 2).
-* `movie_lexical`, `movie_favourite`, `sky_favourite`: *Mary's movie* has two lexical
-  interpretations, *Mary's favourite movie* one and *Anne's favourite sky* none (§4).
-
 ## Implementation notes
 
 A quale `q y x` takes the related entity first (`y` is the whole, maker or user of `x`), an order
@@ -53,7 +45,7 @@ the definite as possessee quantifier. -/
 def clitic (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
   PossNP Q the (fun u x ↦ R u x s) (fun _ ↦ True)
 
-/-- *Q's R is P* holds iff `Q` holds of having exactly one `R`, which is `P` (16). -/
+-- (16)
 theorem clitic_apply (Q : NP E) (R : E → E → S → Prop) (s : S) (P : E → Prop) :
     clitic Q R s P ↔ Q (fun u ↦ ∃ x, (∀ y, R u y s ↔ y = x) ∧ P x) := by
   simp only [clitic, PossNP, dom, the, π_apply, Pi.inf_apply, inf_Prop_eq, true_and]
@@ -184,7 +176,7 @@ theorem favourite_rel {R : E → E → S → Prop} {y x : E} {s : S} (h : favour
     R y x s :=
   h.1
 
-/-- Under an asymmetric preference the favourite is unique (footnote 21). -/
+-- footnote 21
 theorem favourite_subsingleton {R : E → E → S → Prop} {y : E} {s : S}
     (h : ∀ T T', prefer T T' y s → ¬ prefer T' T y s) :
     {x | favourite prefer R y x s}.Subsingleton :=

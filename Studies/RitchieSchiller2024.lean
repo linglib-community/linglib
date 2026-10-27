@@ -152,9 +152,6 @@ theorem not_isDefault_of_not_subset {C : Set E} (hC : ¬ C ⊆ s.present v) (hu 
   · exact hu (hh ▸ rfl)
   · exact hC (default_subset_present s v hh)
 
-/-- A universal claim true of the available objects is true of the salient ones, so an
-utterance judged on what is in reach, as in the meadow, is weaker than one judged on all that
-is in view, as in the room; the converse fails. -/
 theorem every_salient_of_every_available (R S : E → Prop) :
     adjRestrict every (s.available v) R S → adjRestrict every (s.salient v) R S :=
   restrictorAntitone_every S fun _ hx ↦ ⟨hx.1, s.salient_subset_available v hx.2⟩

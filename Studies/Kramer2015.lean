@@ -15,13 +15,6 @@ tops a gendered one, where cyclicity predicts the default gender, and Amharic *…
 'motherhood' and German *St√§dt-chen* 'little town' bear it out, masculine and neuter. A
 diminutive that keeps the gender of its base is not an n.
 
-## Main results
-
-* `highestGender`: a nominal agrees as its highest n would over a bare root.
-* `amharic_innat`, `german_chen`: a plain n over a feminine n gives the default, where a search of
-  every n would give the feminine.
-* `evaluative_transparent`: an evaluative head that is not an n leaves the gender unchanged.
-
 ## Implementation notes
 
 * A head is a categorizer or an evaluative head that is not a categorizer; only categorizers are

@@ -15,17 +15,6 @@ consonants of the output corresponding among themselves, read left to right. The
 IDENT-CC constraints are MAX and DEP of [nasal] along that relation, as the paper frames them, and
 IDENT-OI(nas) is DEP of [nasal] from input to output.
 
-## Main results
-
-* `winner_eq`, `agree_of_le`: a nasal and an oral consonant agree exactly when their pair is at
-  least as similar as the cut below which IDENT-OI(nas) sits.
-* `ngbaka_rows`: the Ngbaka words of (41) and (42) are the fixed points of its grammar.
-* `kikongo_rows`, `kikongo_grammar`: the Kikongo alternations of (43) and (44) are the map
-  `harmonize`, which the grammar derives for the stems without NC clusters.
-* `tumidi`, `nikulu`, `kudumukila_winner`: the paper's Kikongo tableaux.
-* `not_isFaithfulness_corr`, `not_isMarkedness_corr`: CORR is neither faithfulness nor
-  markedness, while the IDENT constraints are faithfulness.
-
 ## Implementation notes
 
 * GEN keeps or nasalizes each consonant and coindexes the consonants by any partition; the
@@ -334,7 +323,7 @@ theorem ngbaka_tableaux :
   decide +kernel
 
 /-- The morpheme structure constraint: a word of the rows is well formed exactly when it is a
-fixed point of the Ngbaka grammar. -/
+fixed point of the Ngbaka grammar ((41), (42)). -/
 theorem ngbaka_rows : ∀ d ∈ ngbakaData, d.2 = .acceptable ↔ IsFixedPoint ngbaka d.1 := by
   decide +kernel
 

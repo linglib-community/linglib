@@ -158,39 +158,34 @@ def Sat : LF V D A → Assignment T → W → Prop
 
 variable (x : A) (v : V) (d : D) (g : Assignment T) (w : W)
 
-/-- The de dicto past under a past (20) presupposes that the described time precedes the utterance
-time and follows no doxastic alternative's time. -/
+-- (20)
 theorem def_bind_past :
     Def M c (.believe x (.PAST 1) .past (.bind d 2 (.pred v (.PAST 2) .nonpast))) g w ↔
       (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1),
         (M.desc d s.world).Precedes c.time ∧ NotAfter (M.desc d s.world) s.time := by
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
-/-- (29) presupposes only that every doxastic alternative time precedes the utterance time (footnote
-23). -/
+-- (29), footnote 23
 theorem def_simultaneous :
     Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast)) g w ↔
       (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1), s.time.Precedes c.time := by
   simp [Def, TenseNode.Def, TenseNode.var, NotAfter, precedes_irrefl]
 
-/-- With the lower past coindexed with the matrix tense, (30) presupposes that the holder located
-himself at or after the matrix time. -/
+-- (30)
 theorem def_free_coindexed :
     Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 1) .nonpast)) g w ↔
       (TenseNode.PAST 1).Def c g ∧
         ∀ s ∈ M.dox x w (g 1), (g 1).Precedes c.time ∧ NotAfter (g 1) s.time := by
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
-/-- Under res-movement (32), the concept yields the res at the holder's world and time and follows
-no alternative's time. -/
+-- (32)
 theorem def_res :
     Def M c (.believeRes x (.PAST 1) .past (.PAST 2) 3 (.pred v (.trace 3) .nonpast)) g w ↔
       (TenseNode.PAST 1).Def c g ∧ (TenseNode.PAST 2).Def c g ∧ c.concept ⟨w, g 1⟩ = g 2 ∧
         ∀ s ∈ M.dox x w (g 1), NotAfter (c.concept s) s.time := by
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
-/-- A concept that locates a later time at some alternative, as "the next time the lights go
-out" does, fails the presupposition of (32). -/
+-- (32)
 theorem not_def_res_of_precedes {s : Kaplan.Index W (NonemptyInterval T)}
     (hs : s ∈ M.dox x w (g 1))
     (h : s.time.Precedes (c.concept s)) :
@@ -201,8 +196,7 @@ theorem not_def_res_of_precedes {s : Kaplan.Index W (NonemptyInterval T)}
 def doubleAccess : LF V D A :=
   .believeRes x (.PAST 1) .past (.PRES 2) 3 (.pred v (.trace 3) .nonpast)
 
-/-- (38) presupposes that the believing time precedes the utterance time, the res overlaps it, and
-the concept yields the res and follows no alternative's time. -/
+-- (38)
 theorem def_doubleAccess (h0 : g 0 = c.time) :
     Def M c (doubleAccess x v) g w ↔
       (g 1).Precedes c.time ∧ (g 2).Overlaps c.time ∧
@@ -212,7 +206,7 @@ theorem def_doubleAccess (h0 : g 0 = c.time) :
   exact ⟨λ ⟨⟨h₁, _⟩, ⟨h₂, _⟩, h₄, h₃⟩ => ⟨h₁, h₂, h₃, h₄⟩,
     λ ⟨h₁, h₂, h₃, h₄⟩ => ⟨⟨h₁, notAfter_of_precedes h₁⟩, ⟨h₂, notAfter_of_overlaps h₂⟩, h₄, h₃⟩⟩
 
-/-- Under (38), the concept at the holder's world and time overlaps the utterance time. -/
+-- (38)
 theorem overlaps_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAccess x v) g w) :
     (c.concept ⟨w, g 1⟩).Overlaps c.time := by
   obtain ⟨_, h₂, _, h₄⟩ := (def_doubleAccess M c x v g w h0).1 h
@@ -223,7 +217,7 @@ theorem snd_lt_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAcces
   lt_of_lt_of_le ((def_doubleAccess M c x v g w h0).1 h).1
     (overlaps_of_def_doubleAccess M c x v g w h0 h).2
 
-/-- (38) cannot report a belief under a backshifting concept such as *a year ago*. -/
+-- (38)
 theorem not_def_doubleAccess_of_backshifting (h0 : g 0 = c.time)
     (hf : ∀ s, (c.concept s).Precedes s.time) : ¬ Def M c (doubleAccess x v) g w := λ h =>
   precedes_not_overlaps (precedes_trans (hf ⟨w, g 1⟩) ((def_doubleAccess M c x v g w h0).1 h).1)
@@ -300,31 +294,27 @@ theorem precedes_of_tlc {i : Var} {a : Affix} (h : TLC false (.pred v (.PAST i) 
   · subst h; exact hd.2
   · exact absurd h Bool.false_ne_true
 
-/-- (50): *John PAST₁ <-cry* is licensed. -/
+-- (50)
 theorem tlc_cry : TLC false (LF.pred v (.PAST 1) .past : LF V D A) := Or.inl rfl
 
-/-- (51): *he PAST₁ <-decide [λ0 PRO to₀ ¬<-tell [λ0 they PAST₀ ¬<-be having ...]]*, the
-lower PAST licensed non-locally by *<-decide*. -/
+-- (51)
 theorem tlc_decide (y : A) (having : V) :
     TLC false (.believe x (.PAST 1) .past (.believe y (.INF 0) .nonpast
       (.pred having (.PAST 0) .nonpast)) : LF V D A) :=
   ⟨Or.inl rfl, trivial, Or.inr rfl⟩
 
-/-- (52) without its relative clause satisfies the TLC, the PAST of *woll* licensed by *<-say*
-across the non-past future. -/
+-- (52)
 theorem tlc_say (buy : V) :
     TLC false (.believe x (.PAST 1) .past (.woll (.PAST 0) .nonpast
       (.pred buy (.INF 0) .nonpast)) : LF V D A) :=
   ⟨Or.inl rfl, Or.inr rfl, trivial⟩
 
-/-- (56): the simultaneous LF of (28) with its affixes, *John PAST₁ <-believe [λ0 Bill PAST₀
-¬<-be asleep]*, is licensed. -/
+-- (56), (28)
 theorem tlc_simultaneous :
     TLC false (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast) : LF V D A) :=
   ⟨Or.inl rfl, Or.inr rfl⟩
 
-/-- Under the entries of Section 3, (56) presupposes only that the believing time precedes
-the utterance time: the presupposition of footnote 23 is gone. -/
+-- Section 3, (56), footnote 23
 theorem def'_simultaneous (h0 : g 0 = c.time) :
     Def' M c (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast)) g w ↔
       (g 1).Precedes c.time := by
@@ -332,7 +322,7 @@ theorem def'_simultaneous (h0 : g 0 = c.time) :
   exact ⟨λ h => h.2.1,
     λ h => ⟨notAfter_of_precedes h, h, λ _ _ => ⟨notAfter_self _, precedes_irrefl _⟩⟩⟩
 
-/-- (57): a present bound from Comp under a `<`-affixed attitude verb violates clause (ii). -/
+-- (57), (ii)
 theorem not_tlc_present_under_past :
     ¬ TLC false (.believe x (.PAST 1) .past (.pred v (.PRES 0) .nonpast) : LF V D A) :=
   λ h => Bool.noConfusion h.2.2
@@ -342,21 +332,21 @@ tense `res` and the affix `a` of the embedded predicate hosting its trace. -/
 def resMoved (res : TenseNode) (a : Affix) : LF V D A :=
   .believeRes x (.PAST 1) .past res 3 (.pred v (.trace 3) a)
 
-/-- (63) is licensed: the res-moved PRES is in the domain of *¬<-be pregnant* alone. -/
+-- (63)
 theorem tlc_63 : TLC false (resMoved x v (.PRES 2) .nonpast : LF V D A) :=
   ⟨Or.inl rfl, ⟨.nonpast, rfl, rfl, rfl⟩, trivial⟩
 
-/-- (62) is excluded: the res-moved PRES is in the domain of *<-be pregnant*. -/
+-- (62)
 theorem not_tlc_62 : ¬ TLC false (resMoved x v (.PRES 2) .past : LF V D A) := by
   rintro ⟨_, ⟨h, hh, hl⟩, _⟩
   cases Option.some.inj (hh : some Affix.past = some h)
   exact absurd hl.1 (by decide)
 
-/-- (65) is licensed: the back-shifted reading, the res-moved PAST hosted by *<-be asleep*. -/
+-- (65)
 theorem tlc_65 : TLC false (resMoved x v (.PAST 2) .past : LF V D A) :=
   ⟨Or.inl rfl, ⟨.past, rfl, Or.inl rfl⟩, trivial⟩
 
-/-- (66) is excluded: the res-moved PAST is in the domain of no `<`-affixed predicate. -/
+-- (66)
 theorem not_tlc_66 : ¬ TLC false (resMoved x v (.PAST 2) .nonpast : LF V D A) := by
   rintro ⟨_, ⟨h, hh, hl⟩, _⟩
   cases Option.some.inj (hh : some Affix.nonpast = some h)
@@ -364,8 +354,7 @@ theorem not_tlc_66 : ¬ TLC false (resMoved x v (.PAST 2) .nonpast : LF V D A) :
   · exact absurd hl (by decide)
   · exact Bool.false_ne_true hl
 
-/-- (63) presupposes a past belief, the res overlap (64) and identity (33), and that the concept
-neither follows nor precedes each alternative's time. -/
+-- (63), (64), (33)
 theorem def'_63 (h0 : g 0 = c.time) :
     Def' M c (resMoved x v (.PRES 2) .nonpast) g w ↔
       (g 1).Precedes c.time ∧ (g 2).Overlaps c.time ∧ c.concept ⟨w, g 1⟩ = g 2 ∧

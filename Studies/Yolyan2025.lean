@@ -92,26 +92,26 @@ def combineC (pin a b : Bool) : Bool := if pin then a || b else a && b
 
 @[simp] theorem combine_true (a b : Bool) : combine true a b = (a && b) := rfl
 
-/-- On a false input, ⊙ is disjunction, the collapse behind (5.15). -/
+-- (5.15)
 @[simp] theorem combine_false (a b : Bool) : combine false a b = (a || b) := rfl
 
 @[simp] theorem combineC_true (a b : Bool) : combineC true a b = (a || b) := rfl
 
 @[simp] theorem combineC_false (a b : Bool) : combineC false a b = (a && b) := rfl
 
-/-- A ⊙-value differs from the input iff one of the components does (Prop. 4.2). -/
+-- Prop. 4.2
 theorem combine_ne_iff (pin a b : Bool) :
     combine pin a b ≠ pin ↔ a ≠ pin ∨ b ≠ pin := by decide +revert
 
-/-- ⊙ is commutative (Prop. 4.4 (i)). -/
+-- Prop. 4.4, (i)
 theorem combine_comm (pin a b : Bool) : combine pin a b = combine pin b a := by
   decide +revert
 
-/-- ⊙ is associative (Prop. 4.4 (ii)). -/
+-- Prop. 4.4, (ii)
 theorem combine_assoc (pin a b c : Bool) :
     combine pin (combine pin a b) c = combine pin a (combine pin b c) := by decide +revert
 
-/-- The input itself is a ⊙-identity (Prop. 4.4 (iii)). -/
+-- Prop. 4.4, (iii)
 theorem combine_id (pin a : Bool) : combine pin a pin = a := by decide +revert
 
 theorem combineC_eq_not_combine (pin a b : Bool) :
@@ -215,7 +215,7 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
       h ⟨(mem_take_flankWord_iff (by decide) (by omega)).mp ht,
         fun hv ↦ hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
 
-/-- Sour Grapes requires both sides, by the maps (a)–(c) of the proof of Thm. 5.2. -/
+-- Thm. 5.2
 theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
   RequiresBothSides.of_flanks (fill := SG.minus) (xOn := SG.plus)
     (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d ↦ 2 * d + 1)
@@ -224,13 +224,12 @@ theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
     (fun d ↦ by rw [sourGrapes_flankWord_mid]; simp)
     (fun d ↦ by rw [sourGrapes_flankWord_mid]; simp)
 
-/-- Sour Grapes harmony is not weakly deterministic (Thm. 5.2). -/
+-- Thm. 5.2
 theorem sourGrapes_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic sourGrapes :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides sourGrapes_requiresBothSides
 
-/-- Tutrugbu ATR harmony (Example 2.12) is not weakly deterministic (Prop. 5.5), from the
-witness of `McCollumEtAl2020`. -/
+-- Example 2.12, Prop. 5.5
 theorem tutrugbu_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic McCollumEtAl2020.tutrugbu.map :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides
@@ -281,7 +280,7 @@ def ofAnalysis (a : Wordlist.Analysis) : Option (List BTone × List BTone) :=
   let s := a.form.form.toList.filterMap toneOf
   if u.length = s.length then some (u, s) else none
 
-/-- Bemba spreading takes each word of Example 2.11 to its surface tones. -/
+-- Example 2.11
 theorem bemba_map_forms : ∀ a ∈ Wordlist.analyses, ∀ p ∈ ofAnalysis a, bemba.map p.1 = p.2 := by
   decide
 
@@ -318,13 +317,13 @@ private theorem not_bembaSurfaces_flankWord_LL {d : ℕ} :
   rintro ⟨-, h | ⟨j, -, hjH, -⟩ | ⟨j, -, hjH, -⟩⟩
   exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
 
-/-- Bemba spreading requires both sides, by the maps (a)–(c) of the proof of Prop. 5.4. -/
+-- Prop. 5.4
 theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
   bemba.requiresBothSides_of_flanks (n := fun d ↦ 2 * d + 4) (t := fun d ↦ d + 3)
     (fun d ↦ by omega) (fun d ↦ by omega) (fun d ↦ bembaSurfaces_flankWord_HL)
     (fun d ↦ not_bembaSurfaces_flankWord_LL) (fun d ↦ not_bembaSurfaces_flankWord_HH)
 
-/-- Bemba high-tone spreading is not weakly deterministic (Prop. 5.4). -/
+-- Prop. 5.4
 theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides bemba_requiresBothSides
 
@@ -375,20 +374,19 @@ def lholStress (w : List Syll) : List (Option Bool) :=
     (lholL.eval w i (.call .stressL x)).bind fun bL ↦
       (lholR.eval w i (.call .stressR x)).map fun bR ↦ combine false bL bR
 
-/-- In Example 2.9 (a), *LH́LHL*, the backward program alone stresses the leftmost heavy. -/
+-- Example 2.9
 theorem lholStress_LHLHL :
     lholStress [.L, .H, .L, .H, .L] =
       [some false, some true, some false, some false, some false] := by
   decide
 
-/-- In Example 2.9 (a), *H́HHHH*, the backward program alone stresses an initial heavy. -/
+-- Example 2.9
 theorem lholStress_HHHHH :
     lholStress [.H, .H, .H, .H, .H] =
       [some true, some false, some false, some false, some false] := by
   decide
 
-/-- In Example 2.9 (b), *ĹLLLL*, with no heavy, the forward program alone stresses the initial
-syllable. -/
+-- Example 2.9
 theorem lholStress_LLLLL :
     lholStress [.L, .L, .L, .L, .L] =
       [some true, some false, some false, some false, some false] := by

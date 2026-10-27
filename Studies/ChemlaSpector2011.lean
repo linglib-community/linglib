@@ -19,18 +19,6 @@ result entails the literal reading. Under a universal the local reading entails 
 one, so Experiment 1 separates only the restricted globalist; under *exactly one* it does not,
 so Experiment 2 separates the localist from both globalists.
 
-## Main results
-
-* `exp1_monotone`: in Experiment 1 the ratings rise with the number of true readings.
-* `restrictedGlobalist_strong_eq_weak`, `localist_weak_ssubset_strong`: only the localist
-  predicts the gap between STRONG and WEAK.
-* `unrestrictedGlobalist_local_eq_false`, `exp2_false_lt_local`: the globalists predict LOCAL to
-  be rated like FALSE, and it is rated far above.
-* `local_isReinforceable`: the local reading passes Sadock's reinforceability diagnostic.
-* `de_qLocal_lt_both`, `de_agrees_with_geurts_pouscoulous`: the marginal local reading under
-  negation is rated far below the baseline, in line with the fourth experiment of Geurts and
-  Pouscoulous (`GeurtsPouscoulous2009.rows_construals_conflict`).
-
 ## Implementation notes
 
 * The unrestricted globalist's reach is the semantic condition that a reading entail the
@@ -200,8 +188,7 @@ instance : (ℓ : ReadingLabel) → (p : Picture3) → Decidable (reading ℓ p)
   | .global, p => inferInstanceAs (Decidable (global p))
   | .local_, p => inferInstanceAs (Decidable (local_ p))
 
-/-- Under *exactly one* the local reading does not entail the literal one, so no globalist
-derivation yields it (§5.1). -/
+-- §5.1
 theorem local_not_globallyDerivable : ¬ GloballyDerivable reading .local_ := by
   decide +kernel
 
@@ -327,8 +314,7 @@ theorem local_isReinforceable :
 
 /-! ### Experiment 2 -/
 
-/-- The condition where only the local reading of *certains* is true is rated above the one where
-only the literal reading is (Figure 12). -/
+-- Figure 12
 theorem exp2_local_gt_literal_some :
     ∃ l ∈ rating₂ .some .local_, ∃ t ∈ rating₂ .some .literal, t < l := by
   decide +kernel
@@ -364,14 +350,12 @@ theorem de_qLocal_lt_both (e : Experiment) (i : Item) :
     ∃ q ∈ ratingDE e i .qLocal, ∃ b ∈ ratingDE e i .both, q < b := by
   cases e <;> cases i <;> decide +kernel
 
-/-- The same controls are rated higher after Experiment 2's non-monotonic items than after
-Experiment 1 (§5.5.4). -/
+-- §5.5.4
 theorem de_qLocal_priming (i : Item) :
     ∃ a ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .two i .qLocal, a < b := by
   cases i <;> decide +kernel
 
-/-- Even primed, the local reading under negation stays below the local reading under *exactly
-one* (§5.5.4). -/
+-- §5.5.4
 theorem de_qLocal_lt_local (i : Item) :
     ∃ q ∈ ratingDE .two i .qLocal, ∃ l ∈ rating₂ i .local_, q < l := by
   cases i <;> decide +kernel

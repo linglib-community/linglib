@@ -17,17 +17,6 @@ how-causation (a difference to the fine-grained outcome) and sufficient-causatio
 pragmatics module chooses among the true expressions by informativity, as a rational speech act
 speaker and listener after Frank and Goodman.
 
-## Main results
-
-* `caused_implies_enabled`, `enabled_implies_affected`: the expressions are ordered by
-  specificity, the hierarchy behind the scale `causalScale`.
-* `speaker_prefers_caused`, `speaker_prefers_enabled`: the speaker prefers the most informative
-  true expression at every positive rationality.
-* `listener_enabled_implicature`: hearing "enabled", the pragmatic listener favours the scenario
-  where "caused" is false.
-* `launch_ofModel`: Michottean launching, as a two-variable structural model, has the aspect
-  profile of the first sample scenario.
-
 ## Implementation notes
 
 * The speaker is the paper's first-level pragmatic speaker over Boolean aspects. The fitted
@@ -90,6 +79,7 @@ instance (cw : CausalWorld) : ∀ u, Decidable (expressionMeaning cw u)
   | .caused => inferInstanceAs (Decidable (_ ∧ _))
   | .madeNoDifference => inferInstanceAs (Decidable (_ ∧ _))
 
+/-- The expressions are ordered by specificity, the hierarchy behind the scale `causalScale`. -/
 theorem caused_implies_enabled (cw : CausalWorld) :
     expressionMeaning cw .caused → expressionMeaning cw .enabled :=
   And.right
@@ -172,15 +162,13 @@ noncomputable abbrev speaker (α : ℝ) : Kernel Scenario CausalExpression :=
 noncomputable abbrev listener (α : ℝ) : Kernel CausalExpression Scenario :=
   RSA.listener (uniformOn Set.univ) (speaker α)
 
-/-- Hearing "enabled", the literal listener finds the two enabling scenarios equally likely
-(Table 1c). -/
+-- Table 1c
 theorem literal_enabled : literal .enabled {.s1} = 2⁻¹ ∧ literal .enabled {.s3} = 0 := by
   rw [listener_uniformOn_truthful_apply_singleton, listener_uniformOn_truthful_apply_singleton,
     ite_eq_left (by decide), ite_eq_right (by decide), show (sem .enabled).card = 2 from by decide]
   norm_num
 
-/-- At Michottean launching the first-level speaker says "caused" with probability 6/11,
-"enabled" with 3/11 and "affected" with 2/11 (Table 1d). -/
+-- Table 1d
 theorem speaker_s1 :
     (speaker 1 .s1).real {.caused} = 6 / 11 ∧ (speaker 1 .s1).real {.enabled} = 3 / 11 ∧
       (speaker 1 .s1).real {.affected} = 2 / 11 := by
@@ -193,8 +181,7 @@ theorem speaker_s1 :
     show (if Scenario.s1 ∈ sem .affected then (6 / (sem .affected).card) ^ 1 else 0) = 2 by decide]
   norm_num
 
-/-- At double prevention the first-level speaker says "enabled" with probability 3/5 and
-"affected" with 2/5, and never "caused" (Table 1d). -/
+-- Table 1d
 theorem speaker_s2 :
     (speaker 1 .s2).real {.enabled} = 3 / 5 ∧ (speaker 1 .s2).real {.affected} = 2 / 5 ∧
       (speaker 1 .s2).real {.caused} = 0 := by
@@ -234,10 +221,6 @@ theorem listener_enabled_implicature {α : ℝ} (hα : 0 < α) :
     (listener α .enabled).real {.s1} < (listener α .enabled).real {.s2} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
 
-/-- Hearing "affected", the pragmatic listener favours the how-cause-only scenario, where
-no stronger expression is true, over Michottean launching. The listener experiment found
-the opposite preference for the analogous pair, the case the paper singles out as the
-model's failure. -/
 theorem listener_affected_prefers_howOnly {α : ℝ} (hα : 0 < α) :
     (listener α .affected).real {.s1} < (listener α .affected).real {.s3} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
@@ -251,9 +234,6 @@ theorem listener_noDifference_identifies {α : ℝ} (hα : 0 < α) :
 /-- The scale ⟨affected, enabled, caused⟩, weakest to strongest. -/
 def causalScale : Fin 3 → CausalExpression := ![.affected, .enabled, .caused]
 
-/-- The scale is a Horn scale. Its meanings are strictly antitone in scale position, each member
-entailing the weaker ones and not conversely, the specificity hierarchy
-`caused_implies_enabled` and `enabled_implies_affected`. -/
 theorem causalScale_strictAnti :
     StrictAnti λ i => {cw | expressionMeaning cw (causalScale i)} := by
   rw [Fin.strictAnti_iff_succ_lt]

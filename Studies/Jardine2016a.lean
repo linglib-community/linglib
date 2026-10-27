@@ -21,12 +21,6 @@ decomposition (43), a left-to-right pass writing `?` after an H and a right-to-l
 resolving it, is computed by a bimachine. Read back into autosegmental representations by (40),
 the OCP-merged output is one H linked to the plateau (Section 4.4).
 
-## Main results
-
-* `utp_map_forms`: the map reproduces the plateaus of Section 2.2
-* `utp_not_isSubsequential`: plateauing is subsequential in neither direction
-* `utp_eq_resolve_mark`, `utp_isBimachineComputable`: the mark-up decomposition (43)
-
 ## Implementation notes
 
 * The conjecture of Section 5.2, after Heinz and Lai, that plateauing has no mark-up-free

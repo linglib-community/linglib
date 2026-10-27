@@ -24,16 +24,6 @@ need heads above tense, so a non-base gerund projects to mirativity where a base
 tense, and the adverbs only the former admits are those of the heads in between (§4). Levin's
 class pages attest the alternation for six of the seven verb classes of (11).
 
-## Main statements
-
-* `not_isTelic_nonBase`: the non-base alternant is atelic.
-* `denial_rows`: a plain *no* denies locatum abundance but not scalarity or mirativity.
-* `nonBase_class_eq_C`: granting projection, the two contents have obligatory local effect and no
-  strong contextual felicity constraint.
-* `even_rows`: *not even* is good exactly with the base alternant, (38)–(40).
-* `gerund_rows`: an adverb is good in a gerund exactly when its head is no higher than the gerund
-  projects, (51)–(60).
-
 ## Implementation notes
 
 * (66) counts the atomic proper parts of an event, here its atomic parts, the same above a
@@ -190,6 +180,7 @@ def contentOf (d : Datum) : Option Content :=
 def responseOf (d : Datum) : Option Response :=
   d.parse? "response" [("denial", .denial), ("wait a minute", .waitAMinute)]
 
+/-- A plain *no* denies locatum abundance but not scalarity or mirativity. -/
 theorem denial_rows : ∀ d ∈ Examples.all, ∀ r ∈ responseOf d, ∀ c ∈ contentOf d,
     (d.judgment = .acceptable ↔ (r = .denial ↔ c.IsAtIssue)) := by
   decide +kernel
@@ -243,6 +234,7 @@ theorem beneathSatisfiable_iff {α : Type*} [Preorder α] {lo hi : α} (h : lo �
   · simp only [BeneathSatisfiable, forall_const, reduceCtorEq, iff_false, not_exists, not_and]
     exact fun v hlo hhi ↦ lt_irrefl v ((hlo.trans_le h).trans hhi)
 
+/-- *not even* is good exactly with the base alternant, (38)–(40). -/
 theorem even_rows {α : Type*} [Preorder α] {lo hi : α} (h : lo ≤ hi) (hv : ∃ v, v < lo) :
     ∀ d ∈ Examples.all, d.feature? "diagnostic" = some "not even" → ∀ a ∈ alternantOf d,
       (d.judgment = .acceptable ↔ BeneathSatisfiable lo hi a) := by
@@ -306,11 +298,12 @@ def projectionOf (d : Datum) : Option Head :=
       ("habitual aspect", cinque .aspHabitual), ("continuative aspect I", cinque .aspContinuative),
       ("durative aspect", cinque .aspDurative), ("prospective aspect", cinque .aspProspective)]
 
+/-- An adverb is good in a gerund exactly when its head is no higher than the gerund projects,
+(51)–(60). -/
 theorem gerund_rows : ∀ d ∈ Examples.all, ∀ a ∈ alternantOf d, ∀ h ∈ projectionOf d,
     (d.judgment = .acceptable ↔ h ≤ size a) := by
   decide +kernel
 
-/-- The heads a non-base gerund projects and a base one does not (`Set.Iic_sdiff_Iic`). -/
 theorem mem_Ioc_size_iff (h : Head) : h ∈ Set.Ioc (size .base) (size .nonBase) ↔
     h ∈ ({scalarity, cinque .modEpistemic, cinque .moodEvidential, mirative} : Finset Head) := by
   rw [size_base, size_nonBase, Set.mem_Ioc]

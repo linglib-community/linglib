@@ -36,27 +36,6 @@ The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs,
 The possessive and locative existential sentences of §12.1.1.2 are those of
 `Turkish.Possession`, with the possessive suffix on the possessee obligatory (§14.4).
 
-## Main results
-
-* `followers_table`: the §3.1 table of permissible vowel sequences.
-* `retriggering`, `palatal_l`: the §3.4 exceptions to harmony, derived rather than listed.
-* `deletable_vowels`, `deletable_consonants`, `predicate_buffers`: the bracketed segments of
-  §6.1.3 after consonant-final and vowel-final stems.
-* `hiatus_repairs`: the two kinds of bracketed segment as elision and insertion at a juncture.
-* `pronominal_n`: the final `n` of a third-person possessive before a case suffix.
-* `imperfective_of_vowel_stems`, `negative_raised`: the vowel-final stems of §8.2.3.3 and the
-  negative of §8.2.2 before -(I)yor.
-* `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
-* `finite_verb`: §8.2 (7), every slot of the finite verb.
-* `same_position_excluded`: §8.2.3 (i), since the template does not repeat position 3.
-* `person_mobility`, `person_fixed`: §8.4, the places of a person marker outside the template.
-* `mi_precedes_clitics`, `mi_follows`: §11.1.1.5, the position of *mI* among the markers of a
-  predicate.
-* `converbs`, `doubled_converbs`: the converbs of §8.5.2.2 and -DIkçA.
-* `conjunctive_converbs`: §28.2, -(y)Ip and -(y)ArAk in place of the position-3 marker.
-* `possessive_existential`, `locative_existential`: §12.1.1.2 (21), (22), (26) and (17).
-* `possessive_obligatory`: §14.4 (117), the possessive suffix on the possessee.
-
 ## Errata
 
 Among the examples of §11.1.1.5, *Gittiler mı?* should be *Gittiler mi?*, since fronting
@@ -87,8 +66,7 @@ theorem followers_table :
     followers e = [e, i] ∧ followers i = [e, i] ∧ followers ö = [e, ü] ∧ followers ü = [e, ü] := by
   decide
 
-/-- The second-person possessive -(I)n on *kız*, *el*, *kol* and *göz* surfaces with each of the
-four high vowels (§3.2.1). -/
+-- §3.2.1
 theorem iType :
     realize [k, ı, z] [(possessive (.personNumber .second .singular)).form] =
         [k, ı, z, ı, n] ∧
@@ -100,15 +78,13 @@ theorem iType :
         [g, ö, z, ü, n] := by
   decide
 
-/-- The last vowel of a stem decides, so the disharmonic loan *otobüs* takes *-ler*
-(Chapter 3). -/
+-- Chapter 3
 theorem last_vowel_decides :
     realize [o, t, o, b, ü, s] [plural.form] =
       [o, t, o, b, ü, s, l, e, r] := by
   decide
 
-/-- In *üz-ül-dü-nüz* 'you became sad' rounding is copied through three suffixes, and the `D`
-of -DI is voiced after `l` (§3.2). -/
+-- §3.2
 theorem iterated :
     realize [ü, z] [passive.form, di.form, (person .one (.personNumber .second .plural)).form] =
       [ü, z, ü, l, d, ü, n, ü, z] := by
@@ -131,8 +107,7 @@ theorem palatal_l :
       [h, a, l', i, m] := by
   decide
 
-/-- The `D` of -DI is `d` after a voiced segment and `t` after a voiceless one, as in *kal-dı*
-and *düş-tü* (§6.1.2). -/
+-- §6.1.2
 theorem voicing_of_D :
     realize [k, a, l] [di.form] = [k, a, l, d, ı] ∧
     realize [d, ü, ş] [di.form] = [d, ü, ş, t, ü] := by
@@ -245,8 +220,7 @@ theorem negative_raised :
       [s, ö, y, l, e, m, i, y, o, r] := by
   decide
 
-/-- The word *ev-ler-imiz-de-ymiş-ler* 'apparently they are at our homes' is a nominal string, the
-evidential copula and a group-2 person marker (§8.1 (2)). -/
+-- §8.1, (2)
 theorem nominal_predicate :
     realize [e, v] [plural.form, (possessive (.personNumber .first .plural)).form, locative.form,
         evidentialCopula.form, (person .two (.personNumber .third .plural)).form] =
@@ -269,7 +243,7 @@ theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) 
 
 /-! ### The order of suffixes (Chapter 8) -/
 
-/-- *çocuk-lar-ın-a* 'to your children' has the order number, possession, case (§8.1 (1)). -/
+-- §8.1, (1)
 theorem nominal :
     Nominal.template.Licensed (E := Nominal.Exponent)
       [⟨_, .plural⟩, ⟨_, .possessive (.personNumber .second .singular)⟩, ⟨_, .dative⟩] := by
@@ -285,8 +259,7 @@ theorem finite_verb :
         ⟨_, .dir⟩] := by
   decide
 
-/-- *Bitir-e-me-miş-tir*, *Oku-yabil-ecek-miş* and *git-ti-ydi-n* fill positions 1-3-5, 2-3-4,
-and 3-4 with a group-1 person marker (§8.2.3 (11), (12), §8.2.3.3). -/
+-- §8.2.3, (11), (12), §8.2.3.3
 theorem tam_positions :
     Verb.template.Licensed (E := Verb.Exponent)
       [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
@@ -296,8 +269,7 @@ theorem tam_positions :
       [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.personNumber .second .singular)⟩] := by
   decide
 
-/-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and
-the copular markers follow that marker (§8.2.3), so the reversed orders are unlicensed. -/
+-- §8.2.2, §8.2.3
 theorem reversed_orders :
     ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .negative⟩, ⟨_, .causative⟩] ∧
     ¬ Verb.template.Licensed (E := Verb.Exponent) [⟨_, .di⟩, ⟨_, .negative⟩] ∧

@@ -133,11 +133,11 @@ theorem permutationInvariant_and :
     PermutationInvariant (E := E) (.t ⇒ .t ⇒ .t) fun u v : Prop ↦ u ∧ v :=
   fun _ ↦ rfl
 
-/-- Negation is a logical item; the skeleton (36) keeps *not*. -/
+-- (36)
 theorem permutationInvariant_not : PermutationInvariant (E := E) (.t ⇒ .t) Not :=
   fun _ ↦ rfl
 
-/-- Expletive *there* denotes the whole domain (23c) and is a logical item. -/
+-- (23c)
 theorem permutationInvariant_there : PermutationInvariant Ty.et fun _ : E ↦ True :=
   fun _ ↦ rfl
 
@@ -170,17 +170,17 @@ theorem permutationInvariant_det_iff {Q : GQ E} :
     exact propext (h (A ∘ ⇑π) (B ∘ ⇑π) A B ⇑π.symm π.symm.bijective
       (fun x ↦ by simp) (fun x ↦ by simp))
 
-/-- *Some* is a logical item (25), by the isomorphism invariance of its Lindström class. -/
+-- (25)
 theorem permutationInvariant_some : PermutationInvariant Ty.det (GQ.some : GQ E) :=
   permutationInvariant_det_iff.2
     (by rw [← Lindstrom.someDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
 
-/-- *Every* is a logical item (35), so only *woman* is replaced in the skeleton of (34a). -/
+-- (35), (34a)
 theorem permutationInvariant_every : PermutationInvariant Ty.det (every : GQ E) :=
   permutationInvariant_det_iff.2
     (by rw [← Lindstrom.everyDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
 
-/-- *No* is a logical item; the skeletons of the (11a) exceptives keep it. -/
+-- (11a)
 theorem permutationInvariant_no : PermutationInvariant Ty.det (no : GQ E) :=
   permutationInvariant_det_iff.2
     (by rw [← Lindstrom.noDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
@@ -263,8 +263,7 @@ theorem thereSkeleton_isLTautology {Q : GQ E} (hc : Conservative Q) (hs : Positi
     (thereSkeleton Q).IsLTautology :=
   fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs (g ())
 
-/-- With *some* the skeleton (25) is false under the empty assignment and true under the
-total one. -/
+-- (25)
 theorem thereSkeleton_some_not_isLAnalytic (a : E) :
     ¬ (thereSkeleton (GQ.some : GQ E)).IsLAnalytic := by
   rintro (h | h)
@@ -272,8 +271,7 @@ theorem thereSkeleton_some_not_isLAnalytic (a : E) :
     exact hx
   · exact h (fun _ _ ↦ True) ⟨a, trivial, trivial⟩
 
-/-- With *at least two*, the skeleton (5b) is not L-analytic, so the weak numeral is grammatical in
-*there*-sentences. -/
+-- (5b)
 theorem thereSkeleton_atLeast_two_not_isLAnalytic :
     ¬ (thereSkeleton (atLeast 2 : GQ Bool)).IsLAnalytic := by
   rintro (h | h)
@@ -292,8 +290,7 @@ paper's footnote requires. -/
 def exceptiveSkeleton (Q : GQ E) : Skeleton E fun _ : Fin 3 ↦ Ty.et :=
   ⟨fun g ↦ (∃ x, g 1 x) ∧ but (g 1) (g 0) Q (g 2)⟩
 
-/-- With a left-upward-monotone determiner the exceptive skeleton is an L-contradiction
-(33). -/
+-- (33)
 theorem exceptiveSkeleton_isLContradiction {Q : GQ E} (h : RestrictorMonotone Q) :
     (exceptiveSkeleton Q).IsLContradiction :=
   fun _ hg ↦ hg.1.elim fun x hx ↦ (IsExceptionSet.eq_bot_of_restrictorMonotone h hg.2).le x hx
@@ -302,8 +299,7 @@ theorem exceptiveSkeleton_not_isLTautology (Q : GQ E) :
     ¬ (exceptiveSkeleton Q).IsLTautology :=
   fun h ↦ (h ![fun _ ↦ True, fun _ ↦ False, fun _ ↦ True]).1.elim fun _ hx ↦ hx
 
-/-- With *every* the exceptive skeleton (32) is true when the exception is the one individual
-outside the scope. -/
+-- (32)
 theorem exceptiveSkeleton_every_not_isLContradiction (a : E) :
     ¬ (exceptiveSkeleton (every : GQ E)).IsLContradiction := fun h ↦
   h ![fun _ ↦ True, (· = a), (· ≠ a)]

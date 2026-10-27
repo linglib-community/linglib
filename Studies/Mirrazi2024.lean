@@ -16,17 +16,6 @@ from a choice function closed above the negation whose world argument the attitu
 of its restrictor but not skolemized to a world, gives only the de re reading when the
 restrictor is the same set in every belief world, (41)–(42): the fixed-set problem.
 
-## Main results
-
-* `skolemized_iff`: closing a world-skolemized function above the negation, with its world
-  argument bound by the operator, gives the reading on which the indefinite scopes below the
-  operator and above the negation.
-* `intensional_iff_of_fixed`: an intensional choice function on a restrictor that is one fixed
-  set across the accessible worlds gives the de re reading.
-* `Scenario40.skolemized`, `Scenario40.not_intensional`, `Scenario40.not_narrow`: in the context
-  of (40) the skolemized function makes the sentence true, no intensional function does, and the
-  narrow reading is false.
-
 ## Implementation notes
 
 * Negation is below the attitude, as the paper's excluded-middle presupposition yields; the

@@ -23,17 +23,6 @@ go with them. Every order that validates the modified disjunction puzzle, as Lew
 lifts of a world order do, infers from *Sam is as likely to win as anyone else* that Sam is as
 likely to win as not; the lottery's probability measure makes the first true and the second false.
 
-## Main statements
-
-* `lottery_collapse`: in any finite lottery, an order validating the modified disjunction puzzle
-  infers (14) from (4).
-* `lottery_rows`: the fair lottery decides the paper's lottery sentences as judged.
-* `not_exists_lift`: no lift of a world order fixes the order of every measure agreeing with it.
-* `not_mustToProbably_of_ncard_lt`: under Kratzer's *must* the m-lifting refutes (35) whenever
-  fewer than half the worlds are best.
-* `probMust_one_iff_humanNecessity`: at threshold one the probabilistic *must* is the
-  quantificational one over the worlds of positive probability.
-
 ## Implementation notes
 
 * Kratzer's *must* is human necessity over the empty modal base, as in `Yalcin2010.must`.
@@ -198,7 +187,7 @@ theorem ModifiedDisjunctionPuzzle.biUnion {r : Set W → Set W → Prop}
 
 /-- In a finite lottery, an order validating the modified disjunction puzzle infers that `a` is as
 likely to win as not from `a` being as likely to win as anyone else, feeding each conclusion back
-as a premise as in (13). -/
+as a premise as in (13) ((14), (4)). -/
 theorem lottery_collapse {T ι : Type*} [Finite T] {r : Set T → Set T → Prop}
     (hr : ModifiedDisjunctionPuzzle r) (holder : T → ι) {a : ι} (ha : ∃ t, holder t ≠ a)
     (h : ∀ b ≠ a, r (holder ⁻¹' {a}) (holder ⁻¹' {b})) :

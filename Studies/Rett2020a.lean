@@ -174,8 +174,7 @@ theorem before_process :
     (before_inchoative_iff (isLeast_timeTrace_Iic i)).trans
       (before_iff_of_isLeast (isLeast_timeTrace_Iic i))⟩
 
-/-- Against a culmination, *before* reads as precedence of its start ((5a), the paper's
-(23a)) ... -/
+-- (5a), (23a)
 theorem before_culmination_start :
     before A {i} ↔ ∃ t ∈ timeTrace A, t < i.fst :=
   before_iff_of_isLeast (isLeast_timeTrace_singleton i)
@@ -185,7 +184,7 @@ theorem before_culmination_telos :
     before A (completive {i}) ↔ ∃ t ∈ timeTrace A, t < i.snd :=
   before_completive_iff (isGreatest_timeTrace_singleton i)
 
-/-- Against a process, *after* reads as succession of its end ((5b), the paper's (24a)) ... -/
+-- (5b), (24a)
 theorem after_process_end :
     after A (Set.Iic i) ↔ ∃ t ∈ timeTrace A, i.snd < t :=
   after_iff_of_isGreatest (isGreatest_timeTrace_Iic i)
@@ -239,14 +238,14 @@ theorem after_stative_inchoative_iff :
     rw [timeTrace_inchoative_of_isLeast (isLeast_timeTrace_Iic j)]
     exact isGreatest_singleton)
 
-/-- In (23), *before* the start of the climb is false and *before* its telos true. -/
+-- (23)
 theorem example23 :
     ¬ before {NonemptyInterval.pure 15} {⟨⟨13, 16⟩, by omega⟩} ∧
       before {NonemptyInterval.pure 15}
         (completive {⟨⟨13, 16⟩, by omega⟩}) := by
   simp [before_culmination_start, before_culmination_telos]
 
-/-- In (24), *after* the end of Mary's term is false and *after* its onset true. -/
+-- (24)
 theorem example24 :
     ¬ after {NonemptyInterval.pure 2022} (Set.Iic ⟨⟨2021, 2028⟩, by omega⟩) ∧
       after {NonemptyInterval.pure 2022}

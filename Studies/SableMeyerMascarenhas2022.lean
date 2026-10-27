@@ -82,8 +82,7 @@ section Schema
 
 variable {W : Type*} {a b c d : Set W}
 
-/-- Experiment 2's schema (10) is the classical schema at `b` with `d` inside the selected
-alternative: matching certifies the inside conjunct `d`. -/
+-- (10)
 theorem exp2_illusory_d (hbd : (b ∩ d).Nonempty) (h : ((c ∩ b) \ d).Nonempty) :
     (disjunction b d c).Illusory (disjunction b d c).Matches d :=
   disjunction_illusory_matches hbd h
@@ -155,7 +154,7 @@ def system1P1 : List MentalModel := [model true true ⊥, model ⊥ ⊥ true]
 /-- Under model conjunction a gap behaves as a negation: fill it with `false`. -/
 def fillGaps (m : MentalModel) : Atom → Bool := fun x ↦ (m x).unbotD false
 
-/-- (16): filling the gaps makes the System-1 models fully explicit and mutually exclusive. -/
+-- (16)
 theorem fillGaps_system1P1 :
     system1P1.map fillGaps = [fun x ↦ decide (x ≠ Atom.c), fun x ↦ decide (x = Atom.c)] := by
   simp only [system1P1, List.map_cons, List.map_nil, List.cons.injEq, and_true]
@@ -254,7 +253,7 @@ def BestConfirmed (P : Problem W) (p : Set W) : Prop :=
 
 variable {μ} {a b c d f : Set W}
 
-/-- If `b` is independent of `a` and of `a ∧ d`, then `D(a ∧ b, d) = P(b) · D(a, d)` (§5.4). -/
+-- §5.4
 theorem confirmationD_inter_eq_mul (hd : MeasurableSet d) (hab : IndepSet a b μ)
     (hadb : IndepSet (a ∩ d) b μ) :
     confirmationD μ (a ∩ b) d = μ.real b * confirmationD μ a d := by
@@ -271,7 +270,7 @@ theorem confirmationD_eq_zero (hd : MeasurableSet d) (hcd : IndepSet c d μ) (h0
   rw [confirmationD, cond_real_apply μ hd, Set.inter_comm, hcd.measureReal_inter_eq_mul,
     mul_div_assoc, div_self hd0, mul_one, sub_self]
 
-/-- The §5.4 asymmetry: a hint that confirms `a` confirms the conjunction `a ∧ b`. -/
+-- §5.4
 theorem confirmationD_inter_pos (hd : MeasurableSet d) (hab : IndepSet a b μ)
     (hadb : IndepSet (a ∩ d) b μ) (hb : μ b ≠ 0) (ha : 0 < confirmationD μ a d) :
     0 < confirmationD μ (a ∩ b) d := by

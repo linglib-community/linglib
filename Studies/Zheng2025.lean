@@ -21,15 +21,6 @@ necessary for resolving the conflict, Theiler's condition on *denn* with resolvi
 proceeding. In the dripping-raincoat scenario of (2), (3) and (5), each context is placed in
 Sudo's grid by the relevance signs of the evidence and of A's beliefs.
 
-## Main statements
-
-* `nandaoQFelicitous_zero`, `not_necessaryToResolve_of_sufficient`: (13) for a polar question is
-  (11), and §4 excludes a why-question with another sufficient answer.
-* `felicitous_iff_mem_nandaoProfile`: in the scenario, felicity is the paper's profile.
-* `xuProfile_not_necessary_not_sufficient`: negative epistemic bias is neither (§2.2).
-* `situation_expectsWet`: the grid does not determine felicity (§2.3).
-* `nandao_distribution`: *nandao* selects polar questions only, (12).
-
 ## Implementation notes
 
 The paper's "significantly raises" is Merin's positive relevance under a prior, the counting
@@ -95,6 +86,8 @@ def nandaoQFelicitous (f : Property D W n) : Prop :=
   (∃ p ∈ k.props, ∀ φ ∈ instantiations f, posRelevant ⟨φ, .of_discrete, μ⟩ {w | p w}) ∧
     unexpected k u ∧ ∀ φ ∈ instantiations f, ¬ k.directlySettles (· ∈ φ)
 
+/-- (13) for a polar question is (11), and §4 excludes a why-question with another sufficient
+answer. -/
 theorem nandaoQFelicitous_zero (f : Property D W 0) :
     nandaoQFelicitous μ k u f ↔ nandaoFelicitous μ k u (f default) := by
   simp [nandaoQFelicitous, nandaoFelicitous, instantiations_zero]

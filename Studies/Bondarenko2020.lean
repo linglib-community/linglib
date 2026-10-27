@@ -25,14 +25,6 @@ inference follows.
 * `report`: the past-tense report with a nominalized clause.
 * `reportThat`: the past-tense report with a CP.
 
-## Main results
-
-* `reportThat_ne_zero`: a report with a CP presupposes nothing.
-* `existsStrong_thetaTh_ne_zero_iff`: the closed θTh-report presupposes pre-existence.
-* `exists_preExists_of_report_ne_zero`: the past-tense report presupposes pre-existence at some
-  past thinking time.
-* `exists_of_report_ne_zero`: the factive inference.
-
 ## Implementation notes
 
 * Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`. Time spans are a
@@ -105,8 +97,7 @@ noncomputable def reportThat [Anchor E I] (P : W → NonemptyInterval T → E �
 variable {τ : X → NonemptyInterval T} {about : E → X} {P : W → NonemptyInterval T → E → Prop}
   {Q : W → NonemptyInterval T → X → Prop} {g₁ t : NonemptyInterval T} {w : W}
 
-/-- θTh's assertion entails its presupposition, so θTh is true exactly when its assertion holds,
-(55), (56). -/
+-- (55), (56)
 theorem thetaTh_eq_one_iff {e : E} :
     thetaTh τ about P Q t e w = 1 ↔ PreExists τ (fun x ↦ Q w t x ∧ P w t e ∧ about e = x) t := by
   simp only [thetaTh, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
@@ -145,8 +136,7 @@ theorem exists_preExists_of_report_ne_zero [Nonempty E]
   · obtain ⟨t', ht'⟩ := hpast
     exact ⟨t', ht'.1, ht'.2, existsStrong_thetaTh_ne_zero_iff.1 (h ⟨t', ht'⟩)⟩
 
-/-- Over an empty contextual past the report is defined whatever the complement describes, so
-(62) needs the past to be nonempty. -/
+-- (62)
 theorem report_ne_zero_of_not_exists (hpast : ¬ ∃ t', t'.Precedes t ∧ t' ≤ g₁) :
     report τ about P Q g₁ t w ≠ 0 :=
   Trivalent.existsStrong_ne_zero_iff.2 (.inr fun ⟨t', ht'⟩ ↦ absurd ⟨t', ht'⟩ hpast)
@@ -159,13 +149,12 @@ theorem exists_of_report_ne_zero [Nonempty E] (hpast : ∃ t', t'.Precedes t ∧
   let ⟨x, hx⟩ := hpre.exists
   ⟨t', x, hprec, hx⟩
 
-/-- Negation keeps the presupposition, (15). -/
+-- (15)
 theorem support_neg_report :
     Function.support (-report τ about P Q g₁ t) = Function.support (report τ about P Q g₁ t) := by
   ext; simp
 
-/-- With a nominalized CP, the presupposition is that an individual with the content started before
-the matrix time, independent of the world ((64), (65)). -/
+-- (64), (65)
 theorem existsStrong_thetaTh_comp_ne_zero_iff [Nonempty E] [Anchor X I] (p : I → Prop) :
     Trivalent.existsStrong (fun e ↦ thetaTh τ about P (fun _ _ ↦ Anchor.comp p) t e w) ≠ 0 ↔
       PreExists τ (Anchor.comp p) t :=

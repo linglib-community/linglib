@@ -52,8 +52,7 @@ variable {A : Type*} {R : A → A → Prop} {X : Finset A} {I : Set (A → A →
 
 /-! ### The six quantifiers (§5) -/
 
-/-- For a symmetric scope relation the direction parameter makes no difference, so the six
-quantifiers reduce to three (§5.4). -/
+-- §5.4
 theorem recip_alternative_iff [Std.Symm R] (c : Coverage) :
     Recip (c, .alternative) R X ↔ Recip (c, .plain) R X := by
   have : SymmGen R = R := funext₂ fun x y ↦ propext ⟨fun h ↦ h.elim id (symm_of R), .inl⟩
@@ -191,8 +190,7 @@ theorem isLeast_strong (h : ∃ R ∈ I, StrongReciprocity R X) :
 
 /-! ### Measles (§6.1) -/
 
-/-- One-way Weak Reciprocity over finitely many members needs a cycle, as with the third graders and
-measles (99). -/
+-- (99)
 theorem exists_transGen_of_oneWayWeak (h : OneWayWeakReciprocity R X) : ∃ x, TransGen R x x := by
   obtain ⟨hX, h⟩ := oneWayWeakReciprocity_iff.1 h
   by_contra! hcyc
@@ -292,8 +290,7 @@ theorem interpretation_pair_alternative {a b : A} (hab : a ≠ b) :
     · exact ⟨b, by simp, hab, hab'⟩
     · exact ⟨a, by simp, Ne.symm hab, hba'⟩
 
-/-- With two members and an asymmetric relation, the interpretation is Inclusive Alternative
-Ordering, as for the bunk beds of (108). -/
+-- (108)
 theorem pair_isLeast {a b : A} (hab : a ≠ b) :
     IsLeast (candidates {a, b} asymmetric) (interpretation {a, b} (.tot, .alternative)) := by
   rw [interpretation_pair_alternative hab]

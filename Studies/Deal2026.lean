@@ -30,16 +30,6 @@ The Nez Perce embedding strategy is read off the paper's judgments in
 Fragment's relativizer *zV-*, and the Bulgarian flag is Krapova's double requirement over the
 Fragment's frames, checked against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
 
-## Main results
-
-* `relative_factive`, `projection_rows`: every relative embedding is factive, factivity being
-  the Fragment entries' Karttunen class, which the projection trials (33)–(36) and (68) confirm
-  row by row.
-* `table79`, `table80`: each shell over C, none, D N or P D, occurs with and without an
-  Ā-dependency, and factivity varies independently of the Ā-dependency.
-* `detoComplement_iff`, `deto_rows`: the double requirement picks out Krapova's *deto*-takers.
-* `paradigm_case_discriminates`: the case half of the diagnostic (21) that *yox̂* is a D.
-
 ## Implementation notes
 
 The Ā column of (79) is a datum for English, Ndebele and Washo, whose Fragments carry no
@@ -93,7 +83,7 @@ def RelativeEmbedding (v : Verb) : Prop :=
 instance (v : Verb) : Decidable (RelativeEmbedding v) :=
   inferInstanceAs (Decidable (∃ row ∈ Examples.all, _))
 
-/-- The relative-embedding predicates take no noun-phrase object, (41). -/
+-- (41)
 theorem nominal_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "nominalComplement" →
       ∀ v ∈ verbs, row.feature? "verb" = some v.form →
@@ -112,9 +102,7 @@ theorem projection_rows :
       (row.projective? = some true ↔ v.IsFactive) := by
   decide
 
-/-- *cuukwe* 'know' projects from a third-person conditional antecedent (68), which
-[karttunen-1971b]'s semi-factive postulates, built on first-person conditionals (25), do not
-predict. -/
+-- (68), (25) [karttunen-1971b]
 theorem cuukwe_conditional_projects :
     ¬ Karttunen1971b.Projects .semi .conditionalAntecedent ∧
       (∃ row ∈ Examples.all, row.environment? = some .conditionalAntecedent ∧
@@ -178,8 +166,7 @@ theorem deto_rows :
           ∀ a ∈ row.alternatives, a.2 = .acceptable := by
   decide
 
-/-- The nominal paraphrases (59) take the preposition *za* and no other, the adpositional frame
-of the Fragment's emotive factives. -/
+-- (59)
 theorem zaPhrase_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "zaPhrase" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
@@ -187,16 +174,14 @@ theorem zaPhrase_rows :
           ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
   decide
 
-/-- In Krapova's factivity tests (57a–b) the complement survives negation and a question exactly
-for the factive predicates. -/
+-- (57a–b)
 theorem krapova_projection_rows :
     ∀ row ∈ Krapova2010.Examples.all, ∀ _ ∈ row.environment?,
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
         (row.projective? = some true ↔ v.IsFactive) := by
   decide
 
-/-- In Krapova's contradiction tests (57c) and footnote 46, a continuation denying the
-complement is starred exactly under a factive predicate, under *deto* and *če* alike. -/
+-- (57c), footnote 46
 theorem krapova_contradiction_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
@@ -250,7 +235,7 @@ theorem table80 :
 
 /-- The relative pronoun *yox̂* ~ *ko* inflects for case, in that cells of the paradigm with
 distinct cases share no forms. This is the case half of the diagnostic that *yox̂* ~ *ko* is a D
-while the invariant *ke* is a C. -/
+while the invariant *ke* is a C ((21)). -/
 theorem paradigm_case_discriminates :
     ∀ c d : NezPerce.Case × RelativePronoun.Column, c.1 ≠ d.1 →
       Disjoint (RelativePronoun.table c) (RelativePronoun.table d) := by

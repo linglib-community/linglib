@@ -26,17 +26,6 @@ conditional: it fails when the consequent is one of the disjuncts, and an *or bo
 antecedent, exhaustified by Hurford's constraint, turns the conjunctive simplification from
 excluded into included.
 
-## Main results
-
-* `freeChoice`, `simpleDisjunction`: the modal and the plain disjunction.
-* `II_fcAlts`, `isInnocentlyExcludable_fcAlts_iff`: what free choice includes and excludes.
-* `support_only_fcAlts`: free choice under `only` is presupposed.
-* `posSupport_only_eq`: without symmetric alternatives `only` agrees with the exclusive
-  `Focus.Particles.only`.
-* `universalFreeChoice`, `negativeUniversalFreeChoice`, `freeChoiceOverUniversal`,
-  `simplificationMost`: instances of `Exhaustification.exhIEII_quantified`.
-* `sda`, `sda_consequent_disjunct`, `orBoth`: simplification, its failure, and the switches.
-
 ## References
 
 * [bar-lev-fox-2020]
@@ -312,7 +301,7 @@ abbrev off : Set Switch := {w | w.light w.up₁ w.up₂ = false}
 /-- Both switches up, and the light on exactly when the switches agree. -/
 def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
 
-/-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario. -/
+-- (76)
 theorem sda_actual :
     actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
@@ -320,8 +309,7 @@ theorem sda_actual :
     ⟨⟨true, false, fun x y ↦ !x && !y⟩, by decide⟩ ⟨actual, by decide⟩]
   decide
 
-/-- *If switch A or switch B or both were down, the light would be off* (78) is false in the
-scenario. -/
+-- (78)
 theorem orBoth_actual :
     actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by

@@ -347,7 +347,6 @@ theorem margin_le (hX : J.strict.Nonempty) {i : ι} (hi : i ∈ J.strict) :
   Finset.inf'_le _ hi
 
 omit [Fintype Ω] [MeasurableSingletonClass Ω] [IsProbabilityMeasure P] in
-/-- A preferred act is worth the preferred value under a representing measure. -/
 theorem pureValue_of_preferred (hP : J.Represents P) {φ : Act ι} (hφ : J.Preferred φ) :
     ∑ i, s.weight i * J.sideValue s P i (φ i) = J.preferredValue s P := by
   refine Finset.sum_congr rfl fun i _ ↦ ?_
@@ -356,7 +355,6 @@ theorem pureValue_of_preferred (hP : J.Represents P) {φ : Act ι} (hφ : J.Pref
   · rw [J.sideValue_eq_of_represents s P hP hi]
 
 omit [Fintype Ω] [MeasurableSingletonClass Ω] in
-/-- A non-preferred act loses at least the margin under a representing measure. -/
 theorem pureValue_le_of_not_preferred (hP : J.Represents P) (hX : J.strict.Nonempty)
     {φ : Act ι} (hφ : ¬J.Preferred φ) :
     ∑ i, s.weight i * J.sideValue s P i (φ i) ≤ J.preferredValue s P - J.margin s P hX := by
@@ -382,8 +380,6 @@ theorem pureValue_le_of_not_preferred (hP : J.Represents P) (hX : J.strict.Nonem
   unfold preferredValue
   linarith
 
-/-- Under a representing measure the expected utility of a mixed act is at most the preferred
-value less the cost, with equality on `Q★`. -/
 theorem expectedUtility_le_of_represents (hP : J.Represents P) (hX : J.strict.Nonempty)
     {c : ℝ} (hcm : c ≤ J.margin s P hX) (μ : Measure (Act ι)) [IsProbabilityMeasure μ] :
     expectedPayoff (J.utility s c) P μ ≤ J.preferredValue s P - c := by
@@ -417,8 +413,6 @@ theorem expectedUtility_uniformPreferred_of_represents (hP : J.Represents P) (c 
         change (J.preferredCard : ℝ) * _ = _
         field_simp
 
-/-- The pushforward of `Q★` along a change of one coordinate beats `Q★` when the change never
-hurts a preferred act and helps one. -/
 theorem expectedUtility_map_gt {c : ℝ} (f : Act ι → Act ι)
     (hle : ∀ φ, J.Preferred φ →
       ∑ ω, P.real {ω} * J.utility s c φ ω ≤ ∑ ω, P.real {ω} * J.utility s c (f φ) ω)
@@ -688,8 +682,7 @@ on `C` than `A`. -/
 def explorer : Judgments (Fin 3) (Fin 3) :=
   ⟨![{0}, {1}, {2}], ![{1}, {2}, {0}], Finset.univ⟩
 
-/-- No transitive relation agrees with cyclic judgments, so "given intransitive judgments, there
-can be no numerical probability measure that agrees with these judgments" (p. 349). -/
+-- p. 349
 theorem explorer_not_agree (r : Set (Fin 3) → Set (Fin 3) → Prop) [IsTrans (Set (Fin 3)) r] :
     ¬explorer.Agree r := fun h ↦
   ((h 2).1 (Finset.mem_univ _)).2
@@ -703,7 +696,7 @@ islands `A`, `B`, `C` they pay `0, 1, 2`, `1, 2, 0` and `2, 0, 1`. -/
 def explorerMixture : Finset (Act (Fin 3)) :=
   {![false, false, true], ![false, true, false], ![true, false, false]}
 
-/-- The uniform mixture of `A2`, `A3`, `A4` "guarantees payoff 1 in all states" (p. 365). -/
+-- p. 365
 theorem explorer_mixture_payoff (c : ℝ) (ω : Fin 3) :
     mixedPayoff (explorer.utility (unitStakes (Fin 3)) c) (uniformOn ↑explorerMixture) ω = 1 := by
   rw [mixedPayoff_uniformOn]
@@ -712,8 +705,7 @@ theorem explorer_mixture_payoff (c : ℝ) (ω : Fin 3) :
       Judgments.Preferred, explorer, unitStakes, Stakes.const, Fin.sum_univ_three,
       Fin.forall_fin_succ, -Finset.sum_boole] <;> norm_num
 
-/-- The explorer's preferred act `A1` is strictly dominated by the uniform mixture of `A2`, `A3`,
-`A4` (§7). -/
+-- §7
 theorem explorer_dominated {c : ℝ} (hc : 0 < c) :
     IsStrictlyPayoffDominated (explorer.utility (unitStakes (Fin 3)) c)
       explorer.uniformPreferred := by
@@ -752,8 +744,7 @@ theorem ellsberg_not_representable : ¬ellsberg.Representable := fun ⟨_, _, h�
 theorem ellsberg_balanced : ellsberg.Balanced := fun ω ↦ by
   fin_cases ω <;> simp [ellsberg]
 
-/-- In Raiffa's argument the preferred act is strictly dominated, paying `50 − c` against option 2's
-`50` (p. 355). -/
+-- p. 355
 theorem ellsberg_dominated {c : ℝ} (hc : 0 < c) :
     IsStrictlyPayoffDominated (ellsberg.utility coinStakes c) ellsberg.uniformPreferred :=
   ellsberg.dominated_of_balanced ellsberg_balanced rfl _ _ hc
@@ -773,9 +764,7 @@ theorem worldCup_balanced : worldCup.Balanced := fun ω ↦ by
 theorem worldCup_not_representable : ¬worldCup.Representable :=
   worldCup.not_representable_of_balanced worldCup_balanced ⟨0, Finset.mem_univ _⟩
 
-/-- In §4's system of bets, trading the four preferred gambles `G1`, `G3`, `G5`, `G7` for the
-four others changes nothing whichever team wins, so paying for the trade is strict dominance.
-(The paper's `G2` reads "Argentina or Chile", a slip for China.) -/
+-- §4
 theorem worldCup_dominated {c : ℝ} (hc : 0 < c) :
     IsStrictlyPayoffDominated (worldCup.utility (unitStakes (Fin 4)) c) worldCup.uniformPreferred :=
   worldCup.dominated_of_balanced worldCup_balanced rfl _ _ hc

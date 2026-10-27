@@ -149,8 +149,7 @@ theorem le_runtime_of_presentState (h : presentState.mapping s d) : s.R ≤ d.ru
   | simple _ => exact (h : False).elim
   | complex _ _ _ hr => exact le_trans h hr
 
-/-- The readings are semantically distinct, §1, since no configuration is both existential and
-a result-state one. -/
+-- §1
 theorem not_existential_of_presentState (h : presentState.mapping s d) :
     ¬ existential.mapping s d :=
   λ he => precedes_not_overlaps (precedes_of_existential he)

@@ -133,8 +133,7 @@ theorem ProjectionMode.veridical_iff [Nonempty W] : μ.Veridical W ↔ μ = .fac
 instance [Nonempty W] : Decidable (μ.Veridical W) :=
   decidable_of_iff _ ProjectionMode.veridical_iff.symm
 
-/-- In (23)–(24), the rumor as evidence projects factually and cannot be denied, while the rumor's
-content can. -/
+-- (23), (24)
 theorem rumor :
     ProjectionMode.factual.Admits Kratzer2012.evidence ∧ ¬ Deniable Kratzer2012.evidence ∧
       Deniable Kratzer2012.content :=
@@ -165,8 +164,7 @@ def BackgroundClass.traditionalFlavor : BackgroundClass → ModalFlavor
   | .factualEvidential => .epistemic
   | .contentEvidential => .epistemic
 
-/-- Table 18.2: the traditional circumstantial class is factual, and the new classification
-splits the traditional epistemic class by mode. -/
+-- Table 18.2
 theorem table18_2 :
     (∀ c : BackgroundClass, c.traditionalFlavor = .circumstantial → c.projectionMode = .factual) ∧
       ∀ μ, ∃ c : BackgroundClass, c.traditionalFlavor = .epistemic ∧ c.projectionMode = μ := by
@@ -212,7 +210,7 @@ def statimcetsMode (m : ModalItem) : ProjectionMode := if m = lakw7a then .conte
 /-- The class of a St'át'imcets modal. -/
 def statimcetsClass (m : ModalItem) : BackgroundClass := .ofMode (statimcetsMode m) (source m)
 
-/-- Table 18.3's St'át'imcets row. -/
+-- Table 18.3
 theorem table18_3 :
     statimcetsClass ka = .factualCircumstantial ∧
       statimcetsClass kaCircumfix = .factualCircumstantial ∧
@@ -223,8 +221,7 @@ theorem table18_3 :
 theorem statimcets_full_split : ∀ c : BackgroundClass, ∃ m ∈ modals, statimcetsClass m = c := by
   decide
 
-/-- In (25)–(28), a modal survives *but it was the wind* exactly when its mode allows denying the
-prejacent. -/
+-- (25), (28)
 theorem deniability_rows (W : Type*) [Nonempty W] :
     ∀ e ∈ Examples.all, e.feature? "test" = some "deniability" →
       ∃ m ∈ e.parse? "modal" modalTable,
@@ -269,8 +266,7 @@ theorem no_duals :
 def forceTable : List (String × ModalForce) :=
   [("possibility", .possibility), ("necessity", .necessity)]
 
-/-- (37)–(38): *ima('a)* is read with each force it expresses, and with possibility where
-English *must* would be infelicitous. -/
+-- (37), (38)
 theorem imaa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some Gitksan.imaa →
       ∀ r ∈ e.readings, ∃ fo ∈ forceTable.lookup r.1,
@@ -280,8 +276,7 @@ theorem imaa_rows :
 /-- The polarity of a row's context. -/
 def polarityTable : List (String × Polarity) := [("false", .positive), ("true", .negative)]
 
-/-- *O'qa* translates as possibility everywhere and as necessity only outside downward-entailing
-contexts ((39)–(40)), as [deal-2011] predicts. -/
+-- (39), (40) [deal-2011]
 theorem oqa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some NezPerce.oqa →
       ∀ π ∈ e.parse? "downwardEntailing" polarityTable, ∀ r ∈ e.readings,
@@ -290,8 +285,7 @@ theorem oqa_rows :
             (ModalItem.HasScalemate Deal2011.lexicalForce NezPerce.modals NezPerce.oqa) fo) := by
   decide
 
-/-- (42)–(43): Nsyilxcen *mat* is accepted in possibility and necessity contexts and *cmay* in
-possibility contexts only, as the fragment records. -/
+-- (42), (43)
 theorem nsyilxcen_rows :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable, m ∈ Nsyilxcen.modals →
       ∀ fo ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔ fo ∈ m.forces) := by
@@ -314,24 +308,21 @@ theorem nsyilxcen_not_scalar :
 
 /-! ### Modal–temporal interaction (§18.4.3) -/
 
-/-- (57)–(62): an epistemic modal takes a past temporal perspective in Blackfoot, Ktunaxa,
-St'át'imcets and Gitksan, every past-perspective row being an accepted epistemic. -/
+-- (57), (62)
 theorem past_perspective_epistemics :
     ∀ e ∈ Examples.all, e.feature? "perspective" = some "past" → e.judgment = .acceptable ∧
       (e.feature? "flavor" = some "epistemic" ∨
         ∃ m ∈ e.parse? "modal" modalTable, m.Epistemic) := by
   decide
 
-/-- (60)–(63): ima('a) takes every orientation, and *dim* is present exactly when it is
-future-oriented, as in [matthewson-2013]'s paradigms. -/
+-- (60), (63) [matthewson-2013]
 theorem gitksan_orientation_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some Gitksan.imaa →
       ∀ s ∈ e.feature? "orientation", ∃ o ∈ Matthewson2013.orientationOf s,
         (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) := by
   decide
 
-/-- English marks past orientation ([condoravdi-2002]) and Gitksan future orientation
-([matthewson-2013]), the mirror image of §18.4.3. -/
+-- §18.4.3 [condoravdi-2002] [matthewson-2013]
 theorem marking_mirror :
     (∀ s : Condoravdi2002.Scope, s.orientation = .past ↔ s = .modalPerf) ∧
       ∀ e ∈ Matthewson2013.Examples.all,
@@ -375,8 +366,7 @@ def strengthTable : List (String × ModalForce) := [("weak", .possibility), ("st
 def flavorTable : List (String × ModalFlavor) :=
   [("epistemic", .epistemic), ("circumstantial", .circumstantial), ("deontic", .deontic)]
 
-/-- (64)–(68): each Niuean example expresses a force and flavour its modal has, and *liga* is
-attested with each of its forces. -/
+-- (64), (68)
 theorem niuean_rows :
     (∀ e ∈ Examples.all, e.feature? "section" = some "18.5" → (e.feature? "force").isSome →
       ∃ m ∈ e.parse? "modal" modalTable, ∃ fo ∈ e.parse? "force" strengthTable,
@@ -427,8 +417,6 @@ def hypotheticalRootSystem : List ModalItem :=
    ⟨"w", {(.possibility, .circumstantial)}, .neutral⟩,
    ⟨"z", {(.possibility, .bouletic)}, .neutral⟩]
 
-/-- The system satisfies the universal and violates the refinement, `x` varying in force and
-`y` in flavour within the root domain, so the refinement is strictly stronger. -/
 theorem hypotheticalRootSystem_singleAxis_not_vanderKlok :
     (∀ m ∈ hypotheticalRootSystem, SingleAxis m.classical.meaning) ∧
       ¬ VanderKlok hypotheticalRootSystem := by

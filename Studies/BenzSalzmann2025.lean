@@ -23,17 +23,6 @@ paper's evidence against deleting individual constituents turns on.
   `Minimalist.Ellipsis.nPEllipsis`, [E] on Num.
 * `ePositionOfContrast`: the contrast condition on [E] placement.
 
-## Main results
-
-* `n_stranding_is_xStranding`: N-to-n movement instantiates X-stranding.
-* `no_individual_prenominal_deletion`, `no_individual_numeral_deletion`: no [E] position deletes a
-  prenominal modifier while sparing the noun.
-* `postnominal_all_or_nothing`: the only [E] position recovering a postnominal dependent deletes
-  every one of them.
-* `contrast_governs_recovery`: a postnominal dependent is recoverable exactly when the noun is
-  contrastive.
-* `gender_parallels_voice`: the categorizer is external under N-stranding as Voice is under VPE.
-
 ## References
 
 * [benz-salzmann-2025]
@@ -67,8 +56,7 @@ theorem n_stranding_is_xStranding :
 theorem clausal_nominal_parallel :
     clausalSpine.Deletes .v (.head .V) ∧ nominalSpine.Deletes .n (.head .N) := by decide
 
-/-- Under N-stranding the noun's dependents are deleted while n, the numeral and the determiner are
-pronounced, as in *zwei Professoren* (6a). -/
+-- (6a)
 theorem nStranding_domain :
     nStrandingNPE.Deletes (.head .N) ∧ nStrandingNPE.Spares (.adjunct .N) ∧
       nStrandingNPE.Spares (.head .n) ∧ nStrandingNPE.Spares (.head .Num) ∧

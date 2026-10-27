@@ -111,7 +111,7 @@ theorem log_grammar_div (hpos : ∀ v, 0 < H v) (con : ConstraintSet (X × Y) (F
   rw [grammar_real_singleton hpos, grammar_real_singleton hpos,
     div_div_div_cancel_right₀ (sum_pos (fun z _ ↦ hpos _) ⟨a, mem_univ a⟩).ne', logOdds]
 
-/-- When the form has only the two candidates, the logit of the first is its log-odds (17). -/
+-- (17)
 theorem logit_grammar_of_pair [DecidableEq Y] (hpos : ∀ v, 0 < H v)
     (con : ConstraintSet (X × Y) (Fin n)) (x : X) {a b : Y} (hab : a ≠ b)
     (huniv : (univ : Finset Y) = {a, b}) :
@@ -162,7 +162,7 @@ theorem Separable.interaction_logOdds_eq_zero (hH : Separable H) {X Y : Type*} {
     log_prod fun k _ ↦ (hg k _).ne', log_prod fun k _ ↦ (hg k _).ne', ← sum_sub_distrib]
   rfl
 
-/-- Separable harmonies predict HZ's generalization (§5.4). -/
+-- §5.4
 theorem Separable.predictsHZ (hH : Separable H) : PredictsHZ H := by
   intro X sq con hind
   simp_rw [logit_grammar_of_pair hH.pos con _ (a := true) (b := false) (by decide) (by decide)]
@@ -208,7 +208,7 @@ theorem PredictsHZ.mul_update (hH : PredictsHZ H) (hpos : ∀ v, 0 < H v) (h0 : 
   rw [log_mul (hpos _).ne' (hpos _).ne']
   linarith
 
-/-- A harmony predicting HZ's generalization satisfies (32). -/
+-- (32)
 theorem PredictsHZ.eq_prod_single (hH : PredictsHZ H) (hpos : ∀ v, 0 < H v) (h0 : H 0 = 1)
     (v : Fin n → ℕ) : H v = ∏ k, H (Pi.single k (v k)) := by
   classical
@@ -228,8 +228,7 @@ theorem predictsHZ_iff_separable (hpos : ∀ v, 0 < H v) (h0 : H 0 = 1) :
   ⟨fun h ↦ separable_iff_exists_prod.2 ⟨fun k c ↦ H (Pi.single k c), fun _ _ ↦ hpos _,
     h.eq_prod_single hpos h0⟩, Separable.predictsHZ⟩
 
-/-- Separability (30) as (32), the harmony of a profile being the product of the harmonies of
-its single-constraint profiles. -/
+-- (30), (32)
 theorem separable_iff_eq_prod_single (hpos : ∀ v, 0 < H v) (h0 : H 0 = 1) :
     Separable H ↔ ∀ v, H v = ∏ k, H (Pi.single k (v k)) :=
   ⟨fun h ↦ ((predictsHZ_iff_separable hpos h0).2 h).eq_prod_single hpos h0,
@@ -248,12 +247,12 @@ theorem grammar_meHarmony {X Y : Type*} [Fintype Y] [MeasurableSpace Y]
   simp only [grammar, maxEnt, meHarmony, log_exp]
   congr 1
 
-/-- Maximum entropy harmony is separable (29), with `hₖ(x) = exp(−x)` for every constraint. -/
+-- (29)
 theorem separable_meHarmony (w : Fin n → ℝ) : Separable fun v ↦ meHarmony w fun k ↦ v k :=
   ⟨fun _ c ↦ exp (-c), w, fun _ _ ↦ exp_pos _, fun v ↦ by
     simp only [meHarmony, ← exp_mul, ← exp_sum, ← sum_neg_distrib, mul_neg, mul_comm]⟩
 
-/-- Maximum entropy harmony predicts HZ's generalization (§3.6). -/
+-- §3.6
 theorem predictsHZ_meHarmony (w : Fin n → ℝ) : PredictsHZ fun v ↦ meHarmony w fun k ↦ v k :=
   (separable_meHarmony w).predictsHZ
 
@@ -263,7 +262,7 @@ theorem predictsHZ_meHarmony (w : Fin n → ℝ) : PredictsHZ fun v ↦ meHarmon
 noncomputable def rescale (h : Fin n → ℕ → ℝ) (k : Fin n) (c : ℕ) : ℝ :=
   -log (h k c)
 
-/-- Every separable harmony is maximum entropy harmony of the rescaled violations (34). -/
+-- (34)
 theorem prod_rpow_eq_meHarmony_rescale {h : Fin n → ℕ → ℝ} (hpos : ∀ k c, 0 < h k c)
     (w : Fin n → ℝ) (v : Fin n → ℕ) :
     ∏ k, h k (v k) ^ w k = meHarmony w fun k ↦ rescale h k (v k) := by
@@ -281,18 +280,18 @@ theorem grammar_prod_rpow {X Y : Type*} [Fintype Y] [MeasurableSpace Y] {h : Fin
 
 variable {h : Fin n → ℕ → ℝ} {k : Fin n}
 
-/-- Rescaling preserves the order of violation counts (footnote 14). -/
+-- footnote 14
 theorem strictMono_rescale (hpos : ∀ c, 0 < h k c) (hanti : StrictAnti (h k)) :
     StrictMono (rescale h k) :=
   fun _ _ hab ↦ neg_lt_neg (log_lt_log (hpos _) (hanti hab))
 
-/-- A rescaled constraint is satisfied iff the original is (footnote 15). -/
+-- footnote 15
 theorem rescale_eq_zero_iff (hpos : ∀ c, 0 < h k c) (hanti : StrictAnti (h k)) (h0 : h k 0 = 1)
     {c : ℕ} : rescale h k c = 0 ↔ c = 0 := by
   rw [← (strictMono_rescale hpos hanti).injective.eq_iff, rescale, rescale, h0]
   simp
 
-/-- Rescaled violations are nonnegative (footnote 16). -/
+-- footnote 16
 theorem rescale_nonneg (hpos : ∀ c, 0 < h k c) (hanti : StrictAnti (h k)) (h0 : h k 0 = 1)
     (c : ℕ) : 0 ≤ rescale h k c := by
   simpa [rescale, h0] using (strictMono_rescale hpos hanti).monotone c.zero_le
@@ -307,8 +306,7 @@ of the two prefixes. -/
 def tagalogConstraints : ConstraintSet Candidate (Fin 6) :=
   ![nasSub, starNC, starRootVelar, starRootCorVel, unif .mangOther, unif .mangRed]
 
-/-- Prefixes and stems are independent dimensions (§2.3, Figure 3), the markedness constraints
-being insensitive to the prefix and the Uniformity constraints to the stem. -/
+-- §2.3, Figure 3
 theorem tagalog_independent : tagalogSquare.Independent tagalogConstraints := by
   intro k
   fin_cases k <;> first | exact .inl ⟨rfl, rfl⟩ | exact .inr ⟨rfl, rfl⟩

@@ -117,7 +117,7 @@ noncomputable def likelihood (A : Set W) : Probability :=
 /-- Nothing is likelier than a tautology (p. 84). -/
 @[simp] theorem likelihood_univ : likelihood P Set.univ = ⊤ := Subtype.ext (by simp)
 
-/-- Nothing is less likely than a contradiction (p. 84). -/
+-- p. 84
 @[simp] theorem likelihood_empty : likelihood P ∅ = ⊥ := Subtype.ext (by simp)
 
 end Scale
@@ -152,8 +152,7 @@ theorem coherent_and_not_admits_contextual_probability :
       ¬ (Boundedness.ofOrder Probability).Admits .contextual :=
   coherent_and_not_admits_contextual (by rw [ofOrder_probability]; decide)
 
-/-- The open-interval alternative of §4.2.6 keeps Interpretive Economy with the open scale `(0, 1)`,
-leaving the tautology no degree. -/
+-- §4.2.6, (0, 1)
 theorem ofOrder_Ioo_zero_one :
     Boundedness.ofOrder (Set.Ioo (0 : ℝ) 1) = .open_ ∧ (1 : ℝ) ∉ Set.Ioo (0 : ℝ) 1 :=
   ⟨Boundedness.ofOrder_Ioo, fun h ↦ lt_irrefl _ h.2⟩
@@ -200,11 +199,11 @@ def possible : Set (Set W) := P.real ⁻¹' Set.Ioi 0
 
 theorem mem_possible_iff : A ∈ possible P ↔ 0 < P.real A := Iff.rfl
 
-/-- Certainty entails likelihood (§5.1.4). -/
+-- §5.1.4
 theorem certain_subset_likely (hθ : θ < 1) : certain P ⊆ likely P θ :=
   fun _ h ↦ lt_of_lt_of_le hθ h
 
-/-- Likelihood entails possibility (§5.2.3). -/
+-- §5.2.3
 theorem likely_subset_possible (hθ : 0 ≤ θ) : likely P θ ⊆ possible P :=
   fun _ h ↦ lt_of_le_of_lt hθ h
 
@@ -244,12 +243,11 @@ theorem mem_possible_iff_not_mem_certain_compl [DiscreteMeasurableSpace W] :
 /-- *n percent A* compares the degree with the scale's maximum (4.51b). -/
 def percent (n : ℝ) : Set (Set W) := {A | P.real A / P.real Set.univ = n / 100}
 
-/-- *n percent likely* is interpretable because the maximum is a degree of the scale
-(p. 121–122). -/
+-- p. 121–122
 theorem mem_percent_iff (n : ℝ) : A ∈ percent P n ↔ P.real A = n / 100 := by
   simp [percent]
 
-/-- *Fifty percent likely* is "exactly as likely as not" (p. 103). -/
+-- p. 103
 theorem mem_percent_fifty_iff [DiscreteMeasurableSpace W] :
     A ∈ percent P 50 ↔ P.real A = P.real Aᶜ := by
   rw [mem_percent_iff]
@@ -296,11 +294,10 @@ def pos (i : EpistemicItem) : Set (Set W) := P.real ⁻¹' i.comparison.interval
 theorem mem_pos_iff (i : EpistemicItem) : A ∈ pos P θ i ↔ i.comparison.Rel (P.real A) (θ i) :=
   Comparison.mem_interval _ _ _
 
-/-- (6.29a) is [lassiter-2015]'s *must*. -/
+-- (6.29a) [lassiter-2015]
 theorem mem_pos_must_iff : A ∈ pos P θ .must ↔ Lassiter2015.probMust P (θ .must) A := Iff.rfl
 
-/-- (6.29b) with the duality `θ_might = 1 − θ_must` of p. 156 is [lassiter-2015]'s *might*, so
-*might* `A` holds iff *must* `¬A` fails. -/
+-- (6.29b), p. 156 [lassiter-2015]
 theorem mem_pos_might_iff [DiscreteMeasurableSpace W] [IsProbabilityMeasure P]
     (hdual : θ .might = 1 - θ .must) :
     A ∈ pos P θ .might ↔ Aᶜ ∉ pos P θ .must := by
@@ -327,23 +324,21 @@ theorem antitone_pos (hθ : StrictMono θ) : Antitone (pos P θ) := by
   · exact Set.preimage_mono <| (hI j _).trans <| (Set.Ici_subset_Ioi.2 (hθ h)).trans (hO i _)
   · exact le_rfl
 
-/-- *Must* `A` leaves `¬A` at most `1 − θ_must` likely, so above one half `A` is more likely
-than its negation (6.16). -/
+-- (6.16)
 theorem compl_lt_of_mem_must [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {θ' : ℝ}
     (hθ : 1 / 2 < θ') (h : A ∈ P.real ⁻¹' Set.Ici θ') : P.real Aᶜ < P.real A := by
   have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
   change θ' ≤ P.real A at h
   linarith
 
-/-- What is more likely than not is a *might*, given `θ_might ≤ 1/2` (6.19). -/
+-- (6.19)
 theorem mem_might_of_compl_lt [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {θ' : ℝ}
     (hθ : θ' ≤ 1 / 2) (h : P.real Aᶜ < P.real A) : A ∈ P.real ⁻¹' Set.Ioi θ' := by
   have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
   change θ' < P.real A
   linarith
 
-/-- Under the dualities of *must* and *might* and of *certain* and *possible*, *certain* is
-stronger than *must* iff *might* is stronger than *possible* (p. 164). -/
+-- p. 164
 theorem must_lt_certain_iff_possible_lt_might (hmm : θ .might = 1 - θ .must)
     (hcp : θ .possible = 1 - θ .certain) : θ .must < θ .certain ↔ θ .possible < θ .might := by
   constructor <;> intro h <;> linarith

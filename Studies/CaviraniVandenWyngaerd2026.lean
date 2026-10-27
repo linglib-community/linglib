@@ -26,16 +26,6 @@ floats, and after /l/ it is not heard.
 The rows are the word pairs of the paper's tables, and the Czech fragment reads the alternating
 consonant off their spelling.
 
-## Main statements
-
-* `derive_eq_sup`: on a velar or a coronal the palataliser docks whole, whatever the suffix.
-* `associate_of_mem`: a consonant with |U| at its place keeps its place and leaves |I| afloat.
-* `interpret_roots`: outside /ɦ/, the root nodes built for a row are pronounced as the phonemes
-  of its attested alternant.
-* `derive_comparative`, `derive_h`: a fricative builds one structure under small and medium
-  palatalisation, where /ɦ/ has two reflexes.
-* `loket_lokte`: the paper's illustration of proper government, *loket* against *lok_te*.
-
 ## Implementation notes
 
 * The skeleton is reduced to what the outcome depends on: the root node of the base-final
@@ -122,11 +112,9 @@ def consonants : List (String × Phonology.Segment × Option Segment) :=
    ("f", Czech.Phonology.f, some f), ("v", Czech.Phonology.v, some (f ⊔ voice)),
    ("m", Czech.Phonology.m, some m)]
 
-/-- Each letter writes its phoneme. -/
 theorem ofString?_consonants : ∀ a ∈ consonants, Czech.Phonology.ofString? a.1 = some [a.2.1] := by
   decide +kernel
 
-/-- Each node of a melody holds only elements that it hosts. -/
 theorem wellFormed_consonants : ∀ a ∈ consonants, ∀ c ∈ a.2.2, c.WellFormed := by decide
 
 /-! ### The palatalisers and their suffixes -/
@@ -181,17 +169,13 @@ def passPtcp : Suffix := ⟨PAL₃, .simplex .A ⊔ .simplex .I, .floating⟩
 
 variable {b a : Segment} {σ : Suffix}
 
-/-- A stronger palataliser builds a larger structure on any base. -/
 theorem sup_PAL_mono (b : Segment) :
     b ≤ b ⊔ PAL₁ ∧ b ⊔ PAL₁ ≤ b ⊔ PAL₂ ∧ b ⊔ PAL₂ ≤ b ⊔ PAL₃ :=
   ⟨le_sup_left, sup_le_sup_left PAL₁_lt_PAL₂.le b, sup_le_sup_left PAL₂_lt_PAL₃.le b⟩
 
-/-- /s/ contains the small and the medium palataliser, so neither changes it. -/
 theorem s_sup_PAL : s ⊔ PAL₁ = s ∧ s ⊔ PAL₂ = s :=
   ⟨sup_eq_left.2 (by decide), sup_eq_left.2 (by decide)⟩
 
-/-- Big-palatalised /d/ has two heads, |I| at its place node and |L| at its laryngeal node, one
-for each of two fundamentals. -/
 theorem heads_d_sup_PAL₃ :
     (t ⊔ voice ⊔ PAL₃).place.heads ∪ (t ⊔ voice ⊔ PAL₃).laryngeal.heads = {.I, .L} ∧
       Element.AntagonismFree {.I, .L} := by
@@ -206,8 +190,6 @@ def associate (root floating : Segment) : Segment × Segment :=
   if Element.AntagonismFree (root.place ⊔ floating.place).elements then (root ⊔ floating, ⊥)
   else (root ⊔ { floating with place := ⊥ }, { place := floating.place })
 
-/-- Floating elements associate whole with a root node whose place holds at most |A| and |I|, as
-that of a velar or a coronal does. -/
 theorem associate_eq_sup (hb : b.place.elements ⊆ {.A, .I}) (ha : a.place.elements ⊆ {.A, .I}) :
     associate b a = (b ⊔ a, ⊥) :=
   ite_eq_left <| .subset (t := {.A, .I}) (by decide) (Finset.union_subset hb ha)
@@ -220,16 +202,12 @@ theorem associate_of_mem (hU : .U ∈ b.place.elements) (hI : .I ∈ a.place.ele
     h (Finset.mem_coe.2 (Finset.mem_union_left _ hU))
       (Finset.mem_coe.2 (Finset.mem_union_right _ hI)) rfl
 
-/-- Elements away from the place node commute with association, so a voiced base is derived as
-its voiceless counterpart is, with voicing added. -/
 theorem associate_sup {c : Segment} (hc : c.place = ⊥) (b a : Segment) :
     associate (b ⊔ c) a = ((associate b a).1 ⊔ c, (associate b a).2) := by
   have hp : (b ⊔ c).place = b.place := by rw [Segment.sup_place, hc, sup_bot_eq]
   simp only [associate, hp]
   split_ifs <;> simp only [sup_right_comm]
 
-/-- A base with |H| at its manner node associates with the medium palataliser as with the small
-one. -/
 theorem associate_PAL₂ (h : .H ∈ b.manner.elements) : associate b PAL₂ = associate b PAL₁ :=
   have hm : b.manner ⊔ .simplex .H = b.manner ⊔ ⊥ := by simpa using h
   congrArg₂ (fun c c' ↦ if Element.AntagonismFree (b.place ⊔ PAL₁.place).elements
@@ -264,21 +242,15 @@ theorem derive_eq_sup (hb : b.place.elements ⊆ {.A, .I})
     derive b σ = [(.C, b ⊔ σ.palataliser)] := by
   simp [derive, associate_eq_sup hb hσ]
 
-/-- Before a floating vowel the palataliser has no root node of its own, whatever the base. -/
 theorem derive_of_floating (h : σ.link = .floating) :
     derive b σ = [(.C, (associate b σ.palataliser).1)] := by
   simp [derive, h]
 
-/-- A floating vowel has every element that its palataliser can leave afloat, so the two are one
-vowel when they meet on the base-final V slot. -/
 theorem palataliser_place_subset_vowel :
     causative.palataliser.place.elements ⊆ causative.vowel.elements ∧
       passPtcp.palataliser.place.elements ⊆ passPtcp.vowel.elements := by
   decide
 
-/-- The labials and the lateral before the comparative, the causative and the locative. /p/ takes
-the |H| and leaves |I| to the base-final V slot, or to the floating vowel. /m/ spreads its manner
-node, where the |I| docks, and /l/ spreads its root node, which repels it. -/
 theorem derive_labial :
     derive p comparative = [(.C, p ⊔ { manner := .simplex .H }), (.V, PAL₁)] ∧
       derive p causative = [(.C, p ⊔ { manner := .simplex .H })] ∧
@@ -343,13 +315,10 @@ def Row.ofRelation (rel : FormRelation (Form Wordlist.Cell)) : Option Row := do
   let (_, base, melody) ← baseConsonant rel.form
   pure ⟨base, melody, suffix, rel.target⟩
 
-/-- Every pair of the tables is a row, save the two possessives that stand in for a participle. -/
 theorem isSome_ofRelation : ∀ rel ∈ Wordlist.relations,
     rel.relation ≠ "possessive" → (Row.ofRelation rel).isSome := by
   decide +kernel
 
-/-- A noun or an adjective writes the base-final consonant itself, read in the context of the
-whole form. The base form of a participle is an infinitive, whose theme vowel palatalises. -/
 theorem alternant_base : ∀ rel ∈ Wordlist.relations,
     rel.relation ∈ ["locDatFSg", "comparative", "causative"] →
       alternant rel.form = (baseConsonant rel.form).map ([·.2.1]) := by
@@ -362,7 +331,6 @@ def rows : List Row := Wordlist.relations.filterMap Row.ofRelation
 /-- The root nodes that the analysis builds for a row, if it gives the base a melody. -/
 def Row.roots (a : Row) : Option (List (Slot × Segment)) := a.melody.map (derive · a.suffix)
 
-/-- Small palatalisation of a velar is the second palatalisation of velars. -/
 theorem alternant_eq_secondPalatalization : ∀ a ∈ rows, a.suffix = locDat →
     a.base ∈ Czech.Phonology.palatalizing →
       alternant a.form = some [Czech.Phonology.secondPalatalization a.base] := by
@@ -395,16 +363,11 @@ theorem derive_h :
       alternant Wordlist.strozejsi = some [Czech.Phonology.ž] :=
   ⟨derive_comparative (by decide), by decide +kernel⟩
 
-/-- Three structures are pronounced [ʃ], palatalised /x/ with unheaded and with headed |I|, and
-big-palatalised /s/. -/
 theorem interpret_š :
     [x ⊔ PAL₁, x ⊔ PAL₃, s ⊔ PAL₃].Nodup ∧
       ∀ c ∈ [x ⊔ PAL₁, x ⊔ PAL₃, s ⊔ PAL₃], interpret (.C, c) = some Czech.Phonology.š := by
   decide +kernel
 
-/-- The medium pattern goes with the big one on a velar and with the small one on a coronal.
-/k/ gives [ts], [tʃ], [tʃ] and /t/ gives [c], [c], [ts], though the three structures differ on
-each. -/
 theorem interpret_medium :
     [k ⊔ PAL₁, k ⊔ PAL₂, k ⊔ PAL₃].Nodup ∧ [t ⊔ PAL₁, t ⊔ PAL₂, t ⊔ PAL₃].Nodup ∧
       [k ⊔ PAL₁, k ⊔ PAL₂, k ⊔ PAL₃].map (fun c ↦ interpret (.C, c)) =

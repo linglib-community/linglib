@@ -188,8 +188,7 @@ theorem globalL0_apply (u : g.Complete) (r : W) :
   congr 1
   rw [Finset.sum_boole]
 
-/-- A complete utterance true of a referent gives the literal listener at least chance
-probability of it, the weak informativity of §2.4. -/
+-- §2.4
 theorem globalL0_ge_inv_card {u : g.Complete} {r : W} (htrue : g.sem u.val r = true) :
     ((Fintype.card W : ℝ≥0∞))⁻¹ ≤ g.globalL0 u {r} := by
   rw [globalL0_apply, ite_eq_left htrue]
@@ -296,7 +295,6 @@ theorem l0_real (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) 
       = (g.trueExts (ctx ++ [u]) r : ℝ) / (∑ r', g.trueExts (ctx ++ [u]) r' : ℕ) := by
   rw [l0_apply g hw, ENNReal.toReal_div, ENNReal.toReal_natCast, ENNReal.toReal_natCast]
 
-/-- Row preference of the incremental speaker compares weighted listener cells. -/
 theorem s1_real_lt_iff {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ}
     {u₀ : U} (h0 : g.l0 ctx u₀ {r} ≠ 0) {u u' : U} :
     (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r).real {u'} ↔
@@ -325,8 +323,6 @@ theorem s1_apply_eq_one (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} 
   exact speaker_dirac_apply_singleton_eq_one one_pos (g.l0_apply_ne_zero hw ht)
     fun u' hu' ↦ g.l0_apply_eq_zero hw (hother u' hu')
 
-/-- Listener preference upon a word compares the speaker's masses, since the uniform prior
-cancels. -/
 theorem l1_real_lt_iff {cost : U → ℝ} {ctx : List U} {u : U} {r r' : W} :
     (g.l1 cost ctx u).real {r} < (g.l1 cost ctx u).real {r'} ↔
       (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r').real {u} :=
@@ -395,8 +391,7 @@ private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Word → M) :
   rw [show (Finset.univ : Finset Word) = {.red, .dress, .object} from by decide,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
 
-/-- For R1 the speaker leads with *red*, keeping both red referents viable, while *dress*
-dilutes the listener over the two dresses (Figure 1c). -/
+-- Figure 1c
 theorem adj_first_for_target :
     (figureOne.s1 0 [] .redDress).real {Word.dress}
       < (figureOne.s1 0 [] .redDress).real {Word.red} := by
@@ -406,7 +401,7 @@ theorem adj_first_for_target :
   rw [figureOne.l0_apply fig1_hw, figureOne.l0_apply fig1_hw]
   exact natCast_div_lt (by decide) (by decide)
 
-/-- For R1 after *red* the speaker completes with *dress*, unique to R1 (Figure 1c). -/
+-- Figure 1c
 theorem noun_after_adj :
     (figureOne.s1 0 [.red] .redDress).real {Word.object}
       < (figureOne.s1 0 [.red] .redDress).real {Word.dress} := by
@@ -416,16 +411,15 @@ theorem noun_after_adj :
   rw [figureOne.l0_apply fig1_hw, figureOne.l0_apply fig1_hw]
   exact natCast_div_lt (by decide) (by decide)
 
-/-- The blue dress R2 forces *dress* as the first word (Figure 1c). -/
+-- Figure 1c
 theorem noun_only_for_r2 : figureOne.s1 0 [] .blueDress {Word.dress} = 1 :=
   figureOne.s1_apply_eq_one fig1_hw (by decide) (by decide) (by decide)
 
-/-- The red hat R3 forces *red* as the first word (Figure 1c). -/
+-- Figure 1c
 theorem adj_only_for_r3 : figureOne.s1 0 [] .redHat {Word.red} = 1 :=
   figureOne.s1_apply_eq_one fig1_hw (by decide) (by decide) (by decide)
 
-/-- For R2 after *red*, the dead end of §2.2, probability splits evenly over the words with viable
-continuations (Figure 1c). -/
+-- §2.2, Figure 1c
 theorem uniform_after_red_for_r2 :
     (figureOne.s1 0 [.red] .blueDress).real {Word.dress} = 1 / 2 ∧
     (figureOne.s1 0 [.red] .blueDress).real {Word.object} = 1 / 2 ∧
@@ -441,7 +435,7 @@ theorem uniform_after_red_for_r2 :
 
 /-! ### Figure 1d: the anticipatory implicature -/
 
-/-- The four speaker cells behind Figures 1c–1e, at no cost, in closed form. -/
+-- Figures 1c–1e
 theorem s1_figureOne_values :
     (figureOne.s1 0 [] .redDress).real {Word.red} = 4 / 7 ∧
     (figureOne.s1 0 [] .redDress).real {Word.dress} = 3 / 7 ∧
@@ -468,8 +462,7 @@ theorem s1_figureOne_values :
       show figureOne.trueExts [Word.red, Word.red] .redDress = 0 from rfl]
   · rw [measureReal_def, adj_only_for_r3, ENNReal.toReal_one]
 
-/-- On hearing *red*, the incremental listener favours the red hat over the red dress, the
-anticipatory implicature (Figure 1d). -/
+-- Figure 1d
 theorem listener_anticipation :
     (figureOne.l1 0 [] .red).real {Referent.redDress}
       < (figureOne.l1 0 [] .red).real {Referent.redHat} := by
@@ -481,8 +474,7 @@ private theorem r2_never_opens_red : (figureOne.s1 0 [] .blueDress).real {Word.r
   rw [figureOne.s1_real_counts fig1_hw (by decide)]
   norm_num [show figureOne.trueExts [Word.red] .blueDress = 0 from rfl]
 
-/-- Exactly, `L1(R3 | red) = 1 / (4/7 + 0 + 1) = 7/11 ≈ 0.64`, the paper's 0.64
-(Figure 1d). -/
+-- Figure 1d
 theorem listener_anticipation_value :
     (figureOne.l1 0 [] .red).real {Referent.redHat} = 7 / 11 := by
   rw [figureOne.l1_real_singleton,
@@ -494,8 +486,7 @@ theorem listener_anticipation_value :
 
 /-! ### Figure 1e: the chain-rule wedge -/
 
-/-- For R1 the chain-rule speaker (eq. 7) prefers bare *dress* to *red dress*, unlike the global
-speaker of Figure 1b (Figure 1e). -/
+-- Figure 1b, Figure 1e
 theorem incremental_prefers_bare_noun :
     figureOne.s1Utt 0 .redDress [.red, .dress] < figureOne.s1Utt 0 .redDress [.dress] := by
   obtain ⟨h1, h2, h3, -⟩ := s1_figureOne_values
@@ -508,8 +499,7 @@ theorem incremental_prefers_bare_noun :
 theorem fig1_mem_dress : [Word.dress] ∈ figureOne.utterances := by decide
 theorem fig1_mem_redDress : [Word.red, Word.dress] ∈ figureOne.utterances := by decide
 
-/-- For the red dress the global pragmatic speaker prefers *red dress* (1/2) to bare *dress*
-(1/4), the preference the chain rule reverses (Figure 1b). -/
+-- Figure 1b
 theorem global_prefers_red_dress :
     (figureOne.globalS1 0 .redDress).real {⟨[.dress], fig1_mem_dress⟩}
       < (figureOne.globalS1 0 .redDress).real {⟨[.red, .dress], fig1_mem_redDress⟩} := by
@@ -548,8 +538,7 @@ theorem greedyUnroll_complete (r : Referent) : greedyUnroll r ∈ figureOne.utte
 theorem greedyUnroll_true (r : Referent) : figureOne.sem (greedyUnroll r) r = true := by
   cases r <;> decide
 
-/-- In Figure 1 the global literal listener gives the target of each greedy output at least
-chance probability, the weak informativity of §2.4. -/
+-- Figure 1, §2.4
 theorem greedyUnroll_weakly_informative (r : Referent) :
     ((Fintype.card Referent : ℝ≥0∞))⁻¹
       ≤ figureOne.globalL0 ⟨greedyUnroll r, greedyUnroll_complete r⟩ {r} :=
@@ -593,7 +582,7 @@ private theorem sum_letter {M : Type*} [AddCommMonoid M] (f : Letter → M) :
   rw [show (Finset.univ : Finset Letter) = {.A, .B} from by decide,
     Finset.sum_insert (by decide), Finset.sum_singleton]
 
-/-- For W1 the chain rule strictly prefers AA (0.4) to BA (0.3) (Figure 3, red). -/
+-- (0.4), (0.3), Figure 3
 theorem figureThree_incremental_prefers_AA :
     figureThree.s1Utt 0 .W1 [.B, .A] < figureThree.s1Utt 0 .W1 [.A, .A] := by
   simp only [ReferenceGame.s1Utt, chain_cons, chain_nil, List.nil_append, mul_one]
@@ -617,8 +606,7 @@ theorem figureThree_incremental_prefers_AA :
 theorem fig3_mem_AA : [Letter.A, Letter.A] ∈ figureThree.utterances := by decide
 theorem fig3_mem_BA : [Letter.B, Letter.A] ∈ figureThree.utterances := by decide
 
-/-- For W1 the global speaker is indifferent between AA and BA, which are equally true and
-informative (Figure 3, green). -/
+-- Figure 3
 theorem figureThree_global_indifferent :
     figureThree.globalS1 0 .W1 {⟨[.A, .A], fig3_mem_AA⟩}
       = figureThree.globalS1 0 .W1 {⟨[.B, .A], fig3_mem_BA⟩} := by
@@ -725,8 +713,7 @@ private theorem forced_stop_after_red_dress (c : ℝ) :
     game.s1 (cost c) [.red, .dress] .redDress {Word.stop} = 1 :=
   game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
 
-/-- In English (§3.1) the incremental speaker is indifferent between *dress* and *red dress* at
-every content-word cost, the paper's 0.5/0.5. -/
+-- §3.1
 theorem incremental_indifferent (c : ℝ) :
     game.s1Utt (cost c) .redDress [.dress, .stop]
       = game.s1Utt (cost c) .redDress [.red, .dress, .stop] := by
@@ -741,8 +728,7 @@ theorem mem_dress : [Word.dress, Word.stop] ∈ game.utterances := by decide
 theorem mem_redDress : [Word.red, Word.dress, Word.stop] ∈ game.utterances := by
   decide
 
-/-- In English (§3.1), with any length cost the global speaker prefers bare *dress*, the paper's
-0.73 against 0.27 at `c = 1`. -/
+-- §3.1
 theorem global_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
     (game.globalS1 (fun u ↦ ReferenceGame.uttCost (cost c) u.val) .redDress).real
         {⟨[.red, .dress, .stop], mem_redDress⟩}
@@ -831,8 +817,7 @@ private theorem step2 (c : ℝ) :
       rw [div_eq_div_iff (by positivity) hpos.ne']
       ring
 
-/-- In Spanish (§3.1), with any length cost the incremental speaker prefers bare *vestido* to
-*vestido rojo*, the paper's 0.73 against 0.27 at `c = 1`. -/
+-- §3.1
 theorem incremental_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
     game.s1Utt (cost c) .redDress [.vestido, .rojo, .stop]
       < game.s1Utt (cost c) .redDress [.vestido, .stop] := by
@@ -921,16 +906,14 @@ theorem s1_tall_values :
         show game.trueExts [Word.key] .tallCup = 0 from by decide,
         show game.trueExts [Word.key] .tallPitcher = 0 from by decide]
 
-/-- Upon hearing *tall*, the incremental listener favours the tall cup over the tall pitcher,
-the anticipatory contrastive inference of §3.2. -/
+-- §3.2
 theorem listener_prefers_tall_cup :
     (game.l1 0 [] .tall).real {Referent.tallPitcher}
       < (game.l1 0 [] .tall).real {Referent.tallCup} := by
   rw [game.l1_real_lt_iff, s1_tall_values.1, s1_tall_values.2.1]
   norm_num
 
-/-- Exactly, the listener puts 3/5 on the tall cup and 2/5 on the pitcher, the paper's 0.6 and
-0.4 (§3.2). -/
+-- §3.2
 theorem listener_tall_values :
     (game.l1 0 [] .tall).real {Referent.tallCup} = 3 / 5 ∧
     (game.l1 0 [] .tall).real {Referent.tallPitcher} = 2 / 5 := by

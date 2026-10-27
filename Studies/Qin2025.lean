@@ -93,7 +93,7 @@ def Row.IsCanonical (r : Row) : Prop := r.violations = 0
 
 instance (r : Row) : Decidable r.IsCanonical := inferInstanceAs (Decidable (r.violations = 0))
 
-/-- The theoretical space of roots has sixteen cells (Fig. 1). -/
+-- Fig. 1
 theorem space_card : Fintype.card Row = 16 := by decide
 
 /-- In Fig. 1, `4.choose k` cells fail exactly `k` criteria. -/

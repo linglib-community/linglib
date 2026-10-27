@@ -178,8 +178,7 @@ theorem trace_prediction_fails :
     Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧ ¬ Hard ex42 := by
   decide
 
-/-- Pied piping (15) associates the filler with the verb and stranding (16) with the final
-preposition, a longer association for the harder sentence. -/
+-- (15), (16)
 theorem stranding :
     ¬ Hard ex15 ∧ Hard ex16 ∧
       ((⟨0, 15, 3⟩ : Dependency).fillerVerb).snd
@@ -259,9 +258,6 @@ theorem centreEmbedded_common (n : ℕ) :
   intro k hk
   omega
 
-/-- In the German multiple subject relative every filler is held until the innermost verb; the
-trace analysis puts the nesting in the gap–verb associations instead, its filler–gap
-associations staying disjoint. -/
 theorem verbFinal_common (n : ℕ) :
     (∀ d ∈ verbFinal n, 2 + 4 * n ∈ d.fillerVerb ∧ 2 + 4 * n ∈ d.gapVerb) ∧
       Disjoint ((verbFinal n).map Dependency.fillerGap) := by
@@ -342,7 +338,7 @@ def der82b : CCG.Derivation String .multimodal sent := wonders der84
 /-- (82c). -/
 def der82c : CCG.Derivation String .multimodal sent := wonders der85
 
-/-- The embedded questions (82a–c) are derived from the lexicon, with no empty category. -/
+-- (82a–c)
 theorem embedded_questions :
     (der82a.LexIn lexicon ∧ der82a.yield = ["Sue", "wonders", "who", "saw", "Mary"]) ∧
       (der82b.LexIn lexicon ∧ der82b.yield = ["Sue", "wonders", "whom", "John", "saw"]) ∧

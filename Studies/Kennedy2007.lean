@@ -14,19 +14,6 @@ comparison class, and Interpretive Economy (66) derives it from the scale struct
 checks the diagnostics of Section 3.2 that separate the positive forms at the three standards,
 the preimages of `Set.Ioi θ`, `Set.Ioi ⊥` and `Set.Ici ⊤` under the measure.
 
-## Main results
-
-* `definite_relative`, `definite_maximum`: definite descriptions, (53)–(54).
-* `sorites_maximum`, `sorites_minimum`: the Sorites second premise, (57)–(58).
-* `antonyms_isCompl`: the denial of a minimum-standard adjective asserts its maximum-standard
-  antonym, (47).
-* `wet_of_wetter`, `not_dry_of_drier`, `long_undetermined_of_longer`: comparatives, (49)–(51).
-* `table61_iff_licenses`: maximizers and minimizers follow the endpoints of the scale, (61).
-* `bent_straight_absolute`: Interpretive Economy selects the endpoint standard of *bent* and
-  *straight* over a relative one, p. 37.
-* `closed_admits_both_endpoints`: a totally closed scale admits both endpoint standards,
-  (67)–(68).
-
 ## References
 
 * [kennedy-2007]
@@ -130,8 +117,7 @@ theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : EndpointModif
   cases p <;> cases b <;> cases m <;> decide
 
 open English.Adjectives in
-/-- The fragment's antonym pairs fill table (61) by their compatibility with maximizers and
-minimizers. -/
+-- (61)
 theorem fragment_pairs_table61 :
     full.boundedness.Licenses .maximizer ∧ empty.boundedness.Licenses .maximizer ∧
     wet.boundedness.Licenses .minimizer ∧ ¬ wet.boundedness.Licenses .maximizer ∧

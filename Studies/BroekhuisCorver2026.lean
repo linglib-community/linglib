@@ -57,26 +57,6 @@ inherently directional prepositions out of the postpositional order.
 * `Extractable`: extraction requires the extracted element to precede the adpositional head.
 * `verbClass`: the transitivity class of a verb of motion with a spatial complementive.
 
-## Main results
-
-* `linearization_eq_post_iff`, `linearization_eq_circum_iff`: each surface class is the
-  effect of one complement kind and directionality, not a lexical property.
-* `linearization_rPronoun`: an R-pronoun complement never gives the postpositional order.
-* `range_linearization`: the rule derives every class of the traditional classification and
-  no other order.
-* `extractable_iff_raises`, `extractable_iff_of_linearization_eq_pre`,
-  `extractable_of_linearization_ne_pre`: extraction is raising, so from a prepositional phrase
-  only an R-pronoun leaves and from any other phrase the complement does.
-* `raises_nominal_of_dpRaises`, `pointLocative_not_postP`: Helmantel's condition on nominal
-  raising entails the chapter's rule, and under it the inherently directional prepositions have
-  no postpositional use.
-* `linearization_direction_post`, `circumP_parts`: the rule reproduces every postpositional
-  use of the fragment and every circumposition decomposes into listed parts.
-* `postP_subset_preP`, `circumP_complement_nominal`, `no_rPron_not_postP`: the lexical
-  restrictions the analysis predicts.
-* `perfect_op`, `postP_selects_zijn`: a postpositional phrase denotes a path and its verb takes
-  *zijn* 'be', while the prepositional phrase of the same adposition takes *hebben* 'have'.
-
 ## Implementation notes
 
 * The chapter's extraction evidence is modelled over complement kinds only, one level deep. The

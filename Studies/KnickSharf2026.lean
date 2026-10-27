@@ -13,13 +13,6 @@ left boundary in a domain `tᵣ`, entails its simple present competitor whatever
 equivalent to it under broad focus, where the domain is unrestricted, which is why competition
 rules it out there. Among the focus alternatives, a domain further in the past is stronger.
 
-## Main results
-
-* `u_perf_entails_simple_present`: the U-perfect entails the simple present.
-* `broad_focus_equiv`: under broad focus the two are equivalent.
-* `earlier_lb_stronger_impf`: an earlier left boundary is stronger under the imperfective.
-* `earlier_lb_not_weaker_impf`: and not conversely.
-
 ## Implementation notes
 
 * A left boundary is a time point, where the paper's left boundary is a subinterval of `tᵣ`; the
@@ -100,8 +93,7 @@ theorem simplePresent_unfold (V : W → E → Prop) (tc : T) (w : W) :
     ∃ e : E, NonemptyInterval.pure tc < τ e ∧ V w e := by
   rfl
 
-/-- The narrow-focus U-perfect (39b) holds when the imperfective holds of a perfect time span from
-`tᵣ` to `tc`. -/
+-- (39b)
 theorem presPerfProgXN_iff (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w ↔ ∃ pts ∈ IMPF V w, pts.fst ∈ tᵣ ∧ pts.snd = tc :=
   ⟨fun ⟨pts, ⟨h₁, h₂⟩, h₃⟩ ↦ ⟨pts, h₂, h₁, h₃⟩, fun ⟨pts, h₂, h₁, h₃⟩ ↦ ⟨pts, ⟨h₁, h₂⟩, h₃⟩⟩
@@ -130,7 +122,7 @@ theorem earlier_lb_stronger_impf (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc 
   ⟨⟨(tLB₂, tc), htc⟩, ⟨rfl, e, lt_of_le_of_lt
     (NonemptyInterval.le_def.2 ⟨(Set.mem_singleton_iff.1 hLB).le.trans h.le, hRB.ge⟩) hlt, hV⟩, rfl⟩
 
-/-- Under the perfective a later left boundary is stronger (28). -/
+-- (28)
 theorem later_lb_stronger_prfv (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc : T) (w : W)
     (h : tLB₁ < tLB₂) :
     ⟨w, tc⟩ ∈ PERF ({pts | pts.fst = tLB₂} ∩ PRFV V ·) →

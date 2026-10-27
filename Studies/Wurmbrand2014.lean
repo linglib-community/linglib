@@ -302,8 +302,7 @@ def episodicTest? (e : Datum) : Option (InfinitivalTenseClass × NonemptyInterva
   | none, some "future" => some (.restructuring, ⟨(0, 1), by omega⟩)
   | _, _ => none
 
-/-- The bare-episodic rows (2)–(3) and the finite baseline (45): a bare eventive is available
-exactly where the reference time its class or tense provides can include an extended event. -/
+-- (2), (3), (45)
 theorem episodic_rows : Datum.Checks episodicTest?
     (fun p ↦ .ofProp (Episodic p.2 (0 : ℤ) p.1)) Examples.all 6 := by
   decide
@@ -320,8 +319,7 @@ def aspectTest? (e : Datum) : Option (Bool × InfinitivalTenseClass × NonemptyI
   | none, some _ => some (perf, .propositional, .pure 0)
   | _, _ => none
 
-/-- The aspect rows of (53)–(57) and (70): an imperfective is available at any reference time
-(`imperfective_pure_of_mem`), a perfective exactly where its class admits an extended event. -/
+-- (53), (57), (70)
 theorem aspect_rows : Datum.Checks aspectTest?
     (fun p ↦ if p.1 then .ofProp (Episodic p.2.2 (0 : ℤ) p.2.1) else .accepted)
     Examples.all 9 := by
@@ -355,8 +353,7 @@ def sotTest? (e : Datum) : Option (List (Option (Finset Ordering)) × Bool) := d
   pure (← stackOfForm? e,
     ← e.parse? "SOT" [("applies", true), ("blocked", false)])
 
-/-- The sequence-of-tense rows (24)–(30): the paper's applies/blocked verdicts are what
-`sotApplies` computes on each row's stack. -/
+-- (24), (30)
 theorem sot_rows :
     (∀ e ∈ Examples.all, ∀ p ∈ sotTest? e, sotApplies p.1 ⟦past⟧ = p.2) ∧
       Datum.ReadCount sotTest? Examples.all 5 := by
@@ -480,15 +477,11 @@ def tenseSpine (t : LinearizedSyntacticObject) : List (Option (Finset Ordering))
 def witnessRows : List (Datum × LinearizedSyntacticObject) :=
   [(ex_17, w24a), (ex_18, w25a), (ex_19, w27a), (ex_21, w29a), (ex_22, w30a)]
 
-/-- Each witness draws its items from the lexicon and pronounces, word for word, its row's
-sentence. -/
 theorem witnesses_spell : ∀ p ∈ witnessRows,
     Minimalist.SpellsOut p.2 lexicon (Minimalist.pfPhon p.2) ∧
       (Minimalist.pfPhon p.2).flatMap (Gloss.tokens ·) = Gloss.tokens p.1.primaryText := by
   decide +kernel
 
-/-- Each witness's tense spine is the stack the reader reconstructs, so the sequence-of-tense
-verdicts run on derived structure. -/
 theorem witnesses_spine : ∀ p ∈ witnessRows, ∀ s ∈ sotTest? p.1, tenseSpine p.2 = s.1 := by
   decide +kernel
 

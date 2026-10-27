@@ -120,9 +120,7 @@ theorem not_numberIgnorance_of_uniqueness (hU : Uniqueness R w D Q) (h : □[R] 
     le_antisymm (hU v hv) (Finset.card_pos.2 ((claim_iff_witnesses_nonempty D Q v).1 (h v hv)))
   exact hne ((one v hv).trans (one v' hv').symm)
 
-/-- Naming the witness contradicts Modal Variation: with every accessible world agreeing on the
-witness set, no two differ, so a determiner with a modal component rejects the *namely* and
-which-question continuations of (2) and (8)–(9). -/
+-- (2), (8), (9)
 theorem not_modalVariation_of_box_witnesses {x : Finset E}
     (h : □[R] (fun v ↦ witnesses D Q v = x) w) : ¬ ModalVariation R w D Q :=
   fun ⟨v, hv, v', hv', hne⟩ ↦ hne ((h v hv).trans (h v' hv').symm)

@@ -22,13 +22,6 @@ complementizer would elide both TPs, and the second ellipsis would silence nothi
 economy bans, as Fox's Scope Economy bans vacuous scope shifting
 (`Minimalist.PronunciationEconomy`).
 
-## Main statements
-
-* `csFromCWH_vacuous`: a coordinated sluice cannot have the structure of a coordinated
-  wh-question, whose shared [E] complementizer would elide its second TP vacuously.
-* `cs_pronunciationEconomy`, `cs_itReading`: in the biclausal sluice each ellipsis silences a string
-  of its own, and the E-type pronoun gives the it reading.
-
 ## Implementation notes
 
 * A structure is a linearized syntactic object spelled out by `Linearization/Spellout.lean`: a token
@@ -123,12 +116,10 @@ theorem cwh_pf : pfPhon cwh = ["what", "where", "John", "sang"] := by decide
 theorem cs_pf : pfPhon cs = ["what", "where"] := by decide
 theorem csFromCWH_pf : pfPhon csFromCWH = pfPhon cs := by decide
 
-/-- Each wh-phrase of the coordinated wh-question is interpreted only in its own conjunct, so the
-second conjunct's verb is intransitive: the at-all reading (12). -/
+-- (12)
 theorem cwh_atAll : orphanTraces .raising cwh = [] := by decide
 
-/-- Built on the wh-question, a sluice would have the at-all reading coordinated sluices lack
-(19). -/
+-- (19)
 theorem csFromCWH_not_itReading : ¬ ItReading csFromCWH := by decide
 
 /-- The shared [E] complementizer elides both TPs, and deleting either leaves the pronunciation the

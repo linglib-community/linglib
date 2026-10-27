@@ -238,7 +238,6 @@ noncomputable def speaker (α c : ℝ) : Kernel (HeartState × Phi) Utterance :=
 instance (α c : ℝ) : IsFiniteKernel (speaker α c) :=
   inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
-/-- Speaker preference at a situation is utility comparison. -/
 theorem speaker_real_singleton_lt_iff (α c : ℝ) (p : HeartState × Phi) (u u' : Utterance) :
     (speaker α c p).real {u} < (speaker α c p).real {u'} ↔ util α c p u < util α c p u' :=
   Kernel.softmax_real_singleton_lt_iff (util_ne_top α c p) (util_exists_ne_bot α c p)

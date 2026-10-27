@@ -401,17 +401,15 @@ abbrev fourBifilter : PrimeBifilter FOUR := classicalFilter.prod
 theorem mem_fourBifilter_iff : ∀ x : FOUR, x ∈ fourBifilter ↔ x = FOUR.T ∨ x = FOUR.I := by
   decide
 
-/-- `FOUR`'s exact values are the classical `{F, T}` ([fitting-2021] Example 8.7.4). -/
+-- Example 8.7.4 [fitting-2021]
 theorem four_isExact_iff : ∀ x : FOUR, IsExact x ↔ x = FOUR.F ∨ x = FOUR.T := by decide
 
-/-- `FOUR`'s anticonsistent values are `{F, T, I}`, the value space of `LP`
-([fitting-2021] Example 8.7.4). -/
+-- Example 8.7.4 [fitting-2021]
 theorem four_isAnticonsistent_iff :
     ∀ x : FOUR, IsAnticonsistent x ↔ x = FOUR.F ∨ x = FOUR.T ∨ x = FOUR.I := by
   decide
 
-/-- `ST` and classical logic validate the same sequents, the original collapse of
-[cobreros-etal-2012] (via [fitting-2021] Example 8.7.4). -/
+-- Example 8.7.4 [cobreros-etal-2012] [fitting-2021]
 theorem four_stValid_iff_cValid {α : Type*} (Γ Δ : List (Fml α)) :
     STValid fourBifilter Γ Δ ↔ CValid fourBifilter Γ Δ :=
   stValid_iff_cValid fourBifilter Γ Δ
@@ -447,45 +445,40 @@ instance : DecidablePred (· ∈ lpFilter) := fun a ↦ inferInstanceAs (Decidab
 /-- The bilattice `NINE = SignType ⊙ SignType` of Figure 4 ([fitting-2021] Example 8.10.3). -/
 abbrev NINE := SignType ⊙ SignType
 
-/-- `NINE`'s exact values are `{f, d⊤, t}` ([fitting-2021] §8.5). -/
+-- §8.5 [fitting-2021]
 theorem nine_isExact_iff : ∀ x : NINE,
     IsExact x ↔ x = mk (-1) 1 ∨ x = mk 0 0 ∨ x = mk 1 (-1) := by
   decide
 
-/-- `NINE`'s consistent values are the exact ones with `{df, ⊥, dt}` ([fitting-2021] §8.5). -/
+-- §8.5 [fitting-2021]
 theorem nine_isConsistent_iff : ∀ x : NINE, IsConsistent x ↔ IsExact x ∨
     x = mk (-1) 0 ∨ x = mk (-1) (-1) ∨ x = mk 0 (-1) := by
   decide
 
-/-- `NINE`'s anticonsistent values are the exact ones with `{of, ⊤, ot}`
-([fitting-2021] §8.5). -/
+-- §8.5 [fitting-2021]
 theorem nine_isAnticonsistent_iff : ∀ x : NINE, IsAnticonsistent x ↔ IsExact x ∨
     x = mk 0 1 ∨ x = mk 1 1 ∨ x = mk 1 0 := by
   decide
 
-/-- The two prime bifilters of `NINE` come from `K3` and `LP` ([fitting-2021] Examples 8.7.5 and
-8.10.4). -/
+-- Examples 8.7.5 and 8.10.4 [fitting-2021]
 theorem nine_bifilters : (∀ x : NINE, x ∈ k3Filter.prod ↔
       x = mk 1 (-1) ∨ x = mk 1 0 ∨ x = mk 1 1) ∧
     ∀ x : NINE, x ∈ lpFilter.prod ↔ x = mk 0 (-1) ∨ x = mk 1 (-1) ∨
       x = mk 0 0 ∨ x = mk 1 0 ∨ x = mk 0 1 ∨ x = mk 1 1 := by
   decide
 
-/-- With `K3` the strictly designated values reduce to `{t}`, so `C⟨NINE, {1} × K3⟩` is `K3`
-([fitting-2021] Example 8.7.5). -/
+-- Example 8.7.5 [fitting-2021]
 theorem k3_strict_iff : ∀ x : NINE, StrictlyDesignated k3Filter.prod x ↔ x = mk 1 (-1) := by
   decide
 
-/-- With `LP` the strictly designated values are `{d⊤, t}` and the tolerantly designated ones
-`{t, d⊤, ot, of, ⊤}` ([fitting-2021] Example 8.10.4). -/
+-- Example 8.10.4 [fitting-2021]
 theorem lp_designated : (∀ x : NINE, StrictlyDesignated lpFilter.prod x ↔
       x = mk 0 0 ∨ x = mk 1 (-1)) ∧
     ∀ x : NINE, TolerantlyDesignated lpFilter.prod x ↔ x = mk 1 (-1) ∨
       x = mk 0 0 ∨ x = mk 1 0 ∨ x = mk 0 1 ∨ x = mk 1 1 := by
   decide
 
-/-- `P, ¬P ⇒ Q` fails in strict/tolerant `LP` as in `LP`, with countermodel `v(P) = d⊤` and
-`v(Q) = f` ([fitting-2021] Example 8.10.4). -/
+-- Example 8.10.4 [fitting-2021]
 theorem lp_explosion_fails :
     ¬ STValid lpFilter.prod [.atom true, .not (.atom true)] [.atom false] := fun h ↦
   absurd (h ⟨fun b ↦ if b then mk 0 0 else mk (-1) 1, by decide⟩ (by decide))
@@ -506,14 +499,12 @@ instance : DecidablePred (· ∈ fdeFilter) :=
 /-- The bilattice `SIXTEEN = FOUR ⊙ FOUR` of Figure 6 ([fitting-2021] Example 8.10.5). -/
 abbrev SIXTEEN := FOUR ⊙ FOUR
 
-/-- `FDE`'s strict/tolerant counterpart validates exactly the sequents of `FDE`
-([fitting-2021] Example 8.10.5). -/
+-- Example 8.10.5 [fitting-2021]
 theorem fde_stValid_iff {α : Type*} (Γ Δ : List (Fml α)) :
     STValid fdeFilter.prod Γ Δ ↔ LValid fdeFilter Γ Δ :=
   stValid_prod_iff fdeFilter Γ Δ
 
-/-- Not every value is exact, consistent or anticonsistent, since `⟨⊥, ⊤⟩` and `⟨⊤, ⊥⟩` of
-`SIXTEEN` are neither consistent nor anticonsistent ([fitting-2021] §8.5, Example 8.10.5). -/
+-- §8.5, Example 8.10.5 [fitting-2021]
 theorem sixteen_neither :
     ¬ IsConsistent (mk FOUR.U FOUR.I : SIXTEEN) ∧
       ¬ IsAnticonsistent (mk FOUR.U FOUR.I : SIXTEEN) ∧

@@ -234,7 +234,6 @@ theorem copropositional_mean_iff {a : Agent} {u : SubUtterance grammar} {x : Ent
   simp [Copropositional, qudContrib, Question.Copropositional, Question.apply, Question.meant,
     Option.exists]
 
-/-- Every assertion of what `a` means to say after `u` answers the question. -/
 theorem copropositional_meanNext (a : Agent) (u : SubUtterance grammar) (x : Entity) :
     (assert ⟨.meanNext a u, x⟩).Copropositional (.meantNext a u) := by
   simp [Copropositional, qudContrib, Question.Copropositional, Question.apply, Question.meantNext,
@@ -326,8 +325,7 @@ example {w : Utterance} {d d' : Board} (h : (Rule.replacePending w).apply d = so
   split at h <;> cases h
   exact ⟨rfl, rfl, rfl⟩
 
-/-- Whether Bo left, who left and which student left are co-propositional (p. 9:30), Bo and Jo
-being the students. -/
+-- p. 9
 theorem copropositional_left :
     let whether : Question := .polar ⟨.left, .bo⟩
     let who : Question := .which .left {x | x.type = .individual}
@@ -462,7 +460,7 @@ theorem dgb2 :
         qud := [⟨.polar ⟨.mean .A georges, .jacques⟩, ∅⟩, ⟨.meant .A georges, {georges}⟩] } := by
   decide
 
-/-- (44): Pending replacement puts the corrected question in PENDING. -/
+-- (44)
 theorem dgb3 :
     (run [.pendingUpdate u₀ .A .B, .backwardRepair .keep georges u₁, .assertQud,
       .replacePending v₀] initial).map (fun d ↦ (d.pending, d.moves)) = some ([v₀], [u₁]) := by
@@ -497,7 +495,7 @@ theorem dgb2 :
         qud := [⟨.meant .A «in», {«in»}⟩] } := by
   decide
 
-/-- (53): Pending replacement puts *Take that book from* in PENDING. -/
+-- (53)
 theorem dgb3 :
     (run [.pendingUpdate u₀ .A .B, .backwardRepair .keep «in» u₁, .replacePending v₀]
       initial).map (fun d ↦ (d.pending, d.moves)) = some ([v₀], [u₁]) := by

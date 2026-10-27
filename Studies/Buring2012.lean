@@ -18,15 +18,6 @@ carries only unmarked values is defined of any referent at all. That is the surv
 underspecification treatment of *they*, whose gender-neutrality is the absence of a gender
 feature rather than a feature of its own.
 
-## Main results
-
-* `selector_eq_assignment`: a pronoun denotes the assignment value at its index.
-* `undefined_of_masculine`, `undefined_of_not_agent`: a feminine entry is undefined of a
-  referent gendered masculine, a first-person entry of one not including the agent.
-* `defined_of_unmarked_features`: an entry with only unmarked values imposes no condition.
-* `they_defined_where_she_undefined`: the two English entries at a male referent.
-* `bound_reading`: binding is an assignment update, with the entry's denotation unchanged.
-
 ## References
 
 * [D. Büring, *Pronouns* (2012)][buring-2012]

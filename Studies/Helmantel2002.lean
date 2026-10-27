@@ -39,17 +39,6 @@ classification leaves out, *met* and *zonder*, are the fragment's non-spatial on
 * `DPRaises`, `linearization`: the complement's movement to the specifier of the directionality
   phrase, and the order of the adposition and its complement that results.
 
-## Main results
-
-* `linearization_eq_post_iff`, `linearization_eq_pre_of_inherent`: the postpositional order is
-  a directional phrase whose adposition is not inherently directional.
-* `dpRaises_iff_linearization_eq_post`: the complement is in the escape hatch, extractable and
-  read as a path, exactly in the postpositional order.
-* `pointLocative_linearization`, `pointLocative_directional`, `narrowLocative_locational`: the
-  point locatives are the inherently directional prepositions and are never postpositional.
-* `narrowLocative_direction_post`, `extendedLocative_direction_post`: the class predicts the
-  path the postpositional use denotes.
-
 ## Implementation notes
 
 * The classes are the dissertation's lists of core adpositions, as lists of fragment entries;

@@ -89,8 +89,6 @@ theorem preferred_of_visual_mem (a : Perfectivity) {S : Finset Parameter} (h : .
   cases a <;> simp [preferred, paradigm, List.find?, performative, factualVisual,
     Finset.Nonempty, h]
 
-/-- A column prefers its last suffix exactly when that suffix covers a source at hand and no
-suffix above it does. -/
 theorem preferred_append_singleton_eq_some {es : List Evidential} {e : Evidential} (he : e ∉ es)
     (S : Finset Parameter) :
     preferred (es ++ [e]) S = some e ↔

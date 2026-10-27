@@ -22,17 +22,6 @@ A count noun denotes Link's star of its atoms, the singletons of its individuals
 the atomized noun, `Mereology.atomize`. The distributional diagnostics of the paper's §4, its case
 against a uniform classifier semantics such as Chierchia's, then follow from the lexical types.
 
-## Main results
-
-* `chol_classifiers_suffixed`, `shan_classifiers_free`: the morphology of the two strategies.
-* `cholTree_interp`, `shanTree_interp`: the two derivations of *two dogs*.
-* `chol_numClf_composes`, `chol_clfNoun_fails`, `shan_clfNoun_composes`, `shan_numClf_fails`:
-  what composes without a noun and what without a numeral.
-* `chol_ocho_composes`, `chol_ocho_clf_fails`: a loan numeral counts the noun without a
-  classifier.
-* `atomize_dogs`: the Shan classifier recovers the noun's atoms.
-* `qmod_iff_cardMod_atomize`: the two strategies agree on every nonzero numeral.
-
 ## Implementation notes
 
 Pluralities are `Finset α`, so μ# is `Finset.card` at type `⟨e,n⟩`, and its strict monotonicity

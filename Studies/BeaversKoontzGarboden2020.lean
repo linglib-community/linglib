@@ -103,8 +103,7 @@ def typology : Finset Root.Kinds :=
   {propertyConcept, pureResult, causativeResult, pureManner, {.state, .manner},
    {.state, .manner, .result}, fullSpec}
 
-/-- The signatures respecting the collocational restrictions are exactly `∅` and the seven rows of
-the typology (12) (p. 227). -/
+-- (12), p. 227
 theorem wellFormed_iff_mem_typology :
     ∀ s : Root.Kinds, s.WellFormed ↔ s = ∅ ∨ s ∈ typology := by decide
 
@@ -192,8 +191,7 @@ theorem kinds_ne_of_cause_not_mem {t : Template σ} {s : Root.Kinds} (hm : .mann
     (hs : .state ∈ s) (hc : .cause ∉ s) : t.kinds ≠ s := by
   rintro rfl; exact hc (hasCause_of_mem_kinds hm hs)
 
-/-- The two manner-and-state rows of (12) without a cause are the signature of no template (p. 230).
--/
+-- (12), p. 230
 theorem kinds_ne_emptyRows (t : Template σ) :
     t.kinds ≠ {.state, .manner} ∧ t.kinds ≠ {.state, .manner, .result} :=
   ⟨kinds_ne_of_cause_not_mem (by decide) (by decide) (by decide),
@@ -248,7 +246,7 @@ theorem hand_closedKinds : hand.closedKinds = fullSpec := by decide
 
 theorem drown_closedKinds : drown.closedKinds = fullSpec := by decide
 
-/-- The filled cells of (12) are the cells of its six roots. -/
+-- (12)
 theorem attestedCells_eq_sample :
     attestedCells = (sample.map fun c ↦ (c.1.closedKinds, c.2)).toFinset := by decide
 

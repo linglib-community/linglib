@@ -81,8 +81,7 @@ theorem attenuation_reduction :
       a < b := by
   decide
 
-/-- The proximate demonstrative codes higher accessibility than the distal one of the same
-shape (§5.1 records Kirsner's Dutch data against this). -/
+-- §5.1
 theorem deixis_proximate :
     ∀ a b : AccessibilityLevel, a.head = .demonstrative → b.head = .demonstrative →
       a.modified = b.modified → a.lexical = b.lexical →
@@ -166,16 +165,14 @@ theorem rows_topicality_over_distance :
       c < m := by
   decide +kernel
 
-/-- A newspaper codes the entity whose point of view it takes by the higher accessibility marker
-((3), (4)). -/
+-- (3), (4)
 theorem rows_perspective :
     ∀ r ∈ Examples.all, ∀ v ∈ (marker r "victim").toList, ∀ p ∈ (marker r "rapists").toList,
       (r.feature? "perspective" = some "victim" → p < v) ∧
         (r.feature? "perspective" = some "rapists" → v < p) := by
   decide +kernel
 
-/-- Every referring expression of the article's opening sentence codes lower accessibility than its
-counterpart in the headline (8). -/
+-- (8)
 theorem rows_headline :
     ∀ a ∈ Examples.all, ∀ b ∈ Examples.all,
       a.source.paperLabel = "(8a)" → b.source.paperLabel = "(8b)" →
@@ -217,8 +214,7 @@ theorem in_focus_collapse :
   decide
 
 open Discourse.Centering in
-/-- Centering's Rule 1 is silent on lexical anaphors: an utterance that realizes every entity by a
-lexical form satisfies it, whatever came before, so it cannot penalize a repeated name. -/
+-- Rule 1
 theorem pronominalizationConstraint_of_lexical {E R : Type*} [DecidableEq E] [LinearOrder R]
     (prev cur : Utterance E R AccessibilityLevel) (h : ∀ r ∈ cur.realizations, r.form.lexical) :
     PronominalizationConstraint {l | l.head = .pronoun} prev cur := by
@@ -226,7 +222,7 @@ theorem pronominalizationConstraint_of_lexical {E R : Type*} [DecidableEq E] [Li
   have : ∀ l : AccessibilityLevel, l.lexical → l.head ≠ .pronoun := by decide
   exact this r.form (h r hr) hp
 
-/-- The discourse topic takes a higher accessibility marker than the local subject (12). -/
+-- (12)
 theorem rows_topic_over_subject :
     ∀ r ∈ Examples.all, ∀ t ∈ (marker r "topicMarker").toList,
       ∀ s ∈ (marker r "subjectMarker").toList, s < t := by

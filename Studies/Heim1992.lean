@@ -17,17 +17,6 @@ admit its complement's presupposition, which a belief report need not. The desir
 the Hintikka-style rule (27) with the comparative semantics (31) on similarity, the library's
 `Desire.Conditional.Want`, with the amendment (40) blocking `want p ∧ want ¬p`.
 
-## Main statements
-
-* `admits_believes_iff`, `believes_ofTrivalent`: on atomic complements the belief rule is
-  Karttunen's admittance in the holder's beliefs, and the update with a trivalent proposition.
-* `believes_too_admits`, `doubt_too_admits_iff`: the *too*-discourse presupposes nothing, and its
-  *doubt* variant is admitted only by contexts its first conjunct reduces to the absurd one.
-* `admits_of_admits_knows`, `believes_admits_not_knows`: *know* passes on its complement's
-  presupposition and *believe* need not, as Patrick's cello shows.
-* `defined_recovered`, `not_want_recovered_compl`: on a four-world model shaped like Asher's
-  Concorde case, the amendment blocks wanting both `p` and `¬p`.
-
 ## Implementation notes
 
 * The three-world model of Section 4.1 for Stalnaker's get-well and have-been-sick contrast needs
@@ -159,8 +148,7 @@ def sick : Set HealthWorld | .w0 | .w2 => True | _ => False
 instance : DecidablePred (· ∈ recovered) := fun w ↦ by
   cases w <;> first | exact isTrue trivial | exact isFalse id
 
-/-- The naive Hintikka rule (27), rejected on [asher-1987]'s Concorde case (32), predicts `wants
-recovered` false under the belief state `sick`. -/
+-- (27), (32) [asher-1987]
 theorem not_sick_subset_recovered : ¬ sick ⊆ recovered := fun h ↦ @h .w2 trivial
 
 /-- Every world is equally similar to every other. -/

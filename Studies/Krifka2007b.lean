@@ -19,15 +19,6 @@ but not safely usable, which fills it. The M principle is derived within Blutner
 optimality theory on McCawley's *kill* example, and the same evaluation over the quadruplet
 yields Krifka's assignment.
 
-## Main statements
-
-* `marked_both`: between two admissible borders a degree is *not unhappy* for one speaker and
-  *not happy* for another, so the two have no fixed border between them.
-* `superoptimal_mccawley`: weak optimality pairs *kill* with direct and *cause to die* with
-  indirect killing.
-* `superoptimal_quadruplet`: in each half of the quadruplet the simpler form takes the safe
-  region and the more complex form the border region.
-
 ## Implementation notes
 
 * Literal meanings are the substrate's single-threshold `AntonymForm.contradictoryDenotation`;
@@ -83,8 +74,7 @@ def Marked (Θ : Set D) (θ : D) (f : AntonymForm) (d : D) : Prop :=
 
 variable {Θ : Set D} {θ θ₁ θ₂ d d₁ d₂ : D}
 
-/-- The literal meanings exhaust the scale, so *neither happy nor unhappy* (21) is a
-contradiction, and an unconditional over the pair (22) covers everyone. -/
+-- (21), (22)
 theorem literal_positive_or_negative (θ d : D) :
     d ∈ literal θ .positive ∨ d ∈ literal θ .negative :=
   lt_or_ge θ d
@@ -93,21 +83,19 @@ theorem not_safe_of_between (h₂ : θ₂ ∈ Θ) (h₁ : θ₁ ∈ Θ) (hd : θ
     ¬ Safe Θ .positive d ∧ ¬ Safe Θ .negative d :=
   ⟨fun h ↦ absurd (h θ₂ h₂) (not_lt.2 hd'), fun h ↦ absurd (h θ₁ h₁) (not_le.2 hd)⟩
 
-/-- A marked *not unhappy* is a mild state of happiness ((3), (19)), happy at the speaker's
-border but not safely so. -/
+-- (3), (19)
 theorem marked_notNegative_iff : Marked Θ θ .notNegative d ↔ θ < d ∧ ∃ θ' ∈ Θ, d ≤ θ' := by
   refine and_congr Iff.rfl ⟨fun h ↦ ?_, fun ⟨θ', hθ', hle⟩ h ↦ absurd (h θ' hθ') (not_lt.2 hle)⟩
   by_contra hn
   exact h fun θ' hθ' ↦ lt_of_not_ge fun hle ↦ hn ⟨θ', hθ', hle⟩
 
-/-- A marked *not happy* is a mild state of unhappiness ((9), (20)), unhappy at the speaker's
-border but not safely so. -/
+-- (9), (20)
 theorem marked_notPositive_iff : Marked Θ θ .notPositive d ↔ d ≤ θ ∧ ∃ θ' ∈ Θ, θ' < d := by
   refine and_congr Iff.rfl ⟨fun h ↦ ?_, fun ⟨θ', hθ', hlt⟩ h ↦ absurd (h θ' hθ') (not_le.2 hlt)⟩
   by_contra hn
   exact h fun θ' hθ' ↦ le_of_not_gt fun hlt ↦ hn ⟨θ', hθ', hlt⟩
 
-/-- At a given border, *not unhappy* reports higher states than *not happy* (20). -/
+-- (20)
 theorem lt_of_marked (h₁ : Marked Θ θ .notPositive d₁) (h₂ : Marked Θ θ .notNegative d₂) :
     d₁ < d₂ :=
   lt_of_le_of_lt h₁.1 h₂.1

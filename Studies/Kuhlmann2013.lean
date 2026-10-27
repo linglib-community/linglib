@@ -138,7 +138,7 @@ def fig10D2 : Graph 6 :=
   .ofArcs [dot, dot, dot, dot, dot, dot] 1
     [(1, 0, .dep), (1, 4, .dep), (4, 3, .dep), (0, 2, .dep), (2, 5, .dep)]
 
-/-- Block-degrees 2 and 3 (Example 6). -/
+-- Example 6
 theorem figure10_blockDegree : blockDegree fig10D1 = 2 ∧ blockDegree fig10D2 = 3 := by
   decide
 
@@ -154,7 +154,7 @@ def fig11D2 : Graph 4 :=
 def fig11D3 : Graph 5 :=
   .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 2, .dep), (2, 4, .dep), (0, 1, .dep), (1, 3, .dep)]
 
-/-- Both well-nested trees of Figure 11 are non-projective (Example 8). -/
+-- Figure 11, Example 8
 theorem figure11_wellNested :
     (fig11D1.IsWellNested ∧ ¬ fig11D1.IsProjective) ∧
       (fig11D2.IsWellNested ∧ ¬ fig11D2.IsProjective) := by
@@ -163,7 +163,7 @@ theorem figure11_wellNested :
 theorem fig11D2_interleave : fig11D2.Interleave 0 1 ∧ Dominates fig11D2 0 1 := by
   decide +kernel
 
-/-- `D₃` is ill-nested, with the siblings of Lemma 9 at positions 1 and 2. -/
+-- Lemma 9
 theorem fig11D3_not_isWellNested : ¬ fig11D3.IsWellNested :=
   (not_isWellNested_iff_siblings (by decide)).2
     ⟨0, 1, 2, by decide, by decide, by decide, by decide +kernel⟩

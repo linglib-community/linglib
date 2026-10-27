@@ -30,22 +30,6 @@ Hebrew reaches weak necessity through the comparatives alone.
 * `strongNecessity`, `weakNecessity`: (41) and (42).
 * `Negotiable`: (49), a list of ideals some participant is not committed to.
 
-## Main results
-
-* `favoredWorlds_eq_bestWorlds`: Frank's compatibility-restricted union is Kratzer's best worlds
-  under the promoted priorities, a best world being one whose verified priorities form a maximal
-  consistent set (`verified_mem_extensions`, `mem_bestWorlds_of_extension`), so the two
-  necessities are von Fintel and Iatridou's strong and weak necessity with the split ordering
-  source (`strongNecessity_iff`, `weakNecessity_iff`); the analyses differ only in the
-  negotiability presupposition.
-* `tax_shift`: the negotiable ideal makes *should* true and *have to* false, and its endorsement
-  leaves it non-negotiable and makes *have to* true.
-* `weakNecessity_ideal`, `weakNecessity_neg_of_not`: a choice of ideal is a choice of weak
-  necessities, from which the neg-raising inference for the ideal follows.
-* `negRaising_iff_comparative`, `carix_negRaises`, `strength_tests`: over the paper's English,
-  Hebrew and Spanish rows, neg-raising and the strength tests pick out the weak necessities, with
-  *carix* the paper's apparent exception.
-
 ## Implementation notes
 
 * Commitment (48) is data, a finite set of ideals per participant, and an ideal list is
@@ -335,8 +319,7 @@ theorem strength_tests :
       (e.judgment = .acceptable ↔ (strategy? e).isSome) := by
   decide
 
-/-- Hebrew has neither a lexical nor a compositional weak necessity (§2.1), its route being the
-evaluative comparative. -/
+-- §2.1
 theorem hebrew_comparative_only :
     ∀ e ∈ Examples.all, e.language = "hebr1245" →
       ∀ s ∈ strategy? e, s = .evaluativeComparative := by

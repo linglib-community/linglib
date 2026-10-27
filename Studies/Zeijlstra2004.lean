@@ -23,17 +23,6 @@ resumption of *no*, which Zeijlstra reduces to an iteration; the two analyses di
 the truth conditions of concord but on whether a concord language has the double negation
 reading as well.
 
-## Main results
-
-* `meaning_of_forall_u`: in a strict concord language every negative clause has one negation,
-  wherever its marker and n-words stand.
-* `meaning_marker_nword`, `meaning_nword_marker`: Italian *non* before an n-word gives concord
-  and after it double negation.
-* `meaning_concord_iff_resumption`, `meaning_dn_iff_iteration`: concord is de Swart and Sag's
-  resumption and double negation their iteration.
-* `mem_nessuno_and_scopeMonotone_iff`: of the readings of an n-word, Zeijlstra's is the
-  non-negative one.
-
 ## Implementation notes
 
 * A clause is its negative elements in c-command order over a nucleus that takes the individuals
@@ -140,8 +129,7 @@ reading is out ((66)). -/
 theorem meaning_nword_marker : meaning [.nword .u A, .marker .i] P ↔ every A fun x ↦ P [x] := by
   simp [meaning, interp, NegElement.feature, every, GQ.some]
 
-/-- Standard Dutch *Niemand loopt niet* 'everybody walks' ((84)): both negative elements carry
-`[iNEG]`. -/
+-- (84)
 theorem meaning_dn_nword_marker : meaning [.nword .i A, .marker .i] P ↔ every A fun x ↦ P [x] := by
   simp [meaning, interp, NegElement.feature, every, no]
 

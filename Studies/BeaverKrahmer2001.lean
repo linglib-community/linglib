@@ -22,25 +22,6 @@ the assertion operator — the floating-A theory derives cancellation as the pre
 placement of meta-assertions — and a Stalnakerian update relation turns the partial
 semantics into a dynamic account of accommodation.
 
-## Main statements
-
-- `strong_conditional_presupposition`, `middle_conditional_filters`,
-  `weak_conditional_cumulative`: the three conditionals project a disjunctively weakened,
-  a filtered, and a cumulative presupposition.
-- `no_disjunction_table_projects_and_cancels`, `no_kleene_fits_soames_disjunctions`: no
-  trivalent disjunction covers both projection and cancellation, and each of the three
-  logics mispredicts some printed example.
-- `printed_predictions`, `printed_verdicts`: the presuppositions the paper prints for each
-  logic are the ones the semantics computes, and its verdicts are agreement with the
-  intuitive presupposition.
-- `KingOfFrance.denial_presupposes_nothing`, `StoppedOrStarted.basic_undefined`,
-  `regret_conditional_presupposes_nothing`, `floating_a_rows`: the floating-A theory's
-  preferred translations are unique and derive the cancellation readings.
-- `update_iff`, `hearer_update_filters_then_asserts`, `monologue`: the paper's update
-  relation is the substrate's Heimian partial update of a trivalent proposition, hearer
-  accommodation is its image over candidate common grounds, and a monologue composes by
-  sequencing.
-
 ## Implementation notes
 
 * Atomic formulas are bivalent, as the paper's valuations are, so a formula is undefined
@@ -650,8 +631,6 @@ example : incoherence KingOfFrance.preferred = 2 := by decide
 example : incoherence (conn .disj .weak (assert (transpl (atom .q) (atom .p)))
     (transpl (atom .r) (neg (atom .p))) : Formula Atom) = 1 := by decide
 
-/-- Preference is not a total order, since two optimal translations with equally many
-assertions tie. -/
 theorem prefers_not_total :
     ∃ (S : List (Formula Atom)) (γ δ : Formula Atom), γ ≠ δ ∧ γ ∈ S ∧ δ ∈ S ∧
       ¬ Prefers S γ δ ∧ ¬ Prefers S δ γ := by

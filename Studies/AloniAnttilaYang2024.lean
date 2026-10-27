@@ -14,17 +14,6 @@ to downward closure and to the empty-state property, and `⨼` the only obstruct
 closure. All three logics are invariant under bounded bisimulation, and BSML, though union
 closed, cannot express every union-closed bisimulation-invariant property.
 
-## Main results
-
-* `support_empt_iff_gdisj_bot`, `support_poss_gdisj`: equivalences among the new connectives.
-* `isLowerSet_support_of_neFree`, `supClosed_support_of_gdFree`,
-  `isFlat_support_of_neFree_gdFree`: the closure properties of Fact 2.7.
-* `invariant_eval`: bisimulation invariance (Theorem 3.8).
-* `bsml_not_complete_for_unionClosed`: BSML does not express every union-closed
-  bisimulation-invariant property (Fact 3.19).
-* `support_empt_conj_ne`: `⊘` cancels pragmatic enrichment.
-* `narrowScopeFC`: narrow-scope free choice, transferred from BSML along `ofBSML`.
-
 ## Implementation notes
 
 The three logics are fragments of one syntax: `Formula` carries `⊥`, `NE`, `⨼` and `⊘`
@@ -282,7 +271,7 @@ theorem isFlat_support_of_neFree_gdFree (hNE : φ.NEFree) (hGD : φ.GDFree) :
 
 /-! ### BSML is not complete for union-closed properties -/
 
-/-- A BSML formula with the empty-state property is downward closed (Lemma 3.18). -/
+-- Lemma 3.18
 theorem isLowerSet_of_support_empty (hGD : φ.GDFree) (hE : φ.EmptFree) :
     (support M φ ∅ → ∀ s t : Finset W, t ⊆ s → support M φ s → support M φ t) ∧
     (antiSupport M φ ∅ → ∀ s t : Finset W, t ⊆ s → antiSupport M φ s → antiSupport M φ t) := by

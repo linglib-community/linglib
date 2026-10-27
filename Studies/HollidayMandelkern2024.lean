@@ -18,22 +18,6 @@ truth-value table follows by decision. On this model Wittgenstein sentences are 
 while `◇¬p` does not entail `¬p`, and the classical laws the paper gives up fail at the point of
 full uncertainty.
 
-## Main results
-
-* `compat_iff`, `access_iff`: the compatibility and accessibility relations of the Scale.
-* `wittgenstein`, `diamond_neg_not_entail_neg`, `not_entail_box`: Wittgenstein sentences are
-  contradictions, yet `◇¬p` does not entail `¬p` and `p` does not entail `□p`.
-* `not_derivable_dia_neg_neg`, `not_derivable_box`: so neither entailment is derivable in the
-  epistemic orthologic EO.
-* `distributivity_fails`, `disjunctive_syllogism_fails`: the classical inferences of (10) and
-  (13) fail at the point of full uncertainty.
-* `orthomodularity_fails`, `not_isModularLattice`, `pseudocomplementation_fails`: the regular
-  propositions form an ortholattice that is not orthomodular, not modular, and whose
-  orthonegation is not a pseudocomplement.
-* `deMorgan`, `not_known_either`: the contrasts with state-based semantics.
-* `stratified_level1`, `not_stratified_across_levels`: classicality within each level of
-  modal iteration, but not across levels.
-
 ## Implementation notes
 
 The Boolean algebra is `Finset (Fin 2)`, so every claim about the Scale is decidable; the
@@ -84,7 +68,7 @@ def x4 : Poss := ⟨({1}, {0, 1}), by decide⟩
 /-- The possibility `x5 = ({1}, {1})` knows `¬p`. -/
 def x5 : Poss := ⟨({1}, {1}), by decide⟩
 
-/-- Two worlds give five possibilities, the first row of Table 1. -/
+-- Table 1
 theorem card_poss : Fintype.card Poss = 5 := by decide
 
 /-- Compatibility is the path `x1 — x2 — x3 — x4 — x5` (Figure 7 and Example 5.3). -/
@@ -144,7 +128,7 @@ theorem mem_bP_disj_bnP : ∀ x : Poss, x ∈ disj frame bP bnP ↔ x = x1 ∨ x
 instance (s : Finset Poss) : DecidablePred (· ∈ (↑s : Set Poss)) :=
   fun x ↦ inferInstanceAs (Decidable (x ∈ s))
 
-/-- The compatibility frame has ten regular subsets (Example 4.11). -/
+-- Example 4.11
 theorem card_regular :
     ((Finset.univ : Finset (Finset Poss)).filter
       fun s : Finset Poss ↦ IsRegular frame (↑s : Set Poss)).card = 10 := by
@@ -248,7 +232,7 @@ theorem deMorgan : ∀ x : Poss, x ∈ dP ∩ dnP ↔ x ∈ orthoNeg frame (disj
 /-- The disjunction `□¬p ∨ □p` is not a logical truth (30). -/
 theorem not_known_either : x3 ∉ disj frame bnP bP := by decide
 
-/-- The diamond of `p` does not collapse to `p` (Theorem 5.7.4). -/
+-- Theorem 5.7.4
 theorem diamond_P_not_subset : ¬ dP ⊆ P :=
   not_diamond_embed_subset (by decide) (by decide)
 
@@ -314,8 +298,7 @@ theorem level1_closed :
     (∀ l m : Level1, ∃ n : Level1, ∀ x, x ∈ l.set ∩ m.set ↔ x ∈ n.set) := by
   refine ⟨by decide, by decide, by decide⟩
 
-/-- Within `B0`, compatible witnesses of two propositions yield a common witness, so `B0` is
-Boolean by the criterion of Proposition 4.39. -/
+-- Proposition 4.39
 theorem stratified_level0 :
     ∀ l m : Level0, (∃ x ∈ l.set, ∃ y ∈ m.set, frame.compat x y) →
       ∃ z, z ∈ l.set ∧ z ∈ m.set := by

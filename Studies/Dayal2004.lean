@@ -24,20 +24,6 @@ may or may not apply to ∩.
 * `kindShift`: the shift that forms the kind term of a nominal of a given number.
 * `Lexicalization`: the shifts a language's definite determiner lexicalizes and blocks.
 
-## Main results
-
-* `kind_and_definite`, `definite_not_indefinite`: where ι is unblocked a bare nominal is a kind or
-  a definite, even *is mashiin ke TukRe* 'parts of this machine', (45).
-* `chierchia_not_definite`: Chierchia's ranking pre-empts the definite readings of Hindi, Russian
-  and Chinese bare nominals, (17) and (18).
-* `english_chierchia_iff_dayal`, `exists_iff_not_down`, `english_bare_singular`: with ι and ι^x
-  blocked the rankings agree, ∃ applies exactly where ∩ is undefined, (43) and (44), and an
-  English bare singular has no shift, (88a).
-* `Lexicalization.classification`: the principles admit exactly four types of language.
-* `Lexicalization.not_englishInReverse`, `Lexicalization.not_germanInReverse`: two impossible
-  languages of Section 5.
-* `rows_agree`: the kind-term judgments of (6a), (14) to (16), (46), (78), (86) and (87a).
-
 ## Implementation notes
 
 * Availability is the theory layer's (`Semantics/Genericity/MeaningPreservation.lean`), and each
@@ -205,13 +191,11 @@ instance : Decidable (l.BareKind num) := by unfold BareKind; infer_instance
 theorem bareKind_or_definiteKind : l.BareKind num ∨ l.DefiniteKind num :=
   (em _).imp_right fun h ↦ l.blocked_subset (not_not.1 h)
 
-/-- Singular kind terms are never optionally definite, (87), since the canonical ι is blocked
-wherever it is lexicalized. -/
+-- (87)
 theorem bareKind_singular_iff : l.BareKind .singular ↔ ¬ l.DefiniteKind .singular :=
   ⟨fun h h' ↦ h (l.iota_mem_blocked h'), fun h h' ↦ h (l.blocked_subset h')⟩
 
-/-- A language can have bare singular kind terms only if it allows plural and mass kind terms to
-be bare, p. 422. -/
+-- p. 422
 theorem bareKind_of_bareKind_singular (h : l.BareKind .singular) : l.BareKind num := by
   rcases kindShift_eq_down_or_iota num with hk | hk <;> rw [BareKind, hk]
   · exact fun hd ↦ h (l.iota_mem_blocked (l.iota_mem_of_down_mem (l.blocked_subset hd)))
@@ -295,7 +279,7 @@ theorem ofDatum_isSome : ∀ d ∈ Examples.all, (Row.ofDatum d).isSome := by
   decide
 
 /-- Each kind term is judged acceptable exactly where its language's lexicalization licenses its
-form. -/
+form ((6a), (14), (16), (46), (78), (86), (87a)). -/
 theorem rows_agree :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.lexicalization.Licit r.num r.form) := by
   decide

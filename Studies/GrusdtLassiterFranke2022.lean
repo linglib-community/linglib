@@ -211,20 +211,20 @@ theorem real_Ac_inter_Cc (s : State) : s.dist.real (Aᶜ ∩ Cᶜ) = s.cell (fal
 /-- The assertability extension of an utterance at the threshold `θ`. -/
 def ext (u : Utt) : Set State := {s | Assertable θ u s.dist}
 
-/-- *Likely C* is assertable everywhere (Table 2(b)). -/
+-- Table 2
 theorem ext_likelyC : ext .likelyC = Set.univ := by
   ext s; cases s <;> simp [ext, Assertable, real_C, State.cell] <;> norm_num
 
-/-- The conditional is assertable in `s1` and `s2` but not in `s3` (Table 2(b)). -/
+-- Table 2
 theorem ext_conditional : ext .conditional = ↑({State.s1, .s2} : Finset State) := by
   ext s; cases s <;> simp [ext, Assertable, real_cond, real_A, real_A_inter_C, State.cell, θ] <;>
     norm_num
 
-/-- *C* is assertable in `s1` only (Table 2(b)). -/
+-- Table 2
 theorem ext_C : ext .C = ↑({State.s1} : Finset State) := by
   ext s; cases s <;> simp [ext, Assertable, real_C, State.cell, θ] <;> norm_num
 
-/-- *A and C* is assertable nowhere (Table 2(b)). -/
+-- Table 2
 theorem ext_conjAC : ext .conjAC = ∅ := by
   ext s; cases s <;> simp [ext, Assertable, real_A_inter_C, State.cell, θ] <;> norm_num
 
@@ -300,8 +300,7 @@ theorem S1_real (s : State) (u : Utt) :
   simp only [S1, measureReal_def, speaker_dirac_zero_apply_singleton, ENNReal.rpow_one]
   rw [ENNReal.toReal_div, ENNReal.toReal_sum fun u' _ => L0_ne_top u' s]
 
-/-- In `s1` the speaker says `C` with share `6/11`, the conditional `3/11`, and *likely C*
-`2/11` (Table 2(d)). -/
+-- Table 2
 theorem S1_s1_C : (S1 .s1).real {.C} = 6 / 11 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s1, L0_real_conditional_s1, L0_real_likelyC]
   norm_num
@@ -314,8 +313,7 @@ theorem S1_s1_likelyC : (S1 .s1).real {.likelyC} = 2 / 11 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s1, L0_real_conditional_s1, L0_real_likelyC]
   norm_num
 
-/-- In `s2` the speaker says the conditional with share `3/5`, *likely C* `2/5`, and `C` never
-(Table 2(d)). -/
+-- Table 2
 theorem S1_s2_conditional : (S1 .s2).real {.conditional} = 3 / 5 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s2, L0_real_conditional_s2, L0_real_likelyC]
   norm_num
@@ -328,7 +326,7 @@ theorem S1_s2_C : (S1 .s2).real {.C} = 0 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s2, L0_real_conditional_s2, L0_real_likelyC]
   norm_num
 
-/-- In `s3` the speaker says *likely C* with certainty (Table 2(d)). -/
+-- Table 2
 theorem S1_s3_likelyC : (S1 .s3).real {.likelyC} = 1 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s3, L0_real_conditional_s3, L0_real_likelyC]
   norm_num
@@ -352,8 +350,7 @@ theorem L1_real (u : Utt) (s : State) :
   simp_rw [prior_real_singleton, ← Finset.mul_sum]
   rw [mul_div_mul_left _ _ (by norm_num)]
 
-/-- Hearing the conditional, the listener puts `11/16` on `s2`, `5/16` on `s1` and nothing on
-`s3` (Table 2(e)). -/
+-- Table 2
 theorem L1_conditional_s2 : (L1 .conditional).real {.s2} = 11 / 16 := by
   rw [L1_real, sum_State, S1_s1_conditional, S1_s2_conditional,
     S1_s3_conditional]
@@ -369,13 +366,12 @@ theorem L1_conditional_s3 : (L1 .conditional).real {.s3} = 0 := by
     S1_s3_conditional]
   norm_num
 
-/-- Hearing `C`, the listener identifies `s1` (Table 2(e)). -/
+-- Table 2
 theorem L1_C_s1 : (L1 .C).real {.s1} = 1 := by
   rw [L1_real, sum_State, S1_s1_C, S1_s2_C, S1_s3_C]
   norm_num
 
-/-- Hearing *likely C*, the listener puts `55/87` on `s3`, `22/87` on `s2` and `10/87` on `s1`
-(Table 2(e)). -/
+-- Table 2
 theorem L1_likelyC_s3 : (L1 .likelyC).real {.s3} = 55 / 87 := by
   rw [L1_real, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
   norm_num
@@ -395,8 +391,6 @@ theorem l1_conditional_prefers_s2 :
     (L1 .conditional).real {.s1} < (L1 .conditional).real {.s2} := by
   rw [L1_conditional_s1, L1_conditional_s2]; norm_num
 
-/-- Hearing *likely C*, the listener prefers `s3` to `s1`, since in `s1` and `s2` a stronger
-utterance was available. -/
 theorem l1_likelyC_prefers_s3 : (L1 .likelyC).real {.s1} < (L1 .likelyC).real {.s3} := by
   rw [L1_likelyC_s1, L1_likelyC_s3]; norm_num
 

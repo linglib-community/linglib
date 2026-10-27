@@ -105,7 +105,7 @@ noncomputable def arrangedToMeet : SyntacticObject :=
   merge john (merge (leaf ⟨.of .V [.T] "arranged", 1⟩) (merge (leaf ⟨.of .T [.V] "to", 2⟩)
     (merge john' (leaf ⟨.of .V [] "meet at noon", 4⟩))))
 
-/-- Form Copy relates the controller of (48a) to its controlled subject. -/
+-- (48a)
 theorem john_mem_copyRel : (john, john') ∈ arrangedToMeet.copyRel :=
   mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])
     (structurallyIdentical_renumber 3 john)
@@ -181,13 +181,11 @@ instance (s : Subject) : DecidablePred (· ∈ attested s) := fun d ↦ by
 attested diagnostic refutes. -/
 def profile (s : Subject) : Set Landau2013.Clause74 := ofAttested (attested s)
 
-/-- The partially controlled subject attests no diagnostic ((56b), (57d), (58b), (59b)), so it is
-obligatory control. -/
+-- (56b), (57d), (58b), (59b)
 theorem profile_pro_eq_univ : profile .pro = Set.univ :=
   ofAttested_eq_univ_iff.2 <| Set.eq_empty_iff_forall_notMem.2 <| by decide +kernel
 
-/-- The *for*-subject has a free reading ((56a), (57c)) and a strict reading under *only* ((58a),
-(59a)), refuting both clauses. -/
+-- (56a), (57c), (58a), (59a)
 theorem profile_forNP_eq_empty : profile .forNP = ∅ :=
   ofAttested_eq_empty_iff.2 <| by decide +kernel
 

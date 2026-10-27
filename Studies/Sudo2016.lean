@@ -110,8 +110,7 @@ with the assertion and projects the presupposition. -/
 noncomputable def modify (P : E → SignType) (N : E → Prop) : E → SignType :=
   fun x ↦ (P x).meetWeak (SignType.ofProp (N x))
 
-/-- When the noun is the plural closure of the classifier's sortal (7c), the modified phrase is
-defined wherever the noun holds. -/
+-- (7c)
 theorem modify_sortal_ne_zero (c : Sortal W E) (n : W → ℕ) (w : W) {x : E}
     (h : AlgClosure (c w) x) : modify (c.apply n w) (AlgClosure (c w)) x ≠ 0 := by
   simp [modify, h]
@@ -164,7 +163,7 @@ theorem predicateOf_iff_of_hasClassifiers {hasClassifiers : Prop} (h : hasClassi
   · rintro ⟨c, rfl⟩
     exact .classifier c
 
-/-- Without classifiers the bare ∪-shift is available, the paper's (18) for English. -/
+-- (18)
 theorem predicateOf_up (atomic : Sortal W E) (n : W → ℕ) :
     PredicateOf False atomic n (up atomic n) :=
   .up id

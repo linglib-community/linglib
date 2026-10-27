@@ -32,16 +32,6 @@ derivation never looks at the melodic elements themselves (`stem_map`).
 * `McCarthy1981.consonantism`, `McCarthy1981.stem`: the consonantism of a binyan and the stem of
   a cell of the table.
 
-## Main results
-
-* `McCarthy1981.forms_derived`: the derivation produces the paper's forms.
-* `McCarthy1981.schema_elide_eq`: the schema (14a) with rule (14b) generates all and only the
-  templates (13).
-* `McCarthy1981.consonantism_quadriliteral`: the quadriliteral binyanim are triliteral ones.
-* `McCarthy1981.metathesisSites_samam`, `McCarthy1981.metathesisSites_ktatab`: the cluster
-  rule (37) applies to identical consonants linked to one root element, not to identical
-  consonants of different morphemes.
-
 ## Implementation notes
 
 * The forms are compared in the paper's transcription; `stem_map` carries a derivation over to
@@ -113,10 +103,10 @@ def schema : List Skeleton :=
 /-- Rule (14b), `V → ∅ / [CVC _ CVC]`, elides the middle vowel of the whole template CVCVCVC. -/
 def elide (t : Skeleton) : Skeleton := if t = cvcvcvc then cvccvc else t
 
-/-- The schema generates the templates (13) and CVCVCVC. -/
+-- (13)
 theorem schema_eq : schema.toFinset = insert cvcvcvc binyanTemplates.toFinset := by decide
 
-/-- The schema with rule (14b) generates all and only the templates (13). -/
+/-- The schema with rule (14b) generates all and only the templates (13) ((14a)). -/
 theorem schema_elide_eq : (schema.map elide).toFinset = binyanTemplates.toFinset := by decide
 
 /-! ### The consonantism of the binyanim -/
@@ -377,7 +367,6 @@ theorem vowelAssociation_map (mel : List Vowel) :
   simp only [TemplateMatch.template_map]
   split <;> rfl
 
-/-- Relabeling the melodic elements relabels the stem. -/
 theorem stem_map (v : Vowel → α) (abl : Ablaut) (c : Category) (b : Binyan)
     (r : ConsonantalRoot α) :
     stem (ax.map f) (f ∘ v) abl c b (r.map f) = (stem ax v abl c b r).map f := by
@@ -428,22 +417,21 @@ private theorem linkCount_eq {p : Slot} {b : Binyan} {xs : List α} {r : Consona
   rw [consonantism_eq_map ax hr]
   rfl
 
-/-- The second binyan geminates its medial radical by Erasure and respreading (17), (25). -/
+-- (17), (25)
 theorem consonantism_II :
     (consonantism ax .V .II ⟨[x, y, z]⟩).spellout = [x, y, y, z] ∧
       (consonantism ax .V .II ⟨[x, y, z]⟩).linkCount .root 1 = 2 :=
   ⟨spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 1, 2]) (by decide),
     (linkCount_eq ax (r := ⟨[0, 1, 2]⟩) rfl _ _).trans (by decide)⟩
 
-/-- The twelfth binyan respreads the root after Erasure, the thirteenth the infix w (30). -/
+-- (30)
 theorem consonantism_XII_XIII :
     (consonantism ax .V .XII ⟨[x, y, z]⟩).spellout = [x, y, ax.w, y, z] ∧
       (consonantism ax .V .XIII ⟨[x, y, z]⟩).spellout = [x, y, ax.w, ax.w, z] :=
   ⟨spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 1, 2]) (by decide),
     spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 104, 2]) (by decide)⟩
 
-/-- A biliteral root geminates its final radical and never its first (33), and the second and fifth
-binyanim undo Erasure (34). -/
+-- (33), (34)
 theorem consonantism_biliteral :
     (consonantism ax .V .I ⟨[x, y]⟩).spellout = [x, y, y] ∧
       (consonantism ax .V .I ⟨[x, y]⟩).linkCount .root 0 = 1 ∧
@@ -466,7 +454,7 @@ theorem consonantism_quadriliteral :
     spellout_eq ax (r := ⟨[0, 1, 2, 3]⟩) rfl (out := [0, 1, 102, 2, 3]) (by decide),
     spellout_eq ax (r := ⟨[0, 1, 2, 3]⟩) rfl (out := [0, 1, 2, 3, 3]) (by decide)⟩
 
-/-- A quinqueliteral root in QI strands its fifth radical (38). -/
+-- (38)
 theorem consonantism_quinqueliteral :
     (consonantism ax .C .II ⟨[v, w, x, y, z]⟩).spellout = [v, w, x, y] ∧
       (consonantism ax .C .II ⟨[v, w, x, y, z]⟩).unassociated .root = [4] :=
@@ -541,7 +529,6 @@ instance (x : Cell) : Decidable x.Covered := inferInstanceAs (Decidable ¬_)
 def Cell.stem (x : Cell) : TemplateMatch String :=
   McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut x.category x.binyan x.root
 
-/-- Every form has a cell. -/
 theorem isSome_cell? : ∀ f ∈ Wordlist.all, (cell? f).isSome := by decide +kernel
 
 /-- The derivation produces every form of the table and of (33), (34) and (38) whose cell the
@@ -550,15 +537,11 @@ theorem forms_derived :
     ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, x.Covered → x.stem.spellout = f.segments := by
   decide +kernel
 
-/-- The forms of uncovered cells are the participles kaatib and maktuub, which the derivation
-does not produce. -/
 theorem forms_uncovered :
     (Wordlist.all.filter fun f ↦ ∃ x ∈ cell? f, ¬x.Covered).map (·.form) = ["kaatib", "maktuub"] ∧
       ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, ¬x.Covered → x.stem.spellout ≠ f.segments := by
   decide +kernel
 
-/-- Every stem of ktb and of dḥrj is well formed on each tier, in that no association lines
-cross and no slot has two lines from one tier. -/
 theorem orderedOn_stem :
     (∀ b c, ∀ s ∈ [AssocSource.root, .affix, .vocalism],
       (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c b
@@ -578,12 +561,10 @@ def seg : String → Phonology.Segment
   | "ṭ" => Phonology.«tˤ» | "š" => Phonology.«ʃ» | "ʔ" => Phonology.«ʔ»
   | "a" => Phonology.a | "i" => Phonology.i | "u" => Phonology.u | _ => ⊥
 
-/-- The roots of the forms are the fragment's ktb, dḥrj and mğnṭš. -/
 theorem root?_map_seg : (root? "write").map (·.map seg) = some ktb ∧
     (root? "roll").map (·.map seg) = some «dḥrj» ∧
     (root? "magnetize").map (·.map seg) = some «mğnṭš» := ⟨rfl, rfl, rfl⟩
 
-/-- Over the fragment's segments the derivation produces the forms read as segments. -/
 theorem forms_derived_seg : ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, x.Covered →
     (McCarthy1981.stem (transcribedAffixes.map seg) (seg ∘ Vowel.transcription) ktbAblaut
       x.category x.binyan (x.root.map seg)).spellout = f.segments.map seg := by
@@ -593,12 +574,11 @@ theorem forms_derived_seg : ∀ f ∈ Wordlist.all, ∀ x ∈ cell? f, x.Covered
 
 /-! ### The OCP and Metathesis -/
 
-/-- The revised OCP (11) represents the geminate root smm as the biliteral sm (p. 396). -/
+-- (11), p. 396
 theorem collapse_smm : OCP.collapse smm.segments = [Phonology.s, Phonology.m] := by
   decide +kernel
 
-/-- The roots of the forms observe the OCP; smm does not, nor do the hypothetical *ddrj and
-*drrj (p. 397). -/
+-- p. 397
 theorem isOCPClean_roots :
     ktb.IsOCPClean ∧ «dḥrj».IsOCPClean ∧ qlq.IsOCPClean ∧ «mğnṭš».IsOCPClean ∧
       (⟨OCP.collapse smm.segments⟩ : ConsonantalRoot Phonology.Segment).IsOCPClean ∧
@@ -650,8 +630,7 @@ theorem metathesisSites_ktatab : metathesisSites (consonantism ax .V .VIII ⟨[x
   rw [consonantism_eq_map ax (r := ⟨[0, 1, 2]⟩) rfl, metathesisSites_map]
   decide
 
-/-- In sammam the second m is the first element linked further left, and the revision (37)
-keeps Metathesis from applying. -/
+-- (37)
 theorem metathesisSites_sammam : metathesisSites (consonantism ax .V .II ⟨[x, y]⟩) = [] := by
   rw [consonantism_eq_map ax (r := ⟨[0, 1]⟩) rfl, metathesisSites_map]
   decide
@@ -675,8 +654,7 @@ theorem Vowel.ablaut_eq_iff (v w : Vowel) :
     v.ablaut = w ↔ w.high = !v.high ∧ w.back = v.high := by
   cases v <;> cases w <;> decide
 
-/-- Ablaut relates the perfective and imperfective vowels of the classes (45a–c), and not those
-of (45d). -/
+-- (45a–c), (45d)
 theorem ablaut_classes :
     (∀ c ∈ [(⟨.a, .i⟩ : Ablaut), ⟨.a, .u⟩, ⟨.i, .a⟩], c.imperf.ablaut = c.perf) ∧
       (⟨.u, .u⟩ : Ablaut).imperf.ablaut ≠ .u := by
@@ -686,14 +664,12 @@ theorem ablaut_classes :
 def ablautLast (mel : List Vowel) : List Vowel :=
   mel.dropLast ++ (mel.getLast?.map Vowel.ablaut).toList
 
-/-- The perfective active melody of the derived binyanim is the basic melody u–a–i after Ablaut, the
-OCP, and erasure of its initial u ((47), (48)). -/
+-- (47), (48)
 theorem melody_perfActive (abl : Ablaut) (b : Binyan) (hb : b ≠ .I) :
     melody abl .perfActive b = (OCP.collapse (ablautLast [.u, .a, .i])).tail := by
   cases b <;> first | exact absurd rfl hb | rfl
 
-/-- The perfective passive melody is the imperfective passive melody with Ablaut on its last
-element (49). -/
+-- (49)
 theorem melody_perfPassive (abl : Ablaut) (b : Binyan) :
     melody abl .perfPassive b = ablautLast (melody abl .imperfPassive b) := by
   cases b <;> rfl

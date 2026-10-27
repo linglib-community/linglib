@@ -25,13 +25,6 @@ under intersection with regular languages.
 * `caseSorted`: the regular language `r`
 * `Claims f L`: the four claims about a language `L` whose words `f` sends to letters
 
-## Main results
-
-* `Claims.map_inf_caseSorted`: the image of the language intersected with `r`
-* `Claims.not_isContextFree`: a language meeting the claims is not context-free
-* `not_isContextFree_of_count_le`: the same with optional objects, under a one-sided Claim 3
-* `acceptable_iff_perm`: Claim 3 against the paper's clauses (1)–(22)
-
 ## Implementation notes
 
 The letters put the accusative *d'chind* and *laa* before the dative *em Hans* and *hälfe*, as the
@@ -197,7 +190,7 @@ theorem Claims.not_isContextFree (h : Claims f L) : ¬ L.IsContextFree := fun hL
 
 /-- A language is not context-free if every clause `w aⁿ bⁿ x cⁿ dⁿ y` is grammatical and every
 object noun phrase of a clause of the schema has a verb requiring its case, objects being
-optional. -/
+optional (Claim 3). -/
 theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clause n n n n)
     (hle : ∀ s ∈ L, s.map f ∈ schema →
       (s.map f).count a ≤ (s.map f).count c ∧ (s.map f).count b ≤ (s.map f).count d) :
@@ -221,7 +214,7 @@ theorem claims_countMatched : Claims id countMatched where
   exists_mem m n := ⟨clause m n m n, fun _ ↦ by simp [count_clause], by simp⟩
   count_eq s hs hsch := by simpa using hs (by simpa using hsch)
 
-/-- Claim 3 excludes the full language, which is context-free. -/
+-- Claim 3
 theorem not_claims_top : ¬ Claims id (⊤ : Language Letter) := fun h ↦ by
   simpa [count_clause] using
     h.count_eq (clause 1 0 0 0) trivial (by simpa using clause_mem_schema 1 0 0 0)
@@ -249,7 +242,7 @@ theorem length_objectCases_eq :
   decide
 
 /-- Among clauses (1)–(22), cross-serial or not, the acceptable ones are exactly those whose
-objects bear the cases their verbs require, as many of each. -/
+objects bear the cases their verbs require, as many of each (Claim 3). -/
 theorem acceptable_iff_perm :
     ∀ e ∈ Examples.all, e.judgment = .acceptable ↔ (objectCases e).Perm (requiredCases e) := by
   decide

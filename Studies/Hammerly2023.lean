@@ -26,15 +26,6 @@ which a free addressee feature would generate, is excluded ((60), p. 72).
 * `Hammerly2023.Admissible`: a contrastive hierarchy whose features all contrast and whose
   narrowing is licensed.
 
-## Main results
-
-* `image_graph_sda_eq_geometry`: the admissible hierarchies derive exactly the partitions
-  Harbour's bivalent geometry (9) generates, his five.
-* `sda_participant_author`, `sda_author_participantStar`: the hierarchies of Figures 4 and 5,
-  the tripartition and the quadripartition.
-* `not_admissible_participant_participantStar`, `not_admissible_participantStar`: narrowing
-  alongside the wide feature, or where the wide feature contrasts, is not licensed.
-
 ## Implementation notes
 
 Only the core persons of §3 are formalized, on participant sets, with the obviation and animacy

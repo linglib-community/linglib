@@ -78,8 +78,7 @@ existential quantifier over worlds (§3.1–3.2), *da'aḵhlxw* and *anooḵ* ar
 and *sgi* is a (weak) necessity modal (§4). -/
 def lexicalForce (m : ModalItem) : ModalForce := if m = sgi then .necessity else .possibility
 
-/-- In an upward-entailing context each modal serves, on [deal-2011]'s account, for exactly the
-forces of Fig. 1. -/
+-- Fig. 1 [deal-2011]
 theorem forces_usable : ∀ m ∈ modals, ∀ g, g.classical ∈ m.classical.forces ↔
     Deal2011.Usable .positive (lexicalForce m) (ModalItem.HasScalemate lexicalForce modals m)
       g := by
@@ -112,8 +111,7 @@ theorem rows_resolve :
 
 /-! ### Force and flavour (§3, §4) -/
 
-/-- Outside the sneeze case, a modal is accepted iff it expresses the context's force and flavour
-((66), (79), (80)). -/
+-- (66), (79), (80)
 theorem rows_meaning :
     ∀ e ∈ Examples.all, e.feature? "test" ≠ some "sneeze" →
       ∀ m ∈ e.parse? "modal" modalTable, ∀ fo ∈ e.parse? "force" forceTable,
@@ -121,7 +119,7 @@ theorem rows_meaning :
           (e.judgment = .acceptable ↔ (fo, fl) ∈ m.meaning) := by
   decide
 
-/-- Each force and flavour that *sgi* expresses is attested ((89), (90), (92), (100)). -/
+-- (89), (90), (92), (100)
 theorem sgi_attested :
     (∀ fo ∈ sgi.forces, ∃ e ∈ Examples.all, e.parse? "modal" modalTable = some sgi ∧
       e.parse? "force" forceTable = some fo ∧ e.judgment = .acceptable) ∧
@@ -129,15 +127,13 @@ theorem sgi_attested :
       e.parse? "flavor" flavorTable = some fl ∧ e.judgment = .acceptable := by
   decide
 
-/-- The sneeze case of (95)–(96), pure circumstantial strong necessity, takes the plain future
-and not *sgi*. -/
+-- (95), (96)
 theorem sneeze_rows :
     ∀ e ∈ Examples.all, e.feature? "test" = some "sneeze" →
       (e.judgment = .acceptable ↔ e.feature? "modal" ≠ some "sgi") := by
   decide
 
-/-- No set of force-flavour pairs predicts the judgments of *sgi*, rejected in the sneeze case (96)
-and volunteered in (100). -/
+-- (96), (100)
 theorem sneeze_gap :
     ¬ ∃ M : Finset ForceFlavor, ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some sgi →
       ∀ fo ∈ e.parse? "force" forceTable, ∀ fl ∈ e.parse? "flavor" flavorTable,
@@ -173,8 +169,7 @@ instance (L : List ModalItem) : Decidable (Mixed L) := inferInstanceAs (Decidabl
 
 theorem gitksan_mixed : Mixed modals := by decide
 
-/-- English selects strength and not type, St'át'imcets type and not strength, and Javanese both, a
-cell [rullmann-matthewson-davis-2008] left open (Fig. 2, Fig. 3). -/
+-- Fig. 2, Fig. 3 [rullmann-matthewson-davis-2008]
 theorem fig2 :
     (StrengthSelective (English.Auxiliaries.modals.map ModalAuxiliary.toModalItem) ∧
         ¬ TypeSelective (English.Auxiliaries.modals.map ModalAuxiliary.toModalItem)) ∧
@@ -199,14 +194,13 @@ def perspectiveOf : String → Option TemporalPerspective
   | "present" => some .present
   | _ => none
 
-/-- The prospective *dim* is present iff the prejacent is future-oriented, with epistemic and
-circumstantial modals alike ((38)–(48), (53), (56), (73), (83)). -/
+-- (38), (48), (53), (56), (73), (83)
 theorem dim_rows :
     ∀ e ∈ Examples.all, ∀ o ∈ (e.feature? "orientation").bind orientationOf,
       (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) := by
   decide
 
-/-- The circumstantial modals are future-oriented (§4). -/
+-- §4
 theorem circumstantial_future :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable, m.Circumstantial →
       ∀ o ∈ (e.feature? "orientation").bind orientationOf, o = .future := by
@@ -219,7 +213,7 @@ theorem dim_circumstantial :
   intro e he m hm hc o ho
   simpa [circumstantial_future e he m hm hc o ho] using dim_rows e he o ho
 
-/-- *ima('a)* is attested at every temporal perspective and orientation (Fig. 4). -/
+-- Fig. 4
 theorem fig4 :
     ∀ p : TemporalPerspective, ∀ o : TemporalOrientation, ∃ e ∈ Examples.all,
       e.parse? "modal" modalTable = some imaa ∧
@@ -227,16 +221,14 @@ theorem fig4 :
         (e.feature? "orientation").bind orientationOf = some o ∧ e.judgment = .acceptable := by
   decide
 
-/-- An unmarked English possibility modal is future-oriented on [condoravdi-2002]'s analysis, as
-in (35), while no accepted Gitksan modal sentence without *dim* is, as in (39). -/
+-- (35), (39) [condoravdi-2002]
 theorem unmarked_orientation :
     Condoravdi2002.Scope.modal.orientation = .future ∧
       ∀ e ∈ Examples.all, e.feature? "prospective" = some "false" → e.judgment = .acceptable →
         ∀ o ∈ (e.feature? "orientation").bind orientationOf, o ≠ .future :=
   ⟨rfl, fun e he hp ha o ho hf ↦ by simpa [hp, hf] using (dim_rows e he o ho).1 ha⟩
 
-/-- *da'aḵhlxw* with its *dim* has no actuality entailment in (62), the ability holding while
-the event fails. -/
+-- (62)
 theorem no_actuality_entailment :
     ∀ e ∈ Examples.all, e.feature? "actualityEntailment" = some "false" →
       e.parse? "modal" modalTable = some daakhlxw ∧ e.feature? "prospective" = some "true" ∧

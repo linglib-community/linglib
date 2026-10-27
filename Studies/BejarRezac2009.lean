@@ -29,19 +29,6 @@ bearing `π`.
   external argument and values no two probes alike on one projection.
 * `BejarRezac2009.segmentProbe`: a segment of the probe searching nominals with Case.
 
-## Main results
-
-* `BejarRezac2009.basque_ranks_first_eq_second`, `BejarRezac2009.full_ranks`: no ranking of persons
-  picks Basque's controller, while specification picks it for a full probe.
-* `BejarRezac2009.basque_isDirect_iff`, `BejarRezac2009.nishnaabemwin_isDirect_iff`: the direct
-  contexts of (22).
-* `BejarRezac2009.converges_iff`: a derivation converges iff it has property P exactly in an inverse
-  context.
-* `BejarRezac2009.highestValue_eq_spec`: the probe valued last spells out the external argument.
-* `BejarRezac2009.segmentProbe_pi`, `BejarRezac2009.pcc`: the root segment is the person probe of
-  the 2003 paper, and no segment reaches a nominal behind an oblique one.
-* `BejarRezac2009.controller_rows`, `context_rows`, `repair_rows`: the examples.
-
 ## Implementation notes
 
 Checking is membership of a segment in a goal's specification, and the value a probe copies is the
@@ -150,7 +137,7 @@ theorem nishnaabemwin_isDirect_iff (s : Scenario Person) :
 /-- Every Swahili context is inverse (22a). -/
 example (s : Scenario Person) : swahili.IsInverse s := AgreementSystem.flat_isInverse s _
 
-/-- A context direct for Basque's partial probe is direct for the full probe (p. 62). -/
+-- p. 62
 theorem basque_isDirect_imp_kashmiri {s : Scenario Person} (h : basque.IsDirect s) :
     kashmiri.IsDirect s :=
   AgreementSystem.IsDirect.mono basque s rfl (by decide) h
@@ -158,8 +145,7 @@ theorem basque_isDirect_imp_kashmiri {s : Scenario Person} (h : basque.IsDirect 
 example : basque.IsInverse ⟨.first, .second⟩ ∧ kashmiri.IsDirect ⟨.first, .second⟩ := by
   decide +kernel
 
-/-- In the full system of Mohawk the only direct context whose two arguments bear [participant]
-is 1N2, the cell of the portmanteau *ku* (26). -/
+-- (26)
 theorem kashmiri_participant_direct_iff (s : Scenario Person) :
     kashmiri.IsDirect s ∧ PersonSegment.participant ∈ kashmiri.spec s.high ∧
         PersonSegment.participant ∈ kashmiri.spec s.low ↔
@@ -296,8 +282,7 @@ theorem repair_rows : ∀ e ∈ Examples.all, ∀ c ∈ config? e, ∀ _ ∈ e.f
 def slotPrefix? (e : Datum) : Option Morphology.Morph :=
   e.surfaceTokens.getLast?.map fun w ↦ .pref (String.ofList (w.toList.takeWhile (· ≠ '-')))
 
-/-- The auxiliaries of (2) begin with the controller's person prefix, absolutive for an internal and
-displaced ergative for an external controller (2d). -/
+-- (2), (2d)
 theorem basque_prefix_rows : ∀ e ∈ Examples.all, e.language = "basq1248" →
     ∀ c ∈ config? e, ∀ _ ∈ person? e "controller", ∃ n ∈ [Number.singular, .plural],
       ((match c.1.controller c.2 with
@@ -312,8 +297,7 @@ def georgianSet : Argument → Georgian.AffixSet
   | .ia => .B
   | .ea => .A
 
-/-- In (18), the 1st singular is Set B *m-* when the internal argument values the probe and Set A
-*v-* when the external one does. -/
+-- (18)
 theorem georgian_prefix_rows : ∀ e ∈ Examples.all, e.language = "nucl1302" →
     ∀ c ∈ config? e,
       ((georgianSet (c.1.controller c.2)).paradigm.realize

@@ -24,14 +24,6 @@ with one whose high spreads over both morae: a primitive `H H` with only its sec
 derives the downstep, and concatenating then collapsing every run, the method they set aside,
 would derive the spread instead.
 
-## Main statements
-
-* `mul_G₁_G₂`: Example 3, the merge of `b` with `b` at the seam (Figure 4).
-* `realize_γ₁_γ₂`, `realize_γ₁_γ₁`: the Kishambaa graphs of Figure 12.
-* `collapse_prod_γ₁_γ₂`, `realize_γ₁_γ₂_ne_collapse`: collapsing after concatenation derives the
-  spread graph for the downstep form, so it does not agree with merging concatenation once a
-  primitive violates the OCP.
-
 ## References
 
 * [jardine-heinz-2015]

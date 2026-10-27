@@ -134,18 +134,17 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The possessive data of Sections 2, 3 and 5. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Part-whole and source relations alternate whenever the possessor is a common noun, (5), (14). -/
+-- (5), (14)
 theorem partitive_alternates :
     ∀ r ∈ rows, r.relation.IsPartitive → r.possessor.form = .common → Acceptable r.judgment := by
   decide
 
-/-- Pronouns and proper names resist the apo-PP whatever the relation, (9), (10). -/
+-- (9), (10)
 theorem individual_resists :
     ∀ r ∈ rows, r.possessor.form ≠ .common → r.judgment = .unacceptable := by
   decide
 
-/-- Kinship, ownership and mere association resist the apo-PP unless the possessor is plural or
-modified, (6), (11a), (15). -/
+-- (6), (11a), (15)
 theorem nonpartitive_resists :
     ∀ r ∈ rows, ¬ r.relation.IsPartitive → ¬ r.possessor.plural → ¬ r.possessor.modified →
       ¬ Acceptable r.judgment := by
@@ -158,16 +157,15 @@ theorem facilitation_mono :
       r.judgment ≤ s.judgment := by
   decide
 
-/-- A paradigm gap is not sufficient for the alternation, (15). -/
+-- (15)
 theorem gap_not_sufficient : ∃ r ∈ rows, r.possessor.gap ∧ r.judgment = .unacceptable := by
   decide
 
-/-- Nor is it necessary, (5). -/
+-- (5)
 theorem gap_not_necessary : ∃ r ∈ rows, ¬ r.possessor.gap ∧ Acceptable r.judgment := by
   decide
 
-/-- The same possessor yields an acceptable apo-PP for the door's handle (5a) and a questionable one
-for its mat (11a). -/
+-- (5a), (11a)
 theorem relation_matters :
     ∃ r ∈ rows, ∃ s ∈ rows, r.possessor = s.possessor ∧ r.judgment ≠ s.judgment := by
   decide
@@ -244,8 +242,7 @@ theorem not_isComplexEvent_of_theme_apo {n : Nominal} (h : n.theme = some .apo) 
     ¬ n.IsComplexEvent := by
   simp [IsComplexEvent, h]
 
-/-- Two apo-PPs never satisfy the restriction: the theme forces the result reading, so the agent is
-a second argument rather than a by-phrase, (8d). -/
+-- (8d)
 theorem not_singleArgument_of_apo_apo {n : Nominal} (ht : n.theme = some .apo)
     (ha : n.agent = some .apo) : ¬ n.SingleArgument := by
   simp [SingleArgument, arguments, IsByPhrase, IsComplexEvent, ht, ha]
@@ -275,13 +272,12 @@ def DerivedRow.ofDatum (e : Datum) : Option DerivedRow := do
 /-- The derived nominals of Sections 2, 4 and 6. -/
 def derivedRows : List DerivedRow := Examples.all.filterMap DerivedRow.ofDatum
 
-/-- The Standard Modern Greek rows are acceptable exactly when well-formed: (7), (8), (30) and
-(33) to (36). -/
+-- (7), (8), (30), (33), (36)
 theorem derived_rows_agree :
     ∀ r ∈ derivedRows, r.variety = .smg → (Acceptable r.judgment ↔ r.nominal.WellFormed) := by
   decide
 
-/-- Grevena Greek stacks two apo-PPs on one nominal, (12). -/
+-- (12)
 theorem grevena_stacks :
     ∃ r ∈ derivedRows, r.variety = .grevena ∧ ¬ r.nominal.SingleArgument ∧
       Acceptable r.judgment := by

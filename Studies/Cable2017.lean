@@ -24,15 +24,6 @@ whose meanings vary in force. The same account makes the past potential weak in 
 restriction of a universal: *ldakát ḵwax̱aayi át* is 'everything I could have eaten', never
 'everything I would have eaten'.
 
-## Main statements
-
-* `expressed_iff`: Tlingit encodes epistemic possibility and circumstantial possibility and
-  necessity, and nothing else.
-* `servesFor_necessity`: a dubitative serves for epistemic necessity, the potential mode not
-  for circumstantial necessity.
-* `dubitatives_fixed_force`: the dubitatives serve for both forces with one force in their
-  meaning, where *k'a* and *-eʔ* have two.
-
 ## Implementation notes
 
 * Cable's deontic flavor includes the teleological and bouletic ones, and his circumstantial
@@ -72,7 +63,7 @@ theorem expressed_iff (ff : ForceFlavor) :
 def lexicalForce (m : ModalItem) : ModalForce :=
   if .necessity ∈ m.forces then .necessity else .possibility
 
-/-- Table 2: each Tlingit modal has one force, its lexical force, and one flavor. -/
+-- Table 2
 theorem forces_eq : ∀ m ∈ Tlingit.modals, m.forces = {lexicalForce m} ∧ m.flavors.card = 1 := by
   decide
 
@@ -101,8 +92,7 @@ theorem dubitatives_fixed_force :
   simp only [ServesIn, flexible_iff]
   decide
 
-/-- In the restriction of *ldakát* 'all', the past potential serves for possibility and not for
-necessity ((54) and (55)). -/
+-- (54), (55)
 theorem potential_universal_restriction :
     ServesIn lexicalForce Tlingit.modals .negative potentialMode .possibility ∧
       ¬ ServesIn lexicalForce Tlingit.modals .negative potentialMode .necessity := by

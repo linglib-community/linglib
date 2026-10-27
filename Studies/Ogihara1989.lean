@@ -17,17 +17,6 @@ reading is weaker, since turning off a stove takes less time than the salient in
 does not hold at the interval as a whole, and the reading on which the speaker never turned off
 the stove is stronger.
 
-## Main statements
-
-* `restricted_iff_exists_past`: the past restricted to a salient interval is Partee's past tense
-  with its index bound by an existential quantifier over the subintervals of that interval.
-* `no_subinterval_iff_not_restricted`: the stove sentence says that the salient interval is past
-  and denies the past restricted to it.
-* `no_subinterval_entails_deictic`, `deictic_too_weak`: this reading entails the referential
-  one, which is also true when the stove was turned off within the salient interval.
-* `never_entails_no_subinterval`, `never_too_strong`: it follows from the reading on which the
-  speaker never turned off the stove and does not entail it.
-
 ## Implementation notes
 
 * A clause holds at an interval when the interval is among its times, and the subinterval

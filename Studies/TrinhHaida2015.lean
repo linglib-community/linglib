@@ -107,8 +107,7 @@ theorem not_isDomain_pair_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ :
   · exact disjoint_left.1 h.disjoint ha (h.subset_left ha)
   · exact disjoint_left.1 h.disjoint ha ha
 
-/-- By (36), the prejacent with one alternative is a domain once every other formal alternative
-lies outside their Boolean closure. -/
+-- (36)
 theorem isDomain_pair (hS : S ∈ F) (h₁ : S₁ ∈ F)
     (h : ∀ S' ∈ F, S' ∈ BooleanSubalgebra.closure {S, S₁} → S' = S ∨ S' = S₁) :
     IsDomain F S {S, S₁} :=

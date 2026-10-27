@@ -16,14 +16,6 @@ mansion, the free relation outside or inside the scope of *former*. The split an
 only the first, since the relation enters with the genitive after *former* has combined with the
 noun, and coercion derives both.
 
-## Main statements
-
-* `convergence`: the coerced noun taken as argument is the noun modified by the genitive.
-* `readingA_eq_readingB_of_constant`: the two readings under *former* coincide when the free
-  relation is constant over time.
-* `readingB_not_readingA_iff`, `readingA_not_readingB_iff`: what each reading holds of that the
-  other does not.
-
 ## Implementation notes
 
 *former* is modelled against a fixed past time. The paper's compositional tree for the split

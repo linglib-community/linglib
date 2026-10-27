@@ -24,27 +24,6 @@ referent measures at least one unit. Where both theories compose they agree.
 A world assigns each dimension a real-valued measure function, and the units are the English
 measure terms.
 
-## Main statements
-
-* `not_much_divisionMP`: a measurement verb never takes a measure phrase of the division theory
-  whose head unit measures in the verb's dimension.
-* `density_reading`: the polysemous *weigh* makes *this cube weighs what that cube weighs* true
-  of a one-kilogram and a two-kilogram cube.
-* `anaphoricMP_snd`: an anaphoric measure phrase has the dimension of its head unit.
-* `much_divisionMP_iff_anaphoricMP`, `contains_divisionMP_iff_anaphoricMP`: where both theories
-  compose, they derive the same truth conditions.
-* `divisionMP_kilogram_liter`: the division theory identifies *0.1 kilograms per liter* with
-  *0.1 grams per milliliter*.
-* `unit_sensitivity`: on the anaphoric theory the two pseudo-partitives assert the same thing,
-  but one presupposes a volume of at least a milliliter and the other of at least a liter.
-* `division_overgenerates`: at a world where the sample measures a tenth of a milliliter, the
-  division theory makes *the 0.1 milliliter sample contained 0.1 grams of salt per milliliter*
-  true, while on the anaphoric theory it is undefined.
-* `acceptable_iff_mem_dom`: a *per*-sentence is defined at a world where its subject measures as
-  the example states exactly when the example is felicitous.
-* `density_ne_anaphoricMP`: the anaphoric theory makes *the sample's density is 0.9 grams per
-  milliliter* contradictory, the puzzle the paper ends on.
-
 ## Implementation notes
 
 * A sentence with *per* denotes a partial proposition `World E →. Prop`, after the
@@ -129,8 +108,7 @@ theorem not_much_divisionMP (hu : u.dimension = D) (hr : r.dimension ≠ 1) :
 def density (w : World E) (x : E) : Quantity ℝ :=
   w.quantity (.of .mass) x / w.quantity .volume x
 
-/-- With the free relative denoting `y`'s measure, *x weighs what y weighs* equates the two
-measures ((12)). -/
+-- (12)
 theorem much_quantity_quantity_iff : much (w.quantity D) (w.quantity D y) x ↔ w D x = w D y := by
   simp [much_quantity_iff]
 
@@ -168,7 +146,7 @@ def anaphoricMP (w : World E) (n : ℝ) (u r : MeasureTerm) (y : E) : Quantity �
 @[simp] theorem anaphoricMP_snd : (anaphoricMP w n u r y).2 = u.dimension := by
   simp [anaphoricMP]
 
-/-- The measurement-verb sentence composes ((22)) to `μ_D(x) = n u ⋅ μ_dim(r)(y) / r`. -/
+-- (22)
 theorem much_anaphoricMP_iff (hu : u.dimension = D) :
     much (w.quantity D) (anaphoricMP w n u r y) x ↔
       w D x = n * u.magnitude * (w r.dimension y / r.magnitude) := by
@@ -191,7 +169,7 @@ theorem contains_divisionMP_iff_anaphoricMP (hm : w r.dimension m ≠ 0) :
 
 /-! ### Units of different sizes -/
 
-/-- The division theory identifies measure phrases whose units are scaled alike ((36b)). -/
+-- (36b)
 theorem divisionMP_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity)
     (hr : r'.quantity = pure k * r.quantity) :
     divisionMP n u' r' = divisionMP n u r := by
@@ -213,8 +191,7 @@ theorem anaphoricMP_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantit
 
 /-! ### The copular puzzle -/
 
-/-- No quantity of mass is a density, so *the sample's density is 0.9 grams* ((47)) is
-contradictory. -/
+-- (47)
 theorem density_ne_of_snd (hq : q.2 = .of .mass) : density w x ≠ q := fun h ↦ by
   simpa [density, hq] using congrArg Prod.snd h
 
@@ -228,7 +205,7 @@ theorem density_ne_anaphoricMP (hu : u.dimension = .of .mass) :
     density w x ≠ anaphoricMP w n u r y :=
   density_ne_of_snd (by simp [hu])
 
-/-- On the division theory (46) equates the sample's density with `n u / r`. -/
+-- (46)
 theorem density_eq_divisionMP_iff (hu : u.dimension = .of .mass) (hr : r.dimension = .volume) :
     density w x = divisionMP n u r ↔
       w (.of .mass) x / w .volume x = n * u.magnitude / r.magnitude := by
@@ -305,8 +282,7 @@ theorem unit_sensitivity :
   · rw [containsPer_scales (by norm_num) kilogram_quantity liter_quantity]
     congr 1; ext; simp [milliliter]
 
-/-- The division theory's truth conditions for *m contains n u per r of salt* ((31)) can hold
-whatever `m` measures in the *per*-unit's dimension. -/
+-- (31)
 theorem contains_divisionMP_satisfiable (hu : u.dimension = .of .mass) {v : ℝ} (hv : v ≠ 0) :
     ∃ w : World (Fin 2), w r.dimension 0 = v ∧
       contains (· = 1) (fun a b ↦ a = 0 ∧ b = 1)
@@ -349,8 +325,7 @@ def scenario? (e : Datum) : Option Scenario := do
   guard (su.dimension = per.dimension)
   pure ⟨per, m * su.magnitude⟩
 
-/-- The subject measures at least one *per*-unit exactly in the felicitous examples ((37), (38),
-(44), (45)). -/
+-- (37), (38), (44), (45)
 theorem rows_unit_sensitivity : ∀ e ∈ Examples.all, ∀ s ∈ scenario? e,
     (s.per.magnitude ≤ s.subjectMeasure ↔ e.judgment = .acceptable) := by
   decide +kernel

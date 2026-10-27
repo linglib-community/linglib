@@ -15,13 +15,6 @@ stores, the class and stylistic stratification of every variable except the lowe
 and the fit of each variable's table of age by class to Labov's models of a stigmatized feature,
 stable or changing, and of an incoming prestige feature.
 
-## Main statements
-
-* `classDeviant_iff_styleDeviant`: a class group deviates from class stratification exactly when
-  it deviates from stylistic stratification.
-* `r_caseIIB`: (r) is distributed as a prestige feature in change.
-* `ing_careful_caseIA`: (ing) in careful speech is distributed as a stable stigmatized feature.
-
 ## Implementation notes
 
 * The printed tables are `Data/Experiments/Labov2006.json`. `Variable.toStandard` negates the

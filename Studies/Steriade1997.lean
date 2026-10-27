@@ -31,14 +31,6 @@ paradigm lists no such stem, keeps the lapse of *párodiable*.
 * `Able.lexStress`, `Able.noLapse`, `Able.lexStressVerb`: Lex [±stress], \*Lapse σσσ and
   Lex([±stress], lexcat).
 
-## Main results
-
-* `lexP_singleton_and_lexPM_singleton_iff`: one listed allomorph is a base to be identical to.
-* `Liaison.mem_optimal_iff`: Lex C] ≫ \*Hiatus selects the liaison forms the sources accept (8).
-* `Liaison.vain_split`, `Liaison.vain_feminine`: the two rankings of Lex 'V-gender and Lex σ'.
-* `Able.remediable`, `Able.parodiable`: the tableaux (16) under both rankings of (18).
-* `Able.mem_optimal_iff_most_responses`: the winners of (18) are the majority responses of (14).
-
 ## Implementation notes
 
 A listed allomorph is a form of the paradigm that (8) or (13) prints, its gender or lexical
@@ -93,7 +85,6 @@ def lexPM : Constraint Form := Constraint.binary fun t ↦ ¬ (L.filter (f · = 
 @[simp] theorem lexPM_eq_zero_iff : lexPM L P f t = 0 ↔ (L.filter (f · = f t)).biUnion P ⊆ P t := by
   simp [lexPM]
 
-/-- A listed allomorph is its own precedent. -/
 theorem lexP_of_mem (h : t ∈ L) : lexP L P t = 0 :=
   (lexP_eq_zero_iff L P).2 (Finset.subset_biUnion_of_mem P h)
 
@@ -247,14 +238,13 @@ theorem mem_optimal_iff : ∀ f ∈ Wordlist.all ++ Wordlist.marked, f.cell = Wo
       f ∈ Wordlist.all) := by
   decide +kernel
 
-/-- The citation masculine *[vɛ̃] espoir* loses on \*Hiatus, leaving the two winners of (8b). -/
+-- (8b)
 theorem vain_optimal :
     (tableau Wordlist.Lexemes.vain (hiatusRanking espoir)).optimal =
       {.ofForm Wordlist.vain_espoir, .ofForm Wordlist.vain_espoir_fem} := by
   decide +kernel
 
-/-- In the split-base effect (11), *[vɛ̃n] espoir* takes its consonant from the feminine and its
-vowel from the masculine. -/
+-- (11)
 theorem split_base :
     (genderRanking espoir (listed Wordlist.Lexemes.vain)).map (· (.ofForm Wordlist.vain_espoir)) =
       [0, 0, 0, 1] ∧
@@ -344,18 +334,15 @@ def lapseRanking : List (Constraint Allomorph) := [lexStress L, noLapse, lexStre
 /-- Lex [±stress] ≫ Lex([±stress], lexcat) ≫ \*Lapse σσσ, the second ranking of (18). -/
 def verbRanking : List (Constraint Allomorph) := [lexStress L, lexStressVerb L, noLapse]
 
-/-- The sources record an *-able* form on each base. -/
 theorem derivations_ne_nil : ∀ b, derivations b ≠ [] := by
   decide
 
-/-- The stem of the verb lapses before *-able*, and the stem stressed on its second syllable
-does not (16). -/
+-- (16)
 theorem noLapse_candidate : ∀ r ∈ Wordlist.relations,
     noLapse (candidate r .sameAsBase) = 1 ∧ noLapse (candidate r .second) = 0 := by
   decide +kernel
 
-/-- A stem stressed on its third syllable has no stressed precedent there, which is why
-*rèmedíable* and *pàrodíable* are dispreferred (p. 16). -/
+-- p. 16
 theorem lexStress_firstThird : ∀ r ∈ Wordlist.relations,
     lexStress (listed r.form.lexeme) (candidate r .firstThird) = 1 := by
   decide +kernel

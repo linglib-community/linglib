@@ -90,7 +90,6 @@ theorem L_stable : TRN.assimilate .raised TRN.H TRN.L = TRN.L := by decide
 
 /-! ### The ventive suffix (§5.5) -/
 
-/-- The ventive suffix (ex. 60), a floating `[−raised]` feature, surfaces as H after an H root. -/
 theorem ventive_after_H : TRN.dock .raised false TRN.H = TRN.H := by decide
 theorem ventive_after_M : TRN.dock .raised false TRN.M = TRN.L := by decide
 theorem ventive_after_L : TRN.dock .raised false TRN.L = TRN.L := by decide

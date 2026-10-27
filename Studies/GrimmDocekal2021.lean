@@ -149,13 +149,12 @@ theorem derived_aggregates_noncountable :
       r.operation ≠ .none → r.judgment ≠ .acceptable := by
   decide
 
-/-- *-í* does not apply to an arbitrary countable noun, (13). -/
+-- (13)
 theorem derivation_restricted :
     ∀ r ∈ rows, r.operation = .derivation → r.judgment = .ungrammatical := by
   decide
 
-/-- A group numeral phrase is counted again and quantified by *mnohé*, (17) and (18), but not
-by *všechna*, (19). -/
+-- (17), (18), (19)
 theorem group_numeral_countable :
     (∃ r ∈ rows, r.numeral = .group ∧ r.operation = .outerCardinal ∧ r.judgment = .acceptable) ∧
       (∃ r ∈ rows, r.numeral = .group ∧ r.operation = .vagueQuantifier ∧
@@ -188,7 +187,7 @@ theorem taxonomic_plural_nonepisodic :
       ∀ r ∈ rows, r.taxonomic = true → r.numeral = .taxonomic → r.judgment = .acceptable := by
   decide
 
-/-- The taxonomic numeral fails on a uniquely referring or proper argument, (52). -/
+-- (52)
 theorem taxonomic_needs_kind :
     ∀ r ∈ rows, r.numeral = .taxonomic → (r.noun = .unique ∨ r.noun = .proper) →
       r.judgment ≠ .acceptable := by
@@ -212,7 +211,7 @@ variable {α : Type*} [SemilatticeSup α] (C : α → α → Prop)
 def iceSem (G : Plurality.GroupStructure α) (n : ℕ) (P : α → ℕ → Prop) (x : α) : Prop :=
   ∃ y ∈ G.sums, x = G.up y ∧ P y n
 
-/-- A group numeral phrase denotes an atom, which is why it is counted again, (17) and (54). -/
+-- (17), (54)
 theorem iceSem_atom {G : Plurality.GroupStructure α} {n : ℕ} {P : α → ℕ → Prop} {x : α}
     (h : iceSem G n P x) : Mereology.Atom x :=
   let ⟨_, hy, hx, _⟩ := h

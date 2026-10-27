@@ -185,8 +185,7 @@ theorem stronglyDiscretionaryOn_univ_iff (hρ : Function.Surjective ρ) :
     ⟨o, o', h₁, h₂, h₃, h₄⟩,
    fun h w _ ↦ let ⟨o, o', h₁, h₂, h₃, h₄⟩ := h w; ⟨o, trivial, o', trivial, h₁, h₂, h₃, h₄⟩⟩
 
-/-- For a bivalent proposition the revised classification agrees with the set-based one of
-§3.1 on its positive extension. -/
+-- §3.1
 theorem objectiveOn_univ_iff_objective_posSupport (h : IsBivalent p) :
     ObjectiveOn ρ p Set.univ ↔ Objective ρ (posSupport p) := by
   rw [objective_iff_forall_mem_iff]
@@ -309,8 +308,7 @@ def tycka : (Ω → SignType) := fun o ↦
 
 variable (o : Ω)
 
-/-- A *tycka* report is undefined exactly when its complement is not strongly discretionary
-relative to the state, so the subjectivity requirement is a presupposition, (28)–(29). -/
+-- (28), (29)
 theorem tycka_eq_zero_iff : tycka ρ R p C o = 0 ↔ ¬ StronglyDiscretionaryOn ρ p C := by
   simp [tycka, SignType.nonpos_iff_ne_one]
 
@@ -323,14 +321,12 @@ theorem tycka_eq_think_of_ne_zero (h : tycka ρ R p C o ≠ 0) :
   have hS := not_not.1 ((tycka_eq_zero_iff ρ R p C o).not.1 h)
   simp only [tycka, think, hS, ofProp_true, SignType.one_sup, meetWeak_one_left]
 
-/-- The presupposition projects through negation, so *I don't think[opinion] it's Tuesday*
-is undefined in the same states as the unnegated report, (28). -/
+-- (28)
 theorem neg_tycka_eq_zero_iff :
     -tycka ρ R p C o = 0 ↔ ¬ StronglyDiscretionaryOn ρ p C :=
   SignType.neg_eq_zero_iff.trans (tycka_eq_zero_iff ρ R p C o)
 
-/-- An objective complement is presupposition failure for *tycka* on any nonempty state,
-the *#I think[opinion] it's Tuesday* effect, (2b), (28). -/
+-- (2b), (28)
 theorem tycka_eq_zero_of_objectiveOn (hobj : ObjectiveOn ρ p C) (hC : C.Nonempty) :
     tycka ρ R p C o = 0 :=
   (tycka_eq_zero_iff ρ R p C o).2 fun h ↦
@@ -413,7 +409,7 @@ theorem stronglyDiscretionaryOn_tasty : StronglyDiscretionaryOn world tasty Set.
 
 theorem objectiveOn_opera : ObjectiveOn world opera Set.univ := by decide
 
-/-- The hybrid (10) is discretionary, cutting the linguist world's refinements. -/
+-- (10)
 theorem discretionaryOn_sexyLinguist : DiscretionaryOn world sexyLinguist Set.univ := by
   decide
 
@@ -421,20 +417,17 @@ theorem not_stronglyDiscretionaryOn_sexyLinguist :
     ¬ StronglyDiscretionaryOn world sexyLinguist Set.univ := by
   decide
 
-/-- The hybrid is strongly discretionary given the linguist world, so (15)–(17) is acceptable only
-where Jonas is taken to be a linguist. -/
+-- (15), (17)
 theorem stronglyDiscretionaryOn_sexyLinguist_objectiveGiven :
     StronglyDiscretionaryOn world sexyLinguist CommonGround.objectiveGiven.toSet := by
   decide
 
-/-- Presupposition placement in (33) — a discretionary assertion with an objective
-presupposition is strongly discretionary once the presupposition is given. -/
+-- (33)
 theorem stronglyDiscretionaryOn_terribleDumped_objectiveGiven :
     StronglyDiscretionaryOn world terribleDumped CommonGround.objectiveGiven.toSet := by
   decide
 
-/-- Presupposition placement in (34) — an objective assertion with a discretionary
-presupposition is strongly discretionary on no information state. -/
+-- (34)
 theorem not_stronglyDiscretionaryOn_caresNotIdiot (cg : CommonGround) :
     ¬ StronglyDiscretionaryOn world caresNotIdiot cg.toSet := by
   decide +revert
@@ -468,16 +461,15 @@ theorem not_disagreeAt_opera (o : Outlook) :
     ¬ DisagreeAt opera accessA accessB o ∧ ¬ DisagreeAt opera accessB accessA o := by
   decide +revert
 
-/-- The chili dialogue (3) is faultless, since no world makes *tasty* objectively false. -/
+-- (3)
 theorem not_objectivelyFalseAt_tasty (w : Bool) : ¬ ObjectivelyFalseAt world tasty w :=
   not_objectivelyFalseAt_of_stronglyDiscretionaryOn world tasty Set.univ
     stronglyDiscretionaryOn_tasty ⟨(.true, w), trivial, rfl⟩
 
-/-- The doctor dialogue (6) contrasts in that asserting *I am an opera singer* in the
-non-singer world violates the norm of accuracy. -/
+-- (6)
 theorem objectivelyFalseAt_opera : ObjectivelyFalseAt world opera .false := by decide
 
-/-- So does asserting the hybrid (10) where John is no linguist, (12). -/
+-- (10), (12)
 theorem objectivelyFalseAt_sexyLinguist : ObjectivelyFalseAt world sexyLinguist .false := by
   decide
 

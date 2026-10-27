@@ -134,7 +134,7 @@ def traditional : Form → CausativeComplexity
   | oneClause .free => .morphological
   | twoClauses _ _ => .periphrastic
 
-/-- The COMPACT type is the traditional lexical and morphological types together (p. 9). -/
+-- p. 9
 theorem type_eq_compact_iff {f : Form} :
     f.type = some .compact ↔ f.traditional ≠ .periphrastic := by
   cases f with
@@ -196,7 +196,7 @@ def Link.stages : Link → Finset Stage
 def Link.meaning (l : Link) (goal event effect : Set W) : Set W :=
   l.stages.inf (Stage.prop goal event effect)
 
-/-- Both types express the causer's attempt, without which there is no causation (pp. 142–143). -/
+-- pp. 142–143
 theorem event_mem_stages (l : Link) : Stage.event ∈ l.stages := by
   cases l <;> decide
 
@@ -335,7 +335,7 @@ cap (§6.4, p. 174). -/
 theorem paradigmCoreNPs_two : causeeDemotion 2 = .indirectObject ∧ 2 < paradigmCoreNPs 2 := by
   decide
 
-/-- Causative productivity declines with the valency of the base (p. 172). -/
+-- p. 172
 theorem isLowerSet_setOf_add_one_le (n : ℕ) : IsLowerSet {v : ℕ | v + 1 ≤ n} :=
   fun _ _ h h' ↦ le_trans (Nat.add_le_add_right h 1) h'
 

@@ -23,21 +23,6 @@ metalinguistic denial, and conditional antecedents strengthen once the implicit 
 fixed. The generic restriction is a vague property set whose precisifications give the normality
 of GEN.
 
-## Main results
-
-* `de_satisfies_strengthening`, `ue_widening_weakens`, `ladusaw_de_is_kl_strengthening`: widening
-  strengthens under an antitone context and weakens under a monotone one, so Ladusaw's contexts
-  are strengthening contexts.
-* `strengthening_sorryThat`, `not_strengthening_wants`: *sorry* licenses *any* and *glad* does
-  not.
-* `widening_satisfies_conditional_strengthening`: conditional antecedents strengthen.
-* `rows_agree`: the paper's judgments follow its classification.
-* `any_cn_dimensionally_universal`, `domain_vague_allows_exceptions`: widening makes *any CN*
-  universal along its dimension, and domain vagueness lets a generic tolerate exceptions.
-* `almost_rows`: *almost* modifies domain-precise and dimensionally universal noun phrases.
-* `genericSubTrue_not_superTrue_iff_indet`: on a finite precisification space, exception tolerance
-  is Fine's borderline status.
-
 ## Implementation notes
 
 * The rows record, at the narrowest operator over *any*, a substrate `LicensingContext` where
@@ -157,8 +142,7 @@ restrictor analysis of conditionals (cf. [kratzer-1986]), the antecedent of
 conditional necessity is classically DE once the modal base is fixed, so
 widening the antecedent domain strengthens the conditional. -/
 
-/-- Conditional necessity is downward entailing in its antecedent, so widening strengthens K&L's
-(143). -/
+-- (143)
 theorem conditional_satisfies_strengthening {W : Type*}
     (domain : W → Set W) (β : Set W) :
     Antitone (Conditional.strictImp domain · β) :=
@@ -283,7 +267,7 @@ theorem widenAlong_weakens_precise {Property : Type*}
     (widenAlong X onDimension).precise ⊆ X.precise :=
   fun _ ⟨h, _⟩ ↦ h
 
-/-- Widening expands the domain, so the restriction cannot undo its effect (K&L §3.5.3). -/
+-- §3.5.3
 theorem widenAlong_expands_domain {Property Entity : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (apply : Property → Set Entity) :

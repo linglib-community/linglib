@@ -19,13 +19,6 @@ infinitives only. The modal is a last resort for Bondarenko's pre-existence pres
 embedded event started before the forgetting: an anterior complement meets it as soon as the
 complement holds, while a plain infinitive contradicts it and needs the modal.
 
-## Main results
-
-* `needsMod_aspP`: a plain infinitive needs the modal.
-* `not_needsMod_anterior_aspP`: the anterior complements do not.
-* `preEx_mod_iff`: the presupposition under the modal.
-* `mca_overgenerates`: White's Modalized Complement Analysis overgenerates.
-
 ## Implementation notes
 
 * The paper's complements are Champollion's continuations, from a predicate of events to a
@@ -125,8 +118,7 @@ theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
   Event.PreExists.exists h
 
 omit [Event.TemporalTrace E T] in
-/-- As printed, (28b) binds the complement's time, and an existentially bound time absorbs the
-anterior shift. -/
+-- (28b)
 theorem exists_anterior_iff [NoMaxOrder T] {p : E → Prop} :
     (∃ e t, anterior C w t e ∧ p e) ↔ ∃ e t, C w t e ∧ p e := by
   refine ⟨fun ⟨e, _, ⟨t', _, hC⟩, hp⟩ ↦ ⟨e, t', hC, hp⟩, fun ⟨e, t, hC, hp⟩ ↦ ?_⟩
@@ -135,19 +127,17 @@ theorem exists_anterior_iff [NoMaxOrder T] {p : E → Prop} :
 
 /-! ### The complements under pre-existence, §6 -/
 
-/-- Under the anterior shift the embedded event precedes the reference time, (32)(iii),
-(34)(iii). -/
+-- (32), (34)
 theorem precedes_of_anterior_aspP (h : anterior (aspP P) w t e) : (τ e).Precedes t :=
   let ⟨_, ht, hle, _⟩ := h
   hle.2.trans_lt ht
 
-/-- For the gerund and the perfect infinitive, pre-existence is the complement's holding at the
-forgetting, (32), (34). -/
+-- (32), (34)
 theorem preEx_anterior_aspP_iff :
     PreEx (anterior (aspP P)) e w ↔ (anterior (aspP P)).closure w (τ e) :=
   Event.preExists_iff_exists_of_precedes fun _ ↦ precedes_of_anterior_aspP
 
-/-- A plain infinitive contradicts pre-existence, (36). -/
+-- (36)
 theorem not_preEx_aspP : ¬ PreEx (aspP P) e w :=
   Event.not_preExists_of_le fun _ h ↦ h.1
 
@@ -169,8 +159,7 @@ theorem not_needsMod_anterior_aspP {f : E} (h : P w e) (hf : (τ e).Precedes (τ
     ¬ NeedsMod (anterior (aspP P)) :=
   fun hn ↦ hn f w (Event.preExists_of_precedes ⟨τ e, hf, le_rfl, h⟩ hf)
 
-/-- The modal meets pre-existence at a forgetting `f`, given a plan holding at the subjective now
-that began before it, (40). -/
+-- (40)
 theorem not_needsMod_mod {f s : E} (hs : mod plan C w (τ f) s) (hlt : (τ s).fst < (τ f).fst) :
     ¬ NeedsMod (mod plan C) :=
   fun hn ↦ hn f w (preEx_mod_iff.2 ⟨s, hs, hlt⟩)

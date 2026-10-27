@@ -90,14 +90,14 @@ def Requires (φ ψ : Formula Atom) : Prop :=
 /-- `X ≡ Y` when the two formulas take the same value in `FOUR` under every valuation. -/
 def Equivalent (φ ψ : Formula Atom) : Prop := ∀ v : Atom → FOUR, eval v φ = eval v ψ
 
-/-- `X` restricts `Y` iff `¬Y` requires `¬X` (§4). -/
+-- §4
 theorem restricts_iff_requires_neg (φ ψ : Formula Atom) :
     Restricts φ ψ ↔ Requires (.neg ψ) (.neg φ) := by
   have key : ∀ x y : FOUR, (x ≤ₖ FOUR.T → y ≤ₖ FOUR.T) ↔
       (FOUR.T ≤ₖ yᶜ → FOUR.T ≤ₖ xᶜ) := by decide
   exact forall_congr' fun v ↦ key _ _
 
-/-- Two formulas are equivalent iff each restricts and requires the other (§4). -/
+-- §4
 theorem equivalent_iff (φ ψ : Formula Atom) :
     Equivalent φ ψ ↔ Restricts φ ψ ∧ Requires φ ψ ∧ Restricts ψ φ ∧ Requires ψ φ := by
   have key : ∀ x y : FOUR, x = y ↔ (x ≤ₖ FOUR.T → y ≤ₖ FOUR.T) ∧ (FOUR.T ≤ₖ x → FOUR.T ≤ₖ y) ∧
@@ -115,68 +115,68 @@ section Guard
 
 variable {L : Type*} [DistribLattice L] (x y z : L ⊙ L)
 
-/-- The Figure 4 identity `(P ⊓ₖ Q) : R = (P ∧ Q) : R`. -/
+-- Figure 4
 theorem guard_kInf_left :
     guard (x ⊓ₖ y) z = guard (x ⊓ y) z := by ext <;> simp [Product.guard]
 
-/-- The Figure 4 identity `(P ⊓ₖ Q) : R = (P : R) ⊓ₖ (Q : R)`. -/
+-- Figure 4
 theorem guard_kInf_left_eq :
     guard (x ⊓ₖ y) z = guard x z ⊓ₖ guard y z := by
   ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
     exact inf_inf_distrib_right _ _ _
 
-/-- The Figure 4 identity `(P ⊓ₖ Q) : R = (P : Q) : R`. -/
+-- Figure 4
 theorem guard_kInf_left_eq_guard_guard :
     guard (x ⊓ₖ y) z = guard (guard x y) z := by
   ext <;> simp [Product.guard]
 
-/-- The Figure 4 identity `(P ⊓ₖ Q) : R = P : (Q : R)`. -/
+-- Figure 4
 theorem guard_kInf_left_eq_guard_guard' :
     guard (x ⊓ₖ y) z = guard x (guard y z) := by
   ext <;> simp [Product.guard, inf_assoc]
 
-/-- The Figure 4 identity `(P ⊔ₖ Q) : R = (P ∨ Q) : R`. -/
+-- Figure 4
 theorem guard_kSup_left :
     guard (x ⊔ₖ y) z = guard (x ⊔ y) z := by ext <;> simp [Product.guard]
 
-/-- The Figure 4 identity `(P ⊔ₖ Q) : R = (P : R) ⊔ₖ (Q : R)`. -/
+-- Figure 4
 theorem guard_kSup_left_eq :
     guard (x ⊔ₖ y) z = guard x z ⊔ₖ guard y z := by
   ext <;> simp [Product.guard, inf_sup_right]
 
-/-- The Figure 4 identity `P : ¬Q = ¬(P : Q)`. -/
+-- Figure 4
 theorem guard_compl : guard x yᶜ = (guard x y)ᶜ := by
   ext <;> simp [Product.guard]
 
-/-- The Figure 4 identity `P : (Q ∧ R) = (P : Q) ∧ (P : R)`. -/
+-- Figure 4
 theorem guard_inf : guard x (y ⊓ z) = guard x y ⊓ guard x z := by
   ext <;> simp only [Product.guard, pro_mk, con_mk, pro_inf, con_inf]
   · exact inf_inf_distrib_left _ _ _
   · exact inf_sup_left _ _ _
 
-/-- The Figure 4 identity `P : (Q ∨ R) = (P : Q) ∨ (P : R)`. -/
+-- Figure 4
 theorem guard_sup : guard x (y ⊔ z) = guard x y ⊔ guard x z := by
   ext <;> simp only [Product.guard, pro_mk, con_mk, pro_sup, con_sup]
   · exact inf_sup_left _ _ _
   · exact inf_inf_distrib_left _ _ _
 
-/-- The Figure 4 identity `P : Q ⊓ₖ R = (P : Q) ⊓ₖ (P : R)`. -/
+-- Figure 4
 theorem guard_kInf : guard x (y ⊓ₖ z) = guard x y ⊓ₖ guard x z := by
   ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
     exact inf_inf_distrib_left _ _ _
 
-/-- The Figure 4 identity `P : Q ⊔ₖ R = (P : Q) ⊔ₖ (P : R)`. -/
+-- Figure 4
 theorem guard_kSup :
     guard x (y ⊔ₖ z) = guard x y ⊔ₖ guard x z := by
   ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kSup, con_kSup] <;>
     exact inf_sup_left _ _ _
 
-/-- The Figure 4 identity `P ⊔ₖ (Q : P) = P`. -/
+-- Figure 4
 theorem kSup_guard_self : x ⊔ₖ guard y x = x := by
   ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kSup, con_kSup] <;> rw [inf_comm] <;>
     exact sup_inf_self
 
-/-- The Figure 4 identity `P ⊓ₖ (Q : P) = Q : P`. -/
+-- Figure 4
 theorem kInf_guard_self : x ⊓ₖ guard y x = guard y x := by
   ext <;> simp only [Product.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
     rw [inf_comm y.pro, inf_left_idem]
@@ -264,8 +264,7 @@ section Product
 
 variable {L : Type*} [Lattice L] [BoundedOrder L]
 
-/-- The extremal identities (§6) hold in `L ⊙ L`, with `(⊤, ⊤)` and `(⊥, ⊥)` the knowledge bounds.
--/
+-- §6
 theorem extremal :
     ((⊤ : L ⊙ L) ⊔ₖ ⊥) = mk ⊤ ⊤ ∧ (⊤ : L ⊙ L) ⊓ₖ ⊥ = mk ⊥ ⊥ ∧
       (mk ⊤ ⊤ : L ⊙ L) ⊓ mk ⊥ ⊥ = ⊥ ∧ (mk ⊤ ⊤ : L ⊙ L) ⊔ mk ⊥ ⊥ = ⊤ := by
@@ -295,17 +294,17 @@ theorem not_isExact_kTop [Nontrivial L] : ¬ IsExact (mk ⊤ ⊤ : L ⊙ L) := b
   rw [isExact_iff]
   simp
 
-/-- The knowledge bottom `⊥ = (⊥, ⊥)` is not exact (Theorem 9.2). -/
+-- Theorem 9.2
 theorem not_isExact_kBot [Nontrivial L] : ¬ IsExact (mk ⊥ ⊥ : L ⊙ L) := by
   rw [isExact_iff]
   simp
 
-/-- The exact values are not closed under `⊓ₖ`, since `true ⊓ₖ false = ⊥` (Theorem 9.2). -/
+-- Theorem 9.2
 theorem not_isExact_kInf [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊓ₖ ⊥) := by
   rw [isExact_iff]
   simp
 
-/-- The exact values are not closed under `⊔ₖ`, since `true ⊔ₖ false = ⊤` (Theorem 9.2). -/
+-- Theorem 9.2
 theorem not_isExact_kSup [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊔ₖ ⊥) := by
   rw [isExact_iff]
   simp
@@ -325,7 +324,7 @@ theorem isConsistent_kSup (hx : IsConsistent x) (hy : IsConsistent y)
   exact sup_le (le_inf hx (hxz.2.trans (hz.trans (InvolutiveCompl.compl_le_compl hyz.1))))
     (le_inf (hyz.2.trans (hz.trans (InvolutiveCompl.compl_le_compl hxz.1))) hy)
 
-/-- The guard of a consistent value is consistent (§9). -/
+-- §9
 theorem isConsistent_guard (hy : IsConsistent y) (x : L ⊙ L) :
     IsConsistent (guard x y) := by
   rw [isConsistent_iff] at *
@@ -335,27 +334,27 @@ end Consistent
 
 variable {x' y' : L ⊙ L}
 
-/-- Lisp conjunction is knowledge-monotone (§9). -/
+-- §9
 theorem landL_kLE_landL (hx : x ≤ₖ x') (hy : y ≤ₖ y') : landL x y ≤ₖ landL x' y' :=
   ⟨inf_le_inf hx.1 (inf_le_inf hx.1 hy.1), sup_le_sup hx.2 (inf_le_inf hx.1 hy.2)⟩
 
-/-- Lisp disjunction is knowledge-monotone (§9). -/
+-- §9
 theorem lorL_kLE_lorL (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorL x y ≤ₖ lorL x' y' :=
   ⟨sup_le_sup hx.1 (inf_le_inf hx.2 hy.1), inf_le_inf hx.2 (inf_le_inf hx.2 hy.2)⟩
 
-/-- Weak conjunction is knowledge-monotone (§9). -/
+-- §9
 theorem landW_kLE_landW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : landW x y ≤ₖ landW x' y' :=
   ⟨inf_le_inf (landL_kLE_landL hx hy).1 (landL_kLE_landL hy hx).1,
     inf_le_inf (landL_kLE_landL hx hy).2 (landL_kLE_landL hy hx).2⟩
 
-/-- Weak disjunction is knowledge-monotone (§9). -/
+-- §9
 theorem lorW_kLE_lorW (hx : x ≤ₖ x') (hy : y ≤ₖ y') : lorW x y ≤ₖ lorW x' y' :=
   ⟨inf_le_inf (lorL_kLE_lorL hx hy).1 (lorL_kLE_lorL hy hx).1,
     inf_le_inf (lorL_kLE_lorL hx hy).2 (lorL_kLE_lorL hy hx).2⟩
 
 variable [InvolutiveCompl L]
 
-/-- The consistent values are closed under the four Kleene connectives (§9). -/
+-- §9
 theorem isConsistent_landL (hx : IsConsistent x) (hy : IsConsistent y) :
     IsConsistent (landL x y) :=
   hx.inf (isConsistent_guard hy x)
@@ -381,7 +380,7 @@ orders (Definition 10.1). -/
 def Bilinear (B : Type*) [Preorder B] [Preorder (Know B)] : Prop :=
   ∀ x y : B, x ≤ y ∨ y ≤ x ∨ x ≤ₖ y ∨ y ≤ₖ x
 
-/-- A product is bilinear iff each factor is linearly ordered (Proposition 10.2). -/
+-- Proposition 10.2
 theorem bilinear_iff {L R : Type*} [PartialOrder L] [PartialOrder R] [BoundedOrder L]
     [BoundedOrder R] :
     Bilinear (L ⊙ R) ↔ (∀ a b : L, a ≤ b ∨ b ≤ a) ∧ ∀ a b : R, a ≤ b ∨ b ≤ a := by
@@ -423,7 +422,7 @@ private theorem decide_sup (p q : L) : decide (a ≤ p ⊔ q) = (decide (a ≤ p
 
 theorem theta_compl : theta a xᶜ = (theta a x)ᶜ := rfl
 
-/-- `θ_a` preserves `∧` when `L` is linear (Lemma 10.4). -/
+-- Lemma 10.4
 theorem theta_inf : theta a (x ⊓ y) = theta a x ⊓ theta a y := by
   ext <;> simp only [theta, pro_mk, con_mk, pro_inf, con_inf, decide_inf, decide_sup]
 
@@ -442,7 +441,7 @@ theorem theta_guard :
 
 variable {Atom : Type*}
 
-/-- `θ_a` is a homomorphism for every connective, so it commutes with evaluation (Lemma 10.4). -/
+-- Lemma 10.4
 theorem eval_theta (v : Atom → L ⊙ L) (φ : Formula Atom) :
     Formula.eval (theta a ∘ v) φ = theta a (Formula.eval v φ) := by
   induction φ with
@@ -463,7 +462,7 @@ private theorem decide_ne {p q : L} (h : p ≠ q) : decide (p ⊔ q ≤ p) ≠ d
   · exact h (hle.antisymm (heq.2 hle))
   · exact h ((heq.1 hle).antisymm hle)
 
-/-- Distinct members of `L ⊙ L` are separated by some `θ_a` (the proof of Theorem 10.5). -/
+-- Theorem 10.5
 theorem exists_theta_ne (h : x ≠ y) : ∃ a, theta a x ≠ theta a y := by
   by_cases hp : x.pro = y.pro
   · have hc : x.con ≠ y.con := fun hc ↦ h (Product.ext hp hc)

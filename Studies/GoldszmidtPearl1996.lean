@@ -143,8 +143,7 @@ def zRank (rules : List (Rule W × ℕ)) (x : W) : ℕ :=
 def zRanking (rules : List (Rule W × ℕ)) (h : ∃ x, zRank rules x = 0) : RankingFunction W :=
   ⟨zRank rules, h⟩
 
-/-- A ranking is admissible iff each rule's consequent follows from its antecedent in the ranking,
-as in Definition 7 and Principle (3). -/
+-- Definition 7, (3)
 theorem admissible_iff_forall_entails {κ : RankingFunction W} {Δ : KnowledgeBase W} :
     Admissible κ Δ ↔ ∀ r ∈ Δ, Entails κ {x | r.ante x} {x | r.cons x} := by
   simp only [Admissible, entails_iff_forall_exists_lt, Rule.Falsified, Set.mem_ofPred_eq,
@@ -155,18 +154,14 @@ theorem admissible_iff_forall_entails {κ : RankingFunction W} {Δ : KnowledgeBa
 def PEntails (Δ : KnowledgeBase W) (φ σ : Set W) : Prop :=
   ∀ κ : RankingFunction W, Admissible κ Δ → Entails κ φ σ
 
-/-- A rule is p-entailed by its own antecedent. -/
 theorem pEntails_of_mem {Δ : KnowledgeBase W} {r : Rule W} (h : r ∈ Δ) :
     PEntails Δ {x | r.ante x} {x | r.cons x} :=
   fun _ hκ ↦ admissible_iff_forall_entails.1 hκ r h
 
-/-- An admissible ranking in which σ does not follow from φ refutes p-entailment. -/
 theorem not_pEntails {Δ : KnowledgeBase W} {κ : RankingFunction W} (hκ : Admissible κ Δ)
     {φ σ : Set W} (h : ¬ Entails κ φ σ) : ¬ PEntails Δ φ σ :=
   fun hp ↦ h (hp κ hκ)
 
-/-- P-entailment is a preferential consequence relation, since each rule of system P holds in
-every admissible ranking. -/
 theorem isPreferential_pEntails (Δ : KnowledgeBase W) :
     Nonmonotonic.IsPreferential (PEntails Δ) where
   refl φ κ _ := (isRational_entails κ).refl φ
@@ -202,8 +197,7 @@ private theorem strength_le_foldr_max (Δ : StrengthBase W) {r : StrengthRule W}
     · exact le_max_left _ _
     · exact le_trans (ih htl) (le_max_right _ _)
 
-/-- A strength base admits a δ-admissible ranking iff its flat base admits an admissible one
-(Theorem 19). -/
+-- Theorem 19
 theorem strengthAdmissible_iff_flat [Fintype W] (Δ : StrengthBase W) :
     (∃ κ : RankingFunction W, StrengthAdmissible κ Δ) ↔
       ∃ κ : RankingFunction W, Admissible κ Δ.flat := by
@@ -284,13 +278,11 @@ def r₅ : Rule World := ⟨flies, airborne⟩
 /-- The base Δ_pb of Example 17. -/
 def Δpb : KnowledgeBase World := [r₁, r₂, r₃, r₄, r₅]
 
-/-- r₁, r₄, and r₅ are tolerated by the whole base; r₂ and r₃ only by each other. -/
 theorem tolerated_Δpb :
     Tolerated r₁ Δpb ∧ Tolerated r₄ Δpb ∧ Tolerated r₅ Δpb ∧
       ¬ Tolerated r₂ Δpb ∧ ¬ Tolerated r₃ Δpb ∧ Tolerated r₂ [r₂, r₃] ∧ Tolerated r₃ [r₂, r₃] := by
   decide
 
-/-- The Consistency-Test labels r₁, r₄, r₅ with 0 and r₂, r₃ with 1. -/
 theorem zPriorities_Δpb : (zPriorities Δpb).map (·.2) = [0, 0, 0, 1, 1] := by decide
 
 /-- The ranking κᶻ of the penguin base. -/
@@ -302,13 +294,9 @@ theorem admissible_κz : Admissible κz Δpb := by decide
 /-! Table 2, with a query (φ, σ) answered YES when σ follows from φ, NO when ¬σ does, and
 undecided when neither. -/
 
-/-- The query "Do penguin-birds fly?" is answered NO under z-entailment. -/
 theorem z_penguin_birds_dont_fly :
     Entails κz {x | penguin x ∧ bird x} {x | ¬ flies x} := by decide
 
-/-- The query "Do penguin-birds fly?" is answered NO under p-entailment, by specificity in every
-admissible ranking. A most normal penguin-bird that flew would falsify r₃, and the world r₃ then
-places below it is a penguin-bird or, failing r₂, is outranked by one. -/
 theorem p_penguin_birds_dont_fly : PEntails Δpb {x | penguin x ∧ bird x} {x | ¬ flies x} := by
   intro κ hκ
   rw [entails_iff_forall_least]
@@ -319,11 +307,8 @@ theorem p_penguin_birds_dont_fly : PEntails Δpb {x | penguin x ∧ bird x} {x |
   · obtain ⟨z, hzp, hzb, hlt'⟩ := hκ r₂ (by simp [Δpb]) y ⟨hyp, hyb⟩
     exact absurd (hmin z ⟨hzp, hzb⟩) (not_le.mpr (hlt'.trans hlt))
 
-/-- The query "Are birds typically penguins?" is answered NO under z-entailment. -/
 theorem z_birds_not_penguins : Entails κz {x | bird x} {x | ¬ penguin x} := by decide
 
-/-- The query "Are birds typically penguins?" is answered NO under p-entailment. A most normal
-bird that was a penguin would falsify r₁ or r₃, and either rule places a bird below it. -/
 theorem p_birds_not_penguins : PEntails Δpb {x | bird x} {x | ¬ penguin x} := by
   intro κ hκ
   rw [entails_iff_forall_least]
@@ -337,13 +322,8 @@ theorem p_birds_not_penguins : PEntails Δpb {x | bird x} {x | ¬ penguin x} := 
   · obtain ⟨y, hyb, -, hlt⟩ := hκ r₁ (by simp [Δpb]) x ⟨hb, hf⟩
     exact absurd (hmin y hyb) (not_le.mpr hlt)
 
-/-- The query "Do red birds fly?" is answered YES under z-entailment, which discounts the
-irrelevant feature. -/
 theorem z_red_birds_fly : Entails κz {x | red x ∧ bird x} {x | flies x} := by decide
 
-/-- The query "Do red birds fly?" is undecided under p-entailment. Adding the rule that red birds do
-not fly keeps the base consistent, and its ranking is admissible for Δ_pb; so is κᶻ, where they fly.
--/
 theorem p_red_birds_fly_undecided :
     ¬ PEntails Δpb {x | red x ∧ bird x} {x | flies x} ∧
       ¬ PEntails Δpb {x | red x ∧ bird x} {x | ¬ flies x} := by
@@ -376,13 +356,10 @@ theorem p_birds_airborne_undecided :
     (by decide +kernel) (by decide +kernel),
     not_pEntails admissible_κz (by decide)⟩
 
-/-- The query "Are penguins winged animals?" is undecided under z-entailment, the exceptional
-subclass inheriting nothing from birds. -/
 theorem z_penguins_winged_undecided :
     ¬ Entails κz {x | penguin x} {x | winged x} ∧
       ¬ Entails κz {x | penguin x} {x | ¬ winged x} := by decide
 
-/-- The query "Are penguins winged animals?" is undecided under p-entailment. -/
 theorem p_penguins_winged_undecided :
     ¬ PEntails Δpb {x | penguin x} {x | winged x} ∧
       ¬ PEntails Δpb {x | penguin x} {x | ¬ winged x} :=
@@ -399,7 +376,6 @@ private theorem le_foldr_max {l : List ℕ} {n : ℕ} (h : n ∈ l) : n ≤ l.fo
     · exact le_max_left _ _
     · exact (ih h).trans (le_max_right _ _)
 
-/-- A falsified rule bounds the rank from below by one more than its priority. -/
 theorem le_zRank_of_falsified {rules : List (Rule W × ℕ)} {q : Rule W × ℕ} (hq : q ∈ rules) {x : W}
     (hx : q.1.Falsified x) : q.2 + 1 ≤ zRank rules x :=
   le_foldr_max (List.mem_map_of_mem (List.mem_filter.mpr ⟨hq, decide_eq_true hx⟩))
@@ -433,7 +409,6 @@ theorem zPlusRank_w₁ : zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅) w₁
   simp [zPlusRank, zRank, ΔpbPlus, w₁, Rule.Falsified, r₁, r₂, r₃, r₄, r₅, bird, penguin, flies,
     winged, airborne]
 
-/-- Every penguin world ranks at least δ₁ + 1, because it falsifies r₂, r₃, or r₁. -/
 theorem le_zPlusRank_of_penguin {x : World} (hp : penguin x) :
     δ₁ + 1 ≤ zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅) x := by
   by_cases hb : bird x
@@ -468,7 +443,7 @@ theorem isZPlusOrdering_example24 : IsZPlusOrdering (ΔpbPlus δ₁ δ₂ δ₃ 
 def κPlus : RankingFunction World :=
   ⟨zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅), w₀, zPlusRank_w₀ _ _ _ _ _⟩
 
-/-- Penguin-birds do not fly under κ⁺, whatever the strengths (Theorem 25). -/
+-- Theorem 25
 theorem zPlus_penguin_birds_dont_fly :
     Entails (κPlus δ₁ δ₂ δ₃ δ₄ δ₅) {x | penguin x ∧ bird x} {x | ¬ flies x} := by
   rw [entails_iff_forall_exists_lt]
@@ -624,7 +599,6 @@ theorem lCondition_of_notMem (hw : w ∉ A) :
   simp [lCondition, hw]
 
 open Classical in
-/-- Up to the constant that normalizes it, L-conditioning lifts the worlds outside `A` by `L`. -/
 theorem exists_lCondition_add (A : Set W) (L : ℕ) :
     ∃ c, ∀ w, lCondition κ A L w + c = κ w + if w ∈ A then 0 else L := by
   refine ⟨(min (rank κ A) (rank κ Aᶜ + L)).toNat, fun w ↦ ?_⟩
@@ -679,15 +653,14 @@ private theorem toNat_min_rank (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) :
   · rw [min_eq_left (by exact_mod_cast h), min_eq_left h, ENat.toNat_natCast]
   · rw [min_eq_right (by exact_mod_cast h), min_eq_right h, ENat.toNat_natCast]
 
-/-- Eq. (32) on the worlds of `A`, where `κ(ω | φ)` is the A-part
-(`RankingFunction.condRank_singleton`) and `max[0; x − y]` is the truncated difference. -/
+-- (32)
 theorem lCondition_eq_aPart_of_mem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (hw : w ∈ A) :
     lCondition κ A L w = aPart κ A w + ((rank κ A).toNat - ((rank κ Aᶜ).toNat + L)) := by
   have := toNat_rank_le κ hw
   rw [lCondition_of_mem κ hw, toNat_min_rank κ hA hA', aPart]
   omega
 
-/-- Eq. (32) on the worlds outside `A`. -/
+-- (32)
 theorem lCondition_eq_aPart_of_notMem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (hw : w ∉ A) :
     lCondition κ A L w = aPart κ Aᶜ w + ((rank κ Aᶜ).toNat + L - (rank κ A).toNat) := by
   have := toNat_rank_le κ (A := Aᶜ) hw
@@ -753,7 +726,7 @@ theorem κm_apply (x : Party) : κm x = if mary x ∧ bill x then 3 else 0 := by
 /-- The ranking κ⁺′ after evidence of strength 2 that Mary goes, read as a Type-J report. -/
 noncomputable def κm' : RankingFunction Party := κm.conditionα {x | mary x} ⟨⟨true, false⟩, rfl⟩ 2
 
-/-- In the right of Fig. 5, the worlds without Mary rise to rank 2. -/
+-- Fig. 5
 theorem κm'_apply (x : Party) : κm' x = if mary x then (if bill x then 3 else 0) else 2 := by
   have h₁ : rank κm {x | mary x} = 0 :=
     (rank_eq_of_forall_le κm (A := {x | mary x}) (w := ⟨true, false⟩) rfl
@@ -768,7 +741,6 @@ theorem κm'_apply (x : Party) : κm' x = if mary x then (if bill x then 3 else 
   · rw [κm', κm.conditionα_of_notMem (A := {x | mary x}) _ _ hx, aPart, h₂, κm_apply]
     simp [hx]
 
-/-- After the Type-J report on Mary, the belief that Bill stays home has strength 2. -/
 theorem rank_κm'_bill : rank κm' {x | bill x} = 2 :=
   (rank_eq_of_forall_le κm' (A := {x | bill x}) (w := ⟨false, true⟩) rfl
     (by simp only [κm'_apply]; decide)).trans
@@ -778,8 +750,7 @@ theorem rank_κm'_not_bill : rank κm' {x | bill x}ᶜ = 0 :=
   (rank_eq_of_forall_le κm' (A := {x | bill x}ᶜ) (w := ⟨true, false⟩) (by decide)
     (by simp only [κm'_apply]; decide)).trans (by simp [κm'_apply, mary, bill])
 
-/-- L-conditioning κ⁺′ on strength-2 evidence that Bill goes lowers `M ∧ B` to 1 and `¬M ∧ B` to 0
-(Fig. 6). -/
+-- Fig. 6
 theorem lCondition_κm'_apply (x : Party) :
     lCondition κm' {x | bill x} 2 x =
       if mary x ∧ bill x then 1 else if mary x ∨ bill x then 0 else 2 := by
@@ -791,8 +762,6 @@ theorem lCondition_κm'_apply (x : Party) :
       κm'_apply]
     by_cases hm : mary x <;> simp [hx, hm]
 
-/-- The Type-L report on Bill brings back the initial ranks of Bill and Mary, `κ⁺″(B) = 0` and
-`κ⁺″(¬M) = 0`, while lowering the disbelief in both going to `κ⁺″(M ∧ B) = 1`. -/
 theorem fig6 :
     rank (lCondition κm' {x | bill x} 2) {x | bill x} = 0 ∧
       rank (lCondition κm' {x | bill x} 2) {x | ¬ mary x} = 0 ∧

@@ -56,8 +56,7 @@ variable {I E : Type}
 /-- The intensional presuppositional monad `I#` of section 4.1, a reader over the maybe monad. -/
 abbrev Iₚ (I : Type) := ReaderT I Option
 
-/-- The monad laws of Figure 7 hold for `I#`. Left Identity is semantic reconstruction, and
-Associativity is what licenses cyclic scope. -/
+-- Figure 7
 theorem monad_laws {α β γ : Type} (v : α) (m : Iₚ I α) (k : α → Iₚ I β) (n : β → Iₚ I γ) :
     (pure v >>= k) = k v ∧ (m >>= pure) = m ∧ (m >>= k >>= n) = (m >>= fun x ↦ k x >>= n) :=
   ⟨pure_bind v k, bind_pure m, bind_assoc m k n⟩
@@ -133,8 +132,7 @@ def globalReading : Iₚ I Bool := fun i ↦
   (wetsuit i >>= fun x ↦ pure (pure (decide (bring x i)))) >>= fun ψ ↦
     materialCond (some (decide (bro i))) ψ
 
-/-- The local reading is undefined exactly when Theo has a brother but no wetsuit, the
-conditional presupposition of the satisfaction theory in Figure 3. -/
+-- Figure 3
 theorem localReading_eq_none_iff (i : I) :
     localReading bro wetsuit bring i = none ↔ bro i ∧ wetsuit i = none := by
   simp only [localReading, consequent, materialCond_decide]
@@ -150,8 +148,7 @@ theorem localReading_isSome_iff (i : I) :
     (localReading bro wetsuit bring i).isSome ↔ (bro i → (wetsuit i).isSome) := by
   simp only [Option.isSome_iff_ne_none, ne_eq, localReading_eq_none_iff, not_and]
 
-/-- The global reading is undefined exactly when Theo has no wetsuit, the unconditional
-presupposition of Figure 4, available without pragmatic strengthening. -/
+-- Figure 4
 theorem globalReading_eq_none_iff (i : I) :
     globalReading bro wetsuit bring i = none ↔ wetsuit i = none := by
   simp only [globalReading, materialCond_decide]
@@ -172,8 +169,7 @@ theorem globalReading_eq_localReading_of_isSome (i : I) (h : (wetsuit i).isSome)
   simp only [globalReading, localReading, consequent, materialCond_decide]
   cases hw : wetsuit i <;> split_ifs <;> simp_all
 
-/-- By Left Identity, a unit applied outside the trigger's scope gives the local reading (footnote
-on Figure 6). -/
+-- Figure 6
 theorem reconstruct (i : I) :
     (pure (consequent wetsuit bring i) >>= fun ψ ↦ materialCond (some (decide (bro i))) ψ) =
       localReading bro wetsuit bring i :=
@@ -202,14 +198,13 @@ bind, its trigger read at the evaluation index. -/
 noncomputable def believeGlobal : Iₚ I Bool :=
   lostClause wetsuit lose >>= fun φ ↦ believe dox (fun j ↦ pure (φ j)) theo
 
-/-- Evaluating the clause as in (21) makes the trigger and the predicate read the same index. -/
+-- (21)
 theorem evalI_lostClause (j : I) :
     evalI (lostClause wetsuit lose) j = wetsuit j >>= fun x ↦ pure (decide (lose x j)) := by
   simp only [evalI, lostClause]
   cases wetsuit j <;> rfl
 
-/-- In situ, the presupposition is that Theo has a wetsuit at every doxastic alternative, the
-prediction of [heim-1992] for (22). -/
+-- (22) [heim-1992]
 theorem believeLocal_isSome_iff (i : I) :
     (believeLocal dox wetsuit lose theo i).isSome ↔
       ∀ j, dox theo i j → (wetsuit j).isSome := by

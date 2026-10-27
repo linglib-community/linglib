@@ -24,18 +24,6 @@ that the speaker can answer truthfully and relevantly, and asserts its prejacent
 * `DeoThomas2025.Context.IsOptimal`: the widest answerable construal, (35).
 * `DeoThomas2025.just`: the lexical entry, (36).
 
-## Main results
-
-* `DeoThomas2025.Context.IsOptimal.widest_or_quality_or_relevance`: the three kinds of context in
-  which a construal is optimal, (37).
-* `DeoThomas2025.Context.isOptimal_ofSet_iff`: the unexplanatory and unelaboratory uses, §4.4
-  and §4.5.
-* `DeoThomas2025.widerThan_fromSetoid`: a finer partition is a wider construal, §4.2 and §4.7.
-* `DeoThomas2025.widerThan_grain`, `DeoThomas2025.figure1`: a finer grain is wider without
-  refining the coarser one, so width is not entailment, Figure 1 and fn. 20.
-* `DeoThomas2025.widerThan_zone`: extreme adjectives, Figure 2 of §4.8.
-* `DeoThomas2025.widerThan_mentionAll`: mention-all is wider than mention-some, §4.1.
-
 ## Implementation notes
 
 A construal is a `Question`, whose alternatives `Question.alt` are the maximal resolving
@@ -88,8 +76,7 @@ theorem WiderThan.irrefl (P : Question W) : ¬ WiderThan P P :=
 theorem WiderThan.asymm {P Q : Question W} (h : WiderThan P Q) : ¬ WiderThan Q P :=
   fun ⟨_, h', _⟩ ↦ let ⟨p, hp, q, hq, hpq⟩ := h.2.2; h' p hp q hq hpq
 
-/-- The trivial construal, the disjunction of all possible causes of §4.4, is narrower than any
-other construal of the same common ground. -/
+-- §4.4
 theorem widerThan_ofSet {P : Question W} {s p : Set W} (hs : P.info = s) (hp : p ∈ alt P)
     (hne : p ≠ s) : WiderThan P (ofSet s) := by
   have hsub : ∀ q ∈ alt P, q ⊆ s := fun q hq ↦
@@ -137,13 +124,13 @@ variable {c q}
 theorem IsWidest.unique {q' : Question W} (h : c.IsWidest q) (h' : c.IsWidest q') : q = q' :=
   by_contra fun hne ↦ (c.comparable q h.1 q' h'.1 hne).elim (h'.2 q h.1) (h.2 q' h'.1)
 
-/-- The optimal construal is unique, as the definite description of (35) requires. -/
+-- (35)
 theorem IsOptimal.unique {q' : Question W} (h : c.IsOptimal q) (h' : c.IsOptimal q') :
     q = q' :=
   by_contra fun hne ↦
     (c.comparable q h.1 q' h'.1 hne).elim (h'.2.2 q h.1 h.2.1) (h.2.2 q' h'.1 h'.2.1)
 
-/-- The widest construal, when answerable, is the optimal one, (37a). -/
+-- (37a)
 theorem IsWidest.isOptimal (h : c.IsWidest q) (ha : c.Answerable q) : c.IsOptimal q :=
   ⟨h.1, ha, fun q' hq' _ ↦ h.2 q' hq'⟩
 
@@ -200,7 +187,8 @@ theorem eq_of_just_ne_zero (h : just c cq p w ≠ 0) (h' : just c cq' p' w' ≠ 
 
 /-! ### Partitions: refinement is width, §4.2 and §4.7 -/
 
-/-- A finer partition of the common ground is a wider construal, (40b) against (40a). -/
+/-- A finer partition of the common ground is a wider construal, (40b) against (40a)
+(§4.2, §4.7). -/
 theorem widerThan_fromSetoid {r s : Setoid W} (h : r < s) :
     WiderThan (fromSetoid r) (fromSetoid s) := by
   obtain ⟨hle, hnle⟩ := lt_iff_le_not_ge.1 h
@@ -259,7 +247,7 @@ end Grain
 distinguishes the degrees below `m` and identifies those from `m` on. -/
 def zone (m : ℕ) : Setoid ℕ := Setoid.ker (min · m)
 
-/-- A construal whose zone of indifference begins later is wider (Figure 2). -/
+/-- A construal whose zone of indifference begins later is wider (Figure 2) (§4.8). -/
 theorem widerThan_zone {m m' : ℕ} (h : m < m') :
     WiderThan (fromSetoid (zone m')) (fromSetoid (zone m)) := by
   refine widerThan_fromSetoid

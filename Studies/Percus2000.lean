@@ -100,8 +100,7 @@ def transparentPredicate : LF := ⟨1, 2⟩
 /-- Both pronouns bound by the embedded λ: everything opaque. -/
 def allOpaque : LF := ⟨2, 2⟩
 
-/-- Generalization X licenses the all-opaque and the transparent-phrase indexings and excludes
-the transparent-predicate indexing. -/
+-- Generalization X
 theorem genX_indexings :
     allOpaque.GenX ∧ transparentDP.GenX ∧ ¬ transparentPredicate.GenX := by
   decide

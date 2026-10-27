@@ -20,14 +20,6 @@ multidimensionality.
 * `M`: the two-channel monad, conventional implicatures over presuppositions.
 * `write`, `check`: logging an implicature and a presuppositional condition.
 
-## Main results
-
-* `seq_eq_bind_bind`: Shan's application (15) is the monad's `<*>`.
-* `Ex20.atIssue_sentence`, `Ex20.ciLog_sentence`, `Ex20.presupLog_sentence`: the three
-  dimensions of Figure 1.
-* `Ex20.presupposition_of_ci`: the implicature entails the presupposition.
-* `Ex20.atIssue_sentence_congr`: the relative clause never reaches the at-issue value.
-
 ## Implementation notes
 
 * The two channels are the transformer `WriterT (List CI) (Writer (List Presup))`, over the Writer

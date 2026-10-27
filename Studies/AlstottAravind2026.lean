@@ -85,8 +85,7 @@ theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
     exact ⟨NonemptyInterval.pure a.snd, Set.mem_Iic.mpr ⟨a.fst_le_snd, le_rfl⟩,
       NonemptyInterval.pure b.fst, Set.mem_Iic.mpr ⟨le_rfl, b.fst_le_snd⟩, h⟩
 
-/-- A stative and an accomplishment overlap, Heinämäki's *when*, the reading a *while*-competition
-implicature negates (§8.1), iff neither ends before the other starts. -/
+-- §8.1
 theorem when_stative_accomplishment_iff (a b : NonemptyInterval T) :
     when_ (Set.Iic a) {b} ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
   simp only [when_, timeTrace_Iic, timeTrace_singleton]

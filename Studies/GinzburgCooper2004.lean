@@ -284,13 +284,13 @@ theorem grounds_fA : Grounds fA σ := by decide
 
 theorem unresolved_fB : unresolved fB σ = {"b"} := by decide
 
-/-- Focussing on "Bo" makes it salient and asks who, named Bo, A is asking about (54). -/
+-- (54)
 theorem focussing_bo : parameterFocussing σ bo = some ⟨.focus "b" σ.content, {bo}⟩ := by decide
 
-/-- Identification asks whom A meant by "Bo" (60). -/
+-- (60)
 theorem identification_bo : parameterIdentification σ bo = some ⟨.meaning bo, {bo}⟩ := by decide
 
-/-- With `b` generalized away, B's assignment grounds the weaker content (78). -/
+-- (78)
 theorem grounds_fB_generalized (bind : String → String → String) :
     Grounds fB (existentialGeneralization bind σ "b") :=
   grounds_existentialGeneralization (by decide)
@@ -298,13 +298,13 @@ theorem grounds_fB_generalized (bind : String → String → String) :
 /-- The state after A's utterance, pending for both participants. -/
 def initial : IS String String := { pending := [σ] }
 
-/-- A grounds her own utterance (82b). -/
+-- (82b)
 theorem speaker : initial.ground fA =
     some { latestMove := some (σ, fA), maxQud := some (.posed σ.content) } := by decide
 
 theorem addressee_ground : initial.ground fB = none := by decide
 
-/-- B clarifies by parameter focussing (82c). -/
+-- (82c)
 theorem addressee : initial.clarify parameterFocussing bo =
     some { pending := [σ], maxQud := some (.focus "b" σ.content), salUtt := {bo} } := by decide
 

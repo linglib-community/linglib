@@ -60,20 +60,18 @@ def EntailsNot (c : Set W) (p : W → Prop) : Prop := ∀ w ∈ c, ¬ p w
 /-- Condition (12) is that the Common Ground is compatible with not-`p`. -/
 def CompatibleNot (c : Set W) (p : W → Prop) : Prop := ∃ w ∈ c, ¬ p w
 
-/-- (11) is the narrow-scope negation, saying that it is not possible that `p`. -/
+-- (11)
 theorem entailsNot_iff : EntailsNot c p ↔ ¬ ∃ w ∈ c, p w := by
   simp [EntailsNot]
 
-/-- (12) is the wide-scope negation, saying that `p` is not Common Ground. -/
+-- (12)
 theorem compatibleNot_iff : CompatibleNot c p ↔ ¬ EntailsP c p := by
   simp [CompatibleNot, EntailsP]
 
-/-- The stronger requirement entails the weaker on a nonempty Common Ground. -/
 theorem compatibleNot_of_entailsNot (hc : c.Nonempty) (h : EntailsNot c p) : CompatibleNot c p :=
   let ⟨w, hw⟩ := hc
   ⟨w, hw, h w hw⟩
 
-/-- The weaker requirement does not entail the stronger. -/
 theorem not_entailsNot_of_compatibleNot :
     ∃ (c : Set Bool) (p : Bool → Prop), CompatibleNot c p ∧ ¬ EntailsNot c p :=
   ⟨Set.univ, (· = true), ⟨false, Set.mem_univ _, Bool.false_ne_true⟩,

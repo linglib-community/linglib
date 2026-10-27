@@ -16,19 +16,6 @@ MAX constraints on long vowels and on morphs of one segment protect, and the fir
 after the infinitival suffix -ni. Vago concludes that Casali's constraints make the right
 predictions for Hungarian.
 
-## Main results
-
-* `optimal_regular`: between a morph and a suffix that are not roots, the regular hierarchy
-  deletes the second vowel when the first is long or alone in its morph, and the first otherwise.
-* `corr_form_rhs`, `maxAt_deleted_eq_maxViolAt`: a candidate is the deletion of its vowels from
-  the unrepaired concatenation, and each MAX constraint counts the protected input segments that
-  have no correspondent in its output.
-* `tableaux`: for every example, the tableau of its four candidates (no deletion, either vowel,
-  both) under the hierarchy of its suffix selects the attested deletion, and its output spells the
-  attested form.
-* `starVV_dominates_of_erdesz`: a ranking that deletes the first vowel of erdő-ész ranks \*VV above
-  MAX on long vowels and MAX LEX, since the deleted root vowel is long.
-
 ## Implementation notes
 
 * Each example is a row of `Data/Wordlist/Vago2017` giving its two morphs, their kinds, the morph

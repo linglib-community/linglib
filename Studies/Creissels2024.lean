@@ -20,21 +20,6 @@ structure or suppressed from it. Symmetrical voices select a pivot without eithe
 outside the typology. Alignment is reformulated as obligatory A-coding or P-coding, which split-S
 languages violate.
 
-## Main statements
-
-* `rows_classified`: every derived construction of the book's examples realizes the type the
-  book assigns it.
-* `voices_typed`: the book's voices of §8.3.4.1, §8.3.5 and §8.3.7 realize their types.
-* `stacking_tswana`, `stacking_nahuatl`: stacked voice markers compose their alternations.
-* `balinese_symmetrical`: beside a passive, an applicative and a causative, the symmetrical
-  voices of Balinese are its agent and patient voices.
-* `break_decausativization`: the English fragment's *break* is a decausativization in its own
-  diatheses.
-* `weakReciprocity_pair_iff`, `liftRel_singleton_iff`, `not_weakReciprocity_singleton`: the
-  reciprocal event of §11.3.1 is (30b) on two participants, and §11.3.3's account of the
-  reflexive–reciprocal polysemy holds for every member doing and undergoing but not for the
-  reciprocity with "another member" of §8.3.3 and §11.3.1.
-
 ## Implementation notes
 
 * The types of voice alternation are the substrate's (`Syntax/Voice/Construction.lean`),
@@ -337,14 +322,12 @@ theorem symmetrical_rows : ∀ row ∈ all, row.parse? "alternation" kindNames =
     ∃ q ∈ init.parse? "pivot" slotNames, p ≠ q ∧ (construction row p).role.isSome := by
   decide +kernel
 
-/-- In Mandinka (13) of chapter 1, 'repair' takes A and P, and 'forget' takes S and a
-postpositional oblique. -/
+-- (13)
 theorem mandinka_roles :
     (construction ex_1_13a).Transitive ∧ ¬ (construction ex_1_13b).Transitive := by
   decide +kernel
 
-/-- Russian (23) is obligatory A-coding, Avar (24) obligatory P-coding, and Basque (22),
-with an ergative S beside a zero-flagged one, split-S and neither. -/
+-- (23), (24), (22)
 theorem alignment_rows :
     (∃ t ∈ flagging "russ1263",
       sFlags "russ1263" ≠ [] ∧ ObligatoryACoding t (sFlags "russ1263")) ∧
@@ -353,8 +336,7 @@ theorem alignment_rows :
     ∃ t ∈ flagging "basq1248", SplitS t (sFlags "basq1248") := by
   decide +kernel
 
-/-- The uncoded alternations of Bambara (2), (3) and Basque (4) are P-ambitransitivity, preserving
-participant structure in Bambara but not in Basque. -/
+-- (2), (3), (4)
 theorem ambitransitivity_rows : ∀ row ∈ all,
     row.parse? "marking" codingNames = some .uncoded → ∀ init ∈ paired "transitive" row,
     (construction init).Transitive ∧ ¬ (construction row).Transitive ∧
@@ -388,23 +370,20 @@ theorem stacking_nahuatl :
   ⟨construction ex_8_39c, ⟨construction ex_8_39b, by decide +kernel, by decide +kernel⟩,
     by decide +kernel⟩
 
-/-- Passivization need not yield an intransitive construction: the passive (38f) of the
-double-P applicative (38c) is transitive, the applied P taking A coding. -/
+-- (38f), (38c)
 theorem passive_transitive :
     (construction ex_8_38c).IsPassivization (construction ex_8_38f) ∧
     (construction ex_8_38f).Transitive := by
   decide +kernel
 
-/-- The Balinese causative (51) nucleativizes a causer and denucleativizes the initial P,
-the initial A taking the role of P: its valency is unchanged. -/
+-- (51)
 theorem causative_valency :
     (construction ex_8_51a).Nucleativizes (construction ex_8_51b) ∧
     (construction ex_8_51a).Denucleativizes (construction ex_8_51b) ∧
     (construction ex_8_51a).valency = (construction ex_8_51b).valency := by
   decide +kernel
 
-/-- In the Tswana portative (3) of chapter 12, the woman who brought the food is the initial S and
-the food is not. -/
+-- (3)
 theorem portative_rows :
     ex_12_3b.judgment = .acceptable ∧ ex_12_3c.judgment = .ungrammatical ∧
     construction ex_12_3b 0 = .term .S ∧ construction ex_12_3c 1 = .term .S := by
@@ -435,8 +414,7 @@ def balineseCausative : Voice :=
 theorem balinesePassive_isPassivization : balinesePassive.IsPassivization := by
   decide
 
-/-- The applicative and the causative relate the constructions of rows (50) and (51), which list
-the participants in the same order. -/
+-- (50), (51)
 theorem balinese_rows : ∀ i : Fin 3,
     balineseApplicative.initial.construction i = construction ex_8_50a (Fin.castLE (by omega) i) ∧
     balineseApplicative.derived.construction i = construction ex_8_50b (Fin.castLE (by omega) i) ∧
@@ -467,17 +445,16 @@ def tagalog : Voice.System :=
     locativeVoice.marked [.suff "an"], (obliqueVoice .semantic).marked [.pref "i"],
     (obliqueVoice .semantic).marked [.pref "ipaN"]}
 
-/-- Balinese is symmetrical and binary although morphologically oriented, so symmetry in the
-book's sense does not require equipollent marking (§8.1.7, §8.5.1). -/
+-- §8.1.7, §8.5.1
 theorem balinese_binary :
     balinese.IsSymmetrical ∧ ¬ balinese.IsMultiple ∧ ¬ balinese.IsEquipollent := by
   decide
 
-/-- The Tagalog voices select the agent, the patient and obliques as pivot (§8.5.2). -/
+-- §8.5.2
 theorem tagalog_pivotRoles : tagalog.symmetrical.pivotRoles = {some .A, some .P, some .X} := by
   decide
 
-/-- Tagalog is a multiple symmetrical system, since an oblique may be the pivot (§8.5.2). -/
+-- §8.5.2
 theorem tagalog_isMultiple : tagalog.IsMultiple := by decide
 
 theorem tagalog_synthetic : ∀ v ∈ tagalog, v.coding = .synthetic := by decide

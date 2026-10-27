@@ -47,14 +47,13 @@ variable {Entity W D : Type*} [LinearOrder D]
 
 /-! ### Monotone increasing quantifiers -/
 
-/-- On a finite domain the two scopes of an upper-interval DegP under *every girl* coincide,
-covering (10), (13a) and (16) (Section 2.1). -/
+-- (10), (13a), (16), Section 2.1
 theorem forall_collapse [Finite Entity] {girl : Entity → Prop} (hg : ∃ x, girl x)
     (μ : Entity → D) {U : Set D} (hU : IsUpperSet U) :
     HighScope (MaxIn U) (every girl) (Iic ∘ μ) ↔ LowScope (MaxIn U) (every girl) (Iic ∘ μ) :=
   highScope_maxIn_iff_lowScope (monotone_every girl) (fun h ↦ let ⟨x, hx⟩ := hg; h x hx) hU
 
-/-- Likewise under *some girl*, (12), (13b), and the possibility operator (15b). -/
+-- (12), (13b), (15b)
 theorem exists_collapse [Finite Entity] (girl : Entity → Prop) (μ : Entity → D) {U : Set D}
     (hU : IsUpperSet U) :
     HighScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) ↔ LowScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) :=
@@ -62,19 +61,18 @@ theorem exists_collapse [Finite Entity] (girl : Entity → Prop) (μ : Entity �
 
 /-! ### Monotone decreasing and non-monotone operators -/
 
-/-- The degrees to which Mary is not tall have no maximum (17c). -/
+-- (17c)
 theorem negation_high_undefined [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
     ¬ ∃ m, IsGreatest (scopeDegrees (fun S ↦ ¬ S a) (Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (Q := fun S ↦ ¬ S a) (fun _ _ h hT hS ↦ hT (h a hS))
     (fun _ ↦ isLowerSet_Iic _)
 
-/-- The degrees to which at most two girls are tall have no maximum (18c). -/
+-- (18c)
 theorem atMost_high_undefined [Fintype Entity] [NoMaxOrder D] (girl : Entity → Prop)
     (μ : Entity → D) : ¬ ∃ m, IsGreatest (scopeDegrees (atMost 2 girl) (Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (antitone_atMost (α := Entity) 2 girl) (fun _ ↦ isLowerSet_Iic _)
 
-/-- The high scope (20c) of *exactly two girls* means *at least two girls are taller than 5 feet*
-(20). -/
+-- (20c), (20)
 theorem exactly_high_atLeast [Fintype Entity] {girl : Entity → Prop} {μ : Entity → D} {m : D}
     (h : IsGreatest (scopeDegrees (exactly 2 girl) (Iic ∘ μ)) m) :
     IsGreatest (scopeDegrees (atLeast 2 girl) (Iic ∘ μ)) m := by
@@ -83,8 +81,7 @@ theorem exactly_high_atLeast [Fintype Entity] {girl : Entity → Prop} {μ : Ent
 
 /-! ### Exactly-differentials and less -/
 
-/-- Under *every girl* the low scope entails the high scope, so (22c), (24c), (28c) and (30c) are
-weaker than (22b), (24b), (28b) and (30b). -/
+-- (22c), (24c), (28c), (30c), (22b), (24b), (28b), (30b)
 theorem forall_high_of_low [Finite Entity] {girl : Entity → Prop} (hg : ∃ x, girl x)
     (μ : Entity → D) (U : Set D) :
     LowScope (MaxIn U) (every girl) (Iic ∘ μ) → HighScope (MaxIn U) (every girl) (Iic ∘ μ) :=
@@ -92,8 +89,7 @@ theorem forall_high_of_low [Finite Entity] {girl : Entity → Prop} (hg : ∃ x,
   let ⟨⟨x₀, hx₀⟩, hmin⟩ := Finite.exists_min fun x : {x // girl x} ↦ μ x.1
   highScope_every_of_lowScope ⟨x₀, hx₀, fun y hy ↦ hmin ⟨y, hy⟩⟩
 
-/-- Under *some girl* the high scope entails the low scope, so (21c), (29c) and (31c) are stronger
-than (21b), (29b) and (31b). -/
+-- (21c), (29c), (31c), (21b), (29b), (31b)
 theorem exists_low_of_high (girl : Entity → Prop) (μ : Entity → D) (U : Set D) :
     HighScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) → LowScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) :=
   lowScope_some_of_highScope
@@ -104,16 +100,14 @@ private theorem scopeDegrees_heights :
   simp [scopeDegrees, every, Fin.forall_fin_two]
   omega
 
-/-- When the shortest girl is exactly 4'1'' and another is taller, the high scope is true and the
-low false, so (22c) is no reading of (22). -/
+-- (22c), (22)
 theorem exactly_high_not_low :
     HighScope (MaxIn {49}) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) ∧
       ¬ LowScope (MaxIn {49}) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) :=
   ⟨⟨49, rfl, scopeDegrees_heights ▸ isGreatest_Iic⟩,
     fun h ↦ by simpa using lowScope_maxIn.1 h 1 trivial⟩
 
-/-- The high scope of *every girl is less tall than that* is true where the sentence is false (24).
--/
+-- (24)
 theorem less_high_not_low :
     HighScope (MaxIn (Iio 50)) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) ∧
       ¬ LowScope (MaxIn (Iio 50)) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) :=
@@ -122,8 +116,7 @@ theorem less_high_not_low :
 
 /-! ### Intensional verbs -/
 
-/-- The high scope of *required to be less long than t* means *not required to be as long as t*
-(30c). -/
+-- (30c)
 theorem required_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
     HighScope (MaxIn (Iio t)) (every (· ∈ Acc)) (Iic ∘ ℓ) ↔ ¬ every (· ∈ Acc) fun w ↦ t ≤ ℓ w := by
   have : Nonempty W := hAcc.to_type
@@ -131,8 +124,7 @@ theorem required_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W �
   exact highScope_maxIn_Iio_iff (monotone_every _) (fun h ↦ let ⟨w, hw⟩ := hAcc; h w hw)
     ⟨ℓ w₀, fun v _ ↦ hw₀ v⟩
 
-/-- The high scope of *allowed to be less long than t* means *not allowed to be as long as t* (31c).
--/
+-- (31c)
 theorem allowed_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
     HighScope (MaxIn (Iio t)) (GQ.some (· ∈ Acc)) (Iic ∘ ℓ) ↔ ¬ GQ.some (· ∈ Acc) fun w ↦ t ≤ ℓ w :=
   highScope_maxIn_Iio_iff (monotone_some _) (fun ⟨_, _, h⟩ ↦ h)

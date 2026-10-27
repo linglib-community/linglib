@@ -24,20 +24,6 @@ the same value at every index, and most verbs depend only on the current values 
 arguments. One sentence entails another when every logically possible interpretation makes the
 second true wherever it makes the first true.
 
-## Main statements
-
-* `every_man_walks_iff`, `a_man_walks_iff`, `the_man_walks_iff`: the simple sentences mean what
-  their first-order paraphrases say, because ordinary nouns hold only of constant concepts.
-* `Interp.LogicallyPossible.extTV_starTV`: an ordinary transitive verb is determined by the
-  relation between individuals that it expresses; likewise for nouns and intransitive verbs.
-* `aWomanLovesEveryMan.not_entails`: *a woman loves every man* has two readings, one for each
-  order of the quantifiers, and they are not equivalent.
-* `not_entails_ninetyRises`: from *the temperature is ninety* and *the temperature rises* it does
-  not follow that *ninety rises*.
-* `a_price_rises_needs_concepts`: *a price rises* can be true although no individual price rises.
-* `johnSeeksAUnicorn.exists_unicorn_of_deRe`, `johnSeeksAUnicorn.not_entails`: on one reading
-  *John seeks a unicorn* implies that there are unicorns, and on the other it does not.
-
 ## Implementation notes
 
 Montague translates each tree into intensional logic and then interprets the logic;
@@ -193,7 +179,7 @@ def extTV (S : W → E → E → Prop) : W → Ty.Domain E W Cat.TV.ty :=
 
 @[simp] theorem starTV_extTV (S : W → E → E → Prop) (i : W) : starTV (extTV S i) = S i := rfl
 
-/-- The translation of *be* satisfies postulate (4) with identity in every interpretation. -/
+-- (4)
 theorem realize_be (M : Interp E W) (g : Assignment (W → E)) :
     (fun i ↦ (Analysis.be : Analysis .TV).realize M g i) = extTV fun _ v u ↦ u = v :=
   rfl

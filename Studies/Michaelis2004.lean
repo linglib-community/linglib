@@ -109,8 +109,7 @@ def progressive : Construction (CompositionRule VendlerClass) :=
       , { filler := .open_ .VERB, gf := some .comp, subjIdx := some 1 } ]
   , meaning := progressiveRule }
 
-/-- Figure 6's raising property: the subject of *be* and the complement's
-subject requirement bear one index, the coinstantiation pattern. -/
+-- Figure 6
 theorem progressive_coinstantiation : refGroupCount progressive.form = 1 := by
   decide
 
@@ -133,15 +132,13 @@ theorem progressive_shift : ¬ PreservesType progressiveRule := λ h =>
 
 /-! ### Frame-adverbial predictions (§5.1.2) -/
 
-/-- "She solved the problem in ten minutes" (Figure 5's instantiation): a
-telic complement composes directly, with no coercion ambiguity. -/
+-- Figure 5
 theorem frame_adverbial_instantiation :
     frameAdverbialRule.override reconciliation [.accomplishment]
       = [.accomplishment] :=
   CompositionRule.override_eq_of_eq_some _ (by decide)
 
-/-- Ex. (30), "They were bored in a minute": the stative input conforms
-by inchoative construal — the onset of boredom, an achievement. -/
+-- (30)
 theorem frame_adverbial_coerces_state :
     frameAdverbialRule.override reconciliation [.state]
       = [.achievement] := by decide
@@ -154,13 +151,11 @@ theorem frame_adverbial_activity_ambiguity :
 
 /-! ### Progressive predictions (§5.2.1) -/
 
-/-- "We were playing cards" (Figure 6's explicit shift): an activity
-complement yields a state directly. -/
+-- Figure 6
 theorem progressive_explicit :
     progressiveRule [.activity] = some .state := by decide
 
-/-- A stative complement of the progressive conforms to the activity type and yields a temporary
-state, as in Exx. (31), (42)–(44). -/
+-- (31), (42), (44)
 theorem progressive_coerces_state :
     progressiveRule.override [conformToActivity] [.state]
       = [.state] := by decide

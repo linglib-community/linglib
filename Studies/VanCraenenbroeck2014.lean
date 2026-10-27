@@ -22,15 +22,6 @@ a head that categorizes nothing. Taking the argument as its complement, the root
 from it; with the argument in the specifier of the categorizer, the categorizer selects it. Only
 the argument in the specifier of a functional head over the root has both properties.
 
-## Main statements
-
-* `derives_iff`: of the root taking the argument as its complement, the root modifying the
-  categorizer, the argument in the specifier of the categorizer, and the argument in the specifier
-  of a functional head over the root, only the last derives the selection and the
-  pronominalization examples.
-* `not_fits`: no idiom domain derives the judgments of the idioms that passivize and survive as
-  nominalized infinitives.
-
 ## Implementation notes
 
 * A proform stands for a phrase of its category, and a selection restriction relates an argument

@@ -27,22 +27,6 @@ no degree-based negative islands — and its scope argument.
 * `theC`: the Fregean definite over a contextual domain, the denotation of a *yori*-clause.
 * `erJ`: the comparative that combines directly with the adjective meaning.
 
-## Main results
-
-* `pos_comparedTo`, `maxIn_Ioi_Iic_iff`: a context setter supplying `y` turns the positive form
-  and the contextual comparative into the comparison with `y`.
-* `isGreatest_card_of_isMaximal`: an amount standard is the cardinality of the maximal
-  plurality.
-* `pos_ne_subcomparative`: an individual standard lies on the matrix dimension and does not
-  express a subcomparative of degree.
-* `not_er_nobody`, `yori_negative_entails_unbought`: the negated *than*-clause has
-  no maximum on an unbounded scale, while the definite *yori*-clause is defined and entails
-  a particular unbought individual.
-* `er_everyone_without_shared_book`: the standard comparative lacks the definite's
-  uniqueness presupposition.
-* `erJ_iff_pos`, `exists_wideScope_not_inSitu`: `erJ` has the truth conditions of the
-  positive form and, applied in situ, yields only the narrow reading under `need`.
-
 Example numbers follow the journal article; the examples are typed in
 `Data/Examples/BeckOdaSugisaki2004.json`.
 
@@ -91,8 +75,7 @@ theorem pos_iff_mem_over (μ : Entity → D) (c : D) (x : Entity) :
     pos μ c x ↔ x ∈ μ ⁻¹' Set.Ioi c := by
   simp only [pos_iff_lt, Set.mem_preimage, Set.mem_Ioi]
 
-/-- `max S > c` (23) holds of an `S` with a greatest element iff some `d ∈ S` exceeds `c` (footnote
-7). -/
+-- (23), footnote 7
 theorem maxIn_Ioi_iff_of_isGreatest {S : Set D} {m : D} (h : IsGreatest S m) (c : D) :
     MaxIn (Set.Ioi c) S ↔ ∃ d ∈ S, c < d :=
   ⟨fun ⟨_, hc, h'⟩ => ⟨_, h'.1, hc⟩,
@@ -120,8 +103,7 @@ theorem theC_eq_some_iff (C : Set Entity) (P : Entity → Prop) (y : Entity) :
     theC C P = some y ↔ (y ∈ C ∧ P y) ∧ ∀ z, z ∈ C → P z → z = y := by
   simp only [theC, iota_eq_some_iff, and_imp]
 
-/-- If `Y` is the maximal `P`-plurality, then the greatest `n` for which some `P`-plurality
-has at least `n` members is the cardinality of `Y` (41a). -/
+-- (41a)
 theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}
     {Y : Finset Atom} (h : IsGreatest {S | P S} Y) :
     IsGreatest {n | ∃ S, P S ∧ n ≤ S.card} Y.card :=
@@ -137,8 +119,7 @@ theorem pos_ne_subcomparative :
 
 /-! ### Negative islands -/
 
-/-- On a scale without a top the negated *than*-clause, the degrees `d` such that nobody
-bought a `d`-expensive book (11), has no greatest degree (12). -/
+-- (11), (12)
 theorem not_isGreatest_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity → D) :
     ¬ ∃ m, IsGreatest (scopeDegrees (no bought) (Set.Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (antitone_no bought) (fun _ ↦ isLowerSet_Iic _)

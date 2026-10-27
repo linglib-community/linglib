@@ -25,14 +25,6 @@ default third person agreement, and the conjunction *maar* 'but' used as a verb 
 Neither an early insertion model, in which only featureless items are roots, nor a late insertion
 model that reserves root positions for items marked as roots derives these examples.
 
-## Main statements
-
-* `roots_eq_primaryMerges`: every object a derivation builds has one root for each Primary Merge,
-  that is, for each derivational workspace.
-* `derives_iff`: of the models that let only featureless items or any item realize a root
-  position, inserting items before or after syntax, only the one that inserts any item after
-  syntax derives the Dutch examples.
-
 ## Implementation notes
 
 * An object's label is the bundle that projects in it. Following the refinement of (42), an item
@@ -209,8 +201,7 @@ open Relation (ReflTransGen)
 /-- *the books* of (18), the definite and plural features over the null derivation. -/
 def theBooks : Obj Feature := .pair (.bundle {.definite}) (.pair (.bundle {.plural}) .null)
 
-/-- The derivation (17)–(18) of *the books* from the resource of its definite and plural
-features. -/
+-- (17), (18)
 theorem derivation_theBooks :
     ReflTransGen Step (State.init [{.definite}, {.plural}]) ⟨[], theBooks⟩ :=
   .tail (.single (.merge [_] [] _ .null)) (.merge [] [] _ _)
@@ -227,8 +218,7 @@ def vV : Obj Feature := .pair (.bundle {.v}) .null
 derivation of its own and readmitted as an atom, are merged over the direct object. -/
 def theChildEatsTheCookie : Obj Feature := .pair (.atom dp) (.pair (.atom vV) dp)
 
-/-- The derivation (33)–(41) builds and readmits the subject, then the v-V complex, and builds
-the direct object last, merging the atoms over it. -/
+-- (33), (41)
 theorem derivation_theChildEatsTheCookie :
     ReflTransGen Step (State.init [{.v}, {.definite}, {.definite}])
       ⟨[], theChildEatsTheCookie⟩ :=
@@ -236,8 +226,7 @@ theorem derivation_theChildEatsTheCookie :
     (.merge [_] [_] _ .null) |>.tail (.readmit _ _ _) |>.tail (.merge [_, _] [] _ .null) |>.tail
     (.merge [] [_] _ _) |>.tail (.merge [] [] _ _)
 
-/-- In (41) the subject and the v-V complex are atoms, the object's feature is open to extraction,
-and the clause has three roots. -/
+-- (41)
 theorem atoms_theChildEatsTheCookie :
     theChildEatsTheCookie.atoms = [dp, vV] ∧ theChildEatsTheCookie.bundles = [{.definite}] ∧
       theChildEatsTheCookie.roots = 3 :=
@@ -251,7 +240,7 @@ theorem derivation_eatTheCookie :
   (ReflTransGen.single (.merge [] [_, _] _ .null)).tail (.readmit _ _ _) |>.tail
     (.merge [_, _] [] _ .null) |>.tail (.merge [_] [] _ _) |>.tail (.merge [] [] _ _)
 
-/-- In (42) F⁰ labels the phrase, since the readmitted v-V complex cannot project. -/
+-- (42)
 theorem label_eatTheCookie : eatTheCookie.label = some {.f} := rfl
 
 /-! ### Functional items in root positions -/

@@ -19,14 +19,6 @@ state lies in `MI` (`Compatible`), so *might p* is rejected exactly when `p` is 
 turns on the assertor's state, which fits Khoo's ratings. Under the ordering semantics asserting
 *might p* adds `p` to the ordering source: Veltman's update with *normally p*.
 
-## Main statements
-
-* `isAssertiveUpdate_might`
-* `exists_isAssertiveUpdate_iff`
-* `compatible_might_iff_compatible_ofProp`
-* `predicts_khoo_ratings`
-* `toExpState_mightOrdUpdate`
-
 ## Implementation notes
 
 The two versions share their definitions over a projection `b : S → Set W` to the modal base,
@@ -242,8 +234,6 @@ theorem predicts_khoo_ratings (s : Khoo2015.Sentence) (q : Khoo2015.Response) :
   · exact iff_of_false (by decide +kernel) (by simp [KhooVerdict, khooSentence, might, ofProp])
   · exact iff_of_true (by decide +kernel) (by simp [KhooVerdict, khooSentence, compatible_might])
 
-/-- Stalnakerian rejection, licensed when the rejector's state excludes every world at which the
-claim is true, misses Khoo's rejection of the *might* claim. -/
 theorem stalnakerian_mispredicts_khoo_ratings :
     ¬ ∀ s q, (Khoo2015.midpoint : ℚ) < Khoo2015.mean s q ↔
       KhooVerdict (fun φ ↦ Disjoint {false} {w | φ .univ w}) s q := by

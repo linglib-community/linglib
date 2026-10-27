@@ -98,8 +98,7 @@ utility read deontically and explanatory value read epistemically. -/
 noncomputable def expectedValue (p : Measure W) (R : ι → Set W) (φ : Set W) : ℝ≥0∞ :=
   ∫⁻ w, countTrue R w ∂p[|φ]
 
-/-- The expected value of a hypothesis is the sum `Σ_i P(R i ∣ φ)` of the likelihoods of the
-relevant propositions (12). -/
+-- (12)
 theorem expectedValue_eq_sum_cond (p : Measure W) (R : ι → Set W) (φ : Set W) :
     expectedValue p R φ = ∑ i, p[R i | φ] := by
   simp only [expectedValue, countTrue, Finset.sum_apply]
@@ -121,8 +120,7 @@ theorem expectedValue_eq_card_of_subset (p : Measure W) [IsFiniteMeasure p] (R :
       ENNReal.inv_mul_cancel hφ (measure_ne_top _ _)]
   simp [this]
 
-/-- A hypothesis that fully predicts the evidence is weakly best, whatever its prior: the §5
-problem of success behind (50)–(51), which the plausibility requirement answers. -/
+-- §5, (50), (51)
 theorem expectedValue_le_of_cond_eq_one {p : Measure W} {e φ : Set W} (ψ : Set W)
     (h : p[e | φ] = 1) : expectedValue p ![e] ψ ≤ expectedValue p ![e] φ := by
   simp only [expectedValue_eq_sum_cond, Fin.sum_univ_one, Matrix.cons_val_zero, h]
@@ -198,18 +196,17 @@ theorem ought_of_must (h : must p R φ alts θ) : ought p R φ alts θ :=
   ⟨h.1, fun ψ hψ ↦ (h.2 ψ hψ).trans_lt h.1⟩
 
 omit [DiscreteMeasurableSpace W] in
-/-- An implausible prejacent is never a `must`, whatever its explanatory value: §5's resolution
-of (49) and its 99-lawyers prediction. -/
+-- §5, (49)
 theorem not_mustPlausible_of_lt (h : p φ < θplaus) : ¬ mustPlausible p R φ alts θ θplaus :=
   fun h' ↦ h.not_ge h'.2
 
 omit [DiscreteMeasurableSpace W] in
-/-- The disjunctive truth conditions of `might` that the paper writes out under (59). -/
+-- (59)
 theorem might_iff : might p R φ θ ↔ expectedValue p R φᶜ ≤ θ ∨ θ < expectedValue p R φ := by
   simp [might, must, imp_iff_not_or, not_lt]
 
 omit [DiscreteMeasurableSpace W] in
-/-- *It must be raining, but of course it might not be* is contradictory (§6). -/
+-- §6
 theorem not_must_and_might_compl : ¬ (must p R φ {φᶜ} θ ∧ might p R φᶜ θ) :=
   fun ⟨h, h'⟩ ↦ h' (by simpa using h)
 
@@ -227,7 +224,7 @@ def koreanConditionalEvaluative (p : Measure W) (R : ι → Set W) (φ : Set W)
   conditionalEval p R φ θ ∧ ∀ ψ ∈ alts, ¬ conditionalEval p R ψ θ
 
 omit [DiscreteMeasurableSpace W] in
-/-- The Korean composition is the `must` semantics (6): this is (48). -/
+-- (6), (48)
 theorem koreanConditionalEvaluative_iff_must :
     koreanConditionalEvaluative p R φ alts θ ↔ must p R φ alts θ := by
   simp only [koreanConditionalEvaluative, conditionalEval, must, expectedValue, not_lt]
@@ -290,7 +287,7 @@ theorem countTrue_idealsRD (w : World) : countTrue idealsRD w = saved w := by
 locations are equiprobable and independent of the action, and the conditioned propositions
 carry mass. -/
 
-/-- Blocking shaft A has expected utility 5 (20). -/
+-- (20)
 theorem expectedValue_blockA_of_cond (p : Measure World) [IsFiniteMeasure p]
     (h : p[inShaft .A | act .blockA] = 1 / 2) :
     expectedValue p idealsRD (act .blockA) = 5 := by
@@ -303,7 +300,7 @@ theorem expectedValue_blockA_of_cond (p : Measure World) [IsFiniteMeasure p]
   rw [mul_one_div, eq_comm, ENNReal.eq_div_iff (by norm_num) (by norm_num)]
   norm_num
 
-/-- Blocking shaft B has expected utility 5 (21). -/
+-- (21)
 theorem expectedValue_blockB_of_cond (p : Measure World) [IsFiniteMeasure p]
     (h : p[inShaft .B | act .blockB] = 1 / 2) :
     expectedValue p idealsRD (act .blockB) = 5 := by
@@ -316,8 +313,7 @@ theorem expectedValue_blockB_of_cond (p : Measure World) [IsFiniteMeasure p]
   rw [mul_one_div, eq_comm, ENNReal.eq_div_iff (by norm_num) (by norm_num)]
   norm_num
 
-/-- Blocking neither shaft has expected utility 9 whatever the distribution (19): one miner
-drowns whatever their location. -/
+-- (19)
 theorem expectedValue_blockNeither_of_ne (p : Measure World) [IsFiniteMeasure p]
     (h : p (act .blockNeither) ≠ 0) : expectedValue p idealsRD (act .blockNeither) = 9 := by
   rw [expectedValue_eq_sum_cond, Fin.sum_univ_castSucc]
@@ -344,8 +340,7 @@ theorem expectedValue_inA_blockNeither_of_ne (p : Measure World) [IsFiniteMeasur
   rw [cond_apply MeasurableSet.of_discrete, hlast]
   simp [h1]
 
-/-- Conditionalized on the miners being in A, blocking A has expected utility 10 (23): the
-prejacent realizes every ideal. -/
+-- (23)
 theorem expectedValue_inA_blockA_of_ne (p : Measure World) [IsFiniteMeasure p]
     (h : p (inShaft .A ∩ act .blockA) ≠ 0) :
     expectedValue p idealsRD (inShaft .A ∩ act .blockA) = 10 :=
@@ -361,7 +356,7 @@ theorem expectedValue_inA_blockB (p : Measure World) [IsFiniteMeasure p] :
 
 variable {p : Measure World} [IsFiniteMeasure p] {θ : ℝ≥0∞}
 
-/-- *We ought to block neither shaft* holds for any `θ < 9` (22). -/
+-- (22)
 theorem ought_blockNeither (hbn : p (act .blockNeither) ≠ 0)
     (hA : p[inShaft .A | act .blockA] = 1 / 2) (hB : p[inShaft .B | act .blockB] = 1 / 2)
     (hθ : θ < 9) : ought p idealsRD (act .blockNeither) {act .blockA, act .blockB} θ := by
@@ -370,8 +365,7 @@ theorem ought_blockNeither (hbn : p (act .blockNeither) ≠ 0)
   · rw [expectedValue_blockA_of_cond p hA, expectedValue_blockNeither_of_ne p hbn]; norm_num
   · rw [expectedValue_blockB_of_cond p hB, expectedValue_blockNeither_of_ne p hbn]; norm_num
 
-/-- *If the miners are in shaft A, we ought to block shaft A* (24) holds for any `θ < 10` (fn 16,
-after Lassiter). -/
+-- (24)
 theorem ought_if_inA_blockA (hbA : p (inShaft .A ∩ act .blockA) ≠ 0)
     (hbn : p (inShaft .A ∩ act .blockNeither) ≠ 0) (hθ : θ < 10) :
     ought p idealsRD (inShaft .A ∩ act .blockA)
@@ -382,8 +376,7 @@ theorem ought_if_inA_blockA (hbA : p (inShaft .A ∩ act .blockA) ≠ 0)
     norm_num
   · rw [expectedValue_inA_blockB p, expectedValue_inA_blockA_of_ne p hbA]; norm_num
 
-/-- *We must block neither shaft* holds for `5 ≤ θ < 9`, blocking neither being the only
-good-enough option (26a). -/
+-- (26a)
 theorem must_blockNeither (hbn : p (act .blockNeither) ≠ 0)
     (hA : p[inShaft .A | act .blockA] = 1 / 2) (hB : p[inShaft .B | act .blockB] = 1 / 2)
     (h5 : 5 ≤ θ) (h9 : θ < 9) :
@@ -393,7 +386,7 @@ theorem must_blockNeither (hbn : p (act .blockNeither) ≠ 0)
   · exact expectedValue_blockA_of_cond p hA ▸ h5
   · exact expectedValue_blockB_of_cond p hB ▸ h5
 
-/-- Read as *must*, (25b) holds for `9 ≤ θ < 10`. -/
+-- (25b)
 theorem must_if_inA_blockA (hbA : p (inShaft .A ∩ act .blockA) ≠ 0)
     (hbn : p (inShaft .A ∩ act .blockNeither) ≠ 0) (h9 : 9 ≤ θ) (h10 : θ < 10) :
     must p idealsRD (inShaft .A ∩ act .blockA)
@@ -426,8 +419,7 @@ theorem prior_cond_inShaft (s : Shaft) (a : Action) :
     · rw [show (Finset.univ.filter (· ∈ act _ ∩ inShaft _)).card = 1 by decide,
         show (Finset.univ.filter (· ∈ act _)).card = 2 by decide, Nat.cast_one, Nat.cast_ofNat]
 
-/-- Under the uniform prior, being in shaft A has expected utility 19/3, the comparison point of
-footnote 17 for Lassiter's `must`. -/
+-- footnote 17
 theorem expectedValue_inA : expectedValue prior idealsRD (inShaft .A) = 19 / 3 := by
   rw [prior, expectedValue_uniformOn_univ,
     show (∑ i : Fin 10, (Finset.univ.filter (· ∈ inShaft .A ∩ idealsRD i)).card) = 19 by decide,
@@ -480,8 +472,7 @@ end Miners
 
 namespace ModalLinda
 
-/-- In the modal conjunction fallacy ((30)–(34)), *must* holds of *feminist bank teller* but not of
-*bank teller*, with expected values (32) and (33). -/
+-- (30), (34), (32), (33)
 theorem modal_conjunction_fallacy (p : Measure W) (R : Fin 2 → Set W)
     (teller feministTeller : Set W) (hsub : feministTeller ⊆ teller)
     (h₁ : p[R 0 | teller] = .ofReal 0.3) (h₂ : p[R 1 | teller] = .ofReal 0.2)
@@ -497,8 +488,7 @@ theorem modal_conjunction_fallacy (p : Measure W) (R : Fin 2 → Set W)
   rintro ψ rfl
   exact hT ▸ hlo
 
-/-- The printed probabilities (30)–(31) are consistent: forty equiprobable worlds, ten of them
-feminist tellers. -/
+-- (30), (31)
 theorem exists_model :
     ∃ (p : Measure (Fin 40)) (R : Fin 2 → Set (Fin 40)) (teller feministTeller : Set (Fin 40)),
       feministTeller ⊆ teller ∧
@@ -522,8 +512,7 @@ end ModalLinda
 
 namespace ModalLawyers
 
-/-- In modal base-rate neglect ((37)–(41)), *Jack must be an engineer* is true and *Jack must be a
-lawyer* false, whatever the prior on `engineer`. -/
+-- (37), (41)
 theorem base_rate_neglect (p : Measure W) (R : Fin 2 → Set W) (engineer lawyer : Set W)
     (h₁ : p[R 0 | engineer] = .ofReal 0.78) (h₂ : p[R 1 | engineer] = .ofReal 0.55)
     (h₃ : p[R 0 | lawyer] = .ofReal 0.35) (h₄ : p[R 1 | lawyer] = .ofReal 0.28)
@@ -537,8 +526,7 @@ theorem base_rate_neglect (p : Measure W) (R : Fin 2 → Set W) (engineer lawyer
   rintro ψ rfl
   exact hL ▸ hlo
 
-/-- The printed probabilities (37)–(38) are consistent: two hypotheses of a hundred equiprobable
-evidence cells each. -/
+-- (37), (38)
 theorem exists_model :
     ∃ (p : Measure (Fin 2 × Fin 100)) (R : Fin 2 → Set (Fin 2 × Fin 100))
       (engineer lawyer : Set (Fin 2 × Fin 100)),

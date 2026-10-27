@@ -28,13 +28,6 @@ verbs exactly under the rankings with R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-H�
 both M anchors. Two dominations the paper states, L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ and
 L-ANCH-Hᵥ ≫ MAX-Tone, are not needed.
 
-## Main statements
-
-* `fits_iff`: replacive dominance is the only dominance type that derives every printed verb.
-* `selectsWinners_iff`: the rankings under which the tableaux select the printed verbs.
-* `exists_selectsWinners_rAnchorM_lAnchorM`: neither L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ nor
-  L-ANCH-Hᵥ ≫ MAX-Tone is needed.
-
 ## Implementation notes
 
 * An input writes a root's lexical tones as the paper does, one tone for each run of identical
@@ -230,7 +223,7 @@ def candE : Candidate input := cand.deleteTierElem 0 |>.insertLink 1 0 |>.insert
 
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE]
 
-/-- The printed rows of (24); the input has no H, so every syllable violates the H anchors. -/
+-- (24)
 private theorem marks :
     candidates.map (fun c ↦ columns.map (con · c)) =
       [[2, 2, 2, 2, 0], [2, 2, 2, 2, 1], [1, 2, 0, 2, 0], [0, 2, 1, 2, 0], [0, 2, 0, 2, 1]] := by
@@ -278,7 +271,7 @@ def candG : Candidate input :=
 
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 
-/-- The printed rows of (25). -/
+-- (25)
 private theorem marks :
     candidates.map (fun c ↦ columns.map (con · c)) =
       [[3, 3, 3, 3, 2], [0, 3, 1, 3, 1], [3, 0, 3, 0, 2], [0, 3, 0, 3, 2], [0, 0, 1, 2, 1],
@@ -331,7 +324,7 @@ def candG : Candidate input :=
 
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 
-/-- The violation marks of the candidates are the printed rows of (26). -/
+-- (26)
 private theorem marks :
     candidates.map (fun c ↦ columns.map (con · c)) =
       [[4, 4, 4, 4, 0], [1, 0, 0, 1, 0], [0, 1, 1, 0, 0], [0, 0, 0, 0, 2], [0, 0, 1, 1, 1],
@@ -394,8 +387,7 @@ theorem surface_winners :
 /-! ### Morphosyntactic integration -/
 
 open Examples in
-/-- Every construction attested with the underived verb of (11) is attested with the derived
-verb of (12): tense, focus, serial verbs, negation. -/
+-- (11), (12)
 theorem derived_verbs_integrated :
     ∀ row ∈ Examples.all, row.feature? "verb" = some "underived" →
       ∃ row' ∈ Examples.all, row'.feature? "verb" = some "derived" ∧

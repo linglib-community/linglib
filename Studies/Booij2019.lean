@@ -80,7 +80,7 @@ theorem occupation_instantiatesAt_iff {w : Fin 6 → Flat String} :
     · fin_cases i <;> fin_cases j <;>
         first | rfl | exact h23 | exact h23.symm | exact absurd hij (by decide)
 
-/-- The nouns of (1) instantiate the template. -/
+-- (1)
 theorem occupation_nouns :
     occupation.InstantiatesAt occupationSub Wordlist.xabbaaz.slots ∧
       occupation.InstantiatesAt occupationSub Wordlist.xaddaam.slots ∧
@@ -89,7 +89,6 @@ theorem occupation_nouns :
   simp only [occupation_instantiatesAt_iff]
   decide
 
-/-- A form with distinct medial consonants matches the vowels but not the gemination. -/
 theorem not_occupation_of_ne_medial :
     ¬ occupation.InstantiatesAt occupationSub
       ![↑"x", ↑"a", ↑"b", ↑"d", ↑"aa", ↑"z"] := by
@@ -162,7 +161,7 @@ theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat 
     · fin_cases i <;> fin_cases j <;>
         first | exact h0 | exact h02.symm.trans h0 | exact h3 | exact absurd hij (by decide)
 
-/-- The verbs of (12) with their bases. -/
+-- (12)
 theorem reduplication_verbs :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub)
         (Sum.elim Wordlist.tetamu.slots Wordlist.tamu.slots) ∧
@@ -211,7 +210,6 @@ theorem comparative_pairs_iff {p q : Fin 5 → Flat String} :
     · fin_cases i <;> fin_cases j <;>
         first | exact h01 | exact h22 | exact h44 | exact absurd hij (by decide)
 
-/-- *kibiir* pairs with *akbar* and *tixiin* with *atxan*, and *kibiir* not with *atxan*. -/
 theorem comparative_pairs :
     comparative.InstantiatesAt (Sum.elim adjSub cmpSub)
         (Sum.elim Wordlist.kibiir.slots Wordlist.akbar.slots) ∧

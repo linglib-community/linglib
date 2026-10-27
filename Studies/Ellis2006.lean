@@ -16,14 +16,6 @@ overshadows the inflection. A learner whose cues already predict the outcome, as
 second-language learner's adverb does, has no error left to divide, so the inflection is blocked
 however much input follows.
 
-## Main statements
-
-* `overshadowing`, `tendsto_strength`: learned together from nothing, the more salient cue is
-  the stronger after every utterance, and in the limit each cue holds its salience's share of
-  the outcome.
-* `blocking`: for a learner whose cues already predict the outcome, utterances pairing adverb
-  and inflection leave every association unchanged.
-
 ## Implementation notes
 
 * The rule is `ErrorDrivenLearning.update` on the utterance in which both cues are present.

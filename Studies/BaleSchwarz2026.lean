@@ -18,18 +18,6 @@ only a composed *per*-PP can be fronted. Both facts reduce to dimensions: a comp
 *per*-phrase has its head unit's dimension, so it can be a weight but never a density, while
 `13 g/mL` is a density and never a weight.
 
-## Main statements
-
-* `existsUnique_pure_mul`: the pure number the anaphoric *per* denotes is the unique `n` with
-  `n ⋅ r = μ(y)`, so the entry needs no division.
-* `coppockPer_much_iff`: Coppock's entry and the anaphoric measure phrase derive the same truth
-  conditions.
-* `ratio_eq_mathSpeak_iff`, `ratio_ne_anaphoricMP`, `not_much_mathSpeak`: a predicate of a
-  quotient dimension accepts the verbalized quotient and never a composed *per*-phrase, and a
-  predicate of a simplex dimension never accepts the verbalized quotient.
-* `rows_dimension`: the measure phrase's dimension matches the predicate's exactly in the
-  felicitous examples.
-
 ## TODO
 
 `rows_dimension` passes over five rows. *Pounds per square inch* in (22) is an idiom for *psi*
@@ -58,11 +46,13 @@ variable {E : Type*} {w : World E} {D D₁ D₂ : QuantityDimension} {x y : E} {
 
 /-! ### Multiplication only -/
 
-/-- The pure number `μ_dim(r)(y) / r` is the unique `n` with `n ⋅ r = μ_dim(r)(y)` ((21)). -/
+-- (21)
 theorem anaphoricPer_eq_pure_iff :
     anaphoricPer w r y = pure n ↔ pure n * r.quantity = w.quantity r.dimension y :=
   r.isUnit_quantity.div_eq_iff.trans eq_comm
 
+/-- The pure number the anaphoric *per* denotes is the unique `n` with `n ⋅ r = μ(y)`, so the entry
+needs no division. -/
 theorem existsUnique_pure_mul : ∃! n : ℝ, pure n * r.quantity = w.quantity r.dimension y :=
   ⟨(anaphoricPer w r y).1, anaphoricPer_eq_pure_iff.1 (Prod.ext rfl anaphoricPer_snd),
     fun _ h ↦ congrArg Prod.fst (anaphoricPer_eq_pure_iff.2 h).symm⟩

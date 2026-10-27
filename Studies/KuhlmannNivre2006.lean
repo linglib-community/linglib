@@ -120,7 +120,7 @@ theorem fig1_isForest_not_isTree :
     fig1.IsForest ∧ ¬ fig1.IsTree ∧ ∀ w, (∀ v, ¬ fig1.Adj v w) ↔ w = 1 ∨ w = 7 := by
   decide
 
-/-- Figure 1 is not projective: the projection of node 1 lacks node 2. -/
+-- Figure 1
 theorem fig1_not_isProjective :
     fig1.projection 0 = [0, 2, 3, 4, 5, 6] ∧ ¬ fig1.IsProjective := by
   decide
@@ -145,7 +145,7 @@ theorem fig2a_planar_not_projective :
     fig2a.IsPlanar ∧ ¬ fig2a.IsProjective ∧ (0 : Fin 3) < fig2a.root ∧ fig2a.root < 2 := by
   decide
 
-/-- Figure 2b is not planar: the edges (1, 4) and (3, 5) cross, and no other pair does. -/
+-- Figure 2b, (1, 4), (3, 5)
 theorem fig2b_crossing :
     fig2b.Linked 0 3 ∧ fig2b.Linked 2 4 ∧ Alternate (0 : Fin 5) 3 2 4 ∧ fig2b.crossings = 1 := by
   decide +kernel
@@ -175,8 +175,7 @@ theorem figure3_gapDegree :
         (fig3c.gapDegreeAt 1 = 2 ∧ fig3c.gapDegree = 2) := by
   decide +kernel
 
-/-- The edge (1, 5) of Figure 3a has degree 0, and the edge (3, 6) of Figure 3b and the edges (2,
-4), (3, 5) and (4, 6) of Figure 3c degree 1. -/
+-- (1, 5), Figure 3a, (3, 6), Figure 3b, (2, 4), (3, 5), (4, 6), Figure 3c
 theorem figure3_edgeDegree :
     (edgeDegreeAt fig3a 0 4 = 0 ∧ edgeDegree fig3a = 0) ∧
       (edgeDegreeAt fig3b 2 5 = 1 ∧ edgeDegree fig3b = 1) ∧
@@ -184,15 +183,13 @@ theorem figure3_edgeDegree :
           edgeDegree fig3c = 1) := by
   decide +kernel
 
-/-- Figures 3a and 3b are well-nested, and Figure 3c is not, since its subtrees at nodes 2 and 3
-interleave. -/
+-- Figures 3a and 3b, Figure 3c
 theorem figure3_wellNested :
     fig3a.IsWellNested ∧ fig3b.IsWellNested ∧
       (fig3c.Interleave 1 2 ∧ ¬ Dominates fig3c 1 2 ∧ ¬ Dominates fig3c 2 1) := by
   decide +kernel
 
-/-- The hierarchy projective ⊂ planar ⊂ well-nested is strict: Figure 2a is planar and not
-projective, Figure 3b well-nested and not planar. -/
+-- Figure 2a, Figure 3b
 theorem hierarchy_strict :
     (fig2a.IsPlanar ∧ ¬ fig2a.IsProjective) ∧ (fig3b.IsWellNested ∧ ¬ fig3b.IsPlanar) := by
   decide +kernel
@@ -212,8 +209,7 @@ def fig4b : Graph 5 :=
 
 theorem figure4_isTree : fig4a.IsTree ∧ fig4b.IsTree := by decide
 
-/-- Gap degree measures the discontinuities of a subtree, edge degree the constituents an edge
-spans: the two orders of Figure 4 reverse. -/
+-- Figure 4
 theorem figure4_degrees :
     (fig4a.gapDegreeAt 1 = 2 ∧ fig4a.gapDegree = 2 ∧ edgeDegree fig4a = 1) ∧
       (fig4b.gapDegreeAt 1 = 1 ∧ fig4b.gapDegree = 1 ∧ edgeDegreeAt fig4b 1 4 = 2 ∧

@@ -122,8 +122,7 @@ theorem comparative_entails_minStandard [OrderBot D] {y : E} (h : μ y w < μ x 
     x ∈ (μ · w) ⁻¹' Set.Ioi ⊥ :=
   bot_le.trans_lt h
 
-/-- Under a necessity standard it does not ((51b)): an object can outvalue another and fall
-short of the standard. -/
+-- (51b)
 theorem comparative_not_entails_pos {y : E} (h : μ y w < μ x w) (hs : μ x w < s) :
     μ y w < μ x w ∧ ¬ Pos μ x w s :=
   ⟨h, not_le_of_gt hs⟩
@@ -155,8 +154,7 @@ section Complete
 variable [CompleteLattice D] {Acc : W → Set W} {pursued : E → W → Prop} {μ : E → W → D}
   {x : E} {w : W} {s : D}
 
-/-- On a complete scale the standard (64) is the maximum of the degrees below the object's value in
-every pursued accessible world. -/
+-- (64)
 theorem isNecessityStandard_iff :
     IsNecessityStandard Acc pursued μ x w s ↔
       s = sSup {d | ∀ w' ∈ Acc w, pursued x w' → d ≤ μ x w'} := by

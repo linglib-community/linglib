@@ -129,7 +129,7 @@ def voiceValency (v : Voice) : Valency :=
 theorem voiceValency_passive : voiceValency English.Verbs.passive = Valency.passiveTransitive := by
   decide
 
-/-- In (8b) the passive of the double-object frame keeps the second object. -/
+-- (8b)
 theorem voiceValency_passive_np_np : voiceValency (Voice.passive .np_np) =
     [⟨.nsubj, .headFinal, true⟩, ⟨.obj, .headInitial, true⟩, ⟨.obl, .headInitial, false⟩] := by
   decide

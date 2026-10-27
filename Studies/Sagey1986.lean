@@ -39,17 +39,6 @@ realised by valid associations.
 * `Association`, `Association.Valid`, `TierRealization`: association lines as overlap in time,
   and two tiers placed in time.
 
-## Main results
-
-* `degreeOfClosure_mem_featureClass_iff`, `nasal_mem_featureClass_iff`: degree of closure lies
-  in the root's class alone and nasality in the classes of the soft palate and its ancestors, so
-  place assimilation leaves both untouched.
-* `disjoint_featureClass_of_articulators`: distinct articulators have disjoint classes.
-* `isComplex_of_round_of_coronal`, `occlusions_isComplex`: a licensed rounded coronal and every
-  multiple occlusion are complex.
-* `Association.Valid.not_crosses`, `isNonCrossing_of_valid`: valid associations do not cross,
-  so the No-Crossing Constraint is derived.
-
 ## Implementation notes
 
 The substrate's features are mapped onto the dissertation's: `[voice]` stands in for the
@@ -132,7 +121,6 @@ def feature? : Node → Option Feature
 /-- The articulator nodes under place, whose distinct combinations are the complex segments. -/
 def articulators : Finset Node := {.labial, .coronal, .dorsal}
 
-/-- Neither of two distinct articulators dominates the other. -/
 theorem not_le_of_mem_articulators {a b : Node} (ha : a ∈ articulators) (hb : b ∈ articulators)
     (hab : a ≠ b) : ¬ a ≤ b := by
   revert a b; decide
@@ -252,7 +240,6 @@ theorem Association.Valid.not_crosses {a b : Association T} (ha : a.Valid) (hb :
 cross. -/
 def IsNoCrossing (S : Set (Association T)) : Prop := S.Pairwise fun a b ↦ ¬ a.Crosses b
 
-/-- Any set of valid associations satisfies the No-Crossing Constraint. -/
 theorem isNoCrossing_of_forall_valid {S : Set (Association T)} (h : ∀ a ∈ S, a.Valid) :
     IsNoCrossing S :=
   fun _ ha _ hb _ ↦ (h _ ha).not_crosses (h _ hb)
@@ -283,8 +270,6 @@ def TierRealization.canonical : TierRealization ℤ where
   timing_precedes h := by simp only [NonemptyInterval.Precedes]; omega
   melody_precedes h := by simp only [NonemptyInterval.Precedes]; omega
 
-/-- Every diagonal link is valid under the canonical realisation, so the hypothesis of
-`isNonCrossing_of_valid` is satisfiable. -/
 theorem canonical_diagonal_valid (n : ℕ) : (TierRealization.canonical.assoc n n).Valid := by
   simp only [Association.Valid, TierRealization.canonical, TierRealization.assoc,
     NonemptyInterval.Overlaps]
@@ -296,9 +281,6 @@ def assoc (ts tf ms mf : ℤ) (ht : ts ≤ tf := by omega) (hm : ms ≤ mf := by
     Association ℤ :=
   ⟨⟨⟨ts, tf⟩, ht⟩, ⟨⟨ms, mf⟩, hm⟩⟩
 
-/-- A contour segment, two melodies sequenced within one timing slot, and a geminate, one
-melody spanning two timing slots, are both pairs of valid associations, which simultaneity
-would forbid by identifying the two melodies, or the two slots. -/
 theorem contour_geminate_valid :
     ((assoc 0 4 0 2).Valid ∧ (assoc 0 4 2 4).Valid) ∧
       ((assoc 0 1 0 3).Valid ∧ (assoc 2 3 0 3).Valid) := by

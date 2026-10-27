@@ -123,8 +123,7 @@ variable {W H E : Type*} (M : Model W H E) {o : E} {w : W}
 /-- The hearers reasonable by the lights of at least one interlocutor ([ney-2026] p. 327). -/
 def reasonable (w : W) : Set H := ⋃ a, lowerPolar M.recognizes (M.conception a w)
 
-/-- A hearer reasonable by either interlocutor's lights is reasonable by the intersection of
-their conceptions ([ney-2026] p. 326). -/
+-- p. 326 [ney-2026]
 theorem reasonable_subset (w : W) :
     M.reasonable w ⊆ lowerPolar M.recognizes (⋂ a, M.conception a w) :=
   iUnion_subset fun a ↦ lowerPolar_anti _ (iInter_subset _ a)
@@ -228,35 +227,33 @@ def insinuation : Model World (Set Referent) Referent where
 
 namespace insinuation
 
-/-- In fact both interlocutors hold the conception ([ney-2026] p. 326). -/
+-- p. 326 [ney-2026]
 theorem mem_conception (a : Role) : hispanicImmigrants ∈ insinuation.conception a .univ := by
   simp [insinuation]
 
 theorem mem_semanticValues : hispanicImmigrants ∈ insinuation.semanticValues .univ := by
   simp [insinuation]
 
-/-- The speaker does not know the addressee shares her conception ([ney-2026] p. 326). -/
+-- p. 326 [ney-2026]
 theorem not_knows_speaker :
     ¬ □[insinuation.belief .speaker] (hispanicImmigrants ∈ insinuation.conception .addressee ·)
       .univ :=
   fun h ↦ by simpa [insinuation] using h {.speaker} (by simp [insinuation, privately])
 
-/-- The addressee does not know the speaker shares hers ([ney-2026] p. 326). -/
+-- p. 326 [ney-2026]
 theorem not_knows_addressee :
     ¬ □[insinuation.belief .addressee] (hispanicImmigrants ∈ insinuation.conception .speaker ·)
       .univ :=
   fun h ↦ by simpa [insinuation] using h {.addressee} (by simp [insinuation, privately])
 
-/-- The speaker knows that the addressee recognises the unavowed intention, an individual
-belief ([ney-2026] p. 325). -/
+-- p. 325 [ney-2026]
 theorem knows_mem_recognized :
     □[insinuation.belief .speaker] (hispanicImmigrants ∈ insinuation.recognized ·) .univ :=
   fun v hv ↦ by
     have hs : .speaker ∈ v := (show (.univ, v) ∈ privately .speaker from hv).1 (Finset.mem_univ _)
     simp [insinuation, Model.recognized, hs]
 
-/-- For all the addressee knows, the speaker does not know that the addressee recognises the
-unavowed intention ([ney-2026] p. 325). -/
+-- p. 325 [ney-2026]
 theorem not_knows_knows_mem_recognized :
     ¬ □[insinuation.belief .addressee]
       (□[insinuation.belief .speaker] (hispanicImmigrants ∈ insinuation.recognized ·)) .univ :=
@@ -264,7 +261,7 @@ theorem not_knows_knows_mem_recognized :
     simpa [insinuation, Model.recognized] using h {.addressee} (by simp [insinuation, privately])
       {.addressee} (by simp [insinuation, privately])
 
-/-- ⟨TWO⟩: it is common ground that the addressee is reasonable ([ney-2026] p. 325). -/
+-- p. 325 [ney-2026]
 theorem commonKnowledge_two :
     CommonKnowledge insinuation.belief univ
       (fun v ↦ insinuation.addressee v ∈ insinuation.reasonable v) .univ :=
@@ -287,8 +284,7 @@ theorem not_mem_of_groundedIn {cg : Filter World} (h : cg.GroundedIn insinuation
     (hw : Finset.univ ∈ cg.ker) : {v | hispanicImmigrants ∈ insinuation.intends v} ∉ cg :=
   fun hp ↦ not_commonKnowledge_mem_intends (h.commonKnowledge hw hp)
 
-/-- In the eavesdropper case the addressee recognises the intention, yet the unavowed referent is
-not a semantic value ([ney-2026] pp. 325–326). -/
+-- pp. 325–326 [ney-2026]
 theorem eavesdropper :
     hispanicImmigrants ∈ insinuation.recognized {.speaker} ∧
       hispanicImmigrants ∉ insinuation.semanticValues {.speaker} := by
@@ -316,8 +312,7 @@ def lennon : Model World (Set LennonReferent) LennonReferent where
   intends_subset_conception _ := subset_rfl
   addressee _ := {house}
 
-/-- With ⟨TWO⟩ as in example (2), the reference to the house is common ground ([ney-2026] p. 324).
--/
+-- (2), p. 324 [ney-2026]
 theorem lennon_commonKnowledge_mem_recognized :
     CommonKnowledge lennon.belief univ (house ∈ lennon.recognized ·) .univ :=
   lennon.commonKnowledge_mem_recognized

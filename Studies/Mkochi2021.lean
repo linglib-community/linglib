@@ -20,13 +20,6 @@ violated by eliding the second. This holds even where the second suffix is a sin
 with the final vowel of the paper's (11), which the constraint on morphs of one segment then
 protects as well.
 
-## Main results
-
-* `exists_mem_optimal_iff_rootSuffix`: at a juncture of the kind a row reports, some ranking of
-  Casali's constraints elides the reported vowel iff the juncture is between a root and a suffix.
-* `schematic_suffixSuffix`: at a schematic juncture of two suffixes no ranking of Casali's
-  constraints elides the second vowel.
-
 ## References
 
 * [mkochi-2021]

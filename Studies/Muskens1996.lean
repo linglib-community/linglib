@@ -12,22 +12,6 @@ that word meanings combine by function application and sequencing as in Montague
 This file gives his lexicon over the register structures of
 `Semantics/Dynamic/RegisterStructure.lean` and computes the meanings of his example sentences.
 
-## Main statements
-
-* `text_eq_box`: "A man adores a woman. She abhors him." means a single box introducing both
-  referents.
-* `dom_text`, `dom_conditional`, `dom_vpCoord`, `dom_npCoord`, `dom_reassignment`: the examples
-  have the first-order truth conditions the paper gives.
-* `dom_everyNarrow`, `dom_everyWide`: "Every girl adores a boy" has both scope readings.
-* `dom_npCoord_no`: a pronoun after a conjunct headed by `no` reads its referent off the input
-  state, so `no` does not bind it.
-* `reassignment_ne_merge`: "Bill and Sue own a donkey" reassigns the donkey's referent, and its
-  two boxes do not merge into one.
-* `toRel_improper_eq`, `not_isProper_improper`: a proper and an improper box can mean the same,
-  so properness is a property of representations.
-* `fn4_diverges`: declaring a referent twice separates Muskens's semantics from Kamp and
-  Reyle's.
-
 ## Implementation notes
 
 Static predicates are sets, so an atomic condition is a preimage. A dynamic predicate takes the
@@ -231,7 +215,7 @@ theorem dom_npCoord_no (h : u₁ ≠ u₂) (john : E) (girl boy : Set E) (admire
 def reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) : Update S :=
   (name bill * name sue : DynQuant S E) (ofStatic₂ owns (indef u₃ (ofStatic donkey)))
 
-/-- Sentence (66) translates as (67), whose second box reassigns `u₃`. -/
+-- (66), (67)
 theorem reassignment_eq (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
     (reassignment u₃ bill sue donkey owns : Update S) =
       box {u₃} (val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ○
@@ -373,8 +357,6 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   show Function.update g₁ 0 1 0 = 1
   simp
 
-/-- Under the partial semantics the re-declaration of `x` is inert, so the witness says that
-every man is mortal, which fails in the model. -/
 theorem fn4_not_isTrue : ¬ fn4.IsTrue (Fin 2) := by
   rintro ⟨g', -, hdom, himp, -⟩
   have hg' : g' = ⊥ :=

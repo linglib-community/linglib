@@ -21,15 +21,6 @@ across indistinguishable worlds, and epistemic approximators quantify over those
 the scalar class, *absolutely*, *completely* and *more or less* take only scale endpoints and
 block *exactly* and *approximately* there.
 
-## Main results
-
-* `SauerlandStateva2011.classification_predicts_distribution`: the two-type classification
-  reproduces every cited judgment.
-* `SauerlandStateva2011.exactly_narrowest`, `SauerlandStateva2011.approximately_widest`: at a
-  degree that is a scale point of every available granularity, *exactly* yields the narrowest
-  reading and *approximately* the widest, (19).
-* `SauerlandStateva2011.second_reset_vacuous`: a second scalar approximator is vacuous, §6.3.5.
-
 ## Implementation notes
 
 Granularities are the grains `Degree.grain`, identified by their widths, and the

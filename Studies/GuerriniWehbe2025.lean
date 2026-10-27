@@ -70,8 +70,7 @@ presupposes that its relevant subdomain alternatives are homogeneous. -/
 noncomputable abbrev pexPlural (R : Set (Set W)) : W → SignType :=
   pexIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) R
 
-/-- The presupposition (19b) is that the relevant subdomain alternatives are all true or all
-false. -/
+-- (19b)
 theorem pexPlural_ne_zero_iff (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
     pexPlural D x P R w ≠ 0 ↔
       Homogeneous (supClosure (atom P '' ↑(x ∩ D)) \ {(⋃ b ∈ x ∩ D, atom P b)} ∩ R) w := by
@@ -200,15 +199,13 @@ variable {W : Type*}
 variable {Atom : Type*} [DecidableEq Atom] {D x : Finset Atom} {P : Atom → W → Prop}
   {R : Set (Set W)}
 
-/-- Where the existential is common ground, a plural predication asserts nothing new, (10a) and
-(13d). -/
+-- (10a), (13d)
 theorem not_informative_pexPlural :
     ¬ PostAccommodationInformative (⋃ b ∈ x ∩ D, atom P b) (pexPlural D x P R) := fun h ↦
   let ⟨_, hw, h⟩ := postAccommodationInformative_iff.1 h
   (pexIEII_eq_neg_one_iff.1 h).2 hw
 
-/-- Where the universal is known to fail, the negated plural predication asserts nothing new once
-homogeneity is accommodated, (10b), (12b), (13c) and (23). -/
+-- (10b), (12b), (13c), (23)
 theorem not_informative_neg (h : Separating D x P) (hcard : 1 < (x ∩ D).card)
     (hR : ∀ a ∈ x ∩ D, atom P a ∈ R) :
     ¬ PostAccommodationInformative {w | ¬ ∀ a ∈ x, a ∈ D → P a w} (-pexPlural D x P R) := fun hi ↦
@@ -238,8 +235,7 @@ abbrev notSmiled (a : Fin 3) (w : Finset (Fin 3)) : Prop := a ∉ w
 private theorem separating_not : Separating Finset.univ Finset.univ notSmiled :=
   ⟨by decide, by decide⟩
 
-/-- In (31), with homogeneity accommodated below negation and no pruning, *the students didn't
-smile* is true where none of them smiled. -/
+-- (31)
 theorem localAccommodation_eq_one_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ notSmiled
       (supClosure (Set.range (atom notSmiled))) w = 1 ↔ w = ∅ := by
@@ -279,8 +275,7 @@ section Judgments
 
 open Finset
 
-/-- In (9), with John's kids known to be adopted, *all 10 of John's kids are adopted* is
-uninformative after accommodation and *John has 10 adopted kids* informative. -/
+-- (9)
 theorem judgments_9 :
     (Examples.ex_9a.judgment = .acceptable ↔
       PostAccommodationInformative {w : ℕ × Bool | w.2 = true}
@@ -311,8 +306,7 @@ theorem judgments_10 :
     iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
 
-/-- In (12), *John isn't married to any of his teammates* is informative, and *John isn't married to
-his teammates* is not once homogeneity is accommodated. -/
+-- (12)
 theorem judgments_12 :
     (Examples.ex_12a.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 2) | w ≠ univ}
@@ -352,8 +346,7 @@ theorem judgments_13 :
         ((Set.mem_ofPred_eq.mp hw).trans_lt (by decide))
       exact Set.mem_biUnion (by simp) ha)⟩
 
-/-- In (23), with the students known not to have all smiled, *the students didn't smile* asserts
-nothing new once homogeneity is accommodated. -/
+-- (23)
 theorem judgments_23 :
     Examples.ex_23.judgment = .acceptable ↔
       PostAccommodationInformative {w : Finset (Fin 3) | w ≠ univ}

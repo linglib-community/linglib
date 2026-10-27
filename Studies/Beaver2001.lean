@@ -15,18 +15,6 @@ of and admits a sentence it can be updated with. A sentence presupposes what eve
 admitting it satisfies, and entails what every output of an update with it satisfies. From
 Part I, the file states Strawsonian presupposition and its Strong Kleene projection (Fact 2.1).
 
-## Main statements
-
-* `Formula.Presupposes.and_right`, `Formula.Presupposes.implies_right`: a presupposition of
-  the second conjunct or of the consequent projects conditionalised on the first.
-* `Formula.satisfies_might_iff`, `Formula.satisfies_must_iff`: *might* is a consistency test
-  and *must* a satisfaction test.
-* `Formula.eval_eq_ofTrivalent`: on the non-modal sentences an update is the Heimian update of
-  the sentence's value under Peters' connectives, so the dynamic and trivalent entailments
-  coincide (`Formula.entails_iff_tval`, Fact 10.3).
-* `entailed_rows`, `unentailed_rows`: the entailments and non-entailments the book prints for
-  its translations of the *realise* examples.
-
 ## Implementation notes
 
 * The book's updates are relations between states. Every PUL relation is a partial function,
@@ -183,7 +171,7 @@ theorem mem_eval_must :
 theorem mem_eval_presup : τ ∈ (presup φ).eval F σ ↔ σ ∈ φ.eval F σ ∧ τ = σ :=
   Part.mem_mk_iff.trans ⟨fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩, fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩⟩
 
-/-- Every update is eliminative, never adding a world to its input (Fact 7.1). -/
+-- Fact 7.1
 theorem eval_eliminative : ∀ (φ : Formula P) {σ τ : Set W}, τ ∈ φ.eval F σ → τ ⊆ σ
   | atom _, _, _, h => mem_eval_atom.1 h ▸ Set.sep_subset _ _
   | not _, _, _, h => CCP.Partial.isEliminative_neg _ _ _ h
@@ -213,7 +201,7 @@ theorem entails_iff_forall : Entails F φ ψ ↔ ∀ σ τ, τ ∈ φ.eval F σ 
 theorem eval_implies : (implies φ ψ).eval F = CCP.Partial.cond (φ.eval F) (ψ.eval F) :=
   (CCP.Partial.cond_eq_neg_seq_neg _ _).symm
 
-/-- *must* is the dual of *might* (Fact 6.1). -/
+-- Fact 6.1
 theorem eval_must (φ : Formula P) : (must φ).eval F = (not (might (not φ))).eval F := by
   funext σ
   change (φ.eval F σ).map _ = (((φ.eval F σ).map (σ \ ·)).map _).map (σ \ ·)
@@ -244,7 +232,7 @@ theorem Presupposes.might (h : Presupposes F φ ψ) : Presupposes F (might φ) �
 theorem Presupposes.must (h : Presupposes F φ ψ) : Presupposes F (must φ) ψ :=
   fun σ hσ ↦ h σ hσ
 
-/-- Presupposition composes (Fact 8.2). -/
+-- Fact 8.2
 theorem Presupposes.trans (h₁ : Presupposes F φ ψ) (h₂ : Presupposes F ψ χ) :
     Presupposes F φ χ :=
   PartialUpdate.Presupposes.trans h₁ h₂
@@ -295,12 +283,12 @@ theorem satisfies_might_iff (hσ : σ.Nonempty) :
   · rintro ⟨υ, hυ, hne⟩
     exact mem_eval_might.2 ⟨υ, hυ, ite_eq_left hne⟩
 
-/-- Otherwise *might* crashes the state (Fact 8.5). -/
+-- Fact 8.5
 theorem empty_mem_eval_might_iff (hσ : σ.Nonempty) (h : (φ.eval F).Admits σ) :
     ∅ ∈ (might φ).eval F σ ↔ ¬ConsistentWith F σ φ := by
   rw [(might_isTest φ).empty_mem_iff hσ h, satisfies_might_iff hσ]
 
-/-- A state admitting `φ` satisfies it iff it is inconsistent with `not φ` (Lemma 8.6). -/
+-- Lemma 8.6
 theorem satisfies_iff_not_consistentWith_not (h : (φ.eval F).Admits σ) :
     Satisfies F σ φ ↔ ¬ConsistentWith F σ (not φ) := by
   constructor
@@ -327,7 +315,7 @@ theorem satisfies_must_iff (hσ : σ.Nonempty) : Satisfies F σ (must φ) ↔ Sa
       exact absurd hif.symm hσ.ne_empty
   · exact fun hs ↦ mem_eval_must.2 ⟨σ, hs, ite_eq_left rfl⟩
 
-/-- Otherwise *must* crashes the state (Fact 8.7). -/
+-- Fact 8.7
 theorem empty_mem_eval_must_iff (hσ : σ.Nonempty) (h : (φ.eval F).Admits σ) :
     ∅ ∈ (must φ).eval F σ ↔ ¬Satisfies F σ φ := by
   rw [(must_isTest φ).empty_mem_iff hσ h, satisfies_must_iff hσ]
@@ -372,7 +360,7 @@ private theorem meetMiddle_ne_zero_iff {a b : SignType} :
   cases a <;> cases b <;> decide
 
 /-- On PL+∂ an update is the Heimian update of the sentence's trivalent value (Lemma 10.1, with the
-distributivity used for Lemma 10.2). -/
+distributivity used for Lemma 10.2) (Fact 10.3). -/
 theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
     φ.eval F = CCP.Partial.ofTrivalent (φ.tval F) := by
   induction hφ with
@@ -414,24 +402,23 @@ theorem admits_iff (hφ : NonModal φ) :
     (φ.eval F).Admits σ ↔ ∀ w ∈ σ, φ.tval F w ≠ 0 := by
   rw [eval_eq_ofTrivalent hφ]; rfl
 
-/-- Update truth is trivalent truth (Lemma 10.1). -/
+-- Lemma 10.1
 theorem trueAt_iff (hφ : NonModal φ) : TrueAt F w φ ↔ φ.tval F w = 1 := by
   rw [TrueAt, eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent_self]; simp
 
-/-- Update falsity is trivalent falsity (Lemma 10.1). -/
+-- Lemma 10.1
 theorem falseAt_iff (hφ : NonModal φ) : FalseAt F w φ ↔ φ.tval F w = -1 := by
   rw [FalseAt, eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent]
   simp only [Set.mem_singleton_iff, eq_comm (a := (∅ : Set W))]
   cases hv : φ.tval F w <;> simp [Set.eq_empty_iff_forall_notMem, hv]
 
-/-- A state satisfies a non-modal sentence iff the sentence is true at each of its worlds, the
-distributivity used to prove Lemma 10.2. -/
+-- Lemma 10.2
 theorem satisfies_iff (hφ : NonModal φ) : Satisfies F σ φ ↔ ∀ w ∈ σ, TrueAt F w φ := by
   simp_rw [trueAt_iff hφ]
   rw [Satisfies, PartialUpdate.supports_iff_mem, eval_eq_ofTrivalent hφ,
     CCP.Partial.mem_ofTrivalent_self]
 
-/-- For non-modal sentences, entailment is entailment at every world (Lemma 10.2). -/
+-- Lemma 10.2
 theorem entails_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
     Entails F φ ψ ↔ ∀ w, TrueAt F w φ → TrueAt F w ψ := by
   refine entails_iff_forall.trans ⟨fun h w hw ↦ h {w} {w} hw, fun h σ _ hτ ↦ ?_⟩
@@ -450,7 +437,6 @@ theorem entails_iff_tval (hφ : NonModal φ) (hψ : NonModal ψ) :
   rw [entails_iff hφ hψ]
   exact forall_congr' fun w ↦ imp_congr (trueAt_iff hφ) (trueAt_iff hψ)
 
-/-- A sentence entails what it presupposes, when that is non-modal. -/
 theorem Presupposes.entails (h : Presupposes F φ ψ) (hψ : NonModal ψ) : Entails F φ ψ :=
   entails_iff_forall.2 fun σ _ hτ ↦ (satisfies_iff hψ).2 fun w hw ↦
     (satisfies_iff hψ).1 (h σ (admits_of_mem hτ)) w (eval_eliminative φ hτ hw)

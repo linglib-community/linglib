@@ -15,15 +15,6 @@ Since the logical form holds of a clause that never happens, the commitment to *
 from assertion and presupposition by disjunctive syllogism (36), which is why *Nancy didn't get
 married until she died* (23) commits the speaker to a marriage at her death.
 
-## Main statements
-
-* `notUntil_iff`, `not_notUntil_iff`: `T` holds or has held at every time of `A`, and the denial
-  is *A before T*.
-* `notUntil_empty`: the logical form holds of a clause that never happens.
-* `notUntil_when`: assertion and presupposition together yield *A when T*.
-* `notUntil_iff_when_of_presupposition`: for point events the two logical forms coincide given
-  the presupposition, as with Finnish *vasta* and German *erst* (38)–(39).
-
 ## References
 
 * [karttunen-1974]
@@ -66,8 +57,8 @@ theorem notUntil_empty : notUntil (∅ : Set (NonemptyInterval T)) B :=
 theorem notUntil_when (h : notUntil A B) (hp : presupposition A B) : when_ A B :=
   hp.resolve_left h
 
-/-- For point events under the presupposition, *A not until B* and *A when B* are equivalent (39).
--/
+/-- For point events under the presupposition, *A not until B* and *A when B* are equivalent (39)
+((38)). -/
 theorem notUntil_iff_when_of_presupposition (a b : T)
     (hp : presupposition {NonemptyInterval.pure a} {NonemptyInterval.pure b}) :
     notUntil {NonemptyInterval.pure a} {NonemptyInterval.pure b} ↔

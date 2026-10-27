@@ -158,8 +158,7 @@ theorem smallClause_not_isLabeled :
       ¬ IsLabeled copular smallClause := by
   decide +kernel
 
-/-- (18): once *lightning* raises, its lower copy is invisible and *the* labels the small clause;
-the copula labels its merge with it. -/
+-- (18)
 theorem smallClause_isLabeledBy_of_raising :
     copularRaised.IsLabeledBy smallClause the ∧
       copularRaised.IsLabeledBy (be * smallClause : LinearizedSyntacticObject) be := by
@@ -191,17 +190,15 @@ def clause : LinearizedSyntacticObject := ea * (t * beta)
 /-- The clause with the internal argument raised over T instead, the external argument in situ. -/
 def objectRaised : LinearizedSyntacticObject := ia * (t * beta)
 
-/-- (17): `β` is two phrases, so it is unlabeled; T labels its merge with `β`, which establishes
-the C–T relation before the subject is merged. -/
+-- (17)
 theorem beta_not_isLabeled : ¬ IsLabeled tP beta ∧ tP.IsLabeledBy tP t := by
   decide +kernel
 
-/-- (17): once the external argument raises, `β` is labeled `v`: in this case the EPP is forced. -/
+-- (17)
 theorem beta_isLabeledBy_of_raising : clause.IsLabeledBy beta v := by
   decide +kernel
 
-/-- In (16), φ-agreement between the subject's determiner and T labels the clause, while a raised
-internal argument labels nothing. -/
+-- (16)
 theorem clause_isLabeledByFeature_phi :
     clause.IsLabeledByFeature (Agreed clause) clause .phi ∧
       ¬ IsLabeled objectRaised objectRaised := by
@@ -240,8 +237,7 @@ def thoughtAlpha : LinearizedSyntacticObject := thought * alpha
 /-- The wh-phrase moved on from `α`. -/
 def movedOn : LinearizedSyntacticObject := whichCity * (thought * alpha)
 
-/-- The declarative CP is labeled with the wh-phrase in situ (20) but not with the wh-phrase at its
-edge (21). -/
+-- (20), (21)
 theorem ex20_ex21 :
     (Examples.ex20.judgment = .acceptable ↔ IsLabeled thoughtInSitu cP) ∧
       (Examples.ex21.judgment = .acceptable ↔ IsLabeled thoughtAlpha alpha) := by
@@ -256,7 +252,7 @@ def alphaQ : LinearizedSyntacticObject := whichCity * (cQ * tP')
 /-- (22): *they wondered [α in which Texas city [β C [JFK was assassinated]]]*. -/
 def wonderedAlpha : LinearizedSyntacticObject := wondered * alphaQ
 
-/-- In (22), `α` is labeled by the interrogative feature on which its two heads agree. -/
+-- (22)
 theorem ex22 :
     wonderedAlpha.labels alphaQ = {inP, cQ} ∧
       wonderedAlpha.IsLabeledByFeature (Agreed wonderedAlpha) alphaQ .Q ∧

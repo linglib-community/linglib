@@ -20,15 +20,6 @@ sentences they pronounce, against Infl's probe search, and against the binding c
 template clause of a shape holds of every clause of that shape, since its derivations are the
 template's with the tokens renamed.
 
-## Main statements
-
-* `Collins2005.converges_iff`: in every clause only PartP movement lets Infl find the object (§5).
-* `Collins2005.commands_external_pp_iff`: the external argument commands a PP at the surface
-  exactly when the PP has left PartP (§7, §10).
-* `Collins2005.order_rows`: a passive is acceptable when a converging derivation pronounces it.
-* `Collins2005.licensing_rows`: the c-command and binding judgments of (10) and (60)–(91).
-* `Collins2005.fitsAt_rExpression_iff`: (76a) puts Principle C at the surface (§9.2).
-
 ## Implementation notes
 
 * Part and the host X of (58) are silent `Cat.Asp` heads, V-to-Part raising (8) is not modelled,
@@ -670,7 +661,7 @@ def Licensing.verdict (c : Licensing) : Verdict :=
   c.dependency.verdict c.clause c.derivation c.antecedent c.dependent
 
 /-- The [barss-lasnik-1986] tests (10), (60a), Principle A (72a), (74a), (91), the bound variable
-(75), Principle B (80a) and Principle C (76a), (85) follow from the position of the PP. -/
+(75), Principle B (80a) and Principle C (76a), (85) follow from the position of the PP ((60)). -/
 theorem licensing_rows :
     (∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.verdict.Admits row.judgment) ∧
       Datum.ReadCount Licensing.ofRow Examples.all 14 := by
@@ -706,7 +697,7 @@ theorem fitsAt_pronoun_iff (ℓ : Level) : FitsAt .pronoun ℓ ↔ ℓ = .anySta
 
 /-- The name rows fit Principle C exactly at the surface, (76a) excluding obligatory
 reconstruction, as the pronoun rows fit Principle B exactly at every stage
-(`fitsAt_pronoun_iff`) (§9). -/
+(`fitsAt_pronoun_iff`) (§9) (§9.2). -/
 theorem fitsAt_rExpression_iff (ℓ : Level) : FitsAt .rExpression ℓ ↔ ℓ = .surface := by
   cases ℓ
   · refine iff_of_true (fun row hrow c hc hd ↦ ?_) rfl

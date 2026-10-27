@@ -14,15 +14,6 @@ extensions of the embedding that keep the values it has already assigned (Defs. 
 the semantics `DRS.Verifies`, and a DRS is true when some embedding of its universe verifies it
 from the empty input (Def. 1.4.5, `DRS.IsTrue`).
 
-## Main statements
-
-* `ulysses_tc`: *Jones owns Ulysses. It fascinates him.* (1.1) is true of a single owning pair,
-  the pronoun equations adding no quantificational force.
-* `porsche_tc`, `porsche_referent_inaccessible`: *Jones does not own a Porsche.* (1.56) denies a
-  verifying extension, and the referent under the negation is inaccessible from the top level.
-* `donkey_universal_reading`, `donkeyPronoun_agree`: *If a farmer owns a donkey he beats it.*
-  (2.47) gets its universal reading from the verification clause for `⇒`, whether or not the
-  pronoun has a referent of its own.
 * `DRT.DRS.isProper_iff_forall_occurrence` (in `DRS/Accessibility.lean`): a DRS is proper iff
   every referent of an atomic condition is accessible where the condition occurs, the
   motivation for Def. 1.4.3 (p. 111).
@@ -134,8 +125,7 @@ theorem ulysses_tc :
       Set.mem_singleton_iff]
     tauto
 
-/-- The completed (1.1) DRS is proper (Def. 1.4.2–1.4.3), every referent its conditions use
-being introduced by the discourse itself. -/
+-- (1.1), Def. 1.4.2–1.4.3
 theorem ulysses_proper : ulyssesDiscourse.IsProper := by decide
 
 /-! ### Negation blocks anaphora: "Jones does not own a Porsche." (1.56) -/
@@ -189,13 +179,11 @@ theorem porsche_tc :
 theorem porsche_referent_inaccessible : ¬ DRS.Accessible porscheDiscourse 1 2 := by
   decide
 
-/-- Accessibility looks left and up, so from inside the negation the outer referent is
-accessible, the asymmetry of Def. 2.1.3. -/
+-- Def. 2.1.3
 theorem outer_referent_accessible : DRS.Accessible porscheDiscourse 2 1 := by
   decide
 
-/-- A continuation resolved to the trapped referent anyway is improper (Def. 1.4.2–1.4.3), since
-merging *It fascinates him* with *it* forced to `u₂` leaves `u₂` free. -/
+-- Def. 1.4.2–1.4.3
 theorem continuation_improper :
     ¬ (porscheDiscourse.merge (.mk ∅ [.atom ⟨.fascinates, ![2, 1]⟩])).IsProper := by
   decide
@@ -330,16 +318,14 @@ theorem donkeyPronoun_agree : donkeyPronoun.IsTrue M ↔ donkey.IsTrue M :=
 
 /-! ### Subordination and accessibility geometry -/
 
-/-- The antecedent box is directly subordinate to the donkey DRS (Def. 1.4.10 as
-extended by Def. 2.1.2). -/
+-- Def. 1.4.10, Def. 2.1.2
 theorem donkey_antecedent_subordinate : DirectlySubordinate donkeyAnte donkey :=
   .impAnte (c := donkeyCons) (by simp [donkey])
 
 theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkey :=
   .impCons (a := donkeyAnte) (by simp [donkey])
 
-/-- The antecedent is accessible to the consequent, so that its referents are accessible from the
-consequent's conditions (Def. 2.1.3(ii)(b)), the geometry that licenses the donkey anaphora. -/
+-- Def. 2.1.3
 theorem donkey_antecedent_accessible : AccessibleTo donkey donkeyAnte donkeyCons :=
   ⟨[donkeyCons, donkeyAnte, donkey], .single (.impCons (by simp [donkey])), by simp⟩
 
@@ -371,8 +357,7 @@ instance : krLang.Structure (Fin 2) where
     | 2, .beats => fun args ↦ args 0 = 0 ∧ args 1 = 1
     | _, _ => fun _ ↦ False
 
-/-- The donkey conditional is true in this model, whose only owning pair `(0, 1)` is a beating
-pair. -/
+-- (0, 1)
 theorem donkey_true_in_model : donkey.IsTrue (Fin 2) := by
   rw [donkey_universal_reading]
   rintro e₁ e₂ ⟨hf, hd, -⟩

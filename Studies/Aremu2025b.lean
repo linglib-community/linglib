@@ -23,15 +23,6 @@ focus itself, against an antisymmetric analysis that pied-pipes a phrase contain
 * `Aremu2025b.Answer.reflexes`, `Aremu2025b.Answer.Licensed`: its overt marking, and the
   conditions on fronting.
 
-## Main statements
-
-* `Aremu2025b.Answer.exactlyTargets_reflexes`: *rín* marks the fronted focus itself.
-* `Aremu2025b.not_perceptible`: a focus in place has no reflex.
-* `Aremu2025b.rin_last`, `Aremu2025b.ni_second`: *rín* ends the clause it marks, where *ni*
-  follows the fronted word.
-* `Aremu2025b.resumptive_mem`: a focused subject is resumed by the pronoun of its person.
-* `Aremu2025b.judgedFelicitous_iff`: the model predicts the judgment of every Ìkálẹ̀ row.
-
 ## Implementation notes
 
 Constituents are positions in the clause `[subject [verb object adjunct]]` with the containment

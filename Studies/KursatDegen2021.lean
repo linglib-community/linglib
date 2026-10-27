@@ -15,18 +15,6 @@ paper's production experiment, which shows a target, a competitor sharing the re
 with it, and two distractors sharing the sufficient property with the competitor, and reads the
 paper's findings off its printed statistics.
 
-## Main statements
-
-* `redundant_eq_sigmoid`: the probability of the redundant expression is a logistic function of
-  the informativeness the redundant adjective adds, less its extra cost.
-* `harder_property_less_redundant`: under the hypothesis, of two properties that trade the
-  sufficient and the redundant role the harder is mentioned redundantly less, at every positive
-  rationality and every cost. Material was found harder to verify than colour (`material_harder`)
-  and was mentioned redundantly less (`color_more_redundant`).
-* `harder_item_less_redundant`: under the hypothesis the same holds of two redundant properties
-  beside one sufficient property, the strong version of the hypothesis, for which the paper
-  found no evidence (`no_within_property_effect`).
-
 ## Implementation notes
 
 * The display is reduced to the roles of its two properties, so a colour-redundant trial and a

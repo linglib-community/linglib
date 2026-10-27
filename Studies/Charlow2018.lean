@@ -25,15 +25,6 @@ cites in section 5, whose type-homogeneous assignments avoid it: two composed re
 derive the paycheck reading with no flattener. The pronouns of Jacobson's variable-free
 semantics use the same applicative at the entity type.
 
-## Main results
-
-* `not_exists_abstraction_denotation`: under the standard rule no denotation of `Λᵢ` binds
-* `hamblin_seq`: Hamblin's pointwise application is the `<*>` of sets
-* `joinM_joinM`, `joinM_pure_seq_pure`: the monad laws in the paper's form
-* `paycheck`, `reconstruction`: the paycheck reading and binding reconstruction
-* `subsingleton_of_forall_store`: assignments storing every intension are trivial
-* `typed_paycheck`: the paycheck reading on type-homogeneous assignments
-
 ## Implementation notes
 
 `ρ`, `⊛` and `μ` are not defined here: they are `pure`, `<*>` and `joinM` of

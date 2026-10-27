@@ -89,8 +89,7 @@ abbrev sunCold : Set CropWorld := {.sunCold}
 /-- The bumper-crop worlds: the good-weather world. -/
 abbrev bumperCrop : Set CropWorld := {.goodWeather}
 
-/-- S* (Lewis disjunctive closure) is TRUE: the closest (goodWeather ∨ sunCold)-world is a
-    good-weather world. This is premise (3) of the critics' argument. -/
+-- (3)
 theorem bumperCrop_lewis_true :
     .actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim (goodWeather ∪ sunCold) bumperCrop := by
   rw [holds]; decide
@@ -100,8 +99,7 @@ theorem bumperCrop_conjunction_false :
        .actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim sunCold bumperCrop) := by
   rw [holds, holds]; decide
 
-/-- Lewis's disjunctive closure is true while the conjunction regimentation is false, so premise (2)
-fails. -/
+-- (2)
 theorem lewis_ne_conjunction :
     .actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim (goodWeather ∪ sunCold) bumperCrop ∧
     ¬ (.actual ∈ variablyStrictImp (fun _ ↦ .univ) cropSim goodWeather bumperCrop ∧

@@ -232,8 +232,7 @@ theorem mustHereOrThere_nontrivial : mustHereOrThere.Nontrivial := by
   simp only [mustHereOrThere, List.mem_cons, List.not_mem_nil, or_false] at hd
   rcases hd with rfl | rfl <;> exact Set.singleton_nonempty _
 
-/-- The disjunction holds and satisfies all three constraints, though *It must be here* does not
-follow from (27). -/
+-- (27)
 theorem not_must_here : ¬ (Set.univ : Set Loc) ⊆ {.here} :=
   fun h ↦ by simpa using h (Set.mem_univ Loc.there)
 
