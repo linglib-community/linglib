@@ -1,0 +1,177 @@
+[
+  {
+    "id": "landman1992_ex3",
+    "source": {
+      "bibkey": "landman-1992",
+      "paperLabel": "(3)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was drawing a circle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary started drawing a circle and was interrupted before she came even close to having drawn one.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "The drawing in (3) is not sufficient to make (4) true, because Mary may have been interrupted (p. 2).",
+    "verified": "page-image"
+  },
+  {
+    "id": "landman1992_ex4",
+    "source": {
+      "bibkey": "landman-1992",
+      "paperLabel": "(4)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary drew a circle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary started drawing a circle and was interrupted before she came even close to having drawn one.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "(3) does not entail (4) (p. 2).",
+    "verified": "page-image"
+  },
+  {
+    "id": "landman1992_ex13",
+    "source": {
+      "bibkey": "landman-1992",
+      "paperLabel": "(13)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was crossing the street, when the truck hit her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary was halfway across the street when a truck hit her; evaluated at the interval at which the truck is seconds away.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "(13) is true at this interval, though the truck is in all of Dowty's inertia worlds (p. 10).",
+    "verified": "page-image"
+  },
+  {
+    "id": "landman1992_ex17_sink",
+    "source": {
+      "bibkey": "landman-1992",
+      "paperLabel": "(17)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was crossing the Atlantic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary gets into the water in France; she is not a very good swimmer; she swims for an hour, and sinks.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "On this scenario, (17) is clearly false (p. 14).",
+    "verified": "page-image"
+  },
+  {
+    "id": "landman1992_ex17_miracle",
+    "source": {
+      "bibkey": "landman-1992",
+      "paperLabel": "(17)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was crossing the Atlantic.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary gets into the water in France; she is not a very good swimmer, but through divine intervention she actually manages to make it across the ocean. Asked after half an hour of swimming.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "Landman claims only that answering that she was in fact crossing the Atlantic is a natural, possible answer (pp. 14-15).",
+    "verified": "page-image"
+  },
+  {
+    "id": "landman1992_ex18",
+    "source": {
+      "bibkey": "landman-1992",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was crossing the street, when the first truck hit her.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A big and busy street with two trucks in two lanes: the first truck hits Mary, and the second drives one truck-length behind the first, so that if the first truck hadn't hit her, the second would have (19).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "Intuitively both (18) and (19) are true (p. 17).",
+    "verified": "page-image"
+  },
+  {
+    "id": "landman1992_ex20",
+    "source": {
+      "bibkey": "landman-1992",
+      "paperLabel": "(20)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was wiping out the Roman army.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary, a person of moderate physical capacities, is battling the Roman army. She manages to kill a couple of soldiers before she gets killed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "(20) is clearly false in this situation (p. 18).",
+    "verified": "page-image"
+  }
+]
