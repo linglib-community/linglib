@@ -61,7 +61,7 @@ theorem bi_reading_not_narrow {S E : Type*} (f : S → ChoiceFunction E) {s : S}
 the situation argument of *bí* (16a) coincide, so that the operator cannot shift it, as the
 explanation of (15) requires (p. 7). -/
 theorem bi_construals_collapse {S E : Type*} {O : (S → Prop) → S → Prop} {s₀ : S}
-    (hO : ModalLogic.IsExtensionalAt O s₀) (f : S → ChoiceFunction E) (P : S → E → Prop)
+    (hO : Montague.IsExtensionalAt O s₀) (f : S → ChoiceFunction E) (P : S → E → Prop)
     (VP : E → S → Prop) :
     smallScope O VP (fun s ↦ f s (P s)) s₀ = largeScope O VP (fun s ↦ f s (P s)) s₀ :=
   (hO.largeScope_eq_smallScope VP _).symm
@@ -70,6 +70,6 @@ example {S E : Type*} (f : S → ChoiceFunction E) (s₀ : S) (P : S → E → P
     (VP : E → S → Prop) :
     smallScope (fun p s ↦ ¬ p s) VP (fun s ↦ f s (P s)) s₀ =
       largeScope (fun p s ↦ ¬ p s) VP (fun s ↦ f s (P s)) s₀ :=
-  bi_construals_collapse ModalLogic.isExtensionalAt_not f P VP
+  bi_construals_collapse Montague.isExtensionalAt_not f P VP
 
 end Zimmermann2026

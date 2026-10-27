@@ -829,7 +829,6 @@ import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
 import Linglib.Logic.Modal.Epistemic
-import Linglib.Logic.Modal.Extensional
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.Kernel

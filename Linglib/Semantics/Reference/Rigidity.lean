@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Data.Set.Image
-public import Linglib.Logic.Modal.Extensional
+public import Linglib.Semantics.Composition.Extensional
 
 /-!
 # Rigid designation
@@ -40,7 +40,7 @@ operator when `f` is rigid, and for every designator when the operator is extens
 * `largeScope_eq_smallScope_of_dependsOn`: the scope readings coincide for a designator constant
   on the indices the operator reads.
 * `largeScope_eq_smallScope`: the scope readings coincide for a rigid designator.
-* `ModalLogic.IsExtensionalAt.largeScope_eq_smallScope`: the scope readings coincide under an
+* `Montague.IsExtensionalAt.largeScope_eq_smallScope`: the scope readings coincide under an
   extensional operator.
 
 ## References
@@ -115,8 +115,8 @@ theorem largeScope_eq_smallScope (h : IsRigid f) (O : (W → Prop) → W → Pro
   funext fun w ↦ largeScope_eq_smallScope_of_dependsOn (dependsOn_univ _) (fun v _ ↦ h v w) P
 
 /-- The two scope readings of every designator coincide under an operator extensional at `w`. -/
-theorem ModalLogic.IsExtensionalAt.largeScope_eq_smallScope {O : (W → Prop) → W → Prop} {w : W}
-    (h : ModalLogic.IsExtensionalAt O w) (P : τ → W → Prop) (f : W → τ) :
+theorem Montague.IsExtensionalAt.largeScope_eq_smallScope {O : (W → Prop) → W → Prop} {w : W}
+    (h : Montague.IsExtensionalAt O w) (P : τ → W → Prop) (f : W → τ) :
     largeScope O P f w = smallScope O P f w :=
-  largeScope_eq_smallScope_of_dependsOn (ModalLogic.isExtensionalAt_iff_dependsOn.1 h)
+  largeScope_eq_smallScope_of_dependsOn (Montague.isExtensionalAt_iff_dependsOn.1 h)
     (Set.eqOn_singleton.2 rfl) P

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Relation.SetRel
 public import Mathlib.Order.GaloisConnection.Basic
+public import Mathlib.Logic.Function.DependsOn
 
 /-!
 # Necessity and possibility in Kripke frames
@@ -20,7 +21,8 @@ Euclidean ones. Each axiom holds along a relation
 Possibility along a relation is
 [left adjoint to necessity along the converse relation](##diamond_box_gc), which gives the
 monotonicity and distribution laws, and necessity along a composite relation is
-[nested necessity](##box_comp). Some laws hold at a world exactly when the world has few
+[nested necessity](##box_comp). Necessity at a world depends on its argument
+[at exactly the worlds the world accesses](##dependsOn_box_iff). Some laws hold at a world exactly when the world has few
 successors. Excluded middle for necessity, $\Box p \lor \Box \neg p$ for every $p$, holds at a
 world [exactly when it accesses at most one world](##box_or_box_not_at_iff), and Negation Swap,
 $\Box \neg p \leftrightarrow \neg \Box p$, holds everywhere
@@ -99,6 +101,14 @@ theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w �
 
 theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
   forall_congr' fun v ↦ imp_congr_left (h v)
+
+/-- Necessity at `w` depends on its argument at a set of worlds exactly when the set contains every
+world `w` accesses. -/
+theorem dependsOn_box_iff {s : Set W} : DependsOn (□[R] · w) s ↔ {v | w ~[R] v} ⊆ s := by
+  refine ⟨fun h v hv ↦ by_contra fun hvs ↦ ?_, fun h p q hpq ↦
+    propext <| forall₂_congr fun v hv ↦ iff_of_eq (hpq v (h hv))⟩
+  have := @h (· ≠ v) (fun _ ↦ True) fun u hu ↦ eq_true (ne_of_mem_of_not_mem hu hvs)
+  exact this.mpr (fun _ _ ↦ trivial) v hv rfl
 
 end Operators
 

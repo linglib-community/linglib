@@ -27,14 +27,14 @@ connectives are extensional, and so are composites of extensional operators.
 In general the value of an operator at an index depends on its argument at some set of indices,
 and the operator is extensional there when that set can be taken to be the index alone. Necessity
 in a Kripke frame depends at a world on
-[exactly the worlds accessible from it](##dependsOn_box_iff), so it is
+[exactly the worlds accessible from it](##ModalLogic.dependsOn_box_iff), so it is
 [extensional only at a world that accesses no world but itself](##isExtensionalAt_box_iff).
 
 ## Main definitions
 
-* `ModalLogic.IsExtensionalAt O w`: the value of `O` at `w` depends only on the extension of its
+* `Montague.IsExtensionalAt O w`: the value of `O` at `w` depends only on the extension of its
   argument at `w`.
-* `ModalLogic.IsExtensional O`: `O` is extensional at every index.
+* `Montague.IsExtensional O`: `O` is extensional at every index.
 
 ## Implementation notes
 
@@ -52,7 +52,7 @@ adjective is extensional requires.
 
 @[expose] public section
 
-namespace ModalLogic
+namespace Montague
 
 open Function
 
@@ -102,19 +102,9 @@ theorem isExtensionalAt_iff_forall_diag :
     IsExtensionalAt O w ↔ ∀ g : W → W → α, O (fun v ↦ g v v) w = O (g w) w :=
   ⟨fun h _ ↦ h rfl, fun h ↦ isExtensionalAt_iff_forall_const.2 fun p ↦ h fun u _ ↦ p u⟩
 
-/-! ### The box -/
+/-! ### Necessity -/
 
-open SetRel in
-/-- The value of the box along `R` at `w` depends on a set of indices exactly when the set
-contains every `R`-successor of `w`. -/
-theorem dependsOn_box_iff {W' : Type*} {R : SetRel W' W} {w : W'} {s : Set W} :
-    DependsOn (□[R] · w) s ↔ {v | w ~[R] v} ⊆ s := by
-  refine ⟨fun h v hv ↦ by_contra fun hvs ↦ ?_, fun h p q hpq ↦
-    propext <| forall₂_congr fun v hv ↦ iff_of_eq (hpq v (h hv))⟩
-  have := @h (· ≠ v) (fun _ ↦ True) fun u hu ↦ eq_true (ne_of_mem_of_not_mem hu hvs)
-  exact this.mpr (fun _ _ ↦ trivial) v hv rfl
-
-open SetRel in
+open ModalLogic SetRel in
 theorem isExtensionalAt_box_iff {R : SetRel W W} :
     IsExtensionalAt □[R] w ↔ ∀ v, w ~[R] v → v = w := by
   rw [isExtensionalAt_iff_dependsOn, dependsOn_box_iff, Set.subset_singleton_iff]
@@ -159,4 +149,4 @@ theorem or {O O' : (W → α) → W → Prop} (h : IsExtensionalAt O w) (h' : Is
 
 end IsExtensionalAt
 
-end ModalLogic
+end Montague

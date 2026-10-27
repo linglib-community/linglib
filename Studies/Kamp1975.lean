@@ -5,7 +5,7 @@ public import Linglib.Logic.Trivalent.Basic
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Linglib.Logic.Modal.Extensional
+public import Linglib.Semantics.Composition.Extensional
 
 /-!
 # Kamp (1975): Two theories about adjectives
@@ -34,7 +34,7 @@ two agree. Before this, Kamp argues that no many-valued logic handles borderline
   every world, while the gloss after it and the claim that every predicative adjective is
   extensional need $F'$ to vary with the world. A predicative adjective whose property differs
   between worlds, such as `grayAdj`, satisfies (4) and the gloss but not (7) as printed. The
-  study reads (7) by its gloss, `ModalLogic.IsExtensional`.
+  study reads (7) by its gloss, `Montague.IsExtensional`.
 
 ## References
 
@@ -240,7 +240,7 @@ theorem gray_intersective : IsIntersective grayAdj :=
   ⟨fun w x ↦ w = .w₁ ∧ x = .a, fun _ ↦ rfl⟩
 
 /-- *gray* is therefore also extensional and subsective. -/
-example : ModalLogic.IsExtensional grayAdj :=
+example : Montague.IsExtensional grayAdj :=
   Modifier.IsIntersective.isExtensional gray_intersective
 example : IsSubsective grayAdj := gray_intersective.isSubsective
 
@@ -272,7 +272,7 @@ def skillfulAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
 theorem skillful_subsective : IsSubsective skillfulAdj :=
   fun _ _ _ h ↦ h.1
 
-theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
+theorem skillful_not_extensional : ¬ Montague.IsExtensional skillfulAdj := by
   intro hext
   let N₁ : W2 → E3 → Prop := fun _ _ ↦ True
   let N₂ : W2 → E3 → Prop := fun w x ↦ match w, x with
@@ -289,7 +289,7 @@ theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
 def allegedAdj : Modifier (W2 → E3 → Prop) := fun _N _ x ↦
   match x with | .a => True | _ => False
 
-theorem alleged_extensional : ModalLogic.IsExtensional allegedAdj :=
+theorem alleged_extensional : Montague.IsExtensional allegedAdj :=
   fun _ _ _ _ ↦ rfl
 
 /-- *alleged N* does not entail *N*. -/
