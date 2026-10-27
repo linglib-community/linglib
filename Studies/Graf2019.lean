@@ -123,17 +123,17 @@ attested are 1|2|3 (Jarawa, Kiowa), 1|23 (Damin), and 12|3 (Winnebago), an AAB s
 13|2 is missing, as monotonicity predicts. -/
 
 /-- Jarawa and Kiowa distinguish all three persons (1|2|3). -/
-def personJarawa : Paradigm 3 ℕ := ![0, 1, 2]
+def personJarawa : Paradigm 3 ℕ := Paradigm.abc
 
 /-- In Damin the second and third persons share a form (1|23). -/
-def personDamin : Paradigm 3 ℕ := ![0, 1, 1]
+def personDamin : Paradigm 3 ℕ := Paradigm.abb
 
 /-- In Winnebago the first and second persons share a form (12|3), an AAB shape. -/
-def personWinnebago : Paradigm 3 ℕ := ![0, 0, 1]
+def personWinnebago : Paradigm 3 ℕ := Paradigm.aab
 
 /-- The unattested partition 13|2 makes the first and third persons syncretic to the exclusion
 of the second. -/
-def personGap : Paradigm 3 ℕ := ![0, 1, 0]
+def personGap : Paradigm 3 ℕ := Paradigm.aba
 
 /-- The attested person partitions are feasibly monotonic over `1 > 2 > 3`. -/
 theorem person_attested_feasiblyMonotone :

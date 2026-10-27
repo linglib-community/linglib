@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.SubintervalProperty
+public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Algebra.Order.Interval.Basic
 public import Mathlib.Data.Part
 
@@ -70,8 +71,9 @@ variable {E α : Type*}
 /-- A verbal projection denotes a quantifier over events, as in [champollion-2015]. -/
 abbrev EvQuant (E : Type*) := (E → Prop) → Prop
 
-/-- `EvQuant.ofPred P` is the existential quantifier over the events of `P`, the shape of (5.37). -/
-def EvQuant.ofPred (P : E → Prop) : EvQuant E := fun f ↦ ∃ e, P e ∧ f e
+/-- `EvQuant.ofPred P` is the existential quantifier over the events of `P`, the determiner
+`some` restricted to `P`, the shape of (5.37). -/
+def EvQuant.ofPred (P : E → Prop) : EvQuant E := Quantifier.GQ.some P
 
 section Preorder
 
