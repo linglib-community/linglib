@@ -30,17 +30,6 @@ threshold are jointly permissible, two cats meet a force's standard consistently
 adopt at most one cat* exactly when the force is possibility, and the judgments of (8)–(10)
 follow from the readings the binders at each position give.
 
-## Main statements
-
-* `closure_covBy`: existential closure above the least degree only just escapes triviality.
-* `unselective_iff`: binding the degree in the restriction of a universal is local existential
-  closure, (63)–(65).
-* `consistent_iff`: two cats meet a force's standard consistently with the preamble of (8)–(10)
-  exactly when the force is possibility.
-* `cat_rows`, `reading_rows`: the judgments of (1), (2), (8)–(10), (61), (66) and (67).
-* `not_admits_contextual`: the scale has a least degree, so Interpretive Economy excludes the
-  relative standard of the positive morpheme (§7).
-
 ## Implementation notes
 
 The paper derives the oddness of (9) from agglomeration, `□p ∧ □q` implying `□(p ∧ q)` (p. 716).
@@ -248,7 +237,7 @@ theorem countingModel :
 
 /-- Two cats meet a force's standard consistently with the preamble, on a counting scale where
 propositions meeting the weak necessity threshold are jointly permissible, exactly when the
-force is possibility (p. 716). -/
+force is possibility (p. 716) ((8), (10)). -/
 theorem consistent_iff (f : ModalForce) :
     (∃ θ : ℕ, JointlyPermissible count θ ∧ AtMostOne count adoptCat ∧
       TwoMeet count adoptCat (ModalForce.standard θ θ f)) ↔ f = .possibility := by
@@ -301,7 +290,7 @@ theorem reading_rows :
 
 /-- The silent modal's scale has a least degree, impermissibility (p. 728), so Interpretive
 Economy admits no contextual standard on it: the relative standard of the positive morpheme is
-a counterexample, as *likely* is ([kennedy-2007], [lassiter-2017]). -/
+a counterexample, as *likely* is ([kennedy-2007], [lassiter-2017]) (§7). -/
 theorem not_admits_contextual {D : Type*} [LinearOrder D] [OrderBot D] :
     ¬ (Boundedness.ofOrder D).Admits .contextual :=
   Boundedness.not_admits_contextual_of_ne_open fun h ↦ by

@@ -26,16 +26,6 @@ over the whole lexicon.
 * `Binder`, `interps`, `Sluices`: the heads that leave an argument implicit, the
   interpretations they give an argument of each head, and whether it licenses sluicing.
 
-## Main results
-
-* `observed_firstObject`, `observed_of_ne_firstObject`: an implicit first object is definite,
-  any other implicit argument definite or indefinite.
-* `interps_eq_observed_iff`: these interpretations single out Appl as the head of the first
-  object and the verb as that of the others.
-* `sluiced_rows`: the sluicing judgments of (10) and (11) follow.
-* `objectDrop_secondObject`, `dropsInBothFrames`: a verb with an implicit transitive object has
-  no implicit second object, and no verb drops its direct object in both frames, except *write*.
-
 ## Implementation notes
 
 The fragment places an implicit argument where the construction it is understood in would
@@ -102,6 +92,7 @@ end Argument
 def observed (x : Argument) : Finset ImplicitInterp :=
   Finset.univ.filter fun a ↦ ∃ v ∈ verbs, v.Alternates (x.leaveImplicit a)
 
+/-- An implicit first object is definite, any other implicit argument definite or indefinite. -/
 theorem observed_firstObject : observed .firstObject = {.def} := by decide +kernel
 
 theorem observed_of_ne_firstObject {x : Argument} (hx : x ≠ .firstObject) :

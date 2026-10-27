@@ -36,12 +36,6 @@ an R-expression cannot corefer with a c-commanding pronoun at any distance.
 * `Chomsky1981.configuration`: c-command and the minimal clause on the noun phrases of a tree.
 * `Chomsky1981.Licit`, `Grammatical`, `CanCorefer`, `MustCorefer`.
 
-## Main results
-
-* `Chomsky1981.not_grammatical_of_not_locallyCommanded`: an anaphor with nothing in its clause
-  c-commanding it rules the tree out.
-* `Chomsky1981.permits_iff`: Principle C for a coindexed pair is Reinhart's restriction (10b).
-
 ## Implementation notes
 
 A one-word noun phrase is a terminal of category `NP`, and the positions are those terminals.

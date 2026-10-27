@@ -23,20 +23,6 @@ outranks both, so the full transitive returns when both arguments are first or s
 exception the paper argues no last-resort account of AF can make. Rerankings give the typology of
 Popti', Akatek and Ch'ol.
 
-## Main statements
-
-* `extractionTooClose_iff`: an extraction is too close exactly when the subject moves from Spec,TP
-  to the layer immediately above, read off the chain of the clause each derivation builds.
-* `rows_optimal`: every example is grammatical exactly when an optimal derivation realizes its
-  verb form.
-* `af_iff_immediately_preverbal`: with at most one participant argument, Kaqchikel AF is optimal
-  exactly when the subject moves to the layer immediately above TP.
-* `exists_optimal_agentFocus_iff`: the grammar derives the Kaqchikel fragment's Agent Focus
-  reflex for arguments of every person.
-* `lastResort_matches_iff`: the last-resort model of Coon, Mateo Pedro and Preminger, run on the
-  Kaqchikel examples, judges an example correctly exactly when its subject is not extracted past
-  an intervening layer and its arguments are not both participants.
-
 ## Implementation notes
 
 * A derivation builds the spine VP, vP, TP and the layers above TP, an adverb's projection after

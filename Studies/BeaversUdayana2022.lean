@@ -24,19 +24,6 @@ each voice form entails and from the weak implicit argument of *di-*.
   forms, what they entail, and the diagnostics they pass.
 * `RootClass.middles`: the middles that *ber-* and *ter-* spell for a class of root.
 
-## Main results
-
-* `converges_ber_iff`: *ber-* projects its agent exactly when the object incorporates.
-* `Form.entailsExternalCauser_iff`, `Form.entailsAgentSubject_iff`: the forms with an external
-  causer and the forms whose subject is the agent.
-* `passes_sendirinya_and_not_rationale_iff`: the anticausative alone passes *dengan sendiri=nya*
-  and fails the rationale clause.
-* `judgments`: a sentence is acceptable exactly when a form its word denotes passes its
-  diagnostic.
-* `denote_anticausative_iff_resolve`: *ter-* is Beavers and Zubair's existential resolution.
-* `compat_berParams_iff`, `berNonActive_params`: *ber-* is compatible exactly with the thematic
-  Voice heads, and its non-active head, unlike the passive, has no implicit agent.
-
 ## Implementation notes
 
 The event variable is closed off, and the disjointness that (39b) makes a presupposition of *di-*

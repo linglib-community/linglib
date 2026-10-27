@@ -39,18 +39,6 @@ run of voices moving the participants) are both read. The word determines the se
 * `Derivation`, `word`: a derivation and the word it builds.
 * `derivation`, `processes`, `initialOf`: a row's derivation, read off its segmentation.
 
-## Main results
-
-* `causativeChamorro_intransitive`, `reciprocalOf_np_fateOfRole`, `passiveAt_fateOfRole`,
-  `applicativeOf_isValencyIncreasing`: Baker's rules are the substrate's voices where the frames
-  meet.
-* `word_injective`: the morphological derivation determines the processes (§2.1).
-* `registered_agree_apply`, `registered_apply_agree`: (27), an agreement morpheme inside a
-  GF-rule morpheme references semantic and one outside it surface grammatical functions.
-* `applied_subject_needs_applicative_first`, `applied_subject_of_applicative_first`: an applied
-  argument becomes the subject only with the applied affix inside the passive affix (§4.2).
-* `rows_word`, `rows_agreement`, `rows_links`, `rows_subject`: the paper's examples.
-
 ## Implementation notes
 
 * A row's derivation is read off its segmentation: the prefixes from the root outward and then

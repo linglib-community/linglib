@@ -26,16 +26,6 @@ an ignorant speaker. Participants under cognitive load answered no to the ignora
 *some* more than twice as often as those without load, while the knowledgeable speaker's *some*
 showed only the usual small reduction.
 
-## Main statements
-
-* `competent_iff_looked`: the speaker is competent about *all* exactly when he looked into the
-  third box.
-* `competenceDefault_eq_contextual`: with integration the default is cancelled exactly where the
-  context contradicts it, so the two hypotheses agree.
-* `load_diverges`, `load_agrees_of_knowledgeable`: without integration the default yields the
-  strong implicature from the ignorant speaker and nothing new from the knowledgeable one.
-* `rows_expected`: the expected response in each trial type is the contextual-licensing answer.
-
 ## References
 
 * [bale-etal-2025]

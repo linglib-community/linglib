@@ -19,22 +19,6 @@ instead names the exception set, the least set whose subtraction makes the quant
 *no* their intersection. Free exceptives like *except for John* carry subtraction with
 restrictiveness only (`Exceptive.Restrictive`), which is why they also occur with *most*.
 
-## Main statements
-
-* `GuaranteesException`: a determiner guarantees an exception set when every false
-  quantification has one. *Every* and *no* guarantee one, *some* never has one, and *most* has
-  none in the paper's five-student situation though it has one in a two-student limiting case;
-  the paper reads the co-occurrence restriction as a grammaticization of this contrast.
-* `not_isExceptionSet_of_lt`, `eq_of_isExceptionSet_ident`: the unique least exception blocks
-  the enlargement inference and the conjunction of two *but*-phrases.
-* `not_exists_nounModifier`: no operation on the restrictor alone yields the *but*-phrase's
-  truth conditions.
-* `isExceptionSet_every_of_restrictive`: with a universal determiner the free exceptive
-  pragmatically strengthens to the *but* reading.
-* `but_predicted`, `exceptFor_predicted`: the paper's exceptive examples, read through the
-  English fragment's determiner denotations, are judged acceptable exactly as the two
-  semantics predict.
-
 ## Implementation notes
 
 * Restrictor, scope and exception set are predicates ordered pointwise, so the truth

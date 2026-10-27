@@ -20,16 +20,6 @@ final 's leaves its phrase without a φ of its own, a medial one does not. With 
 unranked against Align-R(XP, φ) the medial position varies and the final one does not, a line
 that exact Match cannot draw.
 
-## Main results
-
-* `forms_phraseFinal`, `language_michelleCan`: HEADEDNESS and MAX-XP over DEP-ω give a stranded
-  function word its strong form, in a φ of its own, with no constraint that a φ end in a prosodic
-  word, (18), (21), (25).
-* `language_kimIsLeaving`, `language_kimIs`: the two English rankings of (41) and (42).
-* `matchTheory_enclitic_final_of_medial`: under every ranking of standard Match Theory a medial
-  enclitic winning makes a final one win, (43)–(46), which correspondence escapes
-  (`correspondence_not_enclitic_final_of_medial`).
-
 ## Implementation notes
 
 * A φ or ω corresponds to a phrase or lexical word when it contains its head and no foreign head

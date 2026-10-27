@@ -16,17 +16,6 @@ demonstrative is a contrastive topic whose alternatives are disjoint, (28), so i
 a preceding sentence that answers a sister subquestion; with CATS, a *now* sentence cannot
 precede the preceding sentence. These give the positional generalization (45).
 
-## Main results
-
-* `AnandToosarvandani2019.not_restricted_now_past`: *now* is incompatible with PAST.
-* `AnandToosarvandani2019.not_precedes_of_cats`: under CATS a reference within an assessment time
-  before the utterance cannot precede the most recent eventuality, so *now* does not backshift.
-* `AnandToosarvandani2019.eq_of_cats_of_presup_then`: final *then* places the assessment time at
-  the utterance time (41).
-* `AnandToosarvandani2019.admits_iff`: the account derives the positional generalization (45).
-* `AnandToosarvandani2019.accepted_iff_admits`: a reading of an example is accepted exactly when
-  the account admits it.
-
 ## Implementation notes
 
 The contexts enter only through their times; `τ₀` is the time of the preceding sentence, the top

@@ -12,15 +12,6 @@ informative about that feature's value (eqs. 1 and 2), and the pragmatic listene
 the goal. *John is a shark* can then convey scariness to a listener who does not believe John a
 shark.
 
-## Main results
-
-* `KaoBergenEtAl2014.nonliteral`: a person with some value of the goal's feature is a possible
-  meaning of the animal's name whenever some animal of positive prior shares the value.
-* `KaoBergenEtAl2014.category_odds`: a goal ignores the category, so the listener's posterior
-  odds between the animal and the person at a feature vector are their prior odds.
-* `KaoBergenEtAl2014.speaker_odds`, `KaoBergenEtAl2014.names_animal_iff`: the speaker names the
-  animal rather than the person exactly when the feature's value is likelier under the animal.
-
 ## Implementation notes
 
 * Priors are arguments. The category prior and the feature priors of Experiment 1b enter as one

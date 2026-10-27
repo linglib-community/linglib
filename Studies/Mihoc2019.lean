@@ -25,18 +25,6 @@ possibly partial for the comparative ones, which may prune. Under negation that 
 is vacuous, so the superlative numerals, which require their exhaustification to strengthen the
 prejacent, are deviant there.
 
-## Main statements
-
-* `Mihoc2019.Form.tc_iff_rel`: each form's truth conditions compare the maximum with the
-  numeral, strictly for the comparative operator and non-strictly for the superlative one.
-* `Mihoc2019.Ignorance.domainImplicatures_iff`: the implicatures from the subdomain alternatives
-  of one size hold exactly when the number of values the speaker considers possible is not that
-  size.
-* `Mihoc2019.Ignorance.forall_domainImplicatures_iff`: keeping every subdomain alternative
-  yields total ignorance.
-* `Mihoc2019.AntiNegativity.not_negExh_lt`: under negation the subdomain exhaustification does
-  not strengthen the prejacent.
-
 ## Implementation notes
 
 * The maximum of the counted degrees is abstracted to its value, so a truth condition is a

@@ -29,18 +29,11 @@ marking — the zone whose constraints strictly dominate \*STRUC_C. The paper's
 optional zones (constraints that rerank with \*STRUC_C, stochastically in
 Boersma's sense) are noted in docstrings but not represented.
 
-## Main results
-
-- `dom_fits`, `dom_obligatory_zone_upperSet` — the paper's (33b): every attested
-  system fits Figure 4's product prominence order (`Alignment.Fits`), its
-  obligatory zone an upper set.
 - `figure2_typology` / `figure2_languages` — the six interpolation points on
   the definiteness subhierarchy generate exactly the six cutoff systems,
   matched type-for-type to Kalkatungu, Catalan, Pitjantjatjara, Hebrew,
   Turkish, and Written Japanese.
 - `figure3_typology` / `figure3_languages` — likewise for the animacy scale.
-- `two_dimensional_systems` — Hindi and both stages of Spanish need both
-  scales.
 
 ## References
 

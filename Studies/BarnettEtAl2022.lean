@@ -27,17 +27,6 @@ bias grows the speaker shows the longest stick, the listener's belief tends to t
 of *longer* given that the longest stick has the length shown, and the sticks of length five to
 seven backfire while the longer ones do not.
 
-## Main results
-
-* `pragmaticListener_real_le_literal`: the pragmatic listener discounts every stick.
-* `pragmaticListener_real_mono`: the belief in *longer* grows with the stick shown.
-* `backfires_zero`, `ordConnected_backfires`: the backfiring sticks form an interval, empty
-  without a persuasive goal.
-* `tendsto_speaker_real_singleton_atTop`, `tendsto_pragmaticListener_real_atTop`: as the bias
-  grows the speaker shows the longest stick and the listener conditions on it being the longest.
-* `eventually_backfires_eq`: for a strongly biased speaker the backfiring sticks are those of
-  length five to seven.
-
 ## Implementation notes
 
 * As in the authors' code, the sticks are independent and uniform, an average of exactly five
@@ -398,6 +387,7 @@ def backfires (β : ℝ) : Set (Fin 9) :=
   {u | (uniformOn Set.univ).real (longer n) < literal n u ∧
     (pragmaticListener n β u).real (longer n) < (uniformOn Set.univ).real (longer n)}
 
+/-- The backfiring sticks form an interval, empty without a persuasive goal. -/
 theorem backfires_zero : backfires n 0 = ∅ :=
   Set.eq_empty_of_forall_notMem fun u ⟨h₁, h₂⟩ ↦ by
     rw [pragmaticListener_zero] at h₂

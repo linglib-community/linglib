@@ -18,20 +18,6 @@ independence, build the stream and compute its surprisal, and derive the paper's
 the toy languages of Tables 4 to 6 from it. The corpus studies rest on estimated language models
 and a neural learner, and are not formalized.
 
-## Main statements
-
-* `condEntropy_le_condEntropy_fused`, `VoiceTense.condEntropy_fused_lt`: fusing a first feature
-  with a second leaves the third its entropy given the second when the first is independent of
-  the other two jointly, and can fail to when it is independent of each separately.
-* `pastCondEntropy_char_of_le`: once the context spans a word, a stream whose characters reveal
-  their position has the entropy of a word per character.
-* `VoiceTense.pastCondEntropy_fus_lt_agg_zero_iff`,
-  `VoiceAspectTense.pastCondEntropy_agg_lt_fuseLow_one_iff`: fusing dependent features lowers
-  the surprisal without context, and fusing independent features raises it given one character.
-* `VoiceTense.pastCondEntropy_nonclustered_zero`, `VoiceTense.pastCondEntropy_tagged_agg_one_lt`:
-  category clustering leaves the surprisal without context unchanged and lowers it given one
-  character.
-
 ## Implementation notes
 
 * Entropies are in nats. Feature values are `Bool`s, with `false` for active, present and

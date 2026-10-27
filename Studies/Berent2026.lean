@@ -30,19 +30,6 @@ constituents, spoken or signed.
 * `onsetRise`: the sonority rise across a two-consonant onset of feature-specified segments.
 * `InitialIdentity`: a consonantal root begins with two identical consonants.
 
-## Main results
-
-* `sonority_cline`: the onsets of blif, bnif, bdif and lbif are a large rise, a small rise,
-  a plateau and a fall.
-* `onsetRise_congr`, `onsetRise_setFeature_left`: the rise is unchanged by any difference
-  outside `Sonority.features`, and the labial onsets of plik, pnik and ptik pattern with
-  those of blif, bnif and bdif.
-* `initialIdentity_map`, `optimal_morphology_map`: the root restriction and the preference
-  for reduplication give the same verdict on a form and on its image under an injective
-  relabelling.
-* `amodal_doubling_reversal`: the doubling reversal holds for any type of constituents and
-  either ranking of the OCP and DEP.
-
 ## Implementation notes
 
 The paper states the syllable hierarchy without a constraint set, deferring the formal

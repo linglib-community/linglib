@@ -13,17 +13,6 @@ chapter: the twenty-five consonantal phonemes, the obstruents paired in [voice],
 the second palatalization of velars, and the reading of the spelling on the words the chapter
 prints, against its phonemic transcription where it gives one.
 
-## Main results
-
-* `card_consonants`: the twenty-five consonantal phonemes.
-* `voiced_mem_iff`, `devoiced_mem_iff`: the obstruents paired in [voice], all but *c*, *č*,
-  *ch* and *h*.
-* `secondPalatalization_mem`, `secondPalatalization_g`: the reflexes of the second
-  palatalization are coronal stridents with the voicing of their sources, and that of *g* is
-  that of *k* voiced and de-affricated.
-* `ofString?_eq_segments`: the spelling reads as the chapter's transcriptions, save that of
-  *oběd*, which has the final devoicing the reading leaves out (`ofString?_obed`).
-
 ## References
 
 * [short-1993-czech]
@@ -97,6 +86,8 @@ theorem secondPalatalization_g :
 /-! ### Spelling -/
 
 -- p. 459
+/-- The spelling reads as the chapter's transcriptions, save that of *oběd*, which has the final
+devoicing the reading leaves out (`ofString?_obed`). -/
 theorem ofString?_eq_segments : ∀ w ∈ [pena, veno, harfe, mesto],
     ofString? w.form = (w.segments.mapM ofString?).map List.flatten := by
   decide +kernel

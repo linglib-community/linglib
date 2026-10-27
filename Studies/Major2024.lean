@@ -25,18 +25,6 @@ matrix verb has no `v` above it and calls for a dependent case rule. With 'say' 
 there is a `v`, and the dependent rule and Agree then value the same cases, while with a
 complementizer each goes wrong on the Uyghur examples.
 
-## Main results
-
-* `subcategorization`: a verb needs the complement its frames give it, finite or under the
-  converb suffix alike, so *de-* keeps its obligatory complement inside a *dep* clause.
-* `not_takes_ip`, `factive_denial`: no verb takes a converb clause, and denying a clause is
-  contradictory exactly when a factive verb takes it.
-* `case_below_v`: under either modality an object, or the subject below 'say', is accusative
-  exactly where a θ-assigning `v` bears the feature that attracts it.
-* `complementizer_agree`, `complementizer_dependent`: with *dep* a complementizer, Agree leaves
-  the raised subject caseless beside an unaccusative matrix verb, and the dependent rule values
-  it accusative beside an inanimate matrix subject, where it cannot be.
-
 ## Implementation notes
 
 * The feature `[+ACC/SPEC]` of `v` is one Boolean, which makes `v` a probe and shifts its goal

@@ -13,16 +13,6 @@ its referent exists throughout its own local context under a consistent assignme
 commitments. This file runs the fragment of the paper's Appendix C on its four-world model of
 the bathroom discourses.
 
-## Main statements
-
-* `veridicalIndiv_of_accessible`, `counterfactual_blocks_veridical`: an accessible anaphor in a
-  veridical context has a veridical antecedent, and a counterfactual antecedent admits no
-  veridical anaphor.
-* `veridical_run`, `doubleNeg_run`, `bathDisj_run`, `disagree_run`: the discourses of Figures 6,
-  8, 9 and 10 are outputs of the fragment, with their pronouns accessible.
-* `negated_run`, `counterfactual_veridical_impossible`: a negated antecedent (Figure 7) makes its
-  referent counterfactual, and no consistent extension admits a veridical continuation.
-
 ## Implementation notes
 
 * The operators of the fragment are CDRT's: a DRS `[δ | C]` is `box {δ} C` and
@@ -398,6 +388,8 @@ def j₇ : State World Ent :=
   (((init {w_u, w_0}).updateProp φ₁ {w_u, w_0}).updateProp φ₂ {w_bu, w_b}).updateIndiv υ
     bathroomRef
 
+/-- A negated antecedent (Figure 7) makes its referent counterfactual, and no consistent extension
+admits a veridical continuation. -/
 theorem negated_run : init {w_u, w_0} ~[negated] j₇ := by
   refine ⟨(init {w_u, w_0}).updateProp φ₁ {w_u, w_0}, updateProp_mem_box _ _ ?_, ?_⟩
   · intro w hw

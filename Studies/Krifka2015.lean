@@ -23,21 +23,6 @@ rejection, which returns to the space before the question. This is the bias of a
 matching question tag conjoins an assertion with the monopolar question of the same content, and
 a reverse tag disjoins it with the monopolar question of the negation.
 
-## Main statements
-
-* `not_coherent_committed_compl`, `not_coherent_committed_committed_compl`: committing to `φ`
-  while refusing to is incoherent, and so is committing to `φ` and to `¬φ`, which the paper
-  stipulates and which follow here from commitments being propositions and consistent.
-* `not_admits_monopolarQuestion_no`, `admits_bipolarQuestion_no`: *no* needs a prior rejection
-  after a monopolar question and none after a bipolar one.
-* `root_highNegationQuestion_update_no`, `not_admits_highNegationQuestion_yes`: after a question
-  with high negation *no* is admitted and keeps the refusal, while *yes* needs a rejection.
-* `root_reject_matchingTag_no`, `committed_speaker_mem_root_assert_assert`: rejecting an
-  assertion with a matching tag removes the speaker's commitment, which a plain assertion keeps
-  when the addressee contradicts it.
-* `sInter_root_assert_raining`, `sInter_root_update_assert_raining`: an assertion adds the
-  speaker's commitment to `φ` but not `φ`, which enters only with the second update (19).
-
 ## Implementation notes
 
 * A commitment `S⊢φ` is the proposition `Commitment.committed O S φ` over an accessibility for

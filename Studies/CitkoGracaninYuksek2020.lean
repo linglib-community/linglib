@@ -22,13 +22,6 @@ complementizer would elide both TPs, and the second ellipsis would silence nothi
 economy bans, as Fox's Scope Economy bans vacuous scope shifting
 (`Minimalist.PronunciationEconomy`).
 
-## Main statements
-
-* `csFromCWH_vacuous`: a coordinated sluice cannot have the structure of a coordinated
-  wh-question, whose shared [E] complementizer would elide its second TP vacuously.
-* `cs_pronunciationEconomy`, `cs_itReading`: in the biclausal sluice each ellipsis silences a string
-  of its own, and the E-type pronoun gives the it reading.
-
 ## Implementation notes
 
 * A structure is a linearized syntactic object spelled out by `Linearization/Spellout.lean`: a token

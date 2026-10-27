@@ -35,12 +35,6 @@ condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_of_total`
 * `Lewis1981.premiseOrder`: the ordering a premise frame induces.
 * `Lewis1981.ofOrdering`: the premise frame an ordering frame induces.
 
-## Main results
-
-* `Lewis1981.premiseImp_eq_orderingImp`: a premise frame and the ordering frame it induces
-  evaluate every counterfactual alike.
-* `Lewis1981.orderingImp_eq_premiseImp`: every ordering frame is induced by a premise frame.
-
 ## Implementation notes
 
 * Lewis's orderings are strict partial orders of their fields; the library's are preorders on all

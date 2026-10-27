@@ -21,16 +21,6 @@ universal degrees compare as measurements do. A for-clause restricts the compari
 men and drops the measurements, so Seymour, short and very wide, is taller than he is wide but
 not taller for a man than he is wide for a man.
 
-## Main statements
-
-* `indirect_comparison`: Betty is more beautiful than Heather is intelligent, but not more
-  intelligent than Evelin is beautiful.
-* `direct_comparison`: with the measurements up to a common bound in the comparison class,
-  comparing universal degrees is comparing measurements.
-* `for_a_man`: under the same quasi-orders, Seymour is taller than he is wide but not taller for
-  a man than he is wide for a man.
-* `rows_truth`: the sentences the paper evaluates take the truth values it reports.
-
 ## Implementation notes
 
 * Universal degrees are `Degree.universalDegree`: an adjective's quasi-order is given by a

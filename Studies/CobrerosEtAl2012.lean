@@ -42,25 +42,14 @@ borderline however he is classified.
 * `series`: the sorites series of §3.4.1 and §3.6, whose instances are the four-element model
   of p. 354 and the five-men model of §4.2.3.
 
-## Main results
-
 * `TModel.realize_mono` (Lemma 1), `isDual` (Remark 1), `tolerance_valid` (Fact 2),
   `st_two_step` (Fact 3).
-* `TModel.Borderline.exists_ne`: a model with a borderline case has two (footnote 4);
-  `TModel.eq_tolerant_of_realize_conj_neg`: a contradiction can only be tolerantly true.
 * `valid_tolerant_iff`, `unsat_strict_iff` (Theorem 1); `not_valid_strict`,
   `exists_realize_tolerant` (Theorem 2); `consequence_tolerant_iff_lp`,
   `consequence_strict_iff_k3` (Theorem 3).
 * `consequence_iff_dual` (Lemma 6), `Consequence.mono` (Lemma 7), `Consequence.restricted_iff`
   (Lemma 8), `not_consequence_tolerant_strict` (Lemma 9), `Consequence.iff_valid_imp`,
   `deductionTheorem_iff`, `Consequence.iff_valid_imp_of_restricted` (Lemma 10).
-* `not_cc_one_step`, `not_valid_classical_tolerance`, `not_sc_two_step`, `not_ct_two_step`:
-  the §3.4 distinctness of `cc`, `sc`, `ct` and `st`, on the four-element model.
-* `stdRefl_consequence_iff`, `Consequence.cut`, `isTrans_consequence_iff`: reflexivity and
-  transitivity of the nine relations (§§3.3.2, 3.4.1).
-* `not_st_version1`, `st_version2`, `not_series_realize_strict_tolerance`: the sorites of
-  §3.6.
-* `alxatibPelletier_median_borderline`: the five-men model of §4.2.3.
 
 ## Implementation notes
 

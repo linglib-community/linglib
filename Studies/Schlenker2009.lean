@@ -23,30 +23,6 @@ paper's language after its Appendix C, its quantified clauses, the belief report
 section, and the comparison with supervaluations and Strong Kleene logic in the appendix of
 Schlenker's 2008 manuscript, which the published appendix shortens.
 
-## Main statements
-
-* `isLocalContext_incremental`: the incremental local context of every position is Karttunen's,
-  the global context except in a second argument, which takes the context updated with the first
-  argument, or with its negation in a disjunction.
-* `satisfaction_iff_transparency`, `satisfaction_incremental_iff_admits`: satisfaction in the
-  local context is Transparency on either version, and on the incremental one it is admittance by
-  Heim's context change potentials with Beaver's disjunction.
-* `isLocalContext_believe`, `satisfied_believe_iff_admits`: the local context of the complement of
-  *believe* pairs each world of the context with the worlds compatible with the agent's beliefs
-  there, and it entails a presupposition iff the context admits the report under Heim's belief
-  rule.
-* `strongKleeneAcceptable_iff_supervaluationAcceptable_incremental`,
-  `Transparency.strongKleeneAcceptable`,
-  `transparency_symmetric_not_strongKleeneAcceptable_not_supervaluationAcceptable`: on the
-  incremental version Strong Kleene and supervaluation acceptability coincide and follow from
-  Transparency, and on the symmetric version Transparency accepts a sentence that both reject.
-* `transparent_scope_iff_universal`, `not_exists_isLocalContext_infinitelyMany`,
-  `transparentAt_not_transparent_no`: in a quantified sentence Transparency gives universal
-  projection under Non-Triviality, the scope of *infinitely many* has no local context, and with
-  *no* Strong Kleene accepts a sentence that Transparency rejects.
-* `QuantifiedClause.strongKleeneAcceptable_trigger_iff`: a clause with a final trigger is Kleene
-  acceptable iff the trigger is transparent at its assertion.
-
 ## Implementation notes
 
 * The gap's denotation ranges over all propositions, where the paper quantifies over the

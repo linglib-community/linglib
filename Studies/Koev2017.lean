@@ -21,12 +21,6 @@ modal weakening, against Izvorski.
 * `spatiotemporallyDistant`: the distance condition.
 * `LearningScenario.toEvidentialProp`: the evidential sentence as a trivalent proposition.
 
-## Main results
-
-* `direct_not_distant`: direct witness is not distant.
-* `smoke_no_tense_ordering`: the distance condition holds with simultaneous events.
-* `projection_past_negation`: negation preserves the evidential presupposition.
-
 ## Implementation notes
 
 * Events carry no location, so the distance predicate takes a location function as a

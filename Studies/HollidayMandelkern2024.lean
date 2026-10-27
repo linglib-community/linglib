@@ -18,22 +18,6 @@ truth-value table follows by decision. On this model Wittgenstein sentences are 
 while `◇¬p` does not entail `¬p`, and the classical laws the paper gives up fail at the point of
 full uncertainty.
 
-## Main results
-
-* `compat_iff`, `access_iff`: the compatibility and accessibility relations of the Scale.
-* `wittgenstein`, `diamond_neg_not_entail_neg`, `not_entail_box`: Wittgenstein sentences are
-  contradictions, yet `◇¬p` does not entail `¬p` and `p` does not entail `□p`.
-* `not_derivable_dia_neg_neg`, `not_derivable_box`: so neither entailment is derivable in the
-  epistemic orthologic EO.
-* `distributivity_fails`, `disjunctive_syllogism_fails`: the classical inferences of (10) and
-  (13) fail at the point of full uncertainty.
-* `orthomodularity_fails`, `not_isModularLattice`, `pseudocomplementation_fails`: the regular
-  propositions form an ortholattice that is not orthomodular, not modular, and whose
-  orthonegation is not a pseudocomplement.
-* `deMorgan`, `not_known_either`: the contrasts with state-based semantics.
-* `stratified_level1`, `not_stratified_across_levels`: classicality within each level of
-  modal iteration, but not across levels.
-
 ## Implementation notes
 
 The Boolean algebra is `Finset (Fin 2)`, so every claim about the Scale is decidable; the

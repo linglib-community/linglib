@@ -31,15 +31,6 @@ survives.
 * `eTIA`: the E-TIA property.
 * `gTIA`: the G-TIA property.
 
-## Main results
-
-* `IsTimeMeasure.exists_Ioc_eq_of_ge`, `IsTimeMeasure.exists_Ioc_eq_of_le`: (13), and the
-  surjectivity of a measure onto the positive numbers.
-* `not_isMIPLicensed_eTIA`: an atelic VP does not license an E-TIA.
-* `not_isMIPLicensed_gTIA`: a positive G-TIA is not licensed over dense time.
-* `isMIPLicensed_gTIANeg`: a negated G-TIA is licensed.
-* `table1_survivor`: the one reading of Table 1 that survives.
-
 ## Implementation notes
 
 * A measure of time is an `AddContent` on the half-open spans `Set.Ioc a b` of a linearly ordered

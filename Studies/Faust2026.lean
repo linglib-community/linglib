@@ -18,15 +18,6 @@ and the feminine morph, inherent inflection on n, merges only with a nominal bas
 the distribution of the intruding [t] across the Amharic paradigms, which Broselow's default
 consonant left unexplained, and the No-Crossing Constraint keeps it out of the hollow verbs.
 
-## Main statements
-
-* `klj_spread_misaligned`: spreading the final consonant of √klj would misalign the root, so
-  the final slot stays vacant.
-* `isNonCrossing_melodyLinks_intrude`: the intruder's line crosses no root line.
-* `rows_surface`: the derivations reproduce the squib's paradigms.
-* `intruder_distribution`: the intruder occurs exactly in the nominal cells of the roots whose
-  final radical is barred.
-
 ## Implementation notes
 
 * The derivations run over the squib's transcription. `fragment_roots` shows that its roots,

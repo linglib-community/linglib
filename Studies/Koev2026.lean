@@ -18,15 +18,6 @@ tentative pieces of further evidence, comparison classes, the antonym *doubt* an
 modifiers, pattern it with maximum-standard adjectives. This file checks the paper's judgments
 against the fragment's *believe* and *doubt*.
 
-## Main statements
-
-* `fitsModifierRows_iff`: the modifier judgments fit the upper closed scale and no other.
-* `fitsModifierRowsPos_iff`: read off the positive form, they fix the maximum standard.
-* `weakBelieve_fitsModifierRows`: read off the scale, they leave the weak semantics open.
-* `gradability_weakBelieve`: the weak semantics gives *believe* the degree semantics of *confident*.
-* `furtherEvidence_iff`: the rows of §3 make *believe* and *doubt* complementary.
-* `holdsAt_hintikka_iff`: maximal credence is Hintikka's *believe* over the credence's support.
-
 ## Implementation notes
 
 Rows name predicates by form, looked up as a `Degree.Gradability` among the fragment's adjectives

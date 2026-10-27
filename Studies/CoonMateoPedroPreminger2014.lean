@@ -37,18 +37,6 @@ status suffix; it frees the subject, licenses non-finite transitives (the Crazy 
 and as a last resort fails with reflexive and bare objects, which need no Case and let the
 subject of a regular transitive extract.
 
-## Main statements
-
-* `tada`: a registered language marks the extraction of a core argument from a finite transitive
-  exactly when the regular derivation fails, which for the subject is when the absolutive is
-  high.
-* `converges_iff_verbForm`: in Q'anjob'al the derivation that converges uses the verb form the
-  fragment records, Agent Focus in every non-finite transitive and under extraction of a
-  third-person subject.
-* `formallyTransitive_iff_hasSetA`, `formallyTransitive_iff_statusSuffix`: Agent Focus selects
-  intransitive v, so it has no Set A and takes the intransitive status suffix.
-* `analysed_rows`: every analysed example is grammatical exactly when its clause converges.
-
 ## Implementation notes
 
 * The paper's v sits above the substrate's Voice head and is formally transitive when Voice

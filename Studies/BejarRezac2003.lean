@@ -23,14 +23,6 @@ risen above the dative, as in French and Spanish but not in Icelandic.
 * `BejarRezac2003.Head.derive`: the derivation of a head's domain.
 * `BejarRezac2003.PLC`: the Person Licensing Condition.
 
-## Main results
-
-* `BejarRezac2003.applicative_derive`: a dative is what its own preposition's derivation yields.
-* `BejarRezac2003.doc_plc_iff`: the constraint in a double object construction.
-* `BejarRezac2003.pp_plc`: the prepositional construction escapes it.
-* `BejarRezac2003.dnc_plc_iff`: a dative–nominative construction obeys it iff the dative satisfies
-  the EPP and the nominative's φ-features stay below it.
-
 ## Implementation notes
 
 The number probe values Case after the projection's person probe has searched, where the paper

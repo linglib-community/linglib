@@ -39,12 +39,6 @@ correlative are postpositive, §1.3 and §2.1. The file also classifies the corr
 their forms and states Payne's implicational sequence of coordinand types, §3, with the
 counterexample from Tinrin the chapter records.
 
-## Main statements
-
-* `coAB_unsourced`: no harmonic source yields co-A B.
-* `emphatic_iff_correlative`: the emphatic constructions are the correlative ones.
-* `normal_bisyndetic_postpositive`: normal bisyndesis is postpositive.
-
 ## Implementation notes
 
 * A binary pattern (17) is a `Coordinator.Pattern`, the side of each coordinand's coordinator,

@@ -19,18 +19,6 @@ which fits neither of the paper's hypotheses for that task. The paper suggests t
 is prejudicial there, blaming the speaker, though it then expects every condition to be judged
 more charitably, which it does not find.
 
-## Main statements
-
-* `ground_profile_subset_iff`: the traits each persona is introduced with index poles of
-  exactly the precision variant it embodies, in the field [beltrama-solt-burnett-2023] measured.
-* `Hypothesis1.rejects`, `rejects_imprecise_iff`: Hypothesis 1 as monotonicity of rejection in
-  strictness; the Imprecise screen is rejected at the paper's narrow range and accepted at its
-  wide one.
-* `observed_coveredScreen`, `not_hypothesis2A`, `not_hypothesis2B`: the Covered Screen results
-  bear out Hypothesis 1, and the Truth Value Judgment results fit neither Hypothesis 2A nor 2B.
-* `PrejudicialAccount.not_agrees`: no table of rejection rates that agrees with the printed
-  results satisfies the account of §7.
-
 ## Implementation notes
 
 * The precision field is the opposition reading of [beltrama-solt-burnett-2023], precise and

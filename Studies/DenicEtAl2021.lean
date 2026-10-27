@@ -22,17 +22,6 @@ built from the substrate's quantifiers, from which the paper's classes and valid
 The meaning route of §10.2 combines Kadmon and Landman's domain widening for *any* with Chater and
 Oaksford's probabilistic semantics of quantified sentences.
 
-## Main statements
-
-* `Environment.classifies_iff`: the class the paper gives each environment is the one its
-  denotation has, the doubly negative ones being upward entailing with the item in a
-  downward-entailing constituent (§3.1.2, §5).
-* `monotone_wideSome`: on its wide-scope reading *some* sits in an upward-entailing position
-  whatever the environment, the confound of (9) and (27).
-* `cond_eq_one_of_widen`, `exists_cond_lt_one_of_widen`: widening the domain of the object, (30),
-  weakens the bridge premise of the probabilistic downward inference (33), and strictly so for
-  some believer, (34).
-
 ## Implementation notes
 
 * The English fragment gives *many* no reading; a model fixes one of Partee's cardinal and
@@ -222,7 +211,7 @@ def wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) (N : Set ε
   ∃ y ∈ N, f (saw y)
 
 /-- On its wide-scope reading *some* sits in an upward-entailing position, whatever the
-environment, (9). -/
+environment, (9) ((27)). -/
 theorem monotone_wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) :
     Monotone (wideSome f saw) := fun _ _ hN ⟨y, hy, h⟩ ↦ ⟨y, hN hy, h⟩
 

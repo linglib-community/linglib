@@ -38,16 +38,6 @@ derank their chains as a separative comparative requires.
 * `Stassen1985.Models`: the chains a comparative type is modelled on
 * `Stassen1985.strategy`: the strategy a medial verb form shows
 
-## Main results
-
-* `Stassen1985.toWALS_type1985`, `caseAssignment_type1985`, `spatialCase_type1985`: the type
-  agrees with the construction's anatomy and collapses to the type of the atlas
-* `Stassen1985.universal1A` to `Stassen1985.universal4`: the chaining-based universals
-* `Stassen1985.separative_fragments`, `mandarin_exceed`, `english_particle`,
-  `swahili_double_option`: the fragments' constructions under the typology
-* `Stassen1985.korean_consistent`, `Stassen1985.turkish_consistent`: the chains a separative
-  comparative is modelled on have the strategy the converbs show
-
 ## Implementation notes
 
 * The universals are stated over the modelling relation, as the book states them of a

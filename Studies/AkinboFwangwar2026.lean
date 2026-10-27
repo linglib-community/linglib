@@ -28,13 +28,6 @@ verbs exactly under the rankings with R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-H�
 both M anchors. Two dominations the paper states, L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ and
 L-ANCH-Hᵥ ≫ MAX-Tone, are not needed.
 
-## Main statements
-
-* `fits_iff`: replacive dominance is the only dominance type that derives every printed verb.
-* `selectsWinners_iff`: the rankings under which the tableaux select the printed verbs.
-* `exists_selectsWinners_rAnchorM_lAnchorM`: neither L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ nor
-  L-ANCH-Hᵥ ≫ MAX-Tone is needed.
-
 ## Implementation notes
 
 * An input writes a root's lexical tones as the paper does, one tone for each run of identical

@@ -23,21 +23,6 @@ metalinguistic denial, and conditional antecedents strengthen once the implicit 
 fixed. The generic restriction is a vague property set whose precisifications give the normality
 of GEN.
 
-## Main results
-
-* `de_satisfies_strengthening`, `ue_widening_weakens`, `ladusaw_de_is_kl_strengthening`: widening
-  strengthens under an antitone context and weakens under a monotone one, so Ladusaw's contexts
-  are strengthening contexts.
-* `strengthening_sorryThat`, `not_strengthening_wants`: *sorry* licenses *any* and *glad* does
-  not.
-* `widening_satisfies_conditional_strengthening`: conditional antecedents strengthen.
-* `rows_agree`: the paper's judgments follow its classification.
-* `any_cn_dimensionally_universal`, `domain_vague_allows_exceptions`: widening makes *any CN*
-  universal along its dimension, and domain vagueness lets a generic tolerate exceptions.
-* `almost_rows`: *almost* modifies domain-precise and dimensionally universal noun phrases.
-* `genericSubTrue_not_superTrue_iff_indet`: on a finite precisification space, exception tolerance
-  is Fine's borderline status.
-
 ## Implementation notes
 
 * The rows record, at the narrowest operator over *any*, a substrate `LicensingContext` where

@@ -18,16 +18,6 @@ the quantities of `Core/InformationTheory/EntropyRate.lean`. We prove the bound,
 orders of a sentence by dependency length, and check the paper's morpheme templates against
 Bybee's relevance hierarchy.
 
-## Main statements
-
-* `information_locality_bound`: if words and memory states are jointly stationary, `0 < T`, and
-  the memory entropy is at most `∑ t ∈ Icc 1 T, t * distanceInfo w μ t`, then the average
-  surprisal is at least the entropy rate plus `∑' t, distanceInfo w μ (T + t + 1)`.
-* `heavyNPShift_shorter`: heavy NP shift in the paper's example (2) lowers total dependency
-  length.
-* `japanese_violates_surveyed_relevance`, `sesotho_suffixes_violate_relevance`: neither the
-  Japanese suffix order nor Demuth's Sesotho order is sorted by Bybee's relevance hierarchy.
-
 ## Implementation notes
 
 * The Japanese suffix order is `Japanese.Verb.template`'s, the order of the paper's text, its
@@ -102,7 +92,7 @@ theorem longObjectFirst_eq_reorderDependents :
 /-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
 raises its distance to the object from six to nine, so the total dependency length falls: by
 Behaghel's law at the verb, the phrases after it grow outward in the shifted order and not in the
-unshifted one. -/
+unshifted one ((2)). -/
 theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by
   rw [longObjectFirst_eq_reorderDependents]
   exact (Graph.totalLength_lt_reorderDependents_iff (by decide +kernel) (by decide +kernel)

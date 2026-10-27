@@ -29,19 +29,6 @@ output–output account of the same authors stipulated it.
 * `pNasal`: the probability of nasalisation.
 * `table1`: the fitted weights.
 
-## Main results
-
-* `pNasal_eq_sigmoid`: the log-odds of nasalisation are the markedness weight plus each base's
-  weighted activation, signed by its listed velar.
-* `existing_strictAnti_n2`, `existing_strictMono_compound`, `novel_strictAnti_n2`: the frequency
-  effects of Figures 2 and 3.
-* `logit_pNasal_existing`: the N2 effect on the log-odds is the same in existing and novel
-  compounds.
-* `existing_lt_bound`: a free N2 lowers nasalisation below that of a bound N2.
-* `table1_novel_lt_half`: under the fitted weights a novel compound nasalises less than half the
-  time.
-* `tableau7`, `tableau8`, `tableau9`: the schematic tableaux.
-
 ## Implementation notes
 
 * A candidate is the realisation of the compound-medial velar, and identity in [nasal] to a base

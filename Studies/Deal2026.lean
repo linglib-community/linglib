@@ -30,16 +30,6 @@ The Nez Perce embedding strategy is read off the paper's judgments in
 Fragment's relativizer *zV-*, and the Bulgarian flag is Krapova's double requirement over the
 Fragment's frames, checked against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
 
-## Main results
-
-* `relative_factive`, `projection_rows`: every relative embedding is factive, factivity being
-  the Fragment entries' Karttunen class, which the projection trials (33)–(36) and (68) confirm
-  row by row.
-* `table79`, `table80`: each shell over C, none, D N or P D, occurs with and without an
-  Ā-dependency, and factivity varies independently of the Ā-dependency.
-* `detoComplement_iff`, `deto_rows`: the double requirement picks out Krapova's *deto*-takers.
-* `paradigm_case_discriminates`: the case half of the diagnostic (21) that *yox̂* is a D.
-
 ## Implementation notes
 
 The Ā column of (79) is a datum for English, Ndebele and Washo, whose Fragments carry no
@@ -245,7 +235,7 @@ theorem table80 :
 
 /-- The relative pronoun *yox̂* ~ *ko* inflects for case, in that cells of the paradigm with
 distinct cases share no forms. This is the case half of the diagnostic that *yox̂* ~ *ko* is a D
-while the invariant *ke* is a C. -/
+while the invariant *ke* is a C ((21)). -/
 theorem paradigm_case_discriminates :
     ∀ c d : NezPerce.Case × RelativePronoun.Column, c.1 ≠ d.1 →
       Disjoint (RelativePronoun.table c) (RelativePronoun.table d) := by

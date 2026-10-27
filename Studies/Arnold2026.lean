@@ -23,19 +23,6 @@ pronouns are not *they/them*, the two accounts part ways.
 * `Arnold2026.Kind`, `Arnold2026.Kind.condition`: the two kinds and the common grounds each
   kind is used in.
 
-## Main results
-
-* `Arnold2026.disjoint_condition_iff`: the kinds share no common ground unless the one accepting
-  just the they/them fact counts as underspecified.
-* `Arnold2026.antitone_mem_condition_underspecified`: as a discourse asserts more,
-  underspecified *they* is lost and not regained, as in the student story
-  (`Arnold2026.story_they_lost`).
-* `Arnold2026.stage2_they_needs_ungendered_entry`, `Arnold2026.stage3_they_counterexample`: at
-  Konnelly and Cowper's second stage personal *they* needs an ad hoc entry, and at their third
-  stage the grammar admits a use neither kind licenses.
-* `Arnold2026.mem_condition_iff_of_agrees`: an example meets its kind's condition exactly when
-  the paper does not flag it as a would-be counterexample.
-
 ## Implementation notes
 
 The representation of the referent is the common ground of `Discourse/CommonGround.lean`, a

@@ -24,14 +24,6 @@ The supplement strengthens the comparative so that the equative becomes transiti
 metalinguistic degrees, the classes of sets of interpretations under the revised equative, form a
 bounded linear order on which the revised comparative is the comparative of degree semantics.
 
-## Main results
-
-* `comp_trans`, `accepted_comp_of_accepted`: the comparative is transitive, and a sentence with
-  its negated rival entails it for acceptance but not for truth.
-* `evalVery_iff`: *very A* is truth at every reasonably close interpretation.
-* `evalRevised_equi_trans`: the revised equative is transitive, unlike the basic one.
-* `mc_iff_formulaDeg_lt`: the revised comparative compares metalinguistic degrees.
-
 ## Implementation notes
 
 * An interpretation is a world-indexed family of first-order structures. The comparative is the

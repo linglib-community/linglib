@@ -23,20 +23,6 @@ bans multiple wh-fronting there. A coordinated wh-question (*What and when shoul
 therefore shares its heads but not its phrases, while a coordinated sluice (*I forgot what and
 when*) shares its whole C′ and elides it once, which hides the vP edge both wh-phrases crossed.
 
-## Main statements
-
-* `optimal_cwh_iff`: in English the coordinated wh-question has one optimal derivation, which shares
-  heads and leaves each wh-phrase in its own conjunct.
-* `optimal_cs_iff`: in every language the coordinated sluice has two optimal derivations, the
-  elided shared C′ of the paired reading, which displaces the authors' earlier double ellipsis,
-  and, for the nonpaired reading, shared heads under two complementizers of which only one bears
-  [E].
-* `convergesIn_multipleSluice_iff`: multiple sluicing converges exactly where the CP edge may host
-  several wh-phrases, as in German, Greek and one variety of English.
-* `rnr56_economy`: in right node raising with matching verbs, sharing the whole verb phrase is
-  cheaper than eliding part of it, so economy blocks two of the three derivations Belk, Neeleman
-  and Philip license.
-
 ## Implementation notes
 
 * A candidate is a linearized syntactic object spelled out by `Linearization/Spellout.lean`: a token

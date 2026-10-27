@@ -24,12 +24,6 @@ right-to-left pass decodes it.
 
 * `markLeft`, `resolveRight`: the transducers A and B of Figure 1
 
-## Main results
-
-* `utp_map_eq_resolve_mark`: B after A computes plateauing
-* `length_markLeft_run`: A preserves length
-* `utp_isWeaklyDeterministic`: plateauing is weakly deterministic
-
 ## Implementation notes
 
 * A toneless unit is `Tone.TBU.O`, the paper's L. Since `SubsequentialTransducer.runRight`

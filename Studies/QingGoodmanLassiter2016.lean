@@ -13,20 +13,6 @@ listener answers the question under discussion (`L0`), the speaker is informativ
 answer (`speaker`), and the pragmatic listener inverts the speaker over pairs of a world and a
 context set (`listener`).
 
-## Main results
-
-* `standard_uniform`: the standard model puts the three worlds compatible with *John did not stop
-  smoking* on a par at every rationality.
-* `uniform_tie`, `uniform_change_lt`: with every context set equally likely and the maximal
-  question, the world in which John still smokes, with the context set that he smoked, ties with
-  the world in which he never smoked, with the context set that he does not smoke, and the
-  changed world trails.
-* `now_settled_lt`, `now_change_lt`, `now_universe_lt`: asked whether John smokes now, the
-  listener prefers the world in which he still smokes with the context set that he smoked to a
-  context set that already settles the question, to the *change* context set, and, at every
-  rationality of at least one, to the universe.
-* `now_cg_mode`: the paper's common-ground prior is one instance.
-
 ## Implementation notes
 
 * The utterance prior enters the speaker as the cost `-log Pr(u) / α`, since the paper multiplies

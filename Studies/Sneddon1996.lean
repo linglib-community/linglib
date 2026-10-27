@@ -14,15 +14,6 @@ and is lost before the other sonorant consonants. In borrowings an initial *s* m
 *n*. This file checks the Indonesian phonology fragment against these rules, and against the
 forms Sneddon gives for them, each read through the glyphs of PHOIBLE's Indonesian inventory.
 
-## Main results
-
-* `juncture_of_vowel_or_h`, `juncture_of_obstruent`, `juncture_of_sonorant`, `fuse_eq`: the
-  rules for each class of base-initial sound.
-* `voicelessObstruents_sdiff_substituting`: the voiceless obstruents that keep their place are
-  *c* and the fricatives of loans.
-* `junctureRetained_s`: the nasal before a kept *s* is *n*.
-* `relations_prefixed`: each derived form in the table is its prefix on its base.
-
 ## References
 
 * [sneddon-1996]

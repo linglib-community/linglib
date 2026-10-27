@@ -30,16 +30,6 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
   plural and singular quantificational determiners (108), (109).
 * `Minor2022.stateMax`: the state-level maximization of Brasoveanu that fn. 42 contrasts with (106).
 
-## Main results
-
-* `Minor2022.exh_vp`: Exh with Generalized Strength (89) negates the singular alternative (115).
-* `Minor2022.dependent_iff`: the truth conditions (129) of a bare plural under floating *all*.
-* `Minor2022.detPl_most_iff`: the truth conditions of *most* with a bare plural object (131).
-* `Minor2022.max_dist`: maximization (106) is at the level of assignments, unlike the state-level
-  maximization of Brasoveanu (fn. 42).
-* `Minor2022.judgments`: in the context of the girl-and-hat examples, the analysis predicts the
-  judgments of (3), (4), (10b), (11a), (12b) and (13).
-
 ## Implementation notes
 
 * Assignments come from any register structure and values from any partial order, whose atoms are
@@ -266,7 +256,7 @@ theorem singleton_mem_atomic_inter_unique_iff : {i} ∈ atomic u ∩ unique u �
 
 variable (u u') in
 /-- Exh above the VP negates the singular alternative (114), which some model separates from the
-plural, so a bare plural object gets the condition (115). -/
+plural, so a bare plural object gets the condition (115) ((89)). -/
 theorem exh_vp {y : E} (hy : ¬ Atom y) (i : S) :
     Exhaustification.exh {acrossModels fun M : Model E ↦ vp u u' M ○ test (atomic u' ∩ unique u')}
       (acrossModels fun M : Model E ↦ vp u u' M) =

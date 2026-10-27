@@ -31,14 +31,6 @@ paradigm lists no such stem, keeps the lapse of *párodiable*.
 * `Able.lexStress`, `Able.noLapse`, `Able.lexStressVerb`: Lex [±stress], \*Lapse σσσ and
   Lex([±stress], lexcat).
 
-## Main results
-
-* `lexP_singleton_and_lexPM_singleton_iff`: one listed allomorph is a base to be identical to.
-* `Liaison.mem_optimal_iff`: Lex C] ≫ \*Hiatus selects the liaison forms the sources accept (8).
-* `Liaison.vain_split`, `Liaison.vain_feminine`: the two rankings of Lex 'V-gender and Lex σ'.
-* `Able.remediable`, `Able.parodiable`: the tableaux (16) under both rankings of (18).
-* `Able.mem_optimal_iff_most_responses`: the winners of (18) are the majority responses of (14).
-
 ## Implementation notes
 
 A listed allomorph is a form of the paradigm that (8) or (13) prints, its gender or lexical

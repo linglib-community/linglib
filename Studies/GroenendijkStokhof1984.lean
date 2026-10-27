@@ -15,27 +15,6 @@ inside a set compatible with what they know, which contains the index (`Informat
 proposition answers a question for the individual when adding it to their information leaves
 the information inside one cell, and answers it partially when it rules out a cell.
 
-## Main statements
-
-* `Knows.mem_core`: to know the answer is to know every true proposition the question decides.
-* `not_knows_who_of_believes`: believing that someone walks who does not excludes knowing who
-  walks.
-* `who_compl`: *who walks* and *who doesn't walk* are one question.
-* `who_le_whichDeRe`, `whichDeRe_compl`, `Men.readings_independent`: *which man walks* read de
-  re follows from *who walks* and is *which man doesn't walk* read de re, while the de dicto
-  reading is independent of it.
-* `karttunen_knows_of_knows`, `Walkers.karttunen_knows`: Karttunen's postulate for *know*
-  follows from this one, but holds of someone who wrongly believes that Suzy walks.
-* `InformationSets.update`, `InformationSets.LetsKnow.givesTrueAnswer`: updating with a
-  proposition keeps information well formed, and a proposition that lets one know an answer
-  gives a true one.
-* `Figure13.letsKnow_byName`: of a name and a description that answer alike on someone's
-  beliefs, only the name, which is true, lets them know the answer.
-* `better_or_inter_or_union`: of two compatible partial answers, one is better, or their
-  conjunction or their disjunction is better than both.
-* `knowsSomeAnswer_of_knows`: knowing who has a pen gives the mention-some knowledge once someone
-  has a pen.
-
 ## Implementation notes
 
 Extensions are topical properties `E → Set W` and attitudes are `SetRel W W` read through

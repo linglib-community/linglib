@@ -25,14 +25,6 @@ default third person agreement, and the conjunction *maar* 'but' used as a verb 
 Neither an early insertion model, in which only featureless items are roots, nor a late insertion
 model that reserves root positions for items marked as roots derives these examples.
 
-## Main statements
-
-* `roots_eq_primaryMerges`: every object a derivation builds has one root for each Primary Merge,
-  that is, for each derivational workspace.
-* `derives_iff`: of the models that let only featureless items or any item realize a root
-  position, inserting items before or after syntax, only the one that inserts any item after
-  syntax derives the Dutch examples.
-
 ## Implementation notes
 
 * An object's label is the bundle that projects in it. Following the refinement of (42), an item

@@ -19,16 +19,6 @@ The temporal adverb ⌜then⌝ cannot restrict a present tense, whether the pres
 reference (76), read the same `π`, and a present clashes with ⌜then⌝ whatever `π` is. A deleted
 tense carries no presupposition, (86)–(87).
 
-## Main results
-
-* `TsiliaZhao2026.not_restricted_present`: a distal adverb cannot restrict a present.
-* `TsiliaZhao2026.not_restricted_le`: nor a present that presupposes containment in the
-  perspective, as Anand and Toosarvandani's does.
-* `TsiliaZhao2026.accepted_iff_exists_restricted`: an example with ⌜then⌝ is accepted exactly
-  when some perspective satisfies the presuppositions of its tense and its adverb.
-* `TsiliaZhao2026.exists_split_anchor`: pronominal anchors would let a present and ⌜then⌝ anchor
-  apart, (36), hence the parameter.
-
 ## Implementation notes
 
 Times are closed intervals of a linear order, and clause meanings are their presuppositions as

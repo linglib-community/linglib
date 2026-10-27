@@ -25,14 +25,6 @@ on the probe (29): a flat probe finds the secondary n and agrees with the prefix
 Zulu, while a probe relativized to [+Animate] searches past it to the core, the animacy override
 of Chiyao and Swahili and the animate-only object marking of Nyaturu.
 
-## Main results
-
-* `category_ordConnected`: every category is order-convex.
-* `agreement_flat`, `agreement_animateProbe`: a flat probe agrees with the prefix class and a
-  relativized one with the core.
-* `isikhohleli_agreement`: *isikhohleli* 'coughing person' agrees in class 7 or class 1 by the
-  probe.
-
 ## Implementation notes
 
 * A nominal has a secondary n only when its prefix class is a core class other than its core's;

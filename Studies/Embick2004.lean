@@ -24,16 +24,6 @@ complement into the head, where it forms the complex head that Direct Merge buil
 Insertion, which realizes complex heads, cannot tell the two configurations apart: only their
 interpretation does.
 
-## Main statements
-
-* `headDaughter?_moveRoot`: head movement of a Root complement builds the complex head of Direct
-  Merge, so every vocabulary realizes v[FIENT] alike in the two (`realize_moveRoot`).
-* `isSegment_directMerge`: the Root is v[FIENT]'s sister in both structures, projected over as a
-  complement and adjoined under Direct Merge.
-* `interp_directMerge`: a directly merged Root is the means and the aP the result.
-* `acceptable_iff_interpretable`: the condition on v[FIENT] and the argument structure of Roots
-  derive the judgments.
-
 ## Implementation notes
 
 * The domain of v[FIENT] is recorded by the DP in its specifier, a Root directly merged with it,
@@ -125,6 +115,8 @@ def moveRoot : Tree Cat Word → Tree Cat Word
 def headDaughter? (t : Tree Cat Word) : Option (Tree Cat Word) :=
   t.headIndex?.bind (t.children[·]?)
 
+/-- Head movement of a Root complement builds the complex head of Direct Merge, so every vocabulary
+realizes v[FIENT] alike in the two (`realize_moveRoot`). -/
 theorem headDaughter?_moveRoot (r : Root) :
     headDaughter? (moveRoot (rootComplement r)) = some (directMerge r) := rfl
 

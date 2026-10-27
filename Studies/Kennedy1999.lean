@@ -13,15 +13,6 @@ biconditional (54) follows from the complementarity of the two. Positive and neg
 disjoint sorts, so a comparison between them is undefined, which explains cross-polar anomaly
 alongside incommensurability (section 3.1.7).
 
-## Main results
-
-* `Kennedy1999.antonymy_biconditional`: (54), *a is taller than b* iff *b is shorter than a*, on
-  the extents of (30) and (31).
-* `Kennedy1999.comparison_defined_iff`: a subdeletion comparative is acceptable exactly when the
-  compared extents are of one sort on a shared scale, against the rows of sections 3.1.3–3.1.7.
-* `Kennedy1999.measurePhrase_positive_iff`: an absolute measure phrase composes exactly with a
-  positive adjective, sections 3.1.8–3.1.9.
-
 ## Implementation notes
 
 Extents are the rays `Set.Iic (μ a)` and `Set.Ici (μ a)`, closed at the measure as in (30) and

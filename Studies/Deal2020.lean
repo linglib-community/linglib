@@ -22,16 +22,9 @@ force de se readings, those above it overwrite from the attitude event and do no
 * `complement n p`: a complement of size `n` with the complementizer after the lowest `p`.
 * `Verb`: the complements a verb selects and where their complementizer sits.
 
-## Main results
-
-* `stack_eq`, `holdsAt_stack`: stacked operators overwrite the union of their coordinates (172),
-  and unembedded they are vacuous (65).
-* `mem_shifted_of_lt`: (G2); `mem_ofBundles_iff`: bundled classes shift together (§4.4).
 * `complement_apply` and the `apply_complementContext` lemmas: an indexical in a complement reads
   the index, the attitude event or the utterance context by its class's position relative to C,
   (G3).
-* `medial_eq_lowest`: Local Determination (77) in (83).
-* `rows_shift`, `rows_deSe`, `rows_nonDeSe`, `rows_double_report`: the rows' judgments.
 
 ## Implementation notes
 
@@ -115,7 +108,7 @@ theorem holdsAt_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P
   exact Kaplan.holdsAt_shiftyOp _ χ c
 
 /-- (G2): in a complement of any size, an indexical class shifts only if every class below it in
-the sequence shifts as well. -/
+the sequence shifts as well (§4.4). -/
 theorem mem_shifted_of_lt {n : ℕ} {k k' : Coord} (hk : k ∈ shifted n) (hk' : k' ∈ sequence)
     (h : rank k' < rank k) : k' ∈ shifted n :=
   mem_shifted_iff.2 ⟨hk', h.trans (mem_shifted_iff.1 hk).2⟩

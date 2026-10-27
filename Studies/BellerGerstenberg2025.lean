@@ -17,17 +17,6 @@ how-causation (a difference to the fine-grained outcome) and sufficient-causatio
 pragmatics module chooses among the true expressions by informativity, as a rational speech act
 speaker and listener after Frank and Goodman.
 
-## Main results
-
-* `caused_implies_enabled`, `enabled_implies_affected`: the expressions are ordered by
-  specificity, the hierarchy behind the scale `causalScale`.
-* `speaker_prefers_caused`, `speaker_prefers_enabled`: the speaker prefers the most informative
-  true expression at every positive rationality.
-* `listener_enabled_implicature`: hearing "enabled", the pragmatic listener favours the scenario
-  where "caused" is false.
-* `launch_ofModel`: Michottean launching, as a two-variable structural model, has the aspect
-  profile of the first sample scenario.
-
 ## Implementation notes
 
 * The speaker is the paper's first-level pragmatic speaker over Boolean aspects. The fitted
@@ -90,6 +79,7 @@ instance (cw : CausalWorld) : ∀ u, Decidable (expressionMeaning cw u)
   | .caused => inferInstanceAs (Decidable (_ ∧ _))
   | .madeNoDifference => inferInstanceAs (Decidable (_ ∧ _))
 
+/-- The expressions are ordered by specificity, the hierarchy behind the scale `causalScale`. -/
 theorem caused_implies_enabled (cw : CausalWorld) :
     expressionMeaning cw .caused → expressionMeaning cw .enabled :=
   And.right

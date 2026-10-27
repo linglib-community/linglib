@@ -23,12 +23,6 @@ entails, so the scalar item under disjunction gets the implicature earlier accou
 *A or (B or C)* they are the three pairwise exclusiveness implicatures and two that these entail
 (52).
 
-## Main statements
-
-* `isSecondaryImplicature_ab_iff`: (46).
-* `isSecondaryImplicature_kai_iff`: (49).
-* `isSecondaryImplicature_abc_iff`: (52).
-
 ## Implementation notes
 
 A world is a valuation of the atoms, or for (47) whether Kai had the broccoli and whether he had

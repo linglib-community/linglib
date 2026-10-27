@@ -19,17 +19,8 @@ literal parse; lexical uncertainty, after Bergen, Levy and Goodman and Potts et 
 per speaker; the local- and global-implicature speakers choose an utterance together with a
 matrix-free or arbitrary parse, one softmax over pairs per world.
 
-## Main results
-
 * `table1_ss` and its siblings: the readings of every utterance under every parse, the paper's
   Table 1.
-* `vanilla_ss_prefers_wNA`, `gi_ss_prefers_wNS`: the global model corrects the interpretation of
-  *some of the aliens drank some of their water* that the vanilla model gets wrong.
-* `ss_m_parse_pref`, `m_ss_singleton`: its parse posterior peaks at the matrix-only parse, whose
-  reading singles out the world with none- and some-drinkers only, the paper's explanation of
-  the global model's win.
-* `perParse_ss_prefers_o`: under the per-parse normalization the paper rejects, exhaustifying
-  the outer quantifier beats exhaustifying the whole sentence at every rationality.
 
 ## Implementation notes
 

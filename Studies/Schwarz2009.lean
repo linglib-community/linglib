@@ -27,18 +27,6 @@ the type-shifter Π (260), which picks out only parts of a relatum, so that it f
 The paper's examples agree with these predictions except where §6.4.1 says they do not: the strong
 article is predicted in part-whole bridging, where it is out.
 
-## Main results
-
-* `german_toDescriptions`, `fering_toDescriptions`, `english_toDescriptions`: the descriptions each
-  article form denotes.
-* `weak_eq_none_strong_eq_some`, `covarying_anaphora`: the contrast of §6.1, and its instance (31).
-* `weak_covaries`, `strong_isSome_iff`: the weak article covaries with the situation and the strong
-  article does not.
-* `relational_isSome_iff`, `relational_anaphora_coauthored`: relational anaphora is defined iff the
-  antecedent has exactly one relatum.
-* `exists_le_of_shift`, `unique_shift_eq_none`: Π picks out only parts of a relatum.
-* `rows_available`, `rows_unavailable`, `rows_strength`: the examples against the analysis.
-
 ## Implementation notes
 
 (309) leaves its relatum variable unbound and (310b) swaps the relation's arguments; both are read

@@ -38,16 +38,6 @@ the complementizer and the noun out of c-command. The appositive and restrictive
 relatives with ICA rule out a correlative or internally headed placement (section 3.3.1), and
 attraction is not ordered by a case hierarchy (section 3.5).
 
-## Main statements
-
-* `rows_predicted`: the analysis predicts every structural connectivity judgment of chapter 4.
-* `no_uniform_derivation`, `raising_only_fails`: the rivals the book rejects fail on the rows.
-* `inSitu_rows`: a relative stays in its base position exactly when its head's case probe is
-  still active there.
-* `raisingRelative_licensed`, `triggeredMerge_rejects_raisingRelative`: selection before
-  saturation licenses the raising derivation at every stage, which triggered Merge rejects though
-  it accepts the derived object.
-
 ## Implementation notes
 
 * Heights order the head's position in the relative clause below the main-clause position, with

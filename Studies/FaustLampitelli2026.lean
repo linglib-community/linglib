@@ -19,19 +19,6 @@ dissociation and epenthesis applied in the order "rules apply" gives, which make
 opaque in several forms. In the feature system the gutturals are no natural class, so the
 analysis needs the element.
 
-## Main statements
-
-* `not_isNaturalClass_gutturals`: the four gutturals are no natural class of Tigrinya's
-  consonants in the PHOIBLE features.
-* `rows_derived`: every attested form of the paper's paradigms is a realization of the
-  derivation of its underlying form.
-* `rows_unpredicted`: the forms whose retained position the analysis does not predict.
-* `syneresis_37a`: of the two economical realizations of (37a) under the Empty Category
-  Principle, the derivation yields the one that is not standard.
-* `rows_pronounced_eq_standard`: on every row the derivation pronounces the nuclei of the
-  standard realization, except in the configuration of (37a).
-* `governs_32a`: the forms need a final nucleus that does not govern.
-
 ## Implementation notes
 
 * The analysis runs over the paper's transcription, and its vowels and gutturals are the

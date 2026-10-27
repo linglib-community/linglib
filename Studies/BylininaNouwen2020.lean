@@ -35,14 +35,6 @@ Bylinina and Nouwen (2018): Kennedy's *zero A B* is *no A B* and licenses the ne
 items that *zero* does not, while with `MAX` apart from the numeral *zero* is a tautology below
 `MAX` and *no* above it, and licenses none.
 
-## Main results
-
-* `exhAgainst_poss_iff_highScope`: the exhaustified possibility reading of Spector is
-  Kennedy's (46).
-* `lowScope_some_not_highScope`: over *some students* the high reading (39) is strictly stronger.
-* `MAX_individual_iff_exhAgainst`: `MAX` of the lifted number is exhaustification at its site.
-* `not_licenses_zeroWithMAX`: with `MAX`, *zero* licenses no negative polarity item.
-
 ## Implementation notes
 
 * Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate

@@ -17,18 +17,6 @@ why the anteriority of the present perfect is derived rather than encoded. A bou
 that takes time holds throughout no span, so a perfect on a perfective participle, as in Greek,
 has no universal perfect, except where an activity fills the span exactly.
 
-## Main statements
-
-* `universal_at_rb`, `universal_at_lb`: the universal perfect holds at both boundaries of the
-  span.
-* `inclusive_silent_at_rb`, `unmodified_not_universal`: the inclusive perfect does not assert
-  the eventuality at the right boundary, so an unmodified perfect is never universal.
-* `span_lb_before_event`: the left boundary is the adverbial's and may precede the eventuality.
-* `no_universal_of_prfv`, `bounded_activity_fills`: a perfective participle blocks the universal
-  perfect except for an activity filling the span.
-* `experiential_ends_by_rb`, `universal_not_anterior`, `future_perfect_underspecified`: the
-  anteriority of the perfect is derived from the span and tense.
-
 ## Implementation notes
 
 * The features [unbounded] and [bounded] of the paper's footnote 5 are `Aspect.UNBOUNDED`, the

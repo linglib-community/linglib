@@ -27,14 +27,6 @@ and *no* do not.
 * `Tower`: a scope-taker over State.Set programs.
 * `lower`, `reset`: Lower and Reset.
 
-## Main statements
-
-* `lower_combine_monadLift`: scopal application subsumes monadic application (Fact 3.14).
-* `reset_map_monadLift`: Reset leaves a lifted program unchanged (Fact 4.1).
-* `reset_every`: Reset discharges a universal (Fact 4.4).
-* `exceptional_binding`: an indefinite binds a pronoun across a scope island (4.7).
-* `cf_no_candidate_iff`: a choice function closed above *no candidate* overgenerates (4.35).
-
 ## Implementation notes
 
 * A pronoun on the empty stack has no value in the thesis; here `pro` has no output there. A
@@ -584,7 +576,7 @@ theorem cf_exceptional_cond (rel dies : E → Prop) (rich : Prop) (hrel : ∃ x,
     exact ⟨q.1, hq, h⟩
 
 /-- Closing the choice function above *no candidate* gives the [schwarz-2001] reading that no
-candidate submitted every paper he wrote (4.35, `Examples.ex4_4`). -/
+candidate submitted every paper he wrote (4.35, `Examples.ex4_4`) ((4.35)). -/
 theorem cf_no_candidate_iff [Nonempty E] (cand : E → Prop) (paperBy submitted : E → E → Prop)
     (hwrote : ∀ x, cand x → ∃ y, paperBy x y) (hinj : Set.InjOn paperBy {x | cand x}) :
     (∃ f : ChoiceFunction E, ¬ ∃ x, cand x ∧ submitted (f (paperBy x)) x) ↔

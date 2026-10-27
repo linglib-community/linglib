@@ -28,19 +28,6 @@ differ from anankastics only in the pragmatic implication that the temporal rela
 prejacent invites; reading *want* or the modal differently gives the non-anankastic and deontic
 cases.
 
-## Main statements
-
-* `conditionalNecessity_orderingSource_iff`: under consistent effective preferences and the Limit
-  Assumption the paraphrase (89) of (88) is exact.
-* `HobokenScenario.anankastic_harlem`, `HobokenScenario.not_possibility_path`: in the Hoboken
-  scenario the Harlem sentence (1) is true and (14) false, where Sæbø's analysis makes (1) false
-  and (14) true, and the mere-desire construal makes (1) false.
-* `VladivostokScenario.haveTo_chinese_comfortFirst`, `VaccineScenario.should_vaccine`: compatible
-  goals enter the ordering, so the ranking of comfort and cost decides (92), and a second maximal
-  preference makes the near-anankastic (29b) true.
-* `AirportScenario.should_train`, `AirportScenario.should_ride`: the double-modal readings of
-  (83a) and (83b) are both true, where single-modal ones cannot be.
-
 ## Implementation notes
 
 * Both modals are Kratzer's `necessity`, as (88) says, the outer one the restrictor conditional,

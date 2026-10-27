@@ -25,14 +25,6 @@ inference follows.
 * `report`: the past-tense report with a nominalized clause.
 * `reportThat`: the past-tense report with a CP.
 
-## Main results
-
-* `reportThat_ne_zero`: a report with a CP presupposes nothing.
-* `existsStrong_thetaTh_ne_zero_iff`: the closed θTh-report presupposes pre-existence.
-* `exists_preExists_of_report_ne_zero`: the past-tense report presupposes pre-existence at some
-  past thinking time.
-* `exists_of_report_ne_zero`: the factive inference.
-
 ## Implementation notes
 
 * Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`. Time spans are a

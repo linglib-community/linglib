@@ -18,28 +18,6 @@ conditional and disjunction come out of sequential context update over the symme
 connectives, not of the truth tables. Written into consequence, Avoid Void blocks inferring *if A,
 C* from *not A*.
 
-## Main statements
-
-* `accepts_cond_iff`: the Ramsey test (Proposition 3.3).
-* `presupposes_cond_dia`, `not_presupposes_cond_antecedent`, `not_presupposes_cond_neg`: a
-  conditional presupposes that its antecedent is possible and neither it nor its negation (Facts
-  4.3 and 4.4); `Presupposes.neg`, `Presupposes.dia`, `Presupposes.cond_left` give the projection
-  of Proposition 5.1 and Fact 4.6.
-* `presupposes_forallInstances_dia`: restricted quantifiers presuppose that their restrictor is
-  possibly nonempty; at a single world this is Belnap's existential presupposition
-  (`forallInstances_singleton`).
-* `update_cond_eq_empty_iff`, `update_cond_ofSet`, `update_disj_ofSet`, `update_conj_ofSet`:
-  Proposition 5.2.
-* `update_localUpdate_nonempty_iff`: sequential update of an elementary conjunction, conditional or
-  disjunction is felicitous exactly when the context admits it under Peters's filtering connectives
-  and its content is possible in Karttunen's local context, so the pragmatic account recovers the
-  filtering predictions (§5.3–5.5) while the Cooper conjunction itself does not filter
-  (`not_presupposes_conj_carrier`).
-* `entails_neg_cond`, `not_entailsFlat_neg_cond`, `not_entailsSharp_neg_cond`: False Antecedents
-  is valid in C and blocked in C♭ and C#; `entailsSharp_or_to_if`, `entailsSharp_reductio` and
-  the failures of footnote 15 (§6).
-* `strawsonEntails_iff_st`: Strawson entailment is strict-tolerant validity.
-
 ## Implementation notes
 
 * Sentences, Kleene negation, Cooper conjunction and disjunction, and the modals are those of

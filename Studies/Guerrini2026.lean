@@ -23,15 +23,6 @@ Mapping Parameter, (145), from the language and the noun's number.
 * `cumulativeBelowGen`: the rival with the cumulative operator below `Gen`, (74c).
 * `Parse.Available`: the parses a nominal has.
 
-## Main results
-
-* `distributiveKindPred_of_bonaFideGeneric`, `not_bonaFideGeneric_of_exception`: the generic
-  parse entails distribution at the actual world and fails at an accessible exception, (53).
-* `forall_of_cumulativeBelowGen`: the rival makes every member relate to every location, the
-  reason the paper rejects it for *elephants live in Africa and Asia*.
-* `Parse.available_iff`: the singular indefinite, whose kind formation is undefined, (16), has
-  only `Gen` and the existential of Derived Property Predication.
-
 ## Implementation notes
 
 `Gen` is the paper's black box: a universal over the worlds an accessibility relation reaches and
@@ -192,7 +183,7 @@ instance (n : Nominal) : DecidablePred (Parse.Available n) := fun p ↦ by
   cases p <;> unfold Parse.Available <;> infer_instance
 
 /-- By (145) and Tables 1 and 2, the English bare plural has all four parses, the Italian definite
-plural all but `dpp`, and the others only `Gen` and `dpp`. -/
+plural all but `dpp`, and the others only `Gen` and `dpp` ((16)). -/
 theorem Parse.available_iff (p : Parse) :
     p.Available .englishBarePlural ∧ (p.Available .italianDefinitePlural ↔ p ≠ .dpp) ∧
       (p.Available .italianBarePlural ↔ p = .gen ∨ p = .dpp) ∧

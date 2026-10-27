@@ -19,18 +19,6 @@ is spelled out, to a phrase left-aligned with the focus once the phrases that be
 are skipped. Focus movement moves the phrase so marked, so one rule governs both, and it does not
 tell pied-piping from anti-pied-piping.
 
-## Main statements
-
-* `quantifierOnly_ne_only`: a particle that quantified over alternatives to its sister could not
-  associate with a focus properly containing that sister, whatever alternatives it was given.
-* `LeftAlignedOn.symmGen_le`, `LeftmostRequirement.allows_comm`: a phrase left-aligned with the
-  focus contains it or is contained in it, and the rule that places the particle does not tell
-  the two apart.
-* `LeftAlignedOn.symmGen_le_of_common`: of two separate phrases at most one is left-aligned with
-  a given focus, the leftmost effect.
-* `acceptable_iff_favors`: an example is unmarked on a reading exactly when its language's
-  variant of the rule favors the phrase it marks for the focus of that reading.
-
 ## Implementation notes
 
 * A phase is a constituency tree over the categories of the functional sequence, in the order

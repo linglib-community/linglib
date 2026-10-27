@@ -23,15 +23,6 @@ in general. Because COT constraints are rerankable, demoting PRO-TOP below
 FAM-DEF (§4.1) recovers the coreferential reading of (2c) that BFP wrongly
 filters out.
 
-## Main statements
-
-* `cot_iff_bfp`: table (19) — for candidates tied on the four higher-ranked
-  constraints, the COT profile comparison is the BFP transition preference.
-* `d2_canonical_picks_two_marys`, `d2_demoted_picks_bound`: the §4.1
-  reranking flips (2c) from the two-Marys reading to the coreferential one.
-* `cohere_factors_through_cb`, `align_factors_through_cb_and_cp`: the reused
-  constraints see a candidate only through `cb` (and `cp`).
-
 ## References
 
 * [beaver-2004]: The optimization of discourse anaphora.

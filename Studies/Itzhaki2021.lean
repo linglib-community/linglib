@@ -22,23 +22,6 @@ A soritical argument is one schema, `Sorites`: a base case, tolerance along a st
 a counterexample. The classic and the reverse paradox of the heap are its instances along steps of
 one grain, read through either size map.
 
-## Main statements
-
-* `Itzhaki2021.Sorites.conclusion`, `Itzhaki2021.Sorites.false_of_total`: the conclusion of a
-  Sorites follows from its premises when the inverse of the size map is total, and the premises are
-  then inconsistent.
-* `Itzhaki2021.sorites_not_heap`, `Itzhaki2021.sorites_heap`: under the qualitative size, the
-  classic and the reverse paradox of the heap hold for any heap predicate with a heap and a
-  non-heap, while under the quantitative size of the model they are inconsistent
-  (`Itzhaki2021.Model55.not_sorites_size`).
-* `Itzhaki2021.induction_premise`, `Itzhaki2021.conclusion_tall`,
-  `Itzhaki2021.not_forall_sub_natCast_ge`: with an infinitesimal unit of change the premises of the
-  tall paradox hold, and with the quantitative unit its conclusion fails.
-* `Itzhaki2021.instIsTransInfinitelyLess`, `Itzhaki2021.merged_iff`,
-  `Itzhaki2021.not_merged_qualSize`: being infinitely less is transitive, and the merged paradox
-  of the small heap is satisfiable exactly when the qualitative sizes of its two heaps are
-  infinitely apart, which the qualitative size of the heap paradox never makes them.
-
 ## Implementation notes
 
 * The finite and the infinitesimal hyperreals are mathlib's subgroups of archimedean classes at

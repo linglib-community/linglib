@@ -55,24 +55,6 @@ functions the Latin cases express fill it.
   filled one.
 * `Conforms`: an inventory fills every position to the left of each position it fills.
 
-## Main results
-
-* `Conforms.total`: the position sets of two conforming inventories are nested, so that conforming
-  systems lie along a single line of growth.
-* `gaps_subset_of_conforms`: when the functions of a language's cases conform, a gap among its
-  case labels is a position filled by a function some case is not labelled for.
-* `systems_conform`, `gaps_nanai`, `gaps_tarascan`: the systems Blake cites at each stage conform,
-  and his two gapped systems each miss one position.
-* `gaps_latin_labels`, `conforms_latin_functions`: the Latin labels skip the locative and the
-  Latin functions do not.
-* `latin_abl_functions_ancient_greek`, `latin_dat_functions_ssubset_ancient_greek`: Greek has no
-  ablative, its genitive and dative expressing the functions of the Latin one, and its dative is
-  the more comprehensive case.
-* `gaps_finnish`, `gaps_hungarian`, `gaps_dargwa`, `gaps_mongolian`, `gaps_yakut`,
-  `gaps_georgian`, `gaps_basel`: the gaps among the fragment inventories, the Finnish dative filled
-  by a function of the allative (`conforms_finnish_functions`) and the Georgian locative by one of
-  the dative (`conforms_georgian_functions`).
-
 ## Implementation notes
 
 The absolutive is placed with the nominative, since Blake calls the unmarked case of an ergative
@@ -219,6 +201,8 @@ def systems : List (Finset Case) :=
     Finset.univ.image Slovak.Case.label, Finset.univ.image Serbian.Case.label,
     Finset.univ.image Turkish.Case.label, classicalArmenian, Finset.univ.image Tamil.Case.label]
 
+/-- The systems Blake cites at each stage conform, and his two gapped systems each miss one
+position. -/
 theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by
   simp only [systems, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
     implies_true, and_true]

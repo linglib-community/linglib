@@ -35,19 +35,6 @@ only where a `v` probes.
 * `derive`, `Licensed`, `Agrees`, `Derivable`: assignment with the probes a row's morphology
   shows, the Case filter, the case–agreement link, and derivability under some choice.
 
-## Main results
-
-* `dom`, `ditransitive`, `causative`, `passive`, `possessed`: the constructions, on their
-  derivations; `agentive_nominal`, `raising`, `promise`, on hand-placed positions.
-* `derivedCases_eq_cases`: on the constructions the hand-placed positions value what the
-  derivations do.
-* `no_elsewhere_case`, `pureChomsky_no_dative`, `pureChomsky_v_of_acc`: Sakha values nothing as
-  unmarked, and an Agree-only grammar values nothing dative and an accusative only where a `v`
-  probes, whatever the domain.
-* `rows_case`: acceptability is derivability under the two-modality grammar.
-* `pure_marantz_overgenerates`: without the Case filter and the agreement link, the
-  configurational grammar derives rejected examples.
-
 ## Implementation notes
 
 * The phase heads are v, whose complement is the paper's VP phase (note 6), C, and a D with a

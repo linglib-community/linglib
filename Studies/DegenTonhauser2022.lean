@@ -19,15 +19,6 @@ project categorically more than the rest, and they do not: the optionally factiv
 projects, so the factive predicates are those with entailed complements, and under every
 diagnostic and task these are none, or not categorically more projective than the rest.
 
-## Main statements
-
-* `not_exists_threshold`: no threshold on the certainty ratings picks out the canonically factive
-  predicates, under either task.
-* `factive_eq_empty_or_not_separates`: the predicates whose complement is both projective and
-  entailed are none, or not categorically more projective than the rest.
-* `isFactive_iff`: the predicates the English lexicon marks factive are the canonically factive
-  ones.
-
 ## Implementation notes
 
 * A class is categorically more projective when every member's mean certainty rating exceeds

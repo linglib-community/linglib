@@ -23,21 +23,6 @@ construals: the homogeneous reading over the existential and the universal const
 paper's statement of the supervaluation account, and the scope-ambiguous universal of
 Experiment 2 over the two scopes of the universal.
 
-## Main results
-
-* `value_of_isGap`: in a GAP context the readings take the values of Figure 2 and Table 8;
-  `value_of_subset`, `value_of_disjoint`: elsewhere they agree, which the control trials check.
-* `value_homogeneous`: the homogeneous reading is Križ's trivalent plural.
-* `binaryPattern_quantified_bijective`: the four quantified readings give the four possible
-  pairs of binary judgments, one of them the wide-scope existential that no child showed.
-* `binaryPattern_eq_wideScopeUniversal`, `gapPattern_injective`: binary judgments conflate the
-  homogeneous reading with the wide-scope universal, and ternary ones separate them.
-* `homogeneous_weakNegation`: the homogeneous reading with weak negation is the universal one.
-* `definite_in_gap_iff_some_in_all`: on Magri's account a participant accepts the positive
-  definite in a GAP context exactly when they accept *some* where every object has the property.
-* `implicaturePattern_of_isGap`: the account predicts the existential pattern without the
-  implicature and the homogeneous one with it.
-
 ## Implementation notes
 
 A world is the set of objects with the property. Magri's account is the double strengthening of

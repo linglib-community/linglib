@@ -18,20 +18,6 @@ of a focus semantic value, and the focus interpretation principle keeps only tha
 operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free variable whose
 antecedent is a `Focus.Antecedent`.
 
-## Main results
-
-* `three_a`, `three_b`, `only_rows`: *only* over a domain constrained by focus gives (3a) and (3b)
-  their truth values.
-* `recognitions_fixed`, `recognitions_constrained`: the domain is constrained rather than fixed,
-  since the full focus semantic value of a focused verb contains the trivial relation.
-* `verbFocus_scale`, `ace_notMem_subjectFocus`, `roommate_implicature`: focus on the verb licenses
-  the acing scale that focus on the subject does not, and the group scale yields the roommate
-  implicature.
-* `question_resolves_subjectFocus`, `question_rejects_objectFocus`, `qa_rows`: a question
-  admits the answer whose focus semantic value contains it.
-* `ellipsis_filter`: in bare remnant ellipsis focus filters a compositional ambiguity, each
-  correlate finding an antecedent for ~ under exactly one focus placement.
-
 ## Implementation notes
 
 * Worlds of the relational models are sets of atomic facts, so that distinct facts denote

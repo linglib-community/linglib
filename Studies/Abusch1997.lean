@@ -23,17 +23,6 @@ each to exclude it. A present under a past then has no consistent reading in pla
 out de re, and the counterpart correspondence between the base world and the belief world leaves
 only the double access reading.
 
-## Main statements
-
-* `histories_subset_of_upperLimit`, `not_histories_subset_of_branching`: a time the upper limit
-  constraint admits lies on every history through the now, and a time after a branching does
-  not.
-* `PastConstraint.nonLocallyLicensed_of_coindexed`: a past coindexed with its local evaluation
-  time is licensed by a transmitted relation.
-* `expects_no_simultaneous`: under a present matrix an embedded past has no simultaneous
-  reading.
-* `doubleAccess_of_counterpart`: a present under a past has only the double access reading.
-
 ## Implementation notes
 
 * Relation variables are numbered by the paper's superscripts and times by its indices, `0`

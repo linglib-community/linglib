@@ -23,18 +23,6 @@ overlaps; *lentil*, over a frame of the same kind, counts its units.
 * `Entry.IsCount`: an entry is count when its counting base is disjoint.
 * `unitShift`, `containerExtn`: the unit extracting and container classifiers.
 
-## Main results
-
-* `Entry.isCount_of_perspective`, `Entry.isCount_iff_of_null`: every `[+S]` entry is count, and a
-  `[−S]` entry is count exactly when the predicate its schema applies to is disjoint.
-* `rice_mass`, `lentil_count`: a `[−O,−S]` granular is mass and a `[+O,+S]` one is count.
-* `isCount_unitShift`: *grain of*, (49) and (50), makes every entry count.
-* `cum_extn_of_sumClosed`, `not_cum_extn_of_singular`: a container classifier's argument, (45),
-  can be sum-closed but not singular count.
-* `furniture_two_perspectives`, `rice_accessibility`: the two halves of the puzzle on a model.
-* `isCount_iff_english`: the categorization agrees with the English lexicon, where a numeral
-  counts *lentil* and neither *furniture* nor *rice*.
-
 ## Implementation notes
 
 A specific schema is a function from predicates to perspectives in the paper; an entry here
@@ -159,7 +147,7 @@ theorem features_unitShift (E : Entry α) (D : Set α)
     (h : IsMaxDisjointIn Overlap D E.frame.objects) :
     (unitShift E D h).features = (true, true) := rfl
 
-/-- The unit shift makes every entry count. -/
+/-- The unit shift makes every entry count ((49), (50)). -/
 theorem isCount_unitShift (E : Entry α) (D : Set α)
     (h : IsMaxDisjointIn Overlap D E.frame.objects) : (unitShift E D h).IsCount :=
   Entry.isCount_of_perspective rfl

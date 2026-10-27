@@ -23,18 +23,6 @@ material conditional but not probabilistically sound, which is why the English i
 prints are unacceptable; what p-entailment does satisfy is the rules for conditionals of his
 natural deduction system.
 
-## Main results
-
-* `tfae_pEntails`: for factual formulas, logical consequence, p-entailment, the uncertainty bound
-  under every probability, and the preservation of certainty coincide.
-* `isPreferential_pEntails`: p-entailment from a set of conditionals is closed under the rules
-  for conditionals of Adams's natural deduction system.
-* `materially_valid_not_pEntailed`, `printed_inferences`: the patterns of conditional inference
-  Adams examines are valid for the material conditional but not p-entailed, and the English
-  inferences he prints are unacceptable instances of them.
-* `not_isRational_pEntails`: unlike the closest-worlds conditional on a total order,
-  p-entailment does not validate rational monotonicity.
-
 ## Implementation notes
 
 * Possible states of affairs form a measurable space, a formula is the set of states where it is

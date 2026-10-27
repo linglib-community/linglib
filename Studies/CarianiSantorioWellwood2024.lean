@@ -16,16 +16,6 @@ that preserves the strict ordering. This is the two-component analysis of
 `Semantics/Degree/Background.lean`, and the file sorts the paper's inferences by whether they use
 the ordering or the degree scale.
 
-## Main statements
-
-* `exists_conjunctionFallacy`, `image_Ici_ne_ge_over`: confidence in a conjunction without
-  confidence in its conjunct is consistent with the semantics, and with no threshold on a
-  probability measure.
-* `image_Ici_subset_image_Ici_iff_isMax`: *confident* entails *certain* exactly when its contrast
-  state is maximal.
-* `not_maxComparative_of_isMax`: nothing is more confident than a certainty, when the measure
-  also respects ties.
-
 ## Implementation notes
 
 * A holder's confidence states form a type `S` with its background preorder, and `θ : S → Set W`

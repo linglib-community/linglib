@@ -18,23 +18,6 @@ consumed beyond this paper, is `Semantics/Questions/Value.lean`. A wh-question d
 propositions that some value is among the optimal true values of its predicate, those with no
 more relevant true value, and this one rule yields both mention-all and mention-some readings.
 
-## Main statements
-
-* `isResolved_iff_exists_subset_optimalityRegion`: information resolves the problem exactly
-  when it lies within the worlds where one action is optimal.
-* `newspaper_station_resolves`, `newspaper_betterAnswer`: in the Italian newspaper example the
-  partial answer *at least at the station* resolves the problem and is a better answer than the
-  complete one.
-* `questionR_entailment`, `bestPlace_questionR`: when relevance is informativity the rule gives the
-  mention-all partition, and the newspaper question has a mention-some meaning that Hamblin's rule
-  misses.
-* `killer_byName`, `killer_byMask`, `liveIn_visit`, `beatles_questionR`: the decision problem
-  decides the partition, by name or by mask for *Who killed spiderman?*, by city or by address for
-  *Where do you live?*, and by an autograph hierarchy for *Which Beatles' autograph do you have?*.
-* `killer_byName_eq_whoUnder`, `killer_byMask_eq_whoUnder`, `not_isCover_range_val`: with the
-  wh-phrase ranging over all four concepts, which form no conceptual cover, the partitions by name
-  and by mask are exactly Aloni's questions under the name cover and the cover by masks.
-
 ## Implementation notes
 
 A decision problem is a real utility on worlds and actions together with a prior measure, the

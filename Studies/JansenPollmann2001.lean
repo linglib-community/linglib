@@ -32,14 +32,6 @@ nine members of one (`FirstNine`). Among the first nine members of the revised r
 are exactly the numbers with 10-ness, 2-ness or 5-ness, and the quarter sequences of the original
 rule add exactly 2½-ness.
 
-## Main statements
-
-* `firstNine_revised_iff`, `firstNine_original_iff`: the single round numbers are the members of
-  the pair sequences, the quarter sequences adding 2½-ness.
-* `seqPair_examples`, `pair_rows`: the paper's example pairs and the starred and unstarred
-  phrases, against the rules.
-* `not_isRatio_three_mul_pow`: no favourite quantity is three times a power of ten.
-
 ## Implementation notes
 
 * Quantities are rational, since halving and quartering leave the integers (`½ × 10⁰`,

@@ -28,16 +28,6 @@ and *kapannə* 'cut', which select events, have no inchoative.
 * `caseOfReading`: the accusative marks existential resolution.
 * `Anticausativizes`: the condition of causer suppression on a root.
 
-## Main results
-
-* `CauserSort.not_event_le_individual`: anticausatives are never volitive.
-* `reflexive_resolve_eq_reflexivize`: reflexive resolution is Koontz-Garboden's reflexivization.
-* `causative_entails_existential`: the inchoative is true whenever the causative is.
-* `ibeem_incompatible_with_external`: *ibeemə* 'by itself' excludes the accusative variant.
-* `anticausativizes_iff_alternates`: the roots that meet the condition are those with an
-  inchoative.
-* `exists_hasInvolitive_not_anticausativizes`: the involitive does not mark anticausatives.
-
 ## Implementation notes
 
 Sorts are checked rather than denoted. `causerSuppress` takes a proof that the root's causer sort

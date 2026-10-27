@@ -28,19 +28,6 @@ models, since it prefers the true word with the smaller extension.
 * `Word.monotonicity`: the monotonicity Experiment 2 assigned a word, which fixes the side of its
   threshold.
 
-## Main results
-
-* `speakerLit_apply_singleton_eq_zero`, `speakerLit_real_eq_of_eq`: a literal speaker never
-  produces a false word and is indifferent among true words of equal salience.
-* `speakerPrag_real_lt_of_card_lt`: the pragmatic speaker prefers the true word with the smaller
-  extension, which is where focality comes from.
-* `gq_no_entailment`, `some_few_no_entailment`: *some* and *few* compete without entailment.
-* `monotone_gq`, `antitone_gq`: a word with a lower bound is monotone in the intersection set
-  size, and a word with an upper bound antitone.
-* `monotonicity_eq_decreasing_iff`: on the words the English fragment shares with the study,
-  Experiment 2's coding agrees with the scope antitonicity of the fragment's readings.
-* `pt_lt_pt_of_abs_lt`: the prototype semantics is gradient by itself.
-
 ## Implementation notes
 
 States are the intersection set sizes `Fin (n + 1)` and speakers are kernels from states to

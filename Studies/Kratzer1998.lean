@@ -21,15 +21,6 @@ event before the reference time, a form describes a past event out of the blue j
 spells out present tense with perfect aspect. The paper's tables assign that combination to the
 English simple past and the German *Perfekt* and never to the *Präteritum*.
 
-## Main results
-
-* `AspectHead.isAnterior_iff`: only the perfect is anterior.
-* `cell_viewpointType`: against the library's viewpoints, the perfect is strictly stronger, the
-  imperfective strictly weaker, and the perfectives coincide.
-* `describesPastOutOfTheBlue_iff`: describing a past event out of the blue is spelling out the
-  present perfect.
-* `rows_outOfTheBlue`: the out-of-the-blue judgments of the paper's examples.
-
 ## Implementation notes
 
 An out-of-the-blue context is the temporal assignment sending every variable to the utterance time,

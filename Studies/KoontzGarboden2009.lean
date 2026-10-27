@@ -25,14 +25,6 @@ respects the Monotonicity Hypothesis that word formation never removes operators
 * `LicensesBySelf`: the licensing condition of *por sí solo*.
 * `MonotonicityHypothesis`: the Monotonicity Hypothesis on event templates.
 
-## Main results
-
-* `exists_cause_of_anticausative`: CAUSE survives reflexivization.
-* `not_anticausativeReading`: an agent-causer verb has no anticausative reading.
-* `licensesBySelf_anticausative`: derived inchoatives license *por sí solo*.
-* `not_monotonicityHypothesis_caused`: inchoativization violates the hypothesis.
-* `monotonicityHypothesis_reflexivizeTemplate`: reflexivization satisfies it.
-
 ## Implementation notes
 
 The paper's representations take the change-of-state event as the verb's event argument and

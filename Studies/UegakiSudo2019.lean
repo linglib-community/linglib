@@ -18,13 +18,6 @@ true whenever defined; a meaning that is trivial in this way is ungrammatical. W
 declarative, and for veridical predicates, which require the preferred answer to be true and
 believed, the meaning stays contingent.
 
-## Main statements
-
-* `hope_question_iff_significance`: with a question, *hope* asserts its presupposition.
-* `exists_significance_not_hope_declarative`: with a declarative, *hope* is not trivial.
-* `veridical_isDistributive`, `veridicality_breaks_triviality`: veridical predicates are
-  clausally distributive and not trivial.
-
 ## Implementation notes
 
 The non-veridical predicates are the substrate's degree-comparison predicates,

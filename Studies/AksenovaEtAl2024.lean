@@ -24,15 +24,6 @@ patterns sharing a tier, the chapter's condition for one tier to suffice. Yakut'
 blockers are no segment-level participation, so its rounding is no pattern beside its fronting
 harmony.
 
-## Main statements
-
-* `lokaa_not_isStrictlyLocal`, `lokaa_language_eq_strictlyPiecewise`: Lokaa is SL at no width,
-  and its TSL₂ grammar and SP₂ grammar generate one language.
-* `buryat_language`, `buryat_not_isStrictlyPiecewise`: Buryat's grammar is ATR harmony and
-  blocked rounding harmony on one tier, and SP at no width.
-* `yakut_rounding_not_pattern`: no segment-level pattern beside fronting harmony gives Yakut.
-* `kikongo_not_isTierStrictlyLocal`: no single tier carries Kikongo's two harmonies.
-
 ## Implementation notes
 
 * A single-tier grammar's surface alphabet is `Option V` for its tier alphabet `V`, with `none`

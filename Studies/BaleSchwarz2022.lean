@@ -24,27 +24,6 @@ referent measures at least one unit. Where both theories compose they agree.
 A world assigns each dimension a real-valued measure function, and the units are the English
 measure terms.
 
-## Main statements
-
-* `not_much_divisionMP`: a measurement verb never takes a measure phrase of the division theory
-  whose head unit measures in the verb's dimension.
-* `density_reading`: the polysemous *weigh* makes *this cube weighs what that cube weighs* true
-  of a one-kilogram and a two-kilogram cube.
-* `anaphoricMP_snd`: an anaphoric measure phrase has the dimension of its head unit.
-* `much_divisionMP_iff_anaphoricMP`, `contains_divisionMP_iff_anaphoricMP`: where both theories
-  compose, they derive the same truth conditions.
-* `divisionMP_kilogram_liter`: the division theory identifies *0.1 kilograms per liter* with
-  *0.1 grams per milliliter*.
-* `unit_sensitivity`: on the anaphoric theory the two pseudo-partitives assert the same thing,
-  but one presupposes a volume of at least a milliliter and the other of at least a liter.
-* `division_overgenerates`: at a world where the sample measures a tenth of a milliliter, the
-  division theory makes *the 0.1 milliliter sample contained 0.1 grams of salt per milliliter*
-  true, while on the anaphoric theory it is undefined.
-* `acceptable_iff_mem_dom`: a *per*-sentence is defined at a world where its subject measures as
-  the example states exactly when the example is felicitous.
-* `density_ne_anaphoricMP`: the anaphoric theory makes *the sample's density is 0.9 grams per
-  milliliter* contradictory, the puzzle the paper ends on.
-
 ## Implementation notes
 
 * A sentence with *per* denotes a partial proposition `World E →. Prop`, after the

@@ -20,18 +20,6 @@ Opedal and Cotterell, with the negative logarithm and a similarity score. The id
 similarity regards different words as completely distinct and recovers surprisal and Shannon
 entropy.
 
-## Main statements
-
-* `simAdjSurprisal_lt_simAdjSurprisal_iff`: Theorem 1, similarity-adjusted surprisal increases
-  strictly with information value when the similarity is one minus the distance.
-* `simAdjCost_eq_simAdjSurprisal`: Theorem 3, the similarity-adjusted processing cost is
-  similarity-adjusted surprisal, and under the identity similarity Levy's relative entropy.
-* `simAdjEntropy_indicatorScore`: with the identity similarity, eq. (4) is Shannon entropy.
-* `simAdjSurprisal_indicatorScore_comp`: the part-of-speech similarity (8) gives the surprisal of
-  the target's part of speech.
-* `tendsto_simAdjSurprisal_rpow`: raising the similarity to a growing power recovers surprisal
-  (App. E.1).
-
 ## Implementation notes
 
 * Scores take the alternative first and the target second; the paper writes the similarity with
@@ -90,7 +78,8 @@ theorem simAdjSurprisal_indicatorScore (w : W) :
     simAdjSurprisal L indicatorScore c w = surprisal (L c) w :=
   genSurprisal_negLog_indicatorScore L c w
 
-/-- With the identity similarity, similarity-adjusted entropy is Shannon entropy (p. 16487). -/
+/-- With the identity similarity, similarity-adjusted entropy is Shannon entropy (p. 16487)
+((4)). -/
 theorem simAdjEntropy_indicatorScore [Countable W] [IsMarkovKernel L]
     (hL : Integrable (surprisal (L c)) (L c)) :
     simAdjEntropy L indicatorScore c = Hm[L c] := by

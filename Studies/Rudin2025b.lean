@@ -26,14 +26,6 @@ evidence that rising declaratives denote questions.
 * `quoteReport`: a quotative speech report.
 * `Performance.Asking`: a performance that raises an issue without commitment.
 
-## Main results
-
-* `exists_reenact_iff`: a quotative report is satisfiable exactly when the performance has the
-  verb's property.
-* `Performance.asking_iff`: an asking is a rising declarative or an interrogative.
-* `ask_risingDeclarative`: a rising declarative under *ask* is satisfiable.
-* `judgments`: the paper's quotative judgments.
-
 ## Implementation notes
 
 Reenactment is a relation from events to performances, and the model is left free: a

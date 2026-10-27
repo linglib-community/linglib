@@ -54,20 +54,6 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
 * `sizes`, `Again.CrossesComplement` — the sizes of a Cantonese complement by its finiteness, and
   the exceptional scope of an element across the complement of a verb.
 
-## Main results
-
-* `exceptionalScope_outer_iff`, `not_exceptionalScope_inner`, `antitone_exceptionalScope` — the
-  scope pattern by size and projection, and the implicational hierarchy.
-* `faan_crossesComplement_iff`, `not_gwo_crossesComplement`, `faan_ambiguous`, `faan_lowering` —
-  *-faan* lowering onto the verbs with a nonfinite complement, ambiguously, and *-gwo* lowering
-  onto none.
-* `generalization_I`, `generalization_II`, `correlation_I`, `correlation_II` — the Mandarin
-  generalizations as consequences.
-* `cantonese_lowering`, `aspect_lowering`, `no_phaseComplement_lowering` — the Cantonese
-  pattern for the *again*-elements, the aspect suffixes and the phase complements.
-* `embedsYou`, `not_exceptionalScope_of_licensesDynamic` — the licensing of *you* and its
-  blocking of aspect lowering.
-
 ## Implementation notes
 
 The two projections are the binary split of Travis, MacDonald, Tsai and Sybesma; their

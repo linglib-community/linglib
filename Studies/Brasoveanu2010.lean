@@ -24,14 +24,6 @@ indefinite (86) the singular *she* of (5) forces the truth conditions of the wid
 and of the four scopings of (6) only (86) with (96), the combination (97), lets the woman vary
 with the convention.
 
-## Main statements
-
-* `courtAt₁_true_iff`, `courtAt₂_true_iff`: the truth conditions of (85) and (86).
-* `courtAt₂_pretty_true_iff`: (5) under the narrow-scope indefinite.
-* `courtAt₂_come₂_true_iff`: (97), the reading of (6) on which the woman varies.
-* `determiner_every_iff`: on a non-empty restrictor, (83) is the generalized determiner (77).
-* `readings`: the readings of (5) and (6) on p. 444.
-
 ## Implementation notes
 
 * A row is an assignment `Dref → Flat E`, and ★ is `⊥`; lexical relations are predicates of `E`,

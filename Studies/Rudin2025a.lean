@@ -19,14 +19,6 @@ state lies in `MI` (`Compatible`), so *might p* is rejected exactly when `p` is 
 turns on the assertor's state, which fits Khoo's ratings. Under the ordering semantics asserting
 *might p* adds `p` to the ordering source: Veltman's update with *normally p*.
 
-## Main statements
-
-* `isAssertiveUpdate_might`
-* `exists_isAssertiveUpdate_iff`
-* `compatible_might_iff_compatible_ofProp`
-* `predicts_khoo_ratings`
-* `toExpState_mightOrdUpdate`
-
 ## Implementation notes
 
 The two versions share their definitions over a projection `b : S → Set W` to the modal base,

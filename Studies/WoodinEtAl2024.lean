@@ -14,13 +14,6 @@ The six properties are being a multiple of five or of ten and Jansen and Pollman
 multiple of ten and every property makes it a multiple of five, and with non-negative weights the
 predicted frequency is monotone in the roundness ordering of `Numerals.Roundness`.
 
-## Main results
-
-* `dvd_five_of_holds`: every roundness property entails being a multiple of five.
-* `predicted_le_iff`: a rounder number of comparable magnitude is predicted more frequent
-  exactly when the weights of its extra properties outweigh the magnitude penalty.
-* `predicted_99_le_100_iff`: the study's illustration with 99 and 100.
-
 ## Implementation notes
 
 The fitted coefficients, the ordering of the properties by effect size, the residual analysis

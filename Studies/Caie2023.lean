@@ -29,16 +29,6 @@ there.
 * `run` — a discourse, each assertion pruning the next
 * `Charitable` — Uniform Charity, the context shift Standard Updating needs
 
-## Main results
-
-* `fragments_prune` — one filtration of the fragment set updates and prunes at once
-* `run_eq_inter` — a discourse updates on the conjunction of its sentences under one context
-* `prune_singleton` — a unique interpretation is passed on to the next assertion
-* `run_timLikesMatching`, `run_timDislikesMixed` — either discourse leaves exactly the worlds
-  where the Facts hold, so Safe Information holds of both
-* `preservation_drops_fact_world`, `charity_not_safe` — the two horns of the dilemma facing
-  Standard Updating
-
 ## References
 
 * [caie-2023]

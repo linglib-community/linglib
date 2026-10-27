@@ -32,15 +32,6 @@ divide them into contiguous classes (`not_contiguous_continuant_and_voice`): (3.
 * `Parker2002.Class`, `Parker2002.Class.rankWith`: the classes of Table 5.28 and their ranks, with
   the obstruents ranked by a hierarchy of (3.6); `Class.rank` takes Parker's default.
 
-## Main results
-
-* `Parker2002.Class.coarsens_toSonority`: the modal hierarchy coarsens Table 5.28.
-* `Parker2002.le_iff_hierarchy_le`: every ranking strictly monotone for the product order is a
-  hierarchy of (3.6).
-* `Parker2002.not_contiguous_continuant_and_voice`: no ranking divides the obstruents into
-  contiguous classes of both [continuant] and [voice], since the two combine freely.
-* `Parker2002.contiguous_hierarchy`: the classes each hierarchy of (3.6) keeps contiguous.
-
 ## References
 
 * [parker-2002]: the modal hierarchy (3.3) (p. 62), the obstruent hierarchies (3.6) and their
@@ -213,7 +204,7 @@ theorem not_contiguous_continuant_and_voice {α : Type*} [LinearOrder α] (r : O
   not_contiguous_of_independent r fun x y ↦ ⟨⟨x, y⟩, rfl, rfl⟩
 
 /-- (3.6a) keeps the classes of [continuant] contiguous, (3.6b) those of [voice], and (3.6c)
-none. -/
+none ((3.6)). -/
 theorem contiguous_hierarchy (v : Bool) :
     (Contiguous (hierarchy .gt) {o | o.continuant = v} ∧
       ¬ Contiguous (hierarchy .gt) {o | o.voice = v}) ∧

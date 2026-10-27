@@ -24,16 +24,6 @@ semantic agreement can surface on a concord reader only if it surfaces on the pr
 index readers form a lower set of [corbett-1991]'s Agreement Hierarchy however the open
 predicate position is resolved.
 
-## Main statements
-
-* `Regular.gender_derived`, `Regular.index_number` — the derivation claims of (26) and (24)
-* `hybrid_lexicon` — the hybrid nouns break exactly the links of Table 3
-* `cells_isInterval`, `predicted_patterns`, `three_type_patterns` — breaks cut the chain into
-  contiguous cells; the two-type and three-type counts of n. 3 and p. 824
-* `deca_mixed_agreement`, `relative_modifies_deca` — mixed agreement (41) and the relative
-  pronouns of (57)
-* `paired_agree`, `starred_fail` — the examples, paired with their glossed targets
-
 ## Implementation notes
 
 * Lexical entries carry the singular citation form's concord number for count nouns and the

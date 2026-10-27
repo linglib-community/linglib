@@ -12,21 +12,6 @@ literal listener, speaker and pragmatic listener run the standard pipeline (`L0`
 and the listener averages the strategies under a strategy posterior given the utterance
 (`listener`).
 
-## Main results
-
-* `L1_indicator_apply_singleton_of_notMem`, `listener_apply_singleton_ne_zero_iff`: standard RSA
-  gives no mass to a meaning outside the literal extension of the utterance, while the listener
-  gives a meaning of positive prior mass exactly when some strategy of positive posterior weight
-  admits it at the utterance.
-* `L0_rhetoricalOfQUD`, `kaoGoodman2015_S1`, `kaoWuEtAl2014_S1`: every literal listener of
-  question-under-discussion RSA is the literal listener of a rhetorical function, at a prior that
-  is positive everywhere, and the speakers of Kao and Goodman's irony model and of Kao and
-  colleagues' hyperbole model are the framework's speakers at that function.
-* `exists_L0_ne_qudListener`: over two or more meanings some literal listener of the framework is
-  no literal listener of question-under-discussion RSA.
-* `literal_reading_iff`: in the running example, *the weather is amazing* keeps its
-  literal reading exactly when the strategy posterior gives the literal strategy weight.
-
 ## Implementation notes
 
 * The context of the paper's conditional probabilities indexes the prior, the utterance prior,

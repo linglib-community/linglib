@@ -20,15 +20,6 @@ outright. A determiner at the bottom of its Horn scale, *no*, is its own enriche
 licenses both; one above the bottom exhaustifies to a meaning with an upward-entailing conjunct;
 and a presupposition trigger's full meaning fails plain downward entailment.
 
-## Main results
-
-* `strawsonAA_not_sufficient`: *only*, *would* and *sorry* are Strawson anti-additive, yet their
-  meanings are not downward entailing outright.
-* `licensed_iff`: *no* is the only licenser of strong items and *some* the only non-licenser of
-  weak ones, and `rows_predicted` checks this against the paper's judgments.
-* `isIntolerant_of_isAntiAdditive`, `few_isIntolerant`, `atMostThree_not_isIntolerant`: Horn's
-  Intolerance sits strictly between anti-additivity and downward entailment.
-
 ## Implementation notes
 
 * Entailment between scale-mates holds the restrictor fixed and quantifies over scopes, so *no*
@@ -179,6 +170,8 @@ theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := b
   | conditional => exact iff_of_true Conditional.isStrawsonDE_horizonCounterfactual nofun
   | sorryThat => exact iff_of_true isStrawsonDE_regret nofun
 
+/-- *no* is the only licenser of strong items and *some* the only non-licenser of weak ones, and
+`rows_predicted` checks this against the paper's judgments. -/
 theorem licensed_iff (L : Licenser) (s : Strength) :
     Licensed L s ↔ (s = .weak ∧ L ≠ .some) ∨ (s = .strong ∧ L = .no) := by
   cases s <;> simp [licensed_weak_iff, licensed_strong_iff]

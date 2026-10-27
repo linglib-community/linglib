@@ -26,21 +26,6 @@ monadic verb is unaccusative when its sole argument is a direct internal argumen
 * `Unaccusative`: the verb's sole argument is a direct internal argument.
 * `components`: the component sets of the classes in Appendix A, one per construal.
 
-## Main results
-
-* `position_eq_ranking_iff`: the argument of §4.2. The unergative internally caused verbs and
-  the unaccusative verbs that fall under two rules fix the position of every argument.
-* `mem_of_position_eq_ranking`: each of the three rules is needed.
-* `unaccusative_iff`: a verb is unergative exactly when its argument is the immediate cause and
-  nothing more.
-* `diagnostics_agree`: the diagnostics of chapter 4 sort the book's examples as the linking does.
-* `locativeInversion_not_diagnostic`: the examples of §6.2.2 show that locative inversion does
-  not.
-* `isUnaccusative_agrees`: the English fragment's `Verb.IsUnaccusative` classifies the examples'
-  verbs as the linking does.
-* `causativePairs_diverge`: it does not on the verbs of emission with a causative pair, which the
-  book does not count as the causative alternation (§3.2.5).
-
 ## Implementation notes
 
 * A ranking lists the rules keyed to a component, highest precedence first, and the Default rule

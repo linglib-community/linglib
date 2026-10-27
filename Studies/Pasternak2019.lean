@@ -23,13 +23,6 @@ parts.
 * `Monotonic`: the monotonicity presupposition.
 * `intensityComparativeZero`: the comparative with a zero degree in the than-clause set.
 
-## Main results
-
-* `intensityComparative_of_greatest`: under the presupposition the comparative compares the maximal
-  states.
-* `intensityComparativeZero_of_none`: the than-clause positive is not entailed.
-* `div_iff`: mental-state homogeneity.
-
 ## Implementation notes
 
 The reduction of a comparative to its greatest witnesses under a monotone measure is

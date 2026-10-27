@@ -28,16 +28,6 @@ exhaustifying it relative to the alternatives of the constituent *=mi* marks yie
   declarative with a given evidential performs.
 * `Highlighted`, `MiDefined`: highlighting, and the presupposition of *=mi*.
 
-## Main statements
-
-* `miDefined_univ_iff`: for *=mi* on a clause exhaustification is vacuous, and *=mi* needs a
-  highlighted proposition entailing `¬p`.
-* `miDefined_update_present`, `miDefined_update_assert_iff`: presenting `p` licenses *=mi* on
-  `p`, and asserting it does not.
-* `miDefined_of_isInnocentlyExcludable`: corrections.
-* `judgment_eq_acceptable_iff_miDefined`, `judgment_eq_acceptable_iff_nonempty`: an example is
-  acceptable exactly when the analysis licenses its *=mi*, or its speaker stays consistent.
-
 ## Implementation notes
 
 The paper's composition rule I is the bind of `TwoDim`, whose `⊤` plays the empty not-at-issue

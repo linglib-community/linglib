@@ -28,16 +28,6 @@ Fitting's guard `φ : ψ`, read as `ψ` presupposing `φ`, encodes Burton-Robert
 salient presuppositional intuitions, but the thesis rejects it: it makes denying the
 presupposition a contradiction after a negative carrier as well as a positive one.
 
-## Main statements
-
-* `top_kLE_eval_closure`: an assertion is at least true after closure, in any state and under
-  any lexicon (§3.5.6).
-* `penguin_principle`, `nixon_diamond`, `weak_tweety_triangle`: the defaults of §3.7.3.
-* `presupposition_rows`: the inference patterns (6.12) of presupposition.
-* `cancellation_contrast`: the links predict the contradiction marks of (6.11c) and (6.11d), and
-  the guard does not.
-* `context_rows`: the context effects of (6.13) and (6.14).
-
 ## Implementation notes
 
 * The thesis writes a value as `⟨against, for⟩`; this file keeps the substrate's

@@ -25,34 +25,6 @@ When `O` does not distribute over the disjunction, as with necessity modals and 
 quantifiers, the first layer denies both disjuncts instead, and plain disjunction stays exclusive
 at every layer.
 
-## Main statements
-
-* `exists_exhIter_eq`: over finitely many alternatives, iterated exhaustification eventually
-  stops changing.
-* `exhIter_two_eq_anEx`: the second layer denies the exhaustification of every other
-  alternative, whenever that is consistent.
-* `IsDiamond.exhIter_two_eq_iff`: for a disjunction of two independent alternatives and a fourth
-  alternative stronger than both, the second layer adds something exactly when the fourth is
-  stronger than their conjunction.
-* `IsDiamond.disjoint_exhMW`: exhaustifying by minimal worlds instead contradicts free choice.
-* `free_choice_permission`, `free_choice_not_required`, `existential_free_choice`,
-  `conjunctive_free_choice`: free choice under possibility modals, negated necessity modals,
-  existential quantifiers and negated universal quantifiers.
-* `required_implicatures`, `universal_implicatures`: under necessity modals and universal
-  quantifiers, exhaustification denies both disjuncts.
-* `exclusive_or_of_one_le`: plain disjunction is exclusive at every layer.
-* `singular_no_free_choice`: a singular indefinite, whose alternatives include a plural one, has
-  no free choice reading at any layer.
-* `embedded_scalar_implicature`: for *the reading or some of the homework*, exhaustification
-  denies *all of the homework* but not *the reading*.
-* `isSauerlandExcludable_iff_isSecondaryImplicature`: when every alternative entails the
-  prejacent, the test (57) excludes exactly Sauerland's secondary implicatures.
-* `isSauerlandExcludable_of_isInnocentlyExcludable`: over finitely many alternatives, innocent
-  exclusion only removes alternatives from those the test (57) excludes.
-* `exhIE_infClosure_range`, `sauerland_exclusion_eq_empty`: against the answers to a question,
-  innocent exclusion yields *exactly one*, while denying every answer that passes Sauerland's
-  test is contradictory.
-
 ## Implementation notes
 
 Propositions are sets of worlds, so the theorems hold over any model. Example numbers follow the

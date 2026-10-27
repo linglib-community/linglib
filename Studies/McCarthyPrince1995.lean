@@ -29,19 +29,6 @@ Each result says which rankings of the paper's constraints select which candidat
   (39), (106) and (131), each with its `correspondence` and `surface`.
 * `Javanese.con`, `Balangao.con`, `Akan.con`: the constraints of those tableaux.
 
-## Main results
-
-* `Javanese.optimal_eq`: each candidate of (39) violates one constraint, and the winner is the
-  candidate whose constraint is ranked last.
-* `Javanese.overapplication`, `Javanese.normalApplication`,
-  `Javanese.underapplication_notMem`: with *VhV above MAX-IO, MAX-BR above MAX-IO gives
-  overapplication and the reverse gives normal application, and the underapplying candidate
-  wins under no such ranking.
-* `Balangao.optimal_iff`: the coda-sparing reduplicant wins exactly under MAX-IO ≫ NO-CODA ≫
-  MAX-BR.
-* `Akan.optimal_iff`: with PAL above IDENT-IO(−cor), the unpalatalized *kɪ–ka* wins exactly
-  when OCP(+cor) and IDENT-BR(−cor) both dominate PAL.
-
 ## Implementation notes
 
 Javanese is analysed with suffixing reduplication, the paper's tableau (39). Its prefixing

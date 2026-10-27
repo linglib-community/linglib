@@ -17,18 +17,6 @@ though in Souletin Basque, Korean and Tamil they reach further. Alok's relationa
 grades of a clause's phrases factor through their referents, which a single [status] per clause,
 as in Portner, Pak and Zanuttini, cannot match.
 
-## Main results
-
-* `AlokBhalla2026.distribution_rows`: an embedded marker is grammatical exactly in the contexts at
-  or above its language's threshold.
-* `AlokBhalla2026.loci_sound`, `AlokBhalla2026.loci_incomplete`: the loci of a language reach every
-  context it marks, and reach lower ones exactly in Souletin Basque, Korean and Tamil.
-* `AlokBhalla2026.rows_relational`, `AlokBhalla2026.singleSource_refuted`: a Magahi root clause is
-  grammatical exactly when its grades factor through referents, and (44b) and (45) carry several
-  grades.
-* `AlokBhalla2026.allocutive_iff_third`: Kaur's probe reaches the addressee exactly past a third
-  person subject.
-
 ## Implementation notes
 
 * The speech-act phrase reaches embedded-root contexts, as in Miyagawa's account, which the review

@@ -12,15 +12,6 @@ verbalizer, a head below the causative *gěi* and Voice *bǎ*. In *dǎ*+R (*dǎ-
 adjoins to the verbalizer; in *dǎ*+N (*dǎ diànhuà* 'make a phone call') the verbalizer takes a
 noun phrase.
 
-## Main statements
-
-* `topDown_eq_iff`: the heads realize *bǎ*, *gěi*, *dǎ* as in (30) iff v, the lower Caus and
-  Voice head separate projections.
-* `diagnostics_iff`: the judgments of (44), (46), (48) and (49) follow from whether *dǎ* shares a
-  complex head with the root after it.
-* `x0At_tree_lexicon`: under both attachments the root shares the complex head of *dǎ*.
-* `mayCondition'_rootPos_daPos_iff`: *dǎ* is local to the root after it in *dǎ*+R only.
-
 ## Implementation notes
 
 * Heads are parts of an interval partition of `Harley2017.Feature`. The paper's causative v is
@@ -167,7 +158,7 @@ def test? (d : Datum) : Option (Combination × Bool) := do
 theorem length_filterMap_test? : (Examples.all.filterMap test?).length = 12 := by decide +kernel
 
 /-- A test form is acceptable iff it keeps *dǎ* with what follows it or the two lie in different
-complex heads. -/
+complex heads ((44), (46), (48), (49)). -/
 theorem diagnostics_iff : ∀ d ∈ Examples.all, ∀ p ∈ test? d,
     d.judgment = .acceptable ↔ (p.2 = true → ¬ p.1.ShareHead) := by
   decide +kernel

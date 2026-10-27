@@ -19,18 +19,6 @@ fifth they need the bleeding, so the two kinds of impoverishment interleave. The
 the online appendix's analysis, its rules of impoverishment, metathesis, exponence, epenthesis
 and tone, and derives from it the paradigm of `Fragments/Taos/Agreement.lean`.
 
-## Main results
-
-* `derive_eq_form`: the appendix's rules derive every cell of the paradigm but the nine it leaves
-  open (`unaccounted`).
-* `must_interleave`: the orders cases 1 and 5 need respect neither block architecture, each
-  case resting on one bleeding fact (`r40_bleeds_r34a` to `r26_bleeds_r29`).
-* `mopen_tiers`: the rules of exponence read their leftmost brackets on the tiers of
-  `[±participant]` and of number; read on the present arguments alone, they lose the exponents
-  of *mopén*.
-* `r24_feeds_m23`, `Basque.ondarru_feeds`, `Basque.zamudio_bleeds`: impoverishment feeds
-  metathesis in Taos, and Participant Dissimilation feeds or bleeds Ergative Metathesis in Basque.
-
 ## Implementation notes
 
 * Inverse number is the one feature `Feat.inverse`, which `Arg.Has` reads as containing the

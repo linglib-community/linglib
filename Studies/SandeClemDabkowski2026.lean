@@ -28,17 +28,6 @@ Pesetsky's cyclic linearization, which the paper adopts, nothing that ends up be
 particle and the verb shares in it. The Wolof relative clauses described by Sy and by Martinović
 show the same profile, the trigger moving instead of the target.
 
-## Main statements
-
-* `SandeClemDabkowski2026.Clause.harmony_iff_hasAux`: harmony applies exactly when an auxiliary
-  keeps the verb in v (44).
-* `SandeClemDabkowski2026.Clause.notMem_vP_of_between`: what stands between the particle and the
-  verb on the surface was not spelled out with them (41).
-* `SandeClemDabkowski2026.Clause.spellouts_eq_phases`: the derivations spell out the vP and CP
-  snapshots.
-* `SandeClemDabkowski2026.Clause.vPTableau_optimal`: the vP tableau gives the particle the value
-  harmony assigns.
-
 ## Implementation notes
 
 * The vP Spell-out is the vP's head and complement, the stage before the subject merges; the

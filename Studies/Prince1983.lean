@@ -16,16 +16,6 @@ stress is built from the End Rule at an edge, extrametricality, Perfect Grid Con
 from an edge, and bipositional heavy syllables; together they derive the alternating systems of
 Garawa, Hawaiian and Winnebago and the quantity-sensitive systems of (98).
 
-## Main statements
-
-* `SWTree.uniform_rppr_iff`: under uniform labelling at either edge the RPPR is the End Rule.
-* `moveXL_getD_peak`, `Marks.not_isContinuous_move`: Move x never moves the peak, since the move
-  would leave a hole in a column.
-* `postpeninitial_iff`, `antepenultimate_iff`: stress three syllables from an edge comes only from
-  extrametricality and a trough-first sweep from that edge.
-* `hawaiian_eq`, `hawaiian_ne_alternating`: Hawaiian's initial dactyl needs the End Rule at both
-  edges before the sweep, and no perfect grid gives it.
-
 ## Implementation notes
 
 * A grid is the substrate's `Prosody.Grid`, a list of column heights, so the Continuous Column

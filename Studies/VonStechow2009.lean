@@ -24,21 +24,6 @@ A time is a moment, a point of a linear order, or an interval of moments, mathli
 cell read as a relation (`Semantics/Tense/Quantificational.lean`), so `◇[toSetRel ⟦past⟧] P s`
 says that `P` held at some time before `s`.
 
-## Main statements
-
-* `not_dowtyAchievement`, `achievement_rat`: Dowty's interval semantics for achievements is
-  unsatisfiable in dense time, von Stechow's moment semantics is not.
-* `not_perfAdv_yesterday`: the present perfect with *yesterday* is contradictory.
-* `every_sunday`: *John worked on every Sunday* is true on the reading restricted to past
-  Sundays, and false on both unrestricted scopings, of a calendar where John works on Sundays.
-* `restrictedPast_Iic_iff_prfv`: the Past restricted to the subintervals of a past time is the
-  perfective at that time.
-* `exists_not_prfv_past`: *It didn't rain today* is too weak on the referential analysis.
-* `anaphoric_report_iff`: on the anaphoric analysis *At five Mary thought it was six* ascribes
-  inconsistent beliefs to Mary.
-* `before_earliest_iff_beforeEver`, `after_earliest_iff_after`: *before* and *after* the earliest
-  time of the clause are Anscombe's *before ever* and *after*.
-
 ## Implementation notes
 
 The tense entries, relative clauses, attitudes and adjunct clauses are stated on moments, the

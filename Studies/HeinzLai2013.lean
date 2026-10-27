@@ -29,14 +29,6 @@ and then right to left.
 * `IsSourGrapes`, `IsDominantRecessive`: the conditions (8) and (9)
 * `php`: progressive spreading of `+` alone, the transducer of Figure 4
 
-## Main results
-
-* `not_isLeftSubsequential_of_isSourGrapes`: Theorem 5
-* `exists_isRightSubsequential_isSourGrapes`, `not_isRightSubsequential_of_isSourGrapes`: the
-  right half of Theorem 5 fails for (8) alone and holds once trigger-less words are left alone
-* `not_isSubsequential_of_isDominantRecessive`: Theorem 6
-* `isDominantRecessive_php`, `isWeaklyDeterministic_php`: Theorem 7
-
 ## Implementation notes
 
 * The proof of Theorem 5 goes through the bounded delay of left-subsequential functions rather

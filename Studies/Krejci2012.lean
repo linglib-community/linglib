@@ -21,15 +21,6 @@ reflexivization read in the opposite direction. On a model of *eat*, *feed* and 
 entailments of the simple form split between causer and causee of the lexical causative but
 stay with the causee of the periphrastic one.
 
-## Main statements
-
-* `feed_not_makeEat`: feeding is not making eat.
-* `not_eat_and_feed`: denying the simple form while asserting the lexical causative is
-  consistent.
-* `restitutive_not_repetitive`: *again* has a restitutive reading on the result state.
-* `ofAttribute_reaches_le_iff`: the hierarchy is the order of implication among the tiers in the
-  survey, so that no surveyed language skips a tier (`table_respectsHierarchy`).
-
 ## Implementation notes
 
 * The model takes the verb's event to be the change of state and closes the causing event

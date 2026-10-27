@@ -17,18 +17,6 @@ the complex utterances (`S1`). The pragmatic listener, who hears the utterance a
 inverts the speaker jointly over worlds and assumptions (`L1`), as in the model of Qing, Goodman
 and Lassiter.
 
-## Main results
-
-* `L1_c_mono`: the posterior probability of the complement rises with its prior probability,
-  under every utterance, question, rationality, cost and prior over assumptions.
-* `S1_univ_bel_knowNeg_lt_thinkNeg`: a speaker without assumptions who addresses whether Cole
-  believes the complement prefers negated *think* to negated *know* at a world where he does not.
-* `S1_knowNeg_eq_thinkNeg`, `L0_knowNeg_bel_eq_one`: a speaker who assumes the complement finds
-  the two equally informative under either question, and negated *know* then settles the belief
-  question.
-* `S1_bel_congr`: under the belief question the speaker's choice depends on the world only
-  through Cole's belief.
-
 ## Implementation notes
 
 * The paper's literal listener carries a world prior, but in the released model the literal

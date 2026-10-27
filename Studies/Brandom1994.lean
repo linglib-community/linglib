@@ -27,15 +27,6 @@ entailment, exactly when the preclusion it confers is its own incompatibility.
   confers.
 * `Score`, `assert`, `challenge`, `defer`, `disavow`: the scorekeeping moves.
 
-## Main statements
-
-* `Scorecard.Entitled.of_commitmentEntails`: in a coherent role commitment entailment preserves
-  entitlement.
-* `InferentialRole.coherent_iff_precludes_eq`: coherence is incompatibility as scorekeeping
-  confers it.
-* `InferentialRole.IsNegation.content_eq_compl`: a negation's content is the orthocomplement.
-* `barn_entitled`: entitlement to each of two incompatible claims, with commitment to neither.
-
 ## Implementation notes
 
 * Claims are an arbitrary type; `InferentialRole.ofWorlds` is a possible-worlds interpretation.

@@ -30,18 +30,6 @@ the weaker, whatever the world and the rationality. Silence beats a message whos
 too probable, and where some but not all is improbable *some but not all* beats *some* and *not
 all*.
 
-## Main statements
-
-* `eval_strongKleene_pexIE_eq_one_iff`: a sentence is true by Strong Kleene, its scalar items read
-  by `pex`, exactly when all its parses are true, (21)–(24).
-* `supervaluationOn_parses_eq_of_monotone`: under a raised monotone quantifier, truth on all parses
-  is the Strong Kleene value.
-* `exactlyTwo_parses_false_entitywise_undefined`: under *exactly two* it is not.
-* `speaker_readings_real_lt_iff`: the speaker ranks the true messages by the surprisal of their LP
-  reading less the cost.
-* `judgments_11`: in the marbles context *some* passes Post-Accommodation Informativity and loses to
-  *some but not all*.
-
 ## Implementation notes
 
 * The speaker is `RSA.maximinSpeaker` against the literal listeners of the parses, taken as one
@@ -129,7 +117,8 @@ theorem readings_pexIE_lp : readings (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ
 
 /-- A sentence whose scalar items are read by `pex` is true by Strong Kleene exactly where each of
 its bivalent variants is true, the variant reading each item at its own standard, by its parse with
-the operator at K3 (`readings_pexIE_k3`) and without it at LP (`readings_pexIE_lp`) (§5). -/
+the operator at K3 (`readings_pexIE_k3`) and without it at LP (`readings_pexIE_lp`) (§5) ((21),
+(24)). -/
 theorem eval_strongKleene_pexIE_eq_one_iff [DecidableEq U] (φ : Trivalent.Formula U) :
     Trivalent.Formula.eval .strongKleene (fun σ ↦ pexIE (ALT σ) (lit σ) (ALT σ) w) φ = 1 ↔
       ∀ ψ ∈ φ.bivalentVariants, Trivalent.Formula.evalBool (fun x ↦

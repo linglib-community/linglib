@@ -33,19 +33,6 @@ the updates that only change assignments.
 * `Part`, `slice`, `IsAnaphoricallyDistributive`, `anaMight`, `anaNeg`: the cells of a state,
   processing a state cell by cell, and the possibility modal and negation defined that way.
 
-## Main results
-
-* `mem_indefinites_iff`: the second of two coindexed indefinites overwrites the first.
-* `upDynamic_eq_test`, `nonempty_upDynamic_iff`: the dynamic `↑` is the test of the static one.
-* `pollyAnnaStatic_eq`, `pollyAnnaDynamic_eq`: the static and the dynamic meaning of a sentence
-  with two names competing for one index.
-* `reachable_iff_finite`, `reachable_symm`, `antisymmetry_fails`: reachability is differing at
-  finitely many variables, so it is symmetric and no partial order.
-* `isDistributive_distNeg`, `distNeg_might_eq_distNeg_must`: the pointwise negation is
-  distributive and conflates the two modals.
-* `isAnaphoricallyDistributive_slice`, `not_isDistributive_anaMight`, `anaNeg_image`: slicing is
-  distributive over assignments only, and its negation is pointwise on anaphoric updates.
-
 ## Implementation notes
 
 A dynamic proposition is an `Update (Assignment E)`, the paper's functions from assignments to

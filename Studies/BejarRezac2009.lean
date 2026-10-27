@@ -29,19 +29,6 @@ bearing `π`.
   external argument and values no two probes alike on one projection.
 * `BejarRezac2009.segmentProbe`: a segment of the probe searching nominals with Case.
 
-## Main results
-
-* `BejarRezac2009.basque_ranks_first_eq_second`, `BejarRezac2009.full_ranks`: no ranking of persons
-  picks Basque's controller, while specification picks it for a full probe.
-* `BejarRezac2009.basque_isDirect_iff`, `BejarRezac2009.nishnaabemwin_isDirect_iff`: the direct
-  contexts of (22).
-* `BejarRezac2009.converges_iff`: a derivation converges iff it has property P exactly in an inverse
-  context.
-* `BejarRezac2009.highestValue_eq_spec`: the probe valued last spells out the external argument.
-* `BejarRezac2009.segmentProbe_pi`, `BejarRezac2009.pcc`: the root segment is the person probe of
-  the 2003 paper, and no segment reaches a nominal behind an oblique one.
-* `BejarRezac2009.controller_rows`, `context_rows`, `repair_rows`: the examples.
-
 ## Implementation notes
 
 Checking is membership of a segment in a goal's specification, and the value a probe copies is the

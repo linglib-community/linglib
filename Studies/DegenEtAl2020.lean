@@ -15,17 +15,6 @@ the exponential of its utility, the log of the listener's probability of the int
 the cost of the expression. An adjective that the Boolean semantics makes redundant then adds
 information, and adds more the less noisy it is.
 
-## Main statements
-
-* `overmodification_odds_lt_iff`: among the three pins of the paper's first figure the speaker
-  adds a redundant colour to a sufficient size more readily than a redundant size to a sufficient
-  colour exactly when size is the noisier of the two, at every positive rationality and when the
-  two redundant adjectives cost the same.
-* `color_overmodification_iff`, `size_overmodification_iff`: without cost the redundant
-  expression is preferred to the sufficient one exactly when the semantic value of the redundant
-  adjective exceeds one half.
-* `boolean_no_preference`: with Boolean values the redundant adjective adds nothing.
-
 ## Implementation notes
 
 * `S1` is `RSA.speaker`, whose rationality `α` scales the whole utility. The paper weights

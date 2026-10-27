@@ -19,17 +19,6 @@ embedded variation as they predict the global rates of van Tiel and Geurts, whic
 strengthening in the style of Bergen, Levy and Goodman leaves unexplained, and the null result
 of Sun, Tian and Breheny is put down to the corrective context of *P so not Q*.
 
-## Main results
-
-* `supports_iff`: the literal reading supports the true control, the global reading the weak
-  inference too, and the local reading the strong inference too.
-* `exp1_monotone`: the responses of Figure 1 rise with the number of supporting readings.
-* `strong_admitted`: every account but the unmodified neo-Gricean one makes the local reading
-  available under a universal: the grammatical theory of Chierchia and of Chierchia, Fox and
-  Spector computes it locally, and Sauerland's account negates an alternative that is not
-  stronger than the utterance.
-* `compatible_iff_not_strong`: the compatible control is the negation of the strong inference.
-
 ## Implementation notes
 
 * A scale ⟨P, Q⟩ with `Q ⊆ P` puts each individual of the domain in one of the three cells of
@@ -123,6 +112,8 @@ def supported : ReadingLabel → Finset Inference
   | .global => {.trueControl, .weak}
   | .local_ => {.trueControl, .weak, .strong}
 
+/-- The literal reading supports the true control, the global reading the weak inference too, and
+the local reading the strong inference too. -/
 theorem supports_iff (ℓ : ReadingLabel) (n : Inference) : Supports ℓ n ↔ n ∈ supported ℓ := by
   refine ⟨fun h ↦ ?_, fun h ι _ m hm ↦ ?_⟩
   · cases ℓ <;> cases n <;> first

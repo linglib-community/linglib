@@ -23,15 +23,6 @@ negating overt *only*, the substrate's `Focus.Particles.only`, keeps it. The Aka
 that if the prejacent holds no other alternative does, together with existence. The Ngamo
 *=i/ye* construction only presupposes that its background is salient.
 
-## Main results
-
-* `negated_only_licenses_also`, `negated_cleft_notMem`: negating *only* keeps an antecedent for
-  *also*, negating a marked construction does not.
-* `cleft_neg_of_alt`, `cleft_exhaustive`, `cleft_existence`: the conditional exhaustivity of the
-  cleft projects through negation, cannot be cancelled, and comes with existence.
-* `marked_exhaustivity_cancellable`, `marked_of_not_exists`: the Ngamo construction's exhaustive
-  inference is a cancellable implicature, and it carries no existence presupposition.
-
 ## Implementation notes
 
 Constructions are trivalent propositions over an arbitrary set of alternatives containing the

@@ -24,16 +24,6 @@ Activity Condition leaves.
 * `Halpert2012.Clause.Converges`: every phrase needing licensing is reached by L⁰ or V⁰.
 * `Halpert2012.Clause.spellout`: the verb form L⁰'s probing determines.
 
-## Main results
-
-* `Halpert2012.Clause.converges_iff`: the licensing generalization of §3.3.3.
-* `Halpert2012.Clause.countP_le_one`, `Halpert2012.Clause.countP_le_two`: one phrase needing
-  licensing in a vP without extensions, two with them.
-* `Halpert2012.Clause.spellout_eq_disjoint_iff`: the verb is disjoint iff vP is empty.
-* `Halpert2012.search_eq_search_evacuate`: under Activity, probing before A-movement reaches the
-  goal probing after it reaches.
-* `Halpert2012.Clause.rows`: the paradigms of chapters 3 and 4.
-
 ## Implementation notes
 
 Phrases that left vP or attach above it are listed in `Clause.outside` without positions. A row

@@ -18,17 +18,6 @@ collider C → E ← A, with E the conjunction or the disjunction of its causes,
 conjoined and as less causal when they are disjoined. None of the measures in the literature
 predicts the second effect, abnormal deflation, which the paper's two experiments find.
 
-## Main statements
-
-* `abnormal_inflation`, `supersession`, `no_supersession`, `abnormal_deflation`: the four effects
-  of the measure on the collider (§3.2, §5, Table 5).
-* `table1_conjunctive`, `table1_disjunctive`, `no_abnormal_deflation`: the values of SP, ΔP,
-  power-PC and PNS on the collider (Table 1), none of which rises with P(C) when the causes are
-  disjoined.
-* `PNS_eq_deltaP`: under a product measure PNS is ΔP when the outcome is monotone in the cause
-  (§3.3).
-* `ae_tendsto_hits`: the sampling algorithm of §4.4 converges almost surely to the measure.
-
 ## Implementation notes
 
 * Worlds are the draws of C and A under independent Bernoulli priors, the paper's sampling
@@ -429,7 +418,7 @@ theorem integral_hit_step [IsFiniteMeasure μ] :
   simp [sufficiency, necessity, measureReal_def, smul_eq_mul]
 
 /-- The sampling algorithm converges, in that on almost every run of independent steps the
-proportion of hits tends to the actual causal strength, eq. (1). -/
+proportion of hits tends to the actual causal strength, eq. (1) (§4.4). -/
 theorem ae_tendsto_hits [IsFiniteMeasure μ] [IsProbabilityMeasure (step μ w₀ E S)] :
     ∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S),
       Tendsto (fun K : ℕ ↦ (K : ℝ)⁻¹ * ∑ k ∈ Finset.range K, hit w₀ E S (ω k)) atTop

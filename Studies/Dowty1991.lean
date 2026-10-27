@@ -14,21 +14,6 @@ Proto-Agent entailments and as direct object the one with the most Proto-Patient
 Every argument profile here is read off a row of `Data/Examples/Dowty1991.json`, from the
 single-entailment exemplars of (29) and (30) to the three verb classes of (64).
 
-## Main results
-
-* `cruse_volitive_is_volition_alone`: Dowty's exemplar of volition alone is Cruse's volitive
-  doer.
-* `alternates_iff`, `hierarchies`: Corollary 1 is the failure of (31) to select either way, and
-  the role hierarchies of (36) follow from the principle.
-* `primary_transitives`, `buy_sell`, `psych_doublet`: the primary transitive verbs of (35) are
-  selected outright, while *buy* and *sell* and *like* and *please* tie.
-* `directObjectOver_of_changeOfState`, `three_classes`: a change of state entailed for one
-  nonsubject argument alone fixes it as direct object, so of the three classes of (64) only the
-  break class does not alternate.
-* `intransClass_unergative`, `intransClass_unaccusative`: the pure cells of Table 1.
-* `primary_transitives_match_templates`: the substrate's class templates agree with the paper's
-  attributions, save at two deliberate divergences.
-
 ## Implementation notes
 
 A row attributes some entailments to its argument and denies others; the profiles agreeing with

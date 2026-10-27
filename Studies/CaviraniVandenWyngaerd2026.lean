@@ -26,16 +26,6 @@ floats, and after /l/ it is not heard.
 The rows are the word pairs of the paper's tables, and the Czech fragment reads the alternating
 consonant off their spelling.
 
-## Main statements
-
-* `derive_eq_sup`: on a velar or a coronal the palataliser docks whole, whatever the suffix.
-* `associate_of_mem`: a consonant with |U| at its place keeps its place and leaves |I| afloat.
-* `interpret_roots`: outside /ɦ/, the root nodes built for a row are pronounced as the phonemes
-  of its attested alternant.
-* `derive_comparative`, `derive_h`: a fricative builds one structure under small and medium
-  palatalisation, where /ɦ/ has two reflexes.
-* `loket_lokte`: the paper's illustration of proper government, *loket* against *lok_te*.
-
 ## Implementation notes
 
 * The skeleton is reduced to what the outcome depends on: the root node of the base-final

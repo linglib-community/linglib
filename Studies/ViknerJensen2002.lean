@@ -13,14 +13,6 @@ definite in the scope of the possessor (`clitic`, (16)). A sortal head noun is m
 Barker's relationalizer applied to one of its qualia or to the control relation (`Sense.shift`,
 `Sense.shiftWith`).
 
-## Main statements
-
-* `exists_clitic_ne_wideDefinite`: a definite scoping over a quantified possessor gives the
-  wrong truth conditions for *each girl's teacher* (11b).
-* `not_clitic_control`: an inanimate possessor has no control reading (Table 2).
-* `movie_lexical`, `movie_favourite`, `sky_favourite`: *Mary's movie* has two lexical
-  interpretations, *Mary's favourite movie* one and *Anne's favourite sky* none (§4).
-
 ## Implementation notes
 
 A quale `q y x` takes the related entity first (`y` is the whole, maker or user of `x`), an order

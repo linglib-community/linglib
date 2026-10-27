@@ -18,15 +18,6 @@ distribution, only when the partition has two cells. The partition of a cell and
 is the coarsest coarsening that decides the cell, and an attribute is negative when its
 complement is a cell and its two-cell partition properly coarsens the partition.
 
-## Main statements
-
-* `compl_isPartition_iff`: the complements of the cells form a partition exactly for two cells.
-* `sum_measureReal_compl`, `sum_measureReal_compl_eq_one_iff`: the complement probabilities sum
-  to one less than the number of cells, and to one exactly for two cells.
-* `isGreatest_polar_cell`: a cell and its complement give the coarsest coarsening deciding it.
-* `integral_eq_partitionEU`, `partitionEU_congr`: expected utility computed cell by cell does not
-  depend on the partition.
-
 ## Implementation notes
 
 Coarsening is the refinement order on `Setoid`. Expected utility integrates a utility against a

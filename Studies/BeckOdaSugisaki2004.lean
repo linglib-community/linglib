@@ -27,22 +27,6 @@ no degree-based negative islands — and its scope argument.
 * `theC`: the Fregean definite over a contextual domain, the denotation of a *yori*-clause.
 * `erJ`: the comparative that combines directly with the adjective meaning.
 
-## Main results
-
-* `pos_comparedTo`, `maxIn_Ioi_Iic_iff`: a context setter supplying `y` turns the positive form
-  and the contextual comparative into the comparison with `y`.
-* `isGreatest_card_of_isMaximal`: an amount standard is the cardinality of the maximal
-  plurality.
-* `pos_ne_subcomparative`: an individual standard lies on the matrix dimension and does not
-  express a subcomparative of degree.
-* `not_er_nobody`, `yori_negative_entails_unbought`: the negated *than*-clause has
-  no maximum on an unbounded scale, while the definite *yori*-clause is defined and entails
-  a particular unbought individual.
-* `er_everyone_without_shared_book`: the standard comparative lacks the definite's
-  uniqueness presupposition.
-* `erJ_iff_pos`, `exists_wideScope_not_inSitu`: `erJ` has the truth conditions of the
-  positive form and, applied in situ, yields only the narrow reading under `need`.
-
 Example numbers follow the journal article; the examples are typed in
 `Data/Examples/BeckOdaSugisaki2004.json`.
 

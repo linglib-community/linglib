@@ -14,20 +14,6 @@ the speaker is informative about the answer at her world and says nothing false 
 (`speaker`), and the pragmatic listener inverts the speaker jointly over worlds and context sets
 (`listener`).
 
-## Main results
-
-* `needVisa_nonUS_lt`: asked whether Tom needs a visa, a listener who hears *Tom doesn't have a
-  green card* favours the world where Tom is a non-US citizen over the one where he is a US
-  citizen, at every rationality.
-* `freeDrink_exhaustive`, `freeDrink_nonUS_lt`: asked whether Tom gets a free drink, the
-  utterance settles the question in every context set, and the listener still favours the non-US
-  world.
-* `notSprinter_exhaustive_iff`: *not an Olympic sprinter* settles which kind of athlete Tom is,
-  at the world where he is another runner, exactly within context sets that exclude the athlete
-  and the non-athlete worlds.
-* `other_share_lt`: at the non-athlete world *not an Olympic sprinter* is produced more often than
-  silence and less often than *not a runner*.
-
 ## Implementation notes
 
 * Utterances carry no cost.

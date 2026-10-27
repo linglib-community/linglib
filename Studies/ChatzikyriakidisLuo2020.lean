@@ -30,16 +30,6 @@ carrier, all five laws hold.
 * `SubSetoid A B sA sB`: `A` is a subtype of `B` whose identity criterion `sA` is inherited
   from `sB`.
 
-## Main statements
-
-* `range_sigma_comp`: intersective modification meets the noun's extension with the adjective's.
-* `not_forall_nonempty_hom_sigma`: subsective modification need not respect subtyping.
-* `forall_does_iff_mono`: law (A1) holds on a noun exactly when its embedding is a monomorphism.
-* `not_doesNot_comp_heq`, `not_forall_doesNot_of_sub_heq`, `not_exists_doesNot_of_sub_heq`: laws
-  (A3), (A4) and (A5) fail for `HEq`.
-* `three₀_iff_two_lt_card`: three objects distinct under an identity criterion satisfy a predicate
-  exactly when more than two of its identity classes do.
-
 ## Implementation notes
 
 * As in [chatzikyriakidis-luo-2017], a noun is an object of `Over Obj`, a type embedded in a type

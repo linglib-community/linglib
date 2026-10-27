@@ -20,15 +20,6 @@ in either order, (21) and §6. Adverbs under passive *been*, as in (54), are eve
 with *already* a situation modifier (51) no assignment of the zones to Cinque's heads is monotone,
 since Cinque puts the volitional head of *intentionally* above anterior tense.
 
-## Main statements
-
-* `pairwise_cod_le`: along a spine of composing heads no head takes a sort below what one under
-  it yields.
-* `not_composes_of_tPerf_vEvt`: the progressive is not above the perfect, (3).
-* `analyses_judgment`: a row is acceptable exactly when its spine composes.
-* `composes_54a_iff`: adverbs under passive *been* modify events.
-* `not_monotone_of_modVolitional`: the zones do not coarsen Cinque's hierarchy.
-
 ## Implementation notes
 
 * A head is the sorts of its denotation in §4. Selection beyond sort, the progressive's dynamic
@@ -143,6 +134,7 @@ def Composes (l : List Head) : Prop := l.IsChain fun h h' ↦ h.cod = h'.dom
 
 instance (l : List Head) : Decidable (Composes l) := inferInstanceAs (Decidable (List.IsChain _ l))
 
+/-- Along a spine of composing heads no head takes a sort below what one under it yields. -/
 theorem pairwise_cod_le {l : List Head} (hl : Composes l) : l.Pairwise fun h h' ↦ h.cod ≤ h'.dom :=
   have : IsTrans Head fun h h' ↦ h.cod ≤ h'.dom :=
     ⟨fun _ b _ hab hbc ↦ hab.trans ((dom_le_cod b).trans hbc)⟩
@@ -198,6 +190,7 @@ def analyses : List (Datum × List Head) :=
     (Examples.ex_54a, [vProc, vPass, adverb .event, adverb .event, aspEn, tPerf, finStar]),
     (Examples.ex_60a, [verb, asp, adverb .situation, adverb .situation, finStar])]
 
+/-- A row is acceptable exactly when its spine composes. -/
 theorem analyses_judgment : ∀ p ∈ analyses, p.1.judgment = .acceptable ↔ Composes p.2 := by
   decide
 
@@ -223,6 +216,7 @@ theorem composes_61_iff (z : Zone) :
     Composes [vProc, asp, adverb z, adverb .situation, finStar] ↔ z = .situation := by
   cases z <;> decide
 
+/-- Adverbs under passive *been* modify events. -/
 theorem composes_54a_iff (z z' : Zone) :
     Composes [vProc, vPass, adverb z, adverb z', aspEn, tPerf, finStar] ↔
       z = .event ∧ z' = .event := by

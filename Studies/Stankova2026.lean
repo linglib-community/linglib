@@ -17,15 +17,6 @@ outer (PolP), medial (ModP) or inner (TP), and that the polarity items and the p
 Šimík's two readings of negation (`Position.ofReading`): medial negation is the paper's addition,
 low like inner negation but non-propositional like FALSUM.
 
-## Main results
-
-* `licensed_injective`, `particle_signatures_distinct`: Table 1 fingerprints the three
-  positions, and its three particle columns alone do.
-* `licenses_nciLicensed_iff_licensedAt`, `licenses_ppiOutscoping_iff_licensedAt`: the polarity
-  columns agree with Staňková and Šimík's licensing of the indefinites.
-* `czech_refines_nonPreposed`: Czech splits Romero's low negation form into inner and medial.
-* `examples_match_table1`: the paper's examples check against Table 1.
-
 ## References
 
 * [stankova-2026]

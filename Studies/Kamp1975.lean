@@ -20,19 +20,6 @@ which compares the measures of the completion sets, makes any two objects compar
 rejects for adjectives with several criteria such as *clever*; for one-dimensional adjectives the
 two agree. Before this, Kamp argues that no many-valued logic handles borderline cases.
 
-## Main statements
-
-* `intersective_at_world`, `subsective_at_world`: fixing a world sends the intensional classes
-  to the classes of single-world predicates.
-* `kleene_dilemma`: no truth-functional conjunction is both idempotent at the borderline value
-  and false on borderline contradictions.
-* `kampMeasureLe_total`, `clever_incomparable`: the measured comparative is total, while the
-  completion comparative leaves Smith and Jones incomparable in cleverness.
-* `kampPreorder_le_iff_kampMeasureLe`: for one-dimensional adjectives the two comparatives agree.
-* `gray_intersective`, `fake_privative`, `skillful_subsective`, `skillful_not_extensional`,
-  `alleged_not_subsective`: each class has a member, and extensionality is independent of
-  subsectivity.
-
 ## Implementation notes
 
 * The measure of (13) is specialized to atomic `ℚ` weights over a finite set of completions;
@@ -244,6 +231,7 @@ noun, so *gray cat* entails both *gray* and *cat*. -/
 def grayAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
   (match x with | .a => True | _ => False) ∧ N w x
 
+/-- Each class has a member, and extensionality is independent of subsectivity. -/
 theorem gray_intersective : IsIntersective grayAdj :=
   Modifier.isIntersective_iff_exists_forall.mpr
     ⟨fun _ x ↦ match x with | .a => True | _ => False,

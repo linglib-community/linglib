@@ -19,15 +19,6 @@ production map, and contextual independence, the share of a word's predictabilit
 utterance that it owes to itself. The duration models are not formalized; the paper's two worked
 examples are.
 
-## Main statements
-
-* `semanticSupportForForm_endstate_time_lt_thyme`, `semanticSupportForFormFIL_thyme_lt_time`:
-  practice reverses which homophone's form its meaning supports more.
-* `endstate_separates_homophones`: *time* and *thyme* share a form row but get distinct
-  predicted forms.
-* `not_existsUnique_isELTrained`: regression does not determine the word-to-word map.
-* `diag_W_mem_Icc`: the self-prediction shares of the toy words lie in `[0, 1]`.
-
 ## Implementation notes
 
 * The paper fits only the production matrix `G`, so the toy lexicons are their mapping matrices.

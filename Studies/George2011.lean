@@ -20,21 +20,6 @@ readings. Against reducibility, question-embedding *know* depends on belief as w
 and George's twin relations theory derives both uses of a responsive predicate from a pair of an
 existential and a universal relation to propositions.
 
-## Main statements
-
-* `classes_partition_mentionSome`: the cells of the partition are the strongly exhaustive answers
-  other than the contradiction.
-* `negation_generalization`, `restricted_compl_subsingleton_iff`: a question and its negation have
-  the same strongly exhaustive answers, and with a restrictor outside the negation knowing one
-  settles the other exactly when the domain is known.
-* `reducible_iff_exists`, `reducible_embed`: a reducible predicate is one computed from the answers
-  and the propositions it holds of, as every reductive account is.
-* `TwinRelations.exists_proposition_of_question`, `TwinRelations.question_of_forall_proposition`,
-  `TwinRelations.question_singleton`: the linking results of the twin relations theory.
-* `Newspaper.know_not_reducible`, `know_question_stronglyExhaustive_iff`: *know* is not reducible,
-  but on strongly exhaustive answers it is knowing the true answer.
-* `rows_predicted`: the dissertation's truth judgments in its scenarios.
-
 ## Implementation notes
 
 Abstracts are functions `W → Set τ` from worlds to extensions, and answer sets are
@@ -272,6 +257,8 @@ theorem reducible_of_profile (Φ : Set (Set W) → Set (Set W) → Prop) :
     Reducible R fun P x ↦ Φ P {p | R p x} :=
   fun _ _ h ↦ by simp only [h]
 
+/-- A reducible predicate is one computed from the answers and the propositions it holds of, as
+every reductive account is. -/
 theorem reducible_iff_exists :
     Reducible R RQ ↔ ∃ Φ : Set (Set W) → Set (Set W) → Prop, ∀ P x, RQ P x ↔ Φ P {p | R p x} := by
   rw [Reducible, Function.factorsThrough_iff]
@@ -709,6 +696,7 @@ theorem rows_eq : rows = [⟨.admittedKnown, true⟩, ⟨.notAdmittedKnown, fals
     ⟨.redNewspaper, false⟩] := by
   decide
 
+/-- The dissertation's truth judgments in its scenarios. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.holds = true ↔ Verdict r.sentence) := by
   simp only [rows_eq, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
     and_true, true_iff, false_iff, Bool.false_eq_true, Verdict]

@@ -23,12 +23,6 @@ action, presupposed by *make*, separates it from *let*.
 * `NadathurLauer2020.TemporalLocationConstraint`: the constraint (28) on backgrounds
 * `NadathurLauer2020.VolitionalActionConstraint`: the constraint on volitional action (43)
 
-## Main results
-
-* `NadathurLauer2020.Make.solve_eq`: *make* entails that the effect occurs (footnote 20)
-* `NadathurLauer2020.not_forall_causallySufficient_imp_causallyNecessary`,
-  `NadathurLauer2020.not_forall_causallyNecessary_imp_causallySufficient`: neither relation
-  implies the other
 * the judgments on the circuit (26), fire (31), bus (33), lighthouse (35) and dancing (40)–(44)
   scenarios
 

@@ -33,17 +33,6 @@ the accessible worlds agree on the standard's degree.
 * `Comparative`, `Comparative.Acceptable` — a cross-polar comparative and the conditions on it
 * `negationOutside`, `negationInside` — the two analyses of a modal than-clause
 
-## Main results
-
-* `compareWith_little` — the degree negation inverts both intervals compared
-* `not_crossPolar`, `not_crossPolar'` — neither order of a literal cross-polar comparison is true
-* `metamorphosis_iff_subcomparative` — the reinterpretation is a subcomparative
-* `nomaly_acceptable`, `blocked_for_different_reasons` — the three-way pattern and its two sources
-* `reading_of_deletion` — the deletion competitor is synonymous exactly on one dimension
-* `negationOutside_box`, `negationInside_box` — the two analyses as box and diamond
-* `outside_entails_inside_box`, `inside_not_entails_outside` — the entailment is strict
-* `analyses_agree_of_uniform` — a degree-uniform modal base hides the difference
-
 ## References
 
 * [buring-2007]

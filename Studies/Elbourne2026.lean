@@ -18,17 +18,6 @@ feature that the copula cannot select for. The relational *local*, the scope con
 *young alleged murderer*, and gradable adjectives under a positive morpheme all stay within the
 type.
 
-## Main statements
-
-* `intersective_apply_time`: at each time an intersective adjective is the meet with the noun,
-  so predicate modification is not needed.
-* `fido_was_cute`, `fido_is_a_dog`, `john_was_a_former_judge`: predicative sentences.
-* `former_isPrivative`, `intersective_ne_former`: *former* is privative, so the ⟨e,t⟩ theory,
-  whose predicate modification is intersective, cannot express it.
-* `rows_licensed`: the selector features decide which positions an adjective appears in.
-* `exists_inner_not_committed`, `pos_gradable`: the scope contrast and gradable adjectives stay
-  within the type.
-
 ## Implementation notes
 
 * The carrier is the substrate's `Modifier (I → E → Prop)`, properties indexed by times, with

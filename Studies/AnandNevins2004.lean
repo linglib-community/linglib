@@ -21,17 +21,6 @@ operator that overwrites coordinates of the context with those of the index (2).
 * `readings e χ c j`: the values of `χ` under a verb with operator options `e` (39).
 * `Bound`: the binding account (19) with the constraint (22), on the context tower.
 
-## Main results
-
-* `shiftyOp_opAll_iff_holdsAt`: `OP∀` is Stalnaker's diagonal (fn. 7).
-* `isMonster_shiftyOp_of_agent_mem`, `not_isMonster_say`: the operators are monsters, the verbs not.
-* `readings_vano_prod`, `rows_mixed`: Shift-Together (16).
-* `say_shiftyOp_opAll_iff_say`: on a single report `OP∀` under *say* is Schlenker's quantification
-  over contexts (§3.4).
-* `localDepth_ne_zero`: after a shift in the intermediate report the lowest clause cannot read the
-  utterance context (32), which Schlenker's binding account allows (`say_say_bound_origin`).
-* `rows_reported`, `rows_utterance`, `rows_double_report`: the rows' judgments.
-
 ## Implementation notes
 
 Meanings are `Kaplan.Character`s whose index is a `Kaplan.Context`, and an operator is the set of

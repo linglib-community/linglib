@@ -13,16 +13,6 @@ state with the speaker's affect; the literal listener conditions the prior on th
 speaker with a communicative goal is informative about the goal's projection of the meaning and
 pays a higher cost for sharp numbers, and the pragmatic listener marginalizes the goal.
 
-## Main results
-
-* `KaoWuEtAl2014.listener_ne_zero_iff`: a meaning receives positive posterior mass exactly when
-  some goal of positive prior projects it into the cell of a meaning at which the utterance is
-  literally true.
-* `KaoWuEtAl2014.hyperbole`: a low price with affect is available under the affect goal.
-* `KaoWuEtAl2014.literal_of_price_goals`, `KaoWuEtAl2014.halo_of_price_goals`: the comparison
-  models of Fig. 2B.
-* `KaoWuEtAl2014.approximate_prefers_round`: the halo effect of Fig. 3B rests on the cost.
-
 ## Implementation notes
 
 Priors are arguments: the price prior and the conditional affect prior of Experiments 3a and 3b

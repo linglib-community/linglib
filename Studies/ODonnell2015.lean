@@ -23,16 +23,6 @@ derives both rankings from the book's counts (`spectrum`, pp. 267–268), and Ba
 * `FullListing.counts`, `FullListing.seating`: the MAG's analysis of a corpus.
 * `Realizes D`: the corpus `D` has the book's counts.
 
-## Main results
-
-* `Realizes.dmpcfg_ness_lt_ion`, `Realizes.mag_ness_lt_ion`, `Realizes.baayenP_ion_lt_ness`: the
-  three rankings.
-* `exists_realizes`: some corpus has the book's counts.
-* `AdaptorGrammar.prob_replicate_one`: with discount `1` the adaptor grammar is the DMPCFG.
-* `FullListing.counts_eq_card_filter_toFinset`: at a nonterminal on no right-hand side the
-  full-listing counts are type counts.
-* `isElsewhereWinner_of_forall_uniformOn_le`: the probabilistic Elsewhere Condition (§5.5.3).
-
 ## Implementation notes
 
 The book measures a suffix's productivity by its probability on a novel stem of fixed probability
@@ -570,7 +560,7 @@ variable [MeasurableSpace Ctx] [MeasurableSingletonClass Ctx]
 
 /-- **Elsewhere selection is maximum-likelihood inference.** A rule that gives a form at least the
 probability any other rule generating it does, each rule generating its domain uniformly, is an
-Elsewhere winner at that form. -/
+Elsewhere winner at that form (§5.5.3). -/
 theorem isElsewhereWinner_of_forall_uniformOn_le {v : RuleSet (DomainRule Ctx F)} {c : Ctx}
     {r : DomainRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.dom)
     (hmax : ∀ s ∈ v, c ∈ s.dom →

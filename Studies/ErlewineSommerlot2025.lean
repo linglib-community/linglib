@@ -25,16 +25,6 @@ passive cannot be extracted across its theme (60); *N-* on v rather than Voice a
 extraction (§5.2); and the registers of Madurese differ in whether Voice has a null allomorph
 (§5.3). The six grammars predict the judgments of the paper's examples.
 
-## Main statements
-
-* `ErlewineSommerlot2025.Clause.spellouts_eq`: the derivations spell out the paper's VoiceP and
-  CP snapshots.
-* `ErlewineSommerlot2025.Clause.schedule_eq`: the phases of Voice and C are complete when VoiceP
-  is built and at the end.
-* `ErlewineSommerlot2025.rows_grammatical`: the grammars predict every example's judgment.
-* `ErlewineSommerlot2025.overt_voice_paradox`: an overt Voice blocks the order-preserving
-  extraction of two nominals (57).
-
 ## Implementation notes
 
 * A clause is its syntactic parameters, and the exponents of Voice and v are chosen after VoiceP

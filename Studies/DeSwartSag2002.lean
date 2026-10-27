@@ -16,15 +16,6 @@ not. Sentential negation is anti-additive too, a quantifier of type 0 that binds
 so it can join a resumption and is then semantically empty; standard French keeps *pas* out of
 resumption, so *pas* with an n-word reads only as a double negation.
 
-## Main results
-
-* `reading_iteration_iff`, `reading_resumption_iff`: the double negation reading of two n-words
-  is *every*·*some* and the concord reading is *no*·*some*.
-* `reading_resumption_and_not_iteration`: the two readings differ.
-* `isAntiAdditive_no`, `not_isAntiAdditive_few`: *no* is anti-additive and *few* is not.
-* `mem_aucun_and_isAntiAdditive_iff`: of the readings of *aucun*, the anti-additive one is *no*.
-* `negReading_iteration_iff`: negation iterated over an n-word gives the existential.
-
 ## Implementation notes
 
 * Resumption is binary, `Quantifier.Polyadic.resume`; the ternary and quaternary chains of the

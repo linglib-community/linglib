@@ -24,15 +24,6 @@ whose meanings vary in force. The same account makes the past potential weak in 
 restriction of a universal: *ldakát ḵwax̱aayi át* is 'everything I could have eaten', never
 'everything I would have eaten'.
 
-## Main statements
-
-* `expressed_iff`: Tlingit encodes epistemic possibility and circumstantial possibility and
-  necessity, and nothing else.
-* `servesFor_necessity`: a dubitative serves for epistemic necessity, the potential mode not
-  for circumstantial necessity.
-* `dubitatives_fixed_force`: the dubitatives serve for both forces with one force in their
-  meaning, where *k'a* and *-eʔ* have two.
-
 ## Implementation notes
 
 * Cable's deontic flavor includes the teleological and bouletic ones, and his circumstantial

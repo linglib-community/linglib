@@ -23,23 +23,6 @@ evaluation are those of `Benua1997`.
 * `Japanese.grammar`, `Limburg.grammar`: the summary rankings (24) and (54), with the ranking of
   the anti-faithfulness constraint over its IO counterpart that they leave out.
 
-## Main results
-
-* `not_isFaithfulness_antifaithful_maxViol`, `not_isMarkedness_antifaithful_maxViol`:
-  anti-faithfulness is neither faithfulness nor markedness (§2.1.2).
-* `Luo.optimal_exchange`: under `¬F ≫ F` the winners are the derivatives with exactly one voicing
-  alternation in the base, so the plural of *bat* could as well be *pet-e* as *bed-e* (fn. 7).
-* `ooAnti_eq_of_take_eq`: strict base mutation (27); an OO constraint reads the derivative only
-  where it shares the base.
-* `maxViolFeature_base_le_input`: when the base surfaces as it is underlyingly, a derivative that
-  satisfies ¬OO-MAX violates IO-MAX, so a dominance effect needs ¬OO-MAX ≫ IO-MAX.
-* `Japanese.summary_mispredicts`, `Limburg.summary_mispredicts`: (24) and (54) leave that ranking
-  out, and rankings consistent with them keep the base accent of *kóobe-kko* and the dragging tone
-  of *káál-ə*.
-* `Japanese.rows`, `Limburg.rows`: with it, one ranking per language derives every word of the
-  data from its input over every candidate.
-* `Limburg.toneless_wins`: (53) also needs the tonic to bear a tone (§5.2.2).
-
 ## Implementation notes
 
 Accent and tone are read off the paper's transcription: an acute vowel bears the accent, and in

@@ -16,20 +16,6 @@ holder's epistemic alternatives, and acquaintance-based, the concept's value at 
 what the center bears an acquaintance relation to uniquely, the same relation picking out the
 holder's own concept when the res is an epistemic alternative.
 
-## Main statements
-
-* `AcquaintanceBased.eqOn_of_mem_epiAlt`: a suitable generator gives an epistemic alternative the
-  holder's own concept, as Pearson derives from (82).
-* `sayDeRe_of_sayDeSe`: the de se reading is the de re reading through identity, so it entails
-  the de re reading when identity is among the holder's acquaintance relations.
-* `ClaimDeRe.exists_relatum_eq`: a de re claim about a res other than an epistemic alternative
-  needs an acquaintance relation the holder actually bears uniquely to it.
-* `ye_de_se_de_re_ambiguous`: when John praises a paper he does not recognize as his own, the de
-  se reading is false and the de re reading true.
-* `napoleon_contrast`: when John believes himself Napoleon and calls the patient he sees on
-  television delusional, *John claims he is delusional* is true and *John claims Napoleon is
-  delusional* false.
-
 ## Implementation notes
 
 * Concepts are functions from centered worlds, the attitude alternatives of Lewis, to

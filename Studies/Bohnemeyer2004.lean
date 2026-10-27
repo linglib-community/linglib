@@ -43,24 +43,9 @@ are recorded here.
   and passive of (28)–(30), and the subevent each denotes, a projection of the base's template
   (`Subevent.of`).
 
-## Main results
-
-* `linking_derives_split`: the split follows from (31)–(33).
-* `aspect_conditioned_split_family`: under each status with a viewpoint, the marking has the
-  alignment Hindi case has under that viewpoint, the relation to Hindi of §4 (p. 84).
 * `causation_determines_linking` against `template_underdetermines_linking`,
   `stemClass_underdetermines_linking`, `suffix_underdetermines_linking`: what fixes the linking
   and what does not.
-* `linking_patterns_swap_roles`, `linking_markers`: the two alternations are mirror images, read
-  off their records rather than stipulated.
-* `degree_achievements_causativize`, `haanEat_applicative_despite_inactive`: the counterexamples
-  to aspect- and class-based linking.
-* `predictLinking_roles`, `pivotSourceRole_toVoice`: the roles of transitivization (26)–(27)
-  and of detransitivization (28)–(30) follow from the subevent a participant occupies, by the
-  hierarchy (31).
-* `passive_anticausative_distinct_by_A_fate`: the fate of the initial A separates the two.
-* `salience_agrees_on_shared_roots`, `haanEat_defies_transitiviser_diagnostic`: where this
-  classification meets Lucy's.
 
 ## References
 
@@ -261,7 +246,7 @@ def sMarkerFromViewpoint (v : Perfectivity) : Option MarkerSet :=
   markerOf (termRole (linkingDefault v))
 
 /-- Linking by viewpoint derives the split: under each status with a viewpoint aspect, the sole
-argument takes the marker set the viewpoint selects by (32). -/
+argument takes the marker set the viewpoint selects by (32) ((31), (33)). -/
 theorem linking_derives_split {s : StatusCategory} {v : Perfectivity}
     (h : s.viewpointAspect = some v) : markerSet s .S = sMarkerFromViewpoint v := by
   cases s <;> cases v <;> first | rfl | cases h
@@ -514,6 +499,8 @@ theorem externally_caused_causativize :
 
 /-! ### Bridge to split ergativity -/
 
+/-- Under each status with a viewpoint, the marking has the alignment Hindi case has under that
+viewpoint, the relation to Hindi of §4 (p. 84). -/
 theorem aspect_conditioned_split_family {s : StatusCategory} {v : Perfectivity}
     (h : s.viewpointAspect = some v) : (HindiUrdu.alignment v).Classifies (markerSet s) := by
   cases s <;> cases v <;> first | decide | cases h

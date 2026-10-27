@@ -27,12 +27,6 @@ from meanings, never forms from forms, so the tone-pattern contours emerge witho
 being told the patterns. Xu's laboratory contours match the predicted ones for several patterns
 (Fig. 11).
 
-## Main statements
-
-* `LuChuangBaayen2026.production_centroid_centroid_eq_of_decodable`: if every word type of a tone
-  pattern is linearly decodable from the embeddings, the least-squares map sends the pattern's
-  centroid embedding to the centroid of its word types' mean training contours.
-
 ## Implementation notes
 
 * A tone pattern is the set of its word types, and a word type the set of tokens carrying its

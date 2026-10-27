@@ -17,18 +17,6 @@ holds its role, so the protagonist can antecede it exactly where that role is in
 *zibun* is oriented to the pivot, Icelandic *sig* to the self, and the phrases *that fool*,
 *mysteriously* and *beloved* to the source, the self and the pivot.
 
-## Main statements
-
-* `le_iff_forall_mem_internal`: the hierarchy of roles is the one the table of environments
-  shows, a role lying below another when it is internal wherever the other is.
-* `exists_internal_eq_iff`: the table has exactly the specifications that respect the hierarchy,
-  four of the eight.
-* `fits_zibun_iff`, `fits_thatFool_iff`, `fits_mysteriously_iff`, `fits_beloved_iff`: over the
-  paper's examples the role of each form is the only one that is internal in just the environments
-  where the form goes with the protagonist.
-* `fits_ye_iff`: the source, which the paper suggests for logophoric pronouns, does not fit its
-  Ewe example with a psychological predicate.
-
 ## Implementation notes
 
 * An environment records only which roles the protagonist holds. The discourse representation

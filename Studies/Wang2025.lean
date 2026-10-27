@@ -24,19 +24,6 @@ that has a presuppositionally stronger alternative. An utterance commits the spe
 information states and a context admits a set of them, so coherence is overlap, and the context
 entails a proposition when every state it admits believes the proposition.
 
-## Main statements
-
-* `obligatory_of_entailed`, `omitted_of_not_entailed`: the trigger is obligatory where the
-  context entails its presupposition and dropped where the context is silent about it.
-* `obligatory_of_positive_evidence`, `omitted_of_denied`, `omitted_of_ignorance`: against the
-  exhaustified alternative the trigger is obligatory under positive evidence for the
-  presupposition, and dropped where the context denies it or the speaker is ignorant of it.
-* `presup_beats_of_mp_over_fp`: were Maximize Presupposition ranked above Felicity
-  Presupposition, every trigger with an alternative would be obligatory.
-* `notNow_two_maxima`, `optional_of_two_readings`: the alternative of *buzai* 'no longer' has two
-  exhaustified readings, and the trigger is optional because it loses on one and wins on the
-  other.
-
 ## Implementation notes
 
 * Information states are nonempty sets of worlds; the belief operator `K p` is the set of

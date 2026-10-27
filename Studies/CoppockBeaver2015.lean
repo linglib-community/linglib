@@ -25,29 +25,6 @@ type shifts that place it in argument position. The entries are terms of the pap
 Kleene logic with the presupposition operator of Beaver and Krahmer, and the definite
 article competes with the indefinite under an expression-level Maximize Presupposition.
 
-## Main statements
-
-- `anti_uniqueness`: *Scott is not the only author of Waverley* is true exactly when Scott
-  is an author and so is someone else, and presupposes only that Scott is an author
-  (`anti_uniqueness_presup`); the Fregean rival entry can never make it true
-  (`no_anti_uniqueness_fregean`).
-- `the_dominates_an`, `an_only_blocked`: the definite article presuppositionally dominates
-  the indefinite, so *an only P* is blocked in every context; blocking is
-  derivation-sensitive, since the derivation scoping *a plane crash* inside the description
-  is not blocked (`Crash.an_only_survivor_not_blocked`) while the high-scope one is
-  (`Crash.the_only_survivor_blocked`).
-- `not_blocked_sentence_an_only`: no sentence-level Maximize Presupposition blocks
-  *an only P*, because the definite contributes nothing to an *only* phrase and the two
-  sentences mean the same (`sentence_the_only_eq_an_only`); the principle must compare
-  expressions.
-- `no_determinate_indefinites`: an indefinite that survives blocking has no defined update
-  under the iota shift, while iota and the existential shift update alike where unique
-  existence is settled (`readings_agree_of_existsUnique`).
-- `only_answer_apply`: the adjectival entry is the earlier paper's exclusive schema at the
-  question *what things are P*, with answers ranked by entailment.
-- `Scenario.restrictor_rows`, `Lobner.rows`: the paper's predicative judgments are decided
-  by weak uniqueness of the restrictor.
-
 ## Implementation notes
 
 * Predicates are trivalent properties; the counting abbreviation `|P| ≤ 1` and the exclusive

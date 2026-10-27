@@ -17,16 +17,6 @@ Two-knowers, children who give one and two but a handful for larger numerals in 
 task, are the population for which the lower-bounded account has no implicature to offer, the
 developmental strategy of Musolino.
 
-## Main results
-
-* `choice_exact_covered`, `choice_atLeast_visible`: in the critical trials an exact *two* sends
-  the participant to the covered box and a lower-bounded *two* to the visible one.
-* `some_none_all_literal`, `some_none_all_strengthened`: literal *some* picks the box where
-  Cookie Monster has all of the cookies, strengthened *some* the covered box.
-* `exhKnown_last`, `exhKnown_of_lt`: exhaustifying *two* against a known count list leaves it
-  lower-bounded when it is the top of the list and makes it exact otherwise.
-* `atLeast_diff_moreThan_eq_bare`: an implicit alternative *more than two* recovers exactness.
-
 ## Implementation notes
 
 * Scalar trials are typed by the vertices of the triangle of opposition (`Aristotelian.Triangle`),

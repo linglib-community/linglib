@@ -17,16 +17,6 @@ log-likelihood is concave, the maximum entropy learner reaches its global maximu
 Stochastic OT lacks. The file also reruns Boersma and Levelt's acquisition simulation over five
 syllable-structure constraints.
 
-## Main results
-
-* `expected_glaUpdate`, `expected_glaUpdate_eq_self_iff`: the expected GLA adjustment, which
-  vanishes exactly when the expected and observed violations agree.
-* `gla_eq_sga`: the GLA step is the stochastic gradient step of the maximum entropy model.
-* `produced_stages`: as FAITH overtakes the markedness constraints one by one, the syllable types
-  are produced in the nested order CV, CVC, {V, VC}, {CVCC, VCC}, {CCV, CCVC, CCVCC}.
-* `corpusRate_order`: over the corpus of Table 1 the markedness ranks fall in the order of their
-  violation rates, *CODA first and *COMPLEXONSET last.
-
 ## Implementation notes
 
 * The maximum entropy probabilities are the `HarmonicGrammar.maxEnt` distributions of each
@@ -208,7 +198,7 @@ theorem initial_glaUpdate (r η : ℝ) (o : Syl) (k : Fin 5) (hk : k ≠ 0) :
 def corpusRate (k : Fin 5) : ℕ := (rows.map fun r ↦ r.2 * con k (r.1, r.1)).sum
 
 /-- FAITH is never violated in the corpus, and the markedness ranks fall fastest for *CODA, then
-ONSET, *COMPLEXCODA and *COMPLEXONSET, the order in which FAITH overtakes them. -/
+ONSET, *COMPLEXCODA and *COMPLEXONSET, the order in which FAITH overtakes them (Table 1). -/
 theorem corpusRate_order :
     corpusRate 0 = 0 ∧ corpusRate 1 < corpusRate 2 ∧ corpusRate 2 < corpusRate 3 ∧
     corpusRate 3 < corpusRate 4 := by

@@ -24,17 +24,6 @@ does in (1).
 * `Analysis`: an attested form with its fragment verb and classified prefixes, outermost first.
 * `Spells`: morphs spell out a written form.
 
-## Main results
-
-* `Structure.exists_prefixes_eq_iff`: the prefix sequences of structures are the well-stacked
-  sequences with at most one lexical prefix, the resultative position being unique (4.4).
-* `analyses_structured`, `starred_not_structured`: every analysis of the paper has a structure,
-  and the starred reversals (4b) and (4d) have none.
-* `analyses_spells`: outside the past tense, which the fragments do not inflect, each analysis
-  spells out its form.
-* `superlexical_selects_imperfective`: diagnostic (56c) holds of the Russian analyses; the
-  Bulgarian stacks of (3), from Istratkova, attach to the perfective *razkaža*.
-
 ## Implementation notes
 
 The subtypes are the glosses of (57)–(58) together with Istratkova's terminative and
@@ -148,7 +137,7 @@ theorem lexicals_length_le_one (s : Structure) : (lexicals s.prefixes).length �
   cases s.result <;> simp
 
 /-- The linearizations of structures over a stem are exactly the well-stacked sequences with
-at most one lexical prefix. -/
+at most one lexical prefix ((4.4)). -/
 theorem exists_prefixes_eq_iff (ps : List (Morph × PrefixClass)) (st : Verb) :
     (∃ s : Structure, s.stem = st ∧ s.prefixes = ps) ↔
       WellStacked ps ∧ (lexicals ps).length ≤ 1 := by
@@ -299,7 +288,7 @@ theorem analyses_spells : ∀ a ∈ analyses ++ starred,
   decide
 
 /-- Diagnostic (56c) holds of the Russian analyses: a superlexically prefixed verb is built on an
-imperfective stem. -/
+imperfective stem ((3)). -/
 theorem superlexical_selects_imperfective (a : Analysis) (ha : a ∈ russianAnalyses)
     (hs : ∃ p ∈ a.prefixes, p.2.IsSuperlexical) :
     a.stem.perfectivity = some .imperfective := by

@@ -28,15 +28,6 @@ paper's readings, such as the exclusion of *de* by verbs of change.
 * `deAgentive`: *de* in a passive.
 * `Construal`: the agent's relation to the event, ordered by proto-agentivity.
 
-## Main results
-
-* `parCausal_net_of_deCausal`: a cause *de* names is, through its net force, one *par* names.
-* `voicePass_eventIdentification`: passive Voice's closure is redundant under a by-phrase.
-* `change_verbs_exclude_de`: verbs of change exclude *de*.
-* `psych_verbs_allow_both`: psych verbs allow both prepositions.
-* `dependsOnProximate_of_dependsOnDistal`: an effect depends on a distal cause only where it
-  depends on the proximate one.
-
 ## Implementation notes
 
 The paper gives no threshold between high and low proto-agentivity and reports an informal

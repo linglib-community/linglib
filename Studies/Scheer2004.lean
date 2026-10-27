@@ -18,12 +18,6 @@ nucleus governs nothing. And Czech prefixes are vocalised before a root in zero 
 before a root that begins with a branching onset, since government passes over the empty nucleus
 that a domain of infrasegmental government encloses.
 
-## Main results
-
-* `havlik`: in a word of yers alone, a yer survives exactly when its distance to the end is even.
-* `se_psem`, `s_sevcem`: the two illustrations of Havlík's Law (304b).
-* `pode_brat_podbradek`: a prefix is vocalised before *brat* and not before *bradek* (21).
-
 ## Implementation notes
 
 A yer is a nucleus with floating melody: it is pronounced exactly when it is not governed, and,

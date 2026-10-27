@@ -18,18 +18,6 @@ thematic roles. A fusion is the set of lines the book draws between participant 
 roles, and the fusions it draws are the only ones its Semantic Coherence and Correspondence
 Principles allow. The constructions form a network of normal-mode inheritance links.
 
-## Main results
-
-* `fusions_kick`: *kick* fuses with the ditransitive in only one way (Fig. 2.9)
-* `put_uses_exception`: *put* fuses with caused motion through the three-role exception (Fig. 2.7)
-* `fusions_mail`: the ditransitive profiles *mail*'s mailee (Fig. 2.8) or contributes a recipient
-* `contributed_wipe`, `contributed_talk`: the resultative adds a result-goal to *wipe* and a
-  patient as well to *talk* (Fig. 8.2)
-* `fusions_become`: *become* has no fusion with the resultative (p. 190)
-* `nonempty_of_isFusion`: every construction shares a participant with its verb (p. 65)
-* `network_wellTyped`, `inherited_statedForm`, `ditransitive_meaning_ne`: the network's links
-  respect their types, and the ditransitive's senses share its form but not its meaning
-
 ## Implementation notes
 
 Argument roles are `ThetaRole` labels: the cause of caused motion admits the labels whose Dowty
@@ -199,7 +187,7 @@ def kickLF : LinkedFrame :=
 theorem kick_linkedFrame : English.Verbs.kick.linkedFrame? = some kickLF := by decide
 
 /-- *kick* fuses with the ditransitive in only one way, kicker with agent and kicked with patient:
-"The participant roles cannot fuse with the argument roles in any other way" (p. 54). -/
+"The participant roles cannot fuse with the argument roles in any other way" (p. 54) (Fig. 2.9). -/
 theorem fusions_kick : fusions kickLF (ditransitive .actual).meaning.link =
     {{(external, external), (complement 0, complement 1)}} := by
   decide +kernel
@@ -241,7 +229,7 @@ theorem fusions_put : fusions putLF causedMotion.meaning.link = {diag₃} := by 
 
 /-- *put* fuses with caused motion by the three-role exception, its profiled put.place role
 fusing with the goal, which is not profiled: "we can tell because it is linked to an oblique
-function" (p. 53). -/
+function" (p. 53) (Fig. 2.7). -/
 theorem put_uses_exception :
     profilingMismatches putLF causedMotion.meaning.link diag₃ = {(complement 1, complement 1)} ∧
       Corresponds putLF causedMotion.meaning.link diag₃ := by

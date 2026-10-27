@@ -21,19 +21,6 @@ two ways (pp. 828–829): the underspecified variant is a neutral zero point, so
 approximation are separate indexical loci, or round numbers partake of both ends of a single
 opposition.
 
-## Main statements
-
-* `borneOut_contrastField`, `borneOut_neutral`: both readings are borne out by the means of both
-  experiments (p. 828), though on the opposition reading the precise and approximate variants are
-  antipodal and each fits a single persona, while on the neutral reading they are separate loci
-  (`separateLoci_neutral`) and each fits two personae.
-* `not_needHypothesis`: no table of cell means that agrees with the cells Experiment 2 reports
-  satisfies the hypothesis that raising the need for precision favors the more precise variant;
-  the other reported interactions run as it predicts (`favors_exp1`, `favors_exp2`).
-* `loadsMostOn_exp1`, `loadsMostOn_exp2_iff`: by maximal loading, the principal components
-  recover the planned grouping of the scales in Experiment 1, and in Experiment 2 for every scale
-  but *friendly*, which loads most on Status.
-
 ## Implementation notes
 
 * Status, Solidarity and anti-Solidarity are read as the competence, warmth and anti-solidarity
@@ -177,6 +164,9 @@ theorem lift_contrastField_precise (e : Experiment) :
     (contrastField e).ground.lift .precise = {{.competent, .cold, .antiSolidary}} := by
   rw [(complementary_contrastField e).lift_eq_singleton, ground_contrastField_precise]
 
+/-- Both readings are borne out by the means of both experiments (p. 828), though on the opposition
+reading the precise and approximate variants are antipodal and each fits a single persona, while on
+the neutral reading they are separate loci (`separateLoci_neutral`) and each fits two personae. -/
 theorem borneOut_contrastField (e e' : Experiment) : BorneOut (contrastField e) e' := by
   have h : contrastField e = contrastField e' := by
     cases e <;> cases e' <;> simp [contrastField_exp2]
@@ -277,6 +267,9 @@ theorem favors_exp2 {T : Scenario → Variant → Factor → ℚ} (hT : Agrees .
   simp only [Favors, Factor.valence, h1, h2, h3, h4, h5, h6, h7, h8]
   norm_num [Decimal.toRat]
 
+/-- No table of cell means that agrees with the cells Experiment 2 reports satisfies the hypothesis
+that raising the need for precision favors the more precise variant; the other reported interactions
+run as it predicts (`favors_exp1`, `favors_exp2`). -/
 theorem not_needHypothesis {T : Scenario → Variant → Factor → ℚ} (hT : Agrees .exp2 T) :
     ¬ NeedHypothesis T := fun h ↦
   (favors_exp2 hT).2.asymm (h .status .forTheRecord .persuasive .precise .underspecified

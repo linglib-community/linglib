@@ -36,15 +36,6 @@ book names.
   tell the types apart, a pattern's positive answers, and the First Person Hierarchy.
 * `Cysouw2003.Structure`: a paradigmatic structure, a setoid on `Person.Category`.
 
-## Main results
-
-* `Clusivity.ofAttribute_profile_le_iff`: the order of asking is the order of implication among
-  the five types' answers.
-* `Clusivity.rung_bijective`: the types are exactly the lower sets of the questions.
-* `Clusivity.le_iff_profile_subset`: the hierarchy is the order of the profiles.
-* `ofAttribute_givenUp_le_iff`: the Explicitness Hierarchy is the order of implication among the
-  common and semi-common paradigms the book prints.
-
 ## Implementation notes
 
 * The typology of the first person complex is finer than the WALS chapter on clusivity

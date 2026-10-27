@@ -21,21 +21,6 @@ a feature copied from the direct object narrow the interaction condition, so tha
 object must bear it too, which gives the weak and the strictly descending PCC. A probe that
 meets the indirect object first yields the reverse PCC of section 6.2.
 
-## Main results
-
-* `Deal2024.typology`: the runs of the probes derive the typology tables (53) and (57).
-* `Deal2024.rows`: the clitic combinations of French, Bulgarian, Italian, Spanish, Shapsug
-  Adyghe and Slovenian are grammatical exactly when the language's grammar licenses them.
-* `Deal2024.agrees_with_pConstraint`, `Deal2024.agrees_with_gluttony`: on the six cells of
-  table (1) the four varieties coincide with the P-Constraint grammars of Pancheva and
-  Zubizarreta and the gluttony probes of Coon and Keine, the competitors of section 7.
-* `Deal2024.universal5_prominence`, `Deal2024.universal5_addressee`: with the cells read as
-  scenarios and each variety as an argument coding, the strong, weak, me-first and strictly
-  descending varieties obey Haspelmath's scenario universal under 1 > 2 > 3, and the strong,
-  weak, you-first and A-descending ones under 2 > 1 > 3, as his section 7.1 claims of the PCC.
-* `Deal2024.strictlyDescending_iff_downstream`, `Deal2024.aDescending_iff_downstream`: the two
-  descending statements say that the scenario is downstream under their rankings.
-
 ## Implementation notes
 
 The features of the geometry (7) are the person segments of `Phi.PersonSegment`, [φ] its
@@ -233,7 +218,8 @@ def table57 (g : Grammar) : Option PCCType :=
         else if .addressee ∈ g.dynamic then .youFirst
         else .none)
 
-/-- Every grammar derives the variety that table (57) gives it, so the runs derive the tables. -/
+/-- Every grammar derives the variety that table (57) gives it, so the runs derive the tables
+((53)). -/
 theorem typology (g : Grammar) : g.pattern = table57 g := by
   revert g
   decide +kernel

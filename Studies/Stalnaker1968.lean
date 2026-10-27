@@ -17,17 +17,6 @@ selection function (`IsSelectionFunction`), and conditions (3) and (4) in turn m
 selection establishes a total ordering of the selected worlds. The logic C2 adds the corner `>` to
 classical propositional logic and defines necessity as `¬A > A`.
 
-## Main statements
-
-* `isSelectionFunction_minimals`: under Stalnaker's assumption the closest accessible
-  antecedent-world is a selection function.
-* `IsSelectionFunction.isLinearOrder_prior`, `IsSelectionFunction.prior_iff_mem_pair`: priority
-  totally orders the selected worlds, and is the order that choices from pairs reveal.
-* `Provable.sound`: every theorem of C2 is valid.
-* `provable_neg_corner`: a denied conditional is the conditional of the opposite consequent.
-* `not_valid_trans`, `not_valid_strengthening`, `not_valid_contraposition`: the three inferences
-  the corner does not support.
-
 ## Errata
 
 Footnote 7 makes the modal logic of C2 S4 when relative possibility is transitive and S5 when it

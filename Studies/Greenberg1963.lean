@@ -19,17 +19,6 @@ universals are statements about `HeadDirection`: a verb-peripheral language's ad
 in the verb's direction (Universals 3 and 4), and the noun's direction towards its genitive is the
 adposition's (Universal 2).
 
-## Main statements
-
-* `subjectFirst_iff_mem_range`: the three basic types are exactly the subject-first orders, the
-  typology Universal 1 leaves.
-* `universal_3_4`: in the sample a verb-initial language is prepositional and a verb-final one
-  postpositional, its adposition a head in the verb's direction.
-* `universal_2`: the noun precedes or follows its genitive as the adposition precedes or follows
-  its noun phrase, but in Norwegian, which has both genitive orders.
-* `not_universal_23_as_printed`, `universal_23`: the data contradict Universal 23 as printed and
-  bear it out with its genitive orders exchanged.
-
 ## Implementation notes
 
 * A universal is a statement that every language of the sample with one property has another

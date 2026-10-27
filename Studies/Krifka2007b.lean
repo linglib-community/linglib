@@ -19,15 +19,6 @@ but not safely usable, which fills it. The M principle is derived within Blutner
 optimality theory on McCawley's *kill* example, and the same evaluation over the quadruplet
 yields Krifka's assignment.
 
-## Main statements
-
-* `marked_both`: between two admissible borders a degree is *not unhappy* for one speaker and
-  *not happy* for another, so the two have no fixed border between them.
-* `superoptimal_mccawley`: weak optimality pairs *kill* with direct and *cause to die* with
-  indirect killing.
-* `superoptimal_quadruplet`: in each half of the quadruplet the simpler form takes the safe
-  region and the more complex form the border region.
-
 ## Implementation notes
 
 * Literal meanings are the substrate's single-threshold `AntonymForm.contradictoryDenotation`;

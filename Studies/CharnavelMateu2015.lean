@@ -23,20 +23,6 @@ has a single logophoric operator, and two of its elements sharing a feature inte
 * `Licit`: a domain in which no two centers share a feature.
 * `center`: the center a clitic realizes by its person and case.
 
-## Main results
-
-* `LogophoricCenter.not_disjoint_features_iff`: two centers share a feature exactly when they are
-  identical or adjacent on the hierarchy.
-* `licit_iff`: a domain is licit exactly when it holds at most one center, or a discourse
-  participant and an attitude holder.
-* `licit_dative_accusative_iff`, `licit_dative_attitudeHolder_iff`: over the Spanish clitics, a
-  dative and an accusative are licit exactly when the accusative is third person, the strong
-  Person Case Constraint, and a dative with an accusative read de se exactly when the dative is
-  first or second person, the clitic logophoric restriction.
-* `licit_domain_iff`: the hierarchy predicts every condition of the experiment.
-* `grammaticality_eq_of_eq`, `filter_violatesBinding`: conditions differing only in c-command
-  have the same result, and the binding account mispredicts conditions 3, 4 and 6.
-
 ## Implementation notes
 
 * A domain is the list of the centers its clitics realize. Each clitic realizes the center its

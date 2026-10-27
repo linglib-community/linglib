@@ -18,23 +18,6 @@ resolves the question for anyone who knows it. The questioner asks the question 
 most raise the value of its decision problem, and a pragmatic respondent infers the decision
 problem from the question and trades informativity against relevance to it.
 
-## Main statements
-
-* `safe_iff_mem_polar`: a response is safe exactly when it resolves the polar question.
-* `questionScore_eq_valueOfInformation`: the questioner scores a question by its value of
-  information.
-* `listener_R0_real_lt_iff`: by the size principle, an answer favours the worlds with fewer true
-  and safe alternatives.
-* `goalPosterior_real_lt_iff`: the respondent favours the decision problems under which the
-  question was likelier.
-* `respondent_truthful`, `respondent_apply_singleton_ne_zero_of_beta_eq_one`: informativity
-  keeps the respondent truthful, and relevance alone does not.
-* `mention_safe_iff`: in the credit-card case study, naming a card is safe exactly when it was
-  asked about.
-* `yes_value_eq_exhaustive`, `generalYes_posterior_ne_zero`: after "yes" to a question about a
-  card the questioner holds the exhaustive list adds no value, while after "yes" to the general
-  question the questioner stays uncertain.
-
 ## Implementation notes
 
 * The questioner hearing a response and the respondent hearing a question are `RSA.listener`s of

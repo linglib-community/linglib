@@ -18,18 +18,6 @@ This file formalizes chapters 1, 3, 5 to 8 and 11 of [cariani-2021]: the symmetr
 which *will* is Prior's future tense, against the selection semantics of Cariani and Santorio,
 on which *will* is a modal that selects a world from its modal base.
 
-## Main results
-
-* `forall_imp_linearWill_linearWas_iff`, `kt_fb`, `kt_bf`: the symmetric paradigm (ch. 1).
-* `displacesWorlds_hybrid_iff`, `hybrid_iff_linearWill`: *will* as a modal (§3.1, §7.2).
-* `pres_woll_frame_stative_iff`, `pres_woll_frame_eventive_iff`: present-directed *will* (§7.7).
-* `forall_hybrid_or_not_iff`, `forall_not_hybrid_and_not_iff`: the hybrid semantics (ch. 5).
-* `not_accepts_will_and_might_not`, `not_will_and_might_not_will`: future-might contradictions
-  and Kissine's argument (ch. 6).
-* `pres_woll_neg_iff`, `not_pres_WOLL_and_neg`: selectional and universal WOLL (ch. 7).
-* `willIf_willIf`, `willIf_univ_eq_selectionConditional`: will-conditionals (ch. 8).
-* `indeterminate_sat`, `not_exists_convergent_centered_trl`: the open future (ch. 11).
-
 ## Implementation notes
 
 * *Will* along a modal base is `SelectionFunction.modal`; an information state is a set of

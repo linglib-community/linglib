@@ -21,15 +21,6 @@ exponentiated utility of a subject sentence is `exp (-binEntropy rate) / 2`, and
 that only Bob went prefers "BOB went" to "Bob went" (`Prosody.S1_bobWent_lt_BOB_went`), the form the
 paper's exhaustive row records (`Prosody.model_matches_stress_rows`).
 
-## Main results
-
-* `Ellipsis.L0_subject`, `Ellipsis.L1_subject` — a subject fragment is the point mass on its
-  source, for every positive deletion rate; `Ellipsis.S1_apply` — the speaker utters the full
-  sentence.
-* `Prosody.channelMix_eq_exp_neg_binEntropy` — a subject sentence's exponentiated utility is
-  `exp (-binEntropy rate) / 2`.
-* `Prosody.S1_bobWent_lt_BOB_went` — the knowledgeable speaker prefers the stressed form.
-
 ## Implementation notes
 
 Priors are unit weights, the rationality parameter is `1`, and costs are zero. The channel runs from

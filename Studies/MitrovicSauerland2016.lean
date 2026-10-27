@@ -23,21 +23,6 @@ relation and so is the quantifier *every*. Languages differ in which of the thre
 pronounce: English *and* is J, Japanese *mo* is μ, and Hungarian pronounces all three. Only μ can
 have the additive and quantificational uses of Japanese *mo*.
 
-## Main statements
-
-* `conjunction_apply`: J′ over the μ phrases of two individuals holds of a predicate exactly when
-  the predicate holds of each.
-* `mu_of_conjunctive_particle`: μ on an indeterminate is the universal quantifier, as in Japanese
-  *dare-mo* and Latin *quis-que*.
-* `muPrime_team`: the collective μ′ of (20) holds of a predicate true only of a larger team, (22),
-  so it gives no collective reading.
-* `mem_attested_iff`: the examples pronounce exactly the nonempty sets of heads in which the first
-  μ comes only with the second.
-* `languages_pronounced_eq_univ`: all three heads are pronounced in Southeastern Macedonian,
-  Serbo-Croatian, Hungarian and Avar.
-* `mu_has_other_use`, `j_has_no_other_use`: the μ coordinators have additive or quantificational
-  uses, and the J coordinators have neither.
-
 ## Implementation notes
 
 * The heads an example pronounces are those its gloss line writes outside parentheses, or for
@@ -125,7 +110,7 @@ theorem muPrime_of_distributive {a b : α} (ha : P a) (hb : P b) : muPrime a P �
 end Collective
 
 /-- For two members of a team of three (22), the conjunction of their μ′ phrases holds of forming
-the team, though neither collective nor distributive reading does. -/
+the team, though neither collective nor distributive reading does ((20)). -/
 theorem muPrime_team :
     (muPrime ({0} : Finset (Fin 3)) (· = Finset.univ) ∧
       muPrime ({1} : Finset (Fin 3)) (· = Finset.univ)) ∧

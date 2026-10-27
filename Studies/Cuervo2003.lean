@@ -45,16 +45,6 @@ specifier, so an unergative takes a dative clitic and no dative DP (§4.3.2).
 * `Inventory`, `spanish`, `english`, `Inventory.Licenses`, `meanings`: which datives a language's
   applicative heads license and what they mean.
 
-## Main results
-
-* `not_licenses_low_of_biEventive`, `english_not_licenses_of_biEventive`,
-  `english_not_licenses_change`: no double object construction with a complex structure; no
-  dative at all in English causatives, inchoatives and simple verbs of change.
-* `unergative_clitic_only`: the only dative of a Spanish unergative is an animate ethical clitic.
-* `inchoative_meanings`: an animate dative with an inchoative is affected or experiencer, an
-  inanimate one affected alone.
-* `rows`: every example's acceptability and reported meaning are as `meanings` predicts.
-
 ## Implementation notes
 
 The merge site of the applicative and the three types of table (28) are the substrate's

@@ -40,19 +40,6 @@ marked it and the object otherwise.
   language gives the cases; `georgian`, `hindi`, `basque`, `inuktitut`.
 * `Clause.agr`: the position the agreement of the paper's (31) takes its features from.
 
-## Main results
-
-* `Clause.subject_dependent_iff`, `Clause.object_dependent_iff`: when each position has
-  dependent case, the paper's (30).
-* `Clause.ergative_generalization`: a subject moved from the object position has no dependent
-  case, whatever the rules.
-* `Clause.not_burzio`: a clause with a non-thematic subject position and an accusative object.
-* `subject_rows`, `object_rows`: the cases of the paper's Georgian, Hindi and Basque examples.
-* `georgian_subject_eq_pattern`, `georgian_object_eq_pattern`, `georgian_agr`: the rules derive
-  the case marking and the Set A agreement of the Georgian fragment in the first two series.
-* `ecm`: the embedded subject and object of an exceptional case marking clause are both
-  accusative.
-
 ## Implementation notes
 
 The argument that **It arrived the man* fails for want of a subject and not for want of Case,

@@ -16,16 +16,6 @@ than-clause, a disjunctive than-clause entails both disjuncts, a modal comparati
 over the accessible worlds, and Klein's degree-free ordering agrees with degree comparison on
 simple comparatives but not on differentials and factor phrases.
 
-## Main results
-
-* `deDicto_absurd`: the de dicto reading of the yacht sentence (1) is contradictory.
-* `disjunction_to_conjunction_in_than`: a disjunctive than-clause entails both disjuncts, (v).
-* `maxDeg_witness`: a modal comparative compares maxima over the accessible worlds, (x).
-* `klein_agrees_on_simple`: Klein's ordering agrees with degree comparison on simple
-  comparatives, (171).
-* `moreSem_exceeds_counterfactual_worlds`: *too* (R13) is the additive *more* of R4 against a
-  counterfactually determined threshold, (227).
-
 ## Implementation notes
 
 Degrees form a linear order, with the additive or multiplicative structure the rule at hand
@@ -76,7 +66,7 @@ def deReComparative (μ : W → Entity → D) (w₀ wBel : W) (x : Entity) : Pro
 def deDictoComparative (μ : W → Entity → D) (wBel : W) (x : Entity) : Prop :=
   μ wBel x > μ wBel x
 
-/-- The de dicto reading is contradictory. -/
+/-- The de dicto reading is contradictory ((1)). -/
 theorem deDicto_absurd (μ : W → Entity → D) (wBel : W) (x : Entity) :
     ¬ deDictoComparative μ wBel x :=
   lt_irrefl _
@@ -112,7 +102,7 @@ theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
 
 /-- Klein's degree-free ordering ([klein-1980]; §XI) matches degree
 comparison on simple comparatives via `Delineation.ofMeasure`; the divergence
-is confined to differential and factor constructions ((171a)–(171c)). -/
+is confined to differential and factor constructions ((171a)–(171c)) ((171)). -/
 theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
     (a b : Entity) (ha : a ∈ cc) (hb : b ∈ cc) :
     μ b < μ a ↔
@@ -149,7 +139,7 @@ theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)
   le_of_eq h.symm
 
 /-- With a greatest threshold over the accessible worlds, being `excess` too `A` puts the actual
-degree above every accessible world's (R13, §XIII). -/
+degree above every accessible world's (R13, §XIII) ((227)). -/
 theorem moreSem_exceeds_counterfactual_worlds
     [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
     (μ : W → Entity → D) (w₀ : W) (acc : Set W) (x : Entity)

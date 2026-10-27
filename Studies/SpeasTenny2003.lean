@@ -16,19 +16,6 @@ content. A second shell, the sentience domain, hosts the seat of knowledge, the 
 that evaluates the proposition, and the evidence below it. The seat is controlled by the closest
 c-commander of the content.
 
-## Main statements
-
-* `moodEquiv`: the four settings of the two features are the four grammaticized moods, so no
-  language marks a promise, a warning or another illocutionary act.
-* `SAFeatures.controller_closest`: the controller of the seat is the closest c-commander of the
-  content.
-* `Mood.seatOfKnowledge_eq`: the speaker is the seat in declaratives and subjunctives and the
-  hearer in interrogatives and imperatives, which is why discourse-oriented adverbs in a question
-  report the hearer's attitude.
-* `target_ne_hearer`: the source, self and pivot of Sells are not roles of their own, the source
-  being the highest argument of the speech act, the self the seat, and the pivot a thematic
-  argument coindexed with the seat.
-
 ## Implementation notes
 
 * The speech-act shell is recorded by the height of each argument (`SAFeatures.height`), and

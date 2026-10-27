@@ -31,30 +31,6 @@ at the first moment of decidedness of each minimal course making the antecedent 
 antecedent can be true relative to a longer course without being settled; and a past
 antecedent's only minimal course is the actual past, so its consequent never shifts.
 
-## Main statements
-
-* `Transition.future_atom_self`, `Transition.present_atom_self`: at the actual past, future
-  truth is settledness, so the isolated futurate present requires it.
-* `Transition.future_atom_of_lt`: relative to a course leading to a witness, a future claim
-  is true without being settled, which frees the antecedent.
-* `Transition.cond_past_atom`: a past antecedent's consequent is read at the utterance
-  moment, so past antecedents never shift.
-* `Transition.cond_eq_orderingImp`: the paper's conditional is Kratzer's recipe over the
-  extensions of the actual past, except that the consequent is read at the first moment of
-  decidedness.
-* `Transition.future_atom_subset_stable`: future truth persists under extensions of the
-  course, the stability behind the covert necessity operator.
-* `Game.settledness_contrast`, `Game.antecedent_true_without_settledness`: the Red Sox
-  minimal pair.
-* `Trains.schulz_validates_arrival_at_two`, `Trains.kaufmann_rejects_both_arrivals`,
-  `Trains.transition_rejects_both_arrivals`: on the two-trains scenario Schulz's minimality
-  wrongly validates the early arrival, while Kaufmann with a permissive context and the
-  transition account reject both.
-* `Interview.smile_conditional_shifts_consequent`: Crouch's shifted reading, with the
-  consequent read after the interview.
-* `Interview.rivals_shift_past_antecedents`, `Interview.no_shifted_antecedent_moment`: the
-  rivals shift a past tense antecedent where the transition account cannot.
-
 ## Implementation notes
 
 The paper's transition sets with a last transition are represented by their first moment of

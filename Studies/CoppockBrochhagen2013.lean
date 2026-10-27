@@ -23,14 +23,6 @@ as strong as `p` as a possibility. A speaker who knows the answer cannot sincere
 possibilities, while the comparative *more than* raises one, and exhaustifying the raised
 possibilities does not exclude the stronger answers.
 
-## Main statements
-
-* `atLeast_fragment`, `atMost_fragment`: on the question of how many, *at least* and *at most*
-  are the Fragment's readings of the modified numerals, pulled back along the count.
-* `sUnion_atLeastInq`, `sUnion_atMostInq`: the inquisitive entries keep the truth conditions.
-* `restrict_atLeastInq_eq_singleton`: a speaker who knows the answer cannot raise the
-  possibilities of *at least*, the ignorance implicature.
-
 ## Implementation notes
 
 * A state is a relation on propositions, and the question of a measure `μ` has the answers

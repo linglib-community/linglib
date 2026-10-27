@@ -42,13 +42,6 @@ rules on every coordination, not only on the paper's tables of pairs: Hindi's, I
 (`Corbett1991.Icelandic.rules`), and Slovene's (`Corbett1991.Slovene.rules`) once the
 conjunction contributes a marker, which is where Slovene departs from same-gender congruence.
 
-## Main statements
-
-* `markers_sup`: union on person marker sets is the join of persons.
-* `Icelandic.map_resolve`: union of the marker sets (119) reproduces Corbett's Icelandic rules on
-  every coordination.
-* `Slovene.map_resolve`: with the conjunction's marker, union reproduces Corbett's Slovene rules.
-
 ## Implementation notes
 
 * The syncretism class is the maximal indeterminate value a form can bear; §4.5 leaves it to
@@ -386,7 +379,7 @@ def markers : _root_.Icelandic.Gender.Value → GenderSet
 
 theorem markers_injective : Function.Injective markers := by decide
 
-/-- Union of the marker sets reproduces Corbett's rules on every coordination ((120)). -/
+/-- Union of the marker sets reproduces Corbett's rules on every coordination ((120)) ((119)). -/
 theorem map_resolve {cs : List _root_.Icelandic.Gender.Value} (hcs : cs ≠ []) :
     (resolve Corbett1991.Icelandic.rules cs).map markers = some (cs.toFinset.sup markers) :=
   of_sublists (univ := [.masculine, .feminine, .neuter])

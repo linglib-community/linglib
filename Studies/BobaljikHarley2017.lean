@@ -25,18 +25,6 @@ participles, it may do so only under the first. Adjoined to a low functional pro
 Root, as van Craenenbroeck suggests, it may do so under neither, since the lower segment of that
 projection is already a maximal one.
 
-## Main statements
-
-* `localNumbers_clause`: of the arguments of a Hiaki clause only the internal one is local to the
-  Root, so the context that locality gives the Root's Vocabulary Items is the one that
-  `Harley2014.site` stipulates (`structuralSite_eq_site`).
-* `mayCondition_mayCondition'_tree19`, `mayCondition'_tree20`: the refined condition renders
-  specifiers non-local, and only the complement of a head may condition it.
-* `frame_eq_unaccusative`: the applicative rows force the suppletive intransitives to be
-  unaccusative.
-* `mayCondition'_iff_configuration`: of the three configurations of an internal argument, the
-  refined condition lets it condition the Root only as the Root's sister.
-
 ## Implementation notes
 
 * The two formulations of locality are `DistributedMorphology.MayCondition` and

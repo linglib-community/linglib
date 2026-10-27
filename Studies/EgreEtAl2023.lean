@@ -19,20 +19,6 @@ speakers and joint listeners from the literal listener (`listener`). Appendix A 
 lexical uncertainty model of Bergen, Levy and Goodman (`luSpeaker`), and Appendix B a weighted
 interpretation rule (`wir`).
 
-## Main statements
-
-* `bir_eq_ofDensity`, `bir_unif_apply_singleton`, `ratio_inequality`: the interpretation
-  rule is the literal listener at the graded meaning "the prior mass of the radii reaching x",
-  under uniform priors its posterior is the triangle `(n − |n − k| + 1) / (n + 1)²`, and whatever
-  the priors it raises the odds of a closer value against a farther one, where "between" leaves
-  them unchanged.
-* `table1_prefers_around`: with a belief peaked at 4 with support `[1, 7]` the speaker prefers
-  "around 4" to "between 1 and 7".
-* `luSpeaker_eq_of_sameSupport`: in the lexical uncertainty model, beliefs with the same support
-  yield the same speaker at every level.
-* `bir_eq_bind_radiusPosterior`, `wir_ne_bir`: the Bayesian rule is the weighted rule with the
-  posterior over radii in place of the prior, and the two rules differ.
-
 ## Implementation notes
 
 * Values are a countable measurable type with a distance `d : X → ℕ` to the target, so one

@@ -26,18 +26,6 @@ thesis's own examples, and both are attested on each side, so neither check is v
 * `VerbClass`, `selects` — the verb classes and the clause-typers each admits
 * `ClauseKind`, `HasPolP` — the clause types and which of them carry the polarity projection
 
-## Main results
-
-* `kemzi_or_ki`, `kemzi_of_ilu`, `kemzi_and_ki_iff` — the shape of the selection table: every class
-  takes one of the two prefixes, *ʔɨlu* occurs only where *kɛmzɨ-* does, and the two prefixes
-  overlap on the fiction and perception verbs alone
-* `selects_covers_data`, `each_typer_attested` — the table admits every attested pairing, and each
-  typer is attested
-* `suffix_iff_polP`, `polP_clauses_attested` — the suffix of the Tigrinya fragment's circumfix,
-  read off each example's negative word, appears exactly in the clauses carrying the polarity
-  projection, and every such clause type is attested with it
-* `variants_ungrammatical` — the starred variants are those that break the generalization
-
 ## References
 
 * [cacchioli-2026]

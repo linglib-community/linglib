@@ -24,13 +24,6 @@ type-driven composition engine.
 * `lowAppl`: the low applicative.
 * `CauseHead.Embeds`: the layers a causative head's complement may contain.
 
-## Main results
-
-* `composes_unergative_iff`: only high applicatives combine with unergatives.
-* `lowAppl_agent_eq_bot`: a low applicative over an unergative makes the object agent and theme.
-* `cause_voice_order`: Cause applies before Voice.
-* `hasCauseePosition_iff`: a root-selecting, Voice-bundling causative leaves no causee position.
-
 ## Implementation notes
 
 Semantic types are those of `Montague.Ty`, whose eventuality sort `v` is the book's event type

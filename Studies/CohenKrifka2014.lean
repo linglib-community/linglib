@@ -19,19 +19,6 @@ updated root entails that the speaker is committed to the paper's derived truth 
 denial of a value in range is among the commitments, the trace in the model of the paper's claim
 that the sentence's falsity is semantic and its truth an implicature.
 
-## Main statements
-
-* `assert_le_grant`, `sdiff_coe_grant`: a GRANT includes but does not enforce the assertion,
-  and denegating a GRANT is asserting the negation.
-* `coe_exclude`, `sdiff_coe_exclude`: the exclusion is the conjunction of the assertions of the
-  denials, and its denegation is the disjunction of the GRANTs it denied, which keeps the root
-  and so commits the speaker to nothing.
-* `sInter_root_atMost_exactly`, `sInter_root_atLeast_exactly`: on count scales the speaker
-  becomes committed to the classical Keenan and Stavi meanings of the numeral quantifiers.
-* `atMost_mono`, `sInter_root_atLeast_exactly_mono`: *at most* strengthens as the bound drops
-  and as the count grows, while a larger count weakens *at least*, the asymmetry behind NPI
-  licensing.
-
 ## Implementation notes
 
 * A commitment state is a set of propositions and the speaker's commitment to `φ` is the

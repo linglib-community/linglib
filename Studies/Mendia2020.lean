@@ -17,15 +17,6 @@ to through the ι of the cells, and an ad hoc kind term such as *the lions that 
 relation is Cresswell's degree construction, so an amount reading of a relative clause is the
 same definite under the partition of a preorder into its degrees.
 
-## Main statements
-
-* `ncard_realized_classes_le`: under any partition, finitely many individuals realize at most as
-  many subkinds as there are individuals, so *two kinds of dog are sitting in the next room* is
-  false with only Fido there.
-* `the_kappaPlus_eq_some`, `the_kappaPlus_eq_none`: the ad hoc kind term refers exactly when the
-  restrictor's instances share a cell.
-* `amount_reading`: an amount reading refers to the degree of the restrictor's instances.
-
 ## Implementation notes
 
 * The model is extensional. The type `E` collects the realizations of the kind under

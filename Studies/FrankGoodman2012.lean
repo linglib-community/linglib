@@ -15,17 +15,6 @@ proportion to the literal listener's probability of the object, the reciprocal o
 word's extension, and the listener inverts the speaker against a prior, the salience of the
 objects. The paper reports the fit of speaker and listener bets to the model.
 
-## Main statements
-
-* `size_principle`: of two words true of an object the speaker prefers the one with the smaller
-  extension.
-* `speaker_real_singleton_lt_iff`, `listener_real_singleton_lt_iff`: of two objects a word is
-  true of, the speaker uses the word more for the one whose other feature more objects share,
-  and a listener with no prior preference between the two infers that one.
-* `prefers_informative`, `narrowing_blue`, `listener_narrows_blue`: in the context of the paper's
-  figure the speaker prefers *circle* to *blue* for the blue circle and uses *blue* less for it
-  than for the blue square, so a listener who hears *blue* favours the blue square.
-
 ## Implementation notes
 
 * A context gives each object a value on each dimension, and a word is the pair of a dimension

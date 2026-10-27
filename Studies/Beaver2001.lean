@@ -15,18 +15,6 @@ of and admits a sentence it can be updated with. A sentence presupposes what eve
 admitting it satisfies, and entails what every output of an update with it satisfies. From
 Part I, the file states Strawsonian presupposition and its Strong Kleene projection (Fact 2.1).
 
-## Main statements
-
-* `Formula.Presupposes.and_right`, `Formula.Presupposes.implies_right`: a presupposition of
-  the second conjunct or of the consequent projects conditionalised on the first.
-* `Formula.satisfies_might_iff`, `Formula.satisfies_must_iff`: *might* is a consistency test
-  and *must* a satisfaction test.
-* `Formula.eval_eq_ofTrivalent`: on the non-modal sentences an update is the Heimian update of
-  the sentence's value under Peters' connectives, so the dynamic and trivalent entailments
-  coincide (`Formula.entails_iff_tval`, Fact 10.3).
-* `entailed_rows`, `unentailed_rows`: the entailments and non-entailments the book prints for
-  its translations of the *realise* examples.
-
 ## Implementation notes
 
 * The book's updates are relations between states. Every PUL relation is a partial function,
@@ -372,7 +360,7 @@ private theorem meetMiddle_ne_zero_iff {a b : SignType} :
   cases a <;> cases b <;> decide
 
 /-- On PL+∂ an update is the Heimian update of the sentence's trivalent value (Lemma 10.1, with the
-distributivity used for Lemma 10.2). -/
+distributivity used for Lemma 10.2) (Fact 10.3). -/
 theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
     φ.eval F = CCP.Partial.ofTrivalent (φ.tval F) := by
   induction hφ with

@@ -31,16 +31,6 @@ first.
 * `Feature.valency`, `Input.valency`: the valency each feature's voice derives.
 * `Role`, `Feature.target?`, `Role.passiveScopes`: the thematic hierarchy (31) and its uses.
 
-## Main results
-
-* `filtered_of_mem_spellOut`: no spelled-out stem violates the filters (10).
-* `rmc_of_mem_spellOut`, `mem_iff_of_mem_spellOut`: every spelled-out stem satisfies the RMC
-  and spells out exactly the features of its input.
-* `detransitivized_once`: (4a).
-* `ambiguity_needs_late_rule`: (35), (36).
-* `rank_lt_of_rules_ne_none`: (33), circumscription respects the hierarchy.
-* `rows_spellOut`, `rows_cyclicFailures`, `rows_passive`, `rows_form`: the paper's examples.
-
 ## Implementation notes
 
 * A feature's valency effect is that of the voice the fragment assigns it: it adds what the

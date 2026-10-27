@@ -16,17 +16,6 @@ time at which the speaker did not is too weak. In *Sheila had a party last Frida
 drunk* the second tense picks up the time of the first, as an anaphoric pronoun picks up its
 antecedent, which two existential pasts do not require.
 
-## Main statements
-
-* `never_entails_deictic`, `deictic_entails_sometime_not`: the deictic reading of the stove
-  sentence follows from the reading on which the speaker never turned off the stove and entails
-  the one on which the speaker at some past time did not.
-* `never_too_strong`, `sometime_not_too_weak`: neither converse holds.
-* `anaphoric_iff`, `existential_pasts_not_anaphoric`: two past tenses with one index locate
-  their clauses at one time, and two existential pasts need not.
-* `exists_past_iff_sometime`: with its index bound by an existential quantifier, the past tense
-  is Prior's past.
-
 ## Implementation notes
 
 * A time is an interval of a linear order, mathlib's `NonemptyInterval`, and a tense is an index

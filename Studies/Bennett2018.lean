@@ -28,13 +28,6 @@ above the constraint that every prosodic word correspond to a morphological word
   `Match (ω, X⁰)` read as `Prosody.syntaxProsodyMatch` and `Prosody.prosodySyntaxMatch`, and the
   subcategorization frame, aligned with each prefix's index in the frontier.
 
-## Main results
-
-* `omegaInitial_nested`, `omegaInitial_flat`: every stacked high prefix is ω-initial in the
-  recursive parse; only the first prefix is in the flat parse.
-* `high_prefix_recursive`, `low_prefix_flat`: under `SubCat ≫ Match (ω, X⁰)` a
-  high-attaching prefix is parsed recursively and a low-attaching one flat.
-
 ## References
 
 * [bennett-2018]

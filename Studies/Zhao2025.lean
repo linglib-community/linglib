@@ -24,15 +24,6 @@ duration or a measure phrase repairs.
 * `le`: the particle *le*.
 * `meiyou`: the particle *méi-yǒu*.
 
-## Main results
-
-* `hasSubintervalProperty_iff_forall_atomDist`: for an existential quantifier, Atomic Distributivity
-  over time is the subinterval property.
-* `not_atomDist_ofPred`: a description without point traces fails Atomic Distributivity.
-* `not_le_dom_of_le`: the bare stative is a presupposition failure of *le*.
-* `le_dom_of_length`: a duration argument or a measure phrase licenses *le*.
-* `meiyou_dom_of_surpasses`: *guò* licenses *méi-yǒu*.
-
 ## Implementation notes
 
 Times and degrees are the points of a linear order, traces its closed intervals, and a point is the

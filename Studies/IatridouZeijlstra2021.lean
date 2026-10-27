@@ -29,30 +29,6 @@ account, negation yields the subinterval property, so its durative *until* would
 perfective with no event at all, and Greek *para mono* is an exceptive whose meaning already
 gives the punctual one.
 
-## Main statements
-
-* `in_years_contradictory`: exhaustified, the positive perfective claim is contradictory when
-  the events are shorter than the span.
-* `negated_perfective_exh_vacuous`, `throughout_exh_vacuous`: exhaustification is vacuous for a
-  negated perfective and for a predicate holding throughout the span.
-* `not_throughout_exh_contradictory`: exhaustifying the claim that an imperfective predicate does
-  not hold throughout the span is contradictory.
-* `actuality_inference`, `event_near_lb`, `event_near_rb`: a widened span forces a relevant event
-  just beyond its widened boundary.
-* `beyond_expectation_inference`: the widened span contains every event-free alternative.
-* `widened_iff_maximal`: the widened span is the event-free span stretched until the sentence
-  would become false.
-* `not_widened_rb_of_finite`: in dense time no span is widened past finitely many events.
-* `two_until_overgenerates`: the durative *until* of the ambiguity account accepts a negated
-  perfective with no event at all.
-* `eventiveUntil_of_exceptive`: *para mono* with a temporal argument under negation, read as an
-  exceptive, entails the punctual *until* meaning, the event included.
-* `isLeast_rightBoundaries_prfv`, `isLeast_rightBoundaries_unbounded`: a perfective argument of
-  *until* sets the right boundary at the completion of its event, an imperfective one at the
-  onset.
-* `cancellation_rows`, `expectation_rows`, `grammaticality_rows`: the judgments of the example
-  rows against the widening and exhaustification results, over the integers.
-
 ## Implementation notes
 
 * Exhaustification is the shared `Exhaustification.exh` over the domain alternatives, the claim

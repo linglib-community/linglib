@@ -29,19 +29,8 @@ update semantics derives the cumulative reading from meanings of the pseudo-cumu
 * `maxAtU`, `exactlyU`, `sentenceU`: update-theoretic maximization (78), the quantifier (81) and
   the sentence (82).
 
-## Main results
-
-* `cumulative_scenarioA`, `cumulative_scenarioB`, `pseudoCumulative_scenarioB`: on the models of
-  Figure 1, (6) holds in Scenario A only, while (5) holds in Scenario B.
 * `scope27` through `scope33`: the six scopings of two higher-order quantifiers reduce to (27)–(30)
   and (32)–(33); four agree with (6) on Figure 1 and two are pseudo-cumulative.
-* `hasType_cumulative`, `not_hasType_pseudoCumulative`: (45) has type `T` and (46) has none.
-* `reify_sentencePS`: the post-suppositional sentence reifies to (6).
-* `lower_maxAtU_image`: the two maximizations are alphabetic variants (79).
-* `sentenceU_scenarioA`, `sentenceU_scenarioB`: (82) is cumulative on Figure 1, and
-  `down_sentenceULowered` recovers (5) once the object's maximization is lifted from its pointwise
-  counterpart, so that update-theoretic maximization is not distributive
-  (`not_isDistributive_maxAtU`).
 
 ## Implementation notes
 

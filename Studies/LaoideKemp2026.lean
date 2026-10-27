@@ -33,22 +33,6 @@ out `{L}` as a prefix and *d'* afterwards; it fails on the past-tense impersonal
 * `Step`, `IsSurface`, `surfaces`: one docking, a candidate where none applies, and the surface
   forms a candidate derives; `Realizes`, an object linked on the surface.
 
-## Main results
-
-* `surfaces_nonempty`: every candidate derives a surface form.
-* `historic_bog`, `historic_ól`, `historic_fág`: in the one surface form of each form of
-  Figure 1, `d` is pronounced before *ól* and *fág* but not before *bog*.
-* `lenition_feeds_linking`, `not_linking_feeds_lenition`: lenition feeds the linking of `d` and
-  not conversely, so the order of the two processes is intrinsic.
-* `historic_freagair`, `historic_rith`: `d` links before lenited *fr-*, whose emptied C-slot stays
-  in a domain of infrasegmental government, and not before *r-* (Figure 2).
-* `isFloating_of_emptyCV`: whatever the stem, no object of a floating exponent docks before an
-  empty CV unit; `conditional_impersonals`, the same resistance after the trigger *má*.
-* `beginsWithEmptyC_iff_realizes_d`, `beginsWithEmptyC_pstImpers`, `beginsWithEmptyC_of_emptyCV`:
-  the morphosyntactic analysis agrees on (11) and inserts *d'* before a past-tense impersonal.
-* `munster_iff_historic`: in Munster the floating `d` after a particle has the same distribution.
-* `prothesis`: a floating consonant without `{L}` links before a vowel-initial word only.
-
 ## Implementation notes
 
 The segments are written orthographically, as in the paper's CV diagrams. The words of Figure 1

@@ -31,30 +31,6 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
 * `Si.a`, `Si.that`: the indefinite determiner (83) and the relative pronoun (87).
 * `Si.abstractChoice`: abstraction by a choice function in alternative semantics (74).
 
-## Main results
-
-* `some_pure`, `bind_pure_left`, `plusWh_some`: the extended Partee triangle of Figure 4
-  commutes.
-* `exceptional_scope`, `exceptional_ne_narrow`: (33), and the exceptional reading of (1) is not
-  the narrow one.
-* `every_island`: pied-piping a universal's island gives nothing new (2).
-* `intermediate_scope`, `two_island`: intermediate exceptional scope (3), and the distributive
-  scope of a plural indefinite stays in its island (39).
-* `relative_wide`, `lawyer_wide`, `seminar_paper`: selective exceptional scope, (43), (47), (49).
-* `lawyer_wide_not_pointwise`: no function of the point-wise island meaning gives the
-  lawyer-wide reading of (43).
-* `Si.expert_wide_bound`: exceptional scope beside a bound pronoun (51).
-* `Si.paper_wide`, `Si.paper_narrow`, `Si.not_dependsOn_paper_wide`: the Binder Roof
-  Constraint of (53), Figure 14.
-* `Si.cf_reading_iff`, `Si.cf_reading_not_imp_bound`: the choice-function reading (69) and its
-  over-generation.
-* `Si.a_paper_that_she_wrote`: the determiners of Appendix A derive (66).
-* `Si.nobody_met_iff`: abstraction by a choice function over-generates (77).
-* `Si.abstractChoice_eq_distribute`: the two lines of (74) agree when the alternatives are
-  nonempty and distinct at distinct values of the variable.
-* `Si.sSup_readings_nobodyMet_iff`: the layering of (80) and (81) gives (77) the wide-scope
-  reading of the indefinite, not the functional one.
-
 ## Implementation notes
 
 * `η`, `≫=` and flattening are `pure`, `>>=` and `joinM` of mathlib's `Set.monad`, and the

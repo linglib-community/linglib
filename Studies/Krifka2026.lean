@@ -19,19 +19,6 @@ are presupposed by the input assignment, as the referents of names are, so they 
 which is a test, while an entity referent introduced under negation does not. After *John doesn't
 own a dog*, the kind pronoun *them* is therefore interpretable and a partitive is not.
 
-## Main results
-
-* `Krifka2026.pronoun_pollen`: *pollen* is resumed by *it* and *pollen grain* by *they*.
-* `Krifka2026.they_eq_it_of_supClosed`: on a cumulative concept the two pronouns coincide.
-* `Krifka2026.spider_no_kind`, `Krifka2026.spiders_kind`: a singular count concept with two
-  instances has only the closed kind.
-* `Krifka2026.concept_entity_asymmetry`: a concept referent survives negation and an entity
-  referent does not.
-* `Krifka2026.anaphora_after_negation`: after negation the kind pronoun and the empty NP are
-  interpretable and the partitive is not.
-* `Krifka2026.doesntOwnADog_g₀`, `Krifka2026.them_after_doesntOwnADog`: the paper's derivation
-  of *John doesn't own a dog* on a two-entity model.
-
 ## Implementation notes
 
 * Assignments are total functions into a heterogeneous value type with a value marking

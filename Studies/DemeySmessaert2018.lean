@@ -13,10 +13,6 @@ fragment induces, without first computing its Boolean closure. In their Example 
 literals, of which three are consistent, so its closure has `2 ^ 3` elements. Their partition
 is `Finpartition.minterms` and their bitstring semantics `BooleanSubalgebra.toSetOfMinterms`.
 
-## Main results
-
-* `parts_minterms_example2`: the three anchors of Example 2.
-
 ## Implementation notes
 
 A proposition over `p` and `q` is the finset of valuations making it true, a valuation being the

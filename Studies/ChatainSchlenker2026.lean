@@ -17,23 +17,6 @@ accommodates at every argument of a λ-abstract or at none, so an elided clause 
 antecedent's choice. One enrichment can project at one argument and accommodate at another, and
 can accommodate one of a trigger's two presuppositions while the other projects.
 
-## Main statements
-
-* `pointwise_projects_or_accommodates`: a context-free operator projects at every argument or
-  accommodates at every argument (Table 1).
-* `enrichment_projects_and_accommodates`: one enrichment does both, and the clauses stay
-  semantically parallel ((66)–(71)).
-* `presupFailure_clause`, `clause_projects_and_accommodates`: on the partial composition engine,
-  the antecedent and the elided clause of (26) share one λ-abstract, and only the elided clause
-  accommodates ((66)–(70)).
-* `ofPart_clause`: the engine's denotation of the clause reads out as the Strong Kleene negation
-  of the enriched predicate ((67)).
-* `enrichment_by_definedness`: enrichment by definedness is `A` (§5.2).
-* `partial_accommodation`, `partial_accommodation_rows`: enrichment by one presupposition of a
-  trigger accommodates it alone ((34), (38), (39), §5.2.1).
-* `projection_entails_accommodation`: in a knowledge-monotone context the projected reading
-  entails the accommodated one (§4.1).
-
 ## Implementation notes
 
 A trivalent predicate `P : E → W → SignType` is `0` where its presupposition fails. Free
@@ -101,7 +84,7 @@ example (R : E → W → Prop) [∀ x, DecidablePred (R x)] (P : E → W → Sig
 
 /-- An enrichment trivial at `Y` and entailing the presupposition at `X` lets the presupposition
 project at `Y` and accommodates it at `X`, so the antecedent and the elided clause of (26) can
-share one λ-abstract and differ ((66)–(70)). -/
+share one λ-abstract and differ ((66)–(70)) ((71)). -/
 theorem enrichment_projects_and_accommodates (P : E → W → SignType) (R : E → W → Prop)
     [∀ x, DecidablePred (R x)] {X Y : E} (hY : ∀ w, R Y w) (hX : ∀ w, R X w → P X w ≠ 0) :
     gapExt (fun w ↦ ofProp (R Y w) ⊓ P Y w) = gapExt (P Y) ∧
@@ -246,7 +229,7 @@ theorem interpPartial_clause : interpPartial (lexicon P R w) g (clause d) =
 open Classical in
 /-- The three-valued readout of the engine's denotation is the Strong Kleene negation of the
 enriched predicate, so the engine and `enrichment_projects_and_accommodates` describe one
-object. -/
+object ((67)). -/
 theorem ofPart_clause :
     ofPart ((if R d w then P w d else Part.some False).map Not) =
       -(ofProp (R d w) ⊓ ofPart (P w d)) := by

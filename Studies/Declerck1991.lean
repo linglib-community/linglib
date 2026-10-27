@@ -20,12 +20,7 @@ part of its make-up.
   absolute sectors, and the absolute tenses.
 * `Declerck1991.Realizes`: the TOs that realize a tense, along the Allen cells of its links.
 
-## Main results
-
-* `Declerck1991.absolute_sector_bijective`: each absolute sector has one absolute tense.
 * `Declerck1991.realizes_simplePast_iff` and its siblings: the absolute tenses on intervals.
-* `Declerck1991.vague`, `Declerck1991.covers_retrogressive`: the tenses with an intermediate TO
-  are vague where [reichenbach-1947] counts three tenses (§5.1.2).
 
 ## Implementation notes
 

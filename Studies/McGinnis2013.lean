@@ -19,16 +19,6 @@ then shows only through [Multispeaker] in the prefix *gv-*. Each suffix discharg
 it spells out, so the third-person plural screeve suffix leaves no [Group] for *-t*, and *-t*
 leaves no [#] for the default *-s*.
 
-## Main results
-
-* `rows_realized`: a form of the pool is grammatical iff its prefix and suffixes are those the
-  analysis inserts.
-* `one_exponent_per_feature`: in every clause the suffixes realize disjoint parts of T's node, so
-  there is no double plural marking, which Fission alone would not exclude
-  (`fission_alone_allows_double_plural`).
-* `setB_realize`, `setA_realize`: the analysis yields the agreement affixes of the Fragment's two
-  sets, *gv-* without *-t* included.
-
 ## Implementation notes
 
 * An item's contextual features are read off the fused node as it stands before insertion, so

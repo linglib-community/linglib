@@ -24,21 +24,6 @@ taken across alternatives branching from the world of evaluation at the main-cla
 *after* stays veridical and *before* also has counterfactual and non-committal uses, which the
 context sorts (48).
 
-## Main results
-
-* `uniform_lt_iff_beforeEver`, `uniform_gt_iff_after`: Proposition 2, the uniform connective is
-  Anscombe's *before* and *after* on a temporal clause with a first time.
-* `forall_uniform_lt_iff_beforeEver`: the first time is needed, the two *before*s agreeing on a
-  clause exactly when it has one or no time precedes all of it.
-* `isStrawsonDE_before`, `isStrawsonUE_after`: the uniform *before* is Strawson downward
-  entailing in its temporal clause and *after* Strawson upward entailing.
-* `connective_iff_uniform_of_inst`: on an instantiated temporal clause, (47) is (45).
-* `after_veridical`, `veridical_inter_after`: *after* entails its temporal clause, so a context
-  updated with it is veridical (§6).
-* `existsUnique_reading`: each nonempty context has exactly one of the readings of (48).
-* `mozart_update`: in the context of p. 51, *Mozart died before he finished the Requiem* keeps
-  exactly the worlds of its counterfactual reading.
-
 ## Implementation notes
 
 * The alternatives come from a T × W frame whose historical equivalence at `t` is agreement at
@@ -410,7 +395,7 @@ def alternatives : Alternatives frame finishes where
 def context : Set World := {.finish, .early, .idle}
 
 /-- Updating the context with *Mozart died before he finished the Requiem* keeps exactly the
-`early` world. -/
+`early` world (p. 51). -/
 theorem mozart_update : context ∩ {w | before dies finishes alt w} = {.early} := by
   ext w
   simp only [context, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff,

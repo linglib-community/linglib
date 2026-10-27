@@ -22,17 +22,6 @@ anti-rogative, exactly for the distributive positive class. Apparent uses of *ho
 question are non-canonical, and the asymmetry between hoping for the radical and for its negation
 follows from the goals of a hopeful wondering.
 
-## Main statements
-
-* `relational_not_isDistributive`: a predicate related to a question but to none of its answers
-  is not clausally distributive.
-* `trivial_iff_class`: composition with a question is trivial exactly for the distributive
-  positive class.
-* `responsive_rows`, `anti_rogative_rows`, `tsp_rows`, `nondistributive_rows`: the paper's
-  judgments in five languages.
-* `hopes_radical`, `hopes_negation`: hoping for the radical licenses the wondering and hoping for
-  its negation does not.
-
 ## Implementation notes
 
 Triviality quantifies over the degree function and threshold, the non-logical constants of

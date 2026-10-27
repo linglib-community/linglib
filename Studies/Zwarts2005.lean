@@ -24,14 +24,6 @@ concatenation relation.
 * `towardsPP`: *towards*.
 * `IsTraceHom`: a trace homomorphism for concatenation.
 
-## Main results
-
-* `toPP_bounded`: strict goal phrases are bounded.
-* `towardsPP_cumulative`: *towards* is cumulative.
-* `toPP_not_quantized`: bounded phrases are not quantized.
-* `loops_cumulative`: loops are cumulative.
-* `vpp_toPP_bounded`: *walk to the house* is bounded.
-
 ## Implementation notes
 
 * The strict goal and source denotations enter through their endpoint content only.

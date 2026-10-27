@@ -22,17 +22,6 @@ noun instead. Conjugation classes pair the binyanim of an alternation, and two t
 against conjugating a binyan with itself and against mixing geminate and non-geminate templates,
 single out the natural pairs.
 
-## Main statements
-
-* `words_derived_seg`: over the fragment's roots and segments, every root-derived word of the
-  data is derived but five verbs whose guttural, metathesis or geminate-root phonology is not
-  modelled.
-* `spirantize_before_degeminate`: the opposite order would give \*sifer, \*qivel, \*hitraxex.
-* `denominals`: every noun-derived verb is a stem modification of its base, except the
-  {o, e} verbs of (41a, b), and none is the verb its base's root derives.
-* `conjugations_natural`: conjugation classes 1–4 are the natural pairs of (57), and 5 and 6
-  each break one tendency.
-
 ## Implementation notes
 
 * Root-to-template association follows McCarthy, as p. 43 says it does. CVCCVC and
@@ -705,7 +694,7 @@ theorem conjugation_verbs_derived :
   decide +kernel
 
 /-- Conjugations 1–4 are exactly the natural pairs, and wherever (11) marks one alternant [−tr.],
-the causative is the other (p. 226). -/
+the causative is the other (p. 226) ((57)). -/
 theorem conjugations_natural :
     (∀ x ∈ conjugations, (Natural x.2.1 x.2.2 ↔ x.1 ∈ ["1", "2", "3", "4"]) ∧
       (x.2.1 = x.2.2 ↔ x.1 = "6") ∧ (¬(x.2.1.Geminated ↔ x.2.2.Geminated) ↔ x.1 = "5")) ∧

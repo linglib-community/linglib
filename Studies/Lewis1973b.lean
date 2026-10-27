@@ -27,17 +27,6 @@ with the counterfactual primitive is sound, its axioms being the laws of the fil
 theorem of Stalnaker's C2 holds under centering and Stalnaker's Assumption, while conditional
 excluded middle is not a theorem of VC.
 
-## Main statements
-
-* `mem_variablyStrictImp_iff_spheres`: the truth condition by spheres is the primitive.
-* `sobel`: a variably strict conditional makes a Sobel sequence true; `mem_strictImp_of_sobel`:
-  a strict one cannot without vacuity.
-* `closestImp_line`, `not_mem_variablyStrictImp_line_two`, `not_cem_line`: the line example.
-* `variablyStrictImp_eq_ofDomain_selection`, `forall_mem_variablyStrictImp_or_compl_iff`:
-  Stalnaker's theory is a special case, and conditional excluded middle is an ultrafilter.
-* `Provable.sound`, `valid_vcs_of_c2`, `not_provable_vc_cem`: VW, VC and VCS are sound, the
-  theorems of C2 are valid for VCS, and conditional excluded middle is not a theorem of VC.
-
 ## Implementation notes
 
 Propositions are all sets of worlds, so Lewis's assumptions for every antecedent of the language

@@ -17,17 +17,6 @@ The full system evaluates at plural assignments, where a free variable presuppos
 is atomic; it restores covariation, captures quantificational subordination and the weak reading
 of donkey sentences, and a strong-truth operator internalizes universal readings.
 
-## Main statements
-
-* `felicitous_forward_conj`, `felicitous_bathroom`, `not_felicitous_reverse_conj`: anaphora
-  across conjunction and in bathroom sentences, and its sensitivity to order.
-* `trueAtP_notExNotEx_iff`, `trueAtP_qs_iff`, `felicitousP_qs`: covariation and quantificational
-  subordination in the full system.
-* `trueAtP_donkey_iff`, `felicitousP_donkey`: the weak reading of donkey sentences, and
-  Transparency for their pronoun.
-* `stronglyTrueAt_ex_and_iff`: under Strong Truth, *there is a bathroom and it is upstairs* says
-  that every bathroom is upstairs.
-
 ## Implementation notes
 
 * One language serves both systems: `valued` is the paper's *U(x)* in the simplified system and

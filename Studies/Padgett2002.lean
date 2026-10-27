@@ -23,15 +23,6 @@ a Color node carries both features or neither.
 * `Tier`, `Tier.spread`: the autosegments of one feature over a word, and SPREAD (26).
 * `tableau`: the Turkish grammar of (17)–(22), over every fully specified candidate.
 
-## Main results
-
-* `classes_eq_featureClass`: the classes (25) are those of the nodes of (3).
-* `Tier.spread_eq_zero_iff`: SPREAD holds iff the feature has one autosegment.
-* `predict_eq_attested`, `notMem_predict_marked`: the grammar derives the suffixed forms of
-  (6), p. 85 and (21), and not the starred ones; `predict_suffix_mem_reduced`: only the suffix
-  vowels of (13); `predictTotal_son_lAr`: the reverse ranking gives total Color harmony.
-* `ne_colorSpreading`: no spreading of a Color node yields [son-lar] or [petrolʸ-ü] ((9), (23)).
-
 ## Implementation notes
 
 Candidates are fully specified, as from (12) on. The segments are the vowels, as in (12)–(20),

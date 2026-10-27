@@ -24,19 +24,6 @@ of different granularity, the same reasoning picks the coarsest salient scale th
 lies on, and halving a scale's width is the optimal refinement, adding exactly the values the
 coarser scale distorts most.
 
-## Main results
-
-* `division_of_labour`: on the earlier account the superoptimal pairs are the simple expression
-  read approximately and the complex one read precisely.
-* `winners_of_true_value`: with truthfulness above conditional expression economy, a true value
-  of 39 is reported as *forty* approximately or *thirty-nine* precisely, and 40 as *forty* on
-  either reading.
-* `approximate_more_probable`: on the uniform prior the approximate reading of *forty* covers
-  nine times the mass of the precise one, the hearer's conservative choice.
-* `coarsest_scale_most_probable`: given a reported value, the most probable aligned scale is the
-  coarsest one through it, reading *forty-five minutes* at the quarter hours and *forty* at the
-  five minutes.
-
 ## Implementation notes
 
 * Approximate readings are intervals, the halo `[i - s, i + s]`, the paper's own simplification

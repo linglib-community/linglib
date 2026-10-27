@@ -19,13 +19,6 @@ infinitives only. The modal is a last resort for Bondarenko's pre-existence pres
 embedded event started before the forgetting: an anterior complement meets it as soon as the
 complement holds, while a plain infinitive contradicts it and needs the modal.
 
-## Main results
-
-* `needsMod_aspP`: a plain infinitive needs the modal.
-* `not_needsMod_anterior_aspP`: the anterior complements do not.
-* `preEx_mod_iff`: the presupposition under the modal.
-* `mca_overgenerates`: White's Modalized Complement Analysis overgenerates.
-
 ## Implementation notes
 
 * The paper's complements are Champollion's continuations, from a predicate of events to a

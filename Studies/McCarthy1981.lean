@@ -32,16 +32,6 @@ derivation never looks at the melodic elements themselves (`stem_map`).
 * `McCarthy1981.consonantism`, `McCarthy1981.stem`: the consonantism of a binyan and the stem of
   a cell of the table.
 
-## Main results
-
-* `McCarthy1981.forms_derived`: the derivation produces the paper's forms.
-* `McCarthy1981.schema_elide_eq`: the schema (14a) with rule (14b) generates all and only the
-  templates (13).
-* `McCarthy1981.consonantism_quadriliteral`: the quadriliteral binyanim are triliteral ones.
-* `McCarthy1981.metathesisSites_samam`, `McCarthy1981.metathesisSites_ktatab`: the cluster
-  rule (37) applies to identical consonants linked to one root element, not to identical
-  consonants of different morphemes.
-
 ## Implementation notes
 
 * The forms are compared in the paper's transcription; `stem_map` carries a derivation over to
@@ -116,7 +106,7 @@ def elide (t : Skeleton) : Skeleton := if t = cvcvcvc then cvccvc else t
 -- (13)
 theorem schema_eq : schema.toFinset = insert cvcvcvc binyanTemplates.toFinset := by decide
 
-/-- The schema with rule (14b) generates all and only the templates (13). -/
+/-- The schema with rule (14b) generates all and only the templates (13) ((14a)). -/
 theorem schema_elide_eq : (schema.map elide).toFinset = binyanTemplates.toFinset := by decide
 
 /-! ### The consonantism of the binyanim -/

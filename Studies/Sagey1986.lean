@@ -39,17 +39,6 @@ realised by valid associations.
 * `Association`, `Association.Valid`, `TierRealization`: association lines as overlap in time,
   and two tiers placed in time.
 
-## Main results
-
-* `degreeOfClosure_mem_featureClass_iff`, `nasal_mem_featureClass_iff`: degree of closure lies
-  in the root's class alone and nasality in the classes of the soft palate and its ancestors, so
-  place assimilation leaves both untouched.
-* `disjoint_featureClass_of_articulators`: distinct articulators have disjoint classes.
-* `isComplex_of_round_of_coronal`, `occlusions_isComplex`: a licensed rounded coronal and every
-  multiple occlusion are complex.
-* `Association.Valid.not_crosses`, `isNonCrossing_of_valid`: valid associations do not cross,
-  so the No-Crossing Constraint is derived.
-
 ## Implementation notes
 
 The substrate's features are mapped onto the dissertation's: `[voice]` stands in for the

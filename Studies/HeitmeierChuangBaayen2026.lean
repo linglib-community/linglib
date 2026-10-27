@@ -34,19 +34,6 @@ The file also relates the book's three ways of estimating a mapping. Incremental
 updates the mapping at each usage event by the Widrow–Hoff rule, and the mappings of endstate
 and frequency-informed learning are the matrices at which those updates cancel (§1.3, §6.2).
 
-## Main results
-
-* `not_exists_paradigm_eq_of_not_regular`, `pos_weightedLoss_of_not_regular`: an irregular
-  table is the paradigm of no linear mapping over imputed semantics, and training on it leaves
-  positive loss.
-* `exists_paradigm_imputed_eq_iff`: over jointly independent lexeme and function vectors, a
-  table is the paradigm of some linear mapping iff it is analogically regular.
-* `exists_paradigm_eq_of_linearIndependent`: over linearly independent word-specific
-  embeddings, every table is the paradigm of some linear mapping.
-* `pastTense_not_regular`: *walk, walked, go, went* violates proportional analogy.
-* `isTrained_iff_sum_update_sub_eq_zero`: a mapping matrix is trained iff the frequency-weighted
-  Widrow–Hoff updates of the usage events cancel at it.
-
 ## Implementation notes
 
 * The book describes endstate learning as the state incremental learning reaches after infinitely

@@ -28,17 +28,6 @@ tenses alone, the effect noted by Stump. With the sequence-of-tense rule and the
 the present as parameters, the kind of tense gives the pattern of English, Japanese and Polish,
 a table of permissible languages, and three predictions.
 
-## Main statements
-
-* `IsEarliest.eq_fst_of_diamond`: on dense time the earliest moment of an existentially
-  quantified tense within an interval is the start of the interval, whatever the tense.
-* `Reading.fails_iff`, `Reading.stumpEffect_iff`: of the readings of a tensed clause under
-  *before*, the existential ones fail and the pronominal present has the Stump effect.
-* `judgment_iff`, `simultaneous_iff`: the parameters of English, Japanese and Polish give the
-  paper's judgments on *before*-clauses and attitude reports.
-* `pShiftable_present_of_wellFormed`, `simultaneous_past_of_pShiftable`,
-  `noPShiftability_past_of_not_simultaneous`: the three predictions.
-
 ## Implementation notes
 
 * A time is a closed interval of a dense linear order of moments, mathlib's `NonemptyInterval`,

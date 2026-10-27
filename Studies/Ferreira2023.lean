@@ -33,25 +33,6 @@ which Portuguese fills with *tem que*, *tinha que*, *deve*, *devia* (135).
 * `Pattern.Contradictory`, `Pattern.Consistent`, `Profile`: the conjunctions of §2 and the four
   bits of a model that decide them.
 
-## Main results
-
-* `snXg_iff_weakNecessity`: (133), weak necessity is strong necessity with an X-marked
-  ordering source.
-* `domainIndependent_starstar_iff`, `not_exists_starstar_orderingSource`: the ∗∗-revision is
-  domain-independent exactly when bestness is stable under widening, which a three-world frame
-  refutes, so (131) has no solution among ordering sources.
-* `Vertex.entails_iff`: the entailment order of the square (134). Strong necessity entails
-  every vertex, *tinha que* entails *devia*, and nothing else entails anything, which confirms
-  (29) and (82a) and refutes the first half of (82b).
-* `scale`, `rubinstein`: the scale (28)–(29) and Rubinstein's test (27), decided.
-* `necessity_iff_interpret`: (135), the fragment's force at a vertex is the operator the
-  vertex computes.
-* `Pattern.contradictory_iff`, `rows_unacceptable_iff`: a conjunction of §2 is contradictory
-  exactly when no valid profile satisfies both conjuncts, and the paper's `#` judgments
-  ((16)–(25), (30), (32)) are exactly the contradictory ones.
-* `devia_81`, `not_devia_80`, `revise_workday_80`, `dialogues_predicted`: the dialogues
-  (80)–(81) and footnote 18 in a four-world model.
-
 ## Implementation notes
 
 * The similarity ordering of (41) is a totally realistic ordering source, and (41b)(i) is read
@@ -456,7 +437,7 @@ private theorem M3_iff (v : Vertex) :
 end countermodels
 
 /-- In the entailment order of the square (134), strong necessity entails every vertex, *tinha
-que* entails *devia*, and nothing else entails anything. -/
+que* entails *devia*, and nothing else entails anything ((29), (82a), (82b)). -/
 theorem Vertex.entails_iff (v v' : Vertex) :
     v.Entails v' ↔ v = v' ∨ v = ⟨false, false⟩ ∨ (v = ⟨true, false⟩ ∧ v' = ⟨true, true⟩) := by
   refine ⟨fun h ↦ ?_, ?_⟩

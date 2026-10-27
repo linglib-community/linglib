@@ -28,18 +28,6 @@ their strong reading and a repeated description no sloppy reading.
   attitude verbs.
 * `Village`: situations as finite sets of atomic facts.
 
-## Main results
-
-* `sentence_ne_zero_iff`: a sentence presupposes exactly one satisfier at the situation its
-  pronoun denotes.
-* `deDicto_ne_zero_iff`, `deRe_ne_zero_iff`, `attributiveDeRe_eq_one_iff`: the three readings
-  under an intensional operator.
-* `attitude_eq_zero_of_agnostic`, `russellian_consistent`: the description, unlike its
-  Russellian paraphrase, makes an agnostic subject's desire infelicitous.
-* `everyOwnerBeatsTheDonkey_iff`, `incomplete_description`,
-  `everyOwnerBeatsTheDonkeyAndThePriestToo_iff`: the strong donkey reading, incompleteness, and
-  the strict reading of a repeated description in the village.
-
 ## Implementation notes
 
 * Situations are any partial order; minimality is mathlib's `Minimal`, and the lexical entries of

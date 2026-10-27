@@ -26,17 +26,6 @@ conditional: it fails when the consequent is one of the disjuncts, and an *or bo
 antecedent, exhaustified by Hurford's constraint, turns the conjunctive simplification from
 excluded into included.
 
-## Main results
-
-* `freeChoice`, `simpleDisjunction`: the modal and the plain disjunction.
-* `II_fcAlts`, `isInnocentlyExcludable_fcAlts_iff`: what free choice includes and excludes.
-* `support_only_fcAlts`: free choice under `only` is presupposed.
-* `posExt_only_eq`: without symmetric alternatives `only` agrees with the exclusive
-  `Focus.Particles.only`.
-* `universalFreeChoice`, `negativeUniversalFreeChoice`, `freeChoiceOverUniversal`,
-  `simplificationMost`: instances of `Exhaustification.exhIEII_quantified`.
-* `sda`, `sda_consequent_disjunct`, `orBoth`: simplification, its failure, and the switches.
-
 ## References
 
 * [bar-lev-fox-2020]

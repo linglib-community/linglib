@@ -27,23 +27,6 @@ suppletion is suspended, so Vocabulary Insertion reads prosody beyond the head.
   SUBCAT (29b), Positional Minimality (26a), PRIORITY (60a), Match(ω, X⁰) (75a) and
   Match(φ, XP) (23b).
 
-## Main results
-
-* `optimal_joined_iff`: whether the head ends its φ follows from the syntax.
-* `optimal_exponent`: the calculus of top-down suppletion (88).
-* `suppletion_not_optimal_without_maxXP`: MAX-XP, which the tableaux of §3–§4 omit, is what keeps
-  a stranded head out of the next word's φ.
-* `rows_optimal`: the grammar inserts the attested allomorph in every example.
-* `optimal_item_eq_of_two_le`: only a monosyllabic unmarked allomorph suppletes.
-* `winner?_eq_some_item_of_mem_optimal`: PRIORITY undominated selects the Subset Principle's
-  winner.
-* `forms_not_function_of_constituency`, `forms_not_function_of_footed`: neither the syntax nor it
-  and the footing of the next syllable determine the attested allomorph, so no rule set reading
-  only these inserts it (`not_realizes_of_constituency`, `not_realizes_of_footed`), nor does the
-  Subset Principle over the heads' neighborhoods (`not_subsetPrinciple_eq_forms`).
-* `forms_not_function_of_cCommanded`: nor do the words a head c-commands in the ditransitive
-  clause (90), against insertion bounded by the c-command domain (92).
-
 ## Implementation notes
 
 * The input is the syntax of the head and the next word: the phrases over the two words, each
@@ -394,7 +377,7 @@ theorem optimal_exponent (h : Head) (footed sameMax : Bool) :
   decide +revert +kernel
 
 /-- Without MAX-XP, a suppleted head is optimal under no ranking with PRIORITY active, against
-(76a), (77a) and (78a). -/
+(76a), (77a) and (78a) (§3, §4). -/
 theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
     {Fs : List (Constraint Candidate)}
     (hFs : ∀ F ∈ Fs, F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
@@ -503,6 +486,7 @@ theorem optimal_item_eq_of_two_le
     ((hmin _ (z (z (z hd h₁) h₂) h₃)).trans_eq ((priority_eq_zero_iff hi).2 rfl)))
 
 -- §5 [bonet-lloret-mascaro-2007]
+/-- PRIORITY undominated selects the Subset Principle's winner. -/
 theorem winner?_eq_some_item_of_mem_optimal
     (hv : v.Pairwise fun i j ↦ j.specificity ≤ i.specificity) {Fs : List (Constraint Candidate)}
     (hc : c ∈ (Tableau.ofList (candidates v x) (priority v x :: Fs)).optimal) :
@@ -647,7 +631,7 @@ def ditransitiveRows : List (Row × List String) :=
 theorem cCommanded_ditransitiveRows : ∀ x ∈ ditransitiveRows, x.2 = [] := by decide
 
 /-- No function of a head's neighborhood and the words it c-commands gives the attested allomorphs
-((92), §4.3, (78a), (78b)). -/
+((92), §4.3, (78a), (78b)) ((90)). -/
 theorem forms_not_function_of_cCommanded :
     ¬ ∃ f : Neighborhood (Finset Feature) × List String → Form Wordlist.Cell,
       ∀ x ∈ ditransitiveRows, f (x.1.input.neighborhood, x.2) = x.1.form := by

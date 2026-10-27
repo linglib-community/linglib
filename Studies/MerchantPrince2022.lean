@@ -31,14 +31,6 @@ partition (165) is the typology of the tableau (166).
 * `Instantiates`: a function on legs reads a GEPO's equivalence as `=` and its relation as `<`.
 * `IsTypology`: the partition is the typology of some `ConstraintSystem`.
 
-## Main results
-
-* `exists_instantiates_iff`: a GEPO can be instantiated iff it is acyclic, Lemma (280).
-* `toLex_lt_of_not_rel`: under instantiating functions each leg's own block has the least row,
-  Lemma (287).
-* `isTypology_of_instantiates`: an instantiated GMOAT is a typology, Theorem (288).
-* `isTypology_iff_isAcyclic`: the Theorema Egregium, Theorem (290).
-
 ## Implementation notes
 
 Numbers refer to version 2.1.1 of the paper. The relations are stated on legs rather than on

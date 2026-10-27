@@ -15,19 +15,6 @@ assertion (3) with universal quantification (10) derives restricted quantificati
 crows are black" becomes "Consider the crows: each one is black", assertive only if there are
 crows.
 
-## Main statements
-
-* `restrictedForall_eq_zero_iff`: the restricted forms (11)–(12) are nonassertive exactly when
-  nothing satisfies the restrictor, which is Strawson's existential presupposition, here derived
-  rather than stipulated.
-* `belnap_forall_content_eq_every`, `restrictedExists_eq_one_iff`: when assertive, the restricted
-  forms assert `every` and `GQ.some`.
-* `contentSquare_eq_square`, `content_square_relations`: where the forms are assertive their
-  contents are the quantifier square at the restrictor, so they stand in all six relations of the
-  square.
-* `i_conversion_equitrue`, `i_conversion_not_equiassertive`, `barbara`: conversion preserves
-  truth but not assertiveness, and Barbara's major does all the implying (pp. 8–9).
-
 ## Implementation notes
 
 The conditional assertion `(A/B)` of (3) is the indicator
@@ -73,7 +60,7 @@ variable {C B : E → Prop}
 /-! ### Assertiveness and content -/
 
 /-- ∀x(Cx/Bx) is nonassertive exactly when nothing satisfies `C`. This is the existential
-presupposition of universals, which Strawson stipulated and Belnap derives. -/
+presupposition of universals, which Strawson stipulated and Belnap derives ((11), (12)). -/
 @[simp] theorem restrictedForall_eq_zero_iff : restrictedForall C B = 0 ↔ ∀ x, ¬ C x := by
   simp [restrictedForall]
 

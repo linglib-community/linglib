@@ -22,19 +22,6 @@ preference favors conclusions whose subject is the only end term in subject posi
 premises. The Bayesian data analysis and the comparison with the Probability Heuristics Model of
 Chater and Oaksford are not formalized.
 
-## Main statements
-
-* `stateCommunication_eq_beliefAlignment`: as printed, the state-communication and
-  belief-alignment speakers are one speaker, since their utilities differ by the entropy of the
-  reasoner's beliefs, which no conclusion changes.
-* `nothing_follows_of_invalid`: without semantic noise, and at any prior giving every state
-  positive mass, the belief-alignment speaker answers *nothing follows* to every syllogism that
-  entails no quantified conclusion.
-* `barbara_prefers_all`: to *All A are B, All B are C* that speaker prefers *All A are C* to the
-  weaker *Some A are C* and to *nothing follows*.
-* `literalSpeaker_le_nothing_follows`: the literal speaker never prefers a quantified conclusion
-  to *nothing follows*.
-
 ## Implementation notes
 
 * Only *all* carries existential import (section 2.1). Table 1 prints the particular forms with

@@ -24,15 +24,6 @@ The two comparatives coincide on a proper name and the singleton of its degree.
 * `PreservesOrdering`: a map from quantifiers to predicates respects the grading relation on
   proper names (Definition 4).
 
-## Main results
-
-* `PreservesOrdering.eq`: two homomorphisms that preserve the ordering are equal (Fact 2).
-* `PreservesOrdering.eq_npComparative`: the NP-comparative is the only one (§3.5).
-* `not_antitone_npComparative`: the NP-comparative is not monotone decreasing (§3.6).
-* `gtOverSet_antitone`: the S-comparative is monotone decreasing (§3.8).
-* `npComparative_individual`: the two comparatives agree on proper names (§3.9).
-* `not_isAntiAdditive_notEveryDutchman`: *niet iedere Nederlander* is not anti-additive (§4.1).
-
 ## Implementation notes
 
 Degrees are values of a measure `μ` in a preorder rather than the equivalence classes of
@@ -142,7 +133,7 @@ def notEveryDutchman : Set Dutchman → Prop :=
   fun P ↦ ¬ GQ.every (fun _ ↦ True) (· ∈ P)
 
 /-- In the model (51), *niet iedere Nederlander* is not anti-additive, so by Zwarts's hypothesis it
-cannot trigger *ook maar* (45b). -/
+cannot trigger *ook maar* (45b) (§4.1). -/
 theorem not_isAntiAdditive_notEveryDutchman : ¬ IsAntiAdditive notEveryDutchman := by
   rw [isAntiAdditive_iff_gq]
   intro h

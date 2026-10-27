@@ -36,17 +36,6 @@ its number, as Sudo assumes, and must fit the witness set, (14)–(23). The pref
 conceivability presupposition, which fails exactly where the chance of ineffability is certain
 (§6).
 
-## Main statements
-
-* `useful_iff_negated_ne_zero`: preferring useful referents yields the conceivability
-  presupposition.
-* `negated_ne_zero_iff_ineffability_ne_one`: the presupposition holds exactly when ineffability
-  is not certain.
-* `unblocked_mpPresup_isCompl`, `not_H2_of_isZeroOneMeasure`: Maximize Presupposition puts the
-  two numbers in complementary distribution, and a speaker in complementary distribution is not
-  gradient.
-* `not_H2_of_follows_bestGuess`: a speaker producing only best guesses is not gradient either.
-
 ## Implementation notes
 
 * Worlds are witness cardinalities, as in `TieuEtAl2020`, and the conceivable cardinalities are a

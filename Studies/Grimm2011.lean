@@ -15,24 +15,6 @@ treats a case as a connected region of that lattice. This file supplies the pape
 on the lattice of `Semantics/ArgumentStructure/` and reads its predictions off the interval
 characterizations of the case regions.
 
-## Main results
-
-* `canonical_verb_chain`: the canonical subjects of section 2.2 climb a chain from the
-  positional verbs to *assassinate*.
-* `kill_subject_range`, `transitive_region_eq_Ici`: agents are closed upward and patients
-  downward, so natural forces kill and the object of *hit* must exist when the event begins.
-* `pseudoCleft_presupposition`: the pseudo-cleft (5) presupposes that its object exists when the
-  event begins, which a destroyed object does and a created one does not.
-* `kiss_outranking_from_dominance`: the dominance criterion reproduces Dowty's choice for *kiss*.
-* `build_object_admits_iff`: read literally, the correspondences between Dowty's Proto-Patient
-  entailments and persistence exclude the creation level for the object of *build*.
-* `transitivity_hierarchy`: along Tsunoda's hierarchy the agent keeps instigation and motion
-  while the patient rises out of the transitivity region.
-* `pole_alignment`, `recipient_dative`: the poles read out to the core cases of either alignment,
-  and the dative uses of section 5.1 share one node.
-* `genitive_accusative_alternation`: the Russian genitive of *ždat'* marks a non-referring object
-  at the bottom node.
-
 ## Implementation notes
 
 The paper's remarks on differential object marking, deferred to Grimm (2005), and on the size of

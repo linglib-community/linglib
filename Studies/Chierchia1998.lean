@@ -33,22 +33,6 @@ kind, and ∪ takes the parts of a kind's value.
 * `Chierchia1998.dogsBark`, `Chierchia1998.computersRoute`: the generic logical forms (38b) and
   (39b).
 
-## Main results
-
-* `Chierchia1998.hasClassifiers_iff`: the classifier languages of the sample are the
-  [+arg, −pred] ones.
-* `Chierchia1998.argOnly_blocks_nothing`, `Chierchia1998.predOnly_blocks_iota`: blocking in the
-  sampled languages.
-* `Chierchia1998.down_up`, `Chierchia1998.up_down`: ∩∪d = d, and ∪∩P = P for mass P, (17a, b).
-* `Chierchia1998.down_notMem_of_atom`, `Chierchia1998.not_forall_atom_down`: ∩ is undefined for
-  a singular property, and the concept of a sum-closed property with a plurality is not singular
-  everywhere.
-* `Chierchia1998.english_licensesBare_iff`, `Chierchia1998.english_not_licensesBare_singular`:
-  English admits exactly the bare nominals for which ∩ is defined, and so no bare singular.
-* `Chierchia1998.mem_computersRoute`: Diesing's generalization for (39b).
-* `Chierchia1998.some_up_of_mem_dogsBark`: the generic reading of a bare plural entails its
-  existential reading at a situation with a normal instance.
-
 ## Implementation notes
 
 Each language's blocking is derived from its fragment's determiner inventory by
@@ -142,6 +126,7 @@ def up [Preorder E] (k : S → Option E) (s : S) : Set E := (k s).elim ∅ Set.I
 of (16) where it is a kind. -/
 noncomputable def down [LE E] (P : S → Set E) (s : S) : Option E := iota (IsGreatest (P s))
 
+/-- ∩∪d = d, and ∪∩P = P for mass P, (17a, b). -/
 theorem down_up [PartialOrder E] (k : S → Option E) : down (up k) = k :=
   funext fun s ↦ iota_isGreatest_elim_Iic (k s)
 

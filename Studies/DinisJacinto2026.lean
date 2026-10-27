@@ -19,17 +19,6 @@ form then cannot tell apart degrees that differ at most marginally, so its exten
 and tolerant, a Soritical sequence must contain a large step, and an object that leaves the
 extension must have become smaller on the scale.
 
-## Main statements
-
-* `marginalScaleEquiv`: along a linear order, the five axioms with largely smaller than defined
-  are the eleven of the 2025 paper.
-* `comparative_of_positive_of_not_positive`: an object that leaves the positive form's extension
-  has become smaller on the scale, which the two-scale alternative does not predict.
-* `clustered_positive`: at most marginally different degrees are alike for the positive form,
-  so its extension is clustered and tolerant.
-* `exists_large_step_of_soritical`: a Soritical sequence for the positive form crosses into the
-  extension at a large step.
-
 ## Implementation notes
 
 * ML scales are `Degree.MarginalScale`, whose five axioms are those of Figure 1 with largely

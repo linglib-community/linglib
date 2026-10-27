@@ -14,15 +14,6 @@ extensions of the embedding that keep the values it has already assigned (Defs. 
 the semantics `DRS.Verifies`, and a DRS is true when some embedding of its universe verifies it
 from the empty input (Def. 1.4.5, `DRS.IsTrue`).
 
-## Main statements
-
-* `ulysses_tc`: *Jones owns Ulysses. It fascinates him.* (1.1) is true of a single owning pair,
-  the pronoun equations adding no quantificational force.
-* `porsche_tc`, `porsche_referent_inaccessible`: *Jones does not own a Porsche.* (1.56) denies a
-  verifying extension, and the referent under the negation is inaccessible from the top level.
-* `donkey_universal_reading`, `donkeyPronoun_agree`: *If a farmer owns a donkey he beats it.*
-  (2.47) gets its universal reading from the verification clause for `⇒`, whether or not the
-  pronoun has a referent of its own.
 * `DRT.DRS.isProper_iff_forall_occurrence` (in `DRS/Accessibility.lean`): a DRS is proper iff
   every referent of an atomic condition is accessible where the condition occurs, the
   motivation for Def. 1.4.3 (p. 111).

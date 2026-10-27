@@ -21,15 +21,6 @@ a question and the antecedent of a conditional conversationally imply only that 
 possible. The two classes therefore agree in assertions and come apart in the other
 environments.
 
-## Main statements
-
-* `Karttunen1971b.projects_iff`: the complement follows in every model exactly when the verb is
-  a true factive or the sentence is asserted or negated.
-* `Karttunen1971b.projection_rows`: the paper's judgments on *regret*, *realize* and *discover*
-  are these predictions.
-* `Karttunen1971b.emphatic_denial`: denying that a true factive sentence is true is consistent
-  with the falsity of its complement.
-
 ## Implementation notes
 
 * Possibility is read on an accessibility relation, of which the paper assumes only that what is

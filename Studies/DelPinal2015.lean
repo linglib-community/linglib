@@ -17,21 +17,6 @@ result does further compositional work, in *typical fake gun* and in the two bra
 subsective once the head noun is coerced, the literal *fake N* needs no coercion, and a
 first-order *fake* would make shifting heads read every fake gun as a gun.
 
-## Main statements
-
-* `disjoint_privativeE`: no fake, counterfeit or artificial N is an N.
-* `typical_fake_formal_not_telic`: a typical fake N looks like an N and cannot serve as one,
-  which a fake N need not do (`fake_not_formal_not_telic`).
-* `typicalE_eq_cStructure`: where an N's C-structure is narrower than its extension, the typical
-  Ns are those with the whole C-structure.
-* `fake_bracketing`, `fake_brand_made_by_brand_reading`: *fake B N* denotes real Ns on
-  [[fake B] N] and things that are not B Ns on [fake [B N]], so only the latter covers a fake
-  handbag made by Chanel.
-* `fake_isNonVacuous`, `fake_vacuous_in_head`: the literal *fake N* has a positive and a
-  negative extension, and is vacuous only within its head, where Partee's shift applies.
-* `shifting_heads_evil_park_owner`: with a first-order *fake*, one fake paintball gun that is a
-  real gun keeps shifting heads from shifting *gun*, so every fake gun is a gun.
-
 ## Implementation notes
 
 A dual content pairs the E-structure `N.extension` with the C-structure `N.quale`, whose values

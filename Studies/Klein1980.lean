@@ -16,13 +16,6 @@ adjective such as *clever* switches criterion with the comparison class, so its 
 two entities each above the other, which monotonicity forbids. Klein's *as … as* is Kamp's
 *at least as* over all completions.
 
-## Main statements
-
-* `clever_not_monotone`: the delineation for *clever* is not monotone, so no measure induces it.
-* `isStrictWeakOrder_outranks`: under monotonicity the ordering is a strict weak order.
-* `kleinDegree_ofMeasure`: Klein's degrees agree with equality of measure.
-* `preorder_le_iff_kampPreorder_le`: the equative is Kamp's *at least as* over all completions.
-
 ## Implementation notes
 
 * The measure-induced delineation, its monotonicity and its ordering-to-degree equivalence are

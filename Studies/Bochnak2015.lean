@@ -15,17 +15,6 @@ through Klein's consistency constraints, the sound and complete delineations of
 incompatibility with absolute-standard predicates, and the crisp-judgment effect under the
 similarity constraint, stated with van Rooij's margin-of-error order.
 
-## Main statements
-
-* `comparative_ofMeasure_height_iff`: the conjoined comparison closes to Klein's comparative,
-  which for a measure-induced delineation is height comparison, with no degree variable.
-* `eq24a_bent_straight_fails`, `english_more_bent_succeeds`: on two bent rods every conjoined
-  pairing fails where the explicit comparative succeeds.
-* `crisp_pair_not_marginOrder`: a minimally different pair defeats implicit comparison at any
-  positive margin.
-* `cc_b_requires_shared_class`: the comparison entailment needs one comparison class shared by
-  both conjuncts.
-
 ## References
 
 * [bochnak-2015]

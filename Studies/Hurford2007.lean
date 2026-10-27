@@ -23,14 +23,6 @@ are not, while English *twenty one hundred*, one of his rare exceptions, is atte
 
 * `count`: counting with a list of bases
 
-## Main results
-
-* `packed_count`: counting reaches a packed numeral
-* `packed_iff_eq_count`: the packed numerals are the outcomes of counting
-* `Mixtec.count_eq_numeral7999`, `Hawaiian.count_eq_numeral609751`: counting reaches the paper's
-  Mixtec and Hawaiian numerals
-* `English.not_packed_twentyOneHundred`: the Packing Strategy rejects *twenty one hundred*
-
 ## Implementation notes
 
 The trees use the 1975 grammar of `Numeral`, so a DIGIT is a tally and a PHRASE of a bare M is

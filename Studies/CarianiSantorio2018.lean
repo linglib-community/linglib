@@ -30,21 +30,6 @@ of pairs of a world and a selection function.
 * `Valid1`, `Valid2`: truth at every context and at every index.
 * `content2D`: the content of a sentence as a set of pairs of a world and a selection function.
 
-## Main results
-
-* `will_compl`, `willIf_compl`: Negation Swap, unembedded and under an *if*-clause.
-* `will_excluded_middle`, `willIf_excluded_middle`: excluded middle is valid₂.
-* `valid1_materialImp_will`, `not_valid2_materialImp_will`: *will A* entails `A` at every
-  context but not at every index.
-* `will_eq_core`, `necessity_compl_eq_iff`: *will* is necessity along a selection, and a
-  universal analysis commutes with negation only if it is one.
-* `will_alternatives_eq`: the candidate worlds of a context give *will* one modal parameter.
-* `will_inter_self`, `measure_will`: Transparency, so *will A* has the credence of `A`.
-* `measure_necessity_eq_zero`: universal *will* gives an open future credence 0.
-* `credence_willIf_wearsCap`, `no_unconditional_one_half`: the cap-conditional has credence 2/3
-  or 1/3, and no proposition of the model has credence 1/2.
-* `credence2D_willIf_wearsCap`: over pairs the cap-conditional has its conditional probability.
-
 ## Implementation notes
 
 * A sentence is a map from a selection function and a modal parameter to a set of worlds, so an

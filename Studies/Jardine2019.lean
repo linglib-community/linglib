@@ -30,15 +30,6 @@ grammar excludes `HL` without excluding `HF`. And `L_UTP` is neither strictly lo
 tier-based strictly local at any width: with `x = L^(k-1)`, `H L x` and `x H` are in it and
 `H L x H` is not, and every symbol is visible, so a tier-based grammar would be strictly local.
 
-## Main results
-
-* `toAR_realize`: the realization of a string is the presentation `merged` of its words.
-* `isCleanAt_and_noCrossing_realize`: graphs in `gT(Σ*)` obey the OCP and the NCC.
-* `rows_agree`: the grammars decide the paper's example strings.
-* `not_mem_ASL_HF_of_not_mem_ASL_HL`: a grammar excluding `HL` excludes `HF`.
-* `not_isStrictlyLocal_ASL_utp`, `not_isTierStrictlyLocal_ASL_utp`: `L_UTP` is neither strictly
-  local nor tier-based strictly local.
-
 ## Implementation notes
 
 * The paper evaluates a grammar on `g(⋊w⋉)`, with border primitives for `⋊` and `⋉`, which this

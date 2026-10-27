@@ -28,24 +28,6 @@ the typology of Table 3 and the implications of Table 1 are claims about these s
 * `Generates`, `Requires`: the legitimate settings as a formal context, and the order of its
   attribute concepts that (34) reads off them, one number requiring another.
 
-## Main results
-
-* `atomize_nonMinimalOf_iterate`: the successor-like function (31).
-* `not_additiveIn_band`, `additiveIn_firstPerson_iff`: below a cut no element of the
-  third-person lattice is `[+additive]`, and on the first-person lattice only the speaker is.
-* `not_ordConnected_plusAdditive_firstPerson`: `{±additive}` alone cuts the first-person lattice
-  nonconvexly, against the convexity condition (32).
-* `filter_cell_eq_system`: on every person lattice with infinitely many atoms and for every
-  placement of the cuts above four atoms, the bundles with nonempty cells form `Setting.system`.
-* `table3_generated`: the systems of Table 3, with Corbett's records of its example languages.
-* `satisfiesTable1_toSystem_iff`: Table 1 holds of every legitimate setting but
-  `{±additive(*), ±minimal*}`, two lacunae whose unit augmented has no augmented.
-* `requires_of_mem_derivedImplications`, `not_requires_unitAugmented_augmented`: the order the
-  settings induce by (34) has the single implications of Table 1 but the unit augmented's.
-* `mem_of_requires_corbett`: every system of Corbett's choices is a lower set of that order.
-* `meleFila_cell_plural`, `meleFila_classes`: Mele-Fila's plural lies between the two cuts and
-  shares a form with each neighbour (Table 4).
-
 ## Implementation notes
 
 * A bundle is a `Finset` of signed features, so the axiom of extension (27) is built in, and it

@@ -18,14 +18,6 @@ Khalaf; Bruening) and the temporal one (Kim and Lu) check the conjunct next to t
 phrase first. Experiment 1 shows that German allows the construction, and in Experiment 2 the noun
 phrase first is preferred before the verb as much as after it, against both closeness analyses.
 
-## Main results
-
-* `exp1_predictions`, `exp1_rows`: the grammar admits every condition of Experiment 1 but a bare
-  clause after a verb whose fragment entry takes none, and decides the paper's samples.
-* `accounts_diverge_embedded`: the analyses differ before the verb and agree after it.
-* `choices_refute_closeness`, `choices_match_structural`: the order preferred before the verb is
-  one the closeness analyses exclude and the bottom-up ones admit.
-
 ## Implementation notes
 
 * The verbs' c-selection is read off their entries in `Fragments/German/Verbs`. The results are

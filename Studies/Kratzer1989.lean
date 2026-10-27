@@ -37,15 +37,6 @@ which *would* and *might* quantify.
 * `Kratzer1989.consistentPremiseSets`: the premise sets of the analysis of §4.2.
 * `Kratzer1989.IsCrucial`: membership in the crucial set of §4.6.
 
-## Main results
-
-* `Kratzer1989.Lumps.iff_of_isMin`: at a situation without proper parts lumping is joint truth.
-* `Kratzer1989.closedUnderConsequence_iff`: strong closure under logical consequence is closure
-  of the whole set.
-* `Kratzer1989.might_iff_not_would_compl`: *might* is the dual of *would*.
-* `Kratzer1989.might_consistentPremiseSets_atlantic`: the analysis of §4.2 validates (10a).
-* `Kratzer1989.not_might_crucialSet_atlantic`: the crucial set blocks it.
-
 ## Implementation notes
 
 The set `F` of propositions relevant at a world is a parameter. The paper requires its members

@@ -19,20 +19,6 @@ predication as well (`readings_subset_readings`); the question the context raise
 them, and a world is gappy when it verifies the reading one question selects and falsifies
 another's.
 
-## Main results
-
-* `exhIEII_eq_universal`, `exhIEII_compl_biUnion`: the maximality implicature, and its absence
-  under negation.
-* `exhIEII_pruned_eq_atLeast`, `isReading_polar_atLeast`: pruning yields the threshold
-  readings, and a polar question on a threshold selects it.
-* `gappy_iff_barePlural_eq_zero`: the gappy worlds are those where Križ's trivalent plural is
-  undefined; `neg_barePlural_eq_zero_and_notMem_exhIEII_compl`: the accounts part under negation.
-* `gappy_iff_krizChemla_gap`, `krizChemla_negation_residue`: on Križ and Chemla's unembedded
-  displays the account predicts their gaps for the positive sentence and misses those under
-  negation.
-* `disjunction_not_both`, `plural_both`, `reading_66`, `reading_80`, `reading_81`: the paper's
-  examples.
-
 ## Implementation notes
 
 `readings` are the threshold readings, obtained by pruning to a fixed subdomain size; the

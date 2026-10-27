@@ -19,15 +19,6 @@ matrix pronoun never c-commands. Their scope generalization of §4, that a quant
 the two languages the same way. Japanese realizes both analyses through the subcategorization of
 *yori*, and §6 proposes that both degree heads are available crosslinguistically.
 
-## Main results
-
-* `BhattTakahashi2011.standard_cCommanded_of_associate`: (10) holds under reduction.
-* `BhattTakahashi2011.english_binding`, `BhattTakahashi2011.hindi_urdu_binding`: the binding
-  data (11)–(13) and (35).
-* `BhattTakahashi2011.english_scope`, `BhattTakahashi2011.hindi_urdu_scope`: the scope data (43)
-  and (40).
-* `BhattTakahashi2011.three_cells`: the three languages realize distinct analyses.
-
 ## Implementation notes
 
 Generalization (10) is derived from Lechner's Gapped clause, whose remnant inherits the

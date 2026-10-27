@@ -17,25 +17,6 @@ only how the eventuality or the result state stands to the right boundary of the
 interval, and at a moment of reference the universal and the two experiential perfects are the
 three perfects of the older account by Iatridou, Anagnostopoulou and Izvorski.
 
-## Main statements
-
-* `universal_iff_unbounded`, `universal_at_rb`: the universal perfect asserts the eventuality
-  throughout the reference interval.
-* `neutral_experiential_iff`, `bounded_experiential_iff`: the neutral experiential says the
-  eventuality has begun by the right boundary of the reference interval, the bounded one that it
-  has ended by it.
-* `resultative_state_at_rb`, `resultative_perfect_iff`: the resultative perfect asserts the
-  result state at the right boundary and beyond.
-* `bounded_perfect_iff_prfv_perfect`: the proper containment of the bounded aspect makes no
-  difference under the perfect.
-* `bounded_experiential_of_ends_at_rb`: the bounded experiential is compatible with the
-  eventuality holding at the moment of reference.
-* `universal_iff_durative_unbounded`, `neutral_experiential_iff_inclusive_unbounded`,
-  `bounded_experiential_iff_inclusive_bounded`: at a moment of reference the three perfects are
-  those of Iatridou, Anagnostopoulou and Izvorski.
-* `neutral_span_not_covered`, `bounded_span_not_covered`: without the unbounded aspect no perfect
-  is universal.
-
 ## Implementation notes
 
 * The perfect is `Aspect.perfect` and the unbounded aspect `Aspect.UNBOUNDED`. The

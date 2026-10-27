@@ -19,18 +19,6 @@ a free form unless another affix replaces it. This file checks the definitions,
 `Morphology.Comparative.Inventory.IsWord` and its parts, against the paper's examples, and compares
 the definition with Bloomfield's minimum free form, which it is meant to correct.
 
-## Main results
-
-* `to_clitic_zu_prefix`: English infinitival *to* is a clitic and German *zu-* a prefix.
-* `genitive_clitic_suffix`: English genitive *'s* is a clitic and German *-s* a suffix.
-* `alber_required`, `geb_required`: Italian *alber* needs the suffix *-o* or *-i* and German
-  *geb* the suffix *-en* or *-t*, so the bare roots are not words.
-* `tree_word`: English *tree* has no required affix, so it is a word, though not a free form.
-* `bloomfield_too_narrow`, `bloomfield_too_broad`: *tree* and the clitic *to* are words but not
-  minimum free forms, and *a tree* is a minimum free form but not a word.
-* `wordsAt_affix_words`: the words at `.affix` of the English and Italian forms are words, while
-  *a=tree*, one word at `.clitic`, is not.
-
 ## Implementation notes
 
 Each example is an inventory of the paper's free forms, each a list of morphs with textbook

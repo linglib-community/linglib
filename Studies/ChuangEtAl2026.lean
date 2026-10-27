@@ -21,17 +21,6 @@ the space of contours and the space of embeddings, against the dual articulation
 to Martinet (§4). The file accordingly works on continuous f0 vectors rather than on discrete
 tones.
 
-## Main statements
-
-* `ChuangEtAl2026.production_mul_comprehension_ne_one`: no linear map takes the
-  fifty-dimensional contour space onto the 768-dimensional embedding space, so no comprehension
-  matrix inverts production.
-* `ChuangEtAl2026.production_centroid_eq_of_decodable`: a least-squares-trained production matrix
-  sends the centroid of a word type's embeddings to the average of its training contours
-  whenever membership in the word type is a linear functional of the embeddings.
-* `ChuangEtAl2026.production_centroid_univ_eq`: the centroid of all tokens produces the
-  grand-mean training contour.
-
 ## Implementation notes
 
 * A word type is the set of tokens carrying its corpus label (§1, §2.2). Linear decodability

@@ -17,21 +17,6 @@ decomposition predicts the fully pronounced J-μ expressions to be the easiest, 
 structures of Szabolcsi and of Haslinger and colleagues predict the J expressions to be. Georgian
 children instead replayed J-μ sentences most, and Hungarian children showed no difference.
 
-## Main statements
-
-* `pronounced_mem_attested`: each sentence type pronounces a set of heads that Mitrović and
-  Sauerland's examples attest.
-* `transparency_prediction`: the decomposition with the Transparency Principle predicts J-μ
-  easiest, while `playedMore_child_iff` says Georgian children replayed J-μ more than either
-  other sentence type, and those two did not differ.
-* `desiderata_iff`: a measure meets the paper's conditions on a successful account exactly when
-  the order it predicts is the observed one, which none of `Account.universal.covert`,
-  `Account.bareJ.complexity` and `Account.bareJ.covert` does.
-* `not_sentenceEffect_hungarian`: Hungarian shows no sentence-type effect on either measure.
-* `basicTrue_iff_conjunction`, `accurate_iff`: the decomposition computes the basic truth
-  conditions of the test sentences, and the accurate end state is the one with the mentioned
-  objects and nothing else on the table.
-
 ## Implementation notes
 
 * An account assigns each sentence type the heads of its underlying structure, and a measure of

@@ -27,15 +27,6 @@ its best derivation in its context.
 * `NapoliNespor1976.Sentence.Felicitous`: what each structure demands of the context.
 * `NapoliNespor1976.Sentence.verdict`: the grade of the best derivation in a context.
 
-## Main statements
-
-* `NapoliNespor1976.rows_judgment`: the analysis allows the judgment of every row.
-* `NapoliNespor1976.rows_readings`: an indefinite in the embedded clause is non-specific exactly
-  when only the abstract structure derives the clause.
-* `NapoliNespor1976.Sentence.not_contradicts_of_negative`,
-  `NapoliNespor1976.Sentence.not_felicitous_abstract_of_demandsPrecision`: matrix negation and a
-  demand for precision exclude *non₂* on semantic grounds.
-
 ## Implementation notes
 
 * The analysis allows a set of judgments rather than one, since an optional rule and a variety of

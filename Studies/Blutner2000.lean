@@ -25,17 +25,6 @@ stronger local reading over the higher intermediate site that van der Sandt's an
 preference would choose. The Q-principle blocks accommodation when a non-triggering alternative
 expresses the same outcome.
 
-## Main statements
-
-* `strong_total_blocking`: strong bidirection blocks the marked form in every interpretation on
-  any generator in which both forms can express the stereotypical situation.
-* `marked_marked_mem_strongOptimalSet_iff`: strong bidirection pairs the marked form with the
-  marked situation only if the generator excludes both mixed pairs.
-* `weak_division_of_labour`: weak bidirection pairs the unmarked form with the stereotypical
-  situation and the marked form with the marked one.
-* `strength_local_height_intermediate`: without global accommodation, BeStrong selects the local
-  reading where the higher-site preference selects the intermediate one.
-
 ## Implementation notes
 
 * The markedness orders on forms and situations are pulled back from the violations of F and C.
@@ -263,6 +252,8 @@ def ProjectionSite.depth : ProjectionSite → ℕ
   | .intermediate => 1
   | .local => 2
 
+/-- Without global accommodation, BeStrong selects the local reading where the higher-site
+preference selects the intermediate one. -/
 theorem strength_local_height_intermediate :
     superoptimal boundSites (harmony (fun _ ↦ 1) .univ) = {((), .local)} ∧
       superoptimal boundSites (profile [fun _ ↦ 1, (·.2.depth)]) = {((), .intermediate)} := by

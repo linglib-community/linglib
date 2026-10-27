@@ -22,16 +22,6 @@ proper superset of those the other elision violates.
 * `violations`: the constraints an elision violates, a row of the paper's table of violations.
 * `tableau`: the tableau of the two elisions under a ranking.
 
-## Main results
-
-* `exists_mem_optimal_iff`: an elision is optimal under some ranking iff the constraints it
-  violates are not a proper superset of those the other elision violates.
-* `exists_mem_optimal_second_iff`: where the first vowel begins no morpheme, the second can
-  elide iff the first morph is a root and the second is not.
-* `survey_allowed`, `survey_second_iff`: every elision the survey of Section 2 reports is
-  allowed, and the survey reports an elision of the second vowel at exactly the kinds of juncture
-  where one is allowed.
-
 ## Implementation notes
 
 * The constraints are indexed by `Option Prominence`: `some p` is MAX restricted to the position

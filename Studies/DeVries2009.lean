@@ -18,17 +18,6 @@ node with several parents when no parent dominates the current one and either ev
 been traversed or the current parent dominates every parent not yet traversed; his algorithm (71)
 implements it by indexing each node when it is visited.
 
-## Main statements
-
-* `linearization_examples`: (71) yields the strings the paper intends for its examples.
-* `remergedYield_examples`: pronouncing each node under its highest mother pronounced last, the
-  spell-out of `Linearization/Multidominance.lean`, yields them too.
-* `linearization_double`, `remergedYield_double`: on a shared node whose other parent is itself
-  shared, (71) pronounces the node twice, the spell-out once.
-* `remergedYield_sharing`, `remergedYield_movement`: on the examples that remerge only externally
-  each node is pronounced at its last occurrence, and on those that remerge only internally at its
-  highest, whichever highest mother is chosen.
-
 ## Implementation notes
 
 * A remerged node stands at each of its occurrences in a linearized syntactic object; its parents
@@ -200,8 +189,11 @@ def examples : List (LinearizedSyntacticObject × List LexicalItem.Token) :=
     (ex53, [α, e₂, e₃]), (ex54, [y₁, z₁, α, y₂, z₂]), (ex59, [e₁, α, e₂, e₃, e₄, e₅]),
     (ex60, [X, Y, Z]), (ex64, [e₁, e₂, e₃, α, e₄]), (ex66, [a, b, c])]
 
+/-- (71) yields the strings the paper intends for its examples. -/
 theorem linearization_examples : ∀ e ∈ examples, linearization e.1 = e.2 := by decide +kernel
 
+/-- Pronouncing each node under its highest mother pronounced last, the spell-out of
+`Linearization/Multidominance.lean`, yields them too. -/
 theorem remergedYield_examples : ∀ e ∈ examples, remergedYield List.getLast? e.1 = e.2 := by
   decide +kernel
 

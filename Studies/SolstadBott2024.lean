@@ -20,20 +20,6 @@ precede. In the antecedent of a conditional a conjoined clause entailing the occ
 implication from either side, where factive and aspectual triggers are filtered from the left
 only.
 
-## Main statements
-
-* `SolstadBott2024.strongContextualFelicity_iff`: of the three constraints a trigger may place
-  on the discourse around it, only the one demanding a preceding sentence is a strong contextual
-  felicity constraint in the sense of Tonhauser, Beaver, Roberts and Simons.
-* `SolstadBott2024.contextTests_iff_licenses`: a supported context differs reliably from the
-  neutral one in the paper's tests exactly where the trigger's constraint is met.
-* `SolstadBott2024.Account.filters_iff`: incremental local contexts and limited symmetry filter
-  the implication only after the clause entailing it, symmetric local contexts on either side,
-  and local accommodation everywhere.
-* `SolstadBott2024.fits_iff`: of the four accounts only symmetric local contexts fit the
-  occasion verbs of Experiment 3, and only the two asymmetric ones the factive and aspectual
-  triggers.
-
 ## Implementation notes
 
 * A discourse is the information before and after the trigger's sentence, and a constraint is

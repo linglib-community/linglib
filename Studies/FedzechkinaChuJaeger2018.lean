@@ -28,14 +28,6 @@ dependency length is affine in the probability of the symmetric difference of "t
 long" and "the subject comes first", which places every learner in the diamond of Fig. 5 and ties
 Fig. 5 to the order proportions of Fig. 4.
 
-## Main statements
-
-* `verbDependencyLength_eq`: the measure on a clause with the verb at an edge.
-* `integral_dependencyLength_eq_cond`: the mean dependency length of a verb-final learner is an
-  affine function of the difference of the subject-first proportions on the two kinds of scene.
-* `abs_integral_dependencyLength_sub_le`: the diamond of Fig. 5.
-* `integral_dependencyLength_eq_lower_iff`: who reaches its lower lines.
-
 ## Implementation notes
 
 * A short argument is a bare noun, a long one a noun with an adpositional phrase of `L - 1`

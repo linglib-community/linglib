@@ -21,16 +21,6 @@ suppressed where the presumption cannot be attributed to the speaker, and filter
 in which the speaker has asserted, supposed or entertained the precondition, so that the trigger
 is evaluated in a context that includes it.
 
-## Main statements
-
-* `cosOccurs_subset_cosPrecondition`: a change of state entails its precondition.
-* `mem_cosPrecondition_diff_cosOccurs`, `inter_compl_cosOccurs_eq_empty`: a precondition is
-  consistent with the negated trigger, and an entailment holding only where the change occurs is
-  not.
-* `uniformOn_raining_compl_knows`: restricting the context to the precondition makes the negative
-  answer less probable, so more informative.
-* `localContext_subset`: a trigger is filtered where its local context entails the precondition.
-
 ## Implementation notes
 
 Indices are world–time pairs. A change of state occurs where the meaning of the phasal verb,

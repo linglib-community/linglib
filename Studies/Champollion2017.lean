@@ -32,15 +32,6 @@ stated over the Fragment verbs' denotations.
 * `LexicallyCumulative`: a predicate is a fixed point of algebraic closure.
 * `ChampollionPostulates`: the per-verb distributivity postulates.
 
-## Main results
-
-* `lexicallyCumulative_imp_cum`: lexical cumulativity entails Krifka's `CUM`.
-* `subintervalReference_iff_cover`: atelicity is a finite cover into proper-subinterval parts.
-* `stratifiedReference_of_divisiveness`: on a temporally separable event, Krifka's divisiveness
-  clause gives stratified reference along the run time.
-* `pushCarts_stratified`: the back-and-forth event of Figure 6.2 has stratified reference.
-* `pushCarts_not_subregion`: that event fails the subregion presupposition.
-
 ## Implementation notes
 
 * Vendler classes are not among the book's primitives; its atelicity diagnostic is the

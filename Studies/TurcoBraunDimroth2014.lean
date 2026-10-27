@@ -34,14 +34,6 @@ them on the same level.
 * `Switch`, `IsContrast`, `IsCorrection`: a negative claim followed by a positive one, about a
   different or the same topic situation.
 
-## Main results
-
-* `Switch.disjoint_iff`, `IsCorrection.disjoint`, `exists_isContrast_not_disjoint`: corrected
-  claims exclude each other and contrasted ones need not.
-* `denotation_verumFocus`, `denotation_affirmation`: neither device changes truth conditions.
-* `pol_of_polarityOp_eq_some`, `exists_verumFocus_negative`: *wel* makes its sentence positive,
-  and Verum focus occurs in a negated sentence.
-
 ## Implementation notes
 
 The polarity operator is a single slot of the sentence holding its overt value, if any, with

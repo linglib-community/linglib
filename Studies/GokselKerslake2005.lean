@@ -36,27 +36,6 @@ The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs,
 The possessive and locative existential sentences of §12.1.1.2 are those of
 `Turkish.Possession`, with the possessive suffix on the possessee obligatory (§14.4).
 
-## Main results
-
-* `followers_table`: the §3.1 table of permissible vowel sequences.
-* `retriggering`, `palatal_l`: the §3.4 exceptions to harmony, derived rather than listed.
-* `deletable_vowels`, `deletable_consonants`, `predicate_buffers`: the bracketed segments of
-  §6.1.3 after consonant-final and vowel-final stems.
-* `hiatus_repairs`: the two kinds of bracketed segment as elision and insertion at a juncture.
-* `pronominal_n`: the final `n` of a third-person possessive before a case suffix.
-* `imperfective_of_vowel_stems`, `negative_raised`: the vowel-final stems of §8.2.3.3 and the
-  negative of §8.2.2 before -(I)yor.
-* `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
-* `finite_verb`: §8.2 (7), every slot of the finite verb.
-* `same_position_excluded`: §8.2.3 (i), since the template does not repeat position 3.
-* `person_mobility`, `person_fixed`: §8.4, the places of a person marker outside the template.
-* `mi_precedes_clitics`, `mi_follows`: §11.1.1.5, the position of *mI* among the markers of a
-  predicate.
-* `converbs`, `doubled_converbs`: the converbs of §8.5.2.2 and -DIkçA.
-* `conjunctive_converbs`: §28.2, -(y)Ip and -(y)ArAk in place of the position-3 marker.
-* `possessive_existential`, `locative_existential`: §12.1.1.2 (21), (22), (26) and (17).
-* `possessive_obligatory`: §14.4 (117), the possessive suffix on the possessee.
-
 ## Errata
 
 Among the examples of §11.1.1.5, *Gittiler mı?* should be *Gittiler mi?*, since fronting

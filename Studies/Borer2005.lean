@@ -34,16 +34,6 @@ with the requisite number of cells, so *more than three circles* presupposes cir
   cells.
 * `status`: the mereological type a nominal spine composes bottom-up.
 
-## Main results
-
-* `wellFormed_counter_iff`, `not_wellFormed_of_divides`, `wellFormed_measure_iff`,
-  `wellFormed_neutral`: the distribution of the determiner classes derived from range assignment.
-* `sup'_mem`: divided stuff is still stuff, which is `SupClosed.finsetSup'_mem`.
-* `exists_division_without_units`, `exists_unit_of_count_pos`: individuals emerge at ⟨e⟩#,
-  not at ⟨e⟩div.
-* `q_below_num`: dividing feeds counting and nothing divides a quantity, the order the
-  functional sequence records.
-
 ## Implementation notes
 
 The two open values ⟨e⟩div and ⟨e⟩# are the heads `Q` and `Num` of the substrate's nominal

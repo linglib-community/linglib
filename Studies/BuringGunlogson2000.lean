@@ -29,15 +29,6 @@ negates it.
 * `Determiner`, `Question` — the morphosyntactic probes and a probed question; the polarity items
   are the fragments' `either`, `too` and `brauchen`
 
-## Main results
-
-* `felicitous_none_iff`, `felicitous_some_positive_iff`, `felicitous_some_negative_iff` — the
-  three evidence conditions
-* `felicity_separates_readings` — no two question types share a felicity profile
-* `outer_is_interrogative_only` — only inner-negation determiners occur in declaratives
-* `polarity_eq_negative_of_isNPI`, `polarity_eq_positive_of_isPPI` — a polarity item forces the
-  reading the determiner gives
-
 ## References
 
 * [buring-gunlogson-2000]

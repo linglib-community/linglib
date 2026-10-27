@@ -19,18 +19,6 @@ result entails the literal reading. Under a universal the local reading entails 
 one, so Experiment 1 separates only the restricted globalist; under *exactly one* it does not,
 so Experiment 2 separates the localist from both globalists.
 
-## Main results
-
-* `exp1_monotone`: in Experiment 1 the ratings rise with the number of true readings.
-* `restrictedGlobalist_strong_eq_weak`, `localist_weak_ssubset_strong`: only the localist
-  predicts the gap between STRONG and WEAK.
-* `unrestrictedGlobalist_local_eq_false`, `exp2_false_lt_local`: the globalists predict LOCAL to
-  be rated like FALSE, and it is rated far above.
-* `local_isReinforceable`: the local reading passes Sadock's reinforceability diagnostic.
-* `de_qLocal_lt_both`, `de_agrees_with_geurts_pouscoulous`: the marginal local reading under
-  negation is rated far below the baseline, in line with the fourth experiment of Geurts and
-  Pouscoulous (`GeurtsPouscoulous2009.rows_construals_conflict`).
-
 ## Implementation notes
 
 * The unrestricted globalist's reach is the semantic condition that a reading entail the

@@ -20,14 +20,6 @@ is not rigid unless the description uses an essential property. A description ca
 the reference of a rigid name, and then an identity between two such names is necessary if
 true, while the identity between the descriptions fixing their references may be contingent.
 
-## Main statements
-
-* `isRigid_iff_forall_ne_not_diamond`: the intuitive test, pp. 48–49.
-* `forall_largeScope_box_iff_smallScope_box_iff`: the equivalence with scope, p. 12 n. 15.
-* `not_isRigid_of_not_isEssential`: a name defined by a description is not rigid, p. 57.
-* `box_eq_of_isRigid`: identities between rigid designators are necessary, pp. 104, 143.
-* `box_eq_iff_isRigid`: the metaphysical status of the standard meter, p. 56.
-
 ## Implementation notes
 
 A designator is total: a name designates its referent even at worlds where the referent would
@@ -67,7 +59,7 @@ The intuitive test (pp. 48–49), the truth conditions of simple sentences (p. 1
 not have taught Alexander on the large scope reading and not on the small (p. 62 n. 25). -/
 
 /-- No one other than Nixon might have been Nixon: a designator is rigid iff nothing other than
-what it designates at a world might have been designated by it. -/
+what it designates at a world might have been designated by it (pp. 48–49). -/
 theorem isRigid_iff_forall_ne_not_diamond :
     IsRigid t ↔ ∀ w x, x ≠ t w → ¬ ◇[Set.univ] (t · = x) w :=
   ⟨fun h w _ hx ⟨v, _, hv⟩ ↦ hx (hv ▸ h v w), fun h v w ↦
@@ -83,7 +75,7 @@ theorem isRigid_iff_forall_exists_forall_iff [Nonempty W] :
 
 /-- The large and small scope readings of necessity along `R` agree at `w` for every simple
 sentence iff the designator agrees, on the worlds accessible from `w`, with the rigid
-designator whose reference it fixes at `w`. -/
+designator whose reference it fixes at `w` (p. 12, n. 15). -/
 theorem forall_largeScope_box_iff_smallScope_box_iff :
     (∀ P, largeScope □[R] P t w ↔ smallScope □[R] P t w) ↔
       Set.EqOn t (fun _ ↦ t w) {v | w ~[R] v} :=
@@ -115,7 +107,7 @@ necessary if true, though the identity between the designators fixing their refe
 contingent (pp. 143–144). -/
 
 /-- A name synonymous with a description of `F` is not rigid unless `F` is essential to what
-the description actually designates. -/
+the description actually designates (p. 57). -/
 theorem not_isRigid_of_not_isEssential (ht : ∀ w, F (t w) w)
     (hF : ¬ IsEssential D (t w₀) F) : ¬ IsRigid t :=
   fun h ↦ hF fun w _ ↦ h w w₀ ▸ ht w
@@ -125,11 +117,11 @@ theorem const_ne_of_not_isEssential (ht : ∀ w, F (t w) w) (hF : ¬ IsEssential
   (isRigid_const _).ne (not_isRigid_of_not_isEssential ht hF)
 
 /-- The stick is one meter long, *one meter* rigidly designating the length the stick has at
-`w₀`, necessarily iff *the length of the stick* is rigid. -/
+`w₀`, necessarily iff *the length of the stick* is rigid (p. 56). -/
 theorem box_eq_iff_isRigid : □[Set.univ] (fun w ↦ t w = t w₀) w ↔ IsRigid t :=
   ⟨fun h v u ↦ (h v trivial).trans (h u trivial).symm, fun h v _ ↦ h v w₀⟩
 
-/-- An identity between rigid designators is necessary if true. -/
+/-- An identity between rigid designators is necessary if true (pp. 104). -/
 theorem box_eq_of_isRigid (h₁ : IsRigid t₁) (h₂ : IsRigid t₂) (h : t₁ w = t₂ w) :
     □[R] (fun v ↦ t₁ v = t₂ v) w :=
   fun v _ ↦ congrFun (h₁.eq_of_apply_eq h₂ h) v

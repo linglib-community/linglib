@@ -14,14 +14,6 @@ construction, and the Marked Meaning Principle, after Horn's division of pragmat
 marked, negative antonym evaluative in exactly the polar-invariant constructions, the equatives
 and degree questions in which its unmarked antonym has the same truth conditions.
 
-## Main results
-
-* `evaluative_iff_observed`: the implicature route, `implicature`, predicts every judgment of the
-  table.
-* `exact_equative_antonym_invariant`, `comparative_antonym_variant`: polar invariance grounded in
-  the comparison semantics, the strengthened equatives of two antonyms being mutually entailing and
-  their comparatives excluding each other.
-
 ## Implementation notes
 
 Antonym polarity is the adjective's `Adjective.polarity`, which acts on the comparison of its

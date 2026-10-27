@@ -26,19 +26,6 @@ uses of *they*.
   pronoun may copy from its antecedent.
 * `KonnellyCowper2020.forms`: the pronouns available for an antecedent at a stage.
 
-## Main results
-
-* `spellout_pronounFeatures`, `subsetPrinciple_append_they_sg`: each English third-person
-  pronoun spells out its own features, and singular *they* needs no item of its own.
-* `they_mem_forms_iff`, `none_mem_genders_one_iff`, `none_mem_genders_two_iff`: where singular
-  *they* is available at each stage.
-* `monotone_they_mem_forms`: each stage keeps the uses of singular *they* of the stage before.
-* `forms_three_lexical`: at Stage 3 the gender a noun bears lexically no longer matters (§6).
-* `rows_judgment`, `rows_firstStage`: the examples' judgments, and the stage from which each
-  example of singular *they* is grammatical.
-* `bjorkman_overgenerates`, `bjorkman_excludes_stage3`: Bjorkman's condition admits (24) and
-  excludes every Stage 3 example.
-
 ## Implementation notes
 
 The items (11) are read off the English pronoun entries, a neuter bearing [inanim]; the case of a

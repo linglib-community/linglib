@@ -38,17 +38,6 @@ refute (section 2.2.4).
 * `placeAssimilation`, `dorsalAssimilation` — Irish Nasal Place Assimilation and Dorsal
   Assimilation (44).
 
-## Main results
-
-* `articulatorFree_mem_featureClass_iff`, `nasal_notMem_place`, `place_eq_union` — the
-  articulator-free features lie in the root's class alone, [nasal] is not under Place, and Place
-  is the union of the three oral articulators' classes.
-* `isComplex_kp`, `not_isComplex_kw` — only the labiovelar is a complex segment.
-* `placeAssimilation_eqOn_tongueBody`, `placeAssimilation_nasal` — Place spreading carries the
-  Tongue Body class and leaves [nasal].
-* `dorsalAssimilation_back`, `tongueBody_spread_back` — spreading [dorsal] leaves [back], and
-  spreading Tongue Body would carry it (45).
-
 ## Implementation notes
 
 Features of Hayes's inventory absent from (1) are placed by the paper's own articulator-bound
@@ -170,6 +159,7 @@ def kw : Segment :=
   Segment.ofSpecs [(.dorsal, true), (.consonantal, true), (.sonorant, false), (.round, true),
     (.continuant, false)]
 
+/-- Only the labiovelar is a complex segment. -/
 theorem isComplex_kp : kp.IsComplex := by decide
 
 theorem not_isComplex_kw : ¬ kw.IsComplex := by decide

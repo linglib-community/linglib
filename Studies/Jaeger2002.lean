@@ -24,14 +24,6 @@ uniqueness needs the descent. The first part of Theorem 2 uses minimality alone;
 part uses transitivity, as the paper does, where a form-axis blocker of a blocker is turned
 into a blocker.
 
-## Main statements
-
-* `isWeakSolution_unique`: the weak version has at most one solution.
-* `existsUnique_isFixedPt`: x-optimality is unique, and it is the substrate's
-  `superoptimalSet`.
-* `inter_eq_superoptimalSet`: the pairs satisfying both principles of a weak solution are
-  exactly the x-optimal pairs.
-
 ## TODO
 
 * The paper's second part, bidirectional optimization by finite-state transducers, is

@@ -21,25 +21,6 @@ entries; the book's summary claims are checked on that sample, and none is a uni
 Western Armenian, whose numerals combine with bare nouns, is not classified as a classifier
 language by the book and is left to `BaleKhanjian2014`.
 
-## Main results
-
-* `nounClass_agreement_obligatory`, `nounClass_bound`: a noun class system is defined by agreement
-  outside the noun, is closed and obligatory, and is never expressed by free lexemes.
-* `free_numeralClassifier_no_agreement`: free-form numeral classifiers do not agree.
-* `numeralClassifier_obligatory`: in both classifier languages no noun that takes a classifier is
-  counted without one, read off the fragments.
-* `classifier_assignment_semantic`: every kind other than noun class assigns classifiers on
-  semantic grounds.
-* `numeralClassifier_general`: both numeral-classifier systems have a general classifier, every
-  Mandarin noun that takes a classifier taking *gè* and the category of Japanese *-tsu* having no
-  parameter in Downing's inventory.
-* `animacy_basic`, `numeralClassifier_shape`, `colour_never`: animacy, humanness or sex is basic
-  to noun classes and numeral classifiers, shape is typical of numeral classifiers, and colour is
-  never a basis for categorization.
-* `numeralClassifier_no_obligatory_number`: numeral-classifier languages lack compulsory number,
-  Greenberg's association, which the book records with its Dravidian, Nivkh, Algonquian, Tucano,
-  Arawak and Ejagham exceptions.
-
 ## References
 
 * [aikhenvald-2000]

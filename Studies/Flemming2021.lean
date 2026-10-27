@@ -28,21 +28,6 @@ The test case is Smith and Pater's French schwa data (19): eight contexts crossi
 schwa or none, a preceding C or CC, and a following monosyllable or disyllable, evaluated by
 NoSchwa, \*CCC, \*Clash, Max, Dep and \*Cluster (20)–(28).
 
-## Main results
-
-* `choiceProb_pi_gumbelMeasure_eq_maxEnt`, `logit_choiceProb_pi_gumbelMeasure`: MaxEnt is the
-  Gumbel random utility model, with logit (10).
-* `probit_weightNoiseChoiceProb`, `probit_choiceProb_pi_gaussianReal`: the probits (16) and (18).
-* `probitChange_strictAnti`: the NHG probit gain falls with the initial harmony difference (§7.2).
-* `diff_eq`: the difference tableaux (35), derived from the constraint definitions.
-* `logit_following`, `logit_onset`, `logit_underlying`: MaxEnt's uniform logit differences
-  (§7.1).
-* `clash_gain_ordered`: NHG orders the probit gains 1-2 > 5-6 > 3-4 > 7-8 (§8.2).
-* `onset_effect_larger_for_words`, `harmonyDiffRevised_onset`: the Max × \*CCC interaction in the
-  observed rates, and the revised constraint \*CCC/iP that accounts for it (§8.3).
-* `table45_variance_covariance`: in the three-candidate tableau (45) the NHG harmony differences
-  have unequal variances and a nonzero covariance (§9).
-
 ## Implementation notes
 
 * Candidates are `Fin 2`, `0` the schwa candidate and `1` the schwaless one, so that the
@@ -429,7 +414,7 @@ theorem table45_maxent :
   ring
 
 /-- Under weight noise of variance `v`, the harmony differences of `a` and `c` from `b` have
-variances `5v` and `2v` (14) and covariance `2v` (§9). -/
+variances `5v` and `2v` (14) and covariance `2v` (§9) ((45)). -/
 theorem table45_variance_covariance (v : ℝ≥0) :
     Var[fun η ↦ harmonyScore tableCon (tableW + η) 0 - harmonyScore tableCon (tableW + η) 1;
         weightNoise (Fin 3) v] = 5 * v ∧

@@ -17,19 +17,6 @@ complement is acceptable only where the holder's epistemic state, the local cont
 complement, entails `m`. The two properties cross to give four classes, and the diagnostics
 applied to Paraguayan Guaraní and English find contents in all four.
 
-## Main statements
-
-* `TonhauserEtAl2013.excludes_matrix_iff`, `TonhauserEtAl2013.excludes_belief_iff`: a class
-  rules out an utterance in a context that does not entail the content exactly when it has the
-  constraint, and a belief report whose holder does not believe the content exactly when it has
-  obligatory local effect.
-* `TonhauserEtAl2013.judgment_rows`: each of the paper's examples is unacceptable exactly when
-  the class of its content rules it out.
-* `TonhauserEtAl2013.eq_of_excludes_iff`: a judgment in a neutral context and a judgment of a
-  belief report separate the four classes.
-* `TonhauserEtAl2013.acceptable_rows_of_ne_A`: local satisfaction gives every content both
-  properties, and each of the other three classes has an acceptable example that this rules out.
-
 ## Implementation notes
 
 * Acceptability is taken as given, as the contexts in which consultants accept a sentence. The

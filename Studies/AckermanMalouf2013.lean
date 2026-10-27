@@ -21,16 +21,6 @@ object agreement sits at the zero of the measure, and Chiquihuitlán Mazatec's f
 tone classes sit far from it, the prose claim that only third-person vowels are diagnostic
 sharpened to what its Table 6 supports.
 
-## Main statements
-
-* `greek_not_paradigmEconomy`, `greek_principalParts`: Greek violates the enumerative
-  principles while keeping a small principal-part set.
-* `greek_genSg_given_accPl_a`, `greek_genSg_given_accPl`: the paper's worked conditional
-  entropies (13) and (14) as exact closed forms, `log 3 − (2/3) log 2` and `(3/8) log 3` nats.
-* `burmeso_avgCondEntropy`: vocabular clarity makes Burmeso's average conditional entropy zero.
-* `mazatec_vowels_diagnosticity`, `mazatec_tones_no_diagnostic_cell`: how far the Mazatec
-  final vowels and tones are from clarity.
-
 ## Implementation notes
 
 * Forms are the strings the paper's tables print, *-∅* the Greek zero ending, and outcomes

@@ -16,17 +16,6 @@ the speaker `S1` and the uncertainty listener `L1`, which inverts the speaker jo
 and lexica (13), are compared with the fixed-lexicon listener `L1fixed` of (19b). Every ordering
 below holds at every rationality and every cost of the null message.
 
-## Main results
-
-* `one_some_local`, `no_some_local`: under *exactly one* and *no* the uncertainty listener gives
-  mass to the locally enriched states, which the fixed-lexicon model excludes, the low but
-  non-negligible enrichment under a negative quantifier that Chemla and Spector report.
-* `one_some_literal_first`, `no_some_literal_first`: the literal construals NNS and NNN still
-  rank first.
-* `every_some_ordering`, `every_some_fixed`: for *every player hit some of his shots* the
-  uncertainty listener mirrors the human ordering, SSS first and AAA last among the true states,
-  where the fixed-lexicon listener puts SAA first.
-
 ## Implementation notes
 
 The state and lexicon priors are flat (18). The null message is true at every state, so its

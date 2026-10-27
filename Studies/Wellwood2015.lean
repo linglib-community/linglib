@@ -28,14 +28,6 @@ verbs is Bresnan's Much Deletion.
 * `NontriviallyStructured`: a domain with a satisfier properly part of another.
 * `MeasuredDomain.Model`: the order model of what a comparative measures.
 
-## Main results
-
-* `matrix_derivation_denotes`: the engine derives the matrix clause.
-* `nontriviallyStructured_of_cum`: a cumulative domain with two satisfiers is non-trivially
-  structured.
-* `model_restricted_iff`: only states fix the comparative ordering for every admissible measure.
-* `very_much_deletion`: Much Deletion.
-
 ## Implementation notes
 
 Degrees are rationals and eventualities an abstract type, the engine's eventuality sort `v` beside

@@ -43,21 +43,6 @@ stronger constraint on languages and satisfies its weakening by promotion.
   subject by a voice system.
 * `retention`, `RetainsDownward`: pronoun retention and its downward closure.
 
-## Main statements
-
-* `relativizable_eq_biUnion`: a language relativizes a position iff one of its strategies does.
-* `satisfiesHC1_iff_exists_isPrimary`, `SatisfiesHC2.satisfiesPRC`: the Primary Relativization
-  Constraint follows from the Hierarchy Constraints (p. 68).
-* `satisfiesHC2_of_mem_sample`, `retainsDownward_of_mem_sample`: the sample obeys HC₂ and retains
-  pronouns downward (p. 92).
-* `exists_positions_eq_Icc`: each position down to the genitive is a cut-off (Section 1.3).
-* `satisfiesHCPromotion_bot_iff`, `not_isUpperSet_relativizable_tobaBatak`,
-  `satisfiesHCPromotion_tobaBatak`, `mem_relativizable_tobaBatak_iff`: without promotion the
-  constraint is the stronger one, which Toba Batak refutes (p. 68); with promotion Toba Batak
-  satisfies it, relativizing directly the positions its voices cannot promote (p. 69).
-* `hebrew_table1`, `arabic_table1`, `finnish_plus_case_is_primary`, `korean_genitive_retention`,
-  `arabic_table2`: rows of Table 1 (pp. 76–78, Sections 1.3.2 and 1.3.4) and Table 2 (p. 93).
-
 ## Implementation notes
 
 * Continuity is order-connectedness in the substrate's `Position` order. A relative pronoun
@@ -199,6 +184,7 @@ def sample : List (List Relativizer) :=
   [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin, basque,
     french, german, hindi, japanese, russian, tagalog, turkish]
 
+/-- Rows of Table 1 (pp. 76–78, Sections 1.3.2 and 1.3.4) and Table 2 (p. 93). -/
 theorem hebrew_table1 :
     (⟨.postNominal, false⟩ : Strategy).positions hebrew = {.subject, .directObject} ∧
       (⟨.postNominal, true⟩ : Strategy).positions hebrew = Iic .directObject := by
@@ -213,6 +199,7 @@ theorem satisfiesHC1_of_mem_sample {L : List Relativizer} (h : L ∈ sample) :
     SatisfiesHC1 L := by
   revert L; decide
 
+/-- The sample obeys HC₂ and retains pronouns downward (p. 92). -/
 theorem satisfiesHC2_of_mem_sample {L : List Relativizer} (h : L ∈ sample) :
     SatisfiesHC2 L := by
   revert L; decide
@@ -220,7 +207,8 @@ theorem satisfiesHC2_of_mem_sample {L : List Relativizer} (h : L ∈ sample) :
 theorem satisfiesPRC_of_mem_sample {L : List Relativizer} (h : L ∈ sample) : SatisfiesPRC L :=
   (satisfiesHC2_of_mem_sample h).satisfiesPRC (satisfiesHC1_of_mem_sample h)
 
-/-- Every position from the genitive up is the cut-off of some primary strategy in the sample. -/
+/-- Every position from the genitive up is the cut-off of some primary strategy in the sample
+(Section 1.3). -/
 theorem exists_positions_eq_Icc {p : Position} (hp : .genitive ≤ p) :
     ∃ L ∈ sample, ∃ s : Strategy, s.positions L = Icc p .subject := by
   revert p; decide

@@ -16,32 +16,6 @@ conditional, and the probability function validates Adams's Thesis and, through 
 Stalnaker's Thesis in full generality, escaping the triviality results by giving up classical
 conjunction and the Product Rule.
 
-## Main statements
-
-* `equiv_neg_cond`, `equiv_cond_cond`, `equiv_conj_cond`, `equiv_disj_cond`, `equiv_cond_left`:
-  Proposition 1, the five equivalences, each at the generality the paper claims for it, with
-  `conjunction_needs_boolean` and `sk_fails_conjunction` marking where the laws stop.
-* `cooperEval_flat`: the Reduction Theorem, by the appendix's recursion `flat`.
-* `prob_value_neg`, `prob_value_disj`: the second and third principles of trivalent probability;
-  `additivity_all_void` shows the third fails without properness, which the paper does not flag.
-* `ofAdams`, `exists_ofAdams_eq`, `ofAdams_eq_ofAdams_iff`, `prob_ofAdams`: an
-  [adams-1975] formula denotes the conditional event of its consequent on its antecedent, these
-  exhaust the trivalent propositions (the semantic content of the Reduction Theorem), and its
-  trivalent probability is Adams's conditional probability; hence `adams_thesis`, and
-  `pEntails_iff_prob` restates p-entailment in trivalent probabilities.
-* `cEntails_iff_forall_prob`: preserving probability 1 is preserving designated values, the
-  trivalent characterization of the logic C.
-* `prob_cond_eq_one_of_cEntails`, `prob_cond_congr_left`, `prob_cond_disj`: the axioms 3′, 4′ and
-  5′ of trivalent conditional probability; `axiom2'_all_void` and `additivity_cond_all_void` show
-  2′ and 5′ fail as printed in the all-void case.
-* `stalnaker_thesis`: `p_A(B → C) = p_{A ∧ B}(C)` with no hypotheses at all, since Import-Export
-  is a pointwise identity.
-* `prob_cond_material_eq`: learning a simple conditional is learning the material conditional
-  (Proposition 6).
-* `goldstein_santorio_die`, `santorio_wellwood_die`, `edgington_coin`: the die and coin examples
-  of [goldstein-santorio-2021], [santorio-wellwood-2023] and [edgington-1991], computed in the
-  fair models; `prob_conj_gt` is the failure of `p(X ∧ Y) ≤ p(X)`.
-
 ## Implementation notes
 
 * The language is the shared `Trivalent.Formula` and a Cooper valuation is its evaluation by

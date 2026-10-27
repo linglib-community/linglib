@@ -18,10 +18,6 @@ context, equivalently probability 1 under every credence mirroring it, and the R
 predictions (the covert *must*, the test behaviour of modals, epistemic and if-might
 contradictions) come out at the level of acceptance and inference, not truth conditions.
 
-## Main statements
-
-* `Sentence.cond_ofCooper`, `ofFormula_cond`: on nonmodal sentences the conditional is Cooper's,
-  so the semantics extends the Cooper valuations of [egre-rossi-sprenger-2026a].
 * `Sentence.ContextFree.update_eq_restrict` (Fact 1); `Sentence.update_box_of_accepts`,
   `Sentence.update_dia_of` and their converses (Fact 2), which on a conditional-free prejacent is
   [veltman-1996]'s test (`update_dia_ofSet`).

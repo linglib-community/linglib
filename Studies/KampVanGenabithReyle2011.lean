@@ -16,15 +16,6 @@ potential of the second sentence to the state the first expresses gives the stat
 The context change potentials of DRSs are regular (Definition 27) and relate to the states DRSs
 express relative to an assignment (Definition 29) as (44) states.
 
-## Main statements
-
-* `marble_worlds_eq_coin`, `marble_ne_coin`: the states of the two marble DRSs determine the same
-  proposition and differ.
-* `ccp_action`: updating the state of the first sentence of (43) with the second is the state of
-  their merge, as the chapter remarks after Definition 24.
-* `ccp_informative`: a context change potential only adds information (Definition 27(ii)).
-* `mem_ccp_iff_mem_relState`: (44).
-
 ## Implementation notes
 
 `DRS.ccp` is total on information states: on a state whose base misses a free referent, outside
@@ -210,7 +201,7 @@ theorem ccp_distributive : CCP.IsDistributive (K.ccp interp) :=
   Update.image_isDistributive _
 
 /-- A context change potential only adds information: its output carries at least as much
-information as its input (Definitions 25 and 27(ii)). -/
+information as its input (Definitions 25 and 27(ii)) (Definition 27). -/
 theorem ccp_informative (I : State W V M) : K.ccp interp I ≤ I :=
   DRS.ccp_le interp I
 

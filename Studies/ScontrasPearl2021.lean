@@ -21,18 +21,6 @@ pragmatic listener inverts that speaker jointly over worlds, interpretations and
 by the listener's beliefs about the world (`S2`), so that a truth-value judgment is a production
 decision.
 
-## Main results
-
-* `one_half_lt_S2_real_amb_iff`: the sentence is endorsed more often than not exactly when it is
-  produced at the observed world more often than on average.
-* `S2_real_amb_all`: once the question is whether all the horses jumped, the two interpretations
-  of *every horse didn't jump* produce alike and the scope prior does not affect endorsement.
-* `S2_real_amb_mono_baseRate`: production falls with the number of jumpers, so a higher success
-  base rate in the binomial world prior raises endorsement.
-* `share_twoAtLeast_le_share_twoExact`, `share_twoExact_lt_share_twoAtLeast`: with four horses
-  and two jumpers the surface speaker favors the exact reading whatever the question, while the
-  inverse speaker asked whether all jumped favors the at-least reading.
-
 ## Implementation notes
 
 * The rationality of `S1` and the priors on worlds, interpretations and questions are

@@ -15,21 +15,6 @@ pronounced. Here a sentence is a tree with the indices the book prints, the bind
 position is its smallest spell-out domain, and a representation is licit when it meets Conditions
 A and C with nothing exempt.
 
-## Main statements
-
-* `condition_overt`: Condition A with the silent pronouns counted is Condition A among the
-  pronounced noun phrases with the anaphors the silent pronouns bind exempt.
-* `locallyBound_overt_of_licit`, `index_eq_of_licit`: an anaphor that no silent pronoun is
-  coindexed with, as an inanimate one, has a pronounced binder in its domain, and anaphors
-  without pronounced binders in a domain with one silent pronoun corefer.
-* `grammatical_iff`, `not_exists_forall_iff_rep`: the model gives the book's judgment on each
-  example formalized here, and no condition on structure alone does, two of the examples having
-  one structure and opposite judgments.
-* `acceptable_iff_isLogophoric`, `exists_unacceptable_mem_centersOf_iff`: on the examples an
-  anaphor without a pronounced binder is acceptable exactly when its antecedent is an attitude
-  holder or an empathy locus, so the source and the pivot of Sells take in antecedents that
-  exempt nothing and the self does not.
-
 ## Implementation notes
 
 * A noun phrase with a subject is labelled `Det` and its subject is its first daughter; it is a

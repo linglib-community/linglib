@@ -16,12 +16,6 @@ scope, as a name takes none (Chierchia's §4.2), so the kinds approach still giv
 after scrambling, while Krifka's existential shift makes the bare plural a quantifier that takes
 wide scope when scrambled.
 
-## Main results
-
-* `LeBruynDeSwart2022.chierchiaScrambled_iff`: on the kinds approach scrambling changes nothing.
-* `LeBruynDeSwart2022.books_example`: on a two-book model of (35), Krifka's scrambled
-  existential is true and both narrow readings are false.
-
 ## Implementation notes
 
 * Individuals are Link's nonempty sets of atoms, `Mereology.Individual`, so no empty

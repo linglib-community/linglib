@@ -22,18 +22,6 @@ dominance, and blocks a sentence that a potentially p-equivalent alternative dom
 Preservation blocks an imprecise construal of a subexpression that loses an inference, entailment
 or incompatibility, that its precise construal licenses about an alternative.
 
-## Main results
-
-* `lt_complexity_of_lt_potential`: an unblocked expression more imprecise than a competitor is
-  strictly simpler, the form–meaning correlation behind *the doors* and *all the doors*.
-* `forall_not_violates_iff`: a bare numeral survives Inference Preservation exactly when its
-  deviation is under half the lcm of the widths of the scales it lies on, so *99* must be exact
-  while *100* tolerates deviations under twenty-five (`ninetyNine_hundred`); that lcm is the
-  width of the scale Krifka's hearer infers (`tolerated_deviation_is_inferred_cell`).
-* `roundness_depends_on_scales`: *180* is rounder than *200* among angles and *200* than *180*
-  among cardinals, (80b,c).
-* `conjunction_violates`: a conjunction read non-maximally loses the entailment of its conjuncts.
-
 ## Implementation notes
 
 The Manner orderings are read off two natural-number measures on an abstract sentence type, with

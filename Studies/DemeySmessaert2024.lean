@@ -23,19 +23,6 @@ is Boolean isomorphic to the deontic octagon or to the octagon for subject negat
 
 * `subjectNegation`, `deontic`, `knowledgeRep`: the three Keynes–Johnson octagons.
 
-## Main results
-
-* `card_minterms_subjectNegation`, `card_minterms_deontic`: the octagons induce partitions of
-  seven and of six cells.
-* `deonticIso`, `isEmpty_booleanIso_deontic`: the deontic octagon is Aristotelian but not Boolean
-  isomorphic to the octagon for subject negation.
-* `knowledgeRepIso`: the octagon for knowledge representation is Boolean isomorphic to it.
-* `card_minterms_eq_six_or_seven`: every octagon Aristotelian isomorphic to these induces six or
-  seven cells.
-* `nonempty_booleanIso_subjectNegation_iff`, `nonempty_booleanIso_deontic_iff`,
-  `nonempty_booleanIso_subjectNegation_or_deontic`: the octagons of seven cells form one Boolean
-  subfamily and those of six the other.
-
 ## Implementation notes
 
 A subject-negation statement depends only on which regions of `S` and `P` are inhabited, so a

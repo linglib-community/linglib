@@ -27,23 +27,6 @@ property in every belief world.
 * `Aloni2001.whoUnder`: a constituent question under a cover.
 * `Aloni2001.DeReUnder`: a de re belief report under a cover.
 
-## Main statements
-
-* `Aloni2001.isCover_iff_existsUnique`: the existence and uniqueness conditions.
-* `Aloni2001.IsCover.equiv`: Proposition 4.1.2.
-* `Aloni2001.coverEquivPerm`, `Aloni2001.card_covers`: covers are the families of permutations
-  trivial at a base world, and Proposition 4.1.3.
-* `Aloni2001.coverEquivProper`: covers are the proper methods of cross-identification,
-  Propositions 4.2.2 and 4.2.4, the name cover giving the rigid method (`crossId_names`).
-* `Aloni2001.IsCover.eq_names`, `Aloni2001.isCover_iff_eq_names`: a cover of rigid concepts is the
-  name cover, and Corollary 4.1.4.
-* `Aloni2001.whoUnder_names`: under the name cover a question is Groenendijk and Stokhof's.
-* `Aloni2001.deReUnder_iff_exists_ascribesUnder`: a de re report under a cover is ascription
-  under one of its concepts.
-* `Aloni2001.Cards`: the cards of Sections 1.4.1 and 4.1, with their two covers, the
-  identification question (186), the de re report (189), and the collapse of the covers once
-  the cards are known.
-
 ## Implementation notes
 
 * Worlds and individuals are types and concepts total functions, as in Definition 4.1.1.

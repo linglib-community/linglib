@@ -24,20 +24,6 @@ literal with the globally exhaustified meaning, after Magri, misses the gaps und
 *no* and in the GAP?? configuration; and the universal projection of a homogeneity presupposition
 predicts gaps where false was found.
 
-## Main results
-
-* `items_variants`: every display of Table 13 realizes its condition, except the faulty A2 and B2
-  *no* items (`faulty_items`) and the GAP? item 5599 (`misprinted_gapQQ`).
-* `found_iff`: Table 2 finds a gap exactly outside GAP?, apart from the discounted *no* tests.
-* `supervaluation_eq_one_iff_condition`, `supervaluation_eq_zero_iff_found`: the supervaluation
-  predicts every designed value and every finding.
-* `globalConstrual_misfit_iff`: the implicature construal misfits exactly the downward-entailing
-  GAP items and the GAP?? items; `globalConstrual_wideScope`: a wide-scope definite rescues it
-  under plain negation.
-* `pointwise_ne_iff`: supervaluating over per-boy resolutions departs exactly on GAP?.
-* `situations_variants`: Table 12's parses and construals follow from its six situations.
-* `globalExh_iff_mem_strengthened`: global exhaustification is Magri's double strengthening.
-
 ## Implementation notes
 
 The stimuli and findings are the tables of `Data/Experiments/KrizChemla2015`. The E-neg tests reuse
@@ -587,7 +573,7 @@ theorem misprinted_gapQQ :
   decide
 
 /-- Every tested item realizes its condition by §3's principle, with the weak variant true in TRUE
-and GAP and the strong one in TRUE and GAP??. -/
+and GAP and the strong one in TRUE and GAP?? (Table 13). -/
 theorem items_variants : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     (weak i.embedding i.display ↔ i.condition ∈ [.clearlyTrue, .gap]) ∧
       (strong i.embedding i.display ↔ i.condition ∈ [.clearlyTrue, .gapQQ]) := by

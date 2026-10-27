@@ -19,20 +19,6 @@ admissibility and possibility of a speech act are the three levels of the thesis
 discourse expectations, in which a cooperative act is admissible and every act is possible, but
 not conversely.
 
-## Main statements
-
-* `committed_assert`, `committed_update`: an assertion commits the speaker, and a commitment at
-  the root survives every later speech act.
-* `root_update_belief`: no speech act changes a belief relation of the root, so Sincerity and
-  Competence pass a commitment on to beliefs within a state (Theorem 26) but not across an update.
-* `committed_believes_of_sincere`, `exists_committed_believes_not_committed`: under Sincerity a
-  commitment entails a commitment to the corresponding belief, but not conversely, so Krifka's
-  "The buffet is open" is stronger than "I believe the buffet is open".
-* `admissible_of_cooperative`, `exists_admissible_not_cooperative`: cooperative speech acts are
-  admissible, and not conversely.
-* `cooperative_assert_of_not_committed`, `not_cooperative_assert_compl`: after an assertion,
-  the addressee's confirming it is cooperative and denying it is not.
-
 ## Implementation notes
 
 Propositions are world-sets, so the thesis's side condition that a proposition be
@@ -353,7 +339,7 @@ theorem root_update_commitment_le :
     exacts [ihα C, ihβ C]
 
 /-- No speech act changes a belief relation of the root, since assertion is Definition 4, which
-leaves beliefs alone, and every other act keeps the root. -/
+leaves beliefs alone, and every other act keeps the root (Theorem 26). -/
 @[simp] theorem root_update_belief : (update α C).root.belief = C.root.belief := by
   induction α generalizing C with
   | assert => rfl

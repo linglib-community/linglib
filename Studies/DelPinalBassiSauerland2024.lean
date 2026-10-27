@@ -16,22 +16,6 @@ denies only the assertion and leaves double prohibition. The flat `exh^{IE+II}` 
 Fox yields the same overall content without the split, and the paper's puzzles about free choice
 under negative factives, in disjunctions and under quantifiers all turn on the split.
 
-## Main results
-
-* `basic_scalar`: `pex` presupposes the negation of a non-entailed alternative, (11a).
-* `free_choice`, `double_prohibition`, `negative_free_choice`,
-  `negative_free_choice_under_negation`: the readings (14), (16), (19a) and (20), exactly.
-* `pexPossOr_eq_barePlural`, `homogeneity_gap`: `pex[◇(p ∨ q)]` is Križ's homogeneous plural
-  predication over the disjuncts, the structure the paper compares with Goldstein's in §2.2,
-  with the presupposition failures of fn. 2.
-* `pex_and_exh_agree`: with every alternative relevant, `pex` and `exh` agree, (12e)–(13).
-* `free_choice_presupposed`, `unaware_disbelieves_each_disjunct`: negative factives, §3.
-* `free_choice_filtered`, `negative_free_choice_filtered`: Karttunen's filtering disjunction
-  filters free choice, (53), (57c), unlike flat `exh` or local accommodation.
-* `universal_free_choice`, `universal_double_prohibition`, `existential_free_choice_bound`,
-  `exactly_one_free_choice`: free choice under quantifiers, with Fox's strong Kleene
-  existential for (75) and the readings of Gotzner, Romoli and Santorio for (83), (84).
-
 ## Implementation notes
 
 Each `pex` uses the paper's relevance set, which leaves out the conjunctive alternative of

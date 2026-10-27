@@ -29,22 +29,6 @@ alternation, agent focus in Mayan subject questions, and the subjects of passive
 * `AgentFocus`: Voice and T cross-reference one argument, so Voice is spelled out as agent focus.
 * `System.Derivation`: a derivation at v in which every step respects Weak Economy.
 
-## Main results
-
-* `Licensed.not_sublist`: an element checking only features another checks cannot follow it.
-* `nonDP_first`, `not_dp_after_dp`: non-DP arguments are complements, one DP per head.
-* `wordOrder_binding`: the direct object can bind the indirect object only when it precedes it.
-* `transitive_derivations`, `agentFocus_iff`: agent focus arises exactly when the object checks
-  `[·D·]` before the wh-subject merges.
-* `npObject_no_agentFocus`, `multipleFronting`: the environments that obviate agent focus.
-* `doma`, `lowPassive_subject`, `om_iobj_subject`: the subjects of passive ditransitives.
-* `greek_passive`, `greek_whPassive`, `greek_active`: when Greek clitic doubling is obligatory.
-* `literal_greek_whPassive`: Weak Economy read as worded makes clitic doubling obligatory in wh
-  passives, against the data.
-* `System.exists_derivation`: Weak Economy never blocks every operation.
-* `whSubject_complement`, `overlap_subjectQuestions`, `overlap_passives`: Weak Economy makes a
-  wh-subject v's complement unless operations checking a common feature are exempt.
-
 ## Implementation notes
 
 A phrase's checkable features are read off its category and the features it bears. The first

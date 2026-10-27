@@ -23,32 +23,6 @@ records which members of the restrictor are outside the scope, so these truth co
 those of generalized quantifier theory, and the determiners expressible this way are exactly the
 conservative ones.
 
-## Main statements
-
-* `classical_lessThan_iff_some`, `classical_zero_false`: on plain pluralities, *less than three
-  boys sneezed* says only that some boy sneezed, and *zero boys sneezed* is false.
-* `partsOrderIso`: groups ordered by parthood are the sets of polarized individuals that never
-  contain both versions of one individual, ordered by inclusion.
-* `setOf_noun`, `delta_iff_le`: the groups of a noun are its extension polarized in every possible
-  way, and the ∆-operator for a predicate holds of the parts of the group polarized by it.
-* `sentence_iff`: a sentence holds when the determiner holds of the noun's extension polarized by
-  the scope.
-* `lessThan_three_matches_judgments`: unlike the classical entry, *less than three* gets the
-  judgments about upper bounds and existential entailment right.
-* `toGQ_exactly`, `toGQ_lessThan`, `toGQ_all`, `toGQ_most`: the predicted truth conditions are
-  those of the generalized quantifiers.
-* `toGQ_ofGQ_eq_iff`, `conservative_toGQ`, `consGQOrderIso`: a generalized quantifier survives the
-  round trip through predicates exactly when it is conservative, and the predicates are order
-  isomorphic to the conservative quantifiers, whose atoms are the groups (`ofGQ_atom`).
-* `card_predicates`, `eqOn_ofGQ_iff`: on `n` individuals there are `2 ^ (3 ^ n - 1)` predicates
-  of nonempty groups, and they determine a conservative quantifier up to its value at the empty
-  restrictor.
-* `all_scopeless`, `exactly_two_not_individual`: existential raising of *all N* is a Montague
-  individual and so scopeless, while that of *exactly two N* is not.
-* `not_some_singular_collective`: *some boy gathered* is false of a collective predicate.
-* `whichDeRe_eq_ker`, `relevant_of_conservative`: the answers to *which N did B?* correspond to
-  the groups of the noun, so every conservative determiner is relevant to the question.
-
 ## Implementation notes
 
 A group is a function into `Flat Bool`, the paper's trivalent presentation: `⊥` for an absent

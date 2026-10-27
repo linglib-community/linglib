@@ -15,15 +15,6 @@ gets a single prefix or none, and where it gets none a second Specifier is built
 last resort, which stacks a plural prefix on the singular one, as in classes 3, 5 and 9 of
 Changana and Rhonga.
 
-## Main results
-
-* `exponents_cls_num`: the Specifier `[# Nₓ]` is lexicalized by a single prefix or not at all.
-* `stacks_iff_no_entry`: a plural stacks exactly when no entry lexicalizes the plural Specifier
-  on the singular's classifier (section 4.5).
-* `rhonga_plurals`, `rhonga_stacking_iff_not_sharesClassifierN`: Changana and Rhonga stack in
-  classes 3, 5 and 9 and not in 1 and 7, the classes whose prefixes share no classifier.
-* `shona_double_plural`: the Shona double plural *ma-mi-sha*.
-
 ## Implementation notes
 
 The exponents are the post-augment prefixes, which the paper takes as the prefix proper. The

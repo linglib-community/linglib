@@ -30,21 +30,6 @@ tenth win of the season is to the season. With the season the same in every worl
 * `EventFrame`, `EventFrame.Equiv`: eventualities across worlds and the equivalence (17).
 * `Alternatives`, `Alternatives.before`: the alternatives (18) and the revised *before* (19).
 
-## Main results
-
-* `not_before_of_settled`: Beaver and Condoravdi's *before* fails when the main clause is settled
-  at its times and precludes the temporal clause afterwards, and `not_settled_mozart`: their own
-  Mozart model leaves the death unsettled.
-* `EventFrame.Equiv.anti`: the downward closure (18c) follows from (17).
-* `Mozart.before_dies_finishes`, `Mozart.not_before_dies_finishes`: in one history the revision
-  verifies (6a) counterfactually and the original analysis does not.
-* `Alternatives.not_before_of_causedTimes_eq_empty`: without an eventuality that could lead to it,
-  an anti-veridical *before* is false, the oddity of (14).
-* `not_before_of_le`, `Alternatives.not_before_of_le`: both analyses fail on a temporal clause
-  confined to times no later than the main clause (§5.1), though (20a)–(20c) and (21) are
-  acceptable, `rows_bcCounterexample`.
-* `rows_connective_tense`: the non-past of (21) is the tense the fragment records for *mae*.
-
 ## Implementation notes
 
 * A main clause settled at a time holds there in every historical alternative of the world,

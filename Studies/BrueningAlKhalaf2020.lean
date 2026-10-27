@@ -30,15 +30,6 @@ silent Adv head that ellipsis or a partial copy can leave out. The paper's examp
 * `checkedOnce`: the conjunct a selector checks its S-features against, once.
 * `NominalCoordination`, `Displaced`: an adverb's two escapes from the ban on modifying a noun.
 
-## Main results
-
-* `mem_cats_of_mem_nearest`: the phrase next to the selector is selected in its own category.
-* `mem_cats_or_of_admits`: the only violation is a clause where a noun phrase is selected.
-* `exists_admits_iff_admits_elided`: a phrase may violate selection in a coordination exactly when
-  ellipsis of the selector may strand it.
-* `mem_cats_of_admits_id`: speakers whose S-features persist admit no violation in coordination.
-* `nominalCoordination_iff`, `displaced_iff`: a non-*ly* adverb may modify a noun when coordinated
-  before an adjective or displaced.
 * `argument_rows` and its siblings: the model's verdict on each example is its judgment.
 
 ## Implementation notes

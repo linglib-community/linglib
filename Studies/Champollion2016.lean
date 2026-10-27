@@ -26,22 +26,6 @@ with intersection on upward-entailing conjuncts and overgenerates on the others.
 * `choiceRaising`, `distributiveChoiceRaising`: CR (46) and DCR (78) under a choice function
 * `determinerFitting`: DFIT (92)
 
-## Main results
-
-* `minimization_and_existentialRaising`: Minimization after Existential Raising keeps
-  the singletons of the overlap and the pairs from the differences (p. 580), the man–woman pairs
-  (20) for disjoint nouns
-* `minimization_and_Ici`: Minimization of two principal filters is their join
-* `exists_mem_minimization_choiceRaising_iff`,
-  `exists_mem_minimization_distributiveChoiceRaising_iff`: Choice Closure above Minimization
-  gives every pair (57) and every mixture (80)
-* `inter_setOf_ncard_minimization_existentialRaising_predicateDistributivity`: no numeral above
-  two counts the Existential Raising of plural nouns (76)
-* `minimization_or_existentialRaising`, `determinerFitting_every_and_iff_or`:
-  *or* is never collective, and *every cat and dog* is *every cat or dog* (95), (96), (99)
-* `sups_eq_and`, `sups_noMan_noWoman`, `sups_individual_card`: the set product (101)
-  is intersection on upper sets and overgenerates in (103) and (105)
-
 ## Implementation notes
 
 A plurality is a `Set E` and a property of pluralities a `Set (Set E)`, as in the paper. The
@@ -168,7 +152,7 @@ theorem and_existentialRaising (N N' : Set E) :
   rfl
 
 /-- The minimal sets containing an `N` and an `N'` are the singletons of their overlap and the pairs
-drawn from their two differences (journal p. 580). -/
+drawn from their two differences (journal p. 580) ((20)). -/
 theorem minimization_and_existentialRaising (N N' : Set E) :
     minimization (and_.denote
       {existentialRaising N, existentialRaising N'}) =

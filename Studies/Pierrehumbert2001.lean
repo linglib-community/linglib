@@ -26,13 +26,6 @@ more a word is used, and slows as memory accumulates. Without entrenchment the e
 grows at every production, and lenition adds to it; with entrenchment it stays below the variance
 that noise and bias add at a production, and below the spread without entrenchment.
 
-## Main statements
-
-* `lenition_advances_with_use`: under a leniting bias the expected mean falls with every use.
-* `spread_grows`, `lenition_blurs`: without entrenchment the expected spread grows with every
-  use, and lenition widens it.
-* `entrenchment_narrows`: entrenchment keeps the expected spread below the bare model's.
-
 ## Implementation notes
 
 * Every production is stored, the idealization of §3.1. The single-label loop of the appendix

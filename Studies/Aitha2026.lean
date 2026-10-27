@@ -35,12 +35,6 @@ singular suffix, and the Stem, Word, and Phrase tableaux with the marks of the p
 * `numItems`, `numSg`: the singular suffix *-ni* of (40).
 * `wordOrder`, `phraseOrder`: the rankings of (64) and (68).
 
-## Main results
-
-* `strong_rows`, `weak_rows`: both alternations against every paradigm cell of the pool.
-* `weak_not_case_function`, `weak_violates_aba`: the arguments against case conditioning.
-* `oblique_across_quantifier`: the locality contrast of (33)–(36).
-* `wordDat_optimal`, `wordNom_optimal`: both surface forms from one underlying *-am-ni*.
 * `distZero_alignR_max_reranked` and its siblings: the Word-to-Phrase rerankings of (68).
 
 ## Implementation notes

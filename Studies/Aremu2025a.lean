@@ -24,16 +24,6 @@ that only a fronted focus is exhaustive.
 * `Aremu2025a.Answer.reflexes`, `Aremu2025a.Answer.Licensed`: its overt marking, and the
   conditions on what it may front.
 
-## Main statements
-
-* `Aremu2025a.Answer.antiPiedPipes_iff`: an answer anti-pied-pipes its focus exactly when it
-  fronts a proper part of it.
-* `Aremu2025a.Answer.focus_eq_clause_of_antiPiedPipes`: only a focused clause anti-pied-pipes.
-* `Aremu2025a.not_perceptible`: a focus in place has no reflex.
-* `Aremu2025a.relTi_realize_eq_vacated`: a fronted constituent leaves in its position what
-  relativization leaves there.
-* `Aremu2025a.judgedFelicitous_iff`: the model predicts the judgment of every row.
-
 ## Implementation notes
 
 Constituents are positions in the clause `[subject [verb object adjunct]]`, ordered by

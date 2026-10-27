@@ -28,14 +28,6 @@ until* with the actualization his presupposition supplies. The paper's Greek, En
 and Dutch judgments follow from the fragment entries of the connectives and its classification of
 the punctual words, and its stativity diagnostics from homogeneity with negation playing no role.
 
-## Main statements
-
-* `not_durativeUntil_prfv`: a perfective description of a single event rules out durative UNTIL.
-* `wideScope_of_forall_not`: the wide-scope reading carries no actualization.
-* `eventiveUntil_iff`: eventive UNTIL is *not until* with actualization.
-* `rows_predicted`: every judgment on the UNTIL sentences is predicted.
-* `diagnostics_predicted`: the stativity diagnostics follow from homogeneity alone.
-
 ## Implementation notes
 
 * Descriptions are the interval properties of `Aspect`; events carry a run time and a

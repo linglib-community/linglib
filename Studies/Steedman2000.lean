@@ -21,20 +21,6 @@ coordination, gapping, Dutch cross-serial dependencies, scope in verb clusters a
 intonational phrasing over the library's CCG, and interprets the derivations over the toy
 model of `Studies/HeimKratzer1998`.
 
-## Main statements
-
-* `nonConstituentCoord_eq_spelledOut`: "John sees and Mary eats pizza" has the truth
-  conditions of its spelled-out paraphrase.
-* `gapping_acceptable_iff`: Ross's generalization over the book's gapping examples. The raised
-  arguments of a verb-final verb compose into a rightward-looking cluster and those of a
-  verb-initial verb into a leftward-looking one, so verb-final clauses gap backward and the
-  others forward, SVO clauses over the verb-initial verb the revealing rule exposes.
-* `inverse_acceptable_iff_available`: an inverse scope reading is acceptable in the book's
-  examples exactly when some derivation lets the quantified object combine with a constituent
-  containing the tensed verb.
-* `theme_rheme_clash`: a theme accent and a rheme accent do not unify, so the tune forces the
-  phrasing "(ANNA married)(MANNY)".
-
 ## Implementation notes
 
 * Type-raising and coordination are lexical in the library's CCG, so the book's raising rules

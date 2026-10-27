@@ -18,15 +18,6 @@ without Agent Focus is biclausal, an adverb predicated of a clause whose subject
 pronoun, so nothing is extracted; an overt complementizer or pronoun forces that parse, and Agent
 Focus then appears only when the pronoun is focused inside the lower clause.
 
-## Main statements
-
-* `rows_fit`: with the two parses and a case-based account of extraction, every example is
-  grammatical exactly when one of its parses converges.
-* `monoclausal_fits_iff`: with the monoclausal parse alone the case-based account fails exactly
-  on the examples without Agent Focus whose subject seems to cross an adverb that takes a clause.
-* `antiLocality_fits_iff`: Erlewine's grammar fits an example exactly when its object is a full DP
-  and either nothing intervenes or a transitive verb follows an adverb that takes a clause.
-
 ## Implementation notes
 
 * The case-based account is the convergence of `Studies/CoonMateoPedroPreminger2014.lean` with

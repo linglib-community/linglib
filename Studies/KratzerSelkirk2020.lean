@@ -34,17 +34,6 @@ under *only* consumes the alternatives, and without it the [G] on the VP is not 
   squiggle.
 * `LF.Ctx`, `LF.Ctx.Transparent`: one-hole contexts, and those with no squiggle.
 
-## Main results
-
-* `not_given_mark_focused`: no constituent bears both features.
-* `LF.Ctx.meaning_plug`: a context with no squiggle is a continuation.
-* `LF.ord_plug_eq_of_given`, `LF.not_given_plug_foc`: (58) at any depth.
-* `LF.given_foc_came_or_not`: (58) needs the dependence on the FoCus.
-* `LF.representsContrast_narrow`, `LF.not_representsContrast_overfocused`: among all their
-  variants, (51) represents a contrast with (50a) and (50b) does not.
-* `LF.felicitous_sofVP`, `LF.not_felicitous_without_squiggle`: second-occurrence focus (60).
-* `sUnion_alternatives_every_focused`: Schwarzschild's givenness is trivially satisfied (fn. 14).
-
 ## Implementation notes
 
 [FoC] is the substrate's F-mark `Focus.Mark.focused` and (45) is `WithAlternatives.mark`, the
@@ -572,7 +561,8 @@ def every {E W : Type*} (P Q : E → Set W) : Set W := {w | ∀ x, w ∈ P x →
 
 /-- Footnote 14 finds Schwarzschild's givenness, entailment of the existential F-closure, too easy
 to satisfy, which A-Givenness is not. The F-closure of *Every [cat]F is a complainer*, that every
-`P` is a complainer for some `P`, holds at every world, since every complainer is a complainer. -/
+`P` is a complainer for some `P`, holds at every world, since every complainer is a complainer
+(fn. 14). -/
 theorem sUnion_alternatives_every_focused {E W : Type} (cat complainer : E → Set W) :
     ⋃₀ ((every · complainer) <$>
       (pure cat : WithAlternatives (E → Set W)).mark .focused).alternatives = Set.univ := by

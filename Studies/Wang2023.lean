@@ -17,13 +17,6 @@ Maximize Presupposition! (59), which demands the strongest. Number systems with 
 need a weak taboo that avoids only the strongest presupposition (82), and the four attested
 patterns of honorific nonsingulars are the rankings of (83).
 
-## Main results
-
-* `tod_mp_general`: Taboo » MP! selects the least specified cell alone, so no honorific singular,
-  local person or definite arises.
-* `stod_mp_wtod`, `wtod_mp_stod`, `wtod_alone`: the rankings of (83) give honorific plural only,
-  dual only, and the non-escalating systems.
-
 ## Implementation notes
 
 The cells are the number bundles `Number.Features`, singular, dual and plural being the most, the

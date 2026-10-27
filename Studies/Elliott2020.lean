@@ -25,17 +25,6 @@ the positive and negative outputs, so double negation and de Morgan's laws hold,
 sentences and Stone disjunctions license anaphora, and updating a set of world–assignment pairs
 makes a disjunction look externally static until one disjunct is ruled out.
 
-## Main statements
-
-* `neg_neg`, `neg_disj`, `neg_conj`: double negation and de Morgan's laws as equations.
-* `not_exists_bind_eq_positiveClosure`: positive closure is not a bind.
-* `egli`, `not_egli_negative`: Egli's theorem for positive extensions, and its failure for
-  negative ones.
-* `extension_true_bathroom`, `familiar_update_stone`: anaphora in bathroom sentences and Stone
-  disjunctions.
-* `not_familiar_update_disj`, `familiar_update_update_disj`: the apparent external staticity of
-  disjunction and Rothschild's observation.
-
 ## Implementation notes
 
 * A sentence denotes a `StateSet D SignType`, a map from assignments to sets of truth value and

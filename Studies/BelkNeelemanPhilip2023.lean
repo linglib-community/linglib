@@ -22,16 +22,6 @@ is ellipsis. Forced pruning comes first, so a constituent elided in the first co
 a multidominated pivot only at its right edge, and a finite pivot, which ellipsis cannot create,
 contains no further pivot.
 
-## Main statements
-
-* `licensed_rnrMD`, `licensed_rnrE`, `not_licensed_gapBeforePP`: multidominance and ellipsis
-  derive the same right-node raising, and neither leaves a gap before other material of the first
-  conjunct.
-* `licensed_pieBeforePim`, `not_licensed_pimBeforePie`: inside an elided pivot a multidominated
-  pivot may follow material that shows ellipsis, but not precede it.
-* `pivotOnset_nonfinite`, `pivotOnset_finite`: a nonfinite pivot has derivations with the break
-  before the auxiliary, the verb or the prepositional phrase; a finite pivot has only the first.
-
 ## Implementation notes
 
 * A derivation is a linearized syntactic object, multidominated material shared, with its forced and

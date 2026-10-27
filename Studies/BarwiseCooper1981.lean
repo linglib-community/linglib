@@ -36,14 +36,6 @@ so `few` comes out negative strong — B&C's Table II lists *few* as weak, a cla
 their own §4.8 discussion of *many* and *few* already marks as unstable. Partial determiners
 (*the n*, *both*, *neither*) fall outside the total type `GQ α` and are not treated.
 
-## Main results
-
-* `livesOn_apply_iff`, `there_of_positiveStrong`, `Definite.positiveStrong`: C1–C3.
-* `strong_trivial_of_intersective`, `scopeUp_of_restrictorUp_symmetric`: C6 and C7.
-* `exists_and_of_scopeUp_dual`: C10, with `most_selfDual_of_odd_count`.
-* `more_than_half_not_definable`, `more_than_half_not_Q_definable`: C12 and C13, with
-  `no_tree_means_most`, no tree of first-order constants means *most*.
-
 ## References
 
 * [barwise-cooper-1981]

@@ -18,18 +18,6 @@ head to the root, which comes first and forms no word. How complex a verb is and
 pronounced therefore vary independently, the same verbal complex surfacing in T in French, in
 Neg in Russian and in V in Danish.
 
-## Main statements
-
-* `flatMap_members_amalgamateSpine`: the complex heads partition the spine into contiguous
-  stretches in the order of syntactic composition, which gives the Head Movement Constraint,
-  the mirror generalization and the ban on excorporation.
-* `amalgamateSpine_raising_lowering`: the complex head of a spine can sit at any of its heads.
-* `forall_isLeftComb_iff`: the complex heads add one head at a time exactly when no head Lowers
-  right after a head has Raised into it.
-* `verb_placement`: the finite verbs of French, Danish and Russian precede a low adverb,
-  negation or a floating quantifier exactly where their complex head is pronounced in T or
-  above.
-
 ## Implementation notes
 
 * A spine lists the heads of an extended projection, lowest first, each with its [M] feature;

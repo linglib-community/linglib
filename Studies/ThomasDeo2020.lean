@@ -23,22 +23,6 @@ and gives a comparative an upper bound that cannot be cancelled.
   (49).
 * `ThomasDeo2020.just`: approximative *just*, (44).
 
-## Main results
-
-* `ThomasDeo2020.isGranularity_level`, `ThomasDeo2020.not_isPartition_range_level`: a level is a
-  granularity function, (40), that does not partition the scale.
-* `ThomasDeo2020.level_eq_iUnion_cell`: a level is the union of the cells around its degree over
-  all alignments of the grain, footnote 9.
-* `ThomasDeo2020.equative_mono`, `ThomasDeo2020.comparative_anti`: (47) and (51).
-* `ThomasDeo2020.just_equative`: with an equative *just* adds nothing, (48).
-* `ThomasDeo2020.just_comparative_iff`, `ThomasDeo2020.just.not_comparative`: *just older than*
-  holds at the finest grain and at no coarser one, (24).
-* `ThomasDeo2020.just_equative_of_comparative`: *just as tall as, if not taller*, (16).
-* `ThomasDeo2020.not_just_comparative_iff`: the two ways of denying *just older*, (31).
-* `ThomasDeo2020.just_comparative_Ici_iff`: the negative component is exhaustification over the
-  chain of grains, section 5.
-* `ThomasDeo2020.not_equative_of_comparative`: the contradiction of (30).
-
 ## Implementation notes
 
 Degrees form a linearly ordered additive group. A construction relates the grain, the standard

@@ -34,18 +34,6 @@ quantifier to that site give the same reading, so the split-scope reading (77b) 
 read zero books*, which the sentence lacks ((78)), is blocked only for the degree quantifier, by
 the Heim-Kennedy generalization ((80)).
 
-## Main results
-
-* `exhAgainst_zero_iff_no`, `zero_mem_countDegrees`: exhaustified *zero* is *no*, and the
-  unexhaustified *zero* is a tautology.
-* `not_licenses_zero`, `rows_predicted`: *zero* licenses no polarity item, *few* weak ones only
-  and *no* both, as the paper's judgments have it.
-* `kennedyZero_eq_nobody`: Kennedy's *zero* is the context of *no*.
-* `antitone_maxIn_countDegrees`, `not_antitone_maxIn_countDegrees_sdiff`: *fewer than ten* is
-  downward monotone with `×` and not with `*`.
-* `countDegrees_plural_eq_Iic_comp`: a count's measured degree property is that of its
-  pluralities under `×`.
-
 ## Implementation notes
 
 * Pluralities are the finite sets of atoms, and `plural Z` is `Mereology.FullAlgClosure` of
@@ -264,6 +252,7 @@ end Polarity
 A degree quantifier at a lower set, *fewer than ten* or *at most ten*, is downward monotone in its
 scope under `×`, since `0` keeps the degree property nonempty, and not under `*` ((65), (66)). -/
 
+/-- *fewer than ten* is downward monotone with `×` and not with `*`. -/
 theorem antitone_maxIn_countDegrees {U : Set ℕ} (hU : IsLowerSet U) {A : Set α} (hA : A.Finite) :
     Antitone fun B ↦ MaxIn U (countDegrees A (plural B)) := fun _ _ hB h ↦ by
   dsimp only at h ⊢

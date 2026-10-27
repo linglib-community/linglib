@@ -21,15 +21,6 @@ through the outcomes its reading leaves open, and propose that a choice follows 
 the partial outcome a description makes salient, with *at most* but not *up to* making the
 complement set salient, following Blok.
 
-## Main statements
-
-* `outcomes_positive_eq_negative_iff`: the two frames leave open the same outcomes just in case
-  the numeral is read precisely, the premise of the arithmetic argument for their equivalence.
-* `no_reading_only_account`: no account that sees a modifier only through its truth-conditional
-  readings predicts the opposite effects of *bis zu* and *höchstens*.
-* `salienceEffect_eq_framingEffect`: the salience and valence account predicts the direction
-  of the framing effect in all six conditions.
-
 ## Implementation notes
 
 * The German modifiers are the German Fragment's entries, and for salience *bis zu* and

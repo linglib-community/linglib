@@ -16,18 +16,7 @@ approach, Guerrini and Wehbe's presuppositional exhaustification below the quant
 presupposition accommodated globally, it affects positive ones only, including the positive part
 of *exactly two*. The third experiment found the negative part affected as much as the positive.
 
-## Main results
-
 * `pointwise_exactlyTwo_ne_zero_iff` and its siblings: the definedness conditions (25).
-* `symmetric_iff_nonImplicature`: Strong Kleene and Spector's supervaluation agree here (§3.2.1).
-* `pexPlural_alternatives`: `pex` on a boy's definite in a context.
-* `asymmetric_iff_of_scopeAntitone`, `asymmetric_exactlyTwo_universal_iff`: (26), (27) and (30).
-* `predictions_symmetric`, `predictions_asymmetric`: Tables 1 to 4, 6, 7, 9 and 10.
-* `implicature_negativeTarget`: Augurzky et al.'s implicature approach is symmetric under
-  *exactly two*.
-* `localAccommodation_iff_symmetric`: local accommodation (35) gives the symmetric verdict.
-* `significant_iff_augurzky`: the reanalysis changes no test's significance.
-* `effectSizes_likert`, `effectSizes_logOdds`: Table 12 from the figures and the estimates.
 
 ## Implementation notes
 
@@ -363,7 +352,7 @@ theorem asymmetric_iff_implicature [Decidable q.ScopeAntitone]
   · exact asymmetric_iff_of_scopeMonotone ctx opened (hq.resolve_right ha)
 
 /-- Accommodated below the quantifier, the asymmetric approach gives the symmetric verdict, so
-only a cost of local accommodation keeps its asymmetry (§4.3). -/
+only a cost of local accommodation keeps its asymmetry (§4.3) ((35)). -/
 theorem localAccommodation_iff_symmetric :
     localAccommodation q ctx opened ↔ symmetric q ctx (opened.map cell) := by
   rw [symmetric_iff, reading, localAccommodation, resolve, List.map_map]

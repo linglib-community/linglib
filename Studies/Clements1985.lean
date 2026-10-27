@@ -39,25 +39,6 @@ superfluous, is dropped by the later geometries formalized here (`Studies/Sagey1
   the place node, its SPE statement (14) copying `[anterior]` and `[distributed]`, and the
   `[αnasal]` variant the paper contrasts with it.
 
-## Main results
-
-* `supralaryngeal_subset_of_manner_of_place`, `eq_root_of_manner_of_laryngeal` — a spreading
-  that reaches a manner and a place feature carries the whole supralaryngeal class, and one that
-  reaches a manner and a laryngeal feature is the root; `no_spreading_nasal_distributed` (the
-  `[αnasal]` variant of (14)), `eq_root_of_continuant_of_voice` (Kikuyu, §5.1) and
-  `supralaryngeal_subset_of_anterior_of_continuant` (palatalisation, §5.2) are instances.
-* `naturalClass_rule12_target`, `rule12_θ`, `rule12_esh`, `rule12_r` — the targets of (12) are
-  /t d n/, and the three rows of table (11): before /θ/, /ʃ/ and /r/ they take the trigger's
-  place features and nothing else, becoming interdental, postalveolar and retroflex;
-  `rule12_n_p` and `rule12_s_θ` are the non-sites.
-* `rule14_eq_rule12`, `rule14Nasal_n_θ` — (14) agrees with (12) on table (11), while its
-  `[αnasal]` variant is a rule of the same form that applies, making /n/ an oral dental.
-* `preaspiration` — spreading the vowel's supralaryngeal node onto the delinked first half
-  of an aspirated geminate keeps the stop's laryngeal features ((7)), by the substrate's
-  disjointness of sister classes.
-* `mem_place_featureClass_iff`, `primary_separates_stops` — the place features are P ∪ S,
-  and P alone separates /p t k/, as in table (22).
-
 ## Implementation notes
 
 `classNode?` is defined on the features the paper names and is `none` elsewhere, so the

@@ -19,22 +19,6 @@ not. Since the presupposition of a complement projects into the subject's belief
 attitude, the negation lowers through *think* into the complement of *want* but not through *want*
 into the complement of *think*, the asymmetry of stacked neg-raising predicates that Horn reports.
 
-## Main results
-
-* `nrp_eq_neg_one_iff`, `nrp_self_eq_neg_one_iff`: a negated neg-raising predicate asserts the
-  negated complement throughout its modal base, and passes through to the negated complement when
-  its heritage base is its modal base.
-* `isAntiAdditive_negNR`, `not_isAntiAdditive_negUniversal`: a negated neg-raising predicate is
-  anti-additive and a negated universal is not.
-* `isAntiAdditive_noOneNR`: *no one thinks* is anti-additive under universal projection.
-* `isAntiAdditive_negStack_self`, `not_isAntiAdditive_negStack`: *not think want* is
-  anti-additive and *not want think* is not.
-* `strawsonAntiAdditive_not_sufficient`: Strawson anti-additivity does not characterize the
-  licensers of strict NPIs.
-* `rows_licensed`: the paper's judgments follow the anti-additivity of their environments, with
-  the superlatives the exception the paper records (`superlative_exception`) and a finite clause
-  boundary degrading the remaining case (`finite_boundary`).
-
 ## Implementation notes
 
 * `nrp` is the neg-raising predicate of Appendix 2, over a modal base and a heritage base, and

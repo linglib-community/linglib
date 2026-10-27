@@ -21,21 +21,6 @@ speech time, and *mae* and *ato* select a tensed clause directly, *mae* being st
 a variable. The logical forms are interpreted by Heim and Kratzer's type-driven composition,
 which gives a past under *mae* and a present under *ato* no denotation.
 
-## Main statements
-
-* `interpretable_selected`: of the four tensed clauses under *mae* and *ato*, the present under
-  *mae* and the past under *ato* compose.
-* `interpretable_iff_tense`, `relativeTense_iff_tense`: both accounts derive the tenses the
-  fragment records for *mae* and *ato*, and the selection account those of *toki*.
-* `beforeEver_of_before`, `not_forall_before_of_beforeEver`: on intervals (19) is strictly
-  stronger than Anscombe's *before ever*.
-* `extension_after_past`: on dense time *after* absorbs the past operator of the clause it
-  selects, the step the paper takes without comment, and on discrete time it does not.
-* `judgment_iff_relativeTense`: the relative-tense account errs on the past in a Japanese
-  *when*-clause and on the past and the future in a Polish *before*-clause, and nowhere else.
-* `not_exists_sot_polish`: no setting of the sequence-of-tense rule gives the relative-tense
-  account both the complements and the *before*-clauses of Polish.
-
 ## Implementation notes
 
 * A time is an interval of moments, with precedence and inclusion. The entity type of the

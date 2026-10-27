@@ -28,25 +28,6 @@ where the corresponding update succeeds.
 * `Minor2026.want`: an attitude (100) distributing the worlds compatible with its experiencer's
   wishes.
 
-## Main results
-
-* `Minor2026.composes_heads`, `Minor2026.spellOut`: the atomic plural is a well-typed head
-  spelled out as a plural, and `[#, UNIQUE]` is not well-typed (fn. 21).
-* `Minor2026.denote_heads`: the singular head denotes the singular's atomicity and uniqueness,
-  and the atomic plural's head atomicity alone.
-* `Minor2026.exh_atomicPlural`, `Minor2026.disjoint_exhR_atomicPlural`: Exh negates the singular
-  alternative of an atomic plural (87), mandatorily at single assignments (§6.2).
-* `Minor2026.notMem_dom_sentence_atomicPlural`, `Minor2026.atomicPlural_distW_iff`: an atomic
-  plural is contradictory without a weakly distributive licensor (88) and co-distributive under
-  one (90).
-* `Minor2026.notMem_dom_intro_test_of_injOn`: an atomic plural exhaustified relative to `w` fails
-  wherever `w` tells the assignments apart, at a single assignment and under an attitude.
-* `Minor2026.mem_dom_want_test_iff`: *want* with a flat complement quantifies over the worlds
-  compatible with the experiencer's wishes.
-* `Minor2026.wideScope_iff`: the wide-scope dependent plural (134), with each licensor's own
-  atomic referent (§8).
-* `Minor2026.partee`: Partee's generalization, the wide-scope readings of (93).
-
 ## Implementation notes
 
 * Intensionalized uniqueness `unique_w(y)` (103b) is Väänänen's dependence atom

@@ -16,22 +16,11 @@ its unilateral version loses the duality of the modals and the distribution of n
 disjunction, and recovers both with bilateral propositions; §8 shows the truth-value gaps this
 creates are well placed. The semantics is the theory-layer `MinimalCovering`.
 
-## Main results
-
-* `truth_box_disj`, `truth_dia_disj`: the target truth conditions of §5; `box_diversity`,
-  `truth_dia_conj_neg_subset`: Independence is strictly stronger than Diversity, the gap witnessed
-  by `Figures.diversity_without_independence` (Figure 1).
-* `truth_necessity_bang`, `truth_possibility_bang`: over `!φ` the modals are the orthodox
-  `ModalLogic.Box` and `ModalLogic.Diamond` (§6); `box_bang_disj`: the flexibility of (16)–(17).
-* `Unilateral.not_dia_disj`, `Unilateral.dia_right`, `Unilateral.box_neg_disj`: the unilateral
-  semantics of §6 invalidates Impossibility Distribution and duality (§7), and
-  `Unilateral.not_box_disj`, `Unilateral.box_right` Unnecessity Distribution.
 * Facts 1–7 of the appendix: `box_independence_left`, …, `dia_independence_right` (Fact 1);
   `box_conditional_left`, …, `dia_conditional_right` (Fact 2); `Figures.ross_invalid` (Fact 3);
   `free_choice` (Fact 4); `box_eq_neg_diamond_neg`, `diamond_eq_neg_box_neg` (Fact 5);
   `impossibility_distribution_left`, `impossibility_distribution_right` (Fact 6);
   `unnecessity_distribution_left`, `unnecessity_distribution_right` (Fact 7).
-* `dual_free_choice`: the Dual Free Choice inference of fn. 32.
 * §8: `isCompl_truth_falsity` (the modal-free fragment is classical), `ross_gap`,
   `free_choice_gap`, `independence_gap` and the card example `CardGame.gap`;
   `Figures.not_contraposition`: entailment is not closed under contraposition, the formal content

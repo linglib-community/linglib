@@ -34,16 +34,6 @@ conjunction; with symmetric ones it can. The three renderings of open scope in (
 satt at the same indices without being logically equivalent, and footnote 20's extension of their
 bound equivalences to arbitrary formulae fails for one of them (`not_boundEntails_ex20b_ex20a`).
 
-## Main statements
-
-* `update_indef_then_it`, `logicallyEquivalent_hasChild_isParent`, `update_isParent_then_it`: an
-  indefinite licenses a later pronoun, and a logically equivalent sentence without one does not.
-* `realize_ex22b_iff`, `realize_ex21b_iff_of_familiar`: a pronoun covaries under a quantifier
-  only with an indefinite in the restrictor.
-* `felicitous_ex15a_asymmetric`, `not_felicitous_ex15b_asymmetric`, `satt_ex15b_symmetric`: a
-  pronoun after its indefinite in a conjunction is felicitous, and one before it depends on the
-  order of local contexts.
-
 ## Implementation notes
 
 * An atomic valuation is a world-indexed family of structures `I : W → L.Structure E`, and atoms

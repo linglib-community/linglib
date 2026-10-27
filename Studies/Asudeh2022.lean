@@ -28,18 +28,6 @@ but two proofs, one per scope reading. Asudeh also takes resource sensitivity to
 LFG's Completeness and Coherence, which the Dutch cross-serial clauses of Bresnan, Kaplan, Peters
 and Zaenen bear out.
 
-## Main statements
-
-* `Term.Linear.rename_perm`, `Term.not_linear_weaken`, `Term.Linear.not_linear_contract`:
-  reordering premises keeps a proof linear, while weakening and contraction never do.
-* `Term.Linear.count_eq`, `derivable_iff_complete_coherent`: linear proofs preserve the count
-  of every atom, and a Dutch clause's premises have a proof exactly when its f-structure is
-  complete and coherent.
-* `finnish_english`: the Finnish and English sentences instantiate the same premises.
-* `card_correct_loves`, `surface_eval`, `inverse_eval`, `interp_qr_eq_eval`: *Everybody loves
-  somebody* has exactly two correct proof nets, and its two proofs mean its surface and inverse
-  readings, which Heim and Kratzer derive from two Quantifier Raising trees.
-
 ## Implementation notes
 
 * Proofs are intrinsically typed λ-terms over a list of premises; the structural rules rename

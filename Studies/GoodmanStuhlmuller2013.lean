@@ -19,23 +19,6 @@ listener gives the state under that belief. The listener, who knows her access b
 observation, models her with the observation drawn at the state (`speaker`) and applies Bayes'
 rule (`listener`).
 
-## Main statements
-
-* `speaker_real_singleton`: the speaker says only what holds at every state her observation
-  leaves possible, and weights such an utterance by the inverse size of its extension to the
-  power of the rationality.
-* `listener_full_lt`: with complete access the speaker knows the state, and of two states at
-  which an utterance is true the listener favours the one at which fewer alternatives are true.
-  For three objects, *some* implicates *not all* (`some_full`) and a numeral its exact reading
-  (`two_full`, `one_full`).
-* `speaker_of_isUpperSet`: when every meaning is upward closed, as the lower-bounded numerals
-  are, the speaker who has seen `k` objects with the property speaks as one who knows there are
-  exactly `k`.
-* `some_partial`, `one_minimal`, `two_partial`, `one_partial_three`, `one_partial_two`: with
-  access to one or two of three objects the *some* implicature is canceled, *one* after one
-  object and *two* after two carry none, and *one* after two objects keeps the implicature
-  against three but not against two.
-
 ## Implementation notes
 
 * The speaker is `RSA.speaker` at her posterior belief and no cost, composed with the draw of

@@ -24,15 +24,6 @@ subject is the argument a hierarchy ranks highest. The book's subjects share no 
 formed they share the nonspatial source: unlike French *à*, subjecthood is a neutralization whose
 residue a rule supplies.
 
-## Main statements
-
-* `Relation.IsSubjectOf.hasSourceAt_formSubject`: every subject, once formed, bears the nonspatial
-  source.
-* `residue_subjects_fell`, `residue_formedSubjects`: the book's subjects share no cell, and once
-  formed they share the nonspatial source.
-* `residue_a`: *à* leaves in common a locative that is not a source.
-* `rows_subject`: the hierarchy selects the subject the book records for each of its examples.
-
 ## Implementation notes
 
 * The comma of the hierarchy reads "combined with some other relation". The optional comma on the

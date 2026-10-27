@@ -20,16 +20,6 @@ two such maps differ by a transformation that rescales blocks and locations with
 Sorites whose series is infinite, being bald as not being largely less bald than the last member
 makes the premises jointly satisfiable.
 
-## Main statements
-
-* `instIsEmptyMarginalScale`: no conditionally complete order, such as the naturals or the
-  reals, carries an ML scale.
-* `exists_isHom_lex_rat_int`: every countable, finitely marginal ML scale maps homomorphically
-  into the representative model `ℚ ×ₗ ℤ`.
-* `heap_iff_bald`: Itzhaki's heaps are exactly what is not largely smaller than a clear case.
-* `not_transGen_marginallyLT`: no finite chain of marginal steps leads from someone not bald to
-  the last member of a Sorites series.
-
 ## Implementation notes
 
 * The project's ML scales are those of [dinis-jacinto-2026], over a linear order with marginally

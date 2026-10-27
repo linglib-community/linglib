@@ -28,19 +28,6 @@ negation and the determiner–modal generalization for infinitival relatives
 * `Projection`, `Available`: what a possibility modal projects, and the readings a projection
   licenses in an environment.
 
-## Main results
-
-* `contradiction_tests`, `triviality_tests`, `tests_predicted`, `crosslinguistic_tests`: (6),
-  (8), (11) and (12) from the force scale, and the chapter's judgments row by row.
-* `vfiWeak_negRaises_iff`: domain-restriction weak necessity neg-raises for every prejacent at
-  once only in the one-world limit of its domain.
-* `projection_matches_table`, `readings_licensed`: the four projections license exactly the
-  readings of the chapter's table, and every reading of its examples.
-* `exh_subdomain`: (50), exhaustification over the subdomain alternatives is necessity over
-  the domain.
-* `weak_never_narrow`, `must_narrow_iff_higher`, `haveTo_always_narrow`,
-  `strong_determiner_should`: the scope and infinitival-relative generalizations over the rows.
-
 ## Implementation notes
 
 * `Available` transcribes the chapter's reasoning about each cell of its table; only the

@@ -24,14 +24,6 @@ Giannakidou and the attitude-phrase account of Vu and Lohiniva each miss one str
   Spec-CP.
 * `Intervention.Licensed`, `AttP.Licensed`: the rival accounts.
 
-## Main statements
-
-* `licensed_theHell_iff`: *the-hell* is licensed iff its wh-phrase takes scope in matrix Spec-CP.
-* `licensed_daodi`: *daodi* is licensed over a wh-phrase in situ.
-* `licensed_iff_intervention_multiple`: in English multiple questions the accounts agree.
-* `ascription_rows`, `intervention_rows`, `attP_rows`, `island_rows`: the accounts against the
-  rows; `covert_mispredicts`: covert movement gets the island and modifier facts wrong.
-
 ## Implementation notes
 
 The structures are schematic Singlish questions (2), (11), which the Malay and Mandarin rows

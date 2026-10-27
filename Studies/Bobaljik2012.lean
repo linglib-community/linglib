@@ -47,45 +47,6 @@ positive, is ABA without any homophony.
 * `MorphComparative`, `MorphSuperlative`, `Records`: a table row's `M`
   columns, and the synthetic extents of a language's adjectives they record.
 
-## Main results
-
-* `isContiguous_iff_ne_basque`, `ne_aab`, `abc_iff`: of the 73 adjectival
-  cognate triples of Table 4.1, read from `Data/Wordlist/Bobaljik2012`,
-  every one is contiguous but the Basque doublet (143b), no triple is AAB,
-  and the ABC ones are the triples (31) and p. 112 name.
-* `quantifier_isContiguous_iff`, `bulgarian_armenian_eq_abb_comp`,
-  `karelian_sources`, `exists_ungrammatical_of_not_isContiguous`: of the
-  quantifier triples of Table 4.2, all but the three of (165) are
-  contiguous; the Bulgarian and Armenian ones are ABB through a superlative
-  embedding the positive, and the Karelian one is contradicted by the
-  triple (170), its superlative rejected by the questionnaire.
-* `csg1_of_ne_basque`, `basque_not_realized`: CSG1 holds of every other
-  triple, and no antihomophonous vocabulary realizes the Basque one.
-* `bearsOnCSG_names`, `eurasia_of_suppletion`,
-  `exists_rootClasses_of_bearsOnCSG`: of the 148 languages of the broad
-  sample, read from `Data/StructureDataset/Bobaljik2012`, four have suppletion and
-  a morphological superlative, every language with suppletion is in Eurasia,
-  and each of the four has a triple in Table 4.1.
-* `exists_records_iff`, `ssg_exceptions`: a row records synthetic extents
-  exactly when it satisfies the SSG, and of the rows of Tables A.1 and B.1
-  only the four counterexamples §3.4.2 and §3.4.3 discuss fail it.
-* `english_ssg`, `english_rsg`: (3) and (4) on the English Fragment.
-* `czech_bad_abb`, `latin_realize_abc`, `welsh_good_abc`: the engine derives
-  the book's paradigms.
-* `aabContextual_not_adjacent`, `welshAAB_not_grounded`,
-  `fakeAba_not_antihomophonous`: each unattested shape violates exactly one
-  condition.
-* `latin_sprl_needs_portmanteau`: ABC needs a portmanteau ((199)).
-* `greek_comparative`: *pjo kak-ós*, not *pjo cheir-ós* ((94)).
-* `csg1_iff_one_le`: with a suppletive comparative, CSG1 holds of the
-  superlative exactly when its adjective word contains CMPR (§3.3.3).
-* `greek_superlative`, `russian_bad_eq_ploxoj`: the Greek superlative inherits
-  the suppletive root ((106a)) and the Russian one does not ((106d)), as the
-  Fragment's *samyj plox-oj* shows.
-* `periphrastic_of_aba`: on the Fragments a superlative on the positive's root
-  after a comparative on another is periphrastic.
-* `latin_ns_eq_dm`: nanosyntax and DM realize Latin alike.
-
 ## Implementation notes
 
 Lesslessness (5) — no language has a synthetic comparative of inferiority
@@ -475,6 +436,7 @@ def czechBad : RuleSet (SpanRule 3 String) := [⟨"špatn", 0, none⟩, ⟨"hor"
 theorem czech_bad_realize : realize czechBad = ![some "špatn", some "hor", some "hor"] := by
   decide
 
+/-- The engine derives the book's paradigms. -/
 theorem czech_bad_abb : Setoid.ker (realize czechBad) = Setoid.ker Paradigm.abb := by decide
 
 /-- English GOOD (203), with *bett-* under CMPR and *good* elsewhere. -/
@@ -585,7 +547,7 @@ locality (90) only the first inherits a suppletive comparative root, so CSG1
 holds of the first type and fails for the second. -/
 
 /-- With a suppletive comparative, CSG1 holds of the superlative exactly when the superlative's
-adjective word contains the comparative head. -/
+adjective word contains the comparative head (§3.3.3). -/
 theorem csg1_iff_one_le {F : Type*} {e : Fin 3 → Fin 3} (he : ∀ g, e g ≤ g)
     {v : RuleSet (SpanRule 3 F)} (hAH : v.Antihomophonous)
     (h : realize v (e 1) ≠ realize v (e 0)) :

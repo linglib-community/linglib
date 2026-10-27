@@ -24,21 +24,6 @@ and three he does not.
 * `Dixon1982.openClass`, `Dixon1982.noClass`, `Dixon1982.closedClass`: the languages by their
   adjective class.
 
-## Main results
-
-* `exists_predominantly_iff`: a language with an open adjective class or none has one predominant
-  part of speech for all seven types, except Tzotzil.
-* `takes_adjective_iff`: (a), age, dimension, value and colour have adjectives in every
-  closed-class language, except Bemba and Kiriwinian colour and Hua value.
-* `predominantly_noun_iff`: (b), human propensity is mostly nouns, except in Alamblak and
-  Kiriwinian.
-* `takes_physicalProperty_of_humanPropensity`: (c), a closed class with a human-propensity
-  adjective has a physical-property one, except in Sango.
-* `speed_iff`: (d), speed shares a part of speech with physical property, or is an adverb where
-  physical property is verbal, except in Kiriwinian.
-* `pair_iff`: the A/V and N/V pairs of Table 2 are the strongly verbal languages, Hausa and
-  Alamblak.
-
 ## Implementation notes
 
 * A code's parts are the basic parts of speech it involves. A pair code such as `A/V` involves

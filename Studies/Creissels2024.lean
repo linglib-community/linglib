@@ -20,21 +20,6 @@ structure or suppressed from it. Symmetrical voices select a pivot without eithe
 outside the typology. Alignment is reformulated as obligatory A-coding or P-coding, which split-S
 languages violate.
 
-## Main statements
-
-* `rows_classified`: every derived construction of the book's examples realizes the type the
-  book assigns it.
-* `voices_typed`: the book's voices of §8.3.4.1, §8.3.5 and §8.3.7 realize their types.
-* `stacking_tswana`, `stacking_nahuatl`: stacked voice markers compose their alternations.
-* `balinese_symmetrical`: beside a passive, an applicative and a causative, the symmetrical
-  voices of Balinese are its agent and patient voices.
-* `break_decausativization`: the English fragment's *break* is a decausativization in its own
-  diatheses.
-* `weakReciprocity_pair_iff`, `liftRel_singleton_iff`, `not_weakReciprocity_singleton`: the
-  reciprocal event of §11.3.1 is (30b) on two participants, and §11.3.3's account of the
-  reflexive–reciprocal polysemy holds for every member doing and undergoing but not for the
-  reciprocity with "another member" of §8.3.3 and §11.3.1.
-
 ## Implementation notes
 
 * The types of voice alternation are the substrate's (`Syntax/Voice/Construction.lean`),

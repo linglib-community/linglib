@@ -14,17 +14,6 @@ cost of her utterance. Against a fixed listener the RSA speaker maximizes the tr
 against a fixed speaker the Bayesian listener does, so the tradeoff never decreases along the
 recursion.
 
-## Main statements
-
-* `freeEnergy_le_freeEnergy_speaker`, `freeEnergy_le_freeEnergy_listener`: against a fixed
-  listener the RSA speaker maximizes the tradeoff, and against a fixed speaker the Bayesian
-  listener does.
-* `freeEnergy_le_freeEnergy_listener_succ`, `freeEnergy_le_freeEnergy_speaker_succ`,
-  `exists_tendsto_freeEnergy`: along the recursion each listener update and each speaker update
-  raises the tradeoff, which therefore converges.
-* `listener_apply_singleton_eq_zero`, `speaker_listener_apply_singleton_eq_zero`: no agent of the
-  recursion pairs an utterance with a meaning the lexicon rules out for it.
-
 ## Implementation notes
 
 * The paper's speaker knows the meaning, so its tradeoff is `RSA.freeEnergy` at the identity

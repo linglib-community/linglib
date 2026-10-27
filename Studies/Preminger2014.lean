@@ -19,25 +19,6 @@ obligatory-operations model of chapter 5 a probe that finds no goal ends unvalue
 The probes read agreement features, not salience, so the K'ichee' formal addressee, which agrees as
 a third person singular, does not outrank the third person (§7.1).
 
-## Main results
-
-* `Preminger2014.afTarget_eq`, `Preminger2014.afTarget_eq_rank`: the slot reflects the
-  participant if there is one, otherwise the plural argument.
-* `Preminger2014.af_paradigm`, `Preminger2014.afMarker_comm`: the probes deliver the hierarchy's
-  marker, symmetrically in subject and object.
-* `Preminger2014.personRestriction_iff_plc`: the person restriction is the Person Licensing
-  Condition.
-* `Preminger2014.participant_marker`: the clitic carries its goal's whole φ-set (68), (69).
-* `Preminger2014.afTarget_eq_none_iff`, `Preminger2014.failed_agree_tolerated`: failed Agree
-  converges with the null exponent.
-* `Preminger2014.plural_marker`: an available plural goal must be agreed with (114).
-* `Preminger2014.relativization_contrast`: relativization separates the pattern from the Person
-  Case Constraint (§4.2).
-* `Preminger2014.hierarchy_silent_on_restriction`: a hierarchy cannot state the person
-  restriction (§7.1).
-* `Preminger2014.formal_addressee`: the K'ichee' formal addressee patterns as a third person
-  singular (§7.1).
-
 ## Implementation notes
 
 The probes are the substrate's `Probe.Target.participant` and `.plural`, and their competition

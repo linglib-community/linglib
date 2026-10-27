@@ -31,27 +31,6 @@ and Shimoyama.
   consistent.
 * `Available`, `Excluded`: some admissible model makes a reading felicitous, or none does.
 
-## Main results
-
-* `evenEnrich_eq_or_eq_empty`, `evenEnrich_disj_eq_empty`, `evenEnrich_image_antitone_eq`: `E` is
-  vacuous or contradictory; it is contradictory at the existential and vacuous under negation,
-  (47)–(53).
-* `oMinus_biUnion`, `oMinus_biUnion_eq_inter_sInter`: `O⁻` gives an existential universal force
-  over its domain, (63), and there agrees with the simpler (62).
-* `oMinus_antitone_eq`, `not_oMinus_ssubset_of_antitone`: under negation the
-  free-choice implicature vanishes, so *qualunque* has no negative-polarity construal, (65)–(72).
-* `oMinus_biUnion_eq_empty_of_isActualist`: an episodic universal over a widened domain is never
-  true, (67).
-* `exh_atLeastTwo_eq_exactlyOne`, `oMinus_exactlyOne_eq_empty`: `O` against the scalar
-  alternative yields uniqueness, (81), and an existential free-choice item is then contradictory
-  in an episodic sentence, (82).
-* `oMinus_core_biUnion_subset`, `oMinus_core_exactlyOne_subset`,
-  `card_le_one_of_forall_mem_core_exactlyOne`: under a necessity modal `O⁻` yields free choice,
-  (93d) and (117), while letting the whole domain be an antecedent would leave room for a single
-  doctor only, (118).
-* `judgedReadings_predicted`, `judgedSentences_predicted`: every judgment in the paper's rows
-  follows from the item's profile.
-
 ## Implementation notes
 
 Propositions are sets of worlds, and "stronger relative to the common ground" in (50a) is

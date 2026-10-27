@@ -24,13 +24,6 @@ One ranking per group then gives [u] before /-je-/ and the group's vowel before 
 rankings generates all of its forms (`existsUnique_generates`), the Bulgarian and Macedonian
 present in [uv] included, since its theme is /-a-/.
 
-## Main results
-
-* `optimal_eq`: the winner of each group's ranking in each context.
-* `image_pattern`: the factorial typology of the variable constraints, the paper's (31).
-* `existsUnique_generates`: each variety's forms single out its group.
-* `uv_bounds_ov`: over the paper's own constraints [uv] harmonically bounds [ov].
-
 ## Implementation notes
 
 The paper states MAX and DEP over the morphemic and phonetic structures of Containment Theory.
@@ -201,6 +194,7 @@ def Group.form (g : Group) : Context → Candidate
   | ⟨_, .je⟩ => .delete
   | ⟨s, .a⟩ => .fill (g ≠ .ovEv ∨ s = .plain) (g = .uv)
 
+/-- Each group's ranking gives its verbalizer in every context. -/
 theorem optimal_eq (g : Group) (c : Context) : optimal c g.ranking = {g.form c} := by
   obtain ⟨_ | _, _ | _⟩ := c <;> cases g <;> decide
 
@@ -215,6 +209,7 @@ theorem uv_le_ov (s : Wordlist.Root) :
       depNonhigh ⟨s, .a⟩ (.fill true true) < depNonhigh ⟨s, .a⟩ (.fill true false) := by
   revert s; decide
 
+/-- No ranking of the paper's constraints gives [ov], since [uv] harmonically bounds it. -/
 theorem uv_bounds_ov (s : Wordlist.Root) {rk : List (Constraint Candidate)}
     (hrk : rk.Perm (paperConstraints ⟨s, .a⟩)) :
     Candidate.fill true false ∉
@@ -232,7 +227,7 @@ consonant and after a palatal. -/
 def pattern (vs : List (Context → Constraint Candidate)) : Finset Candidate × Finset Candidate :=
   (optimal ⟨.plain, .a⟩ vs, optimal ⟨.palatal, .a⟩ vs)
 
--- (31)
+/-- The rankings of the four constraints derive exactly the four patterns of (31). -/
 theorem image_pattern :
     ([noShare, depBack, depNonhigh, depHigh].permutations'.map pattern).toFinset =
       {({.fill true false}, {.fill true false}), ({.fill true false}, {.fill false false}),
@@ -284,6 +279,9 @@ def varieties : List String := (Wordlist.lexemes.map (·.variety)).dedup
 def formsOf (variety : String) : List Wordlist.Analysis :=
   Wordlist.analyses.filter (·.form.lexeme.variety = variety)
 
+/-- For every variety exactly one group generates all of its forms, the infinitive-stem forms
+after a plain and after a palatal root and the present forms alike. The Bulgarian and
+Macedonian present in [uv] needs no separate statement, since its theme is /-a-/. -/
 theorem existsUnique_generates :
     ∀ variety ∈ varieties, ∃ g : Group,
       (∀ a ∈ formsOf variety, Generates g a) ∧

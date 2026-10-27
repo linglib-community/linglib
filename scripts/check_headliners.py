@@ -1,25 +1,23 @@
 #!/usr/bin/env python3
-"""Check that each study names at most five headline theorems and documents only those.
+"""Check that each study documents one to five theorems: its headline results.
 
-A study's headline theorems are the ones its module docstring lists under `## Main results` (or
-`## Main statements`). Two rules:
+A study's headline theorems are exactly the theorems that carry a docstring; the module docstring
+does not list them again. Two rules:
 
-- The section exists and names one to five theorems of the file. Studies listed in
+- A study has one to five theorems with a docstring. Studies listed in
   `scripts/headliners_baseline.txt` predate the rule and are exempt until they are next audited;
   a listed study that passes is reported so it can leave the list.
-- A theorem the module docstring does not name has no docstring: a paper locator or citation goes
-  in a `--` comment instead. When the section is missing, every theorem the docstring mentions
-  counts as named. Theorems whose proof has `sorry`, or whose docstring mentions TODO, UNVERIFIED
-  or `sorry`, keep their docstrings.
+- The module docstring has no `## Main results` (or `## Main statements`) section.
 
-`--fix` rewrites the docstrings of unnamed theorems as such comments (`-- Table 3`, `-- (12), p. 4
-[key]`), or drops those with neither, and confirms that nothing but comments changed.
+`--demote FILE NAME ...` turns the named theorems' docstrings into a `--` comment holding their
+paper locators and citations (`-- Table 3`, `-- (12), p. 4 [key]`), or drops docstrings that have
+neither, and confirms that nothing but comments changed.
 
 Usage, from the repository root:
 
-    python3 scripts/check_headliners.py                    # check every study, exit 1 on a breach
-    python3 scripts/check_headliners.py --fix [FILE ...]   # rewrite minor docstrings (all studies)
-    python3 scripts/check_headliners.py --write-baseline   # list the studies the first rule exempts
+    python3 scripts/check_headliners.py                          # check every study
+    python3 scripts/check_headliners.py --demote FILE NAME ...   # demote theorems to minor
+    python3 scripts/check_headliners.py --write-baseline         # list the studies exempt
 """
 
 import argparse
@@ -30,9 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BASELINE = ROOT / "scripts" / "headliners_baseline.txt"
 CAP = 5
-MOD = re.compile(r"/-!(.*?)-/", re.S)
-MAIN = re.compile(r"^## Main (?:results|statements)\s*\n(.*?)(?=^## |\Z)", re.S | re.M)
-NAME = re.compile(r"`([A-Za-z_][\w.'₀-₉]*)`")
+MAIN =re.compile(r"^## Main (?:results|statements|theorems)\b", re.M)
 CITE = re.compile(r"\[([a-z0-9][a-z0-9-]*-\d{4}[a-z]?)\]")
 NUM = r"(?:[IVXLC]+\b|\d+(?:\.\d+)*[a-z]?)"
 WORDS = (r"Tables?|Figures?|Fig\.|Sections?|Chapters?|Ch\.|Appendix|Definitions?|Def\.|"
@@ -45,10 +41,8 @@ LOCATOR = re.compile(
     r"|\bpp?\.\s?\d+(?:\s?[–-]\s?\d+)?"
     r"|(?<![\w)])\(\d{1,3}[a-z]?(?:[a-z]|[,–-]\s?\d{0,3}[a-z]?)*(?:\.[a-z\d]+)?\)"
     r"|(?<![\w)])\((?=[ivx])x{0,3}(?:ix|iv|v?i{0,3})\)")
-DECL = re.compile(r"\s*((?:@\[[^\]]*\]\s*)*)((?:(?:private|protected|nonrec|noncomputable) )*)"
+DECL = re.compile(r"\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|nonrec|noncomputable) )*"
                   r"(theorem|lemma)\s+([^\s:({\[]+)")
-THEOREM = re.compile(r"(?m)^[ \t]*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|nonrec) )*"
-                     r"(?:theorem|lemma)\s+([^\s:({\[]+)")
 
 
 def comment_end(t, i):
@@ -86,27 +80,24 @@ def code(t):
     return re.sub(r"\s+", " ", "".join(out)).strip()
 
 
-def header(t):
-    """The names the module docstring lists as main results (None without the section), the names
-    it mentions anywhere, and where it ends."""
-    m = MOD.search(t)
-    if not m:
-        return None, set(), 0
-    main = MAIN.search(m.group(1))
-    listed = list(dict.fromkeys(NAME.findall(main.group(1)))) if main else None
-    return listed, set(NAME.findall(m.group(1))), m.end()
+def module_doc(t):
+    """The span of the module docstring's text, or None. Comments nest, so a `/-je-/` in its prose
+    does not end it."""
+    i = t.find("/-!")
+    return (i + 3, comment_end(t, i) - 2) if i >= 0 else None
 
 
-def named(name, names):
-    """Whether a declared theorem is among `names`, either written in full or by its last part."""
-    return any(name == n or name.endswith("." + n) or n.endswith("." + name) for n in names)
-
-
-def body_of(t, start):
-    """The declaration from `start` to the next line that begins at column 0."""
-    nl = t.find("\n", start)
-    m = re.search(r"\n(?=\S)", t[nl:]) if nl >= 0 else None
-    return t[start:nl + m.start()] if m else t[start:]
+def headliners(t):
+    """The theorems that carry a docstring: (docstring start, docstring end, indent, docstring, name)."""
+    span = module_doc(t)
+    start = span[1] + 2 if span else 0
+    for d in re.finditer(r"(?m)^([ \t]*)/--", t):
+        if d.start() < start:
+            continue
+        end = comment_end(t, d.start() + len(d.group(1)))
+        thm = DECL.match(t, end)
+        if thm:
+            yield d.start(), end, d.group(1), t[d.start() + len(d.group(1)) + 3:end - 2], thm.group(2)
 
 
 def locators(doc):
@@ -115,27 +106,11 @@ def locators(doc):
     return locs, [f"[{k}]" for k in dict.fromkeys(CITE.findall(doc))]
 
 
-def minor_docstrings(t):
-    """The docstrings of theorems the header does not name: (start, end, indent, doc, name)."""
-    listed, mentioned, start = header(t)
-    heads = mentioned if listed is None else set(listed)
-    for m in re.finditer(r"(?m)^([ \t]*)/--", t):
-        if m.start() < start:
-            continue
-        end = comment_end(t, m.start() + len(m.group(1)))
-        d = DECL.match(t, end)
-        if not d or named(d.group(4), heads):
-            continue
-        doc = t[m.start() + len(m.group(1)) + 3:end - 2]
-        if re.search(r"\bsorry\b", body_of(t, d.start(3))) or re.search(r"TODO|UNVERIFIED|\bsorry\b", doc):
-            continue
-        yield m.start(), end, m.group(1), doc, d.group(4)
-
-
-def fix(t):
+def demote(t, names):
+    """`t` with the docstrings of the theorems in `names` turned into locator comments."""
     out, i = [], 0
-    for start, end, indent, doc, _ in minor_docstrings(t):
-        if start < i:
+    for start, end, indent, doc, name in headliners(t):
+        if not any(name == n or name.endswith("." + n) or n.endswith("." + name) for n in names):
             continue
         locs, keys = locators(doc)
         line_end = end + 1 if t[end:end + 1] == "\n" else end
@@ -149,66 +124,53 @@ def fix(t):
     return "".join(out)
 
 
-def cap_breach(t):
+def breach(t):
     """Why the file breaks the first rule, or None."""
-    listed, _, _ = header(t)
-    if listed is None:
-        return "no `## Main results` section"
-    theorems = THEOREM.findall(t)
-    missing = [n for n in listed if not any(named(d, [n]) for d in theorems)]
-    if missing:
-        return "lists names that are not theorems of the file: " + ", ".join(missing)
-    if not 1 <= len(listed) <= CAP:
-        return f"lists {len(listed)} main results (at most {CAP})"
-    return None
-
-
-def studies(paths=None):
-    return [Path(p) for p in paths] if paths else sorted((ROOT / "Studies").glob("*.lean"))
+    n = len(list(headliners(t)))
+    return None if 1 <= n <= CAP else f"documents {n} theorems (one to {CAP})"
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--fix", nargs="*", metavar="FILE", help="rewrite the docstrings of unnamed theorems")
+    ap.add_argument("--demote", nargs="+", metavar=("FILE", "NAME"), help="demote theorems to minor")
     ap.add_argument("--write-baseline", action="store_true", help="list the studies the first rule exempts")
     args = ap.parse_args()
+    studies = sorted((ROOT / "Studies").glob("*.lean"))
 
-    if args.fix is not None:
-        changed = 0
-        for f in studies(args.fix):
-            t = f.read_text(encoding="utf-8")
-            new = fix(t)
-            if new != t:
-                if code(new) != code(t):
-                    sys.exit(f"{f}: rewriting the docstrings would change code; fix it by hand")
-                f.write_text(new, encoding="utf-8")
-                changed += 1
-        print(f"rewrote minor docstrings in {changed} files")
+    if args.demote:
+        f, names = Path(args.demote[0]), args.demote[1:]
+        t = f.read_text(encoding="utf-8")
+        new = demote(t, names)
+        if code(new) != code(t):
+            sys.exit(f"{f}: demoting would change code; edit it by hand")
+        f.write_text(new, encoding="utf-8")
+        print(f"{f}: {len(list(headliners(t))) - len(list(headliners(new)))} docstrings demoted")
         return
 
     if args.write_baseline:
-        exempt = [f.stem for f in studies() if cap_breach(f.read_text(encoding="utf-8"))]
+        exempt = [f.stem for f in studies if breach(f.read_text(encoding="utf-8"))]
         BASELINE.write_text("\n".join(exempt) + "\n", encoding="utf-8")
         print(f"wrote {BASELINE.relative_to(ROOT)}: {len(exempt)} studies")
         return
 
     exempt = set(BASELINE.read_text(encoding="utf-8").split()) if BASELINE.exists() else set()
     breaches, leave = [], []
-    for f in studies():
+    for f in studies:
         t = f.read_text(encoding="utf-8")
-        why = cap_breach(t)
+        why = breach(t)
         if why and f.stem not in exempt:
             breaches.append(f"{f.relative_to(ROOT)}: {why}")
         elif not why and f.stem in exempt:
             leave.append(f.stem)
-        for _, _, _, _, name in minor_docstrings(t):
-            breaches.append(f"{f.relative_to(ROOT)}: `{name}` is not a main result but has a docstring "
-                            "(run with --fix)")
+        span = module_doc(t)
+        if span and MAIN.search(t, span[0], span[1]):
+            breaches.append(f"{f.relative_to(ROOT)}: the module docstring lists main results; "
+                            "the theorems with docstrings are the headline results")
     for b in breaches:
         print(b)
     for s in leave:
         print(f"note: {s} now passes; remove it from {BASELINE.relative_to(ROOT)}")
-    print(f"{len(studies())} studies, {len(exempt)} exempt from the cap, {len(breaches)} breaches")
+    print(f"{len(studies)} studies, {len(exempt)} exempt from the count, {len(breaches)} breaches")
     sys.exit(1 if breaches else 0)
 
 

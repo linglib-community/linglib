@@ -19,14 +19,7 @@ alternatives, qualitatively additive measures and the m-lifting. What separates 
 of additivity is Kraft, Pratt and Seidenberg's ordering on five worlds, the paper's World Cup
 comparisons (3)–(6), which the paper doubts speakers find inconsistent.
 
-## Main results
-
-* `lLift_validities`, `disjunction_problem`, `lLift_refutes_V11_V13`: Fact 1. The l-lifting's
-  V12, which Yalcin counts among the account's failures, follows from its I2.
 * `measure_validities`, `qualAddMeasure_validities` and the refutations of I1–I3: Facts 2, 3.
-* `mLift_validities`, `mLift_refutes_I_patterns`: Fact 5. By `measure_le_of_matchingLift` the
-  m-lifting is sound for any measure that agrees with the world ordering on singletons.
-* `worldCup_not_finitelyAdditive`, `fa_representable_iff_card_lt_five`: Theorem 8.
 
 ## Implementation notes
 

@@ -27,16 +27,6 @@ positions extends the order of its tiers and makes its lines overlaps (26).
 * `IsEventStructureOf X prec ov`: an event structure on the positions of a representation,
   extending its tiers and associations.
 
-## Main statements
-
-* `isEventStructure_intervals`: intervals satisfy the axioms under (11).
-* `isEventStructure_iff_isIntervalOrder`: with overlap the incomparability, the axioms say that
-  precedence is an interval order.
-* `IsEventStructure.not_crossing`, `IsEventStructureOf.noCrossing`: the derivation of the
-  No-Crossing Constraint.
-* `clements_consistent`: the representation (27) of Clements's `mo yɛ ka` is consistent.
-* `not_isEventStructureOf_cycle`: three tiers whose lines cross none pairwise are inconsistent.
-
 ## Implementation notes
 
 The paper's event structures are the structures of precedence and overlap of the logic of time;

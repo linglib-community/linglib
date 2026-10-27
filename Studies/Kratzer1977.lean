@@ -16,12 +16,6 @@ murder must be a crime, while deer can be responsible and can fail to be. The re
 the former principals of a Whare Wananga show that the verdicts depend on how premises are
 individuated.
 
-## Main statements
-
-* `must_p`, `can_q`, `can_neg_q`: the revised verdicts on the New Zealand judgments.
-* `not_must_q`, `must_q`: flying is required only when Te Miti's recommendation is two premises.
-* `canInView_iff_not_mustInView_not`: the revised modals are dual.
-
 ## Implementation notes
 
 * Each example's worlds are the four combinations of the two issues it turns on, and its

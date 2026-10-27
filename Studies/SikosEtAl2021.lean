@@ -13,19 +13,6 @@ pragmatic conditions, the pairs of a context and a word in which the informative
 of the word varies across the objects it is true of. A pragmatic condition is solvable when the
 listener then has a single favourite and reducible when it only excludes a competitor.
 
-## Main statements
-
-* `tendsto_speaker_baselineSpeaker`: the baseline speaker is the informative speaker's limit as
-  the rationality goes to zero, the sense in which the baseline is the model at `α = 0`.
-* `baselineListener_real_singleton_lt_iff`: among the objects a word is true of, the baseline
-  listener follows the prior.
-* `pragmatic_iff`, `not_pragmatic_iff`: a condition is pragmatic exactly when two objects the
-  word is true of share their other feature with different numbers of objects, and otherwise a
-  listener with a uniform prior is as indifferent as the baseline.
-* `solvable_blue`, `solvable_boot`, `reducible_blue`: the conditions of the paper's tables are
-  solvable and reducible at every positive rationality, and `not_pragmatic_boot` is an ambiguous
-  one.
-
 ## Implementation notes
 
 * Fit statistics stay in prose. Across three experiments the baseline fit listener choices at

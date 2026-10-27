@@ -20,19 +20,6 @@ quantifier holds of, and its Definiteness Principle makes that content a context
 in a definite use and a member of the store of existentially quantified objects in an
 indefinite one.
 
-## Main statements
-
-* `rows_predicted`: every corpus reading the paper judges possible queries a contextual
-  parameter of the sign for that use of a noun phrase, and no reading it marks impossible does.
-* `strong_np`, `not_strong_gq`: a definite noun phrase that denotes a witness set holds the
-  strong hypothesis, and one that denotes a generalized quantifier never does, although both
-  make the same parameters available.
-* `Sign.strong_word_iff`: a word holds the strong hypothesis exactly when it stores none of its
-  content.
-* `pair_apply_iff`: a quantifier holds of a predicate exactly when some witness set lies inside
-  the predicate and the rest of the noun's extension lies outside it, which is the paper's
-  reading of a monotone decreasing noun phrase as a reference set with its complement.
-
 ## Implementation notes
 
 * A sign records which kinds of object it contributes, not their values, since the argument

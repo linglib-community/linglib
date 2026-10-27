@@ -36,20 +36,6 @@ constituent question rejects *do* altogether.
 * `DirectlyAnswersPolar`: the hypothesis (112) on the strategy a contrastive topic indicates.
 * `Row`, `rows`: the paper's judgments on the two sentence types across clause types.
 
-## Main results
-
-* `emphaticDo_iff`: emphatic *do* is *do*-support forced by an affirmative Σ alone.
-* `doSupport_negative_iff_positive`: negation and emphatic assertion strand Tense alike.
-* `polarityFocus_alternatives_eq_alt_polar`: the alternatives of polarity focus are those of the
-  polar question.
-* `given_polarityFocus`: a clause with F-marked Σ is Given after any antecedent.
-* `not_admits_polarityFocus_of_constituentQuestion`: a constituent question does not admit
-  polarity focus, so a contrastive-topic sentence answering one rejects *do*.
-* `doctorStrategy_isComplete`: the strategy a contrastive-topic verb phrase indicates is complete
-  when its subquestions decide the superquestion.
-* `ct_acceptable_iff_hostsYesAnswer`: across the embedding environments, a contrastive-topic
-  sentence with emphatic *do* is acceptable exactly where a Yes-answer can be embedded.
-
 ## Implementation notes
 
 * `Clause` keeps only the heads of the clause structure (3) that decide Affix Hopping; an

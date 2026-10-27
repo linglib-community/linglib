@@ -20,15 +20,6 @@ analysis of Turkish causatives follows by Vocabulary Insertion over these heads.
 * `vocabulary`: Key's Turkish causative vocabulary.
 * `ofCauseHead`: Pylkkänen's root- and verb-selecting causative heads as patterns.
 
-## Main statements
-
-* `voice_mem_part_v_iff`: among (49a–d), only Italian puts v and Voice on one head.
-* `v_mem_of_applies`: a lexical causative allomorph applies to the Caus head only if v is on it.
-* `subsetPrinciple_lexical`, `subsetPrinciple_productive`: the root's allomorph is inserted in the
-  lexical causative and *-DIr* in the productive one.
-* `hasCauseePosition_iff`: Pylkkänen's causee position exists iff v and Voice are on different
-  heads.
-
 ## Implementation notes
 
 * A projection absent from a pattern lies outside its support; the projections (49) calls

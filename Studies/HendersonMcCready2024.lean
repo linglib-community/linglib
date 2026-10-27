@@ -26,15 +26,6 @@ dogwhistles; a savvy pro-vaxxer weighs more against the dogwhistle than an unsav
 audience of 400 anti-vaxxers, 100 savvy and 4500 unsavvy pro-vaxxers she dogwhistles until 74 more
 savvy or 1314 more naive pro-vaxxers join it.
 
-## Main statements
-
-* `Listener.L0_eq_listener_truthful`: a likelihood that is zero or one gives Burnett's literal
-  listener.
-* `disavows_to_proVaxxers`, `dogwhistles_to_antiVaxxers`: the speaker disavows to any group of
-  pro-vaxxers and dogwhistles to any group of anti-vaxxers.
-* `dogwhistles_iff_savvy_lt`, `dogwhistles_iff_naive_lt`: she dogwhistles to the book's mixed
-  audience until 74 more savvy or 1314 more naive pro-vaxxers join it.
-
 ## Implementation notes
 
 * The book's probabilities are integer weights in twentieths, since the literal listener

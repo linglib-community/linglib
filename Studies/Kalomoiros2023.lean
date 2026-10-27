@@ -22,21 +22,6 @@ incremental and symmetric Transparency (`LimitedSymmetry.of_transparency`,
 triggers (`Presupposition.Occurrence`), so it applies as it stands wherever a sentence type supplies
 its occurrences and their parsing points.
 
-## Main statements
-
-* `limitedSymmetry_and_left`, `limitedSymmetry_and_right`, `limitedSymmetry_or_left`: conjunction
-  is asymmetric, a trigger in the first conjunct needing the context to entail its presupposition
-  and one in the second only that the first conjunct does, while a first disjunct is filtered by
-  the second.
-* `limitedSymmetry_not`, `limitedSymmetry_if_not_left_iff_or`: a negated sentence respects the
-  constraint iff the sentence does, but a negation inside a coordination changes its polarity, so
-  that a conditional with a negated antecedent behaves like a disjunction.
-* `limitedSymmetryAt_iff`, `limitedSymmetryAt_iff_funs`: the constraint is checked world by world,
-  on the truth functions the good finals realize there, which makes each of the dissertation's
-  facts a computation.
-* `LimitedSymmetry.of_transparency`, `LimitedSymmetry.transparency`: incremental Transparency
-  implies Limited Symmetry, which implies symmetric Transparency.
-
 ## Implementation notes
 
 * A trigger `trigger p a` presupposes `p` and asserts `a`. The dissertation writes `p'p` with the

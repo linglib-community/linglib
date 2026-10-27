@@ -15,14 +15,6 @@ the symmetry problem: after *A*, where *A and B* was available, does the listene
 world of both rise above its prior? Each model's section ends in its verdict, stated with
 `Setting.AntiExhaustive` and `Setting.Exhaustive` (6b).
 
-## Main statements
-
-* `antiExhaustive_listener_iff`: the baseline listener's condition, on prior log odds and costs.
-* `antiExhaustive_bayesWonkyListener_iff`: the Bayesian wonky listener's condition (A.2).
-* `exhaustive_svListener`: the supervaluationist listener is exhaustive (A.3).
-* `exhaustive_luListener`: so is the grammatical lexical-uncertainty listener (§4.3).
-* `exhaustive_liListener`: so is the lexical-intentions listener (§4.4).
-
 ## Implementation notes
 
 * The supervaluationist speaker takes any prior on exhaustification; the paper fixes
@@ -914,7 +906,7 @@ theorem luJointListener_fst : (luJointListener s meaning).fst = luListener s mea
   simp [luSpeaker]
 
 /-- The grammatical lexical-uncertainty listener is exhaustive when *A and B* costs no more than
-*A and not B*. -/
+*A and not B* (§4.3). -/
 theorem exhaustive_luListener (hc : s.cAndB ≤ s.cAndNotB) :
     s.Exhaustive (luListener s Interpretation.meaning .a) := by
   rw [Setting.Exhaustive, luListener,
@@ -1061,8 +1053,8 @@ theorem liMessageSpeaker_wab_lt_wa (hc : s.cAndB ≤ s.cAndNotB) :
   have h₄ := Real.exp_pos (s.lam * Real.log (1 - s.p))
   nlinarith [mul_lt_mul_of_pos_right h₁ h₃, mul_pos h₄ (Real.exp_pos (-(s.lam * s.cAndB)))]
 
-/-- The lexical-intentions listener is exhaustive when *A and B* costs no more than *A and not B*.
--/
+/-- The lexical-intentions listener is exhaustive when *A and B* costs no more than *A and not B*
+(§4.4). -/
 theorem exhaustive_liListener (hc : s.cAndB ≤ s.cAndNotB) :
     s.Exhaustive (liListener s .a) := by
   rw [Setting.Exhaustive, liListener,

@@ -18,14 +18,6 @@ that his author bipartition, second with third against first, is doubtful for pr
 425–426), and she grounds the priority of AUTHOR over ADDRESSEE in the privileged status of
 speakers (p. 426).
 
-## Main results
-
-* `image_graph_active`: the active feature sets the hierarchy allows generate exactly four
-  systems, monopartition, participant bipartition, tripartition and quadripartition.
-* `graph_active_ne_authorBipartition`: none of them is Harbour's author bipartition.
-* `no_partial_conflation`: inclusive conflates with second person only with the exclusive too,
-  second with third only with the first too, and first with third only with the second too.
-
 ## Implementation notes
 
 The features are those of `Harbour2016.ThreeFeature` on participant sets, ADDRESSEE being

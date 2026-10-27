@@ -11,17 +11,6 @@ for hyperbole, over meanings that pair a weather state with the speaker's affect
 question being the state or a dimension of affect (eq. 1). The paper's contribution is the affect
 space, valence together with the arousal dimension it finds in its elicited emotion ratings.
 
-## Main results
-
-* `KaoGoodman2015.irony`: under the arousal question, *the weather is terrible* can mean amazing
-  weather with positive valence and high arousal, whenever the prior admits high arousal at
-  terrible weather.
-* `KaoGoodman2015.valence_flip_needs_arousal`: under the questions of state and valence alone, a
-  positive-valence reading of *terrible* needs positive valence to be possible at terrible
-  weather itself.
-* `KaoGoodman2015.hyperbole`: the reading as merely bad weather is available under the valence
-  question.
-
 ## Implementation notes
 
 * Priors are arguments. The state prior of a weather context and the affect prior of

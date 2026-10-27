@@ -24,16 +24,6 @@ association itself.
   ones, `cStructure` the context-free c-structure grammar, `weakGrammar` the string grammar
 * `Spine`, `Spine.Complete`, `Spine.Coherent` — the f-structure spine and LFG's two conditions
 
-## Main results
-
-* `tree_licensed_cStructure` — the c-structure grammar generates every `tree k m`
-* `Spine.complete_and_coherent_iff` — Completeness and Coherence hold exactly when the objects
-  match the non-final verbs
-* `yield_dutch_mem_weakGrammar` — the matched strings are weakly context-free
-* `not_strongly_contextFree` — no context-free grammar's derivation trees relabel onto the matched
-  trees
-* `subjOfVerb_eq` — the `i`-th NP is the subject of the `i`-th verb
-
 ## References
 
 * [bresnan-etal-1982]

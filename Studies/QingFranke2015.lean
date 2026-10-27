@@ -18,21 +18,6 @@ its own prior and may act on the result by a further soft maximization. The cont
 and a circle of one colour and a circle of the other, and the paper compares the models on the
 choices of speakers and listeners by their Bayes factors.
 
-## Main statements
-
-* `speaker_eq_softmax`, `speaker_belief_uniform`: every speaker of the family soft-maximizes its
-  utility over the true words, and the belief-oriented one at the uniform prior and no cost is
-  Frank and Goodman's.
-* `prefers_unique_colour_iff`, `prefers_noun_iff`: a speaker who ignores salience prefers the word
-  only the referent satisfies exactly when the adjective costs less than the informativity gap,
-  and at the object with both features shared prefers the noun exactly when it is the cheaper.
-* `uniform_listener_narrows_circle`, `salience_listener_window`: a listener with a uniform prior
-  takes both ambiguous words to refer to the object with both features shared, and one with the
-  salience prior does so for *green* and follows salience for *circle*, as the paper's listeners
-  did, on a bounded window of rationalities.
-* `frankGoodman_listener_green`: Frank and Goodman's listener at the measured salience and
-  rationality one takes *green* to refer to the salient green square.
-
 ## Implementation notes
 
 * The lexicon and the model of a context are those of `FrankGoodman2012`, and the belief-oriented

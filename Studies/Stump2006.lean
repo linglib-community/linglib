@@ -60,35 +60,6 @@ one.
   the rules (20a,b), and the linkage of PRATYAÑC and AHAN.
 * `hrdLinkage`, `matLinkage`: Sanskrit HṚD(AYA) and Russian MAT'.
 
-## Main results
-
-* `realize_matches_tables`: the rules realize every attested form of the nine Czech nouns.
-* `czRealizeTable_stemFor_iff`: the fragment's endings alone miss exactly the six nominative and
-  vocative plurals of PŘEDSEDA, SLUHA and FILOSOF.
-* `predseda_eq_hrdina`, `sluha_eq_hrdina_iff`: rules (14) and (15) rebuild Short's paradigm of
-  the masculine a-stems, from which SLUHA's departs only in the locative plural.
-* `sluha_locPl`, `filolog_locPl`, `filologu_voc`: the grammars' velar forms, derived, the
-  locative plurals alike through the soft-masculine coradical and the hard-masculine stem.
-* `pramen_eq_koren_pattern`: rule (14) gives PRAMEN the classes the grammars give *kořen*.
-* `heteroclite_iff`, `segments_invariant`, `pramen_suppletive`: PRAMEN, PŘEDSEDA, SLUHA and
-  FILOLOG are heteroclite on form-identical stems, and heteroclisis is suppletion.
-* `degreeNum_eq_card_iff`: a category is an absolute correlate exactly when the class split
-  factors through it.
-* `pramen_degrees`, `predseda_degrees`, `sluha_degrees`, `filolog_degrees`: the paper's figures.
-* `isAbsoluteCorrelate_of_rules`: rules seeing only a category make it an absolute correlate.
-* `pcr`, `not_satisfiesPCR_hypothetical`: the Czech rules satisfy (40), and a case-only rule
-  would violate it.
-* `fractured_minimal_intersective_privileged`: claim (39) for the Czech nouns.
-* `rules_match_table9`, `rules_match_table10`: (19) and (20a,b) give PRATYAÑC's grades and
-  AHAN's stems at every cell of Tables 9 and 10.
-* `pratyanc_not_heteroclite`, `ahan_heteroclite`, `ahan_grade_eq_pratyancN`: one list of rules
-  makes AHAN heteroclite and PRATYAÑC not, with the same grades.
-* `ahan_degrees`, `ahan_fractured`: AHAN's paradigm is fractured, its case correlation .71.
-* `hrd_cloven`, `privileged_case`, `pcr_skt`: case, the absolute correlate of HṚD(AYA)'s cloven
-  paradigm, is privileged, and (20a,b) satisfy (40).
-* `hrd_form_suppletive`, `mat_suppletive_not_heteroclite`: suppletion with and without
-  heteroclisis.
-
 ## Implementation notes
 
 A Czech noun's segments are the stem of its entry in the Czech noun fragment, the citation form less

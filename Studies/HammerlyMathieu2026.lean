@@ -19,14 +19,6 @@ C's φ ∨ δ probe moves the one bearing δ, by Best Match.
 * `HammerlyMathieu2026.probeStep`: a head's Agree and movement on the syntactic object it heads.
 * `HammerlyMathieu2026.target`: the argument C's probe moves to Spec,CP.
 
-## Main results
-
-* `target_direct`, `target_inverse`, `canTarget_local`, `canTarget_localAgent`,
-  `canTarget_localPatient`: the pattern (19); `derivation_26` to `derivation_30`: the trees.
-* `fitsRows_cEpp`, `not_fitsRows_phiEpp`, `not_fitsRows_deltaEpp`: only the mixed probe fits.
-* `target_inverse_plain`: LDA in the deep inverse does not need ergative Voice.
-* `canTargetOptional_iff`, `target_eq_ex_11a_ex_16b`: fn. 8, and the argument against prolepsis.
-
 ## Implementation notes
 
 * The clause is a linearized syntactic object, closeness the maximal projections above a position,

@@ -23,17 +23,6 @@ the anaphora sets the noun phrase makes available. Scope ambiguity comes from st
 quantifier in the context and retrieving it over the sentence, and binding from marking pronouns
 as local or reflexive.
 
-## Main statements
-
-* `Venus.not_believe_oneStar`, `Venus.believe_oneStar_reporter`: the ancients do not believe
-  that Hesperus is Phosphorus under their own postulates, and do under the reporter's.
-* `nonempty_generalWCIncr_iff_toGQ`, `nonempty_generalWCDecr_iff_toGQ`: the general witness
-  conditions are Barwise and Cooper's two procedures for the tree quantifier of their relation.
-* `witnessType_propAtLeast_iff`: a probabilistic witness condition of §7.3 is its cardinal one.
-* `WitnessCondition.exists_set_subset`: each witness condition can be met by a witness whose
-  set lies in the anaphora set it makes available, which `anaphora_rows` checks against the
-  book's judgements.
-
 ## Implementation notes
 
 * Within one possibility, types are Lean's own, and a property is `E → Type`. A modal type
@@ -796,7 +785,7 @@ theorem uniformOn_eq_one_iff_of_subset (h : X ⊆ P) (hP : P.Nonempty) :
   rw [uniformOn_eq_one_iff P.finite_toSet (Finset.coe_nonempty.2 hP), Finset.coe_subset]
   exact ⟨h.antisymm, Eq.ge⟩
 
-/-- The probabilistic witness condition for *most* (50) is the cardinal one (29). -/
+/-- The probabilistic witness condition for *most* (50) is the cardinal one (29) (§7.3). -/
 theorem witnessType_propAtLeast_iff [Fintype E] {P : E → Prop} [DecidablePred P] {n d : ℕ}
     (hd : 0 < d) (hX : X ⊆ ({x | P x} : Finset E)) (hP : 0 < #{x | P x}) :
     WitnessType P (.propAtLeast n d) X ↔

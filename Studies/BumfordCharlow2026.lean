@@ -34,15 +34,6 @@ semantics is built on.
 * `counitMode`, `eject`, `ejectL`, `ejectR`: the modes an adjunction adds
 * `Ty`, `Eff`, `Combine`: the type-driven grammar of the book's Appendix B
 
-## Main results
-
-* `joinMode_mapL_ba`, `joinMode_mapR_fa`: join at the map modes is bind
-* `mapL_ejectR_counitMode`: the bind of the monad of any adjunction is a mode of combination
-* `mapL_ejectR_counitMode_outputInput`, `mapL_joinMode_mapL_ejectR_counitMode`: the state monad
-  and the state transformer come from `W ⊣ R`
-* `ejectL_structuredApp_joinMode_mapR`: the reader transformer comes from ejection
-* `Combine.reads`: crossover
-
 ## Implementation notes
 
 The storing effect `Output ι α = α × ι` is a functor and not mathlib's `WriterT`, whose functor

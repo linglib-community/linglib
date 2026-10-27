@@ -15,17 +15,6 @@ of completive clauses presents its events one after another (§18.10). The compl
 *napa-* is used only in temporal clauses (§18.1), and a clause with it has only temporal meaning
 (§18.9): a completive clause reads 'after' or 'because' (18.17), with *napa-* only 'after' (18.53).
 
-## Main statements
-
-* `inflection_of_sr`: the inflection of a medial verb follows the switch-reference value of its
-  marker.
-* `complex_marker`, `complex_marker_timing`: the only complex marker is *-ta:y* followed by
-  *-kǝb*, with the switch-reference value of *-ta:y* and a time begun before the next clause's
-  and ending within it.
-* `completive_chain`: in a chain of completive clauses the first event precedes the final one.
-* `completive_temporal`, `completive_readings`: *napa-* goes only with markers that encode a
-  temporal relation, and leaves a completive clause reading 'after' but not 'because'.
-
 ## Implementation notes
 
 Each of the two examples has one medial clause with each completive, and its readings are those
@@ -47,12 +36,15 @@ namespace Aikhenvald2008
 
 open Manambu MedialMarker
 
+/-- The inflection of a medial verb follows the switch-reference value of its marker. -/
 theorem inflection_of_sr (m : MedialMarker) :
     (m.sr = some .ss → m.inflection = .uninflected) ∧
       (m.sr = some .ds → m.inflection = .partiallyInflected) ∧
       (m.sr = none → m.inflection = .uninflected ∨ m.inflection = .fullyInflected) := by
   decide +revert
 
+/-- The only complex marker is *-ta:y* followed by *-kǝb*, with the switch-reference value of
+*-ta:y* and a time begun before the next clause's and ending within it. -/
 theorem complex_marker {m : MedialMarker} (h : 1 < m.morphs.length) :
     m.morphs = tay.morphs ++ keb.morphs ∧ m.sr = tay.sr := by
   decide +revert
@@ -76,6 +68,8 @@ theorem completive_chain {ms : List MedialMarker} (hne : ms ≠ []) (h : ∀ m �
       decide +kernel
     · rw [ih hms fun m' hm' ↦ h m' (by simp [hm']), Allen.comp_precedes_precedes]
 
+/-- *napa-* goes only with markers that encode a temporal relation, and leaves a completive clause
+reading 'after' but not 'because'. -/
 theorem completive_temporal {m : MedialMarker} (h : m.WithCompletive) :
     m.completiveRelations.Nonempty := by
   decide +revert

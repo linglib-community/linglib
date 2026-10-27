@@ -22,22 +22,6 @@ compatible with the beliefs are ranked by the desires they entail, *S wants p* h
 best answer entails *p* (`Want`), and the ascription is defined only if the question decides *p*,
 is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defined`).
 
-## Main results
-
-* `vonFintel_no_conflict`, `heim_no_conflict`: the belief-based semantics cannot make *Nap* and
-  *Not-nap* both true.
-* `closure_under_doxastic_equivalence`, `cpr_overgenerates`: on a belief-based semantics wanting
-  the act is wanting its believed cost, Villalta's closure under doxastic equivalence.
-* `act_true`, `not_act_true`, `cost_undefined`: *Nap* and *Not-nap* are each true in their own
-  context, and *Fail* is undefined in the first.
-* `not_rain_deckstacked`, `deckstacked_excluded`: the deck-stacked question of Lu's case is
-  excluded by the anti-deckstacking constraint, which the level playing field satisfies.
-* `undefined_of_insensitive`, `want_strawsonEntails`: an agent whose beliefs are
-  insensitive to every question deciding *p* has *S wants p* undefined, which leaves the semantics
-  Strawson upward monotone.
-* `want_bot_iff`: on the finest question the semantics is the best-worlds one,
-  `Desire.BestWorlds.Want`.
-
 ## Implementation notes
 
 * A question is a `Setoid`, its answers the cells; the question raised by a list of issues is

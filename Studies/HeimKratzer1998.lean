@@ -20,21 +20,6 @@ transcribed as interpretation relations that the engines extend, and the engines
 toy model for the book's definite descriptions (Chapter 4), relative clauses (Chapter 5) and
 quantifier scope (Chapter 7).
 
-## Main results
-
-* `interp_of_denotes`, `Partial.interp_of_denotes`: where the book's rules assign a value, the
-  engines compute it.
-* `the_student_fails`, `the_pizza`, `the_john_uninterpretable`: presupposition failure and
-  uninterpretability with the Fregean article (§4.4).
-* `interp_studentWhoSleeps`, `the_student_who_sleeps`: a restrictive relative clause is an
-  intersective modifier, so *the student who sleeps* is defined although *the student* is not
-  (§5.1).
-* `det_noun_modifier_uninterpretable`: the bracketing [[the noun] modifier] is uninterpretable
-  (§4.5).
-* `scope_ambiguity_computed`, `surfaceScopeProp_mem_readings_inSitu`: the two Quantifier Raising
-  derivations of a doubly quantified sentence compute its two scope readings (§7.3), and the
-  in-situ alternative of §7.2.1 derives the surface one.
-
 ## Implementation notes
 
 The toy fragment's words stand in for the book's: *student who sleeps* for *house which is

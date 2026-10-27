@@ -32,25 +32,6 @@ literally. The probabilistic model behind the count agrees with it under flat pr
 it by the prior under nearly flat ones; every chain of reasoning reaches a fixed point, and the
 fixed points are perfect Bayesian equilibria.
 
-## Main statements
-
-* `SomeAll.isNashEquilibrium_scalar_and_reversed`, `SomeAll.scalar_implicature`: the
-  implicature of "some" and its reversal are both equilibria, and iterated best response selects
-  the implicature.
-* `TwoDisjuncts.free_choice`: free choice, simplification of disjunctive antecedents and a
-  conjunctive reading of plain disjunction are one prediction.
-* `SomeAllEpistemic.strong`, `DisjunctionEpistemic.ignorance`,
-  `DisjunctionConjEpistemic.exclusivity_of_competencePrior`: epistemic implicatures under each
-  assumption about the speaker's competence.
-* `receiverLevel_eq_receiverChain`, `receiverLevel_eq_receiverChainBy`: the probabilistic model is
-  the count under flat priors and the count refined by the prior under nearly flat ones.
-* `exists_isFixedPt_iterate`, `exists_isFixedPt_receiverChain`: every chain reaches a fixed point.
-* `exists_isPBE_of_isFixedPt`: fixed points are perfect Bayesian equilibria.
-* `coe_receiverStep_subset_exhMW`: the first sophisticated reading entails exhaustification by
-  minimal models.
-* `exhIE_eq_setOf_indistinguishable`: innocent exclusion keeps the worlds that no alternative
-  distinguishes from the minimal ones.
-
 ## Implementation notes
 
 * The counting system depends only on denotations. The prior enters as a secondary criterion,

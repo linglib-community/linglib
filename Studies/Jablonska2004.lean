@@ -24,19 +24,6 @@ property, or a path.
 * `Stem`: a fragment verb with the verbalizer class the paper assigns it.
 * `attested`, `starred`: the paper's analyses of the forms it accepts and rejects.
 
-## Main results
-
-* `wellFormed_iff`: the seven shapes of a well-formed derivation, whence `si_of_asp3`,
-  `eq_of_perf`, `denotesInterval_of_si` and Svenonius's stacking generalization, `wellStacked`.
-* `asp1Reading_iff_table2`: the readings of *po-* in Asp1 are those of Table 2.
-* `attested_wellFormed`, `starred_not_wellFormed`, `attested_readings`: the analyses hold.
-* `spells`: the analyses spell out the attested words.
-* `stem_perfectivity`, `stem_vendlerClass`: the aspect and the Vendler class the fragment records
-  for a stem are those the model derives for it.
-* `phaseTests_judgment`, `presentTests_reading`: the perfectivity the model derives predicts the
-  judgments of the paper's sentences with a phase verb and in the present tense, by the tests of
-  Section 2.1.
-
 ## Implementation notes
 
 * The Aktionsart profile of a bare stem is atelic throughout, the paper's unbounded bare stem;

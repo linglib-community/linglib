@@ -32,17 +32,6 @@ extracted word is placed by a positional head outside the landmark tree.
   `Analysis.OrderedByPositionalHeads A`: `A` is ordered by the 2007 theory, by landmarks chosen as
   in the 2018 theory, and by the revision.
 
-## Main statements
-
-* `Analysis.isLandmark_iff`: the 2007 rules, stated as default inheritance, make `p` the landmark
-  of `w` exactly when `p` is a head of `w` not subordinate to another of its heads.
-* `Analysis.not_orderedByLandmarks_of_extraction`: an analysis is not ordered by the 2007 theory
-  when a word is extracted from a head that it heads and has another head as well.
-* `Analysis.OrderedByLandmarks.orderedByPositionalHeads`: the revision orders every analysis the
-  2007 theory orders.
-* `orderedByPositionalHeads_whatHeBoughtCostLots`, `not_orderedByLandmarks_whatHeBoughtCostLots`:
-  the revision orders the free relative *What he bought cost lots*, and the 2007 theory does not.
-
 ## Implementation notes
 
 * The landmark rules are a `DefaultInheritance` network over the concepts *parent* and

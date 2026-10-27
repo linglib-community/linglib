@@ -23,15 +23,6 @@ on a salient scale is true and asserts that no true alternative is stronger. The
 topic situation, and the scalar *har('i)* asserts its prejacent and presupposes that a contextual
 implication of it ranks highest among its alternatives.
 
-## Main results
-
-* `prejacent_projects`: on an entailment scale, the complement-exclusion reading, the
-  presupposition of *yak('i)* entails the prejacent, which therefore projects through negation.
-* `posExt_only_conjunctions`: over the conjunctions of independent atomic answers *yak('i)* is
-  defined and true exactly where the prejacent holds and every other atom fails.
-* `ke_eq_zero_of_anaphoric`: parallel background-marked antecedents, being anaphoric, cannot
-  supply the antecedent of *ke('e)*.
-
 ## Implementation notes
 
 The scale is a relation `S q p` read as `q` at least as strong as `p`, the entailment scale

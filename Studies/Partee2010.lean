@@ -18,18 +18,6 @@ natural class of the traditional scale, while the modal ones do not, and once th
 reanalysed the adjectives that split are exactly the subsective ones. *Former*, normally
 privative, does not split, a puzzle Partee leaves open.
 
-## Main statements
-
-* `modal_no_split`, `nonmodal_split_except_former`: modal adjectives never split, and the others
-  all split except *former*.
-* `splittable_not_ordConnected`, `reanalyse_splittable_iff`: the classes that split are no
-  interval of the traditional scale, and after the reanalysis they are exactly the subsective
-  ones.
-* `postulates_not_linear`: the meaning postulates do not order the subsective and privative
-  classes.
-* `real_isNonVacuous_iff`, `real_xor_fake`: *real* is vacuous on its literal head and non-vacuous
-  on the head that a privative shifts, where everything is real or fake and not both.
-
 ## Implementation notes
 
 The classes are the paper's labels for the meaning postulates, ordered by the traditional scale

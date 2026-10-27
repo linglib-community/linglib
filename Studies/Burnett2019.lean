@@ -18,21 +18,6 @@ listener inverts the speaker against the prior. When the two variants index comp
 personae, as those of (ING) and /t/ release do, each rules out exactly the persona its rival
 indexes, and the paper's predictions come out in closed form from the prior mass of those two.
 
-## Main results
-
-* `S1_eq`: of two variants indexing complementary personae, every persona both convey is
-  produced alike.
-* `half_lt_share_iff`: such a persona prefers the variant that rules out the likelier persona.
-* `S1_real_singleton_of_ne`: it produces a variant in proportion to the `α`-th power of the
-  rival's extension, which gives the barbecue's 69% and the journalists' 31% (`casual_apical`,
-  `careful_apical`).
-* `L1_real_singleton_of_ne`, `L1_real_singleton_persona`: when the excluded personae are equally
-  likely, a variant doubles the persona only it conveys and leaves every other at its prior,
-  which gives Rice's Table 12 and Bush's bulletproofing (`bush_bulletproof`).
-* `classRate_lt_classRate_iff`: the value functions of Table 8 order the classes as Labov's
-  rates of Table 7, at every rationality.
-* `apicalRate_lt_iff`: the model orders Labov's three recordings of Obama as his rates do.
-
 ## Implementation notes
 
 Priors are integer weights read off the paper's tables, the listener normalizing them, and the
@@ -572,7 +557,8 @@ theorem classRate_strictMono {α α' : ℝ} (hα : 0 < α) (hα' : 0 < α') :
     simp only [select_real_singleton, Real.softmax_apply, classValue]
   refine strictMono_of_lt_half_eq_half_lt ?_ ?_ ?_ <;> rw [classRate_eq hα] <;> linarith
 
-/-- The model orders the classes as Labov's rates of *-in'* do (Tables 7 and 9). -/
+/-- The model orders the classes as Labov's rates of *-in'* do (Tables 7 and 9)
+(Table 8, Table 7). -/
 theorem classRate_lt_classRate_iff {α α' : ℝ} (hα : 0 < α) (hα' : 0 < α') {c c' : ValuedClass} :
     classRate α α' c < classRate α α' c' ↔ (ingByClass c).percent < (ingByClass c').percent := by
   have : StrictMono fun c : ValuedClass ↦ (ingByClass c).percent :=
