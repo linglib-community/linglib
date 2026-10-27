@@ -173,7 +173,7 @@ Heimian alternative set `{φ, ¬φ}`, with `des w` the desirability ordering at 
 worlds where the complement is true against those where its negation is. -/
 noncomputable def preferential (des : W → W → W → Prop) (φ : SProp W) : W → SignType :=
   (Function.support (φ ∅)).indicator fun w ↦
-    SignType.ofProp (Better (des w) (Trivalent.posExt (φ ∅)) (Trivalent.posExt (neg φ ∅)))
+    SignType.ofProp (Better (des w) (posSupport (φ ∅)) (posSupport (neg φ ∅)))
 
 /-- In (38) an epistemic embedded under a non-representational attitude inherits the empty
 information state and fails its non-triviality presupposition. -/

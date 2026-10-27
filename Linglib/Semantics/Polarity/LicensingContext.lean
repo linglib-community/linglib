@@ -564,34 +564,34 @@ theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .a
 theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦ isStrawsonDE_only p.x
 
 theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .anti := fun h ↦
-  not_antitone_posExt_only (Signature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
+  not_antitone_posSupport_only (Signature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
 
 theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
   Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
-  Desire.BestWorlds.not_antitone_posExt_regret (Signature.holdsFor_anti_iff.mp
+  Desire.BestWorlds.not_antitone_posSupport_regret (Signature.holdsFor_anti_iff.mp
     (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   Degree.isStrawsonDE_superlative p.μ p.x
 
 theorem not_holds_superlative : ¬ superlative.licenser.Holds .anti := fun h ↦
-  Degree.not_antitone_posExt_superlative (Signature.holdsFor_anti_iff.mp
+  Degree.not_antitone_posSupport_superlative (Signature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
 
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=
   fun p ↦ Conditional.isStrawsonDE_horizonCounterfactual p.horizon p.q
 
 theorem not_holds_conditionalAntecedent : ¬ conditionalAntecedent.licenser.Holds .anti := fun h ↦
-  Conditional.not_antitone_posExt_horizonCounterfactual (Signature.holdsFor_anti_iff.mp
+  Conditional.not_antitone_posSupport_horizonCounterfactual (Signature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
 
 theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_since p.ago
 
 theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .anti := fun h ↦
-  not_antitone_posExt_since (Signature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
+  not_antitone_posSupport_since (Signature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
 
 /-! ### Modal licensers and questions -/
 

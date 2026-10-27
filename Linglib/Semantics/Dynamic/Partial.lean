@@ -303,18 +303,18 @@ open Presupposition (Connective)
 
 theorem admits_seq_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.conj.localContext s (Trivalent.posExt p)) :=
+      s ⊆ Function.support p ∧ ψ.Admits (Connective.conj.localContext s (posSupport p)) :=
   ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
 
 theorem admits_cond_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
     (cond (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.cond.localContext s (Trivalent.posExt p)) :=
+      s ⊆ Function.support p ∧ ψ.Admits (Connective.cond.localContext s (posSupport p)) :=
   admits_seq_ofTrivalent_iff p ψ s
 
 theorem admits_disj_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
     (disj (ofTrivalent p) ψ).Admits s ↔
-      s ⊆ Function.support p ∧ ψ.Admits (Connective.disj.localContext s (Trivalent.posExt p)) := by
-  have e : s \ {w ∈ s | p w = 1} = Connective.disj.localContext s (Trivalent.posExt p) :=
+      s ⊆ Function.support p ∧ ψ.Admits (Connective.disj.localContext s (posSupport p)) := by
+  have e : s \ {w ∈ s | p w = 1} = Connective.disj.localContext s (posSupport p) :=
     Set.ext fun _ ↦ ⟨fun ⟨hs, hn⟩ ↦ ⟨hs, fun ha ↦ hn ⟨hs, ha⟩⟩, fun ⟨hs, hn⟩ ↦ ⟨hs, fun h ↦ hn h.2⟩⟩
   refine ⟨fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩⟩
   · rw [← e]; exact hψ

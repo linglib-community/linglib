@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Basic.Sign
 public import Linglib.Core.LinearAlgebra.Matrix.Farkas
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Logic.ComparativeProbability.Cancellation
@@ -29,7 +30,8 @@ multiset violating `Cancellation`.
 
 ## Main declarations
 
-* `posSupport`, `negSupport`, `comparisonSum`: the sign-vector vocabulary.
+* `comparisonSum`: the sum of a multiset of comparisons as integer vectors; a comparison's two
+  sides are the supports `posSupport` and `negSupport` of `Core/Basic/Sign.lean`.
 * `Cancellation`: Scott's condition in sign-vector form.
 * `FiniteCancellation.cancellation`, `Cancellation.finiteCancellation`,
   `cancellation_iff_finiteCancellation`: the two forms agree.
@@ -52,29 +54,6 @@ namespace ComparativeProbability
 variable {W : Type*}
 
 /-! ### Sign vectors as comparisons -/
-
-/-- The positive support of a sign vector is the left side of the comparison. -/
-def posSupport (v : W → SignType) : Set W := {i | v i = 1}
-
-/-- The negative support of a sign vector is the right side of the comparison. -/
-def negSupport (v : W → SignType) : Set W := {i | v i = -1}
-
-@[simp] theorem mem_posSupport {v : W → SignType} {i : W} : i ∈ posSupport v ↔ v i = 1 :=
-  Iff.rfl
-
-@[simp] theorem mem_negSupport {v : W → SignType} {i : W} : i ∈ negSupport v ↔ v i = -1 :=
-  Iff.rfl
-
-@[simp] theorem posSupport_neg (v : W → SignType) : posSupport (-v) = negSupport v :=
-  Set.ext fun i ↦ by simp [neg_eq_iff_eq_neg]
-
-@[simp] theorem negSupport_neg (v : W → SignType) : negSupport (-v) = posSupport v :=
-  Set.ext fun i ↦ by simp [neg_eq_iff_eq_neg]
-
-theorem disjoint_posSupport_negSupport (v : W → SignType) :
-    Disjoint (posSupport v) (negSupport v) :=
-  Set.disjoint_left.mpr fun i h₁ h₂ ↦
-    absurd ((mem_posSupport.mp h₁).symm.trans (mem_negSupport.mp h₂)) (by decide)
 
 private theorem signCast_eq_ite (s : SignType) :
     (s : ℤ) = (if s = 1 then 1 else 0) - (if s = -1 then 1 else 0) := by

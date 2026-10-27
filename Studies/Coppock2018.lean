@@ -187,8 +187,8 @@ theorem stronglyDiscretionaryOn_univ_iff (hρ : Function.Surjective ρ) :
 
 /-- For a bivalent proposition the revised classification agrees with the set-based one of
 §3.1 on its positive extension. -/
-theorem objectiveOn_univ_iff_objective_posExt (h : IsBivalent p) :
-    ObjectiveOn ρ p Set.univ ↔ Objective ρ (posExt p) := by
+theorem objectiveOn_univ_iff_objective_posSupport (h : IsBivalent p) :
+    ObjectiveOn ρ p Set.univ ↔ Objective ρ (posSupport p) := by
   rw [objective_iff_forall_mem_iff]
   constructor
   · intro hobj o o' hoo'
