@@ -58,7 +58,8 @@ inductive OccPart
 
 /-- The occupation schema (2) pins the vowels and leaves the root consonants open. -/
 def occupation : Schema OccPart (Flat String) :=
-  ⟨fun | .a => ↑"a" | .aa => ↑"aa" | _ => ⊥, {.c1, .c2, .c3}⟩
+  ⟨fun | .a => ↑"a" | .aa => ↑"aa" | _ => ⊥, {.c1, .c2, .c3},
+    by rintro _ (rfl | rfl | rfl) <;> rfl⟩
 
 /-- The six slots of `C₁aC₂C₂aaC₃` subscripted by parts, the second consonant occupying
 two. -/
@@ -134,7 +135,7 @@ inductive RedPart
 
 /-- The reduplication schema (13) pins the schwa and leaves the consonant and residue open. -/
 def reduplication : Schema RedPart (Flat String) :=
-  ⟨fun | .schwa => ↑"ə" | _ => ⊥, {.c1, .y}⟩
+  ⟨fun | .schwa => ↑"ə" | _ => ⊥, {.c1, .y}, by rintro _ (rfl | rfl) <;> rfl⟩
 
 /-- The reduplicant `C₁əC₁y`, whose initial consonant occupies two slots. -/
 def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
@@ -182,7 +183,8 @@ inductive CmpPart
 
 /-- The comparative schema (16) pins the comparative vowel and leaves all else open. -/
 def comparative : Schema CmpPart (Flat String) :=
-  ⟨fun | .a => ↑"a" | _ => ⊥, {.c1, .c2, .c3, .v1, .v2}⟩
+  ⟨fun | .a => ↑"a" | _ => ⊥, {.c1, .c2, .c3, .v1, .v2},
+    by rintro _ (rfl | rfl | rfl | rfl | rfl) <;> rfl⟩
 
 /-- The adjective template `C₁VC₂VC₃`. -/
 def adjSub : Fin 5 → CmpPart := ![.c1, .v1, .c2, .v2, .c3]

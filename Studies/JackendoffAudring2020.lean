@@ -87,14 +87,15 @@ variable and the feature type a closed one, whose fillers are learned pattern by
 
 /-- The pattern (18a) puts the name before the feature, with the name open and the feature
 closed. -/
-def toponymA : Schema (Fin 2) (Flat String) := ⟨fun _ ↦ ⊥, {0}⟩
+def toponymA : Schema (Fin 2) (Flat String) := ⟨fun _ ↦ ⊥, {0}, fun _ _ ↦ rfl⟩
 
 /-- The pattern (18b) puts the feature before the name. -/
-def toponymB : Schema (Fin 2) (Flat String) := ⟨fun _ ↦ ⊥, {1}⟩
+def toponymB : Schema (Fin 2) (Flat String) := ⟨fun _ ↦ ⊥, {1}, fun _ _ ↦ rfl⟩
 
 /-- The pattern (18d), *the* feature *of* name, has two constants, a closed feature and an
 open name. -/
-def toponymD : Schema (Fin 4) (Flat String) := ⟨![↑"the", ⊥, ↑"of", ⊥], {3}⟩
+def toponymD : Schema (Fin 4) (Flat String) :=
+  ⟨![↑"the", ⊥, ↑"of", ⊥], {3}, by rintro _ rfl; rfl⟩
 
 /-- `toponymsA` holds the stored toponyms of (17a). -/
 def toponymsA : Set (Fin 2 → Flat String) :=
@@ -218,8 +219,8 @@ inductive AssassinateSlot
 /-- `assassinPair` presents the entries (41a) and (41b) with their coindices as one fully
 specified description over the shared variables. -/
 def assassinPair : Schema AssassinVar (Flat Part) :=
-  ⟨fun | .phon => ↑Part.asasin | .murder => ↑Part.murder | .person => ↑Part.person
-       | .ate => ↑Part.ate, ∅⟩
+  .nonproductive fun | .phon => ↑Part.asasin | .murder => ↑Part.murder | .person => ↑Part.person
+                     | .ate => ↑Part.ate
 
 /-- `assassinSub` subscripts the slots of *assassin* by the variables of (41). -/
 def assassinSub : AssassinSlot → AssassinVar
@@ -308,7 +309,8 @@ variable {B I : Type*}
 description, with the affixes and ADHERENT pinned and the base and the ideology open. -/
 def ismist : Schema IsmIstVar (Flat (Atom B I)) :=
   ⟨fun | .ism => ↑(Atom.ism : Atom B I) | .ist => ↑(Atom.ist : Atom B I)
-       | .adherent => ↑(Atom.adherent : Atom B I) | _ => ⊥, {.base, .ideology}⟩
+       | .adherent => ↑(Atom.adherent : Atom B I) | _ => ⊥, {.base, .ideology},
+    by rintro _ (rfl | rfl) <;> rfl⟩
 
 /-- `ismSub` subscripts the slots of the *-ism* schema by the variables of (47). -/
 def ismSub : IsmSlot → IsmIstVar
@@ -380,7 +382,7 @@ def pastSub : Fin 3 → NucleusVar := ![.onset, .past, .coda]
 nuclei `v` and `w`, with `⊥` for an open nucleus. It is the shape of the ablaut schemas (25)
 and (26) and of the German present-tense schema (45). -/
 def nucleusPair (v w : Flat String) : Schema NucleusVar (Flat String) :=
-  ⟨fun | .stem => v | .past => w | _ => ⊥, {.onset, .coda}⟩
+  ⟨fun | .stem => v | .past => w | _ => ⊥, {.onset, .coda}, by rintro _ (rfl | rfl) <;> rfl⟩
 
 /-- The general ablaut schema (25) leaves both nuclei open. -/
 def ablaut : Schema NucleusVar (Flat String) := nucleusPair ⊥ ⊥
@@ -416,6 +418,13 @@ theorem ablaut_pairs_of_nucleusPair {v w : Flat String} {s p : Fin 3 → Flat St
     (h : (nucleusPair v w).InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p)) :
     ablaut.InstantiatesAt (Sum.elim stemSub pastSub) (Sum.elim s p) :=
   ablaut_pairs_iff.2 (nucleusPair_iff.1 h).2.2
+
+-- (25), (26), p. 147: the subschema fills the nucleus variables of the general schema
+theorem instantiation_nucleusPair (v w : String) :
+    Instantiation ablaut.body (nucleusPair ↑v ↑w).body {.stem, .past} := by
+  refine ⟨fun x hx ↦ ?_, fun x hx ↦ ?_⟩
+  · cases x <;> first | rfl | simp at hx
+  · rcases hx with rfl | rfl <;> exact bot_lt_iff_ne_bot.2 Flat.coe_ne_bot
 
 /-- A pair under a subschema with distinct pinned nuclei is a nucleus contrast, the same
 except at the nucleus, where both are present and differ. -/

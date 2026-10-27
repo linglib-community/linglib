@@ -291,6 +291,7 @@ def nounVerb : ConstructionMorphology.Schema RootVar Slot where
     | .verbCategory => ↑(Value.category .action)
     | _ => ⊥
   opens := {.nounMeaning, .verbMeaning, .shape}
+  opens_subset := by rintro _ (rfl | rfl | rfl) <;> rfl
 
 /-- The subscripting of the tiers of the noun schema by the variables of (21). -/
 def nounSub : Tier → RootVar
@@ -347,6 +348,6 @@ theorem hammer_sisters :
 
 theorem hammer_dance_not_sisters :
     ¬ nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun danceVerb) :=
-  fun h ↦ by simpa [hammerNoun, danceVerb] using h.apply_eq_of_elim .phonology .phonology rfl
+  fun h ↦ by simpa [hammerNoun, danceVerb] using h.sumElim_apply_eq .phonology .phonology rfl
 
 end Haspelmath2025b
