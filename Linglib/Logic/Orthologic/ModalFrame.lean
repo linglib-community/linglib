@@ -93,6 +93,11 @@ theorem isRegular_core [IsRRegular F R] {A : Set S} (hA : IsRegular F A) :
   obtain ⟨y'', hy'', hy''z⟩ := hx' x'' hx'x''
   exact hz y'' hy''z.symm (hnec hy'')
 
+/-- Over an R-regular frame `¬◇A = □¬A`, since `□¬A` is regular. -/
+theorem orthoNeg_diamond [IsRRegular F R] (A : Set S) :
+    orthoNeg F (diamond F R A) = R.core (orthoNeg F A) :=
+  orthoNeg_orthoNeg_of_isRegular F (isRegular_core R (orthoNeg_isRegular F A))
+
 variable (F)
 
 /-- R-regularity holds iff `□` preserves regularity, extending Proposition 4.22 of

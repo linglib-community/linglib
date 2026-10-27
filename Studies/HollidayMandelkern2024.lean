@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Orthologic.EpistemicFrame
 public import Linglib.Logic.Orthologic.EpistemicOrthologic
+public import Linglib.Core.Order.Interval.Fintype
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
@@ -29,7 +30,7 @@ order asymmetry of dynamic semantics, whose side is `Veltman1996.consistent_migh
 ## TODO
 
 The Epistemic Grid (Example 4.34), the logic EO+ with its completeness theorem, and the
-remaining principles of Proposition 5.12 are not formalized.
+stratification of every epistemic extension (Theorem 5.11) are not formalized.
 
 ## References
 
@@ -54,19 +55,19 @@ abbrev frame : CompatFrame Poss := epistemicFrame Coin
 instance : DecidableRel frame.compat := inferInstanceAs (DecidableRel (compat (B := Coin)))
 
 /-- The possibility `x1 = ({0}, {0})` knows `p`. -/
-def x1 : Poss := ⟨({0}, {0}), by decide⟩
+def x1 : Poss := Possibility.pure {0} (by decide)
 
 /-- The possibility `x2 = ({0}, {0, 1})` settles `p` without knowing it. -/
-def x2 : Poss := ⟨({0}, {0, 1}), by decide⟩
+def x2 : Poss := ⟨⟨({0}, {0, 1}), by decide⟩, by decide⟩
 
 /-- The possibility `x3 = ({0, 1}, {0, 1})` is fully uncertain. -/
-def x3 : Poss := ⟨({0, 1}, {0, 1}), by decide⟩
+def x3 : Poss := Possibility.pure {0, 1} (by decide)
 
 /-- The possibility `x4 = ({1}, {0, 1})` settles `¬p` without knowing it. -/
-def x4 : Poss := ⟨({1}, {0, 1}), by decide⟩
+def x4 : Poss := ⟨⟨({1}, {0, 1}), by decide⟩, by decide⟩
 
 /-- The possibility `x5 = ({1}, {1})` knows `¬p`. -/
-def x5 : Poss := ⟨({1}, {1}), by decide⟩
+def x5 : Poss := Possibility.pure {1} (by decide)
 
 -- Table 1
 theorem card_poss : Fintype.card Poss = 5 := by decide
@@ -78,7 +79,7 @@ theorem compat_iff : ∀ x y : Poss, frame.compat x y ↔ x = y ∨
 
 /-- `x2` accesses `x1` and `x3`, `x4` accesses `x3` and `x5`, and every possibility accesses
 itself (Figure 12 and Example 5.3). -/
-theorem access_iff : ∀ x y : Poss, (x, y) ∈ access ↔ x = y ∨
+theorem mem_access_iff : ∀ x y : Poss, (x, y) ∈ access ↔ x = y ∨
     (x, y) ∈ [(x2, x1), (x2, x3), (x4, x3), (x4, x5)] := by
   decide
 
@@ -139,7 +140,7 @@ theorem card_regular :
 /-- Wittgenstein sentences of both orders are contradictions ((2) and (3)), by Proposition 4.27. -/
 theorem wittgenstein : nP ∩ dP = ∅ ∧ P ∩ dnP = ∅ :=
   ⟨Set.disjoint_iff_inter_eq_empty.mp (disjoint_orthoNeg_diamond frame access P),
-    by simpa only [orthoNeg_orthoNeg_of_isRegular frame (embed_isRegular _),
+    by simpa only [orthoNeg_orthoNeg_of_isRegular frame (embed _).isRegular,
       Set.disjoint_iff_inter_eq_empty] using disjoint_orthoNeg_diamond frame access nP⟩
 
 /-- At the coin with unknown outcome, `◇¬p` does not entail `¬p` (§1) and `p` does not entail `□p`
@@ -155,11 +156,11 @@ theorem not_derivable_dia_neg_neg :
   intro h
   have hle := Concept.extent_subset_extent_iff.mpr <| ModalFormula.sound
     (CompatFrame.necHom_le access) (CompatFrame.wittgensteinLaw_necHom frame access) h
-    fun _ ↦ eB ({0} : Coin)
+    fun _ ↦ embed ({0} : Coin)
   change ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) ⊆
     ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) at hle
   simp only [ModalFormula.eval_dia, CompatFrame.coe_diamondHom_necHom, ModalFormula.eval,
-    CompatFrame.Regular.coe_compl, coe_eB] at hle
+    CompatFrame.Regular.coe_compl, coe_embed] at hle
   exact diamond_neg_not_entail_neg.2 (hle diamond_neg_not_entail_neg.1)
 
 /-- EO does not derive `p ⊢ □p`: at `x2`, which settles `p` without knowing it (§2). -/
@@ -168,10 +169,10 @@ theorem not_derivable_box :
   intro h
   have hle := Concept.extent_subset_extent_iff.mpr <| ModalFormula.sound
     (CompatFrame.necHom_le access) (CompatFrame.wittgensteinLaw_necHom frame access) h
-    fun _ ↦ eB ({0} : Coin)
+    fun _ ↦ embed ({0} : Coin)
   change ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) ⊆
     ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) at hle
-  simp only [ModalFormula.eval, CompatFrame.coe_necHom, coe_eB] at hle
+  simp only [ModalFormula.eval, CompatFrame.coe_necHom, coe_embed] at hle
   exact not_entail_box.2 (hle not_entail_box.1)
 
 /-- At `x3`, `(p ∨ ¬p) ∧ (◇p ∧ ◇¬p)` holds but its distributed form does not ((10) and Example
@@ -189,7 +190,7 @@ theorem disjunctive_syllogism_fails :
 /-- The regular propositions of the Scale are not orthomodular ((21) and Example 3.20). -/
 theorem orthomodularity_fails : ¬ IsOrthomodularLattice frame.Regular := by
   intro
-  let p : frame.Regular := eB ({0} : Coin)
+  let p : frame.Regular := embed ({0} : Coin)
   have coe_dp : (diamondHom (frame.necHom access) p : Set Poss) = dP :=
     CompatFrame.coe_diamondHom_necHom access p
   have hle : p ≤ diamondHom (frame.necHom access) p := Concept.extent_subset_extent_iff.mp <| by
@@ -212,17 +213,17 @@ theorem not_isModularLattice : ¬ IsModularLattice frame.Regular := fun _ ↦
 `◇¬p ≰ ¬p`. -/
 theorem pseudocomplementation_fails : ¬ ∀ a b : frame.Regular, Disjoint a b → b ≤ aᶜ := by
   intro h
-  let p : frame.Regular := eB ({0} : Coin)
+  let p : frame.Regular := embed ({0} : Coin)
   have coe_dnp : (diamondHom (frame.necHom access) pᶜ : Set Poss) = dnP := by
-    rw [CompatFrame.coe_diamondHom_necHom, CompatFrame.Regular.coe_compl, coe_eB]
+    rw [CompatFrame.coe_diamondHom_necHom, CompatFrame.Regular.coe_compl]
   have hd : Disjoint p (diamondHom (frame.necHom access) pᶜ) := disjoint_iff.2 <|
     CompatFrame.Regular.coe_eq_empty.1 <| by
-      rw [CompatFrame.Regular.coe_inf, coe_dnp, coe_eB]
+      rw [CompatFrame.Regular.coe_inf, coe_dnp, coe_embed]
       exact wittgenstein.2
   have hle := Concept.extent_subset_extent_iff.mpr (h _ _ hd)
   change (diamondHom (frame.necHom access) pᶜ : Set Poss) ⊆ ((pᶜ : frame.Regular) : Set Poss)
     at hle
-  rw [coe_dnp, CompatFrame.Regular.coe_compl, coe_eB] at hle
+  rw [coe_dnp, CompatFrame.Regular.coe_compl, coe_embed] at hle
   exact diamond_neg_not_entail_neg.2 (hle diamond_neg_not_entail_neg.1)
 
 /-- De Morgan's law makes `◇p ∧ ◇¬p` equivalent to `¬(□¬p ∨ □p)` (29). -/

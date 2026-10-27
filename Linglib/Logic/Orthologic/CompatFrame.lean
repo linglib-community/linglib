@@ -279,6 +279,14 @@ def regularClosure (F : CompatFrame S) : ClosureOperator (Set S) where
 theorem regularClosure_isClosed_iff_isRegular (F : CompatFrame S) (A : Set S) :
     (regularClosure F).IsClosed A ↔ IsRegular F A := Iff.rfl
 
+/-- A possibility settles `A ∨ B` iff every possibility compatible with it is compatible with one
+    settling `A` or `B`, so the De Morgan disjunction is the regular closure of the union. -/
+theorem disj_eq_regularClosure_union (F : CompatFrame S) (A B : Set S) :
+    disj F A B = regularClosure F (A ∪ B) := by
+  ext x
+  simp only [disj, mem_orthoNeg, Set.mem_inter_iff, not_and_or, not_forall, not_not,
+    exists_prop, mem_regularClosure, Set.mem_union, and_or_left, exists_or]
+
 /-! ### Closure properties of regular sets -/
 
 theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
@@ -406,5 +414,17 @@ theorem CompatFrame.Regular.isRegular (A : F.Regular) : IsRegular F A :=
     ((A ⊔ B : F.Regular) : Set S) = disj F (A : Set S) (B : Set S) := by
   rw [← InvolutiveCompl.compl_compl (A ⊔ B), InvolutiveCompl.compl_sup]
   simp only [coe_compl, coe_inf, disj]
+
+@[simp] theorem CompatFrame.Regular.coe_iInf {ι : Sort*} (f : ι → F.Regular) :
+    ((⨅ i, f i : F.Regular) : Set S) = ⋂ i, (f i : Set S) :=
+  Concept.extent_iInf f
+
+/-- An arbitrary join of regular propositions is the De Morgan disjunction `¬⋂ᵢ ¬Aᵢ`. -/
+@[simp] theorem CompatFrame.Regular.coe_iSup {ι : Sort*} (f : ι → F.Regular) :
+    ((⨆ i, f i : F.Regular) : Set S) = orthoNeg F (⋂ i, orthoNeg F (f i : Set S)) := by
+  show (⨆ i, f i).extent = _
+  simp only [Concept.extent_iSup, ← Concept.upperPolar_extent, ← upperPolar_eq_lowerPolar,
+    ← orthoNeg_eq_upperPolar]
+  rfl
 
 end Orthologic
