@@ -1,5 +1,6 @@
 module
 
+public import Studies.GroenendijkStokhof1984
 public import Linglib.Semantics.Questions.Polar
 public import Linglib.Semantics.Questions.Constituent
 public import Linglib.Semantics.Questions.Partition.Inquisitive
@@ -289,9 +290,6 @@ section Exhaustivity
 
 variable {ι : Type*} (a : ι → Set W)
 
-/-- The individuals with the property at a world. -/
-def ext (w : W) : Set ι := {d | w ∈ a d}
-
 /-- The answer that no individual has the property. -/
 def nobody : Set W := ⋂ d, (a d)ᶜ
 
@@ -301,15 +299,16 @@ def nonExh : Question W := which Set.univ (Option.elim · (nobody a) a)
 
 /-- The exhaustive reading, resolved by establishing exactly which individuals have the
 property (Figure 5(a)). -/
-def exh : Question W := fromSetoid (Setoid.ker (ext a))
+def exh : Question W := fromSetoid (Setoid.ker (GroenendijkStokhof1984.extension a))
 
 /-- The cell of the exhaustive reading containing a world. -/
-def cell (w : W) : Set W := {v | ext a v = ext a w}
+def cell (w : W) : Set W :=
+  {v | GroenendijkStokhof1984.extension a v = GroenendijkStokhof1984.extension a w}
 
 variable {a} {w v : W} {D : Set W}
 
 theorem mem_cell_iff : v ∈ cell a w ↔ ∀ d, v ∈ a d ↔ w ∈ a d := by
-  simp [cell, ext, Set.ext_iff]
+  simp [cell, GroenendijkStokhof1984.extension, Set.ext_iff]
 
 theorem mem_cell_self : w ∈ cell a w := rfl
 
@@ -318,7 +317,8 @@ theorem cell_eq_of_mem (hv : v ∈ cell a w) : cell a v = cell a w := by
   simp only [cell, Set.mem_ofPred_eq] at hv ⊢
   rw [hv]
 
-theorem cell_mem_classes : cell a w ∈ (Setoid.ker (ext a)).classes :=
+theorem cell_mem_classes :
+    cell a w ∈ (Setoid.ker (GroenendijkStokhof1984.extension a)).classes :=
   Setoid.mem_classes _ w
 
 theorem mem_nonExh : D ∈ nonExh a ↔ D = ∅ ∨ D ⊆ nobody a ∨ ∃ d, D ⊆ a d := by
