@@ -1,0 +1,102 @@
+[
+  {
+    "id": "portner1998_ex11",
+    "source": {
+      "bibkey": "portner-1998",
+      "paperLabel": "(11)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Max was crossing the street.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Max does not in fact cross the street because a bus, cruising along P St. at thirty miles per hour, hits him.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "Dowty's theory predicts (11) false in the situation envisioned, contrary to intuition (p. 764); (11) and (39) are both true in it (p. 779).",
+    "verified": "page-image"
+  },
+  {
+    "id": "portner1998_ex39",
+    "source": {
+      "bibkey": "portner-1998",
+      "paperLabel": "(39)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Max was walking into the path of an oncoming bus.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Max does not in fact cross the street because a bus, cruising along P St. at thirty miles per hour, hits him.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "(11) and (39) appear to describe the same event, and they are both true in the situation envisioned (p. 779).",
+    "verified": "page-image"
+  },
+  {
+    "id": "portner1998_ex18_ordinary",
+    "source": {
+      "bibkey": "portner-1998",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was wiping out the Roman army.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary, an ordinary person, attacks the town barracks and fights whomever she sees; there is really no chance that she can wipe out the local garrison, much less the whole army.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "Hence the intuition that in an ordinary sort of situation, 18 is false (p. 775; scenario p. 767).",
+    "verified": "page-image"
+  },
+  {
+    "id": "portner1998_ex18_hero",
+    "source": {
+      "bibkey": "portner-1998",
+      "paperLabel": "(18)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was wiping out the Roman army.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mary, against all odds, actually succeeds in destroying the whole Roman army.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "If somehow Mary succeeds in destroying the whole Roman army, the sentence is predicted to be true (p. 775); it is judged true (pp. 767-768).",
+    "verified": "page-image"
+  }
+]
