@@ -27,8 +27,7 @@ world](##intension_const).
 
 ## Implementation notes
 
-The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.interp lex g gw`
-works, `g` assigning the individual variables and `gw` the world variables.
+The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.interp lex g` works.
 Translation is the only type-driven step, and translation respects renaming and relating
 constants (`translate_map_const`, `translate_rel`). Binary nodes sequence effects left to right,
 whichever daughter is the function, so at `M = Cont R` the engine derives surface scope only:
@@ -39,11 +38,14 @@ Abstraction needs the effect to distribute over functions,
 never reached, since types do not depend on the assignment. The category of a node is ignored,
 composition being type-driven.
 
+Trees have no world pronouns, so their terms have no free world variables, and interpretation
+evaluates them under the default world assignment of an inhabited type of worlds, on which
+[nothing depends](##eval_translate_congr).
+
 ## TODO
 
-Trees have no world pronouns yet, so no tree translates to a term with a world variable. Von Fintel
-and Heim's overt world pronouns and their binders should translate to the world variables of terms
-and their abstractions.
+Von Fintel and Heim's world pronouns and their binders, translating to the world variables of
+terms and their abstractions.
 
 ## References
 
@@ -96,11 +98,12 @@ theorem valueAt_of_map_fst {E W : Type} {S : Sorts} {M : Type → Type} {τ : Ty
   · simp only [Option.map_some, Option.some.injEq] at h
     subst h; simp [valueAt]
 
-/-- The denotation of a term whose constants are denotations, at its type. -/
-abbrev evalAt {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
-    (g : Assignment E) (gw : Assignment W) (d : Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty S)) ty) :
+/-- The denotation of a term whose constants are denotations, at its type, its world variables
+taking a default value. -/
+abbrev evalAt {E W : Type} [Inhabited W] {M : Type → Type} [Applicative M] {S : Sorts}
+    [Distributive M] (g : Assignment E) (d : Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty S)) ty) :
     Denotation E W M S :=
-  ⟨d.1, d.2.evalM (fun c ↦ c) g gw⟩
+  ⟨d.1, d.2.evalM (fun c ↦ c) g default⟩
 
 end Montague
 
@@ -306,6 +309,46 @@ theorem translate_rel {K' : Ty → Type*} {R : ∀ ty : Ty, K ty → K' ty → P
     exact ⟨.lam n b, by simp [hb'], .lam n hr⟩
   | junk l cs hj _ => intro d' h; rw [translate_junk _ hj] at h; exact absurd h (by simp)
 
+/-- No tree translates to a term with a free world variable, since trees have no world
+pronouns. -/
+theorem freeWVars_translate (t : Tree C L) :
+    ∀ {d}, translate lex t = some d → d.2.freeWVars = ∅ := by
+  induction t using Tree.rec' with
+  | terminal c w =>
+    intro d h
+    obtain ⟨_, _, rfl⟩ := Option.map_eq_some_iff.1 h
+    rfl
+  | node c cs ih =>
+    match cs with
+    | [] => intro d h; simp [translate] at h
+    | [t] => intro d h; exact ih t (by simp) h
+    | [t₁, t₂] =>
+      intro d h
+      simp only [translate_node_binary, Option.bind_eq_some_iff] at h
+      obtain ⟨⟨σ₁, u₁⟩, h₁, ⟨σ₂, u₂⟩, h₂, h⟩ := h
+      simp only [Mode.combine?, Option.map_eq_some_iff] at h
+      obtain ⟨⟨τ, m⟩, -, rfl⟩ := h
+      simp [Term.freeWVars, ih t₁ (by simp) h₁, ih t₂ (by simp) h₂]
+    | _ :: _ :: _ :: _ => intro d h; simp [translate] at h
+  | adjoin c cs ih =>
+    match cs with
+    | [] => intro d h; simp [translate] at h
+    | [t] => intro d h; exact ih t (by simp) h
+    | [t₁, t₂] =>
+      intro d h
+      simp only [translate_adjoin_binary, Option.bind_eq_some_iff] at h
+      obtain ⟨⟨σ₁, u₁⟩, h₁, ⟨σ₂, u₂⟩, h₂, h⟩ := h
+      simp only [Mode.combine?, Option.map_eq_some_iff] at h
+      obtain ⟨⟨τ, m⟩, -, rfl⟩ := h
+      simp [Term.freeWVars, ih t₁ (by simp) h₁, ih t₂ (by simp) h₂]
+    | _ :: _ :: _ :: _ => intro d h; simp [translate] at h
+  | trace n c => intro d h; obtain rfl := Option.some.inj h.symm; rfl
+  | bind n c body ih =>
+    intro d h
+    obtain ⟨_, hb, rfl⟩ := Option.map_eq_some_iff.1 h
+    simpa [Term.freeWVars] using ih hb
+  | junk l cs hj _ => intro d h; rw [translate_junk _ hj] at h; exact absurd h (by simp)
+
 end Translate
 
 /-! ### Tree interpretation -/
@@ -320,10 +363,10 @@ daughter's denotation, a binary node its daughters' denotations composed by the 
 select, a trace the value of its index, and a binder the abstraction over its index when the
 effect has a distributor. It is the denotation of the tree's term with each word's denotation as
 its constant. -/
-def interp {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
-    {L : Type*} (lex : L → Option (Denotation E W M S)) (g : Assignment E) (gw : Assignment W)
+def interp {E W : Type} [Inhabited W] {M : Type → Type} [Applicative M] {S : Sorts}
+    [Distributive M] {L : Type*} (lex : L → Option (Denotation E W M S)) (g : Assignment E)
     (t : Tree C L) : Option (Denotation E W M S) :=
-  (translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t).map (evalAt g gw)
+  (translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t).map (evalAt g)
 
 end TreeInterp
 
@@ -334,14 +377,15 @@ composed denotation. -/
 
 section Reduction
 
-variable {C : Type} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [Distributive M]
+variable {C : Type} {E W : Type} [Inhabited W] {S : Sorts} {M : Type → Type} [Applicative M]
+  [Distributive M]
   {L : Type*}
 
-private theorem map_evalAt_combine (g : Assignment E) (gw : Assignment W)
+private theorem map_evalAt_combine (g : Assignment E)
     (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty S)) ty)) :
     (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (evalAt g gw) =
-      (t₁.map (evalAt g gw)).bind fun d₁ ↦ (t₂.map (evalAt g gw)).bind fun d₂ ↦
+        (evalAt g) =
+      (t₁.map (evalAt g)).bind fun d₁ ↦ (t₂.map (evalAt g)).bind fun d₂ ↦
         Mode.combine? Mode.evalM d₁ d₂ := by
   rcases t₁ with _ | ⟨τ₁, u₁⟩
   · rfl
@@ -350,36 +394,36 @@ private theorem map_evalAt_combine (g : Assignment E) (gw : Assignment W)
   simp only [Option.bind_some, Option.map_some, Mode.combine?]
   rcases τ₁.mode? τ₂ with _ | ⟨τ, m⟩ <;> rfl
 
-variable (lex : L → Option (Denotation E W M S)) (g : Assignment E) (gw : Assignment W)
+variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
 
 @[simp] theorem interp_terminal (c : C) (w : L) :
-    interp lex g gw (.terminal c w : Tree C L) = lex w := by
+    interp lex g (.terminal c w : Tree C L) = lex w := by
   simp only [interp, translate_terminal]
   cases lex w <;> rfl
 
 @[simp] theorem interp_node_unary (c : C) (t : Tree C L) :
-    interp lex g gw (.node c (t :: [])) = interp lex g gw t := rfl
+    interp lex g (.node c (t :: [])) = interp lex g t := rfl
 
 @[simp] theorem interp_adjoin_unary (c : C) (t : Tree C L) :
-    interp lex g gw (.adjoin c (t :: [])) = interp lex g gw t := rfl
+    interp lex g (.adjoin c (t :: [])) = interp lex g t := rfl
 
 @[simp] theorem interp_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    interp lex g gw (.node c (t₁ :: t₂ :: [])) = ((interp lex g gw t₁).bind fun d₁ ↦
-      (interp lex g gw t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
-  map_evalAt_combine g gw _ _
+    interp lex g (.node c (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
+      (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
+  map_evalAt_combine g _ _
 
 @[simp] theorem interp_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
-    interp lex g gw (.adjoin c (t₁ :: t₂ :: [])) = ((interp lex g gw t₁).bind fun d₁ ↦
-      (interp lex g gw t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
-  map_evalAt_combine g gw _ _
+    interp lex g (.adjoin c (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
+      (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
+  map_evalAt_combine g _ _
 
 @[simp] theorem interp_trace (n : ℕ) (c : C) :
-    interp lex g gw (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
+    interp lex g (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
 
 @[simp] theorem interp_bind (n : ℕ) (c : C) (body : Tree C L) :
-    interp lex g gw (.bind n c body) =
-      (interp lex g gw body).bind fun d ↦
-        some ⟨.fn .e d.1, distribute fun x ↦ valueAt d.1 d.2 (interp lex (g[n ↦ x]) gw body)⟩ := by
+    interp lex g (.bind n c body) =
+      (interp lex g body).bind fun d ↦
+        some ⟨.fn .e d.1, distribute fun x ↦ valueAt d.1 d.2 (interp lex (g[n ↦ x]) body)⟩ := by
   simp only [interp, translate_bind]
   rcases translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex body with _ | ⟨τ, b⟩
   · rfl
@@ -387,7 +431,7 @@ variable (lex : L → Option (Denotation E W M S)) (g : Assignment E) (gw : Assi
 
 theorem interp_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    interp lex g gw (RoseTree.node l cs) = none := by
+    interp lex g (RoseTree.node l cs) = none := by
   simp only [interp, translate_junk _ h, Option.map_none]
 
 end Reduction
@@ -464,14 +508,15 @@ theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     · exact absurd rfl h
     · rfl
 
-variable {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [Distributive M]
+variable {E W : Type} [Inhabited W] {S : Sorts} {M : Type → Type} [Applicative M]
+  [Distributive M]
 
 variable {lexTy} {lex : L → Option (Denotation E W M S)}
 
 /-- The type of a tree's denotation is the type `ty?` computes from the types of its leaves. -/
-theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E) (gw : Assignment W)
+theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
-    (interp lex g gw t).map (·.1) =
+    (interp lex g t).map (·.1) =
       ty? lexTy t := by
   induction t using Tree.rec' generalizing g with
   | terminal c w => rw [interp_terminal]; exact h w
@@ -481,7 +526,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
       rw [interp_node_binary, ty?_node_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g gw t₁ <;> cases interp lex g gw t₂ <;> simp [Ty.combine?]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Ty.combine?]
     | _ :: _ :: _ :: _ => rfl
   | adjoin c cs ih =>
     match cs with
@@ -489,19 +534,19 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
       rw [interp_adjoin_binary, ty?_adjoin_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g gw t₁ <;> cases interp lex g gw t₂ <;> simp [Ty.combine?]
+      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Ty.combine?]
     | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
   | bind n c body ih =>
     rw [interp_bind, ty?_bind, ← ih g]
-    cases interp lex g gw body <;> rfl
-  | junk l cs hj _ => rw [interp_junk lex g gw hj, ty?_junk _ hj]; rfl
+    cases interp lex g body <;> rfl
+  | junk l cs hj _ => rw [interp_junk lex g hj, ty?_junk _ hj]; rfl
 
-theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E) (gw : Assignment W)
+theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
-    (interp lex g gw t).isSome =
+    (interp lex g t).isSome =
       (ty? lexTy t).isSome := by
-  rw [← interp_map_fst h g gw t, Option.isSome_map]
+  rw [← interp_map_fst h g t, Option.isSome_map]
 
 end TreeTyping
 
@@ -516,17 +561,18 @@ a closed tree has the same denotation under every assignment. -/
 
 section FreeVariables
 
-variable {C : Type} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [Distributive M]
-  {L : Type*} (lex : L → Option (Denotation E W M S)) (gw : Assignment W)
+variable {C : Type} {E W : Type} [Inhabited W] {S : Sorts} {M : Type → Type} [Applicative M]
+  [Distributive M]
+  {L : Type*} (lex : L → Option (Denotation E W M S))
 
 theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
-    (interp lex g gw t).map (·.1) = (interp lex g' gw t).map (·.1) := by
+    (interp lex g t).map (·.1) = (interp lex g' t).map (·.1) := by
   rw [interp_map_fst (fun _ ↦ rfl), interp_map_fst (fun _ ↦ rfl)]
 
 /-- Assignments agreeing on the traces free in a tree give it the same denotation, the
 coincidence theorem ([heim-kratzer-1998] §5.4.2). -/
 theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
-    (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g gw t = interp lex g' gw t := by
+    (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g t = interp lex g' t := by
   induction t using Tree.rec' generalizing g g' with
   | terminal c w => simp only [interp_terminal]
   | node c cs ih =>
@@ -552,15 +598,15 @@ theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
   | trace n c => simp only [interp_trace]; rw [h n (by simp)]
   | bind n c body ih =>
     simp only [interp_bind]
-    have hb : ∀ x, interp lex (g[n ↦ x]) gw body = interp lex (g'[n ↦ x]) gw body :=
+    have hb : ∀ x, interp lex (g[n ↦ x]) body = interp lex (g'[n ↦ x]) body :=
       fun x ↦ ih fun i hi ↦ by
         by_cases hin : i = n
         · subst hin; simp
         · rw [Function.update_of_ne hin, Function.update_of_ne hin]
           exact h i (by rw [Tree.freeIndices_bind]; exact Finset.mem_erase.mpr ⟨hin, hi⟩)
-    have ht := interp_map_fst_congr lex gw g g' body
+    have ht := interp_map_fst_congr lex g g' body
     revert ht
-    cases hg : interp lex g gw body <;> cases hg' : interp lex g' gw body <;> intro ht
+    cases hg : interp lex g body <;> cases hg' : interp lex g' body <;> intro ht
     · rfl
     · simp at ht
     · simp at ht
@@ -572,21 +618,21 @@ theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
       congr 1
       funext x
       rw [hb x]
-      exact valueAt_of_map_fst (by rw [interp_map_fst_congr lex gw _ g' body, hg']; rfl)
-  | junk l cs hj _ => rw [interp_junk lex g gw hj, interp_junk lex g' gw hj]
+      exact valueAt_of_map_fst (by rw [interp_map_fst_congr lex _ g' body, hg']; rfl)
+  | junk l cs hj _ => rw [interp_junk lex g hj, interp_junk lex g' hj]
 
 /-- By [heim-kratzer-1998]'s (9), a tree with no free trace at index `i` denotes alike under an
 assignment and its modification at `i`. -/
 theorem interp_update_of_not_mem_freeIndices {t : Tree C L} {i : ℕ}
     (h : i ∉ t.freeIndices) (g : Assignment E) (x : E) :
-    interp lex (g[i ↦ x]) gw t = interp lex g gw t :=
-  interp_congr_of_agree lex gw fun j hj ↦
+    interp lex (g[i ↦ x]) t = interp lex g t :=
+  interp_congr_of_agree lex fun j hj ↦
     Function.update_of_ne (fun hji ↦ h (by subst hji; exact hj)) x g
 
 /-- By [heim-kratzer-1998]'s (10), a closed tree denotes alike under every assignment. -/
 theorem interp_congr_of_closed {t : Tree C L} (h : t.Closed) (g g' : Assignment E) :
-    interp lex g gw t = interp lex g' gw t :=
-  interp_congr_of_agree lex gw fun i hi ↦ absurd (h ▸ hi) (Finset.notMem_empty i)
+    interp lex g t = interp lex g' t :=
+  interp_congr_of_agree lex fun i hi ↦ absurd (h ▸ hi) (Finset.notMem_empty i)
 
 end FreeVariables
 
@@ -600,12 +646,12 @@ daughters' (`mem_readings_node_binary`). -/
 
 section Readings
 
-variable {C : Type} {L : Type*} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M]
+variable {C : Type} {L : Type*} {E W : Type} [Inhabited W] {S : Sorts} {M : Type → Type}
+  [Applicative M]
   [Distributive M]
 
 theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : L → L')
-    (g : Assignment E) (gw : Assignment W) (t : Tree C L) :
-    interp lex g gw (t.map f) = interp (lex ∘ f) g gw t := by
+    (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
   induction t using Tree.rec' generalizing g with
   | terminal c w => rfl
   | node c cs ih =>
@@ -629,23 +675,23 @@ theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : 
         (cs.map RoseTree.value).map (Tree.Label.mapWord f) := by
       simp only [List.map_map]
       exact List.map_congr_left fun t _ ↦ Tree.value_map f t
-    rw [Tree.map_rose, interp_junk _ _ _ (by rw [hmap, Tree.Label.licenses_mapWord]; exact hj),
-      interp_junk _ _ _ hj]
+    rw [Tree.map_rose, interp_junk _ _ (by rw [hmap, Tree.Label.licenses_mapWord]; exact hj),
+      interp_junk _ _ hj]
 
-variable (lex : L → Set (Denotation E W M S)) (g : Assignment E) (gw : Assignment W)
+variable (lex : L → Set (Denotation E W M S)) (g : Assignment E)
 
 /-- The readings of a tree when each word has a set of readings are the denotations of the trees
 obtained by resolving each occurrence of a word to one of its readings. -/
 def readings (t : Tree C L) : Set (Denotation E W M S) :=
   {d | ∃ r : Tree C {p : L × Denotation E W M S // p.2 ∈ lex p.1},
-    r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g gw r = some d}
+    r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d}
 
-variable {lex g gw}
+variable {lex g}
 
 theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)} {t : Tree C L}
-    {d : Denotation E W M S} (h : interp choice g gw t = some d) :
+    {d : Denotation E W M S} (h : interp choice g t = some d) :
     ∃ r : Tree C {p : L × Denotation E W M S // choice p.1 = some p.2},
-      r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g gw r = some d := by
+      r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d := by
   induction t using Tree.rec' generalizing g d with
   | terminal c w =>
     rw [interp_terminal] at h
@@ -685,17 +731,17 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)}
     rw [interp_bind] at h
     obtain ⟨⟨τ, probe⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨r, hr, hd⟩ := ih hb
-    have hres : ∀ g', interp choice g' gw body = interp (fun p ↦ some p.1.2) g' gw r := fun g' ↦ by
+    have hres : ∀ g', interp choice g' body = interp (fun p ↦ some p.1.2) g' r := fun g' ↦ by
       rw [← hr, interp_map]
-      exact congrFun (congrFun (congrFun (congrArg _ (funext fun p ↦ p.2)) g') gw) r
+      exact congrFun (congrFun (congrArg _ (funext fun p ↦ p.2)) g') r
     refine ⟨.bind n c r, by simp [hr], ?_⟩
     rw [interp_bind, hd, Option.bind_some]
     simpa only [hres] using h
-  | junk l cs hj _ => exact absurd h (by rw [interp_junk _ _ _ hj]; simp)
+  | junk l cs hj _ => exact absurd h (by rw [interp_junk _ _ hj]; simp)
 
 theorem interp_mem_readings {choice : L → Option (Denotation E W M S)}
     (hc : ∀ w d, choice w = some d → d ∈ lex w) {t : Tree C L} {d : Denotation E W M S}
-    (h : interp choice g gw t = some d) : d ∈ readings lex g gw t := by
+    (h : interp choice g t = some d) : d ∈ readings lex g t := by
   obtain ⟨r, hr, hd⟩ := exists_resolution_of_interp h
   refine ⟨r.map fun p ↦ ⟨p.1, hc _ _ p.2⟩, ?_, ?_⟩
   · rw [Tree.map_map]; exact hr
@@ -703,14 +749,14 @@ theorem interp_mem_readings {choice : L → Option (Denotation E W M S)}
 
 /-- On a lexicon with one reading per word, the readings are the engine's values. -/
 theorem readings_eq_of_choice (choice : L → Option (Denotation E W M S)) (t : Tree C L) :
-    readings (fun w ↦ {d | choice w = some d}) g gw t = {d | interp choice g gw t = some d} := by
+    readings (fun w ↦ {d | choice w = some d}) g t = {d | interp choice g t = some d} := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ interp_mem_readings (fun _ _ h ↦ h) h⟩
-  show interp choice g gw t = some d
+  show interp choice g t = some d
   rw [← hr, interp_map]
-  exact (congrFun (congrFun (congrFun (congrArg _ (funext fun p ↦ p.2)) g) gw) r).trans hd
+  exact (congrFun (congrFun (congrArg _ (funext fun p ↦ p.2)) g) r).trans hd
 
-@[simp] theorem readings_terminal (c : C) (w : L) : readings lex g gw (.terminal c w) = lex w := by
+@[simp] theorem readings_terminal (c : C) (w : L) : readings lex g (.terminal c w) = lex w := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.terminal c ⟨(w, d), h⟩, rfl, rfl⟩⟩
   obtain ⟨p, rfl, rfl⟩ := Tree.map_eq_terminal_iff.1 hr
@@ -718,7 +764,7 @@ theorem readings_eq_of_choice (choice : L → Option (Denotation E W M S)) (t : 
   exact p.2
 
 @[simp] theorem readings_trace (n : ℕ) (c : C) :
-    readings lex g gw (.trace n c) = {⟨.e, pure (g n)⟩} := by
+    readings lex g (.trace n c) = {⟨.e, pure (g n)⟩} := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.trace n c, rfl, h ▸ rfl⟩⟩
   obtain rfl := Tree.map_eq_trace_iff.1 hr
@@ -726,8 +772,8 @@ theorem readings_eq_of_choice (choice : L → Option (Denotation E W M S)) (t : 
 
 /-- A binary node's readings are the pointwise compositions of its daughters'. -/
 theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M S} :
-    d ∈ readings lex g gw (.node c (t₁ :: t₂ :: [])) ↔
-      ∃ d₁ ∈ readings lex g gw t₁, ∃ d₂ ∈ readings lex g gw t₂,
+    d ∈ readings lex g (.node c (t₁ :: t₂ :: [])) ↔
+      ∃ d₁ ∈ readings lex g t₁, ∃ d₂ ∈ readings lex g t₂,
         Mode.combine? Mode.evalM d₁ d₂ = some d := by
   constructor
   · rintro ⟨r, hr, hd⟩
@@ -746,9 +792,8 @@ theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation 
 /-- A binder's readings interpret it over a resolution of its body, which reads each occurrence
 the same way at every value of the bound variable. -/
 theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Denotation E W M S} :
-    d ∈ readings lex g gw (.bind n c t) ↔
-      ∃ r : Tree C {p : L × Denotation E W M S // p.2 ∈ lex p.1}, r.map (·.1.1) = t ∧
-        interp (fun p ↦ some p.1.2) g gw (.bind n c r) = some d := by
+    d ∈ readings lex g (.bind n c t) ↔ ∃ r : Tree C {p : L × Denotation E W M S // p.2 ∈ lex p.1},
+      r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g (.bind n c r) = some d := by
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun ⟨r, hr, hd⟩ ↦ ⟨.bind n c r, by rw [Tree.map_bind, hr], hd⟩⟩
   obtain ⟨b, rfl, hb⟩ := Tree.map_eq_bind_iff.1 hr
   exact ⟨b, hb, hd⟩
@@ -764,7 +809,7 @@ engine computes for it under the set effect. -/
 
 section SetEffect
 
-variable {C : Type} {L : Type*} {E W : Type} {S : Sorts}
+variable {C : Type} {L : Type*} {E W : Type} [Inhabited W] {S : Sorts}
 
 /-- The readings of a word under a set-valued lexicon: its denotations at each of its values. -/
 def wordReadings (lex : L → Option (Denotation E W SetM S)) (w : L) : Set (Denotation E W Id S) :=
@@ -773,9 +818,9 @@ def wordReadings (lex : L → Option (Denotation E W SetM S)) (w : L) : Set (Den
 /-- The readings of a tree under the readings of a set-valued lexicon's words are among the values
 the engine computes for it under the set effect. -/
 theorem mem_interp_setM_of_mem_readings (lex : L → Option (Denotation E W SetM S))
-    (g : Assignment E) (gw : Assignment W) {t : Tree C L} {d : Denotation E W Id S}
-    (hd : d ∈ readings (wordReadings lex) g gw t) :
-    ∃ X, interp lex g gw t = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run := by
+    (g : Assignment E) {t : Tree C L} {d : Denotation E W Id S}
+    (hd : d ∈ readings (wordReadings lex) g t) :
+    ∃ X, interp lex g t = some ⟨d.1, X⟩ ∧ d.2 ∈ X.run := by
   obtain ⟨r, rfl, hr⟩ := hd
   rw [interp_map]
   simp only [interp] at hr ⊢
@@ -800,7 +845,7 @@ theorem mem_interp_setM_of_mem_readings (lex : L → Option (Denotation E W SetM
   rw [hu, Option.some.injEq, Sigma.mk.injEq] at hu₀
   obtain ⟨-, hu₀⟩ := hu₀
   obtain rfl := eq_of_heq hu₀
-  have hmem := hR.mem_run_evalM g gw
+  have hmem := hR.mem_run_evalM g default
   simp only [evalAt, Term.evalM_id] at hev
   subst hev
   exact ⟨_, by rw [hu', Option.map_some], hmem⟩
@@ -812,14 +857,28 @@ end SetEffect
 
 section Translation
 
-variable {C : Type} {K : Ty → Type*} {L : Type*} {E W : Type} {S : Sorts}
+variable {C : Type} {K : Ty → Type*} {L : Type*} {E W : Type} [Inhabited W] {S : Sorts}
+
+omit [Inhabited W] in
+/-- A tree's term has the same value under every assignment of the world variables, having none
+free. -/
+theorem eval_translate_congr (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S)
+    (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (gw gw' : Assignment W) (t : Tree C L) :
+    (translate lex t).map (fun d ↦ (⟨d.1, d.2.eval I g gw⟩ : Denotation E W Id S)) =
+      (translate lex t).map fun d ↦ ⟨d.1, d.2.eval I g gw'⟩ := by
+  cases h : translate lex t with
+  | none => rfl
+  | some d =>
+    simp only [Option.map_some, Option.some.injEq, Sigma.mk.injEq, heq_eq_eq, true_and]
+    exact Term.realize_congr_of_agree _ d.2 (fun _ _ ↦ rfl)
+      (by simp [freeWVars_translate lex t h])
 
 /-- Interpreting a tree whose words denote what an interpretation `I` of their constants gives
 is evaluating the tree's term under `I`. -/
 theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S)
-    (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (gw : Assignment W) (t : Tree C L) :
-    interp (M := Id) (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g gw t =
-      (translate lex t).map fun d ↦ ⟨d.1, d.2.eval I g gw⟩ := by
+    (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (t : Tree C L) :
+    interp (M := Id) (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
+      (translate lex t).map fun d ↦ ⟨d.1, d.2.eval I g default⟩ := by
   simp only [interp, translate_map_const]
   cases translate lex t with
   | none => rfl
@@ -831,19 +890,19 @@ end Translation
 
 section Intension
 
-variable {C : Type} {K : Ty → Type*} {L : Type*} {E W : Type} {S : Sorts}
+variable {C : Type} {K : Ty → Type*} {L : Type*} {E W : Type} [Inhabited W] {S : Sorts}
 
 /-- The intension of a tree under a lexicon of intensions and an assignment, the intension of its
 term ([von-fintel-heim-2011]). -/
 def intension (lex : L → Option (Σ ty, W → Ty.Domain E W ty S)) (g : Assignment E)
-    (gw : Assignment W) (t : Tree C L) : Option (Σ ty, W → Ty.Domain E W ty S) :=
+    (t : Tree C L) : Option (Σ ty, W → Ty.Domain E W ty S) :=
   (translate (K := fun ty ↦ W → Ty.Domain E W ty S) lex t).map fun d ↦
-    ⟨d.1, d.2.intension (fun c ↦ c) g gw⟩
+    ⟨d.1, d.2.intension (fun c ↦ c) g default⟩
 
 theorem intension_eq_intension_translate (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S)
-    (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (gw : Assignment W) (t : Tree C L) :
-    intension (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g gw t =
-      (translate lex t).map fun d ↦ ⟨d.1, d.2.intension I g gw⟩ := by
+    (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (t : Tree C L) :
+    intension (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
+      (translate lex t).map fun d ↦ ⟨d.1, d.2.intension I g default⟩ := by
   simp only [intension, translate_map_const]
   cases translate lex t with
   | none => rfl
@@ -851,13 +910,13 @@ theorem intension_eq_intension_translate (I : ∀ {ty : Ty}, K ty → W → Ty.D
 
 /-- Under a lexicon of rigid intensions, a tree's intension is constant at its denotation. -/
 theorem intension_const (lex : L → Option (Σ ty, Ty.Domain E W ty S)) (g : Assignment E)
-    (gw : Assignment W) (t : Tree C L) :
-    intension (fun x ↦ (lex x).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) g gw t =
-      (interp (M := Id) lex g gw t).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩ := by
-  have h : interp (M := Id) lex g gw t =
-      (translate lex t).map fun d ↦ ⟨d.1, d.2.eval (fun c ↦ c) g gw⟩ :=
-    by simpa [Sigma.eta] using
-      interp_eq_eval_translate (K := fun ty ↦ Ty.Domain E W ty S) (fun c ↦ c) lex g gw t
+    (t : Tree C L) :
+    intension (fun x ↦ (lex x).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) g t =
+      (interp (M := Id) lex g t).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩ := by
+  have h : interp (M := Id) lex g t =
+      (translate lex t).map fun d ↦ ⟨d.1, d.2.eval (fun c ↦ c) g default⟩ := by
+    simpa [Sigma.eta] using
+      interp_eq_eval_translate (K := fun ty ↦ Ty.Domain E W ty S) (fun c ↦ c) lex g t
   rw [intension_eq_intension_translate (K := fun ty ↦ Ty.Domain E W ty S) (fun c _ ↦ c), h]
   cases translate lex t with
   | none => rfl
@@ -870,12 +929,11 @@ end Intension
 
 section Truth
 
-variable {C : Type} {L : Type*} {E W : Type}
+variable {C : Type} {L : Type*} {E W : Type} [Inhabited W]
 
 /-- A tree holds under a lexicon and an assignment when it composes to a true truth value. -/
-def HoldsAt (lex : L → Option (Denotation E W)) (g : Assignment E) (gw : Assignment W)
-    (t : Tree C L) : Prop :=
-  ∃ p, interp lex g gw t = some ⟨.t, p⟩ ∧ p
+def HoldsAt (lex : L → Option (Denotation E W)) (g : Assignment E) (t : Tree C L) : Prop :=
+  ∃ p, interp lex g t = some ⟨.t, p⟩ ∧ p
 
 end Truth
 
