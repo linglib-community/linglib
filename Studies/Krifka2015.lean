@@ -66,37 +66,23 @@ namespace Krifka2015
 
 open Commitment Space Question
 
-/-! ### Questions as meta-speech acts -/
+/-! ### Answers
+
+A question is the meta-speech act `Commitment.Space.question`, and the polar questions
+`Commitment.Space.monopolarQuestion` and `Commitment.Space.bipolarQuestion` propose the
+addressee's commitments. -/
 
 section Questions
 
 variable {X : Type*} (C : Space (Set X)) {P : Set (Set X)} {k l p d : Set X}
 
-/-- A question keeps the root and proposes the continuations that carry one of the acts in
-`P`. -/
-def question (P : Set (Set X)) : Space (Set X) := C.restrict (upperClosure P)
-
-theorem mem_question : d ∈ question C P ↔ d = C.root ∨ d ∈ C ∧ ∃ p ∈ P, p ⊆ d := Iff.rfl
-
--- (27)
-theorem question_singleton (p : Set X) : question C {p} = C.restrict (C.update p) := by
-  rw [question, restrict_coe_update, upperClosure_singleton, UpperSet.coe_Ici]
-
--- (31), (34)
-theorem coe_question_union (P Q : Set (Set X)) :
-    (question C (P ∪ Q) : Set (Set X)) = ↑(question C P) ∪ ↑(question C Q) := by
-  rw [question, upperClosure_union, UpperSet.coe_inf, coe_restrict_union]
-  rfl
-
-/-! ### Answers -/
-
 -- (24), (28)
-theorem question_update_of_mem (hp : p ∈ P) : (question C P).update p = C.update p :=
+theorem question_update_of_mem (hp : p ∈ P) : (C.question P).update p = C.update p :=
   C.update_restrict_of_subset fun _ hd ↦ ⟨p, hp, hd.2⟩
 
 theorem question_update_of_forall (hk : ¬ k ⊆ C.root) (hp : p ∈ P)
     (h : ∀ q ∈ P, q ≠ p → ∀ d ∈ C, ¬ k ∪ q ⊆ d) :
-    (question C P).update k = C.update (k ∪ p) :=
+    (C.question P).update k = C.update (k ∪ p) :=
   update_congr _ <| Set.ext fun d ↦ by
     constructor
     · rintro ⟨rfl | ⟨hd, q, hq, hqd⟩, hkd⟩
@@ -112,24 +98,24 @@ is again a commitment space (2), (3). An act the space does not admit needs a pr
 rejection. -/
 def Admits (C : Space (Set X)) (k : Set X) : Prop := (C.update k).root ∈ C
 
-theorem admits_question_iff_of_mem (hp : p ∈ P) : Admits (question C P) p ↔ Admits C p := by
+theorem admits_question_iff_of_mem (hp : p ∈ P) : Admits (C.question P) p ↔ Admits C p := by
   rw [Admits, question_update_of_mem C hp]
   exact ⟨fun h ↦ show _ ∈ C from h.elim (fun e ↦ e ▸ C.root_mem) And.left,
     fun h ↦ Or.inr ⟨h, p, hp, C.le_root_update p⟩⟩
 
 theorem admits_question_iff_of_forall (hk : ¬ k ⊆ C.root) (hp : p ∈ P)
     (h : ∀ q ∈ P, q ≠ p → ∀ d ∈ C, ¬ k ∪ q ⊆ d) :
-    Admits (question C P) k ↔ Admits C (k ∪ p) := by
+    Admits (C.question P) k ↔ Admits C (k ∪ p) := by
   rw [Admits, question_update_of_forall C hk hp h]
   exact ⟨fun h' ↦ show _ ∈ C from h'.elim (fun e ↦ e ▸ C.root_mem) And.left,
     fun h' ↦ Or.inr ⟨h', p, hp, Set.subset_union_right.trans (C.le_root_update _)⟩⟩
 
 theorem question_singleton_update (hk : ¬ k ⊆ C.root) (p : Set X) :
-    (question C {p}).update k = C.update (k ∪ p) :=
+    (C.question {p}).update k = C.update (k ∪ p) :=
   question_update_of_forall C hk (P := {p}) rfl fun _ hq hne ↦ absurd hq hne
 
 theorem admits_question_singleton_iff (hk : ¬ k ⊆ C.root) (p : Set X) :
-    Admits (question C {p}) k ↔ Admits C (k ∪ p) :=
+    Admits (C.question {p}) k ↔ Admits C (k ∪ p) :=
   admits_question_iff_of_forall C hk (P := {p}) rfl fun _ hq hne ↦ absurd hq hne
 
 theorem admits_update_iff (h : Admits C k) : Admits (C.update k) l ↔ Admits C (l ∪ k) := by
@@ -146,31 +132,13 @@ section Commitments
 variable {A W : Type*} (O : A → SetRel W W) (C : Space (Set (Set W))) (a : A) (φ : Set W)
   {d : Set (Set W)}
 
-/-- A monopolar question proposes `a`'s commitment to `φ` (27). -/
-def monopolarQuestion : Space (Set (Set W)) := question C {{committed O a φ}}
-
-/-- A bipolar question proposes `a`'s commitment to `φ` or to `¬φ` (23). -/
-def bipolarQuestion : Space (Set (Set W)) :=
-  question C {{committed O a φ}, {committed O a φᶜ}}
-
 /-- A question with high negation proposes `a`'s refusal to commit to `φ`, the complement of
 `a⊢φ` (39). -/
-def highNegationQuestion : Space (Set (Set W)) := question C {{(committed O a φ)ᶜ}}
-
-theorem mem_monopolarQuestion :
-    d ∈ monopolarQuestion O C a φ ↔ d = C.root ∨ d ∈ C ∧ committed O a φ ∈ d := by
-  simp [monopolarQuestion, mem_question]
-
--- (31)
-theorem coe_bipolarQuestion :
-    (bipolarQuestion O C a φ : Set (Set (Set W))) =
-      ↑(monopolarQuestion O C a φ) ∪ ↑(monopolarQuestion O C a φᶜ) := by
-  rw [bipolarQuestion, Set.insert_eq, coe_question_union]
-  rfl
+def highNegationQuestion : Space (Set (Set W)) := C.question {{(committed O a φ)ᶜ}}
 
 -- (28a)
 theorem monopolarQuestion_update_yes :
-    (monopolarQuestion O C a φ).update {committed O a φ} = C.assert O a φ :=
+    (C.monopolarQuestion O a φ).update {committed O a φ} = C.assert O a φ :=
   question_update_of_mem C (P := {{committed O a φ}}) rfl
 
 end Commitments
@@ -237,26 +205,26 @@ variable {A W : Type*} [Nonempty W] (O : A → SetRel W W) (a : A) (φ : Set W)
 
 -- (28a)
 theorem admits_monopolarQuestion_yes (h : (committed O a φ).Nonempty) :
-    Admits (monopolarQuestion O (coherent W) a φ) {committed O a φ} :=
+    Admits ((coherent W).monopolarQuestion O a φ) {committed O a φ} :=
   (admits_question_iff_of_mem (coherent W) (P := {{committed O a φ}}) rfl).2
     (admits_coherent_iff.2 (coherent_singleton.2 h))
 
 /-- *No* to a monopolar question is not admitted, so it needs a prior rejection (28b). -/
 theorem not_admits_monopolarQuestion_no [ModalLogic.IsSerial (O a)] :
-    ¬ Admits (monopolarQuestion O (coherent W) a φ) {committed O a φᶜ} := fun h ↦
+    ¬ Admits ((coherent W).monopolarQuestion O a φ) {committed O a φᶜ} := fun h ↦
   not_coherent_committed_committed_compl <| Coherent.mono (Set.pair_comm _ _).le <|
     admits_coherent_iff.1 <|
       (admits_question_singleton_iff _ (not_subset_root_coherent _) {committed O a φ}).1 h
 
 -- (24)
 theorem admits_bipolarQuestion_yes (h : (committed O a φ).Nonempty) :
-    Admits (bipolarQuestion O (coherent W) a φ) {committed O a φ} :=
+    Admits ((coherent W).bipolarQuestion O a φ) {committed O a φ} :=
   (admits_question_iff_of_mem (coherent W) (P := {{committed O a φ}, {committed O a φᶜ}})
     (Or.inl rfl)).2 (admits_coherent_iff.2 (coherent_singleton.2 h))
 
 /-- *No* to a bipolar question is admitted (24). -/
 theorem admits_bipolarQuestion_no (h : (committed O a φᶜ).Nonempty) :
-    Admits (bipolarQuestion O (coherent W) a φ) {committed O a φᶜ} :=
+    Admits ((coherent W).bipolarQuestion O a φ) {committed O a φᶜ} :=
   (admits_question_iff_of_mem (coherent W) (P := {{committed O a φ}, {committed O a φᶜ}})
     (Or.inr rfl)).2 (admits_coherent_iff.2 (coherent_singleton.2 h))
 
@@ -320,7 +288,7 @@ def start (W : Type*) [Nonempty W] : Development (Set (Set W)) := ⟨coherent W,
 -- (28b)
 theorem root_reject_monopolarQuestion_no {A W : Type*} [Nonempty W] (O : A → SetRel W W) (a : A)
     (φ : Set W) (h : (committed O a φᶜ).Nonempty) :
-    (((start W).perform (monopolarQuestion O · a φ)).reject.perform
+    (((start W).perform (·.monopolarQuestion O a φ)).reject.perform
       (·.assert O a φᶜ)).current.root = {committed O a φᶜ} :=
   root_update_coherent (coherent_singleton.2 h)
 
@@ -352,7 +320,7 @@ theorem mem_toIssue_iff {i : Set W} :
     exact ⟨c, hc, e ▸ Set.empty_subset _⟩
 
 theorem sInter_subset_of_mem_continuations_monopolarQuestion {A : Type*} {O : A → SetRel W W}
-    {a : A} {φ : Set W} {c : Set (Set W)} (hc : c ∈ continuations (monopolarQuestion O C a φ)) :
+    {a : A} {φ : Set W} {c : Set (Set W)} (hc : c ∈ continuations (C.monopolarQuestion O a φ)) :
     ⋂₀ c ⊆ committed O a φ := by
   obtain ⟨hc, hne⟩ := hc
   rcases (mem_monopolarQuestion ..).1 hc with rfl | ⟨-, hc⟩
@@ -447,22 +415,22 @@ theorem sInter_root_update_assert_raining :
   exact (Set.sInter_pair _ _).trans (Set.inter_comm _ _)
 
 theorem singleton_commitsTo_mem_continuations {s : Set Weather} (hs : s.Nonempty) :
-    {commitsTo .addressee s} ∈ continuations (monopolarQuestion Index.access C₀ .addressee
+    {commitsTo .addressee s} ∈ continuations (C₀.monopolarQuestion Index.access .addressee
       (Index.fact ⁻¹' s)) :=
   ⟨(mem_monopolarQuestion ..).2 (Or.inr ⟨coherent_singleton.2
     ⟨_, committing_mem_commitsTo_addressee (w := .rain) hs hs⟩, rfl⟩),
     (Set.singleton_nonempty _).ne_empty⟩
 
 theorem monopolar_not_inquisitive :
-    ¬ (toIssue (monopolarQuestion Index.access C₀ .addressee
+    ¬ (toIssue (C₀.monopolarQuestion Index.access .addressee
       (Index.fact ⁻¹' raining))).IsInquisitive := by
   intro h
   have hmem : commitsTo .addressee raining ∈
-      toIssue (monopolarQuestion Index.access C₀ .addressee (Index.fact ⁻¹' raining)) :=
+      toIssue (C₀.monopolarQuestion Index.access .addressee (Index.fact ⁻¹' raining)) :=
     (mem_toIssue_iff _).2 (Or.inr ⟨_, singleton_commitsTo_mem_continuations raining_nonempty,
       (Set.sInter_singleton _).ge⟩)
   refine h ?_
-  have : (toIssue (monopolarQuestion Index.access C₀ .addressee
+  have : (toIssue (C₀.monopolarQuestion Index.access .addressee
       (Index.fact ⁻¹' raining))).info = commitsTo .addressee raining := by
     refine Set.Subset.antisymm (Set.sUnion_subset fun i hi ↦ ?_) (Set.subset_sUnion_of_mem hmem)
     rcases (mem_toIssue_iff _).1 hi with ⟨h0, -⟩ | ⟨c, hc, hic⟩
@@ -473,16 +441,16 @@ theorem monopolar_not_inquisitive :
   exact hmem
 
 theorem bipolar_inquisitive :
-    (toIssue (bipolarQuestion Index.access C₀ .addressee
+    (toIssue (C₀.bipolarQuestion Index.access .addressee
       (Index.fact ⁻¹' raining))).IsInquisitive := by
   intro hinfo
   have hy : {commitsTo .addressee raining} ∈
-      continuations (bipolarQuestion Index.access C₀ .addressee (Index.fact ⁻¹' raining)) :=
+      continuations (C₀.bipolarQuestion Index.access .addressee (Index.fact ⁻¹' raining)) :=
     ⟨(coe_bipolarQuestion ..).ge
       (Or.inl (singleton_commitsTo_mem_continuations raining_nonempty).1),
       (Set.singleton_nonempty _).ne_empty⟩
   have hn : {commitsTo .addressee rainingᶜ} ∈
-      continuations (bipolarQuestion Index.access C₀ .addressee (Index.fact ⁻¹' raining)) :=
+      continuations (C₀.bipolarQuestion Index.access .addressee (Index.fact ⁻¹' raining)) :=
     ⟨(coe_bipolarQuestion ..).ge
       (Or.inr (singleton_commitsTo_mem_continuations raining_compl_nonempty).1),
       (Set.singleton_nonempty _).ne_empty⟩
@@ -490,10 +458,10 @@ theorem bipolar_inquisitive :
   have hno := (mem_toIssue_iff _).2 (Or.inr ⟨_, hn, (Set.sInter_singleton _).ge⟩)
   let wy := committing .rain raining raining raining_nonempty raining_nonempty
   let wn := committing .rain rainingᶜ rainingᶜ raining_compl_nonempty raining_compl_nonempty
-  have hwy : wy ∈ (toIssue (bipolarQuestion Index.access C₀ .addressee
+  have hwy : wy ∈ (toIssue (C₀.bipolarQuestion Index.access .addressee
       (Index.fact ⁻¹' raining))).info :=
     Set.subset_sUnion_of_mem hyes (committing_mem_commitsTo_addressee _ _)
-  have hwn : wn ∈ (toIssue (bipolarQuestion Index.access C₀ .addressee
+  have hwn : wn ∈ (toIssue (C₀.bipolarQuestion Index.access .addressee
       (Index.fact ⁻¹' raining))).info :=
     Set.subset_sUnion_of_mem hno (committing_mem_commitsTo_addressee _ _)
   rcases (mem_toIssue_iff _).1 hinfo with ⟨h0, -⟩ | ⟨c, hc, hsub⟩
@@ -576,11 +544,11 @@ variable {W : Type*} (O : Discourse.Role → SetRel W W) (C : Space (Set (Set W)
 /-- A matching tag conjoins the assertion with the monopolar question of the same content
 (44). -/
 def matchingTag : Set (Set (Set W)) :=
-  ↑(C.assert O .speaker φ) ∩ ↑(monopolarQuestion O C .addressee φ)
+  ↑(C.assert O .speaker φ) ∩ ↑(C.monopolarQuestion O .addressee φ)
 
 /-- A reverse tag disjoins the assertion with the monopolar question of the negation (45). -/
 def reverseTag : Set (Set (Set W)) :=
-  ↑(C.assert O .speaker φ) ∪ ↑(monopolarQuestion O C .addressee φᶜ)
+  ↑(C.assert O .speaker φ) ∪ ↑(C.monopolarQuestion O .addressee φᶜ)
 
 -- p. 342
 theorem matchingTag_eq (hk : committed O .speaker φ ∉ C.root)
@@ -602,7 +570,7 @@ theorem matchingTag_eq (hk : committed O .speaker φ ∉ C.root)
 
 theorem reverseTag_eq (h : Admits C {committed O .speaker φ}) :
     reverseTag O C φ =
-      ↑(question C {{committed O .speaker φ}, {committed O .addressee φᶜ}}) := by
+      ↑(C.question {{committed O .speaker φ}, {committed O .addressee φᶜ}}) := by
   ext d
   constructor
   · rintro (hd | hd)
@@ -620,7 +588,7 @@ theorem isLeast_reverseTag : IsLeast (reverseTag O C φ) C.root :=
   ⟨Or.inr (Space.root_mem _), by
     rintro d (hd | hd)
     · exact (C.root_le_root_update _).trans ((C.assert O .speaker φ).root_le hd)
-    · exact (monopolarQuestion O C .addressee φᶜ).root_le hd⟩
+    · exact (C.monopolarQuestion O .addressee φᶜ).root_le hd⟩
 
 /-- When the addressee contradicts a plain assertion, the speaker is still committed
 (p. 342). -/
@@ -664,7 +632,7 @@ theorem admits_assert_no (hs : (committed O .speaker φ).Nonempty)
 -- p. 343
 theorem root_reverseTag_update_yes [ModalLogic.IsSerial (O .addressee)]
     (h : Coherent {committed O .addressee φ, committed O .speaker φ}) :
-    ((question (coherent W) {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
+    (((coherent W).question {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
         {committed O .addressee φ}).root =
       {committed O .addressee φ, committed O .speaker φ} := by
   have h' : ∀ q ∈ ({{committed O .speaker φ}, {committed O .addressee φᶜ}} : Set (Set (Set W))),
@@ -678,7 +646,7 @@ theorem root_reverseTag_update_yes [ModalLogic.IsSerial (O .addressee)]
 
 -- p. 343
 theorem root_reverseTag_update_no (h : (committed O .addressee φᶜ).Nonempty) :
-    ((question (coherent W) {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
+    (((coherent W).question {{committed O .speaker φ}, {committed O .addressee φᶜ}}).update
         {committed O .addressee φᶜ}).root = {committed O .addressee φᶜ} := by
   rw [question_update_of_mem (coherent W)
     (P := {{committed O .speaker φ}, {committed O .addressee φᶜ}}) (Or.inr rfl)]
@@ -695,7 +663,7 @@ theorem coherent_addressee_speaker_raining :
 /-- In the model, after a reverse tag the addressee's *yes* brings the speaker's commitment
 with it. -/
 example :
-    ((question C₀ {{commitsTo .speaker raining}, {commitsTo .addressee rainingᶜ}}).update
+    ((C₀.question {{commitsTo .speaker raining}, {commitsTo .addressee rainingᶜ}}).update
         {commitsTo .addressee raining}).root =
       {commitsTo .addressee raining, commitsTo .speaker raining} :=
   root_reverseTag_update_yes coherent_addressee_speaker_raining

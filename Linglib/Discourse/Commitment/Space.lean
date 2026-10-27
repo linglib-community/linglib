@@ -4,6 +4,7 @@ public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
+public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Discourse.Commitment.Proposition
 
 /-!
@@ -19,15 +20,19 @@ be rooted, so the laws relating the acts are stated on those sets.
 
 Commitment Space Semantics is the instance over sets of propositions ordered by inclusion. A basic
 act adds propositions, and an assertion adds the proposition `k⊢φ` that the speaker is committed
-to its content.
+to its content, while a polar question proposes that the addressee commit to `φ` or to `¬φ`. The
+participant whose commitment an act projects is thus the speaker of an assertion and the
+addressee of a question.
 
 ## Main definitions
 
 * `Commitment.Space S`: rooted sets of states, ordered by inclusion, with the free space
   `Space.Ici`.
-* `Space.restrict`, `Space.denegate`: the meta-speech acts.
+* `Space.restrict`, `Space.denegate`, `Space.question`: the meta-speech acts.
 * `Space.update`: the basic act adding `k`.
-* `Space.assert`: assertion in Commitment Space Semantics.
+* `Space.assert`, `Space.monopolarQuestion`, `Space.bipolarQuestion`: assertion and polar
+  questions in Commitment Space Semantics.
+* `Space.ProjectsCommitment`: the act projects a participant's commitment on its content.
 
 ## Main results
 
@@ -37,6 +42,9 @@ to its content.
 * `Space.coe_update_sSup`: the update by a join is the conjunction of the updates.
 * `Space.sdiff_coe_denegate`, `Space.coe_denegate_inter`: two denegations cancel, and de
   Morgan's laws hold for them.
+* `Space.projectsCommitment_Ici_assert_iff`, `Space.projectsCommitment_Ici_bipolarQuestion_iff`:
+  in the space of all states, an assertion projects only its author's commitment and a bipolar
+  question only that of the participant it is put to, unless their commitments coincide.
 
 ## Implementation notes
 
@@ -58,6 +66,8 @@ to its content.
   and Question Tags* (2015)][krifka-2015]
 * [T. van der Leer, *Commitments, beliefs and expectations in conversation*
   (2026)][van-der-leer-2026]
+* [E. Coppock and S. Wechsler, *The proper treatment of egophoricity in Kathmandu Newari*
+  (2018)][coppock-wechsler-2018]
 -/
 
 @[expose] public section
@@ -177,6 +187,22 @@ theorem coe_denegate_union (D E : Set S) :
     (C.denegate (D ∪ E) : Set S) = ↑(C.denegate D) ∩ ↑(C.denegate E) := by
   rw [denegate, Set.compl_union, coe_restrict_inter]; rfl
 
+/-- The question `C.question P` keeps the root and proposes the continuations that carry one of
+the acts in `P` ([krifka-2015] (23), (27)). -/
+def question (P : Set S) : Space S := C.restrict (upperClosure P)
+
+@[simp] theorem root_question (P : Set S) : (C.question P).root = C.root := rfl
+
+theorem mem_question {P : Set S} : d ∈ C.question P ↔ d = C.root ∨ d ∈ C ∧ ∃ p ∈ P, p ≤ d :=
+  .rfl
+
+/-- A question with alternative proposals is the disjunction of the questions
+([krifka-2015] (31), (34)). -/
+theorem coe_question_union (P Q : Set S) :
+    (C.question (P ∪ Q) : Set S) = ↑(C.question P) ∪ ↑(C.question Q) := by
+  rw [question, upperClosure_union, UpperSet.coe_inf, coe_restrict_union]
+  rfl
+
 end PartialOrder
 
 /-! ### Basic speech acts -/
@@ -248,6 +274,11 @@ theorem restrict_coe_update (k : S) : C.restrict (C.update k) = C.restrict (Set.
   refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h ↦ ?_, fun h ↦ Or.inr ⟨hd, h⟩⟩)
   exact h.elim (fun e ↦ e ▸ C.le_root_update k) And.right
 
+/-- A question with one proposal restricts the space to the states of its update
+([krifka-2015] (27)). -/
+theorem question_singleton (k : S) : C.question {k} = C.restrict (C.update k) := by
+  rw [question, restrict_coe_update, upperClosure_singleton, UpperSet.coe_Ici]
+
 theorem update_restrict_of_subset (h : ↑C ∩ Set.Ici k ⊆ D) :
     (C.restrict D).update k = C.update k :=
   update_congr _ <| Set.ext fun _ ↦
@@ -299,6 +330,76 @@ theorem root_assert_of_mem (h : insert (committed O k φ) C.root ∈ C) :
 
 theorem root_mem_assert_iff : C.root ∈ C.assert O k φ ↔ committed O k φ ∈ C.root :=
   C.root_mem_update_iff.trans Set.singleton_subset_iff
+
+theorem committed_mem_of_mem_assert (hd : d ∈ C.assert O k φ) : committed O k φ ∈ d :=
+  ((C.mem_assert O k φ).1 hd).elim (· ▸ C.committed_mem_root_assert O k φ) And.right
+
+/-- The monopolar question proposes `k`'s commitment to `φ` ([krifka-2015] (27)). -/
+def monopolarQuestion : Space (Set (Set W)) := C.question {{committed O k φ}}
+
+/-- The bipolar question proposes `k`'s commitment to `φ` or to `¬φ` ([krifka-2015] (23)). -/
+def bipolarQuestion : Space (Set (Set W)) := C.question {{committed O k φ}, {committed O k φᶜ}}
+
+theorem mem_monopolarQuestion :
+    d ∈ C.monopolarQuestion O k φ ↔ d = C.root ∨ d ∈ C ∧ committed O k φ ∈ d := by
+  simp [monopolarQuestion, mem_question]
+
+theorem mem_bipolarQuestion :
+    d ∈ C.bipolarQuestion O k φ ↔
+      d = C.root ∨ d ∈ C ∧ (committed O k φ ∈ d ∨ committed O k φᶜ ∈ d) := by
+  simp [bipolarQuestion, mem_question]
+
+/-- The bipolar question is the disjunction of the monopolar questions of `φ` and of `¬φ`
+([krifka-2015] (31)). -/
+theorem coe_bipolarQuestion :
+    (C.bipolarQuestion O k φ : Set (Set (Set W))) =
+      ↑(C.monopolarQuestion O k φ) ∪ ↑(C.monopolarQuestion O k φᶜ) := by
+  rw [bipolarQuestion, Set.insert_eq, coe_question_union]
+  rfl
+
+/-! ### Projected commitments -/
+
+/-- An act taking `C` to `D` projects `k`'s commitment on `φ` when every state of `D` beyond the
+root of `C` carries `k⊢φ` or `k⊢¬φ`. The participant whose commitment to its content an act
+projects is its epistemic authority ([coppock-wechsler-2018]). -/
+def ProjectsCommitment (D : Space (Set (Set W))) : Prop :=
+  ∀ d ∈ D, d ≠ C.root → committed O k φ ∈ d ∨ committed O k φᶜ ∈ d
+
+/-- An assertion projects its author's commitment. -/
+theorem projectsCommitment_assert : C.ProjectsCommitment O k φ (C.assert O k φ) := fun _ hd _ ↦
+  .inl (C.committed_mem_of_mem_assert O k φ hd)
+
+/-- A bipolar question projects the commitment of the participant it is put to. -/
+theorem projectsCommitment_bipolarQuestion :
+    C.ProjectsCommitment O k φ (C.bipolarQuestion O k φ) := fun _ hd hne ↦
+  (((C.mem_bipolarQuestion O k φ).1 hd).resolve_left hne).2
+
+variable {O k φ} {l : κ}
+
+/-- In the space of all states, an assertion by `l` projects `k`'s commitment only when `l`'s
+commitment to `φ` is `k`'s commitment to `φ` or to `¬φ`. -/
+theorem projectsCommitment_Ici_assert_iff :
+    (Space.Ici ∅).ProjectsCommitment O k φ ((Space.Ici ∅).assert O l φ) ↔
+      committed O k φ = committed O l φ ∨ committed O k φᶜ = committed O l φ := by
+  refine ⟨fun h ↦ h {committed O l φ} (((Space.Ici ∅).mem_assert O l φ).2
+    (.inr ⟨Set.empty_subset _, rfl⟩)) (Set.singleton_ne_empty _), fun h d hd _ ↦ ?_⟩
+  have hl := (Space.Ici ∅).committed_mem_of_mem_assert O l φ hd
+  rcases h with h | h <;> simp only [h, hl, true_or, or_true]
+
+/-- In the space of all states, a bipolar question put to `l` projects `k`'s commitment only when
+`l`'s commitments to `φ` and to `¬φ` are each `k`'s commitment to `φ` or to `¬φ`. -/
+theorem projectsCommitment_Ici_bipolarQuestion_iff :
+    (Space.Ici ∅).ProjectsCommitment O k φ ((Space.Ici ∅).bipolarQuestion O l φ) ↔
+      (committed O k φ = committed O l φ ∨ committed O k φᶜ = committed O l φ) ∧
+        (committed O k φ = committed O l φᶜ ∨ committed O k φᶜ = committed O l φᶜ) := by
+  refine ⟨fun h ↦ ⟨?_, ?_⟩, fun h d hd hne ↦ ?_⟩
+  · exact h {committed O l φ} (((Space.Ici ∅).mem_bipolarQuestion O l φ).2
+      (.inr ⟨Set.empty_subset _, .inl rfl⟩)) (Set.singleton_ne_empty _)
+  · exact h {committed O l φᶜ} (((Space.Ici ∅).mem_bipolarQuestion O l φ).2
+      (.inr ⟨Set.empty_subset _, .inr rfl⟩)) (Set.singleton_ne_empty _)
+  · rcases (Space.Ici ∅).projectsCommitment_bipolarQuestion O l φ d hd hne with hl | hl
+    · rcases h.1 with h | h <;> simp only [h, hl, true_or, or_true]
+    · rcases h.2 with h | h <;> simp only [h, hl, true_or, or_true]
 
 end Space
 
