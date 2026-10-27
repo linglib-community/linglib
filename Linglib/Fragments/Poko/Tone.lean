@@ -1,101 +1,90 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
+public import Linglib.Fragments.Poko.Phonology
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.Autosegmental.Melody
-public import Linglib.Morphology.Morph
 
 /-!
-# Poko Tonal Fragment
+# Poko tone
 
-Lexical tone data for Poko (Poko-Rawo; Glottolog `rawo1244`, ISO 639-3
-`rwa`), a Skou language of Sandaun Province, Papua New Guinea (~100
-speakers, [mcpherson-dryer-2021]). Three contrastive tone levels (H,
-M, L) plus toneless syllables and floating tones; the TBU is the
-syllable. Lexical melodies span `Ø`, `M`, `MH`, `LM`, `LH`, `M^H` and
-double-floating `^L∅^H`, with floating L only stem-initial and
-floating H only stem-final ([mcpherson-lamont-2026] ex. 3, §2.2);
-simple `L` and `H` melodies are absent — [mcpherson-2022] derives the
-gap from edge constraints (`NonInitial(H)`, `NonFinal(L)`), while
-[mcpherson-lamont-2026] speculate an extreme OCP response.
+Poko (Poko-Rawo; Glottolog `rawo1244`, ISO 639-3 `rwa`) is a Skou language of Sandaun Province,
+Papua New Guinea, with no more than a hundred speakers [mcpherson-dryer-2021]. It contrasts
+three tone levels, H, M and L, beside toneless syllables and floating tones, and its
+tone-bearing unit is the syllable. The tones of a stem form one of a few lexical melodies, `∅`,
+`M`, `MH`, `LM`, `LH` and `M^H`, and on disyllables also `^L∅^H`, none with more than two tones.
+H is never initial and L never final, floating or not, so the simple melodies `L` and `H` are
+missing: [mcpherson-2022] derives the gap from the edge constraints NonInitial(H) and
+NonFinal(L), and [mcpherson-lamont-2026] suggest an extreme response to the OCP.
 
-Just enough stems for the [mcpherson-lamont-2026] tableaux; promote to
-a fuller fragment when a second Poko paper arrives.
+The entries are the stems of [mcpherson-lamont-2026]'s tableaux. Each is a melody over the
+stem's syllables with its lexical pre-linking, in which the H of an `M^H` stem is the one
+unlinked, floating element ([rolle-2018]). Every stem ends in a vowel underlyingly, but a
+polysyllabic stem loses its final vowel except phrase-finally and the vowel's tone moves to
+the syllable before it, so the pronouns enter the tableaux in their reduced forms. A phrase is
+the product of its stems in the concatenation monoid.
 
-## Main definitions
+## Implementation notes
 
-* `Poko.Syll` — the stems, one morpheme each (`Syll.morpheme`).
-* `Poko.Syll.melody` — each stem's lexical melody: tones, TBU, and
-  pre-linking ([rolle-2018] §2.1; the floating H of `/M^H/` stems is
-  the unlinked element).
-* `Poko.Form` — autosegmental forms (`Form Syll TRN Morph`).
+A syllable is the string of its segments. A stem takes the morpheme that sponsors its tones and
+syllables as an argument, so that a study gives each token in a phrase a sponsor of its own,
+as the source colours each stem of a tableau.
+
+## References
+
+* [mcpherson-dryer-2021]
+* [mcpherson-lamont-2026]
+* [mcpherson-2022]
+* [rolle-2018]
 -/
 
 @[expose] public section
 
-namespace Poko
-
-open Autosegmental
-open Morphology (Morph)
+open Phonology (Segment)
 open Tone (TRN)
 
-/-! ### Syllables -/
+namespace Poko
 
-/-- Poko syllables for the [mcpherson-lamont-2026] tableaux: fig. 3
-    (`kak`, `ri`, `do`); eq. (24) (`nan`, `ri`, `na`); eq. (27)
-    (`kak`, `ka`); eq. (30) (`kak`, `ili`); eq. (22a) (`ne`). -/
-inductive Syll
-  /-- 3sg.m possessive `kāk` (melody `/M^H/`). -/
-  | kak
-  /-- Pig stem `rī` (melody `/M^H/`). -/
-  | ri
-  /-- Get verb `dō` (melody `/M^H/`). -/
-  | do
-  /-- 1sg pronoun `nãn` — possessor 'my' and subject 'I' (melody `/M/`). -/
-  | nan
-  /-- Eat verb `nã` (melody `/M/`). -/
-  | na
-  /-- Friend stem `kǎ` (melody `/MH/`, surfacing as a rise; eq. 26a). -/
-  | ka
-  /-- Bamboo stem `ìlí` (melody `/LH/`; disyllabic in the language,
-      collapsed to a single backbone element here; eq. 28a). -/
-  | ili
-  /-- Make.1sg verb stem `ne` (toneless; eq. 22a). -/
-  | ne
-  deriving DecidableEq, Repr
+/-- A Poko form has syllables of Poko segments on its lower tier and tonal root nodes on its
+upper tier, each element sponsored by a morpheme in `M`. -/
+abbrev Form (M : Type*) := Autosegmental.Form (List Segment) TRN M
 
-/-! ### Morphemes and melodies -/
+variable {M : Type*} (x : M)
 
-/-- Stable morpheme per stem, keyed by the syllable's surface form. -/
-def Syll.morpheme : Syll → Morph
-  | .kak => .root "kak"
-  | .ri  => .root "ri"
-  | .do  => .root "do"
-  | .nan => .root "nan"
-  | .na  => .root "na"
-  | .ka  => .root "ka"
-  | .ili => .root "ili"
-  | .ne  => .root "ne"
+/-! ### `M^H` stems -/
 
-/-- Each stem's lexical melody ([mcpherson-lamont-2026] ex. 3): tones
-    over the stem's single TBU, with the lexical pre-linking — the H of
-    an `/M^H/` stem is the sole unlinked (floating) element. -/
-def Syll.melody (s : Syll) : Form Syll TRN Morph :=
-  match s with
-  | .kak => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
-  | .ri  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
-  | .do  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
-  | .nan => .melody s.morpheme [.M] [s] {(0, 0)}              -- /M/
-  | .na  => .melody s.morpheme [.M] [s] {(0, 0)}              -- /M/
-  | .ka  => .melody s.morpheme [.M, .H] [s] {(0, 0), (1, 0)}  -- /MH/, both linked
-  | .ili => .melody s.morpheme [.L, .H] [s] {(0, 0), (1, 0)}  -- /LH/, both linked
-  | .ne  => .melody s.morpheme [] [s] ∅                       -- toneless
+/-- /kāk^H/, the 3SG.M pronoun, as possessor 'his' and subject 'he' ((12a), (12c)); the reduced
+form of /kākā^H/ ([mcpherson-dryer-2021] (7)). -/
+def kak : Form M := .melody x [.M, .H] [[k, a, k]] {(0, 0)}
 
-/-- The underlying form of a stem sequence is the product of its melodies, left to right,
-    in the concatenation monoid. -/
-def word (ss : List Syll) : Form Syll TRN Morph := (ss.map Syll.melody).prod
+/-- /rī^H/ 'pig' ((12)). -/
+def ri : Form M := .melody x [.M, .H] [[r, i]] {(0, 0)}
 
-/-- Poko autosegmental forms have a syllable backbone, a `TRN` tone tier, and morpheme
-    sponsors. -/
-abbrev Form := Autosegmental.Form Syll TRN Morph
+/-- /dō^H/ 'get' ((12b), (12c)). -/
+def «do» : Form M := .melody x [.M, .H] [[d, o]] {(0, 0)}
+
+/-! ### `M` stems -/
+
+/-- /nān/, the 1SG pronoun, as possessor 'my' and subject 'I' ((19), (22)); the reduced form of
+/nānē/ ((1a)). -/
+def nan : Form M := .melody x [.M] [[n, a, n]] {(0, 0)}
+
+/-- /nā/ 'eat (1SG)' ((22b)). -/
+def na : Form M := .melody x [.M] [[n, a]] {(0, 0)}
+
+/-! ### Contour, disyllabic and toneless stems -/
+
+/-- /kǎ/ 'friend', its M and H both linked to its one syllable ((3), (26a)). -/
+def ka : Form M := .melody x [.M, .H] [[k, a]] {(0, 0), (1, 0)}
+
+/-- /ìlí/ 'bamboo', L on the first syllable and H on the second ((1b), (28a)). -/
+def ili : Form M := .melody x [.L, .H] [[i], [l, i]] {(0, 0), (1, 1)}
+
+/-- /ne/ 'make (1SG)', toneless ((22a)). -/
+def ne : Form M := .melody x [] [[n, e]] ∅
 
 end Poko
