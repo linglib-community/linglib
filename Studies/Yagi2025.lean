@@ -168,20 +168,20 @@ def Genuine (u φ ψ : CCP.Partial W) (s : Set W) : Prop :=
   (∃ w ∈ s, {w} ∈ φ {w} ∧ ∃ t ∈ u s, w ∈ t) ∧ ∃ w ∈ s, {w} ∈ ψ {w} ∧ ∃ t ∈ u s, w ∈ t
 
 theorem flex_univ_eq_disj (ψ : CCP.Partial W) :
-    flex Set.univ (Trivalent.posExt φ)ᶜ (ofTrivalent φ) ψ = disj (ofTrivalent φ) ψ := by
+    flex Set.univ (posSupport φ)ᶜ (ofTrivalent φ) ψ = disj (ofTrivalent φ) ψ := by
   funext s
   refine Part.ext fun t ↦ ?_
   simp only [flex, disj, Set.inter_univ, Part.mem_bind_iff, mem_ofTrivalent]
   refine exists_congr fun a ↦ and_congr_right fun ⟨_, ha⟩ ↦ ?_
   subst ha
-  rw [show s \ {w ∈ s | φ w = 1} = s ∩ (Trivalent.posExt φ)ᶜ by
-    ext w; simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_compl_iff, Trivalent.mem_posExt,
+  rw [show s \ {w ∈ s | φ w = 1} = s ∩ (posSupport φ)ᶜ by
+    ext w; simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_compl_iff, mem_posSupport,
       Set.mem_sep_iff]; tauto]
 
 /-- Accommodating the negated first disjunct for the second (15) yields Katzir and Singh's
 conditional presupposition (fn. 6). -/
 theorem admits_flex_univ_iff (s : Set W) :
-    (flex Set.univ (Trivalent.posExt φ)ᶜ (ofTrivalent φ) (ofTrivalent ψ)).Admits s ↔
+    (flex Set.univ (posSupport φ)ᶜ (ofTrivalent φ) (ofTrivalent ψ)).Admits s ↔
       ∀ w ∈ s, φ w ≠ 0 ∧ (φ w ≠ 1 → ψ w ≠ 0) := by
   rw [flex_univ_eq_disj, admits_disj_ofTrivalent, Set.subset_def]
   refine forall₂_congr fun w _ ↦ ?_
@@ -305,11 +305,11 @@ noncomputable def allBald : Bill → SignType :=
 the negated first disjunct for the second (15) is defined and genuine. -/
 theorem bill :
     ¬ (flex Set.univ Set.univ (ofTrivalent noChild) (ofTrivalent allBald)).Admits Set.univ ∧
-      {0, 1} ∈ flex Set.univ (Trivalent.posExt noChild)ᶜ (ofTrivalent noChild)
+      {0, 1} ∈ flex Set.univ (posSupport noChild)ᶜ (ofTrivalent noChild)
         (ofTrivalent allBald) Set.univ ∧
-      Genuine (flex Set.univ (Trivalent.posExt noChild)ᶜ (ofTrivalent noChild)
+      Genuine (flex Set.univ (posSupport noChild)ᶜ (ofTrivalent noChild)
         (ofTrivalent allBald)) (ofTrivalent noChild) (ofTrivalent allBald) Set.univ := by
-  have hd : {0, 1} ∈ flex Set.univ (Trivalent.posExt noChild)ᶜ (ofTrivalent noChild)
+  have hd : {0, 1} ∈ flex Set.univ (posSupport noChild)ᶜ (ofTrivalent noChild)
       (ofTrivalent allBald) Set.univ := by
     simp only [flex, Set.inter_univ, Set.univ_inter, Part.mem_bind_iff, Part.mem_map_iff,
       mem_ofTrivalent]

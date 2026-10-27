@@ -151,7 +151,7 @@ def exhaustified : Licenser → Licenser
 trivalent propositions holds it on its truth set, and a scalar operator on its plain meaning. -/
 def Holds : Licenser → Signature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
-  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ Trivalent.posExt (F.op p x)
+  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ posSupport (F.op p x)
   | .modal _, _ | .question, _ => False
 
 /-- A licenser is Strawson downward entailing when every operator in its family is downward
@@ -220,7 +220,7 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   | classical F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
   | scalar F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
   | strawson F =>
-    exact fun p ↦ NaturalLogic.IsStrawsonDE.of_antitone_posExt
+    exact fun p ↦ NaturalLogic.IsStrawsonDE.of_antitone_posSupport
       (Signature.holdsFor_anti_iff.mp (h p))
   | modal _ | question => exact h
 

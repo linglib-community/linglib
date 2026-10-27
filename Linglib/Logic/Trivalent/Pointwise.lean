@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Basic.Sign
 public import Linglib.Logic.Trivalent.Basic
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Algebra.Notation.Indicator
@@ -22,7 +23,8 @@ decomposition, and the three families of trivalent quantifiers.
 
 ## Main definitions
 
-* `Trivalent.posExt`, `Trivalent.negExt`, `Trivalent.gapExt`: the three extensions.
+* `Trivalent.gapExt`: the extension gap. The positive and negative extensions are the supports
+  `posSupport` and `negSupport` of a sign vector (`Core/Basic/Sign.lean`).
 * `Trivalent.IsBivalent`: the proposition is never `0`.
 * `Trivalent.forallWeak`, `Trivalent.existsWeak`: the Weak Kleene quantifiers, undefined as
   soon as any instance is.
@@ -74,60 +76,21 @@ variable {W : Type*}
 
 /-! ### Extensions -/
 
-/-- The positive extension collects the worlds where the proposition is true. -/
-def posExt (p : W → SignType) : Set W := {w | p w = 1}
-
-/-- The negative extension collects the worlds where the proposition is false. -/
-def negExt (p : W → SignType) : Set W := {w | p w = -1}
-
 /-- The extension gap collects the worlds where the proposition is neither true nor false. -/
 def gapExt (p : W → SignType) : Set W := {w | p w = 0}
-
-@[simp] theorem mem_posExt {p : W → SignType} {w : W} :
-    w ∈ posExt p ↔ p w = 1 := Iff.rfl
-
-@[simp] theorem mem_negExt {p : W → SignType} {w : W} :
-    w ∈ negExt p ↔ p w = -1 := Iff.rfl
 
 @[simp] theorem mem_gapExt {p : W → SignType} {w : W} :
     w ∈ gapExt p ↔ p w = 0 := Iff.rfl
 
-instance (p : W → SignType) : DecidablePred (· ∈ posExt p) :=
-  fun w ↦ inferInstanceAs (Decidable (p w = 1))
-
-instance (p : W → SignType) : DecidablePred (· ∈ negExt p) :=
-  fun w ↦ inferInstanceAs (Decidable (p w = -1))
-
 instance (p : W → SignType) : DecidablePred (· ∈ gapExt p) :=
   fun w ↦ inferInstanceAs (Decidable (p w = 0))
 
-theorem posExt_union_negExt (p : W → SignType) : posExt p ∪ negExt p = Function.support p := by
-  ext w; cases h : p w <;> simp [h]
-
-theorem posExt_subset_support (p : W → SignType) : posExt p ⊆ Function.support p :=
-  fun w (h : p w = 1) ↦ by simp [Function.mem_support, h]
-
-theorem negExt_subset_support (p : W → SignType) : negExt p ⊆ Function.support p :=
-  fun w (h : p w = -1) ↦ by simp [Function.mem_support, h]
-
-theorem support_inter_compl_posExt (p : W → SignType) :
-    Function.support p ∩ (posExt p)ᶜ = negExt p := by
-  ext w; cases h : p w <;> simp [h]
-
-theorem posExt_union_negExt_union_gapExt (p : W → SignType) :
-    posExt p ∪ negExt p ∪ gapExt p = Set.univ := by
+theorem posSupport_union_negSupport_union_gapExt (p : W → SignType) :
+    posSupport p ∪ negSupport p ∪ gapExt p = Set.univ := by
   ext w
-  simp only [Set.mem_union, mem_posExt, mem_negExt, mem_gapExt, Set.mem_univ,
+  simp only [Set.mem_union, mem_posSupport, mem_negSupport, mem_gapExt, Set.mem_univ,
     iff_true]
   cases p w <;> simp
-
-theorem disjoint_posExt_negExt (p : W → SignType) :
-    Disjoint (posExt p) (negExt p) := by
-  rw [Set.disjoint_left]
-  intro w hw hw'
-  rw [mem_posExt] at hw
-  rw [mem_negExt, hw] at hw'
-  cases hw'
 
 /-- A proposition is bivalent if it takes no `0` value. -/
 def IsBivalent (p : W → SignType) : Prop :=
@@ -197,10 +160,10 @@ theorem indicator_ofProp_eq_indicator_ofProp_iff {A A' : Set W} {B B' : W → Pr
   constructor
   · intro h
     have hsupp := congrArg Function.support h
-    have hpos := congrArg posExt h
+    have hpos := congrArg posSupport h
     simp only [Set.support_indicator, support_ofProp, Set.inter_univ] at hsupp
     refine ⟨hsupp, ?_⟩
-    simpa [Set.ext_iff, posExt] using hpos
+    simpa [Set.ext_iff, posSupport] using hpos
   · rintro ⟨rfl, h⟩
     funext w
     by_cases hw : w ∈ A
@@ -217,24 +180,24 @@ Asserting a proposition pointwise, `fun w ↦ ofProp (p w = 1)`, keeps its posit
 moves its gap into the negative extension. Conjoining it with a two-valued `R` keeps its gap only
 where `R` holds. -/
 
-@[simp] theorem posExt_ofProp_eq_one (p : W → SignType) :
-    posExt (fun w ↦ ofProp (p w = 1)) = posExt p := by
+@[simp] theorem posSupport_ofProp_eq_one (p : W → SignType) :
+    posSupport (fun w ↦ ofProp (p w = 1)) = posSupport p := by
   ext w; simp
 
-@[simp] theorem negExt_ofProp_eq_one (p : W → SignType) :
-    negExt (fun w ↦ ofProp (p w = 1)) = negExt p ∪ gapExt p := by
+@[simp] theorem negSupport_ofProp_eq_one (p : W → SignType) :
+    negSupport (fun w ↦ ofProp (p w = 1)) = negSupport p ∪ gapExt p := by
   ext w; cases h : p w <;> simp [h]
 
 @[simp] theorem gapExt_ofProp_eq_one (p : W → SignType) :
     gapExt (fun w ↦ ofProp (p w = 1)) = ∅ := by
   ext w; simp
 
-@[simp] theorem posExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
-    posExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ posExt p := by
+@[simp] theorem posSupport_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
+    posSupport (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w} ∩ posSupport p := by
   ext w; by_cases h : R w <;> simp [h]
 
-@[simp] theorem negExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
-    negExt (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w}ᶜ ∪ negExt p := by
+@[simp] theorem negSupport_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :
+    negSupport (fun w ↦ ofProp (R w) ⊓ p w) = {w | R w}ᶜ ∪ negSupport p := by
   ext w; by_cases h : R w <;> simp [h]
 
 @[simp] theorem gapExt_ofProp_inf (R : W → Prop) [DecidablePred R] (p : W → SignType) :

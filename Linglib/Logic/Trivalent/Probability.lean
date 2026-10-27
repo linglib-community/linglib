@@ -61,7 +61,7 @@ variable {W : Type*} [MeasurableSpace W]
 /-- The probability of a trivalent proposition is the conditional probability that it is true given
 that it is not void, and `1` when it is void almost surely. -/
 noncomputable def prob (μ : Measure W) (p : W → SignType) : ℝ≥0∞ :=
-  if μ (support p) = 0 then 1 else μ[posExt p | support p]
+  if μ (support p) = 0 then 1 else μ[posSupport p | support p]
 
 variable {μ : Measure W} {p : W → SignType}
 
@@ -69,7 +69,7 @@ theorem prob_of_measure_support_eq_zero (h : μ (support p) = 0) : prob μ p = 1
   ite_eq_left h
 
 theorem prob_of_measure_support_ne_zero (h : μ (support p) ≠ 0) :
-    prob μ p = μ[posExt p | support p] :=
+    prob μ p = μ[posSupport p | support p] :=
   ite_eq_right h
 
 theorem prob_le_one [IsFiniteMeasure μ] : prob μ p ≤ 1 := by
@@ -108,21 +108,21 @@ variable [DiscreteMeasurableSpace W]
 /-- Where a proposition is not void almost surely, its probability is the weight of its truth over
 that of its truth and falsity together. -/
 theorem prob_eq_div (h : μ (support p) ≠ 0) :
-    prob μ p = μ (posExt p) / (μ (posExt p) + μ (negExt p)) := by
+    prob μ p = μ (posSupport p) / (μ (posSupport p) + μ (negSupport p)) := by
   rw [prob_of_measure_support_ne_zero h,
-    cond_apply_of_subset .of_discrete (posExt_subset_support p), ← posExt_union_negExt,
-    measure_union (disjoint_posExt_negExt p) .of_discrete]
+    cond_apply_of_subset .of_discrete (posSupport_subset_support p), ← posSupport_union_negSupport,
+    measure_union (disjoint_posSupport_negSupport p) .of_discrete]
 
 theorem prob_eq_div_measure_support (h : μ (support p) ≠ 0) :
-    prob μ p = μ (posExt p) / μ (support p) := by
+    prob μ p = μ (posSupport p) / μ (support p) := by
   rw [prob_of_measure_support_ne_zero h,
-    cond_apply_of_subset .of_discrete (posExt_subset_support p)]
+    cond_apply_of_subset .of_discrete (posSupport_subset_support p)]
 
 /-- Against the counting credence, trivalent probability is a ratio of world counts. -/
 theorem prob_count_eq {P S : Finset W} (hpos : ∀ w, p w = 1 ↔ w ∈ P)
     (hsupp : ∀ w, p w ≠ 0 ↔ w ∈ S) (hS : S.Nonempty) :
     prob Measure.count p = P.card / S.card := by
-  have hpos' : posExt p = ↑P := Set.ext fun w ↦ (hpos w).trans Finset.mem_coe.symm
+  have hpos' : posSupport p = ↑P := Set.ext fun w ↦ (hpos w).trans Finset.mem_coe.symm
   have hsupp' : support p = ↑S := Set.ext fun w ↦ (hsupp w).trans Finset.mem_coe.symm
   have h : Measure.count (support p) ≠ 0 := by
     rw [hsupp', Measure.count_apply_finset]
@@ -135,14 +135,14 @@ together adds their probabilities, the additivity of [egre-rossi-sprenger-2026a]
 probability; without the properness hypothesis all three probabilities can be `1` by the all-void
 convention. -/
 theorem prob_joinBelnap {q : W → SignType} (hsupp : support p = support q)
-    (hdisj : Disjoint (posExt p) (posExt q)) (h : μ (support p) ≠ 0) :
+    (hdisj : Disjoint (posSupport p) (posSupport q)) (h : μ (support p) ≠ 0) :
     prob μ (fun w ↦ joinBelnap (p w) (q w)) = prob μ p + prob μ q := by
   have hpt : ∀ w, p w = 0 ↔ q w = 0 := fun w ↦
     not_iff_not.1 (iff_of_eq (congrArg (w ∈ ·) hsupp))
   have hsupp' : support (fun w ↦ joinBelnap (p w) (q w)) = support p := by
     ext w
     simp only [mem_support, ne_eq, joinBelnap_eq_zero_iff, hpt w, and_self]
-  have hpos : posExt (fun w ↦ joinBelnap (p w) (q w)) = posExt p ∪ posExt q := by
+  have hpos : posSupport (fun w ↦ joinBelnap (p w) (q w)) = posSupport p ∪ posSupport q := by
     ext w
     simp [joinBelnap_eq_one_iff]
   rw [prob_eq_div_measure_support (hsupp' ▸ h : μ (support fun w ↦ joinBelnap (p w) (q w)) ≠ 0),
@@ -150,13 +150,13 @@ theorem prob_joinBelnap {q : W → SignType} (hsupp : support p = support q)
     measure_union hdisj .of_discrete, ← hsupp, ENNReal.div_add_div_same]
 
 /-- Probability `1` is almost sure non-falsity. -/
-theorem prob_eq_one_iff [IsFiniteMeasure μ] : prob μ p = 1 ↔ μ (negExt p) = 0 := by
+theorem prob_eq_one_iff [IsFiniteMeasure μ] : prob μ p = 1 ↔ μ (negSupport p) = 0 := by
   by_cases h : μ (support p) = 0
   · exact iff_of_true (prob_of_measure_support_eq_zero h)
-      (measure_mono_null (negExt_subset_support p) h)
+      (measure_mono_null (negSupport_subset_support p) h)
   · have := cond_isProbabilityMeasure (μ := μ) h
     rw [prob_of_measure_support_ne_zero h, ← prob_compl_eq_zero_iff .of_discrete,
-      cond_apply .of_discrete, support_inter_compl_posExt, mul_eq_zero,
+      cond_apply .of_discrete, support_inter_compl_posSupport, mul_eq_zero,
       or_iff_right (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))]
 
 @[simp] theorem prob_dirac_eq_one_iff {w : W} : prob (Measure.dirac w) p = 1 ↔ 0 ≤ p w := by
@@ -165,15 +165,15 @@ theorem prob_eq_one_iff [IsFiniteMeasure μ] : prob μ p = 1 ↔ μ (negExt p) =
 
 /-- Probability `0` is almost sure non-truth where falsity has positive weight. -/
 theorem prob_eq_zero_iff [IsFiniteMeasure μ] :
-    prob μ p = 0 ↔ μ (posExt p) = 0 ∧ μ (negExt p) ≠ 0 := by
+    prob μ p = 0 ↔ μ (posSupport p) = 0 ∧ μ (negSupport p) ≠ 0 := by
   by_cases h : μ (support p) = 0
   · rw [prob_of_measure_support_eq_zero h]
-    exact iff_of_false one_ne_zero fun h' ↦ h'.2 (measure_mono_null (negExt_subset_support p) h)
+    exact iff_of_false one_ne_zero fun h' ↦ h'.2 (measure_mono_null (negSupport_subset_support p) h)
   · rw [prob_of_measure_support_ne_zero h, cond_apply .of_discrete,
-      Set.inter_eq_right.2 (posExt_subset_support p), mul_eq_zero,
+      Set.inter_eq_right.2 (posSupport_subset_support p), mul_eq_zero,
       or_iff_right (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))]
     refine ⟨fun h0 ↦ ⟨h0, fun h1 ↦ h ?_⟩, And.left⟩
-    rw [← posExt_union_negExt]
+    rw [← posSupport_union_negSupport]
     exact measure_union_null h0 h1
 
 /-- **Adams's Thesis.** A conditional assertion of a two-valued consequent on the condition `s` has
@@ -193,7 +193,7 @@ theorem prob_neg [IsFiniteMeasure μ] (h : μ (support p) ≠ 0) : prob μ (-p) 
   have := cond_isProbabilityMeasure (μ := μ) h
   rw [prob_of_measure_support_ne_zero (hs ▸ h), prob_of_measure_support_ne_zero h, hs,
     ← prob_compl_eq_one_sub .of_discrete, cond_apply .of_discrete, cond_apply .of_discrete,
-    support_inter_compl_posExt]
+    support_inter_compl_posSupport]
   congr 2
   ext w
   cases h : p w <;> simp [h]

@@ -503,7 +503,7 @@ end ReadingList
 on bivalent propositions. -/
 theorem addressesIssue_iff_stronglyRelevant {S : W → SignType}
     (hbiv : Trivalent.IsBivalent S) (q : Setoid W) :
-    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ Trivalent.posExt S) := by
+    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ posSupport S) := by
   constructor
   · intro h
     refine Setoid.decides_iff.2 fun w₁ w₂ hr ↦ ?_

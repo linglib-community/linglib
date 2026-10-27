@@ -134,15 +134,15 @@ def Licensed : Licenser → Strength → Prop
   | .some, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (GQ.some : GQ α) {every})
   | .only, .weak => ∀ {ι W : Type} (x : ι), IsStrawsonDE (only (W := W) x)
   | .only, .strong => ∀ {ι W : Type} (x : ι),
-      Antitone fun P : ι → Set W ↦ Trivalent.posExt (only x P)
+      Antitone fun P : ι → Set W ↦ posSupport (only x P)
   | .conditional, .weak => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
       IsStrawsonDE (Conditional.horizonCounterfactual horizon · q)
   | .conditional, .strong => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
-      Antitone fun p ↦ Trivalent.posExt (Conditional.horizonCounterfactual horizon p q)
+      Antitone fun p ↦ posSupport (Conditional.horizonCounterfactual horizon p q)
   | .sorryThat, .weak => ∀ {W : Type} (dox base : W → Set W) (g : W → Set (W → Prop)),
       IsStrawsonDE (regret dox base g)
   | .sorryThat, .strong => ∀ {W : Type} (dox base : W → Set W) (g : W → Set (W → Prop)),
-      Antitone fun p ↦ Trivalent.posExt (regret dox base g p)
+      Antitone fun p ↦ posSupport (regret dox base g p)
 
 /-- The puzzle is that *only*, *would* and *sorry* are Strawson anti-additive, the Strawson form
 of what strong items were held to need, yet none licenses them. -/
@@ -155,9 +155,9 @@ theorem strawsonAA_not_sufficient :
       ¬ Licensed .only .strong ∧ ¬ Licensed .conditional .strong ∧
         ¬ Licensed .sorryThat .strong :=
   ⟨isStrawsonAntiAdditive_only, Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
-    isStrawsonAntiAdditive_regret, fun h ↦ not_antitone_posExt_only (h _),
-    fun h ↦ Conditional.not_antitone_posExt_horizonCounterfactual (h _ _),
-    fun h ↦ not_antitone_posExt_regret (h _ _ _)⟩
+    isStrawsonAntiAdditive_regret, fun h ↦ not_antitone_posSupport_only (h _),
+    fun h ↦ Conditional.not_antitone_posSupport_horizonCounterfactual (h _ _),
+    fun h ↦ not_antitone_posSupport_regret (h _ _ _)⟩
 
 /-- *No* is the only one of the paper's licensers whose enriched meaning is downward
 entailing. -/

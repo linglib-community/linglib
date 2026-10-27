@@ -80,7 +80,7 @@ variable (t : Phasal) (R : SetRel ι ι) (P : ι → Prop)
 
 /-- A change of state occurs at an index when the prior state held at an earlier index and the
 result state holds at the index, which is where the phasal verb is defined and true. -/
-def cosOccurs : Set ι := Trivalent.posExt (t.denote R P)
+def cosOccurs : Set ι := posSupport (t.denote R P)
 
 /-- The ontological precondition of a change of state is its prior state at an earlier index, as
 being on the ladder is for falling off it (5). It is what the phasal verb presupposes. -/

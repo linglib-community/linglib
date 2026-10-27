@@ -139,7 +139,7 @@ theorem isAntiAdditive_every {V : Type*} {g : Set V → Set W} (hg : IsAntiAddit
 open Classical in
 /-- The environment of a negated neg-raising predicate. -/
 def negNR (R H : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt (-nrp R H fun u ↦ SignType.ofProp (u ∈ p))
+  posSupport (-nrp R H fun u ↦ SignType.ofProp (u ∈ p))
 
 /-- A negated neg-raising predicate is the universal over the negated complement (61). -/
 theorem negNR_eq (R H : SetRel W W) (p : Set W) : negNR R H p = every R pᶜ := by
@@ -193,12 +193,12 @@ open Classical in
 /-- The environment of a neg-raising predicate under stressed negation, where the assertion
 operator cancels the excluded middle (fn. 7 (ii)). -/
 def negNRStressed (R : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt fun w ↦ -SignType.ofProp (nrp R R (fun u ↦ SignType.ofProp (u ∈ p)) w = 1)
+  posSupport fun w ↦ -SignType.ofProp (nrp R R (fun u ↦ SignType.ofProp (u ∈ p)) w = 1)
 
 /-- Without its presupposition a negated neg-raising predicate is a negated universal (§2.1.3). -/
 theorem negNRStressed_eq (R : SetRel W W) : negNRStressed R = negUniversal R := by
   ext p w
-  simp only [negNRStressed, negUniversal, nrp, Trivalent.mem_posExt, SignType.neg_eq_one_iff,
+  simp only [negNRStressed, negUniversal, nrp, mem_posSupport, SignType.neg_eq_one_iff,
     SignType.ofProp_eq_neg_one_iff, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
     SignType.ofProp_eq_one_iff, ne_eq, SignType.ofProp_ne_zero, not_false_eq_true, Box,
     implies_true, true_and, not_and]
@@ -207,14 +207,14 @@ theorem negNRStressed_eq (R : SetRel W W) : negNRStressed R = negUniversal R := 
 /-- The environment of negated *know*, a factive universal without neg-raising, built from the
 substrate's negated factive. -/
 def negKnow (R : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt (TwoDim.negFactive (pure (· ∈ p) : TwoDim W (W → Prop)) (Box R)).toTrivalent
+  posSupport (TwoDim.negFactive (pure (· ∈ p) : TwoDim W (W → Prop)) (Box R)).toTrivalent
 
 /-- Negated *know* is not anti-additive (58b). -/
 theorem not_isAntiAdditive_negKnow : ¬ IsAntiAdditive (negKnow (W := Fin 3) .univ) := by
   rw [isAntiAdditive_iff_mem]
   intro h
   have := (h {0, 1} {0, 2} 0).2
-  simp only [negKnow, Trivalent.mem_posExt, TwoDim.toTrivalent_eq_one_iff, TwoDim.negFactive,
+  simp only [negKnow, mem_posSupport, TwoDim.toTrivalent_eq_one_iff, TwoDim.negFactive,
     TwoDim.pure_atIssue, TwoDim.pure_notAtIssue, Pi.top_apply, Prop.top_eq_true, true_and, Box,
     Set.mem_insert_iff,
     Set.mem_singleton_iff, Set.mem_union] at this
@@ -227,7 +227,7 @@ open Classical in
 /-- *No one thinks p* (83) has the excluded middle projecting universally from the scope of the
 quantifier ([heim-1983]). -/
 def noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt fun w ↦
+  posSupport fun w ↦
     -Trivalent.existsWeak fun x : O ↦ nrp (B x) (B x) (fun u ↦ SignType.ofProp (u ∈ p)) w
 
 /-- *No one thinks p* is *everyone thinks not-p* ((87)–(89)). -/
@@ -251,7 +251,7 @@ theorem isAntiAdditive_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) :
 open Classical in
 /-- The environment of a negated neg-raising predicate over another. -/
 def negStack (R₁ H₁ R₂ H₂ : SetRel W W) (p : Set W) : Set W :=
-  Trivalent.posExt (-nrp R₁ H₁ (nrp R₂ H₂ fun u ↦ SignType.ofProp (u ∈ p)))
+  posSupport (-nrp R₁ H₁ (nrp R₂ H₂ fun u ↦ SignType.ofProp (u ∈ p)))
 
 open Classical in
 /-- Under a predicate whose heritage base is its modal base, such as *think*, the negation goes all
@@ -262,7 +262,7 @@ theorem negStack_self_eq (R₁ R₂ H₂ : SetRel W W) (p : Set W) :
   have h u : nrp R₂ H₂ (fun u ↦ SignType.ofProp (u ∈ p)) u = -1 ↔ u ∈ every R₂ pᶜ := by
     rw [← negNR_eq R₂ H₂]
     simp [negNR]
-  simp only [negStack, Trivalent.mem_posExt, Pi.neg_apply, SignType.neg_eq_one_iff,
+  simp only [negStack, mem_posSupport, Pi.neg_apply, SignType.neg_eq_one_iff,
     nrp_self_eq_neg_one_iff, h, every, Box, Set.mem_ofPred_eq]
 
 /-- *I don't believe Bill wanted Harry to die* entails *I believe Bill wanted Harry not to die*
@@ -284,7 +284,7 @@ theorem negStack_eq (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
     negStack R₁ H₁ R₂ R₂ p = {w | (∀ u, w ~[H₁] u → □[R₂] (· ∈ p) u ∨ □[R₂] (· ∉ p) u) ∧
       (∃ u, w ~[R₁] u) ∧ □[R₁] (fun u ↦ ¬ □[R₂] (· ∈ p) u) w} := by
   ext w
-  simp only [negStack, Trivalent.mem_posExt, Pi.neg_apply, SignType.neg_eq_one_iff,
+  simp only [negStack, mem_posSupport, Pi.neg_apply, SignType.neg_eq_one_iff,
     nrp_eq_neg_one_iff, Set.mem_ofPred_eq]
   simp only [ne_eq, nrp, Set.indicator_apply_eq_zero, Trivalent.indicator_apply_eq_one_iff,
     Set.mem_ofPred_eq, SignType.ofProp_eq_one_iff, SignType.ofProp_ne_zero, not_false_eq_true,
@@ -395,14 +395,14 @@ def Env.AntiAdditive : Env → Prop
   | .notThinkWant => ∀ (W : Type) (B R H : SetRel W W), IsAntiAdditive (negStack B B R H)
   | .notWantThink => ∀ (W : Type) (D B R : SetRel W W), IsAntiAdditive (negStack D B R R)
   | .only => ∀ (W ι : Type) (x : ι),
-      IsAntiAdditive fun P : ι → Set W ↦ Trivalent.posExt (NaturalLogic.only x P)
+      IsAntiAdditive fun P : ι → Set W ↦ posSupport (NaturalLogic.only x P)
   | .adversative =>
       ∀ (W : Type) (dox base : W → Set W) (g : W → Set (W → Prop)),
-        IsAntiAdditive fun p ↦ Trivalent.posExt (regret dox base g p)
+        IsAntiAdditive fun p ↦ posSupport (regret dox base g p)
   | .conditional => ∀ (W : Type) (horizon : W → Set W) (q : Set W),
-      IsAntiAdditive fun p ↦ Trivalent.posExt (Conditional.horizonCounterfactual horizon p q)
+      IsAntiAdditive fun p ↦ posSupport (Conditional.horizonCounterfactual horizon p q)
   | .superlative => ∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
-      IsAntiAdditive fun C : W → Set ι ↦ Trivalent.posExt (Degree.superlative μ C a)
+      IsAntiAdditive fun C : W → Set ι ↦ posSupport (Degree.superlative μ C a)
 
 private theorem not_isAntiAdditive_id : ¬ IsAntiAdditive (id : Set Bool → Set Bool) := by
   rw [isAntiAdditive_iff_mem]
@@ -426,16 +426,17 @@ theorem Env.antiAdditive_iff (e : Env) :
   | notWantThink =>
     exact iff_of_false (fun h ↦ not_isAntiAdditive_negStack (h _ _ _ _)) (by decide)
   | only =>
-    exact iff_of_false (fun h ↦ not_antitone_posExt_only (h Unit Bool true).antitone) (by decide)
+    exact iff_of_false (fun h ↦ not_antitone_posSupport_only (h Unit Bool true).antitone)
+      (by decide)
   | adversative =>
-    exact iff_of_false (fun h ↦ not_antitone_posExt_regret (h _ _ _ _).antitone) (by decide)
+    exact iff_of_false (fun h ↦ not_antitone_posSupport_regret (h _ _ _ _).antitone) (by decide)
   | conditional =>
     exact iff_of_false
-      (fun h ↦ Conditional.not_antitone_posExt_horizonCounterfactual (h _ _ _).antitone)
+      (fun h ↦ Conditional.not_antitone_posSupport_horizonCounterfactual (h _ _ _).antitone)
       (by decide)
   | superlative =>
     exact iff_of_false
-      (fun h ↦ Degree.not_antitone_posExt_superlative (h Unit Unit ℕ _ _).antitone) (by decide)
+      (fun h ↦ Degree.not_antitone_posSupport_superlative (h Unit Unit ℕ _ _).antitone) (by decide)
 
 instance : DecidablePred Env.AntiAdditive := fun e ↦ decidable_of_iff _ e.antiAdditive_iff.symm
 

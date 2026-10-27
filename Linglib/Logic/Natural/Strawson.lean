@@ -37,7 +37,7 @@ whatever the presupposition; it is the presupposition that defeats the classical
   together with the Strawson form of Atlas's pseudo-anti-additivity.
 * `isStrawsonDE_ofProp_iff`, `isStrawsonAntiAdditive_ofProp_iff`: without presuppositions the
   Strawson notions are the classical ones.
-* `isStrawsonAntiAdditive_only`, `not_antitone_posExt_only`: *only* over a name is Strawson
+* `isStrawsonAntiAdditive_only`, `not_antitone_posSupport_only`: *only* over a name is Strawson
   anti-additive and not classically downward entailing.
 * `not_isStrawsonUE_only`, `not_isStrawsonUE_since`, `Desire.BestWorlds.not_isStrawsonUE_regret`,
   `Degree.not_isStrawsonUE_superlative`, `Conditional.not_isStrawsonUE_horizonCounterfactual`:
@@ -130,7 +130,8 @@ theorem IsStrawsonUE.of_monotone {a : α → W → Prop} (h : Monotone a)
     (hf : ∀ p w, f p w ≠ 0 → (f p w = 1 ↔ a p w)) : IsStrawsonUE f :=
   fun _ _ hpq w hp hq ↦ (hf _ w hq).2 (h hpq w ((hf _ w (by simp [hp])).1 hp))
 
-theorem IsStrawsonDE.of_antitone_posExt (h : Antitone fun p ↦ posExt (f p)) : IsStrawsonDE f :=
+theorem IsStrawsonDE.of_antitone_posSupport (h : Antitone fun p ↦ posSupport (f p)) :
+    IsStrawsonDE f :=
   fun _ _ hpq _ hq _ ↦ h hpq hq
 
 open Classical in
@@ -144,8 +145,8 @@ theorem isStrawsonUE_ofProp_iff {g : α → W → Prop} :
     IsStrawsonUE (fun p w ↦ SignType.ofProp (g p w)) ↔ Monotone g :=
   forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ by simp [strawsonEntails, Pi.le_def]
 
-theorem not_antitone_posExt {p q : α} {w : W} (hpq : p ≤ q) (hq : f q w = 1) (hp : f p w = 0) :
-    ¬ Antitone fun p ↦ posExt (f p) :=
+theorem not_antitone_posSupport {p q : α} {w : W} (hpq : p ≤ q) (hq : f q w = 1) (hp : f p w = 0) :
+    ¬ Antitone fun p ↦ posSupport (f p) :=
   fun h ↦ by simpa [hp] using h hpq hq
 
 theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : f p w = 1) (hq : f q w = -1) :
@@ -240,9 +241,9 @@ theorem isStrawsonDE_only : IsStrawsonDE (only (W := W) x) :=
 
 /-- *Only John ate vegetables* does not classically entail *only John ate kale*, whose
 presupposition may fail ([von-fintel-1999]'s (11)). -/
-theorem not_antitone_posExt_only :
-    ¬ Antitone fun P : Bool → Set Unit ↦ posExt (only true P) :=
-  not_antitone_posExt (p := ⊥) (q := fun y ↦ {_u | y = true}) (w := ()) bot_le
+theorem not_antitone_posSupport_only :
+    ¬ Antitone fun P : Bool → Set Unit ↦ posSupport (only true P) :=
+  not_antitone_posSupport (p := ⊥) (q := fun y ↦ {_u | y = true}) (w := ()) bot_le
     (by simp [only]) (by simp [only])
 
 /-- *Only John smokes* does not Strawson-entail *only John smokes or drinks*, which is defined and
@@ -302,9 +303,9 @@ theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
 theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
   (isStrawsonAntiAdditive_since ago).isStrawsonDE
 
-theorem not_antitone_posExt_since :
-    ¬ Antitone fun p : Set ℤ ↦ posExt (since (· - 5) p) :=
-  not_antitone_posExt (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
+theorem not_antitone_posSupport_since :
+    ¬ Antitone fun p : Set ℤ ↦ posSupport (since (· - 5) p) :=
+  not_antitone_posSupport (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
     (by simp [since, Set.disjoint_singleton_right]) (by simp [since])
 
 /-- *It's been five years since I saw an eagle* does not Strawson-entail *it's been five years
@@ -354,9 +355,9 @@ theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p
 
 /-- *There only was precipitation in Medford* does not classically entail *there only was rain in
 Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may fail. -/
-theorem not_antitone_posExt_only_subset :
-    ¬ Antitone fun p : Set Bool ↦ posExt (only (· ⊆ ·) {{true}, .univ} p) :=
-  not_antitone_posExt (p := {true}) (q := .univ) (w := false) (Set.subset_univ _)
+theorem not_antitone_posSupport_only_subset :
+    ¬ Antitone fun p : Set Bool ↦ posSupport (only (· ⊆ ·) {{true}, .univ} p) :=
+  not_antitone_posSupport (p := {true}) (q := .univ) (w := false) (Set.subset_univ _)
     (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
       rcases hq with rfl | rfl
       exacts [absurd hw (by simp), subset_rfl]⟩)
@@ -418,14 +419,14 @@ theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
 
 /-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
 Civic* ([von-fintel-1999]'s (30)). -/
-theorem not_antitone_posExt_regret :
+theorem not_antitone_posSupport_regret :
     ¬ Antitone fun p : Set Bool ↦
-      posExt (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ {(· = false)}) p) := by
+      posSupport (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ {(· = false)}) p) := by
   have hb : (premisePreorder {(· = false)}).minimals ({false, true} : Set Bool) = {false} := by
     rw [Preorder.minimals_ofCriteria_eq ⟨false, by simp, by simp⟩]
     ext
     simp
-  exact not_antitone_posExt (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
+  exact not_antitone_posSupport (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
     (by simp [regret, Want, IsContingent, hb]) (by simp [regret])
 
 /-- *Sorry that Robin bought a Civic* does not Strawson-entail *sorry that Robin bought a Civic or
@@ -461,9 +462,9 @@ theorem isStrawsonDE_superlative : IsStrawsonDE (superlative (W := W) μ · x) :
 
 /-- *Emma is the tallest girl in her class* does not classically entail its restriction to girls who
 have learned the alphabet ([von-fintel-1999]'s (76)). -/
-theorem not_antitone_posExt_superlative :
-    ¬ Antitone fun C : Unit → Set Unit ↦ posExt (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
-  not_antitone_posExt (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
+theorem not_antitone_posSupport_superlative :
+    ¬ Antitone fun C : Unit → Set Unit ↦ posSupport (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
+  not_antitone_posSupport (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
 
 /-- *Emma is the tallest girl to have learned the alphabet* does not Strawson-entail *Emma is the
 tallest girl*, defined and false when a taller girl has not learned it. -/
@@ -499,10 +500,10 @@ theorem isStrawsonDE_horizonCounterfactual :
 
 /-- Strengthening the antecedent is not classically valid, since a strengthened antecedent can
 fall outside the horizon ([von-fintel-1999], §4.3). -/
-theorem not_antitone_posExt_horizonCounterfactual :
+theorem not_antitone_posSupport_horizonCounterfactual :
     ¬ Antitone fun p : Set Unit ↦
-      posExt (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
-  not_antitone_posExt (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
+      posSupport (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
+  not_antitone_posSupport (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
 
 /-- Weakening the antecedent is not Strawson valid either, since the weaker antecedent can admit
 worlds the consequent excludes. -/

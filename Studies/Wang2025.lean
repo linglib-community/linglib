@@ -350,7 +350,7 @@ open Presupposition ModalLogic Aspect
 /-- The candidate for a sentence with the trivalent meaning `φ` commits the speaker to its
 presupposition, where `φ` is defined, and to its assertion, where `φ` is true. -/
 def Candidate.ofTrivalent (φ : W → SignType) : Candidate W :=
-  presupSentence (Function.support φ) (Trivalent.posExt φ)
+  presupSentence (Function.support φ) (posSupport φ)
 
 variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : W → SignType}
 

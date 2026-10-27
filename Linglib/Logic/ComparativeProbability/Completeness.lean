@@ -116,11 +116,11 @@ theorem kps_not_representable : ¬Representable kpsGe := fun h ↦ by
   have key := (representable_iff_cancellation kpsGe).mp h kpsFamily (fun v hv ↦ ?_)
     (by decide) ![1, -1, 0, -1, 0] (by simp [kpsFamily])
   · revert key
-    show ¬kpsRank (posSupport _).toFinset ≤ kpsRank (negSupport _).toFinset
+    unfold kpsGe kpsRankSet
     rw [posSupport_eq_coe_filter, negSupport_eq_coe_filter, Finset.toFinset_coe,
       Finset.toFinset_coe]
     decide
-  · show kpsRank (negSupport v).toFinset ≤ kpsRank (posSupport v).toFinset
+  · unfold kpsGe kpsRankSet
     rw [posSupport_eq_coe_filter, negSupport_eq_coe_filter, Finset.toFinset_coe,
       Finset.toFinset_coe]
     simp only [kpsFamily, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hv

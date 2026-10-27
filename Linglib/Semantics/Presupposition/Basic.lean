@@ -56,12 +56,12 @@ def strawsonEntails (p q : W → SignType) : Prop := ∀ w, p w = 1 → q w ≠ 
 
 /-- Strawson entailment is the disjointness of the premise's truth and the conclusion's falsity. -/
 theorem strawsonEntails_iff_disjoint {p q : W → SignType} :
-    strawsonEntails p q ↔ Disjoint (posExt p) (negExt q) := by
+    strawsonEntails p q ↔ Disjoint (posSupport p) (negSupport q) := by
   rw [Set.disjoint_left]
   refine forall_congr' fun w ↦ ⟨fun h hp hq ↦ ?_, fun h hp hq ↦ ?_⟩
-  · simp only [mem_posExt, mem_negExt] at hp hq
+  · simp only [mem_posSupport, mem_negSupport] at hp hq
     simp [hq] at h; exact h hp
-  · simp only [mem_posExt, mem_negExt] at h
+  · simp only [mem_posSupport, mem_negSupport] at h
     cases hw : q w <;> simp_all
 
 /-- Strawson entailment is not transitive, since an undefined middle term discharges both premises

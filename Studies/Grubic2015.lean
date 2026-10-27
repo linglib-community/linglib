@@ -27,7 +27,7 @@ implication of it ranks highest among its alternatives.
 
 * `prejacent_projects`: on an entailment scale, the complement-exclusion reading, the
   presupposition of *yak('i)* entails the prejacent, which therefore projects through negation.
-* `posExt_only_conjunctions`: over the conjunctions of independent atomic answers *yak('i)* is
+* `posSupport_only_conjunctions`: over the conjunctions of independent atomic answers *yak('i)* is
   defined and true exactly where the prejacent holds and every other atom fails.
 * `ke_eq_zero_of_anaphoric`: parallel background-marked antecedents, being anaphoric, cannot
   supply the antecedent of *ke('e)*.
@@ -68,10 +68,10 @@ def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
 
 /-- On the entailment scale over conjunctions of atomic answers, *yak('i)* is true exactly where the
 prejacent is the only true atom ((166) and (25)). -/
-theorem posExt_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
-    Trivalent.posExt (only (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
+theorem posSupport_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
+    posSupport (only (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
   ext w
-  rw [Trivalent.mem_posExt, only_eq_one_iff]
+  rw [mem_posSupport, only_eq_one_iff]
   constructor
   · rintro ⟨⟨_, ⟨A, hA, -, rfl⟩, hw, hq⟩, hmost⟩
     refine ⟨hq hw, fun r hr hwr x hx ↦ ?_⟩
