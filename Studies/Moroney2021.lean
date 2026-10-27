@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Reference.Description
 public import Linglib.Semantics.Mereology
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Presupposition.PhiFeatures
@@ -8,55 +8,75 @@ public import Mathlib.Basic.Rel
 public import Linglib.Semantics.Genericity.MeaningPreservation
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.German.Determiners
+public import Linglib.Fragments.Cantonese.Determiners
 public import Linglib.Fragments.Thai.Determiners
 public import Linglib.Fragments.Shan.Determiners
 public import Studies.Jenks2018
+public import Studies.Schwarz2013
 
 /-!
 # Moroney (2021): definiteness and quantification in Shan
 
 Moroney shows that Shan (Southwestern Tai) bare nouns express both unique and anaphoric
-definiteness, instantiating an unmarked cell that Jenks's definiteness typology had no slot for.
-Because Shan has no articles, no covert type-shift is blocked — ι, ι^x and ∩ are all available to
-bare nouns — while the optional demonstratives *nâj/nân* only add spatial content. The cell is
-derived from `Shan.Determiners.inventory`, the bare-noun readings as the shifts the inventory leaves
-unblocked that are maximal under Dayal's Meaning Preservation, her (79), and the refutation is
-stated against Jenks's four types (`Jenks2018.IsBipartite` and its siblings).
+definiteness. Shan has no articles, so no covert type shift is blocked: ι, ι^x and ∩ are all
+available to bare nouns, and a bare noun takes those maximal under Dayal's Meaning Preservation.
+Shan [falls in none of the four types](##shan_refutes_jenks_typology) of Jenks's typology of
+definiteness marking, and with an unmarked type added [the typology covers every
+inventory](##typology_complete). The type then fixes the definite shifts of a bare noun: [both in
+an unmarked language](##available_of_isUnmarked), ι alone where only anaphora is marked, and
+neither where both are.
 
-Her comparison of Shan and English bare nouns (Table 2.3) finds them alike on the low-scope
-existential, kind and generic readings, alike in lacking a high-scope existential, and different
-only on the definite reading; that difference is derived here (`shan_iota_english_none`) rather than
-tabulated. On the mass/count side she adopts Deal's generalized homogeneity — a predicate is
-g-homogeneous when it is cumulative and, among other options, lacks minimal parts — and argues that
-Shan count nouns, like English *furniture*, are cumulative but have identifiable atomic parts
-(`maa_cumulative_not_divisive`). The demonstratives are the definite with the referent's closeness
-to the speaker added: *nâj* presupposes a unique `P` in the situation and refers to it if it is
-close (`demDenotation`, her (147)–(148)).
+The optional demonstratives *nâj* 'this' and *nân* 'that' presuppose what the bare definite does,
+a unique referent in the situation, and [refer to it when it lies in their deictic
+domain](##demDenotation_eq_some_iff), near the speaker for *nâj* and away from the speaker for
+*nân*. That spatial content is why a demonstrative [is not the
+definite](##demDenotation_eq_bare_iff) and so blocks none of the bare noun's readings.
+
+Shan and English bare nouns are alike on the low-scope existential, kind and generic readings,
+alike in lacking a high-scope existential, and different only on the definite reading, which is
+derived here (`shan_iota_english_none`). On the mass/count side Moroney adopts Deal's generalized
+homogeneity, under which a predicate is g-homogeneous when it is cumulative and, among other
+options, lacks minimal parts, and argues that Shan count nouns, like English *furniture*, are
+cumulative but have identifiable atomic parts (`maa_cumulative_not_divisive`).
 
 ## Implementation notes
 
-Moroney leaves close.to.speaker and far.from.speaker primitive. Here a demonstrative's spatial
-content is the vicinity of a referent whose participants form one of its participant sets, as in
-Harbour's account of spatial deixis: *nâj* covers the sets containing the speaker and *nân* the
-others, so close.to.speaker is the vicinity of a referent including the speaker
-(`mem_image_naj_iff`) and far.from.speaker the vicinity of one excluding the speaker
-(`mem_image_nan_iff`). Where she treats far.from.speaker as the opposite of close.to.speaker, the
-two vicinities may overlap here, as when the addressee stands by the speaker.
+* Moroney leaves close.to.speaker and far.from.speaker primitive. Here a demonstrative's spatial
+  content is the vicinity of a referent whose participants form one of its participant sets, as in
+  Harbour's account of spatial deixis: *nâj* covers the sets containing the speaker and *nân* the
+  others, so close.to.speaker is the vicinity of a referent including the speaker
+  (`mem_image_naj_iff`) and far.from.speaker the vicinity of one excluding the speaker
+  (`mem_image_nan_iff`). Where she treats far.from.speaker as the opposite of close.to.speaker, the
+  two vicinities may overlap here, as when the addressee stands by the speaker.
+* Moroney's Lakhota is Schwarz's tentative construal of *kiŋ* as a weak article only. The Lakhota
+  fragment also gives *kiŋ* its anaphoric uses, so by the fragment Lakhota is generally marked.
+* The Mandarin and Thai fragments follow Jenks in making the demonstrative obligatory in the
+  anaphoric uses, so both are marked anaphoric, as Mandarin is in Jenks's typology. Moroney argues
+  that both are unmarked once an economy principle chooses between the bare noun and the
+  demonstrative; the inventories do not model that principle.
+
+## TODO
+
+* The judgments on bare nouns and demonstratives in each definite use, as data. The bare noun is
+  licit in every use; the demonstrative with a classifier is not licit for a referent unique in
+  the situation, which the non-uniqueness Moroney ascribes to that phrase would derive.
+* The kind-level predictions for each type, which turn on number marking.
 
 ## References
 
 * [moroney-2021]
-* [dayal-2004], [deal-2017], [harbour-2016], [jenks-2018]
+* [dayal-2004], [deal-2017], [harbour-2016], [jenks-2018], [schwarz-2013]
 -/
 
 @[expose] public section
 
 namespace Moroney2021
 
+open Determiner Determiner.Inventory
 open Jenks2018 (IsBipartite IsMarkedAnaphoric IsGenerallyMarked IsMarkedUnique)
 open Genericity
 open Mereology (CUM)
-open scoped SetRel
+open scoped SetRel Denotes
 
 /-! ### Type-shift selection -/
 
@@ -81,28 +101,16 @@ theorem shan_exists_is_last_resort :
       ¬ MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .exists := by
   decide
 
-/-! ### The typology, derived per language -/
+/-! ### The revised typology -/
+
+open DefiniteDescription (Strength)
+
+variable {ds : Inventory} {down : Prop}
 
 /-- An unmarked inventory marks neither presupposition. -/
-def IsUnmarked (ds : Determiner.Inventory) : Prop := ds.strengths = ∅
+def IsUnmarked (ds : Inventory) : Prop := ds.strengths = ∅
 
-theorem derive_all_languages :
-    IsGenerallyMarked English.Determiners.inventory ∧ IsBipartite German.Determiners.inventory ∧
-      IsMarkedAnaphoric Thai.Determiners.inventory ∧ IsUnmarked Shan.Determiners.inventory :=
-  ⟨English.Determiners.isSyncretic_inventory,
-    ⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
-    Thai.Determiners.strengths_inventory, Shan.Determiners.strengths_inventory⟩
-
-theorem shan_anaphoric_without_article :
-    ¬ Shan.Determiners.inventory.Realizes .anaphoric ∧
-      Shan.Determiners.inventory.Realizes .demonstrative := by
-  constructor <;> decide
-
-theorem english_german_anaphoric_realized :
-    English.Determiners.inventory.Realizes .anaphoric ∧
-      German.Determiners.inventory.Realizes .anaphoric := by
-  decide
-
+/-- Shan's inventory falls in none of the four types of Jenks's typology (Table 4.1). -/
 theorem shan_refutes_jenks_typology :
     ¬ (IsBipartite Shan.Determiners.inventory ∨ IsMarkedAnaphoric Shan.Determiners.inventory ∨
       IsGenerallyMarked Shan.Determiners.inventory ∨
@@ -110,6 +118,64 @@ theorem shan_refutes_jenks_typology :
   simp only [IsBipartite, IsMarkedAnaphoric, IsGenerallyMarked, IsMarkedUnique,
     Shan.Determiners.strengths_inventory]
   decide
+
+/-- With the unmarked type added, the typology of Table 4.5 covers every inventory: it marks both
+presuppositions with one form or with two, one of them, or neither. -/
+theorem typology_complete (ds : Inventory) :
+    IsGenerallyMarked ds ∨ IsBipartite ds ∨ IsMarkedUnique ds ∨ IsMarkedAnaphoric ds ∨
+      IsUnmarked ds := by
+  by_cases h : ds.IsSyncretic
+  · exact .inl h
+  have : ∀ t : Finset Strength,
+      t = .univ ∨ t = {.uniqueness} ∨ t = {.familiarity} ∨ t = ∅ := by decide
+  rcases this ds.strengths with h' | h' | h' | h'
+  exacts [.inr (.inl ⟨h', h⟩), .inr (.inr (.inl h')), .inr (.inr (.inr (.inl h'))),
+    .inr (.inr (.inr (.inr h')))]
+
+-- Table 4.5; Hausa, both marked with different forms, p. 186
+theorem table4_5 :
+    IsGenerallyMarked Cantonese.Determiners.inventory ∧
+      IsGenerallyMarked English.Determiners.inventory ∧
+      IsBipartite German.Determiners.inventory ∧
+      IsBipartite Schwarz2013.lakhotaWeakStrongConstrual ∧
+      IsBipartite Hausa.Determiners.inventory ∧
+      IsMarkedAnaphoric Akan.Determiners.inventory ∧
+      IsMarkedAnaphoric MauritianCreole.Determiners.inventory ∧
+      IsUnmarked Shan.Determiners.inventory :=
+  ⟨Cantonese.Determiners.isSyncretic_inventory, English.Determiners.isSyncretic_inventory,
+    ⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
+    Schwarz2013.construal_two_articles, Schwarz2013.hausa_two_articles,
+    Akan.Determiners.strengths_inventory, MauritianCreole.Determiners.strengths_inventory,
+    Shan.Determiners.strengths_inventory⟩
+
+theorem shan_anaphoric_without_article :
+    ¬ Shan.Determiners.inventory.Realizes .anaphoric ∧
+      Shan.Determiners.inventory.Realizes .demonstrative := by
+  constructor <;> decide
+
+/-! ### Definite shifts by type (Tables 4.7 to 4.9) -/
+
+/-- In an unmarked language a bare noun takes both definite shifts, ι and ι^x (Table 4.9). -/
+theorem available_of_isUnmarked (h : IsUnmarked ds) :
+    ds.Available down .iota ∧ ds.Available down .iotaAnaphoric := by
+  simp [available_iota_iff, available_iotaAnaphoric_iff, marks_iff_mem_strengths,
+    show ds.strengths = ∅ from h]
+
+-- Table 4.8
+theorem available_of_isMarkedAnaphoric (h : IsMarkedAnaphoric ds) :
+    ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric := by
+  simp [available_iota_iff, available_iotaAnaphoric_iff, marks_iff_mem_strengths,
+    show ds.strengths = {.familiarity} from h]
+
+-- Table 4.7
+theorem not_available_of_strengths_eq_univ (h : ds.strengths = .univ) :
+    ¬ ds.Available down .iota ∧ ¬ ds.Available down .iotaAnaphoric := by
+  simp [available_iota_iff, available_iotaAnaphoric_iff, marks_iff_mem_strengths, h]
+
+theorem akan_iota_not_iotaAnaphoric :
+    Akan.Determiners.inventory.Available False .iota ∧
+      ¬ Akan.Determiners.inventory.Available False .iotaAnaphoric :=
+  available_of_isMarkedAnaphoric Akan.Determiners.strengths_inventory
 
 /-! ### Shan count nouns are cumulative but not homogeneous -/
 
@@ -128,35 +194,54 @@ theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog :
 
 /-! ### Demonstratives add spatial content -/
 
-/-- The bare definite description denotes the unique referent satisfying the restrictor, the
-uniqueness reading available to Shan bare nouns. -/
-noncomputable def bareDefinite {E : Type*} (restrictor : E → Prop) : Option E :=
-  iota restrictor
-
 section Demonstrative
 
-variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : SetRel E E)
+open DefiniteDescription (Restrictor bare)
 
-/-- The demonstrative of Moroney's (147)–(148) denotes the unique referent satisfying the restrictor
-and lying in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for *nâj*. -/
-noncomputable def demDenotation (d : DemonstrativeDeterminer) (restrictor : E → Prop) :
-    Option E :=
-  iota fun x ↦ restrictor x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis)
+variable {W E P T : Type} [PartialOrder E] (c : Kaplan.Context W E P T) (χ : SetRel E E)
+  (d : DemonstrativeDeterminer)
 
-theorem demDenotation_eq_some_of_bareDefinite {d : DemonstrativeDeterminer}
-    {restrictor : E → Prop} {e : E} (h : bareDefinite restrictor = some e)
-    (hs : e ∈ χ.image (c.participants ⁻¹' d.deixis)) :
-    demDenotation c χ d restrictor = some e := by
-  rw [bareDefinite, iota_eq_some_iff] at h
-  exact (iota_eq_some_iff _).2 ⟨⟨h.1, hs⟩, fun x hx ↦ h.2 x hx.1⟩
+/-- The demonstrative of (147)–(148) presupposes, as the bare definite does, a unique `P` in the
+situation, and denotes the `P` in its deictic domain, `ιx[P(x) ∧ close.to.speaker(x)]` for
+*nâj*. -/
+noncomputable def demDenotation (R : Restrictor E W) (g : Assignment E) (s : W) : Option E :=
+  (⟦bare R⟧ g s).bind fun _ ↦ iota fun x ↦ R g s x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis)
 
-/-- *nâj*'s close.to.speaker of (147) is the vicinity of a referent including the speaker. -/
+/-- A demonstrative refers to the bare noun's referent when that referent lies in its deictic
+domain. -/
+theorem demDenotation_eq_some_iff {R : Restrictor E W} {g : Assignment E} {s : W} {x : E} :
+    demDenotation c χ d R g s = some x ↔
+      ⟦bare R⟧ g s = some x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
+  simp only [demDenotation, Option.bind_eq_some_iff, DefiniteDescription.denote_bare_eq_some_iff,
+    iota_eq_some_iff]
+  constructor
+  · rintro ⟨y, ⟨-, hy⟩, ⟨hx, hxd⟩, -⟩
+    exact ⟨⟨hx, fun z hz ↦ (hy z hz).trans (hy x hx).symm⟩, hxd⟩
+  · rintro ⟨⟨hx, hu⟩, hxd⟩
+    exact ⟨x, ⟨hx, hu⟩, ⟨hx, hxd⟩, fun z hz ↦ hu z hz.1⟩
+
+/-- A demonstrative agrees with the bare definite wherever that is defined exactly when its deictic
+domain holds every referent, so a demonstrative with spatial content is not the definite and
+blocks no definite reading of the bare noun (p. 62). -/
+theorem demDenotation_eq_bare_iff (g : Assignment E) (s : W) :
+    (∀ R : Restrictor E W, (⟦bare R⟧ g s).isSome → demDenotation c χ d R g s = ⟦bare R⟧ g s) ↔
+      ∀ x, x ∈ χ.image (c.participants ⁻¹' d.deixis) := by
+  refine ⟨fun h x ↦ ?_, fun h R hR ↦ ?_⟩
+  · have hb : ⟦bare fun (_ : Assignment E) (_ : W) y ↦ y = x⟧ g s = some x :=
+      (DefiniteDescription.denote_bare_eq_some_iff _ g s).2 ⟨rfl, fun _ ↦ id⟩
+    exact ((demDenotation_eq_some_iff c χ d).1
+      ((h _ (Option.isSome_iff_exists.2 ⟨x, hb⟩)).trans hb)).2
+  · obtain ⟨x, hx⟩ := Option.isSome_iff_exists.1 hR
+    rw [hx, demDenotation_eq_some_iff]
+    exact ⟨hx, h x⟩
+
+-- close.to.speaker, (147)
 theorem mem_image_naj_iff {x : E} :
     x ∈ χ.image (c.participants ⁻¹' Shan.Determiners.naj.deixis) ↔
       ∃ y, c.agent ≤ y ∧ y ~[χ] x := by
   simp [Shan.Determiners.naj, SetRel.image, Person.participants_mem_participantSets_first]
 
-/-- *nân*'s far.from.speaker of (148) is the vicinity of a referent excluding the speaker. -/
+-- far.from.speaker, (148)
 theorem mem_image_nan_iff {x : E} :
     x ∈ χ.image (c.participants ⁻¹' Shan.Determiners.nan.deixis) ↔
       ∃ y, ¬ c.agent ≤ y ∧ y ~[χ] x := by

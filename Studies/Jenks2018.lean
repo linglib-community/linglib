@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Jenks2018
 public import Linglib.Semantics.Reference.Description
+public import Linglib.Semantics.Genericity.NominalMappingParameter
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Fragments.Cantonese.Determiners
@@ -23,6 +24,8 @@ continuing topic (Section 5.3).
 
 ## Implementation notes
 
+* The Blocking Principle (23) is the theory layer's `Determiner.Inventory.Blocks`, under which a
+  determiner blocks ι when it obligatorily expones a use calling for uniqueness.
 * The environments are the paper's six, read as `DefiniteDescription.Use`s, the donkey environment
   being an anaphoric use under quantification, and mapped to Schwarz's presupposition types by
   `DefiniteDescription.Use.strength`. The marked form is the language's obligatory exponent of the
@@ -56,24 +59,18 @@ inductive Topic
   | new
   deriving DecidableEq, Repr
 
-/-- By the Blocking Principle (23), the covert ι is available exactly when no overt determiner
-marks uniqueness. -/
-def IotaAvailable (inv : Inventory) : Prop := ¬ inv.Marks .uniqueness
-
 /-- An index is available exactly in the environments licensed by familiarity, Section 5.1:
 prior mention of the referent or, in producer-product bridging, of its argument. -/
 def IndexAvailable (env : DefiniteDescription.Use) : Prop := env.strength = .familiarity
 
-/-- The bare noun is licit when ι is available and, by Index! (50), no indexed form competes, or
-when the description is a continuing topic (Section 5.3). -/
+/-- The bare noun is licit when the Blocking Principle (23) leaves ι available, no overt determiner
+marking uniqueness, and, by Index! (50), no indexed form competes, or when the description is a
+continuing topic (Section 5.3). -/
 def BareLicit (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) : Prop :=
-  IotaAvailable inv ∧ (¬ (IndexAvailable env ∧ inv.Marks .familiarity) ∨ t = .continuing)
+  ¬ inv.Blocks .iota ∧ (¬ (IndexAvailable env ∧ inv.Marks .familiarity) ∨ t = .continuing)
 
 /-- The marked form is licit when the inventory marks the environment's presupposition. -/
 def MarkedLicit (inv : Inventory) (env : DefiniteDescription.Use) : Prop := inv.Marks env.strength
-
-instance (inv : Inventory) : Decidable (IotaAvailable inv) := by
-  unfold IotaAvailable; infer_instance
 
 instance (env : DefiniteDescription.Use) : Decidable (IndexAvailable env) := by
   unfold IndexAvailable; infer_instance
@@ -95,11 +92,11 @@ theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : DefiniteDescrip
 
 /-- Mandarin has no overt exponent of uniqueness, so its bare nouns are unique definites by the
 covert ι. -/
-theorem iotaAvailable_mandarin : IotaAvailable Mandarin.Determiners.inventory := by
+theorem not_blocks_iota_mandarin : ¬ Mandarin.Determiners.inventory.Blocks .iota := by
   decide
 
 /-- Cantonese [Clf-N] marks uniqueness, so its bare nouns have no definite shift. -/
-theorem not_iotaAvailable_cantonese : ¬ IotaAvailable Cantonese.Determiners.inventory := by
+theorem blocks_iota_cantonese : Cantonese.Determiners.inventory.Blocks .iota := by
   decide
 
 /-! ### The data -/

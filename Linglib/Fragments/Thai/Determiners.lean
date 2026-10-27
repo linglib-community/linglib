@@ -6,10 +6,9 @@ public import Linglib.Syntax.Category.Determiner.Basic
 /-!
 # Thai determiner inventory
 
-Thai patterns with Mandarin, as Jenks reports for both: bare nouns serve
-unique definites, the demonstrative *nán* 'that'
-obligatorily expones anaphoric definites including donkey anaphora, and
-possession is marked with *khɔ̌ɔng*.
+Thai patterns with Mandarin, as Jenks reports for both: bare nouns serve unique definites and
+part–whole bridging, the demonstrative *nán* 'that' obligatorily expones anaphoric definites,
+donkey anaphora and producer–product bridging included, and possession is marked with *khɔ̌ɔng*.
 
 ## References
 
@@ -22,14 +21,13 @@ possession is marked with *khɔ̌ɔng*.
 
 namespace Thai.Determiners
 
-/-- The Thai determiners are the demonstrative *nán*, the obligatory exponent
-    of anaphoric definites including donkey anaphora, and the possessive
-    *khɔ̌ɔng*. -/
+/-- The Thai determiners are the demonstrative *nán*, the obligatory exponent of anaphoric
+definites, and the possessive *khɔ̌ɔng*. -/
 def inventory : Determiner.Inventory :=
   [ .demonstrative
-      { form := "nan", deixis := Person.first.participantSetsᶜ,
-        uses := {.anaphoric} },
-    .possessive { form := "khong" } ]
+      { form := "nán", deixis := Person.first.participantSetsᶜ,
+        uses := {.anaphoric, .bridging .relational} },
+    .possessive { form := "khɔ̌ɔng" } ]
 
 theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
