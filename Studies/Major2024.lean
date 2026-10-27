@@ -115,14 +115,15 @@ theorem washo_parallel :
 /-! ### Two heights -/
 
 theorem adjoined_below :
-    ∀ h ∈ [Cat.v, .Asp, .Neg, .T], Cat.V.fValue < h.fValue ∧ ¬ Cat.T.fValue < h.fValue := by
-  decide
+    ∀ h ∈ [Cat.v, .Asp, .Neg, .T],
+      AsymmRel Cat.ExtendsTo .V h ∧ ¬ AsymmRel Cat.ExtendsTo .T h := by
+  decide +kernel
 
 theorem height_diagnostics :
     ∀ r ∈ Examples.all, ∀ s ∈ r.parse? "height" [("VP", Cat.V), ("TP", .T)],
       ∃ h ∈ r.parse? "diagnostic" [("nci", Cat.Neg), ("proform", .v)],
-        (r.judgment = .acceptable ↔ s.fValue < h.fValue) := by
-  decide
+        (r.judgment = .acceptable ↔ AsymmRel Cat.ExtendsTo s h) := by
+  decide +kernel
 
 /-! ### Accusative from `v` -/
 

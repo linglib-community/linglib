@@ -86,7 +86,7 @@ instance (P : Cat → Prop) [DecidablePred P] (s : ClauseSpine) : Decidable (∃
 /-! ### Extended projections -/
 
 /-- A spine is an extended projection when each head extends the one below it, so that its heads
-are of one family and their F-values do not decrease. -/
+are of one family. -/
 def IsExtendedProjection (s : ClauseSpine) : Prop := s.heads.IsChain Cat.ExtendsTo
 
 instance (s : ClauseSpine) : Decidable s.IsExtendedProjection :=
@@ -171,7 +171,7 @@ theorem vP_le_tP : vP ≤ tP := by decide
 
 theorem tP_le_cP : tP ≤ cP := by decide
 
-theorem cP_isExtendedProjection : cP.IsExtendedProjection := by decide
+theorem cP_isExtendedProjection : cP.IsExtendedProjection := by decide +kernel
 
 end ClauseSpine
 

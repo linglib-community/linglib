@@ -1,55 +1,75 @@
 module
 
-public import Linglib.Syntax.Minimalist.Category
-public import Mathlib.Data.Nat.Basic
+public import Linglib.Core.Order.Antisymmetrization
+public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Syntax.Cartography
 public import Mathlib.Order.RelClasses
 
 /-!
 # Extended projections
 
 Grimshaw takes a clause or a noun phrase to be one extended projection: a lexical head together
-with the functional heads above it, all sharing the categorial features of the lexical head, at
-functional levels, the F-values, that do not decrease going up. The F-value of a category is a
-natural number that is `0` exactly at the lexical head of its family. A category extends to
-another when the two are of one family and the second is at least as high. Every category extends
-the lexical head of its family and any two categories of one family are comparable, so an extended
-projection is a chain rising from its lexical head; `Minimalist.ClauseSpine.IsExtendedProjection`
-is a spine that is such a chain.
+with the functional heads above it, all sharing the categorial features of the lexical head, each
+at a functional level no lower than the one below it. The order of the levels is read off here
+from the structures the sources draw rather than assigned head by head. Each cited structure is a
+sequence of heads, bottom-up, and a source may also take two categories to be one head; a category
+extends to another when a chain of cited steps leads from the first to the second. Every cited step
+stays within one family, so [a category extends only to categories of its
+family](##Minimalist.Cat.ExtendsTo.family_eq), and every category is reached from the lexical head
+of its family, so [it extends that head](##Minimalist.Cat.lexical_extendsTo).
+
+Since the order collects the structures of several sources, a category one source places above
+another and another source below it comes out level with it. Cinque interleaves tense, mood,
+modality and aspect, Zanuttini places negation on both sides of tense and Laka places polarity
+below tense in English and above it in Basque, so [these heads are mutually
+level](##Minimalist.Cat.antisymmRel_T); Rizzi's topics recur on both sides of the focus, so [topic
+and focus are level](##Minimalist.Cat.antisymmRel_Top_Foc). Where the sources agree the order is
+strict, as along the verbal spine from the verb to Force and the nominal spine from the noun to K,
+and where no source relates two heads they are incomparable: Keine's nominalized clause [neither
+contains nor is contained in a CP](##Minimalist.Cat.not_extendsTo_Nmlz_C).
 
 ## Main definitions
 
-* `Minimalist.Cat.fValue`: the functional level of a category.
-* `Minimalist.Cat.ExtendsTo`: the step relation of an extended projection, a preorder.
-
-## Main results
-
-* `Minimalist.Cat.fValue_eq_zero_iff`: the categories at level `0` are the lexical heads.
-* `Minimalist.Cat.lexical_extendsTo`: every category extends the lexical head of its family.
-* `Minimalist.Cat.extendsTo_total`: the categories of one family form a chain.
+* `Minimalist.citedSequences`, `Minimalist.citedIdentifications`: the structures the sources draw.
+* `Minimalist.Cat.Step`: a cited step, from a head to the one a source merges directly above it.
+* `Minimalist.Cat.ExtendsTo`: the extension order, the reflexive-transitive closure of the steps.
 
 ## Implementation notes
 
-An F-value ranks the heads of one family, as Grimshaw's F-values order the heads that share
-categorial features [panagiotidis-2015]; heads of different families are never compared, and each
-family counts up from its lexical head at `0`. In the verbal family the left periphery is Rizzi's
-Fin < Foc < Top < Force, with one topic position, the one above the focus, of the two in which
-his topics recur. The Say layer of embedded speech reports sits between Foc and C as in Egressy,
-and Speas and Tenny's speech-act head closes the sequence. Tense, negation, mood, modality,
-polarity, outer aspect and evidentiality share the inflectional level, inner aspect shares the
-level of v, and `Cartography.Head` orders the clausal heads these levels collapse. In the nominal
-family Borer's dividing head `Q` lies below the counting head `Num`. Prepositions form their own
-family, with den Dikken's Place and Path above them, whereas Grimshaw places P in the nominal
-extended projection.
+A root, a VP and the verb of a cited structure are its lexical head, an IP is `T`, Cinque's heads
+are read through `Cartography.Head.cat`, and the heads of a structure that are not categories here
+(Agr, Cause, Deg, Laka's English AP) are left out, its other heads kept in order. Cinque's
+demonstrative and numeral are specifiers, taken as heads as his footnote allows; Zanuttini's
+numbered negations are all `Neg`; Laka's Σ is `Pol`. Only the high applicative is cited:
+Pylkkänen's low applicative sits below the verb, and with one `Appl` category citing both would
+make the verb, v and the applicative one level.
+
+## TODO
+
+Inner aspect is placed by Liu and Yip's clause sizes, which follow Travis; Travis's own
+structure, Kratzer's Voice, Svenonius's adpositional heads and Grimshaw's definitions are not
+yet read from the sources. No cited structure relates little n to the dividing head or D to the
+demonstrative, so those pairs are incomparable.
 
 ## References
 
 * [grimshaw-2005]
 * [panagiotidis-2015]
-* [rizzi-1997]
+* [harley-2013]
+* [harley-2017]
+* [pylkkanen-2008]
+* [liu-yip-2026]
+* [pollock-1989]
+* [zanuttini-1997]
+* [laka-1990]
+* [keine-2020]
 * [cinque-1999]
-* [borer-2005]
-* [speas-tenny-2003]
+* [rizzi-1997]
 * [egressy-2026]
+* [speas-tenny-2003]
+* [borer-2005]
+* [cinque-2005]
+* [newman-2024]
 * [dendikken-2010]
 -/
 
@@ -57,54 +77,108 @@ extended projection.
 
 namespace Minimalist
 
-/-- The F-value of a category is its level in its extended projection: lexical heads are at `0`,
-categorizers at `1`, the inflectional domain at `2` and the left periphery from `3` up.
+/-! ### The cited structures -/
 
-| level | verbal                            | nominal | adjectival | adpositional |
-|-------|-----------------------------------|---------|------------|--------------|
-| 0     | V                                 | N       | A          | P            |
-| 1     | v, Voice, Appl, InnerAsp          | n       | a          | Place        |
-| 2     | T, Neg, Mod, Mood, Pol, Asp, Evid | Q       |            | Path         |
-| 3     | Fin, Nmlz                         | Num     |            |              |
-| 4     | Foc                               | D, Dem  |            |              |
-| 5     | Top, Say                          | K       |            |              |
-| 6     | C, Force                          |         |            |              |
-| 7     | SA                                |         |            |              | -/
-def Cat.fValue : Cat → ℕ
-  | .V | .N | .A | .P => 0
-  | .v | .n | .a | .Voice | .Appl | .InnerAsp | .Place => 1
-  | .T | .Q | .Neg | .Mod | .Mood | .Pol | .Asp | .Evid | .Path => 2
-  | .Fin | .Num | .Nmlz => 3
-  | .Foc | .D | .Dem => 4
-  | .Top | .K | .Say => 5
-  | .C | .Force => 6
-  | .SA => 7
+/-- The sequences of heads the sources draw, each bottom-up. -/
+def citedSequences : List (List Cat) :=
+  [[.V, .v], [.N, .n], [.A, .a],                  -- [panagiotidis-2015] (11), p. 18
+    [.V, .v, .Voice, .T],                         -- [harley-2013] (2), p. 35
+    [.V, .Appl, .Voice],                          -- [pylkkanen-2008] (6a), pp. 13–14
+    [.v, .Appl, .Voice],                          -- [harley-2017] (18), p. 13
+    [.V, .InnerAsp, .v, .Asp, .T, .C],            -- [liu-yip-2026] (1a), p. 25
+    [.V, .Neg, .T, .C],                           -- [pollock-1989] (77), p. 397
+    [.Mod, .Mood, .Neg, .T, .Mod, .Mod],          -- [zanuttini-1997] (106), p. 141
+    [.Neg, .Asp, .Asp, .Neg, .T, .Neg],           -- [zanuttini-1997] (139), p. 99
+    [.V, .Pol, .T], [.V, .T, .Pol],               -- [laka-1990] (16), p. 101
+    [.T, .Pol, .C],                               -- [laka-1990] (46)–(47), p. 127
+    [.v, .T, .Nmlz],                              -- [keine-2020] (106), p. 74
+    [.v, .T, .C],                                 -- [keine-2020] (238), p. 156
+    [.T, .Fin, .Top, .Foc, .Top, .Force],         -- [rizzi-1997] (41), p. 297
+    [.T, .Foc, .Say],                             -- [egressy-2026] p. 14
+    [.Mood, .SA],                                 -- [speas-tenny-2003] p. 332
+    [.N, .Q, .Num, .D],                           -- [borer-2005] (8a), p. 96
+    [.N, .Num, .Dem],                             -- [cinque-2005] (7a), p. 321
+    [.D, .K],                                     -- [newman-2024] (217), p. 129
+    [.P, .Place, .Path]]                          -- [dendikken-2010] (20c), p. 81
 
-@[simp] theorem CatFamily.fValue_lexical (f : CatFamily) : f.lexical.fValue = 0 := by
-  cases f <;> rfl
+/-- The pairs of categories a source takes to be one head: Rizzi's *che* manifests the force
+position, and Speas and Tenny's speech-act phrase is the projection that encodes force. -/
+def citedIdentifications : List (Cat × Cat) :=
+  [(.C, .Force),                                  -- [rizzi-1997] p. 288
+    (.SA, .Force)]                                -- [speas-tenny-2003] p. 317
 
-/-- The categories at level `0` are exactly the lexical heads. -/
-theorem Cat.fValue_eq_zero_iff {c : Cat} : c.fValue = 0 ↔ c = c.family.lexical := by
-  cases c <;> decide
+/-- The cited steps: each head of Cinque's hierarchy or of a cited sequence to the next one up,
+and each cited identification in both directions. -/
+def citedSteps : List (Cat × Cat) :=
+  ((Cartography.Head.hierarchy.map Cartography.Head.cat) :: citedSequences).flatMap
+      (fun l ↦ l.zip l.tail) ++
+    citedIdentifications.flatMap fun p ↦ [p, p.swap]
 
-/-- `c.ExtendsTo d` holds when `d` extends the projection of `c`, the two categories being of one
-family and `d` at least as high, so that the extended projections are the chains of this
-relation. -/
-def Cat.ExtendsTo (c d : Cat) : Prop := c.family = d.family ∧ c.fValue ≤ d.fValue
+namespace Cat
 
-instance : DecidableRel Cat.ExtendsTo := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+variable {c d : Cat}
 
-instance : IsPreorder Cat Cat.ExtendsTo where
-  refl _ := ⟨rfl, le_rfl⟩
-  trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
+/-- `c.Step d` holds when a source merges `d` directly above `c` or takes the two to be one
+head. -/
+def Step (c d : Cat) : Prop := (c, d) ∈ citedSteps
+
+instance : DecidableRel Step := fun c d ↦ inferInstanceAs (Decidable ((c, d) ∈ citedSteps))
+
+/-- `c.ExtendsTo d` holds when a chain of cited steps leads from `c` to `d`, so that `d` can
+extend the projection of `c`. -/
+def ExtendsTo : Cat → Cat → Prop := Relation.ReflTransGen Step
+
+/-- Reachability along the cited steps, irreducible so that elaboration never computes the
+closure; `decide +kernel` evaluates it. -/
+@[irreducible] def decidableExtendsTo : DecidableRel ExtendsTo := fun c d ↦
+  Relation.ReflTransGen.decidable_of_finite_step
+    (fun x ↦ (citedSteps.filter (·.1 == x)).map (·.2)) (citedSteps.map (·.2))
+    (fun x y ↦ by simp [Step]) (fun _ _ h ↦ by
+      obtain ⟨p, hp, rfl⟩ := List.mem_map.1 h
+      exact List.mem_map_of_mem (List.mem_filter.1 hp).1) c d
+
+instance : DecidableRel ExtendsTo := decidableExtendsTo
+
+instance : IsPreorder Cat ExtendsTo where
+  refl _ := .refl
+  trans _ _ _ := .trans
+
+theorem Step.extendsTo (h : c.Step d) : c.ExtendsTo d := .single h
+
+theorem Step.family_eq (h : c.Step d) : c.family = d.family :=
+  (by decide +kernel : ∀ p ∈ citedSteps, p.1.family = p.2.family) _ h
+
+/-- A category extends only to categories of its family. -/
+theorem ExtendsTo.family_eq (h : c.ExtendsTo d) : c.family = d.family := by
+  induction h with
+  | refl => rfl
+  | tail _ hs ih => exact ih.trans hs.family_eq
 
 /-- Every category extends the lexical head of its family. -/
-theorem Cat.lexical_extendsTo (c : Cat) : c.family.lexical.ExtendsTo c :=
-  ⟨CatFamily.family_lexical _, by simp⟩
+theorem lexical_extendsTo (c : Cat) : c.family.lexical.ExtendsTo c := by
+  cases c <;> decide +kernel
 
-/-- Any two categories of one family are comparable. -/
-theorem Cat.extendsTo_total {c d : Cat} (h : c.family = d.family) :
-    c.ExtendsTo d ∨ d.ExtendsTo c :=
-  (le_total c.fValue d.fValue).imp (⟨h, ·⟩) (⟨h.symm, ·⟩)
+/-- Tense, aspect, modality, mood, the evidential, negation and polarity are mutually level. -/
+theorem antisymmRel_T : ∀ c ∈ [Cat.Asp, .Mod, .Mood, .Evid, .Neg, .Pol],
+    AntisymmRel ExtendsTo c .T := by
+  decide +kernel
+
+/-- Topic and focus are level, since Rizzi's topics recur on both sides of the focus. -/
+theorem antisymmRel_Top_Foc : AntisymmRel ExtendsTo .Top .Foc := by decide +kernel
+
+/-- The complementizer, Force and the speech-act head are one level. -/
+theorem antisymmRel_Force : ∀ c ∈ [Cat.C, .SA], AntisymmRel ExtendsTo c .Force := by decide +kernel
+
+/-- The verbal spine rises strictly from the verb through v, Voice, tense, finiteness and focus to
+Force, and the nominal spine from the noun through the dividing and counting heads and D to K. -/
+theorem isChain_asymmRel :
+    [Cat.V, .v, .Voice, .T, .Fin, .Foc, .Force].IsChain (AsymmRel ExtendsTo) ∧
+      [Cat.N, .Q, .Num, .D, .K].IsChain (AsymmRel ExtendsTo) := by
+  decide +kernel
+
+/-- Keine's nominalized clause and the CP are incomparable. -/
+theorem not_extendsTo_Nmlz_C : ¬ ExtendsTo .Nmlz .C ∧ ¬ ExtendsTo .C .Nmlz := by decide +kernel
+
+end Cat
 
 end Minimalist

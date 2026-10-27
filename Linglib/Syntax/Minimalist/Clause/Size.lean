@@ -13,16 +13,16 @@ public import Linglib.Syntax.Minimalist.Clause.Spine
 A clausal complement is measured by its highest projected head. Wurmbrand classifies infinitival
 complements by the structure they project, a bare vP for restructuring, a TP for propositional
 attitudes and a modal projection for future infinitives, beside the full CP of a finite clause,
-and a complement is at most as large as another when its highest head is no higher in the
-functional sequence. Two sizes with distinct heads at one level, tense and negation for instance,
-are then equivalent but not equal, so the order is a preorder. The size of a clause spine is its
-highest head. On extended projections the extension order of spines, inclusion of labels, refines
-the size order, and the standard sizes are those of the standard spines.
+and a complement is at most as large as another when its highest head is extended by the other's.
+Two sizes with distinct heads at one level, tense and negation for instance, are then equivalent
+but not equal, so the order is a preorder, and two sizes no source relates, a nominalized clause
+and a CP, are incomparable. The size of a clause spine is its highest head. On extended
+projections the extension order of spines, inclusion of labels, refines the size order, and the
+standard sizes are those of the standard spines.
 
 ## Main definitions
 
 * `Minimalist.ComplementSize`: a clausal complement measured by its highest head.
-* `Minimalist.ComplementSize.fLevel`: the functional level of the highest head.
 * `Minimalist.ClauseSpine.size`: the size of a spine, its highest head.
 * `Minimalist.ComplementSize.vP`, `Minimalist.ComplementSize.tP`,
   `Minimalist.ComplementSize.modP`, `Minimalist.ComplementSize.finP`,
@@ -30,8 +30,7 @@ the size order, and the standard sizes are those of the standard spines.
 
 ## Main results
 
-* `Minimalist.ComplementSize.le_def`, `Minimalist.ComplementSize.lt_def`: the order is that of
-  functional levels.
+* `Minimalist.ComplementSize.le_def`: the order is the extension order of the highest heads.
 * `Minimalist.ClauseSpine.size_le_size`: on extended projections, the extension order refines the
   size order, so that the standard sizes ascend as their spines do
   (`Minimalist.ComplementSize.vP_le_tP`, `Minimalist.ComplementSize.tP_le_cP`).
@@ -56,20 +55,21 @@ namespace ComplementSize
 
 variable {a b : ComplementSize}
 
-/-- The functional level of a complement is that of its highest head. -/
-def fLevel (cs : ComplementSize) : ℕ := cs.highestHead.fValue
+/-- Complement sizes are ordered by the extension order of their highest heads, so that a
+complement is at most another when the other's highest head extends its own. -/
+instance : Preorder ComplementSize where
+  le a b := a.highestHead.ExtendsTo b.highestHead
+  le_refl _ := refl_of Cat.ExtendsTo _
+  le_trans _ _ _ := trans_of Cat.ExtendsTo
 
-/-- Complement sizes are ordered by functional level, so that a complement is at most another when
-it projects no higher in the functional sequence. -/
-instance : Preorder ComplementSize := Preorder.lift fLevel
+instance : DecidableLE ComplementSize := fun a b ↦
+  inferInstanceAs (Decidable (a.highestHead.ExtendsTo b.highestHead))
 
-instance : DecidableLE ComplementSize := fun a b ↦ inferInstanceAs (Decidable (a.fLevel ≤ b.fLevel))
+instance : DecidableLT ComplementSize := fun a b ↦
+  inferInstanceAs (Decidable (a.highestHead.ExtendsTo b.highestHead ∧
+    ¬ b.highestHead.ExtendsTo a.highestHead))
 
-instance : DecidableLT ComplementSize := fun a b ↦ inferInstanceAs (Decidable (a.fLevel < b.fLevel))
-
-theorem le_def : a ≤ b ↔ a.fLevel ≤ b.fLevel := Iff.rfl
-
-theorem lt_def : a < b ↔ a.fLevel < b.fLevel := Iff.rfl
+theorem le_def : a ≤ b ↔ a.highestHead.ExtendsTo b.highestHead := Iff.rfl
 
 end ComplementSize
 
@@ -83,29 +83,29 @@ variable {s t : ClauseSpine} {c : Cat}
 the least size. -/
 def size (s : ClauseSpine) : ComplementSize := ⟨s.heads.getLastD .V⟩
 
-private theorem fValue_le_getLastD {l : List Cat} (hp : l.Pairwise Cat.ExtendsTo) (hc : c ∈ l) :
-    c.fValue ≤ (l.getLastD .V).fValue := by
+private theorem extendsTo_getLastD {l : List Cat} (hp : l.Pairwise Cat.ExtendsTo) (hc : c ∈ l) :
+    c.ExtendsTo (l.getLastD .V) := by
   have hne : l ≠ [] := List.ne_nil_of_mem hc
   rw [List.getLastD_eq_getLast?, List.getLast?_eq_some_getLast hne, Option.getD_some]
   rw [← List.dropLast_append_getLast hne, List.mem_append, List.mem_singleton] at hc
   rcases hc with hc | rfl
   · rw [← List.dropLast_append_getLast hne, List.pairwise_append] at hp
-    exact (hp.2.2 c hc _ (List.mem_singleton_self _)).2
-  · exact le_rfl
+    exact hp.2.2 c hc _ (List.mem_singleton_self _)
+  · exact refl_of Cat.ExtendsTo _
 
-theorem IsExtendedProjection.fValue_le_fLevel (hs : s.IsExtendedProjection) (hc : c ∈ s) :
-    c.fValue ≤ s.size.fLevel :=
-  fValue_le_getLastD hs.pairwise hc
+/-- In an extended projection every head is extended by the highest one. -/
+theorem IsExtendedProjection.extendsTo_size (hs : s.IsExtendedProjection) (hc : c ∈ s) :
+    c.ExtendsTo s.size.highestHead :=
+  extendsTo_getLastD hs.pairwise hc
 
-/-- On extended projections, the extension order refines the size order: a spine whose heads
-another projects is no larger. -/
-theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection) : s.size ≤ t.size := by
-  rcases List.eq_nil_or_concat s.heads with hs | ⟨l, c, hs⟩
-  · show (s.heads.getLastD .V).fValue ≤ t.size.fLevel
-    simp [hs, Cat.fValue]
-  · show (s.heads.getLastD .V).fValue ≤ t.size.fLevel
-    rw [hs, List.concat_eq_append, List.getLastD_concat]
-    exact ht.fValue_le_fLevel (le_iff_forall_mem.1 h c (by simp [hs]))
+/-- On extended projections, the extension order refines the size order: a nonempty spine whose
+heads another projects is no larger. -/
+theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection) (hs : s.heads ≠ []) :
+    s.size ≤ t.size := by
+  obtain ⟨l, c, hlc⟩ := (List.eq_nil_or_concat s.heads).resolve_left hs
+  show (s.heads.getLastD .V).ExtendsTo t.size.highestHead
+  rw [hlc, List.concat_eq_append, List.getLastD_concat]
+  exact ht.extendsTo_size (le_iff_forall_mem.1 h c (by simp [hlc]))
 
 end ClauseSpine
 
@@ -129,9 +129,12 @@ def finP : ComplementSize := ⟨.Fin⟩
 def cP : ComplementSize := ClauseSpine.cP.size
 
 /-- The standard sizes ascend as their spines do. -/
-theorem vP_le_tP : vP ≤ tP := ClauseSpine.size_le_size ClauseSpine.vP_le_tP (by decide)
+theorem vP_le_tP : vP ≤ tP :=
+  ClauseSpine.size_le_size ClauseSpine.vP_le_tP (by decide +kernel) (List.cons_ne_nil _ _)
 
-theorem tP_le_cP : tP ≤ cP := ClauseSpine.size_le_size ClauseSpine.tP_le_cP (by decide)
+theorem tP_le_cP : tP ≤ cP :=
+  ClauseSpine.size_le_size ClauseSpine.tP_le_cP ClauseSpine.cP_isExtendedProjection
+    (List.cons_ne_nil _ _)
 
 end ComplementSize
 

@@ -29,14 +29,14 @@ circumstantial base ordered by inertia ([dowty-1979], [kratzer-2013]). This is t
 self-referentiality of intention ([searle-1983]): in every inertia world the intended event is
 caused by the attitude state, hence later than it, the future orientation of *a*-infinitives
 ([wurmbrand-2014]; `intention_future`). Complement size is the extended projection's
-`ComplementSize`, ordered by functional level; the reading is read off the CP threshold, and the
-diagnostics of sections 3 and 3.1 are predicted by the heads the complement reaches
-(`rows_predicted`).
+`ComplementSize`, ordered by the extension order of its highest head; the reading is read off the
+CP threshold, and the diagnostics of sections 3 and 3.1 are predicted by the heads the complement
+reaches (`rows_predicted`).
 
 ## Implementation notes
 
 * The *a*-infinitive is recorded with negation as its highest head, the highest the paper places
-  inside it. The functional sequence does not separate negation from tense and modal heads, so
+  inside it. The extension order makes negation level with tense and the modal heads, so
   the absence of modal auxiliaries ((9) and (10)) and the ban on past-oriented complements ((5))
   stay in the prose and in `intention_future`.
 * The two heads are stated over abstract eventualities and worlds, with the content background,
@@ -164,7 +164,7 @@ def readings (v : Italian.Verb) : List Reading :=
 -- (4)
 theorem convincere_pensare_readings :
     readings convincere = [.belief, .intention] ∧ readings pensare = [.belief, .intention] := by
-  decide
+  decide +kernel
 
 /-! ### The diagnostics of sections 3 and 3.1 -/
 
@@ -220,6 +220,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 theorem rows_predicted : ∀ r ∈ rows, (r.grammatical = true ↔ r.diagnostic.Predicted r.size) := by
-  decide
+  decide +kernel
 
 end FuscoSgrizzi2026
