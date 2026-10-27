@@ -674,7 +674,7 @@ theorem hearer_update (ξ : (W → SignType)) (cgs : Set (Set W)) (τ : Set W) :
 the presuppositions, then updates each remaining one with the assertion. -/
 theorem hearer_update_filters_then_asserts (ξ : (W → SignType)) (cgs : Set (Set W)) :
     (CCP.Partial.ofTrivalent ξ).image cgs =
-      (fun σ ↦ σ ∩ Trivalent.posExt ξ) '' {σ ∈ cgs | (CCP.Partial.ofTrivalent ξ).Admits σ} := by
+      (fun σ ↦ σ ∩ posSupport ξ) '' {σ ∈ cgs | (CCP.Partial.ofTrivalent ξ).Admits σ} := by
   ext τ
   rw [PFun.mem_image]
   constructor

@@ -20,16 +20,16 @@ public import Linglib.Phonology.Tone.Surfacing
 # Unbounded tonal plateauing
 
 Hyman and Katamba's plateauing rule for Luganda makes every tone-bearing unit between two
-H-toned units surface H. Over Jardine's string rendering, a word over `TBU` records each timing
-unit's association state (`H` associated to a H tone, `O` unassociated), and `utp`, a
+H-toned units surface H. Over Jardine's string rendering, a word over `AssociationState` records
+each timing unit's association state (`H` associated to a H tone, `O` unassociated), and `utp`, a
 `Tone.Surfacing` process, rewrites it pointwise by its surfacing predicate, the two-sided window
 `H ∈ w.take (i + 1) ∧ H ∈ w.drop i` asking for an H at or before `i` and one at or after it. The
 map is `utp.map`, the surfacing set `plateau`.
 
 What surfaces is the representation. The string reads back into two-tier autosegmental
-representations by `TBU.toAR`, and the output representation `plateauAR w` is the OCP-merged
-input, hull-closed — fusion then spreading. Timing slot `i` surfaces with H in `plateauAR w`
-exactly when `utp.Surfaces w i` (`utp.surfaces_iff_surfacesWith_plateauAR`).
+representations by `AssociationState.toAR`, and the output representation `plateauAR w` is the
+OCP-merged input, hull-closed — fusion then spreading. Timing slot `i` surfaces with H in
+`plateauAR w` exactly when `utp.Surfaces w i` (`utp.surfaces_iff_surfacesWith_plateauAR`).
 
 The map is the flagship *unbounded circumambient* process: whether a position changes
 depends on unboundedly distant material on **both** sides, in the strong witness form
@@ -40,9 +40,9 @@ deterministic in Heinz and Lai's sense.
 
 ## Main definitions
 
-* `Tone.TBU` — the H/Ø string alphabet (association states; distinct from `Tone.TBUKind`,
-  the phonological typology of timing units).
-* `Tone.TBU.toAR`, `Tone.plateauAR` — the translation of a TBU into a one-slot
+* `Tone.AssociationState` — the H/Ø string alphabet, a timing unit's association to an H tone
+  (distinct from `Tone.TBUKind`, the phonological typology of timing units).
+* `Tone.AssociationState.toAR`, `Tone.plateauAR` — the translation of a timing unit into a one-slot
   representation, and the output representation (OCP-merged input, hull-closed).
 * `Tone.utp` — plateauing as a `Tone.Surfacing` process; `utp.map` the map.
 * `Tone.plateau` — the set of surfacing positions.
@@ -77,7 +77,7 @@ namespace Tone
 
 /-- A tone-bearing unit's association state is `H` for a TBU associated to a H tone and `O`
 for an unspecified TBU (Jardine's Ø). -/
-inductive TBU | H | O
+inductive AssociationState | H | O
   deriving DecidableEq, Repr
 
 /-! ### The output representation
@@ -88,10 +88,10 @@ operation on structures). -/
 
 open Autosegmental
 
-namespace TBU
+namespace AssociationState
 
 /-- A TBU contributes its H tone to the melody if it is H-toned, and nothing otherwise. -/
-def melody : TBU → List TRN
+def melody : AssociationState → List TRN
   | .H => [.H]
   | .O => []
 
@@ -99,10 +99,10 @@ def melody : TBU → List TRN
 
 @[simp] theorem melody_O : melody .O = [] := rfl
 
-theorem length_melody (a : TBU) : (melody a).length = if a = .H then 1 else 0 := by
+theorem length_melody (a : AssociationState) : (melody a).length = if a = .H then 1 else 0 := by
   cases a <;> rfl
 
-theorem sum_length_melody (w : List TBU) :
+theorem sum_length_melody (w : List AssociationState) :
     (w.map fun a => (melody a).length).sum = w.count .H := by
   induction w with
   | nil => rfl
@@ -110,29 +110,29 @@ theorem sum_length_melody (w : List TBU) :
 
 /-- A TBU translates into the primitive with one timing slot carrying the TBU's melody
 (Jardine's reading of the string as a representation). -/
-def toAR (a : TBU) : AR (TwoTier TRN Unit) := AR.primitive (melody a) ()
+def toAR (a : AssociationState) : AR (TwoTier TRN Unit) := AR.primitive (melody a) ()
 
-@[simp] theorem word_toAR_true (a : TBU) : (toAR a).word true = melody a := rfl
+@[simp] theorem word_toAR_true (a : AssociationState) : (toAR a).word true = melody a := rfl
 
-@[simp] theorem word_toAR_false (a : TBU) : (toAR a).word false = [()] := rfl
+@[simp] theorem word_toAR_false (a : AssociationState) : (toAR a).word false = [()] := rfl
 
-@[simp] theorem link_toAR (a : TBU) (p q : ℕ) :
+@[simp] theorem link_toAR (a : AssociationState) (p q : ℕ) :
     (toAR a).Link true false p q ↔ p < (melody a).length ∧ q = 0 := by
   simp [toAR]
 
-@[simp] theorem word_prod_map_toAR_true (w : List TBU) :
+@[simp] theorem word_prod_map_toAR_true (w : List AssociationState) :
     (w.map toAR).prod.word true = List.replicate (w.count .H) TRN.H := by
   induction w with
   | nil => rfl
   | cons a w ih => cases a <;> simp [ih, List.replicate_succ]
 
-@[simp] theorem word_prod_map_toAR_false (w : List TBU) :
+@[simp] theorem word_prod_map_toAR_false (w : List AssociationState) :
     (w.map toAR).prod.word false = List.replicate w.length () := by
   induction w with
   | nil => rfl
   | cons a w ih => simp [ih, List.replicate_succ]
 
-theorem link_prod_map_toAR (w : List TBU) (p j : ℕ) :
+theorem link_prod_map_toAR (w : List AssociationState) (p j : ℕ) :
     (w.map toAR).prod.Link true false p j ↔
       p = (w.take j).count .H ∧ w[j]? = some .H := by
   have hoff : AR.tierOffset toAR true w j = (w.take j).count .H := by
@@ -147,7 +147,7 @@ theorem link_prod_map_toAR (w : List TBU) (p j : ℕ) :
   · rintro ⟨rfl, hj, h⟩
     exact ⟨hj, le_rfl, by simp [h]⟩
 
-theorem link_collapse_prod_map_toAR (w : List TBU) (k j : ℕ) :
+theorem link_collapse_prod_map_toAR (w : List AssociationState) (k j : ℕ) :
     ((w.map toAR).prod.collapse true).Link true false k j ↔ k = 0 ∧ w[j]? = some .H := by
   rw [AR.link_collapse]
   simp only [repointIdx_self, repointIdx_of_ne (by decide : false ≠ true),
@@ -158,20 +158,21 @@ theorem link_collapse_prod_map_toAR (w : List TBU) (k j : ℕ) :
   · rintro ⟨rfl, h⟩
     exact ⟨_, j, ⟨rfl, h⟩, rfl, rfl⟩
 
-end TBU
+end AssociationState
 
 /-- The output representation, in coordinates, is the OCP-merge and then the hull, both at the
 melody tier. -/
-def plateauAR (w : List TBU) : AR (TwoTier TRN Unit) :=
-  ((w.map TBU.toAR).prod.collapse true).hull true
+def plateauAR (w : List AssociationState) : AR (TwoTier TRN Unit) :=
+  ((w.map AssociationState.toAR).prod.collapse true).hull true
 
-theorem link_plateauAR (w : List TBU) (k j : ℕ) :
+theorem link_plateauAR (w : List AssociationState) (k j : ℕ) :
     (plateauAR w).Link true false k j ↔ k = 0 ∧ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
   by_cases hj : j < w.length
   · unfold plateauAR
     rw [AR.link_hull_left true _ (by decide)
-      (by simpa using hj : j < (((w.map TBU.toAR).prod.collapse true).word false).length)]
-    simp only [TBU.link_collapse_prod_map_toAR, List.mem_take_iff_getElem?,
+      (by simpa using hj :
+        j < (((w.map AssociationState.toAR).prod.collapse true).word false).length)]
+    simp only [AssociationState.link_collapse_prod_map_toAR, List.mem_take_iff_getElem?,
       List.mem_drop_iff_getElem?, Nat.lt_succ_iff]
     constructor
     · rintro ⟨q₁, q₂, ⟨rfl, h₁⟩, ⟨-, h₂⟩, hle₁, hle₂⟩
@@ -181,7 +182,7 @@ theorem link_plateauAR (w : List TBU) (k j : ℕ) :
   · refine iff_of_false (fun h => hj ?_) fun ⟨_, _, h⟩ => hj (List.lt_length_of_mem_drop h)
     simpa [plateauAR] using h.lt_right
 
-theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :
+theorem surfacesWith_plateauAR (w : List AssociationState) (j : ℕ) :
     (plateauAR w).SurfacesWith TRN.H j ↔ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
   simp only [AR.SurfacesWith, link_plateauAR, and_assoc, exists_eq_left]
   refine and_congr_right fun hA => and_iff_left_of_imp fun _ => ?_
@@ -194,7 +195,7 @@ theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :
 /-- Unbounded tonal plateauing is the surfacing process in which TBU `i` surfaces H iff some
 H-toned TBU lies at or before it and some at or after it. -/
 @[simps hi lo]
-def utp : Surfacing TBU where
+def utp : Surfacing AssociationState where
   hi := .H
   lo := .O
   Surfaces w i := .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i
@@ -205,7 +206,7 @@ def utp : Surfacing TBU where
       List.mem_drop_iff_getElem?.mpr ⟨_, le_rfl, h⟩⟩
   decSurfaces w i := inferInstanceAs (Decidable (_ ∧ _))
 
-variable {w : List TBU} {i j k : ℕ}
+variable {w : List AssociationState} {i j k : ℕ}
 
 theorem utp.surfaces_def : utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
   Iff.rfl
@@ -237,7 +238,7 @@ theorem utp.surfaces_reverse (hi : i < w.length) :
     show w.length - (i + 1) = w.length - 1 - i from by omega,
     show w.length - i = (w.length - 1 - i) + 1 from by omega, and_comm]
 
-theorem utp.surfaces_split {a : TBU} (h : w[i]? = some a) :
+theorem utp.surfaces_split {a : AssociationState} (h : w[i]? = some a) :
     utp.Surfaces w i ↔ a = .H ∨ (.H ∈ w.take i ∧ .H ∈ w.drop (i + 1)) := by
   rcases eq_or_ne a .H with rfl | ha
   · simp [utp.surfaces_of_hi h]
@@ -246,7 +247,8 @@ theorem utp.surfaces_split {a : TBU} (h : w[i]? = some a) :
     simp [ha, Ne.symm ha]
 
 theorem utp.map_getElem? :
-    (utp.map w)[i]? = w[i]?.map fun _ => if utp.Surfaces w i then TBU.H else TBU.O :=
+    (utp.map w)[i]? =
+      w[i]?.map fun _ => if utp.Surfaces w i then AssociationState.H else AssociationState.O :=
   Surfacing.map_getElem? utp
 
 theorem utp.map_getElem?_H_iff : (utp.map w)[j]? = some .H ↔ utp.Surfaces w j :=
@@ -267,7 +269,7 @@ theorem utp.map_reverse : utp.map w.reverse = (utp.map w).reverse := by
 /-! ### The plateau set -/
 
 /-- The plateau of `w` is the set of positions that surface H. -/
-def plateau (w : List TBU) : Finset ℕ := utp.support w
+def plateau (w : List AssociationState) : Finset ℕ := utp.support w
 
 @[simp] theorem mem_plateau : j ∈ plateau w ↔ utp.Surfaces w j := utp.mem_support
 
@@ -279,7 +281,8 @@ def plateau (w : List TBU) : Finset ℕ := utp.support w
 /-- `utp.map` writes the indicator word of its plateau. -/
 theorem utp.map_eq_plateau_indicator :
     utp.map w
-      = (List.range w.length).map fun i => if i ∈ plateau w then TBU.H else TBU.O :=
+      = (List.range w.length).map fun i =>
+          if i ∈ plateau w then AssociationState.H else AssociationState.O :=
   utp.map_eq_indicator
 
 theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some .H) (hhi : w[hi]? = some .H)
@@ -312,16 +315,17 @@ theorem utp.map_getElem?_H_of_getElem?_H (h : w[i]? = some .H) :
     (utp.map w)[i]? = some .H :=
   utp.map_getElem?_hi_of_getElem?_hi h
 
-theorem utp.surfaces_mono {w' : List TBU}
-    (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (h : utp.Surfaces w i) :
+theorem utp.surfaces_mono {w' : List AssociationState}
+    (hw : ∀ j : ℕ, w[j]? = some AssociationState.H → w'[j]? = some AssociationState.H)
+    (h : utp.Surfaces w i) :
     utp.Surfaces w' i := by
   obtain ⟨⟨l, hl, hlH⟩, r, hr, hrH⟩ := utp.surfaces_iff.mp h
   exact utp.surfaces_iff.mpr ⟨⟨l, hl, hw l hlH⟩, r, hr, hw r hrH⟩
 
 /-- Plateauing is monotone, pointwise more Hs in giving pointwise more Hs out. -/
-theorem utp.map_mono {w' : List TBU}
-    (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (j : ℕ)
-    (h : (utp.map w)[j]? = some TBU.H) : (utp.map w')[j]? = some TBU.H :=
+theorem utp.map_mono {w' : List AssociationState}
+    (hw : ∀ j : ℕ, w[j]? = some AssociationState.H → w'[j]? = some AssociationState.H) (j : ℕ)
+    (h : (utp.map w)[j]? = some AssociationState.H) : (utp.map w')[j]? = some AssociationState.H :=
   utp.map_getElem?_H_iff.mpr (utp.surfaces_mono hw (utp.map_getElem?_H_iff.mp h))
 
 theorem utp.H_mem_map : .H ∈ utp.map w ↔ .H ∈ w :=
@@ -370,7 +374,8 @@ theorem utp.map_eq_self_iff : utp.map w = w ↔ ∀ i, utp.Surfaces w i → w[i]
 theorem utp.range_map : Set.range utp.map = Function.fixedPoints utp.map :=
   Set.ext fun w => ⟨fun ⟨_, hv⟩ => hv ▸ utp.map_map, fun h => ⟨w, h⟩⟩
 
-theorem HOH_sublist_iff : [TBU.H, .O, .H].Sublist w ↔ ∃ i, utp.Surfaces w i ∧ w[i]? = some .O := by
+theorem HOH_sublist_iff :
+    [AssociationState.H, .O, .H].Sublist w ↔ ∃ i, utp.Surfaces w i ∧ w[i]? = some .O := by
   simp only [List.cons_sublist_iff, List.nil_sublist, and_true, utp.surfaces_iff]
   constructor
   · rintro ⟨r₁, r₂, rfl, h₁, s₁, s₂, rfl, h₂, t₁, t₂, rfl, h₃⟩
@@ -422,7 +427,7 @@ The rule schemata as theorems about `utp` rather than clauses of its definition.
 
 /-- A toneless word is unchanged. -/
 theorem utp.map_toneless (n : ℕ) : utp.map (List.replicate n .O) = List.replicate n .O := by
-  have h : plateau (List.replicate n TBU.O) = ∅ :=
+  have h : plateau (List.replicate n AssociationState.O) = ∅ :=
     Finset.not_nonempty_iff_eq_empty.mp (by simp)
   simp [utp.map_eq_plateau_indicator, h, List.map_const']
 
@@ -430,8 +435,8 @@ theorem utp.map_toneless (n : ℕ) : utp.map (List.replicate n .O) = List.replic
 theorem utp.map_single (m n : ℕ) :
     utp.map (List.replicate m .O ++ .H :: List.replicate n .O)
       = List.replicate m .O ++ .H :: List.replicate n .O := by
-  have hH : ∀ j, (List.replicate m TBU.O ++ TBU.H :: List.replicate n TBU.O)[j]? = some TBU.H
-      ↔ j = m := fun j => by
+  have hH : ∀ j, (List.replicate m AssociationState.O ++ AssociationState.H ::
+      List.replicate n AssociationState.O)[j]? = some AssociationState.H ↔ j = m := fun j => by
     simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
       List.length_replicate]
     split_ifs <;> simp_all <;> omega
@@ -444,11 +449,12 @@ theorem utp.map_single (m n : ℕ) :
 
 /-- Everything between the outermost Hs surfaces H; the medial material `w` is
 arbitrary. -/
-theorem utp.map_plateau (m p : ℕ) (w : List TBU) :
+theorem utp.map_plateau (m p : ℕ) (w : List AssociationState) :
     utp.map (List.replicate m .O ++ .H :: (w ++ .H :: List.replicate p .O))
       = List.replicate m .O ++ (List.replicate (w.length + 2) .H ++ List.replicate p .O) := by
-  have hb : ∀ j, (List.replicate m TBU.O ++ TBU.H :: (w ++ TBU.H :: List.replicate p TBU.O))[j]?
-      = some TBU.H → m ≤ j ∧ j ≤ m + 1 + w.length := fun j hj => by
+  have hb : ∀ j, (List.replicate m AssociationState.O ++ AssociationState.H ::
+      (w ++ AssociationState.H :: List.replicate p AssociationState.O))[j]? =
+        some AssociationState.H → m ≤ j ∧ j ≤ m + 1 + w.length := fun j hj => by
     simp only [List.getElem?_append, List.getElem?_cons, List.getElem?_replicate,
       List.length_replicate] at hj
     split_ifs at hj <;> first | omega | simp_all

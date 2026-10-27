@@ -222,7 +222,7 @@ omit [Fintype Ω] [Fintype ι] [DecidableEq ι] in
 /-- A relation `r` on events **agrees** with the judgments, the paper's word for a measure
 (p. 368), when it makes each strict comparison strict and each indifference hold both ways. -/
 def Agree (r : Set Ω → Set Ω → Prop) : Prop :=
-  ∀ i, (i ∈ J.strict → Strict r (J.left i) (J.right i)) ∧
+  ∀ i, (i ∈ J.strict → AsymmRel r (J.left i) (J.right i)) ∧
     (i ∉ J.strict → r (J.left i) (J.right i) ∧ r (J.right i) (J.left i))
 
 variable [MeasurableSpace Ω]
@@ -784,7 +784,7 @@ theorem worldCup_agree_qualitativeProbability :
   let r : Set (Fin 5) → Set (Fin 5) → Prop := Set.preimage worldCupToKps.symm ⁻¹'o kpsGe
   have hr (s t : Finset (Fin 5))
       (h : kpsRank (t.map worldCupToKps.toEmbedding) < kpsRank (s.map worldCupToKps.toEmbedding)) :
-      Strict r ↑s ↑t := by
+      AsymmRel r ↑s ↑t := by
     have key (s t : Finset (Fin 5)) : r ↑s ↑t ↔
         kpsRank (t.map worldCupToKps.toEmbedding) ≤ kpsRank (s.map worldCupToKps.toEmbedding) := by
       show kpsGe _ _ ↔ _

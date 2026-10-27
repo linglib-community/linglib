@@ -169,13 +169,13 @@ def allPlural : W → SignType :=
 theorem gapExt_allPlural : Trivalent.gapExt (allPlural P x) = ∅ :=
   Trivalent.gapExt_ofProp_eq_one _
 
-theorem posExt_allPlural : Trivalent.posExt (allPlural P x) = Trivalent.posExt (barePlural P x) :=
-  Trivalent.posExt_ofProp_eq_one _
+theorem posSupport_allPlural : posSupport (allPlural P x) = posSupport (barePlural P x) :=
+  Trivalent.posSupport_ofProp_eq_one _
 
-theorem negExt_allPlural :
-    Trivalent.negExt (allPlural P x) =
-      Trivalent.negExt (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
-  Trivalent.negExt_ofProp_eq_one _
+theorem negSupport_allPlural :
+    negSupport (allPlural P x) =
+      negSupport (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
+  Trivalent.negSupport_ofProp_eq_one _
 
 theorem isBivalent_allPlural : Trivalent.IsBivalent (allPlural P x) :=
   Trivalent.isBivalent_ofProp_eq_one _

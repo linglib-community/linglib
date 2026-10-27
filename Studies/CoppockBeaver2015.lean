@@ -86,7 +86,7 @@ variable {E W : Type*}
 
 /-- A predicate is weakly unique, the paper's `|P| ≤ 1`, when its positive extension is a
 subsingleton. -/
-def WeakUnique (P : E → SignType) : Prop := (posExt P).Subsingleton
+def WeakUnique (P : E → SignType) : Prop := (posSupport P).Subsingleton
 
 instance [Fintype E] [DecidableEq E] (P : (E → SignType)) : Decidable (WeakUnique P) := by
   unfold WeakUnique Set.Subsingleton; infer_instance
@@ -102,7 +102,7 @@ theorem not_exclusive_iff {P : (E → SignType)} {x : E} :
   simp [Exclusive]
 
 theorem exclusive_iff_subset_singleton {P : (E → SignType)} {x : E} :
-    Exclusive P x ↔ posExt P ⊆ {x} :=
+    Exclusive P x ↔ posSupport P ⊆ {x} :=
   ⟨fun h y hy ↦ not_not.1 fun hyx ↦ h y hyx hy, fun h _ hyx hy ↦ hyx (h hy)⟩
 
 /-- The Weak Fregean definite article (50) returns the restrictor, presupposing weak
@@ -295,7 +295,7 @@ theorem only_answer_apply [DecidableRel (Exclusive (E := E))] (w : Set E)
     [DecidablePred (· ∈ w)] (x : E) :
     Focus.Particles.only (· ⊆ ·) (Set.range answer) (answer {x}) w =
       only (fun y ↦ ofProp (y ∈ w)) x := by
-  have hw : (posExt fun y : E ↦ ofProp (y ∈ w)) = w := Set.ext fun y ↦ ofProp_eq_one_iff
+  have hw : (posSupport fun y : E ↦ ofProp (y ∈ w)) = w := Set.ext fun y ↦ ofProp_eq_one_iff
   have hiff : Exclusive (fun y ↦ ofProp (y ∈ w)) x ↔ w ⊆ {x} := by
     rw [exclusive_iff_subset_singleton, hw]
   refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
@@ -315,7 +315,7 @@ def PresupposesUniqueness (D : (E → SignType) → (E → SignType)) : Prop :=
 
 /-- An entry presupposes existence when it is classical only on nonempty restrictors. -/
 def PresupposesExistence (D : (E → SignType) → (E → SignType)) : Prop :=
-  ∀ P x, D P x ≠ 0 → (posExt P).Nonempty
+  ∀ P x, D P x ≠ 0 → (posSupport P).Nonempty
 
 theorem not_presupposesUniqueness_of_ne_zero [Nontrivial E]
     {D : (E → SignType) → E → SignType} {x : E}
@@ -343,12 +343,12 @@ noncomputable def theFregean (P : (E → SignType)) : (E → SignType) :=
 open Classical in
 /-- The Russellian quantificational entry (53a) asserts unique existence of the restrictor. -/
 noncomputable def theRussellianGQ (P Q : (E → SignType)) : SignType :=
-  meetWeak (ofProp (∃! y, P y = 1)) (ofProp (posExt P ⊆ posExt Q))
+  meetWeak (ofProp (∃! y, P y = 1)) (ofProp (posSupport P ⊆ posSupport Q))
 
 open Classical in
 /-- The Fregean quantificational entry (53b) presupposes unique existence of the restrictor. -/
 noncomputable def theFregeanGQ (P Q : (E → SignType)) : SignType :=
-  meetWeak (ofProp (∃! y, P y = 1) ⊔ 0) (ofProp (posExt P ⊆ posExt Q))
+  meetWeak (ofProp (∃! y, P y = 1) ⊔ 0) (ofProp (posSupport P ⊆ posSupport Q))
 
 open Classical in
 /-- Partee's `be` lowers a generalized quantifier to a predicate. -/

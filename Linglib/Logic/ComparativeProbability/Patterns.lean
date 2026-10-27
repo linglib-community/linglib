@@ -69,7 +69,7 @@ def PositiveFormTransfer : Prop := ∀ a b : α, r b a → Probably r a → Prob
 /-- V12, complement transfer, holds when `b ≽ a` and `a ≽ aᶜ` give `b ≽ bᶜ`. -/
 def ComplementTransfer : Prop := ∀ a b : α, r b a → r a aᶜ → r b bᶜ
 /-- V13, strict disjunction introduction, holds when `(a \ b) ≻ ⊥` gives `(a ⊔ b) ≻ b`. -/
-def StrictDisjunctionIntro : Prop := ∀ a b : α, Strict r (a \ b) ⊥ → Strict r (a ⊔ b) b
+def StrictDisjunctionIntro : Prop := ∀ a b : α, AsymmRel r (a \ b) ⊥ → AsymmRel r (a ⊔ b) b
 /-- I2, collapse of equiprobability into certainty, holds when `a ≽ aᶜ` gives `a ≽ b`. The
 premise is Figure 1's one-directional one, where Yalcin writes *as likely as*. -/
 def EquiprobabilityCollapse : Prop := ∀ a b : α, r a aᶜ → r a b
@@ -150,7 +150,7 @@ section Trans
 variable [IsTrans α r]
 
 theorem positiveFormTransfer [IsComplementReversing r] : PositiveFormTransfer r :=
-  fun _ _ hba ha ↦ strict_of_strict_of_rel (strict_of_rel_of_strict hba ha) (complRev _ _ hba)
+  fun _ _ hba ha ↦ AsymmRel.trans_le (asymmRel_of_rel_of_asymmRel hba ha) (complRev _ _ hba)
 
 theorem complementTransfer [IsComplementReversing r] : ComplementTransfer r :=
   fun _ _ hba ha ↦ _root_.trans (_root_.trans hba ha) (complRev _ _ hba)

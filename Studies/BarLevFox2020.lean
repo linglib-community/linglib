@@ -139,13 +139,13 @@ theorem support_only_fcAlts {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitne
 
 /-- Where the prejacent is the only includable alternative and exactly the non-entailed ones are
 excludable, `only` agrees with the exclusive entry (29b) on the entailment scale. -/
-theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
+theorem posSupport_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
     (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q) (hII : II ALT φ = {φ}) :
-    Trivalent.posExt (only ALT φ) =
-      Trivalent.posExt (Focus.Particles.only (· ⊆ ·) ALT φ) := by
-  rw [Focus.Particles.posExt_only_subset hφ]
+    posSupport (only ALT φ) =
+      posSupport (Focus.Particles.only (· ⊆ ·) ALT φ) := by
+  rw [Focus.Particles.posSupport_only_subset hφ]
   ext w
-  simp only [Trivalent.mem_posExt, only, Trivalent.indicator_apply_eq_one_iff,
+  simp only [mem_posSupport, only, Trivalent.indicator_apply_eq_one_iff,
     SignType.ofProp_eq_one_iff, Set.mem_ofPred_eq, hII, Set.mem_singleton_iff, forall_eq, hIE,
     and_imp, mem_exh]
   exact ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hwq ↦ by_contra fun hne ↦ h q hq hne hwq⟩,

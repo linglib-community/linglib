@@ -339,9 +339,9 @@ theorem cEntails_iff_forall_prob [MeasurableSpace (ι → Bool)]
     refine measure_mono_null (fun v hv ↦ ?_) <|
       (measure_biUnion_null_iff Γ.finite_toSet.countable).2 fun A hA ↦
         Trivalent.prob_eq_one_iff.1 (hΓ A hA)
-    rw [mem_negExt] at hv
+    rw [mem_negSupport] at hv
     by_contra hnot
-    simp only [Set.mem_iUnion, mem_negExt, not_exists] at hnot
+    simp only [Set.mem_iUnion, mem_negSupport, not_exists] at hnot
     have h0 := h v fun A hA ↦ SignType.nonneg_iff_ne_neg_one.2 (hnot A hA)
     rw [hv] at h0
     exact absurd h0 (by decide)
@@ -379,7 +379,7 @@ printed axiom omits: a
 certainly void disjunction of certainly void disjuncts has probability 1 by the All Void
 convention, while the disjuncts' probabilities sum to 2. -/
 theorem additivity_all_void (μ : Measure W) (t : W → ι → Bool) (i : ι) :
-    posExt (value t (.cond (bot i) (top i))) = ∅ ∧
+    posSupport (value t (.cond (bot i) (top i))) = ∅ ∧
       Trivalent.prob μ (value t (.disj (.cond (bot i) (top i)) (.cond (bot i) (top i)))) = 1 ∧
         Trivalent.prob μ (value t (.cond (bot i) (top i))) +
           Trivalent.prob μ (value t (.cond (bot i) (top i))) = 2 := by
@@ -499,7 +499,7 @@ theorem prob_value_neg [IsFiniteMeasure μ] {φ : Formula ι}
 the common defined region has positive credence (the third principle). -/
 theorem prob_value_disj {φ ψ : Formula ι}
     (hsupp : Function.support (value t φ) = Function.support (value t ψ))
-    (hdisj : Disjoint (posExt (value t φ)) (posExt (value t ψ)))
+    (hdisj : Disjoint (posSupport (value t φ)) (posSupport (value t ψ)))
     (h : μ (Function.support (value t φ)) ≠ 0) :
     Trivalent.prob μ (value t (.disj φ ψ)) =
       Trivalent.prob μ (value t φ) + Trivalent.prob μ (value t ψ) :=
@@ -513,7 +513,7 @@ theorem prob_cond_eq_one_of_cEntails [IsFiniteMeasure μ] {A B : Formula ι}
   rw [Trivalent.prob_eq_one_iff]
   convert measure_empty (μ := μ)
   ext w
-  simp only [mem_negExt, value, cooperEval_cond, condAssert_eq_neg_one_iff,
+  simp only [mem_negSupport, value, cooperEval_cond, condAssert_eq_neg_one_iff,
     Trivalent.Designation.threshold_lp, Set.mem_empty_iff_false, iff_false, not_and]
   intro hw hB
   have h0 := h (t w) fun X hX ↦ by rw [List.mem_singleton] at hX; exact hX ▸ hw
@@ -527,7 +527,7 @@ theorem prob_cond_eq_zero_of_cEntails_neg {A B : Formula ι} (h : CEntails [] (.
   convert ENNReal.zero_div
   convert measure_empty (μ := μ)
   ext w
-  rw [mem_posExt]
+  rw [mem_posSupport]
   simp only [value, cooperEval_cond, condAssert_eq_one_iff, Set.mem_empty_iff_false, iff_false,
     not_and]
   intro _ hB
@@ -555,10 +555,10 @@ theorem prob_cond_disj {A B C : Formula ι} (hii : CEntails [C] (.neg (.conj A B
     by_cases hC : 0 ≤ cooperEval (t w) C
     · simp [hC, hiii (t w) hC]
     · simp [hC]
-  have hdisj : Disjoint (posExt (value t (.cond C A))) (posExt (value t (.cond C B))) := by
+  have hdisj : Disjoint (posSupport (value t (.cond C A))) (posSupport (value t (.cond C B))) := by
     rw [Set.disjoint_left]
     intro w hwA hwB
-    rw [mem_posExt] at hwA hwB
+    rw [mem_posSupport] at hwA hwB
     simp only [value, cooperEval_cond, condAssert_eq_one_iff, Trivalent.Designation.threshold_lp]
       at hwA hwB
     have := hii (t w) (by simpa using hwA.1)
@@ -601,7 +601,7 @@ theorem ofAdams_eq_indicator (φ : Adams1975.Formula W) :
 /-- Adams's simple conditionals exhaust the trivalent propositions, each being the conditional
 event of its truth on its definedness. -/
 theorem exists_ofAdams_eq (p : W → SignType) : ∃ φ : Adams1975.Formula W, ofAdams φ = p := by
-  refine ⟨⟨Function.support p, posExt p⟩, ?_⟩
+  refine ⟨⟨Function.support p, posSupport p⟩, ?_⟩
   rw [ofAdams_eq_indicator]
   conv_rhs => rw [← indicator_support_ofProp_eq_one p]
   congr 1

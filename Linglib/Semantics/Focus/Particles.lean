@@ -38,7 +38,7 @@ that the prejacent is less likely than every focus alternative.
 
 ## Main results
 
-* `Focus.Particles.only_subset_eq`, `Focus.Particles.posExt_only_subset`: on the entailment
+* `Focus.Particles.only_subset_eq`, `Focus.Particles.posSupport_only_subset`: on the entailment
   scale *only* presupposes its prejacent and asserts the exclusion, and is true exactly where the
   exhaustification `Exhaustification.exh` is.
 * `Focus.Particles.atMost_eq_eq_atMost_subset`: the identity-scale assertion is the
@@ -152,7 +152,7 @@ theorem only_subset_eq (hp : p ∈ C) :
 
 /-- On the entailment scale *only* is true exactly where the exhaustification
 `Exhaustification.exh` is. -/
-theorem posExt_only_subset (hp : p ∈ C) : Trivalent.posExt (only (· ⊆ ·) C p) = exh C p := by
+theorem posSupport_only_subset (hp : p ∈ C) : posSupport (only (· ⊆ ·) C p) = exh C p := by
   ext w; simp [only_subset_eq hp, exh]
 
 /-! #### The identity scale -/

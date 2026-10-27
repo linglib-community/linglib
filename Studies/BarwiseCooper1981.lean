@@ -308,7 +308,7 @@ sentence with fewer than `m` quantifiers, their (5). B&C prove (5) by extending 
 correspondence that respects `U` and `V` one step at each quantifier, their (6), since "there is
 always enough room": below `m`, every Venn region of the two models is either the same set or
 large in both. That argument is the Ehrenfeucht–Fraïssé game on monadic models, so (5) is
-`elementarilyEquivalentUpTo_monadicStructure_iff` applied to the two models
+`elementarilyEquivalentUpTo_monadic_structure_iff` applied to the two models
 (`elementarilyEquivalentUpTo_struc`), for quantifier rank, which is at most the number of
 quantifiers. The language is `Language.monadic (Fin 2)`, with `U` as `pred 0` and `V` as
 `pred 1`. -/
@@ -320,12 +320,12 @@ open FirstOrder Language
 /-- The structure `M₁`, in which `U` is `[0, m)` and `V` is `[0, 2m)`, so that exactly half the
 `V`'s are `U`'s. -/
 @[reducible] def struc₁ (m k : ℕ) : (Language.monadic (Fin 2)).Structure (Fin k) :=
-  monadicStructure (Fin k) ![fun x ↦ x.val < m, fun x ↦ x.val < 2 * m]
+  monadic.structure ![fun x ↦ x.val < m, fun x ↦ x.val < 2 * m]
 
 /-- The structure `M₂`, in which `U` is `[0, m+1)` and `V` is `[0, 2m)`, so that more than
 half the `V`'s are `U`'s. -/
 @[reducible] def struc₂ (m k : ℕ) : (Language.monadic (Fin 2)).Structure (Fin k) :=
-  monadicStructure (Fin k) ![fun x ↦ x.val < m + 1, fun x ↦ x.val < 2 * m]
+  monadic.structure ![fun x ↦ x.val < m + 1, fun x ↦ x.val < 2 * m]
 
 private theorem le_encard_of_Ico {k lo hi t : ℕ} {s : Set (Fin k)} (hhi : hi ≤ k)
     (ht : t ≤ hi - lo) (hs : ∀ x : Fin k, lo ≤ x.val → x.val < hi → x ∈ s) :
@@ -345,7 +345,7 @@ private theorem min_eq_min_of_le {t k : ℕ} {s s' : Set (Fin k)} (h : (t : ℕ�
 -- (5)
 theorem elementarilyEquivalentUpTo_struc (m k : ℕ) (hm : 0 < m) (hk : 2 * m ≤ k) :
     @ElementarilyEquivalentUpTo _ (m - 1) (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) := by
-  refine elementarilyEquivalentUpTo_monadicStructure_iff.2 fun S ↦ ?_
+  refine elementarilyEquivalentUpTo_monadic_structure_iff.2 fun S ↦ ?_
   simp only [Fin.forall_fin_two, Matrix.cons_val_zero, Matrix.cons_val_one]
   by_cases h₀ : S 0 <;> by_cases h₁ : S 1 <;> simp only [h₀, h₁, iff_true, iff_false]
   · exact min_eq_min_of_le (le_encard_of_Ico (lo := 0) (hi := m) (by omega) (by omega)
@@ -564,7 +564,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
     ∀ {n : ℕ} (ψ : QFormula n),
       2 * (Set.ncard {x | V x} + (numQ ψ + n)) ≤ Fintype.card E →
       ∀ xs : Fin n → E,
-        (@BoundedFormula.Realize _ E (monadicStructure E ![U, V]) Empty n (star ψ) default xs ↔
+        (@BoundedFormula.Realize _ E (monadic.structure ![U, V]) Empty n (star ψ) default xs ↔
           ψ.Realize U V xs)
   | _, .falsum, _, _ => Iff.rfl
   | _, .equal _ _, _, _ => Iff.rfl
@@ -584,7 +584,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
       have := Classical.decEq E
       have hq : numQ (qx f) = numQ f + 1 := rfl
       rw [hq] at hb
-      let _ : (Language.monadic (Fin 2)).Structure E := monadicStructure E ![U, V]
+      let _ : (Language.monadic (Fin 2)).Structure E := monadic.structure ![U, V]
       have hIH : ∀ b, ((star f).Realize default (Fin.snoc xs b) ↔
           f.Realize U V (Fin.snoc xs b)) := fun b ↦
         realize_star_iff hUV f (by omega) (Fin.snoc xs b)
@@ -595,7 +595,7 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
         simp only [BoundedFormula.realize_sup, BoundedFormula.realize_iSup,
           BoundedFormula.realize_bdEqual, BoundedFormula.realize_rel₁, Term.realize_var,
           Function.comp_apply, Sum.elim_inr, Fin.snoc_last, Fin.snoc_castSucc,
-          relMap_monadicStructure, Matrix.cons_val_one, hIH b]
+          relMap_monadic_structure, Matrix.cons_val_one, hIH b]
         constructor
         · rintro (hv | ⟨i, hi⟩ | hf) hnv hne
           · exact absurd hv hnv
@@ -766,7 +766,7 @@ theorem no_tree_means_most {C X : Type}
             (fun x ↦ S.RelMap (.pred 0) ![x]) := by
   rintro ⟨t, ht⟩
   obtain ⟨u, hu⟩ : ∃ u, Tree.translate words t = some ⟨.t, u⟩ := by
-    let S₁ := monadicStructure (Fin 1) fun (_ : Fin 2) (_ : Fin 1) ↦ True
+    let S₁ := monadic.structure fun (_ : Fin 2) (_ : Fin 1) ↦ True
     obtain ⟨p, hp, -⟩ := (ht (Fin 1) S₁ fun _ ↦ 0).2 (by
       show Quantifier.GQ.most (fun _ : Fin 1 ↦ True) fun _ ↦ True
       simp [Quantifier.GQ.most_apply])

@@ -321,7 +321,7 @@ theorem utp_not_isNonInteractingBimachineComputable :
   Tone.utp.requiresBothSides.not_isNonInteractingBimachineComputable
 
 theorem exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable :
-    ∃ f : List Tone.TBU → List Tone.TBU,
+    ∃ f : List Tone.AssociationState → List Tone.AssociationState,
       IsWeaklyDeterministic f ∧ ¬ IsNonInteractingBimachineComputable f :=
   ⟨Tone.utp.map, LamontOHaraSmith2019.utp_isWeaklyDeterministic,
     utp_not_isNonInteractingBimachineComputable⟩

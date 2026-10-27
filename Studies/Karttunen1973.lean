@@ -110,7 +110,7 @@ theorem truth_subset_of_mem (h : C ∈ A.log) : A.truth ⊆ C :=
 /-- The sentence of a trivalent proposition asserts its positive extension and presupposes its
 support. -/
 def ofTrivalent (p : W → SignType) : Presupposing W (Set W) :=
-  Writer.mk (posExt p) [Function.support p]
+  Writer.mk (posSupport p) [Function.support p]
 
 end Presupposing
 

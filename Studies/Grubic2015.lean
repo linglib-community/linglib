@@ -59,10 +59,10 @@ def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
 
 /-- On the entailment scale over conjunctions of atomic answers, *yak('i)* is true exactly where the
 prejacent is the only true atom ((166) and (25)). -/
-theorem posExt_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
-    Trivalent.posExt (only (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
+theorem posSupport_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
+    posSupport (only (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
   ext w
-  rw [Trivalent.mem_posExt, only_eq_one_iff]
+  rw [mem_posSupport, only_eq_one_iff]
   constructor
   · rintro ⟨⟨_, ⟨A, hA, -, rfl⟩, hw, hq⟩, hmost⟩
     refine ⟨hq hw, fun r hr hwr x hx ↦ ?_⟩

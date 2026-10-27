@@ -119,7 +119,7 @@ theorem determinedBySingletons_lewisLift : DeterminedBySingletons (LewisLift r) 
 /-- Over a **total** relation, the strict l-lifting collapses to Lewis's ∃∀ comparative
 possibility: some `A`-world strictly dominates every `B`-world. -/
 theorem strict_lewisLift_iff (hTotal : ∀ a b, r a b ∨ r b a) (A B : Set α) :
-    Strict (LewisLift r) A B ↔ ∃ a ∈ A, ∀ b ∈ B, r a b ∧ ¬ r b a := by
+    AsymmRel (LewisLift r) A B ↔ ∃ a ∈ A, ∀ b ∈ B, r a b ∧ ¬ r b a := by
   constructor
   · rintro ⟨-, hn⟩
     rw [lewisLift_iff] at hn

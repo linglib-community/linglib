@@ -109,8 +109,8 @@ theorem pu_projects_through_negation (p : Set W) (w : W) :
     ((-puClause p) w ≠ 0 ↔ w ∈ p) ∧ (-otiClause p) w ≠ 0 := by
   simp [puClause, otiClause]
 
-theorem posExt_puClause_subset (p : Set W) :
-    Trivalent.posExt (puClause p) ⊆ Trivalent.posExt (otiClause p) := fun w hw ↦ by
+theorem posSupport_puClause_subset (p : Set W) :
+    posSupport (puClause p) ⊆ posSupport (otiClause p) := fun w hw ↦ by
   simp_all [puClause, otiClause]
 
 theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=

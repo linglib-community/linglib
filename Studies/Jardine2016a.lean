@@ -50,10 +50,11 @@ representation of Section 4.1, one symbol per mora, `H` a TBU associated to a H 
 written `O`, an unspecified one, read off the paper's autosegmental diagrams. -/
 
 /-- `tbuString s` is the TBU string spelled `s` in `H` and `O`. -/
-def tbuString (s : String) : List TBU := s.toList.map fun c ↦ if c = 'H' then .H else .O
+def tbuString (s : String) : List AssociationState :=
+  s.toList.map fun c ↦ if c = 'H' then .H else .O
 
 /-- `ofAnalysis a` is the underlying and the surface TBU string of the word `a` analyses. -/
-def ofAnalysis (a : Wordlist.Analysis) : List TBU × List TBU :=
+def ofAnalysis (a : Wordlist.Analysis) : List AssociationState × List AssociationState :=
   (tbuString a.underlyingTones, tbuString a.surfaceTones)
 
 /-- The map (36) reproduces every plateau of Section 2.2, Luganda (8) to (12), Zulu (18b) and
@@ -61,7 +62,7 @@ Saramaccan (21). -/
 theorem utp_map_forms : ∀ a ∈ Wordlist.analyses, utp.map (ofAnalysis a).1 = (ofAnalysis a).2 := by
   decide
 
-variable {w : List TBU} {j k : ℕ}
+variable {w : List AssociationState} {j k : ℕ}
 
 /-! ### UTP is not subsequential
 
@@ -84,25 +85,26 @@ inductive Mark | H | O | Q
   deriving DecidableEq, Repr
 
 /-- The left pass of (43) marks every toneless TBU after a H with `?`. -/
-def markLeft : Mealy Bool TBU Mark :=
+def markLeft : Mealy Bool AssociationState Mark :=
   .ofFlag (· == .H) fun l a => match a with | .H => .H | .O => if l then .Q else .O
 
 /-- The right pass of (43), run right-to-left, resolves `?` to H when a H follows, else to Ø. -/
-def resolveRight : Mealy Bool Mark TBU :=
+def resolveRight : Mealy Bool Mark AssociationState :=
   .ofFlag (· == .H) fun r a =>
     match a with | .H => .H | .O => .O | .Q => if r then .H else .O
 
 theorem markLeft_run_getElem?_H_iff :
-    (markLeft.run w)[j]? = some Mark.H ↔ w[j]? = some TBU.H := by
+    (markLeft.run w)[j]? = some Mark.H ↔ w[j]? = some AssociationState.H := by
   rw [markLeft, Mealy.getElem?_ofFlag_run]
   cases hv : w[j]? with
   | none => simp
   | some a => cases a <;> simp [ite_eq_iff]
 
 /-- UTP is the left-to-right marking pass followed by the right-to-left resolving pass of (43). -/
-theorem utp_eq_resolve_mark (w : List TBU) :
+theorem utp_eq_resolve_mark (w : List AssociationState) :
     utp.map w = resolveRight.runRight (markLeft.run w) := by
-  have hmark (i : ℕ) : Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) := by
+  have hmark (i : ℕ) :
+      Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ AssociationState.H ∈ w.drop (i + 1) := by
     simp only [List.mem_iff_getElem?, List.getElem?_drop, markLeft_run_getElem?_H_iff]
   refine List.ext_getElem? fun i => ?_
   rw [utp.map_getElem?, resolveRight, Mealy.getElem?_ofFlag_runRight]
@@ -117,7 +119,8 @@ theorem utp_eq_resolve_mark (w : List TBU) :
     cases a with
     | H => simp [utp.surfaces_of_hi ha]
     | O =>
-      by_cases hL : TBU.H ∈ w.take i <;> by_cases hR : TBU.H ∈ w.drop (i + 1) <;>
+      by_cases hL : AssociationState.H ∈ w.take i <;>
+        by_cases hR : AssociationState.H ∈ w.drop (i + 1) <;>
         simp [utp.surfaces_split ha, hL, hR]
 
 /-- UTP is computable by a bimachine via the (43) decomposition, hence regular (§4.2). -/
@@ -128,19 +131,20 @@ theorem utp_isBimachineComputable : IsBimachineComputable utp.map := by
 
 /-! ### The autosegmental reading (§4.4)
 
-The string representation reads back into autosegmental representations by `TBU.toAR`
+The string representation reads back into autosegmental representations by `AssociationState.toAR`
 ((40)); the OCP-merged representation of the output has one `H`, linked exactly to the
 plateau, Hyman and Katamba's rule as given in (7). -/
 
 open Autosegmental in
 theorem link_collapse_prod_map_toAR_map :
-    (((utp.map w).map TBU.toAR).prod.collapse true).Link true false k j ↔
+    (((utp.map w).map AssociationState.toAR).prod.collapse true).Link true false k j ↔
       k = 0 ∧ utp.Surfaces w j := by
-  rw [TBU.link_collapse_prod_map_toAR, utp.map_getElem?_H_iff]
+  rw [AssociationState.link_collapse_prod_map_toAR, utp.map_getElem?_H_iff]
 
 /-- `HØØH` fuses to one H linked to all four TBUs. -/
 example : ∀ j < 4,
-    (((utp.map [.H, .O, .O, .H]).map TBU.toAR).prod.collapse true).Link true false 0 j := by
+    (((utp.map [.H, .O, .O, .H]).map AssociationState.toAR).prod.collapse true).Link true false
+      0 j := by
   simp only [link_collapse_prod_map_toAR_map, true_and]
   decide
 
