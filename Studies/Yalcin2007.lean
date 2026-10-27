@@ -2,44 +2,45 @@ module
 
 public import Mathlib.Data.Set.Insert
 public import Linglib.Data.Examples.Yalcin2007
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Modality.DomainSemantics
 
 /-!
 # Yalcin (2007): Epistemic Modals
 
-This file formalizes Yalcin's domain semantics for epistemic modals and the puzzle of
-epistemic contradictions, sentences of the form *it is raining and it might not be raining*
-or *it is not raining and it might be raining*. Unlike Moore-paradoxical sentences, which are
-unassertable but embed happily under *suppose* and in conditional antecedents, epistemic
-contradictions are unsupposable, and a relational semantics cannot explain this, since it
-makes them true at some world (`exists_relational_contra`). Domain semantics evaluates a
-sentence at an index of an information parameter, a set of worlds, and a world, with the
-epistemic possibility modal quantifying existentially over the parameter (`Sentence.might`).
-Attitude verbs shift the parameter to the attitude state and quantify over it (`supposes`),
-so the universal quantifier of *suppose* is trumped by an embedded modal
-(`supposes_might_iff`), an attitude with an embedded possibility modal is the attitude's dual
-(`supposes_might_iff_not_supposes_compl`), and no state of supposition accepts an epistemic
-contradiction (`not_supposes_contra`). An indicative conditional shifts the parameter to the
-largest nonempty substate accepting its antecedent and quantifies over it (`ifThen`), so
-conditionals with an epistemic contradiction as antecedent are never true
-(`ifThen_contra_false`), and the conditional with an epistemic necessity in its consequent is
-equivalent to the plain one (`ifThen_must_iff`). Three notions of consequence are compared.
-Standard and diagonal consequence preserve truth at points, the latter at points whose world
-lies in the information state; informational consequence preserves acceptance, truth
-throughout a state evaluated at that state (`InfoConsequence`). Informational consequence
-validates Łukasiewicz's principle, epistemic contradiction, and the nonfactivity of epistemic
-possibility together (`lukasiewicz`, `epistemic_contradiction`, `nonfactivity`), which no
-classical consequence relation can, while diagonal consequence rejects epistemic contradiction
+This file formalizes Yalcin's argument for domain semantics, whose sentences, modals and acceptance
+are `DomainSemantics`, from the puzzle of epistemic contradictions, sentences of the form *it is
+raining and it might not be raining* or *it is not raining and it might be raining*. Unlike
+Moore-paradoxical sentences, which are unassertable but embed happily under *suppose* and in
+conditional antecedents, epistemic contradictions are unsupposable, and a relational semantics
+cannot explain this, since it makes them true at some world (`exists_relational_contra`). Domain
+semantics evaluates a sentence at an index of an information parameter, a set of worlds, and a
+world, with the epistemic possibility modal quantifying existentially over the parameter. Attitude
+verbs shift the parameter to the attitude state and quantify over it (`supposes`), so the universal
+quantifier of *suppose* is trumped by an embedded modal (`supposes_might_iff`), an attitude with an
+embedded possibility modal is the attitude's dual (`supposes_might_iff_not_supposes_compl`), and no
+state of supposition accepts an epistemic contradiction (`not_supposes_contra`). An indicative
+conditional shifts the parameter to the largest nonempty substate accepting its antecedent and
+quantifies over it (`ifThen`), so conditionals with an epistemic contradiction as antecedent are
+never true (`ifThen_contra_false`), and the conditional with an epistemic necessity in its
+consequent is equivalent to the plain one (`ifThen_must_iff`). Three notions of consequence are
+compared. Standard and diagonal consequence preserve truth at points, the latter at points whose
+world lies in the information state; informational consequence preserves acceptance, truth
+throughout a state evaluated at that state. Informational consequence validates Łukasiewicz's
+principle, epistemic contradiction, and the nonfactivity of epistemic possibility together
+(`lukasiewicz`, `epistemic_contradiction`, `nonfactivity`), which no classical consequence relation
+can, while diagonal consequence rejects epistemic contradiction
 (`not_diagonal_epistemic_contradiction`); on factual sentences informational consequence is
 classical (`factual_classical`). The dual necessity modal yields the same results
 (`not_accepted_neg_must`).
 
 ## Implementation notes
 
-The context coordinate is fixed throughout, so a sentence is a function of the index alone.
-Sentences form a Boolean algebra pointwise: negation is the complement `φᶜ` and conjunction the meet
-`φ ⊓ ψ`. The largest nonempty substate accepting the antecedent is characterized rather than
-constructed, and a conditional is true only if it exists. The probabilistic extension of the
-information parameter in the paper's seventh section is not modelled.
+Sentences form a Boolean algebra pointwise: negation is the complement `φᶜ`, conjunction the meet
+`φ ⊓ ψ`, and the absurd sentence `⊥`. The relational semantics is Kripke's diamond `◇[R]`. The
+largest nonempty substate accepting the antecedent is characterized rather than constructed, and a
+conditional is true only if it exists. The probabilistic extension of the information parameter in
+the paper's seventh section is not modelled.
 
 ## References
 
@@ -53,41 +54,9 @@ information parameter in the paper's seventh section is not modelled.
 
 namespace Yalcin2007
 
+open DomainSemantics Sentence ModalLogic
+
 variable {W : Type*}
-
-/-- A sentence relative to a fixed context: truth at an index consisting of an information
-parameter, a set of worlds, and a world. -/
-abbrev Sentence (W : Type*) := Set W → W → Prop
-
-namespace Sentence
-
-variable (φ ψ : Sentence W)
-
-/-- A nonepistemic sentence places a condition on the world alone. -/
-def ofProp (p : Set W) : Sentence W := fun _ w ↦ w ∈ p
-
-/-- Epistemic possibility: existential quantification over the information parameter. -/
-def might : Sentence W := fun s _ ↦ ∃ w' ∈ s, φ s w'
-
-/-- Epistemic necessity: universal quantification over the information parameter. -/
-def must : Sentence W := fun s _ ↦ ∀ w' ∈ s, φ s w'
-
-/-- A sentence is accepted in a state when it is true at every world of the state, relative
-to that state. -/
-def AcceptedIn (s : Set W) : Prop := ∀ w ∈ s, φ s w
-
-theorem might_might : φ.might.might = φ.might := by
-  ext s w
-  constructor
-  · rintro ⟨_, _, h⟩; exact h
-  · rintro ⟨w', hw', h⟩; exact ⟨w', hw', w', hw', h⟩
-
-theorem must_eq_compl_might_compl : φ.must = φᶜ.mightᶜ := by
-  ext s w; simp [must, might]
-
-end Sentence
-
-open Sentence
 
 /-- The epistemic contradiction *not p and it might be that p*. -/
 def contra (p : Set W) : Sentence W := (ofProp p)ᶜ ⊓ (ofProp p).might
@@ -109,12 +78,9 @@ theorem not_accepted_contra' {p s : Set W} (hs : s.Nonempty) : ¬ (contra' p).Ac
 
 /-! ### Relational semantics -/
 
-/-- Epistemic possibility under an accessibility relation. -/
-def relMight (R : W → W → Prop) (p : Set W) : Set W := {w | ∃ w', R w w' ∧ w' ∈ p}
-
 theorem exists_relational_contra :
-    ∃ (R : Bool → Bool → Prop) (p : Set Bool) (w : Bool), w ∉ p ∧ w ∈ relMight R p :=
-  ⟨fun _ _ ↦ True, {true}, false, by simp, ⟨true, trivial, rfl⟩⟩
+    ∃ (R : SetRel Bool Bool) (p : Set Bool) (w : Bool), w ∉ p ∧ ◇[R] (· ∈ p) w :=
+  ⟨Set.univ, {true}, false, by simp, true, trivial, rfl⟩
 
 /-! ### Attitudes -/
 
@@ -173,36 +139,16 @@ theorem ifThen_must_iff {α : Sentence W} : ifThen α ψ.must s w ↔ ifThen α 
 
 /-! ### Consequence -/
 
-/-- Standard consequence preserves truth at every point. -/
-def StandardConsequence (Γ : List (Sentence W)) (φ : Sentence W) : Prop :=
-  ∀ s w, (∀ γ ∈ Γ, γ s w) → φ s w
-
-/-- Diagonal consequence preserves truth at the diagonal points, those whose world lies in
-the information state. -/
-def DiagonalConsequence (Γ : List (Sentence W)) (φ : Sentence W) : Prop :=
-  ∀ s w, w ∈ s → (∀ γ ∈ Γ, γ s w) → φ s w
-
-/-- Informational consequence preserves acceptance. -/
-def InfoConsequence (Γ : List (Sentence W)) (φ : Sentence W) : Prop :=
-  ∀ s, (∀ γ ∈ Γ, γ.AcceptedIn s) → φ.AcceptedIn s
-
-/-- The absurd sentence. -/
-def bot : Sentence W := ofProp ∅
-
-theorem DiagonalConsequence.of_standard {Γ : List (Sentence W)}
-    (h : StandardConsequence Γ φ) : DiagonalConsequence Γ φ :=
-  fun s w _ hΓ ↦ h s w hΓ
-
-theorem lukasiewicz (p : Set W) : InfoConsequence [(ofProp p)ᶜ] (ofProp p).mightᶜ := by
+theorem lukasiewicz (p : Set W) : InformationalConsequence [(ofProp p)ᶜ] (ofProp p).mightᶜ := by
   intro s h w hw ⟨w', hw', hp⟩
   exact h _ List.mem_cons_self w' hw' hp
 
-theorem epistemic_contradiction (p : Set W) : InfoConsequence [contra p] bot := by
+theorem epistemic_contradiction (p : Set W) : InformationalConsequence [contra p] ⊥ := by
   intro s h w hw
   exact absurd (h _ List.mem_cons_self) (not_accepted_contra ⟨w, hw⟩)
 
 theorem nonfactivity :
-    ¬ InfoConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) := by
+    ¬ InformationalConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) := by
   intro h
   have := h Set.univ (by
     simp only [List.mem_singleton, forall_eq]
@@ -210,12 +156,12 @@ theorem nonfactivity :
   simp [ofProp] at this
 
 theorem not_diagonal_epistemic_contradiction :
-    ¬ DiagonalConsequence [contra ({true} : Set Bool)] bot := by
+    ¬ DiagonalConsequence [contra ({true} : Set Bool)] ⊥ := by
   intro h
   have := h Set.univ false trivial (by
     simp only [List.mem_singleton, forall_eq]
     exact ⟨by simp [ofProp], true, trivial, rfl⟩)
-  simp [bot, ofProp] at this
+  simp at this
 
 theorem not_diagonal_factivity :
     ¬ DiagonalConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) := by
@@ -226,8 +172,8 @@ theorem not_diagonal_factivity :
   simp [ofProp] at this
 
 theorem factual_classical (p q : Set W) :
-    InfoConsequence [(ofProp p)ᶜ ⊓ ofProp q] bot ↔
-      InfoConsequence [ofProp q] (ofProp p) := by
+    InformationalConsequence [(ofProp p)ᶜ ⊓ ofProp q] ⊥ ↔
+      InformationalConsequence [ofProp q] (ofProp p) := by
   constructor
   · intro h s hq w hw
     by_contra hp
@@ -236,7 +182,7 @@ theorem factual_classical (p q : Set W) :
       intro v hv
       rw [Set.mem_singleton_iff.mp hv]
       exact ⟨hp, hq _ List.mem_cons_self w hw⟩) w rfl
-    simp [bot, ofProp] at this
+    simp at this
   · intro h s hs w hw
     have hc := hs _ List.mem_cons_self
     refine absurd (h s ?_ w hw) (hc w hw).1
@@ -244,8 +190,8 @@ theorem factual_classical (p q : Set W) :
     exact fun v hv ↦ (hc v hv).2
 
 theorem not_classical :
-    InfoConsequence [contra ({true} : Set Bool)] bot ∧
-      ¬ InfoConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) :=
+    InformationalConsequence [contra ({true} : Set Bool)] ⊥ ∧
+      ¬ InformationalConsequence [(ofProp {true}).might] (ofProp ({true} : Set Bool)) :=
   ⟨epistemic_contradiction _, nonfactivity⟩
 
 /-! ### Epistemic necessity -/

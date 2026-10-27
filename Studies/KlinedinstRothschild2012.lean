@@ -1,6 +1,6 @@
 module
 
-public import Studies.Yalcin2007
+public import Linglib.Semantics.Modality.DomainSemantics
 
 /-!
 # Klinedinst and Rothschild (2012): Connectives without Truth Tables
@@ -8,7 +8,7 @@ public import Studies.Yalcin2007
 This file formalizes Klinedinst and Rothschild's parameter treatment of the dynamic effects
 of *and* and *or*. Truth is relative to a world and to an information parameter, the set of
 worlds that epistemic modals quantify over, (46) and (47), the domain semantics of
-Yalcin (`Yalcin2007.Sentence`), and the connectives shift that parameter for their
+Yalcin (`DomainSemantics.Sentence`), and the connectives shift that parameter for their
 second clause: *a and b* evaluates *b* against the parameter updated with *a*, (49), and
 *a or b* against the parameter updated with the negation of *a*, (50) (`conj`, `disj`). This
 is what lets an epistemic modal sit in a disjunct: *the dog is in the backyard or it must be
@@ -39,7 +39,7 @@ second conjunct needs worlds where the first fails is a contradiction, (68)
 
 namespace KlinedinstRothschild2012
 
-open Yalcin2007
+open DomainSemantics
 
 variable {W : Type*} (a b : Sentence W)
 
