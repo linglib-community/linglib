@@ -28,8 +28,10 @@ tautomorphemic docking. Every step witness is decided.
 
 ## Implementation notes
 
-The lexical data live in `Fragments.Poko.Tone`; the tableaux, rankings, and serial
-derivations are the substrate's harmonic-serialism and tableau apparatus.
+The stems are those of `Fragments.Poko.Tone`, and an input is their product, each token
+sponsored by its position in the phrase, as the source colours each stem; the tableaux,
+rankings, and serial derivations are the substrate's harmonic-serialism and tableau
+apparatus.
 
 ## References
 
@@ -63,7 +65,7 @@ inductive Cand
 
 /-- `MAX(H)` (eq. 7c): one violation per H tone deleted by GEN. -/
 def maxH : Constraint Cand :=
-  λ
+  fun
     | .nanWinner => 0   -- H docks rightward (preserved)
     | .nanLoser  => 1   -- H deleted
     | .kakWinner => 2   -- both Hs deleted
@@ -71,7 +73,7 @@ def maxH : Constraint Cand :=
 
 /-- `DEP(link)/H` (eq. 7a): one violation per inserted H-associated link. -/
 def depLinkH : Constraint Cand :=
-  λ
+  fun
     | .nanWinner => 1   -- new H link inserted (docking)
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -79,7 +81,7 @@ def depLinkH : Constraint Cand :=
 
 /-- `MAX(M)` (eq. 7c analogue): one violation per M tone deleted. -/
 def maxM : Constraint Cand :=
-  λ
+  fun
     | .nanWinner => 1   -- M overwritten by docking H
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -87,7 +89,7 @@ def maxM : Constraint Cand :=
 
 /-- `MAX(link)/M` (eq. 7b analogue): one violation per deleted M-tone link. -/
 def maxLinkM : Constraint Cand :=
-  λ
+  fun
     | .nanWinner => 1
     | .nanLoser  => 0
     | .kakWinner => 0
@@ -151,16 +153,16 @@ theorem weighted_HG_inadequate :
 /-! ### Shared fig. 2 ranking -/
 
 /-- Non-float tail of the fig. 2 ranking, in (60) column order. -/
-def rankingTail {u : Form} : List (Constraint (Candidate u)) :=
+def rankingTail {u : Form ℕ} : List (Constraint (Candidate u)) :=
   [ starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 /-- The fig. 2 ranking (fig. 3 subset); only `*FLOAT^→` is directional. -/
-def stdRanking {u : Form} : List (Constraint (Candidate u)) :=
+def stdRanking {u : Form ℕ} : List (Constraint (Candidate u)) :=
   haveTone :: starFloatBlock ++ rankingTail
 
 /-- Left-to-right directional HS over `stdRanking` — the paper's positive analysis. -/
-def lrDerivation (input : Form) : HSDerivation (Candidate input) where
+def lrDerivation (input : Form ℕ) : HSDerivation (Candidate input) where
   gen := Candidate.gen
   ranking := stdRanking
 
@@ -169,7 +171,7 @@ def lrDerivation (input : Form) : HSDerivation (Candidate input) where
 namespace Fig3
 
 /-- Fig. 3 input `/kāk^H + rī^H + dō^H/`: each M linked, each H floating. -/
-def fig3Input : Form := word [.kak, .ri, .do]
+def fig3Input : Form ℕ := kak 0 * ri 1 * «do» 2
 
 instance : NeZero fig3Input.upper.length := ⟨by decide⟩
 instance : NeZero fig3Input.lower.length := ⟨by decide⟩
@@ -267,8 +269,8 @@ end Fig3
 
 namespace Eq24
 
-/-- Eq. (24) input `/nãn + rī^H + nã/`; H-rī is the only floating tone. -/
-def eq24Input : Form := word [.nan, .ri, .na]
+/-- Eq. (24) input `/nān + rī^H + nā/`; H-rī is the only floating tone. -/
+def eq24Input : Form ℕ := nan 0 * ri 1 * na 2
 
 instance : NeZero eq24Input.upper.length := ⟨by decide⟩
 instance : NeZero eq24Input.lower.length := ⟨by decide⟩
@@ -279,11 +281,11 @@ def eq24 : Candidate eq24Input := .input _
 /-- Directional-LR derivation over `stdRanking`. -/
 def derivationLR : HSDerivation (Candidate eq24Input) := lrDerivation eq24Input
 
-/-- Attested `[nãn rī ná]`: H-rī docks onto nã, then *FALL repair deletes M-nã. -/
+/-- Attested `[nān rī ná]`: H-rī docks onto nā, then *FALL repair deletes M-nā. -/
 def attestedForm : Candidate eq24Input :=
   eq24
-    |>.insertLink 2 2      -- dock H-rī rightward to nã
-    |>.deleteTierElem 3    -- delete M-nã (repair HM contour)
+    |>.insertLink 2 2      -- dock H-rī rightward to nā
+    |>.deleteTierElem 3    -- delete M-nā (repair HM contour)
 
 -- (24d)
 theorem eq24_step1 :
@@ -302,8 +304,8 @@ end Eq24
 
 namespace Eq21
 
-/-- Eq. (21) input `/nãn + rī^H/` (phrase-final): no rightward landing site. -/
-def eq21Input : Form := word [.nan, .ri]
+/-- Eq. (21) input `/nān + rī^H/` (phrase-final): no rightward landing site. -/
+def eq21Input : Form ℕ := nan 0 * ri 1
 
 instance : NeZero eq21Input.upper.length := ⟨by decide⟩
 instance : NeZero eq21Input.lower.length := ⟨by decide⟩
@@ -314,7 +316,7 @@ def eq21 : Candidate eq21Input := .input _
 /-- Directional-LR derivation; eq. (20)'s `*FLOAT, *TAUTDOCK ≫ MAX(H)` is a sub-ranking. -/
 def derivationLR : HSDerivation (Candidate eq21Input) := lrDerivation eq21Input
 
-/-- Attested `[nãn rī]`: the floating H deletes. -/
+/-- Attested `[nān rī]`: the floating H deletes. -/
 def attestedForm : Candidate eq21Input := eq21.deleteTierElem 2
 
 -- (21b)
@@ -331,7 +333,7 @@ end Eq21
 namespace Eq27
 
 /-- Eq. (27) input `/kāk^H + kǎ/`; kǎ carries a linked MH contour. -/
-def eq27Input : Form := word [.kak, .ka]
+def eq27Input : Form ℕ := kak 0 * ka 1
 
 instance : NeZero eq27Input.upper.length := ⟨by decide⟩
 instance : NeZero eq27Input.lower.length := ⟨by decide⟩
@@ -358,8 +360,9 @@ end Eq27
 
 namespace Eq30
 
-/-- Eq. (30) input `/kāk^H + ìlí/`; ìlí carries a linked LH contour (L% omitted). -/
-def eq30Input : Form := word [.kak, .ili]
+/-- Eq. (30) input `/kāk^H + ìlí/`; ìlí has L on its first syllable and H on its second
+    (L% omitted). -/
+def eq30Input : Form ℕ := kak 0 * ili 1
 
 instance : NeZero eq30Input.upper.length := ⟨by decide⟩
 instance : NeZero eq30Input.lower.length := ⟨by decide⟩
@@ -395,8 +398,8 @@ end Eq30
 
 namespace Eq22
 
-/-- Eq. (22a) input `/nãn + rī^H + ne/`; ne is toneless. -/
-def eq22Input : Form := word [.nan, .ri, .ne]
+/-- Eq. (22a) input `/nān + rī^H + ne/`; ne is toneless. -/
+def eq22Input : Form ℕ := nan 0 * ri 1 * ne 2
 
 instance : NeZero eq22Input.upper.length := ⟨by decide⟩
 instance : NeZero eq22Input.lower.length := ⟨by decide⟩
@@ -407,7 +410,7 @@ def eq22 : Candidate eq22Input := .input _
 /-- Directional-LR derivation over `stdRanking`. -/
 def derivationLR : HSDerivation (Candidate eq22Input) := lrDerivation eq22Input
 
-/-- Attested `[nãn rī né]`: H-rī docks onto toneless ne. -/
+/-- Attested `[nān rī né]`: H-rī docks onto toneless ne. -/
 def attestedForm : Candidate eq22Input := eq22.insertLink 2 2
 
 theorem eq22_step1 :
@@ -426,14 +429,15 @@ end McPhersonLamont2026
 namespace Autosegmental
 
 open Tone (TBU TRN)
-open Morphology (Morph)
+
+variable {S M : Type*}
 
 /-- Embed a `Tone.overwrite` output as a form with one morpheme `m` and links `(i, i)`. -/
-def Form.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) : Form S TRN Morph :=
+def Form.ofTBUList (host : List (TBU S)) (m : M) : Form S TRN M :=
   .melody m (host.map TBU.tone) (host.map TBU.seg)
     ((List.range host.length).map fun i ↦ (i, i)).toFinset
 
-theorem Form.ofTBUList_linksTo_subsingleton {S : Type*} (host : List (TBU S)) (m : Morph)
+theorem Form.ofTBUList_linksTo_subsingleton (host : List (TBU S)) (m : M)
     (i : Fin (Form.ofTBUList host m).lower.length) :
     ((Candidate.input (Form.ofTBUList host m)).linksTo i).length ≤ 1 := by
   have h_all : ∀ n ∈ ((Candidate.input (Form.ofTBUList host m)).linksTo i).map Fin.val,
@@ -451,8 +455,8 @@ theorem Form.ofTBUList_linksTo_subsingleton {S : Type*} (host : List (TBU S)) (m
   omega
 
 theorem Candidate.exists_multi_tone_TBU :
-    ∃ u : Form Unit TRN Morph, ∃ c : Candidate u, ∃ i, 2 ≤ (c.linksTo i).length :=
-  ⟨.melody (Morph.root "m") [.H, .L] [()] ∅,
+    ∃ u : Form Unit TRN Unit, ∃ c : Candidate u, ∃ i, 2 ≤ (c.linksTo i).length :=
+  ⟨.melody () [.H, .L] [()] ∅,
     (Candidate.input _).insertLink ⟨0, by decide⟩ ⟨0, by decide⟩
       |>.insertLink ⟨1, by decide⟩ ⟨0, by decide⟩, ⟨0, by decide⟩, by decide⟩
 
