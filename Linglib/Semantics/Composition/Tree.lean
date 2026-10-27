@@ -92,8 +92,8 @@ theorem valueAt_of_map_fst {E W : Type} {S : Sorts} {M : Type → Type} {τ : Ty
 /-- The denotation of a term whose constants are denotations, at its type. -/
 abbrev evalAt {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
     (g : Assignment E) (d : Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty S)) ty) :
-    Option (Denotation E W M S) :=
-  (d.2.evalM (fun c ↦ c) g).map fun v ↦ ⟨d.1, v⟩
+    Denotation E W M S :=
+  ⟨d.1, d.2.evalM (fun c ↦ c) g⟩
 
 end Montague
 
@@ -316,7 +316,7 @@ its constant. -/
 def interp {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [Distributive M]
     {L : Type*} (lex : L → Option (Denotation E W M S)) (g : Assignment E) (t : Tree C L) :
     Option (Denotation E W M S) :=
-  (translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t).bind (evalAt g)
+  (translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t).map (evalAt g)
 
 end TreeInterp
 
@@ -330,22 +330,18 @@ section Reduction
 variable {C : Type} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [Distributive M]
   {L : Type*}
 
-private theorem bind_evalAt_combine (g : Assignment E)
+private theorem map_evalAt_combine (g : Assignment E)
     (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ M (Ty.Domain E W ty S)) ty)) :
-    (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).bind
+    (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
         (evalAt g) =
-      (t₁.bind (evalAt g)).bind fun d₁ ↦ (t₂.bind (evalAt g)).bind fun d₂ ↦
+      (t₁.map (evalAt g)).bind fun d₁ ↦ (t₂.map (evalAt g)).bind fun d₂ ↦
         Mode.combine? Mode.evalM d₁ d₂ := by
   rcases t₁ with _ | ⟨τ₁, u₁⟩
   · rfl
   rcases t₂ with _ | ⟨τ₂, u₂⟩
-  · simp only [Option.bind_some, Option.bind_none]
-    cases evalAt g ⟨τ₁, u₁⟩ <;> rfl
-  simp only [Option.bind_some, evalAt, Mode.combine?]
-  rcases hm : τ₁.mode? τ₂ with _ | ⟨τ, m⟩ <;>
-    rcases ha : u₁.evalM (fun c ↦ c) g with _ | a <;>
-    rcases hb : u₂.evalM (fun c ↦ c) g with _ | b <;>
-    simp [Term.evalM, hm, ha, hb]
+  · rfl
+  simp only [Option.bind_some, Option.map_some, Mode.combine?]
+  rcases τ₁.mode? τ₂ with _ | ⟨τ, m⟩ <;> rfl
 
 variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
 
@@ -363,12 +359,12 @@ variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
 @[simp] theorem interp_node_binary (c : C) (t₁ t₂ : Tree C L) :
     interp lex g (.node c (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
       (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
-  bind_evalAt_combine g _ _
+  map_evalAt_combine g _ _
 
 @[simp] theorem interp_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
     interp lex g (.adjoin c (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
       (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
-  bind_evalAt_combine g _ _
+  map_evalAt_combine g _ _
 
 @[simp] theorem interp_trace (n : ℕ) (c : C) :
     interp lex g (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
@@ -377,21 +373,15 @@ variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
     interp lex g (.bind n c body) =
       (interp lex g body).bind fun d ↦
         some ⟨.fn .e d.1, distribute fun x ↦ valueAt d.1 d.2 (interp lex (g[n ↦ x]) body)⟩ := by
-  simp only [interp, translate_bind, evalAt]
+  simp only [interp, translate_bind]
   rcases translate (K := fun ty ↦ M (Ty.Domain E W ty S)) lex body with _ | ⟨τ, b⟩
   · rfl
-  · simp only [Option.map_some, Option.bind_some, Term.evalM]
-    rcases b.evalM (fun c ↦ c) g with _ | p
-    · rfl
-    · simp only [Option.bind_some, Option.map_some]
-      congr 3
-      funext x
-      rcases b.evalM (fun c ↦ c) (g[n ↦ x]) with _ | v <;> simp [valueAt]
+  · simp [evalAt, valueAt]
 
 theorem interp_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
     interp lex g (RoseTree.node l cs) = none := by
-  simp only [interp, translate_junk _ h, Option.bind_none]
+  simp only [interp, translate_junk _ h, Option.map_none]
 
 end Reduction
 
@@ -780,7 +770,7 @@ theorem mem_interp_setM_of_mem_readings (lex : L → Option (Denotation E W SetM
   obtain ⟨r, rfl, hr⟩ := hd
   rw [interp_map]
   simp only [interp] at hr ⊢
-  obtain ⟨⟨τ, u⟩, hu, hev⟩ := Option.bind_eq_some_iff.1 hr
+  obtain ⟨⟨τ, u⟩, hu, hev⟩ := Option.map_eq_some_iff.1 hr
   have hrel : ∀ (p : {p : L × Denotation E W Id S //
       p.2 ∈ wordReadings lex p.1}) d',
       (lex ∘ fun x ↦ x.1.1) p = some d' →
@@ -801,11 +791,10 @@ theorem mem_interp_setM_of_mem_readings (lex : L → Option (Denotation E W SetM
   rw [hu, Option.some.injEq, Sigma.mk.injEq] at hu₀
   obtain ⟨-, hu₀⟩ := hu₀
   obtain rfl := eq_of_heq hu₀
-  obtain ⟨X, hX, hmem⟩ := hR.mem_run_evalM g
-  simp only [evalAt, Term.evalM_id, Option.map_some, Option.some.injEq] at hev
+  have hmem := hR.mem_run_evalM g
+  simp only [evalAt, Term.evalM_id] at hev
   subst hev
-  refine ⟨X, ?_, hmem⟩
-  rw [hu', Option.bind_some, evalAt, hX, Option.map_some]
+  exact ⟨_, by rw [hu', Option.map_some], hmem⟩
 
 end SetEffect
 
@@ -822,10 +811,10 @@ theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S
     (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (t : Tree C L) :
     interp (M := Id) (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
       (translate lex t).map fun d ↦ ⟨d.1, d.2.eval I g⟩ := by
-  simp only [interp, translate_map_const, evalAt]
+  simp only [interp, translate_map_const]
   cases translate lex t with
   | none => rfl
-  | some d => simp [Term.eval_map]
+  | some d => simp [evalAt, Term.eval_map]
 
 end Translation
 

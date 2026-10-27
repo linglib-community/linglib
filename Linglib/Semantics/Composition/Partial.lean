@@ -18,8 +18,9 @@ failure, as distinct from uninterpretability, where the types do not compose.
 ## Main definitions
 
 * `Montague.Ty.PDomain`, `Montague.PDenotation`: the partial domains and denotations.
-* `Montague.Mode.evalPartial`, `Montague.Term.evalPartial`: the partial denotations of a mode and
-  of a term.
+* `Montague.Mode.evalPartial`: the partial denotation of a mode.
+* `Montague.Interpretation.partial`, `Montague.Term.evalPartial`: the partial interpretation of
+  terms, and a term's partial denotation in it.
 * `PhraseStructure.Tree.interpPartial`: the partial engine, evaluating a tree's term.
 * `PhraseStructure.Tree.Uninterpretable`, `PhraseStructure.Tree.PresupFailure`: the two ways of
   lacking a value.
@@ -98,14 +99,35 @@ theorem Mode.dom_right_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (T
 
 open scoped Assignment
 
+/-- The partial interpretation: a term's value is a possibly undefined partial denotation, an
+abstraction is the partial function undefined wherever its body is, and a composition is defined
+where its daughters are and the function among them is defined at its argument. -/
+def Interpretation.partial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) :
+    Interpretation K where
+  D ty := Part (Ty.PDomain E W ty S)
+  Var := E
+  const := I
+  var x := Part.some x
+  lam f := Part.some f
+  mode m := m.evalPartial
+
 /-- The partial denotation of a term under a partial interpretation of the constants and an
-assignment; an abstraction is the partial function undefined wherever its body is. -/
+assignment. -/
 def Term.evalPartial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S))
-    (g : Assignment E) : {ty : Ty} → Term K ty → Part (Ty.PDomain E W ty S)
-  | _, .const c => I c
-  | _, .var n => Part.some (g n)
-  | _, .lam n b => Part.some fun x ↦ evalPartial I (g[n ↦ x]) b
-  | _, .comp m l r => m.evalPartial (evalPartial I g l) (evalPartial I g r)
+    (g : Assignment E) {ty : Ty} (t : Term K ty) : Part (Ty.PDomain E W ty S) :=
+  t.realize (.partial I) g
+
+@[simp] theorem Term.evalPartial_lam {K : Ty → Type*}
+    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : Assignment E) (n : ℕ) {τ : Ty}
+    (b : Term K τ) :
+    (Term.lam n b).evalPartial I g = Part.some fun x ↦ b.evalPartial I (g[n ↦ x]) :=
+  rfl
+
+@[simp] theorem Term.evalPartial_comp {K : Ty → Type*}
+    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : Assignment E) {σ₁ σ₂ τ : Ty}
+    (m : Mode σ₁ σ₂ τ) (l : Term K σ₁) (r : Term K σ₂) :
+    (Term.comp m l r).evalPartial I g = m.evalPartial (l.evalPartial I g) (r.evalPartial I g) :=
+  rfl
 
 end Evaluation
 
@@ -287,17 +309,13 @@ def LiftsConst (ty : Ty) (c : Id (Ty.Domain E W ty S)) (c' : Part (Ty.PDomain E 
 theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty S)) ty}
     {u' : Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty} (h : Term.Rel LiftsConst u u')
     (g : Assignment E) :
-    ∃ z, u'.evalPartial (fun c ↦ c) g = Part.some z ∧ Ty.Lifts ty (u.eval (fun c ↦ c) g) z := by
-  induction h generalizing g with
-  | const hc => exact hc
-  | var n => exact ⟨g n, rfl, rfl⟩
-  | lam n _ ih =>
-    exact ⟨_, rfl, Ty.lifts_fn.mpr fun x _ hxy ↦ by obtain rfl : x = _ := hxy; exact ih _⟩
-  | comp m _ _ ihl ihr =>
-    obtain ⟨zl, hzl, hll⟩ := ihl g
-    obtain ⟨zr, hzr, hlr⟩ := ihr g
-    simp only [Term.evalPartial, hzl, hzr, Term.eval]
-    exact m.lifts_evalPartial hll hlr
+    ∃ z, u'.evalPartial (fun c ↦ c) g = Part.some z ∧ Ty.Lifts ty (u.eval (fun c ↦ c) g) z :=
+  h.realize (A := .total fun c ↦ c) (B := .partial fun c ↦ c)
+    (fun ty x (y : Part (Ty.PDomain E W ty S)) ↦ LiftsConst ty x y) (· = ·) (fun _ _ hc ↦ hc)
+    (fun x _ h ↦ by subst h; exact ⟨x, rfl, rfl⟩) (fun _ f' h ↦ ⟨f', rfl, fun x y hxy ↦ h x y hxy⟩)
+    (fun m _ _ _ _ ⟨_, hzl, hll⟩ ⟨_, hzr, hlr⟩ ↦ by
+      subst hzl hzr; exact m.lifts_evalPartial hll hlr)
+    fun _ ↦ rfl
 
 variable {L : Type*} {lex : L → Option (Denotation E W Id S)}
 
@@ -376,7 +394,7 @@ variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
   simp only [interpPartial, translate_bind, Option.map_map]
   rcases translate (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex body with _ | ⟨τ, b⟩
   · rfl
-  · simp [Term.evalPartial, valueAtPartial]
+  · simp [valueAtPartial]
 
 theorem interpPartial_junk {l : PhraseStructure.Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ PhraseStructure.Tree.Label.Licenses l (cs.map RoseTree.value)) :
