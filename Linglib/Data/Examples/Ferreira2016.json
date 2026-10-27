@@ -1,0 +1,102 @@
+[
+  {
+    "id": "ferreira2016_ex45",
+    "source": {
+      "bibkey": "ferreira-2016",
+      "paperLabel": "(45)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John was crossing the street.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John started walking toward the other side of the street, but a bus hit him and he never actually made it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "It can be true if John started walking toward the other side of the street, but due to, for instance, a bus hitting him never actually made it (p. 365).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ferreira2016_ex46",
+    "source": {
+      "bibkey": "ferreira-2016",
+      "paperLabel": "(46)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John was crossing the Atlantic (when a shark killed him).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Uttered half an hour after John, a normal human being, started swimming from the west coast of Africa towards the Brazilian coast.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "This sentence is very likely to be judged false, quite obviously for the reason that the Atlantic is a huge body of water (p. 365).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ferreira2016_ex54",
+    "source": {
+      "bibkey": "ferreira-2016",
+      "paperLabel": "(54)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John plays soccer (regularly).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "John, who loves soccer, does not live far from a local college campus where the only soccer field in the neighborhood is located, and goes there regularly to play with his friends.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "true"
+      ]
+    ],
+    "comment": "Sentence (54) below is true under these circumstances (p. 368).",
+    "verified": "page-image"
+  },
+  {
+    "id": "ferreira2016_ex54_accident",
+    "source": {
+      "bibkey": "ferreira-2016",
+      "paperLabel": "(54)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John plays soccer (regularly).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Due to a tragic car accident, John cannot control the movements of his legs anymore, and the sentence is uttered after these facts became known to the speaker.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "truthValue",
+        "false"
+      ]
+    ],
+    "comment": "(54) is correctly predicted to be false in this case (pp. 370-371).",
+    "verified": "page-image"
+  }
+]
