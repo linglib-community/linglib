@@ -97,6 +97,7 @@
     "paperFeatures": [
       ["variety", "Belfast English"],
       ["clause", "embedded question"],
+      ["complementizer", "none"],
       ["order", "V2"]
     ],
     "comment": "Belfast English inverts in embedded questions, the cue for verb movement to Wh° (Henry 1997: 275).",
@@ -143,9 +144,36 @@
     "readings": [],
     "paperFeatures": [
       ["clause", "embedded declarative"],
+      ["embedding", "bridge verb"],
       ["order", "non-V2 or V2"]
     ],
-    "comment": "Embedded V2 in Norwegian is possible with or without the complementizer. Expands the printed '(at)' of (36) to its overt variant, for both orders.",
+    "comment": "Embedded V2 in Norwegian is possible with or without the complementizer, especially after bridge verbs. Expands the printed '(at)' of (36) to its overt variant, for both orders.",
+    "verified": "page-image"
+  },
+  {
+    "id": "westergaard2009_27",
+    "source": {"bibkey": "westergaard-2009", "paperLabel": "ch. 2 (36)"},
+    "reportedIn": null,
+    "language": "norw1258",
+    "primaryText": "Han sa han ikke kommer.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Han", "he"], ["sa", "said"], ["han", "he"], ["ikke", "not"], ["kommer", "comes"]
+    ],
+    "translation": "He said he isn't coming.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Han sa han kommer ikke.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "embedded declarative"],
+      ["embedding", "bridge verb"],
+      ["complementizer", "none"],
+      ["order", "non-V2 or V2"]
+    ],
+    "comment": "Expands the printed '(at)' of (36) to its variant without the complementizer, for both orders.",
     "verified": "page-image"
   },
   {

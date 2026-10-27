@@ -13,43 +13,48 @@ public import Mathlib.Tactic.DeriveFintype
 # Westergaard (2009): The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy
 
 This file formalizes the syntactic model of Westergaard's monograph. Verb second is not one
-parameter but a setting per clause-type head of a split ForceP, one head per sentence type in
-root clauses and one each for embedded declaratives and embedded questions, so that a
-language's grammar is the set of cells, a sentence type in an embedding context, in which the
-finite verb moves to the left periphery. Her Table 3.1 gives that set for six Germanic
-varieties. The fragments record, from the reference grammars and from her own descriptions,
-where verb second is obligatory, optional or excluded, and her binary settings agree with
-them: each grammar contains the cells where the fragment requires verb second and lies within
-the cells where it allows it, and for five of the six varieties it is exactly the required
-cells. What children acquire are micro-cues, pieces of structure stating for one cell what its
-specifier holds and whether the verb fills its head, and four cues separate the five grammars
-of her Table 3.2. In the Tromsø dialect the monosyllabic *wh*-words *ka*, *kem* and *kor* are
-heads and sit in Int⁰ themselves, which blocks verb movement there; the verb second that still
-occurs is movement to a lower Top⁰, whose feature a given subject checks from the specifier and
-a focused subject leaves for the verb, so that these questions are verb second exactly when the
-subject is new.
+parameter but a setting per clause-type head of a split ForceP, one head per sentence type in root
+clauses and one each for embedded declaratives and embedded questions whose head no complementizer
+fills, so that a language's grammar is the set of cells, a sentence type in an embedding context,
+in which the finite verb moves to the left periphery. Her Table 3.1 gives that set for six Germanic
+varieties. The fragments record, from the reference grammars and from her own descriptions, where
+verb second is obligatory, optional or excluded, in each cell and in embedded clauses without a
+complementizer, and her binary settings agree with them: each grammar contains the [heads](##heads)
+where the fragment requires verb second and lies within those where it allows it, and for five of
+the six varieties it is [exactly the required heads](##table_3_1_eq_required). What children
+acquire are micro-cues, pieces of structure stating for one cell what its specifier holds and
+whether the verb fills its head, and four cues separate the five grammars of her Table 3.2. In the
+Tromsø dialect the monosyllabic *wh*-words *ka*, *kem* and *kor* are heads and sit in Int⁰
+themselves, which blocks verb movement there; the verb second that still occurs is movement to a
+lower Top⁰, whose feature a given subject checks from the specifier and a focused subject leaves
+for the verb, so that these questions are verb second exactly when the subject is new.
 
 ## Main definitions
 
 * `V2Grammar`: a set of cells, the clause-type heads the finite verb moves to.
 * `stdNorwegian`, `stdEnglish`, `nordmore`, `belfast`, `german`, `danish`: the grammars of
   Table 3.1.
+* `heads`: the heads a variety's fragments set, at a set of occurrences.
 * `MicroCue`, `Expresses`: a cue and its expression by a grammar.
 * `TromsøWh`, `WhStatus`, `order`: the Tromsø *wh*-words, their status, and the word order of a
   monosyllabic *wh*-question.
 
 ## Implementation notes
 
-Westergaard's Fin⁰ and Wh⁰ heads are realized as the embedded root-like cells of Bhatt and
-Dayal: German complementizer-less verb-second complements and Belfast English embedded
-inversion are both `quasiSubordinated`, and her Wh⁰ is the yes/no cell her Belfast example
-instantiates. Danish is the one variety whose table entry is not the fragment's required set but
-its possible set on the table's seven heads, since only some Danish exclamatives are verb
-second; the Danish fragment takes its exclamative and imperative cells from Westergaard and the
-others from Vikner. The cues (57) and (60) for verb movement to I°, which she motivates with
-Icelandic, the cue for English inflectional elements, *som*-insertion, focus-sensitive adverbs,
-*kanskje*, and the acquisition chapters are not formalized; the Tromsø rows have no fragment and
-enter only the *wh*-word model.
+Westergaard's Fin⁰ and Wh⁰ are verb movement in an embedded declarative or question whose head no
+complementizer fills (p. 40), as in German's verb-second complement and Belfast English's embedded
+inversion. They are read off each fragment's distribution in embedded clauses without a
+complementizer, at the `quasiSubordinated` cells of Bhatt and Dayal, where the complements of
+bridge and rogative verbs lie; her Wh⁰ is the yes/no cell her Belfast example instantiates. A
+fragment's own embedded cells range over complements with and without a complementizer, so German
+verb second is optional there, alternating with *dass*, and so is Norwegian verb second after a
+bridge verb (36), which her table marks as no movement to Fin⁰. Danish is the one variety whose
+table entry is not the fragment's required heads but its possible heads, since only some Danish
+exclamatives are verb second; the Danish fragment takes its exclamative and imperative cells from
+Westergaard and the others from Vikner. The cues (57) and (60) for verb movement to I°, which she
+motivates with Icelandic, the cue for English inflectional elements, *som*-insertion,
+focus-sensitive adverbs, *kanskje*, and the acquisition chapters are not formalized; the Tromsø
+rows have no fragment and enter only the *wh*-word model.
 
 ## References
 
@@ -93,47 +98,42 @@ abbrev german : V2Grammar :=
 /-- Danish moves the verb to Decl⁰, Int⁰, Pol⁰ and Excl⁰. -/
 abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar, root .exclamative}
 
-/-- The seven heads of Table 3.1, as the cells they type. -/
-abbrev tableHeads : SetRel SentenceType EmbeddingContext :=
-  {root .declarative, root .constituent, root .polar, root .exclamative, root .imperative,
-    (.declarative, .quasiSubordinated), (.polar, .quasiSubordinated)}
+/-- The heads a variety's fragments set at the occurrences in `s`: the root clause-type heads
+read off its verb-second distribution `d`, and Fin⁰ and Wh⁰ read off its distribution `bare` in
+embedded clauses without a complementizer, none where that is not recorded. -/
+def heads (s : Set Occurrence) (d : Distribution) (bare : Distribution := fun _ _ ↦ none) :
+    V2Grammar :=
+  {c ∈ d.preimage s | c.2 = .matrix} ∪ bare.preimage s
 
-/-- Table 3.1 is the required set of the fragment for Standard Norwegian, Standard English,
+instance {s : Set Occurrence} [DecidablePred (· ∈ s)] {d bare : Distribution} :
+    DecidablePred (· ∈ heads s d bare) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∨ _))
+
+/-- Table 3.1 is the required heads of the fragments for Standard Norwegian, Standard English,
 Nordmøre, Belfast English and German. -/
 theorem table_3_1_eq_required :
-    Norwegian.verbSecond.required = stdNorwegian ∧ English.verbSecond.required = stdEnglish ∧
-      Norwegian.Nordmore.verbSecond.required = nordmore ∧
-      English.Belfast.verbSecond.required = belfast ∧ German.verbSecond.required = german := by
+    heads {.obligatory} Norwegian.verbSecond Norwegian.verbSecondWithoutComplementizer =
+        stdNorwegian ∧
+      heads {.obligatory} English.verbSecond = stdEnglish ∧
+      heads {.obligatory} Norwegian.Nordmore.verbSecond = nordmore ∧
+      heads {.obligatory} English.Belfast.verbSecond
+        English.Belfast.verbSecondWithoutComplementizer = belfast ∧
+      heads {.obligatory} German.verbSecond German.verbSecondWithoutComplementizer = german := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> ext c <;> revert c <;> decide
 
-/-- Table 3.1's Danish grammar contains the fragment's required cells and is its possible cells
-among the table's heads, since verb second in some exclamatives only is marked as movement to
-Excl⁰. -/
+/-- Table 3.1's Danish grammar contains the fragments' required heads and is their possible
+heads, since verb second in some exclamatives only is marked as movement to Excl⁰. -/
 theorem danish_table_3_1 :
-    Danish.verbSecond.required ⊆ danish ∧ Danish.verbSecond.possible ∩ tableHeads = danish := by
+    heads {.obligatory} Danish.verbSecond Danish.verbSecondWithoutComplementizer ⊆ danish ∧
+      heads {.excluded}ᶜ Danish.verbSecond Danish.verbSecondWithoutComplementizer = danish := by
   refine ⟨fun c ↦ ?_, Set.ext fun c ↦ ?_⟩ <;> revert c <;> decide
 
-/-- Nordmøre Norwegian is the mirror image of Standard English on Decl⁰ and Int⁰. -/
+-- p. 40
 theorem nordmore_english_mirror :
     root .declarative ∈ Norwegian.Nordmore.verbSecond.required ∧
       root .constituent ∉ Norwegian.Nordmore.verbSecond.required ∧
       root .declarative ∉ English.verbSecond.required ∧
       root .constituent ∈ English.verbSecond.required := by
-  decide
-
-/-- Only German requires verb second in an embedded declarative, and every variety requires it
-in a root yes/no-question. -/
-theorem embedded_german_polar_all :
-    (.declarative, .quasiSubordinated) ∈ German.verbSecond.required ∧
-      (.declarative, .quasiSubordinated) ∉ Norwegian.verbSecond.required ∧
-      (.declarative, .quasiSubordinated) ∉ English.verbSecond.required ∧
-      (.declarative, .quasiSubordinated) ∉ Danish.verbSecond.required ∧
-      root .polar ∈ Norwegian.verbSecond.required ∧
-      root .polar ∈ English.verbSecond.required ∧
-      root .polar ∈ Norwegian.Nordmore.verbSecond.required ∧
-      root .polar ∈ English.Belfast.verbSecond.required ∧
-      root .polar ∈ German.verbSecond.required ∧
-      root .polar ∈ Danish.verbSecond.required := by
   decide
 
 /-! ### Micro-cues (§4) -/
@@ -183,7 +183,6 @@ instance (lang : V2Grammar) (c : MicroCue) [Decidable (c.target ∈ lang)] :
     Decidable (Expresses lang c) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
-/-- A cue and the cue for its absence are never both expressed. -/
 theorem not_expresses_both (lang : V2Grammar) {c c' : MicroCue} (ht : c.target = c'.target)
     (hv : c.verbInHead ≠ c'.verbInHead) : ¬ (Expresses lang c ∧ Expresses lang c') :=
   fun ⟨h, h'⟩ ↦ hv (by
@@ -209,8 +208,8 @@ theorem norwegian_nonV2_cues :
 
 /-! ### The rows -/
 
-/-- The cell a row's `clause` or `wh` feature records; an embedded question is Belfast's
-yes/no-question. -/
+/-- The cell a row's `clause` or `wh` feature records; an embedded declarative after a bridge
+verb is quasi-subordinated, and an embedded question is Belfast's yes/no-question. -/
 def cellOf (r : Datum) : Option (SentenceType × EmbeddingContext) :=
   match r.feature? "clause", r.feature? "wh" with
   | some "declarative", _ | some "subject-initial declarative", _
@@ -219,7 +218,9 @@ def cellOf (r : Datum) : Option (SentenceType × EmbeddingContext) :=
   | some "yes/no-question", _ => some (root .polar)
   | some "imperative", _ => some (root .imperative)
   | some "exclamative", _ => some (root .exclamative)
-  | some "embedded declarative", _ => some (embedded .declarative)
+  | some "embedded declarative", _ =>
+    if r.feature? "embedding" = some "bridge verb" then some (.declarative, .quasiSubordinated)
+    else some (embedded .declarative)
   | some "embedded question", _ => some (.polar, .quasiSubordinated)
   | _, _ => none
 
@@ -235,16 +236,24 @@ def orderOf (r : Datum) : Option Order :=
     [("V2", .moved), ("V1", .moved), ("non-V2", .unmoved), ("non-V2 or V2", .either),
       ("V2 or non-V2", .either)]
 
-/-- The fragment of a row's variety, Standard Norwegian, Nordmøre, Standard or Belfast English
-or Danish; the Tromsø rows have none. -/
-def grammarOf (r : Datum) : Option Distribution :=
+/-- The fragments of a row's variety, Standard Norwegian, Nordmøre, Standard or Belfast English
+or Danish: its verb-second distribution and its distribution in embedded clauses without a
+complementizer. The Tromsø rows have none. -/
+def fragmentsOf (r : Datum) : Option (Distribution × Distribution) :=
   match r.feature? "variety", r.language with
-  | some "Nordmøre", _ => some Norwegian.Nordmore.verbSecond
-  | some "Belfast English", _ => some English.Belfast.verbSecond
-  | some "Standard Norwegian", _ | none, "norw1258" => some Norwegian.verbSecond
-  | none, "stan1293" => some English.verbSecond
-  | none, "dani1285" => some Danish.verbSecond
+  | some "Nordmøre", _ => some (Norwegian.Nordmore.verbSecond, fun _ _ ↦ none)
+  | some "Belfast English", _ =>
+    some (English.Belfast.verbSecond, English.Belfast.verbSecondWithoutComplementizer)
+  | some "Standard Norwegian", _ | none, "norw1258" =>
+    some (Norwegian.verbSecond, Norwegian.verbSecondWithoutComplementizer)
+  | none, "stan1293" => some (English.verbSecond, fun _ _ ↦ none)
+  | none, "dani1285" => some (Danish.verbSecond, Danish.verbSecondWithoutComplementizer)
   | _, _ => none
+
+/-- The distribution a row is judged by: its variety's distribution without a complementizer
+when the row has none, otherwise its verb-second distribution. -/
+def grammarOf (r : Datum) : Option Distribution :=
+  (fragmentsOf r).map fun p ↦ if r.feature? "complementizer" = some "none" then p.2 else p.1
 
 /-- An order is consistent with a distribution at a cell when a moved verb sits where verb
 second is possible, an unmoved one where it is not required, and either where it is optional. -/
