@@ -634,8 +634,8 @@ theorem interp_nobodyMet (g : Assignment E) :
         Set Prop)⟩ := by
   refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM)) ?_
   simp only [Mode.evalM, Set.pure_def, Set.fmap_eq_image, Set.image_singleton, Term.evalM,
-    Function.update_self, Set.seq_eq_set_seq, Option.map_some, Option.bind_some, Set.singleton_seq,
-    Mode.eval, Option.getD_some, Set.image_image]
+    Term.realize, Interpretation.effectful, Function.update_self, Set.seq_eq_set_seq,
+    Set.singleton_seq, Mode.eval, Set.image_image]
   rfl
 
 -- (77)

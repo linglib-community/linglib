@@ -240,12 +240,13 @@ theorem holds_when_relative :
   simp [Diamond, and_left_comm]
 
 -- (18b)
-theorem exists_of_holds_after
-    (h : M.Holds (matrix (.leaf (.vp k))
-      (.bin (.leaf .after) (relative pastOperator (atTrace (.leaf (.vp l))))))) :
-    ∃ t, M.vp l t :=
-  let ⟨_, _, _, t', _, h', _⟩ := holds_after_relative.1 h
-  ⟨t', h'⟩
+theorem exists_of_holds_after :
+    M.Holds (matrix (.leaf (.vp k))
+      (.bin (.leaf .after) (relative pastOperator (atTrace (.leaf (.vp l)))))) →
+    ∃ t, M.vp l t := by
+  rw [holds_after_relative]
+  rintro ⟨_, _, _, t', _, h', _⟩
+  exact ⟨t', h'⟩
 
 -- (18a)
 theorem holds_before_of_forall_not (h : ∀ t, ¬ M.vp l t) :
