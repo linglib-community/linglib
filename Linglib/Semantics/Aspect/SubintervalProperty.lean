@@ -51,8 +51,8 @@ are the set itself.
 The property is divisive reference, `Mereology.DIV`, of the predicate's run times, so it is
 stated on mathlib's `IsLowerSet`. The viewpoint operators quantify over events of the world of
 evaluation, so the entailment is the extensional one. The imperfective paradox proper, on which
-*John was building a house* is true though no house is ever built, needs a modal progressive
-and is not modelled.
+*John was building a house* is true though no house is ever built, is the business of the modal
+progressive, `Aspect.PROG`.
 
 ## References
 
