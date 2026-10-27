@@ -11,7 +11,7 @@ yes/no-question, *Drikker Peter ofte kaffe om morgenen?* 'Does Peter often drink
 morning?'. Since the verb does not otherwise leave the verb phrase, a subordinate clause places it
 after the sentence adverbials, *Vi ved at Peter ofte drikker kaffe* 'We know that Peter often
 drinks coffee'. Some types of exclamative are verb second, *Hvor er han sød!* 'How nice he is!',
-though not all, and imperatives are not, by Westergaard's description.
+though not all.
 
 Verb second in a subordinate clause is what Vikner calls *limited embedded V2*: it depends on the
 matrix verb. The complement of a *bridge verb* such as *påstå* 'claim', *sige* 'say' or *vide*
@@ -25,11 +25,18 @@ that!'.
 
 ## Implementation notes
 
-Verb second is a `Clause.Distribution` over sentence types and embedding contexts. The complement
-of a bridge verb is the quasi-subordinated context, whose cell combines the clauses with and
-without *at*; other subordinate clauses are subordinated. The comments locate each cell: V cites
-Vikner by numbered example or page, W cites the third chapter of Westergaard by example, note or
-table.
+Each cell records the left edges the language admits, written `⟨complementizer, verbSecond⟩` as a
+`Clause.LeftEdge`, and verb second is read off them. The complement of a bridge verb is the
+quasi-subordinated context; other subordinate clauses are subordinated. The comments locate each
+cell: V cites Vikner by numbered example or page, W cites the third chapter of Westergaard by
+example or note.
+
+## TODO
+
+The imperative cell is unrecorded: Westergaard sets no verb movement to the imperative head, which
+concerns the verb's position relative to an overt subject, and Vikner does not describe the order
+of Danish imperatives. The embedded constituent question records Vikner's object and adjunct
+questions; subject questions, which add a complementizer, are not recorded.
 
 ## References
 
@@ -43,31 +50,22 @@ namespace Danish
 
 open Clause
 
-/-- Verb second in a subordinate clause introduced by *at*: optional after a bridge verb. -/
-def verbSecondWithComplementizer : Distribution
-  | .declarative, .quasiSubordinated => some .optional  -- V (13a), (14a), (54a), (54c)
-  | _, _ => none
-
-/-- Verb second in a subordinate clause without a complementizer: excluded after a bridge verb,
-where it needs *at*. -/
-def verbSecondWithoutComplementizer : Distribution
-  | .declarative, .quasiSubordinated => some .excluded  -- V (54b), (81b)
+/-- The left edges of Danish clauses, written `⟨complementizer, verbSecond⟩`. -/
+def leftEdges : LeftEdge.Table
+  | .declarative, .matrix => some {⟨false, true⟩}  -- V (33c)–(33e)
+  | .polar, .matrix => some {⟨false, true⟩}  -- V (33b), (42b)
+  | .constituent, .matrix => some {⟨false, true⟩}  -- V (37c), (38c)
+  | .exclamative, .matrix => some {⟨false, true⟩, ⟨false, false⟩}  -- W (17), note 1
+  | .declarative, .quasiSubordinated =>  -- V (13a), (14a), (54), list (17)
+    some {⟨true, true⟩, ⟨true, false⟩, ⟨false, false⟩}
+  | .declarative, .subordinated => some {⟨true, false⟩, ⟨false, false⟩}  -- V (15a), (16a), p. 84
+  | .polar, .subordinated => some {⟨true, false⟩}  -- V (45b)
+  | .constituent, .subordinated => some {⟨false, false⟩}  -- V (43b), (44b)
+  | .declarative, .insubordinated => some {⟨true, false⟩}  -- V (79a)
   | _, _ => none
 
 /-- Verb second in Danish: required in root declaratives and questions, optional in exclamatives
 and after a bridge verb, and excluded in the other clauses recorded. -/
-def verbSecond : Distribution
-  | .declarative, .matrix => some .obligatory  -- V (33c)–(33e)
-  | .polar, .matrix => some .obligatory  -- V (33b)
-  | .constituent, .matrix => some .obligatory  -- V (37c), (38c)
-  | .exclamative, .matrix => some .optional  -- W (17), note 1
-  | .imperative, .matrix => some .excluded  -- W Table 3.1
-  | t, .quasiSubordinated =>  -- V list (17)
-    verbSecondWithComplementizer.union verbSecondWithoutComplementizer t .quasiSubordinated
-  | .declarative, .subordinated => some .excluded  -- V (15a), (16a), list (18)
-  | .polar, .subordinated => some .excluded  -- V p. 85
-  | .constituent, .subordinated => some .excluded  -- V p. 85
-  | .declarative, .insubordinated => some .excluded  -- V (79a)
-  | _, _ => none
+def verbSecond : Distribution := leftEdges.verbSecond
 
 end Danish

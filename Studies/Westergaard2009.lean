@@ -20,8 +20,10 @@ each head positively or negatively, and her Table 3.1 gives the settings of six 
 Measured against the word order of those varieties, each grammar contains the [heads](##heads)
 where verb second is required and lies within those where it is allowed: for five of the six it is
 [exactly the required heads](##table_3_1_eq_required), and [the Danish one](##danish_table_3_1) is
-the heads where verb second is possible. [Each of her examples has a word order its variety
-allows](##rows_consistent).
+the heads where verb second is possible. The exception is Imp⁰, which [only Belfast English
+sets](##imp_row): it is movement of the verb past an overt subject, while the imperatives of
+Norwegian and German front their verb without counting as movement to Imp⁰. [Each of her examples
+has a word order its variety allows](##rows_consistent).
 
 What children acquire, on this view, are micro-cues: pieces of structure stating for one clause
 type what its specifier holds and whether the finite verb fills its head. [Four cues separate the
@@ -36,18 +38,22 @@ subject is new](##isV2_order_iff).
 ## Implementation notes
 
 * The word order of each variety is its fragment's distribution of verb second over sentence types
-  and embedding contexts. A grammar's [heads](##heads) are read off it: the root heads from the
-  verb-second distribution, Fin⁰ and Wh⁰ from the distribution in embedded clauses without a
-  complementizer, at the `quasiSubordinated` cells of Bhatt and Dayal where the complements of
-  bridge and rogative verbs lie. Her Wh⁰ is the yes/no cell her Belfast example instantiates.
-* Fin⁰ is verb movement in an embedded declarative whose head no complementizer fills (p. 40). A
-  fragment's cell for the complement of a bridge verb combines the clauses with and without the
-  complementizer, so German verb second is optional there, excluded with *dass* and required
-  without it, while Norwegian verb second is optional with and without *at* (36), which her table
-  marks as no movement to Fin⁰.
+  and embedding contexts, read off the left edges the fragment admits for Norwegian, Danish and
+  German. A grammar's [heads](##heads) are read off it: the root heads from the verb-second
+  distribution, Fin⁰ and Wh⁰ from the left edges without a complementizer, at the
+  `quasiSubordinated` cells of Bhatt and Dayal where the complements of bridge and rogative verbs
+  lie. Her Wh⁰ is the yes/no cell her Belfast example instantiates.
+* Fin⁰ is verb movement in an embedded declarative whose head no complementizer fills (p. 40).
+  German verb second after a bridge verb is optional, excluded with *dass* and required without it,
+  while Norwegian verb second there is optional with and without *at* (36), which her table marks
+  as no movement to Fin⁰.
+* Imp⁰ is movement of the verb past an overt imperative subject, which Belfast English shows (19).
+  Norwegian and German imperatives leave the forefield empty and front the verb, as Faarlund, Lie
+  and Vannebo and Truckenbrodt describe them, so their fragments require verb second there; the
+  heads compared with the table leave Imp⁰ out.
 * Only some Danish exclamatives are verb second, which her table counts as movement to Excl⁰. The
-  Danish fragment takes its exclamative and imperative cells from Westergaard and the others from
-  Vikner.
+  Danish fragment takes its exclamative cell from Westergaard and the others from Vikner, and
+  leaves the imperative unrecorded.
 * The cues (57) and (60) for verb movement to I°, which she motivates with Icelandic, the cue for
   English inflectional elements, *som*-insertion, focus-sensitive adverbs, *kanskje*, and the
   acquisition chapters are not formalized. The Tromsø rows have no fragment and enter only the
@@ -95,36 +101,48 @@ abbrev german : V2Grammar :=
 /-- Danish moves the verb to Decl⁰, Int⁰, Pol⁰ and Excl⁰. -/
 abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar, root .exclamative}
 
-/-- The heads a variety sets at the occurrences in `s`: the root clause-type heads read off its
-verb-second distribution `d`, and Fin⁰ and Wh⁰ off its distribution `bare` in embedded clauses
-without a complementizer, which by default records nothing. -/
+/-- The heads other than Imp⁰ that a variety sets at the occurrences in `s`: the root clause-type
+heads read off its verb-second distribution `d`, and Fin⁰ and Wh⁰ off the embedded cells of its
+distribution `bare` in clauses without a complementizer, which by default records nothing. Imp⁰ is
+left out, since Westergaard diagnoses it by an overt subject the verb precedes rather than by the
+verb's place at the left edge. -/
 def heads (s : Set Occurrence) (d : Distribution) (bare : Distribution := .empty) :
     V2Grammar :=
-  {c ∈ d.preimage s | c.2 = .matrix} ∪ bare.preimage s
+  {c ∈ d.preimage s | c.2 = .matrix ∧ c.1 ≠ .imperative} ∪ {c ∈ bare.preimage s | c.2 ≠ .matrix}
 
 instance {s : Set Occurrence} [DecidablePred (· ∈ s)] {d bare : Distribution} :
     DecidablePred (· ∈ heads s d bare) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∨ _))
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∨ _ ∧ _))
 
-/-- For Standard Norwegian, Standard English, Nordmøre, Belfast English and German, Table 3.1
-sets exactly the heads where verb second is required. -/
+/-- Away from Imp⁰, Table 3.1 sets exactly the heads where verb second is required for Standard
+Norwegian, Standard English, Nordmøre, Belfast English and German. -/
 theorem table_3_1_eq_required :
-    heads {.obligatory} Norwegian.verbSecond Norwegian.verbSecondWithoutComplementizer =
+    heads {.obligatory} Norwegian.verbSecond (Norwegian.leftEdges.restrict false).verbSecond =
         stdNorwegian ∧
       heads {.obligatory} English.verbSecond = stdEnglish ∧
       heads {.obligatory} Norwegian.Nordmore.verbSecond = nordmore ∧
       heads {.obligatory} English.Belfast.verbSecond
-        English.Belfast.verbSecondWithoutComplementizer = belfast ∧
-      heads {.obligatory} German.verbSecond German.verbSecondWithoutComplementizer = german := by
+        English.Belfast.verbSecondWithoutComplementizer = belfast \ {root .imperative} ∧
+      heads {.obligatory} German.verbSecond (German.leftEdges.restrict false).verbSecond =
+        german := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> ext c <;> revert c <;> decide
 
 /-- Table 3.1's Danish grammar contains the heads where verb second is required and is the heads
 where it is possible, since Westergaard counts verb second in some exclamatives as movement to
 Excl⁰. -/
 theorem danish_table_3_1 :
-    heads {.obligatory} Danish.verbSecond Danish.verbSecondWithoutComplementizer ⊆ danish ∧
-      heads {.excluded}ᶜ Danish.verbSecond Danish.verbSecondWithoutComplementizer = danish := by
+    heads {.obligatory} Danish.verbSecond (Danish.leftEdges.restrict false).verbSecond ⊆ danish ∧
+      heads {.excluded}ᶜ Danish.verbSecond (Danish.leftEdges.restrict false).verbSecond =
+        danish := by
   refine ⟨fun c ↦ ?_, Set.ext fun c ↦ ?_⟩ <;> revert c <;> decide
+
+-- Imp⁰ is Belfast English's inversion past an overt subject, (19) p. 41 and note 4 p. 19: the
+-- Norwegian and German imperatives front their verb too, but Table 3.1 does not count it.
+theorem imp_row :
+    root .imperative ∈ belfast ∧ root .imperative ∈ English.Belfast.verbSecond.required ∧
+      root .imperative ∈ Norwegian.verbSecond.required ∧ root .imperative ∉ stdNorwegian ∧
+      root .imperative ∈ German.verbSecond.required ∧ root .imperative ∉ german := by
+  decide
 
 -- p. 40
 theorem nordmore_english_mirror :
@@ -235,9 +253,9 @@ def fragmentsOf (r : Datum) : Option (Distribution × Distribution) :=
   | some "Belfast English", _ =>
     some (English.Belfast.verbSecond, English.Belfast.verbSecondWithoutComplementizer)
   | some "Standard Norwegian", _ | none, "norw1258" =>
-    some (Norwegian.verbSecond, Norwegian.verbSecondWithoutComplementizer)
+    some (Norwegian.verbSecond, (Norwegian.leftEdges.restrict false).verbSecond)
   | none, "stan1293" => some (English.verbSecond, Distribution.empty)
-  | none, "dani1285" => some (Danish.verbSecond, Danish.verbSecondWithoutComplementizer)
+  | none, "dani1285" => some (Danish.verbSecond, (Danish.leftEdges.restrict false).verbSecond)
   | _, _ => none
 
 /-- The distribution a row is judged by: its variety's distribution without a complementizer
