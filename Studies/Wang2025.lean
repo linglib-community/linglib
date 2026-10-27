@@ -420,11 +420,11 @@ open Exhaustification in
 the operator of (24) agree, (25). -/
 theorem exhIE_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
     (h₀ : IsMaximalExclusion alts φ M₀) (huniq : ∀ M, IsMaximalExclusion alts φ M → M = M₀) :
-    exhIE (asSetOfSets alts) ↑φ = ↑(exhMx φ M₀) := by
+    exhIE alts.toSetFamily ↑φ = ↑(exhMx φ M₀) := by
   rw [exhIE_eq_sdiff_of_maximal_unique _ _ (isMaximalExclusion_iff.1 h₀) fun X hX ↦ ?_]
   · ext w
-    simp [exhMx, mem_asSetOfSets]
-  · obtain ⟨M, -, rfl⟩ := exists_asSetOfSets_eq hX.prop.1
+    simp [exhMx, Finset.mem_toSetFamily]
+  · obtain ⟨M, -, rfl⟩ := Finset.exists_toSetFamily_eq_of_subset hX.prop.1
     rw [huniq M (isMaximalExclusion_iff.2 hX)]
 
 /-- The worlds of the disjunction example (26) are the pairs of truth values of `p` and `q`. -/

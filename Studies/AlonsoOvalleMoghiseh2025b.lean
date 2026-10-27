@@ -108,13 +108,13 @@ def hamblinRo (D : Finset Entity) : Finset (Finset W) := D.biUnion fun e => hamb
 
 /-- The worlds where the question's presupposition (8) holds. -/
 def dom (H : Finset (Finset W)) : Finset W :=
-  univ.filter (IsExhaustivelyResolvable (ofFinset H))
+  univ.filter (IsExhaustivelyResolvable H.toSetFamily)
 
 /-- EXHp (15) holds when `φ` is defined and every alternative `ψ` with a stronger presupposition
 is undefined. -/
 def ExhP (φ ψ : Finset (Finset W)) (w : W) : Prop :=
-  IsExhaustivelyResolvable (ofFinset φ) w ∧
-    (dom ψ ⊂ dom φ → ¬ IsExhaustivelyResolvable (ofFinset ψ) w)
+  IsExhaustivelyResolvable (φ.toSetFamily) w ∧
+    (dom ψ ⊂ dom φ → ¬ IsExhaustivelyResolvable (ψ.toSetFamily) w)
 
 instance (φ ψ : Finset (Finset W)) (w : W) : Decidable (ExhP φ ψ w) :=
   inferInstanceAs (Decidable (_ ∧ (_ → _)))
@@ -128,8 +128,8 @@ abbrev two : World := {0, 1}
 /-- Whether a singular and a plural answer are available, that is, whether the presupposition
 (8) holds in the world where one atom was bought and in the world where two were. -/
 def answers (H : Finset (Finset World)) : Bool × Bool :=
-  (decide (IsExhaustivelyResolvable (ofFinset H) one),
-    decide (IsExhaustivelyResolvable (ofFinset H) two))
+  (decide (IsExhaustivelyResolvable H.toSetFamily one),
+    decide (IsExhaustivelyResolvable H.toSetFamily two))
 
 /-- The answers available through EXHp (15) of `φ` against its alternative `ψ`. -/
 def exhAnswers (φ ψ : Finset (Finset World)) : Bool × Bool :=
@@ -184,8 +184,8 @@ def freeChoice : Base := ⟨{{0}, {1}}, by decide⟩
 disjunctions, which *-ro* removes ((35)–(36) against (32)–(33), (62) against (63)). -/
 theorem modal_gq :
     ∀ D ∈ [neutral, atoms],
-      IsExhaustivelyResolvable (box (ofFinset (hamblin bought D)) permits) freeChoice ∧
-        ¬ IsExhaustivelyResolvable (box (ofFinset (hamblinRo bought D)) permits) freeChoice := by
+      IsExhaustivelyResolvable (box ((hamblin bought D).toSetFamily) permits) freeChoice ∧
+        ¬ IsExhaustivelyResolvable (box ((hamblinRo bought D).toSetFamily) permits) freeChoice := by
   simp only [isExhaustivelyResolvable_box_iff _ permits_singleton (x := freeChoice)
     (s := (↑freeChoice.1 : Set World)) fun _ => Iff.rfl]
   decide
@@ -243,7 +243,7 @@ example : (Examples.all.filter fun row => (predicted row).isSome).length = 16 :=
 /-- Whether a free-choice-scenario row's interrogative is exhaustively resolvable, (60)–(63). -/
 def resolvable? (row : Datum) : Option Bool := do
   guard (row.feature? "scenario" = some "freeChoice59")
-  (hamblinOf row).map fun H => decide (IsExhaustivelyResolvableOn (ofFinset H) ↑freeChoice.1)
+  (hamblinOf row).map fun H => decide (IsExhaustivelyResolvableOn H.toSetFamily ↑freeChoice.1)
 
 /-- In (60)–(63) the embedded questions are felicitous in (59) iff their interrogative ranges
 over disjunctions (`isExhaustivelyResolvable_box_iff` relates this to the question with

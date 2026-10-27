@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Data.Finset.SetFamily
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Mathlib.Data.Finset.Powerset
@@ -33,52 +34,21 @@ namespace Exhaustification
 
 variable {W : Type*}
 
-/-! ### Coercion -/
-
-/-- The alternatives of a finite family, as sets. -/
-def asSetOfSets (E : Finset (Finset W)) : Set (Set W) :=
-  (fun s : Finset W => (↑s : Set W)) '' (↑E : Set (Finset W))
-
-@[simp] theorem mem_asSetOfSets {E : Finset (Finset W)} {s : Set W} :
-    s ∈ asSetOfSets E ↔ ∃ a ∈ E, (↑a : Set W) = s := by
-  simp [asSetOfSets]
-
-theorem finite_asSetOfSets (E : Finset (Finset W)) : (asSetOfSets E).Finite :=
-  (Finset.finite_toSet E).image _
-
-theorem exists_asSetOfSets_eq {ALT : Finset (Finset W)} {X : Set (Set W)}
-    (h : X ⊆ asSetOfSets ALT) : ∃ M ⊆ ALT, asSetOfSets M = X := by
-  classical
-  refine ⟨ALT.filter fun a : Finset W ↦ (a : Set W) ∈ X, Finset.filter_subset _ _, ?_⟩
-  ext s
-  refine ⟨fun hs ↦ ?_, fun hs ↦ ?_⟩
-  · obtain ⟨a, ha, rfl⟩ := mem_asSetOfSets.1 hs
-    exact (Finset.mem_filter.1 ha).2
-  · obtain ⟨a, ha, rfl⟩ := mem_asSetOfSets.1 (h hs)
-    exact mem_asSetOfSets.2 ⟨a, Finset.mem_filter.2 ⟨ha, hs⟩, rfl⟩
-
-theorem asSetOfSets_subset_iff {M N : Finset (Finset W)} :
-    asSetOfSets M ⊆ asSetOfSets N ↔ M ⊆ N :=
-  ⟨fun h a ha ↦ by
-    obtain ⟨b, hb, hba⟩ := mem_asSetOfSets.1 (h (mem_asSetOfSets.2 ⟨a, ha, rfl⟩))
-    exact Finset.coe_inj.1 hba ▸ hb,
-   fun h s hs ↦ let ⟨a, ha, has⟩ := mem_asSetOfSets.1 hs; mem_asSetOfSets.2 ⟨a, h ha, has⟩⟩
-
 section MaximalExclusion
 
 variable [DecidableEq W]
 
 theorem isConsistentExclusion_asSetOfSets_iff {ALT M : Finset (Finset W)} {φ : Finset W} :
-    IsConsistentExclusion (asSetOfSets ALT) ↑φ (asSetOfSets M) ↔
+    IsConsistentExclusion ALT.toSetFamily ↑φ M.toSetFamily ↔
       M ⊆ ALT ∧ (φ.filter fun w ↦ ∀ q ∈ M, w ∉ q).Nonempty := by
-  refine and_congr asSetOfSets_subset_iff ⟨?_, ?_⟩
+  refine and_congr Finset.toSetFamily_subset_toSetFamily ⟨?_, ?_⟩
   · rintro ⟨w, hwφ, hw⟩
     exact ⟨w, Finset.mem_filter.2 ⟨hwφ, fun q hq hwq ↦
-      hw ⟨_, mem_asSetOfSets.2 ⟨q, hq, rfl⟩, hwq⟩⟩⟩
+      hw ⟨_, Finset.mem_toSetFamily.2 ⟨q, hq, rfl⟩, hwq⟩⟩⟩
   · rintro ⟨w, hw⟩
     obtain ⟨hwφ, hwM⟩ := Finset.mem_filter.1 hw
     refine ⟨w, hwφ, fun ⟨s, hs, hws⟩ ↦ ?_⟩
-    obtain ⟨q, hq, rfl⟩ := mem_asSetOfSets.1 hs
+    obtain ⟨q, hq, rfl⟩ := Finset.mem_toSetFamily.1 hs
     exact hwM q hq hws
 
 /-- A subfamily `M` of `ALT` is a maximal consistent exclusion when denying its members is
@@ -93,43 +63,43 @@ instance (ALT : Finset (Finset W)) (φ : Finset W) (M : Finset (Finset W)) :
 
 theorem isMaximalExclusion_iff {ALT M : Finset (Finset W)} {φ : Finset W} :
     IsMaximalExclusion ALT φ M ↔
-      Maximal (IsConsistentExclusion (asSetOfSets ALT) ↑φ) (asSetOfSets M) := by
+      Maximal (IsConsistentExclusion ALT.toSetFamily ↑φ) M.toSetFamily := by
   constructor
   · rintro ⟨hsub, hne, hmax⟩
     refine ⟨isConsistentExclusion_asSetOfSets_iff.2 ⟨hsub, hne⟩, fun Y hY hMY ↦ ?_⟩
-    obtain ⟨M', hM', rfl⟩ := exists_asSetOfSets_eq hY.1
-    rw [asSetOfSets_subset_iff] at hMY ⊢
+    obtain ⟨M', hM', rfl⟩ := Finset.exists_toSetFamily_eq_of_subset hY.1
+    rw [Finset.toSetFamily_subset_toSetFamily] at hMY ⊢
     by_contra hnot
     exact hmax M' (Finset.mem_powerset.2 hM') (Finset.ssubset_iff_subset_ne.2
       ⟨hMY, fun h ↦ hnot (h ▸ subset_rfl)⟩) (isConsistentExclusion_asSetOfSets_iff.1 hY).2
   · rintro ⟨hc, hmax⟩
     obtain ⟨hsub, hne⟩ := isConsistentExclusion_asSetOfSets_iff.1 hc
     refine ⟨hsub, hne, fun M' hM' hss hne' ↦ hss.2 ?_⟩
-    exact asSetOfSets_subset_iff.1 (hmax
+    exact Finset.toSetFamily_subset_toSetFamily.1 (hmax
       (isConsistentExclusion_asSetOfSets_iff.2 ⟨Finset.mem_powerset.1 hM', hne'⟩)
-      (asSetOfSets_subset_iff.2 hss.1))
+      (Finset.toSetFamily_subset_toSetFamily.2 hss.1))
 
 end MaximalExclusion
 
 variable [Fintype W] [DecidableEq W]
 
 theorem coe_tolerant_exh (ALT : Finset (Finset W)) (φ : Finset W) :
-    (↑(tolerant.exh ALT φ) : Set W) = exh (asSetOfSets ALT) ↑φ := by
+    (↑(tolerant.exh ALT φ) : Set W) = exh ALT.toSetFamily ↑φ := by
   ext w
-  simp only [Finset.mem_coe, mem_tolerant_exh_iff, mem_exh, mem_asSetOfSets,
+  simp only [Finset.mem_coe, mem_tolerant_exh_iff, mem_exh, Finset.mem_toSetFamily,
     forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Finset.coe_subset]
   exact and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦
     ⟨fun h hw ↦ not_not.1 fun hs ↦ h hs hw, fun h hs hw ↦ hs (h hw)⟩
 
 theorem Excluder.coe_exh (E : Excluder W) (ALT : Finset (Finset W)) (φ : Finset W)
     (h : ∀ a ∈ E.excluded ALT φ, ¬ φ ⊆ a) :
-    (↑(E.exh ALT φ) : Set W) = Exhaustification.exh (asSetOfSets (E.excluded ALT φ)) ↑φ := by
+    (↑(E.exh ALT φ) : Set W) = Exhaustification.exh ((E.excluded ALT φ).toSetFamily) ↑φ := by
   ext w
   rw [Finset.mem_coe, Excluder.mem_exh_iff, Exhaustification.mem_exh]
   refine and_congr_right fun _ ↦ ⟨fun h' q hq hw ↦ ?_, fun h' a ha hw ↦ ?_⟩
-  · obtain ⟨a, ha, rfl⟩ := mem_asSetOfSets.1 hq
+  · obtain ⟨a, ha, rfl⟩ := Finset.mem_toSetFamily.1 hq
     exact absurd hw (h' a ha)
-  · exact h a ha (Finset.coe_subset.1 (h' ↑a (mem_asSetOfSets.2 ⟨a, ha, rfl⟩) hw))
+  · exact h a ha (Finset.coe_subset.1 (h' ↑a (Finset.mem_toSetFamily.2 ⟨a, ha, rfl⟩) hw))
 
 variable (ALT : Finset (Finset W)) (φ : Finset W)
 
@@ -141,12 +111,12 @@ def minimalWorlds : Finset W :=
   φ.filter fun u ↦ ∀ v ∈ φ, (∀ a ∈ ALT, v ∈ a → u ∈ a) → ∀ a ∈ ALT, u ∈ a → v ∈ a
 
 theorem mem_minimalWorlds {u : W} :
-    u ∈ minimalWorlds ALT φ ↔ IsMinimal (asSetOfSets ALT) ↑φ u := by
+    u ∈ minimalWorlds ALT φ ↔ IsMinimal ALT.toSetFamily ↑φ u := by
   rw [minimalWorlds, Finset.mem_filter]
-  change _ ↔ (u ∈ (↑φ : Set W) ∧ ¬ ∃ v, v ∈ (↑φ : Set W) ∧ (v <[asSetOfSets ALT] u))
-  have hle : ∀ x y : W, (x ≤[asSetOfSets ALT] y) ↔ ∀ a ∈ ALT, x ∈ a → y ∈ a := fun x y ↦
-    ⟨fun h a ha ↦ h _ (mem_asSetOfSets.2 ⟨a, ha, rfl⟩), fun h _ hs ↦ by
-      obtain ⟨a, ha, rfl⟩ := mem_asSetOfSets.1 hs
+  change _ ↔ (u ∈ (↑φ : Set W) ∧ ¬ ∃ v, v ∈ (↑φ : Set W) ∧ (v <[ALT.toSetFamily] u))
+  have hle : ∀ x y : W, (x ≤[ALT.toSetFamily] y) ↔ ∀ a ∈ ALT, x ∈ a → y ∈ a := fun x y ↦
+    ⟨fun h a ha ↦ h _ (Finset.mem_toSetFamily.2 ⟨a, ha, rfl⟩), fun h _ hs ↦ by
+      obtain ⟨a, ha, rfl⟩ := Finset.mem_toSetFamily.1 hs
       exact h a ha⟩
   simp only [ltALT, hle, Finset.mem_coe, not_exists, not_and, not_not]
 
@@ -159,9 +129,9 @@ theorem innocentlyExcludable_subset (ALT : Finset (Finset W)) (φ : Finset W) :
     innocentlyExcludable ALT φ ⊆ ALT := Finset.filter_subset _ _
 
 theorem isInnocentlyExcludable_iff (a : Finset W) :
-    IsInnocentlyExcludable (asSetOfSets ALT) ↑φ ↑a ↔ a ∈ innocentlyExcludable ALT φ := by
-  have haALT : (↑a : Set W) ∈ asSetOfSets ALT ↔ a ∈ ALT := by
-    simp only [mem_asSetOfSets, Finset.coe_inj, exists_eq_right]
+    IsInnocentlyExcludable ALT.toSetFamily ↑φ ↑a ↔ a ∈ innocentlyExcludable ALT φ := by
+  have haALT : (↑a : Set W) ∈ ALT.toSetFamily ↔ a ∈ ALT := by
+    simp only [Finset.mem_toSetFamily, Finset.coe_inj, exists_eq_right]
   rw [innocentlyExcludable, Finset.mem_filter]
   refine ⟨fun h ↦ ⟨haALT.1 h.1, fun u hu ↦ ?_⟩, fun ⟨ha, h⟩ ↦ ?_⟩
   · exact (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ h.1).1 h
@@ -171,7 +141,7 @@ theorem isInnocentlyExcludable_iff (a : Finset W) :
 
 /-- Innocent excludability is decidable over finite families. -/
 instance decidableIsInnocentlyExcludable (a : Finset W) :
-    Decidable (IsInnocentlyExcludable (asSetOfSets ALT) (↑φ) (↑a)) :=
+    Decidable (IsInnocentlyExcludable ALT.toSetFamily (↑φ) (↑a)) :=
   decidable_of_iff _ (isInnocentlyExcludable_iff ALT φ a).symm
 
 /-! ### The cell -/
@@ -184,7 +154,7 @@ def cellFinset : Finset W :=
     (∀ r ∈ ALT \ innocentlyExcludable ALT φ, w ∈ r)
 
 theorem mem_cellFinset_iff (w : W) :
-    w ∈ cellFinset ALT φ ↔ cell (asSetOfSets ALT) (↑φ) w := by
+    w ∈ cellFinset ALT φ ↔ cell ALT.toSetFamily (↑φ) w := by
   unfold cellFinset cell nonExcludable
   rw [Finset.mem_filter]
   refine ⟨?_, ?_⟩
@@ -193,14 +163,14 @@ theorem mem_cellFinset_iff (w : W) :
     · -- IE side: ∀ q with IsInnocentlyExcludable, ¬ q w
       intro q hq
       -- q is a Set; need to recover its Finset form
-      have hq_alt : q ∈ asSetOfSets ALT := hq.1
-      rcases mem_asSetOfSets.mp hq_alt with ⟨q_f, hq_f_ALT, rfl⟩
+      have hq_alt : q ∈ ALT.toSetFamily := hq.1
+      rcases Finset.mem_toSetFamily.mp hq_alt with ⟨q_f, hq_f_ALT, rfl⟩
       have : q_f ∈ innocentlyExcludable ALT φ :=
         (isInnocentlyExcludable_iff ALT φ q_f).mp hq
       intro hw_q_f
       exact hexcl q_f this hw_q_f
     · rintro r ⟨hr_alt, hr_not_ie⟩
-      rcases mem_asSetOfSets.mp hr_alt with ⟨r_f, hr_f_ALT, rfl⟩
+      rcases Finset.mem_toSetFamily.mp hr_alt with ⟨r_f, hr_f_ALT, rfl⟩
       have hr_not_ie_finset : r_f ∉ innocentlyExcludable ALT φ := by
         intro h
         exact hr_not_ie ((isInnocentlyExcludable_iff ALT φ r_f).mpr h)
@@ -210,22 +180,22 @@ theorem mem_cellFinset_iff (w : W) :
     refine ⟨Finset.mem_univ _, hφ, ?_, ?_⟩
     · intro a ha hw_a
       have ha_set_ie : IsInnocentlyExcludable
-          (asSetOfSets ALT) (↑φ) (↑a) :=
+          ALT.toSetFamily (↑φ) (↑a) :=
         (isInnocentlyExcludable_iff ALT φ a).mpr ha
       exact hexcl _ ha_set_ie hw_a
     · intro r hr
       rcases Finset.mem_sdiff.mp hr with ⟨hr_ALT, hr_not_ie⟩
-      have hr_set_alt : (↑r : Set W) ∈ asSetOfSets ALT :=
-        mem_asSetOfSets.mpr ⟨r, hr_ALT, rfl⟩
+      have hr_set_alt : (↑r : Set W) ∈ ALT.toSetFamily :=
+        Finset.mem_toSetFamily.mpr ⟨r, hr_ALT, rfl⟩
       have hr_not_ie_set : ¬ IsInnocentlyExcludable
-          (asSetOfSets ALT) (↑φ) (↑r) := by
+          ALT.toSetFamily (↑φ) (↑r) := by
         intro h
         exact hr_not_ie ((isInnocentlyExcludable_iff ALT φ r).mp h)
       exact hne (↑r) ⟨hr_set_alt, hr_not_ie_set⟩
 
 /-- The cell is decidable over finite families. -/
 instance decidableCell (w : W) :
-    Decidable (cell (asSetOfSets ALT) (↑φ) w) :=
+    Decidable (cell ALT.toSetFamily (↑φ) w) :=
   decidable_of_iff _ (mem_cellFinset_iff ALT φ w)
 
 /-! ### The innocent excluder -/
@@ -235,12 +205,12 @@ def innocent {W : Type*} [Fintype W] [DecidableEq W] : Excluder W where
   excluded := innocentlyExcludable
   excluded_subset := innocentlyExcludable_subset
 
-theorem coe_innocent_exh : (↑(innocent.exh ALT φ) : Set W) = exhIE (asSetOfSets ALT) ↑φ := by
+theorem coe_innocent_exh : (↑(innocent.exh ALT φ) : Set W) = exhIE ALT.toSetFamily ↑φ := by
   ext w
   rw [Finset.mem_coe, Excluder.mem_exh_iff, mem_exhIE_iff]
   refine and_congr_right fun _ ↦
     ⟨fun h a ha ↦ ?_, fun h a ha ↦ h ↑a ((isInnocentlyExcludable_iff ALT φ a).2 ha)⟩
-  obtain ⟨b, hb, rfl⟩ := mem_asSetOfSets.1 ha.1
+  obtain ⟨b, hb, rfl⟩ := Finset.mem_toSetFamily.1 ha.1
   exact h b ((isInnocentlyExcludable_iff ALT φ b).1 ha)
 
 theorem innocent_exh_eq_phi_of_innocentlyExcludable_empty
@@ -299,9 +269,9 @@ theorem tolerant_exh_subset_innocent_exh
     intro hsub
     -- Bridge Finset → Set, then apply `not_isInnocentlyExcludable_of_phi_subset`.
     have hSet : IsInnocentlyExcludable
-        (asSetOfSets ALT) (↑φ : Set W) (↑a : Set W) :=
+        ALT.toSetFamily (↑φ : Set W) (↑a : Set W) :=
       (isInnocentlyExcludable_iff ALT φ a).mpr ha_ie
-    have hfin : Set.Finite (asSetOfSets ALT) :=
+    have hfin : Set.Finite ALT.toSetFamily :=
       (Set.toFinite _).image _
     have hsat : ∃ x : W, (↑φ : Set W) x := ⟨w, hw_phi⟩
     have h_subset_set : (↑φ : Set W) ⊆ (↑a : Set W) := fun x hx => hsub hx
@@ -319,13 +289,13 @@ theorem innocent_exh_pairwise_disjoint_partial
     intro α hα
     rw [← isInnocentlyExcludable_iff]
     apply IsInnocentlyExcludable.of_full_exclusion_consistent
-    · exact mem_asSetOfSets.mpr ⟨α, hα, rfl⟩
+    · exact Finset.mem_toSetFamily.mpr ⟨α, hα, rfl⟩
     · obtain ⟨w, hw⟩ := hcompat
       rw [Finset.mem_sdiff] at hw
       obtain ⟨hw_phi, hw_not_sup⟩ := hw
       refine ⟨w, hw_phi, ?_⟩
       intro b hb
-      rcases mem_asSetOfSets.mp hb with ⟨β, hβ_mem, rfl⟩
+      rcases Finset.mem_toSetFamily.mp hb with ⟨β, hβ_mem, rfl⟩
       intro hw_β
       apply hw_not_sup
       rw [Finset.sup_eq_biUnion]
@@ -344,7 +314,7 @@ theorem innocent_exh_eq_self_of_forall_subset {ALT : Finset (Finset W)} {φ : Fi
   · exact Finset.subset_empty.1 (Excluder.exh_subset_phi _ _ _)
   refine innocent_exh_eq_phi_of_innocentlyExcludable_empty
     (Finset.eq_empty_of_forall_notMem fun a ha => ?_)
-  exact not_isInnocentlyExcludable_of_phi_subset (finite_asSetOfSets ALT)
+  exact not_isInnocentlyExcludable_of_phi_subset (Finset.finite_toSetFamily ALT)
     (hne.imp fun _ h => h) (Finset.coe_subset.2 (h a (innocentlyExcludable_subset ALT φ ha)))
     ((isInnocentlyExcludable_iff ALT φ a).2 ha)
 
@@ -371,7 +341,7 @@ theorem innocent_exh_erase_entailed
     show φ \ ((innocentlyExcludable ALT φ).biUnion id)
       = φ \ ((innocentlyExcludable (ALT.erase a) φ).biUnion id)
     rw [h_ie_eq]
-  obtain ⟨u, hu⟩ := exists_minimal_of_finite (asSetOfSets ALT) ↑φ (finite_asSetOfSets ALT)
+  obtain ⟨u, hu⟩ := exists_minimal_of_finite ALT.toSetFamily ↑φ (Finset.finite_toSetFamily ALT)
     hphi_nonempty
   have hu' := (mem_minimalWorlds ALT φ).2 hu
   ext b
