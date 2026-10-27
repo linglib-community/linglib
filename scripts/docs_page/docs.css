@@ -1,0 +1,279 @@
+/* The docs pages: the file's map at left, its docstring and declarations in the middle, where it
+   sits in the library at right; one column on phones. The site's tokens and chrome come from
+   site.css; these are the page's own. */
+:root {
+  --flash: #fff4c2; --study: #16a34a; --theory: #4f6fd0; --frag: #c0801f; --ghost: #8f8f8f;
+  --edge: #d9d9d9; --edge-on: #5c5c5c;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --flash: #3b3522; --study: #22c55e; --theory: #8aa2ee; --frag: #e2a955; --ghost: #85868a;
+    --edge: #3c3d41; --edge-on: #b8b9bb;
+  }
+}
+:root[data-theme="dark"] {
+  --flash: #3b3522; --study: #22c55e; --theory: #8aa2ee; --frag: #e2a955; --ghost: #85868a;
+  --edge: #3c3d41; --edge-on: #b8b9bb;
+}
+.nav { max-width: calc(1340px + var(--gap) * 2); }
+.page { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+code { font-family: var(--mono); font-size: 0.84em; padding: 1px 3px; background: var(--code-bg); border-radius: 3px; }
+
+/* Three columns: the file's map, the page, the connections */
+.shell {
+  max-width: 1340px; margin: 0 auto; padding: 8px 0 56px; display: grid; justify-content: center;
+  grid-template-columns: 216px minmax(0, 720px) 300px; column-gap: 44px;
+  grid-template-areas: "toc head rail" "toc doc rail" "toc decls rail";
+  align-items: start; font-size: 17px; line-height: 1.6;
+}
+.head { grid-area: head; }
+.doc { grid-area: doc; }
+.decls { grid-area: decls; }
+.toc { grid-area: toc; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; padding: 4px 2px 24px 0; scrollbar-width: thin; }
+.rail { grid-area: rail; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; padding: 4px 0 24px; scrollbar-width: thin; }
+
+/* Title block */
+.crumbs { margin: 14px 0 0; font: 13px/1.5 var(--mono); color: var(--secondary); }
+.crumbs a { color: var(--secondary); }
+.crumbs a:hover { color: var(--primary); }
+.head h1 { font-size: 30px; line-height: 1.22; margin: 6px 0 10px; text-wrap: balance; }
+.cite-line { margin: 0; font-size: 15px; color: var(--secondary); }
+.links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 8px 0 0; font-size: 15px; }
+.links a { text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.links a:hover { text-decoration-color: currentColor; }
+
+/* Module docstring */
+.doc { margin-top: 18px; }
+.doc p { margin: 0 0 14px; }
+.doc h2 { font-size: 19px; margin: 28px 0 8px; }
+.doc ul { padding-left: 20px; margin: 0 0 14px; }
+.doc a, .ddoc a { text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.doc a:hover, .ddoc a:hover { text-decoration-color: currentColor; }
+.doc code a, .ddoc code a { text-decoration: none; }
+.doc code a:hover, .ddoc code a:hover { text-decoration: underline; }
+a.cite.done { text-decoration-color: var(--study); text-decoration-thickness: 1.5px; }
+a.cite.open { text-decoration-style: dashed; text-decoration-color: var(--ghost); }
+.cite.self { color: var(--primary); }
+.refs li { margin: 0 0 4px; }
+.refs .rt { color: var(--secondary); }
+.doc .refs a.study { margin-left: 4px; font-size: 13px; color: var(--secondary); text-decoration-color: var(--study); }
+.doc .refs a.study:hover { color: var(--primary); }
+
+/* Declarations */
+.decls h2 { font-size: 21px; margin: 40px 0 6px; scroll-margin-top: 12px; }
+.decl { position: relative; padding: 14px 0 16px 14px; border-top: 1px solid var(--border); scroll-margin-top: 12px; }
+.decl::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 2px; border-radius: 1px; }
+.decl.thm::before { background: var(--study); }
+.decl.sorried::before { background: none; border-left: 2px dashed var(--ghost); }
+.decl.flash { animation: flash 1.6s ease-out; }
+@keyframes flash { from { background: var(--flash); } }
+.dh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font: 14.5px/1.5 var(--mono); }
+.dh .attr, .dh .kw { color: var(--secondary); }
+.dh .nm { font-weight: 650; color: var(--primary); overflow-wrap: anywhere; }
+.decl.def .nm, .decl.inst .nm { font-weight: 500; }
+.dh .src { margin-left: auto; font-size: 12px; color: var(--secondary); font-variant-numeric: tabular-nums; }
+.dh .src:hover { color: var(--primary); }
+.dh .loc { margin-left: auto; font-size: 12px; color: var(--secondary); }
+.dh .loc + .src { margin-left: 10px; }
+.ddoc { margin: 4px 0 8px; font-size: 16px; line-height: 1.55; }
+.ddoc p { margin: 0 0 8px; }
+.sig {
+  margin: 6px 0 0; padding: 8px 11px; background: var(--code-bg); border-radius: 5px;
+  font: 13.5px/1.55 var(--mono); color: var(--content); overflow-wrap: anywhere;
+  text-indent: -4ex; padding-left: calc(11px + 4ex);
+}
+.sig .decl_type { display: block; margin-left: 2ex; }
+.sig.bare .decl_type { display: inline; margin-left: 0; }
+.sig a, .eq a, .ctors a, .fields a { color: var(--primary); }
+.sig a:hover, .eq a:hover, .ctors a:hover, .fields a:hover { text-decoration: underline; }
+/* doc-gen4's term layout: each subterm an inline block, so a long statement breaks at its own structure */
+.fn { display: inline-block; text-indent: -1ex; padding-left: 1ex; white-space: pre-wrap; vertical-align: top; max-width: 100%; border-radius: 3px; transition: background-color .1s; }
+.sig .fn:hover { background: color-mix(in srgb, var(--tertiary) 40%, transparent); }
+.impl_arg { transition: opacity .3s; }
+.sig:not(:hover) .impl_arg { opacity: 0.45; }
+.ctors, .fields { list-style: none; margin: 6px 0 0; padding: 0 0 0 11px; font: 13.5px/1.6 var(--mono); }
+.ctors li::before { content: "| "; color: var(--secondary); }
+.eq { list-style: none; margin: 8px 0 0; padding: 2px 0 2px 11px; border-left: 2px dotted var(--tertiary); font: 13px/1.6 var(--mono); color: var(--content); overflow-wrap: anywhere; }
+.eq li { text-indent: -2ex; padding-left: 2ex; }
+.eq-more { margin: 8px 0 0; font-size: 14px; }
+.eq-more summary { color: var(--secondary); cursor: pointer; }
+.eq-note, .derives { margin: 8px 0 0; font-size: 14px; color: var(--secondary); }
+.eq-note a { color: var(--secondary); text-decoration: underline; text-underline-offset: 2px; }
+.used { margin: 8px 0 0; font-size: 14px; color: var(--secondary); }
+.used a { color: var(--secondary); font-family: var(--mono); font-size: 13px; }
+.used a:hover { color: var(--primary); text-decoration: underline; }
+
+/* The flow: headline theorems as open cards, everything else a row that opens in place */
+.sprose { margin: 0 0 6px; font-size: 16.5px; }
+.sprose p { margin: 0 0 10px; }
+.sprose a { text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.lede { margin: 0 0 6px; font-size: 18px; line-height: 1.42; color: var(--primary); font-weight: 500; text-wrap: pretty; }
+.lede p { margin: 0; }
+.lede code { font-size: 0.76em; font-weight: 400; }
+.lede a { color: inherit; }
+.decl.head { margin: 14px 0; padding: 16px 18px 16px 20px; background: var(--entry); border: 1px solid var(--border); border-radius: 8px; }
+.decl.head + .decl.head { margin-top: 12px; }
+.decl.head::before { left: -1px; top: -1px; bottom: -1px; width: 3px; border-radius: 8px 0 0 8px; }
+.decl.head.sorried::before { border-radius: 0; border-left-width: 3px; }
+.decl.head .dh .nm { font-size: 15px; }
+.decl.head + .row { border-top: 0; }
+.decl.row { padding: 0 0 0 14px; }
+.decl.row::before { top: 10px; bottom: auto; height: 14px; }
+.decl.row.open { padding-bottom: 14px; }
+.decl.row.open::before { bottom: 14px; height: auto; }
+.row .dh { flex-wrap: nowrap; }
+.row .opener {
+  flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: 8px; padding: 7px 0; text-align: left;
+  font: 14px/1.45 var(--mono); color: var(--content);
+}
+.row .opener .nm { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.row.thm .opener .nm { color: var(--primary); }
+.row .opener .loc { margin-left: 2px; }
+.row .opener::after { content: "+"; margin-left: auto; padding-left: 10px; font-size: 13px; color: var(--secondary); }
+.row.open > .dh .opener::after { content: "−"; }
+.row .opener:hover .nm { text-decoration: underline; text-underline-offset: 3px; }
+.row:not(.open) .src { display: none; }
+.row .src { margin-left: 12px; }
+.row .body { padding: 0 0 2px; }
+.bf { margin: 10px 0 0; font-size: 14px; line-height: 1.7; color: var(--secondary); }
+.tg { font: 13px var(--mono); color: var(--primary); text-decoration: underline dotted var(--tertiary); text-underline-offset: 4px; white-space: nowrap; }
+.tg:hover { text-decoration-color: currentColor; }
+.tg::after { content: "+"; display: inline-block; margin-left: 3px; font-size: 12px; color: var(--secondary); }
+.tg[aria-expanded="true"]::after { content: "−"; }
+.tg .loc { margin-left: 5px; font-size: 12px; color: var(--secondary); }
+.bf-area > .decl { margin: 8px 0 2px 2px; padding: 0 0 6px 14px; border-top: 0; border-left: 1px solid var(--tertiary); }
+.bf-area > .decl::before { display: none; }
+.bf-area > .decl .ddoc { font-size: 15px; }
+.bf-area > .decl .sig { font-size: 13px; }
+
+/* The map of the file */
+.toc details > summary { list-style: none; font-size: 13px; font-weight: 600; color: var(--primary); padding: 2px 0 8px; }
+.toc details > summary::-webkit-details-marker { display: none; }
+.filter input {
+  width: 100%; padding: 5px 9px; font-size: 14px; background: var(--entry); color: var(--primary);
+  border: 1px solid var(--tertiary); border-radius: 6px; outline: none;
+}
+.filter input:focus { border-color: var(--secondary); }
+.filter input::placeholder { color: var(--secondary); }
+.toggle { display: flex; gap: 7px; align-items: center; margin: 8px 0 4px; font-size: 13px; color: var(--secondary); cursor: pointer; user-select: none; }
+.toggle input { width: 14px; height: 14px; margin: 0; accent-color: var(--primary); }
+.toc ul { list-style: none; margin: 0; padding: 0; }
+.toc .grp { margin: 12px 0 0; }
+.toc .gh { display: block; font-size: 13px; font-weight: 600; color: var(--primary); line-height: 1.35; margin-bottom: 3px; }
+.toc .grp li a {
+  position: relative; display: block; padding: 1px 0 1px 15px; font: 12.5px/1.45 var(--mono); border-radius: 3px;
+  color: var(--secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.toc .grp li a:hover { color: var(--primary); }
+.toc.relating .grp li a { opacity: 0.35; }
+.toc.relating .grp li a.rel, .toc.relating .grp li a.self, .toc.relating .grp li a.here { opacity: 1; }
+.toc .gh.here { background: var(--code-bg); border-radius: 3px; }
+.toc .grp li a.rel::after { content: "•"; position: absolute; right: 2px; color: var(--secondary); }
+.toc .none { font-size: 13px; color: var(--secondary); margin: 10px 0 0; }
+/* Each section a spine, its theorems dots on it (the headline ones larger), its definitions ticks off it */
+.map .grp ul { position: relative; }
+.map .grp ul::before { content: ""; position: absolute; left: 3px; top: 7px; bottom: 7px; width: 1px; background: var(--tertiary); }
+.map .grp li a::before { content: ""; position: absolute; left: 3px; top: 0.75em; width: 6px; height: 1px; background: var(--tertiary); }
+.map .grp li.thm a, .map .grp li.head a { color: var(--primary); }
+.map .grp li.thm a::before, .map .grp li.head a::before {
+  left: 1px; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: var(--study); box-shadow: 0 0 0 2px var(--theme);
+}
+.map .grp li.head a { font-weight: 650; }
+.map .grp li.head a::before { left: 0; top: 0.45em; width: 7px; height: 7px; }
+.map .grp li a.here { background: var(--code-bg); color: var(--primary); }
+
+/* Connections */
+.rail h2 { font-size: 13px; font-weight: 600; margin: 2px 0 6px; }
+.graph { position: relative; }
+.graph svg { display: block; width: 100%; height: auto; overflow: visible; }
+.graph .e { fill: none; stroke: var(--edge); stroke-width: 1; transition: opacity .15s, stroke .15s; }
+.graph .e.on { stroke: var(--edge-on); stroke-width: 1.2; }
+.graph .e.weak { stroke-dasharray: 2 3; }
+.graph .e.lat { stroke: var(--edge-on); stroke-dasharray: 3 3; opacity: 0; }
+.graph.hovering .e:not(.lit) { opacity: 0.15; }
+.graph.hovering .e.lat:not(.lit) { opacity: 0; }
+.graph .e.lit { stroke: var(--primary); stroke-width: 1.5; opacity: 1; }
+.graph .n { cursor: pointer; transition: opacity .15s; }
+.graph .n .hit { fill: transparent; }
+.graph.hovering .n:not(.near):not(.lit) { opacity: 0.3; }
+.graph .s { fill: var(--study); }
+.graph .t { fill: var(--theory); }
+.graph .f { fill: var(--frag); }
+.graph .g { fill: var(--theme); stroke: var(--ghost); stroke-width: 1.4; stroke-dasharray: 2 1.6; }
+.graph .focus .s { stroke: var(--theme); stroke-width: 2; }
+.graph .ring { fill: none; stroke: var(--primary); stroke-width: 1.3; }
+.graph .tick { font-size: 9.5px; fill: var(--secondary); text-anchor: middle; }
+.graph .axis { stroke: var(--border); stroke-width: 1; }
+.tip {
+  position: absolute; z-index: 5; pointer-events: none; max-width: 240px; padding: 5px 9px;
+  background: var(--entry); color: var(--primary); border: 1px solid var(--tertiary); border-radius: 6px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.1); font-size: 13px; line-height: 1.35; opacity: 0;
+}
+.tip.on { opacity: 1; }
+.tip b { font-weight: 600; display: block; }
+.tip span { color: var(--secondary); font-size: 12px; }
+.rail h3 { font-size: 13px; font-weight: 600; margin: 18px 0 5px; }
+.rail ul { list-style: none; margin: 0; padding: 0; font-size: 14px; line-height: 1.4; }
+.rail li { position: relative; padding: 3px 0 3px 15px; }
+.rail li::before { content: ""; position: absolute; left: 1px; top: 0.72em; width: 7px; height: 7px; background: var(--c, transparent); }
+.rail li.s::before { --c: var(--study); border-radius: 50%; }
+.rail li.t::before { --c: var(--theory); border-radius: 1.5px; }
+.rail li.f::before { --c: var(--frag); width: 6px; height: 6px; transform: rotate(45deg); left: 1.5px; }
+.rail li.g::before { border: 1.3px dashed var(--ghost); border-radius: 50%; width: 8px; height: 8px; }
+.rail li.d::before { --c: var(--tertiary); width: 7px; height: 2px; top: 0.85em; }
+.rail li a.nd { color: var(--primary); }
+.rail li a.nd:hover, .rail li.lit a.nd { text-decoration: underline; text-underline-offset: 3px; }
+.rail .why { color: var(--secondary); font-size: 13px; }
+.rail .names { display: block; font: 12px/1.5 var(--mono); color: var(--secondary); }
+.rail .names a { color: var(--secondary); }
+.rail .names a:hover { color: var(--primary); text-decoration: underline; }
+.rail .quiet { color: var(--secondary); font-size: 13px; margin: 8px 0 0; }
+.rail .quiet a { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 2px; }
+.rail details { margin: 14px 0 0; font-size: 13px; color: var(--secondary); }
+.rail details summary { cursor: pointer; }
+.rail details li { padding-left: 0; font: 12px/1.6 var(--mono); }
+.rail details li::before { display: none; }
+
+/* Previews of in-page declarations */
+.pop {
+  position: fixed; z-index: 10; max-width: min(380px, calc(100vw - 32px)); padding: 8px 11px; pointer-events: none;
+  background: var(--entry); border: 1px solid var(--tertiary); border-radius: 7px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  font-size: 14px; line-height: 1.45; color: var(--content); opacity: 0; transition: opacity .12s;
+}
+.pop.on { opacity: 1; }
+.pop .ph { font: 13px var(--mono); color: var(--secondary); margin-bottom: 3px; }
+.pop .ph b { color: var(--primary); font-weight: 650; }
+.pop .ps { font: 12.5px/1.5 var(--mono); color: var(--secondary); }
+
+@media (max-width: 1239px) {
+  .shell { grid-template-columns: minmax(0, 1fr) 280px; column-gap: 40px; grid-template-areas: "head rail" "doc rail" "toc rail" "decls rail"; }
+  .toc { position: static; max-height: none; overflow: visible; padding: 0; margin-top: 18px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .toc details > summary { cursor: pointer; padding: 10px 0; font-size: 15px; }
+  .toc details > summary::after { content: " +"; color: var(--secondary); font-weight: 400; }
+  .toc details[open] > summary::after { content: " −"; }
+  .toc details[open] { padding-bottom: 14px; }
+  .toc .groups { columns: 2; column-gap: 28px; }
+  .toc .grp { break-inside: avoid; }
+}
+@media (max-width: 899px) {
+  .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "doc" "rail" "toc" "decls"; }
+  .rail { position: static; max-height: none; overflow: visible; padding: 4px 0 8px; margin-top: 8px; border-top: 1px solid var(--border); }
+  .rail h2 { margin-top: 14px; }
+  .graph { max-width: 420px; }
+}
+@media (max-width: 600px) {
+  .shell { font-size: 16px; }
+  .head h1 { font-size: 24px; }
+  .toc .groups { columns: 1; }
+  .decl { padding-left: 11px; }
+  .sig { font-size: 12.5px; padding: 7px 9px 7px calc(9px + 3ex); text-indent: -3ex; }
+  .dh { font-size: 14px; }
+  .ddoc { font-size: 15.5px; }
+  .lede { font-size: 16.5px; }
+  .tg { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .decl.flash { animation: none; }
+  .graph .e, .graph .n, .tip, .pop, .impl_arg, .fn { transition: none; }
+}
