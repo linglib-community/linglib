@@ -302,7 +302,8 @@ theorem linearizes : c.derivation.Linearizes (vPSchedule c.derivation) := by
 
 -- §4.1
 theorem isRemnantStep_derivation (h : c.fronted = true) :
-    c.derivation.IsRemnantStep (c.derivation.length - 1) := by
+    ∀ x ∈ [Terminal.object, .verb],
+      c.derivation.IsRemnantStep (c.derivation.length - 1) x.token := by
   obtain ⟨_ | _, _ | _⟩ := c <;> simp at h <;> decide
 
 end Clause

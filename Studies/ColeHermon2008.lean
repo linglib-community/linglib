@@ -281,11 +281,14 @@ theorem ex81_orders :
 theorem ex85_svoi :
     ex85.svo.surfacePhon = ["si-John", "mang-", "alean", "aha", "tu si-Mary"] := by decide
 
-/-- VoiceP raising is remnant movement (§4.1–§4.2): the raised VoiceP holds the traces of the
-verb, Voice, the pivot and, in (56), the goal. -/
+/-- VoiceP raising is remnant movement (§4.1–§4.2): the raised VoiceP is a remnant of the pivot
+and, in (56), of the goal, which have left it, but not of the verb or Voice, which moved only
+inside it. -/
 theorem vos_remnant :
-    ex49.vos.IsRemnantStep (ex49.svoStage.length + 1) ∧
-      ex56.vos.IsRemnantStep (ex56.svoStage.length + 1) := by
+    ex49.vos.IsRemnantStep (ex49.svoStage.length + 1) ex49.pivot ∧
+      (∀ h ∈ [ex49.verb, ex49.voiceHead],
+        ¬ ex49.vos.IsRemnantStep (ex49.svoStage.length + 1) h) ∧
+      ∀ g ∈ ex56.goal, ex56.vos.IsRemnantStep (ex56.svoStage.length + 1) g := by
   decide
 
 /-! ### Copies -/

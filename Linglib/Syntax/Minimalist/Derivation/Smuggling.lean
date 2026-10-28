@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Locality.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
+public import Linglib.Syntax.Minimalist.Derivation.Remnant
 
 /-!
 # Smuggling
@@ -21,12 +22,17 @@ is the consumer's to supply, as the passive study does when Infl finds the objec
 PartP has carried it past the external argument in Spec-vP. Which heads let a constituent out
 of their complement is a question each account answers for itself, and none is fixed here.
 What a step smuggles is frozen, so a derivation that goes on to move it violates Freezing, which
-smuggling accounts must therefore lift for the smuggling movement.
+smuggling accounts must therefore lift for the smuggling movement. Remnant movement is the
+converse, its mover having lost a phrase instead of carrying it: a step moves no remnant of a
+phrase whose head the smuggled phrase pronounces, though it may smuggle one phrase while it moves
+a remnant of another.
 
 ## Main results
 
 * `Minimalist.Derivation.IsSmugglingStep.not_obeysFreezing_append_im`: moving the smuggled
   phrase on violates Freezing.
+* `Minimalist.Derivation.IsSmugglingStep.not_isRemnantStep`: a step does not move a remnant of
+  what the phrase it smuggles pronounces.
 
 ## References
 
@@ -74,5 +80,13 @@ theorem isSmugglingStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
 theorem IsSmugglingStep.not_obeysFreezing_append_im (h : d.IsSmugglingStep i xp w)
     (side : Edge) : ¬ (d.append [.im xp side]).ObeysFreezing :=
   fun h' ↦ (obeysFreezing_append_im_iff.1 h').2 h.frozen
+
+/-- A step does not move a remnant of what the phrase it smuggles pronounces. -/
+theorem IsSmugglingStep.not_isRemnantStep (h : d.IsSmugglingStep i xp w) {t : LexicalItem.Token}
+    (ht : t ∈ xp.yield) : ¬ d.IsRemnantStep i t := by
+  obtain ⟨m, hm, hc, -⟩ := h
+  rintro ⟨m', hm', -, hn⟩
+  obtain rfl := Option.mem_unique hm hm'
+  exact hn (Multiset.mem_of_le (yield_le_of_mem_terms (mem_terms.2 hc.to_reflTransGen)) ht)
 
 end Minimalist.Derivation

@@ -11,38 +11,41 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 /-!
 # Remnant movement
 
-A constituent moves after part of it has moved out, so what fronts is a remnant carrying the
-trace of what left it: [koopman-1997]'s predicate clefts in Vata and Nweh, where the VP fronts
-after the verb has raised, the Gungbe and Kwa predicate doubling of [aboh-dyakonova-2009], the
-constraints on predicate fronting [van-urk-2024] surveys, Toba Batak's VoiceP raising after the
-goal and the subject have evacuated it ([cole-hermon-2008], `Studies/ColeHermon2008.lean`), and
-Guébie's particle fronting after the verb has left the VP ([sande-clem-dabkowski-2026],
-`Studies/SandeClemDabkowski2026.lean`). On a derivation
-the notion is exact: step `i` fronts a remnant when its mover contains the trace the head of an
-earlier mover left. Whether the evacuee's lower copy is pronounced inside the remnant, the verb
-doubling of predicate clefts, is a matter of chain pronunciation, phonological for
-[landau-2006] and syntactic for [koopman-1997] and [harizanov-gribanova-2017]; the carrier
-pronounces no trace and does not decide it. Remnant movement is the converse of smuggling
-(`Derivation/Smuggling.lean`, [collins-2005]), in which the larger constituent moves with the
-smaller one still inside it.
+A *remnant* is a constituent that something has moved out of, and *remnant movement* moves it
+afterwards, so that what moves carries a trace whose antecedent lies outside it: a VP fronted after
+its object has scrambled away, a predicate cleft fronting the VP after the verb has raised, VoiceP
+raising after its subject has left. A trace remembers the head of the phrase that left it, so step
+`i` of a derivation moves a remnant of the phrase headed by `h` when its mover holds a trace of `h`
+but does not pronounce `h`. A mover that carried the phrase along, as when the phrase moved only to
+the mover's own edge, pronounces `h` and is no remnant of it.
 
 ## Main definitions
 
-* `Minimalist.Derivation.IsRemnantStep`
+* `Minimalist.Derivation.IsRemnantStep`: step `i` of a derivation moves a remnant of the phrase
+  headed by `h`.
 
-## Main results
+## Implementation notes
 
-* `Minimalist.Derivation.IsRemnantStep.append`: a remnant step of a derivation
-  is one of every extension.
+* The evacuee is named by its head token, as chains are in `Copy/Chain.lean`. In a derivation that
+  merges each token once, the antecedent of a trace of `h` lies outside the mover exactly when the
+  mover does not pronounce `h`, whatever was later extracted from the evacuee itself.
+* Whether the lower copy of the evacuee inside the remnant is pronounced, as in the verb doubling
+  of predicate clefts, is a question of chain pronunciation that a derivation, which pronounces no
+  trace, leaves open.
+
+## TODO
+
+* After a remnant step that lands above the evacuee, the trace of `h` has no antecedent in the
+  surface object, an orphan trace of `Copy/Chain.lean`; state and prove this.
 
 ## References
 
+* [hinterholzl-2006]
 * [koopman-1997]
 * [aboh-dyakonova-2009]
 * [van-urk-2024]
 * [landau-2006]
 * [harizanov-gribanova-2017]
-* [collins-2005]
 * [cole-hermon-2008]
 * [sande-clem-dabkowski-2026]
 -/
@@ -53,27 +56,36 @@ namespace Minimalist.Derivation
 
 open SyntacticObject
 
-variable {d : Derivation} {steps : List Step} {i : Nat}
+variable {d : Derivation} {steps : List Step} {i : Nat} {h : LexicalItem.Token}
 
-/-- Step `i` of `d` fronts a remnant: its mover contains the trace left by an earlier mover. -/
-def IsRemnantStep (d : Derivation) (i : Nat) : Prop :=
-  ∃ m ∈ d.mover? i, ∃ x ∈ (d.take i).movedItems, Contains m x.headTrace
+/-- Step `i` of `d` moves a remnant of the phrase headed by `h`: its mover holds a trace of `h` but
+does not pronounce `h`. -/
+def IsRemnantStep (d : Derivation) (i : Nat) (h : LexicalItem.Token) : Prop :=
+  ∃ m ∈ d.mover? i, traceOf h ∈ m.terms ∧ h ∉ m.yield
 
-instance (d : Derivation) (i : Nat) : Decidable (d.IsRemnantStep i) := by
-  unfold IsRemnantStep; infer_instance
+instance (d : Derivation) (i : Nat) (h : LexicalItem.Token) : Decidable (d.IsRemnantStep i h) :=
+  inferInstanceAs (Decidable (∃ m ∈ d.mover? i, _))
 
-/-- A remnant step of a derivation is one of every extension. -/
-theorem IsRemnantStep.append (h : d.IsRemnantStep i) : (d.append steps).IsRemnantStep i := by
-  obtain ⟨m, hm, x, hx, hc⟩ := h
-  have hi := lt_length_of_mem_mover? hm
-  exact ⟨m, by rwa [mover?_append_of_lt hi], x, by rwa [take_append_of_le hi.le], hc⟩
+theorem IsRemnantStep.lt_length (hr : d.IsRemnantStep i h) : i < d.length :=
+  let ⟨_, hm, _⟩ := hr
+  lt_length_of_mem_mover? hm
+
+theorem isRemnantStep_append_of_lt (hi : i < d.length) :
+    (d.append steps).IsRemnantStep i h ↔ d.IsRemnantStep i h := by
+  rw [IsRemnantStep, IsRemnantStep, mover?_append_of_lt hi]
+
+theorem IsRemnantStep.append (hr : d.IsRemnantStep i h) : (d.append steps).IsRemnantStep i h :=
+  (isRemnantStep_append_of_lt hr.lt_length).2 hr
 
 theorem isRemnantStep_map_iff {f : LexicalItem.Token → LexicalItem.Token}
-    (hf : Function.Injective f) (hsel : LexicalItem.Token.PreservesSelection f) :
-    (d.map f).IsRemnantStep i ↔ d.IsRemnantStep i := by
-  have hτ (s : SyntacticObject) : (s.map f).selHead = s.selHead.map f := s.selHead_map hsel
-  cases h : d.mover? i <;>
-    simp [IsRemnantStep, mover?_map, h, movedItems_map, ← SyntacticObject.headTrace_map hτ,
-      contains_map_iff hf]
+    (hf : Function.Injective f) : (d.map f).IsRemnantStep i (f h) ↔ d.IsRemnantStep i h := by
+  have hmem (m x : SyntacticObject) : x.map f ∈ (m.map f).terms ↔ x ∈ m.terms := by
+    rw [terms_map, Multiset.mem_map_of_injective (map_injective hf)]
+  cases hm : d.mover? i with
+  | none => simp [IsRemnantStep, mover?_map, hm]
+  | some m =>
+    simp only [IsRemnantStep, mover?_map, hm, Option.map_some, Option.mem_def, Option.some.injEq,
+      exists_eq_left', mem_yield_iff]
+    rw [← map_traceOf, ← map_leaf, hmem, hmem]
 
 end Minimalist.Derivation
