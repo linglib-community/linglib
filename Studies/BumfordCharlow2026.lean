@@ -43,9 +43,10 @@ supplement effect, whose log is a monoid, is `Composition/Writer.lean`.
 
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
-monad are mathlib's. The grammar's `Ty` has computation types `comp f a`, which
-`Montague.Ty` lacks: that engine runs every node in one effect, where the book's
-grammar tracks a stack of effects per node. As in Appendix B, a writer is applicative exactly
+monad are mathlib's. The grammar's `Ty` has computation types `comp f a` for all four effects.
+`Montague.Ty` has them for the reader only, with the map and unit modes and every derivation of a
+tree (`Montague.Ty.modes`, `PhraseStructure.Tree.translations`), so the grammar here keeps its own
+types for the effects and modes the engine lacks. As in Appendix B, a writer is applicative exactly
 when its datum is `t`, every applicative effect of the grammar is monadic, and the only
 adjunction is `W i ⊣ R i`. Base types are `e` and `t`.
 
@@ -57,7 +58,9 @@ April 2025.
 * Islands (section 5.4): the book filters the results at an island node by a predicate on
   their types; the grammar here has no syntax trees.
 * The denotations of derivations, the book's interpreter of section 5.5: `Combine` is a `Prop`,
-  and the interpreter would be a type-valued version with a denotation for each rule.
+  and the interpreter is `Montague.Mode` with `Montague.Ty.modes`, which has the reader with the
+  map and unit modes so far. Moving this grammar onto it needs the indeterminacy, storing and
+  quantification effects, and structured application, join, co-unit, eject and lowering.
 
 ## References
 

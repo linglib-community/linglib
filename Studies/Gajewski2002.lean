@@ -113,6 +113,7 @@ def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
   | .v => Equiv.refl _
   | .s => Equiv.refl _
   | .fn a b => (permLift π a).arrowCongr (permLift π b)
+  | .comp (.reader ι) b => (permLift π ι).arrowCongr (permLift π b)
 
 @[simp] theorem permLift_et_apply (π : Equiv.Perm E) (P : E → Prop) :
     permLift π Ty.et P = P ∘ ⇑π.symm :=

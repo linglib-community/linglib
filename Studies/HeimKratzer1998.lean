@@ -800,7 +800,9 @@ end LogicalForm
 The interpretation function depends on a world as well as an assignment, predicates vary with
 the world, and an attitude verb is necessity along what its subject believes, knows or hopes,
 taking a proposition of type `⟨s,t⟩`. Intensional Functional Application feeds the verb its
-complement's intension, which `Tree.intension` computes. -/
+complement's intension, which `Tree.intension` computes. Typing the worldly words as computations
+that read a world makes it application mapped over that reader, one derivation among those of the
+report. -/
 
 section Intensional
 
@@ -878,6 +880,51 @@ theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person) :
       ∃ p, Tree.intension lex g maryBelievesDickIsDeceitful = some ⟨.t, p⟩ ∧ ¬ p .actual :=
   ⟨⟨_, rfl, rfl⟩, ⟨_, rfl, rfl, rfl⟩, ⟨_, rfl, fun _ _ ↦ rfl⟩,
     ⟨_, rfl, fun h ↦ nomatch (h .other trivial).1⟩⟩
+
+/-- The fragment with the worldly words typed as computations that read a world
+([bumford-charlow-2026]): *loyal* and *deceitful* read a world for a property, and *believes*
+reads one for a relation between a proposition, itself read off a world, and an individual. -/
+def readerLexicon : String → Option (Σ ty, Ty.Domain E W ty)
+  | "Mary" => some ⟨.e, mary⟩
+  | "Jan" => some ⟨.e, jan⟩
+  | "Dick" => some ⟨.e, dick⟩
+  | "is" => some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, fun P ↦ P⟩
+  | "loyal" => some ⟨.comp (.reader .s) (.e ⇒ .t), fun w x ↦ loyal w x⟩
+  | "deceitful" => some ⟨.comp (.reader .s) (.e ⇒ .t), fun w x ↦ deceitful w x⟩
+  | "believes" => some ⟨.comp (.reader .s) (.comp (.reader .s) .t ⇒ .e ⇒ .t),
+      fun w p x ↦ □[believes x] p w⟩
+  | _ => none
+
+/-- Intensional Functional Application is application mapped over the reader of worlds: of the
+derivations of *Mary believes Jan is loyal* from the reader-typed lexicon, exactly one denotes a
+proposition, and it is the intension that Intensional Functional Application gives (8). -/
+theorem translations_maryBelievesJanIsLoyal (g : Assignment E) :
+    ((Tree.translations individualIndices (readerLexicon loyal deceitful believes mary jan dick)
+      maryBelievesJanIsLoyal).filter (·.1 = .comp (.reader .s) .t)).map
+        (fun d ↦ (⟨d.1, d.2.eval (fun c ↦ c) g⟩ : Denotation E W)) =
+      ((Tree.intension (intensionalLexicon loyal deceitful believes mary jan dick) g
+        maryBelievesJanIsLoyal).map fun d ↦
+          (⟨.comp (.reader .s) d.1, d.2⟩ : Denotation E W)).toList := by
+  rw [intension_maryBelievesJanIsLoyal]
+  simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, readerLexicon, Ty.modes, Ty.mode?,
+    Mode.functionalLeft?, Mode.functionalRight?, Mode.intensionalLeft?, Mode.intensionalRight?,
+    Mode.predicateModification?, Mode.eventIdentification?, Eff.map]
+
+-- p. 300: the other derivations layer the two readers, and read at one world twice each is the
+-- report about the constant intension of the complement's truth value there
+theorem translations_maryBelievesJanIsLoyal_layered (g : Assignment E) :
+    ((Tree.translations individualIndices (readerLexicon loyal deceitful believes mary jan dick)
+      maryBelievesJanIsLoyal).filter (·.1 = .comp (.reader .s) (.comp (.reader .s) .t))).map
+        (fun d ↦ (⟨d.1, d.2.eval (fun c ↦ c) g⟩ : Denotation E W)) =
+      [⟨.comp (.reader .s) (.comp (.reader .s) .t),
+        fun u v ↦ □[believes mary] (fun _ ↦ loyal u jan) v⟩,
+       ⟨.comp (.reader .s) (.comp (.reader .s) .t),
+        fun v u ↦ □[believes mary] (fun _ ↦ loyal u jan) v⟩,
+       ⟨.comp (.reader .s) (.comp (.reader .s) .t),
+        fun v u ↦ □[believes mary] (fun _ ↦ loyal u jan) v⟩] := by
+  simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, readerLexicon, Ty.modes, Ty.mode?,
+    Mode.functionalLeft?, Mode.functionalRight?, Mode.intensionalLeft?, Mode.intensionalRight?,
+    Mode.predicateModification?, Mode.eventIdentification?, Eff.map, Eff.pure]
 
 end Intensional
 

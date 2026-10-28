@@ -201,7 +201,7 @@ theorem interp_raised (g : Assignment E) :
   refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM)) ?_
   simp only [Mode.evalM, Set.pure_def, Set.fmap_eq_image, Set.image_singleton, Term.evalM,
     Term.realize, Interpretation.effectful, Function.update_self, Set.seq_eq_set_seq,
-    Set.singleton_seq, Mode.eval, ← Set.range_comp]
+    Set.singleton_seq, ← Set.range_comp]
   change Q '' Set.univ.pi (fun x ↦ Set.range fun d : Designation ↦ d.threshold ≤ p x) = _
   rw [← Set.range_piMap, ← Set.range_comp]
   rfl

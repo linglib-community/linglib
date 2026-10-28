@@ -282,9 +282,13 @@ theorem readings_neededAndBought_unlifted (g : Assignment E) :
   refine Set.eq_empty_iff_forall_notMem.2 fun d ↦ ?_
   simp only [neededAndBought, Tree.mem_readings_phrase_binary, Tree.readings_terminal, lexicon,
     Set.mem_singleton_iff, Mode.combine?, Option.map_eq_some_iff]
-  rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, rfl, ⟨ρ₁, m₁⟩, -, rfl⟩,
+  rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, rfl, ⟨ρ₁, m₁⟩, hm₁, rfl⟩,
     ⟨ρ₂, m₂⟩, -, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, -, rfl⟩, ⟨ρ₄, m₄⟩, -, rfl⟩
-  cases m₁ <;> cases m₂
+  have b₁ := Ty.isBasic_of_mode?_eq_some hm₁
+  clear hm₁
+  cases m₁
+  all_goals try simp only [Mode.IsBasic] at b₁
+  all_goals cases m₂
 
 -- (23)
 theorem readings_neededAndBought (g : Assignment E) :
@@ -295,9 +299,21 @@ theorem readings_neededAndBought (g : Assignment E) :
     buyReadings, Set.mem_singleton_iff, Set.mem_insert_iff, Mode.combine?,
     Option.map_eq_some_iff]
   constructor
-  · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, hb, ⟨ρ₁, m₁⟩, -, rfl⟩,
-      ⟨ρ₂, m₂⟩, -, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, -, rfl⟩, ⟨ρ₄, m₄⟩, -, rfl⟩
-    rcases hb with rfl | rfl <;> cases m₁ <;> cases m₂ <;> cases m₃; cases m₄
+  · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, hb, ⟨ρ₁, m₁⟩, hm₁, rfl⟩,
+      ⟨ρ₂, m₂⟩, hm₂, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, hm₃, rfl⟩, ⟨ρ₄, m₄⟩, hm₄, rfl⟩
+    have b₁ := Ty.isBasic_of_mode?_eq_some hm₁
+    have b₂ := Ty.isBasic_of_mode?_eq_some hm₂
+    have b₃ := Ty.isBasic_of_mode?_eq_some hm₃
+    have b₄ := Ty.isBasic_of_mode?_eq_some hm₄
+    clear hm₁ hm₂ hm₃ hm₄
+    rcases hb with rfl | rfl <;> cases m₁
+    all_goals try simp only [Mode.IsBasic] at b₁
+    all_goals cases m₂
+    all_goals try simp only [Mode.IsBasic] at b₂
+    all_goals cases m₃
+    all_goals try simp only [Mode.IsBasic] at b₃
+    all_goals cases m₄
+    all_goals try simp only [Mode.IsBasic] at b₄
     simp [Coordinator.reading, Coordinator.denote_of_conjunctive (c := English.Coordination.and_)
       rfl]
   · rintro rfl
@@ -318,9 +334,24 @@ theorem readings_neededButDidntBuy (g : Assignment E) :
     Option.map_eq_some_iff]
   constructor
   · rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ₂, h₂⟩, rfl⟩, _, ⟨_, ⟨⟨τ₁, h₁⟩, rfl⟩, _, hb,
-      ⟨ρ₁, m₁⟩, -, rfl⟩, ⟨ρ₂, m₂⟩, -, rfl⟩, ⟨ρ₃, m₃⟩, -, rfl⟩, _, rfl, ⟨ρ₄, m₄⟩, -, rfl⟩,
-      ⟨ρ₅, m₅⟩, -, rfl⟩
-    rcases hb with rfl | rfl <;> cases m₁ <;> cases m₂ <;> cases m₃ <;> cases m₄; cases m₅
+      ⟨ρ₁, m₁⟩, hm₁, rfl⟩, ⟨ρ₂, m₂⟩, hm₂, rfl⟩, ⟨ρ₃, m₃⟩, hm₃, rfl⟩, _, rfl, ⟨ρ₄, m₄⟩, hm₄, rfl⟩,
+      ⟨ρ₅, m₅⟩, hm₅, rfl⟩
+    have b₁ := Ty.isBasic_of_mode?_eq_some hm₁
+    have b₂ := Ty.isBasic_of_mode?_eq_some hm₂
+    have b₃ := Ty.isBasic_of_mode?_eq_some hm₃
+    have b₄ := Ty.isBasic_of_mode?_eq_some hm₄
+    have b₅ := Ty.isBasic_of_mode?_eq_some hm₅
+    clear hm₁ hm₂ hm₃ hm₄ hm₅
+    rcases hb with rfl | rfl <;> cases m₁
+    all_goals try simp only [Mode.IsBasic] at b₁
+    all_goals cases m₂
+    all_goals try simp only [Mode.IsBasic] at b₂
+    all_goals cases m₃
+    all_goals try simp only [Mode.IsBasic] at b₃
+    all_goals cases m₄
+    all_goals try simp only [Mode.IsBasic] at b₄
+    all_goals cases m₅
+    all_goals try simp only [Mode.IsBasic] at b₅
     simp [Coordinator.reading, Coordinator.denote_of_adversative (c := English.Coordination.but_)
       rfl]
   · rintro rfl

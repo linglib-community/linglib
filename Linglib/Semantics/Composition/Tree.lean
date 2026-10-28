@@ -21,6 +21,7 @@ binder whose index has type $s$.
 
 * `Montague.Lexicon`: a lexicon of effectful denotations, keyed by strings.
 * `PhraseStructure.Tree.translate`: the term a tree translates to.
+* `PhraseStructure.Tree.translations`: every term a tree translates to, one per derivation.
 * `PhraseStructure.Tree.interp`: the denotation of a tree under an assignment of individuals.
 * `PhraseStructure.Tree.interpWith`: the denotation under a typing of the indices.
 * `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its words alone.
@@ -131,6 +132,21 @@ def translate (Γ : ℕ → Ty) (lex : L → Option (Σ ty, K ty)) : Tree C L �
   | .trace n _ => some ⟨Γ n, .var n⟩
   | .bind n _ body => (translate Γ lex body).map fun d ↦ ⟨Γ n ⇒ d.1, .lam n d.2⟩
   | _ => none
+
+/-- Every term a tree translates to, one for each way of composing it ([bumford-charlow-2026]'s
+interpreter): a binary node composes its daughters' terms by every mode their types admit,
+`Ty.modes`, where `translate` takes the basic mode they select. -/
+def translations (Γ : ℕ → Ty) (lex : L → Option (Σ ty, K ty)) :
+    Tree C L → List (Σ ty, Term Γ K ty)
+  | .terminal _ w => ((lex w).map fun c ↦ ⟨c.1, .const c.2⟩).toList
+  | .phrase _ _ (t :: []) => translations Γ lex t
+  | .phrase _ _ (t1 :: t2 :: []) =>
+    (translations Γ lex t1).flatMap fun d1 ↦ (translations Γ lex t2).flatMap fun d2 ↦
+      (d1.1.modes d2.1).map fun p ↦ ⟨p.1, .comp p.2 d1.2 d2.2⟩
+  | .phrase _ _ _ => []
+  | .trace n _ => [⟨Γ n, .var n⟩]
+  | .bind n _ body => (translations Γ lex body).map fun d ↦ ⟨Γ n ⇒ d.1, .lam n d.2⟩
+  | _ => []
 
 variable (lex : L → Option (Σ ty, K ty))
 
