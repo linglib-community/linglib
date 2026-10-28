@@ -6,15 +6,16 @@ public import Linglib.Semantics.Tense.Defs
 # Reichenbach's temporal frame
 
 A Reichenbach frame locates a clause by four times. Reichenbach's three are points: the point of
-speech S, the point of reference R and the point of the event E. Kiparsky adds the perspective
-time P, the origin of temporal deixis, which includes S in the simple case and departs from it in
-flashbacks and historical presents. A frame has two positions, of R relative to P and of E
-relative to R (`ReichenbachFrame.referencePosition`, `ReichenbachFrame.eventPosition`).
-Reichenbach names the first past, present or future and the second anterior, simple or posterior;
-Kiparsky calls the first tense and the second aspect, the perfect placing E before R and the
-prospective after it. A tense cell of `Semantics/Tense/Defs.lean` constrains the first position,
-as in `f.referencePosition ∈ ⟦past⟧`. Kiparsky links E to P only through R, so their comparison
-is one that the composition of the two positions allows. Reichenbach's own frames are those whose
+speech S, the point of reference R and the point of the event E. Kiparsky, following Kamp and
+Reyle, adds the perspective time P, the origin of temporal deixis, which includes S in the simple
+case and departs from it in flashbacks and historical presents. A frame has two positions, of R
+relative to P and of E relative to R (`ReichenbachFrame.referencePosition`,
+`ReichenbachFrame.eventPosition`). Reichenbach names the first past, present or future and the
+second anterior, simple or posterior; Kiparsky calls the first tense and the second aspect, the
+perfect placing E before R and the prospective after it. A tense cell of
+`Semantics/Tense/Defs.lean` constrains the first position, as in `f.referencePosition ∈ ⟦past⟧`.
+Kiparsky adopts Comrie's view that E is linked to P only through R, so their comparison is one
+that the composition of the two positions allows. Reichenbach's own frames are those whose
 perspective is the point of speech (`ReichenbachFrame.root`).
 
 ## Main definitions
@@ -31,10 +32,11 @@ perspective is the point of speech (`ReichenbachFrame.root`).
 
 ## Implementation notes
 
-The times are points of a linear order, as Reichenbach's are. Kiparsky takes them to be intervals
-with points as the degenerate case, so his default inclusions of P and E in R become equalities
-here, and the duration of an event that reaches up to the point of speech is not represented;
-his interval account of the perfect is `Studies/Kiparsky2002.lean`, and interval aspect is
+The times are points of a linear order, as Reichenbach's are outside his extended tenses, which
+give the event a stretch of time. Kiparsky takes them to be intervals with points as the
+degenerate case, so his default inclusions of P and E in R become equalities here, and the
+duration of an event, as of one that reaches up to the point of speech, is not represented; his
+interval account of the perfect is `Studies/Kiparsky2002.lean`, and interval aspect is
 `Semantics/Aspect/Viewpoint.lean`. A frame records times, not morphology: that a sentence's tense
 form yields a frame with a given position is a study's claim.
 
@@ -42,6 +44,8 @@ form yields a frame with a given position is a study's claim.
 
 * [reichenbach-1947]
 * [kiparsky-2002]
+* [kamp-reyle-1993]
+* [comrie-1985]
 -/
 
 @[expose] public section

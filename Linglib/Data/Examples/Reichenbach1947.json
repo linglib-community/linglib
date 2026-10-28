@@ -1,0 +1,513 @@
+[
+  {
+    "id": "reichenbach1947_past_perfect",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I had seen John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Past Perfect"],
+      ["structure", "E—R—S"]
+    ],
+    "comment": "The diagram of the table, written in the dash notation of the table of fundamental forms on p. 297.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_simple_past",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I saw John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Past"],
+      ["structure", "R, E—S"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_present_perfect",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I have seen John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Present Perfect"],
+      ["structure", "E—S, R"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_present",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I see John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Present"],
+      ["structure", "S, R, E"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_simple_future",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I shall see John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Future"],
+      ["structure", "S, R—E"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_future_perfect",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I shall have seen John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Future Perfect"],
+      ["structure", "S—E—R"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_past_perfect_extended",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I had been seeing John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Past Perfect, Extended"],
+      ["structure", "E—R—S"]
+    ],
+    "comment": "The diagram draws E as a stretch of time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_simple_past_extended",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I was seeing John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Past, Extended"],
+      ["structure", "R, E—S"]
+    ],
+    "comment": "The diagram draws E as a stretch of time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_present_perfect_extended",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I have been seeing John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Present Perfect, Extended"],
+      ["structure", "E—S, R"]
+    ],
+    "comment": "The diagram draws E as a stretch of time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_present_extended",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I am seeing John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Present, Extended"],
+      ["structure", "S, R, E"]
+    ],
+    "comment": "The diagram draws E as a stretch of time around S and R.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_simple_future_extended",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I shall be seeing John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Future, Extended"],
+      ["structure", "S, R—E"]
+    ],
+    "comment": "The diagram draws E as a stretch of time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_future_perfect_extended",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 290"},
+    "language": "stan1293",
+    "primaryText": "I shall have been seeing John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Future Perfect, Extended"],
+      ["structure", "S—E—R"]
+    ],
+    "comment": "The diagram draws E as a stretch of time.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_1",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "I had mailed the letter when John came and told me the news.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Past Perfect"],
+      ["form", "Simple Past"],
+      ["form", "Simple Past"],
+      ["link", "when"],
+      ["link", "when"],
+      ["structure", "E—R—S"],
+      ["structure", "R, E—S"],
+      ["structure", "R, E—S"]
+    ],
+    "comment": "The three reference points coincide.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_1_has_come",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 293"},
+    "language": "stan1293",
+    "primaryText": "I had mailed the letter when John has come.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Past Perfect"],
+      ["form", "Present Perfect"],
+      ["link", "when"]
+    ],
+    "comment": "Incorrect, since the reference point would have been changed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_2",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "I have not decided which train I shall take.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Present Perfect"],
+      ["form", "Simple Future"],
+      ["link", "which"],
+      ["structure", "E—S, R"],
+      ["structure", "S, R—E"]
+    ],
+    "comment": "Satisfies the rule of the permanence of the reference point.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_2_did_not_decide",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 293"},
+    "language": "stan1293",
+    "primaryText": "I did not decide which train I shall take.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Past"],
+      ["form", "Simple Future"],
+      ["link", "which"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_3",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "I did not know that you would be here.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Past"],
+      ["form", "Conditional"],
+      ["link", "that"],
+      ["structure", "R, E—S"],
+      ["structure", "R—S, E"]
+    ],
+    "comment": "The form would be derives from the simple future by a back-shift of R and E; it is not modal here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_4",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "(4)"},
+    "language": "stan1293",
+    "primaryText": "How unfortunate! Now that John tells me this I have mailed the letter.",
+    "discourseSegments": [
+      "How unfortunate!",
+      "Now that John tells me this I have mailed the letter."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Present"],
+      ["form", "Present Perfect"],
+      ["link", "now that"],
+      ["adverb", "now"],
+      ["structure", "S, R, E"],
+      ["structure", "E—S, R"]
+    ],
+    "comment": "The time identified with John's telling is the reference point of the second clause, not the mailing.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_4_mailed",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 294"},
+    "language": "stan1293",
+    "primaryText": "Now that John tells me this I mailed the letter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Present"],
+      ["form", "Simple Past"],
+      ["link", "now that"],
+      ["adverb", "now"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_telephoned",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 295"},
+    "language": "stan1293",
+    "primaryText": "He telephoned before he came.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Past"],
+      ["form", "Simple Past"],
+      ["link", "before"]
+    ],
+    "comment": "R1 is said to be before R2, but the tenses have the same structure.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_5",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "He was healthier when I saw him than he is now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Past"],
+      ["form", "Simple Past"],
+      ["form", "Present"],
+      ["link", "when"],
+      ["link", "than"],
+      ["structure", "R, E—S"],
+      ["structure", "R, E—S"],
+      ["structure", "S, R, E"]
+    ],
+    "comment": "The rule of the permanence of the reference point is replaced by that of the positional use of the reference point.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_now_shall_go",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 295"},
+    "language": "stan1293",
+    "primaryText": "Now I shall go.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Future"],
+      ["adverb", "now"],
+      ["structure", "S, R—E"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_shall_go_tomorrow",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 295"},
+    "language": "stan1293",
+    "primaryText": "I shall go tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Future"],
+      ["adverb", "tomorrow"],
+      ["structure", "S—R, E"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_photograph",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 296"},
+    "language": "stan1293",
+    "primaryText": "I shall take your photograph when you come.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Future"],
+      ["form", "Present"],
+      ["link", "when"],
+      ["pointOfSpeech", "neglected"]
+    ],
+    "comment": "The form when you will come would be more correct, but the present is preferred; the future of the first clause means S—R, E.",
+    "verified": "page-image"
+  },
+  {
+    "id": "reichenbach1947_record",
+    "source": {"bibkey": "reichenbach-1947", "paperLabel": "p. 296"},
+    "language": "stan1293",
+    "primaryText": "We shall hear the record when we have dined.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "Simple Future"],
+      ["form", "Present Perfect"],
+      ["link", "when"],
+      ["pointOfSpeech", "neglected"]
+    ],
+    "comment": "A similar anomaly: the present perfect stands for the future perfect when we shall have dined.",
+    "verified": "page-image"
+  }
+]
