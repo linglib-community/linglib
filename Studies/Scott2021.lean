@@ -121,9 +121,7 @@ theorem table2 :
     ∀ c ∈ Agreement.Bundle.personNumberCells,
       (spellout (pronoun (cellPerson c) (cellNumber c))).map Morphology.Morph.suff =
         resumptive.realize c := by
-  intro c hc
-  simp only [Agreement.Bundle.personNumberCells, List.mem_cons, List.mem_nil_iff, or_false] at hc
-  rcases hc with rfl | rfl | rfl | rfl | rfl | rfl <;> decide
+  decide
 
 /-! ### MaxElide (§5.2–5.3) -/
 
