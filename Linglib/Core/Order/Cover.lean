@@ -14,8 +14,7 @@ public import Mathlib.Order.Cover
 
 This file proves a discrete intermediate value property. A list in which each element is weakly
 covered by the next moves up a linear order one step at a time, so it cannot pass over a value.
-The file also decides the covering relations on a finite order, which mathlib does only for
-`Bool`. `[UPSTREAM]`
+`[UPSTREAM]`
 
 ## Main results
 
@@ -26,20 +25,6 @@ The file also decides the covering relations on a finite order, which mathlib do
 @[expose] public section
 
 variable {α : Type*}
-
-section Decidable
-
-variable [Fintype α] [Preorder α] [DecidableLE α] [DecidableLT α]
-
-instance WCovBy.instDecidableRelOfFintype : DecidableRel (α := α) (· ⩿ ·) := fun a b ↦
-  decidable_of_iff (a ≤ b ∧ ∀ c, a < c → ¬c < b)
-    ⟨fun h ↦ ⟨h.1, fun c ↦ h.2 c⟩, fun h ↦ ⟨h.1, fun c ↦ h.2 (c := c)⟩⟩
-
-instance CovBy.instDecidableRelOfFintype : DecidableRel (α := α) (· ⋖ ·) := fun a b ↦
-  decidable_of_iff (a < b ∧ ∀ c, a < c → ¬c < b)
-    ⟨fun h ↦ ⟨h.1, fun c ↦ h.2 c⟩, fun h ↦ ⟨h.1, fun c ↦ h.2 (c := c)⟩⟩
-
-end Decidable
 
 /-- A chain of weak covers that starts at or below `x` and reaches an element at or above `x`
 contains `x`. -/
