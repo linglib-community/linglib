@@ -56,6 +56,8 @@ independent of the state's in `Linglib.Pragmatics.RSA.LexicalUncertainty`.
   listener rules out no state she entertains.
 * `RSA.maximinSpeaker_apply_singleton_eq_zero_iff_speaker`: the MaxiMin speaker produces the
   utterances the expected-utility speaker produces.
+* `RSA.listener_speaker_apply_congr`: two utterances the speaker's listener interprets alike are
+  interpreted alike by the listener of the speaker, whatever their costs.
 * `RSA.speaker_ofDensity_apply_singleton`: against the listener of a graded meaning the prior
   cancels from the speaker's choice, and she weighs an utterance by the geometric mean of its
   meaning over her belief and the inverse of the meaning's prior mass.
@@ -67,6 +69,8 @@ independent of the state's in `Linglib.Pragmatics.RSA.LexicalUncertainty`.
 * [M. C. Frank and N. D. Goodman, *Predicting Pragmatic Reasoning in Language Games*
   (2012)][frank-goodman-2012]
 * [J. Degen, *The Rational Speech Act Framework* (2023)][degen-2023]
+* [L. Bergen, R. Levy and N. D. Goodman, *Pragmatic Reasoning through Semantic Inference*
+  (2016)][bergen-levy-goodman-2016]
 * [M. Franke and L. Bergen, *Theory-Driven Statistical Modeling for Semantics and Pragmatics: A
   Case Study on Grammatically Generated Implicature Readings* (2020)][franke-bergen-2020]
 * [spector-2025]
@@ -148,6 +152,13 @@ instance (u : U) : IsZeroOrProbabilityMeasure (listener μ S u) :=
 
 instance : IsFiniteKernel (listener μ S) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofDensity μ _))
+
+/-- Bayes' rule ignores a constant factor in the likelihood: the listener reads two utterances
+alike when, at every state, the mass of one is a positive multiple of the mass of the other. -/
+theorem listener_apply_eq_of_apply_singleton_eq_mul {μ : Measure W} {S : W → Measure U}
+    {u u' : U} {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ w, S w {u'} = c * S w {u}) :
+    listener μ S u' = listener μ S u :=
+  Kernel.ofDensity_apply_eq_of_eq_mul μ (f := fun _ w ↦ S w {u}) hc0 hc h
 
 variable [MeasurableSingletonClass W]
 
@@ -646,6 +657,31 @@ theorem speaker_real_singleton_lt_one [DecidableEq U] {u u' : U} (hne : u' ≠ u
 end
 
 variable {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W} {o : O} {u : U}
+
+/-- The speaker weighs two utterances that her listener interprets alike by their costs alone:
+the mass of one is the mass of the other times the exponential of the rationality times the
+difference in cost. -/
+theorem speaker_apply_singleton_eq_mul_of_apply_eq [MeasurableSingletonClass U] {u' : U}
+    (h : L u = L u') :
+    speaker α C L b o {u'} =
+      ENNReal.ofReal (Real.exp (α * (C u - C u'))) * speaker α C L b o {u} := by
+  have hC : ENNReal.ofReal (Real.exp (-(α * C u'))) =
+      ENNReal.ofReal (Real.exp (α * (C u - C u'))) * ENNReal.ofReal (Real.exp (-(α * C u))) := by
+    rw [← ENNReal.ofReal_mul (Real.exp_pos _).le, ← Real.exp_add]
+    ring_nf
+  rw [speaker_apply_singleton, speaker_apply_singleton, h, hC]
+  simp only [div_eq_mul_inv]
+  ring
+
+/-- **Synonyms stay synonyms.** Two utterances that the speaker's listener interprets alike are
+interpreted alike by the listener of the speaker, whatever their costs, the rationality, the
+speaker's beliefs and the prior: the speaker weighs them by their costs alone, a constant factor
+that the listener's normalization cancels. Iterated, this is [bergen-levy-goodman-2016]'s
+argument that synonyms are interpreted alike at every level of the recursion. -/
+theorem listener_speaker_apply_congr [MeasurableSingletonClass U] (μ : Measure O) {u' : U}
+    (h : L u = L u') : listener μ (speaker α C L b) u' = listener μ (speaker α C L b) u :=
+  listener_apply_eq_of_apply_singleton_eq_mul (ofReal_exp_ne_zero _) ENNReal.ofReal_ne_top
+    fun _ ↦ speaker_apply_singleton_eq_mul_of_apply_eq h
 
 variable [∀ u, IsFiniteMeasure (L u)]
 
