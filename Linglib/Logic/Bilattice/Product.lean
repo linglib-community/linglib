@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.Bilattice.Involution
+public import Linglib.Logic.Bilattice.Involution
 public import Linglib.Core.Order.InvolutiveCompl
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.SupClosed
@@ -145,7 +145,7 @@ end ProjBounds
 
 The instances on the synonym `Know (L ⊙ R)` are transported from the plain `Prod` order on
 `L × R`, so `⊓ₖ`, `⊔ₖ` and `≤ₖ` are the generic knowledge operations of
-`Core.Order.Bilattice.Defs`. -/
+`Logic/Bilattice/Defs.lean`. -/
 
 instance [Preorder L] [Preorder R] : Preorder (Know (L ⊙ R)) :=
   inferInstanceAs (Preorder (L × R))

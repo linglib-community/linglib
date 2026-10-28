@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Order.Bilattice.Product
 public import Linglib.Core.Order.DeMorganAlgebra.Basic
+public import Mathlib.Order.Disjoint
 public import Mathlib.Order.Hom.BoundedLattice
 
 /-!
@@ -15,25 +15,24 @@ public import Mathlib.Order.Hom.BoundedLattice
 Over a distributive lattice `L` with a least element, the pairs `(a, b)` with `a ⊓ b = ⊥` form a
 distributive lattice `Kalman L` with meet `(a, b) ⊓ (c, d) = (a ⊓ c, b ⊔ d)`, and the swap
 `(a, b)ᶜ = (b, a)` is an involution satisfying Kleene's law; when `L` is bounded, `Kalman L` is a
-Kleene algebra. Reading `a` as evidence for and `b` as evidence against a proposition, these are
-the pairs of the product bilattice `L ⊙ L` whose evidence never overlaps, and `Kalman L` is that
-subtype, with the truth order, truth operations and Ginsberg negation of `L ⊙ L`. A bounded
+Kleene algebra. `Kalman L` is the subtype of `L × Lᵒᵈ` of the disjoint pairs, ordered by the
+first coordinate and against the second, so the meet and join are those of `L × Lᵒᵈ`. A bounded
 lattice homomorphism acts on both coordinates (`Kalman.map`), which is the action on morphisms of
 Cignoli's functor from bounded distributive lattices to Kleene algebras.
 
 ## Main definitions
 
-* `Kalman L`: the pairs of `L ⊙ L` with disjoint coordinates, with its `DistribLattice`,
+* `Kalman L`: the pairs of `L × Lᵒᵈ` with disjoint coordinates, with its `DistribLattice`,
   `BoundedOrder`, `InvolutiveCompl` and `IsKleene` instances.
 * `Kalman.map`: the construction on bounded lattice homomorphisms.
 
 ## Implementation notes
 
-`Kalman L` is a subtype of `L ⊙ L` in the manner of mathlib's `Complementeds`, rather than a
-`Sublattice`, so that its order and involution need only a partial order with a least element. The
-closure of the disjoint pairs under the operations and the Kleene law are lemmas about the product
-(`Bilattice.Product.supClosed_disjoint_pro_con`, `Bilattice.Product.infClosed_disjoint_pro_con`,
-`Bilattice.Product.inf_compl_le_sup_compl_of_disjoint`).
+`Kalman L` is a subtype of `L × Lᵒᵈ` in the manner of mathlib's `Complementeds`, rather than a
+`Sublattice`, so that its order and involution need only a partial order with a least element.
+Reading the first coordinate as evidence for and the second as evidence against a proposition,
+`L × Lᵒᵈ` is the carrier of the product bilattice `L ⊙ L` of `Logic/Bilattice/Product.lean` with
+its truth order, and the swap is Ginsberg's negation.
 
 ## TODO
 
@@ -51,12 +50,12 @@ closure of the disjoint pairs under the operations and the Kleene law are lemmas
 
 @[expose] public section
 
-open Bilattice
+open OrderDual
 
-/-- Kalman's construction is the type of pairs of the product bilattice `L ⊙ L` with disjoint
-coordinates, written `P(O)` in [kalman-1958] §3. -/
+/-- Kalman's construction is the type of pairs `(a, b)` of a lattice with disjoint coordinates,
+ordered by `a` and against `b`, written `P(O)` in [kalman-1958] §3. -/
 abbrev Kalman (L : Type*) [PartialOrder L] [OrderBot L] : Type _ :=
-  {x : L ⊙ L // Disjoint x.pro x.con}
+  {x : L × Lᵒᵈ // Disjoint x.1 (ofDual x.2)}
 
 namespace Kalman
 
@@ -67,29 +66,30 @@ section PartialOrder
 variable {L : Type*} [PartialOrder L] [OrderBot L]
 
 /-- The Kalman pair `(a, b)`. -/
-def mk (a b : L) (h : Disjoint a b) : Kalman L := ⟨.mk a b, h⟩
+def mk (a b : L) (h : Disjoint a b) : Kalman L := ⟨(a, toDual b), h⟩
 
 /-- The first coordinate, the evidence for. -/
-def pro (x : Kalman L) : L := x.1.pro
+def pro (x : Kalman L) : L := x.1.1
 
 /-- The second coordinate, the evidence against. -/
-def con (x : Kalman L) : L := x.1.con
+def con (x : Kalman L) : L := ofDual x.1.2
 
 theorem disjoint_pro_con (x : Kalman L) : Disjoint x.pro x.con := x.2
 
-@[simp] theorem pro_coe (x : Kalman L) : (x : L ⊙ L).pro = x.pro := rfl
-@[simp] theorem con_coe (x : Kalman L) : (x : L ⊙ L).con = x.con := rfl
+@[simp] theorem fst_coe (x : Kalman L) : (x : L × Lᵒᵈ).1 = x.pro := rfl
+@[simp] theorem snd_coe (x : Kalman L) : (x : L × Lᵒᵈ).2 = toDual x.con := rfl
 
 @[simp] theorem pro_mk (a b : L) (h : Disjoint a b) : (mk a b h).pro = a := rfl
 @[simp] theorem con_mk (a b : L) (h : Disjoint a b) : (mk a b h).con = b := rfl
 
-@[simp] theorem coe_mk (a b : L) (h : Disjoint a b) : ((mk a b h : Kalman L) : L ⊙ L) = .mk a b :=
+@[simp] theorem coe_mk (a b : L) (h : Disjoint a b) :
+    ((mk a b h : Kalman L) : L × Lᵒᵈ) = (a, toDual b) :=
   rfl
 
 @[simp] theorem mk_pro_con (x : Kalman L) : mk x.pro x.con x.disjoint_pro_con = x := rfl
 
 @[ext] theorem ext {x y : Kalman L} (h₁ : x.pro = y.pro) (h₂ : x.con = y.con) : x = y :=
-  Subtype.ext (Product.ext h₁ h₂)
+  Subtype.ext (Prod.ext h₁ (congrArg toDual h₂))
 
 theorem le_def {x y : Kalman L} : x ≤ y ↔ x.pro ≤ y.pro ∧ y.con ≤ x.con := .rfl
 
@@ -99,14 +99,11 @@ theorem le_def {x y : Kalman L} : x ≤ y ↔ x.pro ≤ y.pro ∧ y.con ≤ x.co
 /-- The pair with no evidence either way, the fixed point of the involution. -/
 instance : Inhabited (Kalman L) := ⟨mk ⊥ ⊥ disjoint_bot_left⟩
 
-/-- Ginsberg's negation, swapping the coordinates, restricts to the disjoint pairs. -/
+/-- Swapping the coordinates is an involution reversing the order. -/
 instance : InvolutiveCompl (Kalman L) where
-  compl x := ⟨(x : L ⊙ L)ᶜ, x.2.symm⟩
+  compl x := mk x.con x.pro x.2.symm
   compl_compl _ := rfl
-  compl_le_compl := Product.compl_le_compl
-
-@[simp, norm_cast] theorem coe_compl (x : Kalman L) : ((xᶜ : Kalman L) : L ⊙ L) = (x : L ⊙ L)ᶜ :=
-  rfl
+  compl_le_compl h := ⟨h.2, h.1⟩
 
 @[simp] protected theorem compl_compl (x : Kalman L) : xᶜᶜ = x := rfl
 
@@ -122,8 +119,8 @@ variable {L : Type*} [PartialOrder L] [BoundedOrder L]
 
 instance : BoundedOrder (Kalman L) := Subtype.boundedOrder disjoint_bot_left disjoint_bot_right
 
-@[simp, norm_cast] theorem coe_top : ((⊤ : Kalman L) : L ⊙ L) = ⊤ := rfl
-@[simp, norm_cast] theorem coe_bot : ((⊥ : Kalman L) : L ⊙ L) = ⊥ := rfl
+@[simp, norm_cast] theorem coe_top : ((⊤ : Kalman L) : L × Lᵒᵈ) = ⊤ := rfl
+@[simp, norm_cast] theorem coe_bot : ((⊥ : Kalman L) : L × Lᵒᵈ) = ⊥ := rfl
 
 @[simp] theorem pro_top : (⊤ : Kalman L).pro = ⊤ := rfl
 @[simp] theorem con_top : (⊤ : Kalman L).con = ⊥ := rfl
@@ -139,11 +136,11 @@ section DistribLattice
 variable {L : Type*} [DistribLattice L] [OrderBot L]
 
 instance : DistribLattice (Kalman L) :=
-  Subtype.distribLattice (fun _ _ hx hy ↦ Product.supClosed_disjoint_pro_con hx hy)
-    fun _ _ hx hy ↦ Product.infClosed_disjoint_pro_con hx hy
+  Subtype.distribLattice (fun _ _ hx hy ↦ (hx.inf_right _).sup_left (hy.inf_right' _))
+    fun _ _ hx hy ↦ (hx.inf_left _).sup_right (hy.inf_left' _)
 
-@[simp, norm_cast] theorem coe_sup (x y : Kalman L) : ↑(x ⊔ y) = (x : L ⊙ L) ⊔ y := rfl
-@[simp, norm_cast] theorem coe_inf (x y : Kalman L) : ↑(x ⊓ y) = (x : L ⊙ L) ⊓ y := rfl
+@[simp, norm_cast] theorem coe_sup (x y : Kalman L) : ↑(x ⊔ y) = (x : L × Lᵒᵈ) ⊔ y := rfl
+@[simp, norm_cast] theorem coe_inf (x y : Kalman L) : ↑(x ⊓ y) = (x : L × Lᵒᵈ) ⊓ y := rfl
 
 @[simp] theorem pro_sup (x y : Kalman L) : (x ⊔ y).pro = x.pro ⊔ y.pro := rfl
 @[simp] theorem con_sup (x y : Kalman L) : (x ⊔ y).con = x.con ⊓ y.con := rfl
@@ -163,7 +160,7 @@ instance : DistribLattice (Kalman L) :=
 /-- The disjoint pairs satisfy the Kleene law, so they form a normal i-lattice in the sense of
 [kalman-1958] §3. -/
 instance : IsKleene (Kalman L) :=
-  ⟨fun x y ↦ Product.inf_compl_le_sup_compl_of_disjoint x.2 y.2⟩
+  ⟨fun x y ↦ ⟨x.2.le_bot.trans bot_le, y.2.symm.le_bot.trans bot_le⟩⟩
 
 end DistribLattice
 
