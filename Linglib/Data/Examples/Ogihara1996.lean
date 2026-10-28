@@ -25,8 +25,8 @@ def ex2a : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("simultaneous (Hanako sick at saying time)", .acceptable), ("shifted (Hanako sick before saying)", .ungrammatical)]
-    paperFeatures := [] }
+    readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
+    paperFeatures := [("tense", "ta"), ("tense", "ru")] }
 
 def ex2b : Datum :=
   { id := "ogihara1996_ex2b"
@@ -38,8 +38,8 @@ def ex2b : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("shifted (Hanako sick before saying)", .acceptable), ("simultaneous (Hanako sick at saying time)", .ungrammatical)]
-    paperFeatures := [] }
+    readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
+    paperFeatures := [("tense", "ta"), ("tense", "ta")] }
 
 def ex19d : Datum :=
   { id := "ogihara1996_ex19d"
@@ -51,9 +51,48 @@ def ex19d : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("Mary's reading at yesterday (definite past)", .acceptable)]
-    paperFeatures := [] }
+    readings := [("shifted", .acceptable)]
+    paperFeatures := [("tense", "ed"), ("tense", "ed"), ("tense", "perfect")] }
 
-def all : List Datum := [ex2a, ex2b, ex19d]
+def ex10a : Datum :=
+  { id := "ogihara1996_ex10a"
+    source := ⟨"ogihara-1996", "ch. 1, (10a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "John said that Mary was in Seattle."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("simultaneous", .acceptable), ("shifted", .acceptable)]
+    paperFeatures := [("tense", "ed"), ("tense", "ed")] }
+
+def ex10b : Datum :=
+  { id := "ogihara1996_ex10b"
+    source := ⟨"ogihara-1996", "ch. 1, (10b)"⟩
+    reportedIn := none
+    language := "nucl1643"
+    primaryText := "Taroo-wa Hanako-ga Siatoru-ni i-ru to it-ta."
+    glossedTokens := [("Taroo-wa", "Taro-TOP"), ("Hanako-ga", "Hanako-NOM"), ("Siatoru-ni", "Seattle-in"), ("i-ru", "be-PRES"), ("to", "that"), ("it-ta", "say-PAST")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
+    paperFeatures := [("tense", "ta"), ("tense", "ru")] }
+
+def ex4_9a : Datum :=
+  { id := "ogihara1996_ex4_9a"
+    source := ⟨"ogihara-1996", "ch. 4, (9a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "John said that Mary will claim that she was sick."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
+    paperFeatures := [("tense", "woll"), ("tense", "ed")] }
+
+def all : List Datum := [ex2a, ex2b, ex19d, ex10a, ex10b, ex4_9a]
 
 end Ogihara1996.Examples

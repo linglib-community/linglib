@@ -14,10 +14,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "simultaneous (Hanako sick at saying time)", "judgment": "acceptable"},
-      {"name": "shifted (Hanako sick before saying)", "judgment": "ungrammatical"}
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "shifted", "judgment": "unacceptable"}
     ],
-    "comment": "Chapter 3, §3.2, p. 69. (2a) has a past tense in the matrix clause and a present tense in the embedded clause and only conveys a simultaneous interpretation.",
+    "paperFeatures": [
+      ["tense", "ta"],
+      ["tense", "ru"]
+    ],
+    "comment": "Hanako's being sick at the time of Taro's saying (simultaneous) or before it (shifted). (2a) has a past tense in the matrix clause and a present tense in the embedded clause and only conveys a simultaneous interpretation.",
     "verified": "page-image"
   },
   {
@@ -35,10 +39,14 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "shifted (Hanako sick before saying)", "judgment": "acceptable"},
-      {"name": "simultaneous (Hanako sick at saying time)", "judgment": "ungrammatical"}
+      {"name": "simultaneous", "judgment": "unacceptable"},
+      {"name": "shifted", "judgment": "acceptable"}
     ],
-    "comment": "Chapter 3, §3.2, p. 69. (2b) has a past tense in both clauses and means unambiguously that Hanako's being sick is prior to Taro's saying; it cannot receive a simultaneous interpretation.",
+    "paperFeatures": [
+      ["tense", "ta"],
+      ["tense", "ta"]
+    ],
+    "comment": "(2b) has a past tense in both clauses and means unambiguously that Hanako's being sick is prior to Taro's saying; it cannot receive a simultaneous interpretation.",
     "verified": "page-image"
   },
   {
@@ -53,9 +61,83 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "Mary's reading at yesterday (definite past)", "judgment": "acceptable"}
+      {"name": "shifted", "judgment": "acceptable"}
     ],
-    "comment": "Chapter 1, §1.3, p. 11; cited from Stump (1985: 223, 230) and labelled [the past perfect]. One of the forms of the perfect that occur with adverbials denoting definite past intervals, in the argument that the perfect can receive the interpretation of the simple past.",
+    "paperFeatures": [
+      ["tense", "ed"],
+      ["tense", "ed"],
+      ["tense", "perfect"]
+    ],
+    "comment": "Cited from Stump (1985: 223, 230) and labelled [the past perfect]: the adverb yesterday locates Mary's reading, before the saying, in the argument that the perfect can receive the interpretation of the simple past.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1996_ex10a",
+    "source": {"bibkey": "ogihara-1996", "paperLabel": "ch. 1, (10a)"},
+    "language": "stan1293",
+    "primaryText": "John said that Mary was in Seattle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["tense", "ed"],
+      ["tense", "ed"]
+    ],
+    "comment": "The simultaneous interpretation is the default; the shifted one is forced by an adverbial like a week earlier.",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1996_ex10b",
+    "source": {"bibkey": "ogihara-1996", "paperLabel": "ch. 1, (10b)"},
+    "language": "nucl1643",
+    "primaryText": "Taroo-wa Hanako-ga Siatoru-ni i-ru to it-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taroo-wa", "Taro-TOP"], ["Hanako-ga", "Hanako-NOM"], ["Siatoru-ni", "Seattle-in"],
+      ["i-ru", "be-PRES"], ["to", "that"], ["it-ta", "say-PAST"]
+    ],
+    "translation": "Taro said that Hanako was in Seattle [at that time].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "shifted", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["tense", "ta"],
+      ["tense", "ru"]
+    ],
+    "comment": "Printed with the embedded clause bracketed and marked [simultaneous reading only].",
+    "verified": "page-image"
+  },
+  {
+    "id": "ogihara1996_ex4_9a",
+    "source": {"bibkey": "ogihara-1996", "paperLabel": "ch. 4, (9a)"},
+    "language": "stan1293",
+    "primaryText": "John said that Mary will claim that she was sick.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "unacceptable"},
+      {"name": "shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["tense", "woll"],
+      ["tense", "ed"]
+    ],
+    "comment": "Readings of Mary's being sick relative to her claim: a simultaneous reading would follow if the SOT rule could delete the lowest past under the matrix past, which is the wrong prediction.",
     "verified": "page-image"
   }
 ]
