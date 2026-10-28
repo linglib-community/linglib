@@ -22,7 +22,7 @@ generate are read off the tree, and the Head Feature Principle holds along every
   `PhraseStructure.Tree.ProjectsAt`, `PhraseStructure.Tree.AdjoinsAt`: the head relation and its
   split into projection and adjunction.
 * `PhraseStructure.Tree.maximalProjectionsAt`, `PhraseStructure.Tree.maxCommand`.
-* `PhraseStructure.Tree.isHead`, `PhraseStructure.Tree.IsHeadAt`: head-level nodes, a terminal or an
+* `PhraseStructure.Tree.IsHead`, `PhraseStructure.Tree.IsHeadAt`: head-level nodes, a terminal or an
   adjunction of heads.
 
 ## Main results
@@ -136,52 +136,37 @@ section HeadLevel
 
 variable {C W : Type*}
 
-mutual
+/-- Within a head-level node a terminal has no daughters, and every other node is the mother of an
+adjunction. -/
+def Label.LicensesHead : Label C W → List (Label C W) → Prop
+  | .terminal _ _, ks => ks = []
+  | .phrase _ .adjunction, _ => True
+  | _, _ => False
+
+instance : ∀ (l : Label C W) (ks : List (Label C W)), Decidable (Label.LicensesHead l ks)
+  | .terminal _ _, ks => inferInstanceAs (Decidable (ks = []))
+  | .phrase _ .adjunction, _ => inferInstanceAs (Decidable True)
+  | .phrase _ .projection, _ | .trace _ _, _ | .bind _ _, _ => inferInstanceAs (Decidable False)
+
 /-- A head-level node, an X⁰, is a terminal or an adjunction of heads. -/
-def isHead : Tree C W → Bool
-  | RoseTree.node (.terminal _ _) [] => true
-  | RoseTree.node (.phrase _ .adjunction) ts => allHeads ts
-  | _ => false
+def IsHead (t : Tree C W) : Prop := t.Licensed Label.LicensesHead
 
-/-- Every tree of a list is head-level. -/
-def allHeads : List (Tree C W) → Bool
-  | [] => true
-  | t :: ts => isHead t && allHeads ts
-end
+instance (t : Tree C W) : Decidable t.IsHead := inferInstanceAs (Decidable (t.Licensed _))
 
-theorem allHeads_iff : ∀ l : List (Tree C W), allHeads l = true ↔ ∀ x ∈ l, isHead x = true
-  | [] => by simp [allHeads]
-  | t :: ts => by simp [allHeads, allHeads_iff ts]
+/-- A projection is not head-level. -/
+@[simp] theorem not_isHead_node (c : C) (cs : List (Tree C W)) : ¬ (node c cs).IsHead :=
+  fun h ↦ h.rel_root
 
-theorem isHead_of_isHead_replaceAt : ∀ (s : Tree C W) (q : List ℕ) (t : Tree C W),
-    (s.subtreeAt q).isSome → isHead (s.replaceAt q t) = true → isHead t = true
-  | _, [], t, _, h => by simpa using h
-  | RoseTree.node l cs, i :: q, t, hv, h => by
-    rw [RoseTree.replaceAt_cons] at h
-    simp only [RoseTree.subtreeAt_cons, RoseTree.children_node, Option.isSome_bind] at hv
-    obtain ⟨c, hc⟩ : ∃ c, cs[i]? = some c := Option.isSome_iff_exists.mp
-      (by cases h' : cs[i]? <;> simp_all)
-    have hcv : (c.subtreeAt q).isSome := by simpa [hc] using hv
-    have hmem : c.replaceAt q t ∈ cs.modify i (·.replaceAt q t) := by
-      rw [List.mem_iff_getElem?]; exact ⟨i, by simp [hc]⟩
-    cases l with
-    | terminal a b =>
-      obtain ⟨d, ds, hds⟩ := List.exists_cons_of_ne_nil (List.ne_nil_of_mem hmem)
-      rw [hds] at h
-      simp [isHead] at h
-    | phrase a k =>
-      cases k with
-      | projection => simp [isHead] at h
-      | adjunction =>
-        simp only [isHead] at h
-        exact isHead_of_isHead_replaceAt c q t hcv ((allHeads_iff _).mp h _ hmem)
-    | _ => simp [isHead] at h
+/-- A tree put in place of a subtree of a head-level node is head-level. -/
+theorem IsHead.of_replaceAt {s t : Tree C W} {q : List ℕ} (hq : (s.subtreeAt q).isSome)
+    (h : Tree.IsHead (s.replaceAt q t)) : t.IsHead :=
+  RoseTree.Licensed.of_subtreeAt h (by simpa using RoseTree.subtreeAt_replaceAt_append hq [])
 
 /-- The node at position `p` of `t` is head-level. -/
-def IsHeadAt (t : Tree C W) (p : TreePath) : Prop := (t.subtreeAt p.toList).all isHead = true
+def IsHeadAt (t : Tree C W) (p : TreePath) : Prop := ∀ s ∈ t.subtreeAt p.toList, Tree.IsHead s
 
 instance (t : Tree C W) (p : TreePath) : Decidable (IsHeadAt t p) :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (∀ s ∈ _, _))
 
 end HeadLevel
 
