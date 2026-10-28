@@ -111,7 +111,7 @@ def minimalWorlds : Finset W :=
   φ.filter fun u ↦ ∀ v ∈ φ, (∀ a ∈ ALT, v ∈ a → u ∈ a) → ∀ a ∈ ALT, u ∈ a → v ∈ a
 
 theorem mem_minimalWorlds {u : W} :
-    u ∈ minimalWorlds ALT φ ↔ IsMinimal ALT.toSetFamily ↑φ u := by
+    u ∈ minimalWorlds ALT φ ↔ u ∈ exhMW ALT.toSetFamily ↑φ := by
   rw [minimalWorlds, Finset.mem_filter]
   change _ ↔ (u ∈ (↑φ : Set W) ∧ ¬ ∃ v, v ∈ (↑φ : Set W) ∧ (v <[ALT.toSetFamily] u))
   have hle : ∀ x y : W, (x ≤[ALT.toSetFamily] y) ↔ ∀ a ∈ ALT, x ∈ a → y ∈ a := fun x y ↦
@@ -353,23 +353,22 @@ theorem innocent_exh_erase_entailed
 
 /-! ### Filtering alternatives can strengthen -/
 
-
 private def cAlt : Finset (Finset Bool) := {{true}, {false}}
 private def cPhi : Finset Bool := Finset.univ
 private def cPsi : Finset Bool := {false}
-private def cPred : Finset Bool → Bool := fun a => decide (a = ({true} : Finset Bool))
+private def cKeep : Finset (Finset Bool) := {{true}}
 
 private theorem innocent_exh_at_symmetric_pair :
     innocent.exh cAlt cPhi = cPhi := by decide
 
 private theorem preFilter_innocent_exh_at_symmetric_pair :
-    (innocent.preFilter cPred).exh cAlt cPhi = cPsi := by decide
+    (innocent.preFilter cKeep).exh cAlt cPhi = cPsi := by decide
 
 theorem preFilter_can_create_implicature :
     ∃ (E : Excluder Bool) (ALT : Finset (Finset Bool)) (φ ψ : Finset Bool)
-      (P : Finset Bool → Bool),
-      ¬ E.exh ALT φ ⊆ ψ ∧ (E.preFilter P).exh ALT φ ⊆ ψ := by
-  refine ⟨innocent, cAlt, cPhi, cPsi, cPred, ?_, ?_⟩
+      (K : Finset (Finset Bool)),
+      ¬ E.exh ALT φ ⊆ ψ ∧ (E.preFilter K).exh ALT φ ⊆ ψ := by
+  refine ⟨innocent, cAlt, cPhi, cPsi, cKeep, ?_, ?_⟩
   · rw [innocent_exh_at_symmetric_pair]; decide
   · rw [preFilter_innocent_exh_at_symmetric_pair]
 

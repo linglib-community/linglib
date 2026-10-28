@@ -1,0 +1,85 @@
+[
+  {
+    "id": "crnic2026b_1",
+    "source": {
+      "bibkey": "crnic-2026b",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only Gal was at the party.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "positive inference",
+        "Gal was at the party"
+      ],
+      [
+        "exhaustive inference",
+        "No one distinct from Gal was at the party"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "crnic2026b_25",
+    "source": {
+      "bibkey": "crnic-2026b",
+      "paperLabel": "(25)"
+    },
+    "language": "stan1293",
+    "primaryText": "Gal isn't only a grad student.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "positive inference",
+        "Gal is at least a grad student"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "crnic2026b_48",
+    "source": {
+      "bibkey": "crnic-2026b",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not only Gal was at the party.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "positive presupposition",
+        "Gal was at the party"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "crnic2026b_107",
+    "source": {
+      "bibkey": "crnic-2026b",
+      "paperLabel": "(107)"
+    },
+    "language": "stan1293",
+    "primaryText": "Someone but Gal was at the party.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  }
+]
