@@ -4,6 +4,7 @@ public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Fragments.German.PolarityItems
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.KratzerShimoyama2002
@@ -27,14 +28,14 @@ under *kann* and *muss* and cancelled under negated possibility. The paper close
 selectivity of Indo-European indeterminates, *irgendein* associating only with existential
 closure, and the Beck effects, in which an intervening operator blocks the in situ wh-phrase.
 
-The paper's sentences with *irgendein* are acceptable exactly in the environments the fragment
-entry `German.PolarityItems.irgendein` lists (`rows_irgendein`). Under a negative operator
-selectivity decides: *niemand* and *auf keinen Fall* close their scope with [∃] and admit the
-item, while the inflectional negation *nicht* carries [Neg] and does not
-(`rows_irgendein_selective`). Strength does not decide it, since the licensing table licenses the
-item under the downward-entailing *nicht* (`negation_licenses_irgendein`). Haspelmath's map
-agrees: the environments the entry lists realize functions of his *irgend-* series, and
-inflectional negation realizes direct negation, which the series lacks (`irgendein_haspelmath`).
+The library's licensing theory admits *irgendein* in every environment where the paper finds it
+acceptable (`rows_admits`). Under a negative operator selectivity decides: *niemand* and *auf
+keinen Fall* close their scope with [∃] and admit the item, while the inflectional negation
+*nicht* carries [Neg] and does not (`rows_irgendein_selective`). Strength does not decide it,
+since the licensing theory also licenses the item under the downward-entailing *nicht*
+(`negation_licenses_irgendein`). Haspelmath's map agrees: the environments of the acceptable
+sentences realize functions of his *irgend-* series, and inflectional negation realizes direct
+negation, which the series lacks (`irgendein_haspelmath`).
 
 ## Implementation notes
 
@@ -302,11 +303,11 @@ def contextOf? (r : Datum) : Option LicensingContext :=
     [("question", .question), ("doubtVerb", .doubtVerb), ("modalPossibility", .modalPossibility),
       ("modalNecessity", .modalNecessity), ("nobody", .nobody), ("negation", .negation)]
 
-/-- A sentence with *irgendein* is acceptable exactly in the environments the fragment entry
-lists, (12), (13), (16)–(18), (21) and (22). -/
-theorem rows_irgendein :
-    ∀ r ∈ Examples.all, ∀ c ∈ contextOf? r,
-      (r.judgment = .acceptable ↔ c ∈ German.PolarityItems.irgendein.licensingContexts) := by
+/-- The library's licensing theory admits *irgendein* exactly where the paper finds it acceptable,
+(12), (13), (16)–(18) and (22), inflectional negation (21) aside. -/
+theorem rows_admits :
+    ∀ r ∈ Examples.all, ∀ c ∈ contextOf? r, c ≠ .negation →
+      (r.judgment = .acceptable ↔ c.licenser.Admits German.PolarityItems.irgendein) := by
   decide
 
 /-- Under a negative operator, *irgendein* is acceptable exactly when that operator closes its scope
@@ -325,8 +326,8 @@ theorem negation_licenses_irgendein :
 
 theorem irgendein_haspelmath :
     ∀ s ∈ Haspelmath1997.german, s.toSeries = German.Indefinites.irgendSeries →
-      (∀ c ∈ German.PolarityItems.irgendein.licensingContexts, ∀ f ∈ c.haspelmath,
-        f ∈ s.functions) ∧
+      (∀ r ∈ Examples.all, ∀ c ∈ contextOf? r, r.judgment = .acceptable →
+        ∀ f ∈ c.haspelmath, f ∈ s.functions) ∧
         ∀ f ∈ LicensingContext.negation.haspelmath, f ∉ s.functions := by
   decide
 
