@@ -11,8 +11,8 @@ public import Linglib.Semantics.Exhaustification.InnocentInclusion
 # Domain alternatives of a modalized existential
 
 This file defines the modal profile of an existential claim `∃ x ∈ D, Q x` evaluated under
-a Kripke accessibility relation, and the subdomain alternatives whose exhaustification
-strengthens it. `FreeChoice` holds when every member of the domain is a witness in some
+an accessibility relation from an index, a world or an event, to worlds, and the subdomain
+alternatives whose exhaustification strengthens it. `FreeChoice` holds when every member of the domain is a witness in some
 accessible world and `ModalVariation` when the witnesses vary across the accessible worlds;
 `subdomainAlternatives` lists the subdomains an item competes with — every nonempty proper subdomain
 for a domain widener, the singletons for an anti-singleton item — and `AntiExhaustivity S`
@@ -33,6 +33,8 @@ Variation and negating all proper ones yields Free Choice.
 
 ## Main results
 
+* `freeChoice_iff_of_isGreatest` — over a domain with a greatest member and a scope closed under
+  parts, Free Choice is the possibility of the greatest member.
 * `notMem_exhIE_subdomain_iff` — anti-exhaustivity is the negated innocent pre-exhaustification
   against every subdomain alternative, in a model realizing every set of witnesses.
 * `exh_subdomain_eq_empty` — without innocent exclusion that pre-exhaustification is
@@ -54,13 +56,20 @@ namespace Exhaustification
 
 open ModalLogic SetRel
 
-variable {W E : Type*} (R : SetRel W W) (w : W) (D : Finset E) (Q : W → E → Prop)
+variable {W' W E : Type*} (R : SetRel W' W) (w : W') (D : Finset E) (Q : W → E → Prop)
 
 /-- The existential claim over the subdomain `S` says that some member of `S` is a witness. -/
 def claim (S : Finset E) (v : W) : Prop := ∃ x ∈ S, Q v x
 
 /-- Free Choice holds when every member of the domain is a witness in some accessible world. -/
 def FreeChoice : Prop := ∀ x ∈ D, ◇[R] (Q · x) w
+
+/-- Over a domain with a greatest member, such as the sums of a number-neutral noun, Free Choice
+for a scope closed under parts says only that the greatest member is a witness in some accessible
+world. -/
+theorem freeChoice_iff_of_isGreatest [Preorder E] {m : E} (hm : IsGreatest (D : Set E) m)
+    (hQ : ∀ v, IsLowerSet {x | Q v x}) : FreeChoice R w D Q ↔ ◇[R] (Q · m) w :=
+  ⟨fun h ↦ h m hm.1, fun ⟨v, hv, hmv⟩ _ hx ↦ ⟨v, hv, hQ v (hm.2 hx) hmv⟩⟩
 
 section Witnesses
 
@@ -116,7 +125,7 @@ section Witnessing
 
 variable {R D Q}
 
-theorem diamond_claim_iff {S : Finset E} {v : W} :
+theorem diamond_claim_iff {S : Finset E} {v : W'} :
     ◇[R] (claim Q S) v ↔ ∃ x ∈ S, ◇[R] (Q · x) v :=
   ⟨fun ⟨u, hu, x, hx, hq⟩ ↦ ⟨x, hx, u, hu, hq⟩, fun ⟨x, hx, u, hu, hq⟩ ↦ ⟨u, hu, x, hx, hq⟩⟩
 
@@ -152,7 +161,7 @@ possibility of the claim exactly to free choice, without pre-exhaustification. -
 theorem exhIEII_singletons_eq_freeChoice (h : RealizesWitnessSets R D Q) (hD : D.Nonempty) :
     exhIEII ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {w | FreeChoice R w D Q} := by
-  set B : E → Set W := fun x ↦ {v | ◇[R] (Q · x) v}
+  set B : E → Set W' := fun x ↦ {v | ◇[R] (Q · x) v}
   have hcell : ∀ w, w ∈ cell (B '' ↑D) {v | ◇[R] (claim Q D) v} ↔ FreeChoice R w D Q := by
     intro w
     rw [mem_cell_iff, sUnion_minimal_singletons h]
@@ -290,7 +299,7 @@ theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     w ∈ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
         {v | ◇[R] (claim Q S₀) v} ↔
       ◇[R] (claim Q S₀) w ∧ ¬ ◇[R] (claim Q (D \ S₀)) w := by
-  set A : Finset E → Set W := fun S ↦ {v | ◇[R] (claim Q S) v}
+  set A : Finset E → Set W' := fun S ↦ {v | ◇[R] (claim Q S) v}
   set P : Set (Finset E) := ↑(subdomainAlternatives .proper D)
   have hP : ∀ {S}, S ∈ P → S ⊆ D := fun h ↦ (mem_subdomainAlternatives_proper.1 h).1
   have hS₀D := hP hS₀
@@ -366,7 +375,7 @@ theorem exh_subdomain_eq_empty (h : RealizesWitnessSets R D Q)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) (h2 : 1 < S₀.card) :
     exh ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
       {v | ◇[R] (claim Q S₀) v} = ∅ := by
-  set A : Finset E → Set W := fun S ↦ {v | ◇[R] (claim Q S) v}
+  set A : Finset E → Set W' := fun S ↦ {v | ◇[R] (claim Q S) v}
   have hS₀D := (mem_subdomainAlternatives_proper.1 hS₀).1
   refine Set.not_nonempty_iff_eq_empty.1 fun hne ↦ ?_
   obtain ⟨_, ⟨v, hvφ, rfl⟩, hleast⟩ := exh_nonempty_iff.1 hne
