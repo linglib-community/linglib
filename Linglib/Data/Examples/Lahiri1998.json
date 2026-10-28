@@ -108,6 +108,43 @@
     "verified": "page-image"
   },
   {
+    "id": "lahiri1998_ex7c",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(7c)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne ek bhii aadmii-ko dekhaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["ek bhii", "any"], ["aadmii-ko", "man"], ["dekhaa", "saw"]
+    ],
+    "translation": "I saw any man.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "positive (UE)"]
+    ],
+    "comment": "Object NPI unlicensed in a positive sentence (4.1).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex7d",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(7d)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne ek bhii aadmii-ko nahiiN dekhaa",
+    "glossedTokens": [
+      ["maiN-ne", "I-ERG"], ["ek bhii", "any"], ["aadmii-ko", "man"], ["nahiiN", "not"],
+      ["dekhaa", "saw"]
+    ],
+    "translation": "I didn't see any men/man.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "negation"]
+    ],
+    "comment": "Object NPI licensed by negation (4.1).",
+    "verified": "page-image"
+  },
+  {
     "id": "lahiri1998_ex8a",
     "source": {"bibkey": "lahiri-1998", "paperLabel": "(8a)"},
     "language": "hind1269",
@@ -201,6 +238,25 @@
     "verified": "page-image"
   },
   {
+    "id": "lahiri1998_ex10b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10b)"},
+    "language": "hind1269",
+    "primaryText": "agar tum kisii-ko bhii dekho to mujhe bataao",
+    "glossedTokens": [
+      ["agar", "if"], ["tum", "you"], ["kisii-ko bhii", "anyone"], ["dekho", "see (subj.)"],
+      ["to", "then"], ["mujhe", "me"], ["bataao", "tell"]
+    ],
+    "translation": "If you see anyone, inform me.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kisii-ko bhii"],
+      ["environment", "conditional protasis"]
+    ],
+    "comment": "NPIs licensed in the protasis of a subjunctive conditional (4.2).",
+    "verified": "page-image"
+  },
+  {
     "id": "lahiri1998_ex10c",
     "source": {"bibkey": "lahiri-1998", "paperLabel": "(10c)"},
     "language": "hind1269",
@@ -220,6 +276,124 @@
     "verified": "page-image"
   },
   {
+    "id": "lahiri1998_ex10d",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10d)"},
+    "language": "hind1269",
+    "primaryText": "agar raam ek bhii kitaab paRhegaa, to use sar dard hone lagegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam", "Ram"], ["ek", "one"], ["bhii", "even"], ["kitaab", "book"],
+      ["paRhegaa", "read-FUT"], ["to", "then"], ["use", "him"], ["sar dard", "headache"],
+      ["hone lagegaa", "happen"]
+    ],
+    "translation": "If Ram reads even one book, he will get a headache.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "conditional protasis"]
+    ],
+    "comment": "NPI licensed in the protasis (4.2).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex10e",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10e)"},
+    "language": "hind1269",
+    "primaryText": "agar raam zaraa bhii paRhegaa, to use sar dard hone lagegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam", "Ram"], ["zaraa", "a little"], ["bhii", "even"],
+      ["paRhegaa", "read-FUT"], ["to", "then"], ["use", "him"], ["sar dard", "headache"],
+      ["hone lagegaa", "happen"]
+    ],
+    "translation": "If Ram reads even a little, he will get a headache.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "zaraa bhii"],
+      ["environment", "conditional protasis"]
+    ],
+    "comment": "NPI licensed in the protasis (4.2).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex10f",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10f)"},
+    "language": "hind1269",
+    "primaryText": "agar raam kuch bhii paRhegaa, to use sar dard hone lagegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam", "Ram"], ["kuch bhii", "anything"], ["paRhegaa", "read-FUT"],
+      ["to", "then"], ["use", "him"], ["sar dard", "headache"], ["hone lagegaa", "happen"]
+    ],
+    "translation": "If Ram reads even a little/anything, he will get a headache.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kuch bhii"],
+      ["environment", "conditional protasis"]
+    ],
+    "comment": "NPI licensed in the protasis (4.2).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex10g",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10g)"},
+    "language": "hind1269",
+    "primaryText": "agar raam-ko sar dard hone lagegaa, to vo ek bhii kitaab paRhegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam-ko", "Ram"], ["sar dard", "headache"], ["hone lagegaa", "happen"],
+      ["to", "then"], ["vo", "he"], ["ek", "one"], ["bhii", "even"], ["kitaab", "book"],
+      ["paRhegaa", "read-FUT"]
+    ],
+    "translation": "If Ram gets a headache, he will read even one book.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "conditional apodosis"]
+    ],
+    "comment": "NPI reading unavailable in the apodosis (4.2). The paper stars only the NPI reading; the free-choice reading is well formed (its footnote 8).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex10h",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10h)"},
+    "language": "hind1269",
+    "primaryText": "agar raam-ko sar dard hone lagegaa, to vo zaraa bhii paRhegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam-ko", "Ram"], ["sar dard", "headache"], ["hone lagegaa", "happens"],
+      ["to", "then"], ["vo", "he"], ["zaraa", "a little"], ["bhii", "even"],
+      ["paRhegaa", "read-FUT"]
+    ],
+    "translation": "If Ram gets a headache, he will read even a little.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "zaraa bhii"],
+      ["environment", "conditional apodosis"]
+    ],
+    "comment": "NPI reading unavailable in the apodosis (4.2). The paper stars only the NPI reading; the free-choice reading is well formed (its footnote 8).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex10i",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(10i)"},
+    "language": "hind1269",
+    "primaryText": "agar raam-ko sar dard hone lagegaa, to vo kuch bhii paRhegaa",
+    "glossedTokens": [
+      ["agar", "if"], ["raam-ko", "Ram"], ["sar dard", "headache"], ["hone lagegaa", "happens"],
+      ["to", "then"], ["vo", "he"], ["kuch bhii", "anything"], ["paRhegaa", "read"]
+    ],
+    "translation": "If Ram gets a headache, he will read even some/one thing.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["npi", "kuch bhii"],
+      ["environment", "conditional apodosis"]
+    ],
+    "comment": "NPI reading unavailable in the apodosis (4.2). The paper stars only the NPI reading; the free-choice reading is well formed (its footnote 8).",
+    "verified": "page-image"
+  },
+  {
     "id": "lahiri1998_ex11a",
     "source": {"bibkey": "lahiri-1998", "paperLabel": "(11a)"},
     "language": "hind1269",
@@ -236,6 +410,25 @@
       ["environment", "universal restrictor"]
     ],
     "comment": "NPIs allowed in the restriction of universal quantifiers, not the nuclear scope (4.3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex11b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(11b)"},
+    "language": "hind1269",
+    "primaryText": "aisaa har chaatr jisne koii bhii kitaab paRhii, paas ho gayaa",
+    "glossedTokens": [
+      ["aisaa", "such"], ["har", "every"], ["chaatr", "student"], ["jisne", "who"],
+      ["koii bhii", "any"], ["kitaab", "book"], ["paRhii", "read"], ["paas ho gayaa", "passed"]
+    ],
+    "translation": "Every student who read any book passed.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "universal restrictor"]
+    ],
+    "comment": "NPI licensed in the restriction of a universal (4.3).",
     "verified": "page-image"
   },
   {
@@ -310,10 +503,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {
-        "form": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa",
-        "judgment": "marginal"
-      }
+      {"form": "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se rokaa", "judgment": "marginal"}
     ],
     "paperFeatures": [
       ["npi", "kisii-se bhii"],
@@ -342,6 +532,50 @@
       ["environment", "outside prohibition scope"]
     ],
     "comment": "The matrix object NPI is outside the DE scope of the prohibition verb (4.5); starred with both manaa kiyaa 'prohibited' and rokaa 'prevented'. The paper glosses maiN-ne as 'me' here; (29c) and (29e) gloss it 'I'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex29e",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(29e)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne ek bhii aadmii-ko rameS-se baat-ciit karne-se manaa kiyaa",
+    "glossedTokens": [
+      ["maiN-ne", "I"], ["ek", "one"], ["bhii", "even"], ["aadmii-ko", "man"],
+      ["rameS-se", "Rames"], ["baat-ciit karne-se", "talk"], ["manaa kiyaa", "prevented"]
+    ],
+    "translation": "I prohibited/prevented even one person from talking to Rames.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "maiN-ne ek bhii aadmii-ko rameS-se baat-ciit karne-se rokaa", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "outside prohibition scope"]
+    ],
+    "comment": "The matrix object NPI is outside the DE scope of the prohibition verb (4.5); starred with both manaa kiyaa and rokaa, which the paper glosses together as 'prevented' here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex29f",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(29f)"},
+    "language": "hind1269",
+    "primaryText": "maiN-ne rameS-ko ek bhii aadmii-se baat-ciit karne-se manaa kiyaa",
+    "glossedTokens": [
+      ["maiN-ne", "I"], ["rameS-ko", "Rames"], ["ek", "one"], ["bhii", "even"],
+      ["aadmii-se", "man"], ["baat-ciit karne-se", "talk"], ["manaa kiyaa", "prohibited"]
+    ],
+    "translation": "I prohibited/prevented Rames from talking to even one person.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "maiN-ne rameS-ko ek bhii aadmii-se baat-ciit karne-se rokaa", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "prohibition verb"]
+    ],
+    "comment": "Object NPI in the scope of a prohibition verb (4.5).",
     "verified": "page-image"
   },
   {
@@ -404,6 +638,25 @@
     "verified": "page-image"
   },
   {
+    "id": "lahiri1998_ex32b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(32b)"},
+    "language": "hind1269",
+    "primaryText": "is-se pahle ki koi bhii aataa, raam ghar calaa gayaa",
+    "glossedTokens": [
+      ["is-se", "it"], ["pahle", "before"], ["ki", "that"], ["koi bhii", "anyone"],
+      ["aataa", "come-SUBJ"], ["raam", "Ram"], ["ghar", "home"], ["calaa gayaa", "went"]
+    ],
+    "translation": "Ram went home before anyone would come home.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koi bhii"],
+      ["environment", "before-clause"]
+    ],
+    "comment": "NPI licensed in a subjunctive (counterfactual) before-clause (4.6).",
+    "verified": "page-image"
+  },
+  {
     "id": "lahiri1998_ex33a",
     "source": {"bibkey": "lahiri-1998", "paperLabel": "(33a)"},
     "language": "hind1269",
@@ -439,6 +692,100 @@
       ["environment", "question"]
     ],
     "comment": "Yes-no and constituent questions license NPIs (4.7).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex34b",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(34b)"},
+    "language": "hind1269",
+    "primaryText": "tumheN ek bhii kitaab pasand aayii kyaa?",
+    "glossedTokens": [
+      ["tumheN", "you"], ["ek bhii", "any"], ["kitaab", "book"], ["pasand aayii", "like"],
+      ["kyaa", "Q"]
+    ],
+    "translation": "Did you like any book?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "question"]
+    ],
+    "comment": "Yes-no and constituent questions license NPIs (4.7). The paper glosses it as (34a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex34c",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(34c)"},
+    "language": "hind1269",
+    "primaryText": "tumheN kuch bhii pasand aayii kyaa?",
+    "glossedTokens": [
+      ["tumheN", "you"], ["kuch bhii", "anything"], ["pasand aayii", "like"], ["kyaa", "Q"]
+    ],
+    "translation": "Did you like anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kuch bhii"],
+      ["environment", "question"]
+    ],
+    "comment": "Yes-no and constituent questions license NPIs (4.7).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex34d",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(34d)"},
+    "language": "hind1269",
+    "primaryText": "tumheN zaraa bhii Saram hai kyaa?",
+    "glossedTokens": [
+      ["tumheN", "you"], ["zaraa", "a little"], ["bhii", "even"], ["Saram", "shame"],
+      ["hai", "be"], ["kyaa", "Q"]
+    ],
+    "translation": "Do you have any shame?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "zaraa bhii"],
+      ["environment", "question"]
+    ],
+    "comment": "Yes-no and constituent questions license NPIs (4.7).",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex34e",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(34e)"},
+    "language": "hind1269",
+    "primaryText": "yahaaN kis-ne ek bhii kitaab paRhii hai?",
+    "glossedTokens": [
+      ["yahaaN", "here"], ["kis-ne", "who"], ["ek bhii", "any"], ["kitaab", "book"],
+      ["paRhii", "read"], ["hai", "has"]
+    ],
+    "translation": "Who here has read any book(s)?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "ek bhii"],
+      ["environment", "question"]
+    ],
+    "comment": "A constituent question licenses the NPI (4.7). The source prints 'ready' for 'read' in the translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex34f",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(34f)"},
+    "language": "hind1269",
+    "primaryText": "yahaaN kis-ne koii bhii kitaab paRhii hai?",
+    "glossedTokens": [
+      ["yahaaN", "here"], ["kis-ne", "who"], ["koii bhii", "any"], ["kitaab", "book"],
+      ["paRhii", "read"], ["hai", "has"]
+    ],
+    "translation": "Who here has read any book(s)?",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "koii bhii"],
+      ["environment", "question"]
+    ],
+    "comment": "A constituent question licenses the NPI (4.7). The paper glosses and translates it as (34e).",
     "verified": "page-image"
   },
   {
@@ -495,6 +842,24 @@
       ["environment", "generic"]
     ],
     "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "lahiri1998_ex35c",
+    "source": {"bibkey": "lahiri-1998", "paperLabel": "(35c)"},
+    "language": "hind1269",
+    "primaryText": "tum to kuch bhii kah dete ho",
+    "glossedTokens": [
+      ["tum", "you"], ["to", "PRT"], ["kuch bhii", "anything"], ["kah dete ho", "say"]
+    ],
+    "translation": "You say anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["npi", "kuch bhii"],
+      ["environment", "generic"]
+    ],
+    "comment": "A generic licenses the item (5.1). The paper adds the paraphrase 'You don't know what to say when'.",
     "verified": "page-image"
   },
   {

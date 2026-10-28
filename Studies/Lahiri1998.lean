@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Focus.Particles
+public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Fragments.HindiUrdu.PolarityItems
 public import Linglib.Data.Examples.Lahiri1998
 
@@ -12,17 +13,20 @@ indefinite plus the focus particle *bhii* 'even' (`HindiUrdu.PolarityItems`). Th
 presupposition of *even*, that the prejacent is less likely than every focus alternative,
 clashes with an entailment-monotone likelihood exactly when an alternative entails the
 prejacent (`Focus.Particles.not_evenPresup_of_subset`). The indefinite is the weakest
-predicate, so in an upward-entailing context every alternative entails the assertion and the
-presupposition is contradictory (`ue_clash`), while a downward-entailing operator reverses the
-entailments and leaves it satisfiable (`de_presup`); the restriction of a generic, read as a
-universal under the paper's background assumption, is such a slot (`generic_presup`), as are
-the negative-expectation reading of a question and the permission reading of an imperative.
+predicate, so in an upward-entailing context [every alternative entails the assertion and the
+presupposition is contradictory](##ue_clash), while [a downward-entailing operator reverses the
+entailments and leaves it satisfiable](##de_presup). The restriction of a generic, read as a
+universal under the paper's background assumption, is such a slot, as are the
+negative-expectation reading of a question and the permission reading of an imperative.
 Clausemate negation takes scope over a Hindi subject indefinite, which is why Hindi licenses
-subject NPIs where English does not (`clausemate_negation`). The judgments of the paper's
-survey are rows, which `analysis_matches_judgments` reads as the analysis predicts, apart from
-the numeral and measure items *ek bhii* and *zaraa bhii* in imperatives and with numerals,
-whose cardinality alternatives the paper distinguishes from the contextual alternatives of
-*koii bhii* and *kuch bhii* and whose exclusion it leaves open (`cardinality_exceptions`).
+subject NPIs where English does not. The judgments of the paper's survey are rows, which [the
+analysis predicts](##analysis_matches_judgments) apart from the numeral and measure items *ek
+bhii* and *zaraa bhii* in imperatives and with numerals, whose cardinality alternatives the paper
+distinguishes from the contextual alternatives of *koii bhii* and *kuch bhii* and whose exclusion
+it leaves open. The library's licensing theory [agrees with the rows wherever it names the
+environment](##rows_admits) and stars every item in a positive sentence, but for the same
+cardinality items and [under a necessity modal, where its free-choice route admits the items the
+paper stars](##necessity_admits_starred).
 
 ## Implementation notes
 
@@ -37,6 +41,20 @@ classified as the analysis classifies them, downward entailing, generic, or neit
 necessity modals and the episodic readings of possibility modals and the future are among
 the last, which the paper reports without deriving. The oblique forms *kisii-ko*, *kisii-se*,
 and *kisiike* are *koii*'s.
+
+The library's licensing contexts realize ten of the survey's environments
+(`Environment.context?`): negation, the protasis, the restrictor of a universal, adversatives
+(the library's regret-based adversative standing in for *surprise*), *before*, questions, the
+generics with and without a numeral, and the possibility and necessity modals and imperatives.
+Prohibition verbs, which the paper counts among its adversative predicates, have no library
+context, nor do the episodic and the non-licensing environments.
+
+## TODO
+
+* The library licenses every free choice item under a necessity modal, through the consistency of
+  its antiexhaustified existential, but the paper stars the *bhii* items there and so does the
+  analysis. Which free choice items survive necessity is not a property the library's free-choice
+  route consults.
 
 ## References
 
@@ -82,11 +100,15 @@ def alternatives (Ps : Set (Ent → Prop)) (φ : World → Ent → Prop) : Set (
 
 variable {Ps : Set (Ent → Prop)}
 
+/-- In an upward-entailing context the scalar presupposition of *bhii* is contradictory, since every
+alternative entails the assertion of the weakest indefinite. -/
 theorem ue_clash (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) :=
   let ⟨P, hP⟩ := hPs
   not_evenPresup_of_subset hμ ⟨P, hP, rfl⟩ (exist_subset_exist_top P)
 
+/-- Under a downward-entailing operator the scalar presupposition of *bhii* is satisfiable, holding
+exactly when no alternative is as likely as the assertion. -/
 theorem de_presup (hμ : Monotone μ) {Q : Set World → Set World} (hQ : Antitone Q) :
     evenPresup μ (Q (exist ⊤ φ)) (Q '' alternatives Ps φ) ↔
       ∀ P ∈ Ps, μ (Q (exist ⊤ φ)) ≠ μ (Q (exist P φ)) := by
@@ -204,6 +226,8 @@ noncomputable def Row.ofDatum (r : Datum) : Option Row :=
 /-- The survey. -/
 noncomputable def data : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- Every judgment of the survey is the one the analysis predicts, apart from the cardinality
+items in imperatives and generics with a numeral. -/
 theorem analysis_matches_judgments :
     ∀ d ∈ data,
       d.alternatives = .property ∨
@@ -214,6 +238,47 @@ theorem analysis_matches_judgments :
 theorem cardinality_exceptions :
     ∀ d ∈ data, d.alternatives = .cardinality →
       d.env = .imperative ∨ d.env = .numeralGeneric → d.judgment ≠ .acceptable := by
+  decide +kernel
+
+/-! ### The licensing theory -/
+
+/-- The licensing context of the library that realizes an environment of the survey, if any. -/
+def Environment.context? : Environment → Option LicensingContext
+  | .negation => some .negation
+  | .protasis => some .conditionalAntecedent
+  | .universalRestrictor => some .universalRestrictor
+  | .adversative => some .adversative
+  | .before => some .beforeClause
+  | .question => some .question
+  | .generic | .numeralGeneric => some .generic
+  | .possibilityModal => some .modalPossibility
+  | .necessityModal => some .modalNecessity
+  | .imperative => some .imperative
+  | .positive | .apodosis | .existentialRestrictor | .factive | .settleForLess
+  | .prohibitionComplement | .prohibitionObject | .after | .episodicModal | .genericFuture
+  | .episodicFuture => none
+
+/-- Wherever the library names the environment, its licensing theory admits the item exactly when
+the paper judges the sentence acceptable, apart from the necessity modals and the cardinality
+items in imperatives and generics with a numeral. -/
+theorem rows_admits :
+    ∀ d ∈ data, ∀ c ∈ d.env.context?, d.env ≠ .necessityModal →
+      (d.alternatives = .property ∨ (d.env ≠ .imperative ∧ d.env ≠ .numeralGeneric)) →
+      (d.judgment = .acceptable ↔ c.licenser.Admits d.item) := by
+  decide +kernel
+
+-- Unembedded, under no licenser, the theory admits no polarity item, and the paper stars every
+-- *bhii* item in a positive sentence.
+theorem rows_positive :
+    ∀ d ∈ data, d.env = .positive →
+      (d.judgment = .acceptable ↔ ¬ (d.item.IsNPI ∨ d.item.IsFCI)) := by
+  decide +kernel
+
+/-- Under a necessity modal the library's free-choice route admits the *bhii* items, which the
+paper stars. -/
+theorem necessity_admits_starred :
+    ∀ d ∈ data, d.env = .necessityModal →
+      LicensingContext.modalNecessity.licenser.Admits d.item ∧ d.judgment ≠ .acceptable := by
   decide +kernel
 
 end Lahiri1998
