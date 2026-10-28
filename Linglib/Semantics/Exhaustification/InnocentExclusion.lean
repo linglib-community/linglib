@@ -17,7 +17,9 @@ alternatives false at the minimal worlds of `Alternatives`, so an alternative is
 excludable iff it fails at every minimal world. Hence minimal-world exhaustification entails
 innocent exclusion, with equality when the alternatives are closed under conjunction, and closing
 them under disjunction changes neither exhaustifier. Innocent exclusion is `exh` with its
-alternative set selected by innocent excludability.
+alternative set selected by innocent excludability. Its exclusion component, the denial of the
+innocently excludable alternatives in a relevance set, is `excludesIE`, which a presuppositional
+exhaustifier presupposes rather than asserts.
 
 ## Main definitions
 
@@ -25,13 +27,15 @@ alternative set selected by innocent excludability.
   prejacent.
 * `IsInnocentlyExcludable`, `exhIE`: membership in every maximal consistent exclusion, and the
   exhaustifier denying such alternatives.
+* `excludesIE`: the denial of the relevant innocently excludable alternatives.
 
 ## Main results
 
 * `maximal_sdiff_satisfied_iff`, `Maximal.exists_eq_sdiff_satisfied`: the maximal consistent
   exclusions are the sets of alternatives false at a minimal world.
 * `isInnocentlyExcludable_iff_exhMW_subset_compl`
-* `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`, `exhIE_eq_sdiff_of_maximal_unique`
+* `exhIE_eq_inter_excludesIE`, `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`,
+  `exhIE_eq_sdiff_of_maximal_unique`
 * `exh_nonempty_iff`, `mem_exhIE_iff_subset_sUnion`: `exh` is consistent iff some prejacent world
   verifies the least set of alternatives, and `exhIE` keeps the worlds verifying only alternatives
   in a minimal verified set
@@ -74,7 +78,24 @@ theorem mem_exhIE_iff {u : World} :
 
 theorem exhIE_subset : exhIE ALT φ ⊆ φ := fun _ h ↦ h.1
 
+/-- The worlds where every innocently excludable alternative in the relevance set `Rc` is false,
+the innocent counterpart of `excludes`. -/
+def excludesIE (Rc : Set (Set World)) : Set World :=
+  {w | ∀ a, IsInnocentlyExcludable ALT φ a → a ∈ Rc → w ∉ a}
+
+@[simp, grind =] theorem mem_excludesIE {Rc : Set (Set World)} {w : World} :
+    w ∈ excludesIE ALT φ Rc ↔ ∀ a, IsInnocentlyExcludable ALT φ a → a ∈ Rc → w ∉ a :=
+  Iff.rfl
+
+/-- Innocent exclusion asserts the prejacent and its exclusion over every alternative. -/
+theorem exhIE_eq_inter_excludesIE : exhIE ALT φ = φ ∩ excludesIE ALT φ univ :=
+  Set.ext fun _ ↦ and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦
+    (imp_iff_right (mem_univ _)).symm
+
 variable {ALT φ}
+
+theorem excludesIE_antitone : Antitone (excludesIE ALT φ) :=
+  fun _ _ h _ hw a ha hR ↦ hw a ha (h hR)
 
 theorem IsConsistentExclusion.mono {X Y : Set (Set World)} (hY : IsConsistentExclusion ALT φ Y)
     (hXY : X ⊆ Y) : IsConsistentExclusion ALT φ X :=

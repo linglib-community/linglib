@@ -10,13 +10,13 @@ public import Linglib.Semantics.Exhaustification.InnocentInclusion
 
 A presuppositional exhaustivity operator asserts its prejacent alone and presupposes what the
 exhaustivity operator asserts besides. Bassi, Del Pinal and Sauerland's `pex^{IE}` presupposes
-that the relevant innocently excludable alternatives are false, and in trivalent form it is true
-where the prejacent is true and the presupposition holds, and false exactly where the prejacent
-is false, so that it contributes nothing to the falsity conditions of its prejacent. Del Pinal,
-Bassi and Sauerland's `pex^{IE+II}` adds the presupposition that the relevant innocently
-includable alternatives other than the prejacent are homogeneous, true together or false
-together, and its presupposition survives negation: negation denies the assertion and leaves the
-presupposition. When the prejacent lies between the meet and the join of those alternatives, as
+that the relevant innocently excludable alternatives are false (`excludesIE`), and in trivalent
+form it is true where the prejacent is true and the presupposition holds, and false exactly where
+the prejacent is false, so that it contributes nothing to the falsity conditions of its
+prejacent. Del Pinal, Bassi and Sauerland's `pex^{IE+II}` adds the presupposition that the
+relevant innocently includable alternatives other than the prejacent are homogeneous, true
+together or false together, and its presupposition survives negation: negation denies the
+assertion and leaves the presupposition. When the prejacent lies between the meet and the join of those alternatives, as
 `◇(p ∨ q)` lies between `◇p ∧ ◇q` and `◇p ∨ ◇q`, homogeneity makes it true where all of them are
 and false where none is.
 
@@ -43,8 +43,9 @@ The two operators differ in their falsity conditions. Bassi, Del Pinal and Sauer
 trivalent entry as their (14) and set aside, in footnote 15, an entry that is false only where the
 presupposition holds, since the contribution of `pex` to the falsity conditions of its prejacent
 must be vacuous; the two entries agree when every excludable alternative is stronger than the
-prejacent. Del Pinal, Bassi and Sauerland state `pex^{IE+II}` as an assertion and a
-presupposition and say that, other than the includable alternatives, they follow the earlier
+prejacent. The set-aside entry is the indicator of `excludesIE` on the prejacent, the form of a
+trigger in `Presupposition`. Del Pinal, Bassi and Sauerland state `pex^{IE+II}` as an assertion
+and a presupposition and say that, other than the includable alternatives, they follow the earlier
 paper; their negative free choice under negation, `¬pex^{IE+II}[□(T ∧ B)]` (their (20)), has the
 presupposition `□T ↔ □B` project from under negation although `□T` and `□B` are weaker than the
 prejacent, which takes the analogue of the set-aside entry for includable alternatives. `pexIEII`
@@ -73,15 +74,13 @@ relevant innocently excludable alternatives are false, and false exactly where t
 false: the Strong Kleene conjunction of the prejacent with the presupposition. -/
 noncomputable def pexIE (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
     World → SignType := fun w ↦
-  SignType.ofProp (w ∈ φ) ⊓
-    (SignType.ofProp (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ) ⊔ 0)
+  SignType.ofProp (w ∈ φ) ⊓ (SignType.ofProp (w ∈ excludesIE ALT φ Rc) ⊔ 0)
 
 section PexIE
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
-theorem pexIE_eq_one_iff :
-    pexIE ALT φ Rc w = 1 ↔ w ∈ φ ∧ ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ := by
+theorem pexIE_eq_one_iff : pexIE ALT φ Rc w = 1 ↔ w ∈ φ ∧ w ∈ excludesIE ALT φ Rc := by
   simp [pexIE]
 
 theorem pexIE_eq_neg_one_iff : pexIE ALT φ Rc w = -1 ↔ w ∉ φ := by
@@ -107,14 +106,13 @@ alternatives in the relevance set `Rc` are false and that the innocently includa
 other than the prejacent, are homogeneous. -/
 noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
     World → SignType :=
-  {w | (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ) ∧
-    Homogeneous (II ALT φ \ {φ} ∩ Rc) w}.indicator fun w ↦ SignType.ofProp (w ∈ φ)
+  (excludesIE ALT φ Rc ∩ {w | Homogeneous (II ALT φ \ {φ} ∩ Rc) w}).indicator
+    fun w ↦ SignType.ofProp (w ∈ φ)
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
 theorem pexIEII_ne_zero_iff :
-    pexIEII ALT φ Rc w ≠ 0 ↔ (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ) ∧
-      Homogeneous (II ALT φ \ {φ} ∩ Rc) w := by
+    pexIEII ALT φ Rc w ≠ 0 ↔ w ∈ excludesIE ALT φ Rc ∧ Homogeneous (II ALT φ \ {φ} ∩ Rc) w := by
   simp [pexIEII]
 
 theorem pexIEII_eq_one_iff : pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ w ∈ φ := by
@@ -139,7 +137,7 @@ theorem pexIEII_eq_neg_one_iff_forall_notMem (hl : ⋂₀ (II ALT φ \ {φ} ∩ 
     (pexIEII_ne_zero_iff.1 h).2.notMem_iff hl hu
 
 theorem pexIEII_ne_zero_iff_of_inter_eq_empty (h : II ALT φ \ {φ} ∩ Rc = ∅) :
-    pexIEII ALT φ Rc w ≠ 0 ↔ ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ := by
+    pexIEII ALT φ Rc w ≠ 0 ↔ w ∈ excludesIE ALT φ Rc := by
   simp [pexIEII_ne_zero_iff, h]
 
 /-- Without relevant includable alternatives, `pex^{IE+II}` is `pex^{IE}` when the relevant
