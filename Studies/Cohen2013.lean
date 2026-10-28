@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Cohen2013
+public import Linglib.Semantics.Quantification.Basic
 public import Studies.Cohen1999
 
 /-!
@@ -12,16 +13,18 @@ and the device that introduces it fixes its scope. Predicate Transfer, which mak
 pragmatically triggered and may apply to the verb or to the verb phrase; a type-shift, which makes
 habituals and lifts a verb conjoined with an intensional one, applies only where the types
 mismatch. [The readings each sentence allows are those its device allows](##readings_available).
-[Reinterpreting the verb gives the stronger reading](##reading_word_le_phrase), so *Mary smokes a
-cigarette* [has only its implausible reading](##cigarette_no_true_reading_available), and
+[Reinterpreting the verb under an indefinite object gives the stronger
+reading](##reading_word_le_phrase), so *Mary smokes a cigarette* [has only its implausible
+reading](##cigarette_no_true_reading_available), and
 [negation scopes over a lifted verb](##needed_but_didnt_buy). Focus fixes the alternatives of
 $\mathbf{gen}$, so *Cows do not eat nettles* with focus on the auxiliary [denies that any cow eats
 nettles](##nettles_aux_focus_iff).
 
 ## Implementation notes
 
-* Both operators use the absolute reading of $\mathbf{gen}$ with trivial alternatives, the chapter
-  deferring the quantifier's content to Cohen's earlier work.
+* Both devices apply one operator, $\lambda x.\,\mathbf{gen}_y[R(y, x)][P(y)]$, and differ only in
+  where they apply. It uses the absolute reading of $\mathbf{gen}$ with trivial alternatives, the
+  chapter deferring the quantifier's content to Cohen's earlier work.
 * Kinds are `Unit`, and individuals, cigarettes and intervals are `Fin n`; the relation
   $e \le \mathrm{int}(t)$ of the habitual shift is a parameter.
 * An oddness judgment is derived as the falsity of every available reading in a model where the
@@ -64,6 +67,8 @@ nettles](##nettles_aux_focus_iff).
 
 namespace Cohen2013
 
+open Quantifier
+
 /-! ### The reinterpretation devices -/
 
 /-- Partee and Rooth's SHIFT lifts an extensional transitive verb to take a quantifier object,
@@ -71,35 +76,26 @@ $\mathrm{SHIFT}(V) = \lambda Q\,\lambda x.\,Q(\lambda y.\,V(x, y))$. -/
 def shift {E : Type*} (V : E → E → Prop) : ((E → Prop) → Prop) → E → Prop :=
   fun Q x ↦ Q fun y ↦ V x y
 
-section Operators
+section Reinterpret
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] [Fintype α]
   (R : α → β → Prop) [∀ b, DecidablePred (R · b)]
 
-/-- Predicate Transfer for generics, $T_G(P) = \lambda x.\,\mathbf{gen}_y[C(y, x)][P(y)]$, turns
-a property of individuals into the property of a kind whose instances generically bear it. -/
-def transfer (P : α → Prop) (x : β) : Prop :=
+/-- The reinterpretation both devices perform,
+$\lambda x.\,\mathbf{gen}_y[R(y, x)][P(y)]$: with $R$ instantiation it is Predicate Transfer's
+$T_G$, turning a property of individuals into the property of a kind whose instances generically
+bear it; with $R$ inclusion in the interval around a moment it is the habitual shift $\gamma$,
+turning a property of intervals into the property of a moment. -/
+def reinterpret (P : α → Prop) (x : β) : Prop :=
   Cohen1999.gen Finset.univ (R · x) (fun _ ↦ True) P
 
-instance (P : α → Prop) [DecidablePred P] (x : β) : Decidable (transfer R P x) := by
-  unfold transfer; infer_instance
+instance (P : α → Prop) [DecidablePred P] (x : β) : Decidable (reinterpret R P x) := by
+  unfold reinterpret; infer_instance
 
-theorem monotone_transfer : Monotone (transfer R) := fun _ _ h x ↦ by
-  classical exact Cohen1999.gen_mono h
+theorem monotone_reinterpret : Monotone (reinterpret R) := fun _ _ h _ ↦
+  Cohen1999.monotone_gen h
 
-/-- The habitual type-shift $\gamma P = \lambda t.\,\mathbf{gen}_e[e \le \mathrm{int}(t)][P(e)]$
-turns a property of intervals into the property of a moment in whose surrounding interval it
-generically holds. -/
-def gamma (P : α → Prop) (t : β) : Prop :=
-  Cohen1999.gen Finset.univ (R · t) (fun _ ↦ True) P
-
-instance (P : α → Prop) [DecidablePred P] (t : β) : Decidable (gamma R P t) := by
-  unfold gamma; infer_instance
-
-theorem monotone_gamma : Monotone (gamma R) := fun _ _ h t ↦ by
-  classical exact Cohen1999.gen_mono h
-
-end Operators
+end Reinterpret
 
 /-- A reinterpretation device applies to the mismatching word itself or to the containing
 phrase. -/
@@ -124,18 +120,19 @@ instance : ∀ d l, Decidable (Device.AppliesAt d l)
   | .predicateTransfer, _ => .isTrue trivial
   | .typeShift, l => inferInstanceAs (Decidable (l = .word))
 
-/-- A verb `V` with an existential object restricted to `N`, reinterpreted by `op`: applied to
-the verb, the reinterpretation leaves the object above it; applied to the verb phrase, it takes
-the object in its scope. -/
-def reading {α β γ : Type*} (op : (α → Prop) → β → Prop) (N : γ → Prop) (V : γ → α → Prop) :
-    Level → β → Prop
-  | .word => fun b ↦ ∃ y, N y ∧ op (V y) b
-  | .phrase => op fun x ↦ ∃ y, N y ∧ V y x
+/-- A verb `V` with a quantified object `Q`, reinterpreted by `op`: applied to the verb, the
+reinterpretation leaves the object above it; applied to the verb phrase, it takes the object in
+its scope. -/
+def reading {α β γ : Type*} (op : (α → Prop) → β → Prop) (Q : (γ → Prop) → Prop)
+    (V : γ → α → Prop) : Level → β → Prop
+  | .word => fun b ↦ Q fun y ↦ op (V y) b
+  | .phrase => op fun x ↦ Q fun y ↦ V y x
 
-/-- Reinterpreting the verb entails reinterpreting the verb phrase, for any reinterpretation
-monotone in the property it reinterprets. -/
+/-- Under an indefinite object, reinterpreting the verb entails reinterpreting the verb phrase,
+for any reinterpretation monotone in the property it reinterprets. -/
 theorem reading_word_le_phrase {α β γ : Type*} {op : (α → Prop) → β → Prop} (hop : Monotone op)
-    (N : γ → Prop) (V : γ → α → Prop) : reading op N V .word ≤ reading op N V .phrase :=
+    (N : γ → Prop) (V : γ → α → Prop) :
+    reading op (GQ.some N) V .word ≤ reading op (GQ.some N) V .phrase :=
   fun b ⟨y, hy, h⟩ ↦ hop (fun _ hx ↦ ⟨y, hy, hx⟩) b h
 
 /-! ### The readings the devices allow -/
@@ -173,7 +170,7 @@ abbrev storkOf : Fin 2 → Unit → Prop := fun _ _ ↦ True
 
 /-- The storks sentence, by the level of transfer. -/
 def storks : Level → Unit → Prop :=
-  reading (transfer storkOf) (fun _ ↦ True) fun a s ↦ nestsIn s a
+  reading (reinterpret storkOf) (GQ.some fun _ ↦ True) fun a s ↦ nestsIn s a
 
 -- (12b)
 theorem storks_word_ne_phrase : ¬ storks .word () ∧ storks .phrase () := by
@@ -192,7 +189,7 @@ abbrev inSpeechInterval : Fin 3 → Unit → Prop := fun _ _ ↦ True
 
 /-- The cigarette sentence, by the level of the shift. -/
 def cigarette : Level → Unit → Prop :=
-  reading (gamma inSpeechInterval) (fun _ ↦ True) smokes
+  reading (reinterpret inSpeechInterval) (GQ.some fun _ ↦ True) smokes
 
 -- (45)
 theorem cigarette_word_ne_phrase : ¬ cigarette .word () ∧ cigarette .phrase () := by
@@ -210,7 +207,7 @@ theorem cigarette_no_true_reading_available :
 
 /-- The brand variant, one brand smoked at every occasion. -/
 def brand : Level → Unit → Prop :=
-  reading (gamma inSpeechInterval) (fun _ : Fin 1 ↦ True) fun _ _ ↦ True
+  reading (reinterpret inSpeechInterval) (GQ.some fun _ : Fin 1 ↦ True) fun _ _ ↦ True
 
 -- (17b)
 theorem brand_true_reading_available : ∃ l, Device.typeShift.AppliesAt l ∧ brand l () :=
@@ -228,7 +225,7 @@ def didntBuy {E : Type*} (V : E → E → Prop) (Q : (E → Prop) → Prop) (x :
 bought no new coat. -/
 theorem needed_but_didnt_buy {E : Type*} (V : E → E → Prop) (N : E → Prop) (x : E) :
     ∀ l, Device.typeShift.AppliesAt l →
-      (didntBuy V (fun P ↦ ∃ y, N y ∧ P y) x l ↔ ¬ ∃ y, N y ∧ V x y) := by
+      (didntBuy V (GQ.some N) x l ↔ ¬ ∃ y, N y ∧ V x y) := by
   intro l hl
   have h : l = .word := hl
   subst h
@@ -236,8 +233,8 @@ theorem needed_but_didnt_buy {E : Type*} (V : E → E → Prop) (N : E → Prop)
 
 -- (25)
 theorem didntBuy_word_ne_phrase :
-    ¬ (didntBuy (fun _ y ↦ y = true) (fun P ↦ ∃ y, True ∧ P y) true .word ↔
-      didntBuy (fun _ y ↦ y = true) (fun P ↦ ∃ y, True ∧ P y) true .phrase) := by
+    ¬ (didntBuy (fun _ y ↦ y = true) (GQ.some fun _ ↦ True) true .word ↔
+      didntBuy (fun _ y ↦ y = true) (GQ.some fun _ ↦ True) true .phrase) := by
   unfold didntBuy shift
   decide
 

@@ -177,10 +177,11 @@ theorem gen_conservativity :
   unfold gen
   rw [uniformOn_finset_setOf, uniformOn_finset_setOf, this]
 
-theorem gen_mono {φ' : α → Prop} [DecidablePred φ'] (h : ∀ x, φ x → φ' x) :
-    gen domain ψ alt φ → gen domain ψ alt φ' := by
-  simp only [gen_iff_card]
-  exact fun hg ↦ hg.trans_le <| Nat.mul_le_mul_left 2 <|
+theorem monotone_gen : Monotone fun φ ↦ gen domain ψ alt φ := fun φ φ' h hg ↦ by
+  classical
+  beta_reduce at hg ⊢
+  rw [gen_iff_card] at hg ⊢
+  exact hg.trans_le <| Nat.mul_le_mul_left 2 <|
     Finset.card_le_card <| Finset.monotone_filter_right _ fun x _ ↦ h x
 
 -- §5.7
