@@ -119,6 +119,7 @@ def Ty.SyntacticDomain.mono {L : Language.{u, u}} {α : Type w} :
   | .n, _, _, _, x => x
   | .v, _, _, _, x => x
   | .s, _, _, _, x => x
+  | .comp _ _, _, _, _, x => x
 
 /-- A predicate of the syntactic model applied to the next bound variable, with `j + 1` bound
 variables in scope, as a determiner applies its restrictor and scope to the variable it binds. -/
@@ -152,18 +153,22 @@ variable {α : Type w}
 /-- In the syntactic model a mode applies at the current number of bound variables, the
 intensional modes to the argument carried to every larger number, and predicate modification and
 event identification conjoin pointwise. -/
-def Mode.readback {σ₁ σ₂ τ : Ty} {n : ℕ} :
+def Mode.readback {n : ℕ} : ∀ {σ₁ σ₂ τ : Ty},
     Mode σ₁ σ₂ τ → Ty.SyntacticDomain L α σ₁ n → Ty.SyntacticDomain L α σ₂ n →
       Ty.SyntacticDomain L α τ n
-  | .functionalLeft, f, a => f n le_rfl a
-  | .functionalRight, a, f => f n le_rfl a
-  | .intensionalLeft, f, a => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
-  | .intensionalRight, a, f => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
-  | .predicateModification, p, q => fun k hk x j hj ↦ p k hk x j hj ⊓ q k hk x j hj
-  | .eventIdentificationLeft, f, p => fun k hk x j hj e i hi ↦
+  | _, _, _, .functionalLeft, f, a => f n le_rfl a
+  | _, _, _, .functionalRight, a, f => f n le_rfl a
+  | _, _, _, .intensionalLeft, f, a => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
+  | _, _, _, .intensionalRight, a, f => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
+  | _, _, _, .predicateModification, p, q => fun k hk x j hj ↦ p k hk x j hj ⊓ q k hk x j hj
+  | _, _, _, .eventIdentificationLeft, f, p => fun k hk x j hj e i hi ↦
       f k hk x j hj e i hi ⊓ p j (hk.trans hj) e i hi
-  | .eventIdentificationRight, p, f => fun k hk x j hj e i hi ↦
+  | _, _, _, .eventIdentificationRight, p, f => fun k hk x j hj e i hi ↦
       f k hk x j hj e i hi ⊓ p j (hk.trans hj) e i hi
+  | _, _, _, .mapRight _, _, _ => PUnit.unit
+  | _, _, _, .mapLeft _, _, _ => PUnit.unit
+  | _, _, _, .unitRight m, a, b => m.readback (fun k hk _ ↦ a k hk PUnit.unit) b
+  | _, _, _, .unitLeft m, a, b => m.readback a fun k hk _ ↦ b k hk PUnit.unit
 
 /-- In the syntactic model a symbol is an atom, a determiner binds the next bound variable where
 its scope is complete, and negation and the connectives are the formula connectives. -/
@@ -255,7 +260,12 @@ theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) 
     (ha : Ty.Realizes S v σ₁ n xs a a') (hb : Ty.Realizes S v σ₂ n xs b b') :
     Ty.Realizes S v τ n xs (μ.readback a b) (μ.eval a' b') := by
   let := S
-  cases μ with
+  induction μ with
+  | mapRight _ _ | mapLeft _ _ => trivial
+  | unitRight _ ih =>
+    exact ih (fun k hk ys hys _ x _ ↦ ha k hk ys hys PUnit.unit (Eff.pure _ x) trivial) hb
+  | unitLeft _ ih =>
+    exact ih ha fun k hk ys hys _ x _ ↦ hb k hk ys hys PUnit.unit (Eff.pure _ x) trivial
   | functionalLeft => exact ha n le_rfl xs rfl b b' hb
   | functionalRight => exact hb n le_rfl xs rfl a a' ha
   | intensionalLeft =>

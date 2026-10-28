@@ -60,6 +60,7 @@ abbrev Ty.PDomain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   | .v => S.eventuality
   | .s => W
   | .fn a b => Ty.PDomain E W a S →. Ty.PDomain E W b S
+  | .comp (.reader ι) b => Ty.PDomain E W ι S →. Ty.PDomain E W b S
 
 /-- A partial denotation is a semantic type with a possibly undefined value in its partial
 domain. -/
@@ -74,28 +75,50 @@ variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
 /-- The partial denotation of a mode, defined where both daughters are and the function or role
 head among them is defined at its argument. -/
-def Mode.evalPartial : Mode σ₁ σ₂ τ → Part (Ty.PDomain E W σ₁ S) → Part (Ty.PDomain E W σ₂ S) →
-    Part (Ty.PDomain E W τ S)
-  | .functionalLeft, f, a => f.bind fun fv ↦ a.bind fv
-  | .functionalRight, a, f => f.bind fun fv ↦ a.bind fv
-  | .intensionalLeft, f, a => f.bind fun fv ↦ a.bind fun av ↦ fv fun _ ↦ Part.some av
-  | .intensionalRight, a, f => f.bind fun fv ↦ a.bind fun av ↦ fv fun _ ↦ Part.some av
-  | .predicateModification, p, q => p.bind fun P ↦ q.bind fun Q ↦
+def Mode.evalPartial : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Part (Ty.PDomain E W σ₁ S) →
+    Part (Ty.PDomain E W σ₂ S) → Part (Ty.PDomain E W τ S)
+  | _, _, _, .functionalLeft, f, a => f.bind fun fv ↦ a.bind fv
+  | _, _, _, .functionalRight, a, f => f.bind fun fv ↦ a.bind fv
+  | _, _, _, .intensionalLeft, f, a => f.bind fun fv ↦ a.bind fun av ↦ fv fun _ ↦ Part.some av
+  | _, _, _, .intensionalRight, a, f => f.bind fun fv ↦ a.bind fun av ↦ fv fun _ ↦ Part.some av
+  | _, _, _, .predicateModification, p, q => p.bind fun P ↦ q.bind fun Q ↦
       Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b
-  | .eventIdentificationLeft, f, p => f.bind fun F ↦ p.bind fun P ↦
+  | _, _, _, .eventIdentificationLeft, f, p => f.bind fun F ↦ p.bind fun P ↦
       Part.some fun x ↦ (F x).map fun Fx e ↦ (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b
-  | .eventIdentificationRight, p, f => f.bind fun F ↦ p.bind fun P ↦
+  | _, _, _, .eventIdentificationRight, p, f => f.bind fun F ↦ p.bind fun P ↦
       Part.some fun x ↦ (F x).map fun Fx e ↦ (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b
+  | _, _, _, .mapRight (f := .reader _) m, a, b =>
+      a.bind fun av ↦ b.map fun bv i ↦ m.evalPartial (Part.some av) (bv i)
+  | _, _, _, .mapLeft (f := .reader _) m, a, b =>
+      a.bind fun av ↦ b.map fun bv i ↦ m.evalPartial (av i) (Part.some bv)
+  | _, _, _, .unitRight (f := .reader _) m, a, b =>
+      m.evalPartial (a.map fun av x ↦ av fun _ ↦ Part.some x) b
+  | _, _, _, .unitLeft (f := .reader _) m, a, b =>
+      m.evalPartial a (b.map fun bv y ↦ bv fun _ ↦ Part.some y)
 
 /-- Every mode is strict in its left daughter. -/
 theorem Mode.dom_left_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
     {b : Part (Ty.PDomain E W σ₂ S)} (h : (m.evalPartial a b).Dom) : a.Dom := by
-  cases m <;> obtain ⟨h₁, h₂⟩ := h <;> first | exact h₁ | exact Part.Dom.of_bind h₂
+  induction m with
+  | @unitRight f _ _ _ _ _ ih => cases f; exact ih h
+  | @unitLeft f _ _ _ _ _ ih => cases f; exact ih h
+  | @mapRight f => cases f; exact h.1
+  | @mapLeft f => cases f; exact h.1
+  | functionalLeft | functionalRight | intensionalLeft | intensionalRight | predicateModification
+  | eventIdentificationLeft | eventIdentificationRight =>
+    obtain ⟨h₁, h₂⟩ := h; first | exact h₁ | exact Part.Dom.of_bind h₂
 
 /-- Every mode is strict in its right daughter. -/
 theorem Mode.dom_right_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
     {b : Part (Ty.PDomain E W σ₂ S)} (h : (m.evalPartial a b).Dom) : b.Dom := by
-  cases m <;> obtain ⟨h₁, h₂⟩ := h <;> first | exact h₁ | exact Part.Dom.of_bind h₂
+  induction m with
+  | @unitRight f _ _ _ _ _ ih => cases f; exact ih h
+  | @unitLeft f _ _ _ _ _ ih => cases f; exact ih h
+  | @mapRight f => cases f; exact h.2
+  | @mapLeft f => cases f; exact h.2
+  | functionalLeft | functionalRight | intensionalLeft | intensionalRight | predicateModification
+  | eventIdentificationLeft | eventIdentificationRight =>
+    obtain ⟨h₁, h₂⟩ := h; first | exact h₁ | exact Part.Dom.of_bind h₂
 
 open scoped Assignment
 
@@ -192,6 +215,8 @@ def Ty.Lifts : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty S → Prop
   | .v, x, y => x = y
   | .s, x, y => x = y
   | .fn a b, f, f' => ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z
+  | .comp (.reader ι) b, f, f' =>
+    ∀ x y, Ty.Lifts ι x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z
 
 @[simp] theorem Ty.lifts_e {x y : E} : Ty.Lifts (E := E) (W := W) (S := S) .e x y ↔ x = y :=
   Iff.rfl
@@ -241,6 +266,7 @@ def Ty.Domain.toPartial : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty
   | .fn .e b, f => PFun.lift fun x ↦ toPartial b (f x)
   | .intens a, f => PFun.lift fun w ↦ toPartial a (f w)
   | .fn _ _, _ => fun _ ↦ Part.none
+  | .comp (.reader _) _, _ => fun _ ↦ Part.none
 
 theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty S) :
     Ty.Lifts ty x (Ty.Domain.toPartial ty x) := by
@@ -264,7 +290,29 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
     {b : Ty.Domain E W σ₂ S} {a' : Ty.PDomain E W σ₁ S} {b' : Ty.PDomain E W σ₂ S}
     (ha : Ty.Lifts σ₁ a a') (hb : Ty.Lifts σ₂ b b') :
     ∃ z, m.evalPartial (Part.some a') (Part.some b') = Part.some z ∧ Ty.Lifts τ (m.eval a b) z := by
-  cases m with
+  induction m with
+  | @mapRight f _ _ _ m ih =>
+    cases f
+    refine ⟨fun i ↦ m.evalPartial (Part.some a') (b' i), by simp [evalPartial], fun x y hxy ↦ ?_⟩
+    obtain ⟨w, hw, hlw⟩ := hb x y hxy
+    obtain ⟨z, hz, hlz⟩ := ih ha hlw
+    exact ⟨z, by simp only [hw, hz], hlz⟩
+  | @mapLeft f _ _ _ m ih =>
+    cases f
+    refine ⟨fun i ↦ m.evalPartial (a' i) (Part.some b'), by simp [evalPartial], fun x y hxy ↦ ?_⟩
+    obtain ⟨w, hw, hlw⟩ := ha x y hxy
+    obtain ⟨z, hz, hlz⟩ := ih hlw hb
+    exact ⟨z, by simp only [hw, hz], hlz⟩
+  | @unitRight f _ _ _ _ m ih =>
+    cases f
+    simpa [evalPartial, eval, Eff.pure] using
+      ih (a := fun x ↦ a fun _ ↦ x) (a' := fun x ↦ a' fun _ ↦ Part.some x)
+        (fun x y hxy ↦ ha (fun _ ↦ x) (fun _ ↦ Part.some y) fun _ _ _ ↦ ⟨y, rfl, hxy⟩) hb
+  | @unitLeft f _ _ _ _ m ih =>
+    cases f
+    simpa [evalPartial, eval, Eff.pure] using
+      ih (b := fun y ↦ b fun _ ↦ y) (b' := fun y ↦ b' fun _ ↦ Part.some y) ha
+        (fun x y hxy ↦ hb (fun _ ↦ x) (fun _ ↦ Part.some y) fun _ _ _ ↦ ⟨y, rfl, hxy⟩)
   | functionalLeft => simpa [evalPartial, eval] using ha b b' hb
   | functionalRight => simpa [evalPartial, eval] using hb a a' ha
   | intensionalLeft =>
