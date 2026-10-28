@@ -533,7 +533,7 @@ end Rembarrnga
 namespace Hopi
 
 /-- The pronoun and the verb each mark the singular against the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 /-- The pronoun sets the singular against dual and plural, (40) to (42). -/
 def pronounNumber : Number → numberSystem.values

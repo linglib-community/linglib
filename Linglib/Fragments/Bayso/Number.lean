@@ -40,7 +40,7 @@ def numberSystem : Number.System :=
 def nounNumbers : Finset Number := insert .general numberSystem.values
 
 /-- Pronouns distinguish the singular and the plural. -/
-def pronounNumberSystem : Number.System := { values := {.singular, .plural} }
+def pronounNumberSystem : Number.System := .singularPlural
 
 /-- The three forms of an agreeing verb, labelled from the pronouns that take them:
 *hudure* 'slept' masculine, *hudurte* feminine, *hudureene* plural. -/

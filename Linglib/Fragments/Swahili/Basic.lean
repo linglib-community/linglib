@@ -116,7 +116,7 @@ def Gender.pluralClass : Gender → NounClass
   | .genderE => .cl10
 
 /-- Swahili distinguishes the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 /-- The class of a gender in a number. -/
 def Gender.class (g : Gender) : numberSystem.values → NounClass :=

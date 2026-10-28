@@ -91,7 +91,7 @@ open Minimalist Minimalist.CyclicAgree Morphology.Exponence Phi
 /-! ### Goals and their visible geometries -/
 
 /-- The goals' languages distinguish the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 /-- A goal DP may sit in the K(ase) shell that encapsulates a dative, so that only its person node
 is visible from outside, as with Basque and Icelandic datives (§3.4.1). -/

@@ -172,7 +172,7 @@ def allNouns : List Noun :=
 /-! ### The definite article -/
 
 /-- Spanish distinguishes the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 /-- The definite article a gender takes in each number. -/
 def Value.definiteArticle (g : Value) : numberSystem.values → String :=

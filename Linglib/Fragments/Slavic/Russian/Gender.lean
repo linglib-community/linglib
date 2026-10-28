@@ -155,6 +155,6 @@ inductive Animacy where
   deriving DecidableEq, Repr, Fintype
 
 /-- Russian distinguishes the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 end Russian.Gender

@@ -53,6 +53,7 @@ measurements and the (DH) discussion are not represented.
 namespace Eckert2008
 
 open SocialMeaning
+open Relation.ReflTransGen (closeStep mem_closeStep subset_closeStep monotone_closeStep)
 
 /-! ### Indexical order and the indexical field -/
 
@@ -63,20 +64,6 @@ abbrev IdeologicalField (T : Type*) := T → Finset T
 namespace IdeologicalField
 
 variable {T : Type*} [DecidableEq T] (I : IdeologicalField T) {S : Finset T} {t : T}
-
-/-- One reconstrual of `S` adds to its meanings everything they are construed as. -/
-def construe (S : Finset T) : Finset T := S ∪ S.biUnion I
-
-@[simp] theorem mem_construe : t ∈ I.construe S ↔ t ∈ S ∨ ∃ s ∈ S, t ∈ I s := by
-  simp [construe]
-
-theorem subset_construe (S : Finset T) : S ⊆ I.construe S := Finset.subset_union_left
-
-theorem construe_mono : Monotone I.construe := λ _ _ h =>
-  Finset.union_subset_union h (Finset.biUnion_subset_biUnion_of_subset_left _ h)
-
-theorem monotone_construe_iterate (S : Finset T) : Monotone λ n => I.construe^[n] S :=
-  I.construe_mono.monotone_iterate_of_le_map (I.subset_construe S)
 
 variable [Fintype T]
 
@@ -94,45 +81,46 @@ def indexicalField : ClosureOperator (Finset T) :=
     t ∈ I.indexicalField S ↔ ∃ s ∈ S, Relation.ReflTransGen (λ a b => b ∈ I a) s t := by
   simp [indexicalField]
 
-theorem iterate_construe_subset_indexicalField (n : ℕ) (S : Finset T) :
-    I.construe^[n] S ⊆ I.indexicalField S := by
+theorem iterate_closeStep_subset_indexicalField (n : ℕ) (S : Finset T) :
+    (closeStep I)^[n] S ⊆ I.indexicalField S := by
   induction n with
   | zero => exact I.indexicalField.le_closure S
   | succ n ih =>
     rw [Function.iterate_succ_apply']
     intro t ht
-    obtain ht | ⟨s, hs, hts⟩ := I.mem_construe.1 ht
+    obtain ht | ⟨s, hs, hts⟩ := mem_closeStep.1 ht
     · exact ih ht
     · obtain ⟨u, hu, hus⟩ := I.mem_indexicalField.1 (ih hs)
       exact I.mem_indexicalField.2 ⟨u, hu, hus.tail hts⟩
 
 theorem mem_indexicalField_iff_exists_iterate :
-    t ∈ I.indexicalField S ↔ ∃ n, t ∈ I.construe^[n] S := by
-  refine ⟨λ h => ?_, λ ⟨n, h⟩ => I.iterate_construe_subset_indexicalField n S h⟩
+    t ∈ I.indexicalField S ↔ ∃ n, t ∈ (closeStep I)^[n] S := by
+  refine ⟨λ h => ?_, λ ⟨n, h⟩ => I.iterate_closeStep_subset_indexicalField n S h⟩
   obtain ⟨s, hs, hst⟩ := I.mem_indexicalField.1 h
   clear h
   induction hst with
   | refl => exact ⟨0, hs⟩
   | tail _ hbc ih =>
     obtain ⟨n, hn⟩ := ih
-    exact ⟨n + 1, by rw [Function.iterate_succ_apply']; exact I.mem_construe.2 (.inr ⟨_, hn, hbc⟩)⟩
+    exact ⟨n + 1, by rw [Function.iterate_succ_apply']; exact mem_closeStep.2 (.inr ⟨_, hn, hbc⟩)⟩
 
-theorem isClosed_iff : I.indexicalField.IsClosed S ↔ I.construe S = S := by
+theorem isClosed_iff : I.indexicalField.IsClosed S ↔ closeStep I S = S := by
   rw [I.indexicalField.isClosed_iff]
   constructor
   · intro h
-    refine (I.subset_construe S).antisymm' ?_
-    exact (I.iterate_construe_subset_indexicalField 1 S).trans h.subset
+    refine (subset_closeStep S).antisymm' ?_
+    exact (I.iterate_closeStep_subset_indexicalField 1 S).trans h.subset
   · intro h
     refine (I.indexicalField.le_closure S).antisymm' λ t ht => ?_
     obtain ⟨n, hn⟩ := I.mem_indexicalField_iff_exists_iterate.1 ht
     rwa [Function.iterate_fixed h] at hn
 
 theorem indexicalField_eq_iterate {n : ℕ}
-    (h : I.construe (I.construe^[n] S) = I.construe^[n] S) :
-    I.indexicalField S = I.construe^[n] S :=
-  ((I.indexicalField.monotone (I.monotone_construe_iterate S (Nat.zero_le n))).trans
-    (I.isClosed_iff.2 h).closure_eq.le).antisymm (I.iterate_construe_subset_indexicalField n S)
+    (h : closeStep I ((closeStep I)^[n] S) = (closeStep I)^[n] S) :
+    I.indexicalField S = (closeStep I)^[n] S :=
+  ((I.indexicalField.monotone (monotone_closeStep.monotone_iterate_of_le_map
+    (subset_closeStep S) (Nat.zero_le n))).trans (I.isClosed_iff.2 h).closure_eq.le).antisymm
+    (I.iterate_closeStep_subset_indexicalField n S)
 
 end IdeologicalField
 
@@ -158,7 +146,7 @@ def centralizedAy : Finset VineyardMeaning := {.vineyarder}
 
 theorem vineyard_marker :
     .localAuthenticity ∉ centralizedAy ∧
-      .localAuthenticity ∈ vineyardIdeology.construe centralizedAy := by
+      .localAuthenticity ∈ closeStep vineyardIdeology centralizedAy := by
   decide
 
 theorem indexicalField_centralizedAy :
@@ -283,9 +271,9 @@ def accretion : IdeologicalField TMeaning
   | .stance s => {.quality (.habitual s)}
   | .quality _ => ∅
 
-theorem quality_habitual_mem_construe {S : Finset TMeaning} {s : TStance}
-    (h : .stance s ∈ S) : .quality (.habitual s) ∈ accretion.construe S :=
-  accretion.mem_construe.2 (.inr ⟨_, h, by simp [accretion]⟩)
+theorem quality_habitual_mem_closeStep {S : Finset TMeaning} {s : TStance}
+    (h : .stance s ∈ S) : .quality (.habitual s) ∈ closeStep accretion S :=
+  mem_closeStep.2 (.inr ⟨_, h, by simp [accretion]⟩)
 
 /-- The field of /t/ release of Figure 4, nine stances and four qualities. -/
 def tRelease : Finset TMeaning :=
@@ -295,7 +283,7 @@ def tRelease : Finset TMeaning :=
 
 -- Figure 4
 theorem indexicalField_tRelease :
-    accretion.indexicalField tRelease = accretion.construe tRelease :=
+    accretion.indexicalField tRelease = closeStep accretion tRelease :=
   accretion.indexicalField_eq_iterate (n := 1) (by decide)
 
 /-- The social types of Figure 4 are the enregistered voices at the less fluid end of the field
@@ -324,8 +312,8 @@ theorem nerdGirl_anchors_subset :
   decide
 
 theorem gayDiva_habitual_exasperated :
-    .quality (.habitual .exasperated) ∈ accretion.construe SocialType.gayDiva.anchors :=
-  quality_habitual_mem_construe (by decide)
+    .quality (.habitual .exasperated) ∈ closeStep accretion SocialType.gayDiva.anchors :=
+  quality_habitual_mem_closeStep (by decide)
 
 /-- The continuum of /t/ articulation runs from hypo- to hyperarticulation, from the deletion
 stigmatized in African American English through the flap of American English and the release

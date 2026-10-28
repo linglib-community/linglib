@@ -55,7 +55,7 @@ open scoped DistributedMorphology.VocabularyItem
 /-! ### Features and matrices, sections 3 to 5 -/
 
 /-- Yucatec Maya distinguishes the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 /-- An argument is a person with a number. -/
 abbrev Argument := Person × numberSystem.values

@@ -58,7 +58,7 @@ inductive Article where
   deriving DecidableEq, Repr, Fintype
 
 /-- Somali distinguishes the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 instance : Nontrivial numberSystem.values :=
   ⟨⟨numberSystem.value .singular, numberSystem.value .plural, by decide⟩⟩
