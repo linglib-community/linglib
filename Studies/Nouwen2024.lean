@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Fragments.English.Adjectives
 
 /-!
@@ -219,10 +219,9 @@ theorem update_real_singleton (s : S) :
 
 theorem update_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) :
     update P ν E α c {s} ≠ 0 ↔ P {s} ≠ 0 ∧ ∃ l, ν {l} ≠ 0 ∧ s ∈ E l := by
-  rw [update, L1, listener_fst_apply_singleton_ne_zero_iff]
-  have hs := S1_apply_singleton_ne_zero_iff P E α c hα s
-  simp_rw [← Set.singleton_prod_singleton, Measure.prod_prod, mul_ne_zero_iff, hs, sem]
-  exact ⟨fun ⟨l, ⟨h, hl⟩, hsl, _⟩ ↦ ⟨h, l, hl, hsl⟩, fun ⟨h, l, hl, hsl⟩ ↦ ⟨l, ⟨h, hl⟩, hsl, h⟩⟩
+  simp_rw [update, L1, listener_prod_fst_apply_singleton_ne_zero_iff,
+    S1_apply_singleton_ne_zero_iff P E α c hα s, sem]
+  exact and_congr_right fun h ↦ exists_congr fun _ ↦ and_congr_right fun _ ↦ and_iff_left h
 
 theorem assertable_update {Λ' : Type*} [MeasurableSpace Λ'] {ν' : Measure Λ'}
     {E' : Λ' → Set S} (hα : 0 < α) {s : S} {l : Λ} {l' : Λ'} (hs : P {s} ≠ 0) (hl : ν {l} ≠ 0)
