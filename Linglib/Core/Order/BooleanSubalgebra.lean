@@ -43,6 +43,8 @@ isomorphism matching the families.
 * `Finpartition.card_range_le_two_pow_card_parts_minterms`: a family takes at most `2 ^ n`
   values.
 * `BooleanSubalgebra.isAtom_iff_mem_minterms`: its atoms are the nonzero minterms.
+* `BooleanSubalgebra.parts_minterms_eq_of_closure_eq`: the nonzero minterms depend only on the
+  subalgebra generated.
 * `BooleanSubalgebra.nonempty_orderIso_closure_iff`: two closures are isomorphic iff the families
   have equally many nonzero minterms.
 
@@ -193,6 +195,29 @@ theorem _root_.Finpartition.card_range_le_two_pow_card_parts_minterms :
   have : Finite (closure (Set.range φ) : Set α) := inferInstanceAs (Finite (closure (Set.range φ)))
   rw [← card_closure]
   exact Nat.card_mono (Set.toFinite _) subset_closure
+
+section ClosureEq
+
+variable {κ : Type*} [Fintype κ] [DecidableEq κ] {ψ : κ → α}
+
+private theorem mem_minterms_of_closure_eq (h : closure (Set.range φ) = closure (Set.range ψ))
+    {a : α} (ha : a ∈ (Finpartition.minterms φ).parts) : a ∈ (Finpartition.minterms ψ).parts := by
+  have hmem := mem_closure_of_mem_minterms ha
+  have hφ : IsAtom (⟨a, hmem⟩ : closure (Set.range φ)) := isAtom_iff_mem_minterms.2 ha
+  have hmem' : a ∈ closure (Set.range ψ) := h ▸ hmem
+  suffices IsAtom (⟨a, hmem'⟩ : closure (Set.range ψ)) from isAtom_iff_mem_minterms.1 this
+  revert hmem'
+  revert hφ
+  revert hmem
+  rw [h]
+  exact fun _ hφ _ ↦ hφ
+
+/-- The nonzero minterms of a family depend only on the Boolean subalgebra it generates. -/
+theorem parts_minterms_eq_of_closure_eq (h : closure (Set.range φ) = closure (Set.range ψ)) :
+    (Finpartition.minterms φ).parts = (Finpartition.minterms ψ).parts :=
+  Finset.ext fun _ ↦ ⟨mem_minterms_of_closure_eq h, mem_minterms_of_closure_eq h.symm⟩
+
+end ClosureEq
 
 section MintermEqBot
 

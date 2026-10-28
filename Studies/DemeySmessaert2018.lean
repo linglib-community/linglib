@@ -25,7 +25,9 @@ logic: existential import empties the first-order cell where *all* and *no* both
 first-order X of opposition is not Aristotelian isomorphic to the syllogistic
 square](##isEmpty_aristotelianIso_categoricalModels). Conversely the strong and weak
 Jacoby–Sesmat–Blanché hexagons of S5 are Aristotelian isomorphic, but with three cells against
-four [they are not Boolean isomorphic](##isEmpty_booleanIso_jsbModels).
+four [they are not Boolean isomorphic](##isEmpty_booleanIso_jsbModels). In any Boolean algebra
+[a JSB hexagon is Boolean closed iff its contrariety triangle is
+exhaustive](##isBooleanClosed_jsbHexagon_iff), the strong case.
 
 ## Implementation notes
 
@@ -58,7 +60,6 @@ four [they are not Boolean isomorphic](##isEmpty_booleanIso_jsbModels).
 
 * The sharper bounds of Section 3.3 for contingent fragments closed under negation,
   $2 \lceil \log_2 n \rceil \le m \le 2^n - 2$ and $\lceil \log_2 (m + 2) \rceil \le n \le 2^{m/2}$.
-* Section 5.1's characterization: a JSB hexagon is strong iff it is Boolean closed.
 * The Buridan octagons of Section 5.2, whose partitions have four, five or six cells, and the
   public announcement logic fragment of Section 6.
 
@@ -194,8 +195,8 @@ theorem card_parts_minterms_atom (m : ℕ) : #(Finpartition.minterms (atom m)).p
     filter_true_of_mem fun σ _ ↦ ne_empty_of_mem (a := σ) (mem_minterm.2 fun i ↦ by simp [atom])]
   simp
 
-/-- **Theorem 5**, lower bound attained: any `m` distinct subsets of `⌈log₂ m⌉` points have
-`⌈log₂ m⌉` cells. -/
+-- Theorem 5, lower bound attained: any `m` distinct subsets of `⌈log₂ m⌉` points have
+-- `⌈log₂ m⌉` cells.
 theorem card_parts_minterms_eq_clog {m : ℕ} {φ : Fin m → Finset (Fin (Nat.clog 2 m))}
     (hφ : Injective φ) : #(Finpartition.minterms φ).parts = Nat.clog 2 m := by
   refine le_antisymm ((Finpartition.card_parts_le_card _).trans_eq (by simp)) ?_
@@ -244,11 +245,6 @@ theorem card_parts_minterms_fol :
       4 := by
   decide
 
--- Section 4: `A` and `E` split syllogistic models into three cells.
-theorem card_parts_minterms_syl :
-    #(Finpartition.minterms ![categorical IsSYLPattern 0, categorical IsSYLPattern 1]).parts =
-      3 := by
-  decide
 
 -- The fourth first-order cell, where `A` and `E` both hold, has nothing in `S`.
 theorem inf_categorical_fol :
@@ -271,6 +267,50 @@ theorem squareRelations_syl : SquareRelations (categoricalSquare IsSYLPattern) :
     simp only [categoricalSquare, categorical, mem_filter, mem_univ, true_and,
       Matrix.cons_val_zero, Matrix.cons_val_one] at hA hE
     exact a_e_contrary _ _ hA hE ⟨r, hr⟩ hS
+
+-- Section 4: the syllogistic cells are the vertices of the triangle of opposition.
+theorem parts_minterms_syl :
+    (Finpartition.minterms ![categorical IsSYLPattern 0, categorical IsSYLPattern 1]).parts =
+      univ.image (categoricalSquare IsSYLPattern).triangle := by
+  set sq := categoricalSquare IsSYLPattern
+  have hd : Pairwise (Function.onFun Disjoint ![sq.A, sq.E]) := by
+    intro i j hij
+    fin_cases i <;> fin_cases j
+    exacts [absurd rfl hij, squareRelations_syl.contraryAE, squareRelations_syl.contraryAE.symm,
+      absurd rfl hij]
+  have hsup : univ.sup ![sq.A, sq.E] = sq.A ⊔ sq.E := by simp [Fin.univ_succ]
+  have himage : univ.image ![sq.A, sq.E] = {sq.A, sq.E} := by
+    ext x
+    simp [Fin.exists_fin_succ, eq_comm]
+  have hne : sq.A ≠ ⊥ ∧ sq.E ≠ ⊥ ∧ sq.I ⊓ sq.O ≠ ⊥ := by decide
+  change (Finpartition.minterms ![sq.A, sq.E]).parts = _
+  have hbot : ⊥ ∉ insert (sq.I ⊓ sq.O) ({sq.A, sq.E} : Finset _) := by
+    simp only [mem_insert, mem_singleton, not_or]
+    exact ⟨hne.2.2.symm, hne.1.symm, hne.2.1.symm⟩
+  rw [Finpartition.parts_minterms_of_pairwise_disjoint hd, hsup, himage,
+    ← squareRelations_syl.inf_IO_eq, erase_eq_of_notMem hbot]
+  ext x
+  simp only [mem_insert, mem_singleton, Finset.mem_image, Finset.mem_univ, true_and]
+  constructor
+  · rintro (rfl | rfl | rfl)
+    exacts [⟨.IO, rfl⟩, ⟨.A, rfl⟩, ⟨.E, rfl⟩]
+  · rintro ⟨t, rfl⟩
+    cases t <;> simp [Square.triangle]
+
+-- Section 4: so `A` and `E` split syllogistic models into three cells.
+theorem card_parts_minterms_syl :
+    #(Finpartition.minterms ![categorical IsSYLPattern 0, categorical IsSYLPattern 1]).parts =
+      3 := by
+  have hne : ∀ t, (categoricalSquare IsSYLPattern).triangle t ≠ ⊥ := by decide
+  have hinj : Function.Injective (categoricalSquare IsSYLPattern).triangle := fun s t hst ↦ by
+    by_contra h
+    have hdis : Disjoint ((categoricalSquare IsSYLPattern).triangle s)
+        ((categoricalSquare IsSYLPattern).triangle t) :=
+      squareRelations_syl.pairwise_disjoint_triangle h
+    rw [← hst] at hdis
+    exact hne s (disjoint_self.1 hdis)
+  rw [parts_minterms_syl, card_image_of_injective _ hinj]
+  decide
 
 -- In first-order logic no two categorical statements are contrary.
 theorem not_isContrary_fol (i j : Fin 4) :
@@ -409,6 +449,121 @@ end Models
 
 /-! ### Strong and weak Jacoby–Sesmat–Blanché hexagons (Section 5.1) -/
 
+section JSB
+
+variable {α : Type*} [BooleanAlgebra α] [DecidableEq α] {a b c : α}
+
+/-- The Jacoby–Sesmat–Blanché hexagon on a contrariety triangle `a`, `b`, `c`, in the paper's
+order `a`, `b`, `¬b`, `¬a`, `c`, `¬c`. -/
+def jsbHexagon (a b c : α) : Fin 6 → α := ![a, b, bᶜ, aᶜ, c, cᶜ]
+
+/-- A diagram is Boolean closed when every contingent element of its closure is a corner. -/
+def IsBooleanClosed {ι : Type*} (φ : ι → α) : Prop :=
+  ∀ x ∈ closure (Set.range φ), x ≠ ⊥ → x ≠ ⊤ → x ∈ Set.range φ
+
+omit [DecidableEq α] in
+theorem closure_jsbHexagon :
+    closure (Set.range (jsbHexagon a b c)) = closure (Set.range ![a, b, c]) := by
+  have h₀ : a ∈ closure (Set.range ![a, b, c]) := subset_closure ⟨0, rfl⟩
+  have h₁ : b ∈ closure (Set.range ![a, b, c]) := subset_closure ⟨1, rfl⟩
+  have h₂ : c ∈ closure (Set.range ![a, b, c]) := subset_closure ⟨2, rfl⟩
+  refine le_antisymm (closure_le.2 ?_) (closure_le.2 ?_) <;> rintro _ ⟨i, rfl⟩ <;> fin_cases i
+  exacts [h₀, h₁, compl_mem h₁, compl_mem h₀, h₂, compl_mem h₂, subset_closure ⟨0, rfl⟩,
+    subset_closure ⟨1, rfl⟩, subset_closure ⟨4, rfl⟩]
+
+variable (hab : Disjoint a b) (hac : Disjoint a c) (hbc : Disjoint b c)
+include hab hac hbc
+
+-- Section 5.1: the cells of a JSB hexagon are the corners of its contrariety triangle and the
+-- complement of their join.
+theorem parts_minterms_jsbHexagon :
+    (Finpartition.minterms (jsbHexagon a b c)).parts =
+      (insert (a ⊔ b ⊔ c)ᶜ ({a, b, c} : Finset α)).erase ⊥ := by
+  have hsup : univ.sup ![a, b, c] = a ⊔ b ⊔ c := by
+    rw [Fin.univ_succ, sup_cons, Fin.univ_succ, map_cons, sup_cons]
+    simp [sup_assoc]
+  have himage : univ.image ![a, b, c] = {a, b, c} := by
+    ext x
+    simp [Fin.exists_fin_succ, eq_comm]
+  rw [parts_minterms_eq_of_closure_eq closure_jsbHexagon,
+    Finpartition.parts_minterms_of_pairwise_disjoint, hsup, himage]
+  intro i j hij
+  fin_cases i <;> fin_cases j <;> first
+    | exact absurd rfl hij
+    | simp only [Function.onFun]
+  all_goals first | assumption | exact Disjoint.symm ‹_›
+
+variable (ha : a ≠ ⊥) (hb : b ≠ ⊥) (hc : c ≠ ⊥)
+include ha hb hc
+
+-- Section 5.1: a JSB hexagon has three cells when strong, its contrariety triangle exhaustive,
+-- and four when weak.
+theorem card_parts_minterms_jsbHexagon :
+    #(Finpartition.minterms (jsbHexagon a b c)).parts = if a ⊔ b ⊔ c = ⊤ then 3 else 4 := by
+  have ne {x y : α} (hx : x ≠ ⊥) (h : Disjoint x y) : x ≠ y := fun hxy ↦ hx (by
+    rw [← hxy] at h; exact disjoint_self.1 h)
+  have h3 : #({a, b, c} : Finset α) = 3 :=
+    card_eq_three.2 ⟨a, b, c, ne ha hab, ne ha hac, ne hb hbc, rfl⟩
+  rw [parts_minterms_jsbHexagon hab hac hbc]
+  split_ifs with hs
+  · rw [hs, compl_top, erase_insert_eq_erase, erase_eq_of_notMem]
+    · exact h3
+    simp [ha.symm, hb.symm, hc.symm]
+  · have hd : (a ⊔ b ⊔ c)ᶜ ≠ ⊥ := fun h ↦ hs (compl_eq_bot.1 h)
+    have hdis {x : α} (hx : x ≤ a ⊔ b ⊔ c) : Disjoint x (a ⊔ b ⊔ c)ᶜ :=
+      disjoint_compl_right.mono_left hx
+    have hbot : ⊥ ∉ insert (a ⊔ b ⊔ c)ᶜ ({a, b, c} : Finset α) := by
+      simp only [mem_insert, mem_singleton, not_or]
+      exact ⟨hd.symm, ha.symm, hb.symm, hc.symm⟩
+    rw [erase_eq_of_notMem hbot, card_insert_of_notMem]
+    · rw [h3]
+    simp only [mem_insert, mem_singleton, not_or]
+    exact ⟨(ne ha (hdis (le_sup_left.trans le_sup_left))).symm,
+      (ne hb (hdis (le_sup_right.trans le_sup_left))).symm, (ne hc (hdis le_sup_right)).symm⟩
+
+/-- **Section 5.1**: a JSB hexagon is Boolean closed iff it is strong. -/
+theorem isBooleanClosed_jsbHexagon_iff :
+    IsBooleanClosed (jsbHexagon a b c) ↔ a ⊔ b ⊔ c = ⊤ := by
+  have hmem (i : Fin 6) : jsbHexagon a b c i ∈ closure (Set.range (jsbHexagon a b c)) :=
+    subset_closure ⟨i, rfl⟩
+  have ha' : a ≤ a ⊔ b ⊔ c := le_sup_left.trans le_sup_left
+  have hb' : b ≤ a ⊔ b ⊔ c := le_sup_right.trans le_sup_left
+  refine ⟨fun h ↦ by_contra fun hs ↦ ?_, fun hs x hx hx₀ hx₁ ↦ ?_⟩
+  · -- the complement of the join is a contingent element of the closure and no corner
+    have below {x : α} (hx : x ≤ a ⊔ b ⊔ c) (hx' : x ≤ (a ⊔ b ⊔ c)ᶜ) : x = ⊥ :=
+      le_bot_iff.1 <| (le_inf hx hx').trans (inf_compl_self _).le
+    obtain ⟨i, hi⟩ := h _ (compl_mem (sup_mem (sup_mem (hmem 0) (hmem 1)) (hmem 4)))
+      (fun h ↦ hs (compl_eq_bot.1 h)) fun h ↦ ha <| le_bot_iff.1 <| ha'.trans_eq (compl_eq_top.1 h)
+    fin_cases i
+    · exact ha (below ha' (show a = _ from hi).le)
+    · exact hb (below hb' (show b = _ from hi).le)
+    · exact ha (hab.eq_bot_of_le (ha'.trans_eq (compl_injective (show bᶜ = _ from hi)).symm))
+    · exact hb (hab.symm.eq_bot_of_le (hb'.trans_eq (compl_injective (show aᶜ = _ from hi)).symm))
+    · exact hc (below le_sup_right (show c = _ from hi).le)
+    · exact ha (hac.eq_bot_of_le (ha'.trans_eq (compl_injective (show cᶜ = _ from hi)).symm))
+  · -- each corner of the triangle lies below `x` or is disjoint from it
+    have cell (y : α) (hy : y = a ∨ y = b ∨ y = c) : x ⊓ y = y ∨ x ⊓ y = ⊥ := by
+      refine (le_or_disjoint_of_mem_minterms hx ?_).imp inf_eq_right.2 fun h ↦ h.symm.eq_bot
+      rw [parts_minterms_jsbHexagon hab hac hbc]
+      rcases hy with rfl | rfl | rfl <;> simp [ha, hb, hc]
+    have split : x = x ⊓ a ⊔ x ⊓ b ⊔ x ⊓ c := by
+      rw [← inf_sup_left, ← inf_sup_left, hs, inf_top_eq]
+    have key {y z : α} (h : y ⊔ z = ⊤) (hyz : Disjoint y z) : zᶜ = y :=
+      (IsCompl.of_eq hyz.eq_bot h).eq_compl.symm
+    rcases cell a (by simp) with h₁ | h₁ <;> rcases cell b (by simp) with h₂ | h₂ <;>
+      rcases cell c (by simp) with h₃ | h₃ <;> rw [h₁, h₂, h₃] at split <;>
+      (try simp only [bot_sup_eq, sup_bot_eq] at split) <;> subst split
+    · exact absurd hs hx₁
+    · exact ⟨5, key hs (hac.sup_left hbc)⟩
+    · exact ⟨2, key (by rw [← hs]; ac_rfl) (hab.sup_left hbc.symm)⟩
+    · exact ⟨0, rfl⟩
+    · exact ⟨3, key (by rw [← hs]; ac_rfl) (hab.symm.sup_left hac.symm)⟩
+    · exact ⟨1, rfl⟩
+    · exact ⟨4, rfl⟩
+    · exact absurd rfl hx₀
+
+end JSB
+
 /-- An S5 world type records the value of `p` at the evaluation world and the set of values `p`
 takes across the worlds, which contains it. -/
 abbrev S5Type := {t : Bool × Finset Bool // t.1 ∈ t.2}
@@ -443,6 +598,16 @@ def strongJSB : Fin 6 → Finset S5Type :=
 def weakJSB : Fin 6 → Finset S5Type :=
   ![boxP, boxNotP, diaP, diaNotP, atP ⊓ diaNotP, atPᶜ ⊔ boxP]
 
+-- Section 5.1: the strong hexagon is the JSB hexagon on `□p`, `□¬p` and `◇p ∧ ◇¬p`.
+theorem strongJSB_eq : strongJSB = jsbHexagon boxP boxNotP (diaP ⊓ diaNotP) := by
+  funext i
+  fin_cases i <;> decide
+
+-- Section 5.1: the weak hexagon is the JSB hexagon on `□p`, `□¬p` and `p ∧ ◇¬p`.
+theorem weakJSB_eq : weakJSB = jsbHexagon boxP boxNotP (atP ⊓ diaNotP) := by
+  funext i
+  fin_cases i <;> decide
+
 -- Section 5.1: the contrariety triangle of the strong hexagon is exhaustive.
 theorem sup_strongJSB_eq_top : strongJSB 0 ⊔ strongJSB 1 ⊔ strongJSB 4 = ⊤ := by
   decide
@@ -453,11 +618,31 @@ theorem sup_weakJSB_ne_top : weakJSB 0 ⊔ weakJSB 1 ⊔ weakJSB 4 ≠ ⊤ := by
 
 -- Section 5.1: the strong hexagon's partition has three cells.
 theorem card_parts_minterms_strongJSB : #(Finpartition.minterms strongJSB).parts = 3 := by
-  decide +kernel
+  rw [strongJSB_eq, card_parts_minterms_jsbHexagon (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide)]
+  split_ifs with h
+  · rfl
+  · exact absurd sup_strongJSB_eq_top h
 
 -- Section 5.1: the weak hexagon's partition has four cells.
 theorem card_parts_minterms_weakJSB : #(Finpartition.minterms weakJSB).parts = 4 := by
-  decide +kernel
+  rw [weakJSB_eq, card_parts_minterms_jsbHexagon (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide)]
+  split_ifs with h
+  · exact absurd h sup_weakJSB_ne_top
+  · rfl
+
+-- Section 5.1: the strong hexagon is Boolean closed.
+theorem isBooleanClosed_strongJSB : IsBooleanClosed strongJSB := by
+  rw [strongJSB_eq]
+  exact (isBooleanClosed_jsbHexagon_iff (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide)).2 sup_strongJSB_eq_top
+
+-- Section 5.1: the weak hexagon is not.
+theorem not_isBooleanClosed_weakJSB : ¬ IsBooleanClosed weakJSB := by
+  rw [weakJSB_eq, isBooleanClosed_jsbHexagon_iff (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide)]
+  exact sup_weakJSB_ne_top
 
 /-- The strong and weak JSB hexagons are Aristotelian isomorphic by the paper's `ρ`, which matches
 their corners in order. -/
