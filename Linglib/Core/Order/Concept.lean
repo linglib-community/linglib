@@ -76,11 +76,8 @@ instance instSetLike {r : S → S → Prop} : SetLike (Concept S S r) S where
   coe c := c.extent
   coe_injective _ _ h := extent_injective h
 
-theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ := by
-  rw [Concept.extent_bot]
-  ext x
-  simp only [Set.mem_empty_iff_false, iff_false]
-  exact fun hx ↦ Std.Irrefl.irrefl x (hx (Set.mem_univ x))
+theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ :=
+  Set.disjoint_univ.1 (Concept.intent_bot (r := r) ▸ (⊥ : Concept S S r).disjoint_extent_intent)
 
 /-- For a symmetric relation the orthocomplement is an involution of the concept lattice
 ([holliday-mandelkern-2024] Proposition 4.8). -/
