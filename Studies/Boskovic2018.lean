@@ -199,10 +199,10 @@ def remnantFronting : Derivation :=
     .em .left kiss, .em .left kissV, .em .left jane, .em .left did, .im jane,
     .im (.traceOf janeD * (kissV * (kiss * mary)) : LinearizedSyntacticObject)]⟩
 
-/-- (20): vP, its subject gone, is labeled by v and moves; remnant movement obeys even the
-traditional ban. -/
+/-- (20): vP, its subject gone, is labeled by v and moves as a remnant of the subject; remnant
+movement obeys even the traditional ban. -/
 theorem ex20 : remnantFronting.surfacePhon = ["kiss", "Mary", "Jane", "did"] ∧
-    remnantFronting.ObeysFreezing ∧
+    remnantFronting.IsRemnantStep 7 janeD ∧ remnantFronting.ObeysFreezing ∧
     (Examples.ex20.judgment = .acceptable ↔ Converges IsPhaseHead remnantFronting) := by
   decide +kernel
 

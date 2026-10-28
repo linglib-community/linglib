@@ -38,6 +38,11 @@ in the relation, and in a derivation of Merge steps that merges no token twice t
 * `Minimalist.Derivation.cCommandsAt_map_iff`: c-command at a stage is invariant under an
   injective relabelling that preserves selection.
 
+## Implementation notes
+
+* `CCommandsAt` reads the stages the replay externalizes under the default trace encoder,
+  `selHead`, though the stages themselves take the encoder as a parameter.
+
 ## References
 
 * [cole-hermon-2008], fn. 28

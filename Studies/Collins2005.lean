@@ -316,12 +316,11 @@ theorem obeysFreezing_map (a : Analysis) (ev : Bool) :
     ((p.map f).passive a ev).ObeysFreezing ↔ (p.passive a ev).ObeysFreezing := by
   rw [passive_map p hh, Derivation.obeysFreezing_map_iff hf]
 
-include hf hsel hh in
-theorem isRemnantStep_map (a : Analysis) (ev : Bool) :
-    ((p.map f).passive a ev).IsRemnantStep ((p.map f).voiceP ev).length ↔
-      (p.passive a ev).IsRemnantStep (p.voiceP ev).length := by
-  rw [passive_map p hh, voiceP_map p hh, Derivation.length_map,
-    Derivation.isRemnantStep_map_iff hf hsel]
+include hf hh in
+theorem isRemnantStep_map (a : Analysis) (ev : Bool) (t : LexicalItem.Token) :
+    ((p.map f).passive a ev).IsRemnantStep ((p.map f).voiceP ev).length (f t) ↔
+      (p.passive a ev).IsRemnantStep (p.voiceP ev).length t := by
+  rw [passive_map p hh, voiceP_map p hh, Derivation.length_map, Derivation.isRemnantStep_map_iff hf]
 
 end Clause
 
@@ -400,12 +399,20 @@ theorem converges_iff_not_obeysFreezing (a : Analysis) (ev : Bool) :
   revert s a ev
   decide +kernel
 
+-- (58)
 theorem isRemnantStep_iff (w : String) (a : Analysis) (ev : Bool) :
-    ((Clause.of verb agent patient (some (.pp w)) be).passive a ev).IsRemnantStep
-        ((Clause.of verb agent patient (some (.pp w)) be).voiceP ev).length ↔
-      a = .partP ∧ ev = true := by
-  rw [of_eq_map, Clause.isRemnantStep_map _ (Equiv.injective _)
-    (renaming_preservesSelection ..) (renaming_heads _ _ _ _ _)]
+    ∀ x ∈ (Clause.of verb agent patient (some (.pp w)) be).complement,
+      ((Clause.of verb agent patient (some (.pp w)) be).passive a ev).IsRemnantStep
+          ((Clause.of verb agent patient (some (.pp w)) be).voiceP ev).length x.val ↔
+        a = .partP ∧ ev = true := by
+  rw [of_eq_map]
+  simp only [Clause.map_complement, Option.mem_map, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, Complement.val_map]
+  intro x hx
+  rw [Clause.isRemnantStep_map _ (Equiv.injective _) (renaming_heads _ _ _ _ _)]
+  simp only [Clause.template, Clause.of, Option.map_some, Complement.map, Option.mem_def,
+    Option.some.injEq] at hx
+  subst hx
   simp only [Option.map_some, Complement.map]
   revert a ev
   decide +kernel
