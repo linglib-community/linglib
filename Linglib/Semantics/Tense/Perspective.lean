@@ -78,9 +78,9 @@ variable {T : Type*} [LinearOrder T] {A B : Finset Allen.Relation} {C : Finset O
 /-- The perspectival presupposition of a temporal pronoun with cell `A` is that its reference
 stands to the perspective `π` in one of the relations of `A`. -/
 def Presup (A : Finset Allen.Relation) (π ref : NonemptyInterval T) : Prop :=
-  Allen.relation ref π ∈ A
+  π ~[Allen.toSetRel A] ref
 
-instance : Decidable (Presup A π r) := inferInstanceAs (Decidable (_ ∈ A))
+instance : Decidable (Presup A π r) := inferInstanceAs (Decidable (π ~[Allen.toSetRel A] r))
 
 @[simp] theorem presup_precedes : Presup Allen.precedes π r ↔ r.Precedes π :=
   Allen.relation_mem_precedes
@@ -93,7 +93,7 @@ instance : Decidable (Presup A π r) := inferInstanceAs (Decidable (_ ∈ A))
 @[simp] theorem presup_ofPosition : Presup (Allen.ofPosition C) π r ↔ r.position π ∈ C :=
   Allen.relation_mem_ofPosition
 
-@[simp] theorem presup_top : Presup ⊤ π r := Finset.mem_univ _
+@[simp] theorem presup_top : Presup ⊤ π r := Allen.mem_toSetRel.2 (Finset.mem_univ _)
 
 /-- An adverb with cell `B` and reference `th` restricts a tense with cell `A` and reference `r`
 relative to the perspective `π`: both presuppositions hold and the tense's reference lies within
@@ -120,10 +120,10 @@ theorem exists_restricted_iff [DenselyOrdered T] [Nontrivial T] :
   obtain ⟨f⟩ := Order.embedding_from_countable_to_dense (α := Fin 6) (β := T)
   have hji : Allen.relation j i ∈ Allen.le := by simpa using hle
   refine ⟨k.map f.toOrderHom, j.map f.toOrderHom, i.map f.toOrderHom, ?_, ?_, ?_⟩
-  · rwa [Presup, Allen.relation_map]
+  · rwa [Presup, Allen.mem_toSetRel, Allen.relation_map]
   · rw [← Allen.relation_mem_le, Allen.relation_map]
     exact hji
-  · rwa [Presup, Allen.relation_map]
+  · rwa [Presup, Allen.mem_toSetRel, Allen.relation_map]
 
 /-- A reference overlapping the perspective cannot be restricted by an adverb whose positions
 exclude overlap, the ⌜then⌝-present clash. -/
@@ -154,8 +154,6 @@ theorem exists_restricted_ofPosition_iff [Nontrivial T] {D : Finset Ordering} :
   refine ⟨.pure y, .pure x, .pure x ⊔ .pure y, hr, le_sup_left, ?_⟩
   rwa [NonemptyInterval.position_eq_eq.2
     (NonemptyInterval.overlaps_symm (NonemptyInterval.overlaps_of_le le_sup_right))]
-
-theorem presup_iff_mem_toSetRel : Presup A π r ↔ π ~[Allen.toSetRel A] r := .rfl
 
 end Perspective
 

@@ -98,20 +98,21 @@ theorem diamond_toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T]
 
 end LinearOrder
 
-namespace Perspective
+end Tense
 
-variable [LinearOrder T] {π : NonemptyInterval T} {Q : NonemptyInterval T → Prop}
+namespace Allen
 
-@[simp] theorem diamond_toSetRel_past :
-    ◇[Allen.toSetRel Allen.precedes] Q π ↔ ∃ r, r.Precedes π ∧ Q r := by
+open ModalLogic
+
+variable {T : Type*} [LinearOrder T] {π : NonemptyInterval T} {Q : NonemptyInterval T → Prop}
+
+@[simp] theorem diamond_toSetRel_precedes :
+    ◇[toSetRel precedes] Q π ↔ ∃ r, r.Precedes π ∧ Q r := by
   simp [Diamond]
 
 /-- On dense time the past of a past is a past on intervals too. -/
-theorem diamond_past_diamond_past [DenselyOrdered T] (Q : NonemptyInterval T → Prop) :
-    ◇[Allen.toSetRel Allen.precedes] (◇[Allen.toSetRel Allen.precedes] Q) =
-      ◇[Allen.toSetRel Allen.precedes] Q := by
-  rw [← diamond_comp, Allen.toSetRel_precedes_comp_self]
+theorem diamond_precedes_diamond_precedes [DenselyOrdered T] (Q : NonemptyInterval T → Prop) :
+    ◇[toSetRel precedes] (◇[toSetRel precedes] Q) = ◇[toSetRel precedes] Q := by
+  rw [← diamond_comp, toSetRel_precedes_comp_self]
 
-end Perspective
-
-end Tense
+end Allen

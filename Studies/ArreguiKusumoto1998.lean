@@ -190,7 +190,7 @@ theorem holds_present : M.Holds (clause presentVariable (.leaf (.vp k))) ↔ M.v
 -- (13)
 theorem holds_past :
     M.Holds (clause pastOperator (.leaf (.vp k))) ↔ ∃ t, t.Precedes M.speechTime ∧ M.vp k t :=
-  Perspective.diamond_toSetRel_past
+  Allen.diamond_toSetRel_precedes
 
 theorem not_interpretable_speechTime_present :
     ¬ Interpretable (.bin (.leaf .speechTime) (.bin presentVariable (.leaf (.vp k)))) :=
@@ -276,7 +276,7 @@ theorem holds_before_present_relative :
 theorem extension_after_past [DenselyOrdered T] :
     M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp k)))) t ↔
       ∃ t', t'.Precedes t ∧ M.vp k t' := by
-  simp [↓Perspective.diamond_past_diamond_past]
+  simp [↓Allen.diamond_precedes_diamond_precedes]
 
 theorem not_extension_after_past_int :
     ∃ (M : Model ℤ) (t : NonemptyInterval ℤ), (∃ t', t'.Precedes t ∧ M.vp 0 t') ∧
@@ -306,7 +306,7 @@ theorem interpretable_selected :
 theorem holds_after_selected [DenselyOrdered T] :
     M.Holds (matrix (.leaf (.vp k)) (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp l))))) ↔
       ∃ t, t.Precedes M.speechTime ∧ M.vp k t ∧ ∃ t', t'.Precedes t ∧ M.vp l t' := by
-  simp [↓Perspective.diamond_past_diamond_past, Diamond]
+  simp [↓Allen.diamond_precedes_diamond_precedes, Diamond]
 
 -- (29)
 theorem holds_before_selected :
@@ -361,7 +361,7 @@ def quantificational (τ vp : LF) : LF := .bin (.leaf .adverb) (.binder 0 (.bin 
 theorem holds_whenever :
     M.Holds (matrix (.leaf (.vp k)) (quantificational presentVariable (.leaf (.vp l)))) ↔
       ∃ t, t.Precedes M.speechTime ∧ ∀ t' ≤ t, M.vp l t' → ∃ t'' ≤ t', M.vp k t'' :=
-  Perspective.diamond_toSetRel_past
+  Allen.diamond_toSetRel_precedes
 
 -- (34b)
 theorem holds_whenever_of_forall_not (ht : t.Precedes M.speechTime)
