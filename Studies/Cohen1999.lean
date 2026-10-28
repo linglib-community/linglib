@@ -177,11 +177,16 @@ theorem gen_conservativity :
   unfold gen
   rw [uniformOn_finset_setOf, uniformOn_finset_setOf, this]
 
+theorem gen_mono {φ' : α → Prop} [DecidablePred φ'] (h : ∀ x, φ x → φ' x) :
+    gen domain ψ alt φ → gen domain ψ alt φ' := by
+  simp only [gen_iff_card]
+  exact fun hg ↦ hg.trans_le <| Nat.mul_le_mul_left 2 <|
+    Finset.card_le_card <| Finset.monotone_filter_right _ fun x _ ↦ h x
+
 -- §5.7
-theorem gen_self (hR : (domain.filter fun x ↦ ψ x ∧ φ x).Nonempty) : gen domain ψ φ φ := by
+theorem gen_self_iff : gen domain ψ φ φ ↔ (domain.filter fun x ↦ ψ x ∧ φ x).Nonempty := by
   rw [gen_iff_card, Finset.filter_true_of_mem (s := domain.filter fun x ↦ ψ x ∧ φ x) (p := φ)
-    fun x hx ↦ (Finset.mem_filter.1 hx).2.2]
-  have := hR.card_pos
+    fun x hx ↦ (Finset.mem_filter.1 hx).2.2, ← Finset.card_pos]
   omega
 
 /-! ### The generalized-quantifier interface

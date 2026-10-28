@@ -1,0 +1,86 @@
+[
+  {
+    "id": "cohen2013_12b",
+    "source": {"bibkey": "cohen-2013", "paperLabel": "(12b)"},
+    "language": "stan1293",
+    "primaryText": "Storks have a favorite nesting area.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "narrow", "judgment": "acceptable"},
+      {"name": "wide", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "generic"]
+    ],
+    "comment": "p. 337: generics in transparent contexts exhibit the usual scope ambiguities, after Schubert and Pelletier 1989; p. 346 derives both readings. narrow: there is a favorite nesting area x such that, in general, storks nest in x. wide: in general, a stork has a favorite nesting area.",
+    "verified": "page-image"
+  },
+  {
+    "id": "cohen2013_17a",
+    "source": {"bibkey": "cohen-2013", "paperLabel": "(17a)"},
+    "language": "stan1293",
+    "primaryText": "John smokes a cigarette.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "narrow", "judgment": "acceptable"},
+      {"name": "wide", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "habitual"]
+    ],
+    "comment": "p. 338: bad because it can only get the implausible reading, one cigarette that John habitually smokes (narrow), not the plausible one, John habitually in a situation where there is a cigarette he smokes (wide); fn. 4: focus does not help. Same sentence as (45a) p. 349 with Mary.",
+    "verified": "page-image"
+  },
+  {
+    "id": "cohen2013_17b",
+    "source": {"bibkey": "cohen-2013", "paperLabel": "(17b)"},
+    "language": "stan1293",
+    "primaryText": "John smokes a brand of French cigarette.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "narrow", "judgment": "acceptable"},
+      {"name": "wide", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "habitual"]
+    ],
+    "comment": "p. 338: habituals without any restriction take narrow scope only (after Krifka et al. 1995); in (17b) too the habitual takes narrow scope, and one brand that John habitually smokes makes sense.",
+    "verified": "page-image"
+  },
+  {
+    "id": "cohen2013_25a",
+    "source": {"bibkey": "cohen-2013", "paperLabel": "(25a)"},
+    "language": "stan1293",
+    "primaryText": "John needed but didn't buy a new coat.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "narrow", "judgment": "acceptable"},
+      {"name": "wide", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "verb conjunction"]
+    ],
+    "comment": "p. 341: can only mean (25b), John didn't buy any new coat, with negation over the type-shifted buy (narrow), not (25c), there is a new coat John didn't buy (wide); fn. 10: (25c) is available when need is read de re, with no type mismatch.",
+    "verified": "page-image"
+  }
+]
