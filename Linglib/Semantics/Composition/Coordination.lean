@@ -1,27 +1,23 @@
 module
 
 public import Linglib.Semantics.Composition.Coordinator
-public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Mode
 
 /-!
 # Coordination in the composition engine
 
-Two sisters of the same conjoinable type, a type that ends in $t$, can combine by coordination:
-their coordinator's denotation applies to the pair in the pointwise Boolean algebra of the type,
-so that *and* conjoins truth values, predicates and quantifiers alike. Coordination is a mode
-beside functional application, intensional application and predicate modification, and
-predicate modification is
-[the conjunctive case at the type of predicates](##combine?_eq_coordinate?_of_conjunctive), so
-the engine's modification mode agrees with what *and* denotes.
+A coordinator is a word of every conjoinable type, a type that ends in $t$: at such a type
+$\tau$ it denotes $\lambda q\,\lambda p.\ c\{p, q\}$, of type
+$\langle\tau,\langle\tau,\tau\rangle\rangle$, in the pointwise Boolean algebra of $\tau$, so that
+*and* conjoins truth values, predicates and quantifiers alike. Coordination therefore needs no
+composition mode of its own: [functional application composes $[X\ [c\ Y]]$ to
+$c\{X, Y\}$](##combine?_reading), and predicate modification [is the conjunctive reading at
+$\langle e,t\rangle$](##combine?_predicateModification_eq_reading).
 
 ## Main definitions
 
-* `Coordinator.coordinate?`: the coordination mode.
-
-## Implementation notes
-
-The mode finds the Boolean algebra of its daughters' type at run time, through
-`Ty.Domain.completeBooleanAlgebra?`; `Coordinator.denote` is the coordinator's denotation.
+* `Coordinator.reading`: a coordinator's denotation at a conjoinable type.
+* `Coordinator.readings`: its denotations at every conjoinable type.
 
 ## References
 
@@ -35,29 +31,41 @@ namespace Coordinator
 
 open Montague
 
-/-- The coordination of two sisters of the same conjoinable type by what the coordinator `c`
-denotes on the pair, in the complete Boolean algebra of their type and through the effect `M`;
-`none` on sisters of different or non-conjoinable types. -/
-def coordinate? {E W : Type} {M : Type → Type} [Applicative M] (c : Coordinator)
-    (d1 d2 : Denotation E W M) : Option (Denotation E W M) :=
-  if h : d1.1 = d2.1 then
-    (Ty.Domain.completeBooleanAlgebra? E W d1.1).map
-      fun (i : CompleteBooleanAlgebra (Ty.Domain E W d1.1)) =>
-        ⟨d1.1, (fun p q ↦ letI := i; c.denote {p, q}) <$> d1.2 <*> (h ▸ d2.2)⟩
-  else none
+variable {E W : Type} {M : Type → Type} [Applicative M]
 
-/-- Predicate modification is generalized conjunction at `⟨e,t⟩`. -/
-theorem combine?_eq_coordinate?_of_conjunctive {E W : Type} {M : Type → Type}
-    [Applicative M] {c : Coordinator} (hc : c.role = .conjunctive) (d1 d2 : Denotation E W M)
-    (h1 : d1.1 = (.e ⇒ .t)) (h2 : d2.1 = (.e ⇒ .t)) :
-    Mode.combine? Mode.evalM d1 d2 = coordinate? c d1 d2 := by
-  obtain ⟨t1, v1⟩ := d1
-  obtain ⟨t2, v2⟩ := d2
-  subst h1; subst h2
-  have h : (Modifier.intersective : Ty.Domain E W (.e ⇒ .t) → _) =
-      fun p q ↦ c.denote {p, q} := by
+/-- A coordinator at a conjoinable type $\tau$ denotes $\lambda q\,\lambda p.\ c\{p, q\}$, of type
+$\langle\tau,\langle\tau,\tau\rangle\rangle$, taking its right coordinand first, as in
+$[X\ [c\ Y]]$. -/
+def reading (c : Coordinator) (τ : Ty) (h : τ.Conjoinable) : Denotation E W M :=
+  ⟨τ ⇒ τ ⇒ τ, pure fun q p ↦ letI := Ty.Domain.completeBooleanAlgebra E W τ h; c.denote {p, q}⟩
+
+/-- A coordinator's readings are its denotations at every conjoinable type. -/
+def readings (c : Coordinator) : Set (Denotation E W M) :=
+  Set.range fun τ : {τ : Ty // τ.Conjoinable} ↦ c.reading τ τ.2
+
+variable [LawfulApplicative M]
+
+/-- Functional application composes `[X [c Y]]` to the coordination of `X` and `Y`. -/
+theorem combine?_reading (c : Coordinator) {τ : Ty} (h : τ.Conjoinable)
+    (x y : M (Ty.Domain E W τ)) :
+    ((Mode.combine? Mode.evalM (c.reading τ h) ⟨τ, y⟩).bind fun d ↦
+        Mode.combine? Mode.evalM ⟨τ, x⟩ d) =
+      some ⟨τ, (fun p q ↦ letI := Ty.Domain.completeBooleanAlgebra E W τ h; c.denote {p, q}) <$>
+        x <*> y⟩ := by
+  simp only [reading, Mode.combine?_fn_left, Option.bind_some, Mode.combine?_fn_right,
+    Mode.evalM, map_pure, pure_seq, seq_map_assoc, Functor.map_map]
+  rfl
+
+/-- Predicate modification is the conjunctive reading at `⟨e,t⟩`. -/
+theorem combine?_predicateModification_eq_reading {c : Coordinator} (hc : c.role = .conjunctive)
+    (x y : M (Ty.Domain E W (.e ⇒ .t))) :
+    Mode.combine? Mode.evalM ⟨.e ⇒ .t, x⟩ ⟨.e ⇒ .t, y⟩ =
+      (Mode.combine? Mode.evalM (c.reading (.e ⇒ .t) trivial) ⟨.e ⇒ .t, y⟩).bind fun d ↦
+        Mode.combine? Mode.evalM ⟨.e ⇒ .t, x⟩ d := by
+  rw [combine?_reading, Mode.combine?_predicateModification]
+  have h : (Modifier.intersective : Ty.Domain E W (.e ⇒ .t) → _) = fun p q ↦
+      letI := Ty.Domain.completeBooleanAlgebra E W (.e ⇒ .t) trivial; c.denote {p, q} := by
     funext p q; simp [Modifier.intersective, Coordinator.denote_of_conjunctive hc]
-  rw [Mode.combine?_predicateModification]
-  exact congrArg (fun F ↦ some (⟨.e ⇒ .t, F <$> v1 <*> v2⟩ : Denotation E W M)) h
+  exact congrArg (fun F ↦ some (⟨.e ⇒ .t, F <$> x <*> y⟩ : Denotation E W M)) h
 
 end Coordinator
