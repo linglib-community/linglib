@@ -15,9 +15,11 @@ A term has a value in any
 *interpretation*, which fixes a domain at each type and how constants, variables, abstraction and
 the modes are interpreted, and the values of related terms in two interpretations are related
 [whenever the relation holds of the constants and variables and survives abstraction and every
-mode](##Rel.realize). Heim and Kratzer's total semantics, von Fintel and Heim's semantics relative
-to a world, and composition under an effect are interpretations, and the total denotation is
-[the case of the intension where no word varies with the world](##intension_const_interp).
+mode](##Rel.realize). Composition under an effect is an interpretation, and Heim and Kratzer's
+total semantics and von Fintel and Heim's semantics relative to a world are its cases under the
+identity effect and the reader of worlds, the latter giving intensional application its argument's
+whole intension. The total denotation is [the case of the intension where no word varies with the
+world](##intension_const_interp).
 
 ## Main definitions
 
@@ -54,6 +56,7 @@ more than the constant functions (`SetM.not_preservesConst`).
 * [montague-1973]
 * [von-fintel-heim-2011]
 * [kratzer-shimoyama-2002]
+* [shan-2001]
 * [shan-2004]
 * [charlow-2020]
 -/
@@ -265,29 +268,6 @@ namespace Interpretation
 
 variable {K : Ty → Type u}
 
-/-- The total interpretation: a constant denotes what `I` gives it, a variable its value, an
-abstraction the function from the values of its variable to its body's, and a composition what its
-mode makes of its daughters ([heim-kratzer-1998]). -/
-def total (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) : Interpretation K where
-  D ty := Ty.Domain E W ty S
-  Val ty := Ty.Domain E W ty S
-  const := I
-  var x := x
-  lam f := f
-  mode m := m.eval
-
-/-- The intensional interpretation: a term's value is its intension, its denotation at every
-world, a constant's that `I` gives it, a variable denotes its value at every world, and a
-composition composes its daughters' intensions by its mode, intensional application giving the
-function its argument's whole intension ([von-fintel-heim-2011]). -/
-def intensional (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S) : Interpretation K where
-  D ty := W → Ty.Domain E W ty S
-  Val ty := Ty.Domain E W ty S
-  const := I
-  var x := fun _ ↦ x
-  lam f := fun w x ↦ f x w
-  mode m := m.intension
-
 /-- The effectful interpretation under an applicative effect that distributes over functions: a
 term's value is a computation, an abstraction distributes the effect over the values of its
 variable, and a composition runs its left daughter first. -/
@@ -299,6 +279,20 @@ def effectful {M : Type → Type} [Applicative M] [Distributive M]
   var x := Pure.pure x
   lam f := distribute f
   mode m := m.evalM
+
+/-- The total interpretation is the effectful interpretation under the identity effect: a constant
+denotes what `I` gives it, a variable its value, an abstraction the function from the values of
+its variable to its body's, and a composition what its mode makes of its daughters
+([heim-kratzer-1998]). -/
+abbrev total (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) : Interpretation K :=
+  effectful (M := Id) I
+
+/-- The intensional interpretation is the effectful interpretation under the reader of worlds
+([shan-2001]): a term's value is its intension, a variable denotes its value at every world, and a
+composition composes its daughters' values at each world, except that intensional application gives
+the function its argument's whole intension ([von-fintel-heim-2011]). -/
+def intensional (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S) : Interpretation K :=
+  { effectful (M := ReaderT W Id) I with mode := Mode.intension }
 
 end Interpretation
 
@@ -414,9 +408,7 @@ theorem evalM_map {M : Type → Type} [Applicative M] [Distributive M]
 @[simp] theorem evalM_id (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S)
     (g : ∀ n, Ty.Domain E W (Γ n) S) {ty : Ty} (t : Term Γ K ty) :
     t.evalM (M := Id) I g = t.eval I g :=
-  realize_rel (A := .effectful (M := Id) I) (B := .total I) (fun _ ↦ (· = ·)) (fun _ ↦ (· = ·))
-    (fun _ ↦ rfl) (fun _ _ h ↦ by subst h; rfl) (fun _ _ h ↦ funext fun x ↦ h x x rfl)
-    (fun _ _ _ _ _ ha hb ↦ by subst ha hb; rfl) t fun _ ↦ rfl
+  rfl
 
 /-- A term whose constants are values of another's sets of values evaluates, under the set effect,
 to a set containing the first term's denotation. -/

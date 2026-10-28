@@ -17,12 +17,13 @@ function type, as an applicative functor distributes over a list in McBride and 
 `dist`. Function types are not traversable, since not every applicative functor distributes
 over them (McBride and Paterson's example is `Option` over functions from the integers), so
 distribution is a property of the functor. The identity functor distributes by doing nothing,
-and the set functor by choosing a value at every index, `Set.pi`.
+the set functor by choosing a value at every index, `Set.pi`, and a reader over a distributive
+functor by reading its environment at every index.
 
 A distributive functor preserves constant families when a family that computes the same `m` at
-every index distributes to the constant functions of the values of `m`. The identity does. The set
-functor does not: from a set with two values it distributes the constant family to every function
-into that set, not only the constant ones.
+every index distributes to the constant functions of the values of `m`. The identity does, and a
+reader over a functor that does. The set functor does not: from a set with two values it
+distributes the constant family to every function into that set, not only the constant ones.
 
 ## Main definitions
 
@@ -32,6 +33,7 @@ into that set, not only the constant ones.
 ## Main results
 
 * `Distributive.preservesConst_id`: the identity functor preserves constant families.
+* `Distributive.preservesConst_readerT`: so does a reader over a functor that does.
 * `SetM.mem_run_distribute`: the set functor distributes a family to its choice functions.
 * `SetM.not_preservesConst`: the set functor does not preserve constant families.
 
@@ -66,6 +68,20 @@ instance : Distributive Id.{u} where
   rfl
 
 theorem preservesConst_id : PreservesConst Id.{u} := fun _ _ _ ↦ rfl
+
+/-- A reader over a distributive functor distributes by reading its environment at every
+index. -/
+instance {ρ : Type u} {M : Type u → Type v} [Distributive M] : Distributive (ReaderT ρ M) where
+  distribute f := fun r ↦ distribute fun i ↦ f i r
+
+@[simp] theorem distribute_readerT {ρ ι α : Type u} {M : Type u → Type v} [Distributive M]
+    (f : ι → ReaderT ρ M α) (r : ρ) : (distribute f : ReaderT ρ M (ι → α)) r =
+      distribute fun i ↦ f i r :=
+  rfl
+
+theorem preservesConst_readerT {ρ : Type u} {M : Type u → Type u} [Monad M] [Distributive M]
+    (h : PreservesConst M) : PreservesConst (ReaderT ρ M) := fun ι α m ↦
+  funext fun r ↦ h ι α (m r)
 
 end Distributive
 
