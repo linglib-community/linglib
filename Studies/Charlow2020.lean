@@ -18,7 +18,9 @@ and unions the results. They are the unit and bind of the set monad. Because bin
 an indefinite that takes scope at the edge of an island turns the island into a set of
 alternatives, and the island can then take scope in its turn, which gives exceptional scope
 without movement out of the island. Higher-order alternative sets let two indefinites on one
-island take scope independently, and once assignments are added to the monad, an indefinite whose
+island take scope independently; with the alternatives in the types, the composition engine
+[derives the island's two higher-order sets and their point-wise flattening](##translations_island)
+without moving either indefinite. Once assignments are added to the monad, an indefinite whose
 restrictor holds a bound pronoun cannot outscope the pronoun's binder.
 
 ## Main definitions
@@ -296,6 +298,60 @@ theorem seminar_paper (grad seminar paper : Set E) (disc : E → E → Prop) (jo
     -eq_iff_iff]
 
 end Selectivity
+
+/-! #### The island on the composition engine
+
+With the indefinites' alternatives in their types, the engine finds every way of composing the
+island of Figure 10 without moving either indefinite: mapping composition over the alternatives
+of one indefinite and then the other's gives the two higher-order islands, and structured
+application, which is point-wise application (11), merges the two sets of alternatives into one,
+the flattening of either. -/
+
+section SelectivityEngine
+
+open Montague PhraseStructure
+
+variable {E : Type} (lawyer rel : Set E) (visits : E → E → Prop)
+
+/-- The words of the island of Figure 10. -/
+inductive IslandWord
+  | aLawyer
+  | visits
+  | aRelative
+  deriving DecidableEq
+
+/-- The island's lexicon, each indefinite a computation whose alternatives are the members of its
+restrictor ([bumford-charlow-2026]). -/
+def islandLexicon : IslandWord → Option (Σ ty, Ty.Domain E Unit ty)
+  | .aLawyer => some ⟨.comp .set .e, lawyer⟩
+  | .visits => some ⟨.e ⇒ .e ⇒ .t, visits⟩
+  | .aRelative => some ⟨.comp .set .e, rel⟩
+
+/-- The island *a lawyer visits a relative*. -/
+def island : Tree Unit IslandWord :=
+  .bin (.leaf .aLawyer) (.bin (.leaf .visits) (.leaf .aRelative))
+
+/-- The island has three derivations, the three that [bumford-charlow-2026]'s `combine` finds for a
+set of individuals and a set of properties: the lawyer's alternatives mapped inside the
+relative's, the higher-order island of Figure 10, right; the relative's inside the lawyer's,
+Figure 10, left; and point-wise application (11), which flattens either. -/
+theorem translations_island (g : Assignment E) :
+    (Tree.translations individualIndices (islandLexicon lawyer rel visits) island).map
+        (fun d ↦ (⟨d.1, d.2.eval (fun c ↦ c) g⟩ : Denotation E Unit)) =
+      [⟨.comp .set (.comp .set .t), relativeOuter lawyer rel visits⟩,
+       ⟨.comp .set (.comp .set .t), lawyerOuter lawyer rel visits⟩,
+       ⟨.comp .set .t, (pure visits <*> rel <*> lawyer : Set Prop)⟩] := by
+  simp [Tree.translations, island, islandLexicon, Ty.modes, Ty.mode?, Mode.functionalLeft?,
+    Mode.functionalRight?, Mode.predicateModification?, Mode.eventIdentification?, Eff.map,
+    Eff.seq]
+  refine ⟨?_, ?_, ?_⟩
+  · simp only [relativeOuter, bind_pure_comp, Set.fmap_eq_image, Set.image_image]
+  · simp only [lawyerOuter, bind_pure_comp, Set.fmap_eq_image, Set.image_image]
+  · refine Set.ext fun q ↦ ?_
+    simp only [Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff]
+    aesop
+
+end SelectivityEngine
 
 -- (43)
 theorem lawyer_wide_ne_relative_wide : ¬ ∀ visits : Fin 4 → Fin 4 → Prop,

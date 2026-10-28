@@ -11,7 +11,8 @@ public import Linglib.Semantics.Composition.Extensional
 A *composition mode* is a rule by which the meanings of two sisters combine into the meaning of
 their mother, selected by the daughters' types: functional application, predicate modification
 and Kratzer's event identification. Over computation types, Bumford and Charlow's meta-modes lift a
-mode through an effect: Map Left and Map Right apply it under the effect of a daughter, and Unit
+mode through an effect: Map Left and Map Right apply it under the effect of a daughter, Structured
+App applies it to the results of two daughters with one effect, merging their effects, and Unit
 Left and Unit Right give a daughter that expects a computation the pure computation of a value. A
 pair of types may then compose in several ways, and [the mode their types select is always
 basic](##Ty.isBasic_of_mode?_eq_some). Under the reader of worlds, von Fintel and Heim's
@@ -73,6 +74,9 @@ inductive Mode : Ty → Ty → Ty → Type where
   | mapRight {f : Eff} {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) : Mode σ₁ (.comp f σ₂) (.comp f τ)
   /-- Map Left ([bumford-charlow-2026]): a mode applied under the effect of the left daughter. -/
   | mapLeft {f : Eff} {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) : Mode (.comp f σ₁) σ₂ (.comp f τ)
+  /-- Structured App ([bumford-charlow-2026]): a mode applied to the results of two daughters with
+  one effect, their effects merged. -/
+  | ap {f : Eff} {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) : Mode (.comp f σ₁) (.comp f σ₂) (.comp f τ)
   /-- Unit Right ([bumford-charlow-2026]): a left daughter expecting a computation takes the pure
   computation of a value. -/
   | unitRight {f : Eff} {σ σ' τ ω : Ty} (m : Mode (σ ⇒ σ') τ ω) : Mode (.comp f σ ⇒ σ') τ ω
@@ -124,7 +128,7 @@ def Ty.combine? (σ₁ σ₂ : Ty) : Option Ty := (σ₁.mode? σ₂).map (·.1)
 /-- A basic mode is one of the composition principles proper, not a meta-mode that lifts one over
 an effect. -/
 def Mode.IsBasic {σ₁ σ₂ τ : Ty} : Mode σ₁ σ₂ τ → Prop
-  | .mapRight _ | .mapLeft _ | .unitRight _ | .unitLeft _ => False
+  | .mapRight _ | .mapLeft _ | .ap _ | .unitRight _ | .unitLeft _ => False
   | _ => True
 
 /-- The mode two daughters' types select is basic. -/
@@ -138,8 +142,8 @@ theorem Ty.isBasic_of_mode?_eq_some {σ₁ σ₂ : Ty} {p : Σ τ, Mode σ₁ σ
 
 /-- Every mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose,
 [bumford-charlow-2026]'s `combine`: the basic mode their types select, Map Right and Map Left over
-a daughter that is a computation, and Unit Right and Unit Left for a daughter that expects one,
-each over every way of composing the underlying types. -/
+a daughter that is a computation, Structured App over two with one effect, and Unit Right and Unit
+Left for a daughter that expects one, each over every way of composing the underlying types. -/
 def Ty.modes (σ₁ σ₂ : Ty) : List (Σ τ, Mode σ₁ σ₂ τ) :=
   (σ₁.mode? σ₂).toList ++
     (match σ₂ with
@@ -148,6 +152,10 @@ def Ty.modes (σ₁ σ₂ : Ty) : List (Σ τ, Mode σ₁ σ₂ τ) :=
     (match σ₁ with
       | .comp f a => (a.modes σ₂).map fun p ↦ ⟨.comp f p.1, .mapLeft p.2⟩
       | _ => []) ++
+    (match σ₁, σ₂ with
+      | .comp f a, .comp f' b =>
+        if h : f = f' then h ▸ (a.modes b).map fun p ↦ ⟨.comp f p.1, .ap p.2⟩ else []
+      | _, _ => []) ++
     (match σ₁ with
       | .fn (.comp _ a) b => ((a ⇒ b).modes σ₂).map fun p ↦ ⟨p.1, .unitRight p.2⟩
       | _ => []) ++
@@ -186,8 +194,9 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
 variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
 /-- The denotation of a mode is application, intersection of two predicates or event
-identification, and for a meta-mode that of its mode under the effect of a daughter, or with the
-pure computation of a value given to a daughter that expects one. -/
+identification, and for a meta-mode that of its mode under the effect of a daughter, on the
+results of two daughters (`(λa b. a ∗ b) • E₁ ⊛ E₂`), or with the pure computation of a value
+given to a daughter that expects one. -/
 @[simp] def eval : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ S → Ty.Domain E W σ₂ S →
     Ty.Domain E W τ S
   | _, _, _, functionalLeft, f, a => f a
@@ -197,6 +206,7 @@ pure computation of a value given to a daughter that expects one. -/
   | _, _, _, eventIdentificationRight, p, f => ArgumentStructure.eventIdentification f p
   | _, _, _, mapRight (f := f) m, a, b => Eff.map f (fun y ↦ m.eval a y) b
   | _, _, _, mapLeft (f := f) m, a, b => Eff.map f (fun x ↦ m.eval x b) a
+  | _, _, _, ap (f := f) m, a, b => Eff.seq f (Eff.map f (fun x y ↦ m.eval x y) a) b
   | _, _, _, unitRight (f := f) m, a, b => m.eval (fun x ↦ a (Eff.pure f x)) b
   | _, _, _, unitLeft (f := f) m, a, b => m.eval a (fun y ↦ b (Eff.pure f y))
 

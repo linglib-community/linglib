@@ -12,10 +12,10 @@ assignment as in Heim and Kratzer. As in Montague's theory of translation,
 [a tree's denotation is the evaluation of the term it translates to](##interp_eq_eval_translate),
 and [it depends on the assignment only at the tree's free traces](##interp_congr_of_agree).
 Denotations may be computations under an effect, after Bumford and Charlow, and a tree whose
-words read a world has as many derivations as the modes lifting composition over that reader
-allow. Under a typing of the indices, a trace or binder of index $n$ is a
-variable of the type its index has, so a world pronoun and the λ binding it are a trace and a
-binder whose index has type $s$.
+words are computations, reading a world or ranging over alternatives, has as many derivations as
+the modes lifting composition over those effects allow. Under a typing of the indices, a trace or
+binder of index $n$ is a variable of the type its index has, so a world pronoun and the λ binding
+it are a trace and a binder whose index has type $s$.
 
 ## Main definitions
 

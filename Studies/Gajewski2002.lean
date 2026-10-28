@@ -104,7 +104,7 @@ variable {E : Type}
 /-! ### Logical items by permutation invariance (§3.1) -/
 
 /-- A permutation of the entity domain lifts to every type (17), as the permutation itself at
-`e`, the identity at `t`, and conjugation at `⟨a,b⟩`. -/
+`e`, the identity at `t`, conjugation at `⟨a,b⟩`, and the image at a set of alternatives. -/
 def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
   | .e => π
   | .t => Equiv.refl _
@@ -114,6 +114,7 @@ def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
   | .s => Equiv.refl _
   | .fn a b => (permLift π a).arrowCongr (permLift π b)
   | .comp (.reader ι) b => (permLift π ι).arrowCongr (permLift π b)
+  | .comp .set b => (permLift π b).setCongr
 
 @[simp] theorem permLift_et_apply (π : Equiv.Perm E) (P : E → Prop) :
     permLift π Ty.et P = P ∘ ⇑π.symm :=
