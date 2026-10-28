@@ -38,6 +38,8 @@ by an isomorphism matching the families.
 * `BooleanSubalgebra.minterm_le_or_le_compl`: a minterm lies below each element of the closure or
   below its complement.
 * `BooleanSubalgebra.card_closure`: the closure has `2 ^ n` elements.
+* `Finpartition.card_range_le_two_pow_card_parts_minterms`: a family takes at most `2 ^ n`
+  values.
 * `BooleanSubalgebra.isAtom_iff_mem_minterms`: its atoms are the nonzero minterms.
 * `BooleanSubalgebra.nonempty_orderIso_closure_iff`: two closures are isomorphic iff the families
   have equally many nonzero minterms.
@@ -163,6 +165,14 @@ theorem card_closure :
     Nat.card (closure (Set.range φ)) = 2 ^ #(Finpartition.minterms φ).parts := by
   rw [Nat.card_congr (toSetOfMinterms φ).toEquiv, Nat.card_eq_fintype_card, Fintype.card_set,
     Fintype.card_coe]
+
+variable (φ) in
+/-- A family with `n` nonzero minterms takes at most `2 ^ n` values. -/
+theorem _root_.Finpartition.card_range_le_two_pow_card_parts_minterms :
+    Nat.card (Set.range φ) ≤ 2 ^ #(Finpartition.minterms φ).parts := by
+  have : Finite (closure (Set.range φ)) := .of_equiv _ (toSetOfMinterms φ).toEquiv.symm
+  rw [← card_closure]
+  exact Nat.card_mono (Set.toFinite _) subset_closure
 
 /-- The atoms of the closure are the nonzero minterms. -/
 theorem isAtom_iff_mem_minterms {ψ : closure (Set.range φ)} :
