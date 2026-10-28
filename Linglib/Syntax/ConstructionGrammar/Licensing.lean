@@ -54,9 +54,8 @@ def IsWord (form : String) (cat : UD.UPOS) : Tree Unit Word → Prop
 
 instance (form : String) (cat : UD.UPOS) : ∀ t, Decidable (IsWord form cat t)
   | .terminal _ w => inferInstanceAs (Decidable (w.form = form ∧ w.cat = cat))
-  | RoseTree.node (.terminal _ _) (_ :: _) | RoseTree.node (.node _) _
-  | RoseTree.node (.segment _) _ | RoseTree.node (.trace _ _) _
-  | RoseTree.node (.bind _ _) _ => isFalse id
+  | RoseTree.node (.terminal _ _) (_ :: _) | RoseTree.node (.phrase _ _) _
+  | RoseTree.node (.trace _ _) _ | RoseTree.node (.bind _ _) _ => isFalse id
 
 /-- A tree is a word of negative polarity. -/
 def IsNegative : Tree Unit Word → Prop
@@ -65,34 +64,30 @@ def IsNegative : Tree Unit Word → Prop
 
 instance : DecidablePred IsNegative
   | .terminal _ w => inferInstanceAs (Decidable (w.features .polarity = some .Neg))
-  | RoseTree.node (.terminal _ _) (_ :: _) | RoseTree.node (.node _) _
-  | RoseTree.node (.segment _) _ | RoseTree.node (.trace _ _) _
-  | RoseTree.node (.bind _ _) _ => isFalse id
+  | RoseTree.node (.terminal _ _) (_ :: _) | RoseTree.node (.phrase _ _) _
+  | RoseTree.node (.trace _ _) _ | RoseTree.node (.bind _ _) _ => isFalse id
 
 /-- A daughter fills a fixed slot when it is a word of that form, an open slot when it is a word of
-its part of speech, a phrasal slot when it is any phrase, a node or an adjunction structure, and a
+its part of speech, a phrasal slot when it is any phrase, a projection or an adjunction structure, and a
 headed slot when it is a constituent with its head word, of its part of speech, among the daughters.
 -/
 def SlotFiller.Matches : SlotFiller String → Tree Unit Word → Prop
   | .fixed f, .terminal _ w => w.form = f
   | .open_ c, .terminal _ w => w.cat = c
-  | .phrasal, .node _ _ | .phrasal, .adjoin _ _ => True
-  | .headed h c, .node _ ts | .headed h c, .adjoin _ ts => ∃ t ∈ ts, IsWord h c t
+  | .phrasal, .phrase _ _ _ => True
+  | .headed h c, .phrase _ _ ts => ∃ t ∈ ts, IsWord h c t
   | .semantic _, _ => True
   | _, _ => False
 
 instance : ∀ (f : SlotFiller String) (t : Tree Unit Word), Decidable (f.Matches t)
   | .fixed f, .terminal _ w => inferInstanceAs (Decidable (w.form = f))
   | .open_ c, .terminal _ w => inferInstanceAs (Decidable (w.cat = c))
-  | .phrasal, .node _ _ | .phrasal, .adjoin _ _ => isTrue trivial
-  | .headed h c, .node _ ts | .headed h c, .adjoin _ ts =>
-    inferInstanceAs (Decidable (∃ t ∈ ts, IsWord h c t))
+  | .phrasal, .phrase _ _ _ => isTrue trivial
+  | .headed h c, .phrase _ _ ts => inferInstanceAs (Decidable (∃ t ∈ ts, IsWord h c t))
   | .semantic _, _ => isTrue trivial
-  | .fixed _, RoseTree.node (.terminal _ _) (_ :: _) | .fixed _, RoseTree.node (.node _) _
-  | .fixed _, RoseTree.node (.segment _) _
+  | .fixed _, RoseTree.node (.terminal _ _) (_ :: _) | .fixed _, RoseTree.node (.phrase _ _) _
   | .fixed _, RoseTree.node (.trace _ _) _ | .fixed _, RoseTree.node (.bind _ _) _
-  | .open_ _, RoseTree.node (.terminal _ _) (_ :: _) | .open_ _, RoseTree.node (.node _) _
-  | .open_ _, RoseTree.node (.segment _) _
+  | .open_ _, RoseTree.node (.terminal _ _) (_ :: _) | .open_ _, RoseTree.node (.phrase _ _) _
   | .open_ _, RoseTree.node (.trace _ _) _ | .open_ _, RoseTree.node (.bind _ _) _
   | .phrasal, RoseTree.node (.terminal _ _) _ | .phrasal, RoseTree.node (.trace _ _) _
   | .phrasal, RoseTree.node (.bind _ _) _
@@ -104,13 +99,12 @@ or on a word among its daughters; `locMinus` and `refEmpty` concern the slot's e
 and semantics and are not checkable against the daughter itself. -/
 def SlotConstraint.Allows : SlotConstraint → Tree Unit Word → Prop
   | .negMinus, .terminal _ w => w.features .polarity ≠ some .Neg
-  | .negMinus, .node _ ts | .negMinus, .adjoin _ ts => ∀ t ∈ ts, ¬ IsNegative t
+  | .negMinus, .phrase _ _ ts => ∀ t ∈ ts, ¬ IsNegative t
   | _, _ => True
 
 instance : ∀ (c : SlotConstraint) (t : Tree Unit Word), Decidable (c.Allows t)
   | .negMinus, .terminal _ w => inferInstanceAs (Decidable (w.features .polarity ≠ some .Neg))
-  | .negMinus, .node _ ts | .negMinus, .adjoin _ ts =>
-    inferInstanceAs (Decidable (∀ t ∈ ts, ¬ IsNegative t))
+  | .negMinus, .phrase _ _ ts => inferInstanceAs (Decidable (∀ t ∈ ts, ¬ IsNegative t))
   | .negMinus, RoseTree.node (.terminal _ _) (_ :: _) | .negMinus, RoseTree.node (.trace _ _) _
   | .negMinus, RoseTree.node (.bind _ _) _ | .locMinus, _ | .refEmpty, _ => isTrue trivial
 
@@ -135,12 +129,12 @@ variable {Sem : Type*} (cxns : List (Construction Sem))
 construction of the inventory; traces and binders are not. -/
 def LicensedLocally : Tree Unit Word → Prop
   | .terminal _ _ => True
-  | .node _ ts | .adjoin _ ts => ∃ c ∈ cxns, FormMatches c.form ts
+  | .phrase _ _ ts => ∃ c ∈ cxns, FormMatches c.form ts
   | _ => False
 
 instance : ∀ t : Tree Unit Word, Decidable (LicensedLocally cxns t)
   | .terminal _ _ => isTrue trivial
-  | .node _ ts | .adjoin _ ts => inferInstanceAs (Decidable (∃ c ∈ cxns, FormMatches c.form ts))
+  | .phrase _ _ ts => inferInstanceAs (Decidable (∃ c ∈ cxns, FormMatches c.form ts))
   | RoseTree.node (.terminal _ _) (_ :: _) | RoseTree.node (.trace _ _) _
   | RoseTree.node (.bind _ _) _ => isFalse id
 

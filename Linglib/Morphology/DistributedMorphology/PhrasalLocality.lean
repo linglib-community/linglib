@@ -92,7 +92,7 @@ theorem mayCondition'_iff {t : Tree C W} {α β : TreePath} :
 
 /-- A proform of category `X` may stand for the node at `p` when it is a phrase of category `X`. -/
 def Replaceable (X : C) (t : Tree C W) (p : TreePath) : Prop :=
-  ∃ s ∈ t.subtreeAt p.toList, isHead s = false ∧ s.value.cat = X
+  ∃ s ∈ t.subtreeAt p.toList, ¬ Tree.IsHead s ∧ s.value.cat = X
 
 /-- A proform of category `X` strands the node at `β` from the node at `α` when it may stand for a
 phrase that contains `α` and not `β`. -/
@@ -109,7 +109,7 @@ instance [DecidableEq C] (X : C) (t : Tree C W) (α β : TreePath) :
 theorem not_replaceable_of_isHeadAt {X : C} {t : Tree C W} {p : TreePath} (h : IsHeadAt t p) :
     ¬ Replaceable X t p := by
   rintro ⟨s, hs, hh, -⟩
-  simp [IsHeadAt, Option.mem_def.mp hs, hh] at h
+  exact hh (h s hs)
 
 /-- **Locality is the absence of stranding.** A trigger may condition a head under the refined
 formulation exactly when no proform strands it from the head. -/
@@ -117,9 +117,8 @@ theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : TreePath} :
     MayCondition' t α β ↔ ∀ X, ¬ Strands X t α β := by
   refine ⟨fun h X ⟨p, hp, hr⟩ ↦ not_replaceable_of_isHeadAt (h p hp) hr, fun h p hp ↦ ?_⟩
   by_contra hh
-  obtain ⟨s, hs⟩ : ∃ s, t.subtreeAt p.toList = some s := by
-    cases h' : t.subtreeAt p.toList <;> simp_all [IsHeadAt]
-  exact h s.value.cat ⟨p, hp, s, hs, by simpa [IsHeadAt, hs] using hh, rfl⟩
+  obtain ⟨s, hs, hns⟩ := not_forall₂.mp hh
+  exact h s.value.cat ⟨p, hp, s, hs, hns, rfl⟩
 
 /-! ### Local labels and complex heads -/
 
@@ -144,7 +143,7 @@ theorem mem_localSet_iff {t : Tree C W} {α : TreePath} {l : C × W} :
 
 /-- The complex head containing the node at `α`, its highest head-level ancestor. -/
 def x0At (t : Tree C W) (α : TreePath) : Option (Tree C W) :=
-  (α.toList.inits.find? fun p ↦ (t.subtreeAt p).all isHead).bind t.subtreeAt
+  (α.toList.inits.find? fun p ↦ decide (∀ s ∈ t.subtreeAt p, Tree.IsHead s)).bind t.subtreeAt
 
 /-! ### Embedding -/
 
@@ -180,16 +179,16 @@ theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : Li
     · exact (isHeadAt_replaceAt_append hE p).mpr (hm ⟨p⟩ (TreePath.le_def.mpr hp)
         (fun h' ↦ hγ (by simpa [TreePath.le_def] using TreePath.le_def.mp h')))
 
-theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
+theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : ¬ Tree.IsHead t)
     (α : List ℕ) {β : TreePath} (hβ : ¬ (⟨h⟩ : TreePath) ≤ β) :
     ¬ MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ β := fun hm ↦ by
   have := mayCondition'_iff.mp hm ⟨h⟩ (TreePath.le_def.mpr (List.prefix_append h α)) hβ
   have h0 := RoseTree.subtreeAt_replaceAt_append (new := t) hE []
   simp only [List.append_nil] at h0
-  simp [IsHeadAt, h0, ht] at this
+  exact ht (this t h0)
 
 /-- Embedding a phrase with a phrasal root leaves the labels local to its heads unchanged. -/
-theorem localSet_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
+theorem localSet_replaceAt (hE : (E.subtreeAt h).isSome) (ht : ¬ Tree.IsHead t)
     (α : List ℕ) : localSet (E.replaceAt h t) ⟨h ++ α⟩ = localSet t ⟨α⟩ := by
   ext l
   constructor
@@ -203,41 +202,40 @@ theorem localSet_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
     exact ⟨⟨h ++ γ⟩, by rwa [RoseTree.subtreeAt_replaceAt_append hE],
       (mayCondition'_replaceAt_append hE α γ).mpr hm⟩
 
-private theorem all_isHead_replaceAt_of_prefix (hE : (E.subtreeAt h).isSome)
-    (ht : isHead t = false) {r : List ℕ} (hr : r <+: h) :
-    ((E.replaceAt h t).subtreeAt r).all isHead = false := by
+private theorem not_forall_isHead_replaceAt_of_prefix (hE : (E.subtreeAt h).isSome)
+    (ht : ¬ Tree.IsHead t) {r : List ℕ} (hr : r <+: h) :
+    ¬ ∀ s ∈ (E.replaceAt h t).subtreeAt r, Tree.IsHead s := by
   obtain ⟨d, rfl⟩ := hr
-  rw [RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d)]
   rw [RoseTree.subtreeAt_append] at hE
   obtain ⟨s, hs⟩ : ∃ s, E.subtreeAt r = some s := Option.isSome_iff_exists.mp
     (by cases h' : E.subtreeAt r <;> simp_all)
   have hsd : (s.subtreeAt d).isSome := by simpa [hs] using hE
-  simp only [hs, Option.map_some, Option.all_some, List.drop_left]
-  cases hh : isHead (s.replaceAt d t)
-  · rfl
-  · exact absurd (isHead_of_isHead_replaceAt s d t hsd hh) (by simp [ht])
+  refine fun hh ↦ ht (IsHead.of_replaceAt hsd (hh _ ?_))
+  simp [RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d), hs]
 
 /-- Embedding a phrase with a phrasal root leaves the complex heads of its nodes unchanged. -/
-theorem x0At_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false) (α : List ℕ) :
+theorem x0At_replaceAt (hE : (E.subtreeAt h).isSome) (ht : ¬ Tree.IsHead t) (α : List ℕ) :
     x0At (E.replaceAt h t) ⟨h ++ α⟩ = x0At t ⟨α⟩ := by
   simp only [x0At]
   rw [List.inits_append, List.find?_append, List.find?_eq_none.mpr
-    (fun r hr ↦ by simp [all_isHead_replaceAt_of_prefix hE ht ((List.mem_inits _ _).mp hr)]),
+    (fun r hr ↦ by
+      simpa using not_forall_isHead_replaceAt_of_prefix hE ht ((List.mem_inits _ _).mp hr)),
     Option.none_or, List.find?_map, inits_eq_nil_cons α, List.find?_cons]
-  have h0 : ((t.subtreeAt []).all isHead) = false := by simp [ht]
-  simp only [h0, List.tail_cons, Function.comp_def, RoseTree.subtreeAt_replaceAt_append hE,
-    Option.bind_map]
+  have h0 : ¬ ∀ s ∈ t.subtreeAt [], Tree.IsHead s := by simpa using ht
+  simp only [h0, decide_false, List.tail_cons, Function.comp_def,
+    RoseTree.subtreeAt_replaceAt_append hE, Option.bind_map]
 
 private theorem replaceable_iff {X : C} {t : Tree C W} {p : TreePath} :
     Replaceable X t p ↔
-      (t.subtreeAt p.toList).map (fun s ↦ (isHead s, s.value.cat)) = some (false, X) := by
+      (t.subtreeAt p.toList).map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
+        some (false, X) := by
   simp [Replaceable]
 
 private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
-    (h₁ : isHead t₁ = false) (h₂ : isHead t₂ = false) (hv : t₁.value = t₂.value) {r : List ℕ}
+    (h₁ : ¬ Tree.IsHead t₁) (h₂ : ¬ Tree.IsHead t₂) (hv : t₁.value = t₂.value) {r : List ℕ}
     (hr : r <+: h) :
-    ((E.replaceAt h t₁).subtreeAt r).map (fun s ↦ (isHead s, s.value.cat)) =
-      ((E.replaceAt h t₂).subtreeAt r).map (fun s ↦ (isHead s, s.value.cat)) := by
+    ((E.replaceAt h t₁).subtreeAt r).map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
+      ((E.replaceAt h t₂).subtreeAt r).map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) := by
   obtain ⟨d, rfl⟩ := hr
   rw [RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d),
     RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d)]
@@ -246,17 +244,15 @@ private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : (E.subtreeA
     (by cases h' : E.subtreeAt r <;> simp_all)
   have hsd : (s.subtreeAt d).isSome := by simpa [hs] using hE
   simp only [hs, Option.map_some, List.drop_left, Option.some.injEq, Prod.mk.injEq]
-  have hh (t : Tree C W) (ht : isHead t = false) : isHead (s.replaceAt d t) = false := by
-    cases hh : isHead (s.replaceAt d t)
-    · rfl
-    · exact absurd (isHead_of_isHead_replaceAt s d t hsd hh) (by simp [ht])
-  refine ⟨by rw [hh _ h₁, hh _ h₂], ?_⟩
+  have hh (t : Tree C W) (ht : ¬ Tree.IsHead t) : ¬ Tree.IsHead (s.replaceAt d t) :=
+    fun h ↦ ht (IsHead.of_replaceAt hsd h)
+  refine ⟨by simp [hh _ h₁, hh _ h₂], ?_⟩
   cases d with
   | nil => simp [hv]
   | cons i d => simp
 
 theorem strands_replaceAt_congr {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
-    (h₁ : isHead t₁ = false) (h₂ : isHead t₂ = false) (hv : t₁.value = t₂.value) {α : List ℕ}
+    (h₁ : ¬ Tree.IsHead t₁) (h₂ : ¬ Tree.IsHead t₂) (hv : t₁.value = t₂.value) {α : List ℕ}
     (hα : ∀ p, p <+: α → p ≠ [] → t₁.subtreeAt p = t₂.subtreeAt p) (X : C) (β : TreePath) :
     Strands X (E.replaceAt h t₁) ⟨h ++ α⟩ β ↔ Strands X (E.replaceAt h t₂) ⟨h ++ α⟩ β := by
   refine exists_congr fun ⟨r⟩ ↦ and_congr_right fun hr ↦ ?_

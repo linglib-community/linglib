@@ -118,7 +118,7 @@ def profile (t : Tree Cat W) (α : TreePath) : Option (Tree Cat W) × Set (Cat �
 
 /-- The Root labels a phrase. -/
 def rootProjects (t : Tree Cat W) : Bool :=
-  t.subtrees.any fun s ↦ match s.value with | .node .root => true | _ => false
+  t.subtrees.any fun s ↦ match s.value with | .phrase .root .projection => true | _ => false
 
 /-- The position of the Root in a configured phrase. -/
 def rootPos : TreePath := ⟨[0, 0]⟩
@@ -148,7 +148,7 @@ theorem profile_eq (L : Lexicon W) :
 theorem profile_replaceAt {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt h).isSome)
     (a : Attachment) (L : Lexicon W) :
     profile (E.replaceAt h (a.tree L)) ⟨h ++ rootPos.toList⟩ = profile (a.tree L) rootPos := by
-  have ht : isHead (a.tree L) = false := by cases a <;> rfl
+  have ht : ¬ Tree.IsHead (a.tree L) := by cases a <;> exact not_isHead_node _ _
   rw [profile, profile, x0At_replaceAt hE ht, localSet_replaceAt hE ht]
 
 /-- **In every context the two attachments give the Root one profile.** -/
@@ -176,7 +176,7 @@ theorem lexicon_eq_of_profile_eq {a a' : Attachment} {L L' : Lexicon W}
   obtain ⟨h1, h2⟩ := h
   obtain ⟨x, r, hd, ar⟩ := L
   obtain ⟨x', r', hd', ar'⟩ := L'
-  simp only [complexHead, RoseTree.node.injEq, Tree.Label.segment.injEq, Cat.cat.injEq,
+  simp only [complexHead, RoseTree.node.injEq, Tree.Label.phrase.injEq, Cat.cat.injEq,
     List.cons.injEq, Tree.Label.terminal.injEq, and_true, true_and] at h1
   obtain ⟨rfl, rfl, -, rfl⟩ := h1
   have hm : (Cat.d, ar) ∈ {l | l ∈ [(Cat.root, r), (Cat.cat x, hd), (Cat.d, ar')]} := by
@@ -248,7 +248,8 @@ theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt
     Strands X (E.replaceAt h (Attachment.complement.tree L)) ⟨h ++ rootPos.toList⟩ β ↔
       Strands X (E.replaceAt h (Attachment.modifier.tree L)) ⟨h ++ rootPos.toList⟩ β := by
   refine strands_replaceAt_congr (t₁ := Attachment.complement.tree L)
-    (t₂ := Attachment.modifier.tree L) hE rfl rfl rfl (fun p hp hp0 ↦ ?_) X β
+    (t₂ := Attachment.modifier.tree L) hE (not_isHead_node _ _) (not_isHead_node _ _) rfl
+    (fun p hp hp0 ↦ ?_) X β
   have : p ∈ [[], [0], [0, 0]] := (List.mem_inits _ _).mpr hp
   simp only [List.mem_cons, List.not_mem_nil, or_false] at this
   obtain rfl | rfl | rfl := this
@@ -256,7 +257,7 @@ theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt
 
 theorem strands_specifier (L : Lexicon W) :
     Strands (.cat L.x) (specifierTree L) ⟨[1, 0, 0]⟩ ⟨[0]⟩ :=
-  ⟨⟨[1]⟩, by decide, _, rfl, rfl, rfl⟩
+  ⟨⟨[1]⟩, by decide, _, rfl, not_isHead_node _ _, rfl⟩
 
 /-- The category of the head a node below the root is merged with, that of its mother. -/
 def selector (t : Tree Cat W) (β : TreePath) : Option Cat :=

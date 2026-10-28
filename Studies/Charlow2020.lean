@@ -665,7 +665,7 @@ theorem readings_nobodyMet (g : Assignment E) :
     Tree.readings (Tree.wordReadings (lexicon human phon met)) g nobodyMet =
       (fun y ↦ (⟨.t, ¬ ∃ x ∈ human, met y x⟩ : Denotation E Unit Id)) '' phon := by
   ext d
-  simp only [nobodyMet, Tree.mem_readings_node_binary, Tree.readings_terminal,
+  simp only [nobodyMet, Tree.mem_readings_phrase_binary, Tree.readings_terminal,
     Tree.mem_readings_bind, Set.mem_image]
   constructor
   · rintro ⟨⟨τ₁, v₁⟩, ⟨X₁, h₁, hm₁⟩, d₂, ⟨r, hr, hd₂⟩, hb⟩
@@ -673,12 +673,12 @@ theorem readings_nobodyMet (g : Assignment E) :
     obtain ⟨rfl, h₁⟩ := h₁
     obtain rfl := eq_of_heq h₁
     obtain rfl : v₁ = _ := hm₁
-    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_node_iff.1 hr
+    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_phrase_iff.1 hr
     obtain ⟨r₁, cs₁, rfl, h₁, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
     obtain ⟨r₂, cs₂, rfl, h₂, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
     obtain rfl := List.map_eq_nil_iff.mp hcs₂
     obtain rfl := Tree.map_eq_trace_iff.1 h₁
-    obtain ⟨cs', rfl, hcs'⟩ := Tree.map_eq_node_iff.1 h₂
+    obtain ⟨cs', rfl, hcs'⟩ := Tree.map_eq_phrase_iff.1 h₂
     obtain ⟨r₃, cs₃, rfl, h₃, hcs₃⟩ := List.map_eq_cons_iff.mp hcs'
     obtain ⟨r₄, cs₄, rfl, h₄, hcs₄⟩ := List.map_eq_cons_iff.mp hcs₃
     obtain rfl := List.map_eq_nil_iff.mp hcs₄
