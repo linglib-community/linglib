@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.LinearAlgebra.LinearIndependent
+public import Linglib.Core.LinearAlgebra.Basis.VectorSpace
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Processing.DiscriminativeLexicon.Realization
 public import Linglib.Processing.DiscriminativeLexicon.Training
@@ -75,7 +75,7 @@ theorem exists_paradigm_eq_of_linearIndependent {s : ParadigmSystem Lexeme Cell 
     (hs : LinearIndependent ℝ (Function.uncurry s))
     (f : ParadigmSystem Lexeme Cell (FormVector n)) :
     ∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G s = f := by
-  obtain ⟨G, hG⟩ := hs.exists_linearMap_apply_eq (Function.uncurry f)
+  obtain ⟨G, hG⟩ := hs.exists_linearMap_forall_apply_eq (Function.uncurry f)
   obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G
   exact ⟨G, funext fun l ↦ funext fun c ↦ hG (l, c)⟩
 
@@ -88,7 +88,7 @@ theorem exists_paradigm_imputed_eq_iff (hind : LinearIndependent ℝ (Sum.elim �
   refine ⟨fun ⟨G, hG⟩ ↦ hG ▸ isAnalogicallyRegular_paradigm G (isAnalogicallyRegular_imputed σ ε),
     fun hreg ↦ ?_⟩
   obtain ⟨a, b, hab⟩ := isAnalogicallyRegular_iff_exists_add.1 hreg
-  obtain ⟨G, hG⟩ := hind.exists_linearMap_apply_eq (Sum.elim a b)
+  obtain ⟨G, hG⟩ := hind.exists_linearMap_forall_apply_eq (Sum.elim a b)
   obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G
   refine ⟨G, funext fun l ↦ funext fun c ↦ ?_⟩
   have hσ : σ l ᵥ* G = a l := hG (Sum.inl l)
