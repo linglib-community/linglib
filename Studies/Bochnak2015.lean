@@ -1,25 +1,46 @@
 module
 
+public import Linglib.Core.Order.IntervalOrder
 public import Linglib.Semantics.Degree.Delineation
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.Comparable
+public import Mathlib.Tactic.Linarith
+public import Studies.Kennedy2007
 
 /-!
 # Bochnak (2015): The Degree Semantics Parameter and cross-linguistic variation
 
-Bochnak argues that Washo lacks degree morphology altogether, with no comparatives, measure
-phrases, equatives, superlatives or degree adverbs, and analyzes its gradable predicates as
-Klein-style vague predicates relative to a comparison class with no degree variable, the negative
-setting of Beck's Degree Semantics Parameter. Comparison is a conjoined construction, one clause
-asserting the positive and the other denying it, whose truth conditions entail a comparison
-through Klein's consistency constraints, the sound and complete delineations of
-`Semantics/Degree/Delineation.lean`. Kennedy's two diagnostics of implicit comparison follow:
-incompatibility with absolute-standard predicates, and the crisp-judgment effect under the
-similarity constraint, stated with van Rooij's margin-of-error order.
+Washo lacks degree morphology, and Bochnak analyzes its gradable predicates as delineations with
+no degree argument, the negative setting of the Degree Semantics Parameter of Beck and colleagues.
+Its conjoined comparison, *x is tall, y is not tall*, [entails the
+comparison](##conjoinedComparison_entails) under Klein's consistency constraints, provided [the
+conjuncts share a comparison class](##exists_classes_iff). It is implicit comparison: unlike the
+English comparative it fails [with absolute-standard predicates](##eq24_fails) and [on a crisp
+pair](##crisp_judgment), and under the Similarity Constraint it [requires a difference beyond a
+margin of error](##marginOrder_of_conjoinedComparison), van Rooij's semi-order.
+
+## Implementation notes
+
+* No Washo entry is defined: the paper's entry (5) has no measure function, so the theorems
+  quantify over delineations. The English entry (1) and the degree morphemes (2) take a measure
+  into any linear order.
+* An absolute-standard predicate has one extension in every comparison class. The extensions of
+  *bent* and *straight* are stated with Kennedy's minimum and maximum standards on a scale of
+  bend, which describe the model and not the entries, as the paper's degree-free relative/absolute
+  distinction requires.
+* The Similarity Constraint is a condition on a delineation for a relation of similarity, imposed
+  in every comparison class containing the similar pair; so imposed it is a tolerance condition,
+  which a class of many small steps meets only trivially. For the margin of error, similarity is
+  incomparability under the margin order, and the margin is real-valued as in measurement theory.
+* The library has interval orders, `IsIntervalOrder`, but no class of semi-orders, so
+  semi-transitivity (58c) is a theorem of its own.
 
 ## References
 
 * [bochnak-2015]
 * [beck-2009]
 * [klein-1980]
+* [kennedy-mcnally-2005]
 * [kennedy-2007a]
 * [kennedy-2007]
 * [fara-2000]
@@ -30,163 +51,208 @@ similarity constraint, stated with van Rooij's margin-of-error order.
 
 namespace Bochnak2015
 
-open Degree
+open Degree Delineation
 
-variable {E : Type*}
+variable {E D : Type*}
 
-/-! ### The two lexical shapes ((1), (5))
+/-! ### Degree arguments ((1)–(3)) -/
 
-The paper's proposal is a contrast in lexical type. English *tall* (1) takes
-a degree argument for degree morphology to bind; Washo entries (5) are
-delineations, `Degree.Delineation E`, with — p. 6:4 — "no
-measure function, and no degree variable at all". No Washo constant is
-defined: the theorems below quantify over delineations, keeping the
-no-measure discipline visible in the types. -/
+section DegreeArgument
 
-/-- The degree-based English entry (1) is `[[tall]] = λd λx. height(x) ≥ d`, of type
-⟨d,⟨e,t⟩⟩. -/
-def tallEnglish (height : E → ℕ) (d : ℕ) (x : E) : Prop :=
-  height x ≥ d
+variable [LinearOrder D] (μ : E → D)
 
-/-! ### Conjoined comparison ((14), (27)–(29)) -/
+/-- The English entry (1) of a gradable predicate measured by `μ` takes a degree argument,
+`⟦tall⟧ = λd λx. height(x) ⪰ d`. -/
+def GradablePredicate (d : D) (x : E) : Prop :=
+  d ≤ μ x
 
-/-- The conjoined comparison (14), with truth conditions (27), holds in context `C` when `x`
+/-- A degree morpheme (2) binds the degree argument of `G` under a restriction `R`,
+`⟦Deg⟧ = λG λx. ∃d[R(d) ∧ G(d)(x)]`, after Kennedy and McNally. -/
+def Deg (R : D → Prop) (G : D → E → Prop) (x : E) : Prop :=
+  ∃ d, R d ∧ G d x
+
+-- the comparative at `θ = μ y` and *pos* (3) at the contextual standard `θ = s_G`
+theorem deg_lt_iff {θ : D} {x : E} : Deg (θ < ·) (GradablePredicate μ) x ↔ θ < μ x :=
+  ⟨fun ⟨_, hθ, hd⟩ ↦ hθ.trans_le hd, fun h ↦ ⟨μ x, h, le_rfl⟩⟩
+
+end DegreeArgument
+
+/-! ### Conjoined comparison ((26)–(29), (32)) -/
+
+section Conjoined
+
+variable {del : Delineation E} {C : Set E} {x y : E}
+
+/-- The conjoined comparison (26), with truth conditions (27), holds in context `C` when `x`
 counts as G and `y` does not. No comparative morpheme, overt or covert, is involved. -/
-def washoConjoined (del : Delineation E) (C : Set E) (x y : E) : Prop :=
+def ConjoinedComparison (del : Delineation E) (C : Set E) (x y : E) : Prop :=
   x ∈ del C ∧ y ∉ del C
 
--- (27)
-theorem washoConjoined_comparative (del : Delineation E) {C : Set E} {x y : E}
-    (h : washoConjoined del C x y) : del.Comparative x y :=
-  ⟨C, h⟩
+/-- Under the second Consistency Constraint (28b) the truth conditions (27) entail the comparison,
+which the conjoined comparison does not assert. -/
+theorem conjoinedComparison_entails {R : E → E → Prop} (hs : del.IsSoundFor R)
+    (h : ConjoinedComparison del C x y) : R x y :=
+  hs C x y h.1 h.2
 
 -- (29)
-theorem washoConjoined_norm_related (del : Delineation E) {C : Set E} {x y : E}
-    (h : x ∉ del C) :
-    ¬ washoConjoined del C x y :=
-  fun ⟨hx, _⟩ => h hx
+theorem not_conjoinedComparison_of_not_mem (h : x ∉ del C) : ¬ ConjoinedComparison del C x y :=
+  fun hc ↦ h hc.1
 
-/-- For a measure-induced delineation the comparative of (27) is height comparison, the (28)
-entailment, with no degree variable in the entry. -/
-theorem comparative_ofMeasure_height_iff (height : E → ℕ) (a b : E) :
-    (Delineation.ofMeasure height).Comparative a b ↔ height b < height a :=
-  Delineation.comparative_ofMeasure_iff height
+-- (32)
+theorem comparative_not_normRelated [LinearOrder D] (μ : E → D) {s : D} (hlt : μ y < μ x)
+    (hs : μ x ≤ s) :
+    Deg (μ y < ·) (GradablePredicate μ) x ∧ ¬ Deg (s < ·) (GradablePredicate μ) x ∧
+      ¬ Deg (s < ·) (GradablePredicate μ) y := by
+  simp only [deg_lt_iff, not_lt]
+  exact ⟨hlt, hs, hlt.le.trans hs⟩
 
-/-! ### Test 1: absolute standards ((23)–(24))
+/-- The comparison needs one comparison class shared by both conjuncts (footnote 11). With two
+classes the conjunction says nothing about `y`: under the delineation of a measure, which meets
+both Consistency Constraints, it holds exactly when something measures below `x`. -/
+theorem exists_classes_iff [LinearOrder D] (μ : E → D) :
+    (∃ C₁ C₂, x ∈ ofMeasure μ C₁ ∧ y ∉ ofMeasure μ C₂) ↔ ∃ z, μ z < μ x :=
+  ⟨fun ⟨_, _, ⟨z, _, hz⟩, _⟩ ↦ ⟨z, hz⟩, fun ⟨z, hz⟩ ↦ ⟨{z}, ∅, ⟨z, rfl, hz⟩, by simp⟩⟩
 
-Two rods, both slightly bent, one more than the other. The English explicit
-comparative (23a) is true; each Washo conjoined attempt (24a–c) requires
-*straight* or *not bent* to hold of one rod, which is false. -/
+end Conjoined
+
+/-! ### Absolute standards ((23)–(24))
+
+Two rods are both slightly bent, one more than the other. The standard of *bent* or *straight* is
+an endpoint of the scale whatever the context, so a conjoined comparison is false except in the
+limiting case where one rod has no bend at all. -/
 
 section AbsoluteStandard
 
-variable (curvature : E → ℕ) (x y : E)
+variable [LinearOrder D] [OrderBot D] (μ : E → D) {C : Set E} {x y : E}
 
-/-- A minimum-standard predicate such as *bent* or *wet* holds when the measure exceeds the
-scale's bottom. The standard is the endpoint, not a comparison class. -/
-def bentPred : Prop := curvature x > 0
+/-- An absolute-standard predicate has the same extension `S` in every comparison class. -/
+def absolute (S : Set E) : Delineation E :=
+  ⟨fun _ ↦ S⟩
 
-/-- A maximum-standard predicate such as *straight* or *dry*, the lexical antonym of `bentPred`,
-holds when the measure sits at the endpoint. -/
-def straightPred : Prop := curvature x = 0
+/-- *Bent*, whose extension is the minimum standard on a scale of bend `μ`. -/
+abbrev bent : Delineation E :=
+  absolute (μ ⁻¹' Set.Ioi ⊥)
 
-/-- *Bent ∧ straight* (24a) fails, since both rods have nonzero curvature. -/
-theorem eq24a_bent_straight_fails (_hx : bentPred curvature x)
-    (hy : bentPred curvature y) :
-    ¬ (bentPred curvature x ∧ straightPred curvature y) :=
-  fun ⟨_, h⟩ => absurd h (Nat.pos_iff_ne_zero.mp hy)
+/-- *Straight*, whose extension is the maximum standard on the reversed scale. -/
+abbrev straight : Delineation E :=
+  absolute ((OrderDual.toDual ∘ μ) ⁻¹' Set.Ici ⊤)
 
--- (24b)
-theorem eq24b_bent_notbent_fails (_hx : bentPred curvature x)
-    (hy : bentPred curvature y) :
-    ¬ (bentPred curvature x ∧ ¬ bentPred curvature y) :=
-  fun ⟨_, h⟩ => h hy
+theorem mem_straight_iff : x ∈ straight μ C ↔ x ∉ bent μ C := by
+  change x ∈ (OrderDual.toDual ∘ μ) ⁻¹' Set.Ici ⊤ ↔ x ∈ (μ ⁻¹' Set.Ioi ⊥)ᶜ
+  rw [(Kennedy2007.antonyms_isCompl μ).compl_eq]
 
--- (24c)
-theorem eq24c_straight_notstraight_fails (hx : bentPred curvature x)
-    (_hy : bentPred curvature y) :
-    ¬ (straightPred curvature x ∧ ¬ straightPred curvature y) :=
-  fun ⟨h, _⟩ => absurd h (Nat.pos_iff_ne_zero.mp hx)
+theorem conjoinedComparison_bent_iff : ConjoinedComparison (bent μ) C x y ↔ ⊥ < μ x ∧ μ y = ⊥ := by
+  simp [ConjoinedComparison, absolute]
 
-/-- The explicit comparative (23a) succeeds in the same scenario, since any nonzero difference
-suffices. -/
-theorem english_more_bent_succeeds (hmore : curvature x > curvature y) :
-    ∃ d, tallEnglish curvature d x ∧ ¬ tallEnglish curvature d y :=
-  ⟨curvature x, le_refl _, by simp [tallEnglish]; omega⟩
+theorem conjoinedComparison_straight_iff :
+    ConjoinedComparison (straight μ) C x y ↔ μ x = ⊥ ∧ ⊥ < μ y := by
+  rw [ConjoinedComparison, mem_straight_iff, mem_straight_iff]
+  simp [absolute]
+
+/-- In the context of (23), with both rods bent and `x` more bent than `y`, the explicit
+comparative (23a) holds, while each conjoined attempt (24a–c) needs one rod to be straight or not
+bent and fails. -/
+theorem eq24_fails (hy : ⊥ < μ y) (hlt : μ y < μ x) :
+    Deg (μ y < ·) (GradablePredicate μ) x ∧ ¬ (x ∈ bent μ C ∧ y ∈ straight μ C) ∧
+      ¬ ConjoinedComparison (bent μ) C x y ∧ ¬ ConjoinedComparison (straight μ) C x y := by
+  refine ⟨(deg_lt_iff μ).2 hlt, ?_, ?_, ?_⟩
+  · rw [mem_straight_iff]
+    exact fun h ↦ hy.ne' ((conjoinedComparison_bent_iff μ).1 h).2
+  · exact fun h ↦ hy.ne' ((conjoinedComparison_bent_iff μ).1 h).2
+  · exact fun h ↦ (hy.trans hlt).ne' ((conjoinedComparison_straight_iff μ).1 h).1
 
 end AbsoluteStandard
 
-/-! ### Test 2: crisp judgments and the margin of error ((20)–(22), (58)–(60))
+/-! ### Crisp judgments and the margin of error ((20)–(21), (58)–(60))
 
-The Similarity Constraint (20) bars separating a minimally-different pair,
-so the conjoined form is infelicitous on two nearly-equal ladders (21) —
-salvageable with hedges like *wewš* 'almost' (22). The paper's van Rooij
-section makes the margin formal: implicit comparison rests on the
-margin-of-error order (60), a semi-order (58); explicit comparison is its
-`ε = 0` case, the strict weak order (59). -/
+The Similarity Constraint (20) bars separating two entities that differ only to a very small
+degree, so a conjoined comparison of two nearly equal ladders (21) is infelicitous, while the
+English comparative needs only a nonzero difference. Van Rooij's margin-of-error order (60) is a
+semi-order (58) and, with no margin, a strict weak order (59), the order of the measure. -/
 
-section MarginOfError
+section CrispJudgment
 
-variable (μ : E → ℕ) (ε : ℕ) {x y z v w : E}
+/-- The Similarity Constraint (20) on a delineation, for a relation `sim` of differing only to a
+very small degree: no comparison class containing two similar entities puts one in the extension
+and leaves the other out. -/
+def SimilarityConstraint (del : Delineation E) (sim : E → E → Prop) : Prop :=
+  ∀ C, ∀ x ∈ C, ∀ y ∈ C, sim x y → x ∈ del C → y ∈ del C
+
+variable (μ : E → ℝ) (ε : ℝ) {del : Delineation E} {C : Set E} {x y z : E}
 
 /-- In the margin-of-error order (60), `x` exceeds `y` by more than the margin of error `ε`. -/
-def marginOrder (x y : E) : Prop := μ y + ε < μ x
+def MarginOrder (x y : E) : Prop :=
+  μ y + ε < μ x
 
--- (58a)
-theorem marginOrder_irrefl : ¬ marginOrder μ ε x x := by
-  simp [marginOrder]
+variable {μ ε}
 
--- (58b)
-theorem marginOrder_intervalOrder (h₁ : marginOrder μ ε x y)
-    (h₂ : marginOrder μ ε v w) :
-    marginOrder μ ε x w ∨ marginOrder μ ε v y := by
-  simp only [marginOrder] at *; omega
+@[simp] theorem marginOrder_zero_iff : MarginOrder μ 0 x y ↔ μ y < μ x := by
+  simp [MarginOrder]
+
+-- (21)
+theorem not_conjoinedComparison_of_similar {sim : E → E → Prop} (h : SimilarityConstraint del sim)
+    (hx : x ∈ C) (hy : y ∈ C) (hs : sim x y) : ¬ ConjoinedComparison del C x y :=
+  fun hc ↦ hc.2 (h C x hx y hy hs hc.1)
+
+/-- In a crisp-judgment context (21), where `x` exceeds `y` by no more than the margin of error,
+the English comparative holds while no conjoined comparison obeying the Similarity Constraint
+does. -/
+theorem crisp_judgment (hsim : SimilarityConstraint del (IncompRel (MarginOrder μ ε)))
+    (hx : x ∈ C) (hy : y ∈ C) (hlt : μ y < μ x) (hclose : μ x ≤ μ y + ε) :
+    Deg (μ y < ·) (GradablePredicate μ) x ∧ ¬ ConjoinedComparison del C x y :=
+  ⟨(deg_lt_iff μ).2 hlt, not_conjoinedComparison_of_similar hsim hx hy
+    ⟨hclose.not_gt, fun h ↦ by unfold MarginOrder at h; linarith⟩⟩
+
+/-- Under the Similarity Constraint for the margin of error and the second Consistency Constraint
+for the measure, a conjoined comparison entails the margin-of-error order (60): its first entity
+exceeds the second by more than the margin. -/
+theorem marginOrder_of_conjoinedComparison (hε : 0 ≤ ε) (hs : del.IsSoundFor fun a b ↦ μ b < μ a)
+    (hsim : SimilarityConstraint del (IncompRel (MarginOrder μ ε))) (hx : x ∈ C) (hy : y ∈ C)
+    (h : ConjoinedComparison del C x y) : MarginOrder μ ε x y := by
+  by_contra hn
+  refine not_conjoinedComparison_of_similar hsim hx hy ⟨hn, fun h' ↦ ?_⟩ h
+  have := conjoinedComparison_entails hs h
+  unfold MarginOrder at h'
+  linarith
+
+variable (μ) in
+-- (58a), (58b)
+theorem isIntervalOrder_marginOrder (hε : 0 ≤ ε) : IsIntervalOrder E (MarginOrder μ ε) where
+  irrefl x h := by unfold MarginOrder at h; linarith
+  two_plus_two x y v w h₁ h₂ := by
+    unfold MarginOrder at *
+    by_contra! h
+    linarith [h.1, h.2]
 
 -- (58c)
-theorem marginOrder_semitransitive (h₁ : marginOrder μ ε x y)
-    (h₂ : marginOrder μ ε y z) (v : E) :
-    marginOrder μ ε x v ∨ marginOrder μ ε v z := by
-  simp only [marginOrder] at *; omega
+theorem marginOrder_semitransitive (h₁ : MarginOrder μ ε x y) (h₂ : MarginOrder μ ε y z)
+    (v : E) : MarginOrder μ ε x v ∨ MarginOrder μ ε v z := by
+  unfold MarginOrder at *
+  by_contra! h
+  linarith [h.1, h.2]
 
-theorem marginOrder_zero_iff : marginOrder μ 0 x y ↔ μ y < μ x := by
-  simp [marginOrder]
-
+variable (μ) in
 -- (59c)
-theorem marginOrder_zero_almostConnected (h : marginOrder μ 0 x y) (z : E) :
-    marginOrder μ 0 x z ∨ marginOrder μ 0 z y := by
-  simp only [marginOrder] at *; omega
+theorem isOrderConnected_marginOrder_zero : IsOrderConnected E (MarginOrder μ 0) :=
+  ⟨fun a b c h ↦ by
+    simp only [marginOrder_zero_iff] at *
+    exact (lt_or_ge (μ b) (μ a)).imp_right h.trans_le⟩
 
-/-- A minimally different pair never clears a positive margin, the crisp-judgment infelicity of
-the conjoined form (21). -/
-theorem crisp_pair_not_marginOrder (hε : 1 ≤ ε) (hclose : μ x = μ y + 1) :
-    ¬ marginOrder μ ε x y := by
-  simp only [marginOrder]; omega
+variable (μ) in
+-- (59)
+theorem isStrictWeakOrder_marginOrder_zero : IsStrictWeakOrder E (MarginOrder μ 0) :=
+  haveI : Std.Asymm (MarginOrder μ 0) :=
+    ⟨fun a b h h' ↦ by simp only [marginOrder_zero_iff] at h h'; exact h.not_gt h'⟩
+  haveI := isOrderConnected_marginOrder_zero μ
+  isStrictWeakOrder_of_isOrderConnected
 
-theorem crisp_pair_marginOrder_zero (hclose : μ x = μ y + 1) :
-    marginOrder μ 0 x y := by
-  simp only [marginOrder]; omega
+-- (60): with a positive margin the order is no weak order
+theorem not_isOrderConnected_marginOrder (hε : 0 < ε) :
+    ¬ IsOrderConnected ℝ (MarginOrder id ε) := fun h ↦ by
+  have := h.conn (2 * ε) ε 0 (by simp only [MarginOrder, id]; linarith)
+  simp only [MarginOrder, id] at this
+  rcases this with h | h <;> linarith
 
-end MarginOfError
-
-/-! ### Footnote 11: the shared comparison class -/
-
-/-- The (28) entailment from (27) requires one comparison class shared by both conjuncts (footnote
-11). -/
-theorem cc_b_requires_shared_class :
-    ∃ (Entity : Type) (del : Delineation Entity)
-      (R : Entity → Entity → Prop),
-      del.IsSoundFor R ∧
-      ∃ (C₁ C₂ : Set Entity) (x y : Entity), x ∈ del C₁ ∧ y ∉ del C₂ ∧ ¬ R x y := by
-  refine ⟨Bool, ⟨fun C ↦ {x | x = true ∧ true ∈ C}⟩, fun a b ↦ a = true ∧ b = false,
-    ?_, {true}, {false}, true, true, ⟨rfl, rfl⟩, ?_, ?_⟩
-  · rintro C x y ⟨rfl, htC⟩ hneg
-    refine ⟨rfl, ?_⟩
-    cases y with
-    | true => exact absurd ⟨rfl, htC⟩ hneg
-    | false => rfl
-  · rintro ⟨_, h⟩
-    simp at h
-  · rintro ⟨_, h⟩
-    exact Bool.noConfusion h
+end CrispJudgment
 
 end Bochnak2015
