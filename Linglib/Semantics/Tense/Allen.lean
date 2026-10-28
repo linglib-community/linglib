@@ -5,6 +5,7 @@ public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Core.Order.Interval.Fintype
 public import Linglib.Semantics.Tense.Defs
 public import Mathlib.Basic.Rel
+public import Mathlib.Order.CountableDenseLinearOrder
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
@@ -239,6 +240,46 @@ end LinearOrder
 
 /-! ### Composition -/
 
+/-! ### Partial isomorphisms
+
+Mathlib's `Order.PartialIso` pairs finitely many points of two linear orders that compare alike,
+so intervals whose endpoints it pairs stand in the same relation. -/
+
+section PartialIso
+
+variable {α β : Type*} [LinearOrder α] [LinearOrder β]
+
+/-- Intervals whose endpoints a partial isomorphism pairs stand in the same relation. -/
+theorem relation_eq_of_mem_partialIso (f : Order.PartialIso α β) {I J : NonemptyInterval α}
+    {i j : NonemptyInterval β} (h₁ : (I.fst, i.fst) ∈ f.val) (h₂ : (I.snd, i.snd) ∈ f.val)
+    (h₃ : (J.fst, j.fst) ∈ f.val) (h₄ : (J.snd, j.snd) ∈ f.val) : relation I J = relation i j := by
+  have h {a c : α} {b d : β} (hp : (a, b) ∈ f.val) (hq : (c, d) ∈ f.val) :
+      compare a c = compare b d := by
+    simpa only [cmp_eq_compare] using f.prop _ hp _ hq
+  exact Relation.ext (by
+    simp only [toComparisons_relation, ofEndpoints, h h₁ h₃, h h₁ h₄, h h₂ h₃, h h₂ h₄, h h₁ h₂,
+      h h₃ h₄])
+
+/-- Two pairs of intervals in the same relation have their endpoints paired by a partial
+isomorphism. -/
+theorem exists_partialIso_of_relation_eq {I K : NonemptyInterval α} {i k : NonemptyInterval β}
+    (h : relation I K = relation i k) :
+    ∃ f : Order.PartialIso α β, (I.fst, i.fst) ∈ f.val ∧ (I.snd, i.snd) ∈ f.val ∧
+      (K.fst, k.fst) ∈ f.val ∧ (K.snd, k.snd) ∈ f.val := by
+  have h' := congrArg Relation.toComparisons h
+  simp only [toComparisons_relation, ofEndpoints, Comparisons.mk.injEq, ← cmp_eq_compare] at h'
+  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := h'
+  have r {a b : α} {c d : β} (h : cmp a b = cmp c d) : cmp b a = cmp d c := by
+    rw [← cmp_swap, h, cmp_swap]
+  refine ⟨⟨{(I.fst, i.fst), (I.snd, i.snd), (K.fst, k.fst), (K.snd, k.snd)}, ?_⟩,
+    by simp, by simp, by simp, by simp⟩
+  intro p hp q hq
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hp hq
+  rcases hp with rfl | rfl | rfl | rfl <;> rcases hq with rfl | rfl | rfl | rfl <;>
+    simp [h1, h2, h3, h4, h5, h6, r h1, r h2, r h3, r h4, r h5, r h6]
+
+end PartialIso
+
 /-- The composite of two cells: the relations of an interval to a third compatible with its
 standing in `C` to a second that stands in `D` to the third, read off the intervals among six
 points. The second interval is placed only beside a first that stands in `C` to it, so the kernel
@@ -286,32 +327,16 @@ theorem toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
   refine le_antisymm toSetRel_comp_subset (fun ⟨k, i⟩ h ↦ ?_)
   have : Nonempty T := ⟨i.fst⟩
   obtain ⟨I, J, K, hD, hC, hik⟩ := mem_comp.1 (mem_toSetRel.1 h)
-  -- the endpoints of `i` and `k`, then those of the interval to be placed
-  let q : Fin 6 → Fin 6 := ![I.fst, I.snd, K.fst, K.snd, J.fst, J.snd]
-  have hq : ∀ x y : Fin 4, compare (![i.fst, i.snd, k.fst, k.snd] x) (![i.fst, i.snd, k.fst,
-      k.snd] y) = compare (q (x.castSucc.castSucc)) (q (y.castSucc.castSucc)) := by
-    have hik' := congrArg Relation.toComparisons hik
-    simp only [toComparisons_relation, ofEndpoints, Comparisons.mk.injEq] at hik'
-    obtain ⟨h1, h2, h3, h4, h5, h6⟩ := hik'
-    have r {a b : Fin 6} {c d : T} (h : compare a b = compare c d) :
-        compare b a = compare d c := by rw [← swap_compare, h, swap_compare]
-    intro x y
-    fin_cases x <;> fin_cases y <;>
-      simp [q, h1, h2, h3, h4, h5, h6, r h1, r h2, r h3, r h4, r h5, r h6]
-  obtain ⟨a, ha⟩ := Ordering.exists_snoc_compare_eq (q := fun x : Fin 5 ↦ q x.castSucc) hq
-  obtain ⟨b, hb⟩ := Ordering.exists_snoc_compare_eq (q := q) (p := Fin.snoc
-    (α := fun _ ↦ T) ![i.fst, i.snd, k.fst, k.snd] a) ha
-  have hab : a ≤ b := compare_le_iff_le.1 (by
-    have := hb 4 5
-    simp [Fin.snoc, q] at this
-    simpa [this] using compare_le_iff_le.2 J.fst_le_snd)
+  -- pair the endpoints of `I` and `K` with those of `i` and `k`, then extend to those of `J`
+  obtain ⟨f, h₁, h₂, h₃, h₄⟩ := exists_partialIso_of_relation_eq hik
+  obtain ⟨f₁, ⟨a, ha⟩, hf₁⟩ := (Order.PartialIso.definedAtLeft T J.fst).isCofinal f
+  obtain ⟨f₂, ⟨b, hb⟩, hf₂⟩ := (Order.PartialIso.definedAtLeft T J.snd).isCofinal f₁
+  have hab : a ≤ b := (le_iff_le_of_cmp_eq_cmp (f₂.prop _ (hf₂ ha) _ hb)).1 J.fst_le_snd
   refine ⟨⟨(a, b), hab⟩, mem_toSetRel.2 ?_, mem_toSetRel.2 ?_⟩
-  · have := ofEndpoints_eq hb 4 5 2 3
-    simp [Fin.snoc, q] at this
-    exact (Relation.ext this : relation ⟨(a, b), hab⟩ k = relation J K) ▸ hC
-  · have := ofEndpoints_eq hb 0 1 4 5
-    simp [Fin.snoc, q] at this
-    exact (Relation.ext this : relation i ⟨(a, b), hab⟩ = relation I J) ▸ hD
+  · exact relation_eq_of_mem_partialIso f₂ (i := ⟨(a, b), hab⟩) (hf₂ ha) hb (hf₂ (hf₁ h₃))
+      (hf₂ (hf₁ h₄)) ▸ hC
+  · exact relation_eq_of_mem_partialIso f₂ (j := ⟨(a, b), hab⟩) (hf₂ (hf₁ h₁)) (hf₂ (hf₁ h₂))
+      (hf₂ ha) hb ▸ hD
 
 /-- The image under one cell of the image under another lies in the image under their composite,
 so a complex aspect relates its outer interval to the run time as the composite cell says. -/

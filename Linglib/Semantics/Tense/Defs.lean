@@ -5,6 +5,7 @@ public import Linglib.Semantics.Denotation
 public import Linglib.Syntax.Category.Verb.Tense
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Finset.Union
 public import Mathlib.Order.Defs.LinearOrder
 
 /-!
@@ -80,20 +81,17 @@ theorem past_sup_present : ⟦past⟧ ⊔ ⟦present⟧ = ⟦future⟧ᶜ := by 
 /-- The composition of two cells collects the orderings of `a` to `c` compatible with `a` to
 `b` in `R` and `b` to `c` in `S`. -/
 def comp (R S : Finset Ordering) : Finset Ordering :=
-  Finset.univ.filter fun o ↦ ∃ r ∈ R, ∃ s ∈ S, o ∈ r.comp s
+  R.biUnion fun r ↦ S.biUnion r.comp
 
 theorem mem_comp {R S : Finset Ordering} {o : Ordering} :
     o ∈ comp R S ↔ ∃ r ∈ R, ∃ s ∈ S, o ∈ r.comp s := by
   simp [comp]
 
-theorem comp_sup_left (R R' S : Finset Ordering) : comp (R ⊔ R') S = comp R S ⊔ comp R' S := by
-  ext o
-  simp only [mem_comp, Finset.sup_eq_union, Finset.mem_union, or_and_right, exists_or]
+theorem comp_sup_left (R R' S : Finset Ordering) : comp (R ⊔ R') S = comp R S ⊔ comp R' S :=
+  Finset.union_biUnion ..
 
 theorem comp_sup_right (R S S' : Finset Ordering) : comp R (S ⊔ S') = comp R S ⊔ comp R S' := by
-  ext o
-  simp only [mem_comp, Finset.sup_eq_union, Finset.mem_union, or_and_right, and_or_left,
-    exists_or]
+  simp only [comp, Finset.sup_eq_union, Finset.union_biUnion, Finset.biUnion_union]
 
 @[simp] theorem comp_present_left (S : Finset Ordering) : comp ⟦present⟧ S = S := by
   ext o
@@ -143,7 +141,7 @@ variable [LinearOrder T]
 
 theorem compare_mem_comp {R S : Finset Ordering} {a b c : T} (h₁ : compare a b ∈ R)
     (h₂ : compare b c ∈ S) : compare a c ∈ comp R S :=
-  Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h₁, _, h₂, Ordering.compare_mem_comp a b c⟩
+  mem_comp.2 ⟨_, h₁, _, h₂, Ordering.compare_mem_comp a b c⟩
 
 theorem compare_mem_comp_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] {a c : T} :
     compare a c ∈ comp C D ↔ ∃ b, compare a b ∈ C ∧ compare b c ∈ D := by
