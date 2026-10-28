@@ -211,7 +211,7 @@ theorem interp_matrix {sc : Scenario} {X : Tree Unit Word}
     (h : ∀ g, interpWith indexTy (lex sc) g X = some ⟨.s ⇒ .t, p g⟩) :
     interpWith indexTy (lex sc) g₀ (matrix X) =
       some ⟨.s ⇒ .t, fun s ↦ ∀ s' ∈ dox .mary s, p (g₀[1 ↦ s]) s'⟩ := by
-  simp only [matrix, interpWith_bind, interpWith_node_binary, interpWith_trace,
+  simp only [matrix, interpWith_bind, interpWith_phrase_binary, interpWith_trace,
     interpWith_terminal, h, lex, Option.bind_some]
   rfl
 

@@ -170,8 +170,7 @@ def cat : ATree C V → C
 phrase. -/
 def ofTree : Tree C V → ATree C V
   | RoseTree.node (.terminal c w) _ => .terminal c w
-  | RoseTree.node (.node c) cs => .node c (ofTreeList cs)
-  | RoseTree.node (.segment c) cs => .node c (ofTreeList cs)
+  | RoseTree.node (.phrase c _) cs => .node c (ofTreeList cs)
   | RoseTree.node (.trace n c) _ => .trace n c
   | .bind n c body => .bind n c body
   | RoseTree.node (.bind _ c) cs => .node c (ofTreeList cs)
@@ -211,8 +210,7 @@ mutual
 
 theorem atoms_ofTree : ∀ t : Tree C V, (ofTree t).atoms = []
   | RoseTree.node (.terminal _ _) _ | RoseTree.node (.trace _ _) _ | .bind _ _ _ => rfl
-  | RoseTree.node (.node _) cs => atomsList_ofTreeList cs
-  | RoseTree.node (.segment _) cs => atomsList_ofTreeList cs
+  | RoseTree.node (.phrase _ _) cs => atomsList_ofTreeList cs
   | RoseTree.node (.bind _ _) [] => rfl
   | RoseTree.node (.bind _ _) (c₁ :: c₂ :: cs) => atomsList_ofTreeList (c₁ :: c₂ :: cs)
 

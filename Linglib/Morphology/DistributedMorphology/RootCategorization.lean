@@ -118,7 +118,7 @@ def profile (t : Tree Cat W) (α : TreePath) : Option (Tree Cat W) × Set (Cat �
 
 /-- The Root labels a phrase. -/
 def rootProjects (t : Tree Cat W) : Bool :=
-  t.subtrees.any fun s ↦ match s.value with | .node .root => true | _ => false
+  t.subtrees.any fun s ↦ match s.value with | .phrase .root .projection => true | _ => false
 
 /-- The position of the Root in a configured phrase. -/
 def rootPos : TreePath := ⟨[0, 0]⟩
@@ -176,7 +176,7 @@ theorem lexicon_eq_of_profile_eq {a a' : Attachment} {L L' : Lexicon W}
   obtain ⟨h1, h2⟩ := h
   obtain ⟨x, r, hd, ar⟩ := L
   obtain ⟨x', r', hd', ar'⟩ := L'
-  simp only [complexHead, RoseTree.node.injEq, Tree.Label.segment.injEq, Cat.cat.injEq,
+  simp only [complexHead, RoseTree.node.injEq, Tree.Label.phrase.injEq, Cat.cat.injEq,
     List.cons.injEq, Tree.Label.terminal.injEq, and_true, true_and] at h1
   obtain ⟨rfl, rfl, -, rfl⟩ := h1
   have hm : (Cat.d, ar) ∈ {l | l ∈ [(Cat.root, r), (Cat.cat x, hd), (Cat.d, ar')]} := by

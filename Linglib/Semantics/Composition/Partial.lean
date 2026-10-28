@@ -371,19 +371,11 @@ variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
   simp only [interpPartial, translate_terminal, Option.map_map]
   cases lex w <;> rfl
 
-@[simp] theorem interpPartial_node_unary (c : C) (t : Tree C L) :
-    interpPartial lex g (.node c (t :: [])) = interpPartial lex g t := rfl
+@[simp] theorem interpPartial_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
+    interpPartial lex g (.phrase c k (t :: [])) = interpPartial lex g t := rfl
 
-@[simp] theorem interpPartial_adjoin_unary (c : C) (t : Tree C L) :
-    interpPartial lex g (.adjoin c (t :: [])) = interpPartial lex g t := rfl
-
-@[simp] theorem interpPartial_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    interpPartial lex g (.node c (t₁ :: t₂ :: [])) = (interpPartial lex g t₁).bind fun d₁ ↦
-      (interpPartial lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
-  map_bind_combine g _ _
-
-@[simp] theorem interpPartial_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
-    interpPartial lex g (.adjoin c (t₁ :: t₂ :: [])) = (interpPartial lex g t₁).bind fun d₁ ↦
+@[simp] theorem interpPartial_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    interpPartial lex g (.phrase c k (t₁ :: t₂ :: [])) = (interpPartial lex g t₁).bind fun d₁ ↦
       (interpPartial lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalPartial d₁ d₂ :=
   map_bind_combine g _ _
 

@@ -167,7 +167,7 @@ theorem parses_raised (g : Assignment E) :
     parses (lexicon Q p) g raised =
       Set.range fun d : Designation ↦ Q fun x ↦ d.threshold ≤ p x := by
   ext b
-  simp only [parses, raised, Set.mem_ofPred_eq, Tree.mem_readings_node_binary,
+  simp only [parses, raised, Set.mem_ofPred_eq, Tree.mem_readings_phrase_binary,
     Tree.readings_terminal, Tree.mem_readings_bind, Set.mem_range]
   constructor
   · rintro ⟨⟨τ₁, v₁⟩, ⟨X₁, h₁, hm₁⟩, d₂, ⟨r, hr, hd₂⟩, hb⟩
@@ -175,7 +175,7 @@ theorem parses_raised (g : Assignment E) :
     obtain ⟨rfl, h₁⟩ := h₁
     obtain rfl := eq_of_heq h₁
     obtain rfl : Q = v₁ := hm₁.symm
-    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_node_iff.1 hr
+    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_phrase_iff.1 hr
     obtain ⟨r₁, cs₁, rfl, h₁, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
     obtain ⟨r₂, cs₂, rfl, h₂, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
     obtain rfl := List.map_eq_nil_iff.mp hcs₂

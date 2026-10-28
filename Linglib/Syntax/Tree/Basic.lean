@@ -6,37 +6,25 @@ public import Linglib.Core.Data.RoseTree.Licensed
 /-!
 # Constituency trees
 
-A constituency tree over a category type `C` and a word type `W` is a rose tree whose nodes carry
-labels: a terminal carries a category and a word, an internal node a category, the mother of an
-adjunction a category too, marking it a further segment of its host's category rather than a
-projection above it, and the two nodes of Heim and Kratzer's trace theory of movement, an indexed
-trace and an indexed binder over a body, carry a category each. Type-driven interpretation reads the
-tree with `C = Unit`; structural operations on parse trees read it with a category system such as
-`PhraseStructure.Cat`. Positions, subtrees, replacement and the frontier are those of the rose tree.
-
-## Main declarations
-
-* `PhraseStructure.Tree.Label`, `PhraseStructure.Tree`: the node labels and the trees over them,
-  with the pattern-matchable constructors `terminal`, `node`, `adjoin`, `trace`, `bind` and the
-  category-free `leaf`, `bin`, `tr`, `binder`.
-* `PhraseStructure.Tree.Label.Licenses`, `PhraseStructure.Tree.IsWellFormed`: terminals and traces
-  are leaves and binders have one body.
-* `PhraseStructure.Tree.rec'`: induction over the five shapes, with a case for ill-formed nodes.
-* `PhraseStructure.Tree.terminals`, `yield`, `cats`, `map`, `freeIndices`, `leafSubst`.
-* `PhraseStructure.Tree.positionedTerminals`: the terminals with their positions, in the order of
-  the yield, which is precedence (`pairwise_precedes_positionedTerminals`).
+A constituency tree over categories `C` and words `W` is a rose tree whose nodes carry labels: a
+terminal carries a category and a word, a phrase a category and its kind, and the trace and binder
+of [heim-kratzer-1998]'s trace theory of movement an index and a category. A phrase is a
+projection or an adjunction structure, which on the segment theory of [may-1985] and
+[chomsky-1995] is a further segment of its host's category; only the head relation of
+`Syntax/Tree/Projection.lean` tells the two apart. Positions, subtrees and the frontier are the
+rose tree's, and the terminals with their positions, in the order of the yield, ascend in
+[precedence](##pairwise_precedes_positionedTerminals).
 
 ## Implementation notes
 
 Daughters are a `List`, so a node is binary or n-ary by its list and sibling order is linear
 precedence. Only the trace theory of movement is expressible: a copy or a multidominance
-representation is not a tree over these labels. Ill-formed label and arity combinations, such as a
-terminal with daughters, are expressible; `IsWellFormed` excludes them where a theorem needs it, and
-the interpreter denotes them `none`. The mark on the mother of an adjunction follows May's and
-Chomsky's segment theory, in which adjunction extends its host's category rather than projecting a
-new one, and bare phrase structure labels the adjunction structure apart from a projection. That
-each binder binds a trace of its index is a property of a tree, not a guarantee of the type, and
-interpretation does not read the category on a binder.
+representation is not a tree over these labels. A binder is the node of Heim and Kratzer's
+Predicate Abstraction rule, whose daughters are an index and a body, with the index in its label
+rather than a daughter of its own. Ill-formed label and arity combinations, such as a terminal
+with daughters, are expressible; `IsWellFormed` excludes them where a theorem needs it, and `rec'`
+sends them to a case of their own. That each binder binds a trace of its index is a property of a
+tree, not a guarantee of the type, and interpretation does not read the category on a binder.
 
 `Tree C W` abbreviates `RoseTree (Label C W)`, so the rose tree's navigation (`children`,
 `subtreeAt`) returns `RoseTree (Label C W)`. Dot notation for this file's operations does not
@@ -46,10 +34,9 @@ resolve on those results, so write `Tree.cat s`, and write constructor patterns 
 ## References
 
 * [heim-kratzer-1998]
-* [katzir-2007]
-* [barker-pullum-1990]
 * [may-1985]
 * [chomsky-1995]
+* [katzir-2007]
 -/
 
 @[expose] public section
@@ -58,14 +45,18 @@ namespace PhraseStructure
 
 namespace Tree
 
-/-- A node of a constituency tree carries a terminal's category and word, an internal node's
-category, the category of an adjunction structure, or a trace's or binder's index and category. -/
+/-- A phrase is a projection, or an adjunction structure, a further segment of the category of
+its host daughter. -/
+inductive PhraseKind where
+  | projection
+  | adjunction
+  deriving DecidableEq, Repr
+
+/-- A node of a constituency tree carries a terminal's category and word, a phrase's category and
+kind, or a trace's or binder's index and category. -/
 inductive Label (C W : Type*) where
   | terminal : C → W → Label C W
-  | node : C → Label C W
-  /-- `segment c` labels the mother of an adjunction, a segment of the category `c` of its host
-  daughter, not a projection above it. -/
-  | segment : C → Label C W
+  | phrase : C → PhraseKind → Label C W
   | trace : ℕ → C → Label C W
   | bind : ℕ → C → Label C W
   deriving DecidableEq, Repr
@@ -76,7 +67,7 @@ variable {C W W' : Type*}
 
 /-- The category a label carries. -/
 def cat : Label C W → C
-  | .terminal c _ | .node c | .segment c | .trace _ c | .bind _ c => c
+  | .terminal c _ | .phrase c _ | .trace _ c | .bind _ c => c
 
 /-- A terminal label carries a category and a word; other labels carry none. -/
 def terminal? : Label C W → Option (C × W)
@@ -86,8 +77,7 @@ def terminal? : Label C W → Option (C × W)
 /-- `mapWord f` relabels the word of a terminal label. -/
 def mapWord (f : W → W') : Label C W → Label C W'
   | .terminal c w => .terminal c (f w)
-  | .node c => .node c
-  | .segment c => .segment c
+  | .phrase c k => .phrase c k
   | .trace n c => .trace n c
   | .bind n c => .bind n c
 
@@ -103,22 +93,19 @@ def mapWord (f : W → W') : Label C W → Label C W'
 /-- A label licenses its daughters when a terminal or a trace has none and a binder has one. -/
 def Licenses : Label C W → List (Label C W) → Prop
   | .terminal _ _, ks => ks = []
-  | .node _, _ => True
-  | .segment _, _ => True
+  | .phrase _ _, _ => True
   | .trace _ _, ks => ks = []
   | .bind _ _, ks => ks.length = 1
 
 instance : ∀ (l : Label C W) (ks : List (Label C W)), Decidable (Licenses l ks)
   | .terminal _ _, ks => inferInstanceAs (Decidable (ks = []))
-  | .node _, _ => inferInstanceAs (Decidable True)
-  | .segment _, _ => inferInstanceAs (Decidable True)
+  | .phrase _ _, _ => inferInstanceAs (Decidable True)
   | .trace _ _, ks => inferInstanceAs (Decidable (ks = []))
   | .bind _ _, ks => inferInstanceAs (Decidable (ks.length = 1))
 
-/-- A label is phrasal when it puts a category over daughters, as a node's or an adjunction
-mother's does. -/
+/-- A label is phrasal when it puts a category over daughters. -/
 def IsPhrase : Label C W → Prop
-  | .node _ | .segment _ => True
+  | .phrase _ _ => True
   | _ => False
 
 instance : DecidablePred (IsPhrase (C := C) (W := W)) := fun l ↦ by
@@ -126,11 +113,11 @@ instance : DecidablePred (IsPhrase (C := C) (W := W)) := fun l ↦ by
 
 /-- A label is a segment label when it marks the mother of an adjunction. -/
 def IsSegment : Label C W → Prop
-  | .segment _ => True
+  | .phrase _ .adjunction => True
   | _ => False
 
 instance : DecidablePred (IsSegment (C := C) (W := W)) := fun l ↦ by
-  cases l <;> unfold IsSegment <;> infer_instance
+  rcases l with _ | ⟨_, _ | _⟩ | _ | _ <;> unfold IsSegment <;> infer_instance
 
 @[simp] theorem licenses_mapWord (f : W → W') (l : Label C W) (ks : List (Label C W)) :
     Licenses (l.mapWord f) (ks.map (mapWord f)) ↔ Licenses l ks := by
@@ -152,14 +139,17 @@ variable {C W : Type*}
 /-- `terminal c w` is the word `w` under category `c`. -/
 @[match_pattern] abbrev terminal (c : C) (w : W) : Tree C W := RoseTree.node (.terminal c w) []
 
+/-- `phrase c k cs` is the phrase of category `c` and kind `k` over daughters `cs`. -/
+@[match_pattern] abbrev phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) : Tree C W :=
+  RoseTree.node (.phrase c k) cs
+
 /-- `node c cs` is the category `c` over daughters `cs`. -/
-@[match_pattern] abbrev node (c : C) (cs : List (Tree C W)) : Tree C W :=
-  RoseTree.node (.node c) cs
+@[match_pattern] abbrev node (c : C) (cs : List (Tree C W)) : Tree C W := phrase c .projection cs
 
 /-- `adjoin c cs` is the category `c` over daughters `cs`, one of which is its host of category
 `c`, the others adjoined to it. -/
 @[match_pattern] abbrev adjoin (c : C) (cs : List (Tree C W)) : Tree C W :=
-  RoseTree.node (.segment c) cs
+  phrase c .adjunction cs
 
 /-- `trace n c` is a trace of index `n`. -/
 @[match_pattern] abbrev trace (n : ℕ) (c : C) : Tree C W := RoseTree.node (.trace n c) []
@@ -168,17 +158,24 @@ variable {C W : Type*}
 @[match_pattern] abbrev bind (n : ℕ) (c : C) (t : Tree C W) : Tree C W :=
   RoseTree.node (.bind n c) [t]
 
+/-- `leaf w` is the word `w`, in a tree without categories. -/
 @[match_pattern] abbrev leaf (w : W) : Tree Unit W := terminal () w
+
+/-- `bin t₁ t₂` is the binary node over `t₁` and `t₂`, in a tree without categories. -/
 @[match_pattern] abbrev bin (t₁ t₂ : Tree Unit W) : Tree Unit W := node () [t₁, t₂]
+
+/-- `tr n` is the trace of index `n`, in a tree without categories. -/
 @[match_pattern] abbrev tr (n : ℕ) : Tree Unit W := trace n ()
+
+/-- `binder n t` is the binder of index `n` over `t`, in a tree without categories. -/
 @[match_pattern] abbrev binder (n : ℕ) (t : Tree Unit W) : Tree Unit W := bind n () t
 
 /-- The category at the root. -/
 def cat (t : Tree C W) : C := t.value.cat
 
 @[simp] theorem cat_terminal (c : C) (w : W) : (terminal c w).cat = c := rfl
-@[simp] theorem cat_node (c : C) (cs : List (Tree C W)) : (node c cs).cat = c := rfl
-@[simp] theorem cat_adjoin (c : C) (cs : List (Tree C W)) : (adjoin c cs).cat = c := rfl
+@[simp] theorem cat_phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
+    (phrase c k cs).cat = c := rfl
 @[simp] theorem cat_trace (n : ℕ) (c : C) : (trace n c : Tree C W).cat = c := rfl
 @[simp] theorem cat_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).cat = c := rfl
 
@@ -190,13 +187,12 @@ instance (t : Tree C W) : Decidable t.IsWellFormed :=
 
 /-! ### Induction -/
 
-/-- Induction over the five shapes, with the hypothesis at every daughter, and a case for the
+/-- Induction over the four shapes, with the hypothesis at every daughter, and a case for the
 nodes whose daughters their label does not license. -/
 @[elab_as_elim]
 def rec' {motive : Tree C W → Sort*}
     (terminal : ∀ c w, motive (terminal c w))
-    (node : ∀ c cs, (∀ t ∈ cs, motive t) → motive (node c cs))
-    (adjoin : ∀ c cs, (∀ t ∈ cs, motive t) → motive (adjoin c cs))
+    (phrase : ∀ c k cs, (∀ t ∈ cs, motive t) → motive (phrase c k cs))
     (trace : ∀ n c, motive (trace n c))
     (bind : ∀ n c t, motive t → motive (bind n c t))
     (junk : ∀ l cs, ¬ Label.Licenses l (cs.map RoseTree.value) → (∀ t ∈ cs, motive t) →
@@ -206,8 +202,7 @@ def rec' {motive : Tree C W → Sort*}
     match l, cs, ih with
     | .terminal c w, [], _ => terminal c w
     | .terminal _ _, _ :: _, ih => junk _ _ (by simp [Label.Licenses]) ih
-    | .node c, cs, ih => node c cs ih
-    | .segment c, cs, ih => adjoin c cs ih
+    | .phrase c k, cs, ih => phrase c k cs ih
     | .trace n c, [], _ => trace n c
     | .trace _ _, _ :: _, ih => junk _ _ (by simp [Label.Licenses]) ih
     | .bind n c, [t], ih => bind n c t (ih t List.mem_cons_self)
@@ -234,13 +229,9 @@ theorem map_rose (f : W → W') (l : Label C W) (cs : List (Tree C W)) :
 @[simp] theorem map_terminal (f : W → W') (c : C) (w : W) :
     (terminal c w).map f = terminal c (f w) := rfl
 
-@[simp] theorem map_node (f : W → W') (c : C) (cs : List (Tree C W)) :
-    (node c cs).map f = node c (cs.map (map f)) := by
-  simp [map, node, Label.mapWord]
-
-@[simp] theorem map_adjoin (f : W → W') (c : C) (cs : List (Tree C W)) :
-    (adjoin c cs).map f = adjoin c (cs.map (map f)) := by
-  simp [map, adjoin, Label.mapWord]
+@[simp] theorem map_phrase (f : W → W') (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
+    (phrase c k cs).map f = phrase c k (cs.map (map f)) := by
+  simp [map, phrase, Label.mapWord]
 
 @[simp] theorem map_trace (f : W → W') (n : ℕ) (c : C) : (trace n c).map f = trace n c := rfl
 
@@ -258,15 +249,9 @@ theorem map_eq_terminal_iff {w' : W'} :
   rcases t with ⟨l, cs⟩
   cases l <;> simp_all [map_rose, Label.mapWord]
 
-theorem map_eq_node_iff {cs' : List (Tree C W')} :
-    t.map f = node c cs' ↔ ∃ cs, t = node c cs ∧ cs.map (map f) = cs' := by
-  refine ⟨fun h ↦ ?_, fun ⟨cs, ht, hcs⟩ ↦ by rw [ht, map_node, hcs]⟩
-  rcases t with ⟨l, cs⟩
-  cases l <;> simp_all [map_rose, Label.mapWord]
-
-theorem map_eq_adjoin_iff {cs' : List (Tree C W')} :
-    t.map f = adjoin c cs' ↔ ∃ cs, t = adjoin c cs ∧ cs.map (map f) = cs' := by
-  refine ⟨fun h ↦ ?_, fun ⟨cs, ht, hcs⟩ ↦ by rw [ht, map_adjoin, hcs]⟩
+theorem map_eq_phrase_iff {k : PhraseKind} {cs' : List (Tree C W')} :
+    t.map f = phrase c k cs' ↔ ∃ cs, t = phrase c k cs ∧ cs.map (map f) = cs' := by
+  refine ⟨fun h ↦ ?_, fun ⟨cs, ht, hcs⟩ ↦ by rw [ht, map_phrase, hcs]⟩
   rcases t with ⟨l, cs⟩
   cases l <;> simp_all [map_rose, Label.mapWord]
 
@@ -310,19 +295,11 @@ def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
 
 @[simp] theorem terminals_terminal (c : C) (w : W) : (terminal c w).terminals = [(c, w)] := rfl
 
-@[simp] theorem terminals_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).terminals = cs.flatMap terminals := by
+@[simp] theorem terminals_phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
+    (phrase c k cs).terminals = cs.flatMap terminals := by
   rcases cs with _ | ⟨c', cs⟩
   · rfl
-  · simp only [terminals, node, RoseTree.leafList_node_cons, List.filterMap_flatten, List.map_map,
-      List.flatMap_def]
-    rfl
-
-@[simp] theorem terminals_adjoin (c : C) (cs : List (Tree C W)) :
-    (adjoin c cs).terminals = cs.flatMap terminals := by
-  rcases cs with _ | ⟨c', cs⟩
-  · rfl
-  · simp only [terminals, adjoin, RoseTree.leafList_node_cons, List.filterMap_flatten,
+  · simp only [terminals, phrase, RoseTree.leafList_node_cons, List.filterMap_flatten,
       List.map_map, List.flatMap_def]
     rfl
 
@@ -334,14 +311,9 @@ def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
 
 @[simp] theorem yield_terminal (c : C) (w : W) : (terminal c w).yield = [w] := rfl
 
-@[simp] theorem yield_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).yield = cs.flatMap yield := by
-  simp only [yield, terminals_node, List.map_flatMap]
-  rfl
-
-@[simp] theorem yield_adjoin (c : C) (cs : List (Tree C W)) :
-    (adjoin c cs).yield = cs.flatMap yield := by
-  simp only [yield, terminals_adjoin, List.map_flatMap]
+@[simp] theorem yield_phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
+    (phrase c k cs).yield = cs.flatMap yield := by
+  simp only [yield, terminals_phrase, List.map_flatMap]
   rfl
 
 @[simp] theorem yield_trace (n : ℕ) (c : C) : (trace n c : Tree C W).yield = [] := rfl
@@ -366,44 +338,14 @@ theorem mem_cats_rose {c : C} {l : Label C W} {cs : List (Tree C W)} :
 
 @[simp] theorem cats_terminal (c : C) (w : W) : (terminal c w).cats = [c] := rfl
 
-@[simp] theorem cats_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).cats = c :: cs.flatMap cats := by
-  simp only [cats, node, RoseTree.values_node, List.map_cons, List.map_flatten, List.map_map,
-    List.flatMap_def]
-  rfl
-
-@[simp] theorem cats_adjoin (c : C) (cs : List (Tree C W)) :
-    (adjoin c cs).cats = c :: cs.flatMap cats := by
-  simp only [cats, adjoin, RoseTree.values_node, List.map_cons, List.map_flatten, List.map_map,
-    List.flatMap_def]
-  rfl
+@[simp] theorem cats_phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
+    (phrase c k cs).cats = c :: cs.flatMap cats :=
+  cats_rose _ cs
 
 @[simp] theorem cats_trace (n : ℕ) (c : C) : (trace n c : Tree C W).cats = [c] := rfl
 
 @[simp] theorem cats_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).cats = c :: t.cats := by
   simp [cats, bind, Label.cat]
-
-theorem mem_cats_node {c' c : C} {cs : List (Tree C W)} :
-    c' ∈ (node c cs).cats ↔ c' = c ∨ ∃ t ∈ cs, c' ∈ t.cats := by
-  simp
-
-theorem mem_cats_bind {c' : C} {n : ℕ} {c : C} {t : Tree C W} :
-    c' ∈ (bind n c t).cats ↔ c' = c ∨ c' ∈ t.cats := by
-  simp
-
-@[simp] theorem subtrees_terminal (c : C) (w : W) : (terminal c w).subtrees = [terminal c w] :=
-  rfl
-
-@[simp] theorem subtrees_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).subtrees = node c cs :: cs.flatMap RoseTree.subtrees :=
-  RoseTree.subtrees_node _ cs
-
-@[simp] theorem subtrees_adjoin (c : C) (cs : List (Tree C W)) :
-    (adjoin c cs).subtrees = adjoin c cs :: cs.flatMap RoseTree.subtrees :=
-  RoseTree.subtrees_node _ cs
-
-@[simp] theorem subtrees_trace (n : ℕ) (c : C) : (trace n c : Tree C W).subtrees = [trace n c] :=
-  rfl
 
 @[simp] theorem subtrees_bind (n : ℕ) (c : C) (t : Tree C W) :
     (bind n c t).subtrees = bind n c t :: t.subtrees := by
@@ -422,13 +364,9 @@ def freeIndices : Tree C W → Finset ℕ :=
 @[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := by
   simp [freeIndices]
 
-theorem freeIndices_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).freeIndices = (cs.map freeIndices).foldr (· ∪ ·) ∅ := by
-  simp [freeIndices, node]
-
-theorem freeIndices_adjoin (c : C) (cs : List (Tree C W)) :
-    (adjoin c cs).freeIndices = (cs.map freeIndices).foldr (· ∪ ·) ∅ := by
-  simp [freeIndices, adjoin]
+theorem freeIndices_phrase (c : C) (k : PhraseKind) (cs : List (Tree C W)) :
+    (phrase c k cs).freeIndices = (cs.map freeIndices).foldr (· ∪ ·) ∅ := by
+  simp [freeIndices, phrase]
 
 @[simp] theorem freeIndices_trace (n : ℕ) (c : C) : (trace n c : Tree C W).freeIndices = {n} := by
   simp [freeIndices]
@@ -441,16 +379,9 @@ theorem freeIndices_adjoin (c : C) (cs : List (Tree C W)) :
   ext
   simp
 
-@[simp] theorem mem_freeIndices_node {i : ℕ} {c : C} {cs : List (Tree C W)} :
-    i ∈ (node c cs).freeIndices ↔ ∃ t ∈ cs, i ∈ t.freeIndices := by
-  rw [freeIndices_node]
-  induction cs with
-  | nil => simp
-  | cons t ts ih => simp [ih]
-
-@[simp] theorem mem_freeIndices_adjoin {i : ℕ} {c : C} {cs : List (Tree C W)} :
-    i ∈ (adjoin c cs).freeIndices ↔ ∃ t ∈ cs, i ∈ t.freeIndices := by
-  rw [freeIndices_adjoin]
+@[simp] theorem mem_freeIndices_phrase {i : ℕ} {c : C} {k : PhraseKind} {cs : List (Tree C W)} :
+    i ∈ (phrase c k cs).freeIndices ↔ ∃ t ∈ cs, i ∈ t.freeIndices := by
+  rw [freeIndices_phrase]
   induction cs with
   | nil => simp
   | cons t ts ih => simp [ih]
@@ -463,7 +394,8 @@ instance [DecidableEq C] [DecidableEq W] (t : Tree C W) : Decidable t.Closed :=
 
 /-! ### Word substitution -/
 
-/-- Replace the word `w` by `w'` at every terminal of category `c`. -/
+/-- Replace the word `w` by `w'` at every terminal of category `c`, the substitution of a
+same-category lexical item of [katzir-2007]. -/
 def leafSubst [DecidableEq C] [DecidableEq W] (w w' : W) (c : C) (t : Tree C W) : Tree C W :=
   RoseTree.map (fun
     | .terminal c' v => .terminal c' (if c = c' ∧ v = w then w' else v)
@@ -476,13 +408,9 @@ variable [DecidableEq C] [DecidableEq W] (w w' : W) (c : C)
 @[simp] theorem leafSubst_terminal (c' : C) (v : W) :
     leafSubst w w' c (terminal c' v) = terminal c' (if c = c' ∧ v = w then w' else v) := rfl
 
-@[simp] theorem leafSubst_node (c' : C) (cs : List (Tree C W)) :
-    leafSubst w w' c (node c' cs) = node c' (cs.map (leafSubst w w' c)) := by
-  simp [leafSubst, node]
-
-@[simp] theorem leafSubst_adjoin (c' : C) (cs : List (Tree C W)) :
-    leafSubst w w' c (adjoin c' cs) = adjoin c' (cs.map (leafSubst w w' c)) := by
-  simp [leafSubst, adjoin]
+@[simp] theorem leafSubst_phrase (c' : C) (k : PhraseKind) (cs : List (Tree C W)) :
+    leafSubst w w' c (phrase c' k cs) = phrase c' k (cs.map (leafSubst w w' c)) := by
+  simp [leafSubst, phrase]
 
 @[simp] theorem leafSubst_trace (n : ℕ) (c' : C) :
     leafSubst w w' c (trace n c') = trace n c' := rfl
@@ -493,30 +421,14 @@ variable [DecidableEq C] [DecidableEq W] (w w' : W) (c : C)
 
 end LeafSubst
 
-/-! ### Positions
-
-A tree takes Gorn addresses as a rose tree, and with them the dominance order on its positions
-and, in `Syntax/Command.lean`, the command relations. -/
-
-open Core.Order
-
-@[simp] theorem children_terminal (c : C) (w : W) : (terminal c w : Tree C W).children = [] :=
-  rfl
-
-@[simp] theorem children_node (c : C) (cs : List (Tree C W)) : (node c cs).children = cs := rfl
-
-@[simp] theorem children_adjoin (c : C) (cs : List (Tree C W)) : (adjoin c cs).children = cs :=
-  rfl
-
-@[simp] theorem children_trace (n : ℕ) (c : C) : (trace n c : Tree C W).children = [] := rfl
-
-@[simp] theorem children_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).children = [t] :=
-  rfl
-
 /-! ### Positions of the terminals
 
-The terminals, paired with their positions, are the word-bearing leaves, so the order of the
-yield is precedence (`RoseTree.pairwise_precedes_positionedLeaves`). -/
+A tree takes Gorn addresses as a rose tree, and with them the dominance order on its positions and,
+in `Syntax/Tree/Command.lean`, the command relations. The terminals, paired with their positions,
+are the word-bearing leaves, so the order of the yield is precedence
+(`RoseTree.pairwise_precedes_positionedLeaves`). -/
+
+open Core.Order
 
 /-- The terminals, left to right, each paired with its position. -/
 def positionedTerminals (t : Tree C W) : List (TreePath × (C × W)) :=

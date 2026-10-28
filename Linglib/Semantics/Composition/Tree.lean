@@ -41,8 +41,8 @@ inverse scope needs an evaluation order chosen per node, which the engine does n
 (`Studies/Barker2002.lean` marks each rule with a permutation of its daughters). Predicate
 Abstraction needs the effect to distribute over functions,
 `(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`. The abstraction's fallback value `valueAt` is
-never reached, since types do not depend on the assignment. The category of a node is ignored,
-composition being type-driven.
+never reached, since types do not depend on the assignment. The category of a node and the kind
+of a phrase are ignored, composition being type-driven.
 
 ## References
 
@@ -120,18 +120,12 @@ its daughters' terms composed by the mode their types select, a trace to the var
 and a binder to the abstraction over that variable. -/
 def translate (Γ : ℕ → Ty) (lex : L → Option (Σ ty, K ty)) : Tree C L → Option (Σ ty, Term Γ K ty)
   | .terminal _ w => (lex w).map fun c ↦ ⟨c.1, .const c.2⟩
-  | .node _ (t :: []) => translate Γ lex t
-  | .node _ (t1 :: t2 :: []) => do
+  | .phrase _ _ (t :: []) => translate Γ lex t
+  | .phrase _ _ (t1 :: t2 :: []) => do
     let d1 ← translate Γ lex t1
     let d2 ← translate Γ lex t2
     Mode.combine? (fun m l r ↦ .comp m l r) d1 d2
-  | .node _ _ => none
-  | .adjoin _ (t :: []) => translate Γ lex t
-  | .adjoin _ (t1 :: t2 :: []) => do
-    let d1 ← translate Γ lex t1
-    let d2 ← translate Γ lex t2
-    Mode.combine? (fun m l r ↦ .comp m l r) d1 d2
-  | .adjoin _ _ => none
+  | .phrase _ _ _ => none
   | .trace n _ => some ⟨Γ n, .var n⟩
   | .bind n _ body => (translate Γ lex body).map fun d ↦ ⟨Γ n ⇒ d.1, .lam n d.2⟩
   | _ => none
@@ -141,18 +135,11 @@ variable (lex : L → Option (Σ ty, K ty))
 @[simp] theorem translate_terminal (c : C) (w : L) :
     translate Γ lex (.terminal c w : Tree C L) = (lex w).map fun c ↦ ⟨c.1, .const c.2⟩ := rfl
 
-@[simp] theorem translate_node_unary (c : C) (t : Tree C L) :
-    translate Γ lex (.node c (t :: [])) = translate Γ lex t := rfl
+@[simp] theorem translate_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
+    translate Γ lex (.phrase c k (t :: [])) = translate Γ lex t := rfl
 
-@[simp] theorem translate_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    translate Γ lex (.node c (t₁ :: t₂ :: [])) = ((translate Γ lex t₁).bind fun d₁ ↦
-      (translate Γ lex t₂).bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂) := rfl
-
-@[simp] theorem translate_adjoin_unary (c : C) (t : Tree C L) :
-    translate Γ lex (.adjoin c (t :: [])) = translate Γ lex t := rfl
-
-@[simp] theorem translate_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
-    translate Γ lex (.adjoin c (t₁ :: t₂ :: [])) = ((translate Γ lex t₁).bind fun d₁ ↦
+@[simp] theorem translate_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    translate Γ lex (.phrase c k (t₁ :: t₂ :: [])) = ((translate Γ lex t₁).bind fun d₁ ↦
       (translate Γ lex t₂).bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂) := rfl
 
 @[simp] theorem translate_trace (n : ℕ) (c : C) :
@@ -169,8 +156,7 @@ theorem translate_junk {l : Tree.Label C L} {cs : List (Tree C L)}
   | terminal c w => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
-  | node c => exact absurd trivial h
-  | segment c => exact absurd trivial h
+  | phrase c k => exact absurd trivial h
   | trace n c => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
@@ -186,21 +172,12 @@ theorem translate_map_const {K' : Ty → Type*} (f : ∀ {ty : Ty}, K ty → K' 
       (translate Γ lex t).map fun d ↦ ⟨d.1, d.2.map f⟩ := by
   induction t using Tree.rec' with
   | terminal c w => simp only [translate_terminal]; cases lex w <;> rfl
-  | node c cs ih =>
+  | phrase c k cs ih =>
     match cs with
     | [] => rfl
     | [t] => exact ih t (by simp)
     | [t₁, t₂] =>
-      simp only [translate_node_binary, ih t₁ (by simp), ih t₂ (by simp)]
-      cases translate Γ lex t₁ <;> cases translate Γ lex t₂ <;> try rfl
-      exact (Mode.combine?_map (fun _ _ _ ↦ rfl) _ _).symm
-    | _ :: _ :: _ :: _ => rfl
-  | adjoin c cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => exact ih t (by simp)
-    | [t₁, t₂] =>
-      simp only [translate_adjoin_binary, ih t₁ (by simp), ih t₂ (by simp)]
+      simp only [translate_phrase_binary, ih t₁ (by simp), ih t₂ (by simp)]
       cases translate Γ lex t₁ <;> cases translate Γ lex t₂ <;> try rfl
       exact (Mode.combine?_map (fun _ _ _ ↦ rfl) _ _).symm
     | _ :: _ :: _ :: _ => rfl
@@ -227,20 +204,12 @@ theorem translate_map_fst {K' : Ty → Type*} {lex' : L → Option (Σ ty, K' ty
     (translate Γ lex t).map (·.1) = (translate Γ lex' t).map (·.1) := by
   induction t using Tree.rec' with
   | terminal c w => simpa [Option.map_map, Function.comp_def] using h w
-  | node c cs ih =>
+  | phrase c k cs ih =>
     match cs with
     | [] => rfl
     | [t] => exact ih t (by simp)
     | [t₁, t₂] =>
-      simp only [translate_node_binary]
-      exact bind_combine?_map_fst (ih t₁ (by simp)) (ih t₂ (by simp))
-    | _ :: _ :: _ :: _ => rfl
-  | adjoin c cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => exact ih t (by simp)
-    | [t₁, t₂] =>
-      simp only [translate_adjoin_binary]
+      simp only [translate_phrase_binary]
       exact bind_combine?_map_fst (ih t₁ (by simp)) (ih t₂ (by simp))
     | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
@@ -264,34 +233,19 @@ theorem translate_rel {K' : Ty → Type*} {R : ∀ ty : Ty, K ty → K' ty → P
     obtain ⟨d, hd, rfl⟩ := Option.map_eq_some_iff.1 h
     obtain ⟨c', hc', hR⟩ := hlex w d hd
     exact ⟨.const c', by simp [hc'], .const hR⟩
-  | node c cs ih =>
+  | phrase c k cs ih =>
     match cs with
     | [] => intro d' h; simp [translate] at h
     | [t] => intro d' h; exact ih t (by simp) h
     | [t₁, t₂] =>
       intro d' h
-      simp only [translate_node_binary, Option.bind_eq_some_iff] at h
+      simp only [translate_phrase_binary, Option.bind_eq_some_iff] at h
       obtain ⟨⟨σ₁, u₁'⟩, h₁, ⟨σ₂, u₂'⟩, h₂, h⟩ := h
       obtain ⟨u₁, hu₁, hr₁⟩ := ih t₁ (by simp) h₁
       obtain ⟨u₂, hu₂, hr₂⟩ := ih t₂ (by simp) h₂
       simp only [Mode.combine?, Option.map_eq_some_iff] at h
       obtain ⟨⟨τ, m⟩, hm, rfl⟩ := h
-      exact ⟨.comp m u₁ u₂, by simp [translate_node_binary, hu₁, hu₂, Mode.combine?, hm],
-        .comp m hr₁ hr₂⟩
-    | _ :: _ :: _ :: _ => intro d' h; simp [translate] at h
-  | adjoin c cs ih =>
-    match cs with
-    | [] => intro d' h; simp [translate] at h
-    | [t] => intro d' h; exact ih t (by simp) h
-    | [t₁, t₂] =>
-      intro d' h
-      simp only [translate_adjoin_binary, Option.bind_eq_some_iff] at h
-      obtain ⟨⟨σ₁, u₁'⟩, h₁, ⟨σ₂, u₂'⟩, h₂, h⟩ := h
-      obtain ⟨u₁, hu₁, hr₁⟩ := ih t₁ (by simp) h₁
-      obtain ⟨u₂, hu₂, hr₂⟩ := ih t₂ (by simp) h₂
-      simp only [Mode.combine?, Option.map_eq_some_iff] at h
-      obtain ⟨⟨τ, m⟩, hm, rfl⟩ := h
-      exact ⟨.comp m u₁ u₂, by simp [translate_adjoin_binary, hu₁, hu₂, Mode.combine?, hm],
+      exact ⟨.comp m u₁ u₂, by simp [translate_phrase_binary, hu₁, hu₂, Mode.combine?, hm],
         .comp m hr₁ hr₂⟩
     | _ :: _ :: _ :: _ => intro d' h; simp [translate] at h
   | trace n c =>
@@ -367,19 +321,11 @@ variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
   simp only [interp, translate_terminal]
   cases lex w <;> rfl
 
-@[simp] theorem interp_node_unary (c : C) (t : Tree C L) :
-    interp lex g (.node c (t :: [])) = interp lex g t := rfl
+@[simp] theorem interp_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
+    interp lex g (.phrase c k (t :: [])) = interp lex g t := rfl
 
-@[simp] theorem interp_adjoin_unary (c : C) (t : Tree C L) :
-    interp lex g (.adjoin c (t :: [])) = interp lex g t := rfl
-
-@[simp] theorem interp_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    interp lex g (.node c (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
-      (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
-  map_evalAt_combine g _ _
-
-@[simp] theorem interp_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
-    interp lex g (.adjoin c (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
+@[simp] theorem interp_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    interp lex g (.phrase c k (t₁ :: t₂ :: [])) = ((interp lex g t₁).bind fun d₁ ↦
       (interp lex g t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂) :=
   map_evalAt_combine g _ _
 
@@ -405,10 +351,10 @@ variable (Γ : ℕ → Ty) (g' : ∀ n, Ty.Domain E W (Γ n) S)
   simp only [interpWith, translate_terminal, Option.map_map]
   cases lex w <;> rfl
 
-@[simp] theorem interpWith_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    interpWith Γ lex g' (.node c (t₁ :: t₂ :: [])) = (interpWith Γ lex g' t₁).bind fun d₁ ↦
+@[simp] theorem interpWith_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    interpWith Γ lex g' (.phrase c k (t₁ :: t₂ :: [])) = (interpWith Γ lex g' t₁).bind fun d₁ ↦
       (interpWith Γ lex g' t₂).bind fun d₂ ↦ Mode.combine? Mode.evalM d₁ d₂ := by
-  simp only [interpWith, translate_node_binary]
+  simp only [interpWith, translate_phrase_binary]
   rcases translate Γ (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t₁ with _ | ⟨τ₁, u₁⟩
   · rfl
   rcases translate Γ (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t₂ with _ | ⟨τ₂, u₂⟩
@@ -447,18 +393,12 @@ variable {C : Type} {Γ : ℕ → Ty} {L : Type*}
 leaves. -/
 def ty? (Γ : ℕ → Ty) (lexTy : L → Option Ty) : Tree C L → Option Ty
   | .terminal _ w => lexTy w
-  | .node _ (t :: []) => ty? Γ lexTy t
-  | .node _ (t1 :: t2 :: []) => do
+  | .phrase _ _ (t :: []) => ty? Γ lexTy t
+  | .phrase _ _ (t1 :: t2 :: []) => do
     let σ ← ty? Γ lexTy t1
     let τ ← ty? Γ lexTy t2
     σ.combine? τ
-  | .node _ _ => none
-  | .adjoin _ (t :: []) => ty? Γ lexTy t
-  | .adjoin _ (t1 :: t2 :: []) => do
-    let σ ← ty? Γ lexTy t1
-    let τ ← ty? Γ lexTy t2
-    σ.combine? τ
-  | .adjoin _ _ => none
+  | .phrase _ _ _ => none
   | .trace n _ => some (Γ n)
   | .bind n _ body => (ty? Γ lexTy body).map (.fn (Γ n))
   | _ => none
@@ -468,18 +408,11 @@ variable (lexTy : L → Option Ty)
 @[simp] theorem ty?_terminal (c : C) (w : L) :
     ty? Γ lexTy (.terminal c w : Tree C L) = lexTy w := rfl
 
-@[simp] theorem ty?_node_unary (c : C) (t : Tree C L) :
-    ty? Γ lexTy (.node c (t :: [])) = ty? Γ lexTy t := rfl
+@[simp] theorem ty?_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
+    ty? Γ lexTy (.phrase c k (t :: [])) = ty? Γ lexTy t := rfl
 
-@[simp] theorem ty?_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    ty? Γ lexTy (.node c (t₁ :: t₂ :: [])) =
-      (ty? Γ lexTy t₁).bind fun σ ↦ (ty? Γ lexTy t₂).bind fun τ ↦ σ.combine? τ := rfl
-
-@[simp] theorem ty?_adjoin_unary (c : C) (t : Tree C L) :
-    ty? Γ lexTy (.adjoin c (t :: [])) = ty? Γ lexTy t := rfl
-
-@[simp] theorem ty?_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
-    ty? Γ lexTy (.adjoin c (t₁ :: t₂ :: [])) =
+@[simp] theorem ty?_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
+    ty? Γ lexTy (.phrase c k (t₁ :: t₂ :: [])) =
       (ty? Γ lexTy t₁).bind fun σ ↦ (ty? Γ lexTy t₂).bind fun τ ↦ σ.combine? τ := rfl
 
 @[simp] theorem ty?_trace (n : ℕ) (c : C) :
@@ -496,8 +429,7 @@ theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
   | terminal c w => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
-  | node c => exact absurd trivial h
-  | segment c => exact absurd trivial h
+  | phrase c k => exact absurd trivial h
   | trace n c => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
@@ -518,20 +450,12 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
       ty? individualIndices lexTy t := by
   induction t using Tree.rec' generalizing g with
   | terminal c w => rw [interp_terminal]; exact h w
-  | node c cs ih =>
+  | phrase c k cs ih =>
     match cs with
     | [] => rfl
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
-      rw [interp_node_binary, ty?_node_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Ty.combine?]
-    | _ :: _ :: _ :: _ => rfl
-  | adjoin c cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => exact ih t (by simp) g
-    | [t₁, t₂] =>
-      rw [interp_adjoin_binary, ty?_adjoin_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
+      rw [interp_phrase_binary, ty?_phrase_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
       cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Ty.combine?]
     | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
@@ -572,24 +496,14 @@ theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
     (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g t = interp lex g' t := by
   induction t using Tree.rec' generalizing g g' with
   | terminal c w => simp only [interp_terminal]
-  | node c cs ih =>
+  | phrase c k cs ih =>
     have hm : ∀ t ∈ cs, ∀ i ∈ t.freeIndices, g i = g' i := fun t ht i hi =>
-      h i (Tree.mem_freeIndices_node.2 ⟨t, ht, hi⟩)
+      h i (Tree.mem_freeIndices_phrase.2 ⟨t, ht, hi⟩)
     match cs with
     | [] => rfl
-    | [t] => simp only [interp_node_unary]; exact ih t (by simp) (hm t (by simp))
+    | [t] => simp only [interp_phrase_unary]; exact ih t (by simp) (hm t (by simp))
     | [t₁, t₂] =>
-      simp only [interp_node_binary]
-      rw [ih t₁ (by simp) (hm t₁ (by simp)), ih t₂ (by simp) (hm t₂ (by simp))]
-    | _ :: _ :: _ :: _ => rfl
-  | adjoin c cs ih =>
-    have hm : ∀ t ∈ cs, ∀ i ∈ t.freeIndices, g i = g' i := fun t ht i hi =>
-      h i (Tree.mem_freeIndices_adjoin.2 ⟨t, ht, hi⟩)
-    match cs with
-    | [] => rfl
-    | [t] => simp only [interp_adjoin_unary]; exact ih t (by simp) (hm t (by simp))
-    | [t₁, t₂] =>
-      simp only [interp_adjoin_binary]
+      simp only [interp_phrase_binary]
       rw [ih t₁ (by simp) (hm t₁ (by simp)), ih t₂ (by simp) (hm t₂ (by simp))]
     | _ :: _ :: _ :: _ => rfl
   | trace n c => simp only [interp_trace]; rw [h n (by simp)]
@@ -638,8 +552,8 @@ end FreeVariables
 A word may have several available readings. A resolution of a tree chooses one reading for
 each occurrence of a word, and the readings of the tree are the values the engine computes
 over its resolutions. The engine on a lexicon with one reading per word is the special case
-(`readings_eq_of_choice`), and a binary node's readings are the pointwise compositions of its
-daughters' (`mem_readings_node_binary`). -/
+(`readings_eq_of_choice`), and a binary phrase's readings are the pointwise compositions of its
+daughters' (`mem_readings_phrase_binary`). -/
 
 section Readings
 
@@ -650,19 +564,12 @@ theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : 
     (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
   induction t using Tree.rec' generalizing g with
   | terminal c w => rfl
-  | node c cs ih =>
+  | phrase c k cs ih =>
     match cs with
     | [] => rfl
     | [t] => exact ih t (by simp) g
     | [t₁, t₂] =>
-      simp only [Tree.map_node, List.map, interp_node_binary, ih t₁ (by simp), ih t₂ (by simp)]
-    | _ :: _ :: _ :: _ => rfl
-  | adjoin c cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => exact ih t (by simp) g
-    | [t₁, t₂] =>
-      simp only [Tree.map_adjoin, List.map, interp_adjoin_binary, ih t₁ (by simp), ih t₂ (by simp)]
+      simp only [Tree.map_phrase, List.map, interp_phrase_binary, ih t₁ (by simp), ih t₂ (by simp)]
     | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
   | bind n c body ih => simp only [Tree.map_bind, interp_bind, ih]
@@ -692,35 +599,20 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)}
   | terminal c w =>
     rw [interp_terminal] at h
     exact ⟨.terminal c ⟨(w, d), h⟩, rfl, by rw [interp_terminal]⟩
-  | node c cs ih =>
+  | phrase c k cs ih =>
     match cs with
     | [] => exact absurd h (by simp [interp, translate])
     | [t] =>
       obtain ⟨r, hr, hd⟩ := ih t (by simp) h
-      exact ⟨.node c (r :: []), by simp [hr], hd⟩
+      exact ⟨.phrase c k (r :: []), by simp [hr], hd⟩
     | [t₁, t₂] =>
-      rw [interp_node_binary] at h
+      rw [interp_phrase_binary] at h
       obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.mp h
       obtain ⟨d₂, h₂, h⟩ := Option.bind_eq_some_iff.mp h
       obtain ⟨r₁, hr₁, hd₁⟩ := ih t₁ (by simp) h₁
       obtain ⟨r₂, hr₂, hd₂⟩ := ih t₂ (by simp) h₂
-      exact ⟨.node c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
-        by rw [interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
-    | _ :: _ :: _ :: _ => exact absurd h (by simp [interp, translate])
-  | adjoin c cs ih =>
-    match cs with
-    | [] => exact absurd h (by simp [interp, translate])
-    | [t] =>
-      obtain ⟨r, hr, hd⟩ := ih t (by simp) h
-      exact ⟨.adjoin c (r :: []), by simp [hr], hd⟩
-    | [t₁, t₂] =>
-      rw [interp_adjoin_binary] at h
-      obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.mp h
-      obtain ⟨d₂, h₂, h⟩ := Option.bind_eq_some_iff.mp h
-      obtain ⟨r₁, hr₁, hd₁⟩ := ih t₁ (by simp) h₁
-      obtain ⟨r₂, hr₂, hd₂⟩ := ih t₂ (by simp) h₂
-      exact ⟨.adjoin c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
-        by rw [interp_adjoin_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
+      exact ⟨.phrase c k (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
+        by rw [interp_phrase_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
     | _ :: _ :: _ :: _ => exact absurd h (by simp [interp, translate])
   | trace n c => exact ⟨.trace n c, rfl, h⟩
   | bind n c body ih =>
@@ -766,24 +658,25 @@ theorem readings_eq_of_choice (choice : L → Option (Denotation E W M S)) (t : 
   obtain rfl := Tree.map_eq_trace_iff.1 hr
   exact (Option.some.inj hd).symm
 
-/-- A binary node's readings are the pointwise compositions of its daughters'. -/
-theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M S} :
-    d ∈ readings lex g (.node c (t₁ :: t₂ :: [])) ↔
+/-- A binary phrase's readings are the pointwise compositions of its daughters'. -/
+theorem mem_readings_phrase_binary {c : C} {k : PhraseKind} {t₁ t₂ : Tree C L}
+    {d : Denotation E W M S} :
+    d ∈ readings lex g (.phrase c k (t₁ :: t₂ :: [])) ↔
       ∃ d₁ ∈ readings lex g t₁, ∃ d₂ ∈ readings lex g t₂,
         Mode.combine? Mode.evalM d₁ d₂ = some d := by
   constructor
   · rintro ⟨r, hr, hd⟩
-    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_node_iff.1 hr
+    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_phrase_iff.1 hr
     obtain ⟨r₁, cs₁, rfl, rfl, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
     obtain ⟨r₂, cs₂, rfl, rfl, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
     obtain rfl := List.map_eq_nil_iff.mp hcs₂
-    rw [interp_node_binary] at hd
+    rw [interp_phrase_binary] at hd
     obtain ⟨d₁, h₁, hd⟩ := Option.bind_eq_some_iff.mp hd
     obtain ⟨d₂, h₂, hd⟩ := Option.bind_eq_some_iff.mp hd
     exact ⟨d₁, ⟨r₁, rfl, h₁⟩, d₂, ⟨r₂, rfl, h₂⟩, hd⟩
   · rintro ⟨d₁, ⟨r₁, hr₁, hd₁⟩, d₂, ⟨r₂, hr₂, hd₂⟩, h⟩
-    exact ⟨.node c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
-      by rw [interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
+    exact ⟨.phrase c k (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
+      by rw [interp_phrase_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
 
 /-- A binder's readings interpret it over a resolution of its body, which reads each occurrence
 the same way at every value of the bound variable. -/

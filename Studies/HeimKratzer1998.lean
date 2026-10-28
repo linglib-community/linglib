@@ -279,13 +279,13 @@ theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment 
   | tn h => rw [interp_terminal]; exact h
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
-    rw [interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_left]
+    rw [interp_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_left]
     rfl
   | faRight _ _ ih₁ ih₂ =>
-    rw [interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_right]
+    rw [interp_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some, Mode.combine?_fn_right]
     rfl
   | pm _ _ ih₁ ih₂ =>
-    rw [interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+    rw [interp_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
       Mode.combine?_predicateModification]
     rfl
   | trace => rfl
@@ -349,7 +349,7 @@ noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
 theorem the_student_fails :
     PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
   refine ⟨⟨.e, the (PFun.lift student)⟩, ?_, fun ⟨x, _, huniq⟩ ↦ ?_⟩
-  · rw [interpPartial_node_binary, interpPartial_terminal, interpPartial_terminal]
+  · rw [interpPartial_phrase_binary, interpPartial_terminal, interpPartial_terminal]
     exact Mode.combine?_evalPartial_fn_left the (PFun.lift student)
   have hj := huniq .john ((true_mem_lift _ _).mpr (.inl rfl))
   have hm := huniq .mary ((true_mem_lift _ _).mpr (.inr rfl))
@@ -358,7 +358,7 @@ theorem the_student_fails :
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
 theorem the_pizza : interpPartial partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
-  rw [interpPartial_node_binary, interpPartial_terminal, interpPartial_terminal]
+  rw [interpPartial_phrase_binary, interpPartial_terminal, interpPartial_terminal]
   refine (Mode.combine?_evalPartial_fn_left the (PFun.lift Toy.pizza)).trans ?_
   rw [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl]
 
@@ -422,13 +422,13 @@ theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment
   | tn h => rw [interpPartial_terminal]; exact h
   | nn _ ih => exact ih
   | faLeft _ _ ih₁ ih₂ =>
-    rw [interpPartial_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+    rw [interpPartial_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
       Mode.combine?_evalPartial_fn_left]
   | faRight _ _ ih₁ ih₂ =>
-    rw [interpPartial_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+    rw [interpPartial_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
       Mode.combine?_evalPartial_fn_right]
   | pm _ _ ih₁ ih₂ =>
-    rw [interpPartial_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+    rw [interpPartial_phrase_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
       Mode.combine?_evalPartial_predicateModification]
   | trace => rfl
   | @pa g n c body τ F _ ih =>

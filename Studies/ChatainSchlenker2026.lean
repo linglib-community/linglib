@@ -220,7 +220,7 @@ theorem interpPartial_clause : interpPartial (lexicon P R w) g (clause d) =
   classical
   have : interpPartial (lexicon P R w) g (clause d) =
       some ⟨.t, (if R d w then P w d else Part.some False).bind fun p ↦ Part.some (¬ p)⟩ := by
-    simp only [clause, vp, interpPartial_node_binary, interpPartial_terminal, interpPartial_bind,
+    simp only [clause, vp, interpPartial_phrase_binary, interpPartial_terminal, interpPartial_bind,
       interpPartial_trace, lexicon, Option.bind_some, Option.map_some, Mode.combine?_fn_left,
       Mode.combine?_fn_right, valueAtPartial, dite_true, Function.update_self, Mode.evalPartial]
     erw [Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some]

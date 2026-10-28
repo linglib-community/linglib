@@ -68,7 +68,7 @@ theorem forall_mem_substitutionSource {lex : Finset (Tree C W)} {φ : Tree C W}
 
 /-- A structural operation on parse trees substitutes a constituent by a same-category item of the
 source, deletes a child of a phrase, contracts a phrase to one of its same-category children, or
-applies one of these inside a child of a phrase or a binder body. A phrase is a node or an
+applies one of these inside a child of a phrase or a binder body. A phrase is a projection or an
 adjunction structure. -/
 inductive StructuralOp (source : Set (Tree C W)) : Tree C W → Tree C W → Prop where
   /-- Substitute a tree by a same-category item of the source. -/
@@ -141,7 +141,7 @@ private theorem structuralOp_preserves_no_cat (source : Set (Tree C W)) (c : C) 
     · exact h_φ.2 t ht'
     · exact hih
   | @inBind n cat body body' _ ih =>
-    rw [Tree.mem_cats_bind] at h_φ ⊢; push Not at h_φ ⊢
+    simp only [Tree.cats_bind, List.mem_cons] at h_φ ⊢; push Not at h_φ ⊢
     exact ⟨h_φ.1, ih h_φ.2⟩
 
 /-- No tree reachable by structural operations contains a category absent from the source and
@@ -313,13 +313,9 @@ private theorem leafSubst_reachable [DecidableEq C] [DecidableEq W] {source : Se
     · obtain ⟨rfl, rfl⟩ := h
       exact .single (StructuralOp.subst rfl h_β)
     · exact .refl
-  | node c' cs ih =>
-    rw [Tree.leafSubst_node]
-    exact mapChildren_reachable (l := .node c') trivial fun i hi ↦
-      ih _ (List.getElem_mem hi) (RoseTree.Licensed.of_mem hφ (List.getElem_mem hi))
-  | adjoin c' cs ih =>
-    rw [Tree.leafSubst_adjoin]
-    exact mapChildren_reachable (l := .segment c') trivial fun i hi ↦
+  | phrase c' k cs ih =>
+    rw [Tree.leafSubst_phrase]
+    exact mapChildren_reachable (l := .phrase c' k) trivial fun i hi ↦
       ih _ (List.getElem_mem hi) (RoseTree.Licensed.of_mem hφ (List.getElem_mem hi))
   | trace n c' => exact .refl
   | bind n c' body ih =>
@@ -348,8 +344,7 @@ fragment, so the converse fails. -/
 same-category items of the lexicon, and the constructors compose pointwise. -/
 def withAlternatives (lex : Finset (Tree C W)) : Tree C W → WithAlternatives (Tree C W)
   | t@(.terminal c _) => ⟨t, insert t {s | s ∈ lex ∧ s.cat = c}⟩
-  | .node c cs => Tree.node c <$> list lex cs
-  | .adjoin c cs => Tree.adjoin c <$> list lex cs
+  | .phrase c k cs => Tree.phrase c k <$> list lex cs
   | t@(.trace _ _) => pure t
   | .bind n c body => Tree.bind n c <$> withAlternatives lex body
   | t => pure t
@@ -368,8 +363,7 @@ theorem withAlternatives_node_of_not_licenses (lex : Finset (Tree C W)) {l : Tre
   | terminal c w => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
-  | node c => exact absurd trivial h
-  | segment c => exact absurd trivial h
+  | phrase c k => exact absurd trivial h
   | trace n c => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
@@ -383,16 +377,7 @@ theorem ordinary_withAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) :
     (withAlternatives lex φ).ordinary = φ := by
   induction φ using Tree.rec' with
   | terminal c w => rfl
-  | node c cs ih =>
-    simp only [withAlternatives, WithAlternatives.ordinary_map]
-    congr 1
-    induction cs with
-    | nil => rfl
-    | cons t ts ihts =>
-      simp only [withAlternatives.list, WithAlternatives.ordinary_seq,
-        WithAlternatives.ordinary_map, ih t List.mem_cons_self,
-        ihts fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)]
-  | adjoin c cs ih =>
+  | phrase c k cs ih =>
     simp only [withAlternatives, WithAlternatives.ordinary_map]
     congr 1
     induction cs with
@@ -409,15 +394,7 @@ theorem wellFormed_withAlternatives (lex : Finset (Tree C W)) (φ : Tree C W) :
     (withAlternatives lex φ).WellFormed := by
   induction φ using Tree.rec' with
   | terminal c w => exact Set.mem_insert _ _
-  | node c cs ih =>
-    refine WithAlternatives.WellFormed.map ?_
-    induction cs with
-    | nil => exact WithAlternatives.WellFormed.unfeatured _
-    | cons t ts ihts =>
-      exact WithAlternatives.mem_alternatives_seq.2
-        ⟨_, WithAlternatives.mem_alternatives_map.2 ⟨_, ih t List.mem_cons_self, rfl⟩, _,
-          ihts fun s hs ↦ ih s (List.mem_cons_of_mem _ hs), rfl⟩
-  | adjoin c cs ih =>
+  | phrase c k cs ih =>
     refine WithAlternatives.WellFormed.map ?_
     induction cs with
     | nil => exact WithAlternatives.WellFormed.unfeatured _
@@ -440,7 +417,7 @@ theorem reachable_of_mem_withAlternatives {source : Set (Tree C W)} (lex : Finse
     rcases hψ with rfl | ⟨hlex', hcat⟩
     · exact Relation.ReflTransGen.refl
     · exact Relation.ReflTransGen.single (StructuralOp.subst hcat (hlex (Finset.mem_coe.2 hlex')))
-  | node c cs ih =>
+  | phrase c k cs ih =>
     intro ψ hψ
     obtain ⟨cs', hcs', rfl⟩ := WithAlternatives.mem_alternatives_map.1 hψ
     clear hψ
@@ -456,25 +433,7 @@ theorem reachable_of_mem_withAlternatives {source : Set (Tree C W)} (lex : Finse
         obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
         exact List.Forall₂.cons (ih t List.mem_cons_self b hb)
           (ihts (fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)) bs hbs)
-    exact pointwise_reachable (l := .node c) trivial h.length_eq.symm fun i hi ↦
-      h.get hi (h.length_eq ▸ hi)
-  | adjoin c cs ih =>
-    intro ψ hψ
-    obtain ⟨cs', hcs', rfl⟩ := WithAlternatives.mem_alternatives_map.1 hψ
-    clear hψ
-    have h : List.Forall₂ (Relation.ReflTransGen (StructuralOp source)) cs cs' := by
-      induction cs generalizing cs' with
-      | nil =>
-        have h : cs' ∈ ({[]} : Set (List (Tree C W))) := by
-          simpa [withAlternatives.list, WithAlternatives.alternatives_pure] using hcs'
-        obtain rfl := Set.mem_singleton_iff.1 h
-        exact List.Forall₂.nil
-      | cons t ts ihts =>
-        obtain ⟨g, hg, bs, hbs, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hcs'
-        obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
-        exact List.Forall₂.cons (ih t List.mem_cons_self b hb)
-          (ihts (fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)) bs hbs)
-    exact pointwise_reachable (l := .segment c) trivial h.length_eq.symm fun i hi ↦
+    exact pointwise_reachable (l := .phrase c k) trivial h.length_eq.symm fun i hi ↦
       h.get hi (h.length_eq ▸ hi)
   | trace n c =>
     intro ψ hψ

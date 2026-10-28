@@ -349,7 +349,7 @@ theorem extension_upstairs_downstairs :
 theorem mem_freeIndices_selected :
     1 ∈ Tree.freeIndices (.bin (.leaf .after) (.bin pastOperator
       (.bin (.leaf (.attitude k)) (.bin pastOperator (atTrace (.leaf (.vp l))))))) := by
-  simp [Tree.freeIndices_node]
+  simp [Tree.freeIndices_phrase]
 
 /-! ### The present of a when-clause -/
 
