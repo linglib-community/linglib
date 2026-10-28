@@ -17,8 +17,7 @@ public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 
 The primitive coproduct `Δ_P(t) = t ⊗ 1 + 1 ⊗ t` on `ConnesKreimer R T`, extended
 multiplicatively, sums `A ⊗ B` over the splittings `F = A + B` of a forest. It is the coproduct
-of the symmetric algebra on the trees (Grinberg and Reiner, Example 1.3.14), unlike the
-admissible-cut coproducts of the sibling files.
+of the symmetric algebra on the trees, unlike the admissible-cut coproducts of the sibling files.
 
 ## Main declarations
 
@@ -36,9 +35,9 @@ admissible-cut coproducts of the sibling files.
 
 ## Implementation notes
 
-`Δ_P` is not a `Bialgebra` instance: the carrier already carries the admissible-cut
-`Bialgebra` (`HopfAlgebra.lean`), so `Δ_P` is an algebra homomorphism with its laws stated
-separately.
+`Δ_P` is not a `Bialgebra` instance: on trees the carrier already carries the pruning
+`Bialgebra` (`ConnesKreimer.instBialgebraRho`), so `Δ_P` is an algebra homomorphism with its laws
+stated separately.
 
 ## References
 
@@ -76,31 +75,17 @@ theorem comulAlgHomNG_emptyCuts {α : Type*} :
     comulAlgHomNG (R := R) (α := α) emptyCuts = comulPrim :=
   comulPrim_unique _ fun t ↦ by simp [comulTreeNG, emptyCuts]
 
-private theorem prod_map_tmul_one (A : Forest T) :
-    (A.map fun t ↦ (ofTree t : ConnesKreimer R T) ⊗ₜ[R] (1 : ConnesKreimer R T)).prod =
-      of' A ⊗ₜ[R] (1 : ConnesKreimer R T) := by
-  induction A using Multiset.induction with
-  | empty => rw [Multiset.map_zero, Multiset.prod_zero, of'_zero, Algebra.TensorProduct.one_def]
-  | cons t A ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, ih, Algebra.TensorProduct.tmul_mul_tmul,
-      of'_cons, one_mul]
-
-private theorem prod_map_one_tmul (B : Forest T) :
-    (B.map fun t ↦ (1 : ConnesKreimer R T) ⊗ₜ[R] (ofTree t : ConnesKreimer R T)).prod =
-      (1 : ConnesKreimer R T) ⊗ₜ[R] of' B := by
-  induction B using Multiset.induction with
-  | empty => rw [Multiset.map_zero, Multiset.prod_zero, of'_zero, Algebra.TensorProduct.one_def]
-  | cons t B ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, ih, Algebra.TensorProduct.tmul_mul_tmul,
-      of'_cons, one_mul]
-
 /-- `Δ_P` sums `A ⊗ B` over the splittings `F = A + B`, counted with multiplicity. -/
 theorem comulPrim_of' (F : Forest T) :
     comulPrim (R := R) (of' F) =
       (F.antidiagonal.map fun p ↦ (of' p.1 : ConnesKreimer R T) ⊗ₜ[R] of' p.2).sum := by
   rw [comulPrim, aeval_of', Multiset.prod_map_add]
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
-  rw [prod_map_tmul_one, prod_map_one_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
+  rw [← mul_one (of' p.1), ← one_mul (of' p.2), ← Algebra.TensorProduct.tmul_mul_tmul,
+    ← prod_map_ofTree, ← prod_map_ofTree, ← Algebra.TensorProduct.includeLeft_apply (S := R),
+    ← Algebra.TensorProduct.includeRight_apply, map_multiset_prod, map_multiset_prod,
+    Multiset.map_map, Multiset.map_map]
+  rfl
 
 /-- The terms of `Δ_P(F)` whose left factor has `k` trees sum `A ⊗ (F - A)` over the `k`-tree
 subforests `A` of `F`. -/
@@ -145,7 +130,8 @@ theorem comm_comp_comulPrim :
   simp [add_comm]
 
 /-- Along the identification of `ConnesKreimer R T` with the symmetric algebra on a module with
-basis `T`, `Δ_P` is the comultiplication of the symmetric algebra. -/
+basis `T`, `Δ_P` is the comultiplication of the symmetric algebra, in which every generator is
+primitive (Example 1.3.14 of [grinberg-reiner-2020]). -/
 theorem comulPrim_comp_equiv {M : Type*} [AddCommMonoid M] [Module R M] (b : Module.Basis T R M) :
     (comulPrim (R := R)).comp (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom =
       (Algebra.TensorProduct.map (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom
