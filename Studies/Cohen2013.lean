@@ -1,148 +1,166 @@
 module
 
+public import Linglib.Data.Examples.Cohen2013
+public import Linglib.Semantics.Quantification.Basic
 public import Studies.Cohen1999
 
 /-!
 # Cohen (2013): No quantification without reinterpretation
 
-A generic or habitual sentence contains no audible quantifier, so the hearer must
-introduce one by reinterpreting the quantifierless input, and the introducing device —
-not a phonologically null determiner — fixes the quantifier's scope. Generics arise by
-Nunberg's Predicate Transfer: when predicating a property of a kind makes no pragmatic
-sense, the predicate is transferred to one true of a kind whose instances generically
-bear it. Pragmatic triggering leaves the transfer free to apply at any level of
-composition, after Nunberg and Recanati, so "Storks have a favorite nesting area" is
-scopally ambiguous — transfer of the verb leaves the generic under the existential,
-transfer of the whole phrase puts it above (§13.4.1) — though never out of an opaque
-context, since transfer needs the property's intension. Habituals arise by a type-shift:
-an eventive verb is evaluated at intervals while the present tense supplies a moment
-(after Taylor and Dowty), and the shift γ resolves the mismatch at the verb, before the
-object composes, so "Mary smokes a cigarette" keeps the generic under the existential and
-is odd, while the brand variant is fine (§13.4.2). That a type-shift applies only at its
-trigger site is argued from Partee and Rooth's SHIFT: negating a shifted verb differs
-from shifting a negated one, and only the first order is attested (§13.3.1, after the
-conjunction *needed but didn't buy*).
-Scope alone also does not exhaust the generic–negation interaction: focus fixes the
-alternative set of Cohen's earlier generic quantifier, so "Cows do not eat [nettles]"
-generalizes with exceptions while "Cows do [not] eat nettles" denies that any cow eats
-them (§13.2.1).
-
-We state the two devices with the generic quantifier of `Studies/Cohen1999.lean` in the
-transferred and shifted predicates, derive both scopes of the storks sentence from the
-transfer's freedom of level and the infelicity of the cigarette sentence from the shift's
-locality, and check the focus readings of the nettles sentence against the two
-alternative sets.
+Generic and habitual sentences have no audible quantifier: the hearer introduces the generic
+quantifier $\mathbf{gen}$ of `Studies/Cohen1999.lean` by reinterpreting the quantifierless input,
+and the device that introduces it fixes its scope. Predicate Transfer, which makes generics, is
+pragmatically triggered and may apply to the verb or to the verb phrase; a type-shift, which makes
+habituals and lifts a verb conjoined with an intensional one, applies only where the types
+mismatch. [The readings each sentence allows are those its device allows](##readings_available).
+[Reinterpreting the verb under an indefinite object gives the stronger
+reading](##reading_word_le_phrase), so *Mary smokes a cigarette* [has only its implausible
+reading](##cigarette_no_true_reading_available), and
+[negation scopes over a lifted verb](##needed_but_didnt_buy). Focus fixes the alternatives of
+$\mathbf{gen}$, so *Cows do not eat nettles* with focus on the auxiliary [denies that any cow eats
+nettles](##nettles_aux_focus_iff).
 
 ## Implementation notes
 
-The generic quantifier inside the reinterpretation operators is the absolute reading
-with trivial alternatives, per the chapter's own pointer to Cohen's earlier work for its
-content. Kinds are `Unit`, individuals and intervals `Fin n`; a felicity judgment is
-derived as the absence of a true reading among the available ones.
+* Both devices apply one operator, $\lambda x.\,\mathbf{gen}_y[R(y, x)][P(y)]$, and differ only in
+  where they apply. It uses the absolute reading of $\mathbf{gen}$ with trivial alternatives, the
+  chapter deferring the quantifier's content to Cohen's earlier work.
+* Kinds are `Unit`, and individuals, cigarettes and intervals are `Fin n`; the relation
+  $e \le \mathrm{int}(t)$ of the habitual shift is a parameter.
+* An oddness judgment is derived as the falsity of every available reading in a model where the
+  plausible reading is true; plausibility itself is not modelled.
+* The rows name a reading by the scope of the reinterpreted element: `narrow` for the device
+  applied to the verb, `wide` for the device applied to the phrase.
+
+## Errata
+
+* Below (25) the chapter says that (25a) can only mean (25b) "but not (25b)"; the excluded
+  reading is (25c).
+* The derivation of the bamboo-shoots generic applies $T_G$ to "(39b)"; the logical form is
+  (35b).
 
 ## TODO
 
-* Bare plurals under habituals ((18): gen above the existential only) follow from bare
-  plurals introducing no discourse referent, a duplex condition under an existential
-  being no well-formed DRS (after Cohen and Erteschik-Shir); this needs the DRT box
-  substrate.
-* Predicate Transfer's ban on scoping out of opaque contexts (§13.4.1) rests on its need
-  for the property's intension, which these extensional models cannot state.
-* The wide-scope generic objects of (19)–(20), which refute a syntactic account
-  (§13.2.3), presuppose a subject–object asymmetry not encoded here.
+* Bare plurals under habituals ((18): $\mathbf{gen}$ above the existential only) follow from bare
+  plurals introducing no discourse referent, a duplex condition under an existential being no
+  well-formed DRS (after Cohen and Erteschik-Shir); this needs the DRT box substrate.
+* Predicate Transfer's ban on scoping out of opaque contexts rests on its need for the property's
+  intension, which these extensional models cannot state.
+* The wide-scope generic objects of (19)–(20), which refute a syntactic account, presuppose a
+  subject–object asymmetry not encoded here.
 
 ## References
 
-* [A. Cohen, *No Quantification without Reinterpretation* (2013)][cohen-2013]
-* [G. Nunberg, *Transfers of Meaning* (1995)][nunberg-1995]
-* [B. Partee and M. Rooth, *Generalized Conjunction and Type Ambiguity*
-  (1983)][partee-rooth-1983]
-* [A. Cohen, *Think Generic! The Meaning and Use of Generic Sentences*
-  (1999)][cohen-1999a]
-* [G. N. Carlson, *Reference to Kinds in English* (1977)][carlson-1977a]
-* [M. Krifka, F. J. Pelletier, G. N. Carlson, A. ter Meulen, G. Chierchia and G. Link,
-  *Genericity: An Introduction* (1995)][krifka-etal-1995]
-* [A. Cohen and N. Erteschik-Shir, *Topic, Focus, and the Interpretation of Bare
-  Plurals* (2002)][cohen-erteschik-shir-2002]
-* [F. Recanati, *Embedded Implicatures* (2003)][recanati-2003]
-* [B. Taylor, *Tense and Continuity* (1977)][taylor-1977]
-* [D. R. Dowty, *Word Meaning and Montague Grammar* (1979)][dowty-1979]
+* [cohen-2013]
+* [nunberg-1995]
+* [recanati-2003]
+* [partee-rooth-1983]
+* [cohen-1999a]
+* [carlson-1977a]
+* [krifka-etal-1995]
+* [cohen-erteschik-shir-2002]
+* [taylor-1977]
+* [dowty-1979]
 -/
 
 @[expose] public section
 
 namespace Cohen2013
 
-open Quantifier Quantifier.GQ
+open Quantifier
 
-/-! ### The two reinterpretation devices (§13.3) -/
+/-! ### The reinterpretation devices -/
 
-/-- Partee and Rooth's SHIFT, lifting an extensional transitive verb to take a
-quantifier object. -/
-def SHIFT {E : Type*} (V : E → E → Prop) : ((E → Prop) → Prop) → E → Prop :=
-  fun Q x ↦ Q (fun y ↦ V x y)
+/-- Partee and Rooth's SHIFT lifts an extensional transitive verb to take a quantifier object,
+$\mathrm{SHIFT}(V) = \lambda Q\,\lambda x.\,Q(\lambda y.\,V(x, y))$. -/
+def shift {E : Type*} (V : E → E → Prop) : ((E → Prop) → Prop) → E → Prop :=
+  fun Q x ↦ Q fun y ↦ V x y
 
--- (25)
-theorem not_shift_ne_shift_not :
-    ∃ (V : Bool → Bool → Prop) (Q : (Bool → Prop) → Prop) (x : Bool),
-      ¬ (¬ SHIFT V Q x ↔ SHIFT (fun a b ↦ ¬ V a b) Q x) :=
-  ⟨fun _ y ↦ y = true, fun P ↦ P true ∨ P false, true, by unfold SHIFT; decide⟩
+section Reinterpret
 
-/-- Predicate Transfer for generics (§13.4.1): a property of individuals becomes the
-property of a kind whose instances generically bear it. -/
-def transfer {Kind Ind : Type*} [MeasurableSpace Ind] [MeasurableSingletonClass Ind]
-    [Fintype Ind] (instanceOf : Ind → Kind → Prop)
-    [∀ k, DecidablePred (fun y ↦ instanceOf y k)] (P : Ind → Prop) [DecidablePred P] :
-    Kind → Prop :=
-  fun k ↦ Cohen1999.gen Finset.univ (fun y ↦ instanceOf y k) (fun _ ↦ True) P
+variable {α β : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] [Fintype α]
+  (R : α → β → Prop) [∀ b, DecidablePred (R · b)]
 
-instance {Kind Ind : Type*} [MeasurableSpace Ind] [MeasurableSingletonClass Ind]
-    [Fintype Ind] (instanceOf : Ind → Kind → Prop)
-    [∀ k, DecidablePred (fun y ↦ instanceOf y k)] (P : Ind → Prop) [DecidablePred P]
-    (k : Kind) : Decidable (transfer instanceOf P k) := by
-  unfold transfer; infer_instance
+/-- The reinterpretation both devices perform,
+$\lambda x.\,\mathbf{gen}_y[R(y, x)][P(y)]$: with $R$ instantiation it is Predicate Transfer's
+$T_G$, turning a property of individuals into the property of a kind whose instances generically
+bear it; with $R$ inclusion in the interval around a moment it is the habitual shift $\gamma$,
+turning a property of intervals into the property of a moment. -/
+def reinterpret (P : α → Prop) (x : β) : Prop :=
+  Cohen1999.gen Finset.univ (R · x) (fun _ ↦ True) P
 
-/-- The habitual type-shift γ (§13.4.2): a property of intervals becomes the property of
-a moment in whose surrounding interval it generically holds. -/
-def gamma {Interval Moment : Type*} [MeasurableSpace Interval]
-    [MeasurableSingletonClass Interval] [Fintype Interval]
-    (containedIn : Interval → Moment → Prop)
-    [∀ t, DecidablePred (fun e ↦ containedIn e t)] (P : Interval → Prop)
-    [DecidablePred P] : Moment → Prop :=
-  fun t ↦ Cohen1999.gen Finset.univ (fun e ↦ containedIn e t) (fun _ ↦ True) P
+instance (P : α → Prop) [DecidablePred P] (x : β) : Decidable (reinterpret R P x) := by
+  unfold reinterpret; infer_instance
 
-instance {Interval Moment : Type*} [MeasurableSpace Interval]
-    [MeasurableSingletonClass Interval] [Fintype Interval]
-    (containedIn : Interval → Moment → Prop)
-    [∀ t, DecidablePred (fun e ↦ containedIn e t)] (P : Interval → Prop)
-    [DecidablePred P] (t : Moment) : Decidable (gamma containedIn P t) := by
-  unfold gamma; infer_instance
+theorem monotone_reinterpret : Monotone (reinterpret R) := fun _ _ h _ ↦
+  Cohen1999.monotone_gen h
 
-/-- A reinterpretation device applies at the mismatching word itself or at the containing
+end Reinterpret
+
+/-- A reinterpretation device applies to the mismatching word itself or to the containing
 phrase. -/
 inductive Level
   | word
   | phrase
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
-/-- The two devices that introduce covert quantifiers (§13.3). -/
+/-- The two devices that introduce covert quantifiers. -/
 inductive Device
   | predicateTransfer
   | typeShift
   deriving DecidableEq
 
-/-- Where a device may apply (§13.3): Predicate Transfer is pragmatically triggered and
-free to apply at any level; a type-shift fires at the type-mismatch site only. -/
+/-- Predicate Transfer is pragmatically triggered and may apply at any level; a type-shift is
+triggered by the type mismatch and applies at its site only. -/
 def Device.AppliesAt : Device → Level → Prop
   | .predicateTransfer, _ => True
   | .typeShift, l => l = .word
 
-/-! ### Storks have a favorite nesting area (§13.4.1)
+instance : ∀ d l, Decidable (Device.AppliesAt d l)
+  | .predicateTransfer, _ => .isTrue trivial
+  | .typeShift, l => inferInstanceAs (Decidable (l = .word))
 
-Two storks, each nesting in its own area. Transfer at the verb quantifies each area's
-candidate nesters, transfer at the phrase quantifies the storks' own areas: the readings
-differ in truth value, and both are available to Predicate Transfer, so the sentence is
-scopally ambiguous and true on one reading. -/
+/-- A verb `V` with a quantified object `Q`, reinterpreted by `op`: applied to the verb, the
+reinterpretation leaves the object above it; applied to the verb phrase, it takes the object in
+its scope. -/
+def reading {α β γ : Type*} (op : (α → Prop) → β → Prop) (Q : (γ → Prop) → Prop)
+    (V : γ → α → Prop) : Level → β → Prop
+  | .word => fun b ↦ Q fun y ↦ op (V y) b
+  | .phrase => op fun x ↦ Q fun y ↦ V y x
+
+/-- Under an indefinite object, reinterpreting the verb entails reinterpreting the verb phrase,
+for any reinterpretation monotone in the property it reinterprets. -/
+theorem reading_word_le_phrase {α β γ : Type*} {op : (α → Prop) → β → Prop} (hop : Monotone op)
+    (N : γ → Prop) (V : γ → α → Prop) :
+    reading op (GQ.some N) V .word ≤ reading op (GQ.some N) V .phrase :=
+  fun b ⟨y, hy, h⟩ ↦ hop (fun _ hx ↦ ⟨y, hy, hx⟩) b h
+
+/-! ### The readings the devices allow -/
+
+/-- The device of a construction: Predicate Transfer for a generic, a type-shift for a habitual
+and for an extensional verb conjoined with an intensional one. -/
+def device? (e : Datum) : Option Device :=
+  e.parse? "construction"
+    [("generic", .predicateTransfer), ("habitual", .typeShift), ("verb conjunction", .typeShift)]
+
+/-- A row's name for the reading a level yields. -/
+def Level.key : Level → String
+  | .word => "narrow"
+  | .phrase => "wide"
+
+/-- A sentence has a reading exactly when its device may apply at the reading's level. -/
+theorem readings_available :
+    ∀ e ∈ Examples.all, ∀ d ∈ device? e, ∀ l,
+      (e.readings.lookup l.key = some .acceptable ↔ d.AppliesAt l) := by
+  decide
+
+theorem readCount_device : Datum.ReadCount device? Examples.all 4 := by
+  decide
+
+/-! ### Storks have a favorite nesting area
+
+Two storks, each nesting in its own area: transferring the verb quantifies over each area's
+nesters, transferring the verb phrase over the storks' own areas. -/
 
 /-- Each of two storks nests in its own area. -/
 abbrev nestsIn : Fin 2 → Fin 2 → Prop := (· = ·)
@@ -150,29 +168,18 @@ abbrev nestsIn : Fin 2 → Fin 2 → Prop := (· = ·)
 /-- Every individual stork instantiates the kind. -/
 abbrev storkOf : Fin 2 → Unit → Prop := fun _ _ ↦ True
 
-/-- The two logical forms of the storks sentence, by level of transfer. -/
-def storksReading : Level → Prop
-  | .word => ∃ a : Fin 2, transfer storkOf (fun s ↦ nestsIn s a) ()
-  | .phrase => transfer storkOf (fun s ↦ ∃ a, nestsIn s a) ()
+/-- The storks sentence, by the level of transfer. -/
+def storks : Level → Unit → Prop :=
+  reading (reinterpret storkOf) (GQ.some fun _ ↦ True) fun a s ↦ nestsIn s a
 
-instance : ∀ l, Decidable (storksReading l) := fun l ↦ by
-  cases l <;> (unfold storksReading; infer_instance)
-
-theorem storksReading_word_ne_phrase :
-    ¬ storksReading .word ∧ storksReading .phrase := by
+-- (12b)
+theorem storks_word_ne_phrase : ¬ storks .word () ∧ storks .phrase () := by
+  simp only [storks, reading]
   constructor <;> decide +kernel
 
-theorem storks_true_reading_available :
-    ∃ l, Device.predicateTransfer.AppliesAt l ∧ storksReading l :=
-  ⟨.phrase, trivial, storksReading_word_ne_phrase.2⟩
+/-! ### Mary smokes a cigarette
 
-/-! ### Mary smokes a cigarette (§13.4.2)
-
-Three occasions in the interval around the speech moment, a different cigarette each
-time. The type mismatch sits at the eventive verb, so γ may apply only there, leaving
-the existential above the generic; that sole available reading is false, which is the
-oddness of (17a)/(45). The brand variant (17b) is the same shift with a constant
-witness, so its narrow reading is true and the sentence is fine. -/
+Three occasions in the interval around the speech moment, a different cigarette each time. -/
 
 /-- Mary smokes a different cigarette at each of three occasions. -/
 abbrev smokes : Fin 3 → Fin 3 → Prop := (· = ·)
@@ -180,41 +187,62 @@ abbrev smokes : Fin 3 → Fin 3 → Prop := (· = ·)
 /-- Every occasion falls in the interval around the speech moment. -/
 abbrev inSpeechInterval : Fin 3 → Unit → Prop := fun _ _ ↦ True
 
-/-- The two logical forms of the cigarette sentence, by level of the shift. -/
-def cigaretteReading : Level → Prop
-  | .word => ∃ c : Fin 3, gamma inSpeechInterval (fun e ↦ smokes c e) ()
-  | .phrase => gamma inSpeechInterval (fun e ↦ ∃ c, smokes c e) ()
+/-- The cigarette sentence, by the level of the shift. -/
+def cigarette : Level → Unit → Prop :=
+  reading (reinterpret inSpeechInterval) (GQ.some fun _ ↦ True) smokes
 
-instance : ∀ l, Decidable (cigaretteReading l) := fun l ↦ by
-  cases l <;> (unfold cigaretteReading; infer_instance)
-
-theorem cigaretteReading_word_ne_phrase :
-    ¬ cigaretteReading .word ∧ cigaretteReading .phrase := by
+-- (45)
+theorem cigarette_word_ne_phrase : ¬ cigarette .word () ∧ cigarette .phrase () := by
+  simp only [cigarette, reading]
   constructor <;> decide +kernel
 
+/-- A type-shift gives *Mary smokes a cigarette* only the reading on which one cigarette is
+smoked habitually, false when she smokes a different one each time. -/
 theorem cigarette_no_true_reading_available :
-    ∀ l, Device.typeShift.AppliesAt l → ¬ cigaretteReading l := by
+    ∀ l, Device.typeShift.AppliesAt l → ¬ cigarette l () := by
   intro l hl
   have h : l = .word := hl
   subst h
-  exact cigaretteReading_word_ne_phrase.1
+  exact cigarette_word_ne_phrase.1
 
-/-- One brand, smoked at every occasion. -/
-abbrev smokesBrand : Fin 1 → Fin 3 → Prop := fun _ _ ↦ True
+/-- The brand variant, one brand smoked at every occasion. -/
+def brand : Level → Unit → Prop :=
+  reading (reinterpret inSpeechInterval) (GQ.some fun _ : Fin 1 ↦ True) fun _ _ ↦ True
 
 -- (17b)
-theorem brand_true_reading_available :
-    ∃ l, Device.typeShift.AppliesAt l ∧
-      ∃ b : Fin 1, gamma inSpeechInterval (fun e ↦ smokesBrand b e) () :=
-  ⟨.word, rfl, ⟨0, by decide +kernel⟩⟩
+theorem brand_true_reading_available : ∃ l, Device.typeShift.AppliesAt l ∧ brand l () :=
+  ⟨.word, rfl, by simp only [brand, reading]; decide +kernel⟩
 
-/-! ### Cows do not eat nettles (§13.2.1)
+/-! ### John needed but didn't buy a new coat -/
 
-Five cows, one a nettle-eater. With focus on the object, the alternatives are the ways
-of eating and the generic scopes over negation: cows in general eat something other than
-nettles, exceptions tolerated ((9a)). With focus on the auxiliary, the scope is its own
-sole alternative, the generic is the trivially true refutation reading, and the negated
-sentence denies that any cow eats nettles — false here ((9b)). -/
+/-- The second conjunct of *John needed but didn't buy a new coat*, with SHIFT applied to the
+verb or to the negated verb. -/
+def didntBuy {E : Type*} (V : E → E → Prop) (Q : (E → Prop) → Prop) (x : E) : Level → Prop
+  | .word => ¬ shift V Q x
+  | .phrase => shift (fun a b ↦ ¬ V a b) Q x
+
+/-- A type-shift gives *John needed but didn't buy a new coat* only the reading on which he
+bought no new coat. -/
+theorem needed_but_didnt_buy {E : Type*} (V : E → E → Prop) (N : E → Prop) (x : E) :
+    ∀ l, Device.typeShift.AppliesAt l →
+      (didntBuy V (GQ.some N) x l ↔ ¬ ∃ y, N y ∧ V x y) := by
+  intro l hl
+  have h : l = .word := hl
+  subst h
+  exact Iff.rfl
+
+-- (25)
+theorem didntBuy_word_ne_phrase :
+    ¬ (didntBuy (fun _ y ↦ y = true) (GQ.some fun _ ↦ True) true .word ↔
+      didntBuy (fun _ y ↦ y = true) (GQ.some fun _ ↦ True) true .phrase) := by
+  unfold didntBuy shift
+  decide
+
+/-! ### Cows do not eat nettles
+
+With focus on the object, the alternatives are the ways of eating and $\mathbf{gen}$ scopes over
+negation. With focus on the auxiliary, the scope is its own sole alternative, and the generic
+under negation is the existential one. -/
 
 /-- The one nettle-eating cow among five. -/
 abbrev eatsNettles : Fin 5 → Prop := (·.val = 4)
@@ -222,14 +250,16 @@ abbrev eatsNettles : Fin 5 → Prop := (·.val = 4)
 /-- Every cow eats something, the disjunction of the alternatives under object focus. -/
 abbrev eatsSomething : Fin 5 → Prop := fun _ ↦ True
 
--- (9a)
-theorem cows_gen_over_neg :
-    Cohen1999.gen Finset.univ (fun _ ↦ True) eatsSomething (fun x ↦ ¬ eatsNettles x) := by
-  decide
+-- (7a), (9a)
+theorem nettles_object_focus :
+    Cohen1999.gen Finset.univ (fun _ ↦ True) eatsSomething (fun x ↦ ¬ eatsNettles x) ∧
+      ∃ x, eatsNettles x :=
+  ⟨by decide, 4, rfl⟩
 
--- (9b)
-theorem cows_neg_over_gen_false :
-    Cohen1999.gen Finset.univ (fun _ ↦ True) eatsNettles eatsNettles :=
-  Cohen1999.gen_self (by decide)
+/-- With focus on the auxiliary, *Cows do not eat nettles* denies that any cow eats nettles. -/
+theorem nettles_aux_focus_iff {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α]
+    [Fintype α] (cow eats : α → Prop) [DecidablePred cow] [DecidablePred eats] :
+    ¬ Cohen1999.gen Finset.univ cow eats eats ↔ ∀ x, cow x → ¬ eats x := by
+  simp [Cohen1999.gen_self_iff, Finset.filter_nonempty_iff]
 
 end Cohen2013
