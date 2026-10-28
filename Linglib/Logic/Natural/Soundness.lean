@@ -24,6 +24,7 @@ dual, complementation.
   function.
 * `Signature.soundFor_of_holdsFor`: a signature's row holds of every function in its class.
 * `Signature.SoundFor.comp`: soundness composes along `Signature.compose`.
+* `Signature.HoldsFor.comp`: so do the function classes themselves.
 
 ## Implementation notes
 
@@ -360,48 +361,25 @@ theorem Signature.SoundFor.comp {ψ φ : Signature} {f : β → γ}
     (ψ * φ).SoundFor (f ∘ g) := by
   intro R x y hR
   have h := hf (Signature.project R φ) (g x) (g y) (hg R x y hR)
-  rwa [projection_composition] at h
+  rwa [Signature.project_project] at h
 
 theorem soundFor_addMult_id : Signature.SoundFor .addMult (id : α → α) :=
   soundFor_addMult ⟨fun _ _ => rfl, rfl⟩ ⟨fun _ _ => rfl, rfl⟩
 
-theorem soundFor_contextProjectivity :
-    ∀ (l : List (Signature × (α → α))),
-      (∀ p ∈ l, p.1.SoundFor p.2) →
-      (Signature.contextProjectivity (l.map Prod.fst)).SoundFor
-        ((l.map Prod.snd).foldr (· ∘ ·) id)
-  | [], _ => soundFor_addMult_id
-  | p :: l, h => by
-      have hhead : p.1.SoundFor p.2 := h p (List.mem_cons_self ..)
-      have htail := soundFor_contextProjectivity l
-        (fun q hq => h q (List.mem_cons_of_mem _ hq))
-      simpa [Signature.contextProjectivity, List.prod_cons, List.map_cons,
-        List.foldr_cons] using
-        hhead.comp htail
-
 end SoundFor
 
-/-! ### Worked instance: double negation is a morphism, semantically
+/-! ### Complementation
 
-Complementation in a Boolean algebra is completely anti-additive and
-anti-multiplicative, so the `.antiAddMult` row is sound for it;
-composing it with itself certifies the enum fact `◇⊟ ∘ ◇⊟ = ⊕⊞` against
-the actual function `compl ∘ compl`. -/
+Complementation in a Boolean algebra is completely anti-additive and anti-multiplicative, so the
+anti-morphism row `⊖` is sound for it. -/
 
 section ComplInstance
-
 
 variable {α : Type*} [BooleanAlgebra α]
 
 theorem compl_soundFor_antiAddMult :
     Signature.SoundFor .antiAddMult (compl : α → α) :=
   soundFor_antiAddMult_of_boundedLatticeHomClass (OrderIso.compl α)
-
-/-- Double negation realizes the morphism row — the composed-signature
-fact `◇⊟ ∘ ◇⊟ = ⊕⊞`, certified semantically rather than by enum table
-lookup. -/
-example : Signature.SoundFor .addMult ((compl : α → α) ∘ compl) :=
-  compl_soundFor_antiAddMult.comp compl_soundFor_antiAddMult
 
 theorem not_soundFor_antiAddMult : Signature.SoundFor .antiAddMult Not :=
   compl_soundFor_antiAddMult
@@ -522,6 +500,46 @@ theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
   | antiAdditive => exact ⟨isAntiAdditive_compl, compl_top⟩
   | antiMultiplicative => exact ⟨isAntiMultiplicative_compl, compl_bot⟩
   | monotone | additive | multiplicative => exact absurd hp (by decide)
+
+/-- The property a composite inherits from a property of the outer function and one of the inner
+function, when there is one. -/
+private def Signature.Property.comp : Signature.Property → Signature.Property →
+    Option Signature.Property
+  | .monotone, .monotone | .antitone, .antitone => some .monotone
+  | .monotone, .antitone | .antitone, .monotone => some .antitone
+  | .additive, .additive | .antiMultiplicative, .antiAdditive => some .additive
+  | .multiplicative, .multiplicative | .antiAdditive, .antiMultiplicative => some .multiplicative
+  | .antiAdditive, .additive | .multiplicative, .antiAdditive => some .antiAdditive
+  | .antiMultiplicative, .multiplicative | .additive, .antiMultiplicative =>
+      some .antiMultiplicative
+  | _, _ => none
+
+private theorem Signature.Property.HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ]
+    {p q r : Signature.Property} {f : β → γ} {g : α → β} (h : p.comp q = some r)
+    (hf : p.HoldsFor f) (hg : q.HoldsFor g) : r.HoldsFor (f ∘ g) := by
+  cases p <;> cases q <;> simp only [Signature.Property.comp, reduceCtorEq,
+    Option.some.injEq] at h <;> subst h <;>
+    simp only [Signature.Property.HoldsFor, IsAntiAdditive, IsAntiMultiplicative] at hf hg ⊢
+  all_goals first
+    | exact Monotone.comp hf hg
+    | exact Antitone.comp hf hg
+    | exact Monotone.comp_antitone hf hg
+    | exact Antitone.comp_monotone hf hg
+    | exact ⟨fun x y ↦ by simp only [Function.comp_apply, hg.1, hf.1],
+        by simp only [Function.comp_apply, hg.2, hf.2]⟩
+
+private theorem Signature.exists_comp_eq_some :
+    ∀ ψ φ : Signature, ∀ r ∈ (ψ * φ).properties,
+      ∃ p ∈ ψ.properties, ∃ q ∈ φ.properties, p.comp q = some r := by
+  decide
+
+/-- A ψ-function after a φ-function is a `ψ * φ`-function, over any bounded lattices: the function
+classes compose as `Signature.compose` says ([icard-2012] Definition 2.6 and Lemma 2.7). -/
+theorem Signature.HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ] {ψ φ : Signature}
+    {f : β → γ} {g : α → β} (hf : ψ.HoldsFor f) (hg : φ.HoldsFor g) :
+    (ψ * φ).HoldsFor (f ∘ g) := fun r hr ↦ by
+  obtain ⟨p, hp, q, hq, h⟩ := Signature.exists_comp_eq_some ψ φ r hr
+  exact Signature.Property.HoldsFor.comp h (hf p hp) (hg q hq)
 
 end HoldsFor
 

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Natural.Completeness
 public import Linglib.Semantics.Polarity.Strength
+public import Linglib.Data.Examples.Icard2012
 
 /-!
 # Icard (2012): Inclusion and Exclusion in Natural Language
@@ -27,10 +28,26 @@ of negative polarity items is `Licenses`, read off the substrate's strength map
   `•` when none is left. A model's constants are functions of their signatures over the whole
   unmarked domains, Boolean algebras, which is stronger than the paper's marked domains and
   leaves Definition 2.8's subtyping of marked types aside.
-* The paper's remark that terms of additive and anti-additive types always alternate, the
-  witness of incompleteness, is not formalized: in the unmarked function lattice the constant
-  `⊤` function and complementation are additive and anti-additive without being disjoint.
-* One cell of the printed projection table deviates from Definition 2.3 (`project_equiv`).
+
+## Errata
+
+* The orders ≪ on relations (p. 710 and its footnote 2) and ≼ on signatures (p. 715) are defined
+  as implication, but Lemma 1.3 and Definitions 1.4, 2.3 and 2.6 take the ≪- or ≼-maximal element
+  to be the most informative one, which is the least in the defined order. Read as printed, every
+  join and projection would be `#` and every composition `•`.
+* The remark under the projection table that `[R]^• = #` for every `R` (p. 715) fails at `≡`,
+  since every function preserves equality (`Signature.project_equiv`).
+* Three cells of the composition table (p. 716) are wrong. Anti-additive after anti-additive is
+  printed antitone but is monotone; anti-multiplicative after multiplicative is printed antitone
+  but is anti-multiplicative; anti-morphic after anti-multiplicative is printed additive but is
+  multiplicative. The first and third printed values fail for complementation, the second is
+  sound but not the most specific.
+* The witness of incompleteness (p. 719), that terms of an additive and of an anti-additive type
+  always stand in `|`, fails: the constant `⊤` function is additive, complementation is
+  anti-additive, and the two are not disjoint.
+* The conclusion of the worked example is stated on p. 720 with *giant squid*, but the
+  introduction (p. 708) and the derivation (pp. 721–722) end at *cephalopod*, as does
+  `derives_squid`.
 
 ## References
 
@@ -49,7 +66,8 @@ open NaturalLogic NaturalLogic.Relation NaturalLogic.Signature
 
 The join table (Lemma 1.5), the projection table (Lemma 2.4) and the composition table
 (Lemma 2.7) are the substrate's `join`, `project` and `compose`; the cells are certified sound
-and least in `Logic/Natural/Soundness.lean` and `Logic/Natural/Completeness.lean`. -/
+and least in `Logic/Natural/Soundness.lean` and `Logic/Natural/Completeness.lean`, and agree with
+the printed ones except where the errata say. -/
 
 example : join .alternation .negation = .forward := rfl
 example : join .alternation .reverse = .alternation := rfl
@@ -64,13 +82,63 @@ example : project .negation .addMult = .negation := rfl
 example : project .alternation .mult = .alternation := rfl
 example : project .negation .mono = .independent := rfl
 
+example : compose .antiAdd .additive = .antiAdd := rfl
+example : compose .mult .addMult = .mult := rfl
+
+-- p. 716: composition is not commutative
+example : (.antiMult : Signature) * .antiAdd = .additive ∧
+    (.antiAdd : Signature) * .antiMult = .mult := ⟨rfl, rfl⟩
+
+-- p. 716: only `⊕` and `⊖` have inverses, so the signatures do not form a group
+example : IsUnit (.antiAddMult : Signature) ∧ ¬ IsUnit (.antiAdd : Signature) :=
+  ⟨isUnit_iff.2 ⟨.negative, rfl⟩, fun h ↦ by
+    obtain ⟨p, hp⟩ := isUnit_iff.1 h
+    cases p <;> cases hp⟩
+
+/-- Negation after negation is a morphism, `⊖ ∘ ⊖ = ⊕`, certified on complementation itself. -/
+example {α : Type*} [BooleanAlgebra α] :
+    Signature.SoundFor (.antiAddMult * .antiAddMult) ((compl : α → α) ∘ compl) :=
+  compl_soundFor_antiAddMult.comp compl_soundFor_antiAddMult
+
+/-! ### Errata -/
+
+/-- Read with the printed implication order, the ≪-maximal sound chaining of Definition 1.4 is
+always `#`. -/
+example (R S : Relation) : IsGreatest {T : Relation | ∀ x y z : Finset (Fin 3),
+    R.Holds x y → S.Holds y z → T.Holds x z} ⊤ :=
+  ⟨fun _ _ _ _ _ ↦ trivial, fun _ _ ↦ le_top⟩
+
 /-- The printed remark that `•` projects every relation to `#` overshoots at `≡`, since every
 function preserves equality. -/
 example : project .equiv .all = .equiv := rfl
 
-example : compose .antiAdd .additive = .antiAdd := rfl
-example : compose .mult .addMult = .mult := rfl
-example : negationSignature * negationSignature = .addMult := rfl
+/-- Anti-additive after anti-additive is monotone; the printed antitone fails for complementation,
+which applied twice is the identity. -/
+example : (.antiAdd : Signature) * .antiAdd = .mono ∧
+    ∃ f g : Bool → Bool, Signature.HoldsFor .antiAdd f ∧ Signature.HoldsFor .antiAdd g ∧
+      ¬ Signature.HoldsFor .anti (f ∘ g) :=
+  ⟨rfl, compl, compl, by decide⟩
+
+/-- Anti-multiplicative after multiplicative is anti-multiplicative, more specific than the
+printed antitone. -/
+example : (.antiMult : Signature) * .mult = .antiMult ∧ (.antiMult : Signature) < .anti :=
+  ⟨rfl, lt_of_le_of_ne (by decide) (by decide)⟩
+
+/-- Anti-morphic after anti-multiplicative is multiplicative; the printed additive fails for
+complementation after the constant `⊤`, which is the constant `⊥`. -/
+example : (.antiAddMult : Signature) * .antiMult = .mult ∧
+    ∃ f g : Bool → Bool, Signature.HoldsFor .antiAddMult f ∧ Signature.HoldsFor .antiMult g ∧
+      ¬ Signature.HoldsFor .additive (f ∘ g) :=
+  ⟨rfl, compl, fun _ ↦ true, by decide⟩
+
+/-- An additive and an anti-additive function need not stand in `|`: the constant `⊤` and
+complementation are not disjoint. -/
+example : Signature.HoldsFor .additive (fun _ : Bool ↦ true) ∧
+    Signature.HoldsFor .antiAdd (compl : Bool → Bool) ∧
+      ¬ Disjoint (fun _ : Bool ↦ true) (compl : Bool → Bool) := by
+  refine ⟨by decide, by decide, ?_⟩
+  rw [disjoint_iff]
+  decide
 
 /-! ### The typed language (Sections 2.1 and 2.3) -/
 
@@ -219,7 +287,7 @@ theorem soundFor_ctxFun : ∀ {τ} (c : Ctx L σ τ), c.pro.SoundFor (ctxFun M c
     show Signature.SoundFor (f.top * c.pro) (eval M f ∘ ctxFun M c)
     rcases hm : f.marks with _ | ⟨φ, ms⟩
     · rw [show f.top = .all by simp [Term.top, hm],
-        show (Signature.all * c.pro) = .all from compose_all_left _]
+        show (Signature.all * c.pro) = .all from Signature.top_mul _]
       exact soundFor_all _
     · rw [hm] at h
       rw [show f.top = φ by simp [Term.top, hm]]
@@ -375,15 +443,17 @@ theorem licenses_weak {σ : Signature} (h : σ.sign = -1) :
     Licenses .weak σ := by
   cases σ <;> first | decide | exact absurd h (by decide)
 
-/-- Examples (1)–(2) put *yet* under *not every* and under *few*, antitone contexts. -/
-example : Licenses .weak .antiMult ∧ Licenses .weak .anti := by decide
-
-/-- Examples (3)–(4) put *in years* under *few* and under *no*, whose second argument is
-anti-additive. -/
-example : ¬ Licenses .antiAdditive .anti ∧ Licenses .antiAdditive .antiAdd := by decide
-
-/-- Examples (5)–(6) put *a tad bit* under *no* and under *not*, the anti-morphism. -/
-example : ¬ Licenses .antiMorphic .antiAdd ∧ Licenses .antiMorphic negationSignature := by
+/-- Each of the examples (1)–(6) is acceptable exactly when its context licenses its item: weak
+*yet* under *not every* and *few*, strong *in years* under *few* and *no*, and superstrong *a tad
+bit* under *no* and *not*, with the second arguments of *not every*, *few* and *no*
+anti-multiplicative, antitone and anti-additive and *not* anti-morphic. -/
+theorem licenses_iff_acceptable :
+    (Licenses .weak .antiMult ↔ Examples.s4_1.judgment = .acceptable) ∧
+    (Licenses .weak .anti ↔ Examples.s4_2.judgment = .acceptable) ∧
+    (Licenses .antiAdditive .anti ↔ Examples.s4_3.judgment = .acceptable) ∧
+    (Licenses .antiAdditive .antiAdd ↔ Examples.s4_4.judgment = .acceptable) ∧
+    (Licenses .antiMorphic .antiAdd ↔ Examples.s4_5.judgment = .acceptable) ∧
+    (Licenses .antiMorphic .antiAddMult ↔ Examples.s4_6.judgment = .acceptable) := by
   decide
 
 end Icard2012
