@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Alternatives.Symmetric
+public import Linglib.Semantics.Alternatives.Relevance
 public import Studies.Katzir2007
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
@@ -215,16 +216,6 @@ theorem mem_inter_of_isSymmetric (h : IsSymmetric S S₁ S₂) (R : BooleanSubal
     (hS : S ∈ R) (hF : S₂ ∈ F) (h₁ : S₁ ∈ (R : Set (Set W)) ∩ F) :
     S₂ ∈ (R : Set (Set W)) ∩ F :=
   ⟨h.mem_of_mem hS h₁.1, hF⟩
-
-/-- A sentence is exhaustively relevant given a restriction when its *only*-meaning lies in the
-Boolean closure of the restriction. -/
-def ExhaustivelyRelevant (A : Set (Set W)) (p : Set W) : Prop :=
-  exh A p ∈ BooleanSubalgebra.closure A
-
-/-- A restriction of the formal alternatives is allowable when it keeps the assertion and prunes
-nothing exhaustively relevant. -/
-def IsAllowableRestriction (F A : Set (Set W)) (S : Set W) : Prop :=
-  S ∈ A ∧ ∀ p ∈ F \ A, ¬ ExhaustivelyRelevant A p
 
 theorem not_isAllowableRestriction_pair (hS : S = S₁ ∪ S₂) (h₂₁ : ¬ S₂ ⊆ S₁) (hF : S₂ ∈ F)
     (h₂ : S₂ ∉ ({S, S₁} : Set (Set W))) : ¬ IsAllowableRestriction F {S, S₁} S := by

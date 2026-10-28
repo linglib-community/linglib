@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Alternatives.Relevance
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Presupposition.Context
@@ -35,6 +36,8 @@ exception set](##pex_but_no_eq_one_iff).
   (41b) and (50b) are written. Read literally, (56) compares a domain with every larger set of
   alternatives, and a domain lacking a non-excludable alternative fails it, since adding one
   changes nothing (`exhOnly_inter_excludable`).
+* Relevance over the context is `Alternatives.IsAllowableRestriction` over the subtype of the
+  context, with each *only*-alternative restricted to it by preimage (`onlyCtx`).
 * The ranking (58) of Informativity, `Presupposition.PostAccommodationInformative`, over Weakening
   is read off the constraints each domain satisfies; the accommodation operator of (56) is
   `posSupport`.
@@ -53,14 +56,15 @@ exception set](##pex_but_no_eq_one_iff).
   (108) does not exclude (107) (`judgment_107`).
 * (40), (56) and (58) do not single out the resolution (41) of *Gal is only a grad student*:
   pruning to *only [postdoc]* satisfies and violates the same constraints, and under negation
-  conveys that Gal is a professor (`pruned_postdoc`).
+  conveys that Gal is a professor (`pruned_postdoc`). The closure of relevance under the Boolean
+  operations, set aside in fn. 3, does single it out, but only computed over the context: there
+  (41) is the one informative pruning that is an allowable restriction in the sense of
+  [fox-katzir-2011] (`isAllowableRestriction_onlyCtx_iff`), while over all worlds pruning to
+  *only [non-academic]* and *only [postdoc]* is allowable too
+  (`isAllowableRestriction_only_ranks`).
 
 ## TODO
 
-* The closure of relevance under Boolean operations, set aside in fn. 3, is what excludes
-  `pruned_postdoc`: computed over the context, [fox-katzir-2011]'s allowable restrictions of the
-  *only*-alternatives of (35) are (41) and the full domain alone. State it with
-  `FoxKatzir2011.IsAllowableRestriction`.
 * The sufficiency modal constructions of §3.4, the embedded exhaustification of §3.5, the
   integrated rivals of §4, the conjunctive closure of fn. 4, and the exceptives of §5.2–5.3.
 
@@ -414,6 +418,8 @@ def ladder : Set (Finset Rank) := {{grad}, {postdoc}, {professor}}
 /-- Gal holds at most one rank. -/
 def oneRank : Set (Finset Rank) := {w | w.card ≤ 1}
 
+instance : DecidablePred (· ∈ oneRank) := fun w ↦ inferInstanceAs (Decidable (w.card ≤ 1))
+
 theorem mem_ranks {Y : Finset Rank} :
     Y ∈ ranks ↔ Y = {grad} ∨ Y = {postdoc} ∨ Y = {professor} ∨ Y = {nonAcademic} := Iff.rfl
 
@@ -474,5 +480,115 @@ theorem pruned_postdoc :
   · simp [neg_eq_iff_eq_neg, exhOnly_eq_neg_one_iff _ (singleton_subset_ranks _), mem_only_ladder,
       oneRank]
     decide
+
+/-! ### Relevance closed under the Boolean operations -/
+
+/-- The *only*-alternatives of (37), restricted to the context. -/
+def onlyCtx (r : Rank) : Set oneRank := Subtype.val ⁻¹' only ranks ladder {r}
+
+@[simp] theorem mem_onlyCtx {r : Rank} {w : oneRank} :
+    w ∈ onlyCtx r ↔ (grad ∈ w.1 → grad = r) ∧ (postdoc ∈ w.1 → postdoc = r) ∧
+      (professor ∈ w.1 → professor = r) := by
+  simp [onlyCtx, mem_only_ladder]
+
+theorem onlyCtx_subset_onlyCtx_iff {q r : Rank} :
+    onlyCtx q ⊆ onlyCtx r ↔ q = r ∨ q = nonAcademic := by
+  rw [Set.subset_def]
+  simp only [mem_onlyCtx]
+  cases q <;> cases r <;> decide
+
+theorem onlyCtx_injective : Function.Injective onlyCtx := fun q r h ↦ by
+  have hq := onlyCtx_subset_onlyCtx_iff.1 h.le
+  have hr := onlyCtx_subset_onlyCtx_iff.1 h.ge
+  grind
+
+theorem onlyCtx_nonAcademic_eq_inter {r : Rank} (hr : r = postdoc ∨ r = professor) :
+    onlyCtx nonAcademic = onlyCtx grad ∩ onlyCtx r := by
+  ext w
+  obtain rfl | rfl := hr <;> simp only [mem_onlyCtx, mem_inter_iff] <;> revert w <;> decide
+
+theorem exh_onlyCtx_eq_compl {q r : Rank} (h : [q, r] = [postdoc, professor] ∨
+    [q, r] = [professor, postdoc]) :
+    exh (onlyCtx '' {grad, nonAcademic, r}) (onlyCtx q) =
+      (onlyCtx grad ∪ onlyCtx nonAcademic ∪ onlyCtx r)ᶜ := by
+  ext w
+  obtain h | h := h <;> simp only [List.cons.injEq, and_true] at h <;> obtain ⟨rfl, rfl⟩ := h <;>
+    simp [onlyCtx_subset_onlyCtx_iff] <;> revert w <;> decide
+
+theorem not_exhaustivelyRelevant_onlyCtx {q : Rank} (hq : q = postdoc ∨ q = professor) :
+    ¬ Alternatives.ExhaustivelyRelevant (onlyCtx '' {grad, nonAcademic}) (onlyCtx q) := by
+  obtain rfl | rfl := hq
+  · refine Alternatives.not_exhaustivelyRelevant_of_separates (u := ⟨{postdoc}, by decide⟩)
+      (v := ⟨{professor}, by decide⟩) ?_ ?_ ?_ <;>
+      simp [mem_exh, onlyCtx_subset_onlyCtx_iff]
+  · refine Alternatives.not_exhaustivelyRelevant_of_separates (u := ⟨{professor}, by decide⟩)
+      (v := ⟨{postdoc}, by decide⟩) ?_ ?_ ?_ <;>
+      simp [mem_exh, onlyCtx_subset_onlyCtx_iff]
+
+-- fn. 3: over the context, of the informative prunings of (35) only (41) is allowable
+theorem isAllowableRestriction_onlyCtx_iff {R : Set Rank}
+    (hR : R = {nonAcademic} ∨ R = {postdoc} ∨ R = {professor} ∨ R = {nonAcademic, postdoc} ∨
+      R = {nonAcademic, professor}) :
+    Alternatives.IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R)
+      (onlyCtx grad) ↔ R = {nonAcademic} := by
+  open Alternatives BooleanSubalgebra in
+  have hER (q : Rank) (hq : q ∉ insert grad R)
+      (h : ExhaustivelyRelevant (onlyCtx '' insert grad R) (onlyCtx q)) :
+      ¬ IsAllowableRestriction (range onlyCtx) (onlyCtx '' insert grad R) (onlyCtx grad) :=
+    fun hA ↦ hA.2 _ ⟨⟨q, rfl⟩, by rwa [onlyCtx_injective.mem_set_image]⟩ h
+  have hna (r : Rank) (hr : r = postdoc ∨ r = professor) :
+      ExhaustivelyRelevant (onlyCtx '' {grad, r}) (onlyCtx nonAcademic) := by
+    have hexh : exh (onlyCtx '' {grad, r}) (onlyCtx nonAcademic) = onlyCtx nonAcademic :=
+      exh_eq_self (by rintro _ ⟨q, -, rfl⟩; exact onlyCtx_subset_onlyCtx_iff.2 (.inr rfl))
+    rw [ExhaustivelyRelevant, hexh, onlyCtx_nonAcademic_eq_inter hr]
+    change onlyCtx grad ⊓ onlyCtx r ∈ _
+    exact inf_mem (subset_closure (mem_image_of_mem _ (by simp)))
+      (subset_closure (mem_image_of_mem _ (by simp)))
+  have hcompl (q r : Rank) (h : [q, r] = [postdoc, professor] ∨ [q, r] = [professor, postdoc]) :
+      ExhaustivelyRelevant (onlyCtx '' {grad, nonAcademic, r}) (onlyCtx q) := by
+    rw [ExhaustivelyRelevant, exh_onlyCtx_eq_compl h]
+    change (onlyCtx grad ⊔ onlyCtx nonAcademic ⊔ onlyCtx r)ᶜ ∈ _
+    have hmem (r' : Rank) (h : r' ∈ ({grad, nonAcademic, r} : Set Rank)) :
+        onlyCtx r' ∈ closure (onlyCtx '' {grad, nonAcademic, r}) :=
+      subset_closure (mem_image_of_mem _ h)
+    exact compl_mem (sup_mem (sup_mem (hmem _ (by simp)) (hmem _ (by simp))) (hmem _ (by simp)))
+  rcases hR with rfl | rfl | rfl | rfl | rfl
+  · refine iff_of_true ⟨mem_image_of_mem _ (mem_insert _ _), ?_⟩ rfl
+    rintro _ ⟨⟨q, rfl⟩, hq⟩
+    rw [onlyCtx_injective.mem_set_image] at hq
+    exact not_exhaustivelyRelevant_onlyCtx (by cases q <;> simp_all)
+  · exact iff_of_false (hER nonAcademic (by simp) (hna postdoc (.inl rfl))) (by simp)
+  · exact iff_of_false (hER nonAcademic (by simp) (hna professor (.inr rfl))) (by simp)
+  · refine iff_of_false (hER professor (by simp) (hcompl professor postdoc (.inr rfl))) ?_
+    intro h
+    have := h.subset (show postdoc ∈ ({nonAcademic, postdoc} : Set Rank) by simp)
+    simp at this
+  · refine iff_of_false (hER postdoc (by simp) (hcompl postdoc professor (.inl rfl))) ?_
+    intro h
+    have := h.subset (show professor ∈ ({nonAcademic, professor} : Set Rank) by simp)
+    simp at this
+
+theorem only_ladder_subset_iff {q r : Rank} :
+    only ranks ladder {q} ⊆ only ranks ladder {r} ↔ q = r ∨ q = nonAcademic := by
+  rw [Set.subset_def]
+  simp only [mem_only_ladder, Finset.mem_singleton]
+  cases q <;> cases r <;> decide
+
+-- over all worlds, the closure also admits pruning to *only [non-academic]* and *only [postdoc]*
+theorem isAllowableRestriction_only_ranks :
+    Alternatives.IsAllowableRestriction (range fun r ↦ only ranks ladder {r})
+      ((fun r ↦ only ranks ladder {r}) '' {grad, nonAcademic, postdoc})
+      (only ranks ladder {grad}) := by
+  refine ⟨mem_image_of_mem _ (by simp), ?_⟩
+  rintro _ ⟨⟨q, rfl⟩, hq⟩
+  have hinj : Function.Injective fun r : Rank ↦ only ranks ladder {r} := fun q r h ↦ by
+    have hq := only_ladder_subset_iff.1 h.le
+    have hr := only_ladder_subset_iff.1 h.ge
+    grind
+  rw [hinj.mem_set_image] at hq
+  obtain rfl : q = professor := by cases q <;> simp_all
+  refine Alternatives.not_exhaustivelyRelevant_of_separates (u := {professor})
+    (v := {grad, postdoc}) ?_ ?_ ?_ <;>
+    simp [mem_exh, only_ladder_subset_iff, mem_only_ladder]
 
 end Ladder
