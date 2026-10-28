@@ -22,15 +22,16 @@ algebra, pointwise.
 * `Montague.Sorts`: the carriers of the degree and eventuality sorts.
 * `Montague.Ty.Domain E W ty S`: the denotation domain of `ty`.
 * `Montague.Denotation E W M S`: a semantic type with an `M`-computation in its domain.
-* `Montague.Ty.Domain.completeBooleanAlgebra?`: the pointwise complete Boolean algebra of a
-  type that ends in `t`, `none` on any other type.
+* `Montague.Ty.Conjoinable`: the types that end in `t`.
+* `Montague.Ty.Domain.completeBooleanAlgebra`: the pointwise complete Boolean algebra of a
+  conjoinable type.
 
 ## Implementation notes
 
 `Ty.Domain` is reducible: a denotation of type `⟨e,t⟩` *is* an `E → Prop` to every tactic and
 instance, and the Boolean algebra of a type that ends in `t` is mathlib's `Pi` instance.
-`Ty.Domain.completeBooleanAlgebra?` computes that algebra by recursion on the type, for the
-composition engine's dispatch on types at run time.
+`Ty.Domain.completeBooleanAlgebra` builds that algebra by recursion on a type known to be
+conjoinable, for statements about a type that is not concrete.
 
 ## References
 
@@ -116,17 +117,20 @@ denotations supply `M`. -/
 abbrev Denotation (E W : Type) (M : Type → Type := Id) (S : Sorts := {}) : Type :=
   (ty : Ty) × M (Ty.Domain E W ty S)
 
+/-- A type is conjoinable when it ends in `t` ([partee-rooth-1983]). -/
+def Ty.Conjoinable : Ty → Prop
+  | .t => True
+  | .fn _ b => b.Conjoinable
+  | .e | .d | .n | .v | .s => False
+
 /-- The domain of a conjoinable type carries the pointwise complete Boolean algebra
-([partee-rooth-1983]), computed by recursion on the type and `none` exactly when the type does
-not end in `t`. At a concrete type it is the instance `Pi.instCompleteBooleanAlgebra` finds
+([partee-rooth-1983]). At a concrete type it is the instance `Pi.instCompleteBooleanAlgebra` finds
 statically. -/
-def Ty.Domain.completeBooleanAlgebra? (E W : Type) (ty : Ty) (S : Sorts := {}) :
-    Option (CompleteBooleanAlgebra (Ty.Domain E W ty S)) :=
-  match ty with
-  | .t => some inferInstance
-  | .fn _ b =>
-    (completeBooleanAlgebra? E W b S).map fun (i : CompleteBooleanAlgebra (Ty.Domain E W b S)) =>
-      letI := i; inferInstance
-  | _ => none
+@[instance_reducible]
+def Ty.Domain.completeBooleanAlgebra (E W : Type) :
+    (ty : Ty) → ty.Conjoinable → (S : Sorts := {}) → CompleteBooleanAlgebra (Ty.Domain E W ty S)
+  | .t, _, _ => inferInstanceAs (CompleteBooleanAlgebra Prop)
+  | .fn _ b, h, S => letI := completeBooleanAlgebra E W b h S; inferInstance
+  | .e, h, _ | .d, h, _ | .n, h, _ | .v, h, _ | .s, h, _ => h.elim
 
 end Montague
