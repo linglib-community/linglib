@@ -7,8 +7,9 @@ public import Linglib.Semantics.Polarity.Licensing
 
 The polarity items of Modern Greek. *Para monon*, literally 'but only', renders English punctual
 *until* in a negated clause. It is a strong negative polarity item: negation and *xoris* 'without'
-license it, while *amfivalo* 'I doubt' and a rhetorical question do not, and the attested and
-excluded contexts [agree with the licensing theory](##paraMonon_licensing_sound).
+license it, while *amfivalo* 'I doubt' and a rhetorical question do not. The licensing theory
+[admits it where it is attested](##paraMonon_licensing_sound) and [not where it is
+out](##paraMonon_excluded_not_admitted).
 
 ## Implementation notes
 
@@ -38,11 +39,14 @@ def paraMonon : PolarityItem :=
   , licensingContexts := [.negation, .withoutClause]
   , excludedContexts := [.doubtVerb, .question] }
 
-/-- The contexts *para monon* is attested in admit it, and those it is attested to be out in do
-not. -/
+/-- The contexts *para monon* is attested in admit it. -/
 theorem paraMonon_licensing_sound :
-    (∀ c ∈ paraMonon.licensingContexts, c.licenser.Admits paraMonon) ∧
-      ∀ c ∈ paraMonon.excludedContexts, ¬ c.licenser.Admits paraMonon := by
+    ∀ c ∈ paraMonon.licensingContexts, c.licenser.Admits paraMonon := by
+  decide
+
+/-- The contexts *para monon* is attested to be out in do not admit it. -/
+theorem paraMonon_excluded_not_admitted :
+    ∀ c ∈ paraMonon.excludedContexts, ¬ c.licenser.Admits paraMonon := by
   decide
 
 end Greek.StandardModern.PolarityItems

@@ -240,11 +240,11 @@ instance : DecidablePred Connective.Punctual := fun _ ↦ inferInstanceAs (Decid
 abbrev Connective.Durative (c : Connective) : Prop :=
   c.entry.relation = .until_ ∧ ¬ c.Punctual
 
-/-- A connective is eventive UNTIL when it is punctual or an *until* with a polarity-item
-use. -/
-abbrev Connective.Eventive (c : Connective) : Prop :=
-  c.Punctual ∨ c.polarityItem.isSome = true
+/-- A connective is eventive UNTIL when it is or doubles as a polarity item, since punctual
+*until* is a polarity item; every punctual word is one. -/
+abbrev Connective.Eventive (c : Connective) : Prop := c.polarityItem.isSome
 
+/-- A connective is *before* when its entry relates the clauses by precedence. -/
 abbrev Connective.Before (c : Connective) : Prop := c.entry.relation = .before
 
 /-- An `AspectForm` is the viewpoint of the main clause. -/
@@ -273,25 +273,45 @@ def Eventuality.predicates : Eventuality → Set (W → E → Prop)
   | .stative => {P | HasSubintervalProperty P}
   | .eventive => {P | ∀ w e e', P w e → P w e' → e = e'}
 
+/-- A model of the paper's sentences: worlds, a time line, and events with run times on it. -/
+structure Model where
+  /-- The worlds. -/
+  W : Type
+  /-- The times. -/
+  T : Type
+  /-- The events. -/
+  E : Type
+  /-- The times are linearly ordered. -/
+  [ord : LinearOrder T]
+  /-- Each event has a run time. -/
+  [trace : Event.TemporalTrace E T]
+
+attribute [instance] Model.ord Model.trace
+
 /-- A main clause of form `a` over a predicate of class `c` is **homogeneous** in the paper's
 sense, admitting durative UNTIL, when durative UNTIL holds of its description in some model. -/
 def AdmitsDurative (a : AspectForm) (c : Eventuality) : Prop :=
-  ∃ (W T E : Type) (_ : LinearOrder T) (_ : Event.TemporalTrace E T) (P : W → E → Prop) (w : W)
-    (t : T), P ∈ c.predicates ∧ durativeUntil (a.view P) w t
+  ∃ (M : Model) (P : M.W → M.E → Prop) (w : M.W) (t : M.T),
+    P ∈ c.predicates ∧ durativeUntil (a.view P) w t
 
 private def unitSpan : NonemptyInterval ℤ := ⟨⟨0, 1⟩, by decide⟩
+
+/-- A state holding over the unit span and at each of its parts. -/
+private def aState : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e ≤ unitSpan
+
+/-- A single event spanning the unit span. -/
+private def anEvent : Unit → NonemptyInterval ℤ → Prop := fun _ e ↦ e = unitSpan
+
+private theorem aState_mem : aState ∈ Eventuality.stative.predicates :=
+  hasSubintervalProperty_iff_witnesses.2 fun _ _ he t ht ↦ ⟨t, rfl, ht.trans he⟩
+
+private theorem anEvent_mem : anEvent ∈ Eventuality.eventive.predicates :=
+  fun _ _ _ h h' ↦ h.trans h'.symm
 
 private theorem admitsDurative_of {a : AspectForm} {c : Eventuality}
     {P : Unit → NonemptyInterval ℤ → Prop} (hP : P ∈ c.predicates) {t : ℤ}
     (h : durativeUntil (a.view P) () t) : AdmitsDurative a c :=
-  ⟨Unit, ℤ, _, inferInstance, inferInstance, P, (), t, hP, h⟩
-
-private theorem mem_stative : (fun (_ : Unit) e ↦ e ≤ unitSpan) ∈ Eventuality.stative.predicates :=
-  hasSubintervalProperty_iff_witnesses.2 fun _ _ he t ht ↦ ⟨t, rfl, ht.trans he⟩
-
-private theorem mem_eventive :
-    (fun (_ : Unit) e ↦ e = unitSpan) ∈ Eventuality.eventive.predicates :=
-  fun _ _ _ h h' ↦ h.trans h'.symm
+  ⟨⟨Unit, ℤ, NonemptyInterval ℤ⟩, P, (), t, hP, h⟩
 
 /-- A main clause is homogeneous exactly when its form is imperfective, progressive or perfect, or
 its predicate stative: the perfective of a single event cannot fill the until interval, while the
@@ -299,27 +319,21 @@ perfective of a state fills it with its homogeneous part. -/
 theorem admitsDurative_iff {a : AspectForm} {c : Eventuality} :
     AdmitsDurative a c ↔ a = .imperfective ∨ a = .progressive ∨ a = .perfect ∨ c = .stative := by
   constructor
-  · rintro ⟨W, T, E, _, _, P, w, t, hP, h⟩
+  · rintro ⟨M, P, w, t, hP, h⟩
     cases a <;> cases c <;> first | decide | exact absurd h (not_durativeUntil_prfv (hP w) t)
   · intro h
-    cases c
-    · cases a
-      · exact admitsDurative_of mem_stative (durativeUntil_unbounded le_rfl (by decide))
-      · exact admitsDurative_of mem_stative
-          (durativeUntil_prfv_of_unbounded mem_stative (durativeUntil_unbounded le_rfl (by decide)))
-      · exact admitsDurative_of mem_stative (durativeUntil_unbounded le_rfl (by decide))
-      · exact admitsDurative_of mem_stative
-          (durativeUntil_perfect_prfv (P := fun _ e ↦ e ≤ unitSpan) (w := ()) le_rfl (t := 2)
-            (by decide))
-      · exact admitsDurative_of mem_stative
-          (durativeUntil_prfv_of_unbounded mem_stative (durativeUntil_unbounded le_rfl (by decide)))
-    · rcases h with rfl | rfl | rfl | h
-      · exact admitsDurative_of mem_eventive (durativeUntil_unbounded rfl (by decide))
-      · exact admitsDurative_of mem_eventive (durativeUntil_unbounded rfl (by decide))
-      · exact admitsDurative_of mem_eventive
-          (durativeUntil_perfect_prfv (P := fun _ e ↦ e = unitSpan) (w := ()) rfl (t := 2)
-            (by decide))
-      · exact absurd h nofun
+    have hs := durativeUntil_unbounded (P := aState) (w := ()) le_rfl (by decide)
+    have he := durativeUntil_unbounded (P := anEvent) (w := ()) rfl (by decide)
+    have hs' := durativeUntil_prfv_of_unbounded aState_mem hs
+    have ps := durativeUntil_perfect_prfv (P := aState) (w := ()) le_rfl (t := 2) (by decide)
+    have pe := durativeUntil_perfect_prfv (P := anEvent) (w := ()) rfl (t := 2) (by decide)
+    cases c <;> cases a <;> simp at h <;>
+      first
+      | exact admitsDurative_of aState_mem hs
+      | exact admitsDurative_of aState_mem hs'
+      | exact admitsDurative_of aState_mem ps
+      | exact admitsDurative_of anEvent_mem he
+      | exact admitsDurative_of anEvent_mem pe
 
 instance (a : AspectForm) (c : Eventuality) : Decidable (AdmitsDurative a c) :=
   decidable_of_iff' _ admitsDurative_iff
@@ -340,6 +354,8 @@ inductive Test
   | plain | preposed | noEventContinuation
   deriving DecidableEq, Repr
 
+/-- A `Row` is a sentence of the paper: its connective, the form and class of its main clause,
+the licensing context the connective sits under, and what it tests. -/
 structure Row where
   connective : Connective
   aspect : AspectForm
@@ -358,15 +374,18 @@ instance (c : Connective) : DecidablePred (Licensed c)
   | some _ => inferInstanceAs (Decidable (∀ _ ∈ _, _))
   | none => inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- `Predicted` is the judgment that the two-*until* analysis predicts for a row. -/
+/-- `Predicted` is the judgment that the two-*until* analysis predicts for a row. A plain sentence
+needs durative UNTIL over a homogeneous clause, eventive UNTIL whose polarity item is licensed, or
+*before*. Preposing needs durative UNTIL over a stative form, and so does a continuation denying
+the event, unless the connective is *before*. -/
 def Predicted (r : Row) : Prop :=
-  (r.test = .plain → (r.connective.Durative ∧ AdmitsDurative r.aspect r.eventuality) ∨
-    (r.connective.Eventive ∧ Licensed r.connective r.licenser) ∨ r.connective.Before) ∧
-  (r.test = .preposed → r.connective.Durative ∧ StativeForm r.aspect) ∧
-  (r.test = .noEventContinuation →
-    (r.connective.Durative ∧ StativeForm r.aspect) ∨ r.connective.Before)
+  match r.test with
+  | .plain => (r.connective.Durative ∧ AdmitsDurative r.aspect r.eventuality) ∨
+      (r.connective.Eventive ∧ Licensed r.connective r.licenser) ∨ r.connective.Before
+  | .preposed => r.connective.Durative ∧ StativeForm r.aspect
+  | .noEventContinuation => (r.connective.Durative ∧ StativeForm r.aspect) ∨ r.connective.Before
 
-instance : DecidablePred Predicted := fun _ ↦ by unfold Predicted; infer_instance
+instance : DecidablePred Predicted := fun _ ↦ by unfold Predicted; split <;> infer_instance
 
 /-- The connectives of the paper. -/
 def connectives : List Connective :=
@@ -391,6 +410,7 @@ def licensers : List (String × Option LicensingContext) :=
   [("none", none), ("negation", some .negation), ("without", some .withoutClause),
     ("doubt", some .doubtVerb), ("question", some .question)]
 
+/-- The row of a datum, its connective read off the gloss line where there is one. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
   let connective ← connectiveOfForm? ex <|>
     ex.parse? "connective" [("until", Connective.until), ("mexri", .mexri),
@@ -413,20 +433,22 @@ inductive Diagnostic
   | howLong | while | forAdverbial | imperative
   deriving DecidableEq, Repr
 
+/-- A `DiagnosticRow` is a sentence of the stativity diagnostics: the diagnostic and the form and
+class of the clause it applies to. Whether the clause is negated is not read, since the
+prediction does not depend on it. -/
 structure DiagnosticRow where
   diagnostic : Diagnostic
   aspect : AspectForm
   eventuality : Eventuality
-  licenser : Option LicensingContext
   deriving DecidableEq, Repr
 
+/-- The diagnostic row of a datum. -/
 def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
   let diagnostic ← ex.parse? "diagnostic" [("howLong", Diagnostic.howLong), ("while", .while),
     ("forAdverbial", .forAdverbial), ("imperative", .imperative)]
   let aspect ← ex.parse? "aspect" aspectForms
   let eventuality ← ex.parse? "eventuality" eventualities
-  let licenser ← ex.parse? "licenser" licensers
-  pure ⟨diagnostic, aspect, eventuality, licenser⟩
+  pure ⟨diagnostic, aspect, eventuality⟩
 
 /-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
 negation playing no role, so negation is no stativizer. -/
