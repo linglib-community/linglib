@@ -436,7 +436,7 @@
       ["connective", "paraMonon"],
       ["aspect", "perfect"],
       ["eventuality", "eventive"],
-      ["licenser", "nonveridical"],
+      ["licenser", "doubt"],
       ["test", "plain"]
     ],
     "comment": "A merely nonveridical environment does not license para monon.",
@@ -458,7 +458,7 @@
       ["connective", "mexri"],
       ["aspect", "perfect"],
       ["eventuality", "eventive"],
-      ["licenser", "nonveridical"],
+      ["licenser", "doubt"],
       ["test", "plain"]
     ],
     "comment": "Mexri is no polarity item; the pluperfect is a stative form. The source prints one translation for the pair {*para monon/mexri}, starred.",
@@ -480,10 +480,32 @@
       ["connective", "paraMonon"],
       ["aspect", "perfective"],
       ["eventuality", "eventive"],
-      ["licenser", "nonveridical"],
+      ["licenser", "question"],
       ["test", "plain"]
     ],
-    "comment": "A rhetorical question carries a negative implicature but is not antiveridical.",
+    "comment": "A rhetorical question carries a negative implicature but does not license para monon. The English translation is unstarred: until survives where para monon does not.",
+    "verified": "page-image"
+  },
+  {
+    "id": "giannakidou2002_ex42mx",
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(42)"},
+    "language": "mode1248",
+    "primaryText": "Jati na pantreftis mexri otan prepi anagastika na to kanis?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Why marry until you absolutely have to?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["connective", "mexri"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "question"],
+      ["test", "plain"]
+    ],
+    "comment": "The source stars (42) as a whole, over the pair {para monon/mexri}.",
     "verified": "page-image"
   },
   {
