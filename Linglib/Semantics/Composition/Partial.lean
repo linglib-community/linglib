@@ -79,8 +79,6 @@ def Mode.evalPartial : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Part (
     Part (Ty.PDomain E W σ₂ S) → Part (Ty.PDomain E W τ S)
   | _, _, _, .functionalLeft, f, a => f.bind fun fv ↦ a.bind fv
   | _, _, _, .functionalRight, a, f => f.bind fun fv ↦ a.bind fv
-  | _, _, _, .intensionalLeft, f, a => f.bind fun fv ↦ a.bind fun av ↦ fv fun _ ↦ Part.some av
-  | _, _, _, .intensionalRight, a, f => f.bind fun fv ↦ a.bind fun av ↦ fv fun _ ↦ Part.some av
   | _, _, _, .predicateModification, p, q => p.bind fun P ↦ q.bind fun Q ↦
       Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b
   | _, _, _, .eventIdentificationLeft, f, p => f.bind fun F ↦ p.bind fun P ↦
@@ -104,8 +102,8 @@ theorem Mode.dom_left_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty
   | @unitLeft f _ _ _ _ _ ih => cases f; exact ih h
   | @mapRight f => cases f; exact h.1
   | @mapLeft f => cases f; exact h.1
-  | functionalLeft | functionalRight | intensionalLeft | intensionalRight | predicateModification
-  | eventIdentificationLeft | eventIdentificationRight =>
+  | functionalLeft | functionalRight | predicateModification | eventIdentificationLeft
+  | eventIdentificationRight =>
     obtain ⟨h₁, h₂⟩ := h; first | exact h₁ | exact Part.Dom.of_bind h₂
 
 /-- Every mode is strict in its right daughter. -/
@@ -116,8 +114,8 @@ theorem Mode.dom_right_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (T
   | @unitLeft f _ _ _ _ _ ih => cases f; exact ih h
   | @mapRight f => cases f; exact h.2
   | @mapLeft f => cases f; exact h.2
-  | functionalLeft | functionalRight | intensionalLeft | intensionalRight | predicateModification
-  | eventIdentificationLeft | eventIdentificationRight =>
+  | functionalLeft | functionalRight | predicateModification | eventIdentificationLeft
+  | eventIdentificationRight =>
     obtain ⟨h₁, h₂⟩ := h; first | exact h₁ | exact Part.Dom.of_bind h₂
 
 open scoped Assignment
@@ -315,12 +313,6 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
         (fun x y hxy ↦ hb (fun _ ↦ x) (fun _ ↦ Part.some y) fun _ _ _ ↦ ⟨y, rfl, hxy⟩)
   | functionalLeft => simpa [evalPartial, eval] using ha b b' hb
   | functionalRight => simpa [evalPartial, eval] using hb a a' ha
-  | intensionalLeft =>
-    simpa [evalPartial, eval] using
-      ha (fun _ ↦ b) (fun _ ↦ Part.some b') fun _ _ _ ↦ ⟨b', rfl, hb⟩
-  | intensionalRight =>
-    simpa [evalPartial, eval] using
-      hb (fun _ ↦ a) (fun _ ↦ Part.some a') fun _ _ _ ↦ ⟨a', rfl, ha⟩
   | predicateModification =>
     refine ⟨_, by simp [evalPartial]; rfl, Ty.lifts_fn.mpr fun x y hxy ↦ ?_⟩
     obtain ⟨p, hp, hlp⟩ := ha x y hxy

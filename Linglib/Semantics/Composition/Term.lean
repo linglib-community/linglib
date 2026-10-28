@@ -16,10 +16,9 @@ A term has a value in any
 the modes are interpreted, and the values of related terms in two interpretations are related
 [whenever the relation holds of the constants and variables and survives abstraction and every
 mode](##Rel.realize). Composition under an effect is an interpretation, and Heim and Kratzer's
-total semantics and von Fintel and Heim's semantics relative to a world are its cases under the
-identity effect and the reader of worlds, the latter giving intensional application its argument's
-whole intension. The total denotation is [the case of the intension where no word varies with the
-world](##intension_const_interp).
+total semantics is its case under the identity effect. An intension is a computation that reads a
+world, as Shan treats intensionality, and its type says so (`Ty.comp`), so a semantics relative to
+a world is the total semantics of a lexicon whose worldly words have such types.
 
 ## Main definitions
 
@@ -27,9 +26,9 @@ world](##intension_const_interp).
 * `Montague.individualIndices`: Heim and Kratzer's typing, every index of type `e`.
 * `Montague.Interpretation`: an interpretation of the terms.
 * `Montague.Term.realize`: the value of a term in an interpretation under an assignment.
-* `Montague.Interpretation.total`, `Montague.Interpretation.intensional`,
-  `Montague.Interpretation.effectful`: the total, intensional and effectful interpretations.
-* `Montague.Term.eval`, `Montague.Term.intension`, `Montague.Term.evalM`: the values in them.
+* `Montague.Interpretation.total`, `Montague.Interpretation.effectful`: the total and effectful
+  interpretations.
+* `Montague.Term.eval`, `Montague.Term.evalM`: the values in them.
 
 ## Implementation notes
 
@@ -260,7 +259,7 @@ theorem realize_rel {A : Interpretation.{u, v, w} K} {B : Interpretation.{u, v',
 
 end Term
 
-/-! ### The total, intensional and effectful interpretations -/
+/-! ### The total and effectful interpretations -/
 
 variable {E W : Type} {S : Sorts}
 
@@ -286,13 +285,6 @@ its variable to its body's, and a composition what its mode makes of its daughte
 ([heim-kratzer-1998]). -/
 abbrev total (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) : Interpretation K :=
   effectful (M := Id) I
-
-/-- The intensional interpretation is the effectful interpretation under the reader of worlds
-([shan-2001]): a term's value is its intension, a variable denotes its value at every world, and a
-composition composes its daughters' values at each world, except that intensional application gives
-the function its argument's whole intension ([von-fintel-heim-2011]). -/
-def intensional (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S) : Interpretation K :=
-  { effectful (M := ReaderT W Id) I with mode := Mode.intension }
 
 end Interpretation
 
@@ -336,34 +328,6 @@ theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty 
     (g : ∀ n, Ty.Domain E W (Γ n) S) {ty : Ty} (t : Term Γ K ty) :
     (t.map f).eval I g = t.eval (fun c ↦ I (f c)) g :=
   realize_map (.total I) f g t
-
-/-- The intension of a term under an interpretation `I` of the constants as intensions and an
-assignment of values to the variables, its denotation at every world. -/
-def intension (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S) (g : ∀ n, Ty.Domain E W (Γ n) S)
-    {ty : Ty} (t : Term Γ K ty) : W → Ty.Domain E W ty S :=
-  t.realize (.intensional I) g
-
-@[simp] theorem intension_comp (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S)
-    (g : ∀ n, Ty.Domain E W (Γ n) S) {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) (l : Term Γ K σ₁)
-    (r : Term Γ K σ₂) :
-    (comp m l r).intension I g = m.intension (l.intension I g) (r.intension I g) :=
-  rfl
-
-theorem intension_map (I : ∀ {ty : Ty}, K' ty → W → Ty.Domain E W ty S)
-    (f : ∀ {ty : Ty}, K ty → K' ty) (g : ∀ n, Ty.Domain E W (Γ n) S) {ty : Ty}
-    (t : Term Γ K ty) : (t.map f).intension I g = t.intension (fun c ↦ I (f c)) g :=
-  realize_map (.intensional I) f g t
-
-/-- Under constants that do not vary with the world, a term's intension is constant at its
-denotation, so the evaluation `eval` is the case of a lexicon of rigid intensions. -/
-@[simp] theorem intension_const_interp (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S)
-    (g : ∀ n, Ty.Domain E W (Γ n) S) {ty : Ty} (t : Term Γ K ty) (w : W) :
-    t.intension (fun c _ ↦ I c) g w = t.eval I g :=
-  congrFun (realize_rel (A := .intensional fun c _ ↦ I c) (B := .total I)
-    (fun _ f x ↦ f = fun _ ↦ x) (fun _ ↦ (· = ·)) (fun _ ↦ rfl) (fun _ _ h ↦ by subst h; rfl)
-    (fun _ _ h ↦ funext fun _ ↦ funext fun x ↦ congrFun (h x x rfl) _)
-    (fun m _ a' _ b' ha hb ↦ by subst ha hb; funext w; exact Mode.intension_const m a' b' w)
-    t fun _ ↦ rfl) w
 
 /-- The denotation of a term under an applicative effect, given an interpretation `I` of the
 constants as computations and an assignment of values to the variables. -/

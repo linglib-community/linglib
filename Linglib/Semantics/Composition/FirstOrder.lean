@@ -109,18 +109,6 @@ abbrev Ty.SyntacticDomain (L : Language.{u, u}) (α : Type w) : Ty → ℕ → T
   | .fn σ τ, i => ∀ k, i ≤ k → Ty.SyntacticDomain L α σ k → Ty.SyntacticDomain L α τ k
   | _, _ => PUnit
 
-/-- A value of the syntactic model with `i` bound variables in scope, carried to `k ≥ i`. -/
-def Ty.SyntacticDomain.mono {L : Language.{u, u}} {α : Type w} :
-    (ty : Ty) → {i k : ℕ} → i ≤ k → Ty.SyntacticDomain L α ty i → Ty.SyntacticDomain L α ty k
-  | .e, _, _, h, x => x.relabel (Sum.map id (Fin.castLE h))
-  | .t, _, _, h, φ => fun j hj ↦ φ j (h.trans hj)
-  | .fn _ _, _, _, h, f => fun j hj ↦ f j (h.trans hj)
-  | .d, _, _, _, x => x
-  | .n, _, _, _, x => x
-  | .v, _, _, _, x => x
-  | .s, _, _, _, x => x
-  | .comp _ _, _, _, _, x => x
-
 /-- A predicate of the syntactic model applied to the next bound variable, with `j + 1` bound
 variables in scope, as a determiner applies its restrictor and scope to the variable it binds. -/
 def Ty.SyntacticDomain.applyNext {L : Language.{u, u}} {α : Type w} {k j : ℕ}
@@ -150,16 +138,13 @@ section Readback
 
 variable {α : Type w}
 
-/-- In the syntactic model a mode applies at the current number of bound variables, the
-intensional modes to the argument carried to every larger number, and predicate modification and
-event identification conjoin pointwise. -/
+/-- In the syntactic model a mode applies at the current number of bound variables, and predicate
+modification and event identification conjoin pointwise. -/
 def Mode.readback {n : ℕ} : ∀ {σ₁ σ₂ τ : Ty},
     Mode σ₁ σ₂ τ → Ty.SyntacticDomain L α σ₁ n → Ty.SyntacticDomain L α σ₂ n →
       Ty.SyntacticDomain L α τ n
   | _, _, _, .functionalLeft, f, a => f n le_rfl a
   | _, _, _, .functionalRight, a, f => f n le_rfl a
-  | _, _, _, .intensionalLeft, f, a => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
-  | _, _, _, .intensionalRight, a, f => f n le_rfl fun _ hk _ ↦ Ty.SyntacticDomain.mono _ hk a
   | _, _, _, .predicateModification, p, q => fun k hk x j hj ↦ p k hk x j hj ⊓ q k hk x j hj
   | _, _, _, .eventIdentificationLeft, f, p => fun k hk x j hj e i hi ↦
       f k hk x j hj e i hi ⊓ p j (hk.trans hj) e i hi
@@ -232,19 +217,6 @@ private theorem realize_relabel_castLE {n k : ℕ} (hk : n ≤ k) (x : L.Term (�
       x.realize (Sum.elim v (ys ∘ Fin.castLE hk)) := by
   rw [Term.realize_relabel, Sum.elim_comp_map, Function.comp_id]
 
-theorem Ty.Realizes.mono {ty : Ty} {n k : ℕ} {xs : Fin n → M} {x : Ty.SyntacticDomain L α ty n}
-    {a : Ty.Domain M W ty Q} (h : Ty.Realizes S v ty n xs x a) (hk : n ≤ k) {ys : Fin k → M}
-    (hys : ys ∘ Fin.castLE hk = xs) :
-    Ty.Realizes S v ty k ys (Ty.SyntacticDomain.mono ty hk x) a := by
-  cases ty with
-  | e =>
-    change (letI := S; (x.relabel (Sum.map id (Fin.castLE hk))).realize (Sum.elim v ys)) = a
-    rw [realize_relabel_castLE S v hk x ys, hys]
-    exact h
-  | t => exact fun j hj zs hzs ↦ h j (hk.trans hj) zs (comp_castLE_trans hys hzs)
-  | fn σ τ => exact fun j hj zs hzs ↦ h j (hk.trans hj) zs (comp_castLE_trans hys hzs)
-  | _ => trivial
-
 private theorem realize_applyNext {k j : ℕ} {ys : Fin k → M}
     {P : Ty.SyntacticDomain L α (.e ⇒ .t) k}
     {P' : Ty.Domain M W (.e ⇒ .t) Q} (hP : Ty.Realizes S v (.e ⇒ .t) k ys P P') (h : k ≤ j)
@@ -268,10 +240,6 @@ theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) 
     exact ih ha fun k hk ys hys _ x _ ↦ hb k hk ys hys PUnit.unit (Eff.pure _ x) trivial
   | functionalLeft => exact ha n le_rfl xs rfl b b' hb
   | functionalRight => exact hb n le_rfl xs rfl a a' ha
-  | intensionalLeft =>
-    exact ha n le_rfl xs rfl _ (fun _ ↦ b') fun _ hk _ hys _ _ _ ↦ hb.mono S v hk hys
-  | intensionalRight =>
-    exact hb n le_rfl xs rfl _ (fun _ ↦ a') fun _ hk _ hys _ _ _ ↦ ha.mono S v hk hys
   | predicateModification =>
     intro k hk ys hys x c hx j hj zs hzs
     simp only [Mode.readback, Mode.eval, BoundedFormula.realize_inf,
