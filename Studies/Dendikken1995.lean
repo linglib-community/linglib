@@ -38,7 +38,7 @@ the calculus predicts the judgment of every row it covers.
   small clause, by strategy and by placement.
 * `Language.incorporates`, `participleContext`: the voices, `Voice.active` or `Voice.passive`,
   in which a language incorporates its particles overtly, Norwegian's read off the contexts
-  that take the compound participle in `Norwegian.Verb.participle`.
+  that admit the compound participle, `Norwegian.ParticipleContext.Admits`.
 
 ## Implementation notes
 
@@ -50,11 +50,11 @@ alone, and the extracted predicate's trace is taken to be governed by the overtl
 complex as by the reanalysed one, a point the chapter has no data on. Danish has no inner order,
 which the chapter records without deriving, so the Danish rows enter only `rows_prefixed`. The
 Norwegian prefixed forms, *utsparka* after *vart* and not after *har*, are the compound
-participles of the reference grammar, which puts them after *være* and *bli* and not after *ha*
+participles of the reference grammar, which admits them after *være* and *bli* and not after *ha*
 whatever the voice, so the voices Norwegian incorporates in are read off the fragment through
-the auxiliary each voice has in the rows, and the *sparke ut* rows are checked against the forms
-the fragment conjugates. The Bokmål rows were constructed and judged by Arnfinn
-Vonen and Alma Næss for den Dikken; the Nynorsk rows are Åfarli's. The arguments from
+the auxiliary each voice has in the rows, and every form judged in the *sparke ut* rows is checked
+against the participles the fragment conjugates. The Bokmål rows were constructed and judged by
+Arnfinn Vonen and Alma Næss for den Dikken; the Nynorsk rows are Åfarli's. The arguments from
 small-clause constituency, from verb-particle idioms and from the ergativity of the particle,
 and Herslund's observation that Danish incorporation is lexically conditioned, are recorded in
 the rows and not formalized.
@@ -283,18 +283,18 @@ def participleContext (v : Voice) : Norwegian.ParticipleContext :=
   if v = Voice.passive then .copular else .perfect
 
 /-- The voices in which a language incorporates its particle overtly into the verb. English
-never does, (133); Norwegian does where the reference grammar puts the compound participle,
+never does, (133); Norwegian does where the reference grammar admits the compound participle,
 after *bli* and *verte* and not after *ha*, (134)–(135), Swedish in the passive, (136), and
 Danish in the active as well, (138). -/
 def Language.incorporates : Language → Set Voice
   | .english => ∅
-  | .norwegian => {v | (participleContext v).IsCompound}
+  | .norwegian => {v | (participleContext v).Admits .compound}
   | .swedish => {Voice.passive}
   | .danish => Set.univ
 
 instance : ∀ L : Language, DecidablePred (· ∈ L.incorporates)
   | .english => fun _ ↦ isFalse fun h ↦ h
-  | .norwegian => fun v ↦ inferInstanceAs (Decidable (participleContext v).IsCompound)
+  | .norwegian => fun v ↦ inferInstanceAs (Decidable ((participleContext v).Admits .compound))
   | .swedish => fun v ↦ inferInstanceAs (Decidable (v = Voice.passive))
   | .danish => fun _ ↦ isTrue trivial
 
@@ -302,8 +302,7 @@ instance : ∀ L : Language, DecidablePred (· ∈ L.incorporates)
 compound participle follows *bli* and *være* and not *ha*. -/
 theorem norwegian_incorporates : Language.incorporates .norwegian = {Voice.passive} := by
   ext v
-  by_cases h : v = Voice.passive <;>
-    simp [Language.incorporates, participleContext, Norwegian.ParticipleContext.IsCompound, h]
+  by_cases h : v = Voice.passive <;> simp [Language.incorporates, participleContext, h]
 
 /-! ### The rows -/
 
@@ -387,13 +386,14 @@ def verbOf (r : Datum) : Option Norwegian.Verb :=
   | some ⟨_, "(134a)"⟩ | some ⟨_, "(135a)"⟩ => some Norwegian.Verbs.Nynorsk.sparkeUt
   | _ => none
 
-/-- Where the participle of the verb phrase is contiguous, in the inner and prefixed rows, a row
-is judged acceptable exactly when it shows the participle the grammar gives for its auxiliary,
-*sparka ut* after *har* and *utsparka* after *vart*. -/
+/-- Where the participle of the verb phrase is contiguous, in the inner and prefixed rows, a form
+is judged acceptable exactly when it shows a participle its auxiliary admits, *sparka ut* after
+*har* and both *utsparka* and *sparka ut* after *vart*. -/
 theorem rows_participle :
     ∀ r ∈ Examples.all, ∀ v ∈ verbOf r, placementOf r ≠ some .outer →
-      (r.judgment = .acceptable ↔
-        (v.participle (participleContext (voiceOf r))).toList <:+: r.primaryText.toList) := by
+      ∀ s ∈ (r.primaryText, r.judgment) :: r.alternatives,
+        (s.2 = .acceptable ↔ ∃ f, (participleContext (voiceOf r)).Admits f ∧
+          (v.participle f).toList <:+: s.1.toList) := by
   decide +kernel
 
 end Dendikken1995

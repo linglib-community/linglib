@@ -7,46 +7,34 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Norwegian verbs
 
-This file defines the Bokmål verb as a lexical entry, the root `Verb` with its stem and its
-formation, simplex or a verb phrase with a verbal particle. Faarlund, Lie and Vannebo's reference
-grammar calls a preposition without a complement that goes with a verb a verbal particle, *kaste
-bort* 'throw away', and describes the relation of such a verb phrase to the compound verb with
-the same particle as its first member, *bortkaste*. The past participle takes the compound form
-more readily than the other forms, and where the verb is otherwise a verb phrase the compound
-participle is used attributively, *en oppgjort sak*, and after *være* and *bli*, *Saka er
-oppgjort* 'the matter is settled', while after *ha* and *få* the participle stays a verb phrase,
-*Vi har gjort opp saka* 'we have settled the matter'. The entries are the particle verbs whose
-participles the grammar lists and those of den Dikken's Norwegian examples, with the simplex
-verbs they are formed on, conjugated by the grammar's classes.
-
-## Main definitions
-
-* `Norwegian.Verb`: the entry, the root `Verb` with its stem and its formation.
-* `Norwegian.ParticipleContext`, `Norwegian.ParticipleContext.IsCompound`: where a participle
-  stands, and the contexts that take the compound form.
-* `Norwegian.Verb.phraseParticiple`, `Norwegian.Verb.compoundParticiple`,
-  `Norwegian.Verb.participle`: the participle of the verb phrase, the compound participle, and
-  the one a context takes.
-* `Norwegian.Verb.transitive`, `Norwegian.Verb.withParticle`: the transitive entry of a stem,
-  and the verb phrase formed on an entry with a verbal particle.
-* `Norwegian.Verbs.allVerbs`, `Norwegian.Verbs.Nynorsk.sparkeUt`: the Bokmål entries and the
-  Nynorsk one.
-
-## Main results
-
-* `Norwegian.Verb.participle_eq_compoundParticiple`, `participle_of_simplex`: the contexts that
-  take the compound participle, and a simplex verb's one participle.
-* `Norwegian.Verbs.grammar_compound_participles`, `Norwegian.Verbs.gjoereOpp_participle`: the
-  compound participles the grammar lists come out of the rule, and *gjøre opp* has the grammar's
-  two participles.
+This file defines the Norwegian verb as a lexical entry, the root `Verb` with its stem, and the
+verb phrase formed on a verb with a *verbal particle*, a preposition without a complement, as in
+*kaste bort* 'throw away'. The past participle of such a verb phrase is that of the verb phrase,
+*gjort opp*, or the compound with the particle prefixed, *oppgjort*. [The compound stands only
+attributively and after *være* and *bli*, and the participle of the verb phrase everywhere but
+attributively](##Norwegian.ParticipleContext.Admits): *en oppgjort sak*, *Saka er oppgjort* 'the
+matter is settled', but only *Vi har gjort opp saka* 'we have settled the matter' after *ha*.
 
 ## Implementation notes
 
-The entries are Bokmål with the *-et* forms of the first weak class, and Nynorsk *sparke* for
-Åfarli's rows in den Dikken's study. His other Nynorsk verbs have no entry: the grammar's lists
-do not place *klippe*, and his *kjørt* is the Bokmål spelling of Nynorsk *køyrt*. Which verb
-phrases also exist as compound verbs in all their forms, the grammar's three groups, is not
-recorded.
+* A verb phrase is cited with its particle, the free morph its citation form ends in, and the
+  particle is read off the citation form rather than stored beside it.
+* The grammar calls the compound participle after *ha* and *få* unusual and the factors that
+  favour the compound tendencies; the entries take the rule as categorical, as den Dikken's data
+  do. That an attributive participle is never that of the verb phrase is read off the grammar's
+  attributive examples, all of them compound.
+* A particle can change the valency of its verb, *blåse av kampen* 'call off the match' beside
+  intransitive *blåse*; `Norwegian.Verb.withParticle` keeps the valency of the simplex verb, which
+  every verb phrase here shares.
+* The entries are Bokmål, with the *-et* forms of the first weak class, and Åfarli's Nynorsk
+  *sparke ut* of den Dikken's study. The comments locate the forms and classes in Faarlund, Lie
+  and Vannebo (FLV) by page.
+
+## TODO
+
+* The grammar's three groups of verb phrases with a particle, those that exist only as a
+  compound, only as a verb phrase, and as both (FLV pp. 83–84).
+* The present participle, whose compound form is obligatory, *tilskyende* (FLV p. 85).
 
 ## References
 
@@ -60,13 +48,7 @@ namespace Norwegian
 
 open ArgumentStructure Conjugation
 
-/-- A verb is simplex or a verb phrase formed on a simplex verb with a verbal particle. -/
-inductive Formation where
-  | simplex
-  | particle (form : String)
-  deriving DecidableEq, Repr
-
-/-- Where a participle stands: after the perfect auxiliaries *ha* and *få*, after *være* and
+/-- Where a past participle stands: after the perfect auxiliaries *ha* and *få*, after *være* and
 *bli*, or attributively. -/
 inductive ParticipleContext where
   | perfect
@@ -74,70 +56,98 @@ inductive ParticipleContext where
   | attributive
   deriving DecidableEq, Repr, Fintype
 
-/-- A context takes the compound participle of a verb phrase when it is attributive or after
-*være* and *bli*; after *ha* and *få* the participle stays a verb phrase. -/
-def ParticipleContext.IsCompound (c : ParticipleContext) : Prop := c ≠ .perfect
+/-- The past participle of a verb phrase with a particle is that of the verb phrase, the particle
+following it, *gjort opp*, or the compound, the particle prefixed, *oppgjort*. -/
+inductive ParticipleForm where
+  | phrase
+  | compound
+  deriving DecidableEq, Repr, Fintype
 
-instance : DecidablePred ParticipleContext.IsCompound :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+namespace ParticipleContext
 
-/-- A Norwegian verb is the root entry with its stem and its formation. -/
+/-- A context admits the participle of the verb phrase unless it is attributive, and the compound
+unless it follows *ha* or *få*. -/
+def Admits (c : ParticipleContext) : ParticipleForm → Prop  -- FLV p. 86, den Dikken (134), (135)
+  | .phrase => c ≠ .attributive
+  | .compound => c ≠ .perfect
+
+instance (c : ParticipleContext) : DecidablePred c.Admits
+  | .phrase => inferInstanceAs (Decidable (c ≠ _))
+  | .compound => inferInstanceAs (Decidable (c ≠ _))
+
+variable {f : ParticipleForm}
+
+@[simp] theorem admits_perfect_iff : perfect.Admits f ↔ f = .phrase := by cases f <;> decide
+
+@[simp] theorem admits_copular : copular.Admits f := by cases f <;> decide
+
+@[simp] theorem admits_attributive_iff : attributive.Admits f ↔ f = .compound := by
+  cases f <;> decide
+
+end ParticipleContext
+
+/-- A Norwegian verb is the root entry with its stem. -/
 structure Verb extends _root_.Verb where
   /-- The stem of the simplex verb. -/
   stem : Stem
-  /-- The formation. -/
-  formation : Formation := .simplex
   deriving BEq
 
 namespace Verb
 
-variable (v : Verb)
+variable (v : Verb) (p : String)
 
-/-- The participle of the verb phrase, the simplex participle followed by its particle, *gjort
-opp*. -/
-def phraseParticiple : String :=
-  match v.formation with
-  | .simplex => v.stem.participle
-  | .particle p => v.stem.participle ++ " " ++ p
+/-- The particle of a verb phrase is the free morph its citation form ends in; a simplex verb has
+none. -/
+def particle? : Option String :=
+  match v.morphs.getLast? with
+  | some ⟨.free, p⟩ => some p
+  | _ => none
 
-/-- The compound participle, the particle prefixed to the simplex participle, *oppgjort*. -/
-def compoundParticiple : String :=
-  match v.formation with
-  | .simplex => v.stem.participle
-  | .particle p => p ++ v.stem.participle
+/-- The past participle of the form `f`, the simplex participle followed by the particle or
+prefixed with it; a simplex verb has one participle. -/
+def participle (f : ParticipleForm) : String :=
+  match v.particle?, f with
+  | none, _ => v.stem.participle
+  | some p, .phrase => v.stem.participle ++ " " ++ p
+  | some p, .compound => p ++ v.stem.participle
 
-/-- The participle a context takes: the compound one attributively and after *være* and *bli*,
-the verb phrase after *ha* and *få*. -/
-def participle : ParticipleContext → String
-  | .perfect => v.phraseParticiple
-  | .copular | .attributive => v.compoundParticiple
-
-variable {v}
-
-theorem participle_perfect : v.participle .perfect = v.phraseParticiple := rfl
-
-theorem participle_eq_compoundParticiple {c : ParticipleContext} (h : c.IsCompound) :
-    v.participle c = v.compoundParticiple := by
-  cases c <;> first | exact absurd rfl h | rfl
-
-/-- A simplex verb has one participle in every context. -/
-theorem participle_of_simplex (h : v.formation = .simplex) (c : ParticipleContext) :
-    v.participle c = v.stem.participle := by
-  cases c <;> simp [participle, phraseParticiple, compoundParticiple, h]
-
-/-- `transitive s` is the transitive entry with the stem `s`. -/
+/-- `transitive s` is the transitive simplex verb with the stem `s`. -/
 def transitive (s : Stem) : Verb :=
   { morphs := [.root s.infinitive], valency := .ofFrame ArgumentFrame.np, stem := s }
 
-/-- `v.withParticle p` is the verb phrase formed on `v` with the verbal particle `p`. -/
-def withParticle (v : Verb) (p : String) : Verb :=
-  { v with morphs := v.morphs ++ [.free p], formation := .particle p }
+/-- `v.withParticle p` is the verb phrase formed on `v` with the particle `p`, with the valency of
+`v`. -/
+def withParticle : Verb := { v with morphs := v.morphs ++ [.free p] }
 
-theorem compoundParticiple_withParticle (v : Verb) (p : String) :
-    (v.withParticle p).compoundParticiple = p ++ v.stem.participle := rfl
+@[simp] theorem particle?_transitive (s : Stem) : (transitive s).particle? = none := rfl
 
-theorem phraseParticiple_withParticle (v : Verb) (p : String) :
-    (v.withParticle p).phraseParticiple = v.stem.participle ++ " " ++ p := rfl
+@[simp] theorem particle?_withParticle : (v.withParticle p).particle? = some p := by
+  simp [particle?, withParticle, Morphology.Morph.free]
+
+@[simp] theorem stem_withParticle : (v.withParticle p).stem = v.stem := rfl
+
+variable {v}
+
+theorem participle_of_particle?_eq_none (h : v.particle? = none) (f : ParticipleForm) :
+    v.participle f = v.stem.participle := by
+  simp [participle, h]
+
+@[simp] theorem participle_withParticle_phrase :
+    (v.withParticle p).participle .phrase = v.stem.participle ++ " " ++ p := by
+  simp [participle]
+
+@[simp] theorem participle_withParticle_compound :
+    (v.withParticle p).participle .compound = p ++ v.stem.participle := by
+  simp [participle]
+
+theorem participle_phrase_ne_compound :
+    (v.withParticle p).participle .phrase ≠ (v.withParticle p).participle .compound := by
+  intro h
+  have := congrArg String.length h
+  simp only [participle_withParticle_phrase, participle_withParticle_compound,
+    String.length_append] at this
+  have : " ".length = 1 := rfl
+  omega
 
 end Verb
 
@@ -146,36 +156,36 @@ namespace Verbs
 /-! ### Simplex verbs -/
 
 /-- *kaste* 'throw', the paradigm verb of the first weak class. -/
-def kaste : Verb := .transitive (weak1 .bokmaal "kaste")
+def kaste : Verb := .transitive (weak1 .bokmaal "kaste")  -- FLV p. 483
 
 /-- *sparke* 'kick', of the first weak class like the other stems in *-rk*. -/
-def sparke : Verb := .transitive (weak1 .bokmaal "sparke")
+def sparke : Verb := .transitive (weak1 .bokmaal "sparke")  -- FLV p. 482
 
-/-- *klippe* 'cut', of the first weak class like the other stems in *-pp*. -/
-def klippe : Verb := .transitive (weak1 .bokmaal "klippe")
+/-- *klippe* 'cut', of the first weak class, as stems in *-pp* often are. -/
+def klippe : Verb := .transitive (weak1 .bokmaal "klippe")  -- FLV p. 483
 
 /-- *kjøre* 'drive', of the second weak class with *-te*, a stem in a long vowel and a single
 consonant. -/
-def kjoere : Verb := .transitive (weak2a "kjøre")
+def kjoere : Verb := .transitive (weak2a "kjøre")  -- FLV p. 484
 
 /-- *sende* 'send', of the second weak class with *-te*, a stem in *-nd*. -/
-def sende : Verb := .transitive (weak2a "sende")
+def sende : Verb := .transitive (weak2a "sende")  -- FLV p. 484
 
 /-- *sette* 'set', of the second weak class with *-te* and a vowel change, *satte*, *satt*. -/
-def sette : Verb := .transitive ⟨"sette", "setter", "satte", "satt"⟩
+def sette : Verb := .transitive ⟨"sette", "setter", "satte", "satt"⟩  -- FLV p. 484
 
 /-- *gjøre* 'do', of the second weak class with *-de* and a vowel change, *gjør*, *gjorde*,
 *gjort*. -/
-def gjoere : Verb := .transitive ⟨"gjøre", "gjør", "gjorde", "gjort"⟩
+def gjoere : Verb := .transitive ⟨"gjøre", "gjør", "gjorde", "gjort"⟩  -- FLV p. 485
 
 /-- *bygge* 'build', of the second weak class with *-de*, a stem in *-gg*. -/
-def bygge : Verb := .transitive (weak2b "bygge")
+def bygge : Verb := .transitive (weak2b "bygge")  -- FLV p. 485
 
 /-- *leie* 'rent', of the second weak class with *-de*, a stem in *-ei*. -/
-def leie : Verb := .transitive (weak2b "leie")
+def leie : Verb := .transitive (weak2b "leie")  -- FLV p. 485
 
 /-- *kle* 'dress', of the second weak class with *-dde*, a stem in a single vowel. -/
-def kle : Verb := .transitive (weak2c "kle")
+def kle : Verb := .transitive (weak2c "kle")  -- FLV p. 485
 
 /-! ### Verb phrases with a verbal particle -/
 
@@ -217,27 +227,25 @@ def allVerbs : List Verb :=
   [kaste, sparke, klippe, kjoere, sende, sette, gjoere, bygge, leie, kle, kasteBort, sparkeUt,
     klippeAv, kjoereBort, sendeUt, setteNed, setteSammen, gjoereOpp, byggeUt, leieUt, klePaa]
 
-/-- The compound participles the grammar lists for *gjøre opp*, *kle på*, *sette sammen*,
-*bygge ut*, *leie ut* and *kaste bort* come out of the rule, the last in the *-et* form of the
-grammar's *en bortkastet dag*. -/
-theorem grammar_compound_participles :
-    [gjoereOpp, klePaa, setteSammen, byggeUt, leieUt, kasteBort].map Verb.compoundParticiple =
+/-- The compound participles the grammar lists come out of the rule, *bortkastet* in the *-et*
+form of its *en bortkastet dag*. -/
+theorem grammar_compound_participles :  -- FLV pp. 85–86
+    [gjoereOpp, klePaa, setteSammen, byggeUt, leieUt, kasteBort].map (·.participle .compound) =
       ["oppgjort", "påkledd", "sammensatt", "utbygd", "utleid", "bortkastet"] := by
   decide
 
-/-- *gjøre opp* has the grammar's two participles, *Vi har gjort opp saka* after *ha* and *Saka
-er oppgjort* after *være*. -/
-theorem gjoereOpp_participle :
-    gjoereOpp.participle .perfect = "gjort opp" ∧ gjoereOpp.participle .copular = "oppgjort" := by
+/-- *gjøre opp* has the two participles of the grammar's *Vi har gjort opp saka* and *Saka er
+oppgjort*. -/
+theorem gjoereOpp_participle :  -- FLV p. 86
+    gjoereOpp.participle .phrase = "gjort opp" ∧ gjoereOpp.participle .compound = "oppgjort" := by
   decide
 
 /-! ### Nynorsk -/
 
 namespace Nynorsk
 
-/-- Nynorsk *sparke* 'kick', of the first weak class, *sparka*, as in the grammar's *Han vart
-sparka*. -/
-def sparke : Verb := .transitive (weak1 .nynorsk "sparke")
+/-- Nynorsk *sparke* 'kick', of the first weak class, *sparka*. -/
+def sparke : Verb := .transitive (weak1 .nynorsk "sparke")  -- FLV p. 493
 
 /-- Nynorsk *sparke ut* 'kick out', Åfarli's *sparka ut* and *utsparka*. -/
 def sparkeUt : Verb := sparke.withParticle "ut"
