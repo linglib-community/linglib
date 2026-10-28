@@ -1,7 +1,7 @@
 module
 
 public import Studies.Rett2015
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Mathlib.Probability.Distributions.Gaussian.Real
 
 /-!

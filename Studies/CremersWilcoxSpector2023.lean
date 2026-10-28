@@ -4,6 +4,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Module
 public import Linglib.Core.Probability.UniformOn
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Pragmatics.RSA.QUD
 public import Linglib.Semantics.Exhaustification.Finite
 

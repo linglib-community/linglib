@@ -3,6 +3,7 @@ module
 public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Basic
+public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Semantics.Degree.Comparison
