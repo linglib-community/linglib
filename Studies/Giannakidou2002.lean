@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.SubintervalProperty
+public import Linglib.Semantics.Polarity.Licensing
 public import Studies.Karttunen1974
 public import Linglib.Fragments.English.TemporalConnectives
 public import Linglib.Fragments.English.PolarityItems
