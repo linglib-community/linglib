@@ -187,7 +187,7 @@ theorem not_wellFormed_comitative : ¬ WellFormed [⟨_, .case .com⟩] := by
 /-! ### Realization -/
 
 /-- Finnish nominals distinguish the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 /-- The endings of the case `c` in the number `num`, where in the plural the genitive is -en, or
 -den or -tten (§13.1.2), the accusative -dät (§13.3.1), the partitive -A or -tA and the illative

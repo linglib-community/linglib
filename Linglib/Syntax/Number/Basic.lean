@@ -124,6 +124,11 @@ structure System where
 
 namespace System
 
+/-- The system of the singular and the plural alone. -/
+def singularPlural : System := { values := {.singular, .plural} }
+
+@[simp] theorem singularPlural_values : singularPlural.values = {.singular, .plural} := rfl
+
 /-- A system's determinate values are an initial segment of the singular, dual and trial when,
 with the value of a cardinality, it has the value of every smaller positive one, as the dual
 requires the singular and the trial the dual ([harbour-2014] Table 1). -/

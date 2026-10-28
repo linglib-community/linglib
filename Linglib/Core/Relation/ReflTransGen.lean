@@ -118,6 +118,12 @@ variable [DecidableEq α] {step : α → Finset α} {s : Finset α} {a b : α}
 /-- One round of closing a set under a successor function. -/
 def closeStep (step : α → Finset α) (S : Finset α) : Finset α := S ∪ S.biUnion step
 
+@[simp] theorem mem_closeStep {S : Finset α} :
+    b ∈ closeStep step S ↔ b ∈ S ∨ ∃ x ∈ S, b ∈ step x := by
+  simp [closeStep]
+
+theorem subset_closeStep (S : Finset α) : S ⊆ closeStep step S := Finset.subset_union_left
+
 /-- The nodes reached from `a` along `step`, when every successor lies in the finite set `s`. -/
 def reach (step : α → Finset α) (s : Finset α) (a : α) : Finset α :=
   (closeStep step)^[(insert a s).card] {a}

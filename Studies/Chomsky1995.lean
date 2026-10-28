@@ -273,11 +273,11 @@ instance (x : t.val.Positions) : Decidable (IsVisible (HeadDaughterAt t) x) :=
 instance : DecidablePred (· ∈ bareCCommand (HeadDaughterAt t)) := fun _ ↦
   decidable_of_iff' _ mem_bareCCommand
 
-/-- The pronounced terminals of `t`, the positions of its lexical leaves; traces are exempt
-from the LCA. -/
-def pronounced : Set t.val.Positions := {p | (t.termAt p).token?.isSome}
+/-- The pronounced terminals of `t`, the positions of its heads; traces are exempt from the
+LCA. -/
+def pronounced : Set t.val.Positions := {p | t.IsHeadAt p}
 
-instance : DecidablePred (· ∈ pronounced t) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred (· ∈ pronounced t) := fun p ↦ inferInstanceAs (Decidable (t.IsHeadAt p))
 
 theorem not_linearizes (ht : ¬ IsMax (⊥ : t.val.Positions)) :
     ¬ Linearizes (bareCCommand (HeadDaughterAt t)) {p | IsMax p} :=

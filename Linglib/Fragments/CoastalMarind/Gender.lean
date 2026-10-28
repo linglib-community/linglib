@@ -54,7 +54,7 @@ inductive Gender where
   deriving DecidableEq, Repr, Fintype
 
 /-- Coastal Marind distinguishes the singular and the plural. -/
-def numberSystem : Number.System := { values := {.singular, .plural} }
+def numberSystem : Number.System := .singularPlural
 
 /-- The distal demonstrative *Vpe*, by gender and number ([olsson-2021] Table 4.2). -/
 def demonstrative (g : Gender) : numberSystem.values → String :=
