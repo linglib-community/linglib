@@ -260,7 +260,7 @@ def ex41pm : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "nonveridical"), ("test", "plain")] }
+    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "doubt"), ("test", "plain")] }
 
 def ex41mx : Datum :=
   { id := "giannakidou2002_ex41mx"
@@ -273,7 +273,7 @@ def ex41mx : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "nonveridical"), ("test", "plain")] }
+    paperFeatures := [("connective", "mexri"), ("aspect", "perfect"), ("eventuality", "eventive"), ("licenser", "doubt"), ("test", "plain")] }
 
 def ex42pm : Datum :=
   { id := "giannakidou2002_ex42pm"
@@ -286,7 +286,20 @@ def ex42pm : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "nonveridical"), ("test", "plain")] }
+    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "question"), ("test", "plain")] }
+
+def ex42mx : Datum :=
+  { id := "giannakidou2002_ex42mx"
+    source := ⟨"giannakidou-2002", "(42)"⟩
+    reportedIn := none
+    language := "mode1248"
+    primaryText := "Jati na pantreftis mexri otan prepi anagastika na to kanis?"
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "question"), ("test", "plain")] }
 
 def ex48 : Datum :=
   { id := "giannakidou2002_ex48"
@@ -639,6 +652,6 @@ def ex71c : Datum :=
     readings := []
     paperFeatures := [("diagnostic", "imperative"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation")] }
 
-def all : List Datum := [ex1, ex2, ex3, ex4, ex8a, ex8b, ex22, ex61a, ex61b, ex32, ex33, ex34, ex35, ex36, ex36pos, ex37, ex38, ex40, ex41pm, ex41mx, ex42pm, ex48, ex49, ex51, ex53, ex57, ex72, ex77, ex43, ex44, ex45, ex46, ex46pos, ex47a, ex47a2, ex47b, ex67a, ex67b, ex67c, ex68a, ex68b, ex68c, ex69, ex70b, ex70c, ex71a, ex71b, ex71c]
+def all : List Datum := [ex1, ex2, ex3, ex4, ex8a, ex8b, ex22, ex61a, ex61b, ex32, ex33, ex34, ex35, ex36, ex36pos, ex37, ex38, ex40, ex41pm, ex41mx, ex42pm, ex42mx, ex48, ex49, ex51, ex53, ex57, ex72, ex77, ex43, ex44, ex45, ex46, ex46pos, ex47a, ex47a2, ex47b, ex67a, ex67b, ex67c, ex68a, ex68b, ex68c, ex69, ex70b, ex70c, ex71a, ex71b, ex71c]
 
 end Giannakidou2002.Examples
