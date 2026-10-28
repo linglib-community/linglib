@@ -185,23 +185,21 @@ def FirstOrderConstant.readback : {ty : Ty} → (n : ℕ) → FirstOrderConstant
 /-- The readback of a term in the syntactic model, given readbacks of its constants, with `n`
 bound variables in scope and a valuation `ρ` of its variables in terms. An abstraction reads back
 to a function at every larger number of bound variables, under `ρ` carried there and updated at
-its variable. Worlds are trivial in the syntactic model, so an abstraction over a world variable
-reads back to a function that ignores its world. -/
+its variable. -/
 def Term.readback {K : Ty → Type*} (R : ∀ {ty : Ty} (n : ℕ), K ty → Ty.SyntacticDomain L α ty n)
-    (n : ℕ) (ρ : ℕ → L.Term (α ⊕ Fin n)) : {ty : Ty} → Term K ty → Ty.SyntacticDomain L α ty n
+    (n : ℕ) (ρ : ℕ → L.Term (α ⊕ Fin n)) :
+    {ty : Ty} → Term individualIndices K ty → Ty.SyntacticDomain L α ty n
   | _, .const c => R n c
   | _, .var i => ρ i
   | _, .lam i b => fun k hk x ↦
       readback R k (Function.update (fun j ↦ (ρ j).relabel (Sum.map id (Fin.castLE hk))) i x) b
-  | _, .wvar _ => PUnit.unit
-  | _, .wlam _ b => fun k hk _ ↦ readback R k (fun j ↦ (ρ j).relabel (Sum.map id (Fin.castLE hk))) b
   | _, .comp μ l r => μ.readback (readback R n ρ l) (readback R n ρ r)
 
 end Readback
 
 /-- The first-order formula a logical form over the first-order constants reads back to, whose
 free variables are the logical form's variables. -/
-def Term.toFormula (u : Term (FirstOrderConstant L) .t) : L.Formula ℕ :=
+def Term.toFormula (u : Term individualIndices (FirstOrderConstant L) .t) : L.Formula ℕ :=
   u.readback FirstOrderConstant.readback 0 (fun i ↦ Language.Term.var (.inl i)) 0 le_rfl
 
 /-! ### Soundness of the readback -/
@@ -289,26 +287,22 @@ theorem Term.realizes_readback {K : Ty → Type*}
     {R : ∀ {ty : Ty} (n : ℕ), K ty → Ty.SyntacticDomain L α ty n}
     {I : ∀ {ty : Ty}, K ty → Ty.Domain M W ty Q}
     (hR : ∀ {ty : Ty} (c : K ty) (n : ℕ) (xs : Fin n → M), Ty.Realizes S v ty n xs (R n c) (I c))
-    {ty : Ty} (u : Term K ty) {n : ℕ} {ρ : ℕ → L.Term (α ⊕ Fin n)} {xs : Fin n → M}
-    {g : Assignment M} (gw : Assignment W)
-    (hρ : ∀ i, Ty.Realizes (W := W) (Q := Q) S v .e n xs (ρ i) (g i)) :
-    Ty.Realizes S v ty n xs (u.readback R n ρ) (u.eval I g gw) := by
+    {ty : Ty} (u : Term individualIndices K ty) {n : ℕ} {ρ : ℕ → L.Term (α ⊕ Fin n)}
+    {xs : Fin n → M}
+    {g : Assignment M} (hρ : ∀ i, Ty.Realizes (W := W) (Q := Q) S v .e n xs (ρ i) (g i)) :
+    Ty.Realizes S v ty n xs (u.readback R n ρ) (u.eval I g) := by
   let := S
-  induction u generalizing n ρ xs g gw with
+  induction u generalizing n ρ xs g with
   | const c => exact hR c n xs
   | var i => exact hρ i
   | lam i b ih =>
     intro k hk ys hys x a hx
-    refine ih gw fun j ↦ ?_
+    refine ih fun j ↦ ?_
     rcases eq_or_ne j i with rfl | hji
     · simpa using hx
     · simp only [Function.update_of_ne hji]
       exact (realize_relabel_castLE S v hk (ρ j) ys).trans (hys ▸ hρ j)
-  | wvar _ => trivial
-  | wlam i b ih =>
-    intro k hk ys hys _ a _
-    exact ih _ fun j ↦ (realize_relabel_castLE S v hk (ρ j) ys).trans (hys ▸ hρ j)
-  | comp μ l r ihl ihr => exact μ.realizes_readback S v (ihl gw hρ) (ihr gw hρ)
+  | comp μ l r ihl ihr => exact μ.realizes_readback S v (ihl hρ) (ihr hρ)
 
 /-- The readbacks of the first-order constants realize their denotations in a composition
 model at a world. -/
@@ -369,11 +363,12 @@ theorem FirstOrderConstant.realizes_readback (m : Model L) (w : m.W) (v : α →
 
 /-- A first-order logical form denotes, at a world of a composition model and under an
 assignment, the realization of its readback there. -/
-theorem Term.realizeAt_toFormula (m : Model L) (w : m.W) (u : Term (FirstOrderConstant L) .t)
-    (g : Assignment m.E) (gw : Assignment m.W) :
-    u.toFormula.RealizeAt m.interp w g ↔ u.eval (FirstOrderConstant.interp m w) g gw :=
+theorem Term.realizeAt_toFormula (m : Model L) (w : m.W)
+    (u : Term individualIndices (FirstOrderConstant L) .t)
+    (g : Assignment m.E) :
+    u.toFormula.RealizeAt m.interp w g ↔ u.eval (FirstOrderConstant.interp m w) g :=
   Term.realizes_readback (m.interp w) g (FirstOrderConstant.realizes_readback m w g) u
-    (n := 0) (ρ := fun i ↦ Language.Term.var (.inl i)) (xs := default) (g := g) gw (fun _ ↦ rfl) 0
+    (n := 0) (ρ := fun i ↦ Language.Term.var (.inl i)) (xs := default) (g := g) (fun _ ↦ rfl) 0
     le_rfl default (Subsingleton.elim _ _)
 
 end Soundness
@@ -400,9 +395,10 @@ variable {L : Language.{u, u}} {C : Type} {X : Type*}
 variable {words : X → Option (Σ ty, FirstOrderConstant L ty)}
 
 theorem holdsAt_iff_eval (m : Model L) (w : m.W) {t : Tree C X}
-    {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
+    {u : Term individualIndices (FirstOrderConstant L) .t}
+    (h : Tree.translate individualIndices words t = some ⟨.t, u⟩)
     (g : Assignment m.E) :
-    HoldsAt (m.lexicon words w) g t ↔ u.eval (FirstOrderConstant.interp m w) g default := by
+    HoldsAt (m.lexicon words w) g t ↔ u.eval (FirstOrderConstant.interp m w) g := by
   unfold HoldsAt Model.lexicon
   rw [Tree.interp_eq_eval_translate (FirstOrderConstant.interp m w), h]
   simp
@@ -410,15 +406,18 @@ theorem holdsAt_iff_eval (m : Model L) (w : m.W) {t : Tree C X}
 /-- A tree that translates to a logical form of type `t` holds where the readback of the
 logical form is realized. -/
 theorem holdsAt_iff_realizeAt (m : Model L) (w : m.W) {t : Tree C X}
-    {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
+    {u : Term individualIndices (FirstOrderConstant L) .t}
+    (h : Tree.translate individualIndices words t = some ⟨.t, u⟩)
     (g : Assignment m.E) :
     HoldsAt (m.lexicon words w) g t ↔ u.toFormula.RealizeAt m.interp w g :=
-  (holdsAt_iff_eval m w h g).trans (Term.realizeAt_toFormula m w u g default).symm
+  (holdsAt_iff_eval m w h g).trans (Term.realizeAt_toFormula m w u g).symm
 
 /-- First-order consequence between the readbacks of two trees yields entailment between the
 trees in every composition model, at every world and under every assignment. -/
-theorem holdsAt_of_models {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderConstant L) .t}
-    (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩)
+theorem holdsAt_of_models {t₁ t₂ : Tree C X}
+    {u₁ u₂ : Term individualIndices (FirstOrderConstant L) .t}
+    (h₁ : Tree.translate individualIndices words t₁ = some ⟨.t, u₁⟩)
+    (h₂ : Tree.translate individualIndices words t₂ = some ⟨.t, u₂⟩)
     (hmod : ∀ (M : Type) (S : L.Structure M) (v : ℕ → M),
       @Formula.Realize L M S ℕ u₁.toFormula v → @Formula.Realize L M S ℕ u₂.toFormula v)
     (m : Model L) (w : m.W) (g : Assignment m.E) :
@@ -446,8 +445,10 @@ private theorem modelEmpty (M : Type) [L₀.Structure M] : M ⊨ (∅ : L₀.The
 
 /-- Over composition models with nonempty domains, entailment between two trees is mathlib's
 `⊨ᵇ` between their readbacks over the empty theory. -/
-theorem models_imp_iff_entails {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderConstant L₀) .t}
-    (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩) :
+theorem models_imp_iff_entails {t₁ t₂ : Tree C X}
+    {u₁ u₂ : Term individualIndices (FirstOrderConstant L₀) .t}
+    (h₁ : Tree.translate individualIndices words t₁ = some ⟨.t, u₁⟩)
+    (h₂ : Tree.translate individualIndices words t₂ = some ⟨.t, u₂⟩) :
     (∅ : L₀.Theory) ⊨ᵇ u₁.toFormula.imp u₂.toFormula ↔
       ∀ (m : Model L₀), Nonempty m.E → ∀ (w : m.W) (g : Assignment m.E),
         HoldsAt (m.lexicon words w) g t₁ → HoldsAt (m.lexicon words w) g t₂ := by
@@ -469,8 +470,8 @@ theorem models_imp_iff_entails {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOr
 nonempty domain iff every finite subfamily is. The nontrivial direction is mathlib's compactness
 theorem `Theory.isSatisfiable_iff_isFinitelySatisfiable`. -/
 theorem holdsAt_compactness {ι : Type} {trees : ι → Tree C X}
-    {us : ι → Term (FirstOrderConstant L₀) .t}
-    (hc : ∀ i, Tree.translate words (trees i) = some ⟨.t, us i⟩)
+    {us : ι → Term individualIndices (FirstOrderConstant L₀) .t}
+    (hc : ∀ i, Tree.translate individualIndices words (trees i) = some ⟨.t, us i⟩)
     (hcl : ∀ i, (us i).toFormula.freeVarFinset = ∅) :
     (∃ (m : Model L₀) (_ : Nonempty m.E) (w : m.W) (g : Assignment m.E),
         ∀ i, HoldsAt (m.lexicon words w) g (trees i)) ↔

@@ -105,42 +105,30 @@ where its daughters are and the function among them is defined at its argument. 
 def Interpretation.partial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) :
     Interpretation K where
   D ty := Part (Ty.PDomain E W ty S)
-  Var := E
+  Val ty := Ty.PDomain E W ty S
   const := I
   var x := Part.some x
   lam f := Part.some f
-  WVar := W
-  wvar v := Part.some v
-  wlam f := Part.some f
   mode m := m.evalPartial
 
-/-- The partial denotation of a term under a partial interpretation of the constants and
-assignments of the variables and world variables. -/
-def Term.evalPartial {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S))
-    (g : Assignment E) (gw : Assignment W) {ty : Ty} (t : Term K ty) :
-    Part (Ty.PDomain E W ty S) :=
-  t.realize (.partial I) g gw
+/-- The partial denotation of a term under a partial interpretation of the constants and an
+assignment. -/
+def Term.evalPartial {Γ : ℕ → Ty} {K : Ty → Type*}
+    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : ∀ n, Ty.PDomain E W (Γ n) S)
+    {ty : Ty} (t : Term Γ K ty) : Part (Ty.PDomain E W ty S) :=
+  t.realize (.partial I) g
 
-section EvalPartial
-
-variable {K : Ty → Type*} (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : Assignment E)
-  (gw : Assignment W)
-
-@[simp] theorem Term.evalPartial_lam (n : ℕ) {τ : Ty} (b : Term K τ) :
-    (Term.lam n b).evalPartial I g gw = Part.some fun x ↦ b.evalPartial I (g[n ↦ x]) gw :=
+@[simp] theorem Term.evalPartial_lam {Γ : ℕ → Ty} {K : Ty → Type*}
+    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : ∀ n, Ty.PDomain E W (Γ n) S)
+    (n : ℕ) {τ : Ty} (b : Term Γ K τ) :
+    (Term.lam n b).evalPartial I g = Part.some fun x ↦ b.evalPartial I (g[n ↦ x]) :=
   rfl
 
-@[simp] theorem Term.evalPartial_wlam (n : ℕ) {τ : Ty} (b : Term K τ) :
-    (Term.wlam n b).evalPartial I g gw = Part.some fun v ↦ b.evalPartial I g (gw[n ↦ v]) :=
+@[simp] theorem Term.evalPartial_comp {Γ : ℕ → Ty} {K : Ty → Type*}
+    (I : ∀ {ty : Ty}, K ty → Part (Ty.PDomain E W ty S)) (g : ∀ n, Ty.PDomain E W (Γ n) S)
+    {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) (l : Term Γ K σ₁) (r : Term Γ K σ₂) :
+    (Term.comp m l r).evalPartial I g = m.evalPartial (l.evalPartial I g) (r.evalPartial I g) :=
   rfl
-
-@[simp] theorem Term.evalPartial_comp {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) (l : Term K σ₁)
-    (r : Term K σ₂) :
-    (Term.comp m l r).evalPartial I g gw =
-      m.evalPartial (l.evalPartial I g gw) (r.evalPartial I g gw) :=
-  rfl
-
-end EvalPartial
 
 end Evaluation
 
@@ -319,19 +307,17 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
 def LiftsConst (ty : Ty) (c : Id (Ty.Domain E W ty S)) (c' : Part (Ty.PDomain E W ty S)) : Prop :=
   ∃ y, c' = Part.some y ∧ Ty.Lifts ty c y
 
-theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty S)) ty}
-    {u' : Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty} (hu : Term.Rel LiftsConst u u')
-    (g : Assignment E) (gw : Assignment W) :
-    ∃ z, u'.evalPartial (fun c ↦ c) g gw = Part.some z ∧
-      Ty.Lifts ty (u.eval (fun c ↦ c) g gw) z :=
-  hu.realize (A := .total fun c ↦ c) (B := .partial fun c ↦ c)
-    (fun ty x (y : Part (Ty.PDomain E W ty S)) ↦ LiftsConst ty x y) (· = ·) (· = ·)
-    (fun _ _ hc ↦ hc) (fun x _ h ↦ by subst h; exact ⟨x, rfl, rfl⟩)
-    (fun _ f' h ↦ ⟨f', rfl, fun x y hxy ↦ h x y hxy⟩) (fun x _ h ↦ by subst h; exact ⟨x, rfl, rfl⟩)
-    (fun _ f' h ↦ ⟨f', rfl, fun x y hxy ↦ h x y hxy⟩)
+theorem Term.Rel.lifts {Γ : ℕ → Ty} {ty : Ty} {u : Term Γ (fun ty ↦ Id (Ty.Domain E W ty S)) ty}
+    {u' : Term Γ (fun ty ↦ Part (Ty.PDomain E W ty S)) ty} (h : Term.Rel LiftsConst u u')
+    {g : ∀ n, Ty.Domain E W (Γ n) S} {g' : ∀ n, Ty.PDomain E W (Γ n) S}
+    (hg : ∀ n, Ty.Lifts (Γ n) (g n) (g' n)) :
+    ∃ z, u'.evalPartial (fun c ↦ c) g' = Part.some z ∧ Ty.Lifts ty (u.eval (fun c ↦ c) g) z :=
+  h.realize (A := .total fun c ↦ c) (B := .partial fun c ↦ c)
+    (fun ty x (y : Part (Ty.PDomain E W ty S)) ↦ LiftsConst ty x y) Ty.Lifts (fun _ _ hc ↦ hc)
+    (fun _ y h ↦ ⟨y, rfl, h⟩) (fun _ f' h ↦ ⟨f', rfl, fun x y hxy ↦ h x y hxy⟩)
     (fun m _ _ _ _ ⟨_, hzl, hll⟩ ⟨_, hzr, hlr⟩ ↦ by
       subst hzl hzr; exact m.lifts_evalPartial hll hlr)
-    (fun _ ↦ rfl) fun _ ↦ rfl
+    hg
 
 variable {L : Type*} {lex : L → Option (Denotation E W Id S)}
 
@@ -350,7 +336,7 @@ namespace PhraseStructure.Tree
 open Montague
 open scoped Assignment
 
-variable {E W : Type} [Inhabited W] {S : Sorts}
+variable {E W : Type} {S : Sorts}
 
 /-! ### Partial interpretation -/
 
@@ -364,15 +350,15 @@ binary node what the mode its daughters' types select composes, a trace the valu
 a binder the partial function abstracting over its index in the body. -/
 def interpPartial (lex : L → Option (PDenotation E W S)) (g : Assignment E) (t : Tree C L) :
     Option (PDenotation E W S) :=
-  (translate (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex t).map fun d ↦
-    ⟨d.1, d.2.evalPartial (fun c ↦ c) g default⟩
+  (translate individualIndices (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex t).map fun d ↦
+    ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩
 
 private theorem map_bind_combine (g : Assignment E)
-    (t₁ t₂ : Option (Σ ty, Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty)) :
+    (t₁ t₂ : Option (Σ ty, Term individualIndices (fun ty ↦ Part (Ty.PDomain E W ty S)) ty)) :
     (t₁.bind fun d₁ ↦ t₂.bind fun d₂ ↦ Mode.combine? (fun m l r ↦ .comp m l r) d₁ d₂).map
-        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g default⟩ : PDenotation E W S)) =
-      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g default⟩).bind fun d₁ ↦
-        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g default⟩).bind fun d₂ ↦
+        (fun d ↦ (⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩ : PDenotation E W S)) =
+      (t₁.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₁ ↦
+        (t₂.map fun d ↦ ⟨d.1, d.2.evalPartial (fun c ↦ c) g⟩).bind fun d₂ ↦
           Mode.combine? Mode.evalPartial d₁ d₂ := by
   rcases t₁ with _ | ⟨τ₁, u₁⟩ <;> rcases t₂ with _ | ⟨τ₂, u₂⟩ <;> try rfl
   simp only [Option.bind_some, Option.map_some, Mode.combine?, Option.map_map]
@@ -408,7 +394,8 @@ variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
     interpPartial lex g (.bind n c body) = (interpPartial lex g body).map fun d ↦
       ⟨.fn .e d.1, Part.some fun x ↦ valueAtPartial d.1 (interpPartial lex (g[n ↦ x]) body)⟩ := by
   simp only [interpPartial, translate_bind, Option.map_map]
-  rcases translate (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex body with _ | ⟨τ, b⟩
+  rcases translate individualIndices (K := fun ty ↦ Part (Ty.PDomain E W ty S)) lex body with
+    _ | ⟨τ, b⟩
   · rfl
   · simp [valueAtPartial]
 
@@ -466,8 +453,8 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
     cases hl with | @mk ty x y hxy => exact ⟨x, hd, y, rfl, hxy⟩
   obtain ⟨⟨τ, u'⟩, ht', rfl⟩ := Option.map_eq_some_iff.1 h
   obtain ⟨u, hu, hr⟩ := translate_rel lex hrel t ht'
-  obtain ⟨z, hz, hl⟩ := hr.lifts g default
-  refine ⟨⟨τ, u.eval (fun c ↦ c) g default⟩, ?_, ?_⟩
+  obtain ⟨z, hz, hl⟩ := hr.lifts (g := g) (g' := g) fun _ ↦ rfl
+  refine ⟨⟨τ, u.eval (fun c ↦ c) g⟩, ?_, ?_⟩
   · simp [Tree.interp, hu, evalAt]; rfl
   · simp only [hz]
     exact .mk hl

@@ -48,12 +48,8 @@ structure Model (L : Language.{u, v}) where
   E : Type
   /-- The worlds index the interpretations. -/
   W : Type
-  /-- A designated world, the value the default assignment gives every world variable. -/
-  [inhabited : Inhabited W]
   /-- At each world a structure interprets the signature. -/
   interp : W → L.Structure E
-
-attribute [instance] Model.inhabited
 
 variable {L : Language.{u, v}}
 

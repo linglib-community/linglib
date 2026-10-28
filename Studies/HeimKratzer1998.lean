@@ -273,7 +273,7 @@ inductive Denotes (lex : L → Option (Denotation E W)) :
       (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) : Denotes lex g (.bind n c body) ⟨.e ⇒ τ, F⟩
 
 /-- Where the book assigns a denotation, the engine at `M = Id` computes it. -/
-theorem interp_of_denotes [Inhabited W] {lex : L → Option (Denotation E W)} {g : Assignment E}
+theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment E}
     {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) : interp lex g t = some d := by
   induction h with
   | tn h => rw [interp_terminal]; exact h
@@ -299,9 +299,8 @@ theorem interp_of_denotes [Inhabited W] {lex : L → Option (Denotation E W)} {g
     funext x
     simp [ih x, valueAt]
 
-theorem Denotes.unique [Inhabited W] {lex : L → Option (Denotation E W)} {g : Assignment E}
-    {t : Tree C L} {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') :
-    d = d' :=
+theorem Denotes.unique {lex : L → Option (Denotation E W)} {g : Assignment E} {t : Tree C L}
+    {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
   Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
 
 end Reference
@@ -416,7 +415,7 @@ inductive Denotes (lex : L → Option (PDenotation E W)) :
       Denotes lex g (.bind n c body) ⟨.e ⇒ τ, Part.some F⟩
 
 /-- Where the book's revised rules assign a value, the partial engine computes it. -/
-theorem interp_of_denotes [Inhabited W] {lex : L → Option (PDenotation E W)} {g : Assignment E}
+theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment E}
     {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
     interpPartial lex g t = some d := by
   induction h with
@@ -440,9 +439,8 @@ theorem interp_of_denotes [Inhabited W] {lex : L → Option (PDenotation E W)} {
     funext x
     simp [ih x, valueAtPartial]
 
-theorem Denotes.unique [Inhabited W] {lex : L → Option (PDenotation E W)} {g : Assignment E}
-    {t : Tree C L} {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') :
-    d = d' :=
+theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E} {t : Tree C L}
+    {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
   Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
 
 theorem denotes_the_pizza :
@@ -755,22 +753,23 @@ def everyStudentSleeps : Tree Unit String :=
   .bin (.bin (.leaf "every") (.leaf "student")) (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
 
 open Toy in
-theorem translate_everyStudentSleeps : Tree.translate toyVocabulary everyStudentSleeps =
-    some ⟨.t, .comp .functionalLeft
-      (.comp .functionalLeft (.const .every) (.const (.rel₁ studentRel)))
-      (.lam 1 (.comp .functionalRight (.var 1) (.const (.rel₁ sleepRel))))⟩ :=
+theorem translate_everyStudentSleeps :
+    Tree.translate individualIndices toyVocabulary everyStudentSleeps =
+      some ⟨.t, .comp .functionalLeft
+        (.comp .functionalLeft (.const .every) (.const (.rel₁ studentRel)))
+        (.lam 1 (.comp .functionalRight (.var 1) (.const (.rel₁ sleepRel))))⟩ :=
   rfl
 
 open Toy FirstOrder.Language in
 /-- The logical form of *every student sleeps* reads back to `∀ x, student x → sleeps x`. -/
-example : ∃ u, Tree.translate toyVocabulary everyStudentSleeps = some ⟨.t, u⟩ ∧
+example : ∃ u, Tree.translate individualIndices toyVocabulary everyStudentSleeps = some ⟨.t, u⟩ ∧
     u.toFormula = ((studentRel.boundedFormula₁ (var (.inr 0))).imp
       (sleepRel.boundedFormula₁ (var (.inr 0)))).all :=
   ⟨_, rfl, rfl⟩
 
 /-- *John John* translates to nothing, since no mode combines two individuals. -/
-example : Tree.translate toyVocabulary (.bin (.leaf "John") (.leaf "John") : Tree Unit String) =
-    none := rfl
+example : Tree.translate individualIndices toyVocabulary
+    (.bin (.leaf "John") (.leaf "John") : Tree Unit String) = none := rfl
 
 /-- In *every student who sleeps laughs* the relative clause abstracts over its trace and
 intersects with the noun by predicate modification. -/
@@ -781,7 +780,8 @@ def everyStudentWhoSleepsLaughs : Tree Unit String :=
 open Toy FirstOrder.Language in
 /-- The relative clause reads back as a conjunct of the restrictor, in
 `∀ x, student x ∧ sleeps x → laughs x`. -/
-example : ∃ u, Tree.translate toyVocabulary everyStudentWhoSleepsLaughs = some ⟨.t, u⟩ ∧
+example : ∃ u,
+    Tree.translate individualIndices toyVocabulary everyStudentWhoSleepsLaughs = some ⟨.t, u⟩ ∧
     u.toFormula = ((studentRel.boundedFormula₁ (var (.inr 0)) ⊓
       sleepRel.boundedFormula₁ (var (.inr 0))).imp (laughRel.boundedFormula₁ (var (.inr 0)))).all :=
   ⟨_, rfl, rfl⟩
@@ -838,15 +838,14 @@ def maryBelievesDickIsDeceitful : Tree Unit String :=
 
 -- (8), p. 308: true at `w` iff Jan is loyal at every world compatible with what Mary believes
 -- in `w`
-theorem intension_maryBelievesJanIsLoyal [Inhabited W] (g : Assignment E) :
+theorem intension_maryBelievesJanIsLoyal (g : Assignment E) :
     Tree.intension (intensionalLexicon loyal deceitful believes mary jan dick) g
       maryBelievesJanIsLoyal = some ⟨.t, fun w ↦ □[believes mary] (loyal · jan) w⟩ :=
   rfl
 
 -- p. 300: interpreted at the lexicon's values at one world, a complement of *believes* is its
 -- truth value, so two true complements make the reports agree
-theorem interp_maryBelieves_eq [Inhabited W] {w : W} (g : Assignment E)
-    (h : loyal w jan ↔ deceitful w dick) :
+theorem interp_maryBelieves_eq {w : W} (g : Assignment E) (h : loyal w jan ↔ deceitful w dick) :
     let lex := fun s ↦ (intensionalLexicon loyal deceitful believes mary jan dick s).map
       fun d ↦ (⟨d.1, d.2 w⟩ : Denotation E W)
     Tree.interp lex g maryBelievesJanIsLoyal = Tree.interp lex g maryBelievesDickIsDeceitful := by
@@ -863,7 +862,6 @@ theorem believes_isExtensionalAt_iff {x : E} {w : W} :
 
 /-- The two worlds of the model for (11). -/
 inductive Ch12World | actual | other
-  deriving Inhabited
 
 /-- The individuals of the model for (11). -/
 inductive Ch12Person | mary | jan | dick
