@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Tense.Embedding
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Data.Examples.Ogihara1996
+public import Linglib.Fragments.Japanese.Tense
 
 /-!
 # Ogihara (1996): Tense, Attitudes, and Scope
@@ -32,9 +33,11 @@ readings the chain allows](##rows_readings).
   evaluates at its own time.
 * The SOT rule applies to the underlying structure: whether a past is deleted depends on the
   morpheme that commands it before deletion.
-* The Japanese present is a relative present and a relative future. The rows judge only the
-  simultaneous and the shifted readings, so the future reading of a Japanese present under a past
-  is predicted but untested.
+* The Japanese present *-(r)u* and past *-ta* have the tenses their verbal endings mark in
+  `Japanese.Tense.ending`, where the present and the future share the non-past, and *-(r)u*
+  [stands for the non-past of every conjugation](##Morpheme.tenses_ru), the copula *-da* among
+  them. The rows judge only the simultaneous and the shifted readings, so the future reading of a
+  Japanese present under a past is predicted but untested.
 
 ## Errata
 
@@ -84,7 +87,7 @@ inductive Morpheme
   | perfect
   /-- The English future *woll*. -/
   | woll
-  /-- The Japanese present *-(r)u*, a relative present and a relative future. -/
+  /-- The Japanese present *-(r)u*, the non-past. -/
   | ru
   /-- The Japanese past *-ta*. -/
   | ta
@@ -97,18 +100,28 @@ def language : Morpheme → Language
   | ru | ta => .japanese
   | _ => .english
 
-/-- The relative tenses the chart assigns a morpheme. -/
+/-- The relative tenses the chart assigns a morpheme, a Japanese one the tenses whose verbal
+ending it is. -/
 def tenses : Morpheme → Finset Tense
   | null => {.present}
   | ed => {.past}
   | perfect => {.past}
   | woll => {.future}
-  | ru => {.present, .future}
-  | ta => {.past}
+  | ru => {t | Japanese.Tense.ending .verbal t = Japanese.Verb.Exponent.u.morphs}
+  | ta => {t | Japanese.Tense.ending .verbal t = Japanese.Verb.Exponent.ta.morphs}
 
 /-- The cell of a morpheme: the positions its relative tenses allow the time of its clause
 against the time of the tense commanding it. -/
 def cell (m : Morpheme) : Finset Ordering := m.tenses.sup fun t ↦ ⟦t⟧
+
+-- p. 2: *-(r)u* stands for the non-past ending of every predicate, the copula's among them.
+theorem tenses_ru (c : Japanese.Tense.Conjugation) :
+    ru.tenses =
+      ({t | Japanese.Tense.ending c t = Japanese.Tense.ending c .present} : Finset _) := by
+  ext t
+  simp only [tenses, Finset.mem_filter, Finset.mem_univ, true_and]
+  exact (Japanese.Tense.ending_eq_ending_iff (t' := .present) .verbal).trans
+    (Japanese.Tense.ending_eq_ending_iff c).symm
 
 /-- A past tense morpheme, the target and trigger of the SOT rule. -/
 def IsPastTense : Morpheme → Prop
@@ -128,22 +141,18 @@ end Morpheme
 
 open Morpheme
 
-/-- The relative tense morphemes of a tense form in a language, outermost first: the past
-inflection, *-ed* in English and *-ta* in Japanese; the Japanese present *-(r)u*, which stands for
-the present ending of every predicate; and in English the perfect for a past participle under
-*have* and *woll* for an infinitive under *will*. The English present, an absolute tense, and the
-present participle, an aspect, contribute none. -/
+/-- The relative tense morphemes of a tense form in a language, outermost first. In English these
+are the past inflection *-ed*, the perfect for a past participle under *have* and *woll* for an
+infinitive under *will*; the English present, an absolute tense, and the present participle, an
+aspect, contribute none. In Japanese the morpheme is the ending of the finite tense, *-ta* or
+*-(r)u*. -/
 def Morpheme.ofForm : Language → Form → List Morpheme
   | .english, f =>
     (if f.finite = .past then [ed] else []) ++ f.nonfinite.filterMap fun
       | .pastParticiple => some perfect
       | .infinitive => some woll
       | .presentParticiple => none
-  | .japanese, f =>
-    match f.finite with
-    | .past => [ta]
-    | .present => [ru]
-    | .future => []
+  | .japanese, f => [if f.finite ∈ ta.tenses then ta else ru]
 
 /-- The chain of tenses of the clauses of a sentence, outermost first, each clause's tense form
 read in the language. -/
