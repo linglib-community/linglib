@@ -11,9 +11,9 @@ types select makes of its daughters' meanings, with traces and binders interpret
 assignment as in Heim and Kratzer. As in Montague's theory of translation,
 [a tree's denotation is the evaluation of the term it translates to](##interp_eq_eval_translate),
 and [it depends on the assignment only at the tree's free traces](##interp_congr_of_agree).
-Denotations may be computations under an effect, after Bumford and Charlow, and under a lexicon of
-intensions a tree has an intension, [constant at its denotation when no word varies with the
-world](##intension_const). Under a typing of the indices, a trace or binder of index $n$ is a
+Denotations may be computations under an effect, after Bumford and Charlow, and a tree whose
+words read a world has as many derivations as the modes lifting composition over that reader
+allow. Under a typing of the indices, a trace or binder of index $n$ is a
 variable of the type its index has, so a world pronoun and the λ binding it are a trace and a
 binder whose index has type $s$.
 
@@ -27,7 +27,6 @@ binder whose index has type $s$.
 * `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its words alone.
 * `PhraseStructure.Tree.readings`: the readings of a tree under a lexicon of sets of readings.
 * `PhraseStructure.Tree.HoldsAt`: the truth of a tree under a lexicon and an assignment.
-* `PhraseStructure.Tree.intension`: the intension of a tree under a lexicon of intensions.
 
 ## Implementation notes
 
@@ -722,45 +721,6 @@ theorem interp_eq_eval_translate (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S
   | some d => simp [evalAt, Term.eval_map]
 
 end Translation
-
-/-! ### Intensions -/
-
-section Intension
-
-variable {C : Type} {K : Ty → Type*} {L : Type*} {E W : Type} {S : Sorts}
-
-/-- The intension of a tree under a lexicon of intensions and an assignment, the intension of its
-term ([von-fintel-heim-2011]). -/
-def intension (lex : L → Option (Σ ty, W → Ty.Domain E W ty S)) (g : Assignment E)
-    (t : Tree C L) : Option (Σ ty, W → Ty.Domain E W ty S) :=
-  (translate individualIndices (K := fun ty ↦ W → Ty.Domain E W ty S) lex t).map fun d ↦
-    ⟨d.1, d.2.intension (fun c ↦ c) g⟩
-
-theorem intension_eq_intension_translate (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S)
-    (lex : L → Option (Σ ty, K ty)) (g : Assignment E) (t : Tree C L) :
-    intension (fun w ↦ (lex w).map fun c ↦ ⟨c.1, I c.2⟩) g t =
-      (translate individualIndices lex t).map fun d ↦ ⟨d.1, d.2.intension I g⟩ := by
-  simp only [intension, translate_map_const]
-  cases translate individualIndices lex t with
-  | none => rfl
-  | some d => simp [Term.intension_map]
-
-/-- Under a lexicon of rigid intensions, a tree's intension is constant at its denotation. -/
-theorem intension_const (lex : L → Option (Σ ty, Ty.Domain E W ty S)) (g : Assignment E)
-    (t : Tree C L) :
-    intension (fun x ↦ (lex x).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩) g t =
-      (interp (M := Id) lex g t).map fun d ↦ ⟨d.1, fun _ ↦ d.2⟩ := by
-  have h : interp (M := Id) lex g t =
-      (translate individualIndices lex t).map fun d ↦ ⟨d.1, d.2.eval (fun c ↦ c) g⟩ := by
-    simpa [Sigma.eta] using
-      interp_eq_eval_translate (K := fun ty ↦ Ty.Domain E W ty S) (fun c ↦ c) lex g t
-  rw [intension_eq_intension_translate (K := fun ty ↦ Ty.Domain E W ty S) (fun c _ ↦ c), h]
-  cases translate individualIndices lex t with
-  | none => rfl
-  | some d =>
-    simp only [Option.map_some]; congr; funext w; exact Term.intension_const_interp _ _ _ w
-
-end Intension
 
 /-! ### Truth -/
 

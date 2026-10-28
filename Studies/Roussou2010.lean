@@ -119,8 +119,7 @@ theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
 theorem comp_over_na_type_clash (b : Montague.Ty) :
     Montague.Ty.combine? (.fn .t b) (.fn .e .t) = none := by
   simp [Montague.Ty.combine?, Montague.Ty.mode?, Montague.Mode.functionalLeft?,
-    Montague.Mode.functionalRight?, Montague.Mode.intensionalLeft?,
-    Montague.Mode.intensionalRight?, Montague.Mode.predicateModification?,
+    Montague.Mode.functionalRight?, Montague.Mode.predicateModification?,
     Montague.Mode.eventIdentification?]
 
 /-! ### Selection -/

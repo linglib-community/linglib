@@ -9,25 +9,23 @@ public import Linglib.Semantics.Composition.Extensional
 # Composition modes
 
 A *composition mode* is a rule by which the meanings of two sisters combine into the meaning of
-their mother, selected by the daughters' types: functional application, predicate modification,
-Kratzer's event identification, and von Fintel and Heim's intensional application, which gives a
-function its argument's intension rather than its value. Relative to a world, intensional
-application on daughters that do not vary with the world sees only a constant intension, and it
-[agrees with the general case on every argument exactly when the function is
-extensional](##forall_eval_intensionalLeft_eq_iff). Over computation types, Bumford and Charlow's
-meta-modes lift a mode through an effect: Map Left and Map Right apply it under the effect of a
-daughter, and Unit Left and Unit Right give a daughter that expects a computation the pure
-computation of a value. A pair of types may then compose in several ways, and
-[the mode their types select is always basic](##Ty.isBasic_of_mode?_eq_some).
+their mother, selected by the daughters' types: functional application, predicate modification
+and Kratzer's event identification. Over computation types, Bumford and Charlow's meta-modes lift a
+mode through an effect: Map Left and Map Right apply it under the effect of a daughter, and Unit
+Left and Unit Right give a daughter that expects a computation the pure computation of a value. A
+pair of types may then compose in several ways, and [the mode their types select is always
+basic](##Ty.isBasic_of_mode?_eq_some). Under the reader of worlds, von Fintel and Heim's
+intensional application is application mapped over the function's reader, which gives the function
+its argument's whole intension, while Unit Right gives it the constant intension of the argument's
+value; [the two agree on every argument exactly when the function is
+extensional](##forall_eval_mapLeft_eq_eval_unitRight_iff).
 
 ## Main definitions
 
 * `Montague.Mode`: the composition modes, typed by the two daughters and the mother.
 * `Montague.Ty.mode?`, `Montague.Ty.combine?`: the mode two daughters' types select, and the type
   they compose to.
-* `Montague.Mode.eval`: composition of daughters that do not vary with the world.
-* `Montague.Mode.intension`: the mother's intension from the daughters' intensions, the mode's
-  denotation under the reader of worlds except at intensional application.
+* `Montague.Mode.eval`: the mother's denotation from the daughters'.
 * `Montague.Mode.evalM`: composition under an applicative effect.
 * `Montague.Mode.combine?`: composition, by the mode their types select, in a family of values.
 * `Montague.Ty.modes`: every mode by which two daughters' types compose.
@@ -35,8 +33,8 @@ computation of a value. A pair of types may then compose in several ways, and
 
 ## Implementation notes
 
-The daughters' types select the first mode that applies among functional application,
-intensional application, predicate modification and event identification. In any family of
+The daughters' types select the first mode that applies among functional application, predicate
+modification and event identification. In any family of
 values indexed by types, [composing commutes with every map of families that commutes with the
 modes](##combine?_map), and [the type of the result depends only on the daughters'
 types](##combine?_map_fst). `Ty.mode?` selects among the basic modes only and is computed by
@@ -56,19 +54,14 @@ effects, is defined by well-founded recursion and computed by `simp`.
 namespace Montague
 
 /-- The composition modes, typed by the two daughters and the mother, are functional application,
-intensional application of a daughter expecting an intension to the intension of its sister
-([von-fintel-heim-2011]), predicate modification of two predicates of one sort, and event
-identification of a role head with a predicate of eventualities, Kratzer's (23) ([kratzer-1996]).
-All but predicate modification come in both orders. -/
+predicate modification of two predicates of one sort, event identification of a role head with a
+predicate of eventualities, Kratzer's (23) ([kratzer-1996]), and the meta-modes lifting a mode
+through an effect. All but predicate modification come in both orders. -/
 inductive Mode : Ty → Ty → Ty → Type where
   /-- Functional application, the left daughter the function. -/
   | functionalLeft {σ τ : Ty} : Mode (σ ⇒ τ) σ τ
   /-- Functional application, the right daughter the function. -/
   | functionalRight {σ τ : Ty} : Mode σ (σ ⇒ τ) τ
-  /-- Intensional application, the left daughter taking the intension of the right. -/
-  | intensionalLeft {σ τ : Ty} : Mode (.intens σ ⇒ τ) σ τ
-  /-- Intensional application, the right daughter taking the intension of the left. -/
-  | intensionalRight {σ τ : Ty} : Mode σ (.intens σ ⇒ τ) τ
   /-- Predicate modification, the intersection of two predicates of a sort. -/
   | predicateModification {σ : Ty} : Mode (σ ⇒ .t) (σ ⇒ .t) (σ ⇒ .t)
   /-- Event identification, the role head the left daughter. -/
@@ -102,16 +95,6 @@ def functionalRight? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ
   | σ₁, .fn σ τ => if h : σ = σ₁ then some ⟨τ, h ▸ functionalRight⟩ else none
   | _, _ => none
 
-/-- Intensional application applies when the left daughter expects the right one's intension. -/
-def intensionalLeft? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
-  | .fn (.intens σ) τ, σ₂ => if h : σ = σ₂ then some ⟨τ, h ▸ intensionalLeft⟩ else none
-  | _, _ => none
-
-/-- Intensional application applies when the right daughter expects the left one's intension. -/
-def intensionalRight? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
-  | σ₁, .fn (.intens σ) τ => if h : σ = σ₁ then some ⟨τ, h ▸ intensionalRight⟩ else none
-  | _, _ => none
-
 /-- Predicate modification applies to two predicates of individuals or two predicates of
 eventualities ([wellwood-2015]). -/
 def predicateModification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
@@ -129,11 +112,10 @@ end Mode
 
 /-- The mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose is the
 first that applies of functional application (with the left daughter as the function first),
-intensional application, predicate modification and event identification. -/
+predicate modification and event identification. -/
 def Ty.mode? (σ₁ σ₂ : Ty) : Option (Σ τ, Mode σ₁ σ₂ τ) :=
-  Mode.functionalLeft? σ₁ σ₂ <|> Mode.functionalRight? σ₁ σ₂ <|> Mode.intensionalLeft? σ₁ σ₂ <|>
-    Mode.intensionalRight? σ₁ σ₂ <|> Mode.predicateModification? σ₁ σ₂ <|>
-      Mode.eventIdentification? σ₁ σ₂
+  Mode.functionalLeft? σ₁ σ₂ <|> Mode.functionalRight? σ₁ σ₂ <|>
+    Mode.predicateModification? σ₁ σ₂ <|> Mode.eventIdentification? σ₁ σ₂
 
 /-- The type of the mother of a left daughter of type `σ₁` and a right daughter of type `σ₂`,
 under the mode their types select. -/
@@ -149,9 +131,9 @@ def Mode.IsBasic {σ₁ σ₂ τ : Ty} : Mode σ₁ σ₂ τ → Prop
 theorem Ty.isBasic_of_mode?_eq_some {σ₁ σ₂ : Ty} {p : Σ τ, Mode σ₁ σ₂ τ}
     (h : σ₁.mode? σ₂ = some p) : p.2.IsBasic := by
   simp only [Ty.mode?, Option.orElse_eq_orElse, Option.orElse_eq_or, Option.or_eq_some_iff] at h
-  rcases h with h | ⟨-, h | ⟨-, h | ⟨-, h | ⟨-, h | ⟨-, h⟩⟩⟩⟩⟩ <;>
-    simp only [Mode.functionalLeft?, Mode.functionalRight?, Mode.intensionalLeft?,
-      Mode.intensionalRight?, Mode.predicateModification?, Mode.eventIdentification?] at h <;>
+  rcases h with h | ⟨-, h | ⟨-, h | ⟨-, h⟩⟩⟩ <;>
+    simp only [Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
+      Mode.eventIdentification?] at h <;>
     split at h <;> (try split_ifs at h with hσ) <;> cases h <;> (try subst hσ) <;> trivial
 
 /-- Every mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose,
@@ -197,23 +179,19 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
 
 @[simp] theorem mode?_predicateModification :
     (Ty.e ⇒ .t).mode? (.e ⇒ .t) = some ⟨_, predicateModification⟩ := by
-  simp [Ty.mode?, functionalLeft?, functionalRight?, intensionalLeft?, intensionalRight?,
-    predicateModification?]
+  simp [Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
 
 /-! ### Denotation -/
 
 variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
-/-- The denotation of a mode is application, application to the constant intension of the
-argument, intersection of two predicates, or event identification. The constant intension is the
-argument's intension when the argument does not vary with the world; `Mode.intension` is the
-general case. -/
+/-- The denotation of a mode is application, intersection of two predicates or event
+identification, and for a meta-mode that of its mode under the effect of a daughter, or with the
+pure computation of a value given to a daughter that expects one. -/
 @[simp] def eval : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ S → Ty.Domain E W σ₂ S →
     Ty.Domain E W τ S
   | _, _, _, functionalLeft, f, a => f a
   | _, _, _, functionalRight, a, f => f a
-  | _, _, _, intensionalLeft, f, a => f fun _ ↦ a
-  | _, _, _, intensionalRight, a, f => f fun _ ↦ a
   | _, _, _, predicateModification, p, q => Modifier.intersective p q
   | _, _, _, eventIdentificationLeft, f, p => ArgumentStructure.eventIdentification f p
   | _, _, _, eventIdentificationRight, p, f => ArgumentStructure.eventIdentification f p
@@ -231,28 +209,14 @@ def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (
 @[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
     m.evalM (M := Id) a b = m.eval a b := rfl
 
-/-- The intension of the mother, given the intensions of the daughters: the denotation of the mode
-under the reader of worlds, which composes the daughters' values at each world, except that
-intensional application applies the function's value at a world to the argument's whole intension
-([von-fintel-heim-2011]'s Intensional Functional Application). -/
-@[simp] def intension :
-    Mode σ₁ σ₂ τ → (W → Ty.Domain E W σ₁ S) → (W → Ty.Domain E W σ₂ S) → W → Ty.Domain E W τ S
-  | intensionalLeft, f, a => fun w ↦ f w a
-  | intensionalRight, a, f => fun w ↦ f w a
-  | m, a, b => m.evalM (M := ReaderT W Id) a b
-
-/-- On daughters that do not vary with the world, the mother's intension is constant at the
-mode's denotation. -/
-@[simp] theorem intension_const (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S)
-    (b : Ty.Domain E W σ₂ S) (w : W) : m.intension (fun _ ↦ a) (fun _ ↦ b) w = m.eval a b := by
-  cases m <;> rfl
-
-/-- Applying a function to the constant intension of its argument's value at `w` agrees with
-intensional application at `w` for every argument exactly when the function, read as an operator
-on intensions, is extensional at `w`. -/
-theorem forall_eval_intensionalLeft_eq_iff {σ τ : Ty} {f : W → (W → Ty.Domain E W σ S) →
-    Ty.Domain E W τ S} {w : W} :
-    (∀ a, intensionalLeft.intension f a w = intensionalLeft.eval (f w) (a w)) ↔
+/-- Application mapped over the reader of worlds gives the function at `w` its argument's whole
+intension ([von-fintel-heim-2011]'s Intensional Functional Application), and Unit Right gives it
+the constant intension of the argument's value at `w`; the two agree at `w` on every argument
+exactly when the function, read as an operator on intensions, is extensional at `w`. -/
+theorem forall_eval_mapLeft_eq_eval_unitRight_iff {σ τ : Ty}
+    {f : W → (W → Ty.Domain E W σ S) → Ty.Domain E W τ S} {w : W} :
+    (∀ a, (mapLeft (f := .reader .s) (functionalLeft (σ := .comp (.reader .s) σ) (τ := τ))).eval
+        f a w = (unitRight (f := .reader .s) (functionalLeft (σ := σ) (τ := τ))).eval (f w) (a w)) ↔
       IsExtensionalAt (fun a w' ↦ f w' a) w :=
   isExtensionalAt_iff_forall_const.symm
 
@@ -298,8 +262,7 @@ theorem combine?_map {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V 
 @[simp] theorem combine?_predicateModification_v
     (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V (.v ⇒ .t)) :
     combine? op ⟨.v ⇒ .t, p⟩ ⟨.v ⇒ .t, q⟩ = some ⟨.v ⇒ .t, op predicateModification p q⟩ := by
-  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, intensionalLeft?,
-    intensionalRight?, predicateModification?]
+  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
 
 end Mode
 
