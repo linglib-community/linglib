@@ -22,7 +22,8 @@ extensional](##forall_eval_intensionalLeft_eq_iff).
 * `Montague.Ty.mode?`, `Montague.Ty.combine?`: the mode two daughters' types select, and the type
   they compose to.
 * `Montague.Mode.eval`: composition of daughters that do not vary with the world.
-* `Montague.Mode.intension`: the mother's intension from the daughters' intensions.
+* `Montague.Mode.intension`: the mother's intension from the daughters' intensions, the mode's
+  denotation under the reader of worlds except at intensional application.
 * `Montague.Mode.evalM`: composition under an applicative effect.
 * `Montague.Mode.combine?`: composition, by the mode their types select, in a family of values.
 
@@ -161,19 +162,24 @@ general case. -/
   | eventIdentificationLeft, f, p => ArgumentStructure.eventIdentification f p
   | eventIdentificationRight, p, f => ArgumentStructure.eventIdentification f p
 
-/-- The intension of the mother, given the intensions of the daughters. At each world functional
-application, predicate modification and event identification compose the daughters' values there,
-and intensional application applies the function's value there to the argument's whole intension
+/-- The denotation of a mode under an applicative effect, which runs the left daughter's
+computation first. -/
+def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (Ty.Domain E W σ₁ S))
+    (b : M (Ty.Domain E W σ₂ S)) : M (Ty.Domain E W τ S) :=
+  m.eval <$> a <*> b
+
+@[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
+    m.evalM (M := Id) a b = m.eval a b := rfl
+
+/-- The intension of the mother, given the intensions of the daughters: the denotation of the mode
+under the reader of worlds, which composes the daughters' values at each world, except that
+intensional application applies the function's value at a world to the argument's whole intension
 ([von-fintel-heim-2011]'s Intensional Functional Application). -/
 @[simp] def intension :
     Mode σ₁ σ₂ τ → (W → Ty.Domain E W σ₁ S) → (W → Ty.Domain E W σ₂ S) → W → Ty.Domain E W τ S
-  | functionalLeft, f, a => fun w ↦ f w (a w)
-  | functionalRight, a, f => fun w ↦ f w (a w)
   | intensionalLeft, f, a => fun w ↦ f w a
   | intensionalRight, a, f => fun w ↦ f w a
-  | predicateModification, p, q => fun w ↦ Modifier.intersective (p w) (q w)
-  | eventIdentificationLeft, f, p => fun w ↦ ArgumentStructure.eventIdentification (f w) (p w)
-  | eventIdentificationRight, p, f => fun w ↦ ArgumentStructure.eventIdentification (f w) (p w)
+  | m, a, b => m.evalM (M := ReaderT W Id) a b
 
 /-- On daughters that do not vary with the world, the mother's intension is constant at the
 mode's denotation. -/
@@ -189,15 +195,6 @@ theorem forall_eval_intensionalLeft_eq_iff {σ τ : Ty} {f : W → (W → Ty.Dom
     (∀ a, intensionalLeft.intension f a w = intensionalLeft.eval (f w) (a w)) ↔
       IsExtensionalAt (fun a w' ↦ f w' a) w :=
   isExtensionalAt_iff_forall_const.symm
-
-/-- The denotation of a mode under an applicative effect, which runs the left daughter's
-computation first. -/
-def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (Ty.Domain E W σ₁ S))
-    (b : M (Ty.Domain E W σ₂ S)) : M (Ty.Domain E W τ S) :=
-  m.eval <$> a <*> b
-
-@[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
-    m.evalM (M := Id) a b = m.eval a b := rfl
 
 /-! ### Composition in a family of values -/
 

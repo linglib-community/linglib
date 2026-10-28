@@ -54,6 +54,7 @@ more than the constant functions (`SetM.not_preservesConst`).
 * [montague-1973]
 * [von-fintel-heim-2011]
 * [kratzer-shimoyama-2002]
+* [shan-2001]
 * [shan-2004]
 * [charlow-2020]
 -/
@@ -276,18 +277,6 @@ def total (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) : Interpretation K wh
   lam f := f
   mode m := m.eval
 
-/-- The intensional interpretation: a term's value is its intension, its denotation at every
-world, a constant's that `I` gives it, a variable denotes its value at every world, and a
-composition composes its daughters' intensions by its mode, intensional application giving the
-function its argument's whole intension ([von-fintel-heim-2011]). -/
-def intensional (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S) : Interpretation K where
-  D ty := W → Ty.Domain E W ty S
-  Val ty := Ty.Domain E W ty S
-  const := I
-  var x := fun _ ↦ x
-  lam f := fun w x ↦ f x w
-  mode m := m.intension
-
 /-- The effectful interpretation under an applicative effect that distributes over functions: a
 term's value is a computation, an abstraction distributes the effect over the values of its
 variable, and a composition runs its left daughter first. -/
@@ -299,6 +288,13 @@ def effectful {M : Type → Type} [Applicative M] [Distributive M]
   var x := Pure.pure x
   lam f := distribute f
   mode m := m.evalM
+
+/-- The intensional interpretation is the effectful interpretation under the reader of worlds
+([shan-2001]): a term's value is its intension, a variable denotes its value at every world, and a
+composition composes its daughters' values at each world, except that intensional application gives
+the function its argument's whole intension ([von-fintel-heim-2011]). -/
+def intensional (I : ∀ {ty : Ty}, K ty → W → Ty.Domain E W ty S) : Interpretation K :=
+  { effectful (M := ReaderT W Id) I with mode := Mode.intension }
 
 end Interpretation
 
