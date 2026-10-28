@@ -447,36 +447,8 @@ leaves: the type of the term it translates to. -/
 def ty? (Γ : ℕ → Ty) (lexTy : L → Option Ty) (t : Tree C L) : Option Ty :=
   (translate Γ (K := fun _ ↦ Unit) (fun w ↦ (lexTy w).map fun ty ↦ ⟨ty, ()⟩) t).map (·.1)
 
-variable (lexTy : L → Option Ty)
-
-@[simp] theorem ty?_terminal (c : C) (w : L) :
-    ty? Γ lexTy (.terminal c w : Tree C L) = lexTy w := by
-  simp [ty?, Option.map_map, Function.comp_def]
-
-@[simp] theorem ty?_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
-    ty? Γ lexTy (.phrase c k (t :: [])) = ty? Γ lexTy t := rfl
-
-@[simp] theorem ty?_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
-    ty? Γ lexTy (.phrase c k (t₁ :: t₂ :: [])) =
-      (ty? Γ lexTy t₁).bind fun σ ↦ (ty? Γ lexTy t₂).bind fun τ ↦ σ.combine? τ := by
-  simp only [ty?, translate_phrase_binary]
-  rcases translate Γ _ t₁ with _ | ⟨σ, u⟩ <;> rcases translate Γ _ t₂ with _ | ⟨τ, v⟩ <;> simp
-
-@[simp] theorem ty?_trace (n : ℕ) (c : C) :
-    ty? Γ lexTy (.trace n c : Tree C L) = some (Γ n) := rfl
-
-@[simp] theorem ty?_bind (n : ℕ) (c : C) (body : Tree C L) :
-    ty? Γ lexTy (.bind n c body) = (ty? Γ lexTy body).map (.fn (Γ n)) := by
-  simp [ty?, Option.map_map, Function.comp_def]
-
-theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
-    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    ty? Γ lexTy (RoseTree.node l cs) = none := by
-  simp [ty?, translate_junk _ h]
-
 variable {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [Distributive M]
-
-variable {lexTy} {lex : L → Option (Denotation E W M S)}
+  {lexTy : L → Option Ty} {lex : L → Option (Denotation E W M S)}
 
 /-- The type of a tree's denotation is the type `ty?` computes from the types of its leaves. -/
 theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
