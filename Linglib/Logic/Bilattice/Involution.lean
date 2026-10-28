@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Bilattice.Defs
+public import Linglib.Logic.Bilattice.Defs
 public import Linglib.Core.Order.InvolutiveCompl
 public import Mathlib.Order.Hom.Basic
 

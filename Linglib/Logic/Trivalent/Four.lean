@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Bilattice.Product
+public import Linglib.Logic.Bilattice.Product
 public import Linglib.Logic.Trivalent.Flat
 
 /-!
