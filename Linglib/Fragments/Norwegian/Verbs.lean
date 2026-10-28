@@ -35,6 +35,10 @@ matter is settled', but only *Vi har gjort opp saka* 'we have settled the matter
 * The grammar's three groups of verb phrases with a particle, those that exist only as a
   compound, only as a verb phrase, and as both (FLV pp. 83–84).
 * The present participle, whose compound form is obligatory, *tilskyende* (FLV p. 85).
+* The contexts keyed by the auxiliaries, whose split between *ha*, *få* and *være*, *bli*,
+  *verte* also governs the agreement of a Nynorsk participle (FLV p. 518).
+* The two participles as word structures, the compound a `Morphology.Word.Tree.compound`, once a
+  compound spells out as one word.
 
 ## References
 
@@ -48,11 +52,13 @@ namespace Norwegian
 
 open ArgumentStructure Conjugation
 
-/-- Where a past participle stands: after the perfect auxiliaries *ha* and *få*, after *være* and
-*bli*, or attributively. -/
+/-- Where a past participle stands. -/
 inductive ParticipleContext where
-  | perfect
-  | copular
+  /-- After *ha* or *få*. -/
+  | haFaa
+  /-- After *være* or *bli*, in Nynorsk also *verte*. -/
+  | vaereBli
+  /-- Attributively. -/
   | attributive
   deriving DecidableEq, Repr, Fintype
 
@@ -69,7 +75,7 @@ namespace ParticipleContext
 unless it follows *ha* or *få*. -/
 def Admits (c : ParticipleContext) : ParticipleForm → Prop  -- FLV p. 86, den Dikken (134), (135)
   | .phrase => c ≠ .attributive
-  | .compound => c ≠ .perfect
+  | .compound => c ≠ .haFaa
 
 instance (c : ParticipleContext) : DecidablePred c.Admits
   | .phrase => inferInstanceAs (Decidable (c ≠ _))
@@ -77,9 +83,9 @@ instance (c : ParticipleContext) : DecidablePred c.Admits
 
 variable {f : ParticipleForm}
 
-@[simp] theorem admits_perfect_iff : perfect.Admits f ↔ f = .phrase := by cases f <;> decide
+@[simp] theorem admits_haFaa_iff : haFaa.Admits f ↔ f = .phrase := by cases f <;> decide
 
-@[simp] theorem admits_copular : copular.Admits f := by cases f <;> decide
+@[simp] theorem admits_vaereBli : vaereBli.Admits f := by cases f <;> decide
 
 @[simp] theorem admits_attributive_iff : attributive.Admits f ↔ f = .compound := by
   cases f <;> decide

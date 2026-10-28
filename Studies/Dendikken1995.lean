@@ -280,7 +280,7 @@ inductive Language
 /-- The context of the participle in a Norwegian row of a voice: the passive rows have *bli*
 or *verte*, the active ones the perfect with *ha*. -/
 def participleContext (v : Voice) : Norwegian.ParticipleContext :=
-  if v = Voice.passive then .copular else .perfect
+  if v = Voice.passive then .vaereBli else .haFaa
 
 /-- The voices in which a language incorporates its particle overtly into the verb. English
 never does, (133); Norwegian does where the reference grammar admits the compound participle,
