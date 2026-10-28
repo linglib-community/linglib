@@ -1094,5 +1094,496 @@
     ],
     "comment": "",
     "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_78",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(78)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Ihm wurde geholfen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ihm", "him.DAT"], ["wurde", "was"], ["geholfen", "helped"]
+    ],
+    "translation": "He was helped.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "helfen"],
+      ["voice", "passive"],
+      ["cases", "dat"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_79b",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(79b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Geholfen zu werden ist angenehm.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Geholfen", "helped"], ["zu", "to"], ["werden", "be"], ["ist", "is"],
+      ["angenehm", "agreeable"]
+    ],
+    "translation": "To be helped is nice.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "helfen"],
+      ["voice", "passive"],
+      ["test", "control"],
+      ["tested", "theme"]
+    ],
+    "comment": "The arbitrary PRO subject of the infinitive cannot be the dative of the passive.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_79c",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(79c)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Aufgenommen zu werden ist angenehm.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Aufgenommen", "admitted"], ["zu", "to"], ["werden", "be"], ["ist", "is"],
+      ["angenehm", "agreeable"]
+    ],
+    "translation": "To be admitted is nice.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "aufnehmen"],
+      ["voice", "passive"],
+      ["test", "control"],
+      ["tested", "theme"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_81a",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(81a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er hofft aufgenommen zu werden.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["hofft", "hopes"], ["aufgenommen", "admitted"], ["zu", "to"],
+      ["werden", "be"]
+    ],
+    "translation": "He hopes to be admitted.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "aufnehmen"],
+      ["voice", "passive"],
+      ["test", "control"],
+      ["tested", "theme"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_81b",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(81b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er hofft geholfen zu werden.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["hofft", "hopes"], ["geholfen", "helped"], ["zu", "to"], ["werden", "be"]
+    ],
+    "translation": "He hopes to be helped.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "helfen"],
+      ["voice", "passive"],
+      ["test", "control"],
+      ["tested", "theme"]
+    ],
+    "comment": "The paper stars the variant with Ihm in place of Er as well.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_82b",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er kam und wurde verhaftet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["kam", "came"], ["und", "and"], ["wurde", "was"],
+      ["verhaftet", "arrested"]
+    ],
+    "translation": "He came and was arrested.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "verhaften"],
+      ["voice", "passive"],
+      ["test", "ellipsis"],
+      ["tested", "theme"]
+    ],
+    "comment": "Printed with the elided er in parentheses.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_82c",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82c)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er kam und wurde geholfen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["kam", "came"], ["und", "and"], ["wurde", "was"], ["geholfen", "helped"]
+    ],
+    "translation": "He came and was helped.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "helfen"],
+      ["voice", "passive"],
+      ["test", "ellipsis"],
+      ["tested", "theme"]
+    ],
+    "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_82d",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82d)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er sah die Damen und gefielen sie.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["sah", "saw"], ["die Damen", "the ladies"], ["und", "and"],
+      ["gefielen", "pleased"], ["sie", "they.NOM"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "gefallen"],
+      ["voice", "active"],
+      ["test", "ellipsis"],
+      ["tested", "experiencer"]
+    ],
+    "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_82e",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(82e)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er sah die Damen und sie gefielen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["sah", "saw"], ["die Damen", "the ladies"], ["und", "and"],
+      ["sie", "they.NOM"], ["gefielen", "pleased"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "gefallen"],
+      ["voice", "active"],
+      ["test", "ellipsis"],
+      ["tested", "experiencer"]
+    ],
+    "comment": "The elided dative cannot be identified with the nominative subject of the first conjunct.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_83a",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Der das Buch lesende Junge heisst Wilhelm.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["das Buch", "the book"], ["lesende", "reading"], ["Junge", "boy"],
+      ["heisst", "is-named"], ["Wilhelm", "Wilhelm"]
+    ],
+    "translation": "The boy reading the book is named Wilhelm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "lesen"],
+      ["voice", "active"],
+      ["test", "relative reduction"],
+      ["tested", "agent"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_83b",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Das der Junge lesende Buch heisst Sieben Legenden.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "the"], ["der Junge", "the boy"], ["lesende", "reading"], ["Buch", "book"],
+      ["heisst", "is-named"], ["Sieben Legenden", "Seven Legends"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "lesen"],
+      ["voice", "active"],
+      ["test", "relative reduction"],
+      ["tested", "theme"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_83c",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83c)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Das vom Jungen gelesene Buch heisst Sieben Legenden.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "the"], ["vom Jungen", "by-the boy"], ["gelesene", "read"], ["Buch", "book"],
+      ["heisst", "is-named"], ["Sieben Legenden", "Seven Legends"]
+    ],
+    "translation": "The book read by the boy is named Seven Legends.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "lesen"],
+      ["voice", "passive"],
+      ["test", "relative reduction"],
+      ["tested", "theme"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_83d",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83d)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Der vom Lehrer geholfene Junge bekam eine gute Note.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["vom Lehrer", "by-the teacher"], ["geholfene", "helped"], ["Junge", "boy"],
+      ["bekam", "got"], ["eine gute Note", "a good grade"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "helfen"],
+      ["voice", "passive"],
+      ["test", "relative reduction"],
+      ["tested", "theme"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_83e",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(83c)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Der das Buch gefallende Junge sitzt da in der Ecke.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["das Buch", "the book"], ["gefallende", "pleasing"], ["Junge", "boy"],
+      ["sitzt", "sits"], ["da", "there"], ["in der Ecke", "in the corner"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "gefallen"],
+      ["voice", "active"],
+      ["test", "relative reduction"],
+      ["tested", "experiencer"]
+    ],
+    "comment": "The fifth item of (83), printed as a second c.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_84",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(84)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Mir ist übel.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mir", "me.DAT"], ["ist", "is"], ["übel", "nasty"]
+    ],
+    "translation": "I am nauseated.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "übel sein"],
+      ["voice", "active"],
+      ["cases", "dat"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_85a",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(85a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Ich hoffe übel zu sein.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ich", "I.NOM"], ["hoffe", "hope"], ["übel", "nauseated"], ["zu", "to"], ["sein", "be"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "übel sein"],
+      ["voice", "active"],
+      ["test", "control"],
+      ["tested", "experiencer"]
+    ],
+    "comment": "The paper stars Mir hofft übel zu sein as well.",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_85b",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(85b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Übel zu sein ist unangenehm.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Übel", "nauseated"], ["zu", "to"], ["sein", "be"], ["ist", "is"],
+      ["unangenehm", "disagreeable"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "übel sein"],
+      ["voice", "active"],
+      ["test", "control"],
+      ["tested", "experiencer"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_88a",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88a)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Ich habe ihn das Gedicht abgehört.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ich", "I"], ["habe", "have"], ["ihn", "him.ACC"], ["das Gedicht", "the poem.ACC"],
+      ["abgehört", "heard"]
+    ],
+    "translation": "I had him recite the poem.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "abhören"],
+      ["voice", "active"],
+      ["cases", "nom acc acc"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_88b",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88b)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Er ist das Gedicht abgehört.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "he.NOM"], ["ist", "is"], ["das Gedicht", "the poem.ACC"], ["abgehört", "heard"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "abhören"],
+      ["voice", "passive"],
+      ["cases", "nom acc"],
+      ["test", "passive"],
+      ["tested", "goal"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "zmt1985_88c",
+    "source": {"bibkey": "zaenen-maling-thrainsson-1985", "paperLabel": "(88c)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Das Gedicht ist ihn abgehört.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das Gedicht", "the poem.NOM"], ["ist", "is"], ["ihn", "him.ACC"], ["abgehört", "heard"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "abhören"],
+      ["voice", "passive"],
+      ["test", "passive"],
+      ["tested", "theme"]
+    ],
+    "comment": "",
+    "verified": "page-image"
   }
 ]
