@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Aristotelian.Morphism
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Quantification.Basic
+public import Studies.DemeySmessaert2018
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Prod
@@ -26,17 +27,19 @@ is Boolean isomorphic to the deontic octagon or to the octagon for subject negat
 ## Implementation notes
 
 A subject-negation statement depends only on which regions of `S` and `P` are inhabited, so a
-proposition is a set of EFOL patterns, each read on its canonical model; a deontic formula is
-likewise a set of KD world types. The octagons are indexed by the subject-negation positions, so
-`γ` and `δ` are the identity, and Section 5's generic description is the subject-negation
-octagon's. The knowledge-representation octagon assumes, as the paper does tacitly, that `X`
-realizes every pattern. The paper identifies the Boolean subfamilies with the sizes of the
-closures; here two octagons of one size are shown to have minterms vanishing at the same polarity
-assignments, which makes their Aristotelian isomorphism a Boolean one.
+proposition is a set of EFOL patterns, each read on its canonical model as in
+[demey-smessaert-2018]; a deontic formula is likewise a set of KD world types. The octagons are
+indexed by the subject-negation positions, so `γ` and `δ` are the identity, and Section 5's
+generic description is the subject-negation octagon's. The knowledge-representation octagon
+assumes, as the paper does tacitly, that `X` realizes every pattern. The paper identifies the
+Boolean subfamilies with the sizes of the closures; here two octagons of one size are shown to
+have minterms vanishing at the same polarity assignments, which makes their Aristotelian
+isomorphism a Boolean one.
 
 ## References
 
 * [demey-smessaert-2024]
+* [demey-smessaert-2018]
 -/
 
 @[expose] public section
@@ -44,6 +47,7 @@ assignments, which makes their Aristotelian isomorphism a Boolean one.
 namespace DemeySmessaert2024
 
 open Finset Function Quantifier Quantifier.GQ Aristotelian ModalLogic SetRel
+open DemeySmessaert2018 (InS InP)
 
 /-! ### Subject negation (Section 2) -/
 
@@ -53,19 +57,6 @@ def IsEFOLPattern (m : Finset (Bool × Bool)) : Prop :=
   (∃ r ∈ m, r.1 = true) ∧ (∃ r ∈ m, r.1 = false) ∧ (∃ r ∈ m, r.2 = true) ∧ (∃ r ∈ m, r.2 = false)
 
 instance : DecidablePred IsEFOLPattern := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-/-- In the canonical model of a pattern, whose individuals are its regions, `S` holds of the
-regions inside `S`. -/
-def InS (m : Finset (Bool × Bool)) (r : m) : Prop := r.1.1 = true
-
-/-- In the canonical model of a pattern, `P` holds of the regions inside `P`. -/
-def InP (m : Finset (Bool × Bool)) (r : m) : Prop := r.1.2 = true
-
-instance (m : Finset (Bool × Bool)) : DecidablePred (InS m) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ = _))
-
-instance (m : Finset (Bool × Bool)) : DecidablePred (InP m) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The Keynes–Johnson octagon for subject negation lists *all*, *some*, *no* and *not all* `S`
 are `P`, then the same with non-`S` (Definition 2). -/

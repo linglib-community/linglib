@@ -17,6 +17,8 @@ the function is `a ↦ b`.
   one singleton.
 * `CompleteLatticeHom.setPreimage_surjective`, `CompleteLatticeHom.setPreimage_injective`: every
   complete lattice homomorphism between powersets is the preimage map of a unique function.
+* `Equiv.toOrderIsoSet_surjective`: every order isomorphism between powersets is the image map of
+  a bijection.
 -/
 
 @[expose] public section
@@ -58,3 +60,27 @@ theorem setPreimage_injective :
   simpa using congrArg (fun φ : CompleteLatticeHom (Set β) (Set α) ↦ a ∈ φ {g a}) h
 
 end CompleteLatticeHom
+
+namespace Equiv
+
+variable {α β : Type*}
+
+/-- Every order isomorphism between powersets is the image map of a bijection. -/
+theorem toOrderIsoSet_surjective :
+    Function.Surjective (toOrderIsoSet : α ≃ β → Set α ≃o Set β) := by
+  intro γ
+  obtain ⟨f, hf⟩ := CompleteLatticeHom.setPreimage_surjective
+    (CompleteLatticeHom.OrderIso.toCompleteLatticeHom γ)
+  obtain ⟨g, hg⟩ := CompleteLatticeHom.setPreimage_surjective
+    (CompleteLatticeHom.OrderIso.toCompleteLatticeHom γ.symm)
+  have hγ (s) : γ s = f ⁻¹' s := (DFunLike.congr_fun hf s).symm
+  have hγ' (s) : γ.symm s = g ⁻¹' s := (DFunLike.congr_fun hg s).symm
+  have hfg : f ∘ g = id := CompleteLatticeHom.setPreimage_injective <|
+    CompleteLatticeHom.ext fun s ↦ by simp [Set.preimage_comp, ← hγ, ← hγ']
+  have hgf : g ∘ f = id := CompleteLatticeHom.setPreimage_injective <|
+    CompleteLatticeHom.ext fun s ↦ by simp [Set.preimage_comp, ← hγ, ← hγ']
+  refine ⟨⟨g, f, congrFun hfg, congrFun hgf⟩, OrderIso.ext <| funext fun s ↦ ?_⟩
+  rw [toOrderIsoSet_apply, image_eq_preimage_symm]
+  exact (hγ s).symm
+
+end Equiv
