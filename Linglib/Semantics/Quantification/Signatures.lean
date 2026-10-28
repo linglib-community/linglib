@@ -74,6 +74,6 @@ row into both positions of *every*'s profile; the scope component `.antiAddMult 
 records that *any* is licensed in *not every*'s scope. -/
 example : Signature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
     (fun R S => ¬ every (α := α) R S) :=
-  not_soundFor_antiAddMult.comp₂ soundFor_every
+  not_soundFor_antiAddMult.comp₂ (σ := ⟨.anti, .mono⟩) soundFor_every
 
 end Quantifier.GQ

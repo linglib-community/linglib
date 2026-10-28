@@ -18,6 +18,14 @@ chaining two relations, projecting a relation through a function of known signat
 signatures. A relation is a conjunction of atomic constraints, so `≡` also satisfies `⊑`; the
 mutually exclusive relations of [maccartney-manning-2009] are their strict versions.
 
+Each operation is a rule on single atoms or properties lifted to the conjunctions. A constraint
+between `x` and `y` followed by one between `y` and `z` gives at most one constraint between `x` and
+`z` (`Relation.Atom.join`), a function with one property carries a constraint between its arguments
+to at most one between its values (`Signature.Property.project`), and a function with one property
+after a function with another has at most one property for that pair (`Signature.Property.compose`).
+The tables of [icard-2012] are what these rules give, cell by cell, except that every function
+carries `≡` to `≡`.
+
 ## Main declarations
 
 * `Relation`: the seven relations, a monoid under `Relation.join` with identity `≡` and absorbing
@@ -34,13 +42,11 @@ mutually exclusive relations of [maccartney-manning-2009] are their strict versi
 
 ## Implementation notes
 
-`compose` is read off the projections of `⊑` and `^`, which determine a signature, and projecting
-twice is projecting once through the composite (`Signature.project_project`), checked cell by
-cell. Associativity of `join` is printed in neither source and is checked by `decide`. The tables
-are proved sound in `Logic/Natural/Soundness.lean` and optimal in `Logic/Natural/Completeness.lean`,
-which also shows that the seven relations are the nondegenerately realizable constraint sets.
-Signatures are ordered by their property sets. Where [icard-2012]'s printed tables disagree with
-his definitions, the definitions decide.
+The monoid laws and the action law follow from the rules: the atom and property rules are
+associative, and the property rule for projection is compatible with the one for composition.
+Each rule is proved sound in `Logic/Natural/Soundness.lean`, and the lifted operations are proved
+optimal in `Logic/Natural/Completeness.lean`, which also shows that the seven relations are the
+nondegenerately realizable constraint sets. Signatures are ordered by their property sets.
 
 ## References
 
@@ -53,6 +59,26 @@ his definitions, the definitions decide.
 @[expose] public section
 
 namespace NaturalLogic
+
+/-- Chaining two partial operations gives the same results in either bracketing when the operations
+agree pointwise. -/
+private theorem exists_bind_comm {α β γ δ ζ ε : Type*} {f : α → β → Option γ}
+    {g : γ → δ → Option ε} {f' : β → δ → Option ζ} {g' : α → ζ → Option ε}
+    (h : ∀ a b d, (f a b).bind (g · d) = (f' b d).bind (g' a ·))
+    {s : α → Prop} {t : β → Prop} {u : δ → Prop} {e : ε} :
+    (∃ c, (∃ a, s a ∧ ∃ b, t b ∧ f a b = some c) ∧ ∃ d, u d ∧ g c d = some e) ↔
+      ∃ a, s a ∧ ∃ z, (∃ b, t b ∧ ∃ d, u d ∧ f' b d = some z) ∧ g' a z = some e := by
+  constructor
+  · rintro ⟨c, ⟨a, ha, b, hb, hab⟩, d, hd, hcd⟩
+    have := h a b d
+    rw [hab, Option.bind_some, hcd] at this
+    obtain ⟨z, hz, hze⟩ := Option.bind_eq_some_iff.1 this.symm
+    exact ⟨a, ha, z, ⟨b, hb, d, hd, hz⟩, hze⟩
+  · rintro ⟨a, ha, z, ⟨b, hb, d, hd, hbd⟩, hze⟩
+    have := h a b d
+    rw [hbd, Option.bind_some, hze] at this
+    obtain ⟨c, hc, hce⟩ := Option.bind_eq_some_iff.1 this
+    exact ⟨c, ⟨a, ha, b, hb, hc⟩, d, hd, hce⟩
 
 /-! ### The seven relations -/
 
@@ -106,6 +132,13 @@ def constraints : Relation → Finset Atom
 
 theorem constraints_injective : Function.Injective constraints := by decide
 
+/-- The strongest relation all of whose constraints satisfy `P`, found by trying the relations
+from the strongest down to `#`, which has none. When the atoms satisfying `P` are the constraints
+of a relation, it is that relation. -/
+def ofAtoms (P : Atom → Prop) [DecidablePred P] : Relation :=
+  ([equiv, negation, forward, reverse, alternation, cover].find?
+    (fun R ↦ ∀ a ∈ R.constraints, P a)).getD independent
+
 /-- In the implication order ([icard-2012]'s ≪), `R ≤ R'` iff `xRy` entails `xR'y`, i.e. iff the
 constraints of `R'` are among those of `R` (`Relation.Holds.of_le`). It consists of two diamonds
 sharing only the top `#`, one with `≡` below `⊑` and `⊒`, the other with `^` below `|` and `⌣`;
@@ -125,64 +158,53 @@ instance : OrderTop Relation where
   top := .independent
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
+/-- The constraint between `x` and `z` that a constraint between `x` and `y` and one between `y`
+and `z` guarantee, when there is one (`Relation.Atom.Holds.join` in `Logic/Natural/Soundness.lean`):
+`≤` and `≥` are transitive, disjointness is inherited downward and codisjointness upward, and,
+in a distributive lattice, `x` disjoint from `y` and `y` codisjoint with `z` give `x ≤ z`. -/
+def Atom.join : Atom → Atom → Option Atom
+  | .le, .le => some .le
+  | .ge, .ge => some .ge
+  | .le, .disjoint => some .disjoint
+  | .disjoint, .ge => some .disjoint
+  | .ge, .codisjoint => some .codisjoint
+  | .codisjoint, .le => some .codisjoint
+  | .disjoint, .codisjoint => some .le
+  | .codisjoint, .disjoint => some .ge
+  | _, _ => none
+
+private theorem Atom.join_assoc :
+    ∀ a b c : Atom, (a.join b).bind (·.join c) = (b.join c).bind (a.join ·) := by
+  decide
+
 /-- The join `R ⋈ R'` ([icard-2012], Lemma 1.5) is the strongest relation guaranteed between `x`
-and `z` given `xRy` and `yR'z`. It approximates relational composition, which
-[maccartney-manning-2009] call join after the database operation; it is not the lattice join.
+and `z` given `xRy` and `yR'z`, the relation asserting what the atom rule gives for each pair of
+constraints of `R` and `R'` (`Relation.mem_constraints_mul`). It approximates relational
+composition, which [maccartney-manning-2009] call join after the database operation; it is not the
+lattice join.
 Each cell is sound (`Relation.Holds.join` in `Logic/Natural/Soundness.lean`) and is the least
 sound relation (`Relation.isLeast_join` in `Logic/Natural/Completeness.lean`), as [icard-2012]'s
 Definition 1.4 requires. Exact composition is a union of the seven relations on 17 of the 49 cells
-([maccartney-manning-2009] §3), and this table gives the best single relation there. -/
-def join : Relation → Relation → Relation
-  -- ≡ is the identity
-  | .equiv, r => r
-  | r, .equiv => r
-  -- ⊑ row
-  | .forward, .forward => .forward
-  | .forward, .reverse => .independent
-  | .forward, .negation => .alternation
-  | .forward, .alternation => .alternation
-  | .forward, .cover => .independent
-  | .forward, .independent => .independent
-  -- ⊒ row
-  | .reverse, .forward => .independent
-  | .reverse, .reverse => .reverse
-  | .reverse, .negation => .cover
-  | .reverse, .alternation => .independent
-  | .reverse, .cover => .cover
-  | .reverse, .independent => .independent
-  -- ^ row
-  | .negation, .forward => .cover
-  | .negation, .reverse => .alternation
-  | .negation, .negation => .equiv
-  | .negation, .alternation => .reverse
-  | .negation, .cover => .forward
-  | .negation, .independent => .independent
-  -- | row
-  | .alternation, .forward => .independent
-  | .alternation, .reverse => .alternation
-  | .alternation, .negation => .forward
-  | .alternation, .alternation => .independent
-  | .alternation, .cover => .forward
-  | .alternation, .independent => .independent
-  -- ⌣ row
-  | .cover, .forward => .cover
-  | .cover, .reverse => .independent
-  | .cover, .negation => .reverse
-  | .cover, .alternation => .reverse
-  | .cover, .cover => .independent
-  | .cover, .independent => .independent
-  -- # row
-  | .independent, _ => .independent
+([maccartney-manning-2009] §3), and this gives the best single relation there. -/
+def join (R S : Relation) : Relation :=
+  ofAtoms fun c ↦ ∃ a ∈ R.constraints, ∃ b ∈ S.constraints, a.join b = some c
 
 instance : Mul Relation := ⟨join⟩
 instance : One Relation := ⟨.equiv⟩
 
+theorem mem_constraints_mul {R S : Relation} {c : Atom} :
+    c ∈ (R * S).constraints ↔ ∃ a ∈ R.constraints, ∃ b ∈ S.constraints, a.join b = some c := by
+  revert R S c
+  decide
+
 /-- The relations form a monoid under ⋈ with identity `≡`. The identity and absorption laws are
-printed in [icard-2012] (p. 710); associativity appears in neither [icard-2012] nor
-[maccartney-manning-2009] and is checked by `decide`. The monoid is not commutative, since `^ ⋈ ⌣ =
+printed in [icard-2012] (p. 710); associativity, printed in neither [icard-2012] nor
+[maccartney-manning-2009], is that of the atom rule. The monoid is not commutative, since `^ ⋈ ⌣ =
 ⊑` but `⌣ ⋈ ^ = ⊒`. -/
 instance : Monoid Relation where
-  mul_assoc := by decide
+  mul_assoc R S T := constraints_injective <| Finset.ext fun _ ↦ by
+    simp only [mem_constraints_mul]
+    exact exists_bind_comm Atom.join_assoc
   one_mul r := by cases r <;> rfl
   mul_one r := by cases r <;> rfl
 
@@ -257,6 +279,13 @@ def properties : Signature → Finset Property
 
 theorem properties_injective : Function.Injective properties := by decide
 
+/-- The most specific signature all of whose properties satisfy `P`, found by trying the
+signatures from the most specific up to `•`, which has none. When the properties satisfying `P`
+are those of a signature, it is that signature. -/
+def ofProperties (P : Property → Prop) [DecidablePred P] : Signature :=
+  ([addMult, antiAddMult, additive, mult, antiAdd, antiMult, mono, anti].find?
+    (fun σ ↦ ∀ p ∈ σ.properties, P p)).getD all
+
 /-- In the refinement order ([icard-2012]'s ≼, §2.2), `σ ≤ τ` iff every σ-function is a τ-function,
 i.e. iff the properties of `τ` are among those of `σ` (`Signature.SoundFor.of_le` in
 `Logic/Natural/Soundness.lean`). The most specific signature, which [icard-2012] calls
@@ -275,120 +304,119 @@ instance : OrderTop Signature where
   top := .all
   le_top _ := le_iff.mpr (Finset.empty_subset _)
 
+/-- The constraint between the values of a function with property `p` that a constraint `a`
+between its arguments guarantees, when there is one (`Signature.Property.HoldsFor.project` in
+`Logic/Natural/Soundness.lean`): a monotone function keeps `≤` and `≥` and an antitone one swaps
+them, an additive function keeps codisjointness and a multiplicative one disjointness, an
+anti-additive function turns codisjointness into disjointness and an anti-multiplicative one the
+reverse. -/
+def Property.project : Relation.Atom → Property → Option Relation.Atom
+  | .le, .monotone => some .le
+  | .ge, .monotone => some .ge
+  | .le, .antitone => some .ge
+  | .ge, .antitone => some .le
+  | .codisjoint, .additive => some .codisjoint
+  | .disjoint, .multiplicative => some .disjoint
+  | .codisjoint, .antiAdditive => some .disjoint
+  | .disjoint, .antiMultiplicative => some .codisjoint
+  | _, _ => none
+
+/-- The property a function with property `p` after one with property `q` has for that pair, when
+there is one (`Signature.Property.HoldsFor.compose` in `Logic/Natural/Soundness.lean`). -/
+def Property.compose : Property → Property → Option Property
+  | .monotone, .monotone | .antitone, .antitone => some .monotone
+  | .monotone, .antitone | .antitone, .monotone => some .antitone
+  | .additive, .additive | .antiMultiplicative, .antiAdditive => some .additive
+  | .multiplicative, .multiplicative | .antiAdditive, .antiMultiplicative => some .multiplicative
+  | .antiAdditive, .additive | .multiplicative, .antiAdditive => some .antiAdditive
+  | .antiMultiplicative, .multiplicative | .additive, .antiMultiplicative =>
+      some .antiMultiplicative
+  | _, _ => none
+
+private theorem Property.compose_assoc : ∀ p q r : Property,
+    (p.compose q).bind (·.compose r) = (q.compose r).bind (p.compose ·) := by
+  decide
+
+private theorem Property.compose_project : ∀ (p q : Property) (a : Relation.Atom),
+    (p.compose q).bind (Property.project a ·) =
+      (Property.project a q).bind (Property.project · p) := by
+  decide
+
 /-- The projection of a relation through a function of the given signature is the strongest relation
 guaranteed between `f x` and `f y` when `x R y` and `f` has signature `σ` ([icard-2012] Definition
-2.3, computed by his Lemma 2.4). Each row is sound (`soundFor_*` in `Logic/Natural/Soundness.lean`)
-and least (`Signature.isLeast_project` in `Logic/Natural/Completeness.lean`). [icard-2012] remarks
-under the table that `[R]^• = #` for all `R` (p. 715), but every function preserves equality, so
-his Definition 2.3 forces `[≡]^• = ≡`. -/
-def project : Relation → Signature → Relation
-  | .equiv, .all => .equiv
-  | _, .all => .independent
-  | r, .addMult => r
-  | .equiv, .antiAddMult => .equiv
-  | .forward, .antiAddMult => .reverse
-  | .reverse, .antiAddMult => .forward
-  | .negation, .antiAddMult => .negation
-  | .alternation, .antiAddMult => .cover
-  | .cover, .antiAddMult => .alternation
-  | .independent, .antiAddMult => .independent
-  | .equiv, .mono => .equiv
-  | .forward, .mono => .forward
-  | .reverse, .mono => .reverse
-  | .negation, .mono => .independent
-  | .alternation, .mono => .independent
-  | .cover, .mono => .independent
-  | .independent, .mono => .independent
-  | .equiv, .anti => .equiv
-  | .forward, .anti => .reverse
-  | .reverse, .anti => .forward
-  | .negation, .anti => .independent
-  | .alternation, .anti => .independent
-  | .cover, .anti => .independent
-  | .independent, .anti => .independent
-  | .equiv, .additive => .equiv
-  | .forward, .additive => .forward
-  | .reverse, .additive => .reverse
-  | .negation, .additive => .cover
-  | .alternation, .additive => .independent
-  | .cover, .additive => .cover
-  | .independent, .additive => .independent
-  | .equiv, .antiAdd => .equiv
-  | .forward, .antiAdd => .reverse
-  | .reverse, .antiAdd => .forward
-  | .negation, .antiAdd => .alternation
-  | .alternation, .antiAdd => .independent
-  | .cover, .antiAdd => .alternation
-  | .independent, .antiAdd => .independent
-  | .equiv, .mult => .equiv
-  | .forward, .mult => .forward
-  | .reverse, .mult => .reverse
-  | .negation, .mult => .alternation
-  | .alternation, .mult => .alternation
-  | .cover, .mult => .independent
-  | .independent, .mult => .independent
-  | .equiv, .antiMult => .equiv
-  | .forward, .antiMult => .reverse
-  | .reverse, .antiMult => .forward
-  | .negation, .antiMult => .cover
-  | .alternation, .antiMult => .cover
-  | .cover, .antiMult => .independent
-  | .independent, .antiMult => .independent
+2.3, computed by his Lemma 2.4): `≡`, since every function preserves equality, and otherwise the
+relation asserting what the property rule gives for each property of `σ` and constraint of `R`
+(`Signature.mem_constraints_project`). Each row is sound (`Signature.soundFor_of_holdsFor` in
+`Logic/Natural/Soundness.lean`) and least (`Signature.isLeast_project` in
+`Logic/Natural/Completeness.lean`). [icard-2012] remarks under the table that `[R]^• = #` for all
+`R` (p. 715), which is what the property rule alone gives for `≡` too. -/
+def project (R : Relation) (σ : Signature) : Relation :=
+  if R = .equiv then .equiv else
+    Relation.ofAtoms fun b ↦ ∃ p ∈ σ.properties, ∃ a ∈ R.constraints, Property.project a p = some b
 
-@[simp] theorem project_equiv (φ : Signature) : project .equiv φ = .equiv := by
-  cases φ <;> rfl
+@[simp] theorem project_equiv (φ : Signature) : project .equiv φ = .equiv := rfl
 
 @[simp] theorem project_independent (φ : Signature) : project .independent φ = .independent := by
   cases φ <;> rfl
 
+theorem mem_constraints_project {R : Relation} (hR : R ≠ .equiv) {σ : Signature}
+    {b : Relation.Atom} : b ∈ (project R σ).constraints ↔
+      ∃ p ∈ σ.properties, ∃ a ∈ R.constraints, Property.project a p = some b := by
+  revert R σ b
+  decide
+
+/-- Projection through a less specific signature gives a weaker relation. -/
+theorem project_mono (R : Relation) : Monotone (project R) := by
+  intro σ τ h
+  by_cases hR : R = .equiv
+  · subst hR
+    exact le_rfl
+  refine Relation.le_iff.2 fun _ hb ↦ ?_
+  obtain ⟨p, hp, a, ha, hab⟩ := (mem_constraints_project hR).1 hb
+  exact (mem_constraints_project hR).2 ⟨p, le_iff.1 h hp, a, ha, hab⟩
+
+private theorem project_ne_equiv : ∀ {R : Relation} (σ : Signature), R ≠ .equiv →
+    project R σ ≠ .equiv := by
+  decide
+
 /-! ### Composition -/
 
-/-- The signature whose projections of `forward` and `negation` are the given relations. These two
-projections identify each signature (`Signature.fromProjectionPair_project`); for `•` both are
-`#`. -/
-def fromProjectionPair : Relation → Relation → Signature
-  | .independent, .independent => .all
-  | .forward, .independent => .mono
-  | .forward, .cover       => .additive
-  | .forward, .alternation => .mult
-  | .forward, .negation    => .addMult
-  | .reverse, .independent => .anti
-  | .reverse, .alternation => .antiAdd
-  | .reverse, .cover       => .antiMult
-  | .reverse, .negation    => .antiAddMult
-  | _, _ => .mono  -- unreachable for valid projection pairs
-
-theorem fromProjectionPair_project (σ : Signature) :
-    fromProjectionPair (project .forward σ) (project .negation σ) = σ := by
-  cases σ <;> rfl
-
 /-- The composition `compose ψ φ` of projectivity signatures ([icard-2012], Definition 2.6 and
-Lemma 2.7), `φ` inner and `ψ` outer, is the signature whose projection table is that of projecting
-through `φ` and then `ψ` (`Signature.project_project`). It is read off the projections of `forward`
-and `negation`, which identify a signature. Three cells of the printed table (p. 716) differ from
-Definition 2.6, at `antiAdd * antiAdd`, `antiMult * mult` and `antiAddMult * antiMult`, and this
-function follows the definition: a ψ-function after a φ-function is a `ψ * φ`-function
-(`Signature.HoldsFor.comp`), and no more specific signature holds of all such composites
-(`Signature.isLeast_compose`). -/
+Lemma 2.7), `φ` inner and `ψ` outer, is the signature asserting what the property rule gives for
+each property of `ψ` and of `φ` (`Signature.mem_properties_mul`). A ψ-function after a
+φ-function is a `ψ * φ`-function (`Signature.HoldsFor.comp`), and no more specific signature holds
+of all such composites (`Signature.isLeast_compose`). Three cells of the printed table (p. 716) differ, at
+`antiAdd * antiAdd`, `antiMult * mult` and `antiAddMult * antiMult`. -/
 def compose (ψ φ : Signature) : Signature :=
-  fromProjectionPair
-    (project (project .forward φ) ψ)
-    (project (project .negation φ) ψ)
+  ofProperties fun r ↦ ∃ p ∈ ψ.properties, ∃ q ∈ φ.properties, p.compose q = some r
 
 instance : Mul Signature where mul := compose
 instance : One Signature where one := .addMult
 
+theorem mem_properties_mul {ψ φ : Signature} {r : Property} :
+    r ∈ (ψ * φ).properties ↔ ∃ p ∈ ψ.properties, ∃ q ∈ φ.properties, p.compose q = some r := by
+  revert ψ φ r
+  decide
+
 /-- Projecting through `φ` and then through `ψ` is projecting through `ψ * φ` ([icard-2012]
-Definition 2.6 and Lemma 2.7). -/
+Definition 2.6 and Lemma 2.7), since applying the composite property rule is applying the two
+rules in turn. -/
 theorem project_project (R : Relation) (φ ψ : Signature) :
     project (project R φ) ψ = project R (ψ * φ) := by
-  cases R <;> cases φ <;> cases ψ <;> rfl
+  by_cases hR : R = .equiv
+  · subst hR; simp only [project_equiv]
+  refine Relation.constraints_injective <| Finset.ext fun _ ↦ ?_
+  simp only [mem_constraints_project (project_ne_equiv φ hR), mem_constraints_project hR,
+    mem_properties_mul]
+  exact (exists_bind_comm Property.compose_project).symm
 
 /-- The signatures form a monoid under composition with identity the morphism signature `⊕`
-([icard-2012] Lemma 2.7). It is not commutative, since `antiMult * antiAdd = additive` but
-`antiAdd * antiMult = mult` (p. 716). -/
+([icard-2012] Lemma 2.7), associative because the property rule is. It is not commutative, since
+`antiMult * antiAdd = additive` but `antiAdd * antiMult = mult` (p. 716). -/
 instance : Monoid Signature where
-  mul_assoc a b c := by cases a <;> cases b <;> cases c <;> rfl
+  mul_assoc ψ φ χ := properties_injective <| Finset.ext fun _ ↦ by
+    simp only [mem_properties_mul]
+    exact exists_bind_comm Property.compose_assoc
   one_mul a := by cases a <;> rfl
   mul_one a := by cases a <;> rfl
 
@@ -408,12 +436,14 @@ instance : MulAction Signature Relation where
   one_smul := by decide
   mul_smul ψ φ R := (project_project R φ ψ).symm
 
+private theorem eq_of_project_eq : ∀ σ τ : Signature, project .forward σ = project .forward τ →
+    project .negation σ = project .negation τ → σ = τ := by
+  decide
+
 /-- A signature is determined by how it projects the relations, already by its projections of `⊑`
 and `^`. -/
 instance : FaithfulSMul Signature Relation where
-  eq_of_smul_eq_smul {σ τ} h := by
-    rw [← fromProjectionPair_project σ, ← fromProjectionPair_project τ]
-    exact congrArg₂ fromProjectionPair (h .forward) (h .negation)
+  eq_of_smul_eq_smul {σ τ} h := eq_of_project_eq σ τ (h .forward) (h .negation)
 
 /-! ### Signs and polarities -/
 

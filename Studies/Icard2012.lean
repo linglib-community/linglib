@@ -10,7 +10,8 @@ public import Linglib.Data.Examples.Icard2012
 This file formalizes Icard's projectivity calculus, which extends the Monotonicity Calculus from
 inclusion to the exclusion relations of MacCartney and Manning. The relations, their join and
 projection tables and the composition of signatures are the library's `NaturalLogic` substrate,
-whose implementations this file checks against the printed cells; on top of them it builds the typed
+which computes them from rules on single constraints and properties, and this file checks the
+computed cells against the printed ones; on top of them it builds the typed
 language of Section 2, with the projectivity markings of a lexicon's constants, the projectivity of
 a context (Definition 2.9, `Ctx.pro`), and the soundness of projectivity marking (Proposition 2.10,
 `Model.soundFor_ctxFun`). The calculus 𝒞 of Section 3 is `Derives`, with the Substitution rule over
@@ -65,9 +66,10 @@ open NaturalLogic NaturalLogic.Relation NaturalLogic.Signature
 /-! ### The printed tables
 
 The join table (Lemma 1.5), the projection table (Lemma 2.4) and the composition table
-(Lemma 2.7) are the substrate's `join`, `project` and `compose`; the cells are certified sound
-and least in `Logic/Natural/Soundness.lean` and `Logic/Natural/Completeness.lean`, and agree with
-the printed ones except where the errata say. -/
+(Lemma 2.7) are the substrate's `join`, `project` and `compose`, computed from rules on single
+constraints and properties; the cells are certified sound and least in
+`Logic/Natural/Soundness.lean` and `Logic/Natural/Completeness.lean`, and agree with the printed
+ones except where the errata say. -/
 
 example : join .alternation .negation = .forward := rfl
 example : join .alternation .reverse = .alternation := rfl
