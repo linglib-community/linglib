@@ -121,7 +121,7 @@ def Model.lex (M : Model T) (w : Word) : Option (Denotation (NonemptyInterval T)
   some ⟨w.ty, M.denote w⟩
 
 /-- A logical form is interpretable when type-driven composition gives it a type. -/
-def Interpretable (lf : LF) : Prop := (ty? (fun w ↦ some w.ty) lf).isSome
+def Interpretable (lf : LF) : Prop := (ty? individualIndices (fun w ↦ some w.ty) lf).isSome
 
 instance : DecidablePred Interpretable := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 

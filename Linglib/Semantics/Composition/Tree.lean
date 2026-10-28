@@ -441,55 +441,57 @@ agreement. Interpretability is therefore decided by the types of the leaves alon
 
 section TreeTyping
 
-variable {C : Type} {L : Type*}
+variable {C : Type} {Γ : ℕ → Ty} {L : Type*}
 
-/-- The type a tree composes to, from the types `lexTy` gives its leaves. -/
-def ty? (lexTy : L → Option Ty) : Tree C L → Option Ty
+/-- The type a tree composes to under a typing `Γ` of its indices, from the types `lexTy` gives its
+leaves. -/
+def ty? (Γ : ℕ → Ty) (lexTy : L → Option Ty) : Tree C L → Option Ty
   | .terminal _ w => lexTy w
-  | .node _ (t :: []) => ty? lexTy t
+  | .node _ (t :: []) => ty? Γ lexTy t
   | .node _ (t1 :: t2 :: []) => do
-    let σ ← ty? lexTy t1
-    let τ ← ty? lexTy t2
+    let σ ← ty? Γ lexTy t1
+    let τ ← ty? Γ lexTy t2
     σ.combine? τ
   | .node _ _ => none
-  | .adjoin _ (t :: []) => ty? lexTy t
+  | .adjoin _ (t :: []) => ty? Γ lexTy t
   | .adjoin _ (t1 :: t2 :: []) => do
-    let σ ← ty? lexTy t1
-    let τ ← ty? lexTy t2
+    let σ ← ty? Γ lexTy t1
+    let τ ← ty? Γ lexTy t2
     σ.combine? τ
   | .adjoin _ _ => none
-  | .trace _ _ => some .e
-  | .bind _ _ body => (ty? lexTy body).map (.fn .e)
+  | .trace n _ => some (Γ n)
+  | .bind n _ body => (ty? Γ lexTy body).map (.fn (Γ n))
   | _ => none
 
 variable (lexTy : L → Option Ty)
 
 @[simp] theorem ty?_terminal (c : C) (w : L) :
-    ty? lexTy (.terminal c w : Tree C L) = lexTy w := rfl
+    ty? Γ lexTy (.terminal c w : Tree C L) = lexTy w := rfl
 
 @[simp] theorem ty?_node_unary (c : C) (t : Tree C L) :
-    ty? lexTy (.node c (t :: [])) = ty? lexTy t := rfl
+    ty? Γ lexTy (.node c (t :: [])) = ty? Γ lexTy t := rfl
 
 @[simp] theorem ty?_node_binary (c : C) (t₁ t₂ : Tree C L) :
-    ty? lexTy (.node c (t₁ :: t₂ :: [])) =
-      (ty? lexTy t₁).bind fun σ ↦ (ty? lexTy t₂).bind fun τ ↦ σ.combine? τ := rfl
+    ty? Γ lexTy (.node c (t₁ :: t₂ :: [])) =
+      (ty? Γ lexTy t₁).bind fun σ ↦ (ty? Γ lexTy t₂).bind fun τ ↦ σ.combine? τ := rfl
 
 @[simp] theorem ty?_adjoin_unary (c : C) (t : Tree C L) :
-    ty? lexTy (.adjoin c (t :: [])) = ty? lexTy t := rfl
+    ty? Γ lexTy (.adjoin c (t :: [])) = ty? Γ lexTy t := rfl
 
 @[simp] theorem ty?_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
-    ty? lexTy (.adjoin c (t₁ :: t₂ :: [])) =
-      (ty? lexTy t₁).bind fun σ ↦ (ty? lexTy t₂).bind fun τ ↦ σ.combine? τ := rfl
+    ty? Γ lexTy (.adjoin c (t₁ :: t₂ :: [])) =
+      (ty? Γ lexTy t₁).bind fun σ ↦ (ty? Γ lexTy t₂).bind fun τ ↦ σ.combine? τ := rfl
 
-@[simp] theorem ty?_trace (n : ℕ) (c : C) : ty? lexTy (.trace n c : Tree C L) = some .e := rfl
+@[simp] theorem ty?_trace (n : ℕ) (c : C) :
+    ty? Γ lexTy (.trace n c : Tree C L) = some (Γ n) := rfl
 
 @[simp] theorem ty?_bind (n : ℕ) (c : C) (body : Tree C L) :
-    ty? lexTy (.bind n c body) =
-      (ty? lexTy body).map (.fn .e) := rfl
+    ty? Γ lexTy (.bind n c body) =
+      (ty? Γ lexTy body).map (.fn (Γ n)) := rfl
 
 theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    ty? lexTy (RoseTree.node l cs) = none := by
+    ty? Γ lexTy (RoseTree.node l cs) = none := by
   cases l with
   | terminal c w => cases cs with
     | nil => exact absurd rfl h
@@ -513,7 +515,7 @@ variable {lexTy} {lex : L → Option (Denotation E W M S)}
 theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
     (interp lex g t).map (·.1) =
-      ty? lexTy t := by
+      ty? individualIndices lexTy t := by
   induction t using Tree.rec' generalizing g with
   | terminal c w => rw [interp_terminal]; exact h w
   | node c cs ih =>
@@ -541,7 +543,7 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
 theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
     (interp lex g t).isSome =
-      (ty? lexTy t).isSome := by
+      (ty? individualIndices lexTy t).isSome := by
   rw [← interp_map_fst h g t, Option.isSome_map]
 
 end TreeTyping
