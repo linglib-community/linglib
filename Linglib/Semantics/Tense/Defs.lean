@@ -202,10 +202,6 @@ theorem inv_toSetRel (C : Finset Ordering) :
 
 end LT
 
-theorem mem_toSetRel_iff_compare [LinearOrder T] {C : Finset Ordering} {p r : T} :
-    p ~[toSetRel C] r ↔ compare r p ∈ C :=
-  ⟨fun ⟨_, ho, hc⟩ ↦ (compare_iff _ _).2 hc ▸ ho, fun h ↦ ⟨_, h, (compare_iff _ _).1 rfl⟩⟩
-
 theorem toSetRel_past_comp_self [Preorder T] [DenselyOrdered T] :
     (toSetRel ⟦past⟧ ○ toSetRel ⟦past⟧ : SetRel T T) = toSetRel ⟦past⟧ := by
   ext ⟨p, r⟩

@@ -53,11 +53,11 @@ def FocusesPreliminaryStages (v : ViewpointType) : Prop :=
 private theorem forall_imp_iff {D : Finset Allen.Relation}
     {P : ∀ {T : Type} [LinearOrder T], NonemptyInterval T → NonemptyInterval T → Prop}
     (hP : ∀ {T : Type} [LinearOrder T] (tt tsit : NonemptyInterval T),
-      P tt tsit ↔ (tt, tsit) ∈ Allen.toSetRel D) (v : ViewpointType) :
+      P tt tsit ↔ (tsit, tt) ∈ Allen.toSetRel D) (v : ViewpointType) :
     (∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
-      v.ttTSitRelation tt tsit → P tt tsit) ↔ v.cell ∩ Allen.atoms ⊆ D := by
+      v.ttTSitRelation tt tsit → P tt tsit) ↔ v.cell ⊆ D := by
   rw [← Allen.forall_toSetRel_subset_iff]
-  exact ⟨fun h T _ ⟨tt, tsit⟩ hv ↦ (hP tt tsit).1 (h ((v.ttTSitRelation_iff tt tsit).2 hv)),
+  exact ⟨fun h T _ ⟨tsit, tt⟩ hv ↦ (hP tt tsit).1 (h ((v.ttTSitRelation_iff tt tsit).2 hv)),
     fun h T _ tt tsit hv ↦ (hP tt tsit).2 (h T ((v.ttTSitRelation_iff tt tsit).1 hv))⟩
 
 /-- The initial point: the perfective and the neutral viewpoint assert it. -/
@@ -70,7 +70,7 @@ theorem showsInitialPoint_iff (v : ViewpointType) :
 /-- The final point: only the perfective asserts it. -/
 theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by
   refine (forall_imp_iff
-    (D := Allen.atoms.filter fun r ↦ r.fstSnd ≠ .gt ∧ r.sndSnd ≠ .lt)
+    (D := Finset.univ.filter fun r ↦ r.fstSnd ≠ .gt ∧ r.sndSnd ≠ .lt)
     (P := @fun _ _ tt tsit ↦ tsit.snd ∈ tt) (fun _ _ ↦ ?_) v).trans ?_
   · rw [Allen.mem_toSetRel, Allen.relation_mem_filter]
     simp [Allen.relation, Allen.ofEndpoints, NonemptyInterval.mem_def, compare_le_iff_le,
@@ -80,7 +80,7 @@ theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .per
 /-- Closure: the perfective and the perfect present the situation as closed. -/
 theorem presentsClosed_iff (v : ViewpointType) :
     PresentsClosed v ↔ v = .perfective ∨ v = .perfect := by
-  refine (forall_imp_iff (D := Allen.atoms.filter (·.sndSnd ≠ .lt))
+  refine (forall_imp_iff (D := Finset.univ.filter (·.sndSnd ≠ .lt))
     (P := @fun _ _ tt tsit ↦ tsit.snd ≤ tt.snd) (fun _ _ ↦ ?_) v).trans ?_
   · rw [Allen.mem_toSetRel, Allen.relation_mem_filter]
     simp [Allen.relation, Allen.ofEndpoints, compare_ge_iff_ge]

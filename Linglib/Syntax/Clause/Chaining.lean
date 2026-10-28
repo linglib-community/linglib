@@ -94,7 +94,7 @@ class MedialForm (M : Type*) where
   relations : M → Finset InterclauseRelation
   /-- The cell of Allen relations in which a form places the time of its clause relative to the
   time the clause is evaluated against, every relation for a form that leaves it open. -/
-  timing : M → Finset Allen.Relation := fun _ ↦ Allen.atoms
+  timing : M → Finset Allen.Relation := fun _ ↦ ⊤
   /-- The form carries subject cross-referencing. -/
   IndexesSubject : M → Prop
   [decidableIndexesSubject : DecidablePred IndexesSubject]

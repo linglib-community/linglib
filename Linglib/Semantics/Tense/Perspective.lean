@@ -22,8 +22,8 @@ reference stands where the reference does, or overlaps `π`.
 * `Tense.DeicticAdverb`: the lexical entry of a temporal deictic adverb, a surface form with the
   positions its reference may occupy relative to its anchor.
 * `Tense.DeicticAdverb.IsDistal`: the cell excludes overlap, as for English *then*.
-* `Tense.Perspective.Presup`: the presupposition of a temporal pronoun with a given cell, and
-  `Tense.Perspective.toSetRel` the relation it induces from the perspective.
+* `Tense.Perspective.Presup`: the presupposition of a temporal pronoun with a given cell, that
+  its reference stands to the perspective in the cell's relation `Allen.toSetRel`.
 * `Tense.Perspective.Restricted`: an adverb restricting a tense, both presuppositions holding and
   the tense's reference lying within the adverb's.
 
@@ -78,9 +78,9 @@ variable {T : Type*} [LinearOrder T] {A B : Finset Allen.Relation} {C : Finset O
 /-- The perspectival presupposition of a temporal pronoun with cell `A` is that its reference
 stands to the perspective `π` in one of the relations of `A`. -/
 def Presup (A : Finset Allen.Relation) (π ref : NonemptyInterval T) : Prop :=
-  Allen.relation ref π ∈ A
+  π ~[Allen.toSetRel A] ref
 
-instance : Decidable (Presup A π r) := inferInstanceAs (Decidable (_ ∈ A))
+instance : Decidable (Presup A π r) := inferInstanceAs (Decidable (π ~[Allen.toSetRel A] r))
 
 @[simp] theorem presup_precedes : Presup Allen.precedes π r ↔ r.Precedes π :=
   Allen.relation_mem_precedes
@@ -93,7 +93,7 @@ instance : Decidable (Presup A π r) := inferInstanceAs (Decidable (_ ∈ A))
 @[simp] theorem presup_ofPosition : Presup (Allen.ofPosition C) π r ↔ r.position π ∈ C :=
   Allen.relation_mem_ofPosition
 
-@[simp] theorem presup_top : Presup ⊤ π r := Finset.mem_univ _
+@[simp] theorem presup_top : Presup ⊤ π r := Allen.mem_toSetRel.2 (Finset.mem_univ _)
 
 /-- An adverb with cell `B` and reference `th` restricts a tense with cell `A` and reference `r`
 relative to the perspective `π`: both presuppositions hold and the tense's reference lies within
@@ -105,8 +105,8 @@ def Restricted (A B : Finset Allen.Relation) (π r th : NonemptyInterval T) : Pr
 with the reference's cell. -/
 theorem Presup.restrict (h : Presup A π r) (hle : r ≤ th) :
     Presup (Allen.comp (Allen.inv Allen.le) A) π th :=
-  Allen.toSetRel_comp_subset (show (th, π) ∈ Allen.toSetRel (Allen.inv Allen.le) ○
-    Allen.toSetRel A from ⟨r, by simpa using hle, h⟩)
+  Allen.toSetRel_comp_subset (show (π, th) ∈ Allen.toSetRel A ○
+    Allen.toSetRel (Allen.inv Allen.le) from ⟨r, h, by simpa using hle⟩)
 
 /-- On dense time, an adverb with cell `B` can restrict a reference with cell `A` for some
 perspective exactly when `B` meets the composite of containment with `A`. -/
@@ -116,27 +116,14 @@ theorem exists_restricted_iff [DenselyOrdered T] [Nontrivial T] :
   refine ⟨fun ⟨π, r, th, hr, hle, hth⟩ ↦ ⟨_, Finset.mem_inter.2 ⟨hr.restrict hle, hth⟩⟩,
     fun ⟨_, ht⟩ ↦ ?_⟩
   obtain ⟨htA, htB⟩ := Finset.mem_inter.1 ht
-  obtain ⟨-, e, h01, h23, h45, hle, hA, rfl⟩ := Allen.mem_comp.1 htA
+  obtain ⟨i, j, k, hle, hA, rfl⟩ := Allen.mem_comp.1 htA
   obtain ⟨f⟩ := Order.embedding_from_countable_to_dense (α := Fin 6) (β := T)
-  have hf (x y : Fin 6) : compare (f (e x)) (f (e y)) = compare (e x) (e y) := by
-    rcases lt_trichotomy (e x) (e y) with h | h | h
-    · rw [compare_lt_iff_lt.2 h, compare_lt_iff_lt.2 (f.lt_iff_lt.2 h)]
-    · rw [h, compare_eq_iff_eq.2 rfl, compare_eq_iff_eq.2 rfl]
-    · rw [compare_gt_iff_gt.2 h, compare_gt_iff_gt.2 (f.lt_iff_lt.2 h)]
-  have hrel (a b c d : Fin 6) : Allen.ofEndpoints (f (e a)) (f (e b)) (f (e c)) (f (e d)) =
-      Allen.ofEndpoints (e a) (e b) (e c) (e d) :=
-    Allen.ofEndpoints_eq (f := fun x ↦ f (e x)) hf a b c d
-  refine ⟨⟨(f (e 4), f (e 5)), f.monotone h45⟩, ⟨(f (e 2), f (e 3)), f.monotone h23⟩,
-    ⟨(f (e 0), f (e 1)), f.monotone h01⟩, ?_, ?_, ?_⟩
-  · change Allen.ofEndpoints _ _ _ _ ∈ A
-    rwa [hrel]
-  · have : Allen.relation (⟨(f (e 0), f (e 1)), f.monotone h01⟩ : NonemptyInterval T)
-        ⟨(f (e 2), f (e 3)), f.monotone h23⟩ ∈ Allen.inv Allen.le := by
-      change Allen.ofEndpoints _ _ _ _ ∈ _
-      rwa [hrel]
-    simpa using this
-  · change Allen.ofEndpoints _ _ _ _ ∈ B
-    rwa [hrel]
+  have hji : Allen.relation j i ∈ Allen.le := by simpa using hle
+  refine ⟨k.map f.toOrderHom, j.map f.toOrderHom, i.map f.toOrderHom, ?_, ?_, ?_⟩
+  · rwa [Presup, Allen.mem_toSetRel, Allen.relation_map]
+  · rw [← Allen.relation_mem_le, Allen.relation_map]
+    exact hji
+  · rwa [Presup, Allen.mem_toSetRel, Allen.relation_map]
 
 /-- A reference overlapping the perspective cannot be restricted by an adverb whose positions
 exclude overlap, the ⌜then⌝-present clash. -/
@@ -167,28 +154,6 @@ theorem exists_restricted_ofPosition_iff [Nontrivial T] {D : Finset Ordering} :
   refine ⟨.pure y, .pure x, .pure x ⊔ .pure y, hr, le_sup_left, ?_⟩
   rwa [NonemptyInterval.position_eq_eq.2
     (NonemptyInterval.overlaps_symm (NonemptyInterval.overlaps_of_le le_sup_right))]
-
-/-- The relation of a cell on intervals relates a perspective to the intervals that stand to it
-in one of the cell's relations. -/
-def toSetRel (A : Finset Allen.Relation) : SetRel (NonemptyInterval T) (NonemptyInterval T) :=
-  {x | Presup A x.1 x.2}
-
-@[simp] theorem mem_toSetRel : π ~[toSetRel A] r ↔ Presup A π r := .rfl
-
-instance : Decidable (π ~[toSetRel A] r) := inferInstanceAs (Decidable (Presup A π r))
-
-theorem toSetRel_eq_inv (A : Finset Allen.Relation) :
-    (toSetRel A : SetRel (NonemptyInterval T) _) = (Allen.toSetRel A).inv := by
-  ext ⟨π, r⟩
-  exact .rfl
-
-theorem toSetRel_precedes_comp_self [DenselyOrdered T] :
-    (toSetRel Allen.precedes ○ toSetRel Allen.precedes : SetRel (NonemptyInterval T) _) =
-      toSetRel Allen.precedes := by
-  ext ⟨π, r⟩
-  simp only [SetRel.mem_comp, mem_toSetRel, presup_precedes]
-  exact ⟨fun ⟨_, h₁, h₂⟩ ↦ NonemptyInterval.precedes_trans h₂ h₁,
-    fun h ↦ let ⟨u, hu, hu'⟩ := exists_between h; ⟨.pure u, hu', hu⟩⟩
 
 end Perspective
 

@@ -52,12 +52,12 @@ theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
 theorem dependsOn_past : DependsOn (Past n P σ) {n} := fun g g' h ↦ by
   simp only [Past, h n rfl]
 
-theorem Past.sometime (h : Past n P σ g) : ◇[Perspective.toSetRel Allen.precedes] P σ :=
+theorem Past.sometime (h : Past n P σ g) : ◇[Allen.toSetRel Allen.precedes] P σ :=
   ⟨_, h.1, h.2⟩
 
 /-- With its index bound by an existential quantifier, the past tense is Prior's past. -/
 theorem exists_past_iff_sometime :
-    (∃ t, lambdaAbsG n (Past n P σ) g t) ↔ ◇[Perspective.toSetRel Allen.precedes] P σ := by
+    (∃ t, lambdaAbsG n (Past n P σ) g t) ↔ ◇[Allen.toSetRel Allen.precedes] P σ := by
   simp [Past, Diamond]
 
 /-! ### The stove
@@ -66,13 +66,13 @@ theorem exists_past_iff_sometime :
 
 /-- A speaker who never turned off the stove did not turn it off at the salient time. -/
 theorem never_entails_deictic (hn : Perspective.Presup Allen.precedes σ (g n))
-    (h : ¬ ◇[Perspective.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ P t) σ g :=
+    (h : ¬ ◇[Allen.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ P t) σ g :=
   ⟨hn, fun hP ↦ h (Past.sometime ⟨hn, hP⟩)⟩
 
 /-- A speaker who did not turn off the stove at the salient time did not turn it off at some
 past time. -/
 theorem deictic_entails_sometime_not (h : Past n (fun t ↦ ¬ P t) σ g) :
-    ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ :=
+    ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ :=
   h.sometime
 
 /-- The sentence is true of a speaker who turned off the stove on an earlier occasion and not at
@@ -80,7 +80,7 @@ the salient time, so the reading on which the speaker never turned it off is too
 theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
       (P : NonemptyInterval ℤ → Prop),
-      Past 0 (fun t ↦ ¬ P t) σ g ∧ ◇[Perspective.toSetRel Allen.precedes] P σ :=
+      Past 0 (fun t ↦ ¬ P t) σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ :=
   ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 1), ⟨Perspective.presup_precedes.2 (by decide), by decide⟩,
     .pure 1, Perspective.presup_precedes.2 (by decide), rfl⟩
 
@@ -89,7 +89,7 @@ there are past times at which the speaker did not, so that reading is too weak. 
 theorem sometime_not_too_weak :
     ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
       (P : NonemptyInterval ℤ → Prop),
-      ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ ∧
+      ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ¬ P t) σ ∧
         Perspective.Presup Allen.precedes σ (g 0) ∧ ¬ Past 0 (fun t ↦ ¬ P t) σ g :=
   ⟨.pure 10, fun _ ↦ .pure 5, (· = .pure 5),
     ⟨.pure 1, Perspective.presup_precedes.2 (by decide), by decide⟩,
@@ -109,7 +109,7 @@ theorem anaphoric_iff :
 /-- Two existential pasts may be true of different times and of no common one. -/
 theorem existential_pasts_not_anaphoric :
     ∃ (σ : NonemptyInterval ℤ) (P Q : NonemptyInterval ℤ → Prop),
-      ◇[Perspective.toSetRel Allen.precedes] P σ ∧ ◇[Perspective.toSetRel Allen.precedes] Q σ ∧
+      ◇[Allen.toSetRel Allen.precedes] P σ ∧ ◇[Allen.toSetRel Allen.precedes] Q σ ∧
         ∀ t, ¬ (P t ∧ Q t) :=
   ⟨.pure 10, (· = .pure 1), (· = .pure 2), ⟨_, Perspective.presup_precedes.2 (by decide), rfl⟩,
     ⟨_, Perspective.presup_precedes.2 (by decide), rfl⟩,

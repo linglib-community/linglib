@@ -45,8 +45,8 @@ or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them
 * `Aspect.inclusive_eq_upperClosure`: the inclusive reading is the upper closure.
 * `Aspect.impf_singleton`: over the world of evaluation alone, the imperfective is the
   extensional one.
-* `Aspect.ViewpointType.denote_eq_preimage`, `Aspect.unbounded_eq_preimage`,
-  `Aspect.perfect_eq_preimage`: the operators are preimages under Allen cells, so complex aspects
+* `Aspect.ViewpointType.denote_eq_image`, `Aspect.unbounded_eq_image`,
+  `Aspect.perfect_eq_image`: the operators are images under Allen cells, so complex aspects
   compose by `Allen.comp`.
 
 ## Implementation notes
@@ -118,7 +118,7 @@ def ViewpointType.cell : ViewpointType → Finset Allen.Relation
 
 theorem ViewpointType.ttTSitRelation_iff {T : Type*} [LinearOrder T] (v : ViewpointType)
     (tt tsit : NonemptyInterval T) :
-    v.ttTSitRelation tt tsit ↔ (tt, tsit) ∈ Allen.toSetRel v.cell := by
+    v.ttTSitRelation tt tsit ↔ (tsit, tt) ∈ Allen.toSetRel v.cell := by
   cases v <;> simp [ttTSitRelation, cell]
 
 /-! ### Operators -/
@@ -212,17 +212,17 @@ theorem mem_prosp : t ∈ PROSP P w ↔ ∃ e : E, t.snd ≤ (τ e).fst ∧ P w 
 
 theorem mem_unbounded : t ∈ UNBOUNDED P w ↔ ∃ e : E, t ≤ τ e ∧ P w e := Iff.rfl
 
-/-- The operator of a viewpoint is the preimage of the predicate's run times under the
-viewpoint's cell. -/
-theorem ViewpointType.denote_eq_preimage (v : ViewpointType) (P : W → E → Prop) (w : W) :
-    v.denote P w = (Allen.toSetRel v.cell).preimage (τ '' {e | P w e}) := by
+/-- The operator of a viewpoint is the image of the predicate's run times under the viewpoint's
+cell. -/
+theorem ViewpointType.denote_eq_image (v : ViewpointType) (P : W → E → Prop) (w : W) :
+    v.denote P w = (Allen.toSetRel v.cell).image (τ '' {e | P w e}) := by
   ext t
-  simp [ViewpointType.denote, ofRel, SetRel.preimage, ViewpointType.ttTSitRelation_iff, and_comm]
+  simp [ViewpointType.denote, ofRel, SetRel.image, ViewpointType.ttTSitRelation_iff, and_comm]
 
-theorem unbounded_eq_preimage (P : W → E → Prop) (w : W) :
-    UNBOUNDED P w = (Allen.toSetRel Allen.le).preimage (τ '' {e | P w e}) := by
+theorem unbounded_eq_image (P : W → E → Prop) (w : W) :
+    UNBOUNDED P w = (Allen.toSetRel Allen.le).image (τ '' {e | P w e}) := by
   ext t
-  simp [UNBOUNDED, ofRel, SetRel.preimage, and_comm]
+  simp [UNBOUNDED, ofRel, SetRel.image, and_comm]
 
 /-- Over the world of evaluation alone, the imperfective is the extensional one, the reference
 interval within the run time of an actual event of the predicate. -/
@@ -283,13 +283,13 @@ theorem perf_eq_atPoint_perfect (p : W → Set (NonemptyInterval T)) :
   change pts.snd = s.time ↔ pts.fst ≤ s.time ∧ s.time = pts.snd
   exact ⟨fun h ↦ ⟨h ▸ pts.fst_le_snd, h.symm⟩, fun h ↦ h.2.symm⟩
 
-/-- The perfect is the preimage of the perfect time spans under the final-subinterval cell, so
-the perfect of a viewpoint relates its reference interval to the run time as the composite of
-the two cells does (`Allen.preimage_toSetRel_subset_comp`). -/
-theorem perfect_eq_preimage (p : W → Set (NonemptyInterval T)) (w : W) :
-    perfect p w = (Allen.toSetRel Allen.finalSubinterval).preimage (p w) := by
+/-- The perfect is the image of the perfect time spans under the final-subinterval cell, so the
+perfect of a viewpoint relates its reference interval to the run time as the composite of the
+two cells does (`Allen.image_toSetRel_subset_comp`). -/
+theorem perfect_eq_image (p : W → Set (NonemptyInterval T)) (w : W) :
+    perfect p w = (Allen.toSetRel Allen.finalSubinterval).image (p w) := by
   ext i
-  simp [perfect, SetRel.preimage]
+  simp [perfect, SetRel.image]
 
 theorem perfect_mono (h : ∀ w, p w ⊆ q w) (w : W) : perfect p w ⊆ perfect q w :=
   fun _ ⟨pts, hp, hf⟩ ↦ ⟨pts, h w hp, hf⟩

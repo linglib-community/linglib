@@ -97,16 +97,16 @@ inductive MedialMarker where
 /-- The cell of a time begun before the next clause's and overlapping it. -/
 @[irreducible]
 def cotemporaneous : Finset Allen.Relation :=
-  Allen.atoms.filter fun r ↦ r.fstFst = .lt ∧ r.sndFst = .gt
+  Finset.univ.filter fun r ↦ r.fstFst = .lt ∧ r.sndFst = .gt
 
 /-- The cell of a time ending where the next clause's begins. -/
 @[irreducible]
-def immediateSequence : Finset Allen.Relation := Allen.atoms.filter (·.sndFst = .eq)
+def immediateSequence : Finset Allen.Relation := Finset.univ.filter (·.sndFst = .eq)
 
 /-- The cell of a time begun before the next clause's and ending as it begins or within it. -/
 @[irreducible]
 def asSoonAs : Finset Allen.Relation :=
-  Allen.atoms.filter fun r ↦ r.fstFst = .lt ∧ r.sndFst ≠ .lt ∧ r.sndSnd = .lt
+  Finset.univ.filter fun r ↦ r.fstFst = .lt ∧ r.sndFst ≠ .lt ∧ r.sndSnd = .lt
 
 section
 
@@ -168,7 +168,7 @@ def timing : MedialMarker → Finset Allen.Relation
   | keb => asSoonAs
   | taykeb => cotemporaneous ∩ asSoonAs
   | n => Allen.ofPosition {.lt, .eq}
-  | lek | gay => Allen.atoms
+  | lek | gay => ⊤
 
 /-- The inflection of the verb before a marker. -/
 def inflection : MedialMarker → MedialInflection

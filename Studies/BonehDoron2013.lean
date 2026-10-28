@@ -126,21 +126,20 @@ variable {A : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {p 
 /-- The retrospective, (19b), holds at a perspective interval that a reference interval of `A`
 precedes, the perspectival past. -/
 def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ (Tense.Perspective.toSetRel Allen.precedes).preimage (A w)
+  fun w ↦ (Allen.toSetRel Allen.precedes).preimage (A w)
 
 /-- *Used to*, (18): the retrospective over the imperfective (19a). -/
 def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   retro (UNBOUNDED P)
 
-theorem usedTo_eq_preimage : usedTo P w = (Allen.toSetRel (Allen.inv Allen.precedes)).preimage
-    ((Allen.toSetRel Allen.le).preimage (τ '' {e | P w e})) := by
-  rw [usedTo, retro, Tense.Perspective.toSetRel_eq_inv, ← Allen.toSetRel_inv,
-    Aspect.unbounded_eq_preimage]
+theorem usedTo_eq_image : usedTo P w = (Allen.toSetRel (Allen.inv Allen.precedes)).image
+    ((Allen.toSetRel Allen.le).image (τ '' {e | P w e})) := by
+  rw [usedTo, retro, Allen.toSetRel_inv, SetRel.image_inv, Aspect.unbounded_eq_image]
 
 /-- The composite of the retrospective and the imperfective: the state began before the
 perspective time, and may have ended at any time after that. -/
 theorem comp_retro_imperfective :
-    Allen.comp (Allen.inv Allen.precedes) Allen.le = Allen.atoms.filter (·.fstFst = .gt) := by
+    Allen.comp (Allen.inv Allen.precedes) Allen.le = Finset.univ.filter (·.fstFst = .gt) := by
   decide +kernel
 
 /-- *Used to* says only that a state began before the perspective time, which the state may
@@ -148,20 +147,20 @@ outlast, so the retrospectivity of (28) is an implicature, cancelled in (30) and
 theorem mem_usedTo_iff : p ∈ usedTo P w ↔ ∃ e, P w e ∧ (τ e).fst < p.fst := by
   constructor
   · intro h
-    rw [usedTo_eq_preimage] at h
-    obtain ⟨_, ⟨e, hP, rfl⟩, h⟩ := Allen.preimage_toSetRel_subset_comp _ h
+    rw [usedTo_eq_image] at h
+    obtain ⟨_, ⟨e, hP, rfl⟩, h⟩ := Allen.image_toSetRel_subset_comp _ h
     rw [Allen.mem_toSetRel, comp_retro_imperfective] at h
     exact ⟨e, hP, compare_gt_iff_gt.1 (Finset.mem_filter.1 h).2⟩
   · rintro ⟨e, hP, hlt⟩
     exact ⟨.pure (τ e).fst, ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩,
-      Tense.Perspective.mem_toSetRel.2 (Tense.Perspective.presup_precedes.2 hlt)⟩
+      Allen.mem_toSetRel.2 (Allen.relation_mem_precedes.2 hlt)⟩
 
 /-- *Since then*, (33), *now*, (35), and a simultaneous reading, (36)–(37), need reference
 intervals overlapping the perspective time, and none of these serves the retrospective. -/
 theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retro A w :=
   fun ⟨i, hi, hp⟩ ↦
     NonemptyInterval.Precedes.not_overlaps
-      (Tense.Perspective.presup_precedes.1 (Tense.Perspective.mem_toSetRel.1 hp)) (h i hi)
+      (Allen.relation_mem_precedes.1 (Allen.mem_toSetRel.1 hp)) (h i hi)
 
 /-- The universal perfect over a span begun before its time of tense entails *used to*, which
 unlike it does not assert the state at that time (`IatridouEtAl2001.universal_at_rb`), so the two

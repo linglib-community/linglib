@@ -108,7 +108,7 @@ theorem mem_orientedBase [LT T] :
 position of the cell. -/
 theorem compare_mem_of_mem_orientedBase [LinearOrder T] (h : s' ∈ orientedBase history s C) :
     compare s'.time s.time ∈ C :=
-  Tense.mem_toSetRel_iff_compare.1 h.2
+  Tense.mem_toSetRel_iff.1 h.2
 
 theorem mem_historicalBase [PartialOrder T] :
     s' ∈ historicalBase history s ↔ s'.world ∈ history s ∧ s.time ≤ s'.time := by

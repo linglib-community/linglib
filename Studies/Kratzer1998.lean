@@ -135,7 +135,7 @@ def AspectHead.cell : AspectHead → Finset Allen.Relation
   | .perfect => Allen.inv Allen.precedes
 
 theorem AspectHead.rel_iff (a : AspectHead) (r s : NonemptyInterval T) :
-    a.rel r s ↔ (r, s) ∈ Allen.toSetRel a.cell := by
+    a.rel r s ↔ (s, r) ∈ Allen.toSetRel a.cell := by
   cases a <;> simp [AspectHead.rel, AspectHead.cell]
 
 /-- Against the library's viewpoints, the perfect is strictly stronger, excluding an event that
