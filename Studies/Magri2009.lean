@@ -125,10 +125,9 @@ structure IsRelevance (Wck φ : Set W) (R : Set W → Prop) : Prop where
   uttered : R φ
   congr {p q : Set W} : p ∩ Wck = q ∩ Wck → (R p ↔ R q)
 
-/-- (42): the prejacent with every relevant innocently excludable alternative denied, the
-counterpart over sets of `Excluder.restrict` applied to `innocent`. -/
+/-- (42): the prejacent with every relevant innocently excludable alternative denied. -/
 def exhR (R : Set W → Prop) (ALT : Set (Set W)) (φ : Set W) : Set W :=
-  {x | x ∈ φ ∧ ∀ a, IsInnocentlyExcludable ALT φ a → R a → x ∉ a}
+  φ ∩ excludesIE ALT φ {a | R a}
 
 variable {R : Set W → Prop} {ALT : Set (Set W)}
 

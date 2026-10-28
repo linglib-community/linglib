@@ -28,11 +28,11 @@ finite worlds. When the prejacent is maximal among the alternatives, exclusion i
 that every true alternative *equals* the prejacent (`mem_excludes_iff_forall_eq`).
 
 An `Excluder` is a selection over finite world types, `Excluder.exh` the resulting operator, and
-`tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.restrict` keeps only
-the relevant alternatives among those an excluder denies, after Magri, and can only weaken the
-result, while `Excluder.preFilter` removes alternatives before the excluder sees them and can
-strengthen it, the asymmetry Fox and Katzir state between contextual restriction and the formal
-alternative source. The innocent excluder is `innocent` in `Finite`.
+`tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.preFilter` offers an
+excluder only some of the alternatives, which can strengthen the result, the asymmetry Fox and
+Katzir state between the formal alternative source and contextual restriction; restricting the
+denied alternatives to the relevant ones, after Magri, is the relevance set of
+`Exhaustification.excludesIE`. The innocent excluder is `innocent` in `Finite`.
 
 ## References
 
@@ -185,7 +185,6 @@ theorem Irredundant.excludes_injOn (hf : Irredundant f) (i₀ : ι) :
       exact hj ⟨fun h ↦ absurd h hmem, fun h ↦ absurd h h2⟩
     exact hf.excludes_ne h₂j hmem (fun h ↦ hmem (h ▸ h₁)) heq
 
-
 theorem mem_exh_range_iff_exhAgainst (f : ι → Set W) (i : ι) (w : W) :
     w ∈ exh (Set.range f) (f i) ↔ exhAgainst (fun i j ↦ ¬ f i ⊆ f j) (w ∈ f ·) i := by
   simp only [mem_exh, Set.forall_mem_range, exhAgainst]
@@ -236,65 +235,15 @@ theorem mem_exh_iff {w : W} :
     w ∈ E.exh ALT φ ↔ w ∈ φ ∧ ∀ a ∈ E.excluded ALT φ, w ∉ a := by
   simp only [exh, Finset.mem_sdiff, Finset.mem_biUnion, id_eq, not_exists, not_and]
 
-end Excluder
-
-
-
-namespace Excluder
-
-/-! ### Restricting the excluded alternatives -/
-
-/-- Deny only the excluded alternatives satisfying `R`. -/
-def restrict (E : Excluder W) (R : Finset W → Bool) : Excluder W where
-  excluded ALT φ := (E.excluded ALT φ).filter (fun a => R a)
-  excluded_subset ALT φ :=
-    (Finset.filter_subset _ _).trans (E.excluded_subset ALT φ)
-
-@[simp] theorem restrict_excluded (E : Excluder W) (R : Finset W → Bool)
-    (ALT : Finset (Finset W)) (φ : Finset W) :
-    (E.restrict R).excluded ALT φ
-      = (E.excluded ALT φ).filter (fun a => R a) := rfl
-
-theorem restrict_const_true (E : Excluder W) :
-    E.restrict (fun _ => true) = E := by
-  cases E with
-  | mk excluded excluded_subset =>
-    simp [restrict]
-
-theorem exh_subset_restrict_exh (E : Excluder W) (R : Finset W → Bool)
-    (ALT : Finset (Finset W)) (φ : Finset W) :
-    E.exh ALT φ ⊆ (E.restrict R).exh ALT φ := by
-  intro w hw
-  rw [mem_exh_iff] at hw ⊢
-  refine ⟨hw.1, ?_⟩
-  intro a ha
-  rw [restrict_excluded, Finset.mem_filter] at ha
-  exact hw.2 a ha.1
-
-theorem restrict_preserves_no_implicature (E : Excluder W)
-    (R : Finset W → Bool) (ALT : Finset (Finset W)) (φ ψ : Finset W)
-    (h : ¬ E.exh ALT φ ⊆ ψ) :
-    ¬ (E.restrict R).exh ALT φ ⊆ ψ :=
-  fun hres => h ((exh_subset_restrict_exh E R ALT φ).trans hres)
-
 /-! ### Filtering the offered alternatives -/
 
-/-- Offer the excluder only the alternatives satisfying `P`. -/
-def preFilter (E : Excluder W) (P : Finset W → Bool) : Excluder W where
-  excluded ALT φ := E.excluded (ALT.filter (fun a => P a)) φ
-  excluded_subset _ _ :=
-    (E.excluded_subset _ _).trans (Finset.filter_subset _ _)
+/-- Offer the excluder only the alternatives in `K`. -/
+def preFilter (K : Finset (Finset W)) : Excluder W where
+  excluded A ψ := E.excluded (A ∩ K) ψ
+  excluded_subset _ _ := (E.excluded_subset _ _).trans Finset.inter_subset_left
 
-@[simp] theorem preFilter_excluded (E : Excluder W) (P : Finset W → Bool)
-    (ALT : Finset (Finset W)) (φ : Finset W) :
-    (E.preFilter P).excluded ALT φ
-      = E.excluded (ALT.filter (fun a => P a)) φ := rfl
-
-theorem preFilter_const_true (E : Excluder W) :
-    E.preFilter (fun _ => true) = E := by
-  cases E with
-  | mk excluded excluded_subset =>
-    simp [preFilter]
+@[simp] theorem preFilter_excluded (K : Finset (Finset W)) :
+    (E.preFilter K).excluded ALT φ = E.excluded (ALT ∩ K) φ := rfl
 
 end Excluder
 

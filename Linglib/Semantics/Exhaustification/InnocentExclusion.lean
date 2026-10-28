@@ -36,6 +36,8 @@ exhaustifier presupposes rather than asserts.
 * `isInnocentlyExcludable_iff_exhMW_subset_compl`
 * `exhIE_eq_inter_excludesIE`, `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`,
   `exhIE_eq_sdiff_of_maximal_unique`
+* `isInnocentlyExcludable_iff_not_subset`, `excludesIE_eq_excludes`: when the prejacent is
+  consistent with denying every alternative it does not entail, innocent exclusion is exclusion
 * `exh_nonempty_iff`, `mem_exhIE_iff_subset_sUnion`: `exh` is consistent iff some prejacent world
   verifies the least set of alternatives, and `exhIE` keeps the worlds verifying only alternatives
   in a minimal verified set
@@ -94,9 +96,6 @@ theorem exhIE_eq_inter_excludesIE : exhIE ALT φ = φ ∩ excludesIE ALT φ univ
 
 variable {ALT φ}
 
-theorem excludesIE_antitone : Antitone (excludesIE ALT φ) :=
-  fun _ _ h _ hw a ha hR ↦ hw a ha (h hR)
-
 theorem IsConsistentExclusion.mono {X Y : Set (Set World)} (hY : IsConsistentExclusion ALT φ Y)
     (hXY : X ⊆ Y) : IsConsistentExclusion ALT φ X :=
   ⟨hXY.trans hY.1, hY.2.mono (sdiff_subset_sdiff_right (sUnion_mono hXY))⟩
@@ -154,7 +153,7 @@ theorem IsConsistentExclusion.subset_sdiff_satisfied {X : Set (Set World)}
 is minimal. -/
 theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
     Maximal (IsConsistentExclusion ALT φ) (ALT \ Preorder.satisfied (· ∈ ·) ALT u) ↔
-      IsMinimal ALT φ u := by
+      u ∈ exhMW ALT φ := by
   refine ⟨fun hmax ↦ ⟨hu, fun ⟨v, hv, hvu, huv⟩ ↦ huv fun c hc huc ↦ by_contra fun hvc ↦ ?_⟩,
     fun ⟨_, hmin⟩ ↦ maximal_subset_iff'.2 ⟨isConsistentExclusion_sdiff_satisfied hu,
       fun Y ⟨hY, v, hv, hvY⟩ hXY b hb ↦ mem_sdiff_satisfied.2 ⟨hY hb, fun hub ↦ ?_⟩⟩⟩
@@ -168,7 +167,7 @@ theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
 /-- Every maximal consistent exclusion is the set of alternatives false at a minimal world. -/
 theorem Maximal.exists_eq_sdiff_satisfied {X : Set (Set World)}
     (hX : Maximal (IsConsistentExclusion ALT φ) X) :
-    ∃ u, IsMinimal ALT φ u ∧ X = ALT \ Preorder.satisfied (· ∈ ·) ALT u := by
+    ∃ u, u ∈ exhMW ALT φ ∧ X = ALT \ Preorder.satisfied (· ∈ ·) ALT u := by
   obtain ⟨u, hu, huX⟩ := hX.1.2
   have hXu := hX.1.subset_sdiff_satisfied huX
   have heq := hXu.antisymm (hX.2 (isConsistentExclusion_sdiff_satisfied hu) hXu)
@@ -262,16 +261,36 @@ theorem exhIE_eq_sdiff_of_maximal_unique {X₀ : Set (Set World)}
   exact and_congr_right fun _ ↦ ⟨fun h a ha ↦ h a ⟨h₀.prop.1 ha, fun X hX ↦ huniq X hX ▸ ha⟩,
     fun h a ha ↦ h a (ha.2 X₀ h₀)⟩
 
+variable {ALT φ} in
+/-- When the prejacent is consistent with the denial of every alternative it does not entail, an
+alternative is innocently excludable iff the prejacent does not entail it. -/
+theorem isInnocentlyExcludable_iff_not_subset (h : (exh ALT φ).Nonempty) {a : Set World}
+    (ha : a ∈ ALT) : IsInnocentlyExcludable ALT φ a ↔ ¬ φ ⊆ a := by
+  obtain ⟨w, hw, hex⟩ := h
+  refine ⟨fun hIE hs ↦ ?_, fun hs ↦ .of_forall_subset_or_notMem ha hw
+    (fun hwa ↦ hs (hex a ha hwa)) fun b hb ↦ (em (w ∈ b)).imp (hex b hb) id⟩
+  have hM : Maximal (IsConsistentExclusion ALT φ) {b ∈ ALT | w ∉ b} :=
+    maximal_subset_iff'.2 ⟨⟨fun _ hb ↦ hb.1, w, hw, fun ⟨_, hb, hwb⟩ ↦ hb.2 hwb⟩,
+      fun Y hY _ b hb ↦ ⟨hY.1 hb, fun hwb ↦
+        let ⟨_, hv, hvY⟩ := hY.2; hvY ⟨b, hb, hex b (hY.1 hb) hwb hv⟩⟩⟩
+  exact (hIE.2 _ hM).2 (hs hw)
+
+variable {ALT φ} in
+/-- When the prejacent is consistent with the denial of every alternative it does not entail,
+innocent exclusion over the relevant alternatives is exclusion over them. -/
+theorem excludesIE_eq_excludes (h : (exh ALT φ).Nonempty) (Rc : Set (Set World)) :
+    excludesIE ALT φ Rc = excludes (ALT ∩ Rc) φ := by
+  ext u
+  simp only [mem_excludesIE, mem_excludes, mem_inter_iff, and_imp]
+  exact ⟨fun hu q hq hR huq ↦ not_not.1 fun hs ↦
+      hu q ((isInnocentlyExcludable_iff_not_subset h hq).2 hs) hR huq,
+    fun hu a ha hR hua ↦ (isInnocentlyExcludable_iff_not_subset h ha.1).1 ha (hu a ha.1 hR hua)⟩
+
 /-- When the prejacent is consistent with the denial of every alternative it does not entail,
 innocent exclusion denies them all ([fox-2007]). -/
 theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhIE ALT φ = exh ALT φ := by
-  obtain ⟨v, hv, hvex⟩ := h
-  refine Subset.antisymm (fun u hu ↦ ⟨exhIE_subset ALT φ hu, fun q hq huq ↦ by_contra fun hφq ↦ ?_⟩)
-    (exh_subset_exhIE ALT φ)
-  have hIE : IsInnocentlyExcludable ALT φ q :=
-    .of_forall_subset_or_notMem hq hv (fun hvq ↦ hφq (hvex q hq hvq))
-      fun b hb ↦ or_iff_not_imp_left.2 fun hφb hvb ↦ hφb (hvex b hb hvb)
-  exact hu.2 q hIE huq
+  rw [exhIE_eq_inter_excludesIE, excludesIE_eq_excludes h, inter_univ]
+  rfl
 
 theorem exhIE_eq_self_of_forall (h : ∀ a ∈ ALT, (φ ∩ a).Nonempty → φ ⊆ a) : exhIE ALT φ = φ :=
   (exhIE_subset ALT φ).antisymm ((exh_eq_self_iff.2 h).ge.trans (exh_subset_exhIE ALT φ))

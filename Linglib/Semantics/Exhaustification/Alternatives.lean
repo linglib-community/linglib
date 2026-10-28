@@ -80,9 +80,6 @@ theorem mem_exhMW_iff_minimal {u : World} :
   rintro _ ⟨v, hv, rfl⟩ hvu
   exact h.2 hv hvu
 
-/-- A world is minimal when it is a prejacent world with no prejacent world strictly below it. -/
-def IsMinimal (u : World) : Prop := u ∈ exhMW ALT φ
-
 theorem exhMW_subset : exhMW ALT φ ⊆ φ := fun _ ⟨h, _⟩ ↦ h
 
 theorem ltALT_wf_of_finite (hfin : ALT.Finite) : WellFounded (ltALT ALT) := by
@@ -103,12 +100,12 @@ theorem ltALT_wf_of_finite (hfin : ALT.Finite) : WellFounded (ltALT ALT) := by
   exact InvImage.wf f Finset.isWellFounded_ssubset
 
 theorem exists_minimal_of_finite (hfin : ALT.Finite) (hsat : ∃ w, φ w) :
-    ∃ u, IsMinimal ALT φ u :=
+    ∃ u, u ∈ exhMW ALT φ :=
   let ⟨u, hu, hmin⟩ := (ltALT_wf_of_finite ALT hfin).has_min {w | φ w} hsat
   ⟨u, hu, fun ⟨v, hv, hlt⟩ ↦ hmin v hv hlt⟩
 
 theorem exists_isMinimal_le (hfin : ALT.Finite) {w : World} (hw : φ w) :
-    ∃ u, IsMinimal ALT φ u ∧ u ≤[ALT] w :=
+    ∃ u, u ∈ exhMW ALT φ ∧ u ≤[ALT] w :=
   let ⟨u, ⟨hu, huw⟩, hmin⟩ :=
     (ltALT_wf_of_finite ALT hfin).has_min {v | φ v ∧ v ≤[ALT] w} ⟨w, hw, leALT_refl ALT w⟩
   ⟨u, ⟨hu, fun ⟨v, hv, hlt⟩ ↦ hmin v ⟨hv, leALT_trans ALT v u w hlt.1 huw⟩ hlt⟩, huw⟩

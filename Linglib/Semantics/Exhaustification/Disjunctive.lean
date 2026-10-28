@@ -50,7 +50,7 @@ variable {A : Set (Set World)}
 theorem isMinimal_of_single {i : ι} (hi : i ∈ I) {w : World}
     (hA : ∀ q ∈ A, w ∈ q → ∃ S ⊆ I, q = ⋃ j ∈ S, p j)
     (hsplit : ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ A ∧ j ∈ S ∧ i ∉ S)
-    (hw : ∀ j ∈ I, w ∈ p j ↔ j = i) : IsMinimal A (⋃ j ∈ I, p j) w := by
+    (hw : ∀ j ∈ I, w ∈ p j ↔ j = i) : w ∈ exhMW A (⋃ j ∈ I, p j) := by
   refine ⟨Set.mem_biUnion hi ((hw i hi).2 rfl), ?_⟩
   rintro ⟨v, hv, hle, hnle⟩
   obtain ⟨j, hj, hvj⟩ := Set.mem_iUnion₂.1 hv
