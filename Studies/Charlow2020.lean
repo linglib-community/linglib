@@ -331,22 +331,31 @@ def islandLexicon : IslandWord → Option (Σ ty, Ty.Domain E Unit ty)
 def island : Tree Unit IslandWord :=
   .bin (.leaf .aLawyer) (.bin (.leaf .visits) (.leaf .aRelative))
 
-/-- The island has three derivations, the three that [bumford-charlow-2026]'s `combine` finds for a
-set of individuals and a set of properties: the lawyer's alternatives mapped inside the
-relative's, the higher-order island of Figure 10, right; the relative's inside the lawyer's,
-Figure 10, left; and point-wise application (11), which flattens either. -/
+/-- The island has the five derivations that [bumford-charlow-2026]'s `combine` finds for a set
+of individuals and a set of properties: the lawyer's alternatives mapped inside the relative's,
+the higher-order island of Figure 10, right, and its join; the relative's inside the lawyer's,
+Figure 10, left, and its join; and structured application. Each join, like structured
+application, is point-wise application (11), so either island flattens to it. -/
 theorem translations_island (g : Assignment E) :
     (Tree.translations individualIndices (islandLexicon lawyer rel visits) island).map
         (fun d ↦ (⟨d.1, d.2.eval (fun c ↦ c) g⟩ : Denotation E Unit)) =
       [⟨.comp .set (.comp .set .t), relativeOuter lawyer rel visits⟩,
+       ⟨.comp .set .t, (pure visits <*> rel <*> lawyer : Set Prop)⟩,
        ⟨.comp .set (.comp .set .t), lawyerOuter lawyer rel visits⟩,
+       ⟨.comp .set .t, (pure visits <*> rel <*> lawyer : Set Prop)⟩,
        ⟨.comp .set .t, (pure visits <*> rel <*> lawyer : Set Prop)⟩] := by
   simp [Tree.translations, island, islandLexicon, Ty.modes, Ty.mode?, Mode.functionalLeft?,
     Mode.functionalRight?, Mode.predicateModification?, Mode.eventIdentification?, Eff.map,
-    Eff.seq]
-  refine ⟨?_, ?_, ?_⟩
+    Eff.seq, Mode.join?, Eff.join]
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · simp only [relativeOuter, bind_pure_comp, Set.fmap_eq_image, Set.image_image]
+  · refine Set.ext fun q ↦ ?_
+    simp only [Set.mem_iUnion, Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff]
+    aesop
   · simp only [lawyerOuter, bind_pure_comp, Set.fmap_eq_image, Set.image_image]
+  · refine Set.ext fun q ↦ ?_
+    simp only [Set.mem_iUnion, Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff]
+    aesop
   · refine Set.ext fun q ↦ ?_
     simp only [Set.mem_seq_iff, Set.mem_image, Set.mem_singleton_iff]
     aesop
