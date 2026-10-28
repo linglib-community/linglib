@@ -34,9 +34,11 @@ The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.int
 `interp` is `interpWith` at `individualIndices` (`interp_eq_interpWith`), as mathlib's
 `Formula.Realize` is `BoundedFormula.Realize` with no bound variables, since the typing cannot be
 inferred from an assignment of individuals.
-Translation is the only type-driven step, and translation respects renaming and relating
-constants (`translate_map_const`, `translate_rel`). Binary nodes sequence effects left to right,
-whichever daughter is the function, so at `M = Cont R` the engine derives surface scope only:
+Translation is the only type-driven step and the only recursion on trees the semantics needs: the
+type of a tree is the type of its term, and the dependence of a denotation on the assignment and on
+the words is the term's (`freeVars_translate`, `translate_map`). Translation respects renaming and
+relating constants (`translate_map_const`, `translate_rel`). Binary nodes sequence effects left to
+right, whichever daughter is the function, so at `M = Cont R` the engine derives surface scope only:
 inverse scope needs an evaluation order chosen per node, which the engine does not provide
 (`Studies/Barker2002.lean` marks each rule with a permutation of its daughters). Predicate
 Abstraction needs the effect to distribute over functions,
@@ -259,6 +261,57 @@ theorem translate_rel {K' : Ty → Type*} {R : ∀ ty : Ty, K ty → K' ty → P
     exact ⟨.lam n b, by simp [hb'], .lam n hr⟩
   | junk l cs hj _ => intro d' h; rw [translate_junk _ hj] at h; exact absurd h (by simp)
 
+/-- The free variables of a tree's term are among the tree's free indices. -/
+theorem freeVars_translate {t : Tree C L} {d : Σ ty, Term Γ K ty}
+    (h : translate Γ lex t = some d) : d.2.freeVars ⊆ t.freeIndices := by
+  induction t using Tree.rec' generalizing d with
+  | terminal c w =>
+    obtain ⟨c', -, rfl⟩ := Option.map_eq_some_iff.1 h
+    simp [Term.freeVars]
+  | phrase c k cs ih =>
+    match cs, h with
+    | [t], h => exact fun i hi ↦ Tree.mem_freeIndices_phrase.2 ⟨t, by simp, ih t (by simp) h hi⟩
+    | [t₁, t₂], h =>
+      obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.1 h
+      obtain ⟨d₂, h₂, h⟩ := Option.bind_eq_some_iff.1 h
+      obtain ⟨p, -, rfl⟩ := Option.map_eq_some_iff.1 h
+      intro i hi
+      rcases Finset.mem_union.1 hi with hi | hi
+      · exact Tree.mem_freeIndices_phrase.2 ⟨t₁, by simp, ih t₁ (by simp) h₁ hi⟩
+      · exact Tree.mem_freeIndices_phrase.2 ⟨t₂, by simp, ih t₂ (by simp) h₂ hi⟩
+  | trace n c =>
+    obtain rfl := (Option.some.inj h).symm
+    simp [Term.freeVars]
+  | bind n c body ih =>
+    obtain ⟨d', h', rfl⟩ := Option.map_eq_some_iff.1 h
+    rw [Tree.freeIndices_bind]
+    exact Finset.erase_subset_erase n (ih h')
+  | junk l cs hj _ => rw [translate_junk _ hj] at h; cases h
+
+/-- Translating a tree with relabelled words is translating the tree under the relabelled
+lexicon. -/
+theorem translate_map {L' : Type*} (lex : L' → Option (Σ ty, K ty)) (f : L → L')
+    (t : Tree C L) : translate Γ lex (t.map f) = translate Γ (lex ∘ f) t := by
+  induction t using Tree.rec' with
+  | terminal c w => rfl
+  | phrase c k cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp)
+    | [t₁, t₂] =>
+      simp only [Tree.map_phrase, List.map, translate_phrase_binary, ih t₁ (by simp),
+        ih t₂ (by simp)]
+    | _ :: _ :: _ :: _ => rfl
+  | trace n c => rfl
+  | bind n c body ih => simp only [Tree.map_bind, translate_bind, ih]
+  | junk l cs hj _ =>
+    have hmap : (cs.map (Tree.map f)).map RoseTree.value =
+        (cs.map RoseTree.value).map (Tree.Label.mapWord f) := by
+      simp only [List.map_map]
+      exact List.map_congr_left fun t _ ↦ Tree.value_map f t
+    rw [Tree.map_rose, translate_junk _ (by rw [hmap, Tree.Label.licenses_mapWord]; exact hj),
+      translate_junk _ hj]
+
 end Translate
 
 /-! ### Tree interpretation -/
@@ -381,88 +434,29 @@ end Reduction
 
 /-! ### The type of a tree
 
-The type a tree composes to is a function of the types of its leaves: `ty?` computes it by the
-recursion of `interp`, with `Ty.combine?` at the binary nodes, and `interp_map_fst` is the
-agreement. Interpretability is therefore decided by the types of the leaves alone. -/
+The type a tree composes to is a function of the types of its leaves: `ty?` is the type of the
+term the tree translates to under a lexicon of bare types, and `interp_map_fst` is the agreement.
+Interpretability is therefore decided by the types of the leaves alone. -/
 
 section TreeTyping
 
 variable {C : Type} {Γ : ℕ → Ty} {L : Type*}
 
 /-- The type a tree composes to under a typing `Γ` of its indices, from the types `lexTy` gives its
-leaves. -/
-def ty? (Γ : ℕ → Ty) (lexTy : L → Option Ty) : Tree C L → Option Ty
-  | .terminal _ w => lexTy w
-  | .phrase _ _ (t :: []) => ty? Γ lexTy t
-  | .phrase _ _ (t1 :: t2 :: []) => do
-    let σ ← ty? Γ lexTy t1
-    let τ ← ty? Γ lexTy t2
-    σ.combine? τ
-  | .phrase _ _ _ => none
-  | .trace n _ => some (Γ n)
-  | .bind n _ body => (ty? Γ lexTy body).map (.fn (Γ n))
-  | _ => none
-
-variable (lexTy : L → Option Ty)
-
-@[simp] theorem ty?_terminal (c : C) (w : L) :
-    ty? Γ lexTy (.terminal c w : Tree C L) = lexTy w := rfl
-
-@[simp] theorem ty?_phrase_unary (c : C) (k : PhraseKind) (t : Tree C L) :
-    ty? Γ lexTy (.phrase c k (t :: [])) = ty? Γ lexTy t := rfl
-
-@[simp] theorem ty?_phrase_binary (c : C) (k : PhraseKind) (t₁ t₂ : Tree C L) :
-    ty? Γ lexTy (.phrase c k (t₁ :: t₂ :: [])) =
-      (ty? Γ lexTy t₁).bind fun σ ↦ (ty? Γ lexTy t₂).bind fun τ ↦ σ.combine? τ := rfl
-
-@[simp] theorem ty?_trace (n : ℕ) (c : C) :
-    ty? Γ lexTy (.trace n c : Tree C L) = some (Γ n) := rfl
-
-@[simp] theorem ty?_bind (n : ℕ) (c : C) (body : Tree C L) :
-    ty? Γ lexTy (.bind n c body) =
-      (ty? Γ lexTy body).map (.fn (Γ n)) := rfl
-
-theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
-    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
-    ty? Γ lexTy (RoseTree.node l cs) = none := by
-  cases l with
-  | terminal c w => cases cs with
-    | nil => exact absurd rfl h
-    | cons => rfl
-  | phrase c k => exact absurd trivial h
-  | trace n c => cases cs with
-    | nil => exact absurd rfl h
-    | cons => rfl
-  | bind n c =>
-    rcases cs with _ | ⟨t, _ | ⟨u, cs⟩⟩
-    · rfl
-    · exact absurd rfl h
-    · rfl
+leaves: the type of the term it translates to. -/
+def ty? (Γ : ℕ → Ty) (lexTy : L → Option Ty) (t : Tree C L) : Option Ty :=
+  (translate Γ (K := fun _ ↦ Unit) (fun w ↦ (lexTy w).map fun ty ↦ ⟨ty, ()⟩) t).map (·.1)
 
 variable {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [Distributive M]
-
-variable {lexTy} {lex : L → Option (Denotation E W M S)}
+  {lexTy : L → Option Ty} {lex : L → Option (Denotation E W M S)}
 
 /-- The type of a tree's denotation is the type `ty?` computes from the types of its leaves. -/
 theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
     (interp lex g t).map (·.1) =
       ty? individualIndices lexTy t := by
-  induction t using Tree.rec' generalizing g with
-  | terminal c w => rw [interp_terminal]; exact h w
-  | phrase c k cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => exact ih t (by simp) g
-    | [t₁, t₂] =>
-      rw [interp_phrase_binary, ty?_phrase_binary, ← ih t₁ (by simp) g, ← ih t₂ (by simp) g]
-      cases interp lex g t₁ <;> cases interp lex g t₂ <;> simp [Ty.combine?]
-    | _ :: _ :: _ :: _ => rfl
-  | trace n c => rfl
-  | bind n c body ih =>
-    rw [interp_bind, ty?_bind, ← ih g]
-    cases interp lex g body <;> rfl
-  | junk l cs hj _ => rw [interp_junk lex g hj, ty?_junk _ hj]; rfl
+  rw [interp, Option.map_map]
+  exact translate_map_fst lex (fun w ↦ by simp [← h w, Option.map_map, Function.comp_def]) t
 
 theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
@@ -494,43 +488,12 @@ theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
 coincidence theorem ([heim-kratzer-1998] §5.4.2). -/
 theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
     (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g t = interp lex g' t := by
-  induction t using Tree.rec' generalizing g g' with
-  | terminal c w => simp only [interp_terminal]
-  | phrase c k cs ih =>
-    have hm : ∀ t ∈ cs, ∀ i ∈ t.freeIndices, g i = g' i := fun t ht i hi =>
-      h i (Tree.mem_freeIndices_phrase.2 ⟨t, ht, hi⟩)
-    match cs with
-    | [] => rfl
-    | [t] => simp only [interp_phrase_unary]; exact ih t (by simp) (hm t (by simp))
-    | [t₁, t₂] =>
-      simp only [interp_phrase_binary]
-      rw [ih t₁ (by simp) (hm t₁ (by simp)), ih t₂ (by simp) (hm t₂ (by simp))]
-    | _ :: _ :: _ :: _ => rfl
-  | trace n c => simp only [interp_trace]; rw [h n (by simp)]
-  | bind n c body ih =>
-    simp only [interp_bind]
-    have hb : ∀ x, interp lex (g[n ↦ x]) body = interp lex (g'[n ↦ x]) body :=
-      fun x ↦ ih fun i hi ↦ by
-        by_cases hin : i = n
-        · subst hin; simp
-        · rw [Function.update_of_ne hin, Function.update_of_ne hin]
-          exact h i (by rw [Tree.freeIndices_bind]; exact Finset.mem_erase.mpr ⟨hin, hi⟩)
-    have ht := interp_map_fst_congr lex g g' body
-    revert ht
-    cases hg : interp lex g body <;> cases hg' : interp lex g' body <;> intro ht
-    · rfl
-    · simp at ht
-    · simp at ht
-    · rename_i d d'
-      obtain ⟨τ, v⟩ := d; obtain ⟨τ', v'⟩ := d'
-      simp only [Option.map_some, Option.some.injEq] at ht
-      subst ht
-      simp only [Option.bind_some, Option.some.injEq, Sigma.mk.injEq, heq_eq_eq, true_and]
-      congr 1
-      funext x
-      rw [hb x]
-      exact valueAt_of_map_fst (by rw [interp_map_fst_congr lex _ g' body, hg']; rfl)
-  | junk l cs hj _ => rw [interp_junk lex g hj, interp_junk lex g' hj]
+  rcases ht : translate individualIndices (K := fun ty ↦ M (Ty.Domain E W ty S)) lex t with
+    _ | ⟨τ, u⟩
+  · simp [interp, ht]
+  · simp only [interp, ht, Option.map_some]
+    exact congrArg (fun v ↦ some (⟨τ, v⟩ : Denotation E W M S))
+      (Term.evalM_congr_of_agree (fun c ↦ c) u fun n hn ↦ h n (freeVars_translate lex ht hn))
 
 /-- By [heim-kratzer-1998]'s (9), a tree with no free trace at index `i` denotes alike under an
 assignment and its modification at `i`. -/
@@ -562,24 +525,7 @@ variable {C : Type} {L : Type*} {E W : Type} {S : Sorts} {M : Type → Type} [Ap
 
 theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : L → L')
     (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
-  induction t using Tree.rec' generalizing g with
-  | terminal c w => rfl
-  | phrase c k cs ih =>
-    match cs with
-    | [] => rfl
-    | [t] => exact ih t (by simp) g
-    | [t₁, t₂] =>
-      simp only [Tree.map_phrase, List.map, interp_phrase_binary, ih t₁ (by simp), ih t₂ (by simp)]
-    | _ :: _ :: _ :: _ => rfl
-  | trace n c => rfl
-  | bind n c body ih => simp only [Tree.map_bind, interp_bind, ih]
-  | junk l cs hj _ =>
-    have hmap : (cs.map (Tree.map f)).map RoseTree.value =
-        (cs.map RoseTree.value).map (Tree.Label.mapWord f) := by
-      simp only [List.map_map]
-      exact List.map_congr_left fun t _ ↦ Tree.value_map f t
-    rw [Tree.map_rose, interp_junk _ _ (by rw [hmap, Tree.Label.licenses_mapWord]; exact hj),
-      interp_junk _ _ hj]
+  simp only [interp, translate_map]
 
 variable (lex : L → Set (Denotation E W M S)) (g : Assignment E)
 
