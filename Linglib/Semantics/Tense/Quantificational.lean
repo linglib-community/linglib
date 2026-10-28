@@ -9,7 +9,7 @@ public import Linglib.Logic.Modal.Basic
 Read quantificationally, a tense quantifies over the times its cell admits, as in the tense
 logic of Prior: the past holds of a predicate at a time when the predicate holds at some earlier
 time. The quantificational tense of a cell is possibility `◇` along the cell's relation
-(`Tense.toSetRel`, and `Tense.Perspective.toSetRel` on intervals), so `◇[toSetRel ⟦past⟧] P t`
+(`Tense.toSetRel`, and `Allen.toSetRel` on intervals), so `◇[toSetRel ⟦past⟧] P t`
 says that `P` held at some time before `t`, and necessity `□` along the relation holds when `P`
 held at all of them. The laws of `Logic/Modal` then apply. The past and the future are converse
 relations, so sometime in the one is adjoint to always in the other. A tense under a tense
@@ -103,13 +103,14 @@ namespace Perspective
 variable [LinearOrder T] {π : NonemptyInterval T} {Q : NonemptyInterval T → Prop}
 
 @[simp] theorem diamond_toSetRel_past :
-    ◇[toSetRel Allen.precedes] Q π ↔ ∃ r, r.Precedes π ∧ Q r := by
+    ◇[Allen.toSetRel Allen.precedes] Q π ↔ ∃ r, r.Precedes π ∧ Q r := by
   simp [Diamond]
 
 /-- On dense time the past of a past is a past on intervals too. -/
 theorem diamond_past_diamond_past [DenselyOrdered T] (Q : NonemptyInterval T → Prop) :
-    ◇[toSetRel Allen.precedes] (◇[toSetRel Allen.precedes] Q) = ◇[toSetRel Allen.precedes] Q := by
-  rw [← diamond_comp, toSetRel_precedes_comp_self]
+    ◇[Allen.toSetRel Allen.precedes] (◇[Allen.toSetRel Allen.precedes] Q) =
+      ◇[Allen.toSetRel Allen.precedes] Q := by
+  rw [← diamond_comp, Allen.toSetRel_precedes_comp_self]
 
 end Perspective
 

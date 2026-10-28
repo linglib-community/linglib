@@ -180,13 +180,13 @@ variable (sunday work : NonemptyInterval T → Prop) {σ : NonemptyInterval T}
 
 -- (44a)
 theorem past_time_on_every_sunday
-    (h : ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
+    (h : ◇[Allen.toSetRel Allen.precedes] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
     ∃ t, ∀ t', sunday t' → t ≤ t' :=
   let ⟨t, _, h⟩ := h; ⟨t, fun t' ht' ↦ (h t' ht').1⟩
 
 -- (44b)
 theorem every_sunday_contains_past_time
-    (h : ∀ t', sunday t' → ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ work t) σ) :
+    (h : ∀ t', sunday t' → ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ work t) σ) :
     ∀ t', sunday t' → ∃ t, t.Precedes σ ∧ t ≤ t' :=
   fun t' ht' ↦ let ⟨t, hts, h⟩ := h t' ht'; ⟨t, Perspective.presup_precedes.1 hts, h.1⟩
 
@@ -199,11 +199,11 @@ def sunday (t : NonemptyInterval ℕ) : Prop := t.fst % 7 = 0 ∧ t.snd = t.fst 
 (45) and false on (44a) and (44b). -/
 theorem every_sunday :
     (∀ t', sunday t' ∧ t'.Precedes (.pure 10) →
-      ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
-    ¬ ◇[Perspective.toSetRel Allen.precedes]
+      ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
+    ¬ ◇[Allen.toSetRel Allen.precedes]
       (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ sunday t) (.pure 10) ∧
     ¬ ∀ t', sunday t' →
-      ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10) := by
+      ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10) := by
   refine ⟨fun t' ⟨h, hs⟩ ↦ ⟨t', Perspective.presup_precedes.2 hs, le_rfl, h⟩, ?_, fun h ↦ ?_⟩
   · rintro ⟨t, -, h⟩
     have h₀ := NonemptyInterval.le_def.1 (h ⟨(0, 1), by decide⟩ ⟨rfl, rfl⟩).1
@@ -230,7 +230,7 @@ variable {W : Type*} (turnOff rain : W → NonemptyInterval T → Prop) (w : W)
 domain `K` before `σ` satisfies it. -/
 def RestrictedPast (K : Set (NonemptyInterval T)) (Q : NonemptyInterval T → Prop)
     (σ : NonemptyInterval T) : Prop :=
-  ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ∈ K ∧ Q t) σ
+  ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ∈ K ∧ Q t) σ
 
 /-- Restricted to subintervals of a time the referential Past (47) admits, the indefinite Past is
 the Perfective (50), so (52) and (54) agree. -/
@@ -240,21 +240,21 @@ theorem restrictedPast_Iic_iff_prfv (h : Perspective.Presup Allen.precedes σ t�
     (NonemptyInterval.precedes_of_le_of_precedes ht (Perspective.presup_precedes.1 h)), ht, hQ⟩⟩
 
 -- (46b), (54)
-theorem not_restrictedPast_of_not_past (h : ¬ ◇[Perspective.toSetRel Allen.precedes] Q σ) :
+theorem not_restrictedPast_of_not_past (h : ¬ ◇[Allen.toSetRel Allen.precedes] Q σ) :
     ¬ RestrictedPast K Q σ :=
   fun ⟨t, hts, _, hQ⟩ ↦ h ⟨t, hts, hQ⟩
 
 -- (46b)
 theorem exists_not_restrictedPast_past :
     ∃ (σ : NonemptyInterval ℤ) (K : Set (NonemptyInterval ℤ)) (Q : NonemptyInterval ℤ → Prop),
-      ¬ RestrictedPast K Q σ ∧ ◇[Perspective.toSetRel Allen.precedes] Q σ := by
+      ¬ RestrictedPast K Q σ ∧ ◇[Allen.toSetRel Allen.precedes] Q σ := by
   refine ⟨.pure 10, Set.Iic ⟨(5, 6), by decide⟩, (· = .pure 1), ?_, .pure 1,
     Perspective.presup_precedes.2 (by decide), rfl⟩
   rintro ⟨t, -, hK, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 hK).1 (by decide)
 
 -- (58), (59)
-theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.toSetRel Allen.precedes]
+theorem not_prfv_of_not_past (h : ¬ ◇[Allen.toSetRel Allen.precedes]
       (fun t ↦ t ≤ today ∧ rain w t) σ)
     (h₅ : Perspective.Presup Allen.precedes σ t₅) (h₅' : t₅ ≤ today) : t₅ ∉ PRFV rain w :=
   fun ⟨t, ht, hr⟩ ↦ h ⟨t, Perspective.presup_precedes.2
@@ -266,7 +266,7 @@ elsewhere in today. -/
 theorem exists_not_prfv_past :
     ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : Unit → NonemptyInterval ℤ → Prop),
       (Perspective.Presup Allen.precedes σ t₅ ∧ t₅ ≤ today ∧ t₅ ∉ PRFV rain ()) ∧
-        ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ today ∧ rain () t) σ := by
+        ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ today ∧ rain () t) σ := by
   refine ⟨.pure 20, ⟨(0, 1), by decide⟩, ⟨(0, 10), by decide⟩, fun _ t ↦ t = .pure 5,
     ⟨Perspective.presup_precedes.2 (by decide), by decide, ?_⟩, .pure 5,
     Perspective.presup_precedes.2 (by decide), by decide, rfl⟩
@@ -276,7 +276,7 @@ theorem exists_not_prfv_past :
 -- (59), (58)
 theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.Precedes σ → t ≤ t₅)
     (h₅ : Perspective.Presup Allen.precedes σ t₅) (h₅' : t₅ ≤ today) :
-    t₅ ∉ PRFV rain w ↔ ¬ ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ today ∧ rain w t) σ :=
+    t₅ ∉ PRFV rain w ↔ ¬ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ today ∧ rain w t) σ :=
   ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (Perspective.presup_precedes.1 ht), hr⟩,
     fun h ↦ not_prfv_of_not_past rain w h h₅ h₅'⟩
 

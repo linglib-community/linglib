@@ -83,23 +83,23 @@ section
 variable {T : Type*} [LinearOrder T] {t₁ t s : NonemptyInterval T}
 
 @[simp] theorem mem_cell_imperfective :
-    (t, s) ∈ Allen.toSetRel (cell .imperfective) ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
+    (s, t) ∈ Allen.toSetRel (cell .imperfective) ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
   simp [cell, NonemptyInterval.NonfinalSubinterval]
 
 @[simp] theorem mem_cell_perfective :
-    (t, s) ∈ Allen.toSetRel (cell .perfective) ↔ t.fst ≤ s.fst ∧ s.snd ≤ t.snd := by
+    (s, t) ∈ Allen.toSetRel (cell .perfective) ↔ t.fst ≤ s.fst ∧ s.snd ≤ t.snd := by
   rw [show cell .perfective = Aspect.ViewpointType.perfective.cell from rfl,
     ← Aspect.ViewpointType.ttTSitRelation_iff]
   exact NonemptyInterval.le_def
 
 @[simp] theorem mem_timing_sim :
-    (t₁, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.sim) ↔ t₁.fst ≤ t.fst ∧ t.snd ≤ t₁.snd := by
-  change (t₁, t) ∈ Allen.toSetRel (Allen.inv Allen.le) ↔ _
+    (t, t₁) ∈ Allen.toSetRel (MedialForm.timing Suffix.sim) ↔ t₁.fst ≤ t.fst ∧ t.snd ≤ t₁.snd := by
+  change (t, t₁) ∈ Allen.toSetRel (Allen.inv Allen.le) ↔ _
   simp [NonemptyInterval.le_def]
 
 @[simp] theorem mem_timing_seq :
-    (t₁, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) ↔ t₁.snd < t.fst := by
-  change (t₁, t) ∈ Allen.toSetRel Allen.precedes ↔ _
+    (t, t₁) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) ↔ t₁.snd < t.fst := by
+  change (t, t₁) ∈ Allen.toSetRel Allen.precedes ↔ _
   simp [NonemptyInterval.Precedes]
 
 end
@@ -113,7 +113,7 @@ variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T]
 /-- The operator of an aspect: the reference times at which it places an event of the
 predicate. -/
 def denote (p : Perfectivity) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  Aspect.ofRel (fun t s ↦ (t, s) ∈ Allen.toSetRel (cell p)) P
+  Aspect.ofRel (fun t s ↦ (s, t) ∈ Allen.toSetRel (cell p)) P
 
 /-- A marked clause: its suffix, its aspect and its predicate of events. -/
 structure Marked (W E : Type*) where
@@ -130,7 +130,7 @@ stands to `t` as the clause's suffix says (56). -/
 def Holds (cs : List (Marked W E × NonemptyInterval T)) (b : Perfectivity) (Q : W → E → Prop)
     (w : W) (t : NonemptyInterval T) : Prop :=
   (∀ c ∈ cs, c.2 ∈ denote c.1.aspect c.1.pred w ∧
-    (c.2, t) ∈ Allen.toSetRel (MedialForm.timing c.1.suffix)) ∧ t ∈ denote b Q w
+    (t, c.2) ∈ Allen.toSetRel (MedialForm.timing c.1.suffix)) ∧ t ∈ denote b Q w
 
 /-- The truth of a chain does not depend on the order of its marked clauses. -/
 theorem holds_perm {cs cs' : List (Marked W E × NonemptyInterval T)} (h : cs.Perm cs')
@@ -148,7 +148,8 @@ variable {T : Type*} [LinearOrder T]
 unmarked clause of aspect `b`: through the reference times of the two clauses. -/
 def eventRel (s : Suffix) (a b : Perfectivity) :
     SetRel (NonemptyInterval T) (NonemptyInterval T) :=
-  (Allen.toSetRel (cell a)).inv ○ Allen.toSetRel (MedialForm.timing s) ○ Allen.toSetRel (cell b)
+  Allen.toSetRel (cell a) ○ (Allen.toSetRel (MedialForm.timing s)).inv ○
+    (Allen.toSetRel (cell b)).inv
 
 /-- The truth condition of a chain with one marked clause on the run times `i` of its marked event
 and `j` of its unmarked event. -/
@@ -277,8 +278,8 @@ end
 /-- Any two times precede a common later one. -/
 theorem sequential_unordered {T : Type*} [LinearOrder T] [NoMaxOrder T]
     (t₁ t₂ : NonemptyInterval T) :
-    ∃ t, (t₁, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) ∧
-      (t₂, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) := by
+    ∃ t, (t, t₁) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) ∧
+      (t, t₂) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) := by
   obtain ⟨b, hb⟩ := exists_gt (max t₁.snd t₂.snd)
   exact ⟨.pure b, mem_timing_seq.2 ((le_max_left _ _).trans_lt hb),
     mem_timing_seq.2 ((le_max_right _ _).trans_lt hb)⟩

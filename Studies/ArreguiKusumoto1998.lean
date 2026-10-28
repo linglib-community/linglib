@@ -110,7 +110,7 @@ scope. -/
 def Model.denote (M : Model T) : (w : Word) → Ty.Domain (NonemptyInterval T) Unit w.ty
   | .vp k => M.vp k
   | .attitude k => M.attitude k
-  | .past | .after => ◇[Perspective.toSetRel Allen.precedes]
+  | .past | .after => ◇[Allen.toSetRel Allen.precedes]
   | .before => before
   | .speechTime => M.speechTime
   | .at_ => fun t' t ↦ t = t'
@@ -142,8 +142,8 @@ def Model.extension (M : Model T) (lf : LF) : NonemptyInterval T → Prop :=
 /-! ### Before and after -/
 
 theorem before_iff_not_diamond :
-    before X t ↔ ¬ ◇[Perspective.toSetRel (Allen.ofPosition ⟦future⟧ᶜ)] X t := by
-  simp only [before, Diamond, Perspective.mem_toSetRel, Perspective.presup_ofPosition,
+    before X t ↔ ¬ ◇[Allen.toSetRel (Allen.ofPosition ⟦future⟧ᶜ)] X t := by
+  simp only [before, Diamond, Allen.mem_toSetRel, Allen.relation_mem_ofPosition,
     Finset.mem_compl, denote_future, Finset.mem_singleton, NonemptyInterval.position_eq_gt,
     not_exists, not_and]
   exact forall_congr' fun _ ↦ not_imp_not.symm

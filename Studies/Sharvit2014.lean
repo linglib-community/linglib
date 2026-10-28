@@ -102,35 +102,35 @@ start of the contextually relevant interval, whatever the cell of the tense. A c
 follows a time of the predicate can be started later, one that overlaps it can be widened to the
 whole interval, and one that precedes it can be started at the start of the interval. -/
 theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
-    (h : IsEarliest C {t | ◇[Perspective.toSetRel (Allen.ofPosition c)] (· ∈ q) t} m) :
+    (h : IsEarliest C {t | ◇[Allen.toSetRel (Allen.ofPosition c)] (· ∈ q) t} m) :
     m = C.fst := by
   refine h.fst_le.eq_of_not_lt' fun hlt ↦ ?_
   obtain ⟨t, ⟨⟨r, hr, hq⟩, htC⟩, hm⟩ := h.1
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 htC
-  rw [Perspective.mem_toSetRel, Perspective.presup_ofPosition] at hr
+  rw [Allen.mem_toSetRel, Allen.relation_mem_ofPosition] at hr
   rcases hpos : r.position t with _ | _ | _
   · have hrt : r.snd < t.fst := NonemptyInterval.position_eq_lt.1 hpos
     obtain ⟨a, ha, ham⟩ := exists_between (max_lt (hrt.trans_le hm.1) hlt)
     have hra : r.position (.pure a) = .lt :=
       NonemptyInterval.position_eq_lt.2 ((le_max_left _ _).trans_lt ha)
-    exact absurd (h.le_of_mem (t := .pure a) ⟨r, by rwa [Perspective.mem_toSetRel,
-      Perspective.presup_ofPosition, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2
+    exact absurd (h.le_of_mem (t := .pure a) ⟨r, by rwa [Allen.mem_toSetRel,
+      Allen.relation_mem_ofPosition, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2
         ⟨(le_max_right _ _).trans ha.le, ham.le.trans (hm.2.trans h₂)⟩)
       (NonemptyInterval.mem_pure_self a)) ham.not_ge
   · have hrC : r.position C = .eq := NonemptyInterval.position_eq_eq.2
       ((NonemptyInterval.overlaps_comm _ _).1 (((NonemptyInterval.overlaps_comm _ _).1
         (NonemptyInterval.position_eq_eq.1 hpos)).mono_left htC))
     exact hlt.ne' (h.eq_fst_of_mem ⟨r, by
-      rwa [Perspective.mem_toSetRel, Perspective.presup_ofPosition, hrC, ← hpos], hq⟩)
+      rwa [Allen.mem_toSetRel, Allen.relation_mem_ofPosition, hrC, ← hpos], hq⟩)
   · have hra : r.position (.pure C.fst) = .gt := NonemptyInterval.position_eq_gt.2
       ((h₁.trans t.fst_le_snd).trans_lt (NonemptyInterval.position_eq_gt.1 hpos))
-    exact hlt.not_ge (h.le_of_mem (t := .pure C.fst) ⟨r, by rwa [Perspective.mem_toSetRel,
-      Perspective.presup_ofPosition, hra, ← hpos], hq⟩
+    exact hlt.not_ge (h.le_of_mem (t := .pure C.fst) ⟨r, by rwa [Allen.mem_toSetRel,
+      Allen.relation_mem_ofPosition, hra, ← hpos], hq⟩
       (NonemptyInterval.le_def.2 ⟨le_rfl, C.fst_le_snd⟩) (NonemptyInterval.mem_pure_self _))
 
 -- (27)
 theorem not_beforeDefined_diamond [DenselyOrdered M] {c : Finset Ordering} :
-    ¬ BeforeDefined C {t | ◇[Perspective.toSetRel (Allen.ofPosition c)] (· ∈ q) t} :=
+    ¬ BeforeDefined C {t | ◇[Allen.toSetRel (Allen.ofPosition c)] (· ∈ q) t} :=
   fun ⟨_, h, hlt⟩ ↦ hlt.ne' h.eq_fst_of_diamond
 
 /-! ### Tensed clauses under *before* -/
@@ -166,7 +166,7 @@ speech time. -/
 def Reading.denote (SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) :
     Reading → Set (NonemptyInterval M)
   | .pronominal τ => {t | Perspective.Presup (Allen.ofPosition (cell τ)) SP t ∧ t ∈ q}
-  | .existential τ => {t | ◇[Perspective.toSetRel (Allen.ofPosition (cell τ))] (· ∈ q) t}
+  | .existential τ => {t | ◇[Allen.toSetRel (Allen.ofPosition (cell τ))] (· ∈ q) t}
   | .null => q
 
 /-- A clause whose verb takes the pronominal tense `τ` with evaluation index `j` and referential

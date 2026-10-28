@@ -50,7 +50,7 @@ variable {T : Type*} [LinearOrder T] {P : NonemptyInterval T → Prop} {K σ : N
 subinterval of `K`, as *Yes, I saw her* (`Examples.ex_57`) says of the day. It is Partee's past
 tense with its index bound by an existential quantifier over the subintervals of `K`. -/
 theorem restricted_iff_exists_past :
-    ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
+    ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
       ∃ t ≤ K, lambdaAbsG n (Past n P σ) g t := by
   simp [Past, Diamond, and_left_comm]
 
@@ -65,7 +65,7 @@ it. -/
 theorem no_subinterval_iff_not_restricted :
     Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ↔
       Perspective.Presup Allen.precedes σ (g n) ∧
-        ¬ ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
+        ¬ ◇[Allen.toSetRel Allen.precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
   ⟨fun h ↦ ⟨h.1, fun ⟨t, _, hle, hP⟩ ↦ h.2 ⟨t, hle, hP⟩⟩, fun h ↦ ⟨h.1, fun ⟨t, hle, hP⟩ ↦
     h.2 ⟨t, Perspective.presup_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
       (Perspective.presup_precedes.1 h.1)), hle, hP⟩⟩⟩
@@ -90,7 +90,7 @@ theorem deictic_too_weak :
 /-- A speaker who never turned off the stove turned it off at no subinterval of the salient
 interval. -/
 theorem never_entails_no_subinterval (hn : Perspective.Presup Allen.precedes σ (g n))
-    (h : ¬ ◇[Perspective.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
+    (h : ¬ ◇[Allen.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   ⟨hn, fun ⟨t, hle, hP⟩ ↦ h ⟨t, Perspective.presup_precedes.2
     (NonemptyInterval.precedes_of_le_of_precedes hle (Perspective.presup_precedes.1 hn)), hP⟩⟩
 
@@ -98,7 +98,7 @@ theorem never_entails_no_subinterval (hn : Perspective.Presup Allen.precedes σ 
 theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
       (P : NonemptyInterval ℤ → Prop),
-      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Perspective.toSetRel Allen.precedes] P σ := by
+      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Allen.toSetRel Allen.precedes] P σ := by
   refine ⟨.pure 10, fun _ ↦ ⟨(5, 6), by decide⟩, (· = .pure 1),
     ⟨Perspective.presup_precedes.2 (by decide), ?_⟩, .pure 1,
     Perspective.presup_precedes.2 (by decide), rfl⟩
