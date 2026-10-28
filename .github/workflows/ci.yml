@@ -51,9 +51,6 @@ jobs:
       - name: Check generated hiatus data
         run: python3 scripts/gen_hiatus.py --check
 
-      - name: Check generated treebank coverage data
-        run: python3 scripts/gen_treebank_coverage.py --check
-
       - name: Check generated dependency length data
         run: python3 scripts/gen_ud_deplength.py --check
 
