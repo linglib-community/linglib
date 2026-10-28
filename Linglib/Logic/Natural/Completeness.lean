@@ -45,9 +45,8 @@ every bounded lattice.
 * `Signature.le_iff_holdsFor`: the refinement order is inclusion of
   function classes — [icard-2012]'s semantic definition of ≼,
   recovered.
-* `Signature.isLeast_compose`, `Signature.holdsFor_comp`: composition
-  is the least signature covering composites ([icard-2012]
-  Definition 2.6).
+* `Signature.isLeast_compose`: composition is the least signature
+  covering composites ([icard-2012] Definition 2.6).
 
 ## Implementation notes
 
@@ -176,21 +175,15 @@ theorem Signature.le_iff_holdsFor {σ τ : Signature} :
 /-! ### Tightness of signature composition -/
 
 set_option synthInstance.maxSize 400 in
-/-- Function classes compose along `Signature.compose`: a ψ-function
-after a φ-function is a `ψ * φ`-function, on the two-element Boolean
-algebra. -/
-theorem Signature.holdsFor_comp :
-    ∀ (ψ φ : Signature) (f g : Finset (Fin 1) → Finset (Fin 1)),
-      ψ.HoldsFor f → φ.HoldsFor g → (ψ * φ).HoldsFor (f ∘ g) := by decide
-
-set_option synthInstance.maxSize 400 in
 /-- **Tightness of signature composition** ([icard-2012]
 Definition 2.6): `ψ * φ` is the least signature whose class contains
-every composite of a ψ-function after a φ-function. -/
+every composite of a ψ-function after a φ-function, already on the
+two-element Boolean algebra; it contains them on every bounded lattice
+(`Signature.HoldsFor.comp`). -/
 theorem Signature.isLeast_compose (ψ φ : Signature) :
     IsLeast {χ : Signature | ∀ f g : Finset (Fin 1) → Finset (Fin 1),
       ψ.HoldsFor f → φ.HoldsFor g → χ.HoldsFor (f ∘ g)} (ψ * φ) := by
-  refine ⟨λ f g hf hg => Signature.holdsFor_comp ψ φ f g hf hg, λ χ hχ => ?_⟩
+  refine ⟨fun f g hf hg ↦ hf.comp hg, fun χ hχ ↦ ?_⟩
   by_contra hle
   have counter : ∀ ψ φ χ : Signature, ¬ ψ * φ ≤ χ →
       ∃ f g : Finset (Fin 1) → Finset (Fin 1),
