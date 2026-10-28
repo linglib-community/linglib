@@ -1,0 +1,241 @@
+{
+  "meta": {
+    "bibkey": "kuhlmann-nivre-2006",
+    "description": "The evaluation of section 4: the dependency analyses of the Danish Dependency Treebank and of the Prague Dependency Treebank, measured by gap degree and edge degree and checked for projectivity, planarity and well-nestedness. Table 1 prints for each treebank the number of structures at each gap degree and at each edge degree, and the number that are projective, planar and well-nested, over all structures and over the non-projective ones only. Each count is printed with its percentage of the structures it is taken over; the percentages are not recorded, and the study recomputes those the text argues from."
+  },
+  "types": [
+    {
+      "name": "Treebank",
+      "doc": "The treebank.",
+      "levels": [
+        {
+          "name": "ddt",
+          "label": "DDT",
+          "doc": "the Danish Dependency Treebank, the whole treebank with its primary dependencies only, less the 17 analyses with more than one root or a node with more than one head, which footnote 4 sets aside as annotation errors"
+        },
+        {
+          "name": "pdt",
+          "label": "PDT",
+          "doc": "the analytical layer of the dedicated training section of the Prague Dependency Treebank"
+        }
+      ]
+    },
+    {
+      "name": "Measure",
+      "doc": "A graded measure of non-projectivity.",
+      "levels": [
+        {
+          "name": "gap",
+          "label": "gap degree",
+          "doc": "the greatest number of gaps in the projection of a node"
+        },
+        {
+          "name": "edge",
+          "label": "edge degree",
+          "doc": "the greatest number of connected components an edge spans whose roots its head does not dominate"
+        }
+      ]
+    },
+    {
+      "name": "Constraint",
+      "doc": "A binary constraint relaxing projectivity.",
+      "levels": [
+        {
+          "name": "planar",
+          "label": "planar",
+          "doc": "no two edges cross"
+        },
+        {
+          "name": "wellNested",
+          "label": "well-nested",
+          "doc": "no two disjoint subtrees interleave"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "structures",
+      "structure": "Structures",
+      "doc": "the number of structures of a treebank, of the projective ones and of the non-projective ones.",
+      "locator": "Table 1, p. 512",
+      "verified": "page-image",
+      "key": [
+        "treebank"
+      ],
+      "columns": [
+        {
+          "name": "treebank",
+          "type": "Treebank",
+          "doc": "The treebank."
+        },
+        {
+          "name": "all",
+          "type": "nat",
+          "doc": "The number of structures, the n over all structures."
+        },
+        {
+          "name": "projective",
+          "type": "nat",
+          "doc": "The number of projective structures."
+        },
+        {
+          "name": "nonProjective",
+          "type": "nat",
+          "doc": "The number of non-projective structures, the n over them only."
+        }
+      ],
+      "rows": [
+        {
+          "treebank": "DDT",
+          "all": 4393,
+          "projective": 3732,
+          "nonProjective": 661
+        },
+        {
+          "treebank": "PDT",
+          "all": 73088,
+          "projective": 56168,
+          "nonProjective": 16920
+        }
+      ]
+    },
+    {
+      "name": "degrees",
+      "structure": "Degrees",
+      "doc": "the number of structures of a treebank at each degree of a measure.",
+      "locator": "Table 1, p. 512",
+      "verified": "page-image",
+      "key": [
+        "measure",
+        "treebank"
+      ],
+      "columns": [
+        {
+          "name": "measure",
+          "type": "Measure",
+          "doc": "The measure."
+        },
+        {
+          "name": "treebank",
+          "type": "Treebank",
+          "doc": "The treebank."
+        },
+        {
+          "name": "counts",
+          "type": "list option nat",
+          "doc": "The number of structures at degree 0, 1, 2 and on up to the last degree printed for either treebank, a dash as none."
+        }
+      ],
+      "rows": [
+        {
+          "measure": "gap degree",
+          "treebank": "DDT",
+          "counts": [
+            3732,
+            654,
+            7,
+            null,
+            null
+          ]
+        },
+        {
+          "measure": "gap degree",
+          "treebank": "PDT",
+          "counts": [
+            56168,
+            16608,
+            307,
+            4,
+            1
+          ]
+        },
+        {
+          "measure": "edge degree",
+          "treebank": "DDT",
+          "counts": [
+            3732,
+            584,
+            58,
+            17,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "measure": "edge degree",
+          "treebank": "PDT",
+          "counts": [
+            56168,
+            16585,
+            259,
+            63,
+            10,
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "coverage",
+      "structure": "Coverage",
+      "doc": "the number of structures of a treebank meeting a binary constraint, over all structures and over the non-projective ones only.",
+      "locator": "Table 1, p. 512",
+      "verified": "page-image",
+      "key": [
+        "constraint",
+        "treebank"
+      ],
+      "columns": [
+        {
+          "name": "constraint",
+          "type": "Constraint",
+          "doc": "The constraint."
+        },
+        {
+          "name": "treebank",
+          "type": "Treebank",
+          "doc": "The treebank."
+        },
+        {
+          "name": "all",
+          "type": "nat",
+          "doc": "The number of structures meeting the constraint."
+        },
+        {
+          "name": "nonProjective",
+          "type": "nat",
+          "doc": "The number of non-projective structures meeting the constraint."
+        }
+      ],
+      "rows": [
+        {
+          "constraint": "planar",
+          "treebank": "DDT",
+          "all": 3796,
+          "nonProjective": 64
+        },
+        {
+          "constraint": "planar",
+          "treebank": "PDT",
+          "all": 60048,
+          "nonProjective": 3880
+        },
+        {
+          "constraint": "well-nested",
+          "treebank": "DDT",
+          "all": 4388,
+          "nonProjective": 656
+        },
+        {
+          "constraint": "well-nested",
+          "treebank": "PDT",
+          "all": 73010,
+          "nonProjective": 16842
+        }
+      ]
+    }
+  ]
+}

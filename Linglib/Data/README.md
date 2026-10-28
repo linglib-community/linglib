@@ -86,16 +86,6 @@ a list-valued field per parameter, so a theorem reads each language once.
 - **Generator**: `scripts/gen_structure_dataset.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/StructureDataset/{AuthorYear}.json` → `{AuthorYear}.lean`
 
-### Treebank coverage of non-projectivity constraints
-
-Per-paper statistics on how many of a treebank's dependency trees, or of the grammar rules
-extracted from them, satisfy a constraint on non-projectivity (projectivity, a gap-degree
-bound, well-nestedness, planarity, or a conjunction), at the precision the paper prints.
-
-- **Schema**: `Linglib/Data/Treebank/Coverage/Schema.lean`
-- **Generator**: `scripts/gen_treebank_coverage.py` (`--check` verifies sync)
-- **Input/Output**: `Linglib/Data/Treebank/Coverage/{Paper}.json` → `{Paper}.lean`
-
 ### Experimental results
 
 The results a paper prints for its experiments, one table per printed table: the stimulus

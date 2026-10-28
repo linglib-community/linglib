@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "bibkey": "kuhlmann-2013",
+    "description": "The evaluation of sections 7.4 and 8.4: the lexicalized LCFRS rules extracted from the training sections of the five genuine dependency treebanks of the 2006 CoNLL shared task, counted as tokens, and the trees they are extracted from, with the number of rules and of trees lost when the yield functions are restricted to fan-out 1, to fan-out at most 2, and to well-nested yield functions of fan-out at most 2. A tree is lost when its construction tree contains a rule the restriction excludes. Table 3 prints the first two restrictions, and Table 4 repeats its columns and adds the third."
+  },
+  "types": [
+    {
+      "name": "Treebank",
+      "doc": "The treebank, by the language the paper names it for.",
+      "levels": [
+        {
+          "name": "arabic",
+          "label": "Arabic",
+          "doc": "the Prague Arabic Dependency Treebank"
+        },
+        {
+          "name": "czech",
+          "label": "Czech",
+          "doc": "the Prague Dependency Treebank of Czech"
+        },
+        {
+          "name": "danish",
+          "label": "Danish",
+          "doc": "the Danish Dependency Treebank"
+        },
+        {
+          "name": "slovene",
+          "label": "Slovene",
+          "doc": "the Slovene Dependency Treebank"
+        },
+        {
+          "name": "turkish",
+          "label": "Turkish",
+          "doc": "the Metu-Sabancı treebank of Turkish"
+        }
+      ]
+    },
+    {
+      "name": "Restriction",
+      "doc": "A restriction on the yield functions of the extracted rules.",
+      "levels": [
+        {
+          "name": "fanOutOne",
+          "label": "fan-out = 1",
+          "doc": "yield functions of fan-out 1"
+        },
+        {
+          "name": "fanOutLeTwo",
+          "label": "fan-out ≤ 2",
+          "doc": "yield functions of fan-out at most 2"
+        },
+        {
+          "name": "wellNested",
+          "label": "+ well-nested",
+          "doc": "well-nested yield functions of fan-out at most 2"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "size",
+      "structure": "Size",
+      "doc": "the number of rules extracted from a treebank and of its trees.",
+      "locator": "Tables 3 and 4, pp. 376 and 379",
+      "verified": "page-image",
+      "key": [
+        "treebank"
+      ],
+      "columns": [
+        {
+          "name": "treebank",
+          "type": "Treebank",
+          "doc": "The treebank."
+        },
+        {
+          "name": "rules",
+          "type": "nat",
+          "doc": "The number of rules extracted, counted as tokens."
+        },
+        {
+          "name": "trees",
+          "type": "nat",
+          "doc": "The number of trees."
+        }
+      ],
+      "rows": [
+        {
+          "treebank": "Arabic",
+          "rules": 5839,
+          "trees": 1460,
+          "note": "the text's 0.74% rule loss at fan-out 1 is 411 of 55,839 rules"
+        },
+        {
+          "treebank": "Czech",
+          "rules": 1322111,
+          "trees": 72703
+        },
+        {
+          "treebank": "Danish",
+          "rules": 99576,
+          "trees": 5190
+        },
+        {
+          "treebank": "Slovene",
+          "rules": 30284,
+          "trees": 1534
+        },
+        {
+          "treebank": "Turkish",
+          "rules": 62507,
+          "trees": 4997
+        }
+      ]
+    },
+    {
+      "name": "loss",
+      "structure": "Loss",
+      "doc": "the rules and trees of a treebank a restriction loses.",
+      "locator": "Tables 3 and 4, pp. 376 and 379",
+      "verified": "page-image",
+      "key": [
+        "treebank",
+        "restriction"
+      ],
+      "columns": [
+        {
+          "name": "treebank",
+          "type": "Treebank",
+          "doc": "The treebank."
+        },
+        {
+          "name": "restriction",
+          "type": "Restriction",
+          "doc": "The restriction."
+        },
+        {
+          "name": "rules",
+          "type": "nat",
+          "doc": "The number of rules the restriction excludes."
+        },
+        {
+          "name": "trees",
+          "type": "nat",
+          "doc": "The number of trees whose construction tree contains an excluded rule."
+        }
+      ],
+      "rows": [
+        {"treebank": "Arabic", "restriction": "fan-out = 1", "rules": 411, "trees": 163},
+        {"treebank": "Arabic", "restriction": "fan-out ≤ 2", "rules": 1, "trees": 1},
+        {"treebank": "Arabic", "restriction": "+ well-nested", "rules": 2, "trees": 2},
+        {"treebank": "Czech", "restriction": "fan-out = 1", "rules": 22283, "trees": 16831},
+        {"treebank": "Czech", "restriction": "fan-out ≤ 2", "rules": 328, "trees": 312},
+        {"treebank": "Czech", "restriction": "+ well-nested", "rules": 407, "trees": 382},
+        {"treebank": "Danish", "restriction": "fan-out = 1", "rules": 1229, "trees": 811},
+        {"treebank": "Danish", "restriction": "fan-out ≤ 2", "rules": 11, "trees": 9},
+        {"treebank": "Danish", "restriction": "+ well-nested", "rules": 17, "trees": 15},
+        {"treebank": "Slovene", "restriction": "fan-out = 1", "rules": 530, "trees": 340},
+        {"treebank": "Slovene", "restriction": "fan-out ≤ 2", "rules": 14, "trees": 11},
+        {"treebank": "Slovene", "restriction": "+ well-nested", "rules": 17, "trees": 13},
+        {"treebank": "Turkish", "restriction": "fan-out = 1", "rules": 924, "trees": 580},
+        {"treebank": "Turkish", "restriction": "fan-out ≤ 2", "rules": 54, "trees": 33},
+        {"treebank": "Turkish", "restriction": "+ well-nested", "rules": 68, "trees": 43}
+      ]
+    }
+  ]
+}
