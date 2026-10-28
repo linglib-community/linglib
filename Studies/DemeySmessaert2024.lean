@@ -28,7 +28,11 @@ is Boolean isomorphic to the deontic octagon or to the octagon for subject negat
 
 A subject-negation statement depends only on which regions of `S` and `P` are inhabited, so a
 proposition is a set of EFOL patterns, each read on its canonical model as in
-[demey-smessaert-2018]; a deontic formula is likewise a set of KD world types. The octagons are
+[demey-smessaert-2018]; a deontic formula is likewise a set of KD world types. Both readings are
+exact: over a domain of four individuals and a frame of three worlds, the octagons over EFOL and
+KD models are Boolean isomorphic to those over patterns and types (`subjectNegationModelsIso`,
+`deonticModelsIso`), so [the deontic octagon of KD models is not Boolean isomorphic to the octagon
+for subject negation of EFOL models](##isEmpty_booleanIso_deonticModels). The octagons are
 indexed by the subject-negation positions, so `γ` and `δ` are the identity, and Section 5's
 generic description is the subject-negation octagon's. The knowledge-representation octagon
 assumes, as the paper does tacitly, that `X` realizes every pattern. The paper identifies the
@@ -47,7 +51,7 @@ isomorphism a Boolean one.
 namespace DemeySmessaert2024
 
 open Finset Function Quantifier Quantifier.GQ Aristotelian ModalLogic SetRel
-open DemeySmessaert2018 (InS InP)
+open DemeySmessaert2018 (InS InP regions mem_regions exists_regions_eq)
 
 /-! ### Subject negation (Section 2) -/
 
@@ -164,16 +168,14 @@ def knowledgeRep : Fin 8 → Set X :=
 variable {R S} (hS : S.Nonempty) (hSc : Sᶜ.Nonempty) (hR : ∀ x, ∃ y, x ~[R] y)
   (hRc : ∀ x, ∃ y, ¬ x ~[R] y)
 
-open Classical in
 /-- The pattern of `x` records which regions of `S` and `R[x]` are inhabited. The assumptions of
 the paper, that `S` is nontrivial and that `R` and its complement are serial, make it an EFOL
 pattern. -/
 noncomputable def pattern (x : X) : {m // IsEFOLPattern m} :=
-  ⟨univ.filter fun r ↦ ∃ y, (y ∈ S ↔ r.1 = true) ∧ (x ~[R] y ↔ r.2 = true), by
-    have mem (y : Y) : (decide (y ∈ S), decide (x ~[R] y)) ∈
-        univ.filter fun r ↦ ∃ y, (y ∈ S ↔ r.1 = true) ∧ (x ~[R] y ↔ r.2 = true) := by
-      simp only [mem_filter, mem_univ, true_and]
-      exact ⟨y, by simp, by simp⟩
+  ⟨regions ((· ∈ S), (x ~[R] ·)), by
+    classical
+    have mem (y : Y) : (decide (y ∈ S), decide (x ~[R] y)) ∈ regions ((· ∈ S), (x ~[R] ·)) :=
+      mem_regions.2 ⟨y, by simp, by simp⟩
     obtain ⟨y₁, hy₁⟩ := hS
     obtain ⟨y₂, hy₂⟩ := hSc
     obtain ⟨y₃, hy₃⟩ := hR x
@@ -182,18 +184,11 @@ noncomputable def pattern (x : X) : {m // IsEFOLPattern m} :=
       ⟨_, mem y₃, by simpa using hy₃⟩, ⟨_, mem y₄, by simpa using hy₄⟩⟩⟩
 
 theorem mem_pattern {x : X} {r : Bool × Bool} :
-    r ∈ (pattern hS hSc hR hRc x).1 ↔ ∃ y, (y ∈ S ↔ r.1 = true) ∧ (x ~[R] y ↔ r.2 = true) := by
-  simp [pattern]
+    r ∈ (pattern hS hSc hR hRc x).1 ↔ ∃ y, (y ∈ S ↔ r.1 = true) ∧ (x ~[R] y ↔ r.2 = true) :=
+  mem_regions
 
-/-- Pulling a set of patterns back along `pattern` is a Boolean homomorphism. -/
-noncomputable def pullback : BoundedLatticeHom (Finset {m // IsEFOLPattern m}) (Set X) where
-  toFun s := pattern hS hSc hR hRc ⁻¹' ↑s
-  map_sup' _ _ := by simp
-  map_inf' _ _ := by simp
-  map_top' := by simp
-  map_bot' := by simp
-
-theorem knowledgeRep_eq : knowledgeRep R S = pullback hS hSc hR hRc ∘ subjectNegation := by
+theorem knowledgeRep_eq :
+    knowledgeRep R S = fun i ↦ pattern hS hSc hR hRc ⁻¹' ↑(subjectNegation i) := by
   funext i
   ext x
   change x ∈ knowledgeRep R S i ↔ pattern hS hSc hR hRc x ∈ subjectNegation i
@@ -204,8 +199,7 @@ theorem knowledgeRep_eq : knowledgeRep R S = pullback hS hSc hR hRc ∘ subjectN
 to the octagon for subject negation, by the map `γ`. -/
 noncomputable def knowledgeRepIso (h : Surjective (pattern hS hSc hR hRc)) :
     BooleanIso subjectNegation (knowledgeRep R S) :=
-  (knowledgeRep_eq hS hSc hR hRc).symm ▸ BooleanIso.ofInjective (pullback hS hSc hR hRc)
-    fun _ _ hst ↦ Finset.coe_injective ((Set.preimage_injective.2 h) hst)
+  (knowledgeRep_eq hS hSc hR hRc).symm ▸ BooleanIso.ofSurjective _ h
 
 open Classical in
 theorem card_minterms_knowledgeRep (h : Surjective (pattern hS hSc hR hRc)) :
@@ -214,6 +208,152 @@ theorem card_minterms_knowledgeRep (h : Surjective (pattern hS hSc hR hRc)) :
     ⟨(knowledgeRepIso hS hSc hR hRc h).closureIso⟩).symm
 
 end KnowledgeRep
+
+/-! ### Models -/
+
+section EFOLModels
+
+variable {D : Type*}
+
+/-- An EFOL model interprets `S` and `P` over the domain `D` with `S`, non-`S`, `P` and non-`P`
+each inhabited. -/
+def IsEFOLModel (m : (D → Prop) × (D → Prop)) : Prop :=
+  (∃ x, m.1 x) ∧ (∃ x, ¬ m.1 x) ∧ (∃ x, m.2 x) ∧ (∃ x, ¬ m.2 x)
+
+/-- The octagon for subject negation over the EFOL models with domain `D`. -/
+def subjectNegationModels (D : Type*) :
+    Fin 8 → Set {m : (D → Prop) × (D → Prop) // IsEFOLModel m} :=
+  ![{m | every m.1.1 m.1.2}, {m | GQ.some m.1.1 m.1.2}, {m | no m.1.1 m.1.2},
+    {m | ¬ every m.1.1 m.1.2}, {m | every (fun x ↦ ¬ m.1.1 x) m.1.2},
+    {m | GQ.some (fun x ↦ ¬ m.1.1 x) m.1.2}, {m | no (fun x ↦ ¬ m.1.1 x) m.1.2},
+    {m | ¬ every (fun x ↦ ¬ m.1.1 x) m.1.2}]
+
+/-- The type of an EFOL model is the set of regions it inhabits. -/
+noncomputable def efolType (m : {m : (D → Prop) × (D → Prop) // IsEFOLModel m}) :
+    {n // IsEFOLPattern n} :=
+  ⟨regions m.1, by
+    classical
+    obtain ⟨⟨x₁, h₁⟩, ⟨x₂, h₂⟩, ⟨x₃, h₃⟩, ⟨x₄, h₄⟩⟩ := m.2
+    have mem (x : D) : (decide (m.1.1 x), decide (m.1.2 x)) ∈ regions m.1 :=
+      mem_regions.2 ⟨x, by simp, by simp⟩
+    exact ⟨⟨_, mem x₁, by simpa using h₁⟩, ⟨_, mem x₂, by simpa using h₂⟩,
+      ⟨_, mem x₃, by simpa using h₃⟩, ⟨_, mem x₄, by simpa using h₄⟩⟩⟩
+
+-- A subject-negation statement holds of an EFOL model iff it holds of the canonical model of the
+-- model's type.
+theorem subjectNegationModels_eq :
+    subjectNegationModels D = fun i ↦ efolType ⁻¹' ↑(subjectNegation i) := by
+  funext i
+  ext m
+  change m ∈ subjectNegationModels D i ↔ efolType m ∈ subjectNegation i
+  rw [mem_subjectNegation]
+  fin_cases i <;> simp [subjectNegationModels, region, efolType, mem_regions, every, no, GQ.some]
+
+theorem efolType_surjective [Fintype D] (hD : 4 ≤ Fintype.card D) :
+    Surjective (efolType (D := D)) := by
+  rintro ⟨n, hn⟩
+  obtain ⟨m, hm⟩ := exists_regions_eq hD (hn.1.imp fun _ h ↦ h.1)
+  refine ⟨⟨m, ?_⟩, Subtype.ext hm⟩
+  obtain ⟨⟨r₁, h₁, e₁⟩, ⟨r₂, h₂, e₂⟩, ⟨r₃, h₃, e₃⟩, ⟨r₄, h₄, e₄⟩⟩ := hn
+  rw [← hm] at h₁ h₂ h₃ h₄
+  obtain ⟨x₁, a₁, -⟩ := mem_regions.1 h₁
+  obtain ⟨x₂, a₂, -⟩ := mem_regions.1 h₂
+  obtain ⟨x₃, -, a₃⟩ := mem_regions.1 h₃
+  obtain ⟨x₄, -, a₄⟩ := mem_regions.1 h₄
+  exact ⟨⟨x₁, a₁.2 e₁⟩, ⟨x₂, fun h ↦ by simpa [e₂] using a₂.1 h⟩, ⟨x₃, a₃.2 e₃⟩,
+    ⟨x₄, fun h ↦ by simpa [e₄] using a₄.1 h⟩⟩
+
+/-- Over a domain of at least four individuals, the EFOL models realize every pattern. -/
+noncomputable def subjectNegationModelsIso [Fintype D] (hD : 4 ≤ Fintype.card D) :
+    BooleanIso subjectNegation (subjectNegationModels D) :=
+  (subjectNegationModels_eq (D := D)).symm ▸
+    BooleanIso.ofSurjective efolType (efolType_surjective hD)
+
+end EFOLModels
+
+section KDModels
+
+variable {W : Type*}
+
+/-- A KD model on the worlds `W` has a serial accessibility relation, a valuation of `p` and an
+evaluation world. -/
+def IsKDModel (m : SetRel W W × (W → Prop) × W) : Prop := ∀ w, ∃ v, w ~[m.1] v
+
+/-- The deontic octagon over the KD models on the worlds `W`. -/
+def deonticModels (W : Type*) : Fin 8 → Set {m : SetRel W W × (W → Prop) × W // IsKDModel m} :=
+  ![{m | m.1.2.1 m.1.2.2 ∧ ◇[m.1.1] m.1.2.1 m.1.2.2},
+    {m | m.1.2.1 m.1.2.2 ∨ □[m.1.1] (fun v ↦ ¬ m.1.2.1 v) m.1.2.2},
+    {m | ¬ m.1.2.1 m.1.2.2 ∧ ◇[m.1.1] m.1.2.1 m.1.2.2},
+    {m | ¬ m.1.2.1 m.1.2.2 ∨ □[m.1.1] (fun v ↦ ¬ m.1.2.1 v) m.1.2.2},
+    {m | ¬ m.1.2.1 m.1.2.2 ∧ ◇[m.1.1] (fun v ↦ ¬ m.1.2.1 v) m.1.2.2},
+    {m | ¬ m.1.2.1 m.1.2.2 ∨ □[m.1.1] m.1.2.1 m.1.2.2},
+    {m | m.1.2.1 m.1.2.2 ∧ ◇[m.1.1] (fun v ↦ ¬ m.1.2.1 v) m.1.2.2},
+    {m | m.1.2.1 m.1.2.2 ∨ □[m.1.1] m.1.2.1 m.1.2.2}]
+
+open Classical in
+/-- The type of a KD model: the value of `p` at the evaluation world and its values at the world's
+successors. -/
+noncomputable def kdType (m : {m : SetRel W W × (W → Prop) × W // IsKDModel m}) : KDType :=
+  (decide (m.1.2.1 m.1.2.2),
+    ⟨univ.filter fun b ↦ ∃ v, m.1.2.2 ~[m.1.1] v ∧ (m.1.2.1 v ↔ b = true), by
+      obtain ⟨v, hv⟩ := m.2 m.1.2.2
+      exact ⟨decide (m.1.2.1 v), mem_filter.2 ⟨mem_univ _, v, hv, by simp⟩⟩⟩)
+
+private theorem val_none {t : KDType} : Val t none ↔ t.1 = true := .rfl
+private theorem dia_access {t : KDType} : ◇[access t] (Val t) none ↔ true ∈ t.2.1 := by
+  revert t; decide
+private theorem dia_access_not {t : KDType} :
+    ◇[access t] (fun w ↦ ¬ Val t w) none ↔ false ∈ t.2.1 := by
+  revert t; decide
+private theorem box_access {t : KDType} : □[access t] (Val t) none ↔ false ∉ t.2.1 := by
+  revert t; decide
+private theorem box_access_not {t : KDType} :
+    □[access t] (fun w ↦ ¬ Val t w) none ↔ true ∉ t.2.1 := by
+  revert t; decide
+
+-- A deontic formula holds of a KD model iff it holds of the canonical model of the model's type.
+theorem deonticModels_eq : deonticModels W = fun i ↦ kdType ⁻¹' ↑(deontic i) := by
+  funext i
+  ext m
+  fin_cases i <;>
+    simp only [deonticModels, deontic, Set.mem_preimage, Finset.mem_coe, val_none, dia_access,
+      dia_access_not, box_access, box_access_not] <;>
+    simp [kdType, Box, Diamond]
+
+theorem kdType_surjective [Fintype W] (hW : 3 ≤ Fintype.card W) : Surjective (kdType (W := W)) := by
+  rintro ⟨a, s, hs⟩
+  obtain ⟨e⟩ : Nonempty (Option s ↪ W) := Function.Embedding.nonempty_of_card_le <| by
+    rw [Fintype.card_option, Fintype.card_coe]
+    exact (Nat.succ_le_succ ((card_le_univ s).trans (by simp))).trans hW
+  have : Nonempty (Option s) := ⟨none⟩
+  have hl := Function.leftInverse_invFun e.injective
+  set V : W → Prop := fun v ↦ (Function.invFun e v).elim (a = true) fun b ↦ b.1 = true
+  set R : SetRel W W := {xy | ∃ b : s, xy.2 = e (some b)}
+  obtain ⟨b₀, hb₀⟩ := hs
+  refine ⟨⟨(R, V, e none), fun _ ↦ ⟨e (some ⟨b₀, hb₀⟩), ⟨b₀, hb₀⟩, rfl⟩⟩, ?_⟩
+  refine Prod.ext (by simp [kdType, V, hl none]) (Subtype.ext <| Finset.ext fun b ↦ ?_)
+  simp only [kdType, mem_filter, mem_univ, true_and]
+  constructor
+  · rintro ⟨v, ⟨c, rfl⟩, hv⟩
+    simp only [V, hl (some c), Option.elim_some] at hv
+    exact (Bool.eq_iff_iff.2 hv) ▸ c.2
+  · intro hb
+    exact ⟨e (some ⟨b, hb⟩), ⟨⟨b, hb⟩, rfl⟩, by simp [V, hl (some ⟨b, hb⟩)]⟩
+
+/-- On at least three worlds, the KD models realize every type. -/
+noncomputable def deonticModelsIso [Fintype W] (hW : 3 ≤ Fintype.card W) :
+    BooleanIso deontic (deonticModels W) :=
+  (deonticModels_eq (W := W)).symm ▸ BooleanIso.ofSurjective kdType (kdType_surjective hW)
+
+end KDModels
+
+/-- Over a domain of at least four individuals and on at least three worlds, the deontic octagon
+of KD models is not Boolean isomorphic to the octagon for subject negation of EFOL models. -/
+theorem isEmpty_booleanIso_deonticModels {D W : Type*} [Fintype D] [Fintype W]
+    (hD : 4 ≤ Fintype.card D) (hW : 3 ≤ Fintype.card W) :
+    IsEmpty (BooleanIso (subjectNegationModels D) (deonticModels W)) :=
+  ⟨fun e ↦ isEmpty_booleanIso_deontic.false
+    ((subjectNegationModelsIso hD).trans (e.trans (deonticModelsIso hW).symm))⟩
 
 /-! ### The family of Keynes–Johnson octagons (Section 5) -/
 

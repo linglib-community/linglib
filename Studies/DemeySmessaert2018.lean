@@ -23,9 +23,9 @@ digits](##card_parts_minterms_digit) and [by any $m$ subsets of
 $\lceil \log_2 m \rceil$ points](##card_parts_minterms_eq_clog). The partition depends on the
 logic: existential import empties the first-order cell where *all* and *no* both hold, so [the
 first-order X of opposition is not Aristotelian isomorphic to the syllogistic
-square](##isEmpty_aristotelianIso_categorical). Conversely the strong and weak
+square](##isEmpty_aristotelianIso_categoricalModels). Conversely the strong and weak
 Jacoby–Sesmat–Blanché hexagons of S5 are Aristotelian isomorphic, but with three cells against
-four [they are not Boolean isomorphic](##isEmpty_booleanIso_jsb).
+four [they are not Boolean isomorphic](##isEmpty_booleanIso_jsbModels).
 
 ## Implementation notes
 
@@ -35,11 +35,13 @@ four [they are not Boolean isomorphic](##isEmpty_booleanIso_jsb).
 * The lower bound of Theorem 4 is attained in the algebra of subsets of `n` points, by the binary
   digits of the points: the low digits are the paper's atoms `p₁, …, pₖ`, the top digit its
   formula splitting the first `n - 2 ^ k` of their cells.
-* A categorical statement depends only on which of the four regions of `S` and `P` are inhabited,
-  so a proposition is a set of patterns of inhabited regions, each read on its canonical model. A
-  first-order pattern is nonempty; a syllogistic one inhabits `S`.
-* An S5 proposition over `p` is a set of world types, a type recording the value of `p` at the
-  evaluation world and the values it takes across the worlds.
+* The cells are counted on finitely many model types and transferred to the models. A
+  categorical statement holds of a model iff it holds of the canonical model of the regions of `S`
+  and `P` the model inhabits (`categoricalModels_eq`), and over a domain of at least four
+  individuals every nonempty set of regions is some model's, so the diagram over sets of regions
+  is Boolean isomorphic to the diagram over models (`BooleanIso.ofSurjective`). Likewise an S5
+  formula over `p` depends only on the value of `p` at the evaluation world and the values it
+  takes, and two worlds realize every such type.
 
 ## Errata
 
@@ -277,14 +279,133 @@ theorem not_isContrary_fol (i j : Fin 4) :
   simp only [IsContrary, codisjoint_iff]
   decide
 
-/-- The first-order X of opposition is not Aristotelian isomorphic to the syllogistic square,
-whose universal statements are contrary. -/
+-- Section 4: on patterns, the first-order X is not Aristotelian isomorphic to the syllogistic
+-- square, whose universal statements are contrary.
 theorem isEmpty_aristotelianIso_categorical :
     IsEmpty (AristotelianIso (categorical IsFOLPattern) (categorical IsSYLPattern)) := by
   refine ⟨fun e ↦ not_isContrary_fol _ _ ((e.symm.map_isContrary 0 1).1 ?_)⟩
   refine ⟨squareRelations_syl.contraryAE, ?_⟩
   simp only [codisjoint_iff]
   decide
+
+section Models
+
+variable {D : Type*}
+
+open Classical in
+/-- The regions a model inhabits, the model interpreting `S` and `P` over the domain `D`. -/
+noncomputable def regions (m : (D → Prop) × (D → Prop)) : Finset (Bool × Bool) :=
+  univ.filter fun r ↦ ∃ x, (m.1 x ↔ r.1 = true) ∧ (m.2 x ↔ r.2 = true)
+
+theorem mem_regions {m : (D → Prop) × (D → Prop)} {r : Bool × Bool} :
+    r ∈ regions m ↔ ∃ x, (m.1 x ↔ r.1 = true) ∧ (m.2 x ↔ r.2 = true) := by
+  simp [regions]
+
+/-- The categorical statements over the first-order models with domain `D`. -/
+def categoricalModels (D : Type*) : Fin 4 → Set ((D → Prop) × (D → Prop)) :=
+  ![{m | every m.1 m.2}, {m | no m.1 m.2}, {m | GQ.some m.1 m.2}, {m | ¬ every m.1 m.2}]
+
+/-- The categorical statements over the models of syllogistics with domain `D`, where something is
+`S`. -/
+def sylModels (D : Type*) : Fin 4 → Set {m : (D → Prop) × (D → Prop) // ∃ x, m.1 x} :=
+  fun i ↦ Subtype.val ⁻¹' categoricalModels D i
+
+/-- The region each categorical statement is about, and whether it says the region is inhabited. -/
+private def region : Fin 4 → (Bool × Bool) × Bool :=
+  ![((true, false), false), ((true, true), false), ((true, true), true), ((true, false), true)]
+
+private theorem mem_categorical_iff {L : Finset (Bool × Bool) → Prop} [DecidablePred L]
+    (i : Fin 4) (n : {n // L n}) :
+    n ∈ categorical L i ↔ ((region i).1 ∈ n.1 ↔ (region i).2 = true) := by
+  have key : ∀ (i : Fin 4) (n : {n : Finset (Bool × Bool) // True}),
+      n ∈ categorical (fun _ ↦ True) i ↔ ((region i).1 ∈ n.1 ↔ (region i).2 = true) := by
+    decide
+  refine Iff.trans ?_ (key i ⟨n.1, trivial⟩)
+  fin_cases i <;> simp [categorical]
+
+private theorem mem_categoricalModels_iff (i : Fin 4) (m : (D → Prop) × (D → Prop)) :
+    m ∈ categoricalModels D i ↔ ((region i).1 ∈ regions m ↔ (region i).2 = true) := by
+  fin_cases i <;> simp [categoricalModels, region, mem_regions, every, no, GQ.some]
+
+/-- The type of a first-order model over a nonempty domain is the set of regions it inhabits. -/
+noncomputable def folType [Nonempty D] (m : (D → Prop) × (D → Prop)) :
+    {n // IsFOLPattern n} :=
+  ⟨regions m, by
+    classical
+    obtain ⟨x⟩ := ‹Nonempty D›
+    exact ⟨(decide (m.1 x), decide (m.2 x)), mem_regions.2 ⟨x, by simp, by simp⟩⟩⟩
+
+/-- The type of a model of syllogistics is the set of regions it inhabits. -/
+noncomputable def sylType (m : {m : (D → Prop) × (D → Prop) // ∃ x, m.1 x}) :
+    {n // IsSYLPattern n} :=
+  ⟨regions m.1, by
+    classical
+    obtain ⟨x, hx⟩ := m.2
+    exact ⟨(true, decide (m.1.2 x)), mem_regions.2 ⟨x, by simp [hx], by simp⟩, rfl⟩⟩
+
+-- Section 4: a categorical statement holds of a first-order model iff it holds of the canonical
+-- model of the model's type.
+theorem categoricalModels_eq [Nonempty D] :
+    categoricalModels D = fun i ↦ folType ⁻¹' ↑(categorical IsFOLPattern i) := by
+  funext i
+  ext m
+  exact (mem_categoricalModels_iff i m).trans (mem_categorical_iff i (folType m)).symm
+
+-- Section 4: likewise for the models of syllogistics.
+theorem sylModels_eq : sylModels D = fun i ↦ sylType ⁻¹' ↑(categorical IsSYLPattern i) := by
+  funext i
+  ext m
+  exact (mem_categoricalModels_iff i m.1).trans (mem_categorical_iff i (sylType m)).symm
+
+-- Over a domain of at least four individuals, every nonempty set of regions is a model's.
+theorem exists_regions_eq [Fintype D] (hD : 4 ≤ Fintype.card D) {n : Finset (Bool × Bool)}
+    (hn : n.Nonempty) : ∃ m : (D → Prop) × (D → Prop), regions m = n := by
+  obtain ⟨e⟩ : Nonempty (n ↪ D) := Function.Embedding.nonempty_of_card_le <| by
+    rw [Fintype.card_coe]
+    exact (card_le_univ n).trans (by simpa using hD)
+  have : Nonempty n := hn.coe_sort
+  have hg := Function.invFun_surjective e.injective
+  refine ⟨(fun x ↦ (Function.invFun e x).1.1 = true, fun x ↦ (Function.invFun e x).1.2 = true),
+    Finset.ext fun r ↦ ⟨fun hr ↦ ?_, fun hr ↦ ?_⟩⟩
+  · obtain ⟨x, h₁, h₂⟩ := mem_regions.1 hr
+    have : (Function.invFun e x).1 = r := Prod.ext (Bool.eq_iff_iff.2 h₁) (Bool.eq_iff_iff.2 h₂)
+    exact this ▸ (Function.invFun e x).2
+  · obtain ⟨x, hx⟩ := hg ⟨r, hr⟩
+    exact mem_regions.2 ⟨x, by simp [hx], by simp [hx]⟩
+
+theorem folType_surjective [Fintype D] [Nonempty D] (hD : 4 ≤ Fintype.card D) :
+    Surjective (folType (D := D)) := fun n ↦
+  let ⟨m, hm⟩ := exists_regions_eq hD n.2
+  ⟨m, Subtype.ext hm⟩
+
+theorem sylType_surjective [Fintype D] (hD : 4 ≤ Fintype.card D) :
+    Surjective (sylType (D := D)) := fun n ↦ by
+  obtain ⟨m, hm⟩ := exists_regions_eq hD (n.2.imp fun r ⟨hr, _⟩ ↦ hr)
+  obtain ⟨r, hr, hS⟩ := n.2
+  obtain ⟨x, hx, -⟩ := mem_regions.1 (hm ▸ hr)
+  exact ⟨⟨m, x, hx.2 hS⟩, Subtype.ext hm⟩
+
+/-- Over a domain of at least four individuals, the first-order models realize every pattern. -/
+noncomputable def categoricalModelsIso [Fintype D] [Nonempty D] (hD : 4 ≤ Fintype.card D) :
+    BooleanIso (categorical IsFOLPattern) (categoricalModels D) :=
+  (categoricalModels_eq (D := D)).symm ▸ BooleanIso.ofSurjective folType (folType_surjective hD)
+
+/-- Over a domain of at least four individuals, the models of syllogistics realize every
+pattern. -/
+noncomputable def sylModelsIso [Fintype D] (hD : 4 ≤ Fintype.card D) :
+    BooleanIso (categorical IsSYLPattern) (sylModels D) :=
+  (sylModels_eq (D := D)).symm ▸ BooleanIso.ofSurjective sylType (sylType_surjective hD)
+
+/-- Over any domain of at least four individuals, the first-order X of opposition is not
+Aristotelian isomorphic to the syllogistic square. -/
+theorem isEmpty_aristotelianIso_categoricalModels [Fintype D] (hD : 4 ≤ Fintype.card D) :
+    IsEmpty (AristotelianIso (categoricalModels D) (sylModels D)) := by
+  have : Nonempty D := (Fintype.card_pos_iff (α := D)).1 (by omega)
+  exact ⟨fun e ↦ isEmpty_aristotelianIso_categorical.false
+    ((categoricalModelsIso hD : AristotelianIso _ _).trans
+      (e.trans ((sylModelsIso hD).symm : AristotelianIso _ _)))⟩
+
+end Models
 
 /-! ### Strong and weak Jacoby–Sesmat–Blanché hexagons (Section 5.1) -/
 
@@ -346,9 +467,97 @@ def jsbIso : AristotelianIso strongJSB weakJSB where
   map_codisjoint := by simp only [codisjoint_iff]; decide
   map_lt := by decide
 
-/-- The strong and weak JSB hexagons are not Boolean isomorphic. -/
+-- Section 5.1: on types, the strong and weak hexagons are not Boolean isomorphic.
 theorem isEmpty_booleanIso_jsb : IsEmpty (BooleanIso strongJSB weakJSB) :=
   ⟨fun e ↦ absurd ((nonempty_orderIso_closure_iff _ _).1 ⟨e.closureIso⟩) <| by
     rw [card_parts_minterms_strongJSB, card_parts_minterms_weakJSB]; decide⟩
+
+section S5Models
+
+variable {W : Type*}
+
+open Classical in
+/-- The type of a pointed S5 model, a valuation of `p` on the worlds `W` with an evaluation world:
+the value of `p` there and the values it takes across the worlds. -/
+noncomputable def s5Type (m : (W → Prop) × W) : S5Type :=
+  ⟨(decide (m.1 m.2), univ.filter fun b ↦ ∃ v, (m.1 v ↔ b = true)),
+    mem_filter.2 ⟨mem_univ _, m.2, by simp⟩⟩
+
+/-- The strong JSB hexagon over pointed S5 models with worlds `W`, every world seeing every one. -/
+def strongJSBModels (W : Type*) : Fin 6 → Set ((W → Prop) × W) :=
+  ![{m | □[Set.univ] m.1 m.2}, {m | □[Set.univ] m.1ᶜ m.2}, {m | ◇[Set.univ] m.1 m.2},
+    {m | ◇[Set.univ] m.1ᶜ m.2}, {m | ◇[Set.univ] m.1 m.2 ∧ ◇[Set.univ] m.1ᶜ m.2},
+    {m | □[Set.univ] m.1 m.2 ∨ □[Set.univ] m.1ᶜ m.2}]
+
+/-- The weak JSB hexagon over pointed S5 models with worlds `W`. -/
+def weakJSBModels (W : Type*) : Fin 6 → Set ((W → Prop) × W) :=
+  ![{m | □[Set.univ] m.1 m.2}, {m | □[Set.univ] m.1ᶜ m.2}, {m | ◇[Set.univ] m.1 m.2},
+    {m | ◇[Set.univ] m.1ᶜ m.2}, {m | m.1 m.2 ∧ ◇[Set.univ] m.1ᶜ m.2},
+    {m | ¬ m.1 m.2 ∨ □[Set.univ] m.1 m.2}]
+
+private theorem mem_atP {t : S5Type} : t ∈ atP ↔ t.1.1 = true := by revert t; decide
+private theorem mem_boxP {t : S5Type} : t ∈ boxP ↔ false ∉ t.1.2 := by revert t; decide
+private theorem mem_boxNotP {t : S5Type} : t ∈ boxNotP ↔ true ∉ t.1.2 := by revert t; decide
+private theorem mem_diaP {t : S5Type} : t ∈ diaP ↔ true ∈ t.1.2 := by revert t; decide
+private theorem mem_diaNotP {t : S5Type} : t ∈ diaNotP ↔ false ∈ t.1.2 := by revert t; decide
+
+-- Section 5.1: each formula of the strong hexagon holds of a pointed S5 model iff it holds of the
+-- canonical model of the model's type.
+theorem strongJSBModels_eq :
+    strongJSBModels W = fun i ↦ s5Type ⁻¹' ↑(strongJSB i) := by
+  funext i
+  ext m
+  fin_cases i <;> simp [strongJSBModels, strongJSB, s5Type, mem_boxP, mem_boxNotP, mem_diaP,
+    mem_diaNotP, Box, Diamond]
+
+-- Section 5.1: likewise for the weak hexagon.
+theorem weakJSBModels_eq : weakJSBModels W = fun i ↦ s5Type ⁻¹' ↑(weakJSB i) := by
+  funext i
+  ext m
+  fin_cases i <;> simp [weakJSBModels, weakJSB, s5Type, mem_atP, mem_boxP, mem_boxNotP,
+    mem_diaP, mem_diaNotP, Box, Diamond]
+
+-- With at least two worlds, every S5 type is a pointed model's.
+theorem s5Type_surjective [Fintype W] (hW : 2 ≤ Fintype.card W) : Surjective (s5Type (W := W)) := by
+  rintro ⟨⟨a, s⟩, ha⟩
+  obtain ⟨e⟩ : Nonempty (s ↪ W) := Function.Embedding.nonempty_of_card_le <| by
+    rw [Fintype.card_coe]
+    exact (card_le_univ s).trans (by simpa using hW)
+  have : Nonempty s := ⟨⟨a, ha⟩⟩
+  have hg := Function.invFun_surjective e.injective
+  have hw : Function.invFun e (e ⟨a, ha⟩) = ⟨a, ha⟩ := Function.leftInverse_invFun e.injective _
+  refine ⟨(fun v ↦ (Function.invFun e v).1 = true, e ⟨a, ha⟩), Subtype.ext <| Prod.ext ?_ ?_⟩
+  · simp [s5Type, hw]
+  · ext b
+    simp only [s5Type, mem_filter, mem_univ, true_and]
+    refine ⟨fun ⟨v, hv⟩ ↦ ?_, fun hb ↦ ?_⟩
+    · exact (Bool.eq_iff_iff.2 hv) ▸ (Function.invFun e v).2
+    · obtain ⟨v, hv⟩ := hg ⟨b, hb⟩
+      exact ⟨v, by simp [hv]⟩
+
+/-- Pointed S5 models with at least two worlds realize every type of the strong hexagon. -/
+noncomputable def strongJSBModelsIso [Fintype W] (hW : 2 ≤ Fintype.card W) :
+    BooleanIso strongJSB (strongJSBModels W) :=
+  (strongJSBModels_eq (W := W)).symm ▸ BooleanIso.ofSurjective s5Type (s5Type_surjective hW)
+
+/-- Pointed S5 models with at least two worlds realize every type of the weak hexagon. -/
+noncomputable def weakJSBModelsIso [Fintype W] (hW : 2 ≤ Fintype.card W) :
+    BooleanIso weakJSB (weakJSBModels W) :=
+  (weakJSBModels_eq (W := W)).symm ▸ BooleanIso.ofSurjective s5Type (s5Type_surjective hW)
+
+/-- Over pointed S5 models with at least two worlds, the strong and weak JSB hexagons are
+Aristotelian isomorphic by the paper's `ρ`. -/
+noncomputable def jsbModelsIso [Fintype W] (hW : 2 ≤ Fintype.card W) :
+    AristotelianIso (strongJSBModels W) (weakJSBModels W) :=
+  (((strongJSBModelsIso hW).symm : AristotelianIso _ _).trans jsbIso).trans (weakJSBModelsIso hW)
+
+/-- Over pointed S5 models with at least two worlds, the strong and weak JSB hexagons are not
+Boolean isomorphic. -/
+theorem isEmpty_booleanIso_jsbModels [Fintype W] (hW : 2 ≤ Fintype.card W) :
+    IsEmpty (BooleanIso (strongJSBModels W) (weakJSBModels W)) :=
+  ⟨fun e ↦ isEmpty_booleanIso_jsb.false
+    ((strongJSBModelsIso hW).trans (e.trans (weakJSBModelsIso hW).symm))⟩
+
+end S5Models
 
 end DemeySmessaert2018
