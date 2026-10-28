@@ -18,7 +18,7 @@
       ["position", "external"],
       ["volitional", "yes"],
       ["reading", "epistemic"],
-      ["epistemicState", "ignorant"]
+      ["epistemicState", "ignorant, not all"]
     ],
     "comment": "Context (23a). Repeated as (3), (73), (124).",
     "verified": "page-image"
@@ -427,7 +427,7 @@
       ["position", "internal"],
       ["volitional", "yes"],
       ["reading", "random choice"],
-      ["decision", "indiscriminate"]
+      ["decision", "one, any"]
     ],
     "comment": "Context (38a). Passive subject of a volitional verb.",
     "verified": "page-image"
@@ -977,7 +977,6 @@
     "readings": [],
     "paperFeatures": [
       ["item", "yalnhej"],
-      ["reading", "random choice"],
       ["anchor", "harmonic"]
     ],
     "comment": "Context (85). Harmonic interpretation (87)–(88): the DP projects from the imperative's anchor. The paper translates (82) only on its non-harmonic reading; this row is the harmonic reading in (85).",

@@ -26,7 +26,7 @@ def ex_22_23a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "external"), ("volitional", "yes"), ("reading", "epistemic"), ("epistemicState", "ignorant")] }
+    paperFeatures := [("position", "external"), ("volitional", "yes"), ("reading", "epistemic"), ("epistemicState", "ignorant, not all")] }
 
 def ex_22_23b : Datum :=
   { id := "alonsoovalleroyer2024_22_23b"
@@ -247,7 +247,7 @@ def ex_37_38a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("position", "internal"), ("volitional", "yes"), ("reading", "random choice"), ("decision", "indiscriminate")] }
+    paperFeatures := [("position", "internal"), ("volitional", "yes"), ("reading", "random choice"), ("decision", "one, any")] }
 
 def ex_37_38b : Datum :=
   { id := "alonsoovalleroyer2024_37_38b"
@@ -559,7 +559,7 @@ def ex_82_85 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("item", "yalnhej"), ("reading", "random choice"), ("anchor", "harmonic")] }
+    paperFeatures := [("item", "yalnhej"), ("anchor", "harmonic")] }
 
 def ex_86 : Datum :=
   { id := "alonsoovalleroyer2024_86"
