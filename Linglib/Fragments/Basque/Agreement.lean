@@ -50,10 +50,11 @@ as a plural, and the newer plural *zuek* adds a further plural marker to the for
 
 ## Implementation notes
 
-The cells are the bundles of `Syntax/Agreement/Bundle.lean`, so that a pronoun's features index
-a table directly. The second person plural cell is that of *zu*, following the forms rather than
-the meaning, and *zuek* has no cell of its own. The two cells of *hi* with a gender occur only in
-the dative and ergative tables. The first and second person singular suffixes are given as they
+The cells are the bundles of `Syntax/Agreement/Bundle.lean`, so that a pronoun's features are
+realized by the cells they extend. The second person plural cell is that of *zu*, following the
+forms rather than the meaning, and *zuek* has no cell of its own. The two cells of *hi* with a
+gender occur only in the dative and ergative tables, and the absolutive realizes them by its
+second person singular cell. The first and second person singular suffixes are given as they
 stand at the end of the word; before another suffix they are *-da-*, *-a-* and *-na-*. Forms
 with modal markers, where the third person filler is *l-*, are not covered.
 
@@ -127,13 +128,23 @@ theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.pronouns,
     HasPersonPrefix (HasPhi.phi p) ↔ p.person ≠ some .third := by
   decide
 
+/-- The absolutive prefix of *hi* is that of the second person singular, whatever the gender of
+the addressee. -/
+theorem absolutive_familiar (x : ReferentGender) :
+    absolutive.realize (familiar x) = absolutive.realize (.personNumber .second .singular) :=
+  Paradigm.realize_congr (by cases x <;> decide)
+
+/-- The ergative suffix of *hi* needs the gender of the addressee. -/
+theorem ergative_second_singular : ergative.realize (.personNumber .second .singular) = none := by
+  decide
+
 /-- The dative and ergative markers of the first and second persons coincide. -/
 theorem dative_eq_ergative {c : Bundle} (h : c.IsSAP) : dative.realize c = ergative.realize c := by
-  have h3 (n : Number) : (c == Bundle.personNumber .third n) = false := by
-    rw [beq_eq_false_iff_ne]
-    rintro rfl
-    exact absurd h (by simp only [Bundle.IsSAP, Bundle.person_personNumber]; decide)
-  simp [dative, ergative, Paradigm.realize, List.lookup_append, List.lookup_cons, h3]
+  have h3 (n : Number) : ¬ Bundle.personNumber .third n ≤ c := fun hle ↦ by
+    have : c.person = .third := by simp [Bundle.person, (Bundle.personNumber_le_iff.1 hle).1]
+    exact absurd h (by rw [Bundle.IsSAP, this]; decide)
+  rw [dative, ergative, Paradigm.realize_append_of_forall_not_le (by simp [h3]),
+    Paradigm.realize_append_of_forall_not_le (by simp [h3])]
 
 /-- A displaced ergative begins with what would fill the absolutive slot for its own person and
 number in the past: the absolutive prefix of a first or second person, the past filler of a

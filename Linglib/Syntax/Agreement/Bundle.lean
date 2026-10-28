@@ -24,6 +24,9 @@ bundle is its features read along that inclusion, `Agreement.Bundle.ofFeatures`.
 * `Agreement.Bundle.set`, `Agreement.Bundle.personNumber` — a bundle with one dimension set,
   and the bundle valued in person and number alone
 * `Agreement.Bundle.ofFeatures` — the restriction of a token's features
+* `Agreement.Bundle.person`, `Agreement.Bundle.IsSAP`, `Agreement.Bundle.IsPlural` — the person a
+  bundle bears, and the speech-act participant and plural bundles
+* `Agreement.Bundle.personNumberCells` — the six bundles of three persons and two numbers
 
 ## References
 
@@ -89,6 +92,38 @@ def ofFeatures (f : Morphology.Features) : Bundle := fun d ↦ f d.toFeature
 @[simp] theorem ofFeatures_apply (f : Morphology.Features) (d : Dimension) :
     ofFeatures f d = f d.toFeature :=
   rfl
+
+instance : DecidableLE Bundle := fun x y ↦ inferInstanceAs (Decidable (∀ d, x d ≤ y d))
+
+instance : DecidableLT Bundle := decidableLTOfDecidableLE
+
+/-- A bundle extends the person–number bundle exactly when it has that person and number. -/
+theorem personNumber_le_iff {p : Person} {n : Number} {x : Bundle} :
+    personNumber p n ≤ x ↔ x .person = p ∧ x .number = n := by
+  refine ⟨fun h ↦ ⟨Flat.coe_le_iff.1 (h .person), Flat.coe_le_iff.1 (h .number)⟩, ?_⟩
+  rintro ⟨hp, hn⟩ d
+  cases d <;> simp [hp, hn]
+
+/-- The person a bundle bears, third where it bears none. -/
+def person (b : Bundle) : Person := (b .person).unbotD .third
+
+@[simp] theorem person_personNumber (p : Person) (n : Number) : (personNumber p n).person = p :=
+  rfl
+
+/-- A bundle is a speech-act participant's when the person it bears is. -/
+def IsSAP (b : Bundle) : Prop := b.person.IsSAP
+
+instance (b : Bundle) : Decidable b.IsSAP := inferInstanceAs (Decidable b.person.IsSAP)
+
+/-- A bundle is plural when its number is. -/
+def IsPlural (b : Bundle) : Prop := b .number = ↑Number.plural
+
+instance (b : Bundle) : Decidable b.IsPlural := inferInstanceAs (Decidable (_ = _))
+
+/-- The six bundles of the first, second and third persons in the singular and the plural, the
+cells of a paradigm without clusivity or a dual. -/
+def personNumberCells : List Bundle :=
+  [Number.singular, .plural].flatMap fun n ↦ [Person.first, .second, .third].map (personNumber · n)
 
 end Bundle
 

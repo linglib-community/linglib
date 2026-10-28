@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Basic
-public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Syntax.Agreement.Bundle
 public import Linglib.Syntax.Case.Basic
 
 /-!
