@@ -283,12 +283,14 @@ theorem readings_neededAndBought_unlifted (g : Assignment E) :
   simp only [neededAndBought, Tree.mem_readings_phrase_binary, Tree.readings_terminal, lexicon,
     Set.mem_singleton_iff, Mode.combine?, Option.map_eq_some_iff]
   rintro ⟨_, rfl, _, ⟨_, ⟨_, rfl, _, ⟨_, ⟨⟨τ, h⟩, rfl⟩, _, rfl, ⟨ρ₁, m₁⟩, hm₁, rfl⟩,
-    ⟨ρ₂, m₂⟩, -, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, -, rfl⟩, ⟨ρ₄, m₄⟩, -, rfl⟩
+    ⟨ρ₂, m₂⟩, hm₂, rfl⟩, _, rfl, ⟨ρ₃, m₃⟩, -, rfl⟩, ⟨ρ₄, m₄⟩, -, rfl⟩
   have b₁ := Ty.isBasic_of_mode?_eq_some hm₁
-  clear hm₁
+  have b₂ := Ty.isBasic_of_mode?_eq_some hm₂
+  clear hm₁ hm₂
   cases m₁
   all_goals try simp only [Mode.IsBasic] at b₁
   all_goals cases m₂
+  all_goals simp only [Mode.IsBasic] at b₂
 
 -- (23)
 theorem readings_neededAndBought (g : Assignment E) :

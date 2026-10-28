@@ -153,6 +153,7 @@ def Mode.readback {n : ℕ} : ∀ {σ₁ σ₂ τ : Ty},
   | _, _, _, .mapRight _, _, _ => PUnit.unit
   | _, _, _, .mapLeft _, _, _ => PUnit.unit
   | _, _, _, .ap _, _, _ => PUnit.unit
+  | _, _, _, .join _, _, _ => PUnit.unit
   | _, _, _, .unitRight m, a, b => m.readback (fun k hk _ ↦ a k hk PUnit.unit) b
   | _, _, _, .unitLeft m, a, b => m.readback a fun k hk _ ↦ b k hk PUnit.unit
 
@@ -234,7 +235,7 @@ theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) 
     Ty.Realizes S v τ n xs (μ.readback a b) (μ.eval a' b') := by
   let := S
   induction μ with
-  | mapRight _ _ | mapLeft _ _ | ap _ _ => trivial
+  | mapRight _ _ | mapLeft _ _ | ap _ _ | join _ _ => trivial
   | unitRight _ ih =>
     exact ih (fun k hk ys hys _ x _ ↦ ha k hk ys hys PUnit.unit (Eff.pure _ x) trivial) hb
   | unitLeft _ ih =>

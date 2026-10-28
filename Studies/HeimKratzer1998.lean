@@ -842,46 +842,52 @@ def maryBelievesJanIsLoyal : Tree Unit String :=
 def maryBelievesDickIsDeceitful : Tree Unit String :=
   .bin (.leaf "Mary") (.bin (.leaf "believes") dickIsDeceitful)
 
-/-- The derivations of a tree from `lexicon` that denote a proposition, with their denotations. -/
-def propositions (g : Assignment E) (t : Tree Unit String) : List (Denotation E W) :=
-  ((Tree.translations individualIndices (lexicon loyal deceitful believes mary jan dick) t).filter
-    (·.1 = .comp (.reader .s) .t)).map fun d ↦ ⟨d.1, d.2.eval (fun c ↦ c) g⟩
+/-- The propositions that the derivations of a tree from `lexicon` denote. -/
+def propositions (g : Assignment E) (t : Tree Unit String) : Set (Denotation E W) :=
+  {d | d ∈ ((Tree.translations individualIndices (lexicon loyal deceitful believes mary jan dick)
+    t).filter (·.1 = .comp (.reader .s) .t)).map fun d ↦ ⟨d.1, d.2.eval (fun c ↦ c) g⟩}
 
 theorem propositions_janIsLoyal (g : Assignment E) :
     propositions loyal deceitful believes mary jan dick g janIsLoyal =
-      [⟨.comp (.reader .s) .t, fun w ↦ loyal w jan⟩] := by
+      {⟨.comp (.reader .s) .t, fun w ↦ loyal w jan⟩} := by
+  ext d
   simp [propositions, Tree.translations, janIsLoyal, lexicon, Ty.modes, Ty.mode?,
     Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map]
+    Mode.eventIdentification?, Eff.map, Mode.join?]
 
 theorem propositions_dickIsDeceitful (g : Assignment E) :
     propositions loyal deceitful believes mary jan dick g dickIsDeceitful =
-      [⟨.comp (.reader .s) .t, fun w ↦ deceitful w dick⟩] := by
+      {⟨.comp (.reader .s) .t, fun w ↦ deceitful w dick⟩} := by
+  ext d
   simp [propositions, Tree.translations, dickIsDeceitful, lexicon, Ty.modes, Ty.mode?,
     Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map]
+    Mode.eventIdentification?, Eff.map, Mode.join?]
 
-/-- Intensional Functional Application is application mapped over the reader of worlds: of the
-two derivations of *Mary believes Jan is loyal* that denote a proposition, the one mapping
+/-- Intensional Functional Application is application mapped over the reader of worlds: the
+derivations of *Mary believes Jan is loyal* denote two propositions, and the one mapping
 application over the verb's reader is true at `w` iff Jan is loyal at every world compatible with
-what Mary believes in `w` (8), p. 308. The other, by structured application, gives the verb the
-constant intension of the complement's truth value at `w`, the report of an extensional semantics
-(p. 300). -/
+what Mary believes in `w` (8), p. 308. The others, by structured application or by joining a
+layered derivation, give the verb the constant intension of the complement's truth value at `w`,
+the report of an extensional semantics (p. 300). -/
 theorem propositions_maryBelievesJanIsLoyal (g : Assignment E) :
     propositions loyal deceitful believes mary jan dick g maryBelievesJanIsLoyal =
-      [⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (loyal · jan) w⟩,
-       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ loyal w jan) w⟩] := by
+      {⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (loyal · jan) w⟩,
+       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ loyal w jan) w⟩} := by
+  ext d
   simp [propositions, Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexicon, Ty.modes,
     Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure]
+    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure, Mode.join?, Eff.join]
+  tauto
 
 theorem propositions_maryBelievesDickIsDeceitful (g : Assignment E) :
     propositions loyal deceitful believes mary jan dick g maryBelievesDickIsDeceitful =
-      [⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (deceitful · dick) w⟩,
-       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ deceitful w dick) w⟩] := by
+      {⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (deceitful · dick) w⟩,
+       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ deceitful w dick) w⟩} := by
+  ext d
   simp [propositions, Tree.translations, maryBelievesDickIsDeceitful, dickIsDeceitful, lexicon,
     Ty.modes, Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure]
+    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure, Mode.join?, Eff.join]
+  tauto
 
 -- p. 300: the other derivations layer the two readers, and read at one world twice each is the
 -- report about the constant intension of the complement's truth value there
@@ -897,7 +903,7 @@ theorem translations_maryBelievesJanIsLoyal_layered (g : Assignment E) :
         fun v u ↦ □[believes mary] (fun _ ↦ loyal u jan) v⟩] := by
   simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexicon, Ty.modes, Ty.mode?,
     Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map, Eff.pure]
+    Mode.eventIdentification?, Eff.map, Eff.pure, Mode.join?]
 
 /-- The lexicon read at the world `w`: a word that reads a world gives its value there. -/
 def lexiconAt (w : W) (s : String) : Option (Σ ty, Ty.Domain E W ty) :=
@@ -914,7 +920,7 @@ theorem translations_lexiconAt_maryBelievesJanIsLoyal (w : W) (g : Assignment E)
       [⟨.t, □[believes mary] (fun _ ↦ loyal w jan) w⟩] := by
   simp [Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexiconAt, lexicon, Ty.modes,
     Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.pure]
+    Mode.eventIdentification?, Eff.pure, Mode.join?]
 
 /-- An attitude verb's complement is a nonextensional context at `w` exactly when the subject's
 attitude at `w` leaves open a world other than `w`, so the truth value of the complement fixes the
@@ -938,10 +944,10 @@ theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person) :
       (fun w x ↦ w = .actual ∧ x = .dick) (fun _ ↦ Set.univ) .mary .jan .dick g
     let prop (p : Ch12World → Prop) : Denotation Ch12Person Ch12World :=
       ⟨.comp (.reader .s) .t, p⟩
-    (∃ p, props janIsLoyal = [prop p] ∧ p .actual) ∧
-      (∃ p, props dickIsDeceitful = [prop p] ∧ p .actual) ∧
-      (∃ p q, props maryBelievesJanIsLoyal = [prop p, prop q] ∧ p .actual ∧ q .actual) ∧
-      ∃ p q, props maryBelievesDickIsDeceitful = [prop p, prop q] ∧ ¬ p .actual ∧ q .actual :=
+    (∃ p, props janIsLoyal = {prop p} ∧ p .actual) ∧
+      (∃ p, props dickIsDeceitful = {prop p} ∧ p .actual) ∧
+      (∃ p q, props maryBelievesJanIsLoyal = {prop p, prop q} ∧ p .actual ∧ q .actual) ∧
+      ∃ p q, props maryBelievesDickIsDeceitful = {prop p, prop q} ∧ ¬ p .actual ∧ q .actual :=
   ⟨⟨_, propositions_janIsLoyal .., rfl⟩, ⟨_, propositions_dickIsDeceitful .., rfl, rfl⟩,
     ⟨_, _, propositions_maryBelievesJanIsLoyal .., fun _ _ ↦ rfl, fun _ _ ↦ rfl⟩,
     ⟨_, _, propositions_maryBelievesDickIsDeceitful .., (fun h ↦ nomatch (h .other trivial).1),

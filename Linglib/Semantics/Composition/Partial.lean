@@ -97,11 +97,14 @@ def Mode.evalPartial : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Part (
       m.evalPartial (a.map fun av x ↦ av fun _ ↦ Part.some x) b
   | _, _, _, .unitLeft (f := .reader _) m, a, b =>
       m.evalPartial a (b.map fun bv y ↦ bv fun _ ↦ Part.some y)
+  | _, _, _, .join (f := .reader _) m, a, b =>
+      (m.evalPartial a b).map fun x i ↦ (x i).bind fun y ↦ y i
   | _, _, _, .mapRight (f := .set) _, a, b => a.bind fun _ ↦ b.map fun _ ↦ PUnit.unit
   | _, _, _, .mapLeft (f := .set) _, a, b => a.bind fun _ ↦ b.map fun _ ↦ PUnit.unit
   | _, _, _, .ap (f := .set) _, a, b => a.bind fun _ ↦ b.map fun _ ↦ PUnit.unit
   | _, _, _, .unitRight (f := .set) m, a, b => m.evalPartial (a.map fun av _ ↦ av PUnit.unit) b
   | _, _, _, .unitLeft (f := .set) m, a, b => m.evalPartial a (b.map fun bv _ ↦ bv PUnit.unit)
+  | _, _, _, .join (f := .set) m, a, b => (m.evalPartial a b).map fun _ ↦ PUnit.unit
 
 /-- Every mode is strict in its left daughter. -/
 theorem Mode.dom_left_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty.PDomain E W σ₁ S)}
@@ -109,6 +112,7 @@ theorem Mode.dom_left_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (Ty
   induction m with
   | @unitRight f _ _ _ _ _ ih => cases f <;> exact ih h
   | @unitLeft f _ _ _ _ _ ih => cases f <;> exact ih h
+  | @join f _ _ _ _ ih => cases f <;> exact ih h
   | @mapRight f | @mapLeft f | @ap f => cases f <;> exact h.1
   | functionalLeft | functionalRight | predicateModification | eventIdentificationLeft
   | eventIdentificationRight =>
@@ -120,6 +124,7 @@ theorem Mode.dom_right_of_dom_evalPartial (m : Mode σ₁ σ₂ τ) {a : Part (T
   induction m with
   | @unitRight f _ _ _ _ _ ih => cases f <;> exact ih h
   | @unitLeft f _ _ _ _ _ ih => cases f <;> exact ih h
+  | @join f _ _ _ _ ih => cases f <;> exact ih h
   | @mapRight f | @mapLeft f | @ap f => cases f <;> exact h.2
   | functionalLeft | functionalRight | predicateModification | eventIdentificationLeft
   | eventIdentificationRight =>
@@ -345,6 +350,15 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
       simpa [evalPartial, eval, Eff.pure] using
         ih (b := fun y ↦ b {y}) (b' := fun _ ↦ b' PUnit.unit) ha
           (fun x _ _ ↦ hb {x} PUnit.unit trivial)
+  | @join f _ _ _ m ih =>
+    obtain ⟨z, hz, hlz⟩ := ih ha hb
+    cases f with
+    | reader =>
+      refine ⟨fun i ↦ (z i).bind fun y ↦ y i, by simp [evalPartial, hz], fun x y hxy ↦ ?_⟩
+      obtain ⟨u, hu, hlu⟩ := hlz x y hxy
+      obtain ⟨v, hv, hlv⟩ := hlu x y hxy
+      exact ⟨v, by simp [hu, hv], hlv⟩
+    | set => exact ⟨PUnit.unit, by simp [evalPartial, hz], trivial⟩
   | functionalLeft => simpa [evalPartial, eval] using ha b b' hb
   | functionalRight => simpa [evalPartial, eval] using hb a a' ha
   | predicateModification =>

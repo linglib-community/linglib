@@ -12,14 +12,14 @@ A *composition mode* is a rule by which the meanings of two sisters combine into
 their mother, selected by the daughters' types: functional application, predicate modification
 and Kratzer's event identification. Over computation types, Bumford and Charlow's meta-modes lift a
 mode through an effect: Map Left and Map Right apply it under the effect of a daughter, Structured
-App applies it to the results of two daughters with one effect, merging their effects, and Unit
-Left and Unit Right give a daughter that expects a computation the pure computation of a value. A
-pair of types may then compose in several ways, and [the mode their types select is always
-basic](##Ty.isBasic_of_mode?_eq_some). Under the reader of worlds, von Fintel and Heim's
-intensional application is application mapped over the function's reader, which gives the function
-its argument's whole intension, while Unit Right gives it the constant intension of the argument's
-value; [the two agree on every argument exactly when the function is
-extensional](##forall_eval_mapLeft_eq_eval_unitRight_iff).
+App applies it to the results of two daughters with one effect, merging their effects, Unit Left
+and Unit Right give a daughter that expects a computation the pure computation of a value, and
+Join flattens a result with two layers of one effect. A pair of types may then compose in several
+ways, and [the mode their types select is always basic](##Ty.isBasic_of_mode?_eq_some). Under the
+reader of worlds, von Fintel and Heim's intensional application is application mapped over the
+function's reader, which gives the function its argument's whole intension, while Unit Right gives
+it the constant intension of the argument's value; [the two agree on every argument exactly when
+the function is extensional](##forall_eval_mapLeft_eq_eval_unitRight_iff).
 
 ## Main definitions
 
@@ -83,6 +83,9 @@ inductive Mode : Ty → Ty → Ty → Type where
   /-- Unit Left ([bumford-charlow-2026]): a right daughter expecting a computation takes the pure
   computation of a value. -/
   | unitLeft {f : Eff} {σ τ τ' ω : Ty} (m : Mode σ (τ ⇒ τ') ω) : Mode σ (.comp f τ ⇒ τ') ω
+  /-- Join ([bumford-charlow-2026]): a mode whose result has two layers of one effect, the
+  layers flattened. -/
+  | join {f : Eff} {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ (.comp f (.comp f τ))) : Mode σ₁ σ₂ (.comp f τ)
   deriving DecidableEq
 
 namespace Mode
@@ -128,7 +131,7 @@ def Ty.combine? (σ₁ σ₂ : Ty) : Option Ty := (σ₁.mode? σ₂).map (·.1)
 /-- A basic mode is one of the composition principles proper, not a meta-mode that lifts one over
 an effect. -/
 def Mode.IsBasic {σ₁ σ₂ τ : Ty} : Mode σ₁ σ₂ τ → Prop
-  | .mapRight _ | .mapLeft _ | .ap _ | .unitRight _ | .unitLeft _ => False
+  | .mapRight _ | .mapLeft _ | .ap _ | .unitRight _ | .unitLeft _ | .join _ => False
   | _ => True
 
 /-- The mode two daughters' types select is basic. -/
@@ -140,12 +143,18 @@ theorem Ty.isBasic_of_mode?_eq_some {σ₁ σ₂ : Ty} {p : Σ τ, Mode σ₁ σ
       Mode.eventIdentification?] at h <;>
     split at h <;> (try split_ifs at h with hσ) <;> cases h <;> (try subst hσ) <;> trivial
 
+/-- The join of a mode whose result has two layers of one effect, and none otherwise. -/
+def Mode.join? {σ₁ σ₂ : Ty} : (Σ τ, Mode σ₁ σ₂ τ) → Option (Σ τ, Mode σ₁ σ₂ τ)
+  | ⟨.comp f (.comp f' u), m⟩ => if h : f' = f then some ⟨.comp f u, .join (h ▸ m)⟩ else none
+  | _ => none
+
 /-- Every mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose,
 [bumford-charlow-2026]'s `combine`: the basic mode their types select, Map Right and Map Left over
 a daughter that is a computation, Structured App over two with one effect, and Unit Right and Unit
-Left for a daughter that expects one, each over every way of composing the underlying types. -/
+Left for a daughter that expects one, each over every way of composing the underlying types, and
+after each, its Join when its result has two layers of one effect. -/
 def Ty.modes (σ₁ σ₂ : Ty) : List (Σ τ, Mode σ₁ σ₂ τ) :=
-  (σ₁.mode? σ₂).toList ++
+  ((σ₁.mode? σ₂).toList ++
     (match σ₂ with
       | .comp f b => (σ₁.modes b).map fun p ↦ ⟨.comp f p.1, .mapRight p.2⟩
       | _ => []) ++
@@ -161,7 +170,7 @@ def Ty.modes (σ₁ σ₂ : Ty) : List (Σ τ, Mode σ₁ σ₂ τ) :=
       | _ => []) ++
     (match σ₂ with
       | .fn (.comp _ a) b => (σ₁.modes (a ⇒ b)).map fun p ↦ ⟨p.1, .unitLeft p.2⟩
-      | _ => [])
+      | _ => [])).flatMap fun p ↦ p :: (Mode.join? p).toList
 termination_by sizeOf σ₁ + sizeOf σ₂
 
 namespace Mode
@@ -196,7 +205,7 @@ variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 /-- The denotation of a mode is application, intersection of two predicates or event
 identification, and for a meta-mode that of its mode under the effect of a daughter, on the
 results of two daughters (`(λa b. a ∗ b) • E₁ ⊛ E₂`), or with the pure computation of a value
-given to a daughter that expects one. -/
+given to a daughter that expects one, or the flattening `μ` of its two layers. -/
 @[simp] def eval : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ S → Ty.Domain E W σ₂ S →
     Ty.Domain E W τ S
   | _, _, _, functionalLeft, f, a => f a
@@ -209,6 +218,7 @@ given to a daughter that expects one. -/
   | _, _, _, ap (f := f) m, a, b => Eff.seq f (Eff.map f (fun x y ↦ m.eval x y) a) b
   | _, _, _, unitRight (f := f) m, a, b => m.eval (fun x ↦ a (Eff.pure f x)) b
   | _, _, _, unitLeft (f := f) m, a, b => m.eval a (fun y ↦ b (Eff.pure f y))
+  | _, _, _, join (f := f) m, a, b => Eff.join f (m.eval a b)
 
 /-- The denotation of a mode under an applicative effect, which runs the left daughter's
 computation first. -/

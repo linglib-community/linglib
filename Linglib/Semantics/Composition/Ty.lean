@@ -25,8 +25,8 @@ carrier of its result's domain.
 * `Montague.Eff`: the effects of computation types.
 * `Montague.Ty.Domain E W ty S`, `Montague.Eff.F`: the denotation domain of `ty`, and an
   effect's carrier.
-* `Montague.Eff.map`, `Montague.Eff.pure`, `Montague.Eff.seq`: an effect's map, unit and
-  application of a computed function to a computed argument.
+* `Montague.Eff.map`, `Montague.Eff.pure`, `Montague.Eff.seq`, `Montague.Eff.join`: an effect's
+  map, unit, application of a computed function to a computed argument, and flattening.
 * `Montague.Denotation E W M S`: a semantic type with an `M`-computation in its domain.
 * `Montague.Ty.Conjoinable`: the types that end in `t`.
 * `Montague.Ty.Domain.completeBooleanAlgebra`: the pointwise complete Boolean algebra of a
@@ -170,6 +170,13 @@ def Eff.seq {E W : Type} {S : Sorts} {α β : Type} :
     (f : Eff) → Eff.F E W f S (α → β) → Eff.F E W f S α → Eff.F E W f S β
   | .reader _, g, x => fun i ↦ g i (x i)
   | .set, g, x => Set.seq g x
+
+/-- An effect's join `μ` ([bumford-charlow-2026]), flattening a computation of a computation: the
+reader reads one environment for both, and indeterminacy unions the sets of alternatives. -/
+def Eff.join {E W : Type} {S : Sorts} {α : Type} :
+    (f : Eff) → Eff.F E W f S (Eff.F E W f S α) → Eff.F E W f S α
+  | .reader _, x => fun i ↦ x i i
+  | .set, x => ⋃₀ x
 
 /-- A denotation in the Montague type system is a semantic type together with an `M`-computation
 in the domain of that type. `M := Id` is the pure [heim-kratzer-1998] carrier; effectful
