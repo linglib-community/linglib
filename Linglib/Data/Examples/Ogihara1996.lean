@@ -26,7 +26,7 @@ def ex2a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
-    paperFeatures := [("tense", "ta"), ("tense", "ru")] }
+    paperFeatures := [("form", "simplePast"), ("form", "simplePresent")] }
 
 def ex2b : Datum :=
   { id := "ogihara1996_ex2b"
@@ -39,7 +39,7 @@ def ex2b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
-    paperFeatures := [("tense", "ta"), ("tense", "ta")] }
+    paperFeatures := [("form", "simplePast"), ("form", "simplePast")] }
 
 def ex19d : Datum :=
   { id := "ogihara1996_ex19d"
@@ -52,7 +52,7 @@ def ex19d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("shifted", .acceptable)]
-    paperFeatures := [("tense", "ed"), ("tense", "ed"), ("tense", "perfect")] }
+    paperFeatures := [("form", "simplePast"), ("form", "pastPerfectProgressive")] }
 
 def ex10a : Datum :=
   { id := "ogihara1996_ex10a"
@@ -65,7 +65,7 @@ def ex10a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .acceptable), ("shifted", .acceptable)]
-    paperFeatures := [("tense", "ed"), ("tense", "ed")] }
+    paperFeatures := [("form", "simplePast"), ("form", "simplePast")] }
 
 def ex10b : Datum :=
   { id := "ogihara1996_ex10b"
@@ -78,7 +78,7 @@ def ex10b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .acceptable), ("shifted", .unacceptable)]
-    paperFeatures := [("tense", "ta"), ("tense", "ru")] }
+    paperFeatures := [("form", "simplePast"), ("form", "simplePresent")] }
 
 def ex4_9a : Datum :=
   { id := "ogihara1996_ex4_9a"
@@ -91,7 +91,7 @@ def ex4_9a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
-    paperFeatures := [("tense", "woll"), ("tense", "ed")] }
+    paperFeatures := [("form", "future"), ("form", "simplePast")] }
 
 def all : List Datum := [ex2a, ex2b, ex19d, ex10a, ex10b, ex4_9a]
 

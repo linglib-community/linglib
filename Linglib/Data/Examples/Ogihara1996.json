@@ -18,8 +18,8 @@
       {"name": "shifted", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["tense", "ta"],
-      ["tense", "ru"]
+      ["form", "simplePast"],
+      ["form", "simplePresent"]
     ],
     "comment": "Hanako's being sick at the time of Taro's saying (simultaneous) or before it (shifted). (2a) has a past tense in the matrix clause and a present tense in the embedded clause and only conveys a simultaneous interpretation.",
     "verified": "page-image"
@@ -43,8 +43,8 @@
       {"name": "shifted", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["tense", "ta"],
-      ["tense", "ta"]
+      ["form", "simplePast"],
+      ["form", "simplePast"]
     ],
     "comment": "(2b) has a past tense in both clauses and means unambiguously that Hanako's being sick is prior to Taro's saying; it cannot receive a simultaneous interpretation.",
     "verified": "page-image"
@@ -64,9 +64,8 @@
       {"name": "shifted", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["tense", "ed"],
-      ["tense", "ed"],
-      ["tense", "perfect"]
+      ["form", "simplePast"],
+      ["form", "pastPerfectProgressive"]
     ],
     "comment": "Cited from Stump (1985: 223, 230) and labelled [the past perfect]: the adverb yesterday locates Mary's reading, before the saying, in the argument that the perfect can receive the interpretation of the simple past.",
     "verified": "page-image"
@@ -87,8 +86,8 @@
       {"name": "shifted", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["tense", "ed"],
-      ["tense", "ed"]
+      ["form", "simplePast"],
+      ["form", "simplePast"]
     ],
     "comment": "The simultaneous interpretation is the default; the shifted one is forced by an adverbial like a week earlier.",
     "verified": "page-image"
@@ -112,8 +111,8 @@
       {"name": "shifted", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["tense", "ta"],
-      ["tense", "ru"]
+      ["form", "simplePast"],
+      ["form", "simplePresent"]
     ],
     "comment": "Printed with the embedded clause bracketed and marked [simultaneous reading only].",
     "verified": "page-image"
@@ -134,10 +133,10 @@
       {"name": "shifted", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["tense", "woll"],
-      ["tense", "ed"]
+      ["form", "future"],
+      ["form", "simplePast"]
     ],
-    "comment": "Readings of Mary's being sick relative to her claim: a simultaneous reading would follow if the SOT rule could delete the lowest past under the matrix past, which is the wrong prediction.",
+    "comment": "The forms are those of the claim and of the clause under it, against whose time the readings are judged: a simultaneous reading would follow if the SOT rule could delete the lowest past under the matrix past, which is the wrong prediction.",
     "verified": "page-image"
   }
 ]

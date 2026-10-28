@@ -14,17 +14,14 @@ an absolute present, and it has a sequence-of-tense rule that optionally deletes
 locally commanded by another past, leaving a null tense that is simultaneous with the commanding
 time. Japanese has no such rule.
 
-The tenses of a clause and the clauses embedded under it form a chain, and the readings of the
-innermost clause are the positions its time may take against the outermost time, composed from
-the cells of the relative tenses along the chain. A past under a past then has [the positions of
-the Upper Limit Constraint where the rule applies and the past positions
-alone](##readings_past_past) otherwise, so [it is simultaneous exactly in
-English](##eq_mem_readings_past_past_iff), while a Japanese present under a past is simultaneous
-and never shifted. The perfect is a relative past, and [a past perfect under a past places its
-event before the commanding time](##readings_pastPerfect) however the rule applies, which is how
-it can be used as a preterit. Because the rule deletes only a past whose local commander is a
-past, [a past under a future stays a past](##readings_future_past) even beneath a higher past. The
-book's sentences [have exactly the readings the chain allows](##rows_readings).
+A clause's tense morphemes are read off its tense form, a past participle under *have* being
+the perfect and an infinitive under *will* the future *woll*, and the readings of a chain of
+clauses compose the cells of their relative tenses. A past under a past then takes [the positions
+of the Upper Limit Constraint or the past ones alone](##readings_past_past), [simultaneous exactly
+in English](##eq_mem_readings_past_past_iff); [a past perfect under a past precedes the commanding
+time](##readings_pastPerfect) however the rule applies; and [a past under a future stays a
+past](##readings_future_past) beneath a higher past. The book's sentences [have exactly the
+readings the chain allows](##rows_readings).
 
 ## Implementation notes
 
@@ -38,6 +35,11 @@ book's sentences [have exactly the readings the chain allows](##rows_readings).
 * The Japanese present is a relative present and a relative future. The rows judge only the
   simultaneous and the shifted readings, so the future reading of a Japanese present under a past
   is predicted but untested.
+
+## Errata
+
+The note to the chart of tenses says that the English present *-s* surfaces only with a first
+person singular subject; it is the third person singular.
 
 ## TODO
 
@@ -126,10 +128,26 @@ end Morpheme
 
 open Morpheme
 
-/-- The past tense morpheme of a language. -/
-def Language.past : Language → Morpheme
-  | .english => ed
-  | .japanese => ta
+/-- The relative tense morphemes of a tense form in a language, outermost first: the past
+inflection, *-ed* in English and *-ta* in Japanese; the Japanese present *-(r)u*, which stands for
+the present ending of every predicate; and in English the perfect for a past participle under
+*have* and *woll* for an infinitive under *will*. The English present, an absolute tense, and the
+present participle, an aspect, contribute none. -/
+def Morpheme.ofForm : Language → Form → List Morpheme
+  | .english, f =>
+    (if f.finite = .past then [ed] else []) ++ f.nonfinite.filterMap fun
+      | .pastParticiple => some perfect
+      | .infinitive => some woll
+      | .presentParticiple => none
+  | .japanese, f =>
+    match f.finite with
+    | .past => [ta]
+    | .present => [ru]
+    | .future => []
+
+/-- The chain of tenses of the clauses of a sentence, outermost first, each clause's tense form
+read in the language. -/
+def chain (L : Language) (fs : List Form) : List Morpheme := fs.flatMap (Morpheme.ofForm L)
 
 /-- The readings of a chain of tenses, each locally commanding the next: the positions of the
 time of the last against the time of the first, composed from the cells of the forms at LF of each
@@ -141,42 +159,55 @@ def readings : List Morpheme → Finset Ordering
 /-- A past under a past takes the positions `pastUnderPast` of its language's SOT rule: before the
 commanding time, or also at it where the rule applies. -/
 theorem readings_past_past (L : Language) :
-    readings [L.past, L.past] = pastUnderPast L.HasSOT := by
+    readings (chain L [.simplePast, .simplePast]) = pastUnderPast L.HasSOT := by
   cases L <;> decide
 
 /-- A past under a past has a simultaneous reading exactly in a language with the SOT rule. -/
 theorem eq_mem_readings_past_past_iff (L : Language) :
-    .eq ∈ readings [L.past, L.past] ↔ L.HasSOT := by
+    .eq ∈ readings (chain L [.simplePast, .simplePast]) ↔ L.HasSOT := by
   rw [readings_past_past, eq_mem_pastUnderPast_iff]
 
 -- (2a), (10b)
-theorem readings_japanese_present : .eq ∈ readings [ta, ru] ∧ .lt ∉ readings [ta, ru] := by
+theorem readings_japanese_present :
+    .eq ∈ readings (chain .japanese [.simplePast, .simplePresent]) ∧
+      .lt ∉ readings (chain .japanese [.simplePast, .simplePresent]) := by
   decide
 
 /-- A past perfect under a past places its event before the commanding time whether or not the
 SOT rule deletes its past, the use of the perfect as a preterit. -/
-theorem readings_pastPerfect : readings [ed, ed, perfect] = ⟦past⟧ := by decide
+theorem readings_pastPerfect : readings (chain .english [.simplePast, .pastPerfect]) = ⟦past⟧ := by
+  decide
 
 /-- A past under a future is not deleted, since its local commander is no past, so it stays
 before the future time even when a past commands the future. -/
-theorem readings_future_past : readings [woll, ed] = ⟦past⟧ ∧ readings [ed, woll, ed] = ⊤ := by
+theorem readings_future_past :
+    readings (chain .english [.future, .simplePast]) = ⟦past⟧ ∧
+      readings (chain .english [.simplePast, .future, .simplePast]) = ⊤ := by
   decide
 
 /-! ### The sentences -/
 
-/-- A morpheme by its name in the rows. -/
-def morpheme? (w : String) : Option Morpheme :=
-  [("null", null), ("ed", ed), ("perfect", perfect), ("woll", woll), ("ru", ru),
-    ("ta", ta)].lookup w
+/-- The language of a row, by its Glottocode. -/
+def language? (g : String) : Option Language :=
+  [("stan1293", Language.english), ("nucl1643", .japanese)].lookup g
+
+/-- A tense form by its name in the rows. -/
+def form? (w : String) : Option Form :=
+  [("simplePast", Form.simplePast), ("simplePresent", .simplePresent), ("future", .future),
+    ("pastPerfectProgressive", Form.pastProgressive.perfect)].lookup w
 
 /-- The position a reading names: simultaneous, at the commanding time, or shifted, before it. -/
 def reading? (w : String) : Option Ordering :=
   [("simultaneous", Ordering.eq), ("shifted", Ordering.lt)].lookup w
 
+/-- The chain of tenses of a row, from the forms of its clauses in its language. -/
+def chain? (row : Datum) : Option (List Morpheme) := do
+  pure (chain (← language? row.language) (← (row.features "form").mapM form?))
+
 /-- The judged readings of the rows: the chain of tenses of each row, with the position each of
 its readings names and the judgment of that reading. -/
 def judged : List (List Morpheme × Ordering × Judgment) :=
-  Examples.all.flatMap fun row ↦ ((row.features "tense").mapM morpheme?).toList.flatMap fun ms ↦
+  Examples.all.flatMap fun row ↦ (chain? row).toList.flatMap fun ms ↦
     row.readings.filterMap fun r ↦ (reading? r.1).map fun o ↦ (ms, o, r.2)
 
 /-- Every reading of the book's sentences is acceptable exactly when the chain of its tenses
