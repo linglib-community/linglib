@@ -13,13 +13,10 @@
     "context": "You were at a party; you know for a fact that not everyone danced, but, because the lights were off, you don't know who exactly danced.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "external"],
-      ["volitional", "yes"],
-      ["reading", "epistemic"],
-      ["epistemicState", "ignorant, not all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (23a). Repeated as (3), (73), (124).",
     "verified": "page-image"
   },
@@ -37,13 +34,10 @@
     "context": "You know that only Kixtup and Xun danced at the party.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "external"],
-      ["volitional", "yes"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows which, not all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (23b).",
     "verified": "page-image"
   },
@@ -61,15 +55,10 @@
     "context": "You were at a party and you saw that everyone there danced.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "external"],
-      ["volitional", "yes"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows all"],
-      ["item", "yalnhej"],
-      ["scenario", "universal"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (24). Consultant comment (25): it could be that just some people danced, or that everybody danced. Repeated as (124)/(125).",
     "verified": "page-image"
   },
@@ -87,13 +76,10 @@
     "context": "There was a town party, and meat was served to everyone who wanted it. You know that at least some people ate meat, but since you weren't there, you couldn't tell who.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "external"],
-      ["volitional", "yes"],
-      ["reading", "epistemic"],
-      ["epistemicState", "ignorant"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (27a).",
     "verified": "page-image"
   },
@@ -111,13 +97,10 @@
     "context": "There was a town party and meat was served; you noticed that everyone was happy about that, and so everyone asked for some.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "external"],
-      ["volitional", "yes"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (27b).",
     "verified": "page-image"
   },
@@ -135,13 +118,10 @@
     "context": "There was a town party, with 20 attendees, and meat was served to everyone who wanted it. But you noticed that, in the end, only Kixtup and Xun ate meat.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "external"],
-      ["volitional", "yes"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows which, not all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (27c).",
     "verified": "page-image"
   },
@@ -159,13 +139,10 @@
     "context": "Xun went to a market and tried a few dishes. You know that Xun liked at least one dish (maybe more), but you're not sure which.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "ignorant"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (29a). Repeated as (34), (65). The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -183,13 +160,10 @@
     "context": "Xun went to a market, tried a few dishes, but didn't like them all. You know exactly which dishes Xun liked, namely soup and tamales.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows which, not all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (29b). The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -207,13 +181,10 @@
     "context": "Xun went to the market and tried a few dishes. You know for a fact that he liked all dishes.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (29c). The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -231,12 +202,10 @@
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "no"],
-      ["reading", "random choice"]
+    "readings": [
+      {"name": "random choice", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "With a non-volitional predicate only the epistemic interpretation is possible. The paper gives no context: it prints the available readings 'Xun liked some dish(es) or other.' / 'Xun liked all dishes.' and 'Not: 'Xun liked a dish at random.'', the reading this row records as unavailable.",
     "verified": "page-image"
   },
@@ -253,12 +222,10 @@
     "context": "Your child bought lots of candy, even though you told him not to. You ask him what he bought. He answers:",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "yes"],
-      ["reading", "epistemic"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (30a). Feigned ignorance, as with English whatever. The paper marks the translation ≈. The paper prints the verb in angle brackets, < ix-in-man-a' >, translated <I bought>.",
     "verified": "page-image"
   },
@@ -276,13 +243,10 @@
     "context": "Xun wanted to read, but didn't have any specific book in mind. He went to the bookstore and bought one at random.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "indiscriminate"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (32a). Repeated as (2), (61), (100), (126).",
     "verified": "page-image"
   },
@@ -300,13 +264,10 @@
     "context": "Xun wanted to read a specific book, the Popol Wuj, went to the bookstore and bought it.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "specific"]
+    "readings": [
+      {"name": "random choice", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (32b).",
     "verified": "page-image"
   },
@@ -324,15 +285,10 @@
     "context": "Xun is very wealthy, and a bit insane. He goes to a bookstore, and he starts buying books indiscriminately, to the point where he ends up buying all books.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "all"],
-      ["item", "yalnhej"],
-      ["scenario", "universal"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (33). Repeated as (126)/(127).",
     "verified": "page-image"
   },
@@ -350,13 +306,10 @@
     "context": "There were strong winds. You know that the wind must have broken many plants, but since you haven't left your house yet, you're not sure which.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "ignorant"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (36a). Passive subject.",
     "verified": "page-image"
   },
@@ -374,13 +327,10 @@
     "context": "There were very strong winds. You noticed that all plants are broken.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (36b).",
     "verified": "page-image"
   },
@@ -398,13 +348,10 @@
     "context": "There were mild winds, which broke only a few fragile plants. You went to check out the plants after the windstorm, and saw which plants were broken.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows which, not all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (36c).",
     "verified": "page-image"
   },
@@ -422,13 +369,10 @@
     "context": "A jury needs to select someone in a competition. All participants to the competition are equally good, so they decide to choose one at random.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "one, any"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (38a). Passive subject of a volitional verb.",
     "verified": "page-image"
   },
@@ -446,13 +390,10 @@
     "context": "A jury needs to select someone in a competition. One participant stands out as the best, so they select them.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "specific"]
+    "readings": [
+      {"name": "random choice", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (38b).",
     "verified": "page-image"
   },
@@ -470,13 +411,10 @@
     "context": "You saw on the news that it rained somewhere in your region yesterday, but you're not sure where.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "adjunct"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "ignorant"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (40a).",
     "verified": "page-image"
   },
@@ -494,13 +432,10 @@
     "context": "You saw on the news that it rained everywhere in your region yesterday.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "adjunct"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (40b).",
     "verified": "page-image"
   },
@@ -518,13 +453,10 @@
     "context": "While you know from the news that it didn't rain everywhere in your region yesterday, you saw it rained in specific places.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "adjunct"],
-      ["volitional", "no"],
-      ["reading", "epistemic"],
-      ["epistemicState", "knows which, not all"]
+    "readings": [
+      {"name": "epistemic", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (40c).",
     "verified": "page-image"
   },
@@ -542,13 +474,10 @@
     "context": "Malin didn't know where to eat, so she chose a place to eat at random.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "adjunct"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "indiscriminate"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (42a).",
     "verified": "page-image"
   },
@@ -566,13 +495,10 @@
     "context": "Malin chose to go try out a new restaurant she heard about.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "adjunct"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "specific"]
+    "readings": [
+      {"name": "random choice", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (42b).",
     "verified": "page-image"
   },
@@ -590,14 +516,10 @@
     "context": "There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["position", "internal"],
-      ["volitional", "yes"],
-      ["reading", "random choice"],
-      ["decision", "indiscriminate"],
-      ["property", "non-maximal"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (44).",
     "verified": "page-image"
   },
@@ -613,10 +535,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["item", "whatever"],
-      ["property", "maximal"]
-    ],
+    "paperFeatures": [],
     "comment": "Context (44). Wh-ever free relatives convey maximality.",
     "verified": "page-image"
   },
@@ -635,11 +554,10 @@
     "context": "Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["reading", "epistemic"],
-      ["property", "non-maximal"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (47). The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -655,10 +573,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["item", "whatever"],
-      ["property", "maximal"]
-    ],
+    "paperFeatures": [],
     "comment": "Context (47).",
     "verified": "page-image"
   },
@@ -676,13 +591,10 @@
     "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …Xun didn't close his eyes and selected a specific card, that of course, gave him an advantage. I ask you, how did Xun cheat?",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "random choice"],
-      ["embedded", "negation"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (49). The random choice component is at-issue: it is what negation targets.",
     "verified": "page-image"
   },
@@ -701,13 +613,10 @@
     "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …You're explaining how not to cheat, using Xun as an example player, you say:",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "random choice"],
-      ["embedded", "conditional antecedent"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (51a).",
     "verified": "page-image"
   },
@@ -726,13 +635,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "epistemic"],
-      ["embedded", "negation"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Continued by (52b) 'Ha tas maj s-cha laj s-k'ol heb' masanil chi', ha-chi' ix-y-ab'l-ej winh.' 'The dish that everybody didn't like, that's the one he ate.'",
     "verified": "page-image"
   },
@@ -751,13 +657,10 @@
     "context": "You're a firefighter, so you know how to stop fire. If you know where the fire is coming from, you don't get worried. You only get worried if you do not know where the fire is coming from.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "epistemic"],
-      ["embedded", "conditional antecedent"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (53a).",
     "verified": "page-image"
   },
@@ -775,11 +678,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["reading", "random choice"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Repeated as (119), (123).",
     "verified": "page-image"
   },
@@ -797,11 +699,11 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "unremarkable", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["reading", "unremarkable"],
-      ["position", "predicative"]
+      ["construction", "predicative"]
     ],
     "comment": "Repeated as (94).",
     "verified": "page-image"
@@ -821,13 +723,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["reading", "random choice"],
-      ["embedded", "conditional antecedent"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "",
     "verified": "page-image"
   },
@@ -845,13 +744,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["reading", "random choice"],
-      ["embedded", "negation"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Also (111). The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -871,8 +767,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "yalnhej"],
-      ["position", "predicative"]
+      ["construction", "predicative"]
     ],
     "comment": "Repeated as (104a); yalnhej DPs have no predicative uses.",
     "verified": "page-image"
@@ -893,8 +788,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "yalnhej"],
-      ["position", "predicative"]
+      ["construction", "predicative"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -905,16 +799,18 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "A: María se casó con algún estudiante del departamento de lingüística. B: ¿Con cuál?",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["María", "María"], ["se", "SE"], ["casó", "marry-PFV-3S"], ["con", "with"],
+      ["algún", "ALGÚN"], ["estudiante", "student"], ["del", "of.the"],
+      ["departamento", "department"], ["de", "of"], ["lingüística", "linguistics"],
+      ["Con", "with"], ["cuál", "which.one"]
+    ],
     "translation": "A: María married a linguistics student. B: With which one?",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["item", "algún"],
-      ["continuation", "which-question"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper marks B's question #, deviant after algún; the row's judgment is B's.",
     "verified": "page-image"
   },
@@ -924,16 +820,17 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "A: Juan entró en la tienda y compró un libro cualquiera. B: ¿Qué libro compró?",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["entró", "enter-PFV-3S"], ["en", "in"], ["la", "the"],
+      ["tienda", "store"], ["y", "and"], ["compró", "buy-PFV-3S"], ["un", "a"], ["libro", "book"],
+      ["cualquiera", "CUALQUIERA"], ["Qué", "which"], ["libro", "book"], ["compró", "buy-PFV-3S"]
+    ],
     "translation": "A: Juan entered the store and bought a random book. B: Which book did he buy?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["continuation", "which-question"]
-    ],
+    "paperFeatures": [],
     "comment": "Not deviant: uno cualquiera conveys no ignorance.",
     "verified": "page-image"
   },
@@ -951,12 +848,10 @@
     "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating …",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "random choice"],
-      ["anchor", "local"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (49). Non-harmonic interpretation (83)–(84). The paper glosses the first word YALNEHJ, a misprint for YALNHEJ; it prints 'Possible interpretation: 'Grab a card at random!' (felicitous given (49))'.",
     "verified": "page-image"
   },
@@ -974,11 +869,10 @@
     "context": "At the beginning of a boardgame, players must select any card they want from the game. It's the first time you play, and you ask me what you need to do.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["anchor", "harmonic"]
+    "readings": [
+      {"name": "harmonic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (85). Harmonic interpretation (87)–(88): the DP projects from the imperative's anchor. The paper translates (82) only on its non-harmonic reading; this row is the harmonic reading in (85).",
     "verified": "page-image"
   },
@@ -995,11 +889,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["anchor", "harmonic"]
+    "readings": [
+      {"name": "harmonic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper cites Alonso-Ovalle & Menéndez-Benito (2018) without a page.",
     "verified": "page-image"
   },
@@ -1018,12 +911,10 @@
     "context": "Xun thinks that some people danced at the party, but he doesn't know exactly who. As far as he can tell, it could be anyone.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "epistemic"],
-      ["anchor", "harmonic"]
+    "readings": [
+      {"name": "harmonic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (89). Utterable by a speaker who knows who danced: the DP projects from the attitude's anchor (91)–(92).",
     "verified": "page-image"
   },
@@ -1043,12 +934,10 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
+      {"name": "random choice", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["reading", "random choice"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper cites Alonso-Ovalle & Menéndez-Benito (2018) without a page; it prints 'Not: 'Juan must have gone to watch a movie, any movie is a possibility for me.''",
     "verified": "page-image"
   },
@@ -1066,11 +955,11 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "unremarkable", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
-      ["item", "irgendein"],
-      ["reading", "unremarkable"],
-      ["position", "predicative"]
+      ["construction", "predicative"]
     ],
     "comment": "The paper marks the translation ≈. German judgments by Michael Wagner (fn. 19).",
     "verified": "page-image"
@@ -1089,11 +978,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "komon"],
-      ["reading", "random choice"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -1110,11 +998,11 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "unremarkable", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
-      ["item", "komon"],
-      ["reading", "unremarkable"],
-      ["position", "predicative"]
+      ["construction", "predicative"]
     ],
     "comment": "The paper marks the translation ≈.",
     "verified": "page-image"
@@ -1133,11 +1021,10 @@
     "context": "Xun bought a book on purpose, and the book is simply unremarkable.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "unremarkable"]
+    "readings": [
+      {"name": "unremarkable", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper translates ≈ 'Xun bought a random book.' and 'Not: 'Xun bought an unremarkable book.'', the reading the row records as unavailable.",
     "verified": "page-image"
   },
@@ -1155,11 +1042,10 @@
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "unremarkable"]
+    "readings": [
+      {"name": "unremarkable", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (101). The paper gives the translation as intended. The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
     "verified": "page-image"
   },
@@ -1177,11 +1063,10 @@
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "unremarkable"]
+    "readings": [
+      {"name": "unremarkable", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (101). The paper gives the translation as intended. The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
     "verified": "page-image"
   },
@@ -1199,11 +1084,10 @@
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "komon"],
-      ["reading", "unremarkable"]
+    "readings": [
+      {"name": "unremarkable", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (101). The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
     "verified": "page-image"
   },
@@ -1221,11 +1105,10 @@
     "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "komon"],
-      ["reading", "unremarkable"]
+    "readings": [
+      {"name": "unremarkable", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (101). The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
     "verified": "page-image"
   },
@@ -1245,8 +1128,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "yalnhej"],
-      ["position", "predicative"]
+      ["construction", "predicative"]
     ],
     "comment": "The paper gives the translation as intended.",
     "verified": "page-image"
@@ -1267,8 +1149,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "yalnhej"],
-      ["position", "predicative"],
       ["construction", "possessive have"]
     ],
     "comment": "The paper gives the translation as intended; fn. 20 notes the string is not ill-formed but incomplete.",
@@ -1290,8 +1170,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "tzijtum"],
-      ["position", "predicative"],
       ["construction", "possessive have"]
     ],
     "comment": "",
@@ -1313,8 +1191,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "yalnhej"],
-      ["position", "predicative"],
       ["construction", "secondary predicate"]
     ],
     "comment": "The paper gives the translation as intended and ≈, and drops 'know' from it.",
@@ -1336,8 +1212,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "tzijtum"],
-      ["position", "predicative"],
       ["construction", "secondary predicate"]
     ],
     "comment": "The paper cites Royer, Buenrostro & Jenks (to appear: 15).",
@@ -1359,8 +1233,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["item", "yalnhej"],
-      ["position", "attributive"]
+      ["construction", "attributive"]
     ],
     "comment": "Yalnhej DPs cannot stack under adjectival modifiers.",
     "verified": "page-image"
@@ -1379,11 +1252,11 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {"name": "unremarkable", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
-      ["item", "komon"],
-      ["position", "attributive"],
-      ["reading", "unremarkable"]
+      ["construction", "attributive"]
     ],
     "comment": "The paper marks the translation ≈.",
     "verified": "page-image"
@@ -1406,12 +1279,7 @@
     "readings": [
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["item", "algún"],
-      ["reading", "epistemic"],
-      ["embedded", "conditional antecedent"],
-      ["survives", "no"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper prints 'Not: 'If Juan bought a book / books and I don't know which one(s) …''; it glosses hablaré 'talk-FUT-3S', a slip for 1S.",
     "verified": "page-image"
   },
@@ -1433,12 +1301,7 @@
       {"name": "epistemic", "judgment": "unacceptable"},
       {"name": "random choice", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["item", "irgendein"],
-      ["reading", "epistemic"],
-      ["embedded", "negation"],
-      ["survives", "no"]
-    ],
+    "paperFeatures": [],
     "comment": "Buccola & Haida 2017; the random choice component survives only with stress on irgendein.",
     "verified": "page-image"
   },
@@ -1456,13 +1319,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["reading", "random choice"],
-      ["embedded", "negation"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈. The paper glosses cogió 'grab-PFC-3S', a misprint for PFV.",
     "verified": "page-image"
   },
@@ -1480,13 +1340,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "n'importe quel"],
-      ["reading", "random choice"],
-      ["embedded", "negation"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -1504,13 +1361,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "komon"],
-      ["reading", "random choice"],
-      ["embedded", "negation"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -1529,13 +1383,10 @@
     "context": "We're playing a board game, and as part of the rules, you must first pick one card at random. Some cards give you a clear advantage, others put you at disadvantage, so you can't just pick any card you desire, i.e. it's important you pick one at random. At this stage of the game, you ask me what you need to do to respect the rules of the game.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "komon"],
-      ["reading", "random choice"],
-      ["embedded", "conditional antecedent"],
-      ["survives", "yes"]
+    "readings": [
+      {"name": "random choice", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Context (116).",
     "verified": "page-image"
   },
@@ -1557,9 +1408,7 @@
       {"name": "epistemic", "judgment": "acceptable"},
       {"name": "random choice", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["item", "irgendein"]
-    ],
+    "paperFeatures": [],
     "comment": "Buccola & Haida 2017. The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -1580,9 +1429,7 @@
       {"name": "epistemic", "judgment": "acceptable"},
       {"name": "random choice", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["item", "algún"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈. The paper prints 'Not: 'Juan bought a random book.''.",
     "verified": "page-image"
   },
@@ -1604,9 +1451,7 @@
       {"name": "random choice", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["item", "uno cualquiera"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈. The paper prints 'Not: 'Juan bought some book or other.''.",
     "verified": "page-image"
   },
@@ -1628,9 +1473,7 @@
       {"name": "random choice", "judgment": "acceptable"},
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
-    "paperFeatures": [
-      ["item", "n'importe quel"]
-    ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈. The paper prints 'Not: 'Marie bought some book or other.''.",
     "verified": "page-image"
   },
@@ -1640,16 +1483,18 @@
     "reportedIn": {"bibkey": "alonso-ovalle-royer-2024", "paperLabel": "(121)"},
     "language": "ital1282",
     "primaryText": "Chi ha telefonato? Un regazzo qualsiasi",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Chi", "who"], ["ha", "have:3S"], ["telefonato", "telephoned"], ["Un", "a"],
+      ["regazzo", "boy"], ["qualsiasi", "QUALSIASI"]
+    ],
     "translation": "",
     "context": "",
     "judgment": "questionable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "un qualsiasi"],
-      ["reading", "epistemic"]
+    "readings": [
+      {"name": "epistemic", "judgment": "questionable"}
     ],
+    "paperFeatures": [],
     "comment": "Un qualsiasi does not express speaker ignorance unembedded. The paper prints (121a) Chi ha telefonato? 'who have:3S telephoned' and (121b) ?? Un regazzo qualsiasi 'a boy QUALSIASI', without translations or speaker labels; regazzo is a misprint for ragazzo. It attributes the description to Chierchia (2013: §5.3.2).",
     "verified": "page-image"
   },
@@ -1666,11 +1511,10 @@
     "context": "The speaker knows that all contextually relevant people are dancing.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "algún"],
-      ["scenario", "universal"]
+    "readings": [
+      {"name": "epistemic", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The context paraphrases the paper's prose.",
     "verified": "page-image"
   },
@@ -1688,11 +1532,10 @@
     "context": "Juan bought all contextually relevant books.",
     "judgment": "unacceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "uno cualquiera"],
-      ["scenario", "universal"]
+    "readings": [
+      {"name": "random choice", "judgment": "unacceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper glosses compró 'grab-PFV-3S'. The context paraphrases the paper's prose.",
     "verified": "page-image"
   },
@@ -1709,11 +1552,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "xomlaj"],
-      ["reading", "epistemic"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "Cannot describe (24) (all danced) nor random choice scenarios. The paper marks the translation ≈.",
     "verified": "page-image"
   },
@@ -1731,11 +1573,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["item", "yalnhej"],
-      ["reading", "epistemic"]
+    "readings": [
+      {"name": "epistemic", "judgment": "acceptable"}
     ],
+    "paperFeatures": [],
     "comment": "The paper marks the translation ≈.",
     "verified": "page-image"
   }

@@ -28,8 +28,9 @@ toward parsed ones.
 * `GlossedWord`, `Datum.glossedWords`: a token's aligned surface and gloss morphs, and a row's
   well-aligned tokens.
 * `GlossedWord.stem`, `GlossedWord.wordform`, `GlossedWord.labels`,
-  `GlossedWord.lexicalGloss?`: the first surface morph and the joined word, decapitalized, and
-  the word's category labels and first lexical gloss.
+  `GlossedWord.lexicalGloss?`, `GlossedWord.lexicalMorph?`: the first surface morph and the
+  joined word, decapitalized, the word's category labels, and its first lexical gloss with the
+  morph it glosses.
 
 ## Implementation notes
 
@@ -154,6 +155,11 @@ def labels : List (List Char) :=
 /-- The word's first lexical gloss, where it has one. -/
 def lexicalGloss? : Option (List Char) :=
   (w.morphs.map (·.2)).find? fun g ↦ !decide (Gloss.IsLabel g)
+
+/-- The surface morph of the word's first lexical gloss, decapitalized: the form that a lexicon
+of roots keys. -/
+def lexicalMorph? : Option (List Char) :=
+  (w.morphs.find? fun m ↦ !decide (Gloss.IsLabel m.2)).map (·.1.map Gloss.toLower)
 
 /-- The word's surface form: its morphs joined, decapitalized. -/
 def wordform : List Char := (w.morphs.flatMap (·.1)).map Gloss.toLower
