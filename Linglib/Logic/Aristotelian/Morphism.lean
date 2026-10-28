@@ -26,6 +26,8 @@ Aristotelian isomorphic diagram of bitstrings.
 * `BooleanIso.toAristotelianIso`: every Boolean isomorphism is an Aristotelian isomorphism.
 * `BooleanIso.ofInjective`: a diagram is Boolean isomorphic to its image along an injective
   homomorphism.
+* `BooleanIso.ofSurjective`: a diagram of sets of types is Boolean isomorphic to its preimage
+  along a surjection onto the types.
 * `BooleanIso.ofMintermEqBot`: a corner bijection is a Boolean isomorphism when the minterms of
   the two diagrams vanish at the same polarity assignments.
 * `AristotelianIso.toSetOfMinterms`: a diagram and its bitstrings are Aristotelian isomorphic.
@@ -180,6 +182,18 @@ noncomputable def ofInjective (g : BoundedLatticeHom α α') (hg : Function.Inje
   closureIso := (orderIsoMapOfInjective _ hg).trans <|
     Set.orderIsoOfEq _ _ (by rw [map_closure, ← Set.range_comp])
   extends_corners _ := rfl
+
+/-- A diagram of sets of types is Boolean isomorphic to its preimage along a surjection onto the
+types, such as the map sending each model of a logic to its type. -/
+noncomputable def ofSurjective {X T : Type*} [Fintype T] [DecidableEq T] {φ : ι → Finset T}
+    (t : X → T) (ht : Function.Surjective t) : BooleanIso φ fun i ↦ t ⁻¹' ↑(φ i) :=
+  ofInjective (φ := φ)
+    { toFun s := t ⁻¹' ↑s
+      map_sup' _ _ := by simp
+      map_inf' _ _ := by simp
+      map_top' := by simp
+      map_bot' := by simp }
+    fun _ _ h ↦ Finset.coe_injective (Set.preimage_injective.2 ht h)
 
 /-- A corner bijection is a Boolean isomorphism when the minterms of the two diagrams, matched
 along it, vanish together. -/
