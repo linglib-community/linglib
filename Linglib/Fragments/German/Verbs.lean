@@ -21,8 +21,9 @@ perfect follows (`German.perfectAuxiliary`).
 The entries are the verbs the studies use: a few causative and attitude verbs, *bauen* 'build',
 the simple, change-of-state and prefixed verbs of Benz's resultatives and nominalizations, the
 sixteen occasion verbs whose presuppositions Solstad and Bott test for projection, and the
-predicates of Schwarzer's experiments, four that take a *dass*-clause and four that do not, and the
-intransitive verbs of Durrell's rule for the perfect auxiliary (§12.3.2). The
+predicates of Schwarzer's experiments, four that take a *dass*-clause and four that do not,
+*helfen* 'help', whose dative passive Zaenen, Maling and Thráinsson set beside the Icelandic one,
+and the intransitive verbs of Durrell's rule for the perfect auxiliary (§12.3.2). The
 present tense of *kaufen* 'buy' is the paradigm Dalrymple and Kaplan use for indeterminate
 agreement.
 
@@ -40,6 +41,7 @@ agreement.
 * [benz-2025]
 * [solstad-bott-2024]
 * [schwarzer-2026]
+* [zaenen-maling-thrainsson-1985]
 * [dalrymple-kaplan-2000]
 -/
 
@@ -361,6 +363,14 @@ def beschliessen : Verb :=
     valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause],
       objects := [.acc] }
 
+/-! ### Verbs with a dative object -/
+
+/-- *helfen* 'help' takes its object in the dative, which stays dative in the passive *Ihm wurde
+geholfen* 'he was helped' ([zaenen-maling-thrainsson-1985] (78)). -/
+def helfen : Verb :=
+  { Verb.ofStem (strong "helfen" "hilft" "half" "geholfen") with
+    valency := .ofFrame ArgumentFrame.np, objects := [.dat] }
+
 /-! ### The entries -/
 
 /-! ### Intransitive verbs of motion and state
@@ -426,7 +436,7 @@ def allVerbs : List Verb :=
    anzeigen, auszeichnen, belangen, ehren, entlassen, raechen, revanchieren,
    zurVerantwortungZiehen,
    beenden, streichen, uebereilen, entwickeln, veranlassen, vergessen, erwarten, beschliessen,
-   laufen, ankommen, tanzen, arbeiten, bleiben, liegen]
+   helfen, laufen, ankommen, tanzen, arbeiten, bleiben, liegen]
 
 theorem form_eq_infinitive : ∀ v ∈ allVerbs, v.form = v.stem.infinitive := by decide
 
