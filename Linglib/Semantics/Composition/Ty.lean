@@ -14,7 +14,8 @@ its own, and the two-sorted type theory of Gallin adds it. Later work adds sorts
 cardinalities, and events and states. Each type has a *domain* of possible denotations, built from
 a set of individuals and a set of worlds, and the domain of a type that ends in $t$ is a Boolean
 algebra, pointwise. A *computation type* is the type of a computation with an effect, such as
-reading an environment, and its domain is the effect's carrier of its result's domain.
+reading an environment or returning one of a set of alternatives, and its domain is the effect's
+carrier of its result's domain.
 
 ## Main definitions
 
@@ -24,7 +25,8 @@ reading an environment, and its domain is the effect's carrier of its result's d
 * `Montague.Eff`: the effects of computation types.
 * `Montague.Ty.Domain E W ty S`, `Montague.Eff.F`: the denotation domain of `ty`, and an
   effect's carrier.
-* `Montague.Eff.map`, `Montague.Eff.pure`: an effect's map and unit.
+* `Montague.Eff.map`, `Montague.Eff.pure`, `Montague.Eff.seq`: an effect's map, unit and
+  application of a computed function to a computed argument.
 * `Montague.Denotation E W M S`: a semantic type with an `M`-computation in its domain.
 * `Montague.Ty.Conjoinable`: the types that end in `t`.
 * `Montague.Ty.Domain.completeBooleanAlgebra`: the pointwise complete Boolean algebra of a
@@ -36,8 +38,10 @@ reading an environment, and its domain is the effect's carrier of its result's d
 instance, and the Boolean algebra of a type that ends in `t` is mathlib's `Pi` instance.
 `Ty.Domain.completeBooleanAlgebra` builds that algebra by recursion on a type known to be
 conjoinable, for statements about a type that is not concrete. The reader's carrier is the
-function type itself, not `ReaderT`, so that its domain is a function type to instance search; its
-map and unit are therefore explicit.
+function type itself, not `ReaderT`, and the carrier of alternatives is `Set`, not `SetM`, so that
+a domain is a function type or a set to instance search; their map, unit and application are
+therefore explicit. A set of alternatives is not conjoinable: two sets of alternatives coordinate
+alternative by alternative, through the modes, and not by intersection.
 
 ## References
 
@@ -86,10 +90,13 @@ inductive Ty where
   deriving Repr, DecidableEq
 
 /-- The effects of computation types ([bumford-charlow-2026]): the reader of an environment of a
-type, a computation that reads a value of that type, as an intension reads a world. -/
+type, a computation that reads a value of that type, as an intension reads a world, and
+indeterminacy, a computation with a set of alternative results, as an indefinite has. -/
 inductive Eff where
   /-- The reader of an environment of type `ι`. -/
   | reader : Ty → Eff
+  /-- Indeterminacy, a set of alternatives. -/
+  | set : Eff
   deriving Repr, DecidableEq
 
 end
@@ -137,10 +144,11 @@ abbrev Ty.Domain (E W : Type) (ty : Ty) (S : Sorts := {}) : Type :=
   | .comp f a => Eff.F E W f S (Ty.Domain E W a S)
 
 /-- The carrier of an effect: a computation that reads an environment of type `ι` is a function
-from its denotations. -/
+from its denotations, and an indeterminate computation is the set of its alternatives. -/
 abbrev Eff.F (E W : Type) (f : Eff) (S : Sorts := {}) (α : Type) : Type :=
   match f with
   | .reader ι => Ty.Domain E W ι S → α
+  | .set => Set α
 
 end
 
@@ -148,10 +156,20 @@ end
 def Eff.map {E W : Type} {S : Sorts} {α β : Type} : (f : Eff) → (α → β) → Eff.F E W f S α →
     Eff.F E W f S β
   | .reader _, g, x => fun i ↦ g (x i)
+  | .set, g, x => g '' x
 
 /-- An effect's unit, the computation with no effect that returns a value. -/
 def Eff.pure {E W : Type} {S : Sorts} {α : Type} : (f : Eff) → α → Eff.F E W f S α
   | .reader _, a => fun _ ↦ a
+  | .set, a => {a}
+
+/-- An effect's application `⊛` of a computed function to a computed argument
+([bumford-charlow-2026]): the reader reads one environment for both, and indeterminacy applies
+every alternative function to every alternative argument. -/
+def Eff.seq {E W : Type} {S : Sorts} {α β : Type} :
+    (f : Eff) → Eff.F E W f S (α → β) → Eff.F E W f S α → Eff.F E W f S β
+  | .reader _, g, x => fun i ↦ g i (x i)
+  | .set, g, x => Set.seq g x
 
 /-- A denotation in the Montague type system is a semantic type together with an `M`-computation
 in the domain of that type. `M := Id` is the pure [heim-kratzer-1998] carrier; effectful
@@ -164,7 +182,7 @@ def Ty.Conjoinable : Ty → Prop
   | .t => True
   | .fn _ b => b.Conjoinable
   | .comp (.reader _) b => b.Conjoinable
-  | .e | .d | .n | .v | .s => False
+  | .comp .set _ | .e | .d | .n | .v | .s => False
 
 /-- The domain of a conjoinable type carries the pointwise complete Boolean algebra
 ([partee-rooth-1983]). At a concrete type it is the instance `Pi.instCompleteBooleanAlgebra` finds
@@ -175,6 +193,6 @@ def Ty.Domain.completeBooleanAlgebra (E W : Type) :
   | .t, _, _ => inferInstanceAs (CompleteBooleanAlgebra Prop)
   | .fn _ b, h, S => letI := completeBooleanAlgebra E W b h S; inferInstance
   | .comp (.reader _) b, h, S => letI := completeBooleanAlgebra E W b h S; inferInstance
-  | .e, h, _ | .d, h, _ | .n, h, _ | .v, h, _ | .s, h, _ => h.elim
+  | .comp .set _, h, _ | .e, h, _ | .d, h, _ | .n, h, _ | .v, h, _ | .s, h, _ => h.elim
 
 end Montague

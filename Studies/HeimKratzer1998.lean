@@ -862,21 +862,26 @@ theorem propositions_dickIsDeceitful (g : Assignment E) :
     Mode.eventIdentification?, Eff.map]
 
 /-- Intensional Functional Application is application mapped over the reader of worlds: of the
-derivations of *Mary believes Jan is loyal*, exactly one denotes a proposition, true at `w` iff
-Jan is loyal at every world compatible with what Mary believes in `w` (8), p. 308. -/
+two derivations of *Mary believes Jan is loyal* that denote a proposition, the one mapping
+application over the verb's reader is true at `w` iff Jan is loyal at every world compatible with
+what Mary believes in `w` (8), p. 308. The other, by structured application, gives the verb the
+constant intension of the complement's truth value at `w`, the report of an extensional semantics
+(p. 300). -/
 theorem propositions_maryBelievesJanIsLoyal (g : Assignment E) :
     propositions loyal deceitful believes mary jan dick g maryBelievesJanIsLoyal =
-      [⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (loyal · jan) w⟩] := by
+      [⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (loyal · jan) w⟩,
+       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ loyal w jan) w⟩] := by
   simp [propositions, Tree.translations, maryBelievesJanIsLoyal, janIsLoyal, lexicon, Ty.modes,
     Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map]
+    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure]
 
 theorem propositions_maryBelievesDickIsDeceitful (g : Assignment E) :
     propositions loyal deceitful believes mary jan dick g maryBelievesDickIsDeceitful =
-      [⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (deceitful · dick) w⟩] := by
+      [⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (deceitful · dick) w⟩,
+       ⟨.comp (.reader .s) .t, fun w ↦ □[believes mary] (fun _ ↦ deceitful w dick) w⟩] := by
   simp [propositions, Tree.translations, maryBelievesDickIsDeceitful, dickIsDeceitful, lexicon,
     Ty.modes, Ty.mode?, Mode.functionalLeft?, Mode.functionalRight?, Mode.predicateModification?,
-    Mode.eventIdentification?, Eff.map]
+    Mode.eventIdentification?, Eff.map, Eff.seq, Eff.pure]
 
 -- p. 300: the other derivations layer the two readers, and read at one world twice each is the
 -- report about the constant intension of the complement's truth value there
@@ -926,7 +931,8 @@ inductive Ch12Person | mary | jan | dick
 
 /-- (11), p. 309: Jan is loyal and Dick deceitful at the actual world, Mary believes that Jan is
 loyal, and she does not believe that Dick is deceitful, since her beliefs leave open a world where
-he is not. -/
+he is not. The report about the constant intension of the complement's truth value is true of
+both, as p. 300 predicts of an extensional semantics. -/
 theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person) :
     let props := propositions (W := Ch12World) (fun _ x ↦ x = .jan)
       (fun w x ↦ w = .actual ∧ x = .dick) (fun _ ↦ Set.univ) .mary .jan .dick g
@@ -934,11 +940,12 @@ theorem janIsLoyal_dickIsDeceitful_maryBelieves (g : Assignment Ch12Person) :
       ⟨.comp (.reader .s) .t, p⟩
     (∃ p, props janIsLoyal = [prop p] ∧ p .actual) ∧
       (∃ p, props dickIsDeceitful = [prop p] ∧ p .actual) ∧
-      (∃ p, props maryBelievesJanIsLoyal = [prop p] ∧ p .actual) ∧
-      ∃ p, props maryBelievesDickIsDeceitful = [prop p] ∧ ¬ p .actual :=
+      (∃ p q, props maryBelievesJanIsLoyal = [prop p, prop q] ∧ p .actual ∧ q .actual) ∧
+      ∃ p q, props maryBelievesDickIsDeceitful = [prop p, prop q] ∧ ¬ p .actual ∧ q .actual :=
   ⟨⟨_, propositions_janIsLoyal .., rfl⟩, ⟨_, propositions_dickIsDeceitful .., rfl, rfl⟩,
-    ⟨_, propositions_maryBelievesJanIsLoyal .., fun _ _ ↦ rfl⟩,
-    ⟨_, propositions_maryBelievesDickIsDeceitful .., fun h ↦ nomatch (h .other trivial).1⟩⟩
+    ⟨_, _, propositions_maryBelievesJanIsLoyal .., fun _ _ ↦ rfl, fun _ _ ↦ rfl⟩,
+    ⟨_, _, propositions_maryBelievesDickIsDeceitful .., (fun h ↦ nomatch (h .other trivial).1),
+      fun _ _ ↦ ⟨rfl, rfl⟩⟩⟩
 
 end Intensional
 
