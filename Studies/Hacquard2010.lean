@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Syntax.Cartography
@@ -53,17 +54,18 @@ Cinque's first approximation of the hierarchy, which puts a root head among the 
 
 namespace Hacquard2010
 
-open Modality
+open Modality ModalLogic
 
 variable {E W : Type*}
 
 /-! ### Event-relative modals, section 5 -/
 
-/-- A necessity modal (29) quantifies over the worlds its event-relative modal base returns. -/
-def must (f : E → Set W) (q : W → Prop) (e : E) : Prop := ∀ w' ∈ f e, q w'
+/-- A necessity modal (29) quantifies over the worlds its event-relative modal base returns:
+necessity along the relation from each event to those worlds. -/
+def must (f : E → Set W) : (W → Prop) → E → Prop := □[SetRel.ofSuccessors f]
 
 /-- A possibility modal (29) quantifies existentially over the same worlds. -/
-def can (f : E → Set W) (q : W → Prop) (e : E) : Prop := ∃ w' ∈ f e, q w'
+def can (f : E → Set W) : (W → Prop) → E → Prop := ◇[SetRel.ofSuccessors f]
 
 /-- A contentful event, an attitude or the speech event, embeds a proposition under universal
 quantification over its content (41), (44); `holds e w` is the event's descriptive part. -/
