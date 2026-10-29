@@ -33,6 +33,8 @@ The atoms `A`, `B`, `C`, `S` and the letters `a`, `b`, `c` are the study's own t
 `CCG.Grammar` is parameterized over both. The lexical entry for `c` is `C\A`, the direction the
 paper's derivation of `aⁿbⁿcⁿ` requires. The language is stated against `Language.anbncn`, and
 the empty word drops out because no CCG grammar derives it (`CCG.Grammar.Derives.ne_nil`).
+Definition 3 quantifies over the categories of the grammar, which are here all of `Cat Atom`,
+the categories over the grammar's atoms.
 
 ## TODO
 
@@ -229,6 +231,11 @@ def PrefixClosed {α : Type*} (R : RuleSystem α) : Prop :=
 `X/Y Yβ ⇒ Xβ` stays permitted under any change of the primary input's result category `X`. -/
 def WithoutTargetRestrictions {α : Type*} (R : RuleSystem α) : Prop :=
   ∀ x x' a (β : List (Cat.Arg α)), R x a β → R x' a β
+
+-- Example 2: the six rules of `G₁`, each restricted to primary inputs with target `S`
+example : exampleGrammar.rules = RuleSystem.ofRestrictedRules ((List.range 3).flatMap fun n ↦
+    [⟨.right, n, {.S}, Set.univ⟩, ⟨.left, n, {.S}, Set.univ⟩]) :=
+  RuleSystem.targetRestricted_eq_ofRestrictedRules _ _
 
 theorem targetRestricted_prefixClosed {α : Type*} (s : α) (d : ℕ) :
     PrefixClosed (RuleSystem.targetRestricted s d) :=

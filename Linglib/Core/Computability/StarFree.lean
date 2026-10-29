@@ -16,9 +16,10 @@ public import Linglib.Core.Computability.Variety.Langs
 # Star-free languages
 
 This file defines the star-free languages as the regular languages with an aperiodic syntactic
-monoid. By Schützenberger's theorem these are the languages of the star-free regular expressions,
-built from finite sets by union, concatenation and complement without Kleene star; McNaughton and
-Papert show that they are also the counter-free and the first-order definable languages. Star-free
+monoid. The name is Schützenberger's theorem, not proved here: the languages of the star-free
+regular expressions, built from finite sets by union, concatenation and complement without
+Kleene star, are exactly these. McNaughton and Papert show that they are also the counter-free
+and the first-order definable languages. Star-free
 is the instance `Monoid.aperiodicVariety` of the languages of a pseudovariety, so its closure
 properties are corollaries of `Monoid.Pseudovariety.langs`.
 
@@ -51,7 +52,9 @@ namespace Language
 variable {α : Type*} {L : Language α}
 
 /-- A language is *star-free* when its syntactic monoid is finite and aperiodic, that is, when it
-is a language of the pseudovariety of aperiodic monoids. -/
+is a language of the pseudovariety of aperiodic monoids. That these are the languages of the
+star-free regular expressions is Schützenberger's theorem, which this definition presupposes
+rather than proves. -/
 def IsStarFree (L : Language α) : Prop := Monoid.aperiodicVariety.langs L
 
 /-- A language is star-free exactly when it is regular with an aperiodic syntactic monoid. -/
