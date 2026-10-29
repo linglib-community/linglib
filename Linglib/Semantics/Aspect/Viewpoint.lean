@@ -57,8 +57,10 @@ or inclusive, at some subinterval, as Dowty, Mittwoch and Vlach distinguish them
   includes it, as Kratzer's and Ferreira's do.
 * The modal domain of the imperfective is a set of worlds for each world and reference interval:
   Ferreira's best worlds of a circumstantial base, Deo's inertia histories, or the language-specific
-  modal bases of Arregui, Rivero and Salanova. Smith's neutral viewpoint includes the
-  initial point of the situation and at least one internal stage.
+  modal bases of Arregui, Rivero and Salanova.
+* Smith's neutral viewpoint includes the initial point of the situation and at least one internal
+  stage where the situation has stages: the topic time contains the start of the situation and,
+  when the situation is not instantaneous, reaches past it.
 * The operators follow Knick and Sharf's equations, with a boundary a time point where the
   paper has a final or initial subinterval. The predicate applies to the outer reference time,
   which beneath the perfect is the perfect time span.
@@ -93,7 +95,7 @@ namespace Aspect
 /-- `v.ttTSitRelation tt tsit` is the relation the viewpoint `v` imposes between the topic time and
 the situation time, which is inclusion in the situation, containment of the situation,
 posteriority, anteriority, and, for the neutral viewpoint, containment of the situation's
-start. -/
+start and of a stage after it. -/
 def ViewpointType.ttTSitRelation {T : Type*} [LinearOrder T]
     (v : ViewpointType) (tt tsit : NonemptyInterval T) : Prop :=
   match v with
@@ -101,25 +103,26 @@ def ViewpointType.ttTSitRelation {T : Type*} [LinearOrder T]
   | .perfective => tsit ≤ tt
   | .perfect => tsit.snd ≤ tt.fst
   | .prospective => tt.snd ≤ tsit.fst
-  | .neutral => tsit.fst ∈ tt
+  | .neutral => tsit.fst ∈ tt ∧ (tsit.fst < tsit.snd → tsit.fst < tt.snd)
 
 instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInterval T) :
     Decidable (v.ttTSitRelation tt tsit) := by
   cases v <;> unfold ViewpointType.ttTSitRelation <;> infer_instance
 
 /-- The cell of the viewpoint's relation, the topic time first: within the situation, around it,
-after it or from its end, before it or up to its start, and around its start. -/
+after it or from its end, before it or up to its start, and around its start and a stage after
+it. -/
 def ViewpointType.cell : ViewpointType → Finset Allen.Relation
   | .imperfective => Allen.lt
   | .perfective => Allen.inv Allen.le
   | .perfect => Allen.inv Allen.isBefore
   | .prospective => Allen.isBefore
-  | .neutral => Allen.inv Allen.startsWithin
+  | .neutral => (Allen.inv Allen.startsWithin).filter fun r ↦ r.secondShape = .lt → r.sndFst = .gt
 
 theorem ViewpointType.ttTSitRelation_iff {T : Type*} [LinearOrder T] (v : ViewpointType)
     (tt tsit : NonemptyInterval T) :
     v.ttTSitRelation tt tsit ↔ (tsit, tt) ∈ Allen.toSetRel v.cell := by
-  cases v <;> simp [ttTSitRelation, cell]
+  cases v <;> simp [ttTSitRelation, cell, Allen.ofEndpoints, compare_lt_iff_lt, compare_gt_iff_gt]
 
 /-! ### Operators -/
 

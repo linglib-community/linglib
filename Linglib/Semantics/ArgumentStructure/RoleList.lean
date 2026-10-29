@@ -140,12 +140,14 @@ def desire : RoleList where
   subjectProfile := {.independentExistence}
   objectProfile  := some {.dependentExistence}
 
-/-- Change of possession (Levin 13.1, the give verbs *give, lend, pass, sell*; 13.5, the verbs of
-obtaining *buy, get, obtain*) has a volitional agent as subject without entailed movement, since
-"both buyer and seller must act agentively (voluntarily)" ([dowty-1991] §3.2). Buyer and seller
-have identical profiles, the tie behind the *buy*/*sell* doublet (§8.3). There is no object
-profile, Dowty raising a "two Themes" worry about the goods and the currency (§3.2) and
-attributing no entailments to the object. -/
+/-- Commercial transfer of possession (*buy*, *sell*) has a volitional agent as subject without
+entailed movement, since "both buyer and seller must act agentively (voluntarily)"
+([dowty-1991] §3.2). Buyer and seller have identical profiles, the tie behind the *buy*/*sell*
+doublet (§8.3). There is no object profile, Dowty raising a "two Themes" worry about the goods
+and the currency (§3.2) and attributing no entailments to the object. The template does not
+extend to the verbs of obtaining at large: Dowty counts *get* and *receive*, whose subjects need
+not act or even be sentient (*The play got a good review*), among the exceptions to argument
+selection (§8.4). -/
 def possessionTransfer : RoleList where
   subjectProfile := {.volition, .sentience, .causation, .independentExistence}
 

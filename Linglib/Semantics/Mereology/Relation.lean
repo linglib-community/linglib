@@ -27,6 +27,7 @@ uniqueness of events is injectivity, and mapping to subobjects is strict monoton
 
 * `UP.uo_of_mo`, `UE.mse_of_uo`: uniqueness of participants gives uniqueness of objects, and the
   two uniqueness conditions give the strict mappings.
+* `UO.up_of_sum`: conversely, a summative relation with unique objects has unique participants.
 * `UE.exists_orderIso_of_uo`: under both uniqueness conditions a related object and event have
   order-isomorphic parts.
 * `UO.qua_of_mso`: the events of a fixed object form a quantized predicate.
@@ -157,6 +158,17 @@ theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (θ x) :=
     hy.ne ((hO he hlt.le).unique ⟨hy.le, hθ⟩ ⟨le_rfl, he'⟩)
 
 end PartialOrder
+
+section SemilatticeSup
+
+variable [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop}
+
+/-- A summative relation with unique objects has unique participants: two participants of an event
+sum to a participant of it, and each is a part of the sum related to the whole event. -/
+theorem UO.up_of_sum (hO : UO θ) (hS : SUM θ) : UP θ := fun _ _ _ ha hb ↦
+  (hO (hS ha hb) le_sup_left).unique ⟨le_sup_left, ha⟩ ⟨le_sup_right, hb⟩
+
+end SemilatticeSup
 
 /-! ### The correspondence between parts -/
 

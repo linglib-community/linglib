@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Fragments.English.Verbs.Basic
 public import Linglib.Data.Examples.Dowty1991
 public import Studies.Cruse1973
 
@@ -11,8 +12,9 @@ Dowty replaces thematic roles by two cluster concepts, the Proto-Agent and the P
 each a list of five entailments a predicate may impose on an argument, (27) and (28). The
 Argument Selection Principle (31) lexicalizes as subject the argument with the most
 Proto-Agent entailments and as direct object the one with the most Proto-Patient entailments.
-Every argument profile here is read off a row of `Data/Examples/Dowty1991.json`, from the
-single-entailment exemplars of (29) and (30) to the three verb classes of (64).
+The argument profiles the principle compares are read off rows of
+`Data/Examples/Dowty1991.json`, from the single-entailment exemplars of (29) and (30) to the three
+verb classes of (64).
 
 ## Implementation notes
 
@@ -22,6 +24,12 @@ interval, so counts are of stated entailments; the parenthesized (27e) and (28e)
 others. `Outranks` reads the Proto-Agent clause of (31) first and lets the
 Proto-Patient clause decide ties, and "approximately equal" in the corollaries is read as equal.
 The incremental theme homomorphism of §6 and the material of §11 are not represented.
+
+The telicity axis of Table 1 is the telicity of the predicate, not an entailment of the ten: a
+change of state may be indefinite and atelic, as in *dim the lights* (p. 568), and a holistic
+theme's definite change in stages (p. 569) has no entailment of its own, so a non-agentive
+change of state falls in the unaccusative cell or the unstable one by its telicity. A verb entry
+supplies it from its aspectual class.
 
 ## References
 
@@ -259,33 +267,41 @@ def table1 : Bool → Bool → IntransClass
 /-- The most important Proto-Agent entailment for the contrast: volition. -/
 def Agentive : Prop := .volition ∈ p
 
-/-- The most important Proto-Patient property for the contrast: an incremental or holistic
-theme, that is, telicity. -/
-def Telic : Prop := .incrementalTheme ∈ p ∨ .changeOfState ∈ p
-
 instance : DecidablePred Agentive := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
-instance : DecidablePred Telic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
-
-/-- The class Table 1 assigns to an intransitive by its sole argument's profile. -/
-def intransClass : IntransClass := table1 (decide (Agentive p)) (decide (Telic p))
+/-- The class Table 1 assigns to an intransitive predicate by the agentivity of its sole argument
+and the predicate's telicity. -/
+def intransClass (t : Aspect.Telicity) : IntransClass :=
+  table1 (decide (Agentive p)) (decide (t = .telic))
 
 /-- Predicates high in agentivity and low in patient properties are invariably
 unergative. -/
-theorem intransClass_unergative (h : Agentive p) (h' : ¬ Telic p) :
-    intransClass p = .unergative := by
-  simp only [intransClass, decide_eq_true h, decide_eq_false h', table1]
+theorem intransClass_unergative (h : Agentive p) : intransClass p .atelic = .unergative := by
+  simp [intransClass, table1, h]
 
 /-- Predicates low in agentivity and high in patient properties are invariably
 unaccusative. -/
-theorem intransClass_unaccusative (h : ¬ Agentive p) (h' : Telic p) :
-    intransClass p = .unaccusative := by
-  simp only [intransClass, decide_eq_false h, decide_eq_true h', table1]
+theorem intransClass_unaccusative (h : ¬ Agentive p) : intransClass p .telic = .unaccusative := by
+  simp [intransClass, table1, h]
 
-theorem intransClass_examples :
-    intransClass selfMotion.subjectProfile = .unergative ∧
-      intransClass disappearance.subjectProfile = .unaccusative ∧
-      intransClass directedMotion.subjectProfile = .unaccusative := by
+theorem intransClass_eq_unstable_iff {t : Aspect.Telicity} :
+    intransClass p t = .unstable ↔ (Agentive p ↔ t = .telic) := by
+  by_cases h : Agentive p <;> cases t <;> simp [intransClass, table1, h]
+
+-- p. 568: change of state alone, which *dim the lights* entails without telicity
+theorem intransClass_changeOfState :
+    intransClass {.changeOfState} .atelic = .unstable ∧
+      intransClass {.changeOfState} .telic = .unaccusative := by
+  decide
+
+/-- The class Table 1 assigns to an intransitive verb entry, by the profile the entry records for
+its sole argument and the telicity of its aspectual class. -/
+def verbClass (v : Verb) : Option IntransClass :=
+  return intransClass (← v.slotProfile? .external) (← v.vendlerClass).telicity
+
+theorem verbClass_run_arrive :
+    verbClass English.Verbs.run.toVerb = some .unergative ∧
+      verbClass English.Verbs.arrive.toVerb = some .unaccusative := by
   decide
 
 /-! ### The substrate's templates against the paper's attributions -/

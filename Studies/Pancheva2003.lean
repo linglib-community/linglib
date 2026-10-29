@@ -22,7 +22,8 @@ three perfects of the older account by Iatridou, Anagnostopoulou and Izvorski.
 * The perfect is `Aspect.perfect` and the unbounded aspect `Aspect.UNBOUNDED`. The
   neutral relation of (7b) is strict, the interval having a point before every point of the
   event, so it is not Smith's neutral viewpoint `ViewpointType.neutral`, which lets the interval
-  start with the event (`neutral_subset_smith_neutral`).
+  start with the event; and (7b) lets the interval end where the event starts, where Smith's
+  reaches one of its stages (`overlapsFromBefore_neutral_incomparable`).
 * The resultative takes a predicate of result states and their events, which only telic
   predicates denote, so an activity such as *run* in (5) has no resultative perfect by its type.
   The paper's formula (17) reads only the run time of the state.
@@ -119,9 +120,19 @@ variable {P : W → E → Prop} {Q : W → S → E → Prop} {w : W} {i : Nonemp
 theorem bounded_subset_prfv (P : W → E → Prop) (w : W) : BOUNDED P w ⊆ PRFV P w :=
   ofRel_mono (fun _ _ ↦ le_of_lt) P w
 
-theorem neutral_subset_smith_neutral (P : W → E → Prop) (w : W) :
-    NEUTRAL P w ⊆ ViewpointType.neutral.denote P w :=
-  ofRel_mono (fun _ _ h ↦ NonemptyInterval.mem_def.2 ⟨h.2.le, h.1.2⟩) P w
+theorem overlapsFromBefore_neutral_incomparable :
+    ¬ (∀ i j : NonemptyInterval ℕ,
+        OverlapsFromBefore i j → ViewpointType.neutral.ttTSitRelation i j) ∧
+      ¬ ∀ i j : NonemptyInterval ℕ,
+        ViewpointType.neutral.ttTSitRelation i j → OverlapsFromBefore i j := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · have := h ⟨(0, 1), by decide⟩ ⟨(1, 3), by decide⟩ (by unfold OverlapsFromBefore; decide)
+    revert this
+    decide
+  · have := h ⟨(1, 2), by decide⟩ ⟨(1, 3), by decide⟩ (by decide)
+    revert this
+    unfold OverlapsFromBefore
+    decide
 
 /-! ### What each perfect asserts at the reference interval -/
 
