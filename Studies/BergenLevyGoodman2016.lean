@@ -15,9 +15,10 @@ a costly utterance are both true of a frequent and a rare meaning. The Rational 
 cannot pair them with meanings: [two utterances its literal listener reads alike are read alike
 at every level of the recursion](##step_iterate_short_eq_long), whatever their costs. Under
 lexical uncertainty the speaker uses one of the lexica that refine each utterance's meaning, and
-the listener, unsure which, inverts the speaker of each. [She then takes the costly utterance to
-point to the rare meaning](##L1_fst_rare_lt), and so pairs forms and meanings [as weak
-bidirection does](##setOf_associates_eq_superoptimalSet).
+the listener, unsure which, inverts the speaker of each. [She then finds the rare meaning
+likelier after the costly utterance than after the cheap one](##L1_fst_rare_lt), and so
+associates each form with the meaning of its markedness, [the pairs weak bidirection takes to be
+super-optimal](##setOf_associates_eq_superoptimalSet).
 
 ## Implementation notes
 
@@ -26,9 +27,12 @@ nonempty set of meanings, under a uniform prior; every lexicon keeps the null ut
 both meanings, so the speaker can always speak. The speaker knows the meaning, the simplification
 of the paper's Section 4.4. The paper simulates the M-implicature at one setting (Figure 6) and
 calls it robust for every rationality above one; here it holds at every positive rationality,
-every prior favouring the frequent meaning and every cost of the null utterance. The proof
-reduces the listener to the speakers' productions summed over the lexica and shows that the ratio
-of the costly to the cheap utterance's production falls as the meaning's prior rises.
+every prior favouring the frequent meaning and every cost of the null utterance. The implicature
+is stated across utterances, as the rare meaning's probability after the costly utterance against
+its probability after the cheap one, not as the rare meaning's being the likelier one after the
+costly utterance. The proof reduces the listener to the speakers' productions summed over the
+lexica and shows that the ratio of the costly to the cheap utterance's production falls as the
+meaning's prior rises.
 
 ## TODO
 

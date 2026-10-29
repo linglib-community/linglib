@@ -15,6 +15,7 @@ public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Kernel.Basic
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.UniformOn
+public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.Franke2011
 
@@ -43,7 +44,9 @@ fixed points are perfect Bayesian equilibria.
   message of a pure sender, as in the Nash equilibria of §7, is the prior conditioned on the
   states that send it. The truth filter of (117) and (122) is applied by maximising over true
   messages and reading an unsent message literally, which agrees with the paper along every
-  chain.
+  chain. After a sent message the receiver keeps the states most probable for the Bayesian
+  listener of the unbiased belief in the sender type
+  (`receiverResponse_eq_argmax_listener`).
 * (83) refines by the prior the literal reading of a message nobody sends; the probabilistic
   model and Figure 16 leave it unrefined, as here. Condition (132) is stated with the inequality
   its proof needs; the paper prints it reversed.
@@ -1143,6 +1146,17 @@ theorem receiverResponse_subset [IsFiniteMeasure G.prior] (hprior : ∀ t, G.pri
   · rw [receiverResponse, ite_eq_left hm]
   · exact fun t ht ↦ G.mem_trueStates.mpr (G.mem_trueMessages.mp
       (hS t (mem_inverse.mp (receiverResponse_subset_inverse hprior hm ht))))
+
+/-- After a message some state sends, the receiver keeps the states most probable for the
+Bayesian listener `RSA.listener` of the unbiased belief in the sender type. -/
+theorem receiverResponse_eq_argmax_listener [IsFiniteMeasure G.prior] {S : T → Finset M} {m : M}
+    (hm : inverse S m ≠ ∅) :
+    receiverResponse G S m =
+      univ.argmax fun t ↦ (RSA.listener G.prior (unbiased S) m).real {t} := by
+  rw [receiverResponse, ite_eq_right hm]
+  ext t
+  simp only [mem_argmax, mem_univ, true_and]
+  exact forall_congr' fun t' ↦ by rw [← not_lt, ← not_lt, RSA.listener_real_singleton_lt_iff]
 
 /-! ### Theorems 1 and 2: the light system is the heavy system with flat or near-flat priors -/
 
