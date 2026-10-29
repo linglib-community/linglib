@@ -128,7 +128,7 @@ theorem moreSem_comparative_bridge [AddCommMonoid D] [IsOrderedCancelAddMonoid D
 theorem moreSem_differential_bridge [AddCommGroup D] [IsOrderedAddMonoid D]
     (μ : Entity → D) (a b : Entity) (diff : D)
     (h : DifferentialComparative μ a b diff) : moreSem μ a diff (μ b) :=
-  le_of_eq (by rw [← h, sub_add_cancel])
+  le_of_eq (by rw [← h, vsub_eq_sub, sub_add_cancel])
 
 theorem asSem_equative_bridge [MulOneClass D] (μ : Entity → D) (a b : Entity) :
     asSem μ a 1 (μ b) ↔ μ b ≤ μ a := by

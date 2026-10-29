@@ -183,9 +183,8 @@ end Universal
 
 theorem shorter_iff_taller {E : Type*} (height : E → ℝ) (m : ℝ) (x y : E) (d : ℝ) :
     DifferentialComparative (fun z ↦ m - height z) y x d ↔
-      DifferentialComparative height x y d := by
-  simp only [DifferentialComparative]
-  constructor <;> intro h <;> linarith
+      DifferentialComparative height x y d :=
+  differentialComparative_const_sub height m x y d
 
 theorem three_times_as_short_not_meaningful :
     FactorEquative ![(-6 : ℝ), -2] 0 1 3 ∧ ¬ FactorEquative (fun i ↦ ![(-6 : ℝ), -2] i + 1) 0 1 3 :=

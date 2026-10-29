@@ -88,7 +88,7 @@ def Describes [Add δ] (φ : α → T → δ) (x : α) (D : Set δ) (t₀ t₁ :
     with `x` at its start: `x` ends up `d` more `φ` than it began. -/
 theorem increase_iff_differentialComparative [AddCommGroup δ] {φ : α → T → δ} {x : α} {d : δ}
     {t₀ t₁ : T} : Increase φ x d t₀ t₁ ↔ DifferentialComparative (φ x) t₁ t₀ d := by
-  rw [Increase, DifferentialComparative, sub_eq_iff_eq_add', eq_comm]
+  rw [Increase, DifferentialComparative, vsub_eq_sub, sub_eq_iff_eq_add', eq_comm]
 
 -- §3
 theorem Increase.end_unique [Add δ] {φ : α → T → δ} {x : α} {d : δ}
