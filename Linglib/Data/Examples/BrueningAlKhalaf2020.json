@@ -896,6 +896,51 @@
     "verified": "page-image"
   },
   {
+    "id": "brueningalkhalaf2020_51a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(51a)"},
+    "language": "stan1293",
+    "primaryText": "She was behaving naturally and nonchalant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "argument"],
+      ["selector", "precedes"],
+      ["selects", "AdvP"],
+      ["conjunct", "AdvP"],
+      ["conjunct", "AP"]
+    ],
+    "comment": "For many speakers behave also permits adjectives; even so, adverbs and APs cannot be coordinated (fn. 23).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_51b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(51b)"},
+    "language": "stan1293",
+    "primaryText": "She became unnerved and distractedly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "predicate"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["selects", "AP"],
+      ["conjunct", "AP"],
+      ["conjunct", "AdvP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "brueningalkhalaf2020_54a",
     "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(54a)"},
     "language": "stan1293",
@@ -970,7 +1015,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "displacement"],
+      ["construction", "displaced modifier"],
       ["modifier", "non-ly AdvP"]
     ],
     "comment": "",
@@ -989,7 +1034,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "displacement"],
+      ["construction", "displaced modifier"],
       ["modifier", "non-ly AdvP"]
     ],
     "comment": "",
@@ -1027,7 +1072,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "displacement"],
+      ["construction", "displaced modifier"],
       ["modifier", "-ly AdvP"]
     ],
     "comment": "",
@@ -1046,8 +1091,109 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "displacement"],
+      ["construction", "displaced modifier"],
       ["modifier", "-ly AdvP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_58a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(58a)"},
+    "language": "stan1293",
+    "primaryText": "A visit so soon would be wonderful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "displaced modifier"],
+      ["modifier", "non-ly AdvP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_58b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(58b)"},
+    "language": "stan1293",
+    "primaryText": "A visit right now would be wonderful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "displaced modifier"],
+      ["modifier", "non-ly AdvP"]
+    ],
+    "comment": "cf. *a (right) now visit",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_59a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(59a)"},
+    "language": "stan1293",
+    "primaryText": "A totally discredited thing, she thinks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "CP"],
+      ["conjunct", "NP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_59b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(59b)"},
+    "language": "stan1293",
+    "primaryText": "Her many accomplishments, she boasted.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "CP"],
+      ["conjunct", "NP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_59c",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(59c)"},
+    "language": "stan1293",
+    "primaryText": "A good result, she is hoping.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "CP"],
+      ["conjunct", "NP"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1113,6 +1259,48 @@
     "verified": "page-image"
   },
   {
+    "id": "brueningalkhalaf2020_61a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(61a)"},
+    "language": "stan1293",
+    "primaryText": "It was on parched corn that the Spartans ate.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["conjunct", "PP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_61b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(61b)"},
+    "language": "stan1293",
+    "primaryText": "It was parched corn that the Spartans dined.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "PP"],
+      ["conjunct", "NP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "brueningalkhalaf2020_62a",
     "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(62a)"},
     "language": "stan1293",
@@ -1154,6 +1342,49 @@
       ["construction", "ellipsis"],
       ["selects", "NP"],
       ["conjunct", "PP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_63a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(63a)"},
+    "language": "stan1293",
+    "primaryText": "Distractedly is what she became.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["selects", "AP"],
+      ["conjunct", "AdvP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_63b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(63b)"},
+    "language": "stan1293",
+    "primaryText": "What did she become, distractedly?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "ellipsis"],
+      ["selects", "NP"],
+      ["selects", "AP"],
+      ["conjunct", "AdvP"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1438,6 +1669,174 @@
     "verified": "page-image"
   },
   {
+    "id": "brueningalkhalaf2020_71a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(71a)"},
+    "language": "stan1293",
+    "primaryText": "That she won the Pulitzer Prize, she is boasting.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "CP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "cf. She is boasting (*the fact) that she will win the Pulitzer Prize.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_71b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(71b)"},
+    "language": "stan1293",
+    "primaryText": "That she will win, she is hoping.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "CP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "cf. She is hoping (*the fact) that she will win.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_72a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(72a)"},
+    "language": "stan1293",
+    "primaryText": "That nouns and verbs are not distinct, we absolutely reject.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "cf. We absolutely reject *(the claim) that nouns and verbs are not distinct.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_72b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(72b)"},
+    "language": "stan1293",
+    "primaryText": "That she will win, we are all hoping for.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "leftward displacement"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "cf. *We are all hoping for that she will win.",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_73a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(73a)"},
+    "language": "stan1293",
+    "primaryText": "She was boasting over and over again that she would win the Pulitzer Prize.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "rightward displacement"],
+      ["selector", "precedes"],
+      ["selects", "CP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_73b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(73b)"},
+    "language": "stan1293",
+    "primaryText": "She hopes for all our sakes that she can defeat them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "rightward displacement"],
+      ["selector", "precedes"],
+      ["selects", "CP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_74a",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(74a)"},
+    "language": "stan1293",
+    "primaryText": "We can attribute to magic that CPs can behave as NPs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "rightward displacement"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_74b",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(74b)"},
+    "language": "stan1293",
+    "primaryText": "We reject without equivocation that nouns and verbs are not distinct.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "rightward displacement"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["conjunct", "CP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "brueningalkhalaf2020_76a",
     "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(76a)"},
     "language": "stan1293",
@@ -1520,6 +1919,25 @@
       ["selects", "CP"],
       ["conjunct", "CP"],
       ["conjunct", "CP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "brueningalkhalaf2020_101d",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(101d)"},
+    "language": "stan1293",
+    "primaryText": "A worker as efficiently as her would be wonderful.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "displaced modifier"],
+      ["modifier", "-ly AdvP"]
     ],
     "comment": "",
     "verified": "page-image"
