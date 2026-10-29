@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Independence.Basic
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Length
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -123,19 +124,19 @@ theorem verbDependencyLength_eq_of_subject_eq_object {d : HeadDirection}
 
 /-- Fig. 1's verb-final sentence with subject first, MOUNTIE [[RED STOOL ON] HUNTER-OBJ] PUNCH,
 with the arcs of its bracketing. -/
-def fig1Sov : Graph 6 :=
+def fig1Sov : Graph UD.DepRel 6 :=
   .ofArcs [Word.mk' "rizba" .NOUN, Word.mk' "redal" .ADJ, Word.mk' "lanferda" .NOUN,
       Word.mk' "sool" .ADP, Word.mk' "barsadi" .NOUN, Word.mk' "kyse" .VERB]
     5 [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case)]
 
 /-- Object first, [[RED STOOL ON] HUNTER-OBJ] MOUNTIE PUNCH. -/
-def fig1Osv : Graph 6 := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)
+def fig1Osv : Graph UD.DepRel 6 := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)
 
 /-- The verb-initial sentence with subject first, PUNCH MOUNTIE [HUNTER-OBJ [ON RED STOOL]]. -/
-def fig1Vso : Graph 6 := fig1Sov.linearize [5, 0, 4, 3, 1, 2] (by decide)
+def fig1Vso : Graph UD.DepRel 6 := fig1Sov.linearize [5, 0, 4, 3, 1, 2] (by decide)
 
 /-- Object first, PUNCH [HUNTER-OBJ [ON RED STOOL]] MOUNTIE. -/
-def fig1Vos : Graph 6 := fig1Sov.linearize [5, 4, 3, 1, 2, 0] (by decide)
+def fig1Vos : Graph UD.DepRel 6 := fig1Sov.linearize [5, 4, 3, 1, 2, 0] (by decide)
 
 theorem fig1_isTree_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso, fig1Vos],
     g.IsTree ∧ g.IsProjective := by

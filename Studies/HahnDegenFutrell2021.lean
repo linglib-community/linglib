@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.EntropyRate
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Reordering
 public import Linglib.Fragments.Japanese.Morph
 public import Linglib.Fragments.Sesotho.Morph
@@ -64,7 +65,7 @@ open Morphology (Word)
 /-! ### Dependency locality -/
 
 /-- The unshifted order of example (2), in which the object precedes the prepositional phrase. -/
-def longObjectFirst : Graph 11 :=
+def longObjectFirst : Graph UD.DepRel 11 :=
   .ofArcs
     [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "the" .DET,
       Word.mk' "extremely" .ADV, Word.mk' "delicious" .ADJ, Word.mk' "bright" .ADV,
@@ -75,7 +76,7 @@ def longObjectFirst : Graph 11 :=
 
 /-- The shifted order of example (2), in which the prepositional phrase precedes the long
 object. -/
-def shifted : Graph 11 :=
+def shifted : Graph UD.DepRel 11 :=
   .ofArcs
     [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "with" .ADP, Word.mk' "a" .DET,
       Word.mk' "fork" .NOUN, Word.mk' "the" .DET, Word.mk' "extremely" .ADV,

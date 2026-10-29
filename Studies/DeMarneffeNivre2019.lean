@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Length
 public import Mathlib.Data.Fin.VecNotation
@@ -17,7 +18,10 @@ are insensitive to word order, §3.1, so the two orders of (1) are one graph rel
 rotation of the positions. Dependency length, §3.2, explains the preference for (2a) over (2b)
 and its absence between (3a) and (3b), the minimization of [behaghel-1932] and
 [temperley-2007], and the object relative (4a) of [gibson-1998] holds its filler at a longer
-distance than the subject relative (4b). Universal Dependencies, §4, puts content words above
+distance than the subject relative (4b). The treebanks before Universal Dependencies annotated
+parallel sentences in schemes with different relations and different heads, so that the Swedish,
+Danish and English analyses of Figure 6 share at most two of their five arcs pairwise and none
+across all three, §4. Universal Dependencies puts content words above
 function words, Figure 4b against the function-word-headed Figure 4a, the function words
 attaching to the content word with which they form a nucleus in the sense of [tesniere-1959],
 so that the content-word skeleton of a sentence is shared across languages, Figure 7; its basic
@@ -31,9 +35,9 @@ use their Universal Dependencies counterparts, and the function-word-headed arcs
 for which UD has no relation, carry `dep`. Punctuation is dropped from (1) so that its two orders
 are exactly a rotation. The coreference relation of Figure 9's enhanced graph is not in the
 library's relation inventory and is omitted; the multiple heads and the cycle do not depend on
-it. The word strings and bubble trees of Figure 2, the nuclei of Figure 5 and the three label
-inventories of Figure 6 are not representable on a single-labelled graph over words and are not
-formalized.
+it. The analyses of Figure 6 carry the relations of their own treebanks, those the figure
+uses. The word strings and bubble trees of Figure 2 and the nuclei of Figure 5 are not
+representable on a graph over words and are not formalized.
 
 ## References
 
@@ -54,20 +58,20 @@ open DependencyGrammar Morphology
 /-! ### Dependency trees and projectivity, §2.4 -/
 
 /-- Figure 1: *small dogs chase cats happily*. -/
-def fig1 : Tree 5 :=
+def fig1 : Tree UD.DepRel 5 :=
   .mk' (.ofArcs [Word.mk' "small" .ADJ, Word.mk' "dogs" .NOUN, Word.mk' "chase" .VERB,
       Word.mk' "cats" .NOUN, Word.mk' "happily" .ADV]
     2 [(1, 0, .amod), (2, 1, .nsubj), (2, 3, .obj), (2, 4, .advmod)])
 
 /-- Figure 3: *bigger dogs than mine*. -/
-def fig3 : Tree 4 :=
+def fig3 : Tree UD.DepRel 4 :=
   .mk' (.ofArcs [Word.mk' "bigger" .ADJ, Word.mk' "dogs" .NOUN, Word.mk' "than" .SCONJ,
       Word.mk' "mine" .PRON]
     1 [(1, 0, .amod), (0, 3, .advmod), (3, 2, .mark)])
 
 -- Figure 3
 theorem fig3_not_isArcProjective : ¬ fig3.IsArcProjective :=
-  λ h => (by decide : ¬ Dominates fig3.toGraph 0 1)
+  fun h ↦ (by decide : ¬ Dominates fig3.toGraph 0 1)
     (h (by decide : fig3.Adj 0 3) 1 (Set.mem_uIcc.2 (Or.inl ⟨by decide, by decide⟩)))
 
 theorem fig3_projection : fig3.projection 0 = [0, 2, 3] ∧ ¬ fig3.IsProjective :=
@@ -76,7 +80,7 @@ theorem fig3_projection : fig3.projection 0 = [0, 2, 3] ∧ ¬ fig3.IsProjective
 /-! ### Insensitivity to word order, §3.1 -/
 
 /-- (1a) *While it was snowing, I went for a run*. -/
-def ex1a : Tree 9 :=
+def ex1a : Tree UD.DepRel 9 :=
   .mk' (.ofArcs [Word.mk' "while" .SCONJ, Word.mk' "it" .PRON, Word.mk' "was" .AUX,
       Word.mk' "snowing" .VERB, Word.mk' "I" .PRON, Word.mk' "went" .VERB, Word.mk' "for" .ADP,
       Word.mk' "a" .DET, Word.mk' "run" .NOUN]
@@ -84,7 +88,7 @@ def ex1a : Tree 9 :=
       (5, 8, .obl), (8, 6, .case), (8, 7, .det)])
 
 /-- (1b) *I went for a run, while it was snowing*. -/
-def ex1b : Tree 9 :=
+def ex1b : Tree UD.DepRel 9 :=
   .mk' (.ofArcs [Word.mk' "I" .PRON, Word.mk' "went" .VERB, Word.mk' "for" .ADP,
       Word.mk' "a" .DET, Word.mk' "run" .NOUN, Word.mk' "while" .SCONJ, Word.mk' "it" .PRON,
       Word.mk' "was" .AUX, Word.mk' "snowing" .VERB]
@@ -98,7 +102,7 @@ theorem ex1b_eq_map : ex1b.toGraph = ex1a.toGraph.map (Equiv.addRight 5) := by
 /-! ### Dependency length, §3.2 -/
 
 /-- (2a) *She threw out the bin with old trash*. -/
-def ex2a : Tree 8 :=
+def ex2a : Tree UD.DepRel 8 :=
   .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "out" .ADP,
       Word.mk' "the" .DET, Word.mk' "bin" .NOUN, Word.mk' "with" .ADP, Word.mk' "old" .ADJ,
       Word.mk' "trash" .NOUN]
@@ -106,7 +110,7 @@ def ex2a : Tree 8 :=
       (7, 5, .case), (7, 6, .amod)])
 
 /-- (2b) *She threw the bin with old trash out*. -/
-def ex2b : Tree 8 :=
+def ex2b : Tree UD.DepRel 8 :=
   .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "the" .DET,
       Word.mk' "bin" .NOUN, Word.mk' "with" .ADP, Word.mk' "old" .ADJ, Word.mk' "trash" .NOUN,
       Word.mk' "out" .ADP]
@@ -114,13 +118,13 @@ def ex2b : Tree 8 :=
       (6, 4, .case), (6, 5, .amod)])
 
 /-- (3a) *She threw out the bin*. -/
-def ex3a : Tree 5 :=
+def ex3a : Tree UD.DepRel 5 :=
   .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "out" .ADP,
       Word.mk' "the" .DET, Word.mk' "bin" .NOUN]
     1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det)])
 
 /-- (3b) *She threw the bin out*. -/
-def ex3b : Tree 5 :=
+def ex3b : Tree UD.DepRel 5 :=
   .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "threw" .VERB, Word.mk' "the" .DET,
       Word.mk' "bin" .NOUN, Word.mk' "out" .ADP]
     1 [(1, 0, .nsubj), (1, 4, .compound), (1, 3, .obj), (3, 2, .det)])
@@ -131,7 +135,7 @@ theorem particle_shift_length :
   decide
 
 /-- (4a) *The reporter who the senator attacked admitted the error*. -/
-def ex4a : Tree 9 :=
+def ex4a : Tree UD.DepRel 9 :=
   .mk' (.ofArcs [Word.mk' "The" .DET, Word.mk' "reporter" .NOUN, Word.mk' "who" .PRON,
       Word.mk' "the" .DET, Word.mk' "senator" .NOUN, Word.mk' "attacked" .VERB,
       Word.mk' "admitted" .VERB, Word.mk' "the" .DET, Word.mk' "error" .NOUN]
@@ -139,7 +143,7 @@ def ex4a : Tree 9 :=
       (6, 8, .obj), (8, 7, .det)])
 
 /-- (4b) *The reporter who attacked the senator admitted the error*. -/
-def ex4b : Tree 9 :=
+def ex4b : Tree UD.DepRel 9 :=
   .mk' (.ofArcs [Word.mk' "The" .DET, Word.mk' "reporter" .NOUN, Word.mk' "who" .PRON,
       Word.mk' "attacked" .VERB, Word.mk' "the" .DET, Word.mk' "senator" .NOUN,
       Word.mk' "admitted" .VERB, Word.mk' "the" .DET, Word.mk' "error" .NOUN]
@@ -152,6 +156,47 @@ theorem relative_filler_distance :
 
 /-! ### Universal Dependencies, §4 -/
 
+/-- The relations of the Swedish Treebank in Figure 6. -/
+inductive SwedishTreebankRel where
+  | DT | SS | OO | CJ
+  deriving DecidableEq, Repr
+
+/-- The relations of the Danish Dependency Treebank in Figure 6. -/
+inductive DanishTreebankRel where
+  | subj | nobj | dobj | coord | conj
+  deriving DecidableEq, Repr
+
+/-- The Stanford typed dependencies in Figure 6. -/
+inductive StanfordRel where
+  | det | nsubj | dobj | cc | conj
+  deriving DecidableEq, Repr
+
+/-- Figure 6, Swedish: *en katt jagar råttor och möss*, the conjunction heading the
+coordination. -/
+def fig6sv : Tree SwedishTreebankRel 6 :=
+  .mk' (.ofArcs [Word.mk' "en" .DET, Word.mk' "katt" .NOUN, Word.mk' "jagar" .VERB,
+      Word.mk' "råttor" .NOUN, Word.mk' "och" .CCONJ, Word.mk' "möss" .NOUN]
+    2 [(1, 0, .DT), (2, 1, .SS), (2, 4, .OO), (4, 3, .CJ), (4, 5, .CJ)])
+
+/-- Figure 6, Danish: *en kat jager rotter og mus*, the article heading the noun. -/
+def fig6da : Tree DanishTreebankRel 6 :=
+  .mk' (.ofArcs [Word.mk' "en" .DET, Word.mk' "kat" .NOUN, Word.mk' "jager" .VERB,
+      Word.mk' "rotter" .NOUN, Word.mk' "og" .CCONJ, Word.mk' "mus" .NOUN]
+    2 [(2, 0, .subj), (0, 1, .nobj), (2, 3, .dobj), (3, 4, .coord), (4, 5, .conj)])
+
+/-- Figure 6, English: *a cat chases rats and mice*. -/
+def fig6en : Tree StanfordRel 6 :=
+  .mk' (.ofArcs [Word.mk' "a" .DET, Word.mk' "cat" .NOUN, Word.mk' "chases" .VERB,
+      Word.mk' "rats" .NOUN, Word.mk' "and" .CCONJ, Word.mk' "mice" .NOUN]
+    2 [(1, 0, .det), (2, 1, .nsubj), (2, 3, .dobj), (3, 4, .cc), (3, 5, .conj)])
+
+-- Figure 6, §4: at most 40% of the arcs shared pairwise, none by all three
+theorem fig6_arcs :
+    fig6sv.arcs.card = 5 ∧ fig6da.arcs.card = 5 ∧ fig6en.arcs.card = 5 ∧
+      (fig6sv.arcs ∩ fig6en.arcs).card = 2 ∧ (fig6da.arcs ∩ fig6en.arcs).card = 2 ∧
+      (fig6sv.arcs ∩ fig6da.arcs).card = 1 ∧ fig6sv.arcs ∩ fig6da.arcs ∩ fig6en.arcs = ∅ := by
+  decide
+
 /-- Function words in the sense of §2.5 and §4: adpositions, auxiliaries, conjunctions,
 determiners and particles. -/
 def IsFunctionWord : UD.UPOS → Prop
@@ -163,10 +208,10 @@ instance : DecidablePred IsFunctionWord := fun c ↦ by
 
 /-- §4.5: content words are higher in the tree than function words: a function word heads
 nothing but the further parts of a fixed expression. -/
-def ContentWordsHigher {n : ℕ} (g : Graph n) : Prop :=
+def ContentWordsHigher {n : ℕ} (g : Graph UD.DepRel n) : Prop :=
   ∀ v w r, g.label v w = some r → IsFunctionWord (g.words v).cat → r = .fixed
 
-instance {n : ℕ} (g : Graph n) : Decidable (ContentWordsHigher g) :=
+instance {n : ℕ} (g : Graph UD.DepRel n) : Decidable (ContentWordsHigher g) :=
   inferInstanceAs (Decidable (∀ _, _))
 
 /-- The words of Figure 4, *Sue believes that Kim will rely on her*. -/
@@ -176,12 +221,12 @@ abbrev fig4Words : List Word :=
     Word.mk' "her" .PRON]
 
 /-- Figure 4a: function words as heads. -/
-def fig4a : Tree 8 :=
+def fig4a : Tree UD.DepRel 8 :=
   .mk' (.ofArcs fig4Words 1 [(1, 0, .nsubj), (1, 2, .ccomp), (2, 4, .dep), (4, 3, .nsubj),
     (4, 5, .dep), (5, 6, .obl), (6, 7, .dep)])
 
 /-- Figure 4b: content words as heads, as in Universal Dependencies. -/
-def fig4b : Tree 8 :=
+def fig4b : Tree UD.DepRel 8 :=
   .mk' (.ofArcs fig4Words 1 [(1, 0, .nsubj), (1, 5, .ccomp), (5, 2, .mark), (5, 3, .nsubj),
     (5, 4, .aux), (5, 7, .obl), (7, 6, .case)])
 
@@ -190,7 +235,7 @@ theorem fig4_contentWordsHigher :
     ContentWordsHigher fig4b.toGraph ∧ ¬ ContentWordsHigher fig4a.toGraph := by decide
 
 /-- Figure 7, English: *the dog will chase the cat out of the room*. -/
-def fig7en : Tree 10 :=
+def fig7en : Tree UD.DepRel 10 :=
   .mk' (.ofArcs [Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "will" .AUX,
       Word.mk' "chase" .VERB, Word.mk' "the" .DET, Word.mk' "cat" .NOUN, Word.mk' "out" .ADP,
       Word.mk' "of" .ADP, Word.mk' "the" .DET, Word.mk' "room" .NOUN]
@@ -198,7 +243,7 @@ def fig7en : Tree 10 :=
       (9, 6, .case), (6, 7, .fixed), (9, 8, .det)])
 
 /-- Figure 7, Finnish: *koira jahtaa kissan huoneesta*, the relations marked by case. -/
-def fig7fi : Tree 4 :=
+def fig7fi : Tree UD.DepRel 4 :=
   .mk' (.ofArcs [Word.mk' "koira" .NOUN, Word.mk' "jahtaa" .VERB, Word.mk' "kissan" .NOUN,
       Word.mk' "huoneesta" .NOUN]
     1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .obl)])
@@ -206,7 +251,8 @@ def fig7fi : Tree 4 :=
 /-- `g₁` is the content-word skeleton of `g₂` along `t`: `t` maps the positions of `g₁` onto
 the content words of `g₂`, the words that are not function words, and preserves every relation
 among them, the solid arcs of Figure 7. -/
-def IsContentSkeleton {m n : ℕ} (t : Fin m → Fin n) (g₁ : Graph m) (g₂ : Graph n) : Prop :=
+def IsContentSkeleton {m n : ℕ} (t : Fin m → Fin n) (g₁ : Graph UD.DepRel m)
+    (g₂ : Graph UD.DepRel n) : Prop :=
   (∀ v w, g₂.label (t v) (t w) = g₁.label v w) ∧ (∀ v, ¬ IsFunctionWord (g₂.words (t v)).cat) ∧
     ∀ u, ¬ IsFunctionWord (g₂.words u).cat → ∃ v, t v = u
 
@@ -224,7 +270,7 @@ abbrev fig9Words : List Word :=
     Word.mk' "exam" .NOUN, Word.mk' "." .PUNCT]
 
 /-- Figure 9, the basic representation: a spanning tree. -/
-def fig9 : Tree 12 :=
+def fig9 : Tree UD.DepRel 12 :=
   .mk' (.ofArcs fig9Words 5 [(5, 0, .nsubj), (0, 2, .acl), (2, 1, .nsubj), (2, 4, .xcomp),
     (4, 3, .mark), (5, 10, .obj), (10, 6, .det), (10, 7, .amod), (7, 9, .conj), (9, 8, .cc),
     (5, 11, .punct)])
@@ -232,7 +278,7 @@ def fig9 : Tree 12 :=
 /-- Figure 9, the enhanced representation: the relative pronoun's subject relation gives way
 to one from *forgot* to *students*, the controlled subject of *come* is made explicit, and the
 modifier relation is propagated to *written*. -/
-def fig9Enhanced : Graph 12 :=
+def fig9Enhanced : Graph UD.DepRel 12 :=
   .ofArcs fig9Words 5 [(5, 0, .nsubj), (0, 2, .acl), (2, 0, .nsubj), (4, 0, .nsubj),
     (2, 4, .xcomp), (4, 3, .mark), (5, 10, .obj), (10, 6, .det), (10, 7, .amod),
     (10, 9, .amod), (7, 9, .conj), (9, 8, .cc), (5, 11, .punct)]

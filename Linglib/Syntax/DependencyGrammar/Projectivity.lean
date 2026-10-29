@@ -53,7 +53,7 @@ study files.
 
 namespace DependencyGrammar
 
-variable {n : ℕ} (g : Graph n)
+variable {L : Type*} {n : ℕ} (g : Graph L n)
 
 /-! ### The binary constraints: projectivity, planarity, well-nestedness -/
 
@@ -94,7 +94,7 @@ its head. -/
 def Graph.IsArcProjective : Prop :=
   ∀ ⦃h d⦄, g.Adj h d → ∀ w ∈ Set.uIcc h d, Dominates g h w
 
-theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph n} (hA : g.IsArcProjective)
+theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph L n} (hA : g.IsArcProjective)
     {v x : Fin n} (hx : Dominates g v x) {w : Fin n} (hw : w ∈ Set.uIcc v x) :
     Dominates g v w := by
   induction hx with

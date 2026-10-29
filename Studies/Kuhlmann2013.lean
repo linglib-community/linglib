@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Data.Experiments.Kuhlmann2013
@@ -55,13 +56,13 @@ open DependencyGrammar Relation
 open Morphology (Word)
 open Data.Experiments (Decimal)
 
-variable {n : ℕ} {g : Graph n}
+variable {L : Type*} {n : ℕ} {g : Graph L n}
 
 /-! ### Block-degree (§7.1) -/
 
 /-- The block-degree of a graph: the maximal number of blocks a node's yield falls into, one
 more than the gap degree. -/
-def blockDegree (g : Graph n) : ℕ := g.gapDegree + 1
+def blockDegree (g : Graph L n) : ℕ := g.gapDegree + 1
 
 theorem isProjective_iff_blockDegree_eq_one :
     g.IsProjective ↔ blockDegree g = 1 := by
@@ -92,7 +93,7 @@ The German order nests the verb–argument dependencies and is projective; the D
 crosses them and is not, at gap degree 1. -/
 
 /-- Dutch cross-serial: *dat Jan Piet Marie zag helpen lezen*. -/
-def dutchCrossSerial : Graph 7 :=
+def dutchCrossSerial : Graph UD.DepRel 7 :=
   .ofArcs
     [Word.mk' "dat" .SCONJ, Word.mk' "Jan" .PROPN, Word.mk' "Piet" .PROPN,
      Word.mk' "Marie" .PROPN, Word.mk' "zag" .VERB, Word.mk' "helpen" .VERB,
@@ -102,7 +103,7 @@ def dutchCrossSerial : Graph 7 :=
      (5, 2, .nsubj), (5, 6, .xcomp), (6, 3, .nsubj)]
 
 /-- German nested: *dass Jan Piet Marie lesen helfen sah*. -/
-def germanNested : Graph 7 :=
+def germanNested : Graph UD.DepRel 7 :=
   .ofArcs
     [Word.mk' "dass" .SCONJ, Word.mk' "Jan" .PROPN, Word.mk' "Piet" .PROPN,
      Word.mk' "Marie" .PROPN, Word.mk' "lesen" .VERB, Word.mk' "helfen" .VERB,
@@ -131,30 +132,30 @@ theorem dutchCrossSerial_isWellNested :
 def dot : Word := Word.mk' "•" .X
 
 /-- Figure 10, `D₁`: the yield of node 2 falls into the blocks {2, 3} and {6}. -/
-def fig10D1 : Graph 6 :=
+def fig10D1 : Graph Unit 6 :=
   .ofArcs [dot, dot, dot, dot, dot, dot] 0
-    [(0, 1, .dep), (0, 4, .dep), (4, 3, .dep), (1, 2, .dep), (2, 5, .dep)]
+    [(0, 1, ()), (0, 4, ()), (4, 3, ()), (1, 2, ()), (2, 5, ())]
 
 /-- Figure 10, `D₂`: the yield of node 1 falls into the blocks {1}, {3} and {6}. -/
-def fig10D2 : Graph 6 :=
+def fig10D2 : Graph Unit 6 :=
   .ofArcs [dot, dot, dot, dot, dot, dot] 1
-    [(1, 0, .dep), (1, 4, .dep), (4, 3, .dep), (0, 2, .dep), (2, 5, .dep)]
+    [(1, 0, ()), (1, 4, ()), (4, 3, ()), (0, 2, ()), (2, 5, ())]
 
 -- Example 6
 theorem figure10_blockDegree : blockDegree fig10D1 = 2 ∧ blockDegree fig10D2 = 3 := by
   decide
 
 /-- Figure 11, `D₁`: non-projective with no overlapping yields at all. -/
-def fig11D1 : Graph 4 :=
-  .ofArcs [dot, dot, dot, dot] 1 [(1, 0, .dep), (1, 2, .dep), (0, 3, .dep)]
+def fig11D1 : Graph Unit 4 :=
+  .ofArcs [dot, dot, dot, dot] 1 [(1, 0, ()), (1, 2, ()), (0, 3, ())]
 
 /-- Figure 11, `D₂`: the yields of nodes 1 and 2 overlap, but node 1 dominates node 2. -/
-def fig11D2 : Graph 4 :=
-  .ofArcs [dot, dot, dot, dot] 0 [(0, 2, .dep), (2, 1, .dep), (1, 3, .dep)]
+def fig11D2 : Graph Unit 4 :=
+  .ofArcs [dot, dot, dot, dot] 0 [(0, 2, ()), (2, 1, ()), (1, 3, ())]
 
 /-- Figure 11, `D₃`: the yields of the sibling nodes 2 and 3 overlap. -/
-def fig11D3 : Graph 5 :=
-  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 2, .dep), (2, 4, .dep), (0, 1, .dep), (1, 3, .dep)]
+def fig11D3 : Graph Unit 5 :=
+  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 2, ()), (2, 4, ()), (0, 1, ()), (1, 3, ())]
 
 -- Figure 11, Example 8
 theorem figure11_wellNested :
@@ -178,7 +179,7 @@ theorem figure11_blockDegree : blockDegree fig11D2 = 2 ∧ blockDegree fig11D3 =
 /-- What a restriction keeps of a tree: every rule extracted from it meets the restriction, the
 fan-out of the rule extracted at a node being the node's block-degree (§7.3) and its
 well-nestedness that of the tree (§8.3). -/
-def Restriction.Holds : Restriction → Graph n → Prop
+def Restriction.Holds : Restriction → Graph L n → Prop
   | .fanOutOne, g => blockDegree g = 1
   | .fanOutLeTwo, g => blockDegree g ≤ 2
   | .wellNested, g => g.IsWellNested ∧ blockDegree g ≤ 2

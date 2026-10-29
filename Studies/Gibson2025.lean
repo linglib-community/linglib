@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Length
 public import Linglib.Syntax.WordOrder
@@ -52,23 +53,23 @@ variable {n : ℕ}
 
 /-- An order is head-first or head-final, section 5.2, when every head-argument arc, that is
 every arc but a subject's, takes that direction. -/
-def Harmonic (g : Graph n) (d : HeadDirection) : Prop :=
+def Harmonic (g : Graph UD.DepRel n) (d : HeadDirection) : Prop :=
   ∀ v w, g.Adj v w → g.label v w ≠ some .nsubj → HeadDirection.ofLT v w = d
 
-instance (g : Graph n) (d : HeadDirection) : Decidable (Harmonic g d) :=
+instance (g : Graph UD.DepRel n) (d : HeadDirection) : Decidable (Harmonic g d) :=
   inferInstanceAs (Decidable (∀ _ _, _))
 
 /-- An order that is neither head-first nor head-final. -/
-def Disharmonic (g : Graph n) : Prop := ∀ d, ¬ Harmonic g d
+def Disharmonic (g : Graph UD.DepRel n) : Prop := ∀ d, ¬ Harmonic g d
 
-instance (g : Graph n) : Decidable (Disharmonic g) :=
+instance (g : Graph UD.DepRel n) : Decidable (Disharmonic g) :=
   inferInstanceAs (Decidable (∀ _, ¬ _))
 
 /-! ### Section 5.1: the measure, on (99a) -/
 
 /-- (99a) *Mary threw away the important documents that she brought home yesterday*, whose
 total dependency length the book computes as eighteen. -/
-def ex99a : Graph 11 :=
+def ex99a : Graph UD.DepRel 11 :=
   .ofArcs [Word.mk' "Mary" .PROPN, Word.mk' "threw" .VERB, Word.mk' "away" .ADV,
       Word.mk' "the" .DET, Word.mk' "important" .ADJ, Word.mk' "documents" .NOUN,
       Word.mk' "that" .PRON, Word.mk' "she" .PRON, Word.mk' "brought" .VERB,
@@ -82,7 +83,7 @@ theorem totalLength_99a : ex99a.totalLength = 18 := by decide
 
 /-- (99b), the particle after the long object, where the arc to *away* crosses the eight words of
 the object. -/
-def ex99b : Graph 11 := ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
+def ex99b : Graph UD.DepRel 11 := ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
 
 theorem totalLength_99b : ex99b.totalLength = 25 ∧ ex99a.totalLength < ex99b.totalLength := by
   decide
@@ -90,24 +91,24 @@ theorem totalLength_99b : ex99b.totalLength = 25 ∧ ex99a.totalLength < ex99b.t
 /-! ### Section 5.2: the mirror rules of a verb-final language, (119) to (121) -/
 
 /-- (119a) *Lana ate pizza*. -/
-def svo119 : Graph 3 :=
+def svo119 : Graph UD.DepRel 3 :=
   .ofArcs [Word.mk' "Lana" .PROPN, Word.mk' "ate" .VERB, Word.mk' "pizza" .NOUN]
     1 [(1, 0, .nsubj), (1, 2, .obj)]
 
 /-- (119b) *Lana pizza ate*. -/
-def sov119 : Graph 3 := svo119.linearize [0, 2, 1] (by decide)
+def sov119 : Graph UD.DepRel 3 := svo119.linearize [0, 2, 1] (by decide)
 
 /-- (120a) *Lana gave pizza to Francine*. -/
-def svo120 : Graph 5 :=
+def svo120 : Graph UD.DepRel 5 :=
   .ofArcs [Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
       Word.mk' "to" .ADP, Word.mk' "Francine" .PROPN]
     1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .obl), (3, 4, .obj)]
 
 /-- (120b) *Lana Francine to pizza gave*. -/
-def sov120 : Graph 5 := svo120.linearize [0, 4, 3, 2, 1] (by decide)
+def sov120 : Graph UD.DepRel 5 := svo120.linearize [0, 4, 3, 2, 1] (by decide)
 
 /-- (121a) *Alfred said that Lana gave pizza to Francine*. -/
-def svo121 : Graph 8 :=
+def svo121 : Graph UD.DepRel 8 :=
   .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "said" .VERB, Word.mk' "that" .SCONJ,
       Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
       Word.mk' "to" .ADP, Word.mk' "Francine" .PROPN]
@@ -116,7 +117,7 @@ def svo121 : Graph 8 :=
 
 /-- (121b) *Alfred Lana Francine to pizza gave that said*, where each clause keeps its subject first
 and mirrors the rest. -/
-def sov121 : Graph 8 := svo121.linearize [0, 3, 7, 6, 5, 4, 2, 1] (by decide)
+def sov121 : Graph UD.DepRel 8 := svo121.linearize [0, 3, 7, 6, 5, 4, 2, 1] (by decide)
 
 theorem sov_harmonic :
     Harmonic svo119 .headInitial ∧ Harmonic sov119 .headFinal ∧
@@ -127,7 +128,7 @@ theorem sov_harmonic :
 /-! ### Section 5.3.1: verb-object and verb-complement direction, (122) -/
 
 /-- (122) *Alfred wanted to eat bananas from Hawaii*, head-first: every arc is adjacent. -/
-def hi122 : Graph 7 :=
+def hi122 : Graph UD.DepRel 7 :=
   .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "wanted" .VERB, Word.mk' "to" .PART,
       Word.mk' "eat" .VERB, Word.mk' "bananas" .NOUN, Word.mk' "from" .ADP,
       Word.mk' "Hawaii" .PROPN]
@@ -138,15 +139,15 @@ example : hi122.IsTree ∧ hi122.IsProjective := by decide
 
 /-- The head-final order with the subject next to its verb: *Hawaii from bananas eat to Alfred
 wanted*. -/
-def hf122 : Graph 7 := hi122.linearize [6, 5, 4, 3, 2, 0, 1] (by decide)
+def hf122 : Graph UD.DepRel 7 := hi122.linearize [6, 5, 4, 3, 2, 0, 1] (by decide)
 
 /-- Verb-object order for *eat* but complement-verb order for *wanted*: *Alfred to eat bananas
 from Hawaii wanted*. -/
-def voCompV122 : Graph 7 := hi122.linearize [0, 2, 3, 4, 5, 6, 1] (by decide)
+def voCompV122 : Graph UD.DepRel 7 := hi122.linearize [0, 2, 3, 4, 5, 6, 1] (by decide)
 
 /-- Object-verb order for *eat* but verb-complement order for *wanted*: *Alfred wanted to
 bananas from Hawaii eat*. -/
-def ovVComp122 : Graph 7 := hi122.linearize [0, 1, 2, 4, 5, 6, 3] (by decide)
+def ovVComp122 : Graph UD.DepRel 7 := hi122.linearize [0, 1, 2, 4, 5, 6, 3] (by decide)
 
 theorem totalLength_122 :
     hi122.totalLength = 6 ∧ hf122.totalLength = 7 ∧
@@ -161,7 +162,7 @@ theorem harmonic_122 :
 /-! ### Sections 5.3.2 to 5.3.4: subordinators, adpositions, and relative clauses, (123) -/
 
 /-- (123) *Alfred said that Lana gave pizza to monkeys who wanted bananas* in English order. -/
-def en123 : Graph 11 :=
+def en123 : Graph UD.DepRel 11 :=
   .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "said" .VERB, Word.mk' "that" .SCONJ,
       Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
       Word.mk' "to" .ADP, Word.mk' "monkeys" .NOUN, Word.mk' "who" .PRON,
@@ -173,35 +174,35 @@ example : en123.IsTree ∧ en123.IsProjective := by decide
 
 /-- The head-final order with subjects first: *Alfred Lana who bananas wanted monkeys to pizza
 gave that said*. -/
-def hfSubjFirst123 : Graph 11 :=
+def hfSubjFirst123 : Graph UD.DepRel 11 :=
   en123.linearize [0, 3, 8, 10, 9, 7, 6, 5, 4, 2, 1] (by decide)
 
 /-- The head-final order with subjects next to their verbs: *who bananas wanted monkeys to pizza
 Lana gave that Alfred said*. -/
-def hf123 : Graph 11 := en123.linearize [8, 10, 9, 7, 6, 5, 3, 4, 2, 0, 1] (by decide)
+def hf123 : Graph UD.DepRel 11 := en123.linearize [8, 10, 9, 7, 6, 5, 3, 4, 2, 0, 1] (by decide)
 
 /-- Verb-initial but subordinator-final: *that* follows the clause it heads. -/
-def voSubFinal123 : Graph 11 :=
+def voSubFinal123 : Graph UD.DepRel 11 :=
   en123.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
 
 /-- Verb-final but subordinator-initial: *that* precedes the clause it heads. -/
-def ovSubInitial123 : Graph 11 :=
+def ovSubInitial123 : Graph UD.DepRel 11 :=
   en123.linearize [2, 8, 10, 9, 7, 6, 5, 3, 4, 0, 1] (by decide)
 
 /-- Verb-initial but postpositional: *to* follows its noun phrase. -/
-def voPost123 : Graph 11 :=
+def voPost123 : Graph UD.DepRel 11 :=
   en123.linearize [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 6] (by decide)
 
 /-- Verb-final but prepositional: *to* precedes its noun phrase. -/
-def ovPre123 : Graph 11 :=
+def ovPre123 : Graph UD.DepRel 11 :=
   en123.linearize [6, 8, 10, 9, 7, 5, 3, 4, 2, 0, 1] (by decide)
 
 /-- Verb-initial but with the relative clause before its noun. -/
-def voRelN123 : Graph 11 :=
+def voRelN123 : Graph UD.DepRel 11 :=
   en123.linearize [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 7] (by decide)
 
 /-- Verb-final but with the relative clause after its noun. -/
-def ovNRel123 : Graph 11 :=
+def ovNRel123 : Graph UD.DepRel 11 :=
   en123.linearize [7, 8, 10, 9, 6, 5, 3, 4, 2, 0, 1] (by decide)
 
 theorem totalLength_123 :
@@ -229,7 +230,7 @@ theorem subordinator_final_stretches :
 /-! ### Section 5.3.5: one-word dependents, Table 5.4 -/
 
 /-- *very tall*, an intensifier before its adjective. -/
-def intensifierFirst : Graph 2 :=
+def intensifierFirst : Graph UD.DepRel 2 :=
   .ofArcs [Word.mk' "very" .ADV, Word.mk' "tall" .ADJ] 1 [(1, 0, .advmod)]
 
 /-- A one-word dependent costs the same on either side of its head, so Table 5.4's single-word

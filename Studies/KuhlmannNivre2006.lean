@@ -62,7 +62,7 @@ namespace KuhlmannNivre2006
 open DependencyGrammar Relation
 open Morphology (Word)
 
-variable {n : ℕ} (g : Graph n)
+variable {L : Type*} {n : ℕ} (g : Graph L n)
 
 /-! ### Edge degree (Definition 9) -/
 
@@ -78,7 +78,7 @@ def edgeDegreeAt (h d : Fin n) : ℕ :=
 
 /-- The edge degree of a graph: the maximum degree of its arcs. -/
 def edgeDegree : ℕ :=
-  (Finset.univ.filter fun p : Fin n × Fin n ↦ g.Adj p.1 p.2).sup fun p ↦ edgeDegreeAt g p.1 p.2
+  g.arcs.sup fun p ↦ edgeDegreeAt g p.1 p.2
 
 variable {g}
 
@@ -100,8 +100,7 @@ theorem edgeDegreeAt_eq_zero_iff (hT : g.IsTree) {h d : Fin n} :
 theorem edgeDegree_eq_zero_iff (hT : g.IsTree) : edgeDegree g = 0 ↔ g.IsProjective := by
   rw [Graph.isProjective_iff_isArcProjective, edgeDegree, ← Nat.bot_eq_zero,
     Finset.sup_eq_bot_iff]
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Nat.bot_eq_zero, Prod.forall,
-    edgeDegreeAt_eq_zero_iff hT]
+  simp only [Graph.mem_arcs, Nat.bot_eq_zero, Prod.forall, edgeDegreeAt_eq_zero_iff hT]
   exact Iff.rfl
 
 /-! ### Figure 1: a dependency forest
@@ -114,9 +113,9 @@ punctuation mark without a head, so it is a forest and not a tree, and the yield
 def dot : Word := Word.mk' "•" .X
 
 /-- Figure 1: nodes 2 and 8 have no head. -/
-def fig1 : Graph 8 :=
+def fig1 : Graph Unit 8 :=
   .ofArcs [dot, dot, dot, dot, dot, dot, dot, dot] 1
-    [(1, 0, .dep), (0, 2, .dep), (0, 3, .dep), (3, 6, .dep), (6, 4, .dep), (6, 5, .dep)]
+    [(1, 0, ()), (0, 2, ()), (0, 3, ()), (3, 6, ()), (6, 4, ()), (6, 5, ())]
 
 /-- Figure 1 is a forest whose roots are nodes 2 and 8, and so not a tree. -/
 theorem fig1_isForest_not_isTree :
@@ -135,11 +134,11 @@ Figure 2a is planar but not projective, its root inside the gap where the substr
 its two named edges crossing. -/
 
 /-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
-def fig2a : Graph 3 := .ofArcs [dot, dot, dot] 1 [(1, 0, .dep), (0, 2, .dep)]
+def fig2a : Graph Unit 3 := .ofArcs [dot, dot, dot] 1 [(1, 0, ()), (0, 2, ())]
 
 /-- Figure 2b: the edges (1, 4) and (3, 5) cross. -/
-def fig2b : Graph 5 :=
-  .ofArcs [dot, dot, dot, dot, dot] 1 [(1, 0, .dep), (0, 3, .dep), (3, 2, .dep), (2, 4, .dep)]
+def fig2b : Graph Unit 5 :=
+  .ofArcs [dot, dot, dot, dot, dot] 1 [(1, 0, ()), (0, 3, ()), (3, 2, ()), (2, 4, ())]
 
 theorem fig2a_isTree : fig2a.IsTree := by decide
 theorem fig2b_isTree : fig2b.IsTree := by decide
@@ -156,19 +155,19 @@ theorem fig2b_crossing :
 /-! ### Figure 3: gap degree, edge degree, and well-nestedness -/
 
 /-- Figure 3a: the projection of node 2 is the interval `(2, 3, 4)`. -/
-def fig3a : Graph 6 :=
+def fig3a : Graph Unit 6 :=
   .ofArcs [dot, dot, dot, dot, dot, dot] 0
-    [(0, 1, .dep), (1, 2, .dep), (2, 3, .dep), (0, 4, .dep), (4, 5, .dep)]
+    [(0, 1, ()), (1, 2, ()), (2, 3, ()), (0, 4, ()), (4, 5, ())]
 
 /-- Figure 3b: the projection of node 2 is `(2, 3, 6)`, with the gap `(3, 6)`. -/
-def fig3b : Graph 6 :=
+def fig3b : Graph Unit 6 :=
   .ofArcs [dot, dot, dot, dot, dot, dot] 0
-    [(0, 1, .dep), (1, 2, .dep), (2, 5, .dep), (0, 3, .dep), (3, 4, .dep)]
+    [(0, 1, ()), (1, 2, ()), (2, 5, ()), (0, 3, ()), (3, 4, ())]
 
 /-- Figure 3c: the projection of node 2 is `(2, 4, 6)`, with the gaps `(2, 4)` and `(4, 6)`. -/
-def fig3c : Graph 6 :=
+def fig3c : Graph Unit 6 :=
   .ofArcs [dot, dot, dot, dot, dot, dot] 0
-    [(0, 1, .dep), (1, 3, .dep), (3, 5, .dep), (0, 2, .dep), (2, 4, .dep)]
+    [(0, 1, ()), (1, 3, ()), (3, 5, ()), (0, 2, ()), (2, 4, ())]
 
 theorem figure3_isTree : fig3a.IsTree ∧ fig3b.IsTree ∧ fig3c.IsTree := by decide
 
@@ -201,14 +200,14 @@ theorem hierarchy_strict :
 
 /-- Figure 4a: the subtree at node 2 has two gaps, each of its edges spanning one component
 node 2 does not dominate. -/
-def fig4a : Graph 6 :=
+def fig4a : Graph Unit 6 :=
   .ofArcs [dot, dot, dot, dot, dot, dot] 0
-    [(0, 1, .dep), (0, 2, .dep), (2, 4, .dep), (1, 3, .dep), (3, 5, .dep)]
+    [(0, 1, ()), (0, 2, ()), (2, 4, ()), (1, 3, ()), (3, 5, ())]
 
 /-- Figure 4b: the subtree at node 2 has one gap, containing two components node 2 does not
 dominate. -/
-def fig4b : Graph 5 :=
-  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 1, .dep), (0, 2, .dep), (0, 3, .dep), (1, 4, .dep)]
+def fig4b : Graph Unit 5 :=
+  .ofArcs [dot, dot, dot, dot, dot] 0 [(0, 1, ()), (0, 2, ()), (0, 3, ()), (1, 4, ())]
 
 theorem figure4_isTree : fig4a.IsTree ∧ fig4b.IsTree := by decide
 
@@ -227,16 +226,16 @@ over all structures, through the degree-zero theorems and the hierarchy. -/
 open Data.Experiments (Decimal)
 
 /-- What a binary constraint says of a graph. -/
-def Constraint.Holds : Constraint → Graph n → Prop
+def Constraint.Holds : Constraint → Graph L n → Prop
   | .planar, g => g.IsPlanar
   | .wellNested, g => g.IsWellNested
 
-instance : ∀ (c : Constraint) (g : Graph n), Decidable (c.Holds g)
+instance : ∀ (c : Constraint) (g : Graph L n), Decidable (c.Holds g)
   | .planar, g => inferInstanceAs (Decidable g.IsPlanar)
   | .wellNested, g => inferInstanceAs (Decidable g.IsWellNested)
 
 /-- The degree a graded measure gives a graph. -/
-def Measure.degree : Measure → Graph n → ℕ
+def Measure.degree : Measure → Graph L n → ℕ
   | .gap, g => g.gapDegree
   | .edge, g => edgeDegree g
 
@@ -254,10 +253,10 @@ def atMost (m : Measure) (t : Treebank) (k : ℕ) : ℕ := ∑ d ∈ Finset.rang
 theorem atMost_mono (m : Measure) (t : Treebank) : Monotone (atMost m t) := fun _ _ h ↦
   Finset.sum_le_sum_of_subset (Finset.range_subset_range.2 (Nat.succ_le_succ h))
 
-variable {T : Multiset (Σ n, Graph n)} {t : Treebank}
+variable {T : Multiset (Σ n, Graph L n)} {t : Treebank}
 
 /-- A treebank has the counts Table 1 prints for `t` over all of its structures. -/
-structure HasCounts (T : Multiset (Σ n, Graph n)) (t : Treebank) : Prop where
+structure HasCounts (T : Multiset (Σ n, Graph L n)) (t : Treebank) : Prop where
   card_eq : Multiset.card T = (structures t).all
   countP_isProjective : T.countP (·.2.IsProjective) = (structures t).projective
   countP_holds (c : Constraint) : T.countP (c.Holds ·.2) = (coverage c t).all
@@ -269,7 +268,8 @@ private theorem countP_replicate {α : Type*} (p : α → Prop) [DecidablePred p
 
 /-- Copies of the trees of Figures 2a, 3a, 3b and 3c make a treebank with the counts of Table 1,
 which is thus not vacuous. -/
-theorem exists_hasCounts (t : Treebank) : ∃ T, (∀ g ∈ T, g.2.IsTree) ∧ HasCounts T t := by
+theorem exists_hasCounts (t : Treebank) :
+    ∃ T : Multiset (Σ n, Graph Unit n), (∀ g ∈ T, g.2.IsTree) ∧ HasCounts T t := by
   have h3a : fig3a.IsProjective ∧ fig3a.IsPlanar ∧ fig3a.IsWellNested := by decide +kernel
   have h2a : ¬ fig2a.IsProjective ∧ fig2a.IsPlanar ∧ fig2a.IsWellNested := by decide +kernel
   have h3b : ¬ fig3b.IsProjective ∧ ¬ fig3b.IsPlanar ∧ fig3b.IsWellNested := by decide +kernel

@@ -267,34 +267,34 @@ namespace DependencyGrammar
 
 open Relation
 
-variable {n : ℕ}
+variable {L : Type*} {n : ℕ}
 
 /-- Total dependency length sums `Nat.dist` over all arcs, the quantity dependency-length
 minimisation is about. -/
-def Graph.totalLength (g : Graph n) : Nat :=
+def Graph.totalLength (g : Graph L n) : Nat :=
   ∑ v : Fin n, ∑ w ∈ g.children v, Nat.dist v w
 
-theorem Graph.totalLength_words (g : Graph n) (words' : Fin n → Morphology.Word) :
+theorem Graph.totalLength_words (g : Graph L n) (words' : Fin n → Morphology.Word) :
     Graph.totalLength { g with words := words' } = g.totalLength := rfl
 
 /-! ### Transport: same structure, different linearization -/
 
 /-- `g.map σ` transports `g` along the position permutation `σ`. Arcs, tokens and root move
 together, so the labeled structure is unchanged and only the linearization varies. -/
-def Graph.map (g : Graph n) (σ : Equiv.Perm (Fin n)) : Graph n :=
+def Graph.map (g : Graph L n) (σ : Equiv.Perm (Fin n)) : Graph L n :=
   { words := g.words ∘ σ.symm
     label := fun v w ↦ g.label (σ.symm v) (σ.symm w)
     root := σ g.root }
 
-@[simp] theorem Graph.map_adj (g : Graph n) (σ : Equiv.Perm (Fin n))
+@[simp] theorem Graph.map_adj (g : Graph L n) (σ : Equiv.Perm (Fin n))
     (v w : Fin n) : (g.map σ).Adj v w ↔ g.Adj (σ.symm v) (σ.symm w) :=
   Iff.rfl
 
 /-- The mirror image, transported along position reversal. -/
-def Graph.mirror (g : Graph n) : Graph n := g.map Fin.revPerm
+def Graph.mirror (g : Graph L n) : Graph L n := g.map Fin.revPerm
 
 /-- Transport along an isometry of the positions preserves total dependency length. -/
-theorem Graph.totalLength_map (g : Graph n) (σ : Equiv.Perm (Fin n))
+theorem Graph.totalLength_map (g : Graph L n) (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
     (g.map σ).totalLength = g.totalLength := by
   unfold totalLength
@@ -314,19 +314,19 @@ theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
 
 /-- The mirror image of a graph has the same total dependency length ([futrell-levy-gibson-2020],
 examples (7)–(8)). -/
-theorem Graph.totalLength_mirror (g : Graph n) :
+theorem Graph.totalLength_mirror (g : Graph L n) :
     g.mirror.totalLength = g.totalLength :=
   g.totalLength_map _ Fin.dist_rev_rev
 
 /-- The graph read in the order `order`, which lists every position once. The token at
 position `p` is the token of `g` at `order[p]`, arcs and root following. -/
-def Graph.linearize (g : Graph n) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
-    Graph n :=
+def Graph.linearize (g : Graph L n) (order : List (Fin n)) (h : order.Perm (List.finRange n)) :
+    Graph L n :=
   g.map ((finCongr (h.length_eq.trans List.length_finRange).symm).trans
     ((h.nodup_iff.mpr (List.nodup_finRange n)).getEquivOfForallMemList order
       fun x ↦ h.mem_iff.mpr (List.mem_finRange x))).symm
 
-theorem Graph.linearize_words (g : Graph n) (order : List (Fin n))
+theorem Graph.linearize_words (g : Graph L n) (order : List (Fin n))
     (h : order.Perm (List.finRange n)) (p : Fin n) :
     (g.linearize order h).words p =
       g.words (order.get (Fin.cast (h.length_eq.trans List.length_finRange).symm p)) :=
@@ -334,7 +334,7 @@ theorem Graph.linearize_words (g : Graph n) (order : List (Fin n))
 
 /-! ### Arc length and the dependent's phrase -/
 
-theorem Graph.ncard_yield_le_dist (g : Graph n) {v w : Fin n} (hv : v ∉ g.yield w)
+theorem Graph.ncard_yield_le_dist (g : Graph L n) {v w : Fin n} (hv : v ∉ g.yield w)
     (h : ∀ x ∈ g.yield w, x ∈ Set.uIcc v w) : (g.yield w).ncard ≤ Nat.dist v w := by
   have hsub : g.yield w ⊆ Set.uIcc v w \ {v} := Set.subset_sdiff_singleton h hv
   refine (Set.ncard_le_ncard hsub).trans (le_of_eq ?_)
@@ -345,18 +345,18 @@ theorem Graph.ncard_yield_le_dist (g : Graph n) {v w : Fin n} (hv : v ∉ g.yiel
 
 /-! ### Distance to a phrase -/
 
-theorem Graph.toFinset_yield_nonempty (g : Graph n) (w : Fin n) : (g.yield w).toFinset.Nonempty :=
+theorem Graph.toFinset_yield_nonempty (g : Graph L n) (w : Fin n) : (g.yield w).toFinset.Nonempty :=
   ⟨w, by simp [ReflTransGen.refl]⟩
 
 /-- The distance from `v` to the nearest word of the yield of `w`, dependency length measured to
 the closest boundary of the dependent's phrase. -/
-def Graph.yieldDist (g : Graph n) (v w : Fin n) : ℕ :=
+def Graph.yieldDist (g : Graph L n) (v w : Fin n) : ℕ :=
   (g.yield w).toFinset.inf' (g.toFinset_yield_nonempty w) fun x ↦ Nat.dist v x
 
-theorem Graph.yieldDist_le_dist (g : Graph n) (v w : Fin n) : g.yieldDist v w ≤ Nat.dist v w :=
+theorem Graph.yieldDist_le_dist (g : Graph L n) (v w : Fin n) : g.yieldDist v w ≤ Nat.dist v w :=
   Finset.inf'_le _ (by simp [ReflTransGen.refl])
 
-variable {g : Graph n} {v w : Fin n}
+variable {g : Graph L n} {v w : Fin n}
 
 /-- An order-connected set through a point strictly between `a` and `b` and avoiding both lies
 strictly between them. -/
@@ -484,7 +484,7 @@ section Siblings
 
 open Finset WordOrder
 
-variable (g : Graph n) (v : Fin n)
+variable (g : Graph L n) (v : Fin n)
 
 /-- A head together with its dependents. -/
 def Graph.siblings : Finset (Fin n) := insert v (g.children v)
