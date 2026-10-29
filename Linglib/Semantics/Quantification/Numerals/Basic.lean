@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Exhaustification.Pointwise
+public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Quantification.Individual
 
 /-!
@@ -21,9 +21,12 @@ reading derives the other: [Partee's `BE` lowers a de-Fregean form to its interv
 [existential closure then gives the lower-bounded numeral](##some_BE_maxIn_singleton), which the
 two-sided one [asymmetrically entails](##maxIn_singleton_lt_individual), while [exhaustifying the
 lower-bounded numeral against the higher ones restores the de-Fregean
-one](##maxIn_singleton_iff_exhAgainst), on counts [the exact reading](##exhAgainst_ge_iff). A
-numeral modifier is a lexical item whose readings are modifiers of sets of amounts, and Nouwen's
-two classes of modifier are read off the construction it is built on.
+one](##maxIn_singleton_iff_exhAgainst), on counts [the exact reading](##exhAgainst_ge_iff).
+Exhaustified against its forms at the other numbers, a form that keeps its number is
+[exact](##mem_exh_range_interval_iff_of_not_isStrict) and *more than* [holds only of an amount
+covering the number](##mem_exh_range_interval_gt_iff), which a dense scale lacks. A numeral
+modifier is a lexical item whose readings are modifiers of sets of amounts, and Nouwen's two
+classes of modifier are read off the construction it is built on.
 
 ## References
 
@@ -87,6 +90,58 @@ theorem exhAgainst_ge_iff [PartialOrder D] {a m : D} :
   exhAgainst_lt_iff_maximal.trans <| by simp [eq_comm]
 
 end Readings
+
+/-! ### Exhaustification on the scale of numerals
+
+The scalar alternatives of a numeral form are the same form at the other numbers, and
+exhaustifying the form denies those it does not entail. A form that keeps its number comes out
+exact, and one that excludes it comes out true only of the amount next to the number, which a
+dense scale does not have. -/
+
+section Scale
+
+variable {D : Type*} {a m : D}
+
+/-- Exhaustified against the higher numerals, *more than `m`* is true of `a` exactly when `a`
+covers `m`. -/
+theorem exhAgainst_gt_iff [Preorder D] :
+    exhAgainst (· < ·) (fun j ↦ a ∈ Comparison.gt.interval j) m ↔ m ⋖ a :=
+  Iff.rfl
+
+variable [LinearOrder D]
+
+/-- Exhaustified against its forms at the other numbers, a form that keeps its number, the bare
+numeral, *at least* or *at most*, is true only of that number. -/
+theorem mem_exh_range_interval_iff_of_not_isStrict {c : Comparison} (hc : ¬ c.IsStrict) :
+    a ∈ exh (Set.range c.interval) (c.interval m) ↔ a = m := by
+  rw [mem_exh_range_iff_exhAgainst]
+  cases c
+  · simp only [Comparison.interval_eq, Set.singleton_subset_singleton, Set.mem_singleton_iff]
+    exact ⟨And.left, fun h ↦ ⟨h, fun _ hmj haj ↦ hmj (h.symm.trans haj)⟩⟩
+  · simp only [Comparison.interval_ge, Set.Ici_subset_Ici, not_le]
+    exact exhAgainst_ge_iff
+  · exact absurd trivial hc
+  · simp only [Comparison.interval_le, Set.Iic_subset_Iic, not_le, Set.mem_Iic]
+    exact exhAgainst_gt_iff_minimal.trans <| minimal_ge_iff.trans eq_comm
+  · exact absurd trivial hc
+
+/-- Exhaustified against its forms at the other numbers, *more than `m`* is true of `a` exactly
+when `a` covers `m`. -/
+theorem mem_exh_range_interval_gt_iff :
+    a ∈ exh (Set.range Comparison.gt.interval) (Comparison.gt.interval m) ↔ m ⋖ a := by
+  rw [mem_exh_range_iff_exhAgainst]
+  simp only [Comparison.interval_gt, Set.Ioi_subset_Ioi_iff, not_le]
+  exact exhAgainst_gt_iff
+
+/-- Exhaustified against its forms at the other numbers, *fewer than `m`* is true of `a` exactly
+when `m` covers `a`. -/
+theorem mem_exh_range_interval_lt_iff :
+    a ∈ exh (Set.range Comparison.lt.interval) (Comparison.lt.interval m) ↔ a ⋖ m := by
+  rw [mem_exh_range_iff_exhAgainst]
+  simp only [Comparison.interval_lt, Set.Iio_subset_Iio_iff, not_le, Set.mem_Iio]
+  exact and_congr_right' (forall_congr' fun _ ↦ imp_not_comm)
+
+end Scale
 
 /-! ### Numeral modifiers -/
 

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Exhaustification.Pointwise
@@ -54,7 +54,7 @@ prejacent, are deviant there.
 
 namespace Mihoc2019
 
-open Degree ModalLogic Exhaustification
+open Degree ModalLogic Exhaustification Numerals
 
 /-! ### Extent indicators and the two operators -/
 
@@ -204,10 +204,13 @@ theorem coe_mem_domainAlts {op : Op} {f : Extent} {n k : ℕ} {T S : Finset ℕ}
 
 A form's scalar alternatives replace its numeral by the other points of a contextual scale `S`
 (her (37b)–(39b)), and exhaustifying denies those the form does not entail, the stronger ones.
-On the full scale of naturals every form comes out 'exactly n', the bare numeral's reading after
-[horn-1972] and an unattested one for the modified forms. A scale with gaps instead leaves an
-interval up to the next point (`mem_exh_moreThan_iff`), and the scale is contextual rather than
-universally dense (her fn. 8, against [fox-hackl-2006]). -/
+On the full scale of naturals every form comes out exact, the bare numeral and the superlatives
+at their numeral and the comparatives at the adjacent number
+(`Numerals.mem_exh_range_interval_gt_iff`), the bare numeral's reading after [horn-1972] and an
+unattested one for the modified forms. A scale with gaps instead leaves an interval up to the next
+point (`mem_exh_moreThan_iff`), and on a dense scale the comparatives' exhaustification is
+contradictory, the prediction of [fox-hackl-2006]; the scale is contextual rather than universally
+dense (her fn. 8). -/
 
 /-- The form with its numeral replaced by `m`. -/
 def Form.withArg : Form → ℕ → Form
@@ -217,6 +220,19 @@ def Form.withArg : Form → ℕ → Form
 /-- The scalar alternatives of a form on the scale `S`. -/
 def Form.scalarAlts (S : Set ℕ) (φ : Form) : Set (Set ℕ) :=
   (fun m ↦ {d | (φ.withArg m).tc d}) '' S
+
+theorem Form.setOf_tc (φ : Form) : {d | φ.tc d} = φ.toComparison.interval φ.arg :=
+  Set.ext fun d ↦ (φ.tc_iff_rel d).trans (Comparison.mem_interval _ _ _).symm
+
+/-- On the full scale a form's scalar alternatives are the intervals of its comparison at every
+number. -/
+theorem Form.scalarAlts_univ (φ : Form) :
+    φ.scalarAlts .univ = Set.range φ.toComparison.interval := by
+  rw [Form.scalarAlts, Set.image_univ]
+  congr 1
+  funext m
+  rw [Form.setOf_tc]
+  obtain ⟨n⟩ | ⟨_ | _, _ | _, n⟩ := φ <;> rfl
 
 theorem mem_exh_moreThan_iff {S : Set ℕ} {n s : ℕ} (hs : s ∈ S) (hns : n < s)
     (hnext : ∀ m ∈ S, n < m → s ≤ m) (maxD : ℕ) :
@@ -235,8 +251,8 @@ theorem mem_exh_moreThan_iff {S : Set ℕ} {n s : ℕ} (hs : s ∈ S) (hns : n <
 theorem mem_exh_moreThan_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.moreThan n).scalarAlts .univ) {d | (Form.moreThan n).tc d} ↔
       maxD = n + 1 := by
-  rw [mem_exh_moreThan_iff (Set.mem_univ _) (Nat.lt_succ_self n) fun _ _ h ↦ h]
-  omega
+  rw [Form.scalarAlts_univ, Form.setOf_tc]
+  exact mem_exh_range_interval_gt_iff.trans (Nat.covBy_iff_add_one_eq.trans eq_comm)
 
 -- Ch. 3, (33) [spector-2014]
 theorem mem_exh_moreThan_five {S : Set ℕ} (h9 : 9 ∈ S) (hgap : ∀ m ∈ S, 5 < m → 9 ≤ m)
@@ -249,40 +265,34 @@ theorem mem_exh_moreThan_five {S : Set ℕ} (h9 : 9 ∈ S) (hgap : ∀ m ∈ S, 
 theorem mem_exh_bare_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.bare n).scalarAlts .univ) {d | (Form.bare n).tc d} ↔
       maxD ∈ Comparison.eq.interval n := by
-  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
-    Set.ofPred_subset_ofPred, tc_bare, Comparison.interval_eq,
-    Set.mem_univ, true_implies, Set.mem_singleton_iff]
-  refine ⟨fun ⟨h, hS⟩ ↦ ?_, by rintro rfl; exact ⟨le_rfl, fun m hm x hx ↦ hm.trans hx⟩⟩
-  have := hS (le_refl maxD) n le_rfl
-  omega
+  rw [Form.scalarAlts_univ, Form.setOf_tc]
+  exact mem_exh_range_interval_iff_of_not_isStrict (c := .ge) nofun
 
 -- Ch. 3, (25)
 theorem mem_exh_lessThan_univ {n : ℕ} (hn : 1 ≤ n) (maxD : ℕ) :
     maxD ∈ exh ((Form.lessThan n).scalarAlts .univ) {d | (Form.lessThan n).tc d} ↔
       maxD = n - 1 := by
-  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
-    Set.ofPred_subset_ofPred, tc_lessThan, Set.mem_univ, true_implies]
-  refine ⟨fun ⟨h, hS⟩ ↦ ?_, fun h ↦ ⟨by omega, fun m hm x hx ↦ by omega⟩⟩
-  have := hS (Nat.lt_succ_self maxD) (n - 1) (by omega)
-  omega
+  rw [Form.scalarAlts_univ, Form.setOf_tc]
+  exact mem_exh_range_interval_lt_iff.trans <| Nat.covBy_iff_add_one_eq.trans <| by
+    simp only [Form.arg]; omega
 
 -- Ch. 3, (26)
 theorem mem_exh_atLeast_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.atLeast n).scalarAlts .univ) {d | (Form.atLeast n).tc d} ↔ maxD = n := by
-  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
-    Set.ofPred_subset_ofPred, tc_atLeast, Set.mem_univ, true_implies]
-  refine ⟨fun ⟨h, hS⟩ ↦ ?_, by rintro rfl; exact ⟨le_rfl, fun m hm x hx ↦ hm.trans hx⟩⟩
-  have := hS (le_refl maxD) n le_rfl
-  omega
+  rw [Form.scalarAlts_univ, Form.setOf_tc]
+  exact mem_exh_range_interval_iff_of_not_isStrict (c := .ge) nofun
 
 -- Ch. 3, (27)
 theorem mem_exh_atMost_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.atMost n).scalarAlts .univ) {d | (Form.atMost n).tc d} ↔ maxD = n := by
-  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
-    Set.ofPred_subset_ofPred, tc_atMost, Set.mem_univ, true_implies]
-  refine ⟨fun ⟨h, hS⟩ ↦ ?_, by rintro rfl; exact ⟨le_rfl, fun m hm x hx ↦ hx.trans hm⟩⟩
-  have := hS (le_refl maxD) n le_rfl
-  omega
+  rw [Form.scalarAlts_univ, Form.setOf_tc]
+  exact mem_exh_range_interval_iff_of_not_isStrict (c := .le) nofun
+
+-- [fox-hackl-2006]: on a dense scale exhaustified *more than n* is contradictory.
+theorem exh_moreThan_eq_empty_of_dense {D : Type*} [LinearOrder D] [DenselyOrdered D] (n : D) :
+    exh (Set.range Comparison.gt.interval) (Comparison.gt.interval n) = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ h ↦
+    not_covBy_of_denselyOrdered (mem_exh_range_interval_gt_iff.1 h)
 
 /-! ### Ignorance
 
