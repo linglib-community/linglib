@@ -26,7 +26,7 @@ def ex3 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex29 : Datum :=
   { id := "kalyakin2026_ex29"
@@ -39,7 +39,7 @@ def ex29 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "focused"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state"), ("contrastiveFocus", "yes")] }
 
 def ex30a : Datum :=
   { id := "kalyakin2026_ex30a"
@@ -52,7 +52,7 @@ def ex30a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "focused"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state"), ("contrastiveFocus", "yes")] }
 
 def ex30b : Datum :=
   { id := "kalyakin2026_ex30b"
@@ -65,7 +65,7 @@ def ex30b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "moved"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex32 : Datum :=
   { id := "kalyakin2026_ex32"
@@ -78,7 +78,7 @@ def ex32 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "raised"), ("antecedentLV", "become"), ("targetLV", "become")] }
+    paperFeatures := [("root", "state")] }
 
 def ex36a : Datum :=
   { id := "kalyakin2026_ex36a"
@@ -91,7 +91,7 @@ def ex36a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex36b : Datum :=
   { id := "kalyakin2026_ex36b"
@@ -104,7 +104,7 @@ def ex36b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "no"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex36c : Datum :=
   { id := "kalyakin2026_ex36c"
@@ -117,7 +117,7 @@ def ex36c : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "inSitu"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex37 : Datum :=
   { id := "kalyakin2026_ex37"
@@ -130,7 +130,7 @@ def ex37 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "focused"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state"), ("contrastiveFocus", "yes")] }
 
 def ex52a : Datum :=
   { id := "kalyakin2026_ex52a"
@@ -143,7 +143,7 @@ def ex52a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("repetitive", .acceptable)]
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex52b : Datum :=
   { id := "kalyakin2026_ex52b"
@@ -156,7 +156,7 @@ def ex52b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("restitutive", .acceptable)]
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex57 : Datum :=
   { id := "kalyakin2026_ex57"
@@ -169,7 +169,7 @@ def ex57 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("root", "manner"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "absent"), ("antecedentLV", "move"), ("targetLV", "move")] }
+    paperFeatures := [("root", "manner")] }
 
 def ex58 : Datum :=
   { id := "kalyakin2026_ex58"
@@ -182,7 +182,7 @@ def ex58 : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "manner"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "absent"), ("antecedentLV", "move"), ("targetLV", "move")] }
+    paperFeatures := [("root", "manner")] }
 
 def ex59 : Datum :=
   { id := "kalyakin2026_ex59"
@@ -195,7 +195,7 @@ def ex59 : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "manner"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "absent"), ("antecedentLV", "say"), ("targetLV", "say")] }
+    paperFeatures := [("root", "manner")] }
 
 def ex75 : Datum :=
   { id := "kalyakin2026_ex75"
@@ -208,7 +208,7 @@ def ex75 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "become"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex76 : Datum :=
   { id := "kalyakin2026_ex76"
@@ -221,7 +221,7 @@ def ex76 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "raised"), ("antecedentLV", "make"), ("targetLV", "become")] }
+    paperFeatures := [("root", "state")] }
 
 def ex78 : Datum :=
   { id := "kalyakin2026_ex78"
@@ -234,7 +234,7 @@ def ex78 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "become-CAUS")] }
+    paperFeatures := [("root", "state")] }
 
 def ex79 : Datum :=
   { id := "kalyakin2026_ex79"
@@ -247,7 +247,7 @@ def ex79 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "become"), ("targetLV", "become-CAUS")] }
+    paperFeatures := [("root", "state")] }
 
 def ex80 : Datum :=
   { id := "kalyakin2026_ex80"
@@ -260,7 +260,7 @@ def ex80 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make-CAUS")] }
+    paperFeatures := [("root", "state")] }
 
 def ex80_causee : Datum :=
   { id := "kalyakin2026_ex80_causee"
@@ -273,7 +273,7 @@ def ex80_causee : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make-CAUS")] }
+    paperFeatures := [("root", "state")] }
 
 def ex85 : Datum :=
   { id := "kalyakin2026_ex85"
@@ -286,7 +286,7 @@ def ex85 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "yes"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex86 : Datum :=
   { id := "kalyakin2026_ex86"
@@ -299,7 +299,7 @@ def ex86 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "yes"), ("rootSilent", "yes"), ("object", "silent"), ("antecedentLV", "make"), ("targetLV", "make")] }
+    paperFeatures := [("root", "state")] }
 
 def ex88 : Datum :=
   { id := "kalyakin2026_ex88"
@@ -312,7 +312,7 @@ def ex88 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("root", "state"), ("antipassive", "no"), ("rootSilent", "yes"), ("object", "raised"), ("antecedentLV", "make"), ("targetLV", "become")] }
+    paperFeatures := [("root", "state")] }
 
 def all : List Datum := [ex3, ex29, ex30a, ex30b, ex32, ex36a, ex36b, ex36c, ex37, ex52a, ex52b, ex57, ex58, ex59, ex75, ex76, ex78, ex79, ex80, ex80_causee, ex85, ex86, ex88]
 

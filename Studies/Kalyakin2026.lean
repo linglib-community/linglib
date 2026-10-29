@@ -24,12 +24,14 @@ Identity Requirement](##persian_verbalIdentity) rather than a larger site.
 * A root naming an end state merges with the direct object inside the complement of v, at the
   site of V; a root naming a manner adjoins to v and shares its site. The rows record the root's
   content in Beavers and Koontz-Garboden's kinds of entailment, `ArgumentStructure.Root.Kinds`.
-* A row records the ellipsis clause, what it leaves silent, and the light verbs of the antecedent
-  and the elided clause as their glosses print them; a difference between the two is a mismatch at
-  v, which the ellipsis tolerates when it spares v (`Minimalist.Ellipsis.identical_update_iff`). The
-  causative suffix of (78)–(80) heads a projection on top of vP or VoiceP, so it is located with
-  the light verb at v, the lowest head it could occupy.
-* The antecedent's construction is not recorded, so (85) and (86) have one configuration, as the
+* An example is read off its glosses: the light verbs of its two clauses, whether the
+  antecedent's root is pronounced in the ellipsis clause, its object and whether it is
+  antipassive. Only the root's content and a contrastive focus, which the paper marks in its
+  translations, are recorded as the paper states them. A difference between the light verbs is a
+  mismatch at v, tolerated when the ellipsis spares v (`Minimalist.Ellipsis.identical_update_iff`);
+  the causative suffix of (78)–(80) heads a projection on top of vP or VoiceP, so it is located
+  with the light verb at v, the lowest head it could occupy.
+* The antecedent's construction plays no part, so (85) and (86) have one configuration, as the
   paper's account of them requires: the root of an antipassive is too high to be deleted, whatever
   the antecedent.
 * (58) and (59) are marked ?? and count as not acceptable; the paper reports that the prediction
@@ -180,26 +182,91 @@ def Licit (e : Ellipsis clausalSpine) (c : Clause) : Prop :=
 instance (e : Ellipsis clausalSpine) : DecidablePred (Licit e) := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-! ### Reading the examples
+
+An example is read off its glosses in the paper's notation. Angle brackets enclose the elided
+material, and a coindexed trace inside them marks an argument moved out of the site (§3.4). The
+light verb of a clause is the token whose gloss names one of (4), and the antecedent clause ends
+at the punctuation after its light verb; the rest is the ellipsis clause. -/
+
+/-- A glossed token, its form and its gloss. -/
+abbrev Token := String × String
+
+/-- The word `p` occurs in `l`. -/
+def occurs (p l : List Char) : Bool := l.tails.any p.isPrefixOf
+
+/-- The gloss names the morpheme `m`, written after a hyphen and before a period, as the stems of
+the light verbs are. -/
+def glossesStem (g : String) (m : String) : Bool := occurs ('-' :: m.toList ++ ['.']) g.toList
+
+/-- The light verb a gloss names, with the causative suffix if it carries one. -/
+def lightVerb? (g : String) : Option LightVerb :=
+  ([("make", LightVerbStem.make), ("become", .become), ("move", .move), ("say", .say)].find?
+    fun (m, _) ↦ glossesStem g m).map fun (_, st) ↦ ⟨st, occurs "-CAUS".toList g.toList⟩
+
+/-- The token's gloss marks it ergative. -/
+def Token.ergative (t : Token) : Bool := occurs "ERG".toList t.2.toList
+
+/-- The token's gloss marks it absolutive. -/
+def Token.absolutive (t : Token) : Bool := occurs "ABS".toList t.2.toList
+
+/-- The form of a token without brackets, punctuation and indices. -/
+def Token.form (t : Token) : List Char :=
+  t.1.toList.filter (· ∉ ['⟨', '⟩', ',', '.', '?', 'ᵢ'])
+
+/-- The token is a trace. -/
+def Token.trace (t : Token) : Bool := t.form == ['t']
+
+/-- The tokens of a clause outside the angle brackets, and those inside. -/
+def pronounced : List Token → Bool → List Token × List Token
+  | [], _ => ([], [])
+  | t :: ts, inside =>
+    let inn := inside || t.1.toList.head? == some '⟨'
+    let (p, e) := pronounced ts (inn && t.1.toList.getLast? != some '⟩')
+    if inn then (p, t :: e) else (t :: p, e)
+
+/-- The antecedent clause, up to the punctuation after its light verb, and the ellipsis clause. -/
+def splitClauses (toks : List Token) : List Token × List Token :=
+  let pre := toks.takeWhile fun t ↦ (lightVerb? t.2).isNone
+  let post := toks.dropWhile fun t ↦ (lightVerb? t.2).isNone
+  let n := post.findIdx (fun t ↦ t.1.toList.getLast? ∈ [some ',', some '.', some '?']) + 1
+  (pre ++ post.take n, post.drop n)
+
+/-- The object of the ellipsis clause, read off its tokens. A trace in the site marks an argument
+moved out of it: raised to subject under an inchoative light verb, moved as a contrastive focus if
+the paper marks one, and moved without focus otherwise. Without a trace, a pronounced absolutive
+beside a pronounced ergative subject is an object in situ, an ergative clause or elided material
+has a silent object, and a clause with neither has none. -/
+def objectStatus (target : List Token) (lv : LightVerb) (focus : Bool) : ObjectStatus :=
+  let (p, e) := pronounced target false
+  if target.any Token.trace then
+    if lv.stem = .become then .raised else if focus then .focused else .moved
+  else if p.any Token.ergative && p.any Token.absolutive then .inSitu
+  else if target.any Token.ergative || !e.isEmpty then .silent
+  else .absent
+
 /-- An ellipsis clause of the paper with its judgment. -/
 structure Row where
   clause : Clause
   judgment : Judgment
 
+/-- The clause of an example. The root's content and a contrastive focus are the paper's
+statements; the rest is read off the glosses: the light verbs of the two clauses, whether the
+antecedent's root is pronounced in the ellipsis clause, the object, and antipassivization, an
+elided argument marked ergative (81b). -/
 def Row.ofDatum (ex : Datum) : Option Row := do
   let k ← ex.parse? "root" [("state", ({.state} : Root.Kinds)), ("manner", {.manner})]
-  let ap ← ex.parse? "antipassive" [("yes", true), ("no", false)]
-  let s ← ex.parse? "rootSilent" [("yes", true), ("no", false)]
-  let o ← ex.parse? "object"
-    [("absent", ObjectStatus.absent), ("silent", .silent), ("inSitu", .inSitu),
-      ("focused", .focused), ("moved", .moved), ("raised", .raised)]
+  let focus := ex.feature? "contrastiveFocus" == some "yes"
+  let (ante, target) := splitClauses ex.glossedTokens
+  let la ← ante.findSome? (lightVerb? ·.2)
+  let lt ← (target.reverse.findSome? (lightVerb? ·.2))
+  let nv ← (ante.takeWhile fun t ↦ (lightVerb? t.2).isNone).getLast?
+  let (p, e) := pronounced target false
+  let silent := !p.any (·.form == nv.form)
   let a := ex.readings.findSome? fun (n, _) ↦
     [("repetitive", AgainReading.repetitive), ("restitutive", .restitutive)].lookup n
-  let lv : List (String × LightVerb) :=
-    [("make", ⟨.make, false⟩), ("become", ⟨.become, false⟩), ("move", ⟨.move, false⟩),
-      ("say", ⟨.say, false⟩), ("make-CAUS", ⟨.make, true⟩), ("become-CAUS", ⟨.become, true⟩)]
-  let la ← ex.parse? "antecedentLV" lv
-  let lt ← ex.parse? "targetLV" lv
-  pure ⟨⟨{ kinds := k }, ap, s, o, a, (la, lt)⟩, ex.judgment⟩
+  pure ⟨⟨{ kinds := k }, e.any Token.ergative, silent, objectStatus target lt focus, a, (la, lt)⟩,
+    ex.judgment⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
