@@ -45,7 +45,7 @@ namespace DependencyGrammar
 
 open Finset WordOrder Relation
 
-variable {n : ℕ} (g : Graph n) (v : Fin n)
+variable {L : Type*} {n : ℕ} (g : Graph L n) (v : Fin n)
 
 /-! ### Blocks -/
 
@@ -101,7 +101,7 @@ def Graph.reorderPerm : Equiv.Perm (Fin n) :=
     Fintype.leftInverse_bijInv _, Fintype.rightInverse_bijInv _⟩
 
 /-- The graph with the dependents of `v` reordered by `σ`, each phrase moving as a block. -/
-def Graph.reorderDependents : Graph n := g.map (g.reorderPerm v σ)
+def Graph.reorderDependents : Graph L n := g.map (g.reorderPerm v σ)
 
 @[simp] theorem Graph.reorderPerm_apply (x : Fin n) : g.reorderPerm v σ x = g.reorderRank v σ x :=
   rfl
@@ -290,19 +290,19 @@ theorem Graph.reorderKey_lt_iff_of_notMem {x y : Fin n} (hx : x ∉ g.yield v) :
 /-! #### The rank of a position in the yield, decomposed -/
 
 /-- Positions outside the yield of `v` and before it. -/
-private def base (g : Graph n) (v : Fin n) : ℕ := #{y | y ∉ g.yield v ∧ y < v}
+private def base (g : Graph L n) (v : Fin n) : ℕ := #{y | y ∉ g.yield v ∧ y < v}
 
 /-- The words of the blocks placed before `c` by `σ`. -/
-private def before (g : Graph n) (v : Fin n) (σ : Equiv.Perm (g.siblings v)) (c : g.siblings v) :
+private def before (g : Graph L n) (v : Fin n) (σ : Equiv.Perm (g.siblings v)) (c : g.siblings v) :
     ℕ :=
   #{y | y ∈ g.yield v ∧ g.siblingRank v (σ (g.blockHead v y)) < g.siblingRank v (σ c)}
 
 /-- The words of the block of `x` before `x`. -/
-private def off (g : Graph n) (v : Fin n) (x : Fin n) : ℕ :=
+private def off (g : Graph L n) (v : Fin n) (x : Fin n) : ℕ :=
   #{y | y ∈ g.yield v ∧ g.blockHead v y = g.blockHead v x ∧ y < x}
 
 /-- The words of the block of `c`. -/
-private def size (g : Graph n) (v : Fin n) (c : g.siblings v) : ℕ :=
+private def size (g : Graph L n) (v : Fin n) (c : g.siblings v) : ℕ :=
   #{y | y ∈ g.yield v ∧ g.blockHead v y = c}
 
 private theorem Graph.reorderRank_of_mem {x : Fin n} (hx : x ∈ g.yield v) :

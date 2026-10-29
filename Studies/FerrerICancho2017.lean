@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Length
 public import Linglib.Syntax.DependencyGrammar.Catena
@@ -45,7 +46,7 @@ namespace FerrerICancho2017
 
 open DependencyGrammar Morphology Finset Equiv Nat
 
-variable {n : ℕ} (g : Graph n)
+variable {L : Type*} {n : ℕ} (g : Graph L n)
 
 /-- The unordered pairs of links sharing no endpoint — the pairs that can
 cross at all, [ferrer-i-cancho-2017]'s potential crossings. Each pair is
@@ -323,7 +324,7 @@ theorem six_mul_sum_crossings_map_add_of_isTree (hT : g.IsTree) :
 /-- Fig. 1: *She loved me for the dangers I had passed* in [melcuk-1988]'s analysis, where the
 preposition heads its object and the auxiliary heads the relative clause. Relations other than
 the subject and object of *loved*, which the caption names, are `dep`. -/
-def fig1 : Tree 9 :=
+def fig1 : Tree UD.DepRel 9 :=
   .mk' (.ofArcs [Word.mk' "She" .PRON, Word.mk' "loved" .VERB, Word.mk' "me" .PRON,
       Word.mk' "for" .ADP, Word.mk' "the" .DET, Word.mk' "dangers" .NOUN, Word.mk' "I" .PRON,
       Word.mk' "had" .AUX, Word.mk' "passed" .VERB]
@@ -348,7 +349,7 @@ theorem fig1_sum_crossings_map :
 
 /-- A star tree, *John gave Mary books*: every link meets the head, so no pair of links can
 cross. -/
-def star : Tree 4 :=
+def star : Tree UD.DepRel 4 :=
   .mk' (.ofArcs [Word.mk' "John" .PROPN, Word.mk' "gave" .VERB, Word.mk' "Mary" .PROPN,
       Word.mk' "books" .NOUN]
     1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)])

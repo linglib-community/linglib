@@ -35,8 +35,8 @@ extracted word is placed by a positional head outside the landmark tree.
 ## Implementation notes
 
 * The landmark rules are a `DefaultInheritance` network over the concepts *parent* and
-  *subordinate parent*, and a landmark relation is checked for `IsTree` and `IsProjective` as a
-  `DependencyGrammar.Graph` with UD's `dep` on each arc.
+  *subordinate parent*, and a landmark relation is checked for `IsTree` and `IsProjective` as an
+  unlabeled `DependencyGrammar.Graph`.
 * Each dependency type fixes the direction of its head with respect to its dependent
   (`Rel.direction`), and an extractee's direction overrides an object's.
 * Chosen landmarks range over each word's heads; the Best Landmark Principle's preference for the
@@ -224,12 +224,11 @@ instance : Decidable (A.IsLandmark w p) := decidable_of_iff _ isLandmark_iff.sym
 
 variable (A) (L : Fin n → Fin n → Prop) [DecidableRel L] (root : Fin n)
 
-/-- The graph of a landmark relation, `L w p` saying that `p` is the landmark of `w`, rooted at
-`root`, with an arc from each word's landmark to the word, labelled with UD's unspecified relation.
--/
-def graphOf : Graph n where
+/-- The unlabeled graph of a landmark relation, `L w p` saying that `p` is the landmark of `w`,
+rooted at `root`, with an arc from each word's landmark to the word. -/
+def graphOf : Graph Unit n where
   words := A.words
-  label p w := if L w p then some .dep else none
+  label p w := if L w p then some () else none
   root := root
 
 /-- Every word stands on the side of its landmark that its dependency on the landmark fixes, the
@@ -251,7 +250,7 @@ instance : Decidable (A.Orders L root) := inferInstanceAs (Decidable (_ ∧ _))
 instance : Decidable (A.ExtractionBy L) := inferInstanceAs (Decidable (∀ _ _, _))
 
 /-- The graph in which every parent is a landmark, as in the diagrams (52) to (55). -/
-abbrev parentGraph : Graph n := A.graphOf (fun w p ↦ A.Parent p w) A.root
+abbrev parentGraph : Graph Unit n := A.graphOf (fun w p ↦ A.Parent p w) A.root
 
 /-- The positional head of an extracted word, by the revision's start-rule of extraction, is the
 head it is extracted from. -/

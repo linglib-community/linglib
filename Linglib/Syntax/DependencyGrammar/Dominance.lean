@@ -62,25 +62,25 @@ namespace DependencyGrammar
 
 open Relation
 
-variable {n : ℕ} {g : Graph n} {u v w x y : Fin n}
+variable {L : Type*} {n : ℕ} {g : Graph L n} {u v w x y : Fin n}
 
 /-! ### Dominance -/
 
 /-- `v` dominates `x` when a possibly empty chain of arcs leads from `v` to `x`. -/
-abbrev Dominates (g : Graph n) : Fin n → Fin n → Prop :=
+abbrev Dominates (g : Graph L n) : Fin n → Fin n → Prop :=
   ReflTransGen g.Adj
 
 /-- The yield of `v` is the set of positions `v` dominates, `v` itself included. -/
-def Graph.yield (g : Graph n) (v : Fin n) : Set (Fin n) :=
+def Graph.yield (g : Graph L n) (v : Fin n) : Set (Fin n) :=
   {x | Dominates g v x}
 
 @[simp] theorem Graph.mem_yield : x ∈ g.yield v ↔ Dominates g v x := Iff.rfl
 
-instance (g : Graph n) (v : Fin n) : DecidablePred (· ∈ g.yield v) :=
+instance (g : Graph L n) (v : Fin n) : DecidablePred (· ∈ g.yield v) :=
   fun _ ↦ inferInstanceAs (Decidable (Dominates g v _))
 
 /-- The projection of `v` is its yield in ascending order of position. -/
-def Graph.projection (g : Graph n) (v : Fin n) : List (Fin n) :=
+def Graph.projection (g : Graph L n) (v : Fin n) : List (Fin n) :=
   (List.finRange n).filter (fun x ↦ decide (x ∈ g.yield v))
 
 @[simp] theorem Graph.mem_projection : x ∈ g.projection v ↔ Dominates g v x := by
@@ -114,18 +114,18 @@ theorem exists_adj_adj_of_not_dominates (hu : Dominates g x u) (hv : Dominates g
 
 /-- A dependency graph is a forest when no position dominates its own head and no position has
 two heads ([kuhlmann-nivre-2006], Definition 2). -/
-structure Graph.IsForest (g : Graph n) : Prop where
+structure Graph.IsForest (g : Graph L n) : Prop where
   /-- The graph is acyclic: a dependent does not dominate its head. -/
   not_dominates_of_adj ⦃v w : Fin n⦄ : g.Adj v w → ¬ Dominates g w v
   /-- A position has at most one head. -/
   leftUnique_adj : Relator.LeftUnique g.Adj
 
 /-- A dependency graph is a tree when it is a forest whose root dominates every position. -/
-structure Graph.IsTree (g : Graph n) : Prop extends g.IsForest where
+structure Graph.IsTree (g : Graph L n) : Prop extends g.IsForest where
   /-- The root dominates every position. -/
   root_dominates (v : Fin n) : Dominates g g.root v
 
-instance (g : Graph n) : Decidable g.IsForest :=
+instance (g : Graph L n) : Decidable g.IsForest :=
   decidable_of_iff ((∀ v w, g.Adj v w → ¬ Dominates g w v) ∧
       ∀ w u, g.Adj u w → ∀ v, g.Adj v w → u = v)
     ⟨fun h ↦ ⟨fun _ _ ↦ h.1 _ _, fun _ _ _ hu hv ↦ h.2 _ _ hu _ hv⟩,
@@ -169,8 +169,8 @@ theorem disjoint_yield_of_adj (hw : g.Adj v w) (hu : g.Adj v u) (hne : w ≠ u) 
 
 end Graph.IsForest
 
-theorem Graph.not_isForest_enhance (hv : g.Adj v w) (hx : x ≠ v) (r : UD.DepRel)
-    (extra : List (Fin n × Fin n × UD.DepRel)) (hmem : (x, w, r) ∈ extra) :
+theorem Graph.not_isForest_enhance (hv : g.Adj v w) (hx : x ≠ v) (r : L)
+    (extra : List (Fin n × Fin n × L)) (hmem : (x, w, r) ∈ extra) :
     ¬ (g.enhance extra).IsForest := fun hF ↦
   hx (hF.leftUnique_adj (enhance_adj.2 (.inr ⟨r, hmem⟩)) (enhance_adj.2 (.inl hv)))
 
@@ -214,7 +214,7 @@ theorem Graph.isTree_iff_leftUnique_adj :
   obtain ⟨y, hdy, hyd⟩ := TransGen.tail'_iff.1 (not_not.1 hdS)
   exact hc (TransGen.head' hcd (hU hyd hcd ▸ hdy))
 
-instance (g : Graph n) : Decidable g.IsTree :=
+instance (g : Graph L n) : Decidable g.IsTree :=
   decidable_of_iff ((∀ w u, g.Adj u w → ∀ v, g.Adj v w → u = v) ∧
       (∀ v, ¬ g.Adj v g.root) ∧ ∀ v, Dominates g g.root v)
     ⟨fun h ↦ g.isTree_iff_leftUnique_adj.2 ⟨fun _ _ _ hu hv ↦ h.1 _ _ hu _ hv, h.2⟩,
@@ -224,7 +224,7 @@ instance (g : Graph n) : Decidable g.IsTree :=
 
 /-- The least head of `v`, and `v` itself when it has none. In a forest it is the head of every
 position that has one. -/
-def Graph.headOf (g : Graph n) (v : Fin n) : Fin n :=
+def Graph.headOf (g : Graph L n) (v : Fin n) : Fin n :=
   (g.parents v).min.untopD v
 
 theorem Graph.headOf_of_forall_not_adj (h : ∀ u, ¬ g.Adj u v) : g.headOf v = v := by
@@ -240,7 +240,7 @@ theorem Graph.IsForest.headOf_eq (hF : g.IsForest) (h : g.Adj u v) : g.headOf v 
 /-! ### The dominance order -/
 
 /-- The positions of `g` ordered by dominance instead of by position. -/
-def DominanceOrder (_g : Graph n) := Fin n
+def DominanceOrder (_g : Graph L n) := Fin n
 
 instance [hT : Fact g.IsTree] : Fact g.IsForest := ⟨hT.out.toIsForest⟩
 
@@ -293,19 +293,19 @@ end DominanceOrder
 /-! ### Bundled trees -/
 
 /-- A dependency tree is a graph bundled with a proof that it is a tree. -/
-structure Tree (n : ℕ) extends Graph n where
+structure Tree (L : Type*) (n : ℕ) extends Graph L n where
   /-- The underlying graph is a tree. -/
   isTree : toGraph.IsTree
 
 namespace Tree
 
-instance : Coe (Tree n) (Graph n) := ⟨toGraph⟩
+instance : Coe (Tree L n) (Graph L n) := ⟨toGraph⟩
 
 /-- Bundle a graph with its tree-hood, decided by default. -/
-def mk' (g : Graph n) (h : g.IsTree := by decide) : Tree n := ⟨g, h⟩
+def mk' (g : Graph L n) (h : g.IsTree := by decide) : Tree L n := ⟨g, h⟩
 
 /-- A bundled tree's tree-hood, which makes the instances of its dominance order available. -/
-instance instFact (t : Tree n) : Fact t.toGraph.IsTree := ⟨t.isTree⟩
+instance instFact (t : Tree L n) : Fact t.toGraph.IsTree := ⟨t.isTree⟩
 
 end Tree
 

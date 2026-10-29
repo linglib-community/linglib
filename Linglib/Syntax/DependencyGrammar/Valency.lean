@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Basic
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Syntax.WordOrder
@@ -62,7 +63,7 @@ structure Valency.Slot where
 /-- The valency of a word is the list of dependent slots it requires or allows. -/
 abbrev Valency := List Valency.Slot
 
-/-- The per-position frame table supplied alongside a `Graph n`. -/
+/-- The per-position frame table supplied alongside a `Graph UD.DepRel n`. -/
 abbrev Frames (n : ℕ) := Fin n → Option Valency
 
 /-- A sparse frame table, in which positions not listed carry no frame. -/
@@ -114,16 +115,16 @@ section Satisfaction
 variable {n : ℕ}
 
 /-- The dependents of `v` linked by relation `rel`. -/
-def Graph.fillersOf (g : Graph n) (v : Fin n) (rel : UD.DepRel) : Finset (Fin n) :=
+def Graph.fillersOf (g : Graph UD.DepRel n) (v : Fin n) (rel : UD.DepRel) : Finset (Fin n) :=
   {w ∈ g.children v | g.label v w = some rel}
 
 /-- The graph satisfies a valency at head `v` when the head has the slot's direction with
 respect to every filler of every slot, and required slots are filled. -/
-def SatisfiesValency (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
+def SatisfiesValency (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) : Prop :=
   ∀ slot ∈ val, (∀ w ∈ g.fillersOf v slot.depType, slot.direction.Orders v w) ∧
     (slot.required → (g.fillersOf v slot.depType).Nonempty)
 
-instance (g : Graph n) (v : Fin n) (val : Valency) :
+instance (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) :
     Decidable (SatisfiesValency g v val) :=
   List.decidableBAll _ val
 
@@ -131,22 +132,22 @@ instance (g : Graph n) (v : Fin n) (val : Valency) :
 half of valency checking (`SatisfiesValency` only checks that required slots are filled). The
 clausal core relations are licensed by clause-embedding frames, which `Valency.ofFrame` does not
 schematize. -/
-def CoreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
+def CoreArgsLicensed (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) : Prop :=
   ∀ w ∈ g.children v, ∀ r ∈ g.label v w,
     r.kind = .cell .core .nominal → ∃ slot ∈ val, slot.depType = r
 
-instance (g : Graph n) (v : Fin n) (val : Valency) :
+instance (g : Graph UD.DepRel n) (v : Fin n) (val : Valency) :
     Decidable (CoreArgsLicensed g v val) :=
   Finset.decidableDforallFinset
 
 /-- Each verb's dependents satisfy its frame, with required slots filled in the
     right direction (`SatisfiesValency`) and no unlicensed core arguments
     (`CoreArgsLicensed`). Verbs without a frame are unconstrained. -/
-def Graph.SatisfiesFrames (g : Graph n) (frames : Frames n) : Prop :=
+def Graph.SatisfiesFrames (g : Graph UD.DepRel n) (frames : Frames n) : Prop :=
   ∀ v, (g.words v).cat = .VERB → ∀ val ∈ frames v,
     SatisfiesValency g v val ∧ CoreArgsLicensed g v val
 
-instance (g : Graph n) (frames : Frames n) :
+instance (g : Graph UD.DepRel n) (frames : Frames n) :
     Decidable (g.SatisfiesFrames frames) :=
   inferInstanceAs (Decidable (∀ _, _))
 

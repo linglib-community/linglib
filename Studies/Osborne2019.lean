@@ -81,12 +81,12 @@ abbrev run_ := English.Verbs.run.toWord .base
 private def citationValency (v : English.Verbs.Verb) : Valency :=
   (v.valency.frames.head?.map Valency.ofFrame).getD []
 
-def intransTree : Graph 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
+def intransTree : Graph UD.DepRel 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
 
-def transTree : Graph 3 :=
+def transTree : Graph UD.DepRel 3 :=
   .ofArcs [john, devours, pizza] 1 [(1, 0, .nsubj), (1, 2, .obj)]
 
-def ditransTree : Graph 4 :=
+def ditransTree : Graph UD.DepRel 4 :=
   .ofArcs [john, gives, mary, book] 1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
 
 example : intransTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
@@ -97,11 +97,11 @@ example : ditransTree.SatisfiesFrames (.ofList [(1, citationValency English.Verb
   decide
 
 /-- *John sleeps book, an intransitive with a spurious object. -/
-def intransWithObj : Graph 3 :=
+def intransWithObj : Graph UD.DepRel 3 :=
   .ofArcs [john, sleeps, book] 1 [(1, 0, .nsubj), (1, 2, .obj)]
 
 /-- *John devours, a transitive missing its object. -/
-def transNoObj : Graph 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
+def transNoObj : Graph UD.DepRel 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
 
 example :
     ¬ intransWithObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
@@ -143,10 +143,10 @@ private def passiveValency (v : English.Verbs.Verb) : Valency :=
   (v.valency.frames.head?.map fun fr ↦ voiceValency (Voice.passive fr)).getD []
 
 /-- *The ball was kicked (by John)* satisfies the participle's derived valency. -/
-def passiveTree : Graph 4 :=
+def passiveTree : Graph UD.DepRel 4 :=
   .ofArcs [the_, ball, was_, kickedPass] 3 [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux)]
 
-def longPassiveTree : Graph 6 :=
+def longPassiveTree : Graph UD.DepRel 6 :=
   .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obl), (5, 4, .case)]
 
@@ -156,7 +156,7 @@ example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.V
   decide
 
 /-- *The ball was kicked the pizza, a passive with a leftover object. -/
-def passiveWithObj : Graph 6 :=
+def passiveWithObj : Graph UD.DepRel 6 :=
   .ofArcs [the_, ball, was_, kickedPass, the_, pizza] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obj), (5, 4, .det)]
 
@@ -164,12 +164,12 @@ example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English
   decide
 
 /-- In *Mary was given a book* the passive of a double-object verb keeps its second object. -/
-def ditransPassiveTree : Graph 5 :=
+def ditransPassiveTree : Graph UD.DepRel 5 :=
   .ofArcs [mary, was_, givenPass, a_, book] 2
     [(2, 0, .nsubj), (2, 1, .aux), (2, 4, .obj), (4, 3, .det)]
 
 /-- *Mary was given, with the second object missing. -/
-def ditransPassiveNoObj : Graph 3 :=
+def ditransPassiveNoObj : Graph UD.DepRel 3 :=
   .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .aux)]
 
 example :
@@ -205,14 +205,14 @@ sleep* leaves the embedded verb without a subject; control and raising differ th
 not structurally. The enhanced graph recovers the subject arc, an argument relation the
 basic tree does not carry and cannot, since a second head breaks the tree. -/
 
-def subjControl : Graph 4 :=
+def subjControl : Graph UD.DepRel 4 :=
   .ofArcs [john, manages, to_, sleep_] 1 [(1, 0, .nsubj), (1, 3, .xcomp), (3, 2, .mark)]
 
-def objControl : Graph 5 :=
+def objControl : Graph UD.DepRel 5 :=
   .ofArcs [john, persuaded, mary, to_, run_] 1
     [(1, 0, .nsubj), (1, 2, .obj), (1, 4, .xcomp), (4, 3, .mark)]
 
-def raising : Graph 4 :=
+def raising : Graph UD.DepRel 4 :=
   .ofArcs [john, seems, to_, sleep_] 1 [(1, 0, .nsubj), (1, 3, .xcomp), (3, 2, .mark)]
 
 example : HasUnrepresentedArg subjControl (subjControl.enhance [(3, 0, .nsubj)]) 0 :=

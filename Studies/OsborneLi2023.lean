@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Basic
 public import Linglib.Data.UD.UPOS
 public import Linglib.Morphology.Word.Basic
@@ -50,7 +51,7 @@ open Morphology (Word)
 
 section Valents
 
-variable {n : ℕ} (g : Graph n)
+variable {n : ℕ} (g : Graph UD.DepRel n)
 
 /-- The relations of valents are the core-argument relations and the oblique, which UD classifies
 as non-core. -/
@@ -112,7 +113,7 @@ end Valents
 dependent expression and its intended antecedent, and the example's row. -/
 structure Stimulus where
   n : ℕ
-  tree : Graph n
+  tree : Graph UD.DepRel n
   pred : Fin n
   ana : Fin n
   ante : Fin n
