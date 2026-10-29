@@ -6,6 +6,7 @@ public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Resolution
 public import Linglib.Semantics.Questions.Partition.Inquisitive
 public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Exhaustification.Excluder
 
 /-!
 # Answerhood operators on Hamblin sets
@@ -46,7 +47,8 @@ operator on the members of `H` true at `w`:
   center of a question;
 - `KnowsSomeAnswer H w Dox`, mention-some knowledge of a true member, which knowing the answer
   implies when there is a true member and equals on a unique one;
-- `exhCell H p`, [fox-2018]'s cells;
+- `Exhaustification.exh H p`, [fox-2018]'s exhaustification of a member against the question,
+  which holds where the member is the strongest true one (`mem_exh_iff_isStrongestTrueAnswer`);
 - `F.toSetFamily`, a finite family of finite propositions, on which the
   presuppositions are decidable.
 
@@ -415,24 +417,29 @@ theorem isExhaustivelyResolvable_box_iff {W' : Type*} {R : SetRel W' W}
     rintro q ⟨⟨r, hr, rfl⟩, hx⟩
     exact mono p r (hmin ⟨hr, (mem r).1 hx⟩)
 
-/-! ### Cells ([fox-2018]) -/
+/-! ### Exhaustification ([fox-2018])
 
-/-- The cell of `p` is the set of worlds where `p` is the strongest true member. -/
-def exhCell (p : Set W) : Set W := {w | IsStrongestTrueAnswer H w p}
-
-@[simp] theorem mem_exhCell {p : Set W} {w : W} :
-    w ∈ exhCell H p ↔ IsStrongestTrueAnswer H w p := Iff.rfl
-
-theorem exhCell_subset (p : Set W) : exhCell H p ⊆ p := fun _ h => h.1.2
+Exhaustifying a member `p` against `H`, `Exhaustification.exh H p`, asserts `p` and denies every
+member `p` does not entail. On a member it holds exactly where `p` is the strongest true member,
+so it is a cell of the partition. -/
 
 theorem trueAnswers_eq_of_isStrongestTrueAnswer {p : Set W}
     (h : IsStrongestTrueAnswer H w p) : trueAnswers H w = {q ∈ H | p ⊆ q} :=
   Set.ext fun _ => ⟨fun hq => ⟨hq.1, h.2 hq⟩, fun ⟨hq, hpq⟩ => ⟨hq, hpq h.1.2⟩⟩
 
-theorem exhCell_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
-    exhCell H p = strongAnswer H w := by
+variable {H w} in
+/-- A member exhaustified against the question holds where it is the strongest true member: Fox's
+`Exh(Q, p)` is the set of worlds `w` with `Max_inf(Q, w) = p` ([fox-2018], (11), after
+[dayal-1996]'s `Max_inf`). -/
+theorem mem_exh_iff_isStrongestTrueAnswer {p : Set W} (hp : p ∈ H) :
+    w ∈ Exhaustification.exh H p ↔ IsStrongestTrueAnswer H w p :=
+  ⟨fun ⟨hw, h⟩ => ⟨⟨hp, hw⟩, fun q ⟨hq, hwq⟩ => h q hq hwq⟩,
+    fun ⟨⟨_, hw⟩, h⟩ => ⟨hw, fun _ hq hwq => h ⟨hq, hwq⟩⟩⟩
+
+theorem exh_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
+    Exhaustification.exh H p = strongAnswer H w := by
   ext v
-  rw [mem_exhCell, mem_strongAnswer]
+  rw [mem_exh_iff_isStrongestTrueAnswer h.1.1, mem_strongAnswer]
   constructor
   · exact fun hv q hq =>
       ⟨fun hwq => h.2 ⟨hq, hwq⟩ hv.1.2, fun hvq => hv.2 ⟨hq, hvq⟩ h.1.2⟩
@@ -441,16 +448,16 @@ theorem exhCell_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
 
 /-- Dayal's strong operator Ans-D/H, [heim-1994]'s strengthening of Ans-D, returns the worlds with
 the same strongest true member as `w`. -/
-noncomputable def dayalStrongAns : Option (Set W) := (dayalAns H w).map (exhCell H)
+noncomputable def dayalStrongAns : Option (Set W) := (dayalAns H w).map (Exhaustification.exh H)
 
 theorem dayalStrongAns_eq_some_iff {A : Set W} :
     dayalStrongAns H w = some A ↔ IsExhaustivelyResolvable H w ∧ A = strongAnswer H w := by
   simp only [dayalStrongAns, Option.map_eq_some_iff, dayalAns_eq_some_iff]
   constructor
   · rintro ⟨p, hp, rfl⟩
-    exact ⟨⟨p, hp⟩, exhCell_eq_strongAnswer H w hp⟩
+    exact ⟨⟨p, hp⟩, exh_eq_strongAnswer H w hp⟩
   · rintro ⟨⟨p, hp⟩, rfl⟩
-    exact ⟨p, hp, exhCell_eq_strongAnswer H w hp⟩
+    exact ⟨p, hp, exh_eq_strongAnswer H w hp⟩
 
 /-! ### Finite Hamblin sets
 
