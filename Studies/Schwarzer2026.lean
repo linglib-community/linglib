@@ -74,8 +74,8 @@ after it the closeness analyses check the first conjunct too. -/
 theorem accounts_diverge_embedded :
     (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {N}) o.phrases ↔
         Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧
-      checkedOnce rootPosition = List.take 1 :=
-  ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ by cases cs <;> rfl⟩
+      checkedOnce (α := Conjunct) rootPosition = List.take 1 :=
+  ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ by rw [checkedOnce_eq_toList_nearest]; cases cs <;> rfl⟩
 
 /-! ### Experiment 1 -/
 

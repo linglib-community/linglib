@@ -5,39 +5,37 @@ public import Linglib.Syntax.Cat
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.List.Infix
+public import Mathlib.Data.List.ReduceOption
 public import Mathlib.Data.List.Sections
+public import Mathlib.Data.List.TFAE
 
 /-!
 # Bruening and Al Khalaf 2020: category mismatches in coordination
 
-Bruening and Al Khalaf argue that coordinated arguments must match in category and may violate
-selection in two configurations only, a clause beside a noun phrase where only noun phrases are
-selected and a non-*ly* adverb beside an adjective before a noun. The violating conjunct is never
-the one next to the selector, and the two violations are those ellipsis and displacement permit.
-They derive the clausal case from a null N that makes a noun phrase of a clause but bears none of
-the semantic selectional features (S-features) a selector checks, with c-selection checked against
-every conjunct and S-features checked once, as soon as possible, in a structure built from left to
-right. A coordinate phrase stacks its conjuncts' features by recency, so a selector that precedes it
-checks the first conjunct and one that follows it the last, `HeadDirection.nearest`, where the
-accounts that make the first conjunct prominent check `List.take 1`. The adverbial case rests on a
-silent Adv head that ellipsis or a partial copy can leave out. The paper's examples are the rows of
-`Data/Examples/BrueningAlKhalaf2020`.
-
-## Main definitions
-
-* `Conjunct`: a phrase as it enters a coordination, itself or a clause under the null N.
-* `Licensed`, `Satisfies`, `Admits`: the conditions on coordinated arguments and predicates.
-* `checkedOnce`: the conjunct a selector checks its S-features against, once.
-* `NominalCoordination`, `Displaced`: an adverb's two escapes from the ban on modifying a noun.
-
-* `argument_rows` and its siblings: the model's verdict on each example is its judgment.
+Coordinated arguments must match in category, and they violate selection in two configurations
+only: a clause beside a noun phrase where only noun phrases are selected, and a non-*ly* adverb
+beside an adjective before a noun. A clause can be a noun phrase under a null N, which bears none
+of the semantic selectional features (S-features) a selector checks. C-selection persists and is
+checked against every conjunct; S-features are checked once, at the first stage of a left-to-right
+derivation at which the selector meets part of the coordination, against the conjunct on top of the
+coordination's stack of features. So [a selector checks the conjunct next to
+it](##checkedOnce_eq_toList_nearest), [which it selects in its own
+category](##mem_cats_of_mem_nearest), and [the mismatches coordination permits are those of
+ellipsis and leftward displacement](##admits_tfae). A non-*ly* adverb has a
+silent Adv head, which ellipsis can take with the noun of the first of two coordinated N′s, so
+that [it can be coordinated with an adjective that follows it](##nominalCoordination_iff). The
+paper's examples are the rows of `Data/Examples/BrueningAlKhalaf2020`.
 
 ## Implementation notes
 
 * Coordinated predicates bear the supercategory Pred of Sag, Gazdar, Wasow and Weisler, which is
   all coordination compares, so they need only `Satisfies`. The coordinator is left implicit.
-* Argument–modifier coordination (§2.1) and the displacement of clauses (§§4.1, 4.5) are not
-  formalized. The questionable (69) counts as excluded.
+* A clause displaced to the left is related to the selected position by a null operator of
+  category NP, which bears S-features, as (72a) requires; any other phrase displaced to the left,
+  and every phrase displaced to the right ((94), (95)), leaves its copy there.
+* Argument–modifier coordination (§2.1) is not formalized. The questionable (69) counts as
+  excluded.
 
 ## References
 
@@ -54,7 +52,7 @@ namespace BrueningAlKhalaf2020
 open PhraseStructure (Cat)
 open PhraseStructure.Cat (N V Adj Adv P)
 
-variable {α β : Type*}
+variable {α : Type*}
 
 /-! ### Conjuncts -/
 
@@ -75,14 +73,6 @@ def cat : Conjunct → Cat
   | phrase c => c
   | nullN => N
 
-/-- A conjunct bears S-features unless its head is the null N, which is semantically empty
-(fn. 27). -/
-def Contentful : Conjunct → Prop
-  | phrase _ => True
-  | nullN => False
-
-instance : DecidablePred Contentful := fun x ↦ by cases x <;> unfold Contentful <;> infer_instance
-
 /-- `ofCat c` lists the conjuncts a phrase of category `c` can be, itself and, for a clause, the
 noun phrase the null N makes of it. -/
 def ofCat : Cat → List Conjunct
@@ -92,12 +82,49 @@ def ofCat : Cat → List Conjunct
 theorem mem_ofCat {x : Conjunct} {c : Cat} : x ∈ ofCat c ↔ x = phrase c ∨ c = .C ∧ x = nullN := by
   unfold ofCat; split <;> simp_all
 
-theorem eq_phrase_of_mem_ofCat {x : Conjunct} {c : Cat} (h : x ∈ ofCat c) (hx : x.Contentful) :
-    x = phrase c := by
-  rcases mem_ofCat.1 h with h | ⟨-, rfl⟩
-  exacts [h, hx.elim]
+theorem eq_phrase_of_mem_ofCat {x : Conjunct} {c : Cat} (h : x ∈ ofCat c) (hx : x ≠ nullN) :
+    x = phrase c :=
+  (mem_ofCat.1 h).resolve_right fun h ↦ hx h.2
 
 end Conjunct
+
+/-! ### The left-to-right derivation -/
+
+section Derivation
+
+variable [DecidableEq α]
+
+/-- A derivation built from left to right merges the selector, written `none`, and the conjuncts
+`some x` in the order they are pronounced, the selector first if it precedes the coordination
+(§4.3). -/
+def derivationOrder : HeadDirection → List α → List (Option α)
+  | .headInitial, cs => none :: cs.map some
+  | .headFinal, cs => cs.map some ++ [none]
+
+/-- A selector checks its S-features once, at the first stage of the derivation at which it and
+part of the coordination have been merged ((87), (91b)), against the conjunct merged last, which
+is on top of the coordination's stack of features ((92)); the features then delete (§4.3). -/
+def checkedOnce (d : HeadDirection) (cs : List α) : List α :=
+  ((derivationOrder d cs).inits.findSome? fun s ↦
+    if none ∈ s then s.reduceOption.getLast? else none).toList
+
+/-- The directionality effect falls out of the derivation: a selector that precedes a coordination
+checks its first conjunct, one that follows it the last (§4.3). -/
+theorem checkedOnce_eq_toList_nearest (d : HeadDirection) (cs : List α) :
+    checkedOnce d cs = (d.nearest cs).toList := by
+  cases d
+  · rcases cs with _ | ⟨c, _ | _⟩ <;> simp [checkedOnce, derivationOrder, List.reduceOption]
+  · have : (cs.map some).reduceOption = cs := by simp [List.reduceOption, List.filterMap_map]
+    rw [checkedOnce, derivationOrder.eq_def, List.inits_append, List.findSome?_append,
+      List.findSome?_eq_none_iff.2 fun s hs ↦ ite_eq_right_iff.2 fun h ↦ ?_]
+    · simp [List.reduceOption_append, this]
+    · simpa using ((List.mem_inits _ _).1 hs).subset h
+
+@[simp] theorem mem_checkedOnce {d : HeadDirection} {cs : List α} {x : α} :
+    x ∈ checkedOnce d cs ↔ x ∈ d.nearest cs := by
+  rw [checkedOnce_eq_toList_nearest, Option.mem_toList, Option.mem_def]
+
+end Derivation
 
 /-! ### Licensing -/
 
@@ -113,20 +140,11 @@ def Coordinable (cs : List Conjunct) : Prop :=
 
 /-- A coordination satisfies a selector that c-selects `cats` and checks its S-features against
 the conjuncts `check cs` when every conjunct is of a c-selected category, c-selection persisting
-and being checked against each (85), and the conjuncts in `check cs` bear S-features (88). -/
+and being checked against each (85), and none of the conjuncts in `check cs` is the null N, which
+cannot check S-features (fn. 27). -/
 def Satisfies (check : List Conjunct → List Conjunct) (cats : Finset Cat)
     (cs : List Conjunct) : Prop :=
-  (∀ x ∈ cs, x.cat ∈ cats) ∧ ∀ x ∈ check cs, x.Contentful
-
-/-- A selector on side `d` checks its S-features once, as soon as it can, and they then delete
-(§4.3). The coordinate phrase stacks its conjuncts' features by recency (92), so a selector that
-precedes it checks the stack of the first conjunct alone ((87), (90)) and one that follows it the
-finished stack, whose last conjunct is on top ((92)). -/
-def checkedOnce (d : HeadDirection) (cs : List Conjunct) : List Conjunct := (d.nearest cs).toList
-
-@[simp] theorem mem_checkedOnce {cs : List Conjunct} {x : Conjunct} :
-    x ∈ checkedOnce d cs ↔ x ∈ d.nearest cs :=
-  Option.mem_toList
+  (∀ x ∈ cs, x.cat ∈ cats) ∧ nullN ∉ check cs
 
 /-- A coordinated argument is licensed when its conjuncts share a category and satisfy the
 selector. -/
@@ -134,19 +152,22 @@ def Licensed (check : List Conjunct → List Conjunct) (cats : Finset Cat)
     (cs : List Conjunct) : Prop :=
   Coordinable cs ∧ Satisfies check cats cs
 
-instance : DecidablePred Coordinable := fun _ ↦ by unfold Coordinable; infer_instance
+instance : DecidablePred Coordinable :=
+  fun cs ↦ inferInstanceAs (Decidable (∀ x ∈ cs, ∀ y ∈ cs, x.cat = y.cat))
 
-instance : DecidablePred (Satisfies check cats) := fun _ ↦ by unfold Satisfies; infer_instance
+instance : DecidablePred (Satisfies check cats) :=
+  fun cs ↦ inferInstanceAs (Decidable ((∀ x ∈ cs, x.cat ∈ cats) ∧ nullN ∉ check cs))
 
-instance : DecidablePred (Licensed check cats) := fun _ ↦ by unfold Licensed; infer_instance
+instance : DecidablePred (Licensed check cats) :=
+  fun cs ↦ inferInstanceAs (Decidable (Coordinable cs ∧ Satisfies check cats cs))
 
 /-- A coordination of phrases of the categories `ps` is admitted under `L` when some choice of
 conjuncts for them satisfies `L`. -/
 def Admits (L : List Conjunct → Prop) (ps : List Cat) : Prop :=
   ∃ cs ∈ (ps.map ofCat).sections, L cs
 
-instance {L : List Conjunct → Prop} [DecidablePred L] : Decidable (Admits L ps) := by
-  unfold Admits; infer_instance
+instance {L : List Conjunct → Prop} [DecidablePred L] : Decidable (Admits L ps) :=
+  inferInstanceAs (Decidable (∃ cs ∈ (ps.map ofCat).sections, L cs))
 
 theorem Admits.mono {L L' : List Conjunct → Prop} (h : ∀ cs, L cs → L' cs) (hL : Admits L ps) :
     Admits L' ps :=
@@ -159,74 +180,103 @@ theorem mem_sections_map_ofCat {cs : List Conjunct} :
     cs ∈ (ps.map ofCat).sections ↔ List.Forall₂ (fun x c ↦ x ∈ ofCat c) cs ps := by
   rw [List.mem_sections, List.forall₂_map_right_iff]
 
-private theorem exists_mem_of_rel_some {R : α → β → Prop} {o : Option α} {b : β}
-    (h : Option.Rel R o (some b)) : ∃ a ∈ o, R a b := by
-  cases h; exact ⟨_, rfl, ‹_›⟩
+theorem Admits.forall_mem {L : List Conjunct → Prop} {P : Conjunct → Prop} {Q : Cat → Prop}
+    (h : Admits L ps) (hL : ∀ cs, L cs → ∀ x ∈ cs, P x) (hQ : ∀ x c, x ∈ ofCat c → P x → Q c) :
+    ∀ p ∈ ps, Q p := by
+  obtain ⟨cs, hcs, hcs'⟩ := h
+  have hP := hL cs hcs'
+  clear hcs'
+  induction mem_sections_map_ofCat.1 hcs with
+  | nil => simp
+  | cons hxp _ ih =>
+    rw [List.forall_mem_cons] at hP ⊢
+    exact ⟨hQ _ _ hxp hP.1, ih (mem_sections_map_ofCat.2 ‹_›) hP.2⟩
 
-private theorem exists_mem_of_forall₂ {R : α → β → Prop} :
-    ∀ {l₁ : List α} {l₂ : List β}, List.Forall₂ R l₁ l₂ → ∀ b ∈ l₂, ∃ a ∈ l₁, R a b
-  | _, _, .nil, _, hb => absurd hb List.not_mem_nil
-  | _, _, .cons hab h, b, hb => by
-    rcases List.mem_cons.1 hb with rfl | hb
-    · exact ⟨_, List.mem_cons_self, hab⟩
-    · obtain ⟨a, ha, hR⟩ := exists_mem_of_forall₂ h b hb
-      exact ⟨a, List.mem_cons_of_mem _ ha, hR⟩
+theorem licensed_swap_reverse {cs : List Conjunct} :
+    Licensed (checkedOnce d.swap) cats cs.reverse ↔ Licensed (checkedOnce d) cats cs := by
+  simp [Licensed, Coordinable, Satisfies, checkedOnce_eq_toList_nearest,
+    HeadDirection.nearest_swap_reverse]
 
-theorem Admits.exists_mem {L : List Conjunct → Prop} (h : Admits L ps) :
-    ∃ cs, L cs ∧ ∀ p ∈ ps, ∃ x ∈ cs, x ∈ ofCat p :=
-  let ⟨cs, hcs, hL⟩ := h; ⟨cs, hL, exists_mem_of_forall₂ (mem_sections_map_ofCat.1 hcs)⟩
+-- §3.1, p. 33
+theorem admits_swap_reverse :
+    Admits (Licensed (checkedOnce d.swap) cats) ps.reverse ↔
+      Admits (Licensed (checkedOnce d) cats) ps := by
+  simp only [Admits, mem_sections_map_ofCat]
+  refine ⟨fun ⟨cs, hcs, h⟩ ↦ ⟨cs.reverse, ?_, ?_⟩, fun ⟨cs, hcs, h⟩ ↦ ⟨cs.reverse, ?_, ?_⟩⟩
+  · rwa [← List.forall₂_reverse_iff, List.reverse_reverse]
+  · rwa [← licensed_swap_reverse, List.reverse_reverse]
+  · exact List.forall₂_reverse_iff.2 hcs
+  · exact licensed_swap_reverse.2 h
 
-/-- A phrase of a category the selector does not c-select can only be a clause under the null N
-(§3.2). -/
+-- §3.2
 theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
-    ∀ p ∈ ps, p ∈ cats ∨ p = .C ∧ N ∈ cats := by
-  obtain ⟨cs, ⟨hsel, -⟩, hcs⟩ := h.exists_mem
-  intro p hp
-  obtain ⟨x, hx, hxp⟩ := hcs p hp
-  rcases mem_ofCat.1 hxp with rfl | ⟨rfl, rfl⟩
-  · exact .inl (hsel _ hx)
-  · exact .inr ⟨rfl, hsel _ hx⟩
+    ∀ p ∈ ps, p ∈ cats ∨ p = .C ∧ N ∈ cats :=
+  h.forall_mem (fun _ h ↦ h.1) fun x _ hx hc ↦ by
+    rcases mem_ofCat.1 hx with rfl | ⟨rfl, rfl⟩
+    exacts [.inl hc, .inr ⟨rfl, hc⟩]
 
 /-- The phrase next to the selector is selected in its own category (§3.1). -/
-theorem mem_cats_of_mem_nearest (h : Admits (Satisfies (checkedOnce d) cats) ps) :
+theorem mem_cats_of_mem_nearest (h : Admits (Licensed (checkedOnce d) cats) ps) :
     ∀ p ∈ d.nearest ps, p ∈ cats := by
-  obtain ⟨cs, hcs, hsel, hS⟩ := h
-  intro p hp
-  have hrel := HeadDirection.rel_nearest (mem_sections_map_ofCat.1 hcs) d
-  rw [Option.mem_def.1 hp] at hrel
-  obtain ⟨x, hx, hxp⟩ := exists_mem_of_rel_some hrel
-  have := hsel x (HeadDirection.mem_of_mem_nearest hx)
-  rwa [eq_phrase_of_mem_ofCat hxp (hS x (mem_checkedOnce.2 hx))] at this
+  have key {ps : List Cat} (h : Admits (Licensed (checkedOnce .headInitial) cats) ps) :
+      ∀ p ∈ ps.head?, p ∈ cats := by
+    obtain ⟨cs, hcs, -, hsel, hS⟩ := h
+    cases mem_sections_map_ofCat.1 hcs with
+    | nil => simp
+    | @cons x p _ _ hxp _ =>
+      intro q hq
+      obtain rfl := Option.mem_some_iff.1 hq
+      have := hsel x List.mem_cons_self
+      rwa [eq_phrase_of_mem_ofCat hxp fun h ↦ hS (by simp [h])] at this
+  cases d
+  · exact key h
+  · simpa [List.head?_reverse] using key (admits_swap_reverse (d := .headFinal) |>.2 h)
 
-/-- A phrase of a category the selector does not c-select can be coordinated iff it can be stranded
-by ellipsis of the selector (§3.3, (80)). -/
-theorem exists_admits_iff_admits_elided (hp : p ∉ cats) :
-    (∃ q, Admits (Licensed (checkedOnce d) cats) [q, p] ∨
-        Admits (Licensed (checkedOnce d) cats) [p, q]) ↔
-      Admits (Licensed (fun _ ↦ []) cats) [p] := by
-  constructor
-  · rintro ⟨q, h | h⟩ <;>
-    · rcases mem_cats_or_of_admits h.satisfies p (by simp) with h | ⟨rfl, hNP⟩
-      · exact absurd h hp
-      · exact ⟨[nullN], by simp [ofCat], by simp [Licensed, Coordinable, Satisfies, hNP, cat]⟩
-  · intro h
-    rcases mem_cats_or_of_admits h.satisfies p (by simp) with h | ⟨rfl, hNP⟩
-    · exact absurd h hp
+/-- A phrase displaced to the left is related to the position its selector selects by a phrase of
+category `displacedLeft c`: a clause, base-generated in an Ā-position, by a null operator of
+category NP (p. 21), and any other phrase by its copy. -/
+def displacedLeft (c : Cat) : Cat := if c = .C then N else c
+
+/-- The mismatches coordination permits are those of ellipsis and of leftward displacement: a
+phrase of a category the selector does not c-select can be coordinated iff it can be stranded by
+ellipsis of the selector ((80)), iff it can be displaced to the left, and iff it is a clause where
+noun phrases are selected (§3.2). -/
+theorem admits_tfae (hp : p ∉ cats) : List.TFAE
+    [∃ q, Admits (Licensed (checkedOnce d) cats) [q, p] ∨
+        Admits (Licensed (checkedOnce d) cats) [p, q],
+      Admits (Licensed (fun _ ↦ []) cats) [p],
+      Admits (Licensed (checkedOnce d) cats) [displacedLeft p],
+      p = .C ∧ N ∈ cats] := by
+  tfae_have 1 → 4 := by
+    rintro ⟨q, h | h⟩ <;> exact (mem_cats_or_of_admits h.satisfies p (by simp)).resolve_left hp
+  tfae_have 2 → 4 := fun h ↦ (mem_cats_or_of_admits h.satisfies p (by simp)).resolve_left hp
+  tfae_have 3 → 4 := fun h ↦ by
+    have := mem_cats_of_mem_nearest h (displacedLeft p) (by cases d <;> rfl)
+    by_cases hC : p = .C
+    · exact ⟨hC, by simpa [displacedLeft, hC] using this⟩
+    · exact absurd (by simpa [displacedLeft, hC] using this) hp
+  tfae_have 4 → 1 := by
+    rintro ⟨rfl, hN⟩
     refine ⟨N, ?_⟩
     cases d
     · exact .inl ⟨[phrase N, nullN], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, checkedOnce, cat, hNP, Contentful]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_toList_nearest]⟩
     · exact .inr ⟨[nullN, phrase N], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, checkedOnce, cat, hNP, Contentful]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_toList_nearest]⟩
+  tfae_have 4 → 2 := by
+    rintro ⟨rfl, hN⟩
+    exact ⟨[nullN], by simp [ofCat], by simp [Licensed, Coordinable, Satisfies, cat, hN]⟩
+  tfae_have 4 → 3 := by
+    rintro ⟨rfl, hN⟩
+    refine ⟨[phrase N], by simp [ofCat, displacedLeft], ?_⟩
+    cases d <;> simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_toList_nearest]
+  tfae_finish
 
-/-- For speakers who reject (3a), whose S-features persist, no conjunct can be a clause under the
-null N (fn. 30). -/
-theorem mem_cats_of_admits_id (h : Admits (Satisfies id cats) ps) : ∀ p ∈ ps, p ∈ cats := by
-  obtain ⟨cs, ⟨hsel, hS⟩, hcs⟩ := h.exists_mem
-  intro p hp
-  obtain ⟨x, hx, hxp⟩ := hcs p hp
-  have := hsel x hx
-  rwa [eq_phrase_of_mem_ofCat hxp (hS x hx)] at this
+-- fn. 30
+theorem mem_cats_of_admits_id (h : Admits (Satisfies id cats) ps) : ∀ p ∈ ps, p ∈ cats :=
+  h.forall_mem (P := fun x ↦ x.cat ∈ cats ∧ x ≠ nullN)
+    (fun _ h x hx ↦ ⟨h.1 x hx, fun e ↦ h.2 (e ▸ hx)⟩)
+    fun x _ hx ⟨hc, hn⟩ ↦ by rwa [eq_phrase_of_mem_ofCat hx hn] at hc
 
 /-! ### Adverbs -/
 
@@ -239,39 +289,33 @@ inductive AdvHead where
   | ly
   deriving DecidableEq, Fintype
 
-/-- When PF deletes the material after a modifier, by ellipsis of the noun in the first of two
-coordinated N′s (103) or in the lower copy of a displaced modifier (100), a silent Adv head, empty
-in sound and meaning, goes with it, and *-ly* stays. -/
-def AdvHead.afterDeletion : AdvHead → Option AdvHead
-  | silent => none
-  | ly => some ly
-
 /-- Two prenominal modifiers, each an adjective (`none`) or an adverb with its head, can be
 coordinated as N′s with the first noun elided (102) when the PF ban on adverbs modifying N′ (99)
-finds no Adv head left on either. The ellipsis takes a silent head on the first along with the
-noun (103). -/
+finds no Adv head on either. Ellipsis can take the Adv head of the first along with the noun only
+if it is silent, empty in sound as well as meaning ((103)). -/
 def NominalCoordination (m₁ m₂ : Option AdvHead) : Prop :=
-  m₁.bind AdvHead.afterDeletion = none ∧ m₂ = none
+  (∀ h ∈ m₁, h = .silent) ∧ m₂ = none
 
-/-- A displaced prenominal modifier, adjoined to the noun phrase, escapes the ban on adverbs
-modifying N′ when its lower copy, adjoined to N′, can leave out its Adv head (100). -/
+/-- A displaced prenominal modifier escapes the ban on adverbs modifying N′ when its copy adjoined
+to N′ can be partial, leaving out its Adv head ((100)), which it can only if the head is silent
+(pp. 31–32). -/
 def Displaced (m : Option AdvHead) : Prop :=
-  m.bind AdvHead.afterDeletion = none
+  ∀ h ∈ m, h = .silent
 
-instance (m₁ m₂ : Option AdvHead) : Decidable (NominalCoordination m₁ m₂) := by
-  unfold NominalCoordination; infer_instance
+instance (m₁ m₂ : Option AdvHead) : Decidable (NominalCoordination m₁ m₂) :=
+  inferInstanceAs (Decidable ((∀ h ∈ m₁, h = .silent) ∧ m₂ = none))
 
-instance : DecidablePred Displaced := fun _ ↦ by unfold Displaced; infer_instance
+instance : DecidablePred Displaced := fun m ↦ inferInstanceAs (Decidable (∀ h ∈ m, h = .silent))
 
 /-- A non-*ly* adverb can be coordinated with an adjective before a noun, if the adjective comes
 last; an adverb in *-ly* cannot (p. 15). -/
 theorem nominalCoordination_iff {m₁ m₂ : Option AdvHead} :
     NominalCoordination m₁ m₂ ↔ m₁ ≠ some .ly ∧ m₂ = none := by
-  rcases m₁ with _ | _ | _ <;> simp [NominalCoordination, AdvHead.afterDeletion]
+  rcases m₁ with _ | _ | _ <;> simp [NominalCoordination]
 
-/-- The adverbs that may be displaced to modify a noun are the non-*ly* ones ((56), (57)). -/
+-- (56), (57)
 theorem displaced_iff {m : Option AdvHead} : Displaced m ↔ m ≠ some .ly := by
-  rcases m with _ | _ | _ <;> simp [Displaced, AdvHead.afterDeletion]
+  rcases m with _ | _ | _ <;> simp [Displaced]
 
 /-! ### The paper's examples -/
 
@@ -279,7 +323,7 @@ open Examples
 
 /-- `catOf? s` is the category the paper's label `s` names. -/
 def catOf? (s : String) : Option Cat :=
-  [("NP", N), ("AP", Adj), ("PP", P), ("CP", Cat.C), ("VP", V)].lookup s
+  [("NP", N), ("AP", Adj), ("AdvP", Adv), ("PP", P), ("CP", Cat.C), ("VP", V)].lookup s
 
 /-- `phrases? e` lists the categories of a row's conjuncts, in order. -/
 def phrases? (e : Datum) : Option (List Cat) := (e.features "conjunct").mapM catOf?
@@ -298,17 +342,18 @@ def modifiers? (e : Datum) : Option (List (Option AdvHead)) :=
     ([("AP", none), ("non-ly AdvP", some .silent), ("-ly AdvP", some .ly)].lookup ·)
 
 theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" ∈ [some "predicate",
-    some "argument", some "ellipsis", some "prenominal", some "displacement"] := by
+    some "argument", some "ellipsis", some "leftward displacement", some "rightward displacement",
+    some "prenominal", some "displaced modifier"] := by
   decide
 
--- (20), (22)
+-- (20)–(22), (51b)
 theorem predicate_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "predicate" →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
       (Admits (Satisfies (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
   decide
 
 /-- The model decides the arguments, alone or coordinated, before or after their selector
-((2)–(3), (39)–(43), (49)–(50), (64), (68)–(69), (77)). -/
+((2)–(3), (39)–(43), (49)–(51), (64), (68)–(69), (77)). -/
 theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
       (Admits (Licensed (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
@@ -321,10 +366,25 @@ theorem argument_rows_first : ∀ e ∈ Examples.all, e.feature? "construction" 
       (Admits (Licensed (List.take 1) cats) ps ↔ e.judgment ≠ .acceptable) := by
   decide
 
--- (54), (55), (60), (62), (76)
+-- (54), (55), (60), (62), (63b), (76)
 theorem ellipsis_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "ellipsis" →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
       (Admits (Licensed (fun _ ↦ []) cats) ps ↔ e.judgment = .acceptable) := by
+  decide
+
+-- (59), (61), (63a), (71), (72)
+theorem leftward_rows : ∀ e ∈ Examples.all,
+    e.feature? "construction" = some "leftward displacement" →
+    ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+      (Admits (Licensed (checkedOnce d) cats) (ps.map displacedLeft) ↔
+        e.judgment = .acceptable) := by
+  decide
+
+-- (73), (74)
+theorem rightward_rows : ∀ e ∈ Examples.all,
+    e.feature? "construction" = some "rightward displacement" →
+    ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+      (Admits (Licensed (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
   decide
 
 -- (44), p. 15, (56a), (57a)
@@ -334,8 +394,9 @@ theorem prenominal_rows : ∀ e ∈ Examples.all, e.feature? "construction" = so
         e.judgment = .acceptable) := by
   decide
 
--- (56b), (57c)
-theorem displacement_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "displacement" →
+-- (56b), (56c), (57b), (57c), (58), (101d)
+theorem displaced_modifier_rows : ∀ e ∈ Examples.all,
+    e.feature? "construction" = some "displaced modifier" →
     ∃ ms ∈ modifiers? e, ((∃ m, ms = [m] ∧ Displaced m) ↔ e.judgment = .acceptable) := by
   decide
 
