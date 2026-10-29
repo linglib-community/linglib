@@ -6,29 +6,22 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.List.Chain
-public import Mathlib.Data.List.OfFn
-public import Linglib.Core.Data.List.GetElem
 public import Linglib.Core.Data.List.Factors
+public import Linglib.Core.Data.List.TakeDrop
+public import Mathlib.Data.Int.Notation
+public import Mathlib.Data.List.OfFn
 
 /-!
 # Subregular Languages: Boundary Augmentation
 
 Boundary augmentation pads a string with `k - 1` boundary markers on each side, so that the
 `k`-factors of the padded string see the edges of the word. The strictly local, locally testable,
-and tier-based classes are built on it. The contiguous `k`-factors themselves are the generic
-`List.kFactors` of `Core/Data/List/Factors.lean`.
-
-## Main definitions
-
-* `Augmented α`: boundary-augmented strings `List (Option α)`,
-  with `none` the boundary marker.
-* `boundary k w`: `w` injected into `Augmented α` and padded with
-  `k - 1` boundary markers on each side.
-* `window k w i`: the integer-indexed entries of `w` on `[i, i + k)`.
-
-## Main results
-
-* `mem_kFactors_boundary_iff`: the `k`-factors of the augmented word are exactly its windows.
+and tier-based classes are built on it; the contiguous `k`-factors themselves are the generic
+`List.kFactors`. A word read at integer positions is a two-sided family blank outside
+`[0, w.length)`, and its width-`k` window at `i` lists its entries on `[i, i + k)`. The entries of
+the padded word are those of the word shifted by the pad width, so
+[the `k`-factors of the augmented word are exactly its windows](##mem_kFactors_boundary_iff)
+starting in `[1 - k, w.length)`.
 
 ## Implementation notes
 
@@ -37,6 +30,11 @@ The standard subregular convention extends the alphabet with two edge markers
 one-fresh-symbol extension `Option α` (`none` = boundary, `some a` = original
 symbol): a single marker suffices because boundary symbols only ever occur at
 fixed positions, so the two edges are never confused.
+
+Integer positions are a lawful `GetElem? (List α) ℤ α` instance, `w[i]?` being `none` at every
+negative `i` rather than counting from the end, so position arithmetic across the left edge is
+ordinary `ℤ` arithmetic rather than a case split on `ℕ` subtraction. Being lawful, the instance
+gets the generic `getElem?_pos`, `getElem?_neg` and `getElem?_eq_some_iff`.
 
 ## References
 
@@ -70,6 +68,70 @@ lemma length_boundary : (boundary k w).length = w.length + 2 * (k - 1) := by
   simp [boundary]; omega
 
 end Boundary
+
+/-! ### Integer indexing -/
+
+namespace List
+
+variable {w y u v : List α} {i : ℤ}
+
+instance instGetElem?Int : GetElem? (List α) ℤ α fun w i ↦ 0 ≤ i ∧ i < w.length where
+  getElem w i h := w[i.toNat]'(by omega)
+  getElem? w i := if 0 ≤ i then w[i.toNat]? else none
+
+instance : LawfulGetElem (List α) ℤ α fun w i ↦ 0 ≤ i ∧ i < w.length where
+  getElem?_def w i _ := by
+    show (if 0 ≤ i then w[i.toNat]? else none) = _
+    split_ifs with h1 h2 h2
+    · exact getElem?_eq_getElem (by omega)
+    · exact getElem?_eq_none (by omega)
+    · exact absurd h2.1 h1
+    · rfl
+
+theorem getElem_int (h : 0 ≤ i ∧ i < w.length) : w[i] = w[i.toNat]'(by omega) := rfl
+
+theorem getElem?_int : w[i]? = if 0 ≤ i then w[i.toNat]? else none := rfl
+
+theorem getElem?_int_of_nonneg (h : 0 ≤ i) : w[i]? = w[i.toNat]? := ite_eq_left h
+
+theorem getElem?_int_of_neg (h : i < 0) : w[i]? = none := ite_eq_right (by omega)
+
+@[simp] theorem getElem?_natCast (w : List α) (n : ℕ) : w[(n : ℤ)]? = w[n]? := by
+  simp [getElem?_int]
+
+@[simp] theorem getElem?_int_nil : ([] : List α)[i]? = none := by simp
+
+theorem getElem?_int_eq_none_iff : w[i]? = none ↔ i < 0 ∨ (w.length : ℤ) ≤ i := by
+  rw [_root_.getElem?_eq_none_iff]
+  omega
+
+/-- Agreement of integer-indexed entries up to the length of `w` forces equality. -/
+theorem ext_getElem?_int (h : ∀ j : ℤ, j ≤ (w.length : ℤ) → y[j]? = w[j]?) : y = w := by
+  have hy : y.length ≤ w.length := by
+    have h1 := h (w.length : ℤ) (Int.le_refl _)
+    rwa [getElem?_natCast, getElem?_natCast, getElem?_eq_none (Nat.le_refl _),
+      getElem?_eq_none_iff] at h1
+  refine ext_getElem? fun n ↦ ?_
+  rcases Nat.lt_or_ge n w.length with hn | hn
+  · simpa using h n (by omega)
+  · rw [getElem?_eq_none hn, getElem?_eq_none (by omega)]
+
+/-- Agreement of integer-indexed entries below `c` transfers prefixes of length `c`. -/
+theorem ext_take_getElem?_int {c : ℕ} (h : ∀ j : ℤ, j < (c : ℤ) → y[j]? = w[j]?) :
+    y.take c = w.take c :=
+  ext_take_getElem? fun n hn ↦ by simpa using h n (by omega)
+
+theorem getElem?_int_append_left (h : i < (u.length : ℤ)) : (u ++ v)[i]? = u[i]? := by
+  by_cases h0 : 0 ≤ i
+  · rw [getElem?_int_of_nonneg h0, getElem?_int_of_nonneg h0, getElem?_append_left (by omega)]
+  · rw [getElem?_int_of_neg (by omega), getElem?_int_of_neg (by omega)]
+
+theorem getElem?_int_take_of_lt {c : ℕ} (h : i < (c : ℤ)) : (w.take c)[i]? = w[i]? := by
+  by_cases h0 : 0 ≤ i
+  · rw [getElem?_int_of_nonneg h0, getElem?_int_of_nonneg h0, getElem?_take_of_lt (by omega)]
+  · rw [getElem?_int_of_neg (by omega), getElem?_int_of_neg (by omega)]
+
+end List
 
 /-! ### Position discrimination and windows
 
