@@ -20,18 +20,21 @@ public import Linglib.Semantics.Reference.Determiner
 
 Harbour derives the person categories as the cells of a partition of the lattice of referents,
 induced by two features, [±author] and [±participant], whose values act on lattices rather than test
-membership. The plus value of a feature adds its lattice pairwise (17), the minus value subtracts
-the lattice's maximum (19), Lexical Complementarity confines a cell that properly contains a sibling
-to the difference (31), and the host head discards the empty set. Over the ontology of speaker,
-hearer and one other, composing [±author] outermost yields the quadripartition and composing
-[±participant] outermost the tripartition. Harbour's signs for Cysouw's categories, read off the
-quadripartition, keep the exclusive apart from the inclusive. His number chapter adopts the number
-theory of his 2014 paper, whose systems `Harbour2014.table3_generated` derives, and composes it
-with person, number dominating person. The same partitions organize the deixis of objects and
-spaces, English *this* and *that* realizing the author bipartition. Against the three-feature
-theories he rejects (§8.2), the systems their features generate are exactly the partitions on which
-resolution is defined, seven of the fifteen, and the geometry that would select his five is one he
-considers and sets aside.
+membership: the plus value adds its lattice pairwise, the minus value subtracts the lattice's
+maximum, Lexical Complementarity confines a cell that properly contains a sibling to the difference,
+and the host head discards the empty set. A language sets whether each feature is present and, when
+both are, which composes first. Over the ontology of speaker, hearer and one other, composing
+[±author] outermost [yields the quadripartition](##Examples.quad_cells_eq_participantSets) and
+composing [±participant] outermost [merges two of its cells](##Examples.tri_card), so the order of
+composition turns four feature sets into five partitions. The three-feature theories he rejects
+generate exactly [the partitions on which resolution is defined](##exists_generated), seven of the
+fifteen; his parameters [generate exactly five of them](##graph_mem_image_iff), those of the
+bivalent geometry he considers and sets aside, never the hearer bipartition or Zwicky's
+tripartition. His signs for Cysouw's categories, read off the quadripartition, keep [the exclusive
+apart from the inclusive](##tamil_clusivity_distinguished). His number chapter adopts the number
+theory of his 2014 paper, whose systems `Harbour2014.table3_generated` derives, and the same
+partitions organize the deixis of objects and spaces, English *this* and *that* realizing the author
+bipartition.
 
 ## Implementation notes
 
@@ -39,7 +42,11 @@ One other suffices for the person partition, whose four cells are fixed by the p
 speaker and the hearer, so the ontology is `Fin 3` and the third-person group is not modeled;
 every result is checked on this finite model. Lexical Complementarity applies once, after both
 features, not cyclically (appendix B.1.2.3). Pairwise addition is mathlib's `⊻`; `ominus` and
-`act` come from `Semantics/Plurality/FeatureAction.lean`.
+`act` come from `Semantics/Plurality/FeatureAction.lean`. The subsidiary parameter of the
+tripartition, which value of [±author] represents the third person, changes no partition and is
+not modeled. A setting's partition is compared with the three-feature systems on participant
+sets, two participant sets being related when a cell holds a referent with each; every cell is a
+union of the classes of referents with the same participants.
 
 ## References
 
@@ -74,6 +81,37 @@ def cellsOf (raws : List (Finset (Finset Ω))) : Finset (Finset (Finset Ω)) :=
 
 end Construction
 
+/-- (29): a setting of the parameters of π, which features are present and, when both are, which
+composes with π first. -/
+structure Setting where
+  /-- (29a): the author feature is present. -/
+  author : Bool
+  /-- (29b): the participant feature is present. -/
+  participant : Bool
+  /-- (29c): the author feature composes with π first, idle unless both features are present. -/
+  authorFirst : Bool
+  deriving DecidableEq, Fintype
+
+section Construction
+variable {Ω : Type*} [DecidableEq Ω]
+
+/-- The raw cells of a setting over the author, participant and π lattices: the π lattice acted
+on by each sign assignment of the features present, the feature that composes first acting
+first. -/
+def Setting.raws (σ : Setting) (au pt π : Finset (Finset Ω)) : List (Finset (Finset Ω)) :=
+  match σ.author, σ.participant with
+  | false, false => [π]
+  | true, false => [true, false].map fun s ↦ act s au π
+  | false, true => [true, false].map fun s ↦ act s pt π
+  | true, true => [true, false].flatMap fun s ↦ [true, false].map fun t ↦
+    if σ.authorFirst then act s pt (act t au π) else act s au (act t pt π)
+
+/-- The partition a setting yields: its raw cells, each refined against the others. -/
+def Setting.cells (σ : Setting) (au pt π : Finset (Finset Ω)) : Finset (Finset (Finset Ω)) :=
+  cellsOf (σ.raws au pt π)
+
+end Construction
+
 /-! ### The three-element ontology `{i, u, o}` and the derived results
 
 Harbour's abbreviation `i_o`/`iu_o`/`u_o`/`o_o` collapses the π-lattice into four
@@ -103,9 +141,13 @@ theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide
 the participant value first and the author value outermost. -/
 def quadRaw (sa sp : Bool) : Finset (Finset Ω) := act sa ℒau (act sp ℒpt ℒπ)
 
-/-- The raw quadripartition cells are those of the four sign assignments. -/
-def quadRaws : List (Finset (Finset Ω)) :=
-  [quadRaw true true, quadRaw true false, quadRaw false true, quadRaw false false]
+/-- The raw quadripartition cells are those of the setting with both features, the participant
+feature composing first. -/
+def quadRaws : List (Finset (Finset Ω)) := Setting.raws ⟨true, true, false⟩ ℒau ℒpt ℒπ
+
+example :
+    quadRaws = [quadRaw true true, quadRaw true false, quadRaw false true, quadRaw false false] :=
+  rfl
 
 /-- A quadripartition cell is a raw cell refined against the others. -/
 def quadCell (sa sp : Bool) : Finset (Finset Ω) := refine quadRaws (quadRaw sa sp)
@@ -129,10 +171,8 @@ theorem inclusive_has_both : ∀ s ∈ inclusive, (0 : Ω) ∈ s ∧ (1 : Ω) �
 
 theorem inclusive_ne_exclusive : inclusive ≠ exclusive := by decide
 
-/-- The four quadripartition cells cover the π-lattice. -/
 theorem quad_covers : inclusive ∪ exclusive ∪ secondP ∪ thirdP = ℒπ := by decide
 
-/-- The four quadripartition cells are pairwise disjoint. -/
 theorem quad_disjoint :
     Disjoint inclusive exclusive ∧ Disjoint inclusive secondP ∧
     Disjoint inclusive thirdP ∧ Disjoint exclusive secondP ∧
@@ -161,9 +201,13 @@ theorem quad_cells_eq_participantSets :
 author value first and the participant value outermost. -/
 def triRaw (sp sa : Bool) : Finset (Finset Ω) := act sp ℒpt (act sa ℒau ℒπ)
 
-/-- The raw tripartition cells are those of the four sign assignments. -/
-def triRaws : List (Finset (Finset Ω)) :=
-  [triRaw true true, triRaw true false, triRaw false true, triRaw false false]
+/-- The raw tripartition cells are those of the setting with both features, the author feature
+composing first. -/
+def triRaws : List (Finset (Finset Ω)) := Setting.raws ⟨true, true, true⟩ ℒau ℒpt ℒπ
+
+example :
+    triRaws = [triRaw true true, triRaw true false, triRaw false true, triRaw false false] :=
+  rfl
 
 /-- With participant outermost the two `−participant` specifications coincide, so the
 tripartition has three cells where the quadripartition has four, the noncommutativity of
@@ -172,30 +216,25 @@ theorem tri_card : (cellsOf triRaws).card = 3 := by decide
 
 theorem tri_ne_quad : cellsOf triRaws ≠ cellsOf quadRaws := by decide
 
-/-! #### The five partitions ([harbour-2016] Table 4.1) -/
+/-! #### Every setting partitions the π lattice by participants -/
 
-/-- The monopartition has no feature active. -/
-def monoP : Finset (Finset (Finset Ω)) := cellsOf [ℒπ]
-/-- The author bipartition activates `±author` alone. -/
-def authorBi : Finset (Finset (Finset Ω)) := cellsOf [act true ℒau ℒπ, act false ℒau ℒπ]
-/-- The participant bipartition activates `±participant` alone. -/
-def participantBi : Finset (Finset (Finset Ω)) := cellsOf [act true ℒpt ℒπ, act false ℒpt ℒπ]
-/-- The tripartition is the set of its cells. -/
-def triP : Finset (Finset (Finset Ω)) := cellsOf triRaws
-/-- The quadripartition is the set of its cells. -/
-def quadP : Finset (Finset (Finset Ω)) := cellsOf quadRaws
+-- §4.3: each setting's cells partition the π lattice
+theorem cells_partition (σ : Setting) :
+    (σ.cells ℒau ℒpt ℒπ).sup id = ℒπ ∧ ∅ ∉ σ.cells ℒau ℒpt ℒπ ∧
+      ∀ c ∈ σ.cells ℒau ℒpt ℒπ, ∀ d ∈ σ.cells ℒau ℒpt ℒπ, c ≠ d → Disjoint c d := by
+  revert σ; decide +kernel
 
-/-- The five parameter settings of Table 4.1, no feature, `±author`, `±participant`, and the two
-composition orders of both, yield five distinct partitions. -/
-theorem five_partitions : [monoP, authorBi, participantBi, triP, quadP].Nodup := by decide
+-- a cell holds a referent iff it holds every referent with its participants
+theorem mem_cells_iff_of_participants_eq (σ : Setting) :
+    ∀ c ∈ σ.cells ℒau ℒpt ℒπ, ∀ s ∈ ℒπ, ∀ t ∈ ℒπ, participants s = participants t →
+      (s ∈ c ↔ t ∈ c) := by
+  revert σ; decide +kernel
 
 /-! #### No four-way singular person ([harbour-2016] Ch. 4) -/
 
 /-- The singleton referents are `{i}`, `{u}` and `{o}`. -/
 def singletons : Finset (Finset Ω) := {{0}, {1}, {2}}
 
-/-- The inclusive, the only cell distinguishing the quadripartition from the tripartition,
-contains no singleton referent, so the singular realizes only three persons. -/
 theorem inclusive_has_no_singleton : inclusive ∩ singletons = ∅ := by decide
 
 theorem inclusive_card_ge_two : ∀ s ∈ inclusive, 2 ≤ s.card := by decide
@@ -296,7 +335,6 @@ theorem generated_hearer_participant {s t : Finset Role} :
 def graph (F : Finset ThreeFeature) : Finset (Finset Role × Finset Role) :=
   univ.filter fun p ↦ bundle F p.1 = bundle F p.2
 
-/-- The eight sets of active features generate seven systems. -/
 theorem card_image_graph : (univ.image graph).card = 7 := by decide
 
 /-- Geometry (9) admits [±hearer] only with [±author]. -/
@@ -304,15 +342,54 @@ def Admissible (F : Finset ThreeFeature) : Prop := .hearer ∈ F → .author ∈
 
 instance : DecidablePred Admissible := fun _ ↦ by unfold Admissible; infer_instance
 
-/-- The admissible feature sets generate five systems. -/
 theorem card_image_graph_admissible : ((univ.filter Admissible).image graph).card = 5 := by
   decide
 
-/-- The two systems only the inadmissible feature sets generate are the hearer bipartition and
-Zwicky's tripartition. -/
 theorem graph_not_admissible :
     ∀ F, ¬ Admissible F → graph F = graph {.hearer} ∨ graph F = graph {.hearer, .participant} := by
   decide
+
+/-! ### The parameter space and its yield
+
+Read on participant sets, the partition a setting yields is one of the systems the three-feature
+theories generate, and the settings yield exactly the systems of the bivalent geometry, so no
+setting yields the hearer bipartition or Zwicky's tripartition. The account's five partitions
+come from two features with no geometry: the order of composition supplies the fifth. -/
+
+/-- The system a setting yields on participant sets: two participant sets are related when a
+cell of its partition holds a referent with each. -/
+def Setting.graph (σ : Setting) : Finset (Finset Role × Finset Role) :=
+  univ.filter fun p ↦ ∃ c ∈ σ.cells Examples.ℒau Examples.ℒpt Examples.ℒπ,
+    ∃ s ∈ c, ∃ t ∈ c, Examples.participants s = p.1 ∧ Examples.participants t = p.2
+
+-- Table 4.1: the monopartition, the author and participant bipartitions, the tripartition with
+-- the author feature composing first, and the quadripartition with the participant feature first
+theorem graph_setting (b : Bool) :
+    (⟨false, false, b⟩ : Setting).graph = graph ∅ ∧
+      (⟨true, false, b⟩ : Setting).graph = graph {.author} ∧
+      (⟨false, true, b⟩ : Setting).graph = graph {.participant} ∧
+      (⟨true, true, true⟩ : Setting).graph = graph {.participant, .author} ∧
+      (⟨true, true, false⟩ : Setting).graph = graph {.author, .hearer} := by
+  revert b; decide
+
+-- p. 193: the systems of the bivalent geometry
+theorem image_graph_eq : univ.image Setting.graph = (univ.filter Admissible).image graph := by
+  decide
+
+/-- The parameters of π generate the system of a set of three features exactly when the set is
+admissible in the bivalent geometry: two features, their order of composition and no geometry
+yield all and only the partitions the geometry stipulates. -/
+theorem graph_mem_image_iff (F : Finset ThreeFeature) :
+    graph F ∈ univ.image Setting.graph ↔ Admissible F := by
+  rw [image_graph_eq]; revert F; decide
+
+-- Zwicky's tripartition, inclusive with second person, is no setting's yield
+theorem graph_hearer_participant_not_mem :
+    graph {.hearer, .participant} ∉ univ.image Setting.graph := by
+  rw [graph_mem_image_iff]; decide
+
+theorem card_image_graph_setting : (univ.image Setting.graph).card = 5 := by
+  rw [image_graph_eq]; exact card_image_graph_admissible
 
 /-! ### Spatial deixis (chapter 7)
 
@@ -322,7 +399,7 @@ features generate them. English *this* and *these* denote things in the speaker'
 person specification to the vicinity of the referents it denotes ((16), p. 180), so *this*
 denotes the vicinity of the first person's referents. -/
 
-/-- English *this* and *that* realize the author bipartition (p. 171). -/
+-- p. 171
 theorem english_demonstratives_author_bipartition :
     English.Determiners.that.deixis = English.Determiners.this.deixisᶜ ∧
       ∀ s t, (generated {.author}).r s t ↔
@@ -330,8 +407,7 @@ theorem english_demonstratives_author_bipartition :
   refine ⟨rfl, fun s t ↦ ?_⟩
   rw [generated_r_iff]; revert s t; decide
 
-/-- *This* picks out the vicinity of the first person's referents, so [±author] defines the
-speaker's space ((16), p. 180). -/
+-- (16), p. 180
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
     (c : Kaplan.Context W E P T) :
     c.participants ⁻¹' English.Determiners.this.deixis = Person.dom c (some .first) :=
@@ -436,10 +512,6 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
     naam.toPronoun.categories.image Category.toFeatures
       = naanŋgæ.toPronoun.categories.image Category.toFeatures := by decide
 
-/-- The exclusive's sign is the [+author, −participant] combination the containment filter on
-membership bundles rejects (`Person.wellFormed_iff_isIntent`), the author as a non-participant,
-which the free combinatorics of chapter 9 generate and the calculus fills
-(`Examples.exclusive_includes_speaker`). -/
 theorem exclusive_sign_filtered :
     ¬ IsLowerSet (↑(Finset.univ.filter (signOf .speakerOthers ·)) : Set Person.Feature) := by
   decide
