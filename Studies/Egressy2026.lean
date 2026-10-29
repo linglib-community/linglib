@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Egressy2026
 public import Linglib.Data.Examples.Gloss
+public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Fragments.Hungarian.Verbs
 public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
@@ -266,7 +267,7 @@ material precedes the *hogy*-clause, finiteness is the `PST` gloss label, every 
 paper being past, and the stem matches `Hungarian.Verbs.Verb.stem` exactly. -/
 def matrixWord? (e : Datum) : Option (GlossedWord × Hungarian.Verbs.Verb) :=
   (e.glossedWords.takeWhile fun w ↦ w.lexicalGloss? != some "that".toList).findSome? fun w ↦
-    if w.labels.contains "PST".toList then
+    if Morphology.Features.ofLabels w.labels .tense == (UD.Tense.Past : Flat _) then
       (verbs.find? fun v ↦ w.stem == v.stem.toList).map (w, ·)
     else none
 

@@ -14,6 +14,8 @@ public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Corbett2000
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Morphology.Word.Leipzig
 
 /-!
 # Corbett (2000): Number
@@ -66,8 +68,9 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   `Agreement.ConjunctAgreement`, which derives the exclusion of the more distant last conjunct
   (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`). An example fits an option
   when its target agrees (`HasPhi.Agree`) with the conjunct the option picks or with the resolved
-  features, all read off the glosses' Leipzig abbreviations, a conjunct whose gloss marks no number
-  being singular; the target's side is read off the order of the words.
+  features, all read off the glosses' category labels (`Morphology.Features.ofLabels`), a conjunct
+  whose gloss marks no number being singular; the target's side is read off the order of the
+  words.
 * Number resolution is the book's rule and is shown to be the substrate's resolution, the
   value of the sum of the conjuncts' referents; the corpus tables are typed here, in percentages,
   with the book's readings of them as theorems.
@@ -734,25 +737,11 @@ theorem resolveNumber_eq_resolve :
         resolveNumber english [a, b] = english.toSystem.resolve a b := by
   decide
 
-/-- The parts of a gloss, its stem and the abbreviations that follow it after `.` or `-`. -/
-def glossParts (g : String) : List (List Char) :=
-  g.toList.foldr (init := [[]]) fun c ps ↦
-    if c = '.' ∨ c = '-' then [] :: ps else (c :: ps.headD []) :: ps.tail
-
-/-- The number a gloss marks by the Leipzig abbreviations `SG`, `DU` and `PL`. -/
-def glossNumber? (g : String) : Option Number :=
-  (glossParts g).findSome?
-    ([("SG".toList, Number.singular), ("DU".toList, .dual), ("PL".toList, .plural)].lookup ·)
-
-/-- The gender a gloss marks by the Leipzig abbreviations `MASC`, `FEM` and `NEUT`. -/
-def glossGender? (g : String) : Option UD.Gender :=
-  (glossParts g).findSome?
-    ([("MASC".toList, UD.Gender.Masc), ("FEM".toList, .Fem), ("NEUT".toList, .Neut)].lookup ·)
-
 /-- The features a conjunct's gloss marks, its number being singular where the gloss marks none,
 as in the Arabic examples. -/
 def conjunctFeatures (g : String) : Morphology.Features :=
-  .of (number := some ((glossNumber? g).getD .singular)) (gender := glossGender? g)
+  let f := Morphology.Features.ofLabels (Gloss.labels g)
+  Function.update f .number ↑((f .number).unbotD .singular)
 
 /-- Slovene resolves the gender of conjuncts by its rules (`Corbett1991.Slovene.rules`): all
 feminines take the feminine and anything else the masculine. -/
@@ -908,7 +897,7 @@ def conjuncts? (row : Datum) : Option (List Morphology.Features) :=
 /-- `target? row` is the features a row's target marks. -/
 def target? (row : Datum) : Option Morphology.Features :=
   ((row.feature? "targetForm").bind fun w ↦ row.glossedTokens.lookup w).map fun g ↦
-    .of (number := glossNumber? g) (gender := glossGender? g)
+    Morphology.Features.ofLabels (Gloss.labels g)
 
 /-- `targetSide? row` is the side of the conjuncts a row's target is on, read off the order of its
 words, head-initial if it precedes them. -/

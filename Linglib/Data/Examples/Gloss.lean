@@ -11,20 +11,23 @@ public import Linglib.Data.Examples.Schema
 # The gloss line as structured data
 
 A glossed token is already structured: the Leipzig Glossing Rules segment the surface word and
-its gloss at the same affix and clitic boundaries (Rule 2) and write grammatical category labels
-in capitals (Rule 3), so a row's gloss line determines a morph-by-morph token stream without any
-analysis beyond the source's own. This file reads that structure: a `GlossedWord` is a token's
-surface morphs beside their glosses, a gloss segment is a category label or a lexical gloss by
-its capitalization, and `Datum.glossedWords` lists a row's well-aligned tokens. Readers built on
-it consult the row's form rather than a curated feature, the first step from annotated stimuli
-toward parsed ones.
+its gloss at the same affix and clitic boundaries (Rule 2), separate by periods the several
+metalanguage elements that render one object-language element (Rule 4), and write grammatical
+category labels in capitals (Rule 3), so a row's gloss line determines a morph-by-morph token
+stream without any analysis beyond the source's own. This file reads that structure: a
+`GlossedWord` is a token's surface morphs beside their glosses, a gloss element is a category
+label or a lexical gloss by its capitalization, and `Datum.glossedWords` lists a row's
+well-aligned tokens. Readers built on it consult the row's form rather than a curated feature,
+the first step from annotated stimuli toward parsed ones.
 
 ## Main definitions
 
 * `Gloss.toLower`: `Char.toLower` extended over the Latin-1 Supplement and Latin Extended-A
   capitals, for sentence-initial tokens in European orthographies.
 * `Gloss.segments`: the morphs of a token, split at the `-` and `=` boundaries.
-* `Gloss.IsLabel`: a gloss segment is a category label, written without lower-case letters.
+* `Gloss.elements`, `Gloss.IsLabel`, `Gloss.labels`: the period-separated elements of a morph's
+  gloss, an element being a category label when written without lower-case letters, and the
+  labels of a gloss.
 * `GlossedWord`, `Datum.glossedWords`: a token's aligned surface and gloss morphs, and a row's
   well-aligned tokens.
 * `GlossedWord.stem`, `GlossedWord.wordform`, `GlossedWord.labels`,
@@ -122,8 +125,8 @@ example : lookup? [("fyrr en", 1), ("til", 2)] (tokens "svaf fyrr en fimm") = so
 example : containsForm (tokens "He will tell her.") "will tell" = true := by decide
 example : containsForm (tokens "He told her.") "will tell" = false := by decide
 
-/-- A gloss segment is a category label, as the Leipzig rules write `PST` or `3SG.DF`, when it
-has no lower-case letter; otherwise it is a lexical gloss. -/
+/-- A gloss is a category label, as the Leipzig rules write `PST` or `3SG.DF`, when it has no
+lower-case letter; otherwise it is a lexical gloss. -/
 def IsLabel (g : List Char) : Prop := ∀ c ∈ g, ¬ c.isLower
 
 instance (g : List Char) : Decidable (IsLabel g) :=
@@ -131,6 +134,16 @@ instance (g : List Char) : Decidable (IsLabel g) :=
 
 example : IsLabel "3SG.DF".toList := by decide
 example : ¬ IsLabel "see".toList := by decide
+
+/-- The elements of a morph's gloss: an object-language element rendered by several metalanguage
+elements, words or category labels, has them separated by periods (Rule 4), as `come.out` or
+`left.SG.MASC`. -/
+def elements (g : List Char) : List (List Char) := split ['.'] g
+
+/-- The category labels of a gloss: the elements of its morphs written without lower-case letters
+(Rules 2–4), as `PST` and `3SG` in `be-PST.3SG`. -/
+def labels (g : String) : List (List Char) :=
+  ((segments g).flatMap elements).filter fun l ↦ decide (IsLabel l) && !l.isEmpty
 
 end Gloss
 
@@ -148,9 +161,10 @@ variable (w : GlossedWord)
 /-- The word's first surface morph, decapitalized: the form that a lexicon keys. -/
 def stem : List Char := (w.morphs.headD ([], [])).1.map Gloss.toLower
 
-/-- The category labels among the word's glosses. -/
+/-- The category labels among the elements of the word's glosses. -/
 def labels : List (List Char) :=
-  (w.morphs.map (·.2)).filter fun g ↦ decide (Gloss.IsLabel g) && !g.isEmpty
+  (w.morphs.flatMap fun m ↦ Gloss.elements m.2).filter fun l ↦
+    decide (Gloss.IsLabel l) && !l.isEmpty
 
 /-- The word's first lexical gloss, where it has one. -/
 def lexicalGloss? : Option (List Char) :=
