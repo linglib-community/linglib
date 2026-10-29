@@ -170,17 +170,13 @@ theorem question_admits_polarityFocus {p : Set W} (hne : p ≠ ∅) (hnu : p ≠
 
 -- (51)
 theorem assertion_neg_resolves_polarityFocus {p : Set W} (hne : p ≠ ∅) :
-    (Antecedent.assertion pᶜ {p, pᶜ}).Resolves (polarityFocus p).ordinary
-      (polarityFocus p).alternatives := by
-  have h : pᶜ ≠ p := fun h ↦ hne (by simpa [h] using Set.inter_compl_self p)
-  refine ⟨⟨?_, ?_, pᶜ, ?_, h⟩, h.symm⟩
-  · rw [polarityFocus_alternatives]
-  · simp
-  · simp
+    (Antecedent.assertion pᶜ).Resolves (polarityFocus p).ordinary
+      (polarityFocus p).alternatives :=
+  ⟨by simp [polarityFocus_alternatives], fun h ↦ hne (by simpa [h] using Set.inter_compl_self p)⟩
 
 -- (57)
-theorem not_assertion_self_resolves (p : Set W) (alts : Set (Set W)) :
-    ¬ (Antecedent.assertion p alts).Resolves (polarityFocus p).ordinary
+theorem not_assertion_self_resolves (p : Set W) :
+    ¬ (Antecedent.assertion p).Resolves (polarityFocus p).ordinary
       (polarityFocus p).alternatives :=
   fun h ↦ h.2 rfl
 
@@ -261,7 +257,7 @@ answer. -/
 theorem not_admits_polarityFocus_of_constituentQuestion {Q : Question W} {p a : Set W}
     (ha : a ∈ Q.alt) (hp : a ≠ p) (hc : a ≠ pᶜ) :
     ¬ (Antecedent.question Q.alt).Admits (polarityFocus p).alternatives := by
-  rw [Antecedent.Admits, contrastSet_question, polarityFocus_alternatives]
+  rw [Antecedent.Admits, Antecedent.contrastSet_question, polarityFocus_alternatives]
   intro h
   rcases h ha with rfl | rfl
   · exact hp rfl
