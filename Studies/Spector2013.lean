@@ -20,7 +20,7 @@ in downward-entailing ones. The readings are the intervals `Comparison.ge.interv
 `Comparison.eq.interval` and `Comparison.le.interval` of the degree substrate; exhaustifying a
 family of readings indexed by the numeral against the stronger numerals asserts the prejacent and
 denies every stronger numeral alternative, and on the numeral itself it is the exact reading
-(`exh_iff_bare`, the substrate's `exhNumeral`).
+(`Numerals.exhAgainst_ge_iff`).
 
 The theorems are symbolic in the numeral. Under a necessity modal the neo-Gricean wide-scope
 implicature is weaker than the exact reading (`necessity_implicature_of_exact`,
@@ -86,15 +86,6 @@ theorem antitone_nec (A : Set ℕ) : Antitone (fun m ↦ nec A (Comparison.ge.in
 
 theorem antitone_poss (A : Set ℕ) : Antitone (fun m ↦ poss A (Comparison.ge.interval m)) :=
   fun _ _ h ⟨k, hk, hkb⟩ ↦ ⟨k, hk, antitone_atLeast k h hkb⟩
-
-theorem exhNumeral_iff_exh (m k : ℕ) :
-    k ∈ exhNumeral m ↔ exhAgainst (· < ·) (fun m ↦ k ∈ Comparison.ge.interval m) m := by
-  rw [exhAgainst_lt_iff_succOrder (antitone_atLeast k), Order.succ_eq_add_one]
-  exact Iff.rfl
-
-theorem exh_iff_bare (m k : ℕ) :
-    exhAgainst (· < ·) (fun m ↦ k ∈ Comparison.ge.interval m) m ↔ k ∈ Comparison.eq.interval m :=
-  (exhNumeral_iff_exh m k).symm.trans (by rw [exhNumeral_eq])
 
 theorem exact_imp_atLeast {m k : ℕ} (h : k ∈ Comparison.eq.interval m) :
     k ∈ Comparison.ge.interval m :=

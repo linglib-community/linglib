@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Semantics.Exhaustification.Pointwise
+public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Linglib.Data.Examples.BylininaNouwen2018
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Plurality.Algebra
@@ -67,7 +66,7 @@ let the de-Fregean analysis do without `⊥` (Section 6.1) are not formalized.
 @[expose] public section
 namespace BylininaNouwen2018
 
-open Degree Exhaustification Quantifier Quantifier.GQ Set Mereology
+open Degree Exhaustification Numerals Quantifier Quantifier.GQ Set Mereology
 
 variable {α : Type*} [DecidableEq α]
 
@@ -127,11 +126,6 @@ theorem zero_notMem_countDegrees_sdiff (A B : Set α) :
 /-- Under `×`, *zero A B* is a tautology ((37), (39)). -/
 theorem zero_mem_countDegrees (A B : Set α) : 0 ∈ countDegrees A (plural B) :=
   ⟨∅, ⟨mem_plural.2 (by simp), mem_plural.2 (by simp)⟩, Finset.card_empty⟩
-
-theorem maxIn_singleton_iff_exhAgainst {D : Type*} [LinearOrder D] {P : Set D} {n : D} :
-    MaxIn {n} P ↔ exhAgainst (· < ·) (· ∈ P) n :=
-  maxIn_singleton.trans <| and_congr_right' ⟨fun h _ hm hmP ↦ (h hmP).not_gt hm,
-    fun h m hmP ↦ not_lt.1 fun hm ↦ h m hm hmP⟩
 
 -- (73)
 theorem maxIn_zero_countDegrees_iff {A B : Set α} :
