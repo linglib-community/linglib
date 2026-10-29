@@ -12,6 +12,7 @@ public import Linglib.Fragments.Mayan.Chuj.Extraction
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Data.Examples.AlonsoOvalleRoyer2024
+public import Linglib.Morphology.Word.Leipzig
 
 /-!
 # Alonso-Ovalle & Royer (2024): modal indefinites and semantic variation in Chuj
@@ -483,7 +484,8 @@ instance (v : Verb) : Decidable (Volitional v) := by unfold Volitional; infer_in
 
 /-- A row's sentence is negated when one of its words is glossed as negation. -/
 def Negated (row : Datum) : Prop :=
-  ∃ w ∈ row.glossedWords, ∃ g ∈ w.labels, g ∈ ["NEG".toList, "NEG.PFV".toList]
+  ∃ w ∈ row.glossedWords,
+    Morphology.Features.ofLabels w.labels .polarity = (UD.Polarity.Neg : Flat _)
 
 instance (row : Datum) : Decidable (Negated row) := by unfold Negated; infer_instance
 
