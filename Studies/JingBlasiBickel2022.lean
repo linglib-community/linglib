@@ -13,14 +13,13 @@ public import Mathlib.Probability.UniformOn
 # Jing, Blasi and Bickel (2022): Dependency-length minimization and its limits: A possible role for a probabilistic version of the final-over-final condition
 
 A two-dependency catena is a dependency with a dependency of its dependent (hierarchical) or two
-dependencies of one head (parallel), harmonic when the two have one direction. The paper scores a
-sentence by the probability that a baseline linearization of its tree has longer catenae, and
-proposes a probabilistic final-over-final condition against a head-initial dependency under a
-head-final one. Mirroring [keeps a sentence's harmony and score](##measures_mirror), and a law
-weighting dependency length alone [gives two dependencies and their reversal one
-probability](##measure_swap_directions). Hence the argument, which Roberts makes against accounts
-of harmony blind to direction: a score falling with head-finality needs a cause that sees
-direction, such as [a penalty on the final-over-initial catena](##cond_harmonic).
+of one head (parallel), harmonic when both point one way. The paper scores a sentence by the
+chance that a baseline relinearization has longer catenae, and proposes a probabilistic
+final-over-final condition against head-initial under head-final. Mirroring [keeps harmony and
+score](##measures_mirror), and a mirror-invariant law, such as one weighting dependency length
+alone, [gives two dependencies and their reversal one probability](##measure_swap_directions).
+Hence the argument, which Roberts makes for harmony: a score falling with head-finality needs a
+cause that sees direction, such as [a penalty on final over initial](##cond_harmonic).
 
 ## Implementation notes
 
@@ -30,17 +29,22 @@ direction, such as [a penalty on the final-over-initial catena](##cond_harmonic)
 * `dlm` is the probability that the paper estimates from 100 baseline samples, for any baseline
   law; Fig. 2a is one sample.
 * "Dispreferred" is modelled one catena at a time: the final-over-initial configuration of a
-  catena is downweighted by `ε < 1` in a law weighting dependency length alone. This is the
-  study's model of the paper's tentative principle, which the paper does not formalize.
+  catena is downweighted by `ε < 1` in a mirror-invariant law. This is the study's model of the
+  paper's tentative principle, which the paper does not formalize.
 * The paper's condition drops both restrictions of Biberauer, Holmberg and Roberts, that the two
   heads lie in one extended projection and share their value of the categorial feature ±V. Of
   the catenae of Table 4 only the complement clause `[[V O] V]` meets them; the relative clause
   `[[V O] N]` and the genitive `[[N N] V]` do not.
-* The symmetry argument binds mirror-invariant measures only. In the book of Sheehan,
-  Biberauer, Roberts and Holmberg, Roberts argues that an account of harmony blind to direction
-  cannot yield the condition (ch. 3, p. 33), and Sheehan shows that Hawkins's ratio of immediate
-  constituents to words, computed left to right, is not mirror-invariant and yields a statistical
-  version of it (ch. 5, pp. 80–83).
+* The symmetry argument binds mirror-invariant laws and measures only. In the book of Sheehan,
+  Biberauer, Roberts and Holmberg, Holmberg's introduction asks a parsing account why the
+  direction of disharmony matters (p. 5), and Roberts argues that cross-categorial harmony,
+  symmetric between head-initial and head-final, cannot account for the condition (ch. 3, p. 33).
+  Hawkins's early immediate constituents escape the argument: their recognition domains are built
+  left to right, and Sheehan's chapter scores the two disharmonic orders 75% and 42% (ch. 5,
+  pp. 80–83).
+* The paper's closing call (p. 415) to ground the condition in comprehension, production or
+  learning is met in part by that chapter, which weighs Hawkins's and Cecchetto's parsing
+  accounts of it.
 * Example (2) holds with the boxed phrases as units, which is the chain of (6): in words, its
   *of*-genitive and *s*-genitive are different trees.
 
@@ -67,7 +71,7 @@ direction, such as [a penalty on the final-over-initial catena](##cond_harmonic)
 
 * [jing-blasi-bickel-2022]
 * [biberauer-holmberg-roberts-2014]
-* [sheehan-etal-2017]
+* [sheehan-biberauer-roberts-holmberg-2017]
 -/
 
 @[expose] public section
@@ -340,7 +344,7 @@ theorem projective_chain :
     · exact ⟨ex6c.mirror, by simp, by decide⟩
     · exact ⟨Arrangement.mirror (Equiv.refl (Fin 3)), by simp, by decide⟩
 
-/-! ### Laws weighting dependency length alone -/
+/-! ### Mirror-invariant laws -/
 
 section Laws
 
@@ -355,10 +359,10 @@ theorem map_mirror_eq_self (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLength) :
   rw [Measure.map_apply .of_discrete .of_discrete, this, hμ, hμ, ← Graph.mirror_map,
     Graph.totalLength_mirror]
 
-/-- p. 412: under a law of linearizations whose point masses depend on total dependency length
-alone, reversing the directions of two dependencies preserves the probability of every event
-about their directions. -/
-theorem measure_swap_directions (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLength) (hg : g.IsForest)
+/-- p. 412: under a law of linearizations invariant under mirroring, reversing the directions of
+two dependencies preserves the probability of every event about their directions. Every law
+weighting dependency length alone is one (`map_mirror_eq_self`). -/
+theorem measure_swap_directions (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsForest)
     {x : (Fin n × Fin n) × (Fin n × Fin n)} (hx : x ∈ g.arcs ×ˢ g.arcs)
     (S : Set (HeadDirection × HeadDirection)) :
     μ {σ | Prod.map HeadDirection.swap HeadDirection.swap (directions σ x) ∈ S} =
@@ -368,9 +372,9 @@ theorem measure_swap_directions (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLengt
       Arrangement.mirror ⁻¹' {σ | directions σ x ∈ S} := by
     ext σ
     simp [directions_mirror (ne_of_mem_arcs hg hx.1) (ne_of_mem_arcs hg hx.2)]
-  rw [e, ← Measure.map_apply .of_discrete .of_discrete, map_mirror_eq_self hμ]
+  rw [e, ← Measure.map_apply .of_discrete .of_discrete, hμ]
 
-private theorem measure_swap_eq (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLength) (hg : g.IsForest)
+private theorem measure_swap_eq (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsForest)
     {x : (Fin n × Fin n) × (Fin n × Fin n)} (hx : x ∈ g.arcs ×ˢ g.arcs)
     (c : HeadDirection × HeadDirection) :
     μ {σ | directions σ x = Prod.map HeadDirection.swap HeadDirection.swap c} =
@@ -385,14 +389,14 @@ private theorem measure_swap_eq (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLengt
   exact hinv.eq_iff.symm
 
 -- (6), Table 4: a final-over-initial catena is as likely as an initial-over-final one
-theorem measure_finalOverInitial (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLength) (hg : g.IsForest)
+theorem measure_finalOverInitial (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsForest)
     {x : (Fin n × Fin n) × (Fin n × Fin n)} (hx : x ∈ hierarchical g) :
     μ {σ | directions σ x = (.headFinal, .headInitial)} =
       μ {σ | directions σ x = (.headInitial, .headFinal)} :=
   measure_swap_eq hμ hg (mem_filter.1 hx).1 (.headInitial, .headFinal)
 
 -- p. 412: parallel dependents pile up before their head as often as after it
-theorem measure_pileUp (hμ : ∀ σ, μ {σ} = f (g.map σ).totalLength) (hg : g.IsForest)
+theorem measure_pileUp (hμ : μ.map Arrangement.mirror = μ) (hg : g.IsForest)
     {x : (Fin n × Fin n) × (Fin n × Fin n)} (hx : x ∈ parallel g) :
     μ {σ | directions σ x = (.headFinal, .headFinal)} =
       μ {σ | directions σ x = (.headInitial, .headInitial)} :=
@@ -406,11 +410,11 @@ private theorem withDensity_apply_directions {x : (Fin n × Fin n) × (Fin n × 
   exact setLIntegral_congr_fun .of_discrete fun σ hσ ↦ congrArg w hσ
 
 /-- Table 4, Fig. 6: let `μ` downweight by `ε < 1` the final-over-initial configuration of a
-hierarchical catena under a law `ν` that weights dependency length alone. Under `ν` the lower
+hierarchical catena under a mirror-invariant law `ν`. Under `ν` the lower
 dependency of the catena is as likely to be harmonic with the upper one when head-final as when
 head-initial; under `μ` the head-final probability is unchanged and the head-initial one is
 greater. Every conditioning set has positive probability. -/
-theorem cond_harmonic [IsFiniteMeasure ν] (hν : ∀ σ, ν {σ} = f (g.map σ).totalLength)
+theorem cond_harmonic [IsFiniteMeasure ν] (hν : ν.map Arrangement.mirror = ν)
     (hg : g.IsForest) {x : (Fin n × Fin n) × (Fin n × Fin n)} (hx : x ∈ hierarchical g)
     {ε : ℝ≥0∞} (hε : ε < 1)
     (hμ : μ = ν.withDensity fun σ ↦
@@ -479,15 +483,16 @@ theorem cond_harmonic [IsFiniteMeasure ν] (hν : ∀ σ, ν {σ} = f (g.map σ)
     refine ENNReal.add_lt_add_right hp ?_
     simpa using ENNReal.mul_lt_mul_left hFI hq hε
 
--- the uniform law on the orders of the chain of (6) meets the hypotheses of `cond_harmonic`
+-- the uniform law on the orders of the chain of (6), which weights dependency length alone,
+-- meets the hypotheses of `cond_harmonic`
 example : chain.IsForest ∧ ((0, 1), (1, 2)) ∈ hierarchical chain ∧
-    (∀ σ, (Measure.count : Measure (Arrangement (Fin 3) 3)) {σ} =
-      (fun _ ↦ 1) (chain.map σ).totalLength) ∧
+    (Measure.count : Measure (Arrangement (Fin 3) 3)).map Arrangement.mirror = Measure.count ∧
     Measure.count {σ : Arrangement (Fin 3) 3 |
       directions σ ((0, 1), (1, 2)) = (.headInitial, .headInitial)} ≠ 0 ∧
     Measure.count {σ : Arrangement (Fin 3) 3 |
       directions σ ((0, 1), (1, 2)) = (.headFinal, .headInitial)} ≠ 0 := by
-  refine ⟨by decide, by decide, Measure.count_singleton, ?_, ?_⟩ <;>
+  refine ⟨by decide, by decide, map_mirror_eq_self (g := chain) (f := fun _ ↦ 1)
+    Measure.count_singleton, ?_, ?_⟩ <;>
     rw [Ne, Measure.count_eq_zero_iff]
   exacts [Set.Nonempty.ne_empty ⟨.refl _, by decide⟩,
     Set.Nonempty.ne_empty ⟨ex6c.mirror, by decide⟩]
