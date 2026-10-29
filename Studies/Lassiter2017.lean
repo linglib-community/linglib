@@ -72,6 +72,13 @@ sets `{φ, ¬φ}` being the book's weakest choice. The counter-model instantiate
 expected value over an equiprobable domain of four worlds indexed by the truth values of `A` and
 `B`.
 
+## Errata
+
+On p. 164 the conclusion that $θ_{might} > θ_{must}$ is said to imply, under the dualities of
+*must* with *might* and of *certain* with *possible*, that $θ_{certain} > θ_{must}$. The premise
+that yields it is the preceding conclusion $θ_{possible} < θ_{might}$
+(`must_lt_certain_iff_possible_lt_might`).
+
 ## TODO
 
 * The measurement-theoretic representation of p. 82 and p. 97, and its generalization to sets of
@@ -324,7 +331,7 @@ theorem antitone_pos (hθ : StrictMono θ) : Antitone (pos P θ) := by
   · exact Set.preimage_mono <| (hI j _).trans <| (Set.Ici_subset_Ioi.2 (hθ h)).trans (hO i _)
   · exact le_rfl
 
--- (6.16)
+-- (6.16) says *much* more likely; a threshold above one half gives only *more* likely
 theorem compl_lt_of_mem_must [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {θ' : ℝ}
     (hθ : 1 / 2 < θ') (h : A ∈ P.real ⁻¹' Set.Ici θ') : P.real Aᶜ < P.real A := by
   have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)

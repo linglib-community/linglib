@@ -12,9 +12,10 @@ of conditionals the first is the consequence condition and the second is conditi
 middle, which is equivalent to the distribution of a conditional over a disjunctive consequent
 (`cem_iff_distribution`). Uniqueness is neutralized by supervaluation: the selection functions in
 use correspond to orderings with ties, and a conditional is true when every completion makes it true
-(`superCounterfactual`), so conditional excluded middle stays valid while Quine's two
-counterfactuals about Bizet and Verdi come out neither true nor false rather than, as for Lewis,
-both false (`bizet_italian_indet`, `bizet_verdi_cem`, `bizet_cem_fails_universal`); distribution
+(`superCounterfactual`). Supervaluation is not truth-functional, so conditional excluded middle
+stays super-true while Quine's two counterfactuals about Bizet and Verdi come out neither true nor
+false rather than, as for Lewis, both false (`bizet_italian_indet`, `bizet_verdi_cem`,
+`bizet_cem_fails_universal`); distribution
 likewise separates the analyses (`distribution_needs_uniqueness`, `distribution_fails_bizetverdi`).
 Because Lewis's antecedents are necessity operators, his analysis predicts a scope ambiguity between
 a quantifier inside and outside a counterfactual, as with the woman President Carter would have
@@ -151,9 +152,13 @@ theorem verdi_french_indet :
   rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 theorem bizet_verdi_cem :
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual ⊔
-      selectionalCounterfactual bvSim compatriots bizetItalianᶜ .actual ≠ -1 :=
-  cem_selectional bvSim compatriots bizetItalian .actual
+    (∀ s : SelectionFunction BVWorld, s.Compatible bvSim →
+      .actual ∈ selectionConditional s compatriots bizetItalian ∪
+        selectionConditional s compatriots bizetItalianᶜ) ∧
+    superCounterfactual bvSim compatriots bizetItalian .actual = 0 ∧
+    superCounterfactual bvSim compatriots bizetItalianᶜ .actual = 0 := by
+  refine ⟨cem_supervaluation bvSim compatriots bizetItalian .actual, bizet_italian_indet, ?_⟩
+  rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 theorem bizet_cem_fails_universal :
     .actual ∉ closestImp bvSim compatriots bizetItalian ∧

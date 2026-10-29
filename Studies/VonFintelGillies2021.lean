@@ -13,10 +13,11 @@ Mantra: *can't* patterns with *must* in its evidential distribution (Observation
 negation neither of a strong nor of a weak existential modal. Kernel semantics resolves the
 dilemma: *can't φ* is *must* of the negation, so its evidential signal is that of *must*, and
 its assertion, that the modal base excludes `φ`, contradicts *might φ* and under a realistic
-base entails the negation of the prejacent, the thesis S2. On the worked kernel of the earlier
-paper *can't not-blue* is defined, true, and excludes *might not-blue* at once, the joint
-profile the Mantra cannot assign (`cant_dilemma_resolved`), and direct information that settles
-the prejacent gives *can't* presupposition failure as it does *must*. The anti-knowledge
+base entails the negation of the prejacent, the thesis S2. On the wet-rain-gear kernel of the
+earlier paper *it can't be not raining* is defined, true, and excludes *it might be not raining*
+at once, the joint profile the Mantra cannot assign (`cant_dilemma_resolved`), and direct
+information that settles the prejacent, seeing the rain, gives *can't* presupposition failure as
+it does *must*. The anti-knowledge
 examples of §4.2, Phil who checked dinner himself against Meryl who followed instructions (24)
 and (25), are the rows of `Data.Examples.VonFintelGillies2021`.
 
@@ -41,8 +42,8 @@ construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation
 
 open Modality VonFintelGillies2010
 
-/-- `⟦not blue⟧`. -/
-abbrev notBlue : World → Prop := (· ≠ .w1)
+/-- `⟦not raining⟧`. -/
+abbrev notRaining : World → Prop := fun w ↦ ¬ raining w
 
 variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
@@ -54,27 +55,27 @@ theorem cant_entails_negation (hReal : w ∈ k.base) (hTrue : kernelCant k φ w 
   must_entails_prejacent k _ w hReal (kernelMust_eq_one_iff.1 hTrue).2
 
 theorem cant_dilemma_resolved :
-    .w1 ∈ mastermindK.base ∧ kernelCant mastermindK notBlue .w1 = 1 ∧
-      kernelMight mastermindK notBlue .w1 = -1 ∧ ¬ notBlue .w1 := by
-  have hCant : kernelCant mastermindK notBlue .w1 = 1 := by
+    (true, true) ∈ wetGearK.base ∧ kernelCant wetGearK notRaining (true, true) = 1 ∧
+      kernelMight wetGearK notRaining (true, true) = -1 ∧ ¬ notRaining (true, true) := by
+  have hCant : kernelCant wetGearK notRaining (true, true) = 1 := by
     refine kernelMust_eq_one_iff.2 ⟨?_, ?_⟩
     · rintro ⟨x, hx, hxor⟩
       rcases hx with rfl | hx'
       · rcases hxor with h_sub | h_disj
-        · exact h_sub (show redOrBlue .w0 from by decide) (by decide)
-        · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
-            (show ¬ notBlue .w1 from by decide)
-      · obtain rfl : x = notRed := hx'
+        · exact h_sub (show onlyRainWets (false, false) from by decide) (by decide)
+        · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
+            (show ¬ notRaining (true, true) from by decide)
+      · obtain rfl : x = wetGear := hx'
         rcases hxor with h_sub | h_disj
-        · exact h_sub (show notRed .w2 from by decide) (by decide)
-        · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)
-            (show ¬ notBlue .w1 from by decide)
-    · rw [Kernel.followsFrom_iff, mastermind_base]
+        · exact h_sub (show wetGear (true, false) from by decide) (by decide)
+        · exact Set.disjoint_left.mp h_disj (show wetGear (true, true) from by decide)
+            (show ¬ notRaining (true, true) from by decide)
+    · rw [Kernel.followsFrom_iff, wetGearK_base]
       rintro w rfl
       decide
-  exact ⟨by rw [mastermind_base]; rfl, hCant, cant_might_exclusion _ _ _ hCant, by decide⟩
+  exact ⟨by rw [wetGearK_base]; rfl, hCant, cant_might_exclusion _ _ _ hCant, by decide⟩
 
-theorem cant_direct_evidence_infelicity : kernelCant mastermindK red .w0 = 0 :=
-  kernelMust_eq_zero_iff.2 ⟨notRed, by simp [mastermindK], Or.inl fun _ hw ↦ hw⟩
+theorem cant_direct_evidence_infelicity (w : World) : kernelCant rainK notRaining w = 0 :=
+  kernelMust_eq_zero_iff.2 ⟨raining, by simp [rainK], Or.inl fun _ hw hn ↦ hn hw⟩
 
 end VonFintelGillies2021

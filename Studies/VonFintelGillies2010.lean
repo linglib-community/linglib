@@ -14,20 +14,27 @@ prejacent, and the felt weakness is an evidential presupposition: the kernel of 
 information must not directly settle the prejacent, though its modal base may entail it. The
 kernel apparatus, the explicit-representation implementation of settling (§7.1) and the
 presuppositional operators (Definitions 4 to 6), is `Semantics/Modality/Kernel.lean`; this file
-carries the worked kernel of Figure 3(a), Billy's weather reports in the colors of the
-Mastermind scenario of §2 (`mastermindK`), on which *must blue* is defined and true while
-*might red* is undefined, so that indirectness and weakness come apart (§4.1), the validity of
-*if φ, must ψ; φ; so ψ* (Argument 4.3.1) and the contradictoriness of *must φ but perhaps not φ*
-(Argument 4.3.2), and the second implementation of settling by the partition a kernel induces,
-a subject matter in which the prejacent is an issue (Definition 7, §7.2), with the two
-implementations shown non-equivalent in both directions (`settlesByPartition`).
+carries the kernels of Billy's weather reports (Figure 3). When she sees wet rain gear and knows
+rain is its only cause (`wetGearK`), *it must be raining* is defined and true; when she sees the
+rain (`rainK`) it is undefined; and when she knows only the cause (`onlyRainWetsK`) it is defined
+and false, so that indirectness and weakness come apart (§4.1). The file also carries the
+validity of *if φ, must ψ; φ; so ψ* (Argument 4.3.1), the contradictoriness of *must φ but
+perhaps not φ* (Argument 4.3.2), and the second implementation of settling by the partition a
+kernel induces, a subject matter in which the prejacent is an issue (Definition 7, §7.2), under
+which the wet rain gear again leaves the weather unsettled while entailing it
+(`entailment_not_implies_partition`). The two implementations are not equivalent. The paper's
+boundary case, a kernel `{P}` that settles `P ∪ Q` explicitly but not by partition, shows one
+direction (`explicit_not_implies_partition`); the base of the wet-gear kernel, which its
+partition settles and no single kernel proposition does, shows the other
+(`partition_not_implies_explicit`), a case the paper does not discuss.
 
 ## Implementation notes
 
-The four worlds are red, blue, green and unknown, with *red or blue* and *not red* the kernel
-propositions `P ∪ Q` and `W \ P` of the paper's figure. A subject matter is a `Setoid`, and a
-proposition is an issue in it when the setoid decides the proposition. The paper's examples
-are the rows of `Data.Examples.VonFintelGillies2010`.
+The four worlds are the combinations of whether the rain gear coming inside is wet and whether it
+is raining, with `P` (no wet rain gear) and `Q` (it is raining) of (25) the propositions
+`noWetGear` and `raining`, so that `P ∩ Q` and `P \ Q` are both inhabited, as the figures draw
+them. A subject matter is a `Setoid`, and a proposition is an issue in it when the setoid decides
+the proposition. The paper's examples are the rows of `Data.Examples.VonFintelGillies2010`.
 
 ## References
 
@@ -40,103 +47,95 @@ are the rows of `Data.Examples.VonFintelGillies2010`.
 
 namespace VonFintelGillies2010
 
-/-! ### The kernel model (§7.1)
+/-! ### Billy's weather reports (§7.1, Figure 3)
 
-A four-world instantiation of §7.1's worked kernel `K = {P ∪ Q, W \ P}`
-(Billy's weather report, Figure 3(a)), skinned with the colors of the §2
-Mastermind scenario (Pascal asking Mordecai *Must there be two reds?*):
-`P` = red-only, `Q` = blue, so `redOrBlue = P ∪ Q` and `notRed = W \ P`.
-`B_K = {w1}` entails *blue* without either kernel proposition settling it. -/
+In Figure 3(a) Billy's direct information is that there is wet rain gear (`W \ P`) and that rain
+gear gets wet only if it is raining (`P ∪ Q`). Each kernel proposition overlaps `Q` without being
+included in it, so neither settles `Q`, while the base, wet gear and rain, entails it. In
+Figure 3(b) her direct information is the rain itself (`Q`). -/
 
 open Modality
 
-/-- Four worlds, with `w0` red, `w1` blue, `w2` green, and `w3` unknown. -/
-inductive World where
-  | w0 | w1 | w2 | w3
-  deriving DecidableEq, Repr, Inhabited
+/-- A world records whether the rain gear coming inside is wet and whether it is raining. -/
+abbrev World := Bool × Bool
 
-/-- `⟦red or blue⟧ = {w0, w1}`, the paper's `P ∪ Q`. -/
-abbrev redOrBlue : World → Prop := fun w ↦ w = .w0 ∨ w = .w1
+/-- (25a) `P`: there is no wet rain gear. -/
+abbrev noWetGear : World → Prop := (·.1 = false)
 
-/-- `⟦not red⟧ = {w1, w2, w3}`, the paper's `W \ P`. -/
-abbrev notRed : World → Prop := (· ≠ .w0)
+/-- (25b) `Q`: it is raining. -/
+abbrev raining : World → Prop := (·.2 = true)
 
-/-- `⟦blue⟧ = {w1}`, the paper's `Q`. -/
-abbrev blue : World → Prop := (· = .w1)
+/-- `P ∪ Q`: rain gear is wet only if it is raining. -/
+abbrev onlyRainWets : World → Prop := fun w ↦ noWetGear w ∨ raining w
 
-/-- `⟦red⟧ = {w0}`, the paper's `P`. -/
-abbrev red : World → Prop := (· = .w0)
+/-- `W \ P`: there is wet rain gear. -/
+abbrev wetGear : World → Prop := fun w ↦ ¬ noWetGear w
 
-/-- The §7.1 kernel `{P ∪ Q, W \ P}` in Mastermind colors. -/
-def mastermindK : Kernel World := ⟨{redOrBlue, notRed}⟩
+/-- The kernel `{P ∪ Q, W \ P}` of Figure 3(a): wet rain gear, with rain its only cause. -/
+def wetGearK : Kernel World := ⟨{onlyRainWets, wetGear}⟩
 
-/-- A one-proposition kernel whose base properly contains ⟦blue⟧. -/
-def indirectK : Kernel World := ⟨{redOrBlue}⟩
+/-- The kernel `{P ∪ Q, Q}` of Figure 3(b): the rain itself. -/
+def rainK : Kernel World := ⟨{onlyRainWets, raining}⟩
 
-theorem mastermind_base : mastermindK.base = ({.w1} : Set World) := by
+/-- A one-proposition kernel, rain the only cause of wet gear, whose base properly contains
+`⟦raining⟧`. -/
+def onlyRainWetsK : Kernel World := ⟨{onlyRainWets}⟩
+
+theorem wetGearK_base : wetGearK.base = ({(true, true)} : Set World) := by
   ext w
-  cases w <;> simp [mastermindK, redOrBlue, notRed]
+  rcases w with ⟨_ | _, _ | _⟩ <;> simp [wetGearK]
 
-theorem mastermind_blue_unsettled :
-    ¬ mastermindK.directlySettles blue := by
+theorem raining_unsettled : ¬ wetGearK.directlySettles raining := by
   rintro ⟨x, hx, hxor⟩
   rcases hx with rfl | hx'
   · rcases hxor with h_sub | h_disj
-    · exact (show ¬ blue .w0 from by decide)
-        (h_sub (show redOrBlue .w0 from by decide))
-    · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
-        (show blue .w1 from by decide)
-  · obtain rfl : x = notRed := hx'
+    · exact (show ¬ raining (false, false) from by decide)
+        (h_sub (show onlyRainWets (false, false) from by decide))
+    · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
+        (show raining (true, true) from by decide)
+  · obtain rfl : x = wetGear := hx'
     rcases hxor with h_sub | h_disj
-    · exact (show ¬ blue .w2 from by decide)
-        (h_sub (show notRed .w2 from by decide))
-    · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)
-        (show blue .w1 from by decide)
+    · exact (show ¬ raining (true, false) from by decide)
+        (h_sub (show wetGear (true, false) from by decide))
+    · exact Set.disjoint_left.mp h_disj (show wetGear (true, true) from by decide)
+        (show raining (true, true) from by decide)
 
-theorem mastermind_blue_follows : mastermindK.FollowsFrom blue := by
-  rw [Kernel.followsFrom_iff, mastermind_base]
+theorem raining_follows : wetGearK.FollowsFrom raining := by
+  rw [Kernel.followsFrom_iff, wetGearK_base]
   rintro w rfl
   rfl
 
-theorem mastermind_must_blue_eq_one : kernelMust mastermindK blue .w0 = 1 :=
-  kernelMust_eq_one_iff.2 ⟨mastermind_blue_unsettled, mastermind_blue_follows⟩
+theorem must_raining_eq_one (w : World) : kernelMust wetGearK raining w = 1 :=
+  kernelMust_eq_one_iff.2 ⟨raining_unsettled, raining_follows⟩
 
-theorem mastermind_red_settled :
-    mastermindK.directlySettles red :=
-  ⟨notRed, by simp [mastermindK], Or.inr (Set.disjoint_left.mpr fun _ hnr hr ↦ hnr hr)⟩
-
-theorem mastermind_might_red_eq_zero : kernelMight mastermindK red .w0 = 0 :=
-  kernelMight_eq_zero_iff.2 mastermind_red_settled
-
-theorem mastermind_redOrBlue_settled :
-    mastermindK.directlySettles redOrBlue :=
-  ⟨redOrBlue, by simp [mastermindK], Or.inl subset_rfl⟩
+theorem rainK_settles_raining : rainK.directlySettles raining :=
+  ⟨raining, by simp [rainK], Or.inl subset_rfl⟩
 
 /-! ### Deep theorems -/
 
 theorem entailment_settling_gap :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.FollowsFrom φ ∧ ¬ k.directlySettles φ :=
-  ⟨mastermindK, blue, mastermind_blue_follows, mastermind_blue_unsettled⟩
+  ⟨wetGearK, raining, raining_follows, raining_unsettled⟩
 
--- §4.1
-theorem indirectness_neq_weakness :
-    kernelMust mastermindK blue .w0 = 1 ∧ kernelMust mastermindK red .w0 = 0 ∧
-      kernelMust indirectK blue .w0 = -1 := by
-  refine ⟨mastermind_must_blue_eq_one, kernelMust_eq_zero_iff.2 mastermind_red_settled,
+-- §4.1, (6), (7)
+theorem indirectness_neq_weakness (w : World) :
+    kernelMust wetGearK raining w = 1 ∧ kernelMust rainK raining w = 0 ∧
+      kernelMust onlyRainWetsK raining w = -1 := by
+  refine ⟨must_raining_eq_one w, kernelMust_eq_zero_iff.2 rainK_settles_raining,
     kernelMust_eq_neg_one_iff.2 ⟨?_, ?_⟩⟩
   · rintro ⟨x, hx, hxor⟩
-    obtain rfl : x = redOrBlue := hx
+    obtain rfl : x = onlyRainWets := hx
     rcases hxor with h_sub | h_disj
-    · exact (show ¬ blue .w0 from by decide)
-        (h_sub (show redOrBlue .w0 from by decide))
-    · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
-        (show blue .w1 from by decide)
+    · exact (show ¬ raining (false, false) from by decide)
+        (h_sub (show onlyRainWets (false, false) from by decide))
+    · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
+        (show raining (true, true) from by decide)
   · intro h
-    have hw0 : World.w0 ∈ indirectK.base :=
+    have hw : ((false, false) : World) ∈ onlyRainWetsK.base :=
       Kernel.mem_base.mpr fun p hp ↦ by
-        obtain rfl : p = redOrBlue := hp; decide
-    exact (by decide : ¬ blue World.w0) (h _ hw0)
+        obtain rfl : p = onlyRainWets := hp; decide
+    exact (by decide : ¬ raining (false, false)) (h _ hw)
 
 variable {W : Type*} (k : Kernel W)
 
@@ -195,39 +194,55 @@ theorem partition_implies_entailment (φ : W → Prop)
 
 /-! ### Non-equivalence of the two implementations (§7.2)
 
-Implementation 1 settles supersets of K-propositions that Implementation 2
-misses (`K = {P}` settles `P ∪ Q` explicitly, but there are worlds agreeing
-on `P` that disagree on `P ∪ Q`); Implementation 2 settles propositions
-determined jointly by K-propositions that no single proposition settles
-(`blue` is determined by `redOrBlue` together with `notRed`). -/
+Implementation 1 settles supersets of K-propositions that Implementation 2 misses: `K = {P}`
+settles `P ∪ Q` explicitly, but worlds agreeing on `P` disagree on `P ∪ Q`. Implementation 2
+settles propositions that K-propositions determine jointly while no single one settles them: the
+base of the wet-gear kernel. Under both, the wet rain gear leaves the weather unsettled while
+entailing it. -/
 
-private theorem not_settles_redOrBlue :
-    ¬ settlesByPartition ⟨{red}⟩ redOrBlue := by
+private theorem not_settles_onlyRainWets :
+    ¬ settlesByPartition ⟨{noWetGear}⟩ onlyRainWets := by
   intro h
-  have h12 := Setoid.decides_iff.1 h .w1 .w2 (fun p hp ↦ by
-    obtain rfl : p = red := hp; decide)
-  exact absurd (h12.mp (by decide)) (by decide)
+  have h' := Setoid.decides_iff.1 h (true, true) (true, false) (fun p hp ↦ by
+    obtain rfl : p = noWetGear := hp; decide)
+  exact absurd (h'.mp (by decide)) (by decide)
 
+-- §7.2
 theorem explicit_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.directlySettles φ ∧ ¬ settlesByPartition k φ :=
-  ⟨⟨{red}⟩, redOrBlue,
-    ⟨red, by simp, Or.inl fun _ hw ↦ Or.inl hw⟩, not_settles_redOrBlue⟩
+  ⟨⟨{noWetGear}⟩, onlyRainWets, ⟨noWetGear, by simp, Or.inl fun _ hw ↦ Or.inl hw⟩,
+    not_settles_onlyRainWets⟩
 
 theorem partition_not_implies_explicit :
     ∃ (k : Kernel World) (φ : World → Prop),
       settlesByPartition k φ ∧ ¬ k.directlySettles φ := by
-  refine ⟨mastermindK, blue, Setoid.decides_iff.2 fun w v h ↦ ?_, mastermind_blue_unsettled⟩
-  have h1 := h redOrBlue (by simp [mastermindK])
-  have h2 := h notRed (by simp [mastermindK])
-  revert h1 h2
-  cases w <;> cases v <;> decide
+  refine ⟨wetGearK, fun w ↦ wetGear w ∧ raining w, Setoid.decides_iff.2 fun w v h ↦ ?_, ?_⟩
+  · have h1 := h onlyRainWets (by simp [wetGearK])
+    have h2 := h wetGear (by simp [wetGearK])
+    revert h1 h2
+    rcases w with ⟨_ | _, _ | _⟩ <;> rcases v with ⟨_ | _, _ | _⟩ <;> decide
+  · rintro ⟨x, hx, hxor⟩
+    rcases hx with rfl | hx'
+    · rcases hxor with h_sub | h_disj
+      · exact (show ¬ (wetGear (false, false) ∧ raining (false, false)) from by decide)
+          (h_sub (show onlyRainWets (false, false) from by decide))
+      · exact Set.disjoint_left.mp h_disj (show onlyRainWets (true, true) from by decide)
+          (show wetGear (true, true) ∧ raining (true, true) from by decide)
+    · obtain rfl : x = wetGear := hx'
+      rcases hxor with h_sub | h_disj
+      · exact (show ¬ (wetGear (true, false) ∧ raining (true, false)) from by decide)
+          (h_sub (show wetGear (true, false) from by decide))
+      · exact Set.disjoint_left.mp h_disj (show wetGear (true, true) from by decide)
+          (show wetGear (true, true) ∧ raining (true, true) from by decide)
 
+-- §7.2, Figure 5(a)
 theorem entailment_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
-      k.FollowsFrom φ ∧ ¬ settlesByPartition k φ :=
-  ⟨⟨{red}⟩, redOrBlue,
-    fun w hw ↦ Or.inl (by simpa using hw),
-    not_settles_redOrBlue⟩
+      k.FollowsFrom φ ∧ ¬ settlesByPartition k φ := by
+  refine ⟨wetGearK, raining, raining_follows, fun h ↦ ?_⟩
+  have h' := Setoid.decides_iff.1 h (false, true) (false, false) (fun p hp ↦ by
+    rcases hp with rfl | rfl <;> decide)
+  exact absurd (h'.mp (by decide)) (by decide)
 
 end VonFintelGillies2010

@@ -18,7 +18,8 @@ the teleological and the statistical construal disagree on whether turtles live 
 hundred. Against the probabilistic rival, on which a generic is true when the scope is more
 likely than not given the restrictor, the paper objects that a margin just over half verifies
 generics that are not true, and that embedded generics trivialize the account: under
-conditionalization the probability of the conditional collapses to that of the scope. Logical
+conditionalization a restrictor compatible with the scope and with its negation is independent of
+the scope, so the probability of the conditional collapses to that of the scope. Logical
 forms are then built by putting the focused material in the nuclear scope and its
 alternatives in the restrictor, which weakens the restrictor where needed (ducks lay eggs),
 lets a tautologous restrictor deliver an existential (firemen are available), and, with a
@@ -37,8 +38,18 @@ Item numbers follow the 2012 preprint.
   has one.
 * `existentialReading`, `gen_univ`, `doubleGeneric`: the alternatives-based, the tautologous,
   and the circumstantial restrictor.
-* `Conditionalizes`, `cond_eq_of_conditionalizes`: the trivialization of probabilistic
-  generics.
+* `Conditionalizes`, `cond_eq_of_conditionalizes`, `measure_compl_eq_zero_of_conditionalizes`:
+  the trivialization of probabilistic generics.
+
+## Implementation notes
+
+Conditionalization is required only of events that leave the restrictor possible,
+$\mu(a \cap d) \neq 0$, as in [lewis-1976]. Lewis's argument uses it at three events. Required
+of every such event, the rule is stronger than the argument needs: for a restrictor compatible
+with the scope and with its negation it already gives the restrictor probability one
+(`measure_compl_eq_zero_of_conditionalizes`), [milne-2003]'s two-valuedness, which the paper
+cites. `cond_eq_of_conditionalizes` is therefore the reductio Lewis intends, with no model in
+which the restrictor has probability below one.
 
 ## References
 
@@ -161,29 +172,66 @@ theorem cohen_too_weak :
 variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
 
 /-- A proposition `c` for the conditional `a > b` conditionalizes when its probability given
-    any `d` is that of `b` given `a` and `d`. -/
-def Conditionalizes (a b c : Set Ω) : Prop := ∀ d, MeasurableSet d → μ[c | d] = μ[b | a ∩ d]
+any `d` that leaves `a` possible is that of `b` given `a` and `d`, [lewis-1976]'s (7). -/
+def Conditionalizes (a b c : Set Ω) : Prop :=
+  ∀ d, MeasurableSet d → μ (a ∩ d) ≠ 0 → μ[c | d] = μ[b | a ∩ d]
 
-/-- Under conditionalization the probability of the scope given the restrictor is the
-    probability of the scope, whenever the restrictor is compatible with the scope. -/
+/-- [lewis-1976]'s first triviality result: under conditionalization, a restrictor compatible
+with the scope and with its negation is independent of the scope. -/
 theorem cond_eq_of_conditionalizes {a b c : Set Ω} (ha : MeasurableSet a)
-    (hb : MeasurableSet b) (h : Conditionalizes μ a b c) (h₁ : μ (a ∩ b) ≠ 0) :
-    μ[b | a] = μ b := by
-  have hc : μ c = μ[b | a] := by simpa using h Set.univ MeasurableSet.univ
+    (hb : MeasurableSet b) (h : Conditionalizes μ a b c) (h₁ : μ (a ∩ b) ≠ 0)
+    (h₂ : μ (a ∩ bᶜ) ≠ 0) : μ[b | a] = μ b := by
+  have ha0 : μ a ≠ 0 := fun h0 ↦ h₁ (measure_mono_null Set.inter_subset_left h0)
+  have hc : μ c = μ[b | a] := by simpa using h Set.univ .univ (by rwa [Set.inter_univ])
   have hb1 : μ[c | b] = 1 := by
-    rw [h b hb, cond_apply (ha.inter hb), Set.inter_assoc, Set.inter_self]
+    rw [h b hb h₁, cond_apply (ha.inter hb), Set.inter_assoc, Set.inter_self]
     exact ENNReal.inv_mul_cancel h₁ (measure_ne_top μ _)
   have hb0 : μ[c | bᶜ] = 0 := by
-    rw [h bᶜ hb.compl, cond_apply (ha.inter hb.compl), Set.inter_assoc, Set.compl_inter_self,
+    rw [h bᶜ hb.compl h₂, cond_apply (ha.inter hb.compl), Set.inter_assoc, Set.compl_inter_self,
       Set.inter_empty, measure_empty, mul_zero]
   have htot := cond_add_cond_compl_eq hb μ (t := c)
   rw [hb1, hb0, one_mul, zero_mul, add_zero] at htot
   rw [← hc]
   exact htot.symm
 
+/-- [milne-2003]'s two-valuedness, which the paper cites: under conditionalization, a restrictor
+compatible with the scope and with its negation is certain. Conditioning on `(a ∩ b) ∪ aᶜ`
+makes `c` certain and conditioning on `(a ∩ bᶜ) ∪ aᶜ` makes it impossible, and `aᶜ` lies in
+both events. -/
+theorem measure_compl_eq_zero_of_conditionalizes {a b c : Set Ω} (ha : MeasurableSet a)
+    (hb : MeasurableSet b) (hc : MeasurableSet c) (h : Conditionalizes μ a b c)
+    (h₁ : μ (a ∩ b) ≠ 0) (h₂ : μ (a ∩ bᶜ) ≠ 0) : μ aᶜ = 0 := by
+  have hd₁ : MeasurableSet (a ∩ b ∪ aᶜ) := (ha.inter hb).union ha.compl
+  have hd₂ : MeasurableSet (a ∩ bᶜ ∪ aᶜ) := (ha.inter hb.compl).union ha.compl
+  have ha₁ : a ∩ (a ∩ b ∪ aᶜ) = a ∩ b := by ext; simp +contextual
+  have ha₂ : a ∩ (a ∩ bᶜ ∪ aᶜ) = a ∩ bᶜ := by ext; simp +contextual
+  have hpos₁ : μ (a ∩ b ∪ aᶜ) ≠ 0 := fun h0 ↦ h₁ (measure_mono_null Set.subset_union_left h0)
+  have hpos₂ : μ (a ∩ bᶜ ∪ aᶜ) ≠ 0 := fun h0 ↦ h₂ (measure_mono_null Set.subset_union_left h0)
+  -- given `(a ∩ b) ∪ aᶜ`, `c` is certain
+  have hone : μ[c | a ∩ b ∪ aᶜ] = 1 := by
+    rw [h _ hd₁ (by rwa [ha₁]), ha₁, cond_apply (ha.inter hb), Set.inter_assoc, Set.inter_self]
+    exact ENNReal.inv_mul_cancel h₁ (measure_ne_top μ _)
+  -- given `(a ∩ bᶜ) ∪ aᶜ`, `c` is impossible
+  have hzero : μ[c | a ∩ bᶜ ∪ aᶜ] = 0 := by
+    rw [h _ hd₂ (by rwa [ha₂]), ha₂, cond_apply (ha.inter hb.compl), Set.inter_assoc,
+      Set.compl_inter_self, Set.inter_empty, measure_empty, mul_zero]
+  have hinv₁ : (μ (a ∩ b ∪ aᶜ))⁻¹ ≠ 0 := ENNReal.inv_ne_zero.2 (measure_ne_top μ _)
+  have hinv₂ : (μ (a ∩ bᶜ ∪ aᶜ))⁻¹ ≠ 0 := ENNReal.inv_ne_zero.2 (measure_ne_top μ _)
+  have hout : μ (aᶜ ∩ cᶜ) = 0 := by
+    have := cond_isProbabilityMeasure (μ := μ) hpos₁
+    have : μ[cᶜ | a ∩ b ∪ aᶜ] = 0 := by rw [prob_compl_eq_one_sub hc, hone, tsub_self]
+    rw [cond_apply hd₁] at this
+    exact measure_mono_null (Set.inter_subset_inter_left _ Set.subset_union_right)
+      ((mul_eq_zero.1 this).resolve_left hinv₁)
+  have hin : μ (aᶜ ∩ c) = 0 := by
+    rw [cond_apply hd₂] at hzero
+    exact measure_mono_null (Set.inter_subset_inter_left _ Set.subset_union_right)
+      ((mul_eq_zero.1 hzero).resolve_left hinv₂)
+  rw [← measure_inter_add_sdiff aᶜ hc, Set.sdiff_eq, hin, hout, add_zero]
+
 theorem cohen_iff_scope {a b c : Set Ω} (ha : MeasurableSet a) (hb : MeasurableSet b)
-    (h : Conditionalizes μ a b c) (h₁ : μ (a ∩ b) ≠ 0) :
+    (h : Conditionalizes μ a b c) (h₁ : μ (a ∩ b) ≠ 0) (h₂ : μ (a ∩ bᶜ) ≠ 0) :
     1 / 2 < μ[b | a] ↔ 1 / 2 < μ b := by
-  rw [cond_eq_of_conditionalizes μ ha hb h h₁]
+  rw [cond_eq_of_conditionalizes μ ha hb h h₁ h₂]
 
 end AsherPelletier2013
