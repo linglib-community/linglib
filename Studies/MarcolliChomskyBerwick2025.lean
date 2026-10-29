@@ -82,12 +82,15 @@ The book's algebra lives in `Core/` and in `Syntax/Minimalist/{Workspace,Merge,E
   (id ⊗ Π_{d,c}) ∘ Δ^c` displayed before (1.3.10): `ConnesKreimer.eraseTraces`,
   `UnorderedTree.contractUnary`, `ConnesKreimer.cutSummandsDN`, `ConnesKreimer.comulDAlgHomN`,
   `ConnesKreimer.eraseTraces_comulCAlgHomN`, `contractUnary_eraseTraces_comulCAlgHomN`.
-* Definition 1.3.4: `Minimalist.Merge.mergeOpG` over a cut enumeration, with `mergeOp` at `Δ^ρ`
-  and `mergeOpC` at `Δ^c`; (1.3.11): `Minimalist.Merge.mergeOpG_apply_of'`.
+* Definition 1.3.4: `Minimalist.Merge.mergeOpG` over a cut enumeration, with the book's `mergeOp`
+  at `Δ^d` and `mergeOpC` at `Δ^c`; (1.3.10): `Minimalist.Merge.mergeOp_eq_comp_comulAlgHomN`,
+  and on objects without unary vertices `mergeOp_eq_rename_contractUnary_comp`; (1.3.11):
+  `Minimalist.Merge.mergeOpG_apply_of'`.
 * Lemma 1.4.1: `Minimalist.Merge.mergeOpG_pair`, `mergeOpG_pair_residual`, with the residual
   workspace passing through by `mergeOpG_of'_mul`.
-* Proposition 1.4.2: `Minimalist.Merge.mergeOpG_im_composition`; on syntactic objects
-  `Minimalist.SyntacticObject.mergeOpC_im`, and for a derivation
+* Proposition 1.4.2: `Minimalist.Merge.mergeOpG_im_composition`, at `Δ^d`
+  `Minimalist.Merge.mergeOp_im_composition`; on syntactic objects
+  `Minimalist.SyntacticObject.mergeOp_im` and `mergeOpC_im`, and for a derivation
   `Minimalist.Derivation.mergeOpList_initial`.
 * Lemmas 1.4.4 and 1.4.5: `Minimalist.Merge.mergeOpG_sideward_2b`, `mergeOpG_sideward_3b`,
   `mergeOpG_sideward_3a`.
@@ -353,7 +356,7 @@ example :
         (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
       of' ({(merge eaten theD).val, UnorderedTree.node Vertex.bare {appleN.val}} :
         Forest (UnorderedTree Vertex)) := by
-  rw [Merge.mergeOpEps_one, Merge.mergeOp, Merge.mergeOpG_sideward_2b Vertex.bare
+  rw [Merge.mergeOpEps_one, Merge.mergeOpG_sideward_2b Vertex.bare
       (by rw [val_mem_subtrees]; decide) (fun h ↦ (by decide : theD ≠ theApple) (Subtype.ext h)),
     filter_cutSummandsN_theApple, Multiset.map_singleton, Multiset.sum_singleton, merge_val,
     ← of'_singleton, ← of'_add]
@@ -379,16 +382,35 @@ example :
   simpa using Merge.mergeOpEps_zero_pair_add (R := ℤ) (F := 0) Vertex.bare
     (S := eaten.val) (S' := theApple.val) (Multiset.notMem_zero _) (Multiset.notMem_zero _)
 
-/-- At `ε = 0` Internal Merge of *the* inside *the apple* survives, while Sideward Merge of the
-    same *the* does not. -/
+/-- At `ε = 0` Internal Merge of *the* inside *the apple* at the pruning cuts survives, while
+    Sideward Merge of the same *the* does not. The pruning cut leaves *apple* under a unary
+    vertex, so the result is no syntactic object. -/
 example :
     Merge.mergeOpEps (R := ℤ) 0 Vertex.bare (UnorderedTree.node Vertex.bare {appleN.val}) theD.val
-        (Merge.mergeOpUnit theD.val (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
+        (Merge.mergeOpUnitG cutSummandsN theD.val
+          (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
       of' ({UnorderedTree.node Vertex.bare
               {UnorderedTree.node Vertex.bare {appleN.val}, theD.val}} :
         Forest (UnorderedTree Vertex)) :=
   Merge.mergeOpEps_im_composition _ _ _ _ _ _ filter_cutSummandsN_theApple rfl
     (fun h ↦ (by decide : theApple ≠ theD) (Subtype.ext h))
+
+private theorem filter_cutSummandsDN_theApple :
+    (cutSummandsDN theApple.val).filter (·.1 = {theD.val}) = {({theD.val}, appleN.val)} := by
+  rw [cutSummandsDN, Multiset.filter_map]
+  simp only [Function.comp_def]
+  rw [filter_cutSummandsN_theApple, Multiset.map_singleton]
+  rfl
+
+/-- At the deletion cuts, the book's Merge, the same Internal Merge contracts that vertex and
+    merges *the* with *apple*, a syntactic object, here *the apple* again. -/
+example :
+    Merge.mergeOp (R := ℤ) Vertex.bare appleN.val theD.val
+        (Merge.mergeOpUnit theD.val (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
+      of' ({theApple.val} : Forest (UnorderedTree Vertex)) := by
+  rw [Merge.mergeOp_im_composition Vertex.bare _ _ _ _ filter_cutSummandsDN_theApple rfl
+    (fun h ↦ (by decide : theApple ≠ theD) (Subtype.ext h)) theD.2.isFullBinary.numUnary_eq_zero,
+    show theApple = merge theD appleN by decide, merge_val, Multiset.pair_comm]
 
 private theorem mem_cutSummandsCN_theApple :
     ({theD.val}, (deleteAccessible theD theApple).val) ∈ cutSummandsCN traceEncoder theApple.val :=

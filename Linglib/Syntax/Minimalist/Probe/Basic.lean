@@ -82,8 +82,11 @@ variable (f : α → Prop) [DecidablePred f]
 `[INT:F, SAT:F]` probe of [bejar-rezac-2003] and [preminger-2014]. -/
 def relativized : Probe α := ⟨f, f⟩
 
-/-- The probe satisfied by every goal and interacting with those that pass `f`, which Agrees
-with the closest goal iff that goal is active, the Active Goal Hypothesis of [chomsky-2000]. -/
+/-- The probe satisfied by every goal and interacting with those that pass `f`: its search stops at
+the first goal listed and Agrees with it iff `f` holds of it. With `f` activity, this is
+[chomsky-2000]'s Agree with a goal "both local and active", an inactive goal blocking Agree with an
+active one below it as in the defective intervention of (42), only over a list of goals that match
+the probe, since a listed goal that does not match would stop the search too. -/
 def ofInt : Probe α := ⟨f, fun _ ↦ True⟩
 
 /-- The insatiable probe interacting with `f`, which no goal halts, so that it copies from every

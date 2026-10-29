@@ -28,7 +28,7 @@ without traces.
 * `ConnesKreimer.cutSummandsDN`: the deletion cuts, the pruning cuts with the unary vertices of
   each trunk contracted.
 * `ConnesKreimer.comulDAlgHomN`: the deletion coproduct, which sums them
-  (`comulDAlgHomN_apply_ofTree`).
+  (`comulDAlgHomN_apply_ofTree`, `comulAlgHomNG_cutSummandsDN`).
 
 ## Main results
 
@@ -122,6 +122,12 @@ theorem comulDAlgHomN_apply_ofTree (T : UnorderedTree α) :
     comulDAlgHomN (R := R) (ofTree T) = ofTree T ⊗ₜ[R] 1 +
       ((cutSummandsDN T).map fun p ↦ of' (R := R) p.1 ⊗ₜ[R] ofTree p.2).sum := by
   simp [comulDAlgHomN, cutSummandsDN, comulTreeN, comulTreeNG, map_multiset_sum, Multiset.map_map]
+
+/-- `Δ^d` is the admissible-cut coproduct at the deletion cuts. -/
+theorem comulAlgHomNG_cutSummandsDN :
+    comulAlgHomNG (R := R) (cutSummandsDN (α := α)) = comulDAlgHomN := by
+  ext T
+  simp [comulDAlgHomN_apply_ofTree, comulTreeNG]
 
 /-! ### The cost of a deletion -/
 
