@@ -332,6 +332,11 @@ theorem gaborOrAnscombe_diag :
   · exact ⟨⟨.i, Set.mem_univ _, show gaborOrAnscombe .i .i by decide⟩,
       fun h ↦ absurd (h (Set.mem_univ .k)) (show ¬ gaborOrAnscombe .k .k by decide)⟩
 
+-- p. 328: what is said at `i` is a necessary truth, yet the sentence is not a priori
+theorem gaborOrAnscombe_isNecessaryAt :
+    gaborOrAnscombe.IsNecessaryAt .i ∧ ¬ gaborOrAnscombe.IsAPriori id :=
+  ⟨fun w ↦ by cases w <;> decide, fun h ↦ (gaborOrAnscombe_diag.2.2.1 .k).1 (h .k) rfl⟩
+
 end Anscombe
 
 section Holmes

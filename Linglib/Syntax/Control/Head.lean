@@ -10,43 +10,61 @@ module
 # The Calculus of Control
 
 [landau-2004]'s calculus, as codified in [landau-2013] ((137)/(178)): each
-clausal head — I and C — carries a `⟨T, Agr⟩` feature specification, and a
-head both of whose features are positive assigns `[+R]`, licensing an
-independent referential subject. Control is the *elsewhere* case. Mutual
-cancellation ([landau-2013] fn. 6): when C is `[+T, +Agr]` as well as I,
-R-assignment cancels and OC re-emerges — the Hebrew subjunctive effect,
-inexpressible on a flat tense scale. [landau-2004]'s scale of finiteness
-(`ClauseClass`) abbreviates clauses so specified, and `ClauseClass.HasOC` is
-derived from the calculus via `ClauseClass.toClause`.
+clausal head — I and C — may carry slots for `[T]` and `[Agr]`, and the
+R-assignment rule applies to a head that has both. A head both of whose
+features are positive is assigned `[+R]`, licensing an independent referential
+subject; a head with both slots and a negative value is assigned `[−R]`; a head
+lacking a slot, as in the defective complements of raising, ECM and small
+clauses, is assigned nothing, and the calculus says nothing about control there
+(`Clause.not_hasControl_of_r_eq_none`). Control is the *elsewhere* case among
+clauses whose I is fully specified. Mutual cancellation ([landau-2013] fn. 6):
+when C is `[+T, +Agr]` as well as I, R-assignment cancels and OC re-emerges —
+the Hebrew subjunctive effect, inexpressible on a flat tense scale.
+[landau-2004]'s scale of finiteness (`ClauseClass`) abbreviates clauses with a
+fully specified I, and `ClauseClass.HasOC` is derived from the calculus via
+`ClauseClass.toClause`.
 
 ## Main definitions
 
-- `Control.Head`, `Control.Clause`
+- `Control.Head`, `Control.Head.r`, `Control.Clause`
 - `Control.Clause.HasControl`: control as the elsewhere condition
 - `Control.ClauseClass`: the scale of finiteness, with derived
   `ClauseClass.HasOC`
+
+## References
+
+* [landau-2004]
+* [landau-2013]
+* [landau-2015]
+* [ostrove-2026]
 -/
 
 @[expose] public section
 
 namespace Control
 
-/-- A clausal head as the calculus sees it: its `⟨T, Agr⟩` feature
-    specification ([landau-2004]; [landau-2013] (137)). -/
+/-- A clausal head as the calculus sees it: its `[T]` and `[Agr]` values, `none`
+    where the head has no slot for the feature ([landau-2004]; [landau-2013]
+    (137)). -/
 structure Head where
-  /-- Semantic tense, `[±T]`. -/
-  tense : Bool
-  /-- Agreement, `[±Agr]`. -/
-  agr : Bool
+  /-- Semantic tense, `[±T]`, `none` without a `[T]` slot. -/
+  tense : Option Bool
+  /-- Agreement, `[±Agr]`, `none` without an `[Agr]` slot. -/
+  agr : Option Bool
   deriving DecidableEq, Repr
 
-/-- A head is R-assigning when both features are positive: it licenses an
-    independent referential subject ([landau-2013] (137a)). -/
-def Head.RAssigning (h : Head) : Prop :=
-  h.tense ∧ h.agr
+/-- The R-assignment rule ([landau-2013] (137)): a head with both slots is
+    assigned `[+R]` when both features are positive and `[−R]` otherwise, and a
+    head lacking a slot is assigned nothing. -/
+def Head.r (h : Head) : Option Bool :=
+  h.tense.bind fun t ↦ h.agr.map (t && ·)
 
-instance (h : Head) : Decidable h.RAssigning :=
-  inferInstanceAs (Decidable (_ ∧ _))
+theorem Head.r_eq_some_true_iff {h : Head} :
+    h.r = some true ↔ h.tense = some true ∧ h.agr = some true := by
+  obtain ⟨_ | t, _ | a⟩ := h <;> simp [Head.r]
+
+theorem Head.r_eq_none_iff {h : Head} : h.r = none ↔ h.tense = none ∨ h.agr = none := by
+  obtain ⟨_ | t, _ | a⟩ := h <;> simp [Head.r]
 
 /-- A clause as the calculus sees it: its inflectional and complementizer
     heads. -/
@@ -57,20 +75,28 @@ structure Clause where
   c : Head
   deriving DecidableEq, Repr
 
-/-- Control is the elsewhere case ([landau-2013] (178) with fn. 6): an
-    R-assigning I destroys control unless C is R-assigning too — mutual
-    cancellation. -/
+/-- Control is the elsewhere case ([landau-2013] (178) with fn. 6): a clause
+    whose I has both slots has control unless I is `[+R]`, and with a `[+R]` I
+    keeps it only when C is `[+R]` too — mutual cancellation. -/
 def Clause.HasControl (cl : Clause) : Prop :=
-  cl.i.RAssigning → cl.c.RAssigning
+  cl.i.r = some false ∨ cl.i.r = some true ∧ cl.c.r = some true
 
 instance (cl : Clause) : Decidable cl.HasControl :=
-  inferInstanceAs (Decidable (_ → _))
+  inferInstanceAs (Decidable (_ ∨ _ ∧ _))
 
-/-- Mutual cancellation: a fully specified C restores OC in a fully finite
-    clause — Hebrew subjunctives ([landau-2013] fn. 6). -/
-theorem Clause.hasControl_of_c_rAssigning {cl : Clause} (h : cl.c.RAssigning) :
-    cl.HasControl :=
-  fun _ => h
+/-- Mutual cancellation: a fully specified `[+R]` C restores OC in a clause whose
+    I is fully specified — Hebrew subjunctives ([landau-2013] fn. 6). -/
+theorem Clause.hasControl_of_c_r_eq_some_true {cl : Clause} (hi : cl.i.r.isSome)
+    (hc : cl.c.r = some true) : cl.HasControl := by
+  obtain ⟨_ | _, hb⟩ := Option.isSome_iff_exists.1 hi
+  · exact .inl hb
+  · exact .inr ⟨hb, hc⟩
+
+/-- A clause whose I lacks a slot falls outside the R-assignment rule, so the
+    calculus gives it no control, whatever its C ([landau-2013] (137)). -/
+theorem Clause.not_hasControl_of_r_eq_none {cl : Clause} (h : cl.i.r = none) :
+    ¬ cl.HasControl := by
+  simp [Clause.HasControl, h]
 
 /-! ### Clause classes -/
 
@@ -88,8 +114,8 @@ inductive ClauseClass where
   | cSubjunctive
   /-- `[+T]` complement: OC unless `[+Agr]` -/
   | fSubjunctive
-  /-- Fully finite: `[+T, +Agr]` on I. No control unless C is fully
-      specified too (mutual cancellation, `Clause.hasControl_of_c_rAssigning`) -/
+  /-- Fully finite: `[+T, +Agr]` on I. No control unless C is fully specified
+      too (mutual cancellation, `Clause.hasControl_of_c_r_eq_some_true`) -/
   | finite
   deriving DecidableEq, Repr
 
@@ -103,11 +129,11 @@ def ClauseClass.ofFiniteness (unrestrictedTAM independentTense : Bool) : ClauseC
   if unrestrictedTAM then .finite
   else if independentTense then .fSubjunctive else .cSubjunctive
 
-/-- The clause a scale position abbreviates, at a given Agr value: `[±T]`
-    on I per the position, C unspecified. The scale cannot express a fully
-    specified C — mutual cancellation needs the calculus directly. -/
+/-- The clause a scale position abbreviates, at a given Agr value: an I with both
+    slots, `[±T]` per the position, and a C with neither. The scale cannot express
+    a fully specified C — mutual cancellation needs the calculus directly. -/
 def ClauseClass.toClause (c : ClauseClass) (agr : Bool) : Clause :=
-  ⟨⟨c ≠ .cSubjunctive, if c = .finite then true else agr⟩, ⟨false, false⟩⟩
+  ⟨⟨some (decide (c ≠ .cSubjunctive)), some (if c = .finite then true else agr)⟩, ⟨none, none⟩⟩
 
 /-- OC is realized in a clause class iff the calculus leaves control at
     the clause it abbreviates: the elsewhere condition on `toClause`. -/

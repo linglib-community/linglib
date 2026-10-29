@@ -20,8 +20,10 @@ with obligatory control into an inflected complement realized as the OC-NC gener
 the library's clause classes (`inflectedComplement_realizes_ocnc`); and object control under
 attitude predicates reads *de se* with psychological verbs and *de te* with communicative ones (36).
 The predicate classes are derived from the English fragment's verb entries rather than stored
-(`derivedLandauClass`), and the derivation places the book's exhaustive-control verbs on the
-predicative tier and its partial-control verbs on the logophoric tier.
+(`derivedLandauClass`). The derivation puts each fragment verb that (4) and (5) list in the class
+they list it in, the responsive *know* among the interrogatives, and leaves *persuade*, an
+object-control verb that the two lists omit and table (36) classifies, without a class but on the
+logophoric tier.
 
 ## Implementation notes
 
@@ -208,15 +210,18 @@ def objectControlReading : ObjectControlSubclass → DeSeReading
 /-! ### Predicate classes from the fragment -/
 
 /-- The predicate class of a fragment verb is read off its semantic fields. A change-of-state type
-gives the aspectual class, an implication signature the implicative class, a factive
-presupposition the factive class, question embedding without an attitude the interrogative
-class, and a doxastic or preferential attitude the propositional or desiderative class; `none`
-where the fields decide nothing, as for *try*. -/
+gives the aspectual class and an implication signature the implicative class. Question embedding
+then gives the interrogative class, ahead of factivity, since (5d) lists the responsive *know*
+there; a factive presupposition gives the factive class. Of the remaining verbs, one whose object
+controls gets no class, since (5) lists none and table (36) sorts them, and a doxastic or
+preferential attitude gives the propositional or desiderative class; `none` also where the fields
+decide nothing, as for *try*. -/
 def derivedLandauClass (v : Verb) : Option PredicateClass :=
   if v.phasal ≠ none then some .aspectual
   else if v.implicative ≠ ⊥ then some .implicative
+  else if v.TakesQuestion then some .interrogative
   else if v.IsFactive then some .factive
-  else if v.TakesQuestion ∧ v.attitude = none then some .interrogative
+  else if ∃ d ∈ v.valency.diatheses, d.controllerRole = some .P then none
   else match v.attitude with
     | some (.doxastic _)     => some .propositional
     | some (.preferential _ _) => some .desiderative
@@ -237,23 +242,29 @@ section Verbs
 open English
 open English.Verbs hiding Verb
 
-/-- The fragment's exhaustive-control verbs, the aspectual and implicative ones. -/
-def exhaustiveControlVerbs : List Verb :=
-  [stop.toVerb, start.toVerb, begin_.toVerb, continue_.toVerb, manage.toVerb, fail.toVerb,
-    remember.toVerb, forget.toVerb, force.toVerb]
+/-- The fragment's exhaustive-control verbs, with the classes (4) lists them in. -/
+def exhaustiveControlVerbs : List (Verb × PredicateClass) :=
+  [(stop.toVerb, .aspectual), (start.toVerb, .aspectual), (begin_.toVerb, .aspectual),
+    (continue_.toVerb, .aspectual), (manage.toVerb, .implicative), (fail.toVerb, .implicative),
+    (remember.toVerb, .implicative), (forget.toVerb, .implicative), (force.toVerb, .implicative)]
 
-/-- The fragment's partial-control verbs, the desiderative, factive, propositional and
-interrogative ones. -/
-def partialControlVerbs : List Verb :=
-  [want.toVerb, hope.toVerb, promise.toVerb, persuade.toVerb, regret.toVerb, know.toVerb,
-    believe.toVerb, think.toVerb, wonder.toVerb]
+/-- The fragment's partial-control verbs, with the classes (5) lists them in. -/
+def partialControlVerbs : List (Verb × PredicateClass) :=
+  [(want.toVerb, .desiderative), (hope.toVerb, .desiderative), (promise.toVerb, .desiderative),
+    (regret.toVerb, .factive), (know.toVerb, .interrogative), (believe.toVerb, .propositional),
+    (think.toVerb, .propositional), (wonder.toVerb, .interrogative)]
 
-theorem exhaustiveControlVerbs_predicative :
-    ∀ v ∈ exhaustiveControlVerbs, (derivedLandauClass v).map (·.tier) = some .predicative := by
+theorem exhaustiveControlVerbs_predicative : ∀ p ∈ exhaustiveControlVerbs,
+    derivedLandauClass p.1 = some p.2 ∧ p.2.tier = .predicative := by
   decide
 
-theorem partialControlVerbs_logophoric :
-    ∀ v ∈ partialControlVerbs, (derivedLandauClass v).map (·.tier) = some .logophoric := by
+theorem partialControlVerbs_logophoric : ∀ p ∈ partialControlVerbs,
+    derivedLandauClass p.1 = some p.2 ∧ p.2.tier = .logophoric := by
+  decide
+
+-- (36): the object-control *persuade* has no class of (4) or (5) and is on the logophoric tier
+theorem persuade_logophoric : derivedLandauClass persuade.toVerb = none ∧
+    derivedControlTier persuade.toVerb = some .logophoric := by
   decide
 
 theorem try_unclassifiable : derivedLandauClass try_.toVerb = none := rfl
