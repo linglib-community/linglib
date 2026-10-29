@@ -14,8 +14,8 @@ public import Linglib.Phonology.Tone.Register
 
 The stems of Drubea with their register tiers, as [lionnet-2025] transcribes them after
 [rivierre-1973] and [shintani-paita-1990b]. A stem is its syllables and, on each mora, the
-register nodes it bears: none, or the downstep `[-raised]` (`Tone.TRN.downstep`, the
-source's `l`). No stem bears a tone feature or an upstep. The postlexical upstep, the
+register features it bears: none, or the downstep `l` (`Tone.RegisterFeature.l`). No stem
+bears a tone feature or an upstep. The postlexical upstep, the
 boundary features, register copying and the three stem patterns the tiers instantiate are
 the analysis and live in `Studies/Lionnet2025`.
 
@@ -61,84 +61,84 @@ abbrev cvv (onset : List Segment) (v : Segment) : Prosody.Syllable := .ofLongVow
 def iTip : Registered Syllable := ⟨[cv [] iNasal], [[]]⟩
 
 /-- /ꜜĩ/ 'piece, bit' ((4a)). -/
-def iPiece : Registered Syllable := ⟨[cv [] iNasal], [[.downstep]]⟩
+def iPiece : Registered Syllable := ⟨[cv [] iNasal], [[.l]]⟩
 
 /-- /ɪɪ/ 'indigenous bamboo' ((4b)). -/
 def iiBamboo : Registered Syllable := ⟨[cvv [] smallCapitalI], [[], []]⟩
 
 /-- /ꜜɪɪ/ 'Elaeocarpus angustifolius, tree sp.' ((4b)). -/
-def iiElaeocarpus : Registered Syllable := ⟨[cvv [] smallCapitalI], [[.downstep], []]⟩
+def iiElaeocarpus : Registered Syllable := ⟨[cvv [] smallCapitalI], [[.l], []]⟩
 
 /-- /be/ 'death; to die' ((3a), (4c)). -/
 def beDie : Registered Syllable := ⟨[cv [b] e], [[]]⟩
 
 /-- /ꜜbe/ 'Melaleuca quinquenervia, niaouli' ((4c)). -/
-def beNiaouli : Registered Syllable := ⟨[cv [b] e], [[.downstep]]⟩
+def beNiaouli : Registered Syllable := ⟨[cv [b] e], [[.l]]⟩
 
 /-- /ɖoo/ 'bag, envelope' ((4d)). -/
 def dooBag : Registered Syllable := ⟨[cvv [dRetroflex] o], [[], []]⟩
 
 /-- /ꜜɖoo/ 'Cordyline spp., plant sp.' ((4d)). -/
-def dooCordyline : Registered Syllable := ⟨[cvv [dRetroflex] o], [[.downstep], []]⟩
+def dooCordyline : Registered Syllable := ⟨[cvv [dRetroflex] o], [[.l], []]⟩
 
 /-- /cu/ 'to wipe' ((4e)). -/
 def cuWipe : Registered Syllable := ⟨[cv [c] u], [[]]⟩
 
 /-- /ꜜcu/ 'to knock down with a pole' ((4e)). -/
-def cuKnock : Registered Syllable := ⟨[cv [c] u], [[.downstep]]⟩
+def cuKnock : Registered Syllable := ⟨[cv [c] u], [[.l]]⟩
 
 /-- /ɲi/ 'coconut tree' ((4f)). -/
 def niCoconut : Registered Syllable := ⟨[cv [nPalatal] i], [[]]⟩
 
 /-- /ꜜɲi/ 'breast' ((4f)). -/
-def niBreast : Registered Syllable := ⟨[cv [nPalatal] i], [[.downstep]]⟩
+def niBreast : Registered Syllable := ⟨[cv [nPalatal] i], [[.l]]⟩
 
 /-- /kee/ 'husband' ((4g), (45d)). -/
 def keeHusband : Registered Syllable := ⟨[cvv [k] e], [[], []]⟩
 
 /-- /ꜜkee/ 'Broussonetia papyrifera, paper mulberry' ((4g), (45d)). -/
-def keeMulberry : Registered Syllable := ⟨[cvv [k] e], [[.downstep], []]⟩
+def keeMulberry : Registered Syllable := ⟨[cvv [k] e], [[.l], []]⟩
 
 /-! ### CVꜜV triplets ((45)) -/
 
 /-- /beꜜe/ NEGATION ((45a), (46)). -/
-def beeNeg : Registered Syllable := ⟨[cvv [b] e], [[], [.downstep]]⟩
+def beeNeg : Registered Syllable := ⟨[cvv [b] e], [[], [.l]]⟩
 
 /-- /bee/ 'fish' ((45a), (19)). -/
 def beeFish : Registered Syllable := ⟨[cvv [b] e], [[], []]⟩
 
 /-- /ꜜbee/ 'descendance' ((45a)). -/
-def beeDescendance : Registered Syllable := ⟨[cvv [b] e], [[.downstep], []]⟩
+def beeDescendance : Registered Syllable := ⟨[cvv [b] e], [[.l], []]⟩
 
 /-- /pwaꜜa/ 'group of men' ((45b), (50)). -/
-def pwaaMen : Registered Syllable := ⟨[cvv [pw] a], [[], [.downstep]]⟩
+def pwaaMen : Registered Syllable := ⟨[cvv [pw] a], [[], [.l]]⟩
 
 /-- /pwaa/ 'white' ((45b)). -/
 def pwaaWhite : Registered Syllable := ⟨[cvv [pw] a], [[], []]⟩
 
 /-- /ꜜpwaa/ 'packet' ((45b)). -/
-def pwaaPacket : Registered Syllable := ⟨[cvv [pw] a], [[.downstep], []]⟩
+def pwaaPacket : Registered Syllable := ⟨[cvv [pw] a], [[.l], []]⟩
 
 /-- /koꜜo/ 'place, field' ((45c), (53)). -/
-def kooPlace : Registered Syllable := ⟨[cvv [k] o], [[], [.downstep]]⟩
+def kooPlace : Registered Syllable := ⟨[cvv [k] o], [[], [.l]]⟩
 
 /-- /koo/ 'fish sp.' ((45c)). -/
 def kooFish : Registered Syllable := ⟨[cvv [k] o], [[], []]⟩
 
 /-- /ꜜkoo/ 'egg' ((45c)). -/
-def kooEgg : Registered Syllable := ⟨[cvv [k] o], [[.downstep], []]⟩
+def kooEgg : Registered Syllable := ⟨[cvv [k] o], [[.l], []]⟩
 
 /-- /keꜜe/ 1PL.SBJ ((45d), (21)). -/
-def kee1pl : Registered Syllable := ⟨[cvv [k] e], [[], [.downstep]]⟩
+def kee1pl : Registered Syllable := ⟨[cvv [k] e], [[], [.l]]⟩
 
 /-- /kãꜜã/ PROSPECTIVE ((45e), (10)). -/
-def kaaProspective : Registered Syllable := ⟨[cvv [k] aNasal], [[], [.downstep]]⟩
+def kaaProspective : Registered Syllable := ⟨[cvv [k] aNasal], [[], [.l]]⟩
 
 /-- /kãã/ 'parent, friend' ((45e)). -/
 def kaaParent : Registered Syllable := ⟨[cvv [k] aNasal], [[], []]⟩
 
 /-- /ꜜkãã/ 'big' ((45e)). -/
-def kaaBig : Registered Syllable := ⟨[cvv [k] aNasal], [[.downstep], []]⟩
+def kaaBig : Registered Syllable := ⟨[cvv [k] aNasal], [[.l], []]⟩
 
 /-! ### Stem shapes ((3)) and the disyllabic triplet ((34)) -/
 
@@ -152,13 +152,13 @@ def uuNet : Registered Syllable := ⟨[cvv [] upsilon], [[], []]⟩
 def kureForest : Registered Syllable := ⟨[cv [k] u, cv [rRetroflex] e], [[], []]⟩
 
 /-- /ꜜku.ɽe/ 'end' ((34b)): downstepped initial syllable, type 2. -/
-def kureEnd : Registered Syllable := ⟨[cv [k] u, cv [rRetroflex] e], [[.downstep], []]⟩
+def kureEnd : Registered Syllable := ⟨[cv [k] u, cv [rRetroflex] e], [[.l], []]⟩
 
 /-- /ku.ꜜɽe/ 'crayfish' ((34c)): downstepped second syllable, type 3. -/
-def kureCrayfish : Registered Syllable := ⟨[cv [k] u, cv [rRetroflex] e], [[], [.downstep]]⟩
+def kureCrayfish : Registered Syllable := ⟨[cv [k] u, cv [rRetroflex] e], [[], [.l]]⟩
 
 /-- /i.ꜜya/ 'to fish' ((3c)). -/
-def iyaFish : Registered Syllable := ⟨[cv [] i, cv [y] a], [[], [.downstep]]⟩
+def iyaFish : Registered Syllable := ⟨[cv [] i, cv [y] a], [[], [.l]]⟩
 
 /-- /kwi.e/ 'wind' ((3c)). -/
 def kwieWind : Registered Syllable := ⟨[cv [kw] i, cv [] e], [[], []]⟩
@@ -199,43 +199,43 @@ def mwereAgain : Registered Syllable := ⟨[cv [mw] e, cv [rRetroflex] e], [[], 
 def kapwaIron : Registered Syllable := ⟨[cv [k] a, cv [pw] a], [[], []]⟩
 
 /-- /ꜜʈobe/ 'wake up' ((39)). -/
-def tobeWake : Registered Syllable := ⟨[cv [tRetroflex] o, cv [b] e], [[.downstep], []]⟩
+def tobeWake : Registered Syllable := ⟨[cv [tRetroflex] o, cv [b] e], [[.l], []]⟩
 
 /-- /ꜜŋɛɽɛ/ 'think' ((40)). -/
-def ngereThink : Registered Syllable := ⟨[cv [ŋ] openE, cv [rRetroflex] openE], [[.downstep], []]⟩
+def ngereThink : Registered Syllable := ⟨[cv [ŋ] openE, cv [rRetroflex] openE], [[.l], []]⟩
 
 /-- /ꜜbeɽu/ 'swim' ((13)). -/
-def beruSwim : Registered Syllable := ⟨[cv [b] e, cv [rRetroflex] u], [[.downstep], []]⟩
+def beruSwim : Registered Syllable := ⟨[cv [b] e, cv [rRetroflex] u], [[.l], []]⟩
 
 /-- /ꜜkeɽee/ 'eat' ((14)). -/
-def kereeEat : Registered Syllable := ⟨[cv [k] e, cvv [rRetroflex] e], [[.downstep], [], []]⟩
+def kereeEat : Registered Syllable := ⟨[cv [k] e, cvv [rRetroflex] e], [[.l], [], []]⟩
 
 /-- /ꜜmwaɽii/ 'plant' ((41), (42)). -/
-def mwariiPlant : Registered Syllable := ⟨[cv [mw] a, cvv [rRetroflex] i], [[.downstep], [], []]⟩
+def mwariiPlant : Registered Syllable := ⟨[cv [mw] a, cvv [rRetroflex] i], [[.l], [], []]⟩
 
 /-- /veꜜyuu/ 'to be sick, to die' ((43), (44)). -/
-def veyuuSick : Registered Syllable := ⟨[cv [v] e, cvv [y] u], [[], [.downstep], []]⟩
+def veyuuSick : Registered Syllable := ⟨[cv [v] e, cvv [y] u], [[], [.l], []]⟩
 
 /-- /kaꜜgwee/ 'like' ((43)). -/
-def kagweeLike : Registered Syllable := ⟨[cv [k] a, cvv [gw] e], [[], [.downstep], []]⟩
+def kagweeLike : Registered Syllable := ⟨[cv [k] a, cvv [gw] e], [[], [.l], []]⟩
 
 /-- /uɽu/ 'cut' ((56a)). -/
 def uruCut : Registered Syllable := ⟨[cv [] u, cv [rRetroflex] u], [[], []]⟩
 
 /-- /ꜜti.e/ 'tear' ((56b), (57)). -/
-def tieTear : Registered Syllable := ⟨[cv [t] i, cv [] e], [[.downstep], []]⟩
+def tieTear : Registered Syllable := ⟨[cv [t] i, cv [] e], [[.l], []]⟩
 
 /-- /ꜜmi.e/ 'wet' ((32), (33)). -/
-def mieWet : Registered Syllable := ⟨[cv [m] i, cv [] e], [[.downstep], []]⟩
+def mieWet : Registered Syllable := ⟨[cv [m] i, cv [] e], [[.l], []]⟩
 
 /-- /goo/ 'Hibbertia pancheri, plant sp.' ((32)). -/
 def gooHibbertia : Registered Syllable := ⟨[cvv [g] o], [[], []]⟩
 
 /-- /ꜜgoo/ 'tree' ((33)). -/
-def gooTree : Registered Syllable := ⟨[cvv [g] o], [[.downstep], []]⟩
+def gooTree : Registered Syllable := ⟨[cvv [g] o], [[.l], []]⟩
 
 /-- /ꜜtaa/ 'one' ((7), (19), (20)). -/
-def taaOne : Registered Syllable := ⟨[cvv [t] a], [[.downstep], []]⟩
+def taaOne : Registered Syllable := ⟨[cvv [t] a], [[.l], []]⟩
 
 /-- /dɪɪ/ 'small' ((6), (19)). -/
 def diiSmall : Registered Syllable := ⟨[cvv [d] smallCapitalI], [[], []]⟩
@@ -247,16 +247,16 @@ def pwiCooked : Registered Syllable := ⟨[cv [pw] i], [[]]⟩
 def kaaSmoke : Registered Syllable := ⟨[cvv [k] a], [[], []]⟩
 
 /-- /ꜜʈã/ 'fire(wood)' ((9), (10), (16)). -/
-def taFire : Registered Syllable := ⟨[cv [tRetroflex] aNasal], [[.downstep]]⟩
+def taFire : Registered Syllable := ⟨[cv [tRetroflex] aNasal], [[.l]]⟩
 
 /-- /ꜜvi/ 'take' ((10)). -/
-def viTake : Registered Syllable := ⟨[cv [v] i], [[.downstep]]⟩
+def viTake : Registered Syllable := ⟨[cv [v] i], [[.l]]⟩
 
 /-- /kwɛ/ 'dance' ((53a)). -/
 def kweDance : Registered Syllable := ⟨[cv [kw] openE], [[]]⟩
 
 /-- /ꜜkwe/ 'eat' ((48), (53b)). -/
-def kweEat : Registered Syllable := ⟨[cv [kw] e], [[.downstep]]⟩
+def kweEat : Registered Syllable := ⟨[cv [kw] e], [[.l]]⟩
 
 /-- /tɪɪ/ 'look at' ((30)). -/
 def tiiLook : Registered Syllable := ⟨[cvv [t] smallCapitalI], [[], []]⟩
@@ -265,22 +265,22 @@ def tiiLook : Registered Syllable := ⟨[cvv [t] smallCapitalI], [[], []]⟩
 def ngaWork : Registered Syllable := ⟨[cv [ŋ] a], [[]]⟩
 
 /-- /ꜜmwa/ 'house' ((37), (55a)). -/
-def mwaHouse : Registered Syllable := ⟨[cv [mw] a], [[.downstep]]⟩
+def mwaHouse : Registered Syllable := ⟨[cv [mw] a], [[.l]]⟩
 
 /-- /ꜜʊʊ/ 'mat' ((55b)). -/
-def uuMat : Registered Syllable := ⟨[cvv [] upsilon], [[.downstep], []]⟩
+def uuMat : Registered Syllable := ⟨[cvv [] upsilon], [[.l], []]⟩
 
 /-- /ũ/ 'hair' ((55b)). -/
 def uHair : Registered Syllable := ⟨[cv [] uNasal], [[]]⟩
 
 /-- /pooꜜka/ 'animal' ((55b)). -/
-def pookaAnimal : Registered Syllable := ⟨[cvv [p] o, cv [k] a], [[], [], [.downstep]]⟩
+def pookaAnimal : Registered Syllable := ⟨[cvv [p] o, cv [k] a], [[], [], [.l]]⟩
 
 /-- /ꜜko/ 'manner' ((55c)). -/
-def koManner : Registered Syllable := ⟨[cv [k] o], [[.downstep]]⟩
+def koManner : Registered Syllable := ⟨[cv [k] o], [[.l]]⟩
 
 /-- /ꜜvuu/ 'speak' ((55c)). -/
-def vuuSpeak : Registered Syllable := ⟨[cvv [v] u], [[.downstep], []]⟩
+def vuuSpeak : Registered Syllable := ⟨[cvv [v] u], [[.l], []]⟩
 
 /-- /a.bo.ɽu/ 'person' ((7)), a trisyllable. -/
 def aboruPerson : Registered Syllable :=
@@ -295,19 +295,19 @@ def ko1sg : Registered Syllable := ⟨[cv [k] o], [[]]⟩
 def ni3sg : Registered Syllable := ⟨[cv [nPalatal] i], [[]]⟩
 
 /-- /ꜜɳi/ 3PL.SBJ ((11), (47)). -/
-def ni3pl : Registered Syllable := ⟨[cv [nRetroflex] i], [[.downstep]]⟩
+def ni3pl : Registered Syllable := ⟨[cv [nRetroflex] i], [[.l]]⟩
 
 /-- /te/ DESCR ((7), (13), (30)). -/
 def teDescr : Registered Syllable := ⟨[cv [t] e], [[]]⟩
 
 /-- /ꜜmwa/ PFV ((8), (11), (39)). -/
-def mwaPfv : Registered Syllable := ⟨[cv [mw] a], [[.downstep]]⟩
+def mwaPfv : Registered Syllable := ⟨[cv [mw] a], [[.l]]⟩
 
 /-- /ꜜɳii/ 'say' ((11), (12)). -/
-def niiSay : Registered Syllable := ⟨[cvv [nRetroflex] i], [[.downstep], []]⟩
+def niiSay : Registered Syllable := ⟨[cvv [nRetroflex] i], [[.l], []]⟩
 
 /-- /ꜜme/ 'that' ((11), (12)). -/
-def meThat : Registered Syllable := ⟨[cv [m] e], [[.downstep]]⟩
+def meThat : Registered Syllable := ⟨[cv [m] e], [[.l]]⟩
 
 /-! ### Affixes -/
 
@@ -324,22 +324,22 @@ def taHand : Registered Syllable := ⟨[cv [tRetroflex] a], [[]]⟩
 /-! ### Loanwords ((54)) -/
 
 /-- /oꜜo.ci/ 'horse', from English. -/
-def oociHorse : Registered Syllable := ⟨[cvv [] o, cv [c] i], [[], [.downstep], []]⟩
+def oociHorse : Registered Syllable := ⟨[cvv [] o, cv [c] i], [[], [.l], []]⟩
 
 /-- /piꜜi.ki/ 'pig', from English. -/
-def piikiPig : Registered Syllable := ⟨[cvv [p] i, cv [k] i], [[], [.downstep], []]⟩
+def piikiPig : Registered Syllable := ⟨[cvv [p] i, cv [k] i], [[], [.l], []]⟩
 
 /-- /poꜜo.ci/ 'pouch, pocket', from French. -/
-def poociPouch : Registered Syllable := ⟨[cvv [p] o, cv [c] i], [[], [.downstep], []]⟩
+def poociPouch : Registered Syllable := ⟨[cvv [p] o, cv [c] i], [[], [.l], []]⟩
 
 /-- /taꜜa.ci/ 'bowl', from French. -/
-def taaciBowl : Registered Syllable := ⟨[cvv [t] a, cv [c] i], [[], [.downstep], []]⟩
+def taaciBowl : Registered Syllable := ⟨[cvv [t] a, cv [c] i], [[], [.l], []]⟩
 
 /-- /coꜜo.ɽo/ 'salt', from English. -/
-def cooroSalt : Registered Syllable := ⟨[cvv [c] o, cv [rRetroflex] o], [[], [.downstep], []]⟩
+def cooroSalt : Registered Syllable := ⟨[cvv [c] o, cv [rRetroflex] o], [[], [.l], []]⟩
 
 /-- /kaꜜa.ʈɛ/ 'car', from English. -/
-def kaateCar : Registered Syllable := ⟨[cvv [k] a, cv [tRetroflex] openE], [[], [.downstep], []]⟩
+def kaateCar : Registered Syllable := ⟨[cvv [k] a, cv [tRetroflex] openE], [[], [.l], []]⟩
 
 /-! ### The lists -/
 

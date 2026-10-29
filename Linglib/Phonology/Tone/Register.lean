@@ -12,39 +12,39 @@ public import Mathlib.Logic.Function.Defs
 public import Linglib.Phonology.Tone.Basic
 
 /-!
-# Register: the terracing realization of `[raised]`
+# Register features and terracing
 
-The syntagmatic reading of `[raised]` ([snider-1999], [lionnet-2025]): each `[-raised]`
-node lowers the register for everything that follows and each `[+raised]` node raises it,
-so a node sequence is realized as the running sum of its shifts from a baseline —
-terracing, as in the register-only systems of Drubea and Numèè and in the catathesis of
-Japanese and English intonation ([beckman-pierrehumbert-1986]).
+In Snider's Register Tier Theory a register feature on the register tier shifts the register
+relative to the preceding register setting, `h` higher and `l` lower: an upstep and a downstep.
+The shift is syntagmatic, and a register feature is a different object from the paradigmatic
+tone features of a `TRN`, `[±upper]` among them, which Yip and Pulleyblank also call a register
+feature but which places a tone in a half of the current register. A sequence of register
+features is realized as the running sum of its shifts from a baseline, which is terracing, as in
+the register-only systems of Drubea and Numèè ([lionnet-2025]) and in the catathesis of Japanese
+and English intonation ([beckman-pierrehumbert-1986]).
 
-A register tier associates its nodes to morae ([snider-1999]'s register-bearing units). A
-mora may bear no node, one, or several — a register contour, or the double downstep of
-[lionnet-2025] — so the tier over a word is the list of each mora's nodes, and a registered
-word is its syllables together with that tier, generic over the syllable type with mora
-counts read by a weight function, as `Prosody.Foot`. The syllabification of the morae is
-the `Composition` whose blocks are the weights, and the per-syllable nodes are the tier split
-along it.
+A register tier gives each register-bearing unit the register features it bears: none, one, or
+several, a register contour or the double downstep of [lionnet-2025]. In Drubea and Numèè the
+register-bearing unit is the mora, and a registered word is its syllables together with the tier
+over their morae, generic over the syllable type with mora counts read by a weight function, as
+`Prosody.Foot`. The syllabification of the morae is the `Composition` whose blocks are the
+weights, and the per-syllable features are the tier split along it.
 
 ## Main definitions
 
 * `terrace` — the levels reached from a baseline by cumulative shifts (`List.scanl`).
-* `TRN.pitchEffect`, `realizePitch` — the shift a node contributes and the levels of a node
-  sequence; `pitchDeltas`, the same from `0`.
-* `RegisterTier`, `RegisterTier.realize` — the nodes on each mora and the level each mora
-  reaches.
-* `Registered` — syllables with a register tier; `composition`, the syllabification of the
-  morae; `syllableNodes`, `IsAligned`, `append`, `concat`.
+* `RegisterFeature`, `RegisterFeature.shift` — Snider's register features and their shifts.
+* `RegisterTier`, `RegisterTier.realize` — the features on each register-bearing unit and the
+  level each unit reaches.
+* `Registered` — syllables with a register tier over their morae; `composition`, the
+  syllabification of the morae; `syllableFeatures`, `IsAligned`, `append`, `concat`.
 
 ## Main results
 
 * `terrace_append`, `terrace_add`, `terrace_mono` — piecewise realization, a baseline only
   shifts the levels, and pointwise monotonicity in the shifts and the baseline: the basis
   of catathesis blocking.
-* `RegisterTier.realize_map_singleton` — a tier with one node per mora realizes as the node
-  sequence.
+* `RegisterTier.realize_append`, `RegisterTier.realize_baseline_mono` — the same for a tier.
 
 ## References
 
@@ -107,71 +107,42 @@ theorem terrace_mono {ds es : List Int} (h : List.Forall₂ (· ≤ ·) ds es) {
     simp only [terrace_cons]
     exact .cons hstep (ih hstep)
 
-/-! ### Node sequences -/
+/-! ### Register features -/
 
-/-- The register shift a node contributes: `[-raised]` lowers, `[+raised]` raises, an
-unspecified `[raised]` is inert. -/
-def TRN.pitchEffect (t : TRN) : Int :=
-  match t.raised with
-  | none => 0
-  | some false => -1
-  | some true => 1
+/-- A **register feature** of Snider's Register Tier Theory ([snider-1999] p. 25): `h` effects a
+register shift higher and `l` a shift lower, relative to the preceding register setting, so `h`
+is an upstep and `l` a downstep. The shift is syntagmatic, unlike the paradigmatic `[±upper]` of
+a `TRN`, which places a tone in the upper or lower half of the current register. -/
+inductive RegisterFeature where
+  /-- A register shift higher, an upstep. -/
+  | h
+  /-- A register shift lower, a downstep. -/
+  | l
+  deriving DecidableEq, Repr
 
-/-- The pitch levels of a node sequence from a baseline, each node's shift cumulative. -/
-def realizePitch (level : Int) (ts : List TRN) : List Int :=
-  terrace level (ts.map TRN.pitchEffect)
+/-- The register shift a feature effects: `h` one step up, `l` one step down. -/
+def RegisterFeature.shift : RegisterFeature → Int
+  | .h => 1
+  | .l => -1
 
-@[simp] theorem realizePitch_nil (level : Int) : realizePitch level [] = [] := by
-  simp [realizePitch]
+/-! ### Register tiers -/
 
-@[simp] theorem realizePitch_cons (level : Int) (t : TRN) (rest : List TRN) :
-    realizePitch level (t :: rest) =
-      (level + t.pitchEffect) :: realizePitch (level + t.pitchEffect) rest :=
-  terrace_cons _ _ _
-
-@[simp] theorem length_realizePitch (level : Int) (ts : List TRN) :
-    (realizePitch level ts).length = ts.length := by
-  simp [realizePitch]
-
-theorem realizePitch_append (level : Int) (ts us : List TRN) :
-    realizePitch level (ts ++ us) =
-      realizePitch level ts ++ realizePitch (level + (ts.map TRN.pitchEffect).sum) us := by
-  simp only [realizePitch, List.map_append, terrace_append]
-
-/-- The register shifts from the start: no privileged pitch, only the differences. -/
-def pitchDeltas (ts : List TRN) : List Int := realizePitch 0 ts
-
-theorem realizePitch_eq_pitchDeltas_shift (level : Int) (ts : List TRN) :
-    realizePitch level ts = (pitchDeltas ts).map (· + level) := by
-  simpa [pitchDeltas, realizePitch] using terrace_add 0 level (ts.map TRN.pitchEffect)
-
-theorem realizePitch_mono {ts₁ ts₂ : List TRN}
-    (hts : List.Forall₂ ((· ≤ ·) on TRN.pitchEffect) ts₁ ts₂) {n m : Int}
-    (hnm : n ≤ m) : List.Forall₂ (· ≤ ·) (realizePitch n ts₁) (realizePitch m ts₂) :=
-  terrace_mono (List.forall₂_map_right_iff.2 <| List.forall₂_map_left_iff.2 hts) hnm
-
-theorem realizePitch_baseline_mono (ts : List TRN) {n m : Int} (h : n ≤ m) :
-    List.Forall₂ (· ≤ ·) (realizePitch n ts) (realizePitch m ts) :=
-  realizePitch_mono (List.forall₂_same.mpr fun _ _ => le_rfl) h
-
-/-! ### Register tiers over morae -/
-
-/-- A **register tier** as associated to the morae of a word: the nodes each mora bears, in
-order — none for a registerless mora, one for a downstepped or upstepped mora, two for a
-register contour or a double downstep ([lionnet-2025]). -/
-abbrev RegisterTier := List (List TRN)
+/-- A **register tier**: the register features each register-bearing unit bears, in order —
+none for a registerless unit, one for a downstepped or upstepped unit, two for a register
+contour or a double downstep ([lionnet-2025]). -/
+abbrev RegisterTier := List (List RegisterFeature)
 
 namespace RegisterTier
 
-/-- The shift a mora's nodes contribute together. -/
-def moraShift (ns : List TRN) : Int := (ns.map TRN.pitchEffect).sum
+/-- The shift a unit's features effect together. -/
+def moraShift (fs : List RegisterFeature) : Int := (fs.map RegisterFeature.shift).sum
 
 @[simp] theorem moraShift_nil : moraShift [] = 0 := rfl
 
-@[simp] theorem moraShift_singleton (t : TRN) : moraShift [t] = t.pitchEffect := by
+@[simp] theorem moraShift_singleton (f : RegisterFeature) : moraShift [f] = f.shift := by
   simp [moraShift]
 
-/-- The register level each mora reaches: terracing by the morae's total shifts. -/
+/-- The register level each unit reaches: terracing by the units' total shifts. -/
 def realize (level : Int) (tier : RegisterTier) : List Int :=
   terrace level (tier.map moraShift)
 
@@ -179,29 +150,35 @@ def realize (level : Int) (tier : RegisterTier) : List Int :=
     (realize level tier).length = tier.length := by
   simp [realize]
 
-/-- A tier with one node per mora realizes as the node sequence. -/
-theorem realize_map_singleton (level : Int) (ts : List TRN) :
-    realize level (ts.map ([·])) = realizePitch level ts := by
-  simp [realize, realizePitch, List.map_map, Function.comp_def]
+/-- A tier realizes piecewise: the second part continues from the register the first leaves. -/
+theorem realize_append (level : Int) (tier tier' : RegisterTier) :
+    realize level (tier ++ tier') =
+      realize level tier ++ realize (level + (tier.map moraShift).sum) tier' := by
+  simp only [realize, List.map_append, terrace_append]
 
-/-- All the nodes of a tier, in order. -/
-abbrev nodes (tier : RegisterTier) : List TRN := tier.flatten
+/-- A lower baseline gives pointwise lower levels. -/
+theorem realize_baseline_mono (tier : RegisterTier) {n m : Int} (h : n ≤ m) :
+    List.Forall₂ (· ≤ ·) (realize n tier) (realize m tier) :=
+  terrace_mono (List.forall₂_same.mpr fun _ _ ↦ le_rfl) h
 
-/-- The morae bearing a given node. -/
-def bearing (t : TRN) (tier : RegisterTier) : List ℕ :=
-  (List.range tier.length).filter fun i ↦ t ∈ tier.getD i []
+/-- All the features of a tier, in order. -/
+abbrev features (tier : RegisterTier) : List RegisterFeature := tier.flatten
+
+/-- The units bearing a given feature. -/
+def bearing (f : RegisterFeature) (tier : RegisterTier) : List ℕ :=
+  (List.range tier.length).filter fun i ↦ f ∈ tier.getD i []
 
 end RegisterTier
 
 /-! ### Registered words -/
 
 /-- A syllable sequence bearing a register tier: the syllables, whose morae are the
-register-bearing units ([lionnet-2025]), and the nodes each mora bears. Mora counts are
-read by a weight function `w`, positive as a syllable has a nucleus, as in `Prosody.Foot`. -/
+register-bearing units ([lionnet-2025]), and the register features each mora bears. Mora counts
+are read by a weight function `w`, positive as a syllable has a nucleus, as in `Prosody.Foot`. -/
 structure Registered (S : Type*) where
   /-- The syllables. -/
   syllables : List S
-  /-- The nodes on each mora, left to right. -/
+  /-- The register features on each mora, left to right. -/
   tier : RegisterTier
   deriving DecidableEq
 
@@ -227,16 +204,18 @@ def IsAligned : Prop := r.tier.length = r.moraCount w
 
 instance : Decidable (r.IsAligned w) := inferInstanceAs (Decidable (_ = _))
 
-/-- The nodes on the morae of each syllable: the tier split along the syllabification. -/
-def syllableNodes : List (List (List TRN)) := r.tier.splitWrtComposition (r.composition w)
+/-- The register features on the morae of each syllable: the tier split along the
+syllabification. -/
+def syllableFeatures : List (List (List RegisterFeature)) :=
+  r.tier.splitWrtComposition (r.composition w)
 
-/-- Syllable `i` bears no node. -/
-def IsRegisterless (i : ℕ) : Prop := ∀ ns ∈ (r.syllableNodes w).getD i [], ns = []
+/-- Syllable `i` bears no register feature. -/
+def IsRegisterless (i : ℕ) : Prop := ∀ fs ∈ (r.syllableFeatures w).getD i [], fs = []
 
 instance (i : ℕ) : Decidable (r.IsRegisterless w i) := List.decidableBAll _ _
 
-theorem length_syllableNodes : (r.syllableNodes w).length = r.syllables.length := by
-  simp [syllableNodes, List.length_splitWrtComposition, composition, Composition.length, shape]
+theorem length_syllableFeatures : (r.syllableFeatures w).length = r.syllables.length := by
+  simp [syllableFeatures, List.length_splitWrtComposition, composition, Composition.length, shape]
 
 variable {w}
 

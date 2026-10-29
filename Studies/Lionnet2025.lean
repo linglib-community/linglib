@@ -20,7 +20,7 @@ import all Init.Data.List.Control
 This file formalizes [lionnet-2025]'s analysis of the word prosody of Drubea and Numèè
 (Oceanic, New Caledonia) as register features alone: an underlying downstep `l` on the
 mora, a postlexical epenthetic upstep `h`, and boundary features, with no tone feature.
-The stems of the two fragments carry only downsteps (`stems_register_only`), at most one
+The stems of the two fragments carry only downsteps (`stems_downstep_only`), at most one
 per stem (`stems_culminative`, Rivierre's culminativity) though not per compound
 (`compounds_not_culminative`), and their tiers are exactly the three stem patterns ∅, `l`,
 ∅`l` associated by the syllabic alignment of Table 4 (`stems_patterned`), the loanwords of
@@ -101,11 +101,11 @@ syllable — on its second mora; nothing when the shape has no mora for it. -/
 def StemPattern.associate : StemPattern → List ℕ → Option RegisterTier
   | .empty, shape => some (registerless shape)
   | .l, [] => none
-  | .l, n :: rest => some ([.downstep] :: registerless ((n - 1) :: rest))
+  | .l, n :: rest => some ([.l] :: registerless ((n - 1) :: rest))
   | .emptyL, [] => none
-  | .emptyL, [n] => if 2 ≤ n then some ([] :: [.downstep] :: registerless [n - 2]) else none
+  | .emptyL, [n] => if 2 ≤ n then some ([] :: [.l] :: registerless [n - 2]) else none
   | .emptyL, n :: m :: rest =>
-    some (registerless [n] ++ [.downstep] :: registerless ((m - 1) :: rest))
+    some (registerless [n] ++ [.l] :: registerless ((m - 1) :: rest))
 
 theorem stems_patterned :
     ∀ s ∈ Drubea.stems, ∃ p : StemPattern, p.associate (s.shape μ) = some s.tier := by
@@ -121,7 +121,8 @@ theorem loans_unpatterned :
     ∀ s ∈ Drubea.loans, ∀ p : StemPattern, p.associate (s.shape μ) ≠ some s.tier := by
   decide
 
-theorem mem_registerless {shape : List ℕ} {ns : List TRN} (h : ns ∈ registerless shape) :
+theorem mem_registerless {shape : List ℕ} {ns : List RegisterFeature}
+    (h : ns ∈ registerless shape) :
     ns = [] := by
   obtain ⟨_, -, h⟩ := List.mem_flatMap.1 h
   exact List.eq_of_mem_replicate h
@@ -136,7 +137,7 @@ theorem getElem?_registerless (shape : List ℕ) (i : ℕ) :
 (§4.2). -/
 theorem associate_syllable_initial (p : StemPattern) {shape : List ℕ} (h : 2 ≤ shape.length)
     {tier : RegisterTier} (ht : p.associate shape = some tier) :
-    ∀ i ∈ RegisterTier.bearing .downstep tier, ∃ k, i = (shape.take k).sum := by
+    ∀ i ∈ RegisterTier.bearing .l tier, ∃ k, i = (shape.take k).sum := by
   intro i hi
   simp only [RegisterTier.bearing, List.mem_filter, List.mem_range, List.getD_eq_getElem?_getD]
     at hi
@@ -171,11 +172,11 @@ theorem associate_syllable_initial (p : StemPattern) {shape : List ℕ} (h : 2 �
         getElem?_registerless] at hi
       simp at hi
 
-/-! ### Culminativity, register-only inventories, and the register-bearing unit -/
+/-! ### Culminativity, downstep as the only primitive, and the register-bearing unit -/
 
 /-- Register culminativity (§3.8, §3.10): at most one downstep per stem. -/
 def IsCulminative {S : Type*} (r : Registered S) : Prop :=
-  (RegisterTier.bearing .downstep r.tier).length ≤ 1
+  (RegisterTier.bearing .l r.tier).length ≤ 1
 
 instance {S : Type*} (r : Registered S) : Decidable (IsCulminative r) :=
   inferInstanceAs (Decidable (_ ≤ _))
@@ -200,15 +201,19 @@ carries the downsteps of its members. -/
 theorem compounds_not_culminative :
     ¬ IsCulminative mound ∧ ¬ IsCulminative blanket ∧ ¬ IsCulminative voice := by decide
 
-/-- No stem specifies `[upper]`: the first attested register-only word-prosodic system
-(§6.2). -/
-theorem stems_register_only :
-    ∀ s ∈ Drubea.stems ++ Numee.stems, IsRegisterOnly (RegisterTier.nodes s.tier) := by
+/-- Every register feature a stem bears is the downstep `l`, the only underlying primitive of the
+system (§4.2, §7). A stem is a register tier over its morae with no tonal root node, so it bears
+no tone feature. -/
+theorem stems_downstep_only :
+    ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ f ∈ RegisterTier.features s.tier, f = .l := by
   decide
+
+-- An upstep on the tier fails the condition.
+example : ¬ ∀ f ∈ RegisterTier.features [[], [.h], [.l]], f = .l := by decide
 
 /-- The two morae of the one syllable of /beꜜe/ differ in register, so the register-bearing
 unit is the mora, not the syllable (§3.7, §4.2). -/
-theorem mora_is_rbu : Drubea.beeNeg.syllableNodes μ = [[[], [.downstep]]] := by decide
+theorem mora_is_rbu : Drubea.beeNeg.syllableFeatures μ = [[[], [.l]]] := by decide
 
 /-! ### Hyman's typology (§6.2) -/
 
@@ -219,7 +224,7 @@ abbrev Stem := {s // s ∈ Drubea.stems}
 mora. -/
 def drubea : Hyman2006.Marking Stem ℕ where
   units s := Finset.range (s.1.moraCount μ)
-  marked s := (RegisterTier.bearing .downstep s.1.tier).toFinset
+  marked s := (RegisterTier.bearing .l s.1.tier).toFinset
   marked_subset s i hi := by
     have h : s.1.tier.length = s.1.moraCount μ := Drubea.stems_aligned s.1 s.2
     simp only [List.mem_toFinset, RegisterTier.bearing, List.mem_filter, List.mem_range] at hi
@@ -227,7 +232,7 @@ def drubea : Hyman2006.Marking Stem ℕ where
   tbu := .mora
 
 theorem drubea_culminative : Hyman2006.Culminative drubea := fun ⟨a, ha⟩ =>
-  (show ∀ a ∈ Drubea.stems, (RegisterTier.bearing .downstep a.tier).toFinset.card ≤ 1 by
+  (show ∀ a ∈ Drubea.stems, (RegisterTier.bearing .l a.tier).toFinset.card ≤ 1 by
     decide) a ha
 
 theorem drubea_not_obligatory : ¬ Hyman2006.Obligatory drubea := fun h =>
@@ -238,7 +243,7 @@ theorem drubea_not_stressAccent : ¬ Hyman2006.StressAccent drubea := fun h =>
 
 /-- The indication of pitch a stem carries: its tier, when a downstep is in it. -/
 def pitch (s : Stem) : Option RegisterTier :=
-  if RegisterTier.bearing .downstep s.1.tier = [] then none else some s.1.tier
+  if RegisterTier.bearing .l s.1.tier = [] then none else some s.1.tier
 
 /-- Tonal by Hyman's definition (3): pitch enters the lexical realization of /ꜜkuɽe/
 'end'. -/
@@ -249,17 +254,17 @@ theorem drubea_tonal : Hyman2006.Tonal pitch := ⟨⟨Drubea.kureEnd, by decide�
 The processes act on the tier with its syllabification written in: a boundary before each
 syllable's morae. -/
 
-/-- A slot of the marked tier: a mora's nodes, or a syllable boundary. -/
-abbrev Slot := Option (List TRN)
+/-- A slot of the marked tier: a mora's register features, or a syllable boundary. -/
+abbrev Slot := Option (List RegisterFeature)
 
 /-- The tier of a word with a boundary before each syllable. -/
 def marked (r : Registered Syllable) : List Slot :=
-  (r.syllableNodes μ).flatMap fun ms ↦ none :: ms.map some
+  (r.syllableFeatures μ).flatMap fun ms ↦ none :: ms.map some
 
 /-- The tier back from a marked string. -/
 def unmark (m : List Slot) : RegisterTier := m.filterMap id
 
-theorem unmark_flatMap (L : List (List (List TRN))) :
+theorem unmark_flatMap (L : List (List (List RegisterFeature))) :
     unmark (L.flatMap fun ms ↦ none :: ms.map some) = L.flatten := by
   induction L with
   | nil => rfl
@@ -271,14 +276,14 @@ theorem unmark_flatMap (L : List (List (List TRN))) :
 
 theorem unmark_marked {r : Registered Syllable} (h : r.IsAligned μ) :
     unmark (marked r) = r.tier := by
-  rw [marked, unmark_flatMap, syllableNodes, List.splitWrtComposition]
+  rw [marked, unmark_flatMap, syllableFeatures, List.splitWrtComposition]
   exact List.flatten_splitWrtCompositionAux h.symm
 
 /-- The register alphabet of the derivations: a boundary, a registerless mora, a downstep,
 a double downstep, an upstep, and the `lh` contour. -/
 def alphabet : List Slot :=
-  [none, some [], some [.downstep], some [.downstep, .downstep], some [.upstep],
-    some [.downstep, .upstep]]
+  [none, some [], some [.l], some [.l, .l], some [.h],
+    some [.l, .h]]
 
 /-- The position variable. -/
 def x : Walk := .var
@@ -291,14 +296,14 @@ def empty (t : Walk) : WindowFormula Slot := .label (some []) t
 
 /-- `t` reads a mora bearing a downstep, single or double. -/
 def bearsL (t : Walk) : WindowFormula Slot :=
-  .disj (.label (some [.downstep]) t) (.label (some [.downstep, .downstep]) t)
+  .disj (.label (some [.l]) t) (.label (some [.l, .l]) t)
 
 /-- The next mora, across a boundary if there is one, bears a downstep. -/
 def nextBearsL : WindowFormula Slot :=
   .disj (bearsL x.succ) (.conj (bar x.succ) (bearsL x.succ.succ))
 
-/-- A node appended to a mora. -/
-def append (t : TRN) : Slot → Slot := Option.map (· ++ [t])
+/-- A register feature appended to a mora. -/
+def append (f : RegisterFeature) : Slot → Slot := Option.map (· ++ [f])
 
 /-- Pre-downstep h-epenthesis (§4.4): a registerless mora before a downstepped one takes `h`,
 unless its own syllable is downstepped before it — one mora back, the syllables being at
@@ -306,14 +311,14 @@ most bimoraic. -/
 def raisingGuard : WindowFormula Slot := .conj (empty x) (.conj nextBearsL (.neg (bearsL x.pred)))
 
 /-- Pre-downstep h-epenthesis as a process. -/
-def raising : Docking Slot := .ofQF raisingGuard (append .upstep)
+def raising : Docking Slot := .ofQF raisingGuard (append .h)
 
 /-- Spreading h-epenthesis ((16)): every registerless mora of the stretch before a downstep
 takes `h`. The look-ahead is unbounded, so the guard is not quantifier-free. -/
 def spreading : Docking Slot where
-  dock := append .upstep
+  dock := append .h
   Docks m i := m[i]? = some (some []) ∧ ∃ k < m.length, i < k ∧
-    (m[k]? = some (some [.downstep]) ∨ m[k]? = some (some [.downstep, .downstep])) ∧
+    (m[k]? = some (some [.l]) ∨ m[k]? = some (some [.l, .l])) ∧
     ∀ j < k, i < j → m[j]? = some (some []) ∨ m[j]? = some none
   lt_length h := (List.getElem?_eq_some_iff.1 h.1).1
   decDocks _ _ := inferInstance
@@ -325,7 +330,7 @@ def neutralizationGuard : WindowFormula Slot := .conj (bar x.pred) (WindowFormul
 
 /-- Utterance-initial neutralisation as a process. -/
 def neutralization : Docking Slot :=
-  .ofQF neutralizationGuard (Option.map (·.filter (· ≠ TRN.downstep)))
+  .ofQF neutralizationGuard (Option.map (·.filter (· ≠ RegisterFeature.l)))
 
 /-- Downstep displacement, first half (§4.6): the downstep on the last mora of a bimoraic
 syllable spreads to the next syllable's first mora, stacking on a downstep there. -/
@@ -334,7 +339,7 @@ def spreadLGuard : WindowFormula Slot :=
     (.conj (.defined x.pred.pred.pred) (.neg (bar x.pred.pred.pred))))
 
 /-- The spreading half of displacement as a process. -/
-def spreadL : Docking Slot := .ofQF spreadLGuard (append .downstep)
+def spreadL : Docking Slot := .ofQF spreadLGuard (append .l)
 
 /-- Downstep displacement, second half: the spread downstep delinks from its host. -/
 def delinkLGuard : WindowFormula Slot :=
@@ -342,16 +347,16 @@ def delinkLGuard : WindowFormula Slot :=
     (.conj (bar x.succ) (.defined x.succ.succ))))
 
 /-- The delinking half of displacement as a process. -/
-def delinkL : Docking Slot := .ofQF delinkLGuard (Option.map (·.erase TRN.downstep))
+def delinkL : Docking Slot := .ofQF delinkLGuard (Option.map (·.erase RegisterFeature.l))
 
-/-- The final syllable bears no node. -/
+/-- The final syllable bears no register feature. -/
 def finalRegisterless : WindowFormula Slot :=
   .conj (WindowFormula.final x)
     (.conj (empty x) (.disj (bar x.pred) (.conj (empty x.pred) (bar x.pred.pred))))
 
 /-- Drubea's final raising (§3.3, §4.8): h% docks on an utterance-final registerless
 syllable. -/
-def finalRaising : Docking Slot := .ofQF finalRegisterless (append .upstep)
+def finalRaising : Docking Slot := .ofQF finalRegisterless (append .h)
 
 /-- Numèè's final lowering (§3.4, §4.8): l% docks on a light final syllable after a
 registerless syllable, whether the final is registerless or downstepped. -/
@@ -360,7 +365,7 @@ def finalLoweringGuard : WindowFormula Slot :=
     (.disj (bar x.pred.pred.pred) (.conj (empty x.pred.pred.pred) (bar x.pred.pred.pred.pred)))))
 
 /-- Numèè's final lowering as a process. -/
-def finalLowering : Docking Slot := .ofQF finalLoweringGuard (append .downstep)
+def finalLowering : Docking Slot := .ofQF finalLoweringGuard (append .l)
 
 /-- The surface form of a morpheme sequence under the processes its transcription shows, in
 order. -/
@@ -389,7 +394,7 @@ theorem marked_mem_alphabet : ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ a ∈ m
   decide
 
 theorem raising_apply_relabel {s : Registered Syllable} (hs : s ∈ Drubea.stems ++ Numee.stems) :
-    (Transduction.relabel raisingGuard (append .upstep) alphabet).apply (marked s) =
+    (Transduction.relabel raisingGuard (append .h) alphabet).apply (marked s) =
       raising.map (marked s) :=
   Transduction.apply_relabel (marked_mem_alphabet s hs)
 
@@ -408,7 +413,7 @@ theorem spreading_not_qf :
     ¬ ∃ (l r : ℕ) (φ : WindowFormula Slot), φ.Bounded l r ∧
       ∀ m i, spreading.Docks m i ↔ i < m.length ∧ φ.Realize m i := by
   rintro ⟨l, r, φ, hφ, h⟩
-  let m₁ : List Slot := List.replicate (r + 2) (some []) ++ [some [.downstep]]
+  let m₁ : List Slot := List.replicate (r + 2) (some []) ++ [some [.l]]
   let m₂ : List Slot := List.replicate (r + 3) (some [])
   have hlen₁ : m₁.length = r + 3 := by simp [m₁]
   have hlen₂ : m₂.length = r + 3 := by simp [m₂]
@@ -467,17 +472,17 @@ theorem ex32_ex33_contrast :
 open Drubea in
 -- (32), (33), (64), (65)
 theorem ex32_ex33_tiers :
-    (derive [raising] [gooHibbertia, mieWet]).tier = [[], [.upstep], [.downstep], []] ∧
-      (derive [raising] [gooTree, mieWet]).tier = [[.downstep], [], [.downstep], []] := by
+    (derive [raising] [gooHibbertia, mieWet]).tier = [[], [.h], [.l], []] ∧
+      (derive [raising] [gooTree, mieWet]).tier = [[.l], [], [.l], []] := by
   decide
 
 open Drubea in
 -- (53), §3.7, §4.6
 theorem ex53_displacement :
     (derive [spreadL, delinkL, raising] [kooPlace, kweDance, reAct]).tier =
-        [[], [.upstep], [.downstep], []] ∧
+        [[], [.h], [.l], []] ∧
       (derive [spreadL, delinkL, raising] [kooPlace, kweEat, reAct]).tier =
-        [[], [.upstep], [.downstep, .downstep], []] ∧
+        [[], [.h], [.l, .l], []] ∧
       realize (derive [spreadL, delinkL, raising] [kooPlace, kweDance, reAct]) = [4, 5, 4, 4] ∧
       realize (derive [spreadL, delinkL, raising] [kooPlace, kweEat, reAct]) = [4, 5, 3, 3] := by
   decide
@@ -486,12 +491,12 @@ open Drubea in
 -- (46)
 theorem ex46_undisplaced :
     (derive [raising] [ni3sg, beeNeg, ngaWork, reAct]).tier =
-        [[], [.upstep], [.downstep], [], []] ∧
+        [[], [.h], [.l], [], []] ∧
       realize (derive [raising] [ni3sg, beeNeg, ngaWork, reAct]) = [4, 5, 4, 4, 4] := by
   decide
 
-/-- Register copying (§3.9, §4.7): a verbal classifier prefix takes the nodes of the verb's
-first mora. -/
+/-- Register copying (§3.9, §4.7): a verbal classifier prefix takes the register features of
+the verb's first mora. -/
 def copyPrefix (prefix_ verb : Registered Syllable) : Registered Syllable :=
   ⟨prefix_.syllables, prefix_.tier.map fun _ ↦ verb.tier.getD 0 []⟩
 
@@ -499,7 +504,7 @@ open Drubea in
 -- (56)
 theorem ex56_copy :
     (copyPrefix taHand uruCut).tier = [[]] ∧
-      (copyPrefix taHand tieTear).tier = [[.downstep]] := by
+      (copyPrefix taHand tieTear).tier = [[.l]] := by
   decide
 
 open Drubea in
@@ -511,8 +516,8 @@ theorem ex57_levels :
 
 -- (16)
 theorem spreading_stretch :
-    spreading.map [none, some [], some [], none, some [], some [.downstep]] =
-      [none, some [.upstep], some [.upstep], none, some [.upstep], some [.downstep]] := by
+    spreading.map [none, some [], some [], none, some [], some [.l]] =
+      [none, some [.h], some [.h], none, some [.h], some [.l]] := by
   decide
 
 /-! ### Numèè utterances -/
@@ -520,7 +525,7 @@ theorem spreading_stretch :
 open Numee in
 -- (24)
 theorem ex24_levels :
-    (derive [finalLowering] [jaaJuice, niCoconut]).tier = [[], [], [.downstep]] ∧
+    (derive [finalLowering] [jaaJuice, niCoconut]).tier = [[], [], [.l]] ∧
       realize (derive [finalLowering, raising] [jaaJuice, niCoconut]) = [4, 5, 4] := by
   decide
 
@@ -528,7 +533,7 @@ open Numee in
 -- (25), (24)
 theorem ex25_double :
     (derive [finalLowering, raising] [jaaJuice, niBreast]).tier =
-        [[], [.upstep], [.downstep, .downstep]] ∧
+        [[], [.h], [.l, .l]] ∧
       realize (derive [finalLowering, raising] [jaaJuice, niBreast]) = [4, 5, 3] := by
   decide
 
@@ -559,15 +564,15 @@ open Numee in
 -- (52), §4.6
 theorem ex52_double :
     (derive [spreadL, delinkL, raising] [yaaNeg, meThat, gee1plExcl, meFut, nyaiArrive]).tier =
-      [[], [.upstep], [.downstep, .downstep], [], [.upstep], [.downstep, .downstep],
-        [.upstep], [.downstep]] := by
+      [[], [.h], [.l, .l], [], [.h], [.l, .l],
+        [.h], [.l]] := by
   decide
 
 -- (18), (63)
 theorem ex18_contour :
     RegisterTier.realize baseline
         (unmark (neutralization.map
-          [none, some [.downstep], none, some [.downstep, .upstep], none, some [.downstep]])) =
+          [none, some [.l], none, some [.l, .h], none, some [.l]])) =
       [4, 4, 3] := by
   decide
 

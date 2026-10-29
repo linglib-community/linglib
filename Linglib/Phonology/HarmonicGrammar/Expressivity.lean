@@ -17,8 +17,8 @@ on a finite set of inputs every OT grammar is an HG grammar, and as the weights 
 MaxEnt concentrates on the OT winner. The containment of OT in HG is
 strict because of *cumulativity*, in which several low-weight violations together outweigh a
 single high-weight one. The comparison follows Smolensky and Legendre, Pater, and Coetzee and
-Pater, and the cumulativity witness is Coetzee and Pater's version of Itô and Mester's Lyman's
-Law data.
+Pater, and the cumulativity witness is Pater's devoicing of Japanese loanwords, where Itô and
+Mester's OCP-Voice gangs up with a ban on voiced geminates.
 
 ## Main definitions
 
@@ -50,11 +50,12 @@ Law data.
   (1993)][prince-smolensky-1993]
 * [P. Smolensky and G. Legendre, *The Harmonic Mind: From Neural Computation to
   Optimality-Theoretic Grammar* (2006)][smolensky-legendre-2006]
-* [J. Pater, *Morpheme-specific phonology: Constraint indexation and inconsistency resolution*
-  (2009)][pater-2009]
+* [J. Pater, *Weighted Constraints in Generative Linguistics* (2009)][pater-2009]
 * [A. W. Coetzee and J. Pater, *The Place of Variation in Phonological Theory*
   (2011)][coetzee-pater-2011]
 * [J. Itô and A. Mester, *The Phonology of Voicing in Japanese* (1986)][ito-mester-1986]
+* [S. Kawahara, *A Faithfulness Ranking Projected from a Perceptibility Scale: The Case of
+  [+voice] in Japanese* (2006)][kawahara-2006]
 * [B. Hayes and C. Wilson, *A Maximum Entropy Model of Phonotactics and Phonotactic Learning*
   (2008)][hayes-wilson-2008]
 * [B. Tesar and P. Smolensky, *The Learnability of Optimality Theory* (1995)][tesar-smolensky-1995]
@@ -328,12 +329,13 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
 
 /-! ### Strict containment — the cumulativity gap -/
 
-/-- HG with non-negative weights strictly contains OT. The witness is [coetzee-pater-2011]'s
-    abstract Lyman's Law instance after [ito-mester-1986], in which faithful candidates violate
-    `{M1}`, `{M2}`, and `{M1, M2}` against an unfaithful `{F}` and only the third input targets
-    the unfaithful output. The weights `[3, 2, 2]` realize it, since `2 + 2 > 3` holds on the
-    third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some markedness
-    constraint above `F`" are inconsistent. -/
+/-- HG with non-negative weights strictly contains OT. The witness abstracts [pater-2009]'s
+    devoicing of Japanese loanwords ((22), on [kawahara-2006]'s data): faithful candidates
+    violate `{M1}`, `{M2}`, and `{M1, M2}`, as *bobu* violates OCP-Voice ([ito-mester-1986]),
+    *web:u* \*Vce-Gem and *dog:u* both, against an unfaithful `{F}`, and only the third input
+    targets the unfaithful output. The weights `[3, 2, 2]` realize it, since `2 + 2 > 3` holds
+    on the third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some
+    markedness constraint above `F`" are inconsistent. -/
 theorem hg_strictly_contains_ot :
     ∃ (Input Output : Type) (n : ℕ) (P : RealizationProblem Input Output (Fin n)),
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by

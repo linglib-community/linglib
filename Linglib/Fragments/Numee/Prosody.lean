@@ -47,7 +47,7 @@ def jaaJuice : Registered Syllable := ⟨[cvv [j] a], [[], []]⟩
 def niCoconut : Registered Syllable := ⟨[cv [nPalatal] iNasal], [[]]⟩
 
 /-- /ꜜɲĩ/ 'breast' ((25)). -/
-def niBreast : Registered Syllable := ⟨[cv [nPalatal] iNasal], [[.downstep]]⟩
+def niBreast : Registered Syllable := ⟨[cv [nPalatal] iNasal], [[.l]]⟩
 
 /-- /ɲĩ/ 3SG.SBJ ((29)). -/
 def ni3sg : Registered Syllable := ⟨[cv [nPalatal] iNasal], [[]]⟩
@@ -65,14 +65,14 @@ def naUp : Registered Syllable := ⟨[cv [nRetroflex] a], [[]]⟩
 def miiLow : Registered Syllable := ⟨[cvv [m] i], [[], []]⟩
 
 /-- /ꜜtẽẽ/ 'girl' ((28)). -/
-def teeGirl : Registered Syllable := ⟨[cvv [t] eNasal], [[.downstep], []]⟩
+def teeGirl : Registered Syllable := ⟨[cvv [t] eNasal], [[.l], []]⟩
 
 /-- /nõ/ 'grill' ((28)). -/
 def noGrill : Registered Syllable := ⟨[cv [n] oNasal], [[]]⟩
 
 /-- /bɛ.ꜜtĩĩ/ 'three' ((28)). -/
 def betiiThree : Registered Syllable :=
-  ⟨[cv [b] openE, cvv [t] iNasal], [[], [.downstep], []]⟩
+  ⟨[cv [b] openE, cvv [t] iNasal], [[], [.l], []]⟩
 
 /-- /ku/ 'yam' ((28)). -/
 def kuYam : Registered Syllable := ⟨[cv [k] u], [[]]⟩
@@ -81,41 +81,41 @@ def kuYam : Registered Syllable := ⟨[cv [k] u], [[]]⟩
 def yuuBerth : Registered Syllable := ⟨[cvv [y] upsilon], [[], []]⟩
 
 /-- /ꜜpaa/ 'up' ((29)). -/
-def paaUp : Registered Syllable := ⟨[cvv [p] a], [[.downstep], []]⟩
+def paaUp : Registered Syllable := ⟨[cvv [p] a], [[.l], []]⟩
 
 /-- /kwẽ/ 'sand' ((29)). -/
 def kweSand : Registered Syllable := ⟨[cv [kw] eNasal], [[]]⟩
 
 /-- /yaꜜa/ NEG ((52)). -/
-def yaaNeg : Registered Syllable := ⟨[cvv [y] a], [[], [.downstep]]⟩
+def yaaNeg : Registered Syllable := ⟨[cvv [y] a], [[], [.l]]⟩
 
 /-- /ꜜmẽ/ 'that' ((52)). -/
-def meThat : Registered Syllable := ⟨[cv [m] eNasal], [[.downstep]]⟩
+def meThat : Registered Syllable := ⟨[cv [m] eNasal], [[.l]]⟩
 
 /-- /geꜜe/ 1PL.EXCL.SBJ ((52)). -/
-def gee1plExcl : Registered Syllable := ⟨[cvv [g] e], [[], [.downstep]]⟩
+def gee1plExcl : Registered Syllable := ⟨[cvv [g] e], [[], [.l]]⟩
 
 /-- /ꜜmẽ/ FUT ((52)). -/
-def meFut : Registered Syllable := ⟨[cv [m] eNasal], [[.downstep]]⟩
+def meFut : Registered Syllable := ⟨[cv [m] eNasal], [[.l]]⟩
 
 /-- /ɲa.ꜜi/ 'arrive' ((52)), a disyllable whose downstep is not displaced. -/
-def nyaiArrive : Registered Syllable := ⟨[cv [nPalatal] a, cv [] i], [[], [.downstep]]⟩
+def nyaiArrive : Registered Syllable := ⟨[cv [nPalatal] a, cv [] i], [[], [.l]]⟩
 
 /-- /ꜜɳe/ 3PL.SBJ ((18)). -/
-def ne3pl : Registered Syllable := ⟨[cv [nRetroflex] e], [[.downstep]]⟩
+def ne3pl : Registered Syllable := ⟨[cv [nRetroflex] e], [[.l]]⟩
 
 /-- /ꜜmwa/ PFV ((18); (38) prints it nasalised). -/
-def mwaPfv : Registered Syllable := ⟨[cv [mw] a], [[.downstep]]⟩
+def mwaPfv : Registered Syllable := ⟨[cv [mw] a], [[.l]]⟩
 
 /-- /ꜜve/ 'go' ((18)). -/
-def veGo : Registered Syllable := ⟨[cv [v] e], [[.downstep]]⟩
+def veGo : Registered Syllable := ⟨[cv [v] e], [[.l]]⟩
 
 /-- /ꜜcĩĩ.bu/ 'rat' ((38)). -/
 def ciibuRat : Registered Syllable :=
-  ⟨[cvv [c] iNasal, cv [b] u], [[.downstep], [], []]⟩
+  ⟨[cvv [c] iNasal, cv [b] u], [[.l], [], []]⟩
 
 /-- /ꜜku/ 'flee' ((38)). -/
-def kuFlee : Registered Syllable := ⟨[cv [k] u], [[.downstep]]⟩
+def kuFlee : Registered Syllable := ⟨[cv [k] u], [[.l]]⟩
 
 /-- /mwo.ɽo/ 'alive' ((38)). -/
 def mworoAlive : Registered Syllable :=
@@ -125,20 +125,20 @@ def mworoAlive : Registered Syllable :=
 def gu2sg : Registered Syllable := ⟨[cv [g] u], [[]]⟩
 
 /-- /ꜜca.pɛ/ 'raise' ((62)). -/
-def capeRaise : Registered Syllable := ⟨[cv [c] a, cv [p] openE], [[.downstep], []]⟩
+def capeRaise : Registered Syllable := ⟨[cv [c] a, cv [p] openE], [[.l], []]⟩
 
 /-- /ꜜpa.ɳaa/ 'mast' ((62)). -/
 def panaaMast : Registered Syllable :=
-  ⟨[cv [p] a, cvv [nRetroflex] a], [[.downstep], [], []]⟩
+  ⟨[cv [p] a, cvv [nRetroflex] a], [[.l], [], []]⟩
 
 /-- /ꜜko/ 'on' ((62)). -/
-def koOn : Registered Syllable := ⟨[cv [k] o], [[.downstep]]⟩
+def koOn : Registered Syllable := ⟨[cv [k] o], [[.l]]⟩
 
 /-- /ɲʊ/ 'boat' ((62)). -/
 def nyuBoat : Registered Syllable := ⟨[cv [nPalatal] upsilon], [[]]⟩
 
 /-- /ꜜwii/ 'down' ((62)). -/
-def wiiDown : Registered Syllable := ⟨[cvv [w] i], [[.downstep], []]⟩
+def wiiDown : Registered Syllable := ⟨[cvv [w] i], [[.l], []]⟩
 
 /-- /to/ 'there' ((62)). -/
 def toThere : Registered Syllable := ⟨[cv [t] o], [[]]⟩
@@ -146,7 +146,7 @@ def toThere : Registered Syllable := ⟨[cv [t] o], [[]]⟩
 /-! ### Affixes -/
 
 /-- The suffix -ꜜẽ PROX ((28)), transcribed downstepped. -/
-def eProx : Registered Syllable := ⟨[cv [] eNasal], [[.downstep]]⟩
+def eProx : Registered Syllable := ⟨[cv [] eNasal], [[.l]]⟩
 
 /-- The prefix a- LOC ((29)). -/
 def aLoc : Registered Syllable := ⟨[cv [] a], [[]]⟩

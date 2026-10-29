@@ -13,18 +13,29 @@ public import Mathlib.Logic.Equiv.Defs
 Tone is paradigmatic: a **tonal root node** (TRN) bundles the two subtonal features
 `[±upper]` (which register half) and `[±raised]` (which target within it) of [yip-1980] and
 [pulleyblank-1986], each possibly unspecified, and links to a tone-bearing unit. Following
-[lionnet-2022], the features are paradigmatic targets, not [snider-1999]'s syntagmatic
-shifts; the terracing reading of `[raised]` is `Tone.Register`.
+[lionnet-2022], both are paradigmatic targets. `[±upper]` is Yip's and Pulleyblank's register
+feature, a choice of register half; the register features `h` and `l` of [snider-1999], which
+shift the register relative to the preceding one, are syntagmatic and a different object,
+`Tone.RegisterFeature` in `Tone/Register.lean`. The register-only systems of [lionnet-2025]
+have register features and no TRN.
 
 ## Main definitions
 
 * `Subtonal`, `TRN` — the two feature dimensions and the root node; `TRN.bundleEquiv`
   identifies a root node with its feature bundle `Subtonal → Option Bool`.
 * `TRN.H`, `TRN.M`, `TRN.L`, `TRN.superHigh` — the four full specifications;
-  `TRN.empty`, `TRN.downstep`, `TRN.upstep` — the register-only nodes.
+  `TRN.empty` — the unspecified node.
 * `TRN.assimilate`, `TRN.merge`, `TRN.dock` — the feature operations, through the bundle.
-* `TBUKind`, `IsRegisterOnly` — the tone-bearing unit and [lionnet-2025]'s register-only
-  inventories.
+* `TBUKind` — the tone-bearing unit.
+
+## References
+
+* [yip-1980]
+* [pulleyblank-1986]
+* [lionnet-2022]
+* [snider-1999]
+* [lionnet-2025]
+* [goldsmith-1976]
 -/
 
 @[expose] public section
@@ -51,12 +62,6 @@ namespace TRN
 
 /-- The fully unspecified node. -/
 @[match_pattern] def empty : TRN := ⟨none, none⟩
-
-/-- A floating `[-raised]`: the downstep node of a register-only system. -/
-@[match_pattern] def downstep : TRN := ⟨none, some false⟩
-
-/-- A floating `[+raised]`: the upstep node. -/
-@[match_pattern] def upstep : TRN := ⟨none, some true⟩
 
 /-- High, `[+upper, -raised]` ([lionnet-2022] ex. 51). -/
 @[match_pattern] def H : TRN := ⟨some true, some false⟩
@@ -117,7 +122,7 @@ def dock (f : Subtonal) (v : Bool) (t : TRN) : TRN :=
 
 end TRN
 
-/-! ### Tone-bearing units and word-prosodic types -/
+/-! ### Tone-bearing units -/
 
 /-- The prosodic unit that carries a node: the syllable in most tone languages, the mora in
 Drubea and Numèè ([lionnet-2025]). -/
@@ -126,13 +131,5 @@ inductive TBUKind where
   | syllable
   deriving DecidableEq, Repr
 
-/-- A **register-only** inventory ([lionnet-2025]): no node specifies `[upper]`, so only the
-syntagmatic `[raised]` is contrastive. Lionnet's split of [hyman-2006]'s tone prototype —
-register-based systems (Drubea, Numèè) against tone-based ones with paradigmatic `[upper]`
-contrasts (Yoruba, Mandarin) and mixed ones (Paicî, Baga Pukur) — is read off the lexical
-inventory rather than recorded. -/
-def IsRegisterOnly (ts : List TRN) : Prop := ∀ t ∈ ts, t.upper = none
-
-instance (ts : List TRN) : Decidable (IsRegisterOnly ts) := List.decidableBAll _ _
 
 end Tone
