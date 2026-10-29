@@ -92,10 +92,9 @@ theorem moreThan_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
 
 theorem exhAgainst_lt_iff_isStrongestTrueAnswer {φ : D → Set W} (hφ : StrictAnti φ) {i : D}
     {w : W} :
-    Exhaustification.exhAgainst (· < ·) (w ∈ φ ·) i ↔ IsStrongestTrueAnswer (range φ) w (φ i) := by
-  rw [isStrongestTrueAnswer_range_iff]
-  refine and_congr_right fun _ => ⟨fun h y hy => ?_, fun h j hij hj => (hφ hij).2 (h j hj)⟩
-  exact hφ.antitone (not_lt.1 fun hiy => h y hiy hy)
+    Exhaustification.exhAgainst (· < ·) (w ∈ φ ·) i ↔ IsStrongestTrueAnswer (range φ) w (φ i) :=
+  (Exhaustification.mem_exh_range_iff_exhAgainst_lt hφ i w).symm.trans
+    (mem_exh_iff_isStrongestTrueAnswer (mem_range_self i))
 
 /-! ### Modal operators -/
 

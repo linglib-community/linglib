@@ -13,10 +13,11 @@ matching condition between a question's Hamblin set and the partition it induces
 exhaustified pointwise into a cell of the contextual partition; Cell Identification demands that
 every cell be so reached and Non-Vacuity that every member reach a cell, and
 `qpm_iff_partitionsBy` shows that together they say that pointwise exhaustification partitions
-the context set. With exhaustification as the strongest true member, Cell Identification is
-Dayal's presupposition (`cellIdentification_exhCell_iff`) and Non-Vacuity fails whenever the set
-contains the disjunction of two incomparable members, the negative island of higher-order
-questions (`not_nonVacuity_exhCell_of_union`), unless a necessity modal intervenes
+the context set. With exhaustification as Fox's (11), `Exhaustification.exh`, which on a member
+holds where that member is the strongest true one (`Question.mem_exh_iff_isStrongestTrueAnswer`),
+Cell Identification is Dayal's presupposition (`cellIdentification_exh_iff`) and Non-Vacuity fails
+whenever the set contains the disjunction of two incomparable members, the negative island of
+higher-order questions (`not_nonVacuity_exh_of_union`), unless a necessity modal intervenes
 (`nonVacuity_box`). With exhaustification as [bar-lev-fox-2020]'s cell operator, a question closed
 under conjunction and its disjunctive counterpart identify the same cells by different members
 (`cell_biInter`, `cell_biUnion`), and the answer set of the paper's revised answer operator is a
@@ -114,30 +115,30 @@ section Dayal
 
 variable {H : Set (Set W)} {A : Set W}
 
-theorem isCellValued_exhCell : IsCellValued (exhCell H) H :=
-  fun _ _ w hw ↦ exhCell_eq_strongAnswer H w hw
+theorem isCellValued_exh : IsCellValued (exh H) H :=
+  fun _ hp w hw ↦ exh_eq_strongAnswer H w ((mem_exh_iff_isStrongestTrueAnswer hp).1 hw)
 
-theorem cellIdentification_exhCell_iff :
-    CellIdentification (exhCell H) H A ↔ ∀ w ∈ A, IsExhaustivelyResolvable H w := by
+theorem cellIdentification_exh_iff :
+    CellIdentification (exh H) H A ↔ ∀ w ∈ A, IsExhaustivelyResolvable H w := by
   constructor
   · intro h w hw
-    obtain ⟨p, -, hpw⟩ := h _ ⟨w, hw, rfl⟩
-    have : w ∈ exhCell H p ∩ A := by rw [hpw]; exact ⟨self_mem_strongAnswer H w, hw⟩
-    exact ⟨p, this.1⟩
+    obtain ⟨p, hp, hpw⟩ := h _ ⟨w, hw, rfl⟩
+    have : w ∈ exh H p ∩ A := by rw [hpw]; exact ⟨self_mem_strongAnswer H w, hw⟩
+    exact ⟨p, (mem_exh_iff_isStrongestTrueAnswer hp).1 this.1⟩
   · rintro h _ ⟨w, hw, rfl⟩
     obtain ⟨p, hp⟩ := h w hw
-    exact ⟨p, hp.1.1, by rw [exhCell_eq_strongAnswer H w hp]⟩
+    exact ⟨p, hp.1.1, by rw [exh_eq_strongAnswer H w hp]⟩
 
-theorem nonVacuity_exhCell_iff :
-    NonVacuity (exhCell H) H A ↔ ∀ p ∈ H, ∃ w ∈ A, IsStrongestTrueAnswer H w p := by
+theorem nonVacuity_exh_iff :
+    NonVacuity (exh H) H A ↔ ∀ p ∈ H, ∃ w ∈ A, IsStrongestTrueAnswer H w p := by
   constructor
   · intro h p hp
     obtain ⟨_, ⟨w, hw, rfl⟩, hpw⟩ := h p hp
-    have : w ∈ exhCell H p ∩ A := by rw [hpw]; exact ⟨self_mem_strongAnswer H w, hw⟩
-    exact ⟨w, hw, this.1⟩
+    have : w ∈ exh H p ∩ A := by rw [hpw]; exact ⟨self_mem_strongAnswer H w, hw⟩
+    exact ⟨w, hw, (mem_exh_iff_isStrongestTrueAnswer hp).1 this.1⟩
   · intro h p hp
     obtain ⟨w, hw, hwp⟩ := h p hp
-    exact ⟨_, ⟨w, hw, rfl⟩, by rw [exhCell_eq_strongAnswer H w hwp]⟩
+    exact ⟨_, ⟨w, hw, rfl⟩, by rw [exh_eq_strongAnswer H w hwp]⟩
 
 theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
     (ha : ∀ i j, a i ⊆ a j → i = j) (w : W) :
@@ -167,9 +168,9 @@ theorem not_isStrongestTrueAnswer_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) 
   · exact h₂₁ (subset_union_right.trans (hmin ⟨h₁, hw⟩))
   · exact h₁₂ (subset_union_left.trans (hmin ⟨h₂, hw⟩))
 
-theorem not_nonVacuity_exhCell_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h₂ : q₂ ∈ H)
-    (hu : q₁ ∪ q₂ ∈ H) (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) : ¬ NonVacuity (exhCell H) H A := by
-  rw [nonVacuity_exhCell_iff]
+theorem not_nonVacuity_exh_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h₂ : q₂ ∈ H)
+    (hu : q₁ ∪ q₂ ∈ H) (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) : ¬ NonVacuity (exh H) H A := by
+  rw [nonVacuity_exh_iff]
   intro h
   obtain ⟨w, -, hw⟩ := h _ hu
   exact not_isStrongestTrueAnswer_union h₁ h₂ h₁₂ h₂₁ w hw
@@ -182,8 +183,8 @@ theorem isStrongestTrueAnswer_box {W' : Type*} {R : SetRel W' W} {p : Set W} (hp
 
 theorem nonVacuity_box {W' : Type*} {R : SetRel W' W} {A : Set W'}
     (h : ∀ p ∈ H, ∃ x ∈ A, ∀ v, x ~[R] v ↔ v ∈ p) :
-    NonVacuity (exhCell (box H R)) (box H R) A := by
-  rw [nonVacuity_exhCell_iff]
+    NonVacuity (exh (box H R)) (box H R) A := by
+  rw [nonVacuity_exh_iff]
   rintro _ ⟨p, hp, rfl⟩
   obtain ⟨x, hx, hxp⟩ := h p hp
   exact ⟨x, hx, isStrongestTrueAnswer_box hp hxp⟩
