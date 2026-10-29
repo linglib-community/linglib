@@ -9,27 +9,31 @@ public import Mathlib.Order.Hom.Set
 /-!
 # Soundness of the projectivity calculus
 
-This file gives the seven relations their lattice content and proves the tables of
-`Logic/Natural/Basic.lean` sound for it over bounded lattices: chained relations compose as the
-join table says, and a signature's projection row holds of a function exactly when the function
-is monotone or antitone and carries disjoint and codisjoint pairs as the row says. The function
+This file gives the seven relations their lattice content and proves the calculus of
+`Logic/Natural/Basic.lean` sound for it over bounded lattices. Each of its three rules is a lattice
+fact about single constraints or properties, and the join, the projections and the composition are
+sound because they assert only what the rules give. A signature's projection row holds of a
+function exactly when the function is monotone or antitone and carries disjoint and codisjoint
+pairs as the row says. The function
 classes of [icard-2012] fall in their rows, their unit conditions being mathlib's pairing of
 meets with `⊥` and joins with `⊤`, and so do bounded lattice homomorphisms and, into the order
 dual, complementation.
 
 ## Main results
 
-* `Relation.Holds.join`: soundness of the join table.
+* `Relation.Atom.Holds.join`, `Signature.Property.HoldsFor.project`,
+  `Signature.Property.HoldsFor.compose`: soundness of the three rules on atoms and properties.
+* `Relation.Holds.join`: soundness of the join.
 * `soundFor_additive_iff`, …, `soundFor_antiAddMult_iff`: what each projection row demands of a
   function.
-* `Signature.soundFor_of_holdsFor`: a signature's row holds of every function in its class.
+* `Signature.soundFor_of_holdsFor`: a signature's projection holds of every function in its class.
 * `Signature.SoundFor.comp`: soundness composes along `Signature.compose`.
 * `Signature.HoldsFor.comp`: so do the function classes themselves.
 
 ## Implementation notes
 
 * Icard works over Boolean algebras; the proofs need only bounded lattices, and distributivity
-  for the join table.
+  for the join rule taking a disjoint pair and a codisjoint pair to `≤`.
 
 ## References
 
@@ -97,31 +101,28 @@ instance Relation.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
 
 /-! ### Join soundness -/
 
-/-- Chained relations compose as the join table says. Distributivity is needed for the cells
-that reason through a complement (`negation ⋈ negation = equiv` is uniqueness of complements). -/
+/-- The atom rule is sound: chained constraints give the constraint `Relation.Atom.join` says.
+Distributivity is needed for a disjoint pair followed by a codisjoint one, which gives `≤`. -/
+theorem Relation.Atom.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
+    {a b c : Relation.Atom} (h : a.join b = some c) {x y z : β} (ha : a.Holds x y)
+    (hb : b.Holds y z) : c.Holds x z := by
+  cases a <;> cases b <;> simp only [Relation.Atom.join, reduceCtorEq, Option.some.injEq] at h <;>
+    subst h <;> simp only [Relation.Atom.Holds] at ha hb ⊢
+  all_goals first
+    | exact le_trans ha hb
+    | exact ge_trans ha hb
+    | exact hb.mono_left ha
+    | exact ha.mono_right hb
+    | exact ha.le_of_codisjoint hb
+    | exact hb.symm.le_of_codisjoint ha.symm
+
+/-- Chained relations compose as the join says, constraint by constraint. -/
 theorem Relation.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
     {R S : Relation} {x y z : β} (hR : R.Holds x y) (hS : S.Holds y z) :
-    (R.join S).Holds x z := by
-  cases R <;> cases S <;>
-    first
-      | trivial
-      | exact hR.symm ▸ hS
-      | exact hS ▸ hR
-      | exact hR.trans hS
-      | exact hS.trans hR
-      | exact hS.disjoint.mono_left hR
-      | exact hS.mono_left hR
-      | exact hS.codisjoint.mono_left hR
-      | exact hR.codisjoint.mono_right hS
-      | exact hR.disjoint.mono_right hS
-      | exact hR.symm.right_unique hS
-      | exact hS.symm.le_of_codisjoint hR.codisjoint.symm
-      | exact hR.disjoint.le_of_codisjoint hS
-      | exact hR.le_of_codisjoint hS.codisjoint
-      | exact hR.mono_right hS
-      | exact hR.le_of_codisjoint hS
-      | exact hS.symm.le_of_codisjoint hR.symm
-      | exact hS.disjoint.symm.le_of_codisjoint hR.symm
+    (R * S).Holds x z :=
+  Relation.holds_iff.2 fun _ hc ↦ by
+    obtain ⟨a, ha, b, hb, h⟩ := Relation.mem_constraints_mul.1 hc
+    exact Relation.Atom.Holds.join h (Relation.holds_iff.1 hR a ha) (Relation.holds_iff.1 hS b hb)
 
 /-! ### Soundness of a signature for a function -/
 
@@ -267,36 +268,6 @@ private theorem codisjoint_map_of_isAntiMultiplicative {f : α → β}
     Codisjoint (f x) (f y) :=
   codisjoint_iff.2 (by rw [← h.1, hxy.eq_bot, h.2])
 
-theorem soundFor_additive {f : α → β} (h : (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤) :
-    Signature.SoundFor .additive f :=
-  soundFor_additive_iff.2 ⟨monotone_of_map_sup h.1, fun _ _ ↦ codisjoint_map_of_map_sup h⟩
-
-theorem soundFor_mult {f : α → β} (h : (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) :
-    Signature.SoundFor .mult f :=
-  soundFor_mult_iff.2 ⟨monotone_of_map_inf h.1, fun _ _ ↦ disjoint_map_of_map_inf h⟩
-
-theorem soundFor_antiAdd {f : α → β} (h : IsAntiAdditive f ∧ f ⊤ = ⊥) :
-    Signature.SoundFor .antiAdd f :=
-  soundFor_antiAdd_iff.2 ⟨h.1.antitone, fun _ _ ↦ disjoint_map_of_isAntiAdditive h⟩
-
-theorem soundFor_antiMult {f : α → β} (h : IsAntiMultiplicative f ∧ f ⊥ = ⊤) :
-    Signature.SoundFor .antiMult f :=
-  soundFor_antiMult_iff.2 ⟨h.1.antitone, fun _ _ ↦ codisjoint_map_of_isAntiMultiplicative h⟩
-
-theorem soundFor_addMult {f : α → β}
-    (hadd : (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤)
-    (hmult : (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) :
-    Signature.SoundFor .addMult f :=
-  soundFor_addMult_iff.2 ⟨monotone_of_map_sup hadd.1, fun _ _ ↦ disjoint_map_of_map_inf hmult,
-    fun _ _ ↦ codisjoint_map_of_map_sup hadd⟩
-
-theorem soundFor_antiAddMult {f : α → β}
-    (haa : IsAntiAdditive f ∧ f ⊤ = ⊥) (ham : IsAntiMultiplicative f ∧ f ⊥ = ⊤) :
-    Signature.SoundFor .antiAddMult f :=
-  soundFor_antiAddMult_iff.2 ⟨haa.1.antitone,
-    fun _ _ ↦ codisjoint_map_of_isAntiMultiplicative ham,
-    fun _ _ ↦ disjoint_map_of_isAntiAdditive haa⟩
-
 theorem soundFor_addMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α β]
     [BoundedLatticeHomClass F α β] (f : F) : Signature.SoundFor .addMult f :=
   soundFor_addMult_iff.2 ⟨OrderHomClass.mono f, fun _ _ h ↦ h.map f, fun _ _ h ↦ h.map f⟩
@@ -343,11 +314,6 @@ theorem Signature.SoundFor.apply {ι : Type*} {σ : Signature} {f : α → ι �
     (h : σ.SoundFor f) (i : ι) : σ.SoundFor (f · i) :=
   fun R x y hR => (h R x y hR).apply i
 
-theorem Signature.project_mono (R : Relation) :
-    Monotone (Signature.project R) := by
-  intro σ τ h
-  revert h; cases σ <;> cases τ <;> cases R <;> decide
-
 theorem Signature.SoundFor.of_le {σ τ : Signature} {f : α → β}
     (h : σ.SoundFor f) (hστ : σ ≤ τ) : τ.SoundFor f :=
   fun R x y hR => (h R x y hR).of_le (Signature.project_mono R hστ)
@@ -364,7 +330,7 @@ theorem Signature.SoundFor.comp {ψ φ : Signature} {f : β → γ}
   rwa [Signature.project_project] at h
 
 theorem soundFor_addMult_id : Signature.SoundFor .addMult (id : α → α) :=
-  soundFor_addMult ⟨fun _ _ => rfl, rfl⟩ ⟨fun _ _ => rfl, rfl⟩
+  soundFor_addMult_iff.2 ⟨monotone_id, fun _ _ h ↦ h, fun _ _ h ↦ h⟩
 
 end SoundFor
 
@@ -444,23 +410,32 @@ property σ asserts. -/
 def Signature.HoldsFor (σ : Signature) (f : α → β) : Prop :=
   ∀ p ∈ σ.properties, p.HoldsFor f
 
-/-- σ's projection row is sound for every σ-function ([icard-2012]
-Lemma 2.5), aggregating the per-row theorems. -/
+/-- The property rule is sound: a function with property `p` carries a constraint between its
+arguments to the constraint `Signature.Property.project` says between its values. -/
+theorem Signature.Property.HoldsFor.project {p : Signature.Property} {f : α → β}
+    (hf : p.HoldsFor f) {a b : Relation.Atom} (h : Signature.Property.project a p = some b)
+    {x y : α} (ha : a.Holds x y) : b.Holds (f x) (f y) := by
+  cases a <;> cases p <;>
+    simp only [Signature.Property.project, reduceCtorEq, Option.some.injEq] at h <;> subst h <;>
+    simp only [Signature.Property.HoldsFor, Relation.Atom.Holds] at hf ha ⊢
+  all_goals first
+    | exact hf ha
+    | exact codisjoint_map_of_map_sup hf ha
+    | exact disjoint_map_of_map_inf hf ha
+    | exact disjoint_map_of_isAntiAdditive hf ha
+    | exact codisjoint_map_of_isAntiMultiplicative hf ha
+
+/-- σ's projection row is sound for every σ-function ([icard-2012] Lemma 2.5): `≡` because `f` is
+a function, and every other constraint by the property rule. -/
 theorem Signature.soundFor_of_holdsFor {σ : Signature} {f : α → β}
     (h : σ.HoldsFor f) : σ.SoundFor f := by
-  cases σ with
-  | all => exact soundFor_all f
-  | mono => exact soundFor_mono_iff.mpr (h .monotone (by decide))
-  | anti => exact soundFor_anti_iff.mpr (h .antitone (by decide))
-  | additive => exact soundFor_additive (h .additive (by decide))
-  | antiAdd => exact soundFor_antiAdd (h .antiAdditive (by decide))
-  | mult => exact soundFor_mult (h .multiplicative (by decide))
-  | antiMult => exact soundFor_antiMult (h .antiMultiplicative (by decide))
-  | addMult =>
-      exact soundFor_addMult (h .additive (by decide)) (h .multiplicative (by decide))
-  | antiAddMult =>
-      exact soundFor_antiAddMult (h .antiAdditive (by decide))
-        (h .antiMultiplicative (by decide))
+  intro R x y hR
+  by_cases hRe : R = .equiv
+  · subst hRe
+    exact congrArg f hR
+  refine Relation.holds_iff.2 fun _ hb ↦ ?_
+  obtain ⟨p, hp, a, ha, hab⟩ := (Signature.mem_constraints_project hRe).1 hb
+  exact (h p hp).project hab (Relation.holds_iff.1 hR a ha)
 
 theorem Signature.HoldsFor.of_le {σ τ : Signature} {f : α → β}
     (h : σ.HoldsFor f) (hστ : σ ≤ τ) : τ.HoldsFor f :=
@@ -501,23 +476,12 @@ theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
   | antiMultiplicative => exact ⟨isAntiMultiplicative_compl, compl_bot⟩
   | monotone | additive | multiplicative => exact absurd hp (by decide)
 
-/-- The property a composite inherits from a property of the outer function and one of the inner
-function, when there is one. -/
-private def Signature.Property.comp : Signature.Property → Signature.Property →
-    Option Signature.Property
-  | .monotone, .monotone | .antitone, .antitone => some .monotone
-  | .monotone, .antitone | .antitone, .monotone => some .antitone
-  | .additive, .additive | .antiMultiplicative, .antiAdditive => some .additive
-  | .multiplicative, .multiplicative | .antiAdditive, .antiMultiplicative => some .multiplicative
-  | .antiAdditive, .additive | .multiplicative, .antiAdditive => some .antiAdditive
-  | .antiMultiplicative, .multiplicative | .additive, .antiMultiplicative =>
-      some .antiMultiplicative
-  | _, _ => none
-
-private theorem Signature.Property.HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ]
-    {p q r : Signature.Property} {f : β → γ} {g : α → β} (h : p.comp q = some r)
+/-- The property rule for composition is sound: a function with property `p` after one with
+property `q` has the property `Signature.Property.compose` says. -/
+theorem Signature.Property.HoldsFor.compose {γ : Type*} [Lattice γ] [BoundedOrder γ]
+    {p q r : Signature.Property} {f : β → γ} {g : α → β} (h : p.compose q = some r)
     (hf : p.HoldsFor f) (hg : q.HoldsFor g) : r.HoldsFor (f ∘ g) := by
-  cases p <;> cases q <;> simp only [Signature.Property.comp, reduceCtorEq,
+  cases p <;> cases q <;> simp only [Signature.Property.compose, reduceCtorEq,
     Option.some.injEq] at h <;> subst h <;>
     simp only [Signature.Property.HoldsFor, IsAntiAdditive, IsAntiMultiplicative] at hf hg ⊢
   all_goals first
@@ -528,18 +492,13 @@ private theorem Signature.Property.HoldsFor.comp {γ : Type*} [Lattice γ] [Boun
     | exact ⟨fun x y ↦ by simp only [Function.comp_apply, hg.1, hf.1],
         by simp only [Function.comp_apply, hg.2, hf.2]⟩
 
-private theorem Signature.exists_comp_eq_some :
-    ∀ ψ φ : Signature, ∀ r ∈ (ψ * φ).properties,
-      ∃ p ∈ ψ.properties, ∃ q ∈ φ.properties, p.comp q = some r := by
-  decide
-
 /-- A ψ-function after a φ-function is a `ψ * φ`-function, over any bounded lattices: the function
 classes compose as `Signature.compose` says ([icard-2012] Definition 2.6 and Lemma 2.7). -/
 theorem Signature.HoldsFor.comp {γ : Type*} [Lattice γ] [BoundedOrder γ] {ψ φ : Signature}
     {f : β → γ} {g : α → β} (hf : ψ.HoldsFor f) (hg : φ.HoldsFor g) :
-    (ψ * φ).HoldsFor (f ∘ g) := fun r hr ↦ by
-  obtain ⟨p, hp, q, hq, h⟩ := Signature.exists_comp_eq_some ψ φ r hr
-  exact Signature.Property.HoldsFor.comp h (hf p hp) (hg q hq)
+    (ψ * φ).HoldsFor (f ∘ g) := fun _ hr ↦ by
+  obtain ⟨p, hp, q, hq, h⟩ := Signature.mem_properties_mul.1 hr
+  exact (hf p hp).compose h (hg q hq)
 
 end HoldsFor
 
