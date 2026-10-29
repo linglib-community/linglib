@@ -7,6 +7,7 @@ public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Number.Resolve
+public import Linglib.Syntax.Agreement.ConjunctAgreement
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991
@@ -60,6 +61,9 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 * Corporate nouns and the honorific plurals reuse the hybrid profiles and availabilities of
   Corbett's typology of gender; the Predicate Hierarchy is a linear order on the predicate's
   four sub-positions, and the rows of Table 6.11 are profiles over it.
+* The options for agreement with conjoined noun phrases (§6.5.1) are the substrate's
+  `Agreement.ConjunctAgreement`, which derives the exclusion of the more distant last conjunct
+  (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`).
 * Number resolution is the book's rule and is shown to be the substrate's resolution, the
   value of the sum of the conjuncts' referents; the corpus tables are typed here, in percentages,
   with the book's readings of them as theorems.
@@ -713,15 +717,6 @@ def slavonic : List Honorific :=
 theorem slavonic_respect : ∀ h ∈ slavonic, h.Respects := by decide
 
 /-! ### Conjoined noun phrases (§6.5) -/
-
-/-- Agreement with conjoined noun phrases is with the nearest conjunct, with the first when it
-is not the nearest, rarely, or with all conjuncts by resolution, and never with the last, most
-distant, conjunct. -/
-inductive ConjunctAgreement where
-  | nearest
-  | first
-  | all
-  deriving DecidableEq, Repr, Fintype
 
 /-- The number resolution rules give the dual for exactly two singular conjuncts where the
 system has a dual and the plural in all other cases. -/
