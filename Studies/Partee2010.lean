@@ -26,6 +26,15 @@ of that scale. Each Polish adjective's class is the paper's, recorded in the row
 `paperFeatures`; for most adjectives of its lists the paper gives only the English. The shift is
 `Modifier.ShiftsHead`, and *real* is the identity modifier.
 
+## Errata
+
+* The meaning postulate (7) for intersective adjectives,
+  $\exists P_{\langle e,t\rangle}\,\Box\,\forall Q\,\forall x\,[\mathrm{ADJ}'(Q)(x) \leftrightarrow
+  P(x) \wedge {}^{\vee}Q(x)]$, binds an extensional $P$ outside the necessity operator, so the
+  property an intersective adjective meets its noun with would have one extension at every world.
+  The study reads (7) with $P$ an intension, `Modifier.IsIntersective` at `W → E → Prop`, as
+  `Studies/Kamp1975.lean` reads Kamp's (7).
+
 ## References
 
 * [partee-2010]
