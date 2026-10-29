@@ -3,6 +3,7 @@ module
 public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.DependencyGrammar.Stemma
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.Word.Basic
 
@@ -48,6 +49,7 @@ cost more only because they keep subjects before their verbs.
 namespace Gibson2025
 
 open DependencyGrammar Morphology
+open Stemma (node leaf)
 
 variable {n : ℕ}
 
@@ -69,15 +71,15 @@ instance (g : Graph UD.DepRel n) : Decidable (Disharmonic g) :=
 
 /-- (99a) *Mary threw away the important documents that she brought home yesterday*, whose
 total dependency length the book computes as eighteen. -/
-def ex99a : Graph UD.DepRel 11 :=
-  .ofArcs [Word.mk' "Mary" .PROPN, Word.mk' "threw" .VERB, Word.mk' "away" .ADV,
-      Word.mk' "the" .DET, Word.mk' "important" .ADJ, Word.mk' "documents" .NOUN,
-      Word.mk' "that" .PRON, Word.mk' "she" .PRON, Word.mk' "brought" .VERB,
-      Word.mk' "home" .ADV, Word.mk' "yesterday" .ADV]
-    1 [(1, 0, .nsubj), (1, 2, .advmod), (1, 5, .obj), (5, 3, .det), (5, 4, .amod), (5, 8, .acl),
-      (8, 6, .mark), (8, 7, .nsubj), (8, 9, .advmod), (8, 10, .advmod)]
-
-example : ex99a.IsTree ∧ ex99a.IsProjective := by decide
+def ex99a : Graph UD.DepRel 11 := Stemma.toGraph <|
+  node (.mk' "threw" .VERB)
+    [(.nsubj, leaf (.mk' "Mary" .PROPN))]
+    [(.advmod, leaf (.mk' "away" .ADV)),
+     (.obj, node (.mk' "documents" .NOUN)
+       [(.det, leaf (.mk' "the" .DET)), (.amod, leaf (.mk' "important" .ADJ))]
+       [(.acl, node (.mk' "brought" .VERB)
+          [(.mark, leaf (.mk' "that" .PRON)), (.nsubj, leaf (.mk' "she" .PRON))]
+          [(.advmod, leaf (.mk' "home" .ADV)), (.advmod, leaf (.mk' "yesterday" .ADV))])])]
 
 theorem totalLength_99a : ex99a.totalLength = 18 := by decide
 
@@ -91,29 +93,34 @@ theorem totalLength_99b : ex99b.totalLength = 25 ∧ ex99a.totalLength < ex99b.t
 /-! ### Section 5.2: the mirror rules of a verb-final language, (119) to (121) -/
 
 /-- (119a) *Lana ate pizza*. -/
-def svo119 : Graph UD.DepRel 3 :=
-  .ofArcs [Word.mk' "Lana" .PROPN, Word.mk' "ate" .VERB, Word.mk' "pizza" .NOUN]
-    1 [(1, 0, .nsubj), (1, 2, .obj)]
+def svo119 : Graph UD.DepRel 3 := Stemma.toGraph <|
+  node (.mk' "ate" .VERB)
+    [(.nsubj, leaf (.mk' "Lana" .PROPN))]
+    [(.obj, leaf (.mk' "pizza" .NOUN))]
 
 /-- (119b) *Lana pizza ate*. -/
 def sov119 : Graph UD.DepRel 3 := svo119.linearize [0, 2, 1] (by decide)
 
 /-- (120a) *Lana gave pizza to Francine*. -/
-def svo120 : Graph UD.DepRel 5 :=
-  .ofArcs [Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
-      Word.mk' "to" .ADP, Word.mk' "Francine" .PROPN]
-    1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .obl), (3, 4, .obj)]
+def svo120 : Graph UD.DepRel 5 := Stemma.toGraph <|
+  node (.mk' "gave" .VERB)
+    [(.nsubj, leaf (.mk' "Lana" .PROPN))]
+    [(.obj, leaf (.mk' "pizza" .NOUN)),
+     (.obl, node (.mk' "to" .ADP) [] [(.obj, leaf (.mk' "Francine" .PROPN))])]
 
 /-- (120b) *Lana Francine to pizza gave*. -/
 def sov120 : Graph UD.DepRel 5 := svo120.linearize [0, 4, 3, 2, 1] (by decide)
 
 /-- (121a) *Alfred said that Lana gave pizza to Francine*. -/
-def svo121 : Graph UD.DepRel 8 :=
-  .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "said" .VERB, Word.mk' "that" .SCONJ,
-      Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
-      Word.mk' "to" .ADP, Word.mk' "Francine" .PROPN]
-    1 [(1, 0, .nsubj), (1, 2, .ccomp), (2, 4, .ccomp), (4, 3, .nsubj), (4, 5, .obj),
-      (4, 6, .obl), (6, 7, .obj)]
+def svo121 : Graph UD.DepRel 8 := Stemma.toGraph <|
+  node (.mk' "said" .VERB)
+    [(.nsubj, leaf (.mk' "Alfred" .PROPN))]
+    [(.ccomp, node (.mk' "that" .SCONJ)
+       []
+       [(.ccomp, node (.mk' "gave" .VERB)
+          [(.nsubj, leaf (.mk' "Lana" .PROPN))]
+          [(.obj, leaf (.mk' "pizza" .NOUN)),
+           (.obl, node (.mk' "to" .ADP) [] [(.obj, leaf (.mk' "Francine" .PROPN))])])])]
 
 /-- (121b) *Alfred Lana Francine to pizza gave that said*, where each clause keeps its subject first
 and mirrors the rest. -/
@@ -128,14 +135,16 @@ theorem sov_harmonic :
 /-! ### Section 5.3.1: verb-object and verb-complement direction, (122) -/
 
 /-- (122) *Alfred wanted to eat bananas from Hawaii*, head-first: every arc is adjacent. -/
-def hi122 : Graph UD.DepRel 7 :=
-  .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "wanted" .VERB, Word.mk' "to" .PART,
-      Word.mk' "eat" .VERB, Word.mk' "bananas" .NOUN, Word.mk' "from" .ADP,
-      Word.mk' "Hawaii" .PROPN]
-    1 [(1, 0, .nsubj), (1, 2, .xcomp), (2, 3, .xcomp), (3, 4, .obj), (4, 5, .nmod),
-      (5, 6, .obj)]
-
-example : hi122.IsTree ∧ hi122.IsProjective := by decide
+def hi122 : Graph UD.DepRel 7 := Stemma.toGraph <|
+  node (.mk' "wanted" .VERB)
+    [(.nsubj, leaf (.mk' "Alfred" .PROPN))]
+    [(.xcomp, node (.mk' "to" .PART)
+       []
+       [(.xcomp, node (.mk' "eat" .VERB)
+          []
+          [(.obj, node (.mk' "bananas" .NOUN)
+             []
+             [(.nmod, node (.mk' "from" .ADP) [] [(.obj, leaf (.mk' "Hawaii" .PROPN))])])])])]
 
 /-- The head-final order with the subject next to its verb: *Hawaii from bananas eat to Alfred
 wanted*. -/
@@ -162,15 +171,21 @@ theorem harmonic_122 :
 /-! ### Sections 5.3.2 to 5.3.4: subordinators, adpositions, and relative clauses, (123) -/
 
 /-- (123) *Alfred said that Lana gave pizza to monkeys who wanted bananas* in English order. -/
-def en123 : Graph UD.DepRel 11 :=
-  .ofArcs [Word.mk' "Alfred" .PROPN, Word.mk' "said" .VERB, Word.mk' "that" .SCONJ,
-      Word.mk' "Lana" .PROPN, Word.mk' "gave" .VERB, Word.mk' "pizza" .NOUN,
-      Word.mk' "to" .ADP, Word.mk' "monkeys" .NOUN, Word.mk' "who" .PRON,
-      Word.mk' "wanted" .VERB, Word.mk' "bananas" .NOUN]
-    1 [(1, 0, .nsubj), (1, 2, .ccomp), (2, 4, .ccomp), (4, 3, .nsubj), (4, 5, .obj),
-      (4, 6, .obl), (6, 7, .obj), (7, 9, .acl), (9, 8, .nsubj), (9, 10, .obj)]
-
-example : en123.IsTree ∧ en123.IsProjective := by decide
+def en123 : Graph UD.DepRel 11 := Stemma.toGraph <|
+  node (.mk' "said" .VERB)
+    [(.nsubj, leaf (.mk' "Alfred" .PROPN))]
+    [(.ccomp, node (.mk' "that" .SCONJ)
+       []
+       [(.ccomp, node (.mk' "gave" .VERB)
+          [(.nsubj, leaf (.mk' "Lana" .PROPN))]
+          [(.obj, leaf (.mk' "pizza" .NOUN)),
+           (.obl, node (.mk' "to" .ADP)
+             []
+             [(.obj, node (.mk' "monkeys" .NOUN)
+                []
+                [(.acl, node (.mk' "wanted" .VERB)
+                   [(.nsubj, leaf (.mk' "who" .PRON))]
+                   [(.obj, leaf (.mk' "bananas" .NOUN))])])])])])]
 
 /-- The head-final order with subjects first: *Alfred Lana who bananas wanted monkeys to pizza
 gave that said*. -/
@@ -225,13 +240,13 @@ theorem totalLength_mirror_123 : en123.mirror.totalLength = 13 :=
 theorem subordinator_final_stretches :
     (voSubFinal123.yield 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
   voSubFinal123.ncard_yield_le_dist (by decide)
-    (λ x hx => Set.mem_uIcc.mpr (by revert x hx; decide))
+    (fun x hx ↦ Set.mem_uIcc.mpr (by revert x hx; decide))
 
 /-! ### Section 5.3.5: one-word dependents, Table 5.4 -/
 
 /-- *very tall*, an intensifier before its adjective. -/
-def intensifierFirst : Graph UD.DepRel 2 :=
-  .ofArcs [Word.mk' "very" .ADV, Word.mk' "tall" .ADJ] 1 [(1, 0, .advmod)]
+def intensifierFirst : Graph UD.DepRel 2 := Stemma.toGraph <|
+  node (.mk' "tall" .ADJ) [(.advmod, leaf (.mk' "very" .ADV))] []
 
 /-- A one-word dependent costs the same on either side of its head, so Table 5.4's single-word
 orders need not align with verb-object order. -/
