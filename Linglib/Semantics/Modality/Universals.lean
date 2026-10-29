@@ -32,8 +32,9 @@ force with a flavor of its own, doxastic or assertive for Koryak *ivək*
 
 * `Modality.forceFlavorIndependent_iff`: the universal as stated, closure under
   recombining the force of one pair with the flavor of another.
-* `Modality.forceFlavorIndependent_iff_pair_product_subset`: independence is convexity
-  for the grid betweenness of [chemla-buccola-dautriche-2019].
+* `Modality.forceFlavorIndependent_iff_pair_product_subset`: independence is convexity, closure
+  under betweenness in the sense of [chemla-buccola-dautriche-2019], for the grid betweenness of
+  [steinert-threlkeld-imel-guo-2023].
 * `Modality.SingleAxis.forceFlavorIndependent`,
   `Modality.ForceFlavorIndependent.pathConnected`: the three properties in order of
   strength.

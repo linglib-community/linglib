@@ -55,7 +55,7 @@ Bayesian listener does, so a round of the recursion never lowers it.
 
 ## References
 
-* [zaslavsky-hu-levy-2020]
+* [zaslavsky-hu-levy-2021]
 * [goodman-stuhlmuller-2013]
 -/
 

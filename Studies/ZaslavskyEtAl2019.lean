@@ -127,7 +127,7 @@ theorem capacityAchieving_iff :
       ∃ Z > 0, ∀ c, μ.real {c} = exp (-expectedSurprisal κ μ c) / Z := by
   have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
   have hC : (0 : ℝ) < Fintype.card C := by exact_mod_cast Fintype.card_pos
-  rw [eq_blahutArimoto_iff, blahutArimoto, eq_tilted_iff]
+  rw [eq_channelCapacity_iff_eq_tilted, eq_tilted_iff]
   simp_rw [uniformOn_univ_real_singleton, ← neg_expectedSurprisal]
   constructor
   · rintro ⟨Z, hZ, h⟩

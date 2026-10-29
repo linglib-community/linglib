@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.MeasureTheory.Measure.Real
+public import Linglib.Core.Probability.Kernel.OfWeights
 public import Mathlib.MeasureTheory.Measure.Tilted
 public import Mathlib.Probability.UniformOn
 
@@ -22,6 +23,8 @@ measure, gives `Real.softmax f`.
   the counting measure.
 * `MeasureTheory.eq_tilted_iff`: a measure on a finite type is a tilt exactly when its atoms are
   proportional to the reweighted ones.
+* `ProbabilityTheory.Kernel.ofWeights_apply_eq_tilted`: normalizing the reweighted atoms gives
+  the tilt.
 -/
 
 @[expose] public section
@@ -93,6 +96,22 @@ theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMe
     refine Measure.ext_iff_singleton.2 fun a ↦ ?_
     rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _),
       ← measureReal_def, ← measureReal_def, h, tilted_real_singleton, hZeq]
+
+/-- On a finite type, normalizing the atoms of `ν` reweighted by the exponential of `f` gives the
+tilt of `ν` by `f`. -/
+theorem _root_.ProbabilityTheory.Kernel.ofWeights_apply_eq_tilted {ι : Type*} [MeasurableSpace ι]
+    [Countable ι] [MeasurableSingletonClass ι] (ν : Measure α) [IsFiniteMeasure ν] [NeZero ν]
+    {w : ι → α → ℝ≥0∞} {i : ι} {f : α → ℝ}
+    (hw : ∀ a, w i a = ν {a} * ENNReal.ofReal (Real.exp (f a))) :
+    Kernel.ofWeights w i = ν.tilted f := by
+  have : IsProbabilityMeasure (ν.tilted f) := isProbabilityMeasure_tilted .of_finite
+  have hfin (a : α) : w i a ≠ ∞ := by
+    rw [hw]
+    exact ENNReal.mul_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top
+  refine Measure.ext_iff_singleton.2 fun a ↦ ?_
+  rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
+    ← measureReal_def, Kernel.ofWeights_real_singleton _ _ hfin, tilted_real_singleton]
+  simp only [hw, ENNReal.toReal_mul, ENNReal.toReal_ofReal, Real.exp_nonneg, ← measureReal_def]
 
 /-- On a finite type, the counting measure tilted by `f` gives each point its softmax
 probability. -/

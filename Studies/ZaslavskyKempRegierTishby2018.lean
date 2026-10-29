@@ -3,6 +3,7 @@ module
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Order.Pareto
+public import Mathlib.Analysis.SpecialFunctions.Log.ERealExp
 
 /-!
 # Zaslavsky, Kemp, Regier and Tishby (2018): Efficient Compression in Color Naming
@@ -27,11 +28,15 @@ complexity and by the information the meanings carry (`accuracy_le_complexity`,
 The Information Bottleneck objective `F_β = I(M;W) − β I(W;U)` (`objective`) is, up to a
 constant, complexity plus `β` times distortion (`objective_eq_complexity_add_mul_distortion`), so
 a minimizer at `β > 0` lies on the IB curve, no lexicon being both simpler and less distorting
-(`not_costPair_lt`). Below `β = 1` the
-meaning-blind lexicon is optimal (`objective_const_le`). Every minimizer of `F_β` has the
-self-consistent Boltzmann form in which a word's probability decays exponentially in its
-divergence from the meaning (`ibUpdate`, `IsIBOptimum`, `isIBOptimum_of_forall_objective_le`), so
-that at finite `β` the optimal categories are soft (`IsIBOptimum.real_pos`).
+(`not_costPair_lt`). Below `β = 1` the meaning-blind lexicon is optimal
+(`objective_const_le`). When the source and the meanings have full support, as the paper's
+Gaussian meanings do, every minimizer of `F_β` has the self-consistent Boltzmann form in which a
+word's probability decays exponentially in its divergence from the meaning (`ibUpdate`,
+`IsIBOptimum`, `isIBOptimum_of_forall_objective_le`), and at finite `β` the optimal categories
+are soft (`IsIBOptimum.real_pos`). Without full support a word whose interpretation rules out part
+of a meaning gets weight zero, and the Boltzmann form has hard solutions: for meanings that are
+point masses, naming each meaning by a word of its own is one at every positive `β`
+(`isIBOptimum_id`).
 
 The cognitive source is the least informative source of the SI (§2). A least informative prior
 of a naming distribution maximizes the entropy of the meaning less its conditional entropy given
@@ -55,8 +60,11 @@ eq. S13).
 * `distortion_eq` and `distortion_le` are the compensation identity
   `InformationTheory.sum_mul_toReal_klDiv` for the meanings channel, applied at each word's
   posterior over meanings.
-* Eq. 7 is a fixed-point equation: the Boltzmann encoder `ibUpdate` tilts the word marginal row
-  by row (`Measure.tilted`), and `isIBOptimum_of_forall_objective_le` is the Gibbs variational
+* Eq. 7 is a fixed-point equation. The Boltzmann encoder `ibUpdate` weighs each word by its
+  marginal probability times `exp (−β D[m ‖ m̂_w])` in `ℝ≥0∞`, through `EReal.exp`, so that an
+  infinite divergence gives weight zero as in eq. 7. For meanings of full support every
+  divergence is finite and each row is the word marginal tilted by `−β D[m ‖ m̂_w]`
+  (`ibUpdate_apply_eq_tilted`), and `isIBOptimum_of_forall_objective_le` is the Gibbs variational
   principle of `Core.Probability.GibbsVariational` applied to each row. `F_β + β I(M;U)` is the
   source average of the negative free energies of the encoder's rows against its own word
   marginal and Bayesian decoder, and at most that average against any other; each row's free
@@ -66,6 +74,15 @@ eq. S13).
 * The efficiency loss `ε_l` divides the minimal deviation by the fitted `β_l`; the fit itself is
   a numerical optimization outside the formalization. The empirical encoders of the World Color
   Survey are not in the library.
+
+## Errata
+
+* SI eq. S10 glosses the conditional entropy as `H_q(C|W) = −∑ p(c) q(w|c) log (q(c|w) / p(c))`,
+  which is `−I_q(W;C)`; the conditional entropy has `log q(c|w)`. `IsLeastInformative` uses the
+  conditional entropy, which the surrounding text and eq. S11 require.
+* SI eq. S11 writes `I_q(W;C) = argmax_{p(c)} H(C) − H_q(C|W)`, equating a number with a
+  distribution; the identity meant is `I_q(W;C) = H(C) − H_q(C|W)`
+  (`measureEntropy_sub_condEntropy`), whence the least informative prior maximizes `I_q(W;C)`.
 
 ## References
 
@@ -248,41 +265,6 @@ theorem objective_const_le (ν : Measure W) [IsProbabilityMeasure ν] {β : ℝ}
   rw [objective, objective, complexity_const, h0]
   nlinarith [mul_nonneg (sub_nonneg.2 hβ) h2]
 
-/-- The right side of eq. 7: the encoder whose row at a meaning tilts the word marginal by `−β`
-times the divergence of the meaning from each word's interpretation. -/
-noncomputable def ibUpdate (β : ℝ) : Kernel M W :=
-  Kernel.ofFunOfCountable fun m => (encoder ∘ₘ source).tilted
-    fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal
-
-omit [IsMarkovKernel meanings] [Fintype U] [Fintype W] [MeasurableSingletonClass U]
-  [MeasurableSingletonClass W] in
-theorem ibUpdate_apply (β : ℝ) (m : M) :
-    ibUpdate meanings source encoder β m = (encoder ∘ₘ source).tilted
-      fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal := rfl
-
-instance (β : ℝ) : IsMarkovKernel (ibUpdate meanings source encoder β) :=
-  ⟨fun _ => isProbabilityMeasure_tilted .of_finite⟩
-
-/-- The self-consistent form of the Information Bottleneck optima (eq. 7): the encoder is its
-own update. -/
-def IsIBOptimum (β : ℝ) : Prop := encoder = ibUpdate meanings source encoder β
-
-omit [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
-theorem ibUpdate_real_singleton (β : ℝ) (m : M) (w : W) :
-    (ibUpdate meanings source encoder β m).real {w} =
-      (encoder ∘ₘ source).real {w}
-          * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
-        / ∑ w', (encoder ∘ₘ source).real {w'}
-          * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w')).toReal) :=
-  tilted_real_singleton _ _ w
-
-omit [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
-theorem IsIBOptimum.real_pos {β : ℝ} (h : IsIBOptimum meanings source encoder β) {w : W}
-    (hw : (encoder ∘ₘ source) {w} ≠ 0) (m : M) : 0 < (encoder m).real {w} := by
-  rw [DFunLike.congr_fun h m]
-  exact ENNReal.toReal_pos (fun h0 => hw (absolutelyContinuous_tilted .of_finite h0))
-    (measure_ne_top _ _)
-
 omit [IsMarkovKernel meanings] [Fintype W] [MeasurableSingletonClass W] in
 private theorem absolutelyContinuous_decoder (hmeanings : ∀ m u, meanings m {u} ≠ 0) (m : M)
     (w : W) : meanings m ≪ decoder meanings source encoder w := by
@@ -295,6 +277,51 @@ private theorem absolutelyContinuous_decoder (hmeanings : ∀ m u, meanings m {u
   rw [show decoder meanings source encoder w {u} = _ from
     Kernel.comp_apply_singleton meanings (encoder†source) w u]
   exact fun h => mul_ne_zero hm' (hmeanings m' u) (sum_eq_zero_iff.1 h m' (mem_univ m'))
+
+/-- The right side of eq. 7: the encoder whose row at a meaning weighs each word by its marginal
+probability times `exp (−β D[m ‖ m̂_w])`, so that at `β > 0` a word whose interpretation rules
+out part of the meaning gets weight zero. -/
+noncomputable def ibUpdate (β : ℝ) : Kernel M W :=
+  Kernel.ofWeights fun m w ↦ (encoder ∘ₘ source) {w} *
+    EReal.exp (-(β * (klDiv (meanings m) (decoder meanings source encoder w) : EReal)))
+
+-- for meanings of full support every divergence is finite and the update is a tilt
+theorem ibUpdate_apply_eq_tilted (hmeanings : ∀ m u, meanings m {u} ≠ 0) (β : ℝ) (m : M) :
+    ibUpdate meanings source encoder β m = (encoder ∘ₘ source).tilted
+      fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal :=
+  Kernel.ofWeights_apply_eq_tilted (encoder ∘ₘ source) fun w ↦ by
+    rw [← EReal.coe_ennreal_toReal (klDiv_ne_top
+        (absolutelyContinuous_decoder meanings source encoder hmeanings m w) .of_finite),
+      ← EReal.coe_mul, ← EReal.coe_neg, EReal.exp_coe, neg_mul]
+
+theorem isMarkovKernel_ibUpdate (hmeanings : ∀ m u, meanings m {u} ≠ 0) (β : ℝ) :
+    IsMarkovKernel (ibUpdate meanings source encoder β) :=
+  ⟨fun m => by
+    rw [ibUpdate_apply_eq_tilted meanings source encoder hmeanings]
+    exact isProbabilityMeasure_tilted .of_finite⟩
+
+/-- The self-consistent form of the Information Bottleneck optima (eq. 7): the encoder is its
+own update. -/
+def IsIBOptimum (β : ℝ) : Prop := encoder = ibUpdate meanings source encoder β
+
+theorem ibUpdate_real_singleton (hmeanings : ∀ m u, meanings m {u} ≠ 0) (β : ℝ) (m : M)
+    (w : W) :
+    (ibUpdate meanings source encoder β m).real {w} =
+      (encoder ∘ₘ source).real {w}
+          * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
+        / ∑ w', (encoder ∘ₘ source).real {w'}
+          * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w')).toReal) := by
+  rw [ibUpdate_apply_eq_tilted meanings source encoder hmeanings]
+  exact tilted_real_singleton _ _ w
+
+/-- For meanings of full support the optimal categories are soft: every meaning gives every word
+in use positive probability. -/
+theorem IsIBOptimum.real_pos {β : ℝ} (hmeanings : ∀ m u, meanings m {u} ≠ 0)
+    (h : IsIBOptimum meanings source encoder β) {w : W} (hw : (encoder ∘ₘ source) {w} ≠ 0)
+    (m : M) : 0 < (encoder m).real {w} := by
+  rw [DFunLike.congr_fun h m, ibUpdate_apply_eq_tilted meanings source encoder hmeanings]
+  exact ENNReal.toReal_pos (fun h0 => hw (absolutelyContinuous_tilted .of_finite h0))
+    (measure_ne_top _ _)
 
 omit [Nonempty M] [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
 private theorem neg_sum_freeEnergy (q : Kernel M W) [IsMarkovKernel q] (ρ : Measure W)
@@ -352,21 +379,64 @@ theorem isIBOptimum_of_forall_objective_le {β : ℝ} (hβ : 0 ≤ β)
         (decoder meanings source encoder w)).toReal) (encoder ∘ₘ source) 1
       - (encoder ∘ₘ source).freeEnergy (fun w => -β * (klDiv (meanings m)
         (decoder meanings source encoder w)).toReal) (encoder m)) ≤ 0 := by
+    have := isMarkovKernel_ibUpdate meanings source encoder hmeanings β
     have := objective_add_le meanings source (ibUpdate meanings source encoder β)
-      (encoder ∘ₘ source) (fun _ => tilted_absolutelyContinuous _ _)
+      (encoder ∘ₘ source) (fun m => by
+        rw [ibUpdate_apply_eq_tilted meanings source encoder hmeanings]
+        exact tilted_absolutelyContinuous _ _)
       (decoder meanings source encoder) (absolutelyContinuous_decoder meanings source encoder
         hmeanings) hβ
-    simp only [ibUpdate_apply, hg] at this
+    simp only [ibUpdate_apply_eq_tilted meanings source encoder hmeanings, hg] at this
     simp only [mul_sub, sum_sub_distrib]
     linarith [objective_add_eq meanings source encoder β, hmin (ibUpdate meanings source encoder β)]
-  refine Kernel.ext fun m => eq_tilted_of_freeEnergy_eq_cgf _ _ (hq m) .of_finite .of_finite
-    .of_finite (le_antisymm (hle m) ?_)
+  refine Kernel.ext fun m => ?_
+  rw [ibUpdate_apply_eq_tilted meanings source encoder hmeanings]
+  refine eq_tilted_of_freeEnergy_eq_cgf _ _ (hq m) .of_finite .of_finite .of_finite
+    (le_antisymm (hle m) ?_)
   have := (sum_eq_zero_iff_of_nonneg fun m _ => mul_nonneg measureReal_nonneg
     (sub_nonneg.2 (hle m))).1 (hsum.antisymm (sum_nonneg fun m _ => mul_nonneg
       measureReal_nonneg (sub_nonneg.2 (hle m)))) m (mem_univ m)
   rw [mul_eq_zero, sub_eq_zero] at this
   exact (this.resolve_left (mt (measureReal_eq_zero_iff (measure_ne_top _ _)).1
     (hsource m))).le
+
+section Hard
+
+variable {α : Type*} [MeasurableSpace α] [Fintype α] [MeasurableSingletonClass α] [Nonempty α]
+  (ρ : Measure α) [IsProbabilityMeasure ρ]
+
+/-- Without meanings of full support the Boltzmann form has hard solutions. When each meaning is
+a point mass, the encoder naming each meaning by a word of its own is a fixed point of eq. 7 at
+every positive `β`, though each meaning gives every other word probability zero. -/
+theorem isIBOptimum_id (hρ : ∀ a, ρ {a} ≠ 0) {β : ℝ} (hβ : 0 < β) :
+    IsIBOptimum (Kernel.id : Kernel α α) ρ Kernel.id β := by
+  classical
+  have hpost (w : α) : (Kernel.id†ρ) w = Measure.dirac w := by
+    refine Measure.ext_iff_singleton.2 fun c => ?_
+    rw [posterior_apply_singleton _ _ (by rw [Measure.id_comp]; exact hρ w),
+      Measure.id_comp, Kernel.id_apply]
+    by_cases hcw : c = w
+    · subst hcw
+      rw [Measure.dirac_apply_of_mem (Set.mem_singleton c), mul_one,
+        ENNReal.div_self (hρ c) (measure_ne_top _ _)]
+    · simp [hcw, Ne.symm hcw]
+  have hdec (w : α) : decoder Kernel.id ρ Kernel.id w = Measure.dirac w := by
+    rw [decoder, Kernel.id_comp, hpost]
+  refine Kernel.ext fun m => ?_
+  rw [Kernel.id_apply]
+  unfold ibUpdate
+  refine (Kernel.ofWeights_apply_eq_dirac (b₀ := m) (hρ m) (measure_ne_top _ _)
+    fun w => ?_).symm
+  rw [Measure.id_comp, hdec, Kernel.id_apply]
+  by_cases hwm : w = m
+  · subst hwm
+    simp
+  · have hac : ¬ Measure.dirac m ≪ Measure.dirac w := fun h => one_ne_zero <|
+      (Measure.dirac_apply_of_mem (Set.mem_singleton m)).symm.trans <| h <| by
+        rw [Measure.dirac_apply, Set.indicator_of_notMem (by simpa using hwm)]
+    simp [hwm, klDiv_of_not_ac hac, EReal.coe_mul_top_of_pos hβ]
+
+end Hard
 
 variable (encoder' : Kernel M W) [IsMarkovKernel encoder']
 
@@ -425,7 +495,7 @@ theorem complexity_eq_sum_klDiv_posterior :
 update (SI §2.1). -/
 theorem IsLeastInformative.eq_blahutArimoto (h : IsLeastInformative source encoder)
     (hsource : ∀ m, source {m} ≠ 0) : source = blahutArimoto encoder source :=
-  (eq_blahutArimoto_iff encoder source).1 ⟨(isLeastInformative_iff source encoder).1 h, hsource⟩
+  (eq_blahutArimoto_iff encoder source hsource).1 ((isLeastInformative_iff source encoder).1 h)
 
 end LeastInformative
 

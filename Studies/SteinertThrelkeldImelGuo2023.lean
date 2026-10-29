@@ -17,7 +17,8 @@ against the Single Axis of Variability universal of [nauze-2008] it replaces. Th
 *-eʔ*, which [bochnak-2015a] finds specified for neither force nor flavor, varies on both axes
 yet is a product, the hypothetical *mighst* is neither, and the singleton meanings of Paciran
 Javanese ([vander-klok-2013a]) satisfy the universal trivially. The paper's equivalence of
-independence with convexity for the grid betweenness of [chemla-buccola-dautriche-2019] is the
+independence with convexity, for its own betweenness on the force-flavor grid and the general
+notion of convexity as closure under betweenness of [chemla-buccola-dautriche-2019], is the
 substrate's `forceFlavorIndependent_iff_pair_product_subset`.
 
 Section 4.1 notes gaps in the uses of *-eʔ* that Bochnak elicits: bouletic necessity and weak
@@ -27,13 +28,10 @@ universal to hold of *-eʔ*, since nothing rules the missing pairs out and the a
 [bochnak-2015a] and [bochnak-2015b] leave force and flavor free (`washo_attested`).
 
 The paper offers path-connectedness as a weaker fallback universal, defined by replacing the
-"and" of independence with an "or" and glossed in a footnote as any two points being joined by a
-path. The two readings come apart. Read as a path through the rook's graph on the force-flavor
-grid, whose edges change one coordinate, the property follows from the "or" formulation
-(`PathConnected.connected`), but the second modal of Table 1, given as satisfying
-path-connectedness without independence, is connected in the grid and fails the "or"
-formulation: its weak teleological and strong epistemic points share no corner
-(`table1b_connected_not_pathConnected`).
+"and" of independence with an "or" (`Modality.PathConnected`) and glossed in a footnote as any
+two points being joined by a path. The two readings come apart. Read as a path through the
+rook's graph on the force-flavor grid, whose edges change one coordinate, the property follows
+from the "or" formulation (`PathConnected.connected`), but not conversely.
 
 The Koryak attitude verb *ivək* is the paper's other counterexample to Nauze's universal, with
 the doxastic and assertive flavors of [mocnik-abramovitz-2019] on the flavor axis. Section 4.1
@@ -49,6 +47,19 @@ teleological; the library folds teleological into circumstantial. The doxastic a
 flavors of *ivək* lie outside that space, and the universal is stated for any types of forces
 and flavors. So do the metaphysical and generic uses of *-eʔ*, which `washoAttested` leaves
 out; the weak necessity of [bochnak-2015a] is the library's `ModalForce.weakNecessity`.
+
+## Errata
+
+* The paper introduces path-connectedness by replacing the universal quantification of
+  convexity, every pair between two pairs of the meaning belongs to it, with an existential
+  one, some pair between them does. Under the paper's own betweenness each of the two pairs lies
+  between them, so the existential condition holds of every meaning
+  (`exists_mem_pair_product`). Only the parenthetical reformulation, "or" in place of "and",
+  is the intended weaker property.
+* Table 1 gives its second modal as satisfying path-connectedness without independence, but it
+  fails the "or" formulation, since its weak teleological and strong epistemic points share no
+  corner; it is connected in the rook's graph, and so satisfies only the footnote's reading
+  (`table1b_connected_not_pathConnected`).
 
 ## References
 
@@ -129,17 +140,21 @@ theorem not_forceFlavorIndependent_mighst : ¬ ForceFlavorIndependent mighst := 
 
 /-! ### Table 1 and the two readings of path-connectedness -/
 
-/-- The first modal of Table 1 expresses both forces with the epistemic and teleological
-flavors. -/
+/-- The first modal of Table 1 expresses both forces with the epistemic and deontic flavors. -/
 def table1a : Finset ForceFlavor :=
-  {(.possibility, .epistemic), (.possibility, .circumstantial),
-   (.necessity, .epistemic), (.necessity, .circumstantial)}
+  {(.possibility, .epistemic), (.possibility, .deontic),
+   (.necessity, .epistemic), (.necessity, .deontic)}
 
 /-- The second modal of Table 1 expresses weak deontic and teleological and strong epistemic and
 deontic. -/
 def table1b : Finset ForceFlavor :=
   {(.possibility, .deontic), (.possibility, .circumstantial),
    (.necessity, .epistemic), (.necessity, .deontic)}
+
+-- §4.2: the existential reading of path-connectedness holds of every meaning
+theorem exists_mem_pair_product (m : Finset ForceFlavor) :
+    ∀ x ∈ m, ∀ y ∈ m, ∃ z ∈ m, z ∈ ({x.1, y.1} : Finset ModalForce) ×ˢ ({x.2, y.2} : Finset _) :=
+  fun x hx _ _ ↦ ⟨x, hx, Finset.mk_mem_product (by simp) (by simp)⟩
 
 theorem table1a_forceFlavorIndependent :
     ForceFlavorIndependent table1a ∧ ¬ SingleAxis table1a := by
