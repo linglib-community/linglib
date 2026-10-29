@@ -33,10 +33,9 @@ of pairs of a world and a selection function.
 ## Implementation notes
 
 * A sentence is a map from a selection function and a modal parameter to a set of worlds, so an
-  *if*-clause, rule (21), shifts the parameter.
+  *if*-clause, rule (20), shifts the parameter.
 * At an empty parameter `will` evaluates the junk selection; the paper restricts its conditional
   principles to antecedents compatible with the modal base (§7).
-* Section and example numbers follow the accepted manuscript (Draft of November 2, 2015).
 
 ## References
 
@@ -60,7 +59,7 @@ variable {W : Type*} (s : SelectionFunction W) {f A B C : Set W} {w : W}
 
 /-! ### Selectional *will*
 
-The clause for *will* is (16) of §5.2, and its collapse at the context is (18). -/
+The clause for *will* is (15) of §5.2, and its collapse at the context is (17). -/
 
 /-- *Will* over the modal parameter `f` sends `A` to the worlds whose selection from `f` is an
 `A`-world, the selectional modal along the constant relation to `f`. -/
@@ -111,7 +110,7 @@ theorem valid1_materialImp_will : Valid1 fun s f ↦ materialImp (will s f A) A 
 
 /-! ### *If*-clauses
 
-An *if*-clause restricts the modal parameter of *will* to the antecedent-worlds, by rule (21) of
+An *if*-clause restricts the modal parameter of *will* to the antecedent-worlds, by rule (20) of
 §5.3.1. -/
 
 /-- *If A, will B* is *will B* over the modal parameter restricted to the `A`-worlds. -/
@@ -125,7 +124,7 @@ theorem willIf_compl : willIf s f A Bᶜ = (willIf s f A B)ᶜ := will_compl s
 theorem willIf_excluded_middle : Valid2 fun s f ↦ willIf s f A B ∪ willIf s f A Bᶜ :=
   fun s f ↦ will_excluded_middle s (f ∩ A)
 
--- (24), §5.3.1
+-- (23), §5.3.1
 theorem willIf_inter : willIf s f A B ∩ willIf s f A C = willIf s f A (B ∩ C) :=
   (map_inf _ B C).symm
 
@@ -142,7 +141,7 @@ section Contexts
 
 variable {T : Type*} [Preorder T] {F : Temporal.TWFrame W T} {t : T}
 
--- (18)
+-- (17)
 theorem mem_will_alternatives_iff : w ∈ will s (F.alternatives (w, t)) A ↔ w ∈ A :=
   mem_will_of_mem s Temporal.TWFrame.mem_alternatives_self
 
@@ -166,7 +165,7 @@ theorem measure_will [MeasurableSpace W] (μ : Measure W) (h : μ fᶜ = 0) :
 
 The modal analyses the paper argues against make *will* necessity over the best open worlds,
 the `necessity f g` of [kratzer-1981] with the open worlds as modal base, such as the most likely
-open worlds of [kaufmann-2005-truth]. They differ in the ordering source `g` (§2.4, (14)). -/
+open worlds of [kaufmann-2005-truth]. They differ in the ordering source `g` (§2.4). -/
 
 /-- A universal analysis commutes with negation for every prejacent iff it is truth at a selected
 world (§2.2, §2.4). -/
@@ -291,7 +290,7 @@ theorem not_conditionalNecessity_wearsCap_or_compl (w : W) :
 
 /-! ### The cap-conditional
 
-The cap-conditional is (31) of §8.2. -/
+The cap-conditional is (30) of §8.2. -/
 
 -- footnote 32
 theorem mem_willIf_wearsCap_warriorsCap (s : SelectionFunction W) (w v : W) :

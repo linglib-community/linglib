@@ -949,7 +949,7 @@ theorem logicallyEquivalent_hasChild_isParent
     exact ⟨b, realize_atom₁.2 ⟨b, hb, by simp⟩, realize_atom₁.2 ⟨b, hb', by simp⟩⟩
 
 /-- After *Sue is a parent*, a pronoun on `x` empties any context with a point not valuing `x` ((2),
-(9), pp. 1093 and 1104). -/
+(9), pp. 1093 and 1096). -/
 theorem update_isParent_then_it (c : Set (Assign V Δ E × W))
     (h : ∃ i ∈ update I .asymmetric c (isParent Par), i.1 x = ⊥) :
     update I .asymmetric (update I .asymmetric c (isParent Par)) (iota x (top x) (atom₁ B x)) =

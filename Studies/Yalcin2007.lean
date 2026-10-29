@@ -30,8 +30,9 @@ throughout a state evaluated at that state. Informational consequence validates 
 principle, epistemic contradiction, and the nonfactivity of epistemic possibility together
 (`lukasiewicz`, `epistemic_contradiction`, `nonfactivity`), which no classical consequence relation
 can, while diagonal consequence rejects epistemic contradiction
-(`not_diagonal_epistemic_contradiction`); on factual sentences informational consequence is
-classical (`factual_classical`). The dual necessity modal yields the same results
+(`not_diagonal_epistemic_contradiction`); on factual sentences informational consequence keeps
+the classical schema on which $\neg\varphi \wedge \psi$ entails the absurd sentence exactly when
+$\psi$ entails $\varphi$ (`factual_reductio`). The dual necessity modal yields the same results
 (`not_accepted_neg_must`).
 
 ## Implementation notes
@@ -41,6 +42,13 @@ Sentences form a Boolean algebra pointwise: negation is the complement `φᶜ`, 
 largest nonempty substate accepting the antecedent is characterized rather than constructed, and a
 conditional is true only if it exists. The probabilistic extension of the information parameter in
 the paper's seventh section is not modelled.
+
+## Errata
+
+The definition of $s_\alpha$ on p. 998 evaluates the antecedent as
+$\llbracket\alpha\rrbracket^{c,s',w}$, at the conditional's own world $w$ rather than at the
+bound $w'$. The surrounding prose asks for the largest subset that includes the information in
+the antecedent, which is acceptance in $s'$, and `IsMaxAccepting` reads it so.
 
 ## References
 
@@ -171,7 +179,8 @@ theorem not_diagonal_factivity :
     exact ⟨true, trivial, rfl⟩)
   simp [ofProp] at this
 
-theorem factual_classical (p q : Set W) :
+-- fn. 7
+theorem factual_reductio (p q : Set W) :
     InformationalConsequence [(ofProp p)ᶜ ⊓ ofProp q] ⊥ ↔
       InformationalConsequence [ofProp q] (ofProp p) := by
   constructor

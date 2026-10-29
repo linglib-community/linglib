@@ -30,6 +30,9 @@ agree on the consequent, and part under embedding.
   counterfactual is the selectional one.
 * `superCounterfactual_eq_selectionalCounterfactual`: on a finite, strongly
   centered ordering the supervaluation over completions is the selectional counterfactual.
+* `cem_supervaluation`: conditional excluded middle is super-true, while the strong-Kleene
+  disjunction of the two selectional counterfactuals is only never false
+  (`selectionalCounterfactual_sup_compl_ne_neg_one`).
 
 ## References
 
@@ -133,7 +136,10 @@ theorem selectionalCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
 
 variable (ord p q w)
 
-theorem cem_selectional :
+/-- The strong-Kleene disjunction of *if p, q* and *if p, not q* is never false. It can be
+indeterminate, when the closest `p`-worlds disagree on `q`; conditional excluded middle is
+super-true all the same (`cem_supervaluation`), supervaluation not being truth-functional. -/
+theorem selectionalCounterfactual_sup_compl_ne_neg_one :
     selectionalCounterfactual ord p q w ⊔ selectionalCounterfactual ord p qᶜ w ≠ -1 := by
   rcases ((ord w).minimals p).eq_empty_or_nonempty with h | h
   · simp [selectionalCounterfactual, h]
@@ -209,6 +215,13 @@ noncomputable def superCounterfactual : SignType :=
   if ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q then 1
   else if ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q then -1
   else 0
+
+/-- Conditional excluded middle is super-true: every compatible selection function makes *if p,
+q* or *if p, not q* true, though neither disjunct need be super-true ([stalnaker-1981]). -/
+theorem cem_supervaluation :
+    ∀ s : SelectionFunction W, s.Compatible ord →
+      w ∈ selectionConditional s p q ∪ selectionConditional s p qᶜ :=
+  fun s _ ↦ selectionConditional_cem s
 
 variable {ord p q w} [Fintype W] [∀ w, DecidableRel (ord w).le]
   [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
