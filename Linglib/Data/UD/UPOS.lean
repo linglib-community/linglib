@@ -1,98 +1,115 @@
 module
 
+public import Mathlib.Data.Fintype.Card
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Universal Dependencies: part-of-speech tags
-[de-marneffe-zeman-2021]
 
-The seventeen universal part-of-speech tags of UD v2, the word-class vocabulary of the
-library's tokens (`Morphology.Word.cat`), with the open, closed, nominal, predicate and
-modifier classes they fall into.
+Universal Dependencies v2 assigns every word one of seventeen universal part-of-speech tags. The
+tags stay close to the eight traditional parts of speech of English: each traditional part of
+speech [is one tag or splits into several](##UD.UPOS.exists_traditional_eq), and the tags of
+particles, of words of no category, of symbols and of punctuation
+[have no traditional counterpart](##UD.UPOS.traditional_eq_none_iff).
 
-Official site: <https://universaldependencies.org/>
+## Main definitions
+
+* `UD.UPOS`: the universal part-of-speech tags.
+* `UD.UPOS.traditional`: the traditional part of speech a tag refines, if any.
+
+## Implementation notes
+
+The constructors are spelled as in CoNLL-U files, in capitals, and ordered as in the source's
+table. A typo or an abbreviation takes the tag of the correct or unabbreviated word, so `X` is
+not the tag of either.
+
+## References
+
+* [de-marneffe-zeman-2021]
 -/
 
 @[expose] public section
 
 namespace UD
 
-
-/-- Universal part-of-speech tags (UPOS).
-
-    17 coarse-grained categories designed for cross-linguistic consistency.
-    Every word in every language can be assigned one of these tags. -/
+/-- The universal part-of-speech tags of Universal Dependencies, one of which every word of every
+language can be assigned. -/
 inductive UPOS where
-  -- Open class words (content words)
-  | ADJ    -- adjective: big, old, green, first
-  | ADV    -- adverb: very, tomorrow, down, where, there
-  | INTJ   -- interjection: psst, ouch, bravo, hello
-  | NOUN   -- noun: girl, cat, tree, air, beauty
-  | PROPN  -- proper noun: Mary, John, London, NATO
-  | VERB   -- verb: run, runs, running, eat, ate
+  /-- A common noun. -/
+  | NOUN
+  /-- A proper noun. -/
+  | PROPN
+  /-- A main verb. -/
+  | VERB
+  /-- An auxiliary verb or other tense, aspect or mood particle. -/
+  | AUX
+  /-- An adjective. -/
+  | ADJ
+  /-- A determiner, articles included. -/
+  | DET
+  /-- A cardinal numeral. -/
+  | NUM
+  /-- An adverb. -/
+  | ADV
+  /-- A pronoun. -/
+  | PRON
+  /-- An adposition, a preposition or a postposition. -/
+  | ADP
+  /-- A coordinating conjunction. -/
+  | CCONJ
+  /-- A subordinating conjunction. -/
+  | SCONJ
+  /-- An interjection. -/
+  | INTJ
+  /-- A particle, a special single-word marker of some languages. -/
+  | PART
+  /-- A word of no other category, such as a word of a foreign-language expression. -/
+  | X
+  /-- A symbol other than punctuation, such as a hash sign or an emoji. -/
+  | SYM
+  /-- Punctuation. -/
+  | PUNCT
+  deriving DecidableEq, Fintype, Inhabited, Repr
 
-  -- Closed class words (function words)
-  | ADP    -- adposition: in, to, during (preposition/postposition)
-  | AUX    -- auxiliary: has, is, should, was, will
-  | CCONJ  -- coordinating conjunction: and, or, but
-  | DET    -- determiner: a, an, the, this, which
-  | NUM    -- numeral: 1, 2, one, two, first
-  | PART   -- particle: 's, not, to (infinitive marker)
-  | PRON   -- pronoun: I, you, he, she, myself, who
-  | SCONJ  -- subordinating conjunction: if, while, that
+namespace UPOS
 
-  -- Other
-  | PUNCT  -- punctuation: . , ; : ! ?
-  | SYM    -- symbol: $, %, @, +, :), 😀
-  | X      -- other: foreign words, typos, abbreviations
-  deriving DecidableEq, Repr, Inhabited, Hashable
+/-- There are seventeen tags. -/
+theorem card : Fintype.card UPOS = 17 := rfl
 
-/-- String representation matching UD conventions -/
-def UPOS.toString : UPOS → String
-  | .ADJ   => "ADJ"
-  | .ADV   => "ADV"
-  | .INTJ  => "INTJ"
-  | .NOUN  => "NOUN"
-  | .PROPN => "PROPN"
-  | .VERB  => "VERB"
-  | .ADP   => "ADP"
-  | .AUX   => "AUX"
-  | .CCONJ => "CCONJ"
-  | .DET   => "DET"
-  | .NUM   => "NUM"
-  | .PART  => "PART"
-  | .PRON  => "PRON"
-  | .SCONJ => "SCONJ"
-  | .PUNCT => "PUNCT"
-  | .SYM   => "SYM"
-  | .X     => "X"
+/-- The eight traditional parts of speech of English. -/
+inductive TraditionalPOS where
+  | noun
+  | verb
+  | adjective
+  | adverb
+  | pronoun
+  | preposition
+  | conjunction
+  | interjection
+  deriving DecidableEq, Fintype, Repr
 
-instance : ToString UPOS := ⟨UPOS.toString⟩
+/-- The traditional part of speech a tag refines, if any. -/
+def traditional : UPOS → Option TraditionalPOS
+  | NOUN | PROPN => some .noun
+  | VERB | AUX => some .verb
+  | ADJ | DET | NUM => some .adjective
+  | ADV => some .adverb
+  | PRON => some .pronoun
+  | ADP => some .preposition
+  | CCONJ | SCONJ => some .conjunction
+  | INTJ => some .interjection
+  | PART | X | SYM | PUNCT => none
 
-/-- Is this an open class (content) word? -/
-def UPOS.isOpenClass : UPOS → Bool
-  | .ADJ | .ADV | .INTJ | .NOUN | .PROPN | .VERB => true
-  | _ => false
+/-- Every traditional part of speech is refined by a tag. -/
+theorem exists_traditional_eq (t : TraditionalPOS) : ∃ p : UPOS, p.traditional = some t := by
+  cases t <;> decide
 
-/-- Is this a closed class (function) word? -/
-def UPOS.isClosedClass : UPOS → Bool
-  | .ADP | .AUX | .CCONJ | .DET | .NUM | .PART | .PRON | .SCONJ => true
-  | _ => false
+/-- The tags with no traditional counterpart are those of particles, of words of no category, of
+symbols and of punctuation. -/
+theorem traditional_eq_none_iff {p : UPOS} :
+    p.traditional = none ↔ p = PART ∨ p = X ∨ p = SYM ∨ p = PUNCT := by
+  cases p <;> decide
 
-/-- Is this a nominal (entity-denoting) category? -/
-def UPOS.isNominal : UPOS → Bool
-  | .NOUN | .PROPN | .PRON | .NUM => true
-  | _ => false
-
-/-- Is this a predicate (event-denoting) category? -/
-def UPOS.isPredicate : UPOS → Bool
-  | .VERB | .AUX => true
-  | _ => false
-
-/-- Is this a modifier category? -/
-def UPOS.isModifier : UPOS → Bool
-  | .ADJ | .ADV => true
-  | _ => false
-
+end UPOS
 
 end UD
