@@ -38,9 +38,11 @@ alternatives are one source of alternatives for the competition relations of `Co
 
 ## Implementation notes
 
-`atMostAsComplex` is reachability, not an operation count, so `equalComplexity`, mutual
-reachability, is coarser than the paper's equal complexity. The `inBind` constructor extends
-the operations into the body of a binder, which the paper's trees lack.
+`atMostAsComplex` is the paper's (19), reachability by finitely many operations, over a source
+given as an argument. The paper draws the replacements that make `ψ` at most as complex as `φ` from
+the substitution source of `φ`, so its equal complexity uses each tree's own source for one
+direction, where `equalComplexity` uses one source for both. The `inBind` constructor extends the
+operations into the body of a binder, which the paper's trees lack.
 
 ## References
 

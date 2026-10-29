@@ -27,6 +27,8 @@ negation `−P`, and its regular closure, the exclusionary negation `∼P`.
   verifier of `P` is excluded by a verifier of `Q`.
 * `Truthmaker.exclusiveNeg`, `Truthmaker.exclusionaryNeg`: Fine's negations `−P` and `∼P`.
 * `Truthmaker.ClassicalExclusion excl P`: Fine's classical exclusion over the possible states `P`.
+* `Truthmaker.Canonical.mirrorExcl`: in the canonical space, a state excludes the states containing
+  the mirror image of each of its literals.
 
 ## Main results
 
@@ -47,12 +49,16 @@ negation `−P`, and its regular closure, the exclusionary negation `∼P`.
 * `Truthmaker.exclusionaryNeg_regularClosure_iUnion`, `Truthmaker.exclusionaryNeg_iSups`: the de
   Morgan laws for the exclusionary negation.
 * `Truthmaker.exclusionaryNeg_exclusionaryNeg`: double negation holds of every regular proposition
-  if it holds of every single state.
+  that the null state does not verify, if it holds of every single state.
 * `Truthmaker.ClassicalExclusion.exclusive`, `Truthmaker.ClassicalExclusion.exhaustive`: under
   classical exclusion a single state paired with its negation is exclusive and exhaustive.
 * `Truthmaker.Canonical.possible_excl`: in the canonical space, where a literal excludes its mirror
   image, the derived possibility is Fine's consistency.
 * `Truthmaker.RedBlueGreen.exclusionaryNeg_exclusionaryNeg_ne`: double negation can fail.
+* `Truthmaker.Canonical.exclusionaryNeg_iSups_ne`,
+  `Truthmaker.Canonical.exclusionaryNeg_exclusionaryNeg_ne`: mirror exclusion satisfies the three
+  conditions, and under it the de Morgan law for conjunction and the lift of double negation fail
+  for a proposition that the null state verifies.
 
 ## Implementation notes
 
@@ -63,6 +69,21 @@ a regular proposition (`Truthmaker.regularClosure_eq_iff`). Fine states that neg
 regular closure for regular propositions only and his de Morgan laws for regular ones, but they
 hold without regularity. The law for conjunctions needs no distributivity, only that the conjuncts
 have verifiers and that the null state verifies none of them.
+
+## Errata
+
+Fine's de Morgan law for conjunctions (Lemma 24(ii)) asks only that the conjuncts be regular and
+verifiable, and his Theorem 25 lifts double negation from single states to every proposition. Both
+fail for a proposition that the null state verifies: nothing excludes the null state, so the
+exclusionary negation of such a proposition has no verifiers. Under mirror exclusion in the
+canonical space, which satisfies Upward and Null Exclusion and Downward Exclusion with the regular
+closure that Fine's own proofs use, the negation of the conjunction of `{□, q}` and `{p}` has the
+verifier `p̄ ⊔ q̄`, which the disjunction of their negations lacks
+(`Canonical.exclusionaryNeg_iSups_ne`), and the double negation of `{□, q}` is `{□}` although every
+single state is its own double negation (`Canonical.exclusionaryNeg_exclusionaryNeg_ne`). Fine's
+proof of Lemma 24(ii) breaks where it distributes the conjunction over disjunctions with the empty
+negation of the null state as a disjunct. The theorems here add the condition that the null state
+verify none of the propositions.
 
 ## References
 
@@ -328,6 +349,13 @@ theorem bot_not_mem_exclusionaryNeg (hN : NullExclusion excl) (hP : P.Nonempty) 
   obtain rfl : q = ⊥ := le_bot_iff.1 ((le_sSup hq).trans hle)
   exact (hN.1 p).1 hqp
 
+/-- No state excludes a proposition that the null state verifies, so its exclusionary negation has
+no verifiers. -/
+theorem exclusionaryNeg_eq_empty_of_bot_mem (hN : NullExclusion excl) (hP : ⊥ ∈ P) :
+    exclusionaryNeg excl P = ∅ := by
+  rw [exclusionaryNeg, Set.eq_empty_of_forall_notMem (s := exclusiveNeg excl P)
+    fun _ ⟨_, ⟨_, hPQ⟩, _⟩ ↦ let ⟨_, _, hq⟩ := hPQ hP; (hN.1 _).2 hq, regularClosure_empty]
+
 theorem DownwardExclusion.exists_conflict (hD : DownwardExclusion excl) {s : S}
     (hs : excl s (sSup P)) : ∃ p ∈ P, Conflict excl s p :=
   let ⟨r, ⟨p, hp, hrp⟩, hrs⟩ := mem_upperClosure.1 (hD hs).1
@@ -530,6 +558,126 @@ theorem possibleFusion_excl : PossibleFusion (excl (α := α)) := by
   · exact hc ⟨x, hx, hx'⟩
   · exact hc ⟨mirror x, hx', by rwa [mirror_mirror]⟩
   · exact ht x hx hx'
+
+/-- In mirror exclusion a state with a literal excludes every state containing the mirror image of
+each of its literals. Unlike `excl`, it satisfies all three of Fine's conditions. -/
+def mirrorExcl (s t : Set (α × Bool)) : Prop :=
+  s.Nonempty ∧ ∀ x ∈ s, mirror x ∈ t
+
+theorem upwardExclusion_mirrorExcl : UpwardExclusion (mirrorExcl (α := α)) :=
+  fun _ _ _ ⟨hq, h⟩ hp ↦ ⟨hq, fun x hx ↦ hp (h x hx)⟩
+
+theorem downwardExclusion_mirrorExcl : DownwardExclusion (mirrorExcl (α := α)) := by
+  intro P q ⟨⟨x, hx⟩, h⟩
+  have hE : ∀ y ∈ q, {y} ∈ {r | ∃ p ∈ P, mirrorExcl r p} := fun y hy ↦
+    let ⟨p, hp, hyp⟩ := Set.mem_sUnion.1 (h y hy)
+    ⟨p, hp, Set.singleton_nonempty y, fun z hz ↦ by rwa [Set.mem_singleton_iff.1 hz]⟩
+  exact mem_regularClosure.2 ⟨⟨{x}, hE x hx, Set.singleton_subset_iff.2 hx⟩,
+    (fun y hy ↦ Set.mem_sUnion.2 ⟨{y}, hE y hy, rfl⟩ : q ⊆ _)⟩
+
+theorem nullExclusion_mirrorExcl : NullExclusion (mirrorExcl (α := α)) :=
+  ⟨fun _ ↦ ⟨fun ⟨⟨_, hx⟩, _⟩ ↦ Set.notMem_empty _ hx,
+      fun ⟨⟨x, hx⟩, h⟩ ↦ Set.notMem_empty _ (h x hx)⟩,
+    fun s hs ↦
+      have hne : s.Nonempty := Set.nonempty_iff_ne_empty.2 hs
+      ⟨⟨mirror '' s, hne, fun x hx ↦ Set.mem_image_of_mem _ hx⟩, ⟨mirror '' s, hne.image _,
+        fun _ ⟨x, hx, hxy⟩ ↦ by rwa [← hxy, mirror_mirror]⟩⟩⟩
+
+/-- Under mirror exclusion every single state is its own double exclusionary negation. -/
+theorem exclusionaryNeg_exclusionaryNeg_singleton (s : Set (α × Bool)) :
+    exclusionaryNeg mirrorExcl (exclusionaryNeg mirrorExcl {s}) = {s} := by
+  rw [exclusionaryNeg_singleton, exclusionaryNeg_regularClosure upwardExclusion_mirrorExcl
+    downwardExclusion_mirrorExcl, exclusionaryNeg]
+  suffices h : exclusiveNeg mirrorExcl {t | mirrorExcl t s} = {s} by
+    rw [h, regularClosure_singleton]
+  have hE : ∀ y ∈ s, mirrorExcl {mirror y} s := fun y hy ↦
+    ⟨Set.singleton_nonempty _, fun z hz ↦ by rwa [Set.mem_singleton_iff.1 hz, mirror_mirror]⟩
+  refine Set.eq_singleton_iff_unique_mem.2 ⟨⟨(fun x ↦ {x}) '' s, ⟨?_, ?_⟩, ?_⟩, ?_⟩
+  · rintro _ ⟨x, hx, rfl⟩
+    refine ⟨{mirror x}, hE x hx, Set.singleton_nonempty _, fun z hz ↦ ?_⟩
+    rw [Set.mem_singleton_iff.1 hz]
+    exact Set.mem_singleton _
+  · rintro t ⟨⟨y, hy⟩, ht⟩
+    refine ⟨{mirror y}, ⟨mirror y, ht y hy, rfl⟩, Set.singleton_nonempty _, fun z hz ↦ ?_⟩
+    rwa [Set.mem_singleton_iff.1 hz, mirror_mirror]
+  · rw [Set.sSup_eq_sUnion, Set.sUnion_image, Set.biUnion_of_singleton]
+  · rintro _ ⟨Q, ⟨hQ, hEQ⟩, rfl⟩
+    refine le_antisymm (sSup_le fun q hq z hz ↦ ?_) fun y hy ↦ ?_
+    · obtain ⟨t, ht, -, hqt⟩ := hQ hq
+      simpa using ht.2 _ (hqt z hz)
+    · obtain ⟨q, hq, ⟨z, hz⟩, hqy⟩ := hEQ (hE y hy)
+      obtain rfl : z = y := mirror_involutive.injective (Set.mem_singleton_iff.1 (hqy z hz))
+      exact Set.mem_sUnion.2 ⟨q, hq, hz⟩
+
+private theorem isClosed_insert_empty_singleton (x : α × Bool) :
+    regularClosure.IsClosed ({∅, {x}} : Set (Set (α × Bool))) := by
+  refine regularClosure.isClosed_iff_closure_le.2 fun s hs ↦ ?_
+  have hs' : s ⊆ {x} := by simpa using (mem_regularClosure.1 hs).2
+  rcases Set.subset_singleton_iff_eq.1 hs' with rfl | rfl
+  exacts [Set.mem_insert _ _, Set.mem_insert_of_mem _ rfl]
+
+/-- Under mirror exclusion the regular proposition `{□, q}`, verified by the null state and by `q`,
+is not its own double exclusionary negation, which is `{□}`, although every single state is
+(`exclusionaryNeg_exclusionaryNeg_singleton`). -/
+theorem exclusionaryNeg_exclusionaryNeg_ne (b : α) :
+    regularClosure.IsClosed ({∅, {(b, true)}} : Set (Set (α × Bool))) ∧
+      exclusionaryNeg mirrorExcl (exclusionaryNeg mirrorExcl {∅, {(b, true)}}) ≠
+        {∅, {(b, true)}} := by
+  refine ⟨isClosed_insert_empty_singleton _, ?_⟩
+  rw [exclusionaryNeg_eq_empty_of_bot_mem (P := {∅, {(b, true)}}) nullExclusion_mirrorExcl
+    (Set.mem_insert _ _), exclusionaryNeg, exclusiveNeg_empty, regularClosure_singleton]
+  intro h
+  have hb : ({(b, true)} : Set (α × Bool)) ∈ ({⊥} : Set (Set (α × Bool))) :=
+    h ▸ Set.mem_insert_of_mem _ rfl
+  exact Set.singleton_ne_empty _ hb
+
+/-- Under mirror exclusion the de Morgan law for conjunction fails for the regular, verifiable
+propositions `{□, q}` and `{p}`: the negation of their conjunction has the verifier `p̄ ⊔ q̄`, which
+the disjunction of their negations, the propositions `∅` and `∼{p}`, lacks. -/
+theorem exclusionaryNeg_iSups_ne {a b : α} (hab : a ≠ b) :
+    let P : Bool → Set (Set (α × Bool)) := fun i ↦ if i then {∅, {(b, true)}} else {{(a, true)}}
+    (∀ i, (P i).Nonempty ∧ regularClosure.IsClosed (P i)) ∧
+      exclusionaryNeg mirrorExcl (Set.iSups P) ≠
+        regularClosure (⋃ i, exclusionaryNeg mirrorExcl (P i)) := by
+  intro P
+  refine ⟨fun i ↦ ?_, fun h ↦ ?_⟩
+  · cases i
+    · exact ⟨Set.singleton_nonempty _, regularClosure_singleton _⟩
+    · exact ⟨Set.insert_nonempty _ _, isClosed_insert_empty_singleton _⟩
+  -- every verifier of `∼{p}`, and so of the disjunction, is part of `p̄`
+  have hbound : ∀ x ∈ regularClosure (⋃ i, exclusionaryNeg mirrorExcl (P i)), x ⊆ {(a, false)} := by
+    refine fun x hx ↦ (mem_regularClosure.1 hx).2.trans (sSup_le fun y hy ↦ ?_)
+    obtain ⟨i, hi⟩ := Set.mem_iUnion.1 hy
+    cases i
+    · simp only [P, Bool.false_eq_true, ↓reduceIte, exclusionaryNeg_singleton] at hi
+      refine (mem_regularClosure.1 hi).2.trans (sSup_le fun r ⟨_, hr⟩ z hz ↦ ?_)
+      have : mirror z = (a, true) := hr z hz
+      rw [← mirror_mirror z, this]
+      rfl
+    · simp only [P, ↓reduceIte] at hi
+      rw [exclusionaryNeg_eq_empty_of_bot_mem (P := {∅, {(b, true)}}) nullExclusion_mirrorExcl
+        (Set.mem_insert _ _)] at hi
+      exact hi.elim
+  -- `p̄ ⊔ q̄` verifies the negation of the conjunction
+  have hpq : sSup ({{(a, false)}, {(b, false)}} : Set (Set (α × Bool))) ∈
+      exclusionaryNeg mirrorExcl (Set.iSups P) := by
+    refine regularClosure.le_closure _ ⟨_, ⟨?_, fun p hp ↦ ?_⟩, rfl⟩
+    · rintro q (rfl | rfl)
+      · refine ⟨⨆ i, (if i then ∅ else {(a, true)} : Set (α × Bool)),
+          Set.iSup_mem_iSups fun i ↦ by cases i <;> simp [P], Set.singleton_nonempty _, ?_⟩
+        rintro _ rfl
+        exact Set.mem_iUnion.2 ⟨false, rfl⟩
+      · refine ⟨⨆ i, (if i then {(b, true)} else {(a, true)} : Set (α × Bool)),
+          Set.iSup_mem_iSups fun i ↦ by cases i <;> simp [P], Set.singleton_nonempty _, ?_⟩
+        rintro _ rfl
+        exact Set.mem_iUnion.2 ⟨true, rfl⟩
+    · obtain ⟨f, hf, rfl⟩ := Set.mem_iSups.1 hp
+      have hfa : f false = {(a, true)} := by simpa [P] using hf false
+      refine ⟨{(a, false)}, Set.mem_insert _ _, Set.singleton_nonempty _, ?_⟩
+      rintro _ rfl
+      exact Set.mem_iUnion.2 ⟨false, hfa ▸ rfl⟩
+  have hb := hbound _ (h ▸ hpq) (by simp : (b, false) ∈ _)
+  exact hab (congrArg Prod.fst (Set.mem_singleton_iff.1 hb)).symm
 
 end Canonical
 

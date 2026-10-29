@@ -13,8 +13,28 @@ support at a singleton state is mathlib `Formula.Realize` over the
 correspondence structure (`support_singleton_iff_st`), support forces the
 closed translation as a sentence and conversely
 (`models_toSentence_of_support`, `exists_support_of_models_toSentence`),
-and mathlib's first-order compactness transfers to finite team
-satisfiability (`support_compactness`).
+and by mathlib's first-order compactness, if every finite subfamily of a family
+of formulas is supported at a singleton state, their closed translations are
+jointly satisfiable (`isSatisfiable_stClose_of_support`).
+
+## Implementation notes
+
+Each closed translation binds its own world variable, so a structure satisfying
+the family need only verify each formula at some world of its own. The
+theorem is therefore not compactness of team support, which fails: models
+have finitely many successors at each world, so no singleton state supports
+the family of `◇φₙ` for infinitely many sentences `φₙ` together with
+`□¬(φᵢ ∧ φⱼ)` for `i ≠ j`, although every finite subfamily is supported, as
+`BSML/Completeness.lean` notes for the propositional fragment.
+
+## TODO
+
+* Non-compactness of NE-free support at singleton states, by such a family.
+
+## References
+
+* [aloni-vanormondt-2023]
+* [puljujarvi-quadrellaro-2024]
 -/
 
 @[expose] public section
@@ -88,22 +108,16 @@ theorem exists_support_of_models_toSentence
 
 /-! ### Compactness for the NE-free fragment -/
 
-/-- **Compactness transfer for NE-free QBSML** ([aloni-vanormondt-2023]
-    Proposition 4.1, the standard translation, and mathlib's
-    `Theory.isSatisfiable_iff_isFinitelySatisfiable`): if every finite
-    subfamily of a family of NE-free formulas is supported at a singleton
-    state of some model, the family's closed standard translations are
-    jointly satisfiable in a single first-order structure.
+/-- If every finite subfamily of a family of NE-free formulas is supported at a singleton state of
+some model, the closed standard translations of the family, each closing its own world variable,
+are jointly satisfiable in one first-order structure ([aloni-vanormondt-2023] Proposition 4.1 with
+mathlib's `Theory.isSatisfiable_iff_isFinitelySatisfiable`).
 
-    The converse recovery of a *team* model from that structure would need
-    `Finset`-branching accessibility and a `Fintype` domain, which an
-    arbitrary first-order structure does not supply, so the transfer is
-    stated one-way. For first-order team logics such as independence logic,
-    [puljujarvi-quadrellaro-2024] prove compactness for sets of formulas twice, by
-    ultraproducts (§3) and by saturated models through the translation into
-    existential second-order logic (§4); they note that this satisfiability
-    compactness differs from compactness of consequence, which fails (§2.5). -/
-theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
+No team model is recovered from that structure, which would need `Finset`-branching accessibility
+and a `Fintype` domain, and the formulas may hold at different worlds of it. For first-order team
+logics such as independence logic, [puljujarvi-quadrellaro-2024] prove compactness for sets of
+formulas by ultraproducts and by saturated models through existential second-order logic. -/
+theorem isSatisfiable_stClose_of_support {Var : Type*} [DecidableEq Var] [Fintype Var]
     {Const : Type u} {Pred : Type v} {ι : Type*}
     {φs : ι → Formula Var Const Pred}
     {τs : ι → ModalFormula ((Language.monadic Pred)[[Const]]) Var}

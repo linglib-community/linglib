@@ -25,8 +25,9 @@ questions accepted so far whose complete answer the context set fails to entail,
 the eleven moves of the discourse it reproduces the paper's table of stacks, `qud_D₀`, each
 well formed in its context set. The strategy of inquiry (12) is read off the same function,
 the subquestions of a question being those accepted while it was the immediate question
-under discussion, `subquestions`, and the tree so obtained is complete, `strat_complete`.
-Answerhood (3) and relevance (15) are checked on the discourse's assertions.
+under discussion, `subquestions`, and in the tree so obtained completely answering the
+subquestions of a question completely answers it, `strat_answersCompletely`, the success
+criterion (11). Answerhood (3) and relevance (15) are checked on the discourse's assertions.
 
 ## Implementation notes
 
@@ -37,7 +38,12 @@ inquisitive `Question.polar`, with alternatives a proposition and its complement
 yes/no convention, not the paper's singleton alternative set. The context set of a move is
 the intersection of the assertions before it from a trivial initial common ground, so
 contextual entailment is entailment relative to that set; a question determined to be
-unanswerable, which the paper also retires, does not arise in the discourse.
+unanswerable, which the paper also retires, does not arise in the discourse. Because the
+lattice order is resolution, the substrate's `Strategy.IsComplete` holds of a node as soon as
+one child entails the parent, so (11) is stated by `Strategy.AnswersCompletely`, which a strategy
+missing the tofu question fails (`isComplete_and_not_answersCompletely_pruned`); likewise
+subquestionhood (10g iii) quantifies over complete answers, which differs from checking the
+alternatives (`not_isSubquestionOf_wh_hilary`).
 
 ## References
 
@@ -307,16 +313,17 @@ theorem qud_D₀ : ∀ k < 12, qud (D₀.take k) = table k := by decide
 theorem wellFormed_wh (C : Set World) (u : Person) :
     [wh u, q_1].Pairwise (IsSubquestionOf C) :=
   List.pairwise_cons.mpr
-    ⟨List.forall_mem_singleton.mpr (isSubquestionOf_of_alt_subset C (alt_wh_subset_q1 u)),
+    ⟨List.forall_mem_singleton.mpr
+        (isSubquestionOf_of_alt_subset C ⟨_, mem_alt_wh u .bagels⟩ (alt_wh_subset_q1 u)),
       List.pairwise_singleton ..⟩
 
 theorem wellFormed_polar (C : Set World) (u : Person) (f : Food) :
     [polar u f, wh u, q_1].Pairwise (IsSubquestionOf C) :=
   List.pairwise_cons.mpr
     ⟨List.forall_mem_cons.mpr
-        ⟨isSubquestionOf_of_alt_subset C (alt_polar_subset_wh u f),
+        ⟨isSubquestionOf_of_alt_subset C ⟨_, self_mem_alt_ofSet _⟩ (alt_polar_subset_wh u f),
           List.forall_mem_singleton.mpr
-            (isSubquestionOf_of_alt_subset C (alt_polar_subset_q1 u f))⟩,
+            (isSubquestionOf_of_alt_subset C ⟨_, self_mem_alt_ofSet _⟩ (alt_polar_subset_q1 u f))⟩,
       wellFormed_wh C u⟩
 
 theorem qud_wellFormed (k : ℕ) (hk : k < 12) :
@@ -328,6 +335,30 @@ theorem qud_wellFormed (k : ℕ) (hk : k < 12) :
     | exact List.pairwise_singleton _ _
     | exact wellFormed_wh _ _
     | exact wellFormed_polar _ _ _
+
+-- (10g iii) quantifies over complete answers, not alternatives: *What did Hilary eat?* entails
+-- *Did Hilary eat something, or Robin the bagels?* and each of its alternatives settles it, but its
+-- complete answer that Hilary ate nothing leaves it open.
+theorem not_isSubquestionOf_wh_hilary :
+    wh .hilary ≤ ofSet (hilaryBagels ∪ hilaryTofu ∪ robinBagels) ∧
+      (∀ a ∈ alt (wh .hilary),
+        PartiallyAnsweredBy (ofSet (hilaryBagels ∪ hilaryTofu ∪ robinBagels)) (Set.univ ∩ a)) ∧
+      ¬ IsSubquestionOf Set.univ (wh .hilary)
+        (ofSet (hilaryBagels ∪ hilaryTofu ∪ robinBagels)) := by
+  have hle : ∀ f, ate .hilary f ⊆ hilaryBagels ∪ hilaryTofu ∪ robinBagels := by
+    rintro (_ | _)
+    exacts [Set.subset_union_left.trans Set.subset_union_left,
+      Set.subset_union_right.trans Set.subset_union_left]
+  refine ⟨iSup_le fun f ↦ ofSet_le_ofSet_iff.mpr (hle f), ?_, fun h ↦ ?_⟩
+  · rw [alt_wh]
+    rintro _ ⟨f, rfl⟩
+    exact ⟨_, self_mem_alt_ofSet _, .inl (Set.inter_subset_right.trans (hle f))⟩
+  · obtain ⟨p, hp, h' | h'⟩ := h _ (completelyAnsweredBy_wh_iff.mpr (.inr (.inr (.inr subset_rfl))))
+    all_goals
+      rw [alt_ofSet, Set.mem_singleton_iff] at hp
+      subst hp
+      rw [Set.univ_inter] at h'
+      exact absurd h' (by decide)
 
 /-! ### The strategy of inquiry (12) -/
 
@@ -356,16 +387,28 @@ theorem strat_eq :
         .node (wh .robin) [.leaf (polar .robin .bagels), .leaf (polar .robin .tofu)]] := by
   simp [strat, subquestions_D₀.1, subquestions_D₀.2.1, subquestions_D₀.2.2.1, Qn.den]
 
-theorem wh_complete (u : Person) :
-    Strategy.IsComplete (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) :=
-  .node_pair (inf_le_left.trans (le_iSup (polar u) .bagels)) (.leaf _) (.leaf _)
+theorem wh_answersCompletely (u : Person) :
+    Strategy.AnswersCompletely (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) :=
+  .node_pair (completeAnswers_polar_inter u).le (.leaf _) (.leaf _)
 
-theorem strat_complete : strat.IsComplete := by
+-- (11)
+theorem strat_answersCompletely : strat.AnswersCompletely := by
   rw [strat_eq]
-  exact .node_pair
-    (inf_le_left.trans (iSup_le λ f =>
-      le_iSup (λ uf : Person × Food => polar uf.1 uf.2) (.hilary, f)))
-    (wh_complete .hilary) (wh_complete .robin)
+  exact .node_pair completeAnswers_wh_inter.le (wh_answersCompletely .hilary)
+    (wh_answersCompletely .robin)
+
+-- Without the tofu question the strategy is still complete by resolution, since resolving whether
+-- Hilary ate the bagels resolves what she ate, but completely answering it no longer completely
+-- answers what she ate.
+theorem isComplete_and_not_answersCompletely_pruned :
+    Strategy.IsComplete (.node (wh .hilary) [.leaf (polar .hilary .bagels)] : Strategy World) ∧
+      ¬ Strategy.AnswersCompletely
+        (.node (wh .hilary) [.leaf (polar .hilary .bagels)] : Strategy World) := by
+  refine ⟨Strategy.isComplete_node_iff.mpr ⟨fun _ ↦ ?_, by simp⟩,
+    fun h ↦ polar_not_entails_wh fun σ hσ ↦ ?_⟩
+  · exact (Multiset.inf_le (by simp [RoseTree.leaf])).trans (le_iSup (polar .hilary) .bagels)
+  · exact (Strategy.answersCompletely_node_iff.mp h).1 (by simp) σ
+      (by simpa [RoseTree.leaf] using hσ)
 
 theorem values_whTree (u : Person) :
     (RoseTree.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)] : Strategy World).values
@@ -379,7 +422,8 @@ theorem wh_wellFormed (C : Set World) (u : Person) :
     rcases hc with rfl | rfl <;>
       simp only [RoseTree.leaf, RoseTree.values_node, List.map_nil, List.flatten_nil,
         List.mem_cons, List.not_mem_nil, or_false] at hr <;>
-      subst hr <;> exact isSubquestionOf_of_alt_subset C (alt_polar_subset_wh _ _)
+      subst hr <;>
+      exact isSubquestionOf_of_alt_subset C ⟨_, self_mem_alt_ofSet _⟩ (alt_polar_subset_wh _ _)
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     rcases hc with rfl | rfl <;> exact .leaf _ _
 
@@ -391,6 +435,7 @@ theorem strat_wellFormed (C : Set World) : strat.WellFormed C := by
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hr <;>
       rcases hr with rfl | rfl | rfl <;>
       exact isSubquestionOf_of_alt_subset C
+        (by first | exact ⟨_, mem_alt_wh _ .bagels⟩ | exact ⟨_, self_mem_alt_ofSet _⟩)
         (by first | exact alt_wh_subset_q1 _ | exact alt_polar_subset_q1 _ _)
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     rcases hc with rfl | rfl <;> exact wh_wellFormed C _

@@ -16,14 +16,19 @@ by a team when every tuple of truth values that `a` takes at a world of the team
 at some world of the team. It has support only, no anti-support. Its `◇` is lax: a team supports
 `◇φ` when some team of successors supporting `φ` reaches every world of the team. ML(⊆) formulas
 are union closed and supported by the empty team, but the inclusion atom breaks downward
-closure. Anttila, Häggblom and Yang axiomatize the logic and characterize its expressive power.
+closure. This file develops the variant whose inclusion atoms relate propositional symbols,
+modal inclusion logic simpliciter in the terms of Anttila, Häggblom and Yang, who axiomatize the
+extended variant, with atoms over classical formulas, and characterize its expressive power. The
+simple variant is strictly less expressive: in one propositional symbol its only inclusion atoms
+are trivial, so every formula is flat.
 
 ## Main definitions
 
 * `Formula`: atoms, `⊥`, inclusion atoms, `¬`, `∧`, split `∨`, `◇` and `□`.
 * `eval`, `support`: support of a formula by a team.
 * `Formula.modalDepth`: the nesting depth of `◇` and `□`.
-* `Formula.InclFree`, `Realize`: the fragment without inclusion atoms, and classical truth.
+* `Formula.InclFree`, `Formula.InclTrivial`, `Realize`: the formulas without inclusion atoms and
+  those whose inclusion atoms are trivial, and classical truth.
 
 ## Main results
 
@@ -32,7 +37,10 @@ closure. Anttila, Häggblom and Yang axiomatize the logic and characterize its e
 * `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
 * `definableClass_support_subset`: every definable team property is union closed, contains `∅`
   and is closed under bounded bisimulation.
-* `support_iff_forall_realize`: without inclusion atoms, support is pointwise classical truth.
+* `support_iff_forall_realize`: when every inclusion atom is trivial, support is pointwise
+  classical truth.
+* `not_mem_definableClass_of_subsingleton`: in one propositional symbol, a union-closed,
+  bisimulation-closed property containing the empty team is not definable.
 
 ## Implementation notes
 
@@ -43,8 +51,8 @@ pointwise clause, where the source restricts it to classical formulas.
 
 ## TODO
 
-* The converse of `definableClass_support_subset`. The source's normal form uses inclusion atoms
-  `⊤ ⊆ α` over classical formulas, which the atom-only encoding lacks.
+* The extended variant, with inclusion atoms over classical formulas, and for it the converse of
+  `definableClass_support_subset`, whose normal form in the source uses atoms `⊤ ⊆ α`.
 * The natural-deduction axiomatization and its completeness.
 * The might operator and the singular might operator, which have the same expressive power.
 
@@ -65,15 +73,16 @@ open ModalLogic (KripkeModel)
 
 /-! ### Syntax -/
 
-/-- The formulas of ML(⊆) ([anttila-haggblom-yang-2025] Definition 2.1), with `◇` and `□` both
-    primitive. An inclusion atom `α₁...αₙ ⊆ β₁...βₙ` is the list of pairs
-    `[(α₁, β₁), ..., (αₙ, βₙ)]`. -/
+/-- The formulas of modal inclusion logic simpliciter, with `◇` and `□` both primitive. An
+    inclusion atom `p₁...pₙ ⊆ q₁...qₙ` over propositional symbols is the list of pairs
+    `[(p₁, q₁), ..., (pₙ, qₙ)]`; [anttila-haggblom-yang-2025] Definition 2.1 allows classical
+    formulas in the atoms. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
   | atom (p : Atom)
   /-- Weak contradiction `⊥`. -/
   | bot
-  /-- Inclusion atom `x⃗ ⊆ y⃗`. -/
+  /-- Inclusion atom `p⃗ ⊆ q⃗`. -/
   | incl (xys : List (Atom × Atom))
   /-- Classical negation (restricted to classical formulas in the paper;
       we allow on any formula for uniform recursion). -/
@@ -99,6 +108,30 @@ def Formula.InclFree : Formula Atom → Prop
   | .incl _ => False
   | .neg φ | .poss φ | .nec φ => φ.InclFree
   | .conj φ ψ | .disj φ ψ => φ.InclFree ∧ ψ.InclFree
+
+/-- `Formula.InclTrivial φ` holds when every inclusion atom of `φ` includes each symbol in itself, a
+trivial atom `p ⊆ p` that every team supports. -/
+def Formula.InclTrivial : Formula Atom → Prop
+  | .atom _ | .bot => True
+  | .incl xys => ∀ xy ∈ xys, xy.1 = xy.2
+  | .neg φ | .poss φ | .nec φ => φ.InclTrivial
+  | .conj φ ψ | .disj φ ψ => φ.InclTrivial ∧ ψ.InclTrivial
+
+theorem Formula.InclFree.inclTrivial {φ : Formula Atom} (h : φ.InclFree) : φ.InclTrivial := by
+  induction φ with
+  | atom | bot => trivial
+  | incl => exact h.elim
+  | neg _ ih | poss _ ih | nec _ ih => exact ih h
+  | conj _ _ ih₁ ih₂ | disj _ _ ih₁ ih₂ => exact ⟨ih₁ h.1, ih₂ h.2⟩
+
+/-- In one propositional symbol every inclusion atom is trivial. -/
+theorem Formula.inclTrivial_of_subsingleton [Subsingleton Atom] (φ : Formula Atom) :
+    φ.InclTrivial := by
+  induction φ with
+  | atom | bot => trivial
+  | incl => exact fun _ _ ↦ Subsingleton.elim _ _
+  | neg _ ih | poss _ ih | nec _ ih => exact ih
+  | conj _ _ ih₁ ih₂ | disj _ _ ih₁ ih₂ => exact ⟨ih₁, ih₂⟩
 
 open scoped ModalLogic in
 /-- Classical Kripke truth of a MIL formula at a world, with `◇` and `□` the shared
@@ -189,7 +222,7 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
   | bot => exact Team.supClosed_singleton_empty
   | incl xys =>
     intro s hs t ht
-    simp only [Set.mem_setOf_eq, support, eval, Finset.sup_eq_union, Finset.coe_union]
+    simp only [Set.mem_ofPred_eq, support, eval, Finset.sup_eq_union, Finset.coe_union]
     exact Team.supClosed_incl _ _ hs ht
   | neg ψ _ => exact Team.supClosed_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.inter ih₂
@@ -280,20 +313,23 @@ theorem definableClass_support_subset (M : KripkeModel W Atom) :
 
 /-! ### The classical fragment
 
-On `incl`-free formulas support is pointwise classical truth: the lax and image modalities
-agree with the flat ones on flat properties (`Team.possLax_flat`, `Team.necImage_flat`). -/
+On formulas whose inclusion atoms are trivial, `incl`-free ones among them, support is pointwise
+classical truth: the lax and image modalities agree with the flat ones on flat properties
+(`Team.possLax_flat`, `Team.necImage_flat`). -/
 
 section Classical
 
 variable {M : KripkeModel W Atom} {φ : Formula Atom} {w : W} {t : Finset W}
 
-/-- On `incl`-free formulas, support is pointwise classical truth. -/
-theorem support_iff_forall_realize (hI : φ.InclFree) (t : Finset W) :
+/-- On formulas whose inclusion atoms are trivial, support is pointwise classical truth. -/
+theorem support_iff_forall_realize (hI : φ.InclTrivial) (t : Finset W) :
     support M φ t ↔ ∀ w ∈ t, Realize M φ w := by
   induction φ generalizing t with
   | atom p => simp [support, eval, Realize]
   | bot => simp [support, eval, Realize, Finset.eq_empty_iff_forall_notMem]
-  | incl xys => exact hI.elim
+  | incl xys =>
+    exact iff_of_true ((support_incl M _ _).2 fun w hw ↦
+      ⟨w, hw, fun xy hxy ↦ by rw [hI xy hxy]⟩) fun _ _ ↦ trivial
   | neg ψ ih =>
     simp only [support, eval, Team.mem_flat, Realize]
     exact forall₂_congr fun w _ ↦ not_congr ((ih hI {w}).trans (by simp))
@@ -308,8 +344,49 @@ theorem support_iff_forall_realize (hI : φ.InclFree) (t : Finset W) :
     simp only [support, eval, ih hI]
     exact Team.mem_necImage_flat.trans (by simp [realize_nec])
 
-theorem support_singleton_iff_realize (hI : φ.InclFree) : support M φ {w} ↔ Realize M φ w := by
+theorem support_singleton_iff_realize (hI : φ.InclTrivial) :
+    support M φ {w} ↔ Realize M φ w := by
   simp [support_iff_forall_realize hI]
+
+open Team in
+/-- In one propositional symbol every formula is flat, so the property of a team that is empty or
+contains a world where the symbol holds, though union closed, bisimulation closed and containing
+the empty team, is not definable: the converse of `definableClass_support_subset` fails. The
+extended variant of [anttila-haggblom-yang-2025] defines it by the atom `⊤ ⊆ p`. -/
+theorem not_mem_definableClass_of_subsingleton [Subsingleton Atom] (p : Atom) {w₁ w₂ : W}
+    (h₁ : M.val p w₁) (h₂ : ¬ M.val p w₂) :
+    let P : TeamProperty W := {t | t = ∅ ∨ ∃ w ∈ t, M.val p w}
+    (SupClosed P ∧ ∅ ∈ P ∧ ModalLogic.BisimClosed M P) ∧ P ∉ definableClass (support M) := by
+  intro P
+  refine ⟨⟨?_, .inl rfl, 0, fun s s' hs ↦ ?_⟩, fun ⟨φ, hφ⟩ ↦ ?_⟩
+  · rintro s (rfl | ⟨w, hw, hpw⟩) t ht
+    · simpa using ht
+    · exact .inr ⟨w, Finset.mem_union_left _ hw, hpw⟩
+  · have hiff : ∀ {w w'}, ModalLogic.WorldBisim 0 M w M w' → (M.val p w ↔ M.val p w') :=
+      fun h ↦ h p
+    refine ⟨?_, ?_⟩
+    · rintro (rfl | ⟨w, hw, hpw⟩)
+      · refine .inl (Finset.eq_empty_of_forall_notMem fun w' hw' ↦ ?_)
+        obtain ⟨_, h, -⟩ := hs.2 w' hw'
+        exact Finset.notMem_empty _ h
+      · obtain ⟨w', hw', h⟩ := hs.1 w hw
+        exact .inr ⟨w', hw', (hiff h).1 hpw⟩
+    · rintro (rfl | ⟨w', hw', hpw⟩)
+      · refine .inl (Finset.eq_empty_of_forall_notMem fun w hw ↦ ?_)
+        obtain ⟨_, h, -⟩ := hs.1 w hw
+        exact Finset.notMem_empty _ h
+      · obtain ⟨w, hw, h⟩ := hs.2 w' hw'
+        exact .inr ⟨w, hw, (hiff h).2 hpw⟩
+  · have hflat := fun t ↦ support_iff_forall_realize (M := M) (φ.inclTrivial_of_subsingleton) t
+    have h₁₂ : support M φ {w₁, w₂} := by
+      have : ({w₁, w₂} : Finset W) ∈ P := .inr ⟨w₁, by simp, h₁⟩
+      rwa [← hφ] at this
+    have h₂' : ({w₂} : Finset W) ∈ P := by
+      rw [← hφ]
+      exact (hflat _).2 fun w hw ↦ (hflat _).1 h₁₂ w (by simp [Finset.mem_singleton.1 hw])
+    rcases h₂' with h | ⟨w, hw, hpw⟩
+    · exact Finset.singleton_ne_empty _ h
+    · exact h₂ (Finset.mem_singleton.1 hw ▸ hpw)
 
 end Classical
 

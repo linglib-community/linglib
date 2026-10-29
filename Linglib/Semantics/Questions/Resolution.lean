@@ -60,34 +60,6 @@ entailing it or ruling it out. -/
 def CompletelyAnsweredBy (Q : Question W) (σ : Set W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
 
-/-- `P` is a subquestion of `Q` relative to the context `C` ([roberts-2012]): every complete
-answer to `P` contextually partially answers `Q`. The entailment is contextual, not question
-entailment, so the relation is not transitive in general. -/
-def IsSubquestionOf (C : Set W) (P Q : Question W) : Prop :=
-  ∀ a ∈ alt P, PartiallyAnsweredBy Q (C ∩ a)
-
-theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (h : alt P ⊆ alt Q) :
-    IsSubquestionOf C P Q :=
-  fun a ha ↦ ⟨a, h ha, Or.inl Set.inter_subset_right⟩
-
-theorem IsSubquestionOf.refl (C : Set W) (P : Question W) : IsSubquestionOf C P P :=
-  isSubquestionOf_of_alt_subset C subset_rfl
-
-theorem isSubquestionOf_of_le (C : Set W) {P Q : Question W} (hQ : Q.IsNormal)
-    (h : P ≤ Q) : IsSubquestionOf C P Q := fun _ ha ↦
-  let ⟨q, hq, haq⟩ := hQ _ (le_def.mp h (alt_subset_props P ha))
-  ⟨q, hq, Or.inl (Set.inter_subset_right.trans haq)⟩
-
-theorem partiallyAnsweredBy_inter_iff {Q : Question W} {C σ : Set W} :
-    PartiallyAnsweredBy Q (C ∩ σ) ↔
-      ∃ p ∈ alt Q, σ ∈ (ofSet p).relativeTo C ∨ σ ∈ (ofSet pᶜ).relativeTo C := by
-  simp only [PartiallyAnsweredBy, mem_relativeTo, mem_ofSet]
-
-theorem isSubquestionOf_iff {C : Set W} {P Q : Question W} :
-    IsSubquestionOf C P Q ↔
-      ∀ a ∈ alt P, ∃ p ∈ alt Q, a ∈ (ofSet p).relativeTo C ∨ a ∈ (ofSet pᶜ).relativeTo C := by
-  simp only [IsSubquestionOf, partiallyAnsweredBy_inter_iff]
-
 variable {σ : Set W} {Q : Question W}
 
 /-! ### Basic relationships -/
@@ -170,6 +142,35 @@ theorem completeAnswers_iSup_ofSet {ι : Type*} [Nonempty ι] {P : ι → Set W}
   ext σ
   simp [completelyAnsweredBy_iff_of_alt_eq_range (alt_iSup_ofSet hP),
     completelyAnsweredBy_ofSet_iff]
+
+/-! ### Contextual subquestions -/
+
+/-- `P` is a subquestion of `Q` relative to the context `C` ([roberts-2012]): every complete
+answer to `P` contextually partially answers `Q`. The entailment is contextual, not question
+entailment, so the relation is not transitive in general. -/
+def IsSubquestionOf (C : Set W) (P Q : Question W) : Prop :=
+  ∀ σ ∈ completeAnswers P, PartiallyAnsweredBy Q (C ∩ σ)
+
+/-- A question with an alternative is a subquestion of any question whose alternatives include
+its own, since each of its complete answers decides one of them. -/
+theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (hP : (alt P).Nonempty)
+    (h : alt P ⊆ alt Q) : IsSubquestionOf C P Q := fun _ hσ ↦
+  let ⟨a, ha⟩ := hP
+  ⟨a, h ha, (hσ a ha).imp (Set.inter_subset_right.trans ·) (Set.inter_subset_right.trans ·)⟩
+
+theorem IsSubquestionOf.refl (C : Set W) {P : Question W} (hP : (alt P).Nonempty) :
+    IsSubquestionOf C P P :=
+  isSubquestionOf_of_alt_subset C hP subset_rfl
+
+theorem partiallyAnsweredBy_inter_iff {Q : Question W} {C σ : Set W} :
+    PartiallyAnsweredBy Q (C ∩ σ) ↔
+      ∃ p ∈ alt Q, σ ∈ (ofSet p).relativeTo C ∨ σ ∈ (ofSet pᶜ).relativeTo C := by
+  simp only [PartiallyAnsweredBy, mem_relativeTo, mem_ofSet]
+
+theorem isSubquestionOf_iff {C : Set W} {P Q : Question W} :
+    IsSubquestionOf C P Q ↔ ∀ σ ∈ completeAnswers P,
+      ∃ p ∈ alt Q, σ ∈ (ofSet p).relativeTo C ∨ σ ∈ (ofSet pᶜ).relativeTo C := by
+  simp only [IsSubquestionOf, partiallyAnsweredBy_inter_iff]
 
 /-! ### Polar reduction
 
