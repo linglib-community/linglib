@@ -290,8 +290,17 @@ def Graph.map (g : Graph L n) (σ : Equiv.Perm (Fin n)) : Graph L n :=
     (v w : Fin n) : (g.map σ).Adj v w ↔ g.Adj (σ.symm v) (σ.symm w) :=
   Iff.rfl
 
+theorem Graph.map_map (g : Graph L n) (σ τ : Equiv.Perm (Fin n)) :
+    (g.map σ).map τ = g.map (σ.trans τ) :=
+  rfl
+
 /-- The mirror image, transported along position reversal. -/
 def Graph.mirror (g : Graph L n) : Graph L n := g.map Fin.revPerm
+
+/-- Mirroring a linearization is linearizing along the mirrored arrangement. -/
+theorem Graph.mirror_map (g : Graph L n) (σ : WordOrder.Arrangement (Fin n) n) :
+    (g.map σ).mirror = g.map σ.mirror :=
+  rfl
 
 /-- Transport along an isometry of the positions preserves total dependency length. -/
 theorem Graph.totalLength_map (g : Graph L n) (σ : Equiv.Perm (Fin n))
