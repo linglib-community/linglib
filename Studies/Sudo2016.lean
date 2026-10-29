@@ -170,8 +170,8 @@ theorem predicateOf_up (atomic : Sortal W E) (n : W → ℕ) :
 
 end General
 
-theorem japanese_has_classifiers : Japanese.Classifiers.classifiers.Nonempty :=
-  ⟨Japanese.Classifiers.tsu, by simp [Japanese.Classifiers.classifiers]⟩
+theorem japanese_has_classifiers : Chierchia1998.Language.HasClassifiers .japanese :=
+  (Chierchia1998.hasClassifiers_iff .japanese).2 rfl
 
 theorem predicateOf_iff_japanese {W E : Type*} [SemilatticeSup E] (atomic : Sortal W E)
     (n : W → ℕ) (P : W → E → Prop) :

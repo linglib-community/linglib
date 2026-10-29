@@ -9,21 +9,20 @@ public import Mathlib.Probability.ConditionalProbability
 # Asher & Pelletier 2013: generics as modal quantifiers
 
 A characterizing generic *φs ψ* is ∀x(φ(x) > ψ(x)), with > the weak conditional of commonsense
-entailment: for each individual, ψ holds throughout the worlds where that individual is a
-normal φ, the conditional of a normality on worlds (`Genericity.Normality.gen`). Normality is
-selected per restrictor, so *Birds fly* and *Penguins don't fly* hold together, the normal
-Opus-penguin worlds not being normal Opus-bird worlds, which a fixed set of normal worlds cannot
-provide; and it has give:
-the teleological and the statistical construal disagree on whether turtles live to be a
-hundred. Against the probabilistic rival, on which a generic is true when the scope is more
-likely than not given the restrictor, the paper objects that a margin just over half verifies
-generics that are not true, and that embedded generics trivialize the account: under
-conditionalization a restrictor compatible with the scope and with its negation is independent of
-the scope, so the probability of the conditional collapses to that of the scope. Logical
-forms are then built by putting the focused material in the nuclear scope and its
-alternatives in the restrictor, which weakens the restrictor where needed (ducks lay eggs),
-lets a tautologous restrictor deliver an existential (firemen are available), and, with a
-further generic over circumstances, gives mosquitoes their disposition to carry the virus.
+entailment: for each individual, ψ holds throughout the worlds where that individual is a normal φ,
+the conditional of a normality on worlds (`Genericity.Normality.gen`). Normality is selected per
+restrictor, so *Birds fly* and *Penguins don't fly* hold together, the normal Opus-penguin worlds
+not being normal Opus-bird worlds, which a fixed set of normal worlds cannot provide; and what
+counts as normal is open to construal, the teleological and the statistical construal disagreeing on
+whether turtles live to be a hundred. Against the probabilistic rival, on which a generic is true
+when the scope is more likely than not given the restrictor, the paper objects that a margin just
+over half verifies generics that are not true, and that embedded generics trivialize the account:
+under conditionalization a restrictor compatible with the scope and with its negation is independent
+of the scope, so the probability of the conditional collapses to that of the scope. Logical forms
+are then built by putting the focused material in the nuclear scope and its alternatives in the
+restrictor, which weakens the restrictor where needed (ducks lay eggs), lets a tautologous
+restrictor deliver an existential (firemen are available), and, with a further generic over
+circumstances, gives mosquitoes their disposition to carry the virus.
 
 Item numbers follow the 2012 preprint.
 

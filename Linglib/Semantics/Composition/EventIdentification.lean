@@ -21,8 +21,8 @@ counterpart of predicate modification, and
 Kratzer's rule is partial: it is undefined when the two inputs restrict the event to disjoint
 sorts, actions and states. Here it is total, and such inputs
 [yield the empty relation](##eventIdentification_eq_bot_iff). The carrier is any pair of types,
-so that the type-driven composition engine, whose events share the domain of individuals, uses
-the same operation.
+so that the type-driven composition engine, whose eventualities are a sort of their own beside
+the individuals, uses the same operation.
 
 ## References
 

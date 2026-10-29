@@ -7,24 +7,27 @@ public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Mereology
 public import Linglib.Fragments.Mandarin.Nouns
 public import Linglib.Fragments.Mandarin.Determiners
-public import Linglib.Fragments.Japanese.Classifiers
+public import Linglib.Fragments.Japanese.Nouns
 public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Fragments.Romance.French.Nouns
 public import Linglib.Fragments.Romance.French.Determiners
+public import Linglib.Fragments.Romance.Italian.Nouns
 public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Determiners
 
 /-!
 # Chierchia (1998): Reference to kinds across languages
 
-Chierchia's Nominal Mapping Parameter sets whether a language's nouns denote kinds, predicates,
-or either: Chinese and Japanese are [+arg, −pred], the Romance languages [−arg, +pred], and
-English [+arg, +pred]. In a [+arg, −pred] language every noun denotes a kind, so its extension is
-mass and a numeral needs a classifier. A language's determiners decide which covert type shifts
-it blocks, and with the parameter which bare nominals it admits as arguments. A bare plural
-denotes its kind, whose instances meet the existential of derived kind predication in an
-episodic sentence and the generic operator in a generic one. A kind sends each situation to a
-partial individual, ∩ takes the largest member of a property's extension where the result is a
-kind, and ∪ takes the parts of a kind's value.
+Chierchia's Nominal Mapping Parameter sets whether a language's nouns denote kinds, predicates, or
+either: Chinese and Japanese are [+arg, −pred], the Romance languages [−arg, +pred], and English
+[+arg, +pred]. In a [+arg, −pred] language every noun denotes a kind, so its extension is mass, no
+set of atoms to count by (`not_forall_atom_up`), and a numeral needs a classifier. A language's
+determiners decide which covert type shifts it blocks, and with the parameter which bare nominals it
+admits as arguments. A bare plural denotes its kind, whose instances meet the existential of derived
+kind predication in an episodic sentence and the generic operator in a generic one. A kind sends
+each situation to a partial individual, ∩ takes the largest member of a property's extension where
+the result is a kind, and ∪ takes the parts of a kind's value.
 
 ## Main definitions
 
@@ -36,8 +39,10 @@ kind, and ∪ takes the parts of a kind's value.
 ## Implementation notes
 
 Each language's blocking is derived from its fragment's determiner inventory by
-`Determiner.Inventory.Blocks`. The generic operator is the conditional over the normal cases of a
-`Genericity.Normality`. The set `K` of kinds is a parameter, primitive as in the paper, and its
+`Determiner.Inventory.Blocks`, and whether it has classifiers from its fragment's nouns: a Mandarin
+or Japanese noun records the classifiers that count it, and an English, French or Italian noun is a
+`ClassifiedNoun` over no classifiers. The generic operator is the conditional over the normal cases
+of a `Genericity.Normality`. The set `K` of kinds is a parameter, primitive as in the paper, and its
 one stated property, that no kind has a singular instance in every situation, is a hypothesis.
 ∩ and ∪ are ι and its partial inverse Id applied at each situation (pp. 359–360), Id sending an
 individual to its parts, `Set.Iic`; on a lower set taking the largest member is the partial
@@ -83,25 +88,32 @@ def determiners : Language → Determiner.Inventory
   | italian => Italian.Determiners.inventory
   | english => English.Determiners.inventory
 
-/-- The language has numeral classifiers, as its fragment records for Mandarin and Japanese; the
-Romance languages and English have none. -/
+/-- Some noun of the language is counted through a classifier, which its fragment's nouns allow only
+where the language has classifiers: an English, French or Italian noun is a `ClassifiedNoun` over
+no classifiers. -/
 def HasClassifiers : Language → Prop
-  | mandarin => Mandarin.Classifiers.classifiers.Nonempty
-  | japanese => Japanese.Classifiers.classifiers.Nonempty
-  | french | italian | english => False
+  | mandarin => ∃ n : Mandarin.Nouns.Noun, n.classifiers.Nonempty
+  | japanese => ∃ n : Japanese.Nouns.Noun, n.classifiers.Nonempty
+  | french => ∃ n : French.Nouns.Noun, n.classifiers.Nonempty
+  | italian => ∃ n : Italian.Nouns.Noun, n.classifiers.Nonempty
+  | english => ∃ n : English.Nouns.Noun, n.classifiers.Nonempty
 
 end Language
 
-open Language
+open Chierchia1998.Language
 
-/-- A [+arg, −pred] language has a generalized classifier system, and a classifier language must
-be [+arg, −pred]: the classifier languages of the sample are exactly the [+arg, −pred] ones. -/
+/-- (20): a [+arg, −pred] language, whose nouns denote kinds and so give numerals no set of
+atoms to count by (`not_forall_atom_up`), has a generalized classifier system, and a classifier
+language must be [+arg, −pred]: the classifier languages of the sample are exactly the
+[+arg, −pred] ones. -/
 theorem hasClassifiers_iff : ∀ l : Language, l.HasClassifiers ↔ l.nominalMapping = .argOnly
   | .mandarin =>
-    iff_of_true ⟨Mandarin.Classifiers.ge, by simp [Mandarin.Classifiers.classifiers]⟩ rfl
+    iff_of_true ⟨Mandarin.Nouns.ren, Mandarin.Classifiers.ge, by simp [Mandarin.Nouns.ren]⟩ rfl
   | .japanese =>
-    iff_of_true ⟨Japanese.Classifiers.tsu, by simp [Japanese.Classifiers.classifiers]⟩ rfl
-  | .french | .italian | .english => iff_of_false id (by decide)
+    iff_of_true ⟨Japanese.Nouns.inu, Japanese.Classifiers.hiki, by simp [Japanese.Nouns.inu]⟩ rfl
+  | .french => iff_of_false (fun ⟨_, c, _⟩ ↦ c.elim) (by decide)
+  | .italian => iff_of_false (fun ⟨_, c, _⟩ ↦ c.elim) (by decide)
+  | .english => iff_of_false (fun ⟨_, c, _⟩ ↦ c.elim) (by decide)
 
 /-! ### Kind formation, §2
 
@@ -134,6 +146,13 @@ theorem up_down [SemilatticeSup E] (hP : ∀ s, IsLowerSet (P s)) (hcum : ∀ s,
     (hfin : ∀ s, (P s).Finite) : up (down P) = P :=
   funext fun s ↦ elim_Iic_iota_isGreatest (hP s) fun hne ↦
     iota_isGreatest_isSome_iff.1 ((hcum s).directedOn.iota_isGreatest_isSome (hfin s) hne)
+
+/-- (20): the property of a kind is no counting level. A kind has a plural instance in some
+situation, so the instances of a kind are not atoms in every situation, and a numeral, which counts
+by a set of atoms, can count them only through a classifier (p. 347). -/
+theorem not_forall_atom_up [PartialOrder E] (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
+    {k : S → Option E} (hk : k ∈ K) : ¬ ∀ s, ∀ x ∈ up k s, Atom x :=
+  fun h ↦ hK k hk fun s d hd ↦ h s d (by rw [up, Option.mem_def.1 hd]; exact Set.mem_Iic.2 le_rfl)
 
 /-- ∩ is undefined for a singular property: its concept is singular in every situation, and no
 kind is. -/

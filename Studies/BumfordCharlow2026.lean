@@ -44,11 +44,14 @@ supplement effect, whose log is a monoid, is `Composition/Writer.lean`.
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
 monad are mathlib's. The grammar's `Ty` has computation types `comp f a` for all four effects.
-`Montague.Ty` has them for the reader only, with the map and unit modes and every derivation of a
-tree (`Montague.Ty.modes`, `PhraseStructure.Tree.translations`), so the grammar here keeps its own
-types for the effects and modes the engine lacks. As in Appendix B, a writer is applicative exactly
-when its datum is `t`, every applicative effect of the grammar is monadic, and the only
-adjunction is `W i ⊣ R i`. Base types are `e` and `t`.
+The composition engine has them for reading and for indeterminacy (`Montague.Eff`), with Map
+Left and Right, Structured App, Unit Left and Right and Join (`Montague.Mode`) and every
+derivation of a tree (`Montague.Ty.modes`, `PhraseStructure.Tree.translations`), but not for
+storing or for quantifying over contexts, and it has no co-unit, eject or lowering. The grammar
+here therefore keeps its own types, for those two effects, the modes they bring, and the side
+condition on storing. As in Appendix B, a writer is applicative exactly when its datum is `t`,
+every applicative effect of the grammar is monadic, and the only adjunction is `W i ⊣ R i`. Base
+types are `e` and `t`.
 
 The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
 April 2025.
@@ -58,9 +61,9 @@ April 2025.
 * Islands (section 5.4): the book filters the results at an island node by a predicate on
   their types; the grammar here has no syntax trees.
 * The denotations of derivations, the book's interpreter of section 5.5: `Combine` is a `Prop`,
-  and the interpreter is `Montague.Mode` with `Montague.Ty.modes`, which has the reader with the
-  map and unit modes so far. Moving this grammar onto it needs the indeterminacy, storing and
-  quantification effects, and structured application, join, co-unit, eject and lowering.
+  and the interpreter is `Montague.Mode` with `Montague.Ty.modes`, which covers reading and
+  indeterminacy with every mode but co-unit, eject and lowering. Moving this grammar onto it needs
+  the storing and quantification effects and those three modes.
 
 ## References
 

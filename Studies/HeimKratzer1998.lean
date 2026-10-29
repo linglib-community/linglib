@@ -29,10 +29,10 @@ nonextensional context exactly when the subject's beliefs leave open another wor
 ## Implementation notes
 
 The toy fragment's words stand in for the book's: *student who sleeps* for *house which is
-empty*, *every person sees some person* for "Some publisher offended every linguist". With
-`interpTy .t = Prop` the engines produce truth conditions as propositions. In Chapter 12 *is* is
-the identity on predicates, the book's emptiness of *is*, and (11d) is the falsity of (10) at the
-actual world, since the fragment has no negation.
+empty*, *every person sees some person* for "Some publisher offended every linguist". The type
+`t` denotes in `Prop` (`Montague.Ty.Domain`), so the engines produce truth conditions as
+propositions. In Chapter 12 *is* is the identity on predicates, the book's emptiness of *is*, and
+(11d) is the falsity of (10) at the actual world, since the fragment has no negation.
 
 ## References
 

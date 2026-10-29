@@ -8,13 +8,15 @@ public import Linglib.Semantics.Conditionals.Basic
 This file defines the generic operator GEN of characterizing sentences as the conditional
 quantifying over the normal cases of its restrictor. [krifka-etal-1995] survey the ways of
 spelling GEN out. On the prototype analysis a characterizing sentence quantifies universally over
-the typical instances of its restrictor, (80) and (81); on relevant quantification it quantifies
-over the restrictor cases that meet a contextual restriction, (78); on the modal analysis it is a
-conditional evaluated at the most normal worlds of a modal base, (86). Each picks out, for a
-restrictor, a set of normal cases inside it, and the generic holds when the matrix holds
-throughout that set. A normality is such a selection (`Normality`), and GEN is the conditional
-over its domain (`Normality.gen`), the domain conditional `Conditional.ofDomain` of the
-conditionals file.
+the typical instances of its restrictor, (80) and (81), and on relevant quantification over the
+restrictor cases that meet a contextual restriction, (78). Each picks out, for a restrictor, a set
+of normal cases inside it, and the generic holds when the matrix holds throughout that set. A
+normality is such a selection (`Normality`), the selection function of [asher-morreau-1995] under
+their one constraint, Facticity, and GEN is the conditional over its domain (`Normality.gen`), the
+domain conditional `Conditional.ofDomain` of the conditionals file. The modal analysis, (86), is
+not a selection: GEN holds when every case of the restrictor in the modal base has one at least as
+normal from which on the matrix holds, the variably strict conditional
+`Conditional.variablyStrictImp` over the ordering source.
 
 Unlike the universal, GEN tolerates exceptions, (74) (`Normality.exists_mem_gen_not_subset`),
 though a universal generalization is a generic one (`Normality.gen_eq_univ_of_subset`), and when
@@ -23,7 +25,11 @@ set of normal cases, as on relevant quantification, makes GEN the strict conditi
 (`Normality.ofAccess`, `Normality.gen_ofAccess`). It overgenerates, since the restriction can be
 the matrix itself, [krifka-etal-1995]'s (79) (`Normality.gen_ofAccess_self`).
 A normality given by a preorder on the cases makes GEN the conditional of the best accessible
-cases (`Normality.ofOrdering`, `Normality.gen_ofOrdering`). Whatever the normality, two generics
+cases (`Normality.ofOrdering`, `Normality.gen_ofOrdering`). This is the modal analysis under the
+Limit Assumption, that every set of accessible cases has best members
+(`Normality.gen_ofOrdering_eq_variablyStrictImp`); without it a restrictor can have no best
+cases, and then every generic with it is true where the modal analysis is not
+(`Normality.exists_gen_ofOrdering_not_variablyStrictImp`). Whatever the normality, two generics
 with one restrictor and disjoint matrices leave the restrictor no normal case, and then every
 generic with that restrictor is true. This is the problem of (82) for the prototype analysis:
 male ducks have colorful feathers and female ducks lay whitish eggs, so no duck is typical for
@@ -43,8 +49,9 @@ select disjoint normal cases (`Normality.disjoint_normal_of_disjoint`).
 * GEN is evaluated at an index (a world, a world and a time, a context) and quantifies over cases
   of another type (individuals, events, situations, worlds), so a normality has both as
   parameters. Restrictors and matrices are sets of cases, as for the conditionals.
-* The one law every analysis shares is that the normal cases of a restrictor are among its cases.
-  Normality is not monotone in the restrictor: the normal penguins need not be normal birds.
+* The one law every selection shares, Asher and Morreau's Facticity, is that the normal cases of a
+  restrictor are among its cases. Normality is not monotone in the restrictor: the normal penguins
+  need not be normal birds.
 
 ## TODO
 
@@ -56,6 +63,7 @@ select disjoint normal cases (`Normality.disjoint_normal_of_disjoint`).
 ## References
 
 * [krifka-etal-1995]
+* [asher-morreau-1995]
 * [cohen-1999a]
 * [tessler-goodman-2019]
 -/
@@ -137,6 +145,38 @@ def ofOrdering (access : I → Set X) (ord : I → Preorder X) : Normality I X :
 
 theorem gen_ofOrdering (access : I → Set X) (ord : I → Preorder X) :
     (ofOrdering access ord).gen = orderingImp access ord := rfl
+
+/-- The modal analysis (86) entails GEN over the best accessible cases. -/
+theorem variablyStrictImp_subset_gen_ofOrdering (access : I → Set X) (ord : I → Preorder X) :
+    variablyStrictImp access ord R S ⊆ (ofOrdering access ord).gen R S :=
+  variablyStrictImp_subset_orderingImp
+
+/-- Under the Limit Assumption, that every nonempty set of accessible cases has best members, the
+modal analysis (86) is GEN over the best accessible cases. -/
+theorem gen_ofOrdering_eq_variablyStrictImp {access : I → Set X} {ord : I → Preorder X}
+    (hlim : ∀ i B, (access i ∩ B).Nonempty → ((ord i).minimals (access i ∩ B)).Nonempty) :
+    (ofOrdering access ord).gen R S = variablyStrictImp access ord R S :=
+  ext fun i ↦ (mem_variablyStrictImp_iff_mem_orderingImp (hlim i)).symm
+
+theorem gen_ofOrdering_eq_variablyStrictImp_of_finite [Finite X] (access : I → Set X)
+    (ord : I → Preorder X) : (ofOrdering access ord).gen R S = variablyStrictImp access ord R S :=
+  gen_ofOrdering_eq_variablyStrictImp fun i _ ↦ (ord i).minimals_nonempty
+
+/-- Without the Limit Assumption, GEN over the best cases can hold vacuously: on the integers no
+case is best, so every generic is true, while the modal analysis (86) is false of a matrix that no
+case satisfies. -/
+theorem exists_gen_ofOrdering_not_variablyStrictImp :
+    ∃ (access : Unit → Set ℤ) (ord : Unit → Preorder ℤ),
+      (∀ S, (ofOrdering access ord).gen univ S = univ) ∧
+        () ∉ variablyStrictImp access ord univ ∅ := by
+  refine ⟨fun _ ↦ univ, fun _ ↦ inferInstance, fun _ ↦ eq_univ_of_forall fun _ x hx ↦ ?_,
+    fun h ↦ ?_⟩
+  · have hle : x - 1 ≤ x := by omega
+    have h : x ≤ x - 1 := hx.2 ⟨trivial, trivial⟩ hle
+    exact absurd h (by omega)
+  · rw [mem_variablyStrictImp, OrderingSemantics.mem_necessityFilter] at h
+    obtain ⟨v, hv, -, hvt⟩ := h 0 ⟨trivial, trivial⟩
+    exact hvt v hv le_rfl
 
 end Normality
 
