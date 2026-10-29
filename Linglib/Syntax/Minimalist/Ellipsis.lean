@@ -20,8 +20,10 @@ adjuncts of the phrases properly inside it, so that the adjuncts of the phrase j
 [E]-bearing head survive. A site outside the deletion domain survives and is invisible to the
 identity condition, so a mismatch in a feature its head bears is tolerated. Lowering [E] shrinks the
 domain, so whatever a higher ellipsis tolerates a lower one tolerates too, which is Sailor's
-generalization. [E]-deletion is one model of Hankamer and Sag's depth: the null sites of a spine are
-the complements [E] silences and the null pro-forms.
+generalization, and a domain containing a head contains every head below it, so an ellipsis
+tolerating a mismatch in a head tolerates one in any head above. The two readings of *again* fix the
+position of [E]. [E]-deletion is one model of Hankamer and Sag's depth: the null sites of a spine
+are the complements [E] silences and the null pro-forms.
 
 ## Main definitions
 
@@ -44,14 +46,17 @@ the complements [E] silences and the null pro-forms.
   the core of X-stranding.
 * `Minimalist.ClauseSpine.Deletes.of_mem_below`, `Minimalist.Ellipsis.Tolerates.of_mem_below`:
   Sailor's generalization, what [E] on a head deletes [E] on any higher head deletes too.
+* `Minimalist.Ellipsis.eq_vpEllipsis_iff`, `Minimalist.Ellipsis.eq_vStrandingVPE_iff`: the *again*
+  test, which places [E] on Voice or on v.
 * `Minimalist.NullSite.not_silences_ePosition`: the head bearing [E] lies outside the site it
   silences.
 
 ## Implementation notes
 
 The adjunction site of a phrase lies below the head that selects the phrase but outside that head's
-complement, so restitutive *again* and manner roots, adjoined to VP, survive v-stranding
-VP-ellipsis while V does not, and prenominal modifiers, adjoined to NP, survive [E] on n. A null
+complement, so restitutive *again*, adjoined to VP, survives v-stranding VP-ellipsis while V does
+not, and prenominal modifiers, adjoined to NP, survive [E] on n. A root adjoined to a head, as a
+manner root adjoins to v, is part of that head and shares its site. A null
 site built from [E] carries a site of its deletion domain, since a head at the bottom of a spine
 has no complement to silence; that witness is what the surface condition of `Anaphor.DepthModel`
 asks for.
@@ -80,13 +85,13 @@ namespace Minimalist
 namespace ClauseSpine
 
 /-- A site of a spine is a head, or the adjunction site of the phrase a head projects, where
-adjuncts such as *again*, manner roots and prenominal modifiers attach. -/
+adjuncts such as *again* and prenominal modifiers attach. -/
 inductive Site
   | head (c : Cat)
   | adjunct (c : Cat)
   deriving DecidableEq, Repr
 
-variable {s : ClauseSpine} {p q : Cat} {x : Site}
+variable {s : ClauseSpine} {p q d : Cat} {x : Site}
 
 /-- [E] on `p` deletes the heads of its complement, and the adjuncts of a phrase that some head of
 the complement takes in its own complement, so that the adjuncts of the phrase just below `p`
@@ -112,6 +117,11 @@ theorem Deletes.of_mem_below (h : s.Deletes q x) (hq : q ∈ s.below p) : s.Dele
   | adjunct d =>
     obtain ⟨e, he, hd⟩ := h
     exact ⟨e, hpre he, hd⟩
+
+/-- A deletion domain is closed downward: [E] deleting a head deletes every head below it. -/
+theorem Deletes.head_of_mem_below (h : s.Deletes p (.head q)) (hd : d ∈ s.below q) :
+    s.Deletes p (.head d) :=
+  (s.below_prefix h).subset hd
 
 end ClauseSpine
 
@@ -205,6 +215,12 @@ theorem Tolerates.of_mem_below {m : Mismatch} (h : e.Tolerates m)
     (hle : e'.ePosition ∈ clausalSpine.below e.ePosition) : e'.Tolerates m :=
   Spares.of_mem_below h hle
 
+/-- A mismatch tolerated by an ellipsis is tolerated in every head above the one regulating it,
+since a deletion domain containing the higher head contains the lower. -/
+theorem Tolerates.of_head_mem_below {m m' : Mismatch} (h : e.Tolerates m)
+    (hm : m.head ∈ clausalSpine.below m'.head) : e.Tolerates m' :=
+  fun h' ↦ h (ClauseSpine.Deletes.head_of_mem_below h' hm)
+
 end Ellipsis
 
 /-! ### Null sites and depth -/
@@ -272,5 +288,23 @@ inductive AgainReading
 def AgainReading.site : AgainReading → ClauseSpine.Site
   | .repetitive => .adjunct .v
   | .restitutive => .adjunct .V
+
+namespace Ellipsis
+
+/-- The *again* test. An ellipsis sparing repetitive *again* and deleting restitutive *again*, as
+English VP-ellipsis does, has [E] on Voice. -/
+theorem eq_vpEllipsis_iff (e : Ellipsis clausalSpine) :
+    e = vpEllipsis ↔
+      e.Spares AgainReading.repetitive.site ∧ e.Deletes AgainReading.restitutive.site := by
+  obtain ⟨p⟩ := e
+  cases p <;> decide
+
+/-- The *again* test. An ellipsis deleting V and sparing restitutive *again* has [E] on v. -/
+theorem eq_vStrandingVPE_iff (e : Ellipsis clausalSpine) :
+    e = vStrandingVPE ↔ e.Deletes (.head .V) ∧ e.Spares AgainReading.restitutive.site := by
+  obtain ⟨p⟩ := e
+  cases p <;> decide
+
+end Ellipsis
 
 end Minimalist

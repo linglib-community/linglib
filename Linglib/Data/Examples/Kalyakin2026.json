@@ -1,0 +1,600 @@
+[
+  {
+    "id": "kalyakin2026_ex3",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(3)"},
+    "language": "muir1238",
+    "primaryText": "Pat’imat-li χureg wana b-arq’-ib, Ashura-li=ra ⟨χureg wana⟩ b-arq’-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pat’imat-li", "Patimat-ERG"], ["χureg", "food.ABS"], ["wana", "warm"],
+      ["b-arq’-ib,", "N-make.PFV-AOR"], ["Ashura-li=ra", "Ashura-ERG=ADD"], ["⟨χureg", "food.ABS"],
+      ["wana⟩", "warm"], ["b-arq’-ib", "N-make.PFV-AOR"]
+    ],
+    "translation": "Patimat warmed up the food, and Ashura did too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"]
+    ],
+    "comment": "The baseline: the object and the non-verbal element wana are elided, the light verb stays. Repeated as (34) and (66).",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex29",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(29)"},
+    "language": "muir1238",
+    "primaryText": "Učitil-li Musa parʁat w-arq’-b=akːu, pro ⟨tᵢ parʁat⟩ w-arq’-ib ʡaˤbdullaᵢ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Učitil-li", "teacher-ERG"], ["Musa", "Musa.ABS"], ["parʁat", "calm"],
+      ["w-arq’-b=akːu,", "M-make.PFV-AOR=NEG.COP"], ["pro", ""], ["⟨tᵢ", ""], ["parʁat⟩", "calm"],
+      ["w-arq’-ib", "M-make.PFV-AOR"], ["ʡaˤbdullaᵢ", "Abdullah.ABS"]
+    ],
+    "translation": "The teacher didn’t calm Musa down, but ABDULLAH, he did.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "focused"]
+    ],
+    "comment": "The contrastively focused object moves rightward out of the site.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex30a",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(30a)"},
+    "language": "muir1238",
+    "primaryText": "Učitil-li Musa parʁat w-arq’-ib, pro Pat’imatᵢ ⟨tᵢ parʁat⟩ r-arq’-b=akːu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Učitil-li", "teacher-ERG"], ["Musa", "Musa.ABS"], ["parʁat", "calm"],
+      ["w-arq’-ib,", "M-make.PFV-AOR"], ["pro", ""], ["Pat’imatᵢ", "Patimat.ABS"], ["⟨tᵢ", ""],
+      ["parʁat⟩", "calm"], ["r-arq’-b=akːu", "F-make.PFV-AOR=NEG.COP"]
+    ],
+    "translation": "The teacher calmed Musa down, but PATIMAT, he didn’t.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "focused"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex30b",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(30b)"},
+    "language": "muir1238",
+    "primaryText": "Učitil-li Musa parʁat w-arq’-ib, direktur-li=ra Musaᵢ ⟨tᵢ parʁat⟩ w-arq’-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Učitil-li", "teacher-ERG"], ["Musa", "Musa.ABS"], ["parʁat", "calm"],
+      ["w-arq’-ib,", "M-make.PFV-AOR"], ["direktur-li=ra", "principal-ERG=ADD"],
+      ["Musaᵢ", "Musa.ABS"], ["⟨tᵢ", ""], ["parʁat⟩", "calm"], ["w-arq’-ib", "M-make.PFV-AOR"]
+    ],
+    "translation": "The teacher calmed Musa down, and the principal did too.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "moved"]
+    ],
+    "comment": "The object is not contrastively focused, so nothing sanctions its movement out of the site.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex32",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(32)"},
+    "language": "muir1238",
+    "primaryText": "ʡinc-bi ħint’in d-Ø-ib, pamidur-ti=raᵢ ⟨tᵢ ħint’in⟩ d-Ø-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ʡinc-bi", "apple-PL.ABS"], ["ħint’in", "red"], ["d-Ø-ib,", "NPL-become.PFV-AOR"],
+      ["pamidur-ti=raᵢ", "tomato-PL.ABS=ADD"], ["⟨tᵢ", ""], ["ħint’in⟩", "red"],
+      ["d-Ø-ib", "NPL-become.PFV-AOR"]
+    ],
+    "translation": "The apples turned red, and the tomatoes did too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "raised"]
+    ],
+    "comment": "A-movement of the inchoative's internal argument out of the site.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex36a",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(36a)"},
+    "language": "muir1238",
+    "primaryText": "Učitil-li Murad parʁat w-arq’-ib, direktur-li=ra w-arq’-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Učitil-li", "teacher-ERG"], ["Murad", "Murad.ABS"], ["parʁat", "calm"],
+      ["w-arq’-ib,", "M-make.PFV-AOR"], ["direktur-li=ra", "principal-ERG=ADD"],
+      ["w-arq’-ib", "M-make.PFV-AOR"]
+    ],
+    "translation": "The teacher calmed Murad, and the principal did too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex36b",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(36b)"},
+    "language": "muir1238",
+    "primaryText": "Učitil-li Murad parʁat w-arq’-ib, direktur-li=ra parʁat w-arq’-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Učitil-li", "teacher-ERG"], ["Murad", "Murad.ABS"], ["parʁat", "calm"],
+      ["w-arq’-ib,", "M-make.PFV-AOR"], ["direktur-li=ra", "principal-ERG=ADD"],
+      ["parʁat", "calm"], ["w-arq’-ib", "M-make.PFV-AOR"]
+    ],
+    "translation": "The teacher calmed Murad, and the principal calmed him, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "no"],
+      ["object", "silent"]
+    ],
+    "comment": "Only the object is silent; the paper derives this by argument ellipsis.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex36c",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(36c)"},
+    "language": "muir1238",
+    "primaryText": "Učitil-li Murad parʁat w-arq’-ib, direktur-li=ra Murad w-arq’-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Učitil-li", "teacher-ERG"], ["Murad", "Murad.ABS"], ["parʁat", "calm"],
+      ["w-arq’-ib,", "M-make.PFV-AOR"], ["direktur-li=ra", "principal-ERG=ADD"],
+      ["Murad", "Murad.ABS"], ["w-arq’-ib", "M-make.PFV-AOR"]
+    ],
+    "translation": "The teacher calmed Murad, and the principal did too.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "inSitu"]
+    ],
+    "comment": "The non-verbal element alone is silent while the object, the same as the antecedent's, stays in situ.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex37",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(37)"},
+    "language": "muir1238",
+    "primaryText": "Učitil-li Murad parʁat w-arq’-ib, pro Rasulᵢ ⟨tᵢ parʁat⟩ w-arq’-b=akːu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Učitil-li", "teacher-ERG"], ["Murad", "Murad.ABS"], ["parʁat", "calm"],
+      ["w-arq’-ib,", "M-make.PFV-AOR"], ["pro", ""], ["Rasulᵢ", "Rasul.ABS"], ["⟨tᵢ", ""],
+      ["parʁat⟩", "calm"], ["w-arq’-b=akːu", "M-make.PFV-AOR=NEG.COP"]
+    ],
+    "translation": "The teacher calmed Murad down, but RASUL, he didn’t.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "focused"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex52a",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(52a)"},
+    "language": "muir1238",
+    "primaryText": "Murad-li uncːa hark b-arq’-ib, Rasul-li=ra ʡibrra ⟨uncːa hark⟩ b-arq’-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Murad-li", "Murad-ERG"], ["uncːa", "door.ABS"], ["hark", "open"],
+      ["b-arq’-ib,", "N-make.PFV-AOR"], ["Rasul-li=ra", "Rasul-ERG=ADD"], ["ʡibrra", "again"],
+      ["⟨uncːa", "door.ABS"], ["hark⟩", "open"], ["b-arq’-ib", "N-make.PFV-AOR"]
+    ],
+    "translation": "Murad opened the door, and then Rasul did open the door again.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "repetitive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"],
+      ["again", "repetitive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex52b",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(52b)"},
+    "language": "muir1238",
+    "primaryText": "Daʡ-li uncːa čikawq’-un, či-li-k’al il hark b-arq’-ib-li ačːʷi. aχirra Rasul-li ʡibrra ⟨uncːa hark⟩ b-arq’-ib",
+    "discourseSegments": [
+      "Daʡ-li uncːa čikawq’-un, či-li-k’al il hark b-arq’-ib-li ačːʷi.",
+      "aχirra Rasul-li ʡibrra ⟨uncːa hark⟩ b-arq’-ib"
+    ],
+    "glossedTokens": [
+      ["Daʡ-li", "wind-ERG"], ["uncːa", "door.ABS"], ["čikawq’-un,", "close.PFV-AOR"],
+      ["či-li-k’al", "who-ERG-INDEF"], ["il", "this.ADDR.ABS"], ["hark", "open"],
+      ["b-arq’-ib-li", "N-make.PFV-AOR-CVB"], ["ačːʷi.", "NEG.COP.PST"], ["aχirra", "finally"],
+      ["Rasul-li", "Rasul-ERG"], ["ʡibrra", "again"], ["⟨uncːa", "door.ABS"], ["hark⟩", "open"],
+      ["b-arq’-ib", "N-make.PFV-AOR"]
+    ],
+    "translation": "The wind blew the door shut, no one opened it. Finally, Rasul opened the door again.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "restitutive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"],
+      ["again", "restitutive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex57",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(57)"},
+    "language": "muir1238",
+    "primaryText": "Darħa taˤħ Ø-uq-un, rursi=ra r-uq-un",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Darħa", "child.ABS"], ["taˤħ", "jump"], ["Ø-uq-un,", "M-move.PFV-AOR"],
+      ["rursi=ra", "girl.ABS=ADD"], ["r-uq-un", "F-move.PFV-AOR"]
+    ],
+    "translation": "The boy jumped, and the girl did too.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "manner"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "absent"]
+    ],
+    "comment": "An activity predicate whose root names a manner and adjoins to v.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex58",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(58)"},
+    "language": "muir1238",
+    "primaryText": "Murad duc’ Ø-uq-un, Musa=ra Ø-uq-un",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Murad", "Murad-ABS"], ["duc’", "run"], ["Ø-uq-un,", "M-move.PFV-AOR"],
+      ["Musa=ra", "Musa.ABS=ADD"], ["Ø-uq-un", "M-move.PFV-AOR"]
+    ],
+    "translation": "Murad ran, and Musa did too.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "manner"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "absent"]
+    ],
+    "comment": "For two consultants omitting the non-verbal element of an activity predicate is only somewhat degraded (p. 25).",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex59",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(59)"},
+    "language": "muir1238",
+    "primaryText": "Darħa ʡimč w-ik’-u-li saj, rursi=ra r-ik’-u-li sa<r>i",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Darħa", "child.ABS"], ["ʡimč", "sneeze"], ["w-ik’-u-li", "M-say.IPFV-PROG-CVB"],
+      ["saj,", "COP.M"], ["rursi=ra", "girl.ABS=ADD"], ["r-ik’-u-li", "F-say.IPFV-PROG-CVB"],
+      ["sa<r>i", "<F>COP"]
+    ],
+    "translation": "The boy sneezes, and so does the girl.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "manner"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "absent"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex75",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(75)"},
+    "language": "muir1238",
+    "primaryText": "Šin wana d-Ø-ib-li=w? Nu-ni ⟨šin wana⟩ d-arq’-ib=ra",
+    "discourseSegments": [
+      "Šin wana d-Ø-ib-li=w?",
+      "Nu-ni ⟨šin wana⟩ d-arq’-ib=ra"
+    ],
+    "glossedTokens": [
+      ["Šin", "water.ABS"], ["wana", "warm"], ["d-Ø-ib-li=w?", "NPL-become.PFV-AOR-CVB=PQ"],
+      ["Nu-ni", "I-ERG"], ["⟨šin", "water.ABS"], ["wana⟩", "warm"],
+      ["d-arq’-ib=ra", "NPL-make.PFV-AOR=1"]
+    ],
+    "translation": "Has the water warmed up? I warmed it up.",
+    "context": "Inchoative antecedent, causative target.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"],
+      ["mismatch", "transitivity"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex76",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(76)"},
+    "language": "muir1238",
+    "primaryText": "Ħu-ni šin wana d-arq’-atːi=w? Il-tːiᵢ ⟨tᵢ wana⟩ d-Ø-ib",
+    "discourseSegments": [
+      "Ħu-ni šin wana d-arq’-atːi=w?",
+      "Il-tːiᵢ ⟨tᵢ wana⟩ d-Ø-ib"
+    ],
+    "glossedTokens": [
+      ["Ħu-ni", "you-ERG"], ["šin", "water.ABS"], ["wana", "warm"],
+      ["d-arq’-atːi=w?", "NPL-make.PFV-AOR.2SG=PQ"], ["Il-tːiᵢ", "this.ADDR.ABS-PL"], ["⟨tᵢ", ""],
+      ["wana⟩", "warm"], ["d-Ø-ib", "NPL-become.PFV-AOR"]
+    ],
+    "translation": "Have you warmed up the water? It warmed up (on its own).",
+    "context": "Causative antecedent, inchoative target.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "raised"],
+      ["mismatch", "transitivity"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex78",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(78)"},
+    "language": "muir1238",
+    "primaryText": "Pat’imat-li χureg wana b-arq’-ib, Ashura-li=ra ⟨χureg wana⟩ b-Ø-iq-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pat’imat-li", "Patimat-ERG"], ["χureg", "food.ABS"], ["wana", "warm"],
+      ["b-arq’-ib,", "N-make.PFV-AOR"], ["Ashura-li=ra", "Ashura-ERG=ADD"], ["⟨χureg", "food.ABS"],
+      ["wana⟩", "warm"], ["b-Ø-iq-ib", "N-become.PFV-CAUS-AOR"]
+    ],
+    "translation": "Patimat warmed up the food, and Ashura did too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"],
+      ["mismatch", "transitivity"]
+    ],
+    "comment": "A causative light verb in the antecedent, a causativized inchoative one in the target.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex79",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(79)"},
+    "language": "muir1238",
+    "primaryText": "Šin wana d-Ø-ib-li=w? Nu-ni ⟨šin wana⟩ d-Ø-iq-ib=ra",
+    "discourseSegments": [
+      "Šin wana d-Ø-ib-li=w?",
+      "Nu-ni ⟨šin wana⟩ d-Ø-iq-ib=ra"
+    ],
+    "glossedTokens": [
+      ["Šin", "water.ABS"], ["wana", "warm"], ["d-Ø-ib-li=w?", "NPL-become.PFV-AOR-CVB=PQ"],
+      ["Nu-ni", "I-ERG"], ["⟨šin", "water.ABS"], ["wana⟩", "warm"],
+      ["d-Ø-iq-ib=ra", "NPL-become.PFV-CAUS-AOR=ADD"]
+    ],
+    "translation": "Has the water warmed up? I warmed it up.",
+    "context": "Intransitive antecedent, causativized intransitive target.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"],
+      ["mismatch", "transitivity"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex80",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(80)"},
+    "language": "muir1238",
+    "primaryText": "Rasul-li šin wana d-arq’-ib-li=w? Musa-li ⟨šin wana⟩ d-arq’-iq-ib",
+    "discourseSegments": [
+      "Rasul-li šin wana d-arq’-ib-li=w?",
+      "Musa-li ⟨šin wana⟩ d-arq’-iq-ib"
+    ],
+    "glossedTokens": [
+      ["Rasul-li", "Rasul-ERG"], ["šin", "water.ABS"], ["wana", "warm"],
+      ["d-arq’-ib-li=w?", "NPL-make.PFV-AOR-CVB=PQ"], ["Musa-li", "Musa-ERG"],
+      ["⟨šin", "water.ABS"], ["wana⟩", "warm"], ["d-arq’-iq-ib", "NPL-make.PFV-CAUS-AOR"]
+    ],
+    "translation": "Has Rasul warmed up the water? Musa made him do it.",
+    "context": "Transitive antecedent, causativized transitive target.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"],
+      ["mismatch", "transitivity"]
+    ],
+    "comment": "The causee il-i-cːi is printed in parentheses as optional; this row omits it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex80_causee",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(80)"},
+    "language": "muir1238",
+    "primaryText": "Rasul-li šin wana d-arq’-ib-li=w? Musa-li il-i-cːi ⟨šin wana⟩ d-arq’-iq-ib",
+    "discourseSegments": [
+      "Rasul-li šin wana d-arq’-ib-li=w?",
+      "Musa-li il-i-cːi ⟨šin wana⟩ d-arq’-iq-ib"
+    ],
+    "glossedTokens": [
+      ["Rasul-li", "Rasul-ERG"], ["šin", "water.ABS"], ["wana", "warm"],
+      ["d-arq’-ib-li=w?", "NPL-make.PFV-AOR-CVB=PQ"], ["Musa-li", "Musa-ERG"],
+      ["il-i-cːi", "this.ADDR-OBL-INTER"], ["⟨šin", "water.ABS"], ["wana⟩", "warm"],
+      ["d-arq’-iq-ib", "NPL-make.PFV-CAUS-AOR"]
+    ],
+    "translation": "Has Rasul warmed up the water? Musa made him do it.",
+    "context": "Transitive antecedent, causativized transitive target.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "silent"],
+      ["mismatch", "transitivity"]
+    ],
+    "comment": "The variant with the optional causee il-i-cːi.",
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex85",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(85)"},
+    "language": "muir1238",
+    "primaryText": "Bašir-li qur-ri dawk b-irq’-u-li saj, Musa=ra ⟨qur-r-a-li dawk⟩ w-irq’-u-li saj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bašir-li", "Bashir-ERG"], ["qur-ri", "house.ABS-PL"], ["dawk", "repaired"],
+      ["b-irq’-u-li", "NPL-make.IPFV-PROG-CVB"], ["saj,", "COP.M"], ["Musa=ra", "Musa.ABS=ADD"],
+      ["⟨qur-r-a-li", "house-PL-OBL.PL-ERG"], ["dawk⟩", "repaired"],
+      ["w-irq’-u-li", "M-make.IPFV-PROG-CVB"], ["saj", "COP.M"]
+    ],
+    "translation": "Bashir is engaged in repairing houses, and so is Musa.",
+    "context": "Transitive antecedent, antipassive target.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "yes"],
+      ["rootSilent", "yes"],
+      ["object", "silent"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex86",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(86)"},
+    "language": "muir1238",
+    "primaryText": "Bašir qur-r-a-li dawk w-irq’-u-li saj, Musa=ra ⟨qur-r-a-li dawk⟩ w-irq’-u-li saj",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bašir", "Bashir.ABS"], ["qur-r-a-li", "house-PL-OBL.PL-ERG"], ["dawk", "repaired"],
+      ["w-irq’-u-li", "M-make.IPFV-PROG-CVB"], ["saj,", "COP.M"], ["Musa=ra", "Musa.ABS=ADD"],
+      ["⟨qur-r-a-li", "house-PL-OBL.PL-ERG"], ["dawk⟩", "repaired"],
+      ["w-irq’-u-li", "M-make.IPFV-PROG-CVB"], ["saj", "COP.M"]
+    ],
+    "translation": "Bashir is engaged in repairing houses, and so is Musa.",
+    "context": "Antipassive antecedent, antipassive target.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "yes"],
+      ["rootSilent", "yes"],
+      ["object", "silent"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "kalyakin2026_ex88",
+    "source": {"bibkey": "kalyakin-2026", "paperLabel": "(88)"},
+    "language": "muir1238",
+    "primaryText": "Pat’imat-li χureg wana b-arq’-ib, šinᵢ ⟨tᵢ wana⟩ d-Ø-ib",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Pat’imat-li", "Patimat-ERG"], ["χureg", "food.ABS"], ["wana", "warm"],
+      ["b-arq’-ib,", "N-make.PFV-AOR"], ["šinᵢ", "water.ABS"], ["⟨tᵢ", ""], ["wana⟩", "warm"],
+      ["d-Ø-ib", "NPL-become.PFV-AOR"]
+    ],
+    "translation": "Patimat warmed up the food, and the water warmed up too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "state"],
+      ["antipassive", "no"],
+      ["rootSilent", "yes"],
+      ["object", "raised"],
+      ["mismatch", "transitivity"]
+    ],
+    "comment": "Acceptable to all speakers consulted, against Kehler's Resemblance condition (p. 35).",
+    "verified": "page-image"
+  }
+]
