@@ -1,5 +1,105 @@
 [
   {
+    "id": "colehermon2008_ex3a",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(3a)"},
+    "language": "bata1289",
+    "primaryText": "Dakdanak-an mang-atuk biang-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dakdanak-an", "child-that"], ["mang-atuk", "act-hit"], ["biang-i", "dog-def"]
+    ],
+    "translation": "The child hit the dog.",
+    "context": "Active clause in SVO order.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "active"],
+      ["order", "SVO"],
+      ["verb", "atuk"],
+      ["agent", "dakdanak-an"],
+      ["patient", "biang-i"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "colehermon2008_ex3b",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(3b)"},
+    "language": "bata1289",
+    "primaryText": "Mang-atuk biang-i dakdanak-an.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mang-atuk", "act-hit"], ["biang-i", "dog-def"], ["dakdanak-an", "child-that"]
+    ],
+    "translation": "The child hit the dog.",
+    "context": "Active clause in VOS order.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "active"],
+      ["order", "VOS"],
+      ["verb", "atuk"],
+      ["agent", "dakdanak-an"],
+      ["patient", "biang-i"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "colehermon2008_ex4a",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(4a)"},
+    "language": "bata1289",
+    "primaryText": "Biang-i di-atuk si-John.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Biang-i", "dog-def"], ["di-atuk", "pass-hit"], ["si-John", "hon-John"]
+    ],
+    "translation": "The dog was hit by John.",
+    "context": "Passive clause in SVO order.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "passive"],
+      ["order", "SVO"],
+      ["verb", "atuk"],
+      ["agent", "si-John"],
+      ["patient", "biang-i"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "colehermon2008_ex4b",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(4b)"},
+    "language": "bata1289",
+    "primaryText": "Di-atuk si-John biang-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Di-atuk", "pass-hit"], ["si-John", "hon-John"], ["biang-i", "dog-def"]
+    ],
+    "translation": "The dog was hit by John.",
+    "context": "Passive clause in VOS order.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "passive"],
+      ["order", "VOS"],
+      ["verb", "atuk"],
+      ["agent", "si-John"],
+      ["patient", "biang-i"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
     "id": "colehermon2008_ex7a",
     "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(7a)"},
     "language": "bata1289",
@@ -94,7 +194,7 @@
     "paperFeatures": [
       ["construction", "extraction"],
       ["voice", "passive"],
-      ["order", "VOS"],
+      ["order", "VOIS"],
       ["transitivity", "ditransitive"],
       ["extracted", "agent"],
       ["wh", "inSitu"]
@@ -152,6 +252,60 @@
       ["wh", "fronted"]
     ],
     "comment": "Repeated as (46).",
+    "verified": "page-image"
+  },
+  {
+    "id": "colehermon2008_ex13",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(13)"},
+    "language": "bata1289",
+    "primaryText": "Di-lean si-John sada buku tu si-Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Di-lean", "pass-give"], ["si-John", "hon-John"], ["sada", "one"], ["buku", "book"],
+      ["tu", "to"], ["si-Mary", "hon-Mary"]
+    ],
+    "translation": "One book was given to Mary by John.",
+    "context": "Passive ditransitive with the indirect object after the subject.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "passive"],
+      ["order", "VOS"],
+      ["verb", "lean"],
+      ["agent", "si-John"],
+      ["patient", "sada buku"],
+      ["goal", "tu si-Mary"]
+    ],
+    "comment": "V-O-S-IO, the basic order of ditransitives.",
+    "verified": "page-image"
+  },
+  {
+    "id": "colehermon2008_ex14",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(14)"},
+    "language": "bata1289",
+    "primaryText": "Di-lean si-John tu si-Mary buku.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Di-lean", "pass-give"], ["si-John", "hon-John"], ["tu", "to"], ["si-Mary", "hon-Mary"],
+      ["buku", "book"]
+    ],
+    "translation": "The book was given to Mary by John.",
+    "context": "Passive ditransitive with the indirect object before the subject.",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "passive"],
+      ["order", "VOIS"],
+      ["verb", "lean"],
+      ["agent", "si-John"],
+      ["patient", "buku"],
+      ["goal", "tu si-Mary"]
+    ],
+    "comment": "Highly marked against the VOSI order of (13), derived by optional processes.",
     "verified": "page-image"
   },
   {
@@ -280,6 +434,58 @@
     "verified": "page-image"
   },
   {
+    "id": "colehermon2008_ex49",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(49)"},
+    "language": "bata1289",
+    "primaryText": "Mang-ida si-Mary si-John.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mang-ida", "act-see"], ["si-Mary", "hon-Mary"], ["si-John", "hon-John"]
+    ],
+    "translation": "John saw Mary.",
+    "context": "Active monotransitive clause in VOS order.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "active"],
+      ["order", "VOS"],
+      ["verb", "ida"],
+      ["agent", "si-John"],
+      ["patient", "si-Mary"]
+    ],
+    "comment": "Derived in (50)–(55).",
+    "verified": "page-image"
+  },
+  {
+    "id": "colehermon2008_ex56",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(56)"},
+    "language": "bata1289",
+    "primaryText": "Mang-alean buku si-John tu si-Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mang-alean", "act-give"], ["buku", "book"], ["si-John", "hon-John"], ["tu", "to"],
+      ["si-Mary", "hon-Mary"]
+    ],
+    "translation": "John gave a book to Mary.",
+    "context": "Active ditransitive clause in VOS order.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "active"],
+      ["order", "VOS"],
+      ["verb", "alean"],
+      ["agent", "si-John"],
+      ["patient", "buku"],
+      ["goal", "tu si-Mary"]
+    ],
+    "comment": "Derived in (57)–(61).",
+    "verified": "page-image"
+  },
+  {
     "id": "colehermon2008_ex62",
     "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(62)"},
     "language": "bata1289",
@@ -377,6 +583,31 @@
       ["tableOne", "B"]
     ],
     "comment": "(38) in simplified form; derived in (75)–(77). Table 1, Type B. The page prints [dirina (sandiri)]; this row takes the variant with sandiri.",
+    "verified": "page-image"
+  },
+  {
+    "id": "colehermon2008_ex81",
+    "source": {"bibkey": "cole-hermon-2008", "paperLabel": "(81)"},
+    "language": "bata1289",
+    "primaryText": "Dakdanak-on mang-atuk biang-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dakdanak-on", "child-this"], ["mang-atuk", "act-hit"], ["biang-i", "dog-def"]
+    ],
+    "translation": "This boy hit the dog.",
+    "context": "Active clause in SVO order.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "order"],
+      ["voice", "active"],
+      ["order", "SVO"],
+      ["verb", "atuk"],
+      ["agent", "dakdanak-on"],
+      ["patient", "biang-i"]
+    ],
+    "comment": "Derived in (83)–(84) under the VOS Hypothesis.",
     "verified": "page-image"
   },
   {

@@ -15,6 +15,58 @@ this module; declarations live in `namespace ColeHermon2008.Examples`.
 
 namespace ColeHermon2008.Examples
 
+def ex3a : Datum :=
+  { id := "colehermon2008_ex3a"
+    source := ⟨"cole-hermon-2008", "(3a)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Dakdanak-an mang-atuk biang-i."
+    glossedTokens := [("Dakdanak-an", "child-that"), ("mang-atuk", "act-hit"), ("biang-i", "dog-def")]
+    context := "Active clause in SVO order."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "active"), ("order", "SVO"), ("verb", "atuk"), ("agent", "dakdanak-an"), ("patient", "biang-i")] }
+
+def ex3b : Datum :=
+  { id := "colehermon2008_ex3b"
+    source := ⟨"cole-hermon-2008", "(3b)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Mang-atuk biang-i dakdanak-an."
+    glossedTokens := [("Mang-atuk", "act-hit"), ("biang-i", "dog-def"), ("dakdanak-an", "child-that")]
+    context := "Active clause in VOS order."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "active"), ("order", "VOS"), ("verb", "atuk"), ("agent", "dakdanak-an"), ("patient", "biang-i")] }
+
+def ex4a : Datum :=
+  { id := "colehermon2008_ex4a"
+    source := ⟨"cole-hermon-2008", "(4a)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Biang-i di-atuk si-John."
+    glossedTokens := [("Biang-i", "dog-def"), ("di-atuk", "pass-hit"), ("si-John", "hon-John")]
+    context := "Passive clause in SVO order."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "passive"), ("order", "SVO"), ("verb", "atuk"), ("agent", "si-John"), ("patient", "biang-i")] }
+
+def ex4b : Datum :=
+  { id := "colehermon2008_ex4b"
+    source := ⟨"cole-hermon-2008", "(4b)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Di-atuk si-John biang-i."
+    glossedTokens := [("Di-atuk", "pass-hit"), ("si-John", "hon-John"), ("biang-i", "dog-def")]
+    context := "Passive clause in VOS order."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "passive"), ("order", "VOS"), ("verb", "atuk"), ("agent", "si-John"), ("patient", "biang-i")] }
+
 def ex7a : Datum :=
   { id := "colehermon2008_ex7a"
     source := ⟨"cole-hermon-2008", "(7a)"⟩
@@ -65,7 +117,7 @@ def ex8b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "VOS"), ("transitivity", "ditransitive"), ("extracted", "agent"), ("wh", "inSitu")] }
+    paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "VOIS"), ("transitivity", "ditransitive"), ("extracted", "agent"), ("wh", "inSitu")] }
 
 def ex9 : Datum :=
   { id := "colehermon2008_ex9"
@@ -92,6 +144,32 @@ def ex10 : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "passive"), ("order", "VOS"), ("transitivity", "ditransitive"), ("extracted", "goal"), ("wh", "fronted")] }
+
+def ex13 : Datum :=
+  { id := "colehermon2008_ex13"
+    source := ⟨"cole-hermon-2008", "(13)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Di-lean si-John sada buku tu si-Mary."
+    glossedTokens := [("Di-lean", "pass-give"), ("si-John", "hon-John"), ("sada", "one"), ("buku", "book"), ("tu", "to"), ("si-Mary", "hon-Mary")]
+    context := "Passive ditransitive with the indirect object after the subject."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "passive"), ("order", "VOS"), ("verb", "lean"), ("agent", "si-John"), ("patient", "sada buku"), ("goal", "tu si-Mary")] }
+
+def ex14 : Datum :=
+  { id := "colehermon2008_ex14"
+    source := ⟨"cole-hermon-2008", "(14)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Di-lean si-John tu si-Mary buku."
+    glossedTokens := [("Di-lean", "pass-give"), ("si-John", "hon-John"), ("tu", "to"), ("si-Mary", "hon-Mary"), ("buku", "book")]
+    context := "Passive ditransitive with the indirect object before the subject."
+    judgment := .marginal
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "passive"), ("order", "VOIS"), ("verb", "lean"), ("agent", "si-John"), ("patient", "buku"), ("goal", "tu si-Mary")] }
 
 def ex17 : Datum :=
   { id := "colehermon2008_ex17"
@@ -158,6 +236,32 @@ def ex44 : Datum :=
     readings := []
     paperFeatures := [("construction", "extraction"), ("voice", "active"), ("order", "VOS"), ("transitivity", "monotransitive"), ("extracted", "patient"), ("wh", "inSitu")] }
 
+def ex49 : Datum :=
+  { id := "colehermon2008_ex49"
+    source := ⟨"cole-hermon-2008", "(49)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Mang-ida si-Mary si-John."
+    glossedTokens := [("Mang-ida", "act-see"), ("si-Mary", "hon-Mary"), ("si-John", "hon-John")]
+    context := "Active monotransitive clause in VOS order."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "active"), ("order", "VOS"), ("verb", "ida"), ("agent", "si-John"), ("patient", "si-Mary")] }
+
+def ex56 : Datum :=
+  { id := "colehermon2008_ex56"
+    source := ⟨"cole-hermon-2008", "(56)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Mang-alean buku si-John tu si-Mary."
+    glossedTokens := [("Mang-alean", "act-give"), ("buku", "book"), ("si-John", "hon-John"), ("tu", "to"), ("si-Mary", "hon-Mary")]
+    context := "Active ditransitive clause in VOS order."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "active"), ("order", "VOS"), ("verb", "alean"), ("agent", "si-John"), ("patient", "buku"), ("goal", "tu si-Mary")] }
+
 def ex62 : Datum :=
   { id := "colehermon2008_ex62"
     source := ⟨"cole-hermon-2008", "(62)"⟩
@@ -209,6 +313,19 @@ def ex68 : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "passive"), ("order", "VOS"), ("antecedent", "patient"), ("reflexive", "agent"), ("tableOne", "B")] }
+
+def ex81 : Datum :=
+  { id := "colehermon2008_ex81"
+    source := ⟨"cole-hermon-2008", "(81)"⟩
+    reportedIn := none
+    language := "bata1289"
+    primaryText := "Dakdanak-on mang-atuk biang-i."
+    glossedTokens := [("Dakdanak-on", "child-this"), ("mang-atuk", "act-hit"), ("biang-i", "dog-def")]
+    context := "Active clause in SVO order."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "order"), ("voice", "active"), ("order", "SVO"), ("verb", "atuk"), ("agent", "dakdanak-on"), ("patient", "biang-i")] }
 
 def ex85 : Datum :=
   { id := "colehermon2008_ex85"
@@ -275,6 +392,6 @@ def ex96 : Datum :=
     readings := []
     paperFeatures := [("construction", "binding"), ("voice", "passive"), ("antecedent", "agent"), ("reflexive", "patient")] }
 
-def all : List Datum := [ex7a, ex7b, ex8a, ex8b, ex9, ex10, ex17, ex21, ex37, ex43, ex44, ex62, ex66, ex67, ex68, ex85, ex87, ex88, ex95, ex96]
+def all : List Datum := [ex3a, ex3b, ex4a, ex4b, ex7a, ex7b, ex8a, ex8b, ex9, ex10, ex13, ex14, ex17, ex21, ex37, ex43, ex44, ex49, ex56, ex62, ex66, ex67, ex68, ex81, ex85, ex87, ex88, ex95, ex96]
 
 end ColeHermon2008.Examples
