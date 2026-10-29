@@ -127,10 +127,11 @@ theorem logit_grammar_of_pair [DecidableEq Y] (hpos : ∀ v, 0 < H v)
 end Grammar
 
 /-- A harmony predicts HZ's generalization (24) when, on every square of forms with the two
-candidates YES and NO whose rows and columns are independent relative to the constraints, the
-logits of YES differ by the same amount along both rows. -/
+candidates YES and NO whose rows and columns are independent relative to the constraints on
+those two candidates, the logits of YES differ by the same amount along both rows. -/
 def PredictsHZ (H : (Fin n → ℕ) → ℝ) : Prop :=
-  ∀ (X : Type) (sq : Square X) (con : ConstraintSet (X × Bool) (Fin n)), sq.Independent con →
+  ∀ (X : Type) (sq : Square X) (con : ConstraintSet (X × Bool) (Fin n)),
+    sq.Independent con true false →
     sq.interaction (fun x ↦ logit ((grammar H con x).real {true})) = 0
 
 /-- A harmony is separable (30) when it is a product of powers of positive unary functions, each
@@ -153,20 +154,19 @@ theorem Separable.pos (hH : Separable H) (v : Fin n → ℕ) : 0 < H v := by
 /-! ### Separable harmonies predict the generalization (§5.4) -/
 
 theorem Separable.interaction_logOdds_eq_zero (hH : Separable H) {X Y : Type*} {sq : Square X}
-    {con : ConstraintSet (X × Y) (Fin n)} (hind : sq.Independent con) (a b : Y) :
+    {con : ConstraintSet (X × Y) (Fin n)} {a b : Y} (hind : sq.Independent con a b) :
     sq.interaction (logOdds H con a b) = 0 := by
   obtain ⟨g, hg, hgH⟩ := separable_iff_exists_prod.1 hH
-  convert hind.interaction_sum_eq_zero fun k v ↦ log (g k (v a)) - log (g k (v b)) using 2
+  convert hind.interaction_sum_eq_zero fun k v ↦ log (g k v.1) - log (g k v.2) using 2
   ext x
   rw [logOdds, log_div (hH.pos _).ne' (hH.pos _).ne', hgH, hgH,
     log_prod fun k _ ↦ (hg k _).ne', log_prod fun k _ ↦ (hg k _).ne', ← sum_sub_distrib]
-  rfl
 
 -- §5.4
 theorem Separable.predictsHZ (hH : Separable H) : PredictsHZ H := by
   intro X sq con hind
   simp_rw [logit_grammar_of_pair hH.pos con _ (a := true) (b := false) (by decide) (by decide)]
-  exact hH.interaction_logOdds_eq_zero hind true false
+  exact hH.interaction_logOdds_eq_zero hind
 
 /-! ### Only separable harmonies predict the generalization (§5.5) -/
 
@@ -182,13 +182,11 @@ private def witnessSquare : Square (Bool × Bool) :=
   ⟨(true, true), (true, false), (false, true), (false, false)⟩
 
 private theorem witnessSquare_independent (u : Fin n → ℕ) (k : Fin n) (c : ℕ) :
-    witnessSquare.Independent (witness u k c) := by
+    witnessSquare.Independent (witness u k c) true false := by
   intro j
   by_cases hj : j = k
-  · exact .inr ⟨funext fun y ↦ by simp [witness, witnessSquare, hj],
-      funext fun y ↦ by simp [witness, witnessSquare, hj]⟩
-  · exact .inl ⟨funext fun y ↦ by simp [witness, witnessSquare, hj],
-      funext fun y ↦ by simp [witness, witnessSquare, hj]⟩
+  · exact .inr ⟨by simp [witness, witnessSquare, hj], by simp [witness, witnessSquare, hj]⟩
+  · exact .inl ⟨by simp [witness, witnessSquare, hj], by simp [witness, witnessSquare, hj]⟩
 
 theorem PredictsHZ.mul_update (hH : PredictsHZ H) (hpos : ∀ v, 0 < H v) (h0 : H 0 = 1)
     (u : Fin n → ℕ) (k : Fin n) (c : ℕ) :
@@ -307,7 +305,7 @@ def tagalogConstraints : ConstraintSet Candidate (Fin 6) :=
   ![nasSub, starNC, starRootVelar, starRootCorVel, unif .mangOther, unif .mangRed]
 
 -- §2.3, Figure 3
-theorem tagalog_independent : tagalogSquare.Independent tagalogConstraints := by
+theorem tagalog_independent : tagalogSquare.Independent tagalogConstraints .yes .no := by
   intro k
   fin_cases k <;> first | exact .inl ⟨rfl, rfl⟩ | exact .inr ⟨rfl, rfl⟩
 
@@ -357,7 +355,7 @@ theorem inverseHarmony_hz_tagalog_iff {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k
 theorem not_separable_inverseHarmony {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k) (h45 : w 4 ≠ w 5)
     (h2 : w 2 ≠ 0) : ¬ Separable (inverseHarmony w) := fun hH ↦ by
   have := (inverseHarmony_hz_tagalog_iff hw).1 <|
-    hH.interaction_logOdds_eq_zero tagalog_independent .yes .no
+    hH.interaction_logOdds_eq_zero tagalog_independent
   tauto
 
 end Magri2025
