@@ -365,7 +365,9 @@ def heat : Verb where
   levinClasses := {LevinClass.cooking, .otherChangeOfState}
 
 /-- "bend" — Levin 45.2 Bend verbs. Causative/inchoative alternation.
-    Degree achievement: closed scale (straight → bent, has maximal endpoint). -/
+    Degree achievement on the scale of *bent*, the negative pole of straightness. That scale has
+    a least degree but no greatest, *slightly bent* against *??perfectly bent* ([kennedy-2007]
+    (63) and p. 37), so the verb is atelic by default. -/
 def bend : Verb where
   morphs := [.root "bend"]
   past := "bent"
@@ -373,8 +375,9 @@ def bend : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 2])]
-  vendlerClass := some .accomplishment
-  scaleDimension := some .curvature
+  vendlerClass := some .activity
+  scaleDimension := some .straightness
+  scalePolarity := .negative
   levinClasses := {LevinClass.assumePosition, .bend, .knead, .spatialConfiguration}
 
 /-- "boil" — Levin 45.3 Cooking verbs. Causative/inchoative alternation.

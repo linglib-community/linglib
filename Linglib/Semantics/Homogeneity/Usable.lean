@@ -9,10 +9,11 @@ public import Linglib.Semantics.Questions.Partition.Basic
 Križ evaluates a trivalent proposition `W → SignType` relative to an issue, a partition
 `Setoid W` of the worlds. A proposition is `sufficientlyTrue` at a world when the world's cell
 contains a world where it is true, `addressesIssue` when no cell contains both a true and a false
-world, and `usable` at a world when it is not false there, is sufficiently true there, and
-addresses the issue. Non-maximal readings are usability at gap-worlds (`gap_enables_nonmax`), gap
-removal blocks them (`metaAssert_prevents_nonmax`), and tolerated exceptions cannot be mentioned
-(`exception_unaddressable`). Strong relevance, after Križ and Spector, is the bivalent counterpart
+world, and `usable` at a world when it is sufficiently true there and addresses the issue. A
+usable proposition is not false (`usable.ne_neg_one`), and one used where it is not literally
+true is in its extension gap there, so non-maximal readings are usability at gap-worlds
+(`usable.eq_zero_of_ne_one`). Gap removal blocks them (`metaAssert_prevents_nonmax`), and
+tolerated exceptions cannot be mentioned (`exception_unaddressable`). Strong relevance, after Križ and Spector, is the bivalent counterpart
 of addressing, holding when the issue decides the proposition (`Setoid.Decides`).
 
 ## Main definitions
@@ -57,32 +58,37 @@ instance addressesIssue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q
     (p : W → SignType) : Decidable (addressesIssue q p) :=
   inferInstanceAs (Decidable (¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = 1 ∧ p w₂ = -1))
 
-/-- `p` may be used at `w` when it is not false at `w`, sufficiently true at `w`, and addresses
-the issue. -/
+/-- `p` may be used at `w` when it is sufficiently true at `w` and addresses the issue. -/
 def usable (q : Setoid W) (p : W → SignType) (w : W) : Prop :=
-  p w ≠ -1 ∧ sufficientlyTrue q p w ∧ addressesIssue q p
+  sufficientlyTrue q p w ∧ addressesIssue q p
 
 instance usable.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q] (p : W → SignType)
     (w : W) : Decidable (usable q p w) :=
-  inferInstanceAs
-    (Decidable (p w ≠ -1 ∧ sufficientlyTrue q p w ∧ addressesIssue q p))
+  inferInstanceAs (Decidable (sufficientlyTrue q p w ∧ addressesIssue q p))
+
+/-- A usable proposition is not false: a true world in the cell of a false one would straddle the
+true/false boundary ([kriz-2016] §3.4). -/
+theorem usable.ne_neg_one {q : Setoid W} {p : W → SignType} {w : W} (h : usable q p w) :
+    p w ≠ -1 := fun hf ↦
+  let ⟨⟨w', hq, ht⟩, hAddr⟩ := h
+  hAddr ⟨w', w, q.symm' hq, ht, hf⟩
 
 theorem usable_iff_of_isBivalent {p : W → SignType} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (w : W) :
     usable q p w ↔ p w = 1 ∧ addressesIssue q p := by
   constructor
-  · intro ⟨hNotFalse, _, hAddr⟩
-    exact ⟨(hbiv w).resolve_right (absurd · hNotFalse), hAddr⟩
+  · intro h
+    exact ⟨(hbiv w).resolve_right h.ne_neg_one, h.2⟩
   · intro ⟨hTrue, hAddr⟩
-    exact ⟨by simp [hTrue], literal_imp_sufficient q p w hTrue, hAddr⟩
+    exact ⟨literal_imp_sufficient q p w hTrue, hAddr⟩
 
 /-! ### Usability at gap-worlds -/
 
-theorem gap_enables_nonmax (q : Setoid W) (p : W → SignType) (w w' : W)
-    (hGap : p w = 0) (hEquiv : q w w') (hTrue : p w' = 1)
-    (hAddr : addressesIssue q p) :
-    usable q p w :=
-  ⟨by simp [hGap], ⟨w', hEquiv, hTrue⟩, hAddr⟩
+/-- A proposition used where it is not literally true is in its extension gap there, so a
+proposition without gaps can be used only where it is true ([kriz-2016] §3.4). -/
+theorem usable.eq_zero_of_ne_one {q : Setoid W} {p : W → SignType} {w : W} (h : usable q p w)
+    (hne : p w ≠ 1) : p w = 0 :=
+  ((SignType.trichotomy (p w)).resolve_left h.ne_neg_one).resolve_right hne
 
 theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → SignType) (w : W)
     (h : usable q ((fun v ↦ SignType.ofProp (v = 1)) ∘ p) w) : SignType.ofProp (p w = 1) = 1 :=
@@ -94,7 +100,7 @@ theorem exception_unaddressable (q : Setoid W) (p e : W → SignType) (w : W)
     (hUse : usable q p w) (hEw : e w = 1)
     (hEfalse : ∀ w', p w' = 1 → e w' = -1) :
     ¬ addressesIssue q e := by
-  obtain ⟨-, ⟨w', hEq, hTrue⟩, -⟩ := hUse
+  obtain ⟨⟨w', hEq, hTrue⟩, -⟩ := hUse
   exact fun hAddr ↦ hAddr ⟨w, w', hEq, hEw, hEfalse w' hTrue⟩
 
 /-! ### Communicated content -/

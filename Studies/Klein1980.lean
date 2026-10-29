@@ -6,21 +6,34 @@ public import Studies.Kamp1975
 /-!
 # Klein (1980): A Semantics for Positive and Comparative Adjectives
 
-Klein gives gradable adjectives a semantics without degrees. An adjective is a predicate whose
-extension is fixed relative to a comparison class, the comparative is derived from the positive
-by quantifying over comparison classes, and degrees, where they are wanted, are recovered as
-classes of entities no comparison class tells apart. The delineation vocabulary of
-`Degree.Delineation` supplies comparison classes, the induced ordering, monotonicity and the
-modifiers *very* and *fairly*; this file states the paper's claims about them. A nonlinear
-adjective such as *clever* switches criterion with the comparison class, so its ordering ranks
-two entities each above the other, which monotonicity forbids. Klein's *as … as* is Kamp's
-*at least as* over all completions.
+Klein gives gradable adjectives a semantics without degrees. Relative to a comparison class an
+adjective is a partial predicate, with a positive extension, a negative extension and a gap of
+borderline cases between them; the comparative is derived from the positive by quantifying over
+comparison classes, and degrees, where they are wanted, are recovered as classes of entities no
+comparison class tells apart. The delineation vocabulary of `Degree.Delineation` supplies the
+extensions, the induced ordering, Klein's two constraints and the modifiers *very* and *fairly*;
+this file states the paper's claims about them.
+
+Under the constraints the ordering of a comparison class is a strict partial order, and where the
+adjective is complete, nondistinct members being equivalent, it is a [linear ordering up to
+equivalence](##linear_ordering). *Tall*, read off a measure, has no gaps, so nothing is more
+determinate than it and it is [linear](##tall_linear). *Clever* is not: when mathematical skill is
+relevant but no finer criterion is fixed, Jude and Mona are nondistinct, yet a context that judges
+mental arithmetic ranks Jude above Mona and one that judges proof theory ranks Mona above Jude, so
+the two are incommensurable rather than equivalent and *clever* is [not
+linear](##clever_not_linear), though each context meets the consistency constraint and none ranks
+a pair both ways. Klein's *as … as* is Kamp's *at least as* over all completions.
 
 ## Implementation notes
 
 * The measure-induced delineation, its monotonicity and its ordering-to-degree equivalence are
   substrate (`Delineation.ofMeasure`, `Delineation.outranks_ofMeasure_iff`); the study states
   what the paper adds on top of them.
+* The contexts of Klein's Figure 3 are modelled for Jude and Mona alone: `clever` is the context
+  `c2`, which leaves both undecided in every class, and `clever21` and `clever22` are its
+  refinements `c21` and `c22`, each deciding a class that contains both.
+* Klein derives the strict partial order from both of his constraints; the consistency constraint
+  (37) suffices (`Delineation.IsMonotoneOn.isStrictOrder_outranks`).
 
 ## References
 
@@ -32,32 +45,90 @@ two entities each above the other, which monotonicity forbids. Klein's *as … a
 
 namespace Klein1980
 
-open Degree
+open Degree Delineation
 
-/-! ### Linear and nonlinear adjectives (§2.2, §3.3)
+variable {E D : Type*} [LinearOrder D]
 
-*Tall* is linear, a single criterion and a monotone delineation, while *clever* can produce
-cycles: which of two entities counts as clever depends on which criterion the comparison class
-makes salient. -/
+/-! ### The ordering within a comparison class (§3.3) -/
+
+/-- Klein's theorem (p. 25): an adjective that meets his constraints (36) and (37) at the class `C`
+and is complete there orders `C` strictly, any two members being equivalent or ranked one way or
+the other, a linear ordering up to equivalence. -/
+theorem linear_ordering {d : Delineation E} {𝒟 : Set (Delineation E)} {C : Set E}
+    (hm : d.IsMonotoneOn (𝒫 C)) (hs : d.IsNontrivialOn C) (hc : d.IsComplete 𝒟 C) :
+    IsStrictOrder E (d.Outranks C) ∧
+      ∀ u ∈ C, ∀ v ∈ C, d.Equivalent 𝒟 C u v ∨ d.Outranks C u v ∨ d.Outranks C v u :=
+  ⟨hm.isStrictOrder_outranks, fun _ hu _ hv ↦ equivalent_or_outranks_or_outranks hc hs hu hv⟩
+
+/-- *Tall*, read off a height measure, is linear: its delineation has no gaps, so nothing is more
+determinate than it. -/
+theorem tall_linear (μ : E → D) : IsLinear {ofMeasure μ} := by
+  refine isLinear_of_forall_isGapless ?_
+  rintro _ rfl
+  exact isGapless_ofMeasure μ
+
+/-! ### A nonlinear adjective (§3.3, Figure 3) -/
 
 /-- Two entities, Jude and Mona. -/
 inductive Clever2
   | j
   | m
+  deriving DecidableEq
 
-/-- This delineation for *clever* applies two conflicting criteria. Jude is clever when Mona is
-absent from the comparison class, Mona when Jude is, and neither when both are present. -/
-def cleverDel : Delineation Clever2 :=
-  ⟨fun C ↦ {x | match x with | .j => Clever2.m ∉ C | .m => Clever2.j ∉ C}⟩
+/-- *Clever* at Klein's context `c2`, where mathematical skill is relevant but no finer criterion
+is fixed, leaves Jude and Mona undecided in every class. -/
+def clever : Delineation Clever2 :=
+  ⟨fun _ ↦ ∅, fun _ ↦ ∅, fun _ ↦ Set.disjoint_empty _⟩
 
-theorem clever_nonlinear : cleverDel.IsNonlinear :=
-  ⟨{Clever2.j, Clever2.m}, Clever2.j, Clever2.m,
-    ⟨{Clever2.j}, by simp, by simp [cleverDel], by simp [cleverDel]⟩,
-    ⟨{Clever2.m}, by simp, by simp [cleverDel], by simp [cleverDel]⟩⟩
+/-- *Clever* at `c21`, which judges mental arithmetic: a class containing Jude and Mona puts Jude
+in the positive extension and Mona in the negative one. -/
+def clever21 : Delineation Clever2 where
+  pos X := {x | x = .j ∧ .j ∈ X ∧ .m ∈ X}
+  neg X := {x | x = .m ∧ .j ∈ X ∧ .m ∈ X}
+  disjoint_pos_neg _ := Set.disjoint_left.2 fun _ hj hm ↦ absurd (hj.1.symm.trans hm.1) (by decide)
 
-/-- The clever delineation is not monotone, so no measure function induces it. -/
-theorem clever_not_monotone : ¬ cleverDel.IsMonotone :=
-  fun h ↦ h.not_isNonlinear clever_nonlinear
+/-- *Clever* at `c22`, which judges proof theory: a class containing Jude and Mona puts Mona in
+the positive extension and Jude in the negative one. -/
+def clever22 : Delineation Clever2 where
+  pos X := {x | x = .m ∧ .j ∈ X ∧ .m ∈ X}
+  neg X := {x | x = .j ∧ .j ∈ X ∧ .m ∈ X}
+  disjoint_pos_neg _ := Set.disjoint_left.2 fun _ hm hj ↦ absurd (hm.1.symm.trans hj.1) (by decide)
+
+/-- The contexts of Figure 3 for Jude and Mona: `c2` and its two refinements. -/
+def cleverContexts : Set (Delineation Clever2) := {clever, clever21, clever22}
+
+theorem clever_le_clever21 : clever ≤ clever21 :=
+  le_def.2 fun _ ↦ ⟨Set.empty_subset _, Set.empty_subset _⟩
+
+theorem clever_le_clever22 : clever ≤ clever22 :=
+  le_def.2 fun _ ↦ ⟨Set.empty_subset _, Set.empty_subset _⟩
+
+-- At `c2` neither (34) nor (35) is true: Jude and Mona are nondistinct.
+theorem nondistinct_clever : clever.Nondistinct Set.univ .j .m :=
+  fun _ _ _ _ ↦ ⟨Iff.rfl, Iff.rfl⟩
+
+-- (34) is true at `c21` and (35) at `c22`.
+theorem outranks_clever21 : clever21.Outranks Set.univ .j .m :=
+  ⟨Set.univ, subset_rfl, ⟨rfl, trivial, trivial⟩, ⟨rfl, trivial, trivial⟩⟩
+
+theorem outranks_clever22 : clever22.Outranks Set.univ .m .j :=
+  ⟨Set.univ, subset_rfl, ⟨rfl, trivial, trivial⟩, ⟨rfl, trivial, trivial⟩⟩
+
+theorem isMonotone_clever21 : clever21.IsMonotone := by
+  rintro - - - - a b ⟨rfl, -⟩ ⟨rfl, -⟩
+  exact ⟨fun h ↦ absurd h.1 (by decide), fun h ↦ absurd h.1 (by decide)⟩
+
+theorem isMonotone_clever22 : clever22.IsMonotone := by
+  rintro - - - - a b ⟨rfl, -⟩ ⟨rfl, -⟩
+  exact ⟨fun h ↦ absurd h.1 (by decide), fun h ↦ absurd h.1 (by decide)⟩
+
+/-- *Clever* is not linear: Jude and Mona are nondistinct at `c2`, but its refinement `c21` tells
+them apart, so they are incommensurable rather than equivalent (§3.3). -/
+theorem clever_not_linear : ¬ IsLinear cleverContexts := fun h ↦ by
+  have := h clever (Set.mem_insert _ _) Set.univ .j trivial .m trivial nondistinct_clever clever21
+    (Set.mem_insert_of_mem _ (Set.mem_insert _ _)) clever_le_clever21 Set.univ subset_rfl trivial
+    trivial
+  exact absurd (this.1.1 ⟨rfl, trivial, trivial⟩).1 (by decide)
 
 /-! ### *Very* narrows the comparison class (eq. 42)
 
@@ -65,8 +136,6 @@ theorem clever_not_monotone : ¬ cleverDel.IsMonotone :=
 `Delineation.very_subset` needs Klein's domain restriction, that a delineation classifies only
 members of its class; measure-induced delineations lack it, yet *very A* entails *A* for them by
 transitivity of the measure order, while being tall does not make one very tall. -/
-
-variable {E D : Type*} [LinearOrder D]
 
 theorem very_ofMeasure_subset (μ : E → D) (C : Set E) :
     (Delineation.ofMeasure μ).very C ⊆ Delineation.ofMeasure μ C :=
@@ -96,41 +165,12 @@ theorem kleinDegree_ofMeasure (μ : E → D) {C : Set E} {a b : E} (ha : a ∈ C
     b ∈ kleinDegree (Delineation.ofMeasure μ) C a ↔ μ a = μ b := by
   have hab : ({a, b} : Set E) ⊆ C := Set.insert_subset ha (Set.singleton_subset_iff.2 hb)
   refine ⟨fun h ↦ by_contra fun hne ↦ ?_, fun heq X _ _ _ ↦ by simp [heq]⟩
-  have key := h {a, b} hab (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl)
+  have key := (h {a, b} hab (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl)).1
   simp only [Delineation.mem_ofMeasure, Set.mem_insert_iff, Set.mem_singleton_iff,
     exists_eq_or_imp, exists_eq_left, lt_irrefl, false_or, or_false] at key
   rcases lt_or_gt_of_ne hne with hlt | hgt
   · exact lt_asymm (key.2 hlt) hlt
   · exact lt_asymm hgt (key.1 hgt)
-
-/-! ### Non-triviality (§5) -/
-
-/-- A delineation is non-trivial when every comparison class with at least two members contains
-a member in the extension and a member outside it. -/
-def IsNontrivial (d : Delineation E) : Prop :=
-  ∀ C : Set E, (∃ a ∈ C, ∃ b ∈ C, a ≠ b) → ∃ u ∈ C, ∃ v ∈ C, u ∈ d C ∧ v ∉ d C
-
-/-! ### The ordering is a strict weak order (§6)
-
-Under monotonicity the context-relative ordering is irreflexive, transitive and has transitive
-incomparability, the ordering structure a degree scale would give without degrees in the
-ontology. -/
-
-/-- Under monotonicity the ordering is a strict weak order. -/
-theorem isStrictWeakOrder_outranks {d : Delineation E} (hmono : d.IsMonotone) (C : Set E) :
-    IsStrictWeakOrder E (d.Outranks C) where
-  irrefl _ := fun ⟨_, _, h, h'⟩ ↦ h' h
-  trans _ _ _ := hmono.outranks_trans
-  incomp_trans _ b _ := fun ⟨hab, hba⟩ ⟨hbc, hcb⟩ ↦
-    ⟨fun hac ↦ (hac.cotrans b).elim hab hbc, fun hca ↦ (hca.cotrans b).elim hcb hba⟩
-
-theorem outranks_or_outranks_or_nondistinct (d : Delineation E) (C : Set E) (u v : E) :
-    d.Outranks C u v ∨ d.Outranks C v u ∨ d.Nondistinct C u v := by
-  by_cases h1 : d.Outranks C u v
-  · exact .inl h1
-  · by_cases h2 : d.Outranks C v u
-    · exact .inr (.inl h2)
-    · exact .inr (.inr (Delineation.nondistinct_of_not_outranks h1 h2))
 
 /-! ### *As … as* and Kamp's *at least as* (§5.3)
 

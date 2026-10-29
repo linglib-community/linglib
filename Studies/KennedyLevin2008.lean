@@ -222,13 +222,15 @@ theorem da_vendler_classes_agree :
   decide
 
 /-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
-with closed scales, and *long*, *wide*, *cool* and *warm* with open ones. -/
+with scales closed above, *bent* with one closed only below, and *long*, *wide*, *cool* and
+*warm* with open ones. -/
 def pairs : List (GradableAdjective × Verb) :=
   [(English.Adjectives.clean, English.Verbs.clean.toVerb),
    (English.Adjectives.dry, English.Verbs.dry.toVerb),
    (English.Adjectives.straight, English.Verbs.straighten.toVerb),
    (English.Adjectives.flat, English.Verbs.flatten.toVerb),
    (English.Adjectives.open_, English.Verbs.open_.toVerb),
+   (English.Adjectives.bent, English.Verbs.bend.toVerb),
    (English.Adjectives.long, English.Verbs.lengthen.toVerb),
    (English.Adjectives.wide, English.Verbs.widen.toVerb),
    (English.Adjectives.cool, English.Verbs.cool.toVerb),
