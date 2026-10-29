@@ -50,7 +50,7 @@ where the Limit Assumption holds.
 * [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
 * [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
 * [S. Kraus, D. Lehmann and M. Magidor, *Nonmonotonic Reasoning, Preferential Models and
-  Cumulative Logics* (1990)][kraus-magidor-1990]
+  Cumulative Logics* (1990)][kraus-lehmann-magidor-1990]
 * [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
   (1992)][lehmann-magidor-1992]
 * [J. P. Burgess, *Quick Completeness Proofs for Some Logics of Conditionals* (1981)][burgess-1981]
@@ -440,12 +440,13 @@ end Universal
 /-! ### The logic of the conditional at a world
 
 At `i` the variably strict conditional relates each antecedent to the necessities over its
-accessible worlds, so it satisfies the rules of system P ([kraus-magidor-1990]) on every preorder,
-with no Limit Assumption ([burgess-1981]), and rational monotonicity ([lehmann-magidor-1992]) on
-every total one, as [lewis-1973b] requires. The conditional of the closest worlds is the relation
-of the minimal worlds, which has these rules when the preorder is well-founded but not in general
-(`Nonmonotonic.exists_not_isPreferential_minimals`). On a preorder that is not total, such as an
-ordering source can induce, rational monotonicity can fail (`exists_not_isRational_closestImp`). -/
+accessible worlds, so it satisfies the rules of system P ([kraus-lehmann-magidor-1990]) on every
+preorder, with no Limit Assumption ([burgess-1981]), and rational monotonicity
+([lehmann-magidor-1992]) on every total one, as [lewis-1973b] requires. The conditional of the
+closest worlds is the relation of the minimal worlds, which has these rules when the preorder is
+well-founded but not in general (`Nonmonotonic.exists_not_isPreferential_minimals`). On a preorder
+that is not total, such as an ordering source can induce, rational monotonicity can fail
+(`exists_not_isRational_closestImp`). -/
 
 section Logic
 

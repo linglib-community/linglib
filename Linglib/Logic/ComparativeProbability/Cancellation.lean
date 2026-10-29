@@ -14,7 +14,10 @@ comparison holds reversed; it characterizes representability by a single additiv
 `Scott.lean` proves Scott's theorem in the sign-vector form of the condition and shows the two
 forms agree (`ComparativeProbability.cancellation_iff_finiteCancellation`). This file holds the
 balanced-sequence form and its soundness: the order a finite measure induces, and so every
-representable qualitative probability order, satisfies finite cancellation.
+representable qualitative probability order, satisfies finite cancellation. Conversely, finite
+cancellation gives de Finetti's axioms to any relation that is total, puts every set at least as
+high as `∅` and puts the whole space strictly above `∅`: transitivity, monotonicity and
+qualitative additivity are each one instance of it.
 
 ## Main definitions
 
@@ -23,6 +26,7 @@ representable qualitative probability order, satisfies finite cancellation.
 ## Main statements
 
 * `MeasureTheory.Measure.finiteCancellation`, `Representable.finiteCancellation`: soundness.
+* `FiniteCancellation.isQualitativeProbability`: finite cancellation gives de Finetti's axioms.
 
 ## References
 
@@ -59,6 +63,30 @@ def FiniteCancellation (ge : Set W → Set W → Prop) : Prop :=
   ∀ (prem : List (Set W × Set W)) (X Y : Set W),
     BalancedSeqs (X :: prem.map Prod.fst) (Y :: prem.map Prod.snd) →
     (∀ p ∈ prem, ge p.1 p.2) → ge Y X
+
+/-! ### De Finetti's axioms from finite cancellation -/
+
+/-- Finite cancellation gives de Finetti's axioms to a relation that is total, puts every set at
+least as high as `∅`, and does not put `∅` as high as the whole space. These are Scott's
+conditions; [scott-1964] (p. 247) derives additivity from totality and cancellation. -/
+theorem FiniteCancellation.isQualitativeProbability {ge : Set W → Set W → Prop}
+    (h : FiniteCancellation ge) (htot : ∀ A B, ge A B ∨ ge B A) (hnn : ∀ A, ge A ∅)
+    (hnt : ¬ ge ∅ Set.univ) : IsQualitativeProbability ge where
+  refl A := (htot A A).elim id id
+  trans A B C hab hbc := h [(A, B), (B, C)] C A (fun s ↦ by
+    simp only [List.map_cons, List.map_nil, seqCount_cons, seqCount_nil]; omega)
+    (by simp [hab, hbc])
+  total := htot
+  mono A B hAB := h [(B \ A, ∅)] A B (fun s ↦ by
+    by_cases hA : s ∈ A
+    · simp [hA, hAB hA]
+    · by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hnn])
+  qadd A B :=
+    ⟨fun hab ↦ h [(A, B)] (B \ A) (A \ B) (fun s ↦ by
+        by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hab]),
+      fun hd ↦ h [(A \ B, B \ A)] B A (fun s ↦ by
+        by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hd])⟩
+  bot_not_ge_top := hnt
 
 /-! ### Measures satisfy finite cancellation -/
 
