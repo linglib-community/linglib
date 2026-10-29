@@ -48,7 +48,7 @@ recursion.
 
 ## References
 
-* [zaslavsky-hu-levy-2020]
+* [zaslavsky-hu-levy-2021]
 * [frank-goodman-2012]
 -/
 

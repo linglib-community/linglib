@@ -27,7 +27,8 @@ An encoding of the emerging concepts is a speaker who names each concept by one 
 objective is the negative expected utility at cost `β • l` (`objective_eq_neg_expectedUtility`).
 With need held fixed the objective decomposes into an item-level objective (eq. 5,
 `objective_eq_sum`), so an encoding that is optimal concept by concept is optimal overall
-(`objective_le_of_forall`) and, for a positive parameter, on the Pareto frontier (`not_costs_lt`).
+(`objective_le_of_forall`) and, for a positive parameter, on the Pareto frontier
+(`minimalFor_costs`).
 Along the frontier the expected length of the optimal encodings falls and their information loss
 rises as the parameter grows (`antitone_expectedLength`, `monotoneOn_expectedSurprisal`), and the
 efficiency loss of an encoding (eq. 8, `efficiencyLoss`) vanishes exactly when the encoding is
@@ -44,10 +45,17 @@ Kullback–Leibler divergence of the paper is the expected surprisal. Need is a 
 concepts and the production policy a deterministic encoding, the case under which the paper
 computes its frontier. The paper takes optima for every `β ≥ 0` to lie on the Pareto frontier; at
 `β = 0` an optimum may be dominated by an encoding of equal information loss and shorter forms, so
-`not_costs_lt` takes `β > 0`. The corpus results, the fitted sensitivity parameter, the
+`minimalFor_costs` takes `β > 0`. The corpus results, the fitted sensitivity parameter, the
 sentence-encoder prototypes, and the baseline encodings are not restated; the attested items of
 the paper's first table and the near-synonyms of its second are recorded as examples. Surprisal
 is measured in nats; bits differ by the factor `log 2`, which rescales the tradeoff parameter.
+
+## Errata
+
+* Eq. 8 is said to follow [zaslavsky-kemp-regier-tishby-2018], but it is a different measure.
+  There the deviation from the optimal objective is taken at the parameter that minimizes it and
+  divided by that parameter (`ZaslavskyKempRegierTishby2018.efficiencyLoss`); eq. 8 takes the
+  least deviation itself, undivided (`efficiencyLoss`).
 
 ## References
 
@@ -154,10 +162,10 @@ theorem objective_le_of_forall {f g : C → W} (β : ℝ)
   exact sum_le_sum fun c _ ↦ mul_le_mul_of_nonneg_left (h c) measureReal_nonneg
 
 /-- Optimizing eq. 5 at a positive tradeoff parameter yields a point of the Pareto frontier. -/
-theorem not_costs_lt {f : C → W} {β : ℝ} (hβ : 0 < β)
-    (hf : ∀ c w, itemObjective l m β c (f c) ≤ itemObjective l m β c w) (g : C → W) :
-    ¬ costs need l m g < costs need l m f := fun h ↦
-  (strictMono_fst_add_mul_snd hβ h).not_ge (objective_le_of_forall need l m β fun c ↦ hf c (g c))
+theorem minimalFor_costs {f : C → W} {β : ℝ} (hβ : 0 < β)
+    (hf : ∀ c w, itemObjective l m β c (f c) ≤ itemObjective l m β c w) :
+    MinimalFor (fun _ ↦ True) (costs need l m) f :=
+  .of_fst_add_mul_snd_le hβ trivial fun g _ ↦ objective_le_of_forall need l m β fun c ↦ hf c (g c)
 
 /-- The efficiency loss of an encoding against the frontier `E` (eq. 8), its least excess
 objective over the optimal encoding across the tradeoff parameters in `B`. -/
