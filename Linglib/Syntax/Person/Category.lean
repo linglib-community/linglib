@@ -29,6 +29,9 @@ speakers and an audience with no one else, are the configurations `Category.Well
 
 * `Category.toConfig_bijective`: the categories are exactly the well-formed configurations.
 * `Category.ofPersonNumber_person`: every category is recovered from its person at some number.
+* `Category.exactCard_eq_card_of_mem_ofPersonNumber`,
+  `Category.disjoint_ofPersonNumber_minimal_augmented`: the categories a number realizes respect
+  its cardinality and the complementarity of minimal and augmented.
 
 ## References
 
@@ -168,19 +171,23 @@ theorem person_separates_clusivity :
 person value and the minimal/augmented coordinates give the minimal/augmented inclusives
 directly (Tagalog *kata* = `(firstInclusive, minimal)` ↦ `{speakerAddressee}`). A
 clusivity-unmarked non-singular first person is the syncretism
-`{speakerAddressee, speakerAddresseeOthers, speakerOthers}` (English *we*), general number is
-noncommittal between the singular and the group category (`(second, general)` ↦
-`{addressee, addresseeOthers}`), and a singular bearing clusivity realizes nothing. -/
+`{speakerAddressee, speakerAddresseeOthers, speakerOthers}` (English *we*), except that the
+speaker and the addressee alone are two and minimal, so the trial, the augmented and the unit
+augmented realize only the groups with others. General number is noncommittal between the
+singular and the group category (`(second, general)` ↦ `{addressee, addresseeOthers}`), and a
+singular or minimal bearing exclusivity realizes nothing. -/
 def ofPersonNumber : Person → Number → Finset Category
   | .first, .singular | .first, .minimal => {.speaker}
   | .first, .dual => {.speakerAddressee, .speakerOthers}
+  | .first, .trial | .first, .augmented | .first, .unitAugmented =>
+    {.speakerAddresseeOthers, .speakerOthers}
   | .first, .general => {.speaker, .speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
   | .first, _ => {.speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
   | .firstInclusive, .singular => ∅
   | .firstInclusive, .minimal | .firstInclusive, .dual => {.speakerAddressee}
   | .firstInclusive, .general => {.speakerAddressee, .speakerAddresseeOthers}
   | .firstInclusive, _ => {.speakerAddresseeOthers}
-  | .firstExclusive, .singular => ∅
+  | .firstExclusive, .singular | .firstExclusive, .minimal => ∅
   | .firstExclusive, _ => {.speakerOthers}
   | .second, .singular | .second, .minimal => {.addressee}
   | .second, .general => {.addressee, .addresseeOthers}
@@ -201,6 +208,19 @@ theorem ofPersonNumber_person (c : Category) : ∃ n, ofPersonNumber c.person n 
   · exact ⟨.plural, rfl⟩
   · exact ⟨.plural, rfl⟩
   · exact ⟨.plural, rfl⟩
+
+/-- A category without others has exactly its participants, so a number value of fixed
+cardinality realizes it only at that cardinality. -/
+theorem exactCard_eq_card_of_mem_ofPersonNumber :
+    ∀ p n c, c ∈ ofPersonNumber p n → c.otherCount = 0 →
+      n.exactCard = none ∨ n.exactCard = some c.card := by
+  decide
+
+/-- No category is both minimal and augmented, whatever the person values: `[−minimal]` is the
+complement of `[+minimal]`. -/
+theorem disjoint_ofPersonNumber_minimal_augmented (p q : Person) :
+    Disjoint (ofPersonNumber p .minimal) (ofPersonNumber q .augmented) := by
+  revert p q; decide
 
 /-! ### The person and number of a set of categories
 

@@ -84,8 +84,10 @@ theorem Realizes.eq {ψ : E} (hv : v.Coherent key)
 
 /-! ### Containment -/
 
-/-- A rule set is **antihomophonous** when distinct rules carry distinct exponents, the
-Antihomophony assumption of [bobaljik-2012] that sets accidental homophony aside. -/
+/-- A rule set is **antihomophonous** when distinct rules carry distinct exponents, setting
+accidental homophony aside. This generalizes [bobaljik-2012]'s Antihomophony, which bars only a
+contextual allomorph homophonous with the default; homophonous contextual allomorphs break
+contiguity from four nested contexts on. -/
 def Antihomophonous (v : RuleSet R) : Prop :=
   Set.InjOn exponent {r | r ∈ v}
 

@@ -13,8 +13,9 @@ patterns, since applicability is closed upward for rules of exponence and downwa
 entries, and each engine generates every contiguous pattern, so Elsewhere insertion from terminal
 rule sets and Superset spellout generate the same fully realized patterns. Over the
 three-grade degree hierarchy, terminal adjacent rule sets realize the comparative and the
-superlative alike, grounded rule sets exclude AAB, and a superlative root distinct from the
-comparative one needs a portmanteau.
+superlative alike, grounded rule sets exclude AAB, and so do rule sets meeting the markedness
+condition with adjacent contexts, and a superlative root distinct from the comparative one needs a
+portmanteau.
 
 ## Main definitions
 
@@ -26,8 +27,9 @@ comparative one needs a portmanteau.
 * `isContiguous_realize`, `isContiguous_spellout`: *ABA for both engines.
 * `isContiguous_iff_generable`, `isContiguous_iff_spelloutGenerable`,
   `spelloutGenerable_iff_generable`: both engines generate exactly the contiguous patterns.
-* `realize_const_of_terminal_adjacent`, `realize_const_of_grounded`, `exists_portmanteau_of_ne`:
-  the AAA/ABB plateau, *AAB, and the portmanteau prediction.
+* `realize_const_of_terminal_adjacent`, `realize_const_of_grounded`,
+  `realize_const_of_markedness`, `exists_portmanteau_of_ne`: the AAA/ABB plateau, *AAB under
+  grounding and under markedness with adjacency, and the portmanteau prediction.
 * `groundedGenerable_iff`: grounded rule sets generate exactly AAA, ABB and ABC.
 
 ## References
@@ -167,7 +169,8 @@ theorem isContiguous_iff_generable (p : Paradigm n F) :
 
 /-- Over the three-grade degree hierarchy, a grounded antihomophonous rule set that realizes
 the positive and the comparative alike and realizes the superlative realizes all three alike, so
-*good – gooder – best* is not generable. This is *AAB ([bobaljik-2012] ch. 5). -/
+*good – gooder – best* is not generable. Grounding alone does the work that [bobaljik-2012] ch. 5
+assigns to the markedness condition and adjacency together (`realize_const_of_markedness`). -/
 theorem realize_const_of_grounded {v : RuleSet (SpanRule 3 F)}
     (hv : v.Antihomophonous) (hG : Grounded v)
     (h01 : realize v 0 = realize v 1) (h2 : (realize v 2).isSome) :
@@ -188,6 +191,15 @@ theorem realize_const_of_grounded {v : RuleSet (SpanRule 3 F)}
   rw [hw₁τ] at h0
   exact absurd h0 (by decide)
 
+/-- *AAB ([bobaljik-2012] ch. 5): over the three-grade degree hierarchy, an antihomophonous rule
+set meeting the markedness condition with adjacent contexts that realizes the positive and the
+comparative alike and realizes the superlative realizes all three alike. -/
+theorem realize_const_of_markedness {v : RuleSet (SpanRule 3 F)}
+    (hv : v.Antihomophonous) (hM : Markedness v) (hA : Adjacent v)
+    (h01 : realize v 0 = realize v 1) (h2 : (realize v 2).isSome) :
+    realize v 1 = realize v 2 :=
+  realize_const_of_grounded hv ((markedness_iff_grounded hA).1 hM) h01 h2
+
 /-- Under adjacency, ABC requires a portmanteau, as with Latin *opt-* and Welsh *gor-*
 ([bobaljik-2012] §5.3.1). -/
 theorem exists_portmanteau_of_ne {v : RuleSet (SpanRule 3 F)} (hA : Adjacent v)
@@ -201,8 +213,8 @@ theorem exists_portmanteau_of_ne {v : RuleSet (SpanRule 3 F)} (hA : Adjacent v)
     exact realize_eq_of_threshold_le hw
       (threshold_le_one h0 (hA w (RuleSet.selectBy_mem hw))) (by decide)
 
-/-- A pattern is **groundedly generable** when some antihomophonous rule set satisfying
-[bobaljik-2012]'s markedness condition realizes it in full. -/
+/-- A pattern is **groundedly generable** when some grounded antihomophonous rule set realizes it
+in full. -/
 def GroundedGenerable (p : Paradigm n F) : Prop :=
   ∃ v : RuleSet (SpanRule n F), v.Antihomophonous ∧ Grounded v ∧ ∀ g, realize v g = some (p g)
 

@@ -24,11 +24,13 @@ public import Linglib.Data.Examples.Corbett1991
 
 The book's typology of gender. Gender is a property of nouns shown only in agreement, and a
 language's genders are the classes of nouns that take the same agreements. Nouns are assigned to
-them by rules reading their meaning or their form: the semantic rules take precedence, the
-formal rules, morphological or phonological, sort the semantic residue, and no system is formal
-alone (`Gender.AssignmentSystem`). Tamil, Russian, Swahili, Afar and Hausa instantiate the
-schema on their fragments, and the assignment systems of chapters 2 and 3 are surveyed by kind
-and by the semantic criteria their rules use (`survey`).
+them by ordered rules reading their meaning or their form (`Gender.AssignmentSystem`), and no
+system is formal alone. In Russian, Swahili and Qafar the semantic rules take precedence and the
+formal rules, morphological or phonological, sort the semantic residue; German diminutives are
+neuter whatever the sex of the referent, so there a formal rule comes before the semantic one
+([*Mädchen*](##German.not_semanticFirst)). Tamil, Russian, Swahili, Afar, Hausa and
+German instantiate the schema on their fragments, and the assignment systems of chapters 2 and
+3 are surveyed by kind and by the semantic criteria their rules use (`survey`).
 
 Counting the genders starts from agreement classes, the sets of nouns taking identical
 agreements in every form on every target, distinguishes the controller genders into which
@@ -191,14 +193,15 @@ def sem (n : Tamil.Gender.Noun) : Bool × Option ReferentGender := (n.rational, 
 /-- Table 2.1 makes male rationals masculine, female rationals feminine and the residue
 neuter. -/
 def system : Gender.AssignmentSystem (Bool × Option ReferentGender) Unit Value where
-  semantic
+  rules := [.semantic fun
     | (true, some .male) => some .masc
     | (true, some .female) => some .fem
-    | _ => none
-  formal _ := none
+    | _ => none]
   residue := .neut
 
 theorem isStrictSemantic_system : system.IsStrictSemantic := fun _ ↦ rfl
+
+theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨aaN, rfl⟩
 
 theorem assign_eq_gender : ∀ n ∈ allNouns, system.assign sem (fun _ ↦ ()) n = n.gender := by
   decide
@@ -237,12 +240,16 @@ def sem (n : Russian.Gender.Noun) : Option ReferentGender := n.referentGender
 declension I masculine, declensions II and III feminine and the rest neuter. The rules for
 acronyms and indeclinables (Figure 3.4) are not modelled. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) (Option Declension) Value where
-  semantic := Option.map Value.ofReferentGender
-  formal
+  rules := [.semantic (Option.map Value.ofReferentGender), .formal fun
     | some .I => some .masc
     | some .II | some .III => some .fem
-    | _ => none
+    | _ => none]
   residue := .neut
+
+-- p. 41
+theorem semanticFirst_system : system.SemanticFirst := ⟨[_], [_], rfl⟩
+
+theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨djadja, rfl⟩
 
 theorem assign_eq_gender :
     ∀ n ∈ allNouns, n ≠ put' → system.assign sem declension n = n.gender := by
@@ -267,18 +274,33 @@ open _root_.Swahili
 /-- The semantic rules read evaluative derivation and animacy. -/
 def sem (n : Swahili.Noun) : Option Evaluative × Animacy := (n.evaluative, n.animacy)
 
+/-- The augmentative rule sends augmentatives to 5/6. -/
+def augmentative : Option Evaluative × Animacy → Option _root_.Swahili.Gender
+  | (some .augmentative, _) => some .genderC
+  | _ => none
+
+/-- The diminutive rule sends diminutives to 7/8. -/
+def diminutive : Option Evaluative × Animacy → Option _root_.Swahili.Gender
+  | (some .diminutive, _) => some .genderD
+  | _ => none
+
+/-- The animacy rule sends animates to 1/2. -/
+def animate : Option Evaluative × Animacy → Option _root_.Swahili.Gender
+  | (_, a) => if .animate ≤ a then some .genderA else none
+
 /-- The rules of §3.1.2 send augmentatives to 5/6, diminutives to 7/8 and remaining animates
 to 1/2, then each morphological class to its own gender, over the fragment's five genders (the
 book's 11/10 and 15 are not among them). The formal rule is total, so the residue gender is
 never reached. -/
 def system : Gender.AssignmentSystem (Option Evaluative × Animacy) _root_.Swahili.Gender
     _root_.Swahili.Gender where
-  semantic
-    | (some .augmentative, _) => some .genderC
-    | (some .diminutive, _) => some .genderD
-    | (none, a) => if .animate ≤ a then some .genderA else none
-  formal := some
+  rules := [.semantic augmentative, .semantic diminutive, .semantic animate, .formal some]
   residue := .genderE
+
+-- p. 48
+theorem semanticFirst_system : system.SemanticFirst := ⟨[_, _, _], [_], rfl⟩
+
+theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨kitoto, rfl⟩
 
 theorem assign_eq_gender : ∀ n ∈ allNouns, system.assign sem Noun.morphClass n = n.gender := by
   decide
@@ -286,6 +308,15 @@ theorem assign_eq_gender : ∀ n ∈ allNouns, system.assign sem Noun.morphClass
 theorem genderA_semantic :
     ∀ n ∈ allNouns, system.assign sem Noun.morphClass n = .genderA →
       (system.semantic (sem n)).isSome := by
+  decide
+
+-- p. 47: the semantic rules apply in their order
+theorem animate_first_misassigns :
+    let A : Gender.AssignmentSystem _ _root_.Swahili.Gender _root_.Swahili.Gender :=
+      { system with rules := [.semantic animate, .semantic augmentative, .semantic diminutive,
+          .formal some] }
+    A.assign sem Noun.morphClass joka = .genderA ∧ joka.gender = .genderC ∧
+      A.assign sem Noun.morphClass kitoto = .genderA ∧ kitoto.gender = .genderD := by
   decide
 
 end Swahili
@@ -302,9 +333,14 @@ def sem (n : Afar.Gender.Noun) : Option ReferentGender := n.referentGender
 /-- The referents' sex first; then a citation form ending in an accented vowel is feminine,
 the rest masculine. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) Bool Value where
-  semantic := Option.map Value.ofReferentGender
-  formal acc := if acc then some .fem else none
+  rules := [.semantic (Option.map Value.ofReferentGender),
+    .formal fun acc ↦ if acc then some .fem else none]
   residue := .masc
+
+-- p. 52
+theorem semanticFirst_system : system.SemanticFirst := ⟨[_], [_], rfl⟩
+
+theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨abba, rfl⟩
 
 theorem assign_eq_gender :
     ∀ n ∈ allNouns, n ≠ doonik → system.assign sem Noun.finalAccentedVowel n = n.gender := by
@@ -326,9 +362,13 @@ def sem (n : Hausa.Noun) : Option ReferentGender := n.referentGender
 
 /-- The referents' sex first; then a noun in *-ā* is feminine, the rest masculine. -/
 def system : Gender.AssignmentSystem (Option ReferentGender) Bool Gender.Value where
-  semantic := Option.map Gender.Value.ofReferentGender
-  formal aa := if aa then some .feminine else none
+  rules := [.semantic (Option.map Gender.Value.ofReferentGender),
+    .formal fun aa ↦ if aa then some .feminine else none]
   residue := .masculine
+
+theorem semanticFirst_system : system.SemanticFirst := ⟨[_], [_], rfl⟩
+
+theorem semanticCore_nonempty : (system.semanticCore sem).Nonempty := ⟨uba, rfl⟩
 
 theorem assign_eq_gender :
     ∀ n ∈ allNouns, n ∉ [gida, kada] →
@@ -336,6 +376,40 @@ theorem assign_eq_gender :
   decide
 
 end Hausa
+
+/-! ### German: a formal rule before the semantic rule (§3.1.3) -/
+
+namespace German
+
+open _root_.German.Gender
+
+/-- The diminutive rule makes a noun in *-chen* or *-lein* neuter. -/
+def diminutive : Option Suffix → Option Value
+  | some .chen | some .lein => some .neut
+  | _ => none
+
+/-- German diminutives are neuter whatever the sex of the referent, *Männchen* 'little man'
+(p. 50) and *Mädchen* 'girl'. A system whose semantic rules make females feminine therefore
+assigns *Mädchen* its neuter only if its semantic rules do not come first. -/
+theorem not_semanticFirst {φ : Type*}
+    {A : Gender.AssignmentSystem (Option ReferentGender) φ Value} {form : GenderedNoun Value → φ}
+    (hfem : A.semantic (some .female) = some .fem)
+    (h : A.assign GenderedNoun.referentGender form maedchen = maedchen.gender) :
+    ¬ A.SemanticFirst := fun hA ↦
+  absurd ((Gender.AssignmentSystem.assign_of_semantic (n := maedchen) hA hfem).symm.trans h)
+    (by decide)
+
+/-- With the diminutive rule before the sex rule, a noun in *-chen* is neuter whatever the sex
+of its referents, and the semantic rule still makes females feminine. -/
+example : let A : Gender.AssignmentSystem (Option ReferentGender) (Option Suffix) Value :=
+      ⟨[.formal diminutive, .semantic (Option.map Value.ofReferentGender)], .masc⟩
+    let chen : GenderedNoun Value → Option Suffix := fun _ ↦ some .chen
+    A.semantic (some .female) = some .fem ∧
+      A.assign GenderedNoun.referentGender chen maedchen = maedchen.gender ∧
+      A.assign GenderedNoun.referentGender chen buebchen = buebchen.gender := by
+  decide
+
+end German
 
 /-! ### Controller and target genders (chapter 6) -/
 

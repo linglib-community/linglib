@@ -20,7 +20,8 @@ in opposite directions.
 
 * `SpanRule`, `SpanRule.threshold`: a rule of exponence and the least grade it applies at.
 * `SupersetRule`: a lexical entry storing an initial span.
-* `Terminal`, `Adjacent`, `Grounded`: well-formedness conditions on rule sets of span rules.
+* `Terminal`, `Adjacent`, `Markedness`, `Grounded`: well-formedness conditions on rule sets of
+  span rules.
 
 ## Main results
 
@@ -28,6 +29,8 @@ in opposite directions.
   higher.
 * `SupersetRule.applySet_subset_iff`: an entry is more specific than another iff its span is
   smaller, the nanosyntax principle Minimize Junk.
+* `markedness_iff_grounded`: under adjacency the markedness condition is the downward closure of
+  thresholds.
 
 ## References
 
@@ -111,13 +114,41 @@ instance (v : RuleSet (SpanRule n F)) : Decidable (Adjacent v) := by
   unfold Adjacent; infer_instance
 
 /-- [bobaljik-2012]'s markedness condition requires, for each context-sensitive rule involving a
-node, a context-free rule involving that node. Under the threshold encoding the rule set's
-thresholds are closed downward. -/
+node, a context-free rule involving that node. A rule involves the nodes `[0, k]` of its span,
+context-sensitively below its threshold, and a context-free rule for `[0, k]` is one of
+threshold `k`, so every threshold below a rule's and within its span is some rule's. -/
+def Markedness (v : RuleSet (SpanRule n F)) : Prop :=
+  ∀ it ∈ v, ∀ k : Fin n, k ≤ it.spans → k < it.threshold → ∃ jt ∈ v, jt.threshold = k
+
+instance (v : RuleSet (SpanRule n F)) : Decidable (Markedness v) := by
+  unfold Markedness; infer_instance
+
+/-- A rule set is grounded when its thresholds are closed downward. This strengthens the
+markedness condition to the thresholds between a rule's span and its context, which adjacency
+leaves empty. -/
 def Grounded (v : RuleSet (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ k : Fin n, k < it.threshold → ∃ jt ∈ v, jt.threshold = k
 
 instance (v : RuleSet (SpanRule n F)) : Decidable (Grounded v) := by
   unfold Grounded; infer_instance
+
+theorem Grounded.markedness {v : RuleSet (SpanRule n F)} (h : Grounded v) : Markedness v :=
+  fun it hit k _ hk ↦ h it hit k hk
+
+/-- Under adjacency the markedness condition is the downward closure of thresholds. -/
+theorem markedness_iff_grounded {v : RuleSet (SpanRule n F)} (hA : Adjacent v) :
+    Markedness v ↔ Grounded v := by
+  refine ⟨fun hM it hit k hk ↦ hM it hit k ?_ hk, Grounded.markedness⟩
+  rcases hc : it.context with - | c
+  · rw [SpanRule.threshold, hc, Option.getD_none, max_self] at hk
+    exact hk.le
+  · rw [SpanRule.threshold, hc, Option.getD_some] at hk
+    rcases lt_max_iff.mp hk with hk | hk
+    · exact hk.le
+    · have h := hA it hit c hc
+      rw [Fin.lt_def] at hk
+      rw [Fin.le_def]
+      omega
 
 /-! ### The Superset reading: lexical entries -/
 
