@@ -27,8 +27,16 @@ recursion.
   a probability kernel. A listener's row is zero at an utterance that applies to no meaning. The
   lexicon is any such weight and the cost any real function, where the paper's lexicon has
   values in the unit interval and its cost is nonnegative.
-* The lexicon statements need `0 < α`, where the paper has `0 ≤ α`. At `α = 0` the speaker
-  here is uniform over all the utterances, since `0 ^ 0 = 1`.
+* Equation numbers are those of the arXiv preprint 2005.06641v1. The two-page proceedings
+  abstract numbers its equations differently and leaves out the proofs.
+
+## Errata
+
+* Proposition 1 of the supplementary material states for every `α ≥ 0` that the recursion
+  respects the lexicon, but at `α = 0` the speaker (2) weighs every utterance alike and so uses
+  utterances the lexicon rules out, unless `0 · (−∞)` is read as `−∞`. The lexicon statements
+  here assume `0 < α`; at `α = 0` the speaker is uniform over all the utterances, since
+  `0 ^ 0 = 1`.
 
 ## TODO
 

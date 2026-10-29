@@ -1,21 +1,25 @@
 module
 
 public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Semantics.Exhaustification.InnocentInclusion
+public import Studies.Fox2007
 
 /-!
 # Champollion, Alsop and Grosu (2019): Free Choice Disjunction as a Rational Speech Act
 
 Free choice, by which *You may take an apple or a pear* conveys that each fruit may be taken by
-itself, does not follow from modal logic, and a speaker who prefers informative utterances
-never has reason to choose the disjunction over a disjunct. The paper adds semantic
-uncertainty: two interpretation functions, the classical (6) and the exhaustified (7), over
-which the pragmatic listener reasons jointly with states and utterances (8). Under the
-exhaustified function a bare disjunct risks the reading *only that fruit*, so at the
-free-choice states Only One and Any Number the disjunction is the speaker's safe choice
+itself, does not follow from modal logic, and a speaker who prefers informative utterances never
+has reason to choose the disjunction over a disjunct. The paper adds semantic uncertainty: two
+interpretation functions, the classical (6) and the exhaustified (7), over which the pragmatic
+listener reasons jointly with states and utterances (8). The exhaustified meanings follow from
+innocent exclusion at the logical forms the paper gives them, the disjunction exhaustified below
+the modal, so that *or* is [true wherever one fruit may be taken by itself](##I2_or). Under the
+exhaustified function a bare disjunct risks the reading *only that fruit*, so at the free-choice
+states Only One and Any Number the disjunction is the speaker's safe choice
 (`speaker_or_onlyOne_exh`, `speaker_prefers_a_at_onlyA_exh`), and the listener inverts the
-avoidance: hearing *or*, each free-choice state outweighs each other state at the paper's
-α = 100 (`fci_derived`, Table 5), and the free-choice states already carry the majority at
-α = 2 (`fci_majority_low_alpha`).
+avoidance: hearing *or*, each free-choice state outweighs each other state at the paper's α = 100
+(`fci_derived`, Table 5), and the free-choice states already carry the majority at α = 2
+(`fci_majority_low_alpha`).
 
 Exclusivity, that not both may be taken, tracks the prior instead. Under a prior favouring Any
 Number the listener hearing *or* ranks Any Number above every other state, at every rationality
@@ -24,6 +28,22 @@ choice, is cancelable. Under negation the negated disjunction is unambiguous and
 strong, so the listener assigns no mass to the states at which free choice would survive
 (`no_fci_under_negation`, Table 9). The variants without the conjunctive alternative
 (Tables 7–8) are not formalized.
+
+## Implementation notes
+
+* A state is read as the set of actions it permits, among taking an apple alone, a pear alone,
+  or both, as §3.1 describes them, and `◇p` holds at a state that permits some action in `p`.
+  Interpretation function 1 is `◇` of each utterance's prejacent and gives the lists (6).
+* Interpretation function 2 is the logical forms of footnote 3, with `exhIE` for the paper's
+  innocent exclusion after [fox-2007]. The footnote writes `C` both for the alternatives of an
+  exhaustifier above the modal and for those of one below it. Here the first are the four
+  utterances under interpretation function 1, the second the disjunction, the disjuncts and
+  their conjunction, and the alternatives `C′` of the conjunction's outer exhaustifier are the
+  second set exhaustified and put under the modal. So read, the logical forms give the lists (7)
+  exactly.
+* The placement matters for *or*. Exhaustified above the modal against the four utterances,
+  `◇(A ∨ B)` denies only `◇(A ∧ B)` and holds at Only A, Only B and Only One but not at Any
+  Number, unlike (7c).
 
 ## References
 
@@ -40,7 +60,7 @@ strong, so the listener assigns no mass to the states at which free choice would
 
 namespace ChampollionAlsopGrosu2019
 
-open MeasureTheory ProbabilityTheory RSA
+open MeasureTheory ProbabilityTheory RSA Exhaustification
 open scoped ENNReal
 
 /-! ### States, utterances, interpretation functions (Table 2, (5)–(7)) -/
@@ -81,55 +101,158 @@ instance : DecidablePred HasFCI
   | .onlyA | .onlyB | .onlyBoth => .isFalse id
   | .onlyOne | .anyNumber => .isTrue trivial
 
-/-- Interpretation function 1 (6) is classical modal logic. -/
-def I1 : Utterance → FCState → Prop
-  | .a, .onlyB => False
-  | .a, _ => True
-  | .b, .onlyA => False
-  | .b, _ => True
-  | .or_, _ => True
-  | .and_, .anyNumber | .and_, .onlyBoth => True
-  | .and_, _ => False
+/-- What a permission can be used for: an apple alone, a pear alone, or both fruit. -/
+inductive Action where
+  | apple | pear | both
+  deriving DecidableEq, Fintype
 
-instance : ∀ u, DecidablePred (I1 u) := fun u w => by
-  cases u <;> cases w <;> first | exact .isTrue trivial | exact .isFalse id
+/-- The actions a state permits. -/
+def permitted : FCState → Set Action
+  | .onlyA => {.apple}
+  | .onlyB => {.pear}
+  | .onlyOne => {.apple, .pear}
+  | .anyNumber => Set.univ
+  | .onlyBoth => {.both}
 
-/-- Interpretation function 2 (7) gives the exhaustified meanings. -/
-def I2 : Utterance → FCState → Prop
-  | .a, .onlyA => True
-  | .a, _ => False
-  | .b, .onlyB => True
-  | .b, _ => False
-  | .or_, .onlyBoth => False
-  | .or_, _ => True
-  | .and_, .onlyBoth => True
-  | .and_, _ => False
+/-- Deontic accessibility relates a state to the actions it permits, so `◇p` is
+`access.preimage p`. -/
+def access : SetRel FCState Action := {p | p.2 ∈ permitted p.1}
 
-instance : ∀ u, DecidablePred (I2 u) := fun u w => by
-  cases u <;> cases w <;> first | exact .isTrue trivial | exact .isFalse id
+/-- Taking an apple, alone or with a pear. -/
+def takeApple : Set Action := {.apple, .both}
+
+/-- Taking a pear, alone or with an apple. -/
+def takePear : Set Action := {.pear, .both}
+
+/-- The proposition each utterance (5) puts under the modal. -/
+def prejacent : Utterance → Set Action
+  | .a => takeApple
+  | .b => takePear
+  | .or_ => takeApple ∪ takePear
+  | .and_ => takeApple ∩ takePear
+
+/-- (6): Interpretation function 1 is classical modal logic, `◇` of the prejacent. -/
+def I1 (u : Utterance) : Set FCState := access.preimage (prejacent u)
+
+/-- The alternatives of the embedded exhaustifier: the disjunction, the disjuncts and their
+conjunction. -/
+def embeddedAlts : Set (Set Action) :=
+  {takeApple ∪ takePear, takeApple, takePear, takeApple ∩ takePear}
+
+/-- (7): Interpretation function 2, by the logical forms of footnote 3. A disjunct is
+exhaustified above the modal against the utterances under interpretation function 1, the
+disjunction below it, and the conjunction below it and then above it against the embedded
+exhaustifications of the alternatives under the modal. -/
+def I2 : Utterance → Set FCState
+  | .a => exhIE {I1 .or_, I1 .a, I1 .b, I1 .and_} (I1 .a)
+  | .b => exhIE {I1 .or_, I1 .a, I1 .b, I1 .and_} (I1 .b)
+  | .or_ => access.preimage (exhIE embeddedAlts (takeApple ∪ takePear))
+  | .and_ => exhIE ((access.preimage ∘ exhIE embeddedAlts) '' embeddedAlts)
+      (access.preimage (exhIE embeddedAlts (takeApple ∩ takePear)))
+
+@[simp] private theorem mem_access {s : FCState} {x : Action} :
+    (s, x) ∈ access ↔ x ∈ permitted s :=
+  Iff.rfl
+
+private theorem isDiamond_I1 : Fox2007.IsDiamond (I1 .or_) (I1 .a) (I1 .b) (I1 .and_) :=
+  Fox2007.isDiamond_sauerlandAlt (O := access.preimage) SetRel.preimage_mono
+    (SetRel.preimage_union ..).le
+    ⟨.onlyA, by simp [permitted, takeApple, takePear]⟩
+    ⟨.onlyB, by simp [permitted, takeApple, takePear]⟩
+
+private theorem isDiamond_embeddedAlts :
+    Fox2007.IsDiamond (takeApple ∪ takePear) takeApple takePear (takeApple ∩ takePear) :=
+  Fox2007.isDiamond_or ⟨.apple, by simp [takeApple, takePear]⟩
+    ⟨.pear, by simp [takeApple, takePear]⟩
+
+-- (6a)
+theorem I1_a : I1 .a = {.onlyA, .onlyOne, .anyNumber, .onlyBoth} := by
+  ext s; cases s <;> simp [I1, prejacent, permitted, takeApple]
+
+-- (6b)
+theorem I1_b : I1 .b = {.onlyB, .onlyOne, .anyNumber, .onlyBoth} := by
+  ext s; cases s <;> simp [I1, prejacent, permitted, takePear]
+
+-- (6c)
+theorem I1_or : I1 .or_ = Set.univ := by
+  ext s; cases s <;> simp [I1, prejacent, permitted, takeApple, takePear]
+
+-- (6d)
+theorem I1_and : I1 .and_ = {.anyNumber, .onlyBoth} := by
+  ext s; cases s <;> simp [I1, prejacent, permitted, takeApple, takePear]
+
+-- (7a)
+theorem I2_a : I2 .a = {.onlyA} := by
+  rw [I2, isDiamond_I1.exhIE_s, I1_a, I1_b]
+  ext s; cases s <;> simp
+
+-- (7b)
+theorem I2_b : I2 .b = {.onlyB} := by
+  rw [I2, isDiamond_I1.exhIE_n, I1_a, I1_b]
+  ext s; cases s <;> simp
+
+-- (7c)
+theorem I2_or : I2 .or_ = {.onlyA, .onlyB, .onlyOne, .anyNumber} := by
+  rw [I2, embeddedAlts, isDiamond_embeddedAlts.exhIE_w]
+  ext s
+  cases s <;> simp [permitted, takeApple, takePear]
+  decide
+
+-- (7d)
+theorem I2_and : I2 .and_ = {.onlyBoth} := by
+  have h := isDiamond_embeddedAlts
+  have hC : (access.preimage ∘ exhIE embeddedAlts) '' embeddedAlts =
+      {access.preimage ((takeApple ∪ takePear) \ (takeApple ∩ takePear)),
+        access.preimage (takeApple \ takePear), access.preimage (takePear \ takeApple),
+        access.preimage (takeApple ∩ takePear)} := by
+    simp only [embeddedAlts, Set.image_insert_eq, Set.image_singleton, Function.comp_apply,
+      h.exhIE_w, h.exhIE_s, h.exhIE_n, h.exhIE_e]
+  have hM : IsMinimalCover
+      {access.preimage ((takeApple ∪ takePear) \ (takeApple ∩ takePear)),
+        access.preimage (takeApple \ takePear), access.preimage (takePear \ takeApple),
+        access.preimage (takeApple ∩ takePear)}
+      (access.preimage (takeApple ∩ takePear)) {.onlyBoth} := by
+    refine .singleton (by simp [permitted, takeApple, takePear]) fun q hq hq₀ ↦ ?_
+    rcases hq with rfl | rfl | rfl | rfl <;>
+      first | exact subset_rfl | simp [permitted, takeApple, takePear] at hq₀
+  rw [I2, hC, embeddedAlts, h.exhIE_e, hM.exhIE_eq]
+  ext s; cases s <;> simp [permitted, takeApple, takePear]
+
+theorem I2_subset_I1 : ∀ u, I2 u ⊆ I1 u
+  | .a | .b => exhIE_subset _ _
+  | .or_ => SetRel.preimage_mono (exhIE_subset _ _)
+  | .and_ => (exhIE_subset _ _).trans (SetRel.preimage_mono (exhIE_subset _ _))
 
 /-- Meaning indexed by interpretation function. -/
-def interpMeaning : Interp → Utterance → FCState → Prop
+def interpMeaning : Interp → Utterance → Set FCState
   | .literal => I1
   | .exhaustified => I2
 
-instance : ∀ i u, DecidablePred (interpMeaning i u)
-  | .literal, u => inferInstanceAs (DecidablePred (I1 u))
-  | .exhaustified, u => inferInstanceAs (DecidablePred (I2 u))
+/-- Membership in a set proved equal to a finset is decided by the finset. -/
+abbrev decidableMemOfEq {s : Set FCState} (F : Finset FCState) (h : s = ↑F) :
+    DecidablePred (· ∈ s) :=
+  fun w ↦ decidable_of_iff (w ∈ F) (by rw [h]; exact Finset.mem_coe.symm)
+
+/-- Membership in a meaning is decided by the lists (6) and (7) it is proved equal to. -/
+instance : ∀ i u, DecidablePred (· ∈ interpMeaning i u)
+  | .literal, .a =>
+    decidableMemOfEq {.onlyA, .onlyOne, .anyNumber, .onlyBoth} (by simp [interpMeaning, I1_a])
+  | .literal, .b =>
+    decidableMemOfEq {.onlyB, .onlyOne, .anyNumber, .onlyBoth} (by simp [interpMeaning, I1_b])
+  | .literal, .or_ => decidableMemOfEq Finset.univ (by simp [interpMeaning, I1_or])
+  | .literal, .and_ => decidableMemOfEq {.anyNumber, .onlyBoth} (by simp [interpMeaning, I1_and])
+  | .exhaustified, .a => decidableMemOfEq {.onlyA} (by simp [interpMeaning, I2_a])
+  | .exhaustified, .b => decidableMemOfEq {.onlyB} (by simp [interpMeaning, I2_b])
+  | .exhaustified, .or_ =>
+    decidableMemOfEq {.onlyA, .onlyB, .onlyOne, .anyNumber} (by simp [interpMeaning, I2_or])
+  | .exhaustified, .and_ => decidableMemOfEq {.onlyBoth} (by simp [interpMeaning, I2_and])
 
 /-- The extension of each utterance under each interpretation function. -/
-def sem (i : Interp) (u : Utterance) : Finset FCState := Finset.univ.filter (interpMeaning i u)
+def sem (i : Interp) (u : Utterance) : Finset FCState :=
+  Finset.univ.filter (· ∈ interpMeaning i u)
 
 @[simp] theorem mem_sem {i : Interp} {u : Utterance} {w : FCState} :
-    w ∈ sem i u ↔ interpMeaning i u w := by simp [sem]
-
-theorem I2_refines_I1 : ∀ u w, I2 u w → I1 u w := by decide
-
-theorem I1_or_everywhere : ∀ w, I1 .or_ w := by decide
-
-theorem I2_or_excludes_onlyBoth : ∀ w, I2 .or_ w ↔ w ≠ .onlyBoth := by decide
-
-theorem I2_a_singleton : ∀ w, I2 .a w ↔ w = .onlyA := by decide
+    w ∈ sem i u ↔ w ∈ interpMeaning i u := by simp [sem]
 
 /-! ### The model (8) -/
 
