@@ -1339,7 +1339,7 @@ def ex_6_31 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjunctAgreement", "nearest")] }
+    paperFeatures := [("conjunctAgreement", "nearest"), ("conjunct", "kostjum"), ("conjunct", "bluzka"), ("targetForm", "byl")] }
 
 def ex_6_32 : Datum :=
   { id := "corbett2000_6_32"
@@ -1352,7 +1352,7 @@ def ex_6_32 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjunctAgreement", "nearest")] }
+    paperFeatures := [("conjunctAgreement", "nearest"), ("conjunct", "Odraza"), ("conjunct", "strach"), ("targetForm", "czierowôł")] }
 
 def ex_6_33 : Datum :=
   { id := "corbett2000_6_33"
@@ -1365,7 +1365,7 @@ def ex_6_33 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjunctAgreement", "first")] }
+    paperFeatures := [("conjunctAgreement", "first"), ("conjunct", "knjige"), ("conjunct", "peresa"), ("targetForm", "podražil-e")] }
 
 def ex_6_34 : Datum :=
   { id := "corbett2000_6_34"
@@ -1378,7 +1378,7 @@ def ex_6_34 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "sg+sg"), ("resolved", "dual")] }
+    paperFeatures := [("conjunctAgreement", "all"), ("conjunct", "Tonček"), ("conjunct", "Marina"), ("targetForm", "prizadevn-a")] }
 
 def ex_6_35 : Datum :=
   { id := "corbett2000_6_35"
@@ -1391,7 +1391,7 @@ def ex_6_35 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "sg+sg"), ("resolved", "dual")] }
+    paperFeatures := [("conjunctAgreement", "all"), ("conjunct", "Milka"), ("conjunct", "tele"), ("targetForm", "bil-a")] }
 
 def ex_6_36 : Datum :=
   { id := "corbett2000_6_36"
@@ -1404,7 +1404,7 @@ def ex_6_36 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "du+sg"), ("resolved", "plural")] }
+    paperFeatures := [("conjunctAgreement", "all"), ("conjunct", "teleti"), ("conjunct", "žrebe"), ("targetForm", "bil-i")] }
 
 def ex_6_37 : Datum :=
   { id := "corbett2000_6_37"
@@ -1417,7 +1417,7 @@ def ex_6_37 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "sg+sg+sg"), ("resolved", "plural")] }
+    paperFeatures := [("conjunctAgreement", "all"), ("conjunct", "Marina"), ("conjunct", "Marta"), ("conjunct", "Marjanca"), ("targetForm", "prizadevn-e")] }
 
 def ex_6_38 : Datum :=
   { id := "corbett2000_6_38"
@@ -1430,7 +1430,7 @@ def ex_6_38 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("target", "attributive"), ("conjunctAgreement", "all")] }
+    paperFeatures := [("target", "attributive"), ("conjunctAgreement", "all"), ("conjunct", "muž-e"), ("conjunct", "dočer-i"), ("targetForm", "ostavlenn-yx")] }
 
 def ex_6_39 : Datum :=
   { id := "corbett2000_6_39"
@@ -1443,7 +1443,7 @@ def ex_6_39 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("target", "attributive"), ("conjunctAgreement", "nearest")] }
+    paperFeatures := [("target", "attributive"), ("conjunctAgreement", "nearest"), ("conjunct", "vzyskatel'nost'"), ("conjunct", "samokritičnost'"), ("targetForm", "Èt-a")] }
 
 def ex_6_40a : Datum :=
   { id := "corbett2000_6_40a"
@@ -1508,7 +1508,7 @@ def ex_6_42a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("verbFirst", "yes"), ("conjunctAgreement", "nearest")] }
+    paperFeatures := [("conjunctAgreement", "nearest"), ("conjunct", "ʕumar"), ("conjunct", "ʕali"), ("targetForm", "Mša")] }
 
 def ex_6_43a : Datum :=
   { id := "corbett2000_6_43a"
@@ -1521,7 +1521,7 @@ def ex_6_43a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "all")] }
+    paperFeatures := [("conjunctAgreement", "all"), ("conjunct", "ʕumar"), ("conjunct", "ʕali"), ("targetForm", "mšaw")] }
 
 def ex_6_43b : Datum :=
   { id := "corbett2000_6_43b"
@@ -1534,7 +1534,7 @@ def ex_6_43b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "nearest")] }
+    paperFeatures := [("conjunctAgreement", "nearest"), ("conjunct", "ʕumar"), ("conjunct", "ʕali"), ("targetForm", "mša")] }
 
 def ex_6_44a : Datum :=
   { id := "corbett2000_6_44a"
@@ -1547,7 +1547,7 @@ def ex_6_44a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "all")] }
+    paperFeatures := [("conjunctAgreement", "all"), ("conjunct", "l-kas"), ("conjunct", "z-zlafa"), ("targetForm", "thərrəsu")] }
 
 def ex_6_44b : Datum :=
   { id := "corbett2000_6_44b"
@@ -1560,7 +1560,7 @@ def ex_6_44b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "nearest")] }
+    paperFeatures := [("conjunctAgreement", "nearest"), ("conjunct", "l-kas"), ("conjunct", "z-zlafa"), ("targetForm", "thərrsat")] }
 
 def ex_6_45 : Datum :=
   { id := "corbett2000_6_45"

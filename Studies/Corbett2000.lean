@@ -8,6 +8,7 @@ public import Mathlib.Tactic.NormNum
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Number.Resolve
 public import Linglib.Syntax.Agreement.ConjunctAgreement
+public import Linglib.Syntax.Agreement.Phi
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
 public import Studies.Corbett1991
@@ -63,7 +64,10 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
   four sub-positions, and the rows of Table 6.11 are profiles over it.
 * The options for agreement with conjoined noun phrases (§6.5.1) are the substrate's
   `Agreement.ConjunctAgreement`, which derives the exclusion of the more distant last conjunct
-  (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`).
+  (`Agreement.ConjunctAgreement.eq_nearest_of_conjuncts_eq_singleton`). An example fits an option
+  when its target agrees (`HasPhi.Agree`) with the conjunct the option picks or with the resolved
+  features, all read off the glosses' Leipzig abbreviations, a conjunct whose gloss marks no number
+  being singular; the target's side is read off the order of the words.
 * Number resolution is the book's rule and is shown to be the substrate's resolution, the
   value of the sum of the conjuncts' referents; the corpus tables are typed here, in percentages,
   with the book's readings of them as theorems.
@@ -730,6 +734,61 @@ theorem resolveNumber_eq_resolve :
         resolveNumber english [a, b] = english.toSystem.resolve a b := by
   decide
 
+/-- The parts of a gloss, its stem and the abbreviations that follow it after `.` or `-`. -/
+def glossParts (g : String) : List (List Char) :=
+  g.toList.foldr (init := [[]]) fun c ps ↦
+    if c = '.' ∨ c = '-' then [] :: ps else (c :: ps.headD []) :: ps.tail
+
+/-- The number a gloss marks by the Leipzig abbreviations `SG`, `DU` and `PL`. -/
+def glossNumber? (g : String) : Option Number :=
+  (glossParts g).findSome?
+    ([("SG".toList, Number.singular), ("DU".toList, .dual), ("PL".toList, .plural)].lookup ·)
+
+/-- The gender a gloss marks by the Leipzig abbreviations `MASC`, `FEM` and `NEUT`. -/
+def glossGender? (g : String) : Option UD.Gender :=
+  (glossParts g).findSome?
+    ([("MASC".toList, UD.Gender.Masc), ("FEM".toList, .Fem), ("NEUT".toList, .Neut)].lookup ·)
+
+/-- The features a conjunct's gloss marks, its number being singular where the gloss marks none,
+as in the Arabic examples. -/
+def conjunctFeatures (g : String) : Morphology.Features :=
+  .of (number := some ((glossNumber? g).getD .singular)) (gender := glossGender? g)
+
+/-- Slovene resolves the gender of conjuncts by its rules (`Corbett1991.Slovene.rules`): all
+feminines take the feminine and anything else the masculine. -/
+def sloveneGender (gs : List (Flat UD.Gender)) : Option UD.Gender :=
+  ((gs.mapM fun (g : Option UD.Gender) ↦ g.bind fun
+      | .Masc => some Slovene.Value.masc | .Fem => some .fem | .Neut => some .neut
+      | .Com => none).bind (ResolutionRule.resolve Slovene.rules)).map fun
+    | .masc => .Masc | .fem => .Fem | .neut => .Neut
+
+section Fits
+
+variable (r : Morphology.Features) (d : HeadDirection) (cs : List Morphology.Features)
+  (t : Morphology.Features)
+
+/-- A target with the features `t` on side `d` of conjuncts `cs` that resolve to `r` fits the
+option `a` when it agrees with what the option gives it access to: the conjunct it picks, or the
+resolved features under agreement with all (§6.5.1). -/
+def Fits : ConjunctAgreement → Prop
+  | .all => HasPhi.Agree t r
+  | a => ∃ x ∈ a.conjuncts d cs, HasPhi.Agree t x
+
+instance : DecidablePred (Fits r d cs t)
+  | .all => inferInstanceAs (Decidable (HasPhi.Agree t r))
+  | .nearest | .first => inferInstanceAs (Decidable (∃ x ∈ _, _))
+
+/-- The target fits the option `a` and no other, unless the nearest and the first conjuncts
+carry the same features, so that the two options are not told apart. -/
+def FitsOnly (a : ConjunctAgreement) : Prop :=
+  Fits r d cs t a ∧ ∀ b, Fits r d cs t b →
+    b = a ∨ ConjunctAgreement.nearest.conjuncts d cs = ConjunctAgreement.first.conjuncts d cs
+
+instance : DecidablePred (FitsOnly r d cs t) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ ∀ _, _))
+
+end Fits
+
 /-- Table 6.12 gives the percentage of number resolution with Russian conjoined noun phrases by
 target. -/
 def russianConjoined : Position → Option ℚ
@@ -842,11 +901,39 @@ theorem bayso_rows : ∀ row ∈ Examples.all, row.language = "bais1246" →
           ("plural", .plural)], c = n.gender.concord v := by
   decide +kernel
 
--- (34), (37)
-theorem slovene_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
-    ∀ cs ∈ row.parse? "conjuncts" [("sg+sg", [Number.singular, .singular]),
-      ("du+sg", [.dual, .singular]), ("sg+sg+sg", [.singular, .singular, .singular])],
-    ∀ r ∈ row.parse? "resolved" numberNames, r = resolveNumber slovene cs := by
+/-- `conjuncts? row` lists the features of a row's conjuncts, in order. -/
+def conjuncts? (row : Datum) : Option (List Morphology.Features) :=
+  (row.features "conjunct").mapM fun w ↦ (row.glossedTokens.lookup w).map conjunctFeatures
+
+/-- `target? row` is the features a row's target marks. -/
+def target? (row : Datum) : Option Morphology.Features :=
+  ((row.feature? "targetForm").bind fun w ↦ row.glossedTokens.lookup w).map fun g ↦
+    .of (number := glossNumber? g) (gender := glossGender? g)
+
+/-- `targetSide? row` is the side of the conjuncts a row's target is on, read off the order of its
+words, head-initial if it precedes them. -/
+def targetSide? (row : Datum) : Option HeadDirection :=
+  (row.feature? "targetForm").bind fun t ↦ (row.features "conjunct").head?.map fun c ↦
+    if row.surfaceTokens.idxOf t < row.surfaceTokens.idxOf c then .headInitial else .headFinal
+
+/-- `resolved? row` is what a row's conjuncts resolve to: their number by the rules of §6.5.2 in
+the language's system and, in Slovene, their gender. Cassubian and Moroccan Arabic are given the
+two values of Russian; no example of theirs has a dual. -/
+def resolved? (row : Datum) : Option Morphology.Features :=
+  (conjuncts? row).bind fun cs ↦
+    let number (c : Choices) := some (resolveNumber c (cs.filterMap fun x ↦ x .number))
+    [("slov1268", Morphology.Features.of (number := number slovene)
+        (gender := sloveneGender (cs.map (· .gender)))),
+      ("russ1263", .of (number := number russian)), ("kash1274", .of (number := number russian)),
+      ("moro1292", .of (number := number russian))].lookup row.language
+
+/-- Each conjoined example fits the option Corbett names for it, and no other, unless its nearest
+and first conjuncts carry the same features (§6.5.1). -/
+theorem conjoined_rows : ∀ row ∈ Examples.all,
+    ∀ a ∈ row.parse? "conjunctAgreement"
+      [("nearest", ConjunctAgreement.nearest), ("first", .first), ("all", .all)],
+    ∃ cs ∈ conjuncts? row, ∃ t ∈ target? row, ∃ d ∈ targetSide? row, ∃ r ∈ resolved? row,
+      FitsOnly r d cs t a := by
   decide +kernel
 
 -- (28), (30)
@@ -888,11 +975,11 @@ theorem hungarian_rows : ∀ row ∈ Examples.all, row.language = "hung1274" →
       (row.judgment = .acceptable ↔ (r = .singular ∨ an = true)) := by
   decide +kernel
 
--- (42), (44)
+-- (42), (44), p. 202
 theorem moroccan_rows : ∀ row ∈ Examples.all, row.language = "moro1292" →
-    ∀ vf ∈ row.parse? "verbFirst" [("yes", true), ("no", false)],
-    ∀ a ∈ row.parse? "conjunctAgreement" [("nearest", ConjunctAgreement.nearest), ("all", .all)],
-      (row.judgment = .acceptable ↔ (a = .all ∨ vf = true)) := by
+    ∃ cs ∈ conjuncts? row, ∃ t ∈ target? row, ∃ d ∈ targetSide? row, ∃ r ∈ resolved? row,
+      (row.judgment = .acceptable ↔
+        Fits r d cs t .all ∨ d = .headInitial ∧ Fits r d cs t .nearest) := by
   decide +kernel
 
 end Corbett2000

@@ -4299,6 +4299,18 @@
       [
         "conjunctAgreement",
         "nearest"
+      ],
+      [
+        "conjunct",
+        "kostjum"
+      ],
+      [
+        "conjunct",
+        "bluzka"
+      ],
+      [
+        "targetForm",
+        "byl"
       ]
     ],
     "comment": "Agreement with the nearest conjunct, which is also the first.",
@@ -4349,6 +4361,18 @@
       [
         "conjunctAgreement",
         "nearest"
+      ],
+      [
+        "conjunct",
+        "Odraza"
+      ],
+      [
+        "conjunct",
+        "strach"
+      ],
+      [
+        "targetForm",
+        "czierowôł"
       ]
     ],
     "comment": "With the controller preceding, the nearest conjunct is the last.",
@@ -4399,6 +4423,18 @@
       [
         "conjunctAgreement",
         "first"
+      ],
+      [
+        "conjunct",
+        "knjige"
+      ],
+      [
+        "conjunct",
+        "peresa"
+      ],
+      [
+        "targetForm",
+        "podražil-e"
       ]
     ],
     "comment": "Agreement with the first, most distant conjunct; resolution would give the masculine plural.",
@@ -4447,12 +4483,16 @@
         "all"
       ],
       [
-        "conjuncts",
-        "sg+sg"
+        "conjunct",
+        "Tonček"
       ],
       [
-        "resolved",
-        "dual"
+        "conjunct",
+        "Marina"
+      ],
+      [
+        "targetForm",
+        "prizadevn-a"
       ]
     ],
     "comment": "The dual cannot agree with one conjunct: agreement with all.",
@@ -4509,12 +4549,16 @@
         "all"
       ],
       [
-        "conjuncts",
-        "sg+sg"
+        "conjunct",
+        "Milka"
       ],
       [
-        "resolved",
-        "dual"
+        "conjunct",
+        "tele"
+      ],
+      [
+        "targetForm",
+        "bil-a"
       ]
     ],
     "comment": "",
@@ -4575,12 +4619,16 @@
         "all"
       ],
       [
-        "conjuncts",
-        "du+sg"
+        "conjunct",
+        "teleti"
       ],
       [
-        "resolved",
-        "plural"
+        "conjunct",
+        "žrebe"
+      ],
+      [
+        "targetForm",
+        "bil-i"
       ]
     ],
     "comment": "",
@@ -4633,12 +4681,20 @@
         "all"
       ],
       [
-        "conjuncts",
-        "sg+sg+sg"
+        "conjunct",
+        "Marina"
       ],
       [
-        "resolved",
-        "plural"
+        "conjunct",
+        "Marta"
+      ],
+      [
+        "conjunct",
+        "Marjanca"
+      ],
+      [
+        "targetForm",
+        "prizadevn-e"
       ]
     ],
     "comment": "",
@@ -4721,6 +4777,18 @@
       [
         "conjunctAgreement",
         "all"
+      ],
+      [
+        "conjunct",
+        "muž-e"
+      ],
+      [
+        "conjunct",
+        "dočer-i"
+      ],
+      [
+        "targetForm",
+        "ostavlenn-yx"
       ]
     ],
     "comment": "Resolution in attributive position, the less favoured option in Russian.",
@@ -4779,6 +4847,18 @@
       [
         "conjunctAgreement",
         "nearest"
+      ],
+      [
+        "conjunct",
+        "vzyskatel'nost'"
+      ],
+      [
+        "conjunct",
+        "samokritičnost'"
+      ],
+      [
+        "targetForm",
+        "Èt-a"
       ]
     ],
     "comment": "Singular attributive agreement with plural predicate agreement.",
@@ -5019,12 +5099,20 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbFirst",
-        "yes"
-      ],
-      [
         "conjunctAgreement",
         "nearest"
+      ],
+      [
+        "conjunct",
+        "ʕumar"
+      ],
+      [
+        "conjunct",
+        "ʕali"
+      ],
+      [
+        "targetForm",
+        "Mša"
       ]
     ],
     "comment": "",
@@ -5065,12 +5153,20 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbFirst",
-        "no"
-      ],
-      [
         "conjunctAgreement",
         "all"
+      ],
+      [
+        "conjunct",
+        "ʕumar"
+      ],
+      [
+        "conjunct",
+        "ʕali"
+      ],
+      [
+        "targetForm",
+        "mšaw"
       ]
     ],
     "comment": "",
@@ -5111,12 +5207,20 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbFirst",
-        "no"
-      ],
-      [
         "conjunctAgreement",
         "nearest"
+      ],
+      [
+        "conjunct",
+        "ʕumar"
+      ],
+      [
+        "conjunct",
+        "ʕali"
+      ],
+      [
+        "targetForm",
+        "mša"
       ]
     ],
     "comment": "With the controller preceding, only agreement with all conjuncts is possible.",
@@ -5157,12 +5261,20 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbFirst",
-        "no"
-      ],
-      [
         "conjunctAgreement",
         "all"
+      ],
+      [
+        "conjunct",
+        "l-kas"
+      ],
+      [
+        "conjunct",
+        "z-zlafa"
+      ],
+      [
+        "targetForm",
+        "thərrəsu"
       ]
     ],
     "comment": "Inanimate conjuncts too: resolution is required by precedence alone.",
@@ -5203,12 +5315,20 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbFirst",
-        "no"
-      ],
-      [
         "conjunctAgreement",
         "nearest"
+      ],
+      [
+        "conjunct",
+        "l-kas"
+      ],
+      [
+        "conjunct",
+        "z-zlafa"
+      ],
+      [
+        "targetForm",
+        "thərrsat"
       ]
     ],
     "comment": "",
