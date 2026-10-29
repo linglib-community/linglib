@@ -6,7 +6,7 @@
     "primaryText": "Dakdanak-an mang-atuk biang-i.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dakdanak-an", "child-that"], ["mang-atuk", "act-hit"], ["biang-i", "dog-def"]
+      ["Dakdanak-an", "child-that"], ["mang-atuk", "ACT-hit"], ["biang-i", "dog-DEF"]
     ],
     "translation": "The child hit the dog.",
     "context": "Active clause in SVO order.",
@@ -14,10 +14,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "active"],
-      ["order", "SVO"],
-      ["verb", "atuk"],
       ["agent", "dakdanak-an"],
       ["patient", "biang-i"]
     ],
@@ -31,7 +27,7 @@
     "primaryText": "Mang-atuk biang-i dakdanak-an.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mang-atuk", "act-hit"], ["biang-i", "dog-def"], ["dakdanak-an", "child-that"]
+      ["Mang-atuk", "ACT-hit"], ["biang-i", "dog-DEF"], ["dakdanak-an", "child-that"]
     ],
     "translation": "The child hit the dog.",
     "context": "Active clause in VOS order.",
@@ -39,10 +35,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "active"],
-      ["order", "VOS"],
-      ["verb", "atuk"],
       ["agent", "dakdanak-an"],
       ["patient", "biang-i"]
     ],
@@ -56,7 +48,7 @@
     "primaryText": "Biang-i di-atuk si-John.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Biang-i", "dog-def"], ["di-atuk", "pass-hit"], ["si-John", "hon-John"]
+      ["Biang-i", "dog-DEF"], ["di-atuk", "PASS-hit"], ["si-John", "HON-John"]
     ],
     "translation": "The dog was hit by John.",
     "context": "Passive clause in SVO order.",
@@ -64,10 +56,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "passive"],
-      ["order", "SVO"],
-      ["verb", "atuk"],
       ["agent", "si-John"],
       ["patient", "biang-i"]
     ],
@@ -81,7 +69,7 @@
     "primaryText": "Di-atuk si-John biang-i.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Di-atuk", "pass-hit"], ["si-John", "hon-John"], ["biang-i", "dog-def"]
+      ["Di-atuk", "PASS-hit"], ["si-John", "HON-John"], ["biang-i", "dog-DEF"]
     ],
     "translation": "The dog was hit by John.",
     "context": "Passive clause in VOS order.",
@@ -89,10 +77,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "passive"],
-      ["order", "VOS"],
-      ["verb", "atuk"],
       ["agent", "si-John"],
       ["patient", "biang-i"]
     ],
@@ -106,8 +90,8 @@
     "primaryText": "Aha si-John mang-alean tu si-Mary?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Aha", "what"], ["si-John", "hon-John"], ["mang-alean", "act-give"], ["tu", "to"],
-      ["si-Mary", "hon-Mary"]
+      ["Aha", "what"], ["si-John", "HON-John"], ["mang-alean", "ACT-give"], ["tu", "to"],
+      ["si-Mary", "HON-Mary"]
     ],
     "translation": "What did John give to Mary?",
     "context": "The wh-object of an active ditransitive fronted; the subject precedes the verb.",
@@ -115,12 +99,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "active"],
-      ["order", "SVO"],
-      ["transitivity", "ditransitive"],
-      ["extracted", "patient"],
-      ["wh", "fronted"]
+      ["agent", "si-John"],
+      ["patient", "aha"],
+      ["goal", "tu si-Mary"]
     ],
     "comment": "Repeated as (86) in the argument for the VOS Hypothesis.",
     "verified": "page-image"
@@ -132,7 +113,7 @@
     "primaryText": "Mang-allang aha do dakdanak-i?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mang-allang", "act-eat"], ["aha", "what"], ["do", "foc"], ["dakdanak-i", "child-def"]
+      ["Mang-allang", "ACT-eat"], ["aha", "what"], ["do", "FOC"], ["dakdanak-i", "child-DEF"]
     ],
     "translation": "What did the child eat?",
     "context": "The wh-object of an active clause in situ, immediately after the verb.",
@@ -140,12 +121,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "active"],
-      ["order", "VOS"],
-      ["transitivity", "monotransitive"],
-      ["extracted", "patient"],
-      ["wh", "inSitu"]
+      ["agent", "dakdanak-i"],
+      ["patient", "aha"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -157,8 +134,8 @@
     "primaryText": "Ise di-lean buku tu si-Mary?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ise", "who"], ["di-lean", "pass-give"], ["buku", "book"], ["tu", "to"],
-      ["si-Mary", "hon-Mary"]
+      ["Ise", "who"], ["di-lean", "PASS-give"], ["buku", "book"], ["tu", "to"],
+      ["si-Mary", "HON-Mary"]
     ],
     "translation": "Who was a book given to Mary by?",
     "context": "The wh-agent of a passive ditransitive fronted.",
@@ -166,12 +143,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "passive"],
-      ["order", "VOS"],
-      ["transitivity", "ditransitive"],
-      ["extracted", "agent"],
-      ["wh", "fronted"]
+      ["agent", "ise"],
+      ["patient", "buku"],
+      ["goal", "tu si-Mary"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -183,8 +157,8 @@
     "primaryText": "Di-lean ise do tu si-Mary sada bunga?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Di-lean", "pass-give"], ["ise", "who"], ["do", "foc"], ["tu", "to"],
-      ["si-Mary", "hon-Mary"], ["sada", "some"], ["bunga", "flower"]
+      ["Di-lean", "PASS-give"], ["ise", "who"], ["do", "FOC"], ["tu", "to"],
+      ["si-Mary", "HON-Mary"], ["sada", "some"], ["bunga", "flower"]
     ],
     "translation": "Who were some flowers given to Mary by?",
     "context": "The wh-agent of a passive ditransitive in situ, immediately after the verb.",
@@ -192,12 +166,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "passive"],
-      ["order", "VOIS"],
-      ["transitivity", "ditransitive"],
-      ["extracted", "agent"],
-      ["wh", "inSitu"]
+      ["agent", "ise"],
+      ["patient", "sada bunga"],
+      ["goal", "tu si-Mary"]
     ],
     "comment": "The goal precedes the pivot: the marked V-Ag-IO-S order of (14).",
     "verified": "page-image"
@@ -209,8 +180,8 @@
     "primaryText": "Tu ise mang-alean buku si-John?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Tu", "to"], ["ise", "who"], ["mang-alean", "act-give"], ["buku", "book"],
-      ["si-John", "hon-John"]
+      ["Tu", "to"], ["ise", "who"], ["mang-alean", "ACT-give"], ["buku", "book"],
+      ["si-John", "HON-John"]
     ],
     "translation": "To whom did John give a book?",
     "context": "The wh-goal PP of an active ditransitive fronted.",
@@ -218,12 +189,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "active"],
-      ["order", "VOS"],
-      ["transitivity", "ditransitive"],
-      ["extracted", "goal"],
-      ["wh", "fronted"]
+      ["agent", "si-John"],
+      ["patient", "buku"],
+      ["goal", "tu ise"]
     ],
     "comment": "Repeated as (45).",
     "verified": "page-image"
@@ -235,8 +203,8 @@
     "primaryText": "Tu ise do di-lean si-John buku?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Tu", "to"], ["ise", "who"], ["do", "foc"], ["di-lean", "pass-give"],
-      ["si-John", "hon-John"], ["buku", "book"]
+      ["Tu", "to"], ["ise", "who"], ["do", "FOC"], ["di-lean", "PASS-give"],
+      ["si-John", "HON-John"], ["buku", "book"]
     ],
     "translation": "To whom was the book given by John?",
     "context": "The wh-goal PP of a passive ditransitive fronted.",
@@ -244,12 +212,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "passive"],
-      ["order", "VOS"],
-      ["transitivity", "ditransitive"],
-      ["extracted", "goal"],
-      ["wh", "fronted"]
+      ["agent", "si-John"],
+      ["patient", "buku"],
+      ["goal", "tu ise"]
     ],
     "comment": "Repeated as (46).",
     "verified": "page-image"
@@ -261,8 +226,8 @@
     "primaryText": "Di-lean si-John sada buku tu si-Mary.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Di-lean", "pass-give"], ["si-John", "hon-John"], ["sada", "one"], ["buku", "book"],
-      ["tu", "to"], ["si-Mary", "hon-Mary"]
+      ["Di-lean", "PASS-give"], ["si-John", "HON-John"], ["sada", "one"], ["buku", "book"],
+      ["tu", "to"], ["si-Mary", "HON-Mary"]
     ],
     "translation": "One book was given to Mary by John.",
     "context": "Passive ditransitive with the indirect object after the subject.",
@@ -270,10 +235,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "passive"],
-      ["order", "VOS"],
-      ["verb", "lean"],
       ["agent", "si-John"],
       ["patient", "sada buku"],
       ["goal", "tu si-Mary"]
@@ -288,7 +249,7 @@
     "primaryText": "Di-lean si-John tu si-Mary buku.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Di-lean", "pass-give"], ["si-John", "hon-John"], ["tu", "to"], ["si-Mary", "hon-Mary"],
+      ["Di-lean", "PASS-give"], ["si-John", "HON-John"], ["tu", "to"], ["si-Mary", "HON-Mary"],
       ["buku", "book"]
     ],
     "translation": "The book was given to Mary by John.",
@@ -297,10 +258,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "passive"],
-      ["order", "VOIS"],
-      ["verb", "lean"],
       ["agent", "si-John"],
       ["patient", "buku"],
       ["goal", "tu si-Mary"]
@@ -315,7 +272,7 @@
     "primaryText": "Si-Bunga mang-ida dirina sandiri.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Si-Bunga", "hon-Bunga"], ["mang-ida", "act-see"], ["dirina sandiri", "herself"]
+      ["Si-Bunga", "HON-Bunga"], ["mang-ida", "ACT-see"], ["dirina sandiri", "herself"]
     ],
     "translation": "Bunga saw herself.",
     "context": "Active clause in SVO order; the subject antecedes a reflexive direct object.",
@@ -323,11 +280,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "active"],
-      ["order", "SVO"],
+      ["agent", "si-Bunga"],
+      ["patient", "dirina sandiri"],
       ["antecedent", "agent"],
-      ["reflexive", "patient"],
       ["tableOne", "A"]
     ],
     "comment": "Table 1, Type A: fully acceptable for all speakers.",
@@ -340,7 +295,7 @@
     "primaryText": "Dirina sandiri pa-ias-hon dakdanak-i.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dirina sandiri", "self"], ["pa-ias-hon", "make-clean-caus"], ["dakdanak-i", "child-def"]
+      ["Dirina sandiri", "self"], ["pa-ias-hon", "make-clean-CAUS"], ["dakdanak-i", "child-DEF"]
     ],
     "translation": "Himself cleaned the child.",
     "context": "Active clause in SVO order; the direct object would antecede a reflexive subject.",
@@ -348,11 +303,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "active"],
-      ["order", "SVO"],
+      ["agent", "dirina sandiri"],
+      ["patient", "dakdanak-i"],
       ["antecedent", "patient"],
-      ["reflexive", "agent"],
       ["tableOne", "C"]
     ],
     "comment": "Table 1, Type C: not acceptable for any speakers. The active prefix is null on this verb (fn. 5).",
@@ -365,7 +318,7 @@
     "primaryText": "Si-Bunga di-ida dirina sandiri.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Si-Bunga", "hon-Bunga"], ["di-ida", "pass-see"], ["dirina sandiri", "self"]
+      ["Si-Bunga", "HON-Bunga"], ["di-ida", "PASS-see"], ["dirina sandiri", "self"]
     ],
     "translation": "Bunga was seen by herself.",
     "context": "Passive clause in SVO order; the passive subject antecedes a reflexive passive agent.",
@@ -373,11 +326,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "passive"],
-      ["order", "SVO"],
+      ["agent", "dirina sandiri"],
+      ["patient", "si-Bunga"],
       ["antecedent", "patient"],
-      ["reflexive", "agent"],
       ["tableOne", "B"]
     ],
     "comment": "Table 1, Type B: acceptable, not the most usual way to express the sentence; marked ungrammatical by Schachter and Sugamoto.",
@@ -390,7 +341,7 @@
     "primaryText": "Aha mang-atuk si-John?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Aha", "what"], ["mang-atuk", "act-hit"], ["si-John", "hon-John"]
+      ["Aha", "what"], ["mang-atuk", "ACT-hit"], ["si-John", "HON-John"]
     ],
     "translation": "What did John hit?",
     "context": "The wh-object of an active monotransitive fronted.",
@@ -398,12 +349,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "active"],
-      ["order", "VOS"],
-      ["transitivity", "monotransitive"],
-      ["extracted", "patient"],
-      ["wh", "fronted"]
+      ["agent", "si-John"],
+      ["patient", "aha"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -415,7 +362,7 @@
     "primaryText": "Mang-atuk aha si-John?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mang-atuk", "act-hit"], ["aha", "what"], ["si-John", "hon-John"]
+      ["Mang-atuk", "ACT-hit"], ["aha", "what"], ["si-John", "HON-John"]
     ],
     "translation": "What did John hit?",
     "context": "The wh-object of an active monotransitive in situ.",
@@ -423,12 +370,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "active"],
-      ["order", "VOS"],
-      ["transitivity", "monotransitive"],
-      ["extracted", "patient"],
-      ["wh", "inSitu"]
+      ["agent", "si-John"],
+      ["patient", "aha"]
     ],
     "comment": "The paper's gloss line reads act-see; the translation and (43) have 'hit'.",
     "verified": "page-image"
@@ -440,7 +383,7 @@
     "primaryText": "Mang-ida si-Mary si-John.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mang-ida", "act-see"], ["si-Mary", "hon-Mary"], ["si-John", "hon-John"]
+      ["Mang-ida", "ACT-see"], ["si-Mary", "HON-Mary"], ["si-John", "HON-John"]
     ],
     "translation": "John saw Mary.",
     "context": "Active monotransitive clause in VOS order.",
@@ -448,10 +391,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "active"],
-      ["order", "VOS"],
-      ["verb", "ida"],
       ["agent", "si-John"],
       ["patient", "si-Mary"]
     ],
@@ -465,8 +404,8 @@
     "primaryText": "Mang-alean buku si-John tu si-Mary.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mang-alean", "act-give"], ["buku", "book"], ["si-John", "hon-John"], ["tu", "to"],
-      ["si-Mary", "hon-Mary"]
+      ["Mang-alean", "ACT-give"], ["buku", "book"], ["si-John", "HON-John"], ["tu", "to"],
+      ["si-Mary", "HON-Mary"]
     ],
     "translation": "John gave a book to Mary.",
     "context": "Active ditransitive clause in VOS order.",
@@ -474,10 +413,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "active"],
-      ["order", "VOS"],
-      ["verb", "alean"],
       ["agent", "si-John"],
       ["patient", "buku"],
       ["goal", "tu si-Mary"]
@@ -492,7 +427,7 @@
     "primaryText": "Mang-ida dirina sandiri si-Bunga.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mang-ida", "act-see"], ["dirina sandiri", "herself"], ["si-Bunga", "hon-Bunga"]
+      ["Mang-ida", "ACT-see"], ["dirina sandiri", "herself"], ["si-Bunga", "HON-Bunga"]
     ],
     "translation": "Bunga saw herself.",
     "context": "Active clause in VOS order; the subject antecedes a reflexive direct object.",
@@ -500,11 +435,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "active"],
-      ["order", "VOS"],
+      ["agent", "si-Bunga"],
+      ["patient", "dirina sandiri"],
       ["antecedent", "agent"],
-      ["reflexive", "patient"],
       ["tableOne", "A"]
     ],
     "comment": "Derived in (63)–(65).",
@@ -517,7 +450,7 @@
     "primaryText": "Dirina sandiri mang-ida si-Bunga.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dirina sandiri", "herself"], ["mang-ida", "act-see"], ["si-Bunga", "hon-Bunga"]
+      ["Dirina sandiri", "herself"], ["mang-ida", "ACT-see"], ["si-Bunga", "HON-Bunga"]
     ],
     "translation": "Herself saw si Bunga.",
     "context": "Active clause in SVO order; the direct object would antecede a reflexive subject.",
@@ -525,11 +458,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "active"],
-      ["order", "SVO"],
+      ["agent", "dirina sandiri"],
+      ["patient", "si-Bunga"],
       ["antecedent", "patient"],
-      ["reflexive", "agent"],
       ["tableOne", "C"]
     ],
     "comment": "A Condition A violation, not the apparent Condition C violation (fn. 29).",
@@ -542,7 +473,7 @@
     "primaryText": "Di-ida si-Torus dirina sandiri.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Di-ida", "pass-see"], ["si-Torus", "hon-Torus"], ["dirina sandiri", "himself"]
+      ["Di-ida", "PASS-see"], ["si-Torus", "HON-Torus"], ["dirina sandiri", "himself"]
     ],
     "translation": "Himself was seen by Torus.",
     "context": "Passive clause in VOS order; the passive agent antecedes a reflexive passive subject.",
@@ -550,11 +481,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "passive"],
-      ["order", "VOS"],
+      ["agent", "si-Torus"],
+      ["patient", "dirina sandiri"],
       ["antecedent", "agent"],
-      ["reflexive", "patient"],
       ["tableOne", "A"]
     ],
     "comment": "(27) and (36) in simplified form; derived in (72)–(74). The two reflexive forms do not differ here (fn. 30). The page prints dirina (sandiri); this row takes the variant with sandiri.",
@@ -567,7 +496,7 @@
     "primaryText": "Di-ida dirina sandiri si-John.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Di-ida", "pass-see"], ["dirina sandiri", "self"], ["si-John", "hon-John"]
+      ["Di-ida", "PASS-see"], ["dirina sandiri", "self"], ["si-John", "HON-John"]
     ],
     "translation": "John was seen by himself.",
     "context": "Passive clause in VOS order; the passive subject antecedes a reflexive passive agent.",
@@ -575,11 +504,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "passive"],
-      ["order", "VOS"],
+      ["agent", "dirina sandiri"],
+      ["patient", "si-John"],
       ["antecedent", "patient"],
-      ["reflexive", "agent"],
       ["tableOne", "B"]
     ],
     "comment": "(38) in simplified form; derived in (75)–(77). Table 1, Type B. The page prints [dirina (sandiri)]; this row takes the variant with sandiri.",
@@ -592,7 +519,7 @@
     "primaryText": "Dakdanak-on mang-atuk biang-i.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dakdanak-on", "child-this"], ["mang-atuk", "act-hit"], ["biang-i", "dog-def"]
+      ["Dakdanak-on", "child-this"], ["mang-atuk", "ACT-hit"], ["biang-i", "dog-DEF"]
     ],
     "translation": "This boy hit the dog.",
     "context": "Active clause in SVO order.",
@@ -600,10 +527,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "order"],
-      ["voice", "active"],
-      ["order", "SVO"],
-      ["verb", "atuk"],
       ["agent", "dakdanak-on"],
       ["patient", "biang-i"]
     ],
@@ -617,8 +540,8 @@
     "primaryText": "Si-John mang-alean aha tu si-Mary?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Si-John", "hon-John"], ["mang-alean", "act-give"], ["aha", "what"], ["tu", "to"],
-      ["si-Mary", "hon-Mary"]
+      ["Si-John", "HON-John"], ["mang-alean", "ACT-give"], ["aha", "what"], ["tu", "to"],
+      ["si-Mary", "HON-Mary"]
     ],
     "translation": "What did John give to Mary?",
     "context": "The wh-object of an active ditransitive in SVO order in situ.",
@@ -626,12 +549,9 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "active"],
-      ["order", "SVO"],
-      ["transitivity", "ditransitive"],
-      ["extracted", "patient"],
-      ["wh", "inSitu"]
+      ["agent", "si-John"],
+      ["patient", "aha"],
+      ["goal", "tu si-Mary"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -643,7 +563,7 @@
     "primaryText": "Biang-i di-atuk ise?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Biang-i", "dog-def"], ["di-atuk", "pass-hit"], ["ise", "who"]
+      ["Biang-i", "dog-DEF"], ["di-atuk", "PASS-hit"], ["ise", "who"]
     ],
     "translation": "Who was the dog hit by?",
     "context": "The wh-agent of a passive clause in SVO order in situ.",
@@ -651,12 +571,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "passive"],
-      ["order", "SVO"],
-      ["transitivity", "monotransitive"],
-      ["extracted", "agent"],
-      ["wh", "inSitu"]
+      ["agent", "ise"],
+      ["patient", "biang-i"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -668,7 +584,7 @@
     "primaryText": "Ise biang-i di-atuk?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ise", "who"], ["biang-i", "dog-def"], ["di-atuk", "pass-hit"]
+      ["Ise", "who"], ["biang-i", "dog-DEF"], ["di-atuk", "PASS-hit"]
     ],
     "translation": "Who was the dog hit by?",
     "context": "The wh-agent of a passive clause in SVO order fronted.",
@@ -676,12 +592,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "extraction"],
-      ["voice", "passive"],
-      ["order", "SVO"],
-      ["transitivity", "monotransitive"],
-      ["extracted", "agent"],
-      ["wh", "fronted"]
+      ["agent", "ise"],
+      ["patient", "biang-i"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -699,10 +611,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "passive"],
-      ["antecedent", "patient"],
-      ["reflexive", "agent"]
+      ["antecedent", "patient"]
     ],
     "comment": "Repeats (25); derived in (97)–(98).",
     "verified": "page-image"
@@ -720,10 +629,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "binding"],
-      ["voice", "passive"],
-      ["antecedent", "agent"],
-      ["reflexive", "patient"]
+      ["antecedent", "agent"]
     ],
     "comment": "Repeats (26); derived in (99)–(100).",
     "verified": "page-image"
