@@ -40,6 +40,11 @@ a reverse tag disjoins it with the monopolar question of the negation.
   is the proposition, everything, or its complement, and under any prior on which the issue is
   live it has the relevance sign it is built from (`relevanceSign_evidence`).
 
+## Errata
+
+* The last stage of (28b) prints the addressee's commitment to `φ` after *No*; since *no*
+  asserts the negation, it is the commitment to `¬φ` here.
+
 ## TODO
 
 * After the second update of an assertion, contradicting it needs a rejection in the paper,
@@ -48,8 +53,6 @@ a reverse tag disjoins it with the monopolar question of the negation.
   contradiction is stated here after the first update only.
 * The reaction *I don't know* is left out, since its clash with either answer is a fact about
   knowledge that coherence does not see.
-* The paper prints the addressee's commitment to `φ` in the last stage of (28b); since *no*
-  asserts the negation, it is the commitment to `¬φ` here.
 
 ## References
 

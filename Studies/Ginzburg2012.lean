@@ -39,13 +39,7 @@ clarification request, a self-repair and a bare follow-up question, as the rules
 * Contextual Instantiation takes the labels of the parameters it witnesses rather than the
   witnessing record, so the utterance it produces is a contextual extension of MaxPending by
   `LocutionaryProposition.exists_eq_instantiate_iff`.
-* Three of the book's tables misprint: trace (66) labels the QUD update after B's question "Assert
-  QUD-incrementation" where it is Ask QUD-incrementation; trace (68) ends with `QUD := ⟨q0⟩`
-  although no `q0` occurs, and Fact update/QUD-downdate leaves QUD empty; Table 7.4 heads the
-  Answers block with 413 while its cells sum to 403, the figure the total of Table 7.3 needs.
-* Appendix B's backwards-looking appropriateness repair ((29) p. 375) makes the pending utterance
-  the focus-establishing constituent, where its statement in the text ((31) p. 287) and every
-  other clarification rule make it the clarified constituent; the rule follows (31).
+* The backwards-looking appropriateness repair follows its statement in the text, (31) p. 287.
 * Utterance Interpolation ((67) p. 190) also adds the most recent speech event to FACTS; the
   rules here leave FACTS as it is.
 * Co-propositionality is approximated by identity (`Copropositional`): a move addresses MaxQUD
@@ -56,6 +50,16 @@ clarification request, a self-repair and a bare follow-up question, as the rules
   modelled.
 * The clarification-request forms of §6.2.1 and the non-sentential-utterance classes of Tables
   7.3–7.4 are recorded as taxonomies (`CRForm`, `NSUClass`, `NSUClass.function`).
+
+## Errata
+
+* Three of the book's tables misprint: trace (66) labels the QUD update after B's question "Assert
+  QUD-incrementation" where it is Ask QUD-incrementation; trace (68) ends with `QUD := ⟨q0⟩`
+  although no `q0` occurs, and Fact update/QUD-downdate leaves QUD empty; Table 7.4 heads the
+  Answers block with 413 while its cells sum to 403, the figure the total of Table 7.3 needs.
+* Appendix B's backwards-looking appropriateness repair ((29) p. 375) makes the pending utterance
+  the focus-establishing constituent, where its statement in the text ((31) p. 287) and every
+  other clarification rule make it the clarified constituent.
 
 ## References
 

@@ -22,9 +22,9 @@ indexes, and the paper's predictions come out in closed form from the prior mass
 
 Priors are integer weights read off the paper's tables, the listener normalizing them, and the
 speaker's rationality is a parameter, `6` where the paper computes a number. Persona selection
-is the sequential rule (15). Table 9 prints 33, 50 and 66 for the classes, which is what the
-joint rule (16) gives at rationality 6; the sequential rule gives about 25, 50 and 75 there, in
-the same order.
+is the sequential rule (15). Table 9 states no rationality. Its 33, 50 and 66 for the classes are
+what the joint rule (16) gives at rationality 6, and what the sequential rule gives at a
+persona-selection rationality of `ln 5`; at 6 the sequential rule gives about 25, 50 and 75.
 
 ## TODO
 

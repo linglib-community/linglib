@@ -7,35 +7,36 @@ public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 # Personae and grounded fields
 
 This file defines the personae and grounded indexical fields of Burnett's social meaning games
-and the Eckert–Montague lift of a field to persona compatibility. A property space is a graph of
-incompatibility on social properties, a persona is a maximal independent set of it, and a
-grounded field indexes each variant to an independent set of properties. The lift sends a
-variant to the personae compatible with it, those with every property it indexes, or on the
-Montagovian-individual reading those sharing some property with it, as an entity lifts to the
-generalized quantifier of the properties it has. An association field over the dimensions of
-social evaluation grounds as the poles whose polarity is the sign of the association. A social
-meaning game runs the RSA pipeline on the personae, its literal listener conditioning a prior on
-the personae a variant meets; Burnett's 2023 book keeps these definitions, and her 2026 review
-takes the game as the current formalization of social meaning as reasoning.
+and the Eckert–Montague field of a variant. A property space is a graph of incompatibility on
+social properties, a persona is a maximal independent set of it, and a grounded field indexes each
+variant to an independent set of properties, its Eckert field. The Eckert–Montague field
+type-lifts the Eckert field to the personae that share some property with it, as the Montagovian
+individual lifts an entity to the properties it has. The personae with every property a variant
+indexes are fewer: a variant that indexes a whole persona is compatible with that persona alone.
+An association field over the dimensions of social evaluation grounds as the poles whose polarity
+is the sign of the association. A social meaning game runs the RSA pipeline on the personae, its
+literal listener conditioning a prior on the variant's Eckert–Montague field; Burnett's 2023 book
+keeps these definitions, and her 2026 review takes the game as the current formalization of
+social meaning as reasoning.
 
 ## Main definitions
 
 * `GroundedField`: an indexical field whose values are independent sets of an incompatibility
   graph.
-* `GroundedField.Compatible`, `GroundedField.Meets`: a persona has every property a variant
-  indexes, or shares one with it.
-* `GroundedField.lift`, `GroundedField.liftMI`: the personae compatible with a variant on each
-  reading.
-* `Persona`: a maximal independent set of the incompatibility graph, and
-  `GroundedField.personae`, the personae that meet a variant.
+* `Persona`: a maximal independent set of the incompatibility graph.
+* `GroundedField.Meets`, `GroundedField.Compatible`: a persona shares a property with a variant,
+  or has every property it indexes.
+* `GroundedField.personae`: the Eckert–Montague field of a variant, the personae that meet it.
+* `GroundedField.compatiblePersonae`: the personae compatible with a variant.
 * `AssociationField.ground`: the grounded field of an association field over the dimensions.
 * `GroundedField.Complementary`: two variants indexing complementary personae.
 
 ## Main results
 
-* `GroundedField.lift_subset_lift`, `GroundedField.liftMI_subset_liftMI`: the lift is antitone
-  and the Montagovian-individual lift monotone in the indexed properties.
-* `GroundedField.lift_eq_singleton`: a variant that indexes a whole persona lifts to it alone.
+* `GroundedField.personae_mono`, `GroundedField.compatiblePersonae_anti`: the Eckert–Montague
+  field grows and the compatible personae shrink as a variant indexes more.
+* `GroundedField.compatiblePersonae_eq_singleton`: a variant that indexes a whole persona is
+  compatible with it alone.
 * `AssociationField.Antipodal.ground_indexes`: of an antipodal pair, the second grounds as the
   opposites of the poles the first grounds as.
 * `GroundedField.Complementary.personae_eq_compl`: of two complementary variants, each meets every
@@ -62,67 +63,71 @@ structure GroundedField (Variant : Type*) {P : Type*} (G : SimpleGraph P) where
   indexes : Variant → Finset P
   isIndepSet : ∀ v, G.IsIndepSet (indexes v : Set P)
 
-namespace GroundedField
-
-variable {Variant P : Type*} {G : SimpleGraph P} (F : GroundedField Variant G) (v : Variant)
-  (π : Finset P) {v₁ v₂ : Variant}
-
-/-- A persona is compatible with a variant when it has every property the variant indexes. -/
-def Compatible : Prop := F.indexes v ⊆ π
-
-/-- On the Montagovian-individual reading, a persona meets a variant when it shares a property
-with it. -/
-def Meets : Prop := ¬ Disjoint (F.indexes v) π
-
-instance [DecidableEq P] : Decidable (F.Compatible v π) :=
-  inferInstanceAs (Decidable (F.indexes v ⊆ π))
-
-instance [DecidableEq P] : Decidable (F.Meets v π) :=
-  inferInstanceAs (Decidable (¬ Disjoint _ _))
-
-variable [Fintype P] [DecidableEq P] [DecidableRel G.Adj]
-
-/-- The Eckert–Montague lift sends a variant to the personae compatible with it. -/
-def lift : Finset (Finset P) := G.maximalIndepSets.filter (F.Compatible v)
-
-/-- The Montagovian-individual lift sends a variant to the personae that meet it. -/
-def liftMI : Finset (Finset P) := G.maximalIndepSets.filter (F.Meets v)
-
-/-- The more a variant indexes, the fewer personae are compatible with it. -/
-theorem lift_subset_lift (h : F.indexes v₁ ⊆ F.indexes v₂) : F.lift v₂ ⊆ F.lift v₁ :=
-  Finset.monotone_filter_right _ fun _ _ hπ ↦ h.trans hπ
-
-/-- The more a variant indexes, the more personae meet it. -/
-theorem liftMI_subset_liftMI (h : F.indexes v₁ ⊆ F.indexes v₂) : F.liftMI v₁ ⊆ F.liftMI v₂ :=
-  Finset.monotone_filter_right _ fun _ _ hπ hd ↦ hπ (hd.mono_left h)
-
-/-- A variant that indexes a whole persona is compatible with that persona alone. -/
-theorem lift_eq_singleton (h : F.indexes v ∈ G.maximalIndepSets) : F.lift v = {F.indexes v} := by
-  ext π
-  simp only [lift, Finset.mem_filter, Finset.mem_singleton, Compatible]
-  refine ⟨fun ⟨hπ, hsub⟩ ↦ ?_, by rintro rfl; exact ⟨h, subset_rfl⟩⟩
-  rw [SimpleGraph.mem_maximalIndepSets] at h hπ
-  exact (Finset.coe_injective (h.eq_of_subset hπ.prop (Finset.coe_subset.2 hsub))).symm
-
-end GroundedField
-
 /-- A persona is a maximal independent set of the incompatibility graph, a maximal consistent
 set of properties. -/
 abbrev Persona {P : Type*} (G : SimpleGraph P) [Fintype P] [DecidableEq P] [DecidableRel G.Adj] :
     Type _ :=
   {π : Finset P // π ∈ G.maximalIndepSets}
 
-/-- The personae that meet a variant. -/
-def GroundedField.personae {Variant P : Type*} {G : SimpleGraph P} [Fintype P] [DecidableEq P]
-    [DecidableRel G.Adj] (F : GroundedField Variant G) (v : Variant) : Finset (Persona G) :=
-  Finset.univ.filter fun π ↦ F.Meets v π.1
-
-@[simp] theorem GroundedField.mem_personae {Variant P : Type*} {G : SimpleGraph P} [Fintype P]
-    [DecidableEq P] [DecidableRel G.Adj] {F : GroundedField Variant G} {v : Variant}
-    {π : Persona G} : π ∈ F.personae v ↔ F.Meets v π.1 := by
-  simp [GroundedField.personae]
-
 namespace GroundedField
+
+section Personae
+
+variable {Variant P : Type*} {G : SimpleGraph P} (F : GroundedField Variant G) (v : Variant)
+  (π : Finset P) {v₁ v₂ : Variant}
+
+/-- A persona meets a variant when it shares a property with it. -/
+def Meets : Prop := ¬ Disjoint (F.indexes v) π
+
+/-- A persona is compatible with a variant when it has every property the variant indexes. -/
+def Compatible : Prop := F.indexes v ⊆ π
+
+instance [DecidableEq P] : Decidable (F.Meets v π) :=
+  inferInstanceAs (Decidable (¬ Disjoint _ _))
+
+instance [DecidableEq P] : Decidable (F.Compatible v π) :=
+  inferInstanceAs (Decidable (F.indexes v ⊆ π))
+
+variable [Fintype P] [DecidableEq P] [DecidableRel G.Adj]
+
+/-- The Eckert–Montague field of a variant is the set of personae that meet it, the type-lift of
+its Eckert field: the field on *competent* and *friendly* consists of the personae that are
+competent or friendly ([burnett-2019] p. 433). -/
+def personae : Finset (Persona G) := Finset.univ.filter fun π ↦ F.Meets v π.1
+
+/-- The personae compatible with a variant, those with every property it indexes. -/
+def compatiblePersonae : Finset (Persona G) := Finset.univ.filter fun π ↦ F.Compatible v π.1
+
+variable {F v}
+
+@[simp] theorem mem_personae {π : Persona G} : π ∈ F.personae v ↔ F.Meets v π.1 := by
+  simp [personae]
+
+@[simp] theorem mem_compatiblePersonae {π : Persona G} :
+    π ∈ F.compatiblePersonae v ↔ F.Compatible v π.1 := by
+  simp [compatiblePersonae]
+
+variable (F)
+
+theorem personae_mono (h : F.indexes v₁ ⊆ F.indexes v₂) : F.personae v₁ ⊆ F.personae v₂ :=
+  Finset.monotone_filter_right _ fun _ _ hπ hd ↦ hπ (hd.mono_left h)
+
+theorem compatiblePersonae_anti (h : F.indexes v₁ ⊆ F.indexes v₂) :
+    F.compatiblePersonae v₂ ⊆ F.compatiblePersonae v₁ :=
+  Finset.monotone_filter_right _ fun _ _ hπ ↦ h.trans hπ
+
+/-- A variant that indexes a whole persona is compatible with that persona alone, so that
+conditioning on the personae compatible with an Eckert field would leave only the persona the field
+itself is, the reason [burnett-2019] (p. 434) conditions on the Eckert–Montague field instead. -/
+theorem compatiblePersonae_eq_singleton (h : F.indexes v ∈ G.maximalIndepSets) :
+    F.compatiblePersonae v = {⟨F.indexes v, h⟩} := by
+  ext π
+  rw [mem_compatiblePersonae, Finset.mem_singleton, Compatible, Subtype.ext_iff]
+  refine ⟨fun hsub ↦ ?_, fun he ↦ he ▸ subset_rfl⟩
+  exact (Finset.coe_injective ((G.mem_maximalIndepSets.1 h).eq_of_subset
+    (G.mem_maximalIndepSets.1 π.2).prop (Finset.coe_subset.2 hsub))).symm
+
+end Personae
 
 variable {Variant P : Type*} [Fintype P] [DecidableEq P] {G : SimpleGraph P} [DecidableRel G.Adj]
 
@@ -181,8 +186,8 @@ theorem mem_personae_of_ne {p : Persona G} (hp : p ≠ h.persona) (hp' : p ≠ h
     exact hp
 
 /-- The first variant is compatible with the persona it indexes alone. -/
-theorem lift_eq_singleton : F.lift v = {F.indexes v} :=
-  F.lift_eq_singleton v h.left_mem
+theorem compatiblePersonae_eq_singleton : F.compatiblePersonae v = {h.persona} :=
+  F.compatiblePersonae_eq_singleton h.left_mem
 
 end Complementary
 
