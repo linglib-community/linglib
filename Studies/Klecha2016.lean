@@ -25,6 +25,10 @@ orientations its attitude's modal bases and its tense both admit: *think* takes 
   embedded time in the base.
 * The aktionsart restriction that rules out the episodic simultaneous reading of (7a) is not
   represented; the study states the orientations that tense and modal base leave open.
+* The paper gives the entries of *think* and *hope* an open modal base argument and leaves the
+  mechanism pairing verbs with bases unformalized. That a doxastic verb takes `dox` alone and a
+  preferential verb either, extended from *think* and *hope* to the verbs of their classes, is
+  this study's assumption, the one the readings of *think* rest on.
 
 ## References
 
@@ -51,8 +55,9 @@ inductive Background
 
 namespace Background
 
-/-- The orientations a modal base admits for the reference time of its prejacent relative to
-the evaluation time are past and present under `dox` and future under `cir` (Table 1). -/
+/-- (35): the orientations a modal base admits for the reference time of its prejacent relative
+to the evaluation time are past and present under `dox`, whose actual histories end at the
+evaluation time, and future under `cir`, whose future histories depart from it. -/
 def orientations : Background → Finset Ordering
   | .dox => ⟦past⟧ ∪ ⟦present⟧
   | .cir => ⟦future⟧
@@ -92,8 +97,10 @@ end Background
 
 /-! ### Attitude verbs, §3.1 -/
 
-/-- A doxastic verb combines with `dox` alone and a preferential verb with either modal base,
-(34). -/
+/-- The modal bases a verb of each class combines with: a doxastic verb `dox` alone and a
+preferential verb either. Klecha's derivations give *hope* `cir`, (49), and `dox`, (55), and
+*think* `dox`; what rules out *think* with `cir` he leaves open, so the restriction is this
+study's. -/
 def modalBases : Attitude → Finset Background
   | .doxastic _ => {.dox}
   | .preferential _ _ => {.dox, .cir}

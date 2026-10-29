@@ -10,16 +10,18 @@ public import Linglib.Data.Examples.Kratzer1998
 /-!
 # Kratzer (1998): More Structural Analogies between Pronouns and Tenses
 
-Kratzer treats tenses as pronouns, after Partee. English has two indexical tenses, a present
-defined when the context provides an interval including the utterance time and a past defined
-when it provides one preceding it, and a zero tense with no presupposition that must be bound by
-the next tense up. A zero tense with a binder index abstracts over the time, so attitude
-complements denote properties of times, which derives Abusch's constraint from the verbs'
-selection. What looks like a tense may spell out a tense together with one of Klein's three
-aspects; since out of the blue only the present is defined and only the perfect places the
-event before the reference time, a form describes a past event out of the blue just in case it
-spells out present tense with perfect aspect. The paper's tables assign that combination to the
-English simple past and the German *Perfekt* and never to the *Präteritum*.
+Kratzer treats tenses as pronouns, after Partee. English has two indexical tenses, a present defined
+when the context provides an interval including the utterance time and a past defined when it
+provides one preceding it, and a zero tense with no presupposition that must be bound by the next
+tense up. A zero tense with a binder index [abstracts over the time](##zeroTense_abstract), so
+attitude complements denote properties of times, as attitude verbs require. From that requirement
+Kratzer derives what von Stechow calls Abusch's Constraint, that in attitude contexts the highest
+tense is controlled by the matrix tense, a constraint distinct from Abusch's Upper Limit Constraint.
+What looks like a tense may spell out a tense together with one of Klein's three aspects; since out
+of the blue only the present is defined and only the perfect places the event before the reference
+time, a form describes a past event out of the blue just in case it spells out present tense with
+perfect aspect. The paper's tables assign that combination to the English simple past and the German
+*Perfekt* and never to the *Präteritum*.
 
 ## Implementation notes
 
@@ -38,6 +40,7 @@ entered, since the library has no French tense forms.
 * [kratzer-1998]
 * [partee-1973]
 * [abusch-1997]
+* [von-stechow-1995]
 * [ogihara-1989]
 * [ogihara-1996]
 * [heim-kratzer-1998]
