@@ -109,8 +109,8 @@ theorem intersection_conservative_symmetric (q : GQ α)
     exact (hInt R (fun x => R x ∧ S x) S (fun x => S x ∧ R x) fun x =>
       ⟨fun ⟨_, hR, hS⟩ => ⟨hS, hS, hR⟩, fun ⟨_, hS, hR⟩ => ⟨hR, hR, hS⟩⟩).mp h⟩
 
-/-- Scope-downward monotonicity is equivalent to scope-upward monotonicity
-    of the inner negation (co-property characterization, P&W §3.2.4). -/
+/-- Scope-downward monotonicity is equivalent to scope-upward monotonicity of the inner negation,
+the co-property characterization of [peters-westerstahl-2006] §3.2.3. -/
 theorem co_property_mono (q : GQ α) :
     ScopeAntitone q ↔ ScopeMonotone (innerNeg q) := by
   constructor
@@ -532,6 +532,11 @@ theorem ScopeMonotone.rightContinuous (q : GQ α)
   intro A B B₁ _ hB₁B _ hQ1 _
   exact h A hB₁B hQ1
 
+theorem ScopeAntitone.rightContinuous (q : GQ α)
+    (h : ScopeAntitone q) : RightContinuous q := by
+  intro A B _ B₂ _ hBB₂ _ hQ2
+  exact h A hBB₂ hQ2
+
 /-- A conservative irreflexive almost-connected quantifier is scope-antitone
 ([van-benthem-1984]'s Theorem 4.1.2). -/
 theorem irrefl_almostConn_scopeDown (q : GQ α)
@@ -697,7 +702,7 @@ theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
 [van-benthem-1984] §3.3 -/
 
 /-- Under conservativity the only symmetric quasi-reflexive quantifier is overlap, that is
-*some* ([van-benthem-1984]'s Corollary 3.3.2). -/
+*some* ([van-benthem-1984]'s Theorem 3.3.2). -/
 theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hSym : Std.Symm q)
     (hQR : QuasiReflexive q)

@@ -32,9 +32,24 @@ first-order logic nor from the unrelativized majority quantifier, so *most* is a
 not a quantifier. The fragment's quantity words instantiate Table II, and the paper's own
 artificial determiners witness that the universals U6–U8 are not logical truths. Under the
 substrate's proportional reading of *few* (fewer than half), *few N are N* is contradictory,
-so `few` comes out negative strong — B&C's Table II lists *few* as weak, a classification
-their own §4.8 discussion of *many* and *few* already marks as unstable. Partial determiners
-(*the n*, *both*, *neither*) fall outside the total type `GQ α` and are not treated.
+so `few` comes out negative strong, while B&C's Table II lists *few* as weak. Partial
+determiners (*the n*, *both*, *neither*) fall outside the total type `GQ α` and are not treated.
+
+## Implementation notes
+
+* The library's `most` is *more than half* of a finite restrictor. Barwise and Cooper keep the
+  two apart: *most* is a non-logical determiner whose meaning the fixed context supplies (§1.4),
+  constrained only by the semantic postulates of Appendix B, and SP1 makes it positive strong at
+  every restrictor, the empty one included. *More than half* fails at the empty restrictor, so
+  `most_apply_self` holds only for a nonempty restrictor, and by the definition of §4.6 the
+  library's `most` is weak rather than strong as Table II has it (`most_weak`).
+
+## Errata
+
+* The artificial determiner of §4.8 is printed as `‖D‖(A) = {X | Card(X − A) is finite and
+  even}`, but the paper's own witnesses, `A − {a, b} ∈ ‖D‖(A)` and `A − {a} ∉ ‖D‖(A)`, hold
+  only for `Card(A − X)`. As printed, `D` would not live on `A`, against the determiner
+  universal U3; `evenOutside` counts `A − X`, and is conservative (`conservative_evenOutside`).
 
 ## References
 
@@ -169,20 +184,29 @@ theorem exists_and_of_scopeUp_dual (hm : ScopeMonotone D) {R A B : α → Prop}
   push Not at h
   exact hB (hm R (show A ≤ (fun x ↦ ¬ B x) from fun x hx hBx ↦ h x hx hBx) hA)
 
-/-! §4.8's artificial strong-but-not-increasing determiner shows U7 (*positive strong
-determiners are increasing*) is not a logical truth. -/
+/-! §4.8's artificial strong-but-not-increasing determiner, conservative once its erratum is
+corrected, shows U7 (*positive strong determiners are increasing*) is not a logical truth. -/
 
-/-- `X ∈ D(A)` iff `X ∖ A` is even — positive strong, but not increasing (§4.8). -/
-def evenOutside : GQ α := fun A X ↦ Even {x | X x ∧ ¬ A x}.ncard
+/-- `X ∈ D(A)` iff the members of `A` outside `X` are finitely and evenly many — positive
+strong, but not increasing (§4.8, with the erratum `A − X`). -/
+def evenOutside : GQ α := fun A X ↦ {x | A x ∧ ¬ X x}.Finite ∧ Even {x | A x ∧ ¬ X x}.ncard
+
+theorem conservative_evenOutside : Conservative (evenOutside (α := α)) := fun A X ↦ by
+  have h : {x | A x ∧ ¬ (A x ∧ X x)} = {x | A x ∧ ¬ X x} := Set.ext fun _ ↦ by
+    simp only [Set.mem_ofPred_eq]; tauto
+  simp only [evenOutside, h]
 
 theorem positiveStrong_evenOutside : PositiveStrong (evenOutside (α := α)) := fun A ↦ by
   simp [evenOutside]
 
-theorem not_scopeUp_evenOutside : ¬ ScopeMonotone (evenOutside (α := Unit)) := fun h ↦ by
-  have h1 := h (fun _ ↦ False)
-    (show ((fun _ : Unit ↦ False) : Unit → Prop) ≤ fun _ ↦ True from fun _ h ↦ h.elim)
-    (by simp [evenOutside])
-  simp [evenOutside, Set.ncard_univ] at h1
+theorem not_scopeUp_evenOutside : ¬ ScopeMonotone (evenOutside (α := Bool)) := fun h ↦ by
+  have h1 := h (fun _ ↦ True)
+    (show ((fun _ : Bool ↦ False) : Bool → Prop) ≤ (· = true) from fun _ h ↦ h.elim)
+    ⟨Set.toFinite _, by simp⟩
+  have : {x : Bool | True ∧ ¬ x = true} = {false} := by ext x; cases x <;> simp
+  obtain ⟨-, h2⟩ := h1
+  rw [this, Set.ncard_singleton] at h2
+  exact Nat.not_even_one h2
 
 /-! §4.9's *some but not all* is persistent but neither increasing nor symmetric, so U8
 (*persistent determiners are increasing and weak*) is not a logical truth either. -/
@@ -234,11 +258,18 @@ theorem no_weak [Nonempty α] : Weak (no : GQ α) := by
   · exact h (fun _ ↦ True) (Classical.arbitrary α) trivial trivial
   · exact h (fun _ ↦ False) (fun x hx ↦ hx.elim)
 
--- §4.7
+-- weak by the definition of §4.6; *half* is not in Table II
 theorem half_weak : Weak (half : GQ (Fin 3)) := by
   rintro (h | h)
   · exact absurd (h (fun x : Fin 3 ↦ x = 0)) (by decide)
   · exact h (fun _ : Fin 3 ↦ False) (by decide)
+
+-- weak by the definition of §4.6, where Table II has *most* strong
+theorem most_weak [Nonempty α] : Weak (most : GQ α) := by
+  rintro (h | h)
+  · simpa [most_apply] using h (fun _ ↦ False)
+  · obtain ⟨x⟩ := ‹Nonempty α›
+    exact h (· = x) ((most_singleton_iff x _).2 rfl)
 
 /-- The lower half of *exactly half* puts at least half the restrictor in the scope. -/
 def atLeastHalf : GQ α := (NumberTree.ofSizes fun x p ↦ p ≤ 2 * x).toGQ
@@ -270,7 +301,8 @@ theorem all_positiveStrong {d : GQ.Family} (h : d ∈ ⟦QuantityWord.all⟧) :
   exact positiveStrong_every
 
 open Classical in
--- Table II
+-- Table II and SP1 (Appendix B) make *most* positive strong at every restrictor; *more than
+-- half*, the library's `most`, is so only at a nonempty one
 theorem most_apply_self {d : GQ.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A : α → Prop)
     (h : ∃ x, A x) : d α A A := by
   obtain rfl : d = GQ.Family.most := hd

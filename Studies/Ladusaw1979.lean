@@ -11,8 +11,9 @@ Ladusaw's licensing condition says that a negative polarity item is acceptable o
 a downward-entailing expression, one that reverses entailment among its arguments, so that the
 affective environments of the earlier literature are characterized rather than listed. Every
 environment credited to the dissertation denotes a downward-entailing operator
-(`cited_environments_de`), questions do not (`question_not_de`), and a downward-entailing
-environment licenses the weak polarity items (`ladusaw_generalization`). The determiners behind
+(`cited_environments_de`), a question is not downward entailing by construction, licensing by
+relevance instead (`question_not_de`), and a downward-entailing environment licenses the weak
+polarity items (`ladusaw_generalization`). The determiners behind
 three of these environments are downward entailing in exactly the argument where they license:
 *no* in its scope and its restrictor, *few* in its scope, and *every* in its restrictor but not its
 scope (`determiner_monotonicity`).
@@ -77,6 +78,8 @@ theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c :=
     (holds_tooTo_iff (s := .weak)).2 (by decide),
     (holds_clausalComparative_iff (s := .weak)).2 (by decide)⟩
 
+-- by construction: `Licenser.Holds` is `False` at the question licenser, which licenses by
+-- relevance rather than by entailment
 theorem question_not_de : ¬ IsDownwardEntailing question.licenser := id
 
 theorem ladusaw_generalization (L : Licenser) (hc : IsDownwardEntailing L)

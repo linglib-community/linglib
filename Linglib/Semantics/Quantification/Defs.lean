@@ -36,12 +36,25 @@ in `Quantification/Individual.lean`.
 
 ## Implementation notes
 
-Extension, the independence of a quantifier from the ambient universe, holds by construction,
-since a denotation is given on one type. A quantifier is a binary relation on predicates, so the
-classical relational properties are the core relation classes `Std.Symm`, `IsTrans`,
-`Std.Antisymm`, `Std.Asymm` and `Std.Trichotomous` applied to it, and the monotonicities are
-`Monotone` and `Antitone` of its sections. Decidability of the concrete denotations is recovered
-pointwise from `[Fintype α]` and decidable restrictor and scope.
+A `GQ α` is a local quantifier, a relation between the predicates of one universe. Extension,
+the requirement that a quantifier not change when the universe is enlarged
+([peters-westerstahl-2006] §3.4.1), relates the values of a quantifier on different universes,
+so it cannot be stated of a `GQ α`: it is a condition on a `GQ.Family`, where it is not yet
+defined. Quantity invariance is likewise only its local form, invariance under permutations of
+one universe. A quantifier is a binary relation on predicates, so the classical relational
+properties are the core relation classes `Std.Symm`, `IsTrans`, `Std.Antisymm`, `Std.Asymm` and
+`Std.Trichotomous` applied to it, and the monotonicities are `Monotone` and `Antitone` of its
+sections. Decidability of the concrete denotations is recovered pointwise from `[Fintype α]` and
+decidable restrictor and scope.
+
+## TODO
+
+* Define extension on `GQ.Family` and prove that a conservative, extensional, quantity-invariant
+  family is the quantifier of a single tree of numbers. Until then the theorems of
+  `Quantification/NumberTree.lean` about trees, such as the absence of asymmetric and Euclidean
+  quantifiers and the characterization of the square of opposition, say nothing about a `GQ α`
+  beyond what `NumberTree.ofGQ` gives on one finite universe, where an asymmetric conservative
+  quantity-invariant quantifier can be nonempty.
 
 ## References
 

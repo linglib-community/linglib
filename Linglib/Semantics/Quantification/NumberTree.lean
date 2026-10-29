@@ -63,8 +63,7 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
   whether an individual is in its scope iff the individual is in its restrictor and the tree is not
   constant on the restrictor's row.
 * `Quantifier.NumberTree.card_powerset_points`: there are `2 ^ ((n + 1) * (n + 2) / 2)` sets of
-  points in rows `0` to `n`, the number of conservative, permutation-invariant quantifiers on a
-  universe of `n` individuals.
+  points in rows `0` to `n`.
 
 ## Implementation notes
 
@@ -77,6 +76,13 @@ below the top.
 Continuity, absence of deadlock and uniformity each treat presence and absence of the quantifier
 alike. Each is stated as a condition on presence (`RowConvex`, `NoDeadlock`, `Homogeneous`) that
 is imposed on the quantifier and on its complement.
+
+## TODO
+
+* Prove that on a universe of `n` individuals `ofGQ` is a bijection from the conservative,
+  quantity-invariant quantifiers onto the sets of points in rows `0` to `n`, which with
+  `card_powerset_points` gives van Benthem's count, the one `KeenanStavi1986.card_logical`
+  proves in the coordinates `(|A|, |A ∩ B|)`.
 
 ## References
 
@@ -584,8 +590,10 @@ theorem card_points (n : ℕ) : (points n).card = (n + 1) * (n + 2) / 2 := by
   rw [points, Finset.card_sigma, Finset.sum_congr rfl fun k _ ↦ Finset.Nat.card_antidiagonal k,
     ← h n, Nat.mul_div_cancel _ two_pos]
 
-/-- The conservative, permutation-invariant quantifiers on a universe of `n` individuals are the
-sets of points in rows `0` to `n` of the tree. -/
+/-- There are `2 ^ ((n + 1) * (n + 2) / 2)` sets of points in rows `0` to `n`. That these sets
+are the conservative, permutation-invariant quantifiers on `n` individuals, van Benthem's count,
+is not proved here; `KeenanStavi1986.card_logical` counts those quantifiers directly, in the
+coordinates `(|A|, |A ∩ B|)`. -/
 theorem card_powerset_points (n : ℕ) :
     (points n).powerset.card = 2 ^ ((n + 1) * (n + 2) / 2) := by
   rw [Finset.card_powerset, card_points]

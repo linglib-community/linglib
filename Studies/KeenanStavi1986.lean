@@ -30,7 +30,8 @@ Section 3.3 characterizes the determiners of existential-*there* sentences as th
 functions, `f R T ↔ f (R ⊓ T) ⊤`: *at least n* is one, *every* and *the n* are not, and the
 class is closed under the Boolean operations (PROP 13). Section 3.4 isolates the cardinal
 functions, deciding by the number of individuals in restrictor and scope: they are closed under
-the Boolean operations and properly included in the existential functions (PROP 14), which are
+the Boolean operations and, given two individuals, properly included in the existential
+functions (PROP 14), which are
 in turn isomorphic as a Boolean algebra to the type ⟨1⟩ quantifiers through `f ↦ f(1)`
 (PROP 15, `existentialOrderIso`), so number `2 ^ 2 ^ n`; the cardinal functions are the sets of
 cardinalities up to `n` (`cardinalOrderIso`), so number `2 ^ (n + 1)`, and *no ... but John* is
@@ -54,6 +55,13 @@ Canonical witnesses of each size are initial segments of a fixed enumeration (`s
 nest, unlike arbitrarily chosen subsets. `BooleanSubalgebra.closure` is finitary, so
 `closure_generators` carries `[Finite α]`; the paper closes under arbitrary meets and joins, and
 on an infinite universe the finitary closure is strictly smaller than the conservative algebra.
+
+## Errata
+
+* PROP 14(c) and its gloss say that the cardinal functions are always a proper subset of the
+  existential ones. On a universe of one individual the two classes coincide
+  (`cardinalSubalgebra_eq_of_subsingleton`), so `cardinalSubalgebra_lt` assumes two
+  individuals.
 
 ## TODO
 
@@ -478,6 +486,22 @@ theorem cardinalSubalgebra_lt [Nontrivial α] :
   refine cardinalSubalgebra_le.lt_of_ne fun h ↦ not_cardinal_noBut hab ?_
   rw [← mem_cardinalSubalgebra, h]
   exact existential_noBut a
+
+private theorem imp_of_card_eq [Subsingleton α] {P Q : α → Prop}
+    (h : Nat.card {x // P x} = Nat.card {x // Q x}) (x : α) (hx : P x) : Q x := by
+  have : Nonempty {x // P x} := ⟨⟨x, hx⟩⟩
+  have hQ : 0 < Nat.card {x // Q x} := h ▸ Nat.card_pos
+  obtain ⟨⟨y, hy⟩⟩ := (Nat.card_pos_iff.1 hQ).1
+  exact Subsingleton.elim y x ▸ hy
+
+-- PROP 14(c) fails on one individual
+theorem cardinalSubalgebra_eq_of_subsingleton [Subsingleton α] :
+    cardinalSubalgebra = (existentialSubalgebra : BooleanSubalgebra (GQ α)) := by
+  refine cardinalSubalgebra_le.antisymm ?_
+  rintro f hf R T R' T' h
+  have e : (fun x ↦ R x ∧ T x) = fun x ↦ R' x ∧ T' x := funext fun x ↦
+    propext ⟨imp_of_card_eq h x, imp_of_card_eq h.symm x⟩
+  rw [hf R T, hf R' T', e]
 
 open Classical in
 /-- A cardinal function is a set `K` of cardinalities between `0` and `n`, holding at `(R, T)`

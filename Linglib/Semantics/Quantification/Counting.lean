@@ -336,10 +336,12 @@ theorem proportional_half : Proportional (half : GQ α) := NumberTree.proportion
 
 /-! ### Counterexamples on small universes
 
-The proportional quantifiers fail `Existential`, the condition for felicity in
-there-sentences, although Barwise and Cooper's Table II labels *few* and *half* weak: their
-truth depends on `|A \ B|`, not just on `|A ∩ B|`. *Few* already fails it on one individual,
-*most* and *half* on two. -/
+The proportional quantifiers fail `Existential`, [keenan-stavi-1986]'s condition for felicity
+in *there*-sentences, since their truth depends on `|A \ B|` and not just on `|A ∩ B|`; *few*
+already fails it on one individual, *most* and *half* on two. This is not the weakness of
+[barwise-cooper-1981], which means being neither positive nor negative strong: their Table II
+lists *few* as weak and does not classify *half*, and they allow a weak *many* or *few* to fail
+the intersection condition. -/
 
 /-- *Most* fails `Existential`, by `A = ⊤` and `B = {0}` on two individuals. -/
 theorem not_existential_most : ¬ Existential (most : GQ (Fin 2)) := fun h ↦ by
@@ -394,6 +396,14 @@ theorem not_antitone_exactly [Fintype α] {n : ℕ} (hn : n ≠ 0) (h : n ≤ Fi
   have := hq (a := ⊥) (b := (· ∈ t)) bot_le (by simp [exactly_apply, ← Set.ncard_coe_finset])
   simp [exactly_apply] at this
   omega
+
+/-- *Exactly n* meets Barwise and Cooper's monotonicity constraint as the conjunction of *at least
+n* and *at most n*, though it is neither monotone nor antitone (`not_monotone_exactly`,
+`not_antitone_exactly`). -/
+theorem satisfiesUniversals_exactly [Finite α] (n : ℕ) :
+    SatisfiesUniversals (exactly n : GQ α) :=
+  ⟨conservative_exactly n, fun R ↦ ⟨atLeast n R, atMost n R, .inl (monotone_atLeast n R),
+    .inr (antitone_atMost n R), by rw [exactly_eq_atLeast_inf_atMost]; rfl⟩⟩
 
 theorem both_fin2 : both (α := Fin 2) (fun _ ↦ True) fun _ ↦ True := by decide
 
