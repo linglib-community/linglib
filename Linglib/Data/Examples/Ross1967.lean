@@ -15,6 +15,19 @@ this module; declarations live in `namespace Ross1967.Examples`.
 
 namespace Ross1967.Examples
 
+def ex4_13a : Datum :=
+  { id := "ross1967_ex4_13a"
+    source := ⟨"ross-1967", "(4.13a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "This is a hat which I'm going to see to it that my wife buys."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("rule", "relativization")] }
+
 def ex4_15a : Datum :=
   { id := "ross1967_ex4_15a"
     source := ⟨"ross-1967", "(4.15a)"⟩
@@ -236,6 +249,6 @@ def ex6_137 : Datum :=
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "LBC")] }
 
-def all : List Datum := [ex4_15a, ex4_18a, ex4_18b, ex2_18, ex4_82a, ex4_82d, ex4_184a, ex4_184b, ex4_184c, ex4_251a, ex4_251b, ex4_251c, ex4_252, ex6_128b, ex6_135b, ex6_136, ex6_137]
+def all : List Datum := [ex4_13a, ex4_15a, ex4_18a, ex4_18b, ex2_18, ex4_82a, ex4_82d, ex4_184a, ex4_184b, ex4_184c, ex4_251a, ex4_251b, ex4_251c, ex4_252, ex6_128b, ex6_135b, ex6_136, ex6_137]
 
 end Ross1967.Examples
