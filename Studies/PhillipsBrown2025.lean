@@ -35,7 +35,8 @@ is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defin
   cost. The Anti-deckstacking Constraint quantifies over all propositions; read so, it admits
   only the finest partition (`antiDeckstacking_univ_singleton`), so it is restricted here to a
   list of salient propositions, the issues of each case.
-* Heim's semantics is the conditional one, `Desire.Conditional.Want`. Levinson's expected-value
+* Heim's semantics is the conditional one, `Desire.Conditional.Want`, with the similar worlds
+  drawn from the belief worlds, as Phillips-Brown presents it. Levinson's expected-value
   comparison, the sufficient-desirability semantics of §2.4, and the Heimian question-based
   semantics of footnote 16 are prose.
 
@@ -188,8 +189,8 @@ theorem vonFintel_no_conflict (A : Set (World → Prop)) :
 /-- Neither can Heim's, under her definedness amendment and antisymmetric desirability. -/
 theorem heim_no_conflict (F : Conditional.Frame World) (w : World) [Std.Antisymm (F.pref w)]
     (hd : Desire.IsContingent bel ↑act) :
-    ¬ (Conditional.Want F bel w ↑act ∧ Conditional.Want F bel w (↑act : Set World)ᶜ) :=
-  fun ⟨h, h'⟩ ↦ h.not_compl hd h'
+    ¬ (Conditional.Want F bel bel w ↑act ∧ Conditional.Want F bel bel w (↑act : Set World)ᶜ) :=
+  fun ⟨h, h'⟩ ↦ h.not_compl (hd.1.mono Set.inter_subset_left) hd h'
 
 /-- On a belief-based semantics, wanting the act is wanting the cost believed to come with it
 (§4.1). -/

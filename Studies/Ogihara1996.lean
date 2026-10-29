@@ -11,18 +11,21 @@ public import Linglib.Fragments.Japanese.Tense
 [ogihara-1996] proposes a relative tense theory: a tense morpheme is interpreted in the scope of
 the structurally higher tense, locating the time of its clause relative to the time of the tense
 that commands it. English and Japanese share the theory and differ in two respects. English has
-an absolute present, and it has a sequence-of-tense rule that optionally deletes a past tense
-locally commanded by another past, leaving a null tense that is simultaneous with the commanding
-time. Japanese has no such rule.
+an absolute present, and it has a sequence-of-tense rule that optionally deletes a tense whose
+local tense feature, the nearest [+past] or [+pres] above it, is its own, leaving a null tense
+that is simultaneous with the commanding time. The perfect carries [+past] without being a tense,
+so it triggers the rule as a past does. Japanese has no such rule.
 
 A clause's tense morphemes are read off its tense form, a past participle under *have* being
 the perfect and an infinitive under *will* the future *woll*, and the readings of a chain of
 clauses compose the cells of their relative tenses. A past under a past then takes [the positions
 of the Upper Limit Constraint or the past ones alone](##readings_past_past), [simultaneous exactly
-in English](##eq_mem_readings_past_past_iff); [a past perfect under a past precedes the commanding
-time](##readings_pastPerfect) however the rule applies; and [a past under a future stays a
-past](##readings_future_past) beneath a higher past. The book's sentences [have exactly the
-readings the chain allows](##rows_readings).
+in English](##eq_mem_readings_past_past_iff), and so does [a past under the
+perfect](##readings_presentPerfect_past), as in *John has said that Mary was sick*; [a past
+perfect under a past precedes the commanding time](##readings_pastPerfect) however the rule
+applies; and [a past under a future stays a past](##readings_future_past) beneath a higher past,
+the present of *will* standing between them. The book's sentences [have exactly the readings the
+chain allows](##rows_readings).
 
 ## Implementation notes
 
@@ -31,8 +34,16 @@ readings the chain allows](##rows_readings).
   quantifiers over times and attitude verbs relate individuals to sets of world-time pairs read
   de se, is not encoded; the null tense left by the rule is the property of times the attitude
   evaluates at its own time.
-* The SOT rule applies to the underlying structure: whether a past is deleted depends on the
-  morpheme that commands it before deletion.
+* The SOT rule is the book's definitive version, over the tense features [+past] and [+pres]:
+  the pasts and the perfect carry [+past], the presents [+pres], and the null tense and *woll*
+  none that the rule sees. A morpheme's local tense feature is that of the nearest morpheme above
+  it to carry one, read off the structure before deletion. A tense is deleted with its feature;
+  the rule names the perfect beside the tenses, so deleting its feature leaves the perfect in
+  place, changes no reading, and the perfect acts as a trigger only.
+* The English absolute present *-s* enters a chain for its [+pres] feature, by which the present
+  of *will* keeps a past below it from being deleted under a higher past. It is no relative tense,
+  so the readings compose the relative tenses left at LF, among them the null tense that a
+  deleted present leaves.
 * The Japanese present *-(r)u* and past *-ta* have the tenses their verbal endings mark in
   `Japanese.Tense.ending`, where the present and the future share the non-past, and *-(r)u*
   [stands for the non-past of every conjugation](##Morpheme.tenses_ru), the copula *-da* among
@@ -46,9 +57,10 @@ person singular subject; it is the third person singular.
 
 ## TODO
 
-The English absolute present *-s* and the double-access sentences it gives under a past are not
-encoded, nor are relative clauses, whose tenses the book interprets by NP scope as well as by the
-rule.
+The interpretation of the English absolute present *-s* and the double-access sentences it gives
+under a past are not encoded, nor are relative clauses, whose tenses the book interprets by NP
+scope as well as by the rule, nor the common nouns that carry tense features and trigger the rule
+in their complements.
 
 ## References
 
@@ -77,8 +89,16 @@ instance : DecidablePred Language.HasSOT
   | .english => isTrue trivial
   | .japanese => isFalse id
 
-/-- The relative tense morphemes of the book's chart of English and Japanese tenses. -/
+/-- The tense features that the SOT rule sees, [+past] and [+pres]. -/
+inductive Feature
+  | past
+  | pres
+  deriving DecidableEq
+
+/-- The tense morphemes of the book's chart of English and Japanese tenses. -/
 inductive Morpheme
+  /-- The English present *-s*, an absolute present. -/
+  | s
   /-- The English null tense `Ø`, a relative present. -/
   | null
   /-- The English past *-ed*. -/
@@ -100,17 +120,17 @@ def language : Morpheme → Language
   | ru | ta => .japanese
   | _ => .english
 
-/-- The relative tenses the chart assigns a morpheme, a Japanese one the tenses whose verbal
-ending it is. -/
+/-- The tenses the chart assigns a morpheme, a Japanese one the tenses whose verbal ending it
+is. -/
 def tenses : Morpheme → Finset Tense
-  | null => {.present}
+  | s | null => {.present}
   | ed => {.past}
   | perfect => {.past}
   | woll => {.future}
   | ru => {t | Japanese.Tense.ending .verbal t = Japanese.Verb.Exponent.u.morphs}
   | ta => {t | Japanese.Tense.ending .verbal t = Japanese.Verb.Exponent.ta.morphs}
 
-/-- The cell of a morpheme: the positions its relative tenses allow the time of its clause
+/-- The cell of a relative tense morpheme: the positions its tenses allow the time of its clause
 against the time of the tense commanding it. -/
 def cell (m : Morpheme) : Finset Ordering := m.tenses.sup fun t ↦ ⟦t⟧
 
@@ -123,47 +143,66 @@ theorem tenses_ru (c : Japanese.Tense.Conjugation) :
   exact (Japanese.Tense.ending_eq_ending_iff (t' := .present) .verbal).trans
     (Japanese.Tense.ending_eq_ending_iff c).symm
 
-/-- A past tense morpheme, the target and trigger of the SOT rule. -/
-def IsPastTense : Morpheme → Prop
-  | ed | ta => True
-  | _ => False
+/-- The tense feature a morpheme carries: [+past] for the pasts and the perfect, [+pres] for the
+presents, and none that the SOT rule sees for the null tense and *woll*. -/
+def feature : Morpheme → Option Feature
+  | ed | ta | perfect => some .past
+  | s | ru => some .pres
+  | null | woll => none
 
-instance : DecidablePred IsPastTense
-  | ed | ta => isTrue trivial
-  | null | perfect | woll | ru => isFalse id
+/-- A tense morpheme, deleted with its feature by the SOT rule. The perfect carries a feature
+without being a tense, and the null tense is what deletion leaves. -/
+def IsTense : Morpheme → Prop
+  | s | ed | ru | ta => True
+  | null | perfect | woll => False
 
-/-- The forms at LF of a morpheme `n` locally commanded by `m`: the SOT rule optionally deletes a
-past tense locally commanded by another past, in a language that has the rule. -/
-def forms (m n : Morpheme) : Finset Morpheme :=
-  if m.IsPastTense ∧ n.IsPastTense ∧ n.language.HasSOT then {n, null} else {n}
+instance : DecidablePred IsTense
+  | s | ed | ru | ta => isTrue trivial
+  | null | perfect | woll => isFalse id
+
+/-- (67): the forms at LF of a morpheme `n` whose local tense feature is `φ`. The SOT rule
+optionally deletes a tense whose local tense feature is its own, in a language that has the
+rule, leaving the null tense. -/
+def forms (φ : Option Feature) (n : Morpheme) : Finset Morpheme :=
+  if n.IsTense ∧ n.feature = φ ∧ n.language.HasSOT then {n, null} else {n}
 
 end Morpheme
 
 open Morpheme
 
-/-- The relative tense morphemes of a tense form in a language, outermost first. In English these
-are the past inflection *-ed*, the perfect for a past participle under *have* and *woll* for an
-infinitive under *will*; the English present, an absolute tense, and the present participle, an
-aspect, contribute none. In Japanese the morpheme is the ending of the finite tense, *-ta* or
-*-(r)u*. -/
+/-- The tense morphemes of a tense form in a language, outermost first. In English these are the
+tense inflection, *-ed* or *-s*, the perfect for a past participle under *have* and *woll* for an
+infinitive under *will*; the present participle, an aspect, contributes none. In Japanese the
+morpheme is the ending of the finite tense, *-ta* or *-(r)u*. -/
 def Morpheme.ofForm : Language → Form → List Morpheme
   | .english, f =>
-    (if f.finite = .past then [ed] else []) ++ f.nonfinite.filterMap fun
-      | .pastParticiple => some perfect
-      | .infinitive => some woll
-      | .presentParticiple => none
+    (match f.finite with | .past => [ed] | .present => [s] | .future => []) ++
+      f.nonfinite.filterMap fun
+        | .pastParticiple => some perfect
+        | .infinitive => some woll
+        | .presentParticiple => none
   | .japanese, f => [if f.finite ∈ ta.tenses then ta else ru]
 
 /-- The chain of tenses of the clauses of a sentence, outermost first, each clause's tense form
 read in the language. -/
 def chain (L : Language) (fs : List Form) : List Morpheme := fs.flatMap (Morpheme.ofForm L)
 
-/-- The readings of a chain of tenses, each locally commanding the next: the positions of the
-time of the last against the time of the first, composed from the cells of the forms at LF of each
-tense against the tense above it. -/
-def readings : List Morpheme → Finset Ordering
+/-- The forms at LF of the morphemes of a chain, each locally commanding the next, when the local
+tense feature of the first is `φ`: a morpheme passes its own feature, if it carries one, to the
+morphemes below it. -/
+def lf (φ : Option Feature) : List Morpheme → List (Finset Morpheme)
+  | [] => []
+  | m :: l => forms φ m :: lf (m.feature.or φ) l
+
+/-- The positions of the time of the last of a chain of tenses at LF against the time of the
+first, composed from the cells of the forms at each place against the tense above it. -/
+def compose : List (Finset Morpheme) → Finset Ordering
   | [] | [_] => ⟦present⟧
-  | m :: n :: l => comp (readings (n :: l)) ((forms m n).sup cell)
+  | _ :: N :: l => comp (compose (N :: l)) (N.sup cell)
+
+/-- The readings of a chain of tenses: the positions its relative tenses at LF allow. The absolute
+present is no relative tense, so the places it keeps are left out. -/
+def readings (l : List Morpheme) : Finset Ordering := compose ((lf none l).filter (· ≠ {s}))
 
 /-- A past under a past takes the positions `pastUnderPast` of its language's SOT rule: before the
 commanding time, or also at it where the rule applies. -/
@@ -171,7 +210,6 @@ theorem readings_past_past (L : Language) :
     readings (chain L [.simplePast, .simplePast]) = pastUnderPast L.HasSOT := by
   cases L <;> decide
 
-/-- A past under a past has a simultaneous reading exactly in a language with the SOT rule. -/
 theorem eq_mem_readings_past_past_iff (L : Language) :
     .eq ∈ readings (chain L [.simplePast, .simplePast]) ↔ L.HasSOT := by
   rw [readings_past_past, eq_mem_pastUnderPast_iff]
@@ -187,8 +225,15 @@ SOT rule deletes its past, the use of the perfect as a preterit. -/
 theorem readings_pastPerfect : readings (chain .english [.simplePast, .pastPerfect]) = ⟦past⟧ := by
   decide
 
-/-- A past under a future is not deleted, since its local commander is no past, so it stays
-before the future time even when a past commands the future. -/
+/-- A past under the perfect, as in *John has said that Mary was sick*, has the simultaneous
+reading as a past under a past does, before or at the time of the saying, since the perfect
+carries [+past] and triggers the rule. -/
+theorem readings_presentPerfect_past :
+    readings (chain .english [.presentPerfect, .simplePast]) = upperLimitConstraint := by
+  decide
+
+/-- A past under a future is not deleted, since its local tense feature is the [+pres] of
+*will*, so it stays before the future time even when a past commands the future. -/
 theorem readings_future_past :
     readings (chain .english [.future, .simplePast]) = ⟦past⟧ ∧
       readings (chain .english [.simplePast, .future, .simplePast]) = ⊤ := by

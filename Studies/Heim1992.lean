@@ -14,14 +14,24 @@ accessibility of (11)–(12): the report is defined iff the complement is define
 state, so a complement presupposing `p` yields a report presupposing that its holder believes `p`,
 Karttunen's generalization. The factive rule of footnote 47 makes *know* admit only contexts that
 admit its complement's presupposition, which a belief report need not. The desire half replaces
-the Hintikka-style rule (27) with the comparative semantics (31) on similarity, the library's
-`Desire.Conditional.Want`, with the amendment (40) blocking `want p ∧ want ¬p`.
+the Hintikka-style rule (27) with a comparison over similarity, `Desire.Conditional.Want`. In
+its truth-conditional form (31) the similar worlds are drawn from all worlds, and it [blocks
+Stalnaker's inference](##HealthWorld.want_getWell_not_want_beenSick) from *I want to get well*
+to *I want to have been sick*. In its context change form (39) they are drawn from the belief
+worlds, which [makes a believed complement and its negation both
+wanted](##want_and_want_compl_of_believes); the amendment (40) makes such ascriptions undefined,
+and under it [wanting `p` excludes wanting `¬p`](##HealthWorld.want_getWell_not_want_compl).
 
 ## Implementation notes
 
-* The three-world model of Section 4.1 for Stalnaker's get-well and have-been-sick contrast needs
-  a non-trivial similarity ordering and is not formalized; the four-world model here uses the
-  trivial ordering.
+* Heim fixes the closest worlds of her model from each belief world; here similarity is a
+  distance on which the two sick worlds are closer to each other than either is to the healthy
+  one, which gives those closest worlds.
+
+## TODO
+
+Asher's Concorde case of the same inference, and the accessibility (43) for *intend* that answers
+the worry of (41), are not formalized.
 
 ## References
 
@@ -134,47 +144,102 @@ theorem believes_admits_not_knows :
   ⟨fun _ _ _ h ↦ by simp_all [celloDox, sellsCello],
    fun h ↦ by simpa [sellsCello] using admits_of_admits_knows _ _ _ _ h rfl⟩
 
-/-! ### Desire reports: the four-world model -/
+/-! ### Desire reports
 
-/-- Worlds are classified by two binary dimensions, recovered (`r`) and sick (`s`), with
-`w0 = r ∧ s`, `w1 = r ∧ ¬s`, `w2 = ¬r ∧ s` and `w3 = ¬r ∧ ¬s`. -/
+Stalnaker's counterexample to the inference that the Hintikka-style rule (27) validates: I am
+sick and want to get well, getting well entails having been sick, and I do not want to have been
+sick. Heim's model has three worlds: in `w1` I am healthy all the time, in `w2` I am sick and
+then get well, and in `w3` I am sick and stay sick; `w1` is better than `w2`, which is better than
+`w3`, and I believe that I have been sick. -/
+
+/-- On the context change rule (39), the similar worlds drawn from the belief worlds, a subject
+who believes `p` or believes `¬p` trivially wants both `p` and `¬p`. -/
+theorem want_and_want_compl_of_believes {W : Type*} {F : Frame W} {Dox p : Set W} {w : W}
+    (h : Dox ⊆ p ∨ Dox ⊆ pᶜ) : Want F Dox Dox w p ∧ Want F Dox Dox w pᶜ := by
+  rcases h with h | h
+  · exact ⟨fun _ _ _ _ y hy ↦ (hy.1.2 (h hy.1.1)).elim, fun _ _ x hx ↦ (hx.1.2 (h hx.1.1)).elim⟩
+  · exact ⟨fun _ _ x hx ↦ (h hx.1.1 hx.1.2).elim, fun _ _ _ _ y hy ↦ (hy.1.2 (h hy.1.1)).elim⟩
+
+/-- The three kinds of worlds of Stalnaker's example. -/
 inductive HealthWorld where
-  | w0 | w1 | w2 | w3
+  /-- I am healthy all the time. -/
+  | w1
+  /-- I am sick first and then get well. -/
+  | w2
+  /-- I am sick and stay sick. -/
+  | w3
   deriving DecidableEq, Fintype
 
-def recovered : Set HealthWorld | .w0 | .w1 => True | _ => False
-def sick : Set HealthWorld | .w0 | .w2 => True | _ => False
+namespace HealthWorld
 
-instance : DecidablePred (· ∈ recovered) := fun w ↦ by
-  cases w <;> first | exact isTrue trivial | exact isFalse id
+/-- The worlds where I get well. -/
+def getWell : Set HealthWorld := {w | w = w2}
 
--- (27), (32) [asher-1987]
-theorem not_sick_subset_recovered : ¬ sick ⊆ recovered := fun h ↦ @h .w2 trivial
+/-- The worlds where I have been sick. -/
+def beenSick : Set HealthWorld := {w | w ≠ w1}
 
-/-- Every world is equally similar to every other. -/
-abbrev trivialSim (_ : HealthWorld) : Preorder HealthWorld := ⊤
+/-- My belief worlds: I believe that I have been sick. -/
+def dox : Set HealthWorld := {w | w ≠ w1}
 
-/-- Recovered worlds are preferred to non-recovered ones, at every evaluation world. -/
-def prefRecovered : HealthWorld → HealthWorld → HealthWorld → Prop :=
-  fun _ x y ↦ x ∈ recovered ∧ y ∉ recovered
+instance : DecidablePred (· ∈ getWell) := fun w ↦ inferInstanceAs (Decidable (w = w2))
 
-instance (w : HealthWorld) : DecidableRel (prefRecovered w) :=
-  fun x y ↦ inferInstanceAs (Decidable (x ∈ recovered ∧ y ∉ recovered))
+instance : DecidablePred (· ∈ beenSick) := fun w ↦ inferInstanceAs (Decidable (w ≠ w1))
 
-instance (w : HealthWorld) : Std.Antisymm (prefRecovered w) :=
-  ⟨fun _ _ ⟨_, hny⟩ ⟨hy, _⟩ ↦ absurd hy hny⟩
+instance : DecidablePred (· ∈ dox) := fun w ↦ inferInstanceAs (Decidable (w ≠ w1))
 
-abbrev heimFrame : Frame HealthWorld := ⟨trivialSim, prefRecovered⟩
+/-- How desirable a world is to me, `w1` best and `w3` worst. -/
+def rank : HealthWorld → ℕ
+  | w1 => 0
+  | w2 => 1
+  | w3 => 2
 
-/-- Under the (40) amendment, `want recovered` is defined when both recovered and non-recovered
-worlds are believed possible. -/
-theorem defined_recovered : Desire.IsContingent Set.univ recovered :=
-  ⟨⟨.w0, trivial, trivial⟩, ⟨.w2, trivial, id⟩⟩
+/-- The distance between worlds, on which the two sick worlds are closer to each other than either
+is to the healthy one. -/
+def distance (a b : HealthWorld) : ℕ := if a = b then 0 else if a = w1 ∨ b = w1 then 2 else 1
 
-/-- Under (40) and an asymmetric preference, `want recovered` excludes `want ¬recovered`,
-independently of the worry of (41)–(42) and the remedy (43). -/
-theorem not_want_recovered_compl (h : Want heimFrame Set.univ .w0 recovered) :
-    ¬ Want heimFrame Set.univ .w0 recoveredᶜ :=
-  h.not_compl defined_recovered
+/-- Similarity to a world is closeness in `distance`, and a world is more desirable than another
+when it ranks higher, at every evaluation world. -/
+abbrev frame : Frame HealthWorld :=
+  ⟨fun w' ↦ Preorder.lift (distance w'), fun _ x y ↦ rank x < rank y⟩
+
+instance (w : HealthWorld) : DecidableRel (frame.sim w).le :=
+  fun x y ↦ inferInstanceAs (Decidable (distance w x ≤ distance w y))
+
+instance (w : HealthWorld) : DecidableRel (frame.pref w) :=
+  fun x y ↦ inferInstanceAs (Decidable (rank x < rank y))
+
+instance (w : HealthWorld) : Std.Antisymm (frame.pref w) :=
+  ⟨fun _ _ h h' ↦ absurd (h.trans h') (lt_irrefl _)⟩
+
+-- p. 194
+theorem getWell_subset_beenSick : getWell ⊆ beenSick := by
+  rintro _ rfl
+  decide
+
+/-- On the rule (31), *I want to get well* is true and *I want to have been sick* false, though
+getting well entails having been sick: from each belief world the closest world where I have not
+been sick is `w1`, which is better. -/
+theorem want_getWell_not_want_beenSick (w : HealthWorld) :
+    Want frame .univ dox w getWell ∧ ¬ Want frame .univ dox w beenSick := by
+  cases w <;> decide
+
+-- p. 198
+theorem want_dox_beenSick (w : HealthWorld) :
+    Want frame dox dox w beenSick ∧ Want frame dox dox w beenSickᶜ :=
+  want_and_want_compl_of_believes (.inl fun _ ↦ id)
+
+/-- Under the amendment (40) *I want to have been sick* is undefined, since I believe I have
+been sick. -/
+theorem not_isContingent_dox_beenSick : ¬ Desire.IsContingent dox beenSick :=
+  fun ⟨_, _, hd, hs⟩ ↦ hs hd
+
+/-- *I want to get well* meets the amendment (40), and the context change rule makes it true and
+so *I want not to get well* false. -/
+theorem want_getWell_not_want_compl (w : HealthWorld) :
+    Want frame dox dox w getWell ∧ ¬ Want frame dox dox w getWellᶜ := by
+  have h : Want frame dox dox w getWell := by cases w <;> decide
+  exact ⟨h, h.not_compl ⟨w2, by decide⟩ ⟨⟨w2, by decide, rfl⟩, w3, by decide, by decide⟩⟩
+
+end HealthWorld
 
 end Heim1992

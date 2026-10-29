@@ -19,7 +19,10 @@ presupposes the complement when the predicate is factive and asserts the box, to
 complement when it is veridical. Veridicality is thus an entailment
 (`veridical_entails_complement`) and factivity a presupposition, which a context admits only if it
 entails the complement (`support_sentence`). Over reflexive accessibility both requirements are
-redundant by the T axiom (`holdsAt_iff_box`).
+redundant by the T axiom (`holdsAt_iff_box`), so the veridicality value records whether the
+predicate asserts its complement, not whether it entails it: a predicate entails its complement
+exactly when it is veridical, factive, or reflexive for every holder
+(`entails_complement_iff`).
 
 ## References
 
@@ -52,7 +55,8 @@ veridicality value and a factivity class. -/
 structure DoxasticPredicate (W E : Type*) where
   /-- `w ~[access x] w'` when `w'` is compatible with the attitude of `x` in `w`. -/
   access : E → SetRel W W
-  /-- Whether the predicate entails its complement. -/
+  /-- Whether the predicate asserts its complement besides the box. A predicate that does not
+  still entails it when it is factive or its accessibility is reflexive. -/
   veridicality : Veridicality
   /-- The factivity class of a predicate that presupposes its complement, `none` otherwise. -/
   factivity : Option Factivity := none
@@ -99,6 +103,27 @@ theorem holdsAt_iff_box [(V.access agent).IsRefl] :
   refine ⟨fun h ↦ h.2.2, fun h ↦ ⟨fun _ _ ↦ box_T h, ?_, h⟩⟩
   cases V.veridicality
   exacts [box_T h, trivial]
+
+/-- A predicate entails its complement exactly when it is veridical, factive, or reflexive in its
+accessibility for every holder, so a non-veridical predicate is one that does not assert its
+complement rather than one that does not entail it. -/
+theorem entails_complement_iff :
+    (∀ a p w, V.HoldsAt a p w → p w) ↔
+      V.veridicality = .veridical ∨ V.factivity.isSome ∨ ∀ a, (V.access a).IsRefl := by
+  refine ⟨fun h ↦ or_iff_not_imp_left.2 fun hV ↦ or_iff_not_imp_left.2 fun hF a ↦
+    ⟨fun w ↦ h a (w ~[V.access a] ·) w ?_⟩, ?_⟩
+  · have hV : V.veridicality = .nonVeridical := by
+      cases hv : V.veridicality
+      · exact absurd hv hV
+      · rfl
+    rw [holdsAt_iff, hV, Option.not_isSome_iff_eq_none.1 hF]
+    exact ⟨by simp, trivial, fun _ ↦ id⟩
+  · rintro (hV | hF | hR) a p w h
+    · exact veridical_entails_complement hV h
+    · obtain ⟨f, hf⟩ := Option.isSome_iff_exists.1 hF
+      exact ((holdsAt_iff ..).1 h).1 f hf
+    · have := hR a
+      exact box_T ((holdsAt_iff ..).1 h).2.2
 
 end DoxasticPredicate
 
