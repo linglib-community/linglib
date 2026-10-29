@@ -1,5 +1,20 @@
 [
   {
+    "id": "ross1967_ex4_13a",
+    "source": {"bibkey": "ross-1967", "paperLabel": "(4.13a)"},
+    "language": "stan1293",
+    "primaryText": "This is a hat which I'm going to see to it that my wife buys.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["rule", "relativization"]
+    ],
+    "comment": "Relativizing out of a that-clause in construction with the abstract pronoun it, which is not [+Lex] (p. 128).",
+    "verified": "page-image"
+  },
+  {
     "id": "ross1967_ex4_15a",
     "source": {"bibkey": "ross-1967", "paperLabel": "(4.15a)"},
     "language": "stan1293",

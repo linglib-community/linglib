@@ -21,20 +21,27 @@ The dissertation's examples are rows whose trees and movements are built here, a
 `chopping_rows` reads their judgments as the constraints predict, the acceptable ones being
 exactly those that violate none; `copying_rows` is the dissertation's other generalization,
 that a copying rule such as Left Dislocation, which leaves a pronoun behind, crosses every one
-of these islands freely.
+of these islands freely. The Complex NP Constraint reads the head of a noun phrase off its line
+of projection, so it holds of Ross's own complex NP, a noun phrase over a noun phrase and a
+sentence, exactly when the inner head is a noun and not the abstract pronoun *it*
+(`cnpc_lexical_head`).
 
 ## Implementation notes
 
 Trees carry the categories of `PhraseStructure.Cat`, which have no levels: a noun phrase is a node
 of category `N`, a coordinate structure a node of category `Conj` headed by its conjunction word,
-whose other daughters are the conjuncts, and a noun phrase has a lexical head noun when its head
-daughter is a noun. The trees are the dissertation's diagrams reduced to the categories the
-constraints mention, with the moved constituent in its source position; questions and
-topicalizations land at the root and relativizations at the relative clause. Dominance in the
-Sentential Subject Constraint is read as immediate, the configuration of a sentence exhaustively
-dominated by a subject NP, so that the constraint does not reach a clause inside a relative clause
-on a subject. The A-over-A principle, the pied-piping convention, upward boundedness, and the
-definition of islands as the domains of chopping rules are not formalized.
+whose other daughters are the conjuncts, and a noun phrase has a lexical head noun when its line
+of projection ends in a word, the `[+N, +Lex]` node of Ross's diagram of the complex NP, which the
+abstract pronoun *it* is not. The trees are the dissertation's diagrams reduced to the categories
+the constraints mention, with the moved constituent in its source position. A relative clause or
+the clause in apposition to an abstract noun is the sister of the noun phrase it modifies under a
+further noun phrase, the `[NP NP S]` structure Ross argues for, so that the head of a complex NP is
+reached through the inner noun phrase. Questions and topicalizations land at the root and
+relativizations at the relative clause. Dominance in the Sentential Subject Constraint is read as
+immediate, the configuration of a sentence exhaustively dominated by a subject NP, so that the
+constraint does not reach a clause inside a relative clause on a subject. The A-over-A principle,
+the pied-piping convention, upward boundedness, and the definition of islands as the domains of
+chopping rules are not formalized.
 
 ## References
 
@@ -75,11 +82,13 @@ dominate the landing site, the constituents the moved element is moved out of. -
 def crossed : List (List ℕ) :=
   m.source.inits.filter fun p ↦ p ≠ m.source ∧ ¬ p <+: m.landing
 
-/-- A noun phrase has a lexical head noun when its head daughter is a noun, a word. -/
-def LexicalNP (t : Tree Cat String) : Prop :=
-  t.cat = N ∧ ∃ d ∈ t.headIndex?.bind (t.children[·]?), d.children = []
+/-- The node at a position has a lexical head when its line of projection ends in a word, a
+terminal, as the noun *claim* heads `[NP [NP the claim] S]` and the pronoun *it* heads nothing. -/
+def HasLexicalHead (p : List ℕ) : Prop :=
+  ∃ x ∈ m.tree.positionedTerminals, IsProjectionOf (Tree.HeadDaughterAt m.tree) x.1 ⟨p⟩
 
-instance (t : Tree Cat String) : Decidable (LexicalNP t) := inferInstanceAs (Decidable (_ ∧ _))
+instance (p : List ℕ) : Decidable (m.HasLexicalHead p) :=
+  inferInstanceAs (Decidable (∃ x ∈ _, _))
 
 /-- A conjunct is a daughter of a coordinate structure other than its head, the conjunction. -/
 def IsConjunct (p : List ℕ) : Prop :=
@@ -87,11 +96,11 @@ def IsConjunct (p : List ℕ) : Prop :=
 
 instance (p : List ℕ) : Decidable (m.IsConjunct p) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The Complex NP Constraint is violated when the movement leaves a sentence and the noun phrase
-with a lexical head noun immediately dominating it. -/
+/-- (4.20): the Complex NP Constraint, by which no element contained in a sentence dominated by a
+noun phrase with a lexical head noun may be moved out of that noun phrase. -/
 def CNPC : Prop :=
-  ∃ s ∈ m.crossed, m.cat? s = some .S ∧ s.dropLast ∈ m.crossed ∧
-    ∃ t ∈ m.at? s.dropLast, LexicalNP t
+  ∃ np ∈ m.crossed, m.cat? np = some N ∧ m.HasLexicalHead np ∧
+    ∃ s ∈ m.crossed, np <+: s ∧ m.cat? s = some .S
 
 /-- The Coordinate Structure Constraint is violated when the moved element is a conjunct leaving its
 coordinate structure, or the movement leaves a conjunct. -/
@@ -125,29 +134,43 @@ end Movement
 
 /-! ### The dissertation's examples -/
 
+/-- In *This is a hat which I'm going to see to it that my wife buys* the relativized NP is in a
+clause in construction with the abstract pronoun *it*. -/
+def seeToIt : Tree Cat String :=
+  .node .S [.node N [w .PRON "this"],
+    .node V [w .AUX "is",
+      .node N [.node N [w .DET "a", w .NOUN "hat"],
+        .node .S [.node N [w .PRON "I"],
+          .node V [w .AUX "am", w .VERB "going",
+            .node V [w .PART "to", w .VERB "see",
+              .node P [w .ADP "to",
+                .node N [.node N [w .PRON "it"],
+                  .node .S [w .SCONJ "that", .node N [w .PRON "my", w .NOUN "wife"],
+                    .node V [w .VERB "buys", .node N [w .PRON "which"]]]]]]]]]]]
+
 /-- In *Who does Phineas know a girl who is jealous of?* the questioned NP is inside the relative
 clause on *girl*. -/
 def phineas : Tree Cat String :=
   .node .S [.node N [w .PROPN "Phineas"],
     .node V [w .VERB "knows",
-      .node N [w .DET "a", w .NOUN "girl",
+      .node N [.node N [w .DET "a", w .NOUN "girl"],
         .node .S [.node N [w .PRON "who"],
           .node V [w .AUX "is",
             .node Adj [w .ADJ "jealous", .node P [w .ADP "of", .node N [w .PRON "who"]]]]]]]]
 
 /-- The relative clause of *the hat which I believed the claim that Otto was wearing*. -/
 def hatClaim : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "hat",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "hat"],
       .node .S [.node N [w .PRON "I"],
         .node V [w .VERB "believed",
-          .node N [w .DET "the", w .NOUN "claim",
+          .node N [.node N [w .DET "the", w .NOUN "claim"],
             .node .S [w .SCONJ "that", .node N [w .PROPN "Otto"],
               .node V [w .AUX "was", w .VERB "wearing", .node N [w .PRON "which"]]]]]]],
     .node V [w .AUX "is", w .ADJ "red"]]
 
 /-- The relative clause of *the hat which I believed that Otto was wearing*. -/
 def hatThat : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "hat",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "hat"],
       .node .S [.node N [w .PRON "I"],
         .node V [w .VERB "believed",
           .node .S [w .SCONJ "that", .node N [w .PROPN "Otto"],
@@ -165,7 +188,7 @@ def sofa : Tree Cat String :=
 
 /-- *The lute which Henry plays and sings madrigals* relativizes out of a conjoined VP. -/
 def lute : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "lute",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "lute"],
       .node .S [.node N [w .PROPN "Henry"],
         .node Conj [.node V [w .VERB "plays", .node N [w .PRON "which"]], w .CCONJ "and",
           .node V [w .VERB "sings", .node N [w .NOUN "madrigals"]]]]],
@@ -184,7 +207,7 @@ def trombone : Tree Cat String :=
 /-- In *The boy whose guardian's employer we elected president* the possessor NPs are nested on
 left branches. -/
 def guardian : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "boy",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "boy"],
       .node .S [.node N [w .PRON "we"],
         .node V [w .VERB "elected",
           .node N [.node N [.node N [w .PRON "whose"], w .NOUN "guardian's"],
@@ -204,7 +227,7 @@ def fireClause : Tree Cat String :=
 
 /-- *The teacher who the reporters expected that the principal would fire*. -/
 def teacherActive : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "teacher",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "teacher"],
       .node .S [.node N [w .DET "the", w .NOUN "reporters"],
         .node V [w .VERB "expected", fireClause]]],
     battleax]
@@ -212,7 +235,7 @@ def teacherActive : Tree Cat String :=
 /-- In *The teacher who that the principal would fire was expected by the reporters* the
 that-clause is a sentential subject. -/
 def teacherPassive : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "teacher",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "teacher"],
       .node .S [.node N [fireClause],
         .node V [w .AUX "was", w .VERB "expected",
           .node P [w .ADP "by", .node N [w .DET "the", w .NOUN "reporters"]]]]],
@@ -221,7 +244,7 @@ def teacherPassive : Tree Cat String :=
 /-- In *The teacher who it was expected by the reporters that the principal would fire* the
 that-clause is extraposed. -/
 def teacherExtraposed : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "teacher",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "teacher"],
       .node .S [.node N [w .PRON "it"],
         .node V [w .AUX "was", w .VERB "expected",
           .node P [w .ADP "by", .node N [w .DET "the", w .NOUN "reporters"]], fireClause]]],
@@ -238,7 +261,7 @@ def hoods : Tree Cat String :=
 /-- In *My father, the man he works with in Boston is going to tell the police …* the
 dislocated NP is the subject of a relative clause. -/
 def father : Tree Cat String :=
-  .node .S [.node N [w .DET "the", w .NOUN "man",
+  .node .S [.node N [.node N [w .DET "the", w .NOUN "man"],
       .node .S [.node N [w .PRON "my", w .NOUN "father"],
         .node V [w .VERB "works", .node P [w .ADP "with", .node N [w .PRON "who"]],
           .node P [w .ADP "in", .node N [w .PROPN "Boston"]]]]],
@@ -274,20 +297,21 @@ def handbag : Tree Cat String :=
 /-- The movement of each example, by the dissertation's number. Questions and dislocations
 land at the root, relativizations at the relative clause. -/
 def movement : String → Option Movement
-  | "(4.15a)" => some ⟨phineas, [1, 1, 2, 1, 1, 1, 1], []⟩
-  | "(4.18a)" => some ⟨hatClaim, [0, 2, 1, 1, 2, 2, 2], [0, 2]⟩
-  | "(4.18b)" => some ⟨hatThat, [0, 2, 1, 1, 2, 2], [0, 2]⟩
+  | "(4.13a)" => some ⟨seeToIt, [1, 1, 1, 1, 2, 2, 1, 1, 2, 1], [1, 1, 1]⟩
+  | "(4.15a)" => some ⟨phineas, [1, 1, 1, 1, 1, 1, 1], []⟩
+  | "(4.18a)" => some ⟨hatClaim, [0, 1, 1, 1, 1, 2, 2], [0, 1]⟩
+  | "(4.18b)" => some ⟨hatThat, [0, 1, 1, 1, 2, 2], [0, 1]⟩
   | "(2.18)" => some ⟨sofa, [1, 2, 1, 2], []⟩
-  | "(4.82a)" => some ⟨lute, [0, 2, 1, 0, 1], [0, 2]⟩
+  | "(4.82a)" => some ⟨lute, [0, 1, 1, 0, 1], [0, 1]⟩
   | "(4.82d)" => some ⟨trombone, [0, 0, 1, 1], []⟩
-  | "(4.184a)" => some ⟨guardian, [0, 2, 1, 1], [0, 2]⟩
-  | "(4.184b)" => some ⟨guardian, [0, 2, 1, 1, 0], [0, 2]⟩
-  | "(4.184c)" => some ⟨guardian, [0, 2, 1, 1, 0, 0], [0, 2]⟩
-  | "(4.251a)" => some ⟨teacherActive, [0, 2, 1, 1, 2, 2], [0, 2]⟩
-  | "(4.251b)" => some ⟨teacherPassive, [0, 2, 0, 0, 2, 2], [0, 2]⟩
-  | "(4.251c)" => some ⟨teacherExtraposed, [0, 2, 1, 3, 2, 2], [0, 2]⟩
+  | "(4.184a)" => some ⟨guardian, [0, 1, 1, 1], [0, 1]⟩
+  | "(4.184b)" => some ⟨guardian, [0, 1, 1, 1, 0], [0, 1]⟩
+  | "(4.184c)" => some ⟨guardian, [0, 1, 1, 1, 0, 0], [0, 1]⟩
+  | "(4.251a)" => some ⟨teacherActive, [0, 1, 1, 1, 2, 2], [0, 1]⟩
+  | "(4.251b)" => some ⟨teacherPassive, [0, 1, 0, 0, 2, 2], [0, 1]⟩
+  | "(4.251c)" => some ⟨teacherExtraposed, [0, 1, 1, 3, 2, 2], [0, 1]⟩
   | "(4.252)" => some ⟨hoods, [0, 2], []⟩
-  | "(6.128b)" => some ⟨father, [0, 2, 0], []⟩
+  | "(6.128b)" => some ⟨father, [0, 1, 0], []⟩
   | "(6.135b)" => some ⟨guitar, [1, 1, 2, 2, 1], []⟩
   | "(6.136)" => some ⟨lived, [0, 0, 1], []⟩
   | "(6.137)" => some ⟨handbag, [1, 1, 0], []⟩
@@ -345,6 +369,14 @@ theorem data_length : data.length = Examples.all.length := by decide +kernel
 theorem chopping_rows :
     ∀ d ∈ data, d.rule = .chopping →
       (d.judgment = .acceptable ↔ ¬ d.movement.Violates) := by
+  decide +kernel
+
+/-- Relativizing out of the clause of *the claim that Otto was wearing* (4.18a) violates the
+Complex NP Constraint, and relativizing out of the clause of *it that my wife buys* (4.13a) does
+not: both are a noun phrase over a noun phrase and a sentence, and only the noun *claim* is a
+lexical head. -/
+theorem cnpc_lexical_head :
+    (∃ m ∈ movement "(4.18a)", m.CNPC) ∧ ∃ m ∈ movement "(4.13a)", ¬ m.CNPC := by
   decide +kernel
 
 theorem attributions : ∀ d ∈ data, ∀ c ∈ d.constraint, c.Fires d.movement := by

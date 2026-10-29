@@ -11,24 +11,36 @@ interrogative form conventionally conveys that someone judges the scene `Y(X)` i
 innocent question (Section 2.2) nor a proposition that negation could apply to
 (Section 4.6). The construction is `wxdyConstruction`, the flat rendering of the paper's
 Figure 12: BE and *doing* are fixed heads, *what* is a fixed and left-isolated object that binds
-the reference of nothing, *doing* and `Y` share the scene judged incongruous, and *doing* may
-not be negated, a stipulation the paper reports being unable to deduce. `X` is not unified with
-`Y`: coinstantiation, twice, unifies it with the subject requirements of *doing* and of `Y`, so
-that it becomes the subject argument of the predication `Y(X)` (`wxdy_coinstantiation`).
+the reference of nothing, `Y` is a predicate phrase, and *doing* may not be negated, a
+stipulation the paper reports being unable to deduce.
+
+Figure 12 does not identify `X` with the subject of `Y`. Its index #1 makes *doing* and `Y` share
+the scene judged incongruous, and #2 makes the argument of that scene the value of `Y`'s own
+subject requirement. The identity comes from coinstantiation (Figure 13), which satisfies the
+subject requirement of a controlled complement by unifying it with another requirement of the
+same predicator (`Coinstantiates`). A construct is licensed only if coinstantiation applies twice,
+in the valence set of BE and in that of *doing*. Since WXDY-*what* refers to nothing, the only
+controller of `Y`'s subject is the subject of *doing*, so [`X` becomes the subject argument of
+the predication `Y(X)`](##KayFillmore1999.Construct.ySubj_eq_x).
 
 The grammatical evidence for the construction in Section 2.3 is derived by the licensing
-recognizer over the paper's minimal pairs: the canonical (3a) and the stative (14a) are
-licensed, while the bare-stem *do* of (12a), *doing* as complement of *keep* in (13a),
-*what else* in (15f), and the negated *doing* of (17b) are not, negation inside `Y` in (17c)
-being fine. The coinstantiation construction of Figure 13 is recorded as a fully abstract form
-with one unification index.
+recognizer over the paper's minimal pairs, read in their word order: the canonical (3a) and the
+stative (14a) are licensed, while the bare-stem *do* of (12a), *doing* as complement of *keep* in
+(13a), *what else* in (15f), and the negated *doing* of (17b) are not, negation inside `Y` in
+(17c) being fine.
 
 ## Implementation notes
 
-The paper's semantics, the incongruity-judgment frame of Figure 12 with a contextually
-anchored judge, is not represented beyond the construction's pragmatic point; its inheritance
-from the left-isolation, subject–auxiliary inversion and wh-interrogative constructions of the
-paper's unification grammar is recorded in prose only.
+The rows are main-clause questions, so their daughters come in the order that left isolation and
+subject–auxiliary inversion give the construction, *what*, BE, `X`, *doing*, `Y`. The embedded,
+uninverted order is not a row. A construct (`Construct`) records the four values unification
+relates: the intrinsic value of `X`, the scene #1, the subject requirement of the VP headed by
+*doing*, and the subject requirement #2 of `Y`. The semantics of WXDY-*what* is `[ref ∅]`, an
+intrinsic value of `none`, which gives coinstantiation nothing to unify. The paper's
+incongruity-judgment frame with its contextually anchored judge is not represented beyond the
+construction's pragmatic point. Its inheritance from the left-isolation, subject–auxiliary
+inversion and wh-interrogative constructions of the paper's unification grammar is recorded in
+prose only.
 
 ## References
 
@@ -44,43 +56,112 @@ open ConstructionGrammar
 
 /-! ### The construction (Figure 12) -/
 
-/-- The WXDY construction, the flat rendering of Figure 12. BE governs the complement *doing*,
-which cannot be negated (Section 4.6) and governs the object WXDY-*what*, left-isolated and not
-an operator binding the reference of anything, and the complement `Y`, a predicate phrase of any
-category. The semantics of *doing* and of `Y` bear #1, the scene judged incongruous, and the
-subject requirement of `Y` bears #2, the argument of its frame. `X`, the subject of BE, bears
-#2 because coinstantiation unifies it with the subject requirements of *doing* and of `Y`
-(Section 4.2, Figure 13). -/
+/-- The WXDY construction, the flat rendering of Figure 12 in the order of a main-clause
+question. WXDY-*what* is left-isolated and not an operator binding the reference of anything, BE
+heads the construction, `X` is its subject, and BE governs the complement *doing*, which cannot be
+negated (Section 4.6) and governs the complement `Y`, a predicate phrase of any category. -/
 def wxdyConstruction : Construction Unit :=
   { form :=
-      [ { filler := .semantic "referential", gf := some .subj, refIdx := some 2 }
+      [ { filler := .fixed "what", gf := some .obj, constraints := [.locMinus, .refEmpty] }
       , { filler := .headed "be" .AUX, isHead := true }
-      , { filler := .headed "doing" .VERB, gf := some .comp, refIdx := some 1, subjIdx := some 2
-        , constraints := [.negMinus] }
-      , { filler := .fixed "what", gf := some .obj, constraints := [.locMinus, .refEmpty] }
-      , { filler := .phrasal, gf := some .comp, refIdx := some 1, subjIdx := some 2 } ]
+      , { filler := .semantic "referential", gf := some .subj }
+      , { filler := .headed "doing" .VERB, gf := some .comp, constraints := [.negMinus] }
+      , { filler := .phrasal, gf := some .comp } ]
   , meaning := ()
   , pragmaticPoint := true }
-
--- Figure 12
-theorem wxdy_refGroupCount : refGroupCount wxdyConstruction.form = 2 := by decide
-
-/-- In WXDY the first constituent `X` bears the index of the subject requirement of the last, `Y`,
-not that of `Y` itself (Section 4.2). -/
-theorem wxdy_coinstantiation :
-    wxdyConstruction.form.head?.bind (·.refIdx) = wxdyConstruction.form.getLast?.bind (·.subjIdx) ∧
-      wxdyConstruction.form.head?.bind (·.refIdx) ≠
-        wxdyConstruction.form.getLast?.bind (·.refIdx) := by
-  decide
 
 theorem wxdy_formal_idiom : wxdyConstruction.IsFormalIdiom := by decide
 
 theorem wxdy_partially_open : wxdyConstruction.specificity = .partiallyOpen := rfl
 
+/-! ### Coinstantiation (Figure 13, Section 4.2) -/
+
+/-- A valence requirement of a predicator as unification sees it: its grammatical function, its
+intrinsic value, `none` for the semantics `[ref ∅]`, and the value of its own subject requirement
+when it is a predicate that does not realize its subject. -/
+structure Requirement (E : Type*) where
+  gf : GrammaticalFunction
+  intrinsic : Option E
+  subj : Option E
+  deriving DecidableEq
+
+variable {E : Type*}
+
+/-- Coinstantiation (Figure 13) satisfies the subject requirement of each complement of a
+predicator by unifying it with the intrinsic value of another requirement of the same predicator,
+covering raising and control alike. A requirement whose semantics is `[ref ∅]` has no value to
+give. -/
+def Coinstantiates (val : List (Requirement E)) : Prop :=
+  ∀ k ∈ val, k.gf = .comp → ∀ v ∈ k.subj, ∃ c ∈ val, c ≠ k ∧ c.intrinsic = some v
+
+instance [DecidableEq E] (val : List (Requirement E)) : Decidable (Coinstantiates val) := by
+  unfold Coinstantiates; infer_instance
+
+/-- A construct of the WXDY construction at the granularity of Figure 12: the intrinsic value of
+`X`, the scene #1 that *doing* and `Y` share, the subject requirement of the VP headed by *doing*,
+and the subject requirement #2 of `Y`, the argument of the scene. -/
+structure Construct (E : Type*) where
+  x : E
+  scene : E
+  doingSubj : E
+  ySubj : E
+
+namespace Construct
+
+variable (c : Construct E)
+
+/-- The valence set of BE: its subject `X` and the VP headed by *doing*. -/
+def beVal : List (Requirement E) :=
+  [⟨.subj, some c.x, none⟩, ⟨.comp, some c.scene, some c.doingSubj⟩]
+
+/-- The valence set of *doing*: its subject, WXDY-*what*, whose semantics is `[ref ∅]`, and `Y`. -/
+def doingVal : List (Requirement E) :=
+  [⟨.subj, some c.doingSubj, none⟩, ⟨.obj, none, none⟩, ⟨.comp, some c.scene, some c.ySubj⟩]
+
+variable {c}
+
+/-- In a construct that coinstantiation licenses, in the valence sets of BE and of *doing*, the
+argument #2 of the scene judged incongruous is the intrinsic value of `X`: `X` is the subject
+argument of the predication `Y(X)` (Section 4.2), though Figure 12 does not identify them. -/
+theorem ySubj_eq_x (hbe : Coinstantiates c.beVal) (hdo : Coinstantiates c.doingVal) :
+    c.ySubj = c.x := by
+  have h₁ := hbe ⟨.comp, some c.scene, some c.doingSubj⟩ (by simp [beVal]) rfl c.doingSubj rfl
+  have h₂ := hdo ⟨.comp, some c.scene, some c.ySubj⟩ (by simp [doingVal]) rfl c.ySubj rfl
+  simp [beVal, doingVal] at h₁ h₂
+  grind
+
+end Construct
+
+/-- The entities of (3a): the scratch, the table, and the scene of the scratch being on the
+table. -/
+inductive Ent
+  | scratch
+  | table
+  | scene
+  deriving DecidableEq
+
+/-- The construct of (3a) *What's this scratch doing on the table?*, in which the scratch fills
+the subject requirements of *doing* and of *on the table*. -/
+def scratchConstruct : Construct Ent := ⟨.scratch, .scene, .scratch, .scratch⟩
+
+example : Coinstantiates scratchConstruct.beVal ∧ Coinstantiates scratchConstruct.doingVal := by
+  decide
+
+/-- No construct of (3a) makes the table the subject of *on the table*. -/
+example (c : Construct Ent) (hx : c.x = .scratch) (hy : c.ySubj = .table) :
+    ¬ (Coinstantiates c.beVal ∧ Coinstantiates c.doingVal) :=
+  fun h ↦ absurd ((Construct.ySubj_eq_x h.1 h.2).trans hx) (by rw [hy]; decide)
+
+/-- Were WXDY-*what* referential, coinstantiation could unify the subject of `Y` with it instead
+of with the subject of *doing*. -/
+example : Coinstantiates [⟨.subj, some Ent.scratch, none⟩, ⟨.obj, some .table, none⟩,
+    ⟨.comp, some .scene, some .table⟩] := by
+  decide
+
 /-! ### The grammatical evidence (Section 2.3)
 
 The paper's minimal pairs, matched against the form: each is a sequence of daughter trees in the
-slot order `X`, BE, *doing*, *what*, `Y`, with lemma-level words tagged for part of speech. -/
+order of its words, with lemma-level words tagged for part of speech. -/
 
 open PhraseStructure (Tree)
 open Morphology (Word)
@@ -88,61 +169,61 @@ open Morphology (Word)
 /-- *not*, a particle of negative polarity. -/
 def negator : Word := { form := "not", cat := .PART, features := .of (polarity := some .Neg) }
 
-/-- (3a) *What's this scratch doing on the table?* -/
+/-- (3a) *What is this scratch doing on the table?* -/
 def scratchTokens : List (Tree Unit Word) :=
-  [ .leaf (.mk' "scratch" .NOUN),
+  [ .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "be" .AUX)],
+    .leaf (.mk' "scratch" .NOUN),
     .node () [.leaf (.mk' "doing" .VERB)],
-    .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "on" .ADP), .leaf (.mk' "table" .NOUN)] ]
 
 /-- (14a) *What's he doing knowing the answer?*, a stative complement. -/
 def stativeTokens : List (Tree Unit Word) :=
-  [ .leaf (.mk' "he" .PRON),
+  [ .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "be" .AUX)],
+    .leaf (.mk' "he" .PRON),
     .node () [.leaf (.mk' "doing" .VERB)],
-    .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "knowing" .VERB), .leaf (.mk' "answer" .NOUN)] ]
 
 /-- (12a) *What does this scratch do on the table?*, with bare-stem *do*. -/
 def bareStemTokens : List (Tree Unit Word) :=
-  [ .leaf (.mk' "scratch" .NOUN),
+  [ .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "do" .AUX)],
+    .leaf (.mk' "scratch" .NOUN),
     .node () [.leaf (.mk' "do" .VERB)],
-    .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "on" .ADP), .leaf (.mk' "table" .NOUN)] ]
 
 /-- (13a) *What did he keep doing in the tool shed?*, *doing* as complement of *keep* rather
 than of copular BE: a fine sentence, but not an instance of the construction. -/
 def nonCopulaTokens : List (Tree Unit Word) :=
-  [ .leaf (.mk' "he" .PRON),
-    .node () [.leaf (.mk' "keep" .VERB)],
-    .node () [.leaf (.mk' "doing" .VERB)],
-    .leaf (.mk' "what" .PRON),
+  [ .leaf (.mk' "what" .PRON),
+    .node () [.leaf (.mk' "do" .AUX)],
+    .leaf (.mk' "he" .PRON),
+    .node () [.leaf (.mk' "keep" .VERB), .leaf (.mk' "doing" .VERB)],
     .node () [.leaf (.mk' "in" .ADP), .leaf (.mk' "shed" .NOUN)] ]
 
 /-- (15f) *What else are you doing eating cold pizza?*, with *else* on WXDY-*what*. -/
 def whatElseTokens : List (Tree Unit Word) :=
-  [ .leaf (.mk' "you" .PRON),
+  [ .node () [.leaf (.mk' "what" .PRON), .leaf (.mk' "else" .ADV)],
     .node () [.leaf (.mk' "be" .AUX)],
+    .leaf (.mk' "you" .PRON),
     .node () [.leaf (.mk' "doing" .VERB)],
-    .node () [.leaf (.mk' "what" .PRON), .leaf (.mk' "else" .ADV)],
     .node () [.leaf (.mk' "eating" .VERB), .leaf (.mk' "pizza" .NOUN)] ]
 
 /-- (17b) *What are my brushes not doing soaking in water?*, with negated *doing*. -/
 def negatedDoingTokens : List (Tree Unit Word) :=
-  [ .leaf (.mk' "brushes" .NOUN),
+  [ .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "be" .AUX)],
+    .leaf (.mk' "brushes" .NOUN),
     .node () [.leaf negator, .leaf (.mk' "doing" .VERB)],
-    .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "soaking" .VERB), .leaf (.mk' "water" .NOUN)] ]
 
 /-- (17c) *What are my brushes doing not soaking in water?*, negation inside `Y`. -/
 def negatedComplementTokens : List (Tree Unit Word) :=
-  [ .leaf (.mk' "brushes" .NOUN),
+  [ .leaf (.mk' "what" .PRON),
     .node () [.leaf (.mk' "be" .AUX)],
+    .leaf (.mk' "brushes" .NOUN),
     .node () [.leaf (.mk' "doing" .VERB)],
-    .leaf (.mk' "what" .PRON),
     .node () [.leaf negator, .leaf (.mk' "soaking" .VERB), .leaf (.mk' "water" .NOUN)] ]
 
 -- (3a), (14a)
@@ -171,22 +252,5 @@ theorem wxdy_negation_contrast :
     ¬ FormMatches wxdyConstruction.form negatedDoingTokens ∧
       FormMatches wxdyConstruction.form negatedComplementTokens := by
   decide
-
-/-! ### Coinstantiation (Figure 13, Section 4.2) -/
-
-/-- The coinstantiation construction, which unifies the intrinsic value of an unfulfilled
-valence requirement of a predicator with the subject requirement of its controlled
-complement, covering raising and control alike; it figures twice in every WXDY clause. The
-flat rendering gives the predicator's subject the index of its complement's subject
-requirement. -/
-def coinstantiationForm : TypedForm String :=
-  [ { filler := .open_ .NOUN, gf := some .subj, refIdx := some 1 }
-  , { filler := .open_ .VERB, isHead := true }
-  , { filler := .open_ .VERB, gf := some .comp, subjIdx := some 1 } ]
-
-theorem coinstantiation_specificity :
-    derivedSpecificity coinstantiationForm = .fullyAbstract := by decide
-
-theorem coinstantiation_coreference : refGroupCount coinstantiationForm = 1 := by decide
 
 end KayFillmore1999
