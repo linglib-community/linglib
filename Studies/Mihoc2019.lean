@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Exhaustification.Pointwise
@@ -248,9 +248,9 @@ theorem mem_exh_moreThan_five {S : Set ℕ} (h9 : 9 ∈ S) (hgap : ∀ m ∈ S, 
 -- Ch. 3, (2)
 theorem mem_exh_bare_univ (n maxD : ℕ) :
     maxD ∈ exh ((Form.bare n).scalarAlts .univ) {d | (Form.bare n).tc d} ↔
-      maxD ∈ Numerals.exhNumeral n := by
+      maxD ∈ Comparison.eq.interval n := by
   simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
-    Set.ofPred_subset_ofPred, tc_bare, Numerals.exhNumeral_eq, Comparison.interval_eq,
+    Set.ofPred_subset_ofPred, tc_bare, Comparison.interval_eq,
     Set.mem_univ, true_implies, Set.mem_singleton_iff]
   refine ⟨fun ⟨h, hS⟩ ↦ ?_, by rintro rfl; exact ⟨le_rfl, fun m hm x hx ↦ hm.trans hx⟩⟩
   have := hS (le_refl maxD) n le_rfl

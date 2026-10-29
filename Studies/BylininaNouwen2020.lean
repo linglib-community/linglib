@@ -65,7 +65,7 @@ The determiner view (Section 2) and the Dutch *hoeven* data (26)–(28) are not 
 @[expose] public section
 namespace BylininaNouwen2020
 
-open BylininaNouwen2018 Degree Exhaustification Quantifier Quantifier.GQ
+open BylininaNouwen2018 Degree Exhaustification Numerals Quantifier Quantifier.GQ
   Quantifier.NP Set
 
 variable {α : Type*}
@@ -170,10 +170,6 @@ higher numerals, a strengthening that moves with the numeral. -/
 theorem MAX_individual_iff_exhAgainst {n : ℕ} {P : Set ℕ} :
     MAX (individual n) P ↔ exhAgainst (· < ·) (individual · P) n := by
   rw [MAX_individual]; exact maxIn_singleton_iff_exhAgainst
-
-theorem maxIn_singleton_lt_individual (n : ℕ) : MaxIn {n} < (individual n : Set ℕ → Prop) :=
-  lt_of_le_not_ge (fun _ h ↦ (maxIn_singleton.1 h).1) fun h ↦
-    absurd ((maxIn_singleton.1 (h {n, n + 1} (Or.inl rfl))).2 (Or.inr rfl)) (by omega)
 
 -- (51)
 theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :

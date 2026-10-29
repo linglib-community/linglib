@@ -5,56 +5,88 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Exhaustification.Pointwise
+public import Linglib.Semantics.Quantification.Individual
 
 /-!
 # Numeral meanings
 
-This file collects what is specific to numerals over the degree comparisons of
-`Semantics/Degree/Comparison.lean`. A bare numeral and its four modifications, *more than*,
-*fewer than*, *at least* and *at most*, are the five comparisons of `Degree.Comparison`: in
-Kennedy's de-Fregean semantics the form with relation `REL` and number `m` is true of a degree
-property whose greatest degree stands in `REL` to `m`. On counts the form denotes the interval
-`c.interval m`, and on worlds measured by `μ` the set `μ ⁻¹' c.interval m`, so the forms have no
-names of their own here. The meanings of the modified forms are common ground. Accounts differ on
-the bare numeral, which has the two-sided meaning `Comparison.eq.interval m` for Kennedy and the
-lower-bounded meaning `Comparison.ge.interval m` in the tradition of Horn, each account deriving the
-other reading. Exhaustifying the lower-bounded meaning against the scale of higher numerals gives
-the two-sided one, and Kennedy's type lowering, existential closure over the two-sided meaning at
-the degrees above, takes it to the lower-bounded one.
-
-## Main definitions
-
-* `Numerals.ModifierClass`, `Numerals.ModifierKind`: Nouwen's two classes of numeral modifier
-  and the constructions modifiers are built on, with `ModifierKind.modifierClass`.
-* `Numerals.NumeralModifier`: a numeral modifier as a lexical item, its form, kind and
-  readings, each reading a `Modifier (Set ℕ)` of sets of amounts.
-* `Numerals.exhNumeral`: the lower-bounded meaning exhaustified against the next numeral.
-
-## Main results
-
-* `Numerals.exhNumeral_eq`: the exhaustified lower-bounded meaning is the two-sided one.
-* `Numerals.mem_exhNumeral_iff_exhAgainst`: exhaustifying against the next numeral is
-  exhaustifying against the whole scale.
+A bare numeral and its modifications *more than*, *fewer than*, *at least* and *at most* are the
+five comparisons of `Degree.Comparison`. On Kennedy's de-Fregean semantics the form with comparison
+`c` and number `m` is the degree quantifier `Degree.MaxIn (c.interval m)`, so the bare numeral
+`MaxIn {m}` is two-sided; in the tradition of Horn it is the lower-bounded `NP.individual m`. Each
+reading derives the other: [Partee's `BE` lowers a de-Fregean form to its interval](##BE_maxIn) and
+[existential closure then gives the lower-bounded numeral](##some_BE_maxIn_singleton), which the
+two-sided one [asymmetrically entails](##maxIn_singleton_lt_individual), while [exhaustifying the
+lower-bounded numeral against the higher ones restores the de-Fregean
+one](##maxIn_singleton_iff_exhAgainst), on counts [the exact reading](##exhAgainst_ge_iff). A
+numeral modifier is a lexical item whose readings are modifiers of sets of amounts, and Nouwen's
+two classes of modifier are read off the construction it is built on.
 
 ## References
 
-* [C. Kennedy, *A "de-Fregean" semantics (and neo-Gricean pragmatics) for modified and
-  unmodified numerals* (2015)][kennedy-2015]
-* [R. Nouwen, *Two kinds of modified numerals* (2010)][nouwen-2010]
-* [L. R. Horn, *On the Semantic Properties of Logical Operators in English* (1972)][horn-1972]
-* [B. Spector, *Bare numerals and scalar implicatures* (2013)][spector-2013]
-* [G. Chierchia, D. Fox and B. Spector, *Scalar Implicature as a Grammatical Phenomenon*
-  (2012)][chierchia-fox-spector-2012]
+* [kennedy-2015]
+* [horn-1972]
+* [partee-1987]
+* [spector-2013]
+* [chierchia-fox-spector-2012]
+* [nouwen-2010]
+* [schwarz-buccola-hamilton-2012]
+* [cremers-coppock-dotlacil-roelofsen-2022]
+* [enguehard-2018]
 -/
 
 @[expose] public section
 
 namespace Numerals
 
-open Degree
+open Degree Exhaustification Quantifier
+
+/-! ### The two readings of a bare numeral -/
+
+section Readings
+
+variable {D : Type*}
+
+/-- Partee's `BE` lowers the de-Fregean form with interval `U` to the property of lying in `U`, as
+`BE(three)` is the property of being three ([kennedy-2015], (39)). -/
+theorem BE_maxIn [Preorder D] (U : Set D) : NP.BE (MaxIn U) = (· ∈ U) :=
+  funext fun x ↦ propext
+    ⟨fun ⟨_, hm, h⟩ ↦ (h.1 : _ = x) ▸ hm, fun hx ↦ ⟨x, hx, isGreatest_singleton⟩⟩
+
+/-- Existential closure over the lowered bare numeral is the individual of the number, the
+lower-bounded reading ([kennedy-2015], (40b) and fn. 3). -/
+theorem some_BE_maxIn_singleton [Preorder D] (m : D) :
+    GQ.some (NP.BE (MaxIn {m})) = NP.individual m := by
+  rw [BE_maxIn]
+  exact NP.some_ident m
+
+/-- On a scale without a top degree the two-sided bare numeral asymmetrically entails the
+lower-bounded one. -/
+theorem maxIn_singleton_lt_individual [Preorder D] [NoMaxOrder D] (m : D) :
+    MaxIn {m} < (NP.individual m : Set D → Prop) :=
+  lt_of_le_not_ge (fun _ h ↦ (maxIn_singleton.1 h).1) fun h ↦
+    let ⟨a, ha⟩ := exists_gt m
+    ha.not_ge ((maxIn_singleton.1 (h (Set.Iic a) ha.le)).2 le_rfl)
+
+/-- Exhaustified against the higher numerals, the lower-bounded bare numeral is the de-Fregean
+one, on any degree property: exhaustification is the meaning-changing operation that
+[kennedy-2015] (p. 10:20) says the two-sided reading needs if the singular term is basic. -/
+theorem maxIn_singleton_iff_exhAgainst [LinearOrder D] {X : Set D} {m : D} :
+    MaxIn {m} X ↔ exhAgainst (· < ·) (· ∈ X) m :=
+  maxIn_singleton.trans <| and_congr_right' ⟨fun h _ hm hmX ↦ (h hmX).not_gt hm,
+    fun h n hnX ↦ not_lt.1 fun hn ↦ h n hn hnX⟩
+
+/-- Exhaustified against the higher numerals, *at least `m`* is true of `a` exactly when `a` is
+`m`, the two-sided reading of the bare numeral, on any partially ordered scale. -/
+theorem exhAgainst_ge_iff [PartialOrder D] {a m : D} :
+    exhAgainst (· < ·) (fun j ↦ a ∈ Comparison.ge.interval j) m ↔
+      a ∈ Comparison.eq.interval m :=
+  exhAgainst_lt_iff_maximal.trans <| by simp [eq_comm]
+
+end Readings
 
 /-! ### Numeral modifiers -/
 
@@ -74,8 +106,9 @@ inductive ModifierClass where
   | classB
   deriving Repr, DecidableEq
 
-/-- The kinds of numeral modifier in [nouwen-2010]'s survey, by the construction the modifier is
-built on. -/
+/-- The constructions a numeral modifier taking a single numeral is built on, in [nouwen-2010]'s
+classification. The disjunctive *n or more* and the two-numeral *between* and *from … to* are left
+out. -/
 inductive ModifierKind where
   /-- A comparative, such as *more than* or *fewer than*. -/
   | comparative
@@ -89,10 +122,12 @@ inductive ModifierKind where
   | adverbial
   deriving Repr, DecidableEq
 
-/-- The class of each kind. The comparatives are [nouwen-2010]'s model of Class A and the
-superlatives and the adverbs of Class B, and the prepositional modifiers follow their spatial
-use, a locative preposition giving a Class A modifier and a directional one a Class B
-modifier. -/
+/-- The class of each kind, after [nouwen-2010]'s tentative classification of the English
+modifiers. The comparatives are his model of Class A and the superlatives and the adverbs of
+Class B, and the prepositional modifiers follow their spatial use, a locative preposition giving a
+Class A modifier and a directional one a Class B modifier. *Over* is Class A although its usual
+spatial sense is directional, which Nouwen puts down to numeral modifiers using only vertical
+senses. -/
 def ModifierKind.modifierClass : ModifierKind → ModifierClass
   | .comparative | .locative => .classA
   | .superlative | .directional | .adverbial => .classB
@@ -103,7 +138,7 @@ structure NumeralModifier where
   /-- The surface form. -/
   form : String
   /-- The construction the modifier is built on, `none` for the exactifiers and approximators,
-  which [nouwen-2010]'s survey does not cover. -/
+  which [nouwen-2010]'s classification does not cover. -/
   kind : Option ModifierKind
   /-- The readings the literature makes available, each a modifier of sets of amounts that sends
   the bare numeral's two-sided meaning `{n}` to the amounts verifying the modified numeral. -/
@@ -132,36 +167,5 @@ variable {form : String} {kind : Option ModifierKind} {c : Comparison}
 @[simp] theorem readings_ofComparison : (ofComparison form kind c).readings = {c.modifier} := rfl
 
 end NumeralModifier
-
-/-! ### Exhaustification
-
-On the account of [chierchia-fox-spector-2012] that [spector-2013] discusses, the bare numeral
-has the lower-bounded meaning and its two-sided reading comes from a covert exhaustivity
-operator, which asserts *at least `m`* and denies *at least `m + 1`*. [kennedy-2015] runs the
-derivation the other way, lowering the two-sided meaning to the lower-bounded one. -/
-
-variable {m n : ℕ}
-
-/-- The lower-bounded meaning of `m` exhaustified against the next numeral. -/
-def exhNumeral (m : ℕ) : Set ℕ := Comparison.ge.interval m \ Comparison.ge.interval (m + 1)
-
-/-- The exhaustified lower-bounded meaning is the two-sided meaning. -/
-theorem exhNumeral_eq (m : ℕ) : exhNumeral m = Comparison.eq.interval m := by
-  ext n
-  simp only [exhNumeral, Comparison.interval_ge, Comparison.interval_eq, Set.mem_sdiff,
-    Set.mem_Ici, Set.mem_singleton_iff]
-  omega
-
-instance : DecidablePred (· ∈ exhNumeral m) := fun n ↦
-  decidable_of_iff (n = m) (by rw [exhNumeral_eq]; rfl)
-
-/-- Exhaustifying against the next numeral is exhaustifying against the whole scale of higher
-numerals, which is an entailment chain (`Exhaustification.exhAgainst_lt_iff_succ`). -/
-theorem mem_exhNumeral_iff_exhAgainst :
-    n ∈ exhNumeral m ↔
-      Exhaustification.exhAgainst (· < ·) (fun k ↦ n ∈ Comparison.ge.interval (m + k)) 0 := by
-  rw [Exhaustification.exhAgainst_lt_iff_succ (A := fun k ↦ n ∈ Comparison.ge.interval (m + k))
-    (fun j k hjk (h : m + k ≤ n) ↦ show m + j ≤ n by omega) Nat.zero_lt_one fun _ h ↦ h]
-  rfl
 
 end Numerals

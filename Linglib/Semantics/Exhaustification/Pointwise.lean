@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Minimal
 public import Mathlib.Order.SuccPred.Basic
 
 /-!
@@ -16,9 +17,10 @@ denies each `A j` with `r i j`. Against the members the prejacent does not entai
 at a world, in any model (`Exhaustification.mem_exh_range_iff_exhAgainst`); a theory that fixes
 which alternatives count as stronger states that relation outright, and its results then hold in
 every model. Against every other member it is pre-exhaustification against independent rivals, which
-holds of some member exactly when one member holds. Against the larger indices of a scale it denies
-just the next-stronger alternative on an entailment chain (`exhAgainst_lt_iff_succ`), and on a dense
-scale it cannot be satisfied, the crash Fox and Hackl derive for *more than*.
+holds of some member exactly when one member holds. Against the larger indices of a scale it is
+maximality (`exhAgainst_lt_iff_maximal`): it denies just the next-stronger alternative on an
+entailment chain (`exhAgainst_lt_iff_succ`), and on a dense scale it cannot be satisfied, the crash
+Fox and Hackl derive for *more than*.
 
 ## Main definitions
 
@@ -70,6 +72,11 @@ theorem forall_not_exhAgainst_ne_iff : (∀ i, ¬ exhAgainst (· ≠ ·) A i) �
 section Scale
 
 variable [Preorder ι]
+
+/-- Exhaustifying against the larger indices is maximality: `A i` holds and no larger index
+satisfies `A`. -/
+theorem exhAgainst_lt_iff_maximal : exhAgainst (· < ·) A i ↔ Maximal A i :=
+  maximal_iff_forall_gt.symm
 
 /-- On an entailment chain, exhaustifying `A i` against the stronger alternatives denies just the
 next-stronger one `A s`. -/

@@ -36,7 +36,7 @@ developmental strategy of Musolino.
 
 namespace HuangSpelkeSnedeker2013
 
-open Numerals Degree
+open Numerals Degree Exhaustification
 
 /-! ### The covered-box task -/
 
@@ -99,11 +99,13 @@ theorem choice_atLeast_visible {m a b : ℕ} (ha : a < m) (hb : m ≤ b) :
     choice (· ∈ Comparison.ge.interval m) ⟨a, b⟩ = some (.visible b) :=
   (choice_eq_visible_right_iff _ _).2 ⟨by simp; omega, by simp; omega⟩
 
-theorem choice_exhNumeral_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
-    choice (· ∈ exhNumeral m) ⟨a, b⟩ = some .covered :=
+-- Exhaustified against every higher numeral, the lower-bounded numeral is exact.
+open scoped Classical in
+theorem choice_exh_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
+    choice (fun k ↦ exhAgainst (· < ·) (fun j ↦ k ∈ Comparison.ge.interval j) m) ⟨a, b⟩ =
+      some .covered :=
   (choice_eq_covered_iff _ _).2
-    ⟨by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega,
-      by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega⟩
+    ⟨exhAgainst_ge_iff.not.2 (by simp; omega), exhAgainst_ge_iff.not.2 (by simp; omega)⟩
 
 theorem choice_one_two_bare :
     choice (· ∈ Comparison.eq.interval 2) ⟨1, 2⟩ = some (.visible 2) := by decide
@@ -117,7 +119,12 @@ theorem choice_two_three_bare :
 
 theorem choice_two_three_atLeast : choice (· ∈ Comparison.ge.interval 2) ⟨2, 3⟩ = none := by decide
 
-theorem choice_two_three_exh : choice (· ∈ exhNumeral 2) ⟨2, 3⟩ = some (.visible 2) := by decide
+open scoped Classical in
+theorem choice_two_three_exh :
+    choice (fun k ↦ exhAgainst (· < ·) (fun j ↦ k ∈ Comparison.ge.interval j) 2) ⟨2, 3⟩ =
+      some (.visible 2) :=
+  (choice_eq_visible_left_iff _ ⟨2, 3⟩).2
+    ⟨exhAgainst_ge_iff.2 rfl, exhAgainst_ge_iff.not.2 (by simp)⟩
 
 theorem choice_one_three_bare : choice (· ∈ Comparison.eq.interval 2) ⟨1, 3⟩ = some .covered :=
   choice_exact_covered (by omega) (by omega)
@@ -175,10 +182,10 @@ theorem all_some_none : choice allLiteral ⟨.IO, .E⟩ = some .covered := by de
 /-- A child at knower level `k` has the numerals up to `k` as a count list; the numeral `i` of
 that list exhaustified against its known stronger alternatives. -/
 def exhKnown (k : ℕ) (i : Fin (k + 1)) (n : ℕ) : Prop :=
-  Exhaustification.exhAgainst (· < ·) (fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ)) i
+  exhAgainst (· < ·) (fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ)) i
 
 instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := fun _ ↦
-  inferInstanceAs (Decidable (Exhaustification.exhAgainst _ _ _))
+  inferInstanceAs (Decidable (exhAgainst _ _ _))
 
 /-- The top of the count list has no stronger known alternative, so exhaustification leaves its
 lower-bounded meaning as it is. -/
@@ -190,7 +197,7 @@ theorem exhKnown_last (k n : ℕ) :
 theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : ℕ) :
     exhKnown k i n ↔ n ∈ Comparison.eq.interval (i : ℕ) := by
   have hs : (i : ℕ) + 1 < k + 1 := by have := Fin.lt_def.1 hi; simp at this; omega
-  rw [exhKnown, Exhaustification.exhAgainst_lt_iff_succ (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
+  rw [exhKnown, exhAgainst_lt_iff_succ (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
     (A := fun j : Fin (k + 1) ↦ n ∈ Comparison.ge.interval (j : ℕ))
     (fun j k hjk (hk : (k : ℕ) ≤ n) ↦ show (j : ℕ) ≤ n from le_trans hjk hk)
     (Fin.lt_def.2 (Nat.lt_succ_self _))
