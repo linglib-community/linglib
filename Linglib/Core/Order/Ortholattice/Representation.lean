@@ -6,10 +6,13 @@ public import Linglib.Core.Order.Concept
 # Representation of ortholattices by orthogonality relations
 
 This file embeds an ortholattice with a join-dense subset `V` into the ortholattice of concepts of
-an orthogonality relation. The points are the nonzero elements of `V`, two points are orthogonal
-when one lies below the complement of the other, and `a` is represented by the points below it.
-This is the converse of the construction of an ortholattice from an orthogonality relation in
-`Core/Order/Concept.lean`.
+an orthogonality relation, onto it when the lattice is complete. The points are the nonzero
+elements of `V`, two points are orthogonal when one lies below the complement of the other, and `a`
+is represented by the points below it. This is the converse of the construction of an ortholattice
+from an orthogonality relation in `Core/Order/Concept.lean`. The representation is MacLaren's:
+an orthocomplemented poset embeds in the closed sets of its orthogonality relation, and a
+join-dense subset has the same closed sets. Holliday and Mandelkern state the combination for
+ortholattices.
 
 ## Main definitions
 
@@ -22,6 +25,7 @@ This is the converse of the construction of an ortholattice from an orthogonalit
 
 * `InvolutiveCompl.represent_le_iff`, `represent_inf`, `represent_compl`,
   `represent_sup`: `represent V` is an ortholattice embedding for any join-dense `V`.
+* `InvolutiveCompl.represent_surjective`: on a complete lattice the embedding is onto.
 
 ## Implementation notes
 
@@ -30,6 +34,7 @@ are needed only for orthogonality to be irreflexive, which makes the concepts an
 
 ## References
 
+* [maclaren-1964]
 * [holliday-mandelkern-2024]
 -/
 
@@ -49,8 +54,8 @@ variable {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
 /-- The points of the representation over `V` are the nonzero elements of `V`. -/
 abbrev Point (V : Set L) : Type _ := ↥(V \ {⊥})
 
-/-- Two points are orthogonal when one lies below the complement of the other
-    ([holliday-mandelkern-2024] Theorem 4.13, where compatibility is `a ≰ ¬b`). -/
+/-- Two points are orthogonal when one lies below the complement of the other ([maclaren-1964]
+    Theorem 2.5; [holliday-mandelkern-2024] Theorem 4.13, where compatibility is `a ≰ ¬b`). -/
 def Orthogonal (V : Set L) (a b : Point V) : Prop := a.1 ≤ b.1ᶜ
 
 @[simp] theorem orthogonal_iff {V : Set L} {a b : Point V} :
@@ -130,8 +135,7 @@ theorem represent_bot (hV : JoinDense V) : represent V (⊥ : L) = ⊥ :=
     rw [← Concept.extent_subset_extent_iff, represent_extent hV]
     exact fun b hb ↦ absurd (le_bot_iff.mp hb) b.2.2
 
-/-- `represent V` sends complements to orthocomplements ([holliday-mandelkern-2024]
-    Theorem 4.13). -/
+/-- `represent V` sends complements to orthocomplements ([maclaren-1964] Theorem 2.3). -/
 theorem represent_compl (hV : JoinDense V) (a : L) :
     represent V aᶜ = (represent V a)ᶜ := by
   apply Concept.ext
@@ -150,5 +154,29 @@ theorem represent_sup (hV : JoinDense V) (a a' : L) :
       represent_compl hV, represent_inf hV, represent_compl hV, represent_compl hV,
       InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl,
       InvolutiveCompl.compl_compl]
+
+end InvolutiveCompl
+
+/-! ### On a complete lattice the representation is onto -/
+
+namespace InvolutiveCompl
+
+variable {L : Type*} [CompleteLattice L] [InvolutiveCompl L] {V : Set L}
+
+/-- On a complete lattice a concept represents the join of its extent, so a complete ortholattice
+is isomorphic to the concepts of the orthogonality relation on a join-dense subset
+([maclaren-1964] Theorems 2.4 and 2.5; [holliday-mandelkern-2024] Theorem 4.13). -/
+theorem represent_surjective (hV : JoinDense V) : Function.Surjective (represent V) := by
+  intro c
+  refine ⟨sSup (Subtype.val '' c.extent), Concept.ext ?_⟩
+  rw [represent_extent hV]
+  ext b
+  simp only [Set.mem_ofPred_eq]
+  refine ⟨fun hb ↦ ?_, fun hb ↦ le_sSup ⟨b, hb, rfl⟩⟩
+  rw [← c.lowerPolar_intent, mem_lowerPolar_iff]
+  intro d hd
+  refine orthogonal_iff.2 (hb.trans (sSup_le ?_))
+  rintro _ ⟨e, he, rfl⟩
+  exact orthogonal_iff.1 (Concept.rel_extent_intent he hd)
 
 end InvolutiveCompl

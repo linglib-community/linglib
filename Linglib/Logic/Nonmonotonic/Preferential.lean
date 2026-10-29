@@ -42,7 +42,7 @@ many worlds every rational relation preserving consistency is the relation of a 
 ## References
 
 * [S. Kraus, D. Lehmann and M. Magidor, *Nonmonotonic Reasoning, Preferential Models and
-  Cumulative Logics* (1990)][kraus-magidor-1990]
+  Cumulative Logics* (1990)][kraus-lehmann-magidor-1990]
 * [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
   (1992)][lehmann-magidor-1992]
 * [J. P. Burgess, *Quick Completeness Proofs for Some Logics of Conditionals* (1981)][burgess-1981]

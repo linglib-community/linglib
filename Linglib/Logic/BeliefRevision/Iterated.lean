@@ -16,16 +16,16 @@ of its revision, and Spohn's conditionalisation of rankings meets the postulates
 ## Main statements
 
 * `BeliefRevision.Revision.isAGM_iff`, `BeliefRevision.Revision.Faithful.unique`: the
-  representation theorem (Theorem 2).
+  representation theorem (Theorem 9).
 * `BeliefRevision.Revision.IsAGM.isRational_accepts`: the conditional beliefs of a state form a
   rational consequence relation, whose preorder is the one representing the operator.
 * `BeliefRevision.Revision.Faithful.agreesAfter_iff`, `preservesLt_iff`, `preservesLe_iff`: a
   postulate over the premises in a domain holds iff its condition holds on pairs of worlds, which
-  gives `c1_iff` to `c6_iff` and `cb_iff` (Theorems 3, 4 and 7).
+  gives `c1_iff` to `c6_iff` and `cb_iff` (Theorems 11, 13 and 16).
 * `BeliefRevision.Revision.Faithful.cb_iff_c1_c2_c3_c4_c5_c6`: Boutilier's postulate is (C1)–(C6)
   together.
 * `BeliefRevision.spohnRevision_faithful`, `spohnRevision_c1` to `c4`: Spohn's revision meets
-  the postulates (Theorem 5).
+  the postulates (Theorem 14).
 
 ## Implementation notes
 
@@ -33,16 +33,23 @@ of its revision, and Spohn's conditionalisation of rankings meets the postulates
   relaxes normalisation so that revision by an unsatisfiable proposition empties the belief set.
 * Faithful preorders are terms, total and well-founded as on the finitely many worlds of a
   propositional language, so consistency needs no finiteness.
-* The induced preorder drops the paper's disjunct that `w` is believed, which expansion makes
-  redundant, and Lemma 1 takes the satisfiable premise the paper leaves implicit.
+* The induced preorder drops the disjunct that `w` is believed from the preorder of the proof of
+  Theorem 9, which expansion makes redundant.
 * Syntax-irrelevance holds by construction, since propositions are sets of worlds.
+
+## Errata
+
+* Lemma 10 says that a state accepts `β` given `α` exactly when some `α ∧ β`-world is strictly
+  more plausible than every `α ∧ ¬β`-world. For an unsatisfiable `α` the right side fails while,
+  by (R*1), the revision by `α` has no worlds and accepts every `β`, so
+  `Faithful.accepts_iff_exists_lt` takes `α` satisfiable.
 
 ## References
 
 * [A. Darwiche and J. Pearl, *On the Logic of Iterated Belief Revision*
   (1997)][darwiche-pearl-1997]
 * [C. E. Alchourrón, P. Gärdenfors and D. Makinson, *On the Logic of Theory Change: Partial
-  Meet Contraction and Revision Functions* (1985)][alchouron-gardenfors-makinson-1985]
+  Meet Contraction and Revision Functions* (1985)][alchourron-gardenfors-makinson-1985]
 * [H. Katsuno and A. O. Mendelzon, *Propositional Knowledge Base Revision and Minimal Change*
   (1991)][katsuno-mendelzon-1991]
 * [C. Boutilier, *Iterated Revision and Minimal Change of Conditional Beliefs*
@@ -126,11 +133,11 @@ structure Faithful (ord : S → Preorder W) : Prop where
   total : ∀ Ψ, Std.Total (ord Ψ).le
   /-- The preorders are well-founded. -/
   wellFounded : ∀ Ψ, WellFounded (ord Ψ).lt
-  /-- Condition 1 of Definition 4: belief worlds are equally plausible. -/
+  /-- Condition (1) of Definition 8: belief worlds are equally plausible. -/
   equiv_of_mem : ∀ Ψ w v, w ∈ r.bel Ψ → v ∈ r.bel Ψ → AntisymmRel (ord Ψ).le w v
-  /-- Condition 2 of Definition 4: belief worlds are more plausible than the others. -/
+  /-- Condition (2) of Definition 8: belief worlds are more plausible than the others. -/
   lt_of_mem : ∀ Ψ w v, w ∈ r.bel Ψ → v ∉ r.bel Ψ → (ord Ψ).lt w v
-  /-- Revision selects the least worlds of the evidence (Theorem 2). -/
+  /-- Revision selects the least worlds of the evidence (Theorem 9). -/
   bel_revise : ∀ Ψ μ, r.bel (r.revise Ψ μ) = (ord Ψ).minimals μ
 
 /-- Postulate (C1) says that evidence entailed by later evidence is redundant. -/
@@ -319,7 +326,7 @@ theorem Faithful.isAGM (h : r.Faithful ord) : r.IsAGM where
     simp only [h.bel_revise] at hne ⊢
     exact (Preorder.minimals_inter_eq (h.total Ψ) hne).le
 
-/-- An operator satisfies the postulates iff a faithful assignment represents it (Theorem 2). -/
+/-- An operator satisfies the postulates iff a faithful assignment represents it (Theorem 9). -/
 theorem isAGM_iff : r.IsAGM ↔ ∃ ord, r.Faithful ord :=
   ⟨fun h ↦ ⟨_, h.faithful⟩, fun ⟨_, h⟩ ↦ h.isAGM⟩
 
@@ -331,7 +338,7 @@ theorem Faithful.accepts_iff (h : r.Faithful ord) :
     (h.wellFounded Ψ), Filter.mem_principal]
 
 /-- A state accepts `β` given a satisfiable `α` iff some `α ∩ β`-world is strictly more plausible
-than every `α \ β`-world (Lemma 1). -/
+than every `α \ β`-world (Lemma 10). -/
 theorem Faithful.accepts_iff_exists_lt (h : r.Faithful ord) (hα : α.Nonempty) :
     r.Accepts Ψ α β ↔ ∃ w ∈ α ∩ β, ∀ v ∈ α \ β, (ord Ψ).lt w v := by
   rw [Accepts, h.bel_revise]
@@ -353,19 +360,19 @@ theorem Faithful.agreesAfter_iff (h : r.Faithful ord) (D : S → Set W → Set W
       Preorder.minimals_congr fun a ha b hb ↦ hCR Ψ μ a (hα ha) b (hα hb)]
 
 /-- For a faithful assignment, (C1) holds iff a state's preorder and its revision's agree on the
-`μ`-worlds, condition (CR1) of Theorem 4. -/
+`μ`-worlds, condition (CR1) of Theorem 13. -/
 theorem Faithful.c1_iff (h : r.Faithful ord) :
     r.C1 ↔ ∀ Ψ μ, AgreesOn (ord Ψ) (ord (r.revise Ψ μ)) μ :=
   h.agreesAfter_iff fun _ μ ↦ μ
 
 /-- For a faithful assignment, (C2) holds iff a state's preorder and its revision's agree on the
-non-`μ`-worlds, condition (CR2) of Theorem 4. -/
+non-`μ`-worlds, condition (CR2) of Theorem 13. -/
 theorem Faithful.c2_iff (h : r.Faithful ord) :
     r.C2 ↔ ∀ Ψ μ, AgreesOn (ord Ψ) (ord (r.revise Ψ μ)) μᶜ :=
   h.agreesAfter_iff fun _ μ ↦ μᶜ
 
 /-- For a faithful assignment, (CB) holds iff a state's preorder and its revision's agree outside
-the revised belief set, condition (CBR) of Theorem 3. -/
+the revised belief set, condition (CBR) of Theorem 11. -/
 theorem Faithful.cb_iff (h : r.Faithful ord) :
     r.CB ↔ ∀ Ψ μ, AgreesOn (ord Ψ) (ord (r.revise Ψ μ)) (r.bel (r.revise Ψ μ))ᶜ := by
   rw [← h.agreesAfter_iff fun Ψ μ ↦ (r.bel (r.revise Ψ μ))ᶜ]
@@ -417,14 +424,14 @@ theorem Faithful.preservesLe_iff (h : r.Faithful ord) (D X : S → Set W → Set
       ⟨hu'.1, fun y hy ↦ (ord _).le_trans _ _ _ hux (hx'.2 y hy)⟩))
 
 /-- Postulate (C3) holds iff revision by `μ` preserves each strict ranking of a `μ`-world below a
-non-`μ`-world, which is condition (CR3) of Theorem 4. -/
+non-`μ`-world, which is condition (CR3) of Theorem 13. -/
 theorem Faithful.c3_iff (h : r.Faithful ord) :
     r.C3 ↔ ∀ Ψ μ, PreservesLt (ord Ψ) (ord (r.revise Ψ μ)) μ μᶜ := by
   simpa [C3, Accepts, ← Set.compl_eq_univ_sdiff] using
     h.preservesLt_iff (fun _ _ ↦ .univ) fun _ μ ↦ μ
 
 /-- Postulate (C4) holds iff revision by `μ` preserves each weak ranking of a `μ`-world below a
-non-`μ`-world, which is condition (CR4) of Theorem 4. -/
+non-`μ`-world, which is condition (CR4) of Theorem 13. -/
 theorem Faithful.c4_iff (h : r.Faithful ord) :
     r.C4 ↔ ∀ Ψ μ, PreservesLe (ord Ψ) (ord (r.revise Ψ μ)) μ μᶜ := by
   simpa [C4, Accepts] using h.preservesLe_iff (fun _ _ ↦ .univ) fun _ μ ↦ μᶜ
@@ -436,7 +443,7 @@ private theorem Faithful.compl_bel_revise_diff (h : r.Faithful ord) (Ψ : S) (μ
   ⟨Set.inter_eq_right.2 (Set.compl_subset_compl.2 (h.isAGM.success Ψ μ)), Set.inter_comm _ _⟩
 
 /-- For a faithful assignment, (C5) holds iff revision by `μ` preserves weak rankings of
-non-`μ`-worlds below `μ`-worlds outside the revised beliefs, condition (CR5) of Theorem 7. -/
+non-`μ`-worlds below `μ`-worlds outside the revised beliefs, condition (CR5) of Theorem 16. -/
 theorem Faithful.c5_iff (h : r.Faithful ord) :
     r.C5 ↔ ∀ Ψ μ, PreservesLe (ord Ψ) (ord (r.revise Ψ μ)) μᶜ (μ \ r.bel (r.revise Ψ μ)) := by
   refine (forall₃_congr fun _ _ _ ↦ imp_congr_left Set.subset_compl_comm).trans <|
@@ -445,7 +452,7 @@ theorem Faithful.c5_iff (h : r.Faithful ord) :
   rw [(h.compl_bel_revise_diff Ψ μ).1, (h.compl_bel_revise_diff Ψ μ).2]
 
 /-- For a faithful assignment, (C6) holds iff revision by `μ` preserves strict rankings of
-non-`μ`-worlds below `μ`-worlds outside the revised beliefs, condition (CR6) of Theorem 7. -/
+non-`μ`-worlds below `μ`-worlds outside the revised beliefs, condition (CR6) of Theorem 16. -/
 theorem Faithful.c6_iff (h : r.Faithful ord) :
     r.C6 ↔ ∀ Ψ μ, PreservesLt (ord Ψ) (ord (r.revise Ψ μ)) μᶜ (μ \ r.bel (r.revise Ψ μ)) := by
   refine (forall₃_congr fun _ _ _ ↦ imp_congr_left Set.subset_compl_comm).trans <|
@@ -552,53 +559,53 @@ theorem spohn_of_mem {w : W} (hw : w ∈ μ) : spohn κ μ w = aPart κ μ w := 
 theorem spohn_of_notMem {w : W} (hw : w ∉ μ) : spohn κ μ w = κ w + 1 := by
   simp [spohn, hw]
 
-/-- The rankings' orderings faithfully represent Spohn's revision (Lemma 2). -/
+/-- The rankings' orderings faithfully represent Spohn's revision (Lemma B.1). -/
 theorem spohnRevision_faithful :
     (spohnRevision W).Faithful (fun κ ↦ Preorder.lift κ) :=
   faithful_lift (fun κ μ _ hw ↦ spohn_of_mem κ μ hw)
     (fun κ μ _ hw ↦ by rw [spohn_of_notMem κ μ hw]; exact Nat.succ_pos _)
 
-/-- Spohn's revision satisfies condition (CR1), the first part of Lemma 3. -/
+/-- Spohn's revision satisfies condition (CR1), part (1) of Lemma B.2. -/
 theorem spohn_agreesOn : AgreesOn (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μ :=
   agreesOn_lift κ μ fun κ μ _ hw ↦ spohn_of_mem κ μ hw
 
-/-- Spohn's revision satisfies condition (CR2), the second part of Lemma 3. -/
+/-- Spohn's revision satisfies condition (CR2), part (2) of Lemma B.2. -/
 theorem spohn_agreesOn_compl :
     AgreesOn (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μᶜ := fun w hw v hv ↦ by
   simp only [Preorder.lift_le_iff, spohn_of_notMem κ μ hw, spohn_of_notMem κ μ hv]
   omega
 
-/-- Spohn's revision satisfies condition (CR3), the third part of Lemma 3. -/
+/-- Spohn's revision satisfies condition (CR3), part (3) of Lemma B.2. -/
 theorem spohn_preservesLt :
     PreservesLt (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μ μᶜ := fun w hw v hv h ↦ by
   rw [Preorder.lift_lt_iff] at h ⊢
   rw [spohn_of_mem κ μ hw, spohn_of_notMem κ μ hv, aPart]
   omega
 
-/-- Spohn's revision satisfies condition (CR4), the fourth part of Lemma 3. -/
+/-- Spohn's revision satisfies condition (CR4), part (4) of Lemma B.2. -/
 theorem spohn_preservesLe :
     PreservesLe (Preorder.lift κ) (Preorder.lift (spohn κ μ)) μ μᶜ := fun w hw v hv h ↦ by
   rw [Preorder.lift_le_iff] at h ⊢
   rw [spohn_of_mem κ μ hw, spohn_of_notMem κ μ hv, aPart]
   omega
 
-/-- Spohn's revision satisfies the AGM postulates (Theorem 5). -/
+/-- Spohn's revision satisfies the AGM postulates (Theorem 14). -/
 theorem spohnRevision_isAGM : (spohnRevision W).IsAGM :=
   spohnRevision_faithful.isAGM
 
-/-- Spohn's revision satisfies (C1) (Theorem 5). -/
+/-- Spohn's revision satisfies (C1) (Theorem 14). -/
 theorem spohnRevision_c1 : (spohnRevision W).C1 :=
   spohnRevision_faithful.c1_iff.2 spohn_agreesOn
 
-/-- Spohn's revision satisfies (C2) (Theorem 5). -/
+/-- Spohn's revision satisfies (C2) (Theorem 14). -/
 theorem spohnRevision_c2 : (spohnRevision W).C2 :=
   spohnRevision_faithful.c2_iff.2 spohn_agreesOn_compl
 
-/-- Spohn's revision satisfies (C3) (Theorem 5). -/
+/-- Spohn's revision satisfies (C3) (Theorem 14). -/
 theorem spohnRevision_c3 : (spohnRevision W).C3 :=
   spohnRevision_faithful.c3_iff.2 spohn_preservesLt
 
-/-- Spohn's revision satisfies (C4) (Theorem 5). -/
+/-- Spohn's revision satisfies (C4) (Theorem 14). -/
 theorem spohnRevision_c4 : (spohnRevision W).C4 :=
   spohnRevision_faithful.c4_iff.2 spohn_preservesLe
 
