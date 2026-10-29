@@ -47,6 +47,9 @@ domain.
   and two NPs.
 * `Rules.classifies_marking_ofAlignment`: the rules of an alignment mark S, A and P with that
   alignment.
+* `Rules.marking_S_eq_marking_A_iff`, `Rules.not_isErgative_marking_of_high_eq_none`: only a
+  high case distinct from the elsewhere case marks a transitive subject apart from an
+  intransitive one, so rules without one are not ergative.
 
 ## Implementation notes
 
@@ -142,8 +145,8 @@ theorem Rules.unmarked_mem_cases {r : Rules} {c : Case} (h : r.unmarked = some c
   simp [Rules.cases, h]
 
 /-- The clausal rules of an alignment: accusative on the lower NP, ergative on the higher,
-    both, or neither, with the elsewhere case nominative where the lower NP is marked and
-    absolutive otherwise. A split-S system is not a dependent-case setting and gets the
+    both, or neither, with the elsewhere case absolutive where the higher NP is marked and
+    nominative otherwise. A split-S system is not a dependent-case setting and gets the
     neutral rules. -/
 def Rules.ofAlignment : Alignment.AlignmentType → Rules
   | .accusative => { low := some .acc, unmarked := some .nom }
@@ -368,6 +371,40 @@ theorem Rules.assign_pair (r : Rules) (lex : α → Option Case) (x y : α) :
 def Rules.marking (r : Rules) (x : ArgumentRole) : Option Case :=
   ((r.assign (fun _ ↦ none) (if x = .S then [ArgumentRole.S] else [.A, .P])).valueOf x).map
     (·.1)
+
+/-- An intransitive subject takes the elsewhere case. -/
+theorem Rules.marking_S (r : Rules) : r.marking .S = r.unmarked := by
+  obtain ⟨hi, lo, un⟩ := r
+  cases hi <;> cases lo <;> cases un <;> rfl
+
+/-- A transitive subject takes the high case, if the rules have one, and else the elsewhere
+    case. -/
+theorem Rules.marking_A (r : Rules) : r.marking .A = r.high.or r.unmarked := by
+  obtain ⟨hi, lo, un⟩ := r
+  cases hi <;> cases lo <;> cases un <;> rfl
+
+/-- A transitive object takes the low case, if the rules have one, and else the elsewhere
+    case. -/
+theorem Rules.marking_P (r : Rules) : r.marking .P = r.low.or r.unmarked := by
+  obtain ⟨hi, lo, un⟩ := r
+  cases hi <;> cases lo <;> cases un <;> rfl
+
+/-- The rules mark a transitive subject as they mark an intransitive one unless they have a high
+    case distinct from the elsewhere case: the two subjects differ only in the NP the transitive
+    one c-commands, which only the high rule reads. -/
+theorem Rules.marking_S_eq_marking_A_iff (r : Rules) :
+    r.marking .S = r.marking .A ↔ r.high = none ∨ r.high = r.unmarked := by
+  rw [r.marking_S, r.marking_A]
+  cases r.high with
+  | none => simp
+  | some c =>
+    simp only [Option.some_or, reduceCtorEq, false_or]
+    exact eq_comm
+
+/-- Rules without a high case are not ergative. -/
+theorem Rules.not_isErgative_marking_of_high_eq_none {r : Rules} (h : r.high = none) :
+    ¬ Alignment.IsErgative r.marking :=
+  fun he ↦ he.2 (r.marking_S_eq_marking_A_iff.2 (.inl h))
 
 /-- The rules of an alignment mark the core roles with that alignment. -/
 theorem Rules.classifies_marking_ofAlignment {a : Alignment.AlignmentType} (ha : a ≠ .active) :

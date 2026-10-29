@@ -141,16 +141,16 @@ theorem aab_feasiblyMonotone : FeasiblyMonotone Paradigm.aab := by
   rw [← isContiguous_iff_feasiblyMonotone]
   decide
 
-/-- Under antihomophony and [bobaljik-2012]'s markedness condition no vocabulary realizes an
-AAB pattern, so the gradation-side exclusion is carried by the realization engine, not by
-monotonicity. -/
-theorem aab_not_groundedly_realizable {v : RuleSet (SpanRule 3 ℕ)}
-    {a b : ℕ} (hAH : v.Antihomophonous) (hG : Grounded v) (hab : a ≠ b) :
+/-- Under antihomophony, [bobaljik-2012]'s markedness condition and adjacency no vocabulary
+realizes an AAB pattern, so the gradation-side exclusion is carried by the realization engine,
+not by monotonicity. -/
+theorem aab_not_realizable {v : RuleSet (SpanRule 3 ℕ)} {a b : ℕ} (hAH : v.Antihomophonous)
+    (hM : Markedness v) (hA : Adjacent v) (hab : a ≠ b) :
     realize v ≠ ![some a, some a, some b] := by
   intro h
   have h01 : realize v 0 = realize v 1 := by simp [h]
   have h2 : (realize v 2).isSome := by simp [h]
-  have h12 := realize_const_of_grounded hAH hG h01 h2
+  have h12 := realize_const_of_markedness hAH hM hA h01 h2
   rw [h] at h12
   exact hab (by simpa using h12)
 

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Case.Dependent
+public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Data.Examples.Baker2015
 
 /-!
@@ -8,7 +9,9 @@ public import Linglib.Data.Examples.Baker2015
 
 Structural case cannot in general be read off agreement with a functional head: ergative
 languages let the finite verb agree with ergative and absolutive subjects alike, and the
-subject must already be ergative before Agree applies. The book takes up Marantz's dependent
+subject must already be ergative before Agree applies. In Kewa and Burushaski the verb agrees
+with both subjects alike, and only a rule reading the NP the transitive subject c-commands can
+[mark the two apart](##ergative_independent_of_agreement). The book takes up Marantz's dependent
 case instead. In a spell-out domain, an NP with lexically governed case keeps it; of two
 distinct caseless NPs one of which c-commands the other, the lower is valued accusative or the
 higher ergative — which of these a language does is its alignment parameter, and a tripartite
@@ -24,6 +27,12 @@ how the unmarked case is realized.
 * `Observed`, `Realizes`: the case a gloss shows, and when the algorithm's output realizes it.
 * `rows_case`: the book's introductory clauses, each derived by `assignCases` from its
   alignment type.
+
+## Implementation notes
+
+The rows record no aspect. Urdu's alignment is split by aspect (`HindiUrdu.alignment`), and
+both of its clauses (25) are perfective, glossed PRF, so they are read on the ergative side of
+the split.
 
 ## References
 
@@ -41,14 +50,16 @@ open Case DependentCase
 /-- The book's languages of focus by alignment type: accusative Sakha, Tamil, Amharic, Cuzco
     Quechua, Korean and Finnish; ergative Shipibo, Burushaski, Chukchi, Lezgian, Ingush,
     Greenlandic, Kewa and Wardaman; tripartite Nez Perce, Coast Tsimshian, Semelai, Diyari and
-    Warlpiri. The marked-nominative and marked-absolutive languages differ in the realization of
-    the unmarked case, which the algorithm does not fix. -/
+    Warlpiri; and Urdu, split by aspect, in the perfective of its clauses (25). The
+    marked-nominative and marked-absolutive languages differ in the realization of the unmarked
+    case, which the algorithm does not fix. -/
 def alignment? : String → Option Alignment.AlignmentType
   | "yaku1245" | "tami1289" | "amha1245" | "cusc1236" | "kore1280" | "finn1318" =>
     some .accusative
   | "ship1254" | "buru1296" | "chuk1273" | "lezg1247" | "ingu1240" | "kala1399" | "west2599"
   | "ward1246" => some .ergative
   | "nezp1238" | "coas1300" | "seme1247" | "dier1241" | "warl1254" => some .tripartite
+  | "urdu1245" => some (HindiUrdu.alignment .perfective)
   | _ => none
 
 /-- The case a gloss shows: a dependent case, or an unmarked form — nominative, absolutive,
@@ -104,10 +115,41 @@ theorem rows_case :
         Realizes v.1 v.2 o := by
   decide
 
-theorem ergative_subject_independent_of_agreement :
-    ∀ r ∈ Examples.all, alignment? r.language = some .ergative →
-      ((assignCases .ergative (fun _ ↦ none) (domain r)).valueOf .subject).map (·.1) =
-        some (if r.feature? "transitive" = some "yes" then .erg else .abs) := by
+-- (22), (23)
+theorem subject_case_of_same_agreement : ∀ r ∈ Examples.all, ∀ r' ∈ Examples.all,
+    r.feature? "transitive" = some "no" → r'.feature? "transitive" = some "yes" →
+    r.language = r'.language → r.feature? "subjectAgreement" = some "yes" →
+    r'.feature? "subjectAgreement" = some "yes" →
+    observed? r .subject = some .unmarked ∧ observed? r' .subject = some .erg := by
   decide
+
+private theorem valueOf_subject_of_high_eq_none {g : Rules} (hg : g.high = none) :
+    (g.assign (fun _ : Arg ↦ none) [.subject, .object]).valueOf .subject =
+      g.unmarked.map (·, .unmarked) := by
+  obtain ⟨hi, lo, un⟩ := g
+  dsimp only at hg
+  subst hg
+  cases lo <;> cases un <;> rfl
+
+/-- Case is not read off agreement: where the verb agrees with an intransitive and a transitive
+    subject alike, as in Kewa (22) and Burushaski (23), only the transitive subject is ergative,
+    and no rules without a high case derive it: they give it the elsewhere case, marking it as
+    they mark an intransitive subject (`Rules.marking_S_eq_marking_A_iff`). -/
+theorem ergative_independent_of_agreement {r r' : Datum} (hr : r ∈ Examples.all)
+    (hr' : r' ∈ Examples.all) (ht : r.feature? "transitive" = some "no")
+    (ht' : r'.feature? "transitive" = some "yes") (hl : r.language = r'.language)
+    (ha : r.feature? "subjectAgreement" = some "yes")
+    (ha' : r'.feature? "subjectAgreement" = some "yes") {g : Rules} (hg : g.high = none) :
+    observed? r .subject ≠ observed? r' .subject ∧
+      ∀ o ∈ observed? r' .subject,
+        ∀ v ∈ (g.assign (fun _ ↦ none) (domain r')).valueOf .subject, ¬ Realizes v.1 v.2 o := by
+  obtain ⟨h, h'⟩ := subject_case_of_same_agreement r hr r' hr' ht ht' hl ha ha'
+  refine ⟨by rw [h, h']; decide, fun o ho v hv hre ↦ ?_⟩
+  rw [h', Option.mem_some_iff] at ho
+  subst ho
+  simp only [domain, ht', ↓reduceIte] at hv
+  rw [valueOf_subject_of_high_eq_none hg, Option.mem_def] at hv
+  obtain ⟨c, -, rfl⟩ := Option.map_eq_some_iff.1 hv
+  simp [Realizes] at hre
 
 end Baker2015

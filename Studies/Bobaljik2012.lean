@@ -21,13 +21,24 @@ Containment Hypothesis (6) — the superlative contains the comparative —
 under Late Insertion, Elsewhere ordering, and locality (8). A comparative
 root allomorph is chosen in the superlative too, so ABA needs an accidental
 homophony that Antihomophony (44) excludes; AAB needs a
-superlative-conditioned allomorph with no comparative counterpart, which
-adjacency (190) or the markedness condition (202) excludes; and a root sees
+superlative-conditioned allomorph with no comparative counterpart, either a
+root allomorph conditioned across the comparative (190), which meets the
+markedness condition (202) and which adjacency excludes, or a portmanteau
+with no context-free counterpart (201), which (202) excludes; and a root sees
 CMPR only when Merger has made the comparative synthetic (90), which is the
 RSG, with the SSG as Merger's downward closure. The same locality condition
 limits CSG1 to periphrastic superlatives that embed the comparative (§3.3.3),
 so Russian *plox-oj – xuž-e – samyj plox-oj*, whose superlative embeds the
 positive, is ABA without any homophony.
+
+The derivation of CSG1 here uses containment and antihomophony but no property
+of the Elsewhere ordering: [under any ranking](##csg1_of_any_ranking) of an
+antihomophonous vocabulary the comparative's allomorph blocks the positive's in
+the superlative, and the ordering decides only which contiguous pattern a
+vocabulary yields. Antihomophony (44) bars only contextual allomorphs
+homophonous with a default, while the engine assumes that all exponents are
+distinct; the difference matters from four grades on, where two homophonous
+contextual allomorphs [yield ABCB](##abcb_not_isContiguous).
 
 ## Main definitions
 
@@ -35,6 +46,8 @@ positive, is ABA without any homophony.
   book's vocabularies (39), (203), (194), (198), (204) as `SpanRule`s.
 * `aabContextual`, `welshAAB`, `fakeAba`: the vocabularies behind the
   unattested shapes — (190), (201), and the homophony loophole of (44).
+* `Antihomophony`, `abcb`: Antihomophony (44), and a four-grade vocabulary
+  meeting it that is not contiguous.
 * `greekBad`, `russianBad`: the Modern Greek vocabulary (93) and its Russian
   counterpart.
 * `positiveEmbedding`: the word extents of a superlative embedding the positive.
@@ -243,6 +256,20 @@ theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p
     p 2 ≠ p 0 :=
   fun h2 ↦ h (hc (i := 0) (j := 1) (k := 2) (by decide) (by decide) h2.symm).symm
 
+/-! ### CSG1 under any ranking
+
+Selecting the applicable rule of greatest score realizes a contiguous pattern whatever the score,
+since applicability grows with the grade. The Elsewhere ordering is one score among others: it
+decides which contiguous pattern a vocabulary yields, not that the pattern is contiguous. -/
+
+/-- CSG1 holds of an antihomophonous vocabulary over the containment structure however its rules
+are ranked. -/
+theorem csg1_of_any_ranking {F α : Type*} [LinearOrder α] (f : SpanRule 3 F → α)
+    {v : RuleSet (SpanRule 3 F)} (hv : v.Antihomophonous) (h : v.realize f 1 ≠ v.realize f 0) :
+    v.realize f 2 ≠ v.realize f 0 :=
+  csg1 (p := v.realize f)
+    (RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hg hs ↦ le_trans hs hg) h
+
 /-! ### The suppletive triples (Tables 4.1 and 4.2)
 
 The 73 adjectival cognate triples of Table 4.1, each with the root classes the book assigns its
@@ -444,6 +471,12 @@ def englishGood : RuleSet (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bet
 
 theorem english_good_abb : Setoid.ker (realize englishGood) = Setoid.ker Paradigm.abb := by decide
 
+-- the reverse of the Elsewhere ranking selects the default *good* at every grade
+theorem english_good_reverse_aaa :
+    Setoid.ker (englishGood.realize fun it ↦ OrderDual.toDual it.threshold) =
+      Setoid.ker Paradigm.aaa := by
+  decide
+
 /-- English BAD (194), with the √ROOT+CMPR portmanteau *worse* and *bad* elsewhere. -/
 def englishBad : RuleSet (SpanRule 3 String) := [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
 
@@ -469,7 +502,7 @@ theorem latin_bonus_realize : realize latinBonus = ![some "bon", some "mel", som
 theorem latin_realize_abc : Setoid.ker (realize latinBonus) = Setoid.ker Paradigm.abc := by decide
 
 theorem latin_wellformed :
-    Adjacent latinBonus ∧ Grounded latinBonus ∧ latinBonus.Antihomophonous := by decide
+    Adjacent latinBonus ∧ Markedness latinBonus ∧ latinBonus.Antihomophonous := by decide
 
 theorem latin_not_terminal : ¬ Terminal latinBonus := by decide
 
@@ -500,6 +533,10 @@ theorem aabContextual_realizes_aab :
 /-- Its context skips the comparative, so adjacency excludes it. -/
 theorem aabContextual_not_adjacent : ¬ Adjacent aabContextual := by decide
 
+-- (202): the root has its context-free rule, so only adjacency, or grounding, excludes (190)
+theorem aabContextual_markedness : Markedness aabContextual ∧ ¬ Grounded aabContextual := by
+  decide
+
 /-- The vocabulary (201), with *gor-* restricted to the superlative and no comparative-level
 counterpart, which gives *\*da – da-ch – gor-au*. -/
 def welshAAB : RuleSet (SpanRule 3 String) := [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
@@ -508,12 +545,12 @@ theorem welshAAB_realizes_aab : Setoid.ker (realize welshAAB) = Setoid.ker Parad
 
 /-- The node [GOOD, CMPR] has a context-sensitive rule and no context-free one, which (202)
 excludes. -/
-theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
+theorem welshAAB_not_markedness : ¬ Markedness welshAAB := by decide
 
--- (202)
-theorem welshAAB_blocked : ¬ (welshAAB.Antihomophonous ∧ Grounded welshAAB) :=
-  fun ⟨hAH, hG⟩ ↦
-    absurd (realize_const_of_grounded hAH hG (by decide) (by decide)) (by decide)
+-- (202), with adjacency
+theorem welshAAB_blocked : ¬ (welshAAB.Antihomophonous ∧ Markedness welshAAB) :=
+  fun ⟨hAH, hM⟩ ↦
+    absurd (realize_const_of_markedness hAH hM (by decide) (by decide) (by decide)) (by decide)
 
 /-- A superlative allomorph accidentally homophonous with the positive yields surface ABA, the
 loophole that Antihomophony (44) closes. -/
@@ -523,6 +560,29 @@ def fakeAba : RuleSet (SpanRule 3 String) :=
 theorem fakeAba_realizes_aba : Setoid.ker (realize fakeAba) = Setoid.ker Paradigm.aba := by decide
 
 theorem fakeAba_not_antihomophonous : ¬ fakeAba.Antihomophonous := by decide
+
+/-- Antihomophony (44): no rule conditioned on a head shares its exponent with a context-free
+rule. -/
+def Antihomophony {n : ℕ} {F : Type*} (v : RuleSet (SpanRule n F)) : Prop :=
+  ∀ it ∈ v, ∀ jt ∈ v, it.context.isSome → jt.context = none → it.exponent ≠ jt.exponent
+
+instance {n : ℕ} {F : Type*} [DecidableEq F] (v : RuleSet (SpanRule n F)) :
+    Decidable (Antihomophony v) := by
+  unfold Antihomophony; infer_instance
+
+theorem antihomophony_of_antihomophonous {n : ℕ} {F : Type*} {v : RuleSet (SpanRule n F)}
+    (hv : v.Antihomophonous) : Antihomophony v := fun it hit jt hjt hc hn he ↦ by
+  obtain rfl := hv hit hjt he
+  simp [hn] at hc
+
+/-- Four grades with two homophonous contextual allomorphs, which Antihomophony (44) allows. -/
+def abcb : RuleSet (SpanRule 4 String) :=
+  [⟨"A", 0, none⟩, ⟨"B", 0, some 1⟩, ⟨"C", 0, some 2⟩, ⟨"B", 0, some 3⟩]
+
+-- (44) is weaker than `Antihomophonous`, which contiguity over four grades needs
+theorem abcb_not_isContiguous :
+    Antihomophony abcb ∧ ¬ abcb.Antihomophonous ∧ ¬ IsContiguous (realize abcb) := by
+  decide
 
 /-! ### Periphrasis and locality (§3.3) -/
 

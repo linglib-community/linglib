@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Studies.BakerVinokurova2010
 public import Linglib.Data.Examples.Poole2024
 
 /-!
@@ -26,7 +27,8 @@ an Agree account. The two mechanisms part on a third caseless DP, which the conf
 rule also marks and a single stack, discharged once, does not (`stack_marks_once`). The Sakha
 illustration of §5 puts a dative stack on V and an accusative stack on T; on every clause
 shape of table (19) the two stacks assign the cases that the dative and accusative rules of
-[baker-vinokurova-2010] assign (`sakha_eq_bakerVinokurova`), and accusative appears on a DP
+[baker-vinokurova-2010]'s Sakha grammar assign with no head probing
+(`sakha_eq_bakerVinokurova`), and accusative appears on a DP
 exactly when it is accessible to T and another caseless DP unlocks the stack, as in (15),
 (18) and (20) (`accusative_rows`).
 
@@ -67,13 +69,13 @@ goals the head encounters. -/
 abbrev Goal (α : Type*) := (α × Option (Case × Mechanism)) × ℕ
 
 /-- The φ-probe relativized to unmarked case: it sees exactly the caseless DPs. -/
-def unmarkedProbe : Probe (Goal α) := Probe.relativized λ g => g.1.2.isNone
+def unmarkedProbe : Probe (Goal α) := Probe.relativized fun g ↦ g.1.2.isNone
 
 /-- The stack (8) over the goals a head encounters in order: the position of the DP assigned
 dependent case, if the first probe finds a caseless DP to unlock the second and the second,
 ignoring that DP, finds another. -/
 def stack (goals : Valuation α (Case × Mechanism)) : Option ℕ :=
-  (unmarkedProbe.search goals.zipIdx).bind λ g =>
+  (unmarkedProbe.search goals.zipIdx).bind fun g ↦
     (unmarkedProbe.search (goals.zipIdx.filter (·.2 ≠ g.2))).map (·.2)
 
 /-- The stack assigning the case `c`: the DP it finds is valued `c` by Agree, every other goal
@@ -82,7 +84,7 @@ def assignDep (c : Case) (goals : Valuation α (Case × Mechanism)) :
     Valuation α (Case × Mechanism) :=
   match stack goals with
   | none => goals
-  | some j => goals.zipIdx.map λ g => if g.2 = j then (g.1.1, some (c, .agree)) else g.1
+  | some j => goals.zipIdx.map fun g ↦ if g.2 = j then (g.1.1, some (c, .agree)) else g.1
 
 /-- The cases a list of valued NPs carries. -/
 def surface (out : Valuation α (Case × Mechanism)) : List (Option Case) := out.map (·.2.map (·.1))
@@ -115,7 +117,7 @@ theorem stack_ne_unlocker {goals : Valuation α (Case × Mechanism)} {g : Goal �
 assigns, whatever their lexical case. -/
 theorem low_eq_dependentPass (c : Case) (lex : α → Option Case) (a b : α) :
     surface (assignDep c (lexicalValuation lex [a, b]))
-      = surface (({ low := some c } : Rules).dependentPass (λ _ => true)
+      = surface (({ low := some c } : Rules).dependentPass (fun _ ↦ true)
           (lexicalValuation lex [a, b])) := by
   simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
   cases lex a <;> cases lex b <;> rfl
@@ -124,7 +126,7 @@ theorem low_eq_dependentPass (c : Case) (lex : α → Option Case) (a b : α) :
 rule (11) assigns, whatever their lexical case. -/
 theorem high_eq_dependentPass (c : Case) (lex : α → Option Case) (spec comp : α) :
     (surface (assignDep c (lexicalValuation lex [comp, spec]))).reverse
-      = surface (({ high := some c } : Rules).dependentPass (λ _ => true)
+      = surface (({ high := some c } : Rules).dependentPass (fun _ ↦ true)
           (lexicalValuation lex [spec, comp])) := by
   simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
   cases lex spec <;> cases lex comp <;> rfl
@@ -132,7 +134,7 @@ theorem high_eq_dependentPass (c : Case) (lex : α → Option Case) (spec comp :
 theorem stack_marks_once (c : Case) (lex : α → Option Case) (a b d : α) (ha : lex a = none)
     (hb : lex b = none) (hd : lex d = none) :
     surface (assignDep c (lexicalValuation lex [a, b, d])) = [none, some c, none] ∧
-      surface (({ low := some c } : Rules).dependentPass (λ _ => true)
+      surface (({ low := some c } : Rules).dependentPass (fun _ ↦ true)
         (lexicalValuation lex [a, b, d])) = [none, some c, some c] := by
   simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil, ha, hb, hd]
   exact ⟨rfl, rfl⟩
@@ -160,7 +162,7 @@ inductive Arg
 /-- The goals V meets: its complement, the direct object, then its specifier, the indirect
 object. -/
 def Shape.vGoals (s : Shape) : Valuation Arg (Case × Mechanism) :=
-  (s.dobj.map λ _ => (Arg.DO, (none : Option (Case × Mechanism)))).toList ++
+  (s.dobj.map fun _ ↦ (Arg.DO, (none : Option (Case × Mechanism)))).toList ++
     (if s.io then [(.IO, none)] else [])
 
 /-- The goals T meets after V's stack has run: the external argument, then the direct object if
@@ -170,29 +172,31 @@ def Shape.tGoals (s : Shape) (vp : Valuation Arg (Case × Mechanism)) :
   (if s.ea then [(.EA, none)] else []) ++
     (if s.dobj = some true then vp.filter (·.1 = .DO) else [])
 
-/-- The cases of the external argument, the indirect object, and the direct object after the
-dative stack on V and the accusative stack on T ([poole-2024] (16), (17)). -/
-def Shape.agree (s : Shape) : Option Case × Option Case × Option Case :=
+/-- The case of an argument after the dative stack on V and the accusative stack on T
+([poole-2024] (16), (17)). -/
+def Shape.agree (s : Shape) (n : Arg) : Option Case :=
   let vp := assignDep .dat s.vGoals
   let tp := assignDep .acc (s.tGoals vp)
-  let caseOf (n : Arg) (l : Valuation Arg (Case × Mechanism)) : Option Case :=
-    (l.valueOf n).map (·.1)
-  (caseOf .EA tp, caseOf .IO vp, (caseOf .DO tp).orElse λ _ => caseOf .DO vp)
+  ((tp.valueOf n).orElse fun _ ↦ vp.valueOf n).map (·.1)
 
-/-- The cases after the dative rule (14a) in the VP phase, the indirect object above the direct
-object, and the accusative rule (14b) in the clause. -/
-def Shape.bakerVinokurova (s : Shape) : Option Case × Option Case × Option Case :=
-  let vp := ({ high := some .dat } : Rules).dependentPass (λ _ => true)
-    ((if s.io then [(.IO, none)] else []) ++
-      (s.dobj.map λ _ => (Arg.DO, (none : Option (Case × Mechanism)))).toList)
-  let tp := ({ low := some .acc } : Rules).dependentPass (λ _ => true) (s.tGoals vp)
-  let caseOf (n : Arg) (l : Valuation Arg (Case × Mechanism)) : Option Case :=
-    (l.valueOf n).map (·.1)
-  (caseOf .EA tp, caseOf .IO vp, (caseOf .DO tp).orElse λ _ => caseOf .DO vp)
+/-- The arguments of a shape, highest first. -/
+def Shape.args (s : Shape) : List Arg :=
+  (if s.ea then [.EA] else []) ++ (if s.io then [.IO] else []) ++
+    (s.dobj.map fun _ ↦ Arg.DO).toList
 
-/-- Table (19): on every clause shape the two stacks assign what the two dependent rules
-assign. -/
-theorem sakha_eq_bakerVinokurova (s : Shape) : s.agree = s.bakerVinokurova := by
+/-- The arguments placed in [baker-vinokurova-2010]'s phases: the external argument merged in
+the clause, the indirect object in the verb phrase, and the direct object in the verb phrase,
+shifting into the clause when it shifts. -/
+def Shape.np (s : Shape) : Arg → PhasedNP
+  | .EA => BakerVinokurova2010.subject
+  | .IO => BakerVinokurova2010.internal false
+  | .DO => BakerVinokurova2010.internal (s.dobj.getD false)
+
+/-- Table (19): on every clause shape the two stacks assign what the dependent rules of
+[baker-vinokurova-2010]'s Sakha grammar assign, with no head probing. -/
+theorem sakha_eq_bakerVinokurova (s : Shape) :
+    s.args.map s.agree =
+      BakerVinokurova2010.cases BakerVinokurova2010.grammar [] (s.args.map s.np) := by
   obtain ⟨ea, io, dobj⟩ := s
   cases ea <;> cases io <;> rcases dobj with _ | _ | _ <;> decide
 

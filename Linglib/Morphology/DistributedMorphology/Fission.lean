@@ -207,6 +207,6 @@ theorem head?_scansion_singleton (m : Finset F)
     (scansion items env [m]).head? =
       (winner? items ({ env with focus := m } : Neighborhood (Finset F))).map (·.exponent) := by
   rw [scansion, List.head?_map, head?_insertions_singleton, winner?,
-    RuleSet.selectBy_eq_head? hsorted]
+    RuleSet.selectBy_eq_head?_applicable hsorted]
 
 end DistributedMorphology

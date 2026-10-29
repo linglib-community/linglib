@@ -183,7 +183,7 @@ theorem aab_contiguous_not_adjacent_generable :
     IsContiguous wardaman3sg ∧ IsContiguous yagua2 ∧
       ∀ v : RuleSet (SpanRule 3 ℕ), Terminal v → Adjacent v →
         realize v ≠ ![some 0, some 0, some 1] :=
-  ⟨by decide, by decide, λ _ hT hA => aab_not_generable_of_terminal_adjacent hT hA (by decide)⟩
+  ⟨by decide, by decide, fun _ hT hA ↦ aab_not_generable_of_terminal_adjacent hT hA (by decide)⟩
 
 /-! ### Accessibility domains, section 3.7
 
@@ -219,7 +219,7 @@ theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
 theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
     {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {g g' : Fin n}
     (hg : d ≤ g) (hg' : d ≤ g') : realize v g = realize v g' :=
-  realize_const_of_cap (λ _ hit => threshold_le_of_terminal_domainLocal hT hD hit) hg hg'
+  realize_const_of_cap (fun _ hit ↦ threshold_le_of_terminal_domainLocal hT hD hit) hg hg'
 
 theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd : 1 ≤ (d : ℕ))
     {v : RuleSet (SpanRule n F)} (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
@@ -237,10 +237,10 @@ theorem wardaman_aab_generated :
       Setoid.ker (realize wardamanVocab) = Setoid.ker Paradigm.aab := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
--- (202) [bobaljik-2012]
-theorem wardaman_not_adjacent_not_grounded :
-    ¬ Adjacent wardamanVocab ∧ ¬ Grounded wardamanVocab := by
-  refine ⟨?_, ?_⟩ <;> decide
+-- the rules meet (202) [bobaljik-2012]; only adjacency, or grounding, excludes them
+theorem wardaman_markedness_not_adjacent :
+    Markedness wardamanVocab ∧ ¬ Adjacent wardamanVocab ∧ ¬ Grounded wardamanVocab := by
+  decide
 
 theorem wardaman_realize_contiguous : IsContiguous (realize wardamanVocab) :=
   isContiguous_realize (by decide)

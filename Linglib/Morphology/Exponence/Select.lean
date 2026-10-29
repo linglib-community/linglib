@@ -125,10 +125,6 @@ theorem le_of_selectBy_eq_some (h : v.selectBy f c = some r) (hs : s ∈ v) (hsc
     f s ≤ f r :=
   List.le_of_mem_argmax (mem_applicable.mpr ⟨hs, hsc⟩) h
 
-theorem selectBy_eq_head? (h : v.Pairwise fun r s ↦ f s ≤ f r) :
-    v.selectBy f c = (v.applicable c).head? :=
-  List.argmax_eq_head? (h.filter _)
-
 theorem realize_eq_of_forall_le (hr : r ∈ v) (hrc : Applies r c)
     (hle : ∀ s ∈ v, Applies s c → f s ≤ f r)
     (heq : ∀ s ∈ v, Applies s c → f s = f r → exponent s = exponent r) :
