@@ -9,6 +9,7 @@ public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Person.System
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Studies.Harbour2014
+public import Studies.Cysouw2003
 public import Linglib.Semantics.Plurality.FeatureAction
 public import Linglib.Syntax.Category.Pronoun.Basic
 public import Linglib.Fragments.Tamil.Pronouns
@@ -19,22 +20,16 @@ public import Linglib.Semantics.Reference.Determiner
 # Harbour (2016): Impossible Persons
 
 Harbour derives the person categories as the cells of a partition of the lattice of referents,
-induced by two features, [±author] and [±participant], whose values act on lattices rather than test
-membership: the plus value adds its lattice pairwise, the minus value subtracts the lattice's
-maximum, Lexical Complementarity confines a cell that properly contains a sibling to the difference,
-and the host head discards the empty set. A language sets whether each feature is present and, when
-both are, which composes first. Over the ontology of speaker, hearer and one other, composing
-[±author] outermost [yields the quadripartition](##Examples.quad_cells_eq_participantSets) and
-composing [±participant] outermost [merges two of its cells](##Examples.tri_card), so the order of
-composition turns four feature sets into five partitions. The three-feature theories he rejects
-generate exactly [the partitions on which resolution is defined](##exists_generated), seven of the
-fifteen; his parameters [generate exactly five of them](##graph_mem_image_iff), those of the
-bivalent geometry he considers and sets aside, never the hearer bipartition or Zwicky's
-tripartition. His signs for Cysouw's categories, read off the quadripartition, keep [the exclusive
-apart from the inclusive](##tamil_clusivity_distinguished). His number chapter adopts the number
-theory of his 2014 paper, whose systems `Harbour2014.table3_generated` derives, and the same
-partitions organize the deixis of objects and spaces, English *this* and *that* realizing the author
-bipartition.
+induced by two features, [±author] and [±participant], whose values act on lattices: the plus value
+adds its lattice pairwise and the minus value subtracts its maximum. A language sets whether each
+feature is present and, when both are, which composes first; composing [±author] outermost [yields
+the quadripartition](##Examples.quad_cells_eq_participantSets) and [±participant] outermost [the
+tripartition](##Examples.tri_card). These parameters [generate exactly five
+partitions](##graph_mem_image_iff), those of the bivalent geometry he sets aside, while the
+three-feature theories he rejects generate [all seven partitions on which resolution is
+defined](##exists_generated), the hearer bipartition and Zwicky's tripartition among them. Without
+number the quadripartition is [Cysouw's only-inclusive pattern](##pattern_quad), and its signs keep
+[the exclusive apart from the inclusive](##tamil_clusivity_distinguished).
 
 ## Implementation notes
 
@@ -486,6 +481,30 @@ def signOf (c : Category) : Person.Feature → Bool
 
 theorem signOf_speakerOthers_ne_speakerAddressee :
     signOf .speakerOthers ≠ signOf .speakerAddressee := by decide
+
+/-! ### Cysouw's first person complex
+
+Without number, a partition fixes which of the four categories including the speaker share a
+form. The quadripartition gives the singular speaker the form of the exclusive and the two
+inclusives a form of their own, Cysouw's only-inclusive pattern; every other setting gives all
+four one form, his pattern without a 'we'. His other common patterns separate a 'we' from the
+singular speaker, which person alone cannot do. -/
+
+open Cysouw2003 (Clusivity)
+
+/-- The pattern of the first person complex a setting yields without number: two of the four
+categories including the speaker share a form when their referents lie in one cell. -/
+abbrev Setting.pattern (σ : Setting) : Clusivity.Pattern :=
+  Setoid.ker fun c ↦ (σ.cells Examples.ℒau Examples.ℒpt Examples.ℒπ).filter (referent c.1 ∈ ·)
+
+-- p. 96: the numberless quadripartition is Cysouw's only-inclusive pattern
+theorem pattern_quad :
+    (⟨true, true, false⟩ : Setting).pattern = Clusivity.onlyInclusive.toPattern :=
+  Setoid.ext fun c d ↦ by simp only [Setoid.ker_def]; revert c d; decide +kernel
+
+theorem pattern_eq_noWe {σ : Setting} (h : σ ≠ ⟨true, true, false⟩) :
+    σ.pattern = Clusivity.noWe.toPattern :=
+  Setoid.ext fun c d ↦ by simp only [Setoid.ker_def]; revert σ c d; decide +kernel
 
 /-! ### The Tamil clusivity contrast
 
