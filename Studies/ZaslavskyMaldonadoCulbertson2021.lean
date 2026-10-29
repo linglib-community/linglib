@@ -1,6 +1,7 @@
 module
 
 public import Studies.ZaslavskyKempRegierTishby2018
+public import Studies.Harbour2016
 
 /-!
 # Zaslavsky, Maldonado and Culbertson (2021): Person systems and efficient compression
@@ -19,7 +20,9 @@ encoder and its exchange have [the same complexity](##complexity_comap) and [the
 accuracy](##accuracy_comap). The second-inclusive system is the exchange of a first-inclusive one,
 so the unbiased model [values the two exactly alike](##objective_secondInclusive) unless the need
 distribution tells the speaker from the addressee: the separation needs the egocentric weights or an
-asymmetric need.
+asymmetric need. Harbour's two person features, by contrast, [generate the partition of the first
+system's groups and never that of the second's](##groupGraph_mem_image_setting_graph), Zwicky's
+tripartition: a hard constraint where the paper finds a soft bias.
 
 ## Implementation notes
 
@@ -32,6 +35,7 @@ corpora, are parameters.
 
 * [zaslavsky-maldonado-culbertson-2021]
 * [zaslavsky-kemp-regier-tishby-2018]
+* [harbour-2016]
 -/
 
 @[expose] public section
@@ -318,5 +322,41 @@ theorem objective_secondInclusive {w : Weights} (h : w.speaker = w.addressee) (�
     rw [Kernel.comap_apply, Kernel.deterministic_apply, Kernel.deterministic_apply,
       secondInclusive_eq, Function.comp_apply]
   simp only [objective, hq, complexity_comap _ hneed, accuracy_comap _ _ hneed (meanings_swap h γ)]
+
+/-! ### Against Harbour's parameters
+
+On the referents with more than one member, the first-inclusive system groups the inclusive with
+the exclusive and the second-inclusive system groups it with the second person, the person
+partitions of the standard tripartition and of Zwicky's. -/
+
+open Discourse
+
+/-- The participants of a referent. -/
+def Referent.participants (r : Referent) : Finset Role :=
+  (if r.speaker then {.speaker} else ∅) ∪ if r.addressee then {.addressee} else ∅
+
+/-- The partition a pronoun system induces on the participant sets of groups: two are related
+when groups with those participants share a form. -/
+def groupGraph (form : Referent → Fin 6) : Finset (Finset Role × Finset Role) :=
+  Finset.univ.filter fun P ↦ ∃ r r' : Referent, r.number ≠ 0 ∧ r'.number ≠ 0 ∧
+    r.participants = P.1 ∧ r'.participants = P.2 ∧ form r = form r'
+
+theorem groupGraph_firstInclusive :
+    groupGraph firstInclusive = Harbour2016.graph {.participant, .author} := by
+  decide
+
+theorem groupGraph_secondInclusive :
+    groupGraph secondInclusive = Harbour2016.graph {.hearer, .participant} := by
+  decide
+
+/-- The two systems the unbiased model values alike are told apart by Harbour's parameters,
+which generate the partition of the first-inclusive system's groups and never that of the
+second-inclusive system's, Zwicky's tripartition. -/
+theorem groupGraph_mem_image_setting_graph :
+    groupGraph firstInclusive ∈ Finset.univ.image Harbour2016.Setting.graph ∧
+      groupGraph secondInclusive ∉ Finset.univ.image Harbour2016.Setting.graph := by
+  rw [groupGraph_firstInclusive, groupGraph_secondInclusive, Harbour2016.graph_mem_image_iff,
+    Harbour2016.graph_mem_image_iff]
+  decide
 
 end ZaslavskyMaldonadoCulbertson2021
