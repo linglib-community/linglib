@@ -5,6 +5,7 @@ public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Basic.Sign.Basic
 public import Mathlib.Data.Fintype.Perm
 public import Linglib.Core.GroupTheory.Perm.MinOn
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Elementary ranking conditions
@@ -12,9 +13,13 @@ public import Linglib.Core.GroupTheory.Perm.MinOn
 OT's algebraic ranking-inference layer ([prince-2002]; [riggle-2009a]). An
 ERC value is a *sign*, so the alphabet is mathlib's `SignType` — `W` (`+1`,
 winner-preferring), `L` (`-1`, loser-preferring), `e` (`0`, neutral) — which buys
-`ercOfProfiles` as a coordinatewise `SignType.sign`, the antithetical ERC as pointwise
-negation, per-coordinate entailment as `SignType`'s own order `L ≤ e ≤ W`, and the
-decidability instances for free.
+`ercOfProfiles` as a coordinatewise `SignType.sign`, Prince's negative of an ERC as pointwise
+negation, and the decidability instances for free. `SignType`'s order `L ≤ e ≤ W` is the order of
+Prince's W-extension and L-retraction: raising coordinates weakens an ERC
+(`ERC.SatisfiedBy.mono`), and when the entailing ERC has a `W` and the entailed one an `L`,
+entailment is exactly the coordinatewise order (`ERC.linearExtensions_singleton_subset_iff`).
+Without those two conditions it is not: an ERC with an `L` and no `W` holds under no ranking and
+entails everything, and one with no `L` holds under every ranking and is entailed by everything.
 
 A ranking satisfies an ERC iff its sign vector, read in the ranking's priority order,
 is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
@@ -25,8 +30,11 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
 * `ERCVal`, `ERC ι` — the sign alphabet and sign vectors `ι → ERCVal` over the constraints `ι`.
 * `ERC.SatisfiedBy` — satisfaction of one ERC by a ranking `Ranking ι n`;
   `ERC.linearExtensions` the permutations of `Fin n` satisfying a `Finset` of them.
-  Consistency and entailment of ERC sets are `Nonempty` and `⊆` of linear-extension sets — no
-  separate algebra.
+  Consistency and entailment of ERC sets are `Nonempty` and `⊆` of linear-extension sets;
+  Prince's characterizations of both by fusion are not yet stated (see TODO).
+* `ERC.SatisfiedBy.mono`, `ERC.linearExtensions_singleton_subset_iff` — Prince's Proposition 1.1:
+  entailment between single ERCs is the coordinatewise order, given a `W` in the entailing ERC
+  and an `L` in the entailed one.
 * `ERC.satisfiedBy_iff_exists_isMinOn`, `ERC.card_filter_satisfiedBy_mul_card` — a ranking
   satisfies an ERC iff its earliest non-neutral constraint is winner-preferring, so the rankings
   satisfying it are the fraction `|W| / |W ∪ L|` of all rankings; by `ERC.not_satisfiedBy_neg` an
@@ -36,6 +44,16 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
   `Tableau.ofRanking_mem_optimal_iff_satisfiedBy` identifies optimality with ERC satisfaction.
 * `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`
   ([merchant-riggle-2016]).
+
+## TODO
+
+Prince's fusion calculus ([prince-2002] §2). The fusion of two ERCs is computed coordinatewise,
+with `L` absorbing, `e` the identity, and each value idempotent ((12)–(13), pp. 8–9). Its main
+results, in terms of `ERC.linearExtensions`:
+* a set of ERCs entails its fusion (Proposition 2.1, p. 10);
+* a set is inconsistent iff some subset fuses to an ERC with an `L` and no `W`
+  (Proposition 2.4, p. 11);
+* a set entails an ERC iff the fusion of some subset entails it (Proposition 2.5, p. 14).
 -/
 
 @[expose] public section
@@ -72,7 +90,9 @@ namespace ERC
 
 variable (α : ERC ι)
 
-/-- An ERC is *trivial* if it has no `L`-constraint, so every ranking satisfies it. -/
+/-- An ERC is *trivial* here if it has no `L`-constraint, so every ranking satisfies it: Prince's
+class `W*` ([prince-2002] §0). Prince's own *trivial* is wider, covering every ERC that lacks a `W`
+or an `L`. -/
 def IsTrivial : Prop := ∀ k, α k ≠ .L
 
 instance [Fintype ι] : Decidable α.IsTrivial := Fintype.decidableForallFintype
@@ -96,6 +116,12 @@ end ERC
 @[simp] private theorem ERCVal.zero_lt_iff (x : ERCVal) : 0 < x ↔ x = .W := by
   revert x; decide
 
+private theorem ERCVal.eq_L_of_le {x : ERCVal} (h : x ≤ .L) : x = .L := by
+  revert x; decide
+
+private theorem ERCVal.eq_W_of_le {x : ERCVal} (h : .W ≤ x) : x = .W := by
+  revert x; decide
+
 namespace ERC
 
 variable (r : Ranking ι n) (α : ERC ι)
@@ -104,7 +130,7 @@ variable (r : Ranking ι n) (α : ERC ι)
 order, is lexicographically nonnegative. -/
 def SatisfiedBy : Prop := toLex 0 ≤ toLex (α ∘ r)
 
-/-- **Prince's leading-entry characterization** ([prince-2002] §0): a ranking
+/-- **The leading-entry characterization** ([prince-2002] §4, p. 22): a ranking
 satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, is
 winner-preferring. -/
 theorem satisfiedBy_iff_lead :
@@ -135,6 +161,15 @@ theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking ι
     α.SatisfiedBy r :=
   (satisfiedBy_iff_dominance r α).mpr fun l hl => absurd hl (htriv l)
 
+/-- **W-extension and L-retraction** ([prince-2002] Proposition 1.1(a)): raising coordinates in
+the order `L ≤ e ≤ W` weakens an ERC, so a ranking satisfying `α` satisfies every `β ≥ α`. -/
+theorem SatisfiedBy.mono {α β : ERC ι} {r : Ranking ι n} (h : α.SatisfiedBy r) (hαβ : α ≤ β) :
+    β.SatisfiedBy r := by
+  rw [satisfiedBy_iff_dominance] at h ⊢
+  intro c hc
+  obtain ⟨w, hw, hd⟩ := h c (ERCVal.eq_L_of_le ((hαβ c).trans_eq hc))
+  exact ⟨w, ERCVal.eq_W_of_le (hw.symm.trans_le (hαβ w)), hd⟩
+
 /-! ### The earliest non-neutral constraint
 
 A ranking satisfies an ERC with a non-neutral constraint exactly when the earliest of its
@@ -164,7 +199,7 @@ theorem satisfiedBy_iff_exists_isMinOn (hα : ∃ k, α k ≠ .e) :
     obtain rfl := r.symm.injective h
     simp [hc] at hx
 
-/-- An ERC with a non-neutral constraint and its antithesis ([prince-2002] §2) hold under no
+/-- An ERC with a non-neutral constraint and its negative ([prince-2002] §2, (20)) hold under no
 common ranking: they share their earliest non-neutral constraint, which prefers the winner of only
 one of them. -/
 theorem not_satisfiedBy_neg (hα : ∃ k, α k ≠ .e) (h : α.SatisfiedBy r) : ¬ (-α).SatisfiedBy r := by
@@ -222,6 +257,71 @@ def linearExtensions (E : Finset (ERC (Fin n))) : Finset (Ranking (Fin n) n) :=
 @[simp] theorem linearExtensions_empty :
     linearExtensions (∅ : Finset (ERC (Fin n))) = Finset.univ := by
   ext r; simp
+
+/-- Some ranking puts `p` first and `q` second. -/
+private theorem exists_ranking_first_second (p q : Fin n) :
+    ∃ r : Ranking (Fin n) n, (∀ c, c ≠ p → r.Dominates p c) ∧
+      ∀ c, c ≠ p → c ≠ q → r.Dominates q c := by
+  let k : Fin n → ℕ := fun c ↦ if c = p then 0 else if c = q then 1 else 2
+  obtain ⟨r, hr⟩ := Ranking.exists_dominates_iff (n := n) (fun c ↦ toLex (k c, c))
+    fun c d h ↦ (Prod.ext_iff.mp (toLex.injective h)).2
+  refine ⟨r, fun c hc ↦ (hr p c).2 (Prod.Lex.toLex_lt_toLex.2 (.inl ?_)),
+    fun c hcp hcq ↦ (hr q c).2 (Prod.Lex.toLex_lt_toLex.2 (.inl ?_))⟩
+  all_goals (simp only [k]; split_ifs <;> simp_all)
+
+/-- Raising coordinates weakens an ERC: the linear extensions of `α` are among those of every
+`β ≥ α` ([prince-2002] Proposition 1.1(a)). -/
+theorem linearExtensions_singleton_subset_of_le {α β : ERC (Fin n)} (hαβ : α ≤ β) :
+    linearExtensions {α} ⊆ linearExtensions {β} := fun r hr ↦ by
+  simp only [mem_linearExtensions, Finset.mem_singleton, forall_eq] at hr ⊢
+  exact hr.mono hαβ
+
+/-- **Entailment between single ERCs is the coordinatewise order** ([prince-2002] Proposition
+1.1). Prince assumes both ERCs nontrivial, with a `W` and an `L` each; the proof needs only a `W`
+in the entailing ERC and an `L` in the entailed one. Conversely to W-extension and L-retraction, a
+coordinate on which `α` exceeds `β` yields a ranking satisfying `α` alone, which puts that
+coordinate first and a `W` of `α` or an `L` of `β` second. -/
+theorem linearExtensions_singleton_subset_iff {α β : ERC (Fin n)} (hα : ∃ k, α k = .W)
+    (hβ : ∃ k, β k = .L) : linearExtensions {α} ⊆ linearExtensions {β} ↔ α ≤ β := by
+  refine ⟨fun h i ↦ le_of_not_gt fun hlt ↦ ?_, linearExtensions_singleton_subset_of_le⟩
+  have h' (r : Ranking (Fin n) n) (hr : α.SatisfiedBy r) : β.SatisfiedBy r := by
+    have hmem : r ∈ linearExtensions {α} := by simpa using hr
+    simpa using h hmem
+  have first {r : Ranking (Fin n) n} {p : Fin n} (hp : ∀ c, c ≠ p → r.Dominates p c) (x : Fin n) :
+      ¬ r.Dominates x p := fun hx ↦ by
+    by_cases hxp : x = p
+    · subst hxp
+      exact lt_irrefl _ hx
+    · exact lt_asymm (hp x hxp) hx
+  obtain ⟨w, hw⟩ := hα
+  obtain ⟨l, hl⟩ := hβ
+  have hcases : ∀ x y : ERCVal, y < x → (y = .L ∧ x ≠ .L) ∨ (x = .W ∧ y ≠ .W) := by decide
+  rcases hcases _ _ hlt with ⟨hβi, hαi⟩ | ⟨hαi, hβi⟩
+  · -- `i` first: `β` fails at `i`, and `α` holds through `i` or through `w` second
+    obtain ⟨r, h₁, h₂⟩ := exists_ranking_first_second i w
+    have hαr : α.SatisfiedBy r := (satisfiedBy_iff_dominance r α).2 fun c hc ↦ by
+      have hci : c ≠ i := fun e ↦ hαi (e ▸ hc)
+      by_cases hαW : α i = .W
+      · exact ⟨i, hαW, h₁ c hci⟩
+      · exact ⟨w, hw, h₂ c hci fun e ↦ by simp [e, hw] at hc⟩
+    obtain ⟨x, -, hx⟩ := (satisfiedBy_iff_dominance r β).1 (h' r hαr) i hβi
+    exact first h₁ x hx
+  · -- `i` first: `α` holds through `i`, and `β` fails at `i` or at `l` second
+    obtain ⟨r, h₁, h₂⟩ := exists_ranking_first_second i l
+    have hαr : α.SatisfiedBy r := (satisfiedBy_iff_dominance r α).2 fun c hc ↦
+      ⟨i, hαi, h₁ c fun e ↦ by simp [e, hαi] at hc⟩
+    have hβr := (satisfiedBy_iff_dominance r β).1 (h' r hαr)
+    by_cases hβL : β i = .L
+    · obtain ⟨x, -, hx⟩ := hβr i hβL
+      exact first h₁ x hx
+    · obtain ⟨x, hxW, hx⟩ := hβr l hl
+      have hxi : x = i := by
+        by_contra hxi
+        by_cases hxl : x = l
+        · subst hxl
+          exact lt_irrefl _ hx
+        · exact lt_asymm (h₂ x hxi hxl) hx
+      exact hβi (hxi ▸ hxW)
 
 end ERC
 
@@ -305,7 +405,8 @@ theorem ercOfProfiles_eq_e_iff (w l : ι → ℕ) (k : ι) :
     ercOfProfiles w l k = .e ↔ w k = l k := by
   simp only [ercOfProfiles, SignType.zero_eq_zero, sign_eq_zero_iff]; omega
 
-/-- The *antithetical* ERC ([prince-2002] §2): swapping winner and loser negates it. -/
+/-- Prince's *negative* of an ERC ([prince-2002] §2, (20)): swapping winner and loser negates
+it. -/
 theorem ercOfProfiles_swap (w l : ι → ℕ) :
     ercOfProfiles l w = -ercOfProfiles w l := by
   funext k

@@ -12,8 +12,9 @@ public import Linglib.Core.Algebra.Order.BigOperators.Ring.Finset
 
 This file compares the expressive power of Optimality Theory (OT), Harmonic Grammar (HG), and
 maximum-entropy grammar (MaxEnt). With exponentially separated weights the harmony order of HG
-agrees with the lexicographic comparison of OT, so every OT grammar is an HG grammar, and as the
-weights are scaled up MaxEnt concentrates on the OT winner. The containment of OT in HG is
+agrees with the lexicographic comparison of OT on violation profiles bounded by the separation, so
+on a finite set of inputs every OT grammar is an HG grammar, and as the weights are scaled up
+MaxEnt concentrates on the OT winner. The containment of OT in HG is
 strict because of *cumulativity*, in which several low-weight violations together outweigh a
 single high-weight one. The comparison follows Smolensky and Legendre, Pater, and Coetzee and
 Pater, and the cumulativity witness is Coetzee and Pater's version of Itô and Mester's Lyman's

@@ -122,7 +122,9 @@ phonological maps of Chandlee, Eyraud and Heinz. The rule emits as follows.
 Single-direction iterative spreading patterns are OSL but not ISL, after Chandlee, Eyraud and
 Heinz, because the output decision depends on the
 *output* history (how far spread has propagated) rather than the *input*
-history alone (`rightwardATR_osl_not_isLeftInputStrictlyLocal`). -/
+history alone: the residuals factor through no window of the input
+(`rightwardATR_osl_residual_not_factorsThrough_rtake`), so the map fails their tail condition
+for ISL, not only membership in the prefix-preserving class of `Subregular.ISL`. -/
 def rightwardATR_osl : OSLRule 2 Seg Seg where
   windowOutput outputWindow currentInput :=
     match currentInput, outputWindow with
@@ -174,19 +176,24 @@ private theorem rightwardATR_osl_apply_replicate (n : ℕ) :
       rw [List.replicate_succ', List.rtake_concat_succ, List.rtake_zero, List.nil_append]
       rfl
 
-theorem rightwardATR_osl_not_isLeftInputStrictlyLocal (k : ℕ) :
-    ¬ IsLeftInputStrictlyLocal k rightwardATR_osl.apply := fun h ↦ by
+theorem rightwardATR_osl_residual_not_factorsThrough_rtake (k : ℕ) :
+    ¬ rightwardATR_osl.apply.residual.FactorsThrough fun u ↦ u.rtake (k - 1) := fun h ↦ by
+  have hpre := rightwardATR_osl_isLeftOutputStrictlyLocal.isPrefix
   have hw : ∀ s : Seg, (s :: List.replicate (k - 1) .recL).rtake (k - 1) =
       List.replicate (k - 1) .recL := fun s ↦ by
     simpa using List.rtake_append_length (l₁ := [s]) (l₂ := List.replicate (k - 1) Seg.recL)
-  have e := congrFun (h.factorsThrough_residual (a := .dom :: List.replicate (k - 1) .recL)
+  have e := congrFun (h (a := .dom :: List.replicate (k - 1) .recL)
     (b := .recL :: List.replicate (k - 1) .recL) (by simp only [hw])) [.recL]
-  rw [Function.residual_eq_drop (h.isPrefix _), Function.residual_eq_drop (h.isPrefix _)] at e
+  rw [Function.residual_eq_drop (hpre _), Function.residual_eq_drop (hpre _)] at e
   simp only [List.cons_append, ← List.replicate_succ',
     rightwardATR_osl_apply_dom_replicate, ← List.replicate_succ,
     rightwardATR_osl_apply_replicate, List.length_replicate, List.drop_replicate,
     Nat.add_sub_cancel_left] at e
   exact absurd e (by decide)
+
+theorem rightwardATR_osl_not_isLeftInputStrictlyLocal (k : ℕ) :
+    ¬ IsLeftInputStrictlyLocal k rightwardATR_osl.apply := fun h ↦
+  rightwardATR_osl_residual_not_factorsThrough_rtake k h.factorsThrough_residual
 
 theorem rightwardATR_osl_isLeftSubsequential :
     IsLeftSubsequential rightwardATR_osl.apply :=

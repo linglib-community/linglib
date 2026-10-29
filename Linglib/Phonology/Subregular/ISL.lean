@@ -14,12 +14,23 @@ public import Linglib.Core.Computability.Residual
 
 This file defines the input strictly local functions. A function `f : List α → List β` is
 *`k`-input strictly local* (`k`-ISL) when the block it emits for each input symbol depends only
-on that symbol and the `k - 1` input symbols before it. Chandlee introduced the class for the
-local phonological processes that apply simultaneously, such as substitution, epenthesis,
-deletion and metathesis, and Chandlee, Eyraud and Heinz characterize it by tails. We compute ISL
-functions by rules, show that a function is `k`-ISL exactly when its residuals factor through
-the last `k - 1` input symbols, and prove that the classes nest in `k`, begin at `k = 1` with the
-letterwise homomorphisms, and are subsequential over a finite alphabet.
+on that symbol and the `k - 1` input symbols before it. Chandlee introduced ISL functions for the
+local phonological processes that apply simultaneously, and Chandlee, Eyraud and Heinz
+characterize them by tails: `f` is `k`-ISL when its residuals factor through the last `k - 1`
+input symbols. We compute ISL functions by rules, show that a function is computed by a rule
+exactly when it fixes `[]`, preserves prefixes, and meets that tail condition, and prove that the
+classes nest in `k`, begin at `k = 1` with the letterwise homomorphisms, and are subsequential
+over a finite alphabet.
+
+A rule emits one block per input symbol and nothing at the end of the word, so the classes here
+are the sequential functions with `f [] = []` that meet the tail condition. Chandlee, Eyraud and
+Heinz's transducers also write a final output at the end of the word, which settles any output
+still pending there, so their class is strictly larger. A process whose context lies to the right
+of its target can be ISL here only scanning right to left, as final devoicing is right-ISL. A
+process with context on both sides, such as intervocalic voicing, which maps `at` to `at` but
+`ata` to `ada`, preserves prefixes in neither direction, and neither does local metathesis, so
+both lie outside the left and the right class here, although both meet the tail condition with a
+final output.
 
 ## Main definitions
 
@@ -31,7 +42,8 @@ letterwise homomorphisms, and are subsequential over a finite alphabet.
 
 ## Main results
 
-* `isLeftInputStrictlyLocal_iff_factorsThrough_residual`: characterization by residuals
+* `isLeftInputStrictlyLocal_iff_factorsThrough_residual`: the class is the prefix-preserving
+  functions fixing `[]` whose residuals meet the tail condition
 * `IsLeftInputStrictlyLocal.weaken`: `k`-ISL functions are `k'`-ISL for `k ≤ k'`
 * `isLeftInputStrictlyLocal_one_iff`: the `1`-ISL functions are the letterwise homomorphisms
 * `IsLeftInputStrictlyLocal.isLeftSubsequential`: ISL functions are subsequential
@@ -39,9 +51,9 @@ letterwise homomorphisms, and are subsequential over a finite alphabet.
 ## Implementation notes
 
 Rules carry neither the initial nor the final output of Chandlee, Eyraud and Heinz's
-transducers, so the classes are the sequential ones with `f [] = []`; final devoicing, left-ISL
-there through a final output, is right-ISL here. `0`-ISL and `1`-ISL coincide, and `k` indexes
-`apply` alone.
+transducers. A theorem refuting membership in the class here therefore refutes their ISL only
+when it refutes the tail condition itself, as the separations in `Subregular.OSL` do.
+`0`-ISL and `1`-ISL coincide, and `k` indexes `apply` alone.
 
 ## References
 
