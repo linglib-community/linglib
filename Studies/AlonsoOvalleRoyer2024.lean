@@ -463,15 +463,18 @@ def extractedFrom (w : GlossedWord) : Option ArgumentRole :=
 /-- The site of the item's DP: an adjunct when its *wh*-word means 'where'; otherwise an argument
 of the clause's verb, internal as the subject of a passive (`Chuj.passive`), external or internal
 as `extractedFrom` finds the subject or the object of a transitive verb, and as the subject of an
-intransitive verb external unless the verb is unaccusative. The site of a DP whose clause has no
-verb of `Chuj.Verbs.all` is not read off. -/
+intransitive verb internal if the verb is unaccusative and external if it is unergative. The site
+of a DP whose clause has no verb of `Chuj.Verbs.all`, or whose intransitive verb is classified as
+neither, is not read off. -/
 def siteOf (row : Datum) : Option Site :=
   if ((clauseOf row).drop 1).head?.any (·.lexicalGloss? = some "where".toList) then some .adjunct
   else (verbOf row).bind fun (v, w) ↦
     if Bears w (.morpheme .verb Chuj.passive.marker) then some .internal
     else if ArgumentFrame.np ∈ v.valency.frames then
       (extractedFrom w).map fun r ↦ if r = .A then .external else .internal
-    else some (if v.IsUnaccusative then .internal else .external)
+    else if v.IsUnaccusative then some .internal
+    else if v.IsUnergative then some .external
+    else none
 
 /-- The sites a row leaves open: the one read off, or any. -/
 def sitesOf (row : Datum) : List Site := (siteOf row).elim [.external, .internal, .adjunct] ([·])

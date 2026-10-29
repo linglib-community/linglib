@@ -141,7 +141,7 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   -- §45 Change of State
   | .break_ => some causativeResult     -- (B&KG Ch.2,5) √CRACK: externally caused CoS
   | .bend => some causativeResult       -- externally caused shape change
-  | .cooking => some fullSpec           -- (B&KG) cooking manner + caused CoS
+  | .cooking => some causativeResult    -- externally caused CoS; √cook has no manner (B&KG (41))
   | .otherChangeOfState => some causativeResult   -- √MELT/√FREEZE: externally caused CoS
   | .entitySpecificChangeOfState => some pureResult -- √BLOSSOM/√RUST: internally caused
   | .calibratableChangeOfState => some pureResult -- internally driven scalar change
@@ -190,15 +190,15 @@ theorem LevinClass.rootEntailments_wellFormed (c : LevinClass) (s : Root.Kinds)
 
 /-! ### The root hypothesis for the causative alternation -/
 
-/-- The classes whose root entails its causer, so that no inchoative variant exists although
-the root entails a caused change: the destroy and murder verbs of
-[beavers-koontz-garboden-2020]. -/
+/-- The classes whose root entails a caused change without a manner and that still lack an
+inchoative variant, for the two reasons [beavers-koontz-garboden-2020] gives (p. 63): *murder*
+restricts its causer to an agent, and *destroy* lacks one "for purely idiosyncratic reasons". -/
 def LevinClass.causativeExceptions : Finset LevinClass := {.destroy, .murder}
 
 /-- The root hypothesis: a class alternates between causative and inchoative when its root
-entails a caused change and no manner, unless the root entails its causer
-(`causativeExceptions`). A hypothesis to be measured against Part II of [levin-1993], not
-data. -/
+entails a caused change and no manner, outside the classes that lack an inchoative for other
+reasons (`causativeExceptions`). A hypothesis to be measured against Part II of [levin-1993],
+not data. -/
 def LevinClass.RootPredictsCausative (c : LevinClass) : Prop :=
   (∃ s ∈ c.rootEntailments, Root.Kind.cause ∈ s ∧ Root.Kind.manner ∉ s) ∧
     c ∉ LevinClass.causativeExceptions

@@ -16,9 +16,11 @@ This file formalizes the root typology of Beavers and Koontz-Garboden's book and
 it refutes. A root carries entailments of four kinds, manner, cause, result and state. The
 Bifurcation Thesis holds that a root carries only a state or a manner, all eventive content
 belonging to the verbal template, and Manner/Result Complementarity holds that no root entails
-both a manner and a result. The root of *blossom* entails a change and so falsifies the first
-(`bifurcation_thesis_false`); the roots of *hand* and *drown* entail both a manner and a result
-and so falsify the second (`manner_result_complementarity_false`).
+both a manner and a result. The book's diagnostics refute both. Result roots allow no truly
+restitutive reading of *again*, so no lexicon that obeys the first fits the judgments
+(`bifurcation_thesis_false`); the causer of *drown* cannot be denied to have acted, so none that
+obeys the second fits them either (`manner_result_complementarity_false`). The book's own root
+classes fit every judgment its diagnostics read (`rows`).
 
 The typology (12) crosses the well-formed signatures with the two positions of a root. The book
 accounts for its empty cells by markedness, an adjoined root describing a manner and a
@@ -45,6 +47,15 @@ Classes and Alternations* (`rootHypothesis_matches_profile`).
   with a manner and a state alone. For the row that adds a change without a cause, the book
   leaves open whether a change and a manner can combine without causation (p. 230).
 * The thesis predicates are the apparatus of this study alone.
+* A diagnostic is a property of a root's state description in an interpretation, and a lexicon,
+  an assignment of signatures to the rows' roots, fits the judgments when each row is acceptable
+  exactly when its root passes the row's diagnostic. The denial of action is modelled as the
+  book applies it to the manner of killing verbs, on a causative, where it denies that the cause
+  of the change is an action of the root's manner; the denial of action with a pure manner verb
+  denies the verb's own event and is not modelled.
+* The result-denial rows test whether a verb entails its result state, which in the ditransitive
+  rows depends on the template as well as the root (§3.3.1), and are not read; the attachment
+  rows of *again* are read by `againAt`.
 
 ## References
 
@@ -254,31 +265,6 @@ theorem hand_drown_differ_in_position :
     hand.closedKinds = drown.closedKinds ∧ (hand, .adjoined) ∈ sample ∧
       (drown, .complement) ∈ sample := by decide
 
-/-! ### Falsifying the Bifurcation Thesis -/
-
-theorem blossom_violatesBifurcation : ViolatesBifurcation blossom.kinds := by decide
-
-theorem crack_violatesBifurcation : ViolatesBifurcation crack.kinds := by decide
-
-theorem hand_violatesBifurcation : ViolatesBifurcation hand.kinds := by decide
-
-theorem flat_jog_le_ontological : flat.kinds ≤ ontological ∧ jog.kinds ≤ ontological := by
-  decide
-
-theorem bifurcation_thesis_false : ¬ ∀ r : Root, r.kinds ≤ ontological :=
-  fun h ↦ blossom_violatesBifurcation (h blossom)
-
-/-! ### Falsifying Manner/Result Complementarity -/
-
-theorem hand_hasMannerAndResult : HasMannerAndResult hand.kinds := by decide
-
-theorem drown_hasMannerAndResult : HasMannerAndResult drown.kinds := by decide
-
-theorem crack_not_hasMannerAndResult : ¬ HasMannerAndResult crack.kinds := by decide
-
-theorem manner_result_complementarity_false : ¬ ∀ r : Root, ¬ HasMannerAndResult r.kinds :=
-  fun h ↦ h hand hand_hasMannerAndResult
-
 /-! ### The entailments of the roots in a model
 
 The kinds of a root are meaning postulates on its state and manner predicates
@@ -330,6 +316,182 @@ theorem crack_respects :
       all_goals exact absurd hp (by decide),
     fun h ↦ let ⟨_, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
 
+/-! ### The diagnostics
+
+Each diagnostic asks whether a sentence can deny something of a root's state description: that a
+change gave rise to the state, that the state held before without a change, under restitutive
+*again*, or that the causer of the change acted. A root passes a diagnostic when some
+interpretation that respects its signature lets the denial go through, and fails it exactly when
+it carries the kinds the diagnostic detects (`passes_iff`). -/
+
+section Diagnostics
+
+open Presupposition
+
+universe u
+
+variable {Entity : Type*} {State Event : Type u}
+  (M : ArgumentStructure.EventStructure.Interpretation Entity State Event)
+
+/-- The stative description `P` holds of `x` in the state `s`, and no change gave rise to `s`. -/
+def DeniesChange (P : Entity → State → Prop) (x : Entity) : State → Prop :=
+  P x ⊓ (◇[M.become] ⊤)ᶜ
+
+theorem entailsChange_iff_forall_not_deniesChange {P : Entity → State → Prop} :
+    M.EntailsChange P ↔ ∀ x s, ¬ DeniesChange M P x s :=
+  forall₂_congr fun _ _ ↦ not_and_not_right.symm
+
+/-- The three diagnostics of a root's entailments. -/
+inductive Diagnostic
+  /-- The stative survives a denial that a change gave rise to its state. -/
+  | changeDenial
+  /-- *Again* at the state presupposes an earlier state, and no earlier change. -/
+  | restitutive
+  /-- The causative survives a denial that its causer acted. -/
+  | actionDenial
+  deriving DecidableEq
+
+/-- The kinds a root carries when it fails the diagnostic: a result for the two diagnostics of
+change, and a manner with a cause for the denial of action. -/
+def Diagnostic.detects : Diagnostic → Root.Kinds
+  | .changeDenial | .restitutive => {.result}
+  | .actionDenial => {.manner, .cause}
+
+/-- The state description `P` of a root with the manner `Q`, applied to `x`, passes the
+diagnostic, with `R` relating a state to the earlier ones. -/
+def Diagnostic.Passes (R : SetRel State State) (P : Entity → State → Prop) (Q : Event → Prop)
+    (x : Entity) : Diagnostic → Prop
+  | .changeDenial => ∃ s, DeniesChange M P x s
+  | .restitutive => ∃ s, againAt M .state R P x x s ≠ 0 ∧ ¬ ◇[R] (◇[M.become] ⊤) s
+  | .actionDenial => ∃ s, P x s ∧ ¬ ◇[M.become] (□[M.cause.inv] Q) s
+
+end Diagnostics
+
+/-- (46a): a knife forged sharp is sharp in its first state `false`, and in its later state
+`true`, which a sharpening gave rise to. -/
+def forged : ArgumentStructure.EventStructure.Interpretation Unit Bool Unit where
+  become := {p | p.1 = true}
+  cause := ⊥
+  effector := ⊥
+
+/-- The knife is sharp in both of its states. -/
+def sharp (_ : Unit) (_ : Bool) : Prop := True
+
+theorem forged_deniesChange : DeniesChange forged sharp () false :=
+  ⟨trivial, fun ⟨_, h, _⟩ ↦ Bool.false_ne_true h⟩
+
+theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
+  fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h () false forged_deniesChange
+
+theorem forged_restitutive :
+    againAt forged .state {p | p.2 < p.1} sharp () () true ≠ 0 ∧
+      ¬ ◇[{p | p.2 < p.1}] (◇[forged.become] ⊤) true :=
+  ⟨Presupposition.again_ne_zero_iff.2 ⟨false, Bool.false_lt_true, trivial⟩,
+    fun ⟨_, hlt, _, h, _⟩ ↦ by cases (h : _ = true); exact lt_irrefl true hlt⟩
+
+/-- A root of signature `ks` passes the diagnostic when its state description passes it in some
+model that respects the signature, with some manner. -/
+def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
+  ∃ (State Event : Type) (M : ArgumentStructure.EventStructure.Interpretation Unit State Event)
+    (P : Unit → State → Prop) (Q : Event → Prop) (R : SetRel State State),
+    M.Respects P Q ks ∧ g.Passes M R P Q ()
+
+private theorem passes_iff_of_ne {ks : Root.Kinds} {g : Diagnostic} (hg : g ≠ .actionDenial) :
+    Passes ks g ↔ Root.Kind.result ∉ close ks := by
+  refine ⟨fun ⟨_, _, M, P, Q, R, hR, hp⟩ hr ↦ ?_, fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥,
+    {p | p.2 < p.1}, fun p hp ↦ ?_, ?_⟩⟩
+  · have hc := hR.entailsChange hr
+    cases g with
+    | changeDenial =>
+      obtain ⟨s, hs⟩ := hp
+      exact (entailsChange_iff_forall_not_deniesChange M).1 hc () s hs
+    | restitutive =>
+      obtain ⟨s, ha, hn⟩ := hp
+      exact hn (diamond_become_of_againAt_state_ne_zero hc ha)
+    | actionDenial => exact hg rfl
+  · have hcause : Root.Kind.cause ∉ ks := fun hk ↦ hr (mem_close.2 ⟨_, hk, .result_cause⟩)
+    cases p with
+    | change => exact absurd (mem_close.2 ⟨_, Finset.singleton_subset_iff.1 hp, le_rfl⟩) hr
+    | cause => exact absurd (Finset.singleton_subset_iff.1 hp) hcause
+    | manner => exact fun _ h ↦ h.elim
+    | mannerOfCause => exact absurd (Finset.insert_subset_iff.1 hp).2 (by simpa using hcause)
+  · cases g with
+    | changeDenial => exact ⟨false, forged_deniesChange⟩
+    | restitutive => exact ⟨true, forged_restitutive⟩
+    | actionDenial => exact absurd rfl hg
+
+private theorem passes_actionDenial_iff {ks : Root.Kinds} :
+    Passes ks .actionDenial ↔ ¬ (Root.Kind.manner ∈ ks ∧ Root.Kind.cause ∈ ks) := by
+  refine ⟨fun ⟨_, _, M, P, Q, R, hR, s, hs, hn⟩ ⟨hm, hc⟩ ↦ hn ?_,
+    fun h ↦ ⟨Unit, Unit, changing, fun _ _ ↦ True, ⊥, ⊥, fun p hp ↦ ?_, (), trivial, ?_⟩⟩
+  · exact hR .mannerOfCause (Finset.insert_subset_iff.2 ⟨hm, Finset.singleton_subset_iff.2 hc⟩)
+      () s hs
+  · cases p with
+    | change => exact fun _ _ _ ↦ ⟨(), trivial, trivial⟩
+    | cause => exact fun _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩
+    | manner => exact fun _ h ↦ h.elim
+    | mannerOfCause =>
+      exact absurd ⟨(Finset.insert_subset_iff.1 hp).1,
+        Finset.singleton_subset_iff.1 (Finset.insert_subset_iff.1 hp).2⟩ h
+  · exact fun ⟨_, _, hbox⟩ ↦ hbox () trivial
+
+/-- A root passes a diagnostic exactly when its collocational closure lacks the kinds the
+diagnostic detects. -/
+theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
+    Passes ks g ↔ ¬ g.detects ⊆ close ks := by
+  cases g with
+  | changeDenial =>
+    simpa only [Diagnostic.detects, Finset.singleton_subset_iff] using
+      passes_iff_of_ne (ks := ks) (g := .changeDenial) (by decide)
+  | restitutive =>
+    simpa only [Diagnostic.detects, Finset.singleton_subset_iff] using
+      passes_iff_of_ne (ks := ks) (g := .restitutive) (by decide)
+  | actionDenial =>
+    simpa only [Diagnostic.detects, Finset.insert_subset_iff, Finset.singleton_subset_iff,
+      mem_close_iff_of_isMax Root.Kind.isMax_manner, mem_close_iff_of_isMax Root.Kind.isMax_cause]
+      using passes_actionDenial_iff (ks := ks)
+
+/-- The signature of a row's root, the least of the class the book assigns it. -/
+def kinds? (d : Datum) : Option Root.Kinds :=
+  d.parse? "root class" [("property concept", propertyConcept), ("result", pureResult)] <|>
+    d.parse? "verb class" [("manner of killing", fullSpec)]
+
+/-- The diagnostic a row tests. -/
+def diagnostic? (d : Datum) : Option Diagnostic :=
+  d.parse? "diagnostic" [("restitutive again", .restitutive), ("action denial", .actionDenial)]
+
+-- (46)–(48), (32)
+theorem rows : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d,
+    (d.judgment = .acceptable ↔ Passes ks g) := by
+  simp only [passes_iff]
+  decide
+
+/-- No lexicon whose roots carry only states and manners fits the judgments: the Bifurcation
+Thesis lets every root pass restitutive *again*, and the result root of *return* in (47a) does
+not. -/
+theorem bifurcation_thesis_false :
+    ¬ ∃ σ : Datum → Root.Kinds, (∀ d, σ d ≤ ontological) ∧
+      ∀ d ∈ Examples.all, ∀ g ∈ diagnostic? d, (d.judgment = .acceptable ↔ Passes (σ d) g) := by
+  rintro ⟨σ, hσ, h⟩
+  have key : ∀ s : Root.Kinds, s ≤ ontological → ¬ Diagnostic.restitutive.detects ⊆ close s := by
+    decide
+  exact absurd ((h Examples.bkg2020_ch2_47a (by simp [Examples.all]) .restitutive (by decide)).2
+    ((passes_iff _).2 (key _ (hσ Examples.bkg2020_ch2_47a)))) (by decide)
+
+/-- No lexicon in which no root carries both a manner and a result fits the judgments: the
+denial of action fails in (32b) only for a root whose manner is that of its cause, which with
+the cause carries a result. -/
+theorem manner_result_complementarity_false :
+    ¬ ∃ σ : Datum → Root.Kinds, (∀ d, ¬ HasMannerAndResult (close (σ d))) ∧
+      ∀ d ∈ Examples.all, ∀ g ∈ diagnostic? d, (d.judgment = .acceptable ↔ Passes (σ d) g) := by
+  rintro ⟨σ, hσ, h⟩
+  have key : ∀ s : Root.Kinds, Diagnostic.actionDenial.detects ⊆ close s →
+      HasMannerAndResult (close s) := by
+    decide
+  refine hσ Examples.bkg2020_ch4_32b (key _ (not_not.1 fun hn ↦ ?_))
+  exact absurd ((h Examples.bkg2020_ch4_32b (by simp [Examples.all]) .actionDenial (by decide)).2
+    ((passes_iff _).2 hn)) (by decide)
+
 /-! ### The root hypothesis against Levin's class profiles -/
 
 open ArgumentStructure
@@ -347,7 +509,7 @@ alternate although the pages star the alternation. The other classes have pages 
 without a manner-free causative root, namely the manner-and-result roots, the internally caused
 result of the grow verbs, and the pure-manner roots of the coil and roll verbs. -/
 def rootHypothesisResidue : Finset LevinClass :=
-  {LevinClass.build, .create, .engender, .amuse, .split, .knead, .cooking, .grow, .coil, .roll}
+  {LevinClass.build, .create, .engender, .amuse, .split, .knead, .grow, .coil, .roll}
 
 theorem rootHypothesis_matches_profile :
     ∀ c : LevinClass, TestedForCausative c → c ∉ rootHypothesisResidue →

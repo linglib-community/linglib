@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Selection
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Basic
 public import Mathlib.Data.Finset.Preimage
 
@@ -12,8 +12,7 @@ instigation, bound to a single participant, and movement as motion, and moves in
 existence to the persistence axis. The four agentivity features thus embed in Dowty's
 entailments, and the agentivity of a profile is its preimage under that embedding.
 The projection is monotone, and Dowty's inclusion of Proto-Agent entailments is exactly Grimm's
-order on agentivity together with independent existence, so Grimm's dominance criterion selects a
-subject wherever it strictly dominates.
+order on agentivity together with independent existence.
 
 ## Main definitions
 
@@ -26,7 +25,6 @@ subject wherever it strictly dominates.
 
 * `EntailmentProfile.protoAgent_subset_iff`: Dowty's inclusion is Grimm's order plus independent
   existence.
-* `outranks_of_lattice_dominance`: strict dominance on the agentivity lattice selects a subject.
 
 ## Implementation notes
 
@@ -89,17 +87,6 @@ theorem protoAgent_subset_iff :
     exacts [@h .volition hf, @h .sentience hf, @h .instigation hf, @h .motion hf, hie hf]
 
 end EntailmentProfile
-
-open EntailmentProfile
-
-/-- Grimm's dominance criterion selects the subject when its agentivity strictly includes the
-object's and independent existence is preserved. -/
-theorem outranks_of_lattice_dominance {subj obj : EntailmentProfile}
-    (hlt : obj.toAgentivity ⊂ subj.toAgentivity)
-    (hie : .independentExistence ∈ obj → .independentExistence ∈ subj) :
-    OutranksForSubject subj obj :=
-  .inl (Finset.ssubset_def.2 ⟨protoAgent_subset_iff.2 ⟨hlt.subset, hie⟩,
-    fun h ↦ hlt.not_subset (protoAgent_subset_iff.1 h).1⟩)
 
 /-- A profile admits a persistence level when the level respects Grimm's two correspondences with
 Dowty's Proto-Patient entailments: an argument entailed to change state is not entailed to persist

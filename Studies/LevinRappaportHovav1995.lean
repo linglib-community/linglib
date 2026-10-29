@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Data.Examples.LevinRappaportHovav1995
 public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Fragments.Romance.Italian.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
@@ -308,6 +309,11 @@ theorem isUnaccusative_agrees :
       ((∀ s ∈ components c, Unaccusative s) → v.IsUnaccusative) ∧
         ((∀ s ∈ components c, ¬ Unaccusative s) → ¬ v.IsUnaccusative) := by
   decide +kernel
+
+-- ch. 1 (13)–(15), §4.1.2 (29)
+theorem italian_directedMotion_isUnaccusative :
+    ∀ v ∈ [Italian.Verbs.venire, Italian.Verbs.arrivare], v.toVerb.IsUnaccusative := by
+  decide
 
 /-- `Verb.IsUnaccusative` counts *buzz*, *flash* and *bleed* unaccusative by their causative pairs
 ((82), (92), (86)), though as emission verbs they are unergative (§3.2.5). -/

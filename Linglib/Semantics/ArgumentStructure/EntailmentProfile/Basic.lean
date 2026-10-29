@@ -22,9 +22,9 @@ each cluster, `protoAgent` and `protoPatient`.
 
 The entailments are not independent: volition presupposes sentience (`WellFormedInternal`).
 Since profiles are sets, `p ⊆ q` is entailment inclusion and `p ∪ q` imposes both profiles'
-entailments, Reinhart and Siloni's role bundling. Argument selection by inclusion is
-`OutranksForSubject`, the traditional labels are `ThetaRole`, the class templates are `RoleList`,
-and the projection to Grimm's agentivity lattice is `EntailmentProfile.toAgentivity`.
+entailments, Reinhart and Siloni's role bundling. Dowty's argument selection principle is in
+`Studies/Dowty1991.lean`, the traditional labels are `ThetaRole`, the class templates are
+`RoleList`, and the projection to Grimm's agentivity lattice is `EntailmentProfile.toAgentivity`.
 
 ## References
 
