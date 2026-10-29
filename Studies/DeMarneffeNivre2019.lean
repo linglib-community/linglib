@@ -158,7 +158,7 @@ def IsFunctionWord : UD.UPOS → Prop
   | .ADP | .AUX | .CCONJ | .DET | .PART | .SCONJ => True
   | _ => False
 
-instance : DecidablePred IsFunctionWord := λ c => by
+instance : DecidablePred IsFunctionWord := fun c ↦ by
   cases c <;> unfold IsFunctionWord <;> infer_instance
 
 /-- §4.5: content words are higher in the tree than function words: a function word heads
@@ -204,11 +204,11 @@ def fig7fi : Tree 4 :=
     1 [(1, 0, .nsubj), (1, 2, .obj), (1, 3, .obl)])
 
 /-- `g₁` is the content-word skeleton of `g₂` along `t`: `t` maps the positions of `g₁` onto
-the content words of `g₂` and preserves every relation among them, the solid arcs of
-Figure 7. -/
+the content words of `g₂`, the words that are not function words, and preserves every relation
+among them, the solid arcs of Figure 7. -/
 def IsContentSkeleton {m n : ℕ} (t : Fin m → Fin n) (g₁ : Graph m) (g₂ : Graph n) : Prop :=
-  (∀ v w, g₂.label (t v) (t w) = g₁.label v w) ∧ (∀ v, (g₂.words (t v)).cat.isOpenClass) ∧
-    ∀ u, (g₂.words u).cat.isOpenClass → ∃ v, t v = u
+  (∀ v w, g₂.label (t v) (t w) = g₁.label v w) ∧ (∀ v, ¬ IsFunctionWord (g₂.words (t v)).cat) ∧
+    ∀ u, ¬ IsFunctionWord (g₂.words u).cat → ∃ v, t v = u
 
 -- Figure 7, §4
 theorem fig7_parallel :
