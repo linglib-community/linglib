@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.AckemaNeeleman2018
 public import Linglib.Fragments.Dutch.Pronouns
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Set.Subsingleton
+public import Studies.Harbour2016
 
 /-!
 # Ackema and Neeleman (2018): Features of Person: From the Inventory of Persons to Their Morphological Realization
@@ -15,12 +16,15 @@ Their input is the person space: three nested sets, with the speaker an obligato
 innermost and an addressee of the next. Third person is `[DIST]`, second `[PROX–DIST]`, first
 `[PROX–PROX]` and the inclusive `[PROX]`.
 
-Number applies to the output of person, and plural requires more than one member. The inclusive
-has two obligatory members and so no singular, which leaves three singular pronouns and four
-plural ones. Only `[DIST]` can deliver the empty set, so expletives are third person singular.
-Spell-out rules mention features with multiplicity, and Maximal Encoding uses the applicable
-rule mentioning the most: Dutch has no rule mentioning two `PROX`, so *wij* realizes both the
-inclusive and the exclusive.
+Number applies to the output of person, and plural requires more than one member. The inclusive has
+two obligatory members and so no singular, which leaves three singular pronouns and four plural
+ones. Only `[DIST]` can deliver the empty set, so expletives are third person singular. Spell-out
+rules mention features with multiplicity, and Maximal Encoding uses the applicable rule mentioning
+the most: Dutch has no rule mentioning two `PROX`, so *wij* realizes both the inclusive and the
+exclusive. No natural class holds the inclusive and the second person without the exclusive, but
+impoverishing `DIST` under `PROX` in the plural [turns a paradigm Harbour's parameters generate into
+Zwicky's tripartition](##impoverishDist_not_mem_image_graph), which they never generate: the
+generalization is statistical here and absolute for Harbour.
 
 ## Implementation notes
 
@@ -464,5 +468,52 @@ theorem clusive_split (a b : E) :
     (clusive a b).realize SpellOut.size ⟨first, true⟩ = some a ∧
       (clusive a b).realize SpellOut.size ⟨inclusive, true⟩ = some b :=
   ⟨rfl, rfl⟩
+
+/-! ### Zwicky's generalization
+
+No natural class holds the inclusive and the second person without the exclusive, so no rule
+marks them alike to the exclusion of the exclusive. Impoverishment can still bring them
+together: deleting `DIST` under `PROX` in the plural gives the second person plural the
+inclusive's structure. In a language that spells out one and two `PROX` apart, the exclusive is
+then marked apart from the inclusive and the second person, which is why the chapter takes
+Zwicky's generalization to be statistical. Harbour's parameters never generate that system. -/
+
+/-- Impoverishment of `DIST` under `PROX` in the plural: the second person plural loses its
+`DIST`. -/
+def impoverishDist : Pronoun → Pronoun
+  | ⟨[.prox, .dist], true⟩ => ⟨[.prox], true⟩
+  | p => p
+
+/-- The system a realization of the plural pronouns induces on participant sets: two are related
+when pronouns with those participants are realized alike. -/
+def pluralGraph [DecidableEq E] (f : Pronoun → Option E) : Finset (Finset Role × Finset Role) :=
+  Finset.univ.filter fun P ↦ ∃ p ∈ inventory, ∃ q ∈ inventory, p.plural ∧ q.plural ∧
+    participants p.person = some P.1 ∧ participants q.person = some P.2 ∧ f p = f q
+
+/-- Plural rules for two `PROX`, one `PROX`, `PROX` with `DIST`, and `DIST`. -/
+def pluralRules : RuleSet (SpellOut (Fin 4)) :=
+  [⟨{.prox, .prox}, true, 0⟩, ⟨{.prox}, true, 1⟩, ⟨{.prox, .dist}, true, 2⟩, ⟨{.dist}, true, 3⟩]
+
+-- without impoverishment the plural paradigm is the quadripartition
+theorem pluralGraph_pluralRules :
+    pluralGraph (pluralRules.realize SpellOut.size) = Harbour2016.graph {.author, .hearer} := by
+  decide
+
+-- with it, Zwicky's tripartition: the inclusive with the second person, the exclusive apart
+theorem pluralGraph_pluralRules_impoverishDist :
+    pluralGraph (pluralRules.realize SpellOut.size ∘ impoverishDist) =
+      Harbour2016.graph {.hearer, .participant} := by
+  decide
+
+/-- Impoverishing `DIST` under `PROX` in the plural turns a plural paradigm that Harbour's
+parameters generate into one they never generate, Zwicky's tripartition. -/
+theorem impoverishDist_not_mem_image_graph :
+    pluralGraph (pluralRules.realize SpellOut.size) ∈
+        Finset.univ.image Harbour2016.Setting.graph ∧
+      pluralGraph (pluralRules.realize SpellOut.size ∘ impoverishDist) ∉
+        Finset.univ.image Harbour2016.Setting.graph := by
+  rw [pluralGraph_pluralRules, pluralGraph_pluralRules_impoverishDist,
+    Harbour2016.graph_mem_image_iff, Harbour2016.graph_mem_image_iff]
+  decide
 
 end AckemaNeeleman2018
