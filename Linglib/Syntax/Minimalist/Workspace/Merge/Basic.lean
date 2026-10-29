@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Data.UnorderedTree.Count
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.Deletion
 public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceCut
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Maps
@@ -19,8 +20,9 @@ where `Δ` is a coproduct extracting accessible terms, `δ_{S,S'}` keeps the ter
 channel is the forest `{S, S'}` (Definition 1.3.1), `B` grafts that forest under a new root
 (Definition 1.3.2), and `⊔` multiplies the two channels back into one workspace. Only `Δ` depends
 on how accessible terms are cut out, so the operator is defined over an arbitrary cut enumeration
-`cuts` (`mergeOpG`), with the pruning instance `mergeOp` and the trace instance `mergeOpC`. The
-unit stage `M_{β,1}` of Internal Merge (Proposition 1.4.2) has no grafting step (`mergeOpUnitG`).
+`cuts` (`mergeOpG`). The book's `Δ` is the deletion coproduct `Δ^d`, and `mergeOp` is Merge at the
+deletion cuts; `mergeOpC` is Merge at the trace cuts. The unit stage `M_{β,1}` of Internal Merge
+(Proposition 1.4.2) has no grafting step (`mergeOpUnitG`).
 
 On a workspace `F`, Merge grafts `{S, S'}` beside the trunk of each forest cut of `F` whose crown
 is `{S, S'}`, summed over all such cuts (`mergeOpG_apply_of'`, the book's (1.3.11)). Each form of
@@ -31,8 +33,8 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 
 ## Main definitions
 
-* `Minimalist.Merge.mergeOpG`, `mergeOp`, `mergeOpC`: Merge over a cut enumeration, at the pruning
-  cuts, and at the trace cuts.
+* `Minimalist.Merge.mergeOpG`, `mergeOp`, `mergeOpC`: Merge over a cut enumeration, at the
+  deletion cuts, and at the trace cuts.
 * `Minimalist.Merge.mergeOpUnitG`, `mergeOpUnit`, `mergeOpUnitC`: the unit stage `M_{β,1}`.
 * `Minimalist.Merge.IsMergeCuts`: cut enumerations whose nonempty crowns have fewer edges than
   their tree.
@@ -42,12 +44,25 @@ External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Inter
 * `Minimalist.Merge.mergeOpG_apply_of'`, `mergeOpG_apply_of'_eq_sum`: Merge on a workspace is a sum
   over its forest cuts, or over a choice of cut for each of its trees.
 * `Minimalist.Merge.mergeOpG_comm`: Merge does not depend on the order of the pair.
+* `Minimalist.Merge.mergeOp_eq_comp_comulAlgHomN`: Merge at `Δ^d` through the pruning coproduct,
+  the book's (1.3.10).
+* `Minimalist.Merge.mergeOp_eq_rename_contractUnary_comp`,
+  `mergeOpUnit_eq_rename_contractUnary_comp`: on objects without unary vertices, Merge at the
+  deletion cuts is Merge at the pruning cuts followed by contracting unary vertices.
 
 ## Implementation notes
 
-Definition 1.3.4 uses the deletion coproduct `Δ^d`, which contracts the unary vertex a cut leaves.
-`mergeOp` uses the pruning coproduct `Δ^ρ`, which keeps it. The two extract the same accessible
-terms and differ only in the remainder, so the forest `B` grafts is the same.
+Definition 1.3.4 fixes the deletion coproduct `Δ^d`, which contracts the unary vertex a cut leaves,
+and `mergeOp` is Merge at the deletion cuts. The pruning coproduct `Δ^ρ` keeps that vertex. The two
+extract the same accessible terms, but `⊔` multiplies the remainder into the result, so Merge at
+the pruning cuts (`mergeOpG cutSummandsN`) is not the book's operator: its Internal Merge leaves a
+unary vertex, which no syntactic object has. The book writes (1.3.7) through `Δ^ρ` only with the
+right channel contracted after the matching (`mergeOp_eq_comp_comulAlgHomN`).
+
+The deletion cuts do not admit Merge in the sense of `IsMergeCuts`: on a tree with a unary vertex
+the trunk of the empty cut is the contracted tree, not the tree. The book's objects are binary
+trees, which have none, and on them `mergeOp` is Merge at the pruning cuts followed by the
+contraction (`mergeOp_eq_rename_contractUnary_comp`).
 
 ## References
 
@@ -360,15 +375,16 @@ noncomputable def mergeOpUnitG (cuts : UnorderedTree α → Multiset (Forest
   mergePostUnit (R := R) (α := α) β ∘ₗ (comulAlgHomNG cuts).toLinearMap
 
 /-- The Merge operator `M_{S,S'}` of [marcolli-chomsky-berwick-2025] Definition 1.3.4, Merge at
-    the pruning cuts `cutSummandsN`, with root label `lbl`. -/
+    the deletion cuts `cutSummandsDN`, whose coproduct is `Δ^d`, with root label `lbl`. -/
 noncomputable def mergeOp (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  mergeOpG (R := R) cutSummandsN lbl S S'
+  mergeOpG (R := R) cutSummandsDN lbl S S'
 
-/-- The unit stage `M_{β,1}` at the pruning cuts. -/
+/-- The unit stage `M_{β,1}` at the deletion cuts, the operator of Definition 1.3.4 that
+    Proposition 1.4.2 composes with External Merge. -/
 noncomputable def mergeOpUnit (β : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  mergeOpUnitG (R := R) cutSummandsN β
+  mergeOpUnitG (R := R) cutSummandsDN β
 
 /-- Merge on a workspace `F` grafts `{S, S'}` beside the trunk of each forest cut of `F` with crown
     `{S, S'}` ([marcolli-chomsky-berwick-2025] (1.3.11)). -/
@@ -424,6 +440,95 @@ theorem mergeOpUnitG_one (cuts : UnorderedTree α → Multiset (Forest
   rw [mergeOpUnitG, LinearMap.comp_apply, AlgHom.toLinearMap_apply, map_one,
     Algebra.TensorProduct.one_def, ← of'_zero, mergePostUnit_basis_tensor,
     ite_eq_right (Multiset.singleton_ne_zero β).symm]
+
+/-! ### Deletion and pruning
+
+Merge at the deletion cuts reaches the pruning coproduct through the contraction `Π_{d,ρ}` of the
+right channel, `rename UnorderedTree.contractUnary`, which commutes with the matching since the two
+act on different channels. -/
+
+section Contraction
+
+omit [DecidableEq (UnorderedTree α)] in
+private theorem comulAlgHomNG_cutSummandsDN_apply (x : ConnesKreimer R (UnorderedTree α)) :
+    comulAlgHomNG cutSummandsDN x = TensorProduct.map LinearMap.id
+      (rename (R := R) UnorderedTree.contractUnary).toLinearMap (comulAlgHomN x) := by
+  rw [comulAlgHomNG_cutSummandsDN, comulDAlgHomN, AlgHom.comp_apply,
+    Algebra.TensorProduct.map, Algebra.TensorProduct.algHomOfLinearMapTensorProduct_apply]
+  rfl
+
+/-- Merge at `Δ^d` is `⊔ ∘ (B ⊗ id) ∘ (id ⊗ Π_{d,ρ}) ∘ δ_{S,S'} ∘ Δ^ρ`, the matching taken through
+    the pruning coproduct and the remainder contracted after it
+    ([marcolli-chomsky-berwick-2025] (1.3.10)). -/
+theorem mergeOp_eq_comp_comulAlgHomN (lbl : α) (S S' : UnorderedTree α) :
+    mergeOp (R := R) lbl S S' = LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ
+      TensorProduct.map (graftBinaryAt lbl S S') LinearMap.id ∘ₗ
+      TensorProduct.map LinearMap.id (rename (R := R) UnorderedTree.contractUnary).toLinearMap ∘ₗ
+      deltaMatch S S' ∘ₗ (comulAlgHomN (R := R) (α := α)).toLinearMap := by
+  refine LinearMap.ext fun x ↦ ?_
+  simp only [mergeOp, mergeOpG, mergePost, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
+    comulAlgHomNG_cutSummandsDN_apply]
+  generalize comulAlgHomN (R := R) (α := α) x = y
+  induction y using TensorProduct.inductionOn with
+  | tmul a b => simp [deltaMatch]
+  | add y z hy hz => simp only [map_add, hy, hz]
+
+/-- Grafting a pair without unary vertices gives a tree the contraction fixes. -/
+private theorem rename_contractUnary_graftBinaryAt (lbl : α) {S S' : UnorderedTree α}
+    (hS : S.numUnary = 0) (hS' : S'.numUnary = 0) (a : ConnesKreimer R (UnorderedTree α)) :
+    rename UnorderedTree.contractUnary (graftBinaryAt lbl S S' a) = graftBinaryAt lbl S S' a := by
+  induction a using ConnesKreimer.induction_linear with
+  | zero => simp only [map_zero]
+  | add f g hf hg => simp only [map_add, hf, hg]
+  | single F r =>
+    rw [← smul_of', map_smul, map_smul, graftBinaryAt_apply_singleton]
+    split_ifs
+    · rw [rename_of', Multiset.map_singleton, UnorderedTree.contractUnary_node_pair,
+        UnorderedTree.contractUnary_eq_self_iff.mpr hS,
+        UnorderedTree.contractUnary_eq_self_iff.mpr hS']
+    · rw [map_zero]
+
+/-- On objects without unary vertices, Merge at the deletion cuts is Merge at the pruning cuts
+    followed by contracting the unary vertices of the workspace. -/
+theorem mergeOp_eq_rename_contractUnary_comp (lbl : α) {S S' : UnorderedTree α}
+    (hS : S.numUnary = 0) (hS' : S'.numUnary = 0) :
+    mergeOp (R := R) lbl S S' = (rename (R := R) UnorderedTree.contractUnary).toLinearMap ∘ₗ
+      mergeOpG (R := R) cutSummandsN lbl S S' := by
+  refine LinearMap.ext fun x ↦ ?_
+  simp only [mergeOp_eq_comp_comulAlgHomN, mergeOpG, mergePost, LinearMap.comp_apply,
+    AlgHom.toLinearMap_apply, comulAlgHomN]
+  generalize deltaMatch S S' (comulAlgHomNG (R := R) cutSummandsN x) = y
+  induction y using TensorProduct.inductionOn with
+  | tmul a b => simp [rename_contractUnary_graftBinaryAt lbl hS hS']
+  | add y z hy hz => simp only [map_add, hy, hz]
+
+/-- A singleton matching of a tree without unary vertices is fixed by the contraction. -/
+private theorem rename_contractUnary_gammaMatchSingle {β : UnorderedTree α} (hβ : β.numUnary = 0)
+    (a : ConnesKreimer R (UnorderedTree α)) :
+    rename UnorderedTree.contractUnary (gammaMatchSingle β a) = gammaMatchSingle β a := by
+  induction a using ConnesKreimer.induction_linear with
+  | zero => simp only [map_zero]
+  | add f g hf hg => simp only [map_add, hf, hg]
+  | single F r =>
+    rw [← smul_of', map_smul, map_smul, gammaMatchSingle_apply_singleton]
+    split_ifs with h
+    · rw [rename_of', h, Multiset.map_singleton, UnorderedTree.contractUnary_eq_self_iff.mpr hβ]
+    · rw [map_zero]
+
+/-- On a tree without unary vertices, the unit stage at the deletion cuts is the unit stage at the
+    pruning cuts followed by contracting the unary vertices of the workspace. -/
+theorem mergeOpUnit_eq_rename_contractUnary_comp {β : UnorderedTree α} (hβ : β.numUnary = 0) :
+    mergeOpUnit (R := R) β = (rename (R := R) UnorderedTree.contractUnary).toLinearMap ∘ₗ
+      mergeOpUnitG (R := R) cutSummandsN β := by
+  refine LinearMap.ext fun x ↦ ?_
+  simp only [mergeOpUnit, mergeOpUnitG, mergePostUnit, LinearMap.comp_apply,
+    AlgHom.toLinearMap_apply, comulAlgHomNG_cutSummandsDN_apply, comulAlgHomN]
+  generalize comulAlgHomNG (R := R) cutSummandsN x = y
+  induction y using TensorProduct.inductionOn with
+  | tmul a b => simp [deltaMatchSingle, rename_contractUnary_gammaMatchSingle hβ]
+  | add y z hy hz => simp only [map_add, hy, hz]
+
+end Contraction
 
 end DecidableEq
 

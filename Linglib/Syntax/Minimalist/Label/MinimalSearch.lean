@@ -105,8 +105,11 @@ instance (x : SyntacticObject) (a : LexicalItem.Token) : Decidable (t.IsLabeledB
 
 variable {F : Type*} (Agreed : F → LexicalItem.Token → LexicalItem.Token → Prop)
 
+-- UNVERIFIED: that [chomsky-2015] writes the shared-feature label as ⟨F, F⟩.
 /-- `x` is labeled by the feature `f`: minimal search finds several heads, none a daughter of `x`,
-each two of which agree in `f`, [chomsky-2015]'s label ⟨F, F⟩ of two phrases. -/
+each two of which agree in `f`. Two phrases are labeled by a most prominent feature they share,
+such as Q or the φ-features, in [chomsky-2013], and the label is written ⟨F, F⟩ in
+[chomsky-2015]. -/
 def IsLabeledByFeature (x : SyntacticObject) (f : F) : Prop :=
   (t.labels x).Nontrivial ∧ (∀ a ∈ t.labels x, ¬ ImmediatelyContains x ↑a) ∧
     (t.labels x : Set LexicalItem.Token).Pairwise (Agreed f)

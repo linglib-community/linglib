@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.UnorderedTree.Basic
+public import Linglib.Core.Data.UnorderedTree.Licensed
 
 @[expose] public section
 
@@ -30,6 +30,7 @@ number of unary vertices.
 * `RoseTree.contractUnary_eq_self_iff`: the fixed points are exactly the unary-free
   trees; hence `contractUnary_idem`.
 * `RoseTree.numNodes_contractUnary_add_numUnary`: each contraction removes one vertex.
+* `UnorderedTree.IsFullBinary.numUnary_eq_zero`: a full binary tree has no unary vertices.
 
 `[UPSTREAM]` candidate alongside the `RoseTree` carrier.
 
@@ -180,5 +181,36 @@ theorem numNodes_contractUnary_add_numUnary (t : UnorderedTree α) :
 @[simp] theorem contractUnary_idem (t : UnorderedTree α) :
     contractUnary (contractUnary t) = contractUnary t :=
   Quotient.inductionOn t fun p => congrArg mk (RoseTree.contractUnary_idem p)
+
+/-- The fixed points of `contractUnary` are exactly the unary-free trees. -/
+theorem contractUnary_eq_self_iff {t : UnorderedTree α} : contractUnary t = t ↔ t.numUnary = 0 :=
+  ⟨fun h ↦ h ▸ numUnary_contractUnary t, Quotient.inductionOn t fun _ h ↦
+    congrArg mk (RoseTree.contractUnary_eq_self_iff.mpr h)⟩
+
+/-- A binary node contracts to the node of its contracted children. -/
+theorem contractUnary_node_pair (a : α) (s t : UnorderedTree α) :
+    contractUnary (node a {s, t}) = node a {contractUnary s, contractUnary t} :=
+  Quotient.inductionOn₂ s t fun p q ↦ by
+    change contractUnary (node a ↑([p, q].map mk)) =
+      node a ↑([p.contractUnary, q.contractUnary].map mk)
+    rw [node_mk_tree_list, node_mk_tree_list, contractUnary_mk, RoseTree.contractUnary_node_cons₂]
+    rfl
+
+/-- A full binary tree has no unary vertices. -/
+theorem IsFullBinary.numUnary_eq_zero {u : UnorderedTree α} (hu : u.IsFullBinary) :
+    u.numUnary = 0 := by
+  induction u using Quotient.inductionOn with
+  | h t =>
+    induction t with
+    | node a cs ih =>
+      rw [quot_mk_eq_mk, IsFullBinary, licensed_mk] at hu
+      obtain ⟨hr, hcs⟩ := RoseTree.licensed_node_iff.mp hu
+      have hlen : cs.length ≠ 1 := by
+        simp only [Multiset.coe_card, List.length_map] at hr
+        omega
+      rw [quot_mk_eq_mk, numUnary_mk, RoseTree.numUnary_node, ite_eq_right hlen, Nat.zero_add]
+      refine List.sum_eq_zero fun n hn ↦ ?_
+      obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hn
+      exact ih c hc (hcs c hc)
 
 end UnorderedTree

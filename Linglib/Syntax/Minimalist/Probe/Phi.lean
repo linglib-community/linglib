@@ -50,7 +50,8 @@ def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Bundle :=
 
 /-- A goal of a φ-probe records the case a head of its own has valued, if any, and its φ-cell. A
 relativized probe reads the cell for visibility, and Agree reads the case for activity, a goal
-being active iff its case is unvalued, the Active Goal Hypothesis of [chomsky-2000]. -/
+being active iff its case is unvalued, as an unchecked structural case feature renders a goal
+active for [chomsky-2000]. -/
 structure PhiGoal where
   valuedCase : Option Case
   cell : Agreement.Bundle

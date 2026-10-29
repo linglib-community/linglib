@@ -14,7 +14,9 @@ of a workspace. It replaces them by `node lbl {S, S'}` and leaves the rest uncha
 two-object workspace this holds over every cut enumeration admitting Merge (`mergeOpG_pair`), in
 particular at the pruning and trace cuts. With a residual workspace `F̂` it holds when no component
 of `F̂` has `S` or `S'` as a subtree (`mergeOpG_pair_residual`), since such a workspace passes
-through Merge unchanged (`mergeOpG_of'_mul`).
+through Merge unchanged (`mergeOpG_of'_mul`). The book's Merge, at the deletion cuts, reaches
+these through the contraction of unary vertices (`mergeOp_eq_rename_contractUnary_comp`), so its
+forms hold of objects without unary vertices, as syntactic objects are.
 
 The proof of `mergeOpG_pair` expands the coproduct of `{S, S'}` into four cross-terms of the
 primitive terms and the cut sums of `S` and `S'`. Only the primitive term survives: a cut of `S'`
@@ -107,11 +109,16 @@ theorem mergeOpG_pair
   obtain ⟨p', hp', rfl⟩ := Multiset.mem_map.mp hx
   rw [ite_eq_right (hS' p' hp'), zero_add, sum_map_ite_eq_zero fun p hp ↦ hSS' p hp p' hp']
 
-/-- External Merge of a two-object workspace at the pruning cuts. -/
-theorem mergeOp_pair (lbl : α) (S S' : UnorderedTree α) :
+/-- External Merge of a two-object workspace, for objects without unary vertices
+([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
+theorem mergeOp_pair (lbl : α) {S S' : UnorderedTree α} (hS : S.numUnary = 0)
+    (hS' : S'.numUnary = 0) :
     mergeOp (R := R) lbl S S' (of' ({S, S'} : Forest (UnorderedTree α)))
-      = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) :=
-  mergeOpG_pair lbl S S'
+      = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) := by
+  rw [mergeOp_eq_rename_contractUnary_comp lbl hS hS', LinearMap.comp_apply, mergeOpG_pair,
+    AlgHom.toLinearMap_apply, rename_of', Multiset.map_singleton,
+    UnorderedTree.contractUnary_node_pair, UnorderedTree.contractUnary_eq_self_iff.mpr hS,
+    UnorderedTree.contractUnary_eq_self_iff.mpr hS']
 
 /-- Merge commutes with a spectator component having neither `S` nor `S'` as a subtree
 ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
@@ -173,13 +180,15 @@ theorem mergeOpG_of'_mul
         (Multiset.disjoint_left.mp hT (by simp)),
       ih (fun U hU ↦ hF U (Multiset.mem_cons_of_mem hU)), mul_assoc]
 
-/-- Merge at the pruning cuts commutes with a spectator component that has neither `S` nor `S'`
-    as a subtree. -/
-theorem mergeOp_ofTree_mul (lbl : α) {S S' T : UnorderedTree α}
-    (hT_S : S ∉ T.subtrees) (hT_S' : S' ∉ T.subtrees)
-    (w : ConnesKreimer R (UnorderedTree α)) :
-    mergeOp (R := R) lbl S S' (ofTree T * w) = ofTree T * mergeOp (R := R) lbl S S' w :=
-  mergeOpG_ofTree_mul lbl hT_S hT_S' w
+/-- Merge commutes with a spectator component that has neither `S` nor `S'` as a subtree, all
+    three without unary vertices. -/
+theorem mergeOp_ofTree_mul (lbl : α) {S S' T : UnorderedTree α} (hS : S.numUnary = 0)
+    (hS' : S'.numUnary = 0) (hT : T.numUnary = 0) (hT_S : S ∉ T.subtrees)
+    (hT_S' : S' ∉ T.subtrees) (w : ConnesKreimer R (UnorderedTree α)) :
+    mergeOp (R := R) lbl S S' (ofTree T * w) = ofTree T * mergeOp (R := R) lbl S S' w := by
+  simp only [mergeOp_eq_rename_contractUnary_comp lbl hS hS', LinearMap.comp_apply,
+    mergeOpG_ofTree_mul lbl hT_S hT_S', AlgHom.toLinearMap_apply, map_mul, rename_ofTree,
+    UnorderedTree.contractUnary_eq_self_iff.mpr hT]
 
 /-- External Merge of `S` and `S'` beside a workspace `F̂` none of whose components contains them
 leaves `F̂` unchanged ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
@@ -191,13 +200,20 @@ theorem mergeOpG_pair_residual
       = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat) := by
   rw [add_comm, of'_add, mergeOpG_of'_mul lbl hF, mergeOpG_pair, ← of'_add, add_comm]
 
-/-- External Merge at the pruning cuts with a residual workspace. -/
+/-- External Merge with a residual workspace, all of whose objects are without unary vertices. -/
 theorem mergeOp_pair_residual (lbl : α) {S S' : UnorderedTree α}
-    {Fhat : Forest (UnorderedTree α)}
-    (hF : ∀ T ∈ Fhat, Disjoint ({S, S'} : Forest (UnorderedTree α)) T.subtrees) :
+    {Fhat : Forest (UnorderedTree α)} (hS : S.numUnary = 0) (hS' : S'.numUnary = 0)
+    (hF : ∀ T ∈ Fhat, Disjoint ({S, S'} : Forest (UnorderedTree α)) T.subtrees)
+    (hFu : ∀ T ∈ Fhat, T.numUnary = 0) :
     mergeOp (R := R) lbl S S' (of' (({S, S'} : Forest (UnorderedTree α)) + Fhat))
-      = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat) :=
-  mergeOpG_pair_residual lbl hF
+      = of' (({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat) := by
+  have hFhat : Fhat.map UnorderedTree.contractUnary = Fhat.map id :=
+    Multiset.map_congr rfl fun T hT ↦ UnorderedTree.contractUnary_eq_self_iff.mpr (hFu T hT)
+  rw [mergeOp_eq_rename_contractUnary_comp lbl hS hS', LinearMap.comp_apply,
+    mergeOpG_pair_residual lbl hF, AlgHom.toLinearMap_apply, rename_of', Multiset.map_add,
+    Multiset.map_singleton, UnorderedTree.contractUnary_node_pair,
+    UnorderedTree.contractUnary_eq_self_iff.mpr hS, UnorderedTree.contractUnary_eq_self_iff.mpr hS',
+    hFhat, Multiset.map_id]
 
 end DecidableEq
 

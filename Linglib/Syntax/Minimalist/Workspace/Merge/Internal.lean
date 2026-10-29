@@ -9,8 +9,9 @@ Internal Merge (Proposition 1.4.2 of Marcolli, Chomsky and Berwick) is the compo
 `M_{T/β,β} ∘ M_{β,1}`. The unit stage selects a cut of `T` with crown `{β}`, giving the two-object
 workspace `{β, T/β}`, and External Merge then merges `β` with the quotient. When one cut extracts
 `β`, the composition yields `node lbl {T/β, β}` over every cut enumeration admitting Merge
-(`mergeOpG_im_composition`). At the pruning cuts the quotient is the deletion remainder; at the
-trace cuts it keeps a trace in place of `β` (`mergeOpC_im_composition`).
+(`mergeOpG_im_composition`). At the deletion cuts of the book's Merge the quotient is the remainder
+with its unary vertex contracted (`mergeOp_im_composition`); at the pruning cuts that vertex stays,
+and at the trace cuts a trace takes the place of `β` (`mergeOpC_im_composition`).
 
 ## Main results
 
@@ -163,14 +164,20 @@ theorem mergeOpG_im_composition_residual [IsMergeCuts cuts] (lbl : α) (β T Q :
     Multiset.pair_comm]
   exact mergeOpG_pair_residual lbl hF
 
-/-- Internal Merge at the pruning cuts. -/
+/-- Internal Merge at the deletion cuts, for a mover `β` without unary vertices extracted by a
+    single deletion cut with trunk `Q`. -/
 theorem mergeOp_im_composition (lbl : α) (β T Q : UnorderedTree α)
     (p0 : Forest (UnorderedTree α) × UnorderedTree α)
-    (h_filter : (cutSummandsN T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
-    (h_remainder : p0.2 = Q) (hTβ : T ≠ β) :
+    (h_filter : (cutSummandsDN T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
+    (h_remainder : p0.2 = Q) (hTβ : T ≠ β) (hβ : β.numUnary = 0) :
     mergeOp (R := R) lbl Q β (mergeOpUnit (R := R) β (of' ({T} : Forest (UnorderedTree α))))
-      = of' ({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) :=
-  mergeOpG_im_composition lbl β T Q p0 h_filter h_remainder hTβ
+      = of' ({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) := by
+  obtain ⟨q, -, rfl⟩ := Multiset.mem_map.mp
+    (Multiset.mem_of_mem_filter (h_filter.symm ▸ Multiset.mem_singleton_self p0))
+  subst h_remainder
+  rw [mergeOpUnit, mergeOpUnitG_apply_singleton_unique β T _ h_filter hTβ, ← of'_singleton,
+    ← of'_add, add_comm]
+  exact mergeOp_pair lbl (UnorderedTree.numUnary_contractUnary _) hβ
 
 end DecidableEq
 

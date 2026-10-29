@@ -14,11 +14,11 @@ of simultaneous extractions multiply, and Merge pays the weight of the terms it 
 
 The weighted coproduct `comulEps ε` scales a tree by `ε` for each level it is moved down on its
 way to the left channel. At `ε = 1` it is the pruning coproduct, so the weighted Merge
-`mergeOpEps 1` is Merge. At `ε = 0` only whole components reach the left channel and the coproduct
-is primitive, so `mergeOpEps 0` merges two components of the workspace and nothing else. At every
-`ε`, weighted Merge agrees with its value at `ε = 0` up to a multiple of `ε`, and External and
-Internal Merge have weight `1` (Proposition 1.5.1): they cost nothing, every Sideward term costs at
-least one, and in the limit only External and Internal Merge remain.
+`mergeOpEps 1` is Merge at the pruning cuts. At `ε = 0` only whole components reach the left
+channel and the coproduct is primitive, so `mergeOpEps 0` merges two components of the workspace
+and nothing else. At every `ε`, weighted Merge agrees with its value at `ε = 0` up to a multiple
+of `ε`, and External and Internal Merge have weight `1` (Proposition 1.5.1): they cost nothing,
+every Sideward term costs at least one, and in the limit only External and Internal Merge remain.
 
 ## Main definitions
 
@@ -44,7 +44,11 @@ least one, and in the limit only External and Internal Merge remain.
   coefficient of the left channel only. The book uses the right weight only to compute the cost
   `d - d = 0` of Internal Merge, which here is the cost `0` of merging two components.
 * The unit stage `M_{β,1}` grafts nothing and costs nothing (the book's rule 4), so Internal Merge
-  is `mergeOpEps ε lbl Q β ∘ mergeOpUnit β`, as the book writes it in proving Proposition 1.5.1.
+  is `mergeOpEps ε lbl Q β ∘ mergeOpUnitG cutSummandsN β`, as the book writes it in proving
+  Proposition 1.5.1.
+* The weights are put on the pruning coproduct `Δ^ρ`. The book's `Δ` is `Δ^d`, which differs from
+  `Δ^ρ` only by contracting the unary vertices of the right channel
+  (`mergeOp_eq_comp_comulAlgHomN`), the channel the weights do not read.
 * The weights are polynomial in `ε`, and the limit `ε → 0` is evaluation at `ε = 0`, the book's
   `M^ε_{S,S'}|_{ε=0}`.
 
@@ -327,9 +331,9 @@ noncomputable def mergeOpEps (ε : R) (lbl : α) (S S' : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePost lbl S S' ∘ₗ (comulEps ε).toLinearMap
 
-/-- At `ε = 1` weighted Merge is Merge. -/
+/-- At `ε = 1` weighted Merge is Merge at the pruning cuts. -/
 theorem mergeOpEps_one (lbl : α) (S S' : UnorderedTree α) :
-    mergeOpEps (1 : R) lbl S S' = mergeOp lbl S S' := by
+    mergeOpEps (1 : R) lbl S S' = mergeOpG cutSummandsN lbl S S' := by
   rw [mergeOpEps, comulEps_one]; rfl
 
 /-- At `ε = 0` weighted Merge is Merge at the empty-cut enumeration. -/
@@ -453,9 +457,10 @@ theorem mergeOpEps_im_composition (ε : R) (lbl : α) (β T Q : UnorderedTree α
     (p0 : Forest (UnorderedTree α) × UnorderedTree α)
     (h_filter : (cutSummandsN T).filter (fun p => p.1 = ({β} : Forest (UnorderedTree α))) = {p0})
     (h_remainder : p0.2 = Q) (hTβ : T ≠ β) :
-    mergeOpEps ε lbl Q β (mergeOpUnit (R := R) β (of' ({T} : Forest (UnorderedTree α)))) =
+    mergeOpEps ε lbl Q β
+        (mergeOpUnitG (R := R) cutSummandsN β (of' ({T} : Forest (UnorderedTree α)))) =
       of' ({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) := by
-  rw [mergeOpUnit, mergeOpUnitG_apply_singleton_unique β T p0 h_filter hTβ, h_remainder,
+  rw [mergeOpUnitG_apply_singleton_unique β T p0 h_filter hTβ, h_remainder,
     ← of'_singleton, ← of'_add, add_comm]
   exact mergeOpEps_pair ε lbl Q β
 

@@ -54,6 +54,11 @@ outside its interior.
 
 * The terms made inaccessible by the interiors of lower phases, and the stricter variant that
   also freezes their heads.
+* The two statements of [chomsky-2001]'s condition differ on a phase in the edge of the next
+  phase. `Accessible .nextPhase` seals the interior of `H` against a probe outside the complement
+  of any phase head `Z` whose projection contains `H`, the edge of `Z` included, while `Pic2` in
+  `Locality/Transfer.lean` seals it only once a phase head whose complement contains the phase of
+  `H` has merged.
 
 ## References
 
