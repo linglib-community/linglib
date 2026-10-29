@@ -12,9 +12,12 @@ This file formalizes Jäger's result that Boersma's Gradual Learning Algorithm (
 Stochastic Optimality Theory is stochastic gradient ascent on the log-likelihood of a maximum
 entropy model of the kind Goldwater and Johnson propose. The expected GLA adjustment is the
 plasticity times the excess of the expected violations over the observed, which is the gradient
-of the log-likelihood once violations are read as non-positive features. Since that
-log-likelihood is concave, the maximum entropy learner reaches its global maximum, the guarantee
-Stochastic OT lacks. The file also reruns Boersma and Levelt's acquisition simulation over five
+of the log-likelihood once violations are read as non-positive features. That log-likelihood is
+concave (`HarmonicGrammar.concaveOn_logLikelihood`), so its global maxima are exactly the weights
+at which expected and observed violations agree (`HarmonicGrammar.isMaxOn_logLikelihood_iff`),
+where the expected GLA update vanishes (`expected_glaUpdate_eq_self_iff`), the guarantee
+Stochastic OT lacks. Neither the convergence of the learner nor the existence of a maximum is
+proved here. The file also reruns Boersma and Levelt's acquisition simulation over five
 syllable-structure constraints.
 
 ## Implementation notes

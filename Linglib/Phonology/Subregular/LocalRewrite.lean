@@ -22,7 +22,11 @@ Johnson and to Kaplan and Kay, with pedagogical exposition in Hayes.
 In the modern subregular setting these rules are a surface notation for the
 Input Strictly Local (ISL) functions of Chandlee and of Chandlee and Heinz,
 rather than a cognitive theory of phonological grammar (that role is held by
-constraint-based frameworks such as `Phonology/OptimalityTheory/`).
+constraint-based frameworks such as `Phonology/OptimalityTheory/`). Their ISL
+functions are computed by transducers that write a final output at the word
+end. The left-ISL class of `Subregular.ISL` has no final output, so it contains
+the rules with no right reach (`Rule.isLeftInputStrictlyLocal`), while a rule
+with a right context needs the final flush of `Rule.toSubsequentialTransducer`.
 
 ## Main definitions
 
@@ -59,7 +63,8 @@ feature class from the adjacent input segment — Chomsky and Halle's
 alpha-variables, which is `Finset.piecewise` on the class — so insertion,
 metathesis and coalescence are not expressible, and application is neither
 iterative/directional nor cyclic. Iterative spreading lies outside ISL, in the
-Output Strictly Local class (`Subregular.OSLRule.spread_not_isLeftInputStrictlyLocal`).
+Output Strictly Local class: its residuals factor through no input window
+(`Subregular.OSLRule.spread_residual_not_factorsThrough_rtake`).
 
 ## TODO
 

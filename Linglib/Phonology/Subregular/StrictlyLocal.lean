@@ -17,7 +17,12 @@ public import Linglib.Core.Data.List.Factors
 A language `L` is **strictly `k`-local** when membership is determined by the
 length-`k` substrings of the boundary-augmented input: a grammar is a set `G` of
 permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies in
-`G`. The forbidden-factor dual (`G = Fᶜ`) is finite even over an infinite alphabet.
+`G`. The grammar may be any set, finite or not. Over a finite alphabet only the finitely many
+`k`-factors matter, so this agrees with the usual finite grammars; over an infinite alphabet it
+admits languages that no finite set of permitted or forbidden factors defines, such as the
+strictly increasing sequences of natural numbers, strictly `2`-local here. A finite set `F` of
+forbidden factors presents its language as `ofForbidden F`, whose grammar `Fᶜ` is infinite over
+an infinite alphabet.
 
 ## Main definitions
 
