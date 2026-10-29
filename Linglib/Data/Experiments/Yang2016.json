@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "bibkey": "yang-2016",
+    "description": "Yang's counts of the plurals of the German feminine nouns: the feminine nouns of the child-directed corpus of section 4.4 and the feminine plurals of the TIGER newspaper corpus, with the number of them that take the *-(e)n* suffix. Page numbers are those of the 2016 MIT Press edition."
+  },
+  "types": [
+    {
+      "name": "Corpus",
+      "doc": "The two corpora in which Yang counts the feminine plurals.",
+      "levels": [
+        {
+          "name": "childDirected",
+          "label": "child-directed",
+          "doc": "the child-directed German corpus of section 4.4"
+        },
+        {
+          "name": "tiger",
+          "label": "TIGER",
+          "doc": "the TIGER newspaper corpus, which does not mark compounds"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "femininePlural",
+      "structure": "FemininePluralRow",
+      "doc": "The feminine nouns counted in a corpus and the number of them whose plural takes the -(e)n suffix.",
+      "locator": "pp. 127–128",
+      "verified": "page-image",
+      "key": [
+        "corpus"
+      ],
+      "columns": [
+        {
+          "name": "corpus",
+          "type": "Corpus",
+          "doc": "The corpus."
+        },
+        {
+          "name": "nouns",
+          "type": "nat",
+          "doc": "The number of feminine nouns, in TIGER of feminine plurals."
+        },
+        {
+          "name": "enPlurals",
+          "type": "nat",
+          "doc": "The number of them whose plural takes the -(e)n suffix."
+        }
+      ],
+      "rows": [
+        {
+          "corpus": "child-directed",
+          "nouns": 166,
+          "enPlurals": 146,
+          "note": "(31), p. 127: the other 20 take -e (13), -ø (6) and -s (1)"
+        },
+        {
+          "corpus": "TIGER",
+          "nouns": 1549,
+          "enPlurals": 1446,
+          "note": "p. 128"
+        }
+      ]
+    }
+  ]
+}
