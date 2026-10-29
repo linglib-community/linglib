@@ -1,0 +1,141 @@
+[
+ {
+  "id": "spector2013_ex30a",
+  "source": {
+   "bibkey": "spector-2013",
+   "paperLabel": "(30a)"
+  },
+  "language": "stan1293",
+  "primaryText": "In the USA, one must be 18 years old in order to be allowed to vote.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "The age requirement for voting in the USA is that voters be 18 years old or more.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "section",
+    "3"
+   ],
+   [
+    "truthValue",
+    "true"
+   ]
+  ],
+  "comment": "True, which shows the 'at least' reading available: on the 'exact' or 'at most' reading the sentence would be false.",
+  "verified": "page-image"
+ },
+ {
+  "id": "spector2013_ex30b",
+  "source": {
+   "bibkey": "spector-2013",
+   "paperLabel": "(30b)"
+  },
+  "language": "stan1293",
+  "primaryText": "One must be 40 years old in order to be eligible to the Fields medal.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "There is a maximal age but no minimal age for being eligible to the Fields medal.",
+  "judgment": "unacceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "section",
+    "3"
+   ],
+   [
+    "truthValue",
+    "false"
+   ]
+  ],
+  "comment": "Judged necessarily false, although an 'at most' reading of the numeral would make it true; with 'at most' added to the left of '40' the sentence is true.",
+  "verified": "page-image"
+ },
+ {
+  "id": "spector2013_ex36b",
+  "source": {
+   "bibkey": "spector-2013",
+   "paperLabel": "(36b)"
+  },
+  "language": "stan1293",
+  "primaryText": "I have four chairs. In fact, I have five.",
+  "discourseSegments": [
+   "I have four chairs.",
+   "In fact, I have five."
+  ],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "In answer to (36a): We need four chairs. Who could provide us with that?",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "section",
+    "4.2"
+   ]
+  ],
+  "comment": "Consistent only under an 'at least' construal of 'four'; on an 'exactly' meaning the discourse would be contradictory.",
+  "verified": "page-image"
+ },
+ {
+  "id": "spector2013_ex39",
+  "source": {
+   "bibkey": "spector-2013",
+   "paperLabel": "(39)"
+  },
+  "language": "stan1293",
+  "primaryText": "In order to be allowed to vote, one has to be 18 years old.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "The minimal age required for voting is 18.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "section",
+    "4.2"
+   ],
+   [
+    "truthValue",
+    "true"
+   ]
+  ],
+  "comment": "Means that one has to be 18 or more to vote but need not be 19 or more: the minimal required age is 18.",
+  "verified": "page-image"
+ },
+ {
+  "id": "spector2013_ex40",
+  "source": {
+   "bibkey": "spector-2013",
+   "paperLabel": "(40)"
+  },
+  "language": "stan1293",
+  "primaryText": "One must be 6 feet tall in order to be hired in the military.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "The minimal height for being hired in the military is 6 feet.",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "section",
+    "4.2"
+   ],
+   [
+    "truthValue",
+    "true"
+   ]
+  ],
+  "comment": "Understood as giving the minimal height; on an 'exact' reading the military would hire only people exactly 6 feet tall.",
+  "verified": "page-image"
+ }
+]

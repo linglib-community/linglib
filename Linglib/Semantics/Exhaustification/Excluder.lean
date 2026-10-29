@@ -197,6 +197,13 @@ theorem Irredundant.mem_exh_range_iff {f : ι → Set W} (hf : Irredundant f) (i
   refine and_congr_right fun _ ↦ forall_congr' fun j ↦ ⟨fun h hij ↦ h (hf.not_subset hij),
     fun h hn ↦ h fun hij ↦ hn (hij ▸ subset_rfl)⟩
 
+/-- On a strictly decreasing family the prejacent entails just the members at smaller indices, so
+exhaustification denies the members at larger ones. -/
+theorem mem_exh_range_iff_exhAgainst_lt [LinearOrder ι] (hf : StrictAnti f) (i : ι) (w : W) :
+    w ∈ exh (Set.range f) (f i) ↔ exhAgainst (· < ·) (w ∈ f ·) i := by
+  rw [mem_exh_range_iff_exhAgainst]
+  simp only [hf.le_iff_ge, not_le]
+
 end Irredundant
 
 variable [Fintype W] [DecidableEq W]

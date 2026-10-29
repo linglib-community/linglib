@@ -3,7 +3,6 @@ module
 public import Mathlib.Data.Fintype.EquivFin
 public import Studies.BylininaNouwen2018
 public import Studies.Partee1987
-public import Studies.Spector2013
 
 /-!
 # Bylinina and Nouwen (2020): Numeral semantics
@@ -110,16 +109,16 @@ variable {n : ℕ}
 /-- Spector's wide-scope exhaustification over a possibility modal, the reading (36-b), is
 Kennedy's numeral raised over the modal ((46)). -/
 theorem exhAgainst_poss_iff_highScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
-    exhAgainst (· < ·) (fun m ↦ Spector2013.poss (count '' {w | R w})
-      (Comparison.ge.interval m)) n ↔ HighScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
-  simp only [Spector2013.poss, exists_mem_image, Comparison.interval_ge, mem_Ici, mem_ofPred_eq]
+    exhAgainst (· < ·) (fun m ↦ (count '' {w | R w} ∩ Comparison.ge.interval m).Nonempty) n ↔
+      HighScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
+  simp only [inter_nonempty, exists_mem_image, Comparison.interval_ge, mem_Ici, mem_ofPred_eq]
   exact exhAgainst_iff_highScope (Q := GQ.some R) (P := Iic ∘ count)
 
 -- (36-a)
 theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
-    Spector2013.poss (count '' {w | R w}) (Comparison.eq.interval n) ↔
+    (count '' {w | R w} ∩ Comparison.eq.interval n).Nonempty ↔
       LowScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
-  simp only [Spector2013.poss, exists_mem_image, Comparison.interval_eq, lowScope_maxIn]
+  simp only [inter_nonempty, exists_mem_image, Comparison.interval_eq, lowScope_maxIn]
   rfl
 
 /-- Over *some students*, the high reading (39) strictly entails the low one. -/
