@@ -40,7 +40,8 @@ later propositional presentation of the theory.
 * `FCP.neg`, `FCP.cond`: negation as non-subsistence, and the conditional as `¬(φ ∧ ¬ψ)`.
 * `FCP.indef`: the indefinite, guarded by the Novelty Condition.
 * `FCP.def_`: the definite, guarded by the Familiarity Condition and its descriptive content.
-* `FCP.trueIn`: truth of a sentence with respect to a file, as consistency of the updated file.
+* `FCP.trueIn`: consistency of the updated file, the truth clause of Heim's criterion (C) for
+  files without worlds.
 
 ## Main results
 
@@ -231,9 +232,11 @@ theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.familiar (h : φ.IsE
 
 /-! ### Truth -/
 
-/-- The truth criterion (C): `φ` is true with respect to `F` iff `F + φ` is
-defined and consistent. Existential quantification is built into truth, so
-indefinites need no existential closure. -/
+/-- `φ` is true with respect to `F` when `F + φ` is defined and consistent. This is the truth
+clause of the criterion (C) of [heim-1982] (Ch. III §3.2) for files without worlds, where a file
+is true iff its satisfaction set is nonempty. On points that carry worlds consistency is truth at
+some world, not at a given one, and the falsity clause of (C) is not stated. Existential
+quantification is built into it, so indefinites need no existential closure. -/
 def trueIn (F : State W V M) (φ : FCP W V M) : Prop := ∃ F' ∈ φ F, F'.Nonempty
 
 theorem trueIn_admits (h : trueIn F φ) : φ.Admits F :=

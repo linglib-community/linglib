@@ -14,15 +14,15 @@ file, a definite's already present and, if it has descriptive content, entailed 
 Logical forms are interpreted by their file change potentials, the four rules of §4.4: an
 atom filters the file and adds its cards, a cumulative formula updates in sequence, the
 universal quantifier tests the file against its two auxiliary updates, and negation tests it
-against one. The truth of an utterance is the truth of the resulting file, criterion (C) of
-§3.2, so Existential Closure is dispensable. The logical forms `LF` and the rules `LF.fcp`
-are stated over the substrate's file change potentials. Principle (A) holds of every rule at
-once (`fcp_isEliminative`), so an established card persists (`familiar_of_mem`) and a card a
-formula does not introduce stays novel (`novel_of_mem`); the claims the dissertation draws
-are proved on its own texts: felicity conditions project through the elementary steps of
-file change (`admits_pretzel`), a card introduced under `every` or `not` does not outlive
-its sentence (`not_admits_everyDog`), and criterion (C) gives a free indefinite existential
-force (`trueIn_indef`).
+against one. The truth of an utterance is the truth of the resulting file, the truth half of
+criterion (C) of §3.2, so Existential Closure is dispensable. The logical forms `LF` and the
+rules `LF.fcp` are stated over the substrate's file change potentials. Principle (A) holds of
+every rule at once (`fcp_isEliminative`), so an established card persists (`familiar_of_mem`)
+and a card a formula does not introduce stays novel (`novel_of_mem`); the claims the
+dissertation draws are proved on its own texts: felicity conditions project through the
+elementary steps of file change (`admits_pretzel`), a card introduced under `every` or `not`
+does not outlive its sentence (`not_admits_everyDog`), and criterion (C) gives a free indefinite
+existential force (`trueIn_indef`).
 
 ## Implementation notes
 
@@ -33,6 +33,15 @@ informativeness order. Quantifier Indexing and Existential Closure are not repre
 the revised rules make them dispensable. Accommodating a novel definite (§5.2) is modelled
 by placing its indefinite card either inside the auxiliary file of a negation or in the
 initial file. Examples are numbered as in the dissertation, by chapter and section.
+
+A state has no domain apart from its points, so at the empty, false file every card is both
+familiar and novel. Heim's files keep `Dom(F)` apart from `Sat(F)`, and her (16) and (17) are
+infelicitous whether or not they are true; here `not_admits_everyDog` and `not_admits_noDog`
+assume that the universal or negated first sentence is true in `F`, since a false one leaves an
+empty file, at which the pronoun's card is vacuously familiar. Truth with respect to a file
+(`FCP.trueIn`) is the consistency of the updated file. That is the truth clause of (C) for the
+files of Chapter III, which carry no worlds; on points that carry worlds it is truth at some
+world, and the falsity clause is not stated.
 
 ## References
 

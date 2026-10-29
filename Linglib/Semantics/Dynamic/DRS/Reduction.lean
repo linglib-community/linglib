@@ -216,8 +216,11 @@ theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
     (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ VerifiesTotal v' K :=
   DRS.realize_toFormula_of_forall fun c _ w => Condition.realize_toFormula c w
 
-/-- The translation of a proper DRS is realized under any assignment iff some embedding
-verifies the DRS (p. 138, Def. 1.4.5). -/
+/-- The translation of a proper DRS is realized under any assignment iff some total assignment
+verifies the DRS in the total-assignment semantics `VerifiesTotal`. This is Kamp and Reyle's
+truth (Def. 1.4.5, `DRS.IsTrue`) only on a reuse-free DRS
+(`DRS.exists_extends_verifiesTotal_iff_exists_verifies`), since a referent declared twice takes
+a new value here and is inert there. -/
 theorem DRS.realize_toFormula_of_isProper [DecidableEq V] {K : DRS L V} (hK : K.IsProper)
     (v : V → M) : K.toFormula.Realize v ↔ ∃ f : V → M, VerifiesTotal f K := by
   rw [DRS.realize_toFormula, exists_extends_verifiesTotal_iff_of_isProper hK]

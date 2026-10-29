@@ -195,8 +195,9 @@ theorem IsTest.comp (h₁ : IsTest D₁) (h₂ : IsTest D₂) : IsTest (D₁ ○
   rintro ⟨_, _⟩ ⟨_, a, b⟩
   exact (h₁ a).trans (h₂ b)
 
-/-- A test is the test of its own domain ([groenendijk-stokhof-1991]'s Fact 6); the
-transformer-face mirror is `CCP.IsTest.eq_guard`. -/
+/-- A test is the test of its own domain, the remark after [groenendijk-stokhof-1991]'s
+Definition 11 that a test is true at `g` iff it relates `g` to itself; the transformer-face
+mirror is `CCP.IsTest.eq_guard`. -/
 theorem IsTest.eq_test_dom (h : IsTest D) : D = test D.dom := by
   ext ⟨i, j⟩
   constructor

@@ -41,6 +41,16 @@ non-subsistence (`neg_toState`), and (21) is rule (III) of the dissertation
 (`toState_everyClause`). The novelty stipulation (22) is the file's independence of the
 card (`novelIn_iff_determinedBy`).
 
+`TrueWrt` makes the truth definition (13) total. Heim defines the truth of `S` with respect to
+`c` only at a world where `c` is true and only when `c` admits `S`, and leaves it undefined
+elsewhere; `TrueWrt` is false there instead, so its negation is not falsity in Heim's sense, and
+`trueWrt_ofTrivalent` assumes both conditions.
+
+Admittance of a conjunction is compared with the projection rule of Karttunen's 1974 paper, which
+filters a presupposition of the second clause entailed by the context incremented with the first
+(`admits_seq_iff_conj`). Karttunen's rule also keeps a presupposition the context alone entails;
+the filter here drops it, which changes no context's admittance.
+
 ## References
 
 * [heim-1983]
@@ -64,8 +74,8 @@ section Propositional
 
 variable {W : Type*}
 
-/-- `S` is true in `w` with respect to `c` (13) iff `c` admits `S` and the context `c` updated
-    by `S` is true in `w`. -/
+/-- (13), made total: `S` is true in `w` with respect to `c` when `c` admits `S` and the context
+    `c` updated by `S` is true in `w`, and is not true otherwise. -/
 def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.Admits c, w ∈ (φ c).get h
 
 theorem trueWrt_ofTrivalent {p : W → SignType} {c : Set W} {w : W} (hw : w ∈ c)
@@ -491,9 +501,14 @@ theorem fatManBicycleAcc_not_universal :
 
 end Files
 
-/-! ### The conjunction filter of Karttunen (1973) -/
+/-! ### Admittance and Karttunen's context-relative filter
 
--- (8), (14) [karttunen-1973]
+[karttunen-1974-presupposition] shows that a context satisfies the presuppositions of a
+compound sentence iff it entails the presuppositions that a context-relative projection rule
+assigns the sentence. Here the rule is the conjunction filter of `Karttunen1973.conj` with
+entailment from the context incremented with the first conjunct. -/
+
+-- [karttunen-1974-presupposition], (4a), (7) and the proof that (8) iff (9), pp. 183–186
 theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → SignType) :
     (seq (ofTrivalent p) (ofTrivalent q)).Admits c ↔
       ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofTrivalent p)

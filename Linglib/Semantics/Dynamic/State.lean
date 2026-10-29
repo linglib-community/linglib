@@ -33,6 +33,13 @@ since neither kernel is antisymmetric, `State` is a `Preorder` only.
 [kamp-vangenabith-reyle-2011] orient informativeness the other way, with the
 initial state at the bottom, and the content is the same.
 
+## Implementation notes
+
+A state has no domain apart from its points: `State.Familiar` and `State.Novel` quantify over
+the points, so at the absurd state `⊥ = ∅` every referent is both familiar and novel. Heim's
+files keep their domain of cards apart from their satisfaction set, so that a false file still
+has cards; a consumer that needs a familiarity failure at a state must assume it nonempty.
+
 ## References
 
 - [kamp-vangenabith-reyle-2011], Defs. 0.23 (information states),

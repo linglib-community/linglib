@@ -114,7 +114,8 @@ theorem presupVal_ne_zero (a : SignType) : presupVal a ≠ 0 := by cases a <;> d
 
 Strong Kleene is the lattice structure of `SignType`; the middle (Peters) and weak
 (Bochvar-internal) connectives are `SignType.meetMiddle` and `SignType.meetWeak` with
-their joins ([peters-1979]; the name *middle Kleene* is [krahmer-1994]'s). The conditional
+their joins. The paper cites the middle connectives from the 1975 *Texas Linguistic Forum*
+version of [peters-1979], and the name *middle Kleene* is [krahmer-1994]'s. The conditional
 of each logic is the derived form `¬a ∨ b`. -/
 
 inductive Kleene | strong | middle | weak

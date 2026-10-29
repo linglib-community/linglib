@@ -47,10 +47,14 @@ Schlenker's 2008 manuscript, which the published appendix shortens.
 
 ## TODO
 
-* Theorem 2 of C.9 is formalized for a single quantified clause, against the universal
-  presupposition rather than a dynamic semantics for quantifiers, which linglib does not define.
-  The conditions on quantificational clauses and domains in the equivalence with dynamic semantics
-  hold trivially in the propositional fragment and are omitted there.
+* Theorem 2 of C.9 for formulas that embed a quantified clause under the connectives. The
+  dynamic semantics of C.6 defines the update of a lone clause exactly where the universal
+  condition of `transparent_scope_iff_universal` holds, so for a clause whose scope is its only
+  trigger the theorem is that lemma. The general statement needs the update of C.6 as a
+  `CCP.Partial W` on quantified clauses; `Heim1983.every`, a potential on sequence–world pairs for
+  *every* alone, is not it. The conditions on quantificational clauses and domains in the
+  equivalence with dynamic semantics hold trivially in the propositional fragment and are omitted
+  there.
 
 ## References
 
@@ -845,8 +849,9 @@ open Quantifier
 variable {E : Type*} {q : NumberTree} {A : W → E → Prop} {C : Set W} {P : Set (W × E)}
 
 /-- Where `q` is non-constant on the restrictor's size, a nuclear-scope presupposition is
-transparent iff every restrictor individual satisfies it, universal projection (Theorem 2 of C.9).
--/
+transparent iff every restrictor individual satisfies it, universal projection. The right side is
+where the dynamic semantics of C.6 defines the update of the clause, and Non-Triviality with
+Constancy (C.9) implies the hypothesis on rows. -/
 theorem transparent_scope_iff_universal [Finite E]
     (hNT : ∀ w ∈ C, ¬ q.ConstantOnRow {x | A w x}.ncard) :
     Transparent C {scopeTruth q A} P ↔ ∀ w ∈ C, ∀ e, A w e → (w, e) ∈ P := by
