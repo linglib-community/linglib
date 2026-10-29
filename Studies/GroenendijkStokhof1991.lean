@@ -27,10 +27,11 @@ Morgan laws hold outright. An existential binds without limit to its right becau
 is associative (`scope_extension`), and it has universal force in an antecedent because
 implication curries (`donkey_equivalence`). Section 3.5's dynamic entailment (`Entails`)
 satisfies the deduction theorem and reduces s-entailment to entailment from the closed
-premiss, and it is neither reflexive nor transitive, by the paper's own counterexamples. The
-satisfaction set of an existential computed in the proof of Fact 19 is the cylindrification of
-its scope's, in the cylindric set algebra of Henkin, Monk and Tarski; that is the substrate's
-`dom_dexists`. The laws are then read off
+premiss, and it is neither reflexive nor transitive (`not_entails_self`, `not_entails_trans`), by
+the paper's own counterexamples: `¬¬∃x Px` entails `∃x Px`, which entails `Px`, but the first does
+not entail the third. The satisfaction set of an existential computed in the proof of Fact 19
+is the cylindrification of its scope's, in the cylindric set algebra of Henkin, Monk and Tarski;
+that is the substrate's `dom_dexists`. The laws are then read off
 for the formulas of `DPL/Syntax.lean` under their interpretation `DPL.Formula.eval`, and the
 paper's opening contrast is computed: `∃x Px ∧ Qx` binds the last occurrence of `x`, while its
 double negation and its alphabetic variant `∃y Py ∧ Qx` do not. Section 4.1's normal binding form
@@ -68,7 +69,8 @@ test in every structure and has an active quantifier (`isTest_eval_equal_conj_ex
 ## TODO
 
 The remaining laws of section 3.4 with side conditions (the leftward scope extension,
-commutativity and idempotency of conjunction, contraposition, distribution), Facts 26 and 27 on
+commutativity and idempotency of conjunction, contraposition, distribution), the restricted
+reflexivity and transitivity of dynamic entailment (Facts 15 and 16), Facts 26 and 27 on
 the translated conditions, and the translation to quantificational dynamic logic of section 4.3.
 -/
 
@@ -379,7 +381,7 @@ theorem not_sEntails_exists_atom [Nontrivial E] :
   obtain ⟨_, rfl, hb⟩ := h (a := fun _ ↦ b) ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   exact hab (by simpa using hb.symm)
 
--- Fact 15
+-- p. 68, the counterexample to reflexivity before Fact 15
 theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Entails φ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨test {g | g 0 = a} ○ dexists 0 (test Set.univ), fun h ↦ ?_⟩
@@ -389,8 +391,8 @@ theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Ent
   obtain ⟨_, _, ⟨rfl, hb⟩, -⟩ := h ⟨_, hb⟩
   exact hab (by simpa using hb.symm)
 
--- Fact 16
-theorem not_entails_trans [Nontrivial E] :
+-- p. 69
+theorem not_entails_neg_neg_exists_atom [Nontrivial E] :
     ∃ p : E → Prop, ¬ Entails ∼∼(dexists 0 (test {g : Assignment E | p (g 0)}))
       (test {g | p (g 0)}) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
@@ -398,6 +400,14 @@ theorem not_entails_trans [Nontrivial E] :
   rw [← close_eq_neg_neg, ← sEntails_iff_entails_close] at h
   obtain ⟨_, rfl, hb⟩ := h (a := fun _ ↦ b) ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   exact hab (by simpa using hb.symm)
+
+/-- Dynamic entailment is not transitive: `¬¬∃x Px` entails `∃x Px`, which entails `Px`, but
+`¬¬∃x Px` does not entail `Px`, since the double negation closes off the quantifier that binds
+the conclusion's `x` (p. 69). -/
+theorem not_entails_trans [Nontrivial E] :
+    ∃ φ ψ χ : Update (Assignment E), Entails φ ψ ∧ Entails ψ χ ∧ ¬ Entails φ χ :=
+  let ⟨p, h⟩ := not_entails_neg_neg_exists_atom (E := E)
+  ⟨_, _, _, entails_neg_neg_self _, entails_exists_atom 0 p, h⟩
 
 theorem not_entails_comp_exists [Nontrivial E] :
     ∃ p : E → Prop, ¬ Entails (dexists 0 (test {g : Assignment E | p (g 0)}) ○

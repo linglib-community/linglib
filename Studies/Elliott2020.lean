@@ -38,12 +38,14 @@ makes a disjunction look externally static until one disjunct is ruled out.
 * The dynamic Hurford constraint (70) is read as validity, over every model and input. Read
   pointwise, it would mark every disjunction with a bivalent first disjunct odd.
 
-## TODO
+## Errata
 
 The paper says (70) rules out (65) and rules in bathroom sentences. Neither existential does
 both. With the guarded one, (65) and the bathroom sentence are both odd
 (`hurfordOdd_someone_or_they`, `hurfordOdd_bathroom`); with the destructive one, neither is
 (`not_hurfordOdd_someone_or_they_destructive`, `not_hurfordOdd_bathroom_destructive`).
+
+## TODO
 
 The universal readings of App. B, by innocent inclusion over subdomain alternatives, are not
 formalized.

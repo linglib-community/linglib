@@ -33,9 +33,10 @@ assignment (43) are `State.lean`'s.
 - `neg_neg`: DNE is definitional.
 - `partition`, `partition_assertable`: every possibility subsists
   positively, subsists negatively, or is unknown.
-- `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws, unlike in
-  standard dynamic semantics.
-- `egli`: Egli's theorem for the positive dimension, definitionally.
+- `de_morgan_disj`, `de_morgan_conj`: de Morgan's laws in both dimensions,
+  unlike in standard dynamic semantics.
+- `egli`: Egli's positive equivalence, the positive half of Egli's theorem,
+  definitionally.
 
 ## Implementation notes
 
@@ -197,22 +198,28 @@ def disj (φ ψ : BilateralDen W V E) : BilateralDen W V E where
 theorem conj_assoc_positive (φ ψ χ : BilateralDen W V E) (s) :
     ((φ ⊙ ψ) ⊙ χ).positive s = (φ ⊙ (ψ ⊙ χ)).positive s := rfl
 
-/-- De Morgan: `¬(φ ∨ ψ)` and `¬φ ∧ ¬ψ` agree positively, definitionally. -/
-theorem de_morgan_disj (φ ψ : BilateralDen W V E) (s) :
-    (~(φ ⊕ ψ)).positive s = ((~φ) ⊙ (~ψ)).positive s := rfl
+/-- De Morgan: `¬(φ ∨ ψ)` is `¬φ ∧ ¬ψ`, in both dimensions. -/
+theorem de_morgan_disj (φ ψ : BilateralDen W V E) : ~(φ ⊕ ψ) = (~φ) ⊙ (~ψ) := by
+  refine BilateralDen.ext rfl (funext fun s ↦ ?_)
+  show ψ.positive (φ.positive s) ∪ ψ.negative (φ.positive s)
+      ∪ ψ.unknownUpdate (φ.positive s) ∪ ψ.positive (φ.negative s)
+      ∪ ψ.positive (φ.unknownUpdate s)
+    = ψ.negative (φ.positive s) ∪ ψ.positive (φ.positive s)
+      ∪ (~ψ).unknownUpdate (φ.positive s) ∪ ψ.positive (φ.negative s)
+      ∪ ψ.positive ((~φ).unknownUpdate s)
+  rw [unknownUpdate_neg φ s, unknownUpdate_neg ψ (φ.positive s),
+    Set.union_comm (ψ.negative (φ.positive s)) (ψ.positive (φ.positive s))]
 
-/-- De Morgan: `¬(φ ∧ ψ)` and `¬φ ∨ ¬ψ` agree positively. -/
-theorem de_morgan_conj (φ ψ : BilateralDen W V E) (s) :
-    (~(φ ⊙ ψ)).positive s = ((~φ) ⊕ (~ψ)).positive s := by
-  have h := unknownUpdate_neg φ s
-  have h' := unknownUpdate_neg ψ (φ.negative s)
+/-- De Morgan: `¬(φ ∧ ψ)` is `¬φ ∨ ¬ψ`, in both dimensions. -/
+theorem de_morgan_conj (φ ψ : BilateralDen W V E) : ~(φ ⊙ ψ) = (~φ) ⊕ (~ψ) := by
+  refine BilateralDen.ext (funext fun s ↦ ?_) rfl
   show ψ.positive (φ.negative s) ∪ ψ.negative (φ.negative s)
       ∪ ψ.unknownUpdate (φ.negative s) ∪ ψ.negative (φ.positive s)
       ∪ ψ.negative (φ.unknownUpdate s)
     = ψ.negative (φ.negative s) ∪ ψ.positive (φ.negative s)
       ∪ (~ψ).unknownUpdate (φ.negative s) ∪ ψ.negative (φ.positive s)
       ∪ ψ.negative ((~φ).unknownUpdate s)
-  rw [h, h',
+  rw [unknownUpdate_neg φ s, unknownUpdate_neg ψ (φ.negative s),
     Set.union_comm (ψ.negative (φ.negative s)) (ψ.positive (φ.negative s))]
 
 /-! ### Quantifiers -/
@@ -235,9 +242,12 @@ def exists_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E where
 def forall_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E :=
   ~(exists_ x (~φ))
 
-/-- Egli's theorem, definitionally: an existential scoping over a
-conjunction binds into the second conjunct, `(∃x φ) ∧ ψ = ∃x (φ ∧ ψ)` in
-the positive dimension — the key property for cross-sentential anaphora. -/
+/-- Egli's positive equivalence ([elliott-sudo-2025], (59)), definitionally:
+an existential scoping over a conjunction binds into the second conjunct,
+`(∃x φ) ∧ ψ` and `∃x (φ ∧ ψ)` having the same positive update. This is only
+the positive half of Egli's theorem: the negative updates differ in general
+((62)), since a denied existential introduces no referent and a denied
+conjunction can. -/
 theorem egli (x : V) (φ ψ : BilateralDen W V E) (s) :
     ((exists_ x φ) ⊙ ψ).positive s = (exists_ x (φ ⊙ ψ)).positive s := rfl
 
