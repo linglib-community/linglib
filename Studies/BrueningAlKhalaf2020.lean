@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.WordOrder
+public import Linglib.Syntax.Agreement.ConjunctAgreement
 public import Linglib.Syntax.Cat
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Mathlib.Data.Finset.Insert
@@ -19,13 +19,14 @@ beside an adjective before a noun. A clause can be a noun phrase under a null N,
 of the semantic selectional features (S-features) a selector checks. C-selection persists and is
 checked against every conjunct; S-features are checked once, at the first stage of a left-to-right
 derivation at which the selector meets part of the coordination, against the conjunct on top of the
-coordination's stack of features. So [a selector checks the conjunct next to
-it](##checkedOnce_eq_toList_nearest), [which it selects in its own
-category](##mem_cats_of_mem_nearest), and [the mismatches coordination permits are those of
-ellipsis and leftward displacement](##admits_tfae). A non-*ly* adverb has a
-silent Adv head, which ellipsis can take with the noun of the first of two coordinated N′s, so
-that [it can be coordinated with an adjective that follows it](##nominalCoordination_iff). The
-paper's examples are the rows of `Data/Examples/BrueningAlKhalaf2020`.
+coordination's stack of features. So [a selector checks its S-features against the nearest
+conjunct](##checkedOnce_eq_conjuncts_nearest), as a target does in agreement with the nearest
+conjunct, [which it selects in its own category](##mem_cats_of_mem_nearest), and [the mismatches
+coordination permits are those of ellipsis and leftward displacement](##admits_tfae). A non-*ly*
+adverb has a silent Adv head, which ellipsis can take with the noun of the first of two
+coordinated N′s, so that [it can be coordinated with an adjective that follows
+it](##nominalCoordination_iff). The paper's examples are the rows of
+`Data/Examples/BrueningAlKhalaf2020`.
 
 ## Implementation notes
 
@@ -49,6 +50,7 @@ paper's examples are the rows of `Data/Examples/BrueningAlKhalaf2020`.
 
 namespace BrueningAlKhalaf2020
 
+open Agreement (ConjunctAgreement)
 open PhraseStructure (Cat)
 open PhraseStructure.Cat (N V Adj Adv P)
 
@@ -108,10 +110,11 @@ def checkedOnce (d : HeadDirection) (cs : List α) : List α :=
   ((derivationOrder d cs).inits.findSome? fun s ↦
     if none ∈ s then s.reduceOption.getLast? else none).toList
 
-/-- The directionality effect falls out of the derivation: a selector that precedes a coordination
-checks its first conjunct, one that follows it the last (§4.3). -/
-theorem checkedOnce_eq_toList_nearest (d : HeadDirection) (cs : List α) :
-    checkedOnce d cs = (d.nearest cs).toList := by
+/-- The directionality effect falls out of the derivation: a selector checks its S-features against
+the nearest conjunct, the first if it precedes the coordination and the last if it follows it
+(§4.3). -/
+theorem checkedOnce_eq_conjuncts_nearest (d : HeadDirection) (cs : List α) :
+    checkedOnce d cs = ConjunctAgreement.nearest.conjuncts d cs := by
   cases d
   · rcases cs with _ | ⟨c, _ | _⟩ <;> simp [checkedOnce, derivationOrder, List.reduceOption]
   · have : (cs.map some).reduceOption = cs := by simp [List.reduceOption, List.filterMap_map]
@@ -122,7 +125,8 @@ theorem checkedOnce_eq_toList_nearest (d : HeadDirection) (cs : List α) :
 
 @[simp] theorem mem_checkedOnce {d : HeadDirection} {cs : List α} {x : α} :
     x ∈ checkedOnce d cs ↔ x ∈ d.nearest cs := by
-  rw [checkedOnce_eq_toList_nearest, Option.mem_toList, Option.mem_def]
+  rw [checkedOnce_eq_conjuncts_nearest, ConjunctAgreement.conjuncts_nearest, Option.mem_toList,
+    Option.mem_def]
 
 end Derivation
 
@@ -194,7 +198,7 @@ theorem Admits.forall_mem {L : List Conjunct → Prop} {P : Conjunct → Prop} {
 
 theorem licensed_swap_reverse {cs : List Conjunct} :
     Licensed (checkedOnce d.swap) cats cs.reverse ↔ Licensed (checkedOnce d) cats cs := by
-  simp [Licensed, Coordinable, Satisfies, checkedOnce_eq_toList_nearest,
+  simp [Licensed, Coordinable, Satisfies, checkedOnce_eq_conjuncts_nearest,
     HeadDirection.nearest_swap_reverse]
 
 -- §3.1, p. 33
@@ -260,20 +264,21 @@ theorem admits_tfae (hp : p ∉ cats) : List.TFAE
     refine ⟨N, ?_⟩
     cases d
     · exact .inl ⟨[phrase N, nullN], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_toList_nearest]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]⟩
     · exact .inr ⟨[nullN, phrase N], by simp [ofCat],
-        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_toList_nearest]⟩
+        by simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]⟩
   tfae_have 4 → 2 := by
     rintro ⟨rfl, hN⟩
     exact ⟨[nullN], by simp [ofCat], by simp [Licensed, Coordinable, Satisfies, cat, hN]⟩
   tfae_have 4 → 3 := by
     rintro ⟨rfl, hN⟩
     refine ⟨[phrase N], by simp [ofCat, displacedLeft], ?_⟩
-    cases d <;> simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_toList_nearest]
+    cases d <;> simp [Licensed, Coordinable, Satisfies, cat, hN, checkedOnce_eq_conjuncts_nearest]
   tfae_finish
 
 -- fn. 30
-theorem mem_cats_of_admits_id (h : Admits (Satisfies id cats) ps) : ∀ p ∈ ps, p ∈ cats :=
+theorem mem_cats_of_admits_all
+    (h : Admits (Satisfies (ConjunctAgreement.all.conjuncts d) cats) ps) : ∀ p ∈ ps, p ∈ cats :=
   h.forall_mem (P := fun x ↦ x.cat ∈ cats ∧ x ≠ nullN)
     (fun _ h x hx ↦ ⟨h.1 x hx, fun e ↦ h.2 (e ▸ hx)⟩)
     fun x _ hx ⟨hc, hn⟩ ↦ by rwa [eq_phrase_of_mem_ofCat hx hn] at hc
@@ -363,7 +368,8 @@ theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some
 theorem argument_rows_first : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
     side? e = some .headFinal → 2 ≤ (e.features "conjunct").length →
     ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
-      (Admits (Licensed (List.take 1) cats) ps ↔ e.judgment ≠ .acceptable) := by
+      (Admits (Licensed (ConjunctAgreement.first.conjuncts .headFinal) cats) ps ↔
+        e.judgment ≠ .acceptable) := by
   decide
 
 -- (54), (55), (60), (62), (63b), (76)

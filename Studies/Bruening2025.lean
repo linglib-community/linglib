@@ -51,6 +51,7 @@ namespace Bruening2025
 
 open BrueningAlKhalaf2020 (Conjunct Admits Satisfies Licensed checkedOnce phrases? selects? side?
   AdvHead NominalCoordination)
+open Agreement (ConjunctAgreement)
 open PhraseStructure (Cat IsMaximalCategory)
 open PhraseStructure.Cat (N V Adj Adv)
 open Core.Order (TreePath)
@@ -348,7 +349,7 @@ theorem exp1b_predictions : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
 /-- For the speakers whose S-features persist (p. 457), the coordinations of Experiment 1b are out
 (§5.9). -/
 theorem exp1b_persisting : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
-    ¬ Admits (Satisfies id {N}) ps := by
+    ¬ Admits (Satisfies (ConjunctAgreement.all.conjuncts .headInitial) {N}) ps := by
   decide
 
 end Bruening2025

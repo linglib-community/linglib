@@ -12,11 +12,12 @@ public import Linglib.Fragments.German.Verbs
 Schwarzer tests three analyses of a clause coordinated with a noun phrase where only the noun
 phrase is selected on German, where complements follow the verb in a root clause and precede it in
 an embedded one. The bottom-up analyses (Sag, Gazdar, Wasow and Weisler; Munn) make the first
-conjunct prominent, so they check `List.take 1`; the linear closeness analysis (Bruening and Al
-Khalaf; Bruening) and the temporal one (Kim and Lu) check the conjunct next to the verb,
-`checkedOnce`. They part company before the verb, where only the bottom-up analyses admit the noun
-phrase first. Experiment 1 shows that German allows the construction, and in Experiment 2 the noun
-phrase first is preferred before the verb as much as after it, against both closeness analyses.
+conjunct prominent, so the verb checks it wherever the verb stands (`ConjunctAgreement.first`);
+the linear closeness analysis (Bruening and Al Khalaf; Bruening) and the temporal one (Kim and Lu)
+check the conjunct next to the verb, the nearest (`checkedOnce`). They part company before the
+verb, where only the bottom-up analyses admit the noun phrase first. Experiment 1 shows that German
+allows the construction, and in Experiment 2 the noun phrase first is preferred before the verb as
+much as after it, against both closeness analyses.
 
 ## Implementation notes
 
@@ -41,6 +42,7 @@ phrase first is preferred before the verb as much as after it, against both clos
 namespace Schwarzer2026
 
 open BrueningAlKhalaf2020
+open Agreement (ConjunctAgreement)
 open PhraseStructure (Cat)
 open PhraseStructure.Cat (N)
 
@@ -60,9 +62,9 @@ def Order.phrases : Order → List Cat
   | .cpFirst => [.C, N]
 
 -- (10b)
-theorem structural_admits_iff (o : Order) :
-    Admits (Licensed (List.take 1) {N}) o.phrases ↔ o = .dpFirst := by
-  cases o <;> decide
+theorem structural_admits_iff (d : HeadDirection) (o : Order) :
+    Admits (Licensed (ConjunctAgreement.first.conjuncts d) {N}) o.phrases ↔ o = .dpFirst := by
+  cases d <;> cases o <;> decide
 
 -- (10a)
 theorem closeness_embedded_iff (o : Order) :
@@ -72,10 +74,11 @@ theorem closeness_embedded_iff (o : Order) :
 /-- The analyses differ before the verb only, which is what makes German the test case, since
 after it the closeness analyses check the first conjunct too. -/
 theorem accounts_diverge_embedded :
-    (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {N}) o.phrases ↔
-        Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧
-      checkedOnce (α := Conjunct) rootPosition = List.take 1 :=
-  ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ by rw [checkedOnce_eq_toList_nearest]; cases cs <;> rfl⟩
+    (∃ o : Order, ¬ (Admits (Licensed (ConjunctAgreement.first.conjuncts embeddedPosition) {N})
+        o.phrases ↔ Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧
+      checkedOnce (α := Conjunct) rootPosition = ConjunctAgreement.first.conjuncts rootPosition :=
+  ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ (checkedOnce_eq_conjuncts_nearest _ cs).trans
+    (ConjunctAgreement.conjuncts_nearest_headInitial _ cs)⟩
 
 /-! ### Experiment 1 -/
 
@@ -157,7 +160,8 @@ theorem choices_refute_closeness :
 /-- The bottom-up analyses admit exactly the preferred order in both positions, which the squib
 takes to support them only indirectly (p. 15). -/
 theorem choices_match_structural (p : Position) (o : Order) :
-    Admits (Licensed (List.take 1) {N}) o.phrases ↔ o = preferred p := by
+    Admits (Licensed (ConjunctAgreement.first.conjuncts p.direction) {N}) o.phrases ↔
+      o = preferred p := by
   rw [preferred_eq, structural_admits_iff]
 
 end Schwarzer2026
