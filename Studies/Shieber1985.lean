@@ -17,7 +17,9 @@ subordinate clauses is not context-free. The homomorphism `f` sends the words of
 letters, and the image of the language intersected with the regular language
 `r = w a* b* x c* d* y` is `w aᵐ bⁿ x cᵐ dⁿ y`. Erasing `w`, `x` and `y` leaves `aᵐ bⁿ cᵐ dⁿ`,
 which is not context-free, and the context-free languages are closed under homomorphisms and
-under intersection with regular languages.
+under intersection with regular languages. The weakening of Claim 3 in note 4 does not support
+this argument (see Errata), but the correction that allows a clause fewer noun phrases than verbs
+[still yields the theorem](##not_isContextFree_of_count_le).
 
 ## Main definitions
 
@@ -32,18 +34,27 @@ schema of Claim 2 and `f` do; the prose of Claim 2 puts the datives first. In th
 requires the case of its entry in `German.Zurich.Verbs`, and a noun phrase bears the case its
 gloss marks.
 
+## Errata
+
+Note 4 restricts Claim 3 to clauses with as many noun phrases as verbs and says that this weaker
+claim suffices for the proof. It does not: with Claim 3 so restricted, the image with the frame
+erased can be `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u} ∪ {aᵐ bⁿ cᵐ dⁿ}`, which is the union of the
+context-free `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u}` and `{aᵏ bʲ cᵏ dˡ}`. [radzinski-2026] reports the
+correction in [ojeda-1988], credited there to Manaster Ramer: the subjects of the infinitives may
+be omitted, so a clause has at most as many noun phrases of each case as verbs requiring that
+case. Stated for all the clauses of the schema, that claim gives the result.
+
 ## TODO
 
-Note 4 restricts Claim 3 to clauses with as many noun phrases as verbs, which does not suffice:
-the image, with the frame erased, can then be `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u} ∪ {aᵐ bⁿ cᵐ dⁿ}`,
-the union of the context-free `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u}` and `{aᵏ bʲ cᵏ dˡ}`. Stating the
-counterexample needs the closure of the context-free languages under union.
+Stating the counterexample to note 4 needs the closure of the context-free languages under union.
 
 ## References
 
 * [shieber-1985]
 * [hopcroft-ullman-1979]
 * [bar-hillel-perles-shamir-1961]
+* [ojeda-1988]
+* [radzinski-2026]
 -/
 
 @[expose] public section
@@ -190,7 +201,7 @@ theorem Claims.not_isContextFree (h : Claims f L) : ¬ L.IsContextFree := fun hL
 
 /-- A language is not context-free if every clause `w aⁿ bⁿ x cⁿ dⁿ y` is grammatical and every
 object noun phrase of a clause of the schema has a verb requiring its case, objects being
-optional (Claim 3). -/
+optional: the correction of Claim 3 that [radzinski-2026] reports from [ojeda-1988]. -/
 theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clause n n n n)
     (hle : ∀ s ∈ L, s.map f ∈ schema →
       (s.map f).count a ≤ (s.map f).count c ∧ (s.map f).count b ≤ (s.map f).count d) :
