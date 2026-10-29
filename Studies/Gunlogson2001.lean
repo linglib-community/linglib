@@ -29,14 +29,19 @@ rows of `Data.Examples.Gunlogson2001`.
 
 Presuppositional admittance, (83) and (84), is not modelled, so consistency (86) is the nonemptiness
 of the updated commitment sets, and the second clause of the final definition of polar question
-(136), which is not a condition on commitment sets, is left out. Theorem (91) does not hold as
-stated, since a resolved proposition is controversial for no one under (66), so a resolved context
-is neutral under (68), and a declarative whose content the addressee already holds makes it a joint
-commitment and so is neutral, `Locution.isNeutralIn_fallingDecl`. The theorem holds when the content
-stays unresolved, which is the form given here, and (93) correspondingly fails for declaratives as
-literally defined. The reduction-set definition of bias (71), which the paper says is equivalent to
-(67), agrees with it exactly on unresolved propositions, `isBiasedR_iff_isBiased_of_not_isResolved`
-and `isBiasedR_of_isJoint`.
+(136), which is not a condition on commitment sets, is left out. Theorem (91) is stated for
+declaratives whose content stays unresolved, the form in which it holds.
+
+## Errata
+
+* Theorem (91), that no declarative is neutral in any context, does not hold as stated. A resolved
+  proposition is controversial for no one under (66), so a resolved context is neutral under (68),
+  and a declarative whose content the addressee already holds makes it a joint commitment and so is
+  neutral (`Locution.isNeutralIn_fallingDecl`). (93) correspondingly fails for declaratives as
+  literally defined.
+* The reduction-set definition of bias (71), which the text calls equivalent to (67), agrees with
+  it exactly on unresolved propositions (`isBiasedR_iff_isBiased_of_not_isResolved`); on a joint
+  commitment (71) holds and (67) does not (`isBiasedR_of_isJoint`).
 
 ## References
 

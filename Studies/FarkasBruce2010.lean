@@ -69,6 +69,13 @@ in every denial (`ba_denial`) and required to be absent from a [reverse, −] an
 * `PolarityParticle` indexes the particles the paper discusses, each with its fragment entry: all
   of English and Romanian, and of the French and German particles only *si* and *doch*.
 
+## Errata
+
+* Total Denial (22b)(i) prints its change as `DC_b = DC_a ∪ {¬p}`, which would give the denier
+  the asserter's commitments, `p` among them, together with `¬p`. The prose around it adds `¬p` to
+  the author's own commitment list, `DC_{b,o} = DC_{b,i} ∪ {¬p}`, and (21) shows `p` on A's list
+  alone; `denial` follows the prose.
+
 ## TODO
 
 * (5) accepts a bare *nu* denial of a positive assertion that (42) stars, so §5.2's claim that

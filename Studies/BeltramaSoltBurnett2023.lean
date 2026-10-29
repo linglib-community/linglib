@@ -160,13 +160,16 @@ theorem complementary_contrastField (e : Experiment) :
     (contrastField e).ground.Complementary .precise .approximate :=
   (antipodal_contrastField e).complementary fun d ↦ by revert d; cases e <;> decide +kernel
 
-theorem lift_contrastField_precise (e : Experiment) :
-    (contrastField e).ground.lift .precise = {{.competent, .cold, .antiSolidary}} := by
-  rw [(complementary_contrastField e).lift_eq_singleton, ground_contrastField_precise]
+theorem compatiblePersonae_contrastField_precise (e : Experiment) :
+    ((contrastField e).ground.compatiblePersonae .precise).map (.subtype _) =
+      {{.competent, .cold, .antiSolidary}} := by
+  rw [(complementary_contrastField e).compatiblePersonae_eq_singleton, Finset.map_singleton]
+  exact congrArg singleton (ground_contrastField_precise e)
 
 /-- Both readings are borne out by the means of both experiments (p. 828), though on the opposition
-reading the precise and approximate variants are antipodal and each fits a single persona, while on
-the neutral reading they are separate loci (`separateLoci_neutral`) and each fits two personae. -/
+reading the precise and approximate variants are antipodal and each is compatible with a single
+persona, while on the neutral reading they are separate loci (`separateLoci_neutral`) and each is
+compatible with two personae. -/
 theorem borneOut_contrastField (e e' : Experiment) : BorneOut (contrastField e) e' := by
   have h : contrastField e = contrastField e' := by
     cases e <;> cases e' <;> simp [contrastField_exp2]
@@ -205,7 +208,8 @@ theorem ground_neutral_precise :
 theorem ground_neutral_approximate :
     (neutral .exp2).ground.indexes .approximate = {.incompetent, .warm} := by decide +kernel
 
-theorem card_lift_neutral_precise : ((neutral .exp2).ground.lift .precise).card = 2 := by
+theorem card_compatiblePersonae_neutral_precise :
+    ((neutral .exp2).ground.compatiblePersonae .precise).card = 2 := by
   decide +kernel
 
 theorem borneOut_neutral (e e' : Experiment) : BorneOut (neutral e) e' := by

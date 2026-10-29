@@ -25,22 +25,28 @@ Propositions are world-sets, so the thesis's side condition that a proposition b
 `C_{a,b}`-free holds vacuously, the antecedent of a conditional act holds at the root iff it is
 `Set.univ`, and the `⊨_SAL` claims — for every space `C`, member `c` and world — are stated at
 the root, `C_c` (Definition 13) being again a space with root `c`. Theorem 32, possibility, is
-the totality of `update`.
+the totality of `update`. Theorem 31(1) is read with its two agents distinct, since for `a = b`
+the confirming assertion is redundant. The well-definedness of the assertion update, which the
+thesis calls easy, rests on `le_restrictCommitment_of_mem`, its root case included.
+
+## Errata
+
+* The witness for Theorem 27(2) takes `O_{a,b} = B_a ∪ {(w, w)}` with `B_a = {(w, w'), (w', w')}`,
+  which is not Euclidean (`w O w` and `w O w'` without `w' O w`), so it is not a commitment state
+  of Definition 2; `buffet` is a witness that is.
+* Competence (Definition 5) quantifies over all pairs of agents, `v B_y w` entailing `v B_x w`
+  for every `x` and `y`, and so forces one shared belief relation (`Frame.competent_iff`).
+* The root of the assertion update of Definition 10 is the update of Definition 4, which the
+  thesis says does not suffice for sincere states, since it leaves beliefs unchanged; the sincere
+  update of Definition 6 is not used. So an assertion keeps a sincere root sincere only if the
+  speaker already believed its content (`Frame.sincere_restrictCommitment_iff`), no speech act
+  changes a belief (`root_update_belief`), and the informative update 2, which holds in sincere,
+  competent states, is brought about by no speech act.
 
 ## TODO
 
 * Theorem 36, the cooperativity of answering a question, and speech act entailment
   (Definition 11) as a relation between acts.
-* Report to the author: the witness for Theorem 27(2), `O_{a,b} = B_a ∪ {(w, w)}`, is not
-  Euclidean (`buffet` replaces it); Theorem 31(1) needs `a ≠ b`, since for `a = b` the
-  confirming assertion is redundant; and the well-definedness of the assertion update, called
-  easy, needs the root case of `le_restrictCommitment_of_mem`.
-* Report to the author: Competence (Definition 5) quantifies over all pairs of agents and so
-  forces one shared belief relation (`Frame.competent_iff`). The assertion update of Definition 10
-  is Definition 4, not the sincere update of Definition 6, so an assertion leaves a sincere root
-  sincere only if the speaker already believed its content (`Frame.sincere_restrictCommitment_iff`),
-  and no speech act changes a belief (`root_update_belief`). The informative update 2 holds in
-  sincere, competent states, but no speech act brings it about.
 
 ## References
 
