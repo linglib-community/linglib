@@ -103,6 +103,14 @@ theorem IsPartition.completeAnswers_eq (hP : P.IsPartition) (hN : P.IsNormal) :
     · exact Or.inl hσc
     · exact Or.inr (hσc.trans (hP.pairwiseDisjoint hc hp hpc.symm).le_compl_right)
 
+/-- A partition question is a contextual subquestion of every normal question it entails, since its
+complete answers are the states resolving it. -/
+theorem IsPartition.isSubquestionOf_of_le (C : Set W) (hP : P.IsPartition) (hP' : P.IsNormal)
+    (hQ : Q.IsNormal) (h : P ≤ Q) : IsSubquestionOf C P Q := fun σ hσ ↦ by
+  rw [hP.completeAnswers_eq hP'] at hσ
+  obtain ⟨q, hq, hσq⟩ := hQ σ (le_def.mp h hσ)
+  exact ⟨q, hq, .inl (Set.inter_subset_right.trans hσq)⟩
+
 theorem IsPartition.completeAnswers_subset_iff_le (hP : P.IsPartition) (hP' : P.IsNormal)
     (hQ : Q.IsPartition) (hQ' : Q.IsNormal) :
     completeAnswers P ⊆ completeAnswers Q ↔ P ≤ Q := by

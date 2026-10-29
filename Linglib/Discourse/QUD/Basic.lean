@@ -21,6 +21,8 @@ tree of questions whose children are the subquestions pursued to answer their pa
   subtree's root.
 * `Discourse.Strategy.IsComplete`: at every branching node, the meet of the children's questions
   entails the parent's.
+* `Discourse.Strategy.AnswersCompletely`: at every branching node, completely answering the
+  children completely answers the parent.
 
 ## Implementation notes
 
@@ -34,8 +36,12 @@ conditions on removal are the caller's obligation.
 Definition (12) leaves the well-formedness of `Strat(q)` to "rational considerations" and its
 substrategies unordered; the ordered `RoseTree` follows Büring. Contextual subquestionhood
 is not transitive, so `WellFormed` relates every question of a subtree to that subtree's root, not
-only to its parent. `IsComplete` is the success criterion of the D₀ discussion, not a clause of
-(12); its converse, the parent entailing the meet of the children, is what (13) rules out.
+only to its parent. `AnswersCompletely` is the success criterion of the D₀ discussion, (11), not
+a clause of (12). `IsComplete` asks instead that resolving the children resolve the parent. The two
+agree on partition questions (`forall_mem_completeAnswers_iff_inf_le`), but on Hamblin questions,
+whose resolving states are their positive answers, one child entailing the parent already makes a
+node complete. The converse of `IsComplete`, the parent entailing the meet of the children, is
+what (13) rules out.
 
 `Question.IsRelevantTo` (in `Semantics/Questions/Resolution.lean`) is existential, so weaker
 than (15), which requires every complete answer to the move to contextually entail a partial
@@ -84,11 +90,11 @@ theorem WellFormed.leaf (C : Set W) (q : Question W) : WellFormed C (.leaf q : S
   ⟨fun | .node h₁ h₂ => ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ => .node h₁ h₂⟩
 
 theorem WellFormed.isSubquestionOf_root {C : Set W} : ∀ {t : Strategy W}, WellFormed C t →
-    ∀ r ∈ t.values, Question.IsSubquestionOf C r t.value
-  | .node _ _, .node h _, r, hr => by
+    (Question.alt t.value).Nonempty → ∀ r ∈ t.values, Question.IsSubquestionOf C r t.value
+  | .node _ _, .node h _, hne, r, hr => by
     rw [RoseTree.values_node, List.mem_cons, List.mem_flatten] at hr
     rcases hr with rfl | ⟨l, hl, hrl⟩
-    · exact .refl _ _
+    · exact .refl _ hne
     · obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hl
       exact h c hc r hrl
 
@@ -118,9 +124,43 @@ theorem IsComplete.node_pair {q : Question W} {s t : Strategy W}
     IsComplete (.node q [s, t]) :=
   .node (fun _ => by simpa using h) (by simp [hs, ht])
 
+/-- A strategy answers completely when at every branching node a state that completely answers
+each child's question completely answers the parent's ([roberts-2012] (11)). Leaves answer
+completely. -/
+def AnswersCompletely (t : Strategy W) : Prop :=
+  t.Licensed fun q qs ↦ qs ≠ [] → ∀ σ, (∀ q' ∈ qs, σ ∈ q'.completeAnswers) → σ ∈ q.completeAnswers
+
+@[simp] theorem answersCompletely_node_iff {q : Question W} {cs : List (Strategy W)} :
+    AnswersCompletely (.node q cs) ↔
+      (cs ≠ [] → ∀ σ, (∀ c ∈ cs, σ ∈ c.value.completeAnswers) → σ ∈ q.completeAnswers) ∧
+        ∀ c ∈ cs, AnswersCompletely c := by
+  rw [AnswersCompletely, RoseTree.licensed_node_iff]
+  simp only [ne_eq, List.map_eq_nil_iff, List.forall_mem_map, AnswersCompletely]
+
+theorem AnswersCompletely.leaf (q : Question W) : AnswersCompletely (.leaf q : Strategy W) :=
+  answersCompletely_node_iff.mpr ⟨fun h ↦ absurd rfl h, nofun⟩
+
+theorem AnswersCompletely.node_pair {q : Question W} {s t : Strategy W}
+    (h : s.value.completeAnswers ∩ t.value.completeAnswers ⊆ q.completeAnswers)
+    (hs : s.AnswersCompletely) (ht : t.AnswersCompletely) : AnswersCompletely (.node q [s, t]) :=
+  answersCompletely_node_iff.mpr
+    ⟨fun _ σ hσ ↦ h ⟨hσ s (by simp), hσ t (by simp)⟩, by simp [hs, ht]⟩
+
+/-- On normal partition questions the two criteria agree at a node: completely answering every
+child completely answers the parent exactly when the meet of the children entails the parent. -/
+theorem forall_mem_completeAnswers_iff_inf_le {q : Question W} {qs : List (Question W)}
+    (hq : q.IsPartition) (hq' : q.IsNormal) (hqs : ∀ q' ∈ qs, q'.IsPartition ∧ q'.IsNormal) :
+    (∀ σ, (∀ q' ∈ qs, σ ∈ q'.completeAnswers) → σ ∈ q.completeAnswers) ↔
+      (qs : Multiset (Question W)).inf ≤ q := by
+  have hmem : ∀ σ, (∀ q' ∈ qs, σ ∈ q'.completeAnswers) ↔ σ ∈ (qs : Multiset (Question W)).inf :=
+    fun σ ↦ by
+      rw [Question.mem_iff_ofSet_le, Multiset.le_inf]
+      refine forall₂_congr fun q' hq'qs ↦ ?_
+      rw [(hqs q' hq'qs).1.completeAnswers_eq (hqs q' hq'qs).2, SetLike.mem_coe,
+        Question.mem_iff_ofSet_le]
+  simp only [hmem, hq.completeAnswers_eq hq', SetLike.mem_coe]
+  exact Question.le_def.symm
+
 end Strategy
-
-variable {W : Type*}
-
 
 end Discourse
