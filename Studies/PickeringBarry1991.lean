@@ -308,35 +308,35 @@ def lexicon : List (String × CCG.Cat Basic) :=
 
 /-- The derivation (83) of *who saw Mary*, in which the subject pronoun applies to a sentence
 missing its subject. -/
-def der83 : CCG.Derivation String .multimodal quest :=
+def der83 : CCG.Derivation String (.multimodal 2) quest :=
   .fapp (.lex "who" (quest / (sent \ np))) (.fapp (.lex "saw" ((sent \ np) / np)) (.lex "Mary" np))
 
 /-- The derivation (84) of *whom John saw*, in which the raised subject composes with the verb
 into a sentence missing its object, which the object pronoun takes. -/
-def der84 : CCG.Derivation String .multimodal quest :=
+def der84 : CCG.Derivation String (.multimodal 2) quest :=
   .fapp (.lex "whom" (quest / (sent / np)))
     (.fcomp (.lex "John" (sent / (sent \ np))) (.lex "saw" ((sent \ np) / np)))
 
 /-- The derivation (85) of *whom John talked to*, in which two compositions leave the
 preposition's object missing. -/
-def der85 : CCG.Derivation String .multimodal quest :=
+def der85 : CCG.Derivation String (.multimodal 2) quest :=
   .fapp (.lex "whom" (quest / (sent / np)))
     (.fcomp (.fcomp (.lex "John" (sent / (sent \ np)))
       (.lex "talked" ((sent \ np) / pp))) (.lex "to" (pp / np)))
 
 /-- *Sue wonders* applied to an embedded question. -/
-def wonders (d : CCG.Derivation String .multimodal quest) :
-    CCG.Derivation String .multimodal sent :=
+def wonders (d : CCG.Derivation String (.multimodal 2) quest) :
+    CCG.Derivation String (.multimodal 2) sent :=
   .bapp (.lex "Sue" np) (.fapp (.lex "wonders" ((sent \ np) / quest)) d)
 
 /-- (82a). -/
-def der82a : CCG.Derivation String .multimodal sent := wonders der83
+def der82a : CCG.Derivation String (.multimodal 2) sent := wonders der83
 
 /-- (82b). -/
-def der82b : CCG.Derivation String .multimodal sent := wonders der84
+def der82b : CCG.Derivation String (.multimodal 2) sent := wonders der84
 
 /-- (82c). -/
-def der82c : CCG.Derivation String .multimodal sent := wonders der85
+def der82c : CCG.Derivation String (.multimodal 2) sent := wonders der85
 
 -- (82a–c)
 theorem embedded_questions :

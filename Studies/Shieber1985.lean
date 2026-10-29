@@ -4,6 +4,7 @@ public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Core.Computability.ContextFreeGrammar.Regular
 public import Linglib.Core.Computability.ContextFreeGrammar.Map
 public import Linglib.Core.Computability.NonContextFree.AmBnCmDn
+public import Linglib.Core.Computability.NonRegular.AnBn
 public import Linglib.Fragments.German.Zurich.Verbs
 public import Linglib.Data.Examples.Shieber1985
 public import Mathlib.Data.List.Sort
@@ -19,7 +20,11 @@ letters, and the image of the language intersected with the regular language
 which is not context-free, and the context-free languages are closed under homomorphisms and
 under intersection with regular languages. The weakening of Claim 3 in note 4 does not support
 this argument (see Errata), but the correction that allows a clause fewer noun phrases than verbs
-[still yields the theorem](##not_isContextFree_of_count_le).
+[still yields the theorem](##not_isContextFree_of_count_le). The argument needs the case
+distinction: identifying the two cases sends the cross-serial clauses onto `aᵏ cᵏ`, so their
+[case-blind image is context-free](##isContextFree_stringMap_eraseCase_crossSerial), as is the
+string set of Dutch, which has no such case marking and for which [pullum-gazdar-1982] give a
+context-free grammar (`PullumGazdar1982.isVerbPhrase_isContextFree`).
 
 ## Main definitions
 
@@ -166,6 +171,35 @@ theorem stringMap_eraseFrame_crossSerial :
 
 theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree := fun h ↦
   not_isContextFree_ambncmdn (by decide) (stringMap_eraseFrame_crossSerial ▸ h.stringMap eraseFrame)
+
+/-! ### Without case
+
+The homomorphism `eraseCase` identifies the accusative and the dative, sending both objects to
+`a` and both verbs to `c`, and erases the frame. -/
+
+/-- `eraseCase` sends both objects to `a`, both verbs to `c`, and every other letter to the
+empty string. -/
+def eraseCase : Letter → List Letter
+  | a | b => [a] | c | d => [c] | _ => []
+
+theorem flatMap_eraseCase_clause (p q r u : ℕ) :
+    (clause p q r u).flatMap eraseCase = replicate (p + q) a ++ replicate (r + u) c := by
+  simp [clause, eraseCase, flatMap_replicate]
+  rw [← append_assoc, replicate_append_replicate]
+
+theorem stringMap_eraseCase_crossSerial : stringMap eraseCase crossSerial = anbn a c := by
+  ext l
+  constructor
+  · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
+    exact ⟨m + n, (flatMap_eraseCase_clause m n m n).symm⟩
+  · rintro ⟨k, rfl⟩
+    exact ⟨_, ⟨k, 0, rfl⟩, by simpa using flatMap_eraseCase_clause k 0 k 0⟩
+
+/-- Without the case distinction the cross-serial clauses are context-free: identifying the
+cases sends `w aᵐ bⁿ x cᵐ dⁿ y` to `aᵐ⁺ⁿ cᵐ⁺ⁿ`. -/
+theorem isContextFree_stringMap_eraseCase_crossSerial :
+    (stringMap eraseCase crossSerial).IsContextFree :=
+  stringMap_eraseCase_crossSerial ▸ isContextFree_anbn a c
 
 /-! ### The claims and the argument -/
 

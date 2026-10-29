@@ -81,7 +81,7 @@ def nodLexicon (n : ℕ) : List (ℕ × Cat ℕ) :=
 
 /-- The NOD grammar is the multimodal grammar over the chain lexicon. The start atom plays no
 role in the span-level claims. -/
-def nodGrammar (n : ℕ) : Grammar ℕ ℕ := .multimodal (nodLexicon n) 1
+def nodGrammar (n : ℕ) : Grammar ℕ ℕ := .multimodal (nodLexicon n) 1 2
 
 theorem mem_nodLexicon {n m : ℕ} (h1 : 1 ≤ m) (hn : m ≤ n) :
     (m, fwd m) ∈ nodLexicon n ∧ (m, bwd m) ∈ nodLexicon n := by

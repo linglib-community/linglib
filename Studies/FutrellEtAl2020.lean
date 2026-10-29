@@ -16,8 +16,8 @@ public import Mathlib.Data.Fin.VecNotation
 This file formalizes the worked examples of Futrell, Levy and Gibson's case for dependency
 length minimization as a source of word-order universals: the dependency trees of its sections
 2.3 and 2.4, with every total dependency length checked against the printed figure.
-Displacement makes trees nonprojective, but only mildly, at gap degree one, in extraposition and
-*wh*-movement ((3) and (4)). Short-before-long order minimizes dependency length after a
+Displacement makes trees nonprojective in extraposition and *wh*-movement ((3) and (4)), both
+trees of gap degree one. Short-before-long order minimizes dependency length after a
 head-initial head, and its mirror image, long-before-short, before a head-final one ((7) and
 (8)); a chain of single dependents is shortest with consistent head direction (9), while a head
 with several short dependents does better splitting them across itself (10), the exceptions to
@@ -34,6 +34,13 @@ dependency lengths of Table 2 are the rows of `Data.UD.DependencyLength.FutrellE
   convention, on which a preposition heads its noun, so arc lengths match the printed diagrams.
 * Mirror-image and reordering claims go through `Graph.mirror` and `Graph.map`, so they
   hold by the general invariance theorems rather than by inspection of hand-typed twins.
+* Dependency length is the distance `Nat.dist` between head and dependent, the measure behind
+  the totals of the printed figures, on which adjacent words are one apart; the prose of
+  section 2.4 of the preprint describes it as the number of intervening words.
+* Gap degree is this file's measure of how far the trees of (3) and (4) depart from
+  projectivity. The paper's claim that natural languages deviate from context-freeness only
+  mildly is the mild context-sensitivity of languages, a property of grammar formalisms that the
+  gap degree of single trees does not settle.
 
 ## References
 
@@ -62,9 +69,8 @@ def tok (s : String) : Word := Word.mk' s .X
 
 Displacement produces nonprojective trees: right extraposition in (3),
 where *who you know* modifies *woman* across the intervening verb, and
-wh-movement in (4), where *what* is the object of *did*. Both sit at gap
-degree 1 — the paper's point that natural languages deviate from
-context-freeness only mildly. -/
+wh-movement in (4), where *what* is the object of *did*. Both have gap
+degree 1. -/
 
 /-- Example (3): "I think a woman arrived who you know". -/
 def extraposition : Graph UD.DepRel 8 :=

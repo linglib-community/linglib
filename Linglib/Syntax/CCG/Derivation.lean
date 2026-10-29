@@ -10,10 +10,10 @@ linearly ordered and type-dependent, applying to string-adjacent categories. Eve
 an instance of one schema, forward composition `X/Y Yβ ⇒ Xβ` or its mirror `Yβ X\Y ⇒ Xβ`, whose
 degree is the length of the argument sequence `β`, with application at degree 0. A CCG formalism
 is a `RuleSystem`, which says which instances of the schema fire. The multimodal system of
-Baldridge and Steedman (`RuleSystem.multimodal`) is the modern inventory: degree at most 2, a
-secondary whose arguments all look one way, and a primary slash whose modality licenses
-harmonic composition (`⋄`) when they look its way and crossing composition (`×`) when they look
-the other way.
+Baldridge and Steedman (`RuleSystem.multimodal`) is the modern inventory: composition up to a
+degree bound into a secondary whose arguments all look one way, every slash in the scope of the
+rule licensing harmonic composition (`⋄`) when those arguments look the primary slash's way and
+crossing composition (`×`) when they look the other way.
 
 A `Derivation T R c` is a tree of lexical leaves, tokens of an alphabet `T`, and binary nodes
 labelled by rules of `R`, indexed by its category, so a value of `Derivation T R c` is a
@@ -34,6 +34,14 @@ morphemic slash are not modeled.
 ## Main statements
 
 * `CCG.Derivation.count_eq_sum`: van Benthem's count invariant.
+
+## Implementation notes
+
+`RuleSystem.multimodal` follows the rules of O-CCG, the multimodal formalism whose composition
+rules [kuhlmann-koller-satta-2015] fix after OpenCCG, without OpenCCG's directional slash types
+and inertness: a rule fires only when every slash in its scope, the primary slash and the slashes
+of the secondary's composed arguments, has a compatible modality, and the degree bound is a
+parameter of the grammar.
 
 ## References
 
@@ -57,22 +65,41 @@ primary `x a`, the category `x` with outermost argument `a`, to combine with a s
 left, and by application when `β` is empty. -/
 abbrev RuleSystem (α : Type*) := Cat α → Cat.Arg α → List (Cat.Arg α) → Prop
 
-/-- The multimodal rule system of [baldridge-2002] and [steedman-2019] admits composition of
-degree at most 2 into a secondary whose arguments all look one way. The primary slash's
-modality must license harmonic composition (`⋄`) when they look its way and crossing composition
-(`×`) when they look the other way, and application fires at every modality. -/
-def RuleSystem.multimodal : RuleSystem α := fun _ a β ↦
-  β.length ≤ 2 ∧ β.Pairwise (·.side = ·.side) ∧
-    ∀ b ∈ β, a.modality ≤ if b.side = a.side then .diamond else .cross
+/-- The multimodal rule system of [baldridge-2002] and [steedman-2019], with the composition
+rules of [kuhlmann-koller-satta-2015]'s O-CCG, admits composition of degree at most `degree`
+into a secondary whose arguments all look one way. Every slash in the scope of the rule, the
+primary slash and the slash of each composed argument, must license harmonic composition (`⋄`)
+when the composed arguments look the primary slash's way and crossing composition (`×`) when
+they look the other way, and application fires at every modality. -/
+def RuleSystem.multimodal (degree : ℕ) : RuleSystem α := fun _ a β ↦
+  β.length ≤ degree ∧ β.Pairwise (·.side = ·.side) ∧
+    ∀ b ∈ β, a.modality ≤ (if b.side = a.side then .diamond else .cross) ∧
+      b.modality ≤ if b.side = a.side then .diamond else .cross
 
-instance (x : Cat α) (a : Cat.Arg α) (β : List (Cat.Arg α)) :
-    Decidable (RuleSystem.multimodal x a β) :=
-  inferInstanceAs (Decidable (β.length ≤ 2 ∧ β.Pairwise (·.side = ·.side) ∧
-    ∀ b ∈ β, a.modality ≤ if b.side = a.side then .diamond else .cross))
+instance (degree : ℕ) (x : Cat α) (a : Cat.Arg α) (β : List (Cat.Arg α)) :
+    Decidable (RuleSystem.multimodal degree x a β) :=
+  inferInstanceAs (Decidable (β.length ≤ degree ∧ β.Pairwise (·.side = ·.side) ∧
+    ∀ b ∈ β, a.modality ≤ (if b.side = a.side then .diamond else .cross) ∧
+      b.modality ≤ if b.side = a.side then .diamond else .cross))
 
-@[simp] theorem RuleSystem.multimodal_singleton {x : Cat α} {a b : Cat.Arg α} :
-    multimodal x a [b] ↔ a.modality ≤ if b.side = a.side then .diamond else .cross := by
+@[simp] theorem RuleSystem.multimodal_nil {degree : ℕ} {x : Cat α} {a : Cat.Arg α} :
+    multimodal degree x a [] := by
   simp [multimodal]
+
+@[simp] theorem RuleSystem.multimodal_singleton {degree : ℕ} {x : Cat α} {a b : Cat.Arg α} :
+    multimodal degree x a [b] ↔ 1 ≤ degree ∧
+      a.modality ≤ (if b.side = a.side then .diamond else .cross) ∧
+      b.modality ≤ if b.side = a.side then .diamond else .cross := by
+  simp [multimodal]
+
+/-- A slash of modality `⋆` is never composed into: a secondary whose composed argument has it
+fails the multimodal rule system at every degree and every primary slash. -/
+theorem RuleSystem.not_multimodal_of_star_mem {degree : ℕ} {x : Cat α} {a : Cat.Arg α}
+    {β : List (Cat.Arg α)} {b : Cat.Arg α} (hb : b ∈ β) (hstar : b.modality = .star) :
+    ¬ multimodal degree x a β := fun h ↦ by
+  have := (h.2.2 b hb).2
+  rw [hstar] at this
+  split_ifs at this <;> exact absurd this (by decide)
 
 /-! ### Rules and derivations -/
 
