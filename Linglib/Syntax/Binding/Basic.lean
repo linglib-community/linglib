@@ -62,6 +62,7 @@ Reuland stresses, and outside this file.
 ## References
 
 * [chomsky-1981]
+* [pollard-sag-1992]
 * [pollard-sag-1994]
 * [reuland-2018]
 * [charnavel-2019]

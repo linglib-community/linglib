@@ -26,8 +26,10 @@ value at each context of what is said there, evaluated at the context's own inde
 (`Character.diag`). For a sentence it is truth at a context, and when the contexts are the
 worlds themselves it is the diagonal proposition of [stalnaker-1978]'s propositional concepts. A
 sentence is *a priori*, valid in Kaplan's logic of demonstratives, when its diagonal holds at
-every context, and *necessary* when what it says at every context is true at every world; the
-two notions come apart in both directions.
+every context, and *necessary at a context* when what it says there is true at every world. The
+two notions come apart in both directions: an a priori sentence can say something contingent,
+and a sentence necessary at a context need not be a priori; a sentence necessary at every context
+is a priori (`Character.IsNecessary.isAPriori`).
 
 ## Main definitions
 
@@ -35,7 +37,7 @@ two notions come apart in both directions.
 * `Character.IsDirectlyReferential`
 * `Character.dthat`, `Character.const`
 * `Character.diag`: the diagonal along the index of the context.
-* `Character.IsAPriori`, `Character.IsNecessary`
+* `Character.IsAPriori`, `Character.IsNecessaryAt`, `Character.IsNecessary`
 
 ## References
 
@@ -104,8 +106,19 @@ def diag (ι : C → W) (χ : Character C W E) : C → E := fun c ↦ χ c (ι c
 context. -/
 def IsAPriori (ι : C → W) (χ : Character C W Prop) : Prop := ∀ c, χ.diag ι c
 
+/-- A sentence is necessary at a context when what it says there is true at every world. -/
+def IsNecessaryAt (χ : Character C W Prop) (c : C) : Prop := ∀ w, χ c w
+
 /-- A sentence is necessary when what it says at every context is true at every world. -/
 def IsNecessary (χ : Character C W Prop) : Prop := ∀ c w, χ c w
+
+theorem isNecessary_iff_forall_isNecessaryAt {χ : Character C W Prop} :
+    χ.IsNecessary ↔ ∀ c, χ.IsNecessaryAt c :=
+  Iff.rfl
+
+theorem IsNecessaryAt.diag {χ : Character C W Prop} {c : C} (h : χ.IsNecessaryAt c)
+    (ι : C → W) : χ.diag ι c :=
+  h _
 
 theorem IsNecessary.isAPriori {χ : Character C W Prop} (h : χ.IsNecessary) (ι : C → W) :
     χ.IsAPriori ι :=
