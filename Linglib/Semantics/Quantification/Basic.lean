@@ -11,14 +11,15 @@ public import Linglib.Semantics.Reference.Iota
 This file defines the generalized quantifiers *every*, *some*, *no* and the Russellian *the*,
 whose truth conditions need no counting, and proves their conservativity, monotonicity,
 symmetry, duality and square-of-opposition properties. The properties checked are Barwise and
-Cooper's universals of conservativity and scope monotonicity, Keenan and Stavi's Boolean
+Cooper's determiner universal and monotonicity constraint, Keenan and Stavi's Boolean
 structure, and Peters and Westerståhl's left monotonicity and smoothness. The counting
 quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
 ## Main definitions
 
 * `every`, `GQ.some`, `no`, `the`: the propositional denotations.
-* `SatisfiesUniversals`: conservativity together with monotonicity in the scope.
+* `SatisfiesUniversals`: conservativity together with Barwise and Cooper's monotonicity
+  constraint, which is right continuity in the scope (`satisfiesUniversals_iff`).
 * `square`: the square of opposition of `every`, `no`, `some` and `not every` at a restrictor.
 
 ## Main results
@@ -39,7 +40,6 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 * [peters-westerstahl-2006]
 * [russell-1905]
 * [van-benthem-1984]
-* [van-de-pol-etal-2023]
 -/
 
 @[expose] public section
@@ -97,10 +97,13 @@ instance : Decidable (no R S) := inferInstanceAs (Decidable (∀ _, _))
 
 end Decidable
 
-/-- A quantifier satisfies Barwise and Cooper's semantic universals when it is conservative and
-either monotone or antitone in its scope. -/
+/-- A determiner satisfies Barwise and Cooper's determiner universal and monotonicity constraint
+(U3 and U6 of [barwise-cooper-1981]) when it is conservative, so that each `q R` lives on `R`,
+and each of its noun phrases `q R` is a monotone quantifier or a conjunction of monotone
+quantifiers. A monotone `q R` is its own conjunction with the trivial quantifier `⊤`. -/
 def SatisfiesUniversals {α : Type*} (q : GQ α) : Prop :=
-  Conservative q ∧ (ScopeMonotone q ∨ ScopeAntitone q)
+  Conservative q ∧ ∀ R, ∃ Q₁ Q₂ : NP α, (Monotone Q₁ ∨ Antitone Q₁) ∧
+    (Monotone Q₂ ∨ Antitone Q₂) ∧ q R = Q₁ ⊓ Q₂
 
 variable {α : Type*}
 
@@ -385,16 +388,31 @@ theorem smooth_every : Smooth (every : GQ α) :=
 theorem coSmooth_no : CoSmooth (no : GQ α) :=
   ⟨downNW_no, fun _ _ _ _ hInt hQ x hR' hS ↦ hQ x (hInt x hR' hS) hS⟩
 
-/-! ### Satisfies universals: B&C's CONS + MON ([barwise-cooper-1981]; used as a
-learnability/complexity target by [van-de-pol-etal-2023]) -/
+/-! ### Barwise and Cooper's universals -/
+
+/-- Barwise and Cooper's monotonicity constraint is right continuity: a quantifier is a
+conjunction of monotone quantifiers exactly when it holds at every scope between two at which it
+holds, Thijsse's observation reported by [van-benthem-1984]. -/
+theorem satisfiesUniversals_iff {q : GQ α} :
+    SatisfiesUniversals q ↔ Conservative q ∧ RightContinuous q := by
+  refine and_congr_right fun _ ↦ ⟨fun h A B B₁ B₂ h₁ h₂ hq₁ hq₂ ↦ ?_, fun h R ↦ ?_⟩
+  · obtain ⟨Q₁, Q₂, hm₁, hm₂, he⟩ := h A
+    simp only [he, Pi.inf_apply, inf_Prop_eq] at hq₁ hq₂ ⊢
+    exact ⟨hm₁.elim (fun hm ↦ hm h₁ hq₁.1) fun hm ↦ hm h₂ hq₂.1,
+      hm₂.elim (fun hm ↦ hm h₁ hq₁.2) fun hm ↦ hm h₂ hq₂.2⟩
+  · refine ⟨fun B ↦ ∃ B' ≤ B, q R B', fun B ↦ ∃ B', B ≤ B' ∧ q R B',
+      .inl fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hB'.trans hBC, hq⟩,
+      .inr fun _ _ hBC ⟨B', hB', hq⟩ ↦ ⟨B', hBC.trans hB', hq⟩, funext fun B ↦ propext ?_⟩
+    exact ⟨fun hq ↦ ⟨⟨B, le_rfl, hq⟩, B, le_rfl, hq⟩,
+      fun ⟨⟨B₁, h₁, hq₁⟩, B₂, h₂, hq₂⟩ ↦ h R B B₁ B₂ h₁ h₂ hq₁ hq₂⟩
 
 theorem satisfiesUniversals_some : SatisfiesUniversals (GQ.some : GQ α) :=
-  ⟨conservative_some, Or.inl scopeMonotone_some⟩
+  satisfiesUniversals_iff.2 ⟨conservative_some, scopeMonotone_some.rightContinuous⟩
 
 theorem satisfiesUniversals_every : SatisfiesUniversals (every : GQ α) :=
-  ⟨conservative_every, Or.inl scopeMonotone_every⟩
+  satisfiesUniversals_iff.2 ⟨conservative_every, scopeMonotone_every.rightContinuous⟩
 
 theorem satisfiesUniversals_no : SatisfiesUniversals (no : GQ α) :=
-  ⟨conservative_no, Or.inr scopeAntitone_no⟩
+  satisfiesUniversals_iff.2 ⟨conservative_no, scopeAntitone_no.rightContinuous⟩
 
 end Quantifier.GQ
