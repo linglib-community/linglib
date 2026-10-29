@@ -11,7 +11,6 @@ public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.Prosody.Phrase
 public import Linglib.Phonology.Prosody.Match
 public import Linglib.Semantics.Exhaustification.Excluder
-public import Linglib.Semantics.Focus.Control
 public import Linglib.Syntax.Reflex
 public import Linglib.Fragments.Tangale.TAM
 public import Linglib.Fragments.Tangale.Focus
@@ -63,7 +62,7 @@ example numbers and sections were checked against the journal version of the pap
 
 namespace HartmannZimmermann2004
 
-open Exhaustification Focus Reflex
+open Exhaustification Reflex
 open OptimalityTheory (Constraint)
 open OptimalityTheory (Tableau)
 

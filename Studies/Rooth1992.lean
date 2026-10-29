@@ -170,10 +170,10 @@ variable {E W : Type} (farmer american canadian : E → Set W)
 /-- The intersective N' *P farmer*. -/
 def nbar (P : E → Set W) : E → Set W := fun x ↦ P x ∩ farmer x
 
--- (15)
+-- (15), (41b)
 theorem farmer_contrast (h : nbar farmer canadian ≠ nbar farmer american) :
-    SquiggleInd (nbar farmer american) ((nbar farmer <$> focused american).alternatives)
-      (nbar farmer canadian) := by
+    (Antecedent.phrase (nbar farmer canadian)).Resolves (nbar farmer american)
+      (nbar farmer <$> focused american).alternatives := by
   rw [alternatives_map_focused]; exact ⟨⟨canadian, rfl⟩, h⟩
 
 end Contrast

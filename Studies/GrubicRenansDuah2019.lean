@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Data.Examples.GrubicRenansDuah2019
 public import Mathlib.Data.Set.Lattice.Bounded

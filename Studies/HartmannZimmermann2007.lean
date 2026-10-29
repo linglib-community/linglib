@@ -98,30 +98,38 @@ instance (u : FocusUtterance) : Decidable u.IsHausaLicensed :=
 
 /-! ## Controlling contexts of the §3.2 matrix
 
-Every cell's mini-scenario has one shape: a two-point answer domain —
-the mentioned answer `ans` vs the contextual alternative `alt` — whose
-content (fish vs other dishes, fifteen vs twenty Naira, behind vs in
-front, …) lives in the cell's data row. The antecedent is the canonical
-`Use.model` of the row's context shape; the answer is composed by the
-engine (`pairAnswer`); `ctx_resolves` is the uniform full-resolution
-fact. Ex-situ variants are interpreted at the base structure (fronting
-is A'-movement for the paper, and alternatives do not distribute
+Every cell's mini-scenario has one shape: a two-point answer domain, the mentioned answer `ans`
+against the contextual alternative `alt`, whose content (fish against other dishes, fifteen
+against twenty Naira, behind against in front, …) lives in the cell's data row. The answer is the
+singleton complete-answer predicate mapped over the F-marked `ans`, and each use's context, the
+four of §1.2, resolves the squiggle on it (`ctx_resolves`). Ex-situ variants are interpreted at
+the base structure (fronting is A'-movement for the paper, and alternatives do not distribute
 through abstraction, so `WithAlternatives` has no `Distributive` instance). -/
 
 /-- The two-point answer domain of a cell's mini-scenario. -/
 inductive Alt | ans | alt
 
-/-- The canonical antecedent of a use over the two-point scenario. -/
-def ctx (u : Use) : Antecedent Alt :=
-  Use.model {Alt.ans} {Alt.alt} u
+/-- The context controlling each use over the two-point scenario: the question or the offer of
+both answers, the assertion of the alternative to be corrected, or a phrase contrasting with it.
+-/
+def ctx : Use → Antecedent (Set Alt)
+  | .newInfo => .question {{.ans}, {.alt}}
+  | .corrective => .assertion {.alt}
+  | .selective => .offer {{.ans}, {.alt}}
+  | .contrastive => .phrase {.alt}
 
-/-- The composed answer of the two-point scenario. -/
+/-- The focused answer of the two-point scenario. -/
 def answer : WithAlternatives (Set Alt) :=
-  pairAnswer Alt.ans Alt.alt
+  (fun x ↦ ({x} : Set Alt)) <$> WithAlternatives.focused Alt.ans
 
-theorem ctx_resolves (u : Use) :
-    (ctx u).Resolves answer.ordinary answer.alternatives :=
-  use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
+theorem ctx_resolves (u : Use) : (ctx u).Resolves answer.ordinary answer.alternatives := by
+  have hmem (x : Alt) : ({x} : Set Alt) ∈ answer.alternatives :=
+    WithAlternatives.mem_alternatives_map.2 ⟨x, Set.mem_univ x, rfl⟩
+  have hne : ({Alt.alt} : Set Alt) ≠ {Alt.ans} := by simp
+  cases u with
+  | newInfo | selective =>
+    exact ⟨Set.pair_subset (hmem _) (hmem _), Or.inl rfl, {Alt.alt}, Or.inr rfl, hne⟩
+  | corrective | contrastive => exact ⟨hmem _, hne⟩
 
 /-! ## Exhaustive focus (§3.2, (32))
 
@@ -137,21 +145,8 @@ def exhAnswer (u : Use) : Set Alt :=
 
 -- §3.2
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
-  have key : excludes ({{Alt.ans}, {Alt.alt}} : Set (Set Alt))
-      {Alt.ans} = {Alt.ans} := by
-    ext w
-    constructor
-    · intro hw
-      have halt := hw {Alt.alt} (Or.inr rfl)
-      cases w with
-      | ans => rfl
-      | alt => exact absurd (halt rfl rfl) (by simp)
-    · rintro rfl
-      intro q hq hwq
-      rcases hq with rfl | rfl
-      · exact subset_rfl
-      · exact absurd hwq (by simp)
-  cases u <;> exact key
+  ext w
+  cases u <;> cases w <;> simp [exhAnswer, excludes, ctx, answer]
 
 /-! ## The 8-cell empirical matrix (§3.2)
 
