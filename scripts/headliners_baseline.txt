@@ -364,7 +364,6 @@ KrizChemla2015
 KrizSpector2021
 KursatDegen2021
 Labov2012
-Ladusaw1979
 Lambert2026
 Landau2013
 Landau2024a
@@ -562,7 +561,6 @@ Wurmbrand2014
 Xiang2022
 Yagi2025
 Yalcin2007
-Yang2016
 YingEtAl2025
 YuAusensiSmith2023
 ZaslavskyEtAl2019
