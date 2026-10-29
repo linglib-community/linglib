@@ -14,8 +14,8 @@ paper's judgments [single out that position](##rows_predicted_iff): the silent r
 V, and the restitutive reading of *again*, which survives, puts it below Voice. A root naming a
 manner adjoins to v itself, and antipassivization coerces every root into that position, so such
 a root [strands with the light verb](##spares_rootSite_position_iff) and cannot be elided.
-Mismatches in v, the causative alternation and causativization, are tolerated, and an ellipsis
-tolerating them [tolerates voice mismatches too](##tolerates_transitivity). Persian ellipsis
+Light-verb mismatches, the causative alternation and causativization, are tolerated, and an
+ellipsis tolerating them [tolerates voice mismatches too](##spares_v). Persian ellipsis
 passes the same *again* test, so its ban on light-verb mismatches [needs Goldberg's Verbal
 Identity Requirement](##persian_verbalIdentity) rather than a larger site.
 
@@ -24,9 +24,11 @@ Identity Requirement](##persian_verbalIdentity) rather than a larger site.
 * A root naming an end state merges with the direct object inside the complement of v, at the
   site of V; a root naming a manner adjoins to v and shares its site. The rows record the root's
   content in Beavers and Koontz-Garboden's kinds of entailment, `ArgumentStructure.Root.Kinds`.
-* A row records the ellipsis clause, what it leaves silent, and how it differs from its
-  antecedent. Causativization (78)–(80) is recorded as a transitivity mismatch: its causative head
-  sits on top of vP or VoiceP, outside any site that spares v (`Tolerates.of_head_mem_below`).
+* A row records the ellipsis clause, what it leaves silent, and the light verbs of the antecedent
+  and the elided clause as their glosses print them; a difference between the two is a mismatch at
+  v, which the ellipsis tolerates when it spares v (`Minimalist.Ellipsis.identical_update_iff`). The
+  causative suffix of (78)–(80) heads a projection on top of vP or VoiceP, so it is located with
+  the light verb at v, the lowest head it could occupy.
 * The antecedent's construction is not recorded, so (85) and (86) have one configuration, as the
   paper's account of them requires: the root of an antipassive is too high to be deleted, whatever
   the antecedent.
@@ -129,6 +131,21 @@ instance : DecidablePred ObjectStatus.Pronounced := fun o ↦ by
 instance : DecidablePred ObjectStatus.Escapes := fun o ↦ by
   cases o <;> unfold ObjectStatus.Escapes <;> infer_instance
 
+/-- The light verbs of the paper's examples (4): *-arq'* ~ *-irq'* 'make', *-Ø* ~ *-irh* 'become',
+*-uq* 'move' and *-ik'* 'say'. -/
+inductive LightVerbStem
+  | make
+  | become
+  | move
+  | say
+  deriving DecidableEq, Repr
+
+/-- A light verb, with or without the causative suffix *-iq* (§5.2). -/
+structure LightVerb where
+  stem : LightVerbStem
+  causative : Bool
+  deriving DecidableEq, Repr
+
 /-- An ellipsis clause of the paper. -/
 structure Clause where
   /-- The root of the non-verbal element. -/
@@ -141,8 +158,14 @@ structure Clause where
   object : ObjectStatus
   /-- The reading of the pronounced *again*, if any (52). -/
   again : Option AgainReading
-  /-- The dimension in which the clause differs from its antecedent, if any. -/
-  mismatch : Option Mismatch
+  /-- The light verbs of the antecedent and of the elided clause. -/
+  lightVerbs : LightVerb × LightVerb
+
+/-- The sites the elided clause must spare: v when its light verb differs from the antecedent's,
+and the adjunction site of a pronounced *again*. -/
+def Clause.sites (c : Clause) : List ClauseSpine.Site :=
+  (if c.lightVerbs.1 = c.lightVerbs.2 then [] else [.head .v]) ++
+    c.again.toList.map AgainReading.site
 
 /-- The clause is licit under the ellipsis `e`. A silent root lies in the site, and a pronounced
 object has left it (§3.6); a pronounced *again* lies outside the site (§4.1); and a mismatch with
@@ -152,7 +175,7 @@ def Licit (e : Ellipsis clausalSpine) (c : Clause) : Prop :=
   (c.rootSilent = true →
       e.Deletes (rootSite (position c.root c.antipassive)) ∧
         (c.object.Pronounced → c.object.Escapes)) ∧
-    (∀ r ∈ c.again, e.Spares r.site) ∧ ∀ m ∈ c.mismatch, e.Tolerates m
+    ∀ x ∈ c.sites, e.Spares x
 
 instance (e : Ellipsis clausalSpine) : DecidablePred (Licit e) := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
@@ -169,10 +192,14 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let o ← ex.parse? "object"
     [("absent", ObjectStatus.absent), ("silent", .silent), ("inSitu", .inSitu),
       ("focused", .focused), ("moved", .moved), ("raised", .raised)]
-  let a := ex.parse? "again"
-    [("repetitive", AgainReading.repetitive), ("restitutive", .restitutive)]
-  let m := ex.parse? "mismatch" [("transitivity", Mismatch.transitivity)]
-  pure ⟨⟨{ kinds := k }, ap, s, o, a, m⟩, ex.judgment⟩
+  let a := ex.readings.findSome? fun (n, _) ↦
+    [("repetitive", AgainReading.repetitive), ("restitutive", .restitutive)].lookup n
+  let lv : List (String × LightVerb) :=
+    [("make", ⟨.make, false⟩), ("become", ⟨.become, false⟩), ("move", ⟨.move, false⟩),
+      ("say", ⟨.say, false⟩), ("make-CAUS", ⟨.make, true⟩), ("become-CAUS", ⟨.become, true⟩)]
+  let la ← ex.parse? "antecedentLV" lv
+  let lt ← ex.parse? "targetLV" lv
+  pure ⟨⟨{ kinds := k }, ap, s, o, a, (la, lt)⟩, ex.judgment⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
@@ -187,50 +214,48 @@ spine under which exactly the acceptable clauses are licit. The silent root of (
 V, and restitutive *again* in (52b) puts it below Voice (§4.1). -/
 theorem rows_predicted_iff (e : Ellipsis clausalSpine) :
     (∀ r ∈ rows, (r.judgment = .acceptable ↔ Licit e r.clause)) ↔ e = vStrandingVPE := by
-  refine ⟨fun h ↦ (eq_vStrandingVPE_iff e).2 ⟨?_, ?_⟩, fun he ↦ he ▸ rows_predicted⟩
+  refine ⟨fun h ↦ eq_vStrandingVPE_iff.2 ⟨?_, ?_⟩, fun he ↦ he ▸ rows_predicted⟩
   · obtain ⟨r, hr, hs, hp, hj⟩ : ∃ r ∈ rows, r.clause.rootSilent = true ∧
         position r.clause.root r.clause.antipassive = .complement ∧ r.judgment = .acceptable := by
       decide
     have := (((h r hr).1 hj).1 hs).1
     rwa [hp] at this
   · obtain ⟨r, hr, ha, hj⟩ : ∃ r ∈ rows,
-        r.clause.again = some .restitutive ∧ r.judgment = .acceptable := by
+        AgainReading.restitutive.site ∈ r.clause.sites ∧ r.judgment = .acceptable := by
       decide
-    exact ((h r hr).1 hj).2.1 _ ha
+    exact ((h r hr).1 hj).2 _ ha
 
 /-! ### Mismatches -/
 
-/-- The predictions of §5.4: an ellipsis tolerating transitivity mismatches tolerates voice
-mismatches, Voice lying above v, and by Sailor's generalization so does every ellipsis whose [E]
-sits lower. -/
-theorem tolerates_transitivity {e e' : Ellipsis clausalSpine} (h : e.Tolerates .transitivity) :
-    e.Tolerates .voice ∧
-      (e'.ePosition ∈ clausalSpine.below e.ePosition → e'.Tolerates .transitivity) :=
-  ⟨h.of_head_mem_below (by decide), h.of_mem_below⟩
+/-- The predictions of §5.4: an ellipsis sparing v, and so tolerating mismatches there, spares
+Voice, which lies above it, and by Sailor's generalization so does every lower ellipsis. -/
+theorem spares_v {e e' : Ellipsis clausalSpine} (h : e.Spares (.head .v)) :
+    e.Spares (.head .Voice) ∧ (e' ≤ e → e'.Spares (.head .v)) :=
+  ⟨fun hV ↦ h (hV.of_rank_le (by decide)), h.of_le⟩
 
 /-- Goldberg's Verbal Identity Requirement (92) on a verb-stranding ellipsis: the stranded verb,
-the head bearing [E], must match its antecedent too, so a mismatch is tolerated only when its head
-is outside the site and is not the stranded head. -/
-def ToleratesUnderVerbalIdentity (e : Ellipsis clausalSpine) (m : Mismatch) : Prop :=
-  e.Tolerates m ∧ m.head ≠ e.ePosition
+the head bearing [E], must match its antecedent too, so a mismatch at a site is tolerated only
+when the site is outside the deletion domain and is not the stranded head. -/
+def ToleratesUnderVerbalIdentity (e : Ellipsis clausalSpine) (x : ClauseSpine.Site) : Prop :=
+  e.Spares x ∧ x ≠ .head e.ePosition
 
-instance (e : Ellipsis clausalSpine) (m : Mismatch) :
-    Decidable (ToleratesUnderVerbalIdentity e m) :=
+instance (e : Ellipsis clausalSpine) (x : ClauseSpine.Site) :
+    Decidable (ToleratesUnderVerbalIdentity e x) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 -- (75), (76), (88)
 theorem rows_violate_verbalIdentity : ∃ r ∈ rows, r.judgment = .acceptable ∧
-    ∃ m ∈ r.clause.mismatch, ¬ ToleratesUnderVerbalIdentity vStrandingVPE m := by
+    ∃ x ∈ r.clause.sites, ¬ ToleratesUnderVerbalIdentity vStrandingVPE x := by
   decide
 
 /-- Persian (§6), after Toosarvandani. An ellipsis that silences the object with its root (89) and
-spares restitutive *again* (90) is of Muira Dargwa's size and tolerates the light-verb mismatch
-that (91) rejects; the Verbal Identity Requirement, which Toosarvandani rejects for Persian
-(p. 38), bans it. -/
+spares restitutive *again* (90) is of Muira Dargwa's size and spares the light verb whose mismatch
+(91) rejects; the Verbal Identity Requirement, which Toosarvandani rejects for Persian (p. 38),
+bans it. -/
 theorem persian_verbalIdentity {e : Ellipsis clausalSpine}
     (h89 : e.Deletes (rootSite .complement)) (h90 : e.Spares AgainReading.restitutive.site) :
-    e.Tolerates .transitivity ∧ ¬ ToleratesUnderVerbalIdentity e .transitivity := by
-  obtain rfl := (eq_vStrandingVPE_iff e).2 ⟨h89, h90⟩
+    e.Spares (.head .v) ∧ ¬ ToleratesUnderVerbalIdentity e (.head .v) := by
+  obtain rfl := eq_vStrandingVPE_iff.2 ⟨h89, h90⟩
   decide
 
 -- p. 39 against p. 24 and (50)

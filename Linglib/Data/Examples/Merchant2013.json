@@ -1,0 +1,1710 @@
+[
+  {
+    "id": "merchant2013_ex1a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1a)"},
+    "language": "stan1293",
+    "primaryText": "The janitor must remove the trash whenever it is apparent that it should be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: removed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1b)"},
+    "language": "stan1293",
+    "primaryText": "It engaged them in a way that I did not think they could be that early in the morning.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: engaged. Attested (NPR, 2012).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1c",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1c)"},
+    "language": "stan1293",
+    "primaryText": "No-one can hypnotize me. Usually the people who are certain they can’t be are the easiest to do it to.",
+    "discourseSegments": [
+      "No-one can hypnotize me.",
+      "Usually the people who are certain they can’t be are the easiest to do it to."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: hypnotized. Attested (Baldacci 2007).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1d",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1d)"},
+    "language": "stan1293",
+    "primaryText": "There was really no one at the meeting who could answer the question the way it should be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: answered. Printed with a leading ellipsis. Attested (2007).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1e",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1e)"},
+    "language": "stan1293",
+    "primaryText": "Proposing to reduce their numbers to save money would be endangering them even more than they are.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Prison guards deserve their good salaries.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: endangered. A 2004 letter to the editor, cited from Sag 2006.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1f",
+    "source": {"bibkey": "kehler-2002", "paperLabel": "p. 53"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(1f)"},
+    "language": "stan1293",
+    "primaryText": "Actually, I have implemented it with a manager, but it doesn’t have to be.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "it = a computer system",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: implemented with a manager.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1g",
+    "source": {"bibkey": "kehler-2002", "paperLabel": "p. 53"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(1g)"},
+    "language": "stan1293",
+    "primaryText": "Steve asked me to send the set by courier through my company insured, and it was.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: sent by courier through my company insured.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1h",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1h)"},
+    "language": "stan1293",
+    "primaryText": "Nevertheless, I shouldn’t have brought you into this. It seems I already am, thought the piano tuner, but he was silent.",
+    "discourseSegments": [
+      "Nevertheless, I shouldn’t have brought you into this.",
+      "It seems I already am, thought the piano tuner, but he was silent."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: brought into this. Attested (Mason 2002).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1i",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1i)"},
+    "language": "stan1293",
+    "primaryText": "I was disappointed that the author did not include as a source Polish-American Jesuit Walter Ciszek, who spent 23 years in Stalin’s prisons and camps, although the memoirs of American Alexander Dolgun are.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: included. Attested (2009).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex1j",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(1j)"},
+    "language": "stan1293",
+    "primaryText": "We also use the xpdf package in our examples, so you may want to install that now if it isn’t already.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Elided: installed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2a)"},
+    "language": "stan1293",
+    "primaryText": "The system can be used by anyone who wants to.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: use it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2b)"},
+    "language": "stan1293",
+    "primaryText": "Has this ever been tested? There’s never been a reason to.",
+    "discourseSegments": [
+      "Has this ever been tested?",
+      "There’s never been a reason to."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: test it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2c",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2c)"},
+    "language": "stan1293",
+    "primaryText": "Curacao lies outside the hurricane belt, but can still occasionally be smitten by hurricanes, as for example Omar did in 2008.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: smite it. Attested (Wikipedia, 2010).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2d",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2d)"},
+    "language": "stan1293",
+    "primaryText": "‘Slippery slope’ arguments can be framed by consequentialists (though I wouldn’t in this case).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: frame a slippery slope argument. Attested (Dawkins 2006).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2e",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2e)"},
+    "language": "stan1293",
+    "primaryText": "This obviously has never been faced or solved properly before and somehow we have to.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: solve it properly. Attested (1987).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2f",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2f)"},
+    "language": "stan1293",
+    "primaryText": "The members are, technically speaking, separate lexemes since partly idiosyncratic morphological changes mark the verbal forms, and must therefore be listed separately in any truly informative dictionary, as indeed Jacobson’s dictionary does.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: list them. Attested (Woodbury 1991).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2g",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2g)"},
+    "language": "stan1293",
+    "primaryText": "This guy’s tape obviously should be scrutinized more than you did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: scrutinize it. Attested (2007).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2h",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2h)"},
+    "language": "stan1293",
+    "primaryText": "Bad food, eaten when you could.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The Watch was",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: eat it. Attested (Pratchett 1996).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2i",
+    "source": {"bibkey": "hardt-1993", "paperLabel": "p. 37"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(2i)"},
+    "language": "stan1293",
+    "primaryText": "This information could have been released by Gorbachev, but he chose not to.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: release it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2j",
+    "source": {"bibkey": "kehler-2002", "paperLabel": "p. 53"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(2j)"},
+    "language": "stan1293",
+    "primaryText": "This problem was to have been looked into, but obviously nobody did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: look into this problem.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex2k",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(2k)"},
+    "language": "stan1293",
+    "primaryText": "Please read the message, phrased better than I could, below, as we look for respondents for a workshop with Prof Michael Fishbane.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Elided: phrase it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex3a",
+    "source": {"bibkey": "sag-1976", "paperLabel": "p. 17"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(3a)"},
+    "language": "stan1293",
+    "primaryText": "Paul denied the charge, but the charge wasn’t by his friends.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "pseudogapping"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Sag reports it as VP-deletion; Merchant takes Sag's examples to be pseudogapping (p. 81).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex3b",
+    "source": {"bibkey": "sag-1976", "paperLabel": "p. 17"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(3b)"},
+    "language": "stan1293",
+    "primaryText": "John had observed many of the enemy’s soldiers, but hadn’t been by them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "pseudogapping"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Sag reports it as VP-deletion; Merchant takes Sag's examples to be pseudogapping (p. 81).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex5a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(5a)"},
+    "language": "stan1293",
+    "primaryText": "Joe was murdered, but we don’t know who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex5b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(5b)"},
+    "language": "stan1293",
+    "primaryText": "Someone murdered Joe, but we don’t know who by.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Repeated as (19).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex24a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "Someone murdered Joe, but we don’t know by whom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex6a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(6a)"},
+    "language": "stan1295",
+    "primaryText": "Erika hat jemanden ermordet, aber sie wissen nicht, wer.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Erika", "Erika"], ["hat", "has"], ["jemanden", "someone"], ["ermordet,", "murdered"],
+      ["aber", "but"], ["sie", "they"], ["wissen", "know"], ["nicht,", "not"], ["wer.", "who.NOM"]
+    ],
+    "translation": "Erika murdered someone, but they don’t know who.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Translation literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex6b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(6b)"},
+    "language": "stan1295",
+    "primaryText": "Peter wurde von jemandem ermordet, aber sie wissen nicht, wer.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Peter", "Peter"], ["wurde", "was"], ["von", "by"], ["jemandem", "someone"],
+      ["ermordet,", "murdered"], ["aber", "but"], ["sie", "they"], ["wissen", "know"],
+      ["nicht,", "not"], ["wer.", "who.NOM"]
+    ],
+    "translation": "Peter was murdered by someone, but they don’t know who.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Translation literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex7a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(7a)"},
+    "language": "stan1295",
+    "primaryText": "Jemand hat Peter ermordet, aber sie wissen nicht, von wem.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jemand", "someone"], ["hat", "has"], ["Peter", "Peter"], ["ermordet,", "murdered"],
+      ["aber", "but"], ["sie", "they"], ["wissen", "know"], ["nicht,", "not"], ["von", "by"],
+      ["wem.", "who.DAT"]
+    ],
+    "translation": "Someone murdered Peter, but they don’t know by whom.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Translation literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex7b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(7b)"},
+    "language": "stan1295",
+    "primaryText": "Jemand wurde von Erika ermordet, aber sie wissen nicht, wen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jemand", "someone"], ["wurde", "was"], ["von", "by"], ["Erika", "Erika"],
+      ["ermordet,", "murdered"], ["aber", "but"], ["sie", "they"], ["wissen", "know"],
+      ["nicht,", "not"], ["wen.", "who.ACC"]
+    ],
+    "translation": "Someone was murdered by Erika but they don’t know whom.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Translation literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex25a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(25a)"},
+    "language": "mode1248",
+    "primaryText": "O Jannis skotose kapjon, ala ðen kserume pjos.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O", "the"], ["Jannis", "Giannis.NOM"], ["skotose", "killed.ACT"],
+      ["kapjon,", "someone.ACC"], ["ala", "but"], ["ðen", "not"], ["kserume", "we.know"],
+      ["pjos.", "who.NOM"]
+    ],
+    "translation": "Giannis killed someone, but we don’t know who.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "Translation literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex25b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(25b)"},
+    "language": "mode1248",
+    "primaryText": "O Jannis skotoθike, ala ðen kserume pjos.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O", "the"], ["Jannis", "Giannis.NOM"], ["skotoθike,", "killed.PASS"], ["ala", "but"],
+      ["ðen", "not"], ["kserume", "we.know"], ["pjos.", "who.NOM"]
+    ],
+    "translation": "Giannis was killed, but we don’t know who.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "Translation literal.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex8",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(8)"},
+    "language": "stan1293",
+    "primaryText": "Who is sending you to Iraq? By Bush.",
+    "discourseSegments": [
+      "Who is sending you to Iraq?",
+      "By Bush."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "fragmentAnswer"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex9a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(9a)"},
+    "language": "stan1295",
+    "primaryText": "Wer hat den Jungen untersucht? Von einer Psychologin.",
+    "discourseSegments": [
+      "Wer hat den Jungen untersucht?",
+      "Von einer Psychologin."
+    ],
+    "glossedTokens": [
+      ["Wer", "who.NOM"], ["hat", "has"], ["den", "the"], ["Jungen", "boy"],
+      ["untersucht?", "examined"], ["Von", "by"], ["einer", "a"],
+      ["Psychologin.", "psychologist.DAT"]
+    ],
+    "translation": "Who examined the boy? (He was examined) by a psychologist.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "fragmentAnswer"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex9b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(9b)"},
+    "language": "stan1295",
+    "primaryText": "Von wem wurde der Junge untersucht? Eine Psychologin.",
+    "discourseSegments": [
+      "Von wem wurde der Junge untersucht?",
+      "Eine Psychologin."
+    ],
+    "glossedTokens": [
+      ["Von", "by"], ["wem", "who.DAT"], ["wurde", "was"], ["der", "the"], ["Junge", "boy"],
+      ["untersucht?", "examined"], ["Eine", "a"], ["Psychologin.", "psychologist.NOM"]
+    ],
+    "translation": "Who was the boy examined by? A psychologist (examined him).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "fragmentAnswer"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex10a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "Some bring roses and lilies by others.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "gapping"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex10b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "Lilies are brought by some and others roses.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "gapping"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex11a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "MAX brought the roses, not by AMY!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "stripping"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex11b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(11b)"},
+    "language": "stan1295",
+    "primaryText": "Der Junge wurde von einer Psychologin untersucht, und ein Kinderarzt auch.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["Junge", "boy"], ["wurde", "was"], ["von", "by"], ["einer", "a"],
+      ["Psychologin", "psychologist.DAT"], ["untersucht,", "examined"], ["und", "and"],
+      ["ein", "a"], ["Kinderarzt", "pediatrician.NOM"], ["auch.", "too"]
+    ],
+    "translation": "The boy was examined by a psychologist, and a pediatrician examined him, too.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "stripping"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "comment": "On the intended reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex12a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(12a)"},
+    "language": "stan1293",
+    "primaryText": "Joe was murdered, but we don’t know who murdered Joe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex12b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(12b)"},
+    "language": "stan1293",
+    "primaryText": "Someone murdered Joe, but we don’t know who Joe was murdered by.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex13a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(13a)"},
+    "language": "stan1295",
+    "primaryText": "Erika hat jemanden ermordet, aber sie wissen nicht, wer von ihr ermordet wurde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Erika", "Erika"], ["hat", "has"], ["jemanden", "someone"], ["ermordet,", "murdered"],
+      ["aber", "but"], ["sie", "they"], ["wissen", "know"], ["nicht,", "not"], ["wer", "who.NOM"],
+      ["von", "by"], ["ihr", "her"], ["ermordet", "murdered"], ["wurde.", "was"]
+    ],
+    "translation": "Erika murdered someone, but they don’t know who was murdered by her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex13b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(13b)"},
+    "language": "stan1295",
+    "primaryText": "Peter wurde von jemandem ermordet, aber sie wissen nicht, wer ihn ermordet hat.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Peter", "Peter"], ["wurde", "was"], ["von", "by"], ["jemandem", "someone"],
+      ["ermordet,", "murdered"], ["aber", "but"], ["sie", "they"], ["wissen", "know"],
+      ["nicht,", "not"], ["wer", "who.NOM"], ["ihn", "him"], ["ermordet", "murdered"],
+      ["hat.", "has"]
+    ],
+    "translation": "Peter was murdered by someone, but they don’t know who murdered him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex13c",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(13c)"},
+    "language": "stan1295",
+    "primaryText": "Jemand hat Peter ermordet, aber sie wissen nicht, von wem er ermordet wurde.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jemand", "someone"], ["hat", "has"], ["Peter", "Peter"], ["ermordet,", "murdered"],
+      ["aber", "but"], ["sie", "they"], ["wissen", "know"], ["nicht,", "not"], ["von", "by"],
+      ["wem", "who.DAT"], ["er", "he"], ["ermordet", "murdered"], ["wurde.", "was"]
+    ],
+    "translation": "Someone murdered Peter, but they don’t know who he was murdered by.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex13d",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(13d)"},
+    "language": "stan1295",
+    "primaryText": "Jemand wurde von Erika ermordet, aber sie wissen nicht, wen sie ermordet hat.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jemand", "someone"], ["wurde", "was"], ["von", "by"], ["Erika", "Erika"],
+      ["ermordet,", "murdered"], ["aber", "but"], ["sie", "they"], ["wissen", "know"],
+      ["nicht,", "not"], ["wen", "who.ACC"], ["sie", "she"], ["ermordet", "murdered"],
+      ["hat.", "has"]
+    ],
+    "translation": "Someone was murdered by Erika, but they don’t know who she murdered.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex14a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(14a)"},
+    "language": "stan1293",
+    "primaryText": "Who is sending you to Iraq? I’m being sent by Bush.",
+    "discourseSegments": [
+      "Who is sending you to Iraq?",
+      "I’m being sent by Bush."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex14b_i",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(14b.i)"},
+    "language": "stan1295",
+    "primaryText": "Wer hat den Jungen untersucht? Er wurde von einer Psychologin untersucht.",
+    "discourseSegments": [
+      "Wer hat den Jungen untersucht?",
+      "Er wurde von einer Psychologin untersucht."
+    ],
+    "glossedTokens": [
+      ["Wer", "who.NOM"], ["hat", "has"], ["den", "the"], ["Jungen", "boy"],
+      ["untersucht?", "examined"], ["Er", "he"], ["wurde", "was"], ["von", "by"], ["einer", "a"],
+      ["Psychologin", "psychologist.DAT"], ["untersucht.", "examined"]
+    ],
+    "translation": "Who examined the boy? He was examined by a psychologist.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex14b_ii",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(14b.ii)"},
+    "language": "stan1295",
+    "primaryText": "Von wem wurde der Junge untersucht? Eine Psychologin hat ihn untersucht.",
+    "discourseSegments": [
+      "Von wem wurde der Junge untersucht?",
+      "Eine Psychologin hat ihn untersucht."
+    ],
+    "glossedTokens": [
+      ["Von", "by"], ["wem", "who.DAT"], ["wurde", "was"], ["der", "the"], ["Junge", "boy"],
+      ["untersucht?", "examined"], ["Eine", "a"], ["Psychologin", "psychologist.NOM"],
+      ["hat", "has"], ["ihn", "him"], ["untersucht.", "examined"]
+    ],
+    "translation": "Who was the boy examined by? A psychologist examined him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex15a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(15a)"},
+    "language": "stan1293",
+    "primaryText": "Some bring roses and lilies are brought by others.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex15b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(15b)"},
+    "language": "stan1293",
+    "primaryText": "Lilies are brought by some but others bring roses.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex16a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(16a)"},
+    "language": "stan1293",
+    "primaryText": "MAX brought the roses—they weren’t brought by AMY!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex16b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(16b)"},
+    "language": "stan1295",
+    "primaryText": "Der Junge wurde von einer Psychologin untersucht, und ein Kinderarzt hat ihn auch untersucht.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["Junge", "boy"], ["wurde", "was"], ["von", "by"], ["einer", "a"],
+      ["Psychologin", "psychologist.DAT"], ["untersucht,", "examined"], ["und", "and"],
+      ["ein", "a"], ["Kinderarzt", "pediatrician.NOM"], ["hat", "has"], ["ihn", "him"],
+      ["auch", "too"], ["untersucht.", "examined"]
+    ],
+    "translation": "The boy was examined by a psychologist, and a pediatrician examined him, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex26a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(26a)"},
+    "language": "mode1248",
+    "primaryText": "O Jannis skotose kapjon, ala ðen kserume pjos skotoθike.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O", "the"], ["Jannis", "Giannis.NOM"], ["skotose", "killed.ACT"],
+      ["kapjon,", "someone.ACC"], ["ala", "but"], ["ðen", "not"], ["kserume", "we.know"],
+      ["pjos", "who.NOM"], ["skotoθike.", "killed.PASS"]
+    ],
+    "translation": "Giannis killed someone, but we don’t know who was killed.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "active"],
+      ["targetVoice", "passive"]
+    ],
+    "comment": "The voice switch is somewhat awkward (p. 95).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex26b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(26b)"},
+    "language": "mode1248",
+    "primaryText": "O Jannis skotoθike, ala ðen kserume pjos ton skotose.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["O", "the"], ["Jannis", "Giannis.NOM"], ["skotoθike,", "killed.PASS"], ["ala", "but"],
+      ["ðen", "not"], ["kserume", "we.know"], ["pjos", "who.NOM"], ["ton", "him.ACC"],
+      ["skotose.", "killed.ACT"]
+    ],
+    "translation": "Giannis was killed, but we don’t know who killed him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "none"],
+      ["antecedentVoice", "passive"],
+      ["targetVoice", "active"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex30a",
+    "source": {"bibkey": "johnson-2004", "paperLabel": "p. 7"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(30a)"},
+    "language": "stan1293",
+    "primaryText": "This can freeze. Please do.",
+    "discourseSegments": [
+      "This can freeze.",
+      "Please do."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "unaccusative"],
+      ["targetV", "transitive"]
+    ],
+    "comment": "The mark is on the second sentence.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex30b",
+    "source": {"bibkey": "sag-1976", "paperLabel": "(2.3.48)"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(30b)"},
+    "language": "stan1293",
+    "primaryText": "Bill melted the copper vase, and the magnesium vase did, too.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "transitive"],
+      ["targetV", "unaccusative"]
+    ],
+    "comment": "Sag 1976, p. 160.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex30c",
+    "source": {"bibkey": "houser-mikkelsen-toosarvandani-2007", "paperLabel": "p. 188"},
+    "reportedIn": {"bibkey": "merchant-2013", "paperLabel": "(30c)"},
+    "language": "stan1293",
+    "primaryText": "Maria still tried to break the vase even though it wouldn’t.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "transitive"],
+      ["targetV", "unaccusative"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex31a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(31a)"},
+    "language": "mode1248",
+    "primaryText": "Eklisan ena ðromo, alla ðen ksero pjos.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Eklisan", "closed.3PL"], ["ena", "a.ACC"], ["ðromo,", "road.ACC"], ["alla", "but"],
+      ["ðen", "not"], ["ksero", "know.1SG"], ["pjos.", "which.NOM"]
+    ],
+    "translation": "They closed a road, but I don’t know which one (closed).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "transitive"],
+      ["targetV", "unaccusative"]
+    ],
+    "comment": "Elided: eklise 'closed.3SG'; intended translation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex31b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(31b)"},
+    "language": "mode1248",
+    "primaryText": "Eklisan ena ðromo, alla ðen ksero pjon.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Eklisan", "closed.3PL"], ["ena", "a.ACC"], ["ðromo,", "road.ACC"], ["alla", "but"],
+      ["ðen", "not"], ["ksero", "know.1SG"], ["pjon.", "which.ACC"]
+    ],
+    "translation": "They closed a road, but I don’t know which one.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "transitive"],
+      ["targetV", "transitive"]
+    ],
+    "comment": "Elided: eklisan 'closed.3PL'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex35a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(35a)"},
+    "language": "stan1293",
+    "primaryText": "They market ethanol well in the Midwest, but regular gas doesn’t.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "transitive"],
+      ["targetV", "middle"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex35b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(35b)"},
+    "language": "stan1293",
+    "primaryText": "They sell Hyundais in Greece because Hondas don’t.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "transitive"],
+      ["targetV", "middle"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex35c",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(35c)"},
+    "language": "stan1293",
+    "primaryText": "Studios generally release action films in the summer, and big-name comedies generally do as well.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "transitive"],
+      ["targetV", "middle"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex36a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(36a)"},
+    "language": "stan1293",
+    "primaryText": "Ethanol markets well in the Midwest, though they don’t in the South.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "middle"],
+      ["targetV", "transitive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex36b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(36b)"},
+    "language": "stan1293",
+    "primaryText": "Hyundais don’t sell in Greece because dealers don’t.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "middle"],
+      ["targetV", "transitive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex36c",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(36c)"},
+    "language": "stan1293",
+    "primaryText": "This kind of movie generally releases in the summer, though a studio might in the winter if it’s Christmas-themed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"],
+      ["antecedentV", "middle"],
+      ["targetV", "transitive"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex38a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(38a)"},
+    "language": "stan1293",
+    "primaryText": "They served the guests something, but I don’t know what.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "doubleObject"],
+      ["targetV", "doubleObject"]
+    ],
+    "comment": "The double-object alternant, served₁.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex38b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(38b)"},
+    "language": "stan1293",
+    "primaryText": "They served something to the guests, but I don’t know what.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "applicativeTo"],
+      ["targetV", "applicativeTo"]
+    ],
+    "comment": "The prepositional alternant, served₂.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex38c",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(38c)"},
+    "language": "stan1293",
+    "primaryText": "They served someone the meal, but I don’t know who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "doubleObject"],
+      ["targetV", "doubleObject"]
+    ],
+    "comment": "The double-object alternant, served₁.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex39a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(39a)"},
+    "language": "stan1293",
+    "primaryText": "They served someone the meal, but I don’t know to whom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "doubleObject"],
+      ["targetV", "applicativeTo"]
+    ],
+    "comment": "The antecedent is served₁, which takes no PP; (39b) spells out the elided served₂.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex40a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(40a)"},
+    "language": "stan1293",
+    "primaryText": "Mary was flirting, but they wouldn’t say with who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "plain"],
+      ["targetV", "plain"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex40b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(40b)"},
+    "language": "stan1293",
+    "primaryText": "Mary was flirting, but they wouldn’t say who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "plain"],
+      ["targetV", "applicativeWith"]
+    ],
+    "comment": "On the reading with a stranded with inside the site.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex41a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(41a)"},
+    "language": "stan1293",
+    "primaryText": "They sent the package—find out who to!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "plain"],
+      ["targetV", "plain"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex41b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(41b)"},
+    "language": "stan1293",
+    "primaryText": "They sent the package—find out who!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "plain"],
+      ["targetV", "applicativeTo"]
+    ],
+    "comment": "On the reading with a stranded to inside the site.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex43a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(43a)"},
+    "language": "stan1293",
+    "primaryText": "They embroidered something with peace signs, but I don’t know what on.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "applicativeWith"],
+      ["targetV", "applicativeOn"]
+    ],
+    "comment": "Repeated as (47a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex43b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(43b)"},
+    "language": "stan1293",
+    "primaryText": "They embroidered something on their jackets, but I don’t know with what.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "On the image impression reading of with what, not the manner reading.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "sluicing"],
+      ["antecedentV", "applicativeOn"],
+      ["targetV", "applicativeWith"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex44",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(44)"},
+    "language": "stan1293",
+    "primaryText": "She embroiders peace signs on jackets more often than she does with swastikas.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "pseudogapping"],
+      ["antecedentV", "applicativeOn"],
+      ["targetV", "applicativeWith"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex45a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(45a)"},
+    "language": "stan1293",
+    "primaryText": "Abby flirted more often in general than Beth did Max.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "pseudogapping"],
+      ["antecedentV", "plain"],
+      ["targetV", "applicativeWith"]
+    ],
+    "comment": "Elided: flirt with.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex45b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(45b)"},
+    "language": "stan1293",
+    "primaryText": "Abby flirted with Ben more often than she did Ryan.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "pseudogapping"],
+      ["antecedentV", "applicativeWith"],
+      ["targetV", "applicativeWith"]
+    ],
+    "comment": "Elided: flirt with.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex46a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(46a)"},
+    "language": "stan1293",
+    "primaryText": "He’d give Yale money more readily than he would to charity.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "pseudogapping"],
+      ["antecedentV", "doubleObject"],
+      ["targetV", "applicativeTo"]
+    ],
+    "comment": "Elided: give money.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex46b",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(46b)"},
+    "language": "stan1293",
+    "primaryText": "He’d give money more readily to Yale than he would charity.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ellipsis", "pseudogapping"],
+      ["antecedentV", "applicativeTo"],
+      ["targetV", "applicativeTo"]
+    ],
+    "comment": "Elided: give money to.",
+    "verified": "page-image"
+  },
+  {
+    "id": "merchant2013_ex49a",
+    "source": {"bibkey": "merchant-2013", "paperLabel": "(49a)"},
+    "language": "stan1293",
+    "primaryText": "The door was closed. The wind blew the door open and no one closed it. Finally, Maribel did again.",
+    "discourseSegments": [
+      "The door was closed.",
+      "The wind blew the door open and no one closed it.",
+      "Finally, Maribel did again."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {"name": "restitutive", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["ellipsis", "vpEllipsis"]
+    ],
+    "comment": "The mark is on the last sentence; the restitutive reading of (48b) is unavailable under VP-ellipsis.",
+    "verified": "page-image"
+  }
+]

@@ -41,10 +41,10 @@ open Minimalist Minimalist.Ellipsis
 
 /-- N-stranding NP-ellipsis: [E] on n, deleting NP alone. The noun survives in its raised
 position, and prenominal modifiers, being outside n's complement, survive with it. -/
-def nStrandingNPE : Ellipsis nominalSpine := ⟨.n⟩
+def nStrandingNPE : Ellipsis nominalSpine := ⟨.n, by decide⟩
 
 /-- NumP-ellipsis: [E] on D, leaving only the determiner. -/
-def numPEllipsis : Ellipsis nominalSpine := ⟨.D⟩
+def numPEllipsis : Ellipsis nominalSpine := ⟨.D, by decide⟩
 
 /-! ### N-stranding -/
 
@@ -68,14 +68,13 @@ theorem nStranding_domain :
 elided-adjective reading. -/
 theorem no_individual_prenominal_deletion {p : Cat} (h : nominalSpine.Deletes p (.adjunct .N)) :
     nominalSpine.Deletes p (.head .N) :=
-  let ⟨_, he, hN⟩ := h
-  (nominalSpine.below_prefix he).subset hN
+  h.of_rank_le (by decide)
 
 /-- The same holds for numerals, since only [E] on D puts Num in the deletion domain, and that
 deletes the noun too ((25b)). -/
 theorem no_individual_numeral_deletion {p : Cat} (h : nominalSpine.Deletes p (.head .Num)) :
     nominalSpine.Deletes p (.head .N) :=
-  (nominalSpine.below_prefix h).subset (by decide : .N ∈ nominalSpine.below .Num)
+  h.of_rank_le (by decide)
 
 /-- Deleting the noun deletes its whole complement, so one postnominal modifier cannot be elided
 while another is pronounced ((28a), (28b)). -/
@@ -109,6 +108,6 @@ theorem german_smaller_domain_than_spanish :
 sluicing (§3). -/
 theorem gender_parallels_voice :
     nStrandingNPE.Spares (.head .n) ∧ nPEllipsis.Deletes (.head .n) ∧
-      vpEllipsis.Tolerates .voice ∧ ¬ sluicing.Tolerates .voice := by decide
+      vpEllipsis.Spares (.head .Voice) ∧ sluicing.Deletes (.head .Voice) := by decide
 
 end BenzSalzmann2025
