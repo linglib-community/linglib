@@ -8,10 +8,14 @@ public import Linglib.Core.Data.RoseTree.Licensed
 
 The canonical metrical foot (Selkirk 1980; Nespor and Vogel 1986; Hayes 1995; Kager 1999) is a
 flat, headed constituent over syllable positions: a non-empty, ordered sequence of syllables with
-one distinguished `head`, the stressed daughter. Headedness (trochaic or iambic), binarity, and the
-trochee, iamb and moraic inventory are derived from the structure, not stored, and the moraic
-versus syllabic split is a counting parameter on `moraCount`. Re-representations into the
-prosodic tree (`Prosody.Tree`) and the metrical grid are functions that recover the same head.
+one distinguished `head`, the stressed daughter. Headedness (trochaic or iambic) and binarity are
+derived from the structure, not stored, and the moraic versus syllabic split is a reading of
+syllable duration, a weight function. The Iambic/Trochaic Law is a condition on that reading:
+a trochee's syllables are even in duration and an iamb's head is longer than its dependent. It
+follows that a weight-blind reading supports trochees and no iambs, and the light–light iamb,
+which Hayes admits as a smaller version of the canonical light–heavy one, violates the law.
+Re-representations into the prosodic tree (`Prosody.Tree`) and the metrical grid are functions
+that recover the same head.
 
 ## Main definitions
 
@@ -21,7 +25,8 @@ prosodic tree (`Prosody.Tree`) and the metrical grid are functions that recover 
 * `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
-* `Foot.IsSyllabicTrochee` / `IsMoraicTrochee` / `IsCanonicalIamb` — the *derived* inventory.
+* `Foot.IsSyllabicTrochee` / `IsMoraicTrochee` — the trochees of the inventory.
+* `Foot.IsEven` / `Foot.ConformsToITL` — even duration, and the Iambic/Trochaic Law.
 * `Foot.toProsTree` / `Foot.toGrid` / `Foot.headFlags` — re-representations that preserve the head
   (the prosodic tree, its metrical grid, and its head-flag row).
 * `footMorae` — mora count of a `Tree`-extracted weight-list foot (the flat metrical
@@ -31,8 +36,11 @@ prosodic tree (`Prosody.Tree`) and the metrical grid are functions that recover 
 
 ## Main results
 
-* `Foot.itl_gap` — the Iambic/Trochaic Law (Hayes 1985): a binary iamb need not be
-  weight-blind-characterizable, unlike a binary (syllabic) trochee.
+* `Foot.conformsToITL_trochee_iff` / `Foot.conformsToITL_iamb_iff` — a binary trochee conforms
+  to the Iambic/Trochaic Law iff it is even, a binary iamb iff its head is the longer syllable.
+* `Foot.IsBinary.conformsToITL_const_iff` — under a weight-blind reading the binary feet that
+  conform are exactly the trochees: there is no syllabic iamb.
+* `Foot.not_conformsToITL_iamb_of_eq` — the even iamb, light–light among them, violates the law.
 * `Foot.headFlags_toProsTree` — the prosodic-tree re-representation carries the same
   head profile as `headFlags` (head-preservation, the functorial spine).
 * `Foot.isFoot_toProsTree` — every `Foot`'s prosodic tree is a well-formed foot tree
@@ -145,29 +153,94 @@ def moraCount (w : S → ℕ) (f : Foot S) : ℕ := (f.syllables.map w).sum
 def IsSyllabicTrochee (f : Foot S) : Prop := f.IsTrochaic ∧ f.IsBinary
 /-- A moraic trochee `(H)` or `(LL)` is head-initial and bimoraic ([hayes-1995]). -/
 def IsMoraicTrochee (w : S → ℕ) (f : Foot S) : Prop := f.IsTrochaic ∧ moraCount w f = 2
-/-- A canonical iamb over Hayes' right-prominent inventory `{(H),(LL),(LH)}` ([hayes-1995]) is
-    head-final, and either a bimoraic monosyllable or an even or right-heavy bimoraic or trimoraic
-    disyllable. Unlike the trochee, the iamb references weight — the
-    quantity-sensitivity the Iambic/Trochaic Law predicts. -/
-def IsCanonicalIamb (w : S → ℕ) (f : Foot S) : Prop :=
-  f.IsIambic ∧
-    ((f.length = 1 ∧ moraCount w f = 2) ∨
-     (f.length = 2 ∧ 2 ≤ moraCount w f ∧ moraCount w f ≤ 3 ∧
-       (f.syllables.map w).headD 0 ≤ (f.syllables.map w).getLast?.getD 0))
-
 instance (f : Foot S) : Decidable f.IsSyllabicTrochee := by
   unfold IsSyllabicTrochee; infer_instance
 instance (w : S → ℕ) (f : Foot S) : Decidable (IsMoraicTrochee w f) := by
   unfold IsMoraicTrochee; infer_instance
-instance (w : S → ℕ) (f : Foot S) : Decidable (IsCanonicalIamb w f) := by
-  unfold IsCanonicalIamb; infer_instance
 
-/-- By **the Iambic/Trochaic Law** ([hayes-1985], after Bolton 1894) a binary iamb is not
-    characterizable weight-blind, since the head-final binary cell admits the left-heavy `(H L̗)`
-    that Hayes' canonical inventory excludes, whereas a binary trochee is exactly
-    `IsSyllabicTrochee` (weight-blind). The witness is `(H L̗)`. -/
-theorem itl_gap : ∃ f : Foot ℕ, (f.IsIambic ∧ f.IsBinary) ∧ ¬ IsCanonicalIamb id f :=
-  ⟨Foot.iamb 2 1, by decide⟩
+/-! ### The Iambic/Trochaic Law
+
+By the Iambic/Trochaic Law ([hayes-1985], after Bolton 1894) elements contrasting in intensity
+group with initial prominence and elements contrasting in duration with final prominence. On
+feet ([hayes-1995] §4.5.2) a trochee consists of units equal in duration, syllables for the
+syllabic trochee and morae for the moraic one, and the canonical iamb concatenates a light
+syllable with a heavy one. The law is a condition on a reading `w` of syllable duration, a
+constant one for syllabic counting and the mora count for moraic counting, and not part of the
+definition of a foot. -/
+
+/-- A foot is **even** under the duration reading `w` when its syllables have equal duration. -/
+def IsEven (w : S → ℕ) (f : Foot S) : Prop := ∀ a ∈ f.syllables, ∀ b ∈ f.syllables, w a = w b
+
+instance (w : S → ℕ) (f : Foot S) : Decidable (f.IsEven w) := by
+  unfold IsEven; infer_instance
+
+/-- A foot **conforms to the Iambic/Trochaic Law** under the duration reading `w` when a trochee
+is even and an iamb's head is longer than each of its other syllables ([hayes-1995] (33),
+§4.5.2). -/
+def ConformsToITL (w : S → ℕ) (f : Foot S) : Prop :=
+  (f.IsTrochaic → f.IsEven w) ∧
+    (f.IsIambic → ∀ i, i ≠ f.head → w (f.syllables.get i) < w (f.syllables.get f.head))
+
+instance (w : S → ℕ) (f : Foot S) : Decidable (f.ConformsToITL w) := by
+  unfold ConformsToITL IsTrochaic IsIambic; infer_instance
+
+section ITL
+
+variable {w : S → ℕ} {a b : S}
+
+@[simp] theorem isTrochaic_trochee : (trochee a b).IsTrochaic := rfl
+@[simp] theorem not_isIambic_trochee : ¬ (trochee a b).IsIambic :=
+  fun h ↦ absurd (show (0 : ℕ) + 1 = 2 from h) (by decide)
+@[simp] theorem isIambic_iamb : (iamb a b).IsIambic := rfl
+@[simp] theorem not_isTrochaic_iamb : ¬ (iamb a b).IsTrochaic :=
+  fun h ↦ absurd (show (1 : ℕ) = 0 from h) (by decide)
+
+theorem conformsToITL_trochee_iff : (trochee a b).ConformsToITL w ↔ w a = w b := by
+  refine ⟨fun h ↦ h.1 rfl a (by simp [trochee]) b (by simp [trochee]),
+    fun h ↦ ⟨fun _ ↦ ?_, fun h' ↦ absurd h' not_isIambic_trochee⟩⟩
+  simp [IsEven, trochee, h]
+
+theorem conformsToITL_iamb_iff : (iamb a b).ConformsToITL w ↔ w a < w b := by
+  refine ⟨fun h ↦ h.2 rfl ⟨0, by simp [iamb]⟩ (by simp [iamb, Fin.ext_iff]),
+    fun h ↦ ⟨fun h' ↦ absurd h' not_isTrochaic_iamb, fun _ i hi ↦ ?_⟩⟩
+  obtain ⟨_ | _ | i, hi'⟩ := i
+  · exact h
+  · exact absurd rfl hi
+  · simp [iamb] at hi'; omega
+
+/-- An even iamb violates the Iambic/Trochaic Law: it has final prominence without a contrast in
+duration. The light–light iamb, a smaller version of the canonical light–heavy one in Hayes'
+inventory, is one ([hayes-1995] p. 82). -/
+theorem not_conformsToITL_iamb_of_eq (h : w a = w b) : ¬ (iamb a b).ConformsToITL w := by
+  rw [conformsToITL_iamb_iff, h]
+  exact lt_irrefl _
+
+/-- A binary foot is a trochee or an iamb. -/
+theorem IsBinary.eq_trochee_or_eq_iamb {f : Foot S} (hf : f.IsBinary) :
+    ∃ a b, f = trochee a b ∨ f = iamb a b := by
+  obtain ⟨syls, head⟩ := f
+  obtain ⟨a, b, rfl⟩ := List.length_eq_two.1 hf
+  obtain ⟨_ | _ | i, hi⟩ := head
+  · exact ⟨a, b, .inl rfl⟩
+  · exact ⟨a, b, .inr rfl⟩
+  · simp at hi; omega
+
+/-- Under a weight-blind reading, a binary foot conforms to the Iambic/Trochaic Law exactly when
+it is a trochee: the law supports the syllabic trochee and no syllabic iamb. -/
+theorem IsBinary.conformsToITL_const_iff {f : Foot S} (hf : f.IsBinary) (c : ℕ) :
+    f.ConformsToITL (fun _ ↦ c) ↔ f.IsTrochaic := by
+  obtain ⟨a, b, rfl | rfl⟩ := hf.eq_trochee_or_eq_iamb
+  · simp [conformsToITL_trochee_iff]
+  · simp [conformsToITL_iamb_iff]
+
+/-- A binary moraic trochee over syllables of positive duration is light–light, so it conforms to
+the Iambic/Trochaic Law. -/
+theorem IsMoraicTrochee.conformsToITL_trochee (h : (trochee a b).IsMoraicTrochee w)
+    (ha : 0 < w a) (hb : 0 < w b) : (trochee a b).ConformsToITL w := by
+  have h2 : w a + w b = 2 := by simpa [moraCount, trochee] using h.2
+  exact conformsToITL_trochee_iff.2 (by omega)
+
+end ITL
 
 /-! ### Re-representations (preserving the head) -/
 
@@ -274,9 +347,12 @@ end Footing
 
 -- Inventory falls out of the derived predicates (no `FootType` enum).
 example : (Foot.trochee 1 1).IsSyllabicTrochee := by decide
-example : (Foot.trochee 2 0 : Foot ℕ).IsMoraicTrochee id := by decide
-example : (Foot.iamb 1 2 : Foot ℕ).IsCanonicalIamb id := by decide
-example : ¬ (Foot.iamb 2 1 : Foot ℕ).IsCanonicalIamb id := by decide
+example : (Foot.monosyllable 2 : Foot ℕ).IsMoraicTrochee id := by decide
+-- Under moraic counting the light–heavy iamb conforms to the Iambic/Trochaic Law, and the
+-- heavy–light trochee and the light–light iamb do not.
+example : (Foot.iamb 1 2 : Foot ℕ).ConformsToITL id := by decide
+example : ¬ (Foot.trochee 2 1 : Foot ℕ).ConformsToITL id := by decide
+example : ¬ (Foot.iamb 1 1 : Foot ℕ).ConformsToITL id := by decide
 example : (Foot.monosyllable 0).IsDegenerate := by decide
 
 -- The re-representations recover the head: a trochee marks position 0, an iamb 1.

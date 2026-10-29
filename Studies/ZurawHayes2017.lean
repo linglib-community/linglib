@@ -130,7 +130,7 @@ attribute [local simp] constraints nasSub starNC starRootNasal starRootCorVel st
 /-- The two families intersect, since on every square the consonant-sensitive constraints are
 insensitive to the prefix and the Uniformity constraints to the stem. -/
 theorem independent (p p' : Prefix) (c c' : StemC) :
-    (square p p' c c').Independent constraints := by
+    (square p p' c c').Independent constraints .yes .no := by
   intro k
   fin_cases k <;> first | exact .inl ⟨rfl, rfl⟩ | exact .inr ⟨rfl, rfl⟩
 
@@ -174,7 +174,7 @@ theorem maxEnt_interaction_logOdds_eq_zero (w : Fin 11 → ℝ) (p p' : Prefix) 
     (square p p' c c').interaction (fun x ↦
       log ((maxEnt (constraints.comap (x, ·)).violations w).real {.yes} /
         (maxEnt (constraints.comap (x, ·)).violations w).real {.no})) = 0 :=
-  (independent p p' c c').interaction_logOdds_maxEnt w .yes .no
+  (independent p p' c c').interaction_logOdds_maxEnt w
 
 theorem harmony_b_sub_harmony_k (w : Fin 11 → ℝ) (p : Prefix) :
     harmonyScore constraints w ((p, .b), .yes) - harmonyScore constraints w ((p, .b), .no) -
@@ -185,7 +185,7 @@ theorem harmony_b_sub_harmony_k (w : Fin 11 → ℝ) (p : Prefix) :
 theorem maxEnt_acrossTheBoard (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
     AcrossTheBoard (square p p' c c') (maxEntSubst w) ∧
       AcrossTheBoard (square p p' c c').transpose (maxEntSubst w) := by
-  have hd := (independent p p' c c').interaction_harmonyScore_sub w .yes .no
+  have hd := (independent p p' c c').interaction_harmonyScore_sub w
   rw [funext (maxEntSubst_eq w)]
   exact ⟨acrossTheBoard_of_interaction_eq_zero (s := fun _ ↦ ()) (F := fun _ ↦ sigmoid)
       (fun _ ↦ sigmoid_strictMono.monotone) hd ⟨rfl, rfl⟩,
@@ -245,7 +245,7 @@ theorem weightNoise_acrossTheBoard (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v �
   rw [funext (weightNoiseSubst_eq w hv)]
   refine acrossTheBoard_of_interaction_eq_zero (F := fun s Δ ↦ normalCDF (Δ / s))
     (fun x ↦ (normalCDF_strictMono.comp (strictMono_id.div_const ?_)).monotone)
-    ((independent p p' c c').interaction_harmonyScore_sub w _ _) ⟨rfl, rfl⟩
+    ((independent p p' c c').interaction_harmonyScore_sub w) ⟨rfl, rfl⟩
   have : (0 : ℝ) < diffSq (.mangOther, x.2) := by exact_mod_cast diffSq_pos _
   have : (0 : ℝ) < v := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
   positivity

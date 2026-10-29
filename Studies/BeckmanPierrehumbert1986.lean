@@ -24,16 +24,19 @@ and declination act above the intermediate phrase and are not catathesis.
 
 ## Implementation notes
 
-Catathesis is register downstep on the tonal register tier: each bitonal accent contributes
-a downstep node and `Tone.realizePitch` realizes the sequence as the running sum, so the
-staircase, the boundary reset, and the comparison with an unbroken chain are theorems of the
-register substrate rather than numbers read off figures. The Japanese accentual phrase is
-built from the prosodic fragment's word entries.
+Catathesis is a phonetic-implementation rule triggered by bitonal accents; it is modelled here
+on the register tier, each bitonal accent contributing a downstep `l` and
+`Tone.RegisterTier.realize` realizing the tier as the running sum, so the staircase, the
+boundary reset, and the comparison with an unbroken chain are theorems of the register
+substrate rather than numbers read off figures. The vocabulary of register features is that
+of [snider-1999], which postdates the paper. The Japanese accentual phrase is built from the
+prosodic fragment's word entries.
 
 ## References
 
 * [beckman-pierrehumbert-1986]
 * [pierrehumbert-1980]
+* [snider-1999]
 -/
 
 @[expose] public section
@@ -59,10 +62,14 @@ def AccentualPhrase.TriggersCatathesis (ap : AccentualPhrase) : Prop :=
 instance : DecidablePred AccentualPhrase.TriggersCatathesis := fun ap ↦
   inferInstanceAs (Decidable (∃ a ∈ ap.accent, a.IsBitonal))
 
-/-- The register nodes of a sequence of accentual phrases: a downstep for each bitonal
-accent and nothing otherwise. -/
-def registerSpecs (aps : List AccentualPhrase) : List TRN :=
-  aps.map fun ap ↦ if ap.TriggersCatathesis then TRN.downstep else TRN.empty
+/-- The register features of an accentual phrase: a downstep if its accent is bitonal, and
+nothing otherwise. -/
+def AccentualPhrase.registerFeatures (ap : AccentualPhrase) : List RegisterFeature :=
+  if ap.TriggersCatathesis then [.l] else []
+
+/-- The register tier of a sequence of accentual phrases, one unit per phrase. -/
+def registerSpecs (aps : List AccentualPhrase) : RegisterTier :=
+  aps.map AccentualPhrase.registerFeatures
 
 /-- The number of catathesis triggers in a sequence. -/
 def catathesisCount (aps : List AccentualPhrase) : ℕ :=
@@ -70,8 +77,10 @@ def catathesisCount (aps : List AccentualPhrase) : ℕ :=
 
 variable (b : Int) (aps aps₁ aps₂ : List AccentualPhrase) (ap : AccentualPhrase)
 
-@[simp] private theorem pitchEffect_downstep : TRN.downstep.pitchEffect = -1 := rfl
-@[simp] private theorem pitchEffect_empty : TRN.empty.pitchEffect = 0 := rfl
+private theorem moraShift_registerFeatures :
+    RegisterTier.moraShift ap.registerFeatures = if ap.TriggersCatathesis then -1 else 0 := by
+  unfold AccentualPhrase.registerFeatures
+  split <;> rfl
 @[simp] theorem catathesisCount_nil : catathesisCount [] = 0 := rfl
 
 theorem catathesisCount_cons :
@@ -83,50 +92,56 @@ theorem catathesisCount_eq_zero_iff :
     catathesisCount aps = 0 ↔ ∀ ap ∈ aps, ¬ap.TriggersCatathesis := by
   simp [catathesisCount, List.filter_eq_nil_iff]
 
-theorem pitchEffect_registerSpecs_nonpos {t : TRN} (h : t ∈ registerSpecs aps) :
-    t.pitchEffect ≤ 0 := by
+theorem moraShift_registerSpecs_nonpos {fs : List RegisterFeature}
+    (h : fs ∈ registerSpecs aps) : RegisterTier.moraShift fs ≤ 0 := by
   simp only [registerSpecs, List.mem_map] at h
   obtain ⟨ap, _, rfl⟩ := h
+  rw [moraShift_registerFeatures]
   split <;> decide
 
-theorem sum_pitchEffect_registerSpecs :
-    ((registerSpecs aps).map TRN.pitchEffect).sum = -(catathesisCount aps : Int) := by
+theorem sum_moraShift_registerSpecs :
+    ((registerSpecs aps).map RegisterTier.moraShift).sum = -(catathesisCount aps : Int) := by
   induction aps with
   | nil => rfl
   | cons ap aps ih =>
     simp only [registerSpecs, List.map_cons, List.sum_cons, catathesisCount_cons] at ih ⊢
-    rw [ih]
-    split <;> (simp only [pitchEffect_downstep, pitchEffect_empty]; omega)
+    rw [ih, moraShift_registerFeatures]
+    split <;> omega
 
-theorem realizePitch_registerSpecs {i : ℕ} (hi : i < aps.length) :
-    (realizePitch b (registerSpecs aps))[i]? = some (b - catathesisCount (aps.take (i + 1))) := by
+theorem realize_registerSpecs {i : ℕ} (hi : i < aps.length) :
+    (RegisterTier.realize b (registerSpecs aps))[i]? =
+      some (b - catathesisCount (aps.take (i + 1))) := by
   induction aps generalizing b i with
   | nil => simp at hi
   | cons ap aps ih =>
     cases i with
     | zero =>
-      simp only [registerSpecs, List.map_cons, realizePitch_cons, List.getElem?_cons_zero,
-        List.take_succ_cons, List.take_zero, catathesisCount_cons, catathesisCount_nil,
-        Option.some.injEq]
-      split <;> (simp only [pitchEffect_downstep, pitchEffect_empty]; omega)
+      simp only [RegisterTier.realize, registerSpecs, List.map_cons, terrace_cons,
+        List.getElem?_cons_zero, List.take_succ_cons, List.take_zero, catathesisCount_cons,
+        catathesisCount_nil, Option.some.injEq, moraShift_registerFeatures]
+      split <;> omega
     | succ i =>
-      simp only [registerSpecs, List.map_cons, realizePitch_cons, List.getElem?_cons_succ,
-        List.take_succ_cons, catathesisCount_cons]
-      rw [show List.map _ aps = registerSpecs aps from rfl, ih _ (by simpa using hi)]
-      split <;> (simp only [pitchEffect_downstep, pitchEffect_empty, Option.some.injEq]; omega)
+      have := ih (b + RegisterTier.moraShift ap.registerFeatures) (i := i) (by simpa using hi)
+      simp only [RegisterTier.realize, registerSpecs] at this
+      simp only [RegisterTier.realize, registerSpecs, List.map_cons, terrace_cons,
+        List.getElem?_cons_succ]
+      rw [this]
+      simp only [List.take_succ_cons, catathesisCount_cons, Option.some.injEq,
+        moraShift_registerFeatures]
+      split <;> omega
 
-theorem realizePitch_registerSpecs_append :
-    realizePitch b (registerSpecs (aps₁ ++ aps₂)) =
-      realizePitch b (registerSpecs aps₁) ++
-        realizePitch (b - catathesisCount aps₁) (registerSpecs aps₂) := by
+theorem realize_registerSpecs_append :
+    RegisterTier.realize b (registerSpecs (aps₁ ++ aps₂)) =
+      RegisterTier.realize b (registerSpecs aps₁) ++
+        RegisterTier.realize (b - catathesisCount aps₁) (registerSpecs aps₂) := by
   have h : registerSpecs (aps₁ ++ aps₂) = registerSpecs aps₁ ++ registerSpecs aps₂ :=
     List.map_append ..
-  rw [h, realizePitch_append, sum_pitchEffect_registerSpecs, Int.sub_eq_add_neg]
+  rw [h, RegisterTier.realize_append, sum_moraShift_registerSpecs, Int.sub_eq_add_neg]
 
 theorem boundary_raises :
-    List.Forall₂ (· ≤ ·) (realizePitch (b - catathesisCount aps₁) (registerSpecs aps₂))
-      (realizePitch b (registerSpecs aps₂)) :=
-  realizePitch_baseline_mono _ (by omega)
+    List.Forall₂ (· ≤ ·) (RegisterTier.realize (b - catathesisCount aps₁) (registerSpecs aps₂))
+      (RegisterTier.realize b (registerSpecs aps₂)) :=
+  RegisterTier.realize_baseline_mono _ (by omega)
 
 /-! ### Intermediate and intonation phrases -/
 
@@ -150,12 +165,12 @@ accent and the boundary tone, [pierrehumbert-1980]'s terminal sequence decompose
 def IntonationPhrase.terminalContour (ip : IntonationPhrase) : TerminalContour :=
   ⟨(ip.ips.getLast ip.ips_nonempty).phraseAccent, ip.boundaryTone⟩
 
-/-- The register nodes of one intermediate phrase: a single chain. -/
-def ipRegisterSpecs (ip : IntermediatePhrase) : List TRN := registerSpecs ip.aps
+/-- The register tier of one intermediate phrase: a single chain. -/
+def ipRegisterSpecs (ip : IntermediatePhrase) : RegisterTier := registerSpecs ip.aps
 
-/-- The register nodes of an intonation phrase, one chain per intermediate phrase: each
+/-- The register tiers of an intonation phrase, one chain per intermediate phrase: each
 starts again from the baseline. -/
-def ipRegisterSpecsAcrossIps (ips : List IntermediatePhrase) : List (List TRN) :=
+def ipRegisterSpecsAcrossIps (ips : List IntermediatePhrase) : List RegisterTier :=
   ips.map ipRegisterSpecs
 
 /-! ### The two systems -/
@@ -218,8 +233,8 @@ theorem mem_english_accentShapes_iff (a : PitchAccent) :
   revert a; decide
 
 theorem triggers_differ :
-    (∀ a ∈ japanese.accentShapes, registerSpecs [⟨some a, 1⟩] = [TRN.downstep]) ∧
-      ∃ a ∈ english.accentShapes, registerSpecs [⟨some a, 1⟩] = [TRN.empty] := by
+    (∀ a ∈ japanese.accentShapes, registerSpecs [⟨some a, 1⟩] = [[.l]]) ∧
+      ∃ a ∈ english.accentShapes, registerSpecs [⟨some a, 1⟩] = [[]] := by
   decide
 
 /-- An accented accentual phrase (*uma'i*, *mo'riya-no*). -/

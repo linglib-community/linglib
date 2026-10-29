@@ -35,7 +35,8 @@ independent.
 
 ## Implementation notes
 
-The noise has variance `v : ℝ≥0`, as in mathlib's `gaussianReal`; Boersma and Pater take `v = 1`.
+The noise has variance `v : ℝ≥0`, as in mathlib's `gaussianReal`. Boersma and Pater leave its width
+free, and their noisy learners of §4.2 evaluate with a standard deviation of 2.
 Flemming's normal MaxEnt, with independent Gaussian noise on the candidates' harmonies, needs no
 definition: it is `choiceProb (Measure.pi fun c ↦ gaussianReal (harmonyScore con w c) v)`, with
 binary case `choiceProb_pi_gaussianReal`. His censored variant, which clamps noisy weights at zero,
