@@ -5,22 +5,29 @@ public import Linglib.Syntax.Category.Verb.Basic
 /-!
 # Unaccusativity
 
-This file defines when a verb entry is unaccusative. An intransitive verb is unaccusative when
-its sole argument is an underlying object and no external argument is introduced, as with
-*arrive* and *melt*, and unergative otherwise, as with *work*. The classification is read off
-the entry's voice where one is recorded, and otherwise off the causative alternation: the
-intransitive of a verb that alternates, *the vase broke* beside *Kim broke the vase*, has as its
-subject the participant the transitive has as its object.
+This file defines when a verb entry is unaccusative and when it is unergative. An intransitive
+verb is unaccusative when its sole argument is an underlying object and no external argument is
+introduced, as with *arrive* and *melt*, and unergative when an external argument is introduced,
+as with *work*. A recorded voice decides. Without one, two of Levin and Rappaport Hovav's
+diagnostics make an entry unaccusative: the causative alternation, since the intransitive of a
+verb that alternates, *the vase broke* beside *Kim broke the vase*, has as its subject the
+participant the transitive has as its object; and inherently directed motion, whose theme
+undergoes a directed change and so is a direct internal argument, as with Italian *arrivare*.
+An entry that records no voice and meets neither diagnostic is classified as neither.
 
 ## Main definitions
 
 * `Verb.Valency.HasCausativeAlternation`: some participant is the object of a plain transitive
   diathesis and the subject of an intransitive one that leaves out the transitive's subject.
-* `Verb.IsUnaccusative`: the verb's voice introduces no external argument, or the verb takes
-  part in the causative alternation.
+* `Verb.IsUnaccusative`: the verb's voice introduces no external argument, or, with no voice
+  recorded, the verb takes part in the causative alternation or is a verb of directed motion.
+* `Verb.IsUnergative`: the verb's voice introduces an external argument.
 
 ## Implementation notes
 
+* The two classifications are disjoint (`Verb.IsUnergative.not_isUnaccusative`) but not
+  exhaustive: an entry without a voice is unergative by no diagnostic here, so a consumer that
+  needs the unergative case reads `Verb.IsUnergative`, not the failure of `Verb.IsUnaccusative`.
 * Unaccusativity is not read off the perfect auxiliary: German *rennen* 'run' takes *sein* and
   is not unaccusative, and French *rougir* 'redden' alternates and takes *avoir*. A grammar
   that relates the two states its rule against the auxiliaries an entry records
@@ -58,12 +65,29 @@ instance : Decidable V.HasCausativeAlternation :=
 
 end Verb.Valency
 
-/-- The verb is unaccusative when its voice, if recorded, introduces no external argument, and
-otherwise when it takes part in the causative alternation. -/
+/-- The verb is unaccusative when its voice, if recorded, introduces no external argument.
+Otherwise it is unaccusative when it takes part in the causative alternation, or when it has an
+intransitive frame and lexicalizes a direction of motion: the theme of a verb of inherently
+directed motion undergoes a directed change, and the Directed Change Linking Rule
+([levin-hovav-1995] (24)) makes it a direct internal argument. -/
 def Verb.IsUnaccusative (v : Verb) : Prop :=
   match v.voiceType with
   | some vt => ¬ vt.AssignsTheta
-  | none => v.valency.HasCausativeAlternation
+  | none => v.valency.HasCausativeAlternation ∨
+      (∃ fr ∈ v.valency.frames, fr.IsIntransitive) ∧ ∃ d ∈ v.direction, d ≠ .place
 
 instance : DecidablePred Verb.IsUnaccusative := fun v ↦ by
   unfold Verb.IsUnaccusative; split <;> infer_instance
+
+/-- The verb is unergative when its recorded voice introduces an external argument. -/
+def Verb.IsUnergative (v : Verb) : Prop := ∃ vt ∈ v.voiceType, vt.AssignsTheta
+
+instance : DecidablePred Verb.IsUnergative := fun _ ↦
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+theorem Verb.IsUnergative.not_isUnaccusative {v : Verb} (h : v.IsUnergative) :
+    ¬ v.IsUnaccusative := by
+  obtain ⟨vt, hvt, ht⟩ := h
+  unfold Verb.IsUnaccusative
+  rw [Option.mem_def.1 hvt]
+  exact not_not_intro ht

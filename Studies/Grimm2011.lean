@@ -20,6 +20,17 @@ characterizations of the case regions.
 The paper's remarks on differential object marking, deferred to Grimm (2005), and on the size of
 the nominative or ergative region in a given language are not formalized. Definiteness is the
 paper's three-step hierarchy (14), the referring feature being the one that entails existence.
+The entailments of a node, which subject selection counts, are its agentivity and persistence
+features. The subject and object of *kiss* are placed at a common persistence level, since
+kissing changes neither.
+
+## Errata
+
+* Subject selection picks "the argument which has the greater number of entailments, or
+  equivalently, the dominant or higher position in the lattice structure" (p. 527). The two are
+  not equivalent: dominance implies the greater count (`card_lt_card_of_lt`), but nodes with
+  different counts may be incomparable (`exists_card_lt_incomparable`), so the count selects where
+  dominance does not.
 
 ## References
 
@@ -86,12 +97,12 @@ theorem build_object_admits_iff (l : PersistenceLevel) :
 
 /-! ### Argument ranges and subject selection, section 2.3
 
-The agent of *kill* need only instigate, so natural forces such as electricity and eventive
-nominals such as the explosion are acceptable subjects, and so is every node above them: agents
-are upward closed. The patient of *hit* canonically changes qualitatively, but the object of the
-conative *hit at* is unaffected and an object may happen to be destroyed, while an entity that
-does not exist when the event begins cannot be hit: patients are closed downward to the
-existence of the entity. -/
+The argument whose node dominates the other's is selected as subject. The agent of *kill* need
+only instigate, so natural forces such as electricity and eventive nominals such as the explosion
+are acceptable subjects, and so is every node above them: agents are upward closed. The patient
+of *hit* canonically changes qualitatively, but the object of the conative *hit at* is unaffected
+and an object may happen to be destroyed, while an entity that does not exist when the event
+begins cannot be hit: patients are closed downward to the existence of the entity. -/
 
 /-- Everything above the minimal instigator is in the nominative or ergative region: the range of
 the subject of *kill*, from the interval characterization of that region. -/
@@ -120,11 +131,30 @@ theorem pseudoCleft_presupposition {T Q : Type*} [LinearOrder T] [DecidableEq Q]
   ⟨fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersBeginning_iff.1 h).1,
     fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersEnd_iff.1 h).1⟩
 
-/-- The subject of *kiss* strictly dominates its object on the agentivity lattice, so the
-dominance criterion selects it, [dowty-1991]'s result for (43) without counting entailments. -/
-theorem kiss_outranking_from_dominance :
-    OutranksForSubject Dowty1991.kissSubjectProfile Dowty1991.kissObjectProfile :=
-  outranks_of_lattice_dominance (by decide) (by decide)
+-- p. 527
+theorem card_lt_card_of_lt {n m : ParticipantType} (h : n < m) :
+    n.1.card + n.2.features.card < m.1.card + m.2.features.card := by
+  have hle : ∀ l k : PersistenceLevel, l ≤ k → l.features.card ≤ k.features.card := by decide
+  have hlt : ∀ l k : PersistenceLevel, l ≤ k → l ≠ k → l.features.card < k.features.card := by
+    decide
+  rcases Prod.lt_iff.1 h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
+  · have := Finset.card_lt_card h₁
+    have := hle _ _ h₂
+    omega
+  · have := Finset.card_le_card h₁
+    have := hlt _ _ h₂.le h₂.ne
+    omega
+
+-- p. 527
+theorem exists_card_lt_incomparable : ∃ n m : ParticipantType,
+    n.1.card + n.2.features.card < m.1.card + m.2.features.card ∧ ¬ n ≤ m ∧ ¬ m ≤ n :=
+  ⟨sentientNonInstigator, minimalInstigator, by decide⟩
+
+-- (43) of [dowty-1991]
+theorem kiss_subject_dominates (l : PersistenceLevel) :
+    ((Dowty1991.kissObjectProfile.toAgentivity, l) : ParticipantType) <
+      (Dowty1991.kissSubjectProfile.toAgentivity, l) :=
+  Prod.mk_lt_mk_iff_left.2 (by decide)
 
 /-! ### The transitivity region and the effectiveness hierarchy, section 3
 

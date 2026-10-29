@@ -5,7 +5,6 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.Exponence.Select
 public import Linglib.Morphology.Realization
-public import Linglib.Semantics.Root.Kinds
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -50,8 +49,7 @@ conditions on the neighboring terminals, not on features of its own head.
 engine; `readingFromAllosemes` is a different object — the composition of
 two already-selected allosemes.
 Existing infrastructure this module retroactively classifies as
-allosemy: the cells of `Minimalist.Voice.Head` (Voice) and the conditioning of v by
-whether its root entails change.
+allosemy: the cells of `Minimalist.Voice.Head` (Voice).
 
 ## References
 
@@ -60,7 +58,6 @@ whether its root entails change.
 * [A. Kratzer, *Severing the external argument from its verb*][kratzer-1996]
 * [N. Myler, *Building and interpreting possession sentences*][myler-2016]
 * [L. J. Adamson, *Gender assignment is local*][adamson-2024]
-* [J. Beavers et al., *States and changes of state*][beavers-etal-2021]
 -/
 
 @[expose] public section
@@ -168,17 +165,6 @@ def licensed {Sem : Type*} (v : RuleSet (VocabularyItem Feature Sem))
 zero alloseme is the elsewhere case. -/
 def Verbalizer.vocabulary : RuleSet (VocabularyItem Feature Verbalizer.Alloseme) :=
   [⟨(complement {.eventive}).toFinset, .eventive⟩, ∅ ⟷ .zero]
-
-/-- The v alloseme over a complement root of signature `s`, the root typology feeding v
-allosemy: eventive when the root entails change, as result roots do, and zero otherwise, as
-over property-concept roots ([beavers-etal-2021]). -/
-def Verbalizer.Alloseme.ofKinds (s : ArgumentStructure.Root.Kinds) : Verbalizer.Alloseme :=
-  if .result ∈ ArgumentStructure.Root.Kinds.close s then .eventive else .zero
-
-theorem Verbalizer.ofKinds_introducesEvent_iff (s : ArgumentStructure.Root.Kinds) :
-    (Verbalizer.Alloseme.ofKinds s).introducesEvent = true ↔
-      .result ∈ ArgumentStructure.Root.Kinds.close s := by
-  unfold Verbalizer.Alloseme.ofKinds; split_ifs with h <;> simp [h] <;> decide
 
 /-! ### n allosemy -/
 

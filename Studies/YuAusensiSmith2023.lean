@@ -393,7 +393,7 @@ variable {L : State ⊕ Event → Prop} {Q : Entity → State → Prop}
 
 theorem realized_restitutive_liftState_iff :
     Reading.restitutive.Realized (relativize N) L (liftState Q) x ↔
-      ∃ s, BeaversEtAl2021.DeniesChange N Q x s := by
+      ∃ s, BeaversKoontzGarboden2020.DeniesChange N Q x s := by
   constructor
   · rintro ⟨s | e, hq, -, hn⟩
     · exact ⟨s, hq, fun h ↦ hn (diamond_relativize_become_inl.2 h)⟩
