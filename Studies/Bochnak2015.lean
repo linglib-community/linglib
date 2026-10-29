@@ -24,6 +24,10 @@ margin of error](##marginOrder_of_conjoinedComparison), van Rooij's semi-order.
 * No Washo entry is defined: the paper's entry (5) has no measure function, so the theorems
   quantify over delineations. The English entry (1) and the degree morphemes (2) take a measure
   into any linear order.
+* *y is not G* is true where `y` is in the negative extension of the delineation, so the
+  conjoined comparison (27), the Consistency Constraint (28b) (`Delineation.IsSoundFor`) and the
+  Similarity Constraint (20), which bars judging *x is G* true and *y is G* false, are stated with
+  it.
 * An absolute-standard predicate has one extension in every comparison class. The extensions of
   *bent* and *straight* are stated with Kennedy's minimum and maximum standards on a scale of
   bend, which describe the model and not the entries, as the paper's degree-free relative/absolute
@@ -84,9 +88,9 @@ section Conjoined
 variable {del : Delineation E} {C : Set E} {x y : E}
 
 /-- The conjoined comparison (26), with truth conditions (27), holds in context `C` when `x`
-counts as G and `y` does not. No comparative morpheme, overt or covert, is involved. -/
+counts as G and `y` counts as not G. No comparative morpheme, overt or covert, is involved. -/
 def ConjoinedComparison (del : Delineation E) (C : Set E) (x y : E) : Prop :=
-  x ∈ del C ∧ y ∉ del C
+  x ∈ del C ∧ y ∈ del.neg C
 
 /-- Under the second Consistency Constraint (28b) the truth conditions (27) entail the comparison,
 which the conjoined comparison does not assert. -/
@@ -110,7 +114,7 @@ theorem comparative_not_normRelated [LinearOrder D] (μ : E → D) {s : D} (hlt 
 classes the conjunction says nothing about `y`: under the delineation of a measure, which meets
 both Consistency Constraints, it holds exactly when something measures below `x`. -/
 theorem exists_classes_iff [LinearOrder D] (μ : E → D) :
-    (∃ C₁ C₂, x ∈ ofMeasure μ C₁ ∧ y ∉ ofMeasure μ C₂) ↔ ∃ z, μ z < μ x :=
+    (∃ C₁ C₂, x ∈ ofMeasure μ C₁ ∧ y ∈ (ofMeasure μ).neg C₂) ↔ ∃ z, μ z < μ x :=
   ⟨fun ⟨_, _, ⟨z, _, hz⟩, _⟩ ↦ ⟨z, hz⟩, fun ⟨z, hz⟩ ↦ ⟨{z}, ∅, ⟨z, rfl, hz⟩, by simp⟩⟩
 
 end Conjoined
@@ -127,7 +131,7 @@ variable [LinearOrder D] [OrderBot D] (μ : E → D) {C : Set E} {x y : E}
 
 /-- An absolute-standard predicate has the same extension `S` in every comparison class. -/
 def absolute (S : Set E) : Delineation E :=
-  ⟨fun _ ↦ S⟩
+  ofExtension fun _ ↦ S
 
 /-- *Bent*, whose extension is the minimum standard on a scale of bend `μ`. -/
 abbrev bent : Delineation E :=
@@ -146,7 +150,10 @@ theorem conjoinedComparison_bent_iff : ConjoinedComparison (bent μ) C x y ↔ �
 
 theorem conjoinedComparison_straight_iff :
     ConjoinedComparison (straight μ) C x y ↔ μ x = ⊥ ∧ ⊥ < μ y := by
-  rw [ConjoinedComparison, mem_straight_iff, mem_straight_iff]
+  have hneg : y ∈ (straight μ).neg C ↔ y ∈ bent μ C := by
+    change y ∉ straight μ C ↔ _
+    rw [mem_straight_iff, not_not]
+  rw [ConjoinedComparison, mem_straight_iff, hneg]
   simp [absolute]
 
 /-- In the context of (23), with both rods bent and `x` more bent than `y`, the explicit
@@ -173,10 +180,10 @@ semi-order (58) and, with no margin, a strict weak order (59), the order of the 
 section CrispJudgment
 
 /-- The Similarity Constraint (20) on a delineation, for a relation `sim` of differing only to a
-very small degree: no comparison class containing two similar entities puts one in the extension
-and leaves the other out. -/
+very small degree: no comparison class containing two similar entities puts one in the positive
+and the other in the negative extension. -/
 def SimilarityConstraint (del : Delineation E) (sim : E → E → Prop) : Prop :=
-  ∀ C, ∀ x ∈ C, ∀ y ∈ C, sim x y → x ∈ del C → y ∈ del C
+  ∀ C, ∀ x ∈ C, ∀ y ∈ C, sim x y → x ∈ del C → y ∉ del.neg C
 
 variable (μ : E → ℝ) (ε : ℝ) {del : Delineation E} {C : Set E} {x y z : E}
 
@@ -192,7 +199,7 @@ variable {μ ε}
 -- (21)
 theorem not_conjoinedComparison_of_similar {sim : E → E → Prop} (h : SimilarityConstraint del sim)
     (hx : x ∈ C) (hy : y ∈ C) (hs : sim x y) : ¬ ConjoinedComparison del C x y :=
-  fun hc ↦ hc.2 (h C x hx y hy hs hc.1)
+  fun hc ↦ h C x hx y hy hs hc.1 hc.2
 
 /-- In a crisp-judgment context (21), where `x` exceeds `y` by no more than the margin of error,
 the English comparative holds while no conjoined comparison obeying the Similarity Constraint

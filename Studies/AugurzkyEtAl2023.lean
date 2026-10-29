@@ -124,8 +124,8 @@ theorem usable_iff_reading_of {S : Display → SignType} {δ : Designation}
     {Q : Setoid Display} (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ})
     (d : Display) : Homogeneity.usable Q S d ↔ reading q d δ := by
   have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) := fun h ↦ h₂.iff h
-  exact ⟨fun ⟨_, ⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
-    ⟨fun hf ↦ hfalse d hf h, ⟨(resolve δ d).map (fun b : Bool ↦ SignType.ofProp b),
+  exact ⟨fun ⟨⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
+    ⟨⟨(resolve δ d).map (fun b : Bool ↦ SignType.ofProp b),
       h₁ (Setoid.ker_def.2 (resolve_map_ofProp δ _).symm), hres _ h⟩,
       fun ⟨d₁, d₂, h₁₂, ht, hf⟩ ↦ hfalse d₂ hf ((hcell h₁₂).1 (htrue d₁ ht))⟩⟩
 

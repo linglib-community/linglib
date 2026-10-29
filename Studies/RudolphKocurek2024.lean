@@ -814,20 +814,20 @@ section Delineation
 variable (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
 
 /-- The delineation induced by a ranked interpretation family takes the extensions of `R` in the
-≤-cone as the admissible comparison classes, and `x` is `R` in `C` iff `x ∈ C`. It instantiates
-Klein's comparison-class parameter. -/
+≤-cone as the admissible comparison classes, and `x` is `R` in `C` iff `x ∈ C`; it has no gaps.
+It instantiates Klein's comparison-class parameter. -/
 def interpretationDelineation (i : I) : Degree.Delineation E :=
-  ⟨fun C ↦ {x | (∃ i', ord.le i' i ∧ C = ext₁ (interp i' w) R) ∧ x ∈ C}⟩
+  .ofExtension fun C ↦ {x | (∃ i', ord.le i' i ∧ C = ext₁ (interp i' w) R) ∧ x ∈ C}
 
 theorem delineation_comparative_iff (i : I) (a b : E) :
     (interpretationDelineation interp ord R w i).Comparative a b ↔
     ∃ i', ord.le i' i ∧ a ∈ ext₁ (interp i' w) R ∧ b ∉ ext₁ (interp i' w) R := by
   constructor
   · rintro ⟨C, ⟨⟨i', h_le, rfl⟩, h_aC⟩, h_nb⟩
-    exact ⟨i', h_le, h_aC, fun hb ↦ h_nb ⟨⟨i', h_le, rfl⟩, hb⟩⟩
+    exact ⟨i', h_le, h_aC, fun hb ↦ (Set.mem_compl_iff _ _).1 h_nb ⟨⟨i', h_le, rfl⟩, hb⟩⟩
   · rintro ⟨i', h_le, h_a, h_b⟩
     exact ⟨ext₁ (interp i' w) R, ⟨⟨i', h_le, rfl⟩, h_a⟩,
-      fun h ↦ h_b h.2⟩
+      (Set.mem_compl_iff _ _).2 fun h ↦ h_b h.2⟩
 
 theorem eval_mc_iff_delineation_of_noReversal (i : I) (a b : E)
     (hnr : NoReversal interp ord R w b a) :

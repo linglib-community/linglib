@@ -31,6 +31,15 @@ a degree achievement is read off that shape.
 * `ScalarDimension.defaultTelicity_telic_iff_hasGreatest`: a degree achievement is telic by default
   exactly when the degrees of its scale have a greatest element.
 
+## Implementation notes
+
+The degrees of a dimension are the integers with the endpoints of its scale adjoined
+(`Boundedness.DegreeShape`), where Kennedy and McNally take degrees isomorphic to the real
+numbers between 0 and 1. The results here and in `Semantics/Degree/Boundedness.lean` use only
+which endpoints a scale has and that an automorphism carries any degree between them to any
+other, which the integers, the rationals and the reals all provide; none of them depends on
+density, which Fox and Hackl's Universal Density of Measurement asserts of every scale.
+
 ## References
 
 * [C. Kennedy and L. McNally, *Scale Structure, Degree Modification, and the Semantics of Gradable
@@ -43,6 +52,7 @@ a degree achievement is read off that shape.
   (2017)][lassiter-2017]
 * [A. Bale and B. Schwarz, *Natural language and external conventions: re-examining per*
   (2026)][bale-schwarz-2026]
+* [D. Fox and M. Hackl, *The Universal Density of Measurement* (2006)][fox-hackl-2006]
 -/
 
 @[expose] public section
@@ -69,7 +79,7 @@ inductive ScalarDimension
   | freedom | tightness | alive | pregnancy | hardness | smoothness | purity
   | cracking | denting | scratching | shattering
   -- Perceptual colour + verb-only scalar-change dimensions
-  | color | curvature | boiling | corrosion | quantity | unspecified
+  | color | boiling | corrosion | quantity | unspecified
   deriving DecidableEq, Repr, Fintype, Inhabited, BEq
 
 /-- The shape of a dimension's scale in its increasing direction ([kennedy-mcnally-2005]
@@ -82,7 +92,7 @@ inductive ScalarDimension
     *likely*. The negative member of an antonym pair measures on the dual scale. The definition is
     reducible, so that order instances on the degrees of a dimension see through it. -/
 abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
-  | .openness | .curvature | .cracking | .denting | .scratching | .boiling
+  | .openness | .cracking | .denting | .scratching | .boiling
   | .alive | .freedom | .fullness | .shattering | .tightness | .pregnancy => .closed
   | .straightness | .flatness | .cleanliness | .purity | .smoothness | .safety
   | .confidence => .upperClosed

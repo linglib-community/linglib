@@ -109,9 +109,12 @@ theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s 
 section Thresholds
 
 /-- The upper sets of a background, as extensions, form a monotone delineation iff the
-background is total. Two incomparable states give the cycle of a nonlinear delineation. -/
+background is total. Two incomparable states give a pair that one threshold ranks one way and
+another the other. -/
 theorem isMonotoneOn_upperSets_iff :
-    (⟨id⟩ : Delineation S).IsMonotoneOn {C | IsUpperSet C} ↔ ∀ s t : S, s ≤ t ∨ t ≤ s := by
+    (Delineation.ofExtension id : Delineation S).IsMonotoneOn {C | IsUpperSet C} ↔
+      ∀ s t : S, s ≤ t ∨ t ≤ s := by
+  rw [Delineation.isMonotoneOn_ofExtension_iff]
   refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ h₁ C₂ h₂ a b ha hb hb₂ ↦ ?_⟩
   · obtain ⟨hst, hts⟩ := not_or.1 hst
     exact hts (h (Ici s) (isUpperSet_Ici s) (Ici t) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
