@@ -78,6 +78,10 @@ satisfies `A`. -/
 theorem exhAgainst_lt_iff_maximal : exhAgainst (· < ·) A i ↔ Maximal A i :=
   maximal_iff_forall_gt.symm
 
+/-- Exhaustifying against the smaller indices is minimality. -/
+theorem exhAgainst_gt_iff_minimal : exhAgainst (· > ·) A i ↔ Minimal A i :=
+  minimal_iff_forall_lt.symm
+
 /-- On an entailment chain, exhaustifying `A i` against the stronger alternatives denies just the
 next-stronger one `A s`. -/
 theorem exhAgainst_lt_iff_succ (hA : Antitone A) (his : i < s) (hleast : ∀ j, i < j → s ≤ j) :
