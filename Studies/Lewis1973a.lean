@@ -18,7 +18,8 @@ analysis: a single cause, a chain, in which the distal cause is a cause through 
 (`Chain.chain_causation`), the common-cause case of the barometer and the storm, where
 neither effect depends on the other (`Epiphenomena.barometer_not_causes_storm`), and
 symmetric overdetermination, where neither of two sufficient causes passes the but-for test
-(`Overdetermination.overdetermination_no_dependence_a`), the limitation the paper concedes.
+(`Overdetermination.overdetermination_no_dependence_a`), a case the paper sets aside as no test of
+the analysis.
 
 ## Implementation notes
 
@@ -184,8 +185,9 @@ end Epiphenomena
 
 namespace Overdetermination
 
-/-! Symmetric overdetermination (fn. 12): with two sufficient causes both
-present, neither is necessary, so neither passes the but-for test. -/
+/-! Symmetric overdetermination, which footnote 12 sets aside as no test case for want of firm
+naive opinions: with two sufficient causes both present, neither is necessary, so neither passes
+the but-for test. -/
 
 inductive V | a | b | e
   deriving DecidableEq, Fintype, Repr

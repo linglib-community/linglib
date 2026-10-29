@@ -19,7 +19,8 @@ two non-contemporaneous events are atelic.
 
 * The model of *eat* identifies an event with the apples it consumes, so its verb phrases are the
   object predicates themselves; the transfer from object to verb phrase is the general
-  `Aspect.vp_cum` and `Aspect.vp_qua`.
+  `Aspect.vp_cum` and, for the strictly incremental and summative relation of (54),
+  `Aspect.SINC.vp_qua`.
 * Temporal precedence is a parameter of the telicity notions. The paper's consequence of
   its event axioms that overlapping events never precede each other enters as
   `NoPartPrecedes`, which is all the proofs use.
@@ -36,6 +37,16 @@ two non-contemporaneous events are atelic.
   dimensions are not formalized.
 * In the finite model, the diagram's detour consists of the segments `h` and `i`; the
   paper's list of movements calls the second one `j`.
+
+## Errata
+
+* The proof in §3.3 that *eat two apples* is quantized infers `y′ = y″` from uniqueness of
+  objects (50), which compares only parts of `y` related to `e′`, while `y′` is not known to be a
+  part of `y`. Cumulativity (54) closes the gap: it relates the sum `y ⊕ y′` to `e`, inside which
+  uniqueness of objects compares `y′` and `y″`, so a summative relation with unique objects has
+  unique participants (`Mereology.UO.up_of_sum`, whence `Aspect.SINC.vp_qua`). Strict
+  incrementality alone does not suffice: `twoThemes` is strictly incremental and takes a
+  quantized object predicate to a verb phrase that is not quantized (`not_qua_vp_twoThemes`).
 
 ## References
 
@@ -87,16 +98,14 @@ theorem eat_sinc : SINC eat where
 
 theorem eat_sum : SUM eat := sum_graph (SupHom.id _)
 
-theorem eat_up : UP eat := up_graph id
-
 /-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
 theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
   vp_cum eat_sum fun _ hx _ _ ↦ hx.mono Finset.subset_union_left
 
 /-- *eat two apples* is quantized, since a measure phrase is quantized and *eat* is strictly
-incremental. -/
+incremental and summative (54). -/
 theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
-  vp_qua eat_up eat_sinc.mso
+  eat_sinc.vp_qua eat_sum
     (qua_pullback (IsExtensiveMeasure.strictMono Finset.card) (singleton_qua 2))
 
 end Eat
@@ -104,6 +113,41 @@ end Eat
 theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
     (y : α) : QUA (VP θ (· = y)) :=
   vp_eq θ y ▸ h.uo.qua_of_mso h.mso y
+
+/-! ### Strict incrementality without cumulativity
+
+In `twoThemes` the event `{0}` has two objects: `{0}`, its part of the object `{0, 1}` of the whole
+event `{0, 1}`, and `{2}`, outside it. The relation is strictly incremental, but the quantized
+object predicate true of `{0, 1}` and of `{2}` gives a verb phrase true of `{0}` and of `{0, 1}`.
+It is not cumulative, since `{0}` and `{2}` would sum to a third object of `{0}`. -/
+
+/-- The event `{0}` has the objects `{0}` and `{2}`. -/
+def twoThemes (x : Finset (Fin 3)) (e : Finset (Fin 2)) : Prop :=
+  (x, e) ∈ [(∅, ∅), ({0}, {0}), ({1}, {1}), ({0, 1}, {0, 1}), ({2}, {0})]
+
+instance : DecidableRel twoThemes := fun _ _ ↦ by unfold twoThemes; infer_instance
+
+theorem twoThemes_sinc : SINC twoThemes where
+  ue x e h y hy := by
+    revert h hy
+    unfold ExistsUnique
+    fin_cases x <;> fin_cases e <;> fin_cases y <;> decide
+  uo e x h e' he' := by
+    revert h he'
+    unfold ExistsUnique flip
+    fin_cases x <;> fin_cases e <;> fin_cases e' <;> decide
+  extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, by decide, by decide⟩
+
+-- §3.3, after (54)
+theorem not_qua_vp_twoThemes :
+    QUA (· ∈ ({{0, 1}, {2}} : Finset (Finset (Fin 3)))) ∧
+      ¬ QUA (VP twoThemes (· ∈ ({{0, 1}, {2}} : Finset (Finset (Fin 3))))) := by
+  refine ⟨?_, fun h ↦ h (x := {0}) ⟨{2}, by decide, by decide⟩ (y := {0, 1})
+    ⟨{0, 1}, by decide, by decide⟩ (by decide) (by decide : ({0} : Finset (Fin 2)) ⊆ {0, 1})⟩
+  rintro x hx y hy hne hle
+  simp only [Set.mem_ofPred_eq, Finset.mem_insert, Finset.mem_singleton] at hx hy
+  rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
+    first | exact hne rfl | exact absurd hle (by decide)
 
 /-! ### Incrementality without telicity (§3.6)
 
