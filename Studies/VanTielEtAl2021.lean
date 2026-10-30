@@ -241,7 +241,7 @@ nor antitone, was coded increasing. -/
 theorem monotonicity_eq_decreasing_iff {w : Word} {q : QuantityWord}
     (h : w.toQuantityWord? = some q) :
     w.monotonicity = .decreasing ↔
-      ∃ d ∈ (⟦q⟧ : Set Family.{0}), ∀ (α : Type) [Fintype α], ScopeAntitone (d α) := by
+      ∃ d ∈ (⟦q⟧ : Set Det.Family.{0}), ∀ (α : Type) [Fintype α], ScopeAntitone (d α) := by
   cases w <;> simp only [Word.toQuantityWord?, reduceCtorEq, Option.some.injEq] at h <;> subst h
   · exact iff_of_true rfl ⟨_, rfl, fun _ _ ↦ scopeAntitone_no⟩
   · exact iff_of_true rfl ⟨_, rfl, fun _ _ ↦ scopeAntitone_few⟩

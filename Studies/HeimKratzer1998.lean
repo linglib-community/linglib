@@ -190,10 +190,10 @@ end ToyModel
 open Toy (student person)
 
 /-- A reading as a composition terminal on the entity domain `E`, at the determiner type. -/
-def toDenotation (d : Family.{0}) (E W : Type) [Fintype E] : Denotation E W := ⟨Ty.det, d E⟩
+def toDenotation (d : Det.Family.{0}) (E W : Type) [Fintype E] : Denotation E W := ⟨Ty.det, d E⟩
 
 /-- The terminals of a set of readings on a domain. -/
-def terminals (s : Set Family.{0}) (E W : Type) [Fintype E] : Set (Denotation E W) :=
+def terminals (s : Set Det.Family.{0}) (E W : Type) [Fintype E] : Set (Denotation E W) :=
   (toDenotation · E W) '' s
 
 /-- `objectShift D` is the object-position entry of the determiner `D`, which the book's lexical
