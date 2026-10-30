@@ -802,12 +802,12 @@ theorem isStrictlyPiecewise_iff_wordModel :
   rw [isStrictlyLocal_iff]
   constructor
   · intro hL w hw
-    rw [← hL]
+    rw [← hL.language_self]
     intro s hs hsw
     obtain ⟨v, hv, hsv⟩ := Set.mem_iUnion₂.1 (hw ((WordModel.diagram_occurs_iff hs).2 hsw))
     exact hL.isSublistClosed ((WordModel.diagram_occurs_iff hs).1 hsv) hv
   · intro hS
-    refine le_antisymm (fun w hw ↦ hS w fun f hf ↦ ?_) fun w hw s _ hs ↦ ?_
+    refine ⟨L, le_antisymm (fun w hw ↦ hS w fun f hf ↦ ?_) fun w hw s _ hs ↦ ?_⟩
     · obtain ⟨s, hsw, hs, hfs⟩ := WordModel.exists_sublist_of_occurs hf
       exact Set.mem_iUnion₂.2 ⟨s, hw s hs hsw, hfs⟩
     · exact hS s fun f hf ↦ Set.mem_iUnion₂.2 ⟨w, hw, WordModel.factors_subset_of_sublist hs hf⟩

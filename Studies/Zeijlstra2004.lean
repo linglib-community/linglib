@@ -177,17 +177,23 @@ theorem not_scopeMonotone_no : ¬ ScopeMonotone (no : Det PUnit.{u + 1}) := fun 
 /-- Of the readings of Italian *nessuno*, the one upward monotone in its scope on every finite
 domain is the indefinite. -/
 theorem mem_nessuno_and_scopeMonotone_iff {d : Det.Family.{u}} :
-    (d ∈ ⟦Italian.Determiners.QuantityWord.nessuno⟧ ∧
+    (d ∈ ⟦Italian.Determiners.nessuno⟧ ∧
       ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = Det.Family.some := by
+  have hmem : d ∈ ⟦Italian.Determiners.nessuno⟧ ↔ d = Det.Family.no ∨ d = Det.Family.some := by
+    simp [Italian.Determiners.nessuno, Denotes.denote]
+  rw [hmem]
   refine ⟨fun ⟨hd, h⟩ ↦ hd.resolve_left fun hn ↦ ?_,
-    fun h ↦ h ▸ ⟨.inr rfl, fun _ _ ↦ scopeMonotone_some⟩⟩
+    fun h ↦ by subst h; exact ⟨.inr rfl, fun _ _ ↦ scopeMonotone_some⟩⟩
   subst hn; exact not_scopeMonotone_no (h PUnit)
 
 theorem mem_zadny_and_scopeMonotone_iff {d : Det.Family.{u}} :
-    (d ∈ ⟦Czech.Determiners.QuantityWord.zadny⟧ ∧
+    (d ∈ ⟦Czech.Determiners.zadny⟧ ∧
       ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = Det.Family.some := by
+  have hmem : d ∈ ⟦Czech.Determiners.zadny⟧ ↔ d = Det.Family.no ∨ d = Det.Family.some := by
+    simp [Czech.Determiners.zadny, eq_comm]
+  rw [hmem]
   refine ⟨fun ⟨hd, h⟩ ↦ hd.resolve_left fun hn ↦ ?_,
-    fun h ↦ h ▸ ⟨.inr rfl, fun _ _ ↦ scopeMonotone_some⟩⟩
+    fun h ↦ by subst h; exact ⟨.inr rfl, fun _ _ ↦ scopeMonotone_some⟩⟩
   subst hn; exact not_scopeMonotone_no (h PUnit)
 
 end Readings

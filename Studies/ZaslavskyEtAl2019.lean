@@ -74,10 +74,11 @@ variable {C W : Type*} [MeasurableSpace C] [MeasurableSpace W] [Fintype C]
 
 /-- The expected surprisal `S(c)` of a color (eq. 1): the surprisal of the color to a listener
 who hears its name and recovers a color by Bayes' rule (eq. 2), averaged over its names. Lower
-values mean more precise communication. -/
+values mean more precise communication. A color of zero need is never recovered; its surprisal is
+`∞` and enters the real average through its real part, `0`. -/
 noncomputable def expectedSurprisal (κ : Kernel C W) [IsFiniteKernel κ] (μ : Measure C)
     [IsFiniteMeasure μ] (c : C) : ℝ :=
-  ∫ w, surprisal ((κ†μ) w) c ∂(κ c)
+  ∫ w, (surprisal ((κ†μ) w) c).toReal ∂(κ c)
 
 /-- The temperature of a color chip. -/
 inductive Temperature
@@ -99,11 +100,13 @@ section Capacity
 variable [Fintype W] (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C)
   [IsProbabilityMeasure μ]
 
+-- A name under which the listener rules the color out contributes `0` to both sides.
 omit [Fintype W] [MeasurableSingletonClass W] in
 theorem neg_expectedSurprisal (c : C) :
     -expectedSurprisal κ μ c = ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
   rw [expectedSurprisal, ← integral_neg]
-  simp only [surprisal, neg_neg]
+  congr 1 with w
+  rw [toReal_surprisal prob_le_one, neg_neg]
 
 /-- The identity behind eq. 5: the divergence of a color's naming distribution from the word
 marginal is its negative expected surprisal less its log need. -/
@@ -158,7 +161,7 @@ theorem expectedSurprisal_ofPartition (f : C → W) (μ : Measure C) [IsProbabil
     expectedSurprisal (ofPartition f) μ c = log (μ.real (f ⁻¹' {f c})) - log (μ.real {c}) := by
   have hsub := Set.singleton_subset_iff.mpr (mem_preimage_self f c)
   have hF : μ (f ⁻¹' {f c}) ≠ 0 := fun h => hc (measure_mono_null hsub h)
-  rw [expectedSurprisal, Kernel.deterministic_apply, integral_dirac, surprisal,
+  rw [expectedSurprisal, Kernel.deterministic_apply, integral_dirac, toReal_surprisal prob_le_one,
     posterior_deterministic_eq_cond μ _ hF,
     cond_real_apply μ (measurable_of_finite f (measurableSet_singleton _)),
     Set.inter_eq_right.mpr hsub, log_div, neg_sub]

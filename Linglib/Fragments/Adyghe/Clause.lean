@@ -89,7 +89,7 @@ structure Verb extends _root_.Verb where
 def gwepshesa : Verb where
   morphs := [.root "gʷəpšəsa"]
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.np]
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   complementCase := some .abs
 
 /-- *qəč̣'ewəpč̣a* 'ask', with a relative clause conveying a question or a noun phrase, in the
@@ -105,7 +105,7 @@ or a noun phrase, in the absolutive ((75), (101), (104)). -/
 def she : Verb where
   morphs := [.root "ṣ̂e"]
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question, ArgumentFrame.np]
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   complementCase := some .abs
 
@@ -114,7 +114,7 @@ def she : Verb where
 def gwereqwe : Verb where
   morphs := [.root "gʷərəʔʷe"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   complementCase := some .abs
 

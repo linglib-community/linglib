@@ -12,14 +12,16 @@ public import Mathlib.Probability.Moments.Variance
 /-!
 # Bernoulli distribution: bind, variance, posterior
 
-Binding a kernel through `Ber(x, y, p)` is the `p`-mixture of its two values, and the variance of
-a real observable under `Ber(x, y, p)` is `p * (1 - p) * (f x - f y) ^ 2`. Conditioning on an
-observation that both points emit with positive likelihood, the posterior mass of a point is
-strictly increasing in its Bernoulli prior.
+Binding a kernel through `Ber(x, y, p)` is the `p`-mixture of its two values, as is a lower
+integral against it, and the variance of a real observable under `Ber(x, y, p)` is
+`p * (1 - p) * (f x - f y) ^ 2`. Conditioning on an observation that both points emit with
+positive likelihood, the posterior mass of a point is strictly increasing in its Bernoulli prior.
 
 ## Main results
 
 * `ProbabilityTheory.bernoulliMeasure_bind`: `Ber(x, y, p).bind f = p • f x + (1 - p) • f y`.
+* `ProbabilityTheory.lintegral_bernoulliMeasure`:
+  `∫⁻ z, f z ∂Ber(x, y, p) = p * f x + (1 - p) * f y`.
 * `ProbabilityTheory.variance_bernoulliMeasure`:
   `Var[f; Ber(x, y, p)] = p * (1 - p) * (f x - f y) ^ 2`.
 * `ProbabilityTheory.strictMono_posterior_bernoulliMeasure`:
@@ -32,6 +34,7 @@ strictly increasing in its Bernoulli prior.
 @[expose] public section
 
 open MeasureTheory unitInterval
+open scoped ENNReal
 
 namespace ProbabilityTheory
 
@@ -43,6 +46,11 @@ theorem bernoulliMeasure_bind {f : X → Measure Y} (hf : Measurable f) :
   ext s hs
   simp [bernoulliMeasure_def, Measure.bind_apply hs hf.aemeasurable, lintegral_add_measure,
     lintegral_smul_measure]
+
+theorem lintegral_bernoulliMeasure (f : X → ℝ≥0∞) :
+    ∫⁻ z, f z ∂Ber(x, y, p) = toNNReal p * f x + toNNReal (σ p) * f y := by
+  rw [bernoulliMeasure_def, lintegral_add_measure, lintegral_smul_measure, lintegral_smul_measure,
+    lintegral_dirac, lintegral_dirac, ENNReal.smul_def, ENNReal.smul_def, smul_eq_mul, smul_eq_mul]
 
 theorem variance_bernoulliMeasure {f : X → ℝ} (hf : AEMeasurable f Ber(x, y, p)) :
     Var[f; Ber(x, y, p)] = p * (1 - p) * (f x - f y) ^ 2 := by

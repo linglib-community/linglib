@@ -50,7 +50,6 @@ open PhraseStructure
 open PhraseStructure.Tree
 open Quantifier Quantifier.Det
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
-open English.Determiners (QuantityWord)
 open scoped Denotes
 
 /-! ### Model and lexicon
@@ -217,21 +216,23 @@ def objectShift? {E W : Type} (d : Denotation E W) : Option (Denotation E W) :=
 def objectShifts {E W : Type} (s : Set (Denotation E W)) : Set (Denotation E W) :=
   {d | ∃ d₁ ∈ s, objectShift? d₁ = some d}
 
-/-- The study's stand on the quantifier words, the one reading each of *every* and *some* makes
-available, as a terminal on the toy domain. -/
-def quantifierReading : QuantityWord → Option (Denotation ToyEntity Unit)
-  | .every => some (toDenotation Family.every ToyEntity Unit)
-  | .some_ => some (toDenotation Family.some ToyEntity Unit)
-  | _ => none
+/-- The study's stand on the quantificational determiners, the reading `every` where a word has
+it and else the reading `Quantifier.Det.some`, as a terminal on the toy domain. -/
+def quantifierReading (w : QuantificationalDeterminer) : Option (Denotation ToyEntity Unit) :=
+  if Symbol.every ∈ w.readings then some (toDenotation Family.every ToyEntity Unit)
+  else if Symbol.some ∈ w.readings then some (toDenotation Family.some ToyEntity Unit)
+  else none
 
-theorem quantifierReading_mem {w : QuantityWord} {d : Denotation ToyEntity Unit}
+theorem quantifierReading_mem {w : QuantificationalDeterminer} {d : Denotation ToyEntity Unit}
     (h : quantifierReading w = some d) : d ∈ terminals ⟦w⟧ ToyEntity Unit := by
-  cases w <;> simp only [quantifierReading, Option.some.injEq, reduceCtorEq] at h <;> subst h <;>
-    exact Set.mem_image_of_mem _ (Set.mem_singleton _)
+  simp only [quantifierReading] at h
+  split_ifs at h with he hs <;> cases h
+  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote he)
+  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote hs)
 
 /-- The leaf interpretation reads the quantifier words through their readings and the toy
 fragment's nouns and verbs through the toy lexicon. -/
-def lex : QuantityWord ⊕ String → Option (Denotation ToyEntity Unit) :=
+def lex : QuantificationalDeterminer ⊕ String → Option (Denotation ToyEntity Unit) :=
   Sum.elim quantifierReading toyLexicon
 
 /-- The assignment `g₀` sends every index to John. -/
@@ -571,23 +572,23 @@ its two scope readings. -/
 
 /-- The surface-scope tree `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]`
 has the reading ∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]]. -/
-def tree_surface : Tree Unit (QuantityWord ⊕ String) :=
+def tree_surface : Tree Unit (QuantificationalDeterminer ⊕ String) :=
   .bin
-    (.bin (.leaf (.inl .every)) (.leaf (.inr "person")))
+    (.bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person")))
     (.binder 1
       (.bin
-        (.bin (.leaf (.inl .some_)) (.leaf (.inr "person")))
+        (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person")))
         (.binder 2
           (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
 
 /-- The inverse-scope tree `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]`
 has the reading ∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]]. -/
-def tree_inverse : Tree Unit (QuantityWord ⊕ String) :=
+def tree_inverse : Tree Unit (QuantificationalDeterminer ⊕ String) :=
   .bin
-    (.bin (.leaf (.inl .some_)) (.leaf (.inr "person")))
+    (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person")))
     (.binder 2
       (.bin
-        (.bin (.leaf (.inl .every)) (.leaf (.inr "person")))
+        (.bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person")))
         (.binder 1
           (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
 
@@ -649,11 +650,11 @@ section Readings
 
 /-- The words' available readings, the quantifier words through the terminals of theirs and
 the toy fragment's words through the toy lexicon. -/
-def lexReadings : QuantityWord ⊕ String → Set (Denotation ToyEntity Unit) :=
+def lexReadings : QuantificationalDeterminer ⊕ String → Set (Denotation ToyEntity Unit) :=
   Sum.elim (fun w ↦ terminals ⟦w⟧ ToyEntity Unit) fun s ↦ {d | toyLexicon s = some d}
 
-theorem lex_mem_lexReadings (w : QuantityWord ⊕ String) (d : Denotation ToyEntity Unit)
-    (h : lex w = some d) : d ∈ lexReadings w := by
+theorem lex_mem_lexReadings (w : QuantificationalDeterminer ⊕ String)
+    (d : Denotation ToyEntity Unit) (h : lex w = some d) : d ∈ lexReadings w := by
   cases w with
   | inl w => exact quantifierReading_mem h
   | inr s => exact h
@@ -674,19 +675,19 @@ section InSitu
 
 /-- The words' readings closed under the lexical rule, each quantifier word making its
 object-position entry available beside its basic one. -/
-def lexFlex (w : QuantityWord ⊕ String) : Set (Denotation ToyEntity Unit) :=
+def lexFlex (w : QuantificationalDeterminer ⊕ String) : Set (Denotation ToyEntity Unit) :=
   lexReadings w ∪ objectShifts (lexReadings w)
 
 /-- A resolution of the quantifier words, the words in `object` taking their object-position
 entry and the others their basic one. -/
-def resolve (object : QuantityWord → Prop) [DecidablePred object] :
-    QuantityWord ⊕ String → Option (Denotation ToyEntity Unit) :=
+def resolve (object : QuantificationalDeterminer → Prop) [DecidablePred object] :
+    QuantificationalDeterminer ⊕ String → Option (Denotation ToyEntity Unit) :=
   Sum.elim (fun w ↦ if object w then (quantifierReading w).bind objectShift?
     else quantifierReading w) toyLexicon
 
-theorem resolve_mem_lexFlex (object : QuantityWord → Prop) [DecidablePred object]
-    (w : QuantityWord ⊕ String) (d : Denotation ToyEntity Unit) (h : resolve object w = some d) :
-    d ∈ lexFlex w := by
+theorem resolve_mem_lexFlex (object : QuantificationalDeterminer → Prop) [DecidablePred object]
+    (w : QuantificationalDeterminer ⊕ String) (d : Denotation ToyEntity Unit)
+    (h : resolve object w = some d) : d ∈ lexFlex w := by
   cases w with
   | inl w =>
     simp only [resolve, Sum.elim_inl] at h
@@ -698,15 +699,17 @@ theorem resolve_mem_lexFlex (object : QuantityWord → Prop) [DecidablePred obje
 
 /-- The book's in-situ tree on the toy fragment, `[S [DP every person] [VP sees [DP some
 person]]]`, with no movement. -/
-def tree_inSitu : Tree Unit (QuantityWord ⊕ String) :=
-  .bin (.bin (.leaf (.inl .every)) (.leaf (.inr "person")))
-    (.bin (.leaf (.inr "sees")) (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))))
+def tree_inSitu : Tree Unit (QuantificationalDeterminer ⊕ String) :=
+  .bin (.bin (.leaf (.inl English.Determiners.every)) (.leaf (.inr "person")))
+    (.bin (.leaf (.inr "sees"))
+      (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))))
 
 theorem interp_computes_inSitu :
-    interp (resolve (· = .some_)) g₀ tree_inSitu = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+    interp (resolve (· = English.Determiners.some_)) g₀ tree_inSitu =
+      some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
 theorem inSitu_eq_surface :
-    interp (resolve (· = .some_)) g₀ tree_inSitu = interp lex g₀ tree_surface :=
+    interp (resolve (· = English.Determiners.some_)) g₀ tree_inSitu = interp lex g₀ tree_surface :=
   interp_computes_inSitu.trans interp_computes_surface.symm
 
 /-- The surface-scope reading is among the readings of the flat tree under the lexical rule. -/
@@ -715,15 +718,15 @@ theorem surfaceScopeProp_mem_readings_inSitu :
   Tree.interp_mem_readings (resolve_mem_lexFlex _) interp_computes_inSitu
 
 theorem object_entry_in_subject_uninterpretable :
-    interp (resolve (· = .some_)) g₀
-      (.bin (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))) (.leaf (.inr "sleeps"))) =
-      none := rfl
+    interp (resolve (· = English.Determiners.some_)) g₀
+      (.bin (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person")))
+        (.leaf (.inr "sleeps"))) = none := rfl
 
 -- §7.1
 theorem basic_entry_in_object_uninterpretable :
     interp (resolve fun _ ↦ False) g₀ (.bin (.leaf (.inr "John"))
-      (.bin (.leaf (.inr "sees")) (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))))) =
-      none := rfl
+      (.bin (.leaf (.inr "sees"))
+        (.bin (.leaf (.inl English.Determiners.some_)) (.leaf (.inr "person"))))) = none := rfl
 
 end InSitu
 

@@ -21,9 +21,7 @@ a `p` surfacing as `b` word-initially, word-finally, after a `p` and before a `p
 φ_apba, (7.22), and the relation it presents is `R(CG(φ_apba))`, Definition 25 (`voicing`): a
 pair is in it iff the Γ-string spelling it, which is unique, is free of the grammar
 (`voicing_iff_spell`), so membership decides, and on the pairs of (7.5) and (7.17) the relation
-agrees with `Rvoice` (`rows_agree`). The identity `R(CG(φ_apba)) = Rvoice` that the text leaves
-to the reader fails: no subgraph of (7.22) mentions a `b` beside the target, so the grammar admits
-`bpa ↦ bba`, which the rule (7.1) does not (`voicing_ne_voiceRule`).
+agrees with `Rvoice` (`rows_agree`).
 
 ## Implementation notes
 
@@ -31,6 +29,13 @@ to the reader fails: no subgraph of (7.22) mentions a `b` beside the target, so 
   that (7.21) reads are symbols of the alphabet, and a Γ-string's graph is wrapped in them.
 * `Rvoice` is written as the rule (7.1) applied pointwise, `voiceRule`, a `p` between two `a`s
   surfacing as `b`.
+
+## Errata
+
+* The text leaves to the reader that `R(CG(φ_apba)) = Rvoice`. The identity fails: no subgraph of
+  (7.22) mentions a `b` beside the target, so the grammar [admits](##voicing_bpa_bba)
+  `bpa ↦ bba`, which the rule (7.1) does not, and the two relations
+  [differ](##voicing_ne_voiceRule).
 
 ## References
 
@@ -128,7 +133,7 @@ theorem spell_eq_some {w v : List Seg} {γs : List Pair} (h : spell w v = some �
 
 theorem spell_eq_some_iff {w v : List Seg} {γs : List Pair} :
     spell w v = some γs ↔ γs.map Pair.input = w ∧ γs.map Pair.output = v :=
-  ⟨spell_eq_some, λ ⟨hw, hv⟩ => hw ▸ hv ▸ spell_map γs⟩
+  ⟨spell_eq_some, fun ⟨hw, hv⟩ ↦ hw ▸ hv ▸ spell_map γs⟩
 
 /-- Jardine's `g` on Γ-strings ((7.15)): the correspondence graph spelling the input and
 output symbols position by position. -/
@@ -229,7 +234,7 @@ theorem rows_agree : ∀ r ∈ rows, voicing r.input r.output ↔ r.inRvoice = t
 
 /-- The rule (7.1) pointwise: a `p` between two `a`s surfaces as `b`. -/
 def voiceRule (w : List Seg) : List Seg :=
-  w.mapIdx λ i x =>
+  w.mapIdx fun i x ↦
     if x = .p ∧ w[i - 1]? = some .a ∧ i ≠ 0 ∧ w[i + 1]? = some .a then .b else x
 
 theorem voiceRule_rows : ∀ r ∈ rows, voiceRule r.input = r.output ↔ r.inRvoice = true := by
@@ -238,9 +243,9 @@ theorem voiceRule_rows : ∀ r ∈ rows, voiceRule r.input = r.output ↔ r.inRv
 -- (7.22)
 theorem voicing_bpa_bba : voicing [.b, .p, .a] [.b, .b, .a] := by decide
 
-/-- So the identity `R(CG(φ_apba)) = Rvoice` that the text leaves to the reader fails: the
-rule (7.1) leaves `bpa` unchanged. -/
+/-- The grammar's relation is not `Rvoice`, against the identity the text leaves to the reader:
+the rule (7.1) leaves `bpa` unchanged. -/
 theorem voicing_ne_voiceRule : ¬ ∀ w v, voicing w v ↔ voiceRule w = v :=
-  λ h => absurd ((h _ _).1 voicing_bpa_bba) (by decide)
+  fun h ↦ absurd ((h _ _).1 voicing_bpa_bba) (by decide)
 
 end Jardine2016b

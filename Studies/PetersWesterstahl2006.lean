@@ -5,6 +5,12 @@ public import Linglib.Semantics.Plurality.Reciprocal
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.Ring
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.Romance.French.Determiners
+public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Fragments.Slavic.Czech.Determiners
+public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Fragments.Mandarin.Determiners
 
 /-!
 # Peters and Westerståhl (2006): Quantifiers in Language and Logic
@@ -17,11 +23,24 @@ quantifier rank `≤ r` (`duplicatorWinsBijective_oneCycle_twoCycles`). `LIN` ho
 fails on the second (`oneCycle_mem_lin`, `twoCycles_not_mem_lin`), so no sentence of `FO(Mon)`
 defines it (`lin_not_monDefinable`): the reciprocal reading built on `LIN` is genuinely polyadic.
 
+Peters and Westerståhl's quantirelation universal has the quantifiers that interpret
+quantirelations conservative and satisfying extension, and they claim that the lexical quantifier
+expressions denote quantifiers closed under isomorphism. The quantificational determiners of the
+English, French, Italian, Czech, Japanese and Mandarin fragments [meet both on every
+reading](##PetersWesterstahl2006.conservative_ext_isom_of_mem_inventories), while their MO, which
+holds when the restrictor has more elements than the scope, is [the reading of no
+quantificational determiner](##PetersWesterstahl2006.mo_not_mem_denote), not being conservative.
+
 ## Implementation notes
 
 The two models are the successor graphs of `+ 1` on `ZMod (2 ^ (r + 1))` and of `+ (0, 1)` on
 `ZMod 2 × ZMod (2 ^ r)`, and the game is won by the general result for successor graphs of
 permutations with long cycles, `FirstOrder.Language.duplicatorWinsBijective_successor`.
+
+A quantificational determiner's readings are determiner symbols, each denoting the global
+denotation of a tree of numbers, so that what the fragments record meets the universal and the
+claim by construction (`QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`); the
+theorem on the inventories states which lexicon they are checked against.
 
 ## TODO
 
@@ -122,5 +141,44 @@ theorem lin_not_monDefinable : ¬ Language.graph.MonDefinable Set.univ Reciproca
   not_monDefinable_of_duplicatorWinsBijective fun r ↦
     ⟨oneCycle r, trivial, twoCycles r, trivial, duplicatorWinsBijective_oneCycle_twoCycles r,
       oneCycle_mem_lin r, twoCycles_not_mem_lin r⟩
+
+/-! ### (QU) and (A) on the fragments -/
+
+section Fragments
+
+open Quantifier
+open scoped Denotes
+
+/-- The determiner inventories of the English, French, Italian, Czech, Japanese and Mandarin
+fragments. -/
+def inventories : List Determiner.Inventory :=
+  [English.Determiners.inventory, French.Determiners.inventory, Italian.Determiners.inventory,
+    Czech.Determiners.inventory, Japanese.Determiners.inventory, Mandarin.Determiners.inventory]
+
+/-- (QU), p. 138, and (A), p. 330, on the fragments: every reading of every quantificational
+determiner of the six inventories is conservative, satisfies extension and is closed under
+isomorphism. -/
+theorem conservative_ext_isom_of_mem_inventories :
+    ∀ inv ∈ inventories, ∀ q, Determiner.Entry.quantifier q ∈ inv →
+      ∀ Q ∈ (⟦q⟧ : Set Det.Family.{0}), Q.Conservative ∧ Q.Ext ∧ Q.Isom :=
+  fun _ _ _ _ _ hQ ↦ QuantificationalDeterminer.conservative_ext_isom_of_mem_denote hQ
+
+example : Determiner.Entry.quantifier English.Determiners.most ∈ English.Determiners.inventory ∧
+    Det.Family.most ∈ (⟦English.Determiners.most⟧ : Set Det.Family.{0}) :=
+  ⟨List.mem_append_left _ (List.mem_append_right _ (List.mem_map_of_mem (by decide))),
+    ⟨.most, by decide, rfl⟩⟩
+
+/-- MO of (38a), p. 13: the restrictor has more elements than the scope. -/
+def mo : Det.Family.{0} := fun _ _ A B ↦ B.ncard < A.ncard
+
+theorem not_conservative_mo : ¬ mo.Conservative := fun h ↦ by
+  have := h Bool {true} {false}
+  simp [mo] at this
+
+/-- MO is the reading of no quantificational determiner. -/
+theorem mo_not_mem_denote (q : QuantificationalDeterminer) : mo ∉ (⟦q⟧ : Set Det.Family.{0}) :=
+  fun h ↦ not_conservative_mo (QuantificationalDeterminer.conservative_ext_isom_of_mem_denote h).1
+
+end Fragments
 
 end PetersWesterstahl2006

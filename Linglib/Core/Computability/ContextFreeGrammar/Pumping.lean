@@ -131,28 +131,28 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g
     unfold pumpingConstant at hlong
     omega
   -- a longest path, and the window of its last `g.rules.card + 1` nodes
-  obtain ⟨p, hp, hpath⟩ := exists_subtreeAt_height_sub t₁ (t₁.height - 2) (by omega)
+  obtain ⟨p, hp, hpath⟩ := exists_getElem?_height_sub t₁ (t₁.height - 2) (by omega)
   set off := t₁.height - 2 - g.rules.card with hoff
   obtain ⟨t₀, ht₀, hh₀⟩ := hpath off (by omega)
   set q := p.drop off with hq
   have hql : q.length = g.rules.card := by simp [q, hp]; omega
   have hpq : p = p.take off ++ q := (List.take_append_drop off p).symm
   obtain ⟨e, he, heh⟩ := hpath p.length hp.le
-  rw [List.take_length, hpq, subtreeAt_append, ht₀, Option.bind_some] at he
+  rw [List.take_length, hpq, getElem?_append, ht₀, Option.bind_some] at he
   obtain ⟨i, j, hij, hjK, A, csᵢ, csⱼ, hi, hj⟩ :=
-    (ht₁.of_subtreeAt ht₀).exists_repeat he (by omega) hql.ge
+    (ht₁.of_getElem? ht₀).exists_repeat he (by omega) hql.ge
   -- the outer and inner repeats, and their addresses
   set outer := node (Symbol.nonterminal A) csᵢ with houter
   set inner := node (Symbol.nonterminal A) csⱼ with hinner
   set po := p.take off ++ q.take i with hpo
-  have hpo_sub : subtreeAt t₁ po = some outer := by
-    rw [hpo, subtreeAt_append, ht₀, Option.bind_some, hi]
+  have hpo_sub : t₁[po]? = some outer := by
+    rw [hpo, getElem?_append, ht₀, Option.bind_some, hi]
   set pr := (q.take j).drop i with hpr
   have hqj : q.take j = q.take i ++ pr := by
     conv_lhs => rw [← List.take_append_drop i (q.take j)]
     rw [List.take_take, min_eq_left hij.le]
-  have hpr_sub : subtreeAt outer pr = some inner := by
-    rw [hqj, subtreeAt_append, hi, Option.bind_some] at hj; exact hj
+  have hpr_sub : outer[pr]? = some inner := by
+    rw [hqj, getElem?_append, hi, Option.bind_some] at hj; exact hj
   have hpr_ne : pr ≠ [] := by
     intro h
     have := congrArg List.length h
@@ -162,8 +162,8 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g
     obtain ⟨s, hs, hsh⟩ := hpath (off + i) (by omega)
     rw [List.take_add, ← hq, ← hpo, hpo_sub, Option.some.injEq] at hs
     rw [hs, hsh]; omega
-  have houter_v : outer.Licensed g.Licenses := ht₁.of_subtreeAt hpo_sub
-  have hinner_v : inner.Licensed g.Licenses := houter_v.of_subtreeAt hpr_sub
+  have houter_v : outer.Licensed g.Licenses := ht₁.of_getElem? hpo_sub
+  have hinner_v : inner.Licensed g.Licenses := houter_v.of_getElem? hpr_sub
   -- yield decompositions
   obtain ⟨u, z, hyu, hyu'⟩ := yield_replaceAt hpo_sub
   obtain ⟨v, y, hyv, hyv'⟩ := yield_replaceAt hpr_sub
@@ -177,7 +177,7 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g
     have hy : y = [] := List.eq_nil_of_length_eq_zero (by omega)
     obtain ⟨i', rest, hpr'⟩ := List.exists_cons_of_ne_nil hpr_ne
     have hlt : (t₁.replaceAt po inner).numNodes < t₁.numNodes :=
-      numNodes_replaceAt_lt hpo_sub (numNodes_lt_of_subtreeAt_cons (hpr' ▸ hpr_sub))
+      numNodes_replaceAt_lt hpo_sub (numNodes_lt_of_getElem?_cons (hpr' ▸ hpr_sub))
     have := hmin _ (ht₁.replaceAt hpo_sub hinner_v rfl)
       (by rw [hyu' inner, ← hy₁, hyu, hyv, hv, hy]; simp)
       (by rw [value_replaceAt (new := inner) hpo_sub rfl, hr₁])

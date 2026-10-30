@@ -276,7 +276,7 @@ def headIndex? (s : RoseTree Vertex) : Option ℕ :=
 /-- The raising head function, [marcolli-chomsky-berwick-2025]'s raising head extended to a total
 head function by the drawing convention: the head daughter of the subtree at each position,
 `none` off the object. -/
-def HeadFunction.raising : HeadFunction := fun t q ↦ (t.val.subtreeAt q.toList).bind headIndex?
+def HeadFunction.raising : HeadFunction := fun t q ↦ t.val[q]?.bind headIndex?
 
 /-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
 it. -/

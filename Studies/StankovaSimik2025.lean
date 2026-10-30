@@ -90,9 +90,9 @@ inductive Indefinite
   deriving DecidableEq, Repr, Fintype
 
 /-- The determiner realizing each indefinite. -/
-def Indefinite.word : Indefinite → Czech.Determiners.QuantityWord
-  | .nci => .zadny
-  | .ppi => .nejaky
+def Indefinite.word : Indefinite → QuantificationalDeterminer
+  | .nci => Czech.Determiners.zadny
+  | .ppi => Czech.Determiners.nejaky
 
 /-- The polarity entry of each indefinite. -/
 def Indefinite.entry : Indefinite → PolarityItem
@@ -103,7 +103,9 @@ def Indefinite.entry : Indefinite → PolarityItem
 clause (p. 5). -/
 theorem compl_eq_no_iff {d : Det.Family} (hd : d ∈ ⟦Indefinite.nci.word⟧) :
     dᶜ = Det.Family.no ↔ d = Det.Family.some := by
-  rcases hd with rfl | rfl <;> simp [Det.Family.some_ne_no, Det.Family.some_ne_no.symm]
+  obtain rfl | rfl : d = Det.Family.no ∨ d = Det.Family.some := by
+    simpa [Indefinite.word, Czech.Determiners.zadny, eq_comm] using hd
+  all_goals simp [Det.Family.some_ne_no, Det.Family.some_ne_no.symm]
 
 /-- A polarity item is licensed at a reading of negation when a positive polarity item
 falls under FALSUM and a negative one under the canonical operator (the paper's (11) and

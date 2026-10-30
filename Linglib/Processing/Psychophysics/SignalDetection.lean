@@ -13,7 +13,7 @@ the state of the trial to the law of the observation; the *hit rate* and the *fa
 `k` are the masses that the signal law and the noise law give to `(k, ∞)`. A *location experiment*
 shifts a noise law `ν` by `δ / 2` on signal trials and by `-(δ / 2)` on noise trials, so that the
 sensitivity `δ` is the distance between the two laws. The normal model takes `ν` standard normal,
-and Luce's Choice Theory takes it logistic (Macmillan and Creelman, ch. 4, p. 98).
+and Luce's Choice Theory takes it logistic ([macmillan-creelman-2005], ch. 4, p. 98).
 
 ## Main definitions
 
@@ -33,15 +33,16 @@ and Luce's Choice Theory takes it logistic (Macmillan and Creelman, ch. 4, p. 98
 
 ## Implementation notes
 
-The forced-choice observer picks the interval with the largest observation, where Green and
-Swets (p. 46) pick the one with the largest likelihood ratio; the two agree when the likelihood
-ratio increases with the observation, as in the normal model. Page numbers of Green and Swets are
-those of the 1988 reprint.
+The forced-choice observer picks the interval with the largest observation, where
+[green-swets-1966] (p. 46) pick the one with the largest likelihood ratio; the two agree when the
+likelihood ratio increases with the observation, as in the normal model. Page numbers of
+[green-swets-1966] are those of the 1988 reprint. The theory stays in this layer with a single
+consumer because the study of [luce-1959] cannot import a study of the later [green-swets-1966].
 
 ## TODO
 
 * The slope of the receiver operating characteristic at a criterion is the likelihood ratio there
-  (Macmillan and Creelman, ch. 2); for the normal model this needs the derivative of `Φ`.
+  ([macmillan-creelman-2005], ch. 2); for the normal model this needs the derivative of `Φ`.
 * The optimal criterion is the Bayes estimator of the experiment under 0-1 loss, and a larger
   sensitivity gives a more informative experiment in the order of
   `Linglib/Core/Probability/Decision/Blackwell.lean`.

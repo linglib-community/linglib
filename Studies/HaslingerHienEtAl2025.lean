@@ -326,18 +326,20 @@ def Structure.head [PartialOrder α] : Structure → (Set α →. Set α)
   | .atomicOnly => oneAt
 
 /-- The English universal determiners *all*, *every* and *each*. -/
-def english : English.Determiners.QuantityWord → Option Structure
-  | .all => some .bare
-  | .every => some .nonOverlap
-  | .each => some .atomic
-  | _ => none
+def english (w : QuantificationalDeterminer) : Option Structure :=
+  if w = English.Determiners.all then some .bare
+  else if w = English.Determiners.every then some .nonOverlap
+  else if w = English.Determiners.each then some .atomic
+  else none
 
 /-- At the lexicon the generalization says that the English forms carrying a ONE head are exactly
 the universal determiners the fragment records as selecting the singular. -/
 theorem one_iff_singular :
     ∀ w s, english w = some s →
       (s ≠ .bare ↔ w.numberRestriction = some .singular) := by
-  decide
+  intro w s h
+  simp only [english] at h
+  split_ifs at h <;> cases h <;> subst_vars <;> decide
 
 theorem structure_dom_tenMinutes (s : Structure) (Q : Set (Set ℕ)) :
     (over s.head tenMinutes Q).Dom ↔ s = .bare ∨ s = .nonOverlap := by

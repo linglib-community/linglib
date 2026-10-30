@@ -19,9 +19,9 @@ the target is the warped expected score. The score fixes what counts as an accur
 and the warping the functional relationship between prediction accuracy and the measured cost,
 the question [smith-levy-2013] ask of surprisal.
 
-Surprisal [levy-2008] is the model with the negative logarithm and the indicator score, and the
-next-unit probability the model with the identity and the indicator: every warping of the
-indicator score is a warping of the target's probability. Information value
+Surprisal [levy-2008], through its real part, is the model with the negative logarithm and the
+indicator score, and the next-unit probability the model with the identity and the indicator: every
+warping of the indicator score is a warping of the target's probability. Information value
 [giulianelli-wallbridge-fernandez-2023], summarised by its mean, is the model with the identity and
 a distance score. A model is anticipatory when its score ignores the target and responsive
 otherwise, the distinction [pimentel-etal-2023] draw informally for reading times; an
@@ -107,23 +107,25 @@ theorem genSurprisal_indicatorScore (f : ℝ → ℝ) :
     genSurprisal L f indicatorScore c w = f ((L c).real {w}) := by
   simp only [genSurprisal, indicatorScore, integral_indicator_one (measurableSet_singleton w)]
 
-/-- Surprisal is the indicator model with the negative logarithm. -/
-theorem genSurprisal_negLog_indicatorScore :
-    genSurprisal L (fun x ↦ -Real.log x) indicatorScore c w = surprisal (L c) w :=
-  genSurprisal_indicatorScore L c w _
+/-- Surprisal is the indicator model with the negative logarithm, through its real part: at a
+target of probability zero the surprisal is `∞` and both sides are `0`. -/
+theorem genSurprisal_negLog_indicatorScore [IsMarkovKernel L] :
+    genSurprisal L (fun x ↦ -Real.log x) indicatorScore c w = (surprisal (L c) w).toReal :=
+  (genSurprisal_indicatorScore L c w _).trans (toReal_surprisal prob_le_one).symm
 
 end indicatorScore
 
 /-! ### Entropy -/
 
 theorem isAnticipatory_surprisal (L : Kernel C A) :
-    IsAnticipatory (fun a (_ : W) c ↦ surprisal (L c) a) := fun _ _ _ _ ↦ rfl
+    IsAnticipatory (fun a (_ : W) c ↦ (surprisal (L c) a).toReal) := fun _ _ _ _ ↦ rfl
 
 /-- Entropy is the anticipatory model with the identity warping that scores each alternative by
-its own surprisal. -/
+the real part of its own surprisal; an alternative of probability zero, whose surprisal is `∞`
+and its real part `0`, carries no weight. -/
 theorem genSurprisal_id_surprisal [Countable A] [MeasurableSingletonClass A] (L : Kernel C A)
-    [IsMarkovKernel L] (c : C) (hL : Integrable (surprisal (L c)) (L c)) (w : W) :
-    genSurprisal L id (fun a (_ : W) c ↦ surprisal (L c) a) c w = Hm[L c] :=
+    [IsMarkovKernel L] (c : C) (hL : Integrable (fun a ↦ (surprisal (L c) a).toReal) (L c))
+    (w : W) : genSurprisal L id (fun a (_ : W) c ↦ (surprisal (L c) a).toReal) c w = Hm[L c] :=
   (measureEntropy_eq_integral_surprisal _ hL).symm
 
 end Surprisal

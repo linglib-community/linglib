@@ -54,12 +54,13 @@ Figure 6 is thus committed as after an assertion but only dependently (`figure6_
 * Acceptance keeps `φ` in the truth commitments when it enters the common ground, as the
   paper's tableaux do, rather than stripping it as `Table.settle` does.
 
-## TODO
+## Errata
 
-* Report to the author: after (35) the prose has (35ii) override the default in (34iii) and (35i)
-  the default in (34ii). Against the final (34), whose defaults are (ii) the principal's truth
-  commitment, (iii) the animator's adequate evidence and (iv) the identification of animator and
-  principal, the overridden defaults are (34iv) and (34iii).
+* After (35) the prose has (35ii) override the default in (34iii) and (35i) the default in
+  (34ii). Against the final (34), whose defaults are (ii) the principal's truth commitment, (iii)
+  the animator's adequate evidence and (iv) the identification of animator and principal, the
+  overridden defaults are (34iv) and (34iii), as the distinctness hypothesis of the reportative
+  theorems and `reportative_evid_adequate` take them.
 
 ## References
 

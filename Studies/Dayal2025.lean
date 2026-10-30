@@ -131,7 +131,7 @@ def deriveSelectionClass (v : _root_.Verb) : SelectionClass :=
   if ¬ v.TakesQuestion then .uninterrogative
   else if v.IsFactive then .responsive
   else match v.attitude with
-  | some (.doxastic .nonVeridical) => .uninterrogative
+  | some (.doxastic .doxastic) => .uninterrogative
   | _ =>
     if v.speechActVerb && citationQuestion v then .rogativeSAP
     else if v.opaqueContext && citationQuestion v then .rogativePerspP

@@ -104,11 +104,14 @@ theorem not_isAntiAdditive_some : ¬ IsAntiAdditive (Det.some (Set.univ : Set PU
 /-- Of the readings of *aucun*, the one that is anti-additive on every finite domain, as a
 concord item must be, is the negative quantifier. -/
 theorem mem_aucun_and_isAntiAdditive_iff {d : Det.Family.{u}} :
-    (d ∈ ⟦French.Determiners.QuantityWord.aucun⟧ ∧
+    (d ∈ ⟦French.Determiners.aucun⟧ ∧
       ∀ (β : Type u) [Fintype β] (A : Set β), IsAntiAdditive (d β A)) ↔
       d = Det.Family.no := by
+  have hmem : d ∈ ⟦French.Determiners.aucun⟧ ↔ d = Det.Family.no ∨ d = Det.Family.some := by
+    simp [French.Determiners.aucun, eq_comm]
+  rw [hmem]
   refine ⟨fun ⟨hd, h⟩ ↦ hd.resolve_right fun hs ↦ ?_,
-    fun h ↦ h ▸ ⟨.inl rfl, fun _ _ ↦ isAntiAdditive_no⟩⟩
+    fun h ↦ by subst h; exact ⟨.inl rfl, fun _ _ ↦ isAntiAdditive_no⟩⟩
   subst hs; exact not_isAntiAdditive_some (h PUnit _)
 
 end AntiAdditive

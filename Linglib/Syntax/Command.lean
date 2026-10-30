@@ -418,22 +418,22 @@ section Replace
 variable {t new : RoseTree β} {a b c : TreePath}
 
 theorem isBranchingAt_replaceAt {x : TreePath} (h : ¬ c ≤ x) :
-    IsBranchingAt (t.replaceAt c.toList new) x ↔ IsBranchingAt t x :=
+    IsBranchingAt (t.replaceAt c new) x ↔ IsBranchingAt t x :=
   mem_positionsWhere_replaceAt (fun _ _ _ _ ↦ by simp [arity]) h new
 
 theorem mem_cCommand_replaceAt (h : ¬ c < a) :
-    a ~[cCommand (t.replaceAt c.toList new)] b ↔ a ~[cCommand t] b :=
+    a ~[cCommand (t.replaceAt c new)] b ↔ a ~[cCommand t] b :=
   mem_commandRelation_congr fun _ hxa ↦ isBranchingAt_replaceAt fun hcx ↦ h (hcx.trans_lt hxa)
 
 theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a ≤ c) :
-    CCommands (t.replaceAt c.toList new) a b ↔ CCommands t a c := by
+    CCommands (t.replaceAt c new) a b ↔ CCommands t a c := by
   have hlt : ¬ c < a := fun h ↦ hca h.le
   have hab : ¬ a ≤ b := fun h ↦ (IsLeftLinear.comparable_of_le_common h hcb).elim hac hca
   have hba : ¬ b ≤ a := fun h ↦ hca (hcb.trans h)
   simp only [CCommands, mem_commandRelation_iff_of_le hcb hlt, mem_cCommand_replaceAt hlt, hab,
     hba, hac, hca, not_false_eq_true, and_true]
 
-theorem cCommands_replaceAt_self : CCommands (t.replaceAt c.toList new) c a ↔ CCommands t c a := by
+theorem cCommands_replaceAt_self : CCommands (t.replaceAt c new) c a ↔ CCommands t c a := by
   simp only [CCommands, mem_cCommand_replaceAt (lt_irrefl c)]
 
 end Replace

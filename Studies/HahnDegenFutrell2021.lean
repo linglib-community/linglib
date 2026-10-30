@@ -17,7 +17,10 @@ information locality bound says that a listener whose memory cannot hold the dep
 some distance pays at least the entropy rate plus the information carried at longer distances,
 the quantities of `Core/InformationTheory/EntropyRate.lean`. We prove the bound, compare two
 orders of a sentence by dependency length, and check the paper's morpheme templates against
-Bybee's relevance hierarchy.
+Bybee's relevance hierarchy. As the paper notes, the bound is invariant under reversal of a
+language: [reading every block backwards leaves both the memory threshold and the surprisal floor
+unchanged](##information_locality_bound_reverse), so a strictly head-initial language and its
+head-final mirror image get the same bound.
 
 ## Implementation notes
 
@@ -186,6 +189,31 @@ theorem information_locality_bound :
     pastCondEntropy_le_condEntropy hw hm₀ hs hT hmem
 
 end InformationLocality
+
+section Reversal
+
+open MeasureTheory ProbabilityTheory InformationTheory Finset
+
+variable {Ω Ω' W : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] [MeasurableSpace W]
+  [MeasurableSingletonClass W] [Fintype W] {μ : Measure Ω} {ν : Measure Ω'}
+  [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] {w : ℕ → Ω → W} {w' : ℕ → Ω' → W}
+
+/-- The bound cannot tell a language from its reversal: a stationary process whose blocks have the
+laws of the reversed blocks of `w` has the same memory threshold and the same surprisal floor
+(p. 733). -/
+theorem information_locality_bound_reverse (hw : ∀ t, Measurable (w t))
+    (hw' : ∀ t, Measurable (w' t)) (hs : IsStationary w μ) (hs' : IsStationary w' ν)
+    (h : ∀ n, ν.map (block w' 0 n) = μ.map fun ω ↦ block w 0 n ω ∘ Fin.rev) (T : ℕ) :
+    ∑ t ∈ Icc 1 T, t * distanceInfo w' ν t = ∑ t ∈ Icc 1 T, t * distanceInfo w μ t ∧
+      entropyRate w' ν + ∑' t, distanceInfo w' ν (T + t + 1) =
+        entropyRate w μ + ∑' t, distanceInfo w μ (T + t + 1) := by
+  refine ⟨sum_congr rfl fun t ht ↦ ?_, ?_⟩
+  · obtain ⟨s, rfl⟩ : ∃ s, t = s + 1 := ⟨t - 1, by have := (mem_Icc.1 ht).1; omega⟩
+    rw [distanceInfo_succ_eq_of_map_rev hw hw' h hs hs']
+  · rw [entropyRate_add_tsum hw' hs', entropyRate_add_tsum hw hs,
+      pastCondEntropy_eq_of_map_rev hw hw' h]
+
+end Reversal
 
 /-! ### The Japanese suffix template
 

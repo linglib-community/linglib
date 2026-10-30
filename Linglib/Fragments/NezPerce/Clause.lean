@@ -86,14 +86,14 @@ def timneneki : Verb where
 def timiipni : Verb where
   morphs := [.root "timiipni"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- *neki* 'think', whose complement does not project ((35), (36), (48)). -/
 def neki : Verb where
   morphs := [.root "neki"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
 
 /-- *hi* 'say, tell', with an accusative addressee before the clause ((47), (65b)). -/
 def hi : Verb where
@@ -107,7 +107,7 @@ def hi : Verb where
 def cuukwe : Verb where
   morphs := [.root "cuukwe"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- The predicates with per-predicate data in the paper. -/

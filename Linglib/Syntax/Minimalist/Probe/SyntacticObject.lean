@@ -143,8 +143,8 @@ theorem mem_goals_leafProbe_map_iff {f : LexicalItem.Token → LexicalItem.Token
     Equiv.subtypeEquivRight fun p ↦ by simp only [val_map, RoseTree.validPaths_map]
   have hsub (q : t.val.Positions) :
       (e q).subtree = RoseTree.map (SyntacticObject.Vertex.map f) q.subtree :=
-    Option.some.inj <| (e q).subtreeAt_eq.symm.trans <|
-      (RoseTree.subtreeAt_map _ t.val q.val.toList).trans (by rw [q.subtreeAt_eq, Option.map_some])
+    Option.some.inj <| (e q).getElem?_eq.symm.trans <|
+      (RoseTree.getElem?_map _ t.val q.val.toList).trans (by rw [q.getElem?_eq, Option.map_some])
   have hterm (q : t.val.Positions) : (t.map f).termAt (e q) = (t.termAt q).map f :=
     Subtype.ext <| show UnorderedTree.mk (e q).subtree = (UnorderedTree.mk q.subtree).map _ by
       rw [hsub, UnorderedTree.map_mk]

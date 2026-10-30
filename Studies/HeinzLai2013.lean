@@ -32,11 +32,23 @@ and then right to left.
 ## Implementation notes
 
 * The proof of Theorem 5 goes through the bounded delay of left-subsequential functions rather
-  than the paper's sets of tails. The paper omits the right half as similar; it needs more than
-  (8), since a right-to-left pass that raises every `−` unless the word ends in `⊟` meets (8).
+  than the paper's sets of tails.
 * Theorem 7 is stated, as in the paper, for words over `+` and `−`.
-* Not formalized: Theorem 4 (majority rules is not regular), the stem-control results
-  (Theorems 8 and 9), and the conjecture that sour grapes is not weakly deterministic.
+* Not formalized: Theorem 4 (majority rules is not regular) and the stem-control results
+  (Theorems 8 and 9).
+
+## Errata
+
+* Theorem 5 also claims that no length-preserving map meeting (8) is right-subsequential, by an
+  argument omitted as similar. Condition (8) fixes the map only on words that begin with `+`, and
+  the right-to-left pass that raises every `−` unless the word ends in `⊟` meets it and
+  [is right-subsequential](##exists_isRightSubsequential_isSourGrapes). The right half
+  [holds](##not_isRightSubsequential_of_isSourGrapes) once the map also leaves every trigger-free
+  word `−ⁿ` unchanged: the last `−` of `+−ⁿ` then surfaces `+` and that of `−−ⁿ` does not, a
+  difference made `n` positions away.
+* The paper conjectures that sour grapes harmony is not weakly deterministic. For the maps
+  meeting (8) the conjecture fails: the same right-to-left pass preserves length, so it is
+  [weakly deterministic](##exists_isWeaklyDeterministic_isSourGrapes) after the identity.
 
 ## References
 
@@ -145,11 +157,9 @@ private theorem raiseUnlessFinalBlocked_run (n : ℕ) :
       raiseUnlessFinalBlocked_runFrom_false]
     rfl
 
-/-- The right half of Theorem 5 fails for (8) alone, since a right-to-left pass meets (8). -/
-theorem exists_isRightSubsequential_isSourGrapes :
-    ∃ f : List Seg → List Seg, IsSourGrapes f ∧ IsRightSubsequential f := by
-  refine ⟨raiseUnlessFinalBlocked.runRight, fun n ↦ ⟨?_, ?_⟩,
-    raiseUnlessFinalBlocked.isRightSubsequential⟩
+private theorem isSourGrapes_raiseUnlessFinalBlocked :
+    IsSourGrapes raiseUnlessFinalBlocked.runRight := by
+  refine fun n ↦ ⟨?_, ?_⟩
   · rw [Mealy.runRight, reverse_cons, reverse_replicate, raiseUnlessFinalBlocked_run,
       reverse_replicate]
   · have : (Seg.plus :: replicate n Seg.minus ++ [Seg.opaqueMinus]).reverse =
@@ -159,8 +169,21 @@ theorem exists_isRightSubsequential_isSourGrapes :
         from rfl, raiseUnlessFinalBlocked_runFrom_true]
     simp [raiseUnlessFinalBlocked]
 
+-- Theorem 5, right half
+theorem exists_isRightSubsequential_isSourGrapes :
+    ∃ f : List Seg → List Seg, IsSourGrapes f ∧ IsRightSubsequential f :=
+  ⟨_, isSourGrapes_raiseUnlessFinalBlocked, raiseUnlessFinalBlocked.isRightSubsequential⟩
+
+/-- A length-preserving map meeting (8) is weakly deterministic, against the paper's conjecture
+for sour grapes harmony. -/
+theorem exists_isWeaklyDeterministic_isSourGrapes :
+    ∃ f : List Seg → List Seg,
+      (∀ w, (f w).length = w.length) ∧ IsSourGrapes f ∧ IsWeaklyDeterministic f :=
+  ⟨_, fun _ ↦ Mealy.length_runRight .., isSourGrapes_raiseUnlessFinalBlocked,
+    raiseUnlessFinalBlocked.isRightSubsequential.isWeaklyDeterministic⟩
+
 /-- No length-preserving right-subsequential function meets (8) and leaves every trigger-free `−ⁿ`
-unchanged, the right half of Theorem 5. -/
+unchanged, the right half of Theorem 5 with the hypothesis on `−ⁿ` it needs. -/
 theorem not_isRightSubsequential_of_isSourGrapes {f : List Seg → List Seg}
     (hlen : ∀ w, (f w).length = w.length) (hf : IsSourGrapes f)
     (hnone : ∀ n, f (replicate n .minus) = replicate n .minus) : ¬ IsRightSubsequential f := by
@@ -240,8 +263,7 @@ private theorem eq_replicate_minus {w : List Seg} (hw : PlusMinus w) (h : .plus 
     w = replicate w.length .minus :=
   eq_replicate_iff.mpr ⟨rfl, fun a ha ↦ (hw a ha).resolve_left fun hp ↦ h (hp ▸ ha)⟩
 
-/-- Progressive spreading of `+`, run left to right and then right to left, meets (9)
-(Theorem 7). -/
+-- Theorem 7
 theorem isDominantRecessive_php : IsDominantRecessive (php.runRight ∘ php.run) := by
   intro w hw
   by_cases h : .plus ∈ w

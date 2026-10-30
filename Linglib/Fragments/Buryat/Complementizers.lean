@@ -84,14 +84,16 @@ def nominalizedFrame : ArgumentFrame :=
 /-- *hanaxa* 'think', translated 'remember' with a nominalized complement (§4.4.3): one verb,
 whose nominalized complement carries a presupposition that the event it describes started
 before the thinking ([bondarenko-2020] (2), (21)). The `readings` rows record the alternation,
-nonveridical and opaque on the bare CP, veridical and transparent on the nominalized frame. -/
+opaque on the bare CP and transparent on the nominalized frame; both readings quantify over
+doxastic alternatives, and the nominalized reading's veridicality comes from that presupposition,
+which the entry does not record. -/
 def hanaxa : Verb where
   morphs := [.root "hanaxa"]
   valency := .ofFrames [ArgumentFrame.finiteClause, nominalizedFrame]
   readings := [
-    { frame := ArgumentFrame.finiteClause, attitude := some (.doxastic .nonVeridical),
+    { frame := ArgumentFrame.finiteClause, attitude := some (.doxastic .doxastic),
       opaqueContext := some true },
-    { frame := nominalizedFrame, attitude := some (.doxastic .veridical),
+    { frame := nominalizedFrame, attitude := some (.doxastic .doxastic),
       opaqueContext := some false }]
 
 /-- *mɘdɘxɘ* 'know' — factive in both frames (ex. 36); embeds polar
@@ -99,7 +101,7 @@ questions (ex. 3). -/
 def medexe : Verb where
   morphs := [.root "mɘdɘxɘ"]
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- *xɘlɘxɘ* 'say' — non-factive with bare CPs; nominalized complements

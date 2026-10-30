@@ -57,7 +57,6 @@ namespace VonFintel1993
 
 open Quantifier Quantifier.Det Quantifier.Exceptive
 open scoped Denotes
-open English.Determiners (QuantityWord)
 
 variable {α : Type*} {Q : Det α} {A C B : Set α}
 
@@ -189,10 +188,22 @@ inductive Determiner
 /-- A determiner reads as the English fragment's denotations for the words the fragment has
 and as the quantification substrate's `no` for *no*. -/
 noncomputable def Determiner.readings : Determiner → Set Det.Family.{0}
-  | .every => ⟦QuantityWord.every⟧
+  | .every => ⟦English.Determiners.every⟧
   | .no => {Det.Family.no}
-  | .some => ⟦QuantityWord.some_⟧
-  | .most => ⟦QuantityWord.most⟧
+  | .some => ⟦English.Determiners.some_⟧
+  | .most => ⟦English.Determiners.most⟧
+
+@[simp] theorem Determiner.readings_every :
+    Determiner.every.readings = {Det.Family.every} := by
+  ext; simp [Determiner.readings, English.Determiners.every, eq_comm]
+
+@[simp] theorem Determiner.readings_some :
+    Determiner.some.readings = {Det.Family.some} := by
+  ext; simp [Determiner.readings, English.Determiners.some_, eq_comm]
+
+@[simp] theorem Determiner.readings_most :
+    Determiner.most.readings = {Det.Family.most} := by
+  ext; simp [Determiner.readings, English.Determiners.most, eq_comm]
 
 /-- A row records an exceptive example of the paper by its marker, its determiner and its
 printed judgment. -/
@@ -230,6 +241,7 @@ theorem but_predicted :
         ∀ q ∈ r.det.readings, ∀ (β : Type) [Fintype β], GuaranteesException (q β)) := by
   have hevery : ∀ q ∈ Determiner.every.readings, ∀ (β : Type) [Fintype β],
       GuaranteesException (q β) := fun q hq β _ ↦ by
+    rw [Determiner.readings_every] at hq
     obtain rfl : q = Det.Family.every := hq
     exact guaranteesException_every
   have hno : ∀ q ∈ Determiner.no.readings, ∀ (β : Type) [Fintype β],
@@ -238,10 +250,10 @@ theorem but_predicted :
     exact guaranteesException_no
   have hsome : ¬ ∀ q ∈ Determiner.some.readings, ∀ (β : Type) [Fintype β],
       GuaranteesException (q β) :=
-    fun h ↦ not_guaranteesException_some (h Det.Family.some rfl (Fin 1))
+    fun h ↦ not_guaranteesException_some (h Det.Family.some (by simp) (Fin 1))
   have hmost : ¬ ∀ q ∈ Determiner.most.readings, ∀ (β : Type) [Fintype β],
       GuaranteesException (q β) :=
-    fun h ↦ not_guaranteesException_most (h Det.Family.most rfl (Fin 5))
+    fun h ↦ not_guaranteesException_most (h Det.Family.most (by simp) (Fin 5))
   rw [rows_eq]
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
@@ -272,6 +284,7 @@ theorem exceptFor_predicted :
           Restrictive (q β) A C B) := by
   have hevery : ∀ q ∈ Determiner.every.readings, ∃ (β : Type) (_ : Fintype β)
       (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
+    rw [Determiner.readings_every] at hq
     obtain rfl : q = Det.Family.every := hq
     exact ⟨Fin 1, inferInstance, Set.univ, Set.univ, ∅,
       fun _ hx ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1))⟩
@@ -282,6 +295,7 @@ theorem exceptFor_predicted :
       fun _ hx _ ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1)) trivial⟩
   have hmost : ∀ q ∈ Determiner.most.readings, ∃ (β : Type) (_ : Fintype β)
       (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
+    rw [Determiner.readings_most] at hq
     obtain rfl : q = Det.Family.most := hq
     exact ⟨Fin 5, inferInstance, Set.univ, {0, 1}, attended, restrictive_most⟩
   rw [rows_eq]

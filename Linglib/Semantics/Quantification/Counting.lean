@@ -26,6 +26,7 @@ of individuals is the quantifier with restrictor `s ∩ A`.
   quantifiers, with `Quantifier.NumberTree.threshold` for a proportion of the restrictor.
 * `Quantifier.Det.most`, `Quantifier.Det.atLeast`, …: their quantifiers.
 * `Quantifier.Det.Proportional`: dependence on the ratio of `|A ∩ B|` to `|A \ B|`.
+* `Quantifier.Det.Symbol`: the determiner symbols, each denoting the global denotation of a tree.
 
 ## Main results
 
@@ -34,6 +35,9 @@ of individuals is the quantifier with restrictor `s ∩ A`.
 * `Quantifier.NumberTree.thresholdGt_one_two`: *more than half* is *most*.
 * `Quantifier.Det.not_existential_most`, `Quantifier.Det.not_monotone_half`: *most* is not
   existential, and *half* is monotone in its scope in neither direction.
+* `Quantifier.Det.Symbol.conservative_denote`, `Quantifier.Det.Symbol.constant_denote`: what a
+  determiner symbol denotes is conservative and constant, so it satisfies extension and is
+  closed under isomorphism.
 
 ## References
 
@@ -41,7 +45,6 @@ of individuals is the quantifier with restrictor `s ∩ A`.
 * [keenan-stavi-1986]
 * [peters-westerstahl-2006]
 * [van-benthem-1984]
-* [van-de-pol-etal-2023]
 -/
 
 @[expose] public section
@@ -221,6 +224,8 @@ theorem atMost_apply : atMost n A B ↔ (A ∩ B).ncard ≤ n := Iff.rfl
 
 theorem exactly_apply : exactly n A B ↔ (A ∩ B).ncard = n := Iff.rfl
 
+theorem allBut_apply : allBut n A B ↔ (A \ B).ncard = n := Iff.rfl
+
 theorem conservative_most : (most : Det α).Conservative := NumberTree.conservative_toDet _
 
 theorem conservative_atLeast (n : ℕ) : (atLeast n : Det α).Conservative :=
@@ -375,8 +380,7 @@ theorem not_scopeAntitone_half : ¬ (half : Det (Fin 3)).ScopeAntitone := fun h 
       half {x : Fin 3 | x = 0 ∨ x = 1} ∅ := h _ (Set.empty_subset _)
   revert this; decide
 
-/-- *Half* is non-monotone in its scope, neither monotone nor antitone
-([van-de-pol-etal-2023]). -/
+/-- *Half* is non-monotone in its scope, neither monotone nor antitone. -/
 theorem not_monotone_half :
     ¬ (half : Det (Fin 3)).ScopeMonotone ∧ ¬ (half : Det (Fin 3)).ScopeAntitone :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩
@@ -402,6 +406,14 @@ theorem satisfiesUniversals_exactly [Finite α] (n : ℕ) :
     (exactly n : Det α).SatisfiesUniversals :=
   ⟨conservative_exactly n, fun A ↦ ⟨atLeast n A, atMost n A, .inl (monotone_atLeast n A),
     .inr (antitone_atMost n A), by rw [exactly_eq_atLeast_inf_atMost]; rfl⟩⟩
+
+/-- *All but n* meets Barwise and Cooper's monotonicity constraint as the conjunction of *all but
+at most n*, which is monotone, and *at least n are not*, which is antitone. -/
+theorem satisfiesUniversals_allBut [Finite α] (n : ℕ) : (allBut n : Det α).SatisfiesUniversals :=
+  ⟨NumberTree.conservative_toDet _, fun A ↦ ⟨fun B ↦ (A \ B).ncard ≤ n, fun B ↦ n ≤ (A \ B).ncard,
+    .inl fun _ _ h hB ↦ (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_right h)).trans hB,
+    .inr fun _ _ h hB ↦ hB.trans (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_right h)),
+    funext fun _ ↦ propext le_antisymm_iff⟩⟩
 
 theorem both_fin2 : both (α := Fin 2) Set.univ Set.univ := by decide
 
@@ -498,6 +510,59 @@ theorem compl_no : no.{u}ᶜ = some.{u} := by
   rw [← compl_some, compl_compl]
 
 end Family
+
+/-! ### Determiner symbols -/
+
+/-- A determiner symbol names one of the canonical denotations, after the basic determiner
+symbols from which [barwise-cooper-1981]'s logic L(GQ) builds its quantifiers. The eight symbols
+are ours: Barwise and Cooper's logical determiner symbols are *some*, *every*, *no*, *both*,
+*neither*, the numerals and *the n*, their non-logical ones include *most* and *few*, and they
+have no *half*; here every symbol has one denotation, the global denotation of its tree. -/
+inductive Symbol where
+  | every | some | no | most | few | half | both | neither
+  deriving DecidableEq, Repr, Fintype
+
+namespace Symbol
+
+/-- The tree of numbers a symbol denotes. -/
+def numberTree : Symbol → NumberTree
+  | .every => NumberTree.all
+  | .some => NumberTree.some
+  | .no => NumberTree.no
+  | .most => NumberTree.most
+  | .few => NumberTree.few
+  | .half => NumberTree.half
+  | .both => NumberTree.both
+  | .neither => NumberTree.neither
+
+/-- A symbol denotes its canonical denotation, the global denotation of its tree
+(`denote_eq_toFamily`). -/
+@[simp] def denote : Symbol → Family.{u}
+  | .every => Family.every
+  | .some => Family.some
+  | .no => Family.no
+  | .most => Family.most
+  | .few => Family.few
+  | .half => Family.half
+  | .both => Family.both
+  | .neither => Family.neither
+
+theorem denote_eq_toFamily (s : Symbol) : (s.denote : Family.{u}) = s.numberTree.toFamily := by
+  cases s
+  exacts [Family.every_eq_toFamily, Family.some_eq_toFamily, Family.no_eq_toFamily, rfl, rfl,
+    rfl, rfl, rfl]
+
+theorem conservative_denote (s : Symbol) : (s.denote : Family.{u}).Conservative :=
+  s.denote_eq_toFamily ▸ NumberTree.conservative_toFamily _
+
+theorem constant_denote (s : Symbol) : (s.denote : Family.{u}).Constant :=
+  s.denote_eq_toFamily ▸ NumberTree.constant_toFamily _
+
+theorem ext_denote (s : Symbol) : (s.denote : Family.{u}).Ext := s.constant_denote.ext
+
+theorem isom_denote (s : Symbol) : (s.denote : Family.{u}).Isom := s.constant_denote.isom
+
+end Symbol
 
 end Det
 

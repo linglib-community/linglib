@@ -55,7 +55,7 @@ def lat : Verb where
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
   vendlerClass := some .state
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- *hall* 'hear', a perception verb that embeds a perceived event or a heard report alike. -/
@@ -78,7 +78,7 @@ def gondol : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   complementSig := some .mono
 
 /-- *hisz* 'believe', a doxastic attitude verb. -/
@@ -87,7 +87,7 @@ def hisz : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   complementSig := some .mono
   pastStem := some "hi"
 

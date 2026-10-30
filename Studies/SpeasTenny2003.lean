@@ -124,8 +124,9 @@ theorem Mood.ofFeatures_features (m : Mood) : Mood.ofFeatures m.features = m := 
 theorem Mood.features_ofFeatures (f : SAFeatures) : (Mood.ofFeatures f).features = f := by
   rcases f with ⟨_ | _, _ | _⟩ <;> rfl
 
-/-- The inventory of grammaticized moods exhausts the variation of the head's two features and
-nothing else, which is why no language marks any further speech act. -/
+/-- The four grammaticized moods are the four settings of the head's two features. The paper
+explains why there are no more by the head's moving at most once; the two features are given
+here, not derived from that bound. -/
 def moodEquiv : SAFeatures ≃ Mood :=
   ⟨Mood.ofFeatures, Mood.features, Mood.features_ofFeatures, Mood.ofFeatures_features⟩
 

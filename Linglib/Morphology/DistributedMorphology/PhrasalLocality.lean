@@ -92,7 +92,7 @@ theorem mayCondition'_iff {t : Tree C W} {α β : TreePath} :
 
 /-- A proform of category `X` may stand for the node at `p` when it is a phrase of category `X`. -/
 def Replaceable (X : C) (t : Tree C W) (p : TreePath) : Prop :=
-  ∃ s ∈ t.subtreeAt p.toList, ¬ Tree.IsHead s ∧ s.value.cat = X
+  ∃ s ∈ t[p.toList]?, ¬ Tree.IsHead s ∧ s.value.cat = X
 
 /-- A proform of category `X` strands the node at `β` from the node at `α` when it may stand for a
 phrase that contains `α` and not `β`. -/
@@ -125,7 +125,7 @@ theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : TreePath} :
 /-- The labels of the terminals that may condition the head at `α` under the refined
 formulation. -/
 def localSet (t : Tree C W) (α : TreePath) : Set (C × W) :=
-  {l | ∃ p : TreePath, t.subtreeAt p.toList = some (terminal l.1 l.2) ∧ MayCondition' t α p}
+  {l | ∃ p : TreePath, t[p.toList]? = some (terminal l.1 l.2) ∧ MayCondition' t α p}
 
 /-- The labels of the terminals that may condition the head at `α`, in the order of the yield. -/
 def localLabels (t : Tree C W) (α : TreePath) : List (C × W) :=
@@ -137,13 +137,13 @@ theorem mem_localSet_iff {t : Tree C W} {α : TreePath} {l : C × W} :
     Option.ite_none_right_eq_some, Option.some.injEq]
   constructor
   · rintro ⟨p, hp, hm⟩
-    exact ⟨(p, l), mem_positionedTerminals_of_subtreeAt hp, hm, rfl⟩
+    exact ⟨(p, l), mem_positionedTerminals_of_getElem? hp, hm, rfl⟩
   · rintro ⟨x, hx, hm, rfl⟩
-    exact ⟨x.1, subtreeAt_of_mem_positionedTerminals hx, hm⟩
+    exact ⟨x.1, getElem?_of_mem_positionedTerminals hx, hm⟩
 
 /-- The complex head containing the node at `α`, its highest head-level ancestor. -/
 def x0At (t : Tree C W) (α : TreePath) : Option (Tree C W) :=
-  (α.toList.inits.find? fun p ↦ decide (∀ s ∈ t.subtreeAt p, Tree.IsHead s)).bind t.subtreeAt
+  (α.toList.inits.find? fun p ↦ decide (∀ s ∈ t[p]?, Tree.IsHead s)).bind (t[·]?)
 
 /-! ### Embedding -/
 
@@ -162,11 +162,11 @@ private theorem prefix_append_cases {r α : List ℕ} (hr : r <+: h ++ α) :
 private theorem inits_eq_nil_cons (α : List ℕ) : α.inits = [] :: α.inits.tail := by
   cases α <;> rfl
 
-theorem isHeadAt_replaceAt_append (hE : (E.subtreeAt h).isSome) (q : List ℕ) :
+theorem isHeadAt_replaceAt_append (hE : E[h]?.isSome) (q : List ℕ) :
     IsHeadAt (E.replaceAt h t) ⟨h ++ q⟩ ↔ IsHeadAt t ⟨q⟩ := by
-  simp only [IsHeadAt, RoseTree.subtreeAt_replaceAt_append hE]
+  simp only [IsHeadAt, RoseTree.getElem?_treePath, RoseTree.getElem?_replaceAt_append hE]
 
-theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : List ℕ) :
+theorem mayCondition'_replaceAt_append (hE : E[h]?.isSome) (α γ : List ℕ) :
     MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ ⟨h ++ γ⟩ ↔ MayCondition' t ⟨α⟩ ⟨γ⟩ := by
   simp only [mayCondition'_iff]
   constructor
@@ -179,70 +179,70 @@ theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : Li
     · exact (isHeadAt_replaceAt_append hE p).mpr (hm ⟨p⟩ (TreePath.le_def.mpr hp)
         (fun h' ↦ hγ (by simpa [TreePath.le_def] using TreePath.le_def.mp h')))
 
-theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : ¬ Tree.IsHead t)
+theorem not_mayCondition'_replaceAt (hE : E[h]?.isSome) (ht : ¬ Tree.IsHead t)
     (α : List ℕ) {β : TreePath} (hβ : ¬ (⟨h⟩ : TreePath) ≤ β) :
     ¬ MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ β := fun hm ↦ by
   have := mayCondition'_iff.mp hm ⟨h⟩ (TreePath.le_def.mpr (List.prefix_append h α)) hβ
-  have h0 := RoseTree.subtreeAt_replaceAt_append (new := t) hE []
+  have h0 := RoseTree.getElem?_replaceAt_append (new := t) hE []
   simp only [List.append_nil] at h0
   exact ht (this t h0)
 
 /-- Embedding a phrase with a phrasal root leaves the labels local to its heads unchanged. -/
-theorem localSet_replaceAt (hE : (E.subtreeAt h).isSome) (ht : ¬ Tree.IsHead t)
+theorem localSet_replaceAt (hE : E[h]?.isSome) (ht : ¬ Tree.IsHead t)
     (α : List ℕ) : localSet (E.replaceAt h t) ⟨h ++ α⟩ = localSet t ⟨α⟩ := by
   ext l
   constructor
   · rintro ⟨⟨p⟩, hp, hm⟩
     by_cases hhp : (⟨h⟩ : TreePath) ≤ ⟨p⟩
     · obtain ⟨γ, rfl⟩ := TreePath.le_def.mp hhp
-      exact ⟨⟨γ⟩, by rwa [RoseTree.subtreeAt_replaceAt_append hE] at hp,
+      exact ⟨⟨γ⟩, by rwa [RoseTree.getElem?_replaceAt_append hE] at hp,
         (mayCondition'_replaceAt_append hE α γ).mp hm⟩
     · exact absurd hm (not_mayCondition'_replaceAt hE ht α hhp)
   · rintro ⟨⟨γ⟩, hp, hm⟩
-    exact ⟨⟨h ++ γ⟩, by rwa [RoseTree.subtreeAt_replaceAt_append hE],
+    exact ⟨⟨h ++ γ⟩, by rwa [RoseTree.getElem?_replaceAt_append hE],
       (mayCondition'_replaceAt_append hE α γ).mpr hm⟩
 
-private theorem not_forall_isHead_replaceAt_of_prefix (hE : (E.subtreeAt h).isSome)
+private theorem not_forall_isHead_replaceAt_of_prefix (hE : E[h]?.isSome)
     (ht : ¬ Tree.IsHead t) {r : List ℕ} (hr : r <+: h) :
-    ¬ ∀ s ∈ (E.replaceAt h t).subtreeAt r, Tree.IsHead s := by
+    ¬ ∀ s ∈ (E.replaceAt h t)[r]?, Tree.IsHead s := by
   obtain ⟨d, rfl⟩ := hr
-  rw [RoseTree.subtreeAt_append] at hE
-  obtain ⟨s, hs⟩ : ∃ s, E.subtreeAt r = some s := Option.isSome_iff_exists.mp
-    (by cases h' : E.subtreeAt r <;> simp_all)
-  have hsd : (s.subtreeAt d).isSome := by simpa [hs] using hE
+  rw [RoseTree.getElem?_append] at hE
+  obtain ⟨s, hs⟩ : ∃ s, E[r]? = some s := Option.isSome_iff_exists.mp
+    (by cases h' : E[r]? <;> simp_all)
+  have hsd : s[d]?.isSome := by simpa [hs] using hE
   refine fun hh ↦ ht (IsHead.of_replaceAt hsd (hh _ ?_))
-  simp [RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d), hs]
+  simp [RoseTree.getElem?_replaceAt_of_prefix (List.prefix_append r d), hs]
 
 /-- Embedding a phrase with a phrasal root leaves the complex heads of its nodes unchanged. -/
-theorem x0At_replaceAt (hE : (E.subtreeAt h).isSome) (ht : ¬ Tree.IsHead t) (α : List ℕ) :
+theorem x0At_replaceAt (hE : E[h]?.isSome) (ht : ¬ Tree.IsHead t) (α : List ℕ) :
     x0At (E.replaceAt h t) ⟨h ++ α⟩ = x0At t ⟨α⟩ := by
   simp only [x0At]
   rw [List.inits_append, List.find?_append, List.find?_eq_none.mpr
     (fun r hr ↦ by
       simpa using not_forall_isHead_replaceAt_of_prefix hE ht ((List.mem_inits _ _).mp hr)),
     Option.none_or, List.find?_map, inits_eq_nil_cons α, List.find?_cons]
-  have h0 : ¬ ∀ s ∈ t.subtreeAt [], Tree.IsHead s := by simpa using ht
+  have h0 : ¬ ∀ s ∈ t[([] : List ℕ)]?, Tree.IsHead s := by simpa using ht
   simp only [h0, decide_false, List.tail_cons, Function.comp_def,
-    RoseTree.subtreeAt_replaceAt_append hE, Option.bind_map]
+    RoseTree.getElem?_replaceAt_append hE, Option.bind_map]
 
 private theorem replaceable_iff {X : C} {t : Tree C W} {p : TreePath} :
     Replaceable X t p ↔
-      (t.subtreeAt p.toList).map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
+      t[p.toList]?.map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
         some (false, X) := by
   simp [Replaceable]
 
-private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
+private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : E[h]?.isSome)
     (h₁ : ¬ Tree.IsHead t₁) (h₂ : ¬ Tree.IsHead t₂) (hv : t₁.value = t₂.value) {r : List ℕ}
     (hr : r <+: h) :
-    ((E.replaceAt h t₁).subtreeAt r).map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
-      ((E.replaceAt h t₂).subtreeAt r).map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) := by
+    (E.replaceAt h t₁)[r]?.map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) =
+      (E.replaceAt h t₂)[r]?.map (fun s ↦ (decide (Tree.IsHead s), s.value.cat)) := by
   obtain ⟨d, rfl⟩ := hr
-  rw [RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d),
-    RoseTree.subtreeAt_replaceAt_of_prefix (List.prefix_append r d)]
-  rw [RoseTree.subtreeAt_append] at hE
-  obtain ⟨s, hs⟩ : ∃ s, E.subtreeAt r = some s := Option.isSome_iff_exists.mp
-    (by cases h' : E.subtreeAt r <;> simp_all)
-  have hsd : (s.subtreeAt d).isSome := by simpa [hs] using hE
+  rw [RoseTree.getElem?_replaceAt_of_prefix (List.prefix_append r d),
+    RoseTree.getElem?_replaceAt_of_prefix (List.prefix_append r d)]
+  rw [RoseTree.getElem?_append] at hE
+  obtain ⟨s, hs⟩ : ∃ s, E[r]? = some s := Option.isSome_iff_exists.mp
+    (by cases h' : E[r]? <;> simp_all)
+  have hsd : s[d]?.isSome := by simpa [hs] using hE
   simp only [hs, Option.map_some, List.drop_left, Option.some.injEq, Prod.mk.injEq]
   have hh (t : Tree C W) (ht : ¬ Tree.IsHead t) : ¬ Tree.IsHead (s.replaceAt d t) :=
     fun h ↦ ht (IsHead.of_replaceAt hsd h)
@@ -251,9 +251,9 @@ private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : (E.subtreeA
   | nil => simp [hv]
   | cons i d => simp
 
-theorem strands_replaceAt_congr {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
+theorem strands_replaceAt_congr {t₁ t₂ : Tree C W} (hE : E[h]?.isSome)
     (h₁ : ¬ Tree.IsHead t₁) (h₂ : ¬ Tree.IsHead t₂) (hv : t₁.value = t₂.value) {α : List ℕ}
-    (hα : ∀ p, p <+: α → p ≠ [] → t₁.subtreeAt p = t₂.subtreeAt p) (X : C) (β : TreePath) :
+    (hα : ∀ p, p <+: α → p ≠ [] → t₁[p]? = t₂[p]?) (X : C) (β : TreePath) :
     Strands X (E.replaceAt h t₁) ⟨h ++ α⟩ β ↔ Strands X (E.replaceAt h t₂) ⟨h ++ α⟩ β := by
   refine exists_congr fun ⟨r⟩ ↦ and_congr_right fun hr ↦ ?_
   rw [replaceable_iff, replaceable_iff]
@@ -261,7 +261,7 @@ theorem strands_replaceAt_congr {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isS
   · rw [sig_replaceAt_of_prefix hE h₁ h₂ hv hr]
   · rcases eq_or_ne p [] with rfl | hp0
     · rw [List.append_nil, sig_replaceAt_of_prefix hE h₁ h₂ hv (List.prefix_refl h)]
-    · simp only [RoseTree.subtreeAt_replaceAt_append hE, hα p hp hp0]
+    · simp only [RoseTree.getElem?_replaceAt_append hE, hα p hp hp0]
 
 end Embedding
 

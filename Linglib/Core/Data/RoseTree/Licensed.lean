@@ -29,7 +29,7 @@ of this form. A tree is licensed exactly when each of its local trees is
 
 * `RoseTree.licensed_node_iff`: a tree is licensed when its root's local tree satisfies `R` and
   its children are licensed; `RoseTree.Licensed.induction` is the induction principle.
-* `RoseTree.Licensed.of_subtreeAt`: licensing passes to subtrees.
+* `RoseTree.Licensed.of_getElem?`: licensing passes to subtrees.
 * `RoseTree.Licensed.replaceAt`: replacing a subtree by a licensed tree with the same root value
   keeps the tree licensed.
 * `RoseTree.licensed_of_perm`: a relation that ignores the order of the children licenses
@@ -96,18 +96,18 @@ theorem Licensed.of_isSubtree {s t : RoseTree α} (ht : t.Licensed R) (hs : IsSu
     s.Licensed R :=
   fun r hr ↦ ht r (hr.trans hs)
 
-theorem Licensed.of_subtreeAt {t s : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
-    (hs : subtreeAt t p = some s) : s.Licensed R :=
-  ht.of_isSubtree (isSubtree_iff_exists_subtreeAt.mpr ⟨p, hs⟩)
+theorem Licensed.of_getElem? {t s : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
+    (hs : t[p]? = some s) : s.Licensed R :=
+  ht.of_isSubtree (isSubtree_iff_exists_getElem?.mpr ⟨p, hs⟩)
 
 /-- Replacing a subtree by a licensed tree with the same root value keeps a tree licensed. -/
 theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
-    (hs : subtreeAt t p = some s) (hnew : new.Licensed R) (hv : new.value = s.value) :
+    (hs : t[p]? = some s) (hnew : new.Licensed R) (hv : new.value = s.value) :
     (t.replaceAt p new).Licensed R := by
   induction p generalizing t with
   | nil => rw [replaceAt_nil]; exact hnew
   | cons i p ih =>
-    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
+    obtain ⟨c, hc, hcs⟩ := getElem?_cons_eq_some_iff.mp hs
     cases t with
     | node a cs =>
       rw [children_node] at hc

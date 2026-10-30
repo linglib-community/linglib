@@ -10,6 +10,7 @@ public import Mathlib.Computability.Language
 public import Linglib.Phonology.Subregular.Boundary
 public import Linglib.Core.Computability.LocallyTestable
 public import Linglib.Core.Data.List.Factors
+public import Linglib.Core.Relation.SetRel
 
 /-!
 # Strictly local languages (SL_k)
@@ -24,6 +25,12 @@ strictly increasing sequences of natural numbers, strictly `2`-local here. A fin
 forbidden factors presents its language as `ofForbidden F`, whose grammar `Fᶜ` is infinite over
 an infinite alphabet.
 
+The language of a grammar is the core of the relation between a word and its `k`-factors, the
+upper adjoint of the map taking a set of words to the factors they contain
+(`StrictlyLocalGrammar.language_eq_core`). Intersection and monotonicity are then mathlib's
+facts about the core, and a language is strictly `k`-local exactly when the factors of its
+members regenerate it (`Language.isStrictlyLocal_iff_language_image`).
+
 ## Main definitions
 
 * `StrictlyLocalGrammar α`: a grammar is just a set of permitted factors over
@@ -37,6 +44,9 @@ an infinite alphabet.
 
 ## Main results
 
+* `StrictlyLocalGrammar.language_eq_core`: the language is `SetRel.core` of the factor relation.
+* `Language.isStrictlyLocal_iff_language_image`: the canonical grammar, the factors of the
+  members, regenerates every strictly local language.
 * `Language.isStrictlyLocal_iff_suffixSubstitutionClosed`: for `k ≥ 2`, strict
   `k`-locality is exactly closure under suffix substitution: the crossover's factors
   split into the two members' shared parts, and conversely the canonical grammar of
@@ -44,6 +54,12 @@ an infinite alphabet.
 
 * `Language.IsStrictlyLocal.toIsLocallyTestable`: `SL_k ⊆ LT_k`.
 * `Language.IsStrictlyLocal.isStarFree`: `SL_k ⊆ SF` over a finite alphabet.
+
+## Implementation notes
+
+Grammars are arbitrary sets over an arbitrary alphabet rather than finite sets over a finite one,
+since none of the results here needs finiteness; the finite setting matters for learning from
+positive data, which is not formalized.
 
 ## References
 
@@ -91,6 +107,24 @@ theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : Lis
     obtain ⟨i, h1, h2, rfl⟩ := (mem_kFactors_boundary_iff hk).mp hf
     exact h i h1 h2
 
+/-! ### The factor relation -/
+
+/-- The language at width `k` is the core of the relation taking a word to its `k`-factors. -/
+theorem language_eq_core (k : ℕ) (G : StrictlyLocalGrammar α) :
+    G.language k =
+      (SetRel.ofSuccessors fun w : List α ↦ {f | f ∈ (boundary k w).kFactors k}).core G :=
+  rfl
+
+theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyLocalGrammar α) :
+    (G₁ ∩ G₂).language k = G₁.language k ⊓ G₂.language k := by
+  simp only [language_eq_core]
+  exact SetRel.core_inter _ _ _
+
+theorem language_mono (k : ℕ) : Monotone (language k : StrictlyLocalGrammar α → Language α) :=
+  fun G₁ G₂ h ↦ by
+    simp only [language_eq_core]
+    exact SetRel.core_subset_core h
+
 /-! ### Count-vector characterisation
 
 Membership in a forbidden-factor SL language is a zero-test of a single
@@ -127,6 +161,16 @@ width `k`. Witness-style, mirroring `Language.IsRegular`/`Language.IsContextFree
 ("L is regular iff some DFA accepts L"). -/
 def IsStrictlyLocal (L : Language α) (k : ℕ) : Prop :=
   ∃ G : StrictlyLocalGrammar α, G.language k = L
+
+/-- A language is strictly `k`-local iff its canonical grammar, the `k`-factors of its members,
+generates it. -/
+theorem isStrictlyLocal_iff_language_image {L : Language α} {k : ℕ} :
+    L.IsStrictlyLocal k ↔
+      StrictlyLocalGrammar.language k {f | ∃ z ∈ L, f ∈ (boundary k z).kFactors k} = L := by
+  refine ⟨?_, fun h ↦ ⟨_, h⟩⟩
+  rintro ⟨G, rfl⟩
+  simp only [StrictlyLocalGrammar.language_eq_core]
+  exact SetRel.image_core_gc.u_l_u_eq_u G
 
 /-! ### Suffix substitution closure -/
 
@@ -172,11 +216,11 @@ theorem IsStrictlyLocal.suffixSubstitutionClosed {L : Language α} {k : ℕ}
 
 theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk : 2 ≤ k)
     (h : L.SuffixSubstitutionClosed k) : L.IsStrictlyLocal k := by
-  refine ⟨{f | ∃ z ∈ L, f ∈ List.kFactors k (boundary k z)}, ?_⟩
-  ext w
-  rw [StrictlyLocalGrammar.mem_language_iff_window (by omega)]
-  refine ⟨fun hw ↦ ?_, fun hw i h1 h2 ↦
-    ⟨w, hw, (mem_kFactors_boundary_iff (by omega)).mpr ⟨i, h1, h2, rfl⟩⟩⟩
+  refine isStrictlyLocal_iff_language_image.2 (le_antisymm (fun w hw ↦ ?_) ?_)
+  swap
+  · simp only [StrictlyLocalGrammar.language_eq_core]
+    exact SetRel.image_core_gc.le_u_l (L : Set (List α))
+  rw [StrictlyLocalGrammar.mem_language_iff_window (by omega)] at hw
   have hwin : ∀ i : ℤ, 1 - (k : ℤ) ≤ i → i < w.length →
       ∃ y ∈ L, ∃ q : ℤ, 1 - (k : ℤ) ≤ q ∧ q < y.length ∧
         ∀ j : ℕ, j < k → y[q + j]? = w[i + j]? := by

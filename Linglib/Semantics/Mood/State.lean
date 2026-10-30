@@ -135,6 +135,24 @@ theorem inquire_inquire_self (c : State W) (q : Setoid W) :
     (c.inquire q).inquire q = c.inquire q :=
   congrArg (State.mk c.toExpState) (inf_right_idem _ _)
 
+/-- Promotion changes nothing exactly when the ordering already respects the content. -/
+theorem promote_eq_self_iff {c : State W} {p : W → Prop} :
+    c.promote p = c ↔ ExpState.Respects c.order p := by
+  rw [← ExpState.refine_eq_self_iff]
+  exact ⟨congrArg fun c : State W ↦ c.order, fun h ↦ State.ext rfl h rfl⟩
+
+@[simp] theorem foldl_assert_toExpState (ps : List (W → Prop)) (c : State W) :
+    (ps.foldl assert c).toExpState = ps.foldl ExpState.assert c.toExpState := by
+  induction ps generalizing c with
+  | nil => rfl
+  | cons p ps ih => exact ih (c.assert p)
+
+@[simp] theorem foldl_promote_toExpState (ps : List (W → Prop)) (c : State W) :
+    (ps.foldl promote c).toExpState = ps.foldl ExpState.promote c.toExpState := by
+  induction ps generalizing c with
+  | nil => rfl
+  | cons p ps ih => exact ih (c.promote p)
+
 /-! ### Order
 
 Mood states are ordered componentwise, a more constrained state lying below a less constrained

@@ -18,7 +18,8 @@ The conditional entropy `pastCondEntropy X μ n` of the value of a process at ti
 the entropy rate. The drop from a past of `t - 1` values to a past of `t` is the information
 `distanceInfo X μ t` that the value at time `0` carries about the value at time `t` given the
 values between them. The entropy rate plus the information at distances beyond `T` is the
-conditional entropy given a past of `T` values.
+conditional entropy given a past of `T` values. All of these are entropies of blocks, so they are
+unchanged when every block is read backwards.
 
 ## Main definitions
 
@@ -34,6 +35,9 @@ conditional entropy given a past of `T` values.
   drop from `pastCondEntropy X μ t` to `pastCondEntropy X μ (t + 1)`.
 * `InformationTheory.entropyRate_add_tsum`: under stationarity, the entropy rate plus the
   information at distances beyond `T` is `pastCondEntropy X μ T`.
+* `InformationTheory.distanceInfo_succ_eq_of_map_rev`: a stationary process whose blocks have the
+  laws of the reversed blocks of `X` has the information of `X` at every positive distance, and
+  any such process has the entropy rate of `X` (`InformationTheory.entropyRate_eq_of_map_rev`).
 
 ## References
 
@@ -88,6 +92,8 @@ theorem entropy_block (T : ℕ) : H[block X 0 T ; μ] = ∑ t ∈ range T, pastC
       block_zero_succ, entropy_comp_of_injective μ ((hX T).prodMk (measurable_block hX 0 T))
         (measurable_of_finite _) (Fin.snocEquiv _).injective]
 
+section Stationary
+
 variable (hs : IsStationary X μ)
 include hs
 
@@ -135,5 +141,43 @@ theorem entropyRate_add_tsum (T : ℕ) :
       (tendsto_atTop_mono (fun n ↦ Nat.le_add_left n T) tendsto_id))
   rw [hsum.tsum_eq]
   ring
+
+end Stationary
+
+/-! ### Time reversal
+
+A process `Y` whose blocks have the laws of the reversed blocks of `X` has the entropies of the
+blocks of `X`, hence its conditional entropies given the past and its entropy rate, and when both
+processes are stationary its information at every positive distance. -/
+
+section Reversal
+
+variable {Ω' : Type*} [MeasurableSpace Ω'] {Y : ℕ → Ω' → S} {ν : Measure Ω'}
+  [IsProbabilityMeasure ν] (hY : ∀ t, Measurable (Y t))
+  (h : ∀ n, ν.map (block Y 0 n) = μ.map fun ω ↦ block X 0 n ω ∘ Fin.rev)
+include hY h
+
+omit [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] hY in
+theorem entropy_block_eq_of_map_rev (n : ℕ) : H[block Y 0 n ; ν] = H[block X 0 n ; μ] := by
+  rw [entropy_def, h n, ← entropy_def]
+  exact entropy_comp_of_injective μ (measurable_block hX 0 n) (f := fun v : Fin n → S ↦ v ∘ Fin.rev)
+    (measurable_of_finite _) fun v w hvw ↦ funext fun i ↦ by simpa using congrFun hvw i.rev
+
+theorem pastCondEntropy_eq_of_map_rev (n : ℕ) : pastCondEntropy Y ν n = pastCondEntropy X μ n := by
+  have hXn := entropy_block (μ := μ) hX (n + 1)
+  have hYn := entropy_block (μ := ν) hY (n + 1)
+  rw [sum_range_succ, ← entropy_block hX n] at hXn
+  rw [sum_range_succ, ← entropy_block hY n] at hYn
+  linarith [entropy_block_eq_of_map_rev hX h n, entropy_block_eq_of_map_rev hX h (n + 1)]
+
+theorem entropyRate_eq_of_map_rev : entropyRate Y ν = entropyRate X μ :=
+  iInf_congr (pastCondEntropy_eq_of_map_rev hX hY h)
+
+theorem distanceInfo_succ_eq_of_map_rev (hs : IsStationary X μ) (hs' : IsStationary Y ν)
+    (t : ℕ) : distanceInfo Y ν (t + 1) = distanceInfo X μ (t + 1) := by
+  rw [distanceInfo_succ hY hs', distanceInfo_succ hX hs, pastCondEntropy_eq_of_map_rev hX hY h,
+    pastCondEntropy_eq_of_map_rev hX hY h]
+
+end Reversal
 
 end InformationTheory
