@@ -13,13 +13,13 @@ are common (Universal 1), and they are the paper's types I, II and III, verb-ini
 and verb-final. This file states the implicational universals of order over the paper's own data:
 the 30-language sample of Appendix I, extended by the per-language properties the text and its
 footnotes record, and the 24 order types of Appendix II with the languages listed as attesting each
-(`Data.WordOrder.Greenberg1963`). The paper's Additional note adds Papago, verb-initial and
-postpositional, to type 7, so that [Universal 3 holds of the types](##universal_3_types) only with
-the exception the note concedes. Each basic type is an arrangement of subject, object and verb,
-and each adposition and each order of a noun and its dependent a head direction, so the harmony
-universals are statements about `HeadDirection`: a verb-peripheral language's adposition is a head
-in the verb's direction (Universals 3 and 4), and the noun's direction towards its genitive is the
-adposition's (Universal 2).
+(`Data.WordOrder.Greenberg1963`). The paper's Additional note assigns Papago, verb-initial and
+postpositional, probably to type 7, so that [Universal 3 holds of the types](##universal_3_types)
+only with the exception the note concedes. Each basic type is an arrangement of subject, object
+and verb, and each adposition and each order of a noun and its dependent a head direction, so the
+harmony universals are statements about `HeadDirection`: a verb-peripheral language's adposition
+is a head in the verb's direction (Universals 3 and 4), and the noun's direction towards its
+genitive is the adposition's (Universal 2).
 
 ## Implementation notes
 

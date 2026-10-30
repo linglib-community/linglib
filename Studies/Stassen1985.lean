@@ -80,7 +80,7 @@ inductive Type1985
 namespace Type1985
 
 /-- The type of the atlas, which collapses the adverbial types into one. -/
-def toWALS : Type1985 → ComparativeType
+def toWALS : Type1985 → Data.WALS.F121A.ComparativeType
   | .separative | .allative | .locative => .locational
   | .exceed => .exceed
   | .conjoined => .conjoined

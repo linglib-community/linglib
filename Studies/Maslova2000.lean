@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Probability.Exchangeable
 public import Linglib.Core.Probability.Kernel.Invariance
+public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Probability.ConditionalProbability
 
 /-!
@@ -13,50 +14,53 @@ universal is its stationary law, the one law that independently changing languag
 reach it, and a law is [stationary exactly when the languages leaving each type balance those
 entering it](##invariant_iff_flow). A typology [has a universal that gives every type a positive
 probability exactly when its types are strongly
-connected](##isIrreducible_iff_exists_isDistributionalUniversal). The universal of interdependent
-typologies [sums to the universal of each](##IsDistributionalUniversal.apply_eq_sum), and of two
-types [the more probable is the one the process leaves with the lower
-probability](##lt_iff_of_invariant). Splitting and dying that ignore type [keep the expected
-frequency of a type among the surviving languages at its ancestral
-frequency](##integral_frequency_cond).
+connected](##isIrreducible_iff_exists_isDistributionalUniversal). Where the shifts of a coarser
+typology depend on its own types alone, [summing the universal of a finer typology over each coarse
+type gives the coarser typology's own universal](##IsDistributionalUniversal.apply_eq_sum); for
+interdependent typologies the paper takes that sum as the definition. Of two types [the more
+probable is the one the process leaves with the lower probability](##lt_iff_of_invariant).
+Splitting and dying that ignore type [keep the expected frequency of a type among the surviving
+languages at its ancestral frequency](##integral_frequency_cond).
 
 ## Implementation notes
 
 * A typology is a finite type with measurable singletons and its type-shift process a Markov
   kernel; `typeShift P` is the process with transition probabilities `P`. Strong connection is
   irreducibility with respect to the counting measure. The paper's small time interval, over which
-  a language most likely keeps its type, is not imposed.
+  a language most likely keeps its type, is not imposed on the definitions; the two processes the
+  errata use keep each type with probability at least nine tenths.
 * That the shifts of a coarser typology depend on the coarse type alone is the condition
   `κ (g s) = (κS s).map g` on the coarsening `g` of a finer typology.
 * The birth-and-death process enters only through the law of the numbers of descendants of the
   $N_0$ ancestral languages, which need only be exchangeable; independent lineages make it so
   (`integral_frequency_cond_pi`). Where no descendant survives, the frequency is `0 / 0 = 0`, and
   the expectation is taken given survival.
+* The paper obtains the expected frequency $f_0$ from the independence of splitting and dying from
+  type, and (A10) displays it, for many ancestral languages, as the ratio of the expected numbers;
+  here it holds exactly for any exchangeable law (`integral_frequency_cond`).
 
 ## Errata
 
-* (A10) computes the expected frequency $N^+ / (N^+ + N^-)$ as the ratio of the expected numbers.
-  The equation holds nonetheless, because the ancestral languages are exchangeable
-  (`integral_frequency_cond`).
-* The second term of (A11) lacks its square; (A12) is what the squared term gives.
+* The second term of (A11) lacks its square; (A12) is what the squared term gives (not formalized;
+  see TODO).
 * At $f_0 = 1/2$, (6) gives $\sigma = \sqrt{\alpha}/(2\sqrt{K})$ with $\alpha = 1 + p(D)/p(B)$,
   more than the $1/(2\sqrt{K})$ of (4) whenever $p(D) > 0$. The appendix obtains (4) as the limit
   $N_0 \to K$, in which every ancestral language leaves descendants, and the bound $1/\sqrt{K}$ of
-  (5) is $2\sigma$ only in that limit.
-* The paper says that a stationary distribution exists only for an ergodic system. With finitely
-  many types every type-shift process has one
-  (`ProbabilityTheory.Kernel.exists_isProbabilityMeasure_invariant`), and a process that never
-  shifts keeps every law, so it has no distributional universal
-  (`not_exists_isDistributionalUniversal_id`); what strong connection adds is uniqueness.
-* Strong connection is necessary for a distributional universal that gives every type a positive
-  probability, but not for a distributional universal: a process with a path from one type to
-  another and none back has one, concentrated on the second type
-  (`isDistributionalUniversal_absorbing`, `not_isIrreducible_absorbing`).
+  (5) is $2\sigma$ only in that limit (not formalized; see TODO).
+* The paper takes strong connection to be necessary for a stationary distribution, which it defines
+  as uniquely determined by the process: without a path from one type to another, the probability
+  of the second stays zero from the first while it is positive from others, so that the dependence
+  on the initial type lasts forever. Strong connection is necessary for a unique stationary law
+  that gives every type a positive probability, but not for a unique stationary law. A process with
+  a path from one type to another and none back has one, concentrated on the second type, and in
+  the limit, which is also how a strongly connected process loses its initial type, the
+  probability of the first type vanishes from both types (`isDistributionalUniversal_absorbing`,
+  `absorbing_pow_apply_true`, `tendsto_absorbing_pow_true`, `not_isIrreducible_absorbing`).
 * The paper takes the notion of a distributional universal to imply that a shift from a preferred
   type to a dispreferred one is less probable than the reverse shift. This holds of two types and
   of any process in detailed balance (`lt_iff_of_isReversible`), but not in general: of three
-  types moving around a cycle, the more probable of two can be one the process shifts to the
-  other and never directly back (`cycle_counterexample`).
+  types moving around a cycle over a small time interval, the more probable of two can be one the
+  process shifts to the other and never directly back (`cycle_counterexample`).
 
 ## TODO
 
@@ -77,8 +81,8 @@ frequency](##integral_frequency_cond).
 
 namespace Maslova2000
 
-open MeasureTheory ProbabilityTheory ProbabilityTheory.Kernel Finset
-open scoped ENNReal
+open MeasureTheory ProbabilityTheory ProbabilityTheory.Kernel Finset Filter
+open scoped ENNReal Topology
 
 variable {T : Type*} [MeasurableSpace T] [Fintype T] [MeasurableSingletonClass T]
   {κ : Kernel T T} {π : Measure T}
@@ -197,7 +201,7 @@ theorem lt_iff_of_isReversible [IsMarkovKernel κ] [IsFiniteMeasure π] (hπ : I
 
 /-! ### Three processes -/
 
--- p. 314: a process that never shifts has a stationary law but no distributional universal
+-- a process that never shifts keeps every law, so it has no distributional universal
 theorem not_exists_isDistributionalUniversal_id :
     ¬ ∃ π, IsDistributionalUniversal (Kernel.id : Kernel Bool Bool) π := by
   rintro ⟨π, -, -, h⟩
@@ -205,13 +209,13 @@ theorem not_exists_isDistributionalUniversal_id :
     (h (Measure.dirac false) inferInstance Measure.id_comp).symm
   simpa using congrArg (· {true}) h₁
 
-/-- A process that shifts a language of type `true` to type `false` with probability one half and
-never shifts back. -/
+/-- A process that shifts a language of type `true` to type `false` with probability one twentieth
+and never shifts back. -/
 noncomputable def absorbing : Kernel Bool Bool :=
-  typeShift fun k i ↦ bif k then 1 / 2 else bif i then 0 else 1
+  typeShift fun k i ↦ bif k then (bif i then 19 / 20 else 1 / 20) else bif i then 0 else 1
 
 private theorem absorbing_nonneg (k i : Bool) :
-    (0 : ℝ) ≤ bif k then 1 / 2 else bif i then 0 else 1 := by
+    (0 : ℝ) ≤ bif k then (bif i then 19 / 20 else 1 / 20) else bif i then 0 else 1 := by
   cases k <;> cases i <;> norm_num
 
 instance : IsMarkovKernel absorbing :=
@@ -231,18 +235,35 @@ theorem isDistributionalUniversal_absorbing :
   rw [show {x : Bool | ¬ x = false} = {true} by ext x; cases x <;> simp]
   exact (measureReal_eq_zero_iff (measure_ne_top _ _)).1 (by linarith)
 
+-- §2.2, p. 312: the probability of `true` is zero from `false` and decays from `true`
+theorem absorbing_pow_apply_true : ∀ n : ℕ,
+    (absorbing ^ n) false {true} = 0 ∧ (absorbing ^ n) true {true} = ENNReal.ofReal (19 / 20) ^ n
+  | 0 => by simp [one_def, id_apply]
+  | n + 1 => by
+    obtain ⟨h₁, h₂⟩ := absorbing_pow_apply_true n
+    simp only [pow_succ', Kernel.mul_def, comp_apply, Measure.comp_apply_singleton,
+      Fintype.univ_bool, mem_singleton, Bool.true_eq_false, not_false_eq_true, sum_insert,
+      sum_singleton, h₁, h₂]
+    simp [absorbing, typeShift_apply_singleton, mul_comm]
+
+theorem tendsto_absorbing_pow_true :
+    Tendsto (fun n ↦ (absorbing ^ n) true {true}) atTop (𝓝 0) := by
+  simp_rw [fun n ↦ (absorbing_pow_apply_true n).2]
+  exact ENNReal.tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num)
+
 -- §2.2: but it is not strongly connected
 theorem not_isIrreducible_absorbing : ¬ IsIrreducible Measure.count absorbing := fun h ↦ by
   have := h
   exact isDistributionalUniversal_absorbing.2.1.measure_singleton_ne_zero
     (IsProbabilityMeasure.ne_zero _) true (by simp)
 
-/-- A three-type process that moves only forward around the cycle `0 → 1 → 2 → 0`. -/
+/-- A three-type process that moves only forward around the cycle `0 → 1 → 2 → 0`, keeping each
+type with probability at least nine tenths. -/
 noncomputable def cycle : Kernel (Fin 3) (Fin 3) :=
-  typeShift ![![1 / 2, 1 / 2, 0], ![0, 1 / 10, 9 / 10], ![1 / 10, 0, 9 / 10]]
+  typeShift ![![19 / 20, 1 / 20, 0], ![0, 9 / 10, 1 / 10], ![1 / 20, 0, 19 / 20]]
 
 private theorem cycle_nonneg (k i : Fin 3) :
-    (0 : ℝ) ≤ ![![1 / 2, 1 / 2, 0], ![0, 1 / 10, 9 / 10], ![1 / 10, 0, 9 / 10]] k i := by
+    (0 : ℝ) ≤ ![![19 / 20, 1 / 20, 0], ![0, 9 / 10, 1 / 10], ![1 / 20, 0, 19 / 20]] k i := by
   fin_cases k <;> fin_cases i <;> norm_num
 
 instance : IsMarkovKernel cycle :=
@@ -259,14 +280,14 @@ private theorem cycle_isIrreducible : IsIrreducible Measure.count cycle := by
 
 -- p. 313: type 0 is more probable than type 1, though the process shifts 0 to 1 and never 1 to 0
 theorem cycle_counterexample :
-    IsDistributionalUniversal cycle (Measure.ofRealWeights ![9 / 59, 5 / 59, 45 / 59]) ∧
-      (Measure.ofRealWeights ![9 / 59, 5 / 59, 45 / 59] : Measure (Fin 3)).real {1} <
-        (Measure.ofRealWeights ![9 / 59, 5 / 59, 45 / 59] : Measure (Fin 3)).real {0} ∧
+    IsDistributionalUniversal cycle (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5]) ∧
+      (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5] : Measure (Fin 3)).real {1} <
+        (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5] : Measure (Fin 3)).real {0} ∧
       (cycle 1).real {0} < (cycle 0).real {1} := by
-  have hw (i : Fin 3) : (0 : ℝ) ≤ ![9 / 59, 5 / 59, 45 / 59] i := by fin_cases i <;> norm_num
-  have : IsProbabilityMeasure (Measure.ofRealWeights ![(9 : ℝ) / 59, 5 / 59, 45 / 59]) :=
+  have hw (i : Fin 3) : (0 : ℝ) ≤ ![2 / 5, 1 / 5, 2 / 5] i := by fin_cases i <;> norm_num
+  have : IsProbabilityMeasure (Measure.ofRealWeights ![(2 : ℝ) / 5, 1 / 5, 2 / 5]) :=
     Measure.isProbabilityMeasure_ofRealWeights hw (by norm_num [Fin.sum_univ_three])
-  have hinv : cycle.Invariant (Measure.ofRealWeights ![9 / 59, 5 / 59, 45 / 59]) :=
+  have hinv : cycle.Invariant (Measure.ofRealWeights ![2 / 5, 1 / 5, 2 / 5]) :=
     invariant_iff_forall_real_singleton.2 fun b ↦ by
       fin_cases b <;> norm_num [Fin.sum_univ_three, Measure.ofRealWeights_real_singleton hw,
         cycle, typeShift_real_singleton cycle_nonneg]
