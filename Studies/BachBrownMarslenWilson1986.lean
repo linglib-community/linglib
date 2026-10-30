@@ -14,8 +14,8 @@ public import Mathlib.Tactic.NormNum
 In Dutch and German a clause can end in a cluster of verbs that follows all their noun phrases.
 Dutch orders the cluster from the matrix verb down and German from the most deeply embedded verb
 up, so the dependencies between noun phrases and verbs cross in Dutch and nest in German, and
-[the German order is the only one in which no two cross](##forall_not_alternate_iff), the only one
-a push-down store can match ([evers-1975]; for Dutch, [no context-free grammar assigns the
+[the German order is the only one whose dependency tree is planar](##isPlanar_graph_iff), the only
+one a push-down store can match ([evers-1975]; for Dutch, [no context-free grammar assigns the
 clusters their trees](##BresnanEtAl1982.not_strongly_contextFree)). Yet
 [bach-brown-marslen-wilson-1986] found the Dutch sentences the easier to understand from two
 embedded clauses on.
@@ -41,6 +41,10 @@ cluster, the time clauses are held and the time they join the matrix
   question task asks about; the object of the last verb is left out. In the string of subjects and
   cluster, subject `i` is at `i` and verb `i` at `n + σ i`, so two dependencies cross when they
   `DependencyGrammar.Alternate`.
+* The dependency tree `graph` adds to Figure 1's arcs between verbs and their subjects the arcs
+  from each verb to the verb it embeds, so that the matrix verb roots a tree; those arcs join
+  neighbours in either order and cross nothing. Its words are a parameter, since no theorem reads
+  them.
 * A Level-`n` Test sentence has an `n`-verb cluster.
 * The model ranks cluster orders. Why both languages break down from Level 3 on, the paper's
   second open question (p. 261), is not modelled.
@@ -151,7 +155,6 @@ theorem forall_held_eq_zero_iff : (∀ i, held σ i = 0) ↔ σ = 1 := by
   rintro rfl i
   exact held_one i
 
-/-- The nested, German order is the only cluster order in which no two dependencies cross. -/
 theorem forall_not_alternate_iff :
     (∀ i j, ¬ Alternate (subject i) (verb σ i) (subject j) (verb σ j)) ↔ σ = Fin.revPerm := by
   simp only [alternate_iff, not_and, not_lt]
@@ -166,6 +169,103 @@ theorem exists_one_lt_held_revPerm_iff :
     (∃ i, 1 < held (Fin.revPerm : Equiv.Perm (Fin n)) i) ↔ 2 < n := by
   simp only [held_revPerm]
   exact ⟨fun ⟨i, hi⟩ ↦ by have := i.isLt; omega, fun h ↦ ⟨⟨2, h⟩, by simp⟩⟩
+
+@[simp] theorem subject_inj {i j : Fin n} : subject i = subject j ↔ i = j := by
+  simp [subject, Fin.ext_iff]
+
+@[simp] theorem verb_inj {i j : Fin n} : verb σ i = verb σ j ↔ i = j := by
+  simp [verb]
+
+@[simp] theorem subject_ne_verb (i j : Fin n) : subject i ≠ verb σ j := by
+  simp [subject, verb, Fin.ext_iff]; omega
+
+@[simp] theorem verb_ne_subject (i j : Fin n) : verb σ j ≠ subject i := (subject_ne_verb i j).symm
+
+/-! ### The dependency tree of a cluster -/
+
+section Graph
+
+open Morphology (Word)
+
+variable (σ) in
+/-- The dependency tree of a cluster over the words `w`, the subjects before the verbs: each verb
+heads its subject and the verb it embeds, and the matrix verb is the root. The arcs are unlabelled,
+as in Figure 1, which draws the arcs between verbs and their arguments only. -/
+def graph [NeZero n] (w : Fin (n + n) → Word) : Graph Unit (n + n) where
+  words := w
+  label a b := if (∃ i, a = verb σ i ∧ b = subject i) ∨
+      ∃ i j : Fin n, (j : ℕ) = i + 1 ∧ a = verb σ i ∧ b = verb σ j then some () else none
+  root := verb σ 0
+
+/-- The depth of a position in the tree: verb `i` at `2 i`, its subject one below it. -/
+private def depth (σ : Equiv.Perm (Fin n)) : Fin (n + n) → ℕ :=
+  Fin.addCases (fun i ↦ 2 * i + 1) (fun k ↦ 2 * σ.symm k)
+
+private theorem depth_subject (i : Fin n) : depth σ (subject i) = 2 * i + 1 := by
+  simp only [depth, subject, Fin.addCases_left]
+
+private theorem depth_verb (i : Fin n) : depth σ (verb σ i) = 2 * i := by
+  simp only [depth, verb, Fin.addCases_right, Equiv.symm_apply_apply]
+
+variable [NeZero n] {w : Fin (n + n) → Word}
+
+@[simp] theorem graph_adj {a b : Fin (n + n)} :
+    (graph σ w).Adj a b ↔ (∃ i, a = verb σ i ∧ b = subject i) ∨
+      ∃ i j : Fin n, (j : ℕ) = i + 1 ∧ a = verb σ i ∧ b = verb σ j := by
+  simp only [Graph.Adj, graph]
+  split_ifs with h <;> simp [h]
+
+private theorem depth_lt_of_adj {a b : Fin (n + n)} (h : (graph σ w).Adj a b) :
+    depth σ a < depth σ b := by
+  rcases graph_adj.1 h with ⟨i, rfl, rfl⟩ | ⟨i, j, hij, rfl, rfl⟩ <;>
+    simp only [depth_subject, depth_verb] <;> omega
+
+private theorem depth_le_of_dominates {a b : Fin (n + n)} (h : Dominates (graph σ w) a b) :
+    depth σ a ≤ depth σ b := by
+  induction h with
+  | refl => exact le_rfl
+  | tail _ hbc ih => exact ih.trans (depth_lt_of_adj hbc).le
+
+-- The graph is a dependency tree, a check on the construction.
+theorem isTree_graph : (graph σ w).IsTree where
+  not_dominates_of_adj _ _ h hd := (depth_lt_of_adj h).not_ge (depth_le_of_dominates hd)
+  leftUnique_adj a b c ha hb := by
+    rcases graph_adj.1 ha with ⟨i, rfl, rfl⟩ | ⟨i, j, hij, rfl, rfl⟩ <;>
+      rcases graph_adj.1 hb with ⟨i', rfl, h⟩ | ⟨i', j', hij', rfl, h⟩
+    · exact congrArg (verb σ) (subject_inj.1 h)
+    · exact absurd h (subject_ne_verb _ _)
+    · exact absurd h (verb_ne_subject _ _)
+    · obtain rfl := verb_inj.1 h
+      exact verb_inj.2 (Fin.ext (by omega))
+  root_dominates p := by
+    have hv (k : ℕ) (hk : k < n) : Dominates (graph σ w) (verb σ 0) (verb σ ⟨k, hk⟩) := by
+      induction k with
+      | zero => exact (show (⟨0, hk⟩ : Fin n) = 0 by simp) ▸ .refl
+      | succ k ih =>
+        exact (ih (by omega)).tail (graph_adj.2 (.inr ⟨⟨k, by omega⟩, ⟨k + 1, hk⟩, rfl, rfl, rfl⟩))
+    induction p using Fin.addCases with
+    | left i => exact (hv i i.isLt).tail (graph_adj.2 (.inl ⟨i, rfl, rfl⟩))
+    | right k =>
+      have h := hv (σ.symm k) (σ.symm k).isLt
+      simp only [Fin.eta, verb, Equiv.apply_symm_apply] at h
+      exact h
+
+/-- The nested, German order is the only cluster order whose dependency tree is planar, no two of
+its arcs crossing. -/
+theorem isPlanar_graph_iff : (graph σ w).IsPlanar ↔ σ = Fin.revPerm := by
+  refine ⟨fun h ↦ forall_not_alternate_iff.1 fun i j ↦
+    h (.inr (graph_adj.2 (.inl ⟨i, rfl, rfl⟩))) (.inr (graph_adj.2 (.inl ⟨j, rfl, rfl⟩))), ?_⟩
+  rintro rfl a b c d hab hcd
+  simp only [Graph.Linked, graph_adj] at hab hcd
+  rcases hab with (⟨⟨i, hi⟩, rfl, rfl⟩ | ⟨⟨i, hi⟩, ⟨i', hi'⟩, hii, rfl, rfl⟩) |
+      (⟨⟨i, hi⟩, rfl, rfl⟩ | ⟨⟨i, hi⟩, ⟨i', hi'⟩, hii, rfl, rfl⟩) <;>
+    rcases hcd with (⟨⟨j, hj⟩, rfl, rfl⟩ | ⟨⟨j, hj⟩, ⟨j', hj'⟩, hjj, rfl, rfl⟩) |
+      (⟨⟨j, hj⟩, rfl, rfl⟩ | ⟨⟨j, hj⟩, ⟨j', hj'⟩, hjj, rfl, rfl⟩) <;>
+    simp only [Alternate, subject, verb, Fin.lt_def, Fin.val_castAdd, Fin.val_natAdd,
+      Fin.revPerm_apply, Fin.val_rev] at * <;>
+    omega
+
+end Graph
 
 /-! ### The comprehension task -/
 
