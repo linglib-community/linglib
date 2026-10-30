@@ -41,7 +41,7 @@ with a modal component.
 * [chierchia-2006]
 * [von-fintel-2000-whatever]
 * [dayal-1997]
-* [schwarzschild-2002]
+* [schwarzschild-2002b]
 * [potts-2005]
 * [zimmermann-2000]
 * [jayez-tovena-2006]

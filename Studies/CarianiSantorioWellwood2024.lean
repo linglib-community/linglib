@@ -1,8 +1,8 @@
 module
 
-public import Linglib.Semantics.Degree.Background
 public import Linglib.Fragments.English.Adjectives
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Studies.CarianiSantorioWellwood2023
 
 /-!
 # Cariani, Santorio and Wellwood (2024): Confidence Reports
@@ -12,9 +12,9 @@ denotation, a property of confidence states. Each state carries a proposition as
 a background ordering ranks a holder's states. *σ is confident that p* says that some state of
 σ's with theme `p` lies at or above a contrast state, and *certain* is the same ordering with
 the contrast state at the top. The comparative instead compares degrees, assigned by a measure
-that preserves the strict ordering. This is the two-component analysis of
-`Semantics/Degree/Background.lean`, and the file sorts the paper's inferences by whether they use
-the ordering or the degree scale.
+that preserves the strict ordering. This is the two-component analysis of the authors' 2023 paper
+on positive adjectives, and the file sorts the paper's inferences by whether they use the ordering
+or the degree scale.
 
 ## Implementation notes
 
@@ -66,7 +66,7 @@ theorem maxComparative_theme_iff (hθ : θ.Injective) (s t : S) :
 that `p` and more confident of `q` than of `p`, then σ is confident that `q`. -/
 example [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ) {c : S} {p q : Set W}
     (hp : p ∈ θ '' Ici c) (h : MaxComparative .gt (θ · = q) (θ · = p) μ) : q ∈ θ '' Ici c :=
-  mem_image_of_maxComparative (isUpperSet_Ici c) hμ hp h
+  CarianiSantorioWellwood2023.mem_image_of_maxComparative (isUpperSet_Ici c) hμ hp h
 
 /-! ### The conjunction fallacy (52) -/
 
@@ -99,13 +99,13 @@ theorem image_Ici_subset_image_Ici_of_isMax [@Std.Total S (· ≤ ·)] {m : S} (
 -- (65a), (66a)
 theorem not_image_Ici_subset_image_Ici (hθ : θ.Injective) {c m : S} (hmc : ¬ m ≤ c) :
     ¬ θ '' Ici c ⊆ θ '' Ici m :=
-  fun h ↦ hmc (Ici_subset_Ici.1 ((image_subset_image_iff hθ).1 h))
+  mt (CarianiSantorioWellwood2023.image_Ici_subset_image_Ici_iff hθ).1 hmc
 
 /-- *Confident* entails *certain* exactly when its contrast state is maximal, so (65a) needs a
 contrast state below the top of an ordering with maxima (69). -/
 theorem image_Ici_subset_image_Ici_iff_isMax [@Std.Total S (· ≤ ·)] (hθ : θ.Injective) {m : S}
     (hm : IsMax m) {c : S} : θ '' Ici c ⊆ θ '' Ici m ↔ IsMax c := by
-  rw [image_subset_image_iff hθ, Ici_subset_Ici]
+  rw [CarianiSantorioWellwood2023.image_Ici_subset_image_Ici_iff hθ]
   exact ⟨hm.mono, fun hc ↦ (total_of (· ≤ ·) m c).elim id fun h ↦ hc h⟩
 
 open English.Adjectives in

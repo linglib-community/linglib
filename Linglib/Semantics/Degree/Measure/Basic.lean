@@ -26,7 +26,7 @@ are dimensionally restricted, and multi-dimensional orders such as weight × vol
 
 ## References
 
-* [schwarzschild-2002], [schwarzschild-2006], [krifka-1989], [wellwood-2015],
+* [schwarzschild-2002a], [schwarzschild-2006], [krifka-1989], [wellwood-2015],
   [cariani-santorio-wellwood-2024], [pasternak-2019]
 -/
 
