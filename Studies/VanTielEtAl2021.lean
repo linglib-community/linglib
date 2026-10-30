@@ -27,6 +27,7 @@ models, since it prefers the true word with the smaller extension.
 * `withConfusion`: production under imprecise number representation.
 * `Word.monotonicity`: the monotonicity Experiment 2 assigned a word, which fixes the side of its
   threshold.
+* `fewReadings`: the readings of *few* in the threshold lexicon, at every threshold.
 
 ## Implementation notes
 
@@ -235,17 +236,34 @@ def Word.toDeterminer? : Word → Option QuantificationalDeterminer
   | .all => .some English.Determiners.all
   | _ => .none
 
+/-- The readings of *few* in the threshold lexicon `gq`, an upper bound on `|A ∩ B|` at every
+threshold, the thresholds being free parameters. -/
+def fewReadings : Set Det.Family.{0} := Set.range fun θ ↦ (NumberTree.atMost θ).toFamily
+
+/-- Every reading of *few* in the threshold lexicon is antitone in its scope, whatever its
+threshold. -/
+theorem scopeAntitone_of_mem_fewReadings {d : Det.Family.{0}} (hd : d ∈ fewReadings)
+    (α : Type) [Fintype α] : ScopeAntitone (d α) := by
+  obtain ⟨θ, rfl⟩ := hd
+  exact scopeAntitone_atMost θ
+
+/-- The readings of a word the fragment shares are the fragment's, and for *few*, whose standard
+the fragment leaves to context, those of the threshold lexicon. -/
+noncomputable def Word.readings (w : Word) (q : QuantificationalDeterminer) :
+    Set Det.Family.{0} :=
+  if w = .few then fewReadings else ⟦q⟧
+
 /-- Experiment 2 coded a word the fragment shares monotone decreasing exactly when the word has a
 reading antitone in its scope on every finite domain. *Half*, whose reading is neither monotone
 nor antitone, was coded increasing. -/
 theorem monotonicity_eq_decreasing_iff {w : Word} {q : QuantificationalDeterminer}
     (h : w.toDeterminer? = some q) :
     w.monotonicity = .decreasing ↔
-      ∃ d ∈ (⟦q⟧ : Set Det.Family.{0}), ∀ (α : Type) [Fintype α], ScopeAntitone (d α) := by
-  cases w <;> simp only [Word.toDeterminer?, reduceCtorEq, Option.some.injEq] at h <;> subst h
+      ∃ d ∈ w.readings q, ∀ (α : Type) [Fintype α], ScopeAntitone (d α) := by
+  cases w <;> simp only [Word.toDeterminer?, reduceCtorEq, Option.some.injEq] at h <;> subst h <;>
+    simp only [Word.readings, reduceCtorEq, ↓reduceIte]
   · exact iff_of_true rfl ⟨_, ⟨.no, Finset.mem_singleton_self _, rfl⟩, fun _ _ ↦ scopeAntitone_no⟩
-  · exact iff_of_true rfl ⟨_, ⟨.few, Finset.mem_singleton_self _, rfl⟩,
-      fun _ _ ↦ scopeAntitone_few⟩
+  · exact iff_of_true rfl ⟨_, ⟨0, rfl⟩, scopeAntitone_of_mem_fewReadings ⟨0, rfl⟩⟩
   · exact iff_of_false (by decide) fun ⟨_, ⟨_, hs, hd⟩, h⟩ ↦ by
       obtain rfl := Finset.mem_singleton.1 hs
       exact not_scopeAntitone_some (hd ▸ h PUnit)

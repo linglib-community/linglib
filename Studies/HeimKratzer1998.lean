@@ -216,19 +216,21 @@ def objectShift? {E W : Type} (d : Denotation E W) : Option (Denotation E W) :=
 def objectShifts {E W : Type} (s : Set (Denotation E W)) : Set (Denotation E W) :=
   {d | ∃ d₁ ∈ s, objectShift? d₁ = some d}
 
-/-- The study's stand on the quantificational determiners, the reading `every` where a word has
-it and else the reading `Quantifier.Det.some`, as a terminal on the toy domain. -/
+/-- The study's stand on the quantificational determiners: *every* and *some*, the words of its
+trees, read as `every` and `Quantifier.Det.some` on the toy domain, and no other word. -/
 def quantifierReading (w : QuantificationalDeterminer) : Option (Denotation ToyEntity Unit) :=
-  if Symbol.every ∈ w.readings then some (toDenotation Family.every ToyEntity Unit)
-  else if Symbol.some ∈ w.readings then some (toDenotation Family.some ToyEntity Unit)
+  if w = English.Determiners.every then some (toDenotation Family.every ToyEntity Unit)
+  else if w = English.Determiners.some_ then some (toDenotation Family.some ToyEntity Unit)
   else none
 
 theorem quantifierReading_mem {w : QuantificationalDeterminer} {d : Denotation ToyEntity Unit}
     (h : quantifierReading w = some d) : d ∈ terminals ⟦w⟧ ToyEntity Unit := by
   simp only [quantifierReading] at h
-  split_ifs at h with he hs <;> cases h
-  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote he)
-  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote hs)
+  split_ifs at h with he hs <;> cases h <;> subst w
+  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote (s := .every)
+      (by decide))
+  · exact Set.mem_image_of_mem _ (QuantificationalDeterminer.denote_mem_denote (s := .some)
+      (by decide))
 
 /-- The leaf interpretation reads the quantifier words through their readings and the toy
 fragment's nouns and verbs through the toy lexicon. -/

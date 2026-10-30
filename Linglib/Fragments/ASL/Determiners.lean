@@ -64,9 +64,9 @@ def toList : List Sign :=
 universe u
 
 /-- The readings available for a sign, those of its gloss: the universals and `EACH` read as
-`every`, `NONEsym` as `no`, the existentials as `Quantifier.Det.some`, `FEW` as `few`, `MOST` as
-`most`, and the numerals as `atLeast` or `exactly`; `MANY` has no reading, its
-standard being contextual. -/
+`every`, `NONEsym` as `no`, the existentials as `Quantifier.Det.some`, `MOST` as `most`, and the
+numerals as `atLeast` or `exactly`; `MANY` and `FEW` have no reading, their standards being
+contextual. -/
 noncomputable instance : Denotes Sign (Set Quantifier.Det.Family.{u}) where
   denote
     | .fsAll | .allB | .each => {Quantifier.Det.Family.every}
@@ -74,9 +74,8 @@ noncomputable instance : Denotes Sign (Set Quantifier.Det.Family.{u}) where
     | .someone | .something => {Quantifier.Det.Family.some}
     | .one => {Quantifier.Det.Family.atLeast 1, Quantifier.Det.Family.exactly 1}
     | .two => {Quantifier.Det.Family.atLeast 2, Quantifier.Det.Family.exactly 2}
-    | .few => {Quantifier.Det.Family.few}
     | .most => {Quantifier.Det.Family.most}
-    | .many => ∅
+    | .many | .few => ∅
 
 end Sign
 
