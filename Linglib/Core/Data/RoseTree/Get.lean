@@ -384,48 +384,6 @@ theorem length_verticesList : ∀ cs : List (RoseTree α),
       length_vertices c, length_verticesList cs, List.map_cons, List.sum_cons]
 end
 
-private theorem modifyHead_succ_injective : Function.Injective (List.modifyHead (· + 1)) := by
-  rintro (_ | ⟨a, l⟩) (_ | ⟨b, m⟩) h <;> simp_all
-
-mutual
-theorem nodup_vertices : ∀ t : RoseTree α, t.vertices.Nodup
-  | node _ cs => by
-    rw [vertices_node, List.nodup_cons]
-    refine ⟨fun h ↦ ?_, nodup_verticesList cs⟩
-    obtain ⟨_, _, h⟩ := exists_cons_of_mem_verticesList h
-    exact List.cons_ne_nil _ _ h.symm
-theorem nodup_verticesList : ∀ cs : List (RoseTree α), (verticesList cs).Nodup
-  | [] => List.nodup_nil
-  | c :: cs => by
-    rw [verticesList_cons, List.nodup_append]
-    refine ⟨List.Nodup.map List.cons_injective (nodup_vertices c),
-      List.Nodup.map modifyHead_succ_injective (nodup_verticesList cs), ?_⟩
-    rintro _ hp _ hq rfl
-    obtain ⟨q, -, rfl⟩ := List.mem_map.mp hp
-    obtain ⟨p', hp', h⟩ := List.mem_map.mp hq
-    obtain ⟨j, q', rfl⟩ := exists_cons_of_mem_verticesList hp'
-    simp at h
-end
-
-/-- The subtrees of `t` with their positions, in preorder. -/
-def positionedSubtrees (t : RoseTree α) : List (TreePath × RoseTree α) :=
-  t.vertices.filterMap fun p ↦ (t.subtreeAt p).map (⟨p⟩, ·)
-
-theorem mem_positionedSubtrees {t s : RoseTree α} {p : TreePath} :
-    (p, s) ∈ t.positionedSubtrees ↔ t.subtreeAt p.toList = some s := by
-  simp only [positionedSubtrees, List.mem_filterMap, Option.map_eq_some_iff, Prod.mk.injEq]
-  refine ⟨fun ⟨_, _, _, hs, rfl, rfl⟩ ↦ hs, fun hs ↦ ?_⟩
-  exact ⟨p.toList, mem_vertices.mpr (by rw [hs]; rfl), s, hs, rfl, rfl⟩
-
-theorem nodup_map_fst_positionedSubtrees (t : RoseTree α) :
-    (t.positionedSubtrees.map Prod.fst).Nodup := by
-  rw [positionedSubtrees, List.map_filterMap]
-  refine (nodup_vertices t).filterMap fun p q r hp hq ↦ ?_
-  simp only [Option.map_map, Function.comp_def, Option.mem_def, Option.map_eq_some_iff] at hp hq
-  obtain ⟨-, -, rfl⟩ := hp
-  obtain ⟨-, -, h⟩ := hq
-  exact congrArg TreePath.toList h.symm
-
 mutual
 /-- The addresses in preorder increase lexicographically. -/
 theorem pairwise_lt_vertices : ∀ t : RoseTree α, t.vertices.Pairwise (· < ·)
@@ -449,6 +407,19 @@ theorem pairwise_lt_verticesList : ∀ cs : List (RoseTree α), (verticesList cs
       exact List.cons_lt_cons_iff.2 (.inl (Nat.succ_pos j))
 end
 
+theorem nodup_vertices (t : RoseTree α) : t.vertices.Nodup :=
+  (pairwise_lt_vertices t).nodup
+
+/-- The subtrees of `t` with their positions, in preorder. -/
+def positionedSubtrees (t : RoseTree α) : List (TreePath × RoseTree α) :=
+  t.vertices.filterMap fun p ↦ (t.subtreeAt p).map (⟨p⟩, ·)
+
+theorem mem_positionedSubtrees {t s : RoseTree α} {p : TreePath} :
+    (p, s) ∈ t.positionedSubtrees ↔ t.subtreeAt p.toList = some s := by
+  simp only [positionedSubtrees, List.mem_filterMap, Option.map_eq_some_iff, Prod.mk.injEq]
+  refine ⟨fun ⟨_, _, _, hs, rfl, rfl⟩ ↦ hs, fun hs ↦ ?_⟩
+  exact ⟨p.toList, mem_vertices.mpr (by rw [hs]; rfl), s, hs, rfl, rfl⟩
+
 theorem pairwise_lt_positionedSubtrees (t : RoseTree α) :
     t.positionedSubtrees.Pairwise fun x y ↦ x.1.toList < y.1.toList :=
   (pairwise_lt_vertices t).filterMap _ fun p q h x hx y hy ↦ by
@@ -456,6 +427,10 @@ theorem pairwise_lt_positionedSubtrees (t : RoseTree α) :
     obtain ⟨_, -, rfl⟩ := hx
     obtain ⟨_, -, rfl⟩ := hy
     exact h
+
+theorem nodup_map_fst_positionedSubtrees (t : RoseTree α) :
+    (t.positionedSubtrees.map Prod.fst).Nodup :=
+  List.pairwise_map.mpr ((pairwise_lt_positionedSubtrees t).imp fun h he ↦ (he ▸ h).false)
 
 /-! ### The leaves with their addresses -/
 
