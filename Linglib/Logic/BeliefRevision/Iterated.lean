@@ -46,18 +46,12 @@ of its revision, and Spohn's conditionalisation of rankings meets the postulates
 
 ## References
 
-* [A. Darwiche and J. Pearl, *On the Logic of Iterated Belief Revision*
-  (1997)][darwiche-pearl-1997]
-* [C. E. Alchourrón, P. Gärdenfors and D. Makinson, *On the Logic of Theory Change: Partial
-  Meet Contraction and Revision Functions* (1985)][alchourron-gardenfors-makinson-1985]
-* [H. Katsuno and A. O. Mendelzon, *Propositional Knowledge Base Revision and Minimal Change*
-  (1991)][katsuno-mendelzon-1991]
-* [C. Boutilier, *Iterated Revision and Minimal Change of Conditional Beliefs*
-  (1996)][boutilier-1996]
-* [P. Gärdenfors and D. Makinson, *Nonmonotonic Inference Based on Expectations*
-  (1994)][gardenfors-makinson-1994]
-* [W. Spohn, *Ordinal Conditional Functions: A Dynamic Theory of Epistemic States*
-  (1988)][spohn-1988]
+* [darwiche-pearl-1997]
+* [alchourron-gardenfors-makinson-1985]
+* [katsuno-mendelzon-1991]
+* [boutilier-1996]
+* [gardenfors-makinson-1994]
+* [spohn-1988]
 -/
 
 @[expose] public section
@@ -517,6 +511,10 @@ noncomputable def spohn : W → ℕ := fun w ↦ if w ∈ μ then aPart κ μ w 
 noncomputable def spohnRevision (W : Type*) : Revision (W → ℕ) W where
   bel κ := {w | κ w = 0}
   revise := spohn
+
+@[simp] theorem spohnRevision_bel : (spohnRevision W).bel κ = {w | κ w = 0} := rfl
+
+@[simp] theorem spohnRevision_revise : (spohnRevision W).revise κ μ = spohn κ μ := rfl
 
 /-- A revision of rankings that takes the `μ`-worlds to their `μ`-part and leaves the rest
 disbelieved is represented by the rankings' own orderings. -/

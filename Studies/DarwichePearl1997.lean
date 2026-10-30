@@ -7,37 +7,22 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Darwiche and Pearl (1997): On the Logic of Iterated Belief Revision
 
-This file formalizes the examples and appendix tables of Darwiche and Pearl's paper on iterated
-belief revision.
-
-The AGM postulates constrain a single revision of a belief set and leave the agent's
-conditional beliefs, its disposition to revise, almost unconstrained, so an AGM-compatible
-operator may drop a conditional belief because the observation that would have triggered it
-arrived (an animal seen to fly is no longer believed to fly should it be a bird) or acquire
-one (a lady believed smart and rich is no longer believed rich once evidence against her
-smartness is overturned). The paper moves revision to epistemic states, weakens the postulate
-of syntax-irrelevance accordingly, since two states with the same beliefs may revise
-differently (two jurors who both believe A guilty but rank B and C differently), and adds four
-postulates: revising by a weaker proposition before a stronger one is redundant (C1), by a
-contradicted one is overridden (C2), evidence implied by later evidence is retained (C3), and
-evidence not contradicted by later evidence stays uncontradicted (C4). Each is equivalent to a
-condition on the faithful total preorders that represent the operator, Spohn's
-conditionalisation satisfies them all, and Boutilier's stronger postulate, minimising every
-change of conditional belief, forgets a colour observation once the animal's species is
-corrected. That postulate is C1–C4 together with two more, C5 and C6, and Spohn's
-conditionalisation violates C6. Four partial operators in the appendix show that the AGM
-postulates entail none of C1–C4, and an operator that moves the disbelieved worlds of rank two
-or more down rather than up satisfies C1 but neither C3 nor C4.
-
-The framework and its theorems are in `Logic/BeliefRevision/Iterated.lean`; here the paper's
-examples and appendix tables are checked against them.
+The AGM postulates constrain one revision of a belief set, so Darwiche and Pearl revise epistemic
+states, which [can share their beliefs and revise them differently](##jurors_revise), and add four
+postulates on iterated revision, (C1)–(C4), which
+[the AGM postulates do not entail](##exists_isAGM_not_c1_c2_c3_c4). Boutilier's stronger postulate
+[forgets an observation once a later one corrects another](##cb_forgets); Spohn's
+conditionalisation [satisfies (C1)–(C4) but not Boutilier's
+postulate](##spohnRevision_c1_c2_c3_c4_not_cb), and an operator moving disbelieved worlds down
+[satisfies (C1) but neither (C3) nor (C4)](##diamondRevision_c1_not_c3_c4).
 
 ## Implementation notes
 
 * The worlds of an appendix table are the valuations of its two propositions, so a
   proposition is a set of pairs of Booleans, `first` and `second` naming the two.
-* A table gives only the preorders before and after one revision; its compatibility with the
-  postulates is that the revised belief worlds are the least evidence-worlds of the prior.
+* A table of Appendix A gives one ranking and its revision by one proposition. `patch` extends it
+  to an operator by Spohn's revision elsewhere, which a faithful assignment still represents when
+  the table's revised belief worlds are the least evidence-worlds of the prior (`patch_faithful`).
 
 ## Errata
 
@@ -46,12 +31,9 @@ examples and appendix tables are checked against them.
 
 ## References
 
-* [A. Darwiche and J. Pearl, *On the logic of iterated belief revision*
-  (1997)][darwiche-pearl-1997]
-* [C. Boutilier, *Iterated revision and minimal change of conditional beliefs*
-  (1996)][boutilier-1996]
-* [M. Goldszmidt and J. Pearl, *Qualitative probabilities for default reasoning, belief
-  revision, and causal modeling* (1996)][goldszmidt-pearl-1996]
+* [darwiche-pearl-1997]
+* [boutilier-1996]
+* [goldszmidt-pearl-1996]
 -/
 
 @[expose] public section
@@ -71,27 +53,29 @@ inductive Suspect
   deriving DecidableEq, Fintype
 
 /-- The first juror holds A guilty, B a remote possibility and C innocent. -/
-def juror₁ : Suspect → ℕ
+def juror1 : Suspect → ℕ
   | .a => 0
   | .b => 1
   | .c => 2
 
 /-- The second juror holds A guilty, C a remote possibility and B innocent. -/
-def juror₂ : Suspect → ℕ
+def juror2 : Suspect → ℕ
   | .a => 0
   | .c => 1
   | .b => 2
 
 theorem jurors_bel :
-    (spohnRevision Suspect).bel juror₁ = (spohnRevision Suspect).bel juror₂ := by
+    (spohnRevision Suspect).bel juror1 = (spohnRevision Suspect).bel juror2 := by
   ext w
-  cases w <;> simp [spohnRevision, juror₁, juror₂]
+  cases w <;> simp [juror1, juror2]
 
+/-- Example 7: two jurors who believe the same, that A is guilty, revise their beliefs differently
+on learning that A is innocent, the first coming to believe B guilty and the second not. -/
 theorem jurors_revise :
     Suspect.b ∈
-        (spohnRevision Suspect).bel ((spohnRevision Suspect).revise juror₁ {w | w ≠ .a}) ∧
+        (spohnRevision Suspect).bel ((spohnRevision Suspect).revise juror1 {w | w ≠ .a}) ∧
       Suspect.b ∉
-        (spohnRevision Suspect).bel ((spohnRevision Suspect).revise juror₂ {w | w ≠ .a}) := by
+        (spohnRevision Suspect).bel ((spohnRevision Suspect).revise juror2 {w | w ≠ .a}) := by
   rw [spohnRevision_faithful.bel_revise, spohnRevision_faithful.bel_revise]
   decide
 
@@ -107,101 +91,170 @@ abbrev first : Set World := {w | w.1 = true}
 abbrev second : Set World := {w | w.2 = true}
 
 /-- Table A.1, before revising by `¬(adder_ok ∧ multiplier_ok)`. -/
-def tableA₁ : World → ℕ
+def tableA1 : World → ℕ
   | (true, true) => 0
   | (true, false) => 1
   | (false, true) => 2
   | (false, false) => 3
 
 /-- Table A.1, after. -/
-def tableA₁' : World → ℕ
+def tableA1' : World → ℕ
   | (true, true) => 1
   | (true, false) => 0
   | (false, true) => 2
   | (false, false) => 1
 
 -- Example A.1
-theorem exampleA₁ :
-    (∀ w, w ∈ (Preorder.lift tableA₁').minimals Set.univ ↔
-      w ∈ (Preorder.lift tableA₁).minimals {w | ¬ (w ∈ first ∧ w ∈ second)}) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₁).minimals {w | w ∉ first} ↔ w = (false, true)) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₁').minimals {w | w ∉ first} ↔ w = (false, false)) ∧
-    ¬ AgreesOn (Preorder.lift tableA₁) (Preorder.lift tableA₁')
+theorem exampleA1 :
+    (∀ w, tableA1' w = 0 ↔
+      w ∈ (Preorder.lift tableA1).minimals {w | ¬ (w ∈ first ∧ w ∈ second)}) ∧
+    (∀ w, w ∈ (Preorder.lift tableA1).minimals {w | w ∉ first} ↔ w = (false, true)) ∧
+    (∀ w, w ∈ (Preorder.lift tableA1').minimals {w | w ∉ first} ↔ w = (false, false)) ∧
+    ¬ AgreesOn (Preorder.lift tableA1) (Preorder.lift tableA1')
       {w | ¬ (w ∈ first ∧ w ∈ second)} := by
   decide
 
 /-- Table A.2, before revising by `¬smart`. -/
-def tableA₂ : World → ℕ
+def tableA2 : World → ℕ
   | (true, true) => 0
   | (true, false) => 1
   | (false, true) => 1
   | (false, false) => 2
 
 /-- Table A.2, after. -/
-def tableA₂' : World → ℕ
+def tableA2' : World → ℕ
   | (true, true) => 2
   | (true, false) => 1
   | (false, true) => 0
   | (false, false) => 1
 
 -- Example A.2
-theorem exampleA₂ :
-    (∀ w, w ∈ (Preorder.lift tableA₂').minimals Set.univ ↔
-      w ∈ (Preorder.lift tableA₂).minimals {w | w ∉ first}) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₂).minimals first ↔ w = (true, true)) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₂').minimals first ↔ w = (true, false)) ∧
-    ¬ AgreesOn (Preorder.lift tableA₂) (Preorder.lift tableA₂') first := by
+theorem exampleA2 :
+    (∀ w, tableA2' w = 0 ↔ w ∈ (Preorder.lift tableA2).minimals {w | w ∉ first}) ∧
+    (∀ w, w ∈ (Preorder.lift tableA2).minimals first ↔ w = (true, true)) ∧
+    (∀ w, w ∈ (Preorder.lift tableA2').minimals first ↔ w = (true, false)) ∧
+    ¬ AgreesOn (Preorder.lift tableA2) (Preorder.lift tableA2') first := by
   decide
 
 /-- Table A.3, before revising by `flies`. -/
-def tableA₃ : World → ℕ
+def tableA3 : World → ℕ
   | (true, true) => 2
   | (true, false) => 3
   | (false, true) => 1
   | (false, false) => 0
 
 /-- Table A.3, after. -/
-def tableA₃' : World → ℕ
+def tableA3' : World → ℕ
   | (true, true) => 1
   | (true, false) => 1
   | (false, true) => 0
   | (false, false) => 1
 
 -- Example A.3
-theorem exampleA₃ :
-    (∀ w, w ∈ (Preorder.lift tableA₃').minimals Set.univ ↔
-      w ∈ (Preorder.lift tableA₃).minimals second) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₃).minimals first ↔ w = (true, true)) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₃').minimals first ↔ w ∈ first) ∧
-    ¬ PreservesLt (Preorder.lift tableA₃) (Preorder.lift tableA₃') second secondᶜ := by
+theorem exampleA3 :
+    (∀ w, tableA3' w = 0 ↔ w ∈ (Preorder.lift tableA3).minimals second) ∧
+    (∀ w, w ∈ (Preorder.lift tableA3).minimals first ↔ w = (true, true)) ∧
+    (∀ w, w ∈ (Preorder.lift tableA3').minimals first ↔ w ∈ first) ∧
+    ¬ PreservesLt (Preorder.lift tableA3) (Preorder.lift tableA3') second secondᶜ := by
   decide
 
 /-- Table A.4, before revising by `nice_day`. -/
-def tableA₄ : World → ℕ
+def tableA4 : World → ℕ
   | (true, true) => 1
   | (true, false) => 1
   | (false, true) => 0
   | (false, false) => 0
 
 /-- Table A.4, after. -/
-def tableA₄' : World → ℕ
+def tableA4' : World → ℕ
   | (true, true) => 2
   | (true, false) => 1
   | (false, true) => 0
   | (false, false) => 1
 
 -- Example A.4
-theorem exampleA₄ :
-    (∀ w, w ∈ (Preorder.lift tableA₄').minimals Set.univ ↔
-      w ∈ (Preorder.lift tableA₄).minimals second) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₄).minimals first ↔ w ∈ first) ∧
-    (∀ w, w ∈ (Preorder.lift tableA₄').minimals first ↔ w = (true, false)) ∧
-    ¬ PreservesLe (Preorder.lift tableA₄) (Preorder.lift tableA₄') second secondᶜ := by
+theorem exampleA4 :
+    (∀ w, tableA4' w = 0 ↔ w ∈ (Preorder.lift tableA4).minimals second) ∧
+    (∀ w, w ∈ (Preorder.lift tableA4).minimals first ↔ w ∈ first) ∧
+    (∀ w, w ∈ (Preorder.lift tableA4').minimals first ↔ w = (true, false)) ∧
+    ¬ PreservesLe (Preorder.lift tableA4) (Preorder.lift tableA4') second secondᶜ := by
   decide
+
+/-! ### The AGM postulates entail none of (C1)–(C4) -/
+
+section Patch
+
+variable {W : Type*}
+
+open Classical in
+/-- Spohn's revision, except that the ranking `κ₀` revised by `μ₀` becomes `κ₁`: a table of
+Appendix A, extended to an operator. -/
+noncomputable def patch (κ₀ : W → ℕ) (μ₀ : Set W) (κ₁ : W → ℕ) : Revision (W → ℕ) W where
+  bel κ := {w | κ w = 0}
+  revise κ μ := if κ = κ₀ ∧ μ = μ₀ then κ₁ else spohn κ μ
+
+variable {κ₀ κ₁ : W → ℕ} {μ₀ : Set W}
+
+theorem patch_revise_self : (patch κ₀ μ₀ κ₁).revise κ₀ μ₀ = κ₁ := by
+  simp [patch]
+
+-- the rankings' orderings represent the extended table when its revised belief worlds are the
+-- least evidence-worlds of the prior
+theorem patch_faithful (h : ∀ w, κ₁ w = 0 ↔ w ∈ (Preorder.lift κ₀).minimals μ₀) :
+    (patch κ₀ μ₀ κ₁).Faithful fun κ ↦ Preorder.lift κ where
+  total := spohnRevision_faithful.total
+  wellFounded := spohnRevision_faithful.wellFounded
+  equiv_of_mem := spohnRevision_faithful.equiv_of_mem
+  lt_of_mem := spohnRevision_faithful.lt_of_mem
+  bel_revise κ μ := by
+    by_cases hκμ : κ = κ₀ ∧ μ = μ₀
+    · obtain ⟨rfl, rfl⟩ := hκμ
+      ext w
+      simp [h, patch]
+    · simpa [patch, hκμ] using spohnRevision_faithful.bel_revise κ μ
+
+end Patch
+
+-- Example A.1
+theorem exists_isAGM_not_c1 : ∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C1 := by
+  have hr := patch_faithful exampleA1.1
+  refine ⟨_, hr.isAGM, fun h ↦ exampleA1.2.2.2 ?_⟩
+  simpa [patch_revise_self] using hr.c1_iff.1 h tableA1 {w | ¬ (w ∈ first ∧ w ∈ second)}
+
+-- Example A.2
+theorem exists_isAGM_not_c2 : ∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C2 := by
+  have hr := patch_faithful exampleA2.1
+  refine ⟨_, hr.isAGM, fun h ↦ exampleA2.2.2.2 ?_⟩
+  have hc : ({w | w ∉ first} : Set World)ᶜ = first := by ext; simp
+  have := hr.c2_iff.1 h tableA2 {w | w ∉ first}
+  rwa [patch_revise_self, hc] at this
+
+-- Example A.3
+theorem exists_isAGM_not_c3 : ∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C3 := by
+  have hr := patch_faithful exampleA3.1
+  refine ⟨_, hr.isAGM, fun h ↦ exampleA3.2.2.2 ?_⟩
+  simpa [patch_revise_self] using hr.c3_iff.1 h tableA3 second
+
+-- Example A.4
+theorem exists_isAGM_not_c4 : ∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C4 := by
+  have hr := patch_faithful exampleA4.1
+  refine ⟨_, hr.isAGM, fun h ↦ exampleA4.2.2.2 ?_⟩
+  simpa [patch_revise_self] using hr.c4_iff.1 h tableA4 second
+
+/-- Appendix A: the AGM postulates entail none of (C1)–(C4), since each table extends to an AGM
+operator that violates its postulate. -/
+theorem exists_isAGM_not_c1_c2_c3_c4 :
+    (∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C1) ∧
+      (∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C2) ∧
+      (∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C3) ∧
+      ∃ r : Revision (World → ℕ) World, r.IsAGM ∧ ¬ r.C4 :=
+  ⟨exists_isAGM_not_c1, exists_isAGM_not_c2, exists_isAGM_not_c3, exists_isAGM_not_c4⟩
 
 /-! ### Boutilier's postulate forgets -/
 
--- Example A.5
+/-- Example A.5: under Boutilier's postulate an agent who believes the animal a bird, observes it
+red, and learns that it is not a bird after all, believes what it would have believed without the
+observation. -/
 theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {Ψ : S}
     {bird red : Set W} (hΨ : r.bel Ψ = bird) (hne : (bird ∩ red).Nonempty)
     (hΨ' : r.bel (r.revise Ψ birdᶜ) = birdᶜ) :
@@ -212,49 +265,54 @@ theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {
 
 /-! ### Boutilier's postulate is stronger than (C1)–(C4) -/
 
-/-- A prior believing world `0`, with the `μ`-world `1` less plausible than the non-`μ`-world
-`2`. -/
-def table₇ : Fin 3 → ℕ
+/-- A prior believing world `0`, with the evidence-world `1` less plausible than the world `2`
+outside the evidence. -/
+def c6Prior : Fin 3 → ℕ
   | 0 => 0
   | 1 => 2
   | 2 => 1
 
-/-- `table₇` after Spohn's revision by `μ₇`. -/
-def table₇' : Fin 3 → ℕ
+/-- `c6Prior` after Spohn's revision by `c6Evidence`. -/
+def c6Prior' : Fin 3 → ℕ
   | 0 => 0
   | 1 => 2
   | 2 => 2
 
-/-- The evidence of `table₇`. -/
-abbrev μ₇ : Set (Fin 3) := {w | w ≠ 2}
+/-- The evidence of `c6Prior`. -/
+abbrev c6Evidence : Set (Fin 3) := {w | w ≠ 2}
 
-theorem spohn_table₇ : spohn table₇ μ₇ = table₇' := by
-  have h : rank table₇ μ₇ = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
+theorem spohn_c6Prior : spohn c6Prior c6Evidence = c6Prior' := by
+  have h : rank c6Prior c6Evidence = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
   funext w
   match w with
-  | 0 | 1 | 2 => simp only [spohn, aPart, h]; simp [μ₇, table₇, table₇']
+  | 0 | 1 | 2 => simp only [spohn, aPart, h]; simp [c6Evidence, c6Prior, c6Prior']
 
 theorem not_spohnRevision_c6 : ¬ (spohnRevision (Fin 3)).C6 := by
   intro h
-  have hlt := spohnRevision_faithful.c6_iff.1 h table₇ μ₇ 2 (by simp) 1
-    ⟨by simp, by simp [spohnRevision, spohn_table₇, table₇']⟩ (by decide)
-  change spohn table₇ μ₇ 2 < spohn table₇ μ₇ 1 at hlt
-  rw [spohn_table₇] at hlt
+  have hlt := spohnRevision_faithful.c6_iff.1 h c6Prior c6Evidence 2 (by simp) 1
+    ⟨by simp, by simp [spohn_c6Prior, c6Prior']⟩ (by decide)
+  rw [Preorder.lift_lt_iff, spohnRevision_revise, spohn_c6Prior] at hlt
   exact absurd hlt (by decide)
 
--- Section 7
+/-- Section 7: Spohn's revision satisfies (C1)–(C4) but not Boutilier's postulate, which adds
+(C5) and (C6). -/
 theorem spohnRevision_c1_c2_c3_c4_not_cb :
     (spohnRevision (Fin 3)).C1 ∧ (spohnRevision (Fin 3)).C2 ∧ (spohnRevision (Fin 3)).C3 ∧
-      (spohnRevision (Fin 3)).C4 ∧ ¬ (spohnRevision (Fin 3)).CB :=
-  ⟨spohnRevision_c1, spohnRevision_c2, spohnRevision_c3, spohnRevision_c4, fun h ↦
-    not_spohnRevision_c6 (spohnRevision_faithful.cb_iff_c1_c2_c3_c4_c5_c6.1 h).2.2.2.2.2⟩
+      (spohnRevision (Fin 3)).C4 ∧ ¬ (spohnRevision (Fin 3)).CB := by
+  refine ⟨spohnRevision_c1, spohnRevision_c2, spohnRevision_c3, spohnRevision_c4, fun h ↦ ?_⟩
+  obtain ⟨-, -, -, -, -, h6⟩ := spohnRevision_faithful.cb_iff_c1_c2_c3_c4_c5_c6.1 h
+  exact not_spohnRevision_c6 h6
 
 /-! ### An operator satisfying (C1) but neither (C3) nor (C4) -/
+
+section Diamond
+
+variable {W : Type*}
 
 open Classical in
 /-- The operator `◇` of Theorem 15 is Spohn's, except that a disbelieved world of rank two or more
 moves down a degree instead of up. -/
-noncomputable def diamond {W : Type*} (κ : W → ℕ) (μ : Set W) : W → ℕ := fun w ↦
+noncomputable def diamond (κ : W → ℕ) (μ : Set W) : W → ℕ := fun w ↦
   if w ∈ μ then aPart κ μ w else if κ w < 2 then κ w + 1 else κ w - 1
 
 /-- `diamond` as a revision operator on rankings. -/
@@ -262,36 +320,41 @@ noncomputable def diamondRevision (W : Type*) : Revision (W → ℕ) W where
   bel κ := {w | κ w = 0}
   revise := diamond
 
-theorem diamond_of_mem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∈ μ) :
+@[simp] theorem diamondRevision_revise (κ : W → ℕ) (μ : Set W) :
+    (diamondRevision W).revise κ μ = diamond κ μ :=
+  rfl
+
+theorem diamond_of_mem {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∈ μ) :
     diamond κ μ w = aPart κ μ w := by
   simp [diamond, hw]
 
-theorem diamond_of_notMem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∉ μ) :
+theorem diamond_of_notMem {κ : W → ℕ} {μ : Set W} {w : W} (hw : w ∉ μ) :
     diamond κ μ w = if κ w < 2 then κ w + 1 else κ w - 1 := by
   simp [diamond, hw]
 
 -- Theorem 15
-theorem diamondRevision_faithful (W : Type*) :
-    (diamondRevision W).Faithful (fun κ ↦ Preorder.lift κ) :=
+theorem diamondRevision_faithful : (diamondRevision W).Faithful (fun κ ↦ Preorder.lift κ) :=
   faithful_lift (fun _ _ _ hw ↦ diamond_of_mem hw)
     (fun _ _ _ hw ↦ by rw [diamond_of_notMem hw]; split_ifs <;> omega)
 
-theorem diamondRevision_isAGM (W : Type*) : (diamondRevision W).IsAGM :=
-  (diamondRevision_faithful W).isAGM
+theorem diamondRevision_isAGM : (diamondRevision W).IsAGM :=
+  diamondRevision_faithful.isAGM
 
 -- Theorem 15
-theorem diamondRevision_c1 (W : Type*) : (diamondRevision W).C1 :=
-  (diamondRevision_faithful W).c1_iff.2 fun κ μ ↦ agreesOn_lift κ μ fun _ _ _ hw ↦ diamond_of_mem hw
+theorem diamondRevision_c1 : (diamondRevision W).C1 :=
+  diamondRevision_faithful.c1_iff.2 fun κ μ ↦ agreesOn_lift κ μ fun _ _ _ hw ↦ diamond_of_mem hw
+
+end Diamond
 
 /-- The prior of Table B.1. -/
-def tableB₁ : Fin 4 → ℕ
+def tableB1 : Fin 4 → ℕ
   | 0 => 0
   | 1 => 3
   | 2 => 4
   | 3 => 0
 
 /-- Table B.1 after `diamond` by `μ`. -/
-def tableB₁' : Fin 4 → ℕ
+def tableB1' : Fin 4 → ℕ
   | 0 => 0
   | 1 => 3
   | 2 => 3
@@ -303,54 +366,57 @@ abbrev μB : Set (Fin 4) := {w | w = 0 ∨ w = 1}
 /-- The evidence `α` of Tables B.1 and B.2. -/
 abbrev αB : Set (Fin 4) := {w | w = 1 ∨ w = 2}
 
-theorem diamond_tableB₁ : diamond tableB₁ μB = tableB₁' := by
-  have h : rank tableB₁ μB = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
+theorem diamond_tableB1 : diamond tableB1 μB = tableB1' := by
+  have h : rank tableB1 μB = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
   funext w
   match w with
-  | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μB, tableB₁, tableB₁']
+  | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μB, tableB1, tableB1']
 
 -- Table B.1, Theorem 15
 theorem not_diamondRevision_c3 : ¬ (diamondRevision (Fin 4)).C3 := by
   intro h
-  have := h tableB₁ μB αB (by
-    rw [(diamondRevision_faithful _).bel_revise, Set.subset_def]
+  have := h tableB1 μB αB (by
+    rw [diamondRevision_faithful.bel_revise, Set.subset_def]
     decide)
-  rw [(diamondRevision_faithful _).bel_revise] at this
-  change (Preorder.lift (diamond tableB₁ μB)).minimals αB ⊆ μB at this
-  rw [diamond_tableB₁] at this
-  exact absurd (this (show (2 : Fin 4) ∈ (Preorder.lift tableB₁').minimals αB by decide))
+  rw [diamondRevision_faithful.bel_revise, diamondRevision_revise, diamond_tableB1] at this
+  exact absurd (this (show (2 : Fin 4) ∈ (Preorder.lift tableB1').minimals αB by decide))
     (by decide)
 
 /-- The prior of Table B.2. -/
-def tableB₂ : Fin 4 → ℕ
+def tableB2 : Fin 4 → ℕ
   | 0 => 0
   | 1 => 3
   | 2 => 3
   | 3 => 0
 
 /-- Table B.2 after `diamond` by `μ`. -/
-def tableB₂' : Fin 4 → ℕ
+def tableB2' : Fin 4 → ℕ
   | 0 => 0
   | 1 => 3
   | 2 => 2
   | 3 => 1
 
-theorem diamond_tableB₂ : diamond tableB₂ μB = tableB₂' := by
-  have h : rank tableB₂ μB = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
+theorem diamond_tableB2 : diamond tableB2 μB = tableB2' := by
+  have h : rank tableB2 μB = 0 := (rank_eq_zero_iff _).2 ⟨0, by decide, rfl⟩
   funext w
   match w with
-  | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μB, tableB₂, tableB₂']
+  | 0 | 1 | 2 | 3 => simp only [diamond, aPart, h]; simp [μB, tableB2, tableB2']
 
 -- Table B.2, Theorem 15
 theorem not_diamondRevision_c4 : ¬ (diamondRevision (Fin 4)).C4 := by
   intro h
-  refine h tableB₂ μB αB ?_ ?_
-  · rw [(diamondRevision_faithful _).bel_revise, Set.not_subset]
+  refine h tableB2 μB αB ?_ ?_
+  · rw [diamondRevision_faithful.bel_revise, Set.not_subset]
     exact ⟨1, by decide, fun h ↦ h (by decide)⟩
-  · rw [(diamondRevision_faithful _).bel_revise]
-    change (Preorder.lift (diamond tableB₂ μB)).minimals αB ⊆ μBᶜ
-    rw [diamond_tableB₂, Set.subset_def]
+  · rw [diamondRevision_faithful.bel_revise, diamondRevision_revise, diamond_tableB2,
+      Set.subset_def]
     simp only [Set.mem_compl_iff]
     decide
+
+/-- Theorem 15: the operator `◇` satisfies (C1) but neither (C3) nor (C4). -/
+theorem diamondRevision_c1_not_c3_c4 :
+    (diamondRevision (Fin 4)).C1 ∧ ¬ (diamondRevision (Fin 4)).C3 ∧
+      ¬ (diamondRevision (Fin 4)).C4 :=
+  ⟨diamondRevision_c1, not_diamondRevision_c3, not_diamondRevision_c4⟩
 
 end DarwichePearl1997

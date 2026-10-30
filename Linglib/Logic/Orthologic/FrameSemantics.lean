@@ -30,11 +30,12 @@ algebraic completeness.
 ## References
 
 * [holliday-mandelkern-2024]
+* [maclaren-1964]
 -/
 
 @[expose] public section
 
-open Order Set InvolutiveCompl
+open Order Set OrthoConcept
 
 universe u
 
@@ -93,8 +94,8 @@ theorem frame_sound {φ ψ : Formula Var} (h : φ ⊢ ψ) : φ ⊨ᶠ ψ :=
   frameConsequence_iff_eval.mpr fun _ V ↦ sound h V
 
 /-- The canonical frame of an ortholattice over `V`: two nonzero elements of `V` are compatible
-    when neither lies below the complement of the other ([holliday-mandelkern-2024]
-    Theorem 4.13). -/
+    when neither lies below the complement of the other, the representation of [maclaren-1964]
+    ([holliday-mandelkern-2024] Theorem 4.13). -/
 def CompatFrame.ofOrtholattice {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
     [IsOrtholattice L] (V : Set L) : CompatFrame (Point V) where
   compat a b := ¬ Orthogonal V a b
@@ -109,12 +110,12 @@ def CompatFrame.ofOrtholattice {L : Type*} [Lattice L] [BoundedOrder L] [Involut
 
 theorem eval_map {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
     [IsOrtholattice L] {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
-    Formula.eval (fun p ↦ represent V₀ (v p)) φ = represent V₀ (Formula.eval v φ) := by
+    Formula.eval (fun p ↦ principal V₀ (v p)) φ = principal V₀ (Formula.eval v φ) := by
   induction φ with
-  | top => simp only [Formula.eval, represent_top hV]
+  | top => simp only [Formula.eval, principal_top hV]
   | var p => rfl
-  | neg φ ih => simp only [Formula.eval, ih, represent_compl hV]
-  | and φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, represent_inf hV]
+  | neg φ ih => simp only [Formula.eval, ih, principal_compl hV]
+  | and φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, principal_inf hV]
 
 /-- Frame consequence implies derivability ([holliday-mandelkern-2024] Theorem 4.19). -/
 theorem frame_complete {φ ψ : Formula Var} (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := by
@@ -122,9 +123,9 @@ theorem frame_complete {φ ψ : Formula Var} (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := b
   intro L _ _ _ _ v
   have hjd : JoinDense (Set.univ : Set L) := fun a ↦ (Set.univ_inter (Set.Iic a)).symm ▸ isLUB_Iic
   have hframe := frameConsequence_iff_eval.mp h (CompatFrame.ofOrtholattice (Set.univ : Set L))
-    fun p ↦ represent Set.univ (v p)
+    fun p ↦ principal Set.univ (v p)
   rw [eval_map hjd, eval_map hjd] at hframe
-  exact (represent_le_iff hjd).mp hframe
+  exact (principal_le_principal hjd).mp hframe
 
 /-- Derivability is consequence over all compatibility frames, Goldblatt's completeness theorem
     ([holliday-mandelkern-2024] Theorem 4.19). -/
