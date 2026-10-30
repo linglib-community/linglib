@@ -1,0 +1,104 @@
+{
+ "meta": {
+  "bibkey": "sheehan-2017b",
+  "description": "The cross-linguistic positions of polar question particles and complementizers, from features 92A and 94A of the World Atlas of Language Structures. A language counts as initial or final for each head; the four combinations are the two consistent orders, an initial complementizer over a final particle (the inverse of the final-over-final configuration) and a final complementizer over an initial particle (the final-over-final configuration).",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Position",
+   "doc": "The position of a head in its phrase.",
+   "levels": [
+    {
+     "name": "initial",
+     "label": "Initial",
+     "doc": "before its complement"
+    },
+    {
+     "name": "final",
+     "label": "Final",
+     "doc": "after its complement"
+    }
+   ]
+  }
+ ],
+ "tables": [
+  {
+   "name": "polarityComplementizer",
+   "structure": "PolarityComplementizer",
+   "doc": "the languages with each combination of the positions of the polar question particle and the complementizer.",
+   "locator": "Table 5.2, p. 92",
+   "verified": "page-image",
+   "key": [
+    "pol",
+    "c"
+   ],
+   "columns": [
+    {
+     "name": "pol",
+     "type": "Position",
+     "doc": "The position of the polar question particle."
+    },
+    {
+     "name": "c",
+     "type": "Position",
+     "doc": "The position of the complementizer."
+    },
+    {
+     "name": "languages",
+     "type": "nat",
+     "doc": "The languages."
+    },
+    {
+     "name": "genera",
+     "type": "nat",
+     "doc": "Their genera."
+    },
+    {
+     "name": "families",
+     "type": "nat",
+     "doc": "Their families."
+    },
+    {
+     "name": "inParentheses",
+     "type": "nat",
+     "doc": "The count printed in parentheses, which is the cross-tabulation of WALS features 92A and 94A (recomputed by `scripts/experiments/Sheehan2017b.py`)."
+    }
+   ],
+   "rows": [
+    {
+     "pol": "Initial",
+     "c": "Initial",
+     "languages": 72,
+     "genera": 35,
+     "families": 13,
+     "inParentheses": 78
+    },
+    {
+     "pol": "Final",
+     "c": "Final",
+     "languages": 45,
+     "genera": 33,
+     "families": 20,
+     "inParentheses": 46
+    },
+    {
+     "pol": "Final",
+     "c": "Initial",
+     "languages": 74,
+     "genera": 40,
+     "families": 16,
+     "inParentheses": 82
+    },
+    {
+     "pol": "Initial",
+     "c": "Final",
+     "languages": 4,
+     "genera": 3,
+     "families": 3,
+     "inParentheses": 4
+    }
+   ]
+  }
+ ]
+}
