@@ -11,16 +11,17 @@ public import Mathlib.Tactic.TFAE
 
 Enguehard traces the prevalence of upward-monotone logical words to exhaustification. A set of
 alternatives is strongly stable when every world has a strongest true member, Dayal's condition on
-answers, and that is when [exhaustifying the non-dominated alternatives yields exactly the
-partition they induce](##Enguehard2025.tfae_stronglyStable), for the basic exhaustifier, innocent
-exclusion and minimal worlds alike. Over atoms and symmetric functions of them, weak stability of
-the alternatives and of their negations
+answers, and for finitely many alternatives that is when [exhaustifying the non-dominated ones
+yields exactly the partition they induce](##Enguehard2025.tfae_stronglyStable), for the basic
+exhaustifier, innocent exclusion and minimal worlds alike. Over atoms and symmetric functions of
+them, weak stability of the alternatives and of their negations
 [leaves only *every* and *some*](##Enguehard2025.mem_every_some_of_bilaterallyWeaklyStable).
-Strong stability of the atoms and the sentences of a lexicon of conservative, quantity-invariant
-determiners, and of their negations, [makes every determiner monotone in its
-scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable). Among proper clones of
-functions, strong stability of the alternatives and their negations at every number of atoms
-[singles out the upward-monotone ones](##Enguehard2025.bilaterallyStronglyStable_iff_eq_isUpperSet).
+Over at least two individuals, strong stability of the atoms and the sentences of a lexicon of
+conservative, quantity-invariant determiners, and of their negations, [makes every determiner
+monotone in its scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable). Among proper
+clones of functions, strong stability of the alternatives and their negations at every number of
+atoms [singles out the upward-monotone
+ones](##Enguehard2025.bilaterallyStronglyStable_iff_eq_isUpperSet).
 The messages a pragmatic speaker can choose as the prior varies [are exactly the minimal true
 ones](##Enguehard2025.exists_prior_iff_minimal), so that weak stability [is Bar-Lev and Katzir's
 communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal) and, where some message is
@@ -37,18 +38,20 @@ true at every world, strong stability
 * Strong stability is `Question.IsExhaustivelyResolvable` at every world. Weak stability is read
   as printed: a strongest true member, or only atoms among the minimal true members. At a world
   where nothing is true this holds vacuously.
-* The statements of (26) assume finitely many worlds, which is stronger than the appendix's
-  assumption of finitely many alternatives; the basic form's clause (c) needs some such assumption
-  (see TODO).
+* The statements of (26) assume finitely many alternatives, which the appendix assumes for
+  innocent exclusion and minimal worlds; its basic form needs the assumption too (Errata).
 * The paper compares strong stability with the condition of Fox's 2020 manuscript, that
   exhaustification yield exactly the induced partition rather than contain it. [fox-2018] states
   the same condition, Question Partition Matching, so the comparison runs through `Fox2018.QPM`:
   the monotone propositions over two atoms are strongly stable but [fail
   it](##Enguehard2025.not_qpm_isUpperSet).
-* Symmetry is invariance under the permutations of the atoms, the counterpart of
-  [keenan-stavi-1986]'s logicality for one argument; projective symmetry is living on a set of
-  atoms and being symmetric in them. Bar-Lev and Katzir's result on binary connectives
-  ([bar-lev-katzir-2025]) is (34c) at two atoms.
+* A symmetric proposition (33) is one that, read as a quantifier over the atoms, is
+  `Quantifier.QuantityInvariant`, [mostowski-1957]'s invariance and the counterpart of
+  [keenan-stavi-1986]'s logicality for one argument. A projectively symmetric one (35) lives on a
+  set of atoms and is invariant under the permutations fixing it, which makes it a conservative,
+  quantity-invariant determiner frozen to a restrictor in [peters-westerstahl-2006]'s sense
+  (`Quantifier.exists_det_apply_eq_iff_livesOn`). Bar-Lev and Katzir's result on binary
+  connectives ([bar-lev-katzir-2025]) is (34c) at two atoms.
 * A clone assigns propositions to every number of atoms, zero included; the paper's clones start
   at one atom, and the results quantify over positive numbers. Both halves of (40) are proved
   without the classification of the maximal clones the paper invokes: conjunction and negation
@@ -68,9 +71,15 @@ true at every world, strong stability
   *if q then p* is not monotone. The result holds when the negated atoms are not dominated among
   the negations either
   ([repaired](##Enguehard2025.eq_setOf_isUpperSet_of_bilaterallyStronglyStable)).
-* (34c) and (37b) need at least two atoms: [*p* and *not
-  p*](##Enguehard2025.exists_isSymmetric_not_isUpperSet) over one atom are bilaterally strongly
-  stable and symmetric, and *not p*, the negated existential, is not monotone.
+* (26) is stated for any set of alternatives, and the appendix assumes them finite only for
+  innocent exclusion and minimal worlds, but its omitted lemma, that exhaustifying against the
+  non-dominated alternatives changes nothing, fails for infinitely many, and with it (c) ⇒ (a):
+  over `ℕ ∪ {∞}`, [the alternatives `[n, ∞]`, `{n}` and
+  `{0, ∞}`](##Enguehard2025.exists_image_exh_eq_classes_not_stronglyStable) not dominated
+  exhaustify to exactly the induced partition, yet none is strongest at `∞`.
+* The statements of (34c) and (37b) and their proofs assume at least two atoms: [*p* and *not
+  p*](##Enguehard2025.exists_quantityInvariant_not_isUpperSet) over one atom are bilaterally
+  strongly stable and symmetric, and *not p*, the negated existential, is not monotone.
 * Weak stability as defined holds vacuously at a world where no alternative is true, whereas the
   proof of (40a) assumes that every world has a true and a false alternative, the coverage that
   fn. 23 asks of STA and that A.3 assumes. Under the definition as printed (40a) fails:
@@ -83,10 +92,6 @@ true at every world, strong stability
 ## TODO
 
 * (38) on convex functions.
-* The basic form of (26) (c) ⇒ (a) for infinitely many alternatives: the omitted lemma that
-  exhaustifying against the non-dominated alternatives changes nothing fails for
-  `{[n, ∞] | n} ∪ {{n} | n} ∪ {{0, ∞}}` on `ℕ ∪ {∞}`, where the non-dominated alternatives
-  exhaustify to the induced partition but no member is strongest at `∞`.
 
 ## References
 
@@ -98,6 +103,8 @@ true at every world, strong stability
 * [fox-2018]
 * [barwise-cooper-1981]
 * [keenan-stavi-1986]
+* [mostowski-1957]
+* [peters-westerstahl-2006]
 -/
 
 @[expose] public section
@@ -129,115 +136,60 @@ over the negated atoms. -/
 def BilaterallyWeaklyStable (atoms A : Set (Set W)) : Prop :=
   WeaklyStable atoms A ∧ WeaklyStable (compl '' atoms) (compl '' A)
 
-/-- (25): a member is dominated when the members strictly stronger than it cover it. -/
-def Dominated (A : Set (Set W)) (φ : Set W) : Prop := φ ⊆ ⋃₀ {ψ ∈ A | ψ ⊂ φ}
-
-/-- `A*`, the members that are not dominated. -/
-def nonDominated (A : Set (Set W)) : Set (Set W) := {φ ∈ A | ¬ Dominated A φ}
-
 theorem StronglyStable.weaklyStable {A : Set (Set W)} (h : StronglyStable A)
     (atoms : Set (Set W)) : WeaklyStable atoms A :=
   fun w ↦ .inl (h w)
 
 /-! ### Strong stability and exhaustification -/
 
-section Dominated
-
-variable {A : Set (Set W)} {φ : Set W} {w : W}
-
--- dominated members exhaustify to the contradiction
-theorem exh_eq_empty_of_dominated (h : Dominated A φ) : exh A φ = ∅ :=
-  eq_empty_of_forall_notMem fun _ hw ↦
-    let ⟨ψ, ⟨hψ, hψφ⟩, hwψ⟩ := h hw.1
-    hψφ.2 (hw.2 ψ hψ hwψ)
-
-theorem mem_nonDominated_of_isStrongestTrueAnswer (h : IsStrongestTrueAnswer A w φ) :
-    φ ∈ nonDominated A :=
-  ⟨h.1.1, fun hd ↦ let ⟨_, ⟨hψ, hψφ⟩, hwψ⟩ := hd h.1.2; hψφ.2 (h.2 ⟨hψ, hwψ⟩)⟩
-
--- a non-dominated member of a strongly stable set is the strongest true member somewhere
-theorem StronglyStable.exists_isStrongestTrueAnswer (hA : StronglyStable A)
-    (hφ : φ ∈ nonDominated A) : ∃ w, IsStrongestTrueAnswer A w φ := by
-  obtain ⟨w, hwφ, hw⟩ := not_subset.1 hφ.2
-  obtain ⟨p, hp⟩ := hA w
-  obtain rfl : p = φ := Classical.byContradiction fun hne ↦
-    hw ⟨p, ⟨hp.1.1, (hp.2 ⟨hφ.1, hwφ⟩).ssubset_of_ne hne⟩, hp.1.2⟩
-  exact ⟨w, hp⟩
-
-theorem exists_mem_nonDominated_subset [Finite W] {ψ : Set W} (hψ : ψ ∈ A) (hw : w ∈ ψ) :
-    ∃ m ∈ nonDominated A, w ∈ m ∧ m ⊆ ψ := by
-  obtain ⟨m, hmψ, hm⟩ := exists_minimal_le_of_wellFoundedLT (fun m ↦ m ∈ A ∧ w ∈ m) ψ ⟨hψ, hw⟩
-  refine ⟨m, ⟨hm.1.1, fun hd ↦ ?_⟩, hm.1.2, hmψ⟩
-  obtain ⟨s, ⟨hs, hsm⟩, hws⟩ := hd hm.1.2
-  exact hsm.2 (hm.2 ⟨hs, hws⟩ hsm.1)
-
--- the appendix's omitted lemma: the dominated members change no exhaustification
-theorem exh_nonDominated [Finite W] (φ : Set W) : exh (nonDominated A) φ = exh A φ := by
-  refine subset_antisymm (fun w hw ↦ ⟨hw.1, fun ψ hψ hwψ ↦ ?_⟩) (exh_antitone (fun _ h ↦ h.1) φ)
-  obtain ⟨m, hm, hwm, hmψ⟩ := exists_mem_nonDominated_subset hψ hwψ
-  exact (hw.2 m hm hwm).trans hmψ
-
-theorem isStrongestTrueAnswer_of_nonDominated [Finite W]
-    (h : IsStrongestTrueAnswer (nonDominated A) w φ) : IsStrongestTrueAnswer A w φ :=
-  ⟨⟨h.1.1.1, h.1.2⟩, fun _ ⟨hψ, hwψ⟩ ↦
-    let ⟨_, hm, hwm, hmψ⟩ := exists_mem_nonDominated_subset hψ hwψ
-    (h.2 ⟨hm, hwm⟩).trans hmψ⟩
-
-private theorem isStrongestTrueAnswer_of_exhMW_subset [Finite W] {B : Set (Set W)} (hφ : φ ∈ B)
-    (hw : w ∈ φ) (h : exhMW B φ ⊆ strongAnswer B w) : IsStrongestTrueAnswer B w φ :=
+private theorem isStrongestTrueAnswer_of_exhMW_subset {B : Set (Set W)} {φ : Set W} {w : W}
+    (hB : B.Finite) (hφ : φ ∈ B) (hw : w ∈ φ) (h : exhMW B φ ⊆ strongAnswer B w) :
+    IsStrongestTrueAnswer B w φ :=
   ⟨⟨hφ, hw⟩, fun ψ ⟨hψ, hwψ⟩ _ hv ↦
-    let ⟨_, hu, huv⟩ := exists_isMinimal_le B φ (toFinite B) hv
+    let ⟨_, hu, huv⟩ := exists_isMinimal_le B φ hB hv
     huv ψ hψ ((h hu ψ hψ).1 hwψ)⟩
 
-private theorem exhMW_eq_exh {B : Set (Set W)} (h : (exh B φ).Nonempty) :
-    exhMW B φ = exh B φ :=
-  subset_antisymm ((exhMW_subset_exhIE B φ).trans (exhIE_eq_exh_of_nonempty _ _ h).subset)
-    (exh_subset_exhMW B φ)
-
-end Dominated
-
-/-- (26), with its extension in the appendix: over finitely many worlds the alternatives are
-strongly stable iff exhaustifying them yields every cell of the partition they induce, iff
-exhaustifying the non-dominated ones yields exactly that partition, whether the exhaustifier is the
-basic one, innocent exclusion or minimal worlds. -/
-theorem tfae_stronglyStable [Finite W] (A : Set (Set W)) :
+/-- (26), with its extension in the appendix: for finitely many alternatives, they are strongly
+stable iff exhaustifying them yields every cell of the partition they induce, iff exhaustifying
+the ones not dominated yields exactly that partition, whether the exhaustifier is the basic one,
+innocent exclusion or minimal worlds. -/
+theorem tfae_stronglyStable (A : Set (Set W)) (hA : A.Finite) :
     List.TFAE [StronglyStable A,
       (partition A).classes ⊆ exh A '' A,
-      exh (nonDominated A) '' nonDominated A = (partition A).classes,
+      exh {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (partition A).classes,
       (partition A).classes ⊆ exhIE A '' A,
-      exhIE (nonDominated A) '' nonDominated A = (partition A).classes,
+      exhIE {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (partition A).classes,
       (partition A).classes ⊆ exhMW A '' A,
-      exhMW (nonDominated A) '' nonDominated A = (partition A).classes] := by
+      exhMW {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} = (partition A).classes] := by
   rw [classes_partition]
+  tfae_have 1 ↔ 2 := by
+    rw [← classes_partition]; exact forall_isExhaustivelyResolvable_iff_classes_subset
+  have hA' : {φ ∈ A | ¬ Dominated A φ}.Finite := hA.subset (sep_subset _ _)
   have hne : ∀ {B : Set (Set W)} {w p}, IsStrongestTrueAnswer B w p → (exh B p).Nonempty :=
     fun {_ w _} hp ↦ ⟨w, (mem_exh_iff_isStrongestTrueAnswer hp.1.1).2 hp⟩
-  have hcell : StronglyStable A → ∀ p ∈ nonDominated A,
-      ∃ w, exh (nonDominated A) p = strongAnswer A w := fun h p hp ↦
-    let ⟨w, hw⟩ := h.exists_isStrongestTrueAnswer hp
-    ⟨w, (exh_nonDominated p).trans (exh_eq_strongAnswer A w hw)⟩
-  have h13 : StronglyStable A →
-      exh (nonDominated A) '' nonDominated A = range (strongAnswer A) := fun h ↦ by
+  have hcell : StronglyStable A → ∀ p ∈ {φ ∈ A | ¬ Dominated A φ},
+      ∃ w, exh {φ ∈ A | ¬ Dominated A φ} p = strongAnswer A w := fun h p hp ↦
+    let ⟨w, hw⟩ := exists_isStrongestTrueAnswer_of_not_dominated h hp.1 hp.2
+    ⟨w, (exh_setOf_not_dominated hA p).trans (exh_eq_strongAnswer A w hw)⟩
+  have h13 : StronglyStable A → exh {φ ∈ A | ¬ Dominated A φ} '' {φ ∈ A | ¬ Dominated A φ} =
+      range (strongAnswer A) := fun h ↦ by
     refine subset_antisymm ?_ ?_
     · rintro _ ⟨p, hp, rfl⟩
       obtain ⟨w, hw⟩ := hcell h p hp
       exact ⟨w, hw.symm⟩
     · rintro _ ⟨w, rfl⟩
       obtain ⟨p, hp⟩ := h w
-      exact ⟨p, mem_nonDominated_of_isStrongestTrueAnswer hp,
-        (exh_nonDominated p).trans (exh_eq_strongAnswer A w hp)⟩
-  have hstar : StronglyStable A → ∀ p ∈ nonDominated A, (exh (nonDominated A) p).Nonempty :=
+      exact ⟨p, ⟨hp.1.1, not_dominated_of_isStrongestTrueAnswer hp⟩,
+        (exh_setOf_not_dominated hA p).trans (exh_eq_strongAnswer A w hp)⟩
+  have hstar : StronglyStable A → ∀ p ∈ {φ ∈ A | ¬ Dominated A φ},
+      (exh {φ ∈ A | ¬ Dominated A φ} p).Nonempty :=
     fun h p hp ↦ let ⟨w, hw⟩ := hcell h p hp; ⟨w, hw ▸ self_mem_strongAnswer A w⟩
-  have hsub : ∀ w, strongAnswer A w ⊆ strongAnswer (nonDominated A) w :=
+  have hsub : ∀ w, strongAnswer A w ⊆ strongAnswer {φ ∈ A | ¬ Dominated A φ} w :=
     fun _ _ hv q hq ↦ hv q hq.1
-  tfae_have 1 → 2 := fun h _ ⟨w, hw⟩ ↦
-    let ⟨p, hp⟩ := h w; ⟨p, hp.1.1, (exh_eq_strongAnswer A w hp).trans hw⟩
-  tfae_have 2 → 1 := fun h w ↦ by
-    obtain ⟨p, hp, he⟩ := h ⟨w, rfl⟩
-    exact ⟨p, (mem_exh_iff_isStrongestTrueAnswer hp).1 (he ▸ self_mem_strongAnswer A w)⟩
   tfae_have 1 → 3 := h13
   tfae_have 3 → 1 := fun h w ↦ by
     obtain ⟨p, hp, he⟩ := h.ge ⟨w, rfl⟩
-    rw [exh_nonDominated] at he
+    rw [exh_setOf_not_dominated hA] at he
     exact ⟨p, (mem_exh_iff_isStrongestTrueAnswer hp.1).1 (he ▸ self_mem_strongAnswer A w)⟩
   tfae_have 1 → 4 := fun h _ ⟨w, hw⟩ ↦ by
     obtain ⟨p, hp⟩ := h w
@@ -245,30 +197,115 @@ theorem tfae_stronglyStable [Finite W] (A : Set (Set W)) :
       ((exh_eq_strongAnswer A w hp).trans hw)⟩
   tfae_have 4 → 1 := fun h w ↦ by
     obtain ⟨p, hp, he⟩ := h ⟨w, rfl⟩
-    exact ⟨p, isStrongestTrueAnswer_of_exhMW_subset hp
+    exact ⟨p, isStrongestTrueAnswer_of_exhMW_subset hA hp
       (exhIE_subset A p (he ▸ self_mem_strongAnswer A w)) ((exhMW_subset_exhIE A p).trans he.le)⟩
   tfae_have 1 → 5 := fun h ↦
     (image_congr fun p hp ↦ exhIE_eq_exh_of_nonempty _ _ (hstar h p hp)).trans (h13 h)
   tfae_have 5 → 1 := fun h w ↦ by
     obtain ⟨p, hp, he⟩ := h.ge ⟨w, rfl⟩
     have hw : w ∈ p := exhIE_subset _ p (he ▸ self_mem_strongAnswer A w)
-    exact ⟨p, isStrongestTrueAnswer_of_nonDominated (isStrongestTrueAnswer_of_exhMW_subset hp hw
-      (((exhMW_subset_exhIE _ p).trans he.le).trans (hsub w)))⟩
+    exact ⟨p, isStrongestTrueAnswer_of_setOf_not_dominated hA
+      (isStrongestTrueAnswer_of_exhMW_subset hA' hp hw
+        (((exhMW_subset_exhIE _ p).trans he.le).trans (hsub w)))⟩
   tfae_have 1 → 6 := fun h _ ⟨w, hw⟩ ↦ by
     obtain ⟨p, hp⟩ := h w
-    exact ⟨p, hp.1.1, (exhMW_eq_exh (hne hp)).trans ((exh_eq_strongAnswer A w hp).trans hw)⟩
+    exact ⟨p, hp.1.1, (exhMW_eq_exh_of_nonempty _ _ (hne hp)).trans
+      ((exh_eq_strongAnswer A w hp).trans hw)⟩
   tfae_have 6 → 1 := fun h w ↦ by
     obtain ⟨p, hp, he⟩ := h ⟨w, rfl⟩
-    exact ⟨p, isStrongestTrueAnswer_of_exhMW_subset hp
+    exact ⟨p, isStrongestTrueAnswer_of_exhMW_subset hA hp
       (exhMW_subset A p (he ▸ self_mem_strongAnswer A w)) he.le⟩
   tfae_have 1 → 7 := fun h ↦
-    (image_congr fun p hp ↦ exhMW_eq_exh (hstar h p hp)).trans (h13 h)
+    (image_congr fun p hp ↦ exhMW_eq_exh_of_nonempty _ _ (hstar h p hp)).trans (h13 h)
   tfae_have 7 → 1 := fun h w ↦ by
     obtain ⟨p, hp, he⟩ := h.ge ⟨w, rfl⟩
     have hw : w ∈ p := exhMW_subset _ p (he ▸ self_mem_strongAnswer A w)
-    exact ⟨p, isStrongestTrueAnswer_of_nonDominated
-      (isStrongestTrueAnswer_of_exhMW_subset hp hw (he.le.trans (hsub w)))⟩
+    exact ⟨p, isStrongestTrueAnswer_of_setOf_not_dominated hA
+      (isStrongestTrueAnswer_of_exhMW_subset hA' hp hw (he.le.trans (hsub w)))⟩
   tfae_finish
+
+-- (26) for infinitely many alternatives (Errata): over `ℕ ∪ {∞}`, the alternatives `[n, ∞]`, `{n}`
+-- and `{0, ∞}`; the `[n, ∞]` are dominated, the others exhaustify to the singletons, the induced
+-- partition, yet none is strongest at `∞`
+theorem exists_image_exh_eq_classes_not_stronglyStable :
+    ∃ A : Set (Set (Option ℕ)),
+      exh {q ∈ A | ¬ Dominated A q} '' {q ∈ A | ¬ Dominated A q} = (partition A).classes ∧
+        ¬ StronglyStable A := by
+  set ψ : ℕ → Set (Option ℕ) := fun n ↦ {w | ∀ k, w = some k → n ≤ k} with hψ
+  set φ : Set (Option ℕ) := {some 0, none} with hφ
+  set A : Set (Set (Option ℕ)) := range ψ ∪ range (fun n ↦ {some n}) ∪ {φ} with hA
+  have hψs : ∀ n, some (n + 1) ∈ ψ n := fun n k hk ↦ by cases hk; omega
+  have hψφ : ∀ n, ¬ ψ n ⊆ φ := fun n h ↦ by simpa [hφ] using h (hψs n)
+  -- the alternatives not dominated are the singletons `{n}` and `{0, ∞}`
+  have hstar : {q ∈ A | ¬ Dominated A q} = range (fun n ↦ {some n}) ∪ {φ} := by
+    ext q
+    simp only [mem_ofPred_eq, mem_union, mem_range, mem_singleton_iff, hA]
+    constructor
+    · rintro ⟨(⟨n, rfl⟩ | ⟨n, rfl⟩) | rfl, hd⟩
+      · refine absurd ?_ hd
+        rintro (_ | k) hw
+        · exact ⟨ψ (n + 1), ⟨.inl (.inl ⟨_, rfl⟩), fun w hw k hk ↦ by have := hw k hk; omega,
+            fun h ↦ by have := h (show some n ∈ ψ n from fun k hk ↦ by cases hk; rfl) n rfl; omega⟩,
+            fun k hk ↦ by cases hk⟩
+        · exact ⟨{some k}, ⟨.inl (.inr ⟨k, rfl⟩), singleton_subset_iff.2 hw,
+            fun h ↦ by simpa using h (show none ∈ ψ n from fun k hk ↦ by cases hk)⟩, rfl⟩
+      · exact .inl ⟨n, rfl⟩
+      · exact .inr rfl
+    · rintro (⟨n, rfl⟩ | rfl)
+      · refine ⟨.inl (.inr ⟨n, rfl⟩), fun hd ↦ ?_⟩
+        obtain ⟨q, ⟨-, hq⟩, hnq⟩ := hd (mem_singleton (some n))
+        exact hq.2 (singleton_subset_iff.2 hnq)
+      · refine ⟨.inr rfl, fun hd ↦ ?_⟩
+        obtain ⟨q, ⟨(⟨n, rfl⟩ | ⟨n, rfl⟩) | rfl, hq⟩, hnq⟩ := hd (show none ∈ φ by simp [hφ])
+        · exact hψφ n hq.1
+        · simp at hnq
+        · exact hq.ne rfl
+  -- every world is a cell of its own
+  have hcell : ∀ w, strongAnswer A w = {w} := by
+    intro w
+    refine subset_antisymm (fun v hv ↦ ?_) (singleton_subset_iff.2 (self_mem_strongAnswer A w))
+    rcases w with _ | n
+    · rcases v with _ | k
+      · rfl
+      · have := (hv (ψ (k + 1)) (.inl (.inl ⟨_, rfl⟩))).1 (fun j hj ↦ by cases hj)
+        have := this k rfl; omega
+    · exact (hv {some n} (.inl (.inr ⟨n, rfl⟩))).1 rfl
+  refine ⟨A, ?_, fun h ↦ ?_⟩
+  · rw [classes_partition, hstar, image_union, image_singleton]
+    have hφe : exh (range (fun n ↦ {some n}) ∪ {φ}) φ = {none} := by
+      ext w
+      simp only [mem_exh, mem_union, mem_range, mem_singleton_iff]
+      constructor
+      · rintro ⟨hw, h⟩
+        rcases w with _ | k
+        · rfl
+        · have hk : k = 0 := by simpa [hφ] using hw
+          subst hk
+          have := h {some 0} (.inl ⟨0, rfl⟩) rfl (show none ∈ φ by simp [hφ])
+          simp at this
+      · rintro rfl
+        refine ⟨by simp [hφ], ?_⟩
+        rintro q (⟨n, rfl⟩ | rfl) hq
+        · simp at hq
+        · exact subset_rfl
+    rw [hφe]
+    ext X
+    simp only [mem_union, mem_image, mem_range, mem_singleton_iff, hcell]
+    constructor
+    · rintro (⟨_, ⟨n, rfl⟩, rfl⟩ | rfl)
+      · exact ⟨some n, (exh_eq_self_iff.2 fun q _ ⟨_, hx, hq⟩ ↦
+          singleton_subset_iff.2 (mem_singleton_iff.1 hx ▸ hq)).symm⟩
+      · exact ⟨none, rfl⟩
+    · rintro ⟨_ | n, rfl⟩
+      · exact .inr rfl
+      · exact .inl ⟨{some n}, ⟨n, rfl⟩, exh_eq_self_iff.2 fun q _ ⟨_, hx, hq⟩ ↦
+          singleton_subset_iff.2 (mem_singleton_iff.1 hx ▸ hq)⟩
+  · obtain ⟨p, ⟨hp, hnp⟩, hmin⟩ := h none
+    rcases hp with (⟨n, rfl⟩ | ⟨n, rfl⟩) | rfl
+    · exact hψφ n (hmin ⟨.inr rfl, by simp [hφ]⟩)
+    · simp at hnp
+    · have := hmin ⟨.inl (.inl ⟨1, rfl⟩), fun k hk ↦ by cases hk⟩ (show some 0 ∈ φ by simp [hφ])
+      have := this 0 rfl; omega
 
 -- (23a): `{p, q}` has no strongest true member where both atoms hold
 theorem not_stronglyStable_pair :
@@ -345,7 +382,7 @@ private theorem compl_Iic_mem (hat : ∀ i, {I | i ∈ I} ∈ A) (hup : ∀ φ �
 private theorem atom_subset_of_singleton_mem (hat : ∀ i, {I | i ∈ I} ∈ A) (h : StronglyStable A)
     {i : ι} (hdom : ¬ Dominated A {I | i ∈ I}) {ψ : Set (Set ι)} (hψ : ψ ∈ A) (hi : {i} ∈ ψ) :
     {I | i ∈ I} ⊆ ψ := by
-  obtain ⟨w, hw⟩ := h.exists_isStrongestTrueAnswer ⟨hat i, hdom⟩
+  obtain ⟨w, hw⟩ := exists_isStrongestTrueAnswer_of_not_dominated h (hat i) hdom
   obtain rfl : w = {i} := eq_singleton_iff_unique_mem.2 ⟨hw.1.2, fun j hj ↦ by
     simpa using hw.2 ⟨hat j, hj⟩ (show {i} ∈ {I | i ∈ I} from rfl)⟩
   exact hw.2 ⟨hψ, hi⟩
@@ -355,7 +392,7 @@ private theorem atom_subset_of_singleton_mem (hat : ∀ i, {I | i ∈ I} ∈ A) 
 private theorem subset_atom_of_compl_singleton_notMem (hat : ∀ i, {I | i ∈ I} ∈ A)
     (h : StronglyStable (compl '' A)) {i : ι} (hdom : ¬ Dominated (compl '' A) {I | i ∈ I}ᶜ)
     {χ : Set (Set ι)} (hχ : χ ∈ A) (hi : {i}ᶜ ∉ χ) : χ ⊆ {I | i ∈ I} := by
-  obtain ⟨w, hw⟩ := h.exists_isStrongestTrueAnswer ⟨⟨_, hat i, rfl⟩, hdom⟩
+  obtain ⟨w, hw⟩ := exists_isStrongestTrueAnswer_of_not_dominated h ⟨_, hat i, rfl⟩ hdom
   obtain rfl : w = {i}ᶜ := by
     ext j
     refine ⟨fun hj hji ↦ hw.1.2 (hji ▸ hj), fun hj ↦ by_contra fun hjw ↦ ?_⟩
@@ -458,48 +495,43 @@ theorem exists_not_isUpperSet_of_bilaterallyStronglyStable :
   · have := h (show (∅ : Set (Fin 2)) ≤ {1} from empty_subset _) (Or.inl (by simp))
     simp at this
 
-/-! ### Symmetric functions -/
+/-! ### Symmetric functions
 
-/-- (33): a proposition is symmetric when it is invariant under the permutations of the atoms. -/
-def IsSymmetric (φ : Set (Set ι)) : Prop := ∀ (σ : Equiv.Perm ι) (I : Set ι), σ ⁻¹' I ∈ φ ↔ I ∈ φ
+A proposition over the atoms is symmetric (33) when, read as a quantifier over them, it is
+`Quantifier.QuantityInvariant`. -/
 
 section Symmetric
 
 variable {φ : Set (Set ι)}
 
 -- a symmetric proposition that one atom entails holds wherever some atom holds
-theorem IsSymmetric.mem_of_subset (hφ : IsSymmetric φ) {i j : ι} (h : {I | i ∈ I} ⊆ φ)
-    {J : Set ι} (hj : j ∈ J) : J ∈ φ := by
+private theorem mem_of_atom_subset (hφ : QuantityInvariant (· ∈ φ)) {i j : ι}
+    (h : {I | i ∈ I} ⊆ φ) {J : Set ι} (hj : j ∈ J) : J ∈ φ := by
   classical
   exact (hφ (Equiv.swap i j) J).1 (h (by simpa using hj))
 
 -- a symmetric proposition true at a world where some atom fails entails no atom
-theorem IsSymmetric.not_subset (hφ : IsSymmetric φ) {I : Set ι} (hI : I ∈ φ) (a : ι) {b : ι}
-    (hb : b ∉ I) : ¬ φ ⊆ {J | a ∈ J} := by
+private theorem not_subset_atom (hφ : QuantityInvariant (· ∈ φ)) {I : Set ι} (hI : I ∈ φ) (a : ι)
+    {b : ι} (hb : b ∉ I) : ¬ φ ⊆ {J | a ∈ J} := by
   classical
   exact fun h ↦ hb (by simpa using h ((hφ (Equiv.swap a b) I).2 hI))
 
-theorem IsSymmetric.compl (hφ : IsSymmetric φ) : IsSymmetric φᶜ := fun σ I ↦ not_congr (hφ σ I)
-
-theorem IsSymmetric.union {ψ : Set (Set ι)} (hφ : IsSymmetric φ) (hψ : IsSymmetric ψ) :
-    IsSymmetric (φ ∪ ψ) := fun σ I ↦ or_congr (hφ σ I) (hψ σ I)
-
-theorem isSymmetric_singleton_empty : IsSymmetric ({∅} : Set (Set ι)) := fun σ _ ↦
+private theorem quantityInvariant_mem_singleton_empty :
+    QuantityInvariant (· ∈ ({∅} : Set (Set ι))) := fun σ _ ↦
   (preimage_injective.2 σ.surjective).eq_iff' preimage_empty
 
-theorem isSymmetric_singleton_univ : IsSymmetric ({univ} : Set (Set ι)) := fun σ _ ↦
+private theorem quantityInvariant_mem_singleton_univ :
+    QuantityInvariant (· ∈ ({univ} : Set (Set ι))) := fun σ _ ↦
   (preimage_injective.2 σ.surjective).eq_iff' preimage_univ
 
 end Symmetric
 
-private theorem setOf_every_univ : {B : Set ι | Det.every univ B} = {univ} :=
-  ext fun _ ↦ univ_subset_iff
+private theorem setOf_every_univ : {B : Set ι | Det.every univ B} = {univ} := by ext; simp
 
-private theorem setOf_no_univ : {B : Set ι | Det.no univ B} = {∅} :=
-  ext fun B ↦ by simp [Det.no, univ_subset_iff]
+private theorem setOf_no_univ : {B : Set ι | Det.no univ B} = {∅} := by ext; simp
 
-private theorem setOf_some_univ : {B : Set ι | Det.some univ B} = {∅}ᶜ :=
-  ext fun B ↦ by simp [Det.some, nonempty_iff_ne_empty]
+private theorem setOf_some_univ : {B : Set ι | Det.some univ B} = {∅}ᶜ := by
+  ext; simp [nonempty_iff_ne_empty]
 
 section Corners
 
@@ -508,7 +540,7 @@ variable {A : Set (Set (Set ι))}
 -- (34a): with three atoms or more, no strongest member where exactly two hold
 theorem not_stronglyStable_of_isSymmetric [Finite ι] (h3 : 2 < Nat.card ι)
     (hat : ∀ i, {I | i ∈ I} ∈ A)
-    (hsym : ∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → IsSymmetric φ) :
+    (hsym : ∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → QuantityInvariant (· ∈ φ)) :
     ¬ StronglyStable A := by
   have := Fintype.ofFinite ι
   rw [Nat.card_eq_fintype_card] at h3
@@ -522,13 +554,13 @@ theorem not_stronglyStable_of_isSymmetric [Finite ι] (h3 : 2 < Nat.card ι)
     have ha : a ∈ ({k} : Set ι) := hσa rfl
     have hb : b ∈ ({k} : Set ι) := hσb rfl
     exact hab (ha.trans hb.symm)
-  exact (hsym σ hσ hna).not_subset hI a (show c ∉ ({a, b} : Set ι) by
+  exact not_subset_atom (hsym σ hσ hna) hI a (show c ∉ ({a, b} : Set ι) by
     simp [hac.symm, hbc.symm]) hσa
 
 -- (34b): only the universal, the existential, the negated existential and the disjunction of the
 -- first and the last survive
 theorem mem_corners_of_weaklyStable [Finite ι] (hat : ∀ i, {I | i ∈ I} ∈ A)
-    (hsym : ∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → IsSymmetric φ)
+    (hsym : ∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → QuantityInvariant (· ∈ φ))
     (h : WeaklyStable (range fun i ↦ {I : Set ι | i ∈ I}) A) {φ : Set (Set ι)} (hφ : φ ∈ A)
     (hφa : φ ∉ range fun i ↦ {I : Set ι | i ∈ I}) :
     φ ∈ ({∅, univ, {B | Det.every univ B}, {B | Det.some univ B}, {B | Det.no univ B},
@@ -537,7 +569,7 @@ theorem mem_corners_of_weaklyStable [Finite ι] (hat : ∀ i, {I | i ∈ I} ∈ 
   have hmid : ∀ I ∈ φ, I.Nonempty → I ≠ univ → ∀ J : Set ι, J.Nonempty → J ∈ φ := by
     intro I hI ⟨a, ha⟩ hIu J ⟨j, hj⟩
     by_contra hJ
-    have hna : ∀ k, ¬ {I | k ∈ I} ⊆ φ := fun k hk ↦ hJ ((hsym φ hφ hφa).mem_of_subset hk hj)
+    have hna : ∀ k, ¬ {I | k ∈ I} ⊆ φ := fun k hk ↦ hJ (mem_of_atom_subset (hsym φ hφ hφa) hk hj)
     obtain ⟨b, hb⟩ := (ne_univ_iff_exists_notMem I).1 hIu
     obtain ⟨ψ, hψφ, hψ⟩ := exists_minimal_le_of_wellFoundedLT (· ∈ trueAnswers A I) φ ⟨hφ, hI⟩
     rcases h I with ⟨σ, hσ, hmin⟩ | hat'
@@ -545,7 +577,7 @@ theorem mem_corners_of_weaklyStable [Finite ι] (hat : ∀ i, {I | i ∈ I} ∈ 
       have hσa : σ ∉ range fun i ↦ {I : Set ι | i ∈ I} := by
         rintro ⟨k, rfl⟩
         exact hna k hσφ
-      exact (hsym σ hσ.1 hσa).not_subset hσ.2 a hb (hmin ⟨hat a, ha⟩)
+      exact not_subset_atom (hsym σ hσ.1 hσa) hσ.2 a hb (hmin ⟨hat a, ha⟩)
     · obtain ⟨k, rfl⟩ := hat' ψ hψ
       exact hna k hψφ
   simp only [setOf_every_univ, setOf_some_univ, setOf_no_univ, mem_insert_iff, mem_singleton_iff]
@@ -571,7 +603,7 @@ over the atoms remain: the corners of the square of opposition other than *no* a
 O-corner. At two atoms this is [bar-lev-katzir-2025]'s result on binary connectives. -/
 theorem mem_every_some_of_bilaterallyWeaklyStable [Finite ι] [Nontrivial ι]
     (hat : ∀ i, {I | i ∈ I} ∈ A)
-    (hsym : ∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → IsSymmetric φ)
+    (hsym : ∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → QuantityInvariant (· ∈ φ))
     (h : BilaterallyWeaklyStable (range fun i ↦ {I : Set ι | i ∈ I}) A) {φ : Set (Set ι)}
     (hφ : φ ∈ A) (hφa : φ ∉ range fun i ↦ {I : Set ι | i ∈ I}) :
     φ ∈ ({∅, univ, {B | Det.every univ B}, {B | Det.some univ B}} : Set (Set (Set ι))) := by
@@ -589,7 +621,7 @@ theorem mem_every_some_of_bilaterallyWeaklyStable [Finite ι] [Nontrivial ι]
         rintro ⟨k, rfl⟩
         exact notMem_empty k (hχθ h0)
       obtain ⟨j, hj⟩ := exists_ne i
-      exact hiθ ((hsym θ hθ hθa).mem_of_subset hiθ' (mem_compl_singleton_iff.2 hj))
+      exact hiθ (mem_of_atom_subset (hsym θ hθ hθa) hiθ' (mem_compl_singleton_iff.2 hj))
     · obtain ⟨_, ⟨k, rfl⟩, rfl⟩ := hat' ψ hψ
       exact hψχ (show ∅ ∈ {I | k ∈ I}ᶜ from notMem_empty k) h0
   have h6 := mem_corners_of_weaklyStable hat hsym h.1 hφ hφa
@@ -688,15 +720,15 @@ theorem weaklyStable_and_not_bilaterallyWeaklyStable_no [Finite ι] [Nontrivial 
   obtain ⟨i⟩ := (inferInstance : Nonempty ι)
   have hsym : ∀ φ ∈ range (fun i ↦ {I : Set ι | i ∈ I}) ∪
       {∅, univ, {B | Det.every univ B}, {B | Det.some univ B}, {B | Det.no univ B}},
-      φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → IsSymmetric φ := by
+      φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → QuantityInvariant (· ∈ φ) := by
     simp only [setOf_every_univ, setOf_some_univ, setOf_no_univ]
     rintro φ (hφ | rfl | rfl | rfl | rfl | rfl) hφa
     · exact absurd hφ hφa
     · exact fun _ _ ↦ Iff.rfl
     · exact fun _ _ ↦ Iff.rfl
-    · exact isSymmetric_singleton_univ
-    · exact isSymmetric_singleton_empty.compl
-    · exact isSymmetric_singleton_empty
+    · exact quantityInvariant_mem_singleton_univ
+    · exact quantityInvariant_mem_singleton_empty.compl
+    · exact quantityInvariant_mem_singleton_empty
   have hN := mem_every_some_of_bilaterallyWeaklyStable (fun i ↦ .inl ⟨i, rfl⟩) hsym h
     (φ := {B | Det.no univ B}) (by simp) (by
       rintro ⟨k, hk⟩
@@ -715,7 +747,7 @@ theorem weaklyStable_and_not_bilaterallyWeaklyStable_no [Finite ι] [Nontrivial 
 -- it is not dominated
 theorem exists_not_dominated_every_union_no [Nonempty ι] :
     ∃ A : Set (Set (Set ι)), (∀ i, {I | i ∈ I} ∈ A) ∧
-      (∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → IsSymmetric φ) ∧
+      (∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → QuantityInvariant (· ∈ φ)) ∧
       WeaklyStable (range fun i ↦ {I : Set ι | i ∈ I}) A ∧
       {B | Det.every univ B} ∪ {B | Det.no univ B} ∈ A ∧
       ¬ Dominated A ({B | Det.every univ B} ∪ {B | Det.no univ B}) := by
@@ -725,8 +757,8 @@ theorem exists_not_dominated_every_union_no [Nonempty ι] :
   refine ⟨range (fun i ↦ {I : Set ι | i ∈ I}) ∪ {{univ}, {univ} ∪ {∅}}, fun i ↦ .inl ⟨i, rfl⟩,
     ?_, fun w ↦ ?_, by simp, fun hd ↦ ?_⟩
   · rintro φ (hφ | rfl | rfl) hφa
-    exacts [absurd hφ hφa, isSymmetric_singleton_univ,
-      isSymmetric_singleton_univ.union isSymmetric_singleton_empty]
+    exacts [absurd hφ hφa, quantityInvariant_mem_singleton_univ,
+      quantityInvariant_mem_singleton_univ.sup quantityInvariant_mem_singleton_empty]
   · rcases w.eq_empty_or_nonempty with rfl | hne
     · refine .inl ⟨{univ} ∪ {∅}, ⟨by simp, .inr rfl⟩, fun ψ ⟨hψ, h0⟩ ↦ ?_⟩
       rcases hψ with ⟨k, rfl⟩ | rfl | rfl
@@ -748,46 +780,24 @@ theorem exists_not_dominated_every_union_no [Nonempty ι] :
     · exact hu0 (mem_singleton_iff.1 h0).symm
     · exact hψs.ne rfl
 
+-- p. 714: with *no* an alternative beside *every*, the disjunction of the universal and the negated
+-- existential is dominated, by the two
+theorem dominated_every_union_no [Nonempty ι] {A : Set (Set (Set ι))}
+    (he : {B | Det.every univ B} ∈ A) (hn : {B | Det.no univ B} ∈ A) :
+    Dominated A ({B | Det.every univ B} ∪ {B | Det.no univ B}) :=
+  dominated_union he hn
+    (fun h ↦ by simpa using h (show univ ∈ {B : Set ι | Det.every univ B} by simp))
+    (fun h ↦ empty_ne_univ (by simpa using h (show ∅ ∈ {B : Set ι | Det.no univ B} by simp)))
+
 end Corners
 
 /-! ### Projectively symmetric functions -/
 
 /-- (35): a proposition is projectively symmetric when it lives on a set of atoms and is symmetric
-in them. -/
+in them, which `Quantifier.exists_det_apply_eq_iff_livesOn` shows is being a conservative,
+quantity-invariant determiner frozen to a restrictor. -/
 def IsProjectivelySymmetric (φ : Set (Set ι)) : Prop :=
-  ∃ J : Set ι, LivesOn (· ∈ φ) J ∧ ∀ σ : Equiv.Perm ι, σ ⁻¹' J = J → ∀ I, σ ⁻¹' I ∈ φ ↔ I ∈ φ
-
-theorem IsSymmetric.isProjectivelySymmetric {φ : Set (Set ι)} (h : IsSymmetric φ) :
-    IsProjectivelySymmetric φ :=
-  ⟨univ, fun B ↦ by rw [univ_inter], fun σ _ ↦ h σ⟩
-
-theorem isProjectivelySymmetric_atom (i : ι) : IsProjectivelySymmetric {I | i ∈ I} :=
-  ⟨{i}, fun B ↦ by simp, fun σ hσ B ↦ by
-    have : σ i = i := by simpa using congrArg (i ∈ ·) hσ
-    simp [this]⟩
-
--- p. 715: a conservative, quantity-invariant determiner with any restrictor
-theorem isProjectivelySymmetric_setOf {d : Det ι} (hC : d.Conservative)
-    (hQ : d.QuantityInvariant) (A : Set ι) : IsProjectivelySymmetric {B | d A B} :=
-  ⟨A, hC.livesOn A, fun σ hσ B ↦ by simpa [hσ] using hQ σ A B⟩
-
--- conversely, every projectively symmetric proposition is such a determiner with a restrictor
-theorem isProjectivelySymmetric_iff {φ : Set (Set ι)} : IsProjectivelySymmetric φ ↔
-    ∃ d : Det ι, d.Conservative ∧ d.QuantityInvariant ∧ ∃ A, φ = {B | d A B} := by
-  refine ⟨fun ⟨J, hJ, hinv⟩ ↦ ?_,
-    fun ⟨d, hC, hQ, A, hφ⟩ ↦ hφ ▸ isProjectivelySymmetric_setOf hC hQ A⟩
-  -- `d A B` when a permutation carries `J` onto `A` and the part of `A ∩ B` it lands on is in `φ`
-  let d : Det ι := fun A B ↦ ∃ τ : Equiv.Perm ι, τ ⁻¹' A = J ∧ τ ⁻¹' (A ∩ B) ∈ φ
-  have key : ∀ (σ : Equiv.Perm ι) A B, d A B → d (σ ⁻¹' A) (σ ⁻¹' B) := by
-    rintro σ A B ⟨τ, hτ, hB⟩
-    refine ⟨σ⁻¹ * τ, ?_, ?_⟩
-    · rw [← hτ]; ext x; simp
-    · convert hB using 1; ext x; simp
-  have e : ∀ (σ : Equiv.Perm ι) X, (⇑σ⁻¹) ⁻¹' (σ ⁻¹' X) = X := fun σ X ↦ by ext; simp
-  refine ⟨d, fun A B ↦ ?_, fun σ A B ↦ ⟨fun h ↦ ?_, key σ A B⟩, J, ext fun B ↦ ?_⟩
-  · simp only [d, ← inter_assoc, inter_self]
-  · simpa only [e] using key σ⁻¹ _ _ h
-  · refine ⟨fun hB ↦ ⟨1, rfl, (hJ B).1 hB⟩, fun ⟨τ, hτ, hB⟩ ↦ (hJ B).2 ((hinv τ hτ _).1 hB)⟩
+  ∃ J, LivesOn (· ∈ φ) J ∧ ∀ σ : Equiv.Perm ι, σ ⁻¹' J = J → ∀ B, σ ⁻¹' B ∈ φ ↔ B ∈ φ
 
 private theorem swap_preimage_eq [DecidableEq ι] {J : Set ι} {a b : ι} (ha : a ∈ J) (hb : b ∈ J) :
     Equiv.swap a b ⁻¹' J = J := by
@@ -890,12 +900,13 @@ theorem isUpperSet_of_bilaterallyStronglyStable [Nontrivial ι] {A : Set (Set (S
     exact hχ
 
 -- (34c) and (37b) at a single atom: `p` and `¬p` (Errata)
-theorem exists_isSymmetric_not_isUpperSet :
+theorem exists_quantityInvariant_not_isUpperSet :
     ∃ A : Set (Set (Set Unit)), (∀ i, {I | i ∈ I} ∈ A) ∧
-      (∀ φ ∈ A, IsSymmetric φ ∧ IsProjectivelySymmetric φ) ∧ BilaterallyStronglyStable A ∧
+      (∀ φ ∈ A, QuantityInvariant (· ∈ φ) ∧ IsProjectivelySymmetric φ) ∧
+      BilaterallyStronglyStable A ∧
       BilaterallyWeaklyStable (range fun i ↦ {I : Set Unit | i ∈ I}) A ∧
       ∃ φ ∈ A, φ ∉ range (fun i ↦ {I : Set Unit | i ∈ I}) ∧ ¬ IsUpperSet φ := by
-  have hsym : ∀ φ : Set (Set Unit), IsSymmetric φ := fun φ σ I ↦ by
+  have hsym : ∀ φ : Set (Set Unit), QuantityInvariant (· ∈ φ) := fun φ σ I ↦ by
     rw [Subsingleton.elim σ 1]; rfl
   have hA : BilaterallyStronglyStable ({{I | () ∈ I}, {I | () ∈ I}ᶜ} : Set (Set (Set Unit))) := by
     refine ⟨fun w ↦ ?_, fun w ↦ ?_⟩ <;> by_cases h : () ∈ w
@@ -904,7 +915,8 @@ theorem exists_isSymmetric_not_isUpperSet :
     · exact ⟨_, ⟨⟨_, .inr rfl, compl_compl _⟩, h⟩, by
         rintro _ ⟨⟨_, rfl | rfl, rfl⟩, hw⟩ <;> simp_all⟩
     · exact ⟨_, ⟨⟨_, .inl rfl, rfl⟩, h⟩, by rintro _ ⟨⟨_, rfl | rfl, rfl⟩, hw⟩ <;> simp_all⟩
-  refine ⟨_, fun _ ↦ .inl rfl, fun φ _ ↦ ⟨hsym φ, (hsym φ).isProjectivelySymmetric⟩, hA,
+  refine ⟨_, fun _ ↦ .inl rfl,
+    fun φ _ ↦ ⟨hsym φ, univ, fun B ↦ by rw [univ_inter], fun σ _ ↦ hsym φ σ⟩, hA,
     ⟨hA.1.weaklyStable _, hA.2.weaklyStable _⟩, _, .inr rfl, fun ⟨_, h⟩ ↦ ?_,
     fun h ↦ h (empty_subset univ) (notMem_empty ()) (mem_univ ())⟩
   simpa using congrArg (univ ∈ ·) h
@@ -917,14 +929,14 @@ theorem scopeMonotone_of_bilaterallyStronglyStable [Nontrivial ι] {D : Set (Det
     (h : BilaterallyStronglyStable
       (range (fun i ↦ {B : Set ι | individual i B}) ∪ ⋃ d ∈ D, range fun A ↦ {B | d A B})) :
     ∀ d ∈ D, d.ScopeMonotone := by
-  intro d hd A
-  rw [← isUpperSet_setOfPred]
-  refine (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ .inl ⟨i, rfl⟩) ?_ h).2.2 _
-    (.inr (mem_biUnion hd ⟨A, rfl⟩))
+  refine fun d hd ↦ Det.scopeMonotone_iff_isUpperSet.2 fun A ↦
+    (isUpperSet_of_bilaterallyStronglyStable (fun i ↦ .inl ⟨i, rfl⟩) ?_ h).2.2 _
+      (.inr (mem_biUnion hd ⟨A, rfl⟩))
   rintro φ (⟨i, rfl⟩ | hφ)
-  · exact isProjectivelySymmetric_atom i
+  · exact exists_det_apply_eq_iff_livesOn.1 ⟨Det.every, Det.conservative_every,
+      Det.quantityInvariant_every, {i}, funext fun _ ↦ propext singleton_subset_iff⟩
   · obtain ⟨d', hd', A', rfl⟩ := mem_iUnion₂.1 hφ
-    exact isProjectivelySymmetric_setOf (hC d' hd') (hQ d' hd') A'
+    exact exists_det_apply_eq_iff_livesOn.1 ⟨d', hC d' hd', hQ d' hd', A', rfl⟩
 
 -- conversely, a lexicon of scope-monotone determiners with *every* and *some* is bilaterally
 -- strongly stable: *every* with restrictor `w` is strongest true, *some* with `wᶜ` weakest false
@@ -937,7 +949,7 @@ theorem bilaterallyStronglyStable_of_scopeMonotone {D : Set (Det ι)} (he : Det.
     rintro φ (⟨i, rfl⟩ | hφ)
     · exact fun _ _ hIJ h ↦ hIJ h
     · obtain ⟨d, hd, A, rfl⟩ := mem_iUnion₂.1 hφ
-      exact isUpperSet_setOfPred.2 (hM d hd A)
+      exact Det.scopeMonotone_iff_isUpperSet.1 (hM d hd) A
   have hsome : ∀ w : Set ι, {B | Det.some wᶜ B} = (Iic w)ᶜ := fun w ↦ ext fun B ↦ by
     simp [Det.some, not_subset, Set.Nonempty, and_comm]
   refine ⟨fun w ↦ ⟨Ici w, ⟨.inr (mem_biUnion he ⟨w, rfl⟩), mem_Ici.2 le_rfl⟩,
@@ -990,13 +1002,17 @@ theorem stronglyStable_and_not_bilaterallyStronglyStable_nobody [Nontrivial ι] 
       exact absurd (mem_singleton_iff.1 (hup (empty_subset univ) rfl)) (nonempty_iff_ne_empty.1
         ⟨i, mem_univ i⟩)
     rintro φ ((⟨i, rfl⟩ | hφ) | hφ)
-    · exact isProjectivelySymmetric_atom i
+    · exact exists_det_apply_eq_iff_livesOn.1 ⟨Det.every, Det.conservative_every,
+        Det.quantityInvariant_every, {i}, funext fun _ ↦ propext singleton_subset_iff⟩
     · obtain ⟨d, hd, A, rfl⟩ := mem_iUnion₂.1 hφ
       rcases hd with rfl | rfl
-      exacts [isProjectivelySymmetric_setOf Det.conservative_every Det.quantityInvariant_every A,
-        isProjectivelySymmetric_setOf Det.conservative_some Det.quantityInvariant_some A]
+      exacts [exists_det_apply_eq_iff_livesOn.1
+          ⟨_, Det.conservative_every, Det.quantityInvariant_every, A, rfl⟩,
+        exists_det_apply_eq_iff_livesOn.1
+          ⟨_, Det.conservative_some, Det.quantityInvariant_some, A, rfl⟩]
     · rw [mem_singleton_iff.1 hφ]
-      exact isProjectivelySymmetric_setOf Det.conservative_no Det.quantityInvariant_no univ
+      exact exists_det_apply_eq_iff_livesOn.1
+        ⟨_, Det.conservative_no, Det.quantityInvariant_no, univ, rfl⟩
 
 /-! ### Closed classes of functions -/
 

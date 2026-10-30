@@ -35,7 +35,7 @@ exhaustifier presupposes rather than asserts.
   exclusions are the sets of alternatives false at a minimal world.
 * `isInnocentlyExcludable_iff_exhMW_subset_compl`
 * `exhIE_eq_inter_excludesIE`, `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`,
-  `exhIE_eq_sdiff_of_maximal_unique`
+  `exhMW_eq_exh_of_nonempty`, `exhIE_eq_sdiff_of_maximal_unique`
 * `isInnocentlyExcludable_iff_not_subset`, `excludesIE_eq_excludes`: when the prejacent is
   consistent with denying every alternative it does not entail, innocent exclusion is exclusion
 * `exh_nonempty_iff`, `mem_exhIE_iff_subset_sUnion`: `exh` is consistent iff some prejacent world
@@ -291,6 +291,12 @@ innocent exclusion denies them all ([fox-2007]). -/
 theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhIE ALT φ = exh ALT φ := by
   rw [exhIE_eq_inter_excludesIE, excludesIE_eq_excludes h, inter_univ]
   rfl
+
+/-- When the prejacent is consistent with the denial of every alternative it does not entail,
+minimal-world exhaustification denies them all too ([spector-2016]). -/
+theorem exhMW_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhMW ALT φ = exh ALT φ :=
+  ((exhMW_subset_exhIE ALT φ).trans (exhIE_eq_exh_of_nonempty ALT φ h).subset).antisymm
+    (exh_subset_exhMW ALT φ)
 
 theorem exhIE_eq_self_of_forall (h : ∀ a ∈ ALT, (φ ∩ a).Nonempty → φ ⊆ a) : exhIE ALT φ = φ :=
   (exhIE_subset ALT φ).antisymm ((exh_eq_self_iff.2 h).ge.trans (exh_subset_exhIE ALT φ))

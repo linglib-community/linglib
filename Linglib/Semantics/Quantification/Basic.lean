@@ -29,6 +29,8 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
   are the infimum, the supremum and the complement of the supremum of the scope over the
   restrictor.
 * `no_iff_disjoint`, `no_iff_not_some`: *no* is disjointness, the complement of *some*.
+* `every_univ_iff`, `some_univ_iff`, `no_univ_iff`: with the whole universe as restrictor, the
+  three hold of the universe, of the nonempty sets and of the empty set.
 * `square_relations`: with a non-empty restrictor the four stand in all six relations of the
   square, so its cells (`Aristotelian.Square.cell`) divide the scopes into those covering all of
   the restrictor, some but not all of it, and none of it.
@@ -83,6 +85,12 @@ theorem no_iff_disjoint : no A B ↔ Disjoint A B := Set.subset_compl_iff_disjoi
 
 theorem no_iff_not_some : no A B ↔ ¬ Det.some A B :=
   no_iff_disjoint.trans <| Set.disjoint_iff_inter_eq_empty.trans Set.not_nonempty_iff_eq_empty.symm
+
+@[simp] theorem every_univ_iff : every Set.univ B ↔ B = Set.univ := Set.univ_subset_iff
+
+@[simp] theorem some_univ_iff : Det.some Set.univ B ↔ B.Nonempty := by simp [Det.some]
+
+@[simp] theorem no_univ_iff : no Set.univ B ↔ B = ∅ := by simp [no, Set.univ_subset_iff]
 
 section Decidable
 
