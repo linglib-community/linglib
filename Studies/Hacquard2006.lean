@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Modality.EventRelativity
+public import Linglib.Semantics.Mood.SpeechEvent
 public import Studies.Condoravdi2002
 public import Linglib.Fragments.Romance.Italian.Modals
 public import Linglib.Data.Examples.Hacquard2006
@@ -29,7 +30,10 @@ complement, `not_aspectBoundEpistemic_of_eq_none`, and its reading (248) is an e
 necessity for the attitude holder, `aspectBoundEpistemic_iff`. The starting point of the
 account is that one modal verb has root and epistemic readings alike, as Italian *potere* and
 *dovere* do, `italian_modals_one_entry`, so the contrast in actuality entailments cannot be
-lexical. The dissertation's examples are the rows of `Data.Examples.Hacquard2006`.
+lexical. In a matrix clause the speech event binds the modal, and its content is the speaker's
+beliefs in a declarative and the addressee's To-Do List in an imperative (`Mood.SpeechEvent`), so
+one possibility modal over one prejacent can be false over the first and true over the second,
+`can_leave_by_event`. The dissertation's examples are the rows of `Data.Examples.Hacquard2006`.
 
 ## Implementation notes
 
@@ -194,5 +198,37 @@ train-taking of (246), since the reading needs a contentful event (310a). -/
 theorem not_aspectBoundEpistemic_of_eq_none (h : ∀ e, occurs e w → con e = none) :
     ¬ aspectBoundEpistemic occurs τ con think w t P :=
   fun ⟨e, he, _, _, hp⟩ ↦ not_contentPossibility_of_eq_none (h e he) hp
+
+/-! ### The content of the speech event, chapter 3
+
+The speech event `e*` has content (assumption 4), the speaker's beliefs in a declarative and the
+addressee's To-Do List in an imperative. The possibility modal it licenses is the dual of the
+necessity modal of `Mood.SpeechEvent.modal`, so over a declarative event it is the epistemic
+*might* of (222). -/
+
+/-- The addressee leaves or stays. -/
+inductive LeaveWorld where
+  | leave
+  | stay
+
+/-- A declarative speech event whose speaker believes the addressee is staying. -/
+def believesStay : Mood.SpeechEvent LeaveWorld := .declarative fun _ ↦ [(· = .stay)]
+
+/-- An imperative speech event with leaving on the addressee's To-Do List. -/
+def todoLeave : Mood.SpeechEvent LeaveWorld := .imperative fun _ ↦ [(· = .leave)]
+
+/-- *You can leave*, the dual of necessity applied to leaving, is false over the declarative
+event, whose speaker believes the addressee is staying, and true over the imperative event, whose
+To-Do List contains leaving. -/
+theorem can_leave_by_event :
+    believesStay.modal .leave (· ≠ .leave) ∧ ¬ todoLeave.modal .leave (· ≠ .leave) := by
+  refine ⟨(Mood.SpeechEvent.modal_declarative_iff _ _ _).2 fun v hv h ↦ ?_, fun h ↦ ?_⟩
+  · subst h
+    cases hv _ (List.mem_singleton_self _)
+  · refine (Mood.SpeechEvent.modal_imperative _ _ _).1 h .leave
+      (Preorder.mem_minimals_iff.2 ⟨by simp, fun w _ hw ↦ ?_⟩) rfl
+    obtain rfl : w = .leave := (Mood.SpeechEvent.toContext_imperative_le _ _ w .leave).1 hw _
+      (List.mem_singleton_self _) rfl
+    exact (Mood.SpeechEvent.toContext_imperative_le _ _ _ _).2 fun _ _ ↦ id
 
 end Hacquard2006

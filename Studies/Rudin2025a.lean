@@ -278,11 +278,6 @@ def mightOrd (p : Set W) : OrdState W → W → Prop := fun i _ ↦ (i.best ∩ 
 /-- Under the ordering semantics *must p* is true when every best world is a `p`-world. -/
 def mustOrd (p : Set W) : OrdState W → W → Prop := fun i _ ↦ i.best ⊆ p
 
-theorem premisePreorder_insert (φ : W → Prop) (A : Set (W → Prop)) :
-    premisePreorder (insert φ A) = ExpState.refine (premisePreorder A) φ :=
-  Preorder.ext fun _ _ ↦ by simp only [Preorder.ofCriteria_le_iff, Set.forall_mem_insert,
-    ExpState.refine_le, and_comm]
-
 theorem compatible_mightOrd : Compatible OrdState.base (mightOrd p) c ↔ (c.base ∩ p).Nonempty := by
   refine ⟨fun ⟨_, hc', ⟨v, hv⟩, h⟩ ↦ ?_, fun h ↦
     ⟨⟨c.base, {(· ∈ p)}⟩, subset_rfl, h.mono Set.inter_subset_left, fun _ _ ↦ ?_⟩⟩

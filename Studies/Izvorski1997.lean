@@ -13,22 +13,26 @@ in every accessible world closest to the speaker's beliefs about the evidence, i
 possible-worlds semantics of Kratzer with a modal base of indirect evidence and an ordering source
 of beliefs about it, (17) to (19), and it presupposes that the speaker has indirect evidence for
 the proposition, evidence that exists and does not establish it (`Ev`). Epistemic *must* has the
-same force and no such presupposition (`must`), which is why an avowal of having no evidence, (12)
-and (13), or of having witnessed the event, (14), is consistent with *must* and not with the
-evidential; the presupposition projects through negation, (15), so that a denial targets the
-proposition, (16). The variability between the report and inference readings comes from the
-ordering source (`necessity_of_beliefs`), and the evidential does not entail its prejacent, as
-*must* does not, (9). Section 5 derives the presupposition from the present perfect: the
-consequent state of the event is known at speech time, giving the evidence, and the event itself
-is not, giving its indirectness (`ev_ne_zero_of_perfect`), and the domain of quantification lies
-within the epistemically accessible worlds, so that unlike the counterfactual inference of the
-past the evidential meaning is no implicature (`bestWorlds_subset_accessible`).
+same force without the presupposition of indirect evidence (`must`), which is why an avowal of
+having no evidence follows *must*, (12), and not the evidential, (13); nor does the evidential
+survive an avowal of having witnessed the event, (14). The presupposition projects through
+negation, (15), so that a denial targets the proposition, (16). The variability between the
+report and inference readings comes from the ordering source (`necessity_of_beliefs`), and the
+evidential does not entail its prejacent, as *must* does not, (9). Section 5 derives the
+presupposition from the present perfect: the consequent state of the event is known at speech
+time, giving the evidence, and the event itself is not, giving its indirectness
+(`ev_ne_zero_of_perfect`), and the domain of quantification lies within the epistemically
+accessible worlds, so that unlike the counterfactual inference of the past the evidential meaning
+is no implicature (`bestWorlds_subset_accessible`).
 
 ## Implementation notes
 
 * The presupposition "speaker has indirect evidence for `p`" is rendered as a nonempty
   evidence background whose worlds do not all verify `p`; the report and inference readings
   are not distinguished in the operator, as the paper intends.
+* `must` carries no presupposition at all. The paper notes that *must* still needs some known
+  propositions as premises, which is why (12) cannot go on with an avowal of having no reason for
+  the belief; the operator does not record this.
 * Section 4's temporal and aspectual diagnostics, (20) to (24), are recorded as rows; the
   evidential takes the temporal interpretation of the indicative, which the operator does not
   represent.

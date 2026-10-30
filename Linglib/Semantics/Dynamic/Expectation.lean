@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Minimals
+public import Linglib.Semantics.Modality.Background
 public import Linglib.Semantics.Modality.OrderingSemantics
 public import Linglib.Semantics.Dynamic.Consequence
 
@@ -30,6 +31,7 @@ mood, assertion and promotion are the updates of the context set and of the To-D
 ## Main results
 
 * `refine_empty`, `refine_univ`, `refine_idem`, `refine_mono`: the meet-semilattice laws.
+* `Modality.premisePreorder_insert`: adding a premise to an ordering source refines its pattern.
 * `le_iff_forall_respects`: a pattern is determined by the propositions it respects.
 * `isAdditive_assert`, `isAdditive_promote`: assertion and promotion are additive.
 * `le_assert_iff`, `isFixedPt_presumablyTest_iff`: acceptance as informational or preferential
@@ -118,6 +120,12 @@ theorem respects_refine (p : Preorder W) (φ : W → Prop) : Respects (refine p 
   inf_le_right
 
 theorem refine_eq_self_iff : refine p φ = p ↔ Respects p φ := inf_eq_left
+
+/-- Adding a premise to an ordering source refines the pattern it induces with that premise. -/
+theorem _root_.Modality.premisePreorder_insert (φ : W → Prop) (A : Set (W → Prop)) :
+    Modality.premisePreorder (insert φ A) = refine (Modality.premisePreorder A) φ :=
+  Preorder.ext fun _ _ ↦ by
+    simp only [Preorder.ofCriteria_le_iff, Set.forall_mem_insert, refine_le, and_comm]
 
 /-- A pattern ranks `w` below `v` exactly when every proposition it respects that holds at `v`
 holds at `w`. -/
