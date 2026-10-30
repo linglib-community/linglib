@@ -69,7 +69,7 @@ attraction is not ordered by a case hierarchy (section 3.5).
 
 namespace Privizentseva2026
 
-open Minimalist (ChainPosition LateMergerBleeds)
+open Minimalist (LateMergerBleeds)
 
 /-! ### Sites and features -/
 
@@ -119,17 +119,21 @@ inductive Derivation where
   | headExternal
   deriving DecidableEq, Repr
 
-/-- The chain of the head noun phrase, lowest position first; a position admits the late merger
-of the restrictor when the noun phrase receives case there. -/
-def Derivation.chain : Derivation → List ChainPosition
-  | .raising o => [⟨Site.rc.height, caseSite .rc o == some .rc⟩,
-      ⟨Site.matrix.height, caseSite .rc o == some .matrix⟩]
-  | .headExternal => [⟨Site.matrix.height, true⟩]
+/-- The chain of the head noun phrase, lowest position first. -/
+def Derivation.chain : Derivation → List Site
+  | .raising _ => [.rc, .matrix]
+  | .headExternal => [.matrix]
 
-/-- The restrictor is first merged at the foot of the chain or, by wholesale late merger, at a
+/-- The position where the head noun phrase receives case: where its case probe is valued when it
+is raised, the main clause when it is external. -/
+def Derivation.casePosition : Derivation → Option Site
+  | .raising o => caseSite .rc o
+  | .headExternal => some .matrix
+
+/-- The restrictor is first merged at the foot of the chain or, by wholesale late merger, at the
 position where the noun phrase receives case. -/
-def Derivation.MergesAt (d : Derivation) (p : ChainPosition) : Prop :=
-  p ∈ d.chain ∧ (d.chain.head? = some p ∨ p.admissible = true)
+def Derivation.MergesAt (d : Derivation) (p : Site) : Prop :=
+  p ∈ d.chain ∧ (d.chain.head? = some p ∨ d.casePosition = some p)
 
 instance (d : Derivation) : DecidablePred d.MergesAt :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -137,7 +141,7 @@ instance (d : Derivation) : DecidablePred d.MergesAt :=
 /-- An idiom whose verb is at `s` is licensed when the noun can be first merged there, as a
 constituent with the verb. -/
 def Derivation.IdiomAt (d : Derivation) (s : Site) : Prop :=
-  ∃ p ∈ d.chain, d.MergesAt p ∧ p.height = s.height
+  d.MergesAt s
 
 /-- A binder at `s` binds an anaphor in the head when the restrictor can be merged at a position
 the binder c-commands, binding applying at any stage. -/
@@ -147,10 +151,10 @@ def Derivation.AnaphorAt (d : Derivation) (s : Site) : Prop :=
 /-- A pronoun at `s` can corefer with a name in the head when the restrictor can be merged above
 it, out of its c-command domain. -/
 def Derivation.ObviatesAt (d : Derivation) (s : Site) : Prop :=
-  LateMergerBleeds d.MergesAt ChainPosition.height d.chain s.binderHeight
+  LateMergerBleeds d.MergesAt Site.height d.chain s.binderHeight
 
 instance (d : Derivation) (s : Site) : Decidable (d.IdiomAt s) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+  inferInstanceAs (Decidable (d.MergesAt s))
 
 instance (d : Derivation) (s : Site) : Decidable (d.AnaphorAt s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
