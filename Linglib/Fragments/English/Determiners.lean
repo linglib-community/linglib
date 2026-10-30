@@ -149,7 +149,7 @@ def a : Article :=
   { form := indefinite .consonant, definiteness := .indefinite, exponent := .dedicatedMorpheme,
     numberRestriction := some .singular }
 
-open Phonology in
+open English.Phonology in
 example : [[smallCapitalI, d, i, schwa, t], [wedge, ŋ, k, l], [j, u, n, smallCapitalI, t],
     [w, wedge, n, s], [scriptA, n, smallCapitalI, s, t], [h, æ, b, smallCapitalI, t, æ, t]].map
       (indefinite ∘ Onset.of) = ["an", "an", "a", "a", "an", "a"] := by
