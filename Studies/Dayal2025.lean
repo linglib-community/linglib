@@ -130,13 +130,11 @@ opaque question-taking verbs PerspP, and other question-taking verbs CP. -/
 def deriveSelectionClass (v : _root_.Verb) : SelectionClass :=
   if ¬ v.TakesQuestion then .uninterrogative
   else if v.IsFactive then .responsive
-  else match v.attitude with
-  | some (.doxastic .doxastic) => .uninterrogative
-  | _ =>
-    if v.speechActVerb && citationQuestion v then .rogativeSAP
-    else if v.opaqueContext && citationQuestion v then .rogativePerspP
-    else if citationQuestion v then .rogativeCP
-    else .uninterrogative
+  else if ∃ a ∈ v.attitude, ¬ a.IsPreferential ∧ ¬ a.IsVeridical v.factivity then .uninterrogative
+  else if v.speechActVerb && citationQuestion v then .rogativeSAP
+  else if v.opaqueContext && citationQuestion v then .rogativePerspP
+  else if citationQuestion v then .rogativeCP
+  else .uninterrogative
 where
   /-- The basic frame is an embedded question. -/
   citationQuestion (v : _root_.Verb) : Bool :=

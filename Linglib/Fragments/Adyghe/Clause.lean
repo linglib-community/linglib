@@ -114,7 +114,7 @@ def she : Verb where
 def gwereqwe : Verb where
   morphs := [.root "gʷərəʔʷe"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   complementCase := some .abs
 

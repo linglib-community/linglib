@@ -38,11 +38,12 @@ inventories.
 ## Implementation notes
 
 * Buryat *hanaxa* 'think' quantifies over doxastic alternatives in both of its frames, which
-  differ in opacity; its nominalized reading, 'remember', is veridical through the presupposition
-  that the event its complement describes started before the thinking (§4.4.3). The fragment's
-  readings carry no factivity, so the veridicality is stated with that presupposition as the
-  reading's factivity class `fac` (`hanaxa_nominalized_isVeridical_iff`), and by
-  `Doxastic.isVeridical_forall_iff` it is veridicality under every denotation of the reading.
+  differ in opacity and factivity; its nominalized reading, 'remember', is factive through the
+  presupposition that the event its complement describes started before the thinking (§4.4.3),
+  which the fragment records on the nominalized frame. The reading is veridical and the bare-CP
+  reading is not (`hanaxa_isVeridical_nominalized`), so by `Doxastic.isVeridical_forall_iff`
+  every denotation of the nominalized reading is veridical and some denotation of the bare-CP
+  reading is not.
 
 ## References
 
@@ -379,16 +380,15 @@ theorem hanaxa_typers :
       hanaxa.typers complementizers = [aasha, zha] := by
   decide
 
-theorem hanaxa_attitudeOn :
-    hanaxa.attitudeOn ArgumentFrame.finiteClause = some (.doxastic .doxastic) ∧
-      hanaxa.attitudeOn nominalizedFrame = some (.doxastic .doxastic) := by
+/-- *hanaxa* has one attitude in both of its frames, and is veridical with a nominalized
+complement, 'remember', and not with a bare CP, 'think': the frames differ in factivity alone
+(§4.4.3). -/
+theorem hanaxa_isVeridical_nominalized :
+    hanaxa.attitudeOn ArgumentFrame.finiteClause = hanaxa.attitudeOn nominalizedFrame ∧
+      (∀ a ∈ hanaxa.attitudeOn nominalizedFrame,
+        a.IsVeridical (hanaxa.factivityOn nominalizedFrame)) ∧
+      ∀ a ∈ hanaxa.attitudeOn ArgumentFrame.finiteClause,
+        ¬ a.IsVeridical (hanaxa.factivityOn ArgumentFrame.finiteClause) := by
   decide
-
-/-- The nominalized reading of *hanaxa* is veridical exactly when it presupposes its complement,
-as the presupposition of its nominalized complement makes it (§4.4.3). -/
-theorem hanaxa_nominalized_isVeridical_iff (fac : Option Presupposition.Factivity) :
-    ∀ a ∈ hanaxa.attitudeOn nominalizedFrame, (a.IsVeridical fac ↔ fac ≠ none) := by
-  rw [hanaxa_attitudeOn.2]
-  simp [Attitude.IsVeridical]
 
 end Bondarenko2022

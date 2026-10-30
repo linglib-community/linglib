@@ -86,8 +86,8 @@ def renwei : Verb := {
   opaqueContext := true
   attitude := some (.doxastic .doxastic) }
 
-/-- 知道 *zhīdào* 'know', presupposing its complement and asserting belief in it; *rènwéi* is
-its non-factive counterpart. -/
+/-- 知道 *zhīdào* 'know', presupposing its complement and quantifying over the holder's epistemic
+alternatives; *rènwéi* is its non-factive counterpart. -/
 def zhidao : Verb := {
   morphs := [.root "zhīdào"]
   script := some "知道"

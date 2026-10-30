@@ -348,7 +348,7 @@ def see : Verb where
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
   vendlerClass := some .state
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   levinClasses := {LevinClass.characterize, .see}
 

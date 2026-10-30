@@ -184,8 +184,9 @@ structure Presupposition where
   deriving Repr, BEq
 
 /-- A frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3 *hanaxa*; Greek
-    *thimame*) overrides the lexeme-level attitude and opacity for its frame (`none` inherits
-    `Verb.attitude` and `Verb.opaqueContext`) and records the sort of the frame's complement. -/
+    *thimame*) overrides the lexeme-level attitude, factivity and opacity for its frame (`none`
+    inherits `Verb.attitude`, `Verb.factivity` and `Verb.opaqueContext`) and records the sort of
+    the frame's complement. -/
 structure Reading where
   /-- The reading applies to every frame of the verb refining this one, in the refinement order
       on `ArgumentFrame`. -/
@@ -194,6 +195,8 @@ structure Reading where
   attitude : Option _root_.Attitude := none
   /-- Frame-conditioned opacity override. -/
   opaqueContext : Option Bool := none
+  /-- Frame-conditioned factivity override, `none` inheriting `Verb.factivity`. -/
+  factivity : Option _root_.Presupposition.Factivity := none
   /-- The semantic sort of the complement on this frame
       ([wurmbrand-lohninger-2023]). -/
   size : Option Clause.Size := none
@@ -299,6 +302,11 @@ instance (v : Verb) : Decidable v.HasController :=
     default. -/
 def Verb.attitudeOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Attitude :=
   ((v.reading? fr).bind (·.attitude)).orElse fun _ ↦ v.attitude
+
+/-- The effective factivity on frame `fr` is the reading's override, else the lexeme's
+    default. -/
+def Verb.factivityOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Presupposition.Factivity :=
+  ((v.reading? fr).bind (·.factivity)).orElse fun _ ↦ v.factivity
 
 /-- All [noonan-2007] codings across the verb's frames. -/
 def Verb.codings (v : Verb) : List Clause.ComplementType :=

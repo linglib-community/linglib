@@ -55,7 +55,7 @@ def lat : Verb where
   valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
   vendlerClass := some .state
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- *hall* 'hear', a perception verb that embeds a perceived event or a heard report alike. -/

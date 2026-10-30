@@ -52,7 +52,7 @@ def pistevo : Verb where
   vendlerClass := some .state
   opaqueContext := true
 
-/-- *kséro* (ξέρω) 'know' (alongside *gnorízo*) — factive doxastic,
+/-- *kséro* (ξέρω) 'know' (alongside *gnorízo*) — factive epistemic,
     stative. Rejects manner adverbs ([angelopoulos-2026] ex. 21a). -/
 def ksero : Verb where
   morphs := [.root "kséro"]
@@ -63,20 +63,20 @@ def ksero : Verb where
 
 /-- *katalavéno* (καταλαβαίνω) 'understand' — eventive (allows
     manner adverbs in [angelopoulos-2026] ex. 21b),
-    factive doxastic. -/
+    factive epistemic. -/
 def katalaveno : Verb where
   morphs := [.root "katalavéno"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   vendlerClass := some .achievement
 
 /-- *sinidhitopió* (συνειδητοποιώ) 'realize' — eventive (achievement),
-    factive doxastic ([angelopoulos-2026] ex. 21b). -/
+    factive epistemic ([angelopoulos-2026] ex. 21b). -/
 def sinidhitopio : Verb where
   morphs := [.root "sinidhitopió"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   vendlerClass := some .achievement
 
@@ -130,7 +130,7 @@ polysemy rides on sense-tagged entry pairs (`SenseTag.stative`, the
 def thimame : Verb where
   morphs := [.root "thimáme"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   vendlerClass := some .achievement
 
@@ -142,7 +142,7 @@ def thimameStat : Verb where
   morphs := [.root "thimáme"]
   valency := .ofFrame ArgumentFrame.finiteClause
   senseTag := .stative
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   vendlerClass := some .state
 
@@ -174,8 +174,8 @@ def nomizo : Verb where
   opaqueContext := true
 
 /-- *paradhéxome* (παραδέχομαι) 'admit' — factive speech-act verb; takes *oti* and not
-    *pu* ([roussou-2010] (19a)), whose factive *oti* complements carry a weak presupposition, the
-    semi-factive class. -/
+    *pu* ([roussou-2010] (19a)). Roussou's factive *oti* complements carry what she calls a weak
+    presupposition; the semi-factive class is our mapping of it. -/
 def paradhexome : Verb where
   morphs := [.root "paradhéxome"]
   valency := .ofFrame ArgumentFrame.finiteClause
@@ -184,12 +184,12 @@ def paradhexome : Verb where
   factivity := some .semi
   vendlerClass := some .achievement
 
-/-- *antilamvánome* (αντιλαμβάνομαι) 'realize' — factive doxastic, eventive; takes *oti*
+/-- *antilamvánome* (αντιλαμβάνομαι) 'realize' — factive epistemic, eventive; takes *oti*
     and not *pu* ([roussou-2010]). -/
 def antilamvanome : Verb where
   morphs := [.root "antilamvánome"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   vendlerClass := some .achievement
 

@@ -86,7 +86,7 @@ def timneneki : Verb where
 def timiipni : Verb where
   morphs := [.root "timiipni"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- *neki* 'think', whose complement does not project ((35), (36), (48)). -/
