@@ -9,17 +9,16 @@ public import Mathlib.Data.Rat.Floor
 public import Mathlib.Tactic.NormNum
 
 /-!
-# Beltrama, Solt and Burnett (2023): Context, Precision, and Social Perception: A Sociopragmatic Study
+# Beltrama, Solt and Burnett (2023): Context, Precision, and Social Perception
 
 Two experiments crossed three variants of a duration, approximate *about fifty minutes*,
 underspecified *fifty minutes* and precise *forty-nine minutes*, with four scenarios ranked by
-their need for precision, and had the speaker rated on scales that reduce to Status, Solidarity
-and anti-Solidarity. Precise speakers are rated above approximate ones on Status and
-anti-Solidarity and below them on Solidarity, and the underspecified variant patterns with the
-precise one on Status and with the approximate one on anti-Solidarity. The paper reads this in
-two ways (pp. 828–829): the underspecified variant is a neutral zero point, so that precision and
-approximation are separate indexical loci, or round numbers partake of both ends of a single
-opposition.
+their need for precision, and had the speaker rated on Status, Solidarity and anti-Solidarity.
+The underspecified variant's means lie [between the other two](##underspecified_mem_uIoo), and
+both of the paper's readings fit them: a neutral zero point from which precision and
+approximation are [separate loci](##borneOut_neutral), or a [single
+opposition](##borneOut_contrastField) of which round numbers partake at both ends. A greater
+need for precision [does not always favor](##not_needHypothesis) the more precise variant.
 
 ## Implementation notes
 
@@ -32,6 +31,11 @@ opposition.
   precise and an imprecise interpretation (p. 809).
 * The context hypothesis is stated over full tables of cell means, which the paper only plots
   (Figures 2–4, 9–11); the theorems hold of every table agreeing with the printed cells.
+* On either reading the underspecified variant indexes no pole (`ground_underspecified`), so it
+  meets no persona (`personae_underspecified`) while every persona is compatible with it
+  (`compatiblePersonae_neutral_underspecified`), and the literal listener of a social meaning game
+  over these fields would condition on the empty set. The paper builds no such game, and none is
+  built here.
 
 ## References
 
@@ -167,9 +171,10 @@ theorem compatiblePersonae_contrastField_precise (e : Experiment) :
   exact congrArg singleton (ground_contrastField_precise e)
 
 /-- Both readings are borne out by the means of both experiments (p. 828), though on the opposition
-reading the precise and approximate variants are antipodal and each is compatible with a single
-persona, while on the neutral reading they are separate loci (`separateLoci_neutral`) and each is
-compatible with two personae. -/
+reading the precise and approximate variants are antipodal (`antipodal_contrastField`) and the
+precise one is compatible with a single persona (`compatiblePersonae_contrastField_precise`), while
+on the neutral reading they are separate loci (`separateLoci_neutral`) and in Experiment 2 the
+precise one is compatible with two personae (`card_compatiblePersonae_neutral_precise`). -/
 theorem borneOut_contrastField (e e' : Experiment) : BorneOut (contrastField e) e' := by
   have h : contrastField e = contrastField e' := by
     cases e <;> cases e' <;> simp [contrastField_exp2]
@@ -214,6 +219,24 @@ theorem card_compatiblePersonae_neutral_precise :
 
 theorem borneOut_neutral (e e' : Experiment) : BorneOut (neutral e) e' := by
   cases e <;> cases e' <;> decide +kernel
+
+-- the underspecified variant indexes no pole on either reading, and so meets no persona
+theorem ground_underspecified (e : Experiment) :
+    (neutral e).ground.indexes .underspecified = ∅ ∧
+      (contrastField e).ground.indexes .underspecified = ∅ := by
+  constructor <;> ext p <;> cases p <;>
+    simp [neutral, contrastField, Pole.polarity, Pole.dimension]
+
+theorem personae_underspecified (e : Experiment) :
+    (neutral e).ground.personae .underspecified = ∅ ∧
+      (contrastField e).ground.personae .underspecified = ∅ :=
+  ⟨(neutral e).ground.personae_eq_empty (ground_underspecified e).1,
+    (contrastField e).ground.personae_eq_empty (ground_underspecified e).2⟩
+
+-- the degenerate case of `compatiblePersonae_subset_personae`: every persona is compatible
+theorem compatiblePersonae_neutral_underspecified (e : Experiment) :
+    (neutral e).ground.compatiblePersonae .underspecified = .univ :=
+  (neutral e).ground.compatiblePersonae_eq_univ (ground_underspecified e).1
 
 /-! ### Scenario modulation -/
 
