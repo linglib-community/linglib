@@ -19,15 +19,18 @@ meaning, Cause, which relates a causing event to a caused one and introduces no 
 they vary in whether Cause is bundled with Voice and in whether it selects a root, a verb or a
 phase. The book's structures, built as syntactic objects and interpreted by the composition
 engine, compute its denotations for [the Chaga benefactive](##interp_chaga) and [the English
-double object construction](##interp_buyTree). The diagnostics that separate the heads are facts
-about composition: [an applicative head merged with an unergative verb composes exactly when it
-is high](##unergative_composes_iff), and in the book's structure relating a low applied argument
-to an external argument, [the low ApplP composes to a contradiction](##interp_ranMary).
+double object construction](##interp_buyTree). In the book's structure relating a low applied
+argument to an external argument, the low ApplP [composes to events of which one individual is
+both agent and theme](##interp_ranMary), a contradiction when no agent of running is its theme,
+so that over an unergative verb [only a high applicative is true of some
+event](##unergative_satisfiable_iff), the book's first diagnostic of the two heads.
 
 ## Main definitions
 
 * `lowAppl`: the low applicative.
 * `lex`: the lexicon of the book's applicative sentences in a `Model`.
+* `Satisfiable`: an object true of some eventuality in a model where no agent of running is its
+  theme.
 * `CauseHead.Embeds`: the layers a causative head's complement may contain.
 
 ## Implementation notes
@@ -42,9 +45,11 @@ predicate, so the engine's conjuncts come in another order than the book's. In (
 asserts the theme twice, once from the verb and once from the low applicative, where the book
 writes it once.
 
-For a low applied argument over an unergative the book gives one structure, (103b), in which the
-ApplP merges above Voice′ and composes to a contradiction; `ranMary` is that structure. The low
-heads are also built in the high applicative's position, `unergative`, where they do not compose.
+Over an unergative the high applicative is built in its position of (6a), `unergative`, and the
+low applicatives in the one structure the book gives them, (103b), `ranMary`, where the ApplP
+merges above Voice′ and composes. The book accounts for their ungrammaticality by the
+contradiction this yields, which follows where no agent of running is its theme; Table 2.1's
+unergative test and (102) rest on it (`Construction.ApplicativizesUnergative`).
 
 The third applicative diagnostic, the availability of the applied argument for depictive
 modification, is also a typing fact in the book: a depictive phrase is of type ⟨e,⟨s,t⟩⟩ and
@@ -111,13 +116,14 @@ theorem lowAppl_not_composes_unergative :
 theorem lowApplP_composes_transitive : Ty.combine? (Ty.evt ⇒ Ty.vt) Ty.evt = some Ty.vt := by
   decide
 
--- (103b)
-theorem lowAppl_agent_eq_bot {agent theme : Entity → E → Prop} (h : Disjoint agent theme)
-    (poss : Entity → Entity → Prop) (run : E → Prop) (x y : Entity) :
-    lowAppl theme poss x y (eventIdentification agent run) = ⊥ := by
-  ext e
-  simp only [Pi.disjoint_iff, Prop.disjoint_iff] at h
-  simpa [lowAppl] using fun ha _ ht _ ↦ h x e ⟨ha, ht⟩
+-- (103b): over a constituent whose open argument is the agent, the low ApplP holds of no event
+-- exactly when, if `x` passes to `y`, `x` is the theme of no event of which it is the agent
+theorem lowAppl_eventIdentification_eq_bot_iff {agent theme : Entity → E → Prop}
+    {poss : Entity → Entity → Prop} {run : E → Prop} {x y : Entity} :
+    lowAppl theme poss x y (eventIdentification agent run) = ⊥ ↔
+      (poss x y → ∀ e, run e → agent x e → ¬ theme x e) := by
+  refine ⟨fun h hp e hr ha ht ↦ (congrFun h e).mp ⟨⟨ha, hr⟩, ht, hp⟩,
+    fun h ↦ funext fun e ↦ eq_false fun ⟨⟨ha, hr⟩, ht, hp⟩ ↦ h hp e hr ha ht⟩
 
 /-! ### The applicatives on the composition engine -/
 
@@ -193,14 +199,15 @@ def chaga : LinearizedSyntacticObject := he * (agentVoice * (wife * (applBen * (
 def buyTree : LinearizedSyntacticObject :=
   mary * (agentVoice * (buy * (john * (applTo * theBook))))
 
-/-- The applicative head `h` merged with the unergative *run*, in the position of the high
-applicative of (6a). -/
-def unergative (h : LexicalItem.Token) : LinearizedSyntacticObject :=
-  he * (agentVoice * (wife * (h * run)))
+/-- The high benefactive applicative merged with the unergative *run*, in its position of
+(6a). -/
+def unergative : LinearizedSyntacticObject := he * (agentVoice * (wife * (applBen * run)))
 
-/-- (103b): `[VoiceP [ApplP I [Appl′ Appl Mary]] [Voice′ Voice run]]`, the low applicative over a
-constituent whose open argument is the external argument. -/
-def ranMary : LinearizedSyntacticObject := (me * (applTo * mary)) * (agentVoice * run)
+/-- (103b): `[VoiceP [ApplP I [Appl′ Appl Mary]] [Voice′ Voice run]]`, the low applicative head `h`
+over a constituent whose open argument is the external argument; *I ran Mary* with the recipient
+head. -/
+def ranMary (h : LexicalItem.Token) : LinearizedSyntacticObject :=
+  (me * (h * mary)) * (agentVoice * run)
 
 variable {Entity V : Type} (M : Model Entity V)
 
@@ -208,7 +215,7 @@ variable {Entity V : Type} (M : Model Entity V)
 (13), the low applicatives the entries (15), *eat* and *buy* the events of eating and buying with
 their themes, *run* the events of running, and the noun phrases the model's individuals. -/
 def lex (tok : LexicalItem.Token) : Option (Denotation Entity Unit Id { eventuality := V }) :=
-  if tok = agentVoice then Voice.agentive.denote M.role
+  if tok = agentVoice then some (Voice.agentive.denote M.role)
   else if tok = applBen then some ⟨Ty.evt, M.benefactive⟩
   else if tok = applTo then some ⟨lowApplTy, lowAppl M.theme M.toPossession⟩
   else if tok = applFrom then some ⟨lowApplTy, lowAppl M.theme M.fromPossession⟩
@@ -276,8 +283,9 @@ private theorem lex_me : lex M me = some ⟨.e, M.speaker⟩ := by
 end Entries
 
 /-- (3): the engine computes the Chaga benefactive, the event of eating the food of which he is the
-agent and his wife the beneficiary, by Functional Application, Event Identification of the high
-applicative, Functional Application and Event Identification of Voice. -/
+agent and his wife the beneficiary, by Functional Application of *eat* to *food*, Event
+Identification of the high applicative, Functional Application to *wife*, Event Identification of
+Voice and Functional Application to *he*. -/
 theorem interp_chaga (g : Assignment Entity) :
     (chaga.toTree (·.id)).interp (lex M) g = some ⟨Ty.vt, fun e ↦
       M.role .agent M.he e ∧ M.benefactive M.wife e ∧ M.theme M.food e ∧ M.eating e⟩ := by
@@ -300,29 +308,34 @@ theorem interp_buyTree (g : Assignment Entity) :
     lex_mary, lex_agentVoice, lex_buy, lex_john, lex_applTo, lex_theBook, Option.bind_some]
   rfl
 
--- (17)
+-- (17): the high applicative over the unergative *run*
 theorem interp_unergative (g : Assignment Entity) :
-    ((unergative applBen).toTree (·.id)).interp (lex M) g = some ⟨Ty.vt, fun e ↦
-        M.role .agent M.he e ∧ M.benefactive M.wife e ∧ M.running e⟩ ∧
-      ((unergative applTo).toTree (·.id)).interp (lex M) g = none ∧
-      ((unergative applFrom).toTree (·.id)).interp (lex M) g = none := by
-  refine ⟨?_, ?_, ?_⟩ <;> simp only [unergative, LinearizedSyntacticObject.mul_def,
+    (unergative.toTree (·.id)).interp (lex M) g = some ⟨Ty.vt, fun e ↦
+      M.role .agent M.he e ∧ M.benefactive M.wife e ∧ M.running e⟩ := by
+  simp only [unergative, LinearizedSyntacticObject.mul_def,
     LinearizedSyntacticObject.toTree_merge, LinearizedSyntacticObject.toTree_leaf,
     PhraseStructure.Tree.interp_phrase_binary, PhraseStructure.Tree.interp_terminal,
-    lex_he, lex_agentVoice, lex_wife, lex_applBen, lex_applTo, lex_applFrom, lex_run,
-    Option.bind_some] <;> rfl
+    lex_he, lex_agentVoice, lex_wife, lex_applBen, lex_run, Option.bind_some]
+  rfl
 
-/-- (103b): the low recipient applicative over the unergative *run*, Voice already merged,
-composes, but to the empty predicate when no individual is both the agent and the theme of an
-event: the transfer it asserts makes the agent of running the theme. -/
-theorem interp_ranMary (g : Assignment Entity) (h : Disjoint (M.role .agent) M.theme) :
-    (ranMary.toTree (·.id)).interp (lex M) g = some ⟨Ty.vt, (⊥ : V → Prop)⟩ := by
-  rw [← lowAppl_agent_eq_bot h M.toPossession M.running M.mary M.speaker]
+private theorem interp_ranMary_of_lex (g : Assignment Entity) {h : LexicalItem.Token}
+    {poss : Entity → Entity → Prop} (hh : lex M h = some ⟨lowApplTy, lowAppl M.theme poss⟩) :
+    ((ranMary h).toTree (·.id)).interp (lex M) g = some ⟨Ty.vt,
+      lowAppl M.theme poss M.mary M.speaker (eventIdentification (M.role .agent) M.running)⟩ := by
   simp only [ranMary, LinearizedSyntacticObject.mul_def,
     LinearizedSyntacticObject.toTree_merge, LinearizedSyntacticObject.toTree_leaf,
     PhraseStructure.Tree.interp_phrase_binary, PhraseStructure.Tree.interp_terminal,
-    lex_me, lex_applTo, lex_mary, lex_agentVoice, lex_run, Option.bind_some]
+    lex_me, hh, lex_mary, lex_agentVoice, lex_run, Option.bind_some]
   rfl
+
+/-- (103b): the low recipient applicative over the unergative *run*, its ApplP merged above
+Voice′, composes to the events of running of which Mary is the agent and the theme, Mary passing
+to the speaker's possession; the book boxes the agent and theme conjuncts as a contradiction. -/
+theorem interp_ranMary (g : Assignment Entity) :
+    ((ranMary applTo).toTree (·.id)).interp (lex M) g = some ⟨Ty.vt, fun e ↦
+      (M.role .agent M.mary e ∧ M.running e) ∧ M.theme M.mary e ∧
+        M.toPossession M.mary M.speaker⟩ :=
+  interp_ranMary_of_lex M g lex_applTo
 
 section CCommand
 
@@ -341,38 +354,52 @@ theorem john_cCommands_theBook :
 
 end CCommand
 
-/-- The applicative head of a type of the book's inventory: the benefactive for the high
-applicative and the recipient and source heads (15) for the low ones; the static-possession and
-affected applicatives of [cuervo-2003] are outside it. -/
-def applHead? : ApplType → Option LexicalItem.Token
-  | .high => some applBen
-  | .low .recipient => some applTo
-  | .low .source => some applFrom
+/-- The book's structure for an applicative head over the unergative *run*: the high applicative
+in its position of (6a), a low one in the structure of (103b). The static-possession and affected
+applicatives of [cuervo-2003] are outside the book's inventory. -/
+def unergativeTree? : ApplType → Option LinearizedSyntacticObject
+  | .high => some unergative
+  | .low .recipient => some (ranMary applTo)
+  | .low .source => some (ranMary applFrom)
   | .low .possessor => none
   | .affected => none
 
-/-- A model on `Unit` in which every relation holds. -/
-private def unitModel : Model Unit Unit :=
-  { role := fun _ _ _ ↦ True, benefactive := fun _ _ ↦ True, theme := fun _ _ ↦ True,
+/-- An object is satisfiable when, in some model where no agent of running is its theme, it
+denotes a predicate of eventualities true of some eventuality. -/
+def Satisfiable (t : LinearizedSyntacticObject) : Prop :=
+  ∃ (Entity V : Type) (M : Model Entity V) (g : Assignment Entity),
+    (∀ x e, M.running e → M.role .agent x e → ¬ M.theme x e) ∧
+      ∃ P, (t.toTree (·.id)).interp (lex M) g = some ⟨Ty.vt, P⟩ ∧ ∃ e, P e
+
+/-- A model on `Unit` in which every relation but the theme holds. -/
+private def highModel : Model Unit Unit :=
+  { role := fun _ _ _ ↦ True, benefactive := fun _ _ ↦ True, theme := fun _ _ ↦ False,
     toPossession := fun _ _ ↦ True, fromPossession := fun _ _ ↦ True, eating := fun _ ↦ True,
     buying := fun _ ↦ True, running := fun _ ↦ True, he := (), wife := (), food := (), mary := (),
     john := (), book := (), speaker := () }
 
-/-- An applicative head, merged with the unergative *run*, composes in every model exactly when it
-is high, Diagnostic 1 (17). -/
-theorem unergative_composes_iff (a : ApplType) :
-    (∃ h ∈ applHead? a, ∀ (Entity V : Type) (M : Model Entity V) (g : Assignment Entity),
-      (((unergative h).toTree (·.id)).interp (lex M) g).isSome) ↔ a = .high := by
-  rcases a with _ | _ | (_ | _ | _)
-  · exact iff_of_true ⟨applBen, rfl, fun _ _ M g ↦ by rw [(interp_unergative M g).1]; rfl⟩ rfl
-  · exact iff_of_false (fun ⟨_, h, _⟩ ↦ nomatch h) nofun
-  · refine iff_of_false (fun ⟨h, hh, hall⟩ ↦ ?_) nofun
-    obtain rfl := Option.some.inj hh
-    simpa [(interp_unergative unitModel fun _ ↦ ()).2.1] using hall Unit Unit unitModel fun _ ↦ ()
-  · refine iff_of_false (fun ⟨h, hh, hall⟩ ↦ ?_) nofun
-    obtain rfl := Option.some.inj hh
-    simpa [(interp_unergative unitModel fun _ ↦ ()).2.2] using hall Unit Unit unitModel fun _ ↦ ()
-  · exact iff_of_false (fun ⟨_, h, _⟩ ↦ nomatch h) nofun
+private theorem not_satisfiable_ranMary {h : LexicalItem.Token}
+    (hh : ∀ (Entity V : Type) (M : Model Entity V),
+      ∃ poss, lex M h = some ⟨lowApplTy, lowAppl M.theme poss⟩) :
+    ¬ Satisfiable (ranMary h) := by
+  rintro ⟨Entity, V, M, g, hM, P, hP, e, he⟩
+  obtain ⟨poss, hposs⟩ := hh Entity V M
+  rw [interp_ranMary_of_lex M g hposs, Option.some.injEq, Sigma.mk.inj_iff] at hP
+  have hbot := (lowAppl_eventIdentification_eq_bot_iff (poss := poss) (y := M.speaker)).2
+    fun _ e hr ha ↦ hM M.mary e hr ha
+  exact (congrFun (hbot.symm.trans (eq_of_heq hP.2)) e).mpr he
+
+/-- Diagnostic 1 (17), on the book's account of (103b): over the unergative *run*, an applicative
+head's structure is satisfiable exactly when the head is high, the low applicatives' structure
+being the contradiction where no agent of running is its theme. -/
+theorem unergative_satisfiable_iff {a : ApplType} {t : LinearizedSyntacticObject}
+    (ht : unergativeTree? a = some t) : Satisfiable t ↔ a = .high := by
+  rcases a with _ | _ | (_ | _ | _) <;> simp only [unergativeTree?, Option.some.injEq,
+    reduceCtorEq] at ht <;> subst ht
+  · exact iff_of_true ⟨Unit, Unit, highModel, fun _ ↦ (), fun _ _ _ _ h ↦ h, _,
+      interp_unergative highModel _, (), trivial, trivial, trivial⟩ rfl
+  · exact iff_of_false (not_satisfiable_ranMary fun _ _ M ↦ ⟨_, lex_applTo⟩) nofun
+  · exact iff_of_false (not_satisfiable_ranMary fun _ _ M ↦ ⟨_, lex_applFrom⟩) nofun
 
 end Engine
 
@@ -401,14 +428,21 @@ def Construction.head : Construction → ApplType
   | .hebrewPossessorDative | .japaneseAdversityCausative | .japaneseGappedAdversity =>
     .low .source
 
-/-- A construction composes with an unergative verb phrase when its head, merged with *run*,
-composes on the engine in every model. -/
-def Construction.ComposesUnergative (c : Construction) : Prop :=
-  ∃ h ∈ applHead? c.head, ∀ (Entity V : Type) (M : Model Entity V) (g : Assignment Entity),
-    (((unergative h).toTree (·.id)).interp (lex M) g).isSome
+/-- A construction applicativizes an unergative, the first test of Table 2.1, when the book's
+structure for its head over *run* is satisfiable. -/
+def Construction.ApplicativizesUnergative (c : Construction) : Prop :=
+  ∃ t ∈ unergativeTree? c.head, Satisfiable t
 
-instance : DecidablePred Construction.ComposesUnergative := fun c ↦
-  decidable_of_iff _ (unergative_composes_iff c.head).symm
+theorem Construction.applicativizesUnergative_iff (c : Construction) :
+    c.ApplicativizesUnergative ↔ c.head = .high := by
+  rcases ht : unergativeTree? c.head with _ | t
+  · simp only [ApplicativizesUnergative, ht, Option.mem_def, reduceCtorEq, false_and,
+      exists_false, false_iff]
+    exact fun h ↦ by simp [h, unergativeTree?] at ht
+  · simp [ApplicativizesUnergative, ht, unergative_satisfiable_iff ht]
+
+instance : DecidablePred Construction.ApplicativizesUnergative := fun c ↦
+  decidable_of_iff _ c.applicativizesUnergative_iff.symm
 
 /-- Table 2.1 lists each of the six languages with the construction tested, its unergative test,
 and its static-verb test. -/
@@ -419,7 +453,7 @@ def table21 : List (Construction × Datum × Datum) :=
 
 -- Table 2.1
 theorem table21_unergative :
-    ∀ t ∈ table21, t.2.1.judgment = .acceptable ↔ t.1.ComposesUnergative := by
+    ∀ t ∈ table21, t.2.1.judgment = .acceptable ↔ t.1.ApplicativizesUnergative := by
   decide
 
 -- Table 2.1, §2.1.2
@@ -429,13 +463,13 @@ theorem table21_static_iff_unergative :
 
 -- Table 2.5
 theorem adversity_passives :
-    Construction.japaneseGaplessAdversity.ComposesUnergative ∧
-      ¬ Construction.japaneseGappedAdversity.ComposesUnergative := by
+    Construction.japaneseGaplessAdversity.ApplicativizesUnergative ∧
+      ¬ Construction.japaneseGappedAdversity.ApplicativizesUnergative := by
   decide
 
 -- (102), Table 2.2
 theorem possessor_dative_transitivity :
-    ¬ Construction.hebrewPossessorDative.ComposesUnergative := by
+    ¬ Construction.hebrewPossessorDative.ApplicativizesUnergative := by
   decide
 
 /-! ### Cause introduces a causing event, not a causer -/
