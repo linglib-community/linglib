@@ -5,6 +5,7 @@ public import Linglib.Morphology.Morphotactics.AffixTemplate
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Studies.Baker1985
 public import Mathlib.Data.List.Sections
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hyman 2003: suffix ordering in Bantu

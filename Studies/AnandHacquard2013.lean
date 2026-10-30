@@ -6,6 +6,7 @@ public import Linglib.Data.Examples.AnandHacquard2013
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Basic.Nontrivial.Defs
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Anand & Hacquard 2013: epistemics and attitudes

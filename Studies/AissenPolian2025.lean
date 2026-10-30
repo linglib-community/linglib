@@ -4,6 +4,7 @@ public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.Locality.Horizon
 public import Linglib.Syntax.Minimalist.Probe.Profile
 public import Linglib.Data.Examples.AissenPolian2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Possessor extraction and categorical subject in Tseltalan

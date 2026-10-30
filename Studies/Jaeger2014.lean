@@ -14,6 +14,7 @@ public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Decision.Admissible
 public import Linglib.Data.Examples.Jaeger2014
 public import Studies.Franke2011
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jäger (2014): Rationalizable Signaling

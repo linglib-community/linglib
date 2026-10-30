@@ -9,6 +9,7 @@ public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Tagalog.Pronouns
 public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Core.Order.Concept
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Cysouw (2003): The paradigmatic structure of person marking

@@ -5,6 +5,7 @@ public import Studies.Israel2001
 public import Linglib.Fragments.Japanese.Conditionals
 public import Linglib.Fragments.German.Conditionals
 public import Linglib.Discourse.Commitment.Table
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Lassiter (2025): Sorting Out Left-Nested Conditionals

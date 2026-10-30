@@ -4,6 +4,7 @@ public import Linglib.Syntax.Minimalist.Case.Dependent
 public import Linglib.Syntax.Minimalist.Case.SyntacticObject
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Data.Examples.BakerVinokurova2010
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Baker & Vinokurova 2010: two modalities of case assignment in Sakha

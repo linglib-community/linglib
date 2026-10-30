@@ -4,6 +4,7 @@ public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.LuPanDegen2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Lu, Pan and Degen (2025): Evidence for a Discourse Account of Manner-of-Speaking Islands

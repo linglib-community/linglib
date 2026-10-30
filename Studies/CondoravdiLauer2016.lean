@@ -7,6 +7,7 @@ public import Linglib.Data.Examples.CondoravdiLauer2016
 public import Studies.VonFintelIatridou2005
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fintype.Sigma
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Condoravdi and Lauer 2016: anankastic conditionals are just conditionals

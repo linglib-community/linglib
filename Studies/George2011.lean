@@ -5,6 +5,7 @@ public import Mathlib.Order.Setoid.Partition
 public import Mathlib.Order.Closure
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Data.Examples.George2011
+public import Linglib.Data.Examples.Readers
 
 /-!
 # George (2011): Question Embedding and the Semantics of Answers

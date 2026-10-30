@@ -5,6 +5,7 @@ public import Studies.Kamp1975
 public import Linglib.Data.Examples.Schema
 public import Linglib.Data.Examples.Partee2010
 public import Mathlib.Order.Interval.Set.OrdConnected
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Partee (2010): Privative Adjectives: Subsective plus Coercion

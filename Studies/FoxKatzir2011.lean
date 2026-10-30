@@ -7,6 +7,7 @@ public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.FoxKatzir2011
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Fox and Katzir (2011): On the Characterization of Alternatives

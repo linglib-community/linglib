@@ -4,6 +4,7 @@ public import Linglib.Fragments.Korean.Evidentiality
 public import Linglib.Semantics.Tense.Evidential
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Cumming2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Cumming (2026): Tense and evidence

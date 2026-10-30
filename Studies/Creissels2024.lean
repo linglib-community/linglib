@@ -7,6 +7,7 @@ public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.Creissels2024
 public import Linglib.Data.Experiments.Creissels2024
 public import Linglib.Fragments.English.Verbs.Causative
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Creissels (2024): Transitivity, Valency, and Voice

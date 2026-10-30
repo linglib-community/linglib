@@ -9,6 +9,7 @@ public import Linglib.Syntax.Control.Diagnostics
 public import Studies.Landau2013
 public import Studies.Allotey2021
 public import Linglib.Data.Examples.Ostrove2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ostrove (2026): Obligatorily Overt PRO in San Martín Peras Mixtec

@@ -6,6 +6,7 @@ public import Linglib.Semantics.Reference.Determiner
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.Fering.Determiners
 public import Linglib.Fragments.German.Determiners
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Schwarz (2009): Two Types of Definites in Natural Language

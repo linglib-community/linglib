@@ -4,6 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 public import Studies.McKayVanInwagen1977
 public import Linglib.Data.Examples.AlonsoOvalle2009
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alonso-Ovalle (2009): counterfactuals, correlatives, and disjunction

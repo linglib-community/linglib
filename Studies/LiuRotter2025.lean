@@ -5,6 +5,7 @@ public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Adverbs
 public import Linglib.Data.Examples.LiuRotter2025
 public import Mathlib.Basic.Sign.Defs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Liu and Rotter (2025): Linguistic and Social Meaning Match

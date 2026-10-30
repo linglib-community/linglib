@@ -7,6 +7,7 @@ public import Linglib.Morphology.DistributedMorphology.Impoverishment
 public import Linglib.Fragments.Georgian.Agreement
 public import Linglib.Data.Examples.McGinnis2013
 public import Mathlib.Order.Prod.Lex.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # McGinnis (2013): Agree and Fission in Georgian Plurals

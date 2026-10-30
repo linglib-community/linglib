@@ -4,6 +4,7 @@ public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Fragments.HindiUrdu.PolarityItems
 public import Linglib.Data.Examples.Lahiri1998
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Lahiri (1998): Focus and negative polarity in Hindi

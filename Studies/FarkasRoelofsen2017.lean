@@ -5,6 +5,7 @@ public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Semantics.Questions.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Farkas and Roelofsen (2017): Division of Labor in Declaratives and Interrogatives

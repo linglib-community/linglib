@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Borer2013
 public import Linglib.Syntax.Minimalist.Category
 public import Studies.Embick2010
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Borer (2013): Structuring Sense: Volume III: Taking Form

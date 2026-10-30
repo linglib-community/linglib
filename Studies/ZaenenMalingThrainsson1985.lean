@@ -7,6 +7,7 @@ public import Linglib.Fragments.Icelandic.Verbs
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Syntax.Case.Valuation
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Zaenen, Maling and Thráinsson (1985): Case and grammatical functions

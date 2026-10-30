@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Tree.Command
 public import Linglib.Data.Examples.Reinhart1976
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Reinhart (1976): The syntactic domain of anaphora

@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Algebra.BigOperators.Fin
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Asudeh (2022): Glue Semantics

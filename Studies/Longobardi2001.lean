@@ -2,6 +2,7 @@ module
 
 public import Studies.Chierchia1998
 public import Linglib.Data.Examples.Longobardi2001
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Longobardi (2001): How Comparative Is Semantics?

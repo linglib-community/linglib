@@ -6,6 +6,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Data.Examples.BaleKhanjian2014
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bale & Khanjian 2014: syntactic complexity and competition in Western Armenian

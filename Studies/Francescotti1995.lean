@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Data.Examples.Francescotti1995
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Francescotti (1995): Even: The Conventional Implicature Approach Reconsidered

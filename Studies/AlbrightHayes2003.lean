@@ -5,6 +5,7 @@ public import Mathlib.Tactic.Positivity
 public import Linglib.Data.Examples.AlbrightHayes2003
 public import Linglib.Fragments.English.Phonology
 public import Linglib.Phonology.Segmental.NaturalClass
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Albright and Hayes (2003): Rules vs. analogy in English past tenses

@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Examples.HaslingerEtAl2025
 public import Mathlib.Order.UpperLower.Closure
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Haslinger, Rosina, Schmitt and Wurm (2025): On the relation between distributivity and maximality

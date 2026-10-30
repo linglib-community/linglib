@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Data.Examples.Beaver2001
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Beaver (2001): Presupposition and Assertion in Dynamic Semantics

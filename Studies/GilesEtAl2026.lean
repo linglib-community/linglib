@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.MinMax
 public import Linglib.Data.Examples.GilesEtAl2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Giles, Rubio-Fernandez and Mollica (2026): Search Efficiency Drives Reference Production Across Modalities, But Colour Is Special

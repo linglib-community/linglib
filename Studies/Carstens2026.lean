@@ -7,6 +7,7 @@ public import Linglib.Syntax.Minimalist.Feature.DualFeature
 public import Linglib.Morphology.DistributedMorphology.Gender
 public import Studies.TaraldsenEtAl2018
 public import Mathlib.Data.Fintype.Inv
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Carstens (2026): The grammar of gender

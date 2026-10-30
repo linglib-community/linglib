@@ -5,6 +5,7 @@ public import Studies.BejarRezac2003
 public import Linglib.Fragments.Basque.Agreement
 public import Linglib.Fragments.Georgian.Agreement
 public import Linglib.Data.Examples.BejarRezac2009
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Béjar and Rezac 2009: Cyclic Agree

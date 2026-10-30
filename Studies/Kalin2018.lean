@@ -7,6 +7,7 @@ public import Linglib.Core.Data.List.Forall2
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Order.CompleteLattice.Finset
 public import Mathlib.Order.Minimal
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kalin (2018): Licensing and Differential Object Marking

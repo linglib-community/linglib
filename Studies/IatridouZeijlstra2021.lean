@@ -11,6 +11,7 @@ public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Quantification.Exceptive
 public import Studies.Giannakidou2002
 public import Mathlib.Data.Set.Finite.Lemmas
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Iatridou and Zeijlstra (2021): The Complex Beauty of Boundary Adverbials

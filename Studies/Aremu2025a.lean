@@ -6,6 +6,7 @@ public import Linglib.Fragments.Yoruba.Focus
 public import Linglib.Fragments.Yoruba.Pronouns
 public import Linglib.Fragments.Yoruba.Relativization
 public import Linglib.Syntax.Reflex
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Aremu (2025): focus realization in Yorùbá

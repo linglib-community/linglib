@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Possession.Relationalizer
 public import Studies.Jenks2018
 public import Linglib.Data.Examples.AhnZhu2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ahn and Zhu (2025): A Bridge to Definiteness: Identifying Unique and Relational Definites through Bridging

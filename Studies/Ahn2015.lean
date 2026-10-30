@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Linglib.Data.Examples.Ahn2015
 public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Data.Examples.Readers
 
 /-!
 # The semantics of additive *either*

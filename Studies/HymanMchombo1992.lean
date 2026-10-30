@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.HymanMchombo1992
 public import Linglib.Fragments.Chichewa.Verbs
 public import Linglib.Fragments.Chichewa.Voice
 public import Linglib.Phonology.OCP
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hyman and Mchombo 1992: morphotactic constraints in the Chichewa verb stem

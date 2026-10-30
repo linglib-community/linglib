@@ -10,6 +10,7 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Phonology.Hiatus
 public import Studies.HarizanovGribanova2019
 public import Studies.Pollock1989
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Arregi and Pietraszko (2021): The ups and downs of head displacement

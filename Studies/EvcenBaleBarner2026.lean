@@ -6,6 +6,7 @@ public import Linglib.Core.Data.Fintype.Sets
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Evcen, Bale and Barner (2026): Conditional Inference and Access to Alternatives

@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Baker1985
 public import Linglib.Morphology.Word.Tree
 public import Linglib.Syntax.Voice.Derivation
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Baker 1985: the Mirror Principle

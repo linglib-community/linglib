@@ -10,6 +10,7 @@ public import Linglib.Data.Examples.ShenHuang2026
 public import Linglib.Data.Examples.DaviesDubinsky2003
 public import Mathlib.Data.Finset.Card
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Shen and Huang (2026): The Role of Phases and Specificity in Definite Islands

@@ -5,6 +5,7 @@ public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Discourse.Commitment.Sincerity
 public import Linglib.Semantics.Mood.Context
 public import Linglib.Data.Examples.CondoravdiLauer2012
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Condoravdi and Lauer 2012: imperatives as preferential commitments

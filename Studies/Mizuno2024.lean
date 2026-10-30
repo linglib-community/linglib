@@ -7,6 +7,7 @@ public import Linglib.Fragments.English.Conditionals
 public import Linglib.Fragments.Japanese.Conditionals
 public import Linglib.Fragments.Mandarin.Conditionals
 public import Linglib.Data.Examples.Mizuno2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Mizuno (2024): Strategies for Anderson Conditionals

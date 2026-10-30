@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.VonFintel1993
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Core.Order.Prop
 public import Mathlib.Tactic.FinCases
+public import Linglib.Data.Examples.Readers
 
 /-!
 # von Fintel (1993): Exceptive Constructions

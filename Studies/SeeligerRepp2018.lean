@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Questions.Bias
 public import Linglib.Data.Examples.SeeligerRepp2018
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Seeliger & Repp (2018): Biased declarative questions in Swedish and German

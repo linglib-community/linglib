@@ -10,6 +10,7 @@ public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Studies.Landau2013
 public import Studies.Landau2015
 public import Linglib.Data.Examples.Landau2024a
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Landau (2024): Control

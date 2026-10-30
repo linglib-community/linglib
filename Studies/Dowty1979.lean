@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Data.Examples.Dowty1979
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dowty (1979): the progressive and the imperfective paradox

@@ -10,6 +10,7 @@ public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Verbs.Implicative
 public import Linglib.Fragments.English.Verbs.Communication
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives

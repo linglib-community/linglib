@@ -3,6 +3,7 @@ module
 public import Studies.Krifka2007b
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.AlexandropoulouGotzner2024a
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alexandropoulou and Gotzner (2024a): relative and absolute adjectives under negation

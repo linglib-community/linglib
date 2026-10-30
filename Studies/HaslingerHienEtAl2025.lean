@@ -6,6 +6,7 @@ public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HaslingerHienEtAl2025
 public import Mathlib.Data.PFun
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Haslinger, Hien, Rosina, Schmitt and Wurm (2025): A unified semantics for universal quantifiers

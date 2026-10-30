@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Reference.Context.Overwrite
 public import Linglib.Data.Examples.Deal2020
 public import Mathlib.Data.Finset.Powerset
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Deal (2020): A Theory of Indexical Shift

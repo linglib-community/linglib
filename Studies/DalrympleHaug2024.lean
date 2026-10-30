@@ -6,6 +6,7 @@ public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.Wan.Reciprocals
 public import Studies.Landau2015
 public import Studies.Rakosi2020
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dalrymple and Haug, constraints on reciprocal scope (2024)

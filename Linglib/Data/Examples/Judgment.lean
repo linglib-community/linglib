@@ -19,8 +19,6 @@ example on which speakers differ.
 
 * `Judgment`: the six marks.
 * `Judgment.toPair`: the order embedding that orders the marks, and the `Lattice` on them.
-* `Judgment.Band`, `Judgment.band`: the three bands of the severity order that a prediction
-  targets.
 * `Judgment.ofName?`: the judgment a data file names.
 
 ## Implementation notes
@@ -98,25 +96,6 @@ instance : Lattice Judgment where
 `*` and the unmarked judgment. -/
 theorem variable_le_iff {j : Judgment} : .variable ≤ j ↔ j = .variable ∨ j = .acceptable := by
   cases j <;> decide
-
-/-- The three bands of the severity order that a prediction targets: the unmarked judgment, the
-middle marks `?` and `%`, on which speakers or grammars divide, and the rejected marks `??`, `#`
-and `*`. Which mark a paper prints within a band is its editorial choice, not a prediction. -/
-inductive Band where
-  | accepted
-  | divided
-  | rejected
-  deriving DecidableEq, Repr
-
-/-- The band of a mark. -/
-def band : Judgment → Band
-  | .acceptable => .accepted
-  | .marginal | .variable => .divided
-  | .questionable | .unacceptable | .ungrammatical => .rejected
-
-/-- The band of a two-way prediction: accepted where `p` holds and rejected where it fails. -/
-def Band.ofProp (p : Prop) [Decidable p] : Band :=
-  if p then .accepted else .rejected
 
 end Judgment
 

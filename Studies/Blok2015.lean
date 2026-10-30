@@ -5,6 +5,7 @@ public import Studies.CoppockBrochhagen2013
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Data.Set.Lattice.Image
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Blok (2015): The semantics and pragmatics of directional numeral modifiers

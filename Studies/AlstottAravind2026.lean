@@ -3,6 +3,7 @@ module
 public import Studies.Heinamaki1974
 public import Studies.Rett2020a
 public import Linglib.Data.Examples.AlstottAravind2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alstott & Aravind (2026): aspectual coercion in *before*- and *after*-clauses

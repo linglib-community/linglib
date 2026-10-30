@@ -8,6 +8,7 @@ public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Again
 public import Linglib.Data.Examples.BeaversKoontzGarboden2020
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning

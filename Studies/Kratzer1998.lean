@@ -6,6 +6,7 @@ public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Fragments.English.Tense
 public import Linglib.Fragments.German.Tense
 public import Linglib.Data.Examples.Kratzer1998
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kratzer (1998): More Structural Analogies between Pronouns and Tenses

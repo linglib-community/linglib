@@ -4,6 +4,7 @@ public import Mathlib.Order.UpperLower.Basic
 public import Studies.Rett2020a
 public import Studies.Heinamaki1974
 public import Linglib.Data.Examples.Rett2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rett (2026): Semantic ambivalence and expletive negation

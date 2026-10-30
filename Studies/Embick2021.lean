@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Embick2021
 public import Linglib.Morphology.DistributedMorphology.Locality
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Embick (2021): The Motivation for Roots in Distributed Morphology

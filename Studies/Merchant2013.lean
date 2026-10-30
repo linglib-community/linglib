@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Data.Examples.Merchant2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Merchant (2013): Voice and ellipsis

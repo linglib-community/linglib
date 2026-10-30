@@ -6,6 +6,7 @@ public import Linglib.Syntax.Cartography
 public import Studies.TonhauserEtAl2013
 public import Linglib.Data.Examples.HoleFraser2026
 public import Mathlib.Data.Set.Card
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hole and Fraser (2026): Syntax and semantics of the *swarm* alternation

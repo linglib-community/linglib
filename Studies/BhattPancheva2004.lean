@@ -6,6 +6,7 @@ public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
 public import Linglib.Syntax.Minimalist.LateMerger
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bhatt and Pancheva (2004): Late Merger of Degree Clauses

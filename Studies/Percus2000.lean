@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Reference.Context.Index
 public import Linglib.Data.Examples.Percus2000
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Percus (2000): Constraints on Some Other Variables in Syntax

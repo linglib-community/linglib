@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Data.Examples.KonnellyCowper2020
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Konnelly and Cowper (2020): gender diversity and morphosyntax

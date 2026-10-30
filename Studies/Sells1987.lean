@@ -6,6 +6,7 @@ public import Linglib.Data.Examples.Sells1987
 public import Linglib.Fragments.Ewe.Pronouns
 public import Linglib.Fragments.Icelandic.Reciprocals
 public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Sells (1987): Aspects of Logophoricity

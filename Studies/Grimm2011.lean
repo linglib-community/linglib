@@ -5,6 +5,7 @@ public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailment
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfLifespan
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Studies.Dowty1991
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Grimm (2011): Semantics of case

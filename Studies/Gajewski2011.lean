@@ -6,6 +6,7 @@ public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Data.Examples.Gajewski2011
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gajewski (2011): Licensing strong NPIs

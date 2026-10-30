@@ -6,6 +6,7 @@ public import Linglib.Fragments.Magahi.Pronouns
 public import Linglib.Fragments.Romance.Galician.Pronouns
 public import Linglib.Fragments.Tamil.Pronouns
 public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alok and Bhalla (2026): allocutivity and the syntax of honorifics

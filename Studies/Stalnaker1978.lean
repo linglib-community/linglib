@@ -5,6 +5,7 @@ public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Semantics.Reference.Kaplan
 public import Mathlib.Algebra.Notation.Support
 public import Mathlib.Basic.Sign.Defs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Stalnaker (1978): Assertion

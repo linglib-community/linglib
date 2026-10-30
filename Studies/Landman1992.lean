@@ -4,6 +4,7 @@ public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Studies.Dowty1979
 public import Linglib.Data.Examples.Landman1992
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Landman (1992): The progressive

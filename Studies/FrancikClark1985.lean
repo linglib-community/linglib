@@ -4,6 +4,7 @@ public import Linglib.Discourse.SpeechAct
 public import Linglib.Data.Examples.FrancikClark1985
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Order.Interval.Set.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Francik and Clark (1985): How to Make Requests That Overcome Obstacles to Compliance

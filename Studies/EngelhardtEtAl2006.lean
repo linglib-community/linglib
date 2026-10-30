@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.EngelhardtEtAl2006
 public import Linglib.Semantics.Reference.Distinguishing
 public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Engelhardt et al. (2006): Do Speakers and Listeners Observe the Gricean Maxim of Quantity?

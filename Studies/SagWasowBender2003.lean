@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.HPSG.Binding
 public import Linglib.Syntax.HPSG.Construction
 public import Linglib.Data.Examples.SagWasowBender2003
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Sag, Wasow & Bender (2003): Syntactic Theory: A Formal Introduction

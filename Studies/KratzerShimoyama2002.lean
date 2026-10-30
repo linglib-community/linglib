@@ -8,6 +8,7 @@ public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Fragments.German.PolarityItems
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.KratzerShimoyama2002
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kratzer and Shimoyama (2002): Indeterminate Pronouns: The View from Japanese

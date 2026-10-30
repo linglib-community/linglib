@@ -9,6 +9,7 @@ public import Linglib.Fragments.Romance.Portuguese.Verbs
 public import Linglib.Fragments.Romance.Italian.Verbs
 public import Linglib.Fragments.Romance.Spanish.Verbs
 public import Linglib.Fragments.Romanian.Verbs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Grano (2024): Intention Reports and Eventuality Abstraction in a Theory of Mood Choice

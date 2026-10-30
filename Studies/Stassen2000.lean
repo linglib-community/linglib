@@ -17,6 +17,7 @@ public import Linglib.Fragments.Yakut.Case
 public import Linglib.Fragments.Yakut.Coordination
 public import Linglib.Syntax.WordOrder
 public import Mathlib.Data.Finset.Grade
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Stassen (2000): AND-languages and WITH-languages

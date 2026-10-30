@@ -5,6 +5,7 @@ public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Core.Data.Fintype.Sets
 public import Studies.GoodmanStuhlmuller2013
 public import Linglib.Data.Examples.BaleEtAl2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bale, Noguchi, Rolland and Barner (2025): Competence by Default: Do Listeners Assume That Speakers Are Knowledgeable When Computing Conversational Inferences?

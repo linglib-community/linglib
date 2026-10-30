@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Linglib.Data.Examples.TonhauserEtAl2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Tonhauser, Beaver, Roberts and Simons (2013): Toward a Taxonomy of Projective Content

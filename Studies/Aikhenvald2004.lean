@@ -13,6 +13,7 @@ public import Linglib.Fragments.Tariana.Evidentiality
 public import Linglib.Fragments.Kashaya.Evidentiality
 public import Linglib.Fragments.WestGreenlandic.Evidentiality
 public import Linglib.Data.Examples.Aikhenvald2004
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Aikhenvald (2004): Evidentiality

@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.AsherLascarides2003
 public import Mathlib.Data.Nat.Notation
 public import Mathlib.Logic.Relation
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Asher & Lascarides 2003: the right frontier

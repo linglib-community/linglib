@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Elbourne2026
 public import Linglib.Semantics.Modification.Classification
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Powerset
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Elbourne (2026): Adjectives without syntactic categories

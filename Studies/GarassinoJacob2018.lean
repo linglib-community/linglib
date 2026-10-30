@@ -4,6 +4,7 @@ public import Linglib.Discourse.QUD.Basic
 public import Linglib.Semantics.Questions.HamblinSet
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.GarassinoJacob2018
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Garassino and Jacob (2018): Polarity focus and non-canonical syntax in Italian, French and Spanish

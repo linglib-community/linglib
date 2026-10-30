@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Ronai2024
 public import Studies.ChemlaSpector2011
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ronai (2024): Embedded scalar diversity

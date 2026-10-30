@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Aspect.Telicity
 public import Linglib.Semantics.ArgumentStructure.Affectedness
 public import Linglib.Data.Examples.Filip2012
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Filip (2012): Lexical aspect

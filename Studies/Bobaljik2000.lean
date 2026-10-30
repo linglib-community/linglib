@@ -2,6 +2,7 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Data.Examples.Bobaljik2000
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bobaljik (2000): The ins and outs of contextual allomorphy

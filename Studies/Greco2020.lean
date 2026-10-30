@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.Locality.Phase
 public import Mathlib.Data.Finset.Insert
 public import Linglib.Data.Examples.Greco2020
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Greco (2020): On the Syntax of Surprise Negation Sentences

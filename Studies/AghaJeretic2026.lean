@@ -3,6 +3,7 @@ module
 public import Studies.Ferreira2023
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Data.Examples.AghaJeretic2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Agha and Jeretič (2026): Modal force and its realization across languages

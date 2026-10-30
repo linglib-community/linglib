@@ -4,6 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Plurality.FeatureAction
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Data.Examples.Toosarvandani2023
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Toosarvandani (2023): The Interpretation and Grammatical Representation of Animacy

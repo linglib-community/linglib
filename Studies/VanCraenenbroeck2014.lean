@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.VanCraenenbroeck2014
 public import Linglib.Morphology.DistributedMorphology.RootCategorization
+public import Linglib.Data.Examples.Readers
 
 /-!
 # van Craenenbroeck (2014): On diagnosing complement-taking roots

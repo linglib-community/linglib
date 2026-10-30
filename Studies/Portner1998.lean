@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Aspect.Progressive
 public import Studies.Landman1992
 public import Linglib.Data.Examples.Portner1998
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Portner (1998): The progressive in modal semantics

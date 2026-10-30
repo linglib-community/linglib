@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Rett2015
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Semantics.Degree.Defs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rett (2015): The semantics of evaluativity

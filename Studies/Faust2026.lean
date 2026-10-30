@@ -5,6 +5,7 @@ public import Linglib.Fragments.Amharic.ConsonantalRoots
 public import Studies.Arad2005
 public import Linglib.Syntax.Gender.Basic
 public import Linglib.Data.Examples.Faust2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Faust (2026): Intrusion as template satisfaction and the QaTaT–QaTa problem in Semitic

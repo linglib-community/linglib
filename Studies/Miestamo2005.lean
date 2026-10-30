@@ -18,6 +18,7 @@ public import Linglib.Fragments.Slavic.Russian.Negation
 public import Linglib.Fragments.Romance.Spanish.Negation
 public import Linglib.Fragments.Quechua.Negation
 public import Linglib.Fragments.Tunica.Negation
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Miestamo (2005): Standard Negation

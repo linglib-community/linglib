@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Wilson1976
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Wilson (1976): The o/a distinction in Hawaiian possessives

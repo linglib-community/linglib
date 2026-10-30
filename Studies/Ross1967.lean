@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Cat
 public import Linglib.Syntax.Tree.Projection
 public import Linglib.Data.Examples.Ross1967
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ross (1967): Constraints on Variables in Syntax

@@ -11,6 +11,7 @@ public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Tactic.NormNum.Ineq
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Sharvit (2014): On the universal principles of tense embedding: The lesson from *before*

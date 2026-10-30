@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Control.Diagnostics
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Landau (2013): Control in Generative Grammar: A Research Companion

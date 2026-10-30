@@ -3,6 +3,7 @@ module
 public import Studies.Harley2014
 public import Linglib.Data.Examples.Harley2014
 public import Linglib.Morphology.DistributedMorphology.PhrasalLocality
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bobaljik and Harley (2017): Suppletion is local: Evidence from Hiaki

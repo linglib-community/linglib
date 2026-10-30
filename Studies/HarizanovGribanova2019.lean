@@ -6,6 +6,7 @@ public import Linglib.Data.Examples.HarizanovGribanova2019
 public import Mathlib.Algebra.Free
 public import Mathlib.Algebra.FreeMonoid.Basic
 public import Mathlib.Data.List.Pairwise
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Harizanov and Gribanova (2019): Whither head movement?

@@ -12,6 +12,7 @@ public import Linglib.Fragments.CoastalMarind.Gender
 public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Agreement.Resolution
 public import Linglib.Data.Examples.Corbett1998
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Corbett's morphology of agreement

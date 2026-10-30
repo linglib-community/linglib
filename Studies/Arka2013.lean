@@ -9,6 +9,7 @@ public import Linglib.Fragments.Indonesian.Aspect
 public import Linglib.Fragments.Indonesian.Complementation
 public import Linglib.Semantics.Tense.Reichenbach
 public import Linglib.Data.Examples.Arka2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Arka 2013: the typology and syntax of TAM in Indonesian

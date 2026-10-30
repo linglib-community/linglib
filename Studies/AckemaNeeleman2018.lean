@@ -5,6 +5,7 @@ public import Linglib.Fragments.Dutch.Pronouns
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Set.Subsingleton
 public import Studies.Harbour2016
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ackema and Neeleman (2018): Features of Person: From the Inventory of Persons to Their Morphological Realization

@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Embick2015
 public import Linglib.Fragments.Korean.Phonology
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Embick (2015): The Morpheme: A Theoretical Introduction

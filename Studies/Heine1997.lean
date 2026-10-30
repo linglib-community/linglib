@@ -5,6 +5,7 @@ public import Linglib.Syntax.Case.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.SymmDiff
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Heine (1997): Possession

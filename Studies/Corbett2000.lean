@@ -16,6 +16,7 @@ public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Corbett2000
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Corbett (2000): Number

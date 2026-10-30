@@ -6,6 +6,7 @@ public import Linglib.Semantics.Focus.Particles
 public import Linglib.Syntax.Minimalist.ExtendedProjection
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Tree.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Branan and Erlewine (2023): Anti-pied-piping

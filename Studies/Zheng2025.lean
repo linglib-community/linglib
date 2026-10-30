@@ -7,6 +7,7 @@ public import Linglib.Semantics.Modality.Kernel
 public import Linglib.Semantics.Questions.Bias
 public import Studies.Theiler2021
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Zheng (2025): Nandao-Qs, When Surprise Sparks Inquiry

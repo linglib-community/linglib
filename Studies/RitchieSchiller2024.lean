@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Order.Hom.Basic
 public import Linglib.Data.Examples.RitchieSchiller2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ritchie and Schiller (2024): Default domain restriction possibilities
