@@ -32,7 +32,9 @@ the conditional entropy `H[X | Y ; μ]` as the expected entropy of `X` under `Y 
 `I[X : Y ; μ]`; on finite types the chain rule `H[X, Y] = H[Y] + H[X | Y]` holds, conditioning
 reduces entropy, conditioning on a function of `Y` leaves at least the entropy that
 conditioning on `Y` does, and conditional entropy is the expected conditional surprisal.
-Entropies are invariant under injective recodings and depend only on laws.
+Entropies are invariant under injective recodings and depend only on laws. Entropy is the expected
+surprisal of a measure under itself, and under another measure the expected surprisal exceeds it by
+the Kullback–Leibler divergence.
 
 ## Main definitions
 
@@ -46,6 +48,8 @@ Entropies are invariant under injective recodings and depend only on laws.
   measure attains.
 * `measureMutualInfo_eq_toReal_klDiv`: on a finite product, mutual information is the divergence
   of the joint from the product of its marginals.
+* `lintegral_surprisal_eq_ofReal_add_klDiv`: on a finite type, the expected surprisal under `ν` of
+  the atoms of `μ` is the entropy of `μ` plus the divergence of `μ` from `ν` (Gibbs' inequality).
 * `chain_rule`: `H[X, Y] = H[Y] + H[X | Y]`.
 * `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent random variables.
 
@@ -96,14 +100,17 @@ theorem measureEntropy_of_isProbabilityMeasure_finite {A : Finset S} (hA : μ (�
   rw [measureReal_def, measure_mono_null (by simpa using hs) hA, ENNReal.toReal_zero,
     negMulLog_zero]
 
-/-- Entropy is expected surprisal. -/
+/-- Entropy is expected surprisal; an atom of mass zero, whose surprisal is `∞`, contributes `0`
+through its real part. -/
 theorem measureEntropy_eq_tsum_mul_surprisal (μ : Measure S) [IsZeroOrProbabilityMeasure μ] :
-    Hm[μ] = ∑' s, μ.real {s} * surprisal μ s := by
-  simp_rw [measureEntropy_of_isProbabilityMeasure, negMulLog_measureReal_singleton]
+    Hm[μ] = ∑' s, μ.real {s} * (surprisal μ s).toReal := by
+  simp_rw [measureEntropy_of_isProbabilityMeasure,
+    fun s ↦ negMulLog_measureReal_singleton (μ := μ) (s := s) prob_le_one]
 
 theorem measureEntropy_eq_integral_surprisal [Countable S] [MeasurableSingletonClass S]
-    (μ : Measure S) [IsZeroOrProbabilityMeasure μ] (h : Integrable (surprisal μ) μ) :
-    Hm[μ] = ∫ s, surprisal μ s ∂μ := by
+    (μ : Measure S) [IsZeroOrProbabilityMeasure μ]
+    (h : Integrable (fun s ↦ (surprisal μ s).toReal) μ) :
+    Hm[μ] = ∫ s, (surprisal μ s).toReal ∂μ := by
   rw [integral_countable h, measureEntropy_eq_tsum_mul_surprisal]
   rfl
 
@@ -266,6 +273,83 @@ theorem toReal_klDiv_ofWeights_add_measureEntropy {ι : Type*} [MeasurableSpace 
       rw [log_div (fun h0 ↦ hp (by rw [h0, zero_div])) fun h0 ↦ hp (by rw [h0, div_zero]), mul_sub]
   rw [toReal_klDiv_add_measureEntropy hμ, Finset.sum_congr rfl fun s _ ↦ hterm s,
     Finset.sum_sub_distrib, ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul, neg_sub]
+
+/-! ### Expected surprisal -/
+
+omit [MeasurableSingletonClass S] in
+private theorem surprisal_mul_measure_singleton {ν : Measure S} {s : S} [IsFiniteMeasure μ]
+    (hν : ν {s} ≤ 1) (h : μ {s} ≠ 0 → ν {s} ≠ 0) :
+    surprisal ν s * μ {s} = ENNReal.ofReal (μ.real {s} * -log (ν.real {s})) := by
+  rcases eq_or_ne (μ {s}) 0 with h₀ | h₀
+  · simp [h₀, measureReal_def]
+  · rw [← ENNReal.ofReal_toReal (surprisal_ne_top_iff.2 (h h₀)),
+      ← ENNReal.ofReal_toReal (measure_ne_top μ {s}), ← ENNReal.ofReal_mul ENNReal.toReal_nonneg,
+      toReal_surprisal hν, ← measureReal_def, mul_comm]
+
+/-- The expected surprisal of a measure under itself is the sum of the summands of its entropy,
+infinite when they are not summable. -/
+theorem lintegral_surprisal_self [Countable S] (μ : Measure S) [IsZeroOrProbabilityMeasure μ] :
+    ∫⁻ s, surprisal μ s ∂μ = ∑' s, ENNReal.ofReal (negMulLog (μ.real {s})) := by
+  rw [lintegral_countable']
+  refine tsum_congr fun s ↦ ?_
+  rw [surprisal_mul_measure_singleton prob_le_one id, negMulLog]
+  ring_nf
+
+theorem ofReal_measureEntropy [Countable S] (μ : Measure S) [IsZeroOrProbabilityMeasure μ]
+    (h : Summable fun s ↦ negMulLog (μ.real {s})) :
+    ENNReal.ofReal (Hm[μ]) = ∫⁻ s, surprisal μ s ∂μ := by
+  rw [lintegral_surprisal_self, measureEntropy_of_isProbabilityMeasure,
+    ENNReal.ofReal_tsum_of_nonneg (fun _ ↦ negMulLog_nonneg measureReal_nonneg measureReal_le_one)
+      h]
+
+omit [MeasurableSingletonClass S] in
+/-- Expected surprisal is invariant under an injective recoding of the values. -/
+theorem lintegral_surprisal_map_of_injective {U : Type*} [MeasurableSpace U] [Countable U]
+    [MeasurableSingletonClass U] {f : S → U} (hf : Measurable f) (hinj : f.Injective)
+    (μ : Measure S) :
+    ∫⁻ u, surprisal (μ.map f) u ∂(μ.map f) = ∫⁻ s, surprisal μ s ∂μ := by
+  rw [lintegral_map (measurable_of_countable _) hf]
+  simp_rw [surprisal_map_of_injective hf hinj]
+
+/-- The cross-entropy, the expected surprisal under `μ` of the atoms as `ν` weighs them, is the
+entropy of `μ` plus the divergence of `μ` from `ν`; both sides are infinite unless `μ ≪ ν`. -/
+theorem lintegral_surprisal_eq_ofReal_add_klDiv [Fintype S] {ν : Measure S}
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] :
+    ∫⁻ s, surprisal ν s ∂μ = ENNReal.ofReal (Hm[μ]) + klDiv μ ν := by
+  by_cases hμν : μ ≪ ν
+  · rw [lintegral_fintype, Finset.sum_congr rfl fun s _ ↦
+        surprisal_mul_measure_singleton prob_le_one fun h h0 ↦ h (hμν h0),
+      ← ENNReal.ofReal_sum_of_nonneg fun s _ ↦ mul_nonneg measureReal_nonneg
+        (neg_nonneg.2 (log_nonpos measureReal_nonneg measureReal_le_one)),
+      ← ENNReal.ofReal_toReal (klDiv_ne_top hμν .of_finite),
+      ← ENNReal.ofReal_add (measureEntropy_nonneg μ) ENNReal.toReal_nonneg, add_comm,
+      toReal_klDiv_add_measureEntropy hμν, ← Finset.sum_neg_distrib]
+    exact congrArg ENNReal.ofReal (Finset.sum_congr rfl fun s _ ↦ by ring)
+  · rw [klDiv_of_not_ac hμν, add_top, eq_top_iff]
+    obtain ⟨s, hμs, hνs⟩ : ∃ s, μ {s} ≠ 0 ∧ ν {s} = 0 := by
+      by_contra! h
+      exact hμν fun t ht ↦ (measure_null_iff_singleton t.to_countable).2 fun s hs ↦
+        not_not.1 fun hμ ↦ h s hμ (measure_mono_null (Set.singleton_subset_iff.2 hs) ht)
+    calc ∞ = surprisal ν s * μ {s} := by rw [surprisal_eq_top_iff.2 hνs, ENNReal.top_mul hμs]
+      _ ≤ ∫⁻ s, surprisal ν s ∂μ := by
+        rw [lintegral_fintype]
+        exact Finset.single_le_sum (f := fun s ↦ surprisal ν s * μ {s}) (fun _ _ ↦ zero_le)
+          (Finset.mem_univ s)
+
+/-- Gibbs' inequality: the expected surprisal under another measure is at least the entropy. -/
+theorem ofReal_measureEntropy_le_lintegral_surprisal [Fintype S] {ν : Measure S}
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] :
+    ENNReal.ofReal (Hm[μ]) ≤ ∫⁻ s, surprisal ν s ∂μ := by
+  rw [lintegral_surprisal_eq_ofReal_add_klDiv]
+  exact le_self_add
+
+/-- The expected surprisal under another measure attains the entropy only at the measure itself. -/
+theorem lintegral_surprisal_eq_ofReal_measureEntropy_iff [Fintype S] {ν : Measure S}
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] :
+    ∫⁻ s, surprisal ν s ∂μ = ENNReal.ofReal (Hm[μ]) ↔ μ = ν := by
+  rw [lintegral_surprisal_eq_ofReal_add_klDiv, ← klDiv_eq_zero_iff]
+  conv_lhs => rhs; rw [← add_zero (ENNReal.ofReal (Hm[μ]))]
+  exact ENNReal.add_right_inj ENNReal.ofReal_ne_top
 
 end measureEntropy
 

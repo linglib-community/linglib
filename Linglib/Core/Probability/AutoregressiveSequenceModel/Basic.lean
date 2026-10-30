@@ -38,18 +38,23 @@ conditionals are the laws of the first symbol of the continuation.
 * `MeasureTheory.Measure.continuation_setOf_prefix`: the continuations beginning with `w` have
   the conditional probability of the strings extending the prefix by `w`.
 * `condPrefixProb_append`, `condPrefixProb_eq_prod`: the chain rule.
-* `neg_log_condPrefixProb`: the surprisal of a continuation is the sum of the surprisals of its
-  symbols.
+* `toENNReal_neg_log_condPrefixProb`, `toENNReal_neg_log_stringProb`: the surprisal of a
+  continuation is the sum of the surprisals of its symbols, and that of a string adds the surprisal
+  of its end.
 * `stringMeasure_eq_of_next_eq`, `stringMeasure_ofMeasure`: a model whose conditionals are the
   next-symbol laws of a language model after every prefix of positive probability has it as its
   string law ([du-etal-2023]).
 * `condPrefixProb_ofMeasure`: the conditional prefix probabilities of the model of a language model
   are its conditional probabilities of prefix sets.
+* `sum_surprisal_next_ofMeasure_map`: an injective re-linearization of the strings preserves the
+  total surprisal of each string under the model of the language.
 
 ## Implementation notes
 
 The alphabet need only carry a measurable space, and the results about string laws a countable one
-with measurable singletons; [du-etal-2023] take it finite.
+with measurable singletons; [du-etal-2023] take it finite. The surprisal of a string counts the end
+of the string: without it, the sum of the surprisals of the symbols is the negative logarithm of
+the prefix probability, which a re-linearization of the strings does not preserve.
 
 ## References
 
@@ -154,16 +159,16 @@ theorem condPrefixProb_eq_prod (c x : List α) :
   | nil => simp
   | cons a x ih => simp [ih, Fin.prod_univ_succ]
 
-/-- The surprisal of a continuation, the negative log of its conditional prefix probability, is
-the sum of the surprisals of its symbols. -/
+/-- The surprisal of a continuation of positive probability, the negative log of its conditional
+prefix probability, is the sum of the surprisals of its symbols. -/
 theorem neg_log_condPrefixProb {c x : List α} (h : M.condPrefixProb c x ≠ 0) :
     -Real.log (M.condPrefixProb c x).toReal =
-      ∑ i : Fin x.length, surprisal (M.next (c ++ x.take i)) (some x[i]) := by
+      ∑ i : Fin x.length, (surprisal (M.next (c ++ x.take i)) (some x[i])).toReal := by
   rw [condPrefixProb_eq_prod] at h ⊢
   rw [ENNReal.toReal_prod, Real.log_prod fun i _ ↦ ENNReal.toReal_ne_zero.2
     ⟨Finset.prod_ne_zero_iff.1 h i (Finset.mem_univ i), measure_ne_top _ _⟩,
     ← Finset.sum_neg_distrib]
-  rfl
+  exact Finset.sum_congr rfl fun i _ ↦ (toReal_surprisal prob_le_one).symm
 
 /-- The prefix probability of `x`: the probability that a generated string begins with `x`. -/
 noncomputable def prefixProb (x : List α) : ℝ≥0∞ := M.condPrefixProb [] x
@@ -235,6 +240,29 @@ theorem condPrefixProb_le_one (c x : List α) : M.condPrefixProb c x ≤ 1 := by
 
 theorem prefixProb_ne_top (x : List α) : M.prefixProb x ≠ ∞ :=
   ne_top_of_le_ne_top ENNReal.one_ne_top (M.condPrefixProb_le_one [] x)
+
+/-- The surprisal of a continuation, the negative log of its conditional prefix probability, is
+the sum of the surprisals of its symbols. -/
+theorem toENNReal_neg_log_condPrefixProb (c x : List α) :
+    (-ENNReal.log (M.condPrefixProb c x)).toENNReal =
+      ∑ i : Fin x.length, surprisal (M.next (c ++ x.take i)) (some x[i]) := by
+  induction x generalizing c with
+  | nil => simp
+  | cons a x ih =>
+    rw [condPrefixProb_cons, ENNReal.toENNReal_neg_log_mul (prob_le_one (μ := M.next c))
+      (condPrefixProb_le_one _ _ _), ih]
+    simp [Fin.sum_univ_succ, surprisal, List.append_assoc]
+
+/-- The surprisal of a string, the negative log of its probability, is the sum of the surprisals of
+its symbols and of the end of the string after it. -/
+theorem toENNReal_neg_log_stringProb (x : List α) :
+    (-ENNReal.log (M.stringProb x)).toENNReal =
+      ∑ i : Fin x.length, surprisal (M.next (x.take i)) (some x[i]) +
+        surprisal (M.next x) none := by
+  rw [stringProb, prefixProb, ENNReal.toENNReal_neg_log_mul (condPrefixProb_le_one _ _ _)
+    (prob_le_one (μ := M.next x)), toENNReal_neg_log_condPrefixProb]
+  simp only [List.nil_append]
+  rfl
 
 /-- A model whose every continuation has positive probability gives every prefix positive
 probability. -/
@@ -375,6 +403,30 @@ variable (μ) in
 theorem isTight_ofMeasure : (ofMeasure μ).IsTight := by
   rw [isTight_iff_isProbabilityMeasure, stringMeasure_ofMeasure]
   infer_instance
+
+variable (μ) in
+theorem stringProb_ofMeasure (x : List α) : (ofMeasure μ).stringProb x = μ {x} := by
+  rw [← stringMeasure_singleton, stringMeasure_ofMeasure]
+
+variable (μ) in
+/-- The surprisal of a string under a language is the sum of the surprisals of its symbols and of
+the end of the string under the model of the language. -/
+theorem surprisal_eq_sum_surprisal_next (x : List α) :
+    surprisal μ x = ∑ i : Fin x.length, surprisal ((ofMeasure μ).next (x.take i)) (some x[i]) +
+      surprisal ((ofMeasure μ).next x) none := by
+  rw [← toENNReal_neg_log_stringProb, stringProb_ofMeasure]
+  rfl
+
+/-- An injective re-linearization `σ` of the strings, such as `List.reverse`, gives each string
+the total surprisal of its preimage, the end of the string included. -/
+theorem sum_surprisal_next_ofMeasure_map {σ : List α → List α} (hσ : σ.Injective) (x : List α) :
+    ∑ i : Fin (σ x).length,
+        surprisal ((ofMeasure (μ.map σ)).next ((σ x).take i)) (some (σ x)[i]) +
+        surprisal ((ofMeasure (μ.map σ)).next (σ x)) none =
+      ∑ i : Fin x.length, surprisal ((ofMeasure μ).next (x.take i)) (some x[i]) +
+        surprisal ((ofMeasure μ).next x) none := by
+  rw [← surprisal_eq_sum_surprisal_next, ← surprisal_eq_sum_surprisal_next,
+    surprisal_map_of_injective .of_discrete hσ]
 
 end ofMeasure
 

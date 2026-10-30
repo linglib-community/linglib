@@ -9,23 +9,14 @@ public import Linglib.Processing.Surprisal.Generalized
 public import Mathlib.Probability.StrongLaw
 
 /-!
-# Monte Carlo estimation of generalized surprisal
+# Giulianelli, Opedal and Cotterell (2024): Generalized Measures of Anticipation and Responsivity
 
-Generalized surprisal warps an expectation over the alternatives a language model samples, and
-[giulianelli-opedal-cotterell-2024] estimate it by warping the mean score of finitely many sampled
-alternatives. The estimator is consistent when the warping is continuous: by the strong law of
-large numbers the mean score converges almost surely to the expected score
-(`ae_tendsto_mcEstimate`). With the identity warping it is also unbiased
-(`integral_mcEstimate_id`).
-
-## Main definitions
-
-* `mcEstimate`: the warped mean score of the first `N` alternatives.
-
-## Main results
-
-* `ae_tendsto_mcEstimate`: consistency for a warping continuous at the expected score.
-* `integral_mcEstimate_id`: unbiasedness for the identity warping.
+Giulianelli, Opedal and Cotterell define generalized surprisal as a warping of the expected score
+of the continuations a language model samples (`Surprisal.genSurprisal`), and estimate it by
+warping the mean score of finitely many sampled continuations (`mcEstimate`). The estimator is
+[consistent](##ae_tendsto_mcEstimate) when the warping is continuous: by the strong law of large
+numbers the mean score converges almost surely to the expected score. With the identity warping it
+is also [unbiased](##integral_mcEstimate_id).
 
 ## Implementation notes
 
@@ -42,14 +33,15 @@ large numbers the mean score converges almost surely to the expected score
 
 @[expose] public section
 
-namespace Surprisal
+namespace GiulianelliOpedalCotterell2024
 
+open Surprisal
 open MeasureTheory ProbabilityTheory Filter Finset Topology
 
 variable {C A W : Type*} [MeasurableSpace C] [MeasurableSpace A]
 
-/-- The Monte Carlo estimate of generalized surprisal from the first `N` alternatives `v`: the
-warping `f` of their mean score against the target `w` in the context `c`. -/
+/-- Eq. (15): the Monte Carlo estimate of generalized surprisal from the first `N` alternatives
+`v`, the warping `f` of their mean score against the target `w` in the context `c`. -/
 noncomputable def mcEstimate (f : ℝ → ℝ) (g : A → W → C → ℝ) (c : C) (w : W) (v : ℕ → A)
     (N : ℕ) : ℝ :=
   f ((N : ℝ)⁻¹ * ∑ n ∈ range N, g (v n) w c)
@@ -92,4 +84,4 @@ theorem integral_mcEstimate_id (hV : ∀ n, Measurable (V n)) (hlaw : ∀ n, P.m
   rw [sum_const, card_range, nsmul_eq_mul, ← mul_assoc, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hN),
     one_mul]
 
-end Surprisal
+end GiulianelliOpedalCotterell2024
