@@ -305,13 +305,14 @@ def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 /-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2) is
-*zijn* on an intransitive frame when the verb is unaccusative and telic, or when a directional
-phrase gives the verb of motion a path and makes it telic, since the phrase makes it unaccusative;
-*hebben* otherwise, for transitive and intransitive verbs and for atelic unaccusative ones; and
-*zijn* for *blijven*, whose state continues. -/
+*zijn* on an intransitive frame when the verb is telic and either unaccusative or a verb of motion
+with a direction, as a directional phrase gives a verb of manner of motion one; the direction makes
+such a verb unaccusative unless a recorded voice introduces an external argument, and the rule
+does not ask. It is *hebben* otherwise, for transitive and intransitive verbs and for atelic
+unaccusative ones, and *zijn* for *blijven*, whose state continues. -/
 def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
   if v.phasal = some .continuation then .be
-  else if fr.IsIntransitive ∧ (v.IsUnaccusative ∨ v.direction.any (· != .place)) ∧
+  else if fr.IsIntransitive ∧ (v.IsUnaccusative ∨ ∃ d ∈ v.direction, d ≠ .place) ∧
       v.vendlerClass.any (·.telicity == .telic) then .be
   else .have
 

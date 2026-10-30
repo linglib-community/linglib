@@ -66,6 +66,11 @@ def vin : Noun := { form := "vin", gloss := "wine", gender := .masculine, counte
 def pain : Noun := { form := "pain", gloss := "bread", gender := .masculine, counters := ∅ }
 def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, counters := ∅ }
 
+/-- The common nouns. -/
+def nouns : List Noun :=
+  [chien, chat, livre, homme, garcon, professeur, etudiant, avocat, cheval, fille, femme, table,
+    pomme, fleur, eau, vin, pain, lait]
+
 /-! ### Proper names -/
 
 /-- A personal name, restricted to a gender. -/

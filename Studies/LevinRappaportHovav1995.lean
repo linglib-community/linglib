@@ -4,6 +4,7 @@ public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
 public import Linglib.Data.Examples.LevinRappaportHovav1995
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Fragments.Dutch.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
@@ -301,18 +302,36 @@ theorem entryOf_isSome :
       (entryOf ex).isSome := by
   decide
 
-/-- Where a row's class gives one verdict, the English fragment's entry for its verb is
-unaccusative exactly as the linking rules say: *break*, *burn*, *freeze*, *arrive* and *appear*
-are, *run* and *swim* are not. -/
+/-- Where a row's class gives one verdict, the English fragment classifies the entry for its verb
+as the linking rules do: *break*, *burn*, *freeze*, *arrive* and *appear* are unaccusative, and
+*run* and *swim* unergative. -/
 theorem isUnaccusative_agrees :
     ∀ ex ∈ Examples.all, ∀ v ∈ entryOf ex, ∀ c ∈ classOf ex,
       ((∀ s ∈ components c, Unaccusative s) → v.IsUnaccusative) ∧
-        ((∀ s ∈ components c, ¬ Unaccusative s) → ¬ v.IsUnaccusative) := by
+        ((∀ s ∈ components c, ¬ Unaccusative s) → v.IsUnergative) := by
   decide +kernel
 
 -- ch. 1 (13)–(15), §4.1.2 (29)
 theorem italian_directedMotion_isUnaccusative :
     ∀ v ∈ [Italian.Verbs.venire, Italian.Verbs.arrivare], v.toVerb.IsUnaccusative := by
+  decide
+
+-- (2): *chiacchierare* 'chat', an agentive verb, is unergative, as is *lavorare* 'work'
+theorem italian_agentive_isUnergative :
+    ∀ v ∈ [Italian.Verbs.chiacchierare, Italian.Verbs.lavorare], v.toVerb.IsUnergative := by
+  decide
+
+theorem werken_isUnergative : Dutch.Verbs.werken.toVerb.IsUnergative := by decide
+
+-- (78), §4.2.2: *salire* 'go up' is unaccusative, here by its change along a scale of height
+theorem salire_isUnaccusative : Italian.Verbs.salire.toVerb.IsUnaccusative := by decide
+
+-- (14), §5.1.1: a directional phrase makes *correre* 'run' unaccusative, while *nuotare* 'swim',
+-- which selects none, stays as it is
+theorem correre_withPath_isUnaccusative :
+    (Italian.Verbs.correre.withPath (.ofCase .ill)).toVerb.IsUnaccusative ∧
+      ¬ Italian.Verbs.correre.toVerb.IsUnaccusative ∧
+      ¬ (Italian.Verbs.nuotare.withPath (.ofCase .ill)).toVerb.IsUnaccusative := by
   decide
 
 /-- `Verb.IsUnaccusative` counts *buzz*, *flash* and *bleed* unaccusative by their causative pairs

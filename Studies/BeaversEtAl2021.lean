@@ -7,30 +7,24 @@ public import Mathlib.Data.Fintype.Basic
 /-!
 # Beavers et al. (2021): States and Changes of State
 
-This file formalizes the argument of Beavers and colleagues that some roots entail change. A
-property-concept root, such as that of *bright*, describes a state that need not have come
-about. A result root, such as that of *shatter*, describes a state that always arises from a
-change (`EventStructure.Interpretation.EntailsChange`). This contradicts the Bifurcation Thesis,
-on which change is introduced by the verbal template and never by a root.
-
-A root entails change exactly when its stative cannot be conjoined with a denial of change, and
-with such a root restitutive *again* presupposes an earlier change. A root passes either of these
-diagnostics of Beavers and Koontz-Garboden in some model that respects its signature exactly when
-it does not entail change (`BeaversKoontzGarboden2020.passes_iff`), and the examples agree
-outside the expected lexical variation (`rows`). The morphology follows from a default
-realization rule: a verb is unmarked iff its root entails change, and a stative is unmarked iff
-its complement does not, and in a model that respects a root's signature the rule agrees with
-the semantics (`entailsChange_of_verbRealization_eq_unmarked`). A language that spells out the
-unmarked form only when it spells out the marked one belongs to one of the three attested types
-(`Exponence.trichotomy`).
+Beavers and colleagues argue that some roots entail change, against the Bifurcation Thesis. Under
+the diagnostics of change of Beavers and Koontz-Garboden, the property-concept roots of the
+examples pass and the result roots fail [outside](##rows) two judgments that
+[vary](##rows_exceptions). A default realization rule makes the verb of a root unmarked iff the
+root entails change, and in a model that respects the root's signature the rule
+[agrees with the semantics](##entailsChange_of_verbRealization_eq_unmarked). A language that spells
+out the unmarked form only when it spells out the marked one
+[is of one of three types](##Exponence.trichotomy).
 
 ## Implementation notes
 
 * The semantics is stated on `EventStructure.Interpretation`, which interprets the primitives of
-  Beavers and Koontz-Garboden's book, and *again* is `Presupposition.again`.
+  Beavers and Koontz-Garboden's book, and *again* is `Presupposition.again`. The diagnostics, and
+  the readers of a row's root class and diagnostic, are those of
+  `Studies/BeaversKoontzGarboden2020.lean`.
 * The realization rule reads whether a root entails change off its kind signature.
 * The tables of the typological survey are not represented. Its coding of markedness is
-  (`Code.IsMarked`).
+  (`Code.IsMarked`). The Modern Greek row of additive restitutive *again* is not read.
 
 ## References
 
@@ -46,14 +40,12 @@ unmarked form only when it spells out the marked one belongs to one of the three
 namespace BeaversEtAl2021
 
 open Presupposition ArgumentStructure
-open BeaversKoontzGarboden2020 (DeniesChange Diagnostic Passes passes_iff)
+open BeaversKoontzGarboden2020 (DeniesChange Passes passes_iff kinds? diagnostic? againAt)
 open scoped SetRel ModalLogic
 
 /-! ### State predicates that entail change -/
 
 section Model
-
-open ArgumentStructure BeaversKoontzGarboden2020
 
 universe u
 
@@ -212,20 +204,18 @@ theorem oromo_long :
 
 /-! ### The judgments -/
 
-/-- The signature of a row's root, the least of its class. -/
-def kinds? (d : Datum) : Option Root.Kinds :=
-  d.parse? "root class"
-    [("property concept", Root.Kinds.propertyConcept), ("result", Root.Kinds.pureResult)]
-
-/-- The diagnostic a row tests. -/
-def diagnostic? (d : Datum) : Option Diagnostic :=
-  d.parse? "diagnostic" [("change denial", .changeDenial), ("restitutive again", .restitutive)]
-
-/-- A row is accepted exactly when its root passes its diagnostic, except for the variable (13) and
-Kakataibo (26). -/
+/-- A row is accepted exactly when its root passes its diagnostic, except for (13), which only
+some speakers accept, and Kakataibo (26). -/
 theorem rows : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d,
-    (d.judgment = .acceptable ↔ Passes ks g) ∨ d.feature? "judgedBy" = some "some speakers" ∨
-      d.language = "cash1251" := by
+    (d.judgment = .acceptable ↔ Passes ks g) ∨ d = Examples.beavers_etal2021_13 ∨
+      d = Examples.beavers_etal2021_26 := by
+  simp only [passes_iff]
+  decide
+
+-- (13), (26): the two judgments the result roots' failure of the diagnostics mispredicts
+theorem rows_exceptions :
+    ∀ d ∈ [Examples.beavers_etal2021_13, Examples.beavers_etal2021_26], ∀ ks ∈ kinds? d,
+      ∀ g ∈ diagnostic? d, ¬ (d.judgment = .acceptable ↔ Passes ks g) := by
   simp only [passes_iff]
   decide
 

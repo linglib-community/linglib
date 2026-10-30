@@ -7,15 +7,15 @@ public import Linglib.Syntax.Voice.Basic
 
 Japanese has two passives in *-(r)are-*. The direct passive makes the object the subject and
 demotes the agent, which may be marked by *niyotte*; it needs a verb that introduces an
-external argument, so an unaccusative has none. The indirect or adversative passive adds an
-affected participant as subject to a verb of any frame, unaccusatives included, the initial
-subject taking *ni* only; the substitution of *niyotte* is Jo and Seo's test for the two.
+external argument (`Verb.HasExternalArgument`), so an unaccusative has none. The indirect or
+adversative passive adds an affected participant as subject to a verb of any frame,
+unaccusatives included, the initial subject taking *ni* only; the substitution of *niyotte* is
+Jo and Seo's test for the two.
 
 ## Main definitions
 
 * `Japanese.directPassive` — the direct passive of the transitive construction
 * `Japanese.indirectPassive` — the indirect passive of a frame
-* `Japanese.DirectPassivizable` — a verb that introduces an external argument
 
 ## Main results
 
@@ -51,13 +51,6 @@ def indirectPassive (fr : ArgumentFrame := .np) : Voice :=
       (List.range fr.complements.length).map (fun i ↦
         some (complement (i + fr.external.toList.length))) ++ [some external])).marked
     [.suff "(r)are"]
-
-/-- A verb the direct passive applies to: one whose voice type introduces an external
-argument. -/
-def DirectPassivizable (w : Verb) : Prop := ∃ vt ∈ w.voiceType, vt.AssignsTheta
-
-instance (w : Verb) : Decidable (DirectPassivizable w) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 theorem directPassive_isPassivization : directPassive.IsPassivization := by decide
 

@@ -59,6 +59,10 @@ def vino : Noun := { form := "vino", gloss := "wine", gender := .masculine, coun
 def pane : Noun := { form := "pane", gloss := "bread", gender := .masculine, counters := ∅ }
 def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, counters := ∅ }
 
+/-- The common nouns. -/
+def nouns : List Noun :=
+  [libro, ragazzo, uomo, gatto, cane, tavolo, ragazza, donna, casa, acqua, vino, pane, latte]
+
 /-! ### Proper names -/
 
 /-- A personal name, restricted to a gender. -/

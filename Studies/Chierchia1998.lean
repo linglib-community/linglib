@@ -21,13 +21,13 @@ public import Linglib.Fragments.English.Determiners
 
 Chierchia's Nominal Mapping Parameter sets whether a language's nouns denote kinds, predicates, or
 either: Chinese and Japanese are [+arg, −pred], the Romance languages [−arg, +pred], and English
-[+arg, +pred]. In a [+arg, −pred] language every noun denotes a kind, so its extension is mass, no
-set of atoms to count by (`not_forall_atom_up`), and a numeral needs a classifier. A language's
-determiners decide which covert type shifts it blocks, and with the parameter which bare nominals it
-admits as arguments. A bare plural denotes its kind, whose instances meet the existential of derived
-kind predication in an episodic sentence and the generic operator in a generic one. A kind sends
-each situation to a partial individual, ∩ takes the largest member of a property's extension where
-the result is a kind, and ∪ takes the parts of a kind's value.
+[+arg, +pred]. The languages of the sample whose fragments count nouns through classifiers are
+[exactly the argument-only ones](##hasClassifiers_iff). A language's determiners decide which
+covert type shifts it blocks, [none in an argument-only language](##argOnly_blocks_nothing), and
+with the parameter which bare nominals it admits as arguments, in English
+[a bare singular only where ∩ is defined for it](##english_licensesBare_singular_iff). ∩ and ∪
+[undo each other](##down_up), and ∩ is [undefined for a singular property](##down_notMem_of_atom).
+A generic bare plural [entails its episodic reading](##some_up_of_mem_dogsBark).
 
 ## Main definitions
 
@@ -39,9 +39,12 @@ the result is a kind, and ∪ takes the parts of a kind's value.
 ## Implementation notes
 
 Each language's blocking is derived from its fragment's determiner inventory by
-`Determiner.Inventory.Blocks`, and whether it has classifiers from its fragment's nouns: a Mandarin
-or Japanese noun records the classifiers that count it, and an English, French or Italian noun is a
-`ClassifiedNoun` over no classifiers. The generic operator is the conditional over the normal cases
+`Determiner.Inventory.Blocks`, and whether it has classifiers from its fragment's common nouns
+(`Language.nouns`): a Mandarin or Japanese noun records the classifiers that count it, and an
+English, French or Italian noun is a `ClassifiedNoun` over no classifiers. The generalized
+classifier system of (20) has every noun counted through a classifier, while the fragments attest
+classifiers rather than that: Mandarin counts the measure noun *tiān* bare
+(`exists_isBareCount_mandarin`). The generic operator is the conditional over the normal cases
 of a `Genericity.Normality`. The set `K` of kinds is a parameter, primitive as in the paper, and its
 one stated property, that no kind has a singular instance in every situation, is a hypothesis.
 ∩ and ∪ are ι and its partial inverse Id applied at each situation (pp. 359–360), Id sending an
@@ -88,32 +91,41 @@ def determiners : Language → Determiner.Inventory
   | italian => Italian.Determiners.inventory
   | english => English.Determiners.inventory
 
-/-- Some noun of the language is counted through a classifier, which its fragment's nouns allow only
-where the language has classifiers: an English, French or Italian noun is a `ClassifiedNoun` over
-no classifiers. -/
-def HasClassifiers : Language → Prop
-  | mandarin => ∃ n : Mandarin.Nouns.Noun, n.classifiers.Nonempty
-  | japanese => ∃ n : Japanese.Nouns.Noun, n.classifiers.Nonempty
-  | french => ∃ n : French.Nouns.Noun, n.classifiers.Nonempty
-  | italian => ∃ n : Italian.Nouns.Noun, n.classifiers.Nonempty
-  | english => ∃ n : English.Nouns.Noun, n.classifiers.Nonempty
+/-- The type of the classifiers of the fragment of `l`, empty for a language without
+classifiers. -/
+abbrev ClassifierType : Language → Type
+  | mandarin | japanese => Classifier
+  | french | italian | english => Empty
+
+/-- `nouns l` is the list of common nouns of the fragment of `l`. -/
+def nouns : (l : Language) → List (ClassifiedNoun l.ClassifierType)
+  | mandarin => Mandarin.Nouns.nouns.map (·.toClassifiedNoun)
+  | japanese => Japanese.Nouns.nouns.map (·.toClassifiedNoun)
+  | french => French.Nouns.nouns.map (·.toClassifiedNoun)
+  | italian => Italian.Nouns.nouns.map (·.toClassifiedNoun)
+  | english => English.Nouns.nouns.map (·.toClassifiedNoun)
+
+/-- The language has classifiers: some common noun of its fragment is counted through one. -/
+def HasClassifiers (l : Language) : Prop := ∃ n ∈ l.nouns, n.classifiers.Nonempty
 
 end Language
 
 open Chierchia1998.Language
 
-/-- (20): a [+arg, −pred] language, whose nouns denote kinds and so give numerals no set of
-atoms to count by (`not_forall_atom_up`), has a generalized classifier system, and a classifier
-language must be [+arg, −pred]: the classifier languages of the sample are exactly the
-[+arg, −pred] ones. -/
-theorem hasClassifiers_iff : ∀ l : Language, l.HasClassifiers ↔ l.nominalMapping = .argOnly
-  | .mandarin =>
-    iff_of_true ⟨Mandarin.Nouns.ren, Mandarin.Classifiers.ge, by simp [Mandarin.Nouns.ren]⟩ rfl
-  | .japanese =>
-    iff_of_true ⟨Japanese.Nouns.inu, Japanese.Classifiers.hiki, by simp [Japanese.Nouns.inu]⟩ rfl
-  | .french => iff_of_false (fun ⟨_, c, _⟩ ↦ c.elim) (by decide)
-  | .italian => iff_of_false (fun ⟨_, c, _⟩ ↦ c.elim) (by decide)
-  | .english => iff_of_false (fun ⟨_, c, _⟩ ↦ c.elim) (by decide)
+/-- (20): the languages of the sample with classifiers are exactly the [+arg, −pred] ones. -/
+theorem hasClassifiers_iff (l : Language) : l.HasClassifiers ↔ l.nominalMapping = .argOnly := by
+  cases l
+  · exact iff_of_true ⟨Mandarin.Nouns.ren.toClassifiedNoun,
+      List.mem_map_of_mem (by simp [Mandarin.Nouns.nouns]), Mandarin.Classifiers.ge,
+      by simp [Mandarin.Nouns.ren]⟩ rfl
+  · exact iff_of_true ⟨Japanese.Nouns.inu.toClassifiedNoun,
+      List.mem_map_of_mem (by simp [Japanese.Nouns.nouns]), Japanese.Classifiers.hiki,
+      by simp [Japanese.Nouns.inu]⟩ rfl
+  all_goals exact iff_of_false (fun ⟨_, _, c, _⟩ ↦ c.elim) (by decide)
+
+theorem exists_isBareCount_mandarin : ∃ n ∈ Language.mandarin.nouns, n.IsBareCount :=
+  ⟨Mandarin.Nouns.tian.toClassifiedNoun, List.mem_map_of_mem (by simp [Mandarin.Nouns.nouns]),
+    by simp [Mandarin.Nouns.tian, ClassifiedNoun.IsBareCount]⟩
 
 /-! ### Kind formation, §2
 
@@ -146,13 +158,6 @@ theorem up_down [SemilatticeSup E] (hP : ∀ s, IsLowerSet (P s)) (hcum : ∀ s,
     (hfin : ∀ s, (P s).Finite) : up (down P) = P :=
   funext fun s ↦ elim_Iic_iota_isGreatest (hP s) fun hne ↦
     iota_isGreatest_isSome_iff.1 ((hcum s).directedOn.iota_isGreatest_isSome (hfin s) hne)
-
-/-- (20): the property of a kind is no counting level. A kind has a plural instance in some
-situation, so the instances of a kind are not atoms in every situation, and a numeral, which counts
-by a set of atoms, can count them only through a classifier (p. 347). -/
-theorem not_forall_atom_up [PartialOrder E] (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
-    {k : S → Option E} (hk : k ∈ K) : ¬ ∀ s, ∀ x ∈ up k s, Atom x :=
-  fun h ↦ hK k hk fun s d hd ↦ h s d (by rw [up, Option.mem_def.1 hd]; exact Set.mem_Iic.2 le_rfl)
 
 /-- ∩ is undefined for a singular property: its concept is singular in every situation, and no
 kind is. -/

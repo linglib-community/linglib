@@ -21,16 +21,16 @@ The paper's remarks on differential object marking, deferred to Grimm (2005), an
 the nominative or ergative region in a given language are not formalized. Definiteness is the
 paper's three-step hierarchy (14), the referring feature being the one that entails existence.
 The entailments of a node, which subject selection counts, are its agentivity and persistence
-features. The subject and object of *kiss* are placed at a common persistence level, since
-kissing changes neither.
+features (`entailmentCount`). The subject of *kiss* dominates its object at any common
+persistence level, since kissing changes neither (`kiss_subject_dominates`).
 
 ## Errata
 
 * Subject selection picks "the argument which has the greater number of entailments, or
   equivalently, the dominant or higher position in the lattice structure" (p. 527). The two are
-  not equivalent: dominance implies the greater count (`card_lt_card_of_lt`), but nodes with
-  different counts may be incomparable (`exists_card_lt_incomparable`), so the count selects where
-  dominance does not.
+  not equivalent: dominance implies the greater count (`entailmentCount_strictMono`), but two
+  nodes of the lattice with different counts may be incomparable
+  (`exists_entailmentCount_lt_incomparable`), so the count selects where dominance does not.
 
 ## References
 
@@ -131,24 +131,28 @@ theorem pseudoCleft_presupposition {T Q : Type*} [LinearOrder T] [DecidableEq Q]
   ⟨fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersBeginning_iff.1 h).1,
     fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersEnd_iff.1 h).1⟩
 
+/-- The number of entailments of a node, its agentivity and persistence features. -/
+def entailmentCount (n : ParticipantType) : ℕ := n.1.card + n.2.features.card
+
 -- p. 527
-theorem card_lt_card_of_lt {n m : ParticipantType} (h : n < m) :
-    n.1.card + n.2.features.card < m.1.card + m.2.features.card := by
-  have hle : ∀ l k : PersistenceLevel, l ≤ k → l.features.card ≤ k.features.card := by decide
-  have hlt : ∀ l k : PersistenceLevel, l ≤ k → l ≠ k → l.features.card < k.features.card := by
-    decide
+theorem entailmentCount_strictMono : StrictMono entailmentCount := fun n m h ↦ by
+  unfold entailmentCount
   rcases Prod.lt_iff.1 h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
   · have := Finset.card_lt_card h₁
-    have := hle _ _ h₂
+    have := Finset.card_le_card (PersistenceLevel.le_iff_features_subset.1 h₂)
     omega
   · have := Finset.card_le_card h₁
-    have := hlt _ _ h₂.le h₂.ne
+    have := Finset.card_lt_card (Finset.ssubset_iff_subset_ne.2
+      ⟨PersistenceLevel.le_iff_features_subset.1 h₂.le,
+        fun h ↦ h₂.ne (PersistenceLevel.features_injective h)⟩)
     omega
 
 -- p. 527
-theorem exists_card_lt_incomparable : ∃ n m : ParticipantType,
-    n.1.card + n.2.features.card < m.1.card + m.2.features.card ∧ ¬ n ≤ m ∧ ¬ m ≤ n :=
-  ⟨sentientNonInstigator, minimalInstigator, by decide⟩
+theorem exists_entailmentCount_lt_incomparable :
+    ∃ n ∈ ParticipantType.lattice, ∃ m ∈ ParticipantType.lattice,
+      entailmentCount n < entailmentCount m ∧ ¬ n ≤ m ∧ ¬ m ≤ n :=
+  ⟨sentientNonInstigator, ParticipantType.mem_lattice.2 (by decide), minimalInstigator,
+    ParticipantType.mem_lattice.2 (by decide), by decide⟩
 
 -- (43) of [dowty-1991]
 theorem kiss_subject_dominates (l : PersistenceLevel) :

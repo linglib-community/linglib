@@ -21,6 +21,7 @@ count noun is not, which Chierchia derives from the Nominal Mapping Parameter
 * `numberSystem`: the singular and the plural.
 * `Noun`: the entry, with `Noun.realize` giving its form at a number.
 * `Noun.toWordSg`, `Noun.toWord`: the entry as a `Word` token.
+* `nouns`: the common nouns entered here.
 
 ## Implementation notes
 
@@ -140,6 +141,13 @@ def milk : Noun := .mass "milk"
 def tea : Noun := .mass "tea"
 def pollen : Noun := .mass "pollen"
 def mold : Noun := .mass "mold"
+
+/-- The common nouns. -/
+def nouns : List Noun :=
+  [pizza, year, book, cat, dog, girl, boy, ball, table, squirrel, kitchen, story, lawyer, student,
+    teacher, soldier, horse, brother, spy, idea, lot, bean, lentil, spider, pollenGrain, father,
+    mother, man, woman, fireman, person, child, water, sand, trash, furniture, rice, gold, air,
+    wine, coffee, beer, milk, tea, pollen, mold]
 
 /-! ### Proper names -/
 
