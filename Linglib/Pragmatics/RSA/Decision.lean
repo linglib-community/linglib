@@ -4,7 +4,7 @@ public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
-# The decision-theoretic listener
+# The decision-theoretic listener and speaker
 
 This file defines the listener of Rational Speech Act models who acts. After an utterance the
 listener's belief is a kernel from utterances to states, and a decision problem is a reward for
@@ -12,7 +12,10 @@ each action at each state. The listener's expected reward of an action is the re
 the belief, and the listener chooses an action by the softmax of expected reward at a rationality.
 The decision-theoretic utility of an utterance for the speaker is the true reward of the action
 the listener's policy chooses. In a signaling game an action is a guess of the state, rewarded
-when right, so the expected reward of a guess is the belief's mass on it.
+when right, so the expected reward of a guess is the belief's mass on it. The decision-theoretic
+speaker chooses an utterance by the softmax of its utility less its cost. Her utility is linear in
+the listener's choice where that of `RSA.speaker` is the logarithm of the listener's mass, so she
+sends every utterance, false ones included, with positive probability.
 
 ## Main definitions
 
@@ -20,6 +23,7 @@ when right, so the expected reward of a guess is the belief's mass on it.
 * `RSA.policy`: the listener's policy, the softmax of expected reward at a rationality.
 * `RSA.actionUtility`: the expected true reward of the listener's choice, the speaker's
   decision-theoretic utility of an utterance at a state.
+* `RSA.actionSpeaker`: the speaker, the softmax of utility less cost at a rationality.
 
 ## Main results
 
@@ -29,11 +33,15 @@ when right, so the expected reward of a guess is the belief's mass on it.
 * `RSA.policy_real_of_pair`, `RSA.actionUtility_of_pair`: with two actions the share is the
   logistic function of the scaled difference in expected reward, and the utility is the rewards
   weighted by the shares.
+* `RSA.actionSpeaker_real_lt_iff`, `RSA.actionSpeaker_real_of_pair`,
+  `RSA.actionSpeaker_apply_singleton_ne_zero`: the speaker prefers the utterance of higher utility
+  less cost, with two utterances her share is logistic, and she sends every utterance.
 
 ## References
 
 * [sumers-etal-2024]
 * [harding-gerstenberg-icard-2025]
+* [brochhagen-franke-van-rooij-2018]
 * [van-rooy-2003]
 * [qing-franke-2015]
 -/
@@ -63,6 +71,13 @@ theorem actionUtility_of_pair [IsMarkovKernel π] (haa' : a ≠ a') (hall : ∀ 
   rw [actionUtility, Fintype.sum_eq_add a a' haa' (fun c hc ↦ absurd (hall c) (not_or.mpr hc)),
     ← measureReal_singleton_add_singleton_of_pair (π u) haa' (fun c _ ↦ hall c)]
   ring
+
+omit [DiscreteMeasurableSpace A] in
+/-- When an action is a guess of the state, rewarded when right, the utility of an utterance at a
+state is the listener's chance of guessing that state. -/
+theorem actionUtility_single [DecidableEq A] (π : Kernel U A) (u : U) (a : A) :
+    actionUtility π (fun a ↦ Pi.single a 1) u a = (π u).real {a} := by
+  simp [actionUtility, Pi.single_apply]
 
 end ActionUtility
 
@@ -138,5 +153,60 @@ theorem actionUtility_policy_eq_of_expectedReward_eq_add {L' : Kernel U W} {u' :
   rw [Real.softmax_add_const]
 
 end Policy
+
+/-! ### The decision-theoretic speaker -/
+
+section Speaker
+
+variable {W M A : Type*} [MeasurableSpace W] [Countable W] [MeasurableSingletonClass W]
+  [MeasurableSpace M] [Fintype M] [Fintype A] [MeasurableSpace A]
+
+/-- The speaker's score of an utterance is rationality times its utility, less its cost. -/
+noncomputable def actionSpeakerScore (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ)
+    (w : W) (m : M) : EReal :=
+  ((β * actionUtility π R m w - cost m : ℝ) : EReal)
+
+/-- The decision-theoretic speaker is the softmax of utility less cost at rationality `β`. The
+utility is the true reward of the listener's choice, linear in the listener's probabilities, where
+`RSA.speaker` scores an utterance by the logarithm of the listener's mass. -/
+noncomputable def actionSpeaker (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ) :
+    Kernel W M :=
+  Kernel.softmax (actionSpeakerScore β cost π R)
+
+variable (β : ℝ) (R : A → W → ℝ) (cost : M → ℝ) (π : Kernel M A)
+
+instance : IsFiniteKernel (actionSpeaker β cost π R) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
+
+instance [Nonempty M] : IsMarkovKernel (actionSpeaker β cost π R) :=
+  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary M, EReal.coe_ne_bot _⟩)
+    (fun _ _ ↦ EReal.coe_ne_top _)
+
+variable {β} {m m' : M} {w : W} [MeasurableSingletonClass M]
+
+/-- The speaker sends every utterance, false ones included, with positive probability. -/
+theorem actionSpeaker_apply_singleton_ne_zero : actionSpeaker β cost π R w {m} ≠ 0 :=
+  Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
+
+/-- The speaker prefers the utterance of higher utility less cost. -/
+theorem actionSpeaker_real_lt_iff :
+    (actionSpeaker β cost π R w).real {m} < (actionSpeaker β cost π R w).real {m'} ↔
+      β * actionUtility π R m w - cost m < β * actionUtility π R m' w - cost m' := by
+  rw [actionSpeaker, Kernel.softmax_real_singleton_lt_iff (score := actionSpeakerScore β cost π R)
+    (w := w) (fun _ ↦ EReal.coe_ne_top _) ⟨m, EReal.coe_ne_bot _⟩, actionSpeakerScore,
+    actionSpeakerScore, EReal.coe_lt_coe_iff]
+
+/-- With two utterances, the speaker's share of one is the logistic function of the scaled
+difference in utility less the difference in cost. -/
+theorem actionSpeaker_real_of_pair (hmm' : m ≠ m') (hall : ∀ c, c = m ∨ c = m') :
+    (actionSpeaker β cost π R w).real {m} =
+      Real.sigmoid (β * (actionUtility π R m w - actionUtility π R m' w) - (cost m - cost m')) := by
+  rw [actionSpeaker, Kernel.softmax_real_singleton_of_pair (score := actionSpeakerScore β cost π R)
+    (w := w) hmm' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _)
+    (fun c _ ↦ hall c), actionSpeakerScore, actionSpeakerScore, EReal.toReal_coe,
+    EReal.toReal_coe]
+  ring_nf
+
+end Speaker
 
 end RSA

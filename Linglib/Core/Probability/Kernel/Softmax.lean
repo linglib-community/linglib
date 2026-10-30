@@ -23,6 +23,9 @@ both ranks the points and says which of them are available.
 * `ProbabilityTheory.Kernel.softmax_coe_eq_count_tilted`,
   `ProbabilityTheory.Kernel.softmax_coe_real_singleton`: a real score gives each row the counting
   measure tilted by the score, whose atoms are `Real.softmax` of the score.
+* `ProbabilityTheory.Kernel.ofWeights_rpow_mul_eq_softmax`,
+  `ProbabilityTheory.Kernel.ofWeights_rpow_eq_softmax`: normalizing powers of weights is the
+  softmax of the scaled logarithms of the weights.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_lt_iff`: row preference is score comparison.
 * `ProbabilityTheory.Kernel.softmax_real_singleton_of_pair`: with two available points the share
   of one is the logistic function of the score difference.
@@ -57,6 +60,18 @@ theorem isMarkovKernel_softmax (h0 : ∀ w, ∃ u, score w u ≠ ⊥)
     (htop : ∀ w u, score w u ≠ ⊤) : IsMarkovKernel (softmax score) :=
   isMarkovKernel_ofWeights (fun w ↦ (h0 w).imp fun _ hu ↦ mt EReal.exp_eq_zero_iff.mp hu)
     fun w u ↦ mt EReal.exp_eq_top_iff.mp (htop w u)
+
+/-- Normalizing powers of weights, each scaled by the exponential of a real offset, is the softmax
+of the scaled logarithms of the weights plus the offsets. -/
+theorem ofWeights_rpow_mul_eq_softmax (w : α → β → ℝ≥0∞) (r : ℝ) (c : α → β → ℝ) :
+    ofWeights (fun a b ↦ w a b ^ r * ENNReal.ofReal (Real.exp (c a b))) =
+      softmax fun a b ↦ r * ENNReal.log (w a b) + c a b := by
+  simp_rw [softmax, EReal.exp_add, EReal.exp_coe, ENNReal.rpow_eq_exp_mul_log]
+
+/-- Normalizing powers of weights is the softmax of their scaled logarithms. -/
+theorem ofWeights_rpow_eq_softmax (w : α → β → ℝ≥0∞) (r : ℝ) :
+    ofWeights (fun a b ↦ w a b ^ r) = softmax fun a b ↦ r * ENNReal.log (w a b) := by
+  simpa using ofWeights_rpow_mul_eq_softmax w r 0
 
 variable [MeasurableSingletonClass β]
 
