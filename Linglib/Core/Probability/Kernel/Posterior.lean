@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.Moments.Covariance
+public import Mathlib.Probability.Kernel.Invariance
 public import Mathlib.Probability.Kernel.Posterior
 public import Mathlib.MeasureTheory.Measure.Real
 
@@ -10,7 +11,8 @@ public import Mathlib.MeasureTheory.Measure.Real
 
 Mathlib characterizes the posterior kernel `κ†μ` almost everywhere. On discrete spaces an
 ae-fact holds at every atom of positive mass, which gives Bayes' rule pointwise at any
-positive-mass observation, with no Radon–Nikodym derivative.
+positive-mass observation, with no Radon–Nikodym derivative. Drawing a state from the posterior
+given an observation of a state drawn from the prior leaves the prior invariant.
 
 ## Main results
 
@@ -18,6 +20,11 @@ positive-mass observation, with no Radon–Nikodym derivative.
   and `comp_real_mul_posterior_real`, the same with the denominator cleared, at every observation.
 * `ProbabilityTheory.posterior_deterministic_eq_cond`: a deterministic observation's posterior
   is the prior conditioned on the observation's fibre.
+* `ProbabilityTheory.ae_eq_posterior_of_eq_of_ne_zero`: when each observation is equally likely
+  at every state that can emit it, the posterior renormalizes the prior over those states.
+* `ProbabilityTheory.invariant_posterior_comp`, `ProbabilityTheory.invariant_comp_posterior`,
+  `ProbabilityTheory.invariant_id_prod_comp_prodMkLeft_posterior`: the chains that alternate the
+  likelihood and the posterior leave the prior, the prior predictive and the joint invariant.
 * `ProbabilityTheory.posterior_real_singleton_lt_posterior_of_pair`: under priors carried by
   two atoms, the posterior at an atom is strictly increasing in its prior mass.
 * `ProbabilityTheory.integral_le_integral_posterior`: conditioning on an observation raises
@@ -118,6 +125,29 @@ theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω 
     ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} / (κ ∘ₘ μ).real {x} := by
   rw [measureReal_def, posterior_apply_singleton κ μ hx, ENNReal.toReal_div, ENNReal.toReal_mul,
     measureReal_def, measureReal_def, measureReal_def]
+
+/-- If each observation is equally likely at every state that can emit it, a kernel that weighs the
+states that can emit `x` by `w` is the posterior under any prior proportional to `w`, on the
+observations the prior predicts. -/
+theorem ae_eq_posterior_of_eq_of_ne_zero [Fintype Ω] [Countable 𝓧]
+    (hκ : ∀ x ω ω', κ ω {x} ≠ 0 → κ ω' {x} ≠ 0 → κ ω {x} = κ ω' {x}) {η : Kernel 𝓧 Ω}
+    (w : Ω → ℝ≥0∞) {c : ℝ≥0∞} (hc₀ : c ≠ 0) (hc : c ≠ ∞) (hμ : ∀ ω, μ {ω} = c * w ω)
+    (hη : ∀ x, (κ ∘ₘ μ) {x} ≠ 0 → ∀ ω,
+      η x {ω} = (if κ ω {x} = 0 then 0 else w ω) / ∑ ω', if κ ω' {x} = 0 then 0 else w ω') :
+    η =ᵐ[κ ∘ₘ μ] κ†μ := by
+  refine ae_iff_of_countable.2 fun x hx ↦ Measure.ext_of_singleton fun ω ↦ ?_
+  obtain ⟨ω₀, -, h₀⟩ := (Measure.comp_apply_singleton_ne_zero_iff κ μ).1 hx
+  have key (ω : Ω) : μ {ω} * κ ω {x} = (c * κ ω₀ {x}) * if κ ω {x} = 0 then 0 else w ω := by
+    by_cases h₁ : κ ω {x} = 0
+    · simp [h₁]
+    · simp only [h₁, ↓reduceIte]
+      rw [hμ, hκ x ω ω₀ h₁ h₀]
+      ring
+  have hsum : (κ ∘ₘ μ) {x} = (c * κ ω₀ {x}) * ∑ ω', if κ ω' {x} = 0 then 0 else w ω' := by
+    rw [Measure.comp_apply_singleton, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun ω _ ↦ key ω
+  rw [hη x hx ω, posterior_apply_singleton κ μ hx ω, key, hsum,
+    ENNReal.mul_div_mul_left _ _ (mul_ne_zero hc₀ h₀) (ENNReal.mul_ne_top hc (measure_ne_top _ _))]
 
 /-- At every state and observation, the observation marginal times the posterior is the prior
 times the likelihood, Bayes' rule on reals with the denominator cleared. -/
@@ -235,6 +265,40 @@ theorem posterior_real_singleton_lt_iff_of_pair :
   constructor <;> intro h <;> nlinarith
 
 end Pair
+
+/-! ### Stationarity
+
+A state drawn from the posterior given an observation of a state drawn from the prior is
+distributed as the prior. The chains that alternate the likelihood and the posterior therefore
+leave the prior, the prior predictive and their joint invariant; the last is the Gibbs sampler for
+the joint. -/
+
+section Invariant
+
+variable {Ω 𝓧 : Type*} {mΩ : MeasurableSpace Ω} {m𝓧 : MeasurableSpace 𝓧} [StandardBorelSpace Ω]
+  [Nonempty Ω] {κ : Kernel Ω 𝓧} [IsMarkovKernel κ] {μ : Measure Ω} [IsFiniteMeasure μ]
+
+/-- A kernel equal to the posterior on the observations the prior predicts, composed after the
+likelihood, leaves the prior invariant. -/
+theorem invariant_comp_of_ae_eq_posterior {η : Kernel 𝓧 Ω} (hη : η =ᵐ[κ ∘ₘ μ] κ†μ) :
+    (η ∘ₖ κ).Invariant μ := by
+  rw [Kernel.Invariant, ← Measure.comp_assoc, Measure.comp_congr hη, posterior_comp_self]
+
+theorem invariant_posterior_comp : (κ†μ ∘ₖ κ).Invariant μ :=
+  invariant_comp_of_ae_eq_posterior (Filter.EventuallyEq.refl _ _)
+
+theorem invariant_comp_posterior : (κ ∘ₖ κ†μ).Invariant (κ ∘ₘ μ) := by
+  rw [Kernel.Invariant, ← Measure.comp_assoc, posterior_comp_self]
+
+/-- The Gibbs sampler for the joint law of a state and its observation, which redraws the state
+from the posterior given the observation and then the observation from the state, leaves the joint
+invariant. -/
+theorem invariant_id_prod_comp_prodMkLeft_posterior :
+    ((Kernel.id ×ₖ κ) ∘ₖ (κ†μ).prodMkLeft Ω).Invariant (μ ⊗ₘ κ) := by
+  rw [Kernel.Invariant, ← Measure.comp_assoc, Measure.prodMkLeft_comp_compProd, posterior_comp_self,
+    Measure.compProd_eq_comp_prod]
+
+end Invariant
 
 section Const
 

@@ -105,9 +105,7 @@ theorem ofWeights_apply_singleton_ne_zero {w : α → β → ℝ≥0∞} {a : α
 theorem isProbabilityMeasure_ofWeights_of_absolutelyContinuous {w : α → β → ℝ≥0∞} {a : α}
     {μ : Measure β} [IsProbabilityMeasure μ] (htop : ∀ b, w a b ≠ ∞) (hμ : μ ≪ ofWeights w a) :
     IsProbabilityMeasure (ofWeights w a) := by
-  obtain ⟨b, hb⟩ : ∃ b, μ {b} ≠ 0 := by
-    by_contra! h
-    exact NeZero.ne μ (Measure.ext_of_singleton fun b ↦ by simp [h b])
+  obtain ⟨b, hb⟩ := Measure.exists_measure_singleton_ne_zero μ
   exact isProbabilityMeasure_ofWeights
     ⟨b, fun h ↦ hb (hμ (ofWeights_apply_singleton_eq_zero h))⟩ htop
 
