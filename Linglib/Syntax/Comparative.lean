@@ -12,16 +12,13 @@ mark the degree on the predicate. Stassen classifies constructions by the case o
 which is derived from the case of the comparee or fixed by the construction, and by the role of
 a fixed-case standard, the object of a verb of exceeding or an adverbial. This file defines the
 construction by these parameters and derives from them its type in Stassen's chapter of the
-World Atlas of Language Structures. The types are the values of the atlas's feature
-(`ComparativeType.toWALS` is a bijection), and through them the file counts the atlas's sample:
-the locational type is the most common and the particle type the rarest.
+World Atlas of Language Structures, a value of the atlas's feature.
 
 ## Main definitions
 
 * `Comparative`: a construction, with the marker of its standard and its markers of degree as
   morphs.
 * `Comparative.type`: the type of a construction in the atlas.
-* `Comparative.ComparativeType.toWALS`: the value of the atlas's feature that a type is.
 * `Comparative.SuperlativeStrategy`: the ways a language forms superlatives.
 
 ## References
@@ -71,40 +68,7 @@ structure Comparative where
 
 namespace Comparative
 
-abbrev ch121 := Data.WALS.F121A.allData
-
-/-! ### Classifications -/
-
-/-- The type of a comparative construction in the atlas, by how it encodes the standard of
-comparison. A language with more than one productive construction has one `Comparative` for
-each, with its own type. -/
-inductive ComparativeType where
-  /-- The standard is marked with a locational or ablative case or adposition, as in Japanese
-  *Y yori X tall*, Turkish, Hindi-Urdu and the Latin ablative. -/
-  | locational
-  /-- A verb meaning 'exceed' or 'surpass' encodes the comparison, as in Yoruba
-  *Ade ga ju Bola lo*. -/
-  | exceed
-  /-- Two juxtaposed clauses, one attributing the property to X and the other denying it of Y
-  or contrasting it. -/
-  | conjoined
-  /-- A dedicated comparative particle marks the standard, as English *than* and German *als*
-  do. -/
-  | particle
-  deriving DecidableEq, BEq, Repr
-
-/-- The value of the atlas's feature 121A that a type is. -/
-def ComparativeType.toWALS : ComparativeType → Data.WALS.F121A.ComparativeType
-  | .locational => .locational
-  | .exceed => .exceed
-  | .conjoined => .conjoined
-  | .particle => .particle
-
-theorem ComparativeType.toWALS_bijective : Function.Bijective ComparativeType.toWALS := by
-  refine ⟨fun a b h ↦ ?_, fun y ↦ ?_⟩
-  · cases a <;> cases b <;> first | rfl | cases h
-  · cases y
-    exacts [⟨.locational, rfl⟩, ⟨.exceed, rfl⟩, ⟨.conjoined, rfl⟩, ⟨.particle, rfl⟩]
+/-! ### Superlatives -/
 
 /-- The ways a language forms superlatives, which are partly independent of its comparative
 type. -/
@@ -126,30 +90,17 @@ inductive SuperlativeStrategy where
 /-! ### The derived type -/
 
 /-- The type of a construction in the atlas, derived from its anatomy. A derived-case
-construction is a particle comparative when it has a standard marker and a conjoined one
-otherwise, and a fixed-case construction is an exceed comparative when the standard is a direct
-object and a locational one otherwise. -/
-def type (c : Comparative) : ComparativeType :=
+construction is a particle comparative when it has a standard marker, as English *than* and German
+*als*, and a conjoined one otherwise, two juxtaposed clauses that attribute the property to one
+item and deny it of the other or contrast them. A fixed-case construction is an exceed comparative
+when the standard is a direct object, as of the exceed verb in Yoruba *X Adj ju Y lọ*, and a
+locational one otherwise, as when the standard is in a locational or ablative case or adposition,
+Japanese *yori*, Turkish *-DAn* and Hindi-Urdu *se*. A language with more than one productive
+construction has one `Comparative` for each, with its own type. -/
+def type (c : Comparative) : Data.WALS.F121A.ComparativeType :=
   match c.caseAssignment, c.fixedEncoding with
   | .derived, _ => if c.standardMarker = [] then .conjoined else .particle
   | .fixed, some .directObject => .exceed
   | .fixed, _ => .locational
-
-/-! ### Counts over the sample of the atlas -/
-
-theorem locational_most_common (t : ComparativeType) (ht : t ≠ .locational) :
-    (ch121.filter (·.2 = t.toWALS)).length <
-      (ch121.filter (·.2 = ComparativeType.locational.toWALS)).length := by
-  cases t <;> first | exact absurd rfl ht | decide +kernel
-
-theorem particle_rarest (t : ComparativeType) (ht : t ≠ .particle) :
-    (ch121.filter (·.2 = ComparativeType.particle.toWALS)).length <
-      (ch121.filter (·.2 = t.toWALS)).length := by
-  cases t <;> first | exact absurd rfl ht | decide +kernel
-
-theorem locational_and_particle_dominant :
-    ch121.length / 2 < (ch121.filter (·.2 = ComparativeType.locational.toWALS)).length +
-      (ch121.filter (·.2 = ComparativeType.particle.toWALS)).length := by
-  decide +kernel
 
 end Comparative

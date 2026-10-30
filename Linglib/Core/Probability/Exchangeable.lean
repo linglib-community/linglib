@@ -122,9 +122,8 @@ variable [Fintype ι] {f : α → ℝ}
 
 /-- Under an exchangeable law of finitely many nonnegative quantities, each one's share of their
 total has the same expectation, so the members of `A` take together the fraction `#A / card ι` of
-the probability that the total is nonzero. Where the total is zero, the share is `0 / 0 = 0`: the
-event on which the total vanishes, the extinction of a population counted by the quantities,
-contributes nothing. -/
+the probability that the total is nonzero. Where the total is zero, the share is `0 / 0 = 0`, so
+the event on which the total vanishes contributes nothing. -/
 theorem Exchangeable.integral_sum_div_sum [IsFiniteMeasure μ] (hμ : Exchangeable μ)
     (hf : Measurable f) (hf0 : ∀ a, 0 ≤ f a) (A : Finset ι) :
     ∫ x, (∑ i ∈ A, f (x i)) / ∑ i, f (x i) ∂μ =
