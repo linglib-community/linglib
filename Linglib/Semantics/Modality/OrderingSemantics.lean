@@ -20,7 +20,9 @@ necessity over a modal base and an ordering source, Lewis's counterfactual over 
 antecedent-worlds and the consequence relation of a preferential model are each membership in
 it. Good possibility, which Portner and Rubinstein take from Kratzer as
 local necessity, asks for a single such world, and the good possibilities are not closed under
-intersection.
+intersection. When the preorder ranks worlds by the premises they satisfy, necessity is Lewis's
+neutral truth condition of premise semantics: every set of premises true together at some world of
+the domain extends to one true together somewhere in the domain and only at `t`-worlds.
 
 Under the Limit Assumption the filter is the principal filter of the minimal worlds, and when one
 world of the domain lies strictly below every other it is the point filter of that world. On a
@@ -42,6 +44,8 @@ proposition.
 
 * `OrderingSemantics.necessityFilter_eq_principal`: under the Limit Assumption the filter is the
   principal filter of the minimal worlds.
+* `OrderingSemantics.mem_necessityFilter_ofCriteria_iff`: under a premise-induced preorder,
+  necessity is premise semantics.
 * `OrderingSemantics.necessityFilter_inter_of_mem`: restricting a domain to one of its necessities
   leaves its filter unchanged.
 * `OrderingSemantics.necessityFilter_inter_of_frequently`: on a total preorder, restricting a
@@ -267,5 +271,29 @@ theorem necessityFilter_inter_of_frequently (htot : Std.Total p.le)
   obtain ⟨z, hz, hzy, hzt⟩ := h₀ y hy hyx₀
   exact ⟨z, ⟨hz, hzt⟩, p.le_trans _ _ _ hzy hyu,
     fun w hw hwz ↦ hyb w hw.1 (p.le_trans _ _ _ hwz hzy)⟩
+
+/-! ### Premise semantics
+
+When the preorder is induced by criteria, a world being closer the more criteria it satisfies,
+necessity can be stated without worlds: the sets of criteria satisfied together at some world of
+the domain stand in for the worlds, and inclusion among them for the order. -/
+
+/-- Under a criteria-derived preorder, `t` is a necessity over `s` exactly when every set of
+criteria satisfied together at some world of `s` extends, within the criteria, to a set satisfied
+together at some world of `s` and only at `t`-worlds of `s`: premise semantics, which needs the
+Limit Assumption no more than ordering semantics does. -/
+theorem mem_necessityFilter_ofCriteria_iff {C : Type*} {sat : W → C → Prop} {crit : Set C} :
+    t ∈ necessityFilter (.ofCriteria sat crit) s ↔
+      ∀ B ⊆ crit, (∃ u ∈ s, ∀ c ∈ B, sat u c) → ∃ D ⊆ crit, (∃ v ∈ s, ∀ c ∈ D, sat v c) ∧
+        B ⊆ D ∧ ∀ w ∈ s, (∀ c ∈ D, sat w c) → w ∈ t := by
+  refine ⟨fun h B hB ⟨u, hu, huB⟩ ↦ ?_, fun h u hu ↦ ?_⟩
+  · obtain ⟨v, hv, hvu, hvt⟩ := h u hu
+    exact ⟨Preorder.satisfied sat crit v, Set.sep_subset _ _, ⟨v, hv, fun _ hc ↦ hc.2⟩,
+      fun c hc ↦ ⟨hB hc, hvu c (hB hc) (huB c hc)⟩,
+      fun w hw hwD ↦ hvt w hw fun c hc hvc ↦ hwD c ⟨hc, hvc⟩⟩
+  · obtain ⟨D, hD, ⟨v, hv, hvD⟩, hBD, hDt⟩ :=
+      h (Preorder.satisfied sat crit u) (Set.sep_subset _ _) ⟨u, hu, fun _ hc ↦ hc.2⟩
+    exact ⟨v, hv, fun c hc huc ↦ hvD c (hBD ⟨hc, huc⟩),
+      fun w hw hwv ↦ hDt w hw fun c hc ↦ hwv c (hD hc) (hvD c hc)⟩
 
 end OrderingSemantics
