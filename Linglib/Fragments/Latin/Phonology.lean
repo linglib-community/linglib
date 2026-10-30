@@ -8,10 +8,10 @@ public import Linglib.Phonology.Segmental.Sonority
 
 This file lists the phonemes of Classical Latin and gives each its segment. Cser's synchronic
 phonology of the language is the source for the inventory: five vowel qualities, six oral
-stops, the voiceless fricatives /f s/, the nasals /m n/, the liquids /l r/ and the
-labio-velar glide written ⟨v⟩. The feature values of a phoneme are not listed here. Each
-phoneme names its glyph in the PHOIBLE chart, and its segment is the segment of that chart
-entry, so the values are PHOIBLE's.
+stops, the voiceless fricatives /f s/, the nasals /m n/, the liquids /l r/, and the glides /j/
+and /w/, written ⟨i⟩ and ⟨v⟩ before a vowel. The feature values of a phoneme are not listed
+here. Each phoneme names its glyph in the PHOIBLE chart, and its segment is the segment of that
+chart entry, so the values are PHOIBLE's.
 
 ## Main definitions
 
@@ -29,8 +29,8 @@ entry, so the values are PHOIBLE's.
 Vowel length is prosodic. Hayes treats duration as a property of the syllable, the feature
 system has no [long], and a long vowel is two morae, so only the five qualities are phonemes
 here. Clear and dark /l/ are positional variants of the one /l/, which the chart leaves
-unspecified for [back], as Sen's analysis of the variants requires. Orthographic ⟨v⟩ is the
-glide [w], [−consonantal], which is what lets Belth's tier projection of *pluv-* skip it.
+unspecified for [back], as Sen's analysis of the variants requires. Both glides are
+[−consonantal] and [+dorsal], [w] also [+labial], as in the chart.
 
 ## TODO
 
@@ -41,7 +41,6 @@ glide [w], [−consonantal], which is what lets Belth's tier projection of *pluv
 
 * [cser-2020]
 * [sen-2015]
-* [belth-2026]
 * [hayes-2009]
 * [moran-mccloy-2019]
 -/
@@ -108,9 +107,12 @@ def r : Segment := .ofChart .«r»
 /-- The labial-velar glide /w/, orthographic ⟨v⟩. -/
 def w : Segment := .ofChart .«w»
 
+/-- The palatal glide /j/, orthographic ⟨i⟩ before a vowel and ⟨e⟩ in ⟨ae⟩ and ⟨oe⟩. -/
+def j : Segment := .ofChart .«j»
+
 /-- The phonemes of Classical Latin, pairwise distinct. -/
 def inventory : Finset Segment :=
-  ⟨↑[a, e, i, o, u, p, b, t, d, k, g, f, s, m, n, l, r, w], by decide⟩
+  ⟨↑[a, e, i, o, u, p, b, t, d, k, g, f, s, m, n, l, r, w, j], by decide⟩
 
 theorem isVowel_iff : ∀ x ∈ inventory, x.IsVowel ↔ x ∈ ({a, e, i, o, u} : Finset Segment) := by
   decide
@@ -123,7 +125,8 @@ theorem ofSegment_eq_liquid_iff :
     ∀ x ∈ inventory, Sonority.ofSegment x = .liquid ↔ x = l ∨ x = r := by
   decide
 
-theorem ofSegment_eq_glide_iff : ∀ x ∈ inventory, Sonority.ofSegment x = .glide ↔ x = w := by
+theorem ofSegment_eq_glide_iff :
+    ∀ x ∈ inventory, Sonority.ofSegment x = .glide ↔ x = w ∨ x = j := by
   decide
 
 end Latin
