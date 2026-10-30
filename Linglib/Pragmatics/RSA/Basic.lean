@@ -975,11 +975,8 @@ theorem speaker_dirac_eq_ofWeights (α : ℝ) (C : U → ℝ) (L : U → Measure
 theorem speaker_dirac_eq_softmax (α : ℝ) (C : U → ℝ) (L : U → Measure W) :
     speaker α C L Measure.dirac = Kernel.softmax fun w u ↦
       α * ENNReal.log (L u {w}) - ((α * C u : ℝ) : EReal) := by
-  rw [speaker_dirac_eq_ofWeights]
-  refine congrArg Kernel.ofWeights (funext fun w ↦ funext fun u ↦ ?_)
-  beta_reduce
-  rw [sub_eq_add_neg, ← EReal.coe_neg, EReal.exp_add, ← ENNReal.log_rpow, ENNReal.exp_log,
-    EReal.exp_coe]
+  rw [speaker_dirac_eq_ofWeights, Kernel.ofWeights_rpow_mul_eq_softmax]
+  simp_rw [EReal.coe_neg, ← sub_eq_add_neg]
 
 theorem isProbabilityMeasure_speaker_dirac (hα : 0 ≤ α) (C : U → ℝ) (L : Kernel U W)
     [IsFiniteKernel L] (h0 : ∃ u, L u {w} ≠ 0) :
