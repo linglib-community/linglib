@@ -30,10 +30,6 @@
       [
         "number",
         "na"
-      ],
-      [
-        "blocked",
-        "no"
       ]
     ],
     "comment": "",
@@ -70,10 +66,6 @@
       [
         "number",
         "na"
-      ],
-      [
-        "blocked",
-        "yes"
       ]
     ],
     "comment": "No smallest degree above the actual speed: no maximally informative true member.",
@@ -111,10 +103,6 @@
       [
         "number",
         "na"
-      ],
-      [
-        "blocked",
-        "no"
       ]
     ],
     "comment": "The modal base can entail a least bound, so maximality can be met.",
@@ -127,8 +115,11 @@
       "paperLabel": "(24)"
     },
     "language": "stan1293",
-    "primaryText": "What are you required to read for this class? -- War and Peace or Brothers Karamazov.",
-    "discourseSegments": [],
+    "primaryText": "What are you required to read for this class? War and Peace or Brothers Karamazov.",
+    "discourseSegments": [
+      "What are you required to read for this class?",
+      "War and Peace or Brothers Karamazov."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -160,10 +151,6 @@
       [
         "number",
         "neutral"
-      ],
-      [
-        "blocked",
-        "no"
       ]
     ],
     "comment": "Both scopes: the trace may range over individuals or over generalized quantifiers.",
@@ -176,8 +163,11 @@
       "paperLabel": "(26)"
     },
     "language": "stan1293",
-    "primaryText": "What did you not read for this class? -- War and Peace or Brothers Karamazov.",
-    "discourseSegments": [],
+    "primaryText": "What did you not read for this class? War and Peace or Brothers Karamazov.",
+    "discourseSegments": [
+      "What did you not read for this class?",
+      "War and Peace or Brothers Karamazov."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -186,7 +176,7 @@
     "readings": [
       {
         "name": "not > or",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       },
       {
         "name": "or > not",
@@ -209,10 +199,6 @@
       [
         "number",
         "neutral"
-      ],
-      [
-        "blocked",
-        "yes"
       ]
     ],
     "comment": "The higher-order denotation always contains the weak negated conjunction (28), which identifies no cell: Non-Vacuity fails.",
@@ -225,8 +211,11 @@
       "paperLabel": "(27)"
     },
     "language": "stan1293",
-    "primaryText": "What are you not allowed to read for this class? -- War and Peace or Brothers Karamazov.",
-    "discourseSegments": [],
+    "primaryText": "What are you not allowed to read for this class? War and Peace or Brothers Karamazov.",
+    "discourseSegments": [
+      "What are you not allowed to read for this class?",
+      "War and Peace or Brothers Karamazov."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -258,10 +247,6 @@
       [
         "number",
         "neutral"
-      ],
-      [
-        "blocked",
-        "no"
       ]
     ],
     "comment": "Marked ? for the narrow-scope reading; the necessity modal lets (29) be the strongest true member.",
@@ -274,8 +259,11 @@
       "paperLabel": "(47a)"
     },
     "language": "stan1293",
-    "primaryText": "What are you required to read for this class? -- War and Peace or Brothers Karamazov.",
-    "discourseSegments": [],
+    "primaryText": "What are you required to read for this class? War and Peace or Brothers Karamazov.",
+    "discourseSegments": [
+      "What are you required to read for this class?",
+      "War and Peace or Brothers Karamazov."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -307,10 +295,6 @@
       [
         "number",
         "neutral"
-      ],
-      [
-        "blocked",
-        "no"
       ]
     ],
     "comment": "",
@@ -323,8 +307,11 @@
       "paperLabel": "(47b)"
     },
     "language": "stan1293",
-    "primaryText": "Which books are you required to read for this class? -- The Russian books or the French books.",
-    "discourseSegments": [],
+    "primaryText": "Which books are you required to read for this class? The Russian books or the French books.",
+    "discourseSegments": [
+      "Which books are you required to read for this class?",
+      "The Russian books or the French books."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -356,10 +343,6 @@
       [
         "number",
         "plural"
-      ],
-      [
-        "blocked",
-        "no"
       ]
     ],
     "comment": "",
@@ -372,8 +355,11 @@
       "paperLabel": "(48)"
     },
     "language": "stan1293",
-    "primaryText": "Which book are you required to read for this class? -- War and Peace or Brothers Karamazov.",
-    "discourseSegments": [],
+    "primaryText": "Which book are you required to read for this class? War and Peace or Brothers Karamazov.",
+    "discourseSegments": [
+      "Which book are you required to read for this class?",
+      "War and Peace or Brothers Karamazov."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -382,7 +368,7 @@
     "readings": [
       {
         "name": "required > or",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       },
       {
         "name": "or > required",
@@ -405,10 +391,6 @@
       [
         "number",
         "singular"
-      ],
-      [
-        "blocked",
-        "yes"
       ]
     ],
     "comment": "Singular wh-phrases cannot quantify over higher-type traces.",
