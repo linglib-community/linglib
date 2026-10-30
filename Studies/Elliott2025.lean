@@ -52,7 +52,7 @@ nonempty `Finset`s, and a collective predicate is a set containing no atom.
 * [rothstein-2017]
 * [van-benthem-1986]
 * [bylinina-nouwen-2018]
-* [schwarzschild-2002]
+* [schwarzschild-2002b]
 * [groenendijk-stokhof-1984]
 -/
 
