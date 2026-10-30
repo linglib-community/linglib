@@ -12,8 +12,9 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 Partee argues that no adjective is privative in Kamp's sense. A privative adjective is vacuous
 within its literal head, so Kamp and Partee's non-vacuity principle shifts the head to include
 the adjective's value, *fur* to real or fake fur, whenever there are both fake things and furs,
-and [on the head it shifts *fake* is subsective and no longer privative](##shiftsHead_subsective):
-what it yields falls under the shifted head and meets it. The tautologous *real*
+and *fake* is [a subsective adjective plus that coercion](##subsective_plus_coercion): the
+subsective, not privative, modifier that keeps of a head what is not a literal N yields on the
+shifted head exactly the fake Ns. The tautologous *real*
 [needs the same shift](##real_isNonVacuous_iff). Nowak's Polish NP-splitting data motivate the
 move. The adjectives that split are the intersective, subsective and privative ones, which form no
 natural class of the traditional scale, while the modal ones do not, and once the privatives are
@@ -27,12 +28,13 @@ The classes are the paper's labels for the meaning postulates, ordered by the tr
 that its footnote 1 says the postulates do not give, and a natural class is read as an interval
 of that scale. Each Polish adjective's class is the paper's, recorded in the rows'
 `paperFeatures`; for most adjectives of its lists the paper gives only the English. The shift is
-`Modifier.ShiftsHead`, and *real* is the identity modifier. Subsectivity on the shifted head is
-the postulate (8) read at the head the shift supplies, which widening a head to include the
-adjective's value secures for any adjective; what singles out the privatives is that non-vacuity
-licenses the shift for them and not for an adjective already non-vacuous within its literal head
-(`Modifier.not_shiftsHead_of_isNonVacuous`). The reanalysis of the splitting data acts on the
-class labels (`AdjectiveClass.reanalyse`).
+`Modifier.ShiftsHead`, and *real* is the identity modifier. The paper leaves the meaning of the
+subsective *fake* informal; it is read here as the modifier that keeps, of the head it is given,
+what is not a literal N, `Modifier.intersective Nᶜ`, so that on the shifted head *real* and *fake*
+divide the head as *Is that gun real or fake?* (10b) presupposes. What singles out the privatives
+is that non-vacuity licenses the shift for them and not for an adjective already non-vacuous
+within its literal head (`Modifier.not_shiftsHead_of_isNonVacuous`). The reanalysis of the
+splitting data acts on the class labels (`AdjectiveClass.reanalyse`).
 
 ## Errata
 
@@ -151,14 +153,22 @@ theorem reanalyse_splittable_iff (c : AdjectiveClass) :
 
 /-! ### *real* and *fake* on the shifted head -/
 
-/-- Where there are both fake things and Ns, *fake* shifts its head, and on the shifted head it
-is subsective, its value falling under the head, and not privative, its value meeting the head
-(pp. 279–281). -/
-theorem shiftsHead_subsective {adj : Modifier (W → E → Prop)} (hp : IsPrivative adj)
+/-- A privative adjective is a subsective adjective plus coercion (pp. 279–280): where there are
+both fake things and Ns, *fake* shifts its head, and the subsective, not privative, modifier that
+keeps of a head what is not a literal N yields on the shifted head exactly the privative's
+value, the fake Ns. -/
+theorem subsective_plus_coercion {adj : Modifier (W → E → Prop)} (hp : IsPrivative adj)
     {N : W → E → Prop} {w : W} (hadj : ∃ x, adj N w x) (hN : ∃ x, N w x) :
-    ShiftsHead adj N w ∧ adj N w ≤ N w ⊔ adj N w ∧ ¬ Disjoint (adj N w) (N w ⊔ adj N w) :=
-  ⟨hp.shiftsHead_iff.2 ⟨hadj, hN⟩, le_sup_right,
-    fun h ↦ hadj.elim fun x hx ↦ (Pi.disjoint_iff.1 h x).le_bot ⟨hx, Or.inr hx⟩⟩
+    ShiftsHead adj N w ∧ IsSubsective (intersective Nᶜ) ∧ ¬ IsPrivative (intersective Nᶜ) ∧
+      intersective Nᶜ (N ⊔ adj N) = adj N := by
+  have hsub := (intersective_isIntersective Nᶜ).isSubsective
+  have heq : intersective Nᶜ (N ⊔ adj N) = adj N := by
+    show Nᶜ ⊓ (N ⊔ adj N) = adj N
+    rw [inf_sup_left, compl_inf_self, bot_sup_eq, inf_eq_right]
+    exact (hp N).le_compl_right
+  refine ⟨hp.shiftsHead_iff.2 ⟨hadj, hN⟩, hsub, fun hpr ↦ ?_, heq⟩
+  obtain ⟨x, hx⟩ := hadj
+  exact hpr.not_isSubsective ⟨N ⊔ adj N, w, x, (congrFun (congrFun heq w) x).mpr hx⟩ hsub
 
 /-- *real* is vacuous on its literal head, and on a privatively shifted head non-vacuous iff there
 are both Ns and things in the privative's value (p. 280). -/

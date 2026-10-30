@@ -14,13 +14,15 @@ of its instances, the parts of its value. ∩ is ι applied at each situation, a
 inverse, `Set.Iic`.
 
 [∩ undoes ∪](##Kind.down_up), and [∪ undoes ∩](##Kind.up_down) on a property closed downward
-wherever ∩ is defined, which a property closed under arbitrary sums over a complete semilattice
-is (`Kind.up_down_of_sSup_mem`) and a finite one closed under binary sums too
-(`Kind.up_down_of_finite`). On the plural of a singular property, ∪∩ restores the
-[atoms beneath the pluralities](##Kind.up_down_of_forall_atom). ∩ is
-[undefined for a singular property](##Kind.down_notMem_of_atom) when every kind has a plural
-instance in some situation. Derived kind predication, which applies a predicate of objects to a
-kind by quantifying existentially over its instances, is `Quantifier.Det.some (Kind.up k s)`.
+wherever ∩ is defined, that is, wherever the property has instances its extension has a largest
+member. Closure under sums gives the largest member, not closure downward: over a complete
+semilattice ∩ is defined on a property closed under arbitrary sums, so ∪ undoes ∩ on one that is
+also closed downward (`Kind.up_down_of_sSup_mem`), and ∩ is defined on a finite property closed
+under binary sums (`Kind.down_isSome_of_supClosed`). On the plural of a singular property, ∪∩
+restores the [atoms beneath the pluralities](##Kind.up_down_of_forall_atom). ∩ is
+[undefined for a singular property](##Kind.down_notMem_of_atom) when no kind is singular wherever
+it has a value. Derived kind predication, which applies a predicate of objects to a kind by
+quantifying existentially over its instances, is `Quantifier.Det.some (Kind.up k s)`.
 
 ## Main definitions
 
@@ -113,29 +115,17 @@ theorem up_down_of_forall_atom (hF : ∀ s, ∀ x ∈ F s, Atom x)
   · rintro (hy | ⟨-, x, hx, hyx⟩)
     exacts [hgm.2 hy, hyx.trans (hgm.2 hx)]
 
-/-- ∩ is undefined for a singular property when every kind has a plural instance in some
-situation: the concept of a singular property is singular wherever it has a value. -/
+/-- ∩ is undefined for a singular property when no kind is singular in every situation where it
+has a value: the concept of a singular property is singular wherever it has one. -/
 theorem down_notMem_of_atom {K : Set (S → Option E)} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
     (hP : ∀ s, ∀ x ∈ P s, Atom x) : down P ∉ K :=
   fun h ↦ hK _ h fun s _ hd ↦ hP s _ (down_eq_some_iff.1 hd).1
-
-/-- The concept of a property with a non-null plurality in its extension at a situation where ∩
-is defined is not singular in every situation. -/
-theorem not_forall_atom_down (hdef : (down P s).isSome) (hx : x ∈ P s) (hx0 : ¬ IsBot x)
-    (hxa : ¬ Atom x) : ¬ ∀ s, ∀ d ∈ down P s, Atom d := fun h ↦ by
-  obtain ⟨m, hm⟩ := Option.isSome_iff_exists.1 hdef
-  have hma := h s m hm
-  exact hxa (hma.eq ((down_eq_some_iff.1 hm).2 hx) hx0 ▸ hma)
 
 end PartialOrder
 
 theorem down_isSome_of_supClosed [SemilatticeSup E] (hcum : SupClosed (P s)) (hfin : (P s).Finite)
     (hne : (P s).Nonempty) : (down P s).isSome :=
   hcum.directedOn.iota_isGreatest_isSome hfin hne
-
-theorem up_down_of_finite [SemilatticeSup E] (hP : ∀ s, IsLowerSet (P s))
-    (hcum : ∀ s, SupClosed (P s)) (hfin : ∀ s, (P s).Finite) : up (down P) = P :=
-  up_down hP fun s ↦ down_isSome_of_supClosed (hcum s) (hfin s)
 
 theorem up_down_of_sSup_mem [CompleteSemilatticeSup E] (hP : ∀ s, IsLowerSet (P s))
     (hsum : ∀ s, ∀ T ⊆ P s, T.Nonempty → sSup T ∈ P s) : up (down P) = P :=
