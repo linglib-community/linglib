@@ -25,9 +25,10 @@ and the spans of prosodic constituency, then reads a Minimalist object.
 * Categories are `Unit`. The engine, c-command and the yield ignore categories; the categories a
   head function assigns (`Minimalist.lexicalHeadAt`) depend on the position, not on the vertex, and
   are not a relabelling.
-* A constituency tree has traces and binders only, so a copy is not represented. A trace of a
-  token is a trace whose index the token gives, and the index-free trace has index `0`. No binder is
-  introduced: a trace is free in the tree, interpreted by the assignment.
+* A constituency tree has traces and binders only, so a copy is not represented. The trace of a
+  token has the index `ι` gives the token, plus one, and the index-free trace has index `0`, so
+  that no token's trace shares the index-free trace's. No binder is introduced: a trace is free in
+  the tree, interpreted by the assignment.
 
 ## References
 
@@ -47,12 +48,12 @@ namespace SyntacticObject
 variable {L : Type}
 
 /-- The label of a vertex in a constituency tree: a lexical leaf is a terminal, the bare label a
-projection, the trace of a token the trace of index `ι` of the token, and the index-free trace the
-trace of index `0`. -/
+projection, the trace of a token the trace of index `ι a + 1` for the token `a`, and the index-free
+trace the trace of index `0`. -/
 def Vertex.toLabel (ι : L → ℕ) : Vertex L → Tree.Label Unit L
   | .inl (some a) => .terminal () a
   | .inl none => .phrase () .projection
-  | .inr (some a) => .trace (ι a) ()
+  | .inr (some a) => .trace (ι a + 1) ()
   | .inr none => .trace 0 ()
 
 end SyntacticObject
@@ -61,14 +62,14 @@ namespace LinearizedSyntacticObject
 
 variable {L : Type} (ι : L → ℕ)
 
-/-- The constituency tree of a linearized object, with the trace of a token indexed by `ι` and
-the index-free trace by `0`. -/
+/-- The constituency tree of a linearized object, with the trace of a token `a` of index
+`ι a + 1` and the index-free trace of index `0`. -/
 def toTree (t : LinearizedSyntacticObject L) : Tree Unit L :=
   t.val.map (SyntacticObject.Vertex.toLabel ι)
 
 @[simp] theorem toTree_leaf (a : L) : (leaf a).toTree ι = .terminal () a := rfl
 
-@[simp] theorem toTree_traceOf (a : L) : (traceOf a).toTree ι = .trace (ι a) () := rfl
+@[simp] theorem toTree_traceOf (a : L) : (traceOf a).toTree ι = .trace (ι a + 1) () := rfl
 
 @[simp] theorem toTree_trace : (trace : LinearizedSyntacticObject L).toTree ι = .trace 0 () := rfl
 

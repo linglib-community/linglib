@@ -17,10 +17,11 @@ argument and not conversely (`mittie_cCommands_theDog`).
 
 Run on the Minimalist object of *Mittie fed the dog*, the type-driven composition engine
 [computes the denotation](##Kratzer1996.interp_tree) that Kratzer derives step by step, the events
-of feeding the dog of which Mittie is the agent. Since the external argument enters by Event
-Identification, the kind of event the verb phrase describes constrains the role Voice can add:
-where predicates are defined only at the eventualities of their Aktionsart and no action is a
-state, an agent head and the stative *own the dog* compose to a predicate [defined at no
+of feeding the dog of which Mittie is the agent. Kratzer connects the Aktionsart of a verb with
+the role of its external argument through Event Identification, which she takes to be undefined
+when its inputs are restricted to disjoint sorts of eventuality. Where predicates are defined only
+at the eventualities of their Aktionsart and no action is a state, an agent head and the stative
+*own the dog* compose on the partial engine to a predicate [defined at no
 eventuality](##Kratzer1996.agent_owns_undefined), while a holder head composes with it to one
 [defined at the states](##Kratzer1996.holder_owns_defined).
 
@@ -42,6 +43,13 @@ eventuality](##Kratzer1996.agent_owns_undefined), while a holder head composes w
 
 * (26) gives *Holder* as $\lambda x_e \lambda s_s[\mathrm{holder}(x)(e)]$, binding $s$ and using
   $e$. The study reads $\mathrm{holder}(x)(s)$.
+
+## TODO
+
+The partial engine's Event Identification is defined eventuality by eventuality, so an agent head
+and a stative verb phrase give an output function defined nowhere where Kratzer has no output
+function. An Event Identification defined only when its inputs are defined at some common
+eventuality would make `agent_owns_undefined` the failure of the composition itself.
 
 ## References
 
@@ -107,7 +115,7 @@ variable {Entity V : Type} (ρ : Voice.Instruction → Entity → V → Prop) (f
 /-- The lexicon of (22): *Agent* denotes as agentive Voice, and *feed*, *Mittie* and *the dog*
 denote the model's constants. -/
 def lex (tok : LexicalItem.Token) : Option (Denotation Entity Unit Id { eventuality := V }) :=
-  if tok = agentVoice then Voice.agentive.denote ρ
+  if tok = agentVoice then some (Voice.agentive.denote ρ)
   else if tok = feed then some ⟨Ty.evt, feedRel⟩
   else if tok = mittie then some ⟨.e, m⟩
   else if tok = theDog then some ⟨.e, d⟩
@@ -123,7 +131,7 @@ theorem interp_tree (g : Assignment Entity) :
       (lex ρ feedRel m d) g = some ⟨Ty.vt, feedRel d⟩ := by
     simp [lex, theDog, feed, agentVoice, mittie]
   have hv := Voice.Head.interp_toTree_leaf_mul ρ (·.id) (v := agentVoice)
-    (by simp [lex]) (show Voice.agentive.thematic = some .agent from rfl) hvp
+    (by simp [lex]) (show Voice.agentive.thematic = some .agent from rfl) rfl hvp
   rw [tree, LinearizedSyntacticObject.mul_def, LinearizedSyntacticObject.toTree_merge,
     Tree.interp_phrase_binary, LinearizedSyntacticObject.toTree_leaf, Tree.interp_terminal, hv]
   simp [lex, mittie, agentVoice, feed]
@@ -178,13 +186,13 @@ private theorem interpPartial_ownsTree (g : Assignment Entity) {h : LexicalItem.
     LinearizedSyntacticObject.toTree_leaf, Tree.interpPartial_phrase_binary,
     Tree.interpPartial_terminal, hm, hd, ho, hh, Option.bind_some]
   rw [Mode.combine?_evalPartial_fn_right, Option.bind_some]
-  erw [Mode.combine?_evalPartial_eventIdentificationLeft, Option.bind_some,
+  rw [Mode.combine?_evalPartial_eventIdentificationLeft, Option.bind_some,
     Mode.combine?_evalPartial_fn_right]
   rfl
 
-/-- (25): an agent head, defined at actions, and the stative *own the dog*, defined at states,
-compose by Event Identification to a predicate defined at no eventuality when no action is a
-state. -/
+/-- An agent head, defined at actions, and the stative *own the dog*, defined at states, where
+Kratzer's Event Identification after (26) comes out undefined, compose on the partial engine to a
+predicate defined at no eventuality when no action is a state. -/
 theorem agent_owns_undefined (g : Assignment Entity) (hdisj : ∀ e, IsAction e → ¬ IsState e) :
     ∃ P : V →. Prop,
       ((ownsTree agentVoice).toTree (·.id)).interpPartial
