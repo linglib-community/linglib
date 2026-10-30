@@ -120,7 +120,8 @@ jobs:
 
       - name: Compose site
         run: |
-          # doc-gen4 output lives under /docs/, so existing deep links survive.
+          # doc-gen4 output lives under /docs/, so existing deep links survive. Its study pages are
+          # replaced below.
           mkdir -p .lake/build/doc-site/docs
           cp -r .lake/build/doc/* .lake/build/doc-site/docs/
           # The landing page at /.
@@ -129,10 +130,11 @@ jobs:
           python3 scripts/gen_eval_page.py --export --out .lake/build/doc-site/eval
           # The bibliography at /bibliography/, with where each work is cited.
           python3 scripts/gen_bibliography_page.py --out .lake/build/doc-site/bibliography
-          # The rebuilt study pages at /docs-new/, beside doc-gen4's until they replace them. A lost
-          # anchor warns rather than blocks the deploy while they are a preview.
-          python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs-new --check \
-            || echo "::warning::gen_docs_pages: some declarations lost their anchors on /docs-new/"
+          # The rebuilt study pages, written over doc-gen4's at /docs/Studies/, so a page's root is
+          # two levels up and doc-gen4's other pages one. A declaration that loses its anchor fails
+          # the deploy. /docs-new/, where the pages were previewed, forwards to them.
+          python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs --root ../../ \
+            --docs-base ../ --check --redirect .lake/build/doc-site/docs-new
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
