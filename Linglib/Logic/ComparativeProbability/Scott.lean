@@ -13,24 +13,14 @@ public import Mathlib.RingTheory.Localization.Integer
 /-!
 # Scott's theorem
 
-Scott's representation theorem for qualitative probability on a finite set says that a relation on
-the subsets of a finite `W` is represented by a probability measure iff `W` is strictly more likely
-than `∅`, every set is at least as likely as `∅`, any two sets compare, and finite cancellation
-holds; de Finetti's further axioms follow from these
-(`FiniteCancellation.isQualitativeProbability`). A comparison `A ≿ B` between disjoint sets is a
-**sign vector** `v : W → SignType`, `A` its positive support and `B` its negative support, and
-cancellation (`Cancellation`) says that whenever a multiset of valid comparisons sums to zero as
-integer vectors, every comparison in it also holds reversed. On a qualitative probability this is
-equivalent to the balanced-sequence form `FiniteCancellation` of `Cancellation.lean`
-(`cancellation_iff_finiteCancellation`); since the sign-vector form compares only disjoint sets, it
-needs qualitative additivity to say anything about overlapping ones.
-
-The hard direction is linear-programming duality over `ℚ` (`Matrix.farkas`), on `Fin n` and
-transported along `Fintype.equivFin`. The weight vectors representing the order form a
-polyhedron, whose normalized points weight the Dirac measures of a representing measure; it is
-nonempty unless a Farkas certificate exists, a nonnegative weighting of valid comparisons that
-sums to zero yet weights a strict one. Clearing denominators turns the certificate into a
-multiset violating `Cancellation`.
+Scott's theorem says that a relation on the subsets of a finite `W` is
+[induced by a probability measure](##ComparativeProbability.representable_iff) iff `W` is strictly
+more likely than `∅`, every set is at least as likely as `∅`, any two sets compare, and finite
+cancellation holds. A comparison `A ≿ B` of disjoint sets is a **sign vector** `v : W → SignType`
+with positive support `A` and negative support `B`, and in this form cancellation says that when
+valid comparisons sum to zero as integer vectors, each holds reversed. It compares only disjoint
+sets, and agrees with finite cancellation
+[on a qualitative probability](##ComparativeProbability.cancellation_iff_finiteCancellation).
 
 ## Main declarations
 
@@ -38,13 +28,23 @@ multiset violating `Cancellation`.
   sides are the supports `posSupport` and `negSupport` of `Core/Basic/Sign.lean`.
 * `Cancellation`: Scott's condition in sign-vector form.
 * `FiniteCancellation.cancellation`, `Cancellation.finiteCancellation`,
-  `cancellation_iff_finiteCancellation`: the two forms agree.
+  `cancellation_iff_finiteCancellation`: the two forms agree on a qualitative probability.
 * `Cancellation.transport`: cancellation along an equivalence of carriers.
 * `cancellation_implies_representable`: the Farkas direction.
-* `representable_iff_finiteCancellation`: Scott's theorem.
-* `representable_iff_cancellation`: its sign-vector form for a qualitative probability.
+* `representable_iff`: Scott's theorem.
+* `representable_iff_cancellation`, `representable_iff_finiteCancellation`: its two forms for a
+  qualitative probability.
 * `cancellation_of_null_atom`: a null atom reduces cancellation to representability one atom
   down.
+
+## Implementation notes
+
+The hard direction is linear-programming duality over `ℚ` (`Matrix.farkas`), on `Fin n` and
+transported along `Fintype.equivFin`. The weight vectors representing the order form a
+polyhedron, whose normalized points weight the Dirac measures of a representing measure; it is
+nonempty unless a Farkas certificate exists, a nonnegative weighting of valid comparisons that
+sums to zero yet weights a strict one. Clearing denominators turns the certificate into a
+multiset violating `Cancellation`.
 
 ## References
 
@@ -394,22 +394,24 @@ theorem cancellation_implies_representable (h : Cancellation r) : Representable 
 theorem representable_iff_cancellation : Representable r ↔ Cancellation r :=
   ⟨fun h ↦ h.finiteCancellation.cancellation, cancellation_implies_representable r⟩
 
+/-- **Scott's theorem** in balanced-sequence form, for a qualitative probability. -/
+theorem representable_iff_finiteCancellation : Representable r ↔ FiniteCancellation r :=
+  (representable_iff_cancellation r).trans (cancellation_iff_finiteCancellation r)
+
 end Scott
 
 /-- **Scott's theorem**. A relation on the subsets of a finite set is induced by a probability
     measure iff the whole space is strictly more likely than `∅`, every set is at least as likely
     as `∅`, any two sets compare, and finite cancellation holds ([scott-1964] Theorem 4.1). -/
-theorem representable_iff_finiteCancellation [Fintype W] [MeasurableSpace W]
-    [DiscreteMeasurableSpace W] (r : Set W → Set W → Prop) :
-    Representable r ↔
-      ¬ r ∅ Set.univ ∧ (∀ A, r A ∅) ∧ (∀ A B, r A B ∨ r B A) ∧ FiniteCancellation r := by
-  refine ⟨fun h ↦ ?_, fun ⟨hnt, hnn, htot, h⟩ ↦ ?_⟩
-  · obtain ⟨μ, hμ, hm⟩ := h
-    refine ⟨by simp [hm], fun A ↦ (hm A ∅).2 (by simp), fun A B ↦ ?_,
-      Representable.finiteCancellation ⟨μ, hμ, hm⟩⟩
-    rw [hm, hm]
-    exact le_total _ _
-  · have := h.isQualitativeProbability htot hnn hnt
+theorem representable_iff [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
+    {r : Set W → Set W → Prop} :
+    Representable r ↔ IsNontrivial r ∧ (∀ A, r A ∅) ∧ Std.Total r ∧ FiniteCancellation r := by
+  refine ⟨fun h ↦ ?_, fun ⟨_, hnn, _, h⟩ ↦ ?_⟩
+  · have hfc := h.finiteCancellation
+    obtain ⟨μ, hμ, hm⟩ := h
+    exact ⟨⟨by simp [hm]⟩, fun A ↦ (hm A ∅).2 (by simp),
+      ⟨fun A B ↦ (le_total (μ B) (μ A)).imp (hm A B).2 (hm B A).2⟩, hfc⟩
+  · have := h.isQualitativeProbability hnn
     exact cancellation_implies_representable r h.cancellation
 
 /-- A null atom and representability one cardinality down yield cancellation, by swapping the

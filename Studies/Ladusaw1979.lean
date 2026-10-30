@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Fragments.English.PolarityItems
 
 /-!
 # Ladusaw (1979): Polarity Sensitivity as Inherent Scope Relations
@@ -10,15 +11,12 @@ public import Linglib.Semantics.Quantification.Counting
 Ladusaw's licensing condition says that an expression triggers negative polarity items in its
 scope exactly when it is downward entailing, its denotation reversing the inclusion of its
 arguments, so that the affective environments of the earlier literature are characterized rather
-than listed. For a construction whose operators are functions between lattices the library's
-licensing theory agrees: it licenses the weak polarity items
-[exactly when it is downward entailing](##licenses_iff_isDownwardEntailing), once the operators that
-are upward entailing as well are set aside. Every environment credited to the dissertation denotes a
-downward-entailing operator (`cited_environments_de`), and a question is not downward entailing by
-construction, licensing by relevance instead (`question_not_de`). The determiners behind three of
-these environments are downward entailing in exactly the argument where they license: *no* in its
-scope and its restrictor, *few* in its scope, and *every* in its restrictor but not its scope
-(`determiner_monotonicity`).
+than listed. For operators between lattices the library's licensing theory agrees once the
+operators that are also upward entailing are set aside: a construction licenses the weak items
+[exactly when it is downward entailing](##licenses_iff_isDownwardEntailing). Every environment
+credited to the dissertation is downward entailing (`isDownwardEntailing_of_mem_environments`), and
+of the determiners behind three of them *no* is so in its scope and restrictor, *few* in its scope,
+and *every* in its restrictor but not its scope (`determiner_monotonicity`).
 
 ## Implementation notes
 
@@ -78,7 +76,7 @@ noncomputable def environments : List Licenser :=
     few.licenser, atMost.licenser, materialAntecedent, beforeClause.licenser, tooTo.licenser,
     clausalComparative.licenser]
 
-theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c := by
+theorem isDownwardEntailing_of_mem_environments : ∀ c ∈ environments, IsDownwardEntailing c := by
   simp only [environments, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
     forall_eq]
   exact ⟨holds_negation .weak, (holds_nobody_iff (s := .weak)).2 (by decide),
@@ -91,7 +89,7 @@ theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c :=
 
 -- by construction: `Licenser.Holds` is `False` at the question licenser, which licenses by
 -- relevance rather than by entailment
-theorem question_not_de : ¬ IsDownwardEntailing question.licenser := id
+theorem not_isDownwardEntailing_question : ¬ IsDownwardEntailing question.licenser := id
 
 theorem licenses_of_isDownwardEntailing {L : Licenser} {e : PolarityItem}
     (hc : IsDownwardEntailing L) (hn : ¬ L.IsStrawsonUE) (he : e.licensor = some .weak) :
@@ -100,18 +98,40 @@ theorem licenses_of_isDownwardEntailing {L : Licenser} {e : PolarityItem}
 
 theorem isDownwardEntailing_of_licenses {F : OperatorFamily} {e : PolarityItem}
     (h : (Licenser.classical F).Licenses e) : IsDownwardEntailing (.classical F) := by
-  rcases h with ⟨_, -, hr⟩ | ⟨h, -⟩ | ⟨h, -⟩
-  · exact isDownwardEntailing_classical_iff.mpr hr.weak.1
-  · exact (h : False).elim
-  · exact (h : False).elim
+  obtain ⟨_, -, hr⟩ | ⟨⟨⟩, -⟩ | ⟨⟨⟩, -⟩ := h
+  exact isDownwardEntailing_classical_iff.mpr hr.weak.1
 
--- (40)
-/-- A construction whose operators are functions between lattices, and not upward entailing,
-licenses the weak negative polarity items exactly when it is downward entailing. -/
+/-- (40): a construction whose operators are functions between lattices, and not all upward
+entailing, licenses the weak negative polarity items exactly when it is downward entailing. -/
 theorem licenses_iff_isDownwardEntailing {F : OperatorFamily} {e : PolarityItem}
     (he : e.licensor = some .weak) (hn : ¬ (Licenser.classical F).IsStrawsonUE) :
     (Licenser.classical F).Licenses e ↔ IsDownwardEntailing (.classical F) :=
   ⟨isDownwardEntailing_of_licenses, fun h ↦ licenses_of_isDownwardEntailing h hn he⟩
+
+-- negation licenses the weak item *ever*, being downward and not upward entailing
+example : negation.licenser.Licenses English.PolarityItems.ever :=
+  (licenses_iff_isDownwardEntailing rfl not_isStrawsonUE_negation).2 (holds_negation .weak)
+
+/-- The scope of *every*, upward entailing. -/
+abbrev everyScope : OperatorFamily :=
+  ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ every p.A⟩
+
+-- the scope of *every* is not downward entailing, so it licenses no weak item
+example : ¬ (Licenser.classical everyScope).Licenses English.PolarityItems.ever := fun h ↦ by
+  have hde := isDownwardEntailing_classical_iff.1 (isDownwardEntailing_of_licenses h)
+    ⟨⟨Unit, fun _ ↦ True⟩, (), trivial⟩
+  exact hde (bot_le : (⊥ : Unit → Prop) ≤ ⊤) (fun _ _ ↦ trivial) () trivial
+
+/-- A constant operator into truth values. -/
+abbrev constFamily : OperatorFamily := ⟨PUnit, fun _ ↦ Prop, fun _ ↦ Prop, fun _ _ ↦ True⟩
+
+-- a constant operator is downward entailing, as Ladusaw's condition counts it, but it licenses
+-- nothing, being upward entailing as well
+example : IsDownwardEntailing (.classical constFamily) ∧
+    ¬ (Licenser.classical constFamily).Licenses English.PolarityItems.ever := by
+  refine ⟨isDownwardEntailing_classical_iff.2 fun _ _ _ _ ↦ le_rfl, fun h ↦ ?_⟩
+  obtain ⟨_, -, hr⟩ | ⟨⟨⟩, -⟩ | ⟨⟨⟩, -⟩ := h
+  exact hr.weak.2 fun _ _ _ _ ↦ le_rfl
 
 variable {α : Type*}
 

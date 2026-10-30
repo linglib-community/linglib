@@ -5,20 +5,15 @@ public import Linglib.Semantics.Reference.Kaplan
 /-!
 # Kaplan (1989): Demonstratives
 
-Kaplan separates the character of an expression, its meaning, from its content at a context, what
-it says there. A sentence is valid in the logic of demonstratives when it is true at every context,
-and necessary when its content at every context is true at every world. Every necessary sentence
-is valid, but the converse, the rule of necessitation, fails as soon as there are two worlds
-([necessitation](##forall_isAPriori_imp_isNecessary_iff)). The identity of a term with its
-rigidification, *α = dthat[α]*, is valid for every term and necessary exactly when the term is
-directly referential ([dthat](##isNecessary_eq_dthat_iff)). Even for sentences whose content does
-not vary with the context, necessitation holds only if every world is the world of some context
-([stable characters](##forall_isAPriori_imp_isNecessary_of_stable_iff)), and a proper context, one
-whose agent exists at its world and is at its position at its time there, has a world with an
-agent. So *I exist* and *I am here now* are valid over the proper contexts
-([I am here now](##isAPriori_locatedAgent)), and in a model with a world where no one exists both
-say something contingent ([the model](##model_isAPriori_not_isNecessary)). The pure indexicals of
-English read the speech-act context however deeply they are embedded, so English has no monsters.
+A sentence is valid in Kaplan's logic of demonstratives when it is true at every context, and
+necessary when what it says at every context is true at every world. Necessity implies validity
+(`Kaplan.Character.IsNecessary.isAPriori`), but necessitation fails
+[as soon as there are two worlds](##forall_isAPriori_imp_isNecessary_iff_subsingleton), and for
+sentences whose content does not vary with the context it holds [only if every world is the world
+of a context](##forall_isAPriori_const_imp_isNecessary_iff_surjective). *α = dthat[α]*
+[is valid](##isAPriori_eq_dthat), and [necessary exactly when α is directly
+referential](##isNecessary_eq_dthat_iff); *I exist* and *I am here now* are
+[valid but contingent](##model_isAPriori_not_isNecessary).
 
 ## Implementation notes
 
@@ -47,7 +42,7 @@ section Necessitation
 variable {C W E : Type*}
 
 /-- Validity implies necessity for every sentence exactly when there is at most one world. -/
-theorem forall_isAPriori_imp_isNecessary_iff [Nonempty C] (ι : C → W) :
+theorem forall_isAPriori_imp_isNecessary_iff_subsingleton [Nonempty C] (ι : C → W) :
     (∀ χ : Character C W Prop, χ.IsAPriori ι → χ.IsNecessary) ↔ Subsingleton W := by
   refine ⟨fun h ↦ ⟨fun w₁ w₂ ↦ ?_⟩, fun _ χ hχ c w ↦ ?_⟩
   · obtain ⟨c⟩ := ‹Nonempty C›
@@ -68,17 +63,16 @@ theorem isNecessary_eq_dthat_iff (ι : C → W) (α : Character C W E) :
       α.IsDirectlyReferential :=
   ⟨fun h c w₁ w₂ ↦ (h c w₁).trans (h c w₂).symm, fun h c w ↦ h c w (ι c)⟩
 
-/-- For sentences whose content is the same at every context, validity implies necessity exactly
-when every world is the world of some context. -/
-theorem forall_isAPriori_imp_isNecessary_of_stable_iff [Nonempty C] (ι : C → W) :
-    (∀ χ : Character C W Prop, (∀ c c', χ c = χ c') → χ.IsAPriori ι → χ.IsNecessary) ↔
+/-- For sentences whose content is the same at every context, Kaplan's stable characters, validity
+implies necessity exactly when every world is the world of some context. -/
+theorem forall_isAPriori_const_imp_isNecessary_iff_surjective [Nonempty C] (ι : C → W) :
+    (∀ p : W → Prop, IsAPriori ι (fun (_ : C) ↦ p) → IsNecessary fun (_ : C) ↦ p) ↔
       Function.Surjective ι := by
-  refine ⟨fun h w ↦ ?_, fun hι χ hχ hv c w ↦ ?_⟩
+  refine ⟨fun h w ↦ ?_, fun hι p hp c w ↦ ?_⟩
   · obtain ⟨c⟩ := ‹Nonempty C›
-    exact h (fun _ w ↦ ∃ c, ι c = w) (fun _ _ ↦ rfl) (fun c ↦ ⟨c, rfl⟩) c w
+    exact h (fun w ↦ ∃ c, ι c = w) (fun c ↦ ⟨c, rfl⟩) c w
   · obtain ⟨c', rfl⟩ := hι w
-    rw [hχ c c']
-    exact hv c'
+    exact hp c'
 
 end Necessitation
 
@@ -109,15 +103,6 @@ theorem isAPriori_existsAgent : IsAPriori (·.1.world) (existsAgent exists_ loca
 theorem isAPriori_locatedAgent : IsAPriori (·.1.world) (locatedAgent exists_ located) :=
   fun c ↦ c.2.2
 
-theorem not_isNecessary_existsAgent {c : ProperContext exists_ located} {w : W}
-    (h : ¬ exists_ c.1.agent w) : ¬ IsNecessary (existsAgent exists_ located) :=
-  fun hn ↦ h (hn c w)
-
-theorem not_isNecessary_locatedAgent {c : ProperContext exists_ located} {w : W}
-    (h : ¬ located c.1.agent c.1.position c.1.time w) :
-    ¬ IsNecessary (locatedAgent exists_ located) :=
-  fun hn ↦ h (hn c w)
-
 /-- The English *I* reads the speech-act context under every embedding. -/
 example : (Kaplan.I : AccessPattern (Context W E P T) E).Stable := AccessPattern.stable_origin _
 
@@ -146,9 +131,38 @@ theorem model_isAPriori_not_isNecessary :
         ¬ IsNecessary (existsAgent existsAt locatedAt)) ∧
       IsAPriori (·.1.world) (locatedAgent existsAt locatedAt) ∧
         ¬ IsNecessary (locatedAgent existsAt locatedAt) :=
-  ⟨⟨isAPriori_existsAgent _ _,
-      not_isNecessary_existsAgent _ _ (c := actualContext) (w := .w1) nofun⟩,
-    isAPriori_locatedAgent _ _,
-    not_isNecessary_locatedAgent _ _ (c := actualContext) (w := .w1) nofun⟩
+  ⟨⟨isAPriori_existsAgent _ _, fun hn ↦ absurd (hn actualContext .w1) nofun⟩,
+    isAPriori_locatedAgent _ _, fun hn ↦ absurd (hn actualContext .w1) nofun⟩
+
+/-- The description *the world of evaluation*, which is not directly referential. -/
+def worldOfEvaluation : Character Unit World World := fun _ w ↦ w
+
+-- *the world of evaluation = dthat[the world of evaluation]* is valid but not necessary, while the
+-- same identity for a name of the actual world is necessary
+example :
+    IsAPriori (fun _ ↦ World.w0) (fun c w ↦ worldOfEvaluation c w =
+        Character.dthat (worldOfEvaluation.diag fun _ ↦ .w0) c w) ∧
+      ¬ IsNecessary (fun c w ↦ worldOfEvaluation c w =
+        Character.dthat (worldOfEvaluation.diag fun _ ↦ .w0) c w) ∧
+      IsNecessary (fun c w ↦ (Character.const .w0 : Character Unit World World) c w =
+        Character.dthat ((Character.const .w0 : Character Unit World World).diag
+          fun _ ↦ .w0) c w) :=
+  ⟨isAPriori_eq_dthat _ worldOfEvaluation,
+    (isNecessary_eq_dthat_iff _ _).not.2 fun h ↦ absurd (h () .w0 .w1) nofun,
+    (isNecessary_eq_dthat_iff _ _).2 fun _ _ _ ↦ rfl⟩
+
+-- the model refutes necessitation, even for the stable characters, since its one proper context
+-- does not reach the alternative world
+example :
+    (¬ ∀ χ : Character (ProperContext existsAt locatedAt) World Prop,
+        χ.IsAPriori (·.1.world) → χ.IsNecessary) ∧
+      ¬ ∀ p : World → Prop, IsAPriori (·.1.world) (fun (_ : ProperContext existsAt locatedAt) ↦ p) →
+        IsNecessary fun (_ : ProperContext existsAt locatedAt) ↦ p := by
+  have : Nonempty (ProperContext existsAt locatedAt) := ⟨actualContext⟩
+  rw [forall_isAPriori_imp_isNecessary_iff_subsingleton,
+    forall_isAPriori_const_imp_isNecessary_iff_surjective]
+  refine ⟨fun h ↦ absurd (h.allEq .w0 .w1) nofun, fun h ↦ ?_⟩
+  obtain ⟨c, hc⟩ := h .w1
+  exact absurd (hc.symm.trans c.2.1) nofun
 
 end Kaplan1989

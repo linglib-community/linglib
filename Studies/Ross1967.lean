@@ -7,41 +7,33 @@ public import Linglib.Data.Examples.Ross1967
 /-!
 # Ross (1967): Constraints on Variables in Syntax
 
-This file formalizes the dissertation's constraints on the variables of reordering
-transformations, stated over the positions a moved constituent leaves behind in a
-constituent-structure tree: the Complex NP Constraint, that nothing is moved out of a sentence
-dominated by a noun phrase with a lexical head noun (`CNPC`); the Coordinate Structure
-Constraint, that no conjunct is moved and nothing is moved out of a conjunct (`CSC`); the Left
-Branch Condition, that no noun phrase on the left branch of a larger noun phrase is moved out
-of it (`LBC`); and the Sentential Subject Constraint, that nothing is moved out of a sentence
-in subject position (`SSC`). A movement is a source position and a landing position in a tree,
-and a constraint is violated when the positions the movement crosses, the ancestors of the
-source that do not dominate the landing site, contain the configuration the constraint names.
-The dissertation's examples are rows whose trees and movements are built here, and
-`chopping_rows` reads their judgments as the constraints predict, the acceptable ones being
-exactly those that violate none; `copying_rows` is the dissertation's other generalization,
-that a copying rule such as Left Dislocation, which leaves a pronoun behind, crosses every one
-of these islands freely. The Complex NP Constraint reads the head of a noun phrase off its line
-of projection, so it holds of Ross's own complex NP, a noun phrase over a noun phrase and a
-sentence, exactly when the inner head is a noun and not the abstract pronoun *it*
-(`cnpc_lexical_head`).
+Ross's constraints on the variables of reordering transformations, the Complex NP Constraint, the
+Coordinate Structure Constraint, the Left Branch Condition and the Sentential Subject Constraint,
+are violated when a movement crosses the configuration they name in a constituent-structure tree.
+[A chopping rule's example is acceptable exactly when it violates none](##Ross1967.chopping_rows),
+and [a copying rule's examples are acceptable though each crosses an
+island](##Ross1967.copying_rows). On Ross's complex NP, a noun phrase over a noun phrase and a
+sentence, [the outer phrase is lexically headed exactly when the inner one
+is](##Ross1967.hasLexicalHead_complexNP), so leaving its sentence [violates the CNPC under a
+noun](##Ross1967.Movement.cnpc_of_complexNP) but [not under *it*](##Ross1967.cnpc_lexical_head).
 
 ## Implementation notes
 
 Trees carry the categories of `PhraseStructure.Cat`, which have no levels: a noun phrase is a node
 of category `N`, a coordinate structure a node of category `Conj` headed by its conjunction word,
-whose other daughters are the conjuncts, and a noun phrase has a lexical head noun when its line
-of projection ends in a word, the `[+N, +Lex]` node of Ross's diagram of the complex NP, which the
-abstract pronoun *it* is not. The trees are the dissertation's diagrams reduced to the categories
-the constraints mention, with the moved constituent in its source position. A relative clause or
-the clause in apposition to an abstract noun is the sister of the noun phrase it modifies under a
-further noun phrase, the `[NP NP S]` structure Ross argues for, so that the head of a complex NP is
-reached through the inner noun phrase. Questions and topicalizations land at the root and
-relativizations at the relative clause. Dominance in the Sentential Subject Constraint is read as
-immediate, the configuration of a sentence exhaustively dominated by a subject NP, so that the
-constraint does not reach a clause inside a relative clause on a subject. The A-over-A principle,
-the pied-piping convention, upward boundedness, and the definition of islands as the domains of
-chopping rules are not formalized.
+whose other daughters are the conjuncts. A noun phrase has a lexical head noun when its lexical
+head (`PhraseStructure.IsLexicalHeadOf`) is a word, the `[+N, +Lex]` node of Ross's diagram of the
+complex NP. The library's lexical head is any minimal projection, and `[N it]`, whose pronoun has
+category `Pron` and not `N`, is one; so the abstract pronoun *it* is not `[+Lex]`, and neither is
+any other pronoun or proper name. The trees are the dissertation's diagrams reduced to the
+categories the constraints mention, with the moved constituent in its source position. A relative
+clause or the clause in apposition to an abstract noun is the sister of the noun phrase it modifies
+under a further noun phrase, the `[NP NP S]` structure Ross argues for. Questions and
+topicalizations land at the root and relativizations at the relative clause. Dominance in the
+Sentential Subject Constraint is read as immediate, the configuration of a sentence exhaustively
+dominated by a subject NP, so that the constraint does not reach a clause inside a relative clause
+on a subject. The A-over-A principle, the pied-piping convention, upward boundedness, and the
+definition of islands as the domains of chopping rules are not formalized.
 
 ## References
 
@@ -59,6 +51,24 @@ open PhraseStructure.Cat (N V P Adj Conj)
 
 /-- A word of a part of speech. -/
 def w (pos : UD.UPOS) (form : String) : Tree Cat String := .terminal (.lex pos) form
+
+/-- A node of `t` has a lexical head when its lexical head is a word. The noun *claim* is the
+lexical head of `[N [N the claim] S]`; the head relation of `[N [N it] S]` stops at `[N it]`, which
+is minimal but not a word. -/
+def HasLexicalHead (t : Tree Cat String) (p : List ℕ) : Prop :=
+  ∃ x ∈ t.positionedTerminals, IsLexicalHeadOf (Tree.HeadDaughterAt t) x.1 ⟨p⟩
+
+instance (t : Tree Cat String) (p : List ℕ) : Decidable (HasLexicalHead t p) :=
+  inferInstanceAs (Decidable (∃ x ∈ _, _))
+
+/-- On Ross's complex NP, a noun phrase over a noun phrase and a sentence, the inner noun phrase is
+the head daughter, so the outer one has a lexical head exactly when the inner one does. -/
+theorem hasLexicalHead_complexNP {t : Tree Cat String} {p : List ℕ} {inner s : Tree Cat String}
+    (ht : t.subtreeAt p = some (Tree.node N [inner, s])) (hi : inner.cat = N) (hs : s.cat = .S) :
+    HasLexicalHead t p ↔ HasLexicalHead t (p ++ [0]) := by
+  have hmd : Tree.HeadDaughterAt t ⟨p⟩ ⟨p ++ [0]⟩ :=
+    ⟨0, by simp [Tree.headIndexAt, Tree.headIndex?, ht, List.zipIdx, hi, hs], rfl⟩
+  simp only [HasLexicalHead, isLexicalHeadOf_iff_of_rel (headDaughterRel_rightUnique _) hmd]
 
 /-- A movement in a tree records the position of the moved constituent and the position it
 lands at. -/
@@ -82,24 +92,16 @@ dominate the landing site, the constituents the moved element is moved out of. -
 def crossed : List (List ℕ) :=
   m.source.inits.filter fun p ↦ p ≠ m.source ∧ ¬ p <+: m.landing
 
-/-- The node at a position has a lexical head when its line of projection ends in a word, a
-terminal, as the noun *claim* heads `[NP [NP the claim] S]` and the pronoun *it* heads nothing. -/
-def HasLexicalHead (p : List ℕ) : Prop :=
-  ∃ x ∈ m.tree.positionedTerminals, IsProjectionOf (Tree.HeadDaughterAt m.tree) x.1 ⟨p⟩
-
-instance (p : List ℕ) : Decidable (m.HasLexicalHead p) :=
-  inferInstanceAs (Decidable (∃ x ∈ _, _))
-
 /-- A conjunct is a daughter of a coordinate structure other than its head, the conjunction. -/
 def IsConjunct (p : List ℕ) : Prop :=
   m.cat? p.dropLast = some Conj ∧ ¬ Tree.HeadDaughterAt m.tree ⟨p.dropLast⟩ ⟨p⟩
 
 instance (p : List ℕ) : Decidable (m.IsConjunct p) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- (4.20): the Complex NP Constraint, by which no element contained in a sentence dominated by a
-noun phrase with a lexical head noun may be moved out of that noun phrase. -/
+/-- (4.20): the Complex NP Constraint is violated when the movement leaves a noun phrase with a
+lexical head noun and a sentence that the noun phrase dominates. -/
 def CNPC : Prop :=
-  ∃ np ∈ m.crossed, m.cat? np = some N ∧ m.HasLexicalHead np ∧
+  ∃ np ∈ m.crossed, m.cat? np = some N ∧ HasLexicalHead m.tree np ∧
     ∃ s ∈ m.crossed, np <+: s ∧ m.cat? s = some .S
 
 /-- The Coordinate Structure Constraint is violated when the moved element is a conjunct leaving its
@@ -129,6 +131,18 @@ instance : Decidable m.LBC := by unfold LBC; infer_instance
 def Violates : Prop := m.CNPC ∨ m.CSC ∨ m.SSC ∨ m.LBC
 
 instance : Decidable m.Violates := inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
+
+variable {m}
+
+/-- Leaving the sentence of Ross's complex NP violates the Complex NP Constraint when the inner
+noun phrase has a lexical head. -/
+theorem cnpc_of_complexNP {np : List ℕ} {inner s : Tree Cat String}
+    (ht : m.at? np = some (Tree.node N [inner, s])) (hi : inner.cat = N) (hs : s.cat = .S)
+    (hnp : np ∈ m.crossed) (hs' : np ++ [1] ∈ m.crossed)
+    (hlex : HasLexicalHead m.tree (np ++ [0])) : m.CNPC :=
+  have ht' : m.tree.subtreeAt np = some (Tree.node N [inner, s]) := ht
+  ⟨np, hnp, by simp [cat?, ht], (hasLexicalHead_complexNP ht' hi hs).2 hlex, np ++ [1], hs',
+    List.prefix_append _ _, by simp [cat?, at?, RoseTree.subtreeAt_append, ht', hs]⟩
 
 end Movement
 
@@ -366,22 +380,35 @@ def data : List Row := Examples.all.filterMap Row.ofDatum
 
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
+/-- A chopping rule's example is acceptable exactly when its movement violates none of the four
+constraints. -/
 theorem chopping_rows :
     ∀ d ∈ data, d.rule = .chopping →
       (d.judgment = .acceptable ↔ ¬ d.movement.Violates) := by
   decide +kernel
 
-/-- Relativizing out of the clause of *the claim that Otto was wearing* (4.18a) violates the
-Complex NP Constraint, and relativizing out of the clause of *it that my wife buys* (4.13a) does
-not: both are a noun phrase over a noun phrase and a sentence, and only the noun *claim* is a
-lexical head. -/
+-- (4.18a), (4.13a): relativizing out of the clause of *the claim* violates the CNPC, out of the
+-- clause of *it* does not
 theorem cnpc_lexical_head :
     (∃ m ∈ movement "(4.18a)", m.CNPC) ∧ ∃ m ∈ movement "(4.13a)", ¬ m.CNPC := by
+  decide +kernel
+
+-- (4.18a): the complex NP over *the claim* satisfies the hypotheses of `cnpc_of_complexNP`
+example : (⟨hatClaim, [0, 1, 1, 1, 1, 2, 2], [0, 1]⟩ : Movement).CNPC :=
+  Movement.cnpc_of_complexNP (np := [0, 1, 1, 1]) rfl rfl rfl (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)
+
+-- (4.13a): `[N it]` is the lexical head of the complex NP over *it*, but it is not a word, as
+-- Ross's `[+Lex]` requires
+example : IsLexicalHeadOf (Tree.HeadDaughterAt seeToIt) ⟨[1, 1, 1, 1, 2, 2, 1, 0]⟩
+      ⟨[1, 1, 1, 1, 2, 2, 1]⟩ ∧ ¬ HasLexicalHead seeToIt [1, 1, 1, 1, 2, 2, 1] := by
   decide +kernel
 
 theorem attributions : ∀ d ∈ data, ∀ c ∈ d.constraint, c.Fires d.movement := by
   decide +kernel
 
+/-- A copying rule's examples are acceptable, though each of their movements violates one of the
+constraints. -/
 theorem copying_rows :
     ∀ d ∈ data, d.rule = .copying → d.judgment = .acceptable ∧ d.movement.Violates := by
   decide +kernel

@@ -128,6 +128,14 @@ theorem IsLexicalHeadOf.unique (hfun : Relator.RightUnique H) {p h h' : α}
     · rfl
     · exact absurd hc (hh'.2 c)
 
+/-- Along a functional head relation a node has the lexical heads of its head daughter. -/
+theorem isLexicalHeadOf_iff_of_rel (hfun : Relator.RightUnique H) {h m d : α} (hmd : H m d) :
+    IsLexicalHeadOf H h m ↔ IsLexicalHeadOf H h d := by
+  refine ⟨fun ⟨hp, hmin⟩ ↦ ⟨?_, hmin⟩, fun ⟨hp, hmin⟩ ↦ ⟨IsProjectionOf.head hmd hp, hmin⟩⟩
+  rcases isProjectionOf_iff_eq_or.mp hp with rfl | ⟨d', hd', hp'⟩
+  · exact absurd hmd (hmin d)
+  · exact hfun hd' hmd ▸ hp'
+
 end Defs
 
 section Order
@@ -555,6 +563,9 @@ theorem isProjectionOf_headDaughterRel_iff {h p : TreePath} :
 
 instance (h p : TreePath) : Decidable (IsProjectionOf (headDaughterRel hd) h p) :=
   decidable_of_iff _ (isProjectionOf_headDaughterRel_iff hd).symm
+
+instance (h p : TreePath) : Decidable (IsLexicalHeadOf (headDaughterRel hd) h p) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The maximal projection of `h` is the lowest maximal projection dominating it. -/
 def maximalProjectionAt (h : TreePath) : TreePath :=

@@ -25,8 +25,8 @@ whatever the complement's Aktionsart (`progressive_stativizes`) are stated.
 
 ## TODO
 
-The paper is not on file; example, figure, and table locators are transcribed from an
-earlier version of this file and are UNVERIFIED.
+Figure 6 is checked against the paper; the other example, figure, and table locators are
+transcribed from an earlier version of this file and are UNVERIFIED.
 
 ## References
 
@@ -70,7 +70,7 @@ override conforms any input to the activity type — states via the
 addition of `hold` and an effector to their causal representation, telic
 events via their processual construal. -/
 def conformToActivity : VendlerClass → VendlerClass :=
-  λ _ => .activity
+  fun _ ↦ .activity
 
 /-! ### The frame adverbial construction (Figure 5, concord) -/
 
@@ -98,20 +98,33 @@ def progressiveRule : CompositionRule VendlerClass
   | [p] => if p = .activity then some .state else none
   | _ => none
 
-/-- The progressive construction (Figure 6): auxiliary *be* with a
-participial complement whose subject requirement unifies with the
-auxiliary's subject, an instance of [kay-fillmore-1999]'s coinstantiation
-construction. -/
+/-- The subject of the progressive's auxiliary. -/
+def progressiveSubject : Slot String := { filler := .open_ .NOUN, gf := some .subj }
+
+/-- The progressive's participial complement. -/
+def progressiveComplement : Slot String := { filler := .open_ .VERB, gf := some .comp }
+
+/-- The progressive construction (Figure 6): auxiliary *be* with a subject and a participial
+complement. -/
 def progressive : Construction (CompositionRule VendlerClass) :=
   { form :=
-      [ { filler := .open_ .NOUN, gf := some .subj, refIdx := some 1 }
+      [ progressiveSubject
       , { filler := .headed "be" .AUX, isHead := true }
-      , { filler := .open_ .VERB, gf := some .comp, subjIdx := some 1 } ]
+      , progressiveComplement ]
   , meaning := progressiveRule }
 
--- Figure 6
-theorem progressive_coinstantiation : refGroupCount progressive.form = 1 := by
-  decide
+/-- The valence set of the auxiliary *be*: its subject, of value `x`, and its participial
+complement, of value `e`, whose subject requirement has value `s`. -/
+def progressiveVal {E : Type*} (x e s : E) : List (Requirement E) :=
+  [progressiveSubject.requirement x none, progressiveComplement.requirement e (some s)]
+
+/-- Figure 6: the progressive is an instance of [kay-fillmore-1999]'s coinstantiation, which
+unifies the subject requirement of the participial complement with the subject of *be*, the
+raising property of the auxiliary. -/
+theorem progressive_coinstantiation {E : Type*} {x e s : E} :
+    Coinstantiates (progressiveVal x e s) ↔ s = x := by
+  simpa [progressiveVal, Slot.requirement, progressiveSubject, progressiveComplement] using
+    coinstantiates_subj_comp_iff (x := x) (e := e) (s := s)
 
 /-! ### Concord vs. shift ((27), (28)) -/
 
@@ -127,7 +140,7 @@ theorem frameAdverbial_concord : PreservesType frameAdverbialRule := by
   · exact (Option.some_inj.mp h).symm
   · exact absurd h (by simp)
 
-theorem progressive_shift : ¬ PreservesType progressiveRule := λ h =>
+theorem progressive_shift : ¬ PreservesType progressiveRule := fun h ↦
   absurd (h .activity .state (by decide)) (by decide)
 
 /-! ### Frame-adverbial predictions (§5.1.2) -/

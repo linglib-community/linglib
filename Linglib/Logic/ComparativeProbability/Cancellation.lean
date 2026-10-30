@@ -7,17 +7,13 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 # Cancellation conditions
 
 A pair of event sequences is *balanced* when every state lies in equally many events on each
-side. Finite cancellation, Scott's reformulation of the condition of Kraft, Pratt and
-Seidenberg, says that when the premise comparisons of a balanced pair hold, the head
-comparison holds reversed; it characterizes representability by a single additive measure.
-
-`Scott.lean` proves Scott's theorem in the sign-vector form of the condition and shows the two
-forms agree (`ComparativeProbability.cancellation_iff_finiteCancellation`). This file holds the
-balanced-sequence form and its soundness: the order a finite measure induces, and so every
-representable qualitative probability order, satisfies finite cancellation. Conversely, finite
-cancellation gives de Finetti's axioms to any relation that is total, puts every set at least as
-high as `∅` and puts the whole space strictly above `∅`: transitivity, monotonicity and
-qualitative additivity are each one instance of it.
+side. Finite cancellation, Scott's reformulation of the condition of Kraft, Pratt and Seidenberg,
+says that when the premise comparisons of a balanced pair hold, the head comparison holds
+reversed. A finite measure's order satisfies it, a balanced pair having
+[equal measure on its two sides](##MeasureTheory.Measure.finiteCancellation), and on a nontrivial
+total relation that puts every set above `∅` it gives
+[de Finetti's axioms](##ComparativeProbability.FiniteCancellation.isQualitativeProbability).
+Together these conditions characterize representability (`representable_iff`, `Scott.lean`).
 
 ## Main definitions
 
@@ -43,7 +39,7 @@ variable {W : Type*}
 open scoped Classical in
 /-- `seqCount s Es` counts the events of `Es` that contain `s`. -/
 noncomputable def seqCount (s : W) (Es : List (Set W)) : ℕ :=
-  (Es.map (fun E => if s ∈ E then (1 : ℕ) else 0)).sum
+  (Es.map fun E ↦ if s ∈ E then (1 : ℕ) else 0).sum
 
 @[simp] theorem seqCount_nil (s : W) : seqCount s [] = 0 := rfl
 
@@ -66,17 +62,17 @@ def FiniteCancellation (ge : Set W → Set W → Prop) : Prop :=
 
 /-! ### De Finetti's axioms from finite cancellation -/
 
-/-- Finite cancellation gives de Finetti's axioms to a relation that is total, puts every set at
-least as high as `∅`, and does not put `∅` as high as the whole space. These are Scott's
-conditions; [scott-1964] (p. 247) derives additivity from totality and cancellation. -/
-theorem FiniteCancellation.isQualitativeProbability {ge : Set W → Set W → Prop}
-    (h : FiniteCancellation ge) (htot : ∀ A B, ge A B ∨ ge B A) (hnn : ∀ A, ge A ∅)
-    (hnt : ¬ ge ∅ Set.univ) : IsQualitativeProbability ge where
-  refl A := (htot A A).elim id id
+/-- Finite cancellation gives de Finetti's axioms to a nontrivial total relation that puts every
+set at least as high as `∅`. These are Scott's conditions; [scott-1964] (p. 247) derives
+additivity from totality and cancellation. -/
+theorem FiniteCancellation.isQualitativeProbability {ge : Set W → Set W → Prop} [IsNontrivial ge]
+    (hnn : ∀ A, ge A ∅) [Std.Total ge] (h : FiniteCancellation ge) :
+    IsQualitativeProbability ge where
+  refl A := h [] A A (fun _ ↦ rfl) (by simp)
   trans A B C hab hbc := h [(A, B), (B, C)] C A (fun s ↦ by
     simp only [List.map_cons, List.map_nil, seqCount_cons, seqCount_nil]; omega)
     (by simp [hab, hbc])
-  total := htot
+  total := Std.Total.total
   mono A B hAB := h [(B \ A, ∅)] A B (fun s ↦ by
     by_cases hA : s ∈ A
     · simp [hA, hAB hA]
@@ -86,7 +82,7 @@ theorem FiniteCancellation.isQualitativeProbability {ge : Set W → Set W → Pr
         by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hab]),
       fun hd ↦ h [(A \ B, B \ A)] B A (fun s ↦ by
         by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hd])⟩
-  bot_not_ge_top := hnt
+  bot_not_ge_top := IsNontrivial.bot_not_ge_top
 
 /-! ### Measures satisfy finite cancellation -/
 
@@ -146,7 +142,7 @@ end
 /-- A representable relation satisfies finite cancellation (the soundness half of Scott's
     theorem, in balanced-sequence form). -/
 theorem Representable.finiteCancellation [Fintype W] [MeasurableSpace W]
-    [MeasurableSingletonClass W] {r : Set W → Set W → Prop} (h : Representable r) :
+    [DiscreteMeasurableSpace W] {r : Set W → Set W → Prop} (h : Representable r) :
     FiniteCancellation r := by
   obtain ⟨μ, hμ, hm⟩ := h
   intro prem X Y hbal hprem

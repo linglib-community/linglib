@@ -20,8 +20,9 @@ from its slot structure rather than stipulated.
 
 * `SlotFiller`, `Slot`, `TypedForm`: the typed form side
 * `RepresentationLevel`, `SlotFiller.level`: the level of a slot's content
-* `derivedSpecificity`, `HasConstraint`, `refGroupCount`: measures derived
-  from forms
+* `derivedSpecificity`, `HasConstraint`: measures derived from forms
+* `Requirement`, `Slot.requirement`, `Coinstantiates`: valence requirements and
+  [kay-fillmore-1999]'s coinstantiation
 * `Construction`, `Construction.specificity`, `Construction.map`: typed
   form–meaning pairings
 * `Construction.IsFullyCompositional`, `Construction.IsFormalIdiom`: analyzability by the
@@ -61,7 +62,7 @@ inductive Specificity where
 Slot content follows [dunn-2025]'s three representation levels, a fixed lexeme (LEX), a word of
 a category (SYN) and a semantic constraint (SEM), with the categories the parts of speech of
 Universal Dependencies where Dunn's are learned, plus [kay-fillmore-1999]'s headed phrases,
-grammatical functions, coreference indices and slot constraints. -/
+grammatical functions and slot constraints. -/
 
 /-- A slot's filler gives the slot's content at one of the representation levels. It is
 parameterized over the lexeme type `Lex`, so the same representation works for strings,
@@ -127,10 +128,6 @@ inductive GrammaticalFunction where
   | obj
   deriving DecidableEq, Repr
 
-/-- A reference index marks unification across slots, [kay-fillmore-1999]'s #1 and #2; values
-bearing one index are unified. -/
-abbrev RefIndex := Nat
-
 /-- A slot constraint is a syntactic constraint on a slot ([kay-fillmore-1999], Figure 12). -/
 inductive SlotConstraint where
   /-- `[loc -]` requires the slot to occur left-isolated, not VP-internal. -/
@@ -144,11 +141,9 @@ inductive SlotConstraint where
 
 /-- A slot in a construction's form has a filler, a headedness flag, and Kay and Fillmore's
 lexicality of the position, where `lex := none` leaves it unspecified; their maximality is not
-stored, since a head is nonmaximal and every other daughter maximal. A slot's semantics bears
-its `refIdx`, and a predicate phrase that does not realize its own subject bears the index of that
-subject requirement as its `subjIdx`. Coinstantiation, which covers raising and control, unifies a
-predicator's subject with the subject requirement of its complement ([kay-fillmore-1999],
-Figure 13). -/
+stored, since a head is nonmaximal and every other daughter maximal. Which values the slots share
+is not part of the form: it is a property of a construct, which coinstantiation constrains
+(`Coinstantiates`). -/
 structure Slot (Lex : Type*) where
   /-- `filler` is what fills the slot. -/
   filler : SlotFiller Lex
@@ -158,10 +153,6 @@ structure Slot (Lex : Type*) where
   lex : Option Bool := none
   /-- `gf` is the slot's grammatical function ([kay-fillmore-1999]). -/
   gf : Option GrammaticalFunction := none
-  /-- `refIdx` is the index of the slot's semantics. -/
-  refIdx : Option RefIndex := none
-  /-- `subjIdx` is the index of the slot's unrealized subject requirement. -/
-  subjIdx : Option RefIndex := none
   /-- `constraints` lists the slot's syntactic constraints. -/
   constraints : List SlotConstraint := []
   deriving DecidableEq, Repr
@@ -200,11 +191,6 @@ instance (form : TypedForm Lex) (c : SlotConstraint) :
     Decidable (HasConstraint form c) :=
   inferInstanceAs (Decidable (∃ s ∈ form, c ∈ s.constraints))
 
-/-- The number of distinct unification indices in a form, on slots and on their subject
-requirements. -/
-def refGroupCount (form : TypedForm Lex) : Nat :=
-  (form.flatMap fun s ↦ s.refIdx.toList ++ s.subjIdx.toList).dedup.length
-
 /-! ### Characterization lemmas -/
 
 theorem derivedSpecificity_eq_fullyAbstract_iff (form : TypedForm Lex) :
@@ -225,6 +211,48 @@ theorem derivedSpecificity_eq_lexicallySpecified_iff (form : TypedForm Lex) :
     exact fun _ ↦ h₂
 
 end DerivedSpecificity
+
+/-! ### Valence and coinstantiation -/
+
+section Coinstantiation
+
+variable {E : Type*}
+
+/-- A valence requirement as unification sees it ([kay-fillmore-1999]): its grammatical function,
+its intrinsic value, `none` for the semantics `[ref ∅]`, and the value of its own subject
+requirement when it is a predicate phrase that does not realize its subject. -/
+structure Requirement (E : Type*) where
+  /-- `gf` is the requirement's grammatical function. -/
+  gf : Option GrammaticalFunction
+  /-- `intrinsic` is the requirement's intrinsic value, `none` for `[ref ∅]`. -/
+  intrinsic : Option E
+  /-- `subj` is the value of the requirement's unrealized subject requirement. -/
+  subj : Option E
+  deriving DecidableEq
+
+/-- The requirement of a slot whose filler a construct gives the value `v`, and whose unrealized
+subject requirement it gives `sv`. A slot marked `[ref ∅]` binds the reference of nothing, so it
+has no intrinsic value whatever the construct gives it. -/
+def Slot.requirement {Lex : Type*} (s : Slot Lex) (v : E) (sv : Option E) : Requirement E :=
+  ⟨s.gf, if .refEmpty ∈ s.constraints then none else some v, sv⟩
+
+/-- Coinstantiation ([kay-fillmore-1999], Figure 13) satisfies the subject requirement of each
+complement in a predicator's valence set by unifying it with the intrinsic value of another member
+of the set: the subject in raising and subject control, the object in object control. The list
+stands for a set, so another member is one distinct from the complement. -/
+def Coinstantiates (val : List (Requirement E)) : Prop :=
+  ∀ k ∈ val, k.gf = some .comp → ∀ v ∈ k.subj, ∃ c ∈ val, c ≠ k ∧ c.intrinsic = some v
+
+instance [DecidableEq E] (val : List (Requirement E)) : Decidable (Coinstantiates val) := by
+  unfold Coinstantiates; infer_instance
+
+/-- In a valence set of a subject and one complement, coinstantiation makes the complement's
+subject the subject's value, as in raising and subject control. -/
+theorem coinstantiates_subj_comp_iff {x e s : E} :
+    Coinstantiates [⟨some .subj, some x, none⟩, ⟨some .comp, some e, some s⟩] ↔ s = x := by
+  simp [Coinstantiates, eq_comm]
+
+end Coinstantiation
 
 /-! ### Constructions and the network -/
 
