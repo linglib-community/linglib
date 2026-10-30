@@ -8,42 +8,28 @@ public import Mathlib.Order.Preorder.Finite
 /-!
 # Minimal elements under a preorder given as a term
 
-This file defines the set of minimal elements of a set under a preorder that is passed as a
-term rather than found by instance resolution. Mathlib's `Minimal` reads the order from the
-`LE` instance of the type, which does not fit a setting where many preorders on one type are
-in play and the preorder is itself data, as with the lattice of preorders on a type. The
-definition here unfolds to `Minimal` for the membership predicate, so the lemmas of
+`Preorder.minimals p s` is the set of minimal elements of `s` under a preorder `p` that is passed
+as a term rather than found by instance resolution. Mathlib's `Minimal` reads the order from the
+`LE` instance of the type, which does not fit a setting where many preorders on one type are in
+play and the preorder is itself data, as with the orderings of worlds in modal and conditional
+semantics. The definition unfolds to `Minimal` for the membership predicate, so the lemmas of
 `Mathlib.Order.Minimal` apply after `letI := p`.
 
-## Main declarations
+Under a well-founded strict order [every element of a set lies above a minimal
+one](##Preorder.exists_le_mem_minimals), so a set has minimal elements exactly when it is
+nonempty. Under a total preorder the minimal elements are [the least
+elements](##Preorder.mem_minimals_iff_forall_le), as for mathlib's `DirectedOn.minimal_iff_isLeast`,
+and the minimal elements of the sets [determine the preorder](##Preorder.eq_of_minimals_eq). Under
+the pullback of a linear order along a map they are [the elements of least
+value](##Preorder.mem_minimals_lift), and under a preorder derived from criteria they are [the
+elements satisfying every criterion](##Preorder.minimals_ofCriteria_eq) whenever some element does.
 
-* `Preorder.minimals`: the minimal elements of a set under a preorder.
-* `Preorder.mem_minimals_of_subset`: an element minimal in a set is minimal in any subset that
-  contains it.
-* `Preorder.exists_le_mem_minimals`: under a well-founded strict order, every element of a set
-  lies above a minimal element of the set.
-* `Preorder.lt_iff_not_ge`, `Preorder.mem_minimals_iff_forall_le`, `Preorder.mem_minimals_pair`:
-  under a total preorder the strict order is the negated converse, the minimal elements are the
-  least elements, and minimality in a pair is the order relation.
-* `Preorder.minimals_nonempty_iff`, `Preorder.minimals_subsingleton`: under a well-founded strict
-  order a set has a minimal element exactly when it is nonempty, and under a total antisymmetric
-  preorder it has at most one.
-* `Preorder.minimals_eq_of_subset_of_subset`: under a well-founded total preorder, two sets whose
-  minimal elements each lie in the other have the same minimal elements.
-* `Preorder.minimals_subset_iff_forall_exists_lt`, `Preorder.minimals_subset_iff_exists_forall_lt`:
-  under a well-founded strict order the minimal elements of `s` lie in `t` when each element of
-  `s` outside `t` is above one inside, and, for a total preorder, when one element inside is
-  below all those outside.
-* `Preorder.minimals_inter_eq`, `Preorder.eq_of_minimals_eq`: under a total preorder, restricting
-  a set to a part that meets its minimal elements restricts them, and the minimal elements
-  determine the preorder.
-* `Preorder.minimals_nonempty`, `Preorder.minimals_nonempty_of_finite`: on a finite type, and in
-  a finite set, every nonempty set has a minimal element.
-* `Preorder.total_lift`, `Preorder.wellFounded_lt_lift`, `Preorder.mem_minimals_lift`: the
-  pullback of a linear order along a map is total, that of a well-founded order is well-founded,
-  and its minimal elements are the elements of least value.
-* `Preorder.minimals_ofCriteria_eq`: under a criteria-derived preorder, when some element of
-  the set satisfies every criterion, the minimal elements are exactly those that do.
+## Implementation notes
+
+`Preorder.lift_le_iff` and `Preorder.lift_lt_iff` are not simp lemmas: a subtype is ordered by
+`Preorder.lift Subtype.val`, so they would rewrite every subtype comparison to its coercion and
+loop against `Subtype.coe_le_coe`. Mathlib has no decidability instance for `Minimal`; the one here
+decides it on a finite type with decidable order and predicate.
 -/
 
 @[expose] public section
@@ -122,14 +108,15 @@ theorem lt_iff_not_ge (hp : Std.Total p.le) {b : α} : p.lt a b ↔ ¬ p.le b a 
 /-- Under a total preorder the minimal elements of a set are its least elements. -/
 theorem mem_minimals_iff_forall_le (hp : Std.Total p.le) :
     a ∈ p.minimals s ↔ a ∈ s ∧ ∀ b ∈ s, p.le a b :=
-  ⟨fun h ↦ ⟨h.1, fun b hb ↦ (hp.total a b).elim id (h.2 hb)⟩,
-    fun h ↦ ⟨h.1, fun b hb _ ↦ h.2 b hb⟩⟩
+  letI := p
+  haveI : Std.Total fun x y : α ↦ y ≤ x := ⟨fun a b ↦ hp.total b a⟩
+  (Std.Total.directedOn s).minimal_iff_isLeast
 
 /-- Under a total antisymmetric preorder a set has at most one minimal element. -/
 theorem minimals_subsingleton (hp : Std.Total p.le) (ha : Std.Antisymm p.le) :
-    (p.minimals s).Subsingleton := fun a has b hbs ↦
-  ha.antisymm a b (((mem_minimals_iff_forall_le hp).1 has).2 b hbs.1)
-    (((mem_minimals_iff_forall_le hp).1 hbs).2 a has.1)
+    (p.minimals s).Subsingleton := fun _ has _ hbs ↦
+  letI : PartialOrder α := { p with le_antisymm := ha.antisymm }
+  IsLeast.unique ((mem_minimals_iff_forall_le hp).1 has) ((mem_minimals_iff_forall_le hp).1 hbs)
 
 /-- Under a well-founded total preorder, two sets whose minimal elements each lie in the other
 have the same minimal elements. -/
@@ -207,8 +194,7 @@ section lift
 
 variable {β : Type*} (f : α → β)
 
--- Not `@[simp]`: a subtype is ordered by `Preorder.lift Subtype.val`, so these would rewrite every
--- subtype comparison to its coercion and loop against `Subtype.coe_le_coe`.
+-- Not `@[simp]`; see the implementation notes.
 theorem lift_le_iff [Preorder β] {a b : α} : (Preorder.lift f).le a b ↔ f a ≤ f b :=
   Iff.rfl
 
