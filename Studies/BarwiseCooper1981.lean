@@ -31,7 +31,7 @@ witness sets (C11). C12 and C13 prove that *more than half* is definable neither
 first-order logic nor from the unrelativized majority quantifier, so *most* is a determiner,
 not a quantifier. The fragment's quantity words instantiate Table II. *Exactly three or
 exactly five*, one of the quantifiers the monotonicity constraint U6 rules out,
-[fails it](##not_satisfiesUniversals_exactly_three_sup_exactly_five), and the paper's
+[fails it](##not_rightContinuous_exactly_three_sup_exactly_five), and the paper's
 artificial determiners witness that U7 and U8 are not logical truths either. Under the
 substrate's proportional reading of *few* (fewer than half), *few N are N* is contradictory,
 so `few` comes out negative strong, while B&C's Table II lists *few* as weak. Partial
@@ -204,13 +204,14 @@ theorem inter_nonempty_of_scopeUp_dual (hm : ScopeMonotone D) {R A B : Set α}
 
 /-! §4.8 proposes U6, that simple noun phrases express monotone quantifiers or conjunctions of
 monotone quantifiers, as ruling out *an even number of*, *exactly three or exactly five* and *all
-but one*. The second fails it on five individuals, its truth at three and at five members of the
-scope not carrying over to four; the third does not (Errata). -/
+but one*. U6 is right continuity in the scope (`satisfiesUniversals_iff`). The second fails it on
+five individuals, its truth at three and at five members of the scope not carrying over to four;
+the third does not (Errata). -/
 
 -- §4.8
-theorem not_satisfiesUniversals_exactly_three_sup_exactly_five :
-    ¬ (exactly 3 ⊔ exactly 5 : Det (Fin 5)).SatisfiesUniversals := fun h ↦ by
-  have := (satisfiesUniversals_iff.1 h).2 .univ {x | x.val < 4} {x | x.val < 3} .univ
+theorem not_rightContinuous_exactly_three_sup_exactly_five :
+    ¬ (exactly 3 ⊔ exactly 5 : Det (Fin 5)).RightContinuous := fun h ↦ by
+  have := h .univ {x | x.val < 4} {x | x.val < 3} .univ
     (fun x (hx : x.val < 3) ↦ (by omega : x.val < 4)) (Set.subset_univ _)
   revert this
   simp only [Pi.sup_apply, sup_Prop_eq]

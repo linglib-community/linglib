@@ -552,6 +552,23 @@ theorem denote_eq_toFamily (s : Symbol) : (s.denote : Family.{u}) = s.numberTree
   exacts [Family.every_eq_toFamily, Family.some_eq_toFamily, Family.no_eq_toFamily, rfl, rfl,
     rfl, rfl, rfl]
 
+theorem numberTree_injective : Function.Injective numberTree := by
+  intro s t h
+  have h₀₀ := congrFun (congrFun h 0) 0
+  have h₁₀ := congrFun (congrFun h 1) 0
+  have h₀₁ := congrFun (congrFun h 0) 1
+  have h₁₁ := congrFun (congrFun h 1) 1
+  have h₀₂ := congrFun (congrFun h 0) 2
+  have h₂₀ := congrFun (congrFun h 2) 0
+  cases s <;> cases t <;> simp_all [numberTree, NumberTree.all, NumberTree.some, NumberTree.no,
+    NumberTree.most, NumberTree.few, NumberTree.half, NumberTree.both, NumberTree.neither]
+
+/-- Distinct symbols denote distinct quantifiers. -/
+theorem denote_injective : Function.Injective (denote : Symbol → Family.{u}) := fun s t h ↦
+  numberTree_injective <| by
+    rw [← NumberTree.ofFamily_toFamily.{u} s.numberTree, ← NumberTree.ofFamily_toFamily.{u}
+      t.numberTree, ← denote_eq_toFamily, ← denote_eq_toFamily, h]
+
 theorem conservative_denote (s : Symbol) : (s.denote : Family.{u}).Conservative :=
   s.denote_eq_toFamily ▸ NumberTree.conservative_toFamily _
 

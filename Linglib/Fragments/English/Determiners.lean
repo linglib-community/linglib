@@ -9,7 +9,7 @@ public import Linglib.Fragments.English.Phonology
 The quantificational determiners of English are `QuantificationalDeterminer` records, each with
 the readings available for it and what its readings leave open, the number the word selects and
 whether it selects mass nouns: a word with one consensus reading has one, so `⟦all⟧` is
-`{every}`, and *many*, whose standard Barwise and Cooper leave to context, has none. Everything
+`{every}`, and *many* and *few*, whose standards are left to context, have none. Everything
 a reading fixes, its force, monotonicity, strength and conservativity, is a theorem about it, as
 in `Studies/BarwiseCooper1981.lean`. The articles, demonstratives and possessives are the other
 determiner kinds. The indefinite article has the liaison form *an* before a word that begins with
@@ -26,6 +26,7 @@ a vowel sound, and the weak form of *the* varies in the same environment.
 ## References
 
 * [barwise-cooper-1981]
+* [solt-2011]
 * [horn-1972]
 * [van-tiel-franke-sauerland-2021]
 * [von-fintel-1993]
@@ -42,8 +43,11 @@ namespace English.Determiners
 /-! ## Quantificational determiners
 
 A word records the readings the literature makes available for it, as determiner symbols: a word
-with one consensus reading records one, so *all* reads as `every`, and *many*, whose standard
-Barwise and Cooper leave to context, records none. The number a word selects and whether it
+with one consensus reading records one, so *all* reads as `every`, and *many* and *few*, whose
+standards Barwise and Cooper leave to context, record none. They leave that of *most* to context
+too, but *most* records its textbook reading, more than half: unlike the vague *many* and *few*,
+*most* is not generally categorized as vague, though its boundary is fuzzy as well
+([solt-2011] §2, §3). The number a word selects and whether it
 selects mass nouns are left open by its readings, so *every* and *all* share a reading and differ
 there. *Both* and *neither* select the dual, the core concept `[−atomic, +minimal]` of
 [harbour-2014], whose cardinality clause their readings reflect
@@ -53,9 +57,10 @@ there. *Both* and *neither* select the dual, the core concept `[−atomic, +mini
 def none_ : QuantificationalDeterminer :=
   { form := "none", readings := {.no}, selectsMass := true }
 
-/-- *Few*, read as `few`, with a plural noun. -/
+/-- *Few*, with a plural noun and no reading, its standard left to context like that of
+*many*. -/
 def few : QuantificationalDeterminer :=
-  { form := "few", readings := {.few}, numberRestriction := some .plural }
+  { form := "few", numberRestriction := some .plural }
 
 /-- *Some*, read as `Quantifier.Det.some`. -/
 def some_ : QuantificationalDeterminer :=
@@ -65,7 +70,7 @@ def some_ : QuantificationalDeterminer :=
 def half : QuantificationalDeterminer :=
   { form := "half", readings := {.half}, selectsMass := true }
 
-/-- *Most*, read as `most`, with a plural or a mass noun. -/
+/-- *Most*, read as `most`, more than half, with a plural or a mass noun. -/
 def most : QuantificationalDeterminer :=
   { form := "most", readings := {.most}, numberRestriction := some .plural, selectsMass := true }
 

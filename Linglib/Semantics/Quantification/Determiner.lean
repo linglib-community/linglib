@@ -12,8 +12,9 @@ public import Linglib.Semantics.Denotation
 # The readings of a quantificational determiner
 
 A quantificational determiner denotes the readings its entry records, each the global
-denotation of a determiner symbol, so it has as many readings as symbols it records, and none
-when its standard is left to context, as with *many*. Each symbol denotes the global
+denotation of a determiner symbol, so it has [as many readings as symbols it
+records](##QuantificationalDeterminer.ncard_denote), and none when its standard is left to
+context, as with *many*. Each symbol denotes the global
 denotation of a tree of numbers, so every reading of every quantificational determiner is
 [conservative, satisfies extension and is closed under
 isomorphism](##QuantificationalDeterminer.conservative_ext_isom_of_mem_denote): what a lexical
@@ -52,6 +53,16 @@ theorem denote_def (d : QuantificationalDeterminer) :
 theorem denote_mem_denote {s : Det.Symbol} (hs : s ∈ d.readings) :
     (s.denote : Det.Family.{u}) ∈ ⟦d⟧ :=
   ⟨s, hs, rfl⟩
+
+theorem denote_eq_singleton {s : Det.Symbol} (h : d.readings = {s}) :
+    (⟦d⟧ : Set Det.Family.{u}) = {s.denote} := by
+  rw [denote_def, h, Finset.coe_singleton, Set.image_singleton]
+
+/-- A quantificational determiner has as many readings as the symbols its entry records. -/
+theorem ncard_denote (d : QuantificationalDeterminer) :
+    (⟦d⟧ : Set Det.Family.{u}).ncard = d.readings.card := by
+  rw [denote_def, Set.ncard_image_of_injective _ Det.Symbol.denote_injective,
+    Set.ncard_coe_finset]
 
 /-- Every reading of a quantificational determiner is conservative, satisfies extension and is
 closed under isomorphism. -/

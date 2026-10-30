@@ -5,12 +5,7 @@ public import Linglib.Semantics.Plurality.Reciprocal
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.Ring
-public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.Romance.French.Determiners
-public import Linglib.Fragments.Romance.Italian.Determiners
-public import Linglib.Fragments.Slavic.Czech.Determiners
-public import Linglib.Fragments.Japanese.Determiners
-public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Peters and Westerståhl (2006): Quantifiers in Language and Logic
@@ -25,11 +20,14 @@ defines it (`lin_not_monDefinable`): the reciprocal reading built on `LIN` is ge
 
 Peters and Westerståhl's quantirelation universal has the quantifiers that interpret
 quantirelations conservative and satisfying extension, and they claim that the lexical quantifier
-expressions denote quantifiers closed under isomorphism. The quantificational determiners of the
-English, French, Italian, Czech, Japanese and Mandarin fragments [meet both on every
-reading](##PetersWesterstahl2006.conservative_ext_isom_of_mem_inventories), while their MO, which
-holds when the restrictor has more elements than the scope, is [the reading of no
-quantificational determiner](##PetersWesterstahl2006.mo_not_mem_denote), not being conservative.
+expressions denote quantifiers closed under isomorphism. On finite universes the global
+determiner denotations meeting both are [exactly the denotations of the binary relations between
+`|A \ B|` and `|A ∩ B|`](##PetersWesterstahl2006.conservative_ext_isom_iff_exists_toFamily), the
+patterns of the number triangle, and every determiner symbol denotes one. Of the logically
+respectable quantifiers the book offers as no determiner's meaning, MO, which holds when the
+restrictor has more elements than the scope,
+[is not conservative](##PetersWesterstahl2006.not_conservative_mo), while Div and Sqt are
+patterns of the triangle, ruled out on empirical grounds alone.
 
 ## Implementation notes
 
@@ -37,10 +35,10 @@ The two models are the successor graphs of `+ 1` on `ZMod (2 ^ (r + 1))` and of 
 `ZMod 2 × ZMod (2 ^ r)`, and the game is won by the general result for successor graphs of
 permutations with long cycles, `FirstOrder.Language.duplicatorWinsBijective_successor`.
 
-A quantificational determiner's readings are determiner symbols, each denoting the global
-denotation of a tree of numbers, so that what the fragments record meets the universal and the
-claim by construction (`QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`); the
-theorem on the inventories states which lexicon they are checked against.
+The universal and the claim are stated of denotations, not of the fragments' entries. An entry's
+readings are determiner symbols, which meet both by construction
+(`QuantificationalDeterminer.conservative_ext_isom_of_mem_denote`), and the fragments draw some of
+their readings from sources later than the book.
 
 ## TODO
 
@@ -142,43 +140,47 @@ theorem lin_not_monDefinable : ¬ Language.graph.MonDefinable Set.univ Reciproca
     ⟨oneCycle r, trivial, twoCycles r, trivial, duplicatorWinsBijective_oneCycle_twoCycles r,
       oneCycle_mem_lin r, twoCycles_not_mem_lin r⟩
 
-/-! ### (QU) and (A) on the fragments -/
+/-! ### (QU) and (A) -/
 
-section Fragments
+section Universals
 
 open Quantifier
-open scoped Denotes
 
-/-- The determiner inventories of the English, French, Italian, Czech, Japanese and Mandarin
-fragments. -/
-def inventories : List Determiner.Inventory :=
-  [English.Determiners.inventory, French.Determiners.inventory, Italian.Determiners.inventory,
-    Czech.Determiners.inventory, Japanese.Determiners.inventory, Mandarin.Determiners.inventory]
+universe u
 
-/-- (QU), p. 138, and (A), p. 330, on the fragments: every reading of every quantificational
-determiner of the six inventories is conservative, satisfies extension and is closed under
-isomorphism. -/
-theorem conservative_ext_isom_of_mem_inventories :
-    ∀ inv ∈ inventories, ∀ q, Determiner.Entry.quantifier q ∈ inv →
-      ∀ Q ∈ (⟦q⟧ : Set Det.Family.{0}), Q.Conservative ∧ Q.Ext ∧ Q.Isom :=
-  fun _ _ _ _ _ hQ ↦ QuantificationalDeterminer.conservative_ext_isom_of_mem_denote hQ
+/-- Fact 11 (b) and Fact 12, on finite universes: a global determiner denotation is conservative,
+satisfies extension and is closed under isomorphism, as (QU) and (A) require of lexical
+quantirelations, exactly when it is the denotation of a binary relation between `|A \ B|` and
+`|A ∩ B|`. -/
+theorem conservative_ext_isom_iff_exists_toFamily {Q : Det.Family.{u}} :
+    Q.Conservative ∧ Q.Ext ∧ Q.Isom ↔ ∃ q : NumberTree, q.toFamily = Q :=
+  ⟨fun ⟨hC, hE, hI⟩ ↦ ⟨_, NumberTree.toFamily_ofFamily hC (Det.Family.constant_iff.2 ⟨hE, hI⟩)⟩,
+    fun ⟨q, hq⟩ ↦ hq ▸ ⟨NumberTree.conservative_toFamily q, (NumberTree.constant_toFamily q).ext,
+      (NumberTree.constant_toFamily q).isom⟩⟩
 
-example : Determiner.Entry.quantifier English.Determiners.most ∈ English.Determiners.inventory ∧
-    Det.Family.most ∈ (⟦English.Determiners.most⟧ : Set Det.Family.{0}) :=
-  ⟨List.mem_append_left _ (List.mem_append_right _ (List.mem_map_of_mem (by decide))),
-    ⟨.most, by decide, rfl⟩⟩
+example (s : Det.Symbol) : (Det.Symbol.denote.{u} s).Conservative ∧
+    (Det.Symbol.denote.{u} s).Ext ∧ (Det.Symbol.denote.{u} s).Isom :=
+  conservative_ext_isom_iff_exists_toFamily.2 ⟨s.numberTree, s.denote_eq_toFamily.symm⟩
 
-/-- MO of (38a), p. 13: the restrictor has more elements than the scope. -/
+/-- MO of (38a): the restrictor has more elements than the scope. -/
 def mo : Det.Family.{0} := fun _ _ A B ↦ B.ncard < A.ncard
 
+-- p. 14
 theorem not_conservative_mo : ¬ mo.Conservative := fun h ↦ by
   have := h Bool {true} {false}
   simp [mo] at this
 
-/-- MO is the reading of no quantificational determiner. -/
-theorem mo_not_mem_denote (q : QuantificationalDeterminer) : mo ∉ (⟦q⟧ : Set Det.Family.{0}) :=
-  fun h ↦ not_conservative_mo (QuantificationalDeterminer.conservative_ext_isom_of_mem_denote h).1
+/-- Div of (38b): `|A ∩ B|` divides `|A|`. -/
+def div : Det.Family.{0} := (NumberTree.ofSizes fun x p ↦ x ∣ p).toFamily
 
-end Fragments
+/-- Sqt of (38c): `|A ∩ B|` exceeds the square root of `|A|`. -/
+def sqt : Det.Family.{0} := (NumberTree.ofSizes fun x p ↦ p < x * x).toFamily
+
+-- p. 14
+example : (div.Conservative ∧ div.Ext ∧ div.Isom) ∧ (sqt.Conservative ∧ sqt.Ext ∧ sqt.Isom) :=
+  ⟨conservative_ext_isom_iff_exists_toFamily.2 ⟨_, rfl⟩,
+    conservative_ext_isom_iff_exists_toFamily.2 ⟨_, rfl⟩⟩
+
+end Universals
 
 end PetersWesterstahl2006

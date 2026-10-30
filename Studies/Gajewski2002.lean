@@ -345,16 +345,16 @@ noncomputable def Determiner.readings : Determiner → Set Det.Family.{0}
   | .three => {Det.Family.atLeast 3}
 
 @[simp] theorem Determiner.readings_every :
-    Determiner.every.readings = {Det.Family.every} := by
-  ext; simp [Determiner.readings, English.Determiners.every, eq_comm]
+    Determiner.every.readings = {Det.Family.every} :=
+  QuantificationalDeterminer.denote_eq_singleton (d := English.Determiners.every) (s := .every) rfl
 
 @[simp] theorem Determiner.readings_some :
-    Determiner.some.readings = {Det.Family.some} := by
-  ext; simp [Determiner.readings, English.Determiners.some_, eq_comm]
+    Determiner.some.readings = {Det.Family.some} :=
+  QuantificationalDeterminer.denote_eq_singleton (d := English.Determiners.some_) (s := .some) rfl
 
 @[simp] theorem Determiner.readings_most :
-    Determiner.most.readings = {Det.Family.most} := by
-  ext; simp [Determiner.readings, English.Determiners.most, eq_comm]
+    Determiner.most.readings = {Det.Family.most} :=
+  QuantificationalDeterminer.denote_eq_singleton (d := English.Determiners.most) (s := .most) rfl
 
 /-- The constructions of the paper's sentences, with their determiner where one matters. -/
 inductive Construction

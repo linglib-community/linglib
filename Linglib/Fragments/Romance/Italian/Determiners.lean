@@ -27,6 +27,8 @@ readings the literature makes available for it and the forms it takes in agreeme
 
 * `Italian.Determiners.combine_eq_combine_iff`: a combination keeps the forms of the definite
   article apart, so the partitive and *quello* vary exactly as the article does.
+* `Italian.Determiners.QuantityWord.form_eq_agree`: a word's record form is its masculine form
+  before a consonant.
 * `Italian.Determiners.QuantityWord.forall_agree_eq_iff`: *ogni* and *qualche* are invariant.
 * `Italian.Determiners.isSyncretic_inventory`: the definite article marks both strengths.
 
@@ -183,14 +185,21 @@ def molti : QuantityWord :=
   { form := "molti", numberRestriction := some .plural,
     agree := fun g _ ↦ match g with | .masculine => "molti" | .feminine => "molte" }
 
-/-- *Pochi* 'few', read as `few`, with a plural noun. -/
+/-- *Pochi* 'few', with a plural noun and no reading, its standard being contextual like that of
+English *few*. -/
 def pochi : QuantityWord :=
-  { form := "pochi", readings := {.few}, numberRestriction := some .plural,
+  { form := "pochi", numberRestriction := some .plural,
     agree := fun g _ ↦ match g with | .masculine => "pochi" | .feminine => "poche" }
 
 /-- The quantificational determiners. -/
 def quantityWords : List QuantityWord :=
   [ogni, ciascuno, qualche, nessuno, tutti, alcuni, molti, pochi]
+
+/-- The record form of each quantificational determiner is its masculine form before a
+consonant. -/
+theorem QuantityWord.form_eq_agree :
+    ∀ w ∈ quantityWords, w.form = w.agree .masculine .consonant := by
+  decide
 
 /-- Among the quantificational determiners, *ogni* and *qualche* are invariant. -/
 theorem QuantityWord.forall_agree_eq_iff :
