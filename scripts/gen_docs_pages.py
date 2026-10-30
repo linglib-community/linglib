@@ -10,11 +10,16 @@ the same theory, the papers it cites and those citing it, and the papers it cite
 formalizes. Everything comes from doc-gen4's output, read by `docgen_index`, and from the
 bibliography; signatures and equations are doc-gen4's own, with their links.
 
-Usage, from the repository root, after doc-gen4 has written `.lake/build/doc`:
+The pages replace doc-gen4's own at `docs/Studies/`, so `--root` and `--docs-base`, the site's root
+and doc-gen4's pages relative to a study page, default to that place.
 
-    python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs-new
+Usage, from the repository root, after doc-gen4 has written `.lake/build/doc` and it is copied to
+`.lake/build/doc-site/docs`:
+
+    python3 scripts/gen_docs_pages.py --out .lake/build/doc-site/docs
     python3 scripts/gen_docs_pages.py --out DIR --only KehlerRohde2013   # some studies only
     python3 scripts/gen_docs_pages.py --out DIR --check   # also confirm every anchor survives
+    python3 scripts/gen_docs_pages.py --out DIR --redirect OLD   # OLD/Studies/X.html forwards here
 """
 
 import argparse
@@ -53,6 +58,19 @@ DECL_NAME = re.compile(r'<span class="decl_kind">\w+</span>\s*<span class="decl_
                        re.S)
 REFS = re.compile(r'(<h2 [^>]*id="References"[^>]*>.*?</h2>)\s*<ul>(.*?)</ul>', re.S)
 BARE = '<span class="decl_args"> :</span>'
+# A page left where the study pages used to be, which forwards to the page, anchor and all.
+REDIRECT = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Moved</title>
+<link rel="canonical" href="{href}">
+<meta http-equiv="refresh" content="0; url={href}">
+<script>location.replace({js} + location.hash);</script>
+</head>
+<body><p>This page is now at <a href="{href}">{href}</a>.</p></body>
+</html>
+"""
 SHOWN = 5
 # Docstrings write mathematics in TeX between dollar signs, as doc-gen4 reads them; a page with
 # any loads MathJax, configured as doc-gen4's but drawing SVG, so that no web fonts load.
@@ -698,10 +716,10 @@ def main():
     ap.add_argument("--doc", type=Path, default=Path(".lake/build/doc"), help="doc-gen4's output")
     ap.add_argument("--out", type=Path, required=True, help="directory for the rebuilt pages")
     ap.add_argument("--root", default="../../", help="the site's root, relative to a study page")
-    ap.add_argument("--docs-base", default="../../docs/",
-                    help="doc-gen4's pages, relative to a study page")
+    ap.add_argument("--docs-base", default="../", help="doc-gen4's pages, relative to a study page")
     ap.add_argument("--only", nargs="*", help="rebuild these studies only")
     ap.add_argument("--check", action="store_true", help="confirm every declaration keeps its anchor")
+    ap.add_argument("--redirect", type=Path, help="also leave pages here that forward to the pages")
     args = ap.parse_args()
 
     lib = Library(args.doc)
@@ -717,6 +735,14 @@ def main():
         out = StudyPage(lib, page, args.root, args.docs_base, sha).render(template)
         (args.out / page).write_text(out, encoding="utf-8")
     print(f"wrote {len(pages)} study pages to {args.out}")
+    if args.redirect:
+        for page in pages:
+            stub = args.redirect / page
+            stub.parent.mkdir(parents=True, exist_ok=True)
+            href = posixpath.relpath((args.out / page).resolve().as_posix(),
+                                     stub.parent.resolve().as_posix())
+            stub.write_text(REDIRECT.format(href=esc(href), js=json.dumps(href)), encoding="utf-8")
+        print(f"wrote {len(pages)} forwarding pages to {args.redirect}")
     if args.check:
         lost = check(lib, args.out, pages)
         for page, frag in lost:

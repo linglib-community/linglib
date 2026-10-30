@@ -4,7 +4,8 @@ The home page, `/eval/` and `/bibliography/` are written by `gen_home_page.py`,
 `gen_eval_page.py` and `gen_bibliography_page.py`. They share one chrome: `site.css` for the look,
 and `site_shell.py` for the header, menu, footer and theme toggle, which it fills into the
 placeholders of each template. A new page uses `site_shell.render` and adds itself to `MENU`; it
-does not copy the header or bring its own stylesheet. The API docs under `/docs/` are doc-gen4's.
+does not copy the header or bring its own stylesheet. The API docs under `/docs/` are doc-gen4's,
+except the study pages at `/docs/Studies/`, which `gen_docs_pages.py` writes over doc-gen4's.
 
 The look is that of Hugo's PaperMod theme, which the site began on:
 
@@ -23,8 +24,9 @@ wide, in light and dark mode, before opening a PR.
 ## The docs pages
 
 `gen_docs_pages.py` rebuilds doc-gen4's study pages from its output (read by `docgen_index.py`)
-into `/docs-new/`, beside doc-gen4's `/docs/` until they replace it. They depart from the rules
-above where a reference page needs it:
+and writes them over doc-gen4's at `/docs/Studies/`, so links to a study page keep landing.
+`/docs-new/`, where they were previewed, forwards to them. They depart from the rules above where a
+reference page needs it:
 
 - Three columns up to 1340px wide, prose still at 720px: the file's map at left, the declarations
   in the middle, where the file sits in the library at right. Readers scan and jump.
@@ -40,4 +42,4 @@ above where a reference page needs it:
   a thousand pages carry them.
 
 Every declaration doc-gen4 indexes keeps its anchor on the rebuilt page, so search and `find/`
-links still land; `--check` confirms it.
+links still land; `--check` confirms it, and a lost anchor fails the deploy.
