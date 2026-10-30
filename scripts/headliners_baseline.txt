@@ -69,7 +69,6 @@ Beavers2011
 BeaversUdayana2022
 BeaversZubair2013
 BeckOdaSugisaki2004
-BeckmanPierrehumbert1986
 BejarRezac2009
 BelkNeelemanPhilip2023
 Belnap1970
@@ -376,7 +375,6 @@ LevinRappaportHovav1995
 LevshinaEtAl2023
 Lewis1973a
 Lewis1973b
-Lionnet2025
 LittleMoroneyRoyer2022
 LiuRotter2025
 LiuYip2026
@@ -386,7 +384,6 @@ LuPanDegen2025
 Luce1959
 Magri2009
 Magri2014
-Magri2025
 Major2024
 Mandelkern2022
 Marantz1991
@@ -568,5 +565,4 @@ Zeijlstra2004
 Zeijlstra2012
 Zheng2025
 Zimmermann2008
-ZurawHayes2017
 ZwickyPullum1983

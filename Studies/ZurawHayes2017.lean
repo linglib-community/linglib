@@ -7,42 +7,22 @@ public import Studies.Zuraw2010
 /-!
 # Zuraw and Hayes (2017): Intersecting Constraint Families
 
-This file formalizes the Tagalog case of Zuraw and Hayes's argument for Harmonic Grammar.
-Nasal substitution is conditioned by two families of constraints (§2.4): the consonant-sensitive
-markedness constraints (3), (4), (6), and the Uniformity constraints (5), one for each of the six
-prefix constructions. Every square crossing two prefixes with two stems is independent in the
-sense of the substrate: each constraint is insensitive to the prefix or to the stem
-(`independent`). The rates of application show across-the-board effects in both dimensions,
-restrained by floor and ceiling effects (§2.3); Harmonic Grammar predicts the pattern because
-constraint effects add.
-
-In MaxEnt the probability of substitution is logistic in the harmony difference (13)
-(`maxEntSubst_eq`), the logit rates have constant differences on every square
-(`maxEnt_interaction_logOdds_eq_zero`), and so the effects of prefixes and of stems are across the
-board on every square, for every weighting (`maxEnt_acrossTheBoard`). In Noisy Harmonic Grammar the
-noise on a comparison grows with the number of constraints that distinguish the candidates, four for
-/p/ as in (15) (`dotProduct_violationDiff_self_p`); since that number depends on the stem alone, the
-effects of the prefixes are across the board on every square, for every weighting and noise
-(`weightNoise_acrossTheBoard`). A decision-tree model instead multiplies a prefix probability by a
-stem probability, so the stem differences grow with the prefix probability, the paper's claws
-(`decision_tree_monotonic_diff`).
-
-Stochastic OT fails differently (§3.8). When a lone constraint opposes two synergistic families
-that each apply through one constraint, as in the French liaison and elision data, generation is
-a race: the opposing constraint's candidate wins when that constraint outruns the other two
-(`raceRate`). By a theorem of Magri's that the paper reports, the difference that a stronger
-constraint of one family makes then grows monotonically as the constraint of the other family
-weakens (`raceRate_add_le`, `antitone_raceRate_sub`) and vanishes as it strengthens
-(`tendsto_raceRate_atTop`): the rates converge in one direction and diverge in the other. In
-Harmonic Grammar's tug-of-war the difference vanishes in both directions
-(`not_antitone_not_monotone_sigmoid_sub`).
+Tagalog nasal substitution is conditioned by consonant-sensitive markedness constraints and by
+one Uniformity constraint per prefix, so every square of two prefixes and two stems is
+independent (`independent`): the effects of prefixes and stems are [across the board in
+MaxEnt](##ZurawHayes2017.maxEnt_acrossTheBoard), those of prefixes [in Noisy Harmonic
+Grammar](##ZurawHayes2017.weightNoise_acrossTheBoard). With a lone constraint opposing two
+synergistic families, the difference a stronger constraint makes [grows in stochastic OT as the
+other weakens](##ZurawHayes2017.antitone_raceRate_sub), the opposing rate [vanishing as the
+first strengthens](##ZurawHayes2017.tendsto_raceRate_atTop), and is [neither antitone nor
+monotone under the MaxEnt rate](##ZurawHayes2017.not_antitone_not_monotone_sigmoid_sub).
 
 ## Implementation notes
 
 * The inputs are the thirty-six crossings of the six prefix constructions of Figure 3 with the
-  six stem-initial consonants of Zuraw (2010); its /t/ stands for the paper's t/s class.
+  six stem-initial consonants of `Studies/Zuraw2010`; its /t/ stands for the paper's t/s class.
 * The constraints are those of Table 1, in its order, the consonant-sensitive ones pulled back
-  from Zuraw (2010) along the projection of a candidate onto its stem and decision.
+  from `Studies/Zuraw2010` along the projection of a candidate onto its stem and decision.
 * Magri's theorem is proved for noise of any law, stochastic OT's Gaussian noise among them: the
   opposing candidate's rate integrates, against the law of its constraint, the product of the
   other two constraints' distribution functions (`choiceProb_pi_eq_lintegral`), and that product
@@ -127,8 +107,6 @@ attribute [local simp] constraints nasSub starNC starRootNasal starRootCorVel st
   Zuraw2010.nasSub Zuraw2010.starNC Zuraw2010.starInitAll Zuraw2010.starInitCorVel
   Zuraw2010.starInitVelar project
 
-/-- The two families intersect, since on every square the consonant-sensitive constraints are
-insensitive to the prefix and the Uniformity constraints to the stem. -/
 theorem independent (p p' : Prefix) (c c' : StemC) :
     (square p p' c c').Independent constraints .yes .no := by
   intro k
@@ -163,8 +141,7 @@ instance : MeasurableSingletonClass SubSt := ⟨fun _ ↦ trivial⟩
 noncomputable def maxEntSubst (w : Fin 11 → ℝ) (x : Prefix × StemC) : ℝ :=
   (maxEnt (constraints.comap (x, ·)).violations w).real {.yes}
 
-/-- The MaxEnt probability of substitution is logistic in the harmony difference between the
-substituted and unsubstituted candidates (13). -/
+-- (13)
 theorem maxEntSubst_eq (w : Fin 11 → ℝ) (x : Prefix × StemC) :
     maxEntSubst w x =
       sigmoid (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) :=
@@ -182,6 +159,8 @@ theorem harmony_b_sub_harmony_k (w : Fin 11 → ℝ) (p : Prefix) :
     w 3 + w 4 - w 1 := by
   cases p <;> simp [harmonyScore_eq_neg_sum, Fin.sum_univ_succ] <;> ring
 
+/-- In MaxEnt the effects of the prefixes and of the stems are across the board on every square,
+for every weighting (§2.3). -/
 theorem maxEnt_acrossTheBoard (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
     AcrossTheBoard (square p p' c c') (maxEntSubst w) ∧
       AcrossTheBoard (square p p' c c').transpose (maxEntSubst w) := by
@@ -217,8 +196,7 @@ private theorem diffSq_pos (x : Prefix × StemC) : 0 < diffSq x := by
   revert x
   decide +kernel
 
-/-- The Noisy HG noise on /p/ is a sum of four Gaussians, one per constraint distinguishing
-substitution from its absence (15). -/
+-- (15)
 theorem dotProduct_violationDiff_self_p (q : Prefix) :
     (constraints.violationDiff ((q, .p), .yes) ((q, .p), .no) ⬝ᵥ
       constraints.violationDiff ((q, .p), .yes) ((q, .p), .no) : ℝ) = 4 := by
@@ -239,6 +217,8 @@ private theorem weightNoiseSubst_eq (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v �
     ← dotProduct_violationDiff_self_eq_diffSq x]
   rfl
 
+/-- In Noisy Harmonic Grammar the effects of the prefixes are across the board on every square,
+for every weighting and noise: the noise on a comparison depends on the stem alone. -/
 theorem weightNoise_acrossTheBoard (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) (p p' : Prefix)
     (c c' : StemC) :
     AcrossTheBoard (square p p' c c') (weightNoiseSubst w v) := by
@@ -292,8 +272,7 @@ theorem raceRate_le_one (n a u : ℝ) : raceRate η n a u ≤ 1 := by
   calc _ ≤ ∫⁻ _, 1 ∂η.map (n + ·) := lintegral_mono fun _ ↦ mul_le_one' prob_le_one prob_le_one
     _ = 1 := by simp [Measure.map_apply (measurable_const_add n) .univ]
 
-/-- For noise of any law, a stronger constraint of one family changes the opposing rate more the
-weaker the constraint of the other family (Magri's theorem, §3.8). -/
+-- §3.8
 theorem raceRate_add_le {n a a' u u' : ℝ} (ha : a' ≤ a) (hu : u ≤ u') :
     raceRate η n a u + raceRate η n a' u' ≤ raceRate η n a' u + raceRate η n a u' := by
   simp only [raceRate_eq]

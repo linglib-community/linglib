@@ -8,35 +8,27 @@ public import Linglib.Data.Examples.BeckmanPierrehumbert1986
 /-!
 # Beckman and Pierrehumbert (1986): Intonational structure in Japanese and English
 
-[beckman-pierrehumbert-1986] give Japanese and English one sparse-tone prosodic hierarchy:
-pitch accents group into accentual phrases with at most one accent each, accentual phrases
-into intermediate phrases, and those into intonation phrases, the phrase accent of
-[pierrehumbert-1980] becoming the terminal tone of the intermediate phrase and the boundary
-tone that of the intonation phrase. In both languages a bitonal accent triggers catathesis,
-the compression of the pitch range for everything that follows within the intermediate
-phrase, so chained accents descend a staircase and a phrase boundary resets the register; an
-unaccented phrase's phrasal H and boundary L do not trigger it, which separates catathesis
-from African downdrift. Both languages fix the accent's location in the lexicon; they differ
-in where its shape comes from, a lexically linked H*+L in Japanese against a choice made by
-the intonation system in English, in the inventory of shapes, one against six, and in whether
-the compression takes effect within the accent or after it. Final lowering
-and declination act above the intermediate phrase and are not catathesis.
+Japanese and English share one sparse-tone prosodic hierarchy: pitch accents group into
+accentual phrases with at most one accent each, accentual phrases into intermediate phrases, and
+those into intonation phrases. A bitonal accent triggers catathesis, a step down of the pitch
+range for the rest of its intermediate phrase, so chained accents [descend a
+staircase](##BeckmanPierrehumbert1986.terrace_registerShifts) and a phrase boundary [resets the
+register above the continued chain](##BeckmanPierrehumbert1986.boundary_raises). Japanese has
+the one bitonal accent shape, while English [has shapes that do not trigger
+catathesis](##BeckmanPierrehumbert1986.triggers_differ).
 
 ## Implementation notes
 
-Catathesis is a phonetic-implementation rule triggered by bitonal accents; it is modelled here
-on the register tier, each bitonal accent contributing a downstep `l` and
-`Tone.RegisterTier.realize` realizing the tier as the running sum, so the staircase, the
-boundary reset, and the comparison with an unbroken chain are theorems of the register
-substrate rather than numbers read off figures. The vocabulary of register features is that
-of [snider-1999], which postdates the paper. The Japanese accentual phrase is built from the
-prosodic fragment's word entries.
+Catathesis is a phonetic-implementation rule triggered by bitonal accents; it is modelled as a
+unit step down of the register, each accentual phrase contributing its shift and `Tone.terrace`
+realizing the shifts as running sums, so the staircase, the boundary reset, and the comparison
+with an unbroken chain are theorems rather than numbers read off figures. The Japanese
+accentual phrase is built from the prosodic fragment's word entries.
 
 ## References
 
 * [beckman-pierrehumbert-1986]
 * [pierrehumbert-1980]
-* [snider-1999]
 -/
 
 @[expose] public section
@@ -62,25 +54,21 @@ def AccentualPhrase.TriggersCatathesis (ap : AccentualPhrase) : Prop :=
 instance : DecidablePred AccentualPhrase.TriggersCatathesis := fun ap ↦
   inferInstanceAs (Decidable (∃ a ∈ ap.accent, a.IsBitonal))
 
-/-- The register features of an accentual phrase: a downstep if its accent is bitonal, and
-nothing otherwise. -/
-def AccentualPhrase.registerFeatures (ap : AccentualPhrase) : List RegisterFeature :=
-  if ap.TriggersCatathesis then [.l] else []
+/-- The register shift of an accentual phrase: a step down if its accent is bitonal, and none
+otherwise. -/
+def AccentualPhrase.shift (ap : AccentualPhrase) : ℤ :=
+  if ap.TriggersCatathesis then -1 else 0
 
-/-- The register tier of a sequence of accentual phrases, one unit per phrase. -/
-def registerSpecs (aps : List AccentualPhrase) : RegisterTier :=
-  aps.map AccentualPhrase.registerFeatures
+/-- The register shifts of a sequence of accentual phrases. -/
+def registerShifts (aps : List AccentualPhrase) : List ℤ :=
+  aps.map AccentualPhrase.shift
 
 /-- The number of catathesis triggers in a sequence. -/
 def catathesisCount (aps : List AccentualPhrase) : ℕ :=
   (aps.filter (·.TriggersCatathesis)).length
 
-variable (b : Int) (aps aps₁ aps₂ : List AccentualPhrase) (ap : AccentualPhrase)
+variable (b : ℤ) (aps aps₁ aps₂ : List AccentualPhrase) (ap : AccentualPhrase)
 
-private theorem moraShift_registerFeatures :
-    RegisterTier.moraShift ap.registerFeatures = if ap.TriggersCatathesis then -1 else 0 := by
-  unfold AccentualPhrase.registerFeatures
-  split <;> rfl
 @[simp] theorem catathesisCount_nil : catathesisCount [] = 0 := rfl
 
 theorem catathesisCount_cons :
@@ -92,56 +80,48 @@ theorem catathesisCount_eq_zero_iff :
     catathesisCount aps = 0 ↔ ∀ ap ∈ aps, ¬ap.TriggersCatathesis := by
   simp [catathesisCount, List.filter_eq_nil_iff]
 
-theorem moraShift_registerSpecs_nonpos {fs : List RegisterFeature}
-    (h : fs ∈ registerSpecs aps) : RegisterTier.moraShift fs ≤ 0 := by
-  simp only [registerSpecs, List.mem_map] at h
-  obtain ⟨ap, _, rfl⟩ := h
-  rw [moraShift_registerFeatures]
-  split <;> decide
-
-theorem sum_moraShift_registerSpecs :
-    ((registerSpecs aps).map RegisterTier.moraShift).sum = -(catathesisCount aps : Int) := by
+theorem sum_registerShifts : (registerShifts aps).sum = -(catathesisCount aps : ℤ) := by
   induction aps with
   | nil => rfl
   | cons ap aps ih =>
-    simp only [registerSpecs, List.map_cons, List.sum_cons, catathesisCount_cons] at ih ⊢
-    rw [ih, moraShift_registerFeatures]
+    simp only [registerShifts, List.map_cons, List.sum_cons, catathesisCount_cons] at ih ⊢
+    rw [ih, AccentualPhrase.shift]
     split <;> omega
 
-theorem realize_registerSpecs {i : ℕ} (hi : i < aps.length) :
-    (RegisterTier.realize b (registerSpecs aps))[i]? =
-      some (b - catathesisCount (aps.take (i + 1))) := by
+/-- The staircase: each phrase is realized below the baseline by the number of catathesis
+triggers up to and including it. -/
+theorem terrace_registerShifts {i : ℕ} (hi : i < aps.length) :
+    (terrace b (registerShifts aps))[i]? = some (b - catathesisCount (aps.take (i + 1))) := by
   induction aps generalizing b i with
   | nil => simp at hi
   | cons ap aps ih =>
     cases i with
     | zero =>
-      simp only [RegisterTier.realize, registerSpecs, List.map_cons, terrace_cons,
-        List.getElem?_cons_zero, List.take_succ_cons, List.take_zero, catathesisCount_cons,
-        catathesisCount_nil, Option.some.injEq, moraShift_registerFeatures]
+      simp only [registerShifts, List.map_cons, terrace_cons, List.getElem?_cons_zero,
+        List.take_succ_cons, List.take_zero, catathesisCount_cons, catathesisCount_nil,
+        Option.some.injEq, AccentualPhrase.shift]
       split <;> omega
     | succ i =>
-      have := ih (b + RegisterTier.moraShift ap.registerFeatures) (i := i) (by simpa using hi)
-      simp only [RegisterTier.realize, registerSpecs] at this
-      simp only [RegisterTier.realize, registerSpecs, List.map_cons, terrace_cons,
-        List.getElem?_cons_succ]
-      rw [this]
+      simp only [registerShifts, List.map_cons, terrace_cons, List.getElem?_cons_succ]
+      rw [show (aps.map AccentualPhrase.shift) = registerShifts aps from rfl,
+        ih _ (by simpa using hi)]
       simp only [List.take_succ_cons, catathesisCount_cons, Option.some.injEq,
-        moraShift_registerFeatures]
+        AccentualPhrase.shift]
       split <;> omega
 
-theorem realize_registerSpecs_append :
-    RegisterTier.realize b (registerSpecs (aps₁ ++ aps₂)) =
-      RegisterTier.realize b (registerSpecs aps₁) ++
-        RegisterTier.realize (b - catathesisCount aps₁) (registerSpecs aps₂) := by
-  have h : registerSpecs (aps₁ ++ aps₂) = registerSpecs aps₁ ++ registerSpecs aps₂ :=
-    List.map_append ..
-  rw [h, RegisterTier.realize_append, sum_moraShift_registerSpecs, Int.sub_eq_add_neg]
+theorem terrace_registerShifts_append :
+    terrace b (registerShifts (aps₁ ++ aps₂)) =
+      terrace b (registerShifts aps₁) ++
+        terrace (b - catathesisCount aps₁) (registerShifts aps₂) := by
+  rw [registerShifts, List.map_append, terrace_append, ← registerShifts, ← registerShifts,
+    sum_registerShifts, Int.sub_eq_add_neg]
 
+/-- The boundary reset: a chain started again from the baseline lies pointwise above the same
+chain continued after the triggers of an earlier one. -/
 theorem boundary_raises :
-    List.Forall₂ (· ≤ ·) (RegisterTier.realize (b - catathesisCount aps₁) (registerSpecs aps₂))
-      (RegisterTier.realize b (registerSpecs aps₂)) :=
-  RegisterTier.realize_baseline_mono _ (by omega)
+    List.Forall₂ (· ≤ ·) (terrace (b - catathesisCount aps₁) (registerShifts aps₂))
+      (terrace b (registerShifts aps₂)) :=
+  terrace_mono (List.forall₂_refl _) (by omega)
 
 /-! ### Intermediate and intonation phrases -/
 
@@ -164,14 +144,6 @@ structure IntonationPhrase where
 accent and the boundary tone, [pierrehumbert-1980]'s terminal sequence decomposed. -/
 def IntonationPhrase.terminalContour (ip : IntonationPhrase) : TerminalContour :=
   ⟨(ip.ips.getLast ip.ips_nonempty).phraseAccent, ip.boundaryTone⟩
-
-/-- The register tier of one intermediate phrase: a single chain. -/
-def ipRegisterSpecs (ip : IntermediatePhrase) : RegisterTier := registerSpecs ip.aps
-
-/-- The register tiers of an intonation phrase, one chain per intermediate phrase: each
-starts again from the baseline. -/
-def ipRegisterSpecsAcrossIps (ips : List IntermediatePhrase) : List RegisterTier :=
-  ips.map ipRegisterSpecs
 
 /-! ### The two systems -/
 
@@ -232,9 +204,10 @@ theorem mem_english_accentShapes_iff (a : PitchAccent) :
     a ∈ english.accentShapes ↔ a.tones.Nodup := by
   revert a; decide
 
+/-- Every Japanese accent shape steps the register down, and some English shape does not. -/
 theorem triggers_differ :
-    (∀ a ∈ japanese.accentShapes, registerSpecs [⟨some a, 1⟩] = [[.l]]) ∧
-      ∃ a ∈ english.accentShapes, registerSpecs [⟨some a, 1⟩] = [[]] := by
+    (∀ a ∈ japanese.accentShapes, registerShifts [⟨some a, 1⟩] = [-1]) ∧
+      ∃ a ∈ english.accentShapes, registerShifts [⟨some a, 1⟩] = [0] := by
   decide
 
 /-- An accented accentual phrase (*uma'i*, *mo'riya-no*). -/
@@ -242,6 +215,15 @@ def accentedAP : AccentualPhrase := ⟨some (.trailing .H .L), 1⟩
 
 /-- An unaccented accentual phrase (*amai*, *toriya-no mawari-no*). -/
 def unaccentedAP : AccentualPhrase := ⟨none, 1⟩
+
+-- Chained accents descend, an unaccented phrase does not step down, and a reset chain lies above.
+example : terrace 0 (registerShifts [accentedAP, accentedAP, accentedAP]) = [-1, -2, -3] := by
+  simp only [registerShifts, List.map_cons, List.map_nil, terrace_cons, terrace_nil]; decide
+example : terrace 0 (registerShifts [accentedAP, unaccentedAP, accentedAP]) = [-1, -1, -2] := by
+  simp only [registerShifts, List.map_cons, List.map_nil, terrace_cons, terrace_nil]; decide
+example : terrace (0 - catathesisCount [accentedAP]) (registerShifts [accentedAP]) = [-2] ∧
+    terrace 0 (registerShifts [accentedAP]) = [-1] := by
+  simp only [registerShifts, List.map_cons, List.map_nil, terrace_cons, terrace_nil]; decide
 
 /-! ### Japanese accentual phrases from the lexicon -/
 

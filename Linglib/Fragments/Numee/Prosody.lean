@@ -11,17 +11,12 @@ public import Linglib.Fragments.Drubea.Prosody
 /-!
 # Numèè register
 
-The stems of Numèè with their register tiers, as [lionnet-2025] transcribes them after
-[rivierre-1973] and the Haudricourt–Rivierre recordings, in the representation of
-`Fragments/Drubea/Prosody`: syllables, and on each mora the downstep it bears or nothing.
-Numèè shares Drubea's register system; the two diverge only at the utterance-final
-boundary, whose Numèè condition is stated in `Studies/Lionnet2025`. The entries are the
-stems, affixes and pronouns of the utterances the source transcribes with pitch levels;
-each docstring gives the example number.
-
-## Main results
-
-* `Numee.stems_aligned`, `Numee.affixes_aligned`: every tier has one entry per mora.
+The stems of Numèè with their register tiers, as the source transcribes them, in the
+representation of `Fragments/Drubea/Prosody`: syllables, and on each mora the downstep it bears
+or nothing. The entries are the stems, affixes and pronouns of the utterances the source
+transcribes with pitch levels; each docstring gives the example number. Every tier
+[has one entry per mora](##Numee.stems_aligned). The segments are those Numèè shares with
+Drubea (`Numee.consonants_eq`, `Numee.vowels_eq`).
 
 ## References
 

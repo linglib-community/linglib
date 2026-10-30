@@ -12,28 +12,22 @@ public import Linglib.Phonology.Tone.Register
 /-!
 # Drubea register
 
-The stems of Drubea with their register tiers, as [lionnet-2025] transcribes them after
-[rivierre-1973] and [shintani-paita-1990b]. A stem is its syllables and, on each mora, the
-register features it bears: none, or the downstep `l` (`Tone.RegisterFeature.l`). No stem
-bears a tone feature or an upstep. The postlexical upstep, the
-boundary features, register copying and the three stem patterns the tiers instantiate are
-the analysis and live in `Studies/Lionnet2025`.
+The stems of Drubea with their register tiers, as the source transcribes them: a stem is its
+syllables and, on each mora, the register features it bears, none or the downstep `l`
+(`Tone.RegisterFeature.l`). The entries are the source's minimal pairs and triplets, its
+illustrations of stem shape, and the stems, affixes and function words of the glossed utterances
+it transcribes with pitch levels; each docstring gives the example number. Every tier
+[has one entry per mora](##Drubea.stems_aligned), and in the stems the lax front vowel
+[heads only bimoraic syllables](##Drubea.smallCapitalI_heavy).
 
-The entries are the source's minimal pairs and triplets, its illustrations of stem shape,
-and the stems, affixes and function words of the glossed utterances it transcribes with
-pitch levels; each docstring gives the example number. Where one syllable string carries
-several tiers, the entries are named by gloss. The stem is the source's free-standing
-monomorphemic lexical item, so pronouns and markers are stems and affixes are listed apart;
-compounds are built from their members in the study. Loanwords, whose syllable-internal
-downstep falls in a non-final syllable, are listed apart. Unlike vowels in sequence are
-heterosyllabic and like vowels a long vowel, following the source. `cv` and `cvv` are a
-light and a heavy open syllable.
+## Implementation notes
 
-## Main results
-
-* `Drubea.stems_aligned`, `Drubea.affixes_aligned`, `Drubea.loans_aligned`: every tier has
-  one entry per mora.
-* `Drubea.smallCapitalI_heavy`: the lax front vowel heads only bimoraic syllables.
+* The stem is the source's free-standing monomorphemic lexical item, so pronouns and markers are
+  stems; affixes and loanwords are listed apart, and compounds are built from their members in
+  `Studies/Lionnet2025`, together with the stem patterns, the postlexical processes and register
+  copying. Where one syllable string carries several tiers, the entries are named by gloss.
+* Unlike vowels in sequence are heterosyllabic and like vowels a long vowel, following the source.
+  `cv` and `cvv` are a light and a heavy open syllable.
 
 ## References
 

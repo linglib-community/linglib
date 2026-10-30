@@ -5,33 +5,25 @@ public import Studies.ZurawHayes2017
 /-!
 # Magri (2025): Constraint Interaction in Probabilistic Phonology
 
-Hayes and Zuraw observed that the rates of a variable process on four forms crossing two
-independent factors lie on two sigmoids shifted against each other at shared abscissas, which is
-to say that their logits differ by a constant along each factor (§2.2,
-`exists_shiftedSigmoids_iff`). Magri asks which modes of constraint interaction predict this. In
-harmony-based probabilistic phonology a form's candidates have probabilities proportional to a
-positive harmony of their violation profiles (23) (`grammar`), and the answer is a
-characterization (§5.5): the grammar predicts the generalization (24) iff its harmony is
-separable, a product of powers of positive unary functions each fed the violations of a single
-constraint (30) (`predictsHZ_iff_separable`). Equivalently the harmony of any profile is the
-product of the harmonies of its single-constraint profiles (32).
-
-The maximum entropy grammar (14) is the MaxEnt distribution of the form's candidates
-(`grammar_meHarmony`), and any separable grammar is the maximum entropy grammar of the
-constraints rescaled by `Ĉₖ = −log hₖ(Cₖ)` (33), whose violations are no longer integers (35)
-(`grammar_prod_rpow`). Feeding the weighted violations to the inverse function instead of the
-exponential (27) is not separable: on the Tagalog square, whose rows and columns are independent
-relative to six of Zuraw and Hayes's constraints (§2.3), it satisfies the constant difference only
-when the two prefix constraints have equal weights or the two stem-nasal constraints have none
-(§4.4, `inverseHarmony_hz_tagalog_iff`).
+The rates of a variable process on four forms crossing two independent factors lie on shifted
+sigmoids at shared abscissas [exactly when their logits differ by a constant along the
+rows](##Magri2025.exists_shiftedSigmoids_iff). Maximum entropy grammar predicts this [when the
+two variants are the only candidates](##Magri2025.interaction_logit_maxEnt), and otherwise [up to
+the probability of the others](##Magri2025.abs_interaction_logit_maxEnt_le). A harmony-based
+grammar [predicts it exactly when its harmony is separable](##Magri2025.predictsHZ_iff_separable),
+a product of positive functions of single constraints' violations; the inverse harmony
+$1/(1+x)$ [predicts it on the Tagalog square only for special
+weights](##Magri2025.inverseHarmony_hz_tagalog_iff).
 
 ## Implementation notes
 
 * A harmony is a function `(Fin n → ℕ) → ℝ` of violation profiles, positive and normalized as
   §4.1 assumes; decreasingness is not needed. `PredictsHZ` is (24) for forms with the two
   candidates YES and NO, read as `true` and `false`. Its log-odds form holds exactly for any
-  number of candidates (`Separable.interaction_logOdds_eq_zero`), where §3.5 states the logits
-  only approximately.
+  number of candidates (`Separable.interaction_logOdds_eq_zero`); the logit form holds only
+  approximately when there are more, within the bound of `abs_interaction_logit_maxEnt_le`.
+* Any separable grammar is the maximum entropy grammar of constraints rescaled by
+  `Ĉₖ = −log hₖ(Cₖ)` (`grammar_prod_rpow`), whose violations are no longer integers.
 * The converse direction takes one square per constraint. Letting constraint `k` vary along the
   rows and the others along the columns gives
   `H (update u k c) = H (single k c) * H (update u k 0)`, whence (32) by induction on the
@@ -139,8 +131,7 @@ fed the violations of a single constraint. -/
 def Separable (H : (Fin n → ℕ) → ℝ) : Prop :=
   ∃ (h : Fin n → ℕ → ℝ) (w : Fin n → ℝ), (∀ k c, 0 < h k c) ∧ ∀ v, H v = ∏ k, h k (v k) ^ w k
 
-/-- The weights of (30) add no generality, since a separable harmony is a product of positive
-unary functions. -/
+-- (30)
 theorem separable_iff_exists_prod :
     Separable H ↔ ∃ g : Fin n → ℕ → ℝ, (∀ k c, 0 < g k c) ∧ ∀ v, H v = ∏ k, g k (v k) :=
   ⟨fun ⟨h, w, hh, hH⟩ ↦ ⟨fun k c ↦ h k c ^ w k, fun k c ↦ rpow_pos_of_pos (hh k c) _, hH⟩,
@@ -238,7 +229,7 @@ theorem separable_iff_eq_prod_single (hpos : ∀ v, 0 < H v) (h0 : H 0 = 1) :
 noncomputable def meHarmony (w r : Fin n → ℝ) : ℝ :=
   exp (-∑ k, w k * r k)
 
-/-- The maximum entropy grammar (14) is the MaxEnt distribution of the form's candidates. -/
+-- (14)
 theorem grammar_meHarmony {X Y : Type*} [Fintype Y] [MeasurableSpace Y]
     (w : Fin n → ℝ) (con : ConstraintSet (X × Y) (Fin n)) (x : X) :
     grammar (fun v ↦ meHarmony w fun k ↦ v k) con x = maxEnt (con.comap (x, ·)).violations w := by
@@ -250,9 +241,64 @@ theorem separable_meHarmony (w : Fin n → ℝ) : Separable fun v ↦ meHarmony 
   ⟨fun _ c ↦ exp (-c), w, fun _ _ ↦ exp_pos _, fun v ↦ by
     simp only [meHarmony, ← exp_mul, ← exp_sum, ← sum_neg_distrib, mul_neg, mul_comm]⟩
 
+-- Zero interaction of the log-odds bounds the interaction of the logits by the excess mass.
+private theorem abs_interaction_logit_le {X : Type*} {sq : Square X} {p q : X → ℝ}
+    (hp : ∀ x, 0 < p x) (hq : ∀ x, 0 < q x) (hpq : ∀ x, p x + q x ≤ 1)
+    (h : sq.interaction (fun x ↦ log (p x / q x)) = 0) :
+    |sq.interaction fun x ↦ logit (p x)| ≤ sq.sum fun x ↦ (1 - p x - q x) / q x := by
+  have hc (x : X) : 0 < 1 - p x := by linarith [hq x, hpq x]
+  have hsplit : (fun x ↦ logit (p x)) =
+      (fun x ↦ log (p x / q x)) - fun x ↦ log ((1 - p x) / q x) := by
+    funext x
+    simp only [Pi.sub_apply]
+    rw [logit, log_div (hp x).ne' (hc x).ne', log_div (hp x).ne' (hq x).ne',
+      log_div (hc x).ne' (hq x).ne']
+    ring
+  rw [hsplit, map_sub, h, zero_sub, abs_neg]
+  refine (Square.abs_interaction_le_sum fun x ↦
+    log_nonneg ((one_le_div (hq x)).2 (by linarith [hpq x]))).trans
+      (Square.sum_le_sum fun x ↦ ?_)
+  rw [sub_div (1 - p x), div_self (hq x).ne']
+  exact log_le_sub_one_of_pos (div_pos (hc x) (hq x))
+
+/-- With more candidates than the two variants, MaxEnt predicts HZ's generalization up to the
+probability of the other candidates (§3.6): the interaction of the logit rates of `a` is at most
+the sum over the square of the other candidates' probability relative to `b`'s. -/
+theorem abs_interaction_logit_maxEnt_le {X Y : Type*} [Fintype Y] [MeasurableSpace Y]
+    [MeasurableSingletonClass Y] {sq : Square X} {con : ConstraintSet (X × Y) (Fin n)} {a b : Y}
+    (h : sq.Independent con a b) (hab : a ≠ b) (w : Fin n → ℝ) :
+    |sq.interaction fun x ↦ logit ((maxEnt (con.comap (x, ·)).violations w).real {a})| ≤
+      sq.sum fun x ↦ (1 - (maxEnt (con.comap (x, ·)).violations w).real {a} -
+        (maxEnt (con.comap (x, ·)).violations w).real {b}) /
+          (maxEnt (con.comap (x, ·)).violations w).real {b} := by
+  classical
+  have : Nonempty Y := ⟨a⟩
+  refine abs_interaction_logit_le (fun x ↦ maxEnt_real_singleton_pos _ w a)
+    (fun x ↦ maxEnt_real_singleton_pos _ w b) (fun x ↦ ?_) (h.interaction_logOdds_maxEnt w)
+  rw [← sum_pair (f := fun c ↦ (maxEnt (con.comap (x, ·)).violations w).real {c}) hab,
+    ← sum_measureReal_singleton_eq_one (maxEnt (con.comap (x, ·)).violations w)]
+  exact sum_le_sum_of_subset_of_nonneg (subset_univ _) fun _ _ _ ↦ measureReal_nonneg
+
+/-- MaxEnt predicts HZ's generalization (22): when the two variants are the only candidates, the
+MaxEnt logit rates have zero interaction, for every weighting. -/
+theorem interaction_logit_maxEnt {X Y : Type*} [Fintype Y] [DecidableEq Y] [MeasurableSpace Y]
+    [MeasurableSingletonClass Y] {sq : Square X} {con : ConstraintSet (X × Y) (Fin n)} {a b : Y}
+    (h : sq.Independent con a b) (hab : a ≠ b) (hY : (univ : Finset Y) = {a, b})
+    (w : Fin n → ℝ) :
+    sq.interaction (fun x ↦ logit ((maxEnt (con.comap (x, ·)).violations w).real {a})) = 0 := by
+  have : Nonempty Y := ⟨a⟩
+  have hsum (x : X) : 1 - (maxEnt (con.comap (x, ·)).violations w).real {a} -
+      (maxEnt (con.comap (x, ·)).violations w).real {b} = 0 := by
+    rw [← sum_measureReal_singleton_eq_one (maxEnt (con.comap (x, ·)).violations w), hY,
+      sum_pair hab]
+    ring
+  simpa [hsum] using abs_interaction_logit_maxEnt_le h hab w
+
 -- §3.6
-theorem predictsHZ_meHarmony (w : Fin n → ℝ) : PredictsHZ fun v ↦ meHarmony w fun k ↦ v k :=
-  (separable_meHarmony w).predictsHZ
+theorem predictsHZ_meHarmony (w : Fin n → ℝ) : PredictsHZ fun v ↦ meHarmony w fun k ↦ v k := by
+  intro X sq con hind
+  simp_rw [grammar_meHarmony]
+  exact interaction_logit_maxEnt hind (by decide) (by decide) w
 
 /-! ### Constraint rescaling (§5.3) -/
 
@@ -267,8 +313,7 @@ theorem prod_rpow_eq_meHarmony_rescale {h : Fin n → ℕ → ℝ} (hpos : ∀ k
   simp only [meHarmony, rescale, mul_neg, sum_neg_distrib, neg_neg, exp_sum,
     rpow_def_of_pos (hpos _ _), mul_comm]
 
-/-- Any separable grammar is the maximum entropy grammar of the rescaled constraints (35), whose
-violations need not be integers. -/
+-- (35)
 theorem grammar_prod_rpow {X Y : Type*} [Fintype Y] [MeasurableSpace Y] {h : Fin n → ℕ → ℝ}
     (hpos : ∀ k c, 0 < h k c) (w : Fin n → ℝ) (con : ConstraintSet (X × Y) (Fin n)) (x : X) :
     grammar (fun v ↦ ∏ k, h k (v k) ^ w k) con x =
@@ -308,6 +353,11 @@ def tagalogConstraints : ConstraintSet Candidate (Fin 6) :=
 theorem tagalog_independent : tagalogSquare.Independent tagalogConstraints .yes .no := by
   intro k
   fin_cases k <;> first | exact .inl ⟨rfl, rfl⟩ | exact .inr ⟨rfl, rfl⟩
+
+-- MaxEnt predicts the generalization on the Tagalog square, for every weighting.
+example (w : Fin 6 → ℝ) : tagalogSquare.interaction
+    (fun x ↦ logit ((maxEnt (tagalogConstraints.comap (x, ·)).violations w).real {.yes})) = 0 :=
+  interaction_logit_maxEnt tagalog_independent (by decide) (by decide) w
 
 /-! ### The inverse harmony (§4.4) -/
 
