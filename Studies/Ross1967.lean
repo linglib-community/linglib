@@ -64,7 +64,7 @@ instance (t : Tree Cat String) (p : List ℕ) : Decidable (HasLexicalHead t p) :
 /-- On Ross's complex NP, a noun phrase over a noun phrase and a sentence, the inner noun phrase is
 the head daughter, so the outer one has a lexical head exactly when the inner one does. -/
 theorem hasLexicalHead_complexNP {t : Tree Cat String} {p : List ℕ} {inner s : Tree Cat String}
-    (ht : t.subtreeAt p = some (Tree.node N [inner, s])) (hi : inner.cat = N) (hs : s.cat = .S) :
+    (ht : t[p]? = some (Tree.node N [inner, s])) (hi : inner.cat = N) (hs : s.cat = .S) :
     HasLexicalHead t p ↔ HasLexicalHead t (p ++ [0]) := by
   have hmd : Tree.HeadDaughterAt t ⟨p⟩ ⟨p ++ [0]⟩ :=
     ⟨0, by simp [Tree.headIndexAt, Tree.headIndex?, ht, List.zipIdx, hi, hs], rfl⟩
@@ -82,7 +82,7 @@ namespace Movement
 variable (m : Movement)
 
 /-- The subtree at a position. -/
-def at? (p : List ℕ) : Option (Tree Cat String) := m.tree.subtreeAt p
+def at? (p : List ℕ) : Option (Tree Cat String) := m.tree[p]?
 
 /-- The category at a position. -/
 def cat? (p : List ℕ) : Option Cat := (m.at? p).map Tree.cat
@@ -140,9 +140,9 @@ theorem cnpc_of_complexNP {np : List ℕ} {inner s : Tree Cat String}
     (ht : m.at? np = some (Tree.node N [inner, s])) (hi : inner.cat = N) (hs : s.cat = .S)
     (hnp : np ∈ m.crossed) (hs' : np ++ [1] ∈ m.crossed)
     (hlex : HasLexicalHead m.tree (np ++ [0])) : m.CNPC :=
-  have ht' : m.tree.subtreeAt np = some (Tree.node N [inner, s]) := ht
+  have ht' : m.tree[np]? = some (Tree.node N [inner, s]) := ht
   ⟨np, hnp, by simp [cat?, ht], (hasLexicalHead_complexNP ht' hi hs).2 hlex, np ++ [1], hs',
-    List.prefix_append _ _, by simp [cat?, at?, RoseTree.subtreeAt_append, ht', hs]⟩
+    List.prefix_append _ _, by simp [cat?, at?, RoseTree.getElem?_append, ht', hs]⟩
 
 end Movement
 

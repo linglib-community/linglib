@@ -76,7 +76,7 @@ abbrev pairConfiguration (t : Tree Cat Unit) (p q : TreePath) : Configuration (F
 /-- A nominal of class `k` at `q` of `t` may corefer with the nominal at `p` when, if a nominal
 occupies `q`, it meets its binding condition under the dependency relating the two. -/
 def MayCorefer (t : Tree Cat Unit) (p q : TreePath) (k : BindingClass) : Prop :=
-  t.subtreeAt q.toList = some np → (pairConfiguration t p q).Condition (pair 0 1) ∅ 1 k
+  t[q.toList]? = some np → (pairConfiguration t p q).Condition (pair 0 1) ∅ 1 k
 
 instance (t : Tree Cat Unit) (p q : TreePath) (k : BindingClass) :
     Decidable (MayCorefer t p q k) :=
@@ -171,9 +171,9 @@ def cd25 : CDComparative where
 def cdData : List (CDComparative × Datum) :=
   [(cd24, Examples.ch2_24), (cd25, Examples.ch2_25)]
 
-theorem copy_present : ∀ d ∈ cdData, d.1.thanClause.subtreeAt d.1.pronoun.toList = some np ∧
-    d.1.reconstructed.subtreeAt d.1.copy.toList = some np ∧
-      d.1.thanClause.subtreeAt d.1.copy.toList = none := by
+theorem copy_present : ∀ d ∈ cdData, d.1.thanClause[d.1.pronoun.toList]? = some np ∧
+    d.1.reconstructed[d.1.copy.toList]? = some np ∧
+      d.1.thanClause[d.1.copy.toList]? = none := by
   decide
 
 /-- Of the three resolutions only syntactic reconstruction under vehicle change predicts the
@@ -232,7 +232,7 @@ def sentence : Tree Cat Unit :=
 /-- The LF of the direct analysis adjoins the remnant and the correlate to the clause they leave
 traces in, so that the clause is one category of three segments. -/
 def direct : Tree Cat Unit :=
-  .adjoin .S [e.remnant, .adjoin .S [(e.matrix.subtreeAt e.correlate.toList).getD np,
+  .adjoin .S [e.remnant, .adjoin .S [(e.matrix[e.correlate.toList]?).getD np,
     (e.sentence.replaceAt (e.thanPhrase.toList ++ [1]) (Tree.trace 1 .N)).replaceAt
       e.correlate.toList (Tree.trace 0 .N)]]
 
@@ -384,8 +384,8 @@ def phrasalData : List (PhrasalComparative × Datum) :=
     (ex87b, Examples.ch4_87b), (ex90, Examples.ch4_90a), (ex91, Examples.ch4_91a)]
 
 theorem rep_nominals (a : Analysis) : ∀ d ∈ phrasalData,
-    (a.rep d.1).1.subtreeAt (a.rep d.1).2.1.toList = some np ∧
-      (a.rep d.1).1.subtreeAt (a.rep d.1).2.2.toList = some np := by
+    (a.rep d.1).1[(a.rep d.1).2.1.toList]? = some np ∧
+      (a.rep d.1).1[(a.rep d.1).2.2.toList]? = some np := by
   revert a; decide
 
 /-- Of the three analyses only the Gapped clause predicts the judgments of the minimal pairs. -/

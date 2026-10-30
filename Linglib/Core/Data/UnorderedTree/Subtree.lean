@@ -68,9 +68,10 @@ theorem unorderedSubtreesList_eq_map (cs : List (RoseTree α)) :
 end
 
 theorem mem_unorderedSubtrees {p : RoseTree α} {x : UnorderedTree α} :
-    x ∈ unorderedSubtrees p ↔ ∃ q s, p.subtreeAt q = some s ∧ UnorderedTree.mk s = x := by
+    x ∈ unorderedSubtrees p ↔
+      ∃ (q : List ℕ) (s : RoseTree α), p[q]? = some s ∧ UnorderedTree.mk s = x := by
   simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
-    isSubtree_iff_exists_subtreeAt]
+    isSubtree_iff_exists_getElem?]
   exact ⟨fun ⟨s, ⟨q, hq⟩, hx⟩ ↦ ⟨q, s, hq, hx⟩, fun ⟨q, s, hq, hx⟩ ↦ ⟨s, ⟨q, hq⟩, hx⟩⟩
 
 end RoseTree

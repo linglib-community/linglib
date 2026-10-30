@@ -270,7 +270,7 @@ instance (t : Tree Node String) : Decidable (IsBarePi t) := by unfold IsBarePi; 
 daughter is not phonologically empty, VERUM is introduced over the translation of `Kᵢ`; by (98ii)
 it is assigned to `Kⱼ`, so an accent on `Kⱼ` yields verum focus. -/
 def IntroducesVerum (t : Tree Node String) (kj : TreePath) : Prop :=
-  match kj.toList.getLast?, t.subtreeAt kj.toList.dropLast with
+  match kj.toList.getLast?, t[kj.toList.dropLast]? with
   | some 0, some (Tree.node _ [a, b]) => ¬ PhonEmpty a ∧ IsBarePi b
   | _, _ => False
 

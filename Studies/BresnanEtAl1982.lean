@@ -282,22 +282,22 @@ def trees (g : ContextFreeGrammar Word) : Set (RoseTree (Symbol Word g.NT)) :=
 along the cluster. -/
 def path (L : ℕ) : List ℕ := 1 :: 2 :: List.replicate L 1
 
-theorem cluster_subtreeAt_replicate (m r : ℕ) :
-    subtreeAt (cluster (m + r)) (List.replicate r 1) = some (cluster m) := by
+theorem cluster_getElem?_replicate (m r : ℕ) :
+    (cluster (m + r))[List.replicate r 1]? = some (cluster m) := by
   induction r with
   | zero => rfl
   | succ r ih =>
-    show subtreeAt (cluster (m + r + 1)) (1 :: List.replicate r 1) = some (cluster m)
+    show (cluster (m + r + 1))[1 :: List.replicate r 1]? = some (cluster m)
     simp [cluster, ih]
 
-theorem dutch_subtreeAt_take (n L r : ℕ) (hr : r ≤ L) (hL : L ≤ n + 2) :
-    subtreeAt (dutch (n + 1)) ((path L).take (r + 2)) = some (cluster (n + 2 - r)) := by
+theorem dutch_getElem?_take (n L r : ℕ) (hr : r ≤ L) (hL : L ≤ n + 2) :
+    (dutch (n + 1))[(path L).take (r + 2)]? = some (cluster (n + 2 - r)) := by
   have hp : (path L).take (r + 2) = [1, 2] ++ List.replicate r 1 := by
     simp [path, List.take_replicate, Nat.min_eq_left hr]
-  rw [hp, subtreeAt_append]
-  have h1 : subtreeAt (dutch (n + 1)) [1, 2] = some (cluster (n + 2)) := rfl
+  rw [hp, getElem?_append]
+  have h1 : (dutch (n + 1))[[1, 2]]? = some (cluster (n + 2)) := rfl
   rw [h1, Option.bind_some]
-  have := cluster_subtreeAt_replicate (n + 2 - r) r
+  have := cluster_getElem?_replicate (n + 2 - r) r
   rwa [Nat.sub_add_cancel (by omega)] at this
 
 /-- The category at depth `k` along `path` is S, then VP, then V′ all the way down. -/
@@ -319,35 +319,35 @@ theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → C
     rw [hEq]; exact Set.mem_range_self _
   obtain ⟨t, ⟨ht, hroot⟩, htℓ⟩ := hmem
   -- the subtrees of `t` along the cluster path relabel to clusters
-  have hsub : ∀ r ≤ L, ∃ s, subtreeAt t ((path L).take (r + 2)) = some s ∧
+  have hsub : ∀ r ≤ L, ∃ s, t[(path L).take (r + 2)]? = some s ∧
       map (Symbol.mapNonterminal ℓ) s = cluster (L + 2 - r) := by
     intro r hr
-    have h := dutch_subtreeAt_take L L r hr (by omega)
-    rw [← htℓ, subtreeAt_map] at h
+    have h := dutch_getElem?_take L L r hr (by omega)
+    rw [← htℓ, getElem?_map] at h
     exact Option.map_eq_some_iff.mp h
   -- the category of the subtree of `t` at each depth along the path
   have hcat : ∀ k ≤ L + 2, ∀ nt cs,
-      subtreeAt t ((path L).take k) = some (node (nonterminal nt) cs) → ℓ nt = catAt k := by
+      t[(path L).take k]? = some (node (nonterminal nt) cs) → ℓ nt = catAt k := by
     intro k hk nt cs h
     have hm := congrArg (Option.map (map (Symbol.mapNonterminal ℓ))) h
-    rw [← subtreeAt_map, htℓ] at hm
+    rw [← getElem?_map, htℓ] at hm
     have key : ∀ d : RoseTree (Symbol Word Cat),
-        subtreeAt (dutch (L + 1)) ((path L).take k) = some d →
+        (dutch (L + 1))[(path L).take k]? = some d →
           d.value = nonterminal (catAt k) := by
       match k, hk with
       | 0, _ =>
         intro d hd
-        simp only [List.take_zero, subtreeAt_nil, Option.some.injEq] at hd
+        simp only [List.take_zero, getElem?_nil, Option.some.injEq] at hd
         subst hd; rfl
       | 1, _ =>
         intro d hd
-        have h1 : subtreeAt (dutch (L + 1)) ((path L).take 1) = some (topVP (L + 1) (L + 2)) :=
+        have h1 : (dutch (L + 1))[(path L).take 1]? = some (topVP (L + 1) (L + 2)) :=
           rfl
         rw [h1, Option.some.injEq] at hd
         subst hd; exact value_topVP _ _
       | r + 2, hk =>
         intro d hd
-        rw [dutch_subtreeAt_take L L r (by omega) (by omega), Option.some.injEq] at hd
+        rw [dutch_getElem?_take L L r (by omega) (by omega), Option.some.injEq] at hd
         subst hd; exact value_cluster _
     simpa using key _ hm
   -- pigeonhole along the cluster path
@@ -367,7 +367,7 @@ theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → C
     rcases i with _ | _ | i <;> rcases j with _ | _ | j <;> simp [catAt] at hc <;> omega
   -- the pumped tree
   set t' := t.replaceAt ((path L).take j) (node (nonterminal A) cᵢ) with ht'
-  have hvalid : t'.Licensed g.Licenses := ht.replaceAt hj (ht.of_subtreeAt hi) rfl
+  have hvalid : t'.Licensed g.Licenses := ht.replaceAt hj (ht.of_getElem? hi) rfl
   have hroot' : t'.value = nonterminal g.initial := by
     obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
     rw [ht', path, List.take_succ_cons, value_replaceAt_cons]; exact hroot

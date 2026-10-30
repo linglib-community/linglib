@@ -27,7 +27,7 @@ sends them to a case of their own. That each binder binds a trace of its index i
 tree, not a guarantee of the type, and interpretation does not read the category on a binder.
 
 `Tree C W` abbreviates `RoseTree (Label C W)`, so the rose tree's navigation (`children`,
-`subtreeAt`) returns `RoseTree (Label C W)`. Dot notation for this file's operations does not
+`t[p]?`) returns `RoseTree (Label C W)`. Dot notation for this file's operations does not
 resolve on those results, so write `Tree.cat s`, and write constructor patterns on them as
 `Tree.node`: an anonymous `.node` would elaborate as `RoseTree.node`, which matches any label.
 
@@ -442,9 +442,9 @@ theorem map_snd_positionedTerminals (t : Tree C W) :
   funext x
   simp [Option.map_map, Function.comp_def]
 
-theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
+theorem getElem?_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
     (h : x ∈ t.positionedTerminals) :
-    RoseTree.subtreeAt t x.1.toList = some (terminal x.2.1 x.2.2) := by
+    t[x.1.toList]? = some (terminal x.2.1 x.2.2) := by
   obtain ⟨⟨p, l⟩, hl, hx⟩ := List.mem_filterMap.mp h
   cases l with
   | terminal c w =>
@@ -452,8 +452,8 @@ theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C 
     exact RoseTree.mem_positionedLeaves.mp hl
   | _ => simp [Label.terminal?] at hx
 
-theorem mem_positionedTerminals_of_subtreeAt {t : Tree C W} {p : List ℕ} {c : C} {w : W}
-    (h : RoseTree.subtreeAt t p = some (terminal c w)) :
+theorem mem_positionedTerminals_of_getElem? {t : Tree C W} {p : List ℕ} {c : C} {w : W}
+    (h : t[p]? = some (terminal c w)) :
     (⟨p⟩, (c, w)) ∈ t.positionedTerminals :=
   List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves.mpr h, rfl⟩
 

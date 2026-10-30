@@ -134,7 +134,7 @@ variable {W : Type*}
 extend to the category of the phase, so that it belongs to the extended projection containing
 the phase head. -/
 def OnSpine (t : Tree Cat W) (p : TreePath) : Prop :=
-  ∀ l ∈ p.toList.inits, ∃ s ∈ t.subtreeAt l, (Tree.cat s).ExtendsTo t.cat
+  ∀ l ∈ p.toList.inits, ∃ s ∈ t[l]?, (Tree.cat s).ExtendsTo t.cat
 
 instance (t : Tree Cat W) (p : TreePath) : Decidable (OnSpine t p) := by
   unfold OnSpine; infer_instance
@@ -281,7 +281,7 @@ variable (fr : Frame)
 /-- The position of a named constituent, the first node spelling its words. -/
 def site (c : Part) : Option TreePath :=
   (fr.brackets.lookup c).bind fun ws ↦
-    (fr.phase.vertices.map TreePath.mk).find? fun p ↦ ∃ s ∈ fr.phase.subtreeAt p.toList,
+    (fr.phase.vertices.map TreePath.mk).find? fun p ↦ ∃ s ∈ fr.phase[p.toList]?,
       Tree.yield s = ws
 
 /-- A variant of the rule lets the constituent `host` of a frame host the particle for a focus

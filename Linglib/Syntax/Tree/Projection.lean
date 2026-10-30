@@ -53,7 +53,7 @@ def headIndex? (t : Tree C W) : Option ℕ :=
   | _ => none
 
 /-- The index of the head daughter at a position of `t`. -/
-def headIndexAt (t : Tree C W) (p : TreePath) : Option ℕ := (t.subtreeAt p.toList).bind headIndex?
+def headIndexAt (t : Tree C W) (p : TreePath) : Option ℕ := (t[p.toList]?).bind headIndex?
 
 /-- `HeadDaughterAt t m d` says that `d` is the head daughter of `m` in `t`. -/
 abbrev HeadDaughterAt (t : Tree C W) : TreePath → TreePath → Prop := headDaughterRel t.headIndexAt
@@ -111,7 +111,7 @@ theorem cat_eq_of_headIndex? {t : Tree C W} {i : ℕ} (h : headIndex? t = some i
 /-- A projection has the category of what it projects from. -/
 theorem cat_eq_of_isProjectionOf {t : Tree C W} {h p : TreePath}
     (hp : IsProjectionOf (HeadDaughterAt t) h p) {s s' : Tree C W}
-    (hs : t.subtreeAt p.toList = some s) (hs' : t.subtreeAt h.toList = some s') :
+    (hs : t[p.toList]? = some s) (hs' : t[h.toList]? = some s') :
     Tree.cat s = Tree.cat s' := by
   induction hp generalizing s' with
   | refl => rw [hs] at hs'; cases hs'; rfl
@@ -120,8 +120,8 @@ theorem cat_eq_of_isProjectionOf {t : Tree C W} {h p : TreePath}
     simp only [headIndexAt, Option.bind_eq_some_iff] at hi
     obtain ⟨u, hu, hiu⟩ := hi
     obtain ⟨d, hd, hcat⟩ := cat_eq_of_headIndex? hiu
-    rw [hc, RoseTree.subtreeAt_append, hu, Option.bind_some, RoseTree.subtreeAt_cons, hd,
-      Option.bind_some, RoseTree.subtreeAt_nil, Option.some.injEq] at hs'
+    rw [hc, RoseTree.getElem?_append, hu, Option.bind_some, RoseTree.getElem?_cons, hd,
+      Option.bind_some, RoseTree.getElem?_nil, Option.some.injEq] at hs'
     rw [← hs', hcat, ih hu]
 
 end PhraseStructure.Tree
@@ -158,12 +158,12 @@ instance (t : Tree C W) : Decidable t.IsHead := inferInstanceAs (Decidable (t.Li
   fun h ↦ h.rel_root
 
 /-- A tree put in place of a subtree of a head-level node is head-level. -/
-theorem IsHead.of_replaceAt {s t : Tree C W} {q : List ℕ} (hq : (s.subtreeAt q).isSome)
+theorem IsHead.of_replaceAt {s t : Tree C W} {q : List ℕ} (hq : (s[q]?).isSome)
     (h : Tree.IsHead (s.replaceAt q t)) : t.IsHead :=
-  RoseTree.Licensed.of_subtreeAt h (by simpa using RoseTree.subtreeAt_replaceAt_append hq [])
+  RoseTree.Licensed.of_getElem? h (by simpa using RoseTree.getElem?_replaceAt_append hq [])
 
 /-- The node at position `p` of `t` is head-level. -/
-def IsHeadAt (t : Tree C W) (p : TreePath) : Prop := ∀ s ∈ t.subtreeAt p.toList, Tree.IsHead s
+def IsHeadAt (t : Tree C W) (p : TreePath) : Prop := ∀ s ∈ t[p.toList]?, Tree.IsHead s
 
 instance (t : Tree C W) (p : TreePath) : Decidable (IsHeadAt t p) :=
   inferInstanceAs (Decidable (∀ s ∈ _, _))

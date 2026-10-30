@@ -66,7 +66,7 @@ variable {t : LinearizedSyntacticObject} {p : t.val.Positions} {y : SyntacticObj
 theorem isSyntacticObject_subtree (p : t.val.Positions) :
     IsSyntacticObject (UnorderedTree.mk p.subtree) :=
   isSyntacticObject_of_mem_subtrees t.toSyntacticObject _
-    (mem_unorderedSubtrees.2 ⟨_, _, p.subtreeAt_eq, rfl⟩)
+    (mem_unorderedSubtrees.2 ⟨_, _, p.getElem?_eq, rfl⟩)
 
 variable (t) in
 /-- The term of `t` at a position. -/
@@ -93,7 +93,7 @@ theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
   have h2 := length_children_subtree hp
   have hv : ∀ i < 2, (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.val.validPaths := fun i hi ↦
-    mem_validPaths_append_singleton_iff.2 ⟨_, p.subtreeAt_eq, h2 ▸ hi⟩
+    mem_validPaths_append_singleton_iff.2 ⟨_, p.getElem?_eq, h2 ▸ hi⟩
   refine ⟨⟨_, hv 0 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨0, rfl⟩),
     ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨1, rfl⟩), fun h ↦ ?_⟩
   simpa using congrArg (fun q : t.val.Positions ↦ q.val.toList.getLast?) h
@@ -151,7 +151,7 @@ theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent
     Positions.mem_children_subtree.2
       ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩
   have hso := isSyntacticObject_subtree (Order.pred a)
-  refine mem_positionsWhere.2 ⟨_, (Order.pred a).subtreeAt_eq, ?_⟩
+  refine mem_positionsWhere.2 ⟨_, (Order.pred a).getElem?_eq, ?_⟩
   generalize (Order.pred a).subtree = s at hc hso
   obtain ⟨v, cs⟩ := s
   rcases length_eq_zero_or_two hso with h0 | h2 <;>
@@ -216,7 +216,7 @@ theorem eq_or_eq_of_covBy (hc : a ⋖ c) (hd : a ⋖ d) (hcd : c ≠ d) (he : a 
     have hr := r.2
     rw [show r.val = ⟨a.val.toList ++ [m]⟩ from TreePath.ext hm] at hr
     obtain ⟨s, hs, hms⟩ := mem_validPaths_append_singleton_iff.1 hr
-    rw [a.subtreeAt_eq, Option.some.injEq] at hs
+    rw [a.getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ hms
   obtain ⟨i, hi⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hc)
   obtain ⟨j, hj⟩ := TreePath.covBy_iff.1 (Positions.covBy_iff.1 hd)
@@ -356,7 +356,7 @@ theorem complement_complement {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 :
     have hv := hp.2
     rw [show hp.val = ⟨(Order.pred hp).val.toList ++ [i]⟩ from TreePath.ext hi] at hv
     obtain ⟨s, hs, his⟩ := mem_validPaths_append_singleton_iff.1 hv
-    rw [(Order.pred hp).subtreeAt_eq, Option.some.injEq] at hs
+    rw [(Order.pred hp).getElem?_eq, Option.some.injEq] at hs
     exact hlen ▸ hs ▸ his
   have hhv : h.toList = (Order.pred hp).val.toList ++ [i] := hi
   apply TreePath.ext
@@ -379,7 +379,7 @@ theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.
   have hcv : complement h ∈ t.val.validPaths := by
     refine mem_validPaths_append_singleton_iff.2 ⟨(Order.pred hp).subtree, ?_, ?_⟩
     · rw [← TreePath.parent_toList, ← hmv]
-      exact (Order.pred hp).subtreeAt_eq
+      exact (Order.pred hp).getElem?_eq
     · rw [hlen]
       omega
   set hc : t.val.Positions := ⟨complement h, hcv⟩

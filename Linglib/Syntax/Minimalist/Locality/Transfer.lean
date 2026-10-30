@@ -203,7 +203,7 @@ theorem mem_validPaths_of_mem_chain {tok : LexicalItem.Token} {p : TreePath}
   simp only [chain, List.mem_filterMap, Option.ite_none_right_eq_some, Option.some.injEq] at hp
   obtain ⟨⟨p', b⟩, hpb, -, rfl⟩ := hp
   obtain ⟨s, hs, -⟩ := mem_positions_iff.1 hpb
-  simp [validPaths, hs]
+  exact (getElem?_eq_some_iff.mp hs).1
 
 theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : TreePath × TreePath}
     (hx : x ∈ links hd t tok) : x.1.parent < x.2 ∧ ¬ x.1 ≤ x.2 := by

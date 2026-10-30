@@ -100,16 +100,16 @@ theorem covBy_iff {p q : Positions t} : p ⋖ q ↔ p.val ⋖ q.val := by
 variable {p : Positions t} {c s : RoseTree α}
 
 /-- The subtree of `t` at a position. -/
-def subtree (p : Positions t) : RoseTree α := (t.subtreeAt p.val.toList).get p.2
+def subtree (p : Positions t) : RoseTree α := (t[p.val.toList]?).get p.2
 
-theorem subtreeAt_eq (p : Positions t) : t.subtreeAt p.val.toList = some p.subtree :=
+theorem getElem?_eq (p : Positions t) : t[p.val.toList]? = some p.subtree :=
   (Option.some_get p.2).symm
 
 /-- The subtrees at the positions are the subtrees, one per position. -/
 theorem map_subtree_univ (t : RoseTree α) :
     (Finset.univ : Finset t.Positions).val.map subtree = (t.subtrees : Multiset (RoseTree α)) := by
-  have hs : ∀ l : List (List ℕ), (∀ p ∈ l, (t.subtreeAt p).isSome) →
-      (l.filterMap t.subtreeAt).map some = l.map t.subtreeAt := by
+  have hs : ∀ l : List (List ℕ), (∀ p ∈ l, (t[p]?).isSome) →
+      (l.filterMap (t[·]?)).map some = l.map (t[·]?) := by
     intro l hl
     induction l with
     | nil => rfl
@@ -128,41 +128,42 @@ theorem map_subtree_univ (t : RoseTree α) :
       exact Multiset.mem_map.2 ⟨⟨_, mem_vertices.1 hp⟩, by simp, rfl⟩
   apply Multiset.map_injective (Option.some_injective _)
   rw [Multiset.map_map, show (some ∘ subtree : t.Positions → _) =
-      (t.subtreeAt ∘ TreePath.toList) ∘ Subtype.val from funext fun q ↦ (subtreeAt_eq q).symm,
-    ← Multiset.map_map, hv, ← filterMap_subtreeAt_vertices, Multiset.map_coe, Multiset.map_coe,
+      ((t[·]?) ∘ TreePath.toList) ∘ Subtype.val from funext fun q ↦ (getElem?_eq q).symm,
+    ← Multiset.map_map, hv, ← filterMap_getElem?_vertices, Multiset.map_coe, Multiset.map_coe,
     List.map_map, hs _ fun p hp ↦ mem_vertices.1 hp]
   rfl
 
 @[simp] theorem subtree_bot : (⊥ : Positions t).subtree = t := rfl
 
-theorem subtree_eq_iff : p.subtree = s ↔ t.subtreeAt p.val.toList = some s := by
-  rw [subtreeAt_eq, Option.some_inj]
+theorem subtree_eq_iff : p.subtree = s ↔ t[p.val.toList]? = some s := by
+  rw [getElem?_eq, Option.some_inj]
 
 theorem isSubtree_subtree : IsSubtree s p.subtree ↔ ∃ q, p ≤ q ∧ q.subtree = s := by
-  rw [isSubtree_iff_exists_subtreeAt]
+  rw [isSubtree_iff_exists_getElem?]
   constructor
   · rintro ⟨r, hr⟩
-    have hq : t.subtreeAt (p.val.toList ++ r) = some s := by
-      rw [subtreeAt_append, subtreeAt_eq]; exact hr
-    exact ⟨⟨⟨p.val.toList ++ r⟩, by simp [validPaths, hq]⟩,
+    have hq : t[p.val.toList ++ r]? = some s := by
+      rw [getElem?_append, getElem?_eq]; exact hr
+    exact ⟨⟨⟨p.val.toList ++ r⟩, (getElem?_eq_some_iff.mp hq).1⟩,
       TreePath.le_def.2 (List.prefix_append _ _), subtree_eq_iff.2 hq⟩
   · rintro ⟨q, hpq, rfl⟩
     obtain ⟨r, hr⟩ := TreePath.le_def.1 hpq
     refine ⟨r, ?_⟩
-    have := q.subtreeAt_eq
-    rwa [← hr, subtreeAt_append, subtreeAt_eq, Option.bind_some] at this
+    have := q.getElem?_eq
+    rwa [← hr, getElem?_append, getElem?_eq, Option.bind_some] at this
 
 theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q.subtree = c := by
   simp only [covBy_iff, TreePath.covBy_iff]
   constructor
   · intro hc
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hc
-    have hq : t.subtreeAt (p.val.toList ++ [i]) = some c := by
-      simp [subtreeAt_append, subtreeAt_eq, hi]
-    exact ⟨⟨⟨p.val.toList ++ [i]⟩, by simp [validPaths, hq]⟩, ⟨i, rfl⟩, subtree_eq_iff.2 hq⟩
+    have hq : t[p.val.toList ++ [i]]? = some c := by
+      simp [getElem?_append, getElem?_eq, hi]
+    exact ⟨⟨⟨p.val.toList ++ [i]⟩, (getElem?_eq_some_iff.mp hq).1⟩, ⟨i, rfl⟩,
+      subtree_eq_iff.2 hq⟩
   · rintro ⟨q, ⟨i, hi⟩, rfl⟩
-    have := q.subtreeAt_eq
-    rw [hi, subtreeAt_append, subtreeAt_eq, Option.bind_some] at this
+    have := q.getElem?_eq
+    rw [hi, getElem?_append, getElem?_eq, Option.bind_some] at this
     exact List.mem_of_getElem? (by simpa using this)
 
 theorem isMax_iff : IsMax p ↔ p.subtree.children = [] := by
@@ -175,7 +176,7 @@ theorem isMax_iff : IsMax p ↔ p.subtree.children = [] := by
     · obtain ⟨u, hu, hi⟩ := mem_validPaths_append_singleton_iff.1
         (validPaths_prefix_closed q.2 (TreePath.le_def.2 ⟨s, by simp [← hs]⟩) :
           (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.validPaths)
-      obtain rfl := Option.some.inj (p.subtreeAt_eq.symm.trans hu)
+      obtain rfl := Option.some.inj (p.getElem?_eq.symm.trans hu)
       simp [h] at hi
 
 end Positions
@@ -188,9 +189,9 @@ variable {P Q : RoseTree α → Prop} {t : RoseTree α} {p : TreePath}
 
 /-- The positions of `t` whose subtree satisfies `P`. -/
 def positionsWhere (P : RoseTree α → Prop) (t : RoseTree α) : Set TreePath :=
-  {p | ∃ s ∈ t.subtreeAt p.toList, P s}
+  {p | ∃ s ∈ t[p.toList]?, P s}
 
-theorem mem_positionsWhere : p ∈ positionsWhere P t ↔ ∃ s ∈ t.subtreeAt p.toList, P s := Iff.rfl
+theorem mem_positionsWhere : p ∈ positionsWhere P t ↔ ∃ s ∈ t[p.toList]?, P s := Iff.rfl
 
 instance [DecidablePred P] (t : RoseTree α) : DecidablePred (· ∈ positionsWhere P t) := fun _ ↦
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -198,7 +199,7 @@ instance [DecidablePred P] (t : RoseTree α) : DecidablePred (· ∈ positionsWh
 theorem positionsWhere_subset_validPaths (P : RoseTree α → Prop) (t : RoseTree α) :
     positionsWhere P t ⊆ t.validPaths := by
   rintro p ⟨s, hs, -⟩
-  simp_all [validPaths, Option.mem_def]
+  exact (getElem?_eq_some_iff.mp hs).1
 
 theorem positionsWhere_mono (h : ∀ s, P s → Q s) (t : RoseTree α) :
     positionsWhere P t ⊆ positionsWhere Q t :=
@@ -218,7 +219,7 @@ theorem positionsWhere_and (P Q : RoseTree α → Prop) (t : RoseTree α) :
 theorem positionsWhere_map {β : Type*} (f : α → β) (P : RoseTree β → Prop) (t : RoseTree α) :
     positionsWhere P (t.map f) = positionsWhere (fun s ↦ P (s.map f)) t := by
   ext p
-  simp [positionsWhere, subtreeAt_map, Option.mem_def]
+  simp [positionsWhere, getElem?_map, Option.mem_def]
 
 theorem mem_positionsWhere_replaceAt
     (hP : ∀ s i q (new : RoseTree α), P (s.replaceAt (i :: q) new) ↔ P s) {c : TreePath}
@@ -227,10 +228,10 @@ theorem mem_positionsWhere_replaceAt
   by_cases hpc : p ≤ c
   · obtain ⟨_ | ⟨i, q⟩, hq⟩ := hpc
     · exact absurd (TreePath.le_def.mpr (by simp [← hq])) h
-    rw [mem_positionsWhere, mem_positionsWhere, subtreeAt_replaceAt_of_prefix ⟨_, hq⟩, ← hq,
+    rw [mem_positionsWhere, mem_positionsWhere, getElem?_replaceAt_of_prefix ⟨_, hq⟩, ← hq,
       List.drop_left]
     simp [hP]
-  · rw [mem_positionsWhere, mem_positionsWhere, subtreeAt_replaceAt_of_not_prefix h hpc]
+  · rw [mem_positionsWhere, mem_positionsWhere, getElem?_replaceAt_of_not_prefix h hpc]
 
 theorem minimal_mem_positionsWhere_iff :
     Minimal (· ∈ positionsWhere P t) p ↔
