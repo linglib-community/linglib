@@ -23,7 +23,11 @@ one](##AristotelianIso.consistent_of_minterm_ne_bot). A consistent assignment wh
 lie above one of two of them [has a nonzero minterm in every such
 diagram](##AristotelianIso.minterm_ne_bot_of_consistent). Only the remaining consistent
 assignments can vanish in one diagram of a family and not in another, and a bijection under which
-none does is a [Boolean isomorphism](##BooleanIso.ofMintermEqBot).
+none does is a [Boolean isomorphism](##BooleanIso.ofMintermEqBot). The upper bound is attained by
+the canonical diagram, which reads the corners on the consistent assignments themselves: it is
+[Aristotelian isomorphic to the original](##AristotelianIso.toCanonical) and [has a nonzero
+minterm at each of them](##minterm_canonical_ne_bot_iff), so the largest number of cells in an
+Aristotelian family is its number of consistent assignments.
 
 ## Implementation notes
 
@@ -34,7 +38,8 @@ this is the papers' definition by the four relations (`AristotelianIso.mk'`). As
 place of `≤` would let an isomorphism send two copies of one corner to two unconnected corners,
 and consistency would not be preserved. Two literals are contradictory or contrary exactly when
 they are disjoint (`disjoint_iff_isCompl_or_isContrary`), which is how `Consistent` states
-Demey and Smessaert's condition.
+Demey's condition. Demey argues informally that his consistent conjunctions form the largest
+partition an Aristotelian family can induce; `card_parts_minterms_canonical` proves it.
 
 The bitstring semantics is Boolean-algebra theory and lives in `Core/Order`. Demey and
 Smessaert's partition induced by a fragment (2018, Definition 5; 2024, Definition 3) is
@@ -51,6 +56,7 @@ their proof.
 ## References
 
 * [demey-smessaert-2018]
+* [demey-2018]
 * [demey-smessaert-2024]
 * [deklerck-vignero-demey-2024]
 -/
@@ -168,9 +174,9 @@ def mk' (hφ : Function.Injective φ) (hφ' : Function.Injective φ') (e : ι �
 
 end AristotelianIso
 
-/-! ### Consistency with the Aristotelian relations -/
+/-! ### Literals -/
 
-section Consistent
+section Literal
 
 /-- The literal of `x` at a polarity: `x` itself where the polarity is true, its complement where
 it is false. -/
@@ -180,9 +186,61 @@ def literal (x : α) (b : Bool) : α := if b then x else xᶜ
 
 @[simp] theorem literal_false (x : α) : literal x false = xᶜ := rfl
 
+theorem disjoint_literal_of_ne {x : α} {a b : Bool} (h : a ≠ b) :
+    Disjoint (literal x a) (literal x b) := by
+  cases a <;> cases b <;> simp_all [disjoint_compl_left, disjoint_compl_right]
+
+/-- A literal lies below another iff it is disjoint from the opposite one. -/
+theorem literal_le_literal_iff_disjoint {x y : α} {a b : Bool} :
+    literal x a ≤ literal y b ↔ Disjoint (literal x a) (literal y !b) := by
+  cases b <;> simp only [literal_true, literal_false, Bool.not_true, Bool.not_false,
+    le_compl_iff_disjoint_right, disjoint_compl_right_iff]
+
+/-- A minterm lies below each of its literals. -/
+theorem minterm_le_literal [Fintype ι] (σ : ι → Bool) (i : ι) :
+    minterm φ σ ≤ literal (φ i) (σ i) :=
+  Finset.inf_le (Finset.mem_univ i)
+
+namespace AristotelianIso
+
+/-- An Aristotelian isomorphism from a corner bijection preserving and reflecting disjointness of
+literals, which is what preserving `Disjoint`, `Codisjoint` and `≤` amounts to
+(`disjoint_literal_iff`). -/
+def ofDisjointLiteral (e : ι ≃ ι')
+    (h : ∀ a b i j, Disjoint (literal (φ' (e i)) a) (literal (φ' (e j)) b) ↔
+      Disjoint (literal (φ i) a) (literal (φ j) b)) : AristotelianIso φ φ' where
+  toEquiv := e
+  map_disjoint' {i j} := by simpa only [literal_true] using h true true i j
+  map_codisjoint' {i j} := by
+    simpa only [literal_false, disjoint_compl_left_iff, ← codisjoint_iff_compl_le_left] using
+      h false false i j
+  map_le' {i j} := by
+    simpa only [literal_true, literal_false, disjoint_compl_right_iff] using h true false i j
+
+/-- An Aristotelian isomorphism preserves and reflects disjointness of literals. -/
+theorem disjoint_literal_iff (e : AristotelianIso φ φ') (a b : Bool) (i j : ι) :
+    Disjoint (literal (φ' (e i)) a) (literal (φ' (e j)) b) ↔
+      Disjoint (literal (φ i) a) (literal (φ j) b) := by
+  cases a <;> cases b <;>
+    simp only [literal_true, literal_false, disjoint_compl_left_iff, disjoint_compl_right_iff,
+      ← codisjoint_iff_compl_le_left, e.map_disjoint, e.map_codisjoint, e.map_le]
+
+/-- An Aristotelian isomorphism preserves and reflects entailment between literals. -/
+theorem literal_le_literal_iff (e : AristotelianIso φ φ') (a b : Bool) (i j : ι) :
+    literal (φ' (e i)) a ≤ literal (φ' (e j)) b ↔ literal (φ i) a ≤ literal (φ j) b := by
+  rw [literal_le_literal_iff_disjoint, literal_le_literal_iff_disjoint, e.disjoint_literal_iff]
+
+end AristotelianIso
+
+end Literal
+
+/-! ### Consistency with the Aristotelian relations -/
+
+section Consistent
+
 /-- A polarity assignment `σ` is **consistent** with the Aristotelian relations of `φ` when no
-two of its literals are contradictory or contrary, that is disjoint
-([demey-smessaert-2024] Definition 9). -/
+two of its literals are contradictory or contrary, that is disjoint ([demey-2018] Section 4,
+[demey-smessaert-2024] Definition 9). -/
 def Consistent (φ : ι → α) (σ : ι → Bool) : Prop :=
   ∀ i j, ¬ Disjoint (literal (φ i) (σ i)) (literal (φ j) (σ j))
 
@@ -191,21 +249,6 @@ instance [Fintype ι] [DecidableRel (Disjoint : α → α → Prop)] : Decidable
 
 variable {σ : ι → Bool}
 
-/-- An Aristotelian isomorphism preserves and reflects disjointness of literals. -/
-theorem AristotelianIso.disjoint_literal_iff (e : AristotelianIso φ φ') (a b : Bool) (i j : ι) :
-    Disjoint (literal (φ' (e i)) a) (literal (φ' (e j)) b) ↔
-      Disjoint (literal (φ i) a) (literal (φ j) b) := by
-  cases a <;> cases b <;>
-    simp only [literal_true, literal_false, disjoint_compl_left_iff, disjoint_compl_right_iff,
-      ← codisjoint_iff_compl_le_left, e.map_disjoint, e.map_codisjoint, e.map_le]
-
-/-- An Aristotelian isomorphism preserves and reflects entailment between literals. -/
-theorem AristotelianIso.literal_le_literal_iff (e : AristotelianIso φ φ') (a b : Bool) (i j : ι) :
-    literal (φ' (e i)) a ≤ literal (φ' (e j)) b ↔ literal (φ i) a ≤ literal (φ j) b := by
-  cases a <;> cases b <;>
-    simp only [literal_true, literal_false, le_compl_iff_disjoint_right, disjoint_compl_left_iff,
-      ← codisjoint_iff_compl_le_right, e.map_disjoint, e.map_codisjoint, e.map_le]
-
 /-- Consistency depends only on the Aristotelian relations. -/
 theorem AristotelianIso.consistent_comp_iff (e : AristotelianIso φ φ') :
     Consistent (φ' ∘ e) σ ↔ Consistent φ σ :=
@@ -213,10 +256,9 @@ theorem AristotelianIso.consistent_comp_iff (e : AristotelianIso φ φ') :
 
 variable [Fintype ι]
 
-/-- A nonzero minterm is at a consistent assignment ([demey-smessaert-2024] Section 5). -/
+/-- A nonzero minterm is at a consistent assignment ([demey-2018] Section 4). -/
 theorem consistent_of_minterm_ne_bot (h : minterm φ σ ≠ ⊥) : Consistent φ σ := fun i j hd ↦
-  h <| le_bot_iff.1 <| (le_inf (Finset.inf_le (Finset.mem_univ i))
-    (Finset.inf_le (Finset.mem_univ j))).trans hd.le_bot
+  h <| le_bot_iff.1 <| (le_inf (minterm_le_literal σ i) (minterm_le_literal σ j)).trans hd.le_bot
 
 /-- A consistent assignment whose literals all lie above one of two of them has a nonzero
 minterm: the minterm is the meet of those two literals, which are not disjoint
@@ -244,7 +286,105 @@ theorem AristotelianIso.minterm_ne_bot_of_consistent {i j : ι} (hσ : Consisten
   Aristotelian.minterm_ne_bot_of_consistent (e.consistent_comp_iff.2 hσ) fun k ↦
     (h k).imp (e.literal_le_literal_iff _ _ _ _).2 (e.literal_le_literal_iff _ _ _ _).2
 
+section Card
+
+open Finset
+
+variable [DecidableEq ι] [Fintype ι'] [DecidableEq ι'] [DecidableEq α']
+  [DecidablePred (Consistent φ)]
+
+omit [Fintype ι'] [DecidableEq ι'] in
+private theorem filter_minterm_ne_bot_subset :
+    (univ.filter fun σ ↦ minterm (φ' ∘ e.toEquiv) σ ≠ ⊥) ⊆ univ.filter (Consistent φ) :=
+  fun _ hσ ↦ mem_filter.2 ⟨mem_univ _, e.consistent_of_minterm_ne_bot (mem_filter.1 hσ).2⟩
+
+include e in
+/-- A diagram Aristotelian isomorphic to `φ` has at most as many nonzero minterms as `φ` has
+consistent assignments ([demey-2018] Section 4). -/
+theorem AristotelianIso.card_parts_minterms_le :
+    #(Finpartition.minterms φ').parts ≤ #(univ.filter (Consistent φ)) := by
+  rw [← Finpartition.parts_minterms_comp_equiv e.toEquiv, Finpartition.card_parts_minterms]
+  exact card_le_card (filter_minterm_ne_bot_subset e)
+
+/-- A diagram Aristotelian isomorphic to `φ` with as many nonzero minterms as `φ` has consistent
+assignments has its nonzero minterms exactly at them. -/
+theorem AristotelianIso.minterm_ne_bot_iff_of_card_eq
+    (h : #(Finpartition.minterms φ').parts = #(univ.filter (Consistent φ))) :
+    minterm (φ' ∘ e) σ ≠ ⊥ ↔ Consistent φ σ := by
+  have := eq_of_subset_of_card_le (filter_minterm_ne_bot_subset e) <| by
+    rw [← h, ← Finpartition.parts_minterms_comp_equiv e.toEquiv,
+      Finpartition.card_parts_minterms]
+  simpa using congrArg (σ ∈ ·) this
+
+end Card
+
 end Consistent
+
+/-! ### The canonical diagram -/
+
+section Canonical
+
+variable (φ) in
+/-- The **canonical diagram** of `φ` reads its corners on the assignments consistent with it,
+the `i`-th corner being the set of those that make `i` true. -/
+def canonical (i : ι) : Set {σ : ι → Bool // Consistent φ σ} := {σ | σ.1 i = true}
+
+theorem literal_canonical (i : ι) (a : Bool) : literal (canonical φ i) a = {σ | σ.1 i = a} := by
+  cases a <;> ext <;> simp [canonical]
+
+variable [Fintype ι] {σ : ι → Bool}
+
+theorem mem_minterm_canonical {τ : {σ : ι → Bool // Consistent φ σ}} :
+    τ ∈ minterm (canonical φ) σ ↔ τ.1 = σ := by
+  refine ⟨fun h ↦ funext fun i ↦ ?_, fun h ↦ ?_⟩
+  · have := minterm_le_literal (φ := canonical φ) σ i h
+    rwa [literal_canonical] at this
+  · refine Set.singleton_subset_iff.1 (Finset.le_inf fun i _ ↦ ?_)
+    change {τ} ⊆ literal (canonical φ i) (σ i)
+    rw [literal_canonical, Set.singleton_subset_iff]
+    exact congrFun h i
+
+/-- The canonical diagram has a nonzero minterm at every consistent assignment. -/
+theorem minterm_canonical_ne_bot_iff : minterm (canonical φ) σ ≠ ⊥ ↔ Consistent φ σ := by
+  rw [Set.bot_eq_empty, ← Set.nonempty_iff_ne_empty]
+  exact ⟨fun ⟨τ, hτ⟩ ↦ mem_minterm_canonical.1 hτ ▸ τ.2,
+    fun h ↦ ⟨⟨σ, h⟩, mem_minterm_canonical.2 rfl⟩⟩
+
+variable [DecidableEq ι]
+
+/-- Two literals of the canonical diagram are disjoint iff those of `φ` are: two literals of `φ`
+that are not disjoint meet a nonzero minterm, which is at a consistent assignment. -/
+theorem disjoint_literal_canonical_iff (a b : Bool) (i j : ι) :
+    Disjoint (literal (canonical φ i) a) (literal (canonical φ j) b) ↔
+      Disjoint (literal (φ i) a) (literal (φ j) b) := by
+  rw [literal_canonical, literal_canonical, Set.disjoint_left]
+  refine ⟨fun h ↦ by_contra fun hd ↦ ?_, fun hd τ hi hj ↦ τ.2 i j (by rwa [hi, hj])⟩
+  obtain ⟨σ, hσ⟩ := exists_not_disjoint_minterm (φ := φ) (disjoint_iff.not.1 hd)
+  have hne : minterm φ σ ≠ ⊥ := fun h0 ↦ hσ (h0 ▸ disjoint_bot_right)
+  have hpol (k : ι) (c : Bool) (hk : literal (φ i) a ⊓ literal (φ j) b ≤ literal (φ k) c) :
+      σ k = c := by_contra fun hc ↦ hσ <| Disjoint.mono_left hk <|
+    ((disjoint_literal_of_ne hc).mono_left (minterm_le_literal σ k)).symm
+  exact h (a := ⟨σ, consistent_of_minterm_ne_bot hne⟩) (hpol i a inf_le_left)
+    (hpol j b inf_le_right)
+
+variable (φ) in
+/-- A diagram is Aristotelian isomorphic to its canonical diagram. -/
+def AristotelianIso.toCanonical : AristotelianIso φ (canonical φ) :=
+  ofDisjointLiteral (.refl ι) disjoint_literal_canonical_iff
+
+variable (φ) in
+open Finset in
+open scoped Classical in
+/-- The canonical diagram has as many nonzero minterms as `φ` has consistent assignments, so the
+bound of `AristotelianIso.card_parts_minterms_le` is attained: the largest number of cells of a
+diagram Aristotelian isomorphic to `φ` is its number of consistent assignments
+([demey-2018] Section 4). -/
+theorem card_parts_minterms_canonical [DecidablePred (Consistent φ)] :
+    #(Finpartition.minterms (canonical φ)).parts = #(univ.filter (Consistent φ)) := by
+  rw [Finpartition.card_parts_minterms]
+  exact congrArg card (filter_congr fun _ _ ↦ minterm_canonical_ne_bot_iff)
+
+end Canonical
 
 /-! ### Boolean isomorphisms -/
 
