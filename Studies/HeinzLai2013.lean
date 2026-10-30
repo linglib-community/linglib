@@ -171,8 +171,10 @@ private theorem isSourGrapes_raiseUnlessFinalBlocked :
 
 -- Theorem 5, right half
 theorem exists_isRightSubsequential_isSourGrapes :
-    ∃ f : List Seg → List Seg, IsSourGrapes f ∧ IsRightSubsequential f :=
-  ⟨_, isSourGrapes_raiseUnlessFinalBlocked, raiseUnlessFinalBlocked.isRightSubsequential⟩
+    ∃ f : List Seg → List Seg,
+      (∀ w, (f w).length = w.length) ∧ IsSourGrapes f ∧ IsRightSubsequential f :=
+  ⟨_, fun _ ↦ Mealy.length_runRight .., isSourGrapes_raiseUnlessFinalBlocked,
+    raiseUnlessFinalBlocked.isRightSubsequential⟩
 
 /-- A length-preserving map meeting (8) is weakly deterministic, against the paper's conjecture
 for sour grapes harmony. -/

@@ -45,9 +45,9 @@ to the filter by `fun x ↦ decide (T x)`, which is literally a `Bool` tier in t
 projection `g : α → Option β` is `List.filterMap g`, the letterwise homomorphism
 `List.flatMap fun x ↦ (g x).toList`, hence `1`-ISL (`isLeftInputStrictlyLocal_one_iff`).
 
-The tier is a field of the grammar rather than a parameter of the class, since a class indexed
-by its tier matters only for intersecting tier-based languages and for inferring a tier from data,
-neither of which is formalized here.
+The tier is a field of the grammar rather than a parameter of the class. A class indexed by its
+tier is needed here neither for intersecting tier-based languages nor for inferring a tier from
+data, since neither is formalized.
 
 ## References
 
