@@ -208,7 +208,7 @@ def bp2004_42 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("before > every", .unacceptable), ("every > before", .acceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
+    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP")] }
 
 def bp2004_43 : Datum :=
   { id := "bp2004_43"
@@ -221,7 +221,7 @@ def bp2004_43 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("before > -er", .acceptable), ("-er > before", .unacceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")] }
+    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP")] }
 
 def bp2004_44 : Datum :=
   { id := "bp2004_44"
@@ -247,7 +247,7 @@ def bp2004_45 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("before > -er d-many books", .acceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP"), ("narrow_scope", "available"), ("wide_scope", "available")] }
+    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP")] }
 
 def bp2004_46 : Datum :=
   { id := "bp2004_46"
@@ -260,7 +260,7 @@ def bp2004_46 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("before > -er d-many books", .unacceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
+    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP")] }
 
 def bp2004_48a : Datum :=
   { id := "bp2004_48a"
@@ -325,7 +325,7 @@ def bp2004_53a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("required > fewer", .acceptable), ("fewer > required", .unacceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")] }
+    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP")] }
 
 def bp2004_53b : Datum :=
   { id := "bp2004_53b"
@@ -338,7 +338,7 @@ def bp2004_53b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("required > fewer", .unacceptable), ("fewer > required", .acceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
+    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP")] }
 
 def bp2004_54a : Datum :=
   { id := "bp2004_54a"
@@ -351,7 +351,7 @@ def bp2004_54a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("required > exactly 5 more", .acceptable), ("exactly 5 more > required", .unacceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")] }
+    paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP")] }
 
 def bp2004_54b : Datum :=
   { id := "bp2004_54b"
@@ -364,7 +364,7 @@ def bp2004_54b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("required > exactly 5 more", .unacceptable), ("exactly 5 more > required", .acceptable)]
-    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")] }
+    paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP")] }
 
 def bp2004_60 : Datum :=
   { id := "bp2004_60"

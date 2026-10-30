@@ -538,14 +538,6 @@
       [
         "mover",
         "DP"
-      ],
-      [
-        "narrow_scope",
-        "unavailable"
-      ],
-      [
-        "wide_scope",
-        "available"
       ]
     ],
     "comment": "",
@@ -587,14 +579,6 @@
       [
         "mover",
         "DegP"
-      ],
-      [
-        "narrow_scope",
-        "available"
-      ],
-      [
-        "wide_scope",
-        "unavailable"
       ]
     ],
     "comment": "",
@@ -676,14 +660,6 @@
       [
         "mover",
         "DP"
-      ],
-      [
-        "narrow_scope",
-        "available"
-      ],
-      [
-        "wide_scope",
-        "available"
       ]
     ],
     "comment": "",
@@ -729,14 +705,6 @@
       [
         "mover",
         "DP"
-      ],
-      [
-        "narrow_scope",
-        "unavailable"
-      ],
-      [
-        "wide_scope",
-        "available"
       ]
     ],
     "comment": "",
@@ -894,14 +862,6 @@
       [
         "mover",
         "DegP"
-      ],
-      [
-        "narrow_scope",
-        "available"
-      ],
-      [
-        "wide_scope",
-        "unavailable"
       ]
     ],
     "comment": "",
@@ -943,14 +903,6 @@
       [
         "mover",
         "DegP"
-      ],
-      [
-        "narrow_scope",
-        "unavailable"
-      ],
-      [
-        "wide_scope",
-        "available"
       ]
     ],
     "comment": "",
@@ -992,14 +944,6 @@
       [
         "mover",
         "DegP"
-      ],
-      [
-        "narrow_scope",
-        "available"
-      ],
-      [
-        "wide_scope",
-        "unavailable"
       ]
     ],
     "comment": "",
@@ -1041,14 +985,6 @@
       [
         "mover",
         "DegP"
-      ],
-      [
-        "narrow_scope",
-        "unavailable"
-      ],
-      [
-        "wide_scope",
-        "available"
       ]
     ],
     "comment": "",
