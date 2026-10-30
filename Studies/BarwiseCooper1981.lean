@@ -29,8 +29,10 @@ determiners validate *D N that VP, VP* (C8); negation reverses monotonicity (C9)
 increasing quantifier and its dual overlap (C10); a monotone quantifier is decided by its
 witness sets (C11). C12 and C13 prove that *more than half* is definable neither in
 first-order logic nor from the unrelativized majority quantifier, so *most* is a determiner,
-not a quantifier. The fragment's quantity words instantiate Table II, and the paper's own
-artificial determiners witness that the universals U6–U8 are not logical truths. Under the
+not a quantifier. The fragment's quantity words instantiate Table II. *Exactly three or
+exactly five*, one of the quantifiers the monotonicity constraint U6 rules out,
+[fails it](##not_satisfiesUniversals_exactly_three_sup_exactly_five), and the paper's
+artificial determiners witness that U7 and U8 are not logical truths either. Under the
 substrate's proportional reading of *few* (fewer than half), *few N are N* is contradictory,
 so `few` comes out negative strong, while B&C's Table II lists *few* as weak. Partial
 determiners (*the n*, *both*, *neither*) fall outside the total type `Det α` and are not treated.
@@ -50,6 +52,10 @@ determiners (*the n*, *both*, *neither*) fall outside the total type `Det α` an
   even}`, but the paper's own witnesses, `A − {a, b} ∈ ‖D‖(A)` and `A − {a} ∉ ‖D‖(A)`, hold
   only for `Card(A − X)`. As printed, `D` would not live on `A`, against the determiner
   universal U3; `evenOutside` counts `A − X`, and is conservative (`conservative_evenOutside`).
+* §4.8 lists *all but one man* among the denotations U6 rules out. But *all but one* is the
+  conjunction of *all but at most one*, increasing, and *not all*, decreasing, just as the same
+  passage reads *two men* as *at least two men but at most two men*; it
+  [satisfies the constraint](##Quantifier.Det.satisfiesUniversals_allBut).
 
 ## References
 
@@ -195,6 +201,23 @@ theorem inter_nonempty_of_scopeUp_dual (hm : ScopeMonotone D) {R A B : Set α}
     (hA : D R A) (hB : dual D R B) : (A ∩ B).Nonempty := by
   by_contra h
   exact hB (hm R (fun x hx hBx ↦ h ⟨x, hx, hBx⟩) hA)
+
+/-! §4.8 proposes U6, that simple noun phrases express monotone quantifiers or conjunctions of
+monotone quantifiers, as ruling out *an even number of*, *exactly three or exactly five* and *all
+but one*. The second fails it on five individuals, its truth at three and at five members of the
+scope not carrying over to four; the third does not (Errata). -/
+
+-- §4.8
+theorem not_satisfiesUniversals_exactly_three_sup_exactly_five :
+    ¬ (exactly 3 ⊔ exactly 5 : Det (Fin 5)).SatisfiesUniversals := fun h ↦ by
+  have := (satisfiesUniversals_iff.1 h).2 .univ {x | x.val < 4} {x | x.val < 3} .univ
+    (fun x (hx : x.val < 3) ↦ (by omega : x.val < 4)) (Set.subset_univ _)
+  revert this
+  simp only [Pi.sup_apply, sup_Prop_eq]
+  decide
+
+-- §4.8, Errata
+example [Finite α] : (allBut 1 : Det α).SatisfiesUniversals := satisfiesUniversals_allBut 1
 
 /-! §4.8's artificial strong-but-not-increasing determiner, conservative once its erratum is
 corrected, shows U7 (*positive strong determiners are increasing*) is not a logical truth. -/

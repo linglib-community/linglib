@@ -41,7 +41,6 @@ of individuals is the quantifier with restrictor `s ∩ A`.
 * [keenan-stavi-1986]
 * [peters-westerstahl-2006]
 * [van-benthem-1984]
-* [van-de-pol-etal-2023]
 -/
 
 @[expose] public section
@@ -221,6 +220,8 @@ theorem atMost_apply : atMost n A B ↔ (A ∩ B).ncard ≤ n := Iff.rfl
 
 theorem exactly_apply : exactly n A B ↔ (A ∩ B).ncard = n := Iff.rfl
 
+theorem allBut_apply : allBut n A B ↔ (A \ B).ncard = n := Iff.rfl
+
 theorem conservative_most : (most : Det α).Conservative := NumberTree.conservative_toDet _
 
 theorem conservative_atLeast (n : ℕ) : (atLeast n : Det α).Conservative :=
@@ -375,8 +376,7 @@ theorem not_scopeAntitone_half : ¬ (half : Det (Fin 3)).ScopeAntitone := fun h 
       half {x : Fin 3 | x = 0 ∨ x = 1} ∅ := h _ (Set.empty_subset _)
   revert this; decide
 
-/-- *Half* is non-monotone in its scope, neither monotone nor antitone
-([van-de-pol-etal-2023]). -/
+/-- *Half* is non-monotone in its scope, neither monotone nor antitone. -/
 theorem not_monotone_half :
     ¬ (half : Det (Fin 3)).ScopeMonotone ∧ ¬ (half : Det (Fin 3)).ScopeAntitone :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩
@@ -402,6 +402,14 @@ theorem satisfiesUniversals_exactly [Finite α] (n : ℕ) :
     (exactly n : Det α).SatisfiesUniversals :=
   ⟨conservative_exactly n, fun A ↦ ⟨atLeast n A, atMost n A, .inl (monotone_atLeast n A),
     .inr (antitone_atMost n A), by rw [exactly_eq_atLeast_inf_atMost]; rfl⟩⟩
+
+/-- *All but n* meets Barwise and Cooper's monotonicity constraint as the conjunction of *all but
+at most n*, which is monotone, and *at least n are not*, which is antitone. -/
+theorem satisfiesUniversals_allBut [Finite α] (n : ℕ) : (allBut n : Det α).SatisfiesUniversals :=
+  ⟨NumberTree.conservative_toDet _, fun A ↦ ⟨fun B ↦ (A \ B).ncard ≤ n, fun B ↦ n ≤ (A \ B).ncard,
+    .inl fun _ _ h hB ↦ (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_right h)).trans hB,
+    .inr fun _ _ h hB ↦ hB.trans (Set.ncard_le_ncard (Set.sdiff_subset_sdiff_right h)),
+    funext fun _ ↦ propext le_antisymm_iff⟩⟩
 
 theorem both_fin2 : both (α := Fin 2) Set.univ Set.univ := by decide
 
