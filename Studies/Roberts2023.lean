@@ -265,21 +265,21 @@ end Scoreboard
 /-! ### Imperative subjects -/
 
 /-- *Nobody* restricted to the addressees (68). The second-person pronoun (66), overt or null,
-is the Montague lift `NP.individual` of an addressee, which lives on the set of addressees by
-`NP.individual_livesOn`. -/
-def nobody (addr : E → Prop) : NP E := GQ.no addr
+is the Montague lift `Quantifier.individual` of an addressee, which lives on the set of
+addressees by `Quantifier.individual_livesOn`. -/
+def nobody (addr : Set E) : Quantifier E := Det.no addr
 
-theorem nobody_livesOn (addr : E → Prop) : NP.LivesOn (nobody addr) addr :=
-  (GQ.conservative_iff_livesOn GQ.no).1 GQ.conservative_no addr
+theorem nobody_livesOn (addr : Set E) : Quantifier.LivesOn (nobody addr) addr :=
+  Det.conservative_no.livesOn addr
 
 theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
     {g : Index W T → List (Index W T → Prop)} {f : Background (Index W T)}
-    {addr : E → Prop}
+    {addr : Set E}
     {move : Index W T → E → Prop} {c c' : Index W T} {x y : E}
     (h : realizes history g f (fun c _ ↦ nobody addr (move c)) x c)
-    (hc' : c' ∈ applic history g f (fun c _ ↦ nobody addr (move c)) x c) (hy : addr y) :
+    (hc' : c' ∈ applic history g f (fun c _ ↦ nobody addr (move c)) x c) (hy : y ∈ addr) :
     ∃ t', c'.time < t' ∧ ¬ move (c'.world, t') y ∧ (c'.world, t') ∈ timelyFut history g c' :=
   let ⟨t', ht, hP, hfut⟩ := h c' hc'
-  ⟨t', ht, hP y hy, hfut⟩
+  ⟨t', ht, hP hy, hfut⟩
 
 end Roberts2023

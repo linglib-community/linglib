@@ -220,7 +220,7 @@ theorem some_few_no_entailment (θ : Word → ℕ) (hs : 1 ≤ θ .some) (hs' : 
 
 /-! ### The English quantity words -/
 
-open English.Determiners Quantifier GQ
+open English.Determiners Quantifier Det
 open scoped Denotes
 
 /-- A word of the study is a quantity word of `Fragments/English/Determiners.lean` when the

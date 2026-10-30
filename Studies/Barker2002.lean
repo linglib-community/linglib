@@ -302,7 +302,7 @@ def someone : Deriv String E := quant "someone" fun k ↦ ∃ x, k x
 
 /-- The expository NP → Det N applies a generalized-quantifier determiner to the continuized
 nominal, so the determiner scopes under whatever the nominal contains. -/
-def NPgq (w : String) (Q : Quantifier.GQ E) (n : Deriv String (E → Prop)) : Deriv String E :=
+def NPgq (w : String) (Q : Quantifier.Det E) (n : Deriv String (E → Prop)) : Deriv String E :=
   bind w (fun P ↦ Q P) n
 
 /-- *every* quantifies universally over choice functions. -/
@@ -334,28 +334,28 @@ theorem everyone_left (σ : Equiv.Perm (Fin 2)) :
   rw [eval, S, continuize_binary_of_pure_right _ _ _ rfl]
   rfl
 
-theorem john_saw_NPgq (w : String) (Q : Quantifier.GQ E) (σ τ : Equiv.Perm (Fin 2)) :
+theorem john_saw_NPgq (w : String) (Q : Quantifier.Det E) (σ τ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NPgq w Q (lex man')))).eval = Q man' (saw' · j) := by
   rw [eval, S, continuize_binary_of_pure_left _ _ rfl, VP,
     continuize_binary_of_pure_left _ _ rfl]
   rfl
 
 theorem every_man_saw_a_woman_inverse (σ : Equiv.Perm (Fin 2)) :
-    (S (Equiv.swap 0 1) (NPgq "every" Quantifier.GQ.every (lex man'))
-      (VP σ (lex saw') (NPgq "a" Quantifier.GQ.some (lex woman')))).eval =
+    (S (Equiv.swap 0 1) (NPgq "every" Quantifier.Det.every (lex man'))
+      (VP σ (lex saw') (NPgq "a" Quantifier.Det.some (lex woman')))).eval =
       ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := by
   rw [eval, S, continuize_binary_swap, VP, continuize_binary_of_pure_left _ _ rfl]
   rfl
 
 theorem every_man_saw_a_woman_surface (σ : Equiv.Perm (Fin 2)) :
-    (S 1 (NPgq "every" Quantifier.GQ.every (lex man'))
-      (VP σ (lex saw') (NPgq "a" Quantifier.GQ.some (lex woman')))).eval =
+    (S 1 (NPgq "every" Quantifier.Det.every (lex man'))
+      (VP σ (lex saw') (NPgq "a" Quantifier.Det.some (lex woman')))).eval =
       ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := by
   rw [eval, S, continuize_binary_one, VP, continuize_binary_of_pure_left _ _ rfl]
   rfl
 
 theorem a_man_thought_everyone_saw_mary (σ₁ σ₂ σ₃ σ₄ : Equiv.Perm (Fin 2)) :
-    (S σ₁ (NPgq "a" Quantifier.GQ.some (lex man'))
+    (S σ₁ (NPgq "a" Quantifier.Det.some (lex man'))
       (VS σ₂ (lex thought') (island (S σ₃ everyone (VP σ₄ (lex saw') (lex m)))))).eval =
       ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := by
   have h : (island (S σ₃ everyone (VP σ₄ (lex saw') (lex m)))).continuize =
@@ -410,7 +410,7 @@ theorem john_saw_det (w : String) (Q : Cont Prop (ChoiceFunction E)) (σ τ υ :
 
 theorem john_saw_every_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ every (lex man')))).eval ↔
-      Quantifier.GQ.every man' (saw' · j) :=
+      Quantifier.Det.every man' (saw' · j) :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans
     (ChoiceFunction.forall_apply_iff_every hman (saw' · j))
 
@@ -422,17 +422,18 @@ theorem john_saw_every_man_iff_of_not_exists (hman : ¬ ∃ x, man' x)
 
 theorem john_saw_no_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ no (lex man')))).eval ↔
-      Quantifier.GQ.no man' (saw' · j) :=
+      Quantifier.Det.no man' (saw' · j) :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans <|
     (ChoiceFunction.exists_apply_iff_some hman (saw' · j)).not.trans
-      (by simp [Quantifier.GQ.no, Quantifier.GQ.some])
+      Quantifier.Det.no_iff_not_some.symm
 
 theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x, N x) (V : E → Prop) :
     (∃ C : Set (ChoiceFunction E),
       (∀ P : E → Prop, {x | P x}.ncard < 2 * ((· P) '' C).ncard) ∧ ∀ f ∈ C, V (f N)) ↔
-      Quantifier.GQ.most N V := by
+      Quantifier.Det.most N V := by
   classical
-  rw [Quantifier.GQ.most_apply]
+  rw [Quantifier.Det.most_apply]
+  change _ ↔ {x | N x ∧ ¬ V x}.ncard < {x | N x ∧ V x}.ncard
   have hNV : {x | N x}.ncard = {x | N x ∧ V x}.ncard + {x | N x ∧ ¬ V x}.ncard :=
     (Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | N x} {x | V x}).symm
   refine ⟨fun ⟨C, hC, hV⟩ ↦ ?_, fun h ↦ ?_⟩
@@ -477,7 +478,7 @@ theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x
 
 theorem john_saw_most_men_iff [Finite E] (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ most (lex man')))).eval ↔
-      Quantifier.GQ.most man' (saw' · j) :=
+      Quantifier.Det.most man' (saw' · j) :=
   (john_saw_det j man' saw' _ _ σ τ υ).to_iff.trans
     (exists_forall_mem_apply_iff_most hman (saw' · j))
 
@@ -604,8 +605,8 @@ theorem rows_scopings_theFriendOfEveryone : ∀ e ∈ Examples.all,
 theorem rows_scopings_everyManSawAWoman : ∀ e ∈ Examples.all,
     e.feature? "derivation" = some "every man saw a woman" → ∀ r ∈ e.readings,
       (r.2 = .acceptable ↔ ∃ σ τ : Equiv.Perm (Fin 2),
-        (S σ (NPgq "every" Quantifier.GQ.every (lex fun _ ↦ True))
-          (VP τ (lex fun (_ _ : Unit) ↦ True) (NPgq "a" Quantifier.GQ.some (lex fun _ ↦ True)))
+        (S σ (NPgq "every" Quantifier.Det.every (lex fun _ ↦ True))
+          (VP τ (lex fun (_ _ : Unit) ↦ True) (NPgq "a" Quantifier.Det.some (lex fun _ ↦ True)))
           ).scopeOrder = wordsOn '>' r.1) := by
   decide +kernel
 

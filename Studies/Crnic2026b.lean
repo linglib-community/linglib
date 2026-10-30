@@ -259,17 +259,17 @@ section Exceptive
 
 variable {α : Type*} {F : Set (Finset α)} {A X w : Finset α}
 
-open Quantifier Quantifier.GQ
+open Quantifier Quantifier.Det
 
 /-- (103b), (109): the determiner `Q` over the restrictor `A` minus the excepted plurality `X`. -/
-def but (Q : GQ α) (A X : Finset α) : Set (Finset α) := {w | Q ((· ∈ A) \ (· ∈ X)) (· ∈ w)}
+def but (Q : Det α) (A X : Finset α) : Set (Finset α) := {w | Q (↑A \ ↑X) ↑w}
 
 -- (102): *no `A` but `X`* is *only* over the pluralities within the restrictor
 theorem but_no_eq_only (hF : ∀ a ∈ A, {a} ∈ F) : but no A X = only F {Z ∈ F | Z ⊆ A} X := by
   ext w
   rw [mem_only_of_subset (sep_subset _ _)]
-  simp only [but, mem_ofPred_eq, no, Pi.sdiff_apply, and_imp]
-  exact ⟨fun h Z _ hZA hZw a ha ↦ by_contra fun haX ↦ h a ⟨hZA ha, haX⟩ (hZw ha),
+  simp only [but, mem_ofPred_eq, no, and_imp]
+  exact ⟨fun h Z _ hZA hZw a ha ↦ by_contra fun haX ↦ h ⟨hZA ha, haX⟩ (hZw ha),
     fun h a ⟨haA, haX⟩ haw ↦ haX (h {a} (hF a haA) (Finset.singleton_subset_iff.2 haA)
       (Finset.singleton_subset_iff.2 haw) (Finset.mem_singleton_self a))⟩
 
@@ -278,7 +278,7 @@ theorem but_no_eq_only (hF : ∀ a ∈ A, {a} ∈ F) : but no A X = only F {Z �
 theorem pex_but_no_eq_one_iff [Fintype α] [DecidableEq α]
     (hF : ∀ Z : Finset α, Z.Nonempty → Z ∈ F) (hXA : X ⊆ A)
     (hco : ∀ x ∈ X, (Finset.univ.erase x).Nonempty) :
-    pex F F (but no A) X w = 1 ↔ Exceptive.IsExceptionSet no (· ∈ A) (· ∈ X) (· ∈ w) := by
+    pex F F (but no A) X w = 1 ↔ Exceptive.IsExceptionSet no (A : Set α) X w := by
   have hsingle : ∀ x ∈ X, {x} ∈ {Z ∈ F | Z ⊆ A} := fun x hx ↦
     ⟨hF _ (Finset.singleton_nonempty x), Finset.singleton_subset_iff.2 (hXA hx)⟩
   rw [show but no A = only F {Z ∈ F | Z ⊆ A} from funext fun _ ↦
@@ -286,8 +286,8 @@ theorem pex_but_no_eq_one_iff [Fintype α] [DecidableEq α]
   change exhOnly F {Z ∈ F | Z ⊆ A} F X w = 1 ↔ _
   rw [exhOnly_eq_one_iff F subset_rfl, forall_mem_only_iff (sep_subset _ _) hsingle
     fun x hx ↦ hF _ (hco x hx), mem_only_of_subset (sep_subset _ _),
-    Exceptive.isExceptionSet_no_iff, funext_iff]
-  simp only [Pi.inf_apply, inf_Prop_eq, eq_iff_iff, mem_sep_iff]
+    Exceptive.isExceptionSet_no_iff, Set.ext_iff]
+  simp only [Set.inf_eq_inter, Set.mem_inter_iff, Finset.mem_coe, mem_sep_iff]
   refine ⟨fun ⟨hXw, h⟩ a ↦ ⟨fun ⟨haA, haw⟩ ↦ h {a} ⟨hF _ (Finset.singleton_nonempty a),
       Finset.singleton_subset_iff.2 haA⟩ (Finset.singleton_subset_iff.2 haw)
       (Finset.mem_singleton_self a), fun haX ↦ ⟨hXA haX, hXw haX⟩⟩,
@@ -297,7 +297,7 @@ section Someone
 
 variable [Fintype α] [DecidableEq α] {g : α}
 
-theorem but_some_univ_erase : but GQ.some Finset.univ (Finset.univ.erase g) = Ici {g} := by
+theorem but_some_univ_erase : but Det.some Finset.univ (Finset.univ.erase g) = Ici {g} := by
   ext w
   refine ⟨fun ⟨x, ⟨_, hx⟩, hxw⟩ ↦ ?_, fun hg ↦ ⟨g, ⟨Finset.mem_univ g, by simp⟩,
     hg (Finset.mem_singleton_self g)⟩⟩
@@ -306,9 +306,9 @@ theorem but_some_univ_erase : but GQ.some Finset.univ (Finset.univ.erase g) = Ic
 
 -- (110b) with the plural alternatives of (12): *someone but everyone except `g`* is excludable
 theorem isInnocentlyExcludable_but_some (hF : Finset.univ.erase g ∈ F) :
-    IsInnocentlyExcludable (but GQ.some Finset.univ '' F) (but GQ.some Finset.univ {g})
+    IsInnocentlyExcludable (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g})
       (Ici {g}) := by
-  have ha : Ici {g} ∈ but GQ.some Finset.univ '' F := ⟨_, hF, but_some_univ_erase⟩
+  have ha : Ici {g} ∈ but Det.some Finset.univ '' F := ⟨_, hF, but_some_univ_erase⟩
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ ha]
   rintro u ⟨hu, hmin⟩ hgu
   refine hmin ⟨u.erase g, ?_, fun q hq hqv ↦ ?_, fun h ↦ ?_⟩
@@ -321,10 +321,10 @@ theorem isInnocentlyExcludable_but_some (hF : Finset.univ.erase g ∈ F) :
   · exact Finset.notMem_erase g u (h _ ha hgu (Finset.mem_singleton_self g))
 
 theorem exhIE_but_some_ne {a : α} (hag : a ≠ g) (hF : Finset.univ.erase g ∈ F) :
-    exhIE (but GQ.some Finset.univ '' F) (but GQ.some Finset.univ {g}) ≠
-      but GQ.some Finset.univ {g} := by
+    exhIE (but Det.some Finset.univ '' F) (but Det.some Finset.univ {g}) ≠
+      but Det.some Finset.univ {g} := by
   intro h
-  have hw : ({g, a} : Finset α) ∈ but GQ.some Finset.univ {g} :=
+  have hw : ({g, a} : Finset α) ∈ but Det.some Finset.univ {g} :=
     ⟨a, ⟨Finset.mem_univ a, by simpa using hag⟩, by simp⟩
   exact (isInnocentlyExcludable_but_some hF).exhIE_subset_compl (h.ge hw) (by simp)
 
@@ -392,8 +392,9 @@ theorem table_1 :
 
 -- (107)–(110)
 theorem judgment_107 : Examples.ex_107.judgment = .unacceptable ∧
-    exhIE (but Quantifier.GQ.some Finset.univ '' party) (but Quantifier.GQ.some Finset.univ {gal}) ≠
-      but Quantifier.GQ.some Finset.univ {gal} :=
+    exhIE (but Quantifier.Det.some Finset.univ '' party)
+        (but Quantifier.Det.some Finset.univ {gal}) ≠
+      but Quantifier.Det.some Finset.univ {gal} :=
   ⟨rfl, exhIE_but_some_ne (a := tal) (by decide) ⟨tal, by decide⟩⟩
 
 end Party

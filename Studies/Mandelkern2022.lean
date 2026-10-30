@@ -224,7 +224,7 @@ def Realize : Formula L V Δ → Assign V Δ E → W → Prop
   | neg p, g, w => ¬ p.Realize g w
   | indef x p q, g, w => ∃ a, p.Realize (g.update x a) w ∧ q.Realize (g.update x a) w
   | iota _ p q, g, w => p.Realize g w ∧ q.Realize g w
-  | quant Q x δ p q, g, w => Q.toGQ (fun a ↦ p.Realize (g.pair δ x a) w)
+  | quant Q x δ p q, g, w => Q.toDet (fun a ↦ p.Realize (g.pair δ x a) w)
       (fun a ↦ p.Realize (g.pair δ x a) w ∧ q.Realize (g.pair δ x a) w)
 
 /-- The bounds of a formula are satisfied (*satt*) at a context, an assignment and a world, in the
@@ -298,7 +298,7 @@ variable {I} {o : Order} {c : Set (Assign V Δ E × W)} {g : Assign V Δ E} {w :
   Iff.rfl
 
 @[simp] theorem realize_quant {Q : Quantifier.NumberTree} {δ : Δ} :
-    (quant Q x δ p q).Realize I g w ↔ Q.toGQ (fun a ↦ p.Realize I (g.pair δ x a) w)
+    (quant Q x δ p q).Realize I g w ↔ Q.toDet (fun a ↦ p.Realize I (g.pair δ x a) w)
       (fun a ↦ p.Realize I (g.pair δ x a) w ∧ q.Realize I (g.pair δ x a) w) :=
   Iff.rfl
 
@@ -996,7 +996,7 @@ theorem not_felicitous_ex21b (hxy : x ≠ y) (hP : ∃ (w : W) (a : E), (I w).Re
 individual (p. 1111). -/
 theorem realize_ex21b_iff_of_familiar (hxy : x ≠ y)
     (hs : (ex21b Pa Lv x y δ Q).Satt I o c g w) (hy : Familiar c y) :
-    (ex21b Pa Lv x y δ Q).Realize I g w ↔ Q.toGQ (fun a ↦ (I w).RelMap Pa ![a])
+    (ex21b Pa Lv x y δ Q).Realize I g w ↔ Q.toDet (fun a ↦ (I w).RelMap Pa ![a])
       (fun a ↦ (I w).RelMap Pa ![a] ∧ ∃ b : E, g y = ↑b ∧ (I w).RelMap Lv ![a, b]) := by
   have hdom : ∀ a, (g.pair δ x a) y = g y := fun a ↦ by
     rw [Assign.pair_apply, PartialAssign.update_of_ne (Ne.symm hxy), (hs a).2.2 y hy]
@@ -1049,7 +1049,7 @@ theorem satt_ex22b_iff [Nonempty E] :
 paired child, the covarying reading (p. 1111). -/
 theorem realize_ex22b_iff (hxy : x ≠ y) :
     (ex22b Ch Of Lv x y δ Q).Realize I g w ↔
-      Q.toGQ (fun a ↦ ∃ b, (I w).RelMap Ch ![b] ∧ (I w).RelMap Of ![b, a])
+      Q.toDet (fun a ↦ ∃ b, (I w).RelMap Ch ![b] ∧ (I w).RelMap Of ![b, a])
         (fun a ↦ (∃ b, (I w).RelMap Ch ![b] ∧ (I w).RelMap Of ![b, a]) ∧
           ∃ b : E, g.dom δ a y = ↑b ∧ (I w).RelMap Lv ![a, b]) := by
   have hp : ∀ a, (hasChildOf Ch Of x y : Formula L V Δ).Realize I (g.pair δ x a) w ↔

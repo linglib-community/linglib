@@ -262,19 +262,19 @@ variable {cn : E → Set W} {φ : E → Set (Set W)} {O : Set W} {w : W}
 /-- An answer to the question introducing `det` `cn` into an open question with answers `φ y` says,
 of a property `P` and a function `f`, that `det` `cn`s are `P`s and that `f` gives a true answer
 for each `P`, which is a `cn` (T12–14, p. 186). -/
-def quantifyIn (det : GQ E) (cn : E → Set W) (φ : E → Set (Set W)) : Set (Set W) :=
-  {O | ∃ (P : W → Set E) (f : W → E → Set W), O = {w | det (w ∈ cn ·) (· ∈ P w) ∧
+def quantifyIn (det : Det E) (cn : E → Set W) (φ : E → Set (Set W)) : Set (Set W) :=
+  {O | ∃ (P : W → Set E) (f : W → E → Set W), O = {w | det {y | w ∈ cn y} (P w) ∧
     ∀ y ∈ P w, w ∈ cn y ∧ f w y ∈ φ y ∧ w ∈ f w y}}
 
-theorem exists_mem_of_mem_trueAnswers_every (hO : O ∈ trueAnswers (quantifyIn GQ.every cn φ) w)
+theorem exists_mem_of_mem_trueAnswers_every (hO : O ∈ trueAnswers (quantifyIn Det.every cn φ) w)
     {y : E} (hy : w ∈ cn y) : ∃ p ∈ φ y, w ∈ p := by
   obtain ⟨⟨P, f, rfl⟩, hdet, hall⟩ := hO
-  obtain ⟨-, hf, hw⟩ := hall y (hdet y hy)
+  obtain ⟨-, hf, hw⟩ := hall y (hdet hy)
   exact ⟨_, hf, hw⟩
 
 /-- A question introducing *the* `cn` has no true answer where nothing is a `cn` (p. 181). -/
 theorem trueAnswers_quantifyIn_the (h : ∀ y, w ∉ cn y) :
-    trueAnswers (quantifyIn GQ.the cn φ) w = ∅ :=
+    trueAnswers (quantifyIn Det.the cn φ) w = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨⟨_, _, hO⟩, hw⟩ ↦ by
     subst hO
     obtain ⟨⟨x, hx, -⟩, -⟩ := hw
@@ -287,21 +287,21 @@ def kingOfFrance : Unit → Set (Option Bool) := fun _ ↦ Set.range some
 def whetherBald : Unit → Set (Set (Option Bool)) := fun _ ↦ {{some true}, {some false}}
 
 theorem king_row :
-    trueAnswers (quantifyIn GQ.the kingOfFrance whetherBald) none = ∅ ↔
+    trueAnswers (quantifyIn Det.the kingOfFrance whetherBald) none = ∅ ↔
       Examples.king.feature? "status" = some "no true answers" :=
   iff_of_true (trueAnswers_quantifyIn_the fun _ ↦ by simp [kingOfFrance]) rfl
 
 /-- On the external view of answerhood, `O` says only that each `P` has its `f`-answer, and it
 answers at `w` when the `P`s are `det` `cn`s there (p. 181). -/
-def externalAnswers (det : GQ E) (cn : E → Set W) (φ : E → Set (Set W)) (w : W) :
+def externalAnswers (det : Det E) (cn : E → Set W) (φ : E → Set (Set W)) (w : W) :
     Set (Set W) :=
   {O | w ∈ O ∧ ∃ (P : Set E) (f : E → Set W), O = {v | ∀ y ∈ P, v ∈ f y} ∧
     det (w ∈ cn ·) (· ∈ P) ∧ ∀ y ∈ P, w ∈ cn y ∧ f y ∈ φ y}
 
 theorem not_assumption_externalAnswers :
-    ¬Assumption (externalAnswers GQ.some (fun _ : Unit ↦ ({true} : Set Bool))
+    ¬Assumption (externalAnswers Det.some (fun _ : Unit ↦ ({true} : Set Bool))
       fun _ ↦ {Set.univ}) := fun h ↦ by
-  have hmem : Set.univ ∈ externalAnswers GQ.some (fun _ : Unit ↦ ({true} : Set Bool))
+  have hmem : Set.univ ∈ externalAnswers Det.some (fun _ : Unit ↦ ({true} : Set Bool))
       (fun _ ↦ {Set.univ}) true :=
     ⟨trivial, {()}, fun _ ↦ Set.univ, by simp, ⟨(), rfl, rfl⟩, fun _ _ ↦ ⟨rfl, rfl⟩⟩
   obtain ⟨-, -, -, -, ⟨_, hx, -⟩, -⟩ := h hmem (Set.mem_univ false)
@@ -316,7 +316,7 @@ section SingularWhich
 variable {η φ : E → Set W} {w : W} {K : SetRel W W}
 
 /-- The proposition that the `η` that `φ` is `x`, with Russellian *the* (p. 192). -/
-def theAnswer (η φ : E → Set W) (x : E) : Set W := {w | GQ.the (fun y ↦ w ∈ η y ∧ w ∈ φ y) (· = x)}
+def theAnswer (η φ : E → Set W) (x : E) : Set W := {w | Det.the (fun y ↦ w ∈ η y ∧ w ∈ φ y) (· = x)}
 
 theorem mem_theAnswer {x : E} : w ∈ theAnswer η φ x ↔ ∀ y, w ∈ η y ∧ w ∈ φ y ↔ y = x :=
   ⟨fun ⟨_, h, hx⟩ ↦ hx ▸ h, fun h ↦ ⟨x, h, rfl⟩⟩

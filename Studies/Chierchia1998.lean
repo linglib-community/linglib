@@ -247,7 +247,7 @@ reads it existentially. -/
 def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C : Set (E × S))
     (route : E → E → S → Prop) : Set S :=
   N.gen ({p | p.1 ∈ up (down plane) p.2} ∩ C)
-    {p | Quantifier.GQ.some (up (down computer) p.2)
+    {p | Quantifier.Det.some (up (down computer) p.2)
       (route · p.1 p.2)}
 
 /-- In (39b) the fronted bare plural is universal over the normal cases, and the one in scope
@@ -264,7 +264,7 @@ predication (31c) wherever the kind has a normal instance. -/
 theorem some_up_of_mem_dogsBark {N : Normality S (E × S)} {dog : S → Set E} {C : Set (E × S)}
     {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
     (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ up (down dog) p.2} ∩ C)) :
-    Quantifier.GQ.some (up (down dog) s') (bark · s') :=
+    Quantifier.Det.some (up (down dog) s') (bark · s') :=
   ⟨x, (N.normal_subset s _ hx).1, h hx⟩
 
 end Generic

@@ -420,7 +420,7 @@ theorem not_presupposes_forallInstances_exists :
 existential presupposition is bound to the world. -/
 theorem forallInstances_singleton {D : Type} (A B : D → Set W) (w : W) :
     forallInstances (fun d ↦ cond (ofSet (A d)) (ofSet (B d))) {w} w =
-      Belnap1970.restrictedForall (fun d ↦ w ∈ A d) (fun d ↦ w ∈ B d) := by
+      Belnap1970.restrictedForall {d | w ∈ A d} {d | w ∈ B d} := by
   unfold forallInstances Belnap1970.restrictedForall
   congr 1
   funext d

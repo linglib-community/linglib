@@ -48,7 +48,7 @@ open Montague
 open scoped Assignment
 open PhraseStructure
 open PhraseStructure.Tree
-open Quantifier Quantifier.GQ
+open Quantifier Quantifier.Det
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open English.Determiners (QuantityWord)
 open scoped Denotes
@@ -199,10 +199,10 @@ def terminals (s : Set Family.{0}) (E W : Type) [Fintype E] : Set (Denotation E 
 /-- `objectShift D` is the object-position entry of the determiner `D`, which the book's lexical
 rule (§7.2.1) derives from the basic one. It takes an object-first two-place predicate and the
 subject and quantifies over the object. -/
-def objectShift {E : Type*} (D : GQ E) : (E → Prop) → (E → E → Prop) → E → Prop :=
+def objectShift {E : Type*} (D : Det E) : (E → Prop) → (E → E → Prop) → E → Prop :=
   fun P R x ↦ D P fun y ↦ R y x
 
-@[simp] theorem objectShift_apply {E : Type*} (D : GQ E) (P : E → Prop) (R : E → E → Prop)
+@[simp] theorem objectShift_apply {E : Type*} (D : Det E) (P : E → Prop) (R : E → E → Prop)
     (x : E) : objectShift D P R x = D P fun y ↦ R y x := rfl
 
 /-- The object-position entry of a terminal of the determiner type, the book's lexical rule
@@ -593,11 +593,11 @@ def tree_inverse : Tree Unit (QuantityWord ⊕ String) :=
 
 /-- The surface-scope reading `∀ > ∃` puts `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  surfaceScope every GQ.some person person fun x y ↦ Toy.sees y x
+  surfaceScope every Det.some person person fun x y ↦ Toy.sees y x
 
 /-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  inverseScope every GQ.some person person fun x y ↦ Toy.sees y x
+  inverseScope every Det.some person person fun x y ↦ Toy.sees y x
 
 theorem surface_scope_true : surfaceScopeProp := by
   rintro x (rfl | rfl)
@@ -606,8 +606,8 @@ theorem surface_scope_true : surfaceScopeProp := by
 
 theorem inverse_scope_false : ¬inverseScopeProp := by
   rintro ⟨y, (rfl | rfl), hall⟩
-  · exact nomatch hall .john (.inl rfl)
-  · exact nomatch hall .mary (.inr rfl)
+  · exact nomatch hall (Or.inl rfl)
+  · exact nomatch hall (Or.inr rfl)
 
 theorem inverse_entails_surface : inverseScopeProp → surfaceScopeProp :=
   iterate_every_some_of_some_every _ _ _
@@ -627,14 +627,14 @@ theorem scope_ambiguity_computed : interp lex g₀ tree_surface ≠ interp lex g
 
 theorem denotes_surface : Denotes lex g₀ tree_surface ⟨Ty.t, surfaceScopeProp⟩ := by
   show Denotes lex g₀ tree_surface
-    ⟨Ty.t, every person fun x ↦ GQ.some person fun y ↦ Toy.sees y x⟩
+    ⟨Ty.t, every person fun x ↦ Det.some person fun y ↦ Toy.sees y x⟩
   refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := every person) ?_
     (.pa (τ := .t) fun x ↦ ?_)
   · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := every)
       (a := person) (.tn rfl) (.tn rfl)
-  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := GQ.some person) ?_
+  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := Det.some person) ?_
       (.pa (τ := .t) fun y ↦ ?_)
-    · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := GQ.some)
+    · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := Det.some)
         (a := person) (.tn rfl) (.tn rfl)
     · exact .faRight (lex := lex) (σ := .e) (τ := .t) (a := x) (f := Toy.sees y) .trace
         (.faLeft (lex := lex) (σ := .e) (τ := .e ⇒ .t) (f := Toy.sees) (a := y)

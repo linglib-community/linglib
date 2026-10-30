@@ -66,7 +66,7 @@ let the de-Fregean analysis do without `⊥` (Section 6.1) are not formalized.
 @[expose] public section
 namespace BylininaNouwen2018
 
-open Degree Exhaustification Numerals Quantifier Quantifier.GQ Set Mereology
+open Degree Exhaustification Numerals Quantifier Quantifier.Det Set Mereology
 
 variable {α : Type*} [DecidableEq α]
 
@@ -129,14 +129,14 @@ theorem zero_mem_countDegrees (A B : Set α) : 0 ∈ countDegrees A (plural B) :
 
 -- (73)
 theorem maxIn_zero_countDegrees_iff {A B : Set α} :
-    MaxIn {0} (countDegrees A (plural B)) ↔ GQ.no A B := by
+    MaxIn {0} (countDegrees A (plural B)) ↔ Det.no A B := by
   refine maxIn_singleton.trans ⟨fun h a ha hb ↦ ?_, fun h ↦ ⟨zero_mem_countDegrees A B, ?_⟩⟩
   · have : 1 ≤ 0 := h.2 ⟨{a}, ⟨mem_plural.2 (Finset.coe_singleton a ▸ singleton_subset_iff.2 ha),
       mem_plural.2 (Finset.coe_singleton a ▸ singleton_subset_iff.2 hb)⟩, Finset.card_singleton a⟩
     omega
   · rintro _ ⟨x, ⟨hA, hB⟩, rfl⟩
     exact Nat.le_zero.2 <| Finset.card_eq_zero.2 <| Finset.eq_empty_of_forall_notMem
-      fun a hx ↦ h a (mem_plural.1 hA hx) (mem_plural.1 hB hx)
+      fun _ hx ↦ h (mem_plural.1 hA hx) (mem_plural.1 hB hx)
 
 -- (72)
 theorem not_maxIn_zero_countDegrees_sdiff (A B : Set α) :
@@ -145,7 +145,7 @@ theorem not_maxIn_zero_countDegrees_sdiff (A B : Set α) :
 
 /-- Exhaustified *zero A B* is *no A B* ((40)). -/
 theorem exhAgainst_zero_iff_no {A B : Set α} :
-    exhAgainst (· < ·) (· ∈ countDegrees A (plural B)) 0 ↔ GQ.no A B :=
+    exhAgainst (· < ·) (· ∈ countDegrees A (plural B)) 0 ↔ Det.no A B :=
   maxIn_singleton_iff_exhAgainst.symm.trans maxIn_zero_countDegrees_iff
 
 /-! ### Negative polarity items
@@ -270,14 +270,14 @@ the sites they reach. -/
 
 section Scope
 
-variable {ι : Type*} {Q : NP ι} {P : ι → Set ℕ} {n : ℕ}
+variable {ι : Type*} {Q : Quantifier ι} {P : ι → Set ℕ} {n : ℕ}
 
 theorem exhAgainst_iff_highScope :
-    exhAgainst (· < ·) (fun m ↦ Q fun x ↦ m ∈ P x) n ↔ HighScope (MaxIn {n}) Q P :=
+    exhAgainst (· < ·) (fun m ↦ Q {x | m ∈ P x}) n ↔ HighScope (MaxIn {n}) Q P :=
   maxIn_singleton_iff_exhAgainst.symm
 
 theorem exhAgainst_iff_lowScope :
-    (Q fun x ↦ exhAgainst (· < ·) (· ∈ P x) n) ↔ LowScope (MaxIn {n}) Q P := by
+    Q {x | exhAgainst (· < ·) (· ∈ P x) n} ↔ LowScope (MaxIn {n}) Q P := by
   simp only [LowScope, maxIn_singleton_iff_exhAgainst]
 
 end Scope
@@ -293,9 +293,9 @@ theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Se
 
 -- (77b), (77a), (78)
 theorem highScope_every_not_lowScope :
-    HighScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
-      ¬ LowScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) :=
+    HighScope (MaxIn {0}) (every univ) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
+      ¬ LowScope (MaxIn {0}) (every univ) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) :=
   ⟨highScope_maxIn_singleton_every.2 ⟨fun _ _ ↦ Nat.zero_le _, fun _ hb ↦ hb ⟨0, trivial, rfl⟩⟩,
-    fun h ↦ absurd (lowScope_maxIn.1 h 1 trivial) (by simp)⟩
+    fun h ↦ absurd (lowScope_maxIn.1 h (mem_univ 1)) (by simp)⟩
 
 end BylininaNouwen2018

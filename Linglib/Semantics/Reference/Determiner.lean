@@ -50,8 +50,8 @@ Moroney's (147)–(148) put the deictic condition inside the restriction, where 
 the restrictor's satisfiers; here it is a presupposition on the indexed referent of the
 strong-article description, and the two coincide whenever the index supplies a referent that meets
 the condition. Distance, visibility and elevation, which cross-cut the person cells, are not
-modeled. `Quantifier`, a generalized quantifier rather than an individual denotation, has no
-`Nominal`.
+modeled. `QuantificationalDeterminer`, whose denotation is a determiner denotation rather than an
+individual one, has no `Nominal`.
 
 ## References
 

@@ -30,7 +30,7 @@ universal under either negation, (91) (`neg_duk_iff`).
 
 * The chapter leaves the choice among generalized-quantifier, indeterminate-pronoun and
   choice-function analyses of the class-B quantifiers open (§3.2.5); *wani* and *koo*+*wh* are
-  read here as the generalized quantifiers `GQ.some` and `every`, the first of the three.
+  read here as the determiner denotations `Det.some` and `every`, the first of the three.
 * A collective predicate is one that holds only of pluralities of at least two members; the
   distributive universal applies it member by member and so fails.
 * The binding differences of §4.2.3 and the adverbial quantifiers of §6 are not represented,
@@ -52,7 +52,7 @@ universal under either negation, (91) (`neg_duk_iff`).
 
 namespace Zimmermann2008
 
-open Hausa.Determiners Quantifier Quantifier.GQ
+open Hausa.Determiners Quantifier Quantifier.Det
 
 variable {α E : Type*}
 
@@ -95,7 +95,7 @@ theorem bare_no_wide_scope :
 
 /-! ### The class-B quantifiers, §3.2 -/
 
-theorem wani_wide_scope : GQ.some (λ _ : Faasinjee => True) (¬ Daura ·) :=
+theorem wani_wide_scope : Det.some Set.univ {x : Faasinjee | ¬ Daura x} :=
   ⟨.cadi, trivial, id⟩
 
 /-- The negative existential reading, no passenger buckled their seatbelt, (69i), fails: Audù
@@ -105,26 +105,24 @@ theorem wani_narrow_scope_false : ¬ ¬ ∃ x : Faasinjee, Daura x :=
 
 -- (69)
 theorem wani_ambiguity_witness :
-    GQ.some (λ _ : Faasinjee => True) (¬ Daura ·) ∧ ¬ ¬ ∃ x : Faasinjee, Daura x :=
+    Det.some Set.univ {x : Faasinjee | ¬ Daura x} ∧ ¬ ¬ ∃ x : Faasinjee, Daura x :=
   ⟨wani_wide_scope, wani_narrow_scope_false⟩
 
 /-- The universal over the negation is the negative existential: *koo*+*wh* under verb-phrase
 negation, (73), *I saw no one*. -/
-theorem every_neg_iff_not_some (R S : α → Prop) :
-    every R (¬ S ·) ↔ ¬ GQ.some R S := by
-  simp [every, GQ.some]
+theorem every_neg_iff_not_some (R S : Set α) : every R Sᶜ ↔ ¬ Det.some R S :=
+  no_iff_not_some
 
 /-- The negative existential of (73) and the negative universal of (74) differ on the model. -/
 theorem kowWh_negation_readings_diverge :
-    ¬ every (λ _ : Faasinjee => True) Daura ∧
-      ¬ every (λ _ : Faasinjee => True) (¬ Daura ·) :=
-  ⟨λ h => h .cadi trivial, λ h => h .audu trivial trivial⟩
+    ¬ every Set.univ {x : Faasinjee | Daura x} ∧ ¬ every Set.univ {x : Faasinjee | ¬ Daura x} :=
+  ⟨fun h ↦ h (Set.mem_univ Faasinjee.cadi), fun h ↦ h (Set.mem_univ Faasinjee.audu) trivial⟩
 
 /-! ### The two universals, §4 -/
 
-/-- The distributive universal *koo*+*wh*: the generalized quantifier `every` over a
-predicate of individuals. -/
-def kowWhSem (R S : α → Prop) : Prop := every R S
+/-- The distributive universal *koo*+*wh*: the determiner denotation `every` over a set of
+individuals. -/
+def kowWhSem (R S : Set α) : Prop := every R S
 
 /-- The collective universal *duk*: its plural or mass argument, (85)–(86), is a plurality, and
 the predicate applies to the plurality as a whole. -/
@@ -140,20 +138,20 @@ theorem duk_collective {R : Finset α} {S : Finset α → Prop} (h : S R) : dukS
 /-- *Koo*+*wh* cannot combine with a collective predicate, (89): applying it member by member
 asks each singleton to gather, which no collective predicate allows. -/
 theorem not_every_collective {R : Finset α} {S : Finset α → Prop} (hS : Collective S)
-    (hR : R.Nonempty) : ¬ kowWhSem (· ∈ R) (λ x => S {x}) := by
+    (hR : R.Nonempty) : ¬ kowWhSem ↑R {x | S {x}} := by
   obtain ⟨x, hx⟩ := hR
   intro h
-  have := hS {x} (h x hx)
+  have := hS {x} (h hx)
   simp at this
 
 /-- *Duk* under negation is the negative universal *not all*, (91), under verb-phrase and
 sentence negation alike: for a distributive predicate, not every member satisfies it. -/
 theorem neg_duk_iff (R : Finset α) (P : α → Prop) :
-    ¬ dukSem R (λ s => ∀ x ∈ s, P x) ↔ ¬ every (· ∈ R) P := by
-  simp [dukSem, every]
+    ¬ dukSem R (fun s ↦ ∀ x ∈ s, P x) ↔ ¬ every ↑R {x | P x} := by
+  simp [dukSem, every, Set.subset_def]
 
-theorem kowWh_daura_false : ¬ kowWhSem (λ _ : Faasinjee => True) Daura :=
-  λ h => h .cadi trivial
+theorem kowWh_daura_false : ¬ kowWhSem Set.univ {x : Faasinjee | Daura x} :=
+  fun h ↦ h (Set.mem_univ Faasinjee.cadi)
 
 /-! ### The data -/
 

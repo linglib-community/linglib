@@ -64,7 +64,7 @@ abbrev EvQuant (E : Type*) := (E → Prop) → Prop
 
 /-- `EvQuant.ofPred P` is the existential quantifier over the events of `P`, the determiner
 `some` restricted to `P`, the shape of (5.37). -/
-def EvQuant.ofPred (P : E → Prop) : EvQuant E := Quantifier.GQ.some P
+def EvQuant.ofPred (P : E → Prop) : EvQuant E := Quantifier.Det.some P
 
 section Preorder
 

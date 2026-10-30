@@ -29,7 +29,7 @@ with intersection on upward-entailing conjuncts and overgenerates on the others.
 ## Implementation notes
 
 A plurality is a `Set E` and a property of pluralities a `Set (Set E)`, as in the paper. The
-determiner *a* is `Quantifier.GQ.some`, the Montague lift is `Quantifier.NP.individual`, *and* and
+determiner *a* is `Quantifier.Det.some`, the Montague lift is `Quantifier.individual`, *and* and
 *or* are what the English coordinators denote, `Coordinator.denote`, and Choice Closure quantifies
 over `ChoiceFunction`, whose totality turns the definedness condition `N ≠ ∅` of Choice
 Raising into a hypothesis. The counterexamples to the set product read Heycock and Zamparelli's sets
@@ -56,7 +56,7 @@ not formalized.
 
 namespace Champollion2016
 
-open Quantifier Quantifier.NP Set SetFamily English.Coordination
+open Quantifier Set SetFamily English.Coordination
 
 private theorem and_denote {α : Type*} [CompleteBooleanAlgebra α] (s : Set α) :
     and_.denote s = sInf s :=
@@ -72,7 +72,7 @@ variable {α E : Type*}
 
 /-- **Existential Raising** (12) sends `N` to the sets that meet it. At any type it is the
 indefinite article *a* (23). -/
-def existentialRaising (N : Set α) : Set (Set α) := {P | GQ.some N P}
+def existentialRaising (N : Set α) : Set (Set α) := {P | Det.some N P}
 
 @[simp]
 theorem mem_existentialRaising {N P : Set α} : P ∈ existentialRaising N ↔ ∃ x ∈ N, x ∈ P :=
@@ -96,11 +96,11 @@ def choiceRaising (f : ChoiceFunction E) (N : Set E) : Set (Set E) := {P | indiv
 /-- **Distributive Choice Raising** (78) holds of the sets that contain every member of the
 plurality `f` chooses from `N`. -/
 def distributiveChoiceRaising (f : ChoiceFunction (Set E)) (N : Set (Set E)) : Set (Set E) :=
-  {P | GQ.every (f N) P}
+  {P | Det.every (f N) P}
 
 /-- **Determiner Fitting** (92) applies a determiner of individuals to the union of a property
 of pluralities and to the union of its meet with the scope. -/
-def determinerFitting (D : GQ E) (A B : Set (Set E)) : Prop := D (⋃₀ A) (⋃₀ (A ∩ B))
+def determinerFitting (D : Det E) (A B : Set (Set E)) : Prop := D (⋃₀ A) (⋃₀ (A ∩ B))
 
 /-! ### Raising and the Montague lift as upper closures -/
 
@@ -348,57 +348,57 @@ theorem minimization_or_existentialRaising (N N' : Set E) :
 
 -- p. 604
 theorem determinerFitting_some_iff {A B : Set (Set E)} (hB : ∅ ∉ B) :
-    determinerFitting GQ.some A B ↔ GQ.some A B := by
+    determinerFitting Det.some A B ↔ Det.some A B := by
   refine ⟨fun ⟨_, _, P, hP, _⟩ ↦ ⟨P, hP⟩, fun ⟨P, hA, hB'⟩ ↦ ?_⟩
   obtain ⟨x, hx⟩ := nonempty_iff_ne_empty.mpr fun h ↦ hB (h ▸ hB')
   exact ⟨x, ⟨P, hA, hx⟩, P, ⟨hA, hB'⟩, hx⟩
 
 -- (94)
 theorem determinerFitting_no_predicateDistributivity_iff (N : Set E) (S : Set (Set E)) :
-    determinerFitting GQ.no (predicateDistributivity N) S ↔
+    determinerFitting Det.no (predicateDistributivity N) S ↔
       ¬ ∃ x ∈ N, ∃ P ∈ S, x ∈ P ∧ P ⊆ N := by
-  refine ⟨fun h ⟨x, hx, P, hPS, hxP, hPN⟩ ↦ h x ⟨{x}, ⟨singleton_nonempty x,
+  refine ⟨fun h ⟨x, hx, P, hPS, hxP, hPN⟩ ↦ h ⟨{x}, ⟨singleton_nonempty x,
     singleton_subset_iff.2 hx⟩, mem_singleton x⟩ ⟨P, ⟨⟨⟨x, hxP⟩, hPN⟩, hPS⟩, hxP⟩,
     fun h x _ ⟨P, ⟨⟨_, hPN⟩, hPS⟩, hxP⟩ ↦ h ⟨x, hPN hxP, P, hPS, hxP, hPN⟩⟩
 
 -- (95)
 theorem determinerFitting_every_minimization_and {N N' : Set E} (h : Disjoint N N')
     (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set E) :
-    determinerFitting GQ.every (minimization (and_.denote
+    determinerFitting Det.every (minimization (and_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
-      GQ.every (or_.denote {N, N'}) S := by
+      Det.every (or_.denote {N, N'}) S := by
   rw [minimization_and_existentialRaising_of_disjoint h,
     or_denote, sSup_pair]
   obtain ⟨x₀, hx₀⟩ := hN
   obtain ⟨y₀, hy₀⟩ := hN'
   refine ⟨fun hD z hz ↦ ?_, fun hS z ⟨_, ⟨x, hx, y, hy, rfl⟩, hz⟩ ↦ ⟨_, ⟨⟨x, hx, y, hy, rfl⟩,
-    insert_nonempty x _, insert_subset (hS x (Or.inl hx)) (singleton_subset_iff.2
-      (hS y (Or.inr hy)))⟩, hz⟩⟩
+    insert_nonempty x _, insert_subset (hS (Or.inl hx)) (singleton_subset_iff.2
+      (hS (Or.inr hy)))⟩, hz⟩⟩
   · have hz' : z ∈ ⋃₀ {P | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} := by
       rcases hz with hz | hz
       exacts [⟨_, ⟨z, hz, y₀, hy₀, rfl⟩, mem_insert z _⟩,
         ⟨_, ⟨x₀, hx₀, z, hz, rfl⟩, mem_insert_of_mem x₀ rfl⟩]
-    obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD z hz'
+    obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD hz'
     exact hP hzP
 
 -- (99)
 theorem determinerFitting_every_minimization_or (N N' S : Set E) :
-    determinerFitting GQ.every (minimization (or_.denote
+    determinerFitting Det.every (minimization (or_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
-      GQ.every (or_.denote {N, N'}) S := by
+      Det.every (or_.denote {N, N'}) S := by
   rw [minimization_or_existentialRaising, or_denote, sSup_pair]
   refine ⟨fun hD z hz ↦ ?_, fun hS z ⟨_, ⟨x, hx, rfl⟩, hz⟩ ↦ ⟨{x}, ⟨⟨x, hx, rfl⟩,
-    singleton_nonempty x, singleton_subset_iff.2 (hS x hx)⟩, hz⟩⟩
-  obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD z ⟨{z}, ⟨z, hz, rfl⟩, mem_singleton z⟩
+    singleton_nonempty x, singleton_subset_iff.2 (hS hx)⟩, hz⟩⟩
+  obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD ⟨{z}, ⟨z, hz, rfl⟩, mem_singleton z⟩
   exact hP hzP
 
 /-- *Every cat and dog* and *every cat or dog* agree, which solves the universal half of
 Bergmann's puzzle (95), (96), (99). -/
 theorem determinerFitting_every_and_iff_or {N N' : Set E} (h : Disjoint N N')
     (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set E) :
-    determinerFitting GQ.every (minimization (and_.denote
+    determinerFitting Det.every (minimization (and_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
-      determinerFitting GQ.every (minimization (or_.denote
+      determinerFitting Det.every (minimization (or_.denote
         {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) :=
   (determinerFitting_every_minimization_and h hN hN' S).trans
     (determinerFitting_every_minimization_or N N' S).symm
@@ -406,9 +406,9 @@ theorem determinerFitting_every_and_iff_or {N N' : Set E} (h : Disjoint N N')
 -- (97), (98)
 theorem determinerFitting_some_minimization_and {N N' : Set E} (h : Disjoint N N')
     (S : Set E) :
-    determinerFitting GQ.some (minimization (and_.denote
+    determinerFitting Det.some (minimization (and_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
-      GQ.some N S ∧ GQ.some N' S := by
+      Det.some N S ∧ Det.some N' S := by
   rw [determinerFitting_some_iff fun h ↦ Set.not_nonempty_empty
     (h : ∅ ∈ predicateDistributivity S).1]
   change predicateDistributivity S ∈ existentialRaising _ ↔ _
@@ -419,8 +419,8 @@ theorem determinerFitting_some_minimization_and {N N' : Set E} (h : Disjoint N N
 -- (98), (97)
 theorem some_or_and_not_determinerFitting_some {N N' S : Set E} (h : Disjoint N N')
     {x : E} (hx : x ∈ N) (hxS : x ∈ S) (hN'S : Disjoint N' S) :
-    GQ.some (or_.denote {N, N'}) S ∧
-      ¬ determinerFitting GQ.some (minimization (and_.denote
+    Det.some (or_.denote {N, N'}) S ∧
+      ¬ determinerFitting Det.some (minimization (and_.denote
         {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) := by
   rw [determinerFitting_some_minimization_and h,
     or_denote, sSup_pair]
@@ -462,24 +462,24 @@ theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
 holds and the intersective one fails. -/
 theorem sups_noMan_noWoman {N N' : Set E} (h : Disjoint N N') {x y : E} (hx : x ∈ N)
     (hy : y ∈ N') :
-    {x, y} ∈ {P : Set E | GQ.no N P} ⊻ {P | GQ.no N' P} ∧
+    {x, y} ∈ {P : Set E | Det.no N P} ⊻ {P | Det.no N' P} ∧
       {x, y} ∉ and_.denote
-        {{P : Set E | GQ.no N P}, {P : Set E | GQ.no N' P}} := by
+        {{P : Set E | Det.no N P}, {P : Set E | Det.no N' P}} := by
   rw [and_denote, sInf_pair]
   refine ⟨⟨{y}, fun z hz hzy ↦ ?_, {x}, fun z hz hzx ↦ ?_, ?_⟩, fun ⟨hno, _⟩ ↦
-    hno x hx (mem_insert x _)⟩
+    hno hx (mem_insert x _)⟩
   · exact disjoint_left.mp h hz (eq_of_mem_singleton hzy ▸ hy)
   · exact disjoint_left.mp h (eq_of_mem_singleton hzx ▸ hx) hz
   · exact (union_comm _ _).trans (singleton_union)
 
 -- (103b)
 theorem sups_individual_nobodyElse {x y : E} (hxy : x ≠ y) :
-    {x, y} ∈ {P : Set E | individual y P} ⊻ {P | GQ.no (· ≠ y) P} ∧
+    {x, y} ∈ {P : Set E | individual y P} ⊻ {P | Det.no {y}ᶜ P} ∧
       {x, y} ∉ and_.denote {{P : Set E | individual y P},
-        {P : Set E | GQ.no (· ≠ y) P}} := by
+        {P : Set E | Det.no {y}ᶜ P}} := by
   rw [and_denote, sInf_pair]
   exact ⟨⟨{x, y}, mem_insert_of_mem x rfl, ∅, fun _ _ h ↦ h, union_empty _⟩,
-    fun ⟨_, hno⟩ ↦ hno x hxy (mem_insert x _)⟩
+    fun ⟨_, hno⟩ ↦ hno hxy (mem_insert x _)⟩
 
 /-- For a condition true of three and false of four (105), the collective entry holds of John and
 four women but the intersective entry does not. -/

@@ -153,7 +153,7 @@ def numberRestriction : QuantityWord → Option Number
   | .tutti | .alcuni | .molti | .pochi => some .plural
 
 /-- The word as a determiner record, under its masculine form before a consonant. -/
-def toQuantifier (w : QuantityWord) : Quantifier :=
+def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
   { form := w.form .masculine .consonant, numberRestriction := w.numberRestriction }
 
 /-- All the words. -/
@@ -168,16 +168,16 @@ theorem forall_form_eq_iff (w : QuantityWord) :
   revert w; decide
 
 /-- The readings available for a word. *Ogni*, *ciascuno* and *tutti* read as `every`, *qualche*
-and *alcuni* as `Quantifier.GQ.some`, and *pochi* as `few`; *molti* has no reading, its standard
+and *alcuni* as `Quantifier.Det.some`, and *pochi* as `few`; *molti* has no reading, its standard
 being contextual like that of English *many*. The n-word *nessuno* reads as `no`, a negative
-quantifier ([de-swart-sag-2002]), or as `Quantifier.GQ.some`, an indefinite whose negation the
+quantifier ([de-swart-sag-2002]), or as `Quantifier.Det.some`, an indefinite whose negation the
 clause supplies ([zeijlstra-2004]). -/
-noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
   denote
-    | .ogni | .ciascuno | .tutti => {Quantifier.GQ.Family.every}
-    | .qualche | .alcuni => {Quantifier.GQ.Family.some}
-    | .nessuno => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}
-    | .pochi => {Quantifier.GQ.Family.few}
+    | .ogni | .ciascuno | .tutti => {Quantifier.Det.Family.every}
+    | .qualche | .alcuni => {Quantifier.Det.Family.some}
+    | .nessuno => {Quantifier.Det.Family.no, Quantifier.Det.Family.some}
+    | .pochi => {Quantifier.Det.Family.few}
     | .molti => ∅
 
 end QuantityWord

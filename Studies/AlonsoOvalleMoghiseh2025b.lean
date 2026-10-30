@@ -49,7 +49,7 @@ removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Quantifier Quantifier.GQ Quantifier.NP Question Finset
+open Quantifier Quantifier.Det Question Finset
 open scoped SetRel
 
 /-! ### Entities, worlds, and answers -/
@@ -88,11 +88,11 @@ def conjProp (X : Finset Entity) : Finset W := univ.filter fun w => ∀ e ∈ X,
 def disjProp (X : Finset Entity) : Finset W := univ.filter fun w => ∃ e ∈ X, P e w
 
 theorem mem_conjProp (X : Finset Entity) (w : W) :
-    w ∈ conjProp P X ↔ (⨅ e ∈ X, individual e) (P · w) := by
+    w ∈ conjProp P X ↔ (⨅ e ∈ X, individual e) {e | P e w} := by
   simp [conjProp, individual]
 
 theorem mem_disjProp (X : Finset Entity) (w : W) :
-    w ∈ disjProp P X ↔ (⨆ e ∈ X, individual e) (P · w) := by
+    w ∈ disjProp P X ↔ (⨆ e ∈ X, individual e) {e | P e w} := by
   simp [disjProp, individual]
 
 variable [DecidableEq W]

@@ -34,7 +34,7 @@ hierarchy and the revised shifts for nouns with complements (53) are not formali
 
 namespace ViknerJensen2002
 
-open Possession Quantifier Quantifier.GQ Quantifier.NP
+open Possession Quantifier Quantifier.Det
 
 variable {E S : Type*}
 
@@ -42,29 +42,31 @@ variable {E S : Type*}
 
 /-- The genitive `'s` (16) is the possessive quantifier of `Q` over the relational noun `R`, with
 the definite as possessee quantifier. -/
-def clitic (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
-  PossNP Q the (fun u x ↦ R u x s) (fun _ ↦ True)
+def clitic (Q : Quantifier E) (R : E → E → S → Prop) (s : S) : Quantifier E :=
+  PossNP Q the (fun u x ↦ R u x s) Set.univ
 
 -- (16)
-theorem clitic_apply (Q : NP E) (R : E → E → S → Prop) (s : S) (P : E → Prop) :
-    clitic Q R s P ↔ Q (fun u ↦ ∃ x, (∀ y, R u y s ↔ y = x) ∧ P x) := by
-  simp only [clitic, PossNP, dom, the, π_apply, Pi.inf_apply, inf_Prop_eq, true_and]
-  refine iff_of_eq (congrArg Q (funext fun a ↦ propext (and_iff_right_of_imp ?_)))
+theorem clitic_apply (Q : Quantifier E) (R : E → E → S → Prop) (s : S) (P : Set E) :
+    clitic Q R s P ↔ Q {u | ∃ x, (∀ y, R u y s ↔ y = x) ∧ x ∈ P} := by
+  simp only [clitic, PossNP, the, π_apply, Set.inf_eq_inter, Set.univ_inter]
+  refine iff_of_eq (congrArg Q (Set.ext fun a ↦ and_iff_right_of_imp ?_))
   rintro ⟨x, hx, -⟩
-  exact ⟨x, (hx x).2 rfl⟩
+  exact ⟨x, trivial, (hx x).2 rfl⟩
 
-theorem clitic_pi (Q : NP E) (W : E → S → Prop) (R : E → E → S → Prop) (s : S) :
-    clitic Q (π W R) s = PossNP Q the (fun u x ↦ R u x s) (fun x ↦ W x s) := by
-  funext P
-  simp only [clitic, PossNP, dom, the, π_apply, Pi.inf_apply, inf_Prop_eq, true_and]
+theorem clitic_pi (Q : Quantifier E) (W : E → S → Prop) (R : E → E → S → Prop) (s : S) :
+    clitic Q (π W R) s = PossNP Q the (fun u x ↦ R u x s) {x | W x s} :=
+  funext fun _ ↦ congrArg Q <| Set.ext fun _ ↦ and_congr
+    ⟨fun ⟨y, _, hy⟩ ↦ ⟨y, hy⟩, fun ⟨y, hy⟩ ↦ ⟨y, trivial, hy⟩⟩
+    (exists_congr fun _ ↦ and_congr_left' <| forall_congr' fun _ ↦
+      iff_congr (and_iff_right trivial) .rfl)
 
 theorem existsUnique_of_clitic_individual {a : E} {R : E → E → S → Prop} {s : S}
-    {P : E → Prop} (h : clitic (individual a) R s P) : ∃! y, R a y s := by
+    {P : Set E} (h : clitic (individual a) R s P) : ∃! y, R a y s := by
   obtain ⟨x, hx, -⟩ := (clitic_apply _ _ _ _).1 h
   exact ⟨x, (hx x).2 rfl, fun y hy ↦ (hx y).1 hy⟩
 
 theorem not_clitic_individual {a : E} {R : E → E → S → Prop} {s : S} (h : ∀ x, ¬ R a x s)
-    (P : E → Prop) : ¬ clitic (individual a) R s P := by
+    (P : Set E) : ¬ clitic (individual a) R s P := by
   rw [clitic_apply]
   rintro ⟨x, hx, -⟩
   exact h x ((hx x).2 rfl)
@@ -73,8 +75,8 @@ theorem not_clitic_individual {a : E} {R : E → E → S → Prop} {s : S} (h : 
 
 /-- The Montagovian definite (13) applied outside the genitive phrase, scoping over the
 possessor quantifier. -/
-def wideDefinite (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
-  the (fun y ↦ Q (fun u ↦ R u y s))
+def wideDefinite (Q : Quantifier E) (R : E → E → S → Prop) (s : S) : Quantifier E :=
+  the {y | Q {u | R u y s}}
 
 theorem clitic_individual (a : E) (R : E → E → S → Prop) (s : S) :
     clitic (individual a) R s = wideDefinite (individual a) R s := by
@@ -83,11 +85,11 @@ theorem clitic_individual (a : E) (R : E → E → S → Prop) (s : S) :
 
 /-- With a quantified possessor, `clitic` and `wideDefinite` differ (11b). -/
 theorem exists_clitic_ne_wideDefinite :
-    ∃ (Q : NP (Fin 4)) (R : Fin 4 → Fin 4 → Unit → Prop) (P : Fin 4 → Prop),
+    ∃ (Q : Quantifier (Fin 4)) (R : Fin 4 → Fin 4 → Unit → Prop) (P : Set (Fin 4)),
       clitic Q R () P ∧ ¬ wideDefinite Q R () P :=
-  ⟨every (· < 2), fun u y _ ↦ u = 0 ∧ y = 2 ∨ u = 1 ∧ y = 3, fun _ ↦ True,
-    by rw [clitic_apply]; unfold every; decide,
-    by simp only [wideDefinite, the, every]; decide⟩
+  ⟨every {x | x < 2}, fun u y _ ↦ u = 0 ∧ y = 2 ∨ u = 1 ∧ y = 3, Set.univ,
+    by rw [clitic_apply]; decide,
+    by unfold wideDefinite the; decide⟩
 
 /-! ### Senses and meaning shifts (§3.2.1, §3.2.3) -/
 
@@ -158,7 +160,7 @@ end Sense
 /-- An inanimate possessor has no control reading (*the car's cake*, Table 2). -/
 theorem not_clitic_control {ctrl : E → E → S → Prop} {animate : E → S → Prop}
     (hctrl : ∀ y x s, ctrl y x s → animate y s) {a : E} {s : S} (ha : ¬ animate a s)
-    (W : E → S → Prop) (P : E → Prop) : ¬ clitic (individual a) (π W ctrl) s P :=
+    (W : E → S → Prop) (P : Set E) : ¬ clitic (individual a) (π W ctrl) s P :=
   not_clitic_individual (fun _ h ↦ ha (hctrl _ _ _ h.2)) P
 
 /-! ### *Favourite* (§4) -/

@@ -16,8 +16,8 @@ public import Linglib.Semantics.Quantification.Individual
 A bare numeral and its modifications *more than*, *fewer than*, *at least* and *at most* are the
 five comparisons of `Degree.Comparison`. On Kennedy's de-Fregean semantics the form with comparison
 `c` and number `m` is the degree quantifier `Degree.MaxIn (c.interval m)`, so the bare numeral
-`MaxIn {m}` is two-sided; in the tradition of Horn it is the lower-bounded `NP.individual m`. Each
-reading derives the other: [Partee's `BE` lowers a de-Fregean form to its interval](##BE_maxIn) and
+`MaxIn {m}` is two-sided; in the tradition of Horn it is the lower-bounded
+`Quantifier.individual m`. Each reading derives the other: [Partee's `BE` lowers a de-Fregean form to its interval](##BE_maxIn) and
 [existential closure then gives the lower-bounded numeral](##some_BE_maxIn_singleton), which the
 two-sided one [asymmetrically entails](##maxIn_singleton_lt_individual), while [exhaustifying the
 lower-bounded numeral against the higher ones restores the de-Fregean
@@ -55,21 +55,21 @@ variable {D : Type*}
 
 /-- Partee's `BE` lowers the de-Fregean form with interval `U` to the property of lying in `U`, as
 `BE(three)` is the property of being three ([kennedy-2015], (39)). -/
-theorem BE_maxIn [Preorder D] (U : Set D) : NP.BE (MaxIn U) = (· ∈ U) :=
-  funext fun x ↦ propext
+theorem BE_maxIn [Preorder D] (U : Set D) : Quantifier.BE (MaxIn U) = U :=
+  Set.ext fun x ↦
     ⟨fun ⟨_, hm, h⟩ ↦ (h.1 : _ = x) ▸ hm, fun hx ↦ ⟨x, hx, isGreatest_singleton⟩⟩
 
 /-- Existential closure over the lowered bare numeral is the individual of the number, the
 lower-bounded reading ([kennedy-2015], (40b) and fn. 3). -/
 theorem some_BE_maxIn_singleton [Preorder D] (m : D) :
-    GQ.some (NP.BE (MaxIn {m})) = NP.individual m := by
+    Det.some (Quantifier.BE (MaxIn {m})) = Quantifier.individual m := by
   rw [BE_maxIn]
-  exact NP.some_ident m
+  exact Quantifier.some_singleton m
 
 /-- On a scale without a top degree the two-sided bare numeral asymmetrically entails the
 lower-bounded one. -/
 theorem maxIn_singleton_lt_individual [Preorder D] [NoMaxOrder D] (m : D) :
-    MaxIn {m} < (NP.individual m : Set D → Prop) :=
+    MaxIn {m} < Quantifier.individual m :=
   lt_of_le_not_ge (fun _ h ↦ (maxIn_singleton.1 h).1) fun h ↦
     let ⟨a, ha⟩ := exists_gt m
     ha.not_ge ((maxIn_singleton.1 (h (Set.Iic a) ha.le)).2 le_rfl)

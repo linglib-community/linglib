@@ -105,7 +105,8 @@ def hanzi : QuantityWord → String
 /-- The word as a determiner record. No word restricts number, and the words that take a bare
 noun take a count or a mass noun alike, as in *suǒyǒu de zhūròu* 'all the pork' beside *suǒyǒu de
 zhū* 'all the pigs' ([kuo-yu-2012]). -/
-def toQuantifier (w : QuantityWord) : Quantifier := { form := w.form, selectsMass := true }
+def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
+  { form := w.form, selectsMass := true }
 
 /-- All the words. -/
 def toList : List QuantityWord :=
@@ -114,18 +115,18 @@ def toList : List QuantityWord :=
 theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 
 /-- The readings available for a word, as generalized quantifiers on every finite domain.
-*Yīxiē* reads as `Quantifier.GQ.some`, *méiyǒu* as `no`, *shǎoshù* as `few`, *duōshù* and
+*Yīxiē* reads as `Quantifier.Det.some`, *méiyǒu* as `no`, *shǎoshù* as `few`, *duōshù* and
 *dàbùfèn* as `most`, and *měi*, *suǒyǒu* and *quánbù* as `every`; *hěnduō* has no reading,
 its standard being a value judgment left to context ([kuo-yu-2012]). Speakers judging
 *dàbùfèn* accept its majority reading far more often than a relative one ([wang-2012],
 §4.2.2.2). -/
-noncomputable instance : Denotes QuantityWord (Set GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Det.Family.{u}) where
   denote
-    | .yixie => {GQ.Family.some}
-    | .meiyou => {GQ.Family.no}
-    | .shaoshu => {GQ.Family.few}
-    | .duoshu | .dabufen => {GQ.Family.most}
-    | .mei | .suoyou | .quanbu => {GQ.Family.every}
+    | .yixie => {Det.Family.some}
+    | .meiyou => {Det.Family.no}
+    | .shaoshu => {Det.Family.few}
+    | .duoshu | .dabufen => {Det.Family.most}
+    | .mei | .suoyou | .quanbu => {Det.Family.every}
     | .henduo => ∅
 
 /-! ### The classifier -/
@@ -153,7 +154,7 @@ instance : DecidablePred TakesBareNoun := fun w ↦ by
 /-- Whether a word takes a classifier is not a function of its readings: *měi* and *suǒyǒu*
 both read as `every`, and only *měi* takes one ([kuo-yu-2012], p. 666). -/
 theorem not_factorsThrough_takesClassifier :
-    ¬ Function.FactorsThrough TakesClassifier fun w ↦ (⟦w⟧ : Set GQ.Family.{u}) :=
+    ¬ Function.FactorsThrough TakesClassifier fun w ↦ (⟦w⟧ : Set Det.Family.{u}) :=
   fun h ↦ (h (a := .mei) (b := .suoyou) rfl).mp trivial
 
 /-! ### The adverb *dōu* -/
@@ -170,9 +171,9 @@ instance : DecidablePred RequiresDou := fun w ↦ by unfold RequiresDou; cases w
 /-- A word needs *dōu* exactly when its one reading is `every`, *dōu* being obligatory in basic
 universal quantification ([kuo-yu-2012], p. 655). -/
 theorem requiresDou_iff {w : QuantityWord} :
-    w.RequiresDou ↔ ⟦w⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
-  cases w <;> simp [RequiresDou, Denotes.denote, GQ.Family.some_ne_every, GQ.Family.no_ne_every,
-    GQ.Family.most_ne_every, GQ.Family.few_ne_every]
+    w.RequiresDou ↔ ⟦w⟧ = ({Det.Family.every} : Set Det.Family.{u}) := by
+  cases w <;> simp [RequiresDou, Denotes.denote, Det.Family.some_ne_every, Det.Family.no_ne_every,
+    Det.Family.most_ne_every, Det.Family.few_ne_every]
 
 end QuantityWord
 

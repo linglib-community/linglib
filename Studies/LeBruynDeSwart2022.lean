@@ -50,26 +50,26 @@ def books : Unit → Set (Individual Book) := fun _ ↦ Set.univ
 def read (x : Individual Book) : Prop := x.1 ⊆ {Book.finished}
 
 /-- With Krifka's existential shift in place (40), no book was read. -/
-def krifkaUnscrambled : Prop := ¬ GQ.some (books ()) read
+def krifkaUnscrambled : Prop := ¬ Det.some (books ()) read
 
 /-- With Krifka's existential shift scrambled over negation (41), some book was not read. -/
-def krifkaScrambled : Prop := GQ.some (books ()) readᶜ
+def krifkaScrambled : Prop := Det.some (books ()) readᶜ
 
 /-- On the kinds approach (38), the bare plural shifts to its kind, and derived kind predication
 introduces the existential over its instances below negation. -/
 def chierchiaUnscrambled : Prop :=
-  ¬ GQ.some ((iota (IsGreatest (books ()))).elim (∅ : Set _) Set.Iic) read
+  ¬ Det.some ((iota (IsGreatest (books ()))).elim (∅ : Set _) Set.Iic) read
 
 /-- On the kinds approach with the kind scrambled over negation, the kind binds a kind-level
 trace below negation. -/
 def chierchiaScrambled : Prop :=
-  NP.individual (fun s ↦ iota (IsGreatest (books s)))
-    (fun k : Unit → Option (Individual Book) ↦ GQ.some ((k ()).elim (∅ : Set _) Set.Iic) read)ᶜ
+  Quantifier.individual (fun s ↦ iota (IsGreatest (books s)))
+    (fun k : Unit → Option (Individual Book) ↦ Det.some ((k ()).elim (∅ : Set _) Set.Iic) read)ᶜ
 
 /-- Scrambling a kind over negation changes nothing, since a kind takes no scope, as a name
 takes none, so the kinds approach gives narrow scope at either position. -/
 theorem chierchiaScrambled_iff : chierchiaScrambled ↔ chierchiaUnscrambled :=
-  NP.individual_compl _ _
+  Quantifier.individual_compl _ _
 
 theorem not_read_unfinished : ¬ read (Individual.atom .unfinished) := fun h ↦
   Book.noConfusion (Set.mem_singleton_iff.1 (h (Set.mem_singleton _)))

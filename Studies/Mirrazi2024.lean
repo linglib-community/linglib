@@ -41,7 +41,7 @@ variable {W E : Type*} {R : SetRel W W} {w₀ : W} {VP : E → W → Prop}
 accessible world has a restrictor member failing the predicate ((44), (48)). -/
 theorem skolemized_iff {N : W → E → Prop} (hN : ∀ w, ∃ x, N w x) :
     (∃ F : W → ChoiceFunction E, Box R (fun w ↦ ¬ VP (F w (N w)) w) w₀) ↔
-      Box R (fun w ↦ GQ.some (N w) (¬ VP · w)) w₀ := by
+      Box R (fun w ↦ Det.some {x | N w x} {x | ¬ VP x w}) w₀ := by
   refine (ChoiceFunction.exists_pi_apply_iff hN fun w x ↦ w₀ ~[R] w → ¬ VP x w).trans <|
     forall_congr' fun w ↦ ?_
   obtain ⟨b, hb⟩ := hN w
@@ -56,7 +56,7 @@ reading ((41), (42)). -/
 theorem intensional_iff_of_fixed {N : W → E → Prop} {B : E → Prop} (hB : ∃ x, B x)
     (hN : ∀ w, w₀ ~[R] w → N w = B) :
     (∃ f : ChoiceFunction E, Box R (fun w ↦ ¬ VP (f (N w)) w) w₀) ↔
-      GQ.some B fun x ↦ Box R (¬ VP x ·) w₀ := by
+      Det.some {x | B x} {x | Box R (¬ VP x ·) w₀} := by
   refine Iff.trans ?_ (ChoiceFunction.exists_apply_iff_some hB fun x ↦ Box R (¬ VP x ·) w₀)
   exact exists_congr fun f ↦ forall₂_congr fun w hw ↦
     iff_of_eq (congrArg (fun N' ↦ ¬ VP (f N') w) (hN w hw))
@@ -100,7 +100,7 @@ theorem skolemized :
     ∃ F : World → ChoiceFunction Book,
       Box beliefs (fun w ↦ ¬ Read (F w fun _ ↦ True) w) .actual :=
   (skolemized_iff (N := fun _ _ ↦ True) fun _ ↦ ⟨.a, trivial⟩).mpr <| by
-    simp only [Box, GQ.some, Read, not_not]
+    simp only [Box, Det.some, Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, Read, not_not]
     decide
 
 /-- No intensional choice function makes (40) true in its context. -/
@@ -108,7 +108,7 @@ theorem not_intensional :
     ¬ ∃ f : ChoiceFunction Book, Box beliefs (fun w ↦ ¬ Read (f fun _ ↦ True) w) .actual := by
   rw [intensional_iff_of_fixed (N := fun _ _ ↦ True) (B := fun _ ↦ True) ⟨.a, trivial⟩
     fun _ _ ↦ rfl]
-  simp only [Box, GQ.some, Read, not_not]
+  simp only [Box, Det.some, Set.Nonempty, Set.mem_inter_iff, Set.mem_ofPred_eq, Read, not_not]
   decide
 
 /-- The reading with the indefinite below the negation, that Rodica thinks Carl read none of the

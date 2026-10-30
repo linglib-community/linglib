@@ -895,10 +895,10 @@ theorem transparentAt_not_transparent_no :
   refine ⟨transparentAt_scopeTruth_iff.2 fun _ _ D D' hD hD' ↦ ?_, fun h ↦ ?_⟩
   · have h1 : D 1 := (hD 1 rfl).2 trivial
     have h1' : D' 1 := (hD' 1 rfl).2 trivial
-    simp only [NumberTree.toGQ_apply, NumberTree.no, true_and]
+    simp only [NumberTree.toDet_apply, NumberTree.no]
     refine iff_of_false (fun h ↦ ?_) fun h ↦ ?_
-    · exact (Set.ncard_eq_zero (s := {x | D x}).1 h).subset (Set.mem_ofPred.2 h1) |>.elim
-    · exact (Set.ncard_eq_zero (s := {x | D' x}).1 h).subset (Set.mem_ofPred.2 h1') |>.elim
+    · exact (Set.ncard_eq_zero (s := Set.univ ∩ D)).1 h |>.subset ⟨trivial, h1⟩ |>.elim
+    · exact (Set.ncard_eq_zero (s := Set.univ ∩ D')).1 h |>.subset ⟨trivial, h1'⟩ |>.elim
   · have := (transparent_scopeTruth_iff NumberTree.no).1 h () rfl (fun hc ↦ ?_) 0 trivial
     · exact absurd this (by decide)
     · have h2 : {_x : Fin 2 | True}.ncard = 2 := by simp
@@ -936,7 +936,7 @@ fails of an individual takes the value `ρR` gives it for that individual, and e
 scope the value `ρS` gives it (items 24–25, individual by individual). -/
 def resolve (w : W) (ρR ρS : E → SyntacticEnvironment Atom → Atom → Atom → Prop)
     (c : QuantifiedClause Atom) : Prop :=
-  c.quantifier.toGQ (fun e ↦ Schlenker2009.resolve J (w, e) (ρR e) [] c.restrictor)
+  c.quantifier.toDet (fun e ↦ Schlenker2009.resolve J (w, e) (ρR e) [] c.restrictor)
     fun e ↦ Schlenker2009.resolve J (w, e) (ρS e) [] c.scope
 
 /-- A clause is Kleene-defined at `w` when every resolution of its trigger tokens gives it the same
@@ -992,7 +992,7 @@ private theorem resolve_iff_of_triggers {F : Formula Atom} (hF : F.triggers = []
   resolve_of_middleKleene_ne_zero J (middleKleene_ne_zero_of_triggers J hF) ρ []
 
 private theorem resolve_trigger_iff (hR : R.triggers = []) {w : W} {ρR ρS} :
-    resolve J w ρR ρS ⟨q, R, .trigger p a⟩ ↔ q.toGQ (fun e ↦ (w, e) ∈ R.truth J)
+    resolve J w ρR ρS ⟨q, R, .trigger p a⟩ ↔ q.toDet (fun e ↦ (w, e) ∈ R.truth J)
       fun e ↦ (w, e) ∈ J p ∧ (w, e) ∈ J a ∨ (w, e) ∉ J p ∧ ρS e [] p a := by
   simp only [resolve, Schlenker2009.resolve, resolve_iff_of_triggers J hR]
 

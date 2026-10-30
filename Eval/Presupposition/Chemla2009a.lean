@@ -248,18 +248,18 @@ private def countermodel : Predicate → Set (Unit × Student)
 /-- In the countermodel every scope that resolves the trigger holds of at least the four students
 that satisfy both parts and fails of the fifth, which fixes the value of every quantifier of the
 experiment. -/
-private theorem toGQ_countermodel {D : Student → Prop}
-    (hD : ∀ e : Student, e.val < 5 → (D e ↔ e.val < 4)) (d : Determiner) :
-    d.tree.toGQ (fun _ ↦ True) D ↔ d = .moreThan3 := by
-  have h4 : 4 ≤ {x | True ∧ D x}.ncard := by
+private theorem toDet_countermodel {D : Set Student}
+    (hD : ∀ e : Student, e.val < 5 → (e ∈ D ↔ e.val < 4)) (d : Determiner) :
+    d.tree.toDet Set.univ D ↔ d = .moreThan3 := by
+  have h4 : 4 ≤ (Set.univ ∩ D).ncard := by
     have : {x : Student | x.val < 4}.ncard = 4 := by
       rw [Set.ncard_eq_toFinset_card']; decide
     exact this ▸ Set.ncard_le_ncard (fun x (hx : x.val < 4) ↦ ⟨trivial, (hD x (by omega)).2 hx⟩)
       (Set.toFinite _)
-  have h1 : 1 ≤ {x | True ∧ ¬ D x}.ncard :=
+  have h1 : 1 ≤ (Set.univ \ D).ncard :=
     (Set.ncard_pos (Set.toFinite _)).2 ⟨⟨4, by decide⟩, trivial, fun h ↦
       absurd ((hD ⟨4, by decide⟩ (by decide)).1 h) (by decide)⟩
-  rw [NumberTree.toGQ_apply]
+  rw [NumberTree.toDet_apply]
   cases d <;> simp only [Determiner.tree, NumberTree.all, NumberTree.no, NumberTree.cardinal_apply,
     Set.mem_ofPred_eq, Set.mem_singleton_iff, reduceCtorEq, iff_false, iff_true] <;> omega
 
@@ -275,8 +275,8 @@ private theorem not_predictsUniversal_clause
     ⟨9, by decide⟩) (by simp [countermodel])
   refine transparentAt_scopeTruth_iff.2 fun _ _ D D' hD hD' ↦ ?_
   have hA : (fun e ↦ ((), e) ∈ (Formula.atom Predicate.student).truth countermodel) =
-      fun _ ↦ True := funext fun _ ↦ eq_true (Set.mem_univ _)
-  rw [hA, toGQ_countermodel (fun e he ↦ hD e he) d, toGQ_countermodel (fun e he ↦ hD' e he) d]
+      (Set.univ : Set Student) := funext fun _ ↦ eq_true (Set.mem_univ _)
+  rw [hA, toDet_countermodel (fun e he ↦ hD e he) d, toDet_countermodel (fun e he ↦ hD' e he) d]
 
 private theorem predicted_of_parse (hacc : T.acceptsClause = some acc)
     (p : Determiner → QuantifiedClause Predicate) :

@@ -74,7 +74,7 @@ theorem not_antitone_npComparative [Nonempty Entity] : ¬ Antitone (npComparativ
 /-- A map `f` from quantifiers to predicates preserves the ordering (Definition 4) when `a > b`
 holds exactly when `a` falls under `f` of the quantifier that the name of `b` denotes. -/
 def PreservesOrdering (f : Set (Set Entity) → Set Entity) : Prop :=
-  ∀ a b, μ b < μ a ↔ a ∈ f (NP.individual b)
+  ∀ a b, μ b < μ a ↔ a ∈ f (Quantifier.individual b)
 
 -- (30)
 theorem npComparative_preservesOrdering : PreservesOrdering μ (npComparative μ) :=
@@ -85,7 +85,7 @@ variable {μ}
 -- Fact 1
 theorem PreservesOrdering.apply_individual {f g : Set (Set Entity) → Set Entity}
     (hf : PreservesOrdering μ f) (hg : PreservesOrdering μ g) (b : Entity) :
-    f (NP.individual b) = g (NP.individual b) :=
+    f (Quantifier.individual b) = g (Quantifier.individual b) :=
   Set.ext fun a ↦ (hf a b).symm.trans (hg a b)
 
 /-- Two ordering-preserving homomorphisms from quantifiers to predicates are equal (Fact 2), each
@@ -116,7 +116,7 @@ theorem gtOverSet_antitone : Antitone (μ ⁻¹' strictUpperBounds ·) :=
 /-- The NP-comparative of a proper name is the S-comparative of its degree's singleton (§3.9), as in
 (44). -/
 theorem npComparative_individual (b : Entity) :
-    npComparative μ (NP.individual b) = μ ⁻¹' strictUpperBounds {μ b} := by
+    npComparative μ (Quantifier.individual b) = μ ⁻¹' strictUpperBounds {μ b} := by
   ext a
   exact (npComparative_preservesOrdering μ a b).symm.trans (by simp)
 
@@ -130,7 +130,7 @@ inductive Dutchman where
 /-- The quantifier *niet iedere Nederlander* 'not every Dutchman' holds of a property that some
 Dutchman lacks. -/
 def notEveryDutchman : Set Dutchman → Prop :=
-  fun P ↦ ¬ GQ.every (fun _ ↦ True) (· ∈ P)
+  fun P ↦ ¬ Det.every Set.univ P
 
 /-- In the model (51), *niet iedere Nederlander* is not anti-additive, so by Zwarts's hypothesis it
 cannot trigger *ook maar* (45b) (§4.1). -/
@@ -138,8 +138,8 @@ theorem not_isAntiAdditive_notEveryDutchman : ¬ IsAntiAdditive notEveryDutchman
   rw [isAntiAdditive_iff_gq]
   intro h
   refine (h {.jan} {.piet}).2 ⟨fun h ↦ ?_, fun h ↦ ?_⟩ fun x _ ↦ ?_
-  · simpa using h .piet trivial
-  · simpa using h .jan trivial
+  · simpa using h (Set.mem_univ .piet)
+  · simpa using h (Set.mem_univ .jan)
   · cases x <;> simp
 
 end Hoeksema1983

@@ -54,6 +54,6 @@ def form : String :=
   else q.indeterminate.form ++ (q.classifier.elim "" ("-" ++ ·.form)) ++ "-" ++ p
 
 /-- An indeterminate quantifier's determiner record carries its form. -/
-def toQuantifier : Quantifier := { form := q.form }
+def toQuantifier : QuantificationalDeterminer := { form := q.form }
 
 end IndeterminateQuantifier

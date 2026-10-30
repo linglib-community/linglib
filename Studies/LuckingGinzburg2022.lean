@@ -20,8 +20,8 @@ with `k` instances (`card_Ioc_antidiagonal`). A verb phrase predicates on the
 reference set and anti-predicates on the complement set (`AntiPredication`), so the sentence is
 true exactly when the condition holds of the sizes of `N \ VP` and `N ∩ VP`
 (`exists_antiPredication_iff`). So referential transparency has the truth conditions of the tree
-quantifier of its condition (`exists_antiPredication_iff_toGQ`), which recovers the paper's claim
-that the set-up entails the conservativity universal (`livesOn_toGQ`), and the surviving reference
+quantifier of its condition (`exists_antiPredication_iff_toDet`), which recovers the paper's claim
+that the set-up entails the conservativity universal (`livesOn_toDet`), and the surviving reference
 sets are exactly the witness sets of [barwise-cooper-1981] (`mem_sieve_iff_witness`). The
 quantifier perspective, whether the bipartition with an empty reference set survives the sieve,
 gates anaphora to the complement set (the paper's (47), `CompsetAccessible`,
@@ -71,7 +71,7 @@ singletons, against its own restriction to quantitative quantifiers in the same 
 
 namespace LuckingGinzburg2022
 
-open Finset Quantifier Quantifier.NP Quantifier.NumberTree
+open Finset Quantifier Quantifier.NumberTree
 open scoped Finset
 
 variable {α : Type*} [DecidableEq α] {q : NumberTree} [DecidableRel q] {S R : Finset α}
@@ -145,12 +145,12 @@ theorem not_compsetAccessible_refind (D : Finset (Finset α)) : ¬ CompsetAccess
 
 /-- Two-headed predication (§4.5): the verb phrase holds throughout the reference set and fails
 throughout the complement set. -/
-def AntiPredication (B : α → Prop) (S R : Finset α) : Prop :=
-  (∀ a ∈ R, B a) ∧ ∀ a ∈ S \ R, ¬ B a
+def AntiPredication (B : Set α) (S R : Finset α) : Prop :=
+  (∀ a ∈ R, a ∈ B) ∧ ∀ a ∈ S \ R, a ∉ B
 
-variable {B : α → Prop} [DecidablePred B]
+variable {B : Set α} [DecidablePred (· ∈ B)]
 
-theorem antiPredication_iff (hR : R ⊆ S) : AntiPredication B S R ↔ R = S.filter B := by
+theorem antiPredication_iff (hR : R ⊆ S) : AntiPredication B S R ↔ R = S.filter (· ∈ B) := by
   refine ⟨fun ⟨h₁, h₂⟩ ↦ ext fun a ↦ ?_, fun h ↦ h ▸ ⟨fun a ha ↦ (mem_filter.1 ha).2,
     fun a ha hB ↦ (mem_sdiff.1 ha).2 (mem_filter.2 ⟨(mem_sdiff.1 ha).1, hB⟩)⟩⟩
   simp only [mem_filter]
@@ -160,32 +160,36 @@ theorem antiPredication_iff (hR : R ⊆ S) : AntiPredication B S R ↔ R = S.fil
 /-- Some surviving bipartition of *q N VP* is anti-predicated iff the condition holds of the sizes
 of `N \ VP` and `N ∩ VP` (§4.5). -/
 theorem exists_antiPredication_iff :
-    (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q #(S \ S.filter B) #(S.filter B) :=
+    (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q #(S \ S.filter (· ∈ B)) #(S.filter (· ∈ B)) :=
   ⟨fun ⟨_, hR, h⟩ ↦ (antiPredication_iff (mem_sieve.1 hR).1).1 h ▸ (mem_sieve.1 hR).2,
-    fun hq ↦ ⟨S.filter B, mem_sieve.2 ⟨filter_subset _ _, hq⟩,
+    fun hq ↦ ⟨S.filter (· ∈ B), mem_sieve.2 ⟨filter_subset _ _, hq⟩,
       (antiPredication_iff (filter_subset _ _)).2 rfl⟩⟩
 
 omit [DecidableEq α] in
-private theorem ncard_mem_and : {x | x ∈ S ∧ B x}.ncard = #(S.filter B) := by
-  rw [← Set.ncard_coe_finset, Finset.coe_filter]
+private theorem ncard_inter : ((S : Set α) ∩ B).ncard = #(S.filter (· ∈ B)) := by
+  rw [← Set.ncard_coe_finset, coe_filter]; rfl
 
-theorem exists_antiPredication_iff_toGQ :
-    (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q.toGQ (· ∈ S) B := by
-  rw [exists_antiPredication_iff, toGQ_apply, ncard_mem_and, ncard_mem_and, filter_not]
+private theorem ncard_diff : ((S : Set α) \ B).ncard = #(S \ S.filter (· ∈ B)) := by
+  rw [← filter_not, ← Set.ncard_coe_finset, coe_filter]; rfl
+
+theorem exists_antiPredication_iff_toDet :
+    (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q.toDet S B := by
+  rw [exists_antiPredication_iff, toDet_apply, ncard_diff, ncard_inter]
 
 omit [DecidableEq α] [DecidableRel q] in
-theorem livesOn_toGQ : LivesOn (q.toGQ (· ∈ S)) (· ∈ S) :=
-  (conservative_toGQ q).livesOn _
+theorem livesOn_toDet : LivesOn (q.toDet S) (S : Set α) :=
+  (conservative_toDet q).livesOn _
 
 /-! ### Witness sets -/
 
 /-- The surviving reference sets (17) are exactly the [barwise-cooper-1981] witness sets of the tree
 quantifier on the head noun. -/
 theorem mem_sieve_iff_witness :
-    R ∈ sieve q S ↔ Witness (q.toGQ (· ∈ S)) (· ∈ S) (· ∈ R) := by
-  simp only [mem_sieve, Witness, toGQ_apply, ncard_mem_and, subset_iff]
+    R ∈ sieve q S ↔ Witness (q.toDet S) (S : Set α) R := by
+  simp only [mem_sieve, Witness, toDet_apply, coe_subset]
   refine and_congr_right fun hR ↦ ?_
-  rw [filter_not, filter_mem_eq_inter, inter_eq_right.2 fun _ h ↦ hR h]
+  rw [← coe_sdiff, ← coe_inter, Set.ncard_coe_finset, Set.ncard_coe_finset,
+    inter_eq_right.2 hR]
 
 /-! ### Complexity -/
 

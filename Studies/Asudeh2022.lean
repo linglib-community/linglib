@@ -60,7 +60,7 @@ and Zaenen bear out.
 namespace Asudeh2022
 
 open Quantifier
-open Quantifier.GQ (every)
+open Quantifier.Det (every)
 open Quantifier.Polyadic (surfaceScope inverseScope)
 
 /-! ### Proofs as linear terms -/
@@ -909,18 +909,18 @@ def Label.ty : Label → Montague.Ty
     generalized quantifiers of the determiners. -/
 def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) :
     Env (fun x ↦ Montague.Ty.Domain E Unit x.ty) everybodyLovesSomebody.flatten :=
-  .cons (every person) (.cons love (.cons (GQ.some person) .nil))
+  .cons (every person) (.cons love (.cons (Det.some person) .nil))
 
 /-- The surface proof means the surface-scope reading, every person loving some person. -/
 theorem surface_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     surface.eval (scopeEnv person love) =
-      surfaceScope every GQ.some person person fun x y ↦ love y x :=
+      surfaceScope every Det.some person person fun x y ↦ love y x :=
   rfl
 
 /-- The inverse proof means the inverse-scope reading, some person loved by every person. -/
 theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     inverse.eval (scopeEnv person love) =
-      inverseScope every GQ.some person person fun x y ↦ love y x :=
+      inverseScope every Det.some person person fun x y ↦ love y x :=
   rfl
 
 open HeimKratzer1998.Toy (person sees) in

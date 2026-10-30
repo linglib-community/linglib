@@ -47,13 +47,13 @@ def wani : Article :=
   { form := "wani", definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
 /-- The distributive universal *kōwànè* 'every, each', masculine. -/
-def kowane : Quantifier := { form := "kōwànè", numberRestriction := some .singular }
+def kowane : QuantificationalDeterminer := { form := "kōwànè", numberRestriction := some .singular }
 
 /-- The distributive universal *kōwàcè* 'every, each', feminine. -/
-def kowace : Quantifier := { form := "kōwàcè", numberRestriction := some .singular }
+def kowace : QuantificationalDeterminer := { form := "kōwàcè", numberRestriction := some .singular }
 
 /-- The collective universal *duk* 'all'. -/
-def duk : Quantifier := { form := "duk", selectsMass := true }
+def duk : QuantificationalDeterminer := { form := "duk", selectsMass := true }
 
 /-- The determiners. -/
 def inventory : Determiner.Inventory :=

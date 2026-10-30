@@ -46,58 +46,58 @@ and a presupposition trigger's full meaning fails plain downward entailment.
 
 namespace Gajewski2011
 
-open NaturalLogic Presupposition Quantifier Quantifier.GQ Desire.BestWorlds
+open NaturalLogic Presupposition Quantifier Quantifier.Det Desire.BestWorlds
 
 variable {α : Type*}
 
 /-! ### Enriched meanings -/
 
-theorem exhaustified_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y) (hxy : x ≠ y) :
-    exhaustified (everyᶜ) {no} A = fun P ↦ GQ.some A P ∧ everyᶜ A P := by
+theorem exhaustified_notEvery {A : Set α} {x y : α} (hx : x ∈ A) (hy : y ∈ A) (hxy : x ≠ y) :
+    exhaustified (everyᶜ) {no} A = fun P ↦ Det.some A P ∧ everyᶜ A P := by
   funext P
   refine propext (exhaustified_iff.trans
     ⟨fun ⟨hne, h⟩ ↦ ⟨?_, hne⟩, fun ⟨⟨z, hz, hPz⟩, hne⟩ ↦ ⟨hne, fun Q' hQ' hno ↦ ?_⟩⟩)
   · by_contra hsome
-    exact h no (Set.mem_singleton _) (fun z hz hPz ↦ hsome ⟨z, hz, hPz⟩) (· = x)
-      (fun hall ↦ hxy (hall y hy).symm) x hx rfl
-  · exact ((Set.mem_singleton_iff.mp hQ' ▸ hno) z hz hPz).elim
+    exact h no (Set.mem_singleton _) (fun z hz hPz ↦ hsome ⟨z, hz, hPz⟩) {x}
+      (fun hall ↦ hxy.symm (hall hy)) hx (Set.mem_singleton x)
+  · exact ((Set.mem_singleton_iff.mp hQ' ▸ hno) hz hPz).elim
 
-theorem not_scopeAntitone_exhaustified {Q : GQ α} {C : Set (GQ α)} {A P : α → Prop}
-    (hP : exhaustified Q C A P) (h : ¬ exhaustified Q C A (fun _ ↦ False)) :
+theorem not_scopeAntitone_exhaustified {Q : Det α} {C : Set (Det α)} {A P : Set α}
+    (hP : exhaustified Q C A P) (h : ¬ exhaustified Q C A ∅) :
     ¬ ScopeAntitone (exhaustified Q C) :=
-  fun hde ↦ h (hde A (show ((fun _ : α ↦ False) : α → Prop) ≤ P from fun _ hf ↦ hf.elim) hP)
+  fun hde ↦ h (hde A (Set.empty_subset P) hP)
 
 /-! ### The licensing principles -/
 
-theorem no_strong : ScopeAntitone (exhaustified (no : GQ α) {everyᶜ}) := by
+theorem no_strong : ScopeAntitone (exhaustified (no : Det α) {everyᶜ}) := by
   rw [exhaustified_no]; exact scopeAntitone_no
 
 theorem notEvery_not_strong [Nontrivial α] :
-    ¬ ScopeAntitone (exhaustified (everyᶜ : GQ α) {no}) := by
+    ¬ ScopeAntitone (exhaustified (everyᶜ : Det α) {no}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
-  refine not_scopeAntitone_exhaustified (A := fun _ ↦ True) (P := (· = x))
-    (exhaustified_iff.2 ⟨fun h ↦ hxy (h y trivial).symm, fun Q' hQ' hno ↦
-      ((Set.mem_singleton_iff.mp hQ' ▸ hno) x trivial rfl).elim⟩)
-    (not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hf ↦ hf)
-      fun hle ↦ hle (· = x) (fun h ↦ hxy (h y trivial).symm) x trivial rfl)
+  refine not_scopeAntitone_exhaustified (A := Set.univ) (P := {x})
+    (exhaustified_iff.2 ⟨fun h ↦ hxy.symm (h (Set.mem_univ y)), fun Q' hQ' hno ↦
+      ((Set.mem_singleton_iff.mp hQ' ▸ hno) (Set.mem_univ x) (Set.mem_singleton x)).elim⟩)
+    (not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hf ↦ hf) fun hle ↦
+      hle {x} (fun h ↦ hxy.symm (h (Set.mem_univ y))) (Set.mem_univ x) (Set.mem_singleton x))
 
 theorem some_not_strong [Nontrivial α] :
-    ¬ ScopeAntitone (exhaustified (GQ.some : GQ α) {every}) := by
+    ¬ ScopeAntitone (exhaustified (Det.some : Det α) {every}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
-  exact not_scopeAntitone_exhaustified (A := fun _ ↦ True) (P := (· = x))
-    (exhaustified_iff.2 ⟨⟨x, trivial, rfl⟩, fun Q' hQ' hev ↦
-      (hxy ((Set.mem_singleton_iff.mp hQ' ▸ hev) y trivial).symm).elim⟩)
+  exact not_scopeAntitone_exhaustified (A := Set.univ) (P := {x})
+    (exhaustified_iff.2 ⟨⟨x, Set.mem_univ x, Set.mem_singleton x⟩, fun Q' hQ' hev ↦
+      (hxy.symm ((Set.mem_singleton_iff.mp hQ' ▸ hev) (Set.mem_univ y))).elim⟩)
     fun h ↦ (exhaustified_iff.1 h).1.elim fun _ h ↦ h.2
 
 theorem atMostFive_not_strong :
-    ¬ ScopeAntitone (exhaustified (atMost 5 : GQ (Fin 6)) {atMost 4}) := by
-  have h4 : ¬ atMost 4 (fun _ : Fin 6 ↦ True) (· ≠ 0) := by
+    ¬ ScopeAntitone (exhaustified (atMost 5 : Det (Fin 6)) {atMost 4}) := by
+  have h4 : ¬ atMost 4 (Set.univ : Set (Fin 6)) {x | x ≠ 0} := by
     decide
-  refine not_scopeAntitone_exhaustified (A := fun _ ↦ True) (P := (· ≠ 0))
+  refine not_scopeAntitone_exhaustified (A := Set.univ) (P := {x | x ≠ 0})
     (exhaustified_iff.2 ⟨by decide,
       fun Q' hQ' h ↦ (h4 (Set.mem_singleton_iff.mp hQ' ▸ h)).elim⟩)
     (not_exhaustified_of_not_le (Set.mem_singleton _) (by decide)
-      fun hle ↦ h4 (hle (· ≠ 0) (by decide)))
+      fun hle ↦ h4 (hle {x | x ≠ 0} (by decide)))
 
 /-- The paper's licensers. -/
 inductive Licenser
@@ -114,13 +114,13 @@ the plain meaning Strawson downward entailing and a strong item needs the enrich
 downward entailing, which for a presupposition trigger without scale-mates is its full
 meaning. -/
 def Licensed : Licenser → Strength → Prop
-  | .no, .weak => ∀ {α : Type}, ScopeAntitone (no : GQ α)
-  | .no, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (no : GQ α) {everyᶜ})
+  | .no, .weak => ∀ {α : Type}, ScopeAntitone (no : Det α)
+  | .no, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (no : Det α) {everyᶜ})
   | .atMostFive, .weak => ∀ {α : Type} [Fintype α], ScopeAntitone (atMost (α := α) 5)
   | .atMostFive, .strong =>
       ∀ {α : Type} [Fintype α], ScopeAntitone (exhaustified (atMost (α := α) 5) {atMost 4})
-  | .some, .weak => ∀ {α : Type}, ScopeAntitone (GQ.some : GQ α)
-  | .some, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (GQ.some : GQ α) {every})
+  | .some, .weak => ∀ {α : Type}, ScopeAntitone (Det.some : Det α)
+  | .some, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (Det.some : Det α) {every})
   | .only, .weak => ∀ {ι W : Type} (x : ι), IsStrawsonDE (only (W := W) x)
   | .only, .strong => ∀ {ι W : Type} (x : ι),
       Antitone fun P : ι → Set W ↦ posSupport (only x P)
@@ -163,9 +163,8 @@ theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := b
   | atMostFive => exact iff_of_true (fun {_} ↦ scopeAntitone_atMost 5) nofun
   | some =>
     refine iff_of_false (fun h ↦ ?_) (· rfl)
-    exact (h (α := Bool) (fun _ ↦ True)
-      (show ((fun _ : Bool ↦ False) : Bool → Prop) ≤ fun _ ↦ True from fun _ hf ↦ hf.elim)
-      ⟨true, trivial, trivial⟩).elim fun _ h ↦ h.2
+    exact (h (α := Bool) Set.univ (Set.empty_subset Set.univ) ⟨true, trivial, trivial⟩).elim
+      fun _ h ↦ h.2
   | only => exact iff_of_true isStrawsonDE_only nofun
   | conditional => exact iff_of_true Conditional.isStrawsonDE_horizonCounterfactual nofun
   | sorryThat => exact iff_of_true isStrawsonDE_regret nofun
@@ -224,28 +223,20 @@ theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive
 
 /-- Proportional *few* is Intolerant, since fewer than half in and fewer than half out is
 impossible. -/
-theorem few_isIntolerant (A : α → Prop) : IsIntolerant (few A) := fun _ x ↦ by
+theorem few_isIntolerant (A : Set α) : IsIntolerant (few A) := fun _ x ↦ by
   by_contra hx
-  rw [not_or, not_not, not_not, few_apply, few_apply] at hx
-  obtain ⟨h₁, h₂⟩ := hx
-  have e : {z | A z ∧ ¬ xᶜ z} = {z | A z ∧ x z} := Set.ext fun _ ↦ and_congr_right' not_not
-  rw [e] at h₂
-  exact absurd (h₁.trans h₂) (lt_irrefl _)
+  rw [not_or, not_not, not_not, few_apply, few_apply, ← Set.sdiff_eq, Set.sdiff_compl] at hx
+  exact lt_asymm hx.1 hx.2
 
 /-- Cardinal *fewer than four* is not Intolerant, since with six elements three are in and three
 out. -/
 theorem atMostThree_not_isIntolerant :
-    ¬ IsIntolerant (atMost 3 (fun _ : Fin 6 ↦ True)) := fun h ↦ by
-  let _ : DecidablePred (fun x : Fin 6 ↦ x < 3)ᶜ := fun z ↦ inferInstanceAs (Decidable (¬ z < 3))
-  exact (h (fun ht ↦ ht.elim
-      (fun h ↦ absurd (h (fun _ ↦ True)) (by decide))
-      fun h ↦ h (fun _ ↦ False) (by decide)) (· < 3)).elim
-    (· (by decide)) (· (by decide))
+    ¬ IsIntolerant (atMost 3 (Set.univ : Set (Fin 6))) := fun h ↦
+  (h (fun ht ↦ ht.elim (fun h ↦ absurd (h Set.univ) (by decide)) fun h ↦ h ∅ (by decide))
+    {x | x < 3}).elim (· (by decide)) (· (by decide))
 
-theorem few_not_rightAntiAdditive : ¬ RightAntiAdditive (few : GQ (Fin 4)) := fun h ↦
-  absurd ((h (fun _ ↦ True) (· = 0) (· = 1)).mpr
-      ⟨by decide, by decide⟩)
-    (by decide)
+theorem few_not_rightAntiAdditive : ¬ RightAntiAdditive (few : Det (Fin 4)) := fun h ↦
+  absurd ((h Set.univ {0} {1}).mpr ⟨by decide, by decide⟩) (by decide)
 
 /-! ### The paper's sentences -/
 

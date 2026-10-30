@@ -7,6 +7,7 @@ public import Linglib.Core.Logic.Function.DependsOn
 public import Mathlib.Data.Finset.NatAntidiagonal
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Tactic.Ring
+public import Mathlib.Basic.Finite.Sum
 
 /-!
 # The tree of numbers
@@ -24,6 +25,12 @@ Van Benthem's postulates of variety, continuity, absence of deadlock and uniform
 invariant under both negations. That symmetry carries the verification of the postulates, and the
 proof that the corners are the only quantifiers satisfying them, from *all* to the other three.
 
+The trees are exactly the determiner denotations given on every finite universe that are
+conservative and constant, [as Boolean algebras](##Quantifier.NumberTree.familyOrderIso), so each
+theorem about trees is one about such denotations; van Benthem's theorem that no nonempty
+quantifier is asymmetric [is the first](##Quantifier.Det.Family.not_apply_of_asymm). On a single
+universe that theorem fails.
+
 ## Main definitions
 
 * `Quantifier.NumberTree`: a quantifier as a relation between `|A \ B|` and `|A ∩ B|`.
@@ -39,8 +46,11 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
 * `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
   `Quantifier.NumberTree.Uniform`: the postulates VAR, CONT, PLUS and UNIF.
 * `Quantifier.NumberTree.ofSizes`: the tree of a relation between `|A ∩ B|` and `|A|`.
-* `Quantifier.NumberTree.ofGQ`, `Quantifier.NumberTree.toGQ`: the tree of a generalized
-  quantifier over a finite universe, and the quantifier of a tree, counting with `Set.ncard`.
+* `Quantifier.NumberTree.ofDet`, `Quantifier.NumberTree.toDet`: the tree of a determiner
+  denotation on a finite universe, and the determiner denotation of a tree, counting with
+  `Set.ncard`.
+* `Quantifier.NumberTree.ofFamily`, `Quantifier.NumberTree.toFamily`: the same on every finite
+  universe at once.
 * `Quantifier.NumberTree.ConstantOnRow`, `Quantifier.NumberTree.ConstantBelow`: a quantifier that
   does not depend on its scope for a restrictor of a given size, or on either argument on a
   universe of a given size.
@@ -53,13 +63,17 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
   universal.
 * `Quantifier.NumberTree.variety_cont_plus_uniform_iff`: the quantifiers satisfying the four
   postulates are exactly the four corners of the square of opposition.
-* `Quantifier.NumberTree.ofGQ_iff`: a conservative, permutation-invariant generalized quantifier
+* `Quantifier.NumberTree.ofDet_iff`: a conservative, permutation-invariant determiner denotation
   holds of `A` and `B` exactly when its tree holds of `|A \ B|` and `|A ∩ B|`.
-* `Quantifier.NumberTree.conservative_toGQ`, `Quantifier.NumberTree.quantityInvariant_toGQ`: the
+* `Quantifier.NumberTree.familyOrderIso`: the conservative constant global determiner
+  denotations are the trees, as Boolean algebras.
+* `Quantifier.Det.Family.not_apply_of_asymm`: such a denotation that is asymmetric on every
+  universe is empty.
+* `Quantifier.NumberTree.conservative_toDet`, `Quantifier.NumberTree.quantityInvariant_toDet`: the
   quantifier of a tree is conservative and permutation invariant.
-* `Quantifier.NumberTree.ScopeMonotone.toGQ`, `Quantifier.NumberTree.ScopeAntitone.toGQ`: the
+* `Quantifier.NumberTree.ScopeMonotone.toDet`, `Quantifier.NumberTree.ScopeAntitone.toDet`: the
   quantifier of a scope-monotone tree is scope monotone, and likewise antitone.
-* `Quantifier.NumberTree.dependsOn_toGQ_compl_singleton_iff`: the quantifier of a tree depends on
+* `Quantifier.NumberTree.dependsOn_toDet_compl_singleton_iff`: the quantifier of a tree depends on
   whether an individual is in its scope iff the individual is in its restrictor and the tree is not
   constant on the restrictor's row.
 * `Quantifier.NumberTree.card_powerset_points`: there are `2 ^ ((n + 1) * (n + 2) / 2)` sets of
@@ -79,13 +93,14 @@ is imposed on the quantifier and on its complement.
 
 ## TODO
 
-* Prove that on a universe of `n` individuals `ofGQ` is a bijection from the conservative,
+* Prove that on a universe of `n` individuals `ofDet` is a bijection from the conservative,
   quantity-invariant quantifiers onto the sets of points in rows `0` to `n`, which with
   `card_powerset_points` gives van Benthem's count, the one `KeenanStavi1986.card_logical`
   proves in the coordinates `(|A|, |A ∩ B|)`.
 
 ## References
 
+* [peters-westerstahl-2006]
 * [van-benthem-1984]
 * [van-benthem-1986]
 -/
@@ -437,145 +452,306 @@ theorem additive_no : NumberTree.no.Additive := additive_all.innerNeg
 
 theorem additive_some : NumberTree.some.Additive := additive_notAll.innerNeg
 
-/-! ### The tree of a generalized quantifier
+/-! ### The tree of a determiner denotation
 
-A generalized quantifier counts its arguments with `Set.ncard`, which asks for no decidability;
+A determiner denotation counts its arguments with `Set.ncard`, which asks for no decidability;
 the counts are meaningful when the sets are finite. -/
 
-section OfGQ
+section OfDet
 
-open GQ
+open Det
 
-variable {α : Type*} {Q : GQ α} {A B A' B' : α → Prop}
+variable {α : Type*} {d : Det α} {A B A' B' : Set α}
 
-/-- A quantifier has quantity when `Q(A, B)` depends only on the four cardinalities `|A ∩ B|`,
-`|A \ B|`, `|B \ A|` and `|M \ (A ∪ B)|`. -/
-def _root_.Quantifier.GQ.Quantity (q : GQ α) : Prop :=
-  ∀ R₁ S₁ R₂ S₂ : α → Prop,
-    {x | R₁ x ∧ S₁ x}.ncard = {x | R₂ x ∧ S₂ x}.ncard →
-    {x | R₁ x ∧ ¬ S₁ x}.ncard = {x | R₂ x ∧ ¬ S₂ x}.ncard →
-    {x | ¬ R₁ x ∧ S₁ x}.ncard = {x | ¬ R₂ x ∧ S₂ x}.ncard →
-    {x | ¬ R₁ x ∧ ¬ S₁ x}.ncard = {x | ¬ R₂ x ∧ ¬ S₂ x}.ncard → (q R₁ S₁ ↔ q R₂ S₂)
+/-- A determiner denotation has quantity when `d A B` depends only on the sizes of the four cells
+of the Venn diagram, `A ∩ B`, `A \ B`, `B \ A` and `(A ∪ B)ᶜ`. -/
+def _root_.Quantifier.Det.Quantity (d : Det α) : Prop :=
+  ∀ A B A' B' : Set α, (A ∩ B).ncard = (A' ∩ B').ncard → (A \ B).ncard = (A' \ B').ncard →
+    (B \ A).ncard = (B' \ A').ncard → (A ∪ B)ᶜ.ncard = (A' ∪ B')ᶜ.ncard → (d A B ↔ d A' B')
 
 open Classical in
-private theorem nat_card_fiber (R S : α → Prop) (p q : Bool) :
-    Nat.card {x // (decide (R x), decide (S x)) = (p, q)} =
-      {x | (R x ↔ p) ∧ (S x ↔ q)}.ncard := by
+private theorem nat_card_fiber (A B : Set α) (p q : Bool) :
+    Nat.card {x // (decide (x ∈ A), decide (x ∈ B)) = (p, q)} =
+      ((bif p then A else Aᶜ) ∩ (bif q then B else Bᶜ)).ncard := by
   rw [← Nat.card_coe_set_eq]
   exact Nat.card_congr (Equiv.subtypeEquivRight fun x ↦ by cases p <;> cases q <;> simp)
 
-theorem _root_.Quantifier.GQ.QuantityInvariant.quantity [Finite α] (hQ : QuantityInvariant Q) :
-    Q.Quantity := by
+theorem _root_.Quantifier.Det.QuantityInvariant.quantity [Finite α] (h : d.QuantityInvariant) :
+    d.Quantity := by
   classical
-  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
+  intro A B A' B' hTT hTF hFT hFF
+  have hFT' : (Aᶜ ∩ B).ncard = (A'ᶜ ∩ B').ncard := by
+    rwa [Set.inter_comm, Set.inter_comm A'ᶜ]
+  rw [Set.compl_union, Set.compl_union] at hFF
   obtain ⟨e, he⟩ := Equiv.exists_comp_eq_of_card_fiber_eq
-    (f := fun x ↦ (decide (R₁ x), decide (S₁ x))) (g := fun x ↦ (decide (R₂ x), decide (S₂ x)))
+    (f := fun x ↦ (decide (x ∈ A'), decide (x ∈ B')))
+    (g := fun x ↦ (decide (x ∈ A), decide (x ∈ B)))
     fun ⟨p, q⟩ ↦ by
       rw [nat_card_fiber, nat_card_fiber]
-      cases p <;> cases q <;> simp only [Bool.false_eq_true, iff_false, iff_true] <;> symm <;>
-        assumption
-  exact hQ R₁ S₁ R₂ S₂ e e.bijective
-    (fun x ↦ decide_eq_decide.1 (congrArg Prod.fst (congrFun he x)))
-    fun x ↦ decide_eq_decide.1 (congrArg Prod.snd (congrFun he x))
+      cases p <;> cases q
+      exacts [hFF, hFT', hTF, hTT]
+  have hA : e ⁻¹' A' = A := Set.ext fun x ↦ decide_eq_decide.1 (congrArg Prod.fst (congrFun he x))
+  have hB : e ⁻¹' B' = B := Set.ext fun x ↦ decide_eq_decide.1 (congrArg Prod.snd (congrFun he x))
+  rw [← h e A' B', hA, hB]
 
-theorem _root_.Quantifier.GQ.Quantity.quantityInvariant (hQ : Q.Quantity) :
-    QuantityInvariant Q := by
-  intro A B A' B' f hf hA hB
-  have key (P P' : α → Prop) (h : ∀ x, P (f x) ↔ P' x) : {x | P x}.ncard = {x | P' x}.ncard := by
-    rw [← Set.ncard_preimage_of_injective_subset_range hf.1 (by simp [hf.2.range_eq])]
-    exact congrArg Set.ncard (Set.ext h)
-  exact hQ A B A' B' (key _ _ fun x ↦ by rw [hA, hB]) (key _ _ fun x ↦ by rw [hA, hB])
-    (key _ _ fun x ↦ by rw [hA, hB]) (key _ _ fun x ↦ by rw [hA, hB])
+private theorem ncard_preimage_perm (σ : Equiv.Perm α) (s : Set α) : (σ ⁻¹' s).ncard = s.ncard :=
+  Set.ncard_preimage_of_injective_subset_range σ.injective (by simp)
 
-theorem _root_.Quantifier.GQ.iff_of_ncard_eq [Finite α] (hC : Conservative Q)
-    (hQ : QuantityInvariant Q) (hd : {x | A x ∧ ¬ B x}.ncard = {x | A' x ∧ ¬ B' x}.ncard)
-    (hi : {x | A x ∧ B x}.ncard = {x | A' x ∧ B' x}.ncard) : Q A B ↔ Q A' B' := by
-  have hA : {x | A x ∧ B x}.ncard + {x | A x ∧ ¬ B x}.ncard = {x | A x}.ncard :=
-    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
-  have hA' : {x | A' x ∧ B' x}.ncard + {x | A' x ∧ ¬ B' x}.ncard = {x | A' x}.ncard :=
-    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
-  have hn := Set.ncard_add_ncard_compl {x | A x}
-  have hn' := Set.ncard_add_ncard_compl {x | A' x}
-  have hN : {x | ¬ A x}.ncard = {x | ¬ A' x}.ncard := by
-    change {x | A x}ᶜ.ncard = {x | A' x}ᶜ.ncard
-    omega
+theorem _root_.Quantifier.Det.Quantity.quantityInvariant (h : d.Quantity) :
+    d.QuantityInvariant :=
+  fun σ A B ↦ h _ _ A B (ncard_preimage_perm σ (A ∩ B)) (ncard_preimage_perm σ (A \ B))
+    (ncard_preimage_perm σ (B \ A)) (ncard_preimage_perm σ (A ∪ B)ᶜ)
+
+/-- A conservative, permutation-invariant determiner denotation on a finite universe depends only
+on `|A \ B|` and `|A ∩ B|`. -/
+theorem _root_.Quantifier.Det.iff_of_ncard_eq [Finite α] (hC : d.Conservative)
+    (hQ : d.QuantityInvariant) (hd : (A \ B).ncard = (A' \ B').ncard)
+    (hi : (A ∩ B).ncard = (A' ∩ B').ncard) : d A B ↔ d A' B' := by
+  have hA := Set.ncard_inter_add_ncard_sdiff_eq_ncard A B
+  have hA' := Set.ncard_inter_add_ncard_sdiff_eq_ncard A' B'
+  have hc := Set.ncard_add_ncard_compl A
+  have hc' := Set.ncard_add_ncard_compl A'
   rw [hC A B, hC A' B']
   refine hQ.quantity _ _ _ _ ?_ ?_ ?_ ?_
-  · convert hi using 2 <;> ext <;> simp only [Set.mem_ofPred_eq] <;> tauto
-  · convert hd using 2 <;> ext <;> simp only [Set.mem_ofPred_eq] <;> tauto
-  · congr 1; ext; simp only [Set.mem_ofPred_eq]; tauto
-  · convert hN using 2 <;> ext <;> simp only [Set.mem_ofPred_eq] <;> tauto
+  · rwa [Set.inter_eq_right.2 Set.inter_subset_left, Set.inter_eq_right.2 Set.inter_subset_left]
+  · rwa [Set.sdiff_self_inter, Set.sdiff_self_inter]
+  · rw [Set.sdiff_eq_empty.2 Set.inter_subset_left, Set.sdiff_eq_empty.2 Set.inter_subset_left]
+  · rw [Set.union_eq_left.2 Set.inter_subset_left, Set.union_eq_left.2 Set.inter_subset_left]
+    omega
 
-/-- The tree of a generalized quantifier holds of `(a, b)` when the quantifier holds of some
-`A` and `B` with `|A \ B| = a` and `|A ∩ B| = b`. -/
-def ofGQ (Q : GQ α) : NumberTree := fun a b ↦
-  ∃ A B : α → Prop, {x | A x ∧ ¬ B x}.ncard = a ∧ {x | A x ∧ B x}.ncard = b ∧ Q A B
+/-- A conservative permutation-invariant determiner denotation that is asymmetric fails of `A`
+and `B` when `A \ B` and `B \ A` have the same size, since swapping them carries `(A, B)` to
+`(B, A)`. -/
+theorem _root_.Quantifier.Det.not_apply_of_asymm [Finite α] (hC : d.Conservative)
+    (hQ : d.QuantityInvariant) [Std.Asymm d] (h : (A \ B).ncard = (B \ A).ncard) : ¬ d A B :=
+  fun hd ↦ Std.Asymm.asymm A B hd ((Det.iff_of_ncard_eq hC hQ h (by rw [Set.inter_comm])).1 hd)
 
-/-- A conservative, permutation-invariant quantifier on a finite universe holds of `A` and `B`
-exactly when its tree holds of `|A \ B|` and `|A ∩ B|`. -/
-theorem ofGQ_iff [Finite α] (hC : Conservative Q) (hQ : QuantityInvariant Q) (A B : α → Prop) :
-    ofGQ Q {x | A x ∧ ¬ B x}.ncard {x | A x ∧ B x}.ncard ↔ Q A B :=
-  ⟨fun ⟨_, _, hd, hi, h⟩ ↦ (GQ.iff_of_ncard_eq hC hQ hd hi).mp h, fun h ↦ ⟨A, B, rfl, rfl, h⟩⟩
+/-- The tree of a determiner denotation holds of `(a, b)` when the denotation holds of some `A`
+and `B` with `|A \ B| = a` and `|A ∩ B| = b`. -/
+def ofDet (d : Det α) : NumberTree := fun a b ↦
+  ∃ A B : Set α, (A \ B).ncard = a ∧ (A ∩ B).ncard = b ∧ d A B
 
-/-- The quantifier of a tree holds of `A` and `B` when the tree holds of `|A \ B|` and
+/-- A conservative, permutation-invariant determiner denotation on a finite universe holds of `A`
+and `B` exactly when its tree holds of `|A \ B|` and `|A ∩ B|`. -/
+theorem ofDet_iff [Finite α] (hC : d.Conservative) (hQ : d.QuantityInvariant) (A B : Set α) :
+    ofDet d (A \ B).ncard (A ∩ B).ncard ↔ d A B :=
+  ⟨fun ⟨_, _, hd, hi, h⟩ ↦ (Det.iff_of_ncard_eq hC hQ hd hi).mp h, fun h ↦ ⟨A, B, rfl, rfl, h⟩⟩
+
+/-- The determiner denotation of a tree holds of `A` and `B` when the tree holds of `|A \ B|` and
 `|A ∩ B|`. -/
-def toGQ (q : NumberTree) : GQ α := fun A B ↦ q {x | A x ∧ ¬ B x}.ncard {x | A x ∧ B x}.ncard
+def toDet (q : NumberTree) : Det α := fun A B ↦ q (A \ B).ncard (A ∩ B).ncard
 
-theorem toGQ_apply (q : NumberTree) (A B : α → Prop) :
-    q.toGQ A B ↔ q {x | A x ∧ ¬ B x}.ncard {x | A x ∧ B x}.ncard := Iff.rfl
+theorem toDet_apply (q : NumberTree) (A B : Set α) :
+    q.toDet A B ↔ q (A \ B).ncard (A ∩ B).ncard := Iff.rfl
 
-@[simp] theorem toGQ_inf (q r : NumberTree) : (q ⊓ r).toGQ = (q.toGQ ⊓ r.toGQ : GQ α) := rfl
+@[simp] theorem toDet_inf (q r : NumberTree) : (q ⊓ r).toDet = (q.toDet ⊓ r.toDet : Det α) := rfl
 
-@[simp] theorem toGQ_compl (q : NumberTree) : qᶜ.toGQ = (q.toGQᶜ : GQ α) := rfl
+@[simp] theorem toDet_compl (q : NumberTree) : qᶜ.toDet = (q.toDetᶜ : Det α) := rfl
 
-@[simp] theorem toGQ_innerNeg (q : NumberTree) : q.innerNeg.toGQ = (q.toGQ : GQ α).innerNeg := by
-  funext A B; simp only [toGQ, innerNeg_apply, GQ.innerNeg, not_not]
+@[simp] theorem toDet_innerNeg (q : NumberTree) :
+    q.innerNeg.toDet = (q.toDet : Det α).innerNeg := by
+  funext A B; simp only [toDet, innerNeg_apply, Det.innerNeg, Set.sdiff_compl]; rfl
 
-/-- On a finite universe the quantifier of a decidable tree is decidable at decidable
+/-- On a finite universe the determiner denotation of a decidable tree is decidable at decidable
 arguments. -/
-instance toGQ.decidable [Fintype α] (q : NumberTree) [DecidableRel q] (A B : α → Prop)
-    [DecidablePred A] [DecidablePred B] : Decidable (q.toGQ A B) :=
-  decidable_of_iff (q (Finset.univ.filter fun x ↦ A x ∧ ¬ B x).card
-    (Finset.univ.filter fun x ↦ A x ∧ B x).card) <| by
-      rw [toGQ_apply, Set.ncard_setOf_eq_card_filter, Set.ncard_setOf_eq_card_filter]
+instance toDet.decidable [Fintype α] (q : NumberTree) [DecidableRel q] (A B : Set α)
+    [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] : Decidable (q.toDet A B) :=
+  decidable_of_iff (q (A \ B).toFinset.card (A ∩ B).toFinset.card) <| by
+    rw [toDet_apply, Set.ncard_eq_toFinset_card' (A \ B), Set.ncard_eq_toFinset_card' (A ∩ B)]
 
-/-- The quantifier of a tree is conservative, since `A \ B` and `A ∩ B` see only `B ∩ A`. -/
-theorem conservative_toGQ (q : NumberTree) : Conservative (q.toGQ : GQ α) := fun A B ↦ by
-  unfold toGQ
-  congr! 3 <;> ext <;> tauto
+/-- The determiner denotation of a tree is conservative, since `A \ B` and `A ∩ B` see only
+`A ∩ B`. -/
+theorem conservative_toDet (q : NumberTree) : (q.toDet : Det α).Conservative := fun A B ↦ by
+  rw [toDet_apply, toDet_apply, Set.sdiff_self_inter, Set.inter_eq_right.2 Set.inter_subset_left]
 
-theorem quantity_toGQ (q : NumberTree) : (q.toGQ : GQ α).Quantity :=
-  fun _ _ _ _ hi hd _ _ ↦ by rw [toGQ_apply, toGQ_apply, hi, hd]
+theorem quantity_toDet (q : NumberTree) : (q.toDet : Det α).Quantity :=
+  fun _ _ _ _ hi hd _ _ ↦ by rw [toDet_apply, toDet_apply, hi, hd]
 
-/-- The quantifier of a tree is permutation invariant. -/
-theorem quantityInvariant_toGQ (q : NumberTree) : QuantityInvariant (q.toGQ : GQ α) :=
-  (quantity_toGQ q).quantityInvariant
+/-- The determiner denotation of a tree is permutation invariant. -/
+theorem quantityInvariant_toDet (q : NumberTree) : (q.toDet : Det α).QuantityInvariant :=
+  (quantity_toDet q).quantityInvariant
 
-/-- The quantifier of a scope-monotone tree is scope monotone, since enlarging `B` within `A` moves
-`|A \ B ∩ B'|` individuals from `A \ B` to `A ∩ B`. -/
-theorem ScopeMonotone.toGQ [Finite α] {q : NumberTree} (h : q.ScopeMonotone) :
-    GQ.ScopeMonotone (q.toGQ : GQ α) := by
+/-- The determiner denotation of a tree is unchanged by pulling back along an injection whose
+range contains the restrictor. -/
+theorem toDet_preimage {β : Type*} {f : α → β} (hf : f.Injective) {A : Set β} (B : Set β)
+    (hA : A ⊆ Set.range f) (q : NumberTree) : q.toDet (f ⁻¹' A) (f ⁻¹' B) ↔ q.toDet A B := by
+  rw [toDet_apply, toDet_apply, ← Set.preimage_sdiff, ← Set.preimage_inter,
+    Set.ncard_preimage_of_injective_subset_range hf (Set.sdiff_subset.trans hA),
+    Set.ncard_preimage_of_injective_subset_range hf (Set.inter_subset_left.trans hA)]
+
+/-- The determiner denotation of a scope-monotone tree is scope monotone, since enlarging `B`
+within `A` moves `|(A \ B) ∩ B'|` individuals from `A \ B` to `A ∩ B`. -/
+theorem ScopeMonotone.toDet [Finite α] {q : NumberTree} (h : q.ScopeMonotone) :
+    (q.toDet : Det α).ScopeMonotone := by
   intro A B B' hB hq
-  unfold NumberTree.toGQ at hq ⊢
-  have h₁ := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | A x ∧ ¬ B x} {x | B' x}
-  have h₂ := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | A x ∧ B' x} {x | B x}
-  replace hB : ∀ x, B x → B' x := hB
-  have e₁ : {x | A x ∧ B' x} ∩ {x | B x} = {x | A x ∧ B x} := by ext x; have := hB x; grind
-  have e₂ : {x | A x ∧ ¬ B x} \ {x | B' x} = {x | A x ∧ ¬ B' x} := by
-    ext x; have := hB x; grind
-  have e₃ : {x | A x ∧ B' x} \ {x | B x} = {x | A x ∧ ¬ B x} ∩ {x | B' x} := by ext; grind
+  rw [toDet_apply] at hq ⊢
+  have h₁ := Set.ncard_inter_add_ncard_sdiff_eq_ncard (A \ B) B'
+  have h₂ := Set.ncard_inter_add_ncard_sdiff_eq_ncard (A ∩ B') B
+  have e₁ : A ∩ B' ∩ B = A ∩ B := by ext x; have := @hB x; grind
+  have e₂ : (A \ B) \ B' = A \ B' := by ext x; have := @hB x; grind
+  have e₃ : (A ∩ B') \ B = (A \ B) ∩ B' := by ext; grind
   rw [e₂] at h₁
   rw [e₁, e₃] at h₂
   rw [← h₂]
   rw [← h₁, Nat.add_comm] at hq
   exact h.shift _ hq
 
-/-- The quantifier of a scope-antitone tree is scope antitone. -/
-theorem ScopeAntitone.toGQ [Finite α] {q : NumberTree} (h : q.ScopeAntitone) :
-    GQ.ScopeAntitone (q.toGQ : GQ α) :=
-  fun A _ _ hB hq ↦ Classical.byContradiction fun hn ↦ h.compl.toGQ A hB hn hq
+/-- The determiner denotation of a scope-antitone tree is scope antitone. -/
+theorem ScopeAntitone.toDet [Finite α] {q : NumberTree} (h : q.ScopeAntitone) :
+    (q.toDet : Det α).ScopeAntitone :=
+  fun A _ _ hB hq ↦ Classical.byContradiction fun hn ↦ h.compl.toDet A hB hn hq
 
-end OfGQ
+end OfDet
+
+/-! ### The tree of a global determiner denotation
+
+A global determiner denotation that is conservative and constant, extensional and closed under
+isomorphism, holds of `A` and `B` according to `|A \ B|` and `|A ∩ B|` alone, on every universe
+at once, which is Peters and Westerståhl's representation of such quantifiers by binary relations between
+numbers. Such denotations are exactly the trees, so every theorem about trees is a theorem
+about them. -/
+
+section Family
+
+universe u
+
+open Det
+
+variable {Q : Det.Family.{u}}
+
+/-- Constancy is extension together with isomorphism closure. -/
+theorem _root_.Quantifier.Det.Family.constant_iff : Q.Constant ↔ Q.Ext ∧ Q.Isom := by
+  refine ⟨fun h ↦ ⟨fun β _ M A B hA hB ↦ ?_, fun α β _ _ e A B ↦ ?_⟩, fun ⟨hE, hI⟩ ↦ ?_⟩
+  · exact h (Function.Embedding.subtype (· ∈ M)) A B (by simpa using hA) (by simpa using hB)
+  · exact h e.toEmbedding A B (by simp) (by simp)
+  · intro α β _ _ f A B hA hB
+    exact (hI (Equiv.ofInjective f f.injective) _ _).trans (hE _ A B hA hB)
+
+theorem _root_.Quantifier.Det.Family.Constant.ext (h : Q.Constant) : Q.Ext :=
+  (Det.Family.constant_iff.1 h).1
+
+theorem _root_.Quantifier.Det.Family.Constant.isom (h : Q.Constant) : Q.Isom :=
+  (Det.Family.constant_iff.1 h).2
+
+private theorem ncard_image_sdiff {α β : Type*} {f : α → β} (hf : f.Injective) (A B : Set α) :
+    (f '' A \ f '' B).ncard = (A \ B).ncard := by
+  rw [← Set.image_sdiff hf, Set.ncard_image_of_injective _ hf]
+
+private theorem ncard_image_inter {α β : Type*} {f : α → β} (hf : f.Injective) (A B : Set α) :
+    (f '' A ∩ f '' B).ncard = (A ∩ B).ncard := by
+  rw [← Set.image_inter hf, Set.ncard_image_of_injective _ hf]
+
+/-- A conservative constant global determiner denotation holds of `A` and `B` on one universe
+exactly when it holds of `A'` and `B'` on another with the same `|A \ B|` and `|A ∩ B|`. Both
+universes embed in their sum, where permutation invariance applies. -/
+theorem _root_.Quantifier.Det.Family.iff_of_ncard_eq (hC : Q.Conservative) (hK : Q.Constant)
+    {α β : Type u} [Finite α] [Finite β] {A B : Set α} {A' B' : Set β}
+    (hd : (A \ B).ncard = (A' \ B').ncard) (hi : (A ∩ B).ncard = (A' ∩ B').ncard) :
+    Q α A B ↔ Q β A' B' := by
+  have h₁ := hK (Function.Embedding.inl (α := α) (β := β)) _ _
+    (Set.image_subset_range _ A) (Set.image_subset_range _ B)
+  have h₂ := hK (Function.Embedding.inr (α := α) (β := β)) _ _
+    (Set.image_subset_range _ A') (Set.image_subset_range _ B')
+  simp only [Set.preimage_image_eq _ (Function.Embedding.injective _)] at h₁ h₂
+  refine h₁.trans ((Det.iff_of_ncard_eq (hC _) (hK.isom.quantityInvariant _) ?_ ?_).trans
+    h₂.symm)
+  · rw [ncard_image_sdiff (Function.Embedding.injective _),
+      ncard_image_sdiff (Function.Embedding.injective _), hd]
+  · rw [ncard_image_inter (Function.Embedding.injective _),
+      ncard_image_inter (Function.Embedding.injective _), hi]
+
+/-- The tree of a global determiner denotation holds of `(a, b)` when the denotation holds of some
+`A` and `B` on some universe with `|A \ B| = a` and `|A ∩ B| = b`. -/
+def ofFamily (Q : Det.Family.{u}) : NumberTree := fun a b ↦
+  ∃ (α : Type u) (_ : Finite α) (A B : Set α), (A \ B).ncard = a ∧ (A ∩ B).ncard = b ∧ Q α A B
+
+/-- A conservative constant global determiner denotation holds of `A` and `B` exactly when its
+tree holds of `|A \ B|` and `|A ∩ B|`. -/
+theorem ofFamily_iff (hC : Q.Conservative) (hK : Q.Constant) (α : Type u) [Finite α]
+    (A B : Set α) : ofFamily Q (A \ B).ncard (A ∩ B).ncard ↔ Q α A B :=
+  ⟨fun ⟨_, _, _, _, hd, hi, h⟩ ↦ (Det.Family.iff_of_ncard_eq hC hK hd hi).1 h,
+    fun h ↦ ⟨α, inferInstance, A, B, rfl, rfl, h⟩⟩
+
+/-- The global determiner denotation of a tree is its determiner denotation on every universe. -/
+def toFamily (q : NumberTree) : Det.Family.{u} := fun _ _ ↦ q.toDet
+
+theorem conservative_toFamily (q : NumberTree) : (q.toFamily : Det.Family.{u}).Conservative :=
+  fun _ _ ↦ conservative_toDet q
+
+/-- The global determiner denotation of a tree is constant; only the restrictor need lie inside
+the range of the embedding. -/
+theorem constant_toFamily (q : NumberTree) : (q.toFamily : Det.Family.{u}).Constant :=
+  fun _ _ _ _ f _ B hA _ ↦ toDet_preimage f.injective B hA q
+
+/-- Some universe realizes any three sizes as `|X \ Y|`, `|X ∩ Y|` and `|Y \ X|`. -/
+theorem exists_ncard_eq (a b c : ℕ) : ∃ (γ : Type u) (_ : Finite γ) (X Y : Set γ),
+    (X \ Y).ncard = a ∧ (X ∩ Y).ncard = b ∧ (Y \ X).ncard = c := by
+  let e₁ : Fin a → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inl i⟩
+  let e₂ : Fin b → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inr (.inl i)⟩
+  let e₃ : Fin c → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c) := fun i ↦ ⟨.inr (.inr i)⟩
+  have card {n : ℕ} {e : Fin n → ULift.{u} (Fin a ⊕ Fin b ⊕ Fin c)} (he : e.Injective) :
+      (Set.range e).ncard = n := by
+    rw [Set.ncard_range_of_injective he, Nat.card_eq_fintype_card, Fintype.card_fin]
+  refine ⟨_, inferInstance, Set.range e₁ ∪ Set.range e₂, Set.range e₂ ∪ Set.range e₃, ?_, ?_, ?_⟩
+  · convert card (e := e₁) fun i j h ↦ by simpa [e₁] using h using 2
+    ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
+  · convert card (e := e₂) fun i j h ↦ by simpa [e₂] using h using 2
+    ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
+  · convert card (e := e₃) fun i j h ↦ by simpa [e₃] using h using 2
+    ext ⟨x | x | x⟩ <;> simp [e₁, e₂, e₃]
+
+theorem ofFamily_toFamily (q : NumberTree) : ofFamily (q.toFamily : Det.Family.{u}) = q := by
+  funext a b
+  refine propext ⟨fun ⟨_, _, _, _, ha, hb, h⟩ ↦ ha ▸ hb ▸ h, fun h ↦ ?_⟩
+  obtain ⟨γ, _, X, Y, ha, hb, -⟩ := exists_ncard_eq.{u} a b 0
+  exact ⟨γ, inferInstance, X, Y, ha, hb, by rwa [toFamily, toDet_apply, ha, hb]⟩
+
+theorem toFamily_ofFamily (hC : Q.Conservative) (hK : Q.Constant) :
+    (ofFamily Q).toFamily = Q := by
+  funext α _ A B
+  exact propext (ofFamily_iff hC hK α A B)
+
+theorem toFamily_le_toFamily_iff {q r : NumberTree} :
+    (q.toFamily : Det.Family.{u}) ≤ r.toFamily ↔ q ≤ r := by
+  refine ⟨fun h a b hq ↦ ?_, fun h _ _ _ _ ↦ h _ _⟩
+  obtain ⟨γ, _, X, Y, ha, hb, -⟩ := exists_ncard_eq.{u} a b 0
+  have : r.toDet X Y := h γ ⟨inferInstance⟩ X Y (show q.toDet X Y by rwa [toDet_apply, ha, hb])
+  rwa [toDet_apply, ha, hb] at this
+
+/-- The conservative constant global determiner denotations are the trees of numbers, as
+Boolean algebras: the tree of a meet, join or complement is the meet, join or complement of
+the trees. -/
+noncomputable def familyOrderIso :
+    {Q : Det.Family.{u} // Q.Conservative ∧ Q.Constant} ≃o NumberTree where
+  toFun Q := ofFamily Q.1
+  invFun q := ⟨q.toFamily, conservative_toFamily q, constant_toFamily q⟩
+  left_inv Q := Subtype.ext (toFamily_ofFamily Q.2.1 Q.2.2)
+  right_inv := ofFamily_toFamily
+  map_rel_iff' {Q Q'} := by
+    change ofFamily Q.1 ≤ ofFamily Q'.1 ↔ Q.1 ≤ Q'.1
+    conv_rhs => rw [← toFamily_ofFamily Q.2.1 Q.2.2, ← toFamily_ofFamily Q'.2.1 Q'.2.2]
+    exact toFamily_le_toFamily_iff.symm
+
+/-- The tree of a global determiner denotation that is asymmetric on every universe is
+asymmetric. -/
+theorem asymmetric_ofFamily (hC : Q.Conservative) (hK : Q.Constant)
+    (h : ∀ (α : Type u) [Finite α], Std.Asymm (Q α)) : (ofFamily Q).Asymmetric := by
+  intro a c b hac hbc
+  obtain ⟨γ, _, X, Y, ha, hb, hc⟩ := exists_ncard_eq.{u} a b c
+  have hXY := (ofFamily_iff hC hK γ X Y).1 (by rwa [ha, hb])
+  have hYX := (ofFamily_iff hC hK γ Y X).1 (by rwa [hc, Set.inter_comm, hb])
+  exact Std.Asymm.asymm X Y hXY hYX
+
+/-- No conservative constant global determiner denotation is asymmetric on every universe unless
+it is empty ([van-benthem-1984], Theorem 3.2.1). On a single universe
+an asymmetric conservative permutation-invariant denotation can be nonempty. -/
+theorem _root_.Quantifier.Det.Family.not_apply_of_asymm (hC : Q.Conservative)
+    (hK : Q.Constant) (h : ∀ (α : Type u) [Finite α], Std.Asymm (Q α)) (α : Type u) [Finite α]
+    (A B : Set α) : ¬ Q α A B := by
+  rw [← ofFamily_iff hC hK, (asymmetric_ofFamily hC hK h).eq_bot]
+  exact id
+
+end Family
 
 /-! ### Counting quantifiers -/
 
@@ -646,108 +822,94 @@ section Dependence
 
 variable {α : Type*} [Finite α]
 
-private theorem ncard_and_not_add_ncard_and (A B : α → Prop) :
-    {x | A x ∧ ¬ B x}.ncard + {x | A x ∧ B x}.ncard = {x | A x}.ncard := by
-  rw [add_comm]; exact Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | A x} {x | B x}
+private theorem toDet_iff_of_ncard {A B : Set α} {n b : ℕ} (hA : A.ncard = n)
+    (hAB : (A ∩ B).ncard = b) : q.toDet A B ↔ q (n - b) b := by
+  have := Set.ncard_inter_add_ncard_sdiff_eq_ncard A B
+  rw [toDet_apply, hAB, show (A \ B).ncard = n - b by omega]
 
-private theorem toGQ_iff_of_ncard {A B : α → Prop} {n b : ℕ} (hA : {x | A x}.ncard = n)
-    (hAB : {x | A x ∧ B x}.ncard = b) : q.toGQ A B ↔ q (n - b) b := by
-  have := ncard_and_not_add_ncard_and A B
-  rw [toGQ_apply, hAB, show {x | A x ∧ ¬ B x}.ncard = n - b by omega]
+theorem toDet_some_iff {A B : Set α} : NumberTree.some.toDet A B ↔ (A ∩ B).Nonempty := by
+  rw [toDet_apply, NumberTree.some, ne_eq, Set.ncard_eq_zero, ← ne_eq,
+    ← Set.nonempty_iff_ne_empty]
 
-private theorem ncard_or_eq {T : Set α} {e : α} (he : e ∉ T) :
-    {x | x ∈ T ∨ x = e}.ncard = T.ncard + 1 := by
-  rw [show {x | x ∈ T ∨ x = e} = insert e T from Set.ext fun _ ↦ or_comm,
-    Set.ncard_insert_of_notMem he]
+theorem toDet_no_iff {A B : Set α} : NumberTree.no.toDet A B ↔ ¬ (A ∩ B).Nonempty := by
+  rw [← toDet_some_iff, ← compl_no, toDet_compl]; exact not_not.symm
 
-theorem toGQ_some_iff {A B : α → Prop} : NumberTree.some.toGQ A B ↔ ∃ x, A x ∧ B x := by
-  rw [toGQ_apply, NumberTree.some, ne_eq, Set.ncard_eq_zero, ← ne_eq, ← Set.nonempty_iff_ne_empty]
-  rfl
+theorem toDet_all_iff {A B : Set α} : NumberTree.all.toDet A B ↔ A ⊆ B := by
+  rw [toDet_apply, NumberTree.all, Set.ncard_eq_zero, Set.sdiff_eq_empty]
 
-theorem toGQ_no_iff {A B : α → Prop} : NumberTree.no.toGQ A B ↔ ¬ ∃ x, A x ∧ B x := by
-  rw [← toGQ_some_iff, ← compl_no, toGQ_compl]; exact not_not.symm
-
-theorem toGQ_all_iff {A B : α → Prop} : NumberTree.all.toGQ A B ↔ ∀ x, A x → B x := by
-  rw [toGQ_apply, NumberTree.all, Set.ncard_eq_zero, Set.eq_empty_iff_forall_notMem]
-  simp
-
-/-- The quantifier of a tree depends on whether an individual is in its scope only if the
-individual is in its restrictor and the tree is not constant on the restrictor's row. -/
-theorem dependsOn_toGQ_compl_singleton_iff (A : α → Prop) (e : α) :
-    DependsOn (q.toGQ A) {e}ᶜ ↔ (A e → q.ConstantOnRow {x | A x}.ncard) := by
+/-- The determiner denotation of a tree depends on whether an individual is in its scope only if
+the individual is in its restrictor and the tree is not constant on the restrictor's row. -/
+theorem dependsOn_toDet_compl_singleton_iff (A : Set α) (e : α) :
+    DependsOn (q.toDet A) {e}ᶜ ↔ (e ∈ A → q.ConstantOnRow A.ncard) := by
   refine ⟨fun hdep hA ↦ by_contra fun hc ↦ ?_, fun h D D' hD ↦ propext ?_⟩
   · obtain ⟨a, b, hab, hq⟩ := not_constantOnRow_iff.1 hc
-    have hmem : e ∈ {x | A x} := hA
-    obtain ⟨S, hS, hSb⟩ := Set.exists_subset_card_eq (s := {x | A x} \ {e}) (n := b)
-      (by have := Set.ncard_sdiff_singleton_add_one hmem; omega)
+    obtain ⟨S, hS, hSb⟩ := Set.exists_subset_card_eq (s := A \ {e}) (n := b)
+      (by have := Set.ncard_sdiff_singleton_add_one hA; omega)
     have heS : e ∉ S := fun h ↦ (hS h).2 rfl
-    have h₁ : {x | A x ∧ x ∈ S}.ncard = b := by
-      rw [show {x | A x ∧ x ∈ S} = S from Set.ext fun _ ↦ ⟨And.right, fun h ↦ ⟨(hS h).1, h⟩⟩, hSb]
-    have h₂ : {x | A x ∧ (x ∈ S ∨ x = e)}.ncard = b + 1 := by
-      rw [show {x | A x ∧ (x ∈ S ∨ x = e)} = {x | x ∈ S ∨ x = e} from Set.ext fun x ↦
-        ⟨And.right, fun h ↦ ⟨h.elim (fun h ↦ (hS h).1) (· ▸ hA), h⟩⟩, ncard_or_eq heS, hSb]
-    have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ S) = (i ∈ S ∨ i = e) :=
-      fun i hi ↦ propext (or_iff_left hi).symm
-    have e₁ : q.toGQ A (· ∈ S) ↔ q (a + 1) b := by
-      rw [toGQ_iff_of_ncard rfl h₁, ← hab, show a + b + 1 - b = a + 1 by omega]
-    have e₂ : q.toGQ A (fun x ↦ x ∈ S ∨ x = e) ↔ q a (b + 1) := by
-      rw [toGQ_iff_of_ncard rfl h₂, ← hab, show a + b + 1 - (b + 1) = a by omega]
+    have h₁ : (A ∩ S).ncard = b := by
+      rw [Set.inter_eq_right.2 fun _ h ↦ (hS h).1, hSb]
+    have h₂ : (A ∩ insert e S).ncard = b + 1 := by
+      rw [Set.inter_eq_right.2 (Set.insert_subset hA fun _ h ↦ (hS h).1),
+        Set.ncard_insert_of_notMem heS, hSb]
+    have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ S) = (i ∈ insert e S) :=
+      fun i hi ↦ propext (or_iff_right hi).symm
+    have e₁ : q.toDet A S ↔ q (a + 1) b := by
+      rw [toDet_iff_of_ncard rfl h₁, ← hab, show a + b + 1 - b = a + 1 by omega]
+    have e₂ : q.toDet A (insert e S) ↔ q a (b + 1) := by
+      rw [toDet_iff_of_ncard rfl h₂, ← hab, show a + b + 1 - (b + 1) = a by omega]
     exact hq (e₁.symm.trans ((Iff.of_eq (hdep hagree)).trans e₂))
-  · by_cases hA : A e
-    · rw [toGQ_apply, toGQ_apply]
-      exact h hA _ _ _ _ (ncard_and_not_add_ncard_and A D) (ncard_and_not_add_ncard_and A D')
-    · have hs : ∀ P : Prop → Prop, {x | A x ∧ P (D x)} = {x | A x ∧ P (D' x)} := fun P ↦
+  · by_cases hA : e ∈ A
+    · rw [toDet_apply, toDet_apply]
+      have := Set.ncard_inter_add_ncard_sdiff_eq_ncard A D
+      have := Set.ncard_inter_add_ncard_sdiff_eq_ncard A D'
+      exact h hA _ _ _ _ (by omega) (by omega)
+    · have hs : ∀ P : Prop → Prop, {x | x ∈ A ∧ P (D x)} = {x | x ∈ A ∧ P (D' x)} := fun P ↦
         Set.ext fun x ↦ by
           by_cases hx : x = e
           · subst hx; simp [hA]
           · simp only [Set.mem_ofPred_eq, hD x hx]
-      rw [toGQ_apply, toGQ_apply]
+      rw [toDet_apply, toDet_apply]
       exact Iff.of_eq (congrArg₂ q (congrArg Set.ncard (hs Not)) (congrArg Set.ncard (hs id)))
 
-theorem exists_not_dependsOn_toGQ_restrictor_iff (e : α) :
-    (∃ B, ¬ DependsOn (fun A ↦ q.toGQ A B) {e}ᶜ) ↔ ¬ q.ConstantBelow (Nat.card α) := by
+theorem exists_not_dependsOn_toDet_restrictor_iff (e : α) :
+    (∃ B, ¬ DependsOn (fun A ↦ q.toDet A B) {e}ᶜ) ↔ ¬ q.ConstantBelow (Nat.card α) := by
   refine ⟨fun ⟨B, hB⟩ hc ↦ hB fun A A' _ ↦ propext ?_, fun hc ↦ ?_⟩
-  · show q.toGQ A B ↔ q.toGQ A' B
-    rw [toGQ_apply, toGQ_apply]
-    have := ncard_and_not_add_ncard_and A B
-    have := ncard_and_not_add_ncard_and A' B
-    have := Set.ncard_le_card {x | A x}
-    have := Set.ncard_le_card {x | A' x}
+  · show q.toDet A B ↔ q.toDet A' B
+    rw [toDet_apply, toDet_apply]
+    have := Set.ncard_inter_add_ncard_sdiff_eq_ncard A B
+    have := Set.ncard_inter_add_ncard_sdiff_eq_ncard A' B
+    have := Set.ncard_le_card A
+    have := Set.ncard_le_card A'
     exact hc _ _ _ _ (by omega) (by omega)
   obtain ⟨a, b, hab, hq⟩ := not_constantBelow_iff.1 hc
-  have hmem : e ∈ (Set.univ : Set α) := Set.mem_univ e
   obtain ⟨T, hT, hTn⟩ := Set.exists_subset_card_eq (s := Set.univ \ {e}) (n := a + b)
-    (by have := Set.ncard_sdiff_singleton_add_one hmem; rw [Set.ncard_univ] at this; omega)
+    (by have := Set.ncard_sdiff_singleton_add_one (Set.mem_univ e)
+        rw [Set.ncard_univ] at this; omega)
   obtain ⟨S, hST, hSb⟩ := Set.exists_subset_card_eq (s := T) (n := b) (by omega)
   have heT : e ∉ T := fun h ↦ (hT h).2 rfl
   have heS : e ∉ S := fun h ↦ heT (hST h)
-  have hA : {x | x ∈ T}.ncard = a + b := hTn
-  have hA' : {x | x ∈ T ∨ x = e}.ncard = a + b + 1 := by rw [ncard_or_eq heT, hTn]
-  have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ T) = (i ∈ T ∨ i = e) :=
-    fun i hi ↦ propext (or_iff_left hi).symm
+  have hA' : (insert e T).ncard = a + b + 1 := by rw [Set.ncard_insert_of_notMem heT, hTn]
+  have hagree : ∀ i ∈ ({e}ᶜ : Set α), (i ∈ T) = (i ∈ insert e T) :=
+    fun i hi ↦ propext (or_iff_right hi).symm
   rcases hq with hq | hq
-  · refine ⟨(· ∈ S), fun hdep ↦ hq ?_⟩
-    have h₁ : {x | x ∈ T ∧ x ∈ S}.ncard = b := by
-      rw [show {x | x ∈ T ∧ x ∈ S} = S from Set.ext fun _ ↦ ⟨And.right, fun h ↦ ⟨hST h, h⟩⟩, hSb]
-    have h₂ : {x | (x ∈ T ∨ x = e) ∧ x ∈ S}.ncard = b := by
-      rw [show {x | (x ∈ T ∨ x = e) ∧ x ∈ S} = S from
-        Set.ext fun _ ↦ ⟨And.right, fun h ↦ ⟨.inl (hST h), h⟩⟩, hSb]
-    have e₁ : q.toGQ (· ∈ T) (· ∈ S) ↔ q a b := by
-      rw [toGQ_iff_of_ncard hA h₁, show a + b - b = a by omega]
-    have e₂ : q.toGQ (fun x ↦ x ∈ T ∨ x = e) (· ∈ S) ↔ q (a + 1) b := by
-      rw [toGQ_iff_of_ncard hA' h₂, show a + b + 1 - b = a + 1 by omega]
+  · refine ⟨S, fun hdep ↦ hq ?_⟩
+    have h₁ : (T ∩ S).ncard = b := by rw [Set.inter_eq_right.2 hST, hSb]
+    have h₂ : (insert e T ∩ S).ncard = b := by
+      rw [Set.inter_eq_right.2 (hST.trans (Set.subset_insert e T)), hSb]
+    have e₁ : q.toDet T S ↔ q a b := by
+      rw [toDet_iff_of_ncard hTn h₁, show a + b - b = a by omega]
+    have e₂ : q.toDet (insert e T) S ↔ q (a + 1) b := by
+      rw [toDet_iff_of_ncard hA' h₂, show a + b + 1 - b = a + 1 by omega]
     exact e₂.symm.trans ((Iff.of_eq (hdep hagree)).symm.trans e₁)
-  · refine ⟨fun x ↦ x ∈ S ∨ x = e, fun hdep ↦ hq ?_⟩
-    have h₁ : {x | x ∈ T ∧ (x ∈ S ∨ x = e)}.ncard = b := by
-      rw [show {x | x ∈ T ∧ (x ∈ S ∨ x = e)} = S from Set.ext fun x ↦
-        ⟨fun h ↦ h.2.resolve_right fun hx ↦ heT (hx ▸ h.1), fun h ↦ ⟨hST h, .inl h⟩⟩, hSb]
-    have h₂ : {x | (x ∈ T ∨ x = e) ∧ (x ∈ S ∨ x = e)}.ncard = b + 1 := by
-      rw [show {x | (x ∈ T ∨ x = e) ∧ (x ∈ S ∨ x = e)} = {x | x ∈ S ∨ x = e} from
-        Set.ext fun x ↦ ⟨And.right, fun h ↦ ⟨h.imp_left (hST ·), h⟩⟩, ncard_or_eq heS, hSb]
-    have e₁ : q.toGQ (· ∈ T) (fun x ↦ x ∈ S ∨ x = e) ↔ q a b := by
-      rw [toGQ_iff_of_ncard hA h₁, show a + b - b = a by omega]
-    have e₂ : q.toGQ (fun x ↦ x ∈ T ∨ x = e) (fun x ↦ x ∈ S ∨ x = e) ↔ q a (b + 1) := by
-      rw [toGQ_iff_of_ncard hA' h₂, show a + b + 1 - (b + 1) = a by omega]
+  · refine ⟨insert e S, fun hdep ↦ hq ?_⟩
+    have h₁ : (T ∩ insert e S).ncard = b := by
+      rw [Set.inter_insert_of_notMem heT, Set.inter_eq_right.2 hST, hSb]
+    have h₂ : (insert e T ∩ insert e S).ncard = b + 1 := by
+      rw [Set.inter_eq_right.2 (Set.insert_subset_insert hST), Set.ncard_insert_of_notMem heS, hSb]
+    have e₁ : q.toDet T (insert e S) ↔ q a b := by
+      rw [toDet_iff_of_ncard hTn h₁, show a + b - b = a by omega]
+    have e₂ : q.toDet (insert e T) (insert e S) ↔ q a (b + 1) := by
+      rw [toDet_iff_of_ncard hA' h₂, show a + b + 1 - (b + 1) = a by omega]
     exact e₂.symm.trans ((Iff.of_eq (hdep hagree)).symm.trans e₁)
 
 end Dependence

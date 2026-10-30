@@ -21,9 +21,8 @@ restrictiveness only (`Exceptive.Restrictive`), which is why they also occur wit
 
 ## Implementation notes
 
-* Restrictor, scope and exception set are predicates ordered pointwise, so the truth
-  conditions are lattice equations and the five-student and two-student models use `⊤` and
-  `Fin` restrictors.
+* Restrictor, scope and exception set are sets, so the truth conditions are lattice equations
+  and the five-student and two-student models use `Set.univ` and `Fin` restrictors.
 * The guarantee of an exception set is conditional on a false quantification, the paper's "if
   there is any at all"; the unconditional version also holds for *every* and *no*, whose
   exception set is then empty (`Exceptive.isExceptionSet_every`).
@@ -56,118 +55,117 @@ restrictiveness only (`Exceptive.Restrictive`), which is why they also occur wit
 
 namespace VonFintel1993
 
-open Quantifier Quantifier.GQ Quantifier.NP Quantifier.Exceptive
+open Quantifier Quantifier.Det Quantifier.Exceptive
 open scoped Denotes
 open English.Determiners (QuantityWord)
 
-variable {α : Type*} {Q : GQ α} {A C B : α → Prop}
+variable {α : Type*} {Q : Det α} {A C B : Set α}
 
 /-! ### Truth conditions (§1.1, §1.5) -/
 
 -- (9)
-theorem isExceptionSet_every_ident_iff {j : α} :
-    IsExceptionSet every A (ident j) B ↔ A \ B = ident j :=
+theorem isExceptionSet_every_singleton_iff {j : α} :
+    IsExceptionSet every A {j} B ↔ A \ B = {j} :=
   isExceptionSet_every_iff
 
 -- (9)
-theorem isExceptionSet_no_ident_iff {j : α} :
-    IsExceptionSet no A (ident j) B ↔ A ⊓ B = ident j :=
+theorem isExceptionSet_no_singleton_iff {j : α} :
+    IsExceptionSet no A {j} B ↔ A ∩ B = {j} :=
   isExceptionSet_no_iff
 
 /-! ### Consequences of uniqueness (§1.5, §1.7) -/
 
 /-- The inference to a *but*-phrase with a larger exception set (24), `Examples.ex_14`, is
 blocked. -/
-theorem not_isExceptionSet_of_lt (h : IsExceptionSet Q A C B) {C' : α → Prop} (hlt : C < C') :
+theorem not_isExceptionSet_of_ssubset (h : IsExceptionSet Q A C B) {C' : Set α} (hlt : C ⊂ C') :
     ¬ IsExceptionSet Q A C' B :=
   fun h' ↦ hlt.ne (h.unique h')
 
 /-- Two *but*-phrases on one quantifier (28), `Examples.ex_28a`, name the same exception. -/
-theorem eq_of_isExceptionSet_ident {j m : α} (hj : IsExceptionSet Q A (ident j) B)
-    (hm : IsExceptionSet Q A (ident m) B) : j = m :=
-  ident_injective (hj.unique hm)
+theorem eq_of_isExceptionSet_singleton {j m : α} (hj : IsExceptionSet Q A {j} B)
+    (hm : IsExceptionSet Q A {m} B) : j = m :=
+  Set.singleton_injective (hj.unique hm)
 
 /-! ### The co-occurrence restrictions (§1.6) -/
 
 /-- A determiner guarantees an exception set when every false quantification has one, the
 property von Fintel finds the universal determiners alone to have. -/
-def GuaranteesException (Q : GQ α) : Prop :=
-  ∀ A B : α → Prop, ¬ Q A B → ∃ C, IsExceptionSet Q A C B
+def GuaranteesException (Q : Det α) : Prop :=
+  ∀ A B : Set α, ¬ Q A B → ∃ C, IsExceptionSet Q A C B
 
-theorem guaranteesException_every : GuaranteesException (every : GQ α) :=
+theorem guaranteesException_every : GuaranteesException (every : Det α) :=
   fun A B _ ↦ ⟨A \ B, isExceptionSet_every A B⟩
 
-theorem guaranteesException_no : GuaranteesException (no : GQ α) :=
-  fun A B _ ↦ ⟨A ⊓ B, isExceptionSet_no A B⟩
+theorem guaranteesException_no : GuaranteesException (no : Det α) :=
+  fun A B _ ↦ ⟨A ∩ B, isExceptionSet_no A B⟩
 
-theorem not_guaranteesException_some : ¬ GuaranteesException (GQ.some : GQ α) := fun h ↦
-  let ⟨_, ⟨_, _, hx⟩, _⟩ := h ⊤ ⊥ fun ⟨_, _, hx⟩ ↦ hx
+theorem not_guaranteesException_some : ¬ GuaranteesException (Det.some : Det α) := fun h ↦
+  let ⟨_, ⟨_, _, hx⟩, _⟩ := h Set.univ ∅ fun ⟨_, _, hx⟩ ↦ hx
   hx
 
 /-- The five students of (25) are Tom, John, Harry, Bill and Mary in order; only the last two
 attended (`Examples.ex_25a`). -/
-abbrev attended : Fin 5 → Prop := (3 ≤ ·)
+abbrev attended : Set (Fin 5) := {x | 3 ≤ x}
 
 -- (25)
-theorem not_isExceptionSet_most (C : Fin 5 → Prop) : ¬ IsExceptionSet most ⊤ C attended := by
+theorem not_isExceptionSet_most (C : Set (Fin 5)) :
+    ¬ IsExceptionSet most Set.univ C attended := by
   rintro ⟨h1, h2⟩
-  have hTJ : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended := by decide
-  have hTH : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 2) attended := by decide
-  have hJH : most (⊤ \ fun x : Fin 5 ↦ x = 1 ∨ x = 2) attended := by decide
-  have hC : C = ⊥ := le_bot_iff.1 fun x hx ↦ by
-    have h01 := h2 hTJ x hx
-    have h02 := h2 hTH x hx
-    have h12 := h2 hJH x hx
-    show False
+  have hTJ : most (Set.univ \ {0, 1}) attended := by decide
+  have hTH : most (Set.univ \ {0, 2}) attended := by decide
+  have hJH : most (Set.univ \ {1, 2}) attended := by decide
+  have hC : C = ∅ := Set.eq_empty_of_forall_notMem fun x hx ↦ by
+    have h01 : x = 0 ∨ x = 1 := h2 hTJ hx
+    have h02 : x = 0 ∨ x = 2 := h2 hTH hx
+    have h12 : x = 1 ∨ x = 2 := h2 hJH hx
     omega
   subst hC
-  have h1' : most (⊤ \ (⊥ : Fin 5 → Prop)) attended := h1
-  rw [sdiff_bot] at h1'
+  have h1' : most (Set.univ \ ∅) attended := h1
+  rw [Set.sdiff_empty] at h1'
   exact absurd h1' (by decide)
 
-theorem not_guaranteesException_most : ¬ GuaranteesException (most : GQ (Fin 5)) := fun h ↦
-  let ⟨C, hC⟩ := h ⊤ attended fun hm ↦ absurd hm (by decide)
+theorem not_guaranteesException_most : ¬ GuaranteesException (most : Det (Fin 5)) := fun h ↦
+  let ⟨C, hC⟩ := h Set.univ attended fun hm ↦ absurd hm (by decide)
   not_isExceptionSet_most C hC
 
 theorem isExceptionSet_most_two :
-    IsExceptionSet most ⊤ (· = (0 : Fin 2)) (· = (1 : Fin 2)) := by
+    IsExceptionSet most Set.univ {(0 : Fin 2)} {(1 : Fin 2)} := by
   refine ⟨by decide, fun S hS x hx ↦ ?_⟩
   obtain rfl : x = 0 := hx
-  have hS' : most (fun x : Fin 2 ↦ True ∧ ¬ S x) (· = 1) := hS
+  have hS' : most (Set.univ \ S) {(1 : Fin 2)} := hS
   by_contra h0
-  by_cases h1 : S 1
-  · have e : (fun x : Fin 2 ↦ True ∧ ¬ S x) = (· = 0) :=
-      funext fun x ↦ propext (by fin_cases x <;> simp [h0, h1])
+  by_cases h1 : 1 ∈ S
+  · have e : Set.univ \ S = {(0 : Fin 2)} :=
+      Set.ext fun x ↦ by fin_cases x <;> simp [h0, h1]
     rw [e] at hS'
     exact absurd hS' (by decide)
-  · have e : (fun x : Fin 2 ↦ True ∧ ¬ S x) = fun _ ↦ True :=
-      funext fun x ↦ propext (by fin_cases x <;> simp [h0, h1])
+  · have e : Set.univ \ S = Set.univ := Set.ext fun x ↦ by fin_cases x <;> simp [h0, h1]
     rw [e] at hS'
     exact absurd hS' (by decide)
 
 /-! ### What *but* operates on (§1.8) -/
 
 /-- No noun modifier yields the exception-set truth conditions with *every* (§1.8). -/
-theorem not_exists_nounModifier (hC : C ≠ ⊥) :
-    ¬ ∃ f : (α → Prop) → α → Prop, ∀ A B, every (f A) B ↔ IsExceptionSet every A C B :=
-  fun ⟨_, hf⟩ ↦
-    hC ((isExceptionSet_every_iff.1 ((hf ⊥ ⊤).1 (every_iff_le.2 le_top))).symm.trans bot_sdiff)
+theorem not_exists_nounModifier (hC : C ≠ ∅) :
+    ¬ ∃ f : Set α → Set α, ∀ A B, every (f A) B ↔ IsExceptionSet every A C B :=
+  fun ⟨_, hf⟩ ↦ hC ((isExceptionSet_every_iff.1 ((hf ∅ Set.univ).1 (Set.subset_univ _))).symm.trans
+    (Set.empty_sdiff _))
 
 /-! ### Free exceptives (§2) -/
 
 -- (25), (34c)
 theorem restrictive_most :
-    Restrictive most ⊤ (fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended :=
+    Restrictive most Set.univ {0, 1} attended :=
   ⟨by decide, fun h ↦ absurd h (by decide)⟩
 
 /-- With *every* the *but* reading is the pragmatic strengthening of the free exceptive to an
 exception set that contains only exceptions (§2.3). -/
-theorem isExceptionSet_every_of_restrictive (h : Restrictive every A C B) (hC : C ≤ A \ B) :
+theorem isExceptionSet_every_of_restrictive (h : Restrictive every A C B) (hC : C ⊆ A \ B) :
     IsExceptionSet every A C B :=
   isExceptionSet_every_iff.2 (le_antisymm (restrictive_every_iff.1 h).1 hC)
 
 -- §2.3
-theorem isExceptionSet_no_of_restrictive (h : Restrictive no A C B) (hC : C ≤ A ⊓ B) :
+theorem isExceptionSet_no_of_restrictive (h : Restrictive no A C B) (hC : C ⊆ A ∩ B) :
     IsExceptionSet no A C B :=
   isExceptionSet_no_iff.2 (le_antisymm (restrictive_no_iff.1 h).1 hC)
 
@@ -190,9 +188,9 @@ inductive Determiner
 
 /-- A determiner reads as the English fragment's denotations for the words the fragment has
 and as the quantification substrate's `no` for *no*. -/
-noncomputable def Determiner.readings : Determiner → Set GQ.Family.{0}
+noncomputable def Determiner.readings : Determiner → Set Det.Family.{0}
   | .every => ⟦QuantityWord.every⟧
-  | .no => {GQ.Family.no}
+  | .no => {Det.Family.no}
   | .some => ⟦QuantityWord.some_⟧
   | .most => ⟦QuantityWord.most⟧
 
@@ -232,18 +230,18 @@ theorem but_predicted :
         ∀ q ∈ r.det.readings, ∀ (β : Type) [Fintype β], GuaranteesException (q β)) := by
   have hevery : ∀ q ∈ Determiner.every.readings, ∀ (β : Type) [Fintype β],
       GuaranteesException (q β) := fun q hq β _ ↦ by
-    obtain rfl : q = GQ.Family.every := hq
+    obtain rfl : q = Det.Family.every := hq
     exact guaranteesException_every
   have hno : ∀ q ∈ Determiner.no.readings, ∀ (β : Type) [Fintype β],
       GuaranteesException (q β) := fun q hq β _ ↦ by
-    obtain rfl : q = GQ.Family.no := hq
+    obtain rfl : q = Det.Family.no := hq
     exact guaranteesException_no
   have hsome : ¬ ∀ q ∈ Determiner.some.readings, ∀ (β : Type) [Fintype β],
       GuaranteesException (q β) :=
-    fun h ↦ not_guaranteesException_some (h GQ.Family.some rfl (Fin 1))
+    fun h ↦ not_guaranteesException_some (h Det.Family.some rfl (Fin 1))
   have hmost : ¬ ∀ q ∈ Determiner.most.readings, ∀ (β : Type) [Fintype β],
       GuaranteesException (q β) :=
-    fun h ↦ not_guaranteesException_most (h GQ.Family.most rfl (Fin 5))
+    fun h ↦ not_guaranteesException_most (h Det.Family.most rfl (Fin 5))
   rw [rows_eq]
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
@@ -270,22 +268,22 @@ each admitting a restrictive exceptive on some finite domain. -/
 theorem exceptFor_predicted :
     ∀ r ∈ rows, r.marker = .exceptFor →
       (r.judgment = .acceptable ↔
-        ∀ q ∈ r.det.readings, ∃ (β : Type) (_ : Fintype β) (A C B : β → Prop),
+        ∀ q ∈ r.det.readings, ∃ (β : Type) (_ : Fintype β) (A C B : Set β),
           Restrictive (q β) A C B) := by
   have hevery : ∀ q ∈ Determiner.every.readings, ∃ (β : Type) (_ : Fintype β)
-      (A C B : β → Prop), Restrictive (q β) A C B := fun q hq ↦ by
-    obtain rfl : q = GQ.Family.every := hq
-    exact ⟨Fin 1, inferInstance, ⊤, ⊤, ⊥,
-      fun x hx ↦ absurd trivial hx.2, fun h ↦ h 0 trivial⟩
+      (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
+    obtain rfl : q = Det.Family.every := hq
+    exact ⟨Fin 1, inferInstance, Set.univ, Set.univ, ∅,
+      fun _ hx ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1))⟩
   have hno : ∀ q ∈ Determiner.no.readings, ∃ (β : Type) (_ : Fintype β)
-      (A C B : β → Prop), Restrictive (q β) A C B := fun q hq ↦ by
-    obtain rfl : q = GQ.Family.no := hq
-    exact ⟨Fin 1, inferInstance, ⊤, ⊤, ⊤,
-      fun x hx _ ↦ hx.2 trivial, fun h ↦ h 0 trivial trivial⟩
+      (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
+    obtain rfl : q = Det.Family.no := hq
+    exact ⟨Fin 1, inferInstance, Set.univ, Set.univ, Set.univ,
+      fun _ hx _ ↦ hx.2 trivial, fun h ↦ h (Set.mem_univ (0 : Fin 1)) trivial⟩
   have hmost : ∀ q ∈ Determiner.most.readings, ∃ (β : Type) (_ : Fintype β)
-      (A C B : β → Prop), Restrictive (q β) A C B := fun q hq ↦ by
-    obtain rfl : q = GQ.Family.most := hq
-    exact ⟨Fin 5, inferInstance, ⊤, fun x ↦ x = 0 ∨ x = 1, attended, restrictive_most⟩
+      (A C B : Set β), Restrictive (q β) A C B := fun q hq ↦ by
+    obtain rfl : q = Det.Family.most := hq
+    exact ⟨Fin 5, inferInstance, Set.univ, {0, 1}, attended, restrictive_most⟩
   rw [rows_eq]
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |

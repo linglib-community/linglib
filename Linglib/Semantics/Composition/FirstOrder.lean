@@ -79,9 +79,9 @@ def FirstOrderConstant.interp (m : Model L) (w : m.W) :
   | _, .name c => m.const c w
   | _, .rel₁ R => m.pred₁ R w
   | _, .rel₂ R => m.pred₂ R w
-  | _, .every => Quantifier.GQ.every
-  | _, .some => Quantifier.GQ.some
-  | _, .no => Quantifier.GQ.no
+  | _, .every => Quantifier.Det.every
+  | _, .some => Quantifier.Det.some
+  | _, .no => Quantifier.Det.no
   | _, .neg => Not
   | _, .conj => fun q p ↦ p ∧ q
   | _, .disj => fun q p ↦ p ∨ q
@@ -306,21 +306,21 @@ theorem FirstOrderConstant.realizes_readback (m : Model L) (w : m.W) (v : α →
     exact iff_of_eq (congrArg _ (funext fun i ↦ by fin_cases i <;> rfl))
   | every =>
     intro k₁ hk₁ ys₁ hys₁ P P' hP k₂ hk₂ ys₂ hys₂ Q Q' hQ j hj zs hzs
-    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.GQ.every,
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.Det.every,
       BoundedFormula.realize_all, BoundedFormula.realize_imp]
     exact forall_congr' fun a ↦ imp_congr
       (realize_applyNext _ v hP _ (comp_castLE_trans hys₂ hzs) a)
       (realize_applyNext _ v hQ hj hzs a)
   | some =>
     intro k₁ hk₁ ys₁ hys₁ P P' hP k₂ hk₂ ys₂ hys₂ Q Q' hQ j hj zs hzs
-    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.GQ.some,
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.Det.some,
       BoundedFormula.realize_ex, BoundedFormula.realize_inf]
     exact exists_congr fun a ↦ and_congr
       (realize_applyNext _ v hP _ (comp_castLE_trans hys₂ hzs) a)
       (realize_applyNext _ v hQ hj hzs a)
   | no =>
     intro k₁ hk₁ ys₁ hys₁ P P' hP k₂ hk₂ ys₂ hys₂ Q Q' hQ j hj zs hzs
-    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.GQ.no,
+    simp only [FirstOrderConstant.readback, FirstOrderConstant.interp, Quantifier.Det.no,
       BoundedFormula.realize_all, BoundedFormula.realize_imp, BoundedFormula.realize_not]
     exact forall_congr' fun a ↦ imp_congr
       (realize_applyNext _ v hP _ (comp_castLE_trans hys₂ hzs) a)

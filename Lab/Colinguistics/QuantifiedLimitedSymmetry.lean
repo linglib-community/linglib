@@ -117,12 +117,9 @@ theorem transparent_neg_iff {q : NumberTree} :
 /-! ### Stability of a restrictor -/
 
 /-- A restrictor with no individual gives the quantifier its value at the origin of the tree. -/
-private theorem toGQ_of_forall_not {q : NumberTree} {X : E → Prop} (hX : ∀ e, ¬ X e)
-    (B : E → Prop) :
-    q.toGQ X B ↔ q 0 0 := by
-  have h₁ : {x | X x ∧ ¬ B x} = ∅ := Set.eq_empty_of_forall_notMem fun e h ↦ hX e h.1
-  have h₂ : {x | X x ∧ B x} = ∅ := Set.eq_empty_of_forall_notMem fun e h ↦ hX e h.1
-  rw [NumberTree.toGQ_apply, h₁, h₂, Set.ncard_empty]
+private theorem toDet_of_forall_not {q : NumberTree} {X : Set E} (hX : ∀ e, e ∉ X)
+    (B : Set E) : q.toDet X B ↔ q 0 0 := by
+  simp [NumberTree.toDet_apply, Set.eq_empty_of_forall_notMem hX]
 
 section Stable
 
@@ -131,8 +128,8 @@ variable [Finite E] {q : NumberTree}
 /-- A restrictor with an individual on whose row the quantifier is not constant gives values that
 depend on the scope, so it is stable for no truth value. -/
 private theorem not_stable {X : E → Prop} {e : E} (he : X e)
-    (hc : ¬ q.ConstantOnRow {x | X x}.ncard) {c : Prop} (h : ∀ B, q.toGQ X B ↔ c) : False :=
-  hc ((NumberTree.dependsOn_toGQ_compl_singleton_iff X e).1
+    (hc : ¬ q.ConstantOnRow {x | X x}.ncard) {c : Prop} (h : ∀ B, q.toDet X B ↔ c) : False :=
+  hc ((NumberTree.dependsOn_toDet_compl_singleton_iff X e).1
     (fun B B' _ ↦ propext ((h B).trans (h B').symm)) he)
 
 /-- In a restrictor, incremental Transparency requires every individual to satisfy the
@@ -155,7 +152,7 @@ theorem restrictorLS_iff (h1 : ¬ q.ConstantOnRow 1) :
     obtain rfl := (Prod.ext_iff.1 he').2
     exact he hπ
   have h0 (B : W → E → Prop) : w ∈ restrictorTruth q B (π ⊓ {(w, e)}) ↔ q 0 0 :=
-    toGQ_of_forall_not hX (B w)
+    toDet_of_forall_not hX (B w)
   have hrow : ¬ q.ConstantOnRow {x | (w, x) ∈ ({(w, e)} : Set (W × E))}.ncard := by
     rwa [show {x | (w, x) ∈ ({(w, e)} : Set (W × E))} = {e} from Set.ext fun x ↦ by simp,
       Set.ncard_singleton]
@@ -183,7 +180,7 @@ theorem restrictorLS_neg_iff (hrow : ∀ n, 0 < n → ¬ q.ConstantOnRow n) :
         (hrow _ ((Set.ncard_pos (Set.toFinite _)).2 ⟨e, he⟩)) fun B ↦ hc fun _ ↦ B
     intro B
     rw [← hc B]
-    refine iff_of_eq (congrArg (q.toGQ · (B w)) (funext fun e ↦ propext ?_))
+    refine iff_of_eq (congrArg (q.toDet · (B w)) (funext fun e ↦ propext ?_))
     exact ⟨fun hd ↦ (hX e fun h ↦ hd h.2).elim, fun hd ↦ (hX e hd).elim⟩
   refine ⟨fun ht f hf ↦ ?_, fun hf' f hf ↦ ?_⟩
   · obtain ⟨B, rfl⟩ := hf
@@ -214,7 +211,7 @@ every individual in the scope to satisfy the presupposition. -/
 theorem transparent_some_iff :
     Transparent C {restrictorTruth NumberTree.some R} π ↔ ∀ w ∈ C, ∀ e, R w e → (w, e) ∈ π := by
   simp only [Transparent, Set.mem_singleton_iff, forall_eq, restrictorTruth, Set.mem_ofPred_eq,
-    NumberTree.toGQ_some_iff]
+    NumberTree.toDet_some_iff]
   refine ⟨fun h w hw e he ↦ ?_, fun h d w hw ↦ ⟨fun ⟨e, h₁, h₂⟩ ↦ ⟨e, h₁.2, h₂⟩,
     fun ⟨e, h₁, h₂⟩ ↦ ⟨e, ⟨h w hw e h₂, h₁⟩, h₂⟩⟩⟩
   obtain ⟨e', ⟨hπ, he'⟩, -⟩ := (h {(w, e)} w hw).2 ⟨e, rfl, he⟩
@@ -228,14 +225,14 @@ theorem transparent_no_iff :
     Transparent C {restrictorTruth NumberTree.no R} π ↔ ∀ w ∈ C, ∀ e, R w e → (w, e) ∈ π := by
   rw [← transparent_some_iff]
   simp only [Transparent, Set.mem_singleton_iff, forall_eq, restrictorTruth, Set.mem_ofPred_eq,
-    NumberTree.toGQ_no_iff, NumberTree.toGQ_some_iff, not_iff_not]
+    NumberTree.toDet_no_iff, NumberTree.toDet_some_iff, not_iff_not]
 
 /-- With the scope `R`, symmetric Transparency for a trigger in the restrictor of *every* requires
 every individual outside the scope to satisfy the presupposition. -/
 theorem transparent_every_iff :
     Transparent C {restrictorTruth NumberTree.all R} π ↔ ∀ w ∈ C, ∀ e, ¬ R w e → (w, e) ∈ π := by
   simp only [Transparent, Set.mem_singleton_iff, forall_eq, restrictorTruth, Set.mem_ofPred_eq,
-    NumberTree.toGQ_all_iff]
+    NumberTree.toDet_all_iff, Set.subset_def]
   refine ⟨fun h w hw e he ↦ by_contra fun hπ ↦ he ((h {(w, e)} w hw).1 ?_ e rfl), fun h d w hw ↦
     ⟨fun h' e hd ↦ by_contra fun hR ↦ hR (h' e ⟨h w hw e hR, hd⟩), fun h' e hd ↦ h' e hd.2⟩⟩
   rintro e' ⟨hπ', he'⟩

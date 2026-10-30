@@ -13,7 +13,7 @@ of such pairs (`scopeTruth`, `restrictorTruth`), and by `isLocalContext_of_depen
 of pairs on which the sentence's truth value depends. At a world, a quantifier depends on whether an
 individual is in its scope iff the individual is in the restrictor and the quantifier is not
 constant on the row of the restrictor's size
-(`Quantifier.NumberTree.dependsOn_toGQ_compl_singleton_iff`). So the local context of the nuclear
+(`Quantifier.NumberTree.dependsOn_toDet_compl_singleton_iff`). So the local context of the nuclear
 scope is the restrictor's individuals at the worlds of the context where that row is not constant
 (`isLocalContext_scopeTruth`): a presupposition triggered in the scope projects universally over the
 restrictor, except at worlds where the sentence's truth value does not depend on its scope at all
@@ -62,11 +62,11 @@ variable {W E : Type*}
 /-- The truth set of `(Q A. _)`, as a function of the denotation of its scope, is the set of worlds
 at which `q` holds of the restrictor and of the scope's individuals there. -/
 def scopeTruth (q : NumberTree) (A : W → E → Prop) (d : Set (W × E)) : Set W :=
-  {w | q.toGQ (A w) fun e ↦ (w, e) ∈ d}
+  {w | q.toDet (A w) fun e ↦ (w, e) ∈ d}
 
 /-- The truth set of `(Q _. B)` as a function of the denotation of its restrictor. -/
 def restrictorTruth (q : NumberTree) (B : W → E → Prop) (d : Set (W × E)) : Set W :=
-  {w | q.toGQ (fun e ↦ (w, e) ∈ d) (B w)}
+  {w | q.toDet (fun e ↦ (w, e) ∈ d) (B w)}
 
 theorem dependsOn_slice_iff {w v : W} {e : E} {g : (E → Prop) → Prop} :
     DependsOn (fun d : Set (W × E) ↦ g fun x ↦ (w, x) ∈ d) {(v, e)}ᶜ ↔
@@ -96,7 +96,7 @@ theorem transparentAt_scopeTruth_iff {q : NumberTree} {A : W → E → Prop} {C 
     {P a : Set (W × E)} :
     TransparentAt C {scopeTruth q A} P a ↔ ∀ w ∈ C, ∀ D D' : E → Prop,
       (∀ e, (w, e) ∈ P → (D e ↔ (w, e) ∈ a)) → (∀ e, (w, e) ∈ P → (D' e ↔ (w, e) ∈ a)) →
-        (q.toGQ (A w) D ↔ q.toGQ (A w) D') := by
+        (q.toDet (A w) D ↔ q.toDet (A w) D') := by
   classical
   simp only [transparentAt_iff, Set.mem_singleton_iff, forall_eq]
   refine ⟨fun h w hw D D' hD hD' ↦ ?_, fun h d d' hd hd' w hw ↦ ?_⟩
@@ -124,11 +124,11 @@ theorem isLocalContext_scopeTruth (A : W → E → Prop) (C : Set W) :
     IsLocalContext C {scopeTruth q A}
       {p | p.1 ∈ C ∧ A p.1 p.2 ∧ ¬ q.ConstantOnRow {x | A p.1 x}.ncard} := by
   convert isLocalContext_of_dependsOn (C := C) (env := {scopeTruth q A}) fun f hf w _ ↦
-    (Set.mem_singleton_iff.1 hf) ▸ dependsOn_slice w (q.toGQ (A w)) using 1
+    (Set.mem_singleton_iff.1 hf) ▸ dependsOn_slice w (q.toDet (A w)) using 1
   ext ⟨v, e⟩
   simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left]
-  change _ ↔ ∃ w ∈ C, ¬ DependsOn (fun d : Set (W × E) ↦ q.toGQ (A w) fun x ↦ (w, x) ∈ d) _
-  simp only [dependsOn_slice_iff, NumberTree.dependsOn_toGQ_compl_singleton_iff, not_imp]
+  change _ ↔ ∃ w ∈ C, ¬ DependsOn (fun d : Set (W × E) ↦ q.toDet (A w) fun x ↦ (w, x) ∈ d) _
+  simp only [dependsOn_slice_iff, NumberTree.dependsOn_toDet_compl_singleton_iff, not_imp]
   exact ⟨fun ⟨hv, ha, hc⟩ ↦ ⟨v, hv, rfl, ha, hc⟩, fun ⟨_, hw, rfl, ha, hc⟩ ↦ ⟨hw, ha, hc⟩⟩
 
 /-- A presupposition triggered in the nuclear scope projects universally over the restrictor. It
@@ -151,16 +151,16 @@ theorem isLocalContext_restrictorTruth (C : Set W) :
   convert isLocalContext_of_dependsOn (C := C) (env := Set.range (restrictorTruth q))
     (fun f hf w _ ↦ by
       obtain ⟨B, rfl⟩ := hf
-      exact dependsOn_slice (E := E) w (q.toGQ · (B w))) using 1
+      exact dependsOn_slice (E := E) w (q.toDet · (B w))) using 1
   ext ⟨v, e⟩
   simp only [Set.mem_ofPred_eq, Set.exists_range_iff]
   refine ⟨fun ⟨hv, hc⟩ ↦ ?_, fun ⟨B, w, hw, hB⟩ ↦ ?_⟩
-  · obtain ⟨B, hB⟩ := (NumberTree.exists_not_dependsOn_toGQ_restrictor_iff e).2 hc
-    exact ⟨fun _ ↦ B, v, hv, fun h ↦ hB ((dependsOn_slice_iff (g := (q.toGQ · B))).1 h rfl)⟩
+  · obtain ⟨B, hB⟩ := (NumberTree.exists_not_dependsOn_toDet_restrictor_iff e).2 hc
+    exact ⟨fun _ ↦ B, v, hv, fun h ↦ hB ((dependsOn_slice_iff (g := (q.toDet · B))).1 h rfl)⟩
   · obtain rfl : v = w := by_contra fun hv ↦
-      hB ((dependsOn_slice_iff (g := (q.toGQ · (B w)))).2 fun h ↦ (hv h).elim)
-    exact ⟨hw, (NumberTree.exists_not_dependsOn_toGQ_restrictor_iff e).1
-      ⟨B v, fun h ↦ hB ((dependsOn_slice_iff (g := (q.toGQ · (B v)))).2 fun _ ↦ h)⟩⟩
+      hB ((dependsOn_slice_iff (g := (q.toDet · (B w)))).2 fun h ↦ (hv h).elim)
+    exact ⟨hw, (NumberTree.exists_not_dependsOn_toDet_restrictor_iff e).1
+      ⟨B v, fun h ↦ hB ((dependsOn_slice_iff (g := (q.toDet · (B v)))).2 fun _ ↦ h)⟩⟩
 
 /-- A presupposition triggered in the restrictor, with every scope as a continuation, projects
 universally over the domain. It is transparent iff every individual satisfies it at each world of

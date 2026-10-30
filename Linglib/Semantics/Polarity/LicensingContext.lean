@@ -22,7 +22,7 @@ licenser carries is a theorem about the operators it denotes. Clausal negation i
 *Nobody*, the restrictor of a universal, *without*, *deny*, *before*, *too … to* and the clausal
 comparative are anti-additive and no more, and *doubt* downward entailing and no more. *Few* and *at
 most* are scalar: downward entailing, and not even that once exhaustified against the stronger *no*
-and *at most n − 1*, the determiner exhaustification `Quantifier.GQ.exhaustified`. Every downward
+and *at most n − 1*, the determiner exhaustification `Quantifier.Det.exhaustified`. Every downward
 entailing context is so non-trivially. Focus *only*, adversatives, superlatives, conditional
 antecedents and temporal *since* are downward entailing only modulo their presuppositions, the
 modals, imperatives, generics and free relatives are modal licensers, and questions license by
@@ -34,7 +34,7 @@ shared inventory that lexical entries cite.
 * `PolarityItem.LicensingContext`: the named constructions.
 * `PolarityItem.LicensingContext.licenser`, `PolarityItem.LicensingContext.haspelmath`: the
   operator a construction places over the item and its function on Haspelmath's map.
-* `Quantifier.GQ.exhaustified`: a determiner exhaustified against its scale-mates.
+* `Quantifier.Det.exhaustified`: a determiner exhaustified against its scale-mates.
 * `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
   `not_holds_exhaustified_few`, …: the certificates of each context's licenser.
 
@@ -80,14 +80,14 @@ shared inventory that lexical entries cite.
 
 /-! ### Determiners exhaustified against their scale-mates -/
 
-namespace Quantifier.GQ
+namespace Quantifier.Det
 
-variable {α : Type*} {Q Q' : GQ α} {C : Set (GQ α)} {A P : α → Prop}
+variable {α : Type*} {Q Q' : Det α} {C : Set (Det α)} {A P : Set α}
 
 /-- The determiner `Q` exhaustified against its scale-mates `C` holds, at each restrictor, of the
 scopes where `Q` holds and every scale-mate holding there is entailed, entailment holding the
 restrictor fixed and quantifying over scopes ([gajewski-2011]'s `O` with `ALT-1`). -/
-def exhaustified (Q : GQ α) (C : Set (GQ α)) : GQ α :=
+def exhaustified (Q : Det α) (C : Set (Det α)) : Det α :=
   fun A ↦ Exhaustification.exh ((· A) '' C) (Q A)
 
 theorem exhaustified_iff : exhaustified Q C A P ↔ Q A P ∧ ∀ Q' ∈ C, Q' A P → Q A ≤ Q' A :=
@@ -102,19 +102,19 @@ theorem exhaustified_eq_of_forall_le (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A �
     exhaustified Q C A = Q A :=
   Exhaustification.exh_eq_self_iff.2 (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP)
 
-theorem exhaustified_no : exhaustified (no : GQ α) {everyᶜ} = no := by
+theorem exhaustified_no : exhaustified (no : Det α) {everyᶜ} = no := by
   funext A
   refine exhaustified_eq_of_forall_le fun Q' hQ' P hP ↦ ?_
   rw [Set.mem_singleton_iff] at hQ'
   subst hQ'
-  obtain ⟨x, hx⟩ := not_forall.mp hP
-  exact fun P' hno hev ↦ hx fun hAx ↦ absurd (hev x hAx) (hno x hAx)
+  obtain ⟨x, hx, -⟩ := Set.not_subset.1 hP
+  exact fun _ hno hev ↦ hno hx (hev hx)
 
-end Quantifier.GQ
+end Quantifier.Det
 
 namespace PolarityItem
 
-open NaturalLogic Presupposition Quantifier Quantifier.GQ Tense Indefinite
+open NaturalLogic Presupposition Quantifier Quantifier.Det Tense Indefinite
 
 /-- A licensing context is a construction that can host a polarity item. What it does to the item
 is the licenser it places over the item's position (`LicensingContext.licenser`), and where it sits
@@ -187,7 +187,7 @@ structure Predicate where
   /-- The individuals. -/
   ι : Type
   /-- The predicate. -/
-  A : ι → Prop
+  A : Set ι
 
 /-- A finite domain and a predicate over it. -/
 structure FinitePredicate extends Predicate where
@@ -198,11 +198,11 @@ attribute [instance] FinitePredicate.fin
 
 /-- A predicate true of something, the restrictor of a negative quantifier. -/
 structure NonemptyPredicate extends Predicate where
-  nonempty : ∃ x, A x
+  nonempty : A.Nonempty
 
 /-- A predicate false of something, the scope of a universal. -/
 structure NonuniversalPredicate extends Predicate where
-  nonuniversal : ∃ x, ¬ A x
+  nonuniversal : ∃ x, x ∉ A
 
 /-- A bound and a finite predicate, the restrictor of *at most n*. -/
 structure BoundedPredicate extends FinitePredicate where
@@ -328,16 +328,16 @@ abbrev necessityFamily : ModalFamily := ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.c
 /-- The licenser a construction places over the position of a polarity item. -/
 noncomputable def licenser : LicensingContext → Licenser
   | negation => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ compl⟩
-  | nobody => .classical ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.no p.A⟩
-  | few => .scalar ⟨⟨FinitePredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.few p.A⟩,
-      fun p ↦ GQ.exhaustified GQ.few {GQ.no} p.A⟩
+  | nobody => .classical ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.no p.A⟩
+  | few => .scalar ⟨⟨FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.few p.A⟩,
+      fun p ↦ Det.exhaustified Det.few {Det.no} p.A⟩
   | atMost => .scalar
-      ⟨⟨BoundedPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.atMost p.n p.A⟩,
-        fun p ↦ GQ.exhaustified (GQ.atMost p.n) {GQ.atMost (p.n - 1)} p.A⟩
+      ⟨⟨BoundedPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ Det.atMost p.n p.A⟩,
+        fun p ↦ Det.exhaustified (Det.atMost p.n) {Det.atMost (p.n - 1)} p.A⟩
   | universalRestrictor => .classical
-      ⟨NonuniversalPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p R ↦ GQ.every R p.A⟩
+      ⟨NonuniversalPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p R ↦ Det.every R p.A⟩
   | withoutClause => .classical
-      ⟨Predicate, fun p ↦ p.ι → Prop, fun p ↦ p.ι → Prop, fun p V ↦ p.A ⊓ Vᶜ⟩
+      ⟨Predicate, fun p ↦ Set p.ι, fun p ↦ Set p.ι, fun p V ↦ p.A \ V⟩
   | beforeClause => .classical
       ⟨MainClause, fun p ↦ Set (NonemptyInterval p.T), fun _ ↦ Prop, fun p ↦ beforeEver p.A⟩
   | clausalComparative | tooTo => .classical exceedsFamily
@@ -370,19 +370,19 @@ theorem holds_nobody_iff {s : Negation.Strength} :
     nobody.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨(rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no _,
-      eq_false fun h ↦ p.nonempty.elim fun x hx ↦ h x hx trivial⟩) fun s hs h ↦ ?_
+      eq_false fun h ↦ p.nonempty.elim fun _ hx ↦ h hx trivial⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨⟨Bool, ⊤⟩, ⟨true, trivial⟩⟩)).2.1
-    (· = true) (· = false)
-  simp [GQ.no, Pi.inf_apply] at this
+  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨⟨Bool, Set.univ⟩, Set.univ_nonempty⟩)).2.1
+    {true} {false}
+  simp [Det.no] at this
 
 theorem holds_few_iff {s : Negation.Strength} : few.licenser.Holds s.toSignature ↔ s ≤ .weak := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr (scopeAntitone_few p.A))
     fun s hs h ↦ ?_
   have := (Signature.holdsFor_antiAdd_iff.mp ((h.toSignature_of_le (s := .antiAdditive)
-    (by revert hs; cases s <;> decide)) ⟨⟨Fin 3, ⊤⟩⟩)).1 (· = 0) (· = 1)
+    (by revert hs; cases s <;> decide)) ⟨⟨Fin 3, Set.univ⟩⟩)).1 {0} {1}
   revert this
-  show GQ.few (⊤ : Fin 3 → Prop) (fun x ↦ x = 0 ∨ x = 1) = (_ ∧ _) → False
+  show Det.few (Set.univ : Set (Fin 3)) ({0} ∪ {1}) = (_ ∧ _) → False
   rw [eq_iff_iff]
   decide
 
@@ -391,9 +391,9 @@ theorem holds_atMost_iff {s : Negation.Strength} :
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_anti_iff.mpr
     (scopeAntitone_atMost p.n p.A)) fun s hs h ↦ ?_
   have := (Signature.holdsFor_antiAdd_iff.mp ((h.toSignature_of_le (s := .antiAdditive)
-    (by revert hs; cases s <;> decide)) ⟨⟨⟨Bool, ⊤⟩⟩, 1⟩)).1 (· = true) (· = false)
+    (by revert hs; cases s <;> decide)) ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)).1 {true} {false}
   revert this
-  show GQ.atMost 1 (⊤ : Bool → Prop) (fun x ↦ x = true ∨ x = false) = (_ ∧ _) → False
+  show Det.atMost 1 (Set.univ : Set Bool) ({true} ∪ {false}) = (_ ∧ _) → False
   rw [eq_iff_iff]
   decide
 
@@ -401,21 +401,19 @@ theorem holds_universalRestrictor_iff {s : Negation.Strength} :
     universalRestrictor.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
     ⟨(leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every _,
-      eq_false fun h ↦ p.nonuniversal.elim fun x hx ↦ hx (h x trivial)⟩) fun s hs h ↦ ?_
+      eq_false fun h ↦ p.nonuniversal.elim fun _ hx ↦ hx (h trivial)⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨⟨Bool, ⊥⟩, ⟨true, id⟩⟩)).2.1
-    (· = true) (· = false)
-  simp [GQ.every, Pi.inf_apply] at this
+  have := (Signature.holdsFor_antiAddMult_iff.mp
+    (h ⟨⟨Bool, ∅⟩, ⟨true, Set.notMem_empty true⟩⟩)).2.1 {true} {false}
+  simp [Det.every] at this
 
 theorem holds_withoutClause_iff {s : Negation.Strength} :
     withoutClause.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
-    ⟨fun V V' ↦ by
-      show p.A ⊓ (V ⊔ V')ᶜ = (p.A ⊓ Vᶜ) ⊓ (p.A ⊓ V'ᶜ)
-      rw [compl_sup, inf_inf_distrib_left], by simp⟩) fun s hs h ↦ ?_
+    ⟨fun _ _ ↦ sdiff_sup, sdiff_top _⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
-  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨Unit, ⊥⟩)).2.2
-  simp at this
+  have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨Unit, ∅⟩)).2.2
+  exact Set.empty_ne_univ (by simpa using this)
 
 theorem holds_beforeClause_iff {s : Negation.Strength} :
     beforeClause.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
@@ -478,22 +476,24 @@ theorem not_isStrawsonUE_negation : ¬ negation.licenser.IsStrawsonUE :=
   not_forall.2 ⟨Unit, fun h ↦ h (bot_le (a := ⊤)) () id trivial⟩
 
 theorem not_isStrawsonUE_nobody : ¬ nobody.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, ⊤⟩, ⟨(), trivial⟩⟩,
-    fun h ↦ h (bot_le (a := ⊤)) (fun _ _ hx ↦ hx) () trivial trivial⟩
+  not_forall.2 ⟨⟨⟨Unit, Set.univ⟩, Set.univ_nonempty⟩,
+    fun h ↦ h (bot_le (a := ⊤)) (fun _ _ hx ↦ hx) (Set.mem_univ ()) trivial⟩
 
 theorem not_isStrawsonUE_few : ¬ few.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, fun _ ↦ True⟩⟩, fun h ↦ absurd
-    (h (a := fun _ ↦ False) (b := fun _ ↦ True) (fun _ h ↦ h.elim) (by decide)) (by decide)⟩
+  not_forall.2 ⟨⟨⟨Unit, Set.univ⟩⟩, fun h ↦ absurd
+    (h (a := ∅) (b := Set.univ) (Set.empty_subset _) (by decide)) (by decide)⟩
 
 theorem not_isStrawsonUE_atMost : ¬ atMost.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨⟨Unit, fun _ ↦ True⟩⟩, 0⟩, fun h ↦ absurd
-    (h (a := fun _ ↦ False) (b := fun _ ↦ True) (fun _ h ↦ h.elim) (by decide)) (by decide)⟩
+  not_forall.2 ⟨⟨⟨⟨Unit, Set.univ⟩⟩, 0⟩, fun h ↦ absurd
+    (h (a := ∅) (b := Set.univ) (Set.empty_subset _) (by decide)) (by decide)⟩
 
 theorem not_isStrawsonUE_universalRestrictor : ¬ universalRestrictor.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨⟨Unit, ⊥⟩, ⟨(), id⟩⟩, fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) () trivial⟩
+  not_forall.2 ⟨⟨⟨Unit, ∅⟩, ⟨(), Set.notMem_empty ()⟩⟩,
+    fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) (Set.mem_univ ())⟩
 
 theorem not_isStrawsonUE_withoutClause : ¬ withoutClause.licenser.IsStrawsonUE :=
-  not_forall.2 ⟨⟨Unit, ⊤⟩, fun h ↦ (h (bot_le (a := ⊤)) () ⟨trivial, id⟩).2 trivial⟩
+  not_forall.2 ⟨⟨Unit, Set.univ⟩, fun h ↦
+    (h (bot_le (a := ⊤)) (Set.mem_sdiff_of_mem (Set.mem_univ ()) (Set.notMem_empty ()))).2 trivial⟩
 
 theorem not_isStrawsonUE_beforeClause : ¬ beforeClause.licenser.IsStrawsonUE :=
   not_forall.2 ⟨⟨ℕ, {NonemptyInterval.pure 0}⟩, fun h ↦
@@ -537,25 +537,23 @@ theorem not_isStrawsonUE_sinceTemporal : ¬ sinceTemporal.licenser.IsStrawsonUE 
 not downward entailing ([gajewski-2011]'s (45), (48)). -/
 
 theorem not_holds_exhaustified_few : ¬ few.licenser.exhaustified.Holds .anti := fun h ↦ by
-  have hA : ¬ GQ.few (fun _ : Fin 3 ↦ True) ≤ GQ.no fun _ ↦ True := fun hle ↦
-    absurd (hle (· = 0) (by decide)) (by decide)
-  have hanti : Antitone (GQ.exhaustified GQ.few {GQ.no} fun _ : Fin 3 ↦ True) :=
-    Signature.holdsFor_anti_iff.mp (h ⟨⟨Fin 3, fun _ ↦ True⟩⟩)
-  refine GQ.not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hx ↦ hx) hA
-    (hanti (show (fun _ ↦ False) ≤ (· = (0 : Fin 3)) from fun _ h ↦ h.elim)
-      (GQ.exhaustified_iff.2 ⟨by decide, ?_⟩))
+  have hA : ¬ Det.few (Set.univ : Set (Fin 3)) ≤ Det.no Set.univ := fun hle ↦
+    absurd (hle {0} (by decide)) (by decide)
+  have hanti : Antitone (Det.exhaustified Det.few {Det.no} (Set.univ : Set (Fin 3))) :=
+    Signature.holdsFor_anti_iff.mp (h ⟨⟨Fin 3, Set.univ⟩⟩)
+  refine Det.not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hx ↦ hx) hA
+    (hanti (a := ∅) (b := {0}) (Set.empty_subset _) (Det.exhaustified_iff.2 ⟨by decide, ?_⟩))
   rintro _ rfl hno
   exact absurd hno (by decide)
 
 theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .anti := fun h ↦ by
-  have hA : ¬ GQ.atMost 1 (fun _ : Bool ↦ True) ≤ GQ.atMost 0 fun _ ↦ True := fun hle ↦
-    absurd (hle (· = true) (by decide)) (by decide)
-  have hanti : Antitone (GQ.exhaustified (GQ.atMost 1) {GQ.atMost 0} fun _ : Bool ↦ True) :=
-    Signature.holdsFor_anti_iff.mp (h ⟨⟨⟨Bool, fun _ ↦ True⟩⟩, 1⟩)
-  refine GQ.not_exhaustified_of_not_le (Set.mem_singleton _)
-    (show GQ.atMost 0 (fun _ : Bool ↦ True) fun _ ↦ False by decide) hA
-    (hanti (show (fun _ ↦ False) ≤ (· = true) from fun _ h ↦ h.elim)
-      (GQ.exhaustified_iff.2 ⟨by decide, ?_⟩))
+  have hA : ¬ Det.atMost 1 (Set.univ : Set Bool) ≤ Det.atMost 0 Set.univ := fun hle ↦
+    absurd (hle {true} (by decide)) (by decide)
+  have hanti : Antitone (Det.exhaustified (Det.atMost 1) {Det.atMost 0} (Set.univ : Set Bool)) :=
+    Signature.holdsFor_anti_iff.mp (h ⟨⟨⟨Bool, Set.univ⟩⟩, 1⟩)
+  refine Det.not_exhaustified_of_not_le (Set.mem_singleton _)
+    (show Det.atMost 0 (Set.univ : Set Bool) ∅ by decide) hA
+    (hanti (a := ∅) (b := {true}) (Set.empty_subset _) (Det.exhaustified_iff.2 ⟨by decide, ?_⟩))
   rintro _ rfl hle
   exact absurd hle (by decide)
 

@@ -10,7 +10,7 @@ public import Linglib.Syntax.Category.Determiner.IndeterminateQuantifier
 
 An indeterminate quantifier applies its particle's coordination to the values its scope takes on
 the restrictor, as Kratzer and Shimoyama propose for Japanese. A disjunctive particle takes the
-supremum, so the quantifier is `Quantifier.GQ.some`; a conjunctive particle takes the infimum,
+supremum, so the quantifier is `Quantifier.Det.some`; a conjunctive particle takes the infimum,
 `every`; and a negative particle the complement of the supremum, `no`.
 
 ## Main definitions
@@ -41,31 +41,31 @@ variable (q : IndeterminateQuantifier)
 
 /-- The reading of an indeterminate quantifier applies its particle's coordination to the
 values the scope takes on the restrictor. -/
-def reading : GQ.Family.{u} :=
-  fun _ _ R S ↦ q.particle.denote (S '' {x | R x})
+def reading : Det.Family.{u} :=
+  fun _ _ A B ↦ q.particle.denote ((· ∈ B) '' A)
 
 /-- An indeterminate quantifier denotes its reading. -/
-instance : Denotes IndeterminateQuantifier (Set GQ.Family.{u}) where
+instance : Denotes IndeterminateQuantifier (Set Det.Family.{u}) where
   denote q := {q.reading}
 
 variable {q}
 
-/-- Under a disjunctive particle the reading is `Quantifier.GQ.some`. -/
+/-- Under a disjunctive particle the reading is `Quantifier.Det.some`. -/
 theorem reading_of_disjunctive (h : q.particle.role = .disjunctive) :
-    q.reading = GQ.Family.some.{u} := by
-  funext _ _ R S
-  rw [reading, Coordinator.denote_of_disjunctive h, ← GQ.some_eq_sSup_image]; rfl
+    q.reading = Det.Family.some.{u} := by
+  funext _ _ A B
+  rw [reading, Coordinator.denote_of_disjunctive h, ← Det.some_eq_sSup_image]; rfl
 
 /-- Under a conjunctive particle the reading is `every`. -/
 theorem reading_of_conjunctive (h : q.particle.role = .conjunctive) :
-    q.reading = GQ.Family.every.{u} := by
-  funext _ _ R S
-  rw [reading, Coordinator.denote_of_conjunctive h, ← GQ.every_eq_sInf_image]; rfl
+    q.reading = Det.Family.every.{u} := by
+  funext _ _ A B
+  rw [reading, Coordinator.denote_of_conjunctive h, ← Det.every_eq_sInf_image]; rfl
 
 /-- Under a negative particle the reading is `no`. -/
 theorem reading_of_negative (h : q.particle.role = .negative) :
-    q.reading = GQ.Family.no.{u} := by
-  funext _ _ R S
-  rw [reading, Coordinator.denote_of_negative h, ← GQ.no_eq_compl_sSup_image]; rfl
+    q.reading = Det.Family.no.{u} := by
+  funext _ _ A B
+  rw [reading, Coordinator.denote_of_negative h, ← Det.no_eq_compl_sSup_image]; rfl
 
 end IndeterminateQuantifier

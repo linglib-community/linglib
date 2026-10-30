@@ -50,7 +50,7 @@ isomorphism a Boolean one.
 
 namespace DemeySmessaert2024
 
-open Finset Function Quantifier Quantifier.GQ Aristotelian ModalLogic SetRel
+open Finset Function Quantifier Quantifier.Det Aristotelian ModalLogic SetRel
 open DemeySmessaert2018 (InS InP regions mem_regions exists_regions_eq)
 
 /-! ### Subject negation (Section 2) -/
@@ -66,13 +66,13 @@ instance : DecidablePred IsEFOLPattern := fun _ ↦ inferInstanceAs (Decidable (
 are `P`, then the same with non-`S` (Definition 2). -/
 def subjectNegation : Fin 8 → Finset {m // IsEFOLPattern m} := ![
   univ.filter fun m ↦ every (InS m.1) (InP m.1),
-  univ.filter fun m ↦ GQ.some (InS m.1) (InP m.1),
+  univ.filter fun m ↦ Det.some (InS m.1) (InP m.1),
   univ.filter fun m ↦ no (InS m.1) (InP m.1),
   univ.filter fun m ↦ ¬ every (InS m.1) (InP m.1),
-  univ.filter fun m ↦ every (fun r ↦ ¬ InS m.1 r) (InP m.1),
-  univ.filter fun m ↦ GQ.some (fun r ↦ ¬ InS m.1 r) (InP m.1),
-  univ.filter fun m ↦ no (fun r ↦ ¬ InS m.1 r) (InP m.1),
-  univ.filter fun m ↦ ¬ every (fun r ↦ ¬ InS m.1 r) (InP m.1)]
+  univ.filter fun m ↦ every (InS m.1)ᶜ (InP m.1),
+  univ.filter fun m ↦ Det.some (InS m.1)ᶜ (InP m.1),
+  univ.filter fun m ↦ no (InS m.1)ᶜ (InP m.1),
+  univ.filter fun m ↦ ¬ every (InS m.1)ᶜ (InP m.1)]
 
 /-- The octagon for subject negation induces a partition of seven cells, so its Boolean closure
 has `2 ^ 7` elements. -/
@@ -172,9 +172,9 @@ variable {R S} (hS : S.Nonempty) (hSc : Sᶜ.Nonempty) (hR : ∀ x, ∃ y, x ~[R
 the paper, that `S` is nontrivial and that `R` and its complement are serial, make it an EFOL
 pattern. -/
 noncomputable def pattern (x : X) : {m // IsEFOLPattern m} :=
-  ⟨regions ((· ∈ S), (x ~[R] ·)), by
+  ⟨regions (S, {y | x ~[R] y}), by
     classical
-    have mem (y : Y) : (decide (y ∈ S), decide (x ~[R] y)) ∈ regions ((· ∈ S), (x ~[R] ·)) :=
+    have mem (y : Y) : (decide (y ∈ S), decide (x ~[R] y)) ∈ regions (S, {y | x ~[R] y}) :=
       mem_regions.2 ⟨y, by simp, by simp⟩
     obtain ⟨y₁, hy₁⟩ := hS
     obtain ⟨y₂, hy₂⟩ := hSc
@@ -217,24 +217,22 @@ variable {D : Type*}
 
 /-- An EFOL model interprets `S` and `P` over the domain `D` with `S`, non-`S`, `P` and non-`P`
 each inhabited. -/
-def IsEFOLModel (m : (D → Prop) × (D → Prop)) : Prop :=
-  (∃ x, m.1 x) ∧ (∃ x, ¬ m.1 x) ∧ (∃ x, m.2 x) ∧ (∃ x, ¬ m.2 x)
+def IsEFOLModel (m : Set D × Set D) : Prop :=
+  m.1.Nonempty ∧ m.1ᶜ.Nonempty ∧ m.2.Nonempty ∧ m.2ᶜ.Nonempty
 
 /-- The octagon for subject negation over the EFOL models with domain `D`. -/
 def subjectNegationModels (D : Type*) :
-    Fin 8 → Set {m : (D → Prop) × (D → Prop) // IsEFOLModel m} :=
-  ![{m | every m.1.1 m.1.2}, {m | GQ.some m.1.1 m.1.2}, {m | no m.1.1 m.1.2},
-    {m | ¬ every m.1.1 m.1.2}, {m | every (fun x ↦ ¬ m.1.1 x) m.1.2},
-    {m | GQ.some (fun x ↦ ¬ m.1.1 x) m.1.2}, {m | no (fun x ↦ ¬ m.1.1 x) m.1.2},
-    {m | ¬ every (fun x ↦ ¬ m.1.1 x) m.1.2}]
+    Fin 8 → Set {m : Set D × Set D // IsEFOLModel m} :=
+  ![{m | every m.1.1 m.1.2}, {m | Det.some m.1.1 m.1.2}, {m | no m.1.1 m.1.2},
+    {m | ¬ every m.1.1 m.1.2}, {m | every m.1.1ᶜ m.1.2}, {m | Det.some m.1.1ᶜ m.1.2},
+    {m | no m.1.1ᶜ m.1.2}, {m | ¬ every m.1.1ᶜ m.1.2}]
 
 /-- The type of an EFOL model is the set of regions it inhabits. -/
-noncomputable def efolType (m : {m : (D → Prop) × (D → Prop) // IsEFOLModel m}) :
-    {n // IsEFOLPattern n} :=
+noncomputable def efolType (m : {m : Set D × Set D // IsEFOLModel m}) : {n // IsEFOLPattern n} :=
   ⟨regions m.1, by
     classical
     obtain ⟨⟨x₁, h₁⟩, ⟨x₂, h₂⟩, ⟨x₃, h₃⟩, ⟨x₄, h₄⟩⟩ := m.2
-    have mem (x : D) : (decide (m.1.1 x), decide (m.1.2 x)) ∈ regions m.1 :=
+    have mem (x : D) : (decide (x ∈ m.1.1), decide (x ∈ m.1.2)) ∈ regions m.1 :=
       mem_regions.2 ⟨x, by simp, by simp⟩
     exact ⟨⟨_, mem x₁, by simpa using h₁⟩, ⟨_, mem x₂, by simpa using h₂⟩,
       ⟨_, mem x₃, by simpa using h₃⟩, ⟨_, mem x₄, by simpa using h₄⟩⟩⟩
@@ -247,7 +245,9 @@ theorem subjectNegationModels_eq :
   ext m
   change m ∈ subjectNegationModels D i ↔ efolType m ∈ subjectNegation i
   rw [mem_subjectNegation]
-  fin_cases i <;> simp [subjectNegationModels, region, efolType, mem_regions, every, no, GQ.some]
+  fin_cases i <;>
+    simp [subjectNegationModels, region, efolType, mem_regions, every, no, Det.some,
+      Set.subset_def, Set.Nonempty, not_imp_not]
 
 theorem efolType_surjective [Fintype D] (hD : 4 ≤ Fintype.card D) :
     Surjective (efolType (D := D)) := by

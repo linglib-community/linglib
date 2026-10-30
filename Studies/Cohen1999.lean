@@ -65,7 +65,7 @@ condition.
 
 namespace Cohen1999
 
-open Quantifier Quantifier.GQ MeasureTheory ProbabilityTheory
+open Quantifier Quantifier.Det MeasureTheory ProbabilityTheory
 open scoped ENNReal Finset
 
 variable {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] (domain : Finset α)
@@ -152,11 +152,12 @@ theorem genRelative_iff_card (hA : (domain.filter alt).Nonempty)
         #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) * #(domain.filter alt) :=
   uniformOn_lt_iff hA hR
 
-theorem gen_iff_most : gen domain ψ alt φ ↔ most (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ := by
-  have h₁ : {x | (x ∈ domain ∧ ψ x ∧ alt x) ∧ φ x}.ncard =
+theorem gen_iff_most :
+    gen domain ψ alt φ ↔ most {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} := by
+  have h₁ : ({x | x ∈ domain ∧ ψ x ∧ alt x} ∩ {x | φ x}).ncard =
       #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) := by
     rw [← Set.ncard_coe_finset]; congr 1; ext; simp
-  have h₂ : {x | (x ∈ domain ∧ ψ x ∧ alt x) ∧ ¬ φ x}.ncard =
+  have h₂ : ({x | x ∈ domain ∧ ψ x ∧ alt x} \ {x | φ x}).ncard =
       #((domain.filter fun x ↦ ψ x ∧ alt x).filter fun x ↦ ¬ φ x) := by
     rw [← Set.ncard_coe_finset]; congr 1; ext; simp
   have h₃ := Finset.card_filter_add_card_filter_not (s := domain.filter fun x ↦ ψ x ∧ alt x) φ
@@ -193,17 +194,18 @@ theorem gen_self_iff : gen domain ψ φ φ ↔ (domain.filter fun x ↦ ψ x ∧
 /-! ### The generalized-quantifier interface
 
 Over the whole carrier with trivial alternatives the absolute reading is the majority
-generalized quantifier, hence proportional: its truth depends only on the two cell counts.
+determiner `most`, hence proportional: its truth depends only on the two cell counts.
 The relativized readings are exactly what departs from this. -/
 
 theorem gen_univ_iff_most {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β]
-    (R S : β → Prop) [DecidablePred R] [DecidablePred S] :
-    gen Finset.univ R (fun _ ↦ True) S ↔ most R S := by
-  simp only [gen_iff_most, Finset.mem_univ, true_and, and_true]
+    (R S : Set β) [DecidablePred (· ∈ R)] [DecidablePred (· ∈ S)] :
+    gen Finset.univ (· ∈ R) (fun _ ↦ True) (· ∈ S) ↔ most R S := by
+  simp only [gen_iff_most, Finset.mem_univ, true_and, and_true, Set.ofPred_mem_eq]
 
 open Classical in
 theorem gen_proportional {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β] :
-    Proportional (fun R S : β → Prop ↦ gen Finset.univ R (fun _ ↦ True) S) := fun R₁ S₁ R₂ S₂ ↦ by
+    Proportional fun R S : Set β ↦ gen Finset.univ (· ∈ R) (fun _ ↦ True) (· ∈ S) :=
+  fun R₁ S₁ R₂ S₂ ↦ by
   simpa only [gen_univ_iff_most] using proportional_most R₁ S₁ R₂ S₂
 
 /-! ### Homogeneity is degenerate unrestricted (definition 4, p. 82) -/
@@ -211,10 +213,10 @@ theorem gen_proportional {β : Type*} [Fintype β] [MeasurableSpace β] [Measura
 -- p. 82
 theorem homogeneous_iff (hR : (domain.filter ψ).Nonempty) :
     Homogeneous domain ψ φ ↔
-      no (fun x ↦ x ∈ domain ∧ ψ x) φ ∨ every (fun x ↦ x ∈ domain ∧ ψ x) φ := by
+      no {x | x ∈ domain ∧ ψ x} {x | φ x} ∨ every {x | x ∈ domain ∧ ψ x} {x | φ x} := by
   constructor
   · intro h
-    by_cases hno : no (fun x ↦ x ∈ domain ∧ ψ x) φ
+    by_cases hno : no {x | x ∈ domain ∧ ψ x} {x | φ x}
     · exact Or.inl hno
     · refine Or.inr ?_
       obtain ⟨x, ⟨hx, hψx⟩, hφx⟩ : ∃ x, (x ∈ domain ∧ ψ x) ∧ φ x := by
@@ -226,12 +228,12 @@ theorem homogeneous_iff (hR : (domain.filter ψ).Nonempty) :
       rw [h φ hpart, uniformOn_eq_one_iff' hR] at h1
       exact fun y hy ↦ h1 y (Finset.mem_filter.2 hy)
   · rintro (hno | hall) part _ hpart
-    · rw [(uniformOn_eq_zero_iff' _).2 fun y hy ↦ hno y ⟨(Finset.mem_filter.1 hy).1,
+    · rw [(uniformOn_eq_zero_iff' (φ := φ) _).2 fun y hy ↦ hno ⟨(Finset.mem_filter.1 hy).1,
           (Finset.mem_filter.1 hy).2.1⟩,
-        (uniformOn_eq_zero_iff' _).2 fun y hy ↦ hno y (Finset.mem_filter.1 hy)]
-    · rw [(uniformOn_eq_one_iff' hpart).2 fun y hy ↦ hall y ⟨(Finset.mem_filter.1 hy).1,
+        (uniformOn_eq_zero_iff' (φ := φ) _).2 fun y hy ↦ hno (Finset.mem_filter.1 hy)]
+    · rw [(uniformOn_eq_one_iff' (φ := φ) hpart).2 fun y hy ↦ hall ⟨(Finset.mem_filter.1 hy).1,
           (Finset.mem_filter.1 hy).2.1⟩,
-        (uniformOn_eq_one_iff' hR).2 fun y hy ↦ hall y (Finset.mem_filter.1 hy)]
+        (uniformOn_eq_one_iff' (φ := φ) hR).2 fun y hy ↦ hall (Finset.mem_filter.1 hy)]
 
 /-! ### Frequency adverbs (definition 10, p. 128)
 
@@ -240,24 +242,24 @@ existential, so a generic over an empty reference class entails nothing (§5.6).
 
 omit [DecidablePred φ] in
 theorem freq_eq_one_iff (hR : (domain.filter fun x ↦ ψ x ∧ alt x).Nonempty) :
-    freq domain ψ alt φ (· = 1) ↔ every (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ :=
+    freq domain ψ alt φ (· = 1) ↔ every {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} :=
   (uniformOn_eq_one_iff' hR).trans
-    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h x hx ↦ h x (Finset.mem_filter.1 hx)⟩
+    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h _ hx ↦ h (Finset.mem_filter.1 hx)⟩
 
 omit [DecidablePred φ] in
 theorem freq_eq_zero_iff :
-    freq domain ψ alt φ (· = 0) ↔ no (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ :=
+    freq domain ψ alt φ (· = 0) ↔ no {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} :=
   (uniformOn_eq_zero_iff' _).trans
-    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h x hx ↦ h x (Finset.mem_filter.1 hx)⟩
+    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h _ hx ↦ h (Finset.mem_filter.1 hx)⟩
 
 omit [DecidablePred φ] in
 theorem freq_pos_iff :
-    freq domain ψ alt φ (0 < ·) ↔ GQ.some (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ := by
+    freq domain ψ alt φ (0 < ·) ↔ Det.some {x | x ∈ domain ∧ ψ x ∧ alt x} {x | φ x} := by
   have h := freq_eq_zero_iff (domain := domain) (ψ := ψ) (alt := alt) (φ := φ)
   unfold freq at h ⊢
   beta_reduce at h ⊢
   rw [pos_iff_ne_zero, Ne, h]
-  simp only [no, GQ.some, not_forall, not_not, exists_prop]
+  exact no_iff_not_some.not_left
 
 /-! ### People have a hard time finding CMU (§3.2.1, after Thomason)
 

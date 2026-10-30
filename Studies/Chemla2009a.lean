@@ -74,12 +74,16 @@ private theorem forall_mem_of_ncard_eq_zero {W E : Type} [Finite E] {A : W → E
   by_contra hP
   exact (eq_empty_iff_forall_notMem.1 h) e ⟨he, hP⟩
 
+private theorem mem_scopeTruth {W E : Type} {A : W → E → Prop} {d : Set (W × E)} {w : W} :
+    w ∈ scopeTruth q A d ↔ q {e | A w e ∧ (w, e) ∉ d}.ncard {e | A w e ∧ (w, e) ∈ d}.ncard :=
+  .rfl
+
 private theorem model_iff {a b : ℕ} (D : Set (Unit × (Fin a ⊕ Fin b))) (d : Set (Fin a ⊕ Fin b))
     (hD : ∀ x, x ∈ D ↔ x.2 ∈ d) :
     () ∈ scopeTruth q (fun _ _ ↦ True) D ↔ q dᶜ.ncard d.ncard := by
   obtain rfl : D = {x | x.2 ∈ d} := ext hD
-  simp only [scopeTruth, NumberTree.toGQ_apply, true_and, mem_ofPred_eq, ofPred_mem_eq]
-  rfl
+  change q (univ \ d).ncard (univ ∩ d).ncard ↔ _
+  rw [univ_inter, ← compl_eq_univ_sdiff]
 
 private theorem ncard_range_inl (a b : ℕ) :
     (range (Sum.inl : Fin a → Fin a ⊕ Fin b)).ncard = a := by
@@ -121,14 +125,14 @@ theorem oneStep_iff :
       by_contra hk
       have hw : q {e | A w e}.ncard 0 ↔ q {e | A w e ∧ (w, e) ∈ P}.ncard
           {e | A w e ∧ (w, e) ∉ P}.ncard := by
-        simpa [scopeTruth, NumberTree.toGQ_apply] using hw
+        simpa [mem_scopeTruth] using hw
       rw [ncard_eq_add (A w) fun e ↦ (w, e) ∈ P] at hw
       exact iff_not_self (hw.trans (h _ _ (Nat.pos_of_ne_zero hk)))
     · refine ⟨fun _ _ ↦ True, fun W E _ A P w hw ↦ forall_mem_of_ncard_eq_zero ?_⟩
       by_contra hk
       have hw : q {e | A w e ∧ (w, e) ∉ P}.ncard {e | A w e ∧ (w, e) ∈ P}.ncard ↔
           q 0 {e | A w e}.ncard := by
-        simpa [scopeTruth, NumberTree.toGQ_apply] using hw
+        simpa [mem_scopeTruth] using hw
       rw [ncard_eq_add (A w) fun e ↦ (w, e) ∉ P] at hw
       simp only [not_not] at hw
       exact iff_not_self (hw.symm.trans (h _ _ (Nat.pos_of_ne_zero hk)))

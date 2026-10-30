@@ -16,7 +16,7 @@ Japanese has no articles, and most of its quantifiers are built from an indeterm
 existential (*dare-ka* 'someone') and *mo* for the universal (*dare-mo* 'everyone', *dono* N *mo*
 'every N'). The particles are the coordinators *ka* 'or' and *mo* 'and', and an indeterminate
 quantifier applies its particle's coordination to the values its scope takes on the restrictor,
-the supremum for *ka* and the infimum for *mo*, which are `Quantifier.GQ.some` and `every`
+the supremum for *ka* and the infimum for *mo*, which are `Quantifier.Det.some` and `every`
 (`IndeterminateQuantifier.reading`). The
 remaining quantifiers are words of their own, the carrier `QuantityWord` of *subete* 'all',
 *hotondo* 'most' and *ryōhō* 'both'. Numeral quantifiers such as *nan-nin-ka* 'several people'
@@ -76,17 +76,17 @@ def form : QuantityWord → String
   | .ryoho => "ryōhō"
 
 /-- A word's determiner record carries its form. -/
-def toQuantifier (w : QuantityWord) : Quantifier := { form := w.form }
+def toQuantifier (w : QuantityWord) : QuantificationalDeterminer := { form := w.form }
 
 /-- `toList` lists every word. -/
 def toList : List QuantityWord := [.subete, .hotondo, .ryoho]
 
 /-- *Subete* reads as `every`, *hotondo* as `most` and *ryōhō* as `both`. -/
-noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
   denote
-    | .subete => {Quantifier.GQ.Family.every}
-    | .hotondo => {Quantifier.GQ.Family.most}
-    | .ryoho => {Quantifier.GQ.Family.both}
+    | .subete => {Quantifier.Det.Family.every}
+    | .hotondo => {Quantifier.Det.Family.most}
+    | .ryoho => {Quantifier.Det.Family.both}
 
 end QuantityWord
 
@@ -95,10 +95,10 @@ def inventory : Determiner.Inventory :=
   indefinites.map (.quantifier ·.toQuantifier) ++
     QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-theorem denote_dareKa : ⟦dareKa⟧ = ({GQ.Family.some} : Set GQ.Family.{u}) := by
+theorem denote_dareKa : ⟦dareKa⟧ = ({Det.Family.some} : Set Det.Family.{u}) := by
   rw [← IndeterminateQuantifier.reading_of_disjunctive (q := dareKa) rfl]; rfl
 
-theorem denote_dareMo : ⟦dareMo⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
+theorem denote_dareMo : ⟦dareMo⟧ = ({Det.Family.every} : Set Det.Family.{u}) := by
   rw [← IndeterminateQuantifier.reading_of_conjunctive (q := dareMo) rfl]; rfl
 
 end Japanese.Determiners

@@ -83,8 +83,8 @@ open Quantifier
 
 /-- Partee and Rooth's SHIFT lifts an extensional transitive verb to take a quantifier object,
 $\mathrm{SHIFT}(V) = \lambda Q\,\lambda x.\,Q(\lambda y.\,V(x, y))$. -/
-def shift {E : Type*} (V : E → E → Prop) : ((E → Prop) → Prop) → E → Prop :=
-  fun Q x ↦ Q fun y ↦ V x y
+def shift {E : Type*} (V : E → E → Prop) : (Set E → Prop) → E → Prop :=
+  fun Q x ↦ Q {y | V x y}
 
 section Reinterpret
 
@@ -133,16 +133,16 @@ instance : ∀ d l, Decidable (Device.AppliesAt d l)
 /-- A verb `V` with a quantified object `Q`, reinterpreted by `op`: applied to the verb, the
 reinterpretation leaves the object above it; applied to the verb phrase, it takes the object in
 its scope. -/
-def reading {α β γ : Type*} (op : (α → Prop) → β → Prop) (Q : (γ → Prop) → Prop)
+def reading {α β γ : Type*} (op : (α → Prop) → β → Prop) (Q : Set γ → Prop)
     (V : γ → α → Prop) : Level → β → Prop
-  | .word => fun b ↦ Q fun y ↦ op (V y) b
-  | .phrase => op fun x ↦ Q fun y ↦ V y x
+  | .word => fun b ↦ Q {y | op (V y) b}
+  | .phrase => op fun x ↦ Q {y | V y x}
 
 /-- Under an indefinite object, reinterpreting the verb entails reinterpreting the verb phrase,
 for any reinterpretation monotone in the property it reinterprets. -/
 theorem reading_word_le_phrase {α β γ : Type*} {op : (α → Prop) → β → Prop} (hop : Monotone op)
     (N : γ → Prop) (V : γ → α → Prop) :
-    reading op (GQ.some N) V .word ≤ reading op (GQ.some N) V .phrase :=
+    reading op (Det.some N) V .word ≤ reading op (Det.some N) V .phrase :=
   fun b ⟨y, hy, h⟩ ↦ hop (fun _ hx ↦ ⟨y, hy, hx⟩) b h
 
 /-! ### The readings the devices allow -/
@@ -180,7 +180,7 @@ abbrev storkOf : Fin 2 → Unit → Prop := fun _ _ ↦ True
 
 /-- The storks sentence, by the level of transfer. -/
 def storks : Level → Unit → Prop :=
-  reading (reinterpret storkOf) (GQ.some fun _ ↦ True) fun a s ↦ nestsIn s a
+  reading (reinterpret storkOf) (Det.some Set.univ) fun a s ↦ nestsIn s a
 
 -- (12b)
 theorem storks_word_ne_phrase : ¬ storks .word () ∧ storks .phrase () := by
@@ -199,7 +199,7 @@ abbrev inSpeechInterval : Fin 3 → Unit → Prop := fun _ _ ↦ True
 
 /-- The cigarette sentence, by the level of the shift. -/
 def cigarette : Level → Unit → Prop :=
-  reading (reinterpret inSpeechInterval) (GQ.some fun _ ↦ True) smokes
+  reading (reinterpret inSpeechInterval) (Det.some Set.univ) smokes
 
 -- (45)
 theorem cigarette_word_ne_phrase : ¬ cigarette .word () ∧ cigarette .phrase () := by
@@ -217,7 +217,7 @@ theorem cigarette_no_true_reading_available :
 
 /-- The brand variant, one brand smoked at every occasion. -/
 def brand : Level → Unit → Prop :=
-  reading (reinterpret inSpeechInterval) (GQ.some fun _ : Fin 1 ↦ True) fun _ _ ↦ True
+  reading (reinterpret inSpeechInterval) (Det.some (Set.univ : Set (Fin 1))) fun _ _ ↦ True
 
 -- (17b)
 theorem brand_true_reading_available : ∃ l, Device.typeShift.AppliesAt l ∧ brand l () :=
@@ -263,7 +263,7 @@ def lexicon (B : Set (Denotation E Unit)) : Word → Set (Denotation E Unit)
   | .but => English.Coordination.but_.readings
   | .didnt => negation
   | .buy => B
-  | .aNewCoat => {⟨Ty.ett, GQ.some newCoat⟩}
+  | .aNewCoat => {⟨Ty.ett, Det.some newCoat⟩}
 
 /-- (23), `John [[needed [and buy]] [a new coat]]`. -/
 def neededAndBought : Tree Unit Word :=
@@ -295,7 +295,7 @@ theorem readings_neededAndBought_unlifted (g : Assignment E) :
 -- (23)
 theorem readings_neededAndBought (g : Assignment E) :
     Tree.readings (lexicon j need newCoat (buyReadings buy)) g neededAndBought =
-      {⟨.t, need (GQ.some newCoat) j ∧ shift buy (GQ.some newCoat) j⟩} := by
+      {⟨.t, need (Det.some newCoat) j ∧ shift buy (Det.some newCoat) j⟩} := by
   ext d
   simp only [neededAndBought, Tree.mem_readings_phrase_binary, Tree.readings_terminal, lexicon,
     buyReadings, Set.mem_singleton_iff, Set.mem_insert_iff, Mode.combine?,
@@ -329,7 +329,7 @@ theorem readings_neededAndBought (g : Assignment E) :
 negation over the lifted verb. -/
 theorem readings_neededButDidntBuy (g : Assignment E) :
     Tree.readings (lexicon j need newCoat (buyReadings buy)) g neededButDidntBuy =
-      {⟨.t, need (GQ.some newCoat) j ∧ ¬ shift buy (GQ.some newCoat) j⟩} := by
+      {⟨.t, need (Det.some newCoat) j ∧ ¬ shift buy (Det.some newCoat) j⟩} := by
   ext d
   simp only [neededButDidntBuy, Tree.mem_readings_phrase_binary, Tree.readings_terminal, lexicon,
     buyReadings, Set.mem_singleton_iff, Set.mem_insert_iff, Mode.combine?,
@@ -366,9 +366,9 @@ theorem readings_neededButDidntBuy (g : Assignment E) :
 
 -- (25)
 theorem not_shift_ne_shift_not :
-    ¬ ((¬ shift (fun _ y ↦ y = true) (GQ.some fun _ ↦ True) true) ↔
-      shift (fun _ b ↦ ¬ (b = true)) (GQ.some fun _ ↦ True) true) := by
-  unfold shift GQ.some
+    ¬ ((¬ shift (fun _ y ↦ y = true) (Det.some Set.univ) true) ↔
+      shift (fun _ b ↦ ¬ (b = true)) (Det.some Set.univ) true) := by
+  unfold shift
   decide
 
 end Engine

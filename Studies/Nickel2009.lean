@@ -37,7 +37,7 @@ shared toy model, with the habitats as the alternative set.
 
 namespace Nickel2009
 
-open Quantifier.GQ (every)
+open Quantifier.Det (every)
 
 /-! ### Ways of Being Normal -/
 
@@ -55,13 +55,13 @@ apparatus specific to Nickel is the existential over ways. -/
 section GEN
 
 variable {α : Type*} (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay)
-  (restrictor scope scope' : α → Prop)
+  (restrictor scope scope' : Set α)
 
 /-- Nickel's GEN with way-indexed normality holds when there is a way of being normal such
 that every entity normal in that way and satisfying the restrictor satisfies the scope. The
 existential over ways lets different conjuncts of a conjunctive generic use different ways. -/
 def nickelGEN : Prop :=
-  ∃ w ∈ ways, every (fun e ↦ restrictor e ∧ normalIn e w) scope
+  ∃ w ∈ ways, every (restrictor ∩ {e | normalIn e w}) scope
 
 /-- A conjunctive generic holds when both `GEN[A][F₁]` and `GEN[A][F₂]` hold, possibly through
 different normality ways. -/
@@ -74,7 +74,8 @@ toy model, not a commitment of the account. -/
 def WaysIncompatible : Prop :=
   ∀ e, ∀ w₁ ∈ ways, ∀ w₂ ∈ ways, w₁ ≠ w₂ → ¬ (normalIn e w₁ ∧ normalIn e w₂)
 
-variable [Fintype α] [DecidablePred restrictor] [DecidablePred scope] [DecidablePred scope']
+variable [Fintype α] [DecidablePred (· ∈ restrictor)] [DecidablePred (· ∈ scope)]
+  [DecidablePred (· ∈ scope')]
   [∀ w, DecidablePred (normalIn · w)]
 
 instance : Decidable (nickelGEN normalIn ways restrictor scope) :=
@@ -95,9 +96,9 @@ section Elephants
 /-- Ten elephants, six African (`0`–`5`) and four Asian (`6`–`9`). -/
 abbrev Elephant := Fin 10
 
-abbrev isElephant : Elephant → Prop := fun _ ↦ True
-abbrev livesInAfrica : Elephant → Prop := (· < 6)
-abbrev livesInAsia : Elephant → Prop := (6 ≤ ·)
+abbrev isElephant : Set Elephant := Set.univ
+abbrev livesInAfrica : Set Elephant := {e | e < 6}
+abbrev livesInAsia : Set Elephant := {e | 6 ≤ e}
 
 def africanWay : NormalcyWay := ⟨1⟩
 def asianWay : NormalcyWay := ⟨2⟩
@@ -117,14 +118,14 @@ section Bears
 and AS `15`–`19`, so that each habitat is a quarter of the bears. -/
 abbrev Bear := Fin 20
 
-abbrev isBear : Bear → Prop := fun _ ↦ True
-abbrev bearNA : Bear → Prop := (· < 5)
-abbrev bearSA : Bear → Prop := fun e ↦ 5 ≤ e ∧ e < 10
-abbrev bearEU : Bear → Prop := fun e ↦ 10 ≤ e ∧ e < 15
-abbrev bearAS : Bear → Prop := (15 ≤ ·)
+abbrev isBear : Set Bear := Set.univ
+abbrev bearNA : Set Bear := {e | e < 5}
+abbrev bearSA : Set Bear := {e | 5 ≤ e ∧ e < 10}
+abbrev bearEU : Set Bear := {e | 10 ≤ e ∧ e < 15}
+abbrev bearAS : Set Bear := {e | 15 ≤ e}
 
-/-- The disjunction of the habitat alternatives, which every bear satisfies. -/
-abbrev bearHabitat : Bear → Prop := fun e ↦ bearNA e ∨ bearSA e ∨ bearEU e ∨ bearAS e
+/-- The union of the habitat alternatives, which every bear lies in. -/
+abbrev bearHabitat : Set Bear := bearNA ∪ bearSA ∪ bearEU ∪ bearAS
 
 def bearWays : Finset NormalcyWay := {⟨1⟩, ⟨2⟩, ⟨3⟩, ⟨4⟩}
 
@@ -159,28 +160,27 @@ directly, with the habitats as the alternative set. The majority view fails on t
 because the Asia conjunct has prevalence 4/10 < 1/2, while Nickel's view succeeds. -/
 
 theorem cohen_fails_elephant_asia :
-    ¬ Cohen1999.gen .univ isElephant (fun e ↦ livesInAfrica e ∨ livesInAsia e) livesInAsia := by
+    ¬ Cohen1999.gen .univ (· ∈ isElephant) (· ∈ livesInAfrica ∪ livesInAsia) (· ∈ livesInAsia) := by
   decide
 
 theorem cohen_fails_nickel_succeeds_on_conjunction :
-    ¬ Cohen1999.gen .univ isElephant (fun e ↦ livesInAfrica e ∨ livesInAsia e) livesInAsia ∧
+    ¬ Cohen1999.gen .univ (· ∈ isElephant) (· ∈ livesInAfrica ∪ livesInAsia) (· ∈ livesInAsia) ∧
     nickelConjunctiveGEN elephantNormalIn ways isElephant livesInAfrica livesInAsia :=
   ⟨cohen_fails_elephant_asia, nickel_handles_elephant_conjunction⟩
 
 -- (2a)
 theorem cohen_fails_all_bear_habitats :
-    ¬ Cohen1999.gen .univ isBear bearHabitat bearNA ∧
-    ¬ Cohen1999.gen .univ isBear bearHabitat bearSA ∧
-    ¬ Cohen1999.gen .univ isBear bearHabitat bearEU ∧
-    ¬ Cohen1999.gen .univ isBear bearHabitat bearAS := by
+    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearNA) ∧
+    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearSA) ∧
+    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearEU) ∧
+    ¬ Cohen1999.gen .univ (· ∈ isBear) (· ∈ bearHabitat) (· ∈ bearAS) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ### Connection to Traditional GEN -/
 
 theorem nickelGEN_singleton_iff {α : Type*} (normalIn : α → NormalcyWay → Prop)
-    (w : NormalcyWay) (restrictor scope : α → Prop) :
-    nickelGEN normalIn {w} restrictor scope ↔
-      every (fun e ↦ restrictor e ∧ normalIn e w) scope := by
+    (w : NormalcyWay) (restrictor scope : Set α) :
+    nickelGEN normalIn {w} restrictor scope ↔ every (restrictor ∩ {e | normalIn e w}) scope := by
   simp [nickelGEN]
 
 end Nickel2009

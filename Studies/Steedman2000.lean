@@ -138,9 +138,9 @@ def semLexicon : SemLexicon String atomTy ToyEntity Unit := fun word cat ↦
   | "pizza", .atom .NP => some ToyEntity.pizza
   | "book", .atom .NP => some ToyEntity.book
   | "John", .rslash (.atom .S) _ (.lslash (.atom .S) _ (.atom .NP)) =>
-      some (Quantifier.NP.individual ToyEntity.john)
+      some (Quantifier.individual ToyEntity.john)
   | "Mary", .rslash (.atom .S) _ (.lslash (.atom .S) _ (.atom .NP)) =>
-      some (Quantifier.NP.individual ToyEntity.mary)
+      some (Quantifier.individual ToyEntity.mary)
   | "sleeps", .lslash (.atom .S) _ (.atom .NP) => some Toy.sleeps
   | "laughs", .lslash (.atom .S) _ (.atom .NP) => some Toy.laughs
   | "sees", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>

@@ -46,32 +46,32 @@ Oaksford's probabilistic semantics of quantified sentences.
 
 namespace DenicEtAl2021
 
-open Quantifier GQ PolarityItem English.PolarityItems
+open Quantifier Det PolarityItem English.PolarityItems
 
 /-! ### The environments -/
 
 /-- The readings of *many* put at least a contextual number, or at least a contextual proportion,
 of the restrictor in the scope. -/
-def manyReadings {ι : Type*} : Set (GQ ι) :=
-  Set.range atLeast ∪ Set.range fun p : ℕ × ℕ ↦ (NumberTree.threshold p.1 p.2).toGQ
+def manyReadings {ι : Type*} : Set (Det ι) :=
+  Set.range atLeast ∪ Set.range fun p : ℕ × ℕ ↦ (NumberTree.threshold p.1 p.2).toDet
 
-theorem scopeMonotone_of_mem_manyReadings {ι : Type*} [Finite ι] {q : GQ ι}
+theorem scopeMonotone_of_mem_manyReadings {ι : Type*} [Finite ι] {q : Det ι}
     (h : q ∈ manyReadings) : ScopeMonotone q := by
   rcases h with ⟨n, rfl⟩ | ⟨⟨n, d⟩, rfl⟩
-  exacts [scopeMonotone_atLeast n, (NumberTree.scopeMonotone_threshold n d).toGQ]
+  exacts [scopeMonotone_atLeast n, (NumberTree.scopeMonotone_threshold n d).toDet]
 
 /-- A model fixes what the stimuli's nouns and adjectives are true of and the reading of *many*. -/
 structure Model (ι : Type*) where
   /-- The aliens. -/
-  alien : ι → Prop
+  alien : Set ι
   /-- The purple alien, the restrictor of *the purple alien*. -/
-  purpleAlien : ι → Prop
+  purpleAlien : Set ι
   /-- The hairy individuals. -/
-  hairy : ι → Prop
+  hairy : Set ι
   /-- The individuals who spent a year on Earth. -/
-  spentYear : ι → Prop
+  spentYear : Set ι
   /-- The reading of *many*. -/
-  many : GQ ι
+  many : Det ι
   /-- The reading of *many* is one the context leaves open. -/
   many_mem : many ∈ manyReadings
 
@@ -81,24 +81,24 @@ variable {ι : Type*}
 
 /-- The constituent hosting the item, as a function of its verb phrase, is the negated verb phrase
 in the negative and doubly negative environments and the verb phrase itself elsewhere. -/
-def host : Environment → (ι → Prop) → (ι → Prop)
+def host : Environment → Set ι → Set ι
   | .negative | .everyNot | .noWithout => compl
   | _ => id
 
 /-- The rest of the sentence, as a function of the host constituent. -/
-def outer (m : Model ι) : Environment → (ι → Prop) → Prop
+def outer (m : Model ι) : Environment → Set ι → Prop
   | .positive | .negative => the m.purpleAlien
-  | .every => GQ.every m.alien
+  | .every => Det.every m.alien
   | .many => m.many m.alien
-  | .no => GQ.no m.alien
-  | .few => GQ.few m.alien
+  | .no => Det.no m.alien
+  | .few => Det.few m.alien
   | .exactly12 => exactly 12 m.alien
-  | .only12 => (atLeast 12 ⊓ atMost 12 : GQ ι) m.alien
-  | .everyNot => fun V ↦ GQ.every (m.alien ⊓ V) m.hairy
-  | .noWithout => fun V ↦ GQ.no m.alien (m.spentYear ⊓ V)
+  | .only12 => (atLeast 12 ⊓ atMost 12 : Det ι) m.alien
+  | .everyNot => fun V ↦ Det.every (m.alien ∩ V) m.hairy
+  | .noWithout => fun V ↦ Det.no m.alien (m.spentYear ∩ V)
 
 /-- The truth of an environment's sentence as a function of its verb phrase. -/
-def denotation (e : Environment) (m : Model ι) : (ι → Prop) → Prop := e.outer m ∘ e.host
+def denotation (e : Environment) (m : Model ι) : Set ι → Prop := e.outer m ∘ e.host
 
 theorem denotation_only12 (m : Model ι) : only12.denotation m = exactly12.denotation m := by
   simp [denotation, outer, host, exactly_eq_atLeast_inf_atMost]
@@ -123,7 +123,7 @@ def Classifies (e : Environment) : Monotonicity → Prop
 theorem valid_subsetToSuperset {e : Environment}
     (he : (environments e).monotonicity = .ue ∨ (environments e).monotonicity = .dn) :
     e.Valid .subsetToSuperset := fun ι _ m ↦ by
-  have hc : Antitone (compl : (ι → Prop) → (ι → Prop)) := fun _ _ ↦ compl_le_compl
+  have hc : Antitone (compl : Set ι → Set ι) := fun _ _ ↦ compl_le_compl
   cases e <;> simp [environments] at he
   · exact scopeMonotone_the m.purpleAlien
   · exact scopeMonotone_every m.alien
@@ -140,7 +140,7 @@ theorem valid_supersetToSubset {e : Environment} (he : (environments e).monotoni
 
 /-- The countermodel has thirteen aliens, none hairy, all on Earth for a year, the first one
 purple, and reads *many* as *at least one*. -/
-def thirteen : Model (Fin 13) := ⟨fun _ ↦ True, (· = 0), fun _ ↦ False, fun _ ↦ True, atLeast 1,
+def thirteen : Model (Fin 13) := ⟨Set.univ, {0}, ∅, Set.univ, atLeast 1,
   .inl ⟨1, rfl⟩⟩
 
 theorem not_valid_subsetToSuperset {e : Environment}
@@ -151,7 +151,7 @@ theorem not_valid_subsetToSuperset {e : Environment}
   case exactly12 => exact not_monotone_exactly (by simp) h
   case only12 => exact not_monotone_exactly (by simp) (denotation_only12 thirteen ▸ h)
   all_goals refine absurd (h (bot_le (a := ⊤)) ?_) ?_ <;>
-    simp [denotation, outer, host, thirteen, the_iff, GQ.no, few_apply]
+    simp [denotation, outer, host, thirteen, the_iff, Det.no, few_apply]
 
 theorem not_valid_supersetToSubset {e : Environment} (he : (environments e).monotonicity ≠ .de) :
     ¬ e.Valid .supersetToSubset := fun h ↦ by
@@ -160,17 +160,17 @@ theorem not_valid_supersetToSubset {e : Environment} (he : (environments e).mono
   case exactly12 => exact not_antitone_exactly (by simp) (by simp) h
   case only12 => exact not_antitone_exactly (by simp) (by simp) (denotation_only12 thirteen ▸ h)
   all_goals refine absurd (h (bot_le (a := ⊤)) ?_) ?_ <;>
-    simp [denotation, outer, host, thirteen, the_iff, GQ.every, GQ.no, atLeast_apply]
+    simp [denotation, outer, host, thirteen, the_iff, Det.every, Det.no, atLeast_apply]
 
 /-- The paper's monotonicity classification of the ten environments is the one their denotations
 give (§3.1.2, §5). -/
 theorem classifies_iff (e : Environment) (k : Monotonicity) :
     e.Classifies k ↔ (environments e).monotonicity = k := by
-  have hid : ¬ ∀ ι : Type, Antitone (id : (ι → Prop) → (ι → Prop)) := fun h ↦
-    (h Unit (bot_le (a := ⊤)) ()) trivial
-  have hc : ¬ ∀ ι : Type, Monotone (compl : (ι → Prop) → (ι → Prop)) := fun h ↦
-    (h Unit (bot_le (a := ⊤)) () (fun h ↦ h)) trivial
-  have hc' : ∀ ι : Type, Antitone (compl : (ι → Prop) → (ι → Prop)) := fun _ _ _ ↦ compl_le_compl
+  have hid : ¬ ∀ ι : Type, Antitone (id : Set ι → Set ι) := fun h ↦
+    h Unit (bot_le (a := ⊤)) (Set.mem_univ ())
+  have hc : ¬ ∀ ι : Type, Monotone (compl : Set ι → Set ι) := fun h ↦
+    h Unit (bot_le (a := ⊤)) (Set.mem_compl (Set.notMem_empty ())) trivial
+  have hc' : ∀ ι : Type, Antitone (compl : Set ι → Set ι) := fun _ _ _ ↦ compl_le_compl
   have := @valid_subsetToSuperset e
   have := @valid_supersetToSubset e
   have := @not_valid_subsetToSuperset e

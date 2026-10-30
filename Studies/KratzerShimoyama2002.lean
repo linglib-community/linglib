@@ -271,11 +271,11 @@ open scoped Denotes in
 -- §9
 theorem japanese_same_base.{u} :
     Japanese.Determiners.dareKa.indeterminate = Japanese.Determiners.dareMo.indeterminate ∧
-      (⟦Japanese.Determiners.dareKa⟧ : Set Quantifier.GQ.Family.{u}) ≠
+      (⟦Japanese.Determiners.dareKa⟧ : Set Quantifier.Det.Family.{u}) ≠
         ⟦Japanese.Determiners.dareMo⟧ := by
   refine ⟨rfl, ?_⟩
   rw [Japanese.Determiners.denote_dareKa, Japanese.Determiners.denote_dareMo]
-  exact fun h ↦ Quantifier.GQ.Family.some_ne_every (Set.singleton_eq_singleton_iff.1 h)
+  exact fun h ↦ Quantifier.Det.Family.some_ne_every (Set.singleton_eq_singleton_iff.1 h)
 
 -- §1, §9 [haspelmath-1997]
 theorem latvian_selective :

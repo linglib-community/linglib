@@ -26,37 +26,35 @@ reverses a scale, so that *not all* blocks the local inference, is the negated c
 
 namespace Geurts2010
 
-open Quantifier Quantifier.GQ GeurtsPouscoulous2009
+open Quantifier Quantifier.Det GeurtsPouscoulous2009
 
-theorem exactlyTwo_not_scopeUp : ¬ ScopeMonotone (Quant.exactlyTwo.sem : GQ (Fin 3)) := by
+theorem exactlyTwo_not_scopeUp : ¬ ScopeMonotone (Quant.exactlyTwo.sem : Det (Fin 3)) := by
   intro h
-  have key : Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (fun s ↦ s = 0 ∨ s = 1) →
-      Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (fun _ ↦ True) :=
-    h (fun _ ↦ True) (show ((fun s : Fin 3 ↦ s = 0 ∨ s = 1) : Fin 3 → Prop) ≤ fun _ ↦ True from
-      fun _ _ ↦ trivial)
+  have key : Quant.exactlyTwo.sem (Set.univ : Set (Fin 3)) {s | s = 0 ∨ s = 1} →
+      Quant.exactlyTwo.sem (Set.univ : Set (Fin 3)) Set.univ :=
+    h Set.univ (Set.subset_univ _)
   simp only [Quant.sem] at key
   revert key
   decide
 
-theorem notAll_not_scopeUp : ¬ ScopeMonotone (Quant.notAll.sem : GQ (Fin 3)) := fun h ↦
-  h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
-    fun _ hf ↦ hf.elim) (fun hall ↦ hall 0 trivial) (fun _ _ ↦ trivial)
+theorem notAll_not_scopeUp : ¬ ScopeMonotone (Quant.notAll.sem : Det (Fin 3)) := fun h ↦
+  h Set.univ (Set.empty_subset Set.univ) (fun hall ↦ hall (Set.mem_univ 0)) subset_rfl
 
 /-- Every conventionalist theory predicts the local reading under *all* and *more than one*, but
 only the stronger ones under *exactly two* (Section 7.3, (62)). -/
 theorem conventionalist_predictions :
-    PredictsLocalSIWeak (Quant.all.sem : GQ (Fin 3)) ∧
-      PredictsLocalSIWeak (Quant.moreThanOne.sem : GQ (Fin 3)) ∧
-      ¬ PredictsLocalSIWeak (Quant.exactlyTwo.sem : GQ (Fin 3)) ∧
-      PredictsLocalSI (Quant.exactlyTwo.sem : GQ (Fin 3)) :=
+    PredictsLocalSIWeak (Quant.all.sem : Det (Fin 3)) ∧
+      PredictsLocalSIWeak (Quant.moreThanOne.sem : Det (Fin 3)) ∧
+      ¬ PredictsLocalSIWeak (Quant.exactlyTwo.sem : Det (Fin 3)) ∧
+      PredictsLocalSI (Quant.exactlyTwo.sem : Det (Fin 3)) :=
   ⟨all_predictsLocalSIWeak, moreThanOne_predictsLocalSIWeak, exactlyTwo_not_scopeUp,
    exactlyTwo_predictsLocalSI⟩
 
 /-- Section 3.2: the downward-entailing scope of *not all* supports no local inference on either
 version of the prediction. -/
 theorem downward_entailing_blocks :
-    ¬ PredictsLocalSI (Quant.notAll.sem : GQ (Fin 3)) ∧
-      ¬ PredictsLocalSIWeak (Quant.notAll.sem : GQ (Fin 3)) :=
+    ¬ PredictsLocalSI (Quant.notAll.sem : Det (Fin 3)) ∧
+      ¬ PredictsLocalSIWeak (Quant.notAll.sem : Det (Fin 3)) :=
   ⟨notAll_not_predictsLocalSI, notAll_not_scopeUp⟩
 
 end Geurts2010

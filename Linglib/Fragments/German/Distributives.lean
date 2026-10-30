@@ -22,9 +22,9 @@ obligatory distributivity and exception intolerance in their study.
 namespace German.Distributives
 
 /-- *Jeder* 'each, every' is a determiner of singular nouns. -/
-def jeder : Quantifier := { form := "jeder", numberRestriction := some .singular }
+def jeder : QuantificationalDeterminer := { form := "jeder", numberRestriction := some .singular }
 
 /-- *Alle* 'all' is a determiner chiefly of plural nouns, and in the singular of mass nouns. -/
-def alle : Quantifier := { form := "alle", selectsMass := true }
+def alle : QuantificationalDeterminer := { form := "alle", selectsMass := true }
 
 end German.Distributives

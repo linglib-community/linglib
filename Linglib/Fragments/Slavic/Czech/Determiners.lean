@@ -10,8 +10,8 @@ public import Linglib.Semantics.Denotation
 Czech has neither a definite nor an indefinite article, so its inventory holds only the
 demonstrative *ten* and the quantificational determiners, and it marks neither strength of
 definiteness (`strengths_inventory`). The quantificational determiners are the carrier
-`QuantityWord`, whose words project to `Quantifier` records and denote the readings the
-literature makes available for them. Two of them are polarity sensitive, the concord item
+`QuantityWord`, whose words project to `QuantificationalDeterminer` records and denote the
+readings the literature makes available for them. Two of them are polarity sensitive, the concord item
 *žádný* 'no' and the positive polarity item *nějaký* 'some', and their entries in
 `PolarityItems.lean` take their forms from here.
 
@@ -70,20 +70,20 @@ def selectsMass : QuantityWord → Bool
   | .kazdy | .nektery => false
 
 /-- The word as a determiner record. -/
-def toQuantifier (w : QuantityWord) : Quantifier :=
+def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
   { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
 
 /-- All the words. -/
 def toList : List QuantityWord := [.kazdy, .zadny, .nejaky, .nektery]
 
 /-- The readings available for a word. *Každý* reads as `every`, *žádný* as `no` or as
-`Quantifier.GQ.some`, and *nějaký* and *některý* as `Quantifier.GQ.some`, the partitive
+`Quantifier.Det.some`, and *nějaký* and *některý* as `Quantifier.Det.some`, the partitive
 specificity of *některý* being no part of its truth conditions. -/
-instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
   denote
-    | .kazdy => {Quantifier.GQ.Family.every}
-    | .zadny => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}
-    | .nejaky | .nektery => {Quantifier.GQ.Family.some}
+    | .kazdy => {Quantifier.Det.Family.every}
+    | .zadny => {Quantifier.Det.Family.no, Quantifier.Det.Family.some}
+    | .nejaky | .nektery => {Quantifier.Det.Family.some}
 
 end QuantityWord
 

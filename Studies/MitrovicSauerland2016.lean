@@ -64,14 +64,14 @@ def mu (R S : α → Prop) : Prop := R ≤ S
 def shift (a : α) : α → Prop := (· = a)
 
 -- (15)
-theorem mu_eq_every : (mu : GQ α) = GQ.every := rfl
+theorem mu_eq_every : (mu : Det α) = Det.every := rfl
 
-theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=
+theorem mu_shift (a : α) : mu (shift a) = Quantifier.individual a :=
   funext fun _ ↦ propext ⟨fun h ↦ h a rfl, fun h _ hx ↦ hx ▸ h⟩
 
 -- (13)
 theorem conjunction_eq {j : Coordinator} (hj : j.role = .conjunctive) (a b : α) :
-    j.denote {mu (shift a), mu (shift b)} = NP.individual a ⊓ NP.individual b := by
+    j.denote {mu (shift a), mu (shift b)} = Quantifier.individual a ⊓ Quantifier.individual b := by
   rw [mu_shift, mu_shift, Coordinator.denote_of_conjunctive hj, sInf_pair]
 
 /-- The conjunction holds of a predicate that holds of each conjunct, so it has no collective
@@ -119,19 +119,19 @@ theorem muPrime_team :
 
 /-- An indeterminate quantifier whose particle is conjunctive denotes μ, (15). -/
 theorem mu_of_conjunctive_particle {q : IndeterminateQuantifier}
-    (hq : q.particle.role = .conjunctive) {α : Type} [Fintype α] {d : GQ.Family}
+    (hq : q.particle.role = .conjunctive) {α : Type} [Fintype α] {d : Det.Family}
     (h : d ∈ ⟦q⟧) : d α = mu := by
   obtain rfl : d = q.reading := h
   rw [IndeterminateQuantifier.reading_of_conjunctive hq]
   rfl
 
 -- (1a)
-theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
+theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : Det.Family}
     (h : d ∈ ⟦Japanese.Determiners.dareMo⟧) : d α = mu :=
   mu_of_conjunctive_particle rfl h
 
 -- (40)
-theorem quisque_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
+theorem quisque_denotes_mu {α : Type} [Fintype α] {d : Det.Family}
     (h : d ∈ ⟦Latin.Determiners.quisque⟧) : d α = mu :=
   mu_of_conjunctive_particle rfl h
 

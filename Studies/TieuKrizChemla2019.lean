@@ -73,9 +73,9 @@ inductive Force where
   deriving DecidableEq, Fintype
 
 /-- The determiner of a force is *some* or *every*. -/
-def Force.gq : Force → GQ Atom
-  | .existential => GQ.some
-  | .universal => GQ.every
+def Force.gq : Force → Det Atom
+  | .existential => Det.some
+  | .universal => Det.every
 
 /-- A construal of the definite scopes under or over sentential negation. -/
 inductive Scope where
@@ -85,7 +85,7 @@ inductive Scope where
 
 /-- Negation at a scope takes the outer negation of a quantifier scoping under it and the inner
 negation of one scoping over it. -/
-def Scope.neg : Scope → GQ Atom → GQ Atom
+def Scope.neg : Scope → Det Atom → Det Atom
   | .low, q => qᶜ
   | .wide, q => q.innerNeg
 
@@ -98,20 +98,21 @@ structure Construal where
   deriving DecidableEq, Fintype
 
 /-- The quantifier a construal gives the definite at a polarity. -/
-def Construal.gq (c : Construal) : Polarity → GQ Atom
+def Construal.gq (c : Construal) : Polarity → Det Atom
   | .positive => c.force.gq
   | .negative => c.scope.neg c.force.gq
 
 /-- Under a construal, *the Xs are P* at a polarity holds at the world `w`, the objects with the
 property. -/
 def Construal.Holds (c : Construal) (p : Polarity) (w : Finset Atom) : Prop :=
-  c.gq p (· ∈ x) (· ∈ w)
+  c.gq p (x : Set Atom) w
 
 instance [DecidableEq Atom] (c : Construal) (p : Polarity) (w : Finset Atom) :
     Decidable (c.Holds x p w) := by
   obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
-    dsimp only [Construal.Holds, Construal.gq, Scope.neg, Force.gq, GQ.compl_apply, GQ.innerNeg,
-      GQ.every, GQ.some] <;>
+    dsimp only [Construal.Holds, Construal.gq, Scope.neg, Force.gq, Det.compl_apply, Det.innerNeg,
+      Det.every, Det.some, Set.Nonempty, Set.subset_def, Set.inter_def, Set.compl_def,
+      Set.mem_ofPred_eq] <;>
     infer_instance
 
 /-! ### Readings -/
@@ -175,20 +176,23 @@ theorem Construal.holds_of_isGap (hw : IsGap x w) (c : Construal) (p : Polarity)
     c.Holds x p w ↔ (c.force = .existential ↔ p = .positive ∨ c.scope = .wide) := by
   obtain ⟨⟨a, ha, haw⟩, b, hb, hbw⟩ := hw
   obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
-    simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
+    simp [Holds, gq, Scope.neg, Force.gq, Det.innerNeg, Det.some, Det.every, Set.Nonempty,
+      Set.subset_def] <;> grind
 
 theorem Construal.holds_of_subset (hx : x.Nonempty) (hw : x ⊆ w) (c : Construal)
     (p : Polarity) : c.Holds x p w ↔ p = .positive := by
   obtain ⟨b, hb⟩ := hx
   obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
-    simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
+    simp [Holds, gq, Scope.neg, Force.gq, Det.innerNeg, Det.some, Det.every, Set.Nonempty,
+      Set.subset_def] <;> grind
 
 theorem Construal.holds_of_disjoint (hx : x.Nonempty) (hw : Disjoint x w) (c : Construal)
     (p : Polarity) : c.Holds x p w ↔ p = .negative := by
   obtain ⟨b, hb⟩ := hx
   rw [Finset.disjoint_left] at hw
   obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
-    simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
+    simp [Holds, gq, Scope.neg, Force.gq, Det.innerNeg, Det.some, Det.every, Set.Nonempty,
+      Set.subset_def] <;> grind
 
 section
 
@@ -235,8 +239,8 @@ theorem value_homogeneous (hx : x.Nonempty) :
   obtain ⟨b, hb⟩ := hx
   apply SignType.eq_of_eq_zero_iff_of_eq_one_iff <;>
     simp [Reading.value, Reading.construals, barePlural, SignType.supervaluation_eq_zero_iff,
-      SignType.supervaluation_eq_one_iff, Construal.Holds, Construal.gq, Force.gq, GQ.some,
-      GQ.every] <;>
+      SignType.supervaluation_eq_one_iff, Construal.Holds, Construal.gq, Force.gq, Det.some,
+      Det.every, Set.Nonempty, Finset.subset_iff] <;>
     grind
 
 end
@@ -257,8 +261,8 @@ theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
     -SignType.ofProp (Reading.homogeneous.value x .positive w = 1) =
       (Reading.quantified ⟨.universal, .low⟩).value x .negative w := by
   rw [value_homogeneous hx, value_negative_of_low (by simp [Reading.construals])]
-  simp [barePlural, Construal.Holds, Construal.gq, Force.gq, GQ.every,
-    SignType.supervaluation_eq_one_iff]
+  simp [barePlural, Construal.Holds, Construal.gq, Force.gq, Det.every,
+    SignType.supervaluation_eq_one_iff, Finset.subset_iff]
 
 -- (19), (20)
 theorem domainRestriction_of_isGap (hw : IsGap x w) :

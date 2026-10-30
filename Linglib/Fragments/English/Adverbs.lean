@@ -74,14 +74,14 @@ def form : AdverbOfQuantification → String
 universe u
 
 /-- An adverb denotes its reading over cases, *always* `every`, *usually* `most`, *sometimes*
-`Quantifier.GQ.some` and *never* `no`. -/
-noncomputable instance : Denotes AdverbOfQuantification (Set Quantifier.GQ.Family.{u})
+`Quantifier.Det.some` and *never* `no`. -/
+noncomputable instance : Denotes AdverbOfQuantification (Set Quantifier.Det.Family.{u})
     where
   denote
-    | .always => {Quantifier.GQ.Family.every}
-    | .usually => {Quantifier.GQ.Family.most}
-    | .sometimes => {Quantifier.GQ.Family.some}
-    | .never => {Quantifier.GQ.Family.no}
+    | .always => {Quantifier.Det.Family.every}
+    | .usually => {Quantifier.Det.Family.most}
+    | .sometimes => {Quantifier.Det.Family.some}
+    | .never => {Quantifier.Det.Family.no}
 
 end AdverbOfQuantification
 

@@ -43,7 +43,7 @@ reading as well.
 
 namespace Zeijlstra2004
 
-open Quantifier Quantifier.GQ Quantifier.Polyadic
+open Quantifier Quantifier.Det Quantifier.Polyadic
 open scoped Denotes
 
 universe u
@@ -58,7 +58,7 @@ inductive Feature where
 carrying a negative feature. -/
 inductive NegElement (α : Type u) where
   | marker (f : Feature)
-  | nword (f : Feature) (A : α → Prop)
+  | nword (f : Feature) (A : Set α)
 
 variable {α : Type u}
 
@@ -83,8 +83,8 @@ def interp : List (NegElement α) → (List α → Prop) → Prop
   | [], P => P []
   | .marker .i :: es, P => ¬ interp es P
   | .marker .u :: es, P => interp es P
-  | .nword .u A :: es, P => GQ.some A fun x ↦ interp es fun xs ↦ P (x :: xs)
-  | .nword .i A :: es, P => no A fun x ↦ interp es fun xs ↦ P (x :: xs)
+  | .nword .u A :: es, P => Det.some A {x | interp es fun xs ↦ P (x :: xs)}
+  | .nword .i A :: es, P => no A {x | interp es fun xs ↦ P (x :: xs)}
 
 /-- The meaning of a clause. When its highest negative element carries `[uNEG]`, a covert
 operator above it checks the feature and contributes negation. -/
@@ -117,21 +117,21 @@ theorem meaning_of_forall_u {es : List (NegElement α)} (hne : es ≠ [])
 
 section Examples
 
-variable {A : α → Prop} {P : List α → Prop}
+variable {A : Set α} {P : List α → Prop}
 
 /-- Italian *Non ha telefonato nessuno* 'nobody called' ((63)): *non* carries `[iNEG]` and
 checks the n-word below it. -/
-theorem meaning_marker_nword : meaning [.marker .i, .nword .u A] P ↔ no A fun x ↦ P [x] := by
-  simp [meaning, interp, NegElement.feature, no, GQ.some]
+theorem meaning_marker_nword : meaning [.marker .i, .nword .u A] P ↔ no A {x | P [x]} := by
+  simp [meaning, interp, NegElement.feature, no_iff_not_some]
 
 /-- In Italian *Nessuno non ha telefonato* ((36b) of chapter 7), *non* negates again, so the concord
 reading is out ((66)). -/
-theorem meaning_nword_marker : meaning [.nword .u A, .marker .i] P ↔ every A fun x ↦ P [x] := by
-  simp [meaning, interp, NegElement.feature, every, GQ.some]
+theorem meaning_nword_marker : meaning [.nword .u A, .marker .i] P ↔ every A {x | P [x]} := by
+  simp [meaning, interp, NegElement.feature, every, Det.some, Set.Nonempty, Set.subset_def]
 
 -- (84)
-theorem meaning_dn_nword_marker : meaning [.nword .i A, .marker .i] P ↔ every A fun x ↦ P [x] := by
-  simp [meaning, interp, NegElement.feature, every, no]
+theorem meaning_dn_nword_marker : meaning [.nword .i A, .marker .i] P ↔ every A {x | P [x]} := by
+  simp [meaning, interp, NegElement.feature, every, no, Set.subset_def]
 
 end Examples
 
@@ -139,7 +139,7 @@ end Examples
 
 section Comparison
 
-variable [Fintype α] {A B : α → Prop} {P : List α → Prop}
+variable [Fintype α] {A B : Set α} {P : List α → Prop}
 
 /-- Two n-words under the covert operator mean de Swart and Sag's resumption of *no* ((68)), itself
 an iteration ((29) of chapter 7). -/
@@ -147,7 +147,7 @@ theorem meaning_concord_iff_resumption :
     meaning [.nword .u A, .nword .u B] P ↔
       DeSwartSag2002.reading .resumption A B fun x y ↦ P [x, y] := by
   rw [DeSwartSag2002.reading_resumption_iff]
-  simp [meaning, interp, NegElement.feature, iterate, no, GQ.some]
+  simp [meaning, interp, NegElement.feature, iterate, no_iff_not_some]
 
 /-- Two n-words carrying `[iNEG]` in a double negation language give de Swart and Sag's
 iteration of *no*. -/
@@ -157,9 +157,8 @@ theorem meaning_dn_iff_iteration :
   simp [meaning, interp, NegElement.feature, DeSwartSag2002.reading, iterate]
 
 theorem meaning_concord_and_not_iteration :
-    meaning [.nword .u (fun _ : Fin 1 ↦ True), .nword .u fun _ ↦ True] (fun _ ↦ False) ∧
-      ¬ DeSwartSag2002.reading .iteration (fun _ : Fin 1 ↦ True) (fun _ ↦ True)
-        fun _ _ ↦ False :=
+    meaning [.nword .u (Set.univ : Set (Fin 1)), .nword .u Set.univ] (fun _ ↦ False) ∧
+      ¬ DeSwartSag2002.reading .iteration (Set.univ : Set (Fin 1)) Set.univ fun _ _ ↦ False :=
   ⟨meaning_concord_iff_resumption.mpr DeSwartSag2002.reading_resumption_and_not_iteration.1,
     DeSwartSag2002.reading_resumption_and_not_iteration.2⟩
 
@@ -172,21 +171,21 @@ Zeijlstra's is the one that is upward monotone in its scope. -/
 
 section Readings
 
-theorem not_scopeMonotone_no : ¬ ScopeMonotone (no : GQ PUnit.{u + 1}) := fun h ↦ by
-  simpa [no] using h (fun _ ↦ True) (bot_le (a := fun _ ↦ True))
+theorem not_scopeMonotone_no : ¬ ScopeMonotone (no : Det PUnit.{u + 1}) := fun h ↦
+  not_no_self Set.univ_nonempty <| h Set.univ (Set.empty_subset _) fun x _ ↦ Set.notMem_empty x
 
 /-- Of the readings of Italian *nessuno*, the one upward monotone in its scope on every finite
 domain is the indefinite. -/
-theorem mem_nessuno_and_scopeMonotone_iff {d : GQ.Family.{u}} :
+theorem mem_nessuno_and_scopeMonotone_iff {d : Det.Family.{u}} :
     (d ∈ ⟦Italian.Determiners.QuantityWord.nessuno⟧ ∧
-      ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = GQ.Family.some := by
+      ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = Det.Family.some := by
   refine ⟨fun ⟨hd, h⟩ ↦ hd.resolve_left fun hn ↦ ?_,
     fun h ↦ h ▸ ⟨.inr rfl, fun _ _ ↦ scopeMonotone_some⟩⟩
   subst hn; exact not_scopeMonotone_no (h PUnit)
 
-theorem mem_zadny_and_scopeMonotone_iff {d : GQ.Family.{u}} :
+theorem mem_zadny_and_scopeMonotone_iff {d : Det.Family.{u}} :
     (d ∈ ⟦Czech.Determiners.QuantityWord.zadny⟧ ∧
-      ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = GQ.Family.some := by
+      ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = Det.Family.some := by
   refine ⟨fun ⟨hd, h⟩ ↦ hd.resolve_left fun hn ↦ ?_,
     fun h ↦ h ▸ ⟨.inr rfl, fun _ _ ↦ scopeMonotone_some⟩⟩
   subst hn; exact not_scopeMonotone_no (h PUnit)
