@@ -83,7 +83,7 @@ attribute [local instance] Set.monad
 
 namespace Charlow2020
 
-open Quantifier Quantifier.NP
+open Quantifier
 
 -- (19)
 theorem sSup_iff_true_mem (m : Set Prop) : sSup m ↔ True ∈ m := by
@@ -98,20 +98,20 @@ variable {α β : Type}
 
 /-- `plusWh Q` is the `+wh` shifter (25), which turns a generalized quantifier into a scope-taker
 over sets. -/
-def plusWh (Q : NP α) (f : α → Set β) : Set β := {y | Q fun x ↦ y ∈ f x}
+def plusWh (Q : Quantifier α) (f : α → Set β) : Set β := {y | Q {x | y ∈ f x}}
 
 /-- Partee's `A`, existential closure over a set, sends a singleton to the Montague lift,
 `A ∘ η = LIFT` (24). -/
-theorem some_pure (x : α) : GQ.some (pure x : Set α) = individual x :=
-  some_ident x
+theorem some_pure (x : α) : Det.some (pure x : Set α) = individual x :=
+  some_singleton x
 
 /-- Binding a singleton is the Montague lift at result type `Set β`, `(≫=) ∘ η = LIFT` (28). -/
 theorem bind_pure_left (x : α) : (fun f : α → Set β ↦ pure x >>= f) = fun f ↦ f x :=
   funext (pure_bind x)
 
 /-- Applying `+wh` to Partee's `A` gives bind, `+wh ∘ A = (≫=)` (29). -/
-theorem plusWh_some (m : Set α) : plusWh (GQ.some m) = fun f : α → Set β ↦ m >>= f := by
-  funext f; ext y; simp [plusWh, GQ.some, Set.bind_def]; rfl
+theorem plusWh_some (m : Set α) : plusWh (Det.some m) = fun f : α → Set β ↦ m >>= f := by
+  funext f; ext y; simp [plusWh, Det.some, Set.bind_def]; rfl
 
 -- Figure 4
 theorem plusWh_individual (x : α) : plusWh (individual x) = fun f : α → Set β ↦ f x := by
@@ -131,7 +131,7 @@ def closureCond (m n : Set Prop) : Set Prop := pure (cond (sSup m) (sSup n))
 
 /-- `det D P f` is the determiner `D` over `P` closing off the alternatives of its scope `f`, as
 in (65) and (84) without assignments. -/
-def det (D : GQ E) (P : Set E) (f : E → Set Prop) : Set Prop := pure (D (· ∈ P) fun x ↦ sSup (f x))
+def det (D : Det E) (P : Set E) (f : E → Set Prop) : Set Prop := pure (D P {x | sSup (f x)})
 
 variable (rel : Set E) (dies : E → Prop) (house : Prop)
 
@@ -157,8 +157,8 @@ theorem narrow_scope :
 /-- A universal closes its island off to a singleton, so pied-piping the island gives the narrow
 reading again (2), as in `Examples.ex2`. -/
 theorem every_island :
-    det GQ.every rel (fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
-      closureCond cond (det GQ.every rel fun x ↦ pure (dies x)) (pure house) := by
+    det Det.every rel (fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
+      closureCond cond (det Det.every rel fun x ↦ pure (dies x)) (pure house) := by
   simp [det, closureCond, sSup_singleton, -eq_iff_iff]
 
 variable (student : Set E) (wrong : E → Prop) (argue : E → Prop → Prop)
@@ -166,24 +166,24 @@ variable (student : Set E) (wrong : E → Prop) (argue : E → Prop → Prop)
 /-- The island of (3) can scope over *three arguments showing that* and stop below *each
 student*, as in `Examples.ex3`. -/
 theorem intermediate_scope :
-    det GQ.every student (fun y ↦ (rel >>= fun c ↦ pure (wrong c)) >>= fun p ↦ pure (argue y p)) =
+    det Det.every student (fun y ↦ (rel >>= fun c ↦ pure (wrong c)) >>= fun p ↦ pure (argue y p)) =
       {∀ y ∈ student, ∃ c ∈ rel, argue y (wrong c)} := by
-  simp [det, GQ.every, Set.bind_def, sSup_Prop_eq, -eq_iff_iff]
+  simp [det, Det.every, Set.subset_def, Set.bind_def, sSup_Prop_eq, -eq_iff_iff]
 
 -- (3)
 theorem widest_scope :
-    (rel >>= fun c ↦ pure (wrong c)) >>= (fun p ↦ det GQ.every student fun y ↦ pure (argue y p)) =
+    (rel >>= fun c ↦ pure (wrong c)) >>= (fun p ↦ det Det.every student fun y ↦ pure (argue y p)) =
       (fun c ↦ ∀ y ∈ student, argue y (wrong c)) '' rel := by
-  ext q; simp [det, GQ.every, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
+  ext q; simp [det, Det.every, Set.subset_def, Set.bind_def, sSup_singleton, eq_comm, -eq_iff_iff]
 
 end Conditional
 
 -- (3)
 theorem intermediate_ne_widest : ¬ ∀ (student rel : Set Bool) (wrong : Bool → Prop)
     (argue : Bool → Prop → Prop),
-    sSup (det GQ.every student fun y ↦ (rel >>= fun c ↦ pure (wrong c)) >>=
+    sSup (det Det.every student fun y ↦ (rel >>= fun c ↦ pure (wrong c)) >>=
         fun p ↦ pure (argue y p)) ↔
-      sSup ((rel >>= fun c ↦ pure (wrong c)) >>= fun p ↦ det GQ.every student fun y ↦
+      sSup ((rel >>= fun c ↦ pure (wrong c)) >>= fun p ↦ det Det.every student fun y ↦
         pure (argue y p)) := by
   intro h
   have h := h Set.univ Set.univ (· = true) fun y p ↦ (p ↔ y = true)
@@ -291,11 +291,12 @@ theorem joinM_relativeOuter :
 and the conditional, as in `Examples.ex47`. -/
 theorem seminar_paper (grad seminar paper : Set E) (disc : E → E → Prop) (joy : E → Prop) :
     (seminar >>= fun s ↦ pure (paper >>= fun p ↦ pure (disc p s))) >>=
-        (fun m ↦ det GQ.every grad fun g ↦ m >>= fun q ↦ closureCond cond (pure q) (pure (joy g))) =
+        (fun m ↦ det Det.every grad fun g ↦
+          m >>= fun q ↦ closureCond cond (pure q) (pure (joy g))) =
       (fun s ↦ ∀ g ∈ grad, ∃ p ∈ paper, cond (disc p s) (joy g)) '' seminar := by
   ext q
-  simp [det, GQ.every, closureCond, Set.bind_def, sSup_Prop_eq, sSup_singleton, eq_comm,
-    -eq_iff_iff]
+  simp [det, Det.every, Set.subset_def, closureCond, Set.bind_def, sSup_Prop_eq, sSup_singleton,
+    eq_comm, -eq_iff_iff]
 
 end Selectivity
 
@@ -425,9 +426,9 @@ def beta (n : ℕ) (f : E → ReaderT (Assignment E) Set α) (x : E) : ReaderT (
 
 /-- `det D P f` is the determiner `D` over `P` closing off its scope `f` at each assignment, as
 *everybody* (65) and the *no candidate* of Figure 14 do. -/
-def det (D : GQ E) (P : Set E) (f : E → ReaderT (Assignment E) Set Prop) :
+def det (D : Det E) (P : Set E) (f : E → ReaderT (Assignment E) Set Prop) :
     ReaderT (Assignment E) Set Prop :=
-  fun g ↦ pure (D (· ∈ P) fun y ↦ sSup (f y g))
+  fun g ↦ pure (D P {y | sSup (f y g)})
 
 variable (ling : Set E) (cited : E → E → Prop)
 
@@ -457,9 +458,10 @@ indefinite wide scope and binds the pronoun ((51), Figure 13, `Examples.ex51`). 
 theorem expert_wide_bound (exp human : Set E) (cites : E → E → Prop)
     (lovesWhen : Prop → E → Prop) :
     expertCites exp cites >>=
-        (fun m ↦ det GQ.every human (beta 0 fun y ↦ m >>= fun p ↦ pure (lovesWhen p y))) =
+        (fun m ↦ det Det.every human (beta 0 fun y ↦ m >>= fun p ↦ pure (lovesWhen p y))) =
       fun _ ↦ (fun x ↦ ∀ y ∈ human, lovesWhen (cites y x) y) '' exp := by
-  funext g; ext q; simp [expertCites, det, GQ.every, sSup_Prop_eq, eq_comm, -eq_iff_iff]
+  funext g; ext q
+  simp [expertCites, det, Det.every, Set.subset_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
 
 /-! #### The Binder Roof Constraint -/
 
@@ -473,18 +475,18 @@ def paperBy : ReaderT (Assignment E) Set E := fun g ↦ {x | x ∈ paper ∧ wro
 
 /-- Scoped over *no candidate*, the indefinite leaves its pronoun free (Figure 14). -/
 theorem paper_wide :
-    paperBy paper wrote >>= (fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y))) =
+    paperBy paper wrote >>= (fun x ↦ det Det.no cand (beta 0 fun y ↦ pure (subm x y))) =
       fun g ↦ (fun x ↦ ¬ ∃ y ∈ cand, subm x y) '' {x | x ∈ paper ∧ wrote x (g 0)} := by
-  funext g; ext q; simp [paperBy, det, GQ.no, sSup_Prop_eq, eq_comm, -eq_iff_iff]
+  funext g; ext q; simp [paperBy, det, Det.no, Set.subset_def, sSup_Prop_eq, eq_comm, -eq_iff_iff]
 
 -- Figure 14
 theorem paper_wide_beta :
-    paperBy paper wrote >>= (fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y))) =
-      paperBy paper wrote >>= fun x ↦ det GQ.no cand fun y ↦ pure (subm x y) :=
+    paperBy paper wrote >>= (fun x ↦ det Det.no cand (beta 0 fun y ↦ pure (subm x y))) =
+      paperBy paper wrote >>= fun x ↦ det Det.no cand fun y ↦ pure (subm x y) :=
   rfl
 
 theorem dependsOn_paper_wide :
-    DependsOn (paperBy paper wrote >>= fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y)))
+    DependsOn (paperBy paper wrote >>= fun x ↦ det Det.no cand (beta 0 fun y ↦ pure (subm x y)))
       {0} := by
   intro g g' h
   rw [paper_wide]
@@ -493,19 +495,19 @@ theorem dependsOn_paper_wide :
 /-- Below `β⁰` the indefinite has its pronoun bound, and the reading is the same at every
 assignment, as in `Examples.ex53`. -/
 theorem paper_narrow :
-    det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)) =
+    det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)) =
       fun _ ↦ {¬ ∃ y ∈ cand, ∃ x ∈ paper, wrote x y ∧ subm x y} := by
-  funext g; simp [paperBy, det, GQ.no, sSup_Prop_eq, -eq_iff_iff]
+  funext g; simp [paperBy, det, Det.no, Set.subset_def, sSup_Prop_eq, -eq_iff_iff]
 
 theorem dependsOn_paper_narrow :
-    DependsOn (det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)))
+    DependsOn (det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)))
       ∅ := by
   rw [paper_narrow]; exact dependsOn_const _
 
 /-- The wide reading does depend on the pronoun, so it is not the bound reading. -/
 theorem not_dependsOn_paper_wide :
     ¬ DependsOn (paperBy (E := Bool) Set.univ (fun _ y ↦ y = true) >>=
-      fun x ↦ det GQ.no Set.univ (beta 0 fun y ↦ pure (x = y))) ∅ := by
+      fun x ↦ det Det.no Set.univ (beta 0 fun y ↦ pure (x = y))) ∅ := by
   intro h
   have h := congrArg Set.Nonempty (h.empty (fun _ ↦ true) fun _ ↦ false)
   rw [paper_wide] at h
@@ -527,7 +529,7 @@ theorem cf_reading_not_imp_bound :
     ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : Assignment (Fin 3)),
     (∃ f : ChoiceFunction (Fin 3),
         ¬ ∃ x ∈ cand, subm (f fun y ↦ y ∈ paper ∧ wrote y x) x) →
-      sSup (det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))
+      sSup (det Det.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y))
         g) := by
   intro h
   have := h {0} {1, 2} (fun _ x ↦ x = 0) (fun y _ ↦ y = 1) (fun _ ↦ 0) <| by

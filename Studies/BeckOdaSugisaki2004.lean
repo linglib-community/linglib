@@ -46,7 +46,7 @@ Example numbers follow the journal article; the examples are typed in
 
 namespace BeckOdaSugisaki2004
 
-open Degree Quantifier Quantifier.GQ Quantifier.NP
+open Degree Quantifier Quantifier.Det
 
 variable {Entity D : Type*} [LinearOrder D]
 
@@ -120,12 +120,12 @@ theorem pos_ne_subcomparative :
 /-! ### Negative islands -/
 
 -- (11), (12)
-theorem not_isGreatest_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity → D) :
+theorem not_isGreatest_nobody [NoMaxOrder D] (bought : Set Entity) (μ : Entity → D) :
     ¬ ∃ m, IsGreatest (scopeDegrees (no bought) (Set.Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (antitone_no bought) (fun _ ↦ isLowerSet_Iic _)
 
 /-- `er` over a negated *than*-clause never holds, the negative island ((11), (87a)). -/
-theorem not_er_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity → D) (S : Set D) :
+theorem not_er_nobody [NoMaxOrder D] (bought : Set Entity) (μ : Entity → D) (S : Set D) :
     ¬ er (scopeDegrees (no bought) (Set.Iic ∘ μ)) S :=
   fun ⟨m, _, hm, _, _⟩ => not_isGreatest_nobody bought μ ⟨m, hm⟩
 
@@ -141,7 +141,7 @@ theorem yori_negative_entails_unbought (C : Set Entity) (bought : Entity → Pro
 the uniqueness presupposition of the *yori*-clause ((94), (95)). -/
 theorem er_everyone_without_shared_book :
     ∃ (read : Fin 2 → Fin 3 → Prop) (μ : Fin 3 → ℕ),
-      er (scopeDegrees (fun S => ∀ b, GQ.some (read b) S) (Set.Iic ∘ μ)) (Set.Iic (μ 2)) ∧
+      er (scopeDegrees (fun S => ∀ b, Det.some (read b) S) (Set.Iic ∘ μ)) (Set.Iic (μ 2)) ∧
         ¬ ∃ x, ∀ b, read b x := by
   refine ⟨fun b x => x.val = b.val, ![1, 1, 2],
     ⟨1, _, ⟨fun b => ?_, fun d hd => ?_⟩, isGreatest_Iic, by simp⟩, ?_⟩
@@ -149,7 +149,7 @@ theorem er_everyone_without_shared_book :
     · exact ⟨0, rfl, by simp⟩
     · exact ⟨1, rfl, by simp⟩
   · obtain ⟨x, hx, hle⟩ := hd 0
-    obtain rfl : x = 0 := Fin.ext (by simpa using hx)
+    obtain rfl : x = 0 := Fin.ext hx
     simpa using hle
   · rintro ⟨x, hx⟩
     have h0 := hx 0
@@ -173,12 +173,12 @@ theorem erJ_iff_pos (μ : Entity → D) (c : D) (x : Entity) :
 /-- The wide-scope reading of *need to be exactly s long*, the comparative over `need`, says
 that the greatest degree reached in every acceptable world is the target `s` (136b). -/
 def wideScope {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
-  HighScope (MaxIn {s}) (every (· ∈ acc)) (Set.Iic ∘ μ)
+  HighScope (MaxIn {s}) (every acc) (Set.Iic ∘ μ)
 
 /-- The in-situ reading, which `erJ` with a differential yields, says that in every acceptable
 world the greatest degree is the target `s`. -/
 def inSitu {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
-  LowScope (MaxIn {s}) (every (· ∈ acc)) (Set.Iic ∘ μ)
+  LowScope (MaxIn {s}) (every acc) (Set.Iic ∘ μ)
 
 theorem inSitu_iff {W : Type*} (acc : Set W) (μ : W → D) (s : D) :
     inSitu acc μ s ↔ ∀ w ∈ acc, μ w = s :=
@@ -197,7 +197,7 @@ theorem exists_wideScope_not_inSitu :
       wideScope acc μ (10 + 5) ∧ ¬ inSitu acc μ (10 + 5) := by
   refine ⟨Set.univ, ![15, 16], ⟨10 + 5, rfl, fun w _ => ?_, fun d hd => ?_⟩, ?_⟩
   · fin_cases w <;> simp
-  · simpa using hd 0 (Set.mem_univ _)
+  · simpa using hd (Set.mem_univ 0)
   · rw [inSitu_iff]
     intro h
     simpa using h 1 (Set.mem_univ _)

@@ -11,7 +11,7 @@ public import Linglib.Morphology.Word.Basic
 
 This file defines the determiner as a lexical object and the determiner inventory of a
 language. The base `Determiner` carries only a surface form, and the four specializations
-`Article`, `DemonstrativeDeterminer`, `Quantifier` and `PossessiveDeterminer` extend
+`Article`, `DemonstrativeDeterminer`, `QuantificationalDeterminer` and `PossessiveDeterminer` extend
 it. An inventory is
 a list of `Determiner.Entry` occurrences. An article marks a strength when one of the definite uses
 it obligatorily expones calls for that strength, and an inventory marks the strengths its articles
@@ -25,7 +25,7 @@ with its own account of when a presupposition is marked.
 
 * `Determiner` is the base record, and `Determiner.toWord` realizes it as a word.
 * `Article` records definiteness, the exponent, the definite uses the article obligatorily
-  expones and the number it selects; `DemonstrativeDeterminer`, `Quantifier` and
+  expones and the number it selects; `DemonstrativeDeterminer`, `QuantificationalDeterminer` and
   `PossessiveDeterminer` are the other specializations.
 * `Determiner.Entry` is an occurrence of one of the four kinds in an inventory, `Entry.kind`
   is its kind together with an article's definiteness, `Entry.strengths` the strengths it
@@ -41,7 +41,7 @@ with its own account of when a presupposition is marked.
 
 This file is the Frame-free lexical layer. The denotations of articles, demonstratives and
 possessives are in `Semantics/Reference/Determiner.lean`, and the generalized-quantifier
-denotation of a `Quantifier` is supplied by its consumers. `Inventory` is a `def`
+denotation of a `QuantificationalDeterminer` is supplied by its consumers. `Inventory` is a `def`
 rather than an `abbrev` so that its operations resolve by dot notation; its membership is the
 list's, and facts about one-entry inventories go through `Inventory.marks_singleton`.
 `Realizes` is
@@ -118,7 +118,7 @@ leaves open, the grammatical number it selects and whether it selects mass nouns
 synonymous determiners such as *every* and *all* differ there. Everything the denotation fixes,
 its force, monotonicity, strength and conservativity, is a theorem about the denotation, which
 the consumers supply. -/
-structure Quantifier extends Determiner where
+structure QuantificationalDeterminer extends Determiner where
   /-- The grammatical number the determiner selects, or none when it is number-neutral. -/
   numberRestriction : Option Number := none
   /-- The determiner selects mass nouns. -/
@@ -137,7 +137,7 @@ namespace Determiner
 inductive Entry where
   | article (a : Article)
   | demonstrative (d : DemonstrativeDeterminer)
-  | quantifier (q : Quantifier)
+  | quantifier (q : QuantificationalDeterminer)
   | possessive (p : PossessiveDeterminer)
   deriving DecidableEq
 

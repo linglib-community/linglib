@@ -563,12 +563,15 @@ section ChoiceFunction
 
 open Quantifier
 
+-- *Some* at a predicate restrictor and scope, as the choice-function lemmas supply them.
+private theorem some_iff_exists {A B : E → Prop} : Det.some A B ↔ ∃ x, A x ∧ B x := .rfl
+
 theorem cf_exceptional_cond (rel dies : E → Prop) (rich : Prop) (hrel : ∃ x, rel x)
     (s : Stack E) :
     (∃ f : ChoiceFunction E, dies (f rel) → rich) ↔
       holds (indef rel >>= fun x ↦ pure (dies x → rich)) s := by
   refine (ChoiceFunction.exists_apply_iff_some hrel fun x ↦ dies x → rich).trans ?_
-  simp only [holds, indef, GQ.some, Set.mem_stateT_bind, Set.mem_stateT_pure, Set.mem_ofPred_eq]
+  simp only [holds, indef, Det.some, Set.mem_stateT_bind, Set.mem_stateT_pure, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨x, hx, h⟩
     exact ⟨_, ⟨(x, s), ⟨hx, rfl⟩, rfl⟩, h⟩
@@ -583,7 +586,7 @@ theorem cf_no_candidate_iff [Nonempty E] (cand : E → Prop) (paperBy submitted 
       ¬ ∃ x, cand x ∧ ∀ y, paperBy x y → submitted y x := by
   have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | cand x})
     (Set.injOn_iff_injective.1 hinj) (fun x ↦ hwrote x x.2) fun x y ↦ ¬ submitted y x
-  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, GQ.some] at h
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, some_iff_exists] at h
   push Not
   simpa using h
 
@@ -591,7 +594,7 @@ theorem cf_same_restrictor_iff (girl : E → Prop) (boysFancied gave : E → E �
     (hB : ∃ y, B y) (hsame : ∀ x, girl x → boysFancied x = B) :
     (∃ f : ChoiceFunction E, ∀ x, girl x → gave (f (boysFancied x)) x) ↔
       ∃ y, B y ∧ ∀ x, girl x → gave y x := by
-  rw [← GQ.some, ← ChoiceFunction.exists_apply_iff_some hB]
+  rw [← some_iff_exists, ← ChoiceFunction.exists_apply_iff_some hB]
   exact exists_congr fun f ↦ forall₂_congr fun x hx ↦ by rw [hsame x hx]
 
 theorem cf_layered_iff [Nonempty E] (linguist : E → Prop) (bookBy : E → E → Prop)
@@ -605,7 +608,7 @@ theorem cf_layered_iff [Nonempty E] (linguist : E → Prop) (bookBy : E → E �
     exact ChoiceFunction.forall_apply_iff_every hling fun z ↦ ¬ read (f (bookBy z))
   have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | linguist x})
     (Set.injOn_iff_injective.1 hinj) (fun x ↦ hbook x x.2) fun _ y ↦ ¬ read y
-  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, GQ.some] at h
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, some_iff_exists] at h
   simpa only [hneg] using h
 
 theorem cf_disjunction_iff [Nonempty E] (cand : E → Prop) (vita portfolio : E → E)
@@ -615,7 +618,7 @@ theorem cf_disjunction_iff [Nonempty E] (cand : E → Prop) (vita portfolio : E 
       ¬ ∃ x, cand x ∧ submit (vita x) x ∧ submit (portfolio x) x := by
   have h := ChoiceFunction.exists_forall_apply_iff_of_injective (ι := {x | cand x})
     (Set.injOn_iff_injective.1 hinj) (fun x ↦ ⟨vita x, .inl rfl⟩) fun x y ↦ ¬ submit y x.1
-  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, GQ.some] at h
+  simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, some_iff_exists] at h
   push Not
   simpa [or_imp, forall_and, imp_iff_not_or] using h
 

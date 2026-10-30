@@ -138,9 +138,9 @@ def Analysis.realize (M : Interp E W) :
   | _, .name α, _, i => fun P ↦ P i (M.name α)
   | _, .he n, g, i => fun P ↦ P i (g n)
   | _, .be, _, i => fun Q x ↦ Q i fun j y ↦ x j = y j
-  | _, .every ζ, g, i => fun P ↦ GQ.every (ζ.realize M g i) (P i)
-  | _, .the ζ, g, i => fun P ↦ GQ.the (ζ.realize M g i) (P i)
-  | _, .a ζ, g, i => fun P ↦ GQ.some (ζ.realize M g i) (P i)
+  | _, .every ζ, g, i => fun P ↦ Det.every (ζ.realize M g i) (P i)
+  | _, .the ζ, g, i => fun P ↦ Det.the (ζ.realize M g i) (P i)
+  | _, .a ζ, g, i => fun P ↦ Det.some (ζ.realize M g i) (P i)
   | _, .f4 α δ, g, i => α.realize M g i fun j ↦ δ.realize M g j
   | _, .f5 δ β, g, i => δ.realize M g i fun j ↦ β.realize M g j
   | _, .f10 n α φ, g, i => α.realize M g i fun j x ↦ φ.realize M (Function.update g n x) j
@@ -249,22 +249,22 @@ section Rigid
 variable [Nonempty W] {R S : (W → E) → Prop}
 
 theorem every_iff_of_rigid (hR : ∀ x, R x → IsRigid x) :
-    GQ.every R S ↔ GQ.every (starIV R) (starIV S) := by
+    Det.every R S ↔ Det.every (starIV R) (starIV S) := by
   obtain ⟨i⟩ := ‹Nonempty W›
-  refine ⟨fun H u hu ↦ H _ hu, fun H x hx ↦ ?_⟩
+  refine ⟨fun H u hu ↦ @H _ hu, fun H x hx ↦ ?_⟩
   have e := (hR x hx).eq_const i
   rw [e]
-  exact H _ (e ▸ hx)
+  exact @H _ (e ▸ hx)
 
 theorem some_iff_of_rigid (hR : ∀ x, R x → IsRigid x) :
-    GQ.some R S ↔ GQ.some (starIV R) (starIV S) := by
+    Det.some R S ↔ Det.some (starIV R) (starIV S) := by
   obtain ⟨i⟩ := ‹Nonempty W›
   refine ⟨fun ⟨x, hx, hs⟩ ↦ ?_, fun ⟨u, hu, hs⟩ ↦ ⟨_, hu, hs⟩⟩
   have e := (hR x hx).eq_const i
   exact ⟨x i, e ▸ hx, e ▸ hs⟩
 
 theorem the_iff_of_rigid (hR : ∀ x, R x → IsRigid x) :
-    GQ.the R S ↔ GQ.the (starIV R) (starIV S) := by
+    Det.the R S ↔ Det.the (starIV R) (starIV S) := by
   obtain ⟨i⟩ := ‹Nonempty W›
   constructor
   · rintro ⟨y, hy, hs⟩
@@ -295,27 +295,27 @@ theorem bill_walks_iff :
 /-- *a man walks* translates to `∨u[man'*(u) ∧ walk'*(u)]`. -/
 theorem a_man_walks_iff :
     (f4 (a (basic man)) (basic walk)).realize M g i ↔
-      GQ.some (starIV (M.const man i)) (starIV (M.const walk i)) :=
+      Det.some (starIV (M.const man i)) (starIV (M.const walk i)) :=
   have := Nonempty.intro i
   some_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
 /-- *every man walks* translates to `∧u[man'*(u) → walk'*(u)]`. -/
 theorem every_man_walks_iff :
     (f4 (every (basic man)) (basic walk)).realize M g i ↔
-      GQ.every (starIV (M.const man i)) (starIV (M.const walk i)) :=
+      Det.every (starIV (M.const man i)) (starIV (M.const walk i)) :=
   have := Nonempty.intro i
   every_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
 /-- *the man walks* translates to `∨v∧u[[man'*(u) ↔ u = v] ∧ walk'*(v)]`. -/
 theorem the_man_walks_iff :
     (f4 (the (basic man)) (basic walk)).realize M g i ↔
-      GQ.the (starIV (M.const man i)) (starIV (M.const walk i)) :=
+      Det.the (starIV (M.const man i)) (starIV (M.const walk i)) :=
   have := Nonempty.intro i
   the_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
 theorem john_finds_a_unicorn_iff :
     (f4 (name john) (f5 (basic find) (a (basic unicorn)))).realize M g i ↔
-      GQ.some (starIV (M.const unicorn i)) (starTV (M.const find i) · (M.name john i)) := by
+      Det.some (starIV (M.const unicorn i)) (starTV (M.const find i) · (M.name john i)) := by
   have := Nonempty.intro i
   obtain ⟨S, hS⟩ := h.tv_ext find nofun
   simp only [realize, ← hS]
@@ -357,7 +357,7 @@ variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (
 include h
 
 theorem direct_iff :
-    direct.realize M g i ↔ surfaceScope GQ.some GQ.every (starIV (M.const woman i))
+    direct.realize M g i ↔ surfaceScope Det.some Det.every (starIV (M.const woman i))
       (starIV (M.const man i)) (flip (starTV (M.const love i))) := by
   have := Nonempty.intro i
   obtain ⟨S, hS⟩ := h.tv_ext love nofun
@@ -367,7 +367,7 @@ theorem direct_iff :
       every_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
 theorem quantifiedIn_iff :
-    quantifiedIn.realize M g i ↔ inverseScope GQ.some GQ.every (starIV (M.const woman i))
+    quantifiedIn.realize M g i ↔ inverseScope Det.some Det.every (starIV (M.const woman i))
       (starIV (M.const man i)) (flip (starTV (M.const love i))) := by
   have := Nonempty.intro i
   obtain ⟨S, hS⟩ := h.tv_ext love nofun
@@ -420,9 +420,9 @@ theorem aWomanLovesEveryMan.not_entails : ¬ Entails {quantifiedIn} direct := fu
     · exact ⟨2, ⟨isRigid_const _, Or.inl rfl⟩, Or.inl ⟨rfl, rfl⟩⟩
     · exact ⟨3, ⟨isRigid_const _, Or.inr rfl⟩, Or.inr ⟨rfl, rfl⟩⟩) fun _ _ ↦ 0
   obtain ⟨u, -, hu⟩ := (direct_iff h _ ()).1 hd
-  have h0 := hu 0 ⟨isRigid_const _, Or.inl rfl⟩
-  have h1 := hu 1 ⟨isRigid_const _, Or.inr rfl⟩
-  simp only [flip, starTV_extTV, staticInterp] at h0 h1
+  have h0 := @hu 0 ⟨isRigid_const _, Or.inl rfl⟩
+  have h1 := @hu 1 ⟨isRigid_const _, Or.inr rfl⟩
+  simp only [Set.mem_ofPred_eq, flip, starTV_extTV, staticInterp] at h0 h1
   omega
 
 /-! ### *John seeks a unicorn*: de dicto and de re -/
@@ -444,7 +444,7 @@ variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (
 include h
 
 theorem deDicto_iff :
-    deDicto.realize M g i ↔ M.const seek i (fun j P ↦ GQ.some (starIV (M.const unicorn j))
+    deDicto.realize M g i ↔ M.const seek i (fun j P ↦ Det.some (starIV (M.const unicorn j))
       (starIV (P j))) (M.name john) :=
   have := Nonempty.intro i
   iff_of_eq <| congrArg (M.const seek i · _) <| funext fun j ↦ funext fun _ ↦
@@ -452,7 +452,7 @@ theorem deDicto_iff :
 
 theorem deRe_iff :
     deRe.realize M g i ↔
-      GQ.some (starIV (M.const unicorn i)) (starTV (M.const seek i) · (M.name john i)) := by
+      Det.some (starIV (M.const unicorn i)) (starTV (M.const seek i) · (M.name john i)) := by
   have := Nonempty.intro i
   simp only [deRe, realize, Function.update_self]
   rw [(h.name_rigid john).eq_const i]
@@ -496,11 +496,11 @@ variable (M : Interp E W) (g : Assignment (W → E)) (i : W)
 
 theorem theTemperatureIsNinety_iff :
     theTemperatureIsNinety.realize M g i ↔
-      GQ.the (M.const temperature i) fun y ↦ y i = M.name ninety i :=
+      Det.the (M.const temperature i) fun y ↦ y i = M.name ninety i :=
   Iff.rfl
 
 theorem theTemperatureRises_iff :
-    theTemperatureRises.realize M g i ↔ GQ.the (M.const temperature i) (M.const rise i) :=
+    theTemperatureRises.realize M g i ↔ Det.the (M.const temperature i) (M.const rise i) :=
   Iff.rfl
 
 theorem ninetyRises_iff : ninetyRises.realize M g i ↔ M.const rise i (M.name ninety) :=
@@ -508,7 +508,7 @@ theorem ninetyRises_iff : ninetyRises.realize M g i ↔ M.const rise i (M.name n
 
 theorem a_price_rises_iff :
     (f4 (a (basic price)) (basic rise)).realize M g i ↔
-      GQ.some (M.const price i) (M.const rise i) :=
+      Det.some (M.const price i) (M.const rise i) :=
   Iff.rfl
 
 end Symbolizations
@@ -556,7 +556,7 @@ individual-variable symbolization `∨u[price'*(u) ∧ rise'*(u)]` is false, so 
 it needs individual-concept variables. -/
 theorem a_price_rises_needs_concepts (g : Assignment (Fin 2 → ℕ)) :
     (f4 (a (basic price)) (basic rise)).realize temperatureInterp g 0 ∧
-      ¬ GQ.some (starIV (temperatureInterp.const price 0))
+      ¬ Det.some (starIV (temperatureInterp.const price 0))
         (starIV (temperatureInterp.const rise 0)) :=
   ⟨⟨_, rfl, 1, by decide, by decide⟩, fun ⟨_, _, _, _, hlt⟩ ↦ lt_irrefl _ hlt⟩
 

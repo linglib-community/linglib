@@ -18,8 +18,8 @@ phrase, and proves its conservativity and scope monotonicity.
 
 ## Main statements
 
-* `Quantifier.GQ.Conservative.poss`: `Poss Q₁ C Q₂ R` is conservative if `Q₂` is (7.29).
-* `Quantifier.GQ.ScopeMonotone.poss` and its variants: `Poss` is scope monotone in the product of
+* `Quantifier.Det.Conservative.poss`: `Poss Q₁ C Q₂ R` is conservative if `Q₂` is (7.29).
+* `Quantifier.Det.ScopeMonotone.poss` and its variants: `Poss` is scope monotone in the product of
   the directions of `Q₁` and `Q₂`.
 * `Possession.poss_eq_possNP_restrict`: for symmetric `Q₁`, `Poss Q₁ C = PossNP (Q₁ C)`
   (Fact 1).
@@ -45,7 +45,7 @@ quantifier `Q₂` of a bare possessive such as *John's bikes* is a parameter.
 
 namespace Possession
 
-open Quantifier Quantifier.GQ Quantifier.NP
+open Quantifier Quantifier.Det
 
 variable {α : Type*}
 
@@ -54,26 +54,26 @@ variable {α : Type*}
 /-- The possessive quantifier of a possessor quantifier `Q₁` with restriction `C`, under which *[Q₁
 C]'s A are B* holds iff `Q₁` relates the `C`s that possess some `A` to the `x` with `Q₂ (π A R x) B`
 ([peters-westerstahl-2006], (7.30)). -/
-def Poss (Q₁ : GQ α) (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
-  fun A B ↦ Q₁ (fun x ↦ C x ∧ dom A R x) (fun x ↦ Q₂ (π A R x) B)
+def Poss (Q₁ : Det α) (C : Set α) (Q₂ : Det α) (R : α → α → Prop) : Det α :=
+  fun A B ↦ Q₁ (C ∩ {x | dom A R x}) {x | Q₂ (π A R x) B}
 
 /-- The possessive quantifier of a possessor noun phrase `Q`, under which *[Q]'s A are B* holds iff
 `Q` holds of the `x` that possess some `A` and satisfy `Q₂ (π A R x) B` ([peters-westerstahl-2006],
 (7.45)). -/
-def PossNP (Q : NP α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
-  fun A B ↦ Q (fun a ↦ dom A R a ∧ Q₂ (π A R a) B)
+def PossNP (Q : Quantifier α) (Q₂ : Det α) (R : α → α → Prop) : Det α :=
+  fun A B ↦ Q {a | dom A R a ∧ Q₂ (π A R a) B}
 
 /-! ### Conservativity -/
 
-theorem _root_.Quantifier.GQ.Conservative.poss {Q₂ : GQ α} (h₂ : Conservative Q₂) (Q₁ : GQ α)
-    (C : α → Prop) (R : α → α → Prop) : Conservative (Poss Q₁ C Q₂ R) := fun _ _ ↦
-  iff_of_eq (congrArg (Q₁ _) (funext fun _ ↦ propext
-    (Conservative.congr_scope h₂ fun _ hy ↦ (and_iff_right hy.1).symm)))
+theorem _root_.Quantifier.Det.Conservative.poss {Q₂ : Det α} (h₂ : Q₂.Conservative) (Q₁ : Det α)
+    (C : Set α) (R : α → α → Prop) : (Poss Q₁ C Q₂ R).Conservative := fun _ _ ↦
+  iff_of_eq (congrArg (Q₁ _) (Set.ext fun _ ↦
+    h₂.congr_scope fun _ hy ↦ (and_iff_right hy.1).symm))
 
-theorem _root_.Quantifier.GQ.Conservative.possNP {Q₂ : GQ α} (h₂ : Conservative Q₂) (Q : NP α)
-    (R : α → α → Prop) : Conservative (PossNP Q Q₂ R) := fun _ _ ↦
-  iff_of_eq (congrArg Q (funext fun _ ↦ propext (and_congr_right fun _ ↦
-    Conservative.congr_scope h₂ fun _ hy ↦ (and_iff_right hy.1).symm)))
+theorem _root_.Quantifier.Det.Conservative.possNP {Q₂ : Det α} (h₂ : Q₂.Conservative)
+    (Q : Quantifier α) (R : α → α → Prop) : (PossNP Q Q₂ R).Conservative := fun _ _ ↦
+  iff_of_eq (congrArg Q (Set.ext fun _ ↦ and_congr_right fun _ ↦
+    h₂.congr_scope fun _ hy ↦ (and_iff_right hy.1).symm))
 
 /-! ### Scope monotonicity
 
@@ -82,21 +82,21 @@ direction, and downward monotone otherwise (Proposition 5, §7.13). -/
 
 section Monotone
 
-variable {Q₁ Q₂ : GQ α} (C : α → Prop) (R : α → α → Prop)
+variable {Q₁ Q₂ : Det α} (C : Set α) (R : α → α → Prop)
 
-theorem _root_.Quantifier.GQ.ScopeMonotone.poss (h₁ : ScopeMonotone Q₁)
+theorem _root_.Quantifier.Det.ScopeMonotone.poss (h₁ : ScopeMonotone Q₁)
     (h₂ : ScopeMonotone Q₂) : ScopeMonotone (Poss Q₁ C Q₂ R) :=
   fun _ _ _ hB ↦ h₁ _ fun _ ↦ h₂ _ hB
 
-theorem _root_.Quantifier.GQ.ScopeMonotone.poss_scopeAntitone (h₁ : ScopeMonotone Q₁)
+theorem _root_.Quantifier.Det.ScopeMonotone.poss_scopeAntitone (h₁ : ScopeMonotone Q₁)
     (h₂ : ScopeAntitone Q₂) : ScopeAntitone (Poss Q₁ C Q₂ R) :=
   fun _ _ _ hB ↦ h₁ _ fun _ ↦ h₂ _ hB
 
-theorem _root_.Quantifier.GQ.ScopeAntitone.poss (h₁ : ScopeAntitone Q₁)
+theorem _root_.Quantifier.Det.ScopeAntitone.poss (h₁ : ScopeAntitone Q₁)
     (h₂ : ScopeAntitone Q₂) : ScopeMonotone (Poss Q₁ C Q₂ R) :=
   fun _ _ _ hB ↦ h₁ _ fun _ ↦ h₂ _ hB
 
-theorem _root_.Quantifier.GQ.ScopeAntitone.poss_scopeMonotone (h₁ : ScopeAntitone Q₁)
+theorem _root_.Quantifier.Det.ScopeAntitone.poss_scopeMonotone (h₁ : ScopeAntitone Q₁)
     (h₂ : ScopeMonotone Q₂) : ScopeAntitone (Poss Q₁ C Q₂ R) :=
   fun _ _ _ hB ↦ h₁ _ fun _ ↦ h₂ _ hB
 
@@ -104,41 +104,37 @@ end Monotone
 
 /-! ### Narrowing -/
 
-theorem poss_eq_possNP_restrict {Q₁ : GQ α} (hSym : Std.Symm Q₁) (hCons : Conservative Q₁)
-    (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) :
+theorem poss_eq_possNP_restrict {Q₁ : Det α} (hSym : Std.Symm Q₁) (hCons : Q₁.Conservative)
+    (C : Set α) (Q₂ : Det α) (R : α → α → Prop) :
     Poss Q₁ C Q₂ R = PossNP (Q₁ C) Q₂ R :=
   funext fun _ ↦ funext fun _ ↦
-    propext ((conserv_symm_iff_int Q₁ hCons).mp hSym _ _ _ _ fun _ ↦ and_assoc)
+    propext (hCons.symm_iff_intersective.1 hSym _ _ _ _ (Set.inter_assoc _ _ _))
 
 /-! ### Individual possessors -/
 
-theorem possNP_individual_iff {Q₂ : GQ α} {R : α → α → Prop} {a : α} {A B : α → Prop} :
+theorem possNP_individual_iff {Q₂ : Det α} {R : α → α → Prop} {a : α} {A B : Set α} :
     PossNP (individual a) Q₂ R A B ↔ dom A R a ∧ Q₂ (π A R a) B :=
   Iff.rfl
 
-theorem possNP_individual_existential_import {Q₂ : GQ α} {R : α → α → Prop}
-    {a : α} {A B : α → Prop} (h : PossNP (individual a) Q₂ R A B) : dom A R a :=
+theorem possNP_individual_existential_import {Q₂ : Det α} {R : α → α → Prop}
+    {a : α} {A B : Set α} (h : PossNP (individual a) Q₂ R A B) : dom A R a :=
   h.1
 
-theorem possNP_individual_the {R : α → α → Prop} {a : α} {A B : α → Prop} :
+theorem possNP_individual_the {R : α → α → Prop} {a : α} {A B : Set α} :
     PossNP (individual a) the R A B ↔ the (π A R a) B :=
   ⟨And.right, fun h ↦ ⟨h.elim fun x hx ↦ ⟨x, (hx.1 x).2 rfl⟩, h⟩⟩
 
 /-! ### Quantity invariance -/
 
 theorem poss_not_quantityInvariant :
-    ¬ QuantityInvariant
-        (Poss (GQ.some (α := Bool)) (fun _ ↦ True) GQ.some
-          (fun x y ↦ x = true ∧ y = true)) := by
+    ¬ (Poss (Det.some (α := Bool)) Set.univ Det.some
+      fun x y ↦ x = true ∧ y = true).QuantityInvariant := by
   intro h
-  have hiff := h (fun x ↦ x = true) (fun _ ↦ True) (fun x ↦ x = false)
-    (fun _ ↦ True) Bool.not
-    ((Function.Involutive.bijective fun b ↦ Bool.not_not b))
-    (fun x ↦ by cases x <;> simp) (fun _ ↦ Iff.rfl)
-  have hpos : Poss (GQ.some (α := Bool)) (fun _ ↦ True) GQ.some
-      (fun x y ↦ x = true ∧ y = true) (fun x ↦ x = true) (fun _ ↦ True) :=
+  have hiff := h (Equiv.swap true false) {true} Set.univ
+  have hpos : Poss (Det.some (α := Bool)) Set.univ Det.some
+      (fun x y ↦ x = true ∧ y = true) {true} Set.univ :=
     ⟨true, ⟨trivial, true, rfl, rfl, rfl⟩, true, ⟨rfl, rfl, rfl⟩, trivial⟩
-  obtain ⟨x, ⟨-, b, hb, -, hb'⟩, -⟩ := hiff.mp hpos
-  exact absurd (hb' ▸ hb) (by simp)
+  obtain ⟨-, ⟨-, b, hb, -, rfl⟩, -⟩ := hiff.2 hpos
+  exact absurd (show Equiv.swap true false true = true from hb) (by simp)
 
 end Possession

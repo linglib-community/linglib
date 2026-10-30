@@ -53,7 +53,7 @@ monotonicity of the five quantifiers (`rows_predicted_mainstream`).
 
 namespace GeurtsPouscoulous2009
 
-open Quantifier Quantifier.GQ Quantifier.NP ModalLogic
+open Quantifier Quantifier.Det ModalLogic
 open SetRel
 
 variable {W : Type*}
@@ -91,36 +91,36 @@ variable {α : Type*}
 
 /-- The stronger mainstream prediction, that a local scalar inference is preferred in every scope
 that is not downward entailing. -/
-def PredictsLocalSI (Q : GQ α) : Prop := ¬ ScopeAntitone Q
+def PredictsLocalSI (Q : Det α) : Prop := ¬ ScopeAntitone Q
 
 /-- The weaker prediction, that a local scalar inference is preferred in upward-entailing
 scopes. -/
-def PredictsLocalSIWeak (Q : GQ α) : Prop := ScopeMonotone Q
+def PredictsLocalSIWeak (Q : Det α) : Prop := ScopeMonotone Q
 
 /-- The quantifiers over squares of the third experiment's sentences. -/
 inductive Quant
   | all | moreThanOne | exactlyTwo | notAll | notMoreThanOne
   deriving DecidableEq, Repr
 
-noncomputable def Quant.sem [Fintype α] : Quant → GQ α
+noncomputable def Quant.sem [Fintype α] : Quant → Det α
   | .all => every
   | .moreThanOne => atLeast 2
   | .exactlyTwo => exactly 2
   | .notAll => everyᶜ
   | .notMoreThanOne => atMost 1
 
-theorem all_predictsLocalSIWeak [Fintype α] : PredictsLocalSIWeak (Quant.all.sem : GQ α) :=
+theorem all_predictsLocalSIWeak [Fintype α] : PredictsLocalSIWeak (Quant.all.sem : Det α) :=
   scopeMonotone_every
 
 theorem moreThanOne_predictsLocalSIWeak [Fintype α] :
-    PredictsLocalSIWeak (Quant.moreThanOne.sem : GQ α) :=
+    PredictsLocalSIWeak (Quant.moreThanOne.sem : Det α) :=
   scopeMonotone_atLeast 2
 
-theorem notAll_not_predictsLocalSI [Fintype α] : ¬ PredictsLocalSI (Quant.notAll.sem : GQ α) :=
-  not_not.mpr (ScopeMonotone.compl _ scopeMonotone_every)
+theorem notAll_not_predictsLocalSI [Fintype α] : ¬ PredictsLocalSI (Quant.notAll.sem : Det α) :=
+  not_not.mpr scopeMonotone_every.compl
 
 theorem notMoreThanOne_not_predictsLocalSI [Fintype α] :
-    ¬ PredictsLocalSI (Quant.notMoreThanOne.sem : GQ α) :=
+    ¬ PredictsLocalSI (Quant.notMoreThanOne.sem : Det α) :=
   not_not.mpr (scopeAntitone_atMost 1)
 
 /-! ### The verification situations -/
@@ -140,10 +140,10 @@ abbrev onePartial : Situation := fun s c ↦ s = 1 ∨ (s = 0 ∧ c = 0)
 abbrev twoPartial : Situation := fun s c ↦ s = 2 ∨ c = 0
 
 /-- *Connected with some of the circles*. -/
-abbrev someC (R : Situation) (s : Fin 3) : Prop := ∃ c, R s c
+abbrev someC (R : Situation) : Set (Fin 3) := {s | ∃ c, R s c}
 
 /-- The local construal, *connected with some but not all of the circles*. -/
-abbrev someNotAllC (R : Situation) (s : Fin 3) : Prop := (∃ c, R s c) ∧ ¬ ∀ c, R s c
+abbrev someNotAllC (R : Situation) : Set (Fin 3) := {s | (∃ c, R s c) ∧ ¬ ∀ c, R s c}
 
 /-- The two verification trials of *exactly two*; the other sentences had one. -/
 inductive Trial
@@ -156,46 +156,43 @@ def situation : Quant → Trial → Situation
   | _, _ => allSome
 
 /-- The classical construal of a verification item. -/
-def Classical (q : Quant) (t : Trial) : Prop := q.sem (fun _ ↦ True) (someC (situation q t))
+def Classical (q : Quant) (t : Trial) : Prop := q.sem Set.univ (someC (situation q t))
 
 /-- The local-implicature construal of a verification item. -/
-def Local (q : Quant) (t : Trial) : Prop := q.sem (fun _ ↦ True) (someNotAllC (situation q t))
+def Local (q : Quant) (t : Trial) : Prop := q.sem Set.univ (someNotAllC (situation q t))
 
 /-- What mainstream conventionalism predicts of an item, the local construal outside
 downward-entailing scopes and the classical one within them. -/
 def Mainstream (q : Quant) (t : Trial) : Prop :=
-  (PredictsLocalSI (q.sem : GQ (Fin 3)) ∧ Local q t) ∨
-    (¬ PredictsLocalSI (q.sem : GQ (Fin 3)) ∧ Classical q t)
+  (PredictsLocalSI (q.sem : Det (Fin 3)) ∧ Local q t) ∨
+    (¬ PredictsLocalSI (q.sem : Det (Fin 3)) ∧ Classical q t)
 
-theorem all_predictsLocalSI : PredictsLocalSI (Quant.all.sem : GQ (Fin 3)) := fun h ↦
-  h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
-    fun _ hf ↦ hf.elim) (fun _ _ ↦ trivial) 0 trivial
+theorem all_predictsLocalSI : PredictsLocalSI (Quant.all.sem : Det (Fin 3)) := fun h ↦
+  h Set.univ (Set.empty_subset _) (fun _ _ ↦ trivial) (Set.mem_univ 0)
 
-theorem moreThanOne_predictsLocalSI : PredictsLocalSI (Quant.moreThanOne.sem : GQ (Fin 3)) := by
+theorem moreThanOne_predictsLocalSI : PredictsLocalSI (Quant.moreThanOne.sem : Det (Fin 3)) := by
   intro h
-  have key : Quant.moreThanOne.sem (fun _ : Fin 3 ↦ True) (fun _ ↦ True) →
-      Quant.moreThanOne.sem (fun _ : Fin 3 ↦ True) (fun _ ↦ False) :=
-    h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
-      fun _ hf ↦ hf.elim)
+  have key : Quant.moreThanOne.sem (Set.univ : Set (Fin 3)) Set.univ →
+      Quant.moreThanOne.sem (Set.univ : Set (Fin 3)) ∅ :=
+    h Set.univ (Set.empty_subset _)
   simp only [Quant.sem] at key
   revert key
   decide
 
-theorem exactlyTwo_predictsLocalSI : PredictsLocalSI (Quant.exactlyTwo.sem : GQ (Fin 3)) := by
+theorem exactlyTwo_predictsLocalSI : PredictsLocalSI (Quant.exactlyTwo.sem : Det (Fin 3)) := by
   intro h
-  have key : Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (fun s ↦ s = 0 ∨ s = 1) →
-      Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (· = 0) :=
-    h (fun _ ↦ True) (show ((· = 0) : Fin 3 → Prop) ≤ fun s ↦ s = 0 ∨ s = 1 from
-      fun _ hs ↦ Or.inl hs)
+  have key : Quant.exactlyTwo.sem (Set.univ : Set (Fin 3)) {s | s = 0 ∨ s = 1} →
+      Quant.exactlyTwo.sem (Set.univ : Set (Fin 3)) {0} :=
+    h Set.univ (show ({0} : Set (Fin 3)) ⊆ {s | s = 0 ∨ s = 1} from fun _ hs ↦ Or.inl hs)
   simp only [Quant.sem] at key
   revert key
   decide
 
 theorem classical_all : Classical .all .none :=
-  show ∀ s : Fin 3, True → someC allSome s by decide
+  show ∀ s : Fin 3, True → s ∈ someC allSome by decide
 
 theorem not_local_all : ¬ Local .all .none :=
-  show ¬ ∀ s : Fin 3, True → someNotAllC allSome s by decide
+  show ¬ ∀ s : Fin 3, True → s ∈ someNotAllC allSome by decide
 
 theorem classical_moreThanOne : Classical .moreThanOne .none := by
   simp only [Classical, Quant.sem, situation]
@@ -222,10 +219,10 @@ theorem local_exactlyTwo_b : Local .exactlyTwo .b := by
   decide
 
 theorem not_classical_notAll : ¬ Classical .notAll .none :=
-  show ¬ ¬ ∀ s : Fin 3, True → someC allSome s by decide
+  show ¬ ¬ ∀ s : Fin 3, True → s ∈ someC allSome by decide
 
 theorem local_notAll : Local .notAll .none :=
-  show ¬ ∀ s : Fin 3, True → someNotAllC allSome s by decide
+  show ¬ ∀ s : Fin 3, True → s ∈ someNotAllC allSome by decide
 
 theorem not_classical_notMoreThanOne : ¬ Classical .notMoreThanOne .none := by
   simp only [Classical, Quant.sem, situation]

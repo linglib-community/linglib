@@ -78,16 +78,16 @@ instance : MeasurableSpace Sentence := ⊤
 
 /-- The quantifiers' meanings (Table 1) are *every* with a nonempty restrictor, *some*, its
 inner negation, and *no*. -/
-def Quant.denote : Quant → GQ Region
-  | .all => fun R S ↦ GQ.every R S ∧ ∃ r, R r
-  | .some => GQ.some
-  | .someNot => GQ.innerNeg GQ.some
-  | .no => GQ.no
+def Quant.denote : Quant → Det Region
+  | .all => fun R S ↦ Det.every R S ∧ R.Nonempty
+  | .some => Det.some
+  | .someNot => Det.innerNeg Det.some
+  | .no => Det.no
 
 /-- A sentence holds at a state when its quantifier relates the existing object types of the
 subject term to the object types of the predicate term. -/
 def Sentence.Holds (p : Sentence) (s : State) : Prop :=
-  p.quant.denote (fun r ↦ r ∈ s ∧ p.subj ∈ r.1) fun r ↦ p.pred ∈ r.1
+  p.quant.denote {r | r ∈ s ∧ p.subj ∈ r.1} {r | p.pred ∈ r.1}
 
 section Holds
 
@@ -95,21 +95,21 @@ variable {x y : Term} {s : State}
 
 theorem holds_all :
     Sentence.Holds ⟨.all, x, y⟩ s ↔ (∀ r ∈ s, x ∈ r.1 → y ∈ r.1) ∧ ∃ r ∈ s, x ∈ r.1 := by
-  simp [Sentence.Holds, Quant.denote, GQ.every]
+  simp [Sentence.Holds, Quant.denote, Det.every, Set.subset_def, Set.Nonempty]
 
 theorem holds_some : Sentence.Holds ⟨.some, x, y⟩ s ↔ ∃ r ∈ s, x ∈ r.1 ∧ y ∈ r.1 := by
-  simp [Sentence.Holds, Quant.denote, GQ.some, and_assoc]
+  simp [Sentence.Holds, Quant.denote, Det.some, Set.Nonempty, and_assoc]
 
 theorem holds_someNot :
     Sentence.Holds ⟨.someNot, x, y⟩ s ↔ ∃ r ∈ s, x ∈ r.1 ∧ y ∉ r.1 := by
-  simp [Sentence.Holds, Quant.denote, GQ.innerNeg, GQ.some, and_assoc]
+  simp [Sentence.Holds, Quant.denote, Det.innerNeg, Det.some, Set.Nonempty, and_assoc]
 
 theorem holds_no : Sentence.Holds ⟨.no, x, y⟩ s ↔ ∀ r ∈ s, x ∈ r.1 → y ∉ r.1 := by
-  simp [Sentence.Holds, Quant.denote, GQ.no]
+  simp [Sentence.Holds, Quant.denote, Det.no, Set.subset_def]
 
 theorem holds_some_of_holds_all (h : Sentence.Holds ⟨.all, x, y⟩ s) :
     Sentence.Holds ⟨.some, x, y⟩ s :=
-  GQ.subalternation_a_i _ _ h.2 h.1
+  Det.subalternation_a_i h.2 h.1
 
 end Holds
 

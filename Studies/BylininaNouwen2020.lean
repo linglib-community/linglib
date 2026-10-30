@@ -64,8 +64,8 @@ The determiner view (Section 2) and the Dutch *hoeven* data (26)–(28) are not 
 @[expose] public section
 namespace BylininaNouwen2020
 
-open BylininaNouwen2018 Degree Exhaustification Numerals Quantifier Quantifier.GQ
-  Quantifier.NP Set
+open BylininaNouwen2018 Degree Exhaustification Numerals Quantifier Quantifier.Det
+  Quantifier Set
 
 variable {α : Type*}
 
@@ -108,25 +108,25 @@ variable {n : ℕ}
 
 /-- Spector's wide-scope exhaustification over a possibility modal, the reading (36-b), is
 Kennedy's numeral raised over the modal ((46)). -/
-theorem exhAgainst_poss_iff_highScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
-    exhAgainst (· < ·) (fun m ↦ (count '' {w | R w} ∩ Comparison.ge.interval m).Nonempty) n ↔
-      HighScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
-  simp only [inter_nonempty, exists_mem_image, Comparison.interval_ge, mem_Ici, mem_ofPred_eq]
-  exact exhAgainst_iff_highScope (Q := GQ.some R) (P := Iic ∘ count)
+theorem exhAgainst_poss_iff_highScope {W : Type*} {R : Set W} {count : W → ℕ} :
+    exhAgainst (· < ·) (fun m ↦ (count '' R ∩ Comparison.ge.interval m).Nonempty) n ↔
+      HighScope (MaxIn {n}) (Det.some R) (Iic ∘ count) := by
+  simp only [inter_nonempty, exists_mem_image, Comparison.interval_ge, mem_Ici]
+  exact exhAgainst_iff_highScope (Q := Det.some R) (P := Iic ∘ count)
 
 -- (36-a)
-theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
-    (count '' {w | R w} ∩ Comparison.eq.interval n).Nonempty ↔
-      LowScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
+theorem poss_eq_iff_lowScope {W : Type*} {R : Set W} {count : W → ℕ} :
+    (count '' R ∩ Comparison.eq.interval n).Nonempty ↔
+      LowScope (MaxIn {n}) (Det.some R) (Iic ∘ count) := by
   simp only [inter_nonempty, exists_mem_image, Comparison.interval_eq, lowScope_maxIn]
   rfl
 
 /-- Over *some students*, the high reading (39) strictly entails the low one. -/
 theorem lowScope_some_not_highScope (n : ℕ) :
-    LowScope (MaxIn {n}) (GQ.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) ∧
-      ¬ HighScope (MaxIn {n}) (GQ.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) :=
-  ⟨lowScope_maxIn.2 ⟨0, trivial, rfl⟩, fun h ↦ absurd
-    ((highScope_maxIn_singleton_some.1 h).2 ⟨1, trivial, rfl⟩) (by simp)⟩
+    LowScope (MaxIn {n}) (Det.some Set.univ) (Iic ∘ fun i : Fin 2 ↦ n + i) ∧
+      ¬ HighScope (MaxIn {n}) (Det.some Set.univ) (Iic ∘ fun i : Fin 2 ↦ n + i) :=
+  ⟨lowScope_maxIn.2 ⟨0, Set.mem_univ 0, rfl⟩, fun h ↦ absurd
+    ((highScope_maxIn_singleton_some.1 h).2 ⟨1, Set.mem_univ 1, rfl⟩) (by simp)⟩
 
 end Scope
 
@@ -141,7 +141,7 @@ theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n :=
     ⟨fun h ↦ (h.1 : n = x).symm, fun h ↦ h ▸ isGreatest_singleton⟩)
 
 theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (individual n) := by
-  rw [BE_maxIn_singleton, BE_individual]
+  rw [BE_maxIn_singleton, BE_individual]; rfl
 
 -- (50), (48)
 theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (MaxIn {n})) = some n := by
@@ -172,7 +172,7 @@ theorem MAX_individual_iff_exhAgainst {n : ℕ} {P : Set ℕ} :
 
 -- (51)
 theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :
-    MAX (individual 0) (countDegrees A (plural B)) ↔ GQ.no A B := by
+    MAX (individual 0) (countDegrees A (plural B)) ↔ Det.no A B := by
   rw [MAX_individual]; exact maxIn_zero_countDegrees_iff
 
 section Polarity

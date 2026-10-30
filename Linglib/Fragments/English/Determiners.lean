@@ -9,9 +9,9 @@ public import Linglib.Fragments.English.Phonology
 # English determiners
 
 The quantificational determiners of English are the carrier `QuantityWord`. A word projects to a
-`Quantifier` record by `QuantityWord.toQuantifier`, which carries only what the readings leave
-open, the number the word selects and whether it selects mass nouns. The readings themselves are
-the `Denotes` instance, a set of `Quantifier.GQ.Family` per word: a word with one consensus
+`QuantificationalDeterminer` record by `QuantityWord.toQuantifier`, which carries only what the
+readings leave open, the number the word selects and whether it selects mass nouns. The readings themselves are
+the `Denotes` instance, a set of `Quantifier.Det.Family` per word: a word with one consensus
 reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every}`, and *many*, whose standard
 Barwise and Cooper leave to context, denotes `∅`. Everything a reading fixes, its force,
 monotonicity, strength and conservativity, is a theorem about it, as in
@@ -85,7 +85,7 @@ def selectsMass : QuantityWord → Bool
   | .few | .every | .each | .many | .both | .neither => false
 
 /-- The determiner record of a word carries its form, its number and its mass selection. -/
-def toQuantifier (w : QuantityWord) : Quantifier :=
+def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
   { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
 
 /-- The six-word quantity scale of [van-tiel-franke-sauerland-2021] runs from *none* to *all*;
@@ -104,20 +104,20 @@ theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 universe u
 
 /-- A word denotes the readings the literature makes available for it, as generalized
-quantifiers on every finite domain. *None* reads as `no`, *some* as `Quantifier.GQ.some`, *all*,
+quantifiers on every finite domain. *None* reads as `no`, *some* as `Quantifier.Det.some`, *all*,
 *every* and *each* as `every`, *most* as `most`, *few* as `few`, *half* as `half`, *both* as
 `both` and *neither* as `neither`; *many* has no reading, since [barwise-cooper-1981] leave its
 standard to context. -/
-noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
   denote
-    | .none_ => {Quantifier.GQ.Family.no}
-    | .some_ => {Quantifier.GQ.Family.some}
-    | .all | .every | .each => {Quantifier.GQ.Family.every}
-    | .most => {Quantifier.GQ.Family.most}
-    | .few => {Quantifier.GQ.Family.few}
-    | .half => {Quantifier.GQ.Family.half}
-    | .both => {Quantifier.GQ.Family.both}
-    | .neither => {Quantifier.GQ.Family.neither}
+    | .none_ => {Quantifier.Det.Family.no}
+    | .some_ => {Quantifier.Det.Family.some}
+    | .all | .every | .each => {Quantifier.Det.Family.every}
+    | .most => {Quantifier.Det.Family.most}
+    | .few => {Quantifier.Det.Family.few}
+    | .half => {Quantifier.Det.Family.half}
+    | .both => {Quantifier.Det.Family.both}
+    | .neither => {Quantifier.Det.Family.neither}
     | .many => ∅
 
 end QuantityWord
@@ -176,7 +176,8 @@ def your : PossessiveDeterminer := { form := "your" }
 /-! ## The inventory -/
 
 /-- The quantificational determiners as records. -/
-def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier
+def allQuantifiers : List QuantificationalDeterminer :=
+  QuantityWord.toList.map QuantityWord.toQuantifier
 
 /-- The articles. -/
 def allArticles : List Article := [the, a]

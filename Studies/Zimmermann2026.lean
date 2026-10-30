@@ -40,20 +40,20 @@ that negation cannot shift the situation argument of the function.
 
 namespace Zimmermann2026
 
-open Quantifier Quantifier.GQ
+open Quantifier Quantifier.Det
 
 /-- Under the existential analysis (16b), the two scopings of *wani* under negation in (13) differ
 on the passenger model of [zimmermann-2008]. -/
 theorem wani_scopings_diverge :
     ¬ ((¬ ∃ x : Zimmermann2008.Faasinjee, Zimmermann2008.Daura x) ↔
-      GQ.some (fun _ : Zimmermann2008.Faasinjee ↦ True) (¬ Zimmermann2008.Daura ·)) :=
+      Det.some (fun _ : Zimmermann2008.Faasinjee ↦ True) (¬ Zimmermann2008.Daura ·)) :=
   fun h ↦ Zimmermann2008.wani_narrow_scope_false (h.mpr Zimmermann2008.wani_wide_scope)
 
 /-- Under the choice-function analysis (16a), *bí* under negation, as in (15), is not the narrow
 reading when the restrictor has two members. -/
 theorem bi_reading_not_narrow {S E : Type*} (f : S → ChoiceFunction E) {s : S}
     {P : S → E → Prop} {a b : E} (ha : P s a) (hb : P s b) (hab : a ≠ b) :
-    ¬ ∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ GQ.some (P s) VP := fun h ↦
+    ¬ ∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ Det.some (P s) VP := fun h ↦
   have h' := (Owusu2022.negation_narrow_iff f ⟨a, ha⟩).mp h
   hab ((h' a ha).trans (h' b hb).symm)
 

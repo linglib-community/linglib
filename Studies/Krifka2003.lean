@@ -124,7 +124,7 @@ otherwise Partee's existential shift (30a) of a predicate meeting a verbal predi
 def app : Den E → Den E → Option (Den E)
   | pred P, ent x | ent x, pred P | vp P, ent x | ent x, vp P => some (tv (P x))
   | quant Q, vp V | vp V, quant Q | quant Q, pred V | pred V, quant Q => some (tv (Q V))
-  | pred P, vp V | vp V, pred P => some (tv (Quantifier.GQ.some P V))
+  | pred P, vp V | vp V, pred P => some (tv (Quantifier.Det.some P V))
   | _, _ => none
 
 /-- Negation applies to truth values only. -/

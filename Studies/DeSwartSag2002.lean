@@ -34,7 +34,7 @@ resumption, so *pas* with an n-word reads only as a double negation.
 
 namespace DeSwartSag2002
 
-open Quantifier Quantifier.GQ Quantifier.Polyadic NaturalLogic
+open Quantifier Quantifier.Det Quantifier.Polyadic NaturalLogic
 open scoped Denotes
 
 universe u
@@ -48,30 +48,30 @@ inductive Mode where
 
 section Readings
 
-variable {α : Type u} [Fintype α] {A B : α → Prop} {R : α → α → Prop}
+variable {α : Type u} [Fintype α] {A B : Set α} {R : α → α → Prop}
 
 /-- The reading of a clause whose two arguments are n-words with restrictors `A` and `B` and
 whose verb denotes `R`, as *Personne n'aime personne* ((13), (14)). -/
-def reading : Mode → (α → Prop) → (α → Prop) → (α → α → Prop) → Prop
+def reading : Mode → Set α → Set α → (α → α → Prop) → Prop
   | .iteration, A, B, R => iterate no no A B R
-  | .resumption, A, B, R => resume GQ.Family.no A B R
+  | .resumption, A, B, R => resume Det.Family.no A B R
 
 /-- The double negation reading, `¬∃x¬∃y R(x, y)` ((13)), is *every*·*some*, as the gloss of
 (33b) has it: everyone loves the son of someone. -/
-theorem reading_iteration_iff : reading .iteration A B R ↔ iterate every GQ.some A B R :=
+theorem reading_iteration_iff : reading .iteration A B R ↔ iterate every Det.some A B R :=
   iterate_no_no_iff
 
 /-- The concord reading, `¬∃x∃y R(x, y)` ((14)), is *no*·*some* ((17)). -/
-theorem reading_resumption_iff : reading .resumption A B R ↔ iterate no GQ.some A B R :=
+theorem reading_resumption_iff : reading .resumption A B R ↔ iterate no Det.some A B R :=
   resume_no_iff
 
 /-- The two readings differ: of one individual who loves no one, *Personne n'aime personne* is
 true on its concord reading and false on its double negation reading. -/
 theorem reading_resumption_and_not_iteration :
-    reading .resumption (fun _ : Fin 1 ↦ True) (fun _ ↦ True) (fun _ _ ↦ False) ∧
-      ¬ reading .iteration (fun _ : Fin 1 ↦ True) (fun _ ↦ True) (fun _ _ ↦ False) := by
+    reading .resumption (Set.univ : Set (Fin 1)) Set.univ (fun _ _ ↦ False) ∧
+      ¬ reading .iteration (Set.univ : Set (Fin 1)) Set.univ (fun _ _ ↦ False) := by
   rw [reading_resumption_iff, reading_iteration_iff]
-  simp [iterate, no, every, GQ.some]
+  simp [iterate, no, every, Det.some]
 
 end Readings
 
@@ -87,28 +87,26 @@ variable {α : Type u}
 
 /-- *No* is anti-additive in its scope: none of `A` is in `S ∪ S'` iff none is in `S` and none
 in `S'`. -/
-theorem isAntiAdditive_no (A : α → Prop) : IsAntiAdditive (no A) := fun S S' ↦ by
-  simp only [no, Pi.sup_apply, sup_Prop_eq, inf_Prop_eq, not_or]
-  exact propext ⟨fun h ↦ ⟨fun x hx ↦ (h x hx).1, fun x hx ↦ (h x hx).2⟩,
-    fun h x hx ↦ ⟨h.1 x hx, h.2 x hx⟩⟩
+theorem isAntiAdditive_no (A : Set α) : IsAntiAdditive (no A) :=
+  isAntiAdditive_iff_gq.2 (rightAntiAdditive_no A)
 
-/-- *Few* is downward-entailing (`Quantifier.GQ.scopeAntitone_few`) but not anti-additive: of
+/-- *Few* is downward-entailing (`Quantifier.Det.scopeAntitone_few`) but not anti-additive: of
 three individuals, few are `0` and few are `1`, but not few are `0` or `1`. -/
-theorem not_isAntiAdditive_few : ¬ IsAntiAdditive (few fun _ : Fin 3 ↦ True) := fun h ↦ by
-  have : few (fun _ : Fin 3 ↦ True) (fun x ↦ x = 0 ∨ x = 1) ↔
-      few (fun _ : Fin 3 ↦ True) (· = 0) ∧ few (fun _ : Fin 3 ↦ True) (· = 1) :=
-    eq_iff_iff.mp (h (· = 0) (· = 1))
+theorem not_isAntiAdditive_few : ¬ IsAntiAdditive (few (Set.univ : Set (Fin 3))) := fun h ↦ by
+  let U : Set (Fin 3) := Set.univ
+  have : few U ({0} ∪ {1}) ↔ few U {0} ∧ few U {1} :=
+    isAntiAdditive_iff_gq.1 h {0} {1}
   revert this; decide
 
-theorem not_isAntiAdditive_some : ¬ IsAntiAdditive (GQ.some fun _ : PUnit.{u + 1} ↦ True) :=
-  fun h ↦ by simpa [GQ.some] using eq_iff_iff.mp (h ⊤ ⊥)
+theorem not_isAntiAdditive_some : ¬ IsAntiAdditive (Det.some (Set.univ : Set PUnit.{u + 1})) :=
+  fun h ↦ by simpa [Det.some] using isAntiAdditive_iff_gq.1 h Set.univ ∅
 
 /-- Of the readings of *aucun*, the one that is anti-additive on every finite domain, as a
 concord item must be, is the negative quantifier. -/
-theorem mem_aucun_and_isAntiAdditive_iff {d : GQ.Family.{u}} :
+theorem mem_aucun_and_isAntiAdditive_iff {d : Det.Family.{u}} :
     (d ∈ ⟦French.Determiners.QuantityWord.aucun⟧ ∧
-      ∀ (β : Type u) [Fintype β] (A : β → Prop), IsAntiAdditive (d β A)) ↔
-      d = GQ.Family.no := by
+      ∀ (β : Type u) [Fintype β] (A : Set β), IsAntiAdditive (d β A)) ↔
+      d = Det.Family.no := by
   refine ⟨fun ⟨hd, h⟩ ↦ hd.resolve_right fun hs ↦ ?_,
     fun h ↦ h ▸ ⟨.inl rfl, fun _ _ ↦ isAntiAdditive_no⟩⟩
   subst hs; exact not_isAntiAdditive_some (h PUnit _)
@@ -123,18 +121,18 @@ quantifier unchanged: in concord, negation is semantically empty (§6.1). The sa
 
 section TypeZero
 
-variable {α : Type u} {A S : α → Prop}
+variable {α : Type u} {A S : Set α}
 
 /-- The reading of a negator with one n-word: negation iterated over the n-word, or absorbed
 into its resumption. -/
-def negReading : Mode → (α → Prop) → (α → Prop) → Prop
+def negReading : Mode → Set α → Set α → Prop
   | .iteration, A, S => ¬ no A S
   | .resumption, A, S => no A S
 
 /-- Negation iterated over an n-word gives the existential reading of *Il ne va pas nulle part*
 ((36a)), since (40) keeps *pas* out of resumption. -/
-theorem negReading_iteration_iff : negReading .iteration A S ↔ GQ.some A S := by
-  simp [negReading, no, GQ.some]
+theorem negReading_iteration_iff : negReading .iteration A S ↔ Det.some A S := by
+  rw [negReading, no_iff_not_some, not_not]
 
 -- (56)
 theorem negReading_resumption_iff : negReading .resumption A S ↔ no A S := Iff.rfl

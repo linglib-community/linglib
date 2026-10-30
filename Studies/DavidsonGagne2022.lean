@@ -58,7 +58,7 @@ realise the pronoun, and check the paper's examples.
 
 namespace DavidsonGagne2022
 
-open Quantifier Quantifier.GQ Presupposition ASL.Determiners
+open Quantifier Quantifier.Det Presupposition ASL.Determiners
 
 variable {E : Type*} [PartialOrder E]
 
@@ -144,12 +144,12 @@ theorem no_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
   restrictorAntitone_no Q fun _ hy => le_trans hy h
 
 theorem some_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
-    GQ.some (partitive x) Q → GQ.some (partitive x') Q :=
+    Det.some (partitive x) Q → Det.some (partitive x') Q :=
   restrictorMonotone_some Q fun _ hy => le_trans hy h
 
 -- (36) [bergen-2016]
 theorem not_strengthening {x x' w : E} (hw : w ≤ x') (hwx : ¬ w ≤ x) :
-    ¬ ∀ Q : E → Prop, GQ.some (partitive x') Q → GQ.some (partitive x) Q :=
+    ¬ ∀ Q : E → Prop, Det.some (partitive x') Q → Det.some (partitive x) Q :=
   fun h ↦ let ⟨_, hy, e⟩ := h (· = w) ⟨w, hw, rfl⟩; hwx (e ▸ hy)
 
 /-! ### Realising the pronoun in the quantifier -/

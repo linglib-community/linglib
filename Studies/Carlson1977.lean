@@ -12,7 +12,7 @@ other quantifiers (§1.3), and even narrower scope than *a* allows, as in (30) *
 everywhere* against the bizarre (29) *A dog was everywhere* (differentiated scope, §1.4). Its
 existential and generic uses are in complementary distribution, fixed by the predicate (§2). The
 analysis of §4 treats the bare plural as the proper name of a kind, translated as
-[montague-1973] translates a proper name, `λP P{d}` (`Quantifier.NP.individual`), and puts the
+[montague-1973] translates a proper name, `λP P{d}` (`Quantifier.individual`), and puts the
 existential in the predicate. Of the two classes of predicates that [milsark-1974] and
 [siegel-1976] isolate, Milsark's properties and states, a property is predicated of an
 individual and a state of one of its stages, a temporally and spatially bounded realization of
@@ -20,7 +20,7 @@ it: *Dogs are intelligent* is `I(d)` and *Dogs are sick* is `∃y[R(y, d) ∧ si
 of the state under the realization relation `R` (`SetRel.image`).
 
 Three consequences are derived. The scope facts force the analysis: by
-`Quantifier.NP.exists_eq_individual_iff` a noun-phrase denotation that commutes with negation and
+`Quantifier.exists_eq_individual_iff` a noun-phrase denotation that commutes with negation and
 with universal quantification is a proper name, and an existential over a noun commutes with both
 exactly when the noun has one member (`some_scopeless_iff`). Differentiated scope follows from
 the ontology: a particular individual "can only be in one place at a time" (`SpatiallyBounded`),
@@ -52,7 +52,7 @@ lawn* and *All dogs are mammals* give *Mammals are sitting on my lawn*, (119)
   relation to the state `run'` is left open, as in the paper.
 * The negation of (134), the universal of (22) and (23), the conjunction of (58) and (59), and the
   belief of (132), read as universal quantification over doxastic alternatives, are all instances
-  of the two clauses of `Quantifier.NP.exists_eq_individual_iff`. Montague's intension operator
+  of the two clauses of `Quantifier.exists_eq_individual_iff`. Montague's intension operator
   is not modelled.
 
 ## TODO
@@ -123,8 +123,8 @@ theorem not_everywhere [Nontrivial Place] (hx : M.SpatiallyBounded x) (t : Time)
 
 /-- (135b) *Some dog is everywhere* is false when every dog is spatially bounded, since the
 existential over dogs scopes over the universal over places. -/
-theorem not_some_everywhere [Nontrivial Place] {N : Ind → Prop}
-    (hN : ∀ x, N x → M.SpatiallyBounded x) (t : Time) : ¬ GQ.some N (M.Everywhere t) :=
+theorem not_some_everywhere [Nontrivial Place] {N : Set Ind}
+    (hN : ∀ x ∈ N, M.SpatiallyBounded x) (t : Time) : ¬ Det.some N {x | M.Everywhere t x} :=
   fun ⟨x, hx, h⟩ ↦ not_everywhere (hN x hx) t h
 
 /-! ### Kinds and their instances -/
@@ -159,7 +159,7 @@ end Model
 /-! ### Scope
 
 A proper name commutes with negation and with universal quantification, and by
-`Quantifier.NP.exists_eq_individual_iff` nothing else does. *Cats are here and cats are not here*,
+`Quantifier.exists_eq_individual_iff` nothing else does. *Cats are here and cats are not here*,
 (134), is a contradiction because `λx ¬∃y[R(y, x) ∧ Here'(y)](c)` is `¬∃y[R(y, c) ∧ Here'(y)]`
 (p. 453), the name commuting with the negation; *Everyone read books on caterpillars*, (23), has
 one reading because the name commutes with the universal. *Buildings will collapse in Berlin
@@ -167,11 +167,10 @@ tomorrow, and will burn in Boston the day after*, (59), means (58) because the n
 the conjunction of two states, each with its own existential over stages: the predicate is
 `R.image P ∩ R.image Q`, which only contains `R.image (P ∩ Q)`. -/
 
-theorem some_scopeless_iff {E : Type*} {N : E → Prop} :
-    ((∀ P, GQ.some N Pᶜ ↔ ¬ GQ.some N P) ∧
-      ∀ S : Set (E → Prop), GQ.some N (sInf S) ↔ ∀ P ∈ S, GQ.some N P) ↔
-      ∃ a, N = ident a := by
-  simp only [← NP.exists_eq_individual_iff, NP.some_eq_individual_iff]
+theorem some_scopeless_iff {E : Type*} {N : Set E} :
+    ((∀ P, Det.some N Pᶜ ↔ ¬ Det.some N P) ∧
+      ∀ S : Set (Set E), Det.some N (⋂₀ S) ↔ ∀ P ∈ S, Det.some N P) ↔ ∃ a, N = {a} := by
+  simp only [← Quantifier.exists_eq_individual_iff, Quantifier.some_eq_individual_iff]
 
 /-! ### A model
 
@@ -227,7 +226,7 @@ example : ¬ model.SpatiallyBounded .dogs :=
   fun h ↦ Model.not_everywhere h () model_everywhere_dogs
 
 /-- (135b) in the model: no dog is everywhere. -/
-example : ¬ GQ.some (· ~[ofKind] .dogs) (model.Everywhere ()) :=
+example : ¬ Det.some {x | x ~[ofKind] .dogs} {x | model.Everywhere () x} :=
   Model.not_some_everywhere (by rintro _ ⟨d, rfl, -⟩; exact model_spatiallyBounded d) ()
 
 /-- (120) in the model: a property that dogs have and mammals lack, such as being good pets, is

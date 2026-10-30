@@ -72,8 +72,8 @@ open Quantifier
 
 /-- The iteration (i) of footnote 8, in which `Q₁` members of `P` bear `R` to `Q₂` of the other
 members of `P`. -/
-def iterateOthers (Q₁ Q₂ : GQ A) (P : A → Prop) (R : A → A → Prop) : Prop :=
-  Q₁ P fun x ↦ Q₂ (fun y ↦ P y ∧ x ≠ y) (R x)
+def iterateOthers (Q₁ Q₂ : Det A) (P : Set A) (R : A → A → Prop) : Prop :=
+  Q₁ P {x | Q₂ (P \ {x}) {y | R x y}}
 
 open Fin.NatCast in
 theorem intermediate_of_succ {n : ℕ} [NeZero n] (hn : 2 ≤ n) {R : Fin n → Fin n → Prop}
@@ -122,11 +122,10 @@ theorem not_intermediate_twoTriangles : ¬ IntermediateReciprocity twoTriangles 
   exact absurd (hblock ((intermediateReciprocity_iff.1 h).2 (Finset.mem_univ 0)
     (Finset.mem_univ 3) (by decide))) (by decide)
 
-theorem iterateOthers_hexagon_iff (Q₁ Q₂ : GQ (Fin 6)) (hQ₂ : Q₂.QuantityInvariant) :
-    iterateOthers Q₁ Q₂ (fun _ ↦ True) hexagon ↔
-      iterateOthers Q₁ Q₂ (fun _ ↦ True) twoTriangles := by
+theorem iterateOthers_hexagon_iff (Q₁ Q₂ : Det (Fin 6)) (hQ₂ : Q₂.QuantityInvariant) :
+    iterateOthers Q₁ Q₂ Set.univ hexagon ↔ iterateOthers Q₁ Q₂ Set.univ twoTriangles := by
   have key (x : Fin 6) : ∃ e : Equiv.Perm (Fin 6),
-      (∀ y, (True ∧ x ≠ e y) ↔ (True ∧ x ≠ y)) ∧ ∀ y, hexagon x (e y) ↔ twoTriangles x y := by
+      (∀ y, e y ≠ x ↔ y ≠ x) ∧ ∀ y, hexagon x (e y) ↔ twoTriangles x y := by
     fin_cases x
     · exact ⟨Equiv.swap 2 5, by decide, by decide⟩
     · exact ⟨Equiv.refl _, by decide, by decide⟩
@@ -134,18 +133,19 @@ theorem iterateOthers_hexagon_iff (Q₁ Q₂ : GQ (Fin 6)) (hQ₂ : Q₂.Quantit
     · exact ⟨Equiv.swap 2 5, by decide, by decide⟩
     · exact ⟨Equiv.refl _, by decide, by decide⟩
     · exact ⟨Equiv.swap 0 3, by decide, by decide⟩
-  have h (x : Fin 6) :
-      Q₂ (fun y ↦ True ∧ x ≠ y) (hexagon x) ↔ Q₂ (fun y ↦ True ∧ x ≠ y) (twoTriangles x) :=
-    let ⟨e, hA, hB⟩ := key x
-    hQ₂ _ _ _ _ e e.bijective hA hB
+  have h (x : Fin 6) : Q₂ (Set.univ \ {x}) {y | hexagon x y} ↔
+      Q₂ (Set.univ \ {x}) {y | twoTriangles x y} := by
+    obtain ⟨e, hA, hB⟩ := key x
+    have hA' : e ⁻¹' (Set.univ \ {x}) = Set.univ \ {x} := Set.ext fun y ↦ by simpa using hA y
+    rw [← hQ₂ e, hA', show e ⁻¹' {y | hexagon x y} = {y | twoTriangles x y} from Set.ext hB]
   simp only [iterateOthers, h]
 
 /-- No iteration with a permutation-invariant inner quantifier is Intermediate Reciprocity on every
 symmetric relation (footnote 8). -/
-theorem intermediateReciprocity_not_iterateOthers (Q₁ Q₂ : GQ (Fin 6))
+theorem intermediateReciprocity_not_iterateOthers (Q₁ Q₂ : Det (Fin 6))
     (hQ₂ : Q₂.QuantityInvariant) :
     ¬ ∀ R : Fin 6 → Fin 6 → Prop, Std.Symm R →
-      (iterateOthers Q₁ Q₂ (fun _ ↦ True) R ↔ IntermediateReciprocity R Finset.univ) := by
+      (iterateOthers Q₁ Q₂ Set.univ R ↔ IntermediateReciprocity R Finset.univ) := by
   intro h
   have h₁ := h hexagon ⟨fun _ _ h ↦ h.symm⟩
   have h₂ := h twoTriangles ⟨fun _ _ h ↦ ⟨h.1.symm, h.2.symm⟩⟩

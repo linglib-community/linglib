@@ -35,8 +35,8 @@ of the quantification.
 
 ## Implementation notes
 
-Restrictor, scope and exception set are predicates, so subtraction is `\`, inclusion `≤` and
-disjointness `Disjoint` of the pointwise Boolean algebra, and `every R S` is definitionally
+Restrictor, scope and exception set are sets, so subtraction is `\`, inclusion `≤` and
+disjointness `Disjoint` of the Boolean algebra of sets, and `every R S` is definitionally
 `R ≤ S` (`every_iff_le`) and `no R S` definitionally `R ≤ Sᶜ` (`no_iff_le_compl`). The
 disjointness formulation of the uniqueness condition is equivalent to the definition only for
 an exception set within the restrictor, which the definition entails
@@ -51,22 +51,22 @@ an exception set within the restrictor, which the definition entails
 
 namespace Quantifier.Exceptive
 
-open Quantifier Quantifier.GQ
+open Quantifier Quantifier.Det
 
-variable {α : Type*} {Q : GQ α} {A C B : α → Prop}
+variable {α : Type*} {Q : Det α} {A C B : Set α}
 
 /-! ### Domain subtraction with restrictiveness and the exception set -/
 
 /-- A restrictive exceptive subtracts the exception set `C` from the restrictor, so that the
 quantification holds with the subtraction and fails without it, (17) of [von-fintel-1993] and
 his semantics of the free exceptive (38). -/
-def Restrictive (Q : GQ α) (A C B : α → Prop) : Prop :=
+def Restrictive (Q : Det α) (A C B : Set α) : Prop :=
   Q (A \ C) B ∧ ¬ Q A B
 
 /-- `C` is the exception set of the quantification when it is the least set whose subtraction
 from the restrictor makes the quantification true, (20) and (21) of [von-fintel-1993] and his
 semantics of the *but*-phrase. -/
-def IsExceptionSet (Q : GQ α) (A C B : α → Prop) : Prop :=
+def IsExceptionSet (Q : Det α) (A C B : Set α) : Prop :=
   IsLeast {S | Q (A \ S) B} C
 
 namespace Restrictive
@@ -77,7 +77,7 @@ theorem not_of_restrictorMonotone (hQ : RestrictorMonotone Q) : ¬ Restrictive Q
 
 /-- Under a left-downward-monotone determiner a restrictive exceptive survives enlarging the
 exception set, the inference the exception set blocks. -/
-theorem mono (hQ : RestrictorAntitone Q) (h : Restrictive Q A C B) {C' : α → Prop}
+theorem mono (hQ : RestrictorAntitone Q) (h : Restrictive Q A C B) {C' : Set α}
     (hC : C ≤ C') : Restrictive Q A C' B :=
   ⟨hQ B (sdiff_le_sdiff_left hC) h.1, h.2⟩
 
@@ -86,7 +86,7 @@ end Restrictive
 namespace IsExceptionSet
 
 /-- The exception set is unique. -/
-theorem unique (h : IsExceptionSet Q A C B) {C' : α → Prop} (h' : IsExceptionSet Q A C' B) :
+theorem unique (h : IsExceptionSet Q A C B) {C' : Set α} (h' : IsExceptionSet Q A C' B) :
     C = C' :=
   IsLeast.unique h h'
 
@@ -106,7 +106,7 @@ theorem restrictive (h : IsExceptionSet Q A C B) (hC : C ≠ ⊥) : Restrictive 
 
 /-- If removing `S` rescues the quantification exactly when `S` covers `r`, then `r` is the
 exception set ([von-fintel-1993]'s §1.6). -/
-theorem of_iff_le {r : α → Prop} (h : ∀ S, Q (A \ S) B ↔ r ≤ S) : IsExceptionSet Q A r B :=
+theorem of_iff_le {r : Set α} (h : ∀ S, Q (A \ S) B ↔ r ≤ S) : IsExceptionSet Q A r B :=
   ⟨(h r).2 le_rfl, fun S hS ↦ (h S).1 hS⟩
 
 end IsExceptionSet
@@ -131,10 +131,10 @@ theorem isExceptionSet_iff_sInf_eq :
 
 /-! ### The universal determiners -/
 
-theorem isExceptionSet_every (A B : α → Prop) : IsExceptionSet every A (A \ B) B :=
+theorem isExceptionSet_every (A B : Set α) : IsExceptionSet every A (A \ B) B :=
   .of_iff_le fun _ ↦ every_iff_le.trans sdiff_le_comm
 
-theorem isExceptionSet_no (A B : α → Prop) : IsExceptionSet no A (A ⊓ B) B :=
+theorem isExceptionSet_no (A B : Set α) : IsExceptionSet no A (A ⊓ B) B :=
   .of_iff_le fun S ↦ by rw [no_iff_le_compl, sdiff_le_comm, sdiff_compl]
 
 /-- (23) of [von-fintel-1993] for *every*. -/

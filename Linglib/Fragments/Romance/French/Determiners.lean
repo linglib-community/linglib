@@ -8,7 +8,7 @@ public import Linglib.Semantics.Denotation
 # French determiners
 
 This file records the French determiners the studies consume. The quantificational determiners
-are the carrier `QuantityWord`, whose members project to a `Quantifier` record by
+are the carrier `QuantityWord`, whose members project to a `QuantificationalDeterminer` record by
 `QuantityWord.toQuantifier` and denote the readings the literature makes available for them,
 so `⟦QuantityWord.tous⟧` is `{every}`. French has no lexical dual universal, and Jeretic and
 colleagues take *les deux* to serve as its indirect alternative, marked with the dual number it
@@ -59,7 +59,7 @@ def selectsMass : QuantityWord → Bool
   | _ => false
 
 /-- The word as a determiner record. -/
-def toQuantifier (w : QuantityWord) : Quantifier :=
+def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
   { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
 
 /-- All the words. -/
@@ -68,16 +68,16 @@ def toList : List QuantityWord := [.tous, .chaque, .aucun, .les_deux, .quelques,
 universe u
 
 /-- The readings the literature makes available for a word. *Tous* and *chaque* read as
-`every`, *quelques* as `Quantifier.GQ.some` and *les deux* as `both`; *toujours* has no
+`every`, *quelques* as `Quantifier.Det.some` and *les deux* as `both`; *toujours* has no
 determiner reading. The n-word *aucun* reads as `no`, a negative quantifier
-([de-swart-sag-2002]), or as `Quantifier.GQ.some`, an indefinite whose negation the clause
+([de-swart-sag-2002]), or as `Quantifier.Det.some`, an indefinite whose negation the clause
 supplies ([zeijlstra-2004]). -/
-noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
   denote
-    | .tous | .chaque => {Quantifier.GQ.Family.every}
-    | .aucun => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}
-    | .quelques => {Quantifier.GQ.Family.some}
-    | .les_deux => {Quantifier.GQ.Family.both}
+    | .tous | .chaque => {Quantifier.Det.Family.every}
+    | .aucun => {Quantifier.Det.Family.no, Quantifier.Det.Family.some}
+    | .quelques => {Quantifier.Det.Family.some}
+    | .les_deux => {Quantifier.Det.Family.both}
     | .toujours => ∅
 
 end QuantityWord
@@ -99,7 +99,8 @@ def les : Article :=
   , uses := {.immediateSituation, .largerSituation, .anaphoric} }
 
 /-- All French quantifier entries. -/
-def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier
+def allQuantifiers : List QuantificationalDeterminer :=
+  QuantityWord.toList.map QuantityWord.toQuantifier
 
 /-- All French article entries. -/
 def allArticles : List Article := [un, les]

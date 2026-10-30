@@ -155,15 +155,15 @@ variable {α : Type*} {A B : W → α → Prop}
 /-- Homogeneity of the scope `B` with respect to the restrictor `A`: all `A`s are `B`s or none
 are. It is the presupposition YES ∪ NO of the distributivity operator (67) and of GEN (137), and
 (71b) takes common knowledge to entail it. -/
-def Homogeneous (A B : α → Prop) : Prop := GQ.every A B ∨ GQ.no A B
+def Homogeneous (A B : α → Prop) : Prop := Det.every A B ∨ Det.no A B
 
 /-- A *some* sentence whose scope common knowledge makes homogeneous with its restrictor (71) is odd
 (38), (73), (72b). -/
 theorem odd_some (hck : ∀ x ∈ Wck, Homogeneous (A x) (B x))
-    (h : ∃ x, GQ.some (A x) (B x) ∧ ¬ GQ.every (A x) (B x)) :
-    Odd Wck {{x | GQ.some (A x) (B x)}, {x | GQ.every (A x) (B x)}} {x | GQ.some (A x) (B x)} :=
+    (h : ∃ x, Det.some (A x) (B x) ∧ ¬ Det.every (A x) (B x)) :
+    Odd Wck {{x | Det.some (A x) (B x)}, {x | Det.every (A x) (B x)}} {x | Det.some (A x) (B x)} :=
   (odd_pair_iff h).2 fun x ⟨hs, hx⟩ ↦
-    (hck x hx).resolve_right fun hno ↦ (GQ.no_contradicts_some _ _).1 hno hs
+    (hck x hx).resolve_right fun hno ↦ Det.no_iff_not_some.1 hno hs
 
 /-- By (66), a presuppositionless sentence (68a) is odd iff common knowledge entails the
 presupposition `p` of its Horn-mate (68b), blindly strengthened as (64) ((61), (62), (63), (142)).
@@ -177,18 +177,26 @@ end Oddness
 
 section NarrowExistential
 
+/-- *Every* at a predicate restrictor and scope, as the worlds of this file supply them. -/
+private theorem every_iff_forall {α : Type*} {A B : α → Prop} :
+    Det.every A B ↔ ∀ x, A x → B x := .rfl
+
+/-- *Some* at a predicate restrictor and scope. -/
+private theorem some_iff_exists {α : Type*} {A B : α → Prop} :
+    Det.some A B ↔ ∃ x, A x ∧ B x := .rfl
+
 variable {E I : Type*} {Wck : Set (E → I → Prop)} {N : E → Prop} {D : I → Prop}
   {R : E → I → Prop}
 
 /-- An existential over `N` in the scope of a universal over the index restrictor `D`: (48b),
 (56), (91b), (105). -/
 def narrowSome (N : E → Prop) (D : I → Prop) : Set (E → I → Prop) :=
-  {f | GQ.every D fun i ↦ GQ.some N fun x ↦ f x i}
+  {f | Det.every D fun i ↦ Det.some N fun x ↦ f x i}
 
 /-- The alternative with *the N such and such*, a Horn-mate of the existential by (49) and (94),
 denoting `d`, with the index restricted by `R d`: (50b), (57), (93b), (106b). -/
 def definite (R : E → I → Prop) (d : E) : Set (E → I → Prop) :=
-  {f | GQ.every (R d) (f d)}
+  {f | Det.every (R d) (f d)}
 
 /-- The scalar alternatives (25) of `narrowSome N D`: itself and the definite alternative for
 each `N`. -/
@@ -197,9 +205,9 @@ def alts (N : E → Prop) (D : I → Prop) (R : E → I → Prop) : Set (Set (E 
 
 -- (52), (96), (108), (51), (95), (107)
 theorem iUnion_definite :
-    ⋃ d : {d // N d}, definite R d = {f | GQ.some N fun d ↦ GQ.every (R d) (f d)} := by
+    ⋃ d : {d // N d}, definite R d = {f | Det.some N fun d ↦ Det.every (R d) (f d)} := by
   ext f
-  simp [definite, GQ.some]
+  simp [definite, some_iff_exists]
 
 /-- An existential under a universal is odd when common knowledge, but not logic (98), makes it
 entail some definite alternative (46a), (54a), (99). -/
@@ -209,7 +217,7 @@ theorem odd_narrowSome (hD : ∃ i, D i)
     Odd Wck (alts N D R) (narrowSome N D) := by
   refine (odd_insert_range_iff h).2 fun f ⟨hf, hfck⟩ ↦ ?_
   obtain ⟨i, hi⟩ := hD
-  obtain ⟨x, hx, hxi⟩ := hf i hi
+  obtain ⟨x, hx, hxi⟩ := hf hi
   exact mem_iUnion.2 ⟨⟨x, hx⟩, hck f hfck x hx i hi hxi⟩
 
 /-- The sentence *#On every day, a fireman won* is odd when common knowledge fixes the same winner
@@ -264,8 +272,8 @@ theorem running_odd :
     refine ⟨g, fun w ⟨c, t⟩ hc ↦ ?_⟩
     obtain rfl : c = .running := hc
     exact hg w t
-  · simp only [narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq, mem_iUnion,
-      not_exists]
+  · simp only [narrowSome, definite, every_iff_forall, some_iff_exists, mem_sdiff, mem_ofPred_eq,
+      mem_iUnion, not_exists]
     decide
 
 /-- The sentence (54b) is fine in the context of (54), since the table verifies it (56) and
@@ -275,8 +283,8 @@ theorem table_not_odd :
       (narrowSome (fun _ ↦ True) fun _ ↦ True) := by
   have h : table ∈ narrowSome (fun _ : Winner ↦ True) (fun _ : Competition × Fin 5 ↦ True) \
       ⋃ d : {_d : Winner // True}, definite (fun _ _ ↦ True) d := by
-    simp only [table, narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq,
-      mem_iUnion, not_exists]
+    simp only [table, narrowSome, definite, every_iff_forall, some_iff_exists, mem_sdiff,
+      mem_ofPred_eq, mem_iUnion, not_exists]
     decide
   rw [alts, odd_insert_range_iff ⟨_, h⟩]
   refine fun hsub ↦ h.2 (hsub ⟨h.1, ?_⟩)
@@ -302,15 +310,15 @@ theorem homogeneous_of_permanent (hf : Permanent span f) {d : E} {A : T → Prop
 /-- (79b): *Sometimes, John is tall*, the adverb restricted by `C` and, by (76) and (77), by
 John's lifespan. -/
 def sometimes (span : E → Set T) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
-  {f | GQ.some (fun t ↦ t ∈ span j ∧ C t) (f j)}
+  {f | Det.some (fun t ↦ t ∈ span j ∧ C t) (f j)}
 
 /-- (80b): its Horn-mate (81) with *always*. -/
 def always (span : E → Set T) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
-  {f | GQ.every (fun t ↦ t ∈ span j ∧ C t) (f j)}
+  {f | Det.every (fun t ↦ t ∈ span j ∧ C t) (f j)}
 
 private theorem mem_sometimes_sdiff_always (h₁ : t₁ ∈ span j ∧ C t₁) (h₂ : t₂ ∈ span j ∧ C t₂)
     (hne : t₁ ≠ t₂) : (fun _ t ↦ t = t₁) ∈ sometimes span j C \ always span j C :=
-  ⟨⟨t₁, h₁, rfl⟩, fun h ↦ hne (h t₂ h₂).symm⟩
+  ⟨⟨t₁, h₁, rfl⟩, fun h ↦ hne (h h₂).symm⟩
 
 /-- The sentence *#Sometimes, John is tall* is odd for every restrictor meeting John's lifespan
 twice, given (70) (72b), (82). -/
@@ -382,8 +390,8 @@ abbrev alts98 : Set (Set (Fireman → Fin 3 → Prop)) :=
 -- (98)
 theorem world98_mem : world98 ∈ narrowSome (fun _ ↦ True) (fun _ ↦ True) \
     ⋃ d : {_d : Fireman // True}, definite (fun d t ↦ True ∧ t ∈ lifespan d) d := by
-  simp only [world98, narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq,
-    mem_iUnion, not_exists]
+  simp only [world98, narrowSome, definite, every_iff_forall, some_iff_exists, mem_sdiff,
+    mem_ofPred_eq, mem_iUnion, not_exists]
   decide
 
 /-- The existential reading of a bare plural subject is odd against the common knowledge `Wck`
@@ -441,9 +449,9 @@ theorem universal_not_odd {T : Type*} {span : Woman → Set T} {C D : Man → T 
     · simp only [mem_iUnion, not_exists]
       rintro ⟨_ | _, _⟩ ha
       · obtain ⟨t, ht⟩ := h₁
-        exact absurd (ha (.b₂, t) ht) nofun
+        exact absurd (@ha (.b₂, t) ht) nofun
       · obtain ⟨t, ht⟩ := h₂
-        exact absurd (ha (.b₁, t) ht) nofun
+        exact absurd (@ha (.b₁, t) ht) nofun
   rw [alts, odd_insert_range_iff ⟨_, h⟩]
   exact fun hsub ↦ h.2 (hsub ⟨h.1, fun _ _ ⟨_, ht⟩ _ _ ↦ ht⟩)
 
@@ -501,7 +509,7 @@ the presupposition (138b) of *John is tall* (134a), (138). -/
 theorem always_odd (hck : ∀ f ∈ Wck, Permanent span f) (h₁ : t₁ ∈ span j) (h₂ : t₂ ∈ span j)
     (hne : t₁ ≠ t₂) : Odd Wck {univ, genPresup (· ∈ span j) fun f ↦ f j} univ :=
   (odd_univ_iff ⟨fun _ t ↦ t = t₁,
-    fun h ↦ h.elim (fun h ↦ hne (h t₂ h₂).symm) fun h ↦ h t₁ h₁ rfl⟩).2
+    fun h ↦ h.elim (fun h ↦ hne (h h₂).symm) fun h ↦ h h₁ rfl⟩).2
     fun f hf ↦ homogeneous_of_permanent (hck f hf) fun _ h ↦ h
 
 /-- The sentence *Firemen are always tall* is fine, as (70) allows some firemen to be tall and
@@ -512,7 +520,7 @@ theorem always_bare_not_odd {N : E → Prop} {d₁ d₂ : E} (h₁ : N d₁ ∧ 
       {univ, genPresup (fun p : E × T ↦ N p.1 ∧ p.2 ∈ span p.1) fun f p ↦ f p.1 p.2} univ := by
   have hf : (fun d _ ↦ d = d₁) ∉ genPresup (fun p : E × T ↦ N p.1 ∧ p.2 ∈ span p.1)
       fun f p ↦ f p.1 p.2 :=
-    fun h ↦ h.elim (fun h ↦ hne (h (d₂, t₂) h₂).symm) fun h ↦ h (d₁, t₁) h₁ rfl
+    fun h ↦ h.elim (fun h ↦ hne (@h (d₂, t₂) h₂).symm) fun h ↦ @h (d₁, t₁) h₁ rfl
   rw [odd_univ_iff ⟨_, hf⟩]
   exact fun h ↦ hf (h (show Permanent span fun d _ ↦ d = d₁ from fun _ ⟨_, hd⟩ _ _ ↦ hd))
 

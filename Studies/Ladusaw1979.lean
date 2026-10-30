@@ -41,7 +41,7 @@ and *every* in its restrictor but not its scope (`determiner_monotonicity`).
 
 namespace Ladusaw1979
 
-open PolarityItem NaturalLogic Quantifier Quantifier.GQ LicensingContext Licenser
+open PolarityItem NaturalLogic Quantifier Quantifier.Det LicensingContext Licenser
 
 /-- An environment is downward entailing when every operator it places over the item reverses
 entailment, the inclusion of its arguments. -/
@@ -114,13 +114,13 @@ example : negation.licenser.Licenses English.PolarityItems.ever :=
 
 /-- The scope of *every*, upward entailing. -/
 abbrev everyScope : OperatorFamily :=
-  ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ every p.A⟩
+  ⟨NonemptyPredicate, fun p ↦ Set p.ι, fun _ ↦ Prop, fun p ↦ every p.A⟩
 
 -- the scope of *every* is not downward entailing, so it licenses no weak item
 example : ¬ (Licenser.classical everyScope).Licenses English.PolarityItems.ever := fun h ↦ by
   have hde := isDownwardEntailing_classical_iff.1 (isDownwardEntailing_of_licenses h)
-    ⟨⟨Unit, fun _ ↦ True⟩, (), trivial⟩
-  exact hde (bot_le : (⊥ : Unit → Prop) ≤ ⊤) (fun _ _ ↦ trivial) () trivial
+    ⟨⟨Unit, Set.univ⟩, ⟨(), Set.mem_univ ()⟩⟩
+  exact hde (Set.empty_subset Set.univ) (Set.subset_univ _) (Set.mem_univ ())
 
 /-- A constant operator into truth values. -/
 abbrev constFamily : OperatorFamily := ⟨PUnit, fun _ ↦ Prop, fun _ ↦ Prop, fun _ _ ↦ True⟩
@@ -136,8 +136,8 @@ example : IsDownwardEntailing (.classical constFamily) ∧
 variable {α : Type*}
 
 theorem determiner_monotonicity [Fintype α] [Nonempty α] :
-    ScopeAntitone (no : GQ α) ∧ RestrictorAntitone (no : GQ α) ∧ ScopeAntitone (few : GQ α) ∧
-      RestrictorAntitone (every : GQ α) ∧ ¬ ScopeAntitone (every : GQ α) :=
+    ScopeAntitone (no : Det α) ∧ RestrictorAntitone (no : Det α) ∧ ScopeAntitone (few : Det α) ∧
+      RestrictorAntitone (every : Det α) ∧ ¬ ScopeAntitone (every : Det α) :=
   ⟨scopeAntitone_no, restrictorAntitone_no, scopeAntitone_few, restrictorAntitone_every,
     not_scopeAntitone_every⟩
 

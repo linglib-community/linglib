@@ -41,7 +41,7 @@ Class A forms are entailed by no alternative at all and have no primary implicat
 The worlds of the pragmatics are counts, so a form's content is the set `c.interval m` of counts,
 the alternatives are the five forms of the numeral, one for each `Degree.Comparison`, and the
 neo-Gricean operators are `NeoGricean.primaryImplicatures` and
-`NeoGricean.IsSecondaryImplicature`. A root modal is the quantifier `every R` or `GQ.some R` over
+`NeoGricean.IsSecondaryImplicature`. A root modal is the quantifier `every R` or `Det.some R` over
 its accessible worlds `R`, and the numeral's two scopes are `Degree.LowScope` and
 `Degree.HighScope` of `MaxIn {m}` over it. The interactions of Class B modifiers with root modals
 (Section 4.2) are not formalized.
@@ -57,7 +57,7 @@ its accessible worlds `R`, and the numeral's two scopes are `Degree.LowScope` an
 
 namespace Kennedy2015
 
-open Degree Numerals NeoGricean Quantifier Quantifier.GQ Set
+open Degree Numerals NeoGricean Quantifier Quantifier.Det Set
 
 /-! ### The de-Fregean semantics (Section 3)
 
@@ -97,7 +97,7 @@ section Modals
 variable {W : Type*} (R : W → Prop) (count : W → ℕ) (m : ℕ)
 
 -- (33a), (34a)
-theorem narrow_scope_two_sided (Q : NP W) :
+theorem narrow_scope_two_sided (Q : Quantifier W) :
     LowScope (MaxIn {m}) Q (Iic ∘ count) ↔ Q fun w ↦ count w = m :=
   lowScope_maxIn
 
@@ -116,7 +116,7 @@ theorem necessity_wide_iff :
 /-- Over a possibility modal the bare numeral is upper-bounded (34b), `m` being the greatest count
 the modal allows. -/
 theorem possibility_wide_iff :
-    HighScope (MaxIn {m}) (GQ.some R) (Iic ∘ count) ↔ IsGreatest (count '' {w | R w}) m :=
+    HighScope (MaxIn {m}) (Det.some R) (Iic ∘ count) ↔ IsGreatest (count '' {w | R w}) m :=
   highScope_maxIn_singleton_some
 
 end Modals

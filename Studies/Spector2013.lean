@@ -63,22 +63,22 @@ variable {α : Type*} {n : ℕ} {P Q : α → Prop}
 
 /-- The rule (7), after Kadmon: *`n` `P` `Q`* holds when some collection of exactly `n`
 individuals lies in both `P` and `Q`, the predicates being distributive. -/
-def collection (n : ℕ) : GQ α := fun P Q ↦ ∃ C ⊆ {x | P x ∧ Q x}, C.ncard = n
+def collection (n : ℕ) : Det α := fun P Q ↦ ∃ C ⊆ {x | P x ∧ Q x}, C.ncard = n
 
 /-- Geurts's entry (42): the collection of (7) is unique. -/
-def uniqueCollection (n : ℕ) : GQ α := fun P Q ↦ ∃! C, C ⊆ {x | P x ∧ Q x} ∧ C.ncard = n
+def uniqueCollection (n : ℕ) : Det α := fun P Q ↦ ∃! C, C ⊆ {x | P x ∧ Q x} ∧ C.ncard = n
 
 /-- On distributive predicates the rule (7) is the *at least* reading: *three girls went to the
 party* (5) says (6), *at least three girls went to the party*. -/
-theorem collection_iff_atLeast [Finite α] : collection n P Q ↔ GQ.atLeast n P Q :=
-  ⟨fun ⟨_, hC, hn⟩ ↦ GQ.atLeast_apply.2 (hn ▸ ncard_le_ncard hC),
-    fun h ↦ exists_subset_card_eq (GQ.atLeast_apply.1 h)⟩
+theorem collection_iff_atLeast [Finite α] : collection n P Q ↔ Det.atLeast n P Q :=
+  ⟨fun ⟨_, hC, hn⟩ ↦ Det.atLeast_apply.2 (hn ▸ ncard_le_ncard hC),
+    fun h ↦ exists_subset_card_eq (Det.atLeast_apply.1 h)⟩
 
 /-- Geurts's entry (42) is the *exactly* reading: *three men came in* (43) is false when more than
 three men came in, there being several collections of three. -/
 theorem uniqueCollection_iff_exactly [Finite α] (hn : 0 < n) :
-    uniqueCollection n P Q ↔ GQ.exactly n P Q := by
-  rw [GQ.exactly_apply]
+    uniqueCollection n P Q ↔ Det.exactly n P Q := by
+  rw [Det.exactly_apply]
   refine ⟨fun ⟨C, ⟨hC, hCn⟩, huniq⟩ ↦ ?_, fun h ↦ ⟨_, ⟨subset_rfl, h⟩, fun C ⟨hC, hCn⟩ ↦
     eq_of_subset_of_ncard_le hC (h.trans hCn.symm).le⟩⟩
   by_contra hne
@@ -92,12 +92,12 @@ theorem uniqueCollection_iff_exactly [Finite α] (hn : 0 < n) :
 -- p. 285: Breheny's weakening, the exact entry with the noun implicitly restricted by some
 -- property, is the *at least* reading: *I have exactly four chairs that are P*, for some `P`
 theorem exists_exactly_restrict_iff_atLeast [Finite α] :
-    (∃ R : α → Prop, GQ.exactly n (fun x ↦ P x ∧ R x) Q) ↔ GQ.atLeast n P Q := by
-  rw [GQ.atLeast_apply]
-  refine ⟨fun ⟨R, h⟩ ↦ GQ.exactly_apply.1 h ▸ ncard_le_ncard fun x hx ↦ ⟨hx.1.1, hx.2⟩,
+    (∃ R : α → Prop, Det.exactly n (fun x ↦ P x ∧ R x) Q) ↔ Det.atLeast n P Q := by
+  rw [Det.atLeast_apply]
+  refine ⟨fun ⟨R, h⟩ ↦ Det.exactly_apply.1 h ▸ ncard_le_ncard fun x hx ↦ ⟨hx.1.1, hx.2⟩,
     fun h ↦ ?_⟩
   obtain ⟨C, hC, hCn⟩ := exists_subset_card_eq h
-  refine ⟨(· ∈ C), GQ.exactly_apply.2 (Eq.trans (congrArg ncard ?_) hCn)⟩
+  refine ⟨(· ∈ C), Det.exactly_apply.2 (Eq.trans (congrArg ncard ?_) hCn)⟩
   ext x
   exact ⟨fun hx ↦ hx.1.2, fun hx ↦ ⟨⟨(hC hx).1, hx⟩, (hC hx).2⟩⟩
 

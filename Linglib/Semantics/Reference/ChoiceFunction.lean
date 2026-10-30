@@ -100,21 +100,21 @@ theorem exists_apply_eq {N : E → Prop} {x : E} (hx : N x) : ∃ f : ChoiceFunc
 
 /-! ### The existential reading
 
-A choice function witnesses the existential reading `GQ.some` on a nonempty restrictor, but the
+A choice function witnesses the existential reading `Det.some` on a nonempty restrictor, but the
 two analyses are not equivalent: the existential reading asserts the existence of a witness, the
 choice function commits to one, and distinct choice functions commit differently. -/
 
-open Quantifier Quantifier.GQ
+open Quantifier Quantifier.Det
 
 /-- A choice function whose pick satisfies the predicate witnesses the existential reading. -/
 theorem some_of_apply (f : ChoiceFunction E) {N VP : E → Prop} (hN : ∃ x, N x)
-    (hVP : VP (f N)) : GQ.some N VP :=
+    (hVP : VP (f N)) : Det.some N VP :=
   ⟨f N, f.apply_of_exists hN, hVP⟩
 
 /-- A choice function agrees with the existential reading on every predicate exactly when its
 pick is the only member of the restrictor. -/
 theorem forall_apply_iff_some_iff (f : ChoiceFunction E) {N : E → Prop} (hN : ∃ x, N x) :
-    (∀ VP : E → Prop, VP (f N) ↔ GQ.some N VP) ↔ ∀ x, N x → x = f N := by
+    (∀ VP : E → Prop, VP (f N) ↔ Det.some N VP) ↔ ∀ x, N x → x = f N := by
   refine ⟨fun h x hx ↦ ((h (· = x)).mpr ⟨x, hx, rfl⟩).symm, fun h VP ↦
     ⟨f.some_of_apply hN, ?_⟩⟩
   rintro ⟨x, hx, hVP⟩
@@ -122,7 +122,7 @@ theorem forall_apply_iff_some_iff (f : ChoiceFunction E) {N : E → Prop} (hN : 
 
 /-- Existential quantification over choice functions is the existential reading. -/
 theorem exists_apply_iff_some {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
-    (∃ f : ChoiceFunction E, VP (f N)) ↔ GQ.some N VP :=
+    (∃ f : ChoiceFunction E, VP (f N)) ↔ Det.some N VP :=
   ⟨fun ⟨f, h⟩ ↦ f.some_of_apply hN h, fun ⟨_, hx, h⟩ ↦
     let ⟨f, hfx⟩ := exists_apply_eq hx; ⟨f, hfx ▸ h⟩⟩
 
@@ -131,7 +131,7 @@ restrictor. -/
 theorem forall_apply_iff_every {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
     (∀ f : ChoiceFunction E, VP (f N)) ↔ every N VP :=
   ⟨fun h _ hx ↦ let ⟨f, hfx⟩ := exists_apply_eq hx; hfx ▸ h f,
-    fun h f ↦ h _ (f.apply_of_exists hN)⟩
+    fun h f ↦ h (f.apply_of_exists hN)⟩
 
 theorem forall_apply_iff_of_not_exists {N : E → Prop} (hN : ¬ ∃ x, N x) (VP : E → Prop) :
     (∀ f : ChoiceFunction E, VP (f N)) ↔ ∀ x, VP x := by
@@ -162,9 +162,11 @@ function above the binder gives the reading with the existential below it, even 
 also contains the variable. -/
 theorem exists_forall_apply_iff_of_injective [Nonempty E] {R : ι → E → Prop}
     (hR : Function.Injective R) (hN : ∀ i, ∃ x, R i x) (VP : ι → E → Prop) :
-    (∃ f : ChoiceFunction E, ∀ i, VP i (f (R i))) ↔ ∀ i, GQ.some (R i) (VP i) := by
+    (∃ f : ChoiceFunction E, ∀ i, VP i (f (R i))) ↔ ∀ i, Det.some (R i) (VP i) := by
   refine ⟨fun ⟨f, h⟩ i ↦ f.some_of_apply (hN i) (h i), fun h ↦ ?_⟩
-  choose x hx hVP using h
+  choose x hxV using h
+  have hx i : R i (x i) := (hxV i).1
+  have hVP i : VP i (x i) := (hxV i).2
   obtain ⟨f, hf⟩ := exists_forall_mem_apply_eq (T := Set.range R) (fun _ hP ↦ x hP.choose)
     fun _ hP _ ↦ by simpa [hP.choose_spec] using hx hP.choose
   refine ⟨f, fun i ↦ ?_⟩
@@ -175,7 +177,7 @@ theorem exists_forall_apply_iff_of_injective [Nonempty E] {R : ι → E → Prop
 /-- Closing a skolemized choice function above a binder of its index gives the reading with the
 existential below the binder. -/
 theorem exists_pi_apply_iff {N : S → E → Prop} (hN : ∀ s, ∃ x, N s x) (VP : S → E → Prop) :
-    (∃ F : S → ChoiceFunction E, ∀ s, VP s (F s (N s))) ↔ ∀ s, GQ.some (N s) (VP s) :=
+    (∃ F : S → ChoiceFunction E, ∀ s, VP s (F s (N s))) ↔ ∀ s, Det.some (N s) (VP s) :=
   Classical.skolem.symm.trans <| forall_congr' fun s ↦ exists_apply_iff_some (hN s) (VP s)
 
 end ChoiceFunction

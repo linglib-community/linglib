@@ -76,7 +76,7 @@ as local or reflexive.
 
 namespace Cooper2023
 
-open Quantifier Quantifier.GQ Quantifier.NP
+open Quantifier Quantifier.Det
 
 variable {E : Type}
 
@@ -113,7 +113,7 @@ theorem nonempty_particularWCExist_iff {P Q : Ppty E} :
   ⟨fun ⟨w⟩ ↦ ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩, fun ⟨a, ⟨p⟩, ⟨q⟩⟩ ↦ ⟨⟨a, p, q⟩⟩⟩
 
 theorem some_of_particularWCExist {P Q : Ppty E} (w : ParticularWCExist P Q) :
-    GQ.some P.Witnessed Q.Witnessed :=
+    Det.some P.Witnessed Q.Witnessed :=
   ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩
 
 theorem no_of_particularWCNo {P Q : Ppty E} (w : ParticularWCNo P Q) :
@@ -705,27 +705,25 @@ variable {P}
 
 -- (20a) [barwise-cooper-1981]
 theorem witnessType_iff_witness :
-    WitnessType P c X ↔ Witness ((NumberTree.ofSizes c).toGQ P) P (· ∈ X) := by
+    WitnessType P c X ↔ Witness ((NumberTree.ofSizes c).toDet P) P (X : Set E) := by
   have hsub : X ⊆ ({x | P x} : Finset E) ↔ ∀ x, x ∈ X → P x := by simp [Finset.subset_iff]
   refine (and_congr_right fun h ↦ ?_).trans (and_congr_left' hsub)
-  have hX : {x | P x ∧ x ∈ X} = (X : Set E) :=
-    Set.ext fun x ↦ ⟨And.right, fun hx ↦ ⟨hsub.1 h x hx, hx⟩⟩
-  have hP : {x | P x ∧ x ∈ X}.ncard + {x | P x ∧ x ∉ X}.ncard = {x | P x}.ncard :=
-    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
-  rw [hX, Set.ncard_coe_finset] at hP
-  rw [NumberTree.toGQ_apply, NumberTree.ofSizes_apply, hX, Set.ncard_coe_finset, Nat.add_comm, hP,
-    Set.ncard_setOf_eq_card_filter]
+  have hX : {x | P x} ∩ (X : Set E) = X := Set.inter_eq_right.2 fun x hx ↦ hsub.1 h x hx
+  have hP := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | P x} (X : Set E)
+  rw [hX, Set.ncard_coe_finset, Set.ncard_setOf_eq_card_filter] at hP
+  show _ ↔ (NumberTree.ofSizes c).toDet {x | P x} X
+  rw [NumberTree.toDet_apply, NumberTree.ofSizes_apply, hX, Set.ncard_coe_finset, Nat.add_comm, hP]
 
-theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every P) P (· ∈ X) := by
-  rw [witnessType_iff_witness, CardRel.ofSizes_every, ← every_eq_toGQ_all]
+theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every P) P (X : Set E) := by
+  rw [witnessType_iff_witness, CardRel.ofSizes_every, ← every_eq_toDet_all]
 
-theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no P) P (· ∈ X) := by
-  rw [witnessType_iff_witness, CardRel.ofSizes_no, ← no_eq_toGQ_no]
+theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no P) P (X : Set E) := by
+  rw [witnessType_iff_witness, CardRel.ofSizes_no, ← no_eq_toDet_no]
 
 -- (21)
 theorem existW_iff_minimal_witness [DecidableEq E] :
-    WitnessType P .exist X ↔ Minimal (fun Y : Finset E ↦ Witness (GQ.some P) P (· ∈ Y)) X := by
-  simp only [WitnessType, CardRel.exist, Witness, GQ.some, minimal_iff_forall_lt,
+    WitnessType P .exist X ↔ Minimal (fun Y : Finset E ↦ Witness (Det.some P) P (Y : Set E)) X := by
+  simp only [WitnessType, CardRel.exist, Witness, Det.some, minimal_iff_forall_lt,
     Finset.card_eq_one]
   constructor
   · rintro ⟨hs, a, rfl⟩
@@ -735,7 +733,7 @@ theorem existW_iff_minimal_witness [DecidableEq E] :
     rw [Finset.ssubset_singleton_iff.1 hY] at hb
     exact Finset.notMem_empty b hb
   · rintro ⟨⟨hs, a, hPa, haX⟩, hmin⟩
-    refine ⟨fun x hx ↦ Finset.mem_filter.2 ⟨Finset.mem_univ x, hs x hx⟩, a, ?_⟩
+    refine ⟨fun x hx ↦ Finset.mem_filter.2 ⟨Finset.mem_univ x, hs hx⟩, a, ?_⟩
     refine (eq_of_le_of_not_lt (Finset.singleton_subset_iff.2 haX) fun hlt ↦ hmin hlt
       ⟨fun x hx ↦ Finset.mem_singleton.1 hx ▸ hPa, a, hPa, Finset.mem_singleton_self a⟩).symm
 
@@ -855,26 +853,26 @@ def GeneralWCDecr.comapScope (g : ∀ a, Q' a → Q a) (w : GeneralWCDecr P c Q)
 open Classical in
 /-- For a relation closed upwards in `|X|`, (59a) is witnessed exactly when the tree quantifier
 holds of `P` and `Q`, by Barwise and Cooper's C11(i). -/
-theorem nonempty_generalWCIncr_iff_toGQ (hc : ∀ p, Monotone (c · p)) :
-    Nonempty (GeneralWCIncr P c Q) ↔ (NumberTree.ofSizes c).toGQ P Q.Witnessed := by
-  rw [((NumberTree.conservative_toGQ _).livesOn P).monotone_apply_iff
-    ((NumberTree.scopeMonotone_ofSizes hc).toGQ P)]
-  refine ⟨fun ⟨w⟩ ↦ ⟨(· ∈ w.X), witnessType_iff_witness.1 w.witness, fun a ha ↦ ⟨w.f a ha⟩⟩,
-    fun ⟨w, hw, hQ⟩ ↦ ⟨⟨{x | w x}, witnessType_iff_witness.2 ?_, fun a ha ↦ (hQ a ?_).some⟩⟩⟩
+theorem nonempty_generalWCIncr_iff_toDet (hc : ∀ p, Monotone (c · p)) :
+    Nonempty (GeneralWCIncr P c Q) ↔ (NumberTree.ofSizes c).toDet P Q.Witnessed := by
+  rw [((NumberTree.conservative_toDet _).livesOn P).monotone_apply_iff
+    ((NumberTree.scopeMonotone_ofSizes hc).toDet P)]
+  refine ⟨fun ⟨w⟩ ↦ ⟨w.X, witnessType_iff_witness.1 w.witness, fun a ha ↦ ⟨w.f a ha⟩⟩,
+    fun ⟨w, hw, hQ⟩ ↦ ⟨⟨{x | x ∈ w}, witnessType_iff_witness.2 ?_, fun a ha ↦ (hQ ?_).some⟩⟩⟩
   · simpa using hw
   · simpa using ha
 
 open Classical in
 /-- For a relation closed downwards in `|X|`, (59b) is witnessed exactly when the tree quantifier
 holds of `P` and `Q`, by C11(ii). -/
-theorem nonempty_generalWCDecr_iff_toGQ (hc : ∀ p, Antitone (c · p)) :
-    Nonempty (GeneralWCDecr P c Q) ↔ (NumberTree.ofSizes c).toGQ P Q.Witnessed := by
-  rw [((NumberTree.conservative_toGQ _).livesOn P).antitone_apply_iff
-    ((NumberTree.scopeAntitone_ofSizes hc).toGQ P)]
-  refine ⟨fun ⟨w⟩ ↦ ⟨(· ∈ w.X), witnessType_iff_witness.1 w.witness,
+theorem nonempty_generalWCDecr_iff_toDet (hc : ∀ p, Antitone (c · p)) :
+    Nonempty (GeneralWCDecr P c Q) ↔ (NumberTree.ofSizes c).toDet P Q.Witnessed := by
+  rw [((NumberTree.conservative_toDet _).livesOn P).antitone_apply_iff
+    ((NumberTree.scopeAntitone_ofSizes hc).toDet P)]
+  refine ⟨fun ⟨w⟩ ↦ ⟨w.X, witnessType_iff_witness.1 w.witness,
       fun a ⟨hQ, hP⟩ ↦ w.f a hP hQ⟩,
-    fun ⟨w, hw, hPQ⟩ ↦ ⟨⟨{x | w x}, witnessType_iff_witness.2 ?_,
-      fun a hP hQ ↦ by simpa using hPQ a ⟨hQ, hP⟩⟩⟩⟩
+    fun ⟨w, hw, hPQ⟩ ↦ ⟨⟨{x | x ∈ w}, witnessType_iff_witness.2 ?_,
+      fun a hP hQ ↦ by simpa using hPQ ⟨hQ, hP⟩⟩⟩⟩
   simpa using hw
 
 open Classical in
@@ -908,11 +906,11 @@ theorem nonempty_generalWCIncr_every_iff :
   ⟨fun ⟨w⟩ a ha ↦ ⟨w.f a (Finset.eq_of_subset_of_card_le w.witness.1 w.witness.2.ge ▸
       Finset.mem_filter.2 ⟨Finset.mem_univ a, ha⟩)⟩,
     fun h ↦ ⟨⟨{x | P x}, ⟨subset_rfl, rfl⟩,
-      fun a ha ↦ (h a (Finset.mem_filter.1 ha).2).some⟩⟩⟩
+      fun _ ha ↦ (h (Finset.mem_filter.1 ha).2).some⟩⟩⟩
 
 -- (62), (60)
 theorem nonempty_generalWCIncr_exist_iff [DecidableEq E] :
-    Nonempty (GeneralWCIncr P .exist Q) ↔ GQ.some P Q.Witnessed :=
+    Nonempty (GeneralWCIncr P .exist Q) ↔ Det.some P Q.Witnessed :=
   ⟨fun ⟨w⟩ ↦
       have ⟨a, ha⟩ := Finset.card_eq_one.1 w.witness.2
       have haX : a ∈ w.X := ha ▸ Finset.mem_singleton_self a
@@ -925,18 +923,18 @@ theorem nonempty_generalWCIncr_exist_iff [DecidableEq E] :
 -- (77), (89)
 theorem nonempty_generalWCIncr_atLeast_iff {θ : ℕ} :
     Nonempty (GeneralWCIncr P (.atLeast θ) Q) ↔ atLeast θ P Q.Witnessed :=
-  nonempty_generalWCIncr_iff_toGQ (CardRel.monotone_atLeast θ)
+  nonempty_generalWCIncr_iff_toDet (CardRel.monotone_atLeast θ)
 
 -- (79)
 theorem nonempty_generalWCDecr_atMost_iff {θ : ℕ} :
     Nonempty (GeneralWCDecr P (.atMost θ) Q) ↔ atMost θ P Q.Witnessed :=
-  nonempty_generalWCDecr_iff_toGQ (CardRel.antitone_atMost θ)
+  nonempty_generalWCDecr_iff_toDet (CardRel.antitone_atMost θ)
 
 -- (74), (78), (90)
 theorem nonempty_generalWCIncr_propAtLeast_iff {n d : ℕ} :
     Nonempty (GeneralWCIncr P (.propAtLeast n d) Q) ↔
-      0 < {x | P x}.ncard ∧ (NumberTree.threshold n d).toGQ P Q.Witnessed := by
-  rw [nonempty_generalWCIncr_iff_toGQ (CardRel.monotone_propAtLeast n d),
+      0 < {x | P x}.ncard ∧ (NumberTree.threshold n d).toDet P Q.Witnessed := by
+  rw [nonempty_generalWCIncr_iff_toDet (CardRel.monotone_propAtLeast n d),
     ← Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | P x} {x | Q.Witnessed x}]
   exact and_congr_left' (by rw [Nat.add_comm]; rfl)
 
@@ -948,32 +946,32 @@ theorem few_and_aFew_iff {θ : ℕ} :
     exactly_eq_atLeast_inf_atMost]
   exact and_comm
 
-theorem nonempty_particularWCNeg_iff_toGQ (hc : ∀ p, Monotone (c · p)) :
-    Nonempty (ParticularWCNeg P c Q) ↔ (NumberTree.ofSizes c).innerNeg.toGQ P Q.Witnessed := by
-  rw [nonempty_generalWCIncr_iff_toGQ hc, NumberTree.toGQ_innerNeg]
-  exact iff_of_eq (congrArg ((NumberTree.ofSizes c).toGQ P) (funext fun _ ↦
+theorem nonempty_particularWCNeg_iff_toDet (hc : ∀ p, Monotone (c · p)) :
+    Nonempty (ParticularWCNeg P c Q) ↔ (NumberTree.ofSizes c).innerNeg.toDet P Q.Witnessed := by
+  rw [nonempty_generalWCIncr_iff_toDet hc, NumberTree.toDet_innerNeg]
+  exact iff_of_eq (congrArg ((NumberTree.ofSizes c).toDet P) (funext fun _ ↦
     propext ⟨fun ⟨g⟩ ⟨q⟩ ↦ (g q).elim, fun h ↦ ⟨fun q ↦ (h ⟨q⟩).elim⟩⟩))
 
 -- (85), (79)
 theorem nonempty_particularWCNeg_compAtMost_iff {θ : ℕ} :
     Nonempty (ParticularWCNeg P (.compAtMost θ) Q) ↔ Nonempty (GeneralWCDecr P (.atMost θ) Q) := by
-  rw [nonempty_particularWCNeg_iff_toGQ (CardRel.monotone_compAtMost θ),
+  rw [nonempty_particularWCNeg_iff_toDet (CardRel.monotone_compAtMost θ),
     CardRel.innerNeg_ofSizes_compAtMost,
-    nonempty_generalWCDecr_iff_toGQ (CardRel.antitone_atMost θ)]
+    nonempty_generalWCDecr_iff_toDet (CardRel.antitone_atMost θ)]
 
 -- (86), (80)
 theorem nonempty_particularWCNeg_compPropAtMost_iff {n d : ℕ} :
     Nonempty (ParticularWCNeg P (.compPropAtMost n d) Q) ↔
       Nonempty (GeneralWCDecr P (.propAtMost n d) Q) := by
-  rw [nonempty_particularWCNeg_iff_toGQ (CardRel.monotone_compPropAtMost n d),
+  rw [nonempty_particularWCNeg_iff_toDet (CardRel.monotone_compPropAtMost n d),
     CardRel.innerNeg_ofSizes_compPropAtMost,
-    nonempty_generalWCDecr_iff_toGQ (CardRel.antitone_propAtMost n d)]
+    nonempty_generalWCDecr_iff_toDet (CardRel.antitone_propAtMost n d)]
 
 -- (70)
 theorem nonempty_particularWCNeg_every_iff :
     Nonempty (ParticularWCNeg P .every Q) ↔ Nonempty (ParticularWCNo (fun a ↦ PLift (P a)) Q) :=
   nonempty_generalWCIncr_every_iff.trans
-    ⟨fun h ↦ ⟨⟨fun a p ↦ (h a p.down).some⟩⟩, fun ⟨w⟩ a p ↦ ⟨w.f a ⟨p⟩⟩⟩
+    ⟨fun h ↦ ⟨⟨fun _ p ↦ (h p.down).some⟩⟩, fun ⟨w⟩ a p ↦ ⟨w.f a ⟨p⟩⟩⟩
 
 /-- The particular condition for `exist` (63) gives the general one (60), with the singleton
 of its individual. -/

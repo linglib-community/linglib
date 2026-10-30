@@ -224,10 +224,10 @@ def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
 
 /-- The determiner condition `DET{u, u'}` ((76)): the static determiner `q` relates the values of
 `u` and `u'`. -/
-def det (q : Quantifier.GQ E) (u u' : R) : Condition (Set S) :=
+def det (q : Quantifier.Det E) (u u' : R) : Condition (Set S) :=
   {I | q (· ∈ value u I) (· ∈ value u' I)}
 
-@[simp] theorem mem_det {q : Quantifier.GQ E} :
+@[simp] theorem mem_det {q : Quantifier.Det E} :
     I ∈ det q u u' ↔ q (· ∈ value u I) (· ∈ value u' I) :=
   Iff.rfl
 
@@ -603,7 +603,7 @@ end Copy
 /-- The generalized determiner `det^{u, u'⊑u}` ((77)): `u` stores the maximal restrictor set and
 `u'` its maximal structured subset satisfying the nuclear scope, each updated under `⟨·⟩`, and the
 static determiner `q` relates the two. -/
-def determiner (q : Quantifier.GQ E) (u u' : R) (P P' : R → Update (Set S)) : Update (Set S) :=
+def determiner (q : Quantifier.Det E) (u u' : R) (P P' : R → Update (Set S)) : Update (Set S) :=
   max u (distribOrId u (P u)) ○ maxSub u' u (distribOrId u' (P' u')) ○ test (det q u u')
 
 theorem Preserves.max (h : ∀ k, w k ≠ u) (hD : Preserves w D) : Preserves w (max u D) :=
@@ -642,7 +642,7 @@ private theorem nonDummy_eq_empty_of_distribOrId {C : Condition (Set S)}
 /-- On a non-empty restrictor, the distributivity operators `⟨·⟩` of the generalized determiner
 (77) can be replaced by `_·` (p. 470) when the static determiner is false of an empty nuclear scope,
 as `EVERY` is. -/
-theorem mem_determiner_iff {q : Quantifier.GQ E} {P P' : R → Update (Set S)}
+theorem mem_determiner_iff {q : Quantifier.Det E} {P P' : R → Update (Set S)}
     (hq : ∀ A : Set E, A.Nonempty → ¬q (· ∈ A) (· ∈ (∅ : Set E))) (huu' : u ≠ u')
     (hI : ∃ K, I ~[intro u ○ distrib u (P u)] K) :
     I ~[determiner q u u' P P'] J ↔

@@ -84,7 +84,7 @@ theorem qForall_iff_of_disjoint (h : DisjointPred Overlap P) : QForall P Q ↔ �
   forall_congr' fun _ ↦ imp_congr_left (maxNonOverlap_iff_of_disjoint h)
 
 theorem qForall_iff_every (h : DisjointPred Overlap P) :
-    QForall P Q ↔ Quantifier.GQ.every P Q :=
+    QForall P Q ↔ Quantifier.Det.every P Q :=
   qForall_iff_of_disjoint h
 
 end PartialOrder

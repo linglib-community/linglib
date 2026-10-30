@@ -25,7 +25,7 @@ the identity at type `t` (`permutationInvariant_and`), expletive *there*, which 
 whole domain, is fixed, and the domain and the empty set are the only invariant properties
 (`permutationInvariant_et_iff`), so a contingent predicate like *new-student* is not a logical
 item. Invariance at the determiner type is exactly the quantity invariance the Quantification
-substrate states on `GQ` (`permutationInvariant_det_iff`), so the logicality of *every*, *some*
+substrate states on `Det` (`permutationInvariant_det_iff`), so the logicality of *every*, *some*
 and *no* follows from the isomorphism invariance of their Lindström classes rather than being
 stipulated. Von Fintel's *but* is a logical item too (`permutationInvariant_but`).
 
@@ -95,7 +95,7 @@ concedes and `exceptiveSkeleton_most_not_isLAnalytic` states.
 
 namespace Gajewski2002
 
-open Montague Quantifier Quantifier.GQ Quantifier.Exceptive
+open Montague Quantifier Quantifier.Det Quantifier.Exceptive
 open English.Determiners (QuantityWord)
 open scoped Denotes
 
@@ -120,8 +120,8 @@ def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
     permLift π Ty.et P = P ∘ ⇑π.symm :=
   rfl
 
-@[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : GQ E) (A B : E → Prop) :
-    permLift π Ty.det Q A B = Q (A ∘ ⇑π) (B ∘ ⇑π) :=
+@[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : Det E) (A B : Set E) :
+    permLift π Ty.det Q A B = Q (π ⁻¹' A) (π ⁻¹' B) :=
   rfl
 
 /-- An item is permutation invariant (18) when every lifted permutation fixes it, van
@@ -157,35 +157,25 @@ theorem permutationInvariant_et_iff {P : E → Prop} :
     · exact Or.inl (funext fun x ↦ eq_true (Set.eq_univ_iff_forall.1 hu x))
   · rintro (rfl | rfl) π <;> rfl
 
-theorem permutationInvariant_det_iff {Q : GQ E} :
-    PermutationInvariant Ty.det Q ↔ QuantityInvariant Q := by
-  constructor
-  · intro h A B A' B' f hf hA hB
-    have hA' : A' = A ∘ f := funext fun x ↦ propext (hA x).symm
-    have hB' : B' = B ∘ f := funext fun x ↦ propext (hB x).symm
-    have hQ := congrFun (congrFun (h (Equiv.ofBijective f hf)) A) B
-    rw [permLift_det_apply] at hQ
-    rw [hA', hB']
-    exact (iff_of_eq hQ).symm
-  · intro h π
-    funext A B
-    exact propext (h (A ∘ ⇑π) (B ∘ ⇑π) A B ⇑π.symm π.symm.bijective
-      (fun x ↦ by simp) (fun x ↦ by simp))
+theorem permutationInvariant_det_iff {Q : Det E} :
+    PermutationInvariant Ty.det Q ↔ QuantityInvariant Q :=
+  ⟨fun h π A B ↦ iff_of_eq (congr_fun₂ (h π) A B),
+    fun h π ↦ funext₂ fun A B ↦ propext (h π A B)⟩
 
 -- (25)
-theorem permutationInvariant_some : PermutationInvariant Ty.det (GQ.some : GQ E) :=
+theorem permutationInvariant_some : PermutationInvariant Ty.det (Det.some : Det E) :=
   permutationInvariant_det_iff.2
-    (by rw [← Lindstrom.someDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
+    (by rw [← Lindstrom.someDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (35), (34a)
-theorem permutationInvariant_every : PermutationInvariant Ty.det (every : GQ E) :=
+theorem permutationInvariant_every : PermutationInvariant Ty.det (every : Det E) :=
   permutationInvariant_det_iff.2
-    (by rw [← Lindstrom.everyDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
+    (by rw [← Lindstrom.everyDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 -- (11a)
-theorem permutationInvariant_no : PermutationInvariant Ty.det (no : GQ E) :=
+theorem permutationInvariant_no : PermutationInvariant Ty.det (no : Det E) :=
   permutationInvariant_det_iff.2
-    (by rw [← Lindstrom.noDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
+    (by rw [← Lindstrom.noDet_toDet]; exact Lindstrom.Det.realize_quantityInvariant _)
 
 /-- Von Fintel's ||but|| (31) factors the least-exception schema compositionally; the
 exception `f` is the least set whose subtraction from the restrictor `g` makes the
@@ -199,25 +189,17 @@ theorem permutationInvariant_but :
     PermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
   intro π
   funext f g D h
-  show but (f ∘ ⇑π) (g ∘ ⇑π) (fun A B ↦ D (A ∘ ⇑π.symm) (B ∘ ⇑π.symm)) (h ∘ ⇑π) = but f g D h
-  simp only [but, IsExceptionSet, IsLeast, lowerBounds, Set.mem_ofPred_eq, Pi.le_def,
-    le_Prop_eq]
-  have hcomp : ∀ (X Y : Ty.Domain E Unit Ty.e → Prop) (e : Equiv.Perm E),
-      (X \ Y) ∘ ⇑e = (X ∘ ⇑e) \ (Y ∘ ⇑e) := fun _ _ _ ↦ rfl
-  refine propext ⟨fun hb ↦ ⟨?_, fun j hj x hx ↦ ?_⟩, fun hb ↦ ⟨?_, fun j hj x hx ↦ ?_⟩⟩
-  · convert hb.1 using 2 <;>
-      simp [hcomp, Function.comp_assoc, Equiv.self_comp_symm]
-  · have hc : (fun A B ↦ D (A ∘ ⇑π.symm) (B ∘ ⇑π.symm))
-        ((g ∘ ⇑π) \ (j ∘ ⇑π)) (h ∘ ⇑π) := by
-      convert hj using 2 <;>
-        simp [hcomp, Function.comp_assoc, Equiv.self_comp_symm]
-    simpa using hb.2 hc (⇑π.symm x) (by simpa using hx)
-  · convert hb.1 using 2 <;>
-      simp [hcomp, Function.comp_assoc, Equiv.self_comp_symm]
-  · have hc : D (g \ (j ∘ ⇑π.symm)) h := by
-      convert hj using 2 <;>
-        simp [hcomp, Function.comp_assoc, Equiv.self_comp_symm]
-    simpa using hb.2 hc (⇑π x) (by simpa using hx)
+  show IsExceptionSet (fun A B ↦ D (π.symm ⁻¹' A) (π.symm ⁻¹' B)) (π ⁻¹' g) (π ⁻¹' f) (π ⁻¹' h) =
+    IsExceptionSet D g f h
+  have key (S : Set E) :
+      D (π.symm ⁻¹' (π ⁻¹' g \ S)) (π.symm ⁻¹' (π ⁻¹' h)) ↔ D (g \ π.symm ⁻¹' S) h := by
+    rw [Set.preimage_sdiff, π.symm_preimage_preimage, π.symm_preimage_preimage]
+  refine propext ⟨fun hb ↦ ⟨?_, fun j hj ↦ ?_⟩, fun hb ↦ ⟨?_, fun j hj ↦ ?_⟩⟩
+  · simpa only [Set.mem_ofPred_eq, π.symm_preimage_preimage] using (key _).1 hb.1
+  · refine (π.preimage_subset f j).1 (hb.2 ((key _).2 ?_))
+    rwa [π.symm_preimage_preimage]
+  · exact (key _).2 (by rw [π.symm_preimage_preimage]; exact hb.1)
+  · simpa only [π.preimage_symm_preimage] using Set.preimage_mono (f := π) (hb.2 ((key j).1 hj))
 
 /-! ### Logical skeletons and L-analyticity (§3.2) -/
 
@@ -255,19 +237,19 @@ end Skeleton
 
 /-- The skeleton (25) of a *there*-sentence applies the determiner to a property variable and
 to *there*, which denotes the domain (23c). -/
-def thereSkeleton (Q : GQ E) : Skeleton E fun _ : Unit ↦ Ty.et :=
-  ⟨fun g ↦ Q (g ()) fun _ ↦ True⟩
+def thereSkeleton (Q : Det E) : Skeleton E fun _ : Unit ↦ Ty.et :=
+  ⟨fun g ↦ Q (g ()) Set.univ⟩
 
 /-- With a conservative positive strong determiner the *there*-skeleton is an L-tautology
 (30), [barwise-cooper-1981]'s consequence that the domain belongs to every strong
 quantifier. -/
-theorem thereSkeleton_isLTautology {Q : GQ E} (hc : Conservative Q) (hs : PositiveStrong Q) :
+theorem thereSkeleton_isLTautology {Q : Det E} (hc : Conservative Q) (hs : PositiveStrong Q) :
     (thereSkeleton Q).IsLTautology :=
   fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs (g ())
 
 -- (25)
 theorem thereSkeleton_some_not_isLAnalytic (a : E) :
-    ¬ (thereSkeleton (GQ.some : GQ E)).IsLAnalytic := by
+    ¬ (thereSkeleton (Det.some : Det E)).IsLAnalytic := by
   rintro (h | h)
   · obtain ⟨_, hx, -⟩ := h fun _ _ ↦ False
     exact hx
@@ -275,13 +257,12 @@ theorem thereSkeleton_some_not_isLAnalytic (a : E) :
 
 -- (5b)
 theorem thereSkeleton_atLeast_two_not_isLAnalytic :
-    ¬ (thereSkeleton (atLeast 2 : GQ Bool)).IsLAnalytic := by
+    ¬ (thereSkeleton (atLeast 2 : Det Bool)).IsLAnalytic := by
   rintro (h | h)
-  · have ht := h fun _ _ ↦ False
-    simp only [thereSkeleton] at ht
+  · have ht : (atLeast 2 : Det Bool) ∅ Set.univ := h fun _ ↦ (∅ : Set Bool)
     exact absurd ht (by decide)
-  · refine h (fun _ _ ↦ True) ?_
-    show (atLeast 2 : GQ Bool) _ _
+  · refine h (fun _ ↦ Set.univ) ?_
+    show (atLeast 2 : Det Bool) Set.univ Set.univ
     decide
 
 /-! ### But-exceptives (§3.3.2) -/
@@ -289,33 +270,33 @@ theorem thereSkeleton_atLeast_two_not_isLAnalytic :
 /-- The skeleton (32)–(33) of *D n₁ but n₂ n₃* applies ||but|| to the exception, restrictor
 and scope variables around the logical determiner, with the exception set nonempty as the
 paper's footnote requires. -/
-def exceptiveSkeleton (Q : GQ E) : Skeleton E fun _ : Fin 3 ↦ Ty.et :=
+def exceptiveSkeleton (Q : Det E) : Skeleton E fun _ : Fin 3 ↦ Ty.et :=
   ⟨fun g ↦ (∃ x, g 1 x) ∧ but (g 1) (g 0) Q (g 2)⟩
 
 -- (33)
-theorem exceptiveSkeleton_isLContradiction {Q : GQ E} (h : RestrictorMonotone Q) :
+theorem exceptiveSkeleton_isLContradiction {Q : Det E} (h : RestrictorMonotone Q) :
     (exceptiveSkeleton Q).IsLContradiction :=
-  fun _ hg ↦ hg.1.elim fun x hx ↦ (IsExceptionSet.eq_bot_of_restrictorMonotone h hg.2).le x hx
+  fun _ hg ↦ hg.1.elim fun _ hx ↦ (IsExceptionSet.eq_bot_of_restrictorMonotone h hg.2).le hx
 
-theorem exceptiveSkeleton_not_isLTautology (Q : GQ E) :
+theorem exceptiveSkeleton_not_isLTautology (Q : Det E) :
     ¬ (exceptiveSkeleton Q).IsLTautology :=
   fun h ↦ (h ![fun _ ↦ True, fun _ ↦ False, fun _ ↦ True]).1.elim fun _ hx ↦ hx
 
 -- (32)
 theorem exceptiveSkeleton_every_not_isLContradiction (a : E) :
-    ¬ (exceptiveSkeleton (every : GQ E)).IsLContradiction := fun h ↦
+    ¬ (exceptiveSkeleton (every : Det E)).IsLContradiction := fun h ↦
   h ![fun _ ↦ True, (· = a), (· ≠ a)]
-    ⟨⟨a, rfl⟩, fun _ hx ↦ hx.2, fun _ hS x hx ↦ by_contra fun hs ↦ hS x ⟨trivial, hs⟩ hx⟩
+    ⟨⟨a, rfl⟩, fun _ hx ↦ hx.2, fun _ hS _ hx ↦ by_contra fun hs ↦ hS ⟨trivial, hs⟩ hx⟩
 
 theorem exceptiveSkeleton_no_not_isLContradiction (a : E) :
-    ¬ (exceptiveSkeleton (no : GQ E)).IsLContradiction := fun h ↦
+    ¬ (exceptiveSkeleton (no : Det E)).IsLContradiction := fun h ↦
   h ![fun _ ↦ True, (· = a), (· = a)]
-    ⟨⟨a, rfl⟩, fun _ hx hxa ↦ hx.2 hxa, fun _ hS x hx ↦ by_contra fun hs ↦ hS x ⟨trivial, hs⟩ hx⟩
+    ⟨⟨a, rfl⟩, fun _ hx hxa ↦ hx.2 hxa, fun _ hS _ hx ↦ by_contra fun hs ↦ hS ⟨trivial, hs⟩ hx⟩
 
 /-- The *most*-exceptive (11c) is ungrammatical, yet its skeleton is not L-analytic, a gap through
 [von-fintel-1993]'s limiting case (Footnote 7). -/
 theorem exceptiveSkeleton_most_not_isLAnalytic :
-    ¬ (exceptiveSkeleton (most : GQ (Fin 2))).IsLAnalytic :=
+    ¬ (exceptiveSkeleton (most : Det (Fin 2))).IsLAnalytic :=
   fun h ↦ h.elim (exceptiveSkeleton_not_isLTautology _) fun hc ↦
     hc ![fun _ ↦ True, (· = 0), (· = 1)] ⟨⟨0, rfl⟩, VonFintel1993.isExceptionSet_most_two⟩
 
@@ -328,7 +309,7 @@ def everyIsSkeleton (E : Type) : Skeleton E fun _ : Fin 2 ↦ Ty.et :=
 
 theorem everyIsSkeleton_not_isLAnalytic (a : E) : ¬ (everyIsSkeleton E).IsLAnalytic := by
   rintro (h | h)
-  · exact h ![fun _ ↦ True, fun _ ↦ False] a trivial
+  · exact h ![fun _ ↦ True, fun _ ↦ False] (Set.mem_univ a)
   · exact h ![fun _ ↦ True, fun _ ↦ True] fun _ _ ↦ trivial
 
 /-- The skeleton (36) of *John is smoking and John is not smoking*, with two propositional
@@ -356,13 +337,13 @@ inductive Determiner
 /-- The readings of a determiner, from the English fragment where it has the word, from the
 quantification substrate for *no*, and *at least n* for the numerals, the paper's reading of
 the left-upward-monotone *one, two*. -/
-noncomputable def Determiner.readings : Determiner → Set GQ.Family.{0}
+noncomputable def Determiner.readings : Determiner → Set Det.Family.{0}
   | .every => ⟦QuantityWord.every⟧
   | .some => ⟦QuantityWord.some_⟧
-  | .no => {GQ.Family.no}
+  | .no => {Det.Family.no}
   | .most => ⟦QuantityWord.most⟧
-  | .two => {GQ.Family.atLeast 2}
-  | .three => {GQ.Family.atLeast 3}
+  | .two => {Det.Family.atLeast 2}
+  | .three => {Det.Family.atLeast 3}
 
 /-- The constructions of the paper's sentences, with their determiner where one matters. -/
 inductive Construction
@@ -420,30 +401,30 @@ theorem rows_predicted :
       (r.grammatical = true ↔ ¬ r.LAnalytic) := by
   have hevery : (Row.mk (.there .every) false).LAnalytic := by
     intro q hq α _ _
-    obtain rfl : q = GQ.Family.every := hq
+    obtain rfl : q = Det.Family.every := hq
     exact Or.inl (thereSkeleton_isLTautology conservative_every positiveStrong_every)
   have hsome : (Row.mk (.there .some) true).grammatical = true ↔
       ¬ (Row.mk (.there .some) true).LAnalytic :=
-    iff_of_true rfl fun h ↦ thereSkeleton_some_not_isLAnalytic true (h GQ.Family.some rfl Bool)
+    iff_of_true rfl fun h ↦ thereSkeleton_some_not_isLAnalytic true (h Det.Family.some rfl Bool)
   rw [rows_eq]
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)
   · exact fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 hevery)
   · exact fun _ ↦ hsome
   · exact fun _ ↦ iff_of_true rfl fun h ↦
-      thereSkeleton_atLeast_two_not_isLAnalytic (h (GQ.Family.atLeast 2) rfl Bool)
+      thereSkeleton_atLeast_two_not_isLAnalytic (h (Det.Family.atLeast 2) rfl Bool)
   · exact fun _ ↦ hsome
   · exact fun _ ↦ iff_of_true rfl fun h ↦
-      (h GQ.Family.every rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
+      (h Det.Family.every rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
         (exceptiveSkeleton_every_not_isLContradiction true)
   · exact fun _ ↦ iff_of_true rfl fun h ↦
-      (h GQ.Family.no rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
+      (h Det.Family.no rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
         (exceptiveSkeleton_no_not_isLContradiction true)
   · refine fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 fun q hq α _ _ ↦ ?_)
-    obtain rfl : q = GQ.Family.some := hq
+    obtain rfl : q = Det.Family.some := hq
     exact Or.inr (exceptiveSkeleton_isLContradiction restrictorMonotone_some)
   · refine fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 fun q hq α _ _ ↦ ?_)
-    obtain rfl : q = GQ.Family.atLeast 3 := hq
+    obtain rfl : q = Det.Family.atLeast 3 := hq
     exact Or.inr (exceptiveSkeleton_isLContradiction (restrictorMonotone_atLeast 3))
   · exact fun hne ↦ absurd rfl hne
   · exact fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 hevery)

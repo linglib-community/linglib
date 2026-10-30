@@ -30,7 +30,7 @@ restrictor and scope positions at the `Prop` instance, and *every* and *no* rece
 
 @[expose] public section
 
-namespace Quantifier.GQ
+namespace Quantifier.Det
 
 open NaturalLogic
 
@@ -40,12 +40,12 @@ variable {α : Type*}
 
 /-- `LeftAntiAdditive` ([peters-westerstahl-2006] §5.9) is sectionwise
 anti-additivity in the restrictor, at the `Prop` instance. -/
-theorem leftAntiAdditive_iff_isAntiAdditive (q : GQ α) :
+theorem leftAntiAdditive_iff_isAntiAdditive (q : Det α) :
     LeftAntiAdditive q ↔ ∀ S, IsAntiAdditive (fun R => q R S) :=
   ⟨fun h S R R' => propext (h R R' S), fun h R R' S => iff_of_eq (h S R R')⟩
 
 /-- `RightAntiAdditive` is sectionwise anti-additivity in the scope. -/
-theorem rightAntiAdditive_iff_isAntiAdditive (q : GQ α) :
+theorem rightAntiAdditive_iff_isAntiAdditive (q : Det α) :
     RightAntiAdditive q ↔ ∀ R, IsAntiAdditive (q R) :=
   ⟨fun h R S S' => propext (h R S S'), fun h R S S' => iff_of_eq (h R S S')⟩
 
@@ -76,4 +76,4 @@ example : Signature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
     (fun R S => ¬ every (α := α) R S) :=
   not_soundFor_antiAddMult.comp₂ (σ := ⟨.anti, .mono⟩) soundFor_every
 
-end Quantifier.GQ
+end Quantifier.Det

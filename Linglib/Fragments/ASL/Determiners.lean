@@ -9,8 +9,8 @@ public import Linglib.Semantics.Denotation
 
 This file records the quantificational signs of American Sign Language attested with locus and
 height modification in [davidson-gagne-2022], under their ASL Signbank ID glosses, as the
-carrier `Sign`. A sign projects to a `Quantifier` record and denotes the readings the
-literature makes available for its gloss: `FS(ALL)` is the fingerspelled universal, `ALL-b` its
+carrier `Sign`. A sign projects to a `QuantificationalDeterminer` record and denotes the
+readings the literature makes available for its gloss: `FS(ALL)` is the fingerspelled universal, `ALL-b` its
 two-handed form, `NONEsym` the symmetrical negative quantifier, and the numerals `ONE` and `TWO`
 carry both the at-least and the exactly reading. Which signs carry a height-marked locus
 themselves and which take a following `IX-arc` is a matter of their phonological form and is
@@ -54,7 +54,7 @@ def numberRestriction : Sign → Option Number
   | .noneSym => none
 
 /-- The sign as a determiner record. -/
-def toQuantifier (s : Sign) : Quantifier :=
+def toQuantifier (s : Sign) : QuantificationalDeterminer :=
   { form := s.form, numberRestriction := s.numberRestriction }
 
 /-- All the signs. -/
@@ -64,18 +64,18 @@ def toList : List Sign :=
 universe u
 
 /-- The readings available for a sign, those of its gloss: the universals and `EACH` read as
-`every`, `NONEsym` as `no`, the existentials as `Quantifier.GQ.some`, `FEW` as `few`, `MOST` as
+`every`, `NONEsym` as `no`, the existentials as `Quantifier.Det.some`, `FEW` as `few`, `MOST` as
 `most`, and the numerals as `atLeast` or `exactly`; `MANY` has no reading, its
 standard being contextual. -/
-noncomputable instance : Denotes Sign (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes Sign (Set Quantifier.Det.Family.{u}) where
   denote
-    | .fsAll | .allB | .each => {Quantifier.GQ.Family.every}
-    | .noneSym => {Quantifier.GQ.Family.no}
-    | .someone | .something => {Quantifier.GQ.Family.some}
-    | .one => {Quantifier.GQ.Family.atLeast 1, Quantifier.GQ.Family.exactly 1}
-    | .two => {Quantifier.GQ.Family.atLeast 2, Quantifier.GQ.Family.exactly 2}
-    | .few => {Quantifier.GQ.Family.few}
-    | .most => {Quantifier.GQ.Family.most}
+    | .fsAll | .allB | .each => {Quantifier.Det.Family.every}
+    | .noneSym => {Quantifier.Det.Family.no}
+    | .someone | .something => {Quantifier.Det.Family.some}
+    | .one => {Quantifier.Det.Family.atLeast 1, Quantifier.Det.Family.exactly 1}
+    | .two => {Quantifier.Det.Family.atLeast 2, Quantifier.Det.Family.exactly 2}
+    | .few => {Quantifier.Det.Family.few}
+    | .most => {Quantifier.Det.Family.most}
     | .many => ∅
 
 end Sign

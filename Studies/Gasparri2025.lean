@@ -41,7 +41,7 @@ a referentialist needs must introduce the naming predicate itself.
 
 namespace Gasparri2025
 
-open Quantifier Quantifier.GQ Quantifier.NP
+open Quantifier Quantifier.Det
 
 theorem referentialist_generic_is_token {E : Type} [Fintype E] [DecidableEq E] (j : E)
     (VP : E → Prop) :

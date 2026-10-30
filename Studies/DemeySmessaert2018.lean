@@ -72,7 +72,7 @@ exhaustive](##isBooleanClosed_jsbHexagon_iff), the strong case.
 
 namespace DemeySmessaert2018
 
-open Finset Function Aristotelian BooleanSubalgebra ModalLogic Quantifier Quantifier.GQ SetRel
+open Finset Function Aristotelian BooleanSubalgebra ModalLogic Quantifier Quantifier.Det SetRel
 
 /-! ### Partitions (Section 3.1) -/
 
@@ -205,16 +205,16 @@ theorem card_parts_minterms_eq_clog {m : ℕ} {φ : Fin m → Finset (Fin (Nat.c
 /-! ### Existential import (Section 4) -/
 
 /-- In the canonical model of a set of regions, each region recording whether an individual is `S`
-and whether it is `P`, the individuals are the regions and `S` holds of those inside `S`. -/
-def InS (m : Finset (Bool × Bool)) (r : m) : Prop := r.1.1 = true
+and whether it is `P`, the individuals are the regions and `S` is the set of those inside `S`. -/
+def InS (m : Finset (Bool × Bool)) : Set m := {r | r.1.1 = true}
 
-/-- In the canonical model of a set of regions, `P` holds of the regions inside `P`. -/
-def InP (m : Finset (Bool × Bool)) (r : m) : Prop := r.1.2 = true
+/-- In the canonical model of a set of regions, `P` is the set of the regions inside `P`. -/
+def InP (m : Finset (Bool × Bool)) : Set m := {r | r.1.2 = true}
 
-instance (m : Finset (Bool × Bool)) : DecidablePred (InS m) :=
+instance (m : Finset (Bool × Bool)) : DecidablePred (· ∈ InS m) :=
   fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-instance (m : Finset (Bool × Bool)) : DecidablePred (InP m) :=
+instance (m : Finset (Bool × Bool)) : DecidablePred (· ∈ InP m) :=
   fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- A first-order model has an individual. -/
@@ -231,7 +231,7 @@ instance : DecidablePred IsSYLPattern := fun _ ↦ inferInstanceAs (Decidable (�
 models of a logic where it holds, the models being the patterns satisfying `L`. -/
 def categorical (L : Finset (Bool × Bool) → Prop) [DecidablePred L] : Fin 4 → Finset {m // L m} :=
   ![univ.filter fun m ↦ every (InS m.1) (InP m.1), univ.filter fun m ↦ no (InS m.1) (InP m.1),
-    univ.filter fun m ↦ GQ.some (InS m.1) (InP m.1),
+    univ.filter fun m ↦ Det.some (InS m.1) (InP m.1),
     univ.filter fun m ↦ ¬ every (InS m.1) (InP m.1)]
 
 /-- The categorical statements as a square, with corners `A`, `E`, `I` and `O`. -/
@@ -253,20 +253,21 @@ theorem inf_categorical_fol :
   ext m
   simp only [categorical, inf_eq_inter, mem_inter, mem_filter, mem_univ, true_and, IsSYLPattern,
     Matrix.cons_val_zero, Matrix.cons_val_one]
-  exact ⟨fun ⟨hA, hE⟩ ⟨r, hr, hS⟩ ↦ a_e_contrary _ _ hA hE ⟨r, hr⟩ hS,
+  exact ⟨fun ⟨hA, hE⟩ ⟨r, hr, hS⟩ ↦
+      Set.eq_empty_iff_forall_notMem.1 (a_e_contrary hA hE) ⟨r, hr⟩ hS,
     fun h ↦ ⟨fun r hr ↦ (h ⟨r.1, r.2, hr⟩).elim, fun r hr ↦ (h ⟨r.1, r.2, hr⟩).elim⟩⟩
 
 -- In syllogistics the categorical statements form a square of opposition.
 theorem squareRelations_syl : SquareRelations (categoricalSquare IsSYLPattern) := by
   refine .of_disjoint ?_ ?_ (disjoint_left.2 fun m hA hE ↦ ?_)
   · ext m
-    simp [categoricalSquare, categorical, no_contradicts_some]
+    simp [categoricalSquare, categorical, no_iff_not_some]
   · ext m
     simp [categoricalSquare, categorical]
   · obtain ⟨r, hr, hS⟩ := m.2
     simp only [categoricalSquare, categorical, mem_filter, mem_univ, true_and,
       Matrix.cons_val_zero, Matrix.cons_val_one] at hA hE
-    exact a_e_contrary _ _ hA hE ⟨r, hr⟩ hS
+    exact Set.eq_empty_iff_forall_notMem.1 (a_e_contrary hA hE) ⟨r, hr⟩ hS
 
 -- Section 4: the syllogistic cells are the vertices of the triangle of opposition.
 theorem parts_minterms_syl :
@@ -334,20 +335,20 @@ variable {D : Type*}
 
 open Classical in
 /-- The regions a model inhabits, the model interpreting `S` and `P` over the domain `D`. -/
-noncomputable def regions (m : (D → Prop) × (D → Prop)) : Finset (Bool × Bool) :=
-  univ.filter fun r ↦ ∃ x, (m.1 x ↔ r.1 = true) ∧ (m.2 x ↔ r.2 = true)
+noncomputable def regions (m : Set D × Set D) : Finset (Bool × Bool) :=
+  univ.filter fun r ↦ ∃ x, (x ∈ m.1 ↔ r.1 = true) ∧ (x ∈ m.2 ↔ r.2 = true)
 
-theorem mem_regions {m : (D → Prop) × (D → Prop)} {r : Bool × Bool} :
-    r ∈ regions m ↔ ∃ x, (m.1 x ↔ r.1 = true) ∧ (m.2 x ↔ r.2 = true) := by
+theorem mem_regions {m : Set D × Set D} {r : Bool × Bool} :
+    r ∈ regions m ↔ ∃ x, (x ∈ m.1 ↔ r.1 = true) ∧ (x ∈ m.2 ↔ r.2 = true) := by
   simp [regions]
 
 /-- The categorical statements over the first-order models with domain `D`. -/
-def categoricalModels (D : Type*) : Fin 4 → Set ((D → Prop) × (D → Prop)) :=
-  ![{m | every m.1 m.2}, {m | no m.1 m.2}, {m | GQ.some m.1 m.2}, {m | ¬ every m.1 m.2}]
+def categoricalModels (D : Type*) : Fin 4 → Set (Set D × Set D) :=
+  ![{m | every m.1 m.2}, {m | no m.1 m.2}, {m | Det.some m.1 m.2}, {m | ¬ every m.1 m.2}]
 
 /-- The categorical statements over the models of syllogistics with domain `D`, where something is
 `S`. -/
-def sylModels (D : Type*) : Fin 4 → Set {m : (D → Prop) × (D → Prop) // ∃ x, m.1 x} :=
+def sylModels (D : Type*) : Fin 4 → Set {m : Set D × Set D // m.1.Nonempty} :=
   fun i ↦ Subtype.val ⁻¹' categoricalModels D i
 
 /-- The region each categorical statement is about, and whether it says the region is inhabited. -/
@@ -363,25 +364,25 @@ private theorem mem_categorical_iff {L : Finset (Bool × Bool) → Prop} [Decida
   refine Iff.trans ?_ (key i ⟨n.1, trivial⟩)
   fin_cases i <;> simp [categorical]
 
-private theorem mem_categoricalModels_iff (i : Fin 4) (m : (D → Prop) × (D → Prop)) :
+private theorem mem_categoricalModels_iff (i : Fin 4) (m : Set D × Set D) :
     m ∈ categoricalModels D i ↔ ((region i).1 ∈ regions m ↔ (region i).2 = true) := by
-  fin_cases i <;> simp [categoricalModels, region, mem_regions, every, no, GQ.some]
+  fin_cases i <;>
+    simp [categoricalModels, region, mem_regions, every, no, Det.some, Set.subset_def,
+      Set.Nonempty]
 
 /-- The type of a first-order model over a nonempty domain is the set of regions it inhabits. -/
-noncomputable def folType [Nonempty D] (m : (D → Prop) × (D → Prop)) :
-    {n // IsFOLPattern n} :=
+noncomputable def folType [Nonempty D] (m : Set D × Set D) : {n // IsFOLPattern n} :=
   ⟨regions m, by
     classical
     obtain ⟨x⟩ := ‹Nonempty D›
-    exact ⟨(decide (m.1 x), decide (m.2 x)), mem_regions.2 ⟨x, by simp, by simp⟩⟩⟩
+    exact ⟨(decide (x ∈ m.1), decide (x ∈ m.2)), mem_regions.2 ⟨x, by simp, by simp⟩⟩⟩
 
 /-- The type of a model of syllogistics is the set of regions it inhabits. -/
-noncomputable def sylType (m : {m : (D → Prop) × (D → Prop) // ∃ x, m.1 x}) :
-    {n // IsSYLPattern n} :=
+noncomputable def sylType (m : {m : Set D × Set D // m.1.Nonempty}) : {n // IsSYLPattern n} :=
   ⟨regions m.1, by
     classical
     obtain ⟨x, hx⟩ := m.2
-    exact ⟨(true, decide (m.1.2 x)), mem_regions.2 ⟨x, by simp [hx], by simp⟩, rfl⟩⟩
+    exact ⟨(true, decide (x ∈ m.1.2)), mem_regions.2 ⟨x, by simp [hx], by simp⟩, rfl⟩⟩
 
 -- Section 4: a categorical statement holds of a first-order model iff it holds of the canonical
 -- model of the model's type.
@@ -399,13 +400,13 @@ theorem sylModels_eq : sylModels D = fun i ↦ sylType ⁻¹' ↑(categorical Is
 
 -- Over a domain of at least four individuals, every nonempty set of regions is a model's.
 theorem exists_regions_eq [Fintype D] (hD : 4 ≤ Fintype.card D) {n : Finset (Bool × Bool)}
-    (hn : n.Nonempty) : ∃ m : (D → Prop) × (D → Prop), regions m = n := by
+    (hn : n.Nonempty) : ∃ m : Set D × Set D, regions m = n := by
   obtain ⟨e⟩ : Nonempty (n ↪ D) := Function.Embedding.nonempty_of_card_le <| by
     rw [Fintype.card_coe]
     exact (card_le_univ n).trans (by simpa using hD)
   have : Nonempty n := hn.coe_sort
   have hg := Function.invFun_surjective e.injective
-  refine ⟨(fun x ↦ (Function.invFun e x).1.1 = true, fun x ↦ (Function.invFun e x).1.2 = true),
+  refine ⟨({x | (Function.invFun e x).1.1 = true}, {x | (Function.invFun e x).1.2 = true}),
     Finset.ext fun r ↦ ⟨fun hr ↦ ?_, fun hr ↦ ?_⟩⟩
   · obtain ⟨x, h₁, h₂⟩ := mem_regions.1 hr
     have : (Function.invFun e x).1 = r := Prod.ext (Bool.eq_iff_iff.2 h₁) (Bool.eq_iff_iff.2 h₂)

@@ -93,7 +93,7 @@ def een : Article :=
 
 /-- The negative article *geen* occurs with singular, plural and mass nouns alike, and the
 grammar argues that it is a quantifier rather than an article. -/
-def geen : Quantifier := { form := "geen", selectsMass := true }
+def geen : QuantificationalDeterminer := { form := "geen", selectsMass := true }
 
 /-- The proximate demonstrative is *deze* ~ *dit*. -/
 def deze : DemonstrativeDeterminer :=

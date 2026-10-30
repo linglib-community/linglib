@@ -101,9 +101,9 @@ def Indefinite.entry : Indefinite → PolarityItem
 
 /-- Of the readings of *žádný*, exactly the indefinite one yields *no* under the one negation of the
 clause (p. 5). -/
-theorem compl_eq_no_iff {d : GQ.Family} (hd : d ∈ ⟦Indefinite.nci.word⟧) :
-    dᶜ = GQ.Family.no ↔ d = GQ.Family.some := by
-  rcases hd with rfl | rfl <;> simp [GQ.Family.some_ne_no, GQ.Family.some_ne_no.symm]
+theorem compl_eq_no_iff {d : Det.Family} (hd : d ∈ ⟦Indefinite.nci.word⟧) :
+    dᶜ = Det.Family.no ↔ d = Det.Family.some := by
+  rcases hd with rfl | rfl <;> simp [Det.Family.some_ne_no, Det.Family.some_ne_no.symm]
 
 /-- A polarity item is licensed at a reading of negation when a positive polarity item
 falls under FALSUM and a negative one under the canonical operator (the paper's (11) and

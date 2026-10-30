@@ -47,7 +47,7 @@ indefinite one.
 
 namespace PurverGinzburg2004
 
-open Examples Quantifier NP
+open Examples Quantifier
 
 /-! ### Signs and the Definiteness Principle -/
 
@@ -211,26 +211,26 @@ theorem not_predicts_ex90 : ¬ (pair {.complement}).Predicts ex90 := by decide
 
 section Witness
 
-variable {α : Type*} {Q : NP α} {A X : α → Prop}
+variable {α : Type*} {Q : Quantifier α} {A X : Set α}
 
 -- (85), §5.5
-theorem witness_subset_of_empty (hQ : Q fun _ ↦ False) (X : α → Prop) :
-    ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
-  ⟨fun _ ↦ False, ⟨fun _ ↦ False.elim, hQ⟩, fun _ ↦ False.elim⟩
+theorem witness_subset_of_empty (hQ : Q ∅) (X : Set α) : ∃ w, Witness Q A w ∧ w ⊆ X :=
+  ⟨∅, ⟨Set.empty_subset A, hQ⟩, Set.empty_subset X⟩
 
 -- (24)
-theorem not_witness_iff_of_empty (hQ : Q fun _ ↦ False) (hX : ¬ Q X) :
-    ¬ ∀ Y, Q Y ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → Y x :=
+theorem not_witness_iff_of_empty (hQ : Q ∅) (hX : ¬ Q X) :
+    ¬ ∀ Y, Q Y ↔ ∃ w, Witness Q A w ∧ w ⊆ Y :=
   fun h ↦ hX ((h X).2 (witness_subset_of_empty hQ X))
 
 /-- A quantifier living on `A` holds of `X` iff some witness set lies inside `X` and the rest of `A`
 outside it (91). -/
 theorem pair_apply_iff (h : LivesOn Q A) :
-    Q X ↔ ∃ R, Witness Q A R ∧ (∀ x, R x → X x) ∧ ∀ x, A x → ¬ R x → ¬ X x := by
+    Q X ↔ ∃ R, Witness Q A R ∧ R ⊆ X ∧ A \ R ⊆ Xᶜ := by
   refine h.apply_iff_witness.trans
-    ⟨fun hw ↦ ⟨_, hw, fun _ ↦ And.right, fun _ hA hR hX ↦ hR ⟨hA, hX⟩⟩, ?_⟩
+    ⟨fun hw ↦ ⟨_, hw, Set.inter_subset_right, fun _ ⟨hA, hR⟩ hX ↦ hR ⟨hA, hX⟩⟩, ?_⟩
   rintro ⟨R, hR, hRX, hC⟩
-  obtain rfl : R = fun x ↦ A x ∧ X x := by ext x; grind [Witness]
+  obtain rfl : R = A ∩ X := Set.Subset.antisymm (Set.subset_inter hR.1 hRX)
+    fun _ ⟨hA, hX⟩ ↦ by_contra fun hR' ↦ hC ⟨hA, hR'⟩ hX
   exact hR
 
 end Witness

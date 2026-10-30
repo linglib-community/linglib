@@ -239,13 +239,13 @@ theorem structCol_keeps_dep : dep Dref.u₃ Dref.u₂ structCol ⊆ dep Dref.u�
 /-- (83): `every^{u, u'⊑u}`, with the distributivity operators (74) that the paper substitutes
 for those of (75) on a non-empty restrictor. -/
 def every (d d' : Dref) (P : Pred E) : Quant E := fun P' ↦
-  max d (distrib d (P d)) ○ maxSub d' d (distrib d' (P' d')) ○ test (det GQ.every d d')
+  max d (distrib d (P d)) ○ maxSub d' d (distrib d' (P' d')) ○ test (det Det.every d d')
 
 /-- On a non-empty restrictor, (83) is the generalized determiner (77) at `EVERY` (p. 470). -/
 theorem determiner_every_iff {d d' : Dref} (hd : d ≠ d') {P P' : Pred E} {I J : Set (Row E)}
     (hI : ∃ K, I ~[intro d ○ distrib d (P d)] K) :
-    I ~[determiner GQ.every d d' P P'] J ↔ I ~[every d d' P P'] J :=
-  mem_determiner_iff (fun _ ⟨x, hx⟩ h ↦ h x hx) hd hI
+    I ~[determiner Det.every d d' P P'] J ↔ I ~[every d d' P P'] J :=
+  mem_determiner_iff (fun _ ⟨_, hx⟩ h ↦ h hx) hd hI
 
 /-- (80): `court-at¹` gives its first object scope over its second. -/
 def courtAt₁ (R : E → E → E → Prop) (Q' Q'' : Quant E) : Pred E :=
@@ -258,7 +258,7 @@ def courtAt₂ (R : E → E → E → Prop) (Q' Q'' : Quant E) : Pred E :=
 /-- (90): `always^{u⊑u'}` quantifies universally over a structured subset of the dref it
 retrieves. -/
 def always (d d' : Dref) : Quant E := fun P ↦
-  maxSub d d' (distrib d (P d)) ○ test (det GQ.every d' d)
+  maxSub d d' (distrib d (P d)) ○ test (det Det.every d' d)
 
 /-- (92): `come-to-banquet-of¹` gives its subject scope over the adverb. -/
 def come₁ (R : E → E → Prop) (Q Q' : Quant E) : Update (Set (Row E)) :=
@@ -348,7 +348,7 @@ theorem courtAt₁_output (hJ : {iStar} ~[courtSentence M courtAt₁] J) :
   obtain ⟨⟨J₃, hmax, hsub⟩, hev⟩ := mem_comp_test.1 hJ₃
   obtain ⟨K, -, hK⟩ := max_subset _ _ hsub
   obtain ⟨hss, rfl, hCt⟩ := mem_test_comp.1 hK
-  simp only [mem_det, GQ.every] at hev
+  simp only [mem_det, Det.every] at hev
   have hwJ : w ∈ value Dref.u₄ J₂ := hw ▸ Set.mem_singleton w
   have hwoman' : M.woman w := by
     simpa using (mem_atom_vec1.1 hwoman).2 w hwJ
@@ -366,7 +366,7 @@ theorem courtAt₁_output (hJ : {iStar} ~[courtSentence M courtAt₁] J) :
     exact hN
   have hconv (c : E) (hc : M.convention c) : c ∈ value Dref.u₃ K ∧ M.courtAt M.harvey w c ∧
       value Dref.u₄ (cell Dref.u₃ c K) = {w} := by
-    have hc₃ : c ∈ value Dref.u₃ K := hev c (by rw [hv₂]; exact hc)
+    have hc₃ : c ∈ value Dref.u₃ K := @hev c (by rw [hv₂]; exact hc)
     obtain ⟨w', hw', hcourt⟩ := exists_courtAt_of_mem_atom M hv₁ (hCt.2 c hc₃)
     have hsub' : value Dref.u₄ (cell Dref.u₃ c K) ⊆ {w} :=
       hv₄ ▸ value_mono fun _ hk ↦ hk.1
@@ -390,7 +390,7 @@ theorem courtAt₂_output (hJ : {iStar} ~[courtSentence M courtAt₂] J) :
   obtain ⟨⟨J₃, hmax, hsub⟩, hev⟩ := mem_comp_test.1 hJ₃
   obtain ⟨K₀, hi₃, hK⟩ := max_subset _ _ hsub
   obtain ⟨hss, hdist⟩ := mem_test_comp.1 hK
-  simp only [mem_det, GQ.every] at hev
+  simp only [mem_det, Det.every] at hev
   have hhJ₁ : M.harvey ∈ value Dref.u₁ J₁ := hN ▸ Set.mem_singleton _
   have hv₂ : value Dref.u₂ K₀ = {c | M.convention c} := by
     rw [value_intro_of_ne (by decide) hi₃]
@@ -411,7 +411,7 @@ theorem courtAt₂_output (hJ : {iStar} ~[courtSentence M courtAt₂] J) :
     (((((preserves_intro (by decide)).comp (preserves_test _ _)).comp
       (preserves_test _ _)).comp (preserves_test _ _)).distrib).value_eq hdist
   have hc₃ (c : E) (hc : M.convention c) : c ∈ value Dref.u₃ K₀ :=
-    hv₃ ▸ hev c (by rw [hv₂J, hv₂]; exact hc)
+    hv₃ ▸ @hev c (by rw [hv₂J, hv₂]; exact hc)
   refine ⟨Set.ext fun c ↦ ⟨fun hc ↦ ?_, fun hc ↦ hv₃ ▸ hc₃ c hc⟩, fun c hc ↦ ?_⟩
   · have := hv₂₃ (hv₃ ▸ hc)
     rwa [hv₂] at this
@@ -484,9 +484,8 @@ theorem exists_courtAt₁_output (hc : ∃ c, M.convention c) {w : E} (hw : M.wo
         exact ⟨⟨c, hc, rfl⟩, rfl⟩
     rw [hcell, singleton_mem_atom_iff (y := ![M.harvey, w, c]) fun k ↦ by fin_cases k <;> rfl]
     exact h c hc
-  · simp only [mem_det, GQ.every]
+  · simp only [mem_det, Det.every]
     rw [value_copy_of_ne (by decide), value_copy_self]
-    exact fun _ h ↦ h
 
 -- (88), (86)
 theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
@@ -618,7 +617,7 @@ theorem exists_courtAt₂_output (hc : ∃ c, M.convention c) {f : E → E}
             ⟨_, ⟨(hJK ⟨⟨x, hx, .inr rfl⟩, by simp⟩).1, rfl⟩, rfl⟩
           rw [hw'] at hb hfx
           rw [Set.mem_singleton_iff.1 hb, Set.mem_singleton_iff.1 hfx]
-    · simp only [mem_det, GQ.every]
+    · simp only [mem_det, Det.every]
       rintro x ⟨j, ⟨c, hc, rfl | rfl⟩, hx⟩ <;> exact ⟨_, ⟨c, hc, .inl rfl⟩, hx⟩
   · ext x
     simp only [J, mem_value, Set.mem_ofPred_eq, Set.mem_image, val_apply]
@@ -645,7 +644,7 @@ theorem mem_dom_prettySentence :
 
 /-- The universal adverb over a test entailing `COME{u₄, u₅}`. -/
 private abbrev alwaysCome (C : Condition (Set (Row E))) : Update (Set (Row E)) :=
-  maxSub Dref.u₅ Dref.u₃ (distrib Dref.u₅ (test C)) ○ test (det GQ.every Dref.u₃ Dref.u₅)
+  maxSub Dref.u₅ Dref.u₃ (distrib Dref.u₅ (test C)) ○ test (det Det.every Dref.u₃ Dref.u₅)
 
 private theorem always_come {C : Condition (Set (Row E))}
     (hC : C ⊆ atom (fun x ↦ M.come (x 0) (x 1)) ![Dref.u₄, Dref.u₅])
@@ -659,7 +658,7 @@ private theorem always_come {C : Condition (Set (Row E))}
   have hP := (preserves_test ![Dref.u₃, Dref.u₄] _).maxSub (by decide) hmax
   have hv₃ := ((preserves_test ![Dref.u₃] _).maxSub (by decide)).value_eq hmax
   intro c hc
-  have hc₅ : c ∈ value Dref.u₅ K := hev c (hv₃.symm ▸ hc)
+  have hc₅ : c ∈ value Dref.u₅ K := @hev c (hv₃.symm ▸ hc)
   obtain ⟨⟨p, k, ⟨hk, hk₅⟩, hp₁, hp₂⟩, hcome⟩ := mem_atom_vec2.1 (hC (hC5.2 c hc₅))
   have hpc : p.2 = c := Flat.coe_inj.1 (hp₂.symm.trans hk₅)
   have hk₃ : val Dref.u₃ k = ↑c := by
@@ -678,9 +677,8 @@ private theorem always_come_of {C : Condition (Set (Row E))} (hne : (value Dref.
     refine mem_maxSub_test_copy (by decide) ⟨?_, fun c hc ↦ hC c ?_⟩
     · rwa [value_copy_self]
     · rwa [value_copy_self] at hc
-  · simp only [mem_det, GQ.every]
+  · simp only [mem_det, Det.every]
     rw [value_copy_self, value_copy_of_ne (by decide)]
-    exact fun _ h ↦ h
 
 private theorem cell_copy_mem {c w : E} (hw : value Dref.u₄ (cell Dref.u₃ c J) = {w})
     (hcome : M.come w c) :

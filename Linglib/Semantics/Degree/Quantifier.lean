@@ -61,7 +61,7 @@ cardinalities of the pluralities a numeral ranges over, `Iic` is pluralization w
 
 namespace Degree
 
-open NaturalLogic Quantifier Quantifier.GQ Set
+open NaturalLogic Quantifier Quantifier.Det Set
 
 variable {α D : Type*}
 
@@ -71,41 +71,40 @@ An entity's degree property is the set of degrees at which the scope holds of it
 predicate `λd. φ(d)(x)`; for a measure `μ` it is `Iic ∘ μ`, the degrees the entity reaches. -/
 
 section Scope
-variable {Q : NP α} {P : α → Set D} {d : D}
+variable {Q : Quantifier α} {P : α → Set D} {d : D}
 
 /-- The degrees at which `Q` holds of the entities whose degree property contains them, the
 degree predicate abstracted over the scope of `Q`. -/
-def scopeDegrees (Q : NP α) (P : α → Set D) : Set D := {d | Q fun x ↦ d ∈ P x}
+def scopeDegrees (Q : Quantifier α) (P : α → Set D) : Set D := {d | Q {x | d ∈ P x}}
 
-theorem mem_scopeDegrees : d ∈ scopeDegrees Q P ↔ Q fun x ↦ d ∈ P x := Iff.rfl
+theorem mem_scopeDegrees : d ∈ scopeDegrees Q P ↔ Q {x | d ∈ P x} := Iff.rfl
 
 /-- A degree quantifier `𝒟` scoping under `Q`, applied to each entity's own degree property. -/
-def LowScope (𝒟 : Set D → Prop) (Q : NP α) (P : α → Set D) : Prop :=
-  Q fun x ↦ 𝒟 (P x)
+def LowScope (𝒟 : Set D → Prop) (Q : Quantifier α) (P : α → Set D) : Prop :=
+  Q {x | 𝒟 (P x)}
 
 /-- A degree quantifier `𝒟` scoping over `Q`. -/
-def HighScope (𝒟 : Set D → Prop) (Q : NP α) (P : α → Set D) : Prop :=
+def HighScope (𝒟 : Set D → Prop) (Q : Quantifier α) (P : α → Set D) : Prop :=
   𝒟 (scopeDegrees Q P)
 
-theorem scopeDegrees_some (R : α → Prop) (P : α → Set D) :
-    scopeDegrees (GQ.some R) P = ⋃ (x) (_ : R x), P x := by
+theorem scopeDegrees_some (R : Set α) (P : α → Set D) :
+    scopeDegrees (Det.some R) P = ⋃ x ∈ R, P x := by
   ext
-  simp [mem_scopeDegrees, GQ.some]
+  simp [mem_scopeDegrees, Det.some, Set.Nonempty]
 
-theorem scopeDegrees_every (R : α → Prop) (P : α → Set D) :
-    scopeDegrees (every R) P = ⋂ (x) (_ : R x), P x := by
+theorem scopeDegrees_every (R : Set α) (P : α → Set D) :
+    scopeDegrees (every R) P = ⋂ x ∈ R, P x := by
   ext
-  simp [mem_scopeDegrees, every]
+  simp [mem_scopeDegrees, every, Set.subset_def]
 
-theorem scopeDegrees_no (R : α → Prop) (P : α → Set D) :
-    scopeDegrees (no R) P = (scopeDegrees (GQ.some R) P)ᶜ := by
-  ext
-  exact (not_exists.trans (forall_congr' fun _ ↦ not_and)).symm
+theorem scopeDegrees_no (R : Set α) (P : α → Set D) :
+    scopeDegrees (no R) P = (scopeDegrees (Det.some R) P)ᶜ :=
+  Set.ext fun _ ↦ no_iff_not_some
 
 end Scope
 
 section Preorder
-variable [Preorder D] {Q : NP α} {P : α → Set D} {μ : α → D} {d : D}
+variable [Preorder D] {Q : Quantifier α} {P : α → Set D} {μ : α → D} {d : D}
 
 /-- The greatest element of `P` lies in `U`. These are the degree quantifiers of [heim-2001],
 *-er than `t`* at `U = Ioi t`, *less than `t`* at `Iio t`, *exactly `δ` -er than `t`* at
@@ -114,13 +113,13 @@ def MaxIn (U X : Set D) : Prop := ∃ m ∈ U, IsGreatest X m
 
 theorem maxIn_singleton {X : Set D} {a : D} : MaxIn {a} X ↔ IsGreatest X a := exists_eq_left
 
-theorem scopeDegrees_some_Iic (R : α → Prop) (μ : α → D) :
-    scopeDegrees (GQ.some R) (Iic ∘ μ) = lowerClosure (μ '' {x | R x}) := by
+theorem scopeDegrees_some_Iic (R : Set α) (μ : α → D) :
+    scopeDegrees (Det.some R) (Iic ∘ μ) = lowerClosure (μ '' R) := by
   ext d
-  simp [mem_scopeDegrees, GQ.some, mem_lowerClosure]
+  simp [mem_scopeDegrees, Det.some, mem_lowerClosure, Set.Nonempty]
 
-theorem scopeDegrees_every_Iic (R : α → Prop) (μ : α → D) :
-    scopeDegrees (every R) (Iic ∘ μ) = lowerBounds (μ '' {x | R x}) := by
+theorem scopeDegrees_every_Iic (R : Set α) (μ : α → D) :
+    scopeDegrees (every R) (Iic ∘ μ) = lowerBounds (μ '' R) := by
   ext d
   exact (mem_lowerBounds.trans forall_mem_image).symm
 
@@ -146,7 +145,7 @@ theorem scopeDegrees_eq_Iic (hQ : Monotone Q) (hP : ∀ x, IsLowerSet (P x)) {m 
 end Preorder
 
 section PartialOrder
-variable [PartialOrder D] {U P : Set D} {Q : NP α} {μ : α → D}
+variable [PartialOrder D] {U P : Set D} {Q : Quantifier α} {μ : α → D}
 
 theorem maxIn_Iic {a : D} : MaxIn U (Iic a) ↔ a ∈ U :=
   ⟨fun ⟨_, hm, h⟩ ↦ h.unique isGreatest_Iic ▸ hm, fun h ↦ ⟨a, h, isGreatest_Iic⟩⟩
@@ -155,39 +154,40 @@ theorem maxIn_compl : MaxIn Uᶜ P ↔ (∃ m, IsGreatest P m) ∧ ¬ MaxIn U P 
   ⟨fun ⟨m, hm, h⟩ ↦ ⟨⟨m, h⟩, fun ⟨_, hm', h'⟩ ↦ hm (h'.unique h ▸ hm')⟩,
     fun ⟨⟨m, h⟩, hn⟩ ↦ ⟨m, fun hm ↦ hn ⟨m, hm, h⟩, h⟩⟩
 
-theorem lowScope_maxIn : LowScope (MaxIn U) Q (Iic ∘ μ) ↔ Q fun x ↦ μ x ∈ U := by
+theorem lowScope_maxIn : LowScope (MaxIn U) Q (Iic ∘ μ) ↔ Q {x | μ x ∈ U} := by
   simp only [LowScope, Function.comp_apply, maxIn_Iic]
 
 theorem lowScope_of_highScope (hQ : Monotone Q) (hU : IsUpperSet U)
     (h : HighScope (MaxIn U) Q (Iic ∘ μ)) : LowScope (MaxIn U) Q (Iic ∘ μ) :=
   let ⟨_, hmU, hm⟩ := h; lowScope_maxIn.2 (hQ (fun _ hx ↦ hU hx hmU) hm.1)
 
-theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y, R y → μ x ≤ μ y)
+theorem highScope_every_of_lowScope {R : Set α} (hR : ∃ x ∈ R, ∀ y ∈ R, μ x ≤ μ y)
     (h : LowScope (MaxIn U) (every R) (Iic ∘ μ)) : HighScope (MaxIn U) (every R) (Iic ∘ μ) := by
   rw [lowScope_maxIn] at h
   obtain ⟨x₀, hx₀, hmin⟩ := hR
-  exact ⟨μ x₀, h x₀ hx₀, hmin, fun _ hd ↦ hd x₀ hx₀⟩
+  exact ⟨μ x₀, h hx₀, fun y hy ↦ hmin y hy, fun _ hd ↦ hd hx₀⟩
 
 /-- Over `every R` the greatest degree every `R`-witness reaches is the infimum of their measures.
 -/
-theorem highScope_maxIn_singleton_every {R : α → Prop} {m : D} :
-    HighScope (MaxIn {m}) (every R) (Iic ∘ μ) ↔ IsGLB (μ '' {x | R x}) m := by
+theorem highScope_maxIn_singleton_every {R : Set α} {m : D} :
+    HighScope (MaxIn {m}) (every R) (Iic ∘ μ) ↔ IsGLB (μ '' R) m := by
   rw [HighScope, maxIn_singleton, scopeDegrees_every_Iic]; rfl
 
 /-- Over `some R` the greatest degree some `R`-witness reaches is the greatest of their measures. -/
-theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
-    HighScope (MaxIn {m}) (GQ.some R) (Iic ∘ μ) ↔ IsGreatest (μ '' {x | R x}) m := by
+theorem highScope_maxIn_singleton_some {R : Set α} {m : D} :
+    HighScope (MaxIn {m}) (Det.some R) (Iic ∘ μ) ↔ IsGreatest (μ '' R) m := by
   rw [HighScope, maxIn_singleton, scopeDegrees_some_Iic, isGreatest_lowerClosure_iff]
 
-theorem lowScope_some_of_highScope {R : α → Prop} (h : HighScope (MaxIn U) (GQ.some R) (Iic ∘ μ)) :
-    LowScope (MaxIn U) (GQ.some R) (Iic ∘ μ) := by
+theorem lowScope_some_of_highScope {R : Set α}
+    (h : HighScope (MaxIn U) (Det.some R) (Iic ∘ μ)) :
+    LowScope (MaxIn U) (Det.some R) (Iic ∘ μ) := by
   obtain ⟨m, hmU, ⟨x, hx, hmx⟩, hub⟩ := h
   exact lowScope_maxIn.2 ⟨x, hx, show μ x ∈ U from hmx.antisymm (hub ⟨x, hx, le_rfl⟩) ▸ hmU⟩
 
 end PartialOrder
 
 section LinearOrder
-variable [LinearOrder D] {U : Set D} {Q Q' : NP α} {μ : α → D}
+variable [LinearOrder D] {U : Set D} {Q Q' : Quantifier α} {μ : α → D}
 
 theorem exists_isGreatest_scopeDegrees [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (h : (scopeDegrees Q (Iic ∘ μ)).Nonempty) :
@@ -225,7 +225,7 @@ theorem highScope_maxIn_iff_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q
 
 theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (hne : (scopeDegrees Q (Iic ∘ μ)).Nonempty) {t : D} :
-    HighScope (MaxIn (Iio t)) Q (Iic ∘ μ) ↔ ¬ Q fun x ↦ t ≤ μ x := by
+    HighScope (MaxIn (Iio t)) Q (Iic ∘ μ) ↔ ¬ Q {x | t ≤ μ x} := by
   have h := highScope_maxIn_iff_lowScope (μ := μ) hQ hQ₀ (isUpperSet_Ici t)
   simp only [lowScope_maxIn, mem_Ici] at h
   rw [← compl_Ici, ← h]

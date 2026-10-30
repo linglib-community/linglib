@@ -47,7 +47,7 @@ formalized.
 
 namespace RitchieSchiller2024
 
-open Quantifier.GQ
+open Quantifier.Det
 
 /-! ### Cognitive heuristics -/
 
@@ -157,8 +157,8 @@ theorem every_salient_of_every_available (R S : E → Prop) :
   restrictorAntitone_every S fun _ hx ↦ ⟨hx.1, s.salient_subset_available v hx.2⟩
 
 theorem some_available_of_some_salient (R S : E → Prop) :
-    adjRestrict Quantifier.GQ.some (s.salient v) R S →
-      adjRestrict Quantifier.GQ.some (s.available v) R S :=
+    adjRestrict Quantifier.Det.some (s.salient v) R S →
+      adjRestrict Quantifier.Det.some (s.available v) R S :=
   restrictorMonotone_some S fun _ hx ↦ ⟨hx.1, s.salient_subset_available v hx.2⟩
 
 /-! ### Joint purposes -/
