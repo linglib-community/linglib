@@ -1,185 +1,220 @@
 module
 
 public import Linglib.Data.Examples.BachBrownMarslenWilson1986
-public import Mathlib.Algebra.BigOperators.Intervals
+public import Linglib.Data.Experiments.BachBrownMarslenWilson1986
+public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fin.Rev
+public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Tactic.NormNum
 
 /-!
-# Bach, Brown & Marslen-Wilson (1986): crossed vs nested dependencies
+# Bach, Brown and Marslen-Wilson (1986): crossed and nested dependencies
 
-Dutch verb clusters cross their NP–verb dependencies (NP₁ NP₂ NP₃ V₁ V₂ V₃),
-German nests them (NP₁ NP₂ NP₃ V₃ V₂ V₁). Matched Dutch and German sentences are
-rated equally comprehensible at one level of embedding; from two levels on Dutch
-is easier on both ratings and probe accuracy (Tables 1, 3) — yet only the nested
-pattern is parsable by a push-down store, so parsing difficulty does not track
-stack-parsability ([evers-1975], [bresnan-etal-1982]).
+In Dutch and German a clause can end in a cluster of verbs that follows all their noun phrases.
+Dutch orders the cluster from the matrix verb down and German from the most deeply embedded verb
+up, so the dependencies between noun phrases and verbs cross in Dutch and nest in German, and
+[the German order is the only one in which no two cross](##forall_not_alternate_iff), the only one
+a push-down store can match ([evers-1975]; for Dutch, [no context-free grammar assigns the
+clusters their trees](##BresnanEtAl1982.not_strongly_contextFree)). Yet
+[bach-brown-marslen-wilson-1986] found the Dutch sentences the easier to understand from two
+embedded clauses on.
 
-An NP–verb binding is a permutation `σ : Equiv.Perm (Fin n)`: crossed is
-`Equiv.refl`, nested is `Fin.revPerm`. `totalIntegrationCost` formalizes the paper's informal
-argument that crossed orders integrate each NP into the matrix structure as its
-verb arrives while nested orders hold every NP until the cluster ends.
+The paper's explanation is what a listener can do with a clause when its verb arrives: a clause
+can be connected up to the matrix once every verb above it has been heard, and
+[that is the case on arrival exactly when its dependency crosses every dependency above
+it](##held_eq_zero_iff_alternate), so [the Dutch order is the only one that connects every clause
+on arrival](##forall_held_eq_zero_iff). The German order holds each clause below the matrix in
+store until the verbs above it arrive; from three verbs on, the innermost clause is held past the
+next verb, and [that is where the Dutch advantage in comprehension appears](##forall_gap_lt_iff).
+The Dutch advantage by noun phrase [peaks at the innermost clause](##errorDifference_lt_np3_iff),
+the clause German holds longest, although both orders connect it at the last verb; summed over a
+cluster, the time clauses are held and the time they join the matrix
+[differ by a constant](##sum_connection), so only the breakdown by noun phrase tells them apart.
+
+## Implementation notes
+
+* A cluster of `n` verbs is a permutation `σ` of `Fin n`: the verbs are indexed from the matrix
+  verb `0` down, and `σ i` is the position of verb `i` in the cluster. The Dutch order is `1`, the
+  German `Fin.revPerm` (Figure 1).
+* The noun phrases are the subjects of the verbs, in the order of their verbs, which is what the
+  question task asks about; the object of the last verb is left out. In the string of subjects and
+  cluster, subject `i` is at `i` and verb `i` at `n + σ i`, so two dependencies cross when they
+  `DependencyGrammar.Alternate`.
+* A Level-`n` Test sentence has an `n`-verb cluster.
+* The model ranks cluster orders. Why both languages break down from Level 3 on, the paper's
+  second open question (p. 261), is not modelled.
+
+## Errata
+
+* Table 5's German/Participle NP2 cell is 0.67, while Table 4 gives 1.07 − 0.38 = 0.69; every
+  other cell of Table 5 is the difference of the Table 4 cells
+  (`errorDifference_eq_sub_iff`).
 
 ## References
 
-* [bach-brown-marslen-wilson-1986]: Crossed and nested dependencies in German
-  and Dutch: A psycholinguistic study. *Language and Cognitive Processes* 1.
-* [evers-1975]: The transformational cycle in Dutch and German.
-* [bresnan-etal-1982]: Cross-serial dependencies in Dutch.
+* [bach-brown-marslen-wilson-1986]
+* [evers-1975]
+* [bresnan-etal-1982]
 -/
 
 @[expose] public section
 
 namespace BachBrownMarslenWilson1986
 
-variable {n : ℕ}
+open Finset DependencyGrammar Data.Experiments
 
-/-- NPs matrix-integrated after `k` verbs heard: NP `i` counts iff every verb on
-the control chain from its verb `V_{σ i}` up to the matrix verb `V_{σ 0}` has
-been heard, i.e. `max (σ 0) (σ i) < k`. -/
-def integratedCount (σ : Equiv.Perm (Fin n)) (k : ℕ) : ℕ :=
-  match n with
-  | 0 => 0
-  | m + 1 =>
-    let matrix := (σ ⟨0, by omega⟩).val
-    (List.range (m + 1)).countP λ i =>
-      if hi : i < m + 1 then
-        max matrix (σ ⟨i, hi⟩).val < k
-      else false
+variable {n : ℕ} (σ : Equiv.Perm (Fin n))
 
-/-- NPs still awaiting matrix-connected integration after `k` verbs. -/
-def unintegratedCount (σ : Equiv.Perm (Fin n)) (k : ℕ) : ℕ :=
-  n - integratedCount σ k
+/-! ### Clauses held in store -/
 
-private theorem countP_dite_lt_range (n k : ℕ) :
-    (List.range n).countP (λ i => if _ : i < n then decide (i < k) else false) = min k n := by
-  induction n with
-  | zero => simp
-  | succ m ih =>
-    rw [List.range_succ, List.countP_append, List.countP_cons, List.countP_nil]
-    simp only [show m < m + 1 from by omega, dite_true]
-    have : (List.range m).countP (λ i => if _ : i < m + 1 then decide (i < k) else false) =
-           (List.range m).countP (λ i => if _ : i < m then decide (i < k) else false) := by
-      apply List.countP_congr; intro i hi; simp only [List.mem_range] at hi
-      simp [show i < m from hi, show i < m + 1 from by omega]
-    rw [this, ih]; by_cases h : m < k <;> simp [h] <;> omega
+/-- The cluster position at which the clause of verb `i` is connected up to the matrix: the last
+position among the verbs `0, …, i` from the matrix down to it. -/
+def connection (i : Fin n) : Fin n := (Iic i).sup' nonempty_Iic σ
 
-theorem integratedCount_refl (k : ℕ) :
-    integratedCount (Equiv.refl (Fin n)) k = min k n := by
-  cases n with
-  | zero => simp [integratedCount]
-  | succ m => simp only [integratedCount, Equiv.refl_apply, Fin.val_mk]
-              exact countP_dite_lt_range (m + 1) k
+/-- The number of verbs for which the clause of verb `i` is held in store: those after its own
+verb, up to the one that connects it. -/
+def held (i : Fin n) : ℕ := connection σ i - σ i
 
-private theorem rev_max_eq (m i k : ℕ) (hi : i < m + 1) :
-    (max (m + 1 - (0 + 1)) (m + 1 - (i + 1)) < k) ↔ m < k := by omega
+variable {σ}
 
-theorem integratedCount_revPerm (k : ℕ) :
-    integratedCount (Fin.revPerm : Equiv.Perm (Fin n)) k = if k ≥ n then n else 0 := by
-  cases n with
-  | zero => simp [integratedCount]
-  | succ m =>
-    simp only [integratedCount, Fin.revPerm_apply, Fin.val_rev]
-    by_cases hk : k ≥ m + 1
-    · rw [ite_eq_left hk]
-      have hall : ∀ i ∈ List.range (m + 1),
-          (if _ : i < m + 1 then
-            decide (max (m + 1 - (0 + 1)) (m + 1 - (i + 1)) < k) else false) = true := by
-        intro i hi; simp only [List.mem_range] at hi
-        simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
-        rw [rev_max_eq m i k hi]; omega
-      have h := List.countP_eq_length.mpr hall
-      rw [List.length_range] at h; exact h
-    · rw [ite_eq_right hk]
-      apply List.countP_eq_zero.mpr
-      intro i hi; simp only [List.mem_range] at hi
-      simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
-      rw [rev_max_eq m i k hi]; omega
+theorem connection_le_iff {i k : Fin n} : connection σ i ≤ k ↔ ∀ j ≤ i, σ j ≤ k := by
+  simp [connection]
 
-theorem unintegratedCount_refl (k : ℕ) :
-    unintegratedCount (Equiv.refl (Fin n)) k = n - min k n := by
-  simp [unintegratedCount, integratedCount_refl]
+theorem apply_le_connection {i j : Fin n} (h : j ≤ i) : σ j ≤ connection σ i :=
+  le_sup' σ (mem_Iic.2 h)
 
-theorem unintegratedCount_revPerm (k : ℕ) :
-    unintegratedCount (Fin.revPerm : Equiv.Perm (Fin n)) k = if k ≥ n then 0 else n := by
-  simp only [unintegratedCount, integratedCount_revPerm]; split <;> omega
+theorem le_connection (i : Fin n) : σ i ≤ connection σ i := apply_le_connection le_rfl
 
-/-- Cumulative unintegrated NPs across the cluster. -/
-def totalIntegrationCost (σ : Equiv.Perm (Fin n)) : ℕ :=
-  ∑ k ∈ Finset.range n, unintegratedCount σ (k + 1)
+theorem held_add (i : Fin n) : held σ i + σ i = connection σ i :=
+  Nat.sub_add_cancel (le_connection i)
 
-/-- The crossed (Dutch) cluster costs `n(n−1)/2`: one NP integrates per verb. -/
-theorem totalIntegrationCost_refl (n : ℕ) :
-    totalIntegrationCost (Equiv.refl (Fin n)) = n * (n - 1) / 2 := by
-  unfold totalIntegrationCost
-  have h : ∀ k ∈ Finset.range n, unintegratedCount (Equiv.refl (Fin n)) (k + 1) =
-      n - 1 - k := by
-    intro k hk
-    have hkn := Finset.mem_range.mp hk
-    rw [unintegratedCount_refl, Nat.min_eq_left (by omega)]
-    omega
-  rw [Finset.sum_congr rfl h, Finset.sum_range_reflect (λ j => j) n]
-  have h2 := Finset.sum_range_id_mul_two n
+-- A clause is held for no verb exactly when its verb's position is a left-to-right maximum of `σ`.
+theorem held_eq_zero_iff {i : Fin n} : held σ i = 0 ↔ ∀ j < i, σ j < σ i := by
+  rw [held, Nat.sub_eq_zero_iff_le, ← Fin.le_def, connection_le_iff]
+  refine ⟨fun h j hj ↦ (h j hj.le).lt_of_ne (σ.injective.ne hj.ne), fun h j hj ↦ ?_⟩
+  rcases hj.lt_or_eq with hj | rfl
+  exacts [(h j hj).le, le_rfl]
+
+@[simp] theorem connection_one (i : Fin n) : connection 1 i = i :=
+  le_antisymm (connection_le_iff.2 fun _ ↦ id) (le_connection (σ := 1) i)
+
+@[simp] theorem held_one (i : Fin n) : held 1 i = 0 := by simp [held]
+
+theorem val_connection_revPerm (i : Fin n) : (connection Fin.revPerm i : ℕ) = n - 1 := by
+  have h : connection Fin.revPerm i = Fin.revPerm ⟨0, i.pos⟩ :=
+    le_antisymm (connection_le_iff.2 fun j _ ↦ Fin.rev_le_rev.2 (Nat.zero_le _))
+      (apply_le_connection (Nat.zero_le _))
+  simp [h]
+
+@[simp] theorem held_revPerm (i : Fin n) : held Fin.revPerm i = i := by
+  have := i.isLt
+  rw [held, val_connection_revPerm, Fin.revPerm_apply, Fin.val_rev]
   omega
 
-/-- The nested (German) cluster costs `n(n−1)`: all `n` NPs float until the last
-verb. -/
-theorem totalIntegrationCost_revPerm (n : ℕ) :
-    totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) = n * (n - 1) := by
-  unfold totalIntegrationCost
-  cases n with
-  | zero => simp
-  | succ m =>
-    have h : ∀ k ∈ Finset.range m,
-        unintegratedCount (Fin.revPerm : Equiv.Perm (Fin (m + 1))) (k + 1) = m + 1 := by
-      intro k hk
-      have hkm := Finset.mem_range.mp hk
-      rw [unintegratedCount_revPerm, ite_eq_right (by omega)]
-    rw [Finset.sum_range_succ, Finset.sum_const_nat h, Finset.card_range,
-        unintegratedCount_revPerm, ite_eq_left (by omega)]
-    have := Nat.mul_comm m (m + 1)
-    simp only [Nat.add_sub_cancel]
-    omega
+-- Summed over a cluster, the time the clauses are connected up to the matrix exceeds the time
+-- they are held by the sum of the positions, which is the same for every order.
+theorem sum_connection :
+    ∑ i, (connection σ i : ℕ) = ∑ i, held σ i + ∑ i : Fin n, (i : ℕ) := by
+  rw [← Equiv.sum_comp σ (fun i : Fin n ↦ (i : ℕ)), ← sum_add_distrib]
+  exact sum_congr rfl fun i _ ↦ (held_add i).symm
 
-theorem totalIntegrationCost_revPerm_eq_two_mul (n : ℕ) :
-    totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) =
-      2 * totalIntegrationCost (Equiv.refl (Fin n)) := by
-  rw [totalIntegrationCost_refl, totalIntegrationCost_revPerm]
-  have h2 := Finset.sum_range_id_mul_two n
+/-! ### Crossed and nested dependencies -/
+
+/-- The position of the subject of verb `i`, among the subjects before the cluster. -/
+def subject (i : Fin n) : Fin (n + n) := Fin.castAdd n i
+
+variable (σ) in
+/-- The position of verb `i`, in the cluster after the subjects. -/
+def verb (i : Fin n) : Fin (n + n) := Fin.natAdd n (σ i)
+
+theorem alternate_iff {i j : Fin n} :
+    Alternate (subject i) (verb σ i) (subject j) (verb σ j) ↔ i < j ∧ σ i < σ j := by
+  have := j.isLt
+  simp only [Alternate, subject, verb, Fin.lt_def, Fin.val_castAdd, Fin.val_natAdd]
   omega
 
-theorem crossed_lt_nested (hn : 2 ≤ n) :
-    totalIntegrationCost (Equiv.refl (Fin n)) <
-      totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) := by
-  rw [totalIntegrationCost_refl, totalIntegrationCost_revPerm]
-  have h : 0 < n * (n - 1) := Nat.mul_pos (by omega) (by omega)
-  omega
+/-- A clause is connected up to the matrix as soon as its verb is heard exactly when its
+dependency crosses the dependency of every clause above it. -/
+theorem held_eq_zero_iff_alternate {i : Fin n} :
+    held σ i = 0 ↔ ∀ j < i, Alternate (subject j) (verb σ j) (subject i) (verb σ i) := by
+  simp only [held_eq_zero_iff, alternate_iff]
+  exact forall₂_congr fun j hj ↦ (and_iff_right hj).symm
 
-/-- The gap equals the whole crossed cost `n(n−1)/2`. -/
-theorem cost_gap (n : ℕ) :
-    totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) -
-        totalIntegrationCost (Equiv.refl (Fin n)) =
-      totalIntegrationCost (Equiv.refl (Fin n)) := by
-  rw [totalIntegrationCost_revPerm_eq_two_mul]; omega
+private theorem eq_one_of_strictMono {τ : Equiv.Perm (Fin n)} (h : StrictMono τ) : τ = 1 :=
+  Equiv.ext fun i ↦ Fin.ext (Fin.coe_orderIso_apply (h.orderIsoOfSurjective τ τ.surjective) i)
 
-theorem level_costs :
-    (totalIntegrationCost (Equiv.refl (Fin 2)),
-      totalIntegrationCost (Equiv.refl (Fin 3)),
-      totalIntegrationCost (Equiv.refl (Fin 4))) = (1, 3, 6) ∧
-    (totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin 2)),
-      totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin 3)),
-      totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin 4))) = (2, 6, 12) := by
-  simp [totalIntegrationCost_refl, totalIntegrationCost_revPerm]
+/-- The crossed, Dutch order is the only cluster order in which every clause is connected up to
+the matrix as soon as its verb is heard. -/
+theorem forall_held_eq_zero_iff : (∀ i, held σ i = 0) ↔ σ = 1 := by
+  refine ⟨fun h ↦ eq_one_of_strictMono fun j i hji ↦ held_eq_zero_iff.1 (h i) j hji, ?_⟩
+  rintro rfl i
+  exact held_one i
 
-/-- The nested binding is antitone — the projective, stack-parsable pattern
-([bresnan-etal-1982]) — and the crossed one is not; the costs run the other way,
-so parsing difficulty does not track stack-parsability. -/
-theorem nonprojective_is_cheaper (hn : 2 ≤ n) :
-    ¬Antitone ⇑(Equiv.refl (Fin n)) ∧ Antitone ⇑(Fin.revPerm : Equiv.Perm (Fin n)) ∧
-      totalIntegrationCost (Equiv.refl (Fin n)) <
-        totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) := by
-  refine ⟨fun h => ?_, fun i j hij => ?_, crossed_lt_nested hn⟩
-  · have := h (a := ⟨0, by omega⟩) (b := ⟨1, by omega⟩) (by simp [Fin.mk_le_mk])
-    simp [Fin.le_def] at this
-  · simpa using Fin.rev_le_rev.2 hij
+/-- The nested, German order is the only cluster order in which no two dependencies cross. -/
+theorem forall_not_alternate_iff :
+    (∀ i j, ¬ Alternate (subject i) (verb σ i) (subject j) (verb σ j)) ↔ σ = Fin.revPerm := by
+  simp only [alternate_iff, not_and, not_lt]
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · have : Fin.revPerm * σ = 1 := eq_one_of_strictMono fun i j hij ↦
+      Fin.rev_lt_rev.2 ((h i j hij).lt_of_ne (σ.injective.ne hij.ne'))
+    exact Equiv.ext fun i ↦ Fin.rev_eq_iff.1 (Equiv.congr_fun this i)
+  · rintro rfl i j hij
+    exact Fin.rev_le_rev.2 hij.le
+
+theorem exists_one_lt_held_revPerm_iff :
+    (∃ i, 1 < held (Fin.revPerm : Equiv.Perm (Fin n)) i) ↔ 2 < n := by
+  simp only [held_revPerm]
+  exact ⟨fun ⟨i, hi⟩ ↦ by have := i.isLt; omega, fun h ↦ ⟨⟨2, h⟩, by simp⟩⟩
+
+/-! ### The comprehension task -/
+
+/-- The Paraphrase score less the Test score of a row of comprehension scores, the difference in
+error rate that Figure 3 plots. -/
+def Comprehension.gap (r : Comprehension) : ℚ := r.para.toRat - r.test.toRat
+
+/-- Table 3 and Figure 3: on the comprehension task, the Dutch group's Test–Paraphrase
+difference is below both German groups' exactly at the level at which the German order first
+holds a clause past the next verb, Level 3 rather than Level 2, where "the higher structure can be
+immediately completed when the next verb is heard" (Discussion, p. 261). The rating means of
+Table 1 put the Dutch difference lowest from Level 2 on, by 0.04 against German/Participle at
+Level 2. -/
+theorem forall_gap_lt_iff {r : Comprehension} (hr : r ∈ comprehension) (hd : r.group = .dutch) :
+    (∀ s ∈ comprehension, s.level = r.level → s.group ≠ .dutch → r.gap < s.gap) ↔
+      ∃ i, 1 < held (Fin.revPerm : Equiv.Perm (Fin r.level)) i := by
+  rw [exists_one_lt_held_revPerm_iff]
+  simp only [comprehension, List.mem_cons, List.not_mem_nil, or_false] at hr
+  rcases hr with rfl | rfl | rfl | rfl | rfl | rfl <;> cases hd <;>
+    simp [comprehension, Comprehension.gap, Decimal.toRat] <;> norm_num
+
+/-- The verb whose subject a questioned noun phrase of a Level 3 sentence is. -/
+def NounPhrase.verb : NounPhrase → Fin 3
+  | .np1 => 0
+  | .np2 => 1
+  | .np3 => 2
+
+/-- How far the Dutch Test–Paraphrase difference of error rate lies below a German group's. -/
+def advantage (g : Group) (k : NounPhrase) : ℚ :=
+  (errorDifference g k).difference.toRat - (errorDifference .dutch k).difference.toRat
+
+/-- Tables 4 and 5 and the Discussion, pp. 260–261: against either German group, the Dutch
+advantage in the Test–Paraphrase difference of error rate is greatest for NP3, as the time the
+German order holds a clause is greatest for the innermost clause. The time at which a clause is
+connected up to the matrix predicts no advantage there, since both orders connect the innermost
+clause at the last verb (`connection_one`, `val_connection_revPerm`). With German/Participle, the
+advantage for NP1 exceeds that for NP2, against the time held. -/
+theorem errorDifference_lt_np3_iff (g : Group) (hg : g ≠ .dutch) (k : NounPhrase) :
+    advantage g k < advantage g .np3 ↔
+      held Fin.revPerm k.verb - held 1 k.verb <
+        held Fin.revPerm NounPhrase.np3.verb - held 1 NounPhrase.np3.verb := by
+  cases g <;> cases k <;> simp_all [advantage, errorDifference, NounPhrase.verb, Decimal.toRat] <;>
+    norm_num
+
+-- Errata: Table 5 is Table 4's Paraphrase minus Test score in every cell but one
+theorem errorDifference_eq_sub_iff (g : Group) (k : NounPhrase) :
+    (errorDifference g k).difference.toRat =
+        (comprehensionByNP g k).para.toRat - (comprehensionByNP g k).test.toRat ↔
+      (g, k) ≠ (.germanPart, .np2) := by
+  cases g <;> cases k <;> simp [errorDifference, comprehensionByNP, Decimal.toRat] <;> norm_num
 
 end BachBrownMarslenWilson1986
