@@ -12,12 +12,13 @@ public import Studies.Belth2026
 # Jacobs (2026): Latin liquid dissimilation and the relevance of phonological structure
 
 The Latin suffix -alis surfaces as -aris after a stem [l] unless [r], a dorsal or the glide [w]
-intervenes; labials and the other coronals do not block. Jacobs puts [lateral] under a LINGUAL
-node beside CORONAL and DORSAL, specifies it only on liquids, and leaves CORONAL unspecified, so
-the segments bearing LINGUAL are [the liquids, the dorsals and the glides](##onLingualTier_iff):
-the blockers are a class of the geometry, not a list. Dissimilation across that tier [derives
+intervenes; labials and the other coronals do not block. McMullin's tier for the pattern "cannot
+be described as a natural class" ([mcmullin-2016], p. 120). Jacobs puts [lateral] under a LINGUAL
+node beside CORONAL and DORSAL, specifies it only on liquids, and leaves CORONAL unspecified, and
+then the segments bearing LINGUAL are [exactly the liquids, the dorsals and the
+glides](##onLingualTier_iff), a class of the geometry. Dissimilation across that tier [derives
 every form the paper accounts for and misses the others](##dissimilate_predicts_iff), where
-the [lateral] tier, McMullin's and Cser's lists of blockers and Belth's consonant tier [each
+Steriade's [lateral] tier, McMullin's and Cser's blockers and Belth's consonant tier [each
 mispredict a form](##rivals_mispredict). The constraints of (18) [select the rule's
 output](##optimal_image_output), and a [j] from a front vowel in hiatus [joins the tier and
 reverses the outcome](##dissimilate_glide).
@@ -25,20 +26,22 @@ reverses the outcome](##dissimilate_glide).
 ## Implementation notes
 
 * Segments are the Fragment's, with PHOIBLE's values. `underlying` reads Jacobs's representations
-  off them: [lateral] only on liquids, after Steriade, CORONAL never, after Lahiri and Reetz, and
-  LABIAL and DORSAL where present. The tree is Jacobs's statement of the LINGUAL node, which he
-  attributes to Clements and Hume (1995: 291); the attribution is his. The tier is that of
-  C-place, so a segment on it is [−syllabic]: a vowel in hiatus is off the tier, the glide on it.
+  off them (p. 134): [lateral] only on liquids, after Steriade, CORONAL never, and LABIAL and
+  DORSAL where present. The tree is Jacobs's statement of the LINGUAL node, which he attributes
+  to Clements and Hume (1995: 291); the attribution is his. The tier is that of C-place, so a
+  segment on it is [−syllabic]: a vowel in hiatus is off the tier, the glide on it.
 * The rule is a `SearchCopy` whose target is the suffix liquid `L`, unspecified for [lateral].
   Jacobs's input has the suffix -alis, which the tableau of (18) takes. Only the suffix liquid
   alternates, as (18c) restricts the ban to the suffix: Latin has stem-internal [l]…[l] (fn. 7).
 * A row is compared on the paper's underlying stem, *latj* for *Latialis* and *glajb* for
   *glebalis* (p. 139), with the suffix liquid read off the attested form.
 * Steriade's tier is derived like Jacobs's, as the segments specified for [lateral]. McMullin's
-  tier (13) and Cser's blockers (Table 2) are listed as their sources list them; Cser's condition
-  of at least three moræ between the liquids needs vowel length, which the segments do not carry.
-  Belth's rule is his study's, over its own transcription. Roberts's correspondence account is
-  known here only from Jacobs's report (pp. 122–129) and is not formalized.
+  tier (13) and Cser's blockers (Table 2) are listed as their sources list them, and Belth's rule
+  is his study's, over its own transcription. Roberts's correspondence account of 2011 is known
+  here only from Jacobs's report (pp. 122–129) and is not formalized.
+* McMullin's grammar (13) bans adjacent [l]…[l] on the tier over whole words, which also rules out
+  his own *stell-ar-is* (p. 118), whose geminate is [l l] on the tier. The rule here changes only
+  the suffix liquid, as (18c) restricts the ban to the suffix.
 * `dissimilate_glide` applies to every stem whose last LINGUAL segment is [l], so it also predicts
   later -alis forms for *tricliniaris* (1d) and Cser's *Saliaris*, which the paper does not check.
 
@@ -56,6 +59,12 @@ reverses the outcome](##dissimilate_glide).
 * (17) is captioned *pluvialis* but spells *fluvialis* (p. 136). The text refers to (15a) as (14a)
   (p. 130), and quotes Cser (2010) at p. 40 for what Cser prints on p. 39.
 
+## TODO
+
+* Cser's further condition, at least three moræ between the stem and the suffix liquid (p. 38),
+  needs vowel length, which the Fragment's segments do not carry. *limitaris* is the rival case
+  either way: its [m] blocks for Cser, and it has more than three moræ.
+
 ## References
 
 * [jacobs-2026]
@@ -64,9 +73,7 @@ reverses the outcome](##dissimilate_glide).
 * [cser-2010]
 * [cser-2020]
 * [belth-2026]
-* [roberts-2011]
 * [clements-hume-1995]
-* [lahiri-reetz-2010]
 -/
 
 @[expose] public section
@@ -144,7 +151,8 @@ def OnLateralTier (s : Segment) : Prop :=
 
 instance : DecidablePred OnLateralTier := fun s ↦ by unfold OnLateralTier; infer_instance
 
-/-- Of the Latin phonemes, the liquids, the dorsals and the two glides bear LINGUAL. -/
+/-- Against McMullin's "no natural class": of the Latin phonemes, the liquids, the dorsals and the
+two glides, and only they, bear LINGUAL. -/
 theorem onLingualTier_iff : ∀ x ∈ Latin.inventory, OnLingualTier x ↔
     x ∈ ({Latin.l, Latin.r, Latin.k, Latin.g, Latin.w, Latin.j} : Finset Segment) := by
   decide
