@@ -130,7 +130,8 @@ variable {π : Polarity} {fo g : ModalForce} {s : Prop}
 /-- Decides membership in the two-world model. -/
 local macro "twoWorlds" : tactic =>
   `(tactic| (simp_all [Appropriate, claim, StrongerIn, bothAccessible,
-    ModalForce.classical, ModalForce.dual, ModalForce.rank]; done))
+    ModalForce.classical, ModalForce.dual, ModalForce.rank, Preorder.lift_le_iff,
+    Preorder.lift_lt_iff]; done))
 
 private theorem not_servesFor_of (p : Bool → Prop)
     (hin : true ∈ Appropriate bothAccessible p π g True)
