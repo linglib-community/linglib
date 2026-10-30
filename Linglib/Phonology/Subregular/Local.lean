@@ -20,8 +20,8 @@ factors, so its canonical grammar is the image of the set under that relation.
 
 ## Main statements
 
-* `FirstOrder.Language.isStrictlyLocal_iff_eq_core`: strictly local sets are the cores of the
-  factor relation.
+* `FirstOrder.Language.isStrictlyLocal_iff_eq_core_image`: a strictly local set is the core of
+  its own image under the factor relation.
 * `FirstOrder.Language.isStrictlyLocal_iff`: a set is strictly local exactly when it contains
   every member whose factors all occur in its members.
 * `FirstOrder.Language.IsStrictlyLocal.mem_of_factors_subset_union`: strictly local sets are
@@ -56,17 +56,18 @@ variable {M k} {S T : Set ι}
 
 /-! ### Strictly local sets -/
 
-/-- Strictly local sets are the cores of the relation between a member and its factors. -/
-theorem isStrictlyLocal_iff_eq_core :
-    L.IsStrictlyLocal M k S ↔
-      ∃ G : Set (L.Factor k), S = (SetRel.ofSuccessors fun i ↦ L.factors k (M i)).core G :=
-  .rfl
+/-- A set is strictly local exactly when its canonical grammar, the image of the set under the
+relation between a member and its factors, cuts it out. -/
+theorem isStrictlyLocal_iff_eq_core_image :
+    L.IsStrictlyLocal M k S ↔ S = (SetRel.ofSuccessors fun i ↦ L.factors k (M i)).core
+      ((SetRel.ofSuccessors fun i ↦ L.factors k (M i)).image S) :=
+  (SetRel.image_core_gc (R := SetRel.ofSuccessors fun i ↦ L.factors k (M i))).exists_eq_u S
 
 /-- A set is strictly local exactly when it contains every member whose factors all occur in its
 members. -/
 theorem isStrictlyLocal_iff :
     L.IsStrictlyLocal M k S ↔ ∀ i, L.factors k (M i) ⊆ ⋃ j ∈ S, L.factors k (M j) → i ∈ S := by
-  rw [isStrictlyLocal_iff_eq_core, SetRel.image_core_gc.exists_eq_u, SetRel.image_ofSuccessors]
+  rw [isStrictlyLocal_iff_eq_core_image, SetRel.image_ofSuccessors]
   exact ⟨fun h i hi ↦ (Set.ext_iff.1 h i).2 hi, fun h ↦ Set.ext fun i ↦
     ⟨fun hi ↦ Set.subset_biUnion_of_mem (u := fun j ↦ L.factors k (M j)) hi, h i⟩⟩
 

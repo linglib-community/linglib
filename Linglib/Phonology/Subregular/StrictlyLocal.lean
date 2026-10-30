@@ -57,9 +57,10 @@ members regenerate it (`Language.isStrictlyLocal_iff_language_image`).
 
 ## Implementation notes
 
-Grammars are arbitrary sets over an arbitrary alphabet rather than finite sets over a finite one,
-since none of the results here needs finiteness; the finite setting matters for learning from
-positive data, which is not formalized.
+Grammars are arbitrary sets over an arbitrary alphabet rather than finite sets over a finite one.
+Only star-freeness assumes a finite alphabet (`Language.IsStrictlyLocal.isStarFree`), and only the
+count-vector characterization a finite set of forbidden factors; finite grammars over a finite
+alphabet are the setting of learning from positive data, which is not formalized.
 
 ## References
 
