@@ -287,9 +287,7 @@ section BlahutArimoto
 variable [Nonempty C]
 
 instance : IsProbabilityMeasure (blahutArimoto κ μ) := by
-  obtain ⟨c, hc⟩ : ∃ c, μ {c} ≠ 0 := by
-    by_contra! h
-    exact NeZero.ne μ (Measure.ext_iff_singleton.2 fun c ↦ by simp [h c])
+  obtain ⟨c, hc⟩ := Measure.exists_measure_singleton_ne_zero μ
   unfold blahutArimoto
   exact Kernel.isProbabilityMeasure_ofWeights ⟨c, Measure.geomMean_ne_zero fun w hw ↦
     (posterior_apply_singleton_ne_zero_iff κ μ (Measure.comp_apply_singleton_ne_zero κ μ hc hw)

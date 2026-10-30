@@ -15,8 +15,10 @@ Pushing a product measure through `η ∥ₖ η'` pushes each factor through its
 joint measure on `α × β` through `Kernel.id ∥ₖ η` keeps the first marginal and composes the
 second with `η`. The joint is disintegrated as `ρ.fst ⊗ₘ ρ.condKernel`. On finite types, a
 composition, a composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at
-atoms, and each row of a kernel charged by the input measure is absolutely continuous with
-respect to the output marginal.
+atoms; an atom is charged by a composition exactly when some charged atom of the input emits it,
+and each row of a kernel charged by the input measure is absolutely continuous with respect to the
+output marginal. The powers of a Markov kernel, in mathlib's monoid of kernels under composition,
+are Markov kernels.
 `[UPSTREAM]` candidate for `Mathlib/Probability/Kernel/Composition/Lemmas.lean`.
 -/
 
@@ -73,6 +75,13 @@ theorem comp_apply_singleton [Fintype α] (κ : Kernel α β) (μ : Measure α) 
     (κ ∘ₘ μ) {b} = ∑ a, μ {a} * κ a {b} := by
   rw [bind_apply (.singleton b) (Kernel.aemeasurable _), lintegral_fintype]
   exact Finset.sum_congr rfl fun a _ ↦ mul_comm _ _
+
+theorem comp_apply_singleton_ne_zero_iff [Fintype α] (κ : Kernel α β) (μ : Measure α) {b : β} :
+    (κ ∘ₘ μ) {b} ≠ 0 ↔ ∃ a, μ {a} ≠ 0 ∧ κ a {b} ≠ 0 := by
+  refine ⟨fun h ↦ ?_, fun ⟨_, ha, hb⟩ ↦ comp_apply_singleton_ne_zero κ μ ha hb⟩
+  rw [comp_apply_singleton] at h
+  obtain ⟨a, -, ha⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
+  exact ⟨a, left_ne_zero_of_mul ha, right_ne_zero_of_mul ha⟩
 
 theorem comp_real_singleton [Fintype α] (κ : Kernel α β) [IsFiniteKernel κ] (μ : Measure α)
     [IsFiniteMeasure μ] (b : β) : (κ ∘ₘ μ).real {b} = ∑ a, μ.real {a} * (κ a).real {b} := by
@@ -153,6 +162,17 @@ end MeasureTheory.Measure
 namespace ProbabilityTheory.Kernel
 
 variable {α β γ : Type*} [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
+
+theorem one_def : (1 : Kernel α α) = Kernel.id := rfl
+
+theorem mul_def (κ η : Kernel α α) : κ * η = κ ∘ₖ η := rfl
+
+/-- The powers of a Markov kernel are Markov kernels. -/
+instance IsMarkovKernel.pow (κ : Kernel α α) [IsMarkovKernel κ] (n : ℕ) :
+    IsMarkovKernel (κ ^ n) := by
+  induction n with
+  | zero => rw [pow_zero, one_def]; infer_instance
+  | succ n ih => rw [pow_succ, mul_def]; infer_instance
 
 theorem comp_apply_singleton [Fintype β] [MeasurableSingletonClass β]
     [MeasurableSingletonClass γ] (η : Kernel β γ) (κ : Kernel α β) (a : α) (c : γ) :
