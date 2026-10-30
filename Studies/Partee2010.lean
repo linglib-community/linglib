@@ -47,7 +47,7 @@ of that scale. Each Polish adjective's class is the paper's, recorded in the row
 
 namespace Partee2010
 
-open Modifier Modifier Examples
+open Modifier Examples
 
 variable {W E : Type*}
 
@@ -100,8 +100,8 @@ theorem postulates_not_linear :
         AdjectiveClass.subsective.postulate adj → AdjectiveClass.privative.postulate adj) ∧
       ¬ (∀ adj : Modifier (Kamp1975.W2 → Kamp1975.E3 → Prop),
         AdjectiveClass.privative.postulate adj → AdjectiveClass.subsective.postulate adj) :=
-  ⟨fun h ↦ Modifier.isPrivative_iff_forall.1 (h _ Kamp1975.skillful_subsective) (fun _ _ ↦ True) .w₁ .a
-      ⟨trivial, trivial⟩ trivial,
+  ⟨fun h ↦ Modifier.isPrivative_iff_forall.1 (h _ Kamp1975.skillful_subsective)
+      (fun _ _ ↦ True) .w₁ .a ⟨trivial, trivial⟩ trivial,
     fun h ↦ Modifier.IsPrivative.not_isSubsective Kamp1975.fake_privative
       ⟨fun _ _ ↦ False, .w₁, .b, trivial, id⟩ (h _ Kamp1975.fake_privative)⟩
 

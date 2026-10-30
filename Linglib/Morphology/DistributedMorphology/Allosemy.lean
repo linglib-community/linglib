@@ -47,9 +47,9 @@ List 2 (form) and List 3 (meaning) run on one selection engine
 conditions on the neighboring terminals, not on features of its own head.
 `Voice.Alloseme.fromComplement` is a worked List-3 competition on that
 engine; `readingFromAllosemes` is a different object — the composition of
-two already-selected allosemes.
-Existing infrastructure this module retroactively classifies as
-allosemy: the cells of `Minimalist.Voice.Head` (Voice).
+two already-selected allosemes. The Voice allosemes map to the cells of
+`Minimalist.Voice.Head` (`Voice.Alloseme.toHead`), preserving θ-assignment
+(`Voice.theta_consistent`).
 
 ## References
 

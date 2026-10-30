@@ -81,7 +81,7 @@ theorem alternation_verbs_unaccusative :
 
 -- (20)
 theorem not_directPassivizable :
-    ¬ Japanese.DirectPassivizable Japanese.hanareru ∧ ¬ anticausative.AssignsTheta := by
+    ¬ Japanese.hanareru.HasExternalArgument ∧ ¬ anticausative.AssignsTheta := by
   decide
 
 /-! ### Case assignment (§3) -/

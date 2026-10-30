@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Reference.Rigidity
-public import Linglib.Fragments.Japanese.Classifiers
+public import Linglib.Fragments.Japanese.Nouns
 public import Studies.Chierchia1998
 public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Finset.Card
@@ -171,7 +171,8 @@ theorem predicateOf_up (atomic : Sortal W E) (n : W → ℕ) :
 end General
 
 theorem japanese_has_classifiers : Chierchia1998.Language.HasClassifiers .japanese :=
-  (Chierchia1998.hasClassifiers_iff .japanese).2 rfl
+  ⟨Japanese.Nouns.inu.toClassifiedNoun, List.mem_map_of_mem (by simp [Japanese.Nouns.nouns]),
+    Japanese.Classifiers.hiki, by simp [Japanese.Nouns.inu]⟩
 
 theorem predicateOf_iff_japanese {W E : Type*} [SemilatticeSup E] (atomic : Sortal W E)
     (n : W → ℕ) (P : W → E → Prop) :

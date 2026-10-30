@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Root.Defs
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
-public import Linglib.Semantics.ArgumentStructure.LevinClass.RootEntailment
+public import Linglib.Semantics.Root.Kinds
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Semantics.Presupposition.Again
@@ -12,50 +12,37 @@ public import Linglib.Data.Examples.BeaversKoontzGarboden2020
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
 
-This file formalizes the root typology of Beavers and Koontz-Garboden's book and the two theses
-it refutes. A root carries entailments of four kinds, manner, cause, result and state. The
-Bifurcation Thesis holds that a root carries only a state or a manner, all eventive content
-belonging to the verbal template, and Manner/Result Complementarity holds that no root entails
-both a manner and a result. The book's diagnostics refute both. Result roots allow no truly
-restitutive reading of *again*, so no lexicon that obeys the first fits the judgments
-(`bifurcation_thesis_false`); the causer of *drown* cannot be denied to have acted, so none that
-obeys the second fits them either (`manner_result_complementarity_false`). The book's own root
-classes fit every judgment its diagnostics read (`rows`).
-
-The typology (12) crosses the well-formed signatures with the two positions of a root. The book
-accounts for its empty cells by markedness, an adjoined root describing a manner and a
-complement root a state, and by naturalness, a root that describes a manner and a state also
-entailing the causation that would relate them; together these carve out exactly the filled
-cells (`mem_attestedCells_iff`). No event template relates a manner and a state other than by
-causation (`Template.hasCause_of_mem_kinds`), and the attested rows are exactly the signatures
-of the templates of the basic inventory, as (13) shows (`attestedRows_eq_kinds_templates`).
-
-The modifier *again* attaches to the root, to `vbecome` or to `vcause`, the three subterms of
-the causative template, and the entailments among its three readings follow from the subterm
-order (`Template.exists_denote_of_isSubterm`). The book's hypothesis about which roots alternate
-between a causative and an inchoative is compared with the class pages of Levin's *English Verb
-Classes and Alternations* (`rootHypothesis_matches_profile`).
+A root carries entailments of four kinds, manner, cause, result and state, and the book's
+diagnostics refute two theses that restrict them. Result roots allow no truly restitutive *again*,
+so [no lexicon of states and manners fits the judgments](##bifurcation_thesis_false), against the
+Bifurcation Thesis; the causer of *drown* cannot be denied to have acted, so
+[no lexicon without a root of manner and result fits them](##manner_result_complementarity_false),
+against Manner/Result Complementarity. The book's own classes [fit them](##rows). Its typology
+fills [the cells that markedness and naturalness allow](##mem_attestedCells_iff), which are
+[the signatures of the basic templates](##attestedRows_eq_kinds_templates).
 
 ## Implementation notes
 
-* The state entailments of the result roots are derived by the collocational closure of the
-  kind signature (`Root.closedKinds`).
+* The state entailments of a result root, and the result entailed by a cause, come from the
+  collocational closure of the signature (`Root.closedKinds`). The refutation of Manner/Result
+  Complementarity rests on the second: read on the signatures as given, the thesis
+  [is consistent with the judgments](##exists_fits_not_mannerResult).
 * A root is its meaning; the six roots carry their signatures and leave their content
   unannotated, so √hand and √drown coincide as values, and the position of each root is
   recorded beside it in `sample`.
 * The third clause of `mem_attestedCells_iff` is the book's naturalness argument for the row
-  with a manner and a state alone. For the row that adds a change without a cause, the book
-  leaves open whether a change and a manner can combine without causation (p. 230).
-* The thesis predicates are the apparatus of this study alone.
-* A diagnostic is a property of a root's state description in an interpretation, and a lexicon,
-  an assignment of signatures to the rows' roots, fits the judgments when each row is acceptable
-  exactly when its root passes the row's diagnostic. The denial of action is modelled as the
-  book applies it to the manner of killing verbs, on a causative, where it denies that the cause
-  of the change is an action of the root's manner; the denial of action with a pure manner verb
-  denies the verb's own event and is not modelled.
-* The result-denial rows test whether a verb entails its result state, which in the ditransitive
-  rows depends on the template as well as the root (§3.3.1), and are not read; the attachment
-  rows of *again* are read by `againAt`.
+  with a manner and a state alone; for the row that adds a change without a cause the book leaves
+  open whether a change and a manner can combine without causation.
+* The signatures of the Levin classes are this study's (`rootEntailments`), and the book's
+  hypothesis about which roots alternate is compared with the class pages of [levin-1993]
+  (`rootHypothesis_matches_profile`, `rootHypothesisResidue_disagrees`).
+* A diagnostic is a property of a root's state description in an interpretation, passed when some
+  interpretation that respects the signature lets the denial go through (`passes_iff`). The
+  denial of action is modelled as the book applies it to the manner of killing verbs, on a
+  causative; with a pure manner verb it denies the verb's own event and is not modelled.
+* The result-denial rows, which in the ditransitives depend on the template as well as the root,
+  and the object-deletion row are not read; the rows of the three attachments of *again* are read
+  by `attachment_rows`.
 
 ## References
 
@@ -74,38 +61,10 @@ namespace BeaversKoontzGarboden2020
 open ArgumentStructure ArgumentStructure.Root.Kinds
 open scoped SetRel ModalLogic
 
-/-! ### The two theses, at signature level -/
+/-! ### The ontological kinds -/
 
 /-- The ontological kinds are all that the Bifurcation Thesis allows a root to carry. -/
 def ontological : Root.Kinds := {.state, .manner}
-
-/-- A signature violates the Bifurcation Thesis when it carries templatic, eventive content,
-that is, when it is not bounded by `ontological`. -/
-def ViolatesBifurcation (s : Root.Kinds) : Prop := ¬ s ≤ ontological
-
-instance : DecidablePred ViolatesBifurcation := fun _ ↦ inferInstanceAs (Decidable (¬ _ ≤ _))
-
-theorem violatesBifurcation_iff :
-    ∀ s, ViolatesBifurcation s ↔ .result ∈ s ∨ .cause ∈ s := by decide
-
-theorem violatesBifurcation_monotone : Monotone ViolatesBifurcation :=
-  fun _ _ hst hs ht ↦ hs (hst.trans ht)
-
-/-- A signature has both manner and result, the configuration that Manner/Result
-Complementarity claims no root realizes. -/
-def HasMannerAndResult (s : Root.Kinds) : Prop := ({.manner, .result} : Root.Kinds) ≤ s
-
-instance : DecidablePred HasMannerAndResult := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
-
-theorem hasMannerAndResult_monotone : Monotone HasMannerAndResult :=
-  fun _ _ hst h ↦ h.trans hst
-
-theorem violatesBifurcation_close_iff :
-    ∀ s, ViolatesBifurcation (close s) ↔ ViolatesBifurcation s := by decide
-
-theorem hasMannerAndResult_close_iff :
-    ∀ s, HasMannerAndResult (close s) ↔ HasMannerAndResult s ∨ (.manner ∈ s ∧ .cause ∈ s) := by
-  decide
 
 /-! ### The typology -/
 
@@ -132,8 +91,7 @@ theorem mem_attestedCells_iff : ∀ (s : Root.Kinds) (p : Root.Position),
 
 section Again
 
-open Presupposition ModalLogic ArgumentStructure EventStructure Template
-open scoped SetRel
+open Presupposition ModalLogic EventStructure Template
 
 /-! ### Sublexical *again* and the hierarchy of its readings
 
@@ -181,18 +139,39 @@ theorem diamond_become_of_againAt_state_ne_zero {R : SetRel State State} {s : St
     ◇[R] (◇[M.become] ⊤) s :=
   diamond_mono R (hres x) s (again_ne_zero_iff.1 h)
 
+/-- The three attachment sites of *again* (27). -/
+inductive Site
+  /-- The root, for the restitutive reading. -/
+  | root
+  /-- `vbecome`, for the repetitive reading over the change. -/
+  | vBecome
+  /-- `vcause`, for the repetitive reading over the causation. -/
+  | vCause
+  deriving DecidableEq
+
+/-- The subterm of the causative template at a site. -/
+def Site.template : Site → Σ σ, Template σ
+  | .root => ⟨_, .state⟩
+  | .vBecome => ⟨_, .achievement⟩
+  | .vCause => ⟨_, causative⟩
+
+theorem Site.isSubterm (s : Site) : s.template.2.IsSubterm causative := by
+  cases s
+  · exact .caused (.become (.refl _))
+  · exact .caused (.refl _)
+  · exact .refl _
+
 end Again
 
 /-! ### The typology and the templates -/
 
 section Templates
 
-open ArgumentStructure EventStructure Template
+open EventStructure Template
 
 variable {σ : Eventuality}
 
-/-- The attested rows of (12) are the signatures of the state, activity, achievement and two
-accomplishment templates ((13), p. 231). -/
+-- (13), p. 231: the attested rows are the signatures of the basic templates
 theorem attestedRows_eq_kinds_templates :
     attestedCells.image Prod.fst =
       {state.kinds, act.kinds, achievement.kinds, causative.kinds, accomplishment.kinds} := by
@@ -274,8 +253,6 @@ one that respects the signature of √flat may have a flat state that no change 
 
 section Model
 
-open ArgumentStructure
-
 variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity State Event}
   {P : Entity → State → Prop} {Q : Event → Prop} {x : Entity} {s : State}
 
@@ -306,14 +283,21 @@ theorem flat_not_entailsChange :
       ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
   ⟨fun p hp ↦ absurd hp (by cases p <;> decide), fun h ↦ let ⟨_, he, _⟩ := h () () trivial; he⟩
 
+private theorem changing_respects {ks : Root.Kinds}
+    (h : ¬ (Root.Kind.manner ∈ ks ∧ Root.Kind.cause ∈ ks)) :
+    changing.Respects (fun _ _ ↦ True) ⊥ ks := fun p hp ↦ by
+  cases p with
+  | change => exact fun _ _ _ ↦ ⟨(), trivial, trivial⟩
+  | cause => exact fun _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩
+  | manner => exact fun _ h ↦ h.elim
+  | mannerOfCause =>
+    exact absurd ⟨(Finset.insert_subset_iff.1 hp).1,
+      Finset.singleton_subset_iff.1 (Finset.insert_subset_iff.1 hp).2⟩ h
+
 theorem crack_respects :
-    changing.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds ∧
-      ¬ unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds :=
-  ⟨fun p hp ↦ by
-      cases p
-      · exact fun _ _ _ ↦ ⟨(), trivial, trivial⟩
-      · exact fun _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩
-      all_goals exact absurd hp (by decide),
+    changing.Respects (fun _ _ ↦ True) ⊥ crack.kinds ∧
+      ¬ unchanging.Respects (fun _ _ ↦ True) ⊥ crack.kinds :=
+  ⟨changing_respects (by decide),
     fun h ↦ let ⟨_, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
 
 /-! ### The diagnostics
@@ -389,6 +373,15 @@ theorem forged_restitutive :
   ⟨Presupposition.again_ne_zero_iff.2 ⟨false, Bool.false_lt_true, trivial⟩,
     fun ⟨_, hlt, _, h, _⟩ ↦ by cases (h : _ = true); exact lt_irrefl true hlt⟩
 
+private theorem forged_respects {ks : Root.Kinds} (hr : Root.Kind.result ∉ close ks) :
+    forged.Respects sharp ⊥ ks := fun p hp ↦ by
+  have hcause : Root.Kind.cause ∉ ks := fun hk ↦ hr (mem_close.2 ⟨_, hk, .result_cause⟩)
+  cases p with
+  | change => exact absurd (mem_close.2 ⟨_, Finset.singleton_subset_iff.1 hp, le_rfl⟩) hr
+  | cause => exact absurd (Finset.singleton_subset_iff.1 hp) hcause
+  | manner => exact fun _ h ↦ h.elim
+  | mannerOfCause => exact absurd (Finset.insert_subset_iff.1 hp).2 (by simpa using hcause)
+
 /-- A root of signature `ks` passes the diagnostic when its state description passes it in some
 model that respects the signature, with some manner. -/
 def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
@@ -396,60 +389,30 @@ def Passes (ks : Root.Kinds) (g : Diagnostic) : Prop :=
     (P : Unit → State → Prop) (Q : Event → Prop) (R : SetRel State State),
     M.Respects P Q ks ∧ g.Passes M R P Q ()
 
-private theorem passes_iff_of_ne {ks : Root.Kinds} {g : Diagnostic} (hg : g ≠ .actionDenial) :
-    Passes ks g ↔ Root.Kind.result ∉ close ks := by
-  refine ⟨fun ⟨_, _, M, P, Q, R, hR, hp⟩ hr ↦ ?_, fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥,
-    {p | p.2 < p.1}, fun p hp ↦ ?_, ?_⟩⟩
-  · have hc := hR.entailsChange hr
-    cases g with
-    | changeDenial =>
-      obtain ⟨s, hs⟩ := hp
-      exact (entailsChange_iff_forall_not_deniesChange M).1 hc () s hs
-    | restitutive =>
-      obtain ⟨s, ha, hn⟩ := hp
-      exact hn (diamond_become_of_againAt_state_ne_zero hc ha)
-    | actionDenial => exact hg rfl
-  · have hcause : Root.Kind.cause ∉ ks := fun hk ↦ hr (mem_close.2 ⟨_, hk, .result_cause⟩)
-    cases p with
-    | change => exact absurd (mem_close.2 ⟨_, Finset.singleton_subset_iff.1 hp, le_rfl⟩) hr
-    | cause => exact absurd (Finset.singleton_subset_iff.1 hp) hcause
-    | manner => exact fun _ h ↦ h.elim
-    | mannerOfCause => exact absurd (Finset.insert_subset_iff.1 hp).2 (by simpa using hcause)
-  · cases g with
-    | changeDenial => exact ⟨false, forged_deniesChange⟩
-    | restitutive => exact ⟨true, forged_restitutive⟩
-    | actionDenial => exact absurd rfl hg
-
-private theorem passes_actionDenial_iff {ks : Root.Kinds} :
-    Passes ks .actionDenial ↔ ¬ (Root.Kind.manner ∈ ks ∧ Root.Kind.cause ∈ ks) := by
-  refine ⟨fun ⟨_, _, M, P, Q, R, hR, s, hs, hn⟩ ⟨hm, hc⟩ ↦ hn ?_,
-    fun h ↦ ⟨Unit, Unit, changing, fun _ _ ↦ True, ⊥, ⊥, fun p hp ↦ ?_, (), trivial, ?_⟩⟩
-  · exact hR .mannerOfCause (Finset.insert_subset_iff.2 ⟨hm, Finset.singleton_subset_iff.2 hc⟩)
-      () s hs
-  · cases p with
-    | change => exact fun _ _ _ ↦ ⟨(), trivial, trivial⟩
-    | cause => exact fun _ _ _ ↦ ⟨(), trivial, (), trivial, trivial⟩
-    | manner => exact fun _ h ↦ h.elim
-    | mannerOfCause =>
-      exact absurd ⟨(Finset.insert_subset_iff.1 hp).1,
-        Finset.singleton_subset_iff.1 (Finset.insert_subset_iff.1 hp).2⟩ h
-  · exact fun ⟨_, _, hbox⟩ ↦ hbox () trivial
-
 /-- A root passes a diagnostic exactly when its collocational closure lacks the kinds the
 diagnostic detects. -/
 theorem passes_iff {ks : Root.Kinds} (g : Diagnostic) :
     Passes ks g ↔ ¬ g.detects ⊆ close ks := by
   cases g with
   | changeDenial =>
-    simpa only [Diagnostic.detects, Finset.singleton_subset_iff] using
-      passes_iff_of_ne (ks := ks) (g := .changeDenial) (by decide)
+    simp only [Diagnostic.detects, Finset.singleton_subset_iff]
+    exact ⟨fun ⟨_, _, M, _, _, _, hR, s, hs⟩ hr ↦
+      (entailsChange_iff_forall_not_deniesChange M).1 (hR.entailsChange hr) () s hs,
+      fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, ⊥, forged_respects hr, false, forged_deniesChange⟩⟩
   | restitutive =>
-    simpa only [Diagnostic.detects, Finset.singleton_subset_iff] using
-      passes_iff_of_ne (ks := ks) (g := .restitutive) (by decide)
+    simp only [Diagnostic.detects, Finset.singleton_subset_iff]
+    exact ⟨fun ⟨_, _, _, _, _, _, hR, _, ha, hn⟩ hr ↦
+      hn (diamond_become_of_againAt_state_ne_zero (hR.entailsChange hr) ha),
+      fun hr ↦ ⟨Bool, Unit, forged, sharp, ⊥, {p | p.2 < p.1}, forged_respects hr, true,
+        forged_restitutive⟩⟩
   | actionDenial =>
-    simpa only [Diagnostic.detects, Finset.insert_subset_iff, Finset.singleton_subset_iff,
+    simp only [Diagnostic.detects, Finset.insert_subset_iff, Finset.singleton_subset_iff,
       mem_close_iff_of_isMax Root.Kind.isMax_manner, mem_close_iff_of_isMax Root.Kind.isMax_cause]
-      using passes_actionDenial_iff (ks := ks)
+    exact ⟨fun ⟨_, _, _, _, _, _, hR, s, hs, hn⟩ ⟨hm, hc⟩ ↦
+      hn (hR .mannerOfCause (Finset.insert_subset_iff.2 ⟨hm, Finset.singleton_subset_iff.2 hc⟩)
+        () s hs),
+      fun h ↦ ⟨Unit, Unit, changing, fun _ _ ↦ True, ⊥, ⊥, changing_respects h, (), trivial,
+        fun ⟨_, _, hbox⟩ ↦ hbox () trivial⟩⟩
 
 /-- The signature of a row's root, the least of the class the book assigns it. -/
 def kinds? (d : Datum) : Option Root.Kinds :=
@@ -458,48 +421,253 @@ def kinds? (d : Datum) : Option Root.Kinds :=
 
 /-- The diagnostic a row tests. -/
 def diagnostic? (d : Datum) : Option Diagnostic :=
-  d.parse? "diagnostic" [("restitutive again", .restitutive), ("action denial", .actionDenial)]
+  d.parse? "diagnostic" [("change denial", .changeDenial), ("restitutive again", .restitutive),
+    ("action denial", .actionDenial)]
 
--- (46)–(48), (32)
-theorem rows : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d,
-    (d.judgment = .acceptable ↔ Passes ks g) := by
-  simp only [passes_iff]
+/-- A lexicon, an assignment of a signature to the root of each row, fits the judgments when each
+row that tests a diagnostic is acceptable exactly when its root passes it. -/
+def Fits (σ : Datum → Root.Kinds) : Prop :=
+  ∀ d ∈ Examples.all, ∀ g ∈ diagnostic? d, (d.judgment = .acceptable ↔ Passes (σ d) g)
+
+/-- The book's root classes fit the judgments of (46)–(48) and (32). -/
+theorem rows : Fits fun d ↦ (kinds? d).getD ∅ := by
+  simp only [Fits, passes_iff]
   decide
 
 /-- No lexicon whose roots carry only states and manners fits the judgments: the Bifurcation
 Thesis lets every root pass restitutive *again*, and the result root of *return* in (47a) does
 not. -/
 theorem bifurcation_thesis_false :
-    ¬ ∃ σ : Datum → Root.Kinds, (∀ d, σ d ≤ ontological) ∧
-      ∀ d ∈ Examples.all, ∀ g ∈ diagnostic? d, (d.judgment = .acceptable ↔ Passes (σ d) g) := by
+    ¬ ∃ σ : Datum → Root.Kinds, (∀ d, close (σ d) ≤ ontological) ∧ Fits σ := by
   rintro ⟨σ, hσ, h⟩
-  have key : ∀ s : Root.Kinds, s ≤ ontological → ¬ Diagnostic.restitutive.detects ⊆ close s := by
+  have key : ∀ s : Root.Kinds, close s ≤ ontological →
+      ¬ Diagnostic.restitutive.detects ⊆ close s := by
     decide
   exact absurd ((h Examples.bkg2020_ch2_47a (by simp [Examples.all]) .restitutive (by decide)).2
     ((passes_iff _).2 (key _ (hσ Examples.bkg2020_ch2_47a)))) (by decide)
 
-/-- No lexicon in which no root carries both a manner and a result fits the judgments: the
-denial of action fails in (32b) only for a root whose manner is that of its cause, which with
-the cause carries a result. -/
+/-- No lexicon in which no root entails both a manner and a result fits the judgments: the denial
+of action fails in (32b) only for a root whose manner is that of its cause, and a cause entails a
+result. -/
 theorem manner_result_complementarity_false :
-    ¬ ∃ σ : Datum → Root.Kinds, (∀ d, ¬ HasMannerAndResult (close (σ d))) ∧
-      ∀ d ∈ Examples.all, ∀ g ∈ diagnostic? d, (d.judgment = .acceptable ↔ Passes (σ d) g) := by
+    ¬ ∃ σ : Datum → Root.Kinds,
+      (∀ d, ¬ ({.manner, .result} : Root.Kinds) ≤ close (σ d)) ∧ Fits σ := by
   rintro ⟨σ, hσ, h⟩
   have key : ∀ s : Root.Kinds, Diagnostic.actionDenial.detects ⊆ close s →
-      HasMannerAndResult (close s) := by
+      ({.manner, .result} : Root.Kinds) ≤ close s := by
     decide
-  refine hσ Examples.bkg2020_ch4_32b (key _ (not_not.1 fun hn ↦ ?_))
+  refine hσ Examples.bkg2020_ch4_32b (key _ ?_)
+  by_contra hn
   exact absurd ((h Examples.bkg2020_ch4_32b (by simp [Examples.all]) .actionDenial (by decide)).2
     ((passes_iff _).2 hn)) (by decide)
 
+private theorem not_subset_erase_result (s : Root.Kinds) :
+    ¬ ({.manner, .result} : Root.Kinds) ⊆ if .manner ∈ s then s.erase .result else s := by
+  intro h
+  have hm := h (Finset.mem_insert_self _ _)
+  have hr := h (Finset.mem_insert_of_mem (Finset.mem_singleton_self _))
+  split_ifs at hm hr with hk
+  · exact (Finset.mem_erase.1 hr).1 rfl
+  · exact hk hm
+
+-- Read on the signatures as given rather than on their closures, Manner/Result Complementarity
+-- fits the judgments: dropping the result from each root with a manner keeps its closure.
+theorem exists_fits_not_mannerResult :
+    ∃ σ : Datum → Root.Kinds, (∀ d, ¬ ({.manner, .result} : Root.Kinds) ≤ σ d) ∧ Fits σ := by
+  refine ⟨fun d ↦ if .manner ∈ (kinds? d).getD ∅ then ((kinds? d).getD ∅).erase .result
+    else (kinds? d).getD ∅, fun d ↦ not_subset_erase_result _, ?_⟩
+  simp only [Fits, passes_iff]
+  decide
+
+/-! ### The attachment of *again* -/
+
+/-- The site at which a row attaches *again*. -/
+def site? (d : Datum) : Option Site :=
+  d.parse? "attachment" [("root", .root), ("v_become", .vBecome), ("v_cause", .vCause)]
+
+-- (25), (27): each reading of *Mary flattened the rug again* is available, *again* attaching
+-- at a subterm of the causative template (see `exists_denote_of_againAt_ne_zero`)
+theorem attachment_rows : ∀ d ∈ Examples.all, ∀ s ∈ site? d,
+    d.judgment = .acceptable ∧ s.template.2.IsSubterm causative := by
+  have h : ∀ d ∈ Examples.all, ∀ s ∈ site? d, d.judgment = .acceptable := by decide
+  exact fun d hd s hs ↦ ⟨h d hd s hs, s.isSubterm⟩
+
 /-! ### The root hypothesis against Levin's class profiles -/
 
-open ArgumentStructure
+/-- The root signature a class realizes, where one has been established: manner roots for the
+activity classes, causative-result roots for the externally caused changes of state, pure
+result roots for the internally caused ones, property concepts for the statives, the empty
+signature for roots with no structural entailment. -/
+def rootEntailments : LevinClass → Option Root.Kinds
+  -- §9 Putting: template provides CAUSE+BECOME; root content varies
+  | .put => none
+  | .putDirection => none
+  | .funnel => some pureManner          -- manner of channeling
+  | .pour => some pureManner            -- manner of pouring
+  | .coil => some pureManner            -- manner of arranging
+  | .sprayLoad => none
+  -- §10 Removing
+  | .remove => none
+  | .clear => some causativeResult      -- externally caused cleared state
+  | .wipeManner | .wipeInstrument => some pureManner            -- manner of surface action
+  | .steal => none
+  -- §11 Sending and Carrying
+  | .send => none
+  | .carry => some pureManner           -- manner of transport
+  | .drive => some pureManner           -- manner via vehicle
+  -- §12 Exerting Force
+  | .pushPull => some pureManner        -- manner of force application
+  -- §13 Change of Possession
+  | .give => some fullSpec              -- (B&KG Ch.3) √HAND: manner + caused possession change
+  | .contribute => none
+  | .get | .obtain => none
+  | .exchange => none
+  -- §14–16
+  | .learn => none
+  | .hold => some propertyConcept       -- state of holding
+  | .conceal => some causativeResult    -- externally caused hidden state
+  -- §17 Throwing
+  | .throw => some fullSpec             -- manner of propulsion + caused arrival
+  -- §18 Contact by Impact
+  | .hit => some pureManner             -- (B&KG Ch.4) impact manner, no state entailed
+  | .swat => some pureManner            -- like hit
+  | .spank => some pureManner           -- like hit
+  -- §19 Poking
+  | .poke => some pureManner            -- manner of contact
+  -- §20 Contact: Touch
+  | .touch => some ∅              -- (B&KG) no structural entailments
+  -- §21 Cutting
+  | .cut => some fullSpec               -- (B&KG Ch.4) cutting manner + caused separation
+  | .carve => some fullSpec             -- like cut
+  -- §22 Combining and Attaching
+  | .mix => some causativeResult        -- externally caused combined state
+  | .amalgamate => some causativeResult
+  -- §23 Separating
+  | .separate => some causativeResult   -- externally caused separated state
+  | .split => some fullSpec             -- instrument manner + caused separation
+  -- §24 Coloring
+  | .color => some causativeResult      -- externally caused colored state
+  -- §25 Image Creation
+  | .imageImpression | .scribble | .illustrate | .transcribe =>
+    some fullSpec
+  -- §26 Creation and Transformation
+  | .build => some causativeResult      -- externally caused creation
+  | .grow => some pureResult            -- internally caused growth
+  | .create => some causativeResult     -- externally caused creation
+  | .knead => some fullSpec             -- kneading manner + caused shape change
+  | .turn => some causativeResult       -- externally caused transformation
+  | .performance => some pureManner     -- performance manner
+  -- §27–28
+  | .engender => some causativeResult   -- root entails causation
+  | .calve => some pureResult           -- internally caused biological process
+  -- §29 Predicative Complements
+  | .appoint => some causativeResult    -- externally caused status change
+  | .characterize => none
+  | .declare => some causativeResult    -- externally caused status change
+  -- §30 Perception
+  | .see => none
+  | .sight => none
+  -- §31 Psych-Verbs
+  | .amuse => some causativeResult      -- stimulus causes psychological CoS
+  | .admire => some propertyConcept     -- psychological state
+  | .marvel => some propertyConcept     -- psychological state
+  -- §32–34
+  | .want => some propertyConcept       -- desiderative state
+  | .long => some propertyConcept       -- desiderative state
+  | .judgment => none
+  | .assessment => none
+  -- §35 Searching
+  | .hunt | .search | .stalk | .investigate | .rummage | .ferret =>
+    some pureManner
+  -- §36 Social Interaction
+  | .correspond | .marry | .meet => none
+  -- §37 Communication
+  | .say => none
+  | .tell => none
+  | .mannerOfSpeaking => some pureManner -- manner of speaking
+  | .talk => none
+  -- §38 Animal Sounds
+  | .animalSound => some pureManner     -- specific sound manner
+  -- §39 Ingesting
+  | .eat => some causativeResult        -- caused consumption, no specific manner
+  | .devour => some fullSpec            -- vigorous manner + caused consumption
+  | .dine => some pureManner            -- social activity manner
+  -- §40 Body
+  | .hiccup | .breathe | .exhale => none
+  | .nonverbalExpression => none
+  | .flinch => none
+  | .hurt => some causativeResult       -- externally caused injury
+  -- §41 Grooming
+  | .dress => some causativeResult      -- externally caused dressed state
+  -- §42 Killing
+  | .murder => some causativeResult     -- (B&KG) root entails caused death
+  | .poison => some fullSpec            -- (B&KG) poisoning manner + caused death (√DROWN-type)
+  -- §43 Emission
+  | .lightEmission => some propertyConcept  -- emitting state
+  | .soundEmission => some propertyConcept
+  | .substanceEmission => some propertyConcept
+  -- §44 Destroy
+  | .destroy => some causativeResult    -- (B&KG) root entails caused total destruction
+  -- §45 Change of State
+  | .break_ => some causativeResult     -- (B&KG Ch.2,5) √CRACK: externally caused CoS
+  | .bend => some causativeResult       -- externally caused shape change
+  | .cooking => some causativeResult    -- externally caused CoS; √cook has no manner (B&KG (41))
+  | .otherChangeOfState => some causativeResult   -- √MELT/√FREEZE: externally caused CoS
+  | .entitySpecificChangeOfState => some pureResult -- √BLOSSOM/√RUST: internally caused
+  | .calibratableChangeOfState => some pureResult -- internally driven scalar change
+  -- §46 Lodge
+  | .lodge => none
+  -- §47 Existence
+  | .exist => some ∅              -- (B&KG) pure stative, no root content
+  -- §48 Appearance, Disappearance
+  | .appear | .reflexiveAppearance => some pureResult          -- internally caused appearance
+  | .disappearance => some pureResult   -- internally caused going out of existence
+  -- §49 Body-Internal Motion
+  | .bodyInternalMotion => some pureManner -- fidgeting manner
+  -- §50 Assuming a Position
+  | .assumePosition => some pureResult  -- internally caused position change
+  -- §51 Motion
+  | .inherentlyDirectedMotion => some pureResult -- internally caused directed motion
+  | .leave => some pureResult           -- internally caused departure
+  | .roll | .run => some pureManner  -- (B&KG) √JOG: motion manner
+  | .vehicleName | .nonVehicleName => some pureManner   -- vehicle manner
+  | .chase => some pureManner           -- chasing manner
+  -- §52 Avoid
+  | .avoid => none
+  -- §53 Lingering and Rushing
+  | .linger => some pureManner          -- temporal manner
+  | .rush => some pureManner            -- temporal manner
+  -- §54 Measure
+  | .register | .cost | .fit | .price | .bill => some propertyConcept    -- measurement state
+  -- §55 Aspectual
+  | .begin | .complete => none
+  -- §57 Weather
+  | .weather => none
+  | _ => none
+
+theorem rootEntailments_wellFormed (c : LevinClass) (s : Root.Kinds)
+    (h : rootEntailments c = some s) : s.WellFormed := by
+  cases c <;> cases h <;> decide
+
+/-- The classes whose root entails a caused change without a manner and that still lack an
+inchoative variant, for the two reasons the book gives (p. 63): *murder* restricts its causer to
+an agent, and *destroy* lacks one "for purely idiosyncratic reasons". -/
+def causativeExceptions : Finset LevinClass := {.destroy, .murder}
+
+/-- The root hypothesis: a class alternates between causative and inchoative when its root
+entails a caused change and no manner, outside the classes that lack an inchoative for other
+reasons. -/
+def RootPredictsCausative (c : LevinClass) : Prop :=
+  (∃ s ∈ rootEntailments c, Root.Kind.cause ∈ s ∧ Root.Kind.manner ∉ s) ∧
+    c ∉ causativeExceptions
+
+instance : DecidablePred RootPredictsCausative := fun _ ↦
+  inferInstanceAs (Decidable ((∃ s ∈ _, _ ∧ _) ∧ _))
 
 /-- A class Part II of [levin-1993] tests for the causative alternation and whose root
 signature is recorded. -/
 def TestedForCausative (c : LevinClass) : Prop :=
-  c.rootEntailments.isSome ∧ c.Tests .causativeInchoative
+  rootEntailments c ≠ none ∧ c.Tests .causativeInchoative
 
 instance : DecidablePred TestedForCausative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -513,12 +681,12 @@ def rootHypothesisResidue : Finset LevinClass :=
 
 theorem rootHypothesis_matches_profile :
     ∀ c : LevinClass, TestedForCausative c → c ∉ rootHypothesisResidue →
-      (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by
+      (RootPredictsCausative c ↔ c.Participates .causativeInchoative) := by
   decide +kernel
 
 theorem rootHypothesisResidue_disagrees :
     ∀ c ∈ rootHypothesisResidue, TestedForCausative c ∧
-      ¬ (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by
+      ¬ (RootPredictsCausative c ↔ c.Participates .causativeInchoative) := by
   decide +kernel
 
 end BeaversKoontzGarboden2020
