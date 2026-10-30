@@ -31,12 +31,13 @@ inductive Corpus where
   | tiger
   deriving DecidableEq, Repr, Fintype
 
-/-- A row of pp. 127–128: The feminine nouns counted in a corpus and the number of them whose
-plural takes the -(e)n suffix. -/
+/-- A row of pp. 127–128: The feminine nouns or plurals counted in a corpus and the number of
+them that take the -(e)n suffix. -/
 structure FemininePluralRow where
-  /-- The number of feminine nouns, in TIGER of feminine plurals. -/
-  nouns : ℕ
-  /-- The number of them whose plural takes the -(e)n suffix. -/
+  /-- The items in the rule's scope: the feminine nouns of the child-directed corpus, the
+  feminine plurals of TIGER. -/
+  items : ℕ
+  /-- The number of them that take the -(e)n suffix. -/
   enPlurals : ℕ
   deriving DecidableEq, Repr
 

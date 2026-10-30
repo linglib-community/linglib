@@ -106,16 +106,6 @@ def Graph.reorderDependents : Graph L n := g.map (g.reorderPerm v σ)
 @[simp] theorem Graph.reorderPerm_apply (x : Fin n) : g.reorderPerm v σ x = g.reorderRank v σ x :=
   rfl
 
-/-! ### Total length under transport -/
-
-theorem Graph.totalLength_map_eq (π : Equiv.Perm (Fin n)) :
-    (g.map π).totalLength = ∑ u, ∑ w ∈ g.children u, Nat.dist (π u) (π w) := by
-  unfold Graph.totalLength
-  simp only [Graph.children, sum_filter]
-  refine Fintype.sum_equiv π.symm _ _ fun u ↦ Fintype.sum_equiv π.symm _ _ fun w ↦ ?_
-  simp [Graph.map_adj]
-
-
 /-! ### Block lemmas (trees) -/
 
 section Blocks
@@ -174,7 +164,7 @@ theorem Graph.blockHead_eq_self_iff (hT : g.IsTree) {x : Fin n} (hx : x ∈ g.yi
     (g.blockHead v x : Fin n) = v ↔ x = v := by
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ Graph.blockHead_self hT⟩
   by_contra hne
-  exact hT.not_adj_self (h ▸ (Graph.adj_blockHead_of_ne hT hx hne).1)
+  exact hT.ne_of_adj (Graph.adj_blockHead_of_ne hT hx hne).1 h.symm
 
 theorem Graph.mem_yield_blockHead {x : Fin n} (hx : x ∈ g.yield v) :
     x ∈ g.yield (g.blockHead v x) := by

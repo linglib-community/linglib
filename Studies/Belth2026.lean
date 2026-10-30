@@ -17,7 +17,7 @@ constructs the search-and-copy rule `Rel(A, F) / C __ ∘ proj(·, T)` (`Phonolo
 adjacent dependencies alone: starting from the whole alphabet as the tier, it builds the
 left- and right-context rules whose contexts are the segments tier-adjacent to the targets,
 counts the applications and correct applications of the more accurate one, accepts it under
-Yang's Tolerance Principle (`Yang2016.tolerates`) with the Elsewhere default the
+Yang's Tolerance Principle (`Yang2016.Tolerates`) with the Elsewhere default the
 untouched targets show, and otherwise deletes from the tier the smallest natural class
 containing the contexts that produced errors (`D2L.iterate`, `D2L.learn`). On the paper's toy
 vocabulary (20) the learner runs exactly as its trace (21), (30), (32) and (33) says: three
@@ -340,16 +340,16 @@ end Toy
 
 /-! ### Tolerance at the toy's iterations -/
 
-theorem not_tolerates_8_7 : ¬ Yang2016.tolerates 8 7 := by
-  unfold Yang2016.tolerates Yang2016.threshold
+theorem not_tolerates_8_7 : ¬ Yang2016.Tolerates 8 7 := by
+  unfold Yang2016.Tolerates Yang2016.threshold
   have h8 : Real.log ((8 : ℕ) : ℝ) = 3 * Real.log 2 := by
     rw [show ((8 : ℕ) : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]; norm_num
   rw [h8, not_le, div_lt_iff₀ (by linarith [Real.log_two_gt_d9])]
   push_cast
   linarith [Real.log_two_gt_d9]
 
-theorem not_tolerates_8_4 : ¬ Yang2016.tolerates 8 4 := by
-  unfold Yang2016.tolerates Yang2016.threshold
+theorem not_tolerates_8_4 : ¬ Yang2016.Tolerates 8 4 := by
+  unfold Yang2016.Tolerates Yang2016.threshold
   have h8 : Real.log ((8 : ℕ) : ℝ) = 3 * Real.log 2 := by
     rw [show ((8 : ℕ) : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]; norm_num
   rw [h8, not_le, div_lt_iff₀ (by linarith [Real.log_two_gt_d9])]
@@ -358,9 +358,9 @@ theorem not_tolerates_8_4 : ¬ Yang2016.tolerates 8 4 := by
 
 -- (33a), (20)
 theorem Toy.learn_tolerates :
-    @D2L.Problem.learn _ _ Toy.problem .agree Yang2016.tolerates
+    @D2L.Problem.learn _ _ Toy.problem .agree Yang2016.Tolerates
       (fun _ _ ↦ Classical.propDecidable _) = some Toy.rule33 :=
-  @Toy.learn Yang2016.tolerates (fun _ _ ↦ Classical.propDecidable _) not_tolerates_8_7
+  @Toy.learn Yang2016.Tolerates (fun _ _ ↦ Classical.propDecidable _) not_tolerates_8_7
     not_tolerates_8_4 (Yang2016.tolerates_zero 7)
 
 /-! ### Latin liquid dissimilation (54) -/

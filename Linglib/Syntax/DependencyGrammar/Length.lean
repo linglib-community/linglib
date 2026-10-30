@@ -290,29 +290,28 @@ def Graph.map (g : Graph L n) (σ : Equiv.Perm (Fin n)) : Graph L n :=
     (v w : Fin n) : (g.map σ).Adj v w ↔ g.Adj (σ.symm v) (σ.symm w) :=
   Iff.rfl
 
-theorem Graph.map_map (g : Graph L n) (σ τ : Equiv.Perm (Fin n)) :
-    (g.map σ).map τ = g.map (σ.trans τ) :=
-  rfl
-
 /-- The mirror image, transported along position reversal. -/
 def Graph.mirror (g : Graph L n) : Graph L n := g.map Fin.revPerm
 
 /-- Mirroring a linearization is linearizing along the mirrored arrangement. -/
-theorem Graph.mirror_map (g : Graph L n) (σ : WordOrder.Arrangement (Fin n) n) :
-    (g.map σ).mirror = g.map σ.mirror :=
+theorem Graph.mirror_map (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
+    (g.map σ).mirror = g.map (WordOrder.Arrangement.mirror σ) :=
   rfl
+
+/-- The total length of a transported graph sums the transported distances of the original arcs. -/
+theorem Graph.totalLength_map_eq (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
+    (g.map σ).totalLength = ∑ u, ∑ w ∈ g.children u, Nat.dist (σ u) (σ w) := by
+  unfold Graph.totalLength
+  simp only [Graph.children, Finset.sum_filter]
+  refine Fintype.sum_equiv σ.symm _ _ fun u ↦ Fintype.sum_equiv σ.symm _ _ fun w ↦ ?_
+  simp [Graph.map_adj]
 
 /-- Transport along an isometry of the positions preserves total dependency length. -/
 theorem Graph.totalLength_map (g : Graph L n) (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
     (g.map σ).totalLength = g.totalLength := by
-  unfold totalLength
-  simp only [Graph.children, Finset.sum_filter]
-  refine Fintype.sum_equiv σ.symm _ _ (fun v ↦ ?_)
-  refine Fintype.sum_equiv σ.symm _ _ (fun w ↦ ?_)
-  simp only [map_adj]
-  by_cases h : g.Adj (σ.symm v) (σ.symm w) <;>
-    simp [h, ← hσ (σ.symm v) (σ.symm w)]
+  rw [Graph.totalLength_map_eq]
+  exact Finset.sum_congr rfl fun u _ ↦ Finset.sum_congr rfl fun w _ ↦ hσ u w
 
 theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
     Nat.dist v.rev w.rev = Nat.dist v w := by
@@ -326,6 +325,10 @@ examples (7)–(8)). -/
 theorem Graph.totalLength_mirror (g : Graph L n) :
     g.mirror.totalLength = g.totalLength :=
   g.totalLength_map _ Fin.dist_rev_rev
+
+@[simp] theorem Graph.totalLength_map_mirror (g : Graph L n) (σ : Equiv.Perm (Fin n)) :
+    (g.map (WordOrder.Arrangement.mirror σ)).totalLength = (g.map σ).totalLength := by
+  rw [← Graph.mirror_map, Graph.totalLength_mirror]
 
 /-- The graph read in the order `order`, which lists every position once. The token at
 position `p` is the token of `g` at `order[p]`, arcs and root following. -/
@@ -537,7 +540,7 @@ theorem Graph.yieldDist_eq_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) {w
     (h : g.Adj v w) :
     g.yieldDist v w = (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
       ⟨v, g.self_mem_siblings v⟩ ⟨w, Graph.mem_siblings_of_adj h⟩ := by
-  have hvw : v ≠ w := fun e ↦ hT.not_dominates_of_adj h (e ▸ ReflTransGen.refl)
+  have hvw : v ≠ w := hT.ne_of_adj h
   rw [Graph.yieldDist_eq_one_add_sum hT hP h, Arrangement.boundaryDist, ite_eq_right (by simpa)]
   congr 1
   simp only [Graph.siblingArrangement_precedes, Graph.phraseLength_eq_ncard, sum_filter]

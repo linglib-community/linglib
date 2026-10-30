@@ -119,7 +119,7 @@ theorem Graph.IsTree.isTree_toSimpleGraph {g : Graph L n} (hT : g.IsTree) :
   refine (Finset.card_bij (fun w _ ↦ s(g.headOf w, w)) (fun w hw ↦ ?_) (fun w hw w' hw' h ↦ ?_)
     fun e he ↦ ?_).symm
   · have hw := hhead (Finset.ne_of_mem_erase hw)
-    simpa using ⟨fun h ↦ hT.not_adj_self (h ▸ hw), Or.inl hw⟩
+    simpa using ⟨hT.ne_of_adj hw, Or.inl hw⟩
   · rcases Sym2.eq_iff.1 h with ⟨-, h⟩ | ⟨h₁, h₂⟩
     · exact h
     · have h₁' := hhead (Finset.ne_of_mem_erase hw)
