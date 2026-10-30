@@ -7,49 +7,46 @@ public import Linglib.Logic.Aristotelian.Basic
 # Isomorphisms of Aristotelian diagrams
 
 An *Aristotelian diagram* is a fragment of a Boolean algebra, here an indexed family
-`φ : ι → α`. Demey and Smessaert call a bijection of corners an *Aristotelian isomorphism* when
-it preserves and reflects the four Aristotelian relations, and a *Boolean isomorphism* when it
-extends to an order isomorphism of the Boolean closures. Every Boolean isomorphism is an
-Aristotelian one but not conversely, as their Keynes–Johnson octagons show. Aristotelian
-isomorphisms form a groupoid, the core of De Klerck, Vignero and Demey's category of
-Aristotelian diagrams. Demey and Smessaert's bitstring semantics sends each element of the
-closure of a diagram to the set of its minterms below it, and carries the diagram to an
-Aristotelian isomorphic diagram of bitstrings.
+`φ : ι → α`. A bijection of corners is an *Aristotelian isomorphism* when it preserves and
+reflects the Aristotelian relations, and a *Boolean isomorphism* when it extends to an order
+isomorphism of the Boolean closures, an extension that is then
+[unique](##BooleanIso.toEquiv_injective). Every Boolean isomorphism is an Aristotelian one, and
+the bitstring semantics, sending each element of the closure to the set of minterms below it,
+[carries a diagram to a Boolean isomorphic diagram of bitstrings](##BooleanIso.toSetOfMinterms).
 
-## Main definitions
-
-* `AristotelianIso`, with `refl`, `symm` and `trans`.
-* `BooleanIso`, with `refl`, `symm` and `trans`.
-
-## Main results
-
-* `BooleanIso.toAristotelianIso`: every Boolean isomorphism is an Aristotelian isomorphism.
-* `BooleanIso.ofInjective`: a diagram is Boolean isomorphic to its image along an injective
-  homomorphism.
-* `BooleanIso.ofSurjective`: a diagram of sets of types is Boolean isomorphic to its preimage
-  along a surjection onto the types.
-* `BooleanIso.ofMintermEqBot`: a corner bijection is a Boolean isomorphism when the minterms of
-  the two diagrams vanish at the same polarity assignments.
-* `AristotelianIso.toSetOfMinterms`: a diagram and its bitstrings are Aristotelian isomorphic.
+The Aristotelian relations are binary, so they see the minterms of a diagram only through pairs
+of literals. A polarity assignment is *consistent* with the relations when no two of its
+literals are contradictory or contrary, and consistency depends only on the relations. Every
+nonzero minterm is at a consistent assignment, so [the consistent assignments bound the nonzero
+minterms of every diagram Aristotelian isomorphic to a given
+one](##AristotelianIso.consistent_of_minterm_ne_bot). A consistent assignment whose literals each
+lie above one of two of them [has a nonzero minterm in every such
+diagram](##AristotelianIso.minterm_ne_bot_of_consistent). Only the remaining consistent
+assignments can vanish in one diagram of a family and not in another, and a bijection under which
+none does is a [Boolean isomorphism](##BooleanIso.ofMintermEqBot).
 
 ## Implementation notes
 
-The family `φ : ι → α` stands in for the paper's set `F ⊆ α`, and a corner bijection is a
-bijection of index types. `AristotelianIso` asks for `Disjoint`, `Codisjoint` and `<` to be
-preserved and reflected. This is equivalent to asking it of the four relations, since each of
-`IsCompl`, `IsContrary`, `IsSubcontrary` and `<` is a Boolean combination of the three, and
-conversely (`disjoint_iff_isCompl_or_isContrary`, `codisjoint_iff_isCompl_or_isSubcontrary`).
+The family `φ : ι → α` stands in for the papers' set `F ⊆ α`, and a corner bijection is a
+bijection of index types. `AristotelianIso` asks for `Disjoint`, `Codisjoint` and `≤` to be
+preserved and reflected, which is to say disjointness of any two literals. On injective families
+this is the papers' definition by the four relations (`AristotelianIso.mk'`). Asking for `<` in
+place of `≤` would let an isomorphism send two copies of one corner to two unconnected corners,
+and consistency would not be preserved. Two literals are contradictory or contrary exactly when
+they are disjoint (`disjoint_iff_isCompl_or_isContrary`), which is how `Consistent` states
+Demey and Smessaert's condition.
 
 The bitstring semantics is Boolean-algebra theory and lives in `Core/Order`. Demey and
 Smessaert's partition induced by a fragment (2018, Definition 5; 2024, Definition 3) is
 `Finpartition.minterms`, with anchor formulas `minterm`; their Lemma 3 is `disjoint_minterm`
 and `sup_minterm`, Lemma 4 `Finpartition.minterms_sumElim`, Lemma 6
 `BooleanSubalgebra.minterm_le_or_le_compl`, Lemma 7
-`BooleanSubalgebra.le_iff_forall_mem_minterms`, Lemma 9 `BooleanSubalgebra.isAtom_iff_mem_minterms`,
-and Theorem 1 `BooleanSubalgebra.toSetOfMinterms` with `BooleanSubalgebra.card_closure`. They
-number the minterms and write a set of them as a string of bits; `toSetOfMinterms` keeps the set.
-Their Theorem 2, proved there from Theorem 1 through the Boolean-to-Aristotelian lemma, is
-proved here directly.
+`BooleanSubalgebra.le_iff_forall_mem_minterms`, Lemma 9
+`BooleanSubalgebra.isAtom_iff_mem_minterms`, and the bitstring semantics of Theorem 1
+`BooleanSubalgebra.toSetOfMinterms`, with `BooleanSubalgebra.card_closure`. They number the
+minterms and write a set of them as a string of bits; `toSetOfMinterms` keeps the set. Their
+Theorem 2 is `BooleanIso.toSetOfMinterms` coerced to an Aristotelian isomorphism, the route of
+their proof.
 
 ## References
 
@@ -66,77 +63,190 @@ variable {ι ι' ι'' α α' α'' : Type*} [BooleanAlgebra α] [BooleanAlgebra �
   {φ : ι → α} {φ' : ι' → α'} {φ'' : ι'' → α''}
 
 open BooleanSubalgebra
-open Equiv (toFun_as_coe apply_symm_apply)
 
 /-- An **Aristotelian isomorphism** is a corner bijection preserving and reflecting `Disjoint`,
-`Codisjoint` and `<`, and hence the four Aristotelian relations (`map_isCompl` and
+`Codisjoint` and `≤`, and hence the four Aristotelian relations (`map_isCompl` and
 siblings). -/
 structure AristotelianIso (φ : ι → α) (φ' : ι' → α') extends ι ≃ ι' where
   /-- Joint inconsistency (`⊓ = ⊥`) is preserved and reflected. -/
-  map_disjoint : ∀ i j, Disjoint (φ i) (φ j) ↔ Disjoint (φ' (toFun i)) (φ' (toFun j))
+  map_disjoint' {i j : ι} : Disjoint (φ' (toEquiv i)) (φ' (toEquiv j)) ↔ Disjoint (φ i) (φ j)
   /-- Joint exhaustiveness (`⊔ = ⊤`) is preserved and reflected. -/
-  map_codisjoint : ∀ i j, Codisjoint (φ i) (φ j) ↔ Codisjoint (φ' (toFun i)) (φ' (toFun j))
-  /-- Subalternation (`<`) is preserved and reflected. -/
-  map_lt : ∀ i j, φ i < φ j ↔ φ' (toFun i) < φ' (toFun j)
+  map_codisjoint' {i j : ι} :
+    Codisjoint (φ' (toEquiv i)) (φ' (toEquiv j)) ↔ Codisjoint (φ i) (φ j)
+  /-- Entailment is preserved and reflected. -/
+  map_le' {i j : ι} : φ' (toEquiv i) ≤ φ' (toEquiv j) ↔ φ i ≤ φ j
 
 namespace AristotelianIso
 
+theorem toEquiv_injective : Function.Injective (toEquiv : AristotelianIso φ φ' → ι ≃ ι')
+  | ⟨_, _, _, _⟩, ⟨_, _, _, _⟩, rfl => rfl
+
 instance : EquivLike (AristotelianIso φ φ') ι ι' where
-  coe e := e.toFun
-  inv e := e.invFun
+  coe e := e.toEquiv
+  inv e := e.toEquiv.symm
   left_inv e := e.left_inv
   right_inv e := e.right_inv
-  coe_injective' e e' h _ := by
-    obtain ⟨e, _, _, _⟩ := e; obtain ⟨e', _, _, _⟩ := e'; congr; exact Equiv.coe_fn_injective h
+  coe_injective' _ _ h _ := toEquiv_injective (Equiv.coe_fn_injective h)
 
 @[simp] theorem coe_fn_toEquiv (e : AristotelianIso φ φ') : (e.toEquiv : ι → ι') = e := rfl
 
 @[ext]
 theorem ext {e e' : AristotelianIso φ φ'} (h : ∀ i, e i = e' i) : e = e' := DFunLike.ext _ _ h
 
+variable (e : AristotelianIso φ φ') {i j : ι}
+
+@[simp] theorem map_disjoint : Disjoint (φ' (e i)) (φ' (e j)) ↔ Disjoint (φ i) (φ j) :=
+  e.map_disjoint'
+
+@[simp] theorem map_codisjoint : Codisjoint (φ' (e i)) (φ' (e j)) ↔ Codisjoint (φ i) (φ j) :=
+  e.map_codisjoint'
+
+@[simp] theorem map_le : φ' (e i) ≤ φ' (e j) ↔ φ i ≤ φ j := e.map_le'
+
+@[simp] theorem map_lt : φ' (e i) < φ' (e j) ↔ φ i < φ j := by
+  simp only [lt_iff_le_not_ge, map_le]
+
+@[simp] theorem map_isCompl : IsCompl (φ' (e i)) (φ' (e j)) ↔ IsCompl (φ i) (φ j) := by
+  simp only [isCompl_iff, map_disjoint, map_codisjoint]
+
+@[simp] theorem map_isContrary : IsContrary (φ' (e i)) (φ' (e j)) ↔ IsContrary (φ i) (φ j) := by
+  simp only [IsContrary, map_disjoint, map_codisjoint]
+
+@[simp] theorem map_isSubcontrary :
+    IsSubcontrary (φ' (e i)) (φ' (e j)) ↔ IsSubcontrary (φ i) (φ j) := by
+  simp only [IsSubcontrary, map_disjoint, map_codisjoint]
+
+/-- An Aristotelian isomorphism of injective families from a bijection preserving and reflecting
+the four Aristotelian relations, as [demey-smessaert-2018] and [demey-smessaert-2024] define
+it. -/
+def mk' (hφ : Function.Injective φ) (hφ' : Function.Injective φ') (e : ι ≃ ι')
+    (hc : ∀ {i j}, IsCompl (φ' (e i)) (φ' (e j)) ↔ IsCompl (φ i) (φ j))
+    (hC : ∀ {i j}, IsContrary (φ' (e i)) (φ' (e j)) ↔ IsContrary (φ i) (φ j))
+    (hS : ∀ {i j}, IsSubcontrary (φ' (e i)) (φ' (e j)) ↔ IsSubcontrary (φ i) (φ j))
+    (hL : ∀ {i j}, φ' (e i) < φ' (e j) ↔ φ i < φ j) : AristotelianIso φ φ' where
+  toEquiv := e
+  map_disjoint' := by
+    simp only [disjoint_iff_isCompl_or_isContrary]
+    exact or_congr hc hC
+  map_codisjoint' := by
+    simp only [codisjoint_iff_isCompl_or_isSubcontrary]
+    exact or_congr hc hS
+  map_le' := by
+    simp only [le_iff_lt_or_eq]
+    exact or_congr hL ((hφ'.eq_iff.trans e.injective.eq_iff).trans hφ.eq_iff.symm)
+
 /-- The identity Aristotelian isomorphism. -/
 @[refl] protected def refl (φ : ι → α) : AristotelianIso φ φ where
-  toEquiv := Equiv.refl ι
-  map_disjoint _ _ := Iff.rfl
-  map_codisjoint _ _ := Iff.rfl
-  map_lt _ _ := Iff.rfl
+  toEquiv := .refl ι
+  map_disjoint' := .rfl
+  map_codisjoint' := .rfl
+  map_le' := .rfl
 
 /-- The inverse Aristotelian isomorphism. -/
-@[symm] protected def symm (e : AristotelianIso φ φ') : AristotelianIso φ' φ where
+@[symm] protected def symm : AristotelianIso φ' φ where
   toEquiv := e.toEquiv.symm
-  map_disjoint i j := by
-    simpa only [toFun_as_coe, apply_symm_apply]
-      using (e.map_disjoint (e.toEquiv.symm i) (e.toEquiv.symm j)).symm
-  map_codisjoint i j := by
-    simpa only [toFun_as_coe, apply_symm_apply]
-      using (e.map_codisjoint (e.toEquiv.symm i) (e.toEquiv.symm j)).symm
-  map_lt i j := by
-    simpa only [toFun_as_coe, apply_symm_apply]
-      using (e.map_lt (e.toEquiv.symm i) (e.toEquiv.symm j)).symm
+  map_disjoint' {i j} := by
+    rw [← e.map_disjoint', Equiv.apply_symm_apply, Equiv.apply_symm_apply]
+  map_codisjoint' {i j} := by
+    rw [← e.map_codisjoint', Equiv.apply_symm_apply, Equiv.apply_symm_apply]
+  map_le' {i j} := by rw [← e.map_le', Equiv.apply_symm_apply, Equiv.apply_symm_apply]
 
 /-- Composition of Aristotelian isomorphisms. -/
-@[trans] protected def trans (e : AristotelianIso φ φ') (e' : AristotelianIso φ' φ'') :
-    AristotelianIso φ φ'' where
+@[trans] protected def trans (e' : AristotelianIso φ' φ'') : AristotelianIso φ φ'' where
   toEquiv := e.toEquiv.trans e'.toEquiv
-  map_disjoint i j := (e.map_disjoint i j).trans (e'.map_disjoint _ _)
-  map_codisjoint i j := (e.map_codisjoint i j).trans (e'.map_codisjoint _ _)
-  map_lt i j := (e.map_lt i j).trans (e'.map_lt _ _)
+  map_disjoint' := e'.map_disjoint'.trans e.map_disjoint'
+  map_codisjoint' := e'.map_codisjoint'.trans e.map_codisjoint'
+  map_le' := e'.map_le'.trans e.map_le'
 
-theorem map_isCompl (e : AristotelianIso φ φ') (i j : ι) :
-    IsCompl (φ i) (φ j) ↔ IsCompl (φ' (e i)) (φ' (e j)) := by
-  simp only [isCompl_iff, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
+@[simp] theorem refl_apply (i : ι) : AristotelianIso.refl φ i = i := rfl
 
-theorem map_isContrary (e : AristotelianIso φ φ') (i j : ι) :
-    IsContrary (φ i) (φ j) ↔ IsContrary (φ' (e i)) (φ' (e j)) := by
-  simp only [IsContrary, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
+@[simp] theorem trans_apply (e' : AristotelianIso φ' φ'') (i : ι) : e.trans e' i = e' (e i) := rfl
 
-theorem map_isSubcontrary (e : AristotelianIso φ φ') (i j : ι) :
-    IsSubcontrary (φ i) (φ j) ↔ IsSubcontrary (φ' (e i)) (φ' (e j)) := by
-  simp only [IsSubcontrary, e.map_disjoint, e.map_codisjoint, toFun_as_coe, coe_fn_toEquiv]
+@[simp] theorem symm_apply_apply (i : ι) : e.symm (e i) = i := e.toEquiv.symm_apply_apply i
+
+@[simp] theorem apply_symm_apply (i : ι') : e (e.symm i) = i := e.toEquiv.apply_symm_apply i
 
 end AristotelianIso
 
-/-! ### Boolean isomorphism (Definition 7) and the nesting -/
+/-! ### Consistency with the Aristotelian relations -/
+
+section Consistent
+
+/-- The literal of `x` at a polarity: `x` itself where the polarity is true, its complement where
+it is false. -/
+def literal (x : α) (b : Bool) : α := if b then x else xᶜ
+
+@[simp] theorem literal_true (x : α) : literal x true = x := rfl
+
+@[simp] theorem literal_false (x : α) : literal x false = xᶜ := rfl
+
+/-- A polarity assignment `σ` is **consistent** with the Aristotelian relations of `φ` when no
+two of its literals are contradictory or contrary, that is disjoint
+([demey-smessaert-2024] Definition 9). -/
+def Consistent (φ : ι → α) (σ : ι → Bool) : Prop :=
+  ∀ i j, ¬ Disjoint (literal (φ i) (σ i)) (literal (φ j) (σ j))
+
+instance [Fintype ι] [DecidableRel (Disjoint : α → α → Prop)] : DecidablePred (Consistent φ) :=
+  fun _ ↦ inferInstanceAs (Decidable (∀ _ _, _))
+
+variable {σ : ι → Bool}
+
+/-- An Aristotelian isomorphism preserves and reflects disjointness of literals. -/
+theorem AristotelianIso.disjoint_literal_iff (e : AristotelianIso φ φ') (a b : Bool) (i j : ι) :
+    Disjoint (literal (φ' (e i)) a) (literal (φ' (e j)) b) ↔
+      Disjoint (literal (φ i) a) (literal (φ j) b) := by
+  cases a <;> cases b <;>
+    simp only [literal_true, literal_false, disjoint_compl_left_iff, disjoint_compl_right_iff,
+      ← codisjoint_iff_compl_le_left, e.map_disjoint, e.map_codisjoint, e.map_le]
+
+/-- An Aristotelian isomorphism preserves and reflects entailment between literals. -/
+theorem AristotelianIso.literal_le_literal_iff (e : AristotelianIso φ φ') (a b : Bool) (i j : ι) :
+    literal (φ' (e i)) a ≤ literal (φ' (e j)) b ↔ literal (φ i) a ≤ literal (φ j) b := by
+  cases a <;> cases b <;>
+    simp only [literal_true, literal_false, le_compl_iff_disjoint_right, disjoint_compl_left_iff,
+      ← codisjoint_iff_compl_le_right, e.map_disjoint, e.map_codisjoint, e.map_le]
+
+/-- Consistency depends only on the Aristotelian relations. -/
+theorem AristotelianIso.consistent_comp_iff (e : AristotelianIso φ φ') :
+    Consistent (φ' ∘ e) σ ↔ Consistent φ σ :=
+  forall₂_congr fun i j ↦ (e.disjoint_literal_iff (σ i) (σ j) i j).not
+
+variable [Fintype ι]
+
+/-- A nonzero minterm is at a consistent assignment ([demey-smessaert-2024] Section 5). -/
+theorem consistent_of_minterm_ne_bot (h : minterm φ σ ≠ ⊥) : Consistent φ σ := fun i j hd ↦
+  h <| le_bot_iff.1 <| (le_inf (Finset.inf_le (Finset.mem_univ i))
+    (Finset.inf_le (Finset.mem_univ j))).trans hd.le_bot
+
+/-- A consistent assignment whose literals all lie above one of two of them has a nonzero
+minterm: the minterm is the meet of those two literals, which are not disjoint
+([demey-smessaert-2024] Section 5). -/
+theorem minterm_ne_bot_of_consistent {i j : ι} (hσ : Consistent φ σ)
+    (h : ∀ k, literal (φ i) (σ i) ≤ literal (φ k) (σ k) ∨
+      literal (φ j) (σ j) ≤ literal (φ k) (σ k)) :
+    minterm φ σ ≠ ⊥ := fun h0 ↦ hσ i j <| disjoint_iff_inf_le.2 <|
+  (Finset.le_inf fun k _ ↦ (h k).elim inf_le_left.trans inf_le_right.trans).trans_eq h0
+
+variable (e : AristotelianIso φ φ')
+
+/-- The nonzero minterms of a diagram are at assignments consistent with the Aristotelian
+relations of any diagram Aristotelian isomorphic to it. -/
+theorem AristotelianIso.consistent_of_minterm_ne_bot (h : minterm (φ' ∘ e) σ ≠ ⊥) :
+    Consistent φ σ :=
+  e.consistent_comp_iff.1 (Aristotelian.consistent_of_minterm_ne_bot h)
+
+/-- A consistent assignment of `φ` whose literals all lie above one of two of them has a nonzero
+minterm in every diagram Aristotelian isomorphic to `φ`. -/
+theorem AristotelianIso.minterm_ne_bot_of_consistent {i j : ι} (hσ : Consistent φ σ)
+    (h : ∀ k, literal (φ i) (σ i) ≤ literal (φ k) (σ k) ∨
+      literal (φ j) (σ j) ≤ literal (φ k) (σ k)) :
+    minterm (φ' ∘ e) σ ≠ ⊥ :=
+  Aristotelian.minterm_ne_bot_of_consistent (e.consistent_comp_iff.2 hσ) fun k ↦
+    (h k).imp (e.literal_le_literal_iff _ _ _ _).2 (e.literal_le_literal_iff _ _ _ _).2
+
+end Consistent
+
+/-! ### Boolean isomorphisms -/
 
 /-- The `i`-th corner of a diagram, viewed inside its Boolean closure. -/
 def corner (φ : ι → α) (i : ι) : closure (Set.range φ) :=
@@ -147,33 +257,63 @@ theorem coe_corner (φ : ι → α) (i : ι) : (corner φ i : α) = φ i := rfl
 
 /-- A **Boolean isomorphism** is a corner bijection that extends to an order isomorphism of the
 Boolean closures. -/
-@[ext]
-structure BooleanIso (φ : ι → α) (φ' : ι' → α') where
-  /-- The underlying corner bijection. -/
-  toEquiv : ι ≃ ι'
-  /-- The order-isomorphism of Boolean closures extending it. -/
+structure BooleanIso (φ : ι → α) (φ' : ι' → α') extends ι ≃ ι' where
+  /-- The order isomorphism of Boolean closures extending the bijection. -/
   closureIso : closure (Set.range φ) ≃o closure (Set.range φ')
-  /-- `closureIso` carries corners to corners. -/
-  extends_corners : ∀ i, closureIso (corner φ i) = corner φ' (toEquiv i)
+  /-- `closureIso` carries each corner to its image. -/
+  closureIso_corner' (i : ι) : closureIso (corner φ i) = corner φ' (toEquiv i)
 
 namespace BooleanIso
 
+/-- A Boolean isomorphism is determined by its corner bijection: the corners generate the
+closure, so the extension is unique. -/
+theorem toEquiv_injective : Function.Injective (toEquiv : BooleanIso φ φ' → ι ≃ ι') := by
+  rintro ⟨e, f, hf⟩ ⟨_, g, hg⟩ rfl
+  obtain rfl : f = g := closure_hom_ext <| by
+    rintro _ ⟨i, rfl⟩
+    exact (hf i).trans (hg i).symm
+  rfl
+
+instance : EquivLike (BooleanIso φ φ') ι ι' where
+  coe e := e.toEquiv
+  inv e := e.toEquiv.symm
+  left_inv e := e.left_inv
+  right_inv e := e.right_inv
+  coe_injective' _ _ h _ := toEquiv_injective (Equiv.coe_fn_injective h)
+
+@[simp] theorem coe_fn_toEquiv (e : BooleanIso φ φ') : (e.toEquiv : ι → ι') = e := rfl
+
+@[ext]
+theorem ext {e e' : BooleanIso φ φ'} (h : ∀ i, e i = e' i) : e = e' := DFunLike.ext _ _ h
+
+@[simp] theorem closureIso_corner (e : BooleanIso φ φ') (i : ι) :
+    e.closureIso (corner φ i) = corner φ' (e i) :=
+  e.closureIso_corner' i
+
+@[simp] theorem coe_closureIso_corner (e : BooleanIso φ φ') (i : ι) :
+    (e.closureIso (corner φ i) : α') = φ' (e i) :=
+  congrArg Subtype.val (e.closureIso_corner i)
+
 /-- The identity Boolean isomorphism. -/
-@[refl] protected def refl (φ : ι → α) : BooleanIso φ φ :=
-  ⟨Equiv.refl ι, OrderIso.refl _, fun _ ↦ rfl⟩
+@[refl] protected def refl (φ : ι → α) : BooleanIso φ φ where
+  toEquiv := .refl ι
+  closureIso := .refl _
+  closureIso_corner' _ := rfl
 
 /-- The inverse Boolean isomorphism. -/
 @[symm] protected def symm (e : BooleanIso φ φ') : BooleanIso φ' φ where
   toEquiv := e.toEquiv.symm
   closureIso := e.closureIso.symm
-  extends_corners i := by rw [e.closureIso.symm_apply_eq, e.extends_corners, apply_symm_apply]
+  closureIso_corner' i := by
+    rw [OrderIso.symm_apply_eq, e.closureIso_corner', Equiv.apply_symm_apply]
 
 /-- Composition of Boolean isomorphisms. -/
 @[trans] protected def trans (e : BooleanIso φ φ') (e' : BooleanIso φ' φ'') : BooleanIso φ φ'' where
   toEquiv := e.toEquiv.trans e'.toEquiv
   closureIso := e.closureIso.trans e'.closureIso
-  extends_corners i := by
-    simp only [OrderIso.trans_apply, e.extends_corners, e'.extends_corners, Equiv.trans_apply]
+  closureIso_corner' i := by
+    rw [OrderIso.trans_apply, e.closureIso_corner', e'.closureIso_corner']
+    rfl
 
 /-- A diagram is Boolean isomorphic to its image along an injective homomorphism. -/
 noncomputable def ofInjective (g : BoundedLatticeHom α α') (hg : Function.Injective g) :
@@ -181,19 +321,15 @@ noncomputable def ofInjective (g : BoundedLatticeHom α α') (hg : Function.Inje
   toEquiv := .refl ι
   closureIso := (orderIsoMapOfInjective _ hg).trans <|
     Set.orderIsoOfEq _ _ (by rw [map_closure, ← Set.range_comp])
-  extends_corners _ := rfl
+  closureIso_corner' _ := rfl
 
 /-- A diagram of sets of types is Boolean isomorphic to its preimage along a surjection onto the
 types, such as the map sending each model of a logic to its type. -/
 noncomputable def ofSurjective {X T : Type*} [Fintype T] [DecidableEq T] {φ : ι → Finset T}
     (t : X → T) (ht : Function.Surjective t) : BooleanIso φ fun i ↦ t ⁻¹' ↑(φ i) :=
-  ofInjective (φ := φ)
-    { toFun s := t ⁻¹' ↑s
-      map_sup' _ _ := by simp
-      map_inf' _ _ := by simp
-      map_top' := by simp
-      map_bot' := by simp }
-    fun _ _ h ↦ Finset.coe_injective (Set.preimage_injective.2 ht h)
+  ofInjective (φ := φ) ((CompleteLatticeHom.setPreimage t).toBoundedLatticeHom.comp
+    (Fintype.finsetOrderIsoSet (α := T) : BoundedLatticeHom (Finset T) (Set T)))
+    ((Set.preimage_injective.2 ht).comp Finset.coe_injective)
 
 /-- A corner bijection is a Boolean isomorphism when the minterms of the two diagrams, matched
 along it, vanish together. -/
@@ -202,41 +338,43 @@ noncomputable def ofMintermEqBot [Fintype ι] [DecidableEq ι] [DecidableEq α] 
   toEquiv := e
   closureIso := (closureOrderIsoOfMintermEqBot h).trans <|
     Set.orderIsoOfEq _ _ (by rw [e.surjective.range_comp])
-  extends_corners i :=
+  closureIso_corner' i :=
     Subtype.ext (congrArg Subtype.val (closureOrderIsoOfMintermEqBot_apply h i) :)
 
-/-- Every Boolean isomorphism is an Aristotelian isomorphism. -/
-def toAristotelianIso (bi : BooleanIso φ φ') : AristotelianIso φ φ' where
-  toEquiv := bi.toEquiv
-  map_disjoint i j := by
-    simp only [toFun_as_coe, ← coe_corner φ, ← coe_corner φ', disjoint_coe, ← bi.extends_corners,
+/-- Every Boolean isomorphism is an Aristotelian isomorphism ([demey-smessaert-2018] Lemma 1). -/
+def toAristotelianIso (e : BooleanIso φ φ') : AristotelianIso φ φ' where
+  toEquiv := e.toEquiv
+  map_disjoint' {i j} := by
+    change Disjoint (φ' (e i)) (φ' (e j)) ↔ _
+    rw [← e.coe_closureIso_corner i, ← e.coe_closureIso_corner j, disjoint_coe,
       disjoint_map_orderIso_iff]
-  map_codisjoint i j := by
-    simp only [toFun_as_coe, ← coe_corner φ, ← coe_corner φ', codisjoint_coe,
-      ← bi.extends_corners, codisjoint_map_orderIso_iff]
-  map_lt i j := by
-    simp only [toFun_as_coe, ← coe_corner φ, ← coe_corner φ', Subtype.coe_lt_coe,
-      ← bi.extends_corners, bi.closureIso.lt_iff_lt]
+    exact disjoint_coe.symm
+  map_codisjoint' {i j} := by
+    change Codisjoint (φ' (e i)) (φ' (e j)) ↔ _
+    rw [← e.coe_closureIso_corner i, ← e.coe_closureIso_corner j, codisjoint_coe,
+      codisjoint_map_orderIso_iff]
+    exact codisjoint_coe.symm
+  map_le' {i j} := by
+    change φ' (e i) ≤ φ' (e j) ↔ _
+    rw [← e.coe_closureIso_corner i, ← e.coe_closureIso_corner j, Subtype.coe_le_coe,
+      e.closureIso.le_iff_le]
+    exact Subtype.coe_le_coe.symm
 
 /-- Forget a Boolean isomorphism down to its underlying Aristotelian isomorphism. -/
 instance : CoeOut (BooleanIso φ φ') (AristotelianIso φ φ') := ⟨toAristotelianIso⟩
 
-end BooleanIso
-
-/-! ### Bitstrings -/
-
 variable [Fintype ι] [DecidableEq ι] [DecidableEq α] in
 variable (φ) in
-/-- The bitstrings of the elements of a diagram form a diagram Aristotelian isomorphic to it
-([demey-smessaert-2018] Theorem 2). -/
-noncomputable def AristotelianIso.toSetOfMinterms :
-    AristotelianIso φ fun i ↦ BooleanSubalgebra.toSetOfMinterms φ (corner φ i) where
-  toEquiv := .refl ι
-  map_disjoint i j := (disjoint_coe (a := corner φ i) (b := corner φ j)).trans
-    (disjoint_map_orderIso_iff (BooleanSubalgebra.toSetOfMinterms φ)).symm
-  map_codisjoint i j := (codisjoint_coe (a := corner φ i) (b := corner φ j)).trans
-    (codisjoint_map_orderIso_iff (BooleanSubalgebra.toSetOfMinterms φ)).symm
-  map_lt i j := (Subtype.coe_lt_coe (x := corner φ i) (y := corner φ j)).trans
-    (BooleanSubalgebra.toSetOfMinterms φ).lt_iff_lt.symm
+/-- The bitstring semantics carries a diagram to a Boolean isomorphic diagram of bitstrings, the
+sets of minterms below its corners ([demey-smessaert-2018] Theorem 1). -/
+noncomputable def toSetOfMinterms :
+    BooleanIso φ fun i ↦ BooleanSubalgebra.toSetOfMinterms φ (corner φ i) :=
+  (ofInjective (φ := corner φ) (closure (Set.range φ)).subtype
+    (closure (Set.range φ)).subtype_injective).symm.trans <|
+    ofInjective (φ := corner φ) (BooleanSubalgebra.toSetOfMinterms φ :
+      BoundedLatticeHom (closure (Set.range φ)) (Set (Finpartition.minterms φ).parts))
+      (BooleanSubalgebra.toSetOfMinterms φ).injective
+
+end BooleanIso
 
 end Aristotelian
