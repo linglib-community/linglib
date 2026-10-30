@@ -145,14 +145,14 @@ theorem profile_eq (L : Lexicon W) :
       profile (Attachment.modifier.tree L) rootPos := by
   rw [profile_tree, profile_tree]
 
-theorem profile_replaceAt {E : Tree Cat W} {h : List ℕ} (hE : (E[h]?).isSome)
+theorem profile_replaceAt {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
     (a : Attachment) (L : Lexicon W) :
     profile (E.replaceAt h (a.tree L)) ⟨h ++ rootPos.toList⟩ = profile (a.tree L) rootPos := by
   have ht : ¬ Tree.IsHead (a.tree L) := by cases a <;> exact not_isHead_node _ _
   rw [profile, profile, x0At_replaceAt hE ht, localSet_replaceAt hE ht]
 
 /-- **In every context the two attachments give the Root one profile.** -/
-theorem profile_replaceAt_eq {E : Tree Cat W} {h : List ℕ} (hE : (E[h]?).isSome)
+theorem profile_replaceAt_eq {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
     (L : Lexicon W) :
     profile (E.replaceAt h (Attachment.complement.tree L)) ⟨h ++ rootPos.toList⟩ =
       profile (E.replaceAt h (Attachment.modifier.tree L)) ⟨h ++ rootPos.toList⟩ := by
@@ -235,7 +235,7 @@ theorem mayCondition'_argPos (a : Attachment) (L : Lexicon W) :
     MayCondition' (a.tree L) rootPos a.argPos := by
   cases a <;> exact of_decide_eq_true rfl
 
-theorem not_strands_argPos {E : Tree Cat W} {h : List ℕ} (hE : (E[h]?).isSome)
+theorem not_strands_argPos {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
     (a : Attachment) (L : Lexicon W) (X : Cat) :
     ¬ Strands X (E.replaceAt h (a.tree L)) ⟨h ++ rootPos.toList⟩ ⟨h ++ a.argPos.toList⟩ :=
   mayCondition'_iff_forall_not_strands.mp
@@ -243,7 +243,7 @@ theorem not_strands_argPos {E : Tree Cat W} {h : List ℕ} (hE : (E[h]?).isSome)
 
 /-- **Pronominalization cannot decide.** In every context a proform strands from the Root under
 one attachment whatever it strands under the other. -/
-theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : (E[h]?).isSome)
+theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : E[h]?.isSome)
     (L : Lexicon W) (X : Cat) (β : TreePath) :
     Strands X (E.replaceAt h (Attachment.complement.tree L)) ⟨h ++ rootPos.toList⟩ β ↔
       Strands X (E.replaceAt h (Attachment.modifier.tree L)) ⟨h ++ rootPos.toList⟩ β := by
@@ -261,7 +261,7 @@ theorem strands_specifier (L : Lexicon W) :
 
 /-- The category of the head a node below the root is merged with, that of its mother. -/
 def selector (t : Tree Cat W) (β : TreePath) : Option Cat :=
-  (t[β.parent.toList]?).map Tree.cat
+  t[β.parent]?.map Tree.cat
 
 /-- The positions of the arguments of a phrase, its DPs. -/
 def argPositions (t : Tree Cat W) : List TreePath :=

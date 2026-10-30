@@ -100,7 +100,7 @@ theorem covBy_iff {p q : Positions t} : p ⋖ q ↔ p.val ⋖ q.val := by
 variable {p : Positions t} {c s : RoseTree α}
 
 /-- The subtree of `t` at a position. -/
-def subtree (p : Positions t) : RoseTree α := (t[p.val.toList]?).get p.2
+def subtree (p : Positions t) : RoseTree α := t[p.val]'p.2
 
 theorem getElem?_eq (p : Positions t) : t[p.val.toList]? = some p.subtree :=
   (Option.some_get p.2).symm
@@ -108,7 +108,7 @@ theorem getElem?_eq (p : Positions t) : t[p.val.toList]? = some p.subtree :=
 /-- The subtrees at the positions are the subtrees, one per position. -/
 theorem map_subtree_univ (t : RoseTree α) :
     (Finset.univ : Finset t.Positions).val.map subtree = (t.subtrees : Multiset (RoseTree α)) := by
-  have hs : ∀ l : List (List ℕ), (∀ p ∈ l, (t[p]?).isSome) →
+  have hs : ∀ l : List (List ℕ), (∀ p ∈ l, t[p]?.isSome) →
       (l.filterMap (t[·]?)).map some = l.map (t[·]?) := by
     intro l hl
     induction l with

@@ -192,7 +192,7 @@ private theorem sum_take_add_numLeaves_le {cs : List (RoseTree α)} {i j : ℕ} 
 
 /-- The frontier of a subtree ends before the frontier of any subtree it precedes begins. -/
 theorem leafIndex_add_numLeaves_le_of_precedes {p q : TreePath} (hpq : p.Precedes q)
-    (hp : t[p.toList]? = some s) (hq : (t[q.toList]?).isSome) :
+    (hp : t[p.toList]? = some s) (hq : t[q.toList]?.isSome) :
     t.leafIndex p.toList + s.numLeaves ≤ t.leafIndex q.toList := by
   obtain ⟨r, i, j, hij, ⟨p', hp'⟩, ⟨q', hq'⟩⟩ := hpq
   rw [List.append_assoc, List.singleton_append] at hp' hq'
@@ -221,7 +221,7 @@ theorem leafIndex_replicate_zero (t : RoseTree α) (k : ℕ) :
     | none => rfl
     | some c => simpa using ih c
 
-theorem leafIndex_eq_zero_iff (h : (t[p]?).isSome) :
+theorem leafIndex_eq_zero_iff (h : t[p]?.isSome) :
     t.leafIndex p = 0 ↔ ∀ i ∈ p, i = 0 := by
   refine ⟨fun h0 ↦ ?_, fun h0 ↦ List.eq_replicate_iff.2 ⟨rfl, h0⟩ ▸ leafIndex_replicate_zero t _⟩
   induction p generalizing t with
@@ -239,8 +239,8 @@ theorem leafIndex_eq_zero_iff (h : (t[p]?).isSome) :
 
 /-- Two positions of a tree are left-aligned exactly when their frontiers begin at the same
 leaf. -/
-theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : (t[p.toList]?).isSome)
-    (hq : (t[q.toList]?).isSome) :
+theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : t[p.toList]?.isSome)
+    (hq : t[q.toList]?.isSome) :
     p.LeftAligned q ↔ t.leafIndex p.toList = t.leafIndex q.toList := by
   obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hp
   obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp hq
@@ -252,7 +252,7 @@ theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : (t[p.toList]?).isSom
       leafIndex_replicate_zero] at this
   · intro h
     have key : ∀ {p q : TreePath} {s : RoseTree α}, t[p.toList]? = some s →
-        (t[q.toList]?).isSome → t.leafIndex p.toList = t.leafIndex q.toList → p ≤ q →
+        t[q.toList]?.isSome → t.leafIndex p.toList = t.leafIndex q.toList → p ≤ q →
         p.LeftAligned q := by
       rintro p q s hs hq h ⟨r, hr⟩
       rw [← hr, leafIndex_append hs] at h
@@ -280,7 +280,7 @@ variable (P : RoseTree α → Prop) [DecidablePred P] (t) {x : ℕ × ℕ}
 /-- The spans of the subtrees of `t` satisfying `P`, in preorder: for the subtree at an address,
 the index in the frontier at which its slice begins and the index at which it ends. -/
 def spans : List (ℕ × ℕ) :=
-  t.vertices.filterMap fun p ↦ (t[p]?).bind fun s ↦
+  t.vertices.filterMap fun p ↦ t[p]?.bind fun s ↦
     if P s then some (t.leafIndex p, t.leafIndex p + s.numLeaves) else none
 
 variable {P t}
@@ -306,7 +306,7 @@ def spansList : List (RoseTree α) → List (ℕ × ℕ)
   rfl
 
 private theorem filterMap_verticesList (a : α) (cs : List (RoseTree α)) :
-    (verticesList cs).filterMap (fun p ↦ ((node a cs)[p]?).bind fun s ↦
+    (verticesList cs).filterMap (fun p ↦ (node a cs)[p]?.bind fun s ↦
       if P s then some ((node a cs).leafIndex p, (node a cs).leafIndex p + s.numLeaves)
       else none) = spansList P cs := by
   induction cs with

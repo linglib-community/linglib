@@ -84,7 +84,7 @@ instance (s m : RoseTree Vertex) : Decidable (IsHighestMother t s m) :=
 left to right, under a highest mother pronounced there. -/
 def candidates (pos : RoseTree Vertex → Option TreePath) (s : RoseTree Vertex) : List TreePath :=
   (t.val.positionedSubtrees.filter fun x ↦ x.2 = s ∧
-    (t.val[x.1.parent.toList]?).any fun m ↦
+    t.val[x.1.parent.toList]?.any fun m ↦
       decide (IsHighestMother t s m) && pos m == some x.1.parent).map Prod.fst
 
 /-- Where `s` is pronounced, within `n` steps of the root: the root at the root, and any other term

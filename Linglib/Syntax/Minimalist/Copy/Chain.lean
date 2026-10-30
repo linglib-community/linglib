@@ -114,7 +114,7 @@ def positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) : Li
 
 theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree Vertex}
     {p : TreePath} {b : β} :
-    (p, b) ∈ positions f t ↔ ∃ s, t[p.toList]? = some s ∧ f s.value = some b := by
+    (p, b) ∈ positions f t ↔ ∃ s, t[p]? = some s ∧ f s.value = some b := by
   simp only [positions, List.mem_filterMap, Option.map_eq_some_iff, Prod.mk.injEq, Prod.exists,
     mem_positionedSubtrees]
   exact ⟨fun ⟨_, s, hs, _, hb, rfl, rfl⟩ ↦ ⟨s, hs, hb⟩,

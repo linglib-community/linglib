@@ -444,7 +444,7 @@ theorem map_snd_positionedTerminals (t : Tree C W) :
 
 theorem getElem?_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
     (h : x ∈ t.positionedTerminals) :
-    t[x.1.toList]? = some (terminal x.2.1 x.2.2) := by
+    t[x.1]? = some (terminal x.2.1 x.2.2) := by
   obtain ⟨⟨p, l⟩, hl, hx⟩ := List.mem_filterMap.mp h
   cases l with
   | terminal c w =>

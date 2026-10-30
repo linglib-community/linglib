@@ -281,7 +281,7 @@ variable (fr : Frame)
 /-- The position of a named constituent, the first node spelling its words. -/
 def site (c : Part) : Option TreePath :=
   (fr.brackets.lookup c).bind fun ws ↦
-    (fr.phase.vertices.map TreePath.mk).find? fun p ↦ ∃ s ∈ fr.phase[p.toList]?,
+    (fr.phase.vertices.map TreePath.mk).find? fun p ↦ ∃ s ∈ fr.phase[p]?,
       Tree.yield s = ws
 
 /-- A variant of the rule lets the constituent `host` of a frame host the particle for a focus

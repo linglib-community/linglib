@@ -106,9 +106,9 @@ inductive Site where
 /-- A site is of a selected kind by its category and by whether its category is maximal, which is
 read off the tree. -/
 def Selected.Matches : Selected → Site → Prop
-  | .maximal c, .at t p => (t[p.toList]?).map PhraseStructure.Tree.cat = some c ∧
+  | .maximal c, .at t p => t[p]?.map PhraseStructure.Tree.cat = some c ∧
       IsMaximalCategory t.ProjectsAt t.AdjoinsAt p
-  | .nonmaximal c, .at t p => (t[p.toList]?).map PhraseStructure.Tree.cat = some c ∧
+  | .nonmaximal c, .at t p => t[p]?.map PhraseStructure.Tree.cat = some c ∧
       ¬ IsMaximalCategory t.ProjectsAt t.AdjoinsAt p
   | .degree d, .degree d' => d = d'
   | _, _ => False

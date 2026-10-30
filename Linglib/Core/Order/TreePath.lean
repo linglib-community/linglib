@@ -52,6 +52,11 @@ structure TreePath where
   toList : List ℕ
   deriving DecidableEq, Repr
 
+attribute [coe] TreePath.toList
+
+/-- A position is read as its address wherever a list of indices is expected. -/
+instance : CoeOut TreePath (List ℕ) := ⟨TreePath.toList⟩
+
 namespace TreePath
 
 /-- A position dominates another when its address is a prefix of the other's. -/

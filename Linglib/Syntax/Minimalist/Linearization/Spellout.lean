@@ -73,7 +73,7 @@ def eHeads : List TreePath := occurrencesWith t (·.item.ellipsis)
 /-- The complements of the [E] heads, one per elided term, the last of its positions. -/
 def elidedDomains : List TreePath :=
   ((eHeads t).map complement).pwFilter
-    fun p q ↦ t.val[p.toList]? ≠ t.val[q.toList]?
+    fun p q ↦ t.val[p]? ≠ t.val[q]?
 
 /-- `tok` is silenced when one of its occurrences lies in the complement of an [E] head. -/
 def IsSilenced (tok : LexicalItem.Token) : Prop :=
@@ -94,7 +94,7 @@ theorem isSilenced_iff_exists_mem_elidedDomains {tok : LexicalItem.Token} :
       exact Decidable.or_iff_not_imp_left.2 fun hxy hyz ↦ hxz ((not_not.1 hxy).trans hyz)
     refine ⟨K, hK, ⟨K.toList ++ q⟩, ?_, ⟨q, rfl⟩⟩
     rw [mem_occurrences, tokenList, mem_positions_iff] at hp ⊢
-    rwa [getElem?_append, ← hKh, ← getElem?_append, hq]
+    rwa [getElem?_treePath, getElem?_append, ← hKh, ← getElem?_append, hq]
   · obtain ⟨h, hh, rfl⟩ := List.mem_map.1 (List.pwFilter_subset _ hK)
     exact ⟨h, hh, hp⟩
 

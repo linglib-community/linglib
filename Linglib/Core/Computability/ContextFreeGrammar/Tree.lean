@@ -197,7 +197,7 @@ end RuleCount
 and `none` off the tree or at a terminal. -/
 def ruleAt? {g : ContextFreeGrammar T} (t : RoseTree (Symbol T g.NT)) (p : List ℕ) :
     Option (ContextFreeRule T g.NT) :=
-  (t[p]?).bind fun s ↦ match s.value with
+  t[p]?.bind fun s ↦ match s.value with
     | .nonterminal A => some ⟨A, s.children.map value⟩
     | .terminal _ => none
 
