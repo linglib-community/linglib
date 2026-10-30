@@ -16,8 +16,9 @@ context is a function `Role → State W`. A sentential force updates one compone
 some participants: assertion meets the speaker's context set with its content, and directing
 promotes the content in the addressee's ordering. Zanuttini, Pak and Portner's promissive adds its
 content to the speaker's To-Do List rather than the addressee's, so a promise and a directive with
-the same content [coincide only when the content already constrains neither participant's
-ordering](##Discourse.SpeechAct.Force.update_promise_eq_directive_iff).
+the same content [coincide exactly when both participants' orderings already respect the
+content](##Discourse.SpeechAct.Force.update_promise_eq_directive_iff), so that promoting it changes
+neither.
 
 ## Main definitions
 
@@ -141,9 +142,9 @@ theorem update_apply_of_notMem {f : Force} {r : Role} (hr : r ∉ f.holders) :
 @[simp] theorem update_exclamation : exclamation.update d φ = d :=
   funext fun _ ↦ update_apply_of_notMem d φ (Finset.notMem_empty _)
 
-/-- A promise and a directive with the same content coincide only when the content already
-constrains neither participant's ordering, since a promise promotes it for the speaker and a
-directive for the addressee ([zanuttini-pak-portner-2012], their (49)). -/
+/-- A promise and a directive with the same content coincide exactly when both participants'
+orderings already respect the content, since a promise promotes it for the speaker and a directive
+for the addressee ([zanuttini-pak-portner-2012], their (49)). -/
 theorem update_promise_eq_directive_iff :
     promise.update d φ = directive.update d φ ↔ ∀ r, ExpState.Respects (d r).order φ := by
   simp only [funext_iff, Role.forall_role, update_promise_speaker, update_directive_speaker,
