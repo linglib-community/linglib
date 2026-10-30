@@ -284,6 +284,22 @@ theorem combine?_map {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V 
     combine? op ⟨.v ⇒ .t, p⟩ ⟨.v ⇒ .t, q⟩ = some ⟨.v ⇒ .t, op predicateModification p q⟩ := by
   simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
 
+@[simp] theorem combine?_eventIdentificationLeft
+    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (f : V (.e ⇒ .v ⇒ .t))
+    (p : V (.v ⇒ .t)) :
+    combine? op ⟨.e ⇒ .v ⇒ .t, f⟩ ⟨.v ⇒ .t, p⟩ =
+      some ⟨.e ⇒ .v ⇒ .t, op eventIdentificationLeft f p⟩ := by
+  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?,
+    eventIdentification?]
+
+@[simp] theorem combine?_eventIdentificationRight
+    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p : V (.v ⇒ .t))
+    (f : V (.e ⇒ .v ⇒ .t)) :
+    combine? op ⟨.v ⇒ .t, p⟩ ⟨.e ⇒ .v ⇒ .t, f⟩ =
+      some ⟨.e ⇒ .v ⇒ .t, op eventIdentificationRight p f⟩ := by
+  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?,
+    eventIdentification?]
+
 end Mode
 
 end Montague

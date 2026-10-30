@@ -194,6 +194,14 @@ theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.
       some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
   rw [Mode.combine?_predicateModification]; simp [Mode.evalPartial]
 
+theorem Mode.combine?_evalPartial_eventIdentificationLeft (F : Ty.PDomain E W (.e ⇒ .v ⇒ .t) S)
+    (P : Ty.PDomain E W (.v ⇒ .t) S) :
+    Mode.combine? Mode.evalPartial (⟨.e ⇒ .v ⇒ .t, Part.some F⟩ : PDenotation E W S)
+        ⟨.v ⇒ .t, Part.some P⟩ =
+      some ⟨.e ⇒ .v ⇒ .t, Part.some fun x ↦ (F x).map fun Fx e ↦
+        (Fx e).bind fun a ↦ (P e).map fun b ↦ a ∧ b⟩ := by
+  rw [Mode.combine?_eventIdentificationLeft]; simp [Mode.evalPartial]
+
 /-- The value of an interpreted daughter at the type `τ`, which is undefined where the daughter
 is uninterpretable or of another type. -/
 def valueAtPartial (τ : Ty) : Option (PDenotation E W S) → Part (Ty.PDomain E W τ S)
