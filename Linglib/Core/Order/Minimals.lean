@@ -207,10 +207,12 @@ section lift
 
 variable {β : Type*} (f : α → β)
 
-@[simp] theorem lift_le_iff [Preorder β] {a b : α} : (Preorder.lift f).le a b ↔ f a ≤ f b :=
+-- Not `@[simp]`: a subtype is ordered by `Preorder.lift Subtype.val`, so these would rewrite every
+-- subtype comparison to its coercion and loop against `Subtype.coe_le_coe`.
+theorem lift_le_iff [Preorder β] {a b : α} : (Preorder.lift f).le a b ↔ f a ≤ f b :=
   Iff.rfl
 
-@[simp] theorem lift_lt_iff [Preorder β] {a b : α} : (Preorder.lift f).lt a b ↔ f a < f b :=
+theorem lift_lt_iff [Preorder β] {a b : α} : (Preorder.lift f).lt a b ↔ f a < f b :=
   Iff.rfl
 
 instance [Preorder β] [DecidableLE β] : DecidableRel (Preorder.lift f).le :=
