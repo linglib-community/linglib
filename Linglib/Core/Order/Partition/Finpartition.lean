@@ -139,6 +139,11 @@ theorem sup_minterm : univ.sup (minterm φ) = ⊤ := by
         · rw [Finset.inf_insert, Function.update_self, ← hg true]; rfl
         · rw [Finset.inf_insert, Function.update_self, ← hg false]; rfl
 
+/-- A nonzero element meets some minterm. -/
+theorem exists_not_disjoint_minterm {x : α} (hx : x ≠ ⊥) : ∃ σ, ¬ Disjoint x (minterm φ σ) := by
+  by_contra! h
+  exact hx (disjoint_top.1 (sup_minterm φ ▸ Finset.disjoint_sup_right.2 fun σ _ ↦ h σ))
+
 section PairwiseDisjoint
 
 open Function

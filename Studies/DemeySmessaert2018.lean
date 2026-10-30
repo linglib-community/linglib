@@ -323,7 +323,7 @@ theorem not_isContrary_fol (i j : Fin 4) :
 -- square, whose universal statements are contrary.
 theorem isEmpty_aristotelianIso_categorical :
     IsEmpty (AristotelianIso (categorical IsFOLPattern) (categorical IsSYLPattern)) := by
-  refine ⟨fun e ↦ not_isContrary_fol _ _ ((e.symm.map_isContrary 0 1).1 ?_)⟩
+  refine ⟨fun e ↦ not_isContrary_fol _ _ ((e.symm.map_isContrary (i := 0) (j := 1)).2 ?_)⟩
   refine ⟨squareRelations_syl.contraryAE, ?_⟩
   simp only [codisjoint_iff]
   decide
@@ -648,9 +648,9 @@ theorem not_isBooleanClosed_weakJSB : ¬ IsBooleanClosed weakJSB := by
 their corners in order. -/
 def jsbIso : AristotelianIso strongJSB weakJSB where
   toEquiv := .refl _
-  map_disjoint := by decide
-  map_codisjoint := by simp only [codisjoint_iff]; decide
-  map_lt := by decide
+  map_disjoint' := by decide
+  map_codisjoint' := by simp only [codisjoint_iff]; decide
+  map_le' := by decide
 
 -- Section 5.1: on types, the strong and weak hexagons are not Boolean isomorphic.
 theorem isEmpty_booleanIso_jsb : IsEmpty (BooleanIso strongJSB weakJSB) :=

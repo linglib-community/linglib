@@ -130,9 +130,9 @@ theorem card_minterms_deontic : #(Finpartition.minterms deontic).parts = 6 := by
 map `δ`. -/
 def deonticIso : AristotelianIso subjectNegation deontic where
   toEquiv := .refl _
-  map_disjoint := by decide +kernel
-  map_codisjoint := by simp only [codisjoint_iff]; decide +kernel
-  map_lt := by decide +kernel
+  map_disjoint' := by decide +kernel
+  map_codisjoint' := by simp only [codisjoint_iff]; decide +kernel
+  map_le' := by decide +kernel
 
 /-- The deontic octagon is not Boolean isomorphic to the octagon for subject negation, since
 their closures have `2 ^ 6` and `2 ^ 7` elements. -/
@@ -357,162 +357,78 @@ theorem isEmpty_booleanIso_deonticModels {D W : Type*} [Fintype D] [Fintype W]
 
 /-! ### The family of Keynes–Johnson octagons (Section 5) -/
 
-/-- A polarity assignment is consistent with the Keynes–Johnson configuration when its meet
-contains no two contrary or contradictory literals (Definition 9). No two true corners are
-disjoint, no two false corners are jointly exhaustive, and no true corner lies below a false
-one. -/
-def Consistent (σ : Fin 8 → Bool) : Prop :=
-  ∀ i j, ¬ (σ i = true ∧ σ j = true ∧ Disjoint (subjectNegation i) (subjectNegation j)) ∧
-    ¬ (σ i = false ∧ σ j = false ∧ subjectNegation i ⊔ subjectNegation j = ⊤) ∧
-    ¬ (σ i = true ∧ σ j = false ∧ subjectNegation i < subjectNegation j)
+-- Definition 10: seven polarity assignments are consistent with the relations of the octagon.
+theorem card_filter_consistent : #(univ.filter (Consistent subjectNegation)) = 7 := by
+  decide +kernel
 
-instance : DecidablePred Consistent := fun _ ↦ by unfold Consistent; infer_instance
-
-theorem card_filter_consistent : #(univ.filter Consistent) = 7 := by decide +kernel
-
-/-- The meets of two corners among the consistent minterms. -/
+/-- The six meets of two corners among the consistent assignments, `ε₁` to `ε₆`. -/
 private def pairs : Finset (Fin 8 × Fin 8) := {(0, 6), (0, 5), (2, 4), (2, 7), (3, 6), (1, 4)}
 
 /-- The polarity assignment of the meet of two corners. -/
 private def polarity (t : Fin 8 × Fin 8) (k : Fin 8) : Bool :=
   decide (subjectNegation t.1 ⊓ subjectNegation t.2 ≤ subjectNegation k)
 
-/-- A positive literal `k` of the polarity assignment of `t` lies above the meet of `t`, by the
-relations of the octagon. -/
-private def CoversPos (t : Fin 8 × Fin 8) (k : Fin 8) : Prop :=
-  polarity t k = true → k = t.1 ∨ k = t.2 ∨ subjectNegation t.1 < subjectNegation k ∨
-    subjectNegation t.2 < subjectNegation k
-
-/-- A negative literal `k` of the polarity assignment of `t` lies above the meet of `t`, by the
-relations of the octagon. -/
-private def CoversNeg (t : Fin 8 × Fin 8) (k : Fin 8) : Prop :=
-  polarity t k = false → Disjoint (subjectNegation t.1) (subjectNegation k) ∨
-    Disjoint (subjectNegation t.2) (subjectNegation k)
-
-private instance (t : Fin 8 × Fin 8) : DecidablePred (CoversPos t) := fun _ ↦ by
-  unfold CoversPos; infer_instance
-
-private instance (t : Fin 8 × Fin 8) : DecidablePred (CoversNeg t) := fun _ ↦ by
-  unfold CoversNeg; infer_instance
-
-/-- The certificate that the meet of a pair is nonzero and below the minterm of its polarity
-assignment. -/
-private def Certified (t : Fin 8 × Fin 8) : Prop :=
-  ¬ Disjoint (subjectNegation t.1) (subjectNegation t.2) ∧ ∀ k, CoversPos t k ∧ CoversNeg t k
-
-private instance : DecidablePred Certified := fun _ ↦ by unfold Certified; infer_instance
-
-private theorem certified : ∀ t ∈ pairs, Certified t := by decide +kernel
+-- Each of the six is consistent, and each of its literals lies above one of its two corners, so
+-- it is the meet of two corners in every octagon of the family.
+private theorem consistent_pairs : ∀ t ∈ pairs, Consistent subjectNegation (polarity t) ∧
+    ∀ k, literal (subjectNegation t.1) (polarity t t.1) ≤
+        literal (subjectNegation k) (polarity t k) ∨
+      literal (subjectNegation t.2) (polarity t t.2) ≤
+        literal (subjectNegation k) (polarity t k) := by
+  decide +kernel
 
 private theorem card_image_polarity : #(pairs.image polarity) = 6 := by
   decide +kernel
 
-section Family
+variable {α : Type*} [BooleanAlgebra α] [DecidableEq α] {φ : Fin 8 → α}
 
-variable {α : Type*} [BooleanAlgebra α] {ψ : Fin 8 → α}
-  (hD : ∀ i j, Disjoint (subjectNegation i) (subjectNegation j) ↔ Disjoint (ψ i) (ψ j))
-  (hC : ∀ i j, Codisjoint (subjectNegation i) (subjectNegation j) ↔ Codisjoint (ψ i) (ψ j))
-  (hL : ∀ i j, subjectNegation i < subjectNegation j ↔ ψ i < ψ j)
+private theorem image_polarity_subset (e : AristotelianIso subjectNegation φ) :
+    pairs.image polarity ⊆ univ.filter fun σ ↦ minterm (φ ∘ e.toEquiv) σ ≠ ⊥ :=
+  image_subset_iff.2 fun t ht ↦ mem_filter.2
+    ⟨mem_univ _, e.minterm_ne_bot_of_consistent (consistent_pairs t ht).1 (consistent_pairs t ht).2⟩
 
-include hD hC hL in
-private theorem consistent_of_minterm_ne_bot {σ : Fin 8 → Bool} (h : minterm ψ σ ≠ ⊥) :
-    Consistent σ :=
-  fun i j ↦ ⟨fun ⟨hi, hj, hd⟩ ↦ h <| le_bot_iff.1 <|
-      (le_inf (minterm_le_of_true hi) (minterm_le_of_true hj)).trans
-        (disjoint_iff_inf_le.1 ((hD i j).1 hd)),
-    fun ⟨hi, hj, hc⟩ ↦ h <| le_bot_iff.1 <|
-      (le_inf (minterm_le_compl_of_false hi) (minterm_le_compl_of_false hj)).trans_eq <| by
-        rw [← compl_sup, codisjoint_iff.1 ((hC i j).1 (codisjoint_iff.2 hc)), compl_top],
-    fun ⟨hi, hj, hl⟩ ↦ h <| le_bot_iff.1 <|
-      (le_inf ((minterm_le_of_true hi).trans ((hL i j).1 hl).le)
-        (minterm_le_compl_of_false hj)).trans_eq (inf_compl_self _)⟩
-
-include hD hL in
-private theorem minterm_polarity_ne_bot {t : Fin 8 × Fin 8} (ht : t ∈ pairs) :
-    minterm ψ (polarity t) ≠ ⊥ := by
-  have h := certified t ht
-  refine fun h0 ↦ (hD _ _).not.1 h.1 (disjoint_iff.2 (le_bot_iff.1 ?_))
-  refine (Finset.le_inf fun k _ ↦ ?_).trans_eq h0
-  cases hk : polarity t k
-  · simp only [Bool.false_eq_true, ↓reduceIte]
-    rcases (h.2 k).2 hk with hd | hd
-    · exact inf_le_left.trans ((hD _ _).1 hd).le_compl_right
-    · exact inf_le_right.trans ((hD _ _).1 hd).le_compl_right
-  · simp only [↓reduceIte]
-    rcases (h.2 k).1 hk with rfl | rfl | hl | hl
-    · exact inf_le_left
-    · exact inf_le_right
-    · exact inf_le_left.trans ((hL _ _).1 hl).le
-    · exact inf_le_right.trans ((hL _ _).1 hl).le
-
-variable [DecidableEq α]
-
-include hD hC hL in
-private theorem filter_minterm_ne_bot_subset :
-    (univ.filter fun σ ↦ minterm ψ σ ≠ ⊥) ⊆ univ.filter Consistent :=
-  fun _ hσ ↦ mem_filter.2 ⟨mem_univ _, consistent_of_minterm_ne_bot hD hC hL (mem_filter.1 hσ).2⟩
-
-include hD hL in
-private theorem image_polarity_subset :
-    pairs.image polarity ⊆ univ.filter fun σ ↦ minterm ψ σ ≠ ⊥ :=
-  image_subset_iff.2 fun _ ht ↦ mem_filter.2 ⟨mem_univ _, minterm_polarity_ne_bot hD hL ht⟩
-
-include hD hC hL in
-private theorem minterm_ne_bot_iff_consistent (h : #(Finpartition.minterms ψ).parts = 7)
-    (σ : Fin 8 → Bool) : minterm ψ σ ≠ ⊥ ↔ Consistent σ := by
-  have := eq_of_subset_of_card_le (filter_minterm_ne_bot_subset hD hC hL) <| by
-    rw [card_filter_consistent, ← Finpartition.card_parts_minterms, h]
-  simpa using congrArg (σ ∈ ·) this
-
-include hD hL in
-private theorem minterm_ne_bot_iff_mem_image (h : #(Finpartition.minterms ψ).parts = 6)
-    (σ : Fin 8 → Bool) : minterm ψ σ ≠ ⊥ ↔ σ ∈ pairs.image polarity := by
-  have := eq_of_subset_of_card_le (image_polarity_subset hD hL) <| by
-    rw [card_image_polarity, ← Finpartition.card_parts_minterms, h]
+private theorem minterm_ne_bot_iff_mem_image (e : AristotelianIso subjectNegation φ)
+    (h : #(Finpartition.minterms φ).parts = 6) (σ : Fin 8 → Bool) :
+    minterm (φ ∘ e.toEquiv) σ ≠ ⊥ ↔ σ ∈ pairs.image polarity := by
+  have := eq_of_subset_of_card_le (image_polarity_subset e) <| by
+    rw [card_image_polarity, ← Finpartition.card_parts_minterms,
+      Finpartition.parts_minterms_comp_equiv, h]
   simpa using congrArg (σ ∈ ·) this.symm
-
-end Family
-
-variable {α : Type*} [BooleanAlgebra α] {φ : Fin 8 → α}
 
 /-- Every Keynes–Johnson octagon, in any Boolean algebra, induces a partition of six or of seven
 cells. Its nonzero minterms are among the seven consistent ones, six of which are meets of two
 corners and so nonzero; the seventh may or may not vanish. -/
-theorem card_minterms_eq_six_or_seven [DecidableEq α] (e : AristotelianIso subjectNegation φ) :
+theorem card_minterms_eq_six_or_seven (e : AristotelianIso subjectNegation φ) :
     #(Finpartition.minterms φ).parts = 6 ∨ #(Finpartition.minterms φ).parts = 7 := by
-  rw [← Finpartition.parts_minterms_comp_equiv e.toEquiv, Finpartition.card_parts_minterms]
-  have h₁ := card_le_card (image_polarity_subset (ψ := φ ∘ e.toEquiv) e.map_disjoint e.map_lt)
-  have h₂ := card_le_card (filter_minterm_ne_bot_subset (ψ := φ ∘ e.toEquiv) e.map_disjoint
-    e.map_codisjoint e.map_lt)
-  rw [card_image_polarity] at h₁
+  have h₁ := card_le_card (image_polarity_subset e)
+  rw [card_image_polarity, ← Finpartition.card_parts_minterms,
+    Finpartition.parts_minterms_comp_equiv] at h₁
+  have h₂ := e.card_parts_minterms_le
   rw [card_filter_consistent] at h₂
   omega
 
 /-- A Keynes–Johnson octagon is Boolean isomorphic to the octagon for subject negation iff it
 induces seven cells, its nonzero minterms then being the seven consistent ones. -/
-theorem nonempty_booleanIso_subjectNegation_iff [DecidableEq α]
-    (e : AristotelianIso subjectNegation φ) :
+theorem nonempty_booleanIso_subjectNegation_iff (e : AristotelianIso subjectNegation φ) :
     Nonempty (BooleanIso subjectNegation φ) ↔ #(Finpartition.minterms φ).parts = 7 where
   mp := fun ⟨b⟩ ↦ (BooleanSubalgebra.nonempty_orderIso_closure_iff _ _).1 ⟨b.closureIso⟩ ▸
     card_minterms_subjectNegation
-  mpr h := ⟨.ofMintermEqBot e.toEquiv fun σ ↦ not_iff_not.1 <|
-    (minterm_ne_bot_iff_consistent (ψ := subjectNegation) (fun _ _ ↦ .rfl) (fun _ _ ↦ .rfl)
-      (fun _ _ ↦ .rfl) card_minterms_subjectNegation σ).trans
-    (minterm_ne_bot_iff_consistent (ψ := φ ∘ e.toEquiv) e.map_disjoint e.map_codisjoint e.map_lt
-      (by rwa [Finpartition.parts_minterms_comp_equiv]) σ).symm⟩
+  mpr h := ⟨.ofMintermEqBot e.toEquiv fun _ ↦ not_iff_not.1 <|
+    ((AristotelianIso.refl _).minterm_ne_bot_iff_of_card_eq
+      (card_minterms_subjectNegation.trans card_filter_consistent.symm)).trans
+      (e.minterm_ne_bot_iff_of_card_eq (h.trans card_filter_consistent.symm)).symm⟩
 
 /-- A Keynes–Johnson octagon is Boolean isomorphic to the deontic octagon iff it induces six
 cells, its nonzero minterms then being the six meets of two corners. -/
-theorem nonempty_booleanIso_deontic_iff [DecidableEq α] (e : AristotelianIso subjectNegation φ) :
+theorem nonempty_booleanIso_deontic_iff (e : AristotelianIso subjectNegation φ) :
     Nonempty (BooleanIso deontic φ) ↔ #(Finpartition.minterms φ).parts = 6 where
   mp := fun ⟨b⟩ ↦ (BooleanSubalgebra.nonempty_orderIso_closure_iff _ _).1 ⟨b.closureIso⟩ ▸
     card_minterms_deontic
   mpr h := ⟨.ofMintermEqBot e.toEquiv fun σ ↦ not_iff_not.1 <|
-    (minterm_ne_bot_iff_mem_image (ψ := deontic) deonticIso.map_disjoint deonticIso.map_lt
-      card_minterms_deontic σ).trans
-    (minterm_ne_bot_iff_mem_image (ψ := φ ∘ e.toEquiv) e.map_disjoint e.map_lt
-      (by rwa [Finpartition.parts_minterms_comp_equiv]) σ).symm⟩
+    (minterm_ne_bot_iff_mem_image deonticIso card_minterms_deontic σ).trans
+      (minterm_ne_bot_iff_mem_image e h σ).symm⟩
 
+omit [DecidableEq α] in
 /-- The Keynes–Johnson octagons form exactly two Boolean subfamilies, each octagon being Boolean
 isomorphic to the octagon for subject negation or to the deontic octagon, which are not Boolean
 isomorphic to each other (`isEmpty_booleanIso_deontic`). -/
