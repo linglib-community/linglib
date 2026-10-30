@@ -2,6 +2,7 @@ module
 
 public import Studies.Fox2018
 public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Pragmatics.RSA.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.TFAE
 
@@ -17,7 +18,12 @@ the alternatives and of their negations
 [leaves only *every* and *some*](##Enguehard2025.mem_every_some_of_bilaterallyWeaklyStable).
 Strong stability of the atoms and the sentences of a lexicon of conservative, quantity-invariant
 determiners, and of their negations, [makes every determiner monotone in its
-scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable).
+scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable). Among proper clones of
+functions, strong stability of the alternatives and their negations at every number of atoms
+[singles out the upward-monotone ones](##Enguehard2025.bilaterallyStronglyStable_iff_eq_isUpperSet).
+The messages a pragmatic speaker can choose as the prior varies [are exactly the minimal true
+ones](##Enguehard2025.exists_prior_iff_minimal), so [strong stability is Bar-Lev and Katzir's
+communicative stability](##Enguehard2025.stronglyStable_iff_isOptimal).
 
 ## Implementation notes
 
@@ -40,6 +46,15 @@ scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable).
   [keenan-stavi-1986]'s logicality for one argument; projective symmetry is living on a set of
   atoms and being symmetric in them. Bar-Lev and Katzir's result on binary connectives
   ([bar-lev-katzir-2025]) is (34c) at two atoms.
+* A clone assigns propositions to every number of atoms, zero included; the paper's clones start
+  at one atom, and the results quantify over positive numbers. Both halves of (40) are proved
+  without the classification of the maximal clones the paper invokes: conjunction and negation
+  express every proposition, and the two constants with any non-monotone function compose to
+  negation.
+* Optimality in A.3 compares the literal listener's mass at the world,
+  `RSA.listener μ (RSA.truthful sem)`, strictly across the true messages with other meanings,
+  which is the paper's assumption that no two messages tie; the utility is its logarithm, which
+  the comparison drops. A prior is a probability measure giving every world positive mass.
 
 ## Errata
 
@@ -55,11 +70,16 @@ scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable).
   dominated. It is not when the negated existential is absent: [with only the atoms and the
   universal beside it](##Enguehard2025.exists_not_dominated_every_union_no), it is the strongest
   true member where no atom holds.
+* (40a) needs every world to have a true and a false member, the coverage fn. 23 asks of STA and
+  A.3 assumes: [the falsity-preserving
+  functions](##Enguehard2025.exists_isClone_bilaterallyWeaklyStable_not_isUpperSet) form a proper
+  clone that contains exclusive disjunction and is bilaterally weakly stable as printed, vacuously
+  so where no atom holds. With the coverage the result
+  [holds](##Enguehard2025.isUpperSet_of_isClone).
 
 ## TODO
 
-* (38) on convex functions, (40) on clones, and the equivalence with Bar-Lev and Katzir's
-  probabilistic stability.
+* (38) on convex functions.
 * The basic form of (26) (c) ⇒ (a) for infinitely many alternatives: the omitted lemma that
   exhaustifying against the non-dominated alternatives changes nothing fails for
   `{[n, ∞] | n} ∪ {{n} | n} ∪ {{0, ∞}}` on `ℕ ∪ {∞}`, where the non-dominated alternatives
@@ -973,5 +993,360 @@ theorem stronglyStable_and_not_bilaterallyStronglyStable_nobody [Nontrivial ι] 
         isProjectivelySymmetric_setOf Det.conservative_some Det.quantityInvariant_some A]
     · rw [mem_singleton_iff.1 hφ]
       exact isProjectivelySymmetric_setOf Det.conservative_no Det.quantityInvariant_no univ
+
+/-! ### Closed classes of functions -/
+
+/-- (39): a clone gives, for each number of atoms, a set of propositions over them that contains the
+atoms and is closed under composition. -/
+structure IsClone (F : ∀ n : ℕ, Set (Set (Set (Fin n)))) : Prop where
+  atom_mem : ∀ n (i : Fin n), {I | i ∈ I} ∈ F n
+  comp_mem : ∀ n k (g : Set (Set (Fin k))) (f : Fin k → Set (Set (Fin n))), g ∈ F k →
+    (∀ j, f j ∈ F n) → {I | {j | I ∈ f j} ∈ g} ∈ F n
+
+private theorem sUnion_mem {S T : Set (Set W)} (h0 : ∅ ∈ S) (hu : ∀ a ∈ S, ∀ b ∈ S, a ∪ b ∈ S)
+    (hT : T.Finite) (hTS : T ⊆ S) : ⋃₀ T ∈ S := by
+  obtain ⟨t, rfl⟩ := hT.exists_finset_coe
+  rw [← Finset.sup_id_set_eq_sUnion]
+  exact Finset.sup_induction h0 hu fun a ha ↦ hTS ha
+
+private theorem sInter_mem {S T : Set (Set W)} (h1 : univ ∈ S) (hi : ∀ a ∈ S, ∀ b ∈ S, a ∩ b ∈ S)
+    (hT : T.Finite) (hTS : T ⊆ S) : ⋂₀ T ∈ S := by
+  obtain ⟨t, rfl⟩ := hT.exists_finset_coe
+  rw [← Finset.inf_id_set_eq_sInter]
+  exact Finset.inf_induction h1 hi fun a ha ↦ hTS ha
+
+-- with the atoms, conjunction and negation express every proposition over at least one atom
+private theorem eq_univ_of_inter_compl {n : ℕ} {S : Set (Set (Set (Fin n)))} (hn : 0 < n)
+    (hat : ∀ i : Fin n, {I | i ∈ I} ∈ S) (hi : ∀ a ∈ S, ∀ b ∈ S, a ∩ b ∈ S)
+    (hc : ∀ a ∈ S, aᶜ ∈ S) : S = univ := by
+  classical
+  have hu : ∀ a ∈ S, ∀ b ∈ S, a ∪ b ∈ S := fun a ha b hb ↦ by
+    simpa [compl_inter] using hc _ (hi _ (hc a ha) _ (hc b hb))
+  have h0 : ∅ ∈ S := by simpa using hi _ (hat ⟨0, hn⟩) _ (hc _ (hat ⟨0, hn⟩))
+  have h1 : univ ∈ S := by simpa using hc _ h0
+  have hcell : ∀ I : Set (Fin n), ({I} : Set (Set (Fin n))) =
+      ⋂₀ range fun i ↦ if i ∈ I then {J | i ∈ J} else {J | i ∈ J}ᶜ := by
+    intro I; ext J
+    simp only [mem_singleton_iff, mem_sInter, forall_mem_range]
+    refine ⟨fun h i ↦ ?_, fun h ↦ ext fun i ↦ ?_⟩
+    · subst h; split_ifs with hi <;> simpa
+    · have := h i; split_ifs at this with hi <;> simp_all
+  refine eq_univ_of_forall fun φ ↦ ?_
+  rw [← biUnion_of_singleton φ, ← sUnion_image]
+  refine sUnion_mem h0 hu (toFinite _) ?_
+  rintro _ ⟨I, -, rfl⟩
+  rw [hcell]
+  refine sInter_mem h1 hi (finite_range _) ?_
+  rintro _ ⟨i, rfl⟩
+  dsimp only
+  split_ifs
+  exacts [hat i, hc _ (hat i)]
+
+namespace IsClone
+
+variable {F : ∀ n : ℕ, Set (Set (Set (Fin n)))} (hF : IsClone F)
+include hF
+
+theorem compl_mem (hneg : {J : Set (Fin 1) | 0 ∉ J} ∈ F 1) {n : ℕ} {φ : Set (Set (Fin n))}
+    (hφ : φ ∈ F n) : φᶜ ∈ F n := by
+  convert hF.comp_mem n 1 _ (fun _ ↦ φ) hneg fun _ ↦ hφ using 1
+  ext I; simp
+
+-- a clone with both constants that holds a function not monotone holds negation
+theorem neg_mem (htop : univ ∈ F 1) (hbot : ∅ ∈ F 1) {n : ℕ} {φ : Set (Set (Fin n))}
+    (hφ : φ ∈ F n) (hnm : ¬ IsUpperSet φ) : {J : Set (Fin 1) | 0 ∉ J} ∈ F 1 := by
+  classical
+  obtain ⟨I, J, hIJ, hI, hJ⟩ : ∃ I J, I ≤ J ∧ I ∈ φ ∧ J ∉ φ := by
+    by_contra h
+    push Not at h
+    exact hnm fun I J hIJ hI ↦ h I J hIJ hI
+  -- a step up by one atom out of `φ`
+  obtain ⟨K, -, ⟨hKJ, hK⟩, hmax⟩ :=
+    exists_maximal_ge_of_wellFoundedGT (fun K ↦ K ≤ J ∧ K ∈ φ) I ⟨hIJ, hI⟩
+  obtain ⟨j, hjJ, hjK⟩ := exists_of_ssubset (hKJ.lt_of_ne fun h ↦ hJ (h ▸ hK))
+  have hjK' : insert j K ∉ φ := fun h ↦
+    hjK (hmax ⟨insert_subset hjJ hKJ, h⟩ (subset_insert j K) (mem_insert j K))
+  -- vary the atom `j`, hold the atoms of `K` true and the others false
+  let g : Fin n → Set (Set (Fin 1)) := fun i ↦
+    if i = j then {X | 0 ∈ X} else if i ∈ K then univ else ∅
+  have hg : ∀ X : Set (Fin 1), {i | X ∈ g i} = if (0 : Fin 1) ∈ X then insert j K else K := by
+    intro X; ext i
+    by_cases hij : i = j
+    · subst hij; split_ifs <;> simp_all [g]
+    · by_cases hiK : i ∈ K <;> split_ifs <;> simp_all [g]
+  convert hF.comp_mem 1 n φ g hφ (fun i ↦ by
+    simp only [g]; split_ifs; exacts [hF.atom_mem 1 0, htop, hbot]) using 1
+  ext X
+  simp only [mem_ofPred_eq, hg X]
+  split_ifs with h0 <;> simp [h0, hK, hjK']
+
+end IsClone
+
+-- the monotone functions form a clone, and a proper one
+theorem isClone_isUpperSet : IsClone (fun n ↦ {φ : Set (Set (Fin n)) | IsUpperSet φ}) ∧
+    ∀ n, 0 < n → {φ : Set (Set (Fin n)) | IsUpperSet φ} ≠ univ := by
+  refine ⟨⟨fun n i I J hIJ (hI : i ∈ I) ↦ hIJ hI, fun n k g f hg hf I J hIJ hI ↦
+    hg (fun j (hj : I ∈ f j) ↦ hf j hIJ hj) hI⟩, fun n hn h ↦ ?_⟩
+  have : {I : Set (Fin n) | ⟨0, hn⟩ ∈ I}ᶜ ∈ {φ : Set (Set (Fin n)) | IsUpperSet φ} := h ▸ mem_univ _
+  exact this (empty_subset {(⟨0, hn⟩ : Fin n)}) (notMem_empty (⟨0, hn⟩ : Fin n)) (mem_singleton _)
+
+-- the propositions of the clone of all functions are bilaterally strongly stable, the cells the
+-- strongest true and their complements the weakest false members: (40) needs the clone proper
+theorem bilaterallyStronglyStable_univ : BilaterallyStronglyStable (univ : Set (Set W)) := by
+  refine ⟨fun w ↦ ⟨{w}, ⟨trivial, rfl⟩, fun ψ ⟨_, hw⟩ ↦ singleton_subset_iff.2 hw⟩,
+    fun w ↦ ⟨{w}, ⟨⟨{w}ᶜ, trivial, compl_compl _⟩, rfl⟩, fun ψ ⟨_, hw⟩ ↦ singleton_subset_iff.2 hw⟩⟩
+
+-- (40a), with a true and a false member at every world (Errata)
+theorem isUpperSet_of_isClone {F : ∀ n : ℕ, Set (Set (Set (Fin n)))} (hF : IsClone F)
+    (hL : ∃ n, 0 < n ∧ F n ≠ univ) (hT : ∀ n, 0 < n → ∀ w, ∃ φ ∈ F n, w ∈ φ)
+    (hF' : ∀ n, 0 < n → ∀ w, ∃ φ ∈ F n, w ∉ φ)
+    (h : ∀ n, 0 < n → BilaterallyWeaklyStable (range fun i : Fin n ↦ {I | i ∈ I}) (F n)) :
+    ∀ n, 0 < n → ∀ φ ∈ F n, IsUpperSet φ := by
+  have hunary : ∀ φ : Set (Set (Fin 1)),
+      φ = ∅ ∨ φ = {J | 0 ∉ J} ∨ φ = {J | 0 ∈ J} ∨ φ = univ := by
+    intro φ
+    have hJ : ∀ J : Set (Fin 1), J = ∅ ∨ J = univ := fun J ↦ J.eq_empty_or_nonempty.imp id
+      fun ⟨x, hx⟩ ↦ eq_univ_of_forall fun y ↦ Subsingleton.elim x y ▸ hx
+    have hneg : ({J : Set (Fin 1) | 0 ∉ J}) = {∅} := ext fun J ↦ by
+      simp [eq_empty_iff_forall_notMem, Fin.forall_fin_one]
+    have hpos : ({J : Set (Fin 1) | 0 ∈ J}) = {univ} := ext fun J ↦ by
+      simp [eq_univ_iff_forall, Fin.forall_fin_one]
+    rw [hneg, hpos]
+    rcases subset_pair_iff_eq.1 (fun J (_ : J ∈ φ) ↦ hJ J) with h | h | h | h
+    · exact .inl h
+    · exact .inr (.inl h)
+    · exact .inr (.inr (.inl h))
+    · exact .inr (.inr (.inr (h.trans (eq_univ_of_forall fun J ↦ (hJ J).elim .inl .inr))))
+  -- negation is not in the clone: with it `p ∧ ¬q`, so conjunction, so everything would be
+  have hneg : {J : Set (Fin 1) | 0 ∉ J} ∉ F 1 := by
+    intro hneg
+    obtain ⟨n, hn, hFn⟩ := hL
+    have hq : {I : Set (Fin 2) | 1 ∈ I}ᶜ ∈ F 2 := hF.compl_mem hneg (hF.atom_mem 2 1)
+    obtain ⟨m, hmq, hm⟩ := exists_minimal_le_of_wellFoundedLT
+      (· ∈ trueAnswers (F 2) {0}) _ ⟨hq, by simp⟩
+    rcases (h 2 two_pos).1 {0} with ⟨σ, ⟨hσ, h0σ⟩, hmin⟩ | hat
+    · have hσ0 : σ = {{0}} := by
+        refine subset_antisymm (fun I hI ↦ ?_) (singleton_subset_iff.2 h0σ)
+        have h0 : (0 : Fin 2) ∈ I := hmin ⟨hF.atom_mem 2 0, rfl⟩ hI
+        have h1 : (1 : Fin 2) ∉ I := hmin ⟨hq, by simp⟩ hI
+        exact ext fun x ↦ by fin_cases x <;> simp [h0, h1]
+      refine hFn (eq_univ_of_inter_compl hn (hF.atom_mem n) (fun a ha b hb ↦ ?_)
+        fun a ha ↦ hF.compl_mem hneg ha)
+      convert hF.comp_mem n 2 σ ![a, bᶜ] hσ (Fin.forall_fin_two.2 ⟨ha, hF.compl_mem hneg hb⟩)
+        using 1
+      ext I
+      simp [hσ0, Set.ext_iff, Fin.forall_fin_two]
+    · obtain ⟨k, rfl⟩ := hat m hm
+      exact absurd (hmq (show univ ∈ {I : Set (Fin 2) | k ∈ I} from mem_univ k)) (by simp)
+  -- so both constants are
+  obtain ⟨φ₁, hφ₁, h0φ₁⟩ := hT 1 one_pos ∅
+  obtain ⟨φ₂, hφ₂, h1φ₂⟩ := hF' 1 one_pos univ
+  have htop : univ ∈ F 1 := by
+    rcases hunary φ₁ with rfl | rfl | rfl | rfl
+    · exact absurd h0φ₁ (notMem_empty _)
+    · exact absurd hφ₁ hneg
+    · exact absurd h0φ₁ (notMem_empty 0)
+    · exact hφ₁
+  have hbot : ∅ ∈ F 1 := by
+    rcases hunary φ₂ with rfl | rfl | rfl | rfl
+    · exact hφ₂
+    · exact absurd hφ₂ hneg
+    · exact absurd (mem_univ 0) h1φ₂
+    · exact absurd (mem_univ _) h1φ₂
+  exact fun n _ φ hφ ↦ by_contra fun hnm ↦ hneg (hF.neg_mem htop hbot hφ hnm)
+
+/-- (40b): a proper clone is bilaterally strongly stable at every number of atoms iff it is the
+clone of upward-monotone functions. -/
+theorem bilaterallyStronglyStable_iff_eq_isUpperSet {F : ∀ n : ℕ, Set (Set (Set (Fin n)))}
+    (hF : IsClone F) (hL : ∃ n, 0 < n ∧ F n ≠ univ) :
+    (∀ n, 0 < n → BilaterallyStronglyStable (F n)) ↔ ∀ n, 0 < n → F n = {φ | IsUpperSet φ} := by
+  refine ⟨fun h ↦ ?_, fun h n hn ↦ h n hn ▸ bilaterallyStronglyStable_isUpperSet⟩
+  have hup := isUpperSet_of_isClone hF hL (fun n hn w ↦ let ⟨σ, hσ, _⟩ := (h n hn).1 w; ⟨σ, hσ⟩)
+    (fun n hn w ↦ let ⟨_, ⟨⟨χ, hχ, rfl⟩, hw⟩, _⟩ := (h n hn).2 w; ⟨χ, hχ, hw⟩)
+    fun n hn ↦ ⟨(h n hn).1.weaklyStable _, (h n hn).2.weaklyStable _⟩
+  have hor := compl_Iic_empty_mem_of_stronglyStable (hF.atom_mem 2) (h 2 two_pos).2
+  intro n hn
+  refine subset_antisymm (hup n hn) fun φ hφ ↦ ?_
+  have hu : ∀ a ∈ F n, ∀ b ∈ F n, a ∪ b ∈ F n := fun a ha b hb ↦ by
+    convert hF.comp_mem n 2 _ ![a, b] hor (Fin.forall_fin_two.2 ⟨ha, hb⟩) using 1
+    ext I
+    simp [subset_empty_iff, eq_empty_iff_forall_notMem, or_iff_not_imp_left]
+  have h0 : ∅ ∈ F n := by
+    have := compl_Iic_mem (hF.atom_mem n) (hup n hn) (h n hn).2 univ
+    rwa [show (Iic (univ : Set (Fin n)))ᶜ = ∅ from (congrArg compl Iic_top).trans compl_univ]
+      at this
+  have hφ' : φ = ⋃₀ (Ici '' φ) := ext fun J ↦
+    ⟨fun hJ ↦ ⟨Ici J, mem_image_of_mem _ hJ, mem_Ici.2 le_rfl⟩,
+      fun ⟨_, ⟨I, hI, rfl⟩, hIJ⟩ ↦ hφ hIJ hI⟩
+  rw [hφ']
+  exact sUnion_mem h0 hu (toFinite _) (image_subset_iff.2 fun I _ ↦
+    Ici_mem (hF.atom_mem n) (hup n hn) (h n hn).1 I)
+
+-- (40a) as printed: the falsity-preserving functions form a proper clone, bilaterally weakly
+-- stable, vacuously where no atom holds, that holds exclusive disjunction (Errata)
+theorem exists_isClone_bilaterallyWeaklyStable_not_isUpperSet :
+    ∃ F : ∀ n : ℕ, Set (Set (Set (Fin n))), IsClone F ∧ (∀ n, F n ≠ univ) ∧
+      (∀ n, BilaterallyWeaklyStable (range fun i : Fin n ↦ {I | i ∈ I}) (F n)) ∧
+      ({{0}, {1}} : Set (Set (Fin 2))) ∈ F 2 ∧ ¬ IsUpperSet ({{0}, {1}} : Set (Set (Fin 2))) := by
+  refine ⟨fun n ↦ {φ | ∅ ∉ φ}, ⟨fun n i ↦ notMem_empty i, fun n k g f hg hf h0 ↦
+    hg (eq_empty_of_forall_notMem (fun j hj ↦ hf j hj) ▸ h0)⟩, fun n h ↦ ?_,
+    fun n ↦ ⟨fun w ↦ ?_, fun w ↦ ?_⟩, by simp, fun h ↦ ?_⟩
+  · have h' : {φ : Set (Set (Fin n)) | ∅ ∉ φ} = univ := h
+    exact (show (univ : Set (Set (Fin n))) ∈ {φ : Set (Set (Fin n)) | ∅ ∉ φ} by
+      rw [h']; trivial) (mem_univ ∅)
+  · by_cases hw : w = ∅
+    · exact .inr fun φ hm ↦ absurd (hw ▸ hm.1.2) hm.1.1
+    · exact .inl ⟨{w}, ⟨fun h ↦ hw (mem_singleton_iff.1 h).symm, rfl⟩,
+        fun ψ ⟨_, hwψ⟩ ↦ singleton_subset_iff.2 hwψ⟩
+  · refine .inl ⟨{∅, w}, ⟨⟨{∅, w}ᶜ, by simp, compl_compl _⟩, by simp⟩, ?_⟩
+    rintro _ ⟨⟨θ, hθ, rfl⟩, hwθ⟩ I hI
+    rcases hI with rfl | rfl
+    exacts [hθ, hwθ]
+  · have := h (subset_univ {0}) (by simp)
+    rcases this with h1 | h1
+    · simpa using congrArg ((1 : Fin 2) ∈ ·) h1
+    · simpa using congrArg ((0 : Fin 2) ∈ ·) h1
+
+/-! ### Bar-Lev and Katzir's communicative stability -/
+
+section Stability
+
+open MeasureTheory ProbabilityTheory
+open scoped ENNReal
+
+variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {U : Type*} [MeasurableSpace U]
+  [Countable U] [MeasurableSingletonClass U] (sem : U → Set W)
+
+/-- (57): at the prior `μ` the message `u` is optimal at `w`: it is true there, and its literal
+listener gives `w` more mass than that of any true message with another meaning. -/
+def IsOptimal (μ : Measure W) (w : W) (u : U) : Prop :=
+  w ∈ sem u ∧ ∀ u', w ∈ sem u' → sem u' ≠ sem u →
+    RSA.listener μ (RSA.truthful sem) u' {w} < RSA.listener μ (RSA.truthful sem) u {w}
+
+/-- A.3: a message is optimal at `w` for some prior giving every world positive mass iff its
+meaning is minimal among the meanings true at `w`, so that which message the pragmatic speaker
+chooses does not depend on the prior exactly where a strongest true meaning exists. -/
+theorem exists_prior_iff_minimal [Fintype W] {w : W} {u : U} :
+    (∃ μ : Measure W, IsProbabilityMeasure μ ∧ (∀ v, μ {v} ≠ 0) ∧ IsOptimal sem μ w u) ↔
+      Minimal (· ∈ trueAnswers (range sem) w) (sem u) := by
+  -- the literal listener's mass at `w` falls as the prior mass of the meaning rises
+  have key : ∀ (μ : Measure W) [IsFiniteMeasure μ], μ {w} ≠ 0 → ∀ {u u' : U}, w ∈ sem u →
+      w ∈ sem u' → (RSA.listener μ (RSA.truthful sem) u' {w} <
+        RSA.listener μ (RSA.truthful sem) u {w} ↔ μ (sem u) < μ (sem u')) := by
+    intro μ _ hw u u' hu hu'
+    rw [RSA.listener_truthful_apply_singleton μ sem hu,
+      RSA.listener_truthful_apply_singleton μ sem hu',
+      ENNReal.mul_lt_mul_iff_left hw (measure_ne_top μ _), ENNReal.inv_lt_inv]
+  constructor
+  · rintro ⟨μ, _, hpos, hu, hopt⟩
+    refine ⟨⟨⟨u, rfl⟩, hu⟩, ?_⟩
+    rintro _ ⟨⟨u', rfl⟩, hu'⟩ hle
+    by_contra hne
+    exact (measure_mono hle).not_gt
+      ((key μ (hpos w) hu hu').1 (hopt u' hu' fun h ↦ hne (h ▸ le_rfl)))
+  · rintro ⟨⟨_, hu⟩, hmin⟩
+    -- the prior putting little mass inside the meaning of `u` and much outside it
+    have hcount : ∀ s : Set W, Measure.count s ≠ ⊤ :=
+      fun s ↦ (Measure.count_apply_lt_top.2 s.toFinite).ne
+    set N : ℝ≥0∞ := Measure.count (univ : Set W) + 1
+    set ν : Measure W := Measure.count + N • Measure.count.restrict (sem u)ᶜ
+    have hν : ∀ s, ν s = Measure.count s + N * Measure.count (s ∩ (sem u)ᶜ) := fun s ↦ by
+      simp [ν, Measure.restrict_apply .of_discrete]
+    have hN : N ≠ ⊤ := ENNReal.add_ne_top.2 ⟨hcount _, ENNReal.one_ne_top⟩
+    have hνtop : ν univ ≠ ⊤ := by
+      rw [hν]; exact ENNReal.add_ne_top.2 ⟨hcount _, ENNReal.mul_ne_top hN (hcount _)⟩
+    have hν0 : ∀ v, ν {v} ≠ 0 := fun v ↦ by simp [hν]
+    have hνu : ν univ ≠ 0 := fun h ↦ hν0 w (measure_mono_null (subset_univ _) h)
+    set μ : Measure W := (ν univ)⁻¹ • ν
+    have hμ : ∀ s, μ s = (ν univ)⁻¹ * ν s := fun s ↦ by simp [μ]
+    have : IsProbabilityMeasure μ := ⟨by rw [hμ, ENNReal.inv_mul_cancel hνu hνtop]⟩
+    refine ⟨μ, inferInstance, fun v ↦ ?_, hu, fun u' hu' hne ↦ ?_⟩
+    · rw [hμ]; exact mul_ne_zero (ENNReal.inv_ne_zero.2 hνtop) (hν0 v)
+    obtain ⟨v, hv, hvu⟩ := not_subset.1 fun h ↦
+      hne (subset_antisymm h (hmin ⟨⟨u', rfl⟩, hu'⟩ h))
+    rw [key μ (by rw [hμ]; exact mul_ne_zero (ENNReal.inv_ne_zero.2 hνtop) (hν0 w)) hu hu', hμ,
+      hμ, ENNReal.mul_lt_mul_iff_right (ENNReal.inv_ne_zero.2 hνtop) (ENNReal.inv_ne_top.2 hνu),
+      hν, hν, inter_compl_self, measure_empty, mul_zero, add_zero]
+    calc Measure.count (sem u) ≤ Measure.count univ := measure_mono (subset_univ _)
+      _ < N := ENNReal.lt_add_right (hcount _) one_ne_zero
+      _ = N * Measure.count {v} := by rw [Measure.count_singleton, mul_one]
+      _ ≤ N * Measure.count (sem u' ∩ (sem u)ᶜ) := by
+        gcongr; exact singleton_subset_iff.2 ⟨hv, hvu⟩
+      _ ≤ _ := le_add_self
+
+-- (58b): Bar-Lev and Katzir's strict stability, that priors never make messages with different
+-- meanings optimal at one world, is strong stability when some message is true at every world
+theorem stronglyStable_iff_isOptimal [Fintype W] (hcov : ∀ w, ∃ u, w ∈ sem u) :
+    StronglyStable (range sem) ↔ ∀ (w : W) (u u' : U) (μ μ' : Measure W),
+      IsProbabilityMeasure μ → IsProbabilityMeasure μ' → (∀ v, μ {v} ≠ 0) → (∀ v, μ' {v} ≠ 0) →
+        IsOptimal sem μ w u → IsOptimal sem μ' w u' → sem u = sem u' := by
+  constructor
+  · intro h w u u' μ μ' hμ hμ' hp hp' ho ho'
+    obtain ⟨l, hl⟩ := h w
+    have e : ∀ {x}, Minimal (· ∈ trueAnswers (range sem) w) x → x = l :=
+      fun hx ↦ le_antisymm (hx.2 hl.1 (hl.2 hx.1)) (hl.2 hx.1)
+    exact (e ((exists_prior_iff_minimal sem).1 ⟨μ, hμ, hp, ho⟩)).trans
+      (e ((exists_prior_iff_minimal sem).1 ⟨μ', hμ', hp', ho'⟩)).symm
+  · intro h w
+    obtain ⟨u, hu⟩ := hcov w
+    obtain ⟨m, -, hm⟩ := exists_minimal_le_of_wellFoundedLT
+      (· ∈ trueAnswers (range sem) w) (sem u) ⟨⟨u, rfl⟩, hu⟩
+    refine ⟨m, hm.1, fun q hq ↦ ?_⟩
+    obtain ⟨m', hm'q, hm'⟩ := exists_minimal_le_of_wellFoundedLT
+      (· ∈ trueAnswers (range sem) w) q hq
+    obtain ⟨⟨u₁, rfl⟩, -⟩ := hm.1
+    obtain ⟨⟨u₂, rfl⟩, -⟩ := hm'.1
+    obtain ⟨μ, hμ, hp, ho⟩ := (exists_prior_iff_minimal sem).2 hm
+    obtain ⟨μ', hμ', hp', ho'⟩ := (exists_prior_iff_minimal sem).2 hm'
+    exact (h w u₁ u₂ μ μ' hμ hμ' hp hp' ho ho').le.trans hm'q
+
+-- (58a): Bar-Lev and Katzir's stability, the same for optimal messages whose meanings are not
+-- atoms, is weak stability
+theorem weaklyStable_iff_isOptimal [Fintype W] (atoms : Set (Set W)) :
+    WeaklyStable atoms (range sem) ↔ ∀ (w : W) (u u' : U) (μ μ' : Measure W),
+      IsProbabilityMeasure μ → IsProbabilityMeasure μ' → (∀ v, μ {v} ≠ 0) → (∀ v, μ' {v} ≠ 0) →
+        sem u ∉ atoms → IsOptimal sem μ w u → IsOptimal sem μ' w u' → sem u = sem u' := by
+  constructor
+  · intro h w u u' μ μ' hμ hμ' hp hp' hua ho ho'
+    have hm := (exists_prior_iff_minimal sem).1 ⟨μ, hμ, hp, ho⟩
+    have hm' := (exists_prior_iff_minimal sem).1 ⟨μ', hμ', hp', ho'⟩
+    rcases h w with ⟨l, hl⟩ | hat
+    · have e : ∀ {x}, Minimal (· ∈ trueAnswers (range sem) w) x → x = l :=
+        fun hx ↦ le_antisymm (hx.2 hl.1 (hl.2 hx.1)) (hl.2 hx.1)
+      exact (e hm).trans (e hm').symm
+    · exact absurd (hat _ hm) hua
+  · intro h w
+    by_cases hex : ∃ m, Minimal (· ∈ trueAnswers (range sem) w) m ∧ m ∉ atoms
+    · obtain ⟨m, hm, hma⟩ := hex
+      refine .inl ⟨m, hm.1, fun q hq ↦ ?_⟩
+      obtain ⟨m', hm'q, hm'⟩ := exists_minimal_le_of_wellFoundedLT
+        (· ∈ trueAnswers (range sem) w) q hq
+      obtain ⟨⟨u₁, rfl⟩, -⟩ := hm.1
+      obtain ⟨⟨u₂, rfl⟩, -⟩ := hm'.1
+      obtain ⟨μ, hμ, hp, ho⟩ := (exists_prior_iff_minimal sem).2 hm
+      obtain ⟨μ', hμ', hp', ho'⟩ := (exists_prior_iff_minimal sem).2 hm'
+      exact (h w u₁ u₂ μ μ' hμ hμ' hp hp' hma ho ho').le.trans hm'q
+    · push Not at hex
+      exact .inr hex
+
+-- where two independent atoms both hold, each is optimal for some prior: the speaker's choice there
+-- depends on the prior, as strict stability forbids and weak stability allows
+theorem exists_prior_isOptimal_atoms :
+    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ (∀ v, μ {v} ≠ 0) ∧
+        IsOptimal (![{0, 2}, {1, 2}] : Fin 2 → Set (Fin 3)) μ 2 0) ∧
+      ∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ (∀ v, μ {v} ≠ 0) ∧
+        IsOptimal (![{0, 2}, {1, 2}] : Fin 2 → Set (Fin 3)) μ 2 1 := by
+  refine ⟨(exists_prior_iff_minimal _).2 ⟨⟨⟨0, rfl⟩, by simp⟩, ?_⟩,
+    (exists_prior_iff_minimal _).2 ⟨⟨⟨1, rfl⟩, by simp⟩, ?_⟩⟩
+  · rintro _ ⟨⟨k, rfl⟩, -⟩ hle
+    fin_cases k
+    · exact le_rfl
+    · exact absurd (hle (show (1 : Fin 3) ∈ ({1, 2} : Set (Fin 3)) by simp)) (by simp)
+  · rintro _ ⟨⟨k, rfl⟩, -⟩ hle
+    fin_cases k
+    · exact absurd (hle (show (0 : Fin 3) ∈ ({0, 2} : Set (Fin 3)) by simp)) (by simp)
+    · exact le_rfl
+
+end Stability
 
 end Enguehard2025
