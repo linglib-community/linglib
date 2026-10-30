@@ -115,6 +115,9 @@ jobs:
       - name: Check citations
         run: python3 scripts/check_citations.py
 
+      - name: Check docstring links
+        run: python3 scripts/check_doc_links.py
+
       - name: Check example literals
         run: python3 scripts/check_examples.py
 
