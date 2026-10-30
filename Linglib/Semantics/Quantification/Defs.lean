@@ -38,6 +38,9 @@ nothing.
 * `Det.Family.Isom`, `Det.Family.Ext`, `Det.Family.Constant`: isomorphism closure, extension,
   and constancy, the two together.
 * `Quantifier.LivesOn`, `Quantifier.individual`: the live-on property and the Montague lift.
+* `Quantifier.Family`, `Quantifier.Family.Isom`, `Quantifier.Family.rel`: global quantifiers,
+  their isomorphism closure, and relativization, which turns one into a global determiner
+  denotation.
 
 ## Implementation notes
 
@@ -46,6 +49,13 @@ A type is not a subset of another type, so extension is stated for a subset `M` 
 isomorphism closure that relates universes presented by unrelated types. The two together are
 invariance along every embedding of universes, `Det.Family.Constant`, which is the condition the
 theorems about global quantifiers assume.
+
+Relativization evaluates a quantifier on the universe `↥A`, so relativizing on a subset of a
+subset reaches a subtype of a subtype rather than the subset itself. Peters and Westerståhl's
+identification of the relativizations with the conservative extensional determiner denotations
+therefore holds here for isomorphism-closed quantifiers. Elements of one type are not elements of
+another, so the global quantifiers that set theory allows to single out an element across
+universes, such as the Montague lift of a fixed individual, have no counterpart among these.
 
 ## References
 
@@ -274,6 +284,10 @@ variable {Q}
 @[simp] theorem sup_apply (Q' : Det.Family.{u}) (α : Type u) [Finite α] :
     (Q ⊔ Q') α = Q α ⊔ Q' α := rfl
 
+theorem le_def {Q' : Det.Family.{u}} :
+    Q ≤ Q' ↔ ∀ (α : Type u) [Finite α] (A B : Set α), Q α A B → Q' α A B :=
+  ⟨fun h α _ A B ↦ h α ⟨inferInstance⟩ A B, fun h α p A B ↦ @h α p.down A B⟩
+
 /-- On a single universe, isomorphism closure is permutation invariance. -/
 theorem Isom.quantityInvariant (h : Q.Isom) (α : Type u) [Finite α] :
     (Q α).QuantityInvariant :=
@@ -302,5 +316,36 @@ theorem individual_injective : Function.Injective (individual (α := α)) :=
 
 theorem individual_livesOn {A : Set α} {a : α} (ha : a ∈ A) : (individual a).LivesOn A :=
   fun _ ↦ ⟨fun h ↦ ⟨ha, h⟩, And.right⟩
+
+/-! ### Global quantifiers and relativization -/
+
+/-- A global quantifier gives a quantifier on every finite universe. -/
+abbrev Family : Type (u + 1) := ∀ (α : Type u) [Finite α], Quantifier α
+
+/-- The global quantifiers form a Boolean algebra, pointwise on universes. -/
+instance : BooleanAlgebra Family.{u} :=
+  Equiv.booleanAlgebra <|
+    Equiv.piCongrRight fun α ↦ Equiv.arrowCongr Equiv.plift.symm (.refl (Quantifier α))
+
+namespace Family
+
+variable (Q : Family.{u})
+
+/-- A global quantifier is closed under isomorphism when an equivalence of universes
+`e : α ≃ β` carries its value on `β` to its value on `α`. -/
+def Isom : Prop :=
+  ∀ ⦃α β : Type u⦄ [Finite α] [Finite β] (e : α ≃ β) (B : Set β), Q α (e ⁻¹' B) ↔ Q β B
+
+/-- The relativization of a global quantifier evaluates it on the restrictor as the universe:
+`Q.rel A B` holds when `Q` holds, on the universe `A`, of the part of `B` inside `A`. -/
+def rel : Det.Family.{u} := fun _ _ A B ↦ Q A (Subtype.val ⁻¹' B)
+
+variable {Q}
+
+theorem le_def {Q' : Family.{u}} :
+    Q ≤ Q' ↔ ∀ (α : Type u) [Finite α] (B : Set α), Q α B → Q' α B :=
+  ⟨fun h α _ B ↦ h α ⟨inferInstance⟩ B, fun h α p B ↦ @h α p.down B⟩
+
+end Family
 
 end Quantifier

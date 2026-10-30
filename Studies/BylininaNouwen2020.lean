@@ -108,25 +108,25 @@ variable {n : ℕ}
 
 /-- Spector's wide-scope exhaustification over a possibility modal, the reading (36-b), is
 Kennedy's numeral raised over the modal ((46)). -/
-theorem exhAgainst_poss_iff_highScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
-    exhAgainst (· < ·) (fun m ↦ (count '' {w | R w} ∩ Comparison.ge.interval m).Nonempty) n ↔
+theorem exhAgainst_poss_iff_highScope {W : Type*} {R : Set W} {count : W → ℕ} :
+    exhAgainst (· < ·) (fun m ↦ (count '' R ∩ Comparison.ge.interval m).Nonempty) n ↔
       HighScope (MaxIn {n}) (Det.some R) (Iic ∘ count) := by
-  simp only [inter_nonempty, exists_mem_image, Comparison.interval_ge, mem_Ici, mem_ofPred_eq]
+  simp only [inter_nonempty, exists_mem_image, Comparison.interval_ge, mem_Ici]
   exact exhAgainst_iff_highScope (Q := Det.some R) (P := Iic ∘ count)
 
 -- (36-a)
-theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
-    (count '' {w | R w} ∩ Comparison.eq.interval n).Nonempty ↔
+theorem poss_eq_iff_lowScope {W : Type*} {R : Set W} {count : W → ℕ} :
+    (count '' R ∩ Comparison.eq.interval n).Nonempty ↔
       LowScope (MaxIn {n}) (Det.some R) (Iic ∘ count) := by
   simp only [inter_nonempty, exists_mem_image, Comparison.interval_eq, lowScope_maxIn]
   rfl
 
 /-- Over *some students*, the high reading (39) strictly entails the low one. -/
 theorem lowScope_some_not_highScope (n : ℕ) :
-    LowScope (MaxIn {n}) (Det.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) ∧
-      ¬ HighScope (MaxIn {n}) (Det.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) :=
-  ⟨lowScope_maxIn.2 ⟨0, trivial, rfl⟩, fun h ↦ absurd
-    ((highScope_maxIn_singleton_some.1 h).2 ⟨1, trivial, rfl⟩) (by simp)⟩
+    LowScope (MaxIn {n}) (Det.some Set.univ) (Iic ∘ fun i : Fin 2 ↦ n + i) ∧
+      ¬ HighScope (MaxIn {n}) (Det.some Set.univ) (Iic ∘ fun i : Fin 2 ↦ n + i) :=
+  ⟨lowScope_maxIn.2 ⟨0, Set.mem_univ 0, rfl⟩, fun h ↦ absurd
+    ((highScope_maxIn_singleton_some.1 h).2 ⟨1, Set.mem_univ 1, rfl⟩) (by simp)⟩
 
 end Scope
 

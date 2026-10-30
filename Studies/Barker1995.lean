@@ -90,9 +90,7 @@ abbrev isIcy : Set (Fin 12) := {9, 10}
 to the three ringed planets, two of which have icy rings. -/
 theorem most_planets_rings_icy :
     Poss most isPlanet Det.some hasRing isRing isIcy := by
-  show most (isPlanet ∩ {x | ∃ y ∈ isRing, hasRing x y})
-    {x | Det.some (isRing ∩ {y | hasRing x y}) isIcy}
-  decide
+  unfold Poss; decide
 
 /-- Without narrowing, the quantification is false: only two of the nine
 planets have an icy ring. -/
@@ -119,9 +117,7 @@ abbrev isBlue : Set (Fin 8) := {7}
 /-- *Most people's favorite color is blue*, counting people, is true, with 3 of 5. -/
 theorem favorite_color_possessor_dominant :
     Poss most isPerson Det.some favors isColor isBlue := by
-  show most (isPerson ∩ {x | ∃ y ∈ isColor, favors x y})
-    {x | Det.some (isColor ∩ {y | favors x y}) isBlue}
-  decide
+  unfold Poss; decide
 
 /-- Counting favored colors instead of people would make the sentence false —
 the reading English does not have. -/

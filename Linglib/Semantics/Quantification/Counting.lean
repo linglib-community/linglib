@@ -13,10 +13,12 @@ The counting quantifiers *most*, *few*, *half*, *both*, *neither*, *at least n*,
 `|A ∩ B|` alone, so each is the quantifier of a set of points on van Benthem's tree of numbers.
 Defined that way they are conservative and permutation invariant by construction, and their
 monotonicity, smoothness and proportionality are read off the tree. Sizes are `Set.ncard`,
-which asks for no decidability. On a finite type with decidable arguments each quantifier is
-decidable through the `Finset` count of each size, so a concrete case closes by `decide`. A
-quantifier restricted to a finite set `s` of individuals is the quantifier with restrictor
-`x ∈ s ∧ A x`.
+which asks for no decidability and is `0` on an infinite set, so on an infinite restrictor the
+counting quantifiers take junk values; the theorems that state what they mean assume a finite
+universe or finite arguments, and global quantifiers are evaluated on finite universes only. On
+a finite type with decidable arguments each quantifier is decidable through the `Finset` count
+of each size, so a concrete case closes by `decide`. A quantifier restricted to a finite set `s`
+of individuals is the quantifier with restrictor `s ∩ A`.
 
 ## Main definitions
 

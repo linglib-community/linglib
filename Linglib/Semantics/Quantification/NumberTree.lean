@@ -29,7 +29,10 @@ The trees are exactly the determiner denotations given on every finite universe 
 conservative and constant, [as Boolean algebras](##Quantifier.NumberTree.familyOrderIso), so each
 theorem about trees is one about such denotations; van Benthem's theorem that no nonempty
 quantifier is asymmetric [is the first](##Quantifier.Det.Family.not_apply_of_asymm). On a single
-universe that theorem fails.
+universe that theorem fails. The conservative constant denotations are in turn the
+[relativizations](##Quantifier.NumberTree.relOrderIso) of the isomorphism-closed global
+quantifiers, the determiner restricting the universe to its restrictor, and a quantifier and its
+relativization are decided by the same tree.
 
 ## Main definitions
 
@@ -69,6 +72,11 @@ universe that theorem fails.
   denotations are the trees, as Boolean algebras.
 * `Quantifier.Det.Family.not_apply_of_asymm`: such a denotation that is asymmetric on every
   universe is empty.
+* `Quantifier.NumberTree.relOrderIso`: relativization is an order isomorphism from the
+  isomorphism-closed global quantifiers onto the conservative constant global determiner
+  denotations.
+* `Quantifier.Family.Isom.apply_iff`: an isomorphism-closed global quantifier holds of `B`
+  according to `|Bᶜ|` and `|B|`, by the tree of its relativization.
 * `Quantifier.NumberTree.conservative_toDet`, `Quantifier.NumberTree.quantityInvariant_toDet`: the
   quantifier of a tree is conservative and permutation invariant.
 * `Quantifier.NumberTree.ScopeMonotone.toDet`, `Quantifier.NumberTree.ScopeAntitone.toDet`: the
@@ -607,9 +615,9 @@ end OfDet
 
 A global determiner denotation that is conservative and constant, extensional and closed under
 isomorphism, holds of `A` and `B` according to `|A \ B|` and `|A ∩ B|` alone, on every universe
-at once, which is Peters and Westerståhl's representation of such quantifiers by binary relations between
-numbers. Such denotations are exactly the trees, so every theorem about trees is a theorem
-about them. -/
+at once, which is Peters and Westerståhl's representation of such quantifiers by binary
+relations between numbers. Such denotations are exactly the trees, so every theorem about trees
+is a theorem about them. -/
 
 section Family
 
@@ -752,6 +760,89 @@ theorem _root_.Quantifier.Det.Family.not_apply_of_asymm (hC : Q.Conservative)
   exact id
 
 end Family
+
+/-! ### Relativization
+
+A determiner restricts the universe of quantification to its restrictor, and this is what makes
+it conservative and extensional: the conservative constant global determiner denotations are
+exactly the relativizations of the isomorphism-closed global quantifiers, and a quantifier and
+its relativization are decided by the same tree. -/
+
+section Relativization
+
+universe u
+
+open Det
+
+variable {Q : Quantifier.Family.{u}} {D : Det.Family.{u}}
+
+/-- A relativized quantifier is conservative, since it sees only the part of the scope inside the
+restrictor. -/
+theorem _root_.Quantifier.Family.conservative_rel (Q : Quantifier.Family.{u}) :
+    Q.rel.Conservative := fun _ _ A B ↦ by
+  show Q A (Subtype.val ⁻¹' B) ↔ Q A (Subtype.val ⁻¹' (A ∩ B))
+  rw [Set.preimage_inter, Subtype.coe_preimage_self, Set.univ_inter]
+
+/-- The relativization of an isomorphism-closed quantifier is constant. -/
+theorem _root_.Quantifier.Family.Isom.constant_rel (h : Q.Isom) : Q.rel.Constant := by
+  intro α β _ _ f A B hA _
+  refine h (Equiv.ofBijective (fun x : ↥(f ⁻¹' A) ↦ (⟨f x, x.2⟩ : ↥A)) ⟨fun x y hxy ↦
+    Subtype.ext (f.injective (congrArg Subtype.val hxy)), fun y ↦ ?_⟩) (Subtype.val ⁻¹' B)
+  obtain ⟨x, hx⟩ := hA y.2
+  exact ⟨⟨x, show f x ∈ A from hx ▸ y.2⟩, Subtype.ext hx⟩
+
+/-- The quantifier of a global determiner denotation at the universe: the denotation with the
+whole universe as its restrictor. -/
+def _root_.Quantifier.Det.Family.atUniv (D : Det.Family.{u}) : Quantifier.Family.{u} :=
+  fun α _ ↦ D α Set.univ
+
+theorem _root_.Quantifier.Det.Family.Isom.atUniv (h : D.Isom) : D.atUniv.Isom :=
+  fun _ _ _ _ e B ↦ h e Set.univ B
+
+/-- A conservative constant global determiner denotation is the relativization of its quantifier
+at the universe. -/
+theorem _root_.Quantifier.Det.Family.rel_atUniv (hC : D.Conservative) (hK : D.Constant) :
+    D.atUniv.rel = D := by
+  funext α _ A B
+  refine propext ((Iff.of_eq ?_).trans ((hK (Function.Embedding.subtype (· ∈ A)) A (A ∩ B)
+    (by simp) (by simp [Set.inter_subset_left])).trans (hC α A B).symm))
+  simp only [Det.Family.atUniv, Quantifier.Family.rel, Function.Embedding.coe_subtype,
+    Set.preimage_inter, Subtype.coe_preimage_self, Set.univ_inter]
+
+/-- An isomorphism-closed quantifier is the quantifier at the universe of its relativization. -/
+theorem _root_.Quantifier.Family.Isom.atUniv_rel (h : Q.Isom) : Q.rel.atUniv = Q := by
+  funext α _ B
+  exact propext (h (Equiv.Set.univ α) B)
+
+/-- Relativization is an order isomorphism from the isomorphism-closed global quantifiers onto the
+conservative constant global determiner denotations. -/
+noncomputable def relOrderIso :
+    {Q : Quantifier.Family.{u} // Q.Isom} ≃o {D : Det.Family.{u} // D.Conservative ∧ D.Constant}
+    where
+  toFun Q := ⟨Q.1.rel, Q.1.conservative_rel, Q.2.constant_rel⟩
+  invFun D := ⟨D.1.atUniv, D.2.2.isom.atUniv⟩
+  left_inv Q := Subtype.ext Q.2.atUniv_rel
+  right_inv D := Subtype.ext (Det.Family.rel_atUniv D.2.1 D.2.2)
+  map_rel_iff' {Q Q'} := by
+    change Q.1.rel ≤ Q'.1.rel ↔ Q.1 ≤ Q'.1
+    rw [Det.Family.le_def, Quantifier.Family.le_def]
+    refine ⟨fun h α _ B hB ↦ ?_, fun h α _ A B ↦ h A (Subtype.val ⁻¹' B)⟩
+    rw [← Q'.2.atUniv_rel]
+    rw [← Q.2.atUniv_rel] at hB
+    exact h α Set.univ B hB
+
+/-- An isomorphism-closed global quantifier holds of `B` according to `|Bᶜ|` and `|B|` alone, by
+the tree of its relativization, so a quantifier and its relativization have the same numerical
+relation. -/
+theorem _root_.Quantifier.Family.Isom.apply_iff (h : Q.Isom) (α : Type u) [Finite α]
+    (B : Set α) : Q α B ↔ ofFamily Q.rel Bᶜ.ncard B.ncard := by
+  have key := ofFamily_iff Q.conservative_rel h.constant_rel α Set.univ B
+  rw [Set.univ_inter, ← Set.compl_eq_univ_sdiff] at key
+  rw [key]
+  conv_lhs => rw [← h.atUniv_rel]
+  rfl
+
+end Relativization
 
 /-! ### Counting quantifiers -/
 
