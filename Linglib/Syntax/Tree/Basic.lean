@@ -449,13 +449,13 @@ theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C 
   cases l with
   | terminal c w =>
     obtain rfl : (p, (c, w)) = x := by simpa [Label.terminal?] using hx
-    exact RoseTree.subtreeAt_of_mem_positionedLeaves hl
+    exact RoseTree.mem_positionedLeaves.mp hl
   | _ => simp [Label.terminal?] at hx
 
 theorem mem_positionedTerminals_of_subtreeAt {t : Tree C W} {p : List ℕ} {c : C} {w : W}
     (h : RoseTree.subtreeAt t p = some (terminal c w)) :
     (⟨p⟩, (c, w)) ∈ t.positionedTerminals :=
-  List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves_of_subtreeAt h, rfl⟩
+  List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves.mpr h, rfl⟩
 
 /-- The terminal positions, in the order of the yield, ascend in precedence. -/
 theorem pairwise_precedes_positionedTerminals (t : Tree C W) :

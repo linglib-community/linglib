@@ -14,39 +14,30 @@ public import Mathlib.Data.List.Nodup
 /-!
 # Rose trees under Gorn addresses
 
-A **Gorn address** is a `List ℕ` path of child indices from the root, and `subtreeAt` navigates a
-rose tree by one. The addresses inside a tree are its positions (`validPaths`), a prefix-closed set
-of `TreePath`s, and the subtrees are the trees reached by descending through children
-(`IsSubtree`). Navigation recurses on the address, not on the tree. This file also shows that
-relabelling commutes with navigation, that a subtree is no larger than its tree and that a tree of
-height above `k` descends `k` steps. It defines `vertices`, which enumerates the addresses, and
-`replaceAt`, which replaces the subtree at an address.
+A Gorn address is the list of child indices on the way down from the root, and
+`RoseTree.subtreeAt` follows one down a rose tree, recursing on the address. The addresses inside
+a tree are its positions (`RoseTree.validPaths`), a prefix-closed set of `TreePath`s. The trees
+found at them are its subtrees (`RoseTree.IsSubtree`), which `RoseTree.subtrees` lists in preorder.
+`RoseTree.vertices` lists the addresses themselves in preorder, which is lexicographic order, and
+`RoseTree.positionedLeaves` lists the leaf addresses in the order of the frontier, which is
+precedence. `RoseTree.replaceAt` replaces the subtree at an address; its effect on the frontier is
+in `RoseTree/Span.lean`.
 
-Unlike `BinaryTree.get` (indexed by a `PosNum` left/right path) there is no `indexOf`: that is
-a binary-search-tree lookup, which has no analogue for a general rose tree.
+## Main definitions
 
-## Main declarations
+* `RoseTree.subtreeAt`: the subtree at an address.
+* `RoseTree.validPaths`: the addresses inside a tree.
+* `RoseTree.IsSubtree`: the subtree relation.
+* `RoseTree.vertices`: the addresses in preorder.
+* `RoseTree.replaceAt`: replacement at an address.
 
-* `RoseTree.subtreeAt`, `RoseTree.validPaths`: the subtree at an address, and the addresses
-  inside a tree, prefix-closed (`validPaths_prefix_closed`).
-* `RoseTree.IsSubtree`: the subtree relation, the subtrees being the values of `subtreeAt`
-  (`isSubtree_iff_exists_subtreeAt`). It is a partial order (`IsSubtree.antisymm`).
-* `RoseTree.subtrees`: the subtrees in preorder, exactly those of `IsSubtree` (`mem_subtrees`),
-  which decides it.
-* `RoseTree.subtreeAt_map`: relabelling commutes with navigation.
-* `RoseTree.exists_subtreeAt_height_sub`: a maximal descent from a tree of height above `k`.
-* `RoseTree.numNodes_le_of_subtreeAt`: a subtree is no larger than its tree.
-* `RoseTree.vertices`: the addresses in preorder, one per vertex (`length_vertices`,
-  `nodup_vertices`), increasing lexicographically (`pairwise_lt_vertices`), and exactly those
-  inside the tree (`mem_vertices`);
-  `RoseTree.positionedSubtrees` pairs each with its subtree (`mem_positionedSubtrees`).
-* `RoseTree.positionedLeaves`: the leaves with their addresses, exactly the leaf addresses
-  (`subtreeAt_of_mem_positionedLeaves`, `mem_positionedLeaves_of_subtreeAt`) in the order of the
-  frontier (`map_snd_positionedLeaves`), which is precedence (`pairwise_precedes_positionedLeaves`).
-* `RoseTree.replaceAt`: replacement at an address, leaving the subtrees away from it unchanged
-  (`subtreeAt_replaceAt_of_not_prefix`) and those above it holding the replacement
-  (`subtreeAt_replaceAt_of_prefix`) and shrinking the tree when the new subtree is smaller
-  (`numNodes_replaceAt_lt`). Its effect on the frontier is in `RoseTree/Span.lean`.
+## Main statements
+
+* `RoseTree.isSubtree_iff_exists_subtreeAt`: the subtrees are the values of `subtreeAt`.
+* `RoseTree.mem_vertices`: `vertices` lists exactly the addresses inside the tree.
+* `RoseTree.pairwise_lt_vertices`: the addresses in preorder increase lexicographically.
+* `RoseTree.pairwise_precedes_positionedLeaves`: the leaf addresses ascend in precedence.
+* `RoseTree.numNodes_replaceAt`: replacement trades the nodes of the old subtree for the new.
 -/
 
 @[expose] public section
@@ -164,8 +155,7 @@ theorem exists_subtreeAt_height_sub (t : RoseTree α) (k : ℕ) (hk : k < t.heig
   | zero =>
     exact ⟨[], rfl, fun i hi ↦ by obtain rfl := Nat.le_zero.mp hi; exact ⟨t, rfl, by simp⟩⟩
   | succ k ih =>
-    obtain ⟨c, hc, hch⟩ := exists_mem_children_height_add_one
-      (Nat.lt_of_le_of_lt (Nat.succ_le_succ (Nat.zero_le k)) hk)
+    obtain ⟨c, hc, hch⟩ := exists_mem_children_height_add_one (t := t) (by omega)
     obtain ⟨j, hj⟩ := List.getElem?_of_mem hc
     obtain ⟨p, hp, hsub⟩ := ih c (by omega)
     refine ⟨j :: p, by simp [hp], fun i hi ↦ ?_⟩
@@ -220,10 +210,8 @@ theorem IsSubtree.of_mem_children {c t : RoseTree α} (h : c ∈ t.children) : I
 /-- Relabelling preserves the subtree relation. -/
 theorem IsSubtree.map {β : Type*} {s t : RoseTree α} (f : α → β) (h : IsSubtree s t) :
     IsSubtree (s.map f) (t.map f) :=
-  Relation.ReflTransGen.lift (RoseTree.map f) (fun c u hc ↦ by
-    obtain ⟨a, cs⟩ := u
-    change RoseTree.map f c ∈ (RoseTree.map f (node a cs)).children
-    rw [map_node]
+  Relation.ReflTransGen.lift (RoseTree.map f) (fun c ⟨a, cs⟩ hc ↦ by
+    simp only [Function.onFun, map_node, children_node]
     exact List.mem_map_of_mem hc) _ _ h
 
 /-- The subtrees of `t` are exactly the values of `subtreeAt t` at addresses inside `t`. -/
@@ -438,12 +426,6 @@ theorem nodup_map_fst_positionedSubtrees (t : RoseTree α) :
   obtain ⟨-, -, h⟩ := hq
   exact congrArg TreePath.toList h.symm
 
-private theorem modifyHead_succ_lt_modifyHead_succ {l m : List ℕ} (hl : l ≠ []) (hm : m ≠ [])
-    (h : l < m) : l.modifyHead (· + 1) < m.modifyHead (· + 1) := by
-  obtain ⟨a, l, rfl⟩ := List.exists_cons_of_ne_nil hl
-  obtain ⟨b, m, rfl⟩ := List.exists_cons_of_ne_nil hm
-  simpa [List.cons_lt_cons_iff] using h
-
 mutual
 /-- The addresses in preorder increase lexicographically. -/
 theorem pairwise_lt_vertices : ∀ t : RoseTree α, t.vertices.Pairwise (· < ·)
@@ -460,7 +442,7 @@ theorem pairwise_lt_verticesList : ∀ cs : List (RoseTree α), (verticesList cs
       (pairwise_lt_verticesList cs).imp_of_mem fun hp hq h ↦ ?_, ?_⟩
     · obtain ⟨_, _, rfl⟩ := exists_cons_of_mem_verticesList hp
       obtain ⟨_, _, rfl⟩ := exists_cons_of_mem_verticesList hq
-      exact modifyHead_succ_lt_modifyHead_succ (List.cons_ne_nil _ _) (List.cons_ne_nil _ _) h
+      simpa [List.cons_lt_cons_iff] using h
     · simp only [List.mem_map]
       rintro _ ⟨p, -, rfl⟩ _ ⟨q, hq, rfl⟩
       obtain ⟨j, q, rfl⟩ := exists_cons_of_mem_verticesList hq
@@ -494,17 +476,6 @@ theorem positionedLeaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : 
   simp only [← List.map_cons, List.zipIdx_map, List.flatMap_map]
   rfl
 
-private theorem fst_mem_of_mem_zipIdx {l : List (RoseTree α)} {x : RoseTree α × ℕ}
-    (h : x ∈ l.zipIdx) : x.1 ∈ l := by
-  rw [List.fst_eq_of_mem_zipIdx h]
-  exact List.getElem_mem _
-
-private theorem pairwise_snd_lt_zipIdx :
-    ∀ (l : List (RoseTree α)) (k : ℕ), (l.zipIdx k).Pairwise fun a b ↦ a.2 < b.2
-  | [], _ => .nil
-  | _ :: l, k => List.pairwise_cons.mpr
-    ⟨fun _ hb ↦ List.le_snd_of_mem_zipIdx hb, pairwise_snd_lt_zipIdx l (k + 1)⟩
-
 /-- Forgetting the addresses leaves the frontier. -/
 theorem map_snd_positionedLeaves (t : RoseTree α) :
     t.positionedLeaves.map Prod.snd = t.leafList := by
@@ -515,34 +486,29 @@ theorem map_snd_positionedLeaves (t : RoseTree α) :
     rw [positionedLeaves_node_of_ne_nil a hcs, leafList_node_of_ne_nil a hcs, List.map_flatMap]
     conv_rhs => rw [← List.zipIdx_map_fst 0 cs, List.map_map, ← List.flatMap_def]
     refine List.flatMap_congr fun x hx ↦ ?_
-    rw [List.map_map, Function.comp_apply, ← ih x.1 (fst_mem_of_mem_zipIdx hx)]
+    rw [List.map_map, Function.comp_apply, ← ih x.1 (List.fst_mem_of_mem_zipIdx hx)]
     rfl
 
-/-- Each listed address holds its leaf. -/
-theorem subtreeAt_of_mem_positionedLeaves {t : RoseTree α} {x : TreePath × α}
-    (h : x ∈ t.positionedLeaves) : subtreeAt t x.1.toList = some (node x.2 []) := by
-  induction t generalizing x with
-  | node a cs ih =>
-    rcases eq_or_ne cs [] with rfl | hcs
-    · obtain rfl := List.mem_singleton.mp (by simpa using h)
-      rfl
-    simp only [positionedLeaves_node_of_ne_nil a hcs, List.mem_flatMap, List.mem_map] at h
-    obtain ⟨⟨c, i⟩, hc, y, hy, rfl⟩ := h
-    simp [List.mem_zipIdx_iff_getElem?.mp hc, ih c (fst_mem_of_mem_zipIdx hc) hy]
-
-/-- Every leaf address is listed. -/
-theorem mem_positionedLeaves_of_subtreeAt {t : RoseTree α} {p : List ℕ} {a : α}
-    (h : subtreeAt t p = some (node a [])) : (⟨p⟩, a) ∈ t.positionedLeaves := by
+/-- The listed addresses are exactly the addresses of the leaves. -/
+theorem mem_positionedLeaves {t : RoseTree α} {p : TreePath} {a : α} :
+    (p, a) ∈ t.positionedLeaves ↔ t.subtreeAt p.toList = some (leaf a) := by
+  obtain ⟨p⟩ := p
   induction t generalizing p with
   | node b cs ih =>
+    rcases eq_or_ne cs [] with rfl | hcs
+    · rcases p with _ | ⟨i, p⟩ <;> simp [TreePath.ext_iff, eq_comm]
     rcases p with _ | ⟨i, p⟩
-    · cases h
-      exact List.mem_singleton.mpr rfl
-    simp only [subtreeAt_cons, children_node, Option.bind_eq_some_iff] at h
-    obtain ⟨c, hc, h⟩ := h
-    rw [positionedLeaves_node_of_ne_nil b (List.ne_nil_of_mem (List.mem_of_getElem? hc))]
-    simp only [List.mem_flatMap, List.mem_map]
-    exact ⟨(c, i), List.mem_zipIdx_iff_getElem?.mpr hc, _, ih c (List.mem_of_getElem? hc) h, rfl⟩
+    · simp [positionedLeaves_node_of_ne_nil b hcs, hcs]
+    simp only [positionedLeaves_node_of_ne_nil b hcs, List.mem_flatMap, List.mem_map,
+      subtreeAt_cons, children_node, Option.bind_eq_some_iff, Prod.mk.injEq, TreePath.mk.injEq,
+      List.cons.injEq]
+    constructor
+    · rintro ⟨⟨c, j⟩, hc, ⟨⟨q⟩, x⟩, hx, ⟨rfl, rfl⟩, rfl⟩
+      have hc := List.mem_zipIdx_iff_getElem?.mp hc
+      exact ⟨c, hc, (ih c (List.mem_of_getElem? hc) _).mp hx⟩
+    · rintro ⟨c, hc, h⟩
+      exact ⟨(c, i), List.mem_zipIdx_iff_getElem?.mpr hc, (⟨p⟩, a),
+        (ih c (List.mem_of_getElem? hc) p).mpr h, ⟨rfl, rfl⟩, rfl⟩
 
 /-- The leaf addresses, in the order of the frontier, ascend in precedence. -/
 theorem pairwise_precedes_positionedLeaves (t : RoseTree α) :
@@ -551,10 +517,13 @@ theorem pairwise_precedes_positionedLeaves (t : RoseTree α) :
   | node a cs ih =>
     rcases eq_or_ne cs [] with rfl | hcs
     · simp
+    have hlt : (cs.zipIdx 0).Pairwise fun x y ↦ x.2 < y.2 := by
+      have := List.pairwise_lt_range' (s := 0) (n := cs.length)
+      rwa [← List.zipIdx_map_snd, List.pairwise_map] at this
     rw [positionedLeaves_node_of_ne_nil a hcs, List.pairwise_flatMap]
-    refine ⟨fun ⟨c, i⟩ hc ↦ ?_, (pairwise_snd_lt_zipIdx cs 0).imp fun hij x hx y hy ↦ ?_⟩
+    refine ⟨fun ⟨c, i⟩ hc ↦ ?_, hlt.imp fun hij x hx y hy ↦ ?_⟩
     · rw [List.pairwise_map]
-      exact (ih c (fst_mem_of_mem_zipIdx hc)).imp fun h ↦ h.cons i
+      exact (ih c (List.fst_mem_of_mem_zipIdx hc)).imp fun h ↦ h.cons i
     · obtain ⟨x, -, rfl⟩ := List.mem_map.mp hx
       obtain ⟨y, -, rfl⟩ := List.mem_map.mp hy
       exact TreePath.precedes_cons_of_lt hij _ _
@@ -597,15 +566,6 @@ theorem replaceAt_cons_of_getElem? {t c : RoseTree α} {i : ℕ} (hc : t.childre
     rw [children_node] at hc
     rw [replaceAt_cons, List.modify_eq_set, hc, Option.getD_some, value_node, children_node]
 
-private theorem eq_take_append_cons_drop {cs : List (RoseTree α)} {i : ℕ} {c : RoseTree α}
-    (hc : cs[i]? = some c) : cs = cs.take i ++ c :: cs.drop (i + 1) := by
-  obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp hc
-  rw [← List.drop_eq_getElem_cons hi, List.take_append_drop]
-
-private theorem set_eq_take_append_cons_drop {cs : List (RoseTree α)} {i : ℕ} {c : RoseTree α}
-    (hc : cs[i]? = some c) (x : RoseTree α) : cs.set i x = cs.take i ++ x :: cs.drop (i + 1) := by
-  rw [List.set_eq_take_append_cons_drop, ite_eq_left (List.getElem?_eq_some_iff.mp hc).1]
-
 /-- Away from the replaced address, at an address neither above nor below it, the subtree is
 unchanged. -/
 theorem subtreeAt_replaceAt_of_not_prefix {t new : RoseTree α} {p q : List ℕ} (hpq : ¬ p <+: q)
@@ -641,22 +601,28 @@ theorem subtreeAt_replaceAt_append {t new : RoseTree α} {p : List ℕ} (hp : (t
   obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hp
   simp [hs]
 
+/-- Replacing the subtree `s` at an address by `new` trades the nodes of `s` for those of `new`. -/
+theorem numNodes_replaceAt {t s : RoseTree α} {p : List ℕ} (h : t.subtreeAt p = some s)
+    (new : RoseTree α) :
+    (t.replaceAt p new).numNodes + s.numNodes = t.numNodes + new.numNodes := by
+  induction p generalizing t with
+  | nil => rw [replaceAt_nil, Option.some.inj h, Nat.add_comm]
+  | cons i p ih =>
+    obtain ⟨a, cs⟩ := t
+    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp h
+    rw [children_node] at hc
+    obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp hc
+    have := ih hcs
+    rw [replaceAt_cons, List.modify_eq_take_cons_drop hi]
+    conv_rhs => rw [← List.take_append_drop i cs, List.drop_eq_getElem_cons hi]
+    simp only [numNodes_node, List.map_append, List.map_cons, List.sum_append, List.sum_cons]
+    omega
+
 /-- Replacing a subtree by a strictly smaller one shrinks the tree. -/
 theorem numNodes_replaceAt_lt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt t p = some s)
     {new : RoseTree α} (hlt : new.numNodes < s.numNodes) :
     (t.replaceAt p new).numNodes < t.numNodes := by
-  induction p generalizing t with
-  | nil => rw [replaceAt_nil, Option.some.inj h]; exact hlt
-  | cons i p ih =>
-    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp h
-    cases t with
-    | node a cs =>
-      rw [children_node] at hc
-      rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node,
-        set_eq_take_append_cons_drop hc, numNodes_node]
-      conv_rhs => rw [eq_take_append_cons_drop hc, numNodes_node]
-      simp only [List.map_append, List.map_cons, List.sum_append, List.sum_cons]
-      have := ih hcs
-      omega
+  have := numNodes_replaceAt h new
+  omega
 
 end RoseTree
