@@ -26,11 +26,12 @@ either: Chinese and Japanese are [+arg, −pred], the Romance languages [−arg,
 [exactly the argument-only ones](##hasClassifiers_iff). A language's determiners decide which
 covert type shifts it blocks, [none in an argument-only language](##argOnly_blocks_nothing), and
 with the parameter which bare nominals it admits as arguments, in English
-[a bare singular only where ∩ is defined for it](##english_licensesBare_singular_iff). ∩ and ∪
-[undo each other](##Kind.down_up), and ∩ is
+[a bare singular only where ∩ is defined for it](##english_licensesBare_singular_iff). ∩
+[undoes ∪](##Kind.down_up), ∪ [undoes ∩ on a property closed downward](##Kind.up_down), and ∩ is
 [undefined for a singular property](##Kind.down_notMem_of_atom). Carlson's state predication on a
-kind [is derived kind predication over its instances](##carlson_mem_image_iff), so states pass from
-dogs to mammals, [Carlson's (119)](##carlson_119). A generic bare plural
+kind [is derived kind predication over its instances](##carlson_mem_image_iff), so a state passes
+from a kind to any kind whose instances include its own,
+[Carlson's (119)](##carlson_119). A generic bare plural
 [entails its episodic reading](##some_up_of_mem_dogsBark).
 
 ## Main definitions
@@ -50,7 +51,12 @@ classifier system of (20) has every noun counted through a classifier, while the
 classifiers rather than that: Mandarin counts the measure noun *tiān* bare
 (`exists_isBareCount_mandarin`). The generic operator is the conditional over the normal cases
 of a `Genericity.Normality`. The set `K` of kinds is a parameter, primitive as in the paper, and its
-one stated property, that no kind has a singular instance in every situation, is a hypothesis.
+property that p. 351 uses, that no kind has a singular instance in every situation, is a hypothesis,
+read with that page's "(when defined)": no kind is singular in every situation where it has a
+value. The paper restricts kinds further, on p. 350, to concepts that identify classes of objects
+with a sufficiently regular function or behavior, which is not formalized. A weaker condition,
+that no kind be necessarily instantiated by one individual, would not exclude ∩ of a singular
+property with no instance in some situation (the first `example` of the kind-formation section).
 ∩ and ∪ are `Kind.down` and `Kind.up`, ι and its partial inverse Id applied at each situation
 (pp. 359–360), Id sending an individual to its parts, `Set.Iic`. (17b) is stated under its own
 hypothesis, that ∩P is defined, read as ∩P having a value wherever P has instances, for a property
@@ -66,13 +72,6 @@ part-of in the model `lawn`, so a kind is an instance of itself.
 * (25e) prints Id(x) = λx[x ≤ y], binding the wrong variable; the text above footnote 14, which
   has ι undone via the part-of relation, and the footnote's Id(x) = λy[y = x] for a singularity
   give Id(x) = λy[y ≤ x].
-* p. 351 concludes that ∩ is undefined for a singular property because a kind cannot have a
-  singular instance in every situation. The kinds of p. 350 may have one instance or none, and
-  only a concept necessarily instantiated by one individual is excluded. On that reading a
-  singular property with no instances in some situation [has a kind](##exists_down_mem_of_atom),
-  so the inference needs the stronger reading, that a kind's instance is plural in some situation,
-  which excludes kinds with no instances; `Kind.down_notMem_of_atom` takes that reading as its
-  hypothesis.
 
 ## References
 
@@ -148,16 +147,16 @@ theorem exists_isBareCount_mandarin : ∃ n ∈ Language.mandarin.nouns, n.IsBar
 ∩ takes a property to the individual concept that picks out the largest member of its extension
 at each situation, where that concept is a kind, (16), and is undefined otherwise; ∪ takes a kind
 to the parts of its value, (15). These are `Kind.down` and `Kind.up`. A kind cannot have a singular
-instance in every situation (p. 351), so ∩ is undefined for a singular property, which is true of
-atoms only (`Kind.down_notMem_of_atom`), once a kind's instance is plural in some situation. -/
+instance in every situation where it has one (p. 351), so ∩ is undefined for a singular property,
+which is true of atoms only (`Kind.down_notMem_of_atom`). -/
 
 section KindFormation
 
 open Mereology
 
-/-- When the kinds exclude only concepts instantiated by one individual in every situation, as on
-p. 350, a singular property with no instance in some situation has a kind. -/
-theorem exists_down_mem_of_atom :
+/-- Were kinds to exclude only concepts instantiated by one individual in every situation, a
+singular property with no instance in some situation could have a kind. -/
+example :
     ∃ (P : Bool → Set Bool) (K : Set (Bool → Option Bool)),
       (∀ k ∈ K, ¬ ∀ s, ∃ d, k s = some d ∧ Atom d) ∧ (∀ s, ∀ x ∈ P s, Atom x) ∧
         Kind.down P ∈ K := by
@@ -240,21 +239,27 @@ theorem lawn_comp_subset : lawn.R ○ {p | p.1 ≤ p.2} ⊆ lawn.R := by
   rintro ⟨t, k⟩ ⟨x, htx, hxk⟩
   exact (show ({t} : Finset (Fin 3)) ≤ x from htx).trans hxk
 
-/-- *Dogs are sitting on my lawn* gives *Mammals are sitting on my lawn* (119): the dogs and the
-mammals of `lawn` meet the conditions of the bridge, with the part-of relation as the instance
-relation, and the dogs' instances are among the mammals'. -/
-theorem carlson_119 (P : Set (Fin 3)) (h : ({0, 1} : Finset (Fin 3)) ∈ lawn.R.image P) :
-    (Finset.univ : Finset (Fin 3)) ∈ lawn.R.image P := by
-  have hd := (carlson_mem_image_iff (M := lawn) (inst := {p | p.1 ≤ p.2})
-    (k := ({0, 1} : Finset (Fin 3))) (κ := fun _ : Unit ↦ some ({0, 1} : Finset (Fin 3)))
-    (s := ()) (fun _ ↦ Iff.rfl) lawn_comp_subset (fun _ ht ↦ ⟨_, ht, by simp⟩) P).1 h
-  have hsub : Kind.up (fun _ : Unit ↦ some ({0, 1} : Finset (Fin 3))) () ⊆
-      Kind.up (fun _ : Unit ↦ some (Finset.univ : Finset (Fin 3))) () :=
-    fun x _ ↦ Finset.subset_univ x
-  exact (carlson_mem_image_iff (M := lawn) (inst := {p | p.1 ≤ p.2})
-    (k := (Finset.univ : Finset (Fin 3))) (κ := fun _ : Unit ↦ some Finset.univ) (s := ())
-    (fun _ ↦ Iff.rfl) lawn_comp_subset (fun _ ht ↦ ⟨_, ht, by simp⟩) P).2
-    (Quantifier.Det.restrictorMonotone_some _ hsub hd)
+/-- *Dogs are sitting on my lawn* gives *Mammals are sitting on my lawn* (119): when Carlson's
+instances of two kinds are the instances of their concepts, a state passes from a kind to any kind
+whose instances include its own, since the instance that derived kind predication finds for the
+first is an instance of the second. -/
+theorem carlson_119 {S E Stage Place Time : Type*} [Preorder E]
+    {M : Carlson1977.Model Stage E Place Time} {inst : SetRel E E} {k k' : E}
+    {κ κ' : S → Option E} {s : S} (hinst : ∀ x, x ~[inst] k ↔ x ∈ Kind.up κ s)
+    (hinst' : ∀ x, x ~[inst] k' ↔ x ∈ Kind.up κ' s) (h : M.R ○ inst ⊆ M.R)
+    (hk : ∀ ⦃t⦄, t ~[M.R] k → t ~[M.R ○ inst] k) (hsub : Kind.up κ s ⊆ Kind.up κ' s)
+    {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P := by
+  obtain ⟨x, hx, t, ht, htx⟩ := (carlson_mem_image_iff hinst h hk P).1 hP
+  exact ⟨t, ht, h ⟨x, htx, (hinst' x).2 (hsub hx)⟩⟩
+
+/-- On `lawn`, with the part-of relation as the instance relation, the dogs and the mammals meet
+the conditions of (119). -/
+example (P : Set (Fin 3)) (h : ({0, 1} : Finset (Fin 3)) ∈ lawn.R.image P) :
+    (Finset.univ : Finset (Fin 3)) ∈ lawn.R.image P :=
+  carlson_119 (M := lawn) (inst := {p | p.1 ≤ p.2}) (k := ({0, 1} : Finset (Fin 3)))
+    (k' := Finset.univ) (κ := fun _ : Unit ↦ some ({0, 1} : Finset (Fin 3)))
+    (κ' := fun _ ↦ some Finset.univ) (s := ()) (fun _ ↦ Iff.rfl) (fun _ ↦ Iff.rfl)
+    lawn_comp_subset (fun _ ht ↦ ⟨_, ht, by simp⟩) (fun x _ ↦ Finset.subset_univ x) h
 
 /-- States do not pass the other way: with the cat on the lawn, *Mammals are sitting on my lawn*
 is true and *Dogs are sitting on my lawn* false. -/
