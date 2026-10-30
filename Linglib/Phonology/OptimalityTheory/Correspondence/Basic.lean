@@ -15,77 +15,74 @@ public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Core.Data.Fintype.Fin
 
 /-!
-# Correspondence Theory
+# Correspondence theory
 
-A correspondence between two strings ([mccarthy-prince-1995] (10)) is a relation ℛ
-between their positions, and a faithfulness constraint is a condition on ℛ: MAX reads
-its domain, DEP its range, IDENT the segments at corresponding positions.
-`Correspondence Role α` carries one string per role (`form`) and the relation
-`edge r₁ r₂` for every ordered pair of roles, so the input–output, base–reduplicant
-and output–output ([benua-1997]) relations of one candidate are cells of a single
-diagram. The relation is directed, as ℛ is; "correspondents of one another" is the
-derived property `IsSymmetric`.
-
-The constraints of Appendix A are families `Correspondence Role α → Role → Role → ℕ`
-counting offending elements; a named constraint is a partial application (MAX-IO is
-`(·.maxViol .input .output)`), and each cardinal family vanishes iff the relation has
-the matching order-theoretic property (`maxViol_eq_zero_iff`, …). Positions are
-`Fin`-indexed, so every pair of `edge` is in range by type. The position-relation
-encoding follows [payne-vu-heinz-2017] and [potts-pullum-2002] (base–reduplicant
-relations: [dolatian-heinz-2020]).
+McCarthy and Prince's correspondence between two strings is a relation between their
+positions, and a faithfulness constraint is a condition on that relation: MAX reads its domain,
+DEP its range, and IDENT the segments at corresponding positions. `Correspondence Role α`
+carries one string per role (`form`) and a relation `edge r₁ r₂` between the positions of each
+ordered pair of roles, so that the input, base, and reduplicant of a reduplicative candidate
+and the relations between them form one diagram (`Correspondence.reduplication`). The relation
+is directed; being correspondents of one another is the derived property `IsSymmetric`. MAX,
+DEP, INTEGRITY, UNIFORMITY, and LINEARITY vanish iff the relation is left-total, right-total,
+functional, injective, and order-preserving respectively (`Correspondence.maxViol_eq_zero_iff`
+and its siblings), and an edge free of all five violations is the graph of an order isomorphism
+between the two position orders (`Correspondence.isFaithful_iff_exists_orderIso`).
 
 ## Main definitions
 
-* `Correspondence` — role-indexed strings with a directed relation between the
+* `Correspondence Role α`: a string for each role and a directed relation between the
   positions of each ordered pair of roles.
 * `Correspondence.maxViol`, `depViol`, `identViol`, `identViolFeature`, `contigIViol`,
   `contigOViol`, `anchorLViol`, `anchorRViol`, `linearityViol`, `uniformityViol`,
-  `integrityViol` — the constraint families of Appendix A; `maxViolOn`, `depViolOn` are
-  their segment-class restrictions (MAX-V, DEP-C, …), and `maxViolAt`, `depViolAt` their
-  restrictions to positions (positional faithfulness).
-* `Correspondence.ofPairs`, `diagram`, `parallel`, `identity`, `reduplication` —
-  constructors: from index pairs, the diagonal on a role predicate, and the binary
-  and input–base–reduplicant diagonal diagrams.
-* `Correspondence.IsSymmetric`, `IsFaithful` — symmetry of the relation; freedom from
-  the five order-relevant violations on an edge.
-* `Correspondence.IsFaithfulness`, `IsMarkedness` — the structural
-  faithfulness/markedness split for constraints over correspondences.
+  `integrityViol`: the families MAX, DEP, IDENT, IDENT(F), I-CONTIG, O-CONTIG, L-ANCHOR,
+  R-ANCHOR, LINEARITY, UNIFORMITY, and INTEGRITY, counting offending elements; `maxViolOn` and
+  `depViolOn` restrict MAX and DEP to a class of segments, and `maxViolAt` and `depViolAt` to a
+  class of positions.
+* `Correspondence.ofPairs`, `diagram`, `parallel`, `identity`, `reduplication`: constructors
+  from index pairs, from a role predicate with the diagonal on each selected pair of roles, and
+  the binary and input–base–reduplicant diagonal diagrams.
+* `Correspondence.IsSymmetric`, `IsFaithful`: symmetry of the relation, and freedom from the
+  five order-relevant violations on an edge.
+* `Correspondence.IsFaithfulness`, `IsMarkedness`: a constraint that the fully faithful
+  candidate satisfies, and one that depends only on the output string.
 
-## Main results
+## Main statements
 
-* `Correspondence.isFaithful_iff_exists_orderIso` — an edge is faithful iff it is the
-  graph of an order isomorphism between the two position orders.
-* `Correspondence.diagram_isSymmetric` — a diagonal diagram over a symmetric role
-  predicate is symmetric.
-* `Correspondence.isMarkedness_iff_exists_comap` — a markedness constraint is exactly a
+* `Correspondence.isFaithful_iff_exists_orderIso`: an edge is faithful iff it is the graph of
+  an order isomorphism between the two position orders.
+* `Correspondence.diagram_isSymmetric`: a diagonal diagram over a symmetric role predicate is
+  symmetric.
+* `Correspondence.isMarkedness_iff_exists_comap`: a constraint is markedness iff it is a
   constraint on strings pulled back along the output form.
-* `Correspondence.maxViolFeature_of_diagonal`, `depViolFeature_of_diagonal`,
-  `identViolFeature_of_diagonal` — on a diagonal edge a feature family counts the offending pairs
-  of the two strings' `List.zip`; `Correspondence.edgeOfPairs_diagonalPairs` — the index pairs
-  `(i, i)` give the diagonal.
-* `Correspondence.IsFaithfulness.not_antifaithful` — the anti-faithfulness constraint of a
+* `Correspondence.identViolFeature_of_diagonal`: on a diagonal edge a feature family counts the
+  offending pairs of the two strings' `List.zip`, as do `maxViolFeature_of_diagonal` and
+  `depViolFeature_of_diagonal`.
+* `Correspondence.IsFaithfulness.not_antifaithful`: the anti-faithfulness constraint of a
   faithfulness constraint is not faithfulness.
+
+## Implementation notes
+
+* A named constraint is a partial application of a family to a pair of roles: MAX-IO is
+  `(·.maxViol .input .output)`.
+* Positions are indexed by `Fin`, so that every pair in an `edge` is in range by type, and
+  `Correspondence.ofPairs` drops index pairs out of range.
+* Encoding a correspondence as a binary relation on positions follows Payne, Vu, and Heinz.
 
 ## References
 
 * [J. J. McCarthy and A. Prince, *Faithfulness and Reduplicative Identity*
   (1995)][mccarthy-prince-1995]
-* [L. Benua, *Transderivational Identity: Phonological Relations between Words*
-  (1997)][benua-1997]
 * [A. Payne, M. H. Vu and J. Heinz, *A Formal Analysis of Correspondence Theory*
   (2017)][payne-vu-heinz-2017]
-* [C. Potts and G. K. Pullum, *Model Theory and the Content of OT Constraints*
-  (2002)][potts-pullum-2002]
-* [H. Dolatian and J. Heinz, *Computing and Classifying Reduplication with 2-Way Finite-State
-  Transducers* (2020)][dolatian-heinz-2020]
 -/
 
 @[expose] public section
 
 namespace OptimalityTheory
 
-/-- A correspondence diagram consists of a string for each role and, for each ordered pair of
-roles, a directed relation between their positions. -/
+/-- A *correspondence diagram*: a string for each role and, for each ordered pair of roles, a
+directed relation between their positions. -/
 structure Correspondence (Role : Type*) (α : Type*) where
   form : Role → List α
   edge : (r₁ r₂ : Role) → Finset (Fin (form r₁).length × Fin (form r₂).length)
@@ -118,37 +115,36 @@ namespace Correspondence
 
 variable {Role : Type*} {α : Type*}
 
-/-- Correspondence is symmetric when each relation is the converse of the reverse
-one. -/
+/-- A correspondence is *symmetric* when each relation is the converse of the reverse one. -/
 def IsSymmetric (c : Correspondence Role α) : Prop :=
   ∀ r₁ r₂, c.edge r₂ r₁ = (c.edge r₁ r₂).image Prod.swap
 
 /-! ### Constraint families -/
 
-/-- MAX (A.1) counts the positions of `form r₁` without a correspondent in `form r₂`. -/
+/-- MAX counts the positions of `form r₁` without a correspondent in `form r₂`. -/
 def maxViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.fst).card
 
-/-- DEP (A.2) counts the positions of `form r₂` without a correspondent in `form r₁`. -/
+/-- DEP counts the positions of `form r₂` without a correspondent in `form r₁`. -/
 def depViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.snd).card
 
-/-- MAX (A.1) restricted to the positions of `form r₁` whose segment satisfies `P` — the
-segment-class instances MAX-V, MAX-C. -/
+/-- MAX restricted to the positions of `form r₁` whose segment satisfies `P`, as in MAX-V and
+MAX-C. -/
 def maxViolOn (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
     ℕ :=
   ((Finset.univ.filter fun i : Fin (c.form r₁).length => P (c.form r₁)[i]) \
     (c.edge r₁ r₂).image Prod.fst).card
 
-/-- DEP (A.2) restricted to the positions of `form r₂` whose segment satisfies `P` — the
-segment-class instances DEP-V, DEP-C. -/
+/-- DEP restricted to the positions of `form r₂` whose segment satisfies `P`, as in DEP-V and
+DEP-C. -/
 def depViolOn (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
     ℕ :=
   ((Finset.univ.filter fun j : Fin (c.form r₂).length => P (c.form r₂)[j]) \
     (c.edge r₁ r₂).image Prod.snd).card
 
-/-- MAX restricted to the positions of `form r₁` that satisfy `P`, the positional
-faithfulness constraints that protect a segment by where it stands, not by what it is. -/
+/-- MAX restricted to the positions of `form r₁` that satisfy `P`, which is the form of a
+positional faithfulness constraint. -/
 def maxViolAt (P : ℕ → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ.filter fun i : Fin (c.form r₁).length ↦ P i) \
     (c.edge r₁ r₂).image Prod.fst).card
@@ -158,12 +154,11 @@ def depViolAt (P : ℕ → Prop) [DecidablePred P] (c : Correspondence Role α) 
   ((Finset.univ.filter fun j : Fin (c.form r₂).length ↦ P j) \
     (c.edge r₁ r₂).image Prod.snd).card
 
-/-- IDENT (A.3) on whole segments counts the corresponding pairs whose segments differ. -/
+/-- IDENT on whole segments counts the corresponding pairs whose segments differ. -/
 def identViol [DecidableEq α] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p => (c.form r₁)[p.1] ≠ (c.form r₂)[p.2]).card
 
-/-- IDENT(F) (A.3) for the feature `proj` counts the corresponding pairs that differ under
-`proj`. -/
+/-- IDENT(F) for the feature `proj` counts the corresponding pairs that differ under `proj`. -/
 def identViolFeature {F : Type*} [DecidableEq F] (proj : α → F)
     (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p => proj (c.form r₁)[p.1] ≠ proj (c.form r₂)[p.2]).card
@@ -186,26 +181,26 @@ theorem maxViolFeature_pos_iff (P : α → Prop) [DecidablePred P] (c : Correspo
       ∃ p ∈ c.edge r₁ r₂, P (c.form r₁)[p.1] ∧ ¬ P (c.form r₂)[p.2] := by
   simp [maxViolFeature, Finset.card_pos, Finset.filter_nonempty_iff]
 
-/-- I-CONTIG, "No Skipping" (A.4a), checks whether the domain of the relation is a contiguous
-substring of `form r₁`. -/
+/-- I-CONTIG is violated once unless the domain of the relation is a contiguous substring of
+`form r₁`. -/
 def contigIViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if ((((c.edge r₁ r₂).image Prod.fst).image Fin.val).sort (· ≤ ·)).IsChain
       (fun a b => b = a + 1) then 0 else 1
 
-/-- O-CONTIG, "No Intrusion" (A.4b), checks whether the range of the relation is a contiguous
-substring of `form r₂`. -/
+/-- O-CONTIG is violated once unless the range of the relation is a contiguous substring of
+`form r₂`. -/
 def contigOViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if ((((c.edge r₁ r₂).image Prod.snd).image Fin.val).sort (· ≤ ·)).IsChain
       (fun a b => b = a + 1) then 0 else 1
 
-/-- L-ANCHOR (A.5) checks whether the leftmost positions correspond, and is vacuous when either
-string is empty. -/
+/-- L-ANCHOR is violated once unless the leftmost positions correspond; it is vacuous when
+either string is empty. -/
 def anchorLViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if h : 0 < (c.form r₁).length ∧ 0 < (c.form r₂).length then
     if (⟨0, h.1⟩, ⟨0, h.2⟩) ∈ c.edge r₁ r₂ then 0 else 1
   else 0
 
-/-- R-ANCHOR (A.5) checks whether the rightmost positions correspond, and is vacuous when
+/-- R-ANCHOR is violated once unless the rightmost positions correspond; it is vacuous when
 either string is empty. -/
 def anchorRViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   if h : 0 < (c.form r₁).length ∧ 0 < (c.form r₂).length then
@@ -213,19 +208,19 @@ def anchorRViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
         ⟨(c.form r₂).length - 1, Nat.pred_lt_self h.2⟩) ∈ c.edge r₁ r₂ then 0 else 1
   else 0
 
-/-- LINEARITY, "No Metathesis" (A.6), counts the pairs of correspondences `(i₁, j₁)`,
-`(i₂, j₂)` with `i₁ < i₂` but `j₂ < j₁`. -/
+/-- LINEARITY counts the pairs of correspondences `(i₁, j₁)` and `(i₂, j₂)` with `i₁ < i₂` but
+`j₂ < j₁`. -/
 def linearityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂ ×ˢ c.edge r₁ r₂).filter fun pq => pq.1.1 < pq.2.1 ∧ pq.2.2 < pq.1.2).card
 
-/-- UNIFORMITY, "No Coalescence" (A.7), counts the positions of `form r₂` with more than one
-correspondent in `form r₁`. -/
+/-- UNIFORMITY counts the positions of `form r₂` with more than one correspondent in
+`form r₁`. -/
 def uniformityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₂).length)).filter fun j =>
     1 < ((c.edge r₁ r₂).filter fun p => p.2 = j).card).card
 
-/-- INTEGRITY, "No Breaking" (A.8), counts the positions of `form r₁` with more than one
-correspondent in `form r₂`. -/
+/-- INTEGRITY counts the positions of `form r₁` with more than one correspondent in
+`form r₂`. -/
 def integrityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₁).length)).filter fun i =>
     1 < ((c.edge r₁ r₂).filter fun p => p.1 = i).card).card
@@ -459,8 +454,8 @@ theorem identViol_swap [DecidableEq α] (c : Correspondence BinaryRole α) (r₁
 
 /-! ### Faithfulness on the diagonal
 
-MAX, DEP and IDENT vanish on a diagonal edge between equal strings — the fully faithful
-candidate, and total reduplication read on its base–reduplicant edge. -/
+MAX, DEP, and IDENT vanish on a diagonal edge between equal strings, as on the fully faithful
+candidate `identity s`. -/
 
 theorem card_image_fst_diagonal (m n : ℕ) :
     ((diagonal m n).image Prod.fst).card = min m n := by
@@ -664,9 +659,9 @@ end Graph
 
 /-! ### Faithfulness as order isomorphism -/
 
-/-- An edge is faithful when it has no MAX, DEP, INTEGRITY, UNIFORMITY or LINEARITY
-violation — exactly the hypotheses under which it is the graph of an order
-isomorphism. -/
+/-- An edge is *faithful* when it has no MAX, DEP, INTEGRITY, UNIFORMITY, or LINEARITY
+violation, which are exactly the conditions under which it is the graph of an order
+isomorphism (`isFaithful_iff_exists_orderIso`). -/
 structure IsFaithful : Prop where
   max : c.maxViol r₁ r₂ = 0
   dep : c.depViol r₁ r₂ = 0
@@ -731,17 +726,16 @@ theorem length_eq_of_isFaithful (h : c.IsFaithful r₁ r₂) :
 
 /-! ### Faithfulness and markedness constraints
 
-A constraint over correspondences is faithfulness when the fully faithful candidate
-satisfies it, and markedness when it reads only the output string. The split is
-structural, and non-vacuous: \*STRUC is markedness and fires on `identity s`. -/
+A constraint over correspondences is faithfulness when the fully faithful candidate satisfies
+it, and markedness when it reads only the output string. The constraint counting the segments
+of the output is markedness and not faithfulness (`exists_isMarkedness_not_isFaithfulness`). -/
 
-/-- A constraint over binary correspondences is **faithfulness** when the fully faithful
-candidate `identity s` satisfies it. -/
+/-- A constraint over binary correspondences is *faithfulness* when the fully faithful candidate
+`identity s` satisfies it. -/
 def IsFaithfulness (k : Constraint (Correspondence BinaryRole α)) : Prop :=
   ∀ s : List α, k (identity s) = 0
 
-/-- A constraint is **markedness** for the role `out` when it depends only on
-`form out`. -/
+/-- A constraint is *markedness* for the role `out` when it depends only on `form out`. -/
 def IsMarkedness (out : Role) (k : Constraint (Correspondence Role α)) : Prop :=
   k.FactorsThrough (·.form out)
 
