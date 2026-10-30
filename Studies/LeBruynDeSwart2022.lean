@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Reference.Kind
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Quantification.Individual
 public import Linglib.Data.Examples.LeBruynDeSwart2022
@@ -58,13 +58,13 @@ def krifkaScrambled : Prop := Det.some (books ()) readᶜ
 /-- On the kinds approach (38), the bare plural shifts to its kind, and derived kind predication
 introduces the existential over its instances below negation. -/
 def chierchiaUnscrambled : Prop :=
-  ¬ Det.some ((iota (IsGreatest (books ()))).elim (∅ : Set _) Set.Iic) read
+  ¬ Det.some (Kind.up (Kind.down books) ()) read
 
 /-- On the kinds approach with the kind scrambled over negation, the kind binds a kind-level
 trace below negation. -/
 def chierchiaScrambled : Prop :=
-  Quantifier.individual (fun s ↦ iota (IsGreatest (books s)))
-    (fun k : Unit → Option (Individual Book) ↦ Det.some ((k ()).elim (∅ : Set _) Set.Iic) read)ᶜ
+  Quantifier.individual (Kind.down books)
+    (fun k : Unit → Option (Individual Book) ↦ Det.some (Kind.up k ()) read)ᶜ
 
 /-- Scrambling a kind over negation changes nothing, since a kind takes no scope, as a name
 takes none, so the kinds approach gives narrow scope at either position. -/
@@ -82,9 +82,9 @@ theorem books_example : krifkaScrambled ∧ ¬ krifkaUnscrambled ∧ ¬ chierchi
   refine ⟨⟨Individual.atom .unfinished, trivial, not_read_unfinished⟩,
     not_not.2 ⟨Individual.atom .finished, trivial, read_finished⟩, ?_⟩
   rw [chierchiaScrambled_iff, chierchiaUnscrambled, not_not]
-  have hd : iota (IsGreatest (books ())) = some ⟨Set.univ, Set.univ_nonempty⟩ :=
-    iota_isGreatest_eq_some_iff.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
-  rw [hd]
+  have hd : Kind.down books () = some ⟨Set.univ, Set.univ_nonempty⟩ :=
+    Kind.down_eq_some_iff.2 ⟨trivial, fun x _ ↦ (Set.subset_univ x.1 : x ≤ _)⟩
+  rw [Kind.up_apply_of_eq_some hd]
   exact ⟨Individual.atom .finished, (Set.subset_univ _ : Individual.atom Book.finished ≤ _),
     read_finished⟩
 

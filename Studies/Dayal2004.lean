@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Genericity.MeaningPreservation
+public import Linglib.Semantics.Reference.Kind
 public import Linglib.Data.Examples.Dayal2004
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.German.Determiners
@@ -29,15 +30,18 @@ may or may not apply to ∩.
 * Availability is the theory layer's (`Semantics/Genericity/MeaningPreservation.lean`), and each
   ranking is written as the predicate of its upper tier, Chierchia's `(· = .down)` and Dayal's
   `(· ≠ .exists)`. Whether ∩ is defined is a hypothesis, since it fails for plural properties
-  anchored to particular entities, fn. 1.
+  anchored to particular entities, fn. 1; for a singular property it is `Kind.down P ∈ K`, which
+  `Kind.down_notMem_of_atom` refutes.
 * Blocking applies within a determiner's domain, the clause "for any set X in its domain" of
   (39a): English *a* selects the singular, so it blocks ∃ for a bare singular and leaves ∃ to a
   bare plural or a mass noun (`Determiner.Inventory.Blocks`).
 * Which side of the cut-off each sampled language falls on is the paper's analysis
   (`lexicalizationOf`); that ι is lexicalized exactly where the fragment's inventory blocks ι is
   checked (`iota_mem_lexicalized_iff`).
-* A mass term is number-neutral, fn. 25, and so is a Chinese noun, which aligns with plurals,
-  p. 413; both have the general number.
+* A mass term is morphologically neutral, fn. 25, outside the singular/plural contrast, so the
+  number of a kind term is an `Option Number` and a mass term has none. A Chinese noun, which
+  does not distinguish singular and plural and patterns with bare plurals, p. 413, has the
+  general number, which `Number.general` reserves for nouns that have number.
 
 ## TODO
 
@@ -104,16 +108,19 @@ theorem exists_iff_not_down (hι : ds.Blocks num .iota) (hx : ds.Blocks num .iot
     MaximalFor (ds.Available num down) (· ≠ .exists) .exists ↔ ¬ down := by
   simp [hι, hx, hex]
 
-/-- An English bare singular has no shift, (88a), since ∩ is undefined for it, *the* blocks ι and
-ι^x, and *a* blocks ∃. -/
-theorem english_bare_singular :
-    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular False)
+/-- An English bare singular has no shift, (88a), since ∩ is undefined for a singular property
+once every kind has a plural instance somewhere, *the* blocks ι and ι^x, and *a* blocks ∃. -/
+theorem english_bare_singular {S E : Type*} [PartialOrder E] {K : Set (S → Option E)}
+    {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Mereology.Atom d)
+    (hP : ∀ s, ∀ x ∈ P s, Mereology.Atom x) :
+    ∀ τ, ¬ MaximalFor (English.Determiners.inventory.Available .singular (Kind.down P ∈ K))
       (· ≠ .exists) τ := by
+  rw [eq_false (Kind.down_notMem_of_atom hK hP)]
   decide
 
-/-- An English bare plural or mass noun takes ∃ exactly where ∩ is undefined, as *parts of this
-machine* does in (43): *the* blocks ι and ι^x, and *a*, which selects the singular, leaves ∃
-open. -/
+/-- An English bare plural takes ∃ exactly where ∩ is undefined, as *parts of this machine* does
+in (43): *the* blocks ι and ι^x, and *a*, which selects the singular, leaves ∃ open at every other
+number. -/
 theorem english_bare_plural_exists_iff {num : Number} (hnum : num ≠ .singular) :
     MaximalFor (English.Determiners.inventory.Available num down) (· ≠ .exists) .exists ↔
       ¬ down := by
@@ -126,17 +133,18 @@ theorem english_bare_plural_exists_iff {num : Number} (hnum : num ≠ .singular)
 
 /-- The kind term of a nominal of number `num` is formed by ∩, except that ∩ is undefined for a
 singular count noun, whose kind term is formed by ι over the taxonomic domain, which picks out the
-unique sub-kind, (77d). A mass term is number-neutral, fn. 25, and a nominal of a language that
-does not mark number aligns with plurals, p. 413. -/
-def kindShift (num : Number) : CovertShift := if num = .singular then .iota else .down
+unique sub-kind, (77d). A mass term, morphologically neutral (fn. 25), has no number, and a
+nominal of a language that does not mark number aligns with plurals, p. 413. -/
+def kindShift (num : Option Number) : CovertShift :=
+  if num = some .singular then .iota else .down
 
-@[simp] theorem kindShift_singular : kindShift .singular = .iota := rfl
+@[simp] theorem kindShift_singular : kindShift (some .singular) = .iota := rfl
 
-@[simp] theorem kindShift_of_ne_singular {num : Number} (h : num ≠ .singular) :
+@[simp] theorem kindShift_of_ne_singular {num : Option Number} (h : num ≠ some .singular) :
     kindShift num = .down :=
   ite_eq_right h
 
-theorem kindShift_eq_down_or_iota (num : Number) :
+theorem kindShift_eq_down_or_iota (num : Option Number) :
     kindShift num = .down ∨ kindShift num = .iota := by
   unfold kindShift; split <;> simp
 
@@ -187,13 +195,13 @@ theorem classification (l : Lexicalization) :
   simpa [Lexicalization.ext_iff, articleless, english, romance, german] using
     key L (Finset.mem_powerset.2 h₁) B (Finset.mem_powerset.2 h₃) h₂ h₄
 
-variable (l : Lexicalization) {num : Number}
+variable (l : Lexicalization) {num : Option Number}
 
 /-- The kind term of a nominal can take the definite determiner when its shift is lexicalized. -/
-def DefiniteKind (num : Number) : Prop := kindShift num ∈ l.lexicalized
+def DefiniteKind (num : Option Number) : Prop := kindShift num ∈ l.lexicalized
 
 /-- The kind term of a nominal can be bare when its shift is not blocked. -/
-def BareKind (num : Number) : Prop := kindShift num ∉ l.blocked
+def BareKind (num : Option Number) : Prop := kindShift num ∉ l.blocked
 
 instance : Decidable (l.DefiniteKind num) := by unfold DefiniteKind; infer_instance
 
@@ -203,11 +211,12 @@ theorem bareKind_or_definiteKind : l.BareKind num ∨ l.DefiniteKind num :=
   (em _).imp_right fun h ↦ l.blocked_subset (not_not.1 h)
 
 -- (87)
-theorem bareKind_singular_iff : l.BareKind .singular ↔ ¬ l.DefiniteKind .singular :=
+theorem bareKind_singular_iff :
+    l.BareKind (some .singular) ↔ ¬ l.DefiniteKind (some .singular) :=
   ⟨fun h h' ↦ h (l.iota_mem_blocked h'), fun h h' ↦ h (l.blocked_subset h')⟩
 
 -- p. 422
-theorem bareKind_of_bareKind_singular (h : l.BareKind .singular) : l.BareKind num := by
+theorem bareKind_of_bareKind_singular (h : l.BareKind (some .singular)) : l.BareKind num := by
   rcases kindShift_eq_down_or_iota num with hk | hk <;> rw [BareKind, hk]
   · exact fun hd ↦ h (l.iota_mem_blocked (l.iota_mem_of_down_mem (l.blocked_subset hd)))
   · exact h
@@ -215,14 +224,14 @@ theorem bareKind_of_bareKind_singular (h : l.BareKind .singular) : l.BareKind nu
 /-- English-in-reverse, with definite plural kinds and bare singular kinds, is impossible (p. 447).
 -/
 theorem not_englishInReverse :
-    ¬ (l.DefiniteKind .plural ∧ l.BareKind .singular) := fun ⟨h, h'⟩ ↦
+    ¬ (l.DefiniteKind (some .plural) ∧ l.BareKind (some .singular)) := fun ⟨h, h'⟩ ↦
   h' (l.iota_mem_blocked (l.iota_mem_of_down_mem (by simpa [DefiniteKind] using h)))
 
 /-- German-in-reverse, with definite plural and mass kinds but optionally bare singular kinds, is
 impossible (p. 448). -/
 theorem not_germanInReverse :
-    ¬ (¬ l.BareKind .plural ∧ ¬ l.BareKind .general ∧ l.BareKind .singular ∧
-      l.DefiniteKind .singular) :=
+    ¬ (¬ l.BareKind (some .plural) ∧ ¬ l.BareKind none ∧ l.BareKind (some .singular) ∧
+      l.DefiniteKind (some .singular)) :=
   fun ⟨_, _, h, h'⟩ ↦ l.bareKind_singular_iff.1 h h'
 
 end Lexicalization
@@ -254,28 +263,29 @@ inductive Form
   deriving DecidableEq
 
 /-- A kind term of number `num` can take the form `f` under `l`. -/
-def Lexicalization.Licit (l : Lexicalization) (num : Number) : Form → Prop
+def Lexicalization.Licit (l : Lexicalization) (num : Option Number) : Form → Prop
   | .bare => l.BareKind num
   | .definite => l.DefiniteKind num
 
-instance (l : Lexicalization) (num : Number) : DecidablePred (l.Licit num) := fun f ↦ by
+instance (l : Lexicalization) (num : Option Number) : DecidablePred (l.Licit num) := fun f ↦ by
   cases f <;> unfold Lexicalization.Licit <;> infer_instance
 
 /-- A row records the language's lexicalization, the number of the noun, the form of its kind
 term, and the judgment. -/
 structure Row where
   lexicalization : Lexicalization
-  num : Number
+  num : Option Number
   form : Form
   judgment : Judgment
 
-/-- A row from a datum's language and features; a mass term is number-neutral, fn. 25. -/
+/-- A row from a datum's language and features; a mass term has no number, fn. 25. -/
 def Row.ofDatum (d : Datum) : Option Row := do
   let l ← lexicalizationOf d.language
-  let num ← match d.feature? "number" with
-    | some "singular" => some Number.singular
-    | some "plural" => some .plural
-    | some "general" | some "mass" => some .general
+  let num : Option Number ← match d.feature? "number" with
+    | some "singular" => some (some .singular)
+    | some "plural" => some (some .plural)
+    | some "general" => some (some .general)
+    | some "mass" => some none
     | _ => none
   let f ← match d.feature? "form" with
     | some "bare" => some Form.bare
