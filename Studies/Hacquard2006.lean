@@ -33,7 +33,8 @@ account is that one modal verb has root and epistemic readings alike, as Italian
 lexical. In a matrix clause the speech event binds the modal, and its content is the speaker's
 beliefs in a declarative and the addressee's To-Do List in an imperative (`Mood.SpeechEvent`), so
 one possibility modal over one prejacent can be false over the first and true over the second,
-`can_leave_by_event`. The dissertation's examples are the rows of `Data.Examples.Hacquard2006`.
+`leave_possible_by_event`. The dissertation's examples are the rows of
+`Data.Examples.Hacquard2006`.
 
 ## Implementation notes
 
@@ -45,6 +46,13 @@ content of an event is partial, and the epistemic readings are
 and (309) are syntactic and enter only through which event a modal is anchored to; the
 progressive (124) and the counterfactual modal of chapter 2, Italian *volere* (chapter 4), and
 the interaction with negation (84) are not formalized.
+
+The deontic reading of `leave_possible_by_event` is read off an imperative speech event, whose
+content `Mood.SpeechEvent` takes to be the addressee's To-Do List, after the content assumption.
+Hacquard's own deontic accessibility relation, (231) and (235c), reads the To-Do List of the
+addressee of whatever event binds the modal, a matrix declarative's included, so the imperative
+event is the substrate's simplification. English *can* has no plain epistemic reading, so the
+epistemic case is glossed with the *might* of (222).
 
 ## References
 
@@ -204,7 +212,8 @@ theorem not_aspectBoundEpistemic_of_eq_none (h : ∀ e, occurs e w → con e = n
 The speech event `e*` has content (assumption 4), the speaker's beliefs in a declarative and the
 addressee's To-Do List in an imperative. The possibility modal it licenses is the dual of the
 necessity modal of `Mood.SpeechEvent.modal`, so over a declarative event it is the epistemic
-*might* of (222). -/
+*might* of (222), and over an imperative event it ranges over the worlds compatible with the
+To-Do List (`Mood.SpeechEvent.optimal_toContext_imperative`). -/
 
 /-- The addressee leaves or stays. -/
 inductive LeaveWorld where
@@ -217,18 +226,19 @@ def believesStay : Mood.SpeechEvent LeaveWorld := .declarative fun _ ↦ [(· = 
 /-- An imperative speech event with leaving on the addressee's To-Do List. -/
 def todoLeave : Mood.SpeechEvent LeaveWorld := .imperative fun _ ↦ [(· = .leave)]
 
-/-- *You can leave*, the dual of necessity applied to leaving, is false over the declarative
-event, whose speaker believes the addressee is staying, and true over the imperative event, whose
-To-Do List contains leaving. -/
-theorem can_leave_by_event :
+/-- The possibility of leaving, the dual of necessity applied to staying, is false over the
+declarative event, whose speaker believes the addressee is staying, and true over the imperative
+event, whose To-Do List contains leaving: the epistemic *might* of (222) and the deontic reading
+come apart over one prejacent. -/
+theorem leave_possible_by_event :
     believesStay.modal .leave (· ≠ .leave) ∧ ¬ todoLeave.modal .leave (· ≠ .leave) := by
   refine ⟨(Mood.SpeechEvent.modal_declarative_iff _ _ _).2 fun v hv h ↦ ?_, fun h ↦ ?_⟩
   · subst h
     cases hv _ (List.mem_singleton_self _)
-  · refine (Mood.SpeechEvent.modal_imperative _ _ _).1 h .leave
-      (Preorder.mem_minimals_iff.2 ⟨by simp, fun w _ hw ↦ ?_⟩) rfl
-    obtain rfl : w = .leave := (Mood.SpeechEvent.toContext_imperative_le _ _ w .leave).1 hw _
-      (List.mem_singleton_self _) rfl
-    exact (Mood.SpeechEvent.toContext_imperative_le _ _ _ _).2 fun _ _ ↦ id
+  · have hopt := Mood.SpeechEvent.optimal_toContext_imperative
+      (todo := fun _ ↦ [(· = LeaveWorld.leave)]) (w₀ := .leave) ⟨.leave, by simp⟩
+    refine (Mood.SpeechEvent.modal_imperative _ _ _).1 h .leave ?_ rfl
+    rw [hopt]
+    simp
 
 end Hacquard2006

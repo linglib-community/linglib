@@ -33,6 +33,8 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 * `w ≤[A] z` and `w <[A] z` are notation for the order of `premisePreorder A`. A `DecidableRel`
   instance on that order would be keyed on every `≤`-goal downstream, so a study that decides a
   premise ordering supplies a local instance for its own ordering source.
+* Adding a premise refines the induced ordering with it, `Modality.premisePreorder_insert`, which
+  lives in `Semantics/Dynamic/Expectation.lean` beside the refinement it is stated with.
 
 ## References
 

@@ -39,7 +39,8 @@ updates, in the states of the participants it updates.
 * Hacquard's deontic accessibility relation reads the To-Do List of the addressee of whatever event
   binds the modal, a declarative speech event included, and keeps the worlds compatible with it.
   Here the To-Do List is the content of an imperative speech event and ranks the worlds instead;
-  the optimal worlds are the compatible ones whenever the list is consistent.
+  the optimal worlds are the compatible ones whenever the list is consistent
+  (`SpeechEvent.optimal_toContext_imperative`).
 * Which event binds a modal is the business of `Semantics/Modality/EventRelativity.lean`.
 
 ## References
@@ -116,6 +117,21 @@ theorem SpeechEvent.toContext_imperative_le (todo : W → List (W → Prop)) (w�
   rw [SpeechEvent.toContext_imperative_addressee, State.foldl_promote_toExpState,
     ExpState.foldl_promote_info]
   rfl
+
+/-- When some world realizes every item of the To-Do List, the addressee's optimal worlds are
+exactly the worlds compatible with the list, those that realize every item. -/
+theorem SpeechEvent.optimal_toContext_imperative {todo : W → List (W → Prop)} {w₀ : W}
+    (h : ∃ v, ∀ p ∈ todo w₀, p v) :
+    ((SpeechEvent.imperative todo).toContext w₀ .addressee).optimal =
+      {v | ∀ p ∈ todo w₀, p v} := by
+  obtain ⟨x, hx⟩ := h
+  ext w
+  rw [ExpState.optimal, Preorder.mem_minimals_iff, SpeechEvent.toContext_imperative_info]
+  refine ⟨fun ⟨_, hw⟩ p hp ↦ (toContext_imperative_le todo w₀ w x).1
+      (hw (Set.mem_univ x) ((toContext_imperative_le todo w₀ x w).2 fun q hq _ ↦ hx q hq)) p hp
+      (hx p hp),
+    fun hw ↦ ⟨Set.mem_univ w, fun v _ _ ↦ (toContext_imperative_le todo w₀ w v).2
+      fun p hp _ ↦ hw p hp⟩⟩
 
 /-! ### The licensed modal -/
 

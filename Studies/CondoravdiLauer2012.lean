@@ -23,9 +23,9 @@ bottom by cooperation by default. The paper's formal points against ordering-sou
 affirmation and, in its discussion of To-Do Lists, against a secondary update of the ordering
 source are checked as well. Read on the mood states that commitments project, [the imperative
 convention promotes the content in the speaker's ordering](##toState_imperative), where Portner's
-To-Do List update promotes it in the addressee's, and that update [excludes no optimal world after
-contrary imperatives](##portner_contrary_imperatives), which the paper's account treats as a
-revision.
+To-Do List update promotes it in the addressee's, and that update by itself [excludes no optimal
+world after contrary imperatives](##portner_contrary_imperatives), which Portner rules out by
+requiring To-Do Lists to be consistent and the paper's account treats as a revision.
 
 ## Implementation notes
 
@@ -269,8 +269,8 @@ theorem toState_declarative (K : State (Discourse.Role × Force) W) (p : Set W) 
 
 /-- The imperative convention (47), read on the participants' mood states, promotes the content
 in the speaker's ordering, the update a promise makes. Portner's To-Do List update promotes it in
-the addressee's ordering instead, and the two coincide only where the content already constrains
-neither ordering (`Discourse.SpeechAct.Force.update_promise_eq_directive_iff`). -/
+the addressee's ordering instead, and the two coincide exactly when both orderings already
+respect the content (`Discourse.SpeechAct.Force.update_promise_eq_directive_iff`). -/
 theorem toState_imperative (K : State (Discourse.Role × Force) W) (p : Set W) :
     toState (insert ((.speaker, .preferential), p) K) =
       Discourse.SpeechAct.Force.update .promise (toState K) (· ∈ p) := by
@@ -313,7 +313,7 @@ example :
   rw [toState_declarative]
   simp [toState]
 
--- a content the addressee's ordering does not respect separates a promise from a directive
+-- a content the speaker's ordering does not respect separates a promise from a directive
 example : Discourse.SpeechAct.Force.update .promise (⊤ : Discourse.Role → Mood.State Bool)
     (· = true) ≠ Discourse.SpeechAct.Force.update .directive ⊤ (· = true) :=
   fun h ↦ Bool.false_ne_true <|
@@ -321,10 +321,13 @@ example : Discourse.SpeechAct.Force.update .promise (⊤ : Discourse.Role → Mo
     ((Discourse.SpeechAct.Force.update_promise_eq_directive_iff _ _).1 h .speaker)
     (w := false) (v := true) trivial rfl
 
-/-- §5: Portner's To-Do List update does not register contrary imperatives. Directing a content
-and then its negation excludes no world that was optimal for the addressee, so in the context of
-(15), where nothing is yet preferred, every world stays optimal; the consistency of effective
-preferences makes the second imperative a revision instead (`imperatives_revise`). -/
+/-- §5: the To-Do List update by itself does not register contrary imperatives. Directing a
+content and then its negation excludes no world that was optimal for the addressee, so in the
+context of (15), where nothing is yet preferred, every world stays optimal. [portner-2007] rules
+such sequences out by requiring To-Do Lists to be consistent, which the paper calls a stipulation,
+since the ordering a To-Do List induces is a Kratzer ordering made to tolerate incompatible
+constraints; on the paper's account the consistency of effective preferences makes the second
+imperative a revision (`imperatives_revise`). -/
 theorem portner_contrary_imperatives (d : Discourse.Role → Mood.State W) (φ : W → Prop) :
     (d .addressee).optimal ⊆ (Discourse.SpeechAct.Force.update .directive
       (Discourse.SpeechAct.Force.update .directive d φ) (¬ φ ·) .addressee).optimal := by
