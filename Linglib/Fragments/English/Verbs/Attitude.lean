@@ -40,7 +40,7 @@ def know : Verb where
   vendlerClass := some .state
   passivizable := false
   complementSig := some .mono
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   levinClasses := {LevinClass.conjecture}
 
@@ -61,7 +61,7 @@ def realize : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   passivizable := false
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- "discover" — semi-factive, weaker projection -/
@@ -70,7 +70,7 @@ def discover : Verb where
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .achievement
   passivizable := false
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   levinClasses := {LevinClass.conjecture, .sight}
 
@@ -80,7 +80,7 @@ def notice : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   passivizable := false
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   levinClasses := {LevinClass.see}
 
@@ -97,7 +97,7 @@ def believe : Verb where
   scaleDimension := some .confidence
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   complementSig := some .mono
   levinClasses := {LevinClass.declare}
 
@@ -109,7 +109,7 @@ def think : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   complementSig := some .mono
   levinClasses := {LevinClass.declare}
 
@@ -123,7 +123,7 @@ def doubt : Verb where
   scaleDimension := some .confidence
   scalePolarity := .negative
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   complementSig := some .anti
 
 /-! ### Preferential Attitude -/
@@ -252,7 +252,7 @@ def reveal : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .full
   levinClasses := {LevinClass.characterize, .say}
 
@@ -380,7 +380,7 @@ def remember_rog : Verb where
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   senseTag := .rogative
   levinClasses := {LevinClass.characterize}
@@ -395,7 +395,7 @@ def forget_rog : Verb where
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .full
   senseTag := .rogative
 

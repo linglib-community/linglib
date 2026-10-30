@@ -45,7 +45,7 @@ def ukuthi : Complementizer where
 def cabanga : Verb where
   morphs := [.root "cabanga"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
 
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
 def funa : Verb where

@@ -138,9 +138,9 @@ namespace PredicateClass
 /-- A fragment entry is in a class when it records the property the class is identified by. -/
 protected def Mem : PredicateClass → Verb → Prop
   | utterance, v => v.speechActVerb
-  | propositionalAttitude, v => v.attitude = some (.doxastic .nonVeridical)
+  | propositionalAttitude, v => ∃ a ∈ v.attitude, ¬ a.IsPreferential ∧ ¬ a.IsVeridical v.factivity
   | commentative, v => v.attitude.bind Attitude.valence ≠ none ∧ v.factivity ≠ none
-  | knowledge, v => v.attitude = some (.doxastic .veridical)
+  | knowledge, v => ∃ a ∈ v.attitude, a.IsVeridical v.factivity
   | fearing, v =>
     v.attitude.bind Attitude.valence = some .negative ∧ v.factivity = none ∧ ¬ HasAffectee v
   | desiderative, v =>

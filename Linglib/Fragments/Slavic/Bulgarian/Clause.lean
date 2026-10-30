@@ -138,77 +138,77 @@ def vazmushtavamSe : Verb where
 def razbiram : Verb where
   morphs := [.root "razbiram"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .full
 
 /-- *vzemam predvid* 'take into account', printed *previd* in the paper. -/
 def vzemamPredvid : Verb where
   morphs := [.root "vzemam", .free "predvid"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .full
 
 /-- *imam predvid* 'bear in mind'. -/
 def imamPredvid : Verb where
   morphs := [.root "imam", .free "predvid"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .full
 
 /-- *prenebregvam* 'ignore'. -/
 def prenebregvam : Verb where
   morphs := [.root "prenebregvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .full
 
 /-- *griža se* 'take care'. -/
 def grizhaSe : Verb where
   morphs := [.root "griža", .free "se"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .full
 
 /-- *znaja* 'know', a semi-factive. -/
 def znaja : Verb where
   morphs := [.root "znaja"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- *pomnja* 'remember'. -/
 def pomnja : Verb where
   morphs := [.root "pomnja"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- *otkrivam* 'find out'. -/
 def otkrivam : Verb where
   morphs := [.root "otkrivam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- *viždam* 'see', on the propositional reading. -/
 def vizhdam : Verb where
   morphs := [.root "viždam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- *čuvam* 'hear', on the propositional reading. -/
 def chuvam : Verb where
   morphs := [.root "čuvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- *zabeljazvam* 'notice'. -/
 def zabeljazvam : Verb where
   morphs := [.root "zabeljazvam"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
 
 /-- The predicates Krapova names. -/

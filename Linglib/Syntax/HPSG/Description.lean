@@ -373,7 +373,7 @@ structure Constraint (Sig : Signature Srt) where
 namespace Constraint
 
 /-- The formula that states a constraint. -/
-def toDesc (c : Constraint Sig) : Desc Sig := (Desc.sortAssign .colon c.sort).imp c.body
+@[coe] def toDesc (c : Constraint Sig) : Desc Sig := (Desc.sortAssign .colon c.sort).imp c.body
 
 instance : Coe (Constraint Sig) (Desc Sig) := ⟨toDesc⟩
 

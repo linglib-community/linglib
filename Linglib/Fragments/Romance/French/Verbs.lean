@@ -442,7 +442,7 @@ def croire : Verb where
   morphs := [.root "croire"]
   valency := .ofFrames [ArgumentFrame.finiteClause]
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
 
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=

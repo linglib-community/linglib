@@ -48,7 +48,7 @@ def leo : Verb where
 def pistevo : Verb where
   morphs := [.root "pistévo"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   vendlerClass := some .state
   opaqueContext := true
 
@@ -57,7 +57,7 @@ def pistevo : Verb where
 def ksero : Verb where
   morphs := [.root "kséro"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   vendlerClass := some .state
 
@@ -67,7 +67,7 @@ def ksero : Verb where
 def katalaveno : Verb where
   morphs := [.root "katalavéno"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   vendlerClass := some .achievement
 
@@ -76,7 +76,7 @@ def katalaveno : Verb where
 def sinidhitopio : Verb where
   morphs := [.root "sinidhitopió"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   vendlerClass := some .achievement
 
@@ -130,7 +130,7 @@ polysemy rides on sense-tagged entry pairs (`SenseTag.stative`, the
 def thimame : Verb where
   morphs := [.root "thimáme"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   vendlerClass := some .achievement
 
@@ -142,7 +142,7 @@ def thimameStat : Verb where
   morphs := [.root "thimáme"]
   valency := .ofFrame ArgumentFrame.finiteClause
   senseTag := .stative
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   vendlerClass := some .state
 
@@ -169,17 +169,19 @@ def thimonoStat : Verb where
 def nomizo : Verb where
   morphs := [.root "nomízo"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   vendlerClass := some .state
   opaqueContext := true
 
 /-- *paradhéxome* (παραδέχομαι) 'admit' — factive speech-act verb; takes *oti* and not
-    *pu* ([roussou-2010]). -/
+    *pu* ([roussou-2010] (19a)), whose factive *oti* complements carry a weak presupposition, the
+    semi-factive class. -/
 def paradhexome : Verb where
   morphs := [.root "paradhéxome"]
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
+  factivity := some .semi
   vendlerClass := some .achievement
 
 /-- *antilamvánome* (αντιλαμβάνομαι) 'realize' — factive doxastic, eventive; takes *oti*
@@ -187,7 +189,7 @@ def paradhexome : Verb where
 def antilamvanome : Verb where
   morphs := [.root "antilamvánome"]
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .doxastic)
   factivity := some .semi
   vendlerClass := some .achievement
 

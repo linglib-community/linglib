@@ -34,6 +34,23 @@ The ch. 2 diagnostics and the Buryat clause shapes are checked here against
 the thesis's own examples (`Bondarenko2022.Examples`); the per-language
 Cont/Comp head assignments are stated over the Buryat and Korean fragment
 inventories.
+
+## Implementation notes
+
+* Buryat *hanaxa* 'think' quantifies over doxastic alternatives in both of its frames, which
+  differ in opacity; its nominalized reading, 'remember', is veridical through the presupposition
+  that the event its complement describes started before the thinking (§4.4.3). The fragment's
+  readings carry no factivity, so the veridicality is stated with that presupposition as the
+  reading's factivity class `fac` (`hanaxa_nominalized_isVeridical_iff`), and by
+  `Doxastic.isVeridical_forall_iff` it is veridicality under every denotation of the reading.
+
+## References
+
+* [bondarenko-2022]
+* [kratzer-2006]
+* [moulton-2015]
+* [kratzer-1989]
+* [bassi-bondarenko-2021]
 -/
 
 @[expose] public section
@@ -362,9 +379,16 @@ theorem hanaxa_typers :
       hanaxa.typers complementizers = [aasha, zha] := by
   decide
 
-theorem hanaxa_frame_conditioned_attitude :
-    hanaxa.attitudeOn ArgumentFrame.finiteClause = some (.doxastic .nonVeridical) ∧
-      hanaxa.attitudeOn nominalizedFrame = some (.doxastic .veridical) := by
+theorem hanaxa_attitudeOn :
+    hanaxa.attitudeOn ArgumentFrame.finiteClause = some (.doxastic .doxastic) ∧
+      hanaxa.attitudeOn nominalizedFrame = some (.doxastic .doxastic) := by
   decide
+
+/-- The nominalized reading of *hanaxa* is veridical exactly when it presupposes its complement,
+as the presupposition of its nominalized complement makes it (§4.4.3). -/
+theorem hanaxa_nominalized_isVeridical_iff (fac : Option Presupposition.Factivity) :
+    ∀ a ∈ hanaxa.attitudeOn nominalizedFrame, (a.IsVeridical fac ↔ fac ≠ none) := by
+  rw [hanaxa_attitudeOn.2]
+  simp [Attitude.IsVeridical]
 
 end Bondarenko2022
