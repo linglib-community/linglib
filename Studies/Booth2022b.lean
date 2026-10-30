@@ -31,7 +31,7 @@ disjointness of the premises' truth set from the conclusion's.
 
 * The semantics is `MinimalCovering`: `Question W` supplies Def 10's subset-closed families
   (`Question.ofSet` is `↓{·}` of Def 11, `Question.info` is `info` of Def 12, `Question.alt` is
-  `alt` of Def 13), Def 10's bilateral propositions are `MinimalCovering.BilatInqProp`, whose
+  `alt` of Def 13), Def 10's bilateral propositions are `Kalman (Question W)`, whose
   third bullet `P⁺ ∩ P⁻ = {∅}` is disjointness in `Question W`, and Def 14's ¬-, ∧- and ∨-clauses
   are its `ᶜ`, `⊓` and `⊔`. Def 14 defines `◇φ` as `¬□¬φ`, which is
   `MinimalCovering.possibility_eq_compl_necessity_compl`.
@@ -41,7 +41,7 @@ disjointness of the premises' truth set from the conclusion's.
 * Def 8's language is the `!`-free fragment of `MinimalCovering.Formula`; Fact 5 is proved for
   the whole language.
 * Def 17 writes `w ∈ ⟦φ⟧⁺` for a world `w` and a set of states; it is read as
-  `w ∈ info ⟦φ⟧⁺`, equivalently `{w} ∈ ⟦φ⟧⁺` (`BilatInqProp.mem_truth_iff`).
+  `w ∈ info ⟦φ⟧⁺`, equivalently `{w} ∈ ⟦φ⟧⁺` (`MinimalCovering.mem_truth_iff`).
 * Def 22 is mathlib's `IncompRel` for the positive interpretations; for atoms it is
   [booth-2022a]'s admissibility (`nonHurford_atom_iff`). The meta-language Facts 6 and 7 are
   stated for every such disjunction, but their proofs assume that no alternative of either disjunct
@@ -68,7 +68,7 @@ disjointness of the premises' truth set from the conclusion's.
 
 namespace Booth2022b
 
-open MinimalCovering MinimalCovering.BilatInqProp Question
+open MinimalCovering Question
 
 variable {W : Type*}
 
@@ -81,7 +81,7 @@ theorem kratzer_monotone (R : W → Set W) : Monotone fun A : Set W ↦ {w | R w
 
 /-- A Booth necessity is a Kratzerian one (Def 1): the relevant worlds lie in the truth set of
 the prejacent. -/
-theorem truth_necessity_subset (R : W → Set W) (φ : BilatInqProp W) :
+theorem truth_necessity_subset (R : W → Set W) (φ : Kalman (Question W)) :
     truth (necessity R φ) ⊆ {w | R w ⊆ truth φ} := by
   rw [truth_necessity]
   exact fun _ h ↦ h.subset_sUnion.trans φ.pro.sUnion_alt_subset_info
@@ -89,27 +89,27 @@ theorem truth_necessity_subset (R : W → Set W) (φ : BilatInqProp W) :
 /-- Booth's necessity is not upward monotonic, as on the model of Figure 1 `□p` is true and `□(p ∨
 q)` is not. -/
 theorem not_monotone_necessity :
-    ¬ ∀ φ ψ : BilatInqProp Booth2022a.Figures.W4, truth φ ⊆ truth ψ →
+    ¬ ∀ φ ψ : Kalman (Question Booth2022a.Figures.W4), truth φ ⊆ truth ψ →
       truth (necessity Booth2022a.Figures.rP φ) ⊆ truth (necessity Booth2022a.Figures.rP ψ) :=
   fun h ↦ (Booth2022a.ross_gap Booth2022a.Figures.incomp_val Booth2022a.Figures.box_p).1
     (h (atom Booth2022a.Figures.vp) (atom Booth2022a.Figures.vp ⊔ atom Booth2022a.Figures.vq)
-      (by simp) Booth2022a.Figures.box_p)
+      (by rw [truth_sup]; exact Set.subset_union_left) Booth2022a.Figures.box_p)
 
 /-! ### Non-Hurford disjunctions (Def 22) -/
 
 /-- **Booth Def 22**: `φ ∨ ψ` is non-Hurford when the positive interpretations of the disjuncts
 are incomparable. -/
-def NonHurford (φ ψ : BilatInqProp W) : Prop :=
+def NonHurford (φ ψ : Kalman (Question W)) : Prop :=
   IncompRel (· ≤ ·) φ.pro ψ.pro
 
-theorem NonHurford.symm {φ ψ : BilatInqProp W} (h : NonHurford φ ψ) : NonHurford ψ φ :=
+theorem NonHurford.symm {φ ψ : Kalman (Question W)} (h : NonHurford φ ψ) : NonHurford ψ φ :=
   IncompRel.symm h
 
 theorem nonHurford_atom_iff {Vp Vq : Set W} :
     NonHurford (atom Vp) (atom Vq) ↔ IncompRel (· ⊆ ·) Vp Vq :=
   and_congr (not_congr ofSet_le_ofSet_iff) (not_congr ofSet_le_ofSet_iff)
 
-theorem alt_sup_pro_eq_union {φ ψ : BilatInqProp W}
+theorem alt_sup_pro_eq_union {φ ψ : Kalman (Question W)}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro) :
     alt (φ ⊔ ψ).pro = alt φ.pro ∪ alt ψ.pro := by
   refine (alt_sup_subset_union φ.pro ψ.pro).antisymm ?_
@@ -139,14 +139,7 @@ theorem fg_eval (V : At → Set W) (R : W → Set W) (φ : MinimalCovering.Formu
   | neg φ ih => exact (ih R).symm
   | conj φ ψ ihφ ihψ => exact ⟨(ihφ R).1.inf (ihψ R).1, (ihφ R).2.sup (ihψ R).2⟩
   | disj φ ψ ihφ ihψ => exact ⟨(ihφ R).1.sup (ihψ R).1, (ihφ R).2.inf (ihψ R).2⟩
-  | bang φ _ =>
-    refine ⟨?_, ?_⟩
-    · change FG (Formula.eval V R φ).proᶜᶜ
-      rw [compl_compl_eq]
-      exact fg_ofSet _
-    · change FG (Formula.eval V R φ).conᶜᶜ
-      rw [compl_compl_eq]
-      exact fg_ofSet _
+  | bang φ _ => exact ⟨fg_ofSet _, fg_ofSet _⟩
   | cond φ ψ _ ihψ => exact ihψ _
   | box φ _ => exact ⟨fg_ofSet _, fg_ofSet _⟩
   | diamond φ _ => exact ⟨fg_ofSet _, fg_ofSet _⟩
@@ -171,7 +164,7 @@ under that condition and fail under Def 22. -/
 
 /-- Under the alternative-wise non-Hurford condition, the Ross inference is strongly invalid once
 `ψ` has an alternative (Booth Fact 7). -/
-theorem ross_strongly_invalid_of_alt {φ ψ : BilatInqProp W}
+theorem ross_strongly_invalid_of_alt {φ ψ : Kalman (Question W)}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro)
     (hψ : (alt ψ.pro).Nonempty) (R : W → Set W) :
     Disjoint (truth (necessity R φ)) (truth (necessity R (φ ⊔ ψ))) := by
@@ -184,18 +177,13 @@ theorem ross_strongly_invalid_of_alt {φ ψ : BilatInqProp W}
 
 /-- Under the alternative-wise non-Hurford condition, if `□(φ ∨ ψ)` is true then some relevant world
 verifies `φ` but not `ψ` (Booth Fact 6). -/
-theorem inter_diff_truth_nonempty_of_alt {φ ψ : BilatInqProp W}
+theorem inter_diff_truth_nonempty_of_alt {φ ψ : Kalman (Question W)}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro)
     (hφ : (alt φ.pro).Nonempty) (hψ : ψ.pro.IsNormal) {R : W → Set W} {w : W}
     (h : w ∈ truth (necessity R (φ ⊔ ψ))) : (R w ∩ (truth φ \ truth ψ)).Nonempty := by
   rw [truth_necessity, Set.mem_ofPred_eq, alt_sup_pro_eq_union hφψ hψφ] at h
   obtain ⟨a, ha⟩ := hφ
-  obtain ⟨v, hvR, hv⟩ := Set.not_subset.1 fun hcov ↦
-    (h.le_of_le hcov Set.sdiff_subset (Set.mem_union_left _ ha)).2 rfl
-  obtain ⟨c, hc, hvc⟩ := h.subset_sUnion hvR
-  have hva : v ∈ a := by
-    by_contra hva
-    exact hv ⟨c, ⟨hc, fun hca ↦ hva (hca ▸ hvc)⟩, hvc⟩
+  obtain ⟨v, hvR, hva, hv⟩ := (isMinCover_iff_inter_sdiff.1 h).2 a (.inl ha)
   refine ⟨v, hvR, subset_info_of_mem (mem_of_mem_alt ha) hva, ?_⟩
   rintro ⟨s, hs, hvs⟩
   obtain ⟨b, hb, hsb⟩ := hψ s hs
@@ -234,17 +222,23 @@ end Formula
 /-- Booth Fact 7 as printed, for every non-Hurford disjunction of Def 22, fails on a three-world
 model with `R(0) = {0, 1}`. -/
 theorem not_forall_disjoint_of_nonHurford :
-    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : BilatInqProp W), NonHurford φ ψ →
+    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : Kalman (Question W)), NonHurford φ ψ →
       Disjoint (truth (necessity R φ)) (truth (necessity R (φ ⊔ ψ))) := by
   intro hall
   have h01 : IncompRel (· ⊆ ·) ({0} : Set (Fin 3)) {1} :=
     ⟨fun h ↦ by simpa using h (Set.mem_singleton 0), fun h ↦ by simpa using h (Set.mem_singleton 1)⟩
   have hNH : NonHurford (atom ({0} : Set (Fin 3)) ⊔ atom {1}) (atom {0, 2}) := by
     refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-    · have : ({1} : Set (Fin 3)) ∈ (atom ({0, 2} : Set (Fin 3))).pro := h (by simp)
-      simp at this
-    · have : ({0, 2} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1} : Set (Fin 3))).pro := h (by simp)
-      simp at this
+    · have : ({1} : Set (Fin 3)) ∈ (atom ({0, 2} : Set (Fin 3))).pro :=
+        h (Question.mem_sup.2 (.inr (Question.mem_ofSet.2 subset_rfl)))
+      exact absurd (Question.mem_ofSet.1 this (Set.mem_singleton 1)) (by simp)
+    · have : ({0, 2} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1} : Set (Fin 3))).pro :=
+        h (Question.mem_ofSet.2 subset_rfl)
+      rcases Question.mem_sup.1 this with h' | h'
+      · exact absurd (Question.mem_ofSet.1 h' (show (2 : Fin 3) ∈ ({0, 2} : Set (Fin 3)) by simp))
+          (by simp)
+      · exact absurd (Question.mem_ofSet.1 h' (show (0 : Fin 3) ∈ ({0, 2} : Set (Fin 3)) by simp))
+          (by simp)
   have hpos : (atom ({0} : Set (Fin 3)) ⊔ atom {1} ⊔ atom {0, 2}).pro =
       ofSet {0, 2} ⊔ ofSet {1} := by
     simp only [Kalman.pro_sup, pro_atom]
@@ -262,16 +256,23 @@ theorem not_forall_disjoint_of_nonHurford :
 /-- Booth Fact 6 as printed, for every non-Hurford disjunction of Def 22, fails on a three-world
 model with `R(0) = W`. -/
 theorem not_forall_independence_of_nonHurford :
-    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : BilatInqProp W), NonHurford φ ψ →
+    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : Kalman (Question W)), NonHurford φ ψ →
       ∀ w ∈ truth (necessity R (φ ⊔ ψ)),
         (R w ∩ (truth φ \ truth ψ)).Nonempty ∧ (R w ∩ (truth ψ \ truth φ)).Nonempty := by
   intro hall
   have hNH : NonHurford (atom ({0, 1} : Set (Fin 3))) (atom {0} ⊔ atom {1, 2}) := by
     refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-    · have : ({0, 1} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1, 2} : Set (Fin 3))).pro := h (by simp)
-      simp [Set.insert_subset_iff] at this
-    · have : ({1, 2} : Set (Fin 3)) ∈ (atom ({0, 1} : Set (Fin 3))).pro := h (by simp)
-      simp [Set.insert_subset_iff] at this
+    · have : ({0, 1} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1, 2} : Set (Fin 3))).pro :=
+        h (Question.mem_ofSet.2 subset_rfl)
+      rcases Question.mem_sup.1 this with h' | h'
+      · exact absurd (Question.mem_ofSet.1 h' (show (1 : Fin 3) ∈ ({0, 1} : Set (Fin 3)) by simp))
+          (by simp)
+      · exact absurd (Question.mem_ofSet.1 h' (show (0 : Fin 3) ∈ ({0, 1} : Set (Fin 3)) by simp))
+          (by simp)
+    · have : ({1, 2} : Set (Fin 3)) ∈ (atom ({0, 1} : Set (Fin 3))).pro :=
+        h (Question.mem_sup.2 (.inr (Question.mem_ofSet.2 subset_rfl)))
+      exact absurd (Question.mem_ofSet.1 this (show (2 : Fin 3) ∈ ({1, 2} : Set (Fin 3)) by simp))
+        (by simp)
   have hpos : (atom ({0, 1} : Set (Fin 3)) ⊔ (atom {0} ⊔ atom {1, 2})).pro =
       ofSet {0, 1} ⊔ ofSet {1, 2} := by
     simp only [Kalman.pro_sup, pro_atom]
@@ -287,6 +288,7 @@ theorem not_forall_independence_of_nonHurford :
     · simpa using h (Set.mem_univ 2)
     · simpa using h (Set.mem_univ 0)
   obtain ⟨x, hx⟩ := (hall (Fin 3) (fun _ ↦ Set.univ) _ _ hNH 0 hbox).1
+  rw [truth_atom, truth_sup, truth_atom, truth_atom] at hx
   fin_cases x <;> simp at hx
 
 /-! ### The object-language Facts 7–13

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.MinimalCovering
 public import Linglib.Logic.Modal.Defs
+public import Studies.Simons2005
 
 /-!
 # Booth (2022a): Independent alternatives: Ross's puzzle and free choice
@@ -10,14 +11,23 @@ public import Linglib.Logic.Modal.Defs
 accepting `□(p ∨ q)` or `◇(p ∨ q)` commits a speaker to `◇(p ∧ ¬q)` and `◇(q ∧ ¬p)`, each disjunct
 an option independently of the other. These are strictly stronger than the Diversity inferences
 `◇p`, `◇q` of the standard analyses (§4), and they amount to the disjuncts' truth sets forming a
-minimal cover of the relevant worlds, where the Diversity inferences need only a super cover (§5).
+minimal cover of the relevant worlds, where the Diversity inferences need only a super cover (§5):
+`◇(p ∨ q)` is true [exactly where both Independence inferences are](##truth_diamond_disj_eq_inter),
+and `□(p ∨ q)` is [the orthodox `□!(p ∨ q)` together with `◇(p ∨ q)`](##truth_box_disj_eq_inter).
 The minimal covering semantics of §6 validates them for inquisitive propositions; §7 notes that
 its unilateral version loses the duality of the modals and the distribution of negated modals over
 disjunction, and recovers both with bilateral propositions; §8 shows the truth-value gaps this
 creates are well placed. The semantics is the theory-layer `MinimalCovering`.
 
-* Facts 1–7 of the appendix: `box_independence_left`, …, `dia_independence_right` (Fact 1);
-  `box_conditional_left`, …, `dia_conditional_right` (Fact 2); `Figures.ross_invalid` (Fact 3);
+The super covers of [simons-2005] validate the Diversity inferences without the Independence
+inferences (fn. 22). Among the pragmatic strengthenings of the super cover that Simons considers,
+the Alternativeness constraint [is the minimal cover](##isMinCover_iff_alternativeness), so
+Booth's semantics makes Alternativeness part of the truth conditions: the cases where some of
+Simons's informants judge a modal disjunction false although her truth conditions make it true
+[are not true here](##not_mem_truth_disj_of_inter_subset).
+
+* Facts 1–7 of the appendix: `box_independence_left`, …, `diamond_independence_right` (Fact 1);
+  `box_conditional_left`, …, `diamond_conditional_right` (Fact 2); `Figures.ross_invalid` (Fact 3);
   `free_choice` (Fact 4); `box_eq_neg_diamond_neg`, `diamond_eq_neg_box_neg` (Fact 5);
   `impossibility_distribution_left`, `impossibility_distribution_right` (Fact 6);
   `unnecessity_distribution_left`, `unnecessity_distribution_right` (Fact 7).
@@ -50,7 +60,7 @@ creates are well placed. The semantics is the theory-layer `MinimalCovering`.
 
 namespace Booth2022a
 
-open MinimalCovering MinimalCovering.BilatInqProp Question
+open MinimalCovering Question
 
 variable {W At : Type*} (V : At → Set W) (R : W → Set W) {p q : At}
 
@@ -66,7 +76,7 @@ theorem truth_box_disj (h : IncompRel (· ⊆ ·) (V p) (V q)) :
 
 /-- The target truth conditions of `◇(p ∨ q)` (§5): the truth sets of the disjuncts minimally
 cover a nonempty set of relevant worlds. -/
-theorem truth_dia_disj (h : IncompRel (· ⊆ ·) (V p) (V q)) :
+theorem truth_diamond_disj (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) =
       {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover {V p, V q} R'} := by
   change truth (possibility R (atom (V p) ⊔ atom (V q))) = _
@@ -76,57 +86,60 @@ theorem truth_box_atom (p : At) :
     truth (Formula.eval V R (.box (.atom p))) = {w | (R w).Nonempty ∧ R w ⊆ V p} :=
   truth_necessity_of_alt_eq_singleton R _ (alt_atom_pro _)
 
-theorem truth_dia_atom (p : At) :
+theorem truth_diamond_atom (p : At) :
     truth (Formula.eval V R (.diamond (.atom p))) = {w | (R w ∩ V p).Nonempty} :=
   truth_possibility_of_alt_eq_singleton R _ (alt_atom_pro _)
 
-theorem truth_dia_conj_neg (p q : At) :
+theorem truth_diamond_conj_neg (p q : At) :
     truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) =
       {w | (R w ∩ (V p \ V q)).Nonempty} :=
   truth_possibility_of_alt_eq_singleton R _ (alt_inf_compl_atom _ _)
 
--- §4
-theorem box_meta_independence (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
-    (hw : w ∈ truth (Formula.eval V R (.box (.disj (.atom p) (.atom q))))) :
-    (R w ∩ (V p \ V q)).Nonempty ∧ (R w ∩ (V q \ V p)).Nonempty := by
-  rw [truth_box_disj V R h] at hw
-  exact ((isMinCover_pair_iff_inter_sdiff h.ne).1 hw).2
+/-- `◇(p ∨ q)` is true exactly where both Independence inferences are (§5): some relevant world is
+a `p`-without-`q` world and some is a `q`-without-`p` world. -/
+theorem truth_diamond_disj_eq_inter (h : IncompRel (· ⊆ ·) (V p) (V q)) :
+    truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) =
+      truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) ∩
+        truth (Formula.eval V R (.diamond (.conj (.atom q) (.neg (.atom p))))) := by
+  rw [truth_diamond_disj V R h, truth_diamond_conj_neg, truth_diamond_conj_neg]
+  ext w
+  simp [exists_isMinCover_iff, Set.pair_sdiff_left h.ne, Set.pair_sdiff_right h.ne]
 
--- §4
-theorem dia_meta_independence (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
-    (hw : w ∈ truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q))))) :
-    (R w ∩ (V p \ V q)).Nonempty ∧ (R w ∩ (V q \ V p)).Nonempty := by
-  rw [truth_dia_disj V R h] at hw
-  obtain ⟨R', hR', -, hmc⟩ := hw
-  obtain ⟨-, h₁, h₂⟩ := (isMinCover_pair_iff_inter_sdiff h.ne).1 hmc
-  exact ⟨h₁.mono (Set.inter_subset_inter_left _ hR'), h₂.mono (Set.inter_subset_inter_left _ hR')⟩
+/-- `□(p ∨ q)` is the orthodox necessity `□!(p ∨ q)` together with `◇(p ∨ q)` (§5): every relevant
+world is a `p ∨ q`-world, and the disjuncts are independent alternatives among them. -/
+theorem truth_box_disj_eq_inter (p q : At) :
+    truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) =
+      truth (Formula.eval V R (.box (.bang (.disj (.atom p) (.atom q))))) ∩
+        truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) :=
+  truth_necessity_eq_inter R _ ((isNormal_ofSet (V p)).sup (isNormal_ofSet (V q)))
 
 /-- The meta-linguistic Diversity inferences follow (§4): the relevant worlds meet both truth
 sets. -/
 theorem box_diversity (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     (hw : w ∈ truth (Formula.eval V R (.box (.disj (.atom p) (.atom q))))) :
-    (R w ∩ V p).Nonempty ∧ (R w ∩ V q).Nonempty :=
-  (box_meta_independence V R h hw).imp
-    (Set.Nonempty.mono (Set.inter_subset_inter_right _ Set.sdiff_subset))
-    (Set.Nonempty.mono (Set.inter_subset_inter_right _ Set.sdiff_subset))
+    (R w ∩ V p).Nonempty ∧ (R w ∩ V q).Nonempty := by
+  rw [truth_box_disj_eq_inter V R p q, truth_diamond_disj_eq_inter V R h, truth_diamond_conj_neg,
+    truth_diamond_conj_neg] at hw
+  exact ⟨hw.2.1.mono (Set.inter_subset_inter_right _ Set.sdiff_subset),
+    hw.2.2.mono (Set.inter_subset_inter_right _ Set.sdiff_subset)⟩
 
 /-- `◇(p ∧ ¬q)` entails `◇p`, so the Independence inferences are at least as strong as the
 Diversity inferences (§4); `Figures.diversity_without_independence` shows they are stronger. -/
-theorem truth_dia_conj_neg_subset (p q : At) :
+theorem truth_diamond_conj_neg_subset (p q : At) :
     truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) ⊆
       truth (Formula.eval V R (.diamond (.atom p))) := by
-  rw [truth_dia_conj_neg, truth_dia_atom]
+  rw [truth_diamond_conj_neg, truth_diamond_atom]
   exact fun _ hw ↦ hw.mono (Set.inter_subset_inter_right _ Set.sdiff_subset)
 
 /-- Over `!φ`, necessity is the universal modal over the relevant worlds when they are nonempty
 ([kratzer-1991]; §6, fn. 13). -/
-theorem truth_necessity_bang (φ : BilatInqProp W) :
+theorem truth_necessity_bang (φ : Kalman (Question W)) :
     truth (necessity R (bang φ)) =
       {w | (R w).Nonempty ∧ ModalLogic.Box (.ofSuccessors R) (· ∈ truth φ) w} :=
   truth_necessity_of_alt_eq_singleton R _ (alt_bang_pro φ)
 
 /-- Over `!φ`, possibility is the orthodox existential modal over the relevant worlds (§6). -/
-theorem truth_possibility_bang (φ : BilatInqProp W) :
+theorem truth_possibility_bang (φ : Kalman (Question W)) :
     truth (possibility R (bang φ)) =
       {w | ModalLogic.Diamond (.ofSuccessors R) (· ∈ truth φ) w} := by
   rw [truth_possibility_of_alt_eq_singleton R _ (alt_bang_pro φ)]
@@ -139,14 +152,16 @@ theorem box_bang_disj (p q : At) :
   rw [truth_box_atom]
   change _ ⊆ truth (necessity R (bang (atom (V p) ⊔ atom (V q))))
   rw [truth_necessity_of_alt_eq_singleton R _ (alt_bang_pro _)]
-  exact fun _ ⟨hne, hsub⟩ ↦ ⟨hne, fun v hv ↦ by simpa using Or.inl (hsub hv)⟩
+  refine fun _ ⟨hne, hsub⟩ ↦ ⟨hne, fun _ hv ↦ ?_⟩
+  rw [truth_sup, truth_atom, truth_atom]
+  exact .inl (hsub hv)
 
 /-! ### The unilateral semantics loses duality and distribution (§7)
 
 In the unilateral semantics of §6 a sentence denotes one inquisitive proposition, negation is the
 pseudocomplement `ᶜ` of `Question W` (the states disjoint from the informative content), and the
-modals are `box` and `dia`. Booth's scenario: in all relevant worlds Alicia burns the letter. Then
-`¬◇(M ∨ B)` is true, since there is no relevant mailing-without-burning world, yet `◇B` is true
+modals are `box` and `diamond`. Booth's scenario: in all relevant worlds Alicia burns the letter.
+Then `¬◇(M ∨ B)` is true, since there is no relevant mailing-without-burning world, yet `◇B` is true
 and `□¬(M ∨ B)` is not. The worlds record whether Alicia mails (`M`) and whether she burns (`B`)
 the letter; the relevant worlds are the two burning worlds, one of them a mailing world. -/
 
@@ -169,26 +184,25 @@ theorem alt_disj : alt (ofSet vM ⊔ ofSet vB) = {vM, vB} :=
 
 /-- `¬◇(M ∨ B)` is true: no nonempty set of burning worlds contains a mailing-without-burning
 world, as a minimal cover by `{M, B}` would need. -/
-theorem not_dia_disj (w : Bool × Bool) : w ∈ (dia rB (ofSet vM ⊔ ofSet vB))ᶜ.info := by
-  rw [info_compl, info_dia, alt_disj]
+theorem not_dia_disj (w : Bool × Bool) : w ∈ (diamond rB (ofSet vM ⊔ ofSet vB))ᶜ.info := by
+  rw [info_compl, info_diamond, alt_disj]
   rintro ⟨R', hR', -, hmc⟩
   obtain ⟨-, ⟨v, hv, -, hvB⟩, -⟩ := (isMinCover_pair_iff_inter_sdiff vM_ne_vB).1 hmc
   exact hvB (hR' hv)
 
 /-- `¬◇B` is not true: some relevant world is a burning world. Impossibility Distribution (19)
 fails. -/
-theorem dia_right (w : Bool × Bool) : w ∉ (dia rB (ofSet vB))ᶜ.info := by
-  rw [info_compl, info_dia, alt_ofSet, Set.notMem_compl_iff]
+theorem dia_right (w : Bool × Bool) : w ∉ (diamond rB (ofSet vB))ᶜ.info := by
+  rw [info_compl, info_diamond, alt_ofSet, Set.notMem_compl_iff]
   have hB : vB.Nonempty := ⟨(true, true), rfl⟩
-  exact ⟨vB, subset_rfl, hB, (isMinCover_singleton_iff hB).2 subset_rfl⟩
+  exact ⟨vB, subset_rfl, hB, isMinCover_singleton_iff.2 ⟨hB, subset_rfl⟩⟩
 
 /-- `□¬(M ∨ B)` is not true while `¬◇(M ∨ B)` is: duality (21) fails. -/
 theorem box_neg_disj (w : Bool × Bool) : w ∉ (box rB (ofSet vM ⊔ ofSet vB)ᶜ).info := by
   rw [info_box, compl_eq, alt_ofSet, Set.mem_ofPred_eq,
-    isMinCover_singleton_iff (show (rB w).Nonempty from ⟨(true, true), rfl⟩), info_sup,
-    info_ofSet, info_ofSet]
+    isMinCover_singleton_iff, info_sup, info_ofSet, info_ofSet]
   intro h
-  exact h (show (true, true) ∈ rB w from rfl) (Or.inr rfl)
+  exact h.2 (show (true, true) ∈ rB w from rfl) (Or.inr rfl)
 
 /-- `¬□(M ∨ B)` is true: the burning worlds hold no mailing-without-burning world. -/
 theorem not_box_disj (w : Bool × Bool) : w ∈ (box rB (ofSet vM ⊔ ofSet vB))ᶜ.info := by
@@ -201,14 +215,14 @@ theorem not_box_disj (w : Bool × Bool) : w ∈ (box rB (ofSet vM ⊔ ofSet vB))
 fails. -/
 theorem box_right (w : Bool × Bool) : w ∉ (box rB (ofSet vB))ᶜ.info := by
   rw [info_compl, info_box, alt_ofSet, Set.notMem_compl_iff]
-  exact (isMinCover_singleton_iff (show (rB w).Nonempty from ⟨(true, true), rfl⟩)).2 subset_rfl
+  exact isMinCover_singleton_iff.2 ⟨⟨(true, true), rfl⟩, subset_rfl⟩
 
-theorem bilateral_not_neg_dia_disj (w : Bool × Bool) :
+theorem bilateral_not_neg_diamond_disj (w : Bool × Bool) :
     w ∉ truth (possibility rB (atom vM ⊔ atom vB))ᶜ := by
   rw [truth_compl, falsity_possibility, alt_sup_atom_con, Set.mem_ofPred_eq,
-    isMinCover_singleton_iff (show (rB w).Nonempty from ⟨(true, true), rfl⟩)]
+    isMinCover_singleton_iff]
   intro h
-  exact (h (show (true, true) ∈ rB w from rfl)).2 rfl
+  exact (h.2 (show (true, true) ∈ rB w from rfl)).2 rfl
 
 end Unilateral
 
@@ -221,30 +235,30 @@ variable {V R}
 /-- **Fact 1**, `□(p ∨ q) ⊨ ◇(p ∧ ¬q)`. -/
 theorem box_independence_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) := by
-  rw [truth_dia_conj_neg]
-  exact fun _ hw ↦ (box_meta_independence V R h hw).1
+      truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) :=
+  (truth_box_disj_eq_inter V R p q).le.trans
+    (Set.inter_subset_right.trans
+      ((truth_diamond_disj_eq_inter V R h).le.trans Set.inter_subset_left))
 
 -- Fact 1
 theorem box_independence_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.conj (.atom q) (.neg (.atom p))))) := by
-  rw [truth_dia_conj_neg]
-  exact fun _ hw ↦ (box_meta_independence V R h hw).2
+      truth (Formula.eval V R (.diamond (.conj (.atom q) (.neg (.atom p))))) :=
+  (truth_box_disj_eq_inter V R p q).le.trans
+    (Set.inter_subset_right.trans
+      ((truth_diamond_disj_eq_inter V R h).le.trans Set.inter_subset_right))
 
 -- Fact 1
-theorem dia_independence_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
+theorem diamond_independence_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) := by
-  rw [truth_dia_conj_neg]
-  exact fun _ hw ↦ (dia_meta_independence V R h hw).1
+      truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) :=
+  (truth_diamond_disj_eq_inter V R h).le.trans Set.inter_subset_left
 
 /-- **Fact 1**, `◇(p ∨ q) ⊨ ◇(q ∧ ¬p)`. -/
-theorem dia_independence_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
+theorem diamond_independence_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.conj (.atom q) (.neg (.atom p))))) := by
-  rw [truth_dia_conj_neg]
-  exact fun _ hw ↦ (dia_meta_independence V R h hw).2
+      truth (Formula.eval V R (.diamond (.conj (.atom q) (.neg (.atom p))))) :=
+  (truth_diamond_disj_eq_inter V R h).le.trans Set.inter_subset_right
 
 theorem updateAccess_neg_atom (p : At) (w : W) :
     updateAccess R (Formula.eval V R (.neg (.atom p))) w = R w \ V p := by
@@ -280,37 +294,41 @@ theorem box_conditional_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
   exact ⟨⟨v, hvR, hvq⟩, fun u hu ↦ (hw.1 hu.1).resolve_right hu.2⟩
 
 -- Fact 2
-theorem dia_conditional_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
+theorem diamond_conditional_left (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.cond (.neg (.atom p)) (.diamond (.atom q)))) := by
   intro w hw
   change w ∈ truth (Formula.eval V (updateAccess R (Formula.eval V R (.neg (.atom p))))
     (.diamond (.atom q)))
-  rw [truth_dia_atom, Set.mem_ofPred_eq, updateAccess_neg_atom]
-  obtain ⟨v, hvR, hvq, hvp⟩ := (dia_meta_independence V R h hw).2
+  rw [truth_diamond_atom, Set.mem_ofPred_eq, updateAccess_neg_atom]
+  have hind := diamond_independence_right h hw
+  rw [truth_diamond_conj_neg] at hind
+  obtain ⟨v, hvR, hvq, hvp⟩ := hind
   exact ⟨v, ⟨hvR, hvp⟩, hvq⟩
 
 /-- **Fact 2**, `◇(p ∨ q) ⊨ ¬q → ◇p`. -/
-theorem dia_conditional_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
+theorem diamond_conditional_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.cond (.neg (.atom q)) (.diamond (.atom p)))) := by
   intro w hw
   change w ∈ truth (Formula.eval V (updateAccess R (Formula.eval V R (.neg (.atom q))))
     (.diamond (.atom p)))
-  rw [truth_dia_atom, Set.mem_ofPred_eq, updateAccess_neg_atom]
-  obtain ⟨v, hvR, hvp, hvq⟩ := (dia_meta_independence V R h hw).1
+  rw [truth_diamond_atom, Set.mem_ofPred_eq, updateAccess_neg_atom]
+  have hind := diamond_independence_left h hw
+  rw [truth_diamond_conj_neg] at hind
+  obtain ⟨v, hvR, hvp, hvq⟩ := hind
   exact ⟨v, ⟨hvR, hvq⟩, hvp⟩
 
 /-- **Fact 4**, Free Choice: `◇(p ∨ q) ⊨ ◇p`. -/
 theorem free_choice (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.diamond (.atom p))) :=
-  (dia_independence_left h).trans (truth_dia_conj_neg_subset V R p q)
+  (diamond_independence_left h).trans (truth_diamond_conj_neg_subset V R p q)
 
 theorem free_choice_right (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
       truth (Formula.eval V R (.diamond (.atom q))) :=
-  (dia_independence_right h).trans (truth_dia_conj_neg_subset V R q p)
+  (diamond_independence_right h).trans (truth_diamond_conj_neg_subset V R q p)
 
 variable (V R)
 
@@ -397,11 +415,19 @@ def IsModalFree : Formula At → Prop
 theorem isCompl_truth_falsity (φ : Formula At) (hφ : IsModalFree φ) :
     IsCompl (truth (Formula.eval V R φ)) (falsity (Formula.eval V R φ)) := by
   induction φ generalizing R with
-  | atom p => simpa [Formula.eval] using isCompl_compl (x := V p)
+  | atom p =>
+    simp only [Formula.eval, truth_atom, falsity_atom]
+    exact isCompl_compl
   | neg φ ih => exact (ih R hφ).symm
-  | conj φ ψ ihφ ihψ => simpa [Formula.eval] using (ihφ R hφ.1).inf_sup (ihψ R hφ.2)
-  | disj φ ψ ihφ ihψ => simpa [Formula.eval] using (ihφ R hφ.1).sup_inf (ihψ R hφ.2)
-  | bang φ ih => simpa [Formula.eval] using ih R hφ
+  | conj φ ψ ihφ ihψ =>
+    simp only [Formula.eval, truth_inf, falsity_inf]
+    exact (ihφ R hφ.1).inf_sup (ihψ R hφ.2)
+  | disj φ ψ ihφ ihψ =>
+    simp only [Formula.eval, truth_sup, falsity_sup]
+    exact (ihφ R hφ.1).sup_inf (ihψ R hφ.2)
+  | bang φ ih =>
+    simp only [Formula.eval, truth_bang, falsity_bang]
+    exact ih R hφ
   | cond φ ψ _ ihψ => exact ihψ _ hφ.2
   | box φ _ => exact hφ.elim
   | diamond φ _ => exact hφ.elim
@@ -438,7 +464,7 @@ theorem independence_gap (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     (hind : w ∉ truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q)))))) :
     w ∉ truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ∧
       w ∉ falsity (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) :=
-  ⟨fun h' ↦ hind (dia_independence_left h h'), fun h' ↦ Set.disjoint_left.1
+  ⟨fun h' ↦ hind (diamond_independence_left h h'), fun h' ↦ Set.disjoint_left.1
     (disjoint_truth_falsity (Formula.eval V R (.diamond (.atom p)))) hp
     (impossibility_distribution_left V R p q h')⟩
 
@@ -466,9 +492,9 @@ theorem gap (w : Bool × Bool) :
     w ∉ truth (Formula.eval val acc (.diamond (.disj (.atom true) (.atom false)))) ∧
       w ∉ falsity (Formula.eval val acc (.diamond (.disj (.atom true) (.atom false)))) := by
   refine independence_gap incomp ?_ ?_
-  · rw [truth_dia_atom]
+  · rw [truth_diamond_atom]
     exact ⟨(true, true), rfl, rfl⟩
-  · rw [truth_dia_conj_neg]
+  · rw [truth_diamond_conj_neg]
     rintro ⟨v, hvR, -, hv⟩
     rw [Set.mem_singleton_iff.1 hvR] at hv
     exact hv rfl
@@ -521,8 +547,8 @@ theorem isMinCover_r₃ : IsMinCover {vp, vq} (r₃ (true, true)) := by
 /-- Figure 1: on the two `p`-worlds `{⟦p⟧, ⟦q⟧}` is a super cover but not a minimal one. -/
 theorem diversity_without_independence :
     IsSuperCover {vp, vq} (rP (true, true)) ∧ ¬ IsMinCover {vp, vq} (rP (true, true)) :=
-  ⟨isSuperCover_pair_iff.2 ⟨Set.subset_union_left, ⟨(true, true), rfl, rfl⟩,
-    ⟨(true, true), rfl, rfl⟩⟩,
+  ⟨isSuperCover_pair_iff.2 ⟨⟨(true, true), rfl, rfl⟩, ⟨(true, true), rfl, rfl⟩,
+    Set.subset_union_left⟩,
     fun h ↦ ((isMinCover_pair_iff incomp.ne).1 h).2.1 subset_rfl⟩
 
 -- Figure 2
@@ -538,14 +564,14 @@ theorem box_p : (true, true) ∈ truth (Formula.eval val rP (.box (.atom true)))
 
 -- Figure 1
 theorem diamond_q : (true, true) ∈ truth (Formula.eval val rP (.diamond (.atom false))) := by
-  rw [truth_dia_atom]
+  rw [truth_diamond_atom]
   exact ⟨(true, true), rfl, rfl⟩
 
 -- Figure 1
 theorem not_diamond_qAndNotP :
     (true, true) ∉
       truth (Formula.eval val rP (.diamond (.conj (.atom false) (.neg (.atom true))))) := by
-  rw [truth_dia_conj_neg]
+  rw [truth_diamond_conj_neg]
   rintro ⟨v, hvR, -, hv⟩
   exact hv hvR
 
@@ -575,5 +601,56 @@ theorem not_contraposition :
     fun h ↦ (ross_gap incomp_val box_p).1 (h box_p)⟩
 
 end Figures
+
+/-! ### Simons's super covers (fn. 22)
+
+[simons-2005] requires the disjuncts under a modal to super cover its domain, each meeting it,
+and considers strengthening the super cover by an Alternativeness constraint as a pragmatic
+add-on. Booth's minimal covers are that strengthening made part of the truth conditions. -/
+
+/-- Simons's super cover enhanced by the Alternativeness constraint is exactly a minimal cover:
+the requirement fn. 22 says resembles the minimal covering relation is that relation. -/
+theorem isMinCover_iff_alternativeness {C : Set (Set W)} {S : Set W} :
+    IsMinCover C S ↔
+      S ⊆ ⋃₀ C ∧ (∀ X ∈ C, (X ∩ S).Nonempty) ∧ Simons2005.Alternativeness C S := by
+  rw [isMinCover_iff_inter_sdiff]
+  refine and_congr_right fun _ ↦ ⟨fun h ↦ ⟨fun X hX ↦ (h X hX).mono fun _ hv ↦ ⟨hv.2.1, hv.1⟩,
+    fun X hX ↦ ?_⟩, fun ⟨_, h⟩ X hX ↦ ?_⟩
+  · obtain ⟨x, hxS, hxX, hx⟩ := h X hX
+    exact ⟨x, ⟨hxX, hxS⟩, fun Y hY hYX hxY ↦ hx ⟨Y, ⟨hY, hYX⟩, hxY⟩⟩
+  · obtain ⟨x, ⟨hxX, hxS⟩, hx⟩ := h X hX
+    exact ⟨x, hxS, hxX, fun ⟨Y, ⟨hY, hYX⟩, hxY⟩ ↦ hx Y hY hYX hxY⟩
+
+/-- `□(p ∨ q)` entails Simons's necessity over the disjuncts, and with it the Diversity
+inferences (fn. 22). -/
+theorem truth_box_disj_subset_must (h : IncompRel (· ⊆ ·) (V p) (V q)) :
+    truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
+      Simons2005.must R {V p, V q} := by
+  rw [truth_box_disj V R h]
+  exact fun _ hw ↦ hw.isSuperCover (hw.nonempty (Set.insert_nonempty _ _))
+
+/-- Simons's necessity validates the Diversity inferences without the Independence inferences
+(fn. 22): on the model of Figure 1 the disjuncts super cover the relevant worlds, yet `◇(q ∧ ¬p)`
+is not true. -/
+theorem Figures.must_not_independence :
+    (true, true) ∈ Simons2005.must Figures.rP {Figures.vp, Figures.vq} ∧
+      (true, true) ∉ truth (Formula.eval Figures.val Figures.rP
+        (.diamond (.conj (.atom false) (.neg (.atom true))))) :=
+  ⟨Figures.diversity_without_independence.1, Figures.not_diamond_qAndNotP⟩
+
+/-- Where every relevant `p`-world is a `q`-world, neither `◇(p ∨ q)` nor `□(p ∨ q)` is true. These
+are the cases of §6.2 of [simons-2005], *Jane may eat chocolate or brush her teeth* when eating
+chocolate requires brushing, on which some speakers judge the sentences false and Simons's own
+truth conditions hold. -/
+theorem not_mem_truth_disj_of_inter_subset (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
+    (hpq : R w ∩ V p ⊆ V q) :
+    w ∉ truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ∧
+      w ∉ truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) := by
+  have hind : w ∉ truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) := by
+    rw [truth_diamond_conj_neg]
+    rintro ⟨v, hvR, hvp, hvq⟩
+    exact hvq (hpq ⟨hvR, hvp⟩)
+  exact ⟨fun hw ↦ hind (diamond_independence_left h hw),
+    fun hw ↦ hind (box_independence_left h hw)⟩
 
 end Booth2022a
