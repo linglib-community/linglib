@@ -12,16 +12,13 @@
   "translation": "",
   "context": "The age requirement for voting in the USA is that voters be 18 years old or more.",
   "judgment": "acceptable",
+  "verdict": true,
   "alternatives": [],
   "readings": [],
   "paperFeatures": [
    [
     "section",
     "3"
-   ],
-   [
-    "truthValue",
-    "true"
    ]
   ],
   "comment": "True, which shows the 'at least' reading available: on the 'exact' or 'at most' reading the sentence would be false.",
@@ -40,16 +37,13 @@
   "translation": "",
   "context": "There is a maximal age but no minimal age for being eligible to the Fields medal.",
   "judgment": "unacceptable",
+  "verdict": false,
   "alternatives": [],
   "readings": [],
   "paperFeatures": [
    [
     "section",
     "3"
-   ],
-   [
-    "truthValue",
-    "false"
    ]
   ],
   "comment": "Judged necessarily false, although an 'at most' reading of the numeral would make it true; with 'at most' added to the left of '40' the sentence is true.",
@@ -95,16 +89,13 @@
   "translation": "",
   "context": "The minimal age required for voting is 18.",
   "judgment": "acceptable",
+  "verdict": true,
   "alternatives": [],
   "readings": [],
   "paperFeatures": [
    [
     "section",
     "4.2"
-   ],
-   [
-    "truthValue",
-    "true"
    ]
   ],
   "comment": "Means that one has to be 18 or more to vote but need not be 19 or more: the minimal required age is 18.",
@@ -123,16 +114,13 @@
   "translation": "",
   "context": "The minimal height for being hired in the military is 6 feet.",
   "judgment": "acceptable",
+  "verdict": true,
   "alternatives": [],
   "readings": [],
   "paperFeatures": [
    [
     "section",
     "4.2"
-   ],
-   [
-    "truthValue",
-    "true"
    ]
   ],
   "comment": "Understood as giving the minimal height; on an 'exact' reading the military would hire only people exactly 6 feet tall.",

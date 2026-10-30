@@ -24,9 +24,10 @@ def ex30a : Datum :=
     glossedTokens := []
     context := "The age requirement for voting in the USA is that voters be 18 years old or more."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("truthValue", "true")] }
+    paperFeatures := [("section", "3")] }
 
 def ex30b : Datum :=
   { id := "spector2013_ex30b"
@@ -37,9 +38,10 @@ def ex30b : Datum :=
     glossedTokens := []
     context := "There is a maximal age but no minimal age for being eligible to the Fields medal."
     judgment := .unacceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("section", "3"), ("truthValue", "false")] }
+    paperFeatures := [("section", "3")] }
 
 def ex36b : Datum :=
   { id := "spector2013_ex36b"
@@ -63,9 +65,10 @@ def ex39 : Datum :=
     glossedTokens := []
     context := "The minimal age required for voting is 18."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.2"), ("truthValue", "true")] }
+    paperFeatures := [("section", "4.2")] }
 
 def ex40 : Datum :=
   { id := "spector2013_ex40"
@@ -76,9 +79,10 @@ def ex40 : Datum :=
     glossedTokens := []
     context := "The minimal height for being hired in the military is 6 feet."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "4.2"), ("truthValue", "true")] }
+    paperFeatures := [("section", "4.2")] }
 
 def all : List Datum := [ex30a, ex30b, ex36b, ex39, ex40]
 

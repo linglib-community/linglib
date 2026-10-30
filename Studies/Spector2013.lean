@@ -212,13 +212,13 @@ predicts; an *at most* reading would make (30b) true, and the *exactly* reading 
 (39) and (40) false. -/
 theorem requirement_rows :
     (votingAges ⊆ Comparison.ge.interval 18 ↔
-      Examples.ex30a.feature? "truthValue" = some "true") ∧
+      Examples.ex30a.verdict = some true) ∧
     (fieldsMedalAges ⊆ Comparison.ge.interval 40 ↔
-      Examples.ex30b.feature? "truthValue" = some "true") ∧
+      Examples.ex30b.verdict = some true) ∧
     (votingAges ⊆ Comparison.ge.interval 18 ↔
-      Examples.ex39.feature? "truthValue" = some "true") ∧
+      Examples.ex39.verdict = some true) ∧
     (militaryHeights ⊆ Comparison.ge.interval 6 ↔
-      Examples.ex40.feature? "truthValue" = some "true") ∧
+      Examples.ex40.verdict = some true) ∧
     fieldsMedalAges ⊆ Comparison.le.interval 40 ∧
     ¬ votingAges ⊆ Comparison.eq.interval 18 ∧ ¬ militaryHeights ⊆ Comparison.eq.interval 6 := by
   refine ⟨iff_of_true subset_rfl (by decide), iff_of_false (fun h ↦ ?_) (by decide),
