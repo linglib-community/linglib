@@ -138,6 +138,10 @@ include hF
 
 theorem not_adj_self : ¬ g.Adj v v := fun h ↦ hF.not_dominates_of_adj h .refl
 
+theorem ne_of_adj (h : g.Adj v w) : v ≠ w := by
+  rintro rfl
+  exact hF.not_adj_self h
+
 theorem acyclic (v : Fin n) : ¬ TransGen g.Adj v v := fun h ↦
   have ⟨_, hvw, hwv⟩ := TransGen.head'_iff.1 h
   hF.not_dominates_of_adj hvw hwv
