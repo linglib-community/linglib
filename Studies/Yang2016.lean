@@ -31,10 +31,11 @@ is [tolerated and productive](##tolerates_productive_femininePlural).
   `N / (1 + ln N)` (`productive_of_le_div_one_add_log`), which lies under the threshold
   (`div_one_add_log_le_threshold`). The rule over two items both of which are exceptions is
   tolerated and costs as much as the list (`not_forall_tolerates_imp_productive`).
-* Yang's simplification of the rule's cost, that the exceptions are themselves Zipfian, is the
-  law `ruleLaw` of the entry at which the search stops: an exception with probability `e / N`,
-  at the rank the Zipfian law on the exceptions gives it, and the rule otherwise. For `e > N` the
-  weight `1 - e / N` is clipped at zero; every statement assumes `e ≤ N`.
+* Yang's simplification of the rule's cost, that a random subset of a Zipfian list is again
+  Zipfian, is what the Zipfian exceptions of `ruleLaw` encode: the search stops at an exception
+  with probability `e / N`, at the rank the Zipfian law on the `e` exceptions gives it, and at the
+  rule otherwise. For `e > N` the weight `1 - e / N` is truncated at zero, so `ruleTime_eq`
+  assumes `e ≤ N`, as does every statement about the cost.
 * The threshold is stated with the natural logarithm as in the book. Mathlib's convention that
   division by zero is zero makes the threshold vanish at `N ≤ 1` (`threshold_eq_zero_of_le_one`).
 * The counts of the German feminine plurals are the book's (`Data.Experiments.Yang2016`); the
