@@ -96,7 +96,6 @@ concedes and `exceptiveSkeleton_most_not_isLAnalytic` states.
 namespace Gajewski2002
 
 open Montague Quantifier Quantifier.Det Quantifier.Exceptive
-open English.Determiners (QuantityWord)
 open scoped Denotes
 
 variable {E : Type}
@@ -338,12 +337,24 @@ inductive Determiner
 quantification substrate for *no*, and *at least n* for the numerals, the paper's reading of
 the left-upward-monotone *one, two*. -/
 noncomputable def Determiner.readings : Determiner → Set Det.Family.{0}
-  | .every => ⟦QuantityWord.every⟧
-  | .some => ⟦QuantityWord.some_⟧
+  | .every => ⟦English.Determiners.every⟧
+  | .some => ⟦English.Determiners.some_⟧
   | .no => {Det.Family.no}
-  | .most => ⟦QuantityWord.most⟧
+  | .most => ⟦English.Determiners.most⟧
   | .two => {Det.Family.atLeast 2}
   | .three => {Det.Family.atLeast 3}
+
+@[simp] theorem Determiner.readings_every :
+    Determiner.every.readings = {Det.Family.every} := by
+  ext; simp [Determiner.readings, English.Determiners.every, eq_comm]
+
+@[simp] theorem Determiner.readings_some :
+    Determiner.some.readings = {Det.Family.some} := by
+  ext; simp [Determiner.readings, English.Determiners.some_, eq_comm]
+
+@[simp] theorem Determiner.readings_most :
+    Determiner.most.readings = {Det.Family.most} := by
+  ext; simp [Determiner.readings, English.Determiners.most, eq_comm]
 
 /-- The constructions of the paper's sentences, with their determiner where one matters. -/
 inductive Construction
@@ -401,11 +412,13 @@ theorem rows_predicted :
       (r.grammatical = true ↔ ¬ r.LAnalytic) := by
   have hevery : (Row.mk (.there .every) false).LAnalytic := by
     intro q hq α _ _
+    rw [Determiner.readings_every] at hq
     obtain rfl : q = Det.Family.every := hq
     exact Or.inl (thereSkeleton_isLTautology conservative_every positiveStrong_every)
   have hsome : (Row.mk (.there .some) true).grammatical = true ↔
       ¬ (Row.mk (.there .some) true).LAnalytic :=
-    iff_of_true rfl fun h ↦ thereSkeleton_some_not_isLAnalytic true (h Det.Family.some rfl Bool)
+    iff_of_true rfl fun h ↦
+      thereSkeleton_some_not_isLAnalytic true (h Det.Family.some (by simp) Bool)
   rw [rows_eq]
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)
@@ -415,12 +428,13 @@ theorem rows_predicted :
       thereSkeleton_atLeast_two_not_isLAnalytic (h (Det.Family.atLeast 2) rfl Bool)
   · exact fun _ ↦ hsome
   · exact fun _ ↦ iff_of_true rfl fun h ↦
-      (h Det.Family.every rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
+      (h Det.Family.every (by simp) Bool).elim (exceptiveSkeleton_not_isLTautology _)
         (exceptiveSkeleton_every_not_isLContradiction true)
   · exact fun _ ↦ iff_of_true rfl fun h ↦
       (h Det.Family.no rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
         (exceptiveSkeleton_no_not_isLContradiction true)
   · refine fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 fun q hq α _ _ ↦ ?_)
+    rw [Determiner.readings_some] at hq
     obtain rfl : q = Det.Family.some := hq
     exact Or.inr (exceptiveSkeleton_isLContradiction restrictorMonotone_some)
   · refine fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 fun q hq α _ _ ↦ ?_)

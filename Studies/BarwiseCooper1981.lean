@@ -266,7 +266,6 @@ end Determiner
 
 section English
 
-open English.Determiners (QuantityWord)
 open scoped Denotes
 
 -- Table II
@@ -323,17 +322,17 @@ theorem atMostHalf_scopeDown : ScopeAntitone (atMostHalf (α := α)) :=
     (Nat.mul_le_mul_left 2 hxy).trans h).toDet
 
 -- Table II
-theorem all_positiveStrong {d : Det.Family} (h : d ∈ ⟦QuantityWord.all⟧) :
+theorem all_positiveStrong {d : Det.Family} (h : d ∈ ⟦English.Determiners.all⟧) :
     PositiveStrong (d α) := by
-  obtain rfl : d = Det.Family.every := h
+  obtain rfl : d = Det.Family.every := by simpa [English.Determiners.all, eq_comm] using h
   exact positiveStrong_every
 
 open Classical in
 -- Table II and SP1 (Appendix B) make *most* positive strong at every restrictor; *more than
 -- half*, the library's `most`, is so only at a nonempty one
-theorem most_apply_self {d : Det.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A : Set α)
+theorem most_apply_self {d : Det.Family} (hd : d ∈ ⟦English.Determiners.most⟧) (A : Set α)
     (h : A.Nonempty) : d α A A := by
-  obtain rfl : d = Det.Family.most := hd
+  obtain rfl : d = Det.Family.most := by simpa [English.Determiners.most, eq_comm] using hd
   show most A A
   rw [most_apply, Set.sdiff_self, Set.ncard_empty, Set.inter_self]
   exact (Set.ncard_pos (Set.toFinite _)).2 h

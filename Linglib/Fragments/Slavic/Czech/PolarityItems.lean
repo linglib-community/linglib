@@ -14,7 +14,7 @@ buy anything' (p. 511), so the concord holds whether the item precedes the verb 
 The *ně-* series (*někdo*, the determiner *nějaký*), built on the prefix *ně-*, are positive
 polarity items, which escape the immediate scope of clausemate negation; the two determiners
 therefore diagnose the position of negation in polar questions. The determiners take their
-forms from `Czech.Determiners.QuantityWord`, and the *ne-* prefix lives in `Negation.lean`.
+forms from `Czech.Determiners`, and the *ne-* prefix lives in `Negation.lean`.
 
 ## References
 
@@ -59,7 +59,7 @@ def nikam : PolarityItem :=
 /-- *žádný* 'no', the determiner concord item, licensed by inner negation alone in polar
 questions ([stankova-2026]). -/
 def zadny : PolarityItem :=
-  { form := Determiners.QuantityWord.zadny.form
+  { form := Determiners.zadny.form
   , licensor := some .antiMorphic
   , licensingContexts := [.negation] }
 
@@ -71,7 +71,7 @@ def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]
 /-- *nějaký* 'some', the determiner positive polarity item, admitted by outer and medial
 negation in polar questions ([stankova-simik-2025], [stankova-2026]). -/
 def nejaky : PolarityItem :=
-  { form := Determiners.QuantityWord.nejaky.form
+  { form := Determiners.nejaky.form
   , antiLicensor := some .antiMorphic }
 
 /-- *někdo* 'someone', the human positive polarity item, which replaces *nikdo* under the

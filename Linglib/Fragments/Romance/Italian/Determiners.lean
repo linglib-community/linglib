@@ -1,8 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Quantification.Determiner
 public import Linglib.Fragments.Romance.Italian.Gender
 public import Linglib.Fragments.Romance.Italian.Phonology
 
@@ -13,22 +11,23 @@ This file records the Italian determiners after Maiden and Robustelli. An articl
 noun in gender and number, and its variant forms depend on how the word that follows it begins,
 which need not be the noun: *lo studioso famoso* but *il famoso studioso*. The partitive article
 is the preposition *di* combined with the definite article, the demonstrative *quello* varies like
-the definite article, and *ciascuno* and *nessuno* vary like the indefinite article. The
-quantificational determiners are the carrier `QuantityWord`, whose members denote the readings the
-literature makes available for them.
+the definite article, and *ciascuno* and *nessuno* vary like the indefinite article. A
+quantificational determiner is a `QuantityWord`, a `QuantificationalDeterminer` record with the
+readings the literature makes available for it and the forms it takes in agreement.
 
 ## Main definitions
 
 * `Italian.Determiners.definite`, `Italian.Determiners.indefinite`: the articles.
 * `Italian.Determiners.combine`: a preposition combined with the definite article, on which
   `Italian.Determiners.partitive` and `Italian.Determiners.quello` are built.
-* `Italian.Determiners.QuantityWord`: the quantificational determiners.
+* `Italian.Determiners.QuantityWord`, `Italian.Determiners.quantityWords`: the quantificational
+  determiners.
 
 ## Main results
 
 * `Italian.Determiners.combine_eq_combine_iff`: a combination keeps the forms of the definite
   article apart, so the partitive and *quello* vary exactly as the article does.
-* `Italian.Determiners.QuantityWord.forall_form_eq_iff`: *ogni* and *qualche* are invariant.
+* `Italian.Determiners.QuantityWord.forall_agree_eq_iff`: *ogni* and *qualche* are invariant.
 * `Italian.Determiners.isSyncretic_inventory`: the definite article marks both strengths.
 
 ## Implementation notes
@@ -123,64 +122,80 @@ def quello : Row × Gender.Value → Onset → String := combine "que"
 
 /-! ### Quantificational determiners -/
 
-/-- The quantificational determiners are *ogni* 'every', *ciascuno* 'each', *qualche* 'some',
-*nessuno* 'no', *tutti* 'all', *alcuni* 'some', *molti* 'many' and *pochi* 'few'. -/
-inductive QuantityWord where
-  | ogni | ciascuno | qualche | nessuno | tutti | alcuni | molti | pochi
-  deriving DecidableEq, Fintype, Repr
+/-- An Italian quantificational determiner, with the form it takes agreeing with a noun of
+each gender before each beginning of a word; its record form is the masculine one before a
+consonant. -/
+structure QuantityWord extends QuantificationalDeterminer where
+  /-- The form agreeing with a noun of gender `g` before a word beginning with `o`. -/
+  agree : Gender.Value → Onset → String
+  deriving DecidableEq
 
 namespace QuantityWord
 
-/-- The form agreeing with a noun of gender `g` before a word beginning with `o`. *Ciascuno* and
-*nessuno* vary like the indefinite article (§9.11, p. 155, and §9.12, p. 157). -/
-def form : QuantityWord → Gender.Value → Onset → String
-  | .ogni, _, _ => "ogni"
-  | .qualche, _, _ => "qualche"
-  | .ciascuno, g, o => "ciasc" ++ indefinite g o
-  | .nessuno, g, o => "ness" ++ indefinite g o
-  | .tutti, .masculine, _ => "tutti"
-  | .tutti, .feminine, _ => "tutte"
-  | .alcuni, .masculine, _ => "alcuni"
-  | .alcuni, .feminine, _ => "alcune"
-  | .molti, .masculine, _ => "molti"
-  | .molti, .feminine, _ => "molte"
-  | .pochi, .masculine, _ => "pochi"
-  | .pochi, .feminine, _ => "poche"
+open scoped Denotes
 
-/-- *Ogni*, *ciascuno*, *qualche* and *nessuno* select the singular, and the rest the plural. -/
-def numberRestriction : QuantityWord → Option Number
-  | .ogni | .ciascuno | .qualche | .nessuno => some .singular
-  | .tutti | .alcuni | .molti | .pochi => some .plural
+attribute [coe] QuantityWord.toQuantificationalDeterminer
 
-/-- The word as a determiner record, under its masculine form before a consonant. -/
-def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
-  { form := w.form .masculine .consonant, numberRestriction := w.numberRestriction }
+instance : CoeOut QuantityWord QuantificationalDeterminer := ⟨toQuantificationalDeterminer⟩
 
-/-- All the words. -/
-def toList : List QuantityWord :=
-  [.ogni, .ciascuno, .qualche, .nessuno, .tutti, .alcuni, .molti, .pochi]
-
-theorem mem_toList (w : QuantityWord) : w ∈ toList := by
-  revert w; decide
-
-theorem forall_form_eq_iff (w : QuantityWord) :
-    (∀ g g' o o', w.form g o = w.form g' o') ↔ w = .ogni ∨ w = .qualche := by
-  revert w; decide
-
-/-- The readings available for a word. *Ogni*, *ciascuno* and *tutti* read as `every`, *qualche*
-and *alcuni* as `Quantifier.Det.some`, and *pochi* as `few`; *molti* has no reading, its standard
-being contextual like that of English *many*. The n-word *nessuno* reads as `no`, a negative
-quantifier ([de-swart-sag-2002]), or as `Quantifier.Det.some`, an indefinite whose negation the
-clause supplies ([zeijlstra-2004]). -/
+/-- A word denotes the readings of its record. -/
 noncomputable instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
-  denote
-    | .ogni | .ciascuno | .tutti => {Quantifier.Det.Family.every}
-    | .qualche | .alcuni => {Quantifier.Det.Family.some}
-    | .nessuno => {Quantifier.Det.Family.no, Quantifier.Det.Family.some}
-    | .pochi => {Quantifier.Det.Family.few}
-    | .molti => ∅
+  denote w := ⟦(w : QuantificationalDeterminer)⟧
 
 end QuantityWord
+
+/-- *Ogni* 'every', read as `every`, invariant, with a singular noun. -/
+def ogni : QuantityWord :=
+  { form := "ogni", readings := {.every}, numberRestriction := some .singular,
+    agree := fun _ _ ↦ "ogni" }
+
+/-- *Ciascuno* 'each', read as `every`, with a singular noun, varying like the indefinite article
+(§9.11, p. 155). -/
+def ciascuno : QuantityWord :=
+  { form := "ciascun", readings := {.every}, numberRestriction := some .singular,
+    agree := fun g o ↦ "ciasc" ++ indefinite g o }
+
+/-- *Qualche* 'some', read as `Quantifier.Det.some`, invariant, with a singular noun. -/
+def qualche : QuantityWord :=
+  { form := "qualche", readings := {.some}, numberRestriction := some .singular,
+    agree := fun _ _ ↦ "qualche" }
+
+/-- *Nessuno* 'no', with a singular noun, varying like the indefinite article (§9.12, p. 157).
+The n-word reads as `no`, a negative quantifier ([de-swart-sag-2002]), or as
+`Quantifier.Det.some`, an indefinite whose negation the clause supplies ([zeijlstra-2004]). -/
+def nessuno : QuantityWord :=
+  { form := "nessun", readings := {.no, .some}, numberRestriction := some .singular,
+    agree := fun g o ↦ "ness" ++ indefinite g o }
+
+/-- *Tutti* 'all', read as `every`, with a plural noun. -/
+def tutti : QuantityWord :=
+  { form := "tutti", readings := {.every}, numberRestriction := some .plural,
+    agree := fun g _ ↦ match g with | .masculine => "tutti" | .feminine => "tutte" }
+
+/-- *Alcuni* 'some', read as `Quantifier.Det.some`, with a plural noun. -/
+def alcuni : QuantityWord :=
+  { form := "alcuni", readings := {.some}, numberRestriction := some .plural,
+    agree := fun g _ ↦ match g with | .masculine => "alcuni" | .feminine => "alcune" }
+
+/-- *Molti* 'many', with a plural noun and no reading, its standard being contextual like that of
+English *many*. -/
+def molti : QuantityWord :=
+  { form := "molti", numberRestriction := some .plural,
+    agree := fun g _ ↦ match g with | .masculine => "molti" | .feminine => "molte" }
+
+/-- *Pochi* 'few', read as `few`, with a plural noun. -/
+def pochi : QuantityWord :=
+  { form := "pochi", readings := {.few}, numberRestriction := some .plural,
+    agree := fun g _ ↦ match g with | .masculine => "pochi" | .feminine => "poche" }
+
+/-- The quantificational determiners. -/
+def quantityWords : List QuantityWord :=
+  [ogni, ciascuno, qualche, nessuno, tutti, alcuni, molti, pochi]
+
+/-- Among the quantificational determiners, *ogni* and *qualche* are invariant. -/
+theorem QuantityWord.forall_agree_eq_iff :
+    ∀ w ∈ quantityWords, (∀ g g' o o', w.agree g o = w.agree g' o') ↔ w = ogni ∨ w = qualche := by
+  decide
 
 /-! ### The inventory -/
 
@@ -201,7 +216,7 @@ def inventory : Determiner.Inventory :=
     .demonstrative { form := questo (.sg, .masculine), deixis := Person.first.participantSets },
     .demonstrative
       { form := quello (.sg, .masculine) .consonant, deixis := Person.first.participantSetsᶜ } ] ++
-    QuantityWord.toList.map (.quantifier ·.toQuantifier)
+    quantityWords.map (.quantifier ·.toQuantificationalDeterminer)
 
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 

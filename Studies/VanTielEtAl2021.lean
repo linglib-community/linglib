@@ -223,36 +223,41 @@ theorem some_few_no_entailment (θ : Word → ℕ) (hs : 1 ≤ θ .some) (hs' : 
 open English.Determiners Quantifier Det
 open scoped Denotes
 
-/-- A word of the study is a quantity word of `Fragments/English/Determiners.lean` when the
-fragment has it. -/
-def Word.toQuantityWord? : Word → Option QuantityWord
-  | .none => .some .none_
-  | .few => .some .few
-  | .some => .some .some_
-  | .half => .some .half
-  | .many => .some .many
-  | .most => .some .most
-  | .all => .some .all
+/-- A word of the study is a quantificational determiner of `Fragments/English/Determiners.lean`
+when the fragment has it. -/
+def Word.toDeterminer? : Word → Option QuantificationalDeterminer
+  | .none => .some none_
+  | .few => .some English.Determiners.few
+  | .some => .some some_
+  | .half => .some English.Determiners.half
+  | .many => .some English.Determiners.many
+  | .most => .some English.Determiners.most
+  | .all => .some English.Determiners.all
   | _ => .none
 
 /-- Experiment 2 coded a word the fragment shares monotone decreasing exactly when the word has a
 reading antitone in its scope on every finite domain. *Half*, whose reading is neither monotone
 nor antitone, was coded increasing. -/
-theorem monotonicity_eq_decreasing_iff {w : Word} {q : QuantityWord}
-    (h : w.toQuantityWord? = some q) :
+theorem monotonicity_eq_decreasing_iff {w : Word} {q : QuantificationalDeterminer}
+    (h : w.toDeterminer? = some q) :
     w.monotonicity = .decreasing ↔
       ∃ d ∈ (⟦q⟧ : Set Det.Family.{0}), ∀ (α : Type) [Fintype α], ScopeAntitone (d α) := by
-  cases w <;> simp only [Word.toQuantityWord?, reduceCtorEq, Option.some.injEq] at h <;> subst h
-  · exact iff_of_true rfl ⟨_, rfl, fun _ _ ↦ scopeAntitone_no⟩
-  · exact iff_of_true rfl ⟨_, rfl, fun _ _ ↦ scopeAntitone_few⟩
-  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.some), h⟩ ↦
-      not_scopeAntitone_some (hd ▸ h PUnit)
-  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.half), h⟩ ↦
-      not_scopeAntitone_half (by subst hd; exact h (Fin 3))
-  · exact iff_of_false (by decide) fun ⟨_, hd, _⟩ ↦ hd
-  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.most), h⟩ ↦
-      not_scopeAntitone_most (hd ▸ h PUnit)
-  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.every), h⟩ ↦
-      not_scopeAntitone_every (hd ▸ h PUnit)
+  cases w <;> simp only [Word.toDeterminer?, reduceCtorEq, Option.some.injEq] at h <;> subst h
+  · exact iff_of_true rfl ⟨_, ⟨.no, Finset.mem_singleton_self _, rfl⟩, fun _ _ ↦ scopeAntitone_no⟩
+  · exact iff_of_true rfl ⟨_, ⟨.few, Finset.mem_singleton_self _, rfl⟩,
+      fun _ _ ↦ scopeAntitone_few⟩
+  · exact iff_of_false (by decide) fun ⟨_, ⟨_, hs, hd⟩, h⟩ ↦ by
+      obtain rfl := Finset.mem_singleton.1 hs
+      exact not_scopeAntitone_some (hd ▸ h PUnit)
+  · exact iff_of_false (by decide) fun ⟨_, ⟨_, hs, hd⟩, h⟩ ↦ by
+      obtain rfl := Finset.mem_singleton.1 hs
+      exact not_scopeAntitone_half (by subst hd; exact h (Fin 3))
+  · exact iff_of_false (by decide) fun ⟨_, ⟨_, hs, _⟩, _⟩ ↦ Finset.notMem_empty _ hs
+  · exact iff_of_false (by decide) fun ⟨_, ⟨_, hs, hd⟩, h⟩ ↦ by
+      obtain rfl := Finset.mem_singleton.1 hs
+      exact not_scopeAntitone_most (hd ▸ h PUnit)
+  · exact iff_of_false (by decide) fun ⟨_, ⟨_, hs, hd⟩, h⟩ ↦ by
+      obtain rfl := Finset.mem_singleton.1 hs
+      exact not_scopeAntitone_every (hd ▸ h PUnit)
 
 end VanTielEtAl2021

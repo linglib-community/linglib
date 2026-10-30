@@ -5,6 +5,7 @@ public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Discourse.Role
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Morphology.Word.Basic
+public import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Determiners
@@ -40,8 +41,9 @@ with its own account of when a presupposition is marked.
 ## Implementation notes
 
 This file is the Frame-free lexical layer. The denotations of articles, demonstratives and
-possessives are in `Semantics/Reference/Determiner.lean`, and the generalized-quantifier
-denotation of a `QuantificationalDeterminer` is supplied by its consumers. `Inventory` is a `def`
+possessives are in `Semantics/Reference/Determiner.lean`. A `QuantificationalDeterminer` records
+its readings as determiner symbols (`Quantifier.Det.Symbol`), whose generalized-quantifier
+denotations are in `Semantics/Quantification/Determiner.lean`. `Inventory` is a `def`
 rather than an `abbrev` so that its operations resolve by dot notation; its membership is the
 list's, and facts about one-entry inventories go through `Inventory.marks_singleton`.
 `Realizes` is
@@ -113,17 +115,19 @@ structure DemonstrativeDeterminer extends Determiner where
   deixis : Finset (Finset Discourse.Role)
   deriving DecidableEq
 
-/-- A quantificational determiner records only what its generalized-quantifier denotation
-leaves open, the grammatical number it selects and whether it selects mass nouns, since
-synonymous determiners such as *every* and *all* differ there. Everything the denotation fixes,
-its force, monotonicity, strength and conservativity, is a theorem about the denotation, which
-the consumers supply. -/
+/-- A quantificational determiner records its readings, the determiner symbols whose
+denotations it may have, and what its denotation leaves open, the grammatical number it selects
+and whether it selects mass nouns, since synonymous determiners such as *every* and *all* differ
+there. Everything a reading fixes, its force, monotonicity, strength and conservativity, is a
+theorem about the reading. -/
 structure QuantificationalDeterminer extends Determiner where
+  /-- The readings available for the determiner, empty when its standard is left to context. -/
+  readings : Finset Quantifier.Det.Symbol := ∅
   /-- The grammatical number the determiner selects, or none when it is number-neutral. -/
   numberRestriction : Option Number := none
   /-- The determiner selects mass nouns. -/
   selectsMass : Bool := false
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- A possessive determiner denotes a definite through a possession relation. -/
 structure PossessiveDeterminer extends Determiner

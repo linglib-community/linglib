@@ -1,29 +1,24 @@
 module
 
-public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Quantification.Determiner
 public import Linglib.Fragments.English.Phonology
 
 /-!
 # English determiners
 
-The quantificational determiners of English are the carrier `QuantityWord`. A word projects to a
-`QuantificationalDeterminer` record by `QuantityWord.toQuantifier`, which carries only what the
-readings leave open, the number the word selects and whether it selects mass nouns. The readings themselves are
-the `Denotes` instance, a set of `Quantifier.Det.Family` per word: a word with one consensus
-reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every}`, and *many*, whose standard
-Barwise and Cooper leave to context, denotes `∅`. Everything a reading fixes, its force,
-monotonicity, strength and conservativity, is a theorem about it, as in
-`Studies/BarwiseCooper1981.lean`. The articles, demonstratives and possessives are the other
+The quantificational determiners of English are `QuantificationalDeterminer` records, each with
+the readings available for it and what its readings leave open, the number the word selects and
+whether it selects mass nouns: a word with one consensus reading has one, so `⟦all⟧` is
+`{every}`, and *many*, whose standard Barwise and Cooper leave to context, has none. Everything
+a reading fixes, its force, monotonicity, strength and conservativity, is a theorem about it, as
+in `Studies/BarwiseCooper1981.lean`. The articles, demonstratives and possessives are the other
 determiner kinds. The indefinite article has the liaison form *an* before a word that begins with
 a vowel sound, and the weak form of *the* varies in the same environment.
 
 ## Main declarations
 
-* `QuantityWord`: the quantificational determiners, with the six-word scale
-  `QuantityWord.scale` of van Tiel, Franke and Sauerland inside it.
-* `QuantityWord.toQuantifier`: a word as a determiner record.
+* `allQuantifiers`: the quantificational determiners, with the six-word scale `scale` of van
+  Tiel, Franke and Sauerland inside it.
 * `indefinite`, `theWeakForm`: the forms of the articles before each beginning of a word.
 * `inventory`: the English determiner inventory, whose *the* marks both strengths
   (`isSyncretic_inventory`).
@@ -44,83 +39,64 @@ a vowel sound, and the weak form of *the* varies in the same environment.
 
 namespace English.Determiners
 
-/-! ## Quantificational determiners -/
+/-! ## Quantificational determiners
 
-/-- The quantificational determiners of English are the six-word quantity scale *none*, *few*,
-*some*, *half*, *most* and *all*, and *every*, *each*, *many*, *both* and *neither*. -/
-inductive QuantityWord where
-  | none_ | few | some_ | half | most | all | every | each | many | both | neither
-  deriving DecidableEq, Repr, Fintype
-
-namespace QuantityWord
-
-/-- The form of a word is its spelling. -/
-def form : QuantityWord → String
-  | .none_ => "none"
-  | .few => "few"
-  | .some_ => "some"
-  | .half => "half"
-  | .most => "most"
-  | .all => "all"
-  | .every => "every"
-  | .each => "each"
-  | .many => "many"
-  | .both => "both"
-  | .neither => "neither"
-
-/-- The grammatical number a word selects is left open by the denotation, so *every* and *all*
-share a denotation and differ here. *Both* and *neither* select the dual, the core concept
-`[−atomic, +minimal]` of [harbour-2014], whose cardinality clause the denotation reflects
+A word records the readings the literature makes available for it, as determiner symbols: a word
+with one consensus reading records one, so *all* reads as `every`, and *many*, whose standard
+Barwise and Cooper leave to context, records none. The number a word selects and whether it
+selects mass nouns are left open by its readings, so *every* and *all* share a reading and differ
+there. *Both* and *neither* select the dual, the core concept `[−atomic, +minimal]` of
+[harbour-2014], whose cardinality clause their readings reflect
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
-def numberRestriction : QuantityWord → Option Number
-  | .few | .most | .all | .many => some .plural
-  | .every | .each => some .singular
-  | .both | .neither => some .dual
-  | .none_ | .some_ | .half => none
 
-/-- `selectsMass w` says whether `w` combines with mass nouns, which the denotation likewise
-leaves open. -/
-def selectsMass : QuantityWord → Bool
-  | .none_ | .some_ | .half | .most | .all => true
-  | .few | .every | .each | .many | .both | .neither => false
+/-- *None*, read as `no`. -/
+def none_ : QuantificationalDeterminer :=
+  { form := "none", readings := {.no}, selectsMass := true }
 
-/-- The determiner record of a word carries its form, its number and its mass selection. -/
-def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
-  { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
+/-- *Few*, read as `few`, with a plural noun. -/
+def few : QuantificationalDeterminer :=
+  { form := "few", readings := {.few}, numberRestriction := some .plural }
+
+/-- *Some*, read as `Quantifier.Det.some`. -/
+def some_ : QuantificationalDeterminer :=
+  { form := "some", readings := {.some}, selectsMass := true }
+
+/-- *Half*, read as `half`. -/
+def half : QuantificationalDeterminer :=
+  { form := "half", readings := {.half}, selectsMass := true }
+
+/-- *Most*, read as `most`, with a plural or a mass noun. -/
+def most : QuantificationalDeterminer :=
+  { form := "most", readings := {.most}, numberRestriction := some .plural, selectsMass := true }
+
+/-- *All*, read as `every`, with a plural or a mass noun. -/
+def all : QuantificationalDeterminer :=
+  { form := "all", readings := {.every}, numberRestriction := some .plural, selectsMass := true }
+
+/-- *Every*, read as `every`, with a singular noun. -/
+def every : QuantificationalDeterminer :=
+  { form := "every", readings := {.every}, numberRestriction := some .singular }
+
+/-- *Each*, read as `every`, with a singular noun. -/
+def each : QuantificationalDeterminer :=
+  { form := "each", readings := {.every}, numberRestriction := some .singular }
+
+/-- *Many*, with a plural noun and no reading, its standard left to context. -/
+def many : QuantificationalDeterminer :=
+  { form := "many", numberRestriction := some .plural }
+
+/-- *Both*, read as `both`, with the dual. -/
+def both : QuantificationalDeterminer :=
+  { form := "both", readings := {.both}, numberRestriction := some .dual }
+
+/-- *Neither*, read as `neither`, with the dual. -/
+def neither : QuantificationalDeterminer :=
+  { form := "neither", readings := {.neither}, numberRestriction := some .dual }
 
 /-- The six-word quantity scale of [van-tiel-franke-sauerland-2021] runs from *none* to *all*;
 quantifier theories such as those of [barwise-cooper-1981] and [von-fintel-1993] are compared on
 it. -/
-def scale : List QuantityWord := [.none_, .few, .some_, .half, .most, .all]
-
-/-- `toList` lists every word. -/
-def toList : List QuantityWord :=
-  [.none_, .few, .some_, .half, .most, .all, .every, .each, .many, .both, .neither]
-
-theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
-
-/-! ### The available readings -/
-
-universe u
-
-/-- A word denotes the readings the literature makes available for it, as generalized
-quantifiers on every finite domain. *None* reads as `no`, *some* as `Quantifier.Det.some`, *all*,
-*every* and *each* as `every`, *most* as `most`, *few* as `few`, *half* as `half`, *both* as
-`both` and *neither* as `neither`; *many* has no reading, since [barwise-cooper-1981] leave its
-standard to context. -/
-noncomputable instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
-  denote
-    | .none_ => {Quantifier.Det.Family.no}
-    | .some_ => {Quantifier.Det.Family.some}
-    | .all | .every | .each => {Quantifier.Det.Family.every}
-    | .most => {Quantifier.Det.Family.most}
-    | .few => {Quantifier.Det.Family.few}
-    | .half => {Quantifier.Det.Family.half}
-    | .both => {Quantifier.Det.Family.both}
-    | .neither => {Quantifier.Det.Family.neither}
-    | .many => ∅
-
-end QuantityWord
+def scale : List QuantificationalDeterminer := [none_, few, some_, half, most, all]
 
 /-! ## Articles, demonstratives and possessives
 
@@ -175,9 +151,9 @@ def your : PossessiveDeterminer := { form := "your" }
 
 /-! ## The inventory -/
 
-/-- The quantificational determiners as records. -/
+/-- The quantificational determiners. -/
 def allQuantifiers : List QuantificationalDeterminer :=
-  QuantityWord.toList.map QuantityWord.toQuantifier
+  [none_, few, some_, half, most, all, every, each, many, both, neither]
 
 /-- The articles. -/
 def allArticles : List Article := [the, a]
