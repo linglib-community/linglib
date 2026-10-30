@@ -12,7 +12,7 @@ public import Mathlib.Tactic.FinCases
 
 A logical form built only from names, predicates, the determiners *every*, *some* and *no*, and
 the truth-functional connectives reads back to a first-order formula with the same truth
-conditions, [soundly](##realizes_readback). So
+conditions, [soundly](##Term.realizes_readback). So
 [a tree holds exactly where its readback is true](##holdsAt_iff_realizeAt),
 [entailment between trees is first-order consequence](##models_imp_iff_entails), and
 [families of trees satisfy compactness](##holdsAt_compactness).
