@@ -7,17 +7,13 @@ public import Linglib.Discourse.Commitment.Frame
 # van der Leer 2026: Speech Act Logic
 
 Van der Leer's Speech Act Logic is a propositional dynamic logic of speech acts over the
-commitment states of `Commitment.Frame`, in which belief `B_a` and commitment `C_{a,b}` are
-modal operators. An assertion is the update `c⌈π⌉_{a,b}` that creates a commitment, Krifka's
-performative update, which Sincerity and Competence pass on to beliefs, so that common belief
-and commitment stay apart, as Bary demands. The projected discourse is a commitment space in
-the sense of Cohen and Krifka, a root state together with its cooperative continuations, which
-the speech acts transform. An assertion narrows the root and keeps the continuations in which
-the addressee confirms, a question keeps the root and the continuations in which the addressee
-answers, and a denegation removes the continuations the denegated act reaches. Cooperativity,
-admissibility and possibility of a speech act are the three levels of the thesis's hierarchy of
-discourse expectations, in which a cooperative act is admissible and every act is possible, but
-not conversely.
+commitment states of `Commitment.Frame`, with belief `B_a` and commitment `C_{a,b}` as modal
+operators. An assertion is Krifka's performative update, creating a commitment
+(`committed_assert`) that Sincerity passes on to belief (`committed_believes_of_sincere`). The
+speech acts transform a commitment space in the sense of Cohen and Krifka, a root state with its
+cooperative continuations, and of the thesis's three levels of discourse expectation a
+cooperative act is admissible (`admissible_of_cooperative`) and every act possible, but not
+conversely (`exists_admissible_not_cooperative`).
 
 ## Implementation notes
 
@@ -25,12 +21,13 @@ Propositions are world-sets, so the thesis's side condition that a proposition b
 `C_{a,b}`-free holds vacuously, the antecedent of a conditional act holds at the root iff it is
 `Set.univ`, and the `⊨_SAL` claims — for every space `C`, member `c` and world — are stated at
 the root, `C_c` (Definition 13) being again a space with root `c`. Theorem 32, possibility, is
-the totality of `update`. Theorem 31(1) is read with its two agents distinct, since for `a = b`
-the confirming assertion is redundant. The well-definedness of the assertion update, which the
-thesis calls easy, rests on `le_restrictCommitment_of_mem`, its root case included.
+the totality of `update`. The well-definedness of the assertion update rests on
+`le_restrictCommitment_of_mem`, its root case included.
 
 ## Errata
 
+* Theorem 31(1) omits `a ≠ b`: for `a = b` the confirmation repeats the assertion, which
+  Theorem 29 makes redundant, so it is never cooperative (`not_cooperative_assert_self`).
 * The witness for Theorem 27(2) takes `O_{a,b} = B_a ∪ {(w, w)}` with `B_a = {(w, w'), (w', w')}`,
   which is not Euclidean (`w O w` and `w O w'` without `w' O w`), so it is not a commitment state
   of Definition 2; `buffet` is a witness that is.
@@ -444,8 +441,8 @@ theorem not_cooperative_assert_compl :
     ((commitment_le_of_le hc (b, a) hwv).2 rfl)
 
 /-- After `assert_{a,b}(π)`, `b` confirming `π` is cooperative, provided the confirmed state is
-projected in `C` and `b` was not yet committed to `π` (Theorem 31(1)). The thesis omits `a ≠ b`; for
-`a = b` the confirmation is redundant. -/
+projected in `C` and `b` was not yet committed to `π` (Theorem 31(1)), and `a ≠ b`, without which
+the confirmation is redundant (`not_cooperative_assert_self`). -/
 theorem cooperative_assert_of_not_committed [Nonempty W] (hab : a ≠ b)
     (hmem : (C.root.restrictCommitment a b π).restrictCommitment b a π ∈ C)
     (h : ∀ w, ¬ C.root.Committed b a π w) :
@@ -466,6 +463,11 @@ theorem cooperative_assert_of_not_committed [Nonempty W] (hab : a ≠ b)
   rcases (Relation.reflGen_iff _ _ _).1 (show C.root ⊑ _ from C.root_le hmem) with e | hlt
   · exact absurd ((congrArg (fun s ↦ (w, v) ∈ s.commitment (b, a)) e).mpr hwv) h₂
   · exact hlt.commitment_nonempty
+
+-- Theorem 31(1) at `a = b`, by Theorem 29
+theorem not_cooperative_assert_self :
+    ¬ Cooperative (update (.assert a a π) C) (.assert a a π) :=
+  fun h ↦ h.1 (assert_assert_of_subset C a a π π subset_rfl)
 
 -- Theorem 35
 theorem question_assert :

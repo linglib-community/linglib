@@ -6,18 +6,14 @@ public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 /-!
 # Personae and grounded fields
 
-This file defines the personae and grounded indexical fields of Burnett's social meaning games
-and the Eckert–Montague field of a variant. A property space is a graph of incompatibility on
-social properties, a persona is a maximal independent set of it, and a grounded field indexes each
-variant to an independent set of properties, its Eckert field. The Eckert–Montague field
-type-lifts the Eckert field to the personae that share some property with it, as the Montagovian
-individual lifts an entity to the properties it has. The personae with every property a variant
-indexes are fewer: a variant that indexes a whole persona is compatible with that persona alone.
-An association field over the dimensions of social evaluation grounds as the poles whose polarity
-is the sign of the association. A social meaning game runs the RSA pipeline on the personae, its
-literal listener conditioning a prior on the variant's Eckert–Montague field; Burnett's 2023 book
-keeps these definitions, and her 2026 review takes the game as the current formalization of
-social meaning as reasoning.
+A persona of Burnett's social meaning games is a maximal independent set of a graph of
+incompatibility on social properties, and a grounded field indexes each variant to an
+independent set, its Eckert field, whose Eckert–Montague field is the set of personae sharing
+some property with it. A persona with every property a variant indexes
+[meets it](##SocialMeaning.GroundedField.compatiblePersonae_subset_personae) when the variant
+indexes any, and a variant that indexes nothing
+[meets none](##SocialMeaning.GroundedField.personae_eq_empty). An association field over the
+dimensions of social evaluation grounds as the poles whose polarity is the sign of the association.
 
 ## Main definitions
 
@@ -31,18 +27,11 @@ social meaning as reasoning.
 * `AssociationField.ground`: the grounded field of an association field over the dimensions.
 * `GroundedField.Complementary`: two variants indexing complementary personae.
 
-## Main results
+## Implementation notes
 
-* `GroundedField.personae_mono`, `GroundedField.compatiblePersonae_anti`: the Eckert–Montague
-  field grows and the compatible personae shrink as a variant indexes more.
-* `GroundedField.compatiblePersonae_eq_singleton`: a variant that indexes a whole persona is
-  compatible with it alone.
-* `AssociationField.Antipodal.ground_indexes`: of an antipodal pair, the second grounds as the
-  opposites of the poles the first grounds as.
-* `GroundedField.Complementary.personae_eq_compl`: of two complementary variants, each meets every
-  persona but the one the other indexes.
-* `AssociationField.Antipodal.complementary`: an antipodal pair indexing every dimension grounds
-  as complementary personae.
+A social meaning game's literal listener conditions a prior over the personae on the
+Eckert–Montague field of the variant it hears, so a variant that indexes nothing leaves it
+conditioning on the empty set (`GroundedField.personae_eq_empty`).
 
 ## References
 
@@ -115,6 +104,19 @@ theorem personae_mono (h : F.indexes v₁ ⊆ F.indexes v₂) : F.personae v₁ 
 theorem compatiblePersonae_anti (h : F.indexes v₁ ⊆ F.indexes v₂) :
     F.compatiblePersonae v₂ ⊆ F.compatiblePersonae v₁ :=
   Finset.monotone_filter_right _ fun _ _ hπ ↦ h.trans hπ
+
+/-- A persona with every property a variant indexes meets it, unless the variant indexes
+nothing. -/
+theorem compatiblePersonae_subset_personae (h : (F.indexes v).Nonempty) :
+    F.compatiblePersonae v ⊆ F.personae v := fun _ hπ ↦
+  mem_personae.2 fun hd ↦ h.ne_empty
+    ((Finset.disjoint_self_iff_empty _).1 (hd.mono_right (mem_compatiblePersonae.1 hπ)))
+
+theorem personae_eq_empty (h : F.indexes v = ∅) : F.personae v = ∅ :=
+  Finset.eq_empty_of_forall_notMem fun _ hπ ↦ mem_personae.1 hπ (by simp [h])
+
+theorem compatiblePersonae_eq_univ (h : F.indexes v = ∅) : F.compatiblePersonae v = .univ :=
+  Finset.eq_univ_of_forall fun π ↦ mem_compatiblePersonae.2 (by simp [Compatible, h])
 
 /-- A variant that indexes a whole persona is compatible with that persona alone, so that
 conditioning on the personae compatible with an Eckert field would leave only the persona the field
