@@ -525,7 +525,7 @@ theorem faithful_lift {f : (W → ℕ) → Set W → W → ℕ}
   wellFounded κ := Preorder.wellFounded_lt_lift κ
   equiv_of_mem κ w v hw hv := by
     simp only [Set.mem_ofPred_eq] at hw hv
-    exact ⟨by simp [hw, hv], by simp [hw, hv]⟩
+    exact ⟨by simp [Preorder.lift_le_iff, hw, hv], by simp [Preorder.lift_le_iff, hw, hv]⟩
   lt_of_mem κ w v hw hv := by
     simp only [Set.mem_ofPred_eq] at hw hv
     exact (Preorder.lift_lt_iff κ).2 (by omega)

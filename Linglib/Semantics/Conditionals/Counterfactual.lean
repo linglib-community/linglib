@@ -274,7 +274,7 @@ theorem stalnaker_lewis_would_diverge :
       s.Compatible ord ∧ (0 : Fin 3) ∈ selectionConditional s {1, 2} {1} ∧
       (0 : Fin 3) ∉ closestImp ord {1, 2} {1} := by
   let ord : Fin 3 → Preorder (Fin 3) := fun w ↦ Preorder.lift fun v ↦ if w = v then 0 else 1
-  have hc : IsCentered ord := fun w w' h ↦ by simp [ord, h]
+  have hc : IsCentered ord := fun w w' h ↦ by simp [ord, Preorder.lift_lt_iff, h]
   obtain ⟨s, hs, hsel⟩ := SelectionFunction.exists_compatible (ord := ord) (w := 0)
     (p := {1, 2}) (v := 1) hc (by decide)
   refine ⟨ord, s, hc, hs, ?_, by decide⟩
