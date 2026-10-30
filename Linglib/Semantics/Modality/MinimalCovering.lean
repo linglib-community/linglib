@@ -7,44 +7,31 @@ public import Mathlib.Order.Comparable
 /-!
 # Minimal covering semantics
 
-Booth's semantics for modals over disjunctions ([booth-2022a], [booth-2022b]): a necessity modal
-requires the alternatives of its prejacent to form a minimal cover of the relevant worlds, not
-merely a cover, and a possibility modal requires them to minimally cover some nonempty set of
-relevant worlds. Each alternative must then contribute a relevant world the others miss, which
-yields the Independence inferences of free choice and blocks the Ross inference.
+Modals over a disjunction require its disjuncts to divide up the relevant worlds. For
+[simons-2005] the disjuncts must super cover them, each disjunct meeting them, so possibility
+holds exactly when [each disjunct is possible](##exists_isSuperCover_iff), the Diversity
+inference. Booth's semantics ([booth-2022a], [booth-2022b]) requires a minimal cover instead,
+which holds exactly when [each disjunct contains a covered world that no other
+contains](##isMinCover_iff_inter_sdiff). Possibility then holds exactly when [each disjunct has a
+relevant world to itself](##exists_isMinCover_iff), the Independence inference, and necessity is
+[orthodox necessity together with possibility](##truth_necessity_eq_inter). A minimal cover of a
+nonempty set is [a super cover](##IsMinCover.isSuperCover).
 
-The unilateral modals `box` and `dia` act on inquisitive propositions (`Question W`), whose
+The unilateral modals `box` and `diamond` act on inquisitive propositions (`Question W`), whose
 alternatives let a modal see the disjuncts of its prejacent. The bilateral semantics assigns each
 sentence a pair of inquisitive propositions, the states verifying and the states falsifying it,
 overlapping only in the inconsistent state `∅`. These pairs are Kalman's construction over the
-inquisitive algebra, `BilatInqProp W := Kalman (Question W)`, so negation swaps the pair and
-conjunction and disjunction are the Kleene-lattice operations, with the De Morgan laws and double
-negation for free. The bilateral modals are pairs of unilateral ones, `necessity = (box, dia)` and
-`possibility = (dia, box)` applied to the two coordinates, so the duality of `□` and `◇` holds by
-definition. Truth and falsity are the informative contents of the two coordinates, together the
-Kleene homomorphism `BilatInqProp.info` into the partial propositions `Kalman (Set W)`: no sentence
-is both true and false, but a modal sentence can be neither.
+inquisitive algebra, `Kalman (Question W)`, so negation swaps the pair and conjunction and
+disjunction are the Kleene-lattice operations, with the De Morgan laws and double negation for
+free. The bilateral modals are pairs of unilateral ones, `necessity = (box, diamond)` and
+`possibility = (diamond, box)` on the two coordinates, so the duality of `□` and `◇` holds by
+definition. Truth and falsity are the informative contents of the two coordinates: no sentence is
+[both true and false](##disjoint_truth_falsity), but a modal sentence can be neither.
 
-## Main definitions
+## Implementation notes
 
-* `MinimalCovering.IsMinCover`, `MinimalCovering.IsSuperCover`: minimal covers and the super
-  covers of [simons-2005].
-* `MinimalCovering.box`, `MinimalCovering.dia`: the unilateral modals.
-* `MinimalCovering.BilatInqProp`: bilateral inquisitive propositions; `BilatInqProp.info`,
-  `BilatInqProp.truth`, `BilatInqProp.falsity`.
-* `MinimalCovering.atom`, `MinimalCovering.bang`, `MinimalCovering.necessity`,
-  `MinimalCovering.possibility`, `MinimalCovering.updateAccess`: the clauses of the semantics.
-* `MinimalCovering.Formula`, `MinimalCovering.Formula.eval`: the language and its interpretation,
-  the restrictor conditional evaluating its consequent under the updated accessibility.
-
-## Main results
-
-* `MinimalCovering.isMinCover_iff`: a cover is minimal exactly when each member is needed.
-* `MinimalCovering.IsMinCover.isSuperCover`: a minimal cover is a super cover.
-* `MinimalCovering.possibility_eq_compl_necessity_compl`: the duality of the modals.
-* `MinimalCovering.truth_necessity_of_alt_eq_singleton`,
-  `MinimalCovering.truth_possibility_of_alt_eq_singleton`: over a single alternative the modals
-  have their orthodox truth conditions.
+`IsMinCover C S` is mathlib's `Minimal` for the predicate of covering `S`, which is closed
+upward, so `Set.minimal_iff_forall_sdiff_singleton` is the characterization by needed members.
 
 ## References
 
@@ -69,89 +56,98 @@ variable {W : Type*}
 def IsMinCover (C : Set (Set W)) (S : Set W) : Prop :=
   Minimal (fun X ↦ S ⊆ ⋃₀ X) C
 
-theorem IsMinCover.subset_sUnion {C : Set (Set W)} {S : Set W} (h : IsMinCover C S) :
-    S ⊆ ⋃₀ C :=
+/-- `C` is a super cover of `S` ([simons-2005]): `C` is nonempty, each of its members meets `S`,
+and each member of `S` belongs to one of them. -/
+def IsSuperCover (C : Set (Set W)) (S : Set W) : Prop :=
+  C.Nonempty ∧ (∀ c ∈ C, (c ∩ S).Nonempty) ∧ S ⊆ ⋃₀ C
+
+variable {C : Set (Set W)} {S A B X : Set W}
+
+theorem IsMinCover.subset_sUnion (h : IsMinCover C S) : S ⊆ ⋃₀ C :=
   h.prop
 
 /-- A cover is minimal exactly when each member is needed: dropping it leaves part of `S`
 uncovered. -/
-theorem isMinCover_iff {C : Set (Set W)} {S : Set W} :
-    IsMinCover C S ↔ S ⊆ ⋃₀ C ∧ ∀ c ∈ C, ¬ S ⊆ ⋃₀ (C \ {c}) := by
-  refine ⟨fun h ↦ ⟨h.prop, fun c hc hcov ↦ (h.le_of_le hcov Set.sdiff_subset hc).2 rfl⟩,
-    fun ⟨hcov, hmin⟩ ↦ ⟨hcov, fun Y hY hYC ↦ ?_⟩⟩
-  by_contra hCY
-  obtain ⟨c, hcC, hcY⟩ := Set.not_subset.1 hCY
-  exact hmin c hcC (hY.trans (Set.sUnion_mono fun d hd ↦ ⟨hYC hd, fun hdc ↦ hcY (hdc ▸ hd)⟩))
+theorem isMinCover_iff : IsMinCover C S ↔ S ⊆ ⋃₀ C ∧ ∀ c ∈ C, ¬ S ⊆ ⋃₀ (C \ {c}) :=
+  Set.minimal_iff_forall_sdiff_singleton fun _ _ hS hXY ↦ hS.trans (Set.sUnion_mono hXY)
 
-theorem isMinCover_empty_iff {C : Set (Set W)} : IsMinCover C ∅ ↔ C = ∅ := by
-  refine ⟨fun h ↦ Set.subset_empty_iff.1 (h.le_of_le (Set.empty_subset _) (Set.empty_subset _)),
+/-- A cover is minimal exactly when each member contains a point of `S` that no other member
+contains. -/
+theorem isMinCover_iff_inter_sdiff :
+    IsMinCover C S ↔ S ⊆ ⋃₀ C ∧ ∀ c ∈ C, (S ∩ (c \ ⋃₀ (C \ {c}))).Nonempty := by
+  refine isMinCover_iff.trans (and_congr_right fun hS ↦ forall₂_congr fun c _ ↦ ?_)
+  refine ⟨fun h ↦ ?_, fun ⟨v, hvS, _, hv⟩ h ↦ hv (h hvS)⟩
+  obtain ⟨v, hvS, hv⟩ := Set.not_subset.1 h
+  obtain ⟨d, hdC, hvd⟩ := hS hvS
+  obtain rfl : d = c := by_contra fun hdc ↦ hv ⟨d, ⟨hdC, hdc⟩, hvd⟩
+  exact ⟨v, hvS, hvd, hv⟩
+
+/-- Some nonempty part of `S` is minimally covered by `C` exactly when `C` is nonempty and each of
+its members contains a point of `S` that no other member contains. -/
+theorem exists_isMinCover_iff :
+    (∃ S' ⊆ S, S'.Nonempty ∧ IsMinCover C S') ↔
+      C.Nonempty ∧ ∀ c ∈ C, (S ∩ (c \ ⋃₀ (C \ {c}))).Nonempty := by
+  refine ⟨fun ⟨S', hS', ⟨v, hv⟩, h⟩ ↦ ?_, fun ⟨⟨c₀, hc₀⟩, h⟩ ↦ ?_⟩
+  · obtain ⟨c, hc, -⟩ := h.subset_sUnion hv
+    exact ⟨⟨c, hc⟩, fun c hc ↦ ((isMinCover_iff_inter_sdiff.1 h).2 c hc).mono
+      (Set.inter_subset_inter_left _ hS')⟩
+  refine ⟨⋃ c ∈ C, S ∩ (c \ ⋃₀ (C \ {c})), Set.iUnion₂_subset fun _ _ ↦ Set.inter_subset_left,
+    (h c₀ hc₀).mono (Set.subset_biUnion_of_mem hc₀), isMinCover_iff_inter_sdiff.2
+      ⟨Set.iUnion₂_subset fun c hc _ hv ↦ ⟨c, hc, hv.2.1⟩, fun c hc ↦ ?_⟩⟩
+  obtain ⟨v, hv⟩ := h c hc
+  exact ⟨v, Set.mem_biUnion hc hv, hv.2⟩
+
+theorem isMinCover_empty_iff : IsMinCover C ∅ ↔ C = ∅ :=
+  ⟨fun h ↦ Set.subset_empty_iff.1 (h.le_of_le (Set.empty_subset _) (Set.empty_subset _)),
     fun h ↦ h ▸ ⟨Set.empty_subset _, fun _ _ _ ↦ Set.empty_subset _⟩⟩
 
-theorem IsMinCover.nonempty {C : Set (Set W)} {S : Set W} (h : IsMinCover C S)
-    (hC : C.Nonempty) : S.Nonempty :=
-  Set.nonempty_iff_ne_empty.2 fun hS ↦ hC.ne_empty (isMinCover_empty_iff.1 (hS ▸ h))
+theorem IsMinCover.nonempty (h : IsMinCover C S) (hC : C.Nonempty) : S.Nonempty :=
+  let ⟨c, hc⟩ := hC
+  ((isMinCover_iff_inter_sdiff.1 h).2 c hc).mono Set.inter_subset_left
 
-theorem isMinCover_singleton_iff {X S : Set W} (hS : S.Nonempty) :
-    IsMinCover {X} S ↔ S ⊆ X := by
-  refine ⟨fun h ↦ by simpa using h.subset_sUnion, fun h ↦ ⟨by simpa using h, fun Y hY hYX ↦ ?_⟩⟩
-  obtain ⟨v, hv⟩ := hS
-  obtain ⟨Z, hZY, -⟩ := hY hv
-  exact Set.singleton_subset_iff.2 (Set.mem_singleton_iff.1 (hYX hZY) ▸ hZY)
+theorem isMinCover_singleton_iff : IsMinCover {X} S ↔ S.Nonempty ∧ S ⊆ X := by
+  simp only [isMinCover_iff_inter_sdiff, Set.sUnion_singleton, Set.mem_singleton_iff, forall_eq,
+    sdiff_self, Set.bot_eq_empty, Set.sUnion_empty, Set.sdiff_empty]
+  exact ⟨fun ⟨h, hX⟩ ↦ ⟨hX.mono Set.inter_subset_left, h⟩,
+    fun ⟨hS, h⟩ ↦ ⟨h, (Set.inter_eq_left.2 h).symm ▸ hS⟩⟩
 
-theorem isMinCover_singleton_iff' {X S : Set W} :
-    IsMinCover {X} S ↔ S.Nonempty ∧ S ⊆ X :=
-  ⟨fun h ↦ ⟨h.nonempty (Set.singleton_nonempty X), by simpa using h.subset_sUnion⟩,
-    fun ⟨hS, h⟩ ↦ (isMinCover_singleton_iff hS).2 h⟩
-
-theorem isMinCover_pair_iff {A B S : Set W} (hAB : A ≠ B) :
+theorem isMinCover_pair_iff (hAB : A ≠ B) :
     IsMinCover {A, B} S ↔ S ⊆ A ∪ B ∧ ¬ S ⊆ A ∧ ¬ S ⊆ B := by
-  refine ⟨fun h ↦ ⟨by simpa using h.subset_sUnion, fun hA ↦ ?_, fun hB ↦ ?_⟩, ?_⟩
-  · have h' := h.le_of_le (y := {A}) (by simpa using hA)
-      (Set.singleton_subset_iff.2 (Set.mem_insert A _))
-    exact hAB (h' (Set.mem_insert_of_mem A (Set.mem_singleton B))).symm
-  · have h' := h.le_of_le (y := {B}) (by simpa using hB)
-      (Set.singleton_subset_iff.2 (Set.mem_insert_of_mem A (Set.mem_singleton B)))
-    exact hAB (h' (Set.mem_insert A _))
-  rintro ⟨hcov, hA, hB⟩
-  refine ⟨by simpa using hcov, fun Y hY hYAB ↦ Set.insert_subset_iff.2 ⟨?_, ?_⟩⟩
-  · obtain ⟨u, huS, huB⟩ := Set.not_subset.1 hB
-    obtain ⟨Z, hZY, huZ⟩ := hY huS
-    rcases hYAB hZY with rfl | rfl
-    · exact hZY
-    · exact absurd huZ huB
-  · obtain ⟨v, hvS, hvA⟩ := Set.not_subset.1 hA
-    obtain ⟨Z, hZY, hvZ⟩ := hY hvS
-    rcases hYAB hZY with rfl | rfl
-    · exact absurd hvZ hvA
-    · exact Set.singleton_subset_iff.2 hZY
+  simp [isMinCover_iff, Set.pair_sdiff_left hAB, Set.pair_sdiff_right hAB, and_comm]
 
-theorem isMinCover_pair_iff_inter_sdiff {A B S : Set W} (hAB : A ≠ B) :
+theorem isMinCover_pair_iff_inter_sdiff (hAB : A ≠ B) :
     IsMinCover {A, B} S ↔ S ⊆ A ∪ B ∧ (S ∩ (A \ B)).Nonempty ∧ (S ∩ (B \ A)).Nonempty := by
-  rw [isMinCover_pair_iff hAB]
-  refine and_congr_right fun hcov ↦ ?_
-  have key : ∀ {X Y : Set W}, S ⊆ X ∪ Y → (¬ S ⊆ Y ↔ (S ∩ (X \ Y)).Nonempty) := fun hXY ↦
-    ⟨fun h ↦ (Set.not_subset.1 h).imp fun _ ⟨hv, hvY⟩ ↦ ⟨hv, (hXY hv).resolve_right hvY, hvY⟩,
-      fun ⟨_, hv, _, hvY⟩ h ↦ hvY (h hv)⟩
-  rw [key hcov, key (hcov.trans (Set.union_comm A B).subset)]
-  exact and_comm
+  simp [isMinCover_iff_inter_sdiff, Set.pair_sdiff_left hAB, Set.pair_sdiff_right hAB]
 
-/-- `C` is a super cover of `S` ([simons-2005]): it covers `S` and each of its members meets `S`. -/
-def IsSuperCover (C : Set (Set W)) (S : Set W) : Prop :=
-  S ⊆ ⋃₀ C ∧ ∀ c ∈ C, (c ∩ S).Nonempty
+theorem IsSuperCover.subset_sUnion (h : IsSuperCover C S) : S ⊆ ⋃₀ C :=
+  h.2.2
 
-theorem isSuperCover_pair_iff {A B S : Set W} :
-    IsSuperCover {A, B} S ↔ S ⊆ A ∪ B ∧ (A ∩ S).Nonempty ∧ (B ∩ S).Nonempty := by
-  simp [IsSuperCover]
+/-- A super cover covers a nonempty set, since its members meet it. -/
+theorem IsSuperCover.nonempty (h : IsSuperCover C S) : S.Nonempty :=
+  let ⟨c, hc⟩ := h.1
+  (h.2.1 c hc).mono Set.inter_subset_right
 
-/-- A minimal cover is a super cover, since a member missing `S` could be dropped. -/
-theorem IsMinCover.isSuperCover {C : Set (Set W)} {S : Set W} (h : IsMinCover C S) :
-    IsSuperCover C S := by
-  refine ⟨h.subset_sUnion, fun c hc ↦ Set.nonempty_iff_ne_empty.2 fun hcS ↦ ?_⟩
-  refine isMinCover_iff.1 h |>.2 c hc fun v hv ↦ ?_
-  obtain ⟨d, hd, hvd⟩ := h.subset_sUnion hv
-  refine ⟨d, ⟨hd, fun hdc ↦ ?_⟩, hvd⟩
-  rw [Set.mem_singleton_iff.1 hdc] at hvd
-  exact Set.eq_empty_iff_forall_notMem.1 hcS v ⟨hvd, hv⟩
+theorem isSuperCover_pair_iff :
+    IsSuperCover {A, B} S ↔ (A ∩ S).Nonempty ∧ (B ∩ S).Nonempty ∧ S ⊆ A ∪ B := by
+  simp [IsSuperCover, and_assoc]
+
+/-- Some part of `S` is super covered by `C` exactly when `C` is nonempty and each of its members
+meets `S`. -/
+theorem exists_isSuperCover_iff :
+    (∃ S' ⊆ S, IsSuperCover C S') ↔ C.Nonempty ∧ ∀ c ∈ C, (c ∩ S).Nonempty := by
+  refine ⟨fun ⟨S', hS', hC, h, _⟩ ↦ ⟨hC, fun c hc ↦ (h c hc).mono
+    (Set.inter_subset_inter_right _ hS')⟩, fun ⟨hC, h⟩ ↦ ⟨S ∩ ⋃₀ C, Set.inter_subset_left, hC,
+      fun c hc ↦ ?_, Set.inter_subset_right⟩⟩
+  obtain ⟨v, hvc, hvS⟩ := h c hc
+  exact ⟨v, hvc, hvS, c, hc, hvc⟩
+
+/-- A minimal cover of a nonempty set is a super cover, since a member missing the set could be
+dropped. -/
+theorem IsMinCover.isSuperCover (h : IsMinCover C S) (hS : S.Nonempty) : IsSuperCover C S := by
+  obtain ⟨v, hv⟩ := hS
+  obtain ⟨c, hc, -⟩ := h.subset_sUnion hv
+  exact ⟨⟨c, hc⟩, fun c hc ↦ ((isMinCover_iff_inter_sdiff.1 h).2 c hc).mono
+    fun _ hv ↦ ⟨hv.2.1, hv.1⟩, h.subset_sUnion⟩
 
 /-! ### The unilateral modals -/
 
@@ -162,50 +158,51 @@ def box (R : W → Set W) (P : Question W) : Question W :=
 
 /-- The unilateral possibility modal: `◇P` holds at `w` when the alternatives of `P` minimally
 cover a nonempty set of relevant worlds. -/
-def dia (R : W → Set W) (P : Question W) : Question W :=
+def diamond (R : W → Set W) (P : Question W) : Question W :=
   ofSet {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt P) R'}
 
 @[simp] theorem info_box (R : W → Set W) (P : Question W) :
     (box R P).info = {w | IsMinCover (alt P) (R w)} :=
   info_ofSet _
 
-@[simp] theorem info_dia (R : W → Set W) (P : Question W) :
-    (dia R P).info = {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt P) R'} :=
+@[simp] theorem info_diamond (R : W → Set W) (P : Question W) :
+    (diamond R P).info = {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt P) R'} :=
   info_ofSet _
 
-theorem disjoint_box_dia (R : W → Set W) {P Q : Question W} (h : Disjoint P.info Q.info) :
-    Disjoint (box R P) (dia R Q) := by
-  rw [box, dia, disjoint_ofSet_iff]
+/-- Necessity is orthodox necessity of what the alternatives cover together with possibility:
+the alternatives cover the relevant worlds, and each has a relevant world to itself. -/
+theorem box_eq_inf_diamond (R : W → Set W) {P : Question W} (hP : (alt P).Nonempty) :
+    box R P = ofSet {w | R w ⊆ ⋃₀ alt P} ⊓ diamond R P := by
+  rw [box, diamond, ofSet_inf]
+  congr 1
+  ext w
+  rw [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_ofPred_eq, Set.mem_ofPred_eq,
+    exists_isMinCover_iff, isMinCover_iff_inter_sdiff]
+  exact ⟨fun h ↦ ⟨h.1, hP, h.2⟩, fun h ↦ ⟨h.1, h.2.2⟩⟩
+
+theorem disjoint_box_diamond (R : W → Set W) {P Q : Question W} (h : Disjoint P.info Q.info) :
+    Disjoint (box R P) (diamond R Q) := by
+  rw [box, diamond, disjoint_ofSet_iff]
   exact Set.disjoint_left.2 fun w hP ⟨R', hR', ⟨v, hv⟩, hQ⟩ ↦
     Set.disjoint_left.1 h (P.sUnion_alt_subset_info (hP.subset_sUnion (hR' hv)))
       (Q.sUnion_alt_subset_info (hQ.subset_sUnion hv))
 
-/-! ### Bilateral inquisitive propositions -/
+/-! ### Bilateral inquisitive propositions
 
-/-- A **bilateral inquisitive proposition**: a pair of inquisitive propositions, the states
-verifying and the states falsifying a sentence, overlapping only in `∅` (disjoint in `Question W`,
-whose bottom is `{∅}`). This is Kalman's construction over the inquisitive algebra; `Kalman.pro`
-and `Kalman.con` are Booth's `⟦φ⟧⁺` and `⟦φ⟧⁻`, and negation, conjunction and disjunction are
-`ᶜ`, `⊓` and `⊔`. -/
-abbrev BilatInqProp (W : Type*) := Kalman (Question W)
-
-namespace BilatInqProp
-
-/-- The informative contents of the two coordinates, `(info ⟦φ⟧⁺, info ⟦φ⟧⁻)`, as a Kleene
-homomorphism into the partial propositions. -/
-def info : BoundedLatticeHom (BilatInqProp W) (Kalman (Set W)) :=
-  Kalman.map infoHom.toBoundedLatticeHom
+A bilateral inquisitive proposition is a pair of inquisitive propositions, the states verifying
+and the states falsifying a sentence, overlapping only in `∅`: disjoint in `Question W`, whose
+bottom is `{∅}`. These are the elements of `Kalman (Question W)`; `Kalman.pro` and `Kalman.con` are
+Booth's `⟦φ⟧⁺` and `⟦φ⟧⁻`, and negation, conjunction and disjunction are `ᶜ`, `⊓` and `⊔`. -/
 
 /-- The worlds at which `φ` is true, `info ⟦φ⟧⁺`. -/
-abbrev truth (φ : BilatInqProp W) : Set W := (info φ).pro
+abbrev truth (φ : Kalman (Question W)) : Set W := φ.pro.info
 
 /-- The worlds at which `φ` is false, `info ⟦φ⟧⁻`. -/
-abbrev falsity (φ : BilatInqProp W) : Set W := (info φ).con
+abbrev falsity (φ : Kalman (Question W)) : Set W := φ.con.info
 
-variable (φ ψ : BilatInqProp W)
+section Connectives
 
-theorem truth_eq : truth φ = φ.pro.info := rfl
-theorem falsity_eq : falsity φ = φ.con.info := rfl
+variable (φ ψ : Kalman (Question W))
 
 theorem mem_truth_iff {w : W} : w ∈ truth φ ↔ {w} ∈ φ.pro :=
   mem_info_iff_singleton_mem _ _
@@ -213,8 +210,9 @@ theorem mem_truth_iff {w : W} : w ∈ truth φ ↔ {w} ∈ φ.pro :=
 theorem mem_falsity_iff {w : W} : w ∈ falsity φ ↔ {w} ∈ φ.con :=
   mem_info_iff_singleton_mem _ _
 
+/-- No sentence is both true and false. -/
 theorem disjoint_truth_falsity : Disjoint (truth φ) (falsity φ) :=
-  (info φ).disjoint_pro_con
+  φ.disjoint_pro_con.map infoHom
 
 @[simp] theorem truth_compl : truth φᶜ = falsity φ := rfl
 @[simp] theorem falsity_compl : falsity φᶜ = truth φ := rfl
@@ -223,12 +221,8 @@ theorem disjoint_truth_falsity : Disjoint (truth φ) (falsity φ) :=
 @[simp] theorem truth_inf : truth (φ ⊓ ψ) = truth φ ∩ truth ψ := info_inf _ _
 @[simp] theorem falsity_inf : falsity (φ ⊓ ψ) = falsity φ ∪ falsity ψ := info_sup _ _
 
-end BilatInqProp
-
-open BilatInqProp
-
 /-- An atomic sentence true at `V`: `(↓{V}, ↓{Vᶜ})`. -/
-def atom (V : Set W) : BilatInqProp W :=
+def atom (V : Set W) : Kalman (Question W) :=
   Kalman.mk (ofSet V) (ofSet Vᶜ) (disjoint_ofSet_iff.2 disjoint_compl_right)
 
 @[simp] theorem pro_atom (V : Set W) : (atom V).pro = ofSet V := rfl
@@ -253,38 +247,35 @@ theorem alt_inf_compl_atom (Vp Vq : Set W) : alt (atom Vp ⊓ (atom Vq)ᶜ).pro 
   rw [Kalman.pro_inf, Kalman.pro_compl, pro_atom, con_atom, ofSet_inf, alt_ofSet]
 
 /-- The inquisitive `!`, erasing the distinctions between alternatives on both sides:
-`(↓{info ⟦φ⟧⁺}, ↓{info ⟦φ⟧⁻})`, each coordinate its double pseudocomplement. -/
-def bang (φ : BilatInqProp W) : BilatInqProp W :=
-  Kalman.mk φ.proᶜᶜ φ.conᶜᶜ (by
-    rw [compl_compl_eq, compl_compl_eq, disjoint_ofSet_iff]
-    exact disjoint_truth_falsity φ)
+`!φ = (↓{info ⟦φ⟧⁺}, ↓{info ⟦φ⟧⁻})`. -/
+def bang : Kalman (Question W) :=
+  Kalman.mk (ofSet (truth φ)) (ofSet (falsity φ))
+    (disjoint_ofSet_iff.2 (disjoint_truth_falsity φ))
 
-@[simp] theorem truth_bang (φ : BilatInqProp W) : truth (bang φ) = truth φ :=
-  info_compl_compl _
+@[simp] theorem truth_bang : truth (bang φ) = truth φ := info_ofSet _
+@[simp] theorem falsity_bang : falsity (bang φ) = falsity φ := info_ofSet _
 
-@[simp] theorem falsity_bang (φ : BilatInqProp W) : falsity (bang φ) = falsity φ :=
-  info_compl_compl _
+theorem alt_bang_pro : alt (bang φ).pro = {truth φ} := alt_ofSet _
 
-theorem alt_bang_pro (φ : BilatInqProp W) : alt (bang φ).pro = {truth φ} := by
-  change alt φ.proᶜᶜ = _
-  rw [compl_compl_eq, alt_ofSet]
-  rfl
+end Connectives
 
 /-! ### The bilateral modals -/
 
 /-- **Necessity**: true where the positive alternatives of the prejacent minimally cover the
 relevant worlds, false where its negative alternatives minimally cover a nonempty part of them. -/
-def necessity (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
-  Kalman.mk (box R φ.pro) (dia R φ.con) (disjoint_box_dia R (disjoint_truth_falsity φ))
+def necessity (R : W → Set W) (φ : Kalman (Question W)) : Kalman (Question W) :=
+  Kalman.mk (box R φ.pro) (diamond R φ.con) (disjoint_box_diamond R (disjoint_truth_falsity φ))
 
 /-- **Possibility**: true where the positive alternatives of the prejacent minimally cover a
 nonempty part of the relevant worlds, false where its negative alternatives minimally cover
 them. -/
-def possibility (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
-  Kalman.mk (dia R φ.pro) (box R φ.con)
-    (disjoint_box_dia R (disjoint_truth_falsity φ).symm).symm
+def possibility (R : W → Set W) (φ : Kalman (Question W)) : Kalman (Question W) :=
+  Kalman.mk (diamond R φ.pro) (box R φ.con)
+    (disjoint_box_diamond R (disjoint_truth_falsity φ).symm).symm
 
-variable (R : W → Set W) (φ : BilatInqProp W)
+section Modals
+
+variable (R : W → Set W) (φ : Kalman (Question W))
 
 /-- The duality of the modals: `◇φ = ¬□¬φ`. -/
 theorem possibility_eq_compl_necessity_compl : possibility R φ = (necessity R φᶜ)ᶜ := rfl
@@ -297,11 +288,11 @@ theorem necessity_eq_compl_possibility_compl : necessity R φ = (possibility R �
 
 @[simp] theorem falsity_necessity :
     falsity (necessity R φ) = {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt φ.con) R'} :=
-  info_dia R _
+  info_diamond R _
 
 @[simp] theorem truth_possibility :
     truth (possibility R φ) = {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt φ.pro) R'} :=
-  info_dia R _
+  info_diamond R _
 
 @[simp] theorem falsity_possibility :
     falsity (possibility R φ) = {w | IsMinCover (alt φ.con) (R w)} :=
@@ -309,33 +300,42 @@ theorem necessity_eq_compl_possibility_compl : necessity R φ = (possibility R �
 
 /-- Over a single alternative `A`, necessity is orthodox: true where the relevant worlds are
 nonempty and inside `A`. -/
-theorem truth_necessity_of_alt_eq_singleton {A : Set W} (h : alt φ.pro = {A}) :
+theorem truth_necessity_of_alt_eq_singleton (h : alt φ.pro = {A}) :
     truth (necessity R φ) = {w | (R w).Nonempty ∧ R w ⊆ A} := by
-  ext w
-  simp [h, isMinCover_singleton_iff']
+  simp [h, isMinCover_singleton_iff]
 
 /-- Over a single alternative `A`, possibility is orthodox: true where some relevant world lies
 in `A`. -/
-theorem truth_possibility_of_alt_eq_singleton {A : Set W} (h : alt φ.pro = {A}) :
+theorem truth_possibility_of_alt_eq_singleton (h : alt φ.pro = {A}) :
     truth (possibility R φ) = {w | (R w ∩ A).Nonempty} := by
-  ext w
-  simp only [truth_possibility, h, isMinCover_singleton_iff', Set.mem_ofPred_eq]
-  refine ⟨fun ⟨R', hR', _, ⟨v, hv⟩, hA⟩ ↦ ⟨v, hR' hv, hA hv⟩, fun ⟨v, hvR, hvA⟩ ↦ ?_⟩
-  exact ⟨{v}, Set.singleton_subset_iff.2 hvR, Set.singleton_nonempty v,
-    Set.singleton_nonempty v, Set.singleton_subset_iff.2 hvA⟩
+  simp [h, exists_isMinCover_iff]
 
-theorem falsity_necessity_of_alt_eq_singleton {B : Set W} (h : alt φ.con = {B}) :
+theorem falsity_necessity_of_alt_eq_singleton (h : alt φ.con = {B}) :
     falsity (necessity R φ) = {w | (R w ∩ B).Nonempty} :=
   truth_possibility_of_alt_eq_singleton R φᶜ h
 
-theorem falsity_possibility_of_alt_eq_singleton {B : Set W} (h : alt φ.con = {B}) :
+theorem falsity_possibility_of_alt_eq_singleton (h : alt φ.con = {B}) :
     falsity (possibility R φ) = {w | (R w).Nonempty ∧ R w ⊆ B} :=
   truth_necessity_of_alt_eq_singleton R φᶜ h
+
+/-- Necessity is orthodox necessity together with possibility: where the positive alternatives of
+`φ` generate it, `□φ` is true exactly where `□!φ` and `◇φ` are. -/
+theorem truth_necessity_eq_inter (hφ : φ.pro.IsNormal) :
+    truth (necessity R φ) = truth (necessity R (bang φ)) ∩ truth (possibility R φ) := by
+  rw [truth_necessity_of_alt_eq_singleton R _ (alt_bang_pro φ)]
+  change (box R φ.pro).info = _ ∩ (diamond R φ.pro).info
+  rw [box_eq_inf_diamond R hφ.alt_nonempty, info_inf, info_ofSet, ← hφ.info_eq_sUnion_alt]
+  ext w
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, info_diamond]
+  exact ⟨fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₂.elim fun _ ⟨hR', hne, _⟩ ↦ hne.mono hR', h₁⟩, h₂⟩,
+    fun ⟨⟨_, h₁⟩, h₂⟩ ↦ ⟨h₁, h₂⟩⟩
+
+end Modals
 
 /-! ### Conditionals and the language -/
 
 /-- The accessibility update by `φ`: the relevant worlds at which `φ` is true. -/
-def updateAccess (R : W → Set W) (φ : BilatInqProp W) (w : W) : Set W :=
+def updateAccess (R : W → Set W) (φ : Kalman (Question W)) (w : W) : Set W :=
   R w ∩ truth φ
 
 /-- The language: atoms, negation, conjunction, disjunction, the inquisitive `!`, the restrictor
@@ -356,7 +356,7 @@ variable {At : Type*}
 
 /-- The interpretation of a sentence in the model `⟨W, R, V⟩`. The restrictor conditional
 evaluates its consequent under the accessibility updated by its antecedent. -/
-def eval (V : At → Set W) : (W → Set W) → Formula At → BilatInqProp W
+def eval (V : At → Set W) : (W → Set W) → Formula At → Kalman (Question W)
   | _, atom p => MinimalCovering.atom (V p)
   | R, neg φ => (eval V R φ)ᶜ
   | R, conj φ ψ => eval V R φ ⊓ eval V R ψ
