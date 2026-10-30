@@ -80,11 +80,15 @@ and the perspective the schema of utterance selects, `[+S]`, or none for the nul
 `[−S]`. -/
 structure Entry (α : Type*) [SemilatticeSup α] where
   frame : Frame α
-  objectFn : Bool
-  sumClosed : Bool
+  objectFn : Prop
+  [decObjectFn : Decidable objectFn]
+  sumClosed : Prop
+  [decSumClosed : Decidable sumClosed]
   perspective : Option (Set α)
   perspective_max : ∀ D, perspective = some D →
     IsMaxDisjointIn Overlap D (if objectFn then frame.objects else frame.extn)
+
+attribute [instance] Entry.decObjectFn Entry.decSumClosed
 
 namespace Entry
 
@@ -103,9 +107,6 @@ def extn : Set α := if E.sumClosed then {x | AlgClosure (· ∈ E.cbase) x} els
 /-- Grammatical counting (A1) is defined over disjoint counting bases only: an entry is count
 when its base is disjoint. -/
 def IsCount : Prop := DisjointPred Overlap E.cbase
-
-/-- The features `[±O]` and `[±S]`. -/
-def features : Bool × Bool := (E.objectFn, E.perspective.isSome)
 
 variable {E}
 
@@ -141,11 +142,13 @@ end Entry
 utterance inserted into the counting base of any entry, the extension closed under sum. -/
 def unitShift (E : Entry α) (D : Set α) (h : IsMaxDisjointIn Overlap D E.frame.objects) :
     Entry α :=
-  ⟨E.frame, true, true, some D, fun _ hD ↦ Option.some_inj.1 hD ▸ h⟩
+  ⟨E.frame, True, True, some D, fun _ hD ↦ Option.some_inj.1 hD ▸ h⟩
 
-theorem features_unitShift (E : Entry α) (D : Set α)
+/-- The unit shift is `[+O,+S]`. -/
+theorem objectFn_unitShift (E : Entry α) (D : Set α)
     (h : IsMaxDisjointIn Overlap D E.frame.objects) :
-    (unitShift E D h).features = (true, true) := rfl
+    (unitShift E D h).objectFn ∧ (unitShift E D h).perspective.isSome :=
+  ⟨trivial, rfl⟩
 
 /-- The unit shift makes every entry count ((49), (50)). -/
 theorem isCount_unitShift (E : Entry α) (D : Set α)
@@ -160,16 +163,16 @@ def containerExtn (R P : Entry α) (contain : α → α → Prop) : Set α :=
 
 /-- The container classifier presupposes, (45), that the argument's extension is cumulative,
 which every sum-closed extension is. -/
-theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed = true) : CUM (· ∈ E.extn) := by
-  simp only [Entry.extn, h, ite_true]
+theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed) : CUM (· ∈ E.extn) := by
+  simp only [Entry.extn, h, ↓reduceIte]
   exact algClosure_cum
 
 /-- A singular count extension with two distinct units is not cumulative: the sum of two units
 is not a unit, so *#a bowl of an apple*. -/
-theorem not_cum_extn_of_singular {E : Entry α} (hs : E.sumClosed = false) (hc : E.IsCount)
+theorem not_cum_extn_of_singular {E : Entry α} (hs : ¬ E.sumClosed) (hc : E.IsCount)
     {u v : α} (hu : u ∈ E.cbase) (hv : v ∈ E.cbase) (hne : u ≠ v) (hu0 : ¬ IsBot u)
     (hv0 : ¬ IsBot v) : ¬ CUM (· ∈ E.extn) := by
-  simp only [Entry.extn, hs, Bool.false_eq_true, ite_false]
+  simp only [Entry.extn, hs, ↓reduceIte]
   intro hcum
   have hsum : u ⊔ v ∈ E.cbase := hcum hu hv
   by_cases huv : u ⊔ v = u
@@ -190,19 +193,21 @@ theorem overlapPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units) 
 mass: the grains of *rice* and *čočka* are in the basic predicate, not in the counting base. -/
 theorem rice_mass {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units) (hne : u ≠ v)
     (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) (E : Entry α) (hF : E.frame = Frame.ofUnits units)
-    (hO : E.objectFn = false) (hS : E.perspective = none) : ¬ E.IsCount := by
+    (hO : ¬ E.objectFn) (hS : E.perspective = none) : ¬ E.IsCount := by
   rw [Entry.isCount_iff_of_null hS]
-  simp only [Entry.base, hO, Bool.false_eq_true, ite_false, hF]
+  simp only [Entry.base, hO, ↓reduceIte, hF]
   exact fun h ↦ h (overlapPred_extn_ofUnits hu hv hne hu0 hv0)
 
 /-- The `[+O,+S]` entry over a frame of disjoint units, *lentil* (36)–(37): the perspective
 is the units themselves. -/
-def lentil (units : Set α) (hd : DisjointPred Overlap units) (sumClosed : Bool) : Entry α :=
-  ⟨Frame.ofUnits units, true, sumClosed, some units,
+def lentil (units : Set α) (hd : DisjointPred Overlap units) (sumClosed : Prop)
+    [Decidable sumClosed] : Entry α :=
+  ⟨Frame.ofUnits units, True, sumClosed, some units,
     fun _ hD ↦ Option.some_inj.1 hD ▸ isMaxDisjointIn_self _ hd⟩
 
 /-- *lentil* is count, with the units as its counting base. -/
-theorem lentil_count {units : Set α} (hd : DisjointPred Overlap units) (sumClosed : Bool) :
+theorem lentil_count {units : Set α} (hd : DisjointPred Overlap units) (sumClosed : Prop)
+    [Decidable sumClosed] :
     (lentil units hd sumClosed).IsCount ∧ (lentil units hd sumClosed).cbase = units :=
   ⟨Entry.isCount_of_perspective rfl, rfl⟩
 
@@ -255,7 +260,7 @@ instance : DecidablePred (· ∈ vanityPerspective) := fun s ↦ decidable_of_if
 
 /-- *furniture* (40): `[+O,−S]` over the functional units and their sums. -/
 def furniture : Entry Part :=
-  ⟨Frame.ofUnits furnitureUnits, true, true, none, fun _ h ↦ by simp at h⟩
+  ⟨Frame.ofUnits furnitureUnits, True, True, none, fun _ h ↦ by simp at h⟩
 
 theorem furniture_mass : ¬ furniture.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
@@ -290,7 +295,7 @@ instance : DecidablePred (· ∈ riceGrains) := fun s ↦
   decidable_of_iff (s = {0} ∨ s = {1} ∨ s = {2}) Iff.rfl
 
 /-- *rice* (38): `[−O,−S]` over the grains and their sums. -/
-def rice : Entry Part := ⟨Frame.ofUnits riceGrains, false, true, none, fun _ h ↦ by simp at h⟩
+def rice : Entry Part := ⟨Frame.ofUnits riceGrains, False, True, none, fun _ h ↦ by simp at h⟩
 
 theorem riceGrains_disjoint : DisjointPred Overlap riceGrains := by decide
 
@@ -299,17 +304,17 @@ rice* (50) is count ((Q2), 9.5.3). -/
 theorem rice_accessibility :
     riceGrains ⊆ rice.frame.extn ∧ ¬ rice.IsCount ∧
       unitShift rice riceGrains (isMaxDisjointIn_self _ riceGrains_disjoint) =
-        lentil riceGrains riceGrains_disjoint true ∧
-      (lentil riceGrains riceGrains_disjoint true).IsCount ∧
-      (lentil riceGrains riceGrains_disjoint true).cbase = riceGrains :=
+        lentil riceGrains riceGrains_disjoint True ∧
+      (lentil riceGrains riceGrains_disjoint True).IsCount ∧
+      (lentil riceGrains riceGrains_disjoint True).cbase = riceGrains :=
   ⟨fun _ h ↦ .base h,
     rice_mass (α := Part) (u := {0}) (v := {1}) (Or.inl rfl) (Or.inr (Or.inl rfl)) (by decide)
-      (by decide) (by decide) rice rfl rfl rfl,
+      (by decide) (by decide) rice rfl id rfl,
     rfl, (lentil_count _ _).1, (lentil_count _ _).2⟩
 
 /-- *mud* (39): `[−O,−S]` over the parts of some mud, which overlap. -/
 def mud : Entry Part :=
-  ⟨Frame.substance {s | s.Nonempty}, false, true, none, fun _ h ↦ by simp at h⟩
+  ⟨Frame.substance {s | s.Nonempty}, False, True, none, fun _ h ↦ by simp at h⟩
 
 theorem mud_mass : ¬ mud.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
@@ -321,7 +326,7 @@ theorem mud_mass : ¬ mud.IsCount := by
 theorem isCount_iff_english :
     (furniture.IsCount ↔ English.Nouns.furniture.IsCount) ∧
       (rice.IsCount ↔ English.Nouns.rice.IsCount) ∧
-      ((lentil riceGrains riceGrains_disjoint true).IsCount ↔ English.Nouns.lentil.IsCount) :=
+      ((lentil riceGrains riceGrains_disjoint True).IsCount ↔ English.Nouns.lentil.IsCount) :=
   ⟨iff_of_false furniture_mass (by decide), iff_of_false rice_accessibility.2.1 (by decide),
     iff_of_true rice_accessibility.2.2.2.1 (by decide)⟩
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Reference.Kind
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Logic.Assignment
@@ -34,9 +34,9 @@ own a dog*, the kind pronoun *them* is therefore interpretable and a partitive i
   counts (`ClassifiedNoun.IsCount`).
 * Individuals form any join semilattice, as in the paper (§3); the models are Link's nonempty
   sets of atoms, `Mereology.Individual`. A kind is a function from worlds to partial
-  individuals, and σ is `iota` of `IsGreatest`, as in (13a). The sufficient condition
-  for σ is stated for finite extensions (`it_isSome_of_supClosed`), where the paper has closure
-  under arbitrary sums.
+  individuals, and σ is ι of `IsGreatest`, as in (13a), so *it* is ∩, `Kind.down`. The
+  sufficient condition for σ is stated for finite extensions (`Kind.down_isSome_of_supClosed`),
+  where the paper has closure under arbitrary sums, since Link's model has no empty sum.
 
 ## TODO
 
@@ -69,45 +69,36 @@ section Kinds
 
 variable [SemilatticeSup E]
 
-/-- *it* (17a) denotes the kind of a concept, ∩ as in (13b). -/
-noncomputable def it (P : World → Set E) : World → Option E :=
-  fun w ↦ iota (IsGreatest (P w))
-
 /-- *they* (17b) denotes the kind of the plural closure (14) of a concept. -/
 noncomputable def they (P : World → Set E) : World → Option E :=
-  fun w ↦ iota (IsGreatest (supClosure (P w)))
+  Kind.down fun w ↦ supClosure (P w)
 
-/-- `pronoun noun` is the kind pronoun that the head noun selects, *they* for a count noun and
-*it* for a mass noun (12). -/
+/-- `pronoun noun` is the kind pronoun that the head noun selects (12): *they* for a count noun,
+and for a mass noun *it*, which denotes the kind of the concept, ∩ as in (13b), (17a). -/
 noncomputable def pronoun (noun : English.Nouns.Noun) : (World → Set E) → World → Option E :=
-  if noun.IsCount then they else it
+  if noun.IsCount then they else Kind.down
 
 theorem pronoun_of_isCount {noun : English.Nouns.Noun} (h : noun.IsCount) :
     pronoun (World := World) (E := E) noun = they :=
   ite_eq_left h
 
 theorem pronoun_of_not_isCount {noun : English.Nouns.Noun} (h : ¬ noun.IsCount) :
-    pronoun (World := World) (E := E) noun = it :=
+    pronoun (World := World) (E := E) noun = Kind.down :=
   ite_eq_right h
 
 /-- *pollen* is resumed by *it* and *pollen grains* by *they*, though they can describe the same
 stuff (8), (12). -/
 theorem pronoun_pollen :
-    pronoun (World := World) (E := E) English.Nouns.pollen = it ∧
+    pronoun (World := World) (E := E) English.Nouns.pollen = Kind.down ∧
       pronoun (World := World) (E := E) English.Nouns.pollenGrain = they :=
   ⟨pronoun_of_not_isCount (by decide), pronoun_of_isCount (by decide)⟩
 
 /-- On a cumulative concept the plural closure changes nothing, so *they* and *it* denote the
 same kind ((16), (18d)). -/
-theorem they_eq_it_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w)) :
-    they P = it P := by
-  unfold they it
+theorem they_eq_down_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w)) :
+    they P = Kind.down P := by
+  unfold they
   simp only [fun w ↦ (h w).supClosure_eq]
-
--- (13)
-theorem it_isSome_of_supClosed {P : World → Set E} {w : World} (hfin : (P w).Finite)
-    (hne : (P w).Nonempty) (hcum : SupClosed (P w)) : (it P w).isSome :=
-  hcum.directedOn.iota_isGreatest_isSome hfin hne
 
 end Kinds
 
@@ -116,7 +107,7 @@ def spider : Unit → Set (Individual Bool) :=
   fun _ ↦ {Individual.atom true, Individual.atom false}
 
 /-- The kind of the singular count concept is undefined with two instances (15c). -/
-theorem spider_no_kind : it spider () = none := by
+theorem spider_no_kind : Kind.down spider () = none := by
   refine IsAntichain.iota_isGreatest_eq_none ?_ (Set.mem_insert _ _)
     (Set.mem_insert_of_mem _ rfl) fun h ↦ Bool.noConfusion (Set.singleton_eq_singleton_iff.1
       (congrArg Subtype.val h))

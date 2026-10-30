@@ -11,12 +11,15 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 
 Partee argues that no adjective is privative in Kamp's sense. A privative adjective is vacuous
 within its literal head, so Kamp and Partee's non-vacuity principle shifts the head to include
-the adjective's value, *fur* to real or fake fur, and on the shifted head *fake* is subsective;
-the tautologous *real* needs the same shift. Nowak's Polish NP-splitting data motivate the move.
-The adjectives that split are the intersective, subsective and privative ones, which form no
+the adjective's value, *fur* to real or fake fur, whenever there are both fake things and furs,
+and [on the head it shifts *fake* is subsective and no longer privative](##shiftsHead_subsective):
+what it yields falls under the shifted head and meets it. The tautologous *real*
+[needs the same shift](##real_isNonVacuous_iff). Nowak's Polish NP-splitting data motivate the
+move. The adjectives that split are the intersective, subsective and privative ones, which form no
 natural class of the traditional scale, while the modal ones do not, and once the privatives are
-reanalysed the adjectives that split are exactly the subsective ones. *Former*, normally
-privative, does not split, a puzzle Partee leaves open.
+relabelled subsective the adjectives that split are
+[exactly the subsective ones](##reanalyse_splittable_iff). *Former*, normally privative, does not
+split, a puzzle Partee leaves open.
 
 ## Implementation notes
 
@@ -24,7 +27,12 @@ The classes are the paper's labels for the meaning postulates, ordered by the tr
 that its footnote 1 says the postulates do not give, and a natural class is read as an interval
 of that scale. Each Polish adjective's class is the paper's, recorded in the rows'
 `paperFeatures`; for most adjectives of its lists the paper gives only the English. The shift is
-`Modifier.ShiftsHead`, and *real* is the identity modifier.
+`Modifier.ShiftsHead`, and *real* is the identity modifier. Subsectivity on the shifted head is
+the postulate (8) read at the head the shift supplies, which widening a head to include the
+adjective's value secures for any adjective; what singles out the privatives is that non-vacuity
+licenses the shift for them and not for an adjective already non-vacuous within its literal head
+(`Modifier.not_shiftsHead_of_isNonVacuous`). The reanalysis of the splitting data acts on the
+class labels (`AdjectiveClass.reanalyse`).
 
 ## Errata
 
@@ -142,6 +150,15 @@ theorem reanalyse_splittable_iff (c : AdjectiveClass) :
   decide
 
 /-! ### *real* and *fake* on the shifted head -/
+
+/-- Where there are both fake things and Ns, *fake* shifts its head, and on the shifted head it
+is subsective, its value falling under the head, and not privative, its value meeting the head
+(pp. 279–281). -/
+theorem shiftsHead_subsective {adj : Modifier (W → E → Prop)} (hp : IsPrivative adj)
+    {N : W → E → Prop} {w : W} (hadj : ∃ x, adj N w x) (hN : ∃ x, N w x) :
+    ShiftsHead adj N w ∧ adj N w ≤ N w ⊔ adj N w ∧ ¬ Disjoint (adj N w) (N w ⊔ adj N w) :=
+  ⟨hp.shiftsHead_iff.2 ⟨hadj, hN⟩, le_sup_right,
+    fun h ↦ hadj.elim fun x hx ↦ (Pi.disjoint_iff.1 h x).le_bot ⟨hx, Or.inr hx⟩⟩
 
 /-- *real* is vacuous on its literal head, and on a privatively shifted head non-vacuous iff there
 are both Ns and things in the privative's value (p. 280). -/

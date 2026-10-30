@@ -34,11 +34,12 @@ language every bare nominal, and a [−arg, +pred] language none.
 ## Implementation notes
 
 Whether ∩ is defined for a nominal is a proposition `down` that the consumer supplies, as for
-`Determiner.Inventory.Available`. It depends on the nominal's denotation and not on its number
+`Determiner.Inventory.Available`; for Chierchia's ∩ it is `Kind.down P ∈ K`
+(`Semantics/Reference/Kind.lean`). It depends on the nominal's denotation and not on its number
 and countability alone, since a plural property anchored to particular entities has no kind. The
 nominal's number is supplied too, since blocking applies only within a determiner's domain.
-`DirectedOn.iota_isGreatest_isSome` and `IsAntichain.iota_isGreatest_eq_none` decide it for
-cumulative extensions and for extensions of two or more atoms.
+`Kind.down_isSome_of_supClosed` and `IsAntichain.iota_isGreatest_eq_none` decide whether ∩ has a
+value for cumulative extensions and for extensions of two or more atoms.
 
 ## References
 
