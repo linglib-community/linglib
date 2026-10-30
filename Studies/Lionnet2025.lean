@@ -17,33 +17,15 @@ import all Init.Data.List.Control
 /-!
 # Lionnet (2025): Tonal languages without tone
 
-This file formalizes [lionnet-2025]'s analysis of the word prosody of Drubea and Numèè
-(Oceanic, New Caledonia) as register features alone: an underlying downstep `l` on the
-mora, a postlexical epenthetic upstep `h`, and boundary features, with no tone feature.
-The stems of the two fragments carry only downsteps (`stems_downstep_only`), at most one
-per stem (`stems_culminative`, Rivierre's culminativity) though not per compound
-(`compounds_not_culminative`), and their tiers are exactly the three stem patterns ∅, `l`,
-∅`l` associated by the syllabic alignment of Table 4 (`stems_patterned`), the loanwords of
-(54) being the one exception (`loans_unpatterned`). The alignment predicts that a
-syllable-internal downstep occurs only in monosyllables (`associate_syllable_initial`);
-the CVꜜV monosyllables are what makes the mora, not the syllable, the register-bearing
-unit (`mora_is_rbu`).
-
-The postlexical derivation is downstep displacement (§4.6), the boundary features h% of
-Drubea and l% of Numèè (§4.8), and pre-downstep h-epenthesis (§4.4), realized by terracing
-from the baseline with the utterance-initial downstep unrealized (§4.5). Each is a
-`Subregular.Docking` process over the tier with its syllable boundaries written in, and
-each but the spreading variant of h-epenthesis has a quantifier-free guard
-([chandlee-jardine-2019]): displacement is spreading then delinking, both one step across a
-boundary; raising reads the next mora and, the syllables being at most bimoraic, one mora
-back within its own; the boundary features read the last two syllables. The realization
-reproduces Rivierre's pitch levels where he transcribes whole steps ((11), (19), (20),
-(24), (26), (30), (38), (53)) and, for every transcribed utterance, the direction of each
-step between syllables (`rows_signs`); the double downstep of (25), (52) and (53b) is a
-second `l` on one mora. Lionnet's rephrasing of [leben-2018]'s definitional properties of
-downstep and his placement of Drubea in [hyman-2006]'s typology — tonal by definition (3)
-but without stress accent, culminative in register while neither obligatory nor
-syllable-dependent (`drubea_tonal`, `drubea_not_stressAccent`) — close the file.
+This file formalizes the word prosody of Drubea and Numèè (Oceanic, New Caledonia) as register
+features alone. [Every register feature of a stem is the downstep
+`l`](##Lionnet2025.stems_downstep_only), at most one per stem (`stems_culminative`), and the stem
+tiers are three patterns (`stems_patterned`) whose alignment [puts the downstep of a polysyllable
+on a syllable-initial mora](##Lionnet2025.associate_syllable_initial); the CVꜜV monosyllables
+[make the mora the register-bearing unit](##Lionnet2025.mora_is_rbu). Postlexical docking
+processes and terracing [reproduce the direction of each transcribed step between
+syllables](##Lionnet2025.rows_signs), and Drubea [is tonal by Hyman's
+definition](##Lionnet2025.drubea_tonal) without a stress accent (`drubea_not_stressAccent`).
 
 ## Implementation notes
 
@@ -115,8 +97,7 @@ theorem numee_stems_patterned :
     ∀ s ∈ Numee.stems, ∃ p : StemPattern, p.associate (s.shape μ) = some s.tier := by
   decide
 
-/-- The loanwords of (54), CVꜜV.CV(V), bear none: Table 3's mapping (b), attested in recent
-loans only. -/
+-- (54), Table 3
 theorem loans_unpatterned :
     ∀ s ∈ Drubea.loans, ∀ p : StemPattern, p.associate (s.shape μ) ≠ some s.tier := by
   decide
@@ -139,12 +120,11 @@ theorem associate_syllable_initial (p : StemPattern) {shape : List ℕ} (h : 2 �
     {tier : RegisterTier} (ht : p.associate shape = some tier) :
     ∀ i ∈ RegisterTier.bearing .l tier, ∃ k, i = (shape.take k).sum := by
   intro i hi
-  simp only [RegisterTier.bearing, List.mem_filter, List.mem_range, List.getD_eq_getElem?_getD]
-    at hi
+  obtain ⟨hlt, hi⟩ := RegisterTier.mem_bearing.1 hi
+  replace hi : RegisterFeature.l ∈ tier[i]?.getD [] := by simpa [List.getElem?_eq_getElem hlt]
   obtain ⟨n, m, rest, rfl⟩ : ∃ n m rest, shape = n :: m :: rest := by
     match shape, h with
     | n :: m :: rest, _ => exact ⟨n, m, rest, rfl⟩
-  obtain ⟨-, hi⟩ := hi
   cases p with
   | empty =>
     simp only [StemPattern.associate, Option.some.injEq] at ht
@@ -196,8 +176,7 @@ def blanket : Registered Syllable := Drubea.uuMat ++ Drubea.uHair ++ Drubea.pook
 /-- /ꜜko·ꜜvuu-ɽe/ 'voice, language' ((55c)), manner·speak-ACT. -/
 def voice : Registered Syllable := Drubea.koManner ++ Drubea.vuuSpeak ++ Drubea.reAct
 
-/-- Culminativity holds of the stem, not of the morphological word: each compound of (55)
-carries the downsteps of its members. -/
+-- (55)
 theorem compounds_not_culminative :
     ¬ IsCulminative mound ∧ ¬ IsCulminative blanket ∧ ¬ IsCulminative voice := by decide
 
@@ -205,11 +184,11 @@ theorem compounds_not_culminative :
 system (§4.2, §7). A stem is a register tier over its morae with no tonal root node, so it bears
 no tone feature. -/
 theorem stems_downstep_only :
-    ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ f ∈ RegisterTier.features s.tier, f = .l := by
+    ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ f ∈ s.tier.flatten, f = .l := by
   decide
 
 -- An upstep on the tier fails the condition.
-example : ¬ ∀ f ∈ RegisterTier.features [[], [.h], [.l]], f = .l := by decide
+example : ¬ ∀ f ∈ ([[], [.h], [.l]] : RegisterTier).flatten, f = .l := by decide
 
 /-- The two morae of the one syllable of /beꜜe/ differ in register, so the register-bearing
 unit is the mora, not the syllable (§3.7, §4.2). -/
@@ -227,8 +206,8 @@ def drubea : Hyman2006.Marking Stem ℕ where
   marked s := (RegisterTier.bearing .l s.1.tier).toFinset
   marked_subset s i hi := by
     have h : s.1.tier.length = s.1.moraCount μ := Drubea.stems_aligned s.1 s.2
-    simp only [List.mem_toFinset, RegisterTier.bearing, List.mem_filter, List.mem_range] at hi
-    exact Finset.mem_range.2 (h ▸ hi.1)
+    obtain ⟨hlt, -⟩ := RegisterTier.mem_bearing.1 (List.mem_toFinset.1 hi)
+    exact Finset.mem_range.2 (h ▸ hlt)
   tbu := .mora
 
 theorem drubea_culminative : Hyman2006.Culminative drubea := fun ⟨a, ha⟩ =>
@@ -282,8 +261,7 @@ theorem unmark_marked {r : Registered Syllable} (h : r.IsAligned μ) :
 /-- The register alphabet of the derivations: a boundary, a registerless mora, a downstep,
 a double downstep, an upstep, and the `lh` contour. -/
 def alphabet : List Slot :=
-  [none, some [], some [.l], some [.l, .l], some [.h],
-    some [.l, .h]]
+  [none, some [], some [.l], some [.l, .l], some [.h], some [.l, .h]]
 
 /-- The position variable. -/
 def x : Walk := .var
@@ -564,8 +542,7 @@ open Numee in
 -- (52), §4.6
 theorem ex52_double :
     (derive [spreadL, delinkL, raising] [yaaNeg, meThat, gee1plExcl, meFut, nyaiArrive]).tier =
-      [[], [.h], [.l, .l], [], [.h], [.l, .l],
-        [.h], [.l]] := by
+      [[], [.h], [.l, .l], [], [.h], [.l, .l], [.h], [.l]] := by
   decide
 
 -- (18), (63)
@@ -643,6 +620,8 @@ def derivations : List (Registered Syllable × Datum) :=
     (derive [raising] [Numee.gu2sg, Numee.capeRaise, Numee.panaaMast, Numee.koOn, Numee.nyuBoat,
       Numee.wiiDown, Numee.toThere], Examples.ex62)]
 
+/-- On every levelled row it derives, the realization reproduces the direction of each step
+between syllables that the source transcribes. -/
 theorem rows_signs :
     ∀ d ∈ derivations, ∀ ls ∈ levels? d.2,
       (signs (syllableLevels d.1 (realize d.1))).take (ls.length - 1) =

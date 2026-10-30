@@ -296,8 +296,9 @@ theorem isNonCrossing_lines_comm {i j : ι} :
   exact ⟨fun h _ _ _ _ h₁ h₂ hlt ↦ le_of_not_gt fun hgt ↦ (h h₂.symm h₁.symm hgt).not_gt hlt,
     fun h _ _ _ _ h₁ h₂ hlt ↦ le_of_not_gt fun hgt ↦ (h h₂.symm h₁.symm hgt).not_gt hlt⟩
 
-/-- Concatenation preserves the No-Crossing Constraint, the inductive step of
-[jardine-heinz-2015]'s Theorem 4 for their merging concatenation. -/
+/-- Concatenation preserves the No-Crossing Constraint. With `NoCrossing.repoint` under the
+merge this gives the inductive step of [jardine-heinz-2015]'s Theorem 4 for their merging
+concatenation, `MergeAR.noCrossing_toAR_mul`. -/
 theorem NoCrossing.mul (hX : X.NoCrossing) (hY : Y.NoCrossing) : (X * Y).NoCrossing :=
     fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' h₁ h₂ hlt ↦ by
   replace hX := isNonCrossing_lines_iff.1 (hX i j)

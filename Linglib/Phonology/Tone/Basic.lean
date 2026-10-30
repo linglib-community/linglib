@@ -124,12 +124,12 @@ end TRN
 
 /-! ### Tone-bearing units -/
 
-/-- The prosodic unit that carries a node: the syllable in most tone languages, the mora in
-Drubea and Numèè ([lionnet-2025]). -/
+/-- The prosodic unit that carries tone or register: the syllable in most tone languages, the
+mora in others, among them Drubea and Numèè, where it bears register features and no tonal root
+node ([lionnet-2025]). -/
 inductive TBUKind where
   | mora
   | syllable
   deriving DecidableEq, Repr
-
 
 end Tone
