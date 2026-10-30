@@ -13,7 +13,9 @@ are common (Universal 1), and they are the paper's types I, II and III, verb-ini
 and verb-final. This file states the implicational universals of order over the paper's own data:
 the 30-language sample of Appendix I, extended by the per-language properties the text and its
 footnotes record, and the 24 order types of Appendix II with the languages listed as attesting each
-(`Data.WordOrder.Greenberg1963`). Each basic type is an arrangement of subject, object and verb,
+(`Data.WordOrder.Greenberg1963`). The paper's Additional note adds Papago, verb-initial and
+postpositional, to type 7, so that [Universal 3 holds of the types](##universal_3_types) only with
+the exception the note concedes. Each basic type is an arrangement of subject, object and verb,
 and each adposition and each order of a noun and its dependent a head direction, so the harmony
 universals are statements about `HeadDirection`: a verb-peripheral language's adposition is a head
 in the verb's direction (Universals 3 and 4), and the noun's direction towards its genitive is the
@@ -26,15 +28,25 @@ adposition's (Universal 2).
   universals with the exceptions the paper names (`UniversalExcept`). Universals over the attested
   order types are `TypeUniversal`.
 * The genitive column follows the text, every postpositional language preposing the genitive and
-  every prepositional one postposing it but Norwegian, which the paper's additional note records
-  with both orders. The demonstrative and numeral columns follow Appendix I, whose counts the
-  printed Table 6 garbles (its NA column sums to 23 against the 19 of Table 5).
+  every prepositional one postposing it but Norwegian, which the paper's Additional note records
+  with both orders. The demonstrative and numeral columns follow Appendix I.
+* The Additional note reports Papago as verb-initial and postpositional, an exception to
+  Universal 3, and assigns it "probably" to type 7 of Appendix II; the types record it there.
 * Zapotec and Songhai, whose question particles follow more than one rule, carry none, as in
   Table 2.
+
+## Errata
+
+* The text counts 14 prepositional languages, 13 of them with the genitive after the noun, but
+  Table 1 and Appendix I have 16, and with Norwegian the only exception 15
+  (`prepositional_count`), the count that gives the text's 29 conforming languages of 30.
+* The printed Table 6 garbles the counts of Appendix I: its NA column sums to 23 against the 19 of
+  Table 5.
 * Universal 23 as printed pairs proper-noun-first apposition with a postposed genitive, as do the
   genitive rows of Table 9. The languages footnote 19 lists, with their genitive orders, Table 9's
   rows by basic type, and the text's assimilation of apposition to the genitive pair it with a
-  preposed genitive, so the printed universal has the two genitive orders exchanged.
+  preposed genitive, so the printed universal has the two genitive orders exchanged
+  (`not_universal_23_as_printed`).
 
 ## TODO
 
@@ -108,10 +120,17 @@ instance (P Q : SampleRow → Prop) (exceptions : List String) [DecidablePred P]
 
 /-- The noun precedes its genitive in a prepositional language and follows it in a postpositional
 one, a head in the adposition's direction, in 29 of the 30 languages (Universal 2). Norwegian,
-the exception of the text, has both orders by the paper's additional note. -/
+the exception of the text, has both orders by the paper's Additional note. -/
 theorem universal_2 :
     UniversalExcept (fun _ ↦ True)
       (fun r ↦ r.genitive.headDirection? = some r.adposition.headDirection) ["Norwegian"] := by
+  decide
+
+-- Table 1: 16 prepositional languages, 15 with the genitive after the noun
+theorem prepositional_count :
+    (sample.filter (·.adposition = .prepositions)).length = 16 ∧
+      ((sample.filter (·.adposition = .prepositions)).filter (·.genitive = .nounFirst)).length =
+        15 := by
   decide
 
 /-- A verb-initial language of the sample is prepositional and a verb-final one postpositional,
@@ -170,8 +189,7 @@ theorem universal_22 :
         (·.adposition = .prepositions) ["Songhai"] := by
   decide
 
-/-- Universal 23 as printed fails on the data, since every language that puts the proper noun first
-puts the genitive before the noun, Norwegian having both orders. -/
+-- Table 9: Universal 23 as printed fails on the data
 theorem not_universal_23_as_printed :
     ¬ Universal (·.apposition = some .properCommon) (·.genitive = .nounFirst) := by
   decide
@@ -216,8 +234,16 @@ theorem universal_2_types :
         (·.index ∈ [14, 21]) := by
   decide
 
+-- Additional note: Papago, verb-initial and postpositional, is an exception to Universal 3
+theorem not_universal_3_types :
+    ¬ TypeUniversal (·.basicOrder.IsInitial .verb) (·.adposition = .prepositions) := by
+  decide
+
+/-- The only verb-initial postpositional type attested is type 7, where the Additional note puts
+Papago, its exception to Universal 3. -/
 theorem universal_3_types :
-    TypeUniversal (·.basicOrder.IsInitial .verb) (·.adposition = .prepositions) := by
+    TypeUniversal (fun t ↦ t.basicOrder.IsInitial .verb ∧ t.adposition = .postpositions)
+      (·.index = 7) := by
   decide
 
 theorem universal_4_types :
@@ -232,7 +258,7 @@ theorem universal_5_types :
 
 theorem universal_17_types :
     TypeUniversal (fun t ↦ t.basicOrder.IsInitial .verb ∧ t.adjective = .dependentFirst)
-      (·.index ∈ [2, 3]) := by
+      (·.index ∈ [2, 3, 7]) := by
   decide
 
 end Greenberg1963

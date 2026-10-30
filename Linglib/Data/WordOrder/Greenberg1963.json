@@ -1,6 +1,6 @@
 {
   "bibkey": "greenberg-1963",
-  "description": "Appendix I's 30-language sample with the per-language properties of the text and footnotes, and Appendix II's 24 order types with the languages listed as attesting them.",
+  "description": "Appendix I's 30-language sample with the per-language properties of the text and footnotes, and Appendix II's 24 order types with the languages listed as attesting them, with Papago in type 7, where the Additional note assigns it.",
   "sample": [
     {"language": "Basque", "verbPosition": "final", "adposition": "postpositions", "genitive": "dependentFirst", "adjective": "nounFirst", "demonstrative": "nounFirst", "numeral": "dependentFirst", "rigidVerbFinal": false, "questionParticleSentence": null, "questionParticleWord": "follows", "questionWordFirst": false, "auxiliary": "follows", "adverbAdjective": "adverbAdjective", "comparison": "standardMarkerAdjective", "apposition": "properCommon", "relative": "dependentFirst", "affixing": "suffixingOnly"},
     {"language": "Berber", "verbPosition": "initial", "adposition": "prepositions", "genitive": "nounFirst", "adjective": "nounFirst", "demonstrative": "nounFirst", "numeral": "dependentFirst", "rigidVerbFinal": false, "questionParticleSentence": "initial", "questionParticleWord": null, "questionWordFirst": true, "auxiliary": null, "adverbAdjective": null, "comparison": "adjectiveMarkerStandard", "apposition": null, "relative": "nounFirst", "affixing": "both"},
@@ -40,7 +40,7 @@
     {"index": 4, "verbPosition": "initial", "adposition": "prepositions", "genitive": "dependentFirst", "adjective": "nounFirst", "attested": []},
     {"index": 5, "verbPosition": "initial", "adposition": "postpositions", "genitive": "nounFirst", "adjective": "nounFirst", "attested": []},
     {"index": 6, "verbPosition": "initial", "adposition": "postpositions", "genitive": "nounFirst", "adjective": "dependentFirst", "attested": []},
-    {"index": 7, "verbPosition": "initial", "adposition": "postpositions", "genitive": "dependentFirst", "adjective": "dependentFirst", "attested": []},
+    {"index": 7, "verbPosition": "initial", "adposition": "postpositions", "genitive": "dependentFirst", "adjective": "dependentFirst", "attested": ["Papago"]},
     {"index": 8, "verbPosition": "initial", "adposition": "postpositions", "genitive": "dependentFirst", "adjective": "nounFirst", "attested": []},
     {"index": 9, "verbPosition": "medial", "adposition": "prepositions", "genitive": "nounFirst", "adjective": "nounFirst", "attested": ["Romance languages", "Albanian", "Modern Greek", "West Atlantic languages", "Yoruba", "Edo group", "Benue-Congo languages including Bantu", "Shilluk", "Acholi", "Bari", "Chad group of Hamito-Semitic except Hausa", "Neo-Syriac", "Khasi", "Nicobarese", "Khmer", "Vietnamese", "Thai languages except Khamti", "Malay", "Subtiaba"]},
     {"index": 10, "verbPosition": "medial", "adposition": "prepositions", "genitive": "nounFirst", "adjective": "dependentFirst", "attested": ["German", "Dutch", "Icelandic", "Slavonic", "Efik", "Kredj", "Maya", "Papiamento"]},

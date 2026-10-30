@@ -11,18 +11,20 @@ public import Linglib.Morphology.Word.Basic
 # Gibson (2025): Syntax: A Cognitive Approach
 
 This file formalizes chapter 5 of [gibson-2025], where dependency length minimization is a
-constraint on grammars: the head-direction generalization of [greenberg-1963] and [dryer-1992],
-that a language's head-argument orders share one direction, follows because a disharmonic order
-stretches the dependencies along a recursive spine. The measure is the total dependency length
-of [futrell-mahowald-gibson-2015], illustrated on the book's (99a) (`totalLength_99a`), and a
-head-final language reads the same structure in the mirrored order of its head-argument rules
-with subjects kept before their verbs (`sov_harmonic`). The argument is worked through the
-book's (122) and (123): every regime is one dependency structure read in a different order
-(`Graph.linearize`), the harmonic orders are the shortest, and each mismatch of verb-complement
-direction with the direction of infinitival, subordinator, adposition, or relative-clause
-dependencies costs the lengths the book computes (`totalLength_122`, `totalLength_123`). The
-mechanism is an arc to the far end of its own phrase (`Graph.ncard_yield_le_dist`), which
-is why the one-word dependents of Table 5.4 need not align (`single_word_free`).
+constraint on grammars: the head-direction generalization, that a language's head-argument orders
+share one direction, which the book draws from the word order correlations of [greenberg-1963] and
+[dryer-1992], follows because a disharmonic order stretches the dependencies along a recursive
+spine. The measure is the total dependency length of [futrell-mahowald-gibson-2015], illustrated on
+the book's (99a) (`totalLength_99a`), and a head-final language reads the same structure in the
+mirrored order of its head-argument rules with subjects kept before their verbs (`sov_harmonic`).
+The argument is worked through the book's (122) and (123): every regime is one dependency structure
+read in a different order (`Graph.linearize`), the harmonic orders are the shortest, and each
+mismatch of verb-complement direction with the direction of infinitival, subordinator, adposition,
+or relative-clause dependencies costs the lengths the book computes (`totalLength_122`,
+`totalLength_123`). The mechanism is an arc to the far end of its own phrase
+(`Graph.ncard_yield_le_dist`), which is why the one-word dependents of Table 5.4 need not align
+(`single_word_free`), the prediction on which Dryer's branching-direction account parts from a
+head-direction one.
 
 ## Implementation notes
 
@@ -33,6 +35,13 @@ adposition, subordinator, and relative-clause order ([dryer-haspelmath-2013]), a
 raw-count dominance over atlas rows is not a theorem of the theory. The full mirror of (123)
 costs the same as the English order (`Graph.totalLength_mirror`); the book's head-final orders
 cost more only because they keep subjects before their verbs.
+
+## Errata
+
+* The book credits the head-direction generalization to [dryer-1992] as well as to Greenberg, but
+  Dryer states the head-dependent account only to argue against it, and proposes in its place
+  that the correlated pairs are a nonphrasal and a phrasal category, which is where
+  `single_word_free` points.
 
 ## References
 
