@@ -18,10 +18,10 @@ The parser builds a phrasal mother as soon as it meets a word whose category det
 mother's constituent recognition domain runs from the word constructing its first immediate
 constituent to the word constructing its last, and Early Immediate Constituents prefers orders
 whose domains recognize the constituents in the fewest words. A domain read right to left [keeps
-its words in reverse order](##crd_mirror), so the ratio of constituents to words cannot tell an
-order from its mirror image; the left-to-right ratio can. Of a head over a phrase whose head has a
-complement, [the consistent orders score best, and the head kept leftmost beats the phrase kept
-leftmost](##binary_lt).
+its words in reverse order](##crd_mirror), so [the ratio of constituents to words cannot tell an
+order from its mirror image](##icToWord_mirror), while [the left-to-right ratio can](##ratios_5_3).
+Of a head over a phrase whose head has a complement, [the consistent orders score best, and the
+head kept leftmost beats the phrase kept leftmost](##leftToRight_binary_lt).
 
 ## Implementation notes
 
@@ -32,8 +32,6 @@ leftmost](##binary_lt).
 * Ratios are exact rationals; the book prints them as rounded percentages.
 * The ratio of constituents to non-terminal nodes is not formalized: the book uses the ratio to
   words as its shorthand (p. 75).
-* Early Immediate Constituents lives here, with the paper that defines it. It moves to
-  `Processing/EarlyImmediateConstituents.lean` once a second later paper consumes it.
 
 ## References
 
@@ -66,8 +64,12 @@ def words (c : IC) : ℕ := c.pre + 1 + c.post
 /-- A constituent read right to left. -/
 def mirror (c : IC) : IC := ⟨c.post, c.pre⟩
 
+@[simp] theorem pre_mirror (c : IC) : c.mirror.pre = c.post := rfl
+
+@[simp] theorem post_mirror (c : IC) : c.mirror.post = c.pre := rfl
+
 @[simp] theorem words_mirror (c : IC) : c.mirror.words = c.words := by
-  simp only [words, mirror]; omega
+  simp only [words, pre_mirror, post_mirror]; omega
 
 end IC
 
@@ -94,7 +96,7 @@ def crd : List IC → List ℕ
 def icToWord (l : List IC) : ℚ := l.length / (crd l).sum
 
 /-- (3.15) The left-to-right ratio: the `i`-th constituent scores `i` over the words of the domain
-up to the last word it dominates, and the domain scores the mean. -/
+up to the last of them it dominates, and the domain scores the mean. -/
 def leftToRight (l : List IC) : ℚ :=
   ((List.range l.length).map fun (i : ℕ) ↦
     ((i : ℚ) + 1) / (((crd l).take (i + 1)).sum : ℚ)).sum / l.length
@@ -124,8 +126,7 @@ theorem crd_mirror (l : List IC) : crd (mirror l) = (crd l).reverse := by
   have : mirror (c :: (l ++ [d])) = d.mirror :: ((mirror l) ++ [c.mirror]) := by
     simp [mirror]
   rw [this, crd_cons_concat, crd_cons_concat]
-  simp [mirror, IC.mirror, Function.comp_def, IC.words]
-  exact fun a _ ↦ by omega
+  simp [mirror, List.map_reverse, Function.comp_def]
 
 -- (3.13) is blind to the direction of reading
 theorem icToWord_mirror (l : List IC) : icToWord (mirror l) = icToWord l := by
@@ -148,17 +149,18 @@ theorem constructing_unique :
 variable {W : Type*}
 
 /-- A daughter is a word whose category constructs a mother of category `c`. -/
-def Constructs (c : Cat) (t : PhraseStructure.Tree Cat W) : Bool :=
-  match t.value with
-  | .terminal k _ => decide ((k, c) ∈ constructing)
-  | _ => false
+def Constructs (c : Cat) (t : PhraseStructure.Tree Cat W) : Prop :=
+  ∃ x ∈ t.value.terminal?, (x.1, c) ∈ constructing
+
+instance (c : Cat) (t : PhraseStructure.Tree Cat W) : Decidable (Constructs c t) :=
+  inferInstanceAs (Decidable (∃ x ∈ _, _))
 
 /-- (3.3) Mother Node Construction: a constituent enters its mother's domain at the first of its
 daughter words whose category constructs it, a word at itself. -/
 def toIC : PhraseStructure.Tree Cat W → Option IC
   | RoseTree.node (.terminal _ _) [] => some ⟨0, 0⟩
   | RoseTree.node (.phrase c _) ds =>
-    (ds.findIdx? (Constructs c)).map fun j ↦
+    (ds.findIdx? (decide <| Constructs c ·)).map fun j ↦
       ⟨((ds.take j).map fun d ↦ (Tree.yield d).length).sum,
         ((ds.drop (j + 1)).map fun d ↦ (Tree.yield d).length).sum⟩
   | _ => none
@@ -170,8 +172,7 @@ def ics (t : PhraseStructure.Tree Cat W) : Option (List IC) := t.children.mapM t
 
 theorem leftToRight_pair (x y : IC) :
     leftToRight [x, y] = (1 / (x.post + 1) + 2 / (x.post + 1 + (y.pre + 1))) / 2 := by
-  simp [leftToRight, crd, crdTail, List.range_succ]
-  norm_num
+  norm_num [leftToRight, crd, crdTail, List.range_succ]
 
 /-- (3.16'): of three noun-phrase domains of six words with a four-word clause, the order with the
 single-word constituents first scores 83.3%, the clause between them 63.3%, and the clause first
@@ -179,8 +180,7 @@ single-word constituents first scores 83.3%, the clause between them 63.3%, and 
 theorem leftToRight_3_16 :
     leftToRight [⟨0, 0⟩, ⟨0, 0⟩, ⟨3, 0⟩] = 5 / 6 ∧ leftToRight [⟨0, 0⟩, ⟨3, 0⟩, ⟨0, 0⟩] = 19 / 30 ∧
       leftToRight [⟨0, 3⟩, ⟨0, 0⟩, ⟨0, 0⟩] = 23 / 60 := by
-  refine ⟨?_, ?_, ?_⟩ <;>
-    simp [leftToRight, crd, crdTail, IC.words, List.range_succ] <;> norm_num
+  refine ⟨?_, ?_, ?_⟩ <;> norm_num [leftToRight, crd, crdTail, IC.words, List.range_succ]
 
 /-! ### A head over a phrase, (3.22) -/
 
@@ -196,8 +196,12 @@ def binary (top bottom : HeadDirection) (m : ℕ) : List IC :=
   | .headInitial => [⟨0, 0⟩, phrase bottom m]
   | .headFinal => [phrase bottom m, ⟨0, 0⟩]
 
+-- (3.21): the four orders of a head over a phrase come in mirror pairs
 theorem binary_swap (top bottom : HeadDirection) (m : ℕ) :
     binary top.swap bottom.swap m = mirror (binary top bottom m) := by
+  cases top <;> cases bottom <;> rfl
+
+theorem binary_zero (top bottom : HeadDirection) : binary top bottom 0 = [⟨0, 0⟩, ⟨0, 0⟩] := by
   cases top <;> cases bottom <;> rfl
 
 theorem leftToRight_binary_consistent (d : HeadDirection) (m : ℕ) :
@@ -206,24 +210,23 @@ theorem leftToRight_binary_consistent (d : HeadDirection) (m : ℕ) :
 
 theorem leftToRight_initial_final (m : ℕ) :
     leftToRight (binary .headInitial .headFinal m) = (1 + 2 / (m + 2)) / 2 := by
-  rw [binary, phrase, leftToRight_pair]; push_cast; ring_nf
+  rw [binary, phrase, leftToRight_pair]; push_cast; ring
 
 theorem leftToRight_final_initial (m : ℕ) :
     leftToRight (binary .headFinal .headInitial m) = (1 / (m + 1) + 2 / (m + 2)) / 2 := by
-  rw [binary, phrase, leftToRight_pair]; push_cast; ring_nf
+  rw [binary, phrase, leftToRight_pair]; push_cast; ring
 
-/-- (3.21), (3.22), pp. 96–97 and 254: the four orders of a head over a phrase come in mirror
-pairs; when the lower head has a complement, the two consistent orders score 100%, the head
-kept leftmost `[C IC]` scores less, and the phrase kept leftmost `[IC C]` less still. -/
-theorem binary_lt (top bottom : HeadDirection) (m : ℕ) :
-    binary top.swap bottom.swap m = mirror (binary top bottom m) ∧
-      (0 < m → leftToRight (binary .headFinal .headInitial m) <
+/-- (3.22), pp. 96–97 and 254: when the lower head has a complement, the two consistent orders of
+a head over a phrase score 100%, the head kept leftmost `[C IC]` scores less, and the phrase kept
+leftmost `[IC C]` less still. -/
+theorem leftToRight_binary_lt {m : ℕ} (hm : 0 < m) (d : HeadDirection) :
+    leftToRight (binary .headFinal .headInitial m) <
         leftToRight (binary .headInitial .headFinal m) ∧
-        leftToRight (binary .headInitial .headFinal m) < 1) := by
-  refine ⟨binary_swap top bottom m, fun hm ↦ ?_⟩
-  rw [leftToRight_initial_final, leftToRight_final_initial]
+      leftToRight (binary .headInitial .headFinal m) < leftToRight (binary d d m) ∧
+      leftToRight (binary d d m) = 1 := by
+  rw [leftToRight_initial_final, leftToRight_final_initial, leftToRight_binary_consistent]
   have hm : (0 : ℚ) < m := by exact_mod_cast hm
-  constructor
+  refine ⟨?_, ?_, rfl⟩
   · rw [div_lt_div_iff_of_pos_right two_pos, add_lt_add_iff_right,
       div_lt_one (by positivity)]
     linarith
@@ -257,8 +260,8 @@ theorem ratios_5_3 :
       leftToRight (binary .headInitial .headFinal 2) = 3 / 4 ∧
       leftToRight (mirror (binary .headInitial .headFinal 2)) = 5 / 12 := by
   refine ⟨by decide +kernel, by decide +kernel, ?_, ?_, ?_, ?_⟩
-  · simp [icToWord, binary, phrase, crd, crdTail]; norm_num
-  · rw [icToWord_mirror]; simp [icToWord, binary, phrase, crd, crdTail]; norm_num
+  · norm_num [icToWord, binary, phrase, crd, crdTail]
+  · rw [icToWord_mirror]; norm_num [icToWord, binary, phrase, crd, crdTail]
   · rw [leftToRight_initial_final]; norm_num
   · rw [← binary_swap, HeadDirection.swap_headInitial, HeadDirection.swap_headFinal,
       leftToRight_final_initial]

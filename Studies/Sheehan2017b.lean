@@ -7,21 +7,21 @@ public import Linglib.Data.Experiments.Sheehan2017b
 # Sheehan (2017b): The Final-over-Final Condition and Processing
 
 The final-over-final condition bans a head-final phrase over a head-initial one. Read left to
-right, Hawkins's Early Immediate Constituents ranks the four orders of a head over a phrase
-[as the condition does](##ex6_to_ex9): the consistent orders score best, and the final-over-initial
-order scores below its mirror image. In that model [a preference for harmony and a skew against
-the final-over-initial order hold together](##harmony_iff_fofc), exactly when the lower head has a
-complement, which is the chapter's (10). Polar question particles and complementizers show the
-skew without the preference, and [no ranking consistent with their counts separates the two
-disharmonic orders](##polarityComplementizer_unexplained), so the model cannot account for it.
+right, Hawkins's Early Immediate Constituents prefers the consistent orders of a head over a phrase
+to the disharmonic ones, and the initial-over-final order to the final-over-initial one,
+[each exactly when the lower head has a complement](##harmony_iff_fofc) (`ex6_to_ex9`), while the
+plain ratio of constituents to words [ties the two disharmonic orders](##icToWord_disharmonic).
+Polar particles and complementizers show the skew without the preference, and the model ranks the
+four orders consistently with their counts [only for a lower head without a
+complement](##polarityComplementizer_unexplained), where they coincide (`Hawkins1994.binary_zero`).
 
 ## Implementation notes
 
 * The trees of (6) to (9) enter through Hawkins's Mother Node Construction (`Hawkins1994.ics`).
   The chapter's English words replace those of Hawkins's (5.3) and (5.4).
 * (10) is stated for the scores. The step to cross-linguistic frequency is Hawkins's prediction
-  that orders are as frequent as their scores rank them, which enters
-  `polarityComplementizer_unexplained` as a hypothesis.
+  that orders are as frequent as their scores rank them, which `polarityComplementizer_unexplained`
+  states as the consistency of the ranking at a complement length with the counts.
 * In Table 5.2 the complementizer is the upper head and the particle the lower one, so type C,
   an initial complementizer over a final particle, is the inverse of the final-over-final order.
 * Note 1 reports that Hawkins's later account could derive the asymmetry only with a preference
@@ -118,9 +118,8 @@ theorem harmony_iff_fofc (m : ℕ) :
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · simp [leftToRight_initial_final, leftToRight_final_initial,
       leftToRight_binary_consistent]
-  · have h := ((binary_lt .headInitial .headInitial m).2 hm)
-    rw [leftToRight_binary_consistent]
-    exact ⟨iff_of_true h.2 hm, iff_of_true h.1 hm, gap m⟩
+  · have h := leftToRight_binary_lt hm .headInitial
+    exact ⟨iff_of_true h.2.1 hm, iff_of_true h.1 hm, gap m⟩
 
 -- pp. 83, 86: the skew grows with the weight of the complement
 theorem gap_strictMono :
@@ -151,22 +150,21 @@ def languages (top bottom : HeadDirection) : ℕ :=
   (polarityComplementizer (position bottom) (position top)).languages
 
 /-- Table 5.2, p. 92: the final-over-initial order of complementizer and particle is rarer than
-its mirror image, which is commoner than the consistent order with both heads initial. A
-complement length at which Early Immediate Constituents ranks the four orders consistently with
-their counts gives the final-over-initial order the score of its mirror image. -/
+its mirror image, which is commoner than the consistent order with both heads initial. Early
+Immediate Constituents ranks the four orders consistently with these counts only at a lower head
+without a complement, where all four orders score alike. -/
 theorem polarityComplementizer_unexplained :
     languages .headFinal .headInitial < languages .headInitial .headFinal ∧
       languages .headInitial .headInitial < languages .headInitial .headFinal ∧
       ∀ m, (∀ x y : HeadDirection × HeadDirection,
           leftToRight (binary x.1 x.2 m) < leftToRight (binary y.1 y.2 m) →
-            languages x.1 x.2 ≤ languages y.1 y.2) →
-        leftToRight (binary .headFinal .headInitial m) =
-          leftToRight (binary .headInitial .headFinal m) := by
-  refine ⟨by decide, by decide, fun m h ↦ ?_⟩
-  rcases Nat.eq_zero_or_pos m with rfl | hm
-  · rw [leftToRight_initial_final, leftToRight_final_initial]; norm_num
-  · have hlt := ((binary_lt .headInitial .headInitial m).2 hm).2
-    rw [← leftToRight_binary_consistent .headInitial m] at hlt
+            languages x.1 x.2 ≤ languages y.1 y.2) ↔ m = 0 := by
+  refine ⟨by decide, by decide, fun m ↦ ⟨fun h ↦ ?_, ?_⟩⟩
+  · by_contra hm
+    have hlt := (leftToRight_binary_lt (Nat.pos_of_ne_zero hm) .headInitial).2.1
     exact absurd (h (.headInitial, .headFinal) (.headInitial, .headInitial) hlt) (by decide)
+  · rintro rfl x y hxy
+    rw [binary_zero, binary_zero] at hxy
+    exact absurd hxy (lt_irrefl _)
 
 end Sheehan2017b
