@@ -22,8 +22,10 @@ scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable). Among proper
 functions, strong stability of the alternatives and their negations at every number of atoms
 [singles out the upward-monotone ones](##Enguehard2025.bilaterallyStronglyStable_iff_eq_isUpperSet).
 The messages a pragmatic speaker can choose as the prior varies [are exactly the minimal true
-ones](##Enguehard2025.exists_prior_iff_minimal), so [strong stability is Bar-Lev and Katzir's
-communicative stability](##Enguehard2025.stronglyStable_iff_isOptimal).
+ones](##Enguehard2025.exists_prior_iff_minimal), so that weak stability [is Bar-Lev and Katzir's
+communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal) and, where some message is
+true at every world, strong stability
+[is its strict form](##Enguehard2025.stronglyStable_iff_isOptimal).
 
 ## Implementation notes
 
@@ -35,8 +37,9 @@ communicative stability](##Enguehard2025.stronglyStable_iff_isOptimal).
 * Strong stability is `Question.IsExhaustivelyResolvable` at every world. Weak stability is read
   as printed: a strongest true member, or only atoms among the minimal true members. At a world
   where nothing is true this holds vacuously.
-* The minimal-world and innocent-exclusion forms of (26) assume finitely many worlds, as the
-  appendix does; the basic form's clause (c) needs it too (see TODO).
+* The statements of (26) assume finitely many worlds, which is stronger than the appendix's
+  assumption of finitely many alternatives; the basic form's clause (c) needs some such assumption
+  (see TODO).
 * The paper compares strong stability with the condition of Fox's 2020 manuscript, that
   exhaustification yield exactly the induced partition rather than contain it. [fox-2018] states
   the same condition, Question Partition Matching, so the comparison runs through `Fox2018.QPM`:
@@ -54,27 +57,27 @@ communicative stability](##Enguehard2025.stronglyStable_iff_isOptimal).
 * Optimality in A.3 compares the literal listener's mass at the world,
   `RSA.listener μ (RSA.truthful sem)`, strictly across the true messages with other meanings,
   which is the paper's assumption that no two messages tie; the utility is its logarithm, which
-  the comparison drops. A prior is a probability measure giving every world positive mass.
+  the comparison drops. A prior is a probability measure giving every world positive mass, and the
+  worlds are finitely many, where the paper also allows countably many.
 
 ## Errata
 
-* (32b) fails as printed: [six propositions over two
-  atoms](##Enguehard2025.exists_not_isUpperSet_of_bilaterallyStronglyStable), among them
-  *if q then p*, are bilaterally strongly stable with neither atom dominated, yet *if q then p* is
-  not monotone. The result holds when the negated atoms are not dominated among the negations
-  either ([repaired](##Enguehard2025.eq_setOf_isUpperSet_of_bilaterallyStronglyStable)).
+* (32b) fails when its condition that the atoms are not dominated is read in `A` alone: [six
+  propositions over two atoms](##Enguehard2025.exists_not_isUpperSet_of_bilaterallyStronglyStable),
+  among them *if q then p*, are bilaterally strongly stable with neither atom dominated, yet
+  *if q then p* is not monotone. The result holds when the negated atoms are not dominated among
+  the negations either
+  ([repaired](##Enguehard2025.eq_setOf_isUpperSet_of_bilaterallyStronglyStable)).
 * (34c) and (37b) need at least two atoms: [*p* and *not
   p*](##Enguehard2025.exists_isSymmetric_not_isUpperSet) over one atom are bilaterally strongly
   stable and symmetric, and *not p*, the negated existential, is not monotone.
-* The paper calls the disjunction of the universal and the negated existential, which (34b) admits,
-  dominated. It is not when the negated existential is absent: [with only the atoms and the
-  universal beside it](##Enguehard2025.exists_not_dominated_every_union_no), it is the strongest
-  true member where no atom holds.
-* (40a) needs every world to have a true and a false member, the coverage fn. 23 asks of STA and
-  A.3 assumes: [the falsity-preserving
+* Weak stability as defined holds vacuously at a world where no alternative is true, whereas the
+  proof of (40a) assumes that every world has a true and a false alternative, the coverage that
+  fn. 23 asks of STA and that A.3 assumes. Under the definition as printed (40a) fails:
+  [the falsity-preserving
   functions](##Enguehard2025.exists_isClone_bilaterallyWeaklyStable_not_isUpperSet) form a proper
-  clone that contains exclusive disjunction and is bilaterally weakly stable as printed, vacuously
-  so where no atom holds. With the coverage the result
+  clone that contains exclusive disjunction and is bilaterally weakly stable,
+  vacuously so where no atom holds. With the coverage the result
   [holds](##Enguehard2025.isUpperSet_of_isClone).
 
 ## TODO
@@ -707,8 +710,9 @@ theorem weaklyStable_and_not_bilaterallyWeaklyStable_no [Finite ι] [Nontrivial 
   · simpa [hu0.symm] using congrArg (∅ ∈ ·) h
   · simpa using congrArg (∅ ∈ ·) h
 
--- p. 714: the disjunction of the universal and the negated existential is not dominated among the
--- atoms, the universal and itself, which are weakly stable (Errata)
+-- p. 714: the disjunction of the universal and the negated existential is dominated only because
+-- the negated existential is an alternative too; without it, beside the atoms and the universal,
+-- it is not dominated
 theorem exists_not_dominated_every_union_no [Nonempty ι] :
     ∃ A : Set (Set (Set ι)), (∀ i, {I | i ∈ I} ∈ A) ∧
       (∀ φ ∈ A, φ ∉ range (fun i ↦ {I : Set ι | i ∈ I}) → IsSymmetric φ) ∧
@@ -1274,8 +1278,9 @@ theorem exists_prior_iff_minimal [Fintype W] {w : W} {u : U} :
         gcongr; exact singleton_subset_iff.2 ⟨hv, hvu⟩
       _ ≤ _ := le_add_self
 
--- (58b): Bar-Lev and Katzir's strict stability, that priors never make messages with different
--- meanings optimal at one world, is strong stability when some message is true at every world
+-- (58b): strict stability in Bar-Lev and Katzir's sense, which the paper adds to theirs, that
+-- priors never make messages with different meanings optimal at one world, is strong stability
+-- when some message is true at every world
 theorem stronglyStable_iff_isOptimal [Fintype W] (hcov : ∀ w, ∃ u, w ∈ sem u) :
     StronglyStable (range sem) ↔ ∀ (w : W) (u u' : U) (μ μ' : Measure W),
       IsProbabilityMeasure μ → IsProbabilityMeasure μ' → (∀ v, μ {v} ≠ 0) → (∀ v, μ' {v} ≠ 0) →
