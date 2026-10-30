@@ -27,11 +27,15 @@ conditional of the theory layer (`Conditional.variablyStrictImp`), the necessity
 semantics over the antecedent-worlds of the field. It entails OF
 (`Conditional.variablyStrictImp_subset_orderingImp`), is OF under the Limit Assumption
 (`Conditional.mem_variablyStrictImp_iff_mem_orderingImp`), and under comparability is the truth
-condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_of_total`).
+condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_of_total`). Its premise
+counterpart P, on which every nonempty premise set consistent with the antecedent is included in
+one that implies the consequent together with it, is the same conditional of the induced ordering
+frame (`neutralPremiseImp_eq_variablyStrictImp`).
 
 ## Main definitions
 
 * `Lewis1981.premiseImp`: truth condition PF of a premise frame.
+* `Lewis1981.neutralPremiseImp`: truth condition P, the neutral one of §6.
 * `Lewis1981.premiseOrder`: the ordering a premise frame induces.
 * `Lewis1981.ofOrdering`: the premise frame an ordering frame induces.
 
@@ -49,8 +53,6 @@ condition of *Counterfactuals* (`Conditional.mem_variablyStrictImp_iff_of_total`
 
 ## TODO
 
-* Section 6's neutral truth condition for premise frames and its equivalence with
-  `Conditional.variablyStrictImp`.
 * Section 6's example of a counterfactual true under the neutral condition on a frame and false
   on one of its refinements.
 
@@ -173,5 +175,30 @@ theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
     revert a b; decide
   simp only [premiseImp_eq_orderingImp, mem_orderingImp, hS,
     Preorder.minimals_eq_of_lt_iff (p := premiseOrder tied 0) (q := premiseOrder split 0) hlt]
+
+/-! ### The neutral truth conditions (§6) -/
+
+/-- Truth condition P holds when every nonempty `A`-consistent premise set for `i` is included in
+an `A`-consistent premise set that implies `C` together with `A`. -/
+def neutralPremiseImp (H : W → Set (Set W)) (A C : Set W) : Set W :=
+  {i | ∀ J, IsConsistentPremiseSet H A i J → J.Nonempty →
+    ∃ K, IsConsistentPremiseSet H A i K ∧ J ⊆ K ∧ A ∩ ⋂₀ K ⊆ C}
+
+/-- Under the neutral truth conditions too, a premise frame and the ordering frame it induces
+evaluate every counterfactual alike: truth condition P is the variably strict conditional. -/
+theorem neutralPremiseImp_eq_variablyStrictImp :
+    neutralPremiseImp H A C = variablyStrictImp (fun i ↦ ⋃₀ H i) (premiseOrder H) A C := by
+  ext i
+  rw [mem_variablyStrictImp, OrderingSemantics.mem_necessityFilter_ofCriteria_iff]
+  refine ⟨fun h B hB ⟨u, ⟨⟨c, hc, huc⟩, huA⟩, huB⟩ ↦ ?_, fun h J hJ ⟨c, hc⟩ ↦ ?_⟩
+  · obtain ⟨K, ⟨hK, v, hvA, hvK⟩, hBK, hKC⟩ := h (insert c B)
+      ⟨Set.insert_subset hc hB, u, huA, Set.forall_mem_insert.2 ⟨huc, huB⟩⟩ ⟨c, B.mem_insert c⟩
+    exact ⟨K, hK, ⟨v, ⟨⟨c, hc, hvK c (hBK (B.mem_insert c))⟩, hvA⟩, hvK⟩,
+      (B.subset_insert c).trans hBK, fun w hw hwK ↦ hKC ⟨hw.2, hwK⟩⟩
+  · obtain ⟨u, huA, huJ⟩ := hJ.2
+    obtain ⟨K, hK, ⟨v, ⟨-, hvA⟩, hvK⟩, hJK, hKC⟩ :=
+      h J hJ.1 ⟨u, ⟨⟨c, hJ.1 hc, huJ c hc⟩, huA⟩, huJ⟩
+    exact ⟨K, ⟨hK, v, hvA, hvK⟩, hJK,
+      fun w ⟨hwA, hwK⟩ ↦ hKC w ⟨⟨c, hJ.1 hc, hwK c (hJK hc)⟩, hwA⟩ hwK⟩
 
 end Lewis1981
