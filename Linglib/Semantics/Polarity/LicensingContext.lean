@@ -9,7 +9,7 @@ public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Polarity.Licenser
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Signatures
-public import Linglib.Semantics.Quantification.Indefinite
+public import Linglib.Semantics.Reference.Indefinite
 public import Linglib.Semantics.Tense.RunTimes
 public import Mathlib.Basic.Rel
 
