@@ -48,7 +48,10 @@ operator on the members of `H` true at `w`:
 - `KnowsSomeAnswer H w Dox`, mention-some knowledge of a true member, which knowing the answer
   implies when there is a true member and equals on a unique one;
 - `Exhaustification.exh H p`, [fox-2018]'s exhaustification of a member against the question,
-  which holds where the member is the strongest true one (`mem_exh_iff_isStrongestTrueAnswer`);
+  which holds where the member is the strongest true one (`mem_exh_iff_isStrongestTrueAnswer`),
+  so that the presupposition holds throughout a set of worlds exactly when exhaustifying members
+  gives each of their cells there (`forall_isExhaustivelyResolvable_iff_exh_inter`); a strongest
+  true member is never dominated (`not_dominated_of_isStrongestTrueAnswer`);
 - `F.toSetFamily`, a finite family of finite propositions, on which the
   presuppositions are decidable.
 
@@ -458,6 +461,56 @@ theorem dayalStrongAns_eq_some_iff {A : Set W} :
     exact ⟨⟨p, hp⟩, exh_eq_strongAnswer H w hp⟩
   · rintro ⟨⟨p, hp⟩, rfl⟩
     exact ⟨p, hp, exh_eq_strongAnswer H w hp⟩
+
+variable {H} in
+/-- The presupposition holds throughout `C` exactly when, for each world of `C`, exhaustifying some
+member gives its cell inside `C`. -/
+theorem forall_isExhaustivelyResolvable_iff_exh_inter (C : Set W) :
+    (∀ w ∈ C, IsExhaustivelyResolvable H w) ↔
+      ∀ w ∈ C, ∃ p ∈ H, Exhaustification.exh H p ∩ C = strongAnswer H w ∩ C := by
+  refine ⟨fun h w hw ↦ ?_, fun h w hw ↦ ?_⟩
+  · obtain ⟨p, hp⟩ := h w hw
+    exact ⟨p, hp.1.1, by rw [exh_eq_strongAnswer H w hp]⟩
+  · obtain ⟨p, hp, he⟩ := h w hw
+    have : w ∈ Exhaustification.exh H p ∩ C := he ▸ ⟨self_mem_strongAnswer H w, hw⟩
+    exact ⟨p, (mem_exh_iff_isStrongestTrueAnswer hp).1 this.1⟩
+
+variable {H} in
+/-- The presupposition holds everywhere exactly when every cell of the partition is the
+exhaustification of a member. -/
+theorem forall_isExhaustivelyResolvable_iff_classes_subset :
+    (∀ w, IsExhaustivelyResolvable H w) ↔
+      (partition H).classes ⊆ Exhaustification.exh H '' H := by
+  rw [classes_partition, Set.range_subset_iff]
+  simpa using forall_isExhaustivelyResolvable_iff_exh_inter (H := H) Set.univ
+
+variable {H w} in
+theorem not_dominated_of_isStrongestTrueAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
+    ¬ Exhaustification.Dominated H p := fun hd ↦
+  let ⟨_, ⟨hq, hqp⟩, hwq⟩ := hd h.1.2
+  hqp.2 (h.2 ⟨hq, hwq⟩)
+
+variable {H} in
+/-- Where the presupposition holds everywhere, a member that is not dominated is the strongest true
+one somewhere. -/
+theorem exists_isStrongestTrueAnswer_of_not_dominated (h : ∀ w, IsExhaustivelyResolvable H w)
+    {p : Set W} (hp : p ∈ H) (hd : ¬ Exhaustification.Dominated H p) :
+    ∃ w, IsStrongestTrueAnswer H w p := by
+  obtain ⟨w, hwp, hw⟩ := Set.not_subset.1 hd
+  obtain ⟨q, hq⟩ := h w
+  obtain rfl : q = p := Classical.byContradiction fun hne ↦
+    hw ⟨q, ⟨hq.1.1, (hq.2 ⟨hp, hwp⟩).ssubset_of_ne hne⟩, hq.1.2⟩
+  exact ⟨w, hq⟩
+
+variable {H w} in
+/-- Among finitely many members, the strongest true one among those not dominated is the strongest
+true one. -/
+theorem isStrongestTrueAnswer_of_setOf_not_dominated (hH : H.Finite) {p : Set W}
+    (h : IsStrongestTrueAnswer {q ∈ H | ¬ Exhaustification.Dominated H q} w p) :
+    IsStrongestTrueAnswer H w p :=
+  ⟨⟨h.1.1.1, h.1.2⟩, fun _ ⟨hq, hwq⟩ ↦
+    let ⟨_, hm, hmd, hwm, hmq⟩ := Exhaustification.exists_mem_subset_not_dominated hH hq hwq
+    (h.2 ⟨⟨hm, hmd⟩, hwm⟩).trans hmq⟩
 
 /-! ### Finite Hamblin sets
 

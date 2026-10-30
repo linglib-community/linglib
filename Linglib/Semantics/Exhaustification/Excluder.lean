@@ -5,6 +5,7 @@ public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Preorder.Finite
 public import Linglib.Semantics.Exhaustification.Pointwise
 
 /-!
@@ -27,6 +28,11 @@ family, `exh` denies the members the prejacent does not entail (`mem_exh_image_i
 finite worlds. When the prejacent is maximal among the alternatives, exclusion is Rooth's condition
 that every true alternative *equals* the prejacent (`mem_excludes_iff_forall_eq`).
 
+A member is `Dominated` when the members strictly stronger than it cover it, as the union of two
+members neither of which entails the other is (`dominated_union`); exhaustifying a dominated member
+gives the contradiction (`exh_eq_empty_of_dominated`). Among finitely many alternatives the
+dominated ones change no exhaustification (`exh_setOf_not_dominated`).
+
 An `Excluder` is a selection over finite world types, `Excluder.exh` the resulting operator, and
 `tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.preFilter` offers an
 excluder only some of the alternatives, which can strengthen the result, the asymmetry Fox and
@@ -44,6 +50,7 @@ denied alternatives to the relevant ones, after Magri, is the relevance set of
 * [fox-2007]
 * [fox-katzir-2011]
 * [magri-2009]
+* [enguehard-2025]
 -/
 
 @[expose] public section
@@ -205,6 +212,50 @@ theorem mem_exh_range_iff_exhAgainst_lt [LinearOrder ι] (hf : StrictAnti f) (i 
   simp only [hf.le_iff_ge, not_le]
 
 end Irredundant
+
+/-! ### Domination -/
+
+section Dominated
+
+variable {C : Set (Set W)} {p q q₁ q₂ : Set W} {w : W}
+
+/-- A member is dominated when the members strictly stronger than it cover it, the condition
+[enguehard-2025] gives (25). A dominated member is never the strongest true one. -/
+def Dominated (C : Set (Set W)) (p : Set W) : Prop := p ⊆ ⋃₀ {q ∈ C | q ⊂ p}
+
+theorem exh_eq_empty_of_dominated (h : Dominated C p) : exh C p = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ hw ↦
+    let ⟨_, ⟨hq, hqp⟩, hwq⟩ := h hw.1
+    hqp.2 (hw.2 _ hq hwq)
+
+/-- The union of two members neither of which entails the other is dominated by them. -/
+theorem dominated_union (h₁ : q₁ ∈ C) (h₂ : q₂ ∈ C) (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) :
+    Dominated C (q₁ ∪ q₂) := by
+  rintro w (hw | hw)
+  · exact ⟨q₁, ⟨h₁, Set.subset_union_left.ssubset_of_not_subset fun h ↦
+      h₂₁ (Set.subset_union_right.trans h)⟩, hw⟩
+  · exact ⟨q₂, ⟨h₂, Set.subset_union_right.ssubset_of_not_subset fun h ↦
+      h₁₂ (Set.subset_union_left.trans h)⟩, hw⟩
+
+/-- Among finitely many alternatives, a true one lies above a true one that is not dominated. -/
+theorem exists_mem_subset_not_dominated (hC : C.Finite) (hq : q ∈ C) (hw : w ∈ q) :
+    ∃ m ∈ C, ¬ Dominated C m ∧ w ∈ m ∧ m ⊆ q := by
+  obtain ⟨m, hmq, hm⟩ := (hC.subset (Set.sep_subset C (w ∈ ·))).exists_le_minimal
+    (show q ∈ {m ∈ C | w ∈ m} from ⟨hq, hw⟩)
+  refine ⟨m, hm.1.1, fun hd ↦ ?_, hm.1.2, hmq⟩
+  obtain ⟨s, ⟨hs, hsm⟩, hws⟩ := hd hm.1.2
+  exact hsm.2 (hm.2 ⟨hs, hws⟩ hsm.1)
+
+/-- Among finitely many alternatives, exhaustifying against the members that are not dominated is
+exhaustifying against all of them. -/
+theorem exh_setOf_not_dominated (hC : C.Finite) (p : Set W) :
+    exh {q ∈ C | ¬ Dominated C q} p = exh C p := by
+  refine Set.Subset.antisymm (fun w hw ↦ ⟨hw.1, fun q hq hwq ↦ ?_⟩)
+    (exh_antitone (fun _ h ↦ h.1) p)
+  obtain ⟨m, hm, hmd, hwm, hmq⟩ := exists_mem_subset_not_dominated hC hq hwq
+  exact (hw.2 m ⟨hm, hmd⟩ hwm).trans hmq
+
+end Dominated
 
 variable [Fintype W] [DecidableEq W]
 

@@ -142,14 +142,8 @@ theorem isCellValued_exh : IsCellValued (exh H) H :=
 world of the context set ((12) and its converse). -/
 theorem cellIdentification_exh_iff :
     CellIdentification (exh H) H A ↔ ∀ w ∈ A, IsExhaustivelyResolvable H w := by
-  constructor
-  · intro h w hw
-    obtain ⟨p, hp, hpw⟩ := h _ ⟨w, hw, rfl⟩
-    have : w ∈ exh H p ∩ A := by rw [hpw]; exact ⟨self_mem_strongAnswer H w, hw⟩
-    exact ⟨p, (mem_exh_iff_isStrongestTrueAnswer hp).1 this.1⟩
-  · rintro h _ ⟨w, hw, rfl⟩
-    obtain ⟨p, hp⟩ := h w hw
-    exact ⟨p, hp.1.1, by rw [exh_eq_strongAnswer H w hp]⟩
+  rw [forall_isExhaustivelyResolvable_iff_exh_inter]
+  exact ⟨fun h w hw ↦ h _ ⟨w, hw, rfl⟩, fun h _ ⟨w, hw, hC⟩ ↦ hC ▸ h w hw⟩
 
 theorem nonVacuity_exh_iff :
     NonVacuity (exh H) H A ↔ ∀ p ∈ H, ∃ w ∈ A, IsStrongestTrueAnswer H w p := by
@@ -183,13 +177,6 @@ theorem isExhaustivelyResolvable_infClosure_range {ι : Type*} [Fintype ι] {a :
 
 /-! ### Negative islands -/
 
-theorem not_isStrongestTrueAnswer_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h₂ : q₂ ∈ H)
-    (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) (w : W) : ¬ IsStrongestTrueAnswer H w (q₁ ∪ q₂) := by
-  rintro ⟨⟨-, hw⟩, hmin⟩
-  rcases hw with hw | hw
-  · exact h₂₁ (subset_union_right.trans (hmin ⟨h₁, hw⟩))
-  · exact h₁₂ (subset_union_left.trans (hmin ⟨h₂, hw⟩))
-
 /-- A question containing the disjunction of two members neither of which entails the other fails
 Non-Vacuity, the negative island of higher-order questions ((26)', (28)). -/
 theorem not_nonVacuity_exh_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h₂ : q₂ ∈ H)
@@ -197,7 +184,7 @@ theorem not_nonVacuity_exh_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h�
   rw [nonVacuity_exh_iff]
   intro h
   obtain ⟨w, -, hw⟩ := h _ hu
-  exact not_isStrongestTrueAnswer_union h₁ h₂ h₁₂ h₂₁ w hw
+  exact not_dominated_of_isStrongestTrueAnswer hw (dominated_union h₁ h₂ h₁₂ h₂₁)
 
 theorem isStrongestTrueAnswer_box {W' : Type*} {R : SetRel W' W} {p : Set W} (hp : p ∈ H)
     {x : W'} (hx : ∀ v, x ~[R] v ↔ v ∈ p) : IsStrongestTrueAnswer (box H R) x (R.core p) := by

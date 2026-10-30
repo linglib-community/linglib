@@ -37,7 +37,8 @@ nothing.
 * `Det.innerNeg`, `Det.dual`, `Det.adjRestrict`: inner negation, the dual and restriction.
 * `Det.Family.Isom`, `Det.Family.Ext`, `Det.Family.Constant`: isomorphism closure, extension,
   and constancy, the two together.
-* `Quantifier.LivesOn`, `Quantifier.individual`: the live-on property and the Montague lift.
+* `Quantifier.LivesOn`, `Quantifier.QuantityInvariant`, `Quantifier.individual`: the live-on
+  property, invariance under the permutations of the universe, and the Montague lift.
 * `Quantifier.Family`, `Quantifier.Family.Isom`, `Quantifier.Family.rel`: global quantifiers,
   their isomorphism closure, and relativization, which turns one into a global determiner
   denotation.
@@ -305,6 +306,12 @@ def LivesOn (Q : Quantifier α) (A : Set α) : Prop := ∀ B, Q B ↔ Q (A ∩ B
 theorem _root_.Quantifier.Det.Conservative.livesOn {d : Det α} (h : d.Conservative)
     (A : Set α) : (d A).LivesOn A :=
   h A
+
+/-- A quantifier is quantity invariant when no permutation of the universe changes it,
+`Q (σ ⁻¹' B) ↔ Q B`: [mostowski-1957]'s invariance condition on a quantifier limited to a universe,
+of which `Det.QuantityInvariant` is the counterpart for determiner denotations. -/
+def QuantityInvariant (Q : Quantifier α) : Prop :=
+  ∀ (σ : Equiv.Perm α) (B : Set α), Q (σ ⁻¹' B) ↔ Q B
 
 /-- The Montague lift of an entity is the principal ultrafilter it generates, the quantifier of
 the sets it belongs to, as [montague-1973] translates a proper name; it is Partee's LIFT and the

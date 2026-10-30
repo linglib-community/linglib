@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Defs
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Properties of determiner denotations
@@ -13,7 +14,11 @@ observe. Under conservativity, symmetry is
 and ↓NE monotonicity; a determiner denotation is restrictor monotone exactly when it is ↑SW and
 ↑SE monotone, and smoothness gives scope monotonicity, all as in Peters and Westerståhl. Van
 Benthem's relational results characterize *all*, *some* and *no* by their relational properties
-alone.
+alone. Scope monotonicity is that every section of the determiner denotation is an upper set of
+scopes. The sections of the conservative, quantity-invariant determiner denotations, which Peters
+and Westerståhl call their freezings to a restrictor, are [exactly the
+quantifiers](##Quantifier.exists_det_apply_eq_iff_livesOn) that live on a set and that the
+permutations fixing it leave unchanged.
 
 ## References
 
@@ -33,6 +38,23 @@ theorem individual_monotone (a : α) : Monotone (individual a) := fun _ _ h ha �
 theorem individual_inter {a : α} {B B' : Set α} :
     individual a (B ∩ B') ↔ individual a B ∧ individual a B' :=
   Iff.rfl
+
+section QuantityInvariant
+
+variable {Q Q' : Quantifier α}
+
+theorem QuantityInvariant.compl (h : Q.QuantityInvariant) : Qᶜ.QuantityInvariant :=
+  fun σ B ↦ not_congr (h σ B)
+
+theorem QuantityInvariant.inf (h : Q.QuantityInvariant) (h' : Q'.QuantityInvariant) :
+    (Q ⊓ Q').QuantityInvariant :=
+  fun σ B ↦ and_congr (h σ B) (h' σ B)
+
+theorem QuantityInvariant.sup (h : Q.QuantityInvariant) (h' : Q'.QuantityInvariant) :
+    (Q ⊔ Q').QuantityInvariant :=
+  fun σ B ↦ or_congr (h σ B) (h' σ B)
+
+end QuantityInvariant
 
 namespace Det
 
@@ -71,6 +93,11 @@ monotone. -/
 theorem scopeAntitone_iff_innerNeg : d.ScopeAntitone ↔ d.innerNeg.ScopeMonotone :=
   ⟨ScopeAntitone.innerNeg, fun h ↦ by simpa using h.innerNeg⟩
 
+/-- A determiner denotation is scope monotone exactly when each of its sections is an upper set of
+scopes. -/
+theorem scopeMonotone_iff_isUpperSet : d.ScopeMonotone ↔ ∀ A, IsUpperSet {B | d A B} :=
+  forall_congr' fun _ ↦ isUpperSet_setOfPred.symm
+
 theorem QuantityInvariant.compl (h : d.QuantityInvariant) : dᶜ.QuantityInvariant :=
   fun σ A B ↦ not_congr (h σ A B)
 
@@ -87,6 +114,11 @@ theorem QuantityInvariant.inf (h : d.QuantityInvariant) (h' : d'.QuantityInvaria
 theorem QuantityInvariant.sup (h : d.QuantityInvariant) (h' : d'.QuantityInvariant) :
     (d ⊔ d').QuantityInvariant :=
   fun σ A B ↦ or_congr (h σ A B) (h' σ A B)
+
+/-- The section of a quantity-invariant determiner denotation at the universe is quantity
+invariant. -/
+theorem QuantityInvariant.apply_univ (h : d.QuantityInvariant) : (d .univ).QuantityInvariant :=
+  fun σ B ↦ by simpa using h σ .univ B
 
 /-! ### Conservativity, symmetry and strength -/
 
@@ -373,5 +405,30 @@ theorem Conservative.iff_disjoint (h : d.Conservative) [Std.Symm d]
     exact he ▸ down (Set.empty_subset A₀) hA₀
 
 end Det
+
+open Set in
+/-- The quantifiers `d A` that a conservative, quantity-invariant determiner denotation gives at a
+restrictor, [peters-westerstahl-2006]'s freezings of it, are the quantifiers that live on a set and
+that the permutations fixing that set leave unchanged. -/
+theorem exists_det_apply_eq_iff_livesOn {Q : Quantifier α} :
+    (∃ d : Det α, d.Conservative ∧ d.QuantityInvariant ∧ ∃ A, d A = Q) ↔
+      ∃ A, Q.LivesOn A ∧ ∀ σ : Equiv.Perm α, σ ⁻¹' A = A → ∀ B, Q (σ ⁻¹' B) ↔ Q B := by
+  refine ⟨fun ⟨d, hC, hQ, A, hdQ⟩ ↦ hdQ ▸ ⟨A, hC.livesOn A, fun σ hσ B ↦ by
+    simpa [hσ] using hQ σ A B⟩, fun ⟨J, hJ, hinv⟩ ↦ ?_⟩
+  -- `d A B` when a permutation carries `J` onto `A` and `Q` holds of the part of `A ∩ B` it
+  -- carries there
+  let d : Det α := fun A B ↦ ∃ τ : Equiv.Perm α, τ ⁻¹' A = J ∧ Q (τ ⁻¹' (A ∩ B))
+  have key : ∀ (σ : Equiv.Perm α) A B, d A B → d (σ ⁻¹' A) (σ ⁻¹' B) := by
+    rintro σ A B ⟨τ, hτ, hB⟩
+    refine ⟨τ.trans σ.symm, ?_, ?_⟩
+    · rw [← hτ]; ext x; simp
+    · have : ⇑(τ.trans σ.symm) ⁻¹' (σ ⁻¹' A ∩ σ ⁻¹' B) = τ ⁻¹' (A ∩ B) := by ext x; simp
+      rwa [this]
+  have e : ∀ (σ : Equiv.Perm α) X, ⇑σ.symm ⁻¹' (σ ⁻¹' X) = X := fun σ X ↦ by ext; simp
+  refine ⟨d, fun A B ↦ ?_, fun σ A B ↦ ⟨fun h ↦ ?_, key σ A B⟩, J, funext fun B ↦ propext ?_⟩
+  · simp only [d, ← inter_assoc, inter_self]
+  · simpa only [e] using key σ.symm _ _ h
+  · exact ⟨fun ⟨τ, hτ, hB⟩ ↦ (hJ B).2 ((hinv τ hτ _).1 hB),
+      fun hB ↦ ⟨Equiv.refl α, rfl, (hJ B).1 hB⟩⟩
 
 end Quantifier
