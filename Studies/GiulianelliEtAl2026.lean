@@ -83,7 +83,7 @@ theorem genSurprisal_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α)
 theorem genSurprisal_prefixIndicator_eq_sum (hc : μ {y | c <+: y} ≠ 0) {w : List α}
     (hw : μ {y | c ++ w <+: y} ≠ 0) :
     genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
-      ∑ i : Fin w.length, surprisal ((ofMeasure μ).next (c ++ w.take i)) (some w[i]) := by
+      ∑ i : Fin w.length, (surprisal ((ofMeasure μ).next (c ++ w.take i)) (some w[i])).toReal := by
   have hsub : {y | c ++ w <+: y} ⊆ {y | c <+: y} := fun _ ↦ (List.prefix_append c w).trans
   rw [genSurprisal_prefixIndicator μ hc, neg_log_condPrefixProb]
   rw [condPrefixProb_ofMeasure hc, cond_apply_of_subset .of_discrete hsub]

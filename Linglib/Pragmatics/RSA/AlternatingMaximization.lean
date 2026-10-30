@@ -142,9 +142,10 @@ noncomputable def expectedUtility (S : Kernel O U) (L : Kernel U W) : ℝ :=
   ∑ w, μ.real {w} * ∫ u, (log ((L u).real {w}) - C u) ∂((S ∘ₖ κ) w)
 
 /-- The information the listener loses about the state, its expected surprisal under her
-interpretation of the speaker's utterance. -/
+interpretation of the speaker's utterance; a state she rules out has surprisal `∞`, which enters
+the real sum through its real part, `0`. -/
 noncomputable def informationLoss (S : Kernel O U) (L : Kernel U W) : ℝ :=
-  ∑ w, μ.real {w} * ∫ u, surprisal (L u) w ∂((S ∘ₖ κ) w)
+  ∑ w, μ.real {w} * ∫ u, (surprisal (L u) w).toReal ∂((S ∘ₖ κ) w)
 
 /-- The expected cost of the speaker's utterances. -/
 noncomputable def expectedCost (S : Kernel O U) : ℝ :=
@@ -156,9 +157,11 @@ theorem expectedCost_smul (β : ℝ) (S : Kernel O U) :
     mul_left_comm β]
 
 theorem expectedUtility_eq_neg_add [Finite U] [MeasurableSingletonClass U] [IsFiniteKernel κ]
-    (S : Kernel O U) [IsFiniteKernel S] (L : Kernel U W) :
+    (S : Kernel O U) [IsFiniteKernel S] (L : Kernel U W) [IsMarkovKernel L] :
     expectedUtility μ κ C S L = -(informationLoss μ κ S L + expectedCost μ κ C S) := by
-  simp only [expectedUtility, informationLoss, expectedCost, surprisal, integral_neg,
+  have h (u : U) (w : W) : (surprisal (L u) w).toReal = -log ((L u).real {w}) :=
+    toReal_surprisal prob_le_one
+  simp only [expectedUtility, informationLoss, expectedCost, h, integral_neg,
     ← Finset.sum_add_distrib, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun w _ ↦ ?_
   rw [integral_sub .of_finite .of_finite]

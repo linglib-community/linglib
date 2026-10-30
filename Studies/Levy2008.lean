@@ -70,17 +70,19 @@ theorem posterior_consistent_append :
 variable [IsProbabilityMeasure P]
 
 /-- The relative entropy of the updated distribution over structures relative to the previous one is
-the word's surprisal (eq. (4)). -/
+the surprisal of a word of positive probability (eq. (4)). -/
 theorem klDiv_posterior_eq_surprisal (h : P (consistent str (ws ++ [w])) ≠ 0) :
     klDiv (posterior P str (ws ++ [w])) (posterior P str ws)
-      = ENNReal.ofReal (surprisal ((ofMeasure (P.map str)).next ws) (some w)) := by
+      = surprisal ((ofMeasure (P.map str)).next ws) (some w) := by
   have hsub := consistent_anti str (List.prefix_append ws [w])
   have hws : P (consistent str ws) ≠ 0 := fun h0 ↦ h (measure_mono_null hsub h0)
   have : IsProbabilityMeasure (posterior P str ws) := cond_isProbabilityMeasure hws
-  rw [← posterior_incremental, klDiv_cond_self _ .of_discrete, surprisal, measureReal_def,
-    measureReal_def, posterior_consistent_append]
-  rw [posterior, cond_apply_of_subset .of_discrete hsub]
-  exact ENNReal.div_ne_zero.mpr ⟨h, measure_ne_top _ _⟩
+  have hne : posterior P str ws (consistent str (ws ++ [w])) ≠ 0 := by
+    rw [posterior, cond_apply_of_subset .of_discrete hsub]
+    exact ENNReal.div_ne_zero.mpr ⟨h, measure_ne_top _ _⟩
+  rw [← posterior_incremental, klDiv_cond_self _ .of_discrete hne, measureReal_def,
+    posterior_consistent_append, surprisal_of_ne_zero (by rwa [← posterior_consistent_append])
+      (measure_ne_top _ _), measureReal_def]
 
 /-- The causal bottleneck (§2.3, Fig. 1b): two generative processes assigning
     the same conditional word probability incur the same update difficulty,
@@ -92,6 +94,6 @@ theorem bottleneck {T' : Type*} [MeasurableSpace T'] [DiscreteMeasurableSpace T'
     klDiv (posterior P str (ws ++ [w])) (posterior P str ws)
       = klDiv (posterior P' str' (ws ++ [w])) (posterior P' str' ws) := by
   rw [klDiv_posterior_eq_surprisal P str ws w h, klDiv_posterior_eq_surprisal P' str' ws w h',
-    surprisal, surprisal, measureReal_def, measureReal_def, hagree]
+    surprisal, surprisal, hagree]
 
 end Levy2008

@@ -23,7 +23,7 @@ happens exactly at words where the disconfirmed analyses comprise most of the pr
 (`log_le_surprisal_next`), which is how the paper reads the spike at *fell* in *the horse raced
 past the barn fell*, where grammar (1) puts the prefix probability before the word at more than ten
 times the one after it (section 6.1), and the subject and object relative asymmetry of grammar (3)
-(section 6.3). The two levels of the linking hypothesis agree, since prefix-level load only grows
+(section 7). The two levels of the linking hypothesis agree, since prefix-level load only grows
 along a sentence (`disconfirmed_mono`) and word-level surprisals telescope to the negative log of
 the sentence's prefix mass (`totalSurprisal_nil_eq`).
 
@@ -37,7 +37,7 @@ stated for any probability measure over structures with string yields.
 The paper defines a word's surprisal as the log ratio of prefix probabilities. Here it is the
 library's surprisal of the word under the next-word law of the grammar's language model,
 `(ofMeasure (P.map str)).next`, the negative log of its conditional probability, and the paper's
-ratio is a theorem about it.
+ratio is a theorem about it; both are infinite at a word that no analysis of the prefix allows.
 
 ## References
 
@@ -74,25 +74,36 @@ theorem disconfirmed_eq_one_sub [DiscreteMeasurableSpace T] [IsProbabilityMeasur
 variable [MeasurableSpace W]
 
 /-- The surprisals of the words of `rest`, read one by one after the prefix `acc`. -/
-noncomputable def totalSurprisal (acc rest : List W) : ℝ :=
+noncomputable def totalSurprisal (acc rest : List W) : ℝ≥0∞ :=
   ∑ i : Fin rest.length,
     surprisal ((ofMeasure (P.map str)).next (acc ++ rest.take i)) (some rest[i])
 
-variable [DiscreteMeasurableSpace T] [MeasurableSingletonClass W]
+variable [DiscreteMeasurableSpace T] [MeasurableSingletonClass W] [IsProbabilityMeasure P]
 
-theorem surprisal_next_eq_log_div :
+theorem surprisal_next_eq_log_div (hws : P (consistent str ws) ≠ 0) :
     surprisal ((ofMeasure (P.map str)).next ws) (some w) =
+      (ENNReal.log (P (consistent str ws) / P (consistent str (ws ++ [w])))).toENNReal := by
+  rw [surprisal, next_ofMeasure_map_apply_some,
+    cond_apply_of_subset .of_discrete (consistent_anti str (List.prefix_append ws [w])),
+    ← ENNReal.log_inv, ENNReal.inv_div (Or.inl (measure_ne_top _ _)) (Or.inl hws)]
+
+-- At a word no analysis allows, the surprisal is `∞` and both sides are `0`.
+omit [IsProbabilityMeasure P] in
+theorem toReal_surprisal_next_eq_log_div :
+    (surprisal ((ofMeasure (P.map str)).next ws) (some w)).toReal =
       Real.log (P.real (consistent str ws) / P.real (consistent str (ws ++ [w]))) := by
-  rw [surprisal, measureReal_def, next_ofMeasure_map_apply_some,
+  rw [toReal_surprisal (prob_le_one (μ := (ofMeasure (P.map str)).next ws)), measureReal_def,
+    next_ofMeasure_map_apply_some,
     cond_apply_of_subset .of_discrete (consistent_anti str (List.prefix_append ws [w])),
     ENNReal.toReal_div, ← Real.log_inv, inv_div]
   rfl
 
-theorem surprisal_next_eq_log_one_add (ha : 0 < P.real (consistent str (ws ++ [w]))) :
-    surprisal ((ofMeasure (P.map str)).next ws) (some w) =
+omit [IsProbabilityMeasure P] in
+theorem toReal_surprisal_next_eq_log_one_add (ha : 0 < P.real (consistent str (ws ++ [w]))) :
+    (surprisal ((ofMeasure (P.map str)).next ws) (some w)).toReal =
       Real.log (1 + (P.real (consistent str ws) - P.real (consistent str (ws ++ [w])))
         / P.real (consistent str (ws ++ [w]))) := by
-  rw [surprisal_next_eq_log_div]
+  rw [toReal_surprisal_next_eq_log_div]
   congr 1
   field_simp
   ring
@@ -101,8 +112,12 @@ theorem log_le_surprisal_next {k : ℝ} (hk : 0 ≤ k)
     (ha : 0 < P.real (consistent str (ws ++ [w])))
     (hdis : k * P.real (consistent str (ws ++ [w])) ≤
       P.real (consistent str ws) - P.real (consistent str (ws ++ [w]))) :
-    Real.log (1 + k) ≤ surprisal ((ofMeasure (P.map str)).next ws) (some w) := by
-  rw [surprisal_next_eq_log_one_add P str ws w ha]
+    ENNReal.ofReal (Real.log (1 + k)) ≤ surprisal ((ofMeasure (P.map str)).next ws) (some w) := by
+  have hne : surprisal ((ofMeasure (P.map str)).next ws) (some w) ≠ ∞ := by
+    rw [surprisal_ne_top_iff, next_ofMeasure_map_apply_some,
+      cond_apply_of_subset .of_discrete (consistent_anti str (List.prefix_append ws [w]))]
+    exact ENNReal.div_ne_zero.2 ⟨fun h0 ↦ by simp [measureReal_def, h0] at ha, measure_ne_top _ _⟩
+  rw [ENNReal.ofReal_le_iff_le_toReal hne, toReal_surprisal_next_eq_log_one_add P str ws w ha]
   refine Real.log_le_log (by linarith) ?_
   have hdiv : k ≤ (P.real (consistent str ws) - P.real (consistent str (ws ++ [w])))
       / P.real (consistent str (ws ++ [w])) :=
@@ -111,25 +126,15 @@ theorem log_le_surprisal_next {k : ℝ} (hk : 0 ≤ k)
 
 /-! ### Load along a sentence -/
 
-variable [IsProbabilityMeasure P]
-
-theorem totalSurprisal_eq {acc rest : List W}
-    (hpos : 0 < P.real (consistent str (acc ++ rest))) :
+theorem totalSurprisal_eq {acc rest : List W} (hacc : P (consistent str acc) ≠ 0) :
     totalSurprisal P str acc rest =
-      Real.log (P.real (consistent str acc)) -
-        Real.log (P.real (consistent str (acc ++ rest))) := by
-  have h₀ : 0 < P.real (consistent str acc) :=
-    hpos.trans_le (measureReal_mono (consistent_anti str (List.prefix_append acc rest)))
-  simp only [measureReal_def] at hpos h₀ ⊢
-  have h := condPrefixProb_ofMeasure_map str P (ENNReal.toReal_pos_iff.1 h₀).1.ne' rest
-  rw [totalSurprisal, ← neg_log_condPrefixProb _ (h ▸ ENNReal.div_ne_zero.2
-    ⟨(ENNReal.toReal_pos_iff.1 hpos).1.ne', measure_ne_top _ _⟩), h, ENNReal.toReal_div,
-    Real.log_div hpos.ne' h₀.ne']
-  ring
+      (ENNReal.log (P (consistent str acc) / P (consistent str (acc ++ rest)))).toENNReal := by
+  rw [totalSurprisal, ← toENNReal_neg_log_condPrefixProb, condPrefixProb_ofMeasure_map str P hacc,
+    ← ENNReal.log_inv, ENNReal.inv_div (Or.inl (measure_ne_top _ _)) (Or.inl hacc)]
 
-theorem totalSurprisal_nil_eq {ws : List W} (hpos : 0 < P.real (consistent str ws)) :
-    totalSurprisal P str [] ws = -Real.log (P.real (consistent str ws)) := by
-  rw [totalSurprisal_eq P str (by simpa using hpos), consistent_nil, probReal_univ]
-  simp
+theorem totalSurprisal_nil_eq :
+    totalSurprisal P str [] ws = (-ENNReal.log (P (consistent str ws))).toENNReal := by
+  rw [totalSurprisal_eq P str (by simp), consistent_nil, measure_univ, one_div, ENNReal.log_inv,
+    List.nil_append]
 
 end Hale2001

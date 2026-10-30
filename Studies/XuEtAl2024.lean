@@ -96,7 +96,11 @@ theorem real_listener (w : W) (c : C) :
 theorem surprisal_listener_le [Nonempty C] (hγ : 0 ≤ γ) {w : W} {c c' : C}
     (h : d c (q w) ≤ d c' (q w)) :
     surprisal (listener γ d q w) c ≤ surprisal (listener γ d q w) c' := by
-  rw [surprisal, surprisal, real_listener, real_listener, neg_le_neg_iff]
+  have hne (c : C) : surprisal (listener γ d q w) c ≠ ⊤ := surprisal_ne_top_iff.2 fun h0 ↦
+    (Real.softmax_pos (fun c ↦ -γ * d c (q w)) c).ne'
+      (by rw [← real_listener, measureReal_def, h0, ENNReal.toReal_zero])
+  rw [← ENNReal.toReal_le_toReal (hne c) (hne c'), toReal_surprisal prob_le_one,
+    toReal_surprisal prob_le_one, real_listener, real_listener, neg_le_neg_iff]
   exact Real.log_le_log (Real.softmax_pos _ _) (Real.softmax_le_softmax_iff.2 (by nlinarith))
 
 theorem real_listener_zero (w : W) (c : C) :
@@ -130,13 +134,14 @@ noncomputable def objective (β : ℝ) (f : C → W) : ℝ :=
   (costs need l m f).1 + β * (costs need l m f).2
 
 /-- The item-level objective (eq. 7): the surprisal of the concept under the form, plus the
-weighted length of the form. -/
+weighted length of the form. A concept the listener rules out has surprisal `∞`, which enters
+through its real part, `0`. -/
 noncomputable def itemObjective (β : ℝ) (c : C) (w : W) : ℝ :=
-  surprisal (m w) c + β * l w
+  (surprisal (m w) c).toReal + β * l w
 
 @[simp] theorem informationLoss_encoder (f : C → W) :
     RSA.informationLoss need Kernel.id (encoder f) m =
-      ∑ c, need.real {c} * surprisal (m (f c)) c := by
+      ∑ c, need.real {c} * (surprisal (m (f c)) c).toReal := by
   simp [RSA.informationLoss, encoder, Kernel.deterministic_apply, integral_dirac]
 
 @[simp] theorem expectedCost_encoder (f : C → W) :
@@ -144,7 +149,7 @@ noncomputable def itemObjective (β : ℝ) (c : C) (w : W) : ℝ :=
   simp [RSA.expectedCost, encoder, Kernel.deterministic_apply, integral_dirac]
 
 /-- The objective is the negative expected utility of `RSA` at cost `β • l`. -/
-theorem objective_eq_neg_expectedUtility [Finite W] (β : ℝ) (f : C → W) :
+theorem objective_eq_neg_expectedUtility [Finite W] [IsMarkovKernel m] (β : ℝ) (f : C → W) :
     objective need l m β f = -RSA.expectedUtility need Kernel.id (β • l) (encoder f) m := by
   rw [RSA.expectedUtility_eq_neg_add, RSA.expectedCost_smul, neg_neg]
   rfl
@@ -183,7 +188,7 @@ theorem antitone_expectedLength : Antitone fun β ↦ ∑ c, need.real {c} * l (
     fun β β' ↦ objective_le_of_forall need l m β fun c ↦ hE β c (E β' c)
 
 theorem monotoneOn_expectedSurprisal :
-    MonotoneOn (fun β ↦ ∑ c, need.real {c} * surprisal (m (E β c)) c) (Set.Ici 0) := by
+    MonotoneOn (fun β ↦ ∑ c, need.real {c} * (surprisal (m (E β c)) c).toReal) (Set.Ici 0) := by
   simpa [costs] using monotoneOn_fst_of_fst_add_mul_snd_le (c := fun β ↦ costs need l m (E β))
     fun β β' ↦ objective_le_of_forall need l m β fun c ↦ hE β c (E β' c)
 

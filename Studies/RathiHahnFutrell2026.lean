@@ -23,8 +23,8 @@ and a neural learner, and are not formalized.
 * Entropies are in nats. Feature values are `Bool`s, with `false` for active, present and
   perfect. Tables 4 and 5 are the toy languages at `d = 1/4`, and Table 6 at `d = 1/2`.
 * A learner is any function from a data set, a lexeme and a cell to a measure on forms, and
-  informational fusion is Core's `surprisal`. A form the learner rules out has informational
-  fusion `∞` in the paper and the junk value `0` of `Real.log` here.
+  informational fusion is Core's `surprisal`, so a form the learner rules out has informational
+  fusion `∞`, as in the paper.
 * The stream writes the words of independent meanings one after another and starts at a
   uniformly random position of the first, which makes it stationary. The toy languages write
   each slot from its own alphabet (`tagged`), except the nonclustered language of Table 6, whose
@@ -71,7 +71,7 @@ categories `J`, is its surprisal under a learner trained on the words of `L` who
 from `σ` in some category of `J`. A cell gives each category `k` a value in `V k`, and a word is
 a lexeme, a cell and a form. Where fusion holds out cells, [wu-cotterell-odonnell-2019]'s
 irregularity holds out a lexeme. -/
-noncomputable def fusion (J : Set K) (ℓ : Lex) (σ : ∀ k, V k) : ℝ :=
+noncomputable def fusion (J : Set K) (ℓ : Lex) (σ : ∀ k, V k) : ℝ≥0∞ :=
   surprisal (learner {w | w.2.1 ∉ J.pi (fun k ↦ {σ k}) ∧ w.2.2 = L w.1 w.2.1} ℓ σ) (L ℓ σ)
 
 theorem fusion_univ (ℓ : Lex) (σ : ∀ k, V k) :

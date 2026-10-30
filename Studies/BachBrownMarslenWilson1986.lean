@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.BachBrownMarslenWilson1986
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Fin.Rev
+public import Mathlib.Data.Fintype.Fin
 
 /-!
 # Bach, Brown & Marslen-Wilson (1986): crossed vs nested dependencies
@@ -31,69 +32,39 @@ verb arrives while nested orders hold every NP until the cluster ends.
 
 namespace BachBrownMarslenWilson1986
 
+open Finset
+
 variable {n : ℕ}
 
-/-- NPs matrix-integrated after `k` verbs heard: NP `i` counts iff every verb on
-the control chain from its verb `V_{σ i}` up to the matrix verb `V_{σ 0}` has
-been heard, i.e. `max (σ 0) (σ i) < k`. -/
+/-- NPs matrix-integrated after `k` verbs heard: NP `i` counts iff every verb on the control
+chain from the matrix verb `V_{σ 0}` down to its own verb `V_{σ i}` has been heard. -/
 def integratedCount (σ : Equiv.Perm (Fin n)) (k : ℕ) : ℕ :=
-  match n with
-  | 0 => 0
-  | m + 1 =>
-    let matrix := (σ ⟨0, by omega⟩).val
-    (List.range (m + 1)).countP λ i =>
-      if hi : i < m + 1 then
-        max matrix (σ ⟨i, hi⟩).val < k
-      else false
+  #{i | ∀ j ≤ i, (σ j : ℕ) < k}
 
 /-- NPs still awaiting matrix-connected integration after `k` verbs. -/
 def unintegratedCount (σ : Equiv.Perm (Fin n)) (k : ℕ) : ℕ :=
   n - integratedCount σ k
 
-private theorem countP_dite_lt_range (n k : ℕ) :
-    (List.range n).countP (λ i => if _ : i < n then decide (i < k) else false) = min k n := by
-  induction n with
-  | zero => simp
-  | succ m ih =>
-    rw [List.range_succ, List.countP_append, List.countP_cons, List.countP_nil]
-    simp only [show m < m + 1 from by omega, dite_true]
-    have : (List.range m).countP (λ i => if _ : i < m + 1 then decide (i < k) else false) =
-           (List.range m).countP (λ i => if _ : i < m then decide (i < k) else false) := by
-      apply List.countP_congr; intro i hi; simp only [List.mem_range] at hi
-      simp [show i < m from hi, show i < m + 1 from by omega]
-    rw [this, ih]; by_cases h : m < k <;> simp [h] <;> omega
-
 theorem integratedCount_refl (k : ℕ) :
     integratedCount (Equiv.refl (Fin n)) k = min k n := by
-  cases n with
-  | zero => simp [integratedCount]
-  | succ m => simp only [integratedCount, Equiv.refl_apply, Fin.val_mk]
-              exact countP_dite_lt_range (m + 1) k
-
-private theorem rev_max_eq (m i k : ℕ) (hi : i < m + 1) :
-    (max (m + 1 - (0 + 1)) (m + 1 - (i + 1)) < k) ↔ m < k := by omega
+  have : (univ.filter fun i : Fin n ↦ ∀ j ≤ i, ((Equiv.refl (Fin n)) j : ℕ) < k) =
+      univ.filter fun i : Fin n ↦ (i : ℕ) < k :=
+    filter_congr fun i _ ↦ ⟨fun h ↦ h i le_rfl, fun h j hj ↦ (Fin.le_def.1 hj).trans_lt h⟩
+  rw [integratedCount, this, Fin.card_filter_val_lt, min_comm]
 
 theorem integratedCount_revPerm (k : ℕ) :
     integratedCount (Fin.revPerm : Equiv.Perm (Fin n)) k = if k ≥ n then n else 0 := by
-  cases n with
-  | zero => simp [integratedCount]
-  | succ m =>
-    simp only [integratedCount, Fin.revPerm_apply, Fin.val_rev]
-    by_cases hk : k ≥ m + 1
-    · rw [ite_eq_left hk]
-      have hall : ∀ i ∈ List.range (m + 1),
-          (if _ : i < m + 1 then
-            decide (max (m + 1 - (0 + 1)) (m + 1 - (i + 1)) < k) else false) = true := by
-        intro i hi; simp only [List.mem_range] at hi
-        simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
-        rw [rev_max_eq m i k hi]; omega
-      have h := List.countP_eq_length.mpr hall
-      rw [List.length_range] at h; exact h
-    · rw [ite_eq_right hk]
-      apply List.countP_eq_zero.mpr
-      intro i hi; simp only [List.mem_range] at hi
-      simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
-      rw [rev_max_eq m i k hi]; omega
+  rcases n with _ | m
+  · simp [integratedCount]
+  have : (univ.filter fun i : Fin (m + 1) ↦ ∀ j ≤ i, ((Fin.revPerm j : Fin (m + 1)) : ℕ) < k) =
+      univ.filter fun _ : Fin (m + 1) ↦ m < k :=
+    filter_congr fun i _ ↦ by
+      simp only [Fin.revPerm_apply, Fin.val_rev]
+      exact ⟨fun h ↦ by simpa using h 0 (Fin.le_def.2 (Nat.zero_le _)), fun h j _ ↦ by omega⟩
+  rw [integratedCount, this]
+  split_ifs with hk
+  · rw [filter_true_of_mem fun _ _ ↦ by omega, card_univ, Fintype.card_fin]
+  · rw [filter_false_of_mem fun _ _ ↦ by omega, card_empty]
 
 theorem unintegratedCount_refl (k : ℕ) :
     unintegratedCount (Equiv.refl (Fin n)) k = n - min k n := by
@@ -117,7 +88,7 @@ theorem totalIntegrationCost_refl (n : ℕ) :
     have hkn := Finset.mem_range.mp hk
     rw [unintegratedCount_refl, Nat.min_eq_left (by omega)]
     omega
-  rw [Finset.sum_congr rfl h, Finset.sum_range_reflect (λ j => j) n]
+  rw [Finset.sum_congr rfl h, Finset.sum_range_reflect (fun j ↦ j) n]
   have h2 := Finset.sum_range_id_mul_two n
   omega
 

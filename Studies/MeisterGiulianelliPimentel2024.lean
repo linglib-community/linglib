@@ -74,14 +74,15 @@ section indicatorScore
 
 variable [MeasurableSpace W] [MeasurableSingletonClass W] (L : Kernel C W) (c : C)
 
-theorem simAdjSurprisal_indicatorScore (w : W) :
-    simAdjSurprisal L indicatorScore c w = surprisal (L c) w :=
+-- At a target of probability zero the surprisal is `∞` and both sides are `0`.
+theorem simAdjSurprisal_indicatorScore [IsMarkovKernel L] (w : W) :
+    simAdjSurprisal L indicatorScore c w = (surprisal (L c) w).toReal :=
   genSurprisal_negLog_indicatorScore L c w
 
 /-- With the identity similarity, similarity-adjusted entropy is Shannon entropy (p. 16487)
 ((4)). -/
 theorem simAdjEntropy_indicatorScore [Countable W] [IsMarkovKernel L]
-    (hL : Integrable (surprisal (L c)) (L c)) :
+    (hL : Integrable (fun w ↦ (surprisal (L c) w).toReal) (L c)) :
     simAdjEntropy L indicatorScore c = Hm[L c] := by
   simp only [simAdjEntropy, simAdjSurprisal_indicatorScore]
   exact (measureEntropy_eq_integral_surprisal _ hL).symm
@@ -89,14 +90,14 @@ theorem simAdjEntropy_indicatorScore [Countable W] [IsMarkovKernel L]
 omit [MeasurableSingletonClass W] in
 /-- The part-of-speech similarity (eq. (8)) is one when the tagger `f` puts the two words in
 the same class, and then similarity-adjusted surprisal is the surprisal of the target's class. -/
-theorem simAdjSurprisal_indicatorScore_comp {V : Type*} [MeasurableSpace V]
+theorem simAdjSurprisal_indicatorScore_comp [IsMarkovKernel L] {V : Type*} [MeasurableSpace V]
     [MeasurableSingletonClass V] {f : C → W → V} (hf : Measurable (f c)) (w : W) :
     simAdjSurprisal L (fun a w c ↦ indicatorScore (f c a) (f c w) c) c w =
-      surprisal ((L c).map (f c)) (f c w) := by
+      (surprisal ((L c).map (f c)) (f c w)).toReal := by
   have (a : W) : ({f c w} : Set V).indicator (1 : V → ℝ) (f c a) =
       (f c ⁻¹' {f c w}).indicator 1 a := (Set.indicator_comp_right _).symm
-  simp only [simAdjSurprisal, genSurprisal, indicatorScore, surprisal, this]
-  rw [integral_indicator_one (hf (measurableSet_singleton _)),
+  simp only [simAdjSurprisal, genSurprisal, indicatorScore, this]
+  rw [integral_indicator_one (hf (measurableSet_singleton _)), toReal_surprisal prob_le_one,
     map_measureReal_apply hf (measurableSet_singleton _)]
 
 end indicatorScore
@@ -104,11 +105,11 @@ end indicatorScore
 /-- Raising the similarity to the power `α` (App. E.1): as `α` grows, similarity-adjusted
 surprisal tends to surprisal when the similarity is one on the diagonal and below one off it. -/
 theorem tendsto_simAdjSurprisal_rpow [MeasurableSpace W] [MeasurableSingletonClass W]
-    (L : Kernel C W) [IsFiniteKernel L] {z : W → W → C → ℝ} {c : C} {w : W}
+    (L : Kernel C W) [IsMarkovKernel L] {z : W → W → C → ℝ} {c : C} {w : W}
     (hm : Measurable fun a ↦ z a w c) (h0 : ∀ a, 0 ≤ z a w c) (hw : z w w c = 1)
     (h1 : ∀ a ≠ w, z a w c < 1) (hL : L c {w} ≠ 0) :
     Tendsto (fun α : ℝ ↦ simAdjSurprisal L (z ^ α) c w) atTop
-      (𝓝 (surprisal (L c) w)) := by
+      (𝓝 (surprisal (L c) w).toReal) := by
   have hle (a : W) : z a w c ≤ 1 := by
     rcases eq_or_ne a w with rfl | ha
     exacts [hw.le, (h1 a ha).le]
@@ -126,6 +127,7 @@ theorem tendsto_simAdjSurprisal_rpow [MeasurableSpace W] [MeasurableSingletonCla
       · simpa [indicatorScore, ha] using
           tendsto_rpow_atTop_of_base_lt_one _ (neg_one_lt_zero.trans_le (h0 a)) (h1 a ha)
   simp only [indicatorScore, integral_indicator_one (measurableSet_singleton w)] at hlim
+  rw [toReal_surprisal prob_le_one]
   exact ((continuousAt_log (ENNReal.toReal_ne_zero.2 ⟨hL, measure_ne_top _ _⟩)).neg.tendsto).comp
     hlim
 
@@ -245,8 +247,6 @@ theorem simAdjCost_indicatorScore [MeasurableSingletonClass W]
   rw [simAdjCost_eq_simAdjSurprisal P str _ ws w h (by simp [indicatorScore])
       fun a ↦ Set.indicator_nonneg (fun _ _ ↦ zero_le_one) a,
     simAdjSurprisal_indicatorScore, klDiv_posterior_eq_surprisal P str ws w h]
-  exact (ENNReal.toReal_ofReal
-    (neg_nonneg.2 (log_nonpos measureReal_nonneg measureReal_le_one))).symm
 
 end cost
 
