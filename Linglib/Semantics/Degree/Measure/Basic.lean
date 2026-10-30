@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Linglib.Core.Order.Monotone.Basic
 public import Mathlib.Tactic.Linarith
 
 /-!
