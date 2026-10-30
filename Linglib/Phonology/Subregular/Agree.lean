@@ -121,7 +121,7 @@ theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_eq_strictlyPiecewise 
 
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise :
     (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language.IsStrictlyPiecewise 2 :=
-  Language.isStrictlyPiecewise_iff.mpr ⟨_, (ofForbiddenPairs_language_eq_strictlyPiecewise hR).symm⟩
+  ⟨_, (ofForbiddenPairs_language_eq_strictlyPiecewise hR).symm⟩
 
 end Transitive
 
