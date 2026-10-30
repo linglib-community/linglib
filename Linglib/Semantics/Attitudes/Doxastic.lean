@@ -17,8 +17,8 @@ context admits only if it entails the complement (`support_sentence`), and asser
 predicate is veridical when it entails its complement (`IsVeridical`), which it does exactly when
 it is factive or its accessibility is reflexive for every holder (`isVeridical_iff`). A verb's entry
 records its factivity and whether its alternatives are epistemic, reflexive in every model, or
-doxastic, and its veridicality is then
-[that of every denotation of that kind](##Doxastic.isVeridical_forall_iff).
+doxastic, and it is veridical exactly when
+[every denotation of that kind is](##Doxastic.isVeridical_forall_iff).
 
 ## Implementation notes
 

@@ -12,7 +12,7 @@ doxastic predicate quantifies over epistemic or doxastic alternatives, Hintikka'
 belief (`Doxastic.Alternatives`); Karttunen's split of the factives into full and semi-factives is
 `Factivity`, on the presupposition facet. The classical cut between *know* and *believe* is
 derived from the two: a doxastic predicate is veridical when it is factive or its alternatives are
-epistemic (`Attitude.IsVeridical`), which is what every denotation of that kind does
+epistemic (`Attitude.IsVeridical`), exactly when every denotation of that kind is
 (`Doxastic.isVeridical_forall_iff`). A preferential predicate has the evaluative valence of
 a gradable predicate, positive for *hope* and negative for *fear*, and is clausally distributive
 or not. Villalta's degree comparison relates its subject to a question exactly when it relates
@@ -21,6 +21,11 @@ and can hold of no particular answer. `Attitude` composes the two dimensions, an
 record one.
 
 ## Implementation notes
+
+For a factive the factivity alone decides `IsVeridical`, so the alternatives of a factive entry do
+not bear on its veridicality. Entries classify them by Hintikka's knowledge: a factive whose
+meaning entails that the holder knows its complement, as *know*, *realize*, *discover*, *notice*,
+*remember*, *forget* and *see* do, quantifies over epistemic alternatives.
 
 The binary cut between veridical and non-veridical is the classical default; Giannakidou's
 three-way veridical, nonveridical, and antiveridical taxonomy and finer attitude typologies such

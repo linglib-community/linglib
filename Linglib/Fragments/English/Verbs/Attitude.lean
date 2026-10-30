@@ -61,7 +61,7 @@ def realize : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   passivizable := false
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- "discover" — semi-factive, weaker projection -/
@@ -70,7 +70,7 @@ def discover : Verb where
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .achievement
   passivizable := false
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   levinClasses := {LevinClass.conjecture, .sight}
 
@@ -80,7 +80,7 @@ def notice : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   passivizable := false
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   levinClasses := {LevinClass.see}
 
@@ -380,7 +380,7 @@ def remember_rog : Verb where
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
   senseTag := .rogative
   levinClasses := {LevinClass.characterize}
@@ -395,7 +395,7 @@ def forget_rog : Verb where
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
-  attitude := some (.doxastic .doxastic)
+  attitude := some (.doxastic .epistemic)
   factivity := some .full
   senseTag := .rogative
 
