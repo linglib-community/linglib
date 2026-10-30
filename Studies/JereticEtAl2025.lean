@@ -123,17 +123,17 @@ def Slot.competitor (s : Slot) : Competitor :=
 expressions of the language with their counts. -/
 def typology : Language → QSlot → Option Slot
   | .english, .universal =>
-    some ⟨"all", 1, [lexicalDual English.Determiners.QuantityWord.both.form
-      English.Determiners.QuantityWord.both.numberRestriction]⟩
+    some ⟨"all", 1, [lexicalDual English.Determiners.both.form
+      English.Determiners.both.numberRestriction]⟩
   | .english, .negative =>
-    some ⟨"no", 1, [lexicalDual English.Determiners.QuantityWord.neither.form
-      English.Determiners.QuantityWord.neither.numberRestriction]⟩
+    some ⟨"no", 1, [lexicalDual English.Determiners.neither.form
+      English.Determiners.neither.numberRestriction]⟩
   | .english, .which => some ⟨"which", 1, [⟨"which of the two", false, 4⟩]⟩
   | .english, .each => some ⟨"each", 1, [⟨"each of the two", false, 4⟩]⟩
   | .english, .one => some ⟨"one", 1, [⟨"one of the two", false, 4⟩]⟩
   | .english, .always => some ⟨"always", 2, [⟨"both times", false, 2⟩]⟩
   | .french, .universal =>
-    some ⟨"tous les", 3, [⟨French.Determiners.QuantityWord.les_deux.form, false, 3⟩]⟩
+    some ⟨"tous les", 3, [⟨French.Determiners.les_deux.form, false, 3⟩]⟩
   | .french, .negative =>
     some ⟨"aucun", 1, [⟨"aucun des deux", false, 3⟩, ⟨"ni l'un ni l'autre", false, 5⟩]⟩
   | .french, .which => some ⟨"quel", 1, []⟩

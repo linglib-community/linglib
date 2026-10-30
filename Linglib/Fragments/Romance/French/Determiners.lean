@@ -1,16 +1,13 @@
 module
 
-public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Quantification.Determiner
 
 /-!
 # French determiners
 
 This file records the French determiners the studies consume. The quantificational determiners
-are the carrier `QuantityWord`, whose members project to a `QuantificationalDeterminer` record by
-`QuantityWord.toQuantifier` and denote the readings the literature makes available for them,
-so `⟦QuantityWord.tous⟧` is `{every}`. French has no lexical dual universal, and Jeretic and
+are `QuantificationalDeterminer` records with the readings the literature makes available for
+them, so `⟦tous⟧` is `{every}`. French has no lexical dual universal, and Jeretic and
 colleagues take *les deux* to serve as its indirect alternative, marked with the dual number it
 realizes; *toujours* is the adverbial universal they set beside English *always*, and has no
 determiner reading. The articles *un* and *les* are `Article`s.
@@ -27,60 +24,34 @@ determiner reading. The articles *un* and *les* are `Article`s.
 
 namespace French.Determiners
 
-/-! ## Quantificational determiners -/
+/-! ## Quantificational determiners
 
-/-- The quantificational determiners are *tous*, *chaque*, *aucun*, *les deux*, *quelques* and the
-adverb *toujours*. -/
-inductive QuantityWord where
-  | tous | chaque | aucun | les_deux | quelques | toujours
-  deriving DecidableEq, Repr, Fintype
+The n-word *aucun* reads as `no`, a negative quantifier ([de-swart-sag-2002]), or as
+`Quantifier.Det.some`, an indefinite whose negation the clause supplies ([zeijlstra-2004]). -/
 
-namespace QuantityWord
+/-- *Tous*, read as `every`, with a plural or a mass noun. -/
+def tous : QuantificationalDeterminer :=
+  { form := "tous", readings := {.every}, numberRestriction := some .plural, selectsMass := true }
 
-/-- The surface form. -/
-def form : QuantityWord → String
-  | .tous => "tous"
-  | .chaque => "chaque"
-  | .aucun => "aucun"
-  | .les_deux => "les deux"
-  | .quelques => "quelques"
-  | .toujours => "toujours"
+/-- *Chaque*, read as `every`, with a singular noun. -/
+def chaque : QuantificationalDeterminer :=
+  { form := "chaque", readings := {.every}, numberRestriction := some .singular }
 
-/-- *Tous*, *quelques* and *toujours* select the plural, *chaque* and *aucun* the singular, and
-*les deux* the dual, the core concept it realizes. -/
-def numberRestriction : QuantityWord → Option Number
-  | .tous | .quelques | .toujours => some .plural
-  | .chaque | .aucun => some .singular
-  | .les_deux => some .dual
+/-- *Aucun*, read as `no` or as `Quantifier.Det.some`, with a singular noun. -/
+def aucun : QuantificationalDeterminer :=
+  { form := "aucun", readings := {.no, .some}, numberRestriction := some .singular }
 
-/-- Whether a word selects mass nouns, which only *tous* does. -/
-def selectsMass : QuantityWord → Bool
-  | .tous => true
-  | _ => false
+/-- *Les deux*, read as `both`, with the dual, the core concept it realizes. -/
+def les_deux : QuantificationalDeterminer :=
+  { form := "les deux", readings := {.both}, numberRestriction := some .dual }
 
-/-- The word as a determiner record. -/
-def toQuantifier (w : QuantityWord) : QuantificationalDeterminer :=
-  { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
+/-- *Quelques*, read as `Quantifier.Det.some`, with a plural noun. -/
+def quelques : QuantificationalDeterminer :=
+  { form := "quelques", readings := {.some}, numberRestriction := some .plural }
 
-/-- All the words. -/
-def toList : List QuantityWord := [.tous, .chaque, .aucun, .les_deux, .quelques, .toujours]
-
-universe u
-
-/-- The readings the literature makes available for a word. *Tous* and *chaque* read as
-`every`, *quelques* as `Quantifier.Det.some` and *les deux* as `both`; *toujours* has no
-determiner reading. The n-word *aucun* reads as `no`, a negative quantifier
-([de-swart-sag-2002]), or as `Quantifier.Det.some`, an indefinite whose negation the clause
-supplies ([zeijlstra-2004]). -/
-noncomputable instance : Denotes QuantityWord (Set Quantifier.Det.Family.{u}) where
-  denote
-    | .tous | .chaque => {Quantifier.Det.Family.every}
-    | .aucun => {Quantifier.Det.Family.no, Quantifier.Det.Family.some}
-    | .quelques => {Quantifier.Det.Family.some}
-    | .les_deux => {Quantifier.Det.Family.both}
-    | .toujours => ∅
-
-end QuantityWord
+/-- The adverb *toujours*, with no determiner reading. -/
+def toujours : QuantificationalDeterminer :=
+  { form := "toujours", numberRestriction := some .plural }
 
 /-! ## Articles -/
 
@@ -100,7 +71,7 @@ def les : Article :=
 
 /-- All French quantifier entries. -/
 def allQuantifiers : List QuantificationalDeterminer :=
-  QuantityWord.toList.map QuantityWord.toQuantifier
+  [tous, chaque, aucun, les_deux, quelques, toujours]
 
 /-- All French article entries. -/
 def allArticles : List Article := [un, les]
