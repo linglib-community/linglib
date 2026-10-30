@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.ModelTheory.Factor
+public import Linglib.Core.Relation.SetRel
 
 /-!
 # Strictly local and locally testable sets of structures
@@ -9,7 +10,8 @@ Among the members of a family of relational structures, a set is strictly `k`-lo
 permitted `k`-factors cuts it out, and locally `k`-testable when membership depends only on the
 set of `k`-factors. Over words ordered by successor these are the strictly local and the locally
 testable stringsets, and over words ordered by precedence the strictly piecewise and the piecewise
-testable ones.
+testable ones. A strictly local set is a core of the relation between a member and its
+factors, so its canonical grammar is the image of the set under that relation.
 
 ## Main definitions
 
@@ -18,6 +20,8 @@ testable ones.
 
 ## Main statements
 
+* `FirstOrder.Language.isStrictlyLocal_iff_eq_core`: strictly local sets are the cores of the
+  factor relation.
 * `FirstOrder.Language.isStrictlyLocal_iff`: a set is strictly local exactly when it contains
   every member whose factors all occur in its members.
 * `FirstOrder.Language.IsStrictlyLocal.mem_of_factors_subset_union`: strictly local sets are
@@ -52,14 +56,19 @@ variable {M k} {S T : Set ι}
 
 /-! ### Strictly local sets -/
 
+/-- Strictly local sets are the cores of the relation between a member and its factors. -/
+theorem isStrictlyLocal_iff_eq_core :
+    L.IsStrictlyLocal M k S ↔
+      ∃ G : Set (L.Factor k), S = (SetRel.ofSuccessors fun i ↦ L.factors k (M i)).core G :=
+  .rfl
+
 /-- A set is strictly local exactly when it contains every member whose factors all occur in its
 members. -/
 theorem isStrictlyLocal_iff :
     L.IsStrictlyLocal M k S ↔ ∀ i, L.factors k (M i) ⊆ ⋃ j ∈ S, L.factors k (M j) → i ∈ S := by
-  refine ⟨?_, fun h ↦ ⟨⋃ j ∈ S, L.factors k (M j), Set.ext fun i ↦
-    ⟨fun hi ↦ Set.subset_biUnion_of_mem (u := fun j ↦ L.factors k (M j)) hi, h i⟩⟩⟩
-  rintro ⟨G, rfl⟩ i hi
-  exact hi.trans (Set.iUnion₂_subset fun _ hj ↦ hj)
+  rw [isStrictlyLocal_iff_eq_core, SetRel.image_core_gc.exists_eq_u, SetRel.image_ofSuccessors]
+  exact ⟨fun h i hi ↦ (Set.ext_iff.1 h i).2 hi, fun h ↦ Set.ext fun i ↦
+    ⟨fun hi ↦ Set.subset_biUnion_of_mem (u := fun j ↦ L.factors k (M j)) hi, h i⟩⟩
 
 /-- Strictly local sets are closed under any operation that adds no factor. -/
 theorem IsStrictlyLocal.mem_of_factors_subset_union (hS : L.IsStrictlyLocal M k S) {a b c : ι}
@@ -81,7 +90,7 @@ theorem IsStrictlyLocal.inter (hS : L.IsStrictlyLocal M k S) (hT : L.IsStrictlyL
     L.IsStrictlyLocal M k (S ∩ T) := by
   obtain ⟨G, rfl⟩ := hS
   obtain ⟨H, rfl⟩ := hT
-  exact ⟨G ∩ H, Set.ext fun _ ↦ Set.subset_inter_iff.symm⟩
+  exact ⟨G ∩ H, (SetRel.core_inter (.ofSuccessors fun i ↦ L.factors k (M i)) G H).symm⟩
 
 /-! ### Locally testable sets -/
 
