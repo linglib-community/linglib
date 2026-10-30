@@ -294,7 +294,6 @@ HaugDalrymple2020
 HawkinsEtAl2025
 HeKaiserIskarous2025
 Heim1983
-Heim1992
 Heim1994a
 Heim1994b
 HeimKratzer1998
@@ -347,7 +346,6 @@ KiegelandEtAl2026
 Kim2024
 Kiparsky2002
 Kiss1998
-Klecha2016
 Koev2026
 KonnellyCowper2020
 KonukEtAl2026

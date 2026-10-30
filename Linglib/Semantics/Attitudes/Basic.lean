@@ -14,7 +14,7 @@ a gradable predicate, positive for *hope* and negative for *fear*, and is clausa
 or not. Villalta's degree comparison relates its subject to a question exactly when it relates
 her to some answer, while *worry*, Mandarin *qidai* and *care* relate her to the question itself
 and can hold of no particular answer. `Attitude` composes the two dimensions: verb entries
-record one, and `Doxastic.lean` interprets the veridicality.
+record one, and the veridicality label records `Doxastic.DoxasticPredicate.IsVeridical`.
 
 ## Implementation notes
 

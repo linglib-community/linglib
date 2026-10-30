@@ -134,7 +134,9 @@ theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell
 `want p` entails `want q` for `p ⊆ q`. -/
 theorem want_strawsonEntails (hpq : p ⊆ q) :
     strawsonEntails (want G N s bel p) (want G N s bel q) := fun _ hp hq ↦ by
-  simp_all [want]
+  simp_all only [want, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
+    SignType.ofProp_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero, SignType.ofProp_ne_zero,
+    imp_false, not_not, Set.ofPred_true, Set.mem_univ, Set.indicator_of_mem]
   exact hp.2.mono hpq
 
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
@@ -186,11 +188,12 @@ theorem vonFintel_no_conflict (A : Set (World → Prop)) :
     ¬ (BestWorlds.Want A bel ↑act ∧ BestWorlds.Want A bel (↑act : Set World)ᶜ) :=
   fun ⟨h, h'⟩ ↦ h.not_compl ⟨⟨true, true, true⟩, by decide⟩ h'
 
-/-- Neither can Heim's, under her definedness amendment and antisymmetric desirability. -/
-theorem heim_no_conflict (F : Conditional.Frame World) (w : World) [Std.Antisymm (F.pref w)]
-    (hd : Desire.IsContingent bel ↑act) :
+/-- Neither can Heim's, whose definedness amendment the beliefs meet, under antisymmetric
+desirability. -/
+theorem heim_no_conflict (F : Conditional.Frame World) (w : World) [Std.Antisymm (F.pref w)] :
     ¬ (Conditional.Want F bel bel w ↑act ∧ Conditional.Want F bel bel w (↑act : Set World)ᶜ) :=
-  fun ⟨h, h'⟩ ↦ h.not_compl (hd.1.mono Set.inter_subset_left) hd h'
+  have hd : Desire.IsContingent bel ↑act := by decide
+  fun ⟨h, h'⟩ ↦ h.not_compl hd.nonempty hd h'
 
 /-- On a belief-based semantics, wanting the act is wanting the cost believed to come with it
 (§4.1). -/

@@ -8,29 +8,20 @@ public import Linglib.Fragments.Japanese.Tense
 /-!
 # Ogihara (1996): Tense, Attitudes, and Scope
 
-[ogihara-1996] proposes a relative tense theory: a tense morpheme is interpreted in the scope of
-the structurally higher tense, locating the time of its clause relative to the time of the tense
-that commands it. English and Japanese share the theory and differ in two respects. English has
-an absolute present, and it has a sequence-of-tense rule that optionally deletes a tense whose
-local tense feature, the nearest [+past] or [+pres] above it, is its own, leaving a null tense
-that is simultaneous with the commanding time. The perfect carries [+past] without being a tense,
-so it triggers the rule as a past does. Japanese has no such rule.
-
-A clause's tense morphemes are read off its tense form, a past participle under *have* being
-the perfect and an infinitive under *will* the future *woll*, and the readings of a chain of
-clauses compose the cells of their relative tenses. A past under a past then takes [the positions
-of the Upper Limit Constraint or the past ones alone](##readings_past_past), [simultaneous exactly
-in English](##eq_mem_readings_past_past_iff), and so does [a past under the
-perfect](##readings_presentPerfect_past), as in *John has said that Mary was sick*; [a past
-perfect under a past precedes the commanding time](##readings_pastPerfect) however the rule
-applies; and [a past under a future stays a past](##readings_future_past) beneath a higher past,
-the present of *will* standing between them. The book's sentences [have exactly the readings the
-chain allows](##rows_readings).
+[ogihara-1996] interprets each tense relative to the time of the tense above it. English adds an
+absolute present and a sequence-of-tense rule that optionally deletes a tense whose local tense
+feature, the nearest [+past] or [+pres] above it, is its own, leaving a null tense at the
+commanding time. A past under a past is then [simultaneous exactly in
+English](##eq_mem_readings_past_past_iff), as is [a past under the
+perfect](##readings_presentPerfect_past). Beneath a higher past, [a past perfect stays a
+past](##readings_pastPerfect) and so does [a past under *will*](##readings_future_past), and the
+book's sentences [have exactly these readings](##rows_readings).
 
 ## Implementation notes
 
-* A reading is a position of the innermost time against the commanding time, at the granularity
-  of the cells of `Semantics/Tense/Defs.lean`. The book's intensional logic, in which tenses are
+* A reading is a position of the time of the innermost clause against the time of the clause
+  above it, the utterance time for a matrix clause, at the granularity of the cells of
+  `Semantics/Tense/Defs.lean`. The book's intensional logic, in which tenses are
   quantifiers over times and attitude verbs relate individuals to sets of world-time pairs read
   de se, is not encoded; the null tense left by the rule is the property of times the attitude
   evaluates at its own time.
@@ -41,9 +32,11 @@ chain allows](##rows_readings).
   the rule names the perfect beside the tenses, so deleting its feature leaves the perfect in
   place, changes no reading, and the perfect acts as a trigger only.
 * The English absolute present *-s* enters a chain for its [+pres] feature, by which the present
-  of *will* keeps a past below it from being deleted under a higher past. It is no relative tense,
-  so the readings compose the relative tenses left at LF, among them the null tense that a
-  deleted present leaves.
+  of *will* keeps a past below it from being deleted under a higher past
+  (`lf_past_future_past`). Its cell is the present: as the tense of a matrix clause it is the
+  utterance time, so a past under it [precedes the commanding time](##readings_present_past).
+  Under a past the cell reads it as a relative present, standing in for the double-access reading
+  the book gives it.
 * The Japanese present *-(r)u* and past *-ta* have the tenses their verbal endings mark in
   `Japanese.Tense.ending`, where the present and the future share the non-past, and *-(r)u*
   [stands for the non-past of every conjugation](##Morpheme.tenses_ru), the copula *-da* among
@@ -130,8 +123,8 @@ def tenses : Morpheme → Finset Tense
   | ru => {t | Japanese.Tense.ending .verbal t = Japanese.Verb.Exponent.u.morphs}
   | ta => {t | Japanese.Tense.ending .verbal t = Japanese.Verb.Exponent.ta.morphs}
 
-/-- The cell of a relative tense morpheme: the positions its tenses allow the time of its clause
-against the time of the tense commanding it. -/
+/-- The cell of a tense morpheme: the positions its tenses allow its time against the time of the
+tense commanding it. -/
 def cell (m : Morpheme) : Finset Ordering := m.tenses.sup fun t ↦ ⟦t⟧
 
 -- p. 2: *-(r)u* stands for the non-past ending of every predicate, the copula's among them.
@@ -183,26 +176,28 @@ def Morpheme.ofForm : Language → Form → List Morpheme
         | .presentParticiple => none
   | .japanese, f => [if f.finite ∈ ta.tenses then ta else ru]
 
-/-- The chain of tenses of the clauses of a sentence, outermost first, each clause's tense form
+/-- The tense morphemes of the clauses of a sentence, outermost first, each clause's tense form
 read in the language. -/
-def chain (L : Language) (fs : List Form) : List Morpheme := fs.flatMap (Morpheme.ofForm L)
+def chain (L : Language) (fs : List Form) : List (List Morpheme) := fs.map (Morpheme.ofForm L)
 
-/-- The forms at LF of the morphemes of a chain, each locally commanding the next, when the local
+/-- The forms at LF of a sequence of morphemes, each locally commanding the next, when the local
 tense feature of the first is `φ`: a morpheme passes its own feature, if it carries one, to the
 morphemes below it. -/
 def lf (φ : Option Feature) : List Morpheme → List (Finset Morpheme)
   | [] => []
   | m :: l => forms φ m :: lf (m.feature.or φ) l
 
-/-- The positions of the time of the last of a chain of tenses at LF against the time of the
-first, composed from the cells of the forms at each place against the tense above it. -/
-def compose : List (Finset Morpheme) → Finset Ordering
-  | [] | [_] => ⟦present⟧
-  | _ :: N :: l => comp (compose (N :: l)) (N.sup cell)
+/-- The composite of a chain of cells, each against the time above it: the positions of the time
+of the last against the time above the first. -/
+def compAlong : List (Finset Ordering) → Finset Ordering
+  | [] => ⟦present⟧
+  | C :: cs => comp (compAlong cs) C
 
-/-- The readings of a chain of tenses: the positions its relative tenses at LF allow. The absolute
-present is no relative tense, so the places it keeps are left out. -/
-def readings (l : List Morpheme) : Finset Ordering := compose ((lf none l).filter (· ≠ {s}))
+/-- The readings of a sentence, given the tense morphemes of its clauses: the positions of the
+time of its last clause against the time of the clause above it, composed from the cells of the
+last clause's morphemes at LF. The clause above a matrix clause is the utterance. -/
+def readings (cs : List (List Morpheme)) : Finset Ordering :=
+  compAlong (((lf none cs.flatten).drop cs.dropLast.flatten.length).map (·.sup cell))
 
 /-- A past under a past takes the positions `pastUnderPast` of its language's SOT rule: before the
 commanding time, or also at it where the rule applies. -/
@@ -220,6 +215,11 @@ theorem readings_japanese_present :
       .lt ∉ readings (chain .japanese [.simplePast, .simplePresent]) := by
   decide
 
+-- a matrix present is the utterance time, in English as in Japanese
+theorem readings_present_past (L : Language) :
+    readings (chain L [.simplePresent, .simplePast]) = ⟦past⟧ := by
+  cases L <;> decide
+
 /-- A past perfect under a past places its event before the commanding time whether or not the
 SOT rule deletes its past, the use of the perfect as a preterit. -/
 theorem readings_pastPerfect : readings (chain .english [.simplePast, .pastPerfect]) = ⟦past⟧ := by
@@ -233,10 +233,19 @@ theorem readings_presentPerfect_past :
   decide
 
 /-- A past under a future is not deleted, since its local tense feature is the [+pres] of
-*will*, so it stays before the future time even when a past commands the future. -/
+*will*, so it stays before the future time even when a past commands the future. Without that
+present, the higher past would license deletion and the simultaneous reading. -/
 theorem readings_future_past :
     readings (chain .english [.future, .simplePast]) = ⟦past⟧ ∧
-      readings (chain .english [.simplePast, .future, .simplePast]) = ⊤ := by
+      readings (chain .english [.simplePast, .future, .simplePast]) = ⟦past⟧ ∧
+      readings [[ed], [woll], [ed]] = upperLimitConstraint := by
+  decide
+
+-- the [+pres] of *will* is the lowest past's local tense feature, so the rule cannot delete it
+theorem lf_past_future_past :
+    lf none (chain .english [.simplePast, .future, .simplePast]).flatten =
+        [{ed}, {s}, {woll}, {ed}] ∧
+      lf none [ed, woll, ed] = [{ed}, {woll}, {ed, null}] := by
   decide
 
 /-! ### The sentences -/
@@ -254,20 +263,21 @@ def form? (w : String) : Option Form :=
 def reading? (w : String) : Option Ordering :=
   [("simultaneous", Ordering.eq), ("shifted", Ordering.lt)].lookup w
 
-/-- The chain of tenses of a row, from the forms of its clauses in its language. -/
-def chain? (row : Datum) : Option (List Morpheme) := do
+/-- The tense morphemes of the clauses of a row, from their forms in its language. -/
+def chain? (row : Datum) : Option (List (List Morpheme)) := do
   pure (chain (← language? row.language) (← (row.features "form").mapM form?))
 
-/-- The judged readings of the rows: the chain of tenses of each row, with the position each of
-its readings names and the judgment of that reading. -/
-def judged : List (List Morpheme × Ordering × Judgment) :=
+/-- The judged readings of the rows: the clauses of each row, with the position each of its
+readings names and the judgment of that reading. -/
+def judged : List (List (List Morpheme) × Ordering × Judgment) :=
   Examples.all.flatMap fun row ↦ (chain? row).toList.flatMap fun ms ↦
     row.readings.filterMap fun r ↦ (reading? r.1).map fun o ↦ (ms, o, r.2)
 
-/-- Every reading of the book's sentences is acceptable exactly when the chain of its tenses
-allows its position. -/
+/-- Every row's forms and readings are read, and every reading of the book's sentences is
+acceptable exactly when the rule allows its position. -/
 theorem rows_readings :
-    (∀ x ∈ judged, (x.2.1 ∈ readings x.1 ↔ x.2.2 = .acceptable)) ∧ judged.length = 11 := by
+    (∀ row ∈ Examples.all, (chain? row).isSome ∧ ∀ r ∈ row.readings, (reading? r.1).isSome) ∧
+      ∀ x ∈ judged, (x.2.1 ∈ readings x.1 ↔ x.2.2 = .acceptable) := by
   decide +kernel
 
 end Ogihara1996

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.Trigger
-public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Logic.Modal.Basic
 
 /-!
@@ -11,18 +10,18 @@ public import Linglib.Logic.Modal.Basic
 Accessibility semantics for doxastic attitude verbs (*believe*, *know*, *think*) in Hintikka's
 tradition: `w ~[R x] w'` reads "`w'` is compatible with what `x` believes or knows in `w`", and
 ⟦x believes p⟧(w) is the relational box `□[R x] p w`, so closure under known implication is the
-K axiom `ModalLogic.box_K`.
+K axiom `ModalLogic.box_K`. A `DoxasticPredicate` pairs an accessibility relation with a
+factivity class; applied to a complement it presupposes the complement when factive, which a
+context admits only if it entails the complement (`support_sentence`), and asserts the box. A
+predicate is veridical when it entails its complement (`IsVeridical`), which it does exactly when
+it is factive or its accessibility is reflexive for every holder (`isVeridical_iff`).
 
-A `DoxasticPredicate` pairs an accessibility relation with a veridicality value and a factivity
-class. Applied to a complement it is a trivalent proposition (`DoxasticPredicate.sentence`) that
-presupposes the complement when the predicate is factive and asserts the box, together with the
-complement when it is veridical. Veridicality is thus an entailment
-(`veridical_entails_complement`) and factivity a presupposition, which a context admits only if it
-entails the complement (`support_sentence`). Over reflexive accessibility both requirements are
-redundant by the T axiom (`holdsAt_iff_box`), so the veridicality value records whether the
-predicate asserts its complement, not whether it entails it: a predicate entails its complement
-exactly when it is veridical, factive, or reflexive for every holder
-(`entails_complement_iff`).
+## Implementation notes
+
+Veridicality is derived, not stored: a predicate that asserts its complement besides the box is
+one whose accessibility is closed under reflexivity, since `□[R ∪ SetRel.id] p w` is
+`□[R] p w ∧ p w` (`ModalLogic.box_union`, `ModalLogic.box_id`). The lexical label
+`Doxastic.Veridicality` of a verb's `Attitude` records `IsVeridical` of its denotation.
 
 ## References
 
@@ -37,27 +36,11 @@ open ModalLogic Presupposition SetRel
 
 variable {W E : Type*}
 
-/-- A veridical verb requires its complement `p` to hold at `w`, and a non-veridical one requires
-nothing. -/
-def VeridicalityHolds (v : Veridicality) (p : W → Prop) (w : W) : Prop :=
-  match v with
-  | .veridical => p w
-  | .nonVeridical => True
-
-instance (v : Veridicality) (p : W → Prop) [DecidablePred p] (w : W) :
-    Decidable (VeridicalityHolds v p w) :=
-  match v with
-  | .veridical => inferInstanceAs (Decidable (p w))
-  | .nonVeridical => inferInstanceAs (Decidable True)
-
 /-- A doxastic attitude predicate is an accessibility relation for each attitude holder, with a
-veridicality value and a factivity class. -/
+factivity class. -/
 structure DoxasticPredicate (W E : Type*) where
   /-- `w ~[access x] w'` when `w'` is compatible with the attitude of `x` in `w`. -/
   access : E → SetRel W W
-  /-- Whether the predicate asserts its complement besides the box. A predicate that does not
-  still entails it when it is factive or its accessibility is reflexive. -/
-  veridicality : Veridicality
   /-- The factivity class of a predicate that presupposes its complement, `none` otherwise. -/
   factivity : Option Factivity := none
 
@@ -67,63 +50,47 @@ variable (V : DoxasticPredicate W E) (agent : E) (p : W → Prop) (w : W)
 
 open Classical in
 /-- Applied to a holder and a complement, the predicate is a trivalent proposition that
-presupposes the complement if the predicate is factive and asserts the box, together with the
-complement if it is veridical. -/
+presupposes the complement if the predicate is factive and asserts the box. -/
 noncomputable def sentence : W → SignType :=
-  {w | ∀ _ ∈ V.factivity, p w}.indicator fun w ↦
-    SignType.ofProp (VeridicalityHolds V.veridicality p w ∧ □[V.access agent] p w)
+  {w | ∀ _ ∈ V.factivity, p w}.indicator fun w ↦ SignType.ofProp (□[V.access agent] p w)
 
 /-- ⟦x V that p⟧(w) is true when `sentence` is. -/
 def HoldsAt : Prop := V.sentence agent p w = 1
 
 theorem holdsAt_iff :
-    V.HoldsAt agent p w ↔ (∀ _ ∈ V.factivity, p w) ∧ VeridicalityHolds V.veridicality p w ∧
-      □[V.access agent] p w := by
+    V.HoldsAt agent p w ↔ (∀ _ ∈ V.factivity, p w) ∧ □[V.access agent] p w := by
   simp [HoldsAt, sentence]
 
 theorem support_sentence :
     Function.support (V.sentence agent p) = {w | ∀ _ ∈ V.factivity, p w} := by
   ext w
-  simp [sentence, -SignType.ofProp_and]
+  simp [sentence]
 
 instance [Fintype W] [∀ v, Decidable (w ~[V.access agent] v)] [DecidablePred p] :
     Decidable (V.HoldsAt agent p w) :=
   decidable_of_iff _ (V.holdsAt_iff agent p w).symm
 
-variable {V agent p w}
+/-- A predicate is veridical when it entails its complement. -/
+def IsVeridical : Prop := ∀ a q v, V.HoldsAt a q v → q v
 
-theorem veridical_entails_complement (hV : V.veridicality = .veridical)
-    (h : V.HoldsAt agent p w) : p w := by
-  rw [holdsAt_iff, hV] at h
-  exact h.2.1
+variable {V agent p w}
 
 theorem holdsAt_iff_box [(V.access agent).IsRefl] :
     V.HoldsAt agent p w ↔ □[V.access agent] p w := by
   rw [holdsAt_iff]
-  refine ⟨fun h ↦ h.2.2, fun h ↦ ⟨fun _ _ ↦ box_T h, ?_, h⟩⟩
-  cases V.veridicality
-  exacts [box_T h, trivial]
+  exact ⟨And.right, fun h ↦ ⟨fun _ _ ↦ box_T h, h⟩⟩
 
-/-- A predicate entails its complement exactly when it is veridical, factive, or reflexive in its
-accessibility for every holder, so a non-veridical predicate is one that does not assert its
-complement rather than one that does not entail it. -/
-theorem entails_complement_iff :
-    (∀ a p w, V.HoldsAt a p w → p w) ↔
-      V.veridicality = .veridical ∨ V.factivity.isSome ∨ ∀ a, (V.access a).IsRefl := by
-  refine ⟨fun h ↦ or_iff_not_imp_left.2 fun hV ↦ or_iff_not_imp_left.2 fun hF a ↦
-    ⟨fun w ↦ h a (w ~[V.access a] ·) w ?_⟩, ?_⟩
-  · have hV : V.veridicality = .nonVeridical := by
-      cases hv : V.veridicality
-      · exact absurd hv hV
-      · rfl
-    rw [holdsAt_iff, hV, Option.not_isSome_iff_eq_none.1 hF]
-    exact ⟨by simp, trivial, fun _ ↦ id⟩
-  · rintro (hV | hF | hR) a p w h
-    · exact veridical_entails_complement hV h
-    · obtain ⟨f, hf⟩ := Option.isSome_iff_exists.1 hF
+/-- A predicate is veridical exactly when it is factive or reflexive in its accessibility for
+every holder. -/
+theorem isVeridical_iff : V.IsVeridical ↔ V.factivity ≠ none ∨ ∀ a, (V.access a).IsRefl := by
+  refine ⟨fun h ↦ or_iff_not_imp_left.2 fun hF a ↦ ⟨fun v ↦ h a (v ~[V.access a] ·) v ?_⟩, ?_⟩
+  · rw [holdsAt_iff, not_not.1 hF]
+    exact ⟨nofun, fun _ ↦ id⟩
+  · rintro (hF | hR) a q v h
+    · obtain ⟨f, hf⟩ := Option.ne_none_iff_exists'.1 hF
       exact ((holdsAt_iff ..).1 h).1 f hf
     · have := hR a
-      exact box_T ((holdsAt_iff ..).1 h).2.2
+      exact box_T ((holdsAt_iff ..).1 h).2
 
 end DoxasticPredicate
 

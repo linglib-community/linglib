@@ -133,10 +133,11 @@
       {"name": "shifted", "judgment": "acceptable"}
     ],
     "paperFeatures": [
+      ["form", "simplePast"],
       ["form", "future"],
       ["form", "simplePast"]
     ],
-    "comment": "The forms are those of the claim and of the clause under it, against whose time the readings are judged: a simultaneous reading would follow if the SOT rule could delete the lowest past under the matrix past, which is the wrong prediction.",
+    "comment": "The readings are judged against the time of the claim: a simultaneous reading would follow if the SOT rule could delete the lowest past under the matrix past, which is the wrong prediction.",
     "verified": "page-image"
   }
 ]

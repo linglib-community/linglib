@@ -8,13 +8,12 @@ public import Mathlib.Data.Set.Finite.Basic
 
 On Heim's conditional semantics, *a wants p* holds at `w` when for every belief world `w'`, every
 `p`-world maximally similar to `w'` is more desirable than every non-`p`-world maximally similar
-to `w'`, with similarity as in Stalnaker and Lewis. Heim states the rule first with the similar
-worlds drawn from all worlds, then, as a context change rule, with them drawn from the belief
-worlds alone, so `Desire.Conditional.Want` takes the domain of comparison as an argument. On the
-belief worlds the rule makes a believed `p` trivially wanted, and so its negation; her amendment,
-that the ascription is undefined when `p` or its negation is already believed, is
-`Desire.IsContingent`, which von Fintel's best-worlds *want* shares. Under it an antisymmetric
-desirability relation cannot make both `p` and `¬p` wanted.
+to `w'`. Heim draws the similar worlds first from all worlds, then, in her context change rule,
+from the belief worlds alone, so `Desire.Conditional.Want` takes the domain of comparison as an
+argument. A domain not contingent on `p` makes `p` trivially wanted, and so its negation
+(`Want.of_not_isContingent`); her amendment, von Fintel's presupposition too, requires the belief
+worlds to be contingent (`Desire.IsContingent`), and under it an antisymmetric desirability
+relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
 
 ## Main definitions
 
@@ -25,6 +24,8 @@ desirability relation cannot make both `p` and `¬p` wanted.
 
 ## Main results
 
+* `Desire.Conditional.Want.of_not_isContingent`: on a domain not contingent on `p`, `p` is
+  trivially wanted.
 * `Desire.Conditional.Want.not_compl`: under the amendment, `p` and `¬p` are not both wanted.
 
 ## References
@@ -50,6 +51,14 @@ def IsContingent (D p : Set W) : Prop := (D ∩ p).Nonempty ∧ (D \ p).Nonempty
 instance [Fintype W] {D p : Set W} [DecidablePred (· ∈ D)] [DecidablePred (· ∈ p)] :
     Decidable (IsContingent D p) :=
   inferInstanceAs (Decidable ((∃ x, x ∈ D ∩ p) ∧ ∃ x, x ∈ D \ p))
+
+variable {D p : Set W}
+
+theorem isContingent_compl : IsContingent D pᶜ ↔ IsContingent D p := by
+  rw [IsContingent, IsContingent, Set.sdiff_compl, ← Set.sdiff_eq, and_comm]
+
+theorem IsContingent.nonempty (h : IsContingent D p) : D.Nonempty :=
+  h.1.mono Set.inter_subset_left
 
 end Desire
 
@@ -93,6 +102,11 @@ instance [Fintype W] [∀ w, DecidableRel (F.sim w).le] [DecidablePred (· ∈ D
 end Decidable
 
 variable {F D bel p w}
+
+/-- A domain of comparison that is not contingent on `p` makes `p` trivially wanted, since `p` or
+its negation has no closest worlds in it. -/
+theorem Want.of_not_isContingent (h : ¬ IsContingent D p) : Want F D bel w p :=
+  fun _ _ x hx y hy ↦ (h ⟨⟨x, hx.1⟩, y, hy.1⟩).elim
 
 /-- When the domain of comparison is contingent on `p`, as (40) requires of the belief worlds,
 an antisymmetric desirability relation cannot make both `p` and `¬p` wanted. -/

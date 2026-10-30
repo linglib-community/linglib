@@ -130,9 +130,6 @@ variable {dox base g p} {w : W}
     want base g p w = -1 ↔ IsContingent (base w) p ∧ ¬ Want (g w) (base w) p := by
   simp [want]
 
-private theorem isContingent_compl {D : Set W} : IsContingent D pᶜ ↔ IsContingent D p := by
-  rw [IsContingent, IsContingent, Set.sdiff_compl, ← Set.sdiff_eq, and_comm]
-
 variable (dox base g p) in
 /-- *Sorry* has the presupposition of *glad*, since *want* presupposes as much of `¬p` as of
 `p`. -/
