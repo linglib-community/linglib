@@ -81,7 +81,7 @@ theorem yield_node_of_ne_nil (s : Symbol T N) {cs : List (RoseTree (Symbol T N))
   simp only [yield, leafList_map, List.filterMap_map, Function.comp_def,
     Symbol.terminal?_mapNonterminal]
 
-theorem yield_replaceAt {t s : RoseTree (Symbol T N)} {p : List ℕ} (h : subtreeAt t p = some s) :
+theorem yield_replaceAt {t s : RoseTree (Symbol T N)} {p : List ℕ} (h : t[p]? = some s) :
     ∃ pre post : List T, t.yield = pre ++ s.yield ++ post ∧
       ∀ new : RoseTree (Symbol T N), (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
   refine ⟨(t.leafList.take (t.leafIndex p)).filterMap Symbol.terminal?,
@@ -197,13 +197,13 @@ end RuleCount
 and `none` off the tree or at a terminal. -/
 def ruleAt? {g : ContextFreeGrammar T} (t : RoseTree (Symbol T g.NT)) (p : List ℕ) :
     Option (ContextFreeRule T g.NT) :=
-  (subtreeAt t p).bind fun s ↦ match s.value with
+  t[p]?.bind fun s ↦ match s.value with
     | .nonterminal A => some ⟨A, s.children.map value⟩
     | .terminal _ => none
 
 theorem ruleAt?_eq_some {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)} {p : List ℕ}
     {A : g.NT} {cs : List (RoseTree (Symbol T g.NT))}
-    (h : subtreeAt t p = some (node (.nonterminal A) cs)) :
+    (h : t[p]? = some (node (.nonterminal A) cs)) :
     ruleAt? t p = some ⟨A, cs.map value⟩ := by
   simp [ruleAt?, h]
 
@@ -212,7 +212,7 @@ theorem ruleAt?_nil_eq_some_iff {g : ContextFreeGrammar T} {t : RoseTree (Symbol
     ruleAt? t [] = some r ↔ t.value = .nonterminal r.input ∧ t.children.map value = r.output := by
   obtain ⟨s, cs⟩ := t
   obtain ⟨A, w⟩ := r
-  cases s <;> simp [ruleAt?, subtreeAt, eq_comm]
+  cases s <;> simp [ruleAt?, eq_comm]
 
 theorem Licensed.exists_mem_output_of_isSubtree {g : ContextFreeGrammar T}
     {t s : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) (hs : IsSubtree s t)
@@ -249,49 +249,49 @@ theorem Licensed.sum_ruleCount_eq_count_values [DecidableEq T] {g : ContextFreeG
       simp [hrule, add_comm]
     · simp [hB]
 
-theorem Licensed.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+theorem Licensed.exists_getElem?_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
-    (hs : subtreeAt t p = some s)
+    (hs : t[p]? = some s)
     (hh : 1 < s.height) {k : ℕ} (hk : k ≤ p.length) :
-    ∃ A cs, subtreeAt t (p.take k) = some (node (.nonterminal A) cs) := by
-  obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (subtreeAt_take_isSome hs k)
+    ∃ A cs, t[p.take k]? = some (node (.nonterminal A) cs) := by
+  obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (getElem?_take_isSome hs k)
   obtain ⟨s₀, cs, rfl⟩ : ∃ s₀ cs, u = node s₀ cs := by cases u; exact ⟨_, _, rfl⟩
   have hne : cs ≠ [] := by
     rcases Nat.lt_or_ge k p.length with hlt | hge
-    · rw [← List.take_append_drop k p, subtreeAt_append, hu, Option.bind_some,
+    · rw [← List.take_append_drop k p, getElem?_append, hu, Option.bind_some,
         List.drop_eq_getElem_cons hlt] at hs
-      obtain ⟨c, hc, -⟩ := subtreeAt_cons_eq_some_iff.mp hs
+      obtain ⟨c, hc, -⟩ := getElem?_cons_eq_some_iff.mp hs
       exact List.ne_nil_of_mem (List.mem_of_getElem? hc)
     · rw [List.take_of_length_le (le_antisymm hk hge ▸ le_rfl), hs] at hu
       obtain rfl := Option.some.inj hu
       obtain ⟨c, hc, -⟩ := exists_mem_children_height_add_one hh
       exact List.ne_nil_of_mem hc
-  obtain ⟨A, rfl⟩ := (ht.of_subtreeAt hu).exists_nonterminal_of_ne_nil hne
+  obtain ⟨A, rfl⟩ := (ht.of_getElem? hu).exists_nonterminal_of_ne_nil hne
   exact ⟨A, cs, hu⟩
 
 /-- By pigeonhole, a path of at least `g.rules.card` steps through a licensed tree, ending at a
 node with children, passes two nodes with the same nonterminal. -/
 theorem Licensed.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
-    (hs : subtreeAt t p = some s)
+    (hs : t[p]? = some s)
     (hh : 1 < s.height) (hlen : g.rules.card ≤ p.length) :
     ∃ i j, i < j ∧ j ≤ p.length ∧ ∃ A csᵢ csⱼ,
-      subtreeAt t (p.take i) = some (node (.nonterminal A) csᵢ) ∧
-      subtreeAt t (p.take j) = some (node (.nonterminal A) csⱼ) := by
+      t[p.take i]? = some (node (.nonterminal A) csᵢ) ∧
+      t[p.take j]? = some (node (.nonterminal A) csⱼ) := by
   classical
   let f : ℕ → ContextFreeRule T g.NT := fun k ↦ (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
   have hf : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := fun k hk ↦ by
     obtain ⟨A, cs, hA⟩ :=
-      ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
+      ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
     simp only [f, ruleAt?_eq_some hA, Option.getD_some]
-    exact (ht.of_subtreeAt hA).rule_mem
+    exact (ht.of_getElem? hA).rule_mem
   obtain ⟨a, ha, b, hb, hne, hfeq⟩ := Finset.exists_ne_map_eq_of_card_lt_of_maps_to
     (by simp only [Finset.card_range]; omega) hf
   wlog hab : a < b generalizing a b
   · exact this b hb a ha hne.symm hfeq.symm (lt_of_le_of_ne (not_lt.mp hab) hne.symm)
   rw [Finset.mem_range] at ha hb
-  obtain ⟨A, csₐ, hA⟩ := ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp ha)
-  obtain ⟨B, cs_b, hB⟩ := ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp hb)
+  obtain ⟨A, csₐ, hA⟩ := ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp ha)
+  obtain ⟨B, cs_b, hB⟩ := ht.exists_getElem?_take hs hh (Nat.lt_succ_iff.mp hb)
   have : A = B := by
     have h := hfeq
     simp only [f, ruleAt?_eq_some hA, ruleAt?_eq_some hB, Option.getD_some,

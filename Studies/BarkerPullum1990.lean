@@ -300,7 +300,7 @@ variable {β : Type*}
 
 theorem mem_branchingNodes_iff {t : RoseTree β} (p : t.Positions) :
     p ∈ branchingNodes ↔ IsBranchingAt t p.val := by
-  obtain ⟨s, hs⟩ : ∃ s, t.subtreeAt p.val.toList = some s := Option.isSome_iff_exists.mp p.2
+  obtain ⟨s, hs⟩ : ∃ s, t[p.val.toList]? = some s := Option.isSome_iff_exists.mp p.2
   constructor
   · rintro ⟨⟨⟨la⟩, ha'⟩, ⟨⟨lb⟩, hb'⟩, hab, ha, hb⟩
     obtain ⟨i, hi⟩ := TreePath.covBy_iff.mp (Positions.covBy_iff.mp ha)
