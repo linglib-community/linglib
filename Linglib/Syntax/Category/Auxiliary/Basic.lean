@@ -61,7 +61,9 @@ expresses. -/
 structure ModalAuxiliary extends Auxiliary, ModalItem
   deriving DecidableEq
 
-instance : Coe ModalAuxiliary Auxiliary := ⟨ModalAuxiliary.toAuxiliary⟩
+attribute [coe] ModalAuxiliary.toAuxiliary
+
+instance : CoeOut ModalAuxiliary Auxiliary := ⟨ModalAuxiliary.toAuxiliary⟩
 
 namespace Auxiliary
 

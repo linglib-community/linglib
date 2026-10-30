@@ -75,7 +75,7 @@ def yiwei : Verb := {
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical) }
+  attitude := some (.doxastic .doxastic) }
 
 /-- 认为 *rènwéi* 'think, hold the view that' is the neutral nonveridical doxastic verb. -/
 def renwei : Verb := {
@@ -84,7 +84,7 @@ def renwei : Verb := {
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical) }
+  attitude := some (.doxastic .doxastic) }
 
 /-- 知道 *zhīdào* 'know', presupposing its complement and asserting belief in it; *rènwéi* is
 its non-factive counterpart. -/
@@ -94,7 +94,7 @@ def zhidao : Verb := {
   valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi }
 
 /-- 后悔 *hòuhuǐ* 'regret', the emotive factive. -/
@@ -146,7 +146,7 @@ def xiangxin : Verb := {
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical) }
+  attitude := some (.doxastic .doxastic) }
 
 /-- 劝 *quàn* 'urge' is a manipulative verb with a nonfinite complement. -/
 def quan : Verb := {

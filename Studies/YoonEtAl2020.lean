@@ -9,8 +9,9 @@ public import Linglib.Core.Probability.UniformOn
 This file formalizes [yoon-etal-2020]'s Rational Speech Act model of polite speech, in which a
 speaker trades off three goals: to be informative, to be kind, and to appear informative and
 kind. In the experimental domain Ann rates Bob's poem on a scale of zero to three hearts and
-answers with one of four adjectives, plain or negated. The literal listener updates a uniform
-prior over states with the soft lexicon elicited in the norming experiment (`meaning`, `l0`);
+answers with one of four adjectives, plain or negated. The literal listener is the density kernel
+of the soft lexicon elicited in the norming experiment against a uniform prior over states
+(`meaning`, `l0`);
 the first-order speaker maximizes a mixture of informational and social utility minus cost,
 `φ · ln P_L0(s | w) + (1 − φ) · E_L0[V(s)] − C(w)`, (5) (`util`, `speaker`); the pragmatic
 listener infers the state and the speaker's goal weight jointly, (4) (`listener`); and the
@@ -64,7 +65,7 @@ inductive HeartState
 instance : MeasurableSpace HeartState := ⊤
 
 /-- The subjective value `V(s)` of a state, the number of hearts. -/
-def HeartState.value : HeartState → ℚ
+def HeartState.value : HeartState → ℕ
   | .h0 => 0
   | .h1 => 1
   | .h2 => 2
@@ -140,7 +141,7 @@ def acceptance : Adjective → Bool → HeartState → ℕ
   | .amazing, true, .h3 => 0
 
 /-- The soft literal meaning `𝓛(s)` of an utterance is its acceptance proportion at the state. -/
-def meaning (u : Utterance) (s : HeartState) : ℚ := acceptance u.1 u.2 s / 49
+noncomputable def meaning (u : Utterance) (s : HeartState) : ℝ := acceptance u.1 u.2 s / 49
 
 theorem meaning_bounded (u : Utterance) (s : HeartState) : 0 ≤ meaning u s ∧ meaning u s ≤ 1 := by
   obtain ⟨a, b⟩ := u
@@ -149,42 +150,53 @@ theorem meaning_bounded (u : Utterance) (s : HeartState) : 0 ≤ meaning u s ∧
 /-- A plain adjective costs 1, and a negated one the cost of negation `c`. -/
 def cost (c : ℝ) (u : Utterance) : ℝ := if u.2 then c else 1
 
-/-! ### The literal listener
+/-! ### The literal listener -/
 
-With a uniform state prior, `P_L0(s | w) = 𝓛(s) / Σ_s' 𝓛(s')`. -/
-
-private theorem sum_hearts (f : HeartState → ℚ) :
+private theorem sum_hearts (f : HeartState → ℝ) :
     (∑ s : HeartState, f s) = f .h0 + f .h1 + f .h2 + f .h3 := by
   rw [show (Finset.univ : Finset HeartState) = {.h0, .h1, .h2, .h3} from by decide,
       Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_singleton]
   ring
 
-/-- The lexicon mass of an utterance, the literal listener's normalizer. -/
-def semMass (u : Utterance) : ℚ := ∑ s : HeartState, meaning u s
+/-- `P_L0(s | u)`, the literal listener, reweights the uniform prior over states by the soft
+meaning of the utterance and normalizes. -/
+noncomputable def l0 : Kernel Utterance HeartState :=
+  Kernel.ofDensity (uniformOn Set.univ) fun u s ↦ ENNReal.ofReal (meaning u s)
 
-/-- `P_L0(s | u)`, the literal listener's posterior under the uniform prior. -/
-def l0 (u : Utterance) (s : HeartState) : ℚ := meaning u s / semMass u
+instance : IsFiniteKernel l0 := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
+
+private theorem meaning_h0_pos (u : Utterance) : 0 < meaning u .h0 := by
+  obtain ⟨a, b⟩ := u
+  cases a <;> cases b <;> norm_num [meaning, acceptance]
+
+-- With a uniform state prior, `P_L0(s | w) = 𝓛(s) / Σ_s' 𝓛(s')`.
+theorem l0_real_singleton (u : Utterance) (s : HeartState) :
+    (l0 u).real {s} = meaning u s / ∑ s', meaning u s' := by
+  have hm : ∀ s', 0 ≤ meaning u s' := fun s' ↦ (meaning_bounded u s').1
+  rw [measureReal_def, l0, Kernel.ofDensity_uniformOn_ofReal_apply_singleton meaning u s hm
+    (Finset.sum_pos' (fun s' _ ↦ hm s') ⟨.h0, Finset.mem_univ _, meaning_h0_pos u⟩),
+    ENNReal.toReal_ofReal (div_nonneg (hm s) (Finset.sum_nonneg fun s' _ ↦ hm s'))]
 
 /-- `E_{P_L0(· | u)}[V(s)]`, the social utility of `u`, which does not depend on the true
 state. -/
-def ev (u : Utterance) : ℚ := ∑ s : HeartState, l0 u s * s.value
+noncomputable def ev (u : Utterance) : ℝ := ∑ s : HeartState, (l0 u).real {s} * s.value
 
 private theorem ev_terrible : ev (.terrible, false) = 29/76 := by
-  rw [ev, sum_hearts]
-  norm_num [l0, semMass, sum_hearts, meaning, acceptance, HeartState.value]
+  simp only [ev, l0_real_singleton, sum_hearts]
+  norm_num [meaning, acceptance, HeartState.value]
 
 private theorem ev_notTerrible : ev (.terrible, true) = 239/111 := by
-  rw [ev, sum_hearts]
-  norm_num [l0, semMass, sum_hearts, meaning, acceptance, HeartState.value]
+  simp only [ev, l0_real_singleton, sum_hearts]
+  norm_num [meaning, acceptance, HeartState.value]
 
 private theorem ev_amazing : ev (.amazing, false) = 39/14 := by
-  rw [ev, sum_hearts]
-  norm_num [l0, semMass, sum_hearts, meaning, acceptance, HeartState.value]
+  simp only [ev, l0_real_singleton, sum_hearts]
+  norm_num [meaning, acceptance, HeartState.value]
 
 private theorem ev_notAmazing : ev (.amazing, true) = 41/44 := by
-  rw [ev, sum_hearts]
-  norm_num [l0, semMass, sum_hearts, meaning, acceptance, HeartState.value]
+  simp only [ev, l0_real_singleton, sum_hearts]
+  norm_num [meaning, acceptance, HeartState.value]
 
 /-! ### The first-order speaker -/
 
@@ -193,14 +205,14 @@ scaled by the optimality `α`, as an extended-real score over the situations `(s
 utterance of literal probability zero at `s` scores `⊥` for every `φ ≠ 0`. -/
 noncomputable def util (α c : ℝ) (p : HeartState × Phi) (u : Utterance) : EReal :=
   if meaning u p.1 = 0 ∧ p.2 ≠ .p0 then ⊥
-  else ((α * ((Phi.val p.2 : ℝ) * Real.log (l0 u p.1 : ℝ)
-    + (1 - (Phi.val p.2 : ℝ)) * (ev u : ℝ) - cost c u) : ℝ) : EReal)
+  else ((α * ((Phi.val p.2 : ℝ) * Real.log ((l0 u).real {p.1})
+    + (1 - (Phi.val p.2 : ℝ)) * ev u - cost c u) : ℝ) : EReal)
 
 private theorem util_ungated {α c : ℝ} {s : HeartState} {φ : Phi} {u : Utterance}
     (h : ¬(meaning u s = 0 ∧ φ ≠ .p0)) :
     util α c (s, φ) u
-      = ((α * ((Phi.val φ : ℝ) * Real.log (l0 u s : ℝ)
-          + (1 - (Phi.val φ : ℝ)) * (ev u : ℝ) - cost c u) : ℝ) : EReal) := by
+      = ((α * ((Phi.val φ : ℝ) * Real.log ((l0 u).real {s})
+          + (1 - (Phi.val φ : ℝ)) * ev u - cost c u) : ℝ) : EReal) := by
   unfold util
   rw [ite_eq_right h]
 
@@ -250,7 +262,7 @@ theorem speaker_apply_eq_zero_of_meaning_eq_zero (α c : ℝ) {s : HeartState} {
 
 theorem social_lt_iff {α : ℝ} (hα : 0 < α) (c : ℝ) (s : HeartState) (u u' : Utterance) :
     (speaker α c (s, .p0)).real {u} < (speaker α c (s, .p0)).real {u'} ↔
-      (ev u : ℝ) - cost c u < (ev u' : ℝ) - cost c u' := by
+      ev u - cost c u < ev u' - cost c u' := by
   rw [speaker_real_singleton_lt_iff, util_ungated (by simp), util_ungated (by simp),
     EReal.coe_lt_coe_iff, mul_lt_mul_iff_right₀ hα]
   simp [Phi.val]
@@ -260,7 +272,7 @@ extra cost of negation is below the social gain of the negation. -/
 theorem social_prefers_indirect_iff {α : ℝ} (hα : 0 < α) (c : ℝ) (s : HeartState) :
     (speaker α c (s, .p0)).real {(.terrible, false)}
         < (speaker α c (s, .p0)).real {(.terrible, true)} ↔
-      c - 1 < (ev (.terrible, true) : ℝ) - ev (.terrible, false) := by
+      c - 1 < ev (.terrible, true) - ev (.terrible, false) := by
   rw [social_lt_iff hα]
   simp only [cost, Bool.false_eq_true, ite_true, ite_false]
   constructor <;> intro h <;> linarith
@@ -284,11 +296,10 @@ theorem informative_prefers_direct {α c : ℝ} (hα : 0 < α) (hc : 1 ≤ c) :
   rw [speaker_real_singleton_lt_iff, util_ungated (by norm_num [meaning, acceptance]),
     util_ungated (by norm_num [meaning, acceptance]), EReal.coe_lt_coe_iff,
     mul_lt_mul_iff_right₀ hα]
-  have hlog : Real.log ((l0 (.terrible, true) .h0 : ℚ) : ℝ)
-      < Real.log ((l0 (.terrible, false) .h0 : ℚ) : ℝ) := by
-    apply Real.log_lt_log
-    · norm_num [l0, semMass, sum_hearts, meaning, acceptance]
-    · norm_num [l0, semMass, sum_hearts, meaning, acceptance]
+  have hlog : Real.log ((l0 (.terrible, true)).real {.h0})
+      < Real.log ((l0 (.terrible, false)).real {.h0}) := by
+    simp only [l0_real_singleton, sum_hearts]
+    apply Real.log_lt_log <;> norm_num [meaning, acceptance]
   simp only [Phi.val, cost, Bool.false_eq_true, ite_true, ite_false]
   norm_num
   linarith

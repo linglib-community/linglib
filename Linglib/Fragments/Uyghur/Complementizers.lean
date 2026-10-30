@@ -61,13 +61,13 @@ def de : Verb where
 def oyla : Verb where
   morphs := [.root "oyla"]
   valency := .ofFrames [ArgumentFrame.np, participialFrame]
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
 
 /-- *bil-* 'know'. -/
 def bil : Verb where
   morphs := [.root "bil"]
   valency := .ofFrames [ArgumentFrame.np, participialFrame]
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- *unut-* 'forget'. -/

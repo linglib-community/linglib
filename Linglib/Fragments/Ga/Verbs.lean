@@ -132,7 +132,7 @@ def dweng : Verb where
   morphs := [.root "dwɛŋ"]
   valency := .ofFrames [akeFrame, niFrame] (controllers := [none, some 0])
   readings := [akeReading]
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
 
 /-! ### Object control -/
 
@@ -183,7 +183,7 @@ they will be coming', 'know whether you or he bought the book'). -/
 def le : Verb where
   morphs := [.root "le"]
   valency := .ofFrame kejiFrame
-  attitude := some (.doxastic .veridical)
+  attitude := some (.doxastic .epistemic)
   factivity := some .semi
 
 /-- The clause-embedding verbs attested in the paper's examples. -/

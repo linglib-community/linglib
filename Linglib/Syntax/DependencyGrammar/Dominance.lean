@@ -303,7 +303,9 @@ structure Tree (L : Type*) (n : ℕ) extends Graph L n where
 
 namespace Tree
 
-instance : Coe (Tree L n) (Graph L n) := ⟨toGraph⟩
+attribute [coe] toGraph
+
+instance : CoeOut (Tree L n) (Graph L n) := ⟨toGraph⟩
 
 /-- Bundle a graph with its tree-hood, decided by default. -/
 def mk' (g : Graph L n) (h : g.IsTree := by decide) : Tree L n := ⟨g, h⟩

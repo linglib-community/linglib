@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.Trigger
 public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Attitudes.Basic
 
 /-!
 # Doxastic attitude semantics
@@ -14,14 +15,19 @@ K axiom `ModalLogic.box_K`. A `DoxasticPredicate` pairs an accessibility relatio
 factivity class; applied to a complement it presupposes the complement when factive, which a
 context admits only if it entails the complement (`support_sentence`), and asserts the box. A
 predicate is veridical when it entails its complement (`IsVeridical`), which it does exactly when
-it is factive or its accessibility is reflexive for every holder (`isVeridical_iff`).
+it is factive or its accessibility is reflexive for every holder (`isVeridical_iff`). A verb's entry
+records its factivity and whether its alternatives are epistemic, reflexive in every model, or
+doxastic, and its veridicality is then
+[that of every denotation of that kind](##Doxastic.isVeridical_forall_iff).
 
 ## Implementation notes
 
 Veridicality is derived, not stored: a predicate that asserts its complement besides the box is
 one whose accessibility is closed under reflexivity, since `□[R ∪ SetRel.id] p w` is
-`□[R] p w ∧ p w` (`ModalLogic.box_union`, `ModalLogic.box_id`). The lexical label
-`Doxastic.Veridicality` of a verb's `Attitude` records `IsVeridical` of its denotation.
+`□[R] p w ∧ p w` (`ModalLogic.box_union`, `ModalLogic.box_id`). The entry fixes the factivity
+class of its denotation and, when its alternatives are epistemic, that the accessibility is
+reflexive; doxastic alternatives impose nothing, so a non-factive predicate over them has a
+denotation that is not veridical, the empty accessibility.
 
 ## References
 
@@ -93,5 +99,20 @@ theorem isVeridical_iff : V.IsVeridical ↔ V.factivity ≠ none ∨ ∀ a, (V.a
       exact box_T ((holdsAt_iff ..).1 h).2
 
 end DoxasticPredicate
+
+/-- A doxastic predicate of factivity class `fac` over alternatives `b` is veridical under every
+denotation of its kind, of that class and reflexive when `b` is epistemic, exactly when the
+attitude `.doxastic b` is veridical. -/
+theorem isVeridical_forall_iff (fac : Option Factivity) (b : Alternatives) :
+    (∀ (W E : Type) (V : DoxasticPredicate W E), V.factivity = fac →
+      (b = .epistemic → ∀ a, (V.access a).IsRefl) → V.IsVeridical) ↔
+      (Attitude.doxastic b).IsVeridical fac := by
+  refine ⟨fun h ↦ ?_, fun h W E V hf hr ↦ ?_⟩
+  · by_contra hn
+    simp only [Attitude.IsVeridical, ne_eq, not_or, not_not] at hn
+    exact h Unit Unit ⟨fun _ ↦ ∅, none⟩ hn.1.symm (fun hb ↦ absurd hb hn.2) () (fun _ ↦ False) ()
+      ((DoxasticPredicate.holdsAt_iff ..).2 ⟨nofun, fun _ hv ↦ absurd hv (Set.notMem_empty _)⟩)
+  · rw [DoxasticPredicate.isVeridical_iff, hf]
+    exact h.imp id hr
 
 end Doxastic

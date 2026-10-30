@@ -72,7 +72,7 @@ def seon : Verb where
   valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
 
 /-- 講 *gong* 'say'. -/
 def gong : Verb where

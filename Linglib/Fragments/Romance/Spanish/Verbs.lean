@@ -340,7 +340,7 @@ def creer : Verb where
   morphs := [.root "creer"]
   valency := .ofFrames [ArgumentFrame.finiteClause]
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
 
 /-- *querer* 'want' takes a *que* clause in the subjunctive, with disjoint reference, and an
 infinitive under subject control. -/

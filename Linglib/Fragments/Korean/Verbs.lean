@@ -215,7 +215,7 @@ def mit : Verb where
   stem := [.root "mit"]
   script := some "믿다"
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   vendlerClass := some .state
   opaqueContext := true
 
@@ -224,7 +224,7 @@ def sayngkakha : Verb where
   stem := [.root "sayngkakha"]
   script := some "생각하다"
   valency := .ofFrame ArgumentFrame.finiteClause
-  attitude := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .doxastic)
   vendlerClass := some .activity
   opaqueContext := true
 
