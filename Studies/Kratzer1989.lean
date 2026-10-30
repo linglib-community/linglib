@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Semantics.Conditionals.Basic
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.Max
 public import Mathlib.Order.UpperLower.Basic
@@ -8,64 +9,52 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Kratzer (1989): An Investigation of the Lumps of Thought
 
-This file formalizes [kratzer-1989]'s premise semantics for counterfactuals over situations and
-its argument that counterfactual reasoning needs the lumping relation between propositions.
-Situations are the elements of a type with a parthood preorder, propositions are sets of
-situations, and the worlds are the maximal situations. A proposition lumps another in a world
-when it is true there and every part of the world in which it is true is one in which the other
-is true too (§2). This is neither logical nor material implication, and a possible-worlds
-semantics, whose worlds have no parts, cannot tell it from the latter.
-
-The analysis of §4.2 adds true propositions to the antecedent of a counterfactual while
-preserving consistency. Taken at face value it predicts (§4.3) that if Paula weren't buying a
-pound of apples, the Atlantic Ocean might be drying up, since the true disjunction that Paula
-is buying apples or the Atlantic is drying up can be added consistently to the antecedent and,
-with it, yields the consequent. The repair of §4.4 is that a proposition brings along
-everything it lumps. In a world where the Atlantic is not drying up, every situation where the
-disjunction holds is one where Paula is buying apples, so the disjunction lumps the first
-disjunct, which contradicts the antecedent. The spurious *might*-counterfactual is blocked, and
-the proposition that the Atlantic is not drying up survives and settles the question. The
-formal definitions of §4.6 build this into the crucial set, the family of premise sets over
-which *would* and *might* quantify.
-
-## Main definitions
-
-* `Kratzer1989.Lumps`: lumping in a situation.
-* `Kratzer1989.Follows`, `Kratzer1989.IsConsistent`, `Kratzer1989.IsCompatible`: logical
-  consequence, consistency, and compatibility, which quantify over worlds only.
-* `Kratzer1989.Would`, `Kratzer1989.Might`: the counterfactuals over a family of premise sets.
-* `Kratzer1989.consistentPremiseSets`: the premise sets of the analysis of §4.2.
-* `Kratzer1989.IsCrucial`: membership in the crucial set of §4.6.
+Kratzer evaluates counterfactuals over situations, the parts of worlds, with the worlds the
+maximal situations. A proposition lumps another in a world when it is true there and the other
+is true in every part of the world in which it is; at a world without parts, as in a
+possible-worlds semantics, [lumping is just joint truth](##Kratzer1989.Lumps.iff_of_isMin).
+*If p, would q* is true when every way of adding true propositions to $p$ while preserving
+consistency reaches a set that implies $q$. This is the premise semantics of
+[kratzer-1981-partition], and it is [the variably strict conditional over the worlds ordered by
+the facts they verify](##would_consistentPremiseSets_iff). It predicts that [if Paula weren't
+buying apples, the Atlantic might be drying up](##might_variablyStrictImp_atlantic), since the
+true disjunction that Paula is buying apples or the Atlantic is drying up can be added. A
+proposition brings along everything it lumps, and the disjunction lumps the purchase, which
+contradicts the antecedent. Adding only sets closed under lumping, [the Atlantic would not be
+drying up](##would_crucialSet_compl_ad).
 
 ## Implementation notes
 
-The set `F` of propositions relevant at a world is a parameter. The paper requires its members
-to be true in the world and persistent, among further conditions left open, and says the two
-closure conditions must be relativized to it; `ClosedUnderLumping` and `ClosedUnderConsequence`
-are stated relative to `F`.
-
-The model has three worlds, the actual one, one where only Paula's purchase differs, and one
-where the Atlantic dries, and two parts of the actual world, one supporting only the purchase
-and one supporting only the Atlantic's calm. The second is what keeps the calm from lumping the
-purchase. The relevant propositions are (9a), (9b), and (9d); the moon disjunction (9e) runs in
-parallel.
+* The set `F` of propositions relevant at a world is a parameter. The paper requires its
+  members to be true in the world and persistent, among further conditions left open, and says
+  the two closure conditions must be relativized to it; `ClosedUnderLumping` and
+  `ClosedUnderConsequence` are stated relative to `F`.
+* The model has three worlds, the actual one, one where only Paula's purchase differs, and one
+  where the Atlantic dries, and two parts of the actual world, one supporting only the purchase
+  and one supporting only the Atlantic's calm. The second is what keeps the calm from lumping
+  the purchase. The relevant propositions are (9a), (9b), and (9d); the moon disjunction (9e)
+  runs in parallel.
 
 ## TODO
 
-Closure under logical consequence is idle in the Paula example. The paper motivates it with the
-King Ludwig example of §5.2, which needs the non-accidental generalizations of §5.
+* Closure under logical consequence is idle in the Paula example. The paper motivates it with
+  the King Ludwig example of §5.2, which needs the non-accidental generalizations of §5.
+* The second counterexample of §4.3, a room of painters, and the asymmetry of §4.5 rest on the
+  accidental quantification of §3.5, which the model does not have.
 
 ## References
 
-* [A. Kratzer, *An investigation of the lumps of thought* (1989)][kratzer-1989]
-* [kratzer-2012], Chapter 5, the revised version of the paper
+* [kratzer-1989]
+* [kratzer-2012] — chapter 5, the revised version of the paper
+* [kratzer-1981-partition]
+* [lewis-1981]
 -/
 
 @[expose] public section
 
 namespace Kratzer1989
 
-open Set
+open Set Conditional
 
 section Situations
 
@@ -124,7 +113,7 @@ extensions in `𝒜`. -/
 def Might (𝒜 : Set (Set (Set S))) (q : Set S) : Prop :=
   ∃ A ∈ 𝒜, ∀ A' ∈ 𝒜, A ⊆ A' → IsCompatible q A'
 
-/-- *Might q* is the negation of *would not q* (§4.2). -/
+-- §4.2
 theorem might_iff_not_would_compl : Might 𝒜 q ↔ ¬ Would 𝒜 qᶜ := by
   simp only [Might, Would, isCompatible_iff_not_follows_compl, not_forall, not_exists, not_and,
     exists_prop]
@@ -133,6 +122,36 @@ theorem might_iff_not_would_compl : Might 𝒜 q ↔ ¬ Would 𝒜 qᶜ := by
 antecedent `p` while preserving consistency. -/
 def consistentPremiseSets (F : Set (Set S)) (p : Set S) : Set (Set (Set S)) :=
   {A | A ⊆ insert p F ∧ p ∈ A ∧ IsConsistent A}
+
+/-- The counterfactual of §4.2, the premise semantics of [kratzer-1981-partition] (§4.6), is the
+variably strict conditional over the worlds ordered by which facts relevant to the world of
+evaluation they verify, as [lewis-1981] showed of premise semantics in general. -/
+theorem would_consistentPremiseSets_iff {F : S → Set (Set S)} :
+    Would (consistentPremiseSets (F w) p) q ↔
+      w ∈ variablyStrictImp (fun _ ↦ worlds S) (fun v ↦ .ofCriteria (· ∈ ·) (F v)) p q := by
+  rw [mem_variablyStrictImp, OrderingSemantics.mem_necessityFilter_ofCriteria_iff]
+  refine ⟨fun h B hB ⟨u, ⟨hu, hup⟩, huB⟩ ↦ ?_, fun h A ⟨hA, hpA, u, hu, huA⟩ ↦ ?_⟩
+  · obtain ⟨A', ⟨hA', hpA', v, hv, hvA'⟩, hBA', hA'q⟩ := h (insert p B)
+      ⟨insert_subset_insert hB, mem_insert p B, u, hu, forall_mem_insert.2 ⟨hup, huB⟩⟩
+    refine ⟨{c ∈ F w | c ∈ A'}, sep_subset _ _, ⟨v, ⟨hv, hvA' p hpA'⟩, fun c hc ↦ hvA' c hc.2⟩,
+      fun c hc ↦ ⟨hB hc, hBA' (mem_insert_of_mem p hc)⟩, fun x ⟨hx, hxp⟩ hxD ↦ hA'q ⟨hx, ?_⟩⟩
+    intro c hc
+    rcases hA' hc with rfl | hcF
+    · exact hxp
+    · exact hxD c ⟨hcF, hc⟩
+  · obtain ⟨D, hD, ⟨v, ⟨hv, hvp⟩, hvD⟩, hAD, hDq⟩ :=
+      h {c ∈ F w | c ∈ A} (sep_subset _ _) ⟨u, ⟨hu, huA p hpA⟩, fun c hc ↦ huA c hc.2⟩
+    refine ⟨insert p D, ⟨insert_subset_insert hD, mem_insert p D, v, hv,
+      forall_mem_insert.2 ⟨hvp, hvD⟩⟩, fun c hc ↦ ?_, fun x ⟨hx, hxD⟩ ↦
+      hDq x ⟨hx, hxD p (mem_insert p D)⟩ fun c hc ↦ hxD c (mem_insert_of_mem p hc)⟩
+    rcases hA hc with rfl | hcF
+    · exact mem_insert _ D
+    · exact mem_insert_of_mem p (hAD ⟨hcF, hc⟩)
+
+theorem might_consistentPremiseSets_iff {F : S → Set (Set S)} :
+    Might (consistentPremiseSets (F w) p) q ↔
+      w ∈ might (variablyStrictImp (fun _ ↦ worlds S) (fun v ↦ .ofCriteria (· ∈ ·) (F v))) p q :=
+  might_iff_not_would_compl.trans (not_congr would_consistentPremiseSets_iff)
 
 /-! ### The crucial set (§4.6) -/
 
@@ -144,8 +163,8 @@ def ClosedUnderLumping (F A : Set (Set S)) (w : S) : Prop := ∀ p ∈ A, ∀ q 
 of `A` logically implies is in `A`. -/
 def ClosedUnderConsequence (F A : Set (Set S)) : Prop := ∀ B ⊆ A, ∀ q ∈ F, Follows B q → q ∈ A
 
-/-- Since consequence is monotone in the premises, strong closure under logical consequence is
-closure under the consequences of the whole set. -/
+-- Since consequence is monotone in the premises, strong closure under logical consequence is
+-- closure under the consequences of the whole set
 theorem closedUnderConsequence_iff : ClosedUnderConsequence F A ↔ ∀ q ∈ F, Follows A q → q ∈ A :=
   ⟨fun h q hq ↦ h A subset_rfl q hq, fun h _ hB q hq hBq ↦ h q hq (hBq.mono hB)⟩
 
@@ -247,8 +266,8 @@ theorem not_lumps_notAd_paOrAd : ¬ Lumps notAd paOrAd Sit.actual := fun h ↦
 
 /-! ### The analysis of §4.2 and its failure (§4.3) -/
 
-/-- (10a) under the analysis of §4.2: adding the disjunction to the antecedent keeps the
-premises consistent and makes the Atlantic's drying compatible with every extension. -/
+-- §4.3: adding the disjunction to the antecedent keeps the premises consistent and makes the
+-- Atlantic's drying compatible with every extension
 theorem might_consistentPremiseSets_atlantic : Might (consistentPremiseSets facts notPa) ad := by
   refine ⟨{notPa, paOrAd}, ⟨by simp [facts, insert_subset_iff], by simp,
     ⟨.atlantic, by decide_sit⟩⟩, ?_⟩
@@ -261,6 +280,13 @@ theorem might_consistentPremiseSets_atlantic : Might (consistentPremiseSets fact
   rcases mem_insert_iff.mp ht with rfl | ht
   · decide_sit
   · exact hs t ht
+
+/-- The variably strict conditional over the worlds ordered by the facts they verify predicts
+(10a): if Paula weren't buying a pound of apples, the Atlantic Ocean might be drying up. -/
+theorem might_variablyStrictImp_atlantic :
+    Sit.actual ∈ might (variablyStrictImp (fun _ ↦ worlds Sit)
+      (fun _ ↦ .ofCriteria (· ∈ ·) facts)) notPa ad :=
+  might_consistentPremiseSets_iff (F := fun _ ↦ facts).1 might_consistentPremiseSets_atlantic
 
 /-! ### The repair (§4.4) -/
 
@@ -289,7 +315,7 @@ theorem isCrucial_notPa_notAd : IsCrucial facts Sit.actual notPa {notPa, notAd} 
       exact absurd (congrArg (Sit.calm ∈ ·) h) (by decide_sit)
     · exact absurd (h ⟨(by decide : IsMax Sit.noApples), by decide_sit⟩) (by decide_sit)
 
-/-- Under lumping, no crucial premise set keeps the Atlantic's drying compatible in (10a). -/
+-- §4.4
 theorem not_might_crucialSet_atlantic : ¬ Might (crucialSet facts Sit.actual notPa) ad := by
   rintro ⟨A, hA, hall⟩
   have hpa : pa ∉ A := fun h ↦ by
@@ -311,6 +337,8 @@ theorem not_might_crucialSet_atlantic : ¬ Might (crucialSet facts Sit.actual no
   have h₂ := hs notAd (by simp)
   revert h₁ h₂; clear hs hw; revert s; decide_sit
 
+/-- Adding only premise sets closed under lumping, if Paula weren't buying a pound of apples,
+the Atlantic Ocean would not be drying up. -/
 theorem would_crucialSet_compl_ad : Would (crucialSet facts Sit.actual notPa) adᶜ :=
   not_not.mp (might_iff_not_would_compl.not.mp not_might_crucialSet_atlantic)
 
