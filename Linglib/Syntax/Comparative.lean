@@ -12,13 +12,16 @@ mark the degree on the predicate. Stassen classifies constructions by the case o
 which is derived from the case of the comparee or fixed by the construction, and by the role of
 a fixed-case standard, the object of a verb of exceeding or an adverbial. This file defines the
 construction by these parameters and derives from them its type in Stassen's chapter of the
-World Atlas of Language Structures, whose sample it also counts.
+World Atlas of Language Structures. The types are the values of the atlas's feature
+(`ComparativeType.toWALS` is a bijection), and through them the file counts the atlas's sample:
+the locational type is the most common and the particle type the rarest.
 
 ## Main definitions
 
 * `Comparative`: a construction, with the marker of its standard and its markers of degree as
   morphs.
 * `Comparative.type`: the type of a construction in the atlas.
+* `Comparative.ComparativeType.toWALS`: the value of the atlas's feature that a type is.
 * `Comparative.SuperlativeStrategy`: the ways a language forms superlatives.
 
 ## References
@@ -90,6 +93,19 @@ inductive ComparativeType where
   | particle
   deriving DecidableEq, BEq, Repr
 
+/-- The value of the atlas's feature 121A that a type is. -/
+def ComparativeType.toWALS : ComparativeType → Data.WALS.F121A.ComparativeType
+  | .locational => .locational
+  | .exceed => .exceed
+  | .conjoined => .conjoined
+  | .particle => .particle
+
+theorem ComparativeType.toWALS_bijective : Function.Bijective ComparativeType.toWALS := by
+  refine ⟨fun a b h ↦ ?_, fun y ↦ ?_⟩
+  · cases a <;> cases b <;> first | rfl | cases h
+  · cases y
+    exacts [⟨.locational, rfl⟩, ⟨.exceed, rfl⟩, ⟨.conjoined, rfl⟩, ⟨.particle, rfl⟩]
+
 /-- The ways a language forms superlatives, which are partly independent of its comparative
 type. -/
 inductive SuperlativeStrategy where
@@ -121,30 +137,19 @@ def type (c : Comparative) : ComparativeType :=
 
 /-! ### Counts over the sample of the atlas -/
 
-theorem ch121_counts_sum :
-    (ch121.filter (·.2 == .locational)).length +
-    (ch121.filter (·.2 == .exceed)).length +
-    (ch121.filter (·.2 == .conjoined)).length +
-    (ch121.filter (·.2 == .particle)).length =
-    ch121.length := by decide +kernel
+theorem locational_most_common (t : ComparativeType) (ht : t ≠ .locational) :
+    (ch121.filter (·.2 = t.toWALS)).length <
+      (ch121.filter (·.2 = ComparativeType.locational.toWALS)).length := by
+  cases t <;> first | exact absurd rfl ht | decide +kernel
 
-theorem locational_most_common :
-    let loc := (ch121.filter (·.2 == .locational)).length
-    let exc := (ch121.filter (·.2 == .exceed)).length
-    let con := (ch121.filter (·.2 == .conjoined)).length
-    let par := (ch121.filter (·.2 == .particle)).length
-    loc > exc ∧ loc > con ∧ loc > par := by decide +kernel
-
-theorem particle_rarest :
-    let loc := (ch121.filter (·.2 == .locational)).length
-    let exc := (ch121.filter (·.2 == .exceed)).length
-    let con := (ch121.filter (·.2 == .conjoined)).length
-    let par := (ch121.filter (·.2 == .particle)).length
-    par < loc ∧ par < exc ∧ par < con := by decide +kernel
+theorem particle_rarest (t : ComparativeType) (ht : t ≠ .particle) :
+    (ch121.filter (·.2 = ComparativeType.particle.toWALS)).length <
+      (ch121.filter (·.2 = t.toWALS)).length := by
+  cases t <;> first | exact absurd rfl ht | decide +kernel
 
 theorem locational_and_particle_dominant :
-    let loc := (ch121.filter (·.2 == .locational)).length
-    let par := (ch121.filter (·.2 == .particle)).length
-    loc + par > ch121.length / 2 := by decide +kernel
+    ch121.length / 2 < (ch121.filter (·.2 = ComparativeType.locational.toWALS)).length +
+      (ch121.filter (·.2 = ComparativeType.particle.toWALS)).length := by
+  decide +kernel
 
 end Comparative

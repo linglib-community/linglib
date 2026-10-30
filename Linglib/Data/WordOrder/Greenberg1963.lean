@@ -11,7 +11,8 @@ Auto-generated from `Linglib/Data/WordOrder/Greenberg1963.json` by
 re-run the generator.
 
 Appendix I's 30-language sample with the per-language properties of the text and footnotes, and
-Appendix II's 24 order types with the languages listed as attesting them.
+Appendix II's 24 order types with the languages listed as attesting them, with Papago in type 7,
+where the Additional note assigns it.
 -/
 
 @[expose] public section
@@ -581,7 +582,8 @@ def types : List OrderType := [
     adposition := .postpositions,
     genitive := .dependentFirst,
     adjective := .dependentFirst,
-    attested := [] },
+    attested := [
+      "Papago"] },
   { index := 8,
     verbPosition := .initial,
     adposition := .postpositions,
