@@ -18,8 +18,10 @@ The conditional entropy `pastCondEntropy X μ n` of the value of a process at ti
 the entropy rate. The drop from a past of `t - 1` values to a past of `t` is the information
 `distanceInfo X μ t` that the value at time `0` carries about the value at time `t` given the
 values between them. The entropy rate plus the information at distances beyond `T` is the
-conditional entropy given a past of `T` values. All of these are entropies of blocks, so they are
-unchanged when every block is read backwards.
+conditional entropy given a past of `T` values. The conditional entropies and the entropy rate are
+entropies of blocks, so they are unchanged when every block is read backwards; a process whose
+blocks are the reversed blocks of another is stationary, so the information at each positive
+distance is unchanged as well when the other is stationary.
 
 ## Main definitions
 
@@ -35,8 +37,8 @@ unchanged when every block is read backwards.
   drop from `pastCondEntropy X μ t` to `pastCondEntropy X μ (t + 1)`.
 * `InformationTheory.entropyRate_add_tsum`: under stationarity, the entropy rate plus the
   information at distances beyond `T` is `pastCondEntropy X μ T`.
-* `InformationTheory.distanceInfo_succ_eq_of_map_rev`: a stationary process whose blocks have the
-  laws of the reversed blocks of `X` has the information of `X` at every positive distance, and
+* `InformationTheory.distanceInfo_succ_eq_of_map_rev`: a process whose blocks have the laws of the
+  reversed blocks of a stationary `X` has the information of `X` at every positive distance, and
   any such process has the entropy rate of `X` (`InformationTheory.entropyRate_eq_of_map_rev`).
 
 ## References
@@ -146,9 +148,9 @@ end Stationary
 
 /-! ### Time reversal
 
-A process `Y` whose blocks have the laws of the reversed blocks of `X` has the entropies of the
-blocks of `X`, hence its conditional entropies given the past and its entropy rate, and when both
-processes are stationary its information at every positive distance. -/
+A process `Y` whose blocks have the laws of the reversed blocks of `X` is stationary and has the
+entropies of the blocks of `X`, hence its conditional entropies given the past and its entropy
+rate, and when `X` is stationary its information at every positive distance. -/
 
 section Reversal
 
@@ -173,10 +175,29 @@ theorem pastCondEntropy_eq_of_map_rev (n : ℕ) : pastCondEntropy Y ν n = pastC
 theorem entropyRate_eq_of_map_rev : entropyRate Y ν = entropyRate X μ :=
   iInf_congr (pastCondEntropy_eq_of_map_rev hX hY h)
 
-theorem distanceInfo_succ_eq_of_map_rev (hs : IsStationary X μ) (hs' : IsStationary Y ν)
-    (t : ℕ) : distanceInfo Y ν (t + 1) = distanceInfo X μ (t + 1) := by
-  rw [distanceInfo_succ hY hs', distanceInfo_succ hX hs, pastCondEntropy_eq_of_map_rev hX hY h,
-    pastCondEntropy_eq_of_map_rev hX hY h]
+omit [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] in
+/-- A process whose blocks have the laws of the reversed blocks of another is stationary: the
+block of `n` values from any time has the law of the reversed first block of `n` values. -/
+theorem isStationary_of_map_rev : IsStationary Y ν := fun a n ↦ by
+  let g : (Fin (a + n) → S) → (Fin n → S) := fun v j ↦ v (Fin.natAdd a j)
+  have hg : Measurable g := measurable_of_finite g
+  have hrev (m : ℕ) : Measurable fun ω ↦ block X 0 m ω ∘ Fin.rev :=
+    (measurable_of_finite fun v : Fin m → S ↦ v ∘ Fin.rev).comp (measurable_block hX 0 m)
+  have h₁ : block Y a n = g ∘ block Y 0 (a + n) := by
+    funext ω j
+    simp [g, block, add_comm]
+  have h₂ : g ∘ (fun ω ↦ block X 0 (a + n) ω ∘ Fin.rev) = fun ω ↦ block X 0 n ω ∘ Fin.rev := by
+    funext ω j
+    simp only [g, block, Function.comp_apply, Fin.val_rev, Fin.val_natAdd, add_zero]
+    exact congrArg (fun k ↦ X k ω) (by omega)
+  refine ⟨(measurable_block hY a n).aemeasurable, (measurable_block hY 0 n).aemeasurable, ?_⟩
+  rw [h₁, ← Measure.map_map hg (measurable_block hY 0 _), h (a + n), Measure.map_map hg (hrev _),
+    h₂, h n]
+
+theorem distanceInfo_succ_eq_of_map_rev (hs : IsStationary X μ) (t : ℕ) :
+    distanceInfo Y ν (t + 1) = distanceInfo X μ (t + 1) := by
+  rw [distanceInfo_succ hY (isStationary_of_map_rev hX hY h), distanceInfo_succ hX hs,
+    pastCondEntropy_eq_of_map_rev hX hY h, pastCondEntropy_eq_of_map_rev hX hY h]
 
 end Reversal
 
