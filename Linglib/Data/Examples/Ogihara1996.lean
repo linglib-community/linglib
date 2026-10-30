@@ -91,7 +91,7 @@ def ex4_9a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .unacceptable), ("shifted", .acceptable)]
-    paperFeatures := [("form", "future"), ("form", "simplePast")] }
+    paperFeatures := [("form", "simplePast"), ("form", "future"), ("form", "simplePast")] }
 
 def all : List Datum := [ex2a, ex2b, ex19d, ex10a, ex10b, ex4_9a]
 

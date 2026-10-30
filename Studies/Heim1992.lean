@@ -8,19 +8,14 @@ public import Mathlib.Data.Set.Lattice.Bounded
 /-!
 # Heim (1992): Presupposition Projection and the Semantics of Attitude Verbs
 
-Heim gives the attitude predicates context change potentials and derives their projection
-behaviour. The belief rule (18) is `believes`, a `CCP.Partial` combinator over the doxastic
-accessibility of (11)–(12): the report is defined iff the complement is defined on each doxastic
-state, so a complement presupposing `p` yields a report presupposing that its holder believes `p`,
-Karttunen's generalization. The factive rule of footnote 47 makes *know* admit only contexts that
-admit its complement's presupposition, which a belief report need not. The desire half replaces
-the Hintikka-style rule (27) with a comparison over similarity, `Desire.Conditional.Want`. In
-its truth-conditional form (31) the similar worlds are drawn from all worlds, and it [blocks
-Stalnaker's inference](##HealthWorld.want_getWell_not_want_beenSick) from *I want to get well*
-to *I want to have been sick*. In its context change form (39) they are drawn from the belief
-worlds, which [makes a believed complement and its negation both
-wanted](##want_and_want_compl_of_believes); the amendment (40) makes such ascriptions undefined,
-and under it [wanting `p` excludes wanting `¬p`](##HealthWorld.want_getWell_not_want_compl).
+Heim gives the attitude predicates context change potentials. A belief report [presupposes that its
+holder believes the complement's presupposition](##believes_ofTrivalent), and a *know* report,
+unlike it, [needs a context that entails it](##believes_admits_not_knows). *Want* compares the most
+similar worlds where the complement holds and where it fails. Drawn from all worlds, they [block the
+inference](##HealthWorld.want_getWell_not_want_beenSick) from *I want to get well* to *I want to
+have been sick*; drawn from the belief worlds, they [make a believed complement and its negation
+both wanted](##HealthWorld.want_dox_beenSick), until her amendment [makes wanting `p` exclude
+wanting `¬p`](##HealthWorld.want_getWell_not_want_compl).
 
 ## Implementation notes
 
@@ -66,8 +61,7 @@ theorem admits_believes_ofTrivalent :
       ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w :=
   Iff.rfl
 
-/-- On atomic complements, Karttunen's rule (3) makes `c` admit `a believes φ` iff the doxastic
-image of `c` admits `φ`. -/
+-- (3)
 theorem admits_believes_iff :
     (believes Dox a (ofTrivalent p)).Admits c ↔
       (SetRel.ofSuccessors (Dox a)).image c ⊆ Function.support p :=
@@ -83,18 +77,20 @@ theorem believes_ofTrivalent :
   funext c
   refine Part.ext' ?_ fun h _ ↦ Set.ext fun w ↦ ?_
   · simp [believes, ofTrivalent, Set.subset_def, ModalLogic.Box, admits_ofTrivalent]
-  · simp [believes, mem_ofTrivalent_self, ModalLogic.Box]
+  · simp only [believes, mem_ofTrivalent_self, Set.mem_ofPred_eq, ModalLogic.Box,
+      SetRel.mem_ofSuccessors, Function.mem_support, ne_eq, ofTrivalent_get,
+      Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff, Set.sep_and,
+      Set.mem_inter_iff, iff_and_self, and_imp]
     exact fun hw h1 ↦ ⟨hw, fun v hv ↦ by simp [h1 v hv]⟩
 
-/-- (20) presupposes nothing, given the presupposition (22) of the *too*-clause. -/
+-- (20), (22)
 theorem believes_too_admits (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
     (seq (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m)))
       (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c :=
   ⟨fun _ _ _ _ ↦ SignType.ofProp_ne_zero, fun _ hw v hv ↦ by
     simpa [Set.indicator_apply_ne_zero] using (mem_ofTrivalent_self _ _).1 hw.2 v hv⟩
 
-/-- Only contexts in which John already believes Mary is here admit (25), *John doubts that Mary_i
-is here and believes that Susan_F is here too_i*. -/
+-- (25)
 theorem doubt_too_admits_iff (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
     (seq (neg (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m))))
       (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c ↔
@@ -114,7 +110,6 @@ theorem admits_knows :
     (knows Dox a φ).Admits c ↔ c ∈ φ c ∧ (believes Dox a φ).Admits c :=
   exists_prop
 
-/-- A context admitting a *know* report admits its complement's presupposition. -/
 theorem admits_of_admits_knows (h : (knows Dox a (ofTrivalent p)).Admits c) :
     c ⊆ Function.support p :=
   supports.admits h.fst
@@ -152,14 +147,6 @@ sick. Heim's model has three worlds: in `w1` I am healthy all the time, in `w2` 
 then get well, and in `w3` I am sick and stay sick; `w1` is better than `w2`, which is better than
 `w3`, and I believe that I have been sick. -/
 
-/-- On the context change rule (39), the similar worlds drawn from the belief worlds, a subject
-who believes `p` or believes `¬p` trivially wants both `p` and `¬p`. -/
-theorem want_and_want_compl_of_believes {W : Type*} {F : Frame W} {Dox p : Set W} {w : W}
-    (h : Dox ⊆ p ∨ Dox ⊆ pᶜ) : Want F Dox Dox w p ∧ Want F Dox Dox w pᶜ := by
-  rcases h with h | h
-  · exact ⟨fun _ _ _ _ y hy ↦ (hy.1.2 (h hy.1.1)).elim, fun _ _ x hx ↦ (hx.1.2 (h hx.1.1)).elim⟩
-  · exact ⟨fun _ _ x hx ↦ (h hx.1.1 hx.1.2).elim, fun _ _ _ _ y hy ↦ (hy.1.2 (h hy.1.1)).elim⟩
-
 /-- The three kinds of worlds of Stalnaker's example. -/
 inductive HealthWorld where
   /-- I am healthy all the time. -/
@@ -179,13 +166,13 @@ def getWell : Set HealthWorld := {w | w = w2}
 def beenSick : Set HealthWorld := {w | w ≠ w1}
 
 /-- My belief worlds: I believe that I have been sick. -/
-def dox : Set HealthWorld := {w | w ≠ w1}
+def dox : Set HealthWorld := beenSick
 
 instance : DecidablePred (· ∈ getWell) := fun w ↦ inferInstanceAs (Decidable (w = w2))
 
 instance : DecidablePred (· ∈ beenSick) := fun w ↦ inferInstanceAs (Decidable (w ≠ w1))
 
-instance : DecidablePred (· ∈ dox) := fun w ↦ inferInstanceAs (Decidable (w ≠ w1))
+instance : DecidablePred (· ∈ dox) := inferInstanceAs (DecidablePred (· ∈ beenSick))
 
 /-- How desirable a world is to me, `w1` best and `w3` worst. -/
 def rank : HealthWorld → ℕ
@@ -209,36 +196,41 @@ instance (w : HealthWorld) : DecidableRel (frame.pref w) :=
   fun x y ↦ inferInstanceAs (Decidable (rank x < rank y))
 
 instance (w : HealthWorld) : Std.Antisymm (frame.pref w) :=
-  ⟨fun _ _ h h' ↦ absurd (h.trans h') (lt_irrefl _)⟩
-
--- p. 194
-theorem getWell_subset_beenSick : getWell ⊆ beenSick := by
-  rintro _ rfl
-  decide
+  ⟨fun _ _ h h' ↦ (lt_asymm h h').elim⟩
 
 /-- On the rule (31), *I want to get well* is true and *I want to have been sick* false, though
 getting well entails having been sick: from each belief world the closest world where I have not
 been sick is `w1`, which is better. -/
 theorem want_getWell_not_want_beenSick (w : HealthWorld) :
-    Want frame .univ dox w getWell ∧ ¬ Want frame .univ dox w beenSick := by
-  cases w <;> decide
+    getWell ⊆ beenSick ∧ Want frame .univ dox w getWell ∧ ¬ Want frame .univ dox w beenSick := by
+  refine ⟨?_, by cases w <;> decide⟩
+  rintro _ rfl
+  decide
 
--- p. 198
-theorem want_dox_beenSick (w : HealthWorld) :
-    Want frame dox dox w beenSick ∧ Want frame dox dox w beenSickᶜ :=
-  want_and_want_compl_of_believes (.inl fun _ ↦ id)
+-- the similarity does the work: with every world equally similar, *I want to get well* is false
+theorem not_want_getWell_top (w : HealthWorld) :
+    ¬ Want ⟨fun _ ↦ ⊤, frame.pref⟩ .univ dox w getWell := fun h ↦
+  (by decide : ¬ rank w2 < rank w1)
+    (h w2 (by decide) w2 (by simp [Frame.closest, getWell]) w1 (by simp [Frame.closest, getWell]))
 
-/-- Under the amendment (40) *I want to have been sick* is undefined, since I believe I have
-been sick. -/
+-- (40)
 theorem not_isContingent_dox_beenSick : ¬ Desire.IsContingent dox beenSick :=
   fun ⟨_, _, hd, hs⟩ ↦ hs hd
+
+/-- On the context change rule (39), the similar worlds drawn from the belief worlds, I trivially
+want to have been sick, which I believe, and also not to have been sick. -/
+theorem want_dox_beenSick (w : HealthWorld) :
+    Want frame dox dox w beenSick ∧ Want frame dox dox w beenSickᶜ :=
+  ⟨.of_not_isContingent not_isContingent_dox_beenSick,
+    .of_not_isContingent (Desire.isContingent_compl.not.2 not_isContingent_dox_beenSick)⟩
 
 /-- *I want to get well* meets the amendment (40), and the context change rule makes it true and
 so *I want not to get well* false. -/
 theorem want_getWell_not_want_compl (w : HealthWorld) :
     Want frame dox dox w getWell ∧ ¬ Want frame dox dox w getWellᶜ := by
+  have hc : Desire.IsContingent dox getWell := ⟨⟨w2, by decide, rfl⟩, w3, by decide, by decide⟩
   have h : Want frame dox dox w getWell := by cases w <;> decide
-  exact ⟨h, h.not_compl ⟨w2, by decide⟩ ⟨⟨w2, by decide, rfl⟩, w3, by decide, by decide⟩⟩
+  exact ⟨h, h.not_compl hc.nonempty hc⟩
 
 end HealthWorld
 

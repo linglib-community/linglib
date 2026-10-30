@@ -8,15 +8,14 @@ public import Linglib.Data.Examples.Klecha2016
 /-!
 # Klecha (2016): Modality and Embedded Temporal Operators
 
-Klecha accounts for the temporal orientation of finite clauses under attitude verbs through
-their modal bases. His new data, (2) and (3), are past-under-past sentences with *hope* and
-*pray* whose embedded event follows the attitude, readings Abusch's Upper Limit Constraint
-forbids and *think* lacks, (6). The modal base pronouns of (35) carry the constraint: `dox`
-returns actual histories, ending at the evaluation time, and `cir` future histories,
-beginning after it, so each base is the substrate's base oriented by a tense cell. A
-past-under-past clause has an underlying past or non-past, and its readings are the
-orientations its attitude's modal bases and its tense both admit: *think* takes `dox` alone,
-*hope* either.
+[klecha-2016] derives the temporal orientation of a clause under an attitude verb from the verb's
+modal bases. Under *hope* and *pray* a past under a past may follow the attitude, which Abusch's
+Upper Limit Constraint forbids and *think* does not allow. The base `dox` returns the actual
+histories, which end at the evaluation time, so it [carries the
+constraint](##Background.upperLimitConstraint_of_mem_dox), and `cir` the future histories, which
+begin after it. A clause's readings are the orientations its attitude's bases and its tense both
+admit: [*think* leaves the past and the present](##think_readings), [*hope* every
+orientation](##hope_readings), as [the corpus sentences show](##rows_readings).
 
 ## Implementation notes
 
@@ -82,12 +81,14 @@ theorem compare_mem_orientations [LinearOrder T] (m : Background)
 -- §4.2 [abusch-1997]
 theorem orientations_dox : dox.orientations = upperLimitConstraint := by decide
 
+/-- The modal base `dox` carries the Upper Limit Constraint: its situations are never later than
+the evaluation time. -/
 theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
     {s s' : Index W T} (h : s' ∈ dox.base history s) :
     compare s'.time s.time ∈ upperLimitConstraint :=
   orientations_dox ▸ compare_mem_orientations .dox history h
 
--- (55), (53), §3.3, (43)
+-- (55), (53), §3.3, (43), (45a), §3.2
 theorem cells :
     dox.orientations ∩ ⟦past⟧ = ⟦past⟧ ∧ dox.orientations ∩ nonpast = ⟦present⟧ ∧
       cir.orientations ∩ nonpast = ⟦future⟧ ∧ cir.orientations ∩ ⟦past⟧ = ∅ := by
@@ -113,31 +114,21 @@ def readings (a : Attitude) (τ : Finset Ordering) : Finset Ordering :=
 -- (4), (7)
 theorem readings_union (a : Attitude) (τ₁ τ₂ : Finset Ordering) :
     readings a (τ₁ ∪ τ₂) = readings a τ₁ ∪ readings a τ₂ := by
-  ext o
-  simp only [readings, Finset.mem_biUnion, Finset.mem_inter, Finset.mem_union]
-  constructor
-  · rintro ⟨m, hm, ho, h | h⟩
-    · exact Or.inl ⟨m, hm, ho, h⟩
-    · exact Or.inr ⟨m, hm, ho, h⟩
-  · rintro (⟨m, hm, ho, h⟩ | ⟨m, hm, ho, h⟩)
-    · exact ⟨m, hm, ho, Or.inl h⟩
-    · exact ⟨m, hm, ho, Or.inr h⟩
+  simp only [readings, Finset.inter_union_distrib_left, Finset.biUnion_union]
 
-theorem past_union_nonpast : ⟦past⟧ ∪ nonpast = Finset.univ := by decide
-
--- (6), (7), (7a)
+/-- (6), (7), (7a): under *think* a past under a past, of underlying past or non-past, is before
+or at the attitude, and of underlying non-past at it. -/
 theorem think_readings : ∀ a ∈ think.attitude.toList,
-    readings a Finset.univ = ⟦past⟧ ∪ ⟦present⟧ ∧ readings a nonpast = ⟦present⟧ := by
+    readings a (⟦past⟧ ∪ nonpast) = ⟦past⟧ ∪ ⟦present⟧ ∧ readings a nonpast = ⟦present⟧ := by
   decide +kernel
 
--- (48), (54), (4), (5)
+/-- (48), (54), (4), (5): under *hope* a past under a past, of underlying past or non-past, may
+take every orientation, its underlying non-past the present and the future, and its underlying
+past the past. -/
 theorem hope_readings : ∀ a ∈ hope.attitude.toList,
-    readings a Finset.univ = Finset.univ ∧ readings a nonpast = nonpast ∧
+    readings a (⟦past⟧ ∪ nonpast) = Finset.univ ∧ readings a nonpast = nonpast ∧
       readings a ⟦past⟧ = ⟦past⟧ := by
   decide +kernel
-
--- (45a), §3.2
-theorem matrix_nonpast_present : Background.dox.orientations ∩ nonpast = ⟦present⟧ := by decide
 
 /-! ### The data, (1)–(3) -/
 
@@ -152,7 +143,8 @@ def verbOf : String → Option English.Verbs.Verb
 def cells : List (String × Finset Ordering) :=
   [("past", ⟦past⟧), ("present", ⟦present⟧), ("future", ⟦future⟧)]
 
--- (1), (2), (3)
+/-- (1), (2), (3): an orientation of a corpus sentence is available exactly when its attitude's
+readings admit it. -/
 theorem rows_readings :
     ∀ e ∈ Examples.all, ∀ v ∈ (e.feature? "verb" >>= verbOf).toList, ∀ a ∈ v.attitude.toList,
       ∀ c ∈ cells, ∀ j ∈ (e.feature? c.1).toList,

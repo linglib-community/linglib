@@ -216,7 +216,6 @@ identification of doxastic alternatives with the credence's support that relates
 ([hintikka-1969]). -/
 def hintikka : Doxastic.DoxasticPredicate W E where
   access x := {(w, v) | Cr x w {v} ≠ 0}
-  veridicality := .nonVeridical
 
 /-- *Believe* at the maximum standard of the credence scale is Hintikka's *believe* over the
 credence's support, the universal force of (1). -/
@@ -226,7 +225,7 @@ theorem holdsAt_hintikka_iff [DiscreteMeasurableSpace W] [Countable W]
   rw [← Lassiter2017.certain_eq_preimage, Lassiter2017.mem_certain_iff,
     measureReal_def, ENNReal.toReal_eq_one_iff, ← prob_compl_eq_zero_iff .of_discrete,
     ← mem_ae_iff, ← Filter.eventually_mem_set, ae_iff_of_countable]
-  simp [Doxastic.DoxasticPredicate.holdsAt_iff, hintikka, Doxastic.VeridicalityHolds, box_iff]
+  simp [Doxastic.DoxasticPredicate.holdsAt_iff, hintikka, box_iff]
 
 end Hintikka
 

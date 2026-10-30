@@ -87,6 +87,12 @@ theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w �
   simp only [Box, Set.mem_iUnion, forall_exists_index]
   exact forall_comm
 
+theorem box_union (S : SetRel W' W) : □[R ∪ S] p w ↔ □[R] p w ∧ □[S] p w := by
+  simp only [Box, Set.mem_union, or_imp, forall_and]
+
+theorem box_id {u : W} : □[SetRel.id] p u ↔ p u :=
+  ⟨fun h ↦ h u (SetRel.mem_id.2 rfl), fun h _ hv ↦ SetRel.mem_id.1 hv ▸ h⟩
+
 theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
   forall_congr' fun v ↦ imp_congr_left (h v)
 

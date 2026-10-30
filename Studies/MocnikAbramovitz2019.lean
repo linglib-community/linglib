@@ -141,9 +141,9 @@ theorem ivek_all_iff : F.ivek φ .all p x w ↔ ◇[F.access φ x] p w :=
 
 theorem ivek_doxastic_identity_iff_holdsAt :
     F.ivek .doxastic .identity p x w ↔
-      (⟨F.belief, .nonVeridical, none⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
+      (⟨F.belief, none⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
   rw [Doxastic.DoxasticPredicate.holdsAt_iff, ivek_identity_iff]
-  exact ⟨fun h ↦ ⟨nofun, trivial, h⟩, fun h ↦ h.2.2⟩
+  exact ⟨fun h ↦ ⟨nofun, h⟩, fun h ↦ h.2⟩
 
 /-! ### Conjunction and negation, §2 -/
 

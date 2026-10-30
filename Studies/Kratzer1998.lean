@@ -10,18 +10,14 @@ public import Linglib.Data.Examples.Kratzer1998
 /-!
 # Kratzer (1998): More Structural Analogies between Pronouns and Tenses
 
-Kratzer treats tenses as pronouns, after Partee. English has two indexical tenses, a present defined
-when the context provides an interval including the utterance time and a past defined when it
-provides one preceding it, and a zero tense with no presupposition that must be bound by the next
-tense up. A zero tense with a binder index [abstracts over the time](##zeroTense_abstract), so
-attitude complements denote properties of times, as attitude verbs require. From that requirement
-Kratzer derives what von Stechow calls Abusch's Constraint, that in attitude contexts the highest
-tense is controlled by the matrix tense, a constraint distinct from Abusch's Upper Limit Constraint.
-What looks like a tense may spell out a tense together with one of Klein's three aspects; since out
-of the blue only the present is defined and only the perfect places the event before the reference
-time, a form describes a past event out of the blue just in case it spells out present tense with
-perfect aspect. The paper's tables assign that combination to the English simple past and the German
-*Perfekt* and never to the *Präteritum*.
+[kratzer-1998] treats tenses as pronouns. An indexical tense presupposes how its time stands to the
+utterance time, so out of the blue [only a tense admitting coincidence is
+defined](##tense_outOfTheBlue_iff); a zero tense presupposes nothing, and [with a binder index
+abstracts over its time](##zeroTense_abstract), which [an indexical tense does
+not](##tense_not_abstracted). A form may spell out a tense with one of Klein's aspects, [only the
+perfect anterior](##AspectHead.isAnterior_iff), so a form [describes a past event out of the blue
+iff it spells out such a tense with the perfect](##Variety.describesPastOutOfTheBlue_iff), as [the
+English simple past and the German *Perfekt* do, not the *Präteritum*](##rows_outOfTheBlue).
 
 ## Implementation notes
 
@@ -34,6 +30,13 @@ perfect, with strict precedence, is stronger than the perfect viewpoint of `Aspe
 which admits an event abutting the reference time (`perfect_viewpointType`). The zero-pronoun
 typology of §2–§3 and the locality argument from switch reference are prose. The French table is not
 entered, since the library has no French tense forms.
+
+## TODO
+
+Kratzer derives from the attitude verbs' selection of properties of times what von Stechow calls
+Abusch's Constraint, that the highest tense of an attitude complement is controlled by the matrix
+tense, a constraint distinct from Abusch's Upper Limit Constraint. The attitude verbs are not
+encoded, so neither is the derivation.
 
 ## References
 
