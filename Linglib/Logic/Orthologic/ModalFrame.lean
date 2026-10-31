@@ -64,7 +64,7 @@ theorem mem_diamond {A : Set S} {x : S} : x ∈ diamond F R A ↔
 theorem diamond_orthoNeg_orthoNeg (A : Set S) :
     diamond F R (orthoNeg F (orthoNeg F A)) = diamond F R A := by
   unfold diamond
-  rw [orthoNeg_orthoNeg_of_isRegular F (orthoNeg_isRegular F A)]
+  rw [(isRegular_orthoNeg F A).orthoNeg_orthoNeg]
 
 /-- A relation is R-regular when a possibility accessing one compatible with `y` is compatible
 with a possibility according to which `y` might obtain, one in `◇↓y` for `↓y` the refinements of
@@ -110,7 +110,7 @@ theorem isRegular_core [IsRRegular F R] {A : Set S} (hA : IsRegular F A) :
 /-- Over an R-regular frame `¬◇A = □¬A`, since `□¬A` is regular. -/
 theorem orthoNeg_diamond [IsRRegular F R] (A : Set S) :
     orthoNeg F (diamond F R A) = R.core (orthoNeg F A) :=
-  orthoNeg_orthoNeg_of_isRegular F (isRegular_core R (orthoNeg_isRegular F A))
+  (isRegular_core R (isRegular_orthoNeg F A)).orthoNeg_orthoNeg
 
 variable (F)
 
@@ -119,7 +119,7 @@ variable (F)
 theorem isRRegular_iff_isRegular_core :
     IsRRegular F R ↔ ∀ A, IsRegular F A → IsRegular F (R.core A) := by
   refine ⟨fun _ _ ↦ isRegular_core R, fun h ↦ (isRRegular_iff F R).2 fun x y' y hxy' hy'y ↦ ?_⟩
-  obtain hx | ⟨x', hxx', hx'⟩ := h _ (orthoNeg_isRegular F {y}) x
+  obtain hx | ⟨x', hxx', hx'⟩ := h _ (isRegular_orthoNeg F {y}) x
   · exact (hx hxy' y hy'y rfl).elim
   refine ⟨x', hxx', fun x'' hx'x'' ↦ ?_⟩
   simpa [mem_orthoNeg] using hx' x'' hx'x''
@@ -134,7 +134,7 @@ theorem isKnowable_iff :
   · have hx : x ∈ orthoNeg F (orthoNeg F {x}) :=
       (refines_iff_mem_orthoNeg_orthoNeg F).mp fun _ ↦ id
     obtain ⟨y, hy⟩ := Set.nonempty_iff_ne_empty.mpr
-      (mt (h _ (orthoNeg_isRegular F _)) (Set.nonempty_iff_ne_empty.mp ⟨x, hx⟩))
+      (mt (h _ (isRegular_orthoNeg F _)) (Set.nonempty_iff_ne_empty.mp ⟨x, hx⟩))
     exact ⟨y, fun _ hyz ↦ (refines_iff_mem_orthoNeg_orthoNeg F).mpr (hy hyz)⟩
 
 variable {F R} in
@@ -158,7 +158,7 @@ theorem disjoint_orthoNeg_diamond_iterate {n : ℕ}
   refine Set.disjoint_left.mpr fun x hxA hx ↦ ?_
   obtain ⟨y, hyx, hy⟩ := h x
   exact not_image_iterate_subset_orthoNeg n hx hyx.symm fun z hz ↦
-    (orthoNeg_isRegular F A).mem_of_refines (hy z hz) hxA
+    (isRegular_orthoNeg F A).mem_of_refines (hy z hz) hxA
 
 /-- Over a reflexive relation with Knowability, `¬A` and `◇A` are disjoint for every set `A`,
 regular or not, and without R-regularity ([holliday-mandelkern-2024] Proposition 4.27). -/

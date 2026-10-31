@@ -140,7 +140,7 @@ theorem card_regular :
 /-- Wittgenstein sentences of both orders are contradictions ((2) and (3)), by Proposition 4.27. -/
 theorem wittgenstein : nP ∩ dP = ∅ ∧ P ∩ dnP = ∅ :=
   ⟨Set.disjoint_iff_inter_eq_empty.mp (disjoint_orthoNeg_diamond frame access P),
-    by simpa only [orthoNeg_orthoNeg_of_isRegular frame (embed _).isRegular,
+    by simpa only [(embed _).isRegular.orthoNeg_orthoNeg,
       Set.disjoint_iff_inter_eq_empty] using disjoint_orthoNeg_diamond frame access nP⟩
 
 /-- At the coin with unknown outcome, `◇¬p` does not entail `¬p` (§1) and `p` does not entail `□p`

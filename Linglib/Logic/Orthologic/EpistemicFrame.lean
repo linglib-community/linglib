@@ -356,10 +356,10 @@ theorem restricted_diamond_distributivity_embed {ι : Sort*} {κ : ι → Type*}
 theorem box_distributivity_embed (b₁ b₂ c : B) :
     (embed b₁ ⊔ embed b₂) ⊓ □ₑ (embed c) ≤ embed b₁ ⊓ □ₑ (embed c) ⊔ embed b₂ ⊓ □ₑ (embed c) := by
   rw [← SetLike.coe_subset_coe]
-  simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup, CompatFrame.coe_necHom,
-    disj_eq_regularClosure_union]
-  rintro x ⟨hx, hc⟩ x' hxx'
-  obtain ⟨x'', hx'x'', hb⟩ := hx x' hxx'
+  simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup, CompatFrame.coe_necHom]
+  rintro x ⟨hx, hc⟩
+  refine (mem_disj _).2 fun x' hxx' ↦ ?_
+  obtain ⟨x'', hx'x'', hb⟩ := (mem_disj _).1 hx x' hxx'
   let z : Possibility B :=
     ⟨⟨(x'.fst ⊓ x''.fst, x'.fst), inf_le_left⟩, mt disjoint_iff.2 hx'x''.1⟩
   have hz : z ∈ access.core (embed c) := mem_core_embed.2 (hxx'.2.2.trans (mem_core_embed.1 hc))
@@ -380,10 +380,10 @@ theorem diamond_disjunctive_syllogism_a_embed (b c : B) :
     (embed b ⊔ ◇ₑ (embed c)) ⊓ (◇ₑ (embed c))ᶜ ≤ embed b := by
   rw [← SetLike.coe_subset_coe]
   simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup,
-    CompatFrame.Regular.coe_compl, CompatFrame.coe_diamondHom_necHom,
-    disj_eq_regularClosure_union]
+    CompatFrame.Regular.coe_compl, CompatFrame.coe_diamondHom_necHom]
   rintro x ⟨hx, hc⟩
   rw [mem_orthoNeg_diamond_embed] at hc
+  rw [mem_disj] at hx
   refine by_contra fun hxb ↦ ?_
   obtain ⟨z, hwz, hz | hz⟩ := hx _ (x.compat_withFst sdiff_le (mt sdiff_eq_bot_iff.1 hxb))
   · exact hwz.1 (disjoint_sdiff_self_left.mono_right hz)
@@ -395,8 +395,9 @@ theorem diamond_disjunctive_syllogism_b_embed (b c : B) :
     (embed b ⊔ ◇ₑ (embed c)) ⊓ (embed b)ᶜ ≤ ◇ₑ (embed c) := by
   rw [← embed_compl, ← SetLike.coe_subset_coe]
   simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup,
-    CompatFrame.coe_diamondHom_necHom, disj_eq_regularClosure_union]
+    CompatFrame.coe_diamondHom_necHom]
   rintro x ⟨hx, hb : x.fst ≤ bᶜ⟩
+  rw [mem_disj] at hx
   refine mem_diamond_embed.2 fun hd ↦ ?_
   obtain ⟨z, hz, hzb | hzc⟩ := hx _ compat_pure_fst
   · exact hz.1 (disjoint_compl_left.mono hb hzb)
