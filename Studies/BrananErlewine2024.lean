@@ -81,7 +81,7 @@ def goals (h : TreePath) : List (TreePath × LexicalItem.Token) :=
 
 /-- The features of a goal, [D] unless it is a clitic, and [REL] on the relative operator. -/
 def feats (g : TreePath × LexicalItem.Token) : Finset Feature :=
-  (if g.2 ∈ r.clitics then ∅ else {.d}) ∪ (if g.2.item.wh then {.rel} else ∅)
+  (if g.2 ∈ r.clitics then ∅ else {.d}) ∪ (if g.2.item.IsWh then {.rel} else ∅)
 
 /-- The probe on the goals of the relative clause. -/
 def probe : Probe (TreePath × LexicalItem.Token) := relD.toProbe r.feats
@@ -118,7 +118,7 @@ def relC : LexicalItem.Token := ⟨.of .C [.T], 0⟩
 def tense : LexicalItem.Token := ⟨.of .T [.v], 1⟩
 def littleV : LexicalItem.Token := ⟨.of .v [.V], 2⟩
 /-- The relative operator. -/
-def op : LexicalItem.Token := ⟨.of .D [] "" (wh := true), 3⟩
+def op : LexicalItem.Token := ⟨.of .D [] "" (features := .single .wh true), 3⟩
 /-- The possessive D head. -/
 def poss : LexicalItem.Token := ⟨.of .D [.N], 4⟩
 def sting : LexicalItem.Token := ⟨.of .V [.D] "sok", 5⟩
@@ -215,7 +215,7 @@ def bawo : LexicalItem.Token := ⟨.of .C [.T] "bawo", 22⟩
 def tense : LexicalItem.Token := ⟨.of .T [.v], 23⟩
 def aux : LexicalItem.Token := ⟨.of .T [.v] "mulaé", 24⟩
 def littleV : LexicalItem.Token := ⟨.of .v [.V], 25⟩
-def op : LexicalItem.Token := ⟨.of .D [] "" (wh := true), 26⟩
+def op : LexicalItem.Token := ⟨.of .D [] "" (features := .single .wh true), 26⟩
 def poss : LexicalItem.Token := ⟨.of .D [.N], 27⟩
 def police : LexicalItem.Token := ⟨.of .D [] "pelisi", 28⟩
 def arrest : LexicalItem.Token := ⟨.of .V [.D] "akep", 29⟩

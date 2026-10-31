@@ -208,7 +208,7 @@ theorem unaccusative_epp (ag : Agreement) :
   cases ag <;> decide +kernel
 
 /-- The determiner of *who*. -/
-def whoD := tok 119 .D "who" (wh := true) (sel := [.n])
+def whoD := tok 119 .D "who" (features := .single .wh true) (sel := [.n])
 /-- *who*, a wh-nominal. -/
 def who : LinearizedSyntacticObject := nominal whoD (tok 120 .n (sel := [.N])) (tok 121 .N "who")
 
@@ -290,12 +290,13 @@ theorem ex3prime : ¬ ViolatesPic Invisible whoExpect whoD ∧
 
 /-! ### Criterial freezing (1) -/
 
-def cQ := tok 129 .C (wh := true) (sel := [.T])
+def cQ := tok 129 .C (features := .single .wh true) (sel := [.T])
 def wonder := tok 130 .V "wonder" (sel := [.C])
 def like := tok 131 .V "like" (sel := [.D])
 /-- *which dog*. -/
 def whichDog : LinearizedSyntacticObject :=
-  nominal (tok 132 .D "which" (wh := true) (sel := [.n])) (tok 133 .n (sel := [.N]))
+  nominal (tok 132 .D "which" (features := .single .wh true) (sel := [.n]))
+    (tok 133 .n (sel := [.N]))
     (tok 134 .N "dog")
 
 /-- *John likes which dog*, the subject raised from the verb phrase. -/

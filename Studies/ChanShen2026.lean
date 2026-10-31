@@ -66,12 +66,12 @@ open Minimalist Core.Order RoseTree
 /-! ### The lexicon -/
 
 /-- A token of the schematic questions. -/
-def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false) :
-    LexicalItem.Token :=
-  ⟨LexicalItem.of cat sel phon wh false, id⟩
+def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "")
+    (features : FeatureBundle := ⊥) : LexicalItem.Token :=
+  ⟨LexicalItem.of cat sel phon features, id⟩
 
 /-- The wh-phrase of the single questions. -/
-def what := tok 0 .D (phon := "what") (wh := true)
+def what := tok 0 .D (phon := "what") (features := .single .wh true)
 /-- The matrix interrogative C and the embedded C. -/
 def c₁ := tok 1 .C [.V]
 def c₂ := tok 2 .C [.V]
@@ -94,12 +94,12 @@ def thinkRel := tok 14 .V [.C] "think"
 where Singlish has them. -/
 def theHell := tok 15 .D (phon := "the hell")
 /-- The wh-heads that host *the-hell*. -/
-def whatH := tok 16 .D [.D] "what" (wh := true)
-def whoH := tok 17 .D [.D] "who" (wh := true)
+def whatH := tok 16 .D [.D] "what" (features := .single .wh true)
+def whoH := tok 17 .D [.D] "who" (features := .single .wh true)
 /-- Mandarin *daodi*, an adverb in the clause of the wh-phrase it modifies; nothing selects it. -/
 def daodi := tok 18 .A (phon := "daodi")
 /-- The English multiple questions (1), (25), (26). -/
-def who := tok 19 .D (phon := "who") (wh := true)
+def who := tok 19 .D (phon := "who") (features := .single .wh true)
 def loves := tok 20 .V [.D, .D] "loves"
 
 /-! ### The three strategies (7), (8), (14) -/
@@ -234,7 +234,7 @@ theorem licensed_daodi : Licensed daodiQuestion daodi ∧ ¬ ReachesScope daodiQ
 /-- [den-dikken-giannakidou-2002]: *wh-the-hell* is a polarity item licensed in the immediate
 scope of the question operator ([linebarger-1987]), which a wh-phrase c-commanding it blocks. -/
 def Intervention.Licensed (m : LexicalItem.Token) : Prop :=
-  ∃ q ∈ occurrences t m, ∀ x ∈ tokenList t.val, x.2.item.wh = true → ¬ PartOf t m x.2 →
+  ∃ q ∈ occurrences t m, ∀ x ∈ tokenList t.val, x.2.item.IsWh → ¬ PartOf t m x.2 →
     ¬ CCommands t.val (projectionAt .raising t x.1) q
 
 instance (m : LexicalItem.Token) : Decidable (Intervention.Licensed t m) :=

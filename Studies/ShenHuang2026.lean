@@ -77,7 +77,7 @@ structure Config where
 /-! ### The object DP (5) -/
 
 /-- The wh-phrase, the complement of *about*. -/
-def wh : LexicalItem.Token := ⟨.of .D [] "what" true, 0⟩
+def wh : LexicalItem.Token := ⟨.of .D [] "what" (.single .wh true), 0⟩
 
 /-- The preposition of the depiction nominal. -/
 def about : LexicalItem.Token := ⟨.of .P [.D] "about", 1⟩

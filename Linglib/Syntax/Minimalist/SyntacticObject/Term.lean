@@ -156,7 +156,7 @@ theorem contains_iff_exists_immediatelyContains :
 theorem numNodes_lt_of_immediatelyContains (h : ImmediatelyContains x y) :
     y.val.numNodes < x.val.numNodes := by
   obtain ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ := exists_form x <;> simp at h
-  obtain rfl | rfl := h <;> simp <;> omega
+  obtain rfl | rfl := h <;> simp
 
 theorem numNodes_lt_of_contains (h : Contains x y) : y.val.numNodes < x.val.numNodes :=
   transGen_minimal (r' := InvImage (· > ·) fun s : SyntacticObject L ↦ s.val.numNodes)

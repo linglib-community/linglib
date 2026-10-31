@@ -61,9 +61,9 @@ open CitkoGracaninYuksek2020 (tok ItReading)
 
 /-! ### The lexicon -/
 
-def what := tok 1 .D (phon := "what") (wh := true)
-def when := tok 2 .P (phon := "when") (wh := true)
-def who := tok 3 .D (phon := "who") (wh := true)
+def what := tok 1 .D (phon := "what") (features := .single .wh true)
+def when := tok 2 .P (phon := "when") (features := .single .wh true)
+def who := tok 3 .D (phon := "who") (features := .single .wh true)
 def you := tok 4 .D (phon := "you")
 def T := tok 5 .T [.v]
 def v := tok 6 .v [.V]
@@ -217,7 +217,7 @@ def headToken? (s : RoseTree Vertex) : Option LexicalItem.Token :=
 
 /-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/
 def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
-  ∃ tok ∈ (headToken? s).toList, tok.item.wh = true
+  ∃ tok ∈ (headToken? s).toList, tok.item.IsWh
 
 instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
