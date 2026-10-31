@@ -92,6 +92,18 @@ theorem no_iff_not_some : no A B ↔ ¬ Det.some A B :=
 
 @[simp] theorem no_univ_iff : no Set.univ B ↔ B = ∅ := by simp [no, Set.univ_subset_iff]
 
+/-- *Some* turns a union of restrictors into a join. -/
+theorem some_union (A A' : Set α) : Det.some (A ∪ A') = Det.some A ⊔ Det.some A' := by
+  funext B; simp [Det.some, Set.union_inter_distrib_right, Set.union_nonempty]
+
+/-- *Every* turns a union of restrictors into a meet. -/
+theorem every_union (A A' : Set α) : every (A ∪ A') = every A ⊓ every A' := by
+  funext B; simp [every, Set.union_subset_iff]
+
+/-- The Montague lift of `a` is *every* on `{a}`. -/
+theorem _root_.Quantifier.individual_eq_every (a : α) : individual a = every {a} := by
+  funext B; simp [individual, every]
+
 section Decidable
 
 variable [Fintype α] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)]

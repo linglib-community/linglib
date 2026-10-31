@@ -13,7 +13,8 @@ projection or an adjunction structure, which on the segment theory of [may-1985]
 [chomsky-1995] is a further segment of its host's category; only the head relation of
 `Syntax/Tree/Projection.lean` tells the two apart. Positions, subtrees and the frontier are the
 rose tree's, and the terminals with their positions, in the order of the yield, ascend in
-[precedence](##pairwise_precedes_positionedTerminals).
+[precedence](##pairwise_precedes_positionedTerminals). A tree without categories can be written in
+labelled brackets, as `tree% [x [y z]]`.
 
 ## Implementation notes
 
@@ -169,6 +170,31 @@ variable {C W : Type*}
 
 /-- `binder n t` is the binder of index `n` over `t`, in a tree without categories. -/
 @[match_pattern] abbrev binder (n : ℕ) (t : Tree Unit W) : Tree Unit W := bind n () t
+
+/-! ### Bracket notation
+
+`tree%` writes a tree without categories in labelled-bracket style: `[x y]` is the binary node
+over `x` and `y`, `[λ n x]` the binder of index `n` over `x`, a bare identifier `w` the word `.w`,
+`⟨e⟩` the word `e`, and `(t)` the tree `t`, such as a trace `(.tr n)`. -/
+
+/-- The syntax of `tree%`. -/
+declare_syntax_cat phraseTree
+
+syntax ident : phraseTree
+syntax "⟨" term "⟩" : phraseTree
+syntax "(" term ")" : phraseTree
+syntax "[" phraseTree phraseTree "]" : phraseTree
+syntax "[" "λ" num phraseTree "]" : phraseTree
+
+/-- A tree without categories in labelled-bracket notation. -/
+syntax "tree%" phraseTree : term
+
+macro_rules
+  | `(tree% $w:ident) => `(PhraseStructure.Tree.leaf (.$w:ident))
+  | `(tree% ⟨$e⟩) => `(PhraseStructure.Tree.leaf $e)
+  | `(tree% ($t)) => `($t)
+  | `(tree% [$x $y]) => `(PhraseStructure.Tree.bin (tree% $x) (tree% $y))
+  | `(tree% [λ $n $x]) => `(PhraseStructure.Tree.binder $n (tree% $x))
 
 /-- The category at the root. -/
 def cat (t : Tree C W) : C := t.value.cat
