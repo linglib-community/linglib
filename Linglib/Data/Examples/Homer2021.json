@@ -518,5 +518,165 @@
     ],
     "comment": "Judged on the narrowest scope of some; the sentence is printed unmarked.",
     "verified": "page-image"
+  },
+  {
+    "id": "homer2021_ex92b",
+    "source": {
+      "bibkey": "homer-2021",
+      "paperLabel": "(92b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is impossible that someone stole anything.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "IMPOS.≫SOME",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "someone"
+      ],
+      [
+        "object",
+        "anything"
+      ],
+      [
+        "superordinate",
+        "impossible"
+      ],
+      [
+        "clause",
+        "none"
+      ]
+    ],
+    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+    "verified": "page-image"
+  },
+  {
+    "id": "homer2021_ex98",
+    "source": {
+      "bibkey": "homer-2021",
+      "paperLabel": "(98)"
+    },
+    "language": "stan1293",
+    "primaryText": "It's impossible that someone isn't eating anything.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "IMPOS.≫NEG≫SOME≫ANY",
+        "judgment": "ungrammatical"
+      },
+      {
+        "name": "IMPOS.≫SOME≫NEG≫ANY",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "someone"
+      ],
+      [
+        "object",
+        "anything"
+      ],
+      [
+        "superordinate",
+        "impossible"
+      ],
+      [
+        "clause",
+        "negation"
+      ]
+    ],
+    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+    "verified": "page-image"
+  },
+  {
+    "id": "homer2021_ex103b",
+    "source": {
+      "bibkey": "homer-2021",
+      "paperLabel": "(103b)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is impossible that anyone stole something.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "IMPOS.≫SOME",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "anyone"
+      ],
+      [
+        "object",
+        "something"
+      ],
+      [
+        "superordinate",
+        "impossible"
+      ],
+      [
+        "clause",
+        "none"
+      ]
+    ],
+    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+    "verified": "page-image"
+  },
+  {
+    "id": "homer2021_ex122b",
+    "source": {
+      "bibkey": "homer-2021",
+      "paperLabel": "(122b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I'm not sure that someone understood anything.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "NEG≫SOME",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "subject",
+        "someone"
+      ],
+      [
+        "object",
+        "anything"
+      ],
+      [
+        "superordinate",
+        "not sure"
+      ],
+      [
+        "clause",
+        "none"
+      ]
+    ],
+    "comment": "Judged on the scope readings printed beside it; the sentence is printed unmarked.",
+    "verified": "page-image"
   }
 ]

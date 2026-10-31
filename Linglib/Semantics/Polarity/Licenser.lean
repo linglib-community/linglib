@@ -184,6 +184,30 @@ def Carries (L : Licenser) : Negation.Strength → Prop
   | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
   | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toSignature
 
+section OfOperator
+
+variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] {f : σ → P}
+  {s : Negation.Strength}
+
+/-- The classical licenser of a single operator over the position of a polarity item. -/
+def ofOperator (f : σ → P) : Licenser :=
+  .classical { Param := PUnit, Dom := fun _ ↦ σ, Cod := fun _ ↦ P, op := fun _ ↦ f }
+
+/-- A single operator carries a strength of negation when it is in the function class of the
+strength and is not upward entailing. -/
+theorem carries_ofOperator_iff :
+    (ofOperator f).Carries s ↔ s.toSignature.HoldsFor f ∧ ¬Monotone f := by
+  have ha (h : s.toSignature.HoldsFor f) : Antitone f :=
+    Signature.holdsFor_anti_iff.1 (h.of_le (by cases s <;> decide))
+  cases s <;>
+    simp only [ofOperator, Carries, IsStrawsonDE, IsStrawsonUE, exhaustified, Holds]
+  · exact ⟨fun h ↦ ⟨Signature.holdsFor_anti_iff.2 (h.1 ⟨⟩), fun hm ↦ h.2 fun _ ↦ hm⟩,
+      fun h ↦ ⟨fun _ ↦ Signature.holdsFor_anti_iff.1 h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩⟩
+  all_goals exact ⟨fun h ↦ ⟨h.2 ⟨⟩, fun hm ↦ h.1.2 fun _ ↦ hm⟩,
+    fun h ↦ ⟨⟨fun _ ↦ ha h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩, fun _ ↦ h.1⟩⟩
+
+end OfOperator
+
 /-- The route by which a licenser licenses. -/
 def mechanism : Licenser → LicensingMechanism
   | .classical _ | .scalar _ | .strawson _ => .strengthening

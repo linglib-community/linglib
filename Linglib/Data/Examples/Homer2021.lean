@@ -223,6 +223,58 @@ def ex56e : Datum :=
     readings := [("narrowest scope of some", .ungrammatical)]
     paperFeatures := [("item", "some"), ("clause", "negation"), ("connective", "or")] }
 
-def all : List Datum := [ex18, ex19, ex24, ex32, ex41a, ex42a, ex42b, ex46a, ex46b, ex48a, ex48b, ex48c, ex50e, ex51b, ex56d, ex56e]
+def ex92b : Datum :=
+  { id := "homer2021_ex92b"
+    source := ⟨"homer-2021", "(92b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "It is impossible that someone stole anything."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("IMPOS.≫SOME", .ungrammatical)]
+    paperFeatures := [("subject", "someone"), ("object", "anything"), ("superordinate", "impossible"), ("clause", "none")] }
+
+def ex98 : Datum :=
+  { id := "homer2021_ex98"
+    source := ⟨"homer-2021", "(98)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "It's impossible that someone isn't eating anything."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("IMPOS.≫NEG≫SOME≫ANY", .ungrammatical), ("IMPOS.≫SOME≫NEG≫ANY", .acceptable)]
+    paperFeatures := [("subject", "someone"), ("object", "anything"), ("superordinate", "impossible"), ("clause", "negation")] }
+
+def ex103b : Datum :=
+  { id := "homer2021_ex103b"
+    source := ⟨"homer-2021", "(103b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "It is impossible that anyone stole something."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("IMPOS.≫SOME", .acceptable)]
+    paperFeatures := [("subject", "anyone"), ("object", "something"), ("superordinate", "impossible"), ("clause", "none")] }
+
+def ex122b : Datum :=
+  { id := "homer2021_ex122b"
+    source := ⟨"homer-2021", "(122b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I'm not sure that someone understood anything."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("NEG≫SOME", .ungrammatical)]
+    paperFeatures := [("subject", "someone"), ("object", "anything"), ("superordinate", "not sure"), ("clause", "none")] }
+
+def all : List Datum := [ex18, ex19, ex24, ex32, ex41a, ex42a, ex42b, ex46a, ex46b, ex48a, ex48b, ex48c, ex50e, ex51b, ex56d, ex56e, ex92b, ex98, ex103b, ex122b]
 
 end Homer2021.Examples
