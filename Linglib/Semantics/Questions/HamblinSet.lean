@@ -462,6 +462,17 @@ theorem dayalStrongAns_eq_some_iff {A : Set W} :
   · rintro ⟨⟨p, hp⟩, rfl⟩
     exact ⟨p, hp, exh_eq_strongAnswer H w hp⟩
 
+/-- Ans-D/H returns the worlds where Ans-D returns what it returns at `w`, Heim's form of the
+strong operator. -/
+theorem dayalStrongAns_eq_some_iff_eq_setOf {A : Set W} :
+    dayalStrongAns H w = some A ↔
+      IsExhaustivelyResolvable H w ∧ A = {v | dayalAns H v = dayalAns H w} := by
+  rw [dayalStrongAns_eq_some_iff]
+  refine and_congr_right fun ⟨p, hp⟩ ↦ ?_
+  rw [(dayalAns_eq_some_iff H w).2 hp, ← exh_eq_strongAnswer H w hp]
+  exact Eq.congr_right <| Set.ext fun v ↦
+    (mem_exh_iff_isStrongestTrueAnswer hp.1.1).trans (dayalAns_eq_some_iff H v).symm
+
 variable {H} in
 /-- The presupposition holds throughout `C` exactly when, for each world of `C`, exhaustifying some
 member gives its cell inside `C`. -/
