@@ -10,10 +10,10 @@ public import Linglib.Syntax.Person.Features
 
 This file defines the feature dimensions that Agree checks and the feature bundles of lexical
 items. A dimension is an agreement dimension (`Agreement.Dimension`), one of Harbour's person or
-number features (`Person.Feature`, `Number.Feature`), or one of [±wh], [±tense], [Infl] and [obl].
-A dimension takes its values from the type that already defines them; Harbour's features take
-values in `Bool`. A feature bundle has a checking slot (`FeatureSlot`) at each
-dimension.
+number features (`Person.Feature`, `Number.Feature`), or one of [±wh], [±tense], [Infl], [obl] and
+the [E] of a head whose complement is elided. A dimension takes its values from the type that
+already defines them; Harbour's features take values in `Bool`, and [E] is privative, with the
+single value `()`. A feature bundle has a checking slot (`FeatureSlot`) at each dimension.
 
 The agreement bundle of a checking bundle (`Agreement.Bundle`) keeps the value at each agreement
 dimension and drops the other dimensions; an agreement bundle is in turn a checking bundle that is
@@ -44,6 +44,7 @@ the Valuation/Interpretability Biconditional of [chomsky-2001] as a hypothesis
 * [bjorkman-2011]
 * [harbour-2014]
 * [harbour-2016]
+* [merchant-2001]
 -/
 
 @[expose] public section
@@ -65,6 +66,8 @@ inductive FeatureType where
   | personFeature (f : Person.Feature)
   | numberFeature (f : Number.Feature)
   | wh | tense | infl | oblique
+  /-- [E], which leaves the complement of its head unpronounced ([merchant-2001]). -/
+  | ellipsis
   deriving Repr, DecidableEq, Fintype
 
 namespace FeatureType
@@ -89,7 +92,7 @@ namespace FeatureType
 /-- The dimensions as a list, since `Finset.univ.toList` is noncomputable. -/
 def all : List FeatureType :=
   [person, number, gender, case, agr .definiteness, participant, author, atomic, minimal,
-   wh, tense, infl, oblique]
+   wh, tense, infl, oblique, ellipsis]
 
 theorem mem_all (t : FeatureType) : t ∈ all := by
   revert t; decide
@@ -100,6 +103,7 @@ theorem mem_all (t : FeatureType) : t ∈ all := by
   | personFeature _ | numberFeature _ => Bool
   | infl => Infl
   | wh | tense | oblique => Bool
+  | ellipsis => Unit
 
 instance (t : FeatureType) : DecidableEq t.Value := by
   cases t with

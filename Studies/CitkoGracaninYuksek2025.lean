@@ -74,8 +74,8 @@ def will := tok 9 .C [.T] "will"
 def c := tok 10 .C [.T]
 def c' := tok 11 .C [.T]
 /-- The null complementizer bearing [E], and a second one. -/
-def cE := tok 12 .C [.T] (ellipsis := true)
-def cE' := tok 13 .C [.T] (ellipsis := true)
+def cE := tok 12 .C [.T] (features := .single .ellipsis ())
+def cE' := tok 13 .C [.T] (features := .single .ellipsis ())
 /-- The tokens a second, separately built clause draws. -/
 def you' := tok 14 .D (phon := "you")
 def T' := tok 15 .T [.v]

@@ -59,11 +59,10 @@ open Minimalist Minimalist.LinearizedSyntacticObject Core.Order
 
 /-! ### The lexicon -/
 
-/-- `tok` builds a token from a category, its selection, its form, its feature bundle and its
-[E] feature. -/
+/-- `tok` builds a token from a category, its selection, its form and its feature bundle. -/
 def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "")
-    (features : FeatureBundle := ⊥) (ellipsis : Bool := false) : LexicalItem.Token :=
-  ⟨LexicalItem.of cat sel phon features ellipsis, id⟩
+    (features : FeatureBundle := ⊥) : LexicalItem.Token :=
+  ⟨LexicalItem.of cat sel phon features, id⟩
 
 def what := tok 1 .D (phon := "what") (features := .single .wh true)
 def «where» := tok 2 .P (phon := "where") (features := .single .wh true)
@@ -72,8 +71,8 @@ def T := tok 4 .T [.V]
 def sang := tok 5 .V [.D] "sang"
 /-- The null complementizer, the one bearing [E], and a second one bearing [E]. -/
 def c := tok 6 .C [.T]
-def cE := tok 7 .C [.T] (ellipsis := true)
-def cE' := tok 8 .C [.T] (ellipsis := true)
+def cE := tok 7 .C [.T] (features := .single .ellipsis ())
+def cE' := tok 8 .C [.T] (features := .single .ellipsis ())
 /-- The tokens of a second, separately built clause. -/
 def john' := tok 9 .D (phon := "John")
 def T' := tok 10 .T [.V]

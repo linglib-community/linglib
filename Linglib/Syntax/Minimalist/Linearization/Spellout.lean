@@ -68,7 +68,7 @@ variable (t : LinearizedSyntacticObject)
 /-! ### Ellipsis -/
 
 /-- The [E] heads. -/
-def eHeads : List TreePath := occurrencesWith t (·.item.ellipsis)
+def eHeads : List TreePath := occurrencesWith t (·.item.HasE)
 
 /-- The complements of the [E] heads, one per elided term, the last of its positions. -/
 def elidedDomains : List TreePath :=
