@@ -27,6 +27,7 @@ it are a trace and a binder whose index has type $s$.
 * `PhraseStructure.Tree.ty?`: the type a tree composes to, from the types of its words alone.
 * `PhraseStructure.Tree.readings`: the readings of a tree under a lexicon of sets of readings.
 * `PhraseStructure.Tree.HoldsAt`: the truth of a tree under a lexicon and an assignment.
+* `PhraseStructure.Tree.HoldsAtWith`: the truth of a tree under a typing of its indices.
 
 ## Implementation notes
 
@@ -731,6 +732,17 @@ variable {C : Type} {L : Type*} {E W : Type}
 /-- A tree holds under a lexicon and an assignment when it composes to a true truth value. -/
 def HoldsAt (lex : L → Option (Denotation E W)) (g : Assignment E) (t : Tree C L) : Prop :=
   ∃ p, interp lex g t = some ⟨.t, p⟩ ∧ p
+
+/-- A tree holds under a typing `Γ` of its indices, a lexicon and an assignment of values of those
+types when it composes to a true truth value. -/
+def HoldsAtWith (Γ : ℕ → Ty) (lex : L → Option (Denotation E W)) (g : ∀ n, Ty.Domain E W (Γ n))
+    (t : Tree C L) : Prop :=
+  ∃ p, interpWith Γ lex g t = some ⟨.t, p⟩ ∧ p
+
+theorem holdsAtWith_iff {Γ : ℕ → Ty} {lex : L → Option (Denotation E W)}
+    {g : ∀ n, Ty.Domain E W (Γ n)} {t : Tree C L} {p : Prop}
+    (h : interpWith Γ lex g t = some ⟨.t, p⟩) : HoldsAtWith Γ lex g t ↔ p := by
+  simp [HoldsAtWith, h]
 
 end Truth
 

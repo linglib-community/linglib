@@ -47,6 +47,8 @@ effects, is defined by well-founded recursion and computed by `simp`.
 * [heim-kratzer-1998]
 * [von-fintel-heim-2011]
 * [kratzer-1996]
+* [wellwood-2015]
+* [winter-2001b]
 * [bumford-charlow-2026]
 -/
 
@@ -102,11 +104,13 @@ def functionalRight? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ
   | σ₁, .fn σ τ => if h : σ = σ₁ then some ⟨τ, h ▸ functionalRight⟩ else none
   | _, _ => none
 
-/-- Predicate modification applies to two predicates of individuals or two predicates of
-eventualities ([wellwood-2015]). -/
+/-- Predicate modification applies to two predicates of individuals, of eventualities
+([wellwood-2015]), or of pluralities, the sets of individuals of which collective predicates hold
+([winter-2001b]). -/
 def predicateModification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
   | .fn .e .t, .fn .e .t => some ⟨_, predicateModification⟩
   | .fn .v .t, .fn .v .t => some ⟨_, predicateModification⟩
+  | .fn (.fn .e .t) .t, .fn (.fn .e .t) .t => some ⟨_, predicateModification⟩
   | _, _ => none
 
 /-- Event identification applies to a role head and an eventuality predicate, in either order. -/
@@ -282,6 +286,12 @@ theorem combine?_map {op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V 
 @[simp] theorem combine?_predicateModification_v
     (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V (.v ⇒ .t)) :
     combine? op ⟨.v ⇒ .t, p⟩ ⟨.v ⇒ .t, q⟩ = some ⟨.v ⇒ .t, op predicateModification p q⟩ := by
+  simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
+
+@[simp] theorem combine?_predicateModification_et
+    (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ) (p q : V ((.e ⇒ .t) ⇒ .t)) :
+    combine? op ⟨(.e ⇒ .t) ⇒ .t, p⟩ ⟨(.e ⇒ .t) ⇒ .t, q⟩ =
+      some ⟨(.e ⇒ .t) ⇒ .t, op predicateModification p q⟩ := by
   simp [combine?, Ty.mode?, functionalLeft?, functionalRight?, predicateModification?]
 
 @[simp] theorem combine?_eventIdentificationLeft

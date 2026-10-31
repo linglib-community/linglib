@@ -43,6 +43,26 @@ def reading (c : Coordinator) (τ : Ty) (h : τ.Conjoinable) : Denotation E W M 
 def readings (c : Coordinator) : Set (Denotation E W M) :=
   Set.range fun τ : {τ : Ty // τ.Conjoinable} ↦ c.reading τ τ.2
 
+/-- A conjunctive coordinator's reading is the meet of its coordinands. -/
+theorem reading_of_conjunctive {c : Coordinator} (hc : c.role = .conjunctive) {τ : Ty}
+    (h : τ.Conjoinable) : (c.reading τ h : Denotation E W M) =
+      ⟨τ ⇒ τ ⇒ τ, pure fun q p ↦ letI := Ty.Domain.completeBooleanAlgebra E W τ h; p ⊓ q⟩ := by
+  unfold reading
+  congr 2
+  funext q p
+  let := Ty.Domain.completeBooleanAlgebra E W τ h
+  exact (denote_of_conjunctive hc _).trans sInf_pair
+
+/-- A disjunctive coordinator's reading is the join of its coordinands. -/
+theorem reading_of_disjunctive {c : Coordinator} (hc : c.role = .disjunctive) {τ : Ty}
+    (h : τ.Conjoinable) : (c.reading τ h : Denotation E W M) =
+      ⟨τ ⇒ τ ⇒ τ, pure fun q p ↦ letI := Ty.Domain.completeBooleanAlgebra E W τ h; p ⊔ q⟩ := by
+  unfold reading
+  congr 2
+  funext q p
+  let := Ty.Domain.completeBooleanAlgebra E W τ h
+  exact (denote_of_disjunctive hc _).trans sSup_pair
+
 variable [LawfulApplicative M]
 
 /-- Functional application composes `[X [c Y]]` to the coordination of `X` and `Y`. -/
