@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Probability.Decision.Admissible
 public import Linglib.Logic.ComparativeProbability.Completeness
+public import Studies.HollidayIcard2013
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.UniformOn
@@ -239,8 +240,7 @@ def Representable : Prop := ∃ P : Measure Ω, IsProbabilityMeasure P ∧ J.Rep
 omit [Fintype Ω] [Fintype ι] [DecidableEq ι] in
 theorem Agree.representable {J : Judgments Ω ι} {r : Set Ω → Set Ω → Prop} (h : J.Agree r)
     (hr : ComparativeProbability.Representable r) : J.Representable := by
-  obtain ⟨μ, hμ, hm⟩ := hr
-  obtain rfl : r = μ.inducedGe := funext₂ fun A B ↦ propext (hm A B)
+  obtain ⟨μ, hμ, rfl⟩ := hr
   exact ⟨μ, hμ, h⟩
 
 /-! ### The Main Lemma -/
@@ -596,31 +596,12 @@ theorem dominated_of_balanced [Nonempty ι] (hJ : J.Balanced) (hX : J.strict = F
 omit [Fintype Ω] in
 theorem not_representable_of_balanced [MeasurableSingletonClass Ω] [Finite Ω] (hJ : J.Balanced)
     (hX : J.strict.Nonempty) : ¬J.Representable := by
-  classical
   have := Fintype.ofFinite Ω
   rintro ⟨P, _, hP⟩
   obtain ⟨i₀, hi₀⟩ := hX
-  have hle (i : ι) : P.real (J.right i) ≤ P.real (J.left i) := by
-    by_cases hi : i ∈ J.strict
-    · exact (P.strict_inducedGe_iff_real.1 ((hP i).1 hi)).le
-    · exact P.inducedGe_iff_real.1 ((hP i).2 hi).1
-  have hmass (S : ι → Set Ω) :
-      ∑ i, P.real (S i) = ∑ ω, P.real {ω} * ∑ i, (((S i).indicator (1 : Ω → ℕ) ω : ℕ) : ℝ) := by
-    have hA (A : Set Ω) :
-        P.real A = ∑ ω, P.real {ω} * (((A.indicator (1 : Ω → ℕ) ω : ℕ)) : ℝ) := by
-      simp only [Set.indicator_apply, Pi.one_apply, Nat.cast_ite, Nat.cast_one, Nat.cast_zero,
-        mul_ite, mul_one, mul_zero]
-      rw [← Finset.sum_filter, sum_measureReal_singleton]
-      congr 1
-      ext ω; simp
-    rw [Finset.sum_congr rfl fun i _ ↦ hA (S i)]
-    simp only [Finset.mul_sum]
-    exact Finset.sum_comm
-  have hsum : ∑ i, P.real (J.left i) = ∑ i, P.real (J.right i) := by
-    rw [hmass, hmass]
-    exact Finset.sum_congr rfl fun ω _ ↦ by rw [← Nat.cast_sum, ← Nat.cast_sum, hJ ω]
-  exact (Finset.sum_lt_sum (fun i _ ↦ hle i)
-    ⟨i₀, Finset.mem_univ _, P.strict_inducedGe_iff_real.1 ((hP i₀).1 hi₀)⟩).ne' hsum
+  refine P.not_asymmRel_of_balanced hJ (fun i ↦ ?_) i₀ ((hP i₀).1 hi₀)
+  by_cases hi : i ∈ J.strict
+  exacts [((hP i).1 hi).1, ((hP i).2 hi).1]
 
 /-! ### One weak relation on all pairs
 
@@ -639,17 +620,17 @@ theorem ofRel_representable_iff (r : Set Ω → Set Ω → Prop) [DecidableRel r
     (ofRel r).Representable ↔ ComparativeProbability.Representable r := by
   constructor
   · rintro ⟨P, hP, h⟩
-    refine ⟨P, hP, fun A B ↦ ⟨fun hAB ↦ ?_, fun hle ↦ by_contra fun hAB ↦ ?_⟩⟩
+    refine ⟨P, hP, funext₂ fun A B ↦ propext ⟨fun hle ↦ by_contra fun hAB ↦ ?_, fun hAB ↦ ?_⟩⟩
+    · exact ((h ⟨(B, A), (total_of r A B).resolve_left hAB⟩).1 (by simpa [ofRel] using hAB)).2 hle
     · by_cases hBA : r B A
       · exact ((h ⟨(A, B), hAB⟩).2 (by simpa [ofRel] using hBA)).1
       · exact ((h ⟨(A, B), hAB⟩).1 (by simpa [ofRel] using hBA)).1
-    · exact ((h ⟨(B, A), (total_of r A B).resolve_left hAB⟩).1 (by simpa [ofRel] using hAB)).2 hle
-  · rintro ⟨P, hP, h⟩
-    refine ⟨P, hP, fun p ↦ ⟨fun hs ↦ ⟨(h _ _).1 p.2, fun hBA ↦ ?_⟩, fun hs ↦ ?_⟩⟩
+  · rintro ⟨P, hP, rfl⟩
+    refine ⟨P, hP, fun p ↦ ⟨fun hs ↦ ⟨p.2, fun hBA ↦ ?_⟩, fun hs ↦ ?_⟩⟩
     · simp only [ofRel, Finset.mem_filter, Finset.mem_univ, true_and] at hs
-      exact hs ((h _ _).2 hBA)
+      exact hs hBA
     · simp only [ofRel, Finset.mem_filter, Finset.mem_univ, true_and, not_not] at hs
-      exact ⟨(h _ _).1 p.2, (h _ _).1 hs⟩
+      exact ⟨p.2, hs⟩
 
 omit [Fintype ι] [DecidableEq ι] [MeasurableSpace Ω] in
 theorem ofRel_strict_nonempty (r : Set Ω → Set Ω → Prop) [DecidableRel r] [IsLikelihoodMono r]
@@ -769,33 +750,15 @@ theorem worldCup_dominated {c : ℝ} (hc : 0 < c) :
     IsStrictlyPayoffDominated (worldCup.utility (unitStakes (Fin 4)) c) worldCup.uniformPreferred :=
   worldCup.dominated_of_balanced worldCup_balanced rfl _ _ hc
 
-/-- The World Cup teams as Kraft, Pratt and Seidenberg's atoms `p, q, r, s, t` (`0`–`4`), with
-Argentina `q`, Brazil `r`, China `s`, Denmark `p` and England `t`. -/
-def worldCupToKps : Fin 5 ≃ Fin 5 := ⟨![1, 2, 3, 0, 4], ![3, 0, 1, 2, 4], by decide, by decide⟩
-
-private theorem preimage_worldCupToKps_symm (s : Finset (Fin 5)) :
-    worldCupToKps.symm ⁻¹' (↑s : Set (Fin 5)) = ↑(s.map worldCupToKps.toEmbedding) := by
-  ext x; simp
-
+/-- Kraft, Pratt and Seidenberg's order, with the teams as its atoms, is a qualitative
+probability that agrees with the World Cup judgments, though no measure does. -/
 theorem worldCup_agree_qualitativeProbability :
     ∃ r : Set (Fin 5) → Set (Fin 5) → Prop, IsQualitativeProbability r ∧ worldCup.Agree r ∧
       ¬ComparativeProbability.Representable r := by
-  classical
-  let r : Set (Fin 5) → Set (Fin 5) → Prop := Set.preimage worldCupToKps.symm ⁻¹'o kpsGe
-  have hr (s t : Finset (Fin 5))
-      (h : kpsRank (t.map worldCupToKps.toEmbedding) < kpsRank (s.map worldCupToKps.toEmbedding)) :
-      AsymmRel r ↑s ↑t := by
-    have key (s t : Finset (Fin 5)) : r ↑s ↑t ↔
-        kpsRank (t.map worldCupToKps.toEmbedding) ≤ kpsRank (s.map worldCupToKps.toEmbedding) := by
-      show kpsGe _ _ ↔ _
-      simp only [kpsGe, preimage_worldCupToKps_symm, Finset.toFinset_coe]
-    exact ⟨(key s t).2 h.le, fun h' ↦ absurd ((key t s).1 h') (not_le.2 h)⟩
-  have hagree : worldCup.Agree r := fun i ↦ ⟨fun _ ↦ ?_, fun hi ↦ absurd (Finset.mem_univ i) hi⟩
-  · exact ⟨r, inferInstance, hagree, fun h ↦ worldCup_not_representable (hagree.representable h)⟩
-  fin_cases i
-  · simpa [worldCup] using hr {3} {0, 2} (by decide)
-  · simpa [worldCup] using hr {0, 4} {2, 3} (by decide)
-  · simpa [worldCup] using hr {1, 2} {0, 3} (by decide)
-  · simpa [worldCup] using hr {0, 2, 3} {1, 4} (by decide)
+  obtain ⟨h₁, h₂, h₃, h₄⟩ := HollidayIcard2013.worldCup_kpsGe
+  have hagree : worldCup.Agree (Set.preimage HollidayIcard2013.worldCupToKps.symm ⁻¹'o kpsGe) :=
+    fun i ↦ ⟨fun _ ↦ by fin_cases i; exacts [h₃, h₁, h₂, h₄],
+      fun hi ↦ absurd (Finset.mem_univ i) hi⟩
+  exact ⟨_, inferInstance, hagree, fun h ↦ worldCup_not_representable (hagree.representable h)⟩
 
 end Icard2016
