@@ -4,7 +4,6 @@ public import Linglib.Data.Experiments.DenicEtAl2021
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Fragments.English.PolarityItems
-public import Studies.KadmonLandman1993
 public import Linglib.Core.Probability.ConditionalProbability
 
 /-!
@@ -218,8 +217,8 @@ theorem monotone_wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop
 -- (27), (26a), (26b)
 theorem narrow_of_wideSome {f : (ι → Prop) → Prop} (hf : Monotone f) {saw : ε → ι → Prop}
     {N N' : Set ε} (hN : N ⊆ N') (h : wideSome f saw N) :
-    f (KadmonLandman1993.existsInDomain N' saw) :=
-  let ⟨y, hy, hf'⟩ := h; hf (fun _ hx ↦ ⟨y, hN hy, hx⟩) hf'
+    f (⋃ x ∈ N', saw x) :=
+  let ⟨_, hy, hf'⟩ := h; hf (fun _ hx ↦ Set.mem_biUnion (hN hy) hx) hf'
 
 end WideScope
 
@@ -249,7 +248,7 @@ certain. -/
 
 section MeaningRoute
 
-open MeasureTheory ProbabilityTheory KadmonLandman1993
+open MeasureTheory ProbabilityTheory
 
 variable {Ω ε : Type*} [MeasurableSpace Ω]
 
@@ -270,21 +269,17 @@ theorem cond_eq_zero_of_cond_eq_one {μ : Measure Ω} [IsFiniteMeasure μ] {s e 
 whenever it makes seeing birds certain ((33), (34)). -/
 theorem cond_eq_one_of_widen {μ : Measure Ω} {saw : ε → Set Ω}
     {birds anyBirds : Set ε} {D : Set Ω} (h : birds ⊆ anyBirds)
-    (hD : μ[existsInDomain birds saw | D] = 1) : μ[existsInDomain anyBirds saw | D] = 1 :=
-  le_antisymm prob_le_one (hD ▸ measure_mono (existsInDomain_mono saw h))
+    (hD : μ[(⋃ x ∈ birds, saw x) | D] = 1) : μ[(⋃ x ∈ anyBirds, saw x) | D] = 1 :=
+  le_antisymm prob_le_one (hD ▸ measure_mono (Set.biUnion_subset_biUnion_left h))
 
 /-- Seeing doves can make seeing any birds certain but not seeing birds, the room (34) leaves for
 *any* to help. -/
 theorem exists_cond_lt_one_of_widen : ∃ (saw : Fin 2 → Set (Fin 2)) (doves birds anyBirds :
     Set (Fin 2)), birds ⊆ anyBirds ∧
-      Measure.count[existsInDomain birds saw | existsInDomain doves saw] < 1 ∧
-      Measure.count[existsInDomain anyBirds saw | existsInDomain doves saw] = 1 := by
-  have h₀ : existsInDomain {0} (fun y : Fin 2 ↦ {y}) = {0} :=
-    Set.ext fun _ ↦ ⟨fun ⟨_, hy, hw⟩ ↦ hw.trans hy, fun hw ↦ ⟨0, rfl, hw⟩⟩
-  have h₁ : existsInDomain .univ (fun y : Fin 2 ↦ {y}) = .univ :=
-    Set.eq_univ_of_forall fun w ↦ ⟨w, trivial, rfl⟩
-  exact ⟨fun y ↦ {y}, .univ, {0}, .univ, Set.subset_univ _, by simp [h₀, h₁, cond_apply .univ],
-    by simp [h₁]⟩
+      Measure.count[(⋃ x ∈ birds, saw x) | ⋃ x ∈ doves, saw x] < 1 ∧
+      Measure.count[(⋃ x ∈ anyBirds, saw x) | ⋃ x ∈ doves, saw x] = 1 := by
+  exact ⟨fun y ↦ {y}, .univ, {0}, .univ, Set.subset_univ _,
+    by simp [Set.iUnion_of_singleton, cond_apply .univ], by simp [Set.iUnion_of_singleton]⟩
 
 end MeaningRoute
 

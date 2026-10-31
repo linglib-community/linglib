@@ -54,20 +54,11 @@ must entail the narrow: `C (∃x∈D', Px) ⊆ C (∃x∈D, Px)`. This holds exa
 when `C` is antitone, which is why DE contexts license — and why widening in
 UE contexts, where it weakens, leaves *any* unlicensed. -/
 
-/-- The existential over a domain `D` is `∃ x ∈ D, P x`. -/
-def existsInDomain {World Entity : Type*} (D : Set Entity) (P : Entity → Set World) :
-    Set World :=
-  fun w ↦ ∃ x ∈ D, P x w
-
-theorem existsInDomain_mono {World Entity : Type*} {D D' : Set Entity} (P : Entity → Set World)
-    (h : D ⊆ D') : existsInDomain D P ⊆ existsInDomain D' P :=
-  fun _ ⟨x, hx, hP⟩ ↦ ⟨x, h hx, hP⟩
-
 /-- K&L's strengthening condition holds when widening the domain `D` to `D'` in context `C`
 creates a stronger statement, the wide interpretation entailing the narrow one. -/
 def Strengthening {World Entity : Type*} (C : Set World → Set World) (D D' : Set Entity)
     (P : Entity → Set World) : Prop :=
-  C (existsInDomain D' P) ⊆ C (existsInDomain D P)
+  C (⋃ x ∈ D', P x) ⊆ C (⋃ x ∈ D, P x)
 
 /-- In a DE (antitone) context, strengthening is automatic. K&L note that for many examples this
 makes the same predictions as [ladusaw-1979], while explaining *why* DE contexts license, since
@@ -75,15 +66,15 @@ widening must strengthen and DE reverses entailment. -/
 theorem de_satisfies_strengthening {World Entity : Type*} {C : Set World → Set World}
     (hDE : Antitone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : Strengthening C D D' P :=
-  hDE (existsInDomain_mono P hD)
+  hDE (Set.biUnion_subset_biUnion_left hD)
 
 /-- In a UE (monotone) context, widening *weakens* — the opposite of
 strengthening. This is K&L's explanation for why *any* is out in plain
 positive contexts. -/
 theorem ue_widening_weakens {World Entity : Type*} {C : Set World → Set World}
     (hUE : Monotone C) (D D' : Set Entity) (P : Entity → Set World)
-    (hD : D ⊆ D') : C (existsInDomain D P) ⊆ C (existsInDomain D' P) :=
-  hUE (existsInDomain_mono P hD)
+    (hD : D ⊆ D') : C (⋃ x ∈ D, P x) ⊆ C (⋃ x ∈ D', P x) :=
+  hUE (Set.biUnion_subset_biUnion_left hD)
 
 /-! ### Compatibility with Ladusaw 1979
 
@@ -130,8 +121,8 @@ the `false` car, so one is glad that some car was bought but not that the `true`
 theorem not_strengthening_wants :
     ¬ Strengthening (wants fun _ : Bool ↦ {false}) {true} .univ fun x ↦ {x} := by
   intro h
-  obtain ⟨x, rfl, hfx⟩ := h (a := true) (fun w _ ↦ ⟨w, Set.mem_univ w, rfl⟩) rfl
-  exact Bool.false_ne_true hfx
+  have := h (a := true) (fun w _ ↦ Set.mem_biUnion (Set.mem_univ w) rfl) rfl
+  simp at this
 
 /-! ### Conditional antecedents
 
