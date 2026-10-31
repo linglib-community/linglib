@@ -34,7 +34,9 @@ Karttunen's local context of a gap (`SyntacticEnvironment.localContext`) is reco
 good finals: some good final makes the formula's truth value at a world depend on the gap iff the
 world is in the local context (`SyntacticEnvironment.exists_dependsAt_iff`), and the filtering
 evaluation is defined at a world iff every trigger's presupposition holds there whenever the world
-is in the trigger's local context (`Formula.middleKleene_ne_zero_iff`).
+is in the trigger's local context (`Formula.middleKleene_ne_zero_iff`). The Weak Kleene evaluation
+is defined at a world iff every trigger's presupposition holds there, wherever the trigger is
+(`Formula.weakKleene_ne_zero_iff`).
 
 ## Main definitions
 
@@ -55,6 +57,7 @@ is in the trigger's local context (`Formula.middleKleene_ne_zero_iff`).
 * [kalomoiros-2023]
 * [karttunen-1974-presupposition]
 * [peters-1979]
+* [langendoen-savin-1971]
 -/
 
 @[expose] public section
@@ -559,6 +562,23 @@ theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom)
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩
       · rw [localContext_eq_inter] at hl; exact h hl.1 o ho hl.2
     rw [hG, middleKleene_bin_ne_zero I]
+
+/-- Under the Weak Kleene connectives every presupposition projects: a formula is defined at a world
+iff the presupposition of each of its triggers holds there, as the cumulative hypothesis of
+[langendoen-savin-1971] has it. -/
+theorem Formula.weakKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
+    F.weakKleene I w ≠ 0 ↔ ∀ o ∈ F.triggers, w ∈ I o.2.1 := by
+  induction F with
+  | atom p => simp [weakKleene, eval, triggers]
+  | trigger p p' => simp [weakKleene, eval, triggers]
+  | not F ih =>
+    simp only [weakKleene, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff, triggers,
+      List.forall_mem_map] at ih ⊢
+    exact ih
+  | bin c F G ihF ihG =>
+    simp only [weakKleene] at ihF ihG ⊢
+    simp only [eval, triggers, List.forall_mem_append, List.forall_mem_map, ← ihF, ← ihG]
+    cases c <;> simp [SignType.joinWeak_eq_zero_iff, not_or]
 
 /-- Local accommodation of every trigger leaves no undefinedness, so it is all-or-nothing. -/
 theorem Formula.isBivalent_middleKleene_accommodate (I : Atom → Set W) (F : Formula Atom) :
