@@ -49,9 +49,9 @@ namespace Chomsky2013
 open Minimalist Minimalist.LinearizedSyntacticObject
 
 /-- A token of the examples. -/
-def tok (id : ℕ) (cat : Cat) (phon : String := "") (wh : Bool := false) (sel : SelStack := []) :
-    LexicalItem.Token :=
-  ⟨LexicalItem.of cat sel phon wh false, id⟩
+def tok (id : ℕ) (cat : Cat) (phon : String := "") (features : FeatureBundle := ⊥)
+    (sel : SelStack := []) : LexicalItem.Token :=
+  ⟨LexicalItem.of cat sel phon features, id⟩
 
 /-- A nominal: a determiner over a nominalizer and a root. -/
 def nominal (d n r : LexicalItem.Token) : LinearizedSyntacticObject :=
@@ -97,12 +97,12 @@ inductive Feature
 /-- The probe for a feature on the positions of `t`: for the interrogative feature, [wh] heads; for
 φ-features, determiner phrases. -/
 def probe (t : LinearizedSyntacticObject) : Feature → Probe t.val.Positions
-  | .Q => .relativized fun q ↦ (t.termAt q).token?.any (·.item.wh)
+  | .Q => .relativized fun q ↦ ∃ a ∈ (t.termAt q).token?, a.item.IsWh
   | .phi => t.phraseProbe .D
 
 /-- The heads bearing the probe for a feature: interrogative C and T. -/
 def Probes : Feature → LexicalItem.Token → Prop
-  | .Q, a => a.item.cat = .C ∧ a.item.wh = true
+  | .Q, a => a.item.cat = .C ∧ a.item.IsWh
   | .phi, a => a.item.cat = .T
 
 instance : ∀ f, DecidablePred (Probes f)
@@ -209,15 +209,15 @@ theorem clause_isLabeledByFeature_phi :
 def thought := tok 16 .V "thought"
 def wondered := tok 17 .V "wondered"
 def c := tok 18 .C
-def cQ := tok 19 .C (wh := true)
+def cQ := tok 19 .C (features := .single .wh true)
 def was := tok 20 .T "was"
 def assassinated := tok 21 .V "assassinated"
 /-- *JFK*. -/
 def jfk : LinearizedSyntacticObject := nominal (tok 22 .D) (tok 23 .n) (tok 24 .N "JFK")
-def inP := tok 25 .P "in" (wh := true)
+def inP := tok 25 .P "in" (features := .single .wh true)
 /-- *in which Texas city*. -/
 def whichCity : LinearizedSyntacticObject :=
-  inP * nominal (tok 26 .D "which" (wh := true)) (tok 27 .n) (tok 28 .N "city")
+  inP * nominal (tok 26 .D "which" (features := .single .wh true)) (tok 27 .n) (tok 28 .N "city")
 
 /-- *JFK was assassinated in which Texas city*, the wh-phrase in its base position. -/
 def tP' : LinearizedSyntacticObject := was * ((assassinated * jfk) * whichCity)

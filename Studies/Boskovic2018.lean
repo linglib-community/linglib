@@ -129,7 +129,7 @@ instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
 /-! ### Extraction from a subject (16)–(18) -/
 
 /-- The determiner of *who*. -/
-def whoD := tok 200 .D "who" (wh := true) (sel := [.n])
+def whoD := tok 200 .D "who" (features := .single .wh true) (sel := [.n])
 /-- *who*. -/
 def who : LinearizedSyntacticObject := nominal whoD (tok 201 .n (sel := [.N])) (tok 202 .N)
 def ofP := tok 203 .P "of" (sel := [.D])
@@ -142,7 +142,7 @@ def hired := tok 208 .V "hired" (sel := [.D])
 def mary : LinearizedSyntacticObject :=
   nominal (tok 209 .D (sel := [.n])) (tok 210 .n (sel := [.N])) (tok 211 .N "Mary")
 def tI := tok 212 .T (sel := [.v])
-def cQ := tok 213 .C (wh := true) (sel := [.T])
+def cQ := tok 213 .C (features := .single .wh true) (sel := [.T])
 
 /-- The subject *friends of* `x`. -/
 def subject (x : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
@@ -294,7 +294,7 @@ def zou := tok 268 .T "zou" (sel := [.V])
 def dat := tok 269 .C "dat" (sel := [.T])
 def gedacht := tok 270 .V "gedacht" (sel := [.C])
 def had := tok 271 .T "had" (sel := [.V])
-def cWh := tok 272 .C (wh := true) (sel := [.T])
+def cWh := tok 272 .C (features := .single .wh true) (sel := [.T])
 
 /-- (42a): *waar* raised to Spec,PP, the PP raised out of the embedded clause through its edge,
 and *waar* extracted from it. -/

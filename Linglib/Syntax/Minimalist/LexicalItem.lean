@@ -7,18 +7,21 @@ module
 
 public import Mathlib.Data.Nat.Notation
 public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Syntax.Minimalist.Feature.Basic
 
 /-!
 # Lexical items
 
 The leaves of syntactic objects are drawn from `SO₀`, the lexical items and syntactic features. A
-lexical item is a category with its selectional stack, its phonological form and its [wh] and [E]
-features, and a token of it is the item with the index that tells its tokens apart. The carrier
-built over tokens is `SyntacticObject/Basic.lean`.
+lexical item is a category with its selectional stack, its phonological form, its feature bundle
+and its [E] feature, and a token of it is the item with the index that tells its tokens apart. An
+item is [+wh] when its bundle values [wh] as `true`. The carrier built over tokens is
+`SyntacticObject/Basic.lean`.
 
 ## Main definitions
 
 * `Minimalist.LexicalItem`, `Minimalist.LexicalItem.Token`
+* `Minimalist.LexicalItem.IsWh`: the item is [+wh].
 * `Minimalist.LexicalItem.Token.PreservesSelection`: relabellings of tokens that selection does
   not see.
 
@@ -33,7 +36,7 @@ built over tokens is `SyntacticObject/Basic.lean`.
 namespace Minimalist
 
 /-- A lexical item is a category with its selectional stack, a phonological form, empty for a
-silent item, and the [wh] and [E] features. -/
+silent item, a feature bundle and the [E] feature. -/
 structure LexicalItem where
   /-- The category. -/
   cat : Cat
@@ -41,17 +44,22 @@ structure LexicalItem where
   sel : SelStack
   /-- The phonological form, empty for a silent item. -/
   phonForm : String
-  /-- The [wh] feature, read by wh-movement and the multiple-wh-fronting parameter. -/
-  wh : Bool
+  /-- The feature bundle the item has in the lexicon. -/
+  features : FeatureBundle
   /-- The [E] feature, which leaves the head's complement unpronounced ([merchant-2001]). -/
   ellipsis : Bool
   deriving Repr, DecidableEq
 
-/-- The lexical item of a category and selectional stack, silent and without [wh] or [E] unless
-the optional arguments say otherwise. -/
-def LexicalItem.of (cat : Cat) (sel : SelStack) (phonForm : String := "") (wh : Bool := false)
-    (ellipsis : Bool := false) : LexicalItem :=
-  ⟨cat, sel, phonForm, wh, ellipsis⟩
+/-- The lexical item of a category and selectional stack, silent, without features and without
+[E] unless the optional arguments say otherwise. -/
+def LexicalItem.of (cat : Cat) (sel : SelStack) (phonForm : String := "")
+    (features : FeatureBundle := ⊥) (ellipsis : Bool := false) : LexicalItem :=
+  ⟨cat, sel, phonForm, features, ellipsis⟩
+
+/-- The item is [+wh]: its bundle values [wh] as `true`. -/
+def LexicalItem.IsWh (li : LexicalItem) : Prop := li.features .wh = .valued true
+
+instance (li : LexicalItem) : Decidable li.IsWh := inferInstanceAs (Decidable (_ = _))
 
 /-- The phonological form of a pronounced item, `none` for a silent one. -/
 def LexicalItem.phonForm? (li : LexicalItem) : Option String :=

@@ -59,13 +59,14 @@ open Minimalist Minimalist.LinearizedSyntacticObject Core.Order
 
 /-! ### The lexicon -/
 
-/-- `tok` builds a token from a category, its selection, its form, and the wh and [E] features. -/
-def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false)
-    (ellipsis : Bool := false) : LexicalItem.Token :=
-  ⟨LexicalItem.of cat sel phon wh ellipsis, id⟩
+/-- `tok` builds a token from a category, its selection, its form, its feature bundle and its
+[E] feature. -/
+def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "")
+    (features : FeatureBundle := ⊥) (ellipsis : Bool := false) : LexicalItem.Token :=
+  ⟨LexicalItem.of cat sel phon features ellipsis, id⟩
 
-def what := tok 1 .D (phon := "what") (wh := true)
-def «where» := tok 2 .P (phon := "where") (wh := true)
+def what := tok 1 .D (phon := "what") (features := .single .wh true)
+def «where» := tok 2 .P (phon := "where") (features := .single .wh true)
 def john := tok 3 .D (phon := "John")
 def T := tok 4 .T [.V]
 def sang := tok 5 .V [.D] "sang"

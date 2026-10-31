@@ -44,14 +44,11 @@ keeps its value](##Minimalist.FeatureState.apply_eq_valued_of_le).
 
 The leaves of a `SyntacticObject` are lexical-item tokens, and the tree records nothing else: in
 [marcolli-chomsky-berwick-2025] the leaves are drawn from a set of lexical items and syntactic
-features, and Merge attaches no label to an internal vertex. Agree changes the features of the
-items it relates, producing what [chomsky-2000] calls modified lexical items. Bundles are therefore
-kept outside the tree: a `FeatureState` assigns a bundle to each item, and valuation changes that
-assignment, not the tree.
-
-## TODO
-
-`LexicalItem.wh` should be read from the [wh] slot of the item's bundle.
+features, and Merge attaches no label to an internal vertex. A lexical item carries the bundle it
+has in the lexicon (`LexicalItem.features`). Agree changes the features of the items it relates,
+producing what [chomsky-2000] calls modified lexical items. The bundles of a derivation are
+therefore kept outside the tree: a `FeatureState` assigns a bundle to each item, and valuation
+changes that assignment, not the tree.
 
 ## References
 
