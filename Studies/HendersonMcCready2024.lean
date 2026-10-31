@@ -250,8 +250,7 @@ private theorem L0_real_singleton (L : Listener Persona Message) (s : Bool)
   have : L.L0 = Kernel.ofDensity (Measure.ofWeights (priorWeight ·))
       fun m π ↦ (likelihoodWeight s m π : ℝ≥0∞) := by
     simp [Listener.L0, listener, hp, hl]
-  rw [this]
-  exact Kernel.ofDensity_natCast_real_singleton priorWeight (likelihoodWeight s) m π
+  simp [this, Kernel.ofDensity_real_singleton, Measure.ofWeights_real_singleton]
 
 private theorem sum_univ (f : Persona → ℝ) :
     ∑ π, f π = f proVaxProCorp + f proVaxAntiCorp + f antiVaxProCorp + f antiVaxAntiCorp := by

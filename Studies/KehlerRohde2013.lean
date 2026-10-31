@@ -390,11 +390,11 @@ theorem arnold_prediction :
           (fun u r ↦ (arnoldLikelihood u r : ℝ≥0∞)) .pronoun).real {.goal} < 62 / 100) ∧
       RoundsTo (2784 / 10000) arnoldRow.pronounRate ∧
       RoundsTo ((20 / 100) * (86 / 100) / (28 / 100)) arnoldRow.goalInterpretation := by
-  rw [Kernel.ofDensity_natCast_real_singleton,
+  rw [Kernel.ofDensity_real_singleton _ _ _ (by simp),
     show (Finset.univ : Finset Role) = {.source, .goal} by decide, Finset.sum_pair (by decide)]
-  simp only [RoundsTo, arnoldPrior, arnoldLikelihood, arnoldRow, arnoldPrediction,
-    arnoldPronominalizations, Role.position, Data.Experiments.Decimal.hundredths,
-    Data.Experiments.Decimal.toRat, abs_le]
+  simp only [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast, RoundsTo, arnoldPrior,
+    arnoldLikelihood, arnoldRow, arnoldPrediction, arnoldPronominalizations, Role.position,
+    Data.Experiments.Decimal.hundredths, Data.Experiments.Decimal.toRat, abs_le]
   norm_num
 
 /-! ### Bidirectionality (Table 6) -/
@@ -500,11 +500,12 @@ theorem bayesSubject_eq : bayesSubject .active = 3658 / 4642 ∧
     rw [bayesSubject, Kernel.ofDensity_apply_eq_of_eq_mul _ (c := 100⁻¹)
       (f := fun u r ↦ (voiceLikelihood v u r : ℝ≥0∞)) (by simp) (by simp)
       fun r ↦ voiceProduction_apply_singleton v r .pronoun]
-  rw [key, key, Kernel.ofDensity_natCast_real_singleton, Kernel.ofDensity_natCast_real_singleton,
+  rw [key, key, Kernel.ofDensity_real_singleton _ _ _ (by simp),
+    Kernel.ofDensity_real_singleton _ _ _ (by simp),
     show (Finset.univ : Finset Position) = {.subject, .nonSubject} by decide,
     Finset.sum_pair (by decide)]
-  simp only [voicePrior, voiceLikelihood, causalMention, causalMentions, pronominalizations,
-    Data.Experiments.Decimal.hundredths]
+  simp only [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast, voicePrior, voiceLikelihood,
+    causalMention, causalMentions, pronominalizations, Data.Experiments.Decimal.hundredths]
   norm_num
 
 theorem voice_predictions :
