@@ -118,10 +118,6 @@ theorem modalBase_subset_didSome {N : Set (Fin 2)} : modalBase ⊆ didSome N ↔
 theorem modalBase_ne_empty : modalBase ≠ ∅ :=
   Nonempty.ne_empty ⟨((false, {0}) : World), by simp [modalBase]⟩
 
-/-- Clausemate negation, *pas* or *not*. -/
-def negation : Signature.soundPairs (Set World) :=
-  ⟨(compl, .antiAddMult), compl_soundFor_antiAddMult⟩
-
 /-- *It is impossible that `p`*: no world of the modal base is a `p`-world. -/
 def impossible : Signature.soundPairs (Set World) :=
   ⟨(fun p ↦ {_w | Disjoint modalBase p}, .anti),

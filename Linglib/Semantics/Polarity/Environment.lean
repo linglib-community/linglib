@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Natural.Composition
+public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Polarity.Basic
 
 /-!
@@ -25,7 +26,9 @@ below it, and [it fixes the direction of the domain's
 environment](##PolarityItem.Path.antitone_environment). A layer of negative sign, a
 downward-entailing expression, therefore [reverses the sign of every domain above
 it](##PolarityItem.Path.sign_cons): an item licensed in a domain can be anti-licensed in the
-next, and licensed again in the one after.
+next, and licensed again in the one after. When the minimal domain comes with scalar alternatives,
+the layers apply to each of them, so every domain has [its meaning with its
+alternatives](##PolarityItem.Path.withAlternatives), as in alternative semantics.
 
 ## Implementation notes
 
@@ -45,6 +48,10 @@ next, and licensed again in the one after.
 namespace PolarityItem
 
 open NaturalLogic
+
+/-- Sentential negation as a layer: complementation, anti-morphic. -/
+def negation {P : Type*} [BooleanAlgebra P] : Signature.soundPairs P :=
+  ⟨(compl, .antiAddMult), compl_soundFor_antiAddMult⟩
 
 /-- The path of a polarity item from its minimal domain to the sentence: the environment of the
 minimal domain with a signature sound for it, and the layers between successive domains, outermost
@@ -88,6 +95,33 @@ theorem environment_cons (l : Signature.soundPairs P) (t : List (Signature.sound
     p.environment (l :: t) = l.1.1 ∘ p.environment t := by
   simp only [environment, List.prod_cons, Submonoid.coe_mul, Prod.fst_mul]
   rfl
+
+section WithAlternatives
+
+/-- The meaning of the domain reached through the layers `t` with its alternatives, when `A` gives
+the alternatives of the minimal domain: the layers apply to each alternative. -/
+def withAlternatives (A : σ → Set P) (t : List (Signature.soundPairs P)) (x : σ) :
+    WithAlternatives P :=
+  (t.prod : Function.End P × Signature).1 <$> ⟨p.minimal x, A x⟩
+
+@[simp]
+theorem ordinary_withAlternatives (A : σ → Set P) (t : List (Signature.soundPairs P)) (x : σ) :
+    (p.withAlternatives A t x).ordinary = p.environment t x :=
+  rfl
+
+@[simp]
+theorem withAlternatives_nil (A : σ → Set P) (x : σ) :
+    p.withAlternatives A [] x = ⟨p.minimal x, A x⟩ :=
+  id_map _
+
+@[simp]
+theorem withAlternatives_cons (A : σ → Set P) (l : Signature.soundPairs P)
+    (t : List (Signature.soundPairs P)) (x : σ) :
+    p.withAlternatives A (l :: t) x = l.1.1 <$> p.withAlternatives A t x := by
+  simp only [withAlternatives, List.prod_cons, Submonoid.coe_mul, Prod.fst_mul]
+  exact comp_map _ _ _
+
+end WithAlternatives
 
 /-- Adding a layer multiplies the sign of a domain by the sign of the layer. -/
 @[simp]

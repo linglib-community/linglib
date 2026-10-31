@@ -4,6 +4,7 @@ public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Polarity.Licenser
+public import Linglib.Semantics.Polarity.Environment
 public import Studies.Chierchia2004
 public import Linglib.Data.Examples.BuccolaCrnic2021
 
@@ -13,10 +14,13 @@ public import Linglib.Data.Examples.BuccolaCrnic2021
 This file models the Revised NPI Licensing Condition (`LicensingCondition`): a negative polarity
 item is acceptable only in a sentence that is downward entailing with respect to it and that none
 of its scalar alternatives entails, so that the sentence is a strongest of its alternatives. The
-condition is stated over a sentence with its alternatives (`WithAlternatives`), not over the
-operators above the item. Under negation it asks that the positive sentence be a weakest of its
-alternatives ([`licensingCondition_compl_iff`](##licensingCondition_compl_iff)), the
-sentence-level counterpart of a scalar term at the bottom of its scale.
+condition is stated over a constituent with its alternatives (`WithAlternatives`), not over the
+operators above the item, and [some constituent containing the item must meet it](##Licensed).
+In the models the clause below negation is upward entailing with respect to the item, so [the
+condition falls on the negated sentence](##licensed_negated_iff). Under negation it asks that the
+positive sentence be a weakest of its alternatives
+([`licensingCondition_compl_iff`](##licensingCondition_compl_iff)), the sentence-level
+counterpart of a scalar term at the bottom of its scale.
 
 With *and* between *any NP* and another plurality, the *or*-alternative entails the sentence
 whenever the predicate holds of the parts of any plurality it holds of, so [conjoined *any*
@@ -47,6 +51,9 @@ entailment, is the first clause of the revised condition without the second, and
   The scalar alternatives come with the sentence, so restricting them to local ones is the
   caller's choice, and an alternative equivalent to the sentence does not entail it in the sense
   of the condition.
+* The constituents containing the item are the domains of a path (`PolarityItem.Path`), whose
+  layers apply to the alternatives of the clause. Each model's clause is upward entailing in the
+  restrictor and empty at its bottom, so no clause without the negation meets the condition.
 * The condition is necessary for acceptability; the paper also reasons from its satisfaction to
   acceptability, and `rows_licensing` pairs it with the judgments in both directions.
 * Negation is complementation. A numeral sentence asserts a plurality of exactly that many, and a
@@ -128,6 +135,56 @@ theorem antitone_iff_forall_div [Preorder α] {VP : α → Set W} :
     Antitone VP ↔ ∀ w, Mereology.DIV (w ∈ VP ·) :=
   ⟨fun h _ _ _ hba ha ↦ h hba ha, fun h _ _ hab w hw ↦ h w hab hw⟩
 
+theorem not_licensingCondition_of_monotone [Preorder α] {S : α → WithAlternatives (Set W)}
+    {n n' : α} (hS : Monotone fun x ↦ (S x).ordinary) (h : n' ≤ n)
+    (hne : (S n').ordinary ≠ (S n).ordinary) : ¬LicensingCondition S n := fun hc ↦
+  hne (le_antisymm (hS h) (hc.de h))
+
+/-! ### Domains -/
+
+section Domains
+
+open PolarityItem NaturalLogic
+
+variable [Lattice α] [BoundedOrder α]
+
+/-- The Revised NPI Licensing Condition over the domains of the item: some domain, with the
+alternatives `A` of the minimal domain carried through the layers below it, meets the
+condition. -/
+def Licensed (p : Path α (Set W)) (A : α → Set (Set W)) (n : α) : Prop :=
+  ∃ t ∈ p.layers.tails, LicensingCondition (p.withAlternatives A t) n
+
+/-- The path of the item in a clause `S` monotone in its restrictor, under negation. -/
+def negated (S : α → WithAlternatives (Set W)) (hS : Monotone fun x ↦ (S x).ordinary) :
+    Path α (Set W) :=
+  ⟨fun x ↦ (S x).ordinary, .mono, soundFor_mono_iff.2 hS, [negation]⟩
+
+-- a clause below negation that is not constant below the restrictor does not meet the condition
+theorem licensed_negated_iff {S : α → WithAlternatives (Set W)}
+    {hS : Monotone fun x ↦ (S x).ordinary} {n n' : α} (h : n' ≤ n)
+    (hne : (S n').ordinary ≠ (S n).ordinary) :
+    Licensed (negated S hS) (WithAlternatives.alternatives ∘ S) n ↔
+      LicensingCondition (compl <$> S ·) n := by
+  have h0 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S) [] = S :=
+    funext fun _ ↦ by simp [negated]
+  have h1 : (negated S hS).withAlternatives (WithAlternatives.alternatives ∘ S) [negation] =
+      (compl <$> S ·) :=
+    funext fun _ ↦ by simp [negated, negation]
+  refine ⟨fun ⟨t, ht, hc⟩ ↦ ?_, fun hc ↦ ⟨[negation], by simp [negated], h1 ▸ hc⟩⟩
+  simp [negated] at ht
+  rcases ht with rfl | rfl
+  · exact h1 ▸ hc
+  · exact absurd (h0 ▸ hc) (not_licensingCondition_of_monotone hS h hne)
+
+theorem licensed_negated_iff_of_eq_empty {S : α → WithAlternatives (Set W)}
+    {hS : Monotone fun x ↦ (S x).ordinary} {n : α} (hbot : (S ⊥).ordinary = ∅)
+    (hn : (S n).ordinary.Nonempty) :
+    Licensed (negated S hS) (WithAlternatives.alternatives ∘ S) n ↔
+      LicensingCondition (compl <$> S ·) n :=
+  licensed_negated_iff bot_le (hbot ▸ hn.ne_empty.symm)
+
+end Domains
+
 /-! ### Conjunction -/
 
 section Conjunction
@@ -153,6 +210,9 @@ def disj (VP : α → Set W) (g n : α) : WithAlternatives (Set W) :=
 
 theorem monotone_andSome : Monotone (andSome VP g) := fun _ _ h _ ⟨y, hy, hne, hw⟩ ↦
   ⟨y, hy.trans h, hne, hw⟩
+
+theorem andSome_bot (VP : α → Set W) (g : α) : andSome VP g ⊥ = ∅ :=
+  eq_empty_of_forall_notMem fun _ ⟨_, hy, hne, _⟩ ↦ hne (le_bot_iff.1 hy)
 
 theorem monotone_orSome : Monotone (orSome VP g) := fun _ _ h _ hw ↦
   hw.imp_right fun ⟨y, hy, hne, hw⟩ ↦ ⟨y, hy.trans h, hne, hw⟩
@@ -200,6 +260,9 @@ def numeral (R : Finset E → P → Set W) (n : ℕ) (N : Set P) : WithAlternati
 theorem monotone_someN (n : ℕ) : Monotone (someN R n) := fun _ _ h _ ⟨X, hX, y, hy, hR⟩ ↦
   ⟨X, hX, y, h hy, hR⟩
 
+theorem someN_empty (R : Finset E → P → Set W) (n : ℕ) : someN R n ∅ = ∅ :=
+  eq_empty_of_forall_notMem fun _ ⟨_, _, _, hy, _⟩ ↦ hy
+
 theorem someN_subset (hR : ∀ y, Antitone (R · y)) (hmn : m ≤ n) : someN R n N ⊆ someN R m N :=
   fun _ ⟨_, hX, y, hy, hR'⟩ ↦
     let ⟨X', hX', hc⟩ := Finset.exists_subset_card_eq (hX ▸ hmn)
@@ -227,6 +290,11 @@ variable {V : E → P → Set W} {D : Set E} {N : Set P}
 def every (V : E → P → Set W) (D : Set E) (N : Set P) : WithAlternatives (Set W) :=
   ⟨{w | Det.every D {x | ∃ y ∈ N, w ∈ V x y}},
     {{w | Det.every D {x | ∃ y ∈ N, w ∈ V x y}}, {w | Det.some D {x | ∃ y ∈ N, w ∈ V x y}}}⟩
+
+theorem monotone_every (V : E → P → Set W) (D : Set E) :
+    Monotone fun N ↦ (every V D N).ordinary := fun _ _ h _ hw _ hx ↦
+  let ⟨y, hy, hV⟩ := hw hx
+  ⟨y, h hy, hV⟩
 
 theorem not_licensingCondition_every (hD : D.Nonempty)
     (hne : ¬{w | Det.some D {x | ∃ y ∈ N, w ∈ V x y}} ⊆
@@ -342,6 +410,71 @@ theorem not_licensingCondition_sentence37a : ¬LicensingCondition sentence37a un
   not_licensingCondition_every ⟨0, trivial⟩ fun h ↦ by
     have := h (a := {(0, 0)}) ⟨0, trivial, 0, trivial, by simp [didHomework]⟩
     simpa [Quantifier.Det.every, didHomework] using this (mem_univ 1)
+
+/-! ### The domains of the models -/
+
+/-- The domains of *any boys* in (26): the clause and the clause under negation. -/
+def path26 : PolarityItem.Path (Finset (Fin 4)) (Set (Finset (Fin 4))) :=
+  negated (conj haveBlueEyes girls) monotone_andSome
+
+/-- The domains of *any boys* in (29). -/
+def path29 : PolarityItem.Path (Finset (Fin 4)) (Set (Finset (Fin 4))) :=
+  negated (conj wroteTogether girls) monotone_andSome
+
+/-- The domains of *any paper* in (32a). -/
+def path32a : PolarityItem.Path (Set (Fin 2)) (Set (Finset (Fin 4 × Fin 2))) :=
+  negated (numeral readPaper 1) (monotone_someN 1)
+
+/-- The domains of *any paper* in (32b). -/
+def path32b : PolarityItem.Path (Set (Fin 2)) (Set (Finset (Fin 4 × Fin 2))) :=
+  negated (numeral readPaper 4) (monotone_someN 4)
+
+/-- The domains of *any paper* in (32c). -/
+def path32c : PolarityItem.Path (Set (Fin 2)) (Set (Finset (Fin 4) × Fin 2)) :=
+  negated (numeral wrotePaperTogether 4) (monotone_someN 4)
+
+/-- The domains of *any homework* in (37a). -/
+def path37a : PolarityItem.Path (Set (Fin 2)) (Set (Finset (Fin 4 × Fin 2))) :=
+  negated (every didHomework univ) (monotone_every _ _)
+
+open WithAlternatives (alternatives)
+
+theorem licensed_path26_iff :
+    Licensed path26 (alternatives ∘ conj haveBlueEyes girls) boys ↔
+      LicensingCondition sentence26 boys :=
+  licensed_negated_iff_of_eq_empty (andSome_bot _ _) ⟨.univ, by
+    simp only [conj, andSome, haveBlueEyes, girls, boys, mem_ofPred_eq]; decide⟩
+
+theorem licensed_path29_iff :
+    Licensed path29 (alternatives ∘ conj wroteTogether girls) boys ↔
+      LicensingCondition sentence29 boys :=
+  licensed_negated_iff_of_eq_empty (andSome_bot _ _) ⟨girls ∪ {2}, by
+    simp only [conj, andSome, wroteTogether, girls, boys, mem_ofPred_eq]; decide⟩
+
+theorem licensed_path32a_iff :
+    Licensed path32a (alternatives ∘ numeral readPaper 1) univ ↔
+      LicensingCondition sentence32a univ :=
+  licensed_negated_iff_of_eq_empty (someN_empty _ _)
+    ⟨{(0, 0)}, {0}, rfl, 0, trivial, by simp [readPaper]⟩
+
+theorem licensed_path32b_iff :
+    Licensed path32b (alternatives ∘ numeral readPaper 4) univ ↔
+      LicensingCondition sentence32b univ :=
+  licensed_negated_iff_of_eq_empty (someN_empty _ _)
+    ⟨.univ, .univ, by simp, 0, trivial, by simp [readPaper]⟩
+
+theorem licensed_path32c_iff :
+    Licensed path32c (alternatives ∘ numeral wrotePaperTogether 4) univ ↔
+      LicensingCondition sentence32c univ :=
+  licensed_negated_iff_of_eq_empty (someN_empty _ _)
+    ⟨(.univ, 0), .univ, by simp, 0, trivial, rfl⟩
+
+theorem licensed_path37a_iff :
+    Licensed path37a (alternatives ∘ every didHomework univ) univ ↔
+      LicensingCondition sentence37a univ :=
+  licensed_negated_iff_of_eq_empty
+    (eq_empty_of_forall_notMem fun _ hw ↦ by simpa using hw (mem_univ 0))
+    ⟨.univ, fun x _ ↦ ⟨0, trivial, by simp [didHomework]⟩⟩
 
 /-! ### Chierchia's Strong Application and exhaustification -/
 
@@ -471,13 +604,17 @@ def licensing? (e : Datum) : Option Prop :=
   match e.feature? "coordination", e.feature? "number", e.feature? "numeral",
     e.feature? "quantifier", e.feature? "predicate" with
   | some "and", some "plural", none, none, some "distributive" =>
-      some (LicensingCondition sentence26 boys)
+      some (Licensed path26 (alternatives ∘ conj haveBlueEyes girls) boys)
   | some "and", some "plural", none, none, some "collective" =>
-      some (LicensingCondition sentence29 boys)
-  | none, none, some "one", none, some "distributive" => some (LicensingCondition sentence32a univ)
-  | none, none, some "four", none, some "distributive" => some (LicensingCondition sentence32b univ)
-  | none, none, some "four", none, some "collective" => some (LicensingCondition sentence32c univ)
-  | none, none, none, some "all", none => some (LicensingCondition sentence37a univ)
+      some (Licensed path29 (alternatives ∘ conj wroteTogether girls) boys)
+  | none, none, some "one", none, some "distributive" =>
+      some (Licensed path32a (alternatives ∘ numeral readPaper 1) univ)
+  | none, none, some "four", none, some "distributive" =>
+      some (Licensed path32b (alternatives ∘ numeral readPaper 4) univ)
+  | none, none, some "four", none, some "collective" =>
+      some (Licensed path32c (alternatives ∘ numeral wrotePaperTogether 4) univ)
+  | none, none, none, some "all", none =>
+      some (Licensed path37a (alternatives ∘ every didHomework univ) univ)
   | _, _, _, _, _ => none
 
 theorem rows_licensing : ∀ e ∈ Examples.all, ∀ p ∈ licensing? e,
@@ -487,12 +624,14 @@ theorem rows_licensing : ∀ e ∈ Examples.all, ∀ p ∈ licensing? e,
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     rintro p ⟨⟩ <;>
     first
-      | exact iff_of_false (by decide) not_licensingCondition_sentence26
-      | exact iff_of_true rfl licensingCondition_sentence29
-      | exact iff_of_true rfl licensingCondition_sentence32a
-      | exact iff_of_false (by decide) not_licensingCondition_sentence32b
-      | exact iff_of_true rfl licensingCondition_sentence32c
-      | exact iff_of_false (by decide) not_licensingCondition_sentence37a
+      | exact iff_of_false (by decide) (licensed_path26_iff.not.2 not_licensingCondition_sentence26)
+      | exact iff_of_true rfl (licensed_path29_iff.2 licensingCondition_sentence29)
+      | exact iff_of_true rfl (licensed_path32a_iff.2 licensingCondition_sentence32a)
+      | exact iff_of_false (by decide)
+          (licensed_path32b_iff.not.2 not_licensingCondition_sentence32b)
+      | exact iff_of_true rfl (licensed_path32c_iff.2 licensingCondition_sentence32c)
+      | exact iff_of_false (by decide)
+          (licensed_path37a_iff.not.2 not_licensingCondition_sentence37a)
 
 theorem readCount_licensing : Datum.ReadCount licensing? Examples.all 6 := by
   decide +kernel
