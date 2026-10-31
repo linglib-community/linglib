@@ -186,6 +186,15 @@ theorem agree_state :
     rw [agree_cons]
     by_cases hs : p.sat a <;> by_cases hi : p.int a <;> simp [hs, hi, ih]
 
+/-- Agree only adds to the state when copying does. -/
+theorem le_agree_state [Preorder σ] (h : ∀ a s, s ≤ copy a s) :
+    s ≤ (p.agree copy s goals).state := by
+  rw [agree_state]
+  generalize (p.agree copy s goals).interacted = l
+  induction l generalizing s with
+  | nil => exact le_rfl
+  | cons a l ih => exact (h a s).trans ih
+
 theorem mem_of_mem_inspected {a : α} (ha : a ∈ p.inspected goals) : a ∈ goals := by
   rcases List.mem_append.mp ha with h | h
   · exact List.takeWhile_subset _ h

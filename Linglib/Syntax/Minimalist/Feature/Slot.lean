@@ -32,14 +32,12 @@ The leaves of a `SyntacticObject` are lexical-item tokens, and the tree records 
 [marcolli-chomsky-berwick-2025] the leaves are drawn from a set of lexical items and syntactic
 features, and Merge attaches no label to an internal vertex. Agree changes the features of the
 items it relates, producing what [chomsky-2000] calls modified lexical items. Slots are therefore
-kept outside the tree: the state of Agree assigns a bundle of slots to each token, and valuation
-changes that assignment, not the tree.
+kept outside the tree: the state of Agree (`Minimalist.FeatureState`) assigns a bundle of slots to
+each item, and valuation changes that assignment, not the tree.
 
 ## TODO
 
-Each study that runs Agree defines its own assignment of bundles to tokens (`Amato2025.State`).
-The assignment belongs in the substrate, and `LexicalItem.wh` should then be read from the [wh]
-slot of the assigned bundle.
+`LexicalItem.wh` should be read from the [wh] slot of the item's bundle.
 
 ## References
 
@@ -87,6 +85,12 @@ def rec' {motive : FeatureSlot α → Sort*} (absent : motive .absent) (unvalued
 
 @[simp] theorem valued_inj {v w : α} : valued v = valued w ↔ v = w :=
   ⟨fun h ↦ Flat.coe_injective (WithBot.coe_injective h), fun h ↦ h ▸ rfl⟩
+
+@[simp] theorem valued_le_iff {v : α} {s : FeatureSlot α} : valued v ≤ s ↔ s = valued v := by
+  cases s with
+  | absent => exact iff_of_false (WithBot.not_coe_le_bot _) (absent_ne_valued v)
+  | unvalued => exact iff_of_false (fun h ↦ Flat.not_coe_le_bot v (WithBot.coe_le_coe.1 h)) nofun
+  | valued w => simp [eq_comm]
 
 /-! ### The flat slot underneath -/
 
