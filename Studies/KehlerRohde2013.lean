@@ -112,13 +112,14 @@ theorem map_production_compProd_prod :
     lintegral_singleton, Kernel.prod_apply_prod, measure_univ, one_mul,
     Measure.compProd_apply_singleton, mul_comm]
 
+omit [DiscreteMeasurableSpace C] in
 theorem fst_cond_compProd_prod (u : F) :
     ((μ ⊗ₘ (η ×ₖ σ))[|{x | x.2.2 = u}]).fst = Kernel.ofDensity μ (fun u r ↦ σ r {u}) u := by
-  have hm : Measurable fun x : R × C × F ↦ (x.1, x.2.1) :=
-    measurable_fst.prodMk (measurable_fst.comp measurable_snd)
-  rw [← Measure.fst_compProd (Kernel.ofDensity μ (fun u r ↦ σ r {u}) u) η,
-    ← map_cond_compProd_prod, Measure.fst, Measure.fst, Measure.map_map measurable_fst hm]
-  rfl
+  rw [Measure.fst_cond_compProd μ _ (s := {x : R × C × F | x.2.2 = u})
+    ((measurable_snd.comp measurable_snd) (.singleton u)), Kernel.ofDensity_apply]
+  congr with r
+  rw [show Prod.mk r ⁻¹' {x : R × C × F | x.2.2 = u} = Set.univ ×ˢ {u} by ext; simp,
+    Kernel.prod_apply_prod, measure_univ, one_mul]
 
 omit [Fintype F] [DiscreteMeasurableSpace C] [DiscreteMeasurableSpace F] [IsMarkovKernel η] in
 theorem map_relation_compProd_prod [IsMarkovKernel σ] :

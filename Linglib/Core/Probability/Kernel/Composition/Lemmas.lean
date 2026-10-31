@@ -13,7 +13,9 @@ public import Mathlib.Probability.Kernel.Disintegration.StandardBorel
 
 Pushing a product measure through `η ∥ₖ η'` pushes each factor through its kernel. Pushing a
 joint measure on `α × β` through `Kernel.id ∥ₖ η` keeps the first marginal and composes the
-second with `η`. The joint is disintegrated as `ρ.fst ⊗ₘ ρ.condKernel`. On finite types, a
+second with `η`. The joint is disintegrated as `ρ.fst ⊗ₘ ρ.condKernel`. Conditioning a joint
+`μ ⊗ₘ κ` on an event and keeping the first coordinate reweights `μ` by the mass each row of `κ`
+gives the event's section, and normalizes. On finite types, a
 composition, a composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at
 atoms; an atom is charged by a composition exactly when some charged atom of the input emits it,
 and each row of a kernel charged by the input measure is absolutely continuous with respect to the
@@ -130,6 +132,35 @@ theorem parallelComp_id_comp_real_singleton (ρ : Measure (α × β)) [IsFiniteM
   simp only [ENNReal.toReal_mul, measureReal_def]
 
 end Atoms
+
+/-! ### Conditioning on an event -/
+
+section Event
+
+variable (μ : Measure α) [SFinite μ] {s : Set (α × β)}
+
+theorem fst_restrict_compProd (κ : Kernel α β) [IsSFiniteKernel κ] (hs : MeasurableSet s) :
+    ((μ ⊗ₘ κ).restrict s).fst = μ.withDensity fun a ↦ κ a (Prod.mk a ⁻¹' s) := by
+  ext t ht
+  rw [fst_apply ht, restrict_apply (measurable_fst ht), withDensity_apply _ ht,
+    compProd_apply ((measurable_fst ht).inter hs), ← lintegral_indicator ht]
+  congr with a
+  by_cases ha : a ∈ t <;> simp [Set.preimage_inter, Set.preimage_preimage, ha]
+
+/-- Conditioning a joint on an event and keeping the first coordinate reweights the first
+marginal by the mass each row gives the event's section, and normalizes. -/
+theorem fst_cond_compProd (κ : Kernel α β) [IsSFiniteKernel κ] (hs : MeasurableSet s) :
+    ((μ ⊗ₘ κ)[|s]).fst = (μ.withDensity fun a ↦ κ a (Prod.mk a ⁻¹' s))[|Set.univ] := by
+  rw [ProbabilityTheory.cond, ProbabilityTheory.cond, restrict_univ, withDensity_apply _ .univ,
+    restrict_univ, fst, Measure.map_smul _ measurable_fst.aemeasurable, ← fst,
+    fst_restrict_compProd μ κ hs, compProd_apply hs]
+
+theorem fst_cond_prod (ν : Measure β) [SFinite ν] (hs : MeasurableSet s) :
+    ((μ.prod ν)[|s]).fst = (μ.withDensity fun a ↦ ν (Prod.mk a ⁻¹' s))[|Set.univ] := by
+  rw [← compProd_const, fst_cond_compProd μ _ hs]
+  rfl
+
+end Event
 
 section Fiber
 
