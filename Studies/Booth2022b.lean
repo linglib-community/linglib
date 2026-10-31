@@ -6,26 +6,15 @@ public import Mathlib.Tactic.FinCases
 /-!
 # Booth (2022b): Necessity modals, disjunctions, and collectivity
 
-[booth-2022b] resolves Ross's Puzzle by requiring the alternatives of a necessity modal's
-prejacent to form a minimal cover of the relevant worlds, not merely a cover: each alternative
-must be needed, so `□(p ∨ q)` licenses the Independence inferences `◇(p ∧ ¬q)` and `◇(q ∧ ¬p)`,
-and the Ross inference from `□p` to `□(p ∨ q)` is strongly invalid. The semantics is the bilateral
-minimal covering semantics of [booth-2022a] (the theory-layer `MinimalCovering`), whose results
-on atoms this paper restates; its new content is the generalization of the Ross and Independence
-facts from atoms to arbitrary non-Hurford disjunctions, resting on the compactness of alternatives.
-The closing reading of `□` as a collective predicate of the plurality of propositions a disjunction
-denotes (§4) is not formalized.
-
-Entailment over a model (Def 18) is inclusion of truth sets, and strong invalidity (Def 21) is
-disjointness of the premises' truth set from the conclusion's.
-
-* `ross_strongly_invalid_of_alt`, `inter_diff_truth_nonempty_of_alt` and their sentence forms
-  `Formula.ross_strongly_invalid`, `Formula.independence`: the meta-language Facts 7 and 6.
-* `independence_left`, `independence_right` (Fact 9), `free_choice_left`, `free_choice_right`
-  (Fact 10), `independence_conditional_left`, `independence_conditional_right` (Fact 11),
-  `unnecessity_distribution_left`, `unnecessity_distribution_right` (Fact 12),
-  `impossibility_distribution_left`, `impossibility_distribution_right` (Fact 13): [booth-2022a]'s
-  Facts 1, 4, 2, 7 and 6.
+[booth-2022b] resolves Ross's Puzzle in the bilateral minimal covering semantics of [booth-2022a],
+the theory-layer `MinimalCovering`: the alternatives of a necessity modal's prejacent must form a
+minimal cover of the relevant worlds, so `□(p ∨ q)` licenses the Independence inferences and the
+Ross inference from `□p` to `□(p ∨ q)` is strongly invalid. The results on atoms restate those of
+[booth-2022a]. The new content generalizes the Ross and Independence facts from atoms to every
+disjunction whose disjuncts share no alternatives ([Ross](##Formula.ross_strongly_invalid),
+[Independence](##Formula.independence)), resting on the [compactness of
+alternatives](##Formula.fg_eval). The closing reading of `□` as a collective predicate of the
+plurality of propositions a disjunction denotes is not formalized.
 
 ## Implementation notes
 
@@ -43,15 +32,23 @@ disjointness of the premises' truth set from the conclusion's.
 * Def 17 writes `w ∈ ⟦φ⟧⁺` for a world `w` and a set of states; it is read as
   `w ∈ info ⟦φ⟧⁺`, equivalently `{w} ∈ ⟦φ⟧⁺` (`MinimalCovering.mem_truth_iff`).
 * Def 22 is mathlib's `IncompRel` for the positive interpretations; for atoms it is
-  [booth-2022a]'s admissibility (`nonHurford_atom_iff`). The meta-language Facts 6 and 7 are
-  stated for every such disjunction, but their proofs assume that no alternative of either disjunct
-  is a state of the other, `Disjoint (alt ⟦φ⟧⁺) ⟦ψ⟧⁺`, which is strictly stronger. Under Def 22
-  both facts fail; under the alternative-wise condition the proofs go through, and for atoms the
-  two conditions coincide, so the object-language Facts 7–13 stand. The correction is this file's,
-  not the paper's.
+  [booth-2022a]'s admissibility (`nonHurford_atom_iff`).
+* Entailment over a model (Def 18) is the `⊨[V, R]` of `MinimalCovering`, inclusion of truth sets,
+  and strong invalidity (Def 21) is disjointness of the premises' truth set from the
+  conclusion's.
 * Facts 12 and 13 need no non-Hurford hypothesis.
 * Figures 1 and 2 reprint those of [booth-2022a] and are formalized there
   (`Booth2022a.Figures`).
+
+## Errata
+
+* The meta-language Facts 6 and 7 are stated for every non-Hurford disjunction (Def 22), but their
+  proofs assume that no alternative of either disjunct is a state of the other,
+  `Disjoint (alt ⟦φ⟧⁺) ⟦ψ⟧⁺`, which is strictly stronger. Under Def 22 both facts fail on
+  three-world models ([Fact 7](##not_forall_disjoint_of_nonHurford),
+  [Fact 6](##not_forall_independence_of_nonHurford)); under the alternative-wise condition the
+  proofs go through. For atoms the two conditions coincide, so the object-language Facts 7–13
+  stand.
 
 ## References
 
@@ -74,26 +71,22 @@ variable {W : Type*}
 
 /-! ### Kratzer's semantics (Def 1) -/
 
-/-- Kratzer's necessity is upward monotonic, so it validates the Ross inference (Booth Fact 1; Def
-1). -/
+-- Fact 1
 theorem kratzer_monotone (R : W → Set W) : Monotone fun A : Set W ↦ {w | R w ⊆ A} :=
   fun _ _ hAB _ hw ↦ hw.trans hAB
 
-/-- A Booth necessity is a Kratzerian one (Def 1): the relevant worlds lie in the truth set of
-the prejacent. -/
 theorem truth_necessity_subset (R : W → Set W) (φ : Kalman (Question W)) :
     truth (necessity R φ) ⊆ {w | R w ⊆ truth φ} := by
   rw [truth_necessity]
   exact fun _ h ↦ h.subset_sUnion.trans φ.pro.sUnion_alt_subset_info
 
-/-- Booth's necessity is not upward monotonic, as on the model of Figure 1 `□p` is true and `□(p ∨
-q)` is not. -/
+-- Figure 1
 theorem not_monotone_necessity :
     ¬ ∀ φ ψ : Kalman (Question Booth2022a.Figures.W4), truth φ ⊆ truth ψ →
       truth (necessity Booth2022a.Figures.rP φ) ⊆ truth (necessity Booth2022a.Figures.rP ψ) :=
   fun h ↦ (Booth2022a.ross_gap Booth2022a.Figures.incomp_val Booth2022a.Figures.box_p).1
     (h (atom Booth2022a.Figures.vp) (atom Booth2022a.Figures.vp ⊔ atom Booth2022a.Figures.vq)
-      (by rw [truth_sup]; exact Set.subset_union_left) Booth2022a.Figures.box_p)
+      (by simp) Booth2022a.Figures.box_p)
 
 /-! ### Non-Hurford disjunctions (Def 22) -/
 
@@ -125,9 +118,9 @@ namespace Formula
 
 variable {At : Type*}
 
-/-- **Booth Fact 3**, double negation. -/
+-- Fact 3
 theorem eval_neg_neg (V : At → Set W) (R : W → Set W) (φ : MinimalCovering.Formula At) :
-    Formula.eval V R (.neg (.neg φ)) = Formula.eval V R φ :=
+    Formula.eval V R (∼∼φ) = Formula.eval V R φ :=
   rfl
 
 /-- Both interpretations of a sentence are finitely generated, so each is generated by its finitely
@@ -144,10 +137,9 @@ theorem fg_eval (V : At → Set W) (R : W → Set W) (φ : MinimalCovering.Formu
   | box φ _ => exact ⟨fg_ofSet _, fg_ofSet _⟩
   | diamond φ _ => exact ⟨fg_ofSet _, fg_ofSet _⟩
 
-/-- The □⁺ clause of Def 14, with its conjunct `R(w) ≠ ∅`, agrees with that of [booth-2022a] on
-every sentence (Fact 5). -/
+-- Fact 5 [booth-2022a]
 theorem truth_necessity_eq (V : At → Set W) (R : W → Set W) (φ : MinimalCovering.Formula At) :
-    truth (Formula.eval V R (.box φ)) =
+    truth (Formula.eval V R (□φ)) =
       {w | (R w).Nonempty ∧ IsMinCover (alt (Formula.eval V R φ).pro) (R w)} := by
   change truth (necessity R (Formula.eval V R φ)) = _
   rw [truth_necessity]
@@ -162,8 +154,7 @@ Booth states both facts for every non-Hurford disjunction (Def 22). Their proofs
 alternative of either disjunct is a state of the other, which is strictly stronger; the facts hold
 under that condition and fail under Def 22. -/
 
-/-- Under the alternative-wise non-Hurford condition, the Ross inference is strongly invalid once
-`ψ` has an alternative (Booth Fact 7). -/
+-- Fact 7
 theorem ross_strongly_invalid_of_alt {φ ψ : Kalman (Question W)}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro)
     (hψ : (alt ψ.pro).Nonempty) (R : W → Set W) :
@@ -175,8 +166,7 @@ theorem ross_strongly_invalid_of_alt {φ ψ : Kalman (Question W)}
   exact Set.disjoint_left.1 hψφ hb (mem_of_mem_alt
     (h₂.le_of_le h₁.subset_sUnion Set.subset_union_left (Set.mem_union_right _ hb)))
 
-/-- Under the alternative-wise non-Hurford condition, if `□(φ ∨ ψ)` is true then some relevant world
-verifies `φ` but not `ψ` (Booth Fact 6). -/
+-- Fact 6
 theorem inter_diff_truth_nonempty_of_alt {φ ψ : Kalman (Question W)}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro)
     (hφ : (alt φ.pro).Nonempty) (hψ : ψ.pro.IsNormal) {R : W → Set W} {w : W}
@@ -199,7 +189,7 @@ supplies the alternative of `ψ`. -/
 theorem ross_strongly_invalid
     (hφψ : Disjoint (alt (Formula.eval V R φ).pro) (Formula.eval V R ψ).pro)
     (hψφ : Disjoint (alt (Formula.eval V R ψ).pro) (Formula.eval V R φ).pro) :
-    Disjoint (truth (Formula.eval V R (.box φ))) (truth (Formula.eval V R (.box (.disj φ ψ)))) :=
+    Disjoint (truth (Formula.eval V R (□φ))) (truth (Formula.eval V R (□(φ ⋎ ψ)))) :=
   ross_strongly_invalid_of_alt hφψ hψφ (fg_eval V R ψ).1.isNormal.alt_nonempty R
 
 /-- **Booth Fact 6** for sentences under the alternative-wise non-Hurford condition; Fact 5
@@ -207,7 +197,7 @@ supplies the alternatives and the normality of the disjuncts. -/
 theorem independence
     (hφψ : Disjoint (alt (Formula.eval V R φ).pro) (Formula.eval V R ψ).pro)
     (hψφ : Disjoint (alt (Formula.eval V R ψ).pro) (Formula.eval V R φ).pro) {w : W}
-    (h : w ∈ truth (Formula.eval V R (.box (.disj φ ψ)))) :
+    (h : w ∈ truth (Formula.eval V R (□(φ ⋎ ψ)))) :
     (R w ∩ (truth (Formula.eval V R φ) \ truth (Formula.eval V R ψ))).Nonempty ∧
       (R w ∩ (truth (Formula.eval V R ψ) \ truth (Formula.eval V R φ))).Nonempty := by
   have hφ := (fg_eval V R φ).1.isNormal
@@ -229,16 +219,10 @@ theorem not_forall_disjoint_of_nonHurford :
     ⟨fun h ↦ by simpa using h (Set.mem_singleton 0), fun h ↦ by simpa using h (Set.mem_singleton 1)⟩
   have hNH : NonHurford (atom ({0} : Set (Fin 3)) ⊔ atom {1}) (atom {0, 2}) := by
     refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-    · have : ({1} : Set (Fin 3)) ∈ (atom ({0, 2} : Set (Fin 3))).pro :=
-        h (Question.mem_sup.2 (.inr (Question.mem_ofSet.2 subset_rfl)))
-      exact absurd (Question.mem_ofSet.1 this (Set.mem_singleton 1)) (by simp)
-    · have : ({0, 2} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1} : Set (Fin 3))).pro :=
-        h (Question.mem_ofSet.2 subset_rfl)
-      rcases Question.mem_sup.1 this with h' | h'
-      · exact absurd (Question.mem_ofSet.1 h' (show (2 : Fin 3) ∈ ({0, 2} : Set (Fin 3)) by simp))
-          (by simp)
-      · exact absurd (Question.mem_ofSet.1 h' (show (0 : Fin 3) ∈ ({0, 2} : Set (Fin 3)) by simp))
-          (by simp)
+    · have : ({1} : Set (Fin 3)) ∈ (atom ({0, 2} : Set (Fin 3))).pro := h (by simp)
+      simp at this
+    · have : ({0, 2} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1} : Set (Fin 3))).pro := h (by simp)
+      simp at this
   have hpos : (atom ({0} : Set (Fin 3)) ⊔ atom {1} ⊔ atom {0, 2}).pro =
       ofSet {0, 2} ⊔ ofSet {1} := by
     simp only [Kalman.pro_sup, pro_atom]
@@ -262,17 +246,10 @@ theorem not_forall_independence_of_nonHurford :
   intro hall
   have hNH : NonHurford (atom ({0, 1} : Set (Fin 3))) (atom {0} ⊔ atom {1, 2}) := by
     refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-    · have : ({0, 1} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1, 2} : Set (Fin 3))).pro :=
-        h (Question.mem_ofSet.2 subset_rfl)
-      rcases Question.mem_sup.1 this with h' | h'
-      · exact absurd (Question.mem_ofSet.1 h' (show (1 : Fin 3) ∈ ({0, 1} : Set (Fin 3)) by simp))
-          (by simp)
-      · exact absurd (Question.mem_ofSet.1 h' (show (0 : Fin 3) ∈ ({0, 1} : Set (Fin 3)) by simp))
-          (by simp)
-    · have : ({1, 2} : Set (Fin 3)) ∈ (atom ({0, 1} : Set (Fin 3))).pro :=
-        h (Question.mem_sup.2 (.inr (Question.mem_ofSet.2 subset_rfl)))
-      exact absurd (Question.mem_ofSet.1 this (show (2 : Fin 3) ∈ ({1, 2} : Set (Fin 3)) by simp))
-        (by simp)
+    · have : ({0, 1} : Set (Fin 3)) ∈ (atom {0} ⊔ atom ({1, 2} : Set (Fin 3))).pro := h (by simp)
+      simp [Set.insert_subset_iff] at this
+    · have : ({1, 2} : Set (Fin 3)) ∈ (atom ({0, 1} : Set (Fin 3))).pro := h (by simp)
+      simp [Set.insert_subset_iff] at this
   have hpos : (atom ({0, 1} : Set (Fin 3)) ⊔ (atom {0} ⊔ atom {1, 2})).pro =
       ofSet {0, 1} ⊔ ofSet {1, 2} := by
     simp only [Kalman.pro_sup, pro_atom]
@@ -288,7 +265,6 @@ theorem not_forall_independence_of_nonHurford :
     · simpa using h (Set.mem_univ 2)
     · simpa using h (Set.mem_univ 0)
   obtain ⟨x, hx⟩ := (hall (Fin 3) (fun _ ↦ Set.univ) _ _ hNH 0 hbox).1
-  rw [truth_atom, truth_sup, truth_atom, truth_atom] at hx
   fin_cases x <;> simp at hx
 
 /-! ### The object-language Facts 7–13
@@ -299,77 +275,67 @@ section Atomic
 
 variable {At : Type*} (V : At → Set W) (R : W → Set W) {p q : At}
 
-/-- For atoms the Ross inference `□p ∴ □(p ∨ q)` is strongly invalid (Booth Fact 7). -/
+-- Fact 7
 theorem ross_strongly_invalid (h : NonHurford (atom (V p)) (atom (V q))) :
-    Disjoint (truth (Formula.eval V R (.box (.atom p))))
-      (truth (Formula.eval V R (.box (.disj (.atom p) (.atom q))))) :=
+    Disjoint (truth (Formula.eval V R (□.atom p)))
+      (truth (Formula.eval V R (□(.atom p ⋎ .atom q)))) :=
   Set.disjoint_left.2 fun _ hw ↦ (Booth2022a.ross_gap (nonHurford_atom_iff.1 h) hw).1
 
-/-- **Booth Fact 8**: the Extended Ross inference `□p, ◇q ∴ □(p ∨ q)` is strongly invalid. -/
+-- Fact 8
 theorem extended_ross_strongly_invalid (h : NonHurford (atom (V p)) (atom (V q))) :
-    Disjoint (truth (Formula.eval V R (.box (.atom p))) ∩
-        truth (Formula.eval V R (.diamond (.atom q))))
-      (truth (Formula.eval V R (.box (.disj (.atom p) (.atom q))))) :=
+    Disjoint (truth (Formula.eval V R (□.atom p)) ∩
+        truth (Formula.eval V R (◇.atom q)))
+      (truth (Formula.eval V R (□(.atom p ⋎ .atom q)))) :=
   (ross_strongly_invalid V R h).mono_left Set.inter_subset_left
 
-/-- **Booth Fact 9**, first Independence inference: `□(p ∨ q)` entails `◇(p ∧ ¬q)`. -/
+-- Fact 9
 theorem independence_left (h : NonHurford (atom (V p)) (atom (V q))) :
-    truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q))))) :=
+    □(.atom p ⋎ .atom q) ⊨[V, R] ◇(.atom p ⋏ ∼.atom q) :=
   Booth2022a.box_independence_left (nonHurford_atom_iff.1 h)
 
-/-- **Booth Fact 9**, second Independence inference: `□(p ∨ q)` entails `◇(q ∧ ¬p)`. -/
+-- Fact 9
 theorem independence_right (h : NonHurford (atom (V p)) (atom (V q))) :
-    truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.conj (.atom q) (.neg (.atom p))))) :=
+    □(.atom p ⋎ .atom q) ⊨[V, R] ◇(.atom q ⋏ ∼.atom p) :=
   Booth2022a.box_independence_right (nonHurford_atom_iff.1 h)
 
-/-- **Booth Fact 10**, Free Choice: `◇(p ∨ q)` entails `◇p`. -/
+-- Fact 10
 theorem free_choice_left (h : NonHurford (atom (V p)) (atom (V q))) :
-    truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.atom p))) :=
+    ◇(.atom p ⋎ .atom q) ⊨[V, R] ◇.atom p :=
   Booth2022a.free_choice (nonHurford_atom_iff.1 h)
 
-/-- **Booth Fact 10**, Free Choice: `◇(p ∨ q)` entails `◇q`. -/
+-- Fact 10
 theorem free_choice_right (h : NonHurford (atom (V p)) (atom (V q))) :
-    truth (Formula.eval V R (.diamond (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.diamond (.atom q))) :=
+    ◇(.atom p ⋎ .atom q) ⊨[V, R] ◇.atom q :=
   Booth2022a.free_choice_right (nonHurford_atom_iff.1 h)
 
-/-- **Booth Fact 11**, Independence Conditionals: `□(p ∨ q)` entails `¬p → □q`. -/
+-- Fact 11
 theorem independence_conditional_left (h : NonHurford (atom (V p)) (atom (V q))) :
-    truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.cond (.neg (.atom p)) (.box (.atom q)))) :=
+    □(.atom p ⋎ .atom q) ⊨[V, R] ∼.atom p ⇒ □.atom q :=
   Booth2022a.box_conditional_left (nonHurford_atom_iff.1 h)
 
-/-- **Booth Fact 11**, Independence Conditionals: `□(p ∨ q)` entails `¬q → □p`. -/
+-- Fact 11
 theorem independence_conditional_right (h : NonHurford (atom (V p)) (atom (V q))) :
-    truth (Formula.eval V R (.box (.disj (.atom p) (.atom q)))) ⊆
-      truth (Formula.eval V R (.cond (.neg (.atom q)) (.box (.atom p)))) :=
+    □(.atom p ⋎ .atom q) ⊨[V, R] ∼.atom q ⇒ □.atom p :=
   Booth2022a.box_conditional_right (nonHurford_atom_iff.1 h)
 
-/-- **Booth Fact 12**, Unnecessity Distribution: `¬□(p ∨ q)` entails `¬□p`. -/
+-- Fact 12
 theorem unnecessity_distribution_left (p q : At) :
-    truth (Formula.eval V R (.neg (.box (.disj (.atom p) (.atom q))))) ⊆
-      truth (Formula.eval V R (.neg (.box (.atom p)))) :=
+    ∼□(.atom p ⋎ .atom q) ⊨[V, R] ∼□.atom p :=
   Booth2022a.unnecessity_distribution_left V R p q
 
-/-- **Booth Fact 12**, Unnecessity Distribution: `¬□(p ∨ q)` entails `¬□q`. -/
+-- Fact 12
 theorem unnecessity_distribution_right (p q : At) :
-    truth (Formula.eval V R (.neg (.box (.disj (.atom p) (.atom q))))) ⊆
-      truth (Formula.eval V R (.neg (.box (.atom q)))) :=
+    ∼□(.atom p ⋎ .atom q) ⊨[V, R] ∼□.atom q :=
   Booth2022a.unnecessity_distribution_right V R p q
 
-/-- **Booth Fact 13**, Impossibility Distribution: `¬◇(p ∨ q)` entails `¬◇p`. -/
+-- Fact 13
 theorem impossibility_distribution_left (p q : At) :
-    truth (Formula.eval V R (.neg (.diamond (.disj (.atom p) (.atom q))))) ⊆
-      truth (Formula.eval V R (.neg (.diamond (.atom p)))) :=
+    ∼◇(.atom p ⋎ .atom q) ⊨[V, R] ∼◇.atom p :=
   Booth2022a.impossibility_distribution_left V R p q
 
-/-- **Booth Fact 13**, Impossibility Distribution: `¬◇(p ∨ q)` entails `¬◇q`. -/
+-- Fact 13
 theorem impossibility_distribution_right (p q : At) :
-    truth (Formula.eval V R (.neg (.diamond (.disj (.atom p) (.atom q))))) ⊆
-      truth (Formula.eval V R (.neg (.diamond (.atom q)))) :=
+    ∼◇(.atom p ⋎ .atom q) ⊨[V, R] ∼◇.atom q :=
   Booth2022a.impossibility_distribution_right V R p q
 
 end Atomic

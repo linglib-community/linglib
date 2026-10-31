@@ -26,7 +26,8 @@ disjunction are the Kleene-lattice operations, with the De Morgan laws and doubl
 free. The bilateral modals are pairs of unilateral ones, `necessity = (box, diamond)` and
 `possibility = (diamond, box)` on the two coordinates, so the duality of `□` and `◇` holds by
 definition. Truth and falsity are the informative contents of the two coordinates: no sentence is
-[both true and false](##disjoint_truth_falsity), but a modal sentence can be neither.
+[both true and false](##disjoint_truth_falsity), but a modal sentence can be neither. A sentence
+entails another in a model, `φ ⊨[V, R] ψ`, when the second is true wherever the first is.
 
 ## Implementation notes
 
@@ -350,6 +351,13 @@ inductive Formula (At : Type*) where
   | box (φ : Formula At)
   | diamond (φ : Formula At)
 
+@[inherit_doc] scoped notation:max "∼" φ:66 => Formula.neg φ
+@[inherit_doc] scoped infixl:65 " ⋏ " => Formula.conj
+@[inherit_doc] scoped infixl:60 " ⋎ " => Formula.disj
+@[inherit_doc] scoped infixr:55 " ⇒ " => Formula.cond
+@[inherit_doc] scoped notation:max "□" φ:66 => Formula.box φ
+@[inherit_doc] scoped notation:max "◇" φ:66 => Formula.diamond φ
+
 namespace Formula
 
 variable {At : Type*}
@@ -367,5 +375,9 @@ def eval (V : At → Set W) : (W → Set W) → Formula At → Kalman (Question 
   | R, diamond φ => possibility R (eval V R φ)
 
 end Formula
+
+/-- `φ ⊨[V, R] ψ`: `φ` entails `ψ` in the model `⟨W, R, V⟩`, `ψ` being true wherever `φ` is. -/
+scoped notation:50 φ:51 " ⊨[" V ", " R "] " ψ:51 =>
+  LE.le (truth (Formula.eval V R φ)) (truth (Formula.eval V R ψ))
 
 end MinimalCovering
