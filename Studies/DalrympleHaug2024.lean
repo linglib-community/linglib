@@ -59,7 +59,7 @@ construction, and check them against the paper's judgments.
 * [I. Landau, *A two-tiered theory of control* (2015)][landau-2015]
 * [K. Safir, *One true anaphor* (2014)][safir-2014]
 * [L. Champollion, *Overt distributivity in algebraic event semantics*
-  (2016)][champollion-2016]
+  (2016)][champollion-2016a]
 -/
 
 @[expose] public section
