@@ -5,23 +5,11 @@ public import Linglib.Phonology.OptimalityTheory.Antimatroid
 /-!
 # Optimality-theoretic grammars
 
-Merchant and Riggle represent an Optimality-theoretic grammar, the ranking information that
-determines the optima of a language, by a consistent set of elementary ranking conditions
-(ERCs), and they observe that the representing set is not unique, since distinct ERC sets can
-have the same satisfying rankings. `Grammar n` therefore takes the set of satisfying rankings,
-its `legs`, as the identity of a grammar over `n` constraints, and requires that set to be the
-linear extensions of some consistent ERC set. Two consistent ERC sets present the same grammar
-exactly when they have the same linear extensions (`Grammar.ofERCs_eq_iff`).
-
-The maps `models` and `conditions`, from sets of ERCs to the rankings satisfying them and
-from sets of rankings to the ERCs they satisfy, form an antitone Galois connection
-(`subset_models_iff`), and the leg sets of grammars are exactly the nonempty closed sets of
-its closure operator `grammarClosure` (`Grammar.coe_legs_isGrammarClosed`,
-`Grammar.exists_grammar_of_isGrammarClosed`). Grammars are partially ordered by inclusion of
-leg sets; the trivial grammar is the greatest element, and the closure of the union of two leg
-sets is the least upper bound (`Grammar.superGrammar_le`). The top segments of the legs form
-an antimatroid (`Grammar.toAntimatroid`), the one Merchant and Riggle associate with any ERC
-set presenting the grammar (`Grammar.toAntimatroid_ofERCs_isFeasible`).
+This file defines Optimality-theoretic grammars over a fixed set of constraints. A grammar is
+identified with its legs, the rankings that satisfy it, which must be the linear extensions of
+some consistent set of elementary ranking conditions; as Merchant and Riggle observe, distinct
+sets of conditions can present the same grammar. Grammars are partially ordered by inclusion of
+their legs, and the legs of a grammar determine an antimatroid.
 
 ## Main definitions
 
@@ -46,6 +34,8 @@ set presenting the grammar (`Grammar.toAntimatroid_ofERCs_isFeasible`).
 * `Grammar.coe_legs_isGrammarClosed`, `Grammar.exists_grammar_of_isGrammarClosed`: the leg
   sets of grammars are exactly the nonempty closed sets.
 * `Grammar.feasible_ofERCs`: the feasible sets of `ofERCs E h` are those of `E`.
+* `Grammar.toAntimatroid_ofERCs_isFeasible`: the antimatroid of a grammar is that of any ERC set
+  presenting it.
 * `Grammar.superGrammar_le`: the super-grammar of `G` and `G'` is their least upper bound.
 
 ## Implementation notes
