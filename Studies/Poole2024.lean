@@ -121,7 +121,7 @@ theorem low_eq_dependentPass (c : Case) (lex : α → Option Case) (a b : α) :
     surface (assignDep c (lexicalValuation lex [a, b]))
       = surface (({ low := some c } : Rules).dependentPass (fun _ ↦ true)
           (lexicalValuation lex [a, b])) := by
-  simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
+  simp only [lexicalValuation, Case.slotValuation, Valuation.initial, List.map_cons, List.map_nil]
   cases lex a <;> cases lex b <;> rfl
 
 /-- A stack on the head introducing the higher DP assigns its specifier what the high dependent case
@@ -130,7 +130,7 @@ theorem high_eq_dependentPass (c : Case) (lex : α → Option Case) (spec comp :
     (surface (assignDep c (lexicalValuation lex [comp, spec]))).reverse
       = surface (({ high := some c } : Rules).dependentPass (fun _ ↦ true)
           (lexicalValuation lex [spec, comp])) := by
-  simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
+  simp only [lexicalValuation, Case.slotValuation, Valuation.initial, List.map_cons, List.map_nil]
   cases lex spec <;> cases lex comp <;> rfl
 
 theorem stack_marks_once (c : Case) (lex : α → Option Case) (a b d : α) (ha : lex a = none)
@@ -138,7 +138,8 @@ theorem stack_marks_once (c : Case) (lex : α → Option Case) (a b d : α) (ha 
     surface (assignDep c (lexicalValuation lex [a, b, d])) = [none, some c, none] ∧
       surface (({ low := some c } : Rules).dependentPass (fun _ ↦ true)
         (lexicalValuation lex [a, b, d])) = [none, some c, some c] := by
-  simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil, ha, hb, hd]
+  simp only [lexicalValuation, Case.slotValuation, Valuation.initial, List.map_cons, List.map_nil,
+    ha, hb, hd]
   exact ⟨rfl, rfl⟩
 
 end Stack

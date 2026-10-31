@@ -115,28 +115,30 @@ theorem no_elsewhere_case {α : Type*} (np : α → PhasedNP) (probes : List (Ca
 theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hx : xs[i]? = some x)
     (h : (pureChomsky.assign np probes order xs)[i]? = some (x, .valued (.dat, m))) :
-    (np x).lexicalCase = some .dat := by
+    (np x).case = .valued .dat := by
   rw [CaseAssigners.assign] at h
-  rcases hlex : (np x).lexicalCase with _ | c
-  · rcases case_mem_of_assignBy (lex := fun x ↦ (np x).lexicalCase) (x := x) hlex
+  cases hk : (np x).case with
+  | valued c =>
+    rw [assignBy_getElem?_of_valued (case := fun x ↦ (np x).case) hx hk] at h
+    simp only [Option.some.injEq, Prod.mk.injEq, FeatureSlot.valued_inj, true_and] at h
+    rw [h.1]
+  | absent | unvalued =>
+    rcases case_mem_of_assignBy (case := fun x ↦ (np x).case) (x := x) (by simp [hk])
       h with ⟨_, -, hc⟩ | ⟨_, -, ⟨_, _⟩, hp, rfl⟩
     · simp [pureChomsky, Rules.cases] at hc
     · obtain ⟨⟨hd, d⟩, -, -, hk⟩ := pureChomsky.mem_probesIn np hp
       revert hk; cases hd <;> simp [pureChomsky]
-  · rw [assignBy_getElem?_of_some (lex := fun x ↦ (np x).lexicalCase) hx hlex] at h
-    simp only [Option.some.injEq, Prod.mk.injEq, FeatureSlot.valued_inj, true_and] at h
-    rw [h.1]
 
 /-- The Agree-based grammar values an NP accusative only where a `v` probes: in a derivation
     without one, an accusative NP brought its case from the lexicon. -/
 theorem pureChomsky_v_of_acc {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism}
-    (hlex : (np x).lexicalCase = none)
+    (hlex : (np x).case.value? = none)
     (h : (pureChomsky.assign np probes order xs)[i]? = some (x, .valued (.acc, m))) :
     ∃ d, (Cat.v, d) ∈ probes := by
   rw [CaseAssigners.assign] at h
   obtain rfl := mechanism_eq_agree_of_assignBy (rules := pureChomsky.rules)
-    (fun _ _ ↦ rfl) (lex := fun x ↦ (np x).lexicalCase) (x := x) hlex h
+    (fun _ _ ↦ rfl) (case := fun x ↦ (np x).case) (x := x) hlex h
   obtain ⟨_, -, ⟨_, _⟩, hp, rfl⟩ := exists_probe_of_assignBy h
   obtain ⟨⟨hd, d⟩, hmem, -, hk⟩ := pureChomsky.mem_probesIn np hp
   obtain rfl : hd = .v := by revert hk; cases hd <;> simp [pureChomsky]
@@ -217,8 +219,8 @@ def passiveClause (agent goal : Bool) : Derivation :=
 /-- The cases Sakha's grammar values on the nominals `xs` of a derivation. -/
 def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
   d.externalize?.map fun t ↦
-    (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead (fun _ ↦ none)
-      (· ≠ proD) xs).map (·.2.value?.map (·.1))
+    (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
+      (fun x ↦ if x = proD then .absent else .unvalued) xs).map (·.2.value?.map (·.1))
 
 /-! ### Positions -/
 
@@ -233,7 +235,7 @@ def internal (shifted : Bool) : PhasedNP :=
 def possessor : PhasedNP := { phase := .D }
 
 /-- The covert agent, merged in the clause, competing for case without bearing it. -/
-def pro : PhasedNP := { bearsCase := false }
+def pro : PhasedNP := { case := .absent }
 
 /-- Finite T probing the clause. -/
 def finite : List (Cat × Cat) := [(.T, .C)]
