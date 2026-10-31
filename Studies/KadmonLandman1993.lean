@@ -87,9 +87,8 @@ restrictions. -/
 /-- Ladusaw-DE contexts are K&L strengthening contexts; Ladusaw describes *where* NPIs occur, and
 K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (L : PolarityItem.Licenser)
-    (hDE : IsDownwardEntailing L) : L.mechanism = .strengthening := by
-  unfold IsDownwardEntailing at hDE
-  cases L <;> first | rfl | exact hDE.elim
+    (hDE : IsDownwardEntailing L) : L.LicensesByStrengthening :=
+  Licenser.licensesByStrengthening_iff.2 (Licenser.isStrawsonDE_of_holds_anti hDE)
 
 /-! ### Adversative predicates: *sorry* vs *glad*
 

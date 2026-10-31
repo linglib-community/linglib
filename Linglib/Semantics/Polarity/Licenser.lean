@@ -33,9 +33,15 @@ stronger scale-mates; only a scalar licenser has a direct implicature.
   needs the plain meaning downward entailing modulo presupposition (von Fintel) and not upward
   entailing as well (Bylinina and Nouwen); a stronger strength must hold outright of the
   exhaustified meaning.
-* `PolarityItem.Licenser.LicensesFreeChoice`, `PolarityItem.Licenser.LicensesByRelevance`: the
-  free-choice route of a modal licenser (Chierchia) and the relevance route of a question
-  (van Rooy).
+* `PolarityItem.Licenser.LicensesByStrengthening`, `PolarityItem.Licenser.LicensesFreeChoice`,
+  `PolarityItem.Licenser.LicensesByRelevance`: the strengthening route of a downward-entailing
+  licenser (Kadmon and Landman), the free-choice route of a modal licenser (Chierchia) and the
+  relevance route of a question (van Rooy).
+
+## Main statements
+
+* `PolarityItem.Licenser.licensesByStrengthening_iff`: widening strengthens under a licenser
+  exactly when the licenser is downward entailing modulo presupposition.
 
 ## Implementation notes
 
@@ -55,6 +61,7 @@ stronger scale-mates; only a scalar licenser has a direct implicature.
 * [zwarts-1998]
 * [bylinina-nouwen-2018]
 * [icard-2012]
+* [kadmon-landman-1993]
 * [chierchia-2006]
 * [van-rooy-2003-npi]
 -/
@@ -183,6 +190,16 @@ def mechanism : Licenser → LicensingMechanism
   | .modal _ => .genericIndefinite
   | .question => .entropy
 
+/-- A licenser licenses by strengthening when, under each of its operators, widening the domain of
+an existential strengthens the result: the existential over the wider domain entails, modulo
+presupposition, the existential over the narrower one ([kadmon-landman-1993]). -/
+def LicensesByStrengthening : Licenser → Prop
+  | .classical F | .scalar ⟨F, _⟩ => ∀ p (E : Type) (P : E → F.Dom p) ⦃D D' : Finset E⦄,
+      D ⊆ D' → F.op p (D'.sup P) ≤ F.op p (D.sup P)
+  | .strawson F => ∀ p (E : Type) (P : E → F.Dom p) ⦃D D' : Finset E⦄,
+      D ⊆ D' → strawsonEntails (F.op p (D'.sup P)) (F.op p (D.sup P))
+  | .modal _ | .question => False
+
 /-- A modal licenser licenses free choice when, under one of its operators and over a domain of at
 least two possible witnesses, the antiexhaustified existential is consistent
 ([chierchia-2006]). -/
@@ -223,6 +240,17 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
     exact fun p ↦ NaturalLogic.IsStrawsonDE.of_antitone_posSupport
       (Signature.holdsFor_anti_iff.mp (h p))
   | modal _ | question => exact h
+
+/-- Widening strengthens under every operator of a licenser exactly when the licenser is downward
+entailing modulo presupposition. -/
+theorem licensesByStrengthening_iff : L.LicensesByStrengthening ↔ L.IsStrawsonDE := by
+  classical
+  rcases L with F | ⟨F, _⟩ | F | _ | _
+  all_goals first
+    | exact Iff.rfl
+    | exact ⟨fun h p a b hab ↦ by
+          simpa [sup_eq_left.2 hab] using h p _ id (Finset.subset_insert b {a}),
+        fun h p _ _ _ _ hD ↦ h p (Finset.sup_mono hD)⟩
 
 theorem Carries.weak (h : L.Carries s) : L.Carries .weak := by
   cases s with
