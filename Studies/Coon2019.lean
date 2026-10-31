@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.Valency
 public import Linglib.Semantics.Composition.Ty
-public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Syntax.Minimalist.Verbal.Voice.Diathesis
 public import Linglib.Data.Wordlist.Coon2019
 public import Linglib.Fragments.Mayan.Chuj.Voice
 public import Linglib.Data.Examples.Coon2019
@@ -36,9 +36,8 @@ heads whose parametric semantics supplies two of the three properties the licens
 an external argument and its implicitness; the third, inherent ergative case, is the transitive
 head's own, since the substrate's Case checking is the accusative of v. The count adopts the
 Obligatory Case Parameter of footnote 15, one of the two options the paper leaves open. The
-same two properties and the realization of the internal argument compute the voice of each stem
-in the substrate's types of voice alternation. The class of a root fixes which realizations its
-internal slot admits; that an intransitive root's argument is only ever a full DP encodes the
+voice of each stem is the voice its head derives with the internal argument so realized. The
+class of a root fixes which realizations its internal slot admits; that an intransitive root's argument is only ever a full DP encodes the
 absence of unaccusative subject incorporation, (48), which the paper leaves to typology, and no
 implicit option for such roots is attested. The event semantics of §3.2.2 records truth
 conditions; the locus of Existential Closure that separates the two antipassives lives in the
@@ -217,19 +216,6 @@ def Internal.position? : Internal → Option ArgumentFrame.Position
   | .implicit => some (.implicit none)
   | .absent => none
 
-/-- The voice of a transitive root's stem under a head and a realization of the internal argument,
-from the transitive stem (§4, (78)). A head that merges an overt agent keeps it as the subject,
-the internal argument after it; otherwise the internal argument is the subject, the agent implicit
-under a head that merges an implicit one and out of participant structure under a head that
-merges none. -/
-def stemVoice (v : V) (i : Internal) : Voice :=
-  if v.head.IsThematic ∧ ¬ v.head.ExternalImplicit then
-    .of .np ⟨some .nominal, i.position?.toList⟩
-      [some .external, i.position?.map fun _ ↦ ArgumentFrame.Slot.complement 0]
-  else if v.head.ExternalImplicit then
-    .of .np ⟨some .nominal, [.implicit none]⟩ [some (.complement 0), some .external]
-  else .of .np .intransitive [none, some .external]
-
 /-- A root class forms a stem with a head when the head is well-formed on it under some
 realization; stems with other derivational suffixes, (11) and (15), are not in view. -/
 def FormsStem (rc : RootClass) (v : V) : Prop := ∃ i, WellFormed rc v i
@@ -244,9 +230,9 @@ theorem formsStem_iff :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> intro v <;> cases v <;> decide
 
 -- (56), (58)
-theorem stemVoice_image :
+theorem diathesis_image :
     (Finset.univ.filter fun p : V × Internal ↦ WellFormed .tv p.1 p.2).image
-        (fun p ↦ stemVoice p.1 p.2) = Chuj.voices.image (·.marked []) := by
+        (fun p ↦ p.1.head.diathesis p.2.position?) = Chuj.voices.image (·.marked []) := by
   decide
 
 -- (78), (79)
@@ -293,10 +279,10 @@ theorem agentiveIntransitive_iff (v : V) (i : Internal) :
   cases v <;> cases i <;> decide
 
 -- §4.1, (78)
-theorem stemVoice_types (v : V) (i : Internal) (hw : WellFormed .tv v i) :
-    ((stemVoice v i).IsDecausativization ↔ ¬ v.head.IsThematic) ∧
-      ((stemVoice v i).IsPassivization ↔ v.head.ExternalImplicit) ∧
-      ((stemVoice v i).IsAntipassivization ↔ AgentiveIntransitive v i) := by
+theorem diathesis_types (v : V) (i : Internal) (hw : WellFormed .tv v i) :
+    ((v.head.diathesis i.position?).IsDecausativization ↔ ¬ v.head.IsThematic) ∧
+      ((v.head.diathesis i.position?).IsPassivization ↔ v.head.ExternalImplicit) ∧
+      ((v.head.diathesis i.position?).IsAntipassivization ↔ AgentiveIntransitive v i) := by
   cases v <;> cases i <;> first | exact absurd hw (by decide) | decide
 
 /-! ### Implicit arguments and -aj -/
@@ -323,7 +309,7 @@ theorem aj_table :
 
 -- §4.2
 theorem aj_iff_implicit (v : V) (i : Internal) (hw : WellFormed .tv v i) :
-    Aj v i ↔ ∃ j, (stemVoice v i).derived.construction j = .implicit := by
+    Aj v i ↔ ∃ j, (v.head.diathesis i.position?).derived.construction j = .implicit := by
   cases v <;> cases i <;> first | exact absurd hw (by decide) | decide
 
 /-! ### Agent diagnostics -/

@@ -280,11 +280,11 @@ theorem anticausative_rows : ∀ e ∈ Examples.all,
   decide +kernel
 
 /-- The clause of an example that is not anticausative. *Quejarse* has an external argument and
-impersonal *dar* is an activity under an impersonal Voice head. -/
+impersonal *dar* is an activity under Voice with an implicit agent. -/
 def otherClause? (e : Datum) : Option Clause :=
   (appl? e).bind fun a ↦ e.parse? "construction"
     [("inherent", ⟨Minimalist.Voice.agentive, [.vDO], a⟩),
-      ("impersonal", ⟨Minimalist.Voice.impersonal, [.vDO], a⟩)]
+      ("impersonal", ⟨Minimalist.Voice.passive, [.vDO], a⟩)]
 
 /-- Where *se* has another source and the clause is not inchoative, the applicative head has its
 plain exponent alone, so stylistic *le* is out. -/
