@@ -7,17 +7,18 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Representability of qualitative probability orders
 
-A qualitative probability is representable when a probability measure induces it. Kraft,
-Pratt and Seidenberg show that every order on at most four atoms is representable and give a
-five-atom order that is not. This file holds the predicate and the
-reductions to disjoint comparisons and past a null atom; `CancellationFin4.lean` derives the
-cases up to four atoms from Scott cancellation, and `Completeness.lean` holds the five-atom
-counterexample and its padding to every larger size.
+This file defines representability: a relation on events is representable when a probability
+measure induces it. Agreement on disjoint comparisons suffices, a null atom can be dropped, and
+representability descends along any injection of carriers. `CancellationFin4.lean` derives
+representability up to four atoms from Scott cancellation, and `Completeness.lean` holds Kraft,
+Pratt and Seidenberg's five-atom order, which is not representable.
 
 ## Main statements
 
 * `Representable`: the representability predicate on relations.
-* `reduce_to_disjoint`, `null_elem_reduce`, `perm_repr`: the reductions.
+* `reduce_to_disjoint`: agreement on disjoint comparisons suffices.
+* `null_elem_reduce`: representability past a null atom.
+* `Representable.of_preimage`: representability descends along an injection.
 
 ## References
 
@@ -91,29 +92,28 @@ theorem null_elem_reduce {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) 
       ← succ_image_preimage C, ← succ_image_preimage D]
   exact hm (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
 
-/-! ### Transport along equivalences -/
-
-theorem transfer_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
-    [MeasurableSpace α] [DiscreteMeasurableSpace α] (e : W ≃ α) (r : Set W → Set W → Prop)
-    (μ : Measure α) (hm : ∀ A B : Set α, (Set.preimage e ⁻¹'o r) A B ↔ μ B ≤ μ A) :
-    ∀ A B : Set W, r A B ↔ μ.map e.symm B ≤ μ.map e.symm A := by
-  intro A B
-  have h := hm (e '' A) (e '' B)
-  simp only [Order.Preimage, Equiv.preimage_image] at h
-  rwa [Measure.map_apply (.of_discrete) (.of_discrete),
-    Measure.map_apply (.of_discrete) (.of_discrete), ← Equiv.image_eq_preimage_symm,
-    ← Equiv.image_eq_preimage_symm]
+/-! ### Transport along injections -/
 
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n) (r : Set (Fin n) → Set (Fin n) → Prop)
     (j : Fin n) : (Set.preimage σ ⁻¹'o r) ∅ {j} ↔ r ∅ {σ.symm j} := by
   show r (σ ⁻¹' ∅) (σ ⁻¹' {j}) ↔ _
   rw [Set.preimage_empty, show σ ⁻¹' {j} = {σ.symm j} by ext; simp [Equiv.eq_symm_apply]]
 
-/-- Representability transports backward along any equivalence. -/
-theorem perm_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
-    [MeasurableSpace α] [DiscreteMeasurableSpace α] (σ : W ≃ α) (r : Set W → Set W → Prop)
-    (h : Representable (Set.preimage σ ⁻¹'o r)) : Representable r := by
-  obtain ⟨μ, hμ, hm⟩ := h
-  exact ⟨μ.map σ.symm, inferInstance, transfer_repr σ r μ hm⟩
+/-- Representability descends along an injection `f`: if comparing sets by their preimages under
+    `f` is represented by `μ`, then `r` is represented by `μ.comap f`, which weights each set by
+    its image. The sets outside the range of `f` are null for `μ`, as `r` is reflexive. -/
+theorem Representable.of_preimage {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
+    [MeasurableSpace α] [DiscreteMeasurableSpace α] {r : Set W → Set W → Prop} [Std.Refl r]
+    {f : W → α} (hf : Function.Injective f) (h : Representable (Set.preimage f ⁻¹'o r)) :
+    Representable r := by
+  obtain ⟨μ, _, hμ⟩ := h
+  have hnull : μ (Set.range f)ᶜ = 0 := le_zero_iff.mp
+    (((hμ ∅ _).mp (by simpa [Order.Preimage] using refl_of r ∅)).trans_eq measure_empty)
+  have hcomap (A : Set W) : μ.comap f A = μ (f '' A) :=
+    Measure.comap_apply _ hf (fun _ _ ↦ .of_discrete) μ .of_discrete
+  refine ⟨μ.comap f, isProbabilityMeasure_comap hf (ae_iff.mpr hnull) fun _ _ ↦ .of_discrete,
+    fun A B ↦ ?_⟩
+  rw [hcomap, hcomap, ← hμ]
+  simp [Order.Preimage, Set.preimage_image_eq _ hf]
 
 end ComparativeProbability

@@ -7,8 +7,9 @@ public import Mathlib.Tactic.FinCases
 
 /-! # Cancellation on at most four atoms
 
-Every qualitative probability order on at most four atoms satisfies Scott cancellation, hence is
-representable by a probability measure, as Kraft, Pratt and Seidenberg showed.
+This file proves that every qualitative probability order on at most four atoms satisfies Scott
+cancellation, hence is representable by a probability measure. Kraft, Pratt and Seidenberg remark,
+without proof, that five atoms are the fewest on which this can fail.
 
 ## Main declarations
 
@@ -16,8 +17,6 @@ representable by a probability measure, as Kraft, Pratt and Seidenberg showed.
 * `ComparativeProbability.extendLex`: the extension by a dominant world.
 * `ComparativeProbability.cancellation_of_le_four`: every qualitative probability on at most four
   atoms satisfies cancellation.
-* `ComparativeProbability.representable_of_le_four`: every qualitative probability on at most
-  four atoms is representable.
 
 ## Implementation notes
 
@@ -473,11 +472,5 @@ theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
           cancellation_implies_representable r' (cancellation_of_le_four (by omega) r')
       · push Not at h
         exact no_null_cancellation_of_le_four hn r h
-
-/-- Every qualitative probability on at most four atoms is representable, by Scott
-    cancellation. -/
-theorem representable_of_le_four {n : ℕ} (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
-    [IsQualitativeProbability r] : Representable r :=
-  cancellation_implies_representable r (cancellation_of_le_four hn r)
 
 end ComparativeProbability
