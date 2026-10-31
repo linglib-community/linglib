@@ -1,0 +1,32 @@
+[
+  {
+    "id": "chierchia2004_ex128a",
+    "source": {"bibkey": "chierchia-2004", "paperLabel": "(128a)"},
+    "language": "stan1293",
+    "primaryText": "I doubt that John ate the cake and drank any coffee",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["connective", "and"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "chierchia2004_ex130a",
+    "source": {"bibkey": "chierchia-2004", "paperLabel": "(130a)"},
+    "language": "stan1293",
+    "primaryText": "I doubt that John ate the cake or drank any coffee",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["connective", "or"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
