@@ -18,9 +18,10 @@ of the meaning of the item. The constituents in which the acceptability of an it
 its domains, form a chain from its minimal domain to the sentence (`PolarityItem.Path`): each
 domain is the one below under a layer, so the environment of a domain composes the layers below it
 with the environment of the minimal domain. A domain carries a strength of negation when its
-environment, as the operator over the position of the item, does (`PolarityItem.Licenser.Carries`).
-The licensing condition asks of an item that some domain carry the strength that licenses it, and
-that some domain not carry the strength that blocks it (`PolarityItem.Path.Licenses`).
+environment, as the operator over the position of the item, does (`PolarityItem.Licenser.Carries`),
+and an item is acceptable in it when it carries the strength that licenses the item and not the
+strength that blocks it. The licensing condition asks that the item be acceptable in some domain
+(`PolarityItem.Path.Licenses`).
 
 Each layer is in the function class of a signature, so the sign of a domain is the product of the
 signs below it, and [it fixes the direction of the domain's
@@ -36,8 +37,8 @@ alternatives](##PolarityItem.Path.withAlternatives), as in alternative semantics
 
 ## Implementation notes
 
-* The licenser of a domain is a classical licenser, whose operators are between lattices in
-  `Type`, so carrying and licensing are stated for paths there.
+* The licenser of a domain is the classical licenser of its environment, whose operators are
+  between lattices in `Type`, so carrying and licensing are stated for paths there.
 * A signature in whose class an environment lies can understate its strength, so showing that a
   domain does not carry a strength takes meanings of the item on which the environment fails the
   strength.
@@ -164,37 +165,45 @@ end Path
 
 /-! ### Carrying a strength and licensing -/
 
+section Acceptable
+
+variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P]
+
+/-- An item is acceptable under an operator over its position when the operator carries the
+strength of negation that licenses the item and does not carry the strength that blocks it. -/
+def Acceptable (π : PolarityItem) (f : σ → P) : Prop :=
+  (∀ s ∈ π.licensor, (Licenser.ofOperator f).Carries s) ∧
+    ∀ s ∈ π.antiLicensor, ¬(Licenser.ofOperator f).Carries s
+
+variable {π : PolarityItem} {f : σ → P} {s : Negation.Strength}
+
+theorem acceptable_of_licensor (hl : π.licensor = some s) (ha : π.antiLicensor = none)
+    (h : (Licenser.ofOperator f).Carries s) : π.Acceptable f :=
+  ⟨fun _ h' ↦ Option.mem_some_iff.1 (hl ▸ h') ▸ h, fun _ h' ↦ absurd (ha ▸ h') nofun⟩
+
+theorem acceptable_of_antiLicensor (hl : π.licensor = none) (ha : π.antiLicensor = some s)
+    (h : ¬(Licenser.ofOperator f).Carries s) : π.Acceptable f :=
+  ⟨fun _ h' ↦ absurd (hl ▸ h') nofun, fun _ h' ↦ Option.mem_some_iff.1 (ha ▸ h') ▸ h⟩
+
+end Acceptable
+
 namespace Path
 
 variable {σ P : Type} [Lattice σ] [BoundedOrder σ] [Lattice P] [BoundedOrder P] (p : Path σ P)
   {t : List (Signature.classPairs P)} {s : Negation.Strength} {π : PolarityItem}
 
-/-- The licenser of the domain reached through `t`: its environment, as the operator over the
-position of the item. -/
-def licenser (t : List (Signature.classPairs P)) : Licenser :=
-  .classical { Param := PUnit, Dom := fun _ ↦ σ, Cod := fun _ ↦ P, op := fun _ ↦ p.environment t }
-
-/-- The domain reached through `t` carries the strength `s` of negation. -/
+/-- The domain reached through `t` carries the strength `s` of negation: the licenser of its
+environment does. -/
 def Carries (t : List (Signature.classPairs P)) (s : Negation.Strength) : Prop :=
-  (p.licenser t).Carries s
+  (Licenser.ofOperator (p.environment t)).Carries s
 
-/-- The licensing condition: some domain carries the strength of negation that licenses the
-item, and some domain does not carry the strength that blocks it. -/
+/-- The licensing condition: the item is acceptable in some domain. -/
 def Licenses (π : PolarityItem) : Prop :=
-  (∀ s ∈ π.licensor, ∃ t ∈ p.layers.tails, p.Carries t s) ∧
-    ∀ s ∈ π.antiLicensor, ∃ t ∈ p.layers.tails, ¬p.Carries t s
+  ∃ t ∈ p.layers.tails, π.Acceptable (p.environment t)
 
 theorem carries_iff :
-    p.Carries t s ↔ s.toSignature.HoldsFor (p.environment t) ∧ ¬Monotone (p.environment t) := by
-  have ha (h : s.toSignature.HoldsFor (p.environment t)) : Antitone (p.environment t) :=
-    Signature.holdsFor_anti_iff.1 (h.of_le (by cases s <;> decide))
-  cases s <;>
-    simp only [Carries, licenser, Licenser.Carries, Licenser.IsStrawsonDE, Licenser.IsStrawsonUE,
-      Licenser.exhaustified, Licenser.Holds]
-  · exact ⟨fun h ↦ ⟨Signature.holdsFor_anti_iff.2 (h.1 ⟨⟩), fun hm ↦ h.2 fun _ ↦ hm⟩,
-      fun h ↦ ⟨fun _ ↦ Signature.holdsFor_anti_iff.1 h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩⟩
-  all_goals exact ⟨fun h ↦ ⟨h.2 ⟨⟩, fun hm ↦ h.1.2 fun _ ↦ hm⟩,
-    fun h ↦ ⟨⟨fun _ ↦ ha h.1, fun hm ↦ h.2 (hm ⟨⟩)⟩, fun _ ↦ h.1⟩⟩
+    p.Carries t s ↔ s.toSignature.HoldsFor (p.environment t) ∧ ¬Monotone (p.environment t) :=
+  Licenser.carries_ofOperator_iff
 
 /-- A domain of positive sign carries no strength of negation. -/
 theorem not_carries_of_sign_eq_one (h : p.sign t = 1) : ¬p.Carries t s := fun hc ↦
@@ -216,15 +225,13 @@ theorem carries_weak_of_sign_eq_neg_one (h : p.sign t = -1)
 
 /-- An item that a strength licenses is anti-licensed when every domain has positive sign. -/
 theorem not_licenses_of_mem_licensor (hs : s ∈ π.licensor)
-    (h : ∀ t ∈ p.layers.tails, p.sign t = 1) : ¬p.Licenses π := fun hl ↦
-  let ⟨t, ht, hc⟩ := hl.1 s hs
-  p.not_carries_of_sign_eq_one (h t ht) hc
+    (h : ∀ t ∈ p.layers.tails, p.sign t = 1) : ¬p.Licenses π := fun ⟨t, ht, ha⟩ ↦
+  p.not_carries_of_sign_eq_one (h t ht) (ha.1 s hs)
 
 /-- An item that a strength blocks is anti-licensed when every domain carries it. -/
 theorem not_licenses_of_mem_antiLicensor (hs : s ∈ π.antiLicensor)
-    (h : ∀ t ∈ p.layers.tails, p.Carries t s) : ¬p.Licenses π := fun hl ↦
-  let ⟨t, ht, hc⟩ := hl.2 s hs
-  hc (h t ht)
+    (h : ∀ t ∈ p.layers.tails, p.Carries t s) : ¬p.Licenses π := fun ⟨t, ht, ha⟩ ↦
+  ha.2 s hs (h t ht)
 
 end Path
 

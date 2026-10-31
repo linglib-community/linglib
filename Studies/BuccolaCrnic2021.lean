@@ -577,11 +577,7 @@ theorem strongApply_andNode_wroteTogether :
 /-- The environment of (26), *I don't think that the girls and some `n` have blue eyes*, as an
 operator on the restrictor of the item. -/
 def haveBlueEyesEnvironment : PolarityItem.Licenser :=
-  .classical
-    { Param := PUnit.{2}
-      Dom := fun _ ↦ Finset (Fin 4)
-      Cod := fun _ ↦ Set (Finset (Fin 4))
-      op := fun _ n ↦ (sentence26 n).ordinary }
+  .ofOperator fun n ↦ (sentence26 n).ordinary
 
 /-- The environment of (26) meets the substrate's condition on a weak item, downward and not upward
 entailment, which is the first clause of the Revised NPI Licensing Condition without the second,
