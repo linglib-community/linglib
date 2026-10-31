@@ -54,7 +54,7 @@ and the paper doubts speakers find them inconsistent.
 
 namespace HollidayIcard2013
 
-open ComparativeProbability MeasureTheory ProbabilityTheory
+open ComparativeProbability ComparativePossibility MeasureTheory ProbabilityTheory
 
 variable {W : Type*}
 
@@ -72,18 +72,18 @@ variable (ge_w : W → W → Prop) [IsPreorder W ge_w]
 /-- The l-lifting of any preorder on worlds validates the three measure-invalid patterns I1–I3,
 since it is right-union closed. This is Fact 1's disjunction problem. -/
 theorem disjunction_problem :
-    RightUnion (LewisLift ge_w) ∧ EquiprobabilityCollapse (LewisLift ge_w) ∧
-      HamblinCollapse (LewisLift ge_w) :=
-  have hI2 := equiprobabilityCollapse_of_rightUnion (rightUnion_lewisLift (r := ge_w))
-  ⟨rightUnion_lewisLift, hI2, hamblinCollapse_of_equiprobabilityCollapse hI2⟩
+    RightUnion (Lewis ge_w) ∧ EquiprobabilityCollapse (Lewis ge_w) ∧
+      HamblinCollapse (Lewis ge_w) :=
+  have hI2 := equiprobabilityCollapse_of_rightUnion (rightUnion_lewis (r := ge_w))
+  ⟨rightUnion_lewis, hI2, hamblinCollapse_of_equiprobabilityCollapse hI2⟩
 
 /-- Over a nonempty preorder on worlds the l-lifting validates V1–V7 and V12 (Fact 1), the last
 because it validates I2. -/
 theorem lLift_validities [Nonempty W] :
-    ProbablyToNotProbablyNot (LewisLift ge_w) ∧ ProbablyDistribInf (LewisLift ge_w) ∧
-      ChancyDisjunctionIntro (LewisLift ge_w) ∧ Minimality (LewisLift ge_w) ∧
-      Maximality (LewisLift ge_w) ∧ MustToProbably (LewisLift ge_w) (· = Set.univ) ∧
-      ProbablyToMight (LewisLift ge_w) (· ≠ ∅) ∧ ComplementTransfer (LewisLift ge_w) :=
+    ProbablyToNotProbablyNot (Lewis ge_w) ∧ ProbablyDistribInf (Lewis ge_w) ∧
+      ChancyDisjunctionIntro (Lewis ge_w) ∧ Minimality (Lewis ge_w) ∧
+      Maximality (Lewis ge_w) ∧ MustToProbably (Lewis ge_w) (· = Set.univ) ∧
+      ProbablyToMight (Lewis ge_w) (· ≠ ∅) ∧ ComplementTransfer (Lewis ge_w) :=
   ⟨probablyToNotProbablyNot, probablyDistribInf, chancyDisjunctionIntro, minimality,
     maximality, mustToProbably, probablyToMight,
     complementTransfer_of_equiprobabilityCollapse (disjunction_problem ge_w).2.1⟩
@@ -93,16 +93,23 @@ end LLift
 /-- The l-lifting refutes V11 and V13 on two indiscriminate worlds (Fact 1). -/
 theorem lLift_refutes_V11_V13 :
     (∃ (W : Type) (ge_w : W → W → Prop),
-      IsPreorder W ge_w ∧ ¬PositiveFormTransfer (LewisLift ge_w)) ∧
+      IsPreorder W ge_w ∧ ¬PositiveFormTransfer (Lewis ge_w)) ∧
     (∃ (W : Type) (ge_w : W → W → Prop),
-      IsPreorder W ge_w ∧ ¬StrictDisjunctionIntro (LewisLift ge_w)) := by
+      IsPreorder W ge_w ∧ ¬StrictDisjunctionIntro (Lewis ge_w)) := by
   refine ⟨⟨Fin 2, fun _ _ ↦ True, inferInstance, fun h ↦ ?_⟩,
     ⟨Fin 2, fun _ _ ↦ True, inferInstance, fun h ↦ ?_⟩⟩
   · exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, trivial⟩) probably_top).2
       fun _ _ ↦ ⟨1, by simp, trivial⟩
   · have hsd : ({0} : Set (Fin 2)) \ {1} = {0} := Set.sdiff_singleton_eq_self (by simp)
-    refine (h {0} {1} ⟨lewisLift_empty _, fun h' ↦ ?_⟩).2 fun _ _ ↦ ⟨1, rfl, trivial⟩
-    exact Set.singleton_ne_empty 0 (hsd ▸ lewisLift_empty_left_iff.1 h')
+    refine (h {0} {1} ⟨lewis_empty _, fun h' ↦ ?_⟩).2 fun _ _ ↦ ⟨1, rfl, trivial⟩
+    exact Set.singleton_ne_empty 0 (hsd ▸ lewis_empty_left_iff.1 h')
+
+-- Theorem 2
+theorem wjr_lewis_complete [Finite W] (ge : Set W → Set W → Prop) [IsLikelihoodMono ge]
+    [IsTrans (Set W) ge] :
+    (∃ r : W → W → Prop, Std.Refl r ∧ Lewis r = ge) ↔
+      RightUnion ge ∧ DeterminedBySingletons ge :=
+  exists_eq_lewis_iff
 
 /-! ### Facts 2 and 3: finitely and qualitatively additive measures -/
 
@@ -262,7 +269,7 @@ Worlds are `Fin 4`, with `0` the best; `ge_w u v` is `u ≤ v`. -/
 
 theorem chain_pair_gt_pair :
     AsymmRel (MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} ∧
-      AsymmRel (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} := by
+      AsymmRel (Lewis (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} := by
   have hm : MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {0, 1} {1, 2} :=
     ⟨fun b ↦ b - 1, fun b hb ↦ by
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb
@@ -270,15 +277,15 @@ theorem chain_pair_gt_pair :
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb₁ hb₂
       rcases hb₁ with rfl | rfl <;> rcases hb₂ with rfl | rfl <;>
         first | rfl | exact absurd hf (by decide)⟩
-  have hl : ¬ LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop) {1, 2} {0, 1} := by
+  have hl : ¬ Lewis (· ≤ · : Fin 4 → Fin 4 → Prop) {1, 2} {0, 1} := by
     intro hd
     obtain ⟨a, ha, hle⟩ := hd (Set.mem_insert 0 {1})
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl <;> exact absurd hle (by decide)
-  exact ⟨⟨hm, fun h ↦ hl h.lewisLift⟩, ⟨hm.lewisLift, hl⟩⟩
+  exact ⟨⟨hm, fun h ↦ hl h.lewis⟩, ⟨hm.lewis, hl⟩⟩
 
 theorem chain_singleton_vs_pair :
-    AsymmRel (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0} {1, 2} ∧
+    AsymmRel (Lewis (· ≤ · : Fin 4 → Fin 4 → Prop)) {0} {1, 2} ∧
       ¬ MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {0} {1, 2} ∧
       ¬ MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {1, 2} {0} := by
   refine ⟨⟨fun b _ ↦ ⟨0, rfl, Fin.zero_le b⟩, fun hd ↦ ?_⟩, fun h ↦ ?_, ?_⟩

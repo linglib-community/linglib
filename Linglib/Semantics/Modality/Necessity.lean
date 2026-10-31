@@ -42,8 +42,8 @@ backgrounds unify into one and both forces become simple necessity over their un
 
 `necessity` quantifies over `bestWorlds` directly, so studies that treat `necessity` and
 `possibility` as the Kratzer pair inherit the Limit Assumption; `humanNecessity` is the
-limit-free form. Kratzer's comparative possibility, weak necessity and slight possibility are
-not formalized here.
+limit-free form. Kratzer's comparative possibility lives in `ComparativePossibility.lean`; weak
+necessity and slight possibility are not formalized here.
 
 ## References
 
@@ -159,6 +159,13 @@ theorem necessity_of_humanNecessity {f g : Background W} {p : W → Prop}
 good. -/
 def LimitAssumption (f g : Background W) (w : W) : Prop :=
   ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ bestWorlds f g w, (v ≤[g w] u)
+
+/-- The Limit Assumption says that the best worlds are at least as possible as the accessible
+worlds, in Lewis's sense of comparative possibility. -/
+theorem limitAssumption_iff_lewis {f g : Background W} {w : W} :
+    LimitAssumption f g w ↔ ComparativePossibility.Lewis (premisePreorder (g w)).le
+      (bestWorlds f g w) (f.accessibleWorlds w) :=
+  Iff.rfl
 
 theorem LimitAssumption.of_finite [Finite W] (f g : Background W) (w : W) :
     LimitAssumption f g w := fun _ hu ↦

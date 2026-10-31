@@ -15,7 +15,10 @@ takes as primitive the theory layer's conditional over an accessibility assignme
 of similarity preorders (`Conditional.variablyStrictImp`), which is membership in the filter of
 necessities over the accessible antecedent-worlds, and derives the book's apparatus from it.
 Lewis's systems of spheres are the sets of accessible worlds each closer than every accessible
-world outside, and his truth condition by spheres is the primitive on a total preorder. No strict
+world outside, and his truth condition by spheres is the primitive on a total preorder. Comparative
+possibility by spheres is [Lewis's lifting of the similarity order to the accessible
+propositions](##Lewis1973b.forall_spheres_iff_lewis), and the counterfactual is
+[definable from it](##Lewis1973b.mem_variablyStrictImp_iff_asymmRel_lewis). No strict
 conditional makes two adjacent stages of a Sobel sequence true, and a variably strict one does.
 Under the Limit Assumption the conditional is truth at the closest accessible antecedent-worlds;
 without it, as for a line longer than an inch, the closest-world conditional is vacuously true of
@@ -42,8 +45,7 @@ holds by definition, and Deduction within Conditionals takes the conjunction of 
 
 * The completeness of the V-logics (§6.1), and that every theorem of VCS is a theorem of
   Stalnaker's C2.
-* Comparative possibility (§2.5) as the lifting of comparative similarity to propositions, and the
-  representation of set-selection functions (§2.7).
+* The representation of set-selection functions (§2.7).
 * Stalnaker's Assumption as a well-ordering of the accessible worlds (§3.4).
 
 ## References
@@ -110,6 +112,15 @@ theorem singleton_mem_spheres {access : W → Set W} {ord : W → Preorder W} {w
   subst hj
   exact hc j k fun h ↦ hk h.symm
 
+/-- On a total preorder the accessible worlds at least as close as a given world form a
+sphere. -/
+theorem setOf_le_mem_spheres (htot : Std.Total (ord i).le) (j : W) :
+    {x ∈ access i | (ord i).le x j} ∈ spheres access ord i := by
+  refine ⟨fun x hx ↦ hx.1, fun x hx k hk hkS ↦ ?_⟩
+  have hjk : ¬ (ord i).le k j := fun h ↦ hkS ⟨hk, h⟩
+  exact ((ord i).lt_iff_le_not_ge _ _).2 ⟨(ord i).le_trans _ _ _ hx.2
+    ((htot.total k j).resolve_left hjk), fun hkx ↦ hjk ((ord i).le_trans _ _ _ hkx hx.2)⟩
+
 /-- On a total preorder, *if p, q* holds when no sphere contains a `p`-world, or some sphere
 contains one and `q` holds at every `p`-world in it (§1.3). -/
 theorem mem_variablyStrictImp_iff_spheres (htot : Std.Total (ord i).le) :
@@ -121,11 +132,8 @@ theorem mem_variablyStrictImp_iff_spheres (htot : Std.Total (ord i).le) :
     · exact .inl fun S hS ↦ Set.disjoint_iff_inter_eq_empty.2
         (subset_empty_iff.1 (he ▸ inter_subset_inter_left p hS.1))
     obtain ⟨b, hb, -, hbq⟩ := h u hu
-    refine .inr ⟨{x ∈ access i | (ord i).le x b}, ⟨fun x hx ↦ hx.1, fun j hj k hk hkS ↦ ?_⟩,
-      ⟨b, ⟨hb.1, (ord i).le_refl b⟩, hb.2⟩, fun x hx ↦ hbq x ⟨hx.1.1, hx.2⟩ hx.1.2⟩
-    have hbk : ¬ (ord i).le k b := fun h ↦ hkS ⟨hk, h⟩
-    refine ((ord i).lt_iff_le_not_ge _ _).2 ⟨(ord i).le_trans _ _ _ hj.2
-      ((htot.total k b).resolve_left hbk), fun hkj ↦ hbk ((ord i).le_trans _ _ _ hkj hj.2)⟩
+    exact .inr ⟨_, setOf_le_mem_spheres htot b, ⟨b, ⟨hb.1, (ord i).le_refl b⟩, hb.2⟩,
+      fun x hx ↦ hbq x ⟨hx.1.1, hx.2⟩ hx.1.2⟩
   · rintro (h | ⟨S, hS, ⟨x, hxS, hxp⟩, hSq⟩) u hu
     · exact absurd hu.2 (Set.disjoint_left.1 (h _ ⟨subset_rfl, fun _ _ k hk hkS ↦
         absurd hk hkS⟩) hu.1)
@@ -134,6 +142,29 @@ theorem mem_variablyStrictImp_iff_spheres (htot : Std.Total (ord i).le) :
         hSq ⟨mem_of_mem_spheres hS huS hc.1 hcu, hc.2⟩⟩
     · exact ⟨x, ⟨hS.1 hxS, hxp⟩, ((ord i).lt_iff_le_not_ge _ _).1 (hS.2 x hxS u hu.1 huS) |>.1,
         fun c hc hcx ↦ hSq ⟨mem_of_mem_spheres hS hxS hc.1 hcx, hc.2⟩⟩
+
+/-! ### Comparative possibility (§2.5) -/
+
+/-- On a total preorder Lewis's truth condition for comparative possibility, that every sphere
+containing a `q`-world contains a `p`-world, says that the accessible `p`-worlds are at least as
+possible as the accessible `q`-worlds under the similarity order (§2.5, p. 53). -/
+theorem forall_spheres_iff_lewis (htot : Std.Total (ord i).le) :
+    (∀ S ∈ spheres access ord i, (S ∩ q).Nonempty → (S ∩ p).Nonempty) ↔
+      ComparativePossibility.Lewis (ord i).le (access i ∩ p) (access i ∩ q) := by
+  refine ⟨fun h b hb ↦ ?_, fun h S hS ⟨b, hbS, hbq⟩ ↦ ?_⟩
+  · obtain ⟨a, ⟨ha, hab⟩, hap⟩ := h _ (setOf_le_mem_spheres htot b)
+      ⟨b, ⟨hb.1, (ord i).le_refl b⟩, hb.2⟩
+    exact ⟨a, ⟨ha, hap⟩, hab⟩
+  · obtain ⟨a, ⟨ha, hap⟩, hab⟩ := h ⟨hS.1 hbS, hbq⟩
+    exact ⟨a, mem_of_mem_spheres hS hbS ha hab, hap⟩
+
+/-- On a total preorder *if p, q* holds when no accessible world is a `p`-world or the `p ∧ q`
+worlds are more possible than the `p ∧ ¬q` worlds, Lewis's definition of the counterfactual from
+comparative possibility (§2.5, p. 53). -/
+theorem mem_variablyStrictImp_iff_asymmRel_lewis (htot : Std.Total (ord i).le) :
+    i ∈ variablyStrictImp access ord p q ↔ access i ∩ p = ∅ ∨
+      AsymmRel (ComparativePossibility.Lewis (ord i).le) (access i ∩ p ∩ q) ((access i ∩ p) \ q) :=
+  mem_necessityFilter_iff_asymmRel_lewis htot
 
 /-! ### Sobel sequences
 

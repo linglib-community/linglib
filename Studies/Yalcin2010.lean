@@ -58,7 +58,7 @@ the probability space account validates V1–V12 and none of I1–I3 or E1.
 
 namespace Yalcin2010
 
-open ComparativeProbability Modality MeasureTheory ProbabilityTheory
+open ComparativeProbability ComparativePossibility Modality MeasureTheory ProbabilityTheory
 
 /-! ### §3: the relative likelihood approach
 
@@ -75,7 +75,7 @@ instance : IsPreorder W (premisePreorder O).le where
 
 /-- On Kratzer's account `A` is at least as likely as `B` when every world of `B` is matched by
 an at least as high world of `A`. -/
-abbrev likelihood : Set W → Set W → Prop := LewisLift (premisePreorder O).le
+abbrev likelihood : Set W → Set W → Prop := Lewis (premisePreorder O).le
 
 /-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
@@ -153,7 +153,7 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
 theorem kratzer_V9 (w : W) : ChancyModusTollens (likelihood O) (ifThen O · · w) :=
   chancyModusTollens_iff.2 (kratzer_V8 O w)
 
-theorem kratzer_I1 : RightUnion (likelihood O) := rightUnion_lewisLift
+theorem kratzer_I1 : RightUnion (likelihood O) := rightUnion_lewis
 
 theorem kratzer_I2 : EquiprobabilityCollapse (likelihood O) :=
   equiprobabilityCollapse_of_rightUnion (kratzer_I1 O)

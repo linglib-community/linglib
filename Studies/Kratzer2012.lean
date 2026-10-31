@@ -43,7 +43,7 @@ exists, rather than as an extra coordinate. Counterparts are identified with the
 status, since the model has no other individuals.
 
 The toy examples' worlds are `Fin 4`, the index of `wᵢ` being `i`, and all of them are
-accessible, so comparative possibility is `KratzerLift` of the induced ordering with no modal
+accessible, so comparative possibility is `Kratzer` of the induced ordering with no modal
 base to restrict it. The chapter states the rankings `O₁` and `O₂` of §2.5 directly; here they are
 induced by nested ordering sources, and `O₁` is the ranking of §2.4. The general results of
 §2.4–§2.5 are Kratzer's question and caveats answered for these operators rather than theorems the
@@ -114,7 +114,7 @@ theorem must_of_reliable {W : Type*} (rumor chief reliable : W → Prop) (f : Ba
 
 /-! ### Grades of possibility (§2.4–§2.5)
 
-Comparative possibility on a ranking of worlds is the revised lift `KratzerLift`, which compares
+Comparative possibility on a ranking of worlds is the revised lift `Kratzer`, which compares
 two propositions only on the worlds where they differ. Along a ranking without ties, the
 probability measures that preserve it are those in which each world outweighs all worse worlds
 together, and once two worlds are unranked with a third not above them, no measure giving that
@@ -124,7 +124,7 @@ instances on four worlds. -/
 
 namespace Grades
 
-open MeasureTheory ComparativeProbability
+open MeasureTheory ComparativeProbability ComparativePossibility
 open scoped ENNReal
 
 section Measures
@@ -154,10 +154,10 @@ theorem Superincreasing.measure_lt_iff [LinearOrder α] [Finite α] (hμ : Super
 variable [MeasurableSingletonClass α] [IsFiniteMeasure μ]
 
 -- p. 41
-theorem not_kratzerLift_iff_measure_le {r : α → α → Prop} {a b c : α}
-    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) (hab' : ¬ (r a b ∧ ¬ r b a))
-    (hba : ¬ (r b a ∧ ¬ r a b)) (hca : ¬ (r c a ∧ ¬ r a c)) (hc : μ {c} ≠ 0) :
-    ¬ ∀ A B : Set α, KratzerLift r A B ↔ μ B ≤ μ A := by
+theorem not_kratzer_iff_measure_le {r : α → α → Prop} {a b c : α}
+    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) (hab' : ¬ AsymmRel r a b)
+    (hba : ¬ AsymmRel r b a) (hca : ¬ AsymmRel r c a) (hc : μ {c} ≠ 0) :
+    ¬ ∀ A B : Set α, Kratzer r A B ↔ μ B ≤ μ A := by
   intro h
   have ha : a ∉ ({b, c} : Set α) := by simp [hab, hac]
   have h₁ : μ {a} ≤ μ {b} :=
@@ -176,12 +176,12 @@ private theorem measure_le_iff_diff (A B : Set α) : μ B ≤ μ A ↔ μ (B \ A
     ← measure_inter_add_sdiff A (Set.toFinite B).measurableSet, Set.inter_comm,
     ENNReal.add_le_add_iff_left (measure_ne_top μ _)]
 
-theorem kratzerLift_iff_measure_le_iff [LinearOrder α] :
-    (∀ A B : Set α, KratzerLift (· ≥ ·) A B ↔ μ B ≤ μ A) ↔ Superincreasing μ := by
+theorem kratzer_iff_measure_le_iff [LinearOrder α] :
+    (∀ A B : Set α, Kratzer (· ≥ ·) A B ↔ μ B ≤ μ A) ↔ Superincreasing μ := by
   refine ⟨fun h a ↦ not_le.1 fun hle ↦
     (h _ _).2 hle ⟨a, ⟨rfl, lt_irrefl a⟩, fun x hx ↦ ⟨hx.1.le, not_le.2 hx.1⟩⟩, fun hμ A B ↦ ?_⟩
-  have key : ∀ a b : α, (b ≥ a ∧ ¬ a ≥ b) ↔ a < b := fun _ _ ↦ lt_iff_le_not_ge.symm
-  rw [measure_le_iff_diff, ← not_lt, hμ.measure_lt_iff disjoint_sdiff_sdiff, KratzerLift]
+  have key : ∀ a b : α, AsymmRel (· ≥ ·) b a ↔ a < b := fun _ _ ↦ lt_iff_le_not_ge.symm
+  rw [measure_le_iff_diff, ← not_lt, hμ.measure_lt_iff disjoint_sdiff_sdiff, Kratzer]
   simp only [key]
 
 end Measures
@@ -218,11 +218,6 @@ theorem atLeastAsGoodAs_ideal_iff (v w z : World) : (w ≤[ideal v] z) ↔ z ≤
     forall_eq]
   fin_omega
 
-/-- `p` is a better possibility than `q` when it is at least as good a possibility, in the
-revised sense of §2.4, and not conversely. -/
-def BetterPossibility (p q : Set World) : Prop :=
-  KratzerLift (premisePreorder (ideal 0)).le p q ∧ ¬ KratzerLift (premisePreorder (ideal 0)).le q p
-
 /-- Kratzer's probability measure gives `wᵢ` the probability `2ⁱ/15`. -/
 noncomputable def prob : Measure World :=
   ∑ i : World, (2 ^ (i : ℕ) / 15 : ℝ≥0∞) • Measure.dirac i
@@ -244,12 +239,14 @@ theorem superincreasing_prob : Superincreasing prob := by
   revert a
   decide
 
--- p. 43
-theorem betterPossibility_iff (p q : Set World) : BetterPossibility p q ↔ prob q < prob p := by
+-- p. 43: `p` is a better possibility than `q` (p. 41) when it is at least as good a possibility
+-- in the revised sense and not conversely.
+theorem betterPossibility_iff (p q : Set World) :
+    AsymmRel (Kratzer (premisePreorder (ideal 0)).le) p q ↔ prob q < prob p := by
   have hr : (premisePreorder (ideal 0)).le = (· ≥ ·) :=
     funext₂ fun w z ↦ propext (atLeastAsGoodAs_ideal_iff 0 w z)
-  have h := kratzerLift_iff_measure_le_iff.2 superincreasing_prob
-  rw [BetterPossibility, hr, h, h, lt_iff_le_not_ge]
+  have h := kratzer_iff_measure_le_iff.2 superincreasing_prob
+  rw [AsymmRel, hr, h, h, lt_iff_le_not_ge]
 
 /-! #### The rankings of §2.5 -/
 
@@ -381,11 +378,11 @@ theorem humanPossibility_tied_iff_probTied (p : World → Prop) :
   simp
 
 -- p. 46
-theorem not_kratzerLift_tied_iff (μ : Measure World) [IsFiniteMeasure μ] (h : μ {1} ≠ 0) :
-    ¬ ∀ A B : Set World, KratzerLift (premisePreorder (tied 0)).le A B ↔ μ B ≤ μ A := by
-  refine not_kratzerLift_iff_measure_le (a := 2) (b := 3) (c := 1) (by decide) (by decide)
+theorem not_kratzer_tied_iff (μ : Measure World) [IsFiniteMeasure μ] (h : μ {1} ≠ 0) :
+    ¬ ∀ A B : Set World, Kratzer (premisePreorder (tied 0)).le A B ↔ μ B ≤ μ A := by
+  refine not_kratzer_iff_measure_le (a := 2) (b := 3) (c := 1) (by decide) (by decide)
     (by decide) ?_ ?_ ?_ h <;>
-  simp [Preorder.ofCriteria_le_iff, tied]
+  simp [AsymmRel, Preorder.ofCriteria_le_iff, tied]
 
 end Grades
 

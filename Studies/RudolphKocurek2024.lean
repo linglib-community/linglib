@@ -63,7 +63,7 @@ bounded linear order on which the revised comparative is the comparative of degr
 namespace RudolphKocurek2024
 
 open FirstOrder FirstOrder.Language
-open ComparativeProbability
+open ComparativeProbability ComparativePossibility
 
 /-! ### Semantic orderings -/
 
@@ -168,19 +168,20 @@ fails. -/
 def coneDiff (le : W → W → Prop) (P Q : W → Prop) (i : W) : Set W :=
   {x | le x i ∧ P x ∧ ¬ Q x}
 
-theorem strict_lewisLift_iff_below {below : W → W → Prop}
+theorem asymmRel_lewis_iff_below {below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (A B : Set W) :
-    AsymmRel (LewisLift ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
-  rw [strict_lewisLift_iff hTotal]
+    AsymmRel (Lewis ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
+  have : Std.Total ge_w := ⟨hTotal⟩
+  rw [asymmRel_lewis_iff]
   exact exists_congr fun a ↦ and_congr_right fun _ ↦ forall₂_congr fun b _ ↦ (hBelow b a).symm
 
-theorem coneStrictLift_iff_strict_lewisLift {le below : W → W → Prop}
+theorem coneStrictLift_iff_asymmRel_lewis {le below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (P Q : W → Prop) (i : W) :
     ConeStrictLift le below P Q i ↔
-      AsymmRel (LewisLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
-  rw [strict_lewisLift_iff_below hTotal hBelow]
+      AsymmRel (Lewis ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
+  rw [asymmRel_lewis_iff_below hTotal hBelow]
   unfold ConeStrictLift coneDiff
   simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
 
@@ -506,12 +507,12 @@ theorem ComparativeFree.realize_congr :
   | .sup _ _, h => or_congr (ComparativeFree.realize_congr h.1) (ComparativeFree.realize_congr h.2)
   | .comp _ _, h => h.elim
 
-theorem realize_comp_iff_strict_lewisLift :
+theorem realize_comp_iff_asymmRel_lewis :
     Realize interp (.comp A B) ord.le i w ↔
-    AsymmRel (LewisLift (flip ord.le))
+    AsymmRel (Lewis (flip ord.le))
       (coneDiff ord.le (Realize interp A ord.le · w) (Realize interp B ord.le · w) i)
       (coneDiff ord.le (Realize interp B ord.le · w) (Realize interp A ord.le · w) i) :=
-  coneStrictLift_iff_strict_lewisLift (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl) _ _ _
+  coneStrictLift_iff_asymmRel_lewis (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl) _ _ _
 
 theorem not_realize_comp_self : ¬ Realize interp (.comp A A) le i w :=
   fun ⟨_, _, hA, hnA, _⟩ ↦ hnA hA
@@ -727,24 +728,24 @@ section ModifierGroundings
 variable (φ ψ : ComparativeFormula L E) (ord : SemanticOrdering I)
   (d : DistanceFunction I ord) (i : I) (w : W)
 
-theorem evalMuchMore_iff_strict_lewisLift :
+theorem evalMuchMore_iff_asymmRel_lewis :
     EvalMuchMore interp φ ψ ord d i w ↔
     AsymmRel
-      (LewisLift (fun a b ↦ ¬ FarBelow ord d a b))
+      (Lewis (fun a b ↦ ¬ FarBelow ord d a b))
       (coneDiff ord.le (Eval interp φ ord · w) (Eval interp ψ ord · w) i)
       (coneDiff ord.le (Eval interp ψ ord · w) (Eval interp φ ord · w) i) :=
-  coneStrictLift_iff_strict_lewisLift
+  coneStrictLift_iff_asymmRel_lewis
     (fun a b ↦ not_farBelow_total d a b)
     (fun _ _ ↦ ⟨fun h ↦ ⟨FarBelow.asymm d h, not_not_intro h⟩,
       fun h ↦ not_not.mp h.2⟩) _ _ i
 
-theorem evalMostly_iff_strict_lewisLift :
+theorem evalMostly_iff_asymmRel_lewis :
     EvalMostly interp φ ord d i w ↔
     AsymmRel
-      (LewisLift (fun a b ↦ ord.le b a))
+      (Lewis (fun a b ↦ ord.le b a))
       {x | ord.lt x i ∧ d.close i x ∧ ∀ j, ord.equiv j x → Eval interp φ ord j w}
       {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interp φ ord j w} := by
-  rw [strict_lewisLift_iff_below
+  rw [asymmRel_lewis_iff_below
     (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl)]
   simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
   rfl
