@@ -10,24 +10,21 @@ public import Linglib.Phonology.Prosody.Word
 /-!
 # Phrase-level prosodic structure
 
-The φ and ι layers sit above the prosodic word. A well-formed phrase is a φ-node licensed by
-Layeredness, so a φ over prosodic words, recursive phrases, or stray feet and syllables, the
-free-clitic site of Selkirk (1996); a well-formed utterance is an ι-node over phrases and
-whatever Layeredness admits below them. Recursion and level skipping are admitted at both
-levels, since Nonrecursivity and Exhaustivity are violable (Selkirk 1996; the recursive φ of
-Match Theory, Selkirk 2011). `HeadUnique` is the culminativity of prominence, at most one head
-child per node, the structural hook that Büring's (2015) metrical weak–strong calculus reads
-(Büring 2016). The φ-constituents of an utterance are its maximal φ-projections
-(`maximalProjections`); φ-edges are what demarcative focus reflexes (`Reflex.boundary`)
-realize.
+This file defines the well-formed phonological and intonational phrases of the prosodic tree,
+and culminative prominence at a node. A phrase is a tree rooted in a φ-node whose nodes license
+their daughters by Layeredness. Recursion and level skipping are admitted.
+
+## Main definitions
+
+* `IsPhrase`, `IsUtterance`: well-formed phonological phrases and intonational phrases.
+* `HeadUnique`: at most one child of a node heads it.
 
 ## References
 
-* [selkirk-1996]
-* [selkirk-2011]
-* [ishihara-kalivoda-2022]
-* [buring-2015]
-* [buring-2016]
+* [E. Selkirk, *The Prosodic Structure of Function Words* (1996)][selkirk-1996]
+* [E. Selkirk, *The Syntax-Phonology Interface* (2011)][selkirk-2011]
+* [D. Büring, *Unalternative Semantics* (2015)][buring-2015]
+* [D. Büring, *Intonation and Meaning* (2016)][buring-2016]
 -/
 
 @[expose] public section
@@ -35,13 +32,19 @@ realize.
 namespace Prosody
 
 /-- A well-formed phonological phrase is a licensed tree rooted in a φ-node: a φ over nodes of
-level at most φ. -/
+level at most φ. A stray syllable under the φ is the position of the free clitic of
+[selkirk-1996], and a φ under a φ is the recursive φ-structure that the Match Theory of
+[selkirk-2011] maps syntactic phrases to; Nonrecursivity and Exhaustivity are violable in
+[selkirk-1996]. -/
 abbrev IsPhrase : Tree → Prop := IsConstituent .ph
 
 /-- A well-formed intonational phrase, or utterance, is a licensed tree rooted in an ι-node. -/
 abbrev IsUtterance : Tree → Prop := IsConstituent .iota
 
-/-- Prominence is culminative when at most one child heads its parent. -/
+/-- Prominence is *culminative* at a node when at most one of its children heads it, the
+configuration of one metrically strong daughter beside weak sisters that [buring-2015] annotates
+on phrase markers and that the metrical trees of [buring-2016] carry as a weak–strong relation
+on sisters. -/
 def HeadUnique (t : Tree) : Prop :=
   (t.children.filter (fun c => c.value.isHead)).length ≤ 1
 
