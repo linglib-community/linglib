@@ -334,7 +334,7 @@ theorem mongolian_differs_from_sakha_in_dat_only :
 
 theorem mongolian_derives_no_dative :
     (∀ s ∈ casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false, ∀ p ∈ s,
-      p.2.map (·.1) ≠ some .dat) ∧
+      p.2.value?.map (·.1) ≠ some .dat) ∧
     (casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false).bind (·.valueOf goalD) ≠
       (casesOf BakerVinokurova2010.grammar (BakerVinokurova2010.ditransitiveClause true) false).bind
         (·.valueOf goalD) := by

@@ -105,7 +105,7 @@ def pureChomsky : CaseAssigners where
 /-- Sakha values nothing as unmarked: an NP no rule and no head reaches stays caseless. -/
 theorem no_elsewhere_case {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     (order : List Cat) {xs : List α} {i : ℕ} {x : α} {c : Case} {m : Mechanism}
-    (h : (grammar.assign np probes order xs)[i]? = some (x, some (c, m))) : m ≠ .unmarked := by
+    (h : (grammar.assign np probes order xs)[i]? = some (x, .valued (c, m))) : m ≠ .unmarked := by
   rw [CaseAssigners.assign] at h
   refine mechanism_ne_unmarked_of_assignBy ?_ h
   intro c _
@@ -114,7 +114,7 @@ theorem no_elsewhere_case {α : Type*} (np : α → PhasedNP) (probes : List (Ca
 /-- The Agree-based grammar values nothing dative: a dative NP brought it from the lexicon. -/
 theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hx : xs[i]? = some x)
-    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, some (.dat, m))) :
+    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, .valued (.dat, m))) :
     (np x).lexicalCase = some .dat := by
   rw [CaseAssigners.assign] at h
   rcases hlex : (np x).lexicalCase with _ | c
@@ -124,7 +124,7 @@ theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List
     · obtain ⟨⟨hd, d⟩, -, -, hk⟩ := pureChomsky.mem_probesIn np hp
       revert hk; cases hd <;> simp [pureChomsky]
   · rw [assignBy_getElem?_of_some (lex := fun x ↦ (np x).lexicalCase) hx hlex] at h
-    simp only [Option.some.injEq, Prod.mk.injEq, true_and] at h
+    simp only [Option.some.injEq, Prod.mk.injEq, FeatureSlot.valued_inj, true_and] at h
     rw [h.1]
 
 /-- The Agree-based grammar values an NP accusative only where a `v` probes: in a derivation
@@ -132,7 +132,7 @@ theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List
 theorem pureChomsky_v_of_acc {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism}
     (hlex : (np x).lexicalCase = none)
-    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, some (.acc, m))) :
+    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, .valued (.acc, m))) :
     ∃ d, (Cat.v, d) ∈ probes := by
   rw [CaseAssigners.assign] at h
   obtain rfl := mechanism_eq_agree_of_assignBy (rules := pureChomsky.rules)
@@ -218,7 +218,7 @@ def passiveClause (agent goal : Bool) : Derivation :=
 def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
   d.externalize?.map fun t ↦
     (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead (fun _ ↦ none)
-      (· ≠ proD) xs).map (·.2.map (·.1))
+      (· ≠ proD) xs).map (·.2.value?.map (·.1))
 
 /-! ### Positions -/
 
@@ -244,7 +244,7 @@ def domainOrder : List Cat := [.D, .v, .C]
 /-- The cases of hand-placed NPs, positionally. -/
 def cases (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP) :
     List (Option Case) :=
-  (g.assign id probes domainOrder nps).map (·.2.map (·.1))
+  (g.assign id probes domainOrder nps).map (·.2.value?.map (·.1))
 
 /-! ### The constructions -/
 
@@ -469,7 +469,7 @@ instance (o : Occupant) (v : Option (Case × Mechanism)) : Decidable (Licensed o
     agreement means no NP is. -/
 def Agrees (r : Datum) (out : Valuation Occupant (Case × Mechanism)) : Prop :=
   (r.feature? "agreesWith").isSome → ∀ p ∈ out, p.1.covert = false →
-    (p.2 = some (.nom, .agree) ↔ r.feature? "agreesWith" = p.1.slot.map Slot.key)
+    (p.2 = .valued (.nom, .agree) ↔ r.feature? "agreesWith" = p.1.slot.map Slot.key)
 
 instance (r : Datum) (out : Valuation Occupant (Case × Mechanism)) :
     Decidable (Agrees r out) := by
@@ -481,7 +481,7 @@ instance (r : Datum) (out : Valuation Occupant (Case × Mechanism)) :
 def Derives (g : CaseAssigners) (chomskian : Bool) (r : Datum) (d : List Occupant) :
     Prop :=
   (∀ p ∈ derive g r d, p.1.covert = false →
-    Realizes p.2 p.1.observed ∧ (chomskian = true → Licensed p.1 p.2)) ∧
+    Realizes p.2.value? p.1.observed ∧ (chomskian = true → Licensed p.1 p.2.value?)) ∧
   (chomskian = true → Agrees r (derive g r d))
 
 instance (g : CaseAssigners) (chomskian : Bool) (r : Datum) (d : List Occupant) :

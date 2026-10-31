@@ -67,10 +67,10 @@ variable {α : Type*}
 
 /-- A goal as a head sees it: an NP with its current valuation, at its position among the
 goals the head encounters. -/
-abbrev Goal (α : Type*) := (α × Option (Case × Mechanism)) × ℕ
+abbrev Goal (α : Type*) := (α × FeatureSlot (Case × Mechanism)) × ℕ
 
 /-- The φ-probe relativized to unmarked case: it sees exactly the caseless DPs. -/
-def unmarkedProbe : Probe (Goal α) := Probe.relativized fun g ↦ g.1.2.isNone
+def unmarkedProbe : Probe (Goal α) := Probe.relativized fun g ↦ g.1.2 = .unvalued
 
 /-- The stack (8) over the goals a head encounters in order: the position of the DP assigned
 dependent case, if the first probe finds a caseless DP to unlock the second and the second,
@@ -85,14 +85,15 @@ def assignDep (c : Case) (goals : Valuation α (Case × Mechanism)) :
     Valuation α (Case × Mechanism) :=
   match stack goals with
   | none => goals
-  | some j => goals.zipIdx.map fun g ↦ if g.2 = j then (g.1.1, some (c, .agree)) else g.1
+  | some j => goals.zipIdx.map fun g ↦ if g.2 = j then (g.1.1, .valued (c, .agree)) else g.1
 
 /-- The cases a list of valued NPs carries. -/
-def surface (out : Valuation α (Case × Mechanism)) : List (Option Case) := out.map (·.2.map (·.1))
+def surface (out : Valuation α (Case × Mechanism)) : List (Option Case) :=
+  out.map (·.2.value?.map (·.1))
 
 theorem stack_eq_none_of_subsingleton {goals : Valuation α (Case × Mechanism)}
     (h : ∀ i j, ∀ g ∈ goals.zipIdx, ∀ g' ∈ goals.zipIdx, g.2 = i → g'.2 = j →
-      g.1.2 = none → g'.1.2 = none → i = j) :
+      g.1.2 = .unvalued → g'.1.2 = .unvalued → i = j) :
     stack goals = none := by
   unfold stack
   rcases hs : unmarkedProbe.search goals.zipIdx with _ | g
@@ -102,7 +103,7 @@ theorem stack_eq_none_of_subsingleton {goals : Valuation α (Case × Mechanism)}
     intro g' hg' hne hvis
     have hg := Probe.mem_of_search_eq_some hs
     have hv := Probe.sat_of_search_eq_some hs
-    simp only [unmarkedProbe, Probe.relativized, Option.isNone_iff_eq_none] at hv hvis
+    simp only [unmarkedProbe, Probe.relativized] at hv hvis
     exact hne (h g'.2 g.2 g' hg' g hg rfl rfl hvis hv)
 
 theorem stack_ne_unlocker {goals : Valuation α (Case × Mechanism)} {g : Goal α} {j : ℕ}
@@ -163,14 +164,14 @@ inductive Arg
 /-- The goals V meets: its complement, the direct object, then its specifier, the indirect
 object. -/
 def Shape.vGoals (s : Shape) : Valuation Arg (Case × Mechanism) :=
-  (s.dobj.map fun _ ↦ (Arg.DO, (none : Option (Case × Mechanism)))).toList ++
-    (if s.io then [(.IO, none)] else [])
+  (s.dobj.map fun _ ↦ (Arg.DO, (.unvalued : FeatureSlot (Case × Mechanism)))).toList ++
+    (if s.io then [(.IO, .unvalued)] else [])
 
 /-- The goals T meets after V's stack has run: the external argument, then the direct object if
 it has shifted out of VP; the indirect object stays in the VP phase. -/
 def Shape.tGoals (s : Shape) (vp : Valuation Arg (Case × Mechanism)) :
     Valuation Arg (Case × Mechanism) :=
-  (if s.ea then [(.EA, none)] else []) ++
+  (if s.ea then [(.EA, .unvalued)] else []) ++
     (if s.dobj = some true then vp.filter (·.1 = .DO) else [])
 
 /-- The case of an argument after the dative stack on V and the accusative stack on T
@@ -204,7 +205,7 @@ theorem sakha_eq_bakerVinokurova (s : Shape) :
 /-- The goals of T's accusative stack in (15), (18) and (20): another caseless DP, if any, then
 the DP in question, if accessible to T. -/
 def tGoals (licensor accessible : Bool) : Valuation Arg (Case × Mechanism) :=
-  (if licensor then [(.EA, none)] else []) ++ (if accessible then [(.DO, none)] else [])
+  (if licensor then [(.EA, .unvalued)] else []) ++ (if accessible then [(.DO, .unvalued)] else [])
 
 /-- A row's accusative marking, accessibility, and licensor, read from its features. -/
 def interpret (r : Datum) : Option (Bool × Bool × Bool) := do

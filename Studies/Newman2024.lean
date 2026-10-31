@@ -480,7 +480,7 @@ def caseOf (es : List Transitive) (a : Transitive) : Option Case :=
     | [] => [.obj]
   match ((r.unmarkedPass (fun _ ↦ true) <| r.dependentPass (fun _ ↦ true) <|
       Case.lexicalValuation (fun _ ↦ none) dom).lookup a) with
-  | some v => v.map (·.1)
+  | some k => k.value?.map (·.1)
   | none => r.unmarked
 
 /-- Voice's φ-probe, spelled out as Set A, agrees with the closest argument. -/
