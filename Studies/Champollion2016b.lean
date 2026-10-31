@@ -2,39 +2,39 @@ module
 
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Semantics.Composition.Coordination
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Syntax.Command
 public import Linglib.Fragments.English.Coordination
 public import Mathlib.Data.Set.Card
-public import Mathlib.Data.Set.Sups
 
 /-!
 # Champollion (2016): Ten Men and Women Got Married Today: Noun Coordination and the Intersective Theory of Conjunction
 
 This file derives the collective readings of noun coordination from the intersective *and*, on
-the paper's logical forms. A plurality is a set, a raised noun an upper set of pluralities, and
-Minimization of the meet of two raised nouns keeps [the minimal elements of the set product of
-their generators](##minimal_mem_inter_upperClosure_iff), the collective *and* of Heycock and
-Zamparelli. With Choice Closure above Minimization, [*a doctor and lawyer met* holds of any
-doctor–lawyer pair](##holds_lf56) and [*ten men and women got married* of ten-person man–woman
-mixtures](##holds_lf81); above *no* it [gives a reading the constraint on its scope
-excludes](##not_closureBelowNo_lf61). [*Or* is never collective](##minimal_mem_union_some_iff),
-and the collective entry [overgenerates on conjuncts that are not upward
-entailing](##sups_noMan_noWoman).
+the paper's logical forms. A raised noun is a quantifier over pluralities, and Minimization keeps
+its minimal witness sets, which for the meet of two raised nouns are [the minimal elements of the
+set product of their generators](##minimal_mem_inter_upperClosure_iff), the collective *and* of
+Heycock and Zamparelli. With Choice Closure above Minimization, [*a doctor and lawyer met* holds
+of any doctor–lawyer pair](##holds_lf56) and [*ten men and women got married* of ten-person
+man–woman mixtures](##holds_lf81); above *no* it [gives a reading the constraint on its scope
+excludes](##not_closureBelowNo_lf61). [*Or* is never collective](##minimal_some_sup_some_iff),
+[*every* gives *and* and *or* one reading](##holds_lf95_iff_holds_lf96), and the collective entry
+[overgenerates on conjuncts that are not upward entailing](##sups_noMan_noWoman).
 
 ## Implementation notes
 
-* A plurality is a `Set E` and a property of pluralities a `Set (Set E)`. The determiner *a*,
-  which is Existential Raising, is `Quantifier.Det.some`, the Montague lift is
-  `Quantifier.individual`, Distributive Choice Raising is the principal filter `Set.Ici`, and
-  Predicate Distributivity is `𝒫 S \ {∅}`.
+* A plurality is a `Set E` and a property of pluralities a `Quantifier E`. Existential Raising is
+  *a* (`Quantifier.Det.some`) at the type of its argument, Minimization is `Minimal`, Choice
+  Raising the Montague lift `Quantifier.individual` of the chosen member, Distributive Choice
+  Raising *every* on the chosen plurality, and Predicate Distributivity `𝒫 S \ {∅}`.
 * The logical forms are trees interpreted by the composition engine under a typing of the
-  indices. *And* and *or* are the English coordinators at the type of their coordinands, a trace
-  of a choice-function index applied to a noun is the chosen individual or plurality, and Choice
-  Closure binds the index by Predicate Abstraction. It ranges over `ChoiceFunction`, whose totality
-  turns the definedness condition `N ≠ ∅` of Choice Raising into a hypothesis.
+  indices. *A*, *no*, *every*, *and* and *or* each have one entry, typed by a parameter, and
+  Choice Closure one for each of the two types at which the paper uses (48), over choice functions
+  on the type it binds. Their totality turns the definedness condition `N ≠ ∅` of Choice Raising
+  into a hypothesis.
 * Heycock and Zamparelli's common nouns denote sets of singletons. Their counterexamples are stated
   for the individuals those singletons contain, which the singleton map carries over since it
   preserves unions.
@@ -58,6 +58,7 @@ The split scope of indefinite numerals and Winter's pair semantics are not forma
 * [winter-2001b]
 * [heycock-zamparelli-2005]
 * [bergmann-1982]
+* [barwise-cooper-1981]
 -/
 
 @[expose] public section
@@ -66,7 +67,7 @@ namespace Champollion2016b
 
 open Quantifier Set SetFamily
 
-variable {α E : Type*}
+variable {E : Type*}
 
 /-- **Determiner Fitting** (92) applies a determiner of individuals to the union of a property
 of pluralities and to the union of its meet with the scope. -/
@@ -74,22 +75,10 @@ def determinerFitting (D : Det E) (A B : Set (Set E)) : Prop := D (⋃₀ A) (�
 
 /-! ### Raised nouns and Minimization -/
 
--- (12), (13)
-theorem setOf_some_eq_upperClosure (N : Set α) :
-    {P | Det.some N P} = upperClosure ((fun x ↦ ({x} : Set α)) '' N) := by
-  ext P; simp [Det.some, Set.Nonempty]
-
-theorem setOf_some_union (N N' : Set α) :
-    {P | Det.some (N ∪ N') P} = {P | Det.some N P} ∪ {P | Det.some N' P} := by
-  ext P; simp [Det.some, union_inter_distrib_right, union_nonempty]
-
-theorem setOf_individual (x : E) : {P : Set E | individual x P} = Ici {x} := by
-  ext P; exact (singleton_subset_iff (a := x) (s := P)).symm
-
 -- (78), (79)
-theorem Ici_eq_setOf_mem_powerset {M : Set E} (h : M.Nonempty) :
-    Ici M = {P | M ∈ 𝒫 P \ {∅}} := by
-  ext P; exact (and_iff_left h.ne_empty).symm
+theorem every_iff_mem_powerset {M P : Set E} (h : M.Nonempty) :
+    Det.every M P ↔ M ∈ 𝒫 P \ {∅} :=
+  (and_iff_left h.ne_empty).symm
 
 theorem image_singleton_sups (N N' : Set E) :
     (fun x ↦ ({x} : Set E)) '' N ⊻ (fun x ↦ ({x} : Set E)) '' N' =
@@ -102,30 +91,13 @@ theorem image_singleton_sups (N N' : Set E) :
   · rintro ⟨x, hx, y, hy, rfl⟩
     exact ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩
 
-/-- Minimization of the meet of two upper closures keeps the minimal elements of the set product
-of their generators, the collective conjunction of Heycock and Zamparelli (101), p. 608. -/
-theorem minimal_mem_inter_upperClosure_iff [SemilatticeSup α] {s t : Set α} {a : α} :
-    Minimal (· ∈ (upperClosure s : Set α) ∩ upperClosure t) a ↔ Minimal (· ∈ s ⊻ t) a := by
-  rw [← UpperSet.coe_sup, ← upperClosure_sups]
-  exact minimal_mem_upperClosure_iff
-
--- (42)
-theorem minimal_mem_some_iff {N P : Set E} :
-    Minimal (· ∈ {Q | Det.some N Q}) P ↔ ∃ x ∈ N, P = {x} := by
-  have hanti : IsAntichain (· ≤ ·) ((fun x ↦ ({x} : Set E)) '' N) := by
-    rintro _ ⟨x, -, rfl⟩ _ ⟨y, -, rfl⟩ hne hle
-    exact hne (by rw [singleton_subset_singleton.mp hle])
-  rw [setOf_some_eq_upperClosure]
-  refine minimal_mem_upperClosure_iff.trans ?_
-  rw [hanti.minimal_mem_iff]
-  simp [eq_comm]
-
 -- p. 580
-theorem minimal_mem_inter_some_iff {N N' P : Set E} :
-    Minimal (· ∈ {Q | Det.some N Q} ∩ {Q | Det.some N' Q}) P ↔
+theorem minimal_some_inf_some_iff {N N' P : Set E} :
+    Minimal (Det.some N ⊓ Det.some N') P ↔
       (∃ x ∈ N ∩ N', P = {x}) ∨ ∃ x ∈ N \ N', ∃ y ∈ N' \ N, P = {x, y} := by
-  rw [setOf_some_eq_upperClosure, setOf_some_eq_upperClosure, minimal_mem_inter_upperClosure_iff,
-    image_singleton_sups]
+  show Minimal (· ∈ {Q | Det.some N Q} ∩ {Q | Det.some N' Q}) P ↔ _
+  rw [Det.setOf_some_eq_upperClosure, Det.setOf_some_eq_upperClosure,
+    minimal_mem_inter_upperClosure_iff, image_singleton_sups]
   refine ⟨?_, ?_⟩
   · rintro ⟨⟨x, hx, y, hy, rfl⟩, hmin⟩
     by_cases hxN' : x ∈ N'
@@ -149,41 +121,32 @@ theorem minimal_mem_inter_some_iff {N N' P : Set E} :
       exact le_rfl
 
 -- (10), (20)
-theorem minimal_mem_inter_some_iff_of_disjoint {N N' P : Set E} (h : Disjoint N N') :
-    Minimal (· ∈ {Q | Det.some N Q} ∩ {Q | Det.some N' Q}) P ↔ ∃ x ∈ N, ∃ y ∈ N', P = {x, y} := by
-  rw [minimal_mem_inter_some_iff, disjoint_iff_inter_eq_empty.mp h, sdiff_eq_left.mpr h,
+theorem minimal_some_inf_some_iff_of_disjoint {N N' P : Set E} (h : Disjoint N N') :
+    Minimal (Det.some N ⊓ Det.some N') P ↔ ∃ x ∈ N, ∃ y ∈ N', P = {x, y} := by
+  rw [minimal_some_inf_some_iff, disjoint_iff_inter_eq_empty.mp h, sdiff_eq_left.mpr h,
     sdiff_eq_left.mpr h.symm]
   simp
 
 -- (43)
-theorem minimal_mem_individual_inter_some_iff {N P : Set E} {j : E} (hj : j ∈ N) :
-    Minimal (· ∈ {Q | individual j Q} ∩ {Q | Det.some N Q}) P ↔ P = {j} := by
-  have : {Q : Set E | individual j Q} = {Q | Det.some {j} Q} := by
-    ext Q; simp [individual, Det.some]
-  rw [this, minimal_mem_inter_some_iff]
+theorem minimal_individual_inf_some_iff {N P : Set E} {j : E} (hj : j ∈ N) :
+    Minimal (individual j ⊓ Det.some N) P ↔ P = {j} := by
+  rw [show individual j = Det.some {j} by funext Q; simp [individual, Det.some],
+    minimal_some_inf_some_iff]
   simp [hj]
 
-theorem minimal_mem_Ici_inter_Ici_iff [Lattice α] {a b c : α} :
-    Minimal (· ∈ Ici a ∩ Ici b) c ↔ c = a ⊔ b := by
-  rw [Ici_inter_Ici]
-  exact minimal_ge_iff
-
 -- (40)
-theorem minimal_mem_inter_individual_iff {x y : E} {P : Set E} :
-    Minimal (· ∈ {Q | individual x Q} ∩ {Q | individual y Q}) P ↔ P = {x, y} := by
-  rw [setOf_individual, setOf_individual, minimal_mem_Ici_inter_Ici_iff, ← singleton_union]
-  rfl
+theorem minimal_individual_inf_individual_iff {x y : E} {P : Set E} :
+    Minimal (individual x ⊓ individual y) P ↔ P = {x, y} := by
+  rw [individual_eq_every, individual_eq_every, ← Det.every_union, Det.minimal_every_iff,
+    singleton_union]
 
 -- (57)
-theorem exists₂_minimal_mem_inter_individual_iff {N N' P : Set E} (hN : N.Nonempty)
+theorem exists₂_minimal_individual_inf_individual_iff {N N' P : Set E} (hN : N.Nonempty)
     (hN' : N'.Nonempty) :
-    (∃ f₁ f₂ : ChoiceFunction E,
-      Minimal (· ∈ {Q | individual (f₁ N) Q} ∩ {Q | individual (f₂ N') Q}) P) ↔
+    (∃ f₁ f₂ : ChoiceFunction E, Minimal (individual (f₁ N) ⊓ individual (f₂ N')) P) ↔
       ∃ x ∈ N, ∃ y ∈ N', P = {x, y} := by
-  simp only [minimal_mem_inter_individual_iff]
-  exact (ChoiceFunction.exists_apply_iff_some hN fun x ↦
-    ∃ f₂ : ChoiceFunction E, P = {x, f₂ N'}).trans (exists_congr fun x ↦
-      and_congr_right fun _ ↦ ChoiceFunction.exists_apply_iff_some hN' fun y ↦ P = {x, y})
+  simp only [minimal_individual_inf_individual_iff]
+  exact ChoiceFunction.exists₂_apply_iff hN hN' fun x y ↦ P = {x, y}
 
 /-! ### Plurals -/
 
@@ -209,30 +172,29 @@ theorem ncard_inter_union_of_exactly {N N' P : Set E} (h : Disjoint N N') {n : �
     (finite_of_ncard_ne_zero (h₁ ▸ hn)) (finite_of_ncard_ne_zero (h₂ ▸ hn)), h₁, h₂]
 
 -- (75), (76)
-theorem ncard_le_two_of_minimal_mem_inter_some {N N' P : Set E}
-    (hP : Minimal (· ∈ {Q | Det.some N Q} ∩ {Q | Det.some N' Q}) P) : P.ncard ≤ 2 := by
-  rcases minimal_mem_inter_some_iff.1 hP with ⟨x, -, rfl⟩ | ⟨x, -, y, -, rfl⟩
+theorem ncard_le_two_of_minimal_some_inf_some {N N' P : Set E}
+    (hP : Minimal (Det.some N ⊓ Det.some N') P) : P.ncard ≤ 2 := by
+  rcases minimal_some_inf_some_iff.1 hP with ⟨x, -, rfl⟩ | ⟨x, -, y, -, rfl⟩
   · simp
   · exact (ncard_insert_le x {y}).trans (by simp)
 
 -- (80)
-theorem exists₂_minimal_mem_Ici_inter_Ici_iff {N N' : Set (Set E)} {P : Set E}
+theorem exists₂_minimal_every_inf_every_iff {N N' : Set (Set E)} {P : Set E}
     (hN : N.Nonempty) (hN' : N'.Nonempty) :
-    (∃ f₁ f₂ : ChoiceFunction (Set E), Minimal (· ∈ Ici (f₁ N) ∩ Ici (f₂ N')) P) ↔
+    (∃ f₁ f₂ : ChoiceFunction (Set E), Minimal (Det.every (f₁ N) ⊓ Det.every (f₂ N')) P) ↔
       P ∈ N ⊻ N' := by
-  simp only [minimal_mem_Ici_inter_Ici_iff, mem_sups]
-  exact (ChoiceFunction.exists_apply_iff_some hN fun M ↦
-    ∃ f₂ : ChoiceFunction (Set E), P = M ⊔ f₂ N').trans (exists_congr fun M ↦
-      and_congr_right fun _ ↦ (ChoiceFunction.exists_apply_iff_some hN' fun W ↦
-        P = M ⊔ W).trans (exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm))
+  simp only [← Det.every_union, Det.minimal_every_iff, mem_sups]
+  exact (ChoiceFunction.exists₂_apply_iff hN hN' fun M W ↦ P = M ∪ W).trans <|
+    exists_congr fun _ ↦ and_congr_right fun _ ↦ exists_congr fun _ ↦
+      and_congr_right fun _ ↦ eq_comm
 
-/-! ### *And*, *or* and Determiner Fitting -/
+/-! ### *Or* and Determiner Fitting -/
 
 /-- Minimization after Existential Raising of a disjunction keeps only singletons, so *or* is
 never collective (§6.2). -/
-theorem minimal_mem_union_some_iff {N N' P : Set E} :
-    Minimal (· ∈ {Q | Det.some N Q} ∪ {Q | Det.some N' Q}) P ↔ ∃ x ∈ N ∪ N', P = {x} := by
-  rw [← setOf_some_union, minimal_mem_some_iff]
+theorem minimal_some_sup_some_iff {N N' P : Set E} :
+    Minimal (Det.some N ⊔ Det.some N') P ↔ ∃ x ∈ N ∪ N', P = {x} := by
+  rw [← Det.some_union, Det.minimal_some_iff]
 
 -- p. 604
 theorem determinerFitting_some_iff {A B : Set (Set E)} (hB : ∅ ∉ B) :
@@ -292,8 +254,8 @@ theorem determinerFitting_some_pairs_iff (N N' V : Set E) :
 
 /-! ### Logical forms
 
-The composition engine interprets the paper's logical forms, and the theorems below give the
-truth conditions of each. -/
+The composition engine interprets the paper's logical forms, written in labelled brackets, and
+the theorems below give the truth conditions of each. -/
 
 section LogicalForms
 
@@ -302,165 +264,139 @@ open Montague PhraseStructure Tree English.Coordination
 variable {E : Type} {N N' V : Set E} {R S : Set (Set E)}
 
 /-- The words of the logical forms: two nouns, a predicate of individuals, a relative clause and
-a verb phrase that are predicates of pluralities, the numerals, the determiners and coordinators,
-and the silent operators. A word the paper uses at the types of individuals and of pluralities
-has one entry for each. -/
+a verb phrase that are predicates of pluralities, the numerals, and the overt and silent
+operators, those the paper uses at several types typed by a parameter. -/
 inductive Word where
   | noun₁ | noun₂ | atom | relative | vp
   | numeral (n : ℕ)
-  | a | aPlural | noPlural | every | dfit
-  | and | or | orNoun
-  | min | cr | dcr | pdist
-  | choiceClosure | choiceClosureSentence | choiceClosurePlural | choiceClosurePluralSentence
+  | a (σ : Ty) | no (σ : Ty) | every (σ : Ty) | and (τ : Ty) | or (τ : Ty)
+  | dfit | min | cr | dcr | pdist
+  | choiceClosure (σ : Ty) | choiceClosureSentence (σ : Ty)
   deriving DecidableEq
 
 /-- The type of an index: `1` and `2` range over choice functions on individuals, the others over
 choice functions on pluralities. -/
-def indexTy (n : ℕ) : Ty := if n ≤ 2 then (.e ⇒ .t) ⇒ .e else ((.e ⇒ .t) ⇒ .t) ⇒ .e ⇒ .t
+def indexTy (n : ℕ) : Ty := if n ≤ 2 then .et ⇒ .e else .ett ⇒ .et
 
 /-- The denotations, over two nouns `N`, `N'`, a predicate `V` of individuals and predicates `R`
-and `S` of pluralities: the numerals (70), *a* (23) at individuals and at pluralities, Determiner
-Fitting (92), Minimization (19), Choice Raising (46), Distributive Choice Raising (78), Predicate
-Distributivity (27), and Choice Closure (49), (50) over choice functions. -/
-def lex (N N' V : Set E) (R S : Set (Set E)) : Word → Option (Denotation E Unit)
-  | .noun₁ => some ⟨.e ⇒ .t, N⟩
-  | .noun₂ => some ⟨.e ⇒ .t, N'⟩
-  | .atom => some ⟨.e ⇒ .t, V⟩
-  | .relative => some ⟨(.e ⇒ .t) ⇒ .t, R⟩
-  | .vp => some ⟨(.e ⇒ .t) ⇒ .t, S⟩
-  | .numeral n => some ⟨(.e ⇒ .t) ⇒ .t, {P : Set E | P.ncard = n}⟩
-  | .a => some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun (A B : Set E) ↦ Det.some A B⟩
-  | .aPlural => some ⟨((.e ⇒ .t) ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t) ⇒ .t,
-      fun (A B : Set (Set E)) ↦ Det.some A B⟩
-  | .noPlural => some ⟨((.e ⇒ .t) ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t) ⇒ .t,
-      fun (A B : Set (Set E)) ↦ Det.no A B⟩
-  | .every => some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun (A B : Set E) ↦ Det.every A B⟩
-  | .dfit => some ⟨((.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t) ⇒ .t,
+and `S` of pluralities: the numerals (70), *a* (23), *no* and *every* at the type `σ` of what
+they quantify over, the coordinators at a conjoinable type, Determiner Fitting (92), Minimization
+(19), Choice Raising (46), Distributive Choice Raising (78), Predicate Distributivity (27), and
+Choice Closure over choice functions on `σ`, at a property of pluralities (49) and at a sentence
+(50). -/
+noncomputable def lex (N N' V : Set E) (R S : Set (Set E)) : Word → Option (Denotation E Unit)
+  | .noun₁ => some ⟨.et, N⟩
+  | .noun₂ => some ⟨.et, N'⟩
+  | .atom => some ⟨.et, V⟩
+  | .relative => some ⟨.ett, R⟩
+  | .vp => some ⟨.ett, S⟩
+  | .numeral n => some ⟨.ett, {P : Set E | P.ncard = n}⟩
+  | .a σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.some : Det (Ty.Domain E Unit σ))⟩
+  | .no σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.no : Det (Ty.Domain E Unit σ))⟩
+  | .every σ => some ⟨(σ ⇒ .t) ⇒ (σ ⇒ .t) ⇒ .t, (Det.every : Det (Ty.Domain E Unit σ))⟩
+  | .and τ => if h : τ.Conjoinable then some (and_.reading τ h) else none
+  | .or τ => if h : τ.Conjoinable then some (or_.reading τ h) else none
+  | .dfit => some ⟨.det ⇒ .ett ⇒ .ett ⇒ .t,
       fun (D : Det E) (A B : Set (Set E)) ↦ determinerFitting D A B⟩
-  | .and => some (and_.reading ((.e ⇒ .t) ⇒ .t) trivial)
-  | .or => some (or_.reading ((.e ⇒ .t) ⇒ .t) trivial)
-  | .orNoun => some (or_.reading (.e ⇒ .t) trivial)
-  | .min => some ⟨((.e ⇒ .t) ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t,
-      fun (Q : Set (Set E)) (P : Set E) ↦ Minimal (· ∈ Q) P⟩
-  | .cr => some ⟨((.e ⇒ .t) ⇒ .e) ⇒ (.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t,
-      fun (f : Set E → E) (N P : Set E) ↦ individual (f N) P⟩
-  | .dcr => some ⟨(((.e ⇒ .t) ⇒ .t) ⇒ .e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t,
-      fun (f : Set (Set E) → Set E) (N : Set (Set E)) (P : Set E) ↦ f N ⊆ P⟩
-  | .pdist => some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun (P : Set E) ↦ (𝒫 P \ {∅} : Set (Set E))⟩
-  | .choiceClosure => some ⟨(((.e ⇒ .t) ⇒ .e) ⇒ (.e ⇒ .t) ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t,
-      fun (A : (Set E → E) → Set E → Prop) (P : Set E) ↦ ∃ f : ChoiceFunction E, A f P⟩
-  | .choiceClosureSentence => some ⟨(((.e ⇒ .t) ⇒ .e) ⇒ .t) ⇒ .t,
-      fun (A : (Set E → E) → Prop) ↦ ∃ f : ChoiceFunction E, A f⟩
-  | .choiceClosurePlural =>
-      some ⟨((((.e ⇒ .t) ⇒ .t) ⇒ .e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t,
-        fun (A : (Set (Set E) → Set E) → Set E → Prop) (P : Set E) ↦
-          ∃ f : ChoiceFunction (Set E), A f P⟩
-  | .choiceClosurePluralSentence => some ⟨((((.e ⇒ .t) ⇒ .t) ⇒ .e ⇒ .t) ⇒ .t) ⇒ .t,
-      fun (A : (Set (Set E) → Set E) → Prop) ↦ ∃ f : ChoiceFunction (Set E), A f⟩
+  | .min => some ⟨.ett ⇒ .ett, fun (Q : Quantifier E) ↦ Minimal Q⟩
+  | .cr => some ⟨(.et ⇒ .e) ⇒ .et ⇒ .ett, fun (f : Set E → E) (N : Set E) ↦ individual (f N)⟩
+  | .dcr => some ⟨(.ett ⇒ .et) ⇒ .ett ⇒ .ett,
+      fun (f : Set (Set E) → Set E) (N : Set (Set E)) ↦ Det.every (f N)⟩
+  | .pdist => some ⟨.et ⇒ .ett, fun (P : Set E) ↦ (𝒫 P \ {∅} : Set (Set E))⟩
+  | .choiceClosure σ => some ⟨(((σ ⇒ .t) ⇒ σ) ⇒ .ett) ⇒ .ett,
+      fun (A : ((Ty.Domain E Unit σ → Prop) → Ty.Domain E Unit σ) → Set E → Prop) (P : Set E) ↦
+        ∃ f : ChoiceFunction (Ty.Domain E Unit σ), A f P⟩
+  | .choiceClosureSentence σ => some ⟨(((σ ⇒ .t) ⇒ σ) ⇒ .t) ⇒ .t,
+      fun (A : ((Ty.Domain E Unit σ → Prop) → Ty.Domain E Unit σ) → Prop) ↦
+        ∃ f : ChoiceFunction (Ty.Domain E Unit σ), A f⟩
 
-attribute [local simp] HoldsAtWith lex indexTy Coordinator.reading_of_conjunctive
+attribute [local simp] HoldsAtWith lex indexTy Ty.Conjoinable Coordinator.reading_of_conjunctive
   Coordinator.reading_of_disjunctive and_ or_
 
 /-- `[[a noun₁] [c [a noun₂]]]`: Existential Raising of each noun, coordinated by `c`. -/
-def raised (c : Word) : Tree Unit Word :=
-  .bin (.bin (.leaf .a) (.leaf .noun₁)) (.bin (.leaf c) (.bin (.leaf .a) (.leaf .noun₂)))
+def raised (c : Word) : Tree Unit Word := tree% [[⟨.a .e⟩ noun₁] [⟨c⟩ [⟨.a .e⟩ noun₂]]]
 
 /-- `[[CR t₁] noun₁] [and [[CR t₂] noun₂]]`. -/
-def crAnd : Tree Unit Word :=
-  .bin (.bin (.bin (.leaf .cr) (.tr 1)) (.leaf .noun₁))
-    (.bin (.leaf .and) (.bin (.bin (.leaf .cr) (.tr 2)) (.leaf .noun₂)))
+def crAnd : Tree Unit Word := tree% [[[cr (.tr 1)] noun₁] [⟨.and .ett⟩ [[cr (.tr 2)] noun₂]]]
 
 /-- `[[DCR t₃] X] [and [[DCR t₄] Y]]`. -/
 def dcrAnd (X Y : Tree Unit Word) : Tree Unit Word :=
-  .bin (.bin (.bin (.leaf .dcr) (.tr 3)) X) (.bin (.leaf .and) (.bin (.bin (.leaf .dcr) (.tr 4)) Y))
+  tree% [[[dcr (.tr 3)] (X)] [⟨.and .ett⟩ [[dcr (.tr 4)] (Y)]]]
 
 /-- `[PDIST w]`, the plural of `w` (72). -/
-def plural (w : Word) : Tree Unit Word := .bin (.leaf .pdist) (.leaf w)
+def plural (w : Word) : Tree Unit Word := tree% [pdist ⟨w⟩]
+
+/-- `[∃₁ [λ₁ [∃₂ [λ₂ [MIN [[CR t₁] noun₁] [and [[CR t₂] noun₂]]]]]]]`. -/
+def closedAbove : Tree Unit Word :=
+  tree% [⟨.choiceClosure .e⟩ [λ 1 [⟨.choiceClosure .e⟩ [λ 2 [min (crAnd)]]]]]
 
 /-- `[[[DFIT D] X] [PDIST atom]]`. -/
 def fitted (D : Word) (X : Tree Unit Word) : Tree Unit Word :=
-  .bin (.bin (.bin (.leaf .dfit) (.leaf D)) X) (plural .atom)
+  tree% [[[dfit ⟨D⟩] (X)] (plural .atom)]
 
 /-- The LF (24) of the hydra *a man and woman who dated met*. -/
-def lf24 : Tree Unit Word :=
-  .bin (.bin (.leaf .aPlural) (.bin (.bin (.leaf .min) (raised .and)) (.leaf .relative)))
-    (.leaf .vp)
+def lf24 : Tree Unit Word := tree% [[⟨.a .et⟩ [[min (raised (.and .ett))] relative]] vp]
 
 /-- The LF (29) of *a man and woman had a beer*. -/
-def lf29 : Tree Unit Word := .bin (.bin (.leaf .aPlural) (.bin (.leaf .min) (raised .and)))
-  (plural .atom)
-
-/-- `[∃₁ [λ₁ [∃₂ [λ₂ [MIN crAnd]]]]]`: both Choice Closures above Minimization. -/
-def closedAbove : Tree Unit Word :=
-  .bin (.leaf .choiceClosure) (.binder 1
-    (.bin (.leaf .choiceClosure) (.binder 2 (.bin (.leaf .min) crAnd))))
+def lf29 : Tree Unit Word := tree% [[⟨.a .et⟩ [min (raised (.and .ett))]] (plural .atom)]
 
 /-- The LF (56) of *a doctor and lawyer met*. -/
-def lf56 : Tree Unit Word := .bin (.bin (.leaf .aPlural) closedAbove) (.leaf .vp)
+def lf56 : Tree Unit Word := tree% [[⟨.a .et⟩ (closedAbove)] vp]
 
 /-- *A doctor and lawyer met* with each Choice Closure directly above its Choice Raising. -/
 def lfLocal : Tree Unit Word :=
-  .bin (.bin (.leaf .aPlural) (.bin (.leaf .min)
-    (.bin (.bin (.leaf .choiceClosure) (.binder 1 (.bin (.bin (.leaf .cr) (.tr 1)) (.leaf .noun₁))))
-      (.bin (.leaf .and) (.bin (.leaf .choiceClosure)
-        (.binder 2 (.bin (.bin (.leaf .cr) (.tr 2)) (.leaf .noun₂))))))))
-    (.leaf .vp)
+  tree% [[⟨.a .et⟩ [min [[⟨.choiceClosure .e⟩ [λ 1 [[cr (.tr 1)] noun₁]]]
+    [⟨.and .ett⟩ [⟨.choiceClosure .e⟩ [λ 2 [[cr (.tr 2)] noun₂]]]]]]] vp]
 
 /-- The LF of (60a) *no man and woman have a right …*, with Choice Closure below *no*. -/
-def lf60 : Tree Unit Word := .bin (.bin (.leaf .noPlural) closedAbove) (.leaf .vp)
+def lf60 : Tree Unit Word := tree% [[⟨.no .et⟩ (closedAbove)] vp]
 
 /-- The LF (61), with Choice Closure above *no*. -/
 def lf61 : Tree Unit Word :=
-  .bin (.leaf .choiceClosureSentence) (.binder 1 (.bin (.leaf .choiceClosureSentence) (.binder 2
-    (.bin (.bin (.leaf .noPlural) (.bin (.leaf .min) crAnd)) (.leaf .vp)))))
+  tree% [⟨.choiceClosureSentence .e⟩ [λ 1 [⟨.choiceClosureSentence .e⟩ [λ 2
+    [[⟨.no .et⟩ [min (crAnd)]] vp]]]]]
 
 /-- The LF (81) of *ten men and women got married today*. -/
 def lf81 : Tree Unit Word :=
-  .bin (.bin (.leaf .aPlural) (.bin (.leaf (.numeral 10)) (.bin (.leaf .choiceClosurePlural)
-    (.binder 3 (.bin (.leaf .choiceClosurePlural) (.binder 4
-      (.bin (.leaf .min) (dcrAnd (plural .noun₁) (plural .noun₂))))))))) (.leaf .vp)
+  tree% [[⟨.a .et⟩ [⟨.numeral 10⟩ [⟨.choiceClosure .et⟩ [λ 3 [⟨.choiceClosure .et⟩
+    [λ 4 [min (dcrAnd (plural .noun₁) (plural .noun₂))]]]]]]] vp]
 
 /-- The LF (83a) of *two Americans and three Russians made an excellent basketball team*. -/
 def lf83 : Tree Unit Word :=
-  .bin (.leaf .choiceClosurePluralSentence) (.binder 3 (.bin (.leaf .choiceClosurePluralSentence)
-    (.binder 4 (.bin (.bin (.leaf .aPlural) (.bin (.leaf .min)
-      (dcrAnd (.bin (.leaf (.numeral 2)) (plural .noun₁))
-        (.bin (.leaf (.numeral 3)) (plural .noun₂))))) (.leaf .vp)))))
+  tree% [⟨.choiceClosureSentence .et⟩ [λ 3 [⟨.choiceClosureSentence .et⟩ [λ 4 [[⟨.a .et⟩
+    [min (dcrAnd (tree% [⟨.numeral 2⟩ (plural .noun₁)]) (tree% [⟨.numeral 3⟩ (plural .noun₂)]))]]
+    vp]]]]]
 
 /-- The LF (95a) of *every cat and dog is licensed*. -/
-def lf95 : Tree Unit Word := fitted .every (.bin (.leaf .min) (raised .and))
+def lf95 : Tree Unit Word := fitted (.every .e) (tree% [min (raised (.and .ett))])
 
 /-- The LF (96a) of *every cat or dog is licensed*. -/
-def lf96 : Tree Unit Word :=
-  .bin (.bin (.leaf .every) (.bin (.leaf .noun₁) (.bin (.leaf .orNoun) (.leaf .noun₂))))
-    (.leaf .atom)
+def lf96 : Tree Unit Word := tree% [[⟨.every .e⟩ [noun₁ [⟨.or .et⟩ noun₂]]] atom]
 
 /-- The LF (97a) of *a cat and dog came running in*. -/
-def lf97 : Tree Unit Word := fitted .a (.bin (.leaf .min) (raised .and))
+def lf97 : Tree Unit Word := fitted (.a .e) (tree% [min (raised (.and .ett))])
 
 /-- The LF (98a) of *a cat or dog came running in*. -/
-def lf98 : Tree Unit Word :=
-  .bin (.bin (.leaf .a) (.bin (.leaf .noun₁) (.bin (.leaf .orNoun) (.leaf .noun₂)))) (.leaf .atom)
+def lf98 : Tree Unit Word := tree% [[⟨.a .e⟩ [noun₁ [⟨.or .et⟩ noun₂]]] atom]
 
 /-- The LF of *every cat or dog is licensed* described in the prose and in (99b). -/
-def lf99 : Tree Unit Word := fitted .every (.bin (.leaf .min) (raised .or))
+def lf99 : Tree Unit Word := fitted (.every .e) (tree% [min (raised (.or .ett))])
 
 /-- The LF as (99a) prints it, with Minimization under *or*. -/
 def lf99Printed : Tree Unit Word :=
-  fitted .every (.bin (.bin (.leaf .min) (.bin (.leaf .a) (.leaf .noun₁)))
-    (.bin (.leaf .or) (.bin (.leaf .min) (.bin (.leaf .a) (.leaf .noun₂)))))
+  fitted (.every .e) (tree% [[min [⟨.a .e⟩ noun₁]] [⟨.or .ett⟩ [min [⟨.a .e⟩ noun₂]]]])
 
 /-- No Choice Closure in `t` takes scope over *no*, the constraint the paper draws from (59) and
 (60). -/
 def ClosureBelowNo (t : Tree Unit Word) : Prop :=
   ∀ p ∈ t.positionedTerminals, ∀ q ∈ t.positionedTerminals,
-    p.2.2 ∈ [.choiceClosure, .choiceClosureSentence, .choiceClosurePlural,
-      .choiceClosurePluralSentence] → q.2.2 = .noPlural → ¬ t.CCommands p.1 q.1
+    (p.2.2 matches .choiceClosure _ | .choiceClosureSentence _) → (q.2.2 matches .no _) →
+      ¬ t.CCommands p.1 q.1
 
 instance : DecidablePred ClosureBelowNo := fun t ↦
   inferInstanceAs (Decidable (∀ p ∈ t.positionedTerminals, ∀ q ∈ t.positionedTerminals,
-    p.2.2 ∈ [.choiceClosure, .choiceClosureSentence, .choiceClosurePlural,
-      .choiceClosurePluralSentence] → q.2.2 = .noPlural → ¬ t.CCommands p.1 q.1))
+    (p.2.2 matches .choiceClosure _ | .choiceClosureSentence _) → (q.2.2 matches .no _) →
+      ¬ t.CCommands p.1 q.1))
 
 variable (g : ∀ n, Ty.Domain E Unit (indexTy n))
 
@@ -486,15 +422,15 @@ theorem holds_lf24 (h : Disjoint N N') : ⟦lf24⟧ ↔ ∃ x ∈ N, ∃ y ∈ N
   simp [lf24, raised]
   constructor
   · rintro ⟨P, ⟨hP, hR⟩, hS⟩
-    obtain ⟨x, hx, y, hy, rfl⟩ := (minimal_mem_inter_some_iff_of_disjoint h).1 hP
+    obtain ⟨x, hx, y, hy, rfl⟩ := (minimal_some_inf_some_iff_of_disjoint h).1 hP
     exact ⟨x, hx, y, hy, hR, hS⟩
   · rintro ⟨x, hx, y, hy, hR, hS⟩
-    exact ⟨_, ⟨(minimal_mem_inter_some_iff_of_disjoint h).2 ⟨x, hx, y, hy, rfl⟩, hR⟩, hS⟩
+    exact ⟨_, ⟨(minimal_some_inf_some_iff_of_disjoint h).2 ⟨x, hx, y, hy, rfl⟩, hR⟩, hS⟩
 
 -- (29)
 theorem holds_lf29 (h : Disjoint N N') : ⟦lf29⟧ ↔ ∃ x ∈ N, ∃ y ∈ N', x ∈ V ∧ y ∈ V := by
   simp [lf29, raised, plural]
-  refine (some_setOf_iff (fun _ ↦ minimal_mem_inter_some_iff_of_disjoint h) _).trans ?_
+  refine (some_setOf_iff (fun _ ↦ minimal_some_inf_some_iff_of_disjoint h) _).trans ?_
   simp [insert_subset_iff, ← nonempty_iff_ne_empty]
 
 /-- With Choice Closure above Minimization, *a doctor and lawyer met* (56) holds when a doctor and
@@ -502,19 +438,18 @@ a lawyer met, whatever professions they share (58). -/
 theorem holds_lf56 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf56⟧ ↔ ∃ x ∈ N, ∃ y ∈ N', {x, y} ∈ S := by
   simp [lf56, closedAbove, crAnd]
-  exact some_setOf_iff (fun _ ↦ exists₂_minimal_mem_inter_individual_iff hN hN') S
+  exact some_setOf_iff (fun _ ↦ exists₂_minimal_individual_inf_individual_iff hN hN') S
 
 -- p. 587
 theorem holds_lfLocal (hN : N.Nonempty) (hN' : N'.Nonempty) :
-    ⟦lfLocal⟧ ↔ Det.some {P | Minimal (· ∈ {Q | Det.some N Q} ∩ {Q | Det.some N' Q}) P} S := by
+    ⟦lfLocal⟧ ↔ Det.some (Minimal (Det.some N ⊓ Det.some N')) S := by
   have h {N : Set E} (hN : N.Nonempty) :
-      {Q | ∃ f : ChoiceFunction E, individual (f N) Q} = {Q | Det.some N Q} :=
-    Set.ext fun Q ↦ ChoiceFunction.exists_apply_iff_some hN Q
+      (fun Q ↦ ∃ f : ChoiceFunction E, individual (f N) Q) = Det.some N :=
+    funext fun Q ↦ propext (ChoiceFunction.exists_apply_iff_some hN Q)
   simp [lfLocal]
-  show Det.some {P | Minimal (· ∈ {Q | ∃ f : ChoiceFunction E, individual (f N) Q} ∩
-    {Q | ∃ f : ChoiceFunction E, individual (f N') Q}) P} S ↔ _
+  show Det.some (Minimal ((fun Q ↦ ∃ f : ChoiceFunction E, individual (f N) Q) ⊓
+    fun Q ↦ ∃ f : ChoiceFunction E, individual (f N') Q)) S ↔ _
   rw [h hN, h hN']
-  rfl
 
 /- A doctor who is also a lawyer meets another lawyer: (56) holds and the LF with local Choice
 Closure does not. -/
@@ -523,7 +458,7 @@ example {x y : E} (hx : x ∈ N ∩ N') (hy : y ∈ N') (hxy : x ≠ y) :
       ¬ HoldsAtWith indexTy (lex N N' V R {{x, y}}) g lfLocal := by
   refine ⟨(holds_lf56 g ⟨x, hx.1⟩ ⟨y, hy⟩).2 ⟨x, hx.1, y, hy, rfl⟩, fun h ↦ ?_⟩
   obtain ⟨P, hP, rfl⟩ := (holds_lfLocal g ⟨x, hx.1⟩ ⟨y, hy⟩).1 h
-  rcases minimal_mem_inter_some_iff.1 hP with ⟨z, -, hz⟩ | ⟨z, ⟨-, hzN'⟩, w, -, hzw⟩
+  rcases minimal_some_inf_some_iff.1 hP with ⟨z, -, hz⟩ | ⟨z, ⟨-, hzN'⟩, w, -, hzw⟩
   · have hx' : x ∈ ({z} : Set E) := hz ▸ mem_insert x {y}
     have hy' : y ∈ ({z} : Set E) := hz ▸ mem_insert_of_mem x rfl
     exact hxy (hx'.trans hy'.symm)
@@ -535,25 +470,19 @@ example {x y : E} (hx : x ∈ N ∩ N') (hy : y ∈ N') (hxy : x ≠ y) :
 theorem holds_lf60 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf60⟧ ↔ ∀ x ∈ N, ∀ y ∈ N', {x, y} ∉ S := by
   simp [lf60, closedAbove, crAnd]
-  exact Det.no_iff_not_some.trans <| (not_congr
-    (some_setOf_iff (fun _ ↦ exists₂_minimal_mem_inter_individual_iff hN hN') S)).trans (by simp)
+  exact Det.no_iff_not_some.trans <| (not_congr (some_setOf_iff
+    (fun _ ↦ exists₂_minimal_individual_inf_individual_iff hN hN') S)).trans (by simp)
 
 -- (60b), (61)
 theorem holds_lf61 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf61⟧ ↔ ∃ x ∈ N, ∃ y ∈ N', {x, y} ∉ S := by
-  have h (a b : E) : Det.no {P | Minimal (· ∈ {Q | individual a Q} ∩ {Q | individual b Q}) P} S ↔
-      {a, b} ∉ S := by
-    rw [show {P | Minimal (· ∈ {Q | individual a Q} ∩ {Q | individual b Q}) P} = {{a, b}} from
-      Set.ext fun _ ↦ minimal_mem_inter_individual_iff]
-    simp [Det.no]
+  have h (a b : E) : Det.no (Minimal (individual a ⊓ individual b)) S ↔ {a, b} ∉ S := by
+    rw [show Minimal (individual a ⊓ individual b) = (· = {a, b}) from
+      funext fun _ ↦ propext minimal_individual_inf_individual_iff]
+    exact ⟨fun h ↦ h rfl, fun h P (hP : P = {a, b}) ↦ hP ▸ h⟩
   simp [lf61, crAnd]
-  constructor
-  · rintro ⟨f₁, f₂, hS⟩
-    exact ⟨f₁ N, f₁.apply_of_exists hN, f₂ N', f₂.apply_of_exists hN', (h _ _).1 hS⟩
-  · rintro ⟨x, hx, y, hy, hS⟩
-    obtain ⟨f₁, rfl⟩ := ChoiceFunction.exists_apply_eq hx
-    obtain ⟨f₂, rfl⟩ := ChoiceFunction.exists_apply_eq hy
-    exact ⟨f₁, f₂, (h _ _).2 hS⟩
+  exact (exists₂_congr fun (f₁ f₂ : ChoiceFunction E) ↦ h (f₁ N) (f₂ N')).trans
+    (ChoiceFunction.exists₂_apply_iff hN hN' fun a b ↦ {a, b} ∉ S)
 
 -- p. 588
 theorem closureBelowNo_lf60 : ClosureBelowNo lf60 := by decide
@@ -567,7 +496,7 @@ theorem holds_lf81 (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf81⟧ ↔ ∃ P ∈ S, P.ncard = 10 ∧ P ⊆ N ∪ N' ∧ (P ∩ N).Nonempty ∧ (P ∩ N').Nonempty := by
   have hp (N : Set E) (hN : N.Nonempty) : (𝒫 N \ {∅} : Set (Set E)).Nonempty :=
     ⟨N, Subset.rfl, hN.ne_empty⟩
-  have hmix (P : Set E) := exists₂_minimal_mem_Ici_inter_Ici_iff (P := P) (hp N hN) (hp N' hN')
+  have hmix (P : Set E) := exists₂_minimal_every_inf_every_iff (P := P) (hp N hN) (hp N' hN')
   simp [lf81, dcrAnd, plural]
   constructor
   · rintro ⟨P, ⟨h10, hP⟩, hS⟩
@@ -578,23 +507,19 @@ theorem holds_lf81 (hN : N.Nonempty) (hN' : N'.Nonempty) :
 -- (83)
 theorem holds_lf83 (hN : ∃ A ⊆ N, A.ncard = 2) (hN' : ∃ B ⊆ N', B.ncard = 3) :
     ⟦lf83⟧ ↔ ∃ A ⊆ N, ∃ B ⊆ N', A.ncard = 2 ∧ B.ncard = 3 ∧ A ∪ B ∈ S := by
-  have h (a b : Set E) : Det.some {P | Minimal (· ∈ Ici a ∩ Ici b) P} S ↔ a ∪ b ∈ S := by
-    rw [show {P | Minimal (· ∈ Ici a ∩ Ici b) P} = {a ⊔ b} from
-      Set.ext fun _ ↦ minimal_mem_Ici_inter_Ici_iff]
-    simp [Det.some]
+  have h (a b : Set E) : Det.some (Minimal (Det.every a ⊓ Det.every b)) S ↔ a ∪ b ∈ S := by
+    rw [← Det.every_union, show Minimal (Det.every (a ∪ b)) = (· = a ∪ b) from
+      funext fun _ ↦ propext Det.minimal_every_iff]
+    exact ⟨fun ⟨_, (hP : _ = a ∪ b), hS⟩ ↦ hP ▸ hS, fun h ↦ ⟨_, rfl, h⟩⟩
   have hX {N : Set E} {n : ℕ} (hN : ∃ A ⊆ N, A.ncard = n) (hn : n ≠ 0) :
       ({P : Set E | P.ncard = n} ∩ (𝒫 N \ {∅}) : Set (Set E)).Nonempty := by
     obtain ⟨A, hA, hAn⟩ := hN
     refine ⟨A, hAn, hA, fun h ↦ hn ?_⟩
     rw [← hAn, show A = ∅ from h, ncard_empty]
-  let X (n : ℕ) (N : Set E) : Set (Set E) := {P : Set E | P.ncard = n} ∩ (𝒫 N \ {∅})
   simp [lf83, dcrAnd, plural]
-  refine (exists₂_congr fun (f₁ f₂ : ChoiceFunction (Set E)) ↦
-    h (f₁ (X 2 N)) (f₂ (X 3 N'))).trans ?_
-  refine (ChoiceFunction.exists_apply_iff_some (hX hN two_ne_zero) fun M ↦
-    ∃ f₂ : ChoiceFunction (Set E), M ∪ f₂ (X 3 N') ∈ S).trans ?_
-  refine (exists_congr fun M ↦ and_congr_right fun _ ↦
-    ChoiceFunction.exists_apply_iff_some (hX hN' three_ne_zero) fun W ↦ M ∪ W ∈ S).trans ?_
+  refine (exists₂_congr fun (f₁ f₂ : ChoiceFunction (Set E)) ↦ h _ _).trans <|
+    (ChoiceFunction.exists₂_apply_iff (hX hN two_ne_zero) (hX hN' three_ne_zero)
+      fun M W ↦ M ∪ W ∈ S).trans ?_
   constructor
   · rintro ⟨A, ⟨hA2, hAN, -⟩, B, ⟨hB3, hBN', -⟩, hS⟩
     exact ⟨A, hAN, B, hBN', hA2, hB3, hS⟩
@@ -609,7 +534,7 @@ theorem holds_lf83 (hN : ∃ A ⊆ N, A.ncard = 2) (hN' : ∃ B ⊆ N', B.ncard 
 theorem holds_lf95 (h : Disjoint N N') (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf95⟧ ↔ Det.every (N ∪ N') V := by
   simp [lf95, fitted, raised, plural]
-  exact (determinerFitting_congr (fun _ ↦ minimal_mem_inter_some_iff_of_disjoint h) _).trans
+  exact (determinerFitting_congr (fun _ ↦ minimal_some_inf_some_iff_of_disjoint h) _).trans
     (determinerFitting_every_pairs_iff hN hN' V)
 
 -- (96)
@@ -617,7 +542,8 @@ theorem holds_lf96 : ⟦lf96⟧ ↔ Det.every (N ∪ N') V := by
   simp [lf96]
   rfl
 
--- (95), (96): the universal half of Bergmann's puzzle
+/-- *Every cat and dog is licensed* (95) and *every cat or dog is licensed* (96) agree, the
+universal half of Bergmann's puzzle. -/
 theorem holds_lf95_iff_holds_lf96 (h : Disjoint N N') (hN : N.Nonempty) (hN' : N'.Nonempty) :
     ⟦lf95⟧ ↔ ⟦lf96⟧ :=
   (holds_lf95 g h hN hN').trans (holds_lf96 g).symm
@@ -625,7 +551,7 @@ theorem holds_lf95_iff_holds_lf96 (h : Disjoint N N') (hN : N.Nonempty) (hN' : N
 -- (97)
 theorem holds_lf97 (h : Disjoint N N') : ⟦lf97⟧ ↔ Det.some N V ∧ Det.some N' V := by
   simp [lf97, fitted, raised, plural]
-  exact (determinerFitting_congr (fun _ ↦ minimal_mem_inter_some_iff_of_disjoint h) _).trans
+  exact (determinerFitting_congr (fun _ ↦ minimal_some_inf_some_iff_of_disjoint h) _).trans
     (determinerFitting_some_pairs_iff N N' V)
 
 -- (98)
@@ -642,8 +568,8 @@ example (h : Disjoint N N') {x : E} (hx : x ∈ N) (hxV : x ∈ V) (hN'V : Disjo
 -- (99)
 theorem holds_lf99 : ⟦lf99⟧ ↔ Det.every (N ∪ N') V := by
   simp [lf99, fitted, raised, plural]
-  exact (determinerFitting_congr (fun _ ↦ minimal_mem_union_some_iff) _).trans
-    (determinerFitting_every_singletons_iff _ V)
+  exact (determinerFitting_congr (fun _ ↦ minimal_some_sup_some_iff (N := N) (N' := N')) _).trans
+    (determinerFitting_every_singletons_iff (N ∪ N') V)
 
 -- (99a)
 theorem holds_lf99Printed_iff : ⟦lf99Printed⟧ ↔ ⟦lf99⟧ := by
@@ -651,13 +577,15 @@ theorem holds_lf99Printed_iff : ⟦lf99Printed⟧ ↔ ⟦lf99⟧ := by
   simp [lf99Printed, fitted, plural]
   refine (determinerFitting_congr (fun P ↦ ?_) _).trans
     (determinerFitting_every_singletons_iff (N ∪ N') V)
-  show Minimal (· ∈ {Q | Det.some N Q}) P ∨ Minimal (· ∈ {Q | Det.some N' Q}) P ↔ _
-  rw [minimal_mem_some_iff, minimal_mem_some_iff]
+  show Minimal (Det.some N) P ∨ Minimal (Det.some N') P ↔ _
+  rw [Det.minimal_some_iff, Det.minimal_some_iff]
   simp only [mem_ofPred_eq, mem_union, or_and_right, exists_or]
 
 end LogicalForms
 
 /-! ### The collective theory -/
+
+variable {α : Type*}
 
 -- (101)
 theorem inter_subset_sups [Lattice α] (Q Q' : Set α) : Q ∩ Q' ⊆ Q ⊻ Q' :=
@@ -673,7 +601,7 @@ theorem sups_eq_inter [Lattice α] {Q Q' : Set α} (hQ : IsUpperSet Q) (hQ' : Is
 -- (102), (20)
 theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
     {A | A.ncard = 1 ∧ A ⊆ N} ⊻ {B | B.ncard = 1 ∧ B ⊆ N'} =
-      {P | Minimal (· ∈ {Q | Det.some N Q} ∩ {Q | Det.some N' Q}) P} := by
+      {P | Minimal (Det.some N ⊓ Det.some N') P} := by
   have hsing (N : Set E) : {A | A.ncard = 1 ∧ A ⊆ N} = (fun x ↦ ({x} : Set E)) '' N := by
     ext A
     simp only [mem_ofPred_eq, ncard_eq_one, mem_image]
@@ -683,7 +611,7 @@ theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
     · rintro ⟨x, hx, rfl⟩
       exact ⟨⟨x, rfl⟩, singleton_subset_iff.2 hx⟩
   rw [hsing, hsing, image_singleton_sups]
-  exact Set.ext fun _ ↦ (minimal_mem_inter_some_iff_of_disjoint h).symm
+  exact Set.ext fun _ ↦ (minimal_some_inf_some_iff_of_disjoint h).symm
 
 /-- When a man and a woman alone smiled, the collective entry of *No man and no woman smiled* (103a)
 holds and the intersective one fails. -/

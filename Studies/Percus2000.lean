@@ -179,17 +179,15 @@ def Binder.sit : Binder → Sit → Sit → Sit
   | .lower, _, s' => s'
 
 /-- The matrix [λ₁ [s₁ [Mary [thinks _]]]] of (26b) and (35b), over the complement of *thinks*. -/
-def matrix (X : Tree Unit Word) : Tree Unit Word :=
-  .binder 1 (.bin (.tr 1) (.bin (.leaf .mary) (.bin (.leaf .thinks) X)))
+def matrix (X : Tree Unit Word) : Tree Unit Word := tree% [λ 1 [(.tr 1) [mary [thinks (X)]]]]
 
 /-- The embedded clause of (26b), [λ₂ [S [[my brother T] is Canadian]]]. -/
 def vpb (S T : Binder) : Tree Unit Word :=
-  .binder 2 (.bin (.tr S.index) (.bin (.bin (.leaf .myBrother) (.tr T.index)) (.leaf .isCanadian)))
+  tree% [λ 2 [(.tr S.index) [[myBrother (.tr T.index)] isCanadian]]]
 
 /-- The embedded clause of (35b), [λ₂ [S [ssh₈ [always [λ₃ [s₃ [[my brother s₂] won]]]]]]]. -/
 def advp (S : Binder) : Tree Unit Word :=
-  .binder 2 (.bin (.tr S.index) (.bin (.tr 8) (.bin (.leaf .always)
-    (.binder 3 (.bin (.tr 3) (.bin (.bin (.leaf .myBrother) (.tr 2)) (.leaf .won)))))))
+  tree% [λ 2 [(.tr S.index) [(.tr 8) [always [λ 3 [(.tr 3) [[myBrother (.tr 2)] won]]]]]]]
 
 /-- (26b), with the pronoun that *is Canadian* selects coindexed with `S` and the pronoun in *my
 brother* with `T`: (27) is `lf .lower .upper`, (31) `lf .lower .lower` and (33)

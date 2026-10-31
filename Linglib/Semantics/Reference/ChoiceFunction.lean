@@ -30,7 +30,8 @@ every proposition true there (`Conditional.SelectionFunction`).
   witnesses the existential reading, and agrees with it on every predicate only when the
   restrictor has a single member.
 * `ChoiceFunction.exists_apply_iff_some`, `ChoiceFunction.forall_apply_iff_every`: quantifying
-  over choice functions gives the existential and universal readings on a nonempty restrictor.
+  over choice functions gives the existential and universal readings on a nonempty restrictor,
+  and `ChoiceFunction.exists₂_apply_iff` the existential reading of each of two restrictors.
 * `ChoiceFunction.exists_forall_apply_iff`: a choice function whose restrictor contains a bound
   variable takes no scope relative to the binder.
 * `ChoiceFunction.exists_forall_apply_iff_of_injective`, `ChoiceFunction.exists_pi_apply_iff`:
@@ -125,6 +126,14 @@ theorem exists_apply_iff_some {N : E → Prop} (hN : ∃ x, N x) (VP : E → Pro
     (∃ f : ChoiceFunction E, VP (f N)) ↔ Det.some N VP :=
   ⟨fun ⟨f, h⟩ ↦ f.some_of_apply hN h, fun ⟨_, hx, h⟩ ↦
     let ⟨f, hfx⟩ := exists_apply_eq hx; ⟨f, hfx ▸ h⟩⟩
+
+/-- Existential quantification over two choice functions, on two nonempty restrictors, is the
+existential reading of each. -/
+theorem exists₂_apply_iff {N N' : E → Prop} (hN : ∃ x, N x) (hN' : ∃ x, N' x)
+    (VP : E → E → Prop) :
+    (∃ f₁ f₂ : ChoiceFunction E, VP (f₁ N) (f₂ N')) ↔ ∃ x, N x ∧ ∃ y, N' y ∧ VP x y :=
+  (exists_apply_iff_some hN fun x ↦ ∃ f₂ : ChoiceFunction E, VP x (f₂ N')).trans <|
+    exists_congr fun x ↦ and_congr_right fun _ ↦ exists_apply_iff_some hN' (VP x)
 
 /-- Universal quantification over choice functions is the universal reading, on a nonempty
 restrictor. -/

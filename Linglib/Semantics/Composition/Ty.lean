@@ -191,6 +191,12 @@ def Ty.Conjoinable : Ty → Prop
   | .comp (.reader _) b => b.Conjoinable
   | .comp .set _ | .e | .d | .n | .v | .s => False
 
+instance Ty.decidableConjoinable : DecidablePred Ty.Conjoinable
+  | .t => .isTrue trivial
+  | .fn _ b => Ty.decidableConjoinable b
+  | .comp (.reader _) b => Ty.decidableConjoinable b
+  | .comp .set _ | .e | .d | .n | .v | .s => .isFalse id
+
 /-- The domain of a conjoinable type carries the pointwise complete Boolean algebra
 ([partee-rooth-1983]). At a concrete type it is the instance `Pi.instCompleteBooleanAlgebra` finds
 statically. -/

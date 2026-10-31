@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Set.Sups
 public import Mathlib.Order.Minimal
 public import Mathlib.Order.UpperLower.Closure
 
@@ -10,7 +11,8 @@ public import Mathlib.Order.UpperLower.Closure
 minimal elements of an upper closure are those of the generating set, and so is its least element.
 mathlib has the minimal-element lemma only for antichains,
 `IsAntichain.minimal_mem_upperClosure_iff_mem`, which follows from the general one with
-`IsAntichain.minimal_mem_iff`.
+`IsAntichain.minimal_mem_iff`. In a join-semilattice the meet of two upper closures is the upper
+closure of the pairwise joins, so its minimal elements are those of the pairwise joins.
 -/
 
 @[expose] public section
@@ -39,3 +41,16 @@ theorem isLeast_upperClosure_iff : IsLeast (upperClosure s : Set α) x ↔ IsLea
     exact (hlb has).trans hab
 
 end PartialOrder
+
+section SemilatticeSup
+variable [SemilatticeSup α] {s t : Set α} {x : α}
+
+open SetFamily in
+/-- The minimal elements of the meet of two upper closures are those of the pairwise joins of
+their generators. -/
+theorem minimal_mem_inter_upperClosure_iff :
+    Minimal (· ∈ (upperClosure s : Set α) ∩ upperClosure t) x ↔ Minimal (· ∈ s ⊻ t) x := by
+  rw [← UpperSet.coe_sup, ← upperClosure_sups]
+  exact minimal_mem_upperClosure_iff
+
+end SemilatticeSup

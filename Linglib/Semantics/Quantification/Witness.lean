@@ -1,7 +1,8 @@
 module
 
-public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Order.Minimal
+public import Mathlib.Order.UpperLower.Closure
 
 /-!
 # Witness sets
@@ -11,7 +12,9 @@ A witness set for a type ⟨1⟩ quantifier `Q` living on `A` is a subset of `A`
 set. Witness sets characterise the monotone quantifiers: an increasing quantifier holds of `X`
 iff `X` contains one of its witness sets, and a decreasing quantifier holds of `X` iff `X ∩ A`
 is contained in one (C11). Living on `A` already confines the minimal sets in `Q` to `A`, so the
-minimal witness sets are exactly the minimal sets in the quantifier.
+minimal witness sets are exactly the minimal sets in the quantifier: those of *some* `A` are the
+singletons of its members, the upper closure of which is *some* `A`, and that of *every* `A` is `A`
+itself.
 
 ## Main definitions
 
@@ -25,6 +28,8 @@ minimal witness sets are exactly the minimal sets in the quantifier.
   for increasing and decreasing quantifiers.
 * `Quantifier.LivesOn.minimal_witness_iff`: the minimal witness sets of a quantifier living
   on `A` are its minimal sets.
+* `Quantifier.Det.minimal_some_iff`, `Quantifier.Det.minimal_every_iff`: the minimal sets of
+  *some* and *every*.
 
 ## References
 
@@ -68,5 +73,26 @@ theorem LivesOn.minimal_witness_iff (h : Q.LivesOn A) :
     fun hm ↦
       have hle : w ⊆ A ∩ w := hm.2 ((h w).1 hm.1) Set.inter_subset_right
       ⟨⟨hle.trans Set.inter_subset_left, hm.1⟩, fun _ hy hyw ↦ hm.2 hy.2 hyw⟩⟩
+
+/-! ### *Some* and *every* -/
+
+/-- *Some* `A` holds of the upper closure of the singletons of `A`. -/
+theorem Det.setOf_some_eq_upperClosure (A : Set α) :
+    {B | Det.some A B} = upperClosure ((fun x ↦ ({x} : Set α)) '' A) := by
+  ext B; simp [Det.some, Set.Nonempty]
+
+/-- The minimal sets in *some* `A` are the singletons of its members. -/
+theorem Det.minimal_some_iff : Minimal (Det.some A) w ↔ ∃ x ∈ A, w = {x} := by
+  refine ⟨fun ⟨⟨x, hxA, hxw⟩, hmin⟩ ↦ ⟨x, hxA, ?_⟩, ?_⟩
+  · exact (hmin (y := {x}) ⟨x, hxA, rfl⟩ (Set.singleton_subset_iff.2 hxw)).antisymm
+      (Set.singleton_subset_iff.2 hxw)
+  · rintro ⟨x, hxA, rfl⟩
+    refine ⟨⟨x, hxA, rfl⟩, fun v ⟨y, _, hyv⟩ hvx ↦ ?_⟩
+    obtain rfl : y = x := hvx hyv
+    exact Set.singleton_subset_iff.2 hyv
+
+/-- The minimal set in *every* `A` is `A`. -/
+theorem Det.minimal_every_iff : Minimal (Det.every A) w ↔ w = A :=
+  minimal_ge_iff
 
 end Quantifier
