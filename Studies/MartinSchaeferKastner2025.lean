@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Syntax.Minimalist.Verbal.Voice.Diathesis
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
 public import Linglib.Fragments.Romance.French.Verbs
 public import Linglib.Semantics.Reference.Animacy
@@ -29,9 +29,9 @@ both forms (`SeMarking.HasChoice`).
 
 ## Implementation notes
 
-The voice flavours are the non-thematic and reflexive Voice heads of
-`Syntax/Minimalist/Verbal/Voice.lean` after Schäfer (2008), and the entailments of an
-anticausative's sole argument are those of the French fragment's entries; the
+The two parses are the paper's diatheses, the anticausative and the reflexive, which expletive
+Voice and agentive Voice over an object understood as the subject derive after Schäfer (2008); the
+entailments of an anticausative's sole argument are those of the French fragment's entries; the
 account presupposes the reflexive–anticausative syncretism of Koontz-Garboden. The
 experiments' rating means are described in the paper and not represented.
 
@@ -100,20 +100,26 @@ inductive Form where
   | se
   deriving DecidableEq
 
-/-- The Voice heads a form admits, of the paper's two flavours for a French anticausative: the
-non-thematic Voice of the marked anticausative and the reflexive Voice. The bare form admits only
-the anticausative and the *se* form the reflexive as well, the syncretism of [schaefer-2008] and
-[koontz-garboden-2009]. -/
-def Form.voiceOptions : Form → List Head
-  | .bare => [Minimalist.Voice.anticausative]
-  | .se => [Minimalist.Voice.anticausative, Minimalist.Voice.reflexive]
+/-- The voices a form admits, of the paper's two diatheses for a French anticausative: the
+anticausative and the semantically reflexive voice, whose sole argument is both undergoer and
+agent. The bare form admits only the anticausative and the *se* form the reflexive as well, the
+syncretism of [schaefer-2008] and [koontz-garboden-2009]. -/
+def Form.voiceOptions : Form → List Voice
+  | .bare => [Voice.anticausative]
+  | .se => [Voice.anticausative, Voice.reflexive]
 
 theorem se_ambiguous :
-    (∀ f : Form, Minimalist.Voice.anticausative ∈ f.voiceOptions) ∧
-      Minimalist.Voice.reflexive ∈ Form.se.voiceOptions ∧
-      Minimalist.Voice.reflexive ∉ Form.bare.voiceOptions := by
+    (∀ f : Form, Voice.anticausative ∈ f.voiceOptions) ∧
+      Voice.reflexive ∈ Form.se.voiceOptions ∧ Voice.reflexive ∉ Form.bare.voiceOptions := by
   refine ⟨fun f ↦ ?_, by decide, by decide⟩
   cases f <;> decide
+
+/-- The *se* form's voices are those expletive Voice and agentive Voice over an object understood
+as the subject derive. -/
+example : Form.se.voiceOptions = [Minimalist.Voice.anticausative.diathesis none,
+    Minimalist.Voice.agentive.diathesis (some (.implicit (some .reflexive)))] := by
+  rw [Minimalist.Voice.Head.diathesis_of_not_isThematic _ (by decide),
+    Minimalist.Voice.Head.diathesis_reflexive (by decide)]; rfl
 
 /-! ### Managing the ambiguity (§2) -/
 

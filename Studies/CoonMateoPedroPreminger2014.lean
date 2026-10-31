@@ -115,11 +115,13 @@ inductive Object where
 the object. -/
 def voiceAF : Head := { agentive with checksCase := true }
 
-/-- The verb phrase of a clause, an intransitive with the marker series of its sole argument or
-a transitive with its Voice and its object. -/
+/-- The verb phrase of a clause: an intransitive with the marker series of its sole argument, a
+transitive with its Voice and its object, or an antipassive, whose notional subject is the subject
+of an intransitive verb and whose notional patient is oblique, incorporated or omitted (§4.1). -/
 inductive Predicate where
   | intransitive (marking : MarkerSet)
   | transitive (voice : Head) (object : Object)
+  | antipassive (object : Object)
   deriving DecidableEq
 
 /-- A clause, with the head licensing its object, its finiteness, its verb phrase, the argument
@@ -142,17 +144,17 @@ namespace Predicate
 /-- The Voice head of a transitive verb phrase. -/
 def voice? : Predicate → Option Head
   | .transitive v _ => some v
-  | .intransitive _ => none
+  | .intransitive _ | .antipassive _ => none
 
 /-- The object of a transitive verb phrase. -/
 def object? : Predicate → Option Object
-  | .transitive _ o => some o
+  | .transitive _ o | .antipassive o => some o
   | .intransitive _ => none
 
 /-- The marker series of an intransitive subject. -/
 def marking? : Predicate → Option MarkerSet
   | .intransitive m => some m
-  | .transitive _ _ => none
+  | .transitive _ _ | .antipassive _ => none
 
 /-- The same verb phrase under regular transitive Voice, the derivation Agent Focus competes
 with. -/
@@ -310,9 +312,9 @@ theorem last_resort :
 
 -- (60)
 theorem antipassive_frees (l : Licenser) :
-    ¬ (Predicate.transitive antipassive .oblique).FormallyTransitive ∧
-      ¬ (Predicate.transitive antipassive .oblique).Raises l ∧
-        ¬ Trapped ⟨l, true, .transitive antipassive .oblique, some .A, false⟩ := by
+    ¬ (Predicate.antipassive .oblique).FormallyTransitive ∧
+      ¬ (Predicate.antipassive .oblique).Raises l ∧
+        ¬ Trapped ⟨l, true, .antipassive .oblique, some .A, false⟩ := by
   cases l <;> decide
 
 /-! ### Agent Focus and intransitive v -/
@@ -480,7 +482,7 @@ def Predicate.ofRow (row : Datum) : Option Predicate := do
       Predicate.intransitive <$> row.parse? "marking" [("abs", MarkerSet.setB), ("erg", .setA)]
   | "transitive" => Predicate.transitive agentive <$> row.parse? "object" objects
   | "agentFocus" => Predicate.transitive voiceAF <$> row.parse? "object" objects
-  | "antipassive" => Predicate.transitive antipassive <$> row.parse? "object" objects
+  | "antipassive" => Predicate.antipassive <$> row.parse? "object" objects
   | _ => none
 
 /-- The clause a row describes, its object's licenser read off the paper's classification of

@@ -6,47 +6,32 @@ public import Linglib.Core.Order.Flat
 /-!
 # Voice heads
 
-Voice introduces, or fails to introduce, the external argument of the verbal phrase it takes, as
-Kratzer proposed. A head is a cell of Alexiadou and Schäfer's typology after Schäfer: thematic
-Voice introduces an external-argument variable with an instruction for interpreting it, as an
-agent, a causer or a holder, and expletive Voice introduces nothing; active Voice bears a
-D-feature and projects a specifier, non-active Voice does not, its variable, if any,
-existentially bound and implicit. The four cells are the active and non-active thematic heads,
-the transitive and the passive, and the active and non-active expletive heads, the *se*-marked
-anticausative and the non-active middle. Beyond its cell a head may bind the internal argument to
-the external one, reflexively or reciprocally, or demote it to an oblique, the antipassive; may
-check the accusative Case that v otherwise checks; and may carry Agree features.
-
-Every property consumers read is derived from the cell: `Head.IsThematic`, `Head.AssignsTheta`,
-`Head.ExternalImplicit`, `Head.IsPhasal`, and `Head.params`, the cell as a pair of `Flat Bool`
-coordinates that a morpheme spelling out several heads may leave open.
+This file defines Voice heads, which introduce or fail to introduce the external argument of the
+verbal phrase they take, as Kratzer proposed. A head is a cell of the typology of Alexiadou,
+Anagnostopoulou and Schäfer: thematic Voice introduces an external-argument variable with an
+instruction for interpreting it, and expletive Voice introduces none; active Voice bears a
+D-feature and projects a specifier, and non-active Voice does not, its variable, if any, being
+existentially bound. A head may also check the accusative Case that v otherwise checks, and carry
+Agree features.
 
 ## Main definitions
 
-* `Instruction`, `Operation`, `Head`: the thematic instruction, the valency operation and the
-  head.
-* `Head.IsThematic`, `Head.HasD`, `Head.ExternalImplicit`, `Head.AssignsTheta`, `Head.IsPhasal`,
-  `Head.ChecksCase`, `Head.DCoherent`: the predicate API.
-* `agentive`, `causer`, `experiencer`, `anticausative`, `middle`, `passive`, `impersonal`,
-  `reflexive`, `reciprocal`, `antipassive`: the named cells.
-* `Params`, `Head.params`: the ±D/±λx cell with either coordinate left open.
-
-## Main results
-
-* `Head.AssignsTheta.isThematic`, `Head.IsPhasal.assignsTheta`: θ-assignment entails a thematic
-  head, and phasehood entails θ-assignment.
-* `canonical_dCoherent`: every named cell realizes its variable in its specifier exactly when it
-  has one.
-* `antipassive_not_phasal`: the antipassive is thematic and active yet not a phase.
+* `Minimalist.Voice.Head`: a Voice head, its cell with its Case checking and features.
+* `Minimalist.Voice.Head.IsThematic`, `Minimalist.Voice.Head.AssignsTheta`,
+  `Minimalist.Voice.Head.IsPhasal`: the predicates on a head.
+* `Minimalist.Voice.agentive`, `Minimalist.Voice.anticausative`, `Minimalist.Voice.middle`,
+  `Minimalist.Voice.passive`: the named cells.
+* `Minimalist.Voice.Params`: the ±D/±λx cell with either coordinate left open.
 
 ## Implementation notes
 
 * The passive is the thematic non-active cell, its agent implicit, with the Finnish impersonal in
-  the same cell; Collins's passive Voice, which assigns no θ-role and checks Case, is statable
-  here as an expletive active head with `checksCase`.
-* Phasehood is that of Chomsky's v*, a θ-assigning active head, with the antipassive excepted
-  because it detransitivizes. A study that separates the phase head v from Voice reads its own
-  v off the Voice head below it.
+  the same cell. Collins's passive Voice, which assigns no θ-role and checks Case, is an expletive
+  active head that checks Case.
+* Reflexive, reciprocal and antipassive voices are not cells of their own: they are what a
+  θ-assigning head derives with its internal argument implicit or oblique.
+* Phasehood is that of Chomsky's v*, a θ-assigning active head. A study that separates the phase
+  head v from Voice reads its own v off the Voice head below it.
 * Cuervo's inchoatives have no Voice at all, and the event structure below Voice is
   `Minimalist.LittleV`.
 
@@ -58,13 +43,7 @@ coordinates that a morpheme spelling out several heads may leave open.
 * [collins-2005]
 * [cuervo-2003]
 * [kratzer-1996]
-* [martin-schaefer-kastner-2025]
 * [munoz-perez-2026]
-* [schaefer-2008]
-* [schaefer-2017]
-* [scott-2023]
-* [siloni-2012]
-* [wood-2015]
 -/
 @[expose] public section
 
@@ -80,17 +59,8 @@ inductive Instruction where
   | holder
   deriving DecidableEq, Repr
 
-/-- What a head does to the internal argument beyond introducing an external one, binding it to
-the external argument reflexively or reciprocally ([siloni-2012]) or demoting it to an oblique
-([scott-2023]). -/
-inductive Operation where
-  | reflexive
-  | reciprocal
-  | antipassive
-  deriving DecidableEq, Repr
-
 /-- A Voice head, with its cell in the thematic/expletive × active/non-active typology, whether
-its variable is implicit, its valency operation, and its per-construction properties. -/
+its variable is implicit, and its per-construction properties. -/
 structure Head where
   /-- The external-argument variable λx with its instruction, `none` for expletive Voice. -/
   thematic : Option Instruction
@@ -98,8 +68,6 @@ structure Head where
   hasD : Bool
   /-- The variable is existentially bound rather than saturated by a specifier DP. -/
   implicit : Bool := false
-  /-- The operation on the internal argument, if any. -/
-  operation : Option Operation := none
   /-- Checks the accusative Case that v otherwise checks, as [collins-2005]'s passive Voice
   does. -/
   checksCase : Bool := false
@@ -129,9 +97,8 @@ def AssignsTheta : Prop := v.IsThematic ∧ ¬ v.ExternalImplicit
 /-- Checks Case. -/
 def ChecksCase : Prop := v.checksCase = true
 
-/-- The head is a phase head, [chomsky-2001]'s v*, when it assigns a θ-role and is active,
-unless it is the antipassive, which detransitivizes. -/
-def IsPhasal : Prop := v.AssignsTheta ∧ v.HasD ∧ v.operation ≠ some .antipassive
+/-- The head is a phase head, [chomsky-2001]'s v*, when it assigns a θ-role and is active. -/
+def IsPhasal : Prop := v.AssignsTheta ∧ v.HasD
 
 /-- A thematic head's variable is implicit exactly when the head projects no specifier, as in
 [alexiadou-anagnostopoulou-schaefer-2015]'s grid; a head may diverge, and stating the divergence
@@ -169,9 +136,6 @@ def Head.params (v : Head) : Params := (v.hasD, v.thematic.isSome)
 /-- Thematic active Voice introducing an agent, the transitive and unergative head v*. -/
 def agentive : Head := { thematic := some .agent, hasD := true }
 
-/-- Thematic active Voice introducing a causer. -/
-def causer : Head := { thematic := some .causer, hasD := true }
-
 /-- Thematic active Voice introducing a holder, the experiencer subject of a psych
 causative. -/
 def experiencer : Head := { thematic := some .holder, hasD := true }
@@ -185,51 +149,5 @@ def middle : Head := { thematic := none, hasD := false }
 
 /-- Thematic non-active Voice, its agent existentially bound and implicit, the passive. -/
 def passive : Head := { thematic := some .agent, hasD := false, implicit := true }
-
-/-- The Finnish impersonal, the same cell as the passive, with an implicit generic agent. -/
-def impersonal : Head := passive
-
-/-- Agentive Voice binding the internal argument to the agent, Romance reflexive *se*
-([martin-schaefer-kastner-2025]). [wood-2015]'s Icelandic *-st* is a SpecpP clitic, not an
-exponent of this head. -/
-def reflexive : Head := { agentive with operation := some .reflexive }
-
-/-- Agentive Voice putting the agent in the mutual relation with the internal argument,
-[siloni-2012]'s syntactic reciprocalization. Lexically reciprocal verbs enter the syntax
-symmetric and are not exponents of this head. -/
-def reciprocal : Head := { agentive with operation := some .reciprocal }
-
-/-- Agentive Voice demoting the object to an oblique, with absolutive on the agent
-([scott-2023]). -/
-def antipassive : Head := { agentive with operation := some .antipassive }
-
-/-! ### Verification -/
-
-theorem assignsTheta_cells :
-    agentive.AssignsTheta ∧ causer.AssignsTheta ∧ experiencer.AssignsTheta ∧
-      reflexive.AssignsTheta ∧ reciprocal.AssignsTheta ∧ antipassive.AssignsTheta ∧
-      ¬ anticausative.AssignsTheta ∧ ¬ middle.AssignsTheta ∧ ¬ passive.AssignsTheta := by
-  decide
-
-theorem passive_anticausative :
-    passive.IsThematic ∧ passive.ExternalImplicit ∧ ¬ anticausative.IsThematic ∧
-      anticausative.HasD := by
-  decide
-
-/-- Every named thematic cell keeps its variable implicit exactly when it lacks a specifier. -/
-theorem canonical_dCoherent :
-    agentive.DCoherent ∧ causer.DCoherent ∧ experiencer.DCoherent ∧
-      anticausative.DCoherent ∧ middle.DCoherent ∧ passive.DCoherent ∧ reflexive.DCoherent ∧
-      reciprocal.DCoherent ∧ antipassive.DCoherent := by
-  decide
-
-theorem phasal_cells :
-    agentive.IsPhasal ∧ causer.IsPhasal ∧ ¬ anticausative.IsPhasal ∧ ¬ middle.IsPhasal ∧
-      ¬ passive.IsPhasal := by
-  decide
-
-/-- The antipassive is a thematic active head that is no phase, phasehood tracking v*
-transitivity ([chomsky-2001]) and the antipassive detransitivizing. -/
-theorem antipassive_not_phasal : antipassive.AssignsTheta ∧ ¬ antipassive.IsPhasal := by decide
 
 end Minimalist.Voice
