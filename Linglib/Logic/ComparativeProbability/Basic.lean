@@ -10,15 +10,17 @@ public import Mathlib.Order.RelClasses
 /-!
 # Basic API for qualitative probabilities
 
-On any Boolean algebra the axioms let a disjoint common context cancel and let disjoint
-comparisons merge. On sets, a qualitative probability pulls back along preimages
-(`Set.preimage f ⁻¹'o r`) and, when the range is not null, along images of an injection.
+On any Boolean algebra the axioms let a disjoint common context cancel, let a null event be
+removed, and let disjoint comparisons merge. On sets, a qualitative probability pulls back along
+preimages (`Set.preimage f ⁻¹'o r`) and, when the range is not null, along images of an
+injection.
 
 ## Main statements
 
 * `rel_sup_sup_right_iff`, `rel_sup_sup_right`, `rel_sup_sup`: context cancellation and
   merging.
 * `isQualitativeAdditive_iff`: qualitative additivity is context cancellation.
+* `rel_sdiff_sdiff_iff`: removing a null event changes no comparison.
 * `isQualitativeProbability_image`: pulling back along the image of an injection.
 * `not_isQualitativeProbability_of_isEmpty`: an empty carrier has no qualitative probability.
 * `exists_not_rel_empty_singleton`: a finite carrier has a non-null atom.
@@ -54,6 +56,15 @@ theorem isQualitativeAdditive_iff : IsQualitativeAdditive r ↔
   refine ⟨fun _ _ _ _ ↦ rel_sup_sup_right_iff, fun h ↦ ⟨fun a b ↦ ?_⟩⟩
   have := h (a \ b) (b \ a) (a ⊓ b) disjoint_inf_sdiff (inf_comm b a ▸ disjoint_inf_sdiff)
   rwa [sup_sdiff_inf, inf_comm, sup_sdiff_inf] at this
+
+/-- Removing an event at most as likely as `⊥` changes no comparison. -/
+theorem rel_sdiff_sdiff_iff [IsQualitativeProbability r] {n : α} (hn : r ⊥ n) {a b : α} :
+    r (a \ n) (b \ n) ↔ r a b := by
+  have h (x : α) : r (x \ n) x := by
+    rw [qadd (r := r), sdiff_eq_bot_iff.mpr sdiff_le, sdiff_sdiff_right_self]
+    exact trans_of r hn (mono _ _ inf_le_right)
+  exact ⟨fun hab ↦ trans_of r (mono _ _ sdiff_le) (trans_of r hab (h b)),
+    fun hab ↦ trans_of r (h a) (trans_of r hab (mono _ _ sdiff_le))⟩
 
 /-- Two comparisons with disjoint left parts and disjoint right parts merge into their joins,
     even with cross overlaps. The proof adds context to each side, passes through `b₁ ⊔ a₂`,
