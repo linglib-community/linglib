@@ -76,6 +76,7 @@ theorem iff_of_pattern (hO : Invariant ordinal a) (hI : Independent a)
   let f : Profile ι α K → ι → K → K := fun u i t ↦
     if u x i = u y i then t - u x i else (t - u x i) / |u y i - u x i|
   have hf : ∀ u, f u ∈ ordinal := fun u ↦ by
+    rw [mem_ordinal]
     intro i s t hst
     dsimp only [f]
     split_ifs with h

@@ -169,13 +169,13 @@ theorem health_utilitarian_iff (hw : 0 < w .cardiovascular) :
     utilitarian w (health mS mB cB t) .suzy .bill ↔
       cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t := by
   rw [← mul_le_mul_iff_of_pos_right hw, add_mul, div_mul_eq_mul_div, div_mul_cancel₀ _ hw.ne']
-  simp only [utilitarian, dotProduct, sum_health, health]
+  simp only [utilitarian_apply, dotProduct, sum_health, health]
   constructor <;> intro h <;> linarith
 
 theorem health_mono (hw : 0 ≤ w .cardiovascular) (h : t ≤ t') :
     utilitarian w (health mS mB cB t) .suzy .bill →
       utilitarian w (health mS mB cB t') .suzy .bill := by
-  simp only [utilitarian, dotProduct, sum_health, health]
+  simp only [utilitarian_apply, dotProduct, sum_health, health]
   intro h'
   linarith [mul_le_mul_of_nonneg_left h hw]
 

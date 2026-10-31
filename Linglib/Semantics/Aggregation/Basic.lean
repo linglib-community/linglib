@@ -17,14 +17,16 @@ assigns each profile a relation on the objects, read `x ⪰ y`. In social choice
 are voters and the objects social states; for a multidimensional adjective the individuals are
 its dimensions and the relation is its comparative.
 
-The information a rule may use is fixed by invariance under a class of transformation vectors:
-strictly increasing maps when values are ordinal and incomparable across individuals, positive
-affine maps with a common unit when differences are comparable, similarities when values are
-ratio-scale, and the classes that apply one map to every individual. Arrow's conditions, the
-strong Pareto condition, Pareto indifference and anonymity are predicates on rules. When every
-output is a preorder, Pareto indifference says that a rule ranks objects by ranking their vectors
-of values, and with independence and at least three objects one ranking of vectors serves every
-profile.
+The information a rule may use is fixed by invariance under a class of transformation vectors.
+On a single scale the changes of scale are the strictly increasing maps of an ordinal scale, the
+positive affine maps of an interval scale and the similarities of a ratio scale. A class of
+vectors applies such maps separately to each individual (non-comparability), one map to every
+individual (full comparability), or affine maps with a common unit (unit comparability). Arrow's
+conditions, the strong Pareto condition, Pareto indifference and anonymity are predicates on rules.
+
+A rule ranks vectors when each output is the preimage, under the profile, of one relation on
+vectors of values. Every classical rule does, and on three or more objects a rule with preorder
+outputs does exactly when it is independent and Pareto indifferent.
 
 ## Main definitions
 
@@ -34,9 +36,10 @@ profile.
 
 ## Main statements
 
-* `Aggregation.paretoIndifferent_iff_forall_exists_eq_onFun`: Pareto indifference as ranking
+* `Aggregation.paretoIndifferent_iff_forall_exists_eq_preimage`: Pareto indifference as ranking
   vectors.
-* `Aggregation.exists_forall_eq_onFun`: one ranking of vectors serves every profile.
+* `Aggregation.independent_and_paretoIndifferent_iff_exists_preimage`: welfarism, one ranking of
+  vectors for every profile.
 
 ## Implementation notes
 
@@ -88,62 +91,100 @@ theorem Invariant.mono {β : Type*} {S T : Set (ι → K → K)} (h : S ⊆ T) {
     (ha : Invariant T a) : Invariant S a :=
   fun f hf ↦ ha f (h hf)
 
-/-- Vectors of strictly increasing transformations; invariance under them is ordinal
-non-comparability. -/
-def ordinal [Preorder K] : Set (ι → K → K) := {f | ∀ i, StrictMono (f i)}
+/-- Vectors of strictly increasing transformations, one for each individual; invariance under
+them is ordinal non-comparability. -/
+def ordinal [Preorder K] : Set (ι → K → K) := Set.univ.pi fun _ ↦ {u | StrictMono u}
 
-/-- Vectors applying one strictly increasing transformation to every individual; invariance under
-them is ordinal level comparability. -/
-def ordinalLevel [Preorder K] : Set (ι → K → K) := {f | ∃ u : K → K, StrictMono u ∧ ∀ i, f i = u}
+/-- One strictly increasing transformation applied to every individual; invariance under these
+is ordinal level comparability. -/
+def ordinalLevel [Preorder K] : Set (ι → K → K) := const ι '' {u | StrictMono u}
+
+@[simp]
+theorem mem_ordinal [Preorder K] {f : ι → K → K} : f ∈ ordinal ↔ ∀ i, StrictMono (f i) :=
+  Set.mem_univ_pi
+
+/-- Applying one transformation to every individual is a special case of applying one to each. -/
+theorem const_image_subset_pi {S : Set (K → K)} : const ι '' S ⊆ Set.univ.pi fun _ ↦ S := by
+  rintro _ ⟨u, hu, rfl⟩ i -
+  exact hu
 
 theorem ordinalLevel_subset_ordinal [Preorder K] : ordinalLevel ⊆ (ordinal : Set (ι → K → K)) :=
-  fun _ ⟨_, hu, hf⟩ i ↦ hf i ▸ hu
+  const_image_subset_pi
 
 section Cardinal
 
 variable [Semiring K] [PartialOrder K]
 
-/-- Common-unit positive affine transformation vectors; invariance under them is cardinal unit
-comparability. -/
+/-- The positive affine transformations `t ↦ a * t + b` with `0 < a`, the changes of scale of
+an interval scale. -/
+def positiveAffine : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ t, u t = a * t + b}
+
+/-- The similarity transformations `t ↦ a * t` with `0 < a`, the changes of scale of a ratio
+scale. -/
+def similarity : Set (K → K) := {u | ∃ a : K, 0 < a ∧ ∀ t, u t = a * t}
+
+/-- Vectors of positive affine transformations, one for each individual; invariance under them
+is cardinal non-comparability. -/
+def cardinal : Set (ι → K → K) := Set.univ.pi fun _ ↦ positiveAffine
+
+/-- Positive affine transformation vectors with a common unit; invariance under them is cardinal
+unit comparability. -/
 def cardinalUnit : Set (ι → K → K) :=
   {f | ∃ a : K, 0 < a ∧ ∃ b : ι → K, ∀ i t, f i t = a * t + b i}
 
-/-- Similarity transformation vectors; invariance under them is ratio-scale
-non-comparability. -/
-def ratio : Set (ι → K → K) := {f | ∃ a : ι → K, (∀ i, 0 < a i) ∧ ∀ i t, f i t = a i * t}
+/-- One positive affine transformation applied to every individual; invariance under these is
+cardinal full comparability. -/
+def cardinalFull : Set (ι → K → K) := const ι '' positiveAffine
 
-/-- Vectors applying one positive affine transformation to every individual; invariance under them
-is cardinal full comparability. -/
-def cardinalFull : Set (ι → K → K) := {f | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ i t, f i t = a * t + b}
+/-- Vectors of similarity transformations, one for each individual; invariance under them is
+ratio-scale non-comparability. -/
+def ratio : Set (ι → K → K) := Set.univ.pi fun _ ↦ similarity
 
-/-- Vectors applying one similarity transformation to every individual; invariance under them is
+/-- One similarity transformation applied to every individual; invariance under these is
 ratio-scale full comparability. -/
-def ratioFull : Set (ι → K → K) := {f | ∃ a : K, 0 < a ∧ ∀ i t, f i t = a * t}
+def ratioFull : Set (ι → K → K) := const ι '' similarity
 
-theorem cardinalFull_subset_cardinalUnit : cardinalFull ⊆ (cardinalUnit : Set (ι → K → K)) :=
-  fun _ ⟨a, ha, b, hf⟩ ↦ ⟨a, ha, fun _ ↦ b, hf⟩
+@[simp]
+theorem mem_ratio {f : ι → K → K} : f ∈ ratio ↔ ∀ i, f i ∈ similarity :=
+  Set.mem_univ_pi
+
+theorem similarity_subset_positiveAffine : similarity ⊆ (positiveAffine : Set (K → K)) :=
+  fun _ ⟨a, ha, hu⟩ ↦ ⟨a, ha, 0, fun t ↦ by rw [hu, add_zero]⟩
+
+theorem cardinalFull_subset_cardinalUnit : cardinalFull ⊆ (cardinalUnit : Set (ι → K → K)) := by
+  rintro _ ⟨u, ⟨a, ha, b, hu⟩, rfl⟩
+  exact ⟨a, ha, fun _ ↦ b, fun _ ↦ hu⟩
+
+theorem cardinalUnit_subset_cardinal : cardinalUnit ⊆ (cardinal : Set (ι → K → K)) :=
+  fun _ ⟨a, ha, b, hf⟩ i _ ↦ ⟨a, ha, b i, hf i⟩
 
 theorem ratioFull_subset_cardinalFull : ratioFull ⊆ (cardinalFull : Set (ι → K → K)) :=
-  fun _ ⟨a, ha, hf⟩ ↦ ⟨a, ha, 0, fun i t ↦ by rw [hf, add_zero]⟩
+  Set.image_mono similarity_subset_positiveAffine
+
+theorem ratio_subset_cardinal : ratio ⊆ (cardinal : Set (ι → K → K)) :=
+  Set.pi_mono fun _ _ ↦ similarity_subset_positiveAffine
 
 theorem ratioFull_subset_ratio : ratioFull ⊆ (ratio : Set (ι → K → K)) :=
-  fun _ ⟨a, ha, hf⟩ ↦ ⟨fun _ ↦ a, fun _ ↦ ha, hf⟩
+  const_image_subset_pi
 
 variable [IsStrictOrderedRing K]
 
+theorem positiveAffine_subset_strictMono : positiveAffine ⊆ {u : K → K | StrictMono u} :=
+  fun _ ⟨a, ha, b, hu⟩ s t hst ↦ by
+    simp only [hu]
+    exact add_lt_add_left (mul_lt_mul_of_pos_left hst ha) _
+
+theorem cardinal_subset_ordinal : cardinal ⊆ (ordinal : Set (ι → K → K)) :=
+  Set.pi_mono fun _ _ ↦ positiveAffine_subset_strictMono
+
 theorem cardinalFull_subset_ordinalLevel : cardinalFull ⊆ (ordinalLevel : Set (ι → K → K)) :=
-  fun _ ⟨a, ha, b, hf⟩ ↦ ⟨(a * · + b), fun _ _ hst ↦ add_lt_add_left
-    (mul_lt_mul_of_pos_left hst ha) _, fun i ↦ funext (hf i)⟩
+  Set.image_mono positiveAffine_subset_strictMono
 
-theorem cardinalUnit_subset_ordinal : cardinalUnit ⊆ (ordinal : Set (ι → K → K)) := by
-  rintro f ⟨a, ha, b, hf⟩ i s t hst
-  simp only [hf]
-  exact add_lt_add_left (mul_lt_mul_of_pos_left hst ha) _
+theorem cardinalUnit_subset_ordinal : cardinalUnit ⊆ (ordinal : Set (ι → K → K)) :=
+  cardinalUnit_subset_cardinal.trans cardinal_subset_ordinal
 
-theorem ratio_subset_ordinal : ratio ⊆ (ordinal : Set (ι → K → K)) := by
-  rintro f ⟨a, ha, hf⟩ i s t hst
-  simp only [hf]
-  exact mul_lt_mul_of_pos_left hst (ha i)
+theorem ratio_subset_ordinal : ratio ⊆ (ordinal : Set (ι → K → K)) :=
+  ratio_subset_cardinal.trans cardinal_subset_ordinal
 
 end Cardinal
 
@@ -201,6 +242,43 @@ def NonDictatorial : Prop := ∀ i, ¬ IsDictator a i
 
 end Conditions
 
+/-! ### Rules that rank vectors -/
+
+section Preimage
+
+variable {R : (ι → K) → (ι → K) → Prop}
+
+/-- A rule that ranks objects by a relation on their vectors of values is independent. -/
+theorem independent_preimage (R : (ι → K) → (ι → K) → Prop) :
+    Independent (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+  fun _ _ _ _ hx hy ↦ by simp only [Order.Preimage, hx, hy]
+
+theorem paretoIndifferent_preimage (hR : ∀ p, R p p) :
+    ParetoIndifferent (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+  fun v x y h ↦ ⟨show R (v x) (v y) from h ▸ hR _, show R (v y) (v x) from h ▸ hR _⟩
+
+theorem quasiOrderValued_preimage [IsPreorder (ι → K) R] :
+    QuasiOrderValued (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+  fun _ ↦ inferInstance
+
+theorem weakOrderValued_preimage [IsTrans (ι → K) R] [Std.Total R] :
+    WeakOrderValued (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+  ⟨fun _ ↦ inferInstance, fun _ ↦ inferInstance⟩
+
+/-- A rule that ranks vectors is anonymous when permuting the coordinates leaves the ranking of
+vectors unchanged. -/
+theorem anonymous_preimage (h : ∀ σ : Equiv.Perm ι, (· ∘ σ) ⁻¹'o R = R) :
+    Anonymous (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+  fun σ v ↦ congrArg (v ⁻¹'o ·) (h σ)
+
+/-- A rule that ranks vectors is invariant under a class of transformation vectors when each
+of them, applied coordinatewise, leaves the ranking of vectors unchanged. -/
+theorem invariant_preimage {T : Set (ι → K → K)} (h : ∀ f ∈ T, Pi.map f ⁻¹'o R = R) :
+    Invariant T (fun v ↦ v ⁻¹'o R : Rule ι α K) :=
+  fun f hf v ↦ congrArg (v ⁻¹'o ·) (h f hf)
+
+end Preimage
+
 /-! ### Welfarism -/
 
 section Welfarism
@@ -210,8 +288,8 @@ variable {a : Rule ι α K}
 /-- When every output is a preorder, Pareto indifference holds exactly when each output ranks the
 objects by a ranking of their vectors of values ([dambrosio-hedden-2024] fn. 16, after
 [blackorby-donaldson-weymark-1990]). -/
-theorem paretoIndifferent_iff_forall_exists_eq_onFun (h : QuasiOrderValued a) :
-    ParetoIndifferent a ↔ ∀ v, ∃ R : (ι → K) → (ι → K) → Prop, a v = (R on v) := by
+theorem paretoIndifferent_iff_forall_exists_eq_preimage (h : QuasiOrderValued a) :
+    ParetoIndifferent a ↔ ∀ v, ∃ R : (ι → K) → (ι → K) → Prop, a v = v ⁻¹'o R := by
   refine ⟨fun hP v ↦ ⟨Relation.Map (a v) v v, funext₂ fun x y ↦
     propext ⟨fun hxy ↦ ⟨x, y, hxy, rfl, rfl⟩, ?_⟩⟩, fun h' v x y hxy ↦ ?_⟩
   · have := h v
@@ -220,7 +298,7 @@ theorem paretoIndifferent_iff_forall_exists_eq_onFun (h : QuasiOrderValued a) :
   · obtain ⟨R, hR⟩ := h' v
     have := h v
     have e : ∀ z w, v z = v w → a v z w := fun z w hzw ↦ by
-      simpa only [hR, onFun, hzw] using refl_of (a v) z
+      simpa only [hR, Order.Preimage, hzw] using refl_of (a v) z
     exact ⟨e x y hxy, e y x hxy.symm⟩
 
 variable (hI : Independent a) (hP : ParetoIndifferent a) (hQ : QuasiOrderValued a)
@@ -281,21 +359,28 @@ theorem iff_of_eq_of_ne (h₃ : 3 ≤ ENat.card α) {v w : Profile ι α K} {x y
     (iff_of_ne_left hI hP hQ hzy.symm (hu₁.trans hu₁'.symm) (hu₂.trans hu₂'.symm)).trans
       (iff_of_ne_right hI hP hQ hxy' (hu₁'.trans hx) (hu₂'.trans hy))
 
-/-- Welfarism: a rule that is independent and Pareto indifferent, with preorder outputs, on three
-or more objects ranks the objects at every profile by one ranking of their vectors of values. -/
-theorem exists_forall_eq_onFun (h₃ : 3 ≤ ENat.card α) :
-    ∃ R : (ι → K) → (ι → K) → Prop, ∀ v, a v = (R on v) := by
+omit hI hP in
+/-- Welfarism: on three or more objects, a rule with preorder outputs is independent and Pareto
+indifferent exactly when one relation on vectors of values ranks the objects at every profile. -/
+theorem independent_and_paretoIndifferent_iff_exists_preimage (h₃ : 3 ≤ ENat.card α) :
+    Independent a ∧ ParetoIndifferent a ↔
+      ∃ R : (ι → K) → (ι → K) → Prop, ∀ v, a v = v ⁻¹'o R := by
   classical
   have : Nontrivial α := (ENat.one_lt_card_iff_nontrivial α).1 (lt_of_lt_of_le (by simp) h₃)
   obtain ⟨x₀, y₀, h₀⟩ := exists_pair_ne α
-  let pr (p q : ι → K) : Profile ι α K := update (fun _ ↦ q) x₀ p
-  have hpr₁ (p q) : pr p q x₀ = p := update_self _ _ _
-  have hpr₂ (p q) : pr p q y₀ = q := update_of_ne h₀.symm _ _
-  refine ⟨fun p q ↦ a (pr p q) x₀ y₀, fun v ↦ funext₂ fun x y ↦ propext ?_⟩
-  rcases eq_or_ne x y with rfl | hxy
-  · have := hQ v
-    exact iff_of_true (refl_of (a v) x) (hP _ _ _ ((hpr₁ _ _).trans (hpr₂ _ _).symm)).1
-  · exact iff_of_eq_of_ne hI hP hQ h₃ hxy h₀ (hpr₁ _ _).symm (hpr₂ _ _).symm
+  refine ⟨fun ⟨hI, hP⟩ ↦ ?_, fun ⟨R, hR⟩ ↦ ?_⟩
+  · let pr (p q : ι → K) : Profile ι α K := update (fun _ ↦ q) x₀ p
+    have hpr₁ (p q) : pr p q x₀ = p := update_self _ _ _
+    have hpr₂ (p q) : pr p q y₀ = q := update_of_ne h₀.symm _ _
+    refine ⟨fun p q ↦ a (pr p q) x₀ y₀, fun v ↦ funext₂ fun x y ↦ propext ?_⟩
+    rcases eq_or_ne x y with rfl | hxy
+    · have := hQ v
+      exact iff_of_true (refl_of (a v) x) (hP _ _ _ ((hpr₁ _ _).trans (hpr₂ _ _).symm)).1
+    · exact iff_of_eq_of_ne hI hP hQ h₃ hxy h₀ (hpr₁ _ _).symm (hpr₂ _ _).symm
+  · obtain rfl : a = fun v ↦ v ⁻¹'o R := funext hR
+    refine ⟨independent_preimage R, paretoIndifferent_preimage fun p ↦ ?_⟩
+    have := hQ fun _ ↦ p
+    exact refl_of ((fun _ : α ↦ p) ⁻¹'o R) x₀
 
 end Welfarism
 

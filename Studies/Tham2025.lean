@@ -129,8 +129,8 @@ theorem degree_lt_degree_of_lt {spatial' : α → K} (h0 : 0 < k ⬝ᵥ v x) (hs
 
 theorem more_iff_utilitarian (hs : spatial x = spatial y) (hs0 : 0 < spatial x) :
     More k v spatial x y ↔ utilitarian k v x y ∧ ¬ utilitarian k v y x := by
-  rw [More, degree, degree, ← hs, div_lt_div_iff_of_pos_right hs0, utilitarian, utilitarian,
-    lt_iff_le_not_ge]
+  rw [More, degree, degree, ← hs, div_lt_div_iff_of_pos_right hs0, utilitarian_apply,
+    utilitarian_apply, lt_iff_le_not_ge]
 
 /-! ### Respect phrases (sections 3.2.2 and 4.2) -/
 
