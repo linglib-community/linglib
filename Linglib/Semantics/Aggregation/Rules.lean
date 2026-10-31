@@ -4,31 +4,35 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Finset.Max
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
-public import Linglib.Core.SocialChoice.Basic
+public import Linglib.Semantics.Aggregation.Basic
 
 /-!
-# Classical social welfare functionals
+# Classical aggregation rules
 
-Five classical rules with the conditions they meet or fail. Majority rule, after May, meets every
-Arrow condition except weak-ordering outputs. The Pareto rule, after Weymark, is a quasi-ordering
-that leaves every trade-off incomparable. The utilitarian rule meets every Arrow condition except
-ordinal invariance, failing even ratio-scale invariance. The Cobb–Douglas rule, after Tsui and
-Weymark, is ratio-scale invariant on non-negative profiles, and the maximin rule needs only ordinal
-level comparability. The Pareto rule is the unanimous verdict of the utilitarian rules with
-positive weights, so a trade-off is exactly a pair that two positive weightings rank oppositely.
+This file defines five classical aggregation rules and the conditions they meet or fail. Majority
+rule, after May, meets every Arrow condition except weak-ordering outputs. The Pareto rule, after
+Weymark, is a quasi-ordering that leaves every trade-off incomparable. The utilitarian rule meets
+every Arrow condition except ordinal invariance, failing even ratio-scale invariance. The
+Cobb–Douglas rule, after Tsui and Weymark, is ratio-scale invariant on non-negative profiles, and
+the maximin rule needs only ordinal level comparability. The Pareto rule is the unanimous verdict
+of the utilitarian rules with positive weights, so a trade-off is exactly a pair that two positive
+weightings rank oppositely.
 
 ## Main definitions
 
-* `SocialChoice.majority`, `SocialChoice.paretoRule`, `SocialChoice.utilitarian`,
-  `SocialChoice.maximin`, `SocialChoice.cobbDouglas`: the five rules.
+* `Aggregation.majority`: majority rule.
+* `Aggregation.paretoRule`: the Pareto rule.
+* `Aggregation.utilitarian`: weighted sums of values.
+* `Aggregation.maximin`: the lowest value.
+* `Aggregation.cobbDouglas`: weighted products of values.
 
 ## Main statements
 
-* `SocialChoice.paretoRule_iff_forall_utilitarian`: the Pareto rule is the unanimous verdict of
+* `Aggregation.paretoRule_iff_forall_utilitarian`: the Pareto rule is the unanimous verdict of
   the positively weighted utilitarian rules.
-* `SocialChoice.not_ordinalInvariant_utilitarian`: the utilitarian rule needs cardinal
+* `Aggregation.not_ordinalInvariant_utilitarian`: the utilitarian rule needs cardinal
   information.
-* `SocialChoice.maximin_ordinalLevelInvariant`: the maximin rule needs only ordinal level
+* `Aggregation.maximin_ordinalLevelInvariant`: the maximin rule needs only ordinal level
   comparability.
 
 ## References
@@ -41,7 +45,7 @@ positive weights, so a trade-off is exactly a pair that two positive weightings 
 
 @[expose] public section
 
-namespace SocialChoice
+namespace Aggregation
 
 open Finset
 
@@ -126,8 +130,15 @@ def paretoRule : Rule ι α K := fun v x y ↦ v y ≤ v x
 theorem paretoRule_quasiOrderValued : QuasiOrderValued (paretoRule : Rule ι α K) :=
   fun _ ↦ { refl := fun _ ↦ le_rfl, trans := fun _ _ _ h h' ↦ h'.trans h }
 
+/-- The Pareto rule ranks `x` strictly above `y` iff the vector of `x` lies strictly above that of
+`y`. -/
+@[simp]
+theorem asymmRel_paretoRule_iff {v : Profile ι α K} {x y : α} :
+    AsymmRel (paretoRule v) x y ↔ v y < v x :=
+  lt_iff_le_not_ge.symm
+
 theorem paretoRule_strongPareto : StrongPareto (paretoRule : Rule ι α K) :=
-  fun _ _ _ h ↦ ⟨h, fun ⟨i, hi⟩ ↦ ⟨h, fun h' ↦ (h' i).not_gt hi⟩⟩
+  fun _ _ _ ↦ ⟨id, asymmRel_paretoRule_iff.2⟩
 
 theorem paretoRule_paretoIndifferent : ParetoIndifferent (paretoRule : Rule ι α K) :=
   fun _ _ _ h ↦ ⟨h.ge, h.le⟩
@@ -330,4 +341,4 @@ theorem cobbDouglas_transform_of_nonneg {f : ι → ℝ → ℝ} (hf : f ∈ rat
 
 end CobbDouglas
 
-end SocialChoice
+end Aggregation

@@ -4,23 +4,23 @@ public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.Linarith
-public import Linglib.Core.SocialChoice.Basic
+public import Linglib.Semantics.Aggregation.Basic
 
 /-!
 # Arrow's theorem
 
-With three or more alternatives, a rule on profiles of values that is ordinally invariant, outputs
-weak orderings, respects weak Pareto and is independent of irrelevant alternatives has a dictator,
-an individual whose strict rankings are the strict overall rankings. Ordinal invariance makes the
-values carry no more than each individual's ranking, which recovers Arrow's setting. The proof is
-by field expansion and group contraction: the whole population is decisive, an almost decisive
-group is decisive for every pair, and a decisive group with two or more members has a decisive
-proper subgroup.
+This file proves Arrow's theorem. With three or more alternatives, a rule on profiles of values
+that is ordinally invariant, outputs weak orderings, respects weak Pareto and is independent of
+irrelevant alternatives has a dictator, an individual whose strict rankings are the strict overall
+rankings. Ordinal invariance makes the values carry no more than each individual's ranking, which
+recovers Arrow's setting. The proof is by field expansion and group contraction: the whole
+population is decisive, an almost decisive group is decisive for every pair, and a decisive group
+with two or more members has a decisive proper subgroup.
 
 ## Main statements
 
-* `SocialChoice.exists_isDictator`: a rule meeting Arrow's conditions has a dictator.
-* `SocialChoice.arrow`: no rule meets all of Arrow's conditions.
+* `Aggregation.exists_isDictator`: a rule meeting Arrow's conditions has a dictator.
+* `Aggregation.arrow`: no rule meets all of Arrow's conditions.
 
 ## References
 
@@ -30,7 +30,7 @@ proper subgroup.
 
 @[expose] public section
 
-namespace SocialChoice
+namespace Aggregation
 
 variable {ι α K : Type*}
 
@@ -293,4 +293,4 @@ theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) :
 
 end Arrow
 
-end SocialChoice
+end Aggregation

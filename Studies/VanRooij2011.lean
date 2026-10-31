@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.SocialChoice.Rules
+public import Linglib.Semantics.Aggregation.Rules
 public import Linglib.Semantics.Degree.MeasurePhrase
 public import Linglib.Semantics.Degree.UniversalScale
 
@@ -19,8 +19,8 @@ across adjectives meaningful from merely ordinal measures, which van Rooij count
 
 ## Implementation notes
 
-* A measure on individual–adjective pairs is a profile of `SocialChoice` with adjectives as its
-  individuals, following the paper's analogy with interpersonal comparisons of utility. The
+* A measure on individual–adjective pairs is a `Aggregation.Profile` with adjectives as
+  its individuals, following the paper's analogy with interpersonal comparisons of utility. The
   co-ordinal, co-interval and co-ratio scales are Sen's comparability classes `ordinalLevel`,
   `cardinalFull` and `ratioFull`, and separate scales per adjective are `ordinal`.
 * Measures are real-valued, as in the paper; universal degrees are rational.
@@ -42,7 +42,7 @@ across adjectives meaningful from merely ordinal measures, which van Rooij count
 
 namespace VanRooij2011
 
-open Degree SocialChoice Finset
+open Degree Aggregation Finset
 
 variable {X Ad K : Type*}
 

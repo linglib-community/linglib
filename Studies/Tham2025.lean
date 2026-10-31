@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.SocialChoice.Rules
+public import Linglib.Semantics.Aggregation.Rules
 public import Linglib.Data.Examples.Tham2025
 
 /-!
@@ -39,7 +39,7 @@ cracked without its having cracked badly, `Event.pos_not_verb`.
 ## Implementation notes
 
 The measure sums over an index type of dimensions, each with a nonnegative extent measure on
-hosts, in the profile vocabulary of `SocialChoice`; the paper's comparative at a
+hosts, in the profile vocabulary of `Aggregation`; the paper's comparative at a
 weighting is the utilitarian rule on the extent profile when the hosts have the same spatial
 extent, `more_iff_utilitarian`. A respect phrase is the weighting `Pi.single i 1`, so respect
 phrases and quantification over respects are the paper's grammatical access to dimensions for
@@ -65,7 +65,7 @@ that the difference degree is the reason, are not formalized. The examples are t
 
 namespace Tham2025
 
-open SocialChoice Finset Matrix
+open Aggregation Finset Matrix
 
 /-! ### The adjective (section 5.2, (46)–(47)) -/
 
