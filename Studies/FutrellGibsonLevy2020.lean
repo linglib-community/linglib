@@ -22,16 +22,19 @@ special case (`MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless`).
 
 Their comprehender of section 3.3 predicts the next word by Bayesian inversion of the memory
 kernel (`bayes`). Given the encoder, any other predictor's average difficulty exceeds its own by
-the expected divergence of the other prediction from the Bayesian one
-(`averageDifficulty_eq_bayes_add`), so the Bayesian predictor is the unique one of least average
-difficulty (`averageDifficulty_bayes_eq_iff`). Averaged over contexts, its difficulty is the
-conditional entropy of the word given the representation (`averageDifficulty_bayes`), and it
-exceeds the difficulty of the lossless comprehender by exactly the predictive information memory
-loses (`averageDifficulty_bayes_eq_lossless_add`).
+the expected divergence of the Bayesian prediction from the other one
+(`averageDifficulty_eq_bayes_add`), so among predictors that are Markov kernels the Bayesian one is
+the unique one of least average difficulty, up to representations of probability zero
+(`averageDifficulty_bayes_eq_iff`). Averaged over contexts, its difficulty is the conditional
+entropy of the word given the representation (`averageDifficulty_bayes`). A lossless process has
+the conditional entropy of the word given the context (`averageDifficulty_of_lossless`), and the
+Bayesian comprehender exceeds it by exactly the predictive information memory loses
+(`averageDifficulty_bayes_eq_add`).
 
 Information locality (section 5) is proved for a single dependency under erasure noise
-(`erasure`), where the paper's first-order approximation is exact. Difficulty is then the unigram
-surprisal less the surviving fraction of the pointwise mutual information
+(`erasure`), whose predictor is the Bayesian one at every representation of positive probability
+(`bayes_erasure_predict`) and where the paper's first-order approximation is exact. Difficulty is
+then the unigram surprisal less the surviving fraction of the pointwise mutual information
 (`toReal_expectedSurprisal_erasure`), so it grows with distance when the words are positively
 associated and shrinks when they are negatively associated (`locality`, `antilocality`).
 
@@ -117,8 +120,8 @@ theorem expectedSurprisal_of_deterministic {f : C → R} {hf : Measurable f}
     mp.expectedSurprisal c w = mp.perStateSurprisal (f c) w :=
   expectedSurprisal_of_dirac (h ▸ Kernel.deterministic_apply hf c) w
 
-/-- A lossless process has the surprisal of the language model it realizes: surprisal theory is
-the lossless special case of lossy-context surprisal. -/
+-- A lossless process has the surprisal of the language model it realizes: surprisal theory is
+-- the lossless special case of lossy-context surprisal.
 theorem expectedSurprisal_eq_surprisal_of_lossless {L : Kernel C W} (h : mp.IsLosslessFor L)
     (c : C) (w : W) : mp.expectedSurprisal c w = surprisal (L c) w := by
   obtain ⟨f, hf, he, hp⟩ := h
@@ -278,7 +281,7 @@ theorem averageDifficulty_bayes_le {mp : MemoryProcess C R W} [IsMarkovKernel mp
   rw [averageDifficulty_eq_bayes_add L π mem h]
   exact le_self_add
 
-/-- Given the encoder, the Bayesian comprehender is the unique predictor of least average
+/-- Given the encoder, the Bayesian comprehender is the unique Markov predictor of least average
 difficulty, up to representations of probability zero. -/
 theorem averageDifficulty_bayes_eq_iff {mp : MemoryProcess C R W} [IsMarkovKernel mp.predict]
     (h : mp.encode = mem) :
@@ -293,25 +296,28 @@ theorem averageDifficulty_bayes_eq_iff {mp : MemoryProcess C R W} [IsMarkovKerne
     eq_comm (a := (bayes L π mem).predict r)]
   simp
 
-/-- The Bayesian comprehender's difficulty exceeds the lossless comprehender's by the predictive
-information that memory loses. -/
-theorem averageDifficulty_bayes_eq_lossless_add {mp : MemoryProcess C R W}
-    (h : mp.IsLosslessFor L) :
-    (bayes L π mem).averageDifficulty L π =
-      mp.averageDifficulty L π + ENNReal.ofReal (Im[joint L π] - Im[memJoint L π mem]) := by
+/-- The Bayesian comprehender's difficulty exceeds the conditional entropy of the word given its
+context, the difficulty of a lossless process, by the predictive information that memory loses. -/
+theorem averageDifficulty_bayes_eq_add :
+    (bayes L π mem).averageDifficulty L π = ENNReal.ofReal H[Prod.fst | Prod.snd ; joint L π] +
+      ENNReal.ofReal (Im[joint L π] - Im[memJoint L π mem]) := by
   have : Nonempty C := π.nonempty_of_neZero
   have hH : H[Prod.fst | Prod.snd ; memJoint L π mem] =
       H[Prod.fst | Prod.snd ; joint L π] + (Im[joint L π] - Im[memJoint L π mem]) := by
     rw [condEntropy_fst_snd, condEntropy_fst_snd, memJoint, Measure.fst_parallelComp_id_comp]
     ring
-  rw [averageDifficulty_bayes, averageDifficulty_of_lossless L π h, hH,
-    ENNReal.ofReal_add (condEntropy_nonneg _ _ _)
-      (sub_nonneg.2 (measureMutualInfo_memJoint_le L π mem))]
+  rw [averageDifficulty_bayes, hH, ENNReal.ofReal_add (condEntropy_nonneg _ _ _)
+    (sub_nonneg.2 (measureMutualInfo_memJoint_le L π mem))]
 
-theorem averageDifficulty_lossless_le_bayes {mp : MemoryProcess C R W} (h : mp.IsLosslessFor L) :
+theorem averageDifficulty_lossless_le_bayes {R' : Type*} [MeasurableSpace R']
+    [MeasurableSingletonClass R'] {mp : MemoryProcess C R' W} (h : mp.IsLosslessFor L) :
     mp.averageDifficulty L π ≤ (bayes L π mem).averageDifficulty L π := by
-  rw [averageDifficulty_bayes_eq_lossless_add L π mem h]
+  rw [averageDifficulty_of_lossless L π h, averageDifficulty_bayes_eq_add]
   exact le_self_add
+
+-- Every language model has a lossless process, reading the context itself.
+example : (⟨Kernel.deterministic id measurable_id, L⟩ : MemoryProcess C C W).IsLosslessFor L :=
+  ⟨id, measurable_id, rfl, rfl⟩
 
 end AverageForm
 
@@ -335,6 +341,19 @@ noncomputable def erasure (e : I) : MemoryProcess W (W ⊕ Unit) W where
   predict := Kernel.ofFunOfCountable (Sum.elim (⇑L) fun _ ↦ L ∘ₘ π)
 
 variable {e e' : I} {y w : W}
+
+instance (e : I) : IsMarkovKernel (erasure L π e).encode :=
+  ⟨fun y ↦ inferInstanceAs (IsProbabilityMeasure Ber(Sum.inr (), Sum.inl y, e))⟩
+
+theorem erasure_encode_inl [DecidableEq W] (c y : W) :
+    (erasure L π e).encode c {Sum.inl y} = if c = y then (toNNReal (σ e) : ℝ≥0∞) else 0 := by
+  rcases eq_or_ne c y with rfl | hcy
+  · simp [erasure, Kernel.ofFunOfCountable, Kernel.coe_mk, bernoulliMeasure_def]
+  · simp [erasure, Kernel.ofFunOfCountable, Kernel.coe_mk, bernoulliMeasure_def, hcy]
+
+theorem erasure_encode_inr (c : W) (u : Unit) :
+    (erasure L π e).encode c {Sum.inr u} = toNNReal e := by
+  simp [erasure, Kernel.ofFunOfCountable, Kernel.coe_mk, bernoulliMeasure_def]
 
 theorem erasure_zero_isLosslessFor : (erasure L π 0).IsLosslessFor L :=
   ⟨Sum.inl, measurable_inl,
@@ -389,6 +408,35 @@ theorem toReal_expectedSurprisal_erasure_sub (h0 : (L ∘ₘ π).real {w} ≠ 0)
       = (e : ℝ) * pmi L π y w := by
   rw [toReal_expectedSurprisal_erasure L π h0 hy, surprisal_eq_sub_pmi L π h0 hy]
   ring
+
+/-- The erasure process is the Bayesian comprehender of its own encoder: at every representation
+of positive probability its predictor is the posterior predictive of section 3.3. -/
+theorem bayes_erasure_predict [Fintype W] {r : W ⊕ Unit}
+    (hr : (memJoint L π (erasure L π e).encode).snd {r} ≠ 0) :
+    (bayes L π (erasure L π e).encode).predict r = (erasure L π e).predict r := by
+  classical
+  have : Nonempty W := π.nonempty_of_neZero
+  have hsnd : (memJoint L π (erasure L π e).encode).snd {r} =
+      ∑ c, π {c} * (erasure L π e).encode c {r} := by
+    rw [memJoint, Measure.snd_parallelComp_id_comp, snd_joint, Measure.comp_apply_singleton]
+  have hjoint (w : W) : memJoint L π (erasure L π e).encode {(w, r)} =
+      (memJoint L π (erasure L π e).encode).snd {r} * (erasure L π e).predict r {w} := by
+    rw [memJoint_singleton, hsnd]
+    rcases r with y | u
+    · simp only [erasure_encode_inl, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
+        ite_true]
+      show _ = _ * L y {w}
+      ring
+    · have hπ : ∑ c, π {c} * (toNNReal e : ℝ≥0∞) = toNNReal e := by
+        rw [← Finset.sum_mul, sum_measure_singleton, Finset.coe_univ, measure_univ, one_mul]
+      simp only [erasure_encode_inr]
+      show _ = _ * (L ∘ₘ π) {w}
+      rw [hπ, Measure.comp_apply_singleton, Finset.mul_sum]
+      exact Finset.sum_congr rfl fun c _ ↦ by ring
+  refine Measure.ext_of_singleton fun w ↦ ?_
+  have h := snd_mul_map_fst_cond (memJoint L π (erasure L π e).encode) w r
+  rw [hjoint] at h
+  exact (ENNReal.mul_right_inj hr (measure_ne_top _ _)).1 h
 
 /-- Under progressive noise, where a more distant context word has a larger erasure rate,
 difficulty increases with distance when the words are positively associated. -/

@@ -49,7 +49,8 @@ the Kullback–Leibler divergence.
 * `measureMutualInfo_eq_toReal_klDiv`: on a finite product, mutual information is the divergence
   of the joint from the product of its marginals.
 * `lintegral_surprisal_eq_ofReal_add_klDiv`: on a finite type, the expected surprisal under `ν` of
-  the atoms of `μ` is the entropy of `μ` plus the divergence of `μ` from `ν` (Gibbs' inequality).
+  the atoms of `μ` is the entropy of `μ` plus the divergence of `μ` from `ν`, so it is at least the
+  entropy (Gibbs' inequality, `ofReal_measureEntropy_le_lintegral_surprisal`).
 * `chain_rule`: `H[X, Y] = H[Y] + H[X | Y]`.
 * `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent random variables.
 

@@ -53,8 +53,8 @@ conditionals are the laws of the first symbol of the continuation.
 
 The alphabet need only carry a measurable space, and the results about string laws a countable one
 with measurable singletons; [du-etal-2023] take it finite. The surprisal of a string counts the end
-of the string: without it, the sum of the surprisals of the symbols is the negative logarithm of
-the prefix probability, which a re-linearization of the strings does not preserve.
+of the string, so that it is the negative logarithm of the probability of the string
+(`toENNReal_neg_log_stringProb`) rather than of its prefix probability.
 
 ## References
 

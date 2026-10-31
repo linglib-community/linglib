@@ -74,11 +74,23 @@ variable {C W : Type*} [MeasurableSpace C] [MeasurableSpace W] [Fintype C]
 
 /-- The expected surprisal `S(c)` of a color (eq. 1): the surprisal of the color to a listener
 who hears its name and recovers a color by Bayes' rule (eq. 2), averaged over its names. Lower
-values mean more precise communication. A color of zero need is never recovered; its surprisal is
-`∞` and enters the real average through its real part, `0`. -/
+values mean more precise communication. The surprisal enters through its real part; for a color
+of positive need that is the surprisal itself (`ofReal_expectedSurprisal`), while a color of zero
+need is never recovered, its surprisal is `∞`, and its real part `0`. -/
 noncomputable def expectedSurprisal (κ : Kernel C W) [IsFiniteKernel κ] (μ : Measure C)
     [IsFiniteMeasure μ] (c : C) : ℝ :=
   ∫ w, (surprisal ((κ†μ) w) c).toReal ∂(κ c)
+
+-- For a color of positive need, the real expected surprisal is the extended one.
+theorem ofReal_expectedSurprisal [Fintype W] (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C)
+    [IsProbabilityMeasure μ] {c : C} (hc : μ {c} ≠ 0) :
+    ENNReal.ofReal (expectedSurprisal κ μ c) = ∫⁻ w, surprisal ((κ†μ) w) c ∂(κ c) := by
+  rw [expectedSurprisal, ofReal_integral_eq_lintegral_ofReal .of_finite
+    (.of_forall fun _ ↦ ENNReal.toReal_nonneg)]
+  refine lintegral_congr_ae (ae_iff_of_countable.2 fun w hw ↦ ENNReal.ofReal_toReal
+    (surprisal_ne_top_iff.2 ?_))
+  exact (posterior_apply_singleton_ne_zero_iff κ μ
+    (Measure.comp_apply_singleton_ne_zero κ μ hc hw) c).2 ⟨hc, hw⟩
 
 /-- The temperature of a color chip. -/
 inductive Temperature

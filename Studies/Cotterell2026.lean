@@ -44,7 +44,8 @@ end difficulty growing linearly in the length of the prefix leaves the softmax m
 * The paper's bound `f` is nonnegative and its constant bound positive; neither sign condition is
   needed here.
 * Surprisal is extended nonnegative. The softmax model gives every unit positive probability, so
-  its surprisals are finite, and the identities with the real difficulty use their real parts.
+  its surprisals are finite: the difficulty less the baseline, read as an extended nonnegative
+  real.
 * The paper remarks that the softmax construction need not give a language model but gives no
   example; `not_isTight_softmaxModel_length` is an added witness.
 * The paper's fitness measure, its consistency theorem for maximum-likelihood estimation, and its
@@ -78,8 +79,11 @@ theorem real_next_softmaxModel (u : List α) (o : Option α) :
   Kernel.softmax_coe_real_singleton (fun u o ↦ -d o u) u o
 
 theorem surprisal_softmaxModel (u : List α) (o : Option α) :
-    (surprisal ((softmaxModel d).next u) o).toReal = d o u + log (∑ o', exp (-d o' u)) := by
-  rw [toReal_surprisal prob_le_one, real_next_softmaxModel, log_softmax]
+    surprisal ((softmaxModel d).next u) o = ENNReal.ofReal (d o u + log (∑ o', exp (-d o' u))) := by
+  have h0 : (softmaxModel d).next u {o} ≠ 0 :=
+    Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
+  rw [surprisal_of_ne_zero h0 (measure_ne_top _ _), real_next_softmaxModel, log_softmax]
+  congr 1
   ring
 
 variable {d}
@@ -137,8 +141,8 @@ theorem not_isTight_softmaxModel_length [Nonempty α] :
 theorem surprisal_next_ofMeasure_stringMeasure (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞)
     (u : List α) (o : Option α) :
-    (surprisal ((AutoregressiveSequenceModel.ofMeasure (softmaxModel d).stringMeasure).next u)
-      o).toReal = d o u + log (∑ o', exp (-d o' u)) := by
+    surprisal ((AutoregressiveSequenceModel.ofMeasure (softmaxModel d).stringMeasure).next u) o =
+      ENNReal.ofReal (d o u + log (∑ o', exp (-d o' u))) := by
   have hpos : (softmaxModel d).prefixProb u ≠ 0 :=
     (softmaxModel d).condPrefixProb_ne_zero (fun _ _ ↦ Kernel.softmax_apply_singleton_ne_zero
       (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _) [] u
@@ -147,12 +151,12 @@ theorem surprisal_next_ofMeasure_stringMeasure (hd : ∀ o u, 0 ≤ d o u) {f : 
 theorem exists_difficulty_eq_surprisal (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞) :
     ∃ μ : Measure (List α), IsProbabilityMeasure μ ∧ ∃ b : List α → ℝ,
-      ∀ o u,
-        d o u = (surprisal ((AutoregressiveSequenceModel.ofMeasure μ).next u) o).toReal + b u :=
+      ∀ o u, surprisal ((AutoregressiveSequenceModel.ofMeasure μ).next u) o =
+        ENNReal.ofReal (d o u - b u) :=
   ⟨(softmaxModel d).stringMeasure,
     (softmaxModel d).isTight_iff_isProbabilityMeasure.1 (isTight_softmaxModel hd hf hdiv),
     fun u ↦ -log (∑ o', exp (-d o' u)),
-    fun o u ↦ by rw [surprisal_next_ofMeasure_stringMeasure hd hf hdiv]; ring⟩
+    fun o u ↦ by rw [surprisal_next_ofMeasure_stringMeasure hd hf hdiv, sub_neg_eq_add]⟩
 
 /-- A constant bound `C` on end difficulty bounds the expected length of the softmax model by `(1 -
 η) / η` (Proposition 1(b)). -/

@@ -93,13 +93,16 @@ theorem real_listener (w : W) (c : C) :
     (listener γ d q w).real {c} = Real.softmax (fun c ↦ -γ * d c (q w)) c :=
   Kernel.softmax_coe_real_singleton _ w c
 
+theorem surprisal_listener_ne_top [Nonempty C] (w : W) (c : C) :
+    surprisal (listener γ d q w) c ≠ ⊤ :=
+  surprisal_ne_top_iff.2 fun h0 ↦ (Real.softmax_pos (fun c ↦ -γ * d c (q w)) c).ne'
+    (by rw [← real_listener, measureReal_def, h0, ENNReal.toReal_zero])
+
 theorem surprisal_listener_le [Nonempty C] (hγ : 0 ≤ γ) {w : W} {c c' : C}
     (h : d c (q w) ≤ d c' (q w)) :
     surprisal (listener γ d q w) c ≤ surprisal (listener γ d q w) c' := by
-  have hne (c : C) : surprisal (listener γ d q w) c ≠ ⊤ := surprisal_ne_top_iff.2 fun h0 ↦
-    (Real.softmax_pos (fun c ↦ -γ * d c (q w)) c).ne'
-      (by rw [← real_listener, measureReal_def, h0, ENNReal.toReal_zero])
-  rw [← ENNReal.toReal_le_toReal (hne c) (hne c'), toReal_surprisal prob_le_one,
+  rw [← ENNReal.toReal_le_toReal (surprisal_listener_ne_top γ d q w c)
+      (surprisal_listener_ne_top γ d q w c'), toReal_surprisal prob_le_one,
     toReal_surprisal prob_le_one, real_listener, real_listener, neg_le_neg_iff]
   exact Real.log_le_log (Real.softmax_pos _ _) (Real.softmax_le_softmax_iff.2 (by nlinarith))
 
@@ -134,8 +137,9 @@ noncomputable def objective (β : ℝ) (f : C → W) : ℝ :=
   (costs need l m f).1 + β * (costs need l m f).2
 
 /-- The item-level objective (eq. 7): the surprisal of the concept under the form, plus the
-weighted length of the form. A concept the listener rules out has surprisal `∞`, which enters
-through its real part, `0`. -/
+weighted length of the form. The surprisal enters through its real part, which is the surprisal
+itself unless the listener rules the concept out under the form; the similarity choice listener
+rules nothing out (`surprisal_listener_ne_top`). -/
 noncomputable def itemObjective (β : ℝ) (c : C) (w : W) : ℝ :=
   (surprisal (m w) c).toReal + β * l w
 
@@ -143,6 +147,21 @@ noncomputable def itemObjective (β : ℝ) (c : C) (w : W) : ℝ :=
     RSA.informationLoss need Kernel.id (encoder f) m =
       ∑ c, need.real {c} * (surprisal (m (f c)) c).toReal := by
   simp [RSA.informationLoss, encoder, Kernel.deterministic_apply, integral_dirac]
+
+-- A listener that rules out no needed concept under its form loses, in the real cost, exactly
+-- the expected surprisal of the intended concept.
+theorem ofReal_informationLoss_encoder [IsFiniteMeasure need] (f : C → W)
+    (hm : ∀ c, need {c} ≠ 0 → m (f c) {c} ≠ 0) :
+    ENNReal.ofReal (RSA.informationLoss need Kernel.id (encoder f) m) =
+      ∑ c, need {c} * surprisal (m (f c)) c := by
+  rw [informationLoss_encoder, ENNReal.ofReal_sum_of_nonneg fun c _ ↦
+    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg]
+  refine Finset.sum_congr rfl fun c _ ↦ ?_
+  rcases eq_or_ne (need {c}) 0 with h0 | h0
+  · simp [measureReal_def, h0]
+  · rw [ENNReal.ofReal_mul measureReal_nonneg, measureReal_def,
+      ENNReal.ofReal_toReal (measure_ne_top _ _),
+      ENNReal.ofReal_toReal (surprisal_ne_top_iff.2 (hm c h0))]
 
 @[simp] theorem expectedCost_encoder (f : C → W) :
     RSA.expectedCost need Kernel.id l (encoder f) = ∑ c, need.real {c} * l (f c) := by
