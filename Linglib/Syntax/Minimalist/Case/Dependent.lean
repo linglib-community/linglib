@@ -25,8 +25,8 @@ and listed from the highest down, and `Case/SyntacticObject.lean` reads them off
 ## Main definitions
 
 * `agreeValue`, `agreeValueOn`: Agree on the highest caseless NP of a domain, or the closest.
-* `PhasedNP`: an NP placed by hand: its lexical case, whether it bears case, its phase, and the
-  phase it shifts into.
+* `PhasedNP`: an NP placed by hand: the case slot it enters with, absent for PRO, its phase, and
+  the phase it shifts into.
 * `CaseAssigners`: the rules of each phase head's domain and the case each head values.
 * `assignBy`, `CaseAssigners.assign`: assignment over domains, and over NPs placed by hand.
 
@@ -57,8 +57,8 @@ and listed from the highest down, and `Case/SyntacticObject.lean` reads them off
 
 namespace Minimalist
 
-open Case (Mechanism Valuation lexicalValuation lexicalValuation_getElem?_of_some
-  lexicalValuation_getElem?)
+open Case (Mechanism Valuation slotValuation slotValuation_getElem?_of_valued
+  slotValuation_getElem?)
 open DependentCase
 
 /-! ### Agree -/
@@ -199,13 +199,13 @@ end Agree
 
 /-! ### Positions set by hand -/
 
-/-- An NP placed by hand: any case a lexical head has valued, the phase whose domain merges it,
-    and the phase it shifts into, if any. -/
+/-- An NP placed by hand: the case slot it enters with, the phase whose domain merges it, and the
+    phase it shifts into, if any. -/
 structure PhasedNP where
-  /-- The case a lexical head has valued, if any. -/
-  lexicalCase : Option Case := none
-  /-- Whether the NP bears case, which a covert PRO competes for without bearing. -/
-  bearsCase : Bool := true
+  /-- The case slot the NP enters with: valued by a lexical head, absent for an NP that bears no
+  case, such as PRO, which competes for dependent case without bearing it, and unvalued
+  otherwise. -/
+  case : FeatureSlot Case := .unvalued
   /-- The phase whose domain merges the NP. -/
   phase : Cat := .C
   /-- The phase whose domain the NP shifts into, if any. -/
@@ -240,21 +240,20 @@ variable {α ι : Type*} (rules : ι → Rules) (visible : ι → α → Prop)
   [∀ i, DecidablePred (visible i)] (above : ι → ℕ × α → ℕ × α → Prop)
   [∀ i, DecidableRel (above i)] (closer : ι → α → α → Prop) [∀ i, DecidableRel (closer i)]
   (probes : ι → List (Case × (α → Bool))) (spellOut : ι → α → Prop)
-  [∀ i, DecidablePred (spellOut i)] (bearsCase : α → Prop) [DecidablePred bearsCase]
+  [∀ i, DecidablePred (spellOut i)]
 
 /-- One domain: its dependent rules over the NPs it sees, `above i` ordering them by c-command,
-    then each of its probes valuing the closest NP it reaches, then its elsewhere case, only the
-    NPs that bear case taking any. -/
+    then each of its probes valuing the closest NP it reaches, then its elsewhere case. An NP that
+    bears no case is passed over by all three. -/
 def domainPassBy (i : ι) (s : Valuation α (Case × Mechanism)) : Valuation α (Case × Mechanism) :=
-  (rules i).unmarkedPass (fun x ↦ spellOut i x ∧ bearsCase x) <|
-    (probes i).foldl (fun st p ↦ agreeValueOn (closer i) (fun x ↦ p.2 x ∧ bearsCase x)
-        (p.1, .agree) st)
-      ((rules i).dependentPassBy (above i) (visible i) bearsCase s)
+  (rules i).unmarkedPass (spellOut i) <|
+    (probes i).foldl (fun st p ↦ agreeValueOn (closer i) (p.2 ·) (p.1, .agree) st)
+      ((rules i).dependentPassBy (above i) (visible i) s)
 
 /-- The domains in the order `order`, innermost first. -/
 def assignBy (order : List ι) (s : Valuation α (Case × Mechanism)) :
     Valuation α (Case × Mechanism) :=
-  order.foldl (fun st i ↦ domainPassBy rules visible above closer probes spellOut bearsCase i st) s
+  order.foldl (fun st i ↦ domainPassBy rules visible above closer probes spellOut i st) s
 
 /-- The valuations assignment over the domains `order` can make: those of the rules of a domain,
     and the case of one of its probes under Agree. -/
@@ -265,44 +264,43 @@ def valuationsBy (order : List ι) : Set (Case × Mechanism) :=
 /-- Assignment over domains extends the valuation by what the rules and the probes value. -/
 theorem extends_assignBy (order : List ι) (s : Valuation α (Case × Mechanism)) :
     s.Extends (· ∈ valuationsBy rules probes order)
-      (assignBy rules visible above closer probes spellOut bearsCase order s) := by
+      (assignBy rules visible above closer probes spellOut order s) := by
   refine Valuation.Extends.foldl _ (fun i hi st ↦ ?_) s
   have hrules : ∀ v ∈ (rules i).valuations, v ∈ valuationsBy rules probes order :=
     fun v hv ↦ .inl ⟨i, hi, hv⟩
-  refine (((rules i).extends_dependentPassBy _ _ _ st).mono hrules).trans <|
-    (Valuation.Extends.foldl (F := fun p st ↦ agreeValueOn (closer i) (fun x ↦ p.2 x ∧ bearsCase x)
-        (p.1, .agree) st)
+  refine (((rules i).extends_dependentPassBy _ _ st).mono hrules).trans <|
+    (Valuation.Extends.foldl (F := fun p st ↦ agreeValueOn (closer i) (p.2 ·) (p.1, .agree) st)
       _ (fun p hp st ↦ extends_agreeValue (.inr ⟨rfl, i, hi, p, hp, rfl⟩) st) _).trans <|
     ((rules i).extends_unmarkedPass _ _).mono hrules
 
-variable {rules visible above closer probes spellOut bearsCase} {order : List ι}
-  {lex : α → Option Case} {xs : List α} {n : ℕ} {x : α} {c : Case} {m : Mechanism}
+variable {rules visible above closer probes spellOut} {order : List ι}
+  {case : α → FeatureSlot Case} {xs : List α} {n : ℕ} {x : α} {c : Case} {m : Mechanism}
 
 /-- Assignment is total: one valuation per NP. -/
 @[simp] theorem length_assignBy :
-    (assignBy rules visible above closer probes spellOut bearsCase order
-      (lexicalValuation lex xs)).length =
+    (assignBy rules visible above closer probes spellOut order
+      (slotValuation case xs)).length =
       xs.length := by
-  simp [← (extends_assignBy rules visible above closer probes spellOut bearsCase order _).length_eq,
-    lexicalValuation]
+  simp [← (extends_assignBy rules visible above closer probes spellOut order _).length_eq,
+    slotValuation]
 
 /-- Lexical case is kept through every domain. -/
-theorem assignBy_getElem?_of_some (hx : xs[n]? = some x) (hc : lex x = some c) :
-    (assignBy rules visible above closer probes spellOut bearsCase order
-      (lexicalValuation lex xs))[n]? =
+theorem assignBy_getElem?_of_valued (hx : xs[n]? = some x) (hc : case x = .valued c) :
+    (assignBy rules visible above closer probes spellOut order
+      (slotValuation case xs))[n]? =
       some (x, .valued (c, .lexical)) :=
-  (extends_assignBy rules visible above closer probes spellOut bearsCase order _).getElem?_of_some
-    (lexicalValuation_getElem?_of_some _ hx hc)
+  (extends_assignBy rules visible above closer probes spellOut order _).getElem?_of_some
+    (slotValuation_getElem?_of_valued _ hx hc)
 
 /-- A caseless NP is valued only with a case a domain's rules or one of its probes gives. -/
-theorem case_mem_of_assignBy (hlex : lex x = none)
-    (h : (assignBy rules visible above closer probes spellOut bearsCase order
-      (lexicalValuation lex xs))[n]? = some (x, .valued (c, m))) :
+theorem case_mem_of_assignBy (hlex : (case x).value? = none)
+    (h : (assignBy rules visible above closer probes spellOut order
+      (slotValuation case xs))[n]? = some (x, .valued (c, m))) :
     (∃ i ∈ order, c ∈ (rules i).cases) ∨ ∃ i ∈ order, ∃ p ∈ probes i, p.1 = c := by
-  rcases (extends_assignBy rules visible above closer probes spellOut bearsCase order
+  rcases (extends_assignBy rules visible above closer probes spellOut order
     _).of_getElem? h with
     h | h | ⟨-, h⟩
-  · exact absurd (lexicalValuation_getElem? h).1 (by simp [hlex])
+  · simp [(slotValuation_getElem? h).1] at hlex
   · obtain ⟨i, hi, hv⟩ := h
     exact .inl ⟨i, hi, Rules.fst_mem_cases hv⟩
   · exact .inr h
@@ -310,39 +308,40 @@ theorem case_mem_of_assignBy (hlex : lex x = none)
 /-- With no elsewhere case in any domain, nothing is valued as unmarked: an NP that no rule and
     no head reaches stays caseless. -/
 theorem mechanism_ne_unmarked_of_assignBy (hr : ∀ i ∈ order, (rules i).unmarked = none)
-    (h : (assignBy rules visible above closer probes spellOut bearsCase order
-      (lexicalValuation lex xs))[n]? = some (x, .valued (c, m))) : m ≠ .unmarked := by
+    (h : (assignBy rules visible above closer probes spellOut order
+      (slotValuation case xs))[n]? = some (x, .valued (c, m))) : m ≠ .unmarked := by
   rintro rfl
-  rcases (extends_assignBy rules visible above closer probes spellOut bearsCase order
+  rcases (extends_assignBy rules visible above closer probes spellOut order
     _).of_getElem? h with
     h | ⟨i, hi, ⟨hm, -⟩ | ⟨-, hu⟩⟩ | ⟨hm, -⟩
-  · simpa using (lexicalValuation_getElem? h).2
+  · simpa using (slotValuation_getElem? h).2
   · cases hm
   · simp [hr i hi] at hu
   · cases hm
 
 /-- A case valued under Agree is the case of a probe of some domain. -/
 theorem exists_probe_of_assignBy
-    (h : (assignBy rules visible above closer probes spellOut bearsCase order
-      (lexicalValuation lex xs))[n]? = some (x, .valued (c, .agree))) :
+    (h : (assignBy rules visible above closer probes spellOut order
+      (slotValuation case xs))[n]? = some (x, .valued (c, .agree))) :
     ∃ i ∈ order, ∃ p ∈ probes i, p.1 = c := by
-  rcases (extends_assignBy rules visible above closer probes spellOut bearsCase order
+  rcases (extends_assignBy rules visible above closer probes spellOut order
     _).of_getElem? h with
     h | ⟨-, -, ⟨hm, -⟩ | ⟨hm, -⟩⟩ | ⟨-, h⟩
-  · simpa using (lexicalValuation_getElem? h).2
+  · simpa using (slotValuation_getElem? h).2
   · cases hm
   · cases hm
   · exact h
 
 /-- With no dependent and no elsewhere case in any domain, a caseless NP is valued under Agree
     alone. -/
-theorem mechanism_eq_agree_of_assignBy (hr : ∀ i ∈ order, rules i = {}) (hlex : lex x = none)
-    (h : (assignBy rules visible above closer probes spellOut bearsCase order
-      (lexicalValuation lex xs))[n]? = some (x, .valued (c, m))) : m = .agree := by
-  rcases (extends_assignBy rules visible above closer probes spellOut bearsCase order
+theorem mechanism_eq_agree_of_assignBy (hr : ∀ i ∈ order, rules i = {})
+    (hlex : (case x).value? = none)
+    (h : (assignBy rules visible above closer probes spellOut order
+      (slotValuation case xs))[n]? = some (x, .valued (c, m))) : m = .agree := by
+  rcases (extends_assignBy rules visible above closer probes spellOut order
     _).of_getElem? h with
     h | ⟨i, hi, hv⟩ | ⟨hm, -⟩
-  · exact absurd (lexicalValuation_getElem? h).1 (by simp [hlex])
+  · simp [(slotValuation_getElem? h).1] at hlex
   · simp [hr i hi, Rules.valuations] at hv
   · exact hm
 
@@ -373,8 +372,8 @@ theorem CaseAssigners.mem_probesIn {probes : List (Cat × Cat)} {c : Cat}
 def CaseAssigners.assign (probes : List (Cat × Cat)) (order : List Cat) (xs : List α) :
     Valuation α (Case × Mechanism) :=
   assignBy g.rules (fun c x ↦ (np x).visible c) (fun _ p q ↦ p.1 < q.1) (fun _ _ _ ↦ False)
-    (g.probesIn np probes) (fun c x ↦ (np x).spellOut = c) (fun x ↦ (np x).bearsCase) order
-    (lexicalValuation (fun x ↦ (np x).lexicalCase) xs)
+    (g.probesIn np probes) (fun c x ↦ (np x).spellOut = c) order
+    (slotValuation (fun x ↦ (np x).case) xs)
 
 end Assign
 

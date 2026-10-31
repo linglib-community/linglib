@@ -192,7 +192,7 @@ def realized (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List (Ar
 function first: the highest not yet valued takes the nominative and the next the accusative. -/
 def defaultCase {α : Type*} (s : Case.Valuation α C) : Case.Valuation α C :=
   s.fill fun i _ ↦
-    match (s.unvalued fun _ ↦ True).idxOf i with
+    match (s.caseless fun _ ↦ True).idxOf i with
     | 0 => some P.nom
     | 1 => some P.acc
     | _ => none

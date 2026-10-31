@@ -13,7 +13,9 @@ public import Linglib.Syntax.Feature.Slot
 
 A derivation that values the case of nominals step by step keeps, for each nominal, the checking
 slot of its case (`FeatureSlot`): unvalued until a value is assigned, valued once one is, and
-absent for a nominal that bears no case. This is a *valuation* of the nominals. Every
+absent for a nominal that bears no case, such as PRO. A nominal is *caseless* when its slot has no
+value, so PRO is caseless, and it competes for dependent case while never receiving one. This is a
+*valuation* of the nominals. Every
 step of the formalized case theories, the dependent-case rules of [marantz-1991], Agree
 ([chomsky-2000]) and the licensing of [kalin-2018], keeps the nominals and the values already
 assigned and assigns new values only from what its rules provide: it *extends* the valuation by
@@ -30,9 +32,9 @@ in which adding an assigner may change what values a nominal but never leaves on
 ## Main definitions
 
 * `Case.Valuation`: nominals, from the highest down, each with the value of its case.
-* `Case.Valuation.initial`, `Case.Valuation.fill`, `Case.Valuation.unvalued`: the valuation with
-  given values, the simultaneous valuation of the unvalued nominals, and the positions of the
-  unvalued ones.
+* `Case.Valuation.initial`, `Case.Valuation.fill`, `Case.Valuation.caseless`: the valuation with
+  given slots, the simultaneous valuation of the unvalued nominals, and the positions of the
+  caseless ones.
 * `Case.Valuation.valueOf`: the value of a nominal, the nominals being identified by their own
   type rather than by a label.
 * `Case.Valuation.Extends`: one valuation extends another by values satisfying a predicate.
@@ -49,12 +51,6 @@ in which adding an assigner may change what values a nominal but never leaves on
 
 The operations are structurally recursive on the list, rather than defined through
 `List.mapIdx` or `List.lookmap`, whose accumulators `decide` cannot evaluate.
-
-## TODO
-
-PRO competes for dependent case without bearing it, which `Minimalist.PhasedNP.bearsCase` encodes
-as a flag beside an unvalued slot. An absent slot would encode it directly, once the dependent
-rules count absent nominals among the caseless competitors.
 
 ## References
 
@@ -114,13 +110,14 @@ def valueOf [DecidableEq α] (a : α) (s : Valuation α β) : Option β :=
   | some (.valued v) => some v
   | _ => none
 
-/-- The unvalued nominals `P` selects with their positions, highest first. -/
-def unvaluedEntries (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List (ℕ × α) :=
-  (s.zipIdx.filter fun p ↦ decide (p.1.2 = .unvalued) && decide (P p.1.1)).map fun p ↦ (p.2, p.1.1)
+/-- The caseless nominals `P` selects with their positions, highest first: those without a value,
+whether unvalued or bearing no case. -/
+def caselessEntries (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List (ℕ × α) :=
+  (s.zipIdx.filter fun p ↦ p.1.2.value?.isNone && decide (P p.1.1)).map fun p ↦ (p.2, p.1.1)
 
-/-- The positions of the unvalued nominals `P` selects, highest first. -/
-def unvalued (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List ℕ :=
-  (unvaluedEntries P s).map Prod.fst
+/-- The positions of the caseless nominals `P` selects, highest first. -/
+def caseless (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List ℕ :=
+  (caselessEntries P s).map Prod.fst
 
 @[simp] theorem length_initial (v : α → FeatureSlot β) (xs : List α) :
     (initial v xs).length = xs.length := length_map ..
@@ -153,20 +150,20 @@ theorem fill_getElem?_of_unvalued {f : ℕ → α → Option β} {s : Valuation 
   · rfl
   · by_cases hk : k = .unvalued <;> simp [hk]
 
-theorem mem_unvaluedEntries {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} {x : α} :
-    (i, x) ∈ unvaluedEntries P s ↔ s[i]? = some (x, .unvalued) ∧ P x := by
-  simp only [unvaluedEntries, mem_map, mem_filter, mem_zipIdx_iff_getElem?, Bool.and_eq_true,
-    decide_eq_true_eq, Prod.mk.injEq]
+theorem mem_caselessEntries {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} {x : α} :
+    (i, x) ∈ caselessEntries P s ↔ ∃ k, s[i]? = some (x, k) ∧ k.value? = none ∧ P x := by
+  simp only [caselessEntries, mem_map, mem_filter, mem_zipIdx_iff_getElem?, Bool.and_eq_true,
+    Option.isNone_iff_eq_none, decide_eq_true_eq, Prod.mk.injEq]
   constructor
-  · rintro ⟨⟨⟨y, v⟩, j⟩, ⟨hj, rfl, hy⟩, rfl, rfl⟩
-    exact ⟨hj, hy⟩
-  · rintro ⟨hx, hP⟩
-    exact ⟨((x, .unvalued), i), ⟨hx, rfl, hP⟩, rfl, rfl⟩
+  · rintro ⟨⟨⟨y, k⟩, j⟩, ⟨hj, hk, hy⟩, rfl, rfl⟩
+    exact ⟨k, hj, hk, hy⟩
+  · rintro ⟨k, hx, hk, hP⟩
+    exact ⟨((x, k), i), ⟨hx, hk, hP⟩, rfl, rfl⟩
 
-theorem mem_unvalued {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} :
-    i ∈ unvalued P s ↔ ∃ x, s[i]? = some (x, .unvalued) ∧ P x := by
-  simp only [unvalued, mem_map, Prod.exists, exists_and_right, exists_eq_right]
-  exact exists_congr fun _ ↦ mem_unvaluedEntries
+theorem mem_caseless {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} :
+    i ∈ caseless P s ↔ ∃ x k, s[i]? = some (x, k) ∧ k.value? = none ∧ P x := by
+  simp only [caseless, mem_map, Prod.exists, exists_and_right, exists_eq_right]
+  exact exists_congr fun _ ↦ mem_caselessEntries
 
 /-! ### Extension -/
 

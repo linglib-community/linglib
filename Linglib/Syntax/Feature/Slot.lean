@@ -130,6 +130,14 @@ def map {β : Type*} (g : α → β) : FeatureSlot α → FeatureSlot β
 @[simp] theorem map_valued {β : Type*} (g : α → β) (v : α) : (valued v).map g = valued (g v) :=
   rfl
 
+@[simp] theorem map_eq_valued_iff {β : Type*} {g : α → β} {s : FeatureSlot α} {w : β} :
+    s.map g = valued w ↔ ∃ v, s = valued v ∧ g v = w := by
+  cases s <;> simp [map]
+
+@[simp] theorem map_map {β γ : Type*} (g : α → β) (h : β → γ) (s : FeatureSlot α) :
+    (s.map g).map h = s.map (h ∘ g) := by
+  cases s <;> rfl
+
 /-! ### The flat slot underneath -/
 
 /-- The value of a slot as a flat slot, `⊥` if the slot is absent or unvalued. -/
