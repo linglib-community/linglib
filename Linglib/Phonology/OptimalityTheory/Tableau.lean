@@ -14,55 +14,61 @@ public import Mathlib.Algebra.Order.Group.PiLex
 /-!
 # Tableaux
 
-An OT tableau ([prince-smolensky-1993]) evaluates a finite candidate set by constraints in rank
-order. A candidate's violation profile is its violation vector read in rank order and ordered
-lexicographically, `Lex (Fin n → ℕ)` ([riggle-2009b]): the lexicographic order is Optimality
-Theory's strict domination, while Harmonic Grammar weights the same vector without ordering it
-(`HarmonicGrammar.harmonyScore`). The winners are the candidates of least profile, the
-`Finset.argmin` of the profile over the candidates.
+An Optimality-theoretic tableau, as Prince and Smolensky define it, evaluates a finite set of
+candidates by constraints in rank order. The violations of a candidate, read in rank order, form
+its *violation profile*, and profiles are compared lexicographically, which is Riggle's harmonic
+inequality: the highest-ranked constraint on which two candidates differ decides between them.
+The winners of a tableau are the candidates of least profile (`Tableau.optimal`), the
+`Finset.argmin` of `Tableau.profile` over the candidates, and a candidate is optimal when it
+belongs to this set. Evaluation proceeds constraint by constraint (`Tableau.optimal_tail`): the
+winners are the winners under the lower constraints among the candidates that do best on the top
+one, and a constraint that rates every candidate alike changes nothing
+(`Tableau.optimal_ofList_append_of_forall_eq`).
 
 ## Main definitions
 
-* `ViolationProfile n` — `Lex (Fin n → ℕ)`, a fixed-length violation vector.
-* `Tableau C n` — candidates `C` and `n` constraints in rank order, position `0` most dominant.
-* `Tableau.profile` — a candidate's violation profile.
-* `Tableau.optimal` — the winner set; optimality is plain membership.
-* `Tableau.ofRanking` — the tableau of a constraint set `con : ConstraintSet C ι` under a ranking
-  `r : Ranking ι n`, whose constraint at rank position `p` is `con (r p)`.
-* `Tableau.ofList` — the tableau of a ranked constraint list, list order being priority.
-* `Tableau.ofOrder` — a tableau from a constraint *order* (labels, most dominant first) and the
-  candidates' violation marks by label: the paper-tableau form.
-* `Tableau.tail` — the candidates doing best on the top constraint, under the constraints below.
+* `ViolationProfile n`: the violation vector `Fin n → ℕ` under its lexicographic order.
+* `Tableau C n`: a finite set of candidates and `n` constraints in rank order, position `0`
+  most dominant.
+* `Tableau.profile`, `Tableau.optimal`: a candidate's violation profile, and the set of winners.
+* `Tableau.ofRanking con r candidates`: the tableau of a constraint set under a ranking, whose
+  constraint at rank position `p` is `con (r p)`.
+* `Tableau.ofList`, `Tableau.ofOrder`: the tableau of a list of constraints in rank order, and
+  the tableau of a printed table, a column order of labels and the marks in each cell.
+* `Tableau.tail`: the candidates that do best on the top constraint, under the constraints below
+  it.
 
-## Main results
+## Main statements
 
-* `Tableau.mem_optimal_iff` / `Tableau.optimal_nonempty` / `Tableau.optimal_eq_singleton_iff` —
-  the winner characterization; winners exist; sole winner ⟺ strict domination.
-* `Tableau.ofRanking_profile_lt_iff_exists_dominates` — a candidate beats another under a ranking
-  iff some constraint preferring it dominates every constraint preferring the other.
-* `Tableau.notMem_optimal_of_lt` / `Tableau.ofRanking_notMem_optimal_of_lt` — harmonic bounding:
-  a candidate beaten pointwise never wins.
-* `Tableau.exists_mem_ofRanking_optimal_iff_pair` — a candidate wins against its only competitor
-  under some ranking iff the competitor does not harmonically bound it.
-* `Tableau.ofRanking_zero_mem_optimal` / `Tableau.ofRanking_eq_zero_of_mem_optimal` — a candidate
-  with no violations wins under every ranking, and then every winner has no violations.
-* `Tableau.ofRanking_mem_optimal_of_forall_le` — optimality transfers under every ranking to a
-  candidate of another tableau bounded constraint by constraint.
-* `Tableau.ofRanking_optimal_eq_argmin_filter` — when the constraints above the last can be
-  satisfied together, the winners satisfy them all and do best on the last.
-* `Tableau.constraints_zero_le_of_mem_optimal` — a winner does at least as well as every
-  candidate on the top constraint.
-* `Tableau.optimal_tail` / `Tableau.optimal_ofList_cons` — EVAL filters the candidates constraint
-  by constraint; `Tableau.optimal_ofList_append_of_forall_eq` — constraints rating every candidate
-  alike are inert.
-* `Tableau.optimal_ofList_antifaithful` — under `¬F ≫ F` the winners are the candidates violating
-  `F` least among those violating it ([alderete-2001]).
+* `Tableau.mem_optimal_iff`: a winner is a candidate whose profile is at most every candidate's.
+* `Tableau.optimal_eq_singleton_iff`: a tableau has a sole winner iff that candidate's profile
+  is strictly below every other candidate's.
+* `Tableau.ofRanking_profile_lt_iff_exists_dominates`: under a ranking, one candidate beats
+  another iff some constraint preferring it dominates every constraint preferring the other.
+* `Tableau.ofRanking_notMem_optimal_of_lt`: a candidate that violates every constraint at least
+  as often as a competitor, and some more often, wins under no ranking.
+* `Tableau.exists_mem_ofRanking_optimal_iff_pair`: against a single competitor, a candidate wins
+  under some ranking iff the competitor does not bound it in this way.
+* `Tableau.ofRanking_optimal_eq_argmin_filter`: when some candidate satisfies every constraint
+  above the last, the winners are the candidates satisfying all of them that do best on the last.
+* `Tableau.optimal_tail`: the winners of a tableau are the winners of its tail.
+* `Tableau.optimal_ofList_antifaithful`: under `¬F ≫ F`, the winners are the candidates that
+  violate `F` least among those violating it at all.
+
+## Implementation notes
+
+* Rank position `0` is the most dominant constraint, so `Tableau.profile` is `toLex` of the
+  violation vector and mathlib's lexicographic order on `Fin n → ℕ` is strict domination.
+* Optimality is membership in `Tableau.optimal` rather than a separate predicate, and
+  `Tableau.mem_optimal_iff` unfolds it.
+* `Tableau.ofList` takes its number of constraints from the length of the list and is
+  `Tableau.ofRanking` under the identity ranking; `Tableau.ofOrder` takes its number of
+  constraints from the length of the column order and every inhabitant of `C` as a candidate.
 
 ## References
 
 * [A. Prince and P. Smolensky, *Optimality Theory: Constraint Interaction in Generative Grammar*
   (1993)][prince-smolensky-1993]
-* [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
 * [J. Riggle, *Violation Semirings in Optimality Theory* (2009)][riggle-2009b]
 * [J. D. Alderete, *Dominance Effects as Trans-derivational Anti-faithfulness*
   (2001)][alderete-2001]
@@ -76,8 +82,8 @@ namespace OptimalityTheory
 order. -/
 abbrev ViolationProfile (n : ℕ) := Lex (Fin n → ℕ)
 
-/-- An OT tableau is a finite candidate set and the constraints that evaluate it, in rank
-order. -/
+/-- An *Optimality-theoretic tableau*: a finite set of candidates and the constraints that
+evaluate them, in rank order. -/
 structure Tableau (C : Type*) (n : ℕ) where
   /-- The candidates. -/
   candidates : Finset C
@@ -88,20 +94,18 @@ namespace Tableau
 
 variable {C : Type*} {n : ℕ} (t : Tableau C n) (c : C)
 
-/-- A candidate's violation profile is its violations read in rank order, ordered
-lexicographically. -/
+/-- The *violation profile* of a candidate: its violations read in rank order, under the
+lexicographic order. -/
 def profile : ViolationProfile n := toLex fun p ↦ t.constraints p c
 
 @[simp] theorem profile_apply (p : Fin n) : t.profile c p = t.constraints p c := rfl
 
-/-- The winning candidates, those of least profile. Optimality is plain membership
-`c ∈ t.optimal`, unfolded by `mem_optimal_iff`. -/
+/-- The winners of a tableau, the candidates of least profile. -/
 def optimal : Finset C := t.candidates.argmin t.profile
 
 variable {t c} {d m : C}
 
-/-- A winner is a candidate whose profile is lexicographically below that of every
-candidate. -/
+/-- A winner is a candidate whose profile is at most that of every candidate. -/
 theorem mem_optimal_iff :
     c ∈ t.optimal ↔ c ∈ t.candidates ∧ ∀ d ∈ t.candidates, t.profile c ≤ t.profile d :=
   Finset.mem_argmin
@@ -117,8 +121,8 @@ theorem le_of_mem_optimal (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
     t.profile c ≤ t.profile d :=
   (mem_optimal_iff.1 hc).2 d hd
 
-/-- A tableau has sole winner `m` iff `m` is a candidate that strictly lex-dominates every other
-candidate. -/
+/-- A tableau has the sole winner `m` iff `m` is a candidate whose profile is strictly below that
+of every other candidate. -/
 theorem optimal_eq_singleton_iff :
     t.optimal = {m} ↔ m ∈ t.candidates ∧ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c :=
   Finset.argmin_eq_singleton_iff
@@ -126,7 +130,7 @@ theorem optimal_eq_singleton_iff :
 @[simp] theorem optimal_singleton (hc : t.candidates = {c}) : t.optimal = {c} :=
   optimal_eq_singleton_iff.2 ⟨by simp [hc], fun _ hd hdc ↦ absurd (by simpa [hc] using hd) hdc⟩
 
-/-- A candidate strictly lex-dominated by a competitor is no winner. -/
+/-- A candidate whose profile is strictly above that of a competitor is not a winner. -/
 theorem notMem_optimal_of_lt (hc : c ∈ t.candidates) (h : t.profile c < t.profile d) :
     d ∉ t.optimal :=
   fun hd ↦ (le_of_mem_optimal hd hc).not_gt h
@@ -139,8 +143,8 @@ theorem profile_eq_zero_of_mem_optimal (hc : c ∈ t.optimal) (hd : d ∈ t.cand
     (h0 : t.profile d = 0) : t.profile c = 0 :=
   le_antisymm (h0 ▸ le_of_mem_optimal hc hd) bot_le
 
-/-- A winner does at least as well as every candidate on the top constraint, so a satisfiable
-top constraint is satisfied by every winner. -/
+/-- A winner does at least as well as every candidate on the top constraint, so that if some
+candidate satisfies the top constraint, every winner does. -/
 theorem constraints_zero_le_of_mem_optimal {t : Tableau C (n + 1)} (hc : c ∈ t.optimal)
     (hd : d ∈ t.candidates) : t.constraints 0 c ≤ t.constraints 0 d :=
   Pi.apply_le_of_toLex (x := (t.constraints · c)) (le_of_mem_optimal hc hd) fun j hj ↦
@@ -167,14 +171,12 @@ section Constructors
 variable {ι : Type*} (con : ConstraintSet C ι) (r : Ranking ι n) (candidates : Finset C)
   (ranking : List (Constraint C))
 
-/-- `ofRanking con r candidates` is the tableau of a constraint set `con : ConstraintSet C ι`
-under a ranking `r : Ranking ι n`: rank position `p` reads constraint `r p`, so coordinate `0` of
-the lexicographic profile is the most dominant constraint. -/
+/-- The tableau of a constraint set `con` under a ranking `r`: the constraint at rank position
+`p` is `con (r p)`, so that coordinate `0` of the profile is the most dominant constraint. -/
 def ofRanking : Tableau C n := ⟨candidates, con ∘ r⟩
 
-/-- The tableau of a ranked constraint list, list order being priority (position `0` most
-dominant), is `Tableau.ofRanking` under the identity ranking. Study files use this as
-`(Tableau.ofList {.a, .b} [c₁, c₂]).optimal = {.a}`. -/
+/-- The tableau of a list of constraints in rank order, position `0` most dominant:
+`Tableau.ofRanking` under the identity ranking. -/
 def ofList : Tableau C ranking.length := ofRanking ranking.get (Equiv.refl _) candidates
 
 @[simp] theorem ofRanking_candidates : (ofRanking con r candidates).candidates = candidates := rfl
@@ -188,7 +190,7 @@ def ofList : Tableau C ranking.length := ofRanking ranking.get (Equiv.refl _) ca
 variable {con r candidates}
 
 /-- Under a ranking, one candidate beats another iff some constraint preferring it dominates
-every constraint preferring the other, which is the elementary ranking condition. -/
+every constraint preferring the other. -/
 theorem ofRanking_profile_lt_iff_exists_dominates :
     (ofRanking con r candidates).profile c < (ofRanking con r candidates).profile d ↔
       ∃ i, con i c < con i d ∧ ∀ j, con j d < con j c → r.Dominates i j :=
@@ -203,8 +205,9 @@ theorem ofRanking_optimal_eq_singleton_iff :
   simp only [optimal_eq_singleton_iff, ofRanking_candidates,
     ofRanking_profile_lt_iff_exists_dominates]
 
-/-- A candidate beaten pointwise on the constraint set by a competitor is harmonically bounded,
-that is, optimal under no ranking of the set. -/
+/-- A candidate that violates every constraint at least as often as a competitor, and some
+constraint more often, is *harmonically bounded*: it is optimal under no ranking of the
+constraint set. -/
 theorem ofRanking_notMem_optimal_of_lt (hc : c ∈ candidates) (hlt : (con · c) < (con · d)) :
     d ∉ (ofRanking con r candidates).optimal :=
   notMem_optimal_of_lt hc (Pi.toLex_comp_strictMono r hlt)
@@ -226,9 +229,10 @@ theorem ofRanking_eq_zero_of_mem_optimal (hc : c ∈ (ofRanking con r candidates
   have h := profile_eq_zero_of_mem_optimal hc hd (funext fun p ↦ h0 (r p))
   simpa using show con (r (r.symm i)) c = 0 from congrFun h (r.symm i)
 
-/-- **Optimality transfers along constraint-wise bounds.** Under any ranking, a candidate of a
-second tableau violating each constraint no more than a winner of the first is a winner, where each
-candidate of the second violates each constraint at least as much as some candidate of the first. -/
+/-- Optimality transfers along constraint-wise bounds. Under any ranking, a candidate `d` of a
+second tableau that violates each constraint no more than a winner `c` of the first is itself a
+winner, provided that every candidate of the second tableau violates each constraint at least as
+much as some candidate of the first. -/
 theorem ofRanking_mem_optimal_of_forall_le {C' : Type*} {con' : ConstraintSet C' ι}
     {candidates' : Finset C'} {d : C'} (hc : c ∈ (ofRanking con r candidates).optimal)
     (hd : d ∈ candidates') (hdc : ∀ i, con' i d ≤ con i c)
@@ -301,9 +305,9 @@ end Constructors
 
 /-! ### Evaluation constraint by constraint
 
-EVAL filters the candidates constraint by constraint ([prince-smolensky-1993]): the winners of a
-tableau are the winners of its lower constraints among the candidates that do best on its top one.
-A constraint that every candidate violates equally filters out nothing. -/
+Prince and Smolensky's Eval proceeds constraint by constraint: the winners of a tableau are the
+winners under its lower constraints among the candidates that do best on its top one, and a
+constraint that every candidate violates equally removes no candidate. -/
 
 section Cascade
 
@@ -341,8 +345,8 @@ theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F 
     (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by
   rw [optimal_ofList_cons, Finset.argmin_eq_self_of_forall_le fun c hc d hd ↦ (h c hc d hd).le]
 
-/-- Constraints that rate every candidate alike are inert wherever they are ranked above the
-others. -/
+/-- Constraints that rate every candidate alike, ranked above the others, do not change the
+winners. -/
 theorem optimal_ofList_append_of_forall_eq (h : ∀ F ∈ Fs, ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     (ofList s (Fs ++ Gs)).optimal = (ofList s Gs).optimal := by
   induction Fs with
@@ -369,8 +373,9 @@ theorem optimal_ofList_antifaithful_cons (h : ∃ c ∈ s, 0 < F c) :
     (ofList s (F.antifaithful :: Fs)).optimal = (ofList (s.filter (0 < F ·)) Fs).optimal := by
   rw [optimal_ofList_cons, Constraint.argmin_antifaithful h]
 
-/-- Under `¬F ≫ F` the winners are the candidates violating `F` least among those violating it at
-all ([alderete-2001] (9)). -/
+/-- Under `¬F ≫ F`, the winners are the candidates that violate `F` least among those violating
+it at all, so that Alderete's anti-faithfulness constraint ranked above `F` forces a minimal
+violation of `F`. -/
 theorem optimal_ofList_antifaithful (h : ∃ c ∈ s, 0 < F c) :
     (ofList s [F.antifaithful, F]).optimal = (s.filter (0 < F ·)).argmin F := by
   rw [optimal_ofList_antifaithful_cons h, optimal_ofList_cons, optimal_ofList_nil]
@@ -381,9 +386,9 @@ section Fintype
 
 variable [Fintype C] {L : Type*} (order : List L) (marks : C → L → ℕ)
 
-/-- The tableau of a constraint order — labels `L`, most dominant first — and each candidate's
-violation marks by label, as a paper's tableau is printed: `order` is its column order and
-`marks c l` the cell. Candidates are every inhabitant of `C`. -/
+/-- The tableau of a printed table: `order` lists the constraint labels in column order, most
+dominant first, `marks c l` is the cell of candidate `c` under label `l`, and every inhabitant
+of `C` is a candidate. -/
 def ofOrder : Tableau C order.length := ⟨Finset.univ, fun p c ↦ marks c (order.get p)⟩
 
 @[simp] theorem ofOrder_candidates : (ofOrder order marks).candidates = Finset.univ := rfl

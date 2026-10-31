@@ -3,67 +3,69 @@ module
 public import Linglib.Phonology.OptimalityTheory.Antimatroid
 
 /-!
-# OT grammars: the leg-set / ERC-set / antimatroid hub
+# Optimality-theoretic grammars
 
-In Optimality Theory the linguistically fundamental object is not a single
-ranking but a **grammar**: the set of all rankings ("legs") that yield the same
-optima ([prince-2002]; [prince-smolensky-1993]). A grammar has three equivalent
-faces ([merchant-riggle-2016]): a **leg set** (the satisfying rankings), an
-**ERC set** (its ranking conditions), and an **antimatroid**. This file makes the
-grammar a first-class type, taking the leg set as its canonical identity and
-exhibiting the other two faces as views.
+Merchant and Riggle represent an Optimality-theoretic grammar, the ranking information that
+determines the optima of a language, by a consistent set of elementary ranking conditions
+(ERCs), and they observe that the representing set is not unique, since distinct ERC sets can
+have the same satisfying rankings. `Grammar n` therefore takes the set of satisfying rankings,
+its `legs`, as the identity of a grammar over `n` constraints, and requires that set to be the
+linear extensions of some consistent ERC set. Two consistent ERC sets present the same grammar
+exactly when they have the same linear extensions (`Grammar.ofERCs_eq_iff`).
 
-Taking the leg set as identity makes grammar equality decidable and dissolves the
-"up to entailment" hedge that the ERC-set presentation carries: two consistent ERC
-sets present the *same* grammar exactly when they have the same linear extensions
-(`Grammar.ofERCs_eq_iff`). The transitive-reduction ambiguity that forces
-[merchant-riggle-2016] Theorem 2 to be stated up to logical equivalence becomes
-literal `Grammar` equality here.
-
-The antimatroid face (`Grammar.toAntimatroid`) has a converse — every
-full-support antimatroid is some grammar's — by [dietrich-1987]'s rooted-circuit
-characterization (`ERC.toAntimatroid_ofAntimatroid`,
-`ERC.satisfiedBy_ofAntimatroid_toAntimatroid_iff` in `OptimalityTheory.Antimatroid`). The
-feasible family is read directly off the legs and is independent of the presenting ERC set,
-since `ERC.IsFeasible` depends only on the satisfying rankings.
+The maps `models` and `conditions`, from sets of ERCs to the rankings satisfying them and
+from sets of rankings to the ERCs they satisfy, form an antitone Galois connection
+(`subset_models_iff`), and the leg sets of grammars are exactly the nonempty closed sets of
+its closure operator `grammarClosure` (`Grammar.coe_legs_isGrammarClosed`,
+`Grammar.exists_grammar_of_isGrammarClosed`). Grammars are partially ordered by inclusion of
+leg sets; the trivial grammar is the greatest element, and the closure of the union of two leg
+sets is the least upper bound (`Grammar.superGrammar_le`). The top segments of the legs form
+an antimatroid (`Grammar.toAntimatroid`), the one Merchant and Riggle associate with any ERC
+set presenting the grammar (`Grammar.toAntimatroid_ofERCs_isFeasible`).
 
 ## Main definitions
 
-* `Grammar n` — a realizable leg set: a `Finset (Ranking (Fin n) n)` equal to the linear
-  extensions of some consistent ERC set.
-* `Grammar.ofERCs` — the canonical grammar of a consistent ERC set (the ERC face,
-  as a constructor).
-* `Grammar.feasible` / `Grammar.toAntimatroid` — the antimatroid face.
+* `models A`, `conditions R`: the rankings satisfying every ERC in `A`, and the ERCs
+  satisfied by every ranking in `R`.
+* `grammarClosure R`: `models (conditions R)`, a closure operator on sets of rankings, with
+  `IsGrammarClosed` for its closed sets.
+* `Grammar n`: a finite set of rankings equal to the linear extensions of some consistent ERC
+  set; `Grammar.ofERCs E h` is the grammar of a consistent ERC set `E`.
+* `Grammar.feasible`, `Grammar.toAntimatroid`: the top segments of the legs, and the
+  antimatroid they form.
+* `Grammar.trivial`, `Grammar.superGrammar`: the grammar with every ranking as a leg, and the
+  least grammar containing two given grammars.
 
-## Main results
+## Main statements
 
-* `Grammar.ofERCs_eq_iff` — two consistent ERC sets present the same grammar iff
-  they have the same linear extensions (the entailment quotient dissolves).
-* `Grammar.feasible_ofERCs` — the antimatroid family of `ofERCs E` is `ERC.IsFeasible E`.
-* `Grammar.toAntimatroid_isFeasible` — the antimatroid face's feasible sets are
-  exactly the prefixes of the grammar's legs.
+* `subset_models_iff`: `R ⊆ models A ↔ A ⊆ conditions R`.
+* `isGrammarClosed_iff_exists_models`: a set of rankings is closed iff it is `models A` for
+  some `A`.
+* `Grammar.ofERCs_eq_iff`: two consistent ERC sets present the same grammar iff they have the
+  same linear extensions.
+* `Grammar.coe_legs_isGrammarClosed`, `Grammar.exists_grammar_of_isGrammarClosed`: the leg
+  sets of grammars are exactly the nonempty closed sets.
+* `Grammar.feasible_ofERCs`: the feasible sets of `ofERCs E h` are those of `E`.
+* `Grammar.superGrammar_le`: the super-grammar of `G` and `G'` is their least upper bound.
 
-## Categorical structure
+## Implementation notes
 
-All the structure here is the order-theoretic specialization of category theory —
-the categories are *thin* (posetal), not monoidal. `(Set (Ranking (Fin n) n), ⊆)` and
-`(Set (ERC (Fin n)), ⊆)` are thin categories; `subset_models_iff` exhibits `conditions`
-and `models` as a **(dual) adjunction** between them. The induced monad
-`grammarClosure = models ∘ conditions` is the **idempotent closure monad**, and its
-algebras — the closed objects (`IsGrammarClosed`) — are exactly the grammars: a
-**reflective subcategory** of ranking-space with `grammarClosure` as the reflector.
-On `Grammar n` itself this lands as a `PartialOrder` (the specificity order —
-on the ERC face, definitionally containment of linear-extension sets, i.e.
-entailment) with a **terminal object** (`OrderTop`, the trivial
-grammar) and **binary coproducts** (`superGrammar`, the super-grammar join, with
-universal property `superGrammar_le`). Binary products (meets) may be empty, so the
-full complete lattice lives on the closed sets, not on `Grammar`.
+* The presenting ERC set is an argument of `Grammar.ofERCs` rather than a field of `Grammar`,
+  so that equality of grammars is equality of leg sets (`Grammar.ext`) and carries no choice
+  of presentation.
+* `Grammar n` carries the join of the specificity order but no meet. The intersection of two
+  closed sets is closed (`isGrammarClosed_inter`), but `realizable` requires a nonempty leg
+  set, and the file does not show when an intersection of leg sets is nonempty.
+* The axioms of `Grammar.toAntimatroid` are transported from `ERC.toAntimatroid` of any ERC
+  set realizing the grammar (`Grammar.exists_antimatroid_feasible_eq`). The converse, that
+  every antimatroid on all of `Fin n` is the antimatroid of a consistent set of ERCs, is
+  `ERC.toAntimatroid_ofAntimatroid`, which follows Dietrich; it is not restated for `Grammar`.
 
 ## References
 
-* [merchant-riggle-2016]
-* [prince-2002]
-* [prince-smolensky-1993]
+* [N. Merchant, J. Riggle, *OT grammars, beyond partial orders: ERC sets and antimatroids*
+  (2016)][merchant-riggle-2016]
+* [B. L. Dietrich, *A circuit set characterization of antimatroids* (1987)][dietrich-1987]
 -/
 
 @[expose] public section
@@ -72,21 +74,18 @@ namespace OptimalityTheory
 
 variable {n : ℕ}
 
-/-! ### The grammar–condition Galois connection
+/-! ### The Galois connection between rankings and conditions
 
-The leg-set / ERC-set duality is the antitone Galois connection — the
-formal-concept "polarity" ([merchant-riggle-2016]; the framing is
-Birkhoff / Ganter–Wille) — induced by the satisfaction relation on
-`Ord(S.Con) × ERC`. `models A` collects the rankings satisfying every condition in
-`A`; `conditions R` collects the conditions satisfied by every ranking in `R`.
-Grammars are exactly the closed sets `models (conditions R)`, the *extents* of
-this context. -/
+`models A` is the set of rankings satisfying every condition in `A`, and `conditions R` is
+the set of conditions satisfied by every ranking in `R`. Both maps are antitone, and together
+they form a Galois connection (`subset_models_iff`), so that `models ∘ conditions` is a
+closure operator on sets of rankings whose closed sets are the sets of the form `models A`. -/
 
-/-- The rankings satisfying every condition in `A` (the extent polarity). -/
+/-- The rankings satisfying every condition in `A`. -/
 def models (A : Set (ERC (Fin n))) : Set (Ranking (Fin n) n) :=
   {r | ∀ α ∈ A, ERC.SatisfiedBy r α}
 
-/-- The conditions satisfied by every ranking in `R` (the intent polarity). -/
+/-- The conditions satisfied by every ranking in `R`. -/
 def conditions (R : Set (Ranking (Fin n) n)) : Set (ERC (Fin n)) :=
   {α | ∀ r ∈ R, ERC.SatisfiedBy r α}
 
@@ -109,9 +108,9 @@ theorem conditions_antitone :
     Antitone (conditions : Set (Ranking (Fin n) n) → Set (ERC (Fin n))) := by
   intro R S hRS α hα r hr; exact hα r (hRS hr)
 
-/-- The closure operator on ranking-space — the **reflector** onto the grammars,
-i.e. the idempotent monad `models ∘ conditions` induced by the Galois adjunction.
-Its fixed points (the algebras / closed objects) are exactly the grammars. -/
+/-- The closure of a set of rankings: the rankings satisfying every condition that all of `R`
+satisfy. It is extensive, monotone, and idempotent (`subset_grammarClosure`,
+`grammarClosure_mono`, `grammarClosure_idem`). -/
 def grammarClosure (R : Set (Ranking (Fin n) n)) : Set (Ranking (Fin n) n) := models (conditions R)
 
 theorem subset_grammarClosure (R : Set (Ranking (Fin n) n)) : R ⊆ grammarClosure R := by
@@ -130,10 +129,8 @@ theorem grammarClosure_idem (R : Set (Ranking (Fin n) n)) :
   show models (conditions (grammarClosure R)) = models (conditions R)
   rw [conditions_grammarClosure]
 
-/-- A ranking-set is **grammar-closed** iff it equals its closure — iff it is the
-models of some condition set. These are the closure monad's algebras (the closed
-objects of the reflective subcategory), exactly the leg sets of grammars
-(`Grammar.coe_legs_isGrammarClosed`, `Grammar.exists_grammar_of_isGrammarClosed`). -/
+/-- A set of rankings is *grammar-closed* when it equals its closure, equivalently when it is
+`models A` for some set of conditions `A` (`isGrammarClosed_iff_exists_models`). -/
 def IsGrammarClosed (R : Set (Ranking (Fin n) n)) : Prop := grammarClosure R = R
 
 theorem isGrammarClosed_models (A : Set (ERC (Fin n))) : IsGrammarClosed (models A) :=
@@ -143,14 +140,12 @@ theorem isGrammarClosed_iff_exists_models {R : Set (Ranking (Fin n) n)} :
     IsGrammarClosed R ↔ ∃ A, R = models A :=
   ⟨fun h => ⟨conditions R, h.symm⟩, by rintro ⟨A, rfl⟩; exact isGrammarClosed_models A⟩
 
-/-! ### The closure system: meet and the super-grammar join
+/-! ### Intersections and closures of unions
 
-The closed sets form a closure system, hence a complete lattice. The **meet** of
-two grammars is the intersection of their legs (`isGrammarClosed_inter`) — conjoin
-their conditions (`models_union`). The **join** is `grammarClosure (R ∪ R')`, the
-smallest grammar containing both: the closure of the union of legs. This is the
-*super-grammar* that coarsens a typology by unioning grammars; closing the union
-is exactly what guarantees the result is again a grammar. -/
+The intersection of two closed sets is closed (`isGrammarClosed_inter`), and the rankings
+satisfying the union of two condition sets are those satisfying both (`models_union`). The
+closure of a union of two sets is a closed set containing both (`isGrammarClosed_grammarClosure`,
+`subset_grammarClosure`); among grammars it is the least such (`Grammar.superGrammar_le`). -/
 
 theorem models_union (A B : Set (ERC (Fin n))) : models (A ∪ B) = models A ∩ models B := by
   ext r; simp only [mem_models, Set.mem_union, or_imp, forall_and, Set.mem_inter_iff]
@@ -168,13 +163,13 @@ theorem coe_linearExtensions_eq_models (E : Finset (ERC (Fin n))) :
     (↑(ERC.linearExtensions E) : Set (Ranking (Fin n) n)) = models ↑E := by
   ext r; simp [mem_models]
 
-/-- An OT grammar is a set of rankings realizable as the linear extensions of some consistent
-ERC set ([merchant-riggle-2016]). The leg set is the grammar's canonical identity; the ERC-set
-and antimatroid presentations are views. -/
+/-- An *Optimality-theoretic grammar* over `n` constraints: a set of rankings that is the set of
+linear extensions of some consistent set of ERCs. Two grammars are equal when their rankings
+are (`Grammar.ext`), whichever ERC sets present them. -/
 structure Grammar (n : ℕ) where
-  /-- The grammar's legs: the rankings that select its language's optima. -/
+  /-- The rankings of the grammar. -/
   legs : Finset (Ranking (Fin n) n)
-  /-- Every grammar is the linear-extension set of some consistent ERC set. -/
+  /-- The legs are the linear extensions of some consistent set of ERCs. -/
   realizable : ∃ E : Finset (ERC (Fin n)),
     (ERC.linearExtensions E).Nonempty ∧ legs = ERC.linearExtensions E
 
@@ -183,7 +178,7 @@ namespace Grammar
 @[ext] theorem ext {G G' : Grammar n} (h : G.legs = G'.legs) : G = G' := by
   cases G; cases G'; cases h; rfl
 
-/-- The grammar of a consistent ERC set — the ERC face, as a constructor. -/
+/-- The grammar whose legs are the linear extensions of a consistent set of ERCs `E`. -/
 def ofERCs (E : Finset (ERC (Fin n))) (hcons : (ERC.linearExtensions E).Nonempty) : Grammar n where
   legs := ERC.linearExtensions E
   realizable := ⟨E, hcons, rfl⟩
@@ -207,24 +202,23 @@ theorem legs_nonempty (G : Grammar n) : G.legs.Nonempty := by
   obtain ⟨E, hcons, hlegs⟩ := G.realizable
   exact hlegs ▸ hcons
 
-/-! ### The ERC face: grammar equality is mutual entailment -/
+/-! ### Grammars presented by sets of ERCs -/
 
-/-- Two consistent ERC sets present the same grammar iff they have the same linear extensions
-([merchant-riggle-2016] Theorem 2). -/
+/-- Two consistent sets of ERCs present the same grammar iff they have the same linear
+extensions. -/
 theorem ofERCs_eq_iff {E E' : Finset (ERC (Fin n))}
     (h : (ERC.linearExtensions E).Nonempty) (h' : (ERC.linearExtensions E').Nonempty) :
     ofERCs E h = ofERCs E' h' ↔ ERC.linearExtensions E = ERC.linearExtensions E' :=
   ⟨congrArg legs, fun hl => ext hl⟩
 
-/-! ### The antimatroid face -/
+/-! ### The antimatroid of a grammar -/
 
-/-- The feasible family of a grammar consists of the top segments of its legs, read directly
-off the legs and independent of any ERC presentation. -/
+/-- A set of constraints is *feasible* for a grammar when it is the set of the top `k`
+constraints of one of its legs. -/
 def feasible (G : Grammar n) (S : Set (Fin n)) : Prop :=
   ∃ r : Ranking (Fin n) n, r ∈ G.legs ∧ ∃ k : Fin (n + 1), ↑(r.take k) = S
 
-/-- The feasible family of `ofERCs E` is that of `E`, so the antimatroid face agrees with
-`ERC.toAntimatroid`. -/
+/-- The feasible sets of `ofERCs E hcons` are the feasible sets of `E`. -/
 theorem feasible_ofERCs (E : Finset (ERC (Fin n))) (hcons : (ERC.linearExtensions E).Nonempty)
     (S : Set (Fin n)) :
     (ofERCs E hcons).feasible S ↔ ERC.IsFeasible ↑E S := by
@@ -241,10 +235,9 @@ theorem exists_antimatroid_feasible_eq (G : Grammar n) :
   exact ⟨ERC.toAntimatroid _ ((ERC.linearExtensions_nonempty_iff E).mp hcons), rfl,
     (G.feasible_eq_isFeasible hlegs).symm⟩
 
-/-- The antimatroid face of a grammar ([merchant-riggle-2016]) has the constraints as ground set
-and the top segments of the legs as feasible sets. Every grammar is an antimatroid, and the
-converse rests on [dietrich-1987] (`ERC.toAntimatroid_ofAntimatroid`). The axioms transfer from
-the antimatroid of any ERC set realizing the grammar (`exists_antimatroid_feasible_eq`). -/
+/-- The antimatroid of a grammar has the constraints as ground set and the feasible sets of the
+grammar as feasible sets. Its axioms are those of `ERC.toAntimatroid` for any set of ERCs
+presenting the grammar (`exists_antimatroid_feasible_eq`). -/
 def toAntimatroid (G : Grammar n) : Antimatroid (Fin n) where
   E := Set.univ
   IsFeasible := G.feasible
@@ -275,7 +268,7 @@ theorem toAntimatroid_ofERCs_isFeasible (E : Finset (ERC (Fin n)))
   rw [toAntimatroid_isFeasible, feasible_ofERCs]
   exact Iff.rfl
 
-/-! ### Grammars are exactly the nonempty closed sets -/
+/-! ### Leg sets are the nonempty closed sets -/
 
 theorem coe_legs_isGrammarClosed (G : Grammar n) :
     IsGrammarClosed (↑G.legs : Set (Ranking (Fin n) n)) := by
@@ -298,19 +291,13 @@ theorem exists_grammar_of_isGrammarClosed {R : Set (Ranking (Fin n) n)}
     exact ⟨r, hr⟩
   exact ⟨⟨ERC.linearExtensions E, E, hcons, rfl⟩, hReq⟩
 
-/-! ### The specificity order: grammars as a thin category
+/-! ### The specificity order
 
-`Grammar n` is a **poset** — a thin category — under leg-set inclusion: `G ≤ G'`
-means `G` is *more specific* (fewer legs, more ranking conditions). On the ERC face
-`ofERCs E h ≤ ofERCs E' h'` is definitionally
-`ERC.linearExtensions E ⊆ ERC.linearExtensions E'` — the entailment order, the
-order side of the Galois adjunction. `grammarClosure` is the **reflector** onto
-this subcategory
-(grammars are its closed objects — the algebras of the idempotent closure monad).
-The **terminal object** is the trivial grammar (`OrderTop`); the **coproduct** of
-two grammars is their super-grammar — the closure of the union of legs. Binary
-products (meets) may be empty, so the full lattice lives on the closed sets, with
-`Grammar n` the nonempty part. -/
+Grammars are ordered by inclusion of leg sets (`le_iff_legs`): `G ≤ G'` when every leg of
+`G` is a leg of `G'`, so that `G` satisfies every condition that `G'` satisfies
+(`conditions_antitone`). For grammars presented by sets of ERCs this is inclusion of their
+linear extensions. The trivial grammar is the greatest element, and the super-grammar of two
+grammars is their least upper bound. -/
 
 instance : PartialOrder (Grammar n) where
   le G G' := G.legs ⊆ G'.legs
@@ -320,8 +307,8 @@ instance : PartialOrder (Grammar n) where
 
 theorem le_iff_legs {G G' : Grammar n} : G ≤ G' ↔ G.legs ⊆ G'.legs := Iff.rfl
 
-/-- The trivial grammar has all rankings as legs and no ranking conditions (`ofERCs ∅`); it is
-the terminal object of the specificity order. -/
+/-- The *trivial grammar*, `ofERCs ∅`, has every ranking as a leg (`legs_trivial`) and is the
+greatest element of the specificity order. -/
 def trivial : Grammar n := ofERCs ∅ ⟨1, by simp⟩
 
 @[simp] theorem legs_trivial : (Grammar.trivial : Grammar n).legs = Finset.univ := by
@@ -336,10 +323,9 @@ theorem grammarClosure_union_nonempty (G G' : Grammar n) :
   obtain ⟨r, hr⟩ := G.legs_nonempty
   exact ⟨r, subset_grammarClosure _ (Set.mem_union_left _ (Finset.mem_coe.mpr hr))⟩
 
-/-- The **super-grammar** (the coproduct / join in the thin category of grammars):
-the least grammar containing both `G` and `G'`, the closure of the union of their
-legs. This is [merchant-riggle-2016]'s typology coarsening — union the legs, then
-close to land back inside `Grammar`. -/
+/-- The *super-grammar* of `G` and `G'`: the grammar whose legs are the closure of the union of
+their legs (`coe_superGrammar_legs`). It is the least upper bound of `G` and `G'` in the
+specificity order (`le_superGrammar_left`, `le_superGrammar_right`, `superGrammar_le`). -/
 noncomputable def superGrammar (G G' : Grammar n) : Grammar n :=
   (exists_grammar_of_isGrammarClosed (isGrammarClosed_grammarClosure _)
     (grammarClosure_union_nonempty G G')).choose

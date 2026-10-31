@@ -10,50 +10,78 @@ public import Mathlib.Order.Prod.Lex.Basic
 /-!
 # Elementary ranking conditions
 
-OT's algebraic ranking-inference layer ([prince-2002]; [riggle-2009a]). An
-ERC value is a *sign*, so the alphabet is mathlib's `SignType` — `W` (`+1`,
-winner-preferring), `L` (`-1`, loser-preferring), `e` (`0`, neutral) — which buys
-`ercOfProfiles` as a coordinatewise `SignType.sign`, Prince's negative of an ERC as pointwise
-negation, and the decidability instances for free. `SignType`'s order `L ≤ e ≤ W` is the order of
-Prince's W-extension and L-retraction: raising coordinates weakens an ERC
-(`ERC.SatisfiedBy.mono`), and when the entailing ERC has a `W` and the entailed one an `L`,
-entailment is exactly the coordinatewise order (`ERC.linearExtensions_singleton_subset_iff`).
-Without those two conditions it is not: an ERC with an `L` and no `W` holds under no ranking and
-entails everything, and one with no `L` holds under every ranking and is entailed by everything.
+Prince's *elementary ranking condition* (ERC) records, for a desired winner against a
+competitor, which constraints prefer the winner (`W`), which prefer the loser (`L`), and which
+are indifferent (`e`). A ranking satisfies the condition when some `W`-constraint dominates
+every `L`-constraint (`ERC.satisfiedBy_iff_dominance`), which is when the winner beats the loser
+under that ranking (`satisfiedBy_ercOfProfiles_iff_le`), so that a candidate is optimal under a
+ranking iff the ranking satisfies its ERC against every competitor
+(`Tableau.ofRanking_mem_optimal_iff_satisfiedBy`). The three values are ordered `L ≤ e ≤ W`,
+and raising a coordinate weakens an ERC (`ERC.SatisfiedBy.mono`); when the entailing ERC has a
+`W` and the entailed one an `L`, entailment is exactly this coordinatewise order
+(`ERC.linearExtensions_singleton_subset_iff`), which is Prince's Proposition 1.1, and an ERC
+with no `L` holds under every ranking (`ERC.trivial_satisfiedBy`).
 
-A ranking satisfies an ERC iff its sign vector, read in the ranking's priority order,
-is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
-`L`-constraint is outranked by some `W`-constraint ([prince-2002] §0 (3)/(4)).
+## Main definitions
 
-## Main declarations
+* `ERCVal`, `ERC ι`: the values `W`, `L`, and `e`, and sign vectors over the constraints `ι`.
+* `ERC.SatisfiedBy r α`: the ranking `r` satisfies the ERC `α`; `ERC.linearExtensions E` is
+  the set of rankings satisfying every ERC in a finite set `E`.
+* `ERC.IsTrivial`, `ERC.IsContradictory`, `ERC.IsSimple`: an ERC with no `L`, one with an `L`
+  and no `W`, and one with exactly one `W` and one `L`.
+* `ercOfProfiles`, `tableauERC`, `simpleERC`: the ERC of a winner and a loser given by their
+  violation vectors, of two candidates of a tableau, and of a single domination `i ≫ j`.
 
-* `ERCVal`, `ERC ι` — the sign alphabet and sign vectors `ι → ERCVal` over the constraints `ι`.
-* `ERC.SatisfiedBy` — satisfaction of one ERC by a ranking `Ranking ι n`;
-  `ERC.linearExtensions` the permutations of `Fin n` satisfying a `Finset` of them.
-  Consistency and entailment of ERC sets are `Nonempty` and `⊆` of linear-extension sets;
-  Prince's characterizations of both by fusion are not yet stated (see TODO).
-* `ERC.SatisfiedBy.mono`, `ERC.linearExtensions_singleton_subset_iff` — Prince's Proposition 1.1:
-  entailment between single ERCs is the coordinatewise order, given a `W` in the entailing ERC
-  and an `L` in the entailed one.
-* `ERC.satisfiedBy_iff_exists_isMinOn`, `ERC.card_filter_satisfiedBy_mul_card` — a ranking
-  satisfies an ERC iff its earliest non-neutral constraint is winner-preferring, so the rankings
-  satisfying it are the fraction `|W| / |W ∪ L|` of all rankings; by `ERC.not_satisfiedBy_neg` an
-  ERC with a non-neutral constraint and its antithesis hold under no common ranking.
-* `ercOfProfiles`, `tableauERC` — ERCs from violation vectors and winner–loser
-  pairs; `satisfiedBy_ercOfProfiles_iff_le` bridges to the Core lex order, and
-  `Tableau.ofRanking_mem_optimal_iff_satisfiedBy` identifies optimality with ERC satisfaction.
-* `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`
-  ([merchant-riggle-2016]).
+## Main statements
+
+* `ERC.satisfiedBy_iff_dominance`: a ranking satisfies an ERC iff every `L`-constraint is
+  dominated by some `W`-constraint.
+* `ERC.satisfiedBy_iff_lead`: a ranking satisfies an ERC iff its earliest non-neutral
+  constraint, when one exists, is a `W`.
+* `ERC.SatisfiedBy.mono`: raising coordinates in the order `L ≤ e ≤ W` weakens an ERC.
+* `ERC.linearExtensions_singleton_subset_iff`: given a `W` in the entailing ERC and an `L` in
+  the entailed one, entailment between single ERCs is the coordinatewise order.
+* `ERC.card_filter_satisfiedBy_mul_card`: the rankings satisfying an ERC with a non-neutral
+  constraint are the fraction `|W| / |W ∪ L|` of all rankings.
+* `ERC.not_satisfiedBy_neg`: an ERC with a non-neutral constraint and its negative hold under
+  no common ranking.
+* `satisfiedBy_ercOfProfiles_iff_le`: a ranking satisfies the ERC of a winner and a loser iff
+  the winner's violations, read in the order of the ranking, are lexicographically at most the
+  loser's.
+* `Tableau.ofRanking_mem_optimal_iff_satisfiedBy`: a candidate is optimal under a ranking iff
+  the ranking satisfies its ERC against every competitor.
+
+## Implementation notes
+
+* `ERCVal` is mathlib's `SignType`, with `W = 1`, `L = -1`, and `e = 0`, so that
+  `ercOfProfiles` is a coordinatewise `SignType.sign`, Prince's negative of an ERC is `-α`, and
+  satisfaction and the classes of ERCs are decidable through the instances of `SignType`.
+* `ERC.IsTrivial` requires that an ERC have no `L`, Prince's class `W*`, whereas Prince calls
+  an ERC trivial when it lacks a `W` or an `L`.
+* Consistency and entailment of ERC sets have no definitions of their own: a finite set `E` is
+  consistent when `ERC.linearExtensions E` is nonempty, and `E` entails `E'` when
+  `ERC.linearExtensions E ⊆ ERC.linearExtensions E'`.
+* `ERC.satisfiedBy_iff_exists_dominant`, Prince's `∃∀` form, requires a constraint to exist,
+  as Prince assumes, since over no constraints the `∀∃` form holds vacuously and the `∃∀`
+  form fails.
 
 ## TODO
 
-Prince's fusion calculus ([prince-2002] §2). The fusion of two ERCs is computed coordinatewise,
-with `L` absorbing, `e` the identity, and each value idempotent ((12)–(13), pp. 8–9). Its main
-results, in terms of `ERC.linearExtensions`:
+Prince's fusion calculus. The fusion of two ERCs is computed coordinatewise, with `L`
+absorbing, `e` the identity, and each value idempotent (Prince's (12) and (13), pp. 8 and 9).
+Its main results, in terms of `ERC.linearExtensions`:
 * a set of ERCs entails its fusion (Proposition 2.1, p. 10);
 * a set is inconsistent iff some subset fuses to an ERC with an `L` and no `W`
   (Proposition 2.4, p. 11);
 * a set entails an ERC iff the fusion of some subset entails it (Proposition 2.5, p. 14).
+
+## References
+
+* [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
+* [J. Riggle, *The Complexity of Ranking Hypotheses in Optimality Theory*
+  (2009)][riggle-2009a]
+* [N. Merchant, J. Riggle, *OT grammars, beyond partial orders: ERC sets and antimatroids*
+  (2016)][merchant-riggle-2016]
 -/
 
 @[expose] public section
@@ -62,43 +90,41 @@ namespace OptimalityTheory
 
 variable {ι : Type*} {n : ℕ}
 
-/-! ### The three-valued alphabet `ERCVal` -/
+/-! ### The three values -/
 
-/-- An ERC value is a sign ([prince-2002] §0): `W` (winner-preferring), `L`
-(loser-preferring), `e` (neutral). This is mathlib's `SignType` — see `ERCVal.W`,
-`ERCVal.L`, `ERCVal.e`. -/
+/-- An ERC value: `W` (winner-preferring), `L` (loser-preferring), or `e` (neutral), as
+mathlib's `SignType` (`ERCVal.W`, `ERCVal.L`, `ERCVal.e`). -/
 abbrev ERCVal := SignType
 
 namespace ERCVal
 
-/-- Winner-preferring value (`+1`). -/
+/-- The winner-preferring value (`1`). -/
 @[match_pattern] abbrev W : ERCVal := .pos
-/-- Loser-preferring value (`-1`). -/
+/-- The loser-preferring value (`-1`). -/
 @[match_pattern] abbrev L : ERCVal := .neg
-/-- Neutral / indifferent value (`0`). -/
+/-- The neutral value (`0`). -/
 @[match_pattern] abbrev e : ERCVal := .zero
 
 end ERCVal
 
 /-! ### Elementary ranking conditions -/
 
-/-- An elementary ranking condition over the constraints `ι`: a sign vector `ι → ERCVal`
-([prince-2002] §0). -/
+/-- An *elementary ranking condition* over the constraints `ι`: a sign vector `ι → ERCVal`. -/
 abbrev ERC (ι : Type*) := ι → ERCVal
 
 namespace ERC
 
 variable (α : ERC ι)
 
-/-- An ERC is *trivial* here if it has no `L`-constraint, so every ranking satisfies it: Prince's
-class `W*` ([prince-2002] §0). Prince's own *trivial* is wider, covering every ERC that lacks a `W`
-or an `L`. -/
+/-- An ERC is *trivial* when it has no `L`-constraint, so that every ranking satisfies it:
+Prince's class `W*`. Prince's own term is wider and covers every ERC that lacks a `W` or an
+`L`. -/
 def IsTrivial : Prop := ∀ k, α k ≠ .L
 
 instance [Fintype ι] : Decidable α.IsTrivial := Fintype.decidableForallFintype
 
-/-- An ERC is *contradictory* if it has an `L`-constraint but no
-`W`-constraint, so no ranking satisfies it — Prince's class `𝓛⁺`. -/
+/-- An ERC is *contradictory* when it has an `L`-constraint but no `W`-constraint: Prince's
+class `L⁺`. -/
 def IsContradictory : Prop := (∀ k, α k ≠ .W) ∧ (∃ k, α k = .L)
 
 instance [Fintype ι] : Decidable α.IsContradictory := inferInstanceAs (Decidable (_ ∧ _))
@@ -126,20 +152,19 @@ namespace ERC
 
 variable (r : Ranking ι n) (α : ERC ι)
 
-/-- A ranking `r` *satisfies* ERC `α` iff its sign vector, read in `r`'s priority
-order, is lexicographically nonnegative. -/
+/-- A ranking `r` *satisfies* the ERC `α` when the sign vector of `α`, read in the order of `r`,
+is lexicographically nonnegative. -/
 def SatisfiedBy : Prop := toLex 0 ≤ toLex (α ∘ r)
 
-/-- **The leading-entry characterization** ([prince-2002] §4, p. 22): a ranking
-satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, is
-winner-preferring. -/
+/-- A ranking satisfies an ERC iff its earliest non-neutral constraint, when one exists, is
+winner-preferring, which is Prince's description of satisfaction by a left-to-right sweep. -/
 theorem satisfiedBy_iff_lead :
     α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W :=
   ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.lex_le_iff_find _ _).mp h he),
    fun h => (Pi.lex_le_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
-/-- [prince-2002] §0 (3): satisfaction unfolds to the `∀∃` dominance form — every
-loser-preferring constraint is dominated by some winner-preferring one. -/
+/-- Satisfaction in Prince's `∀∃` form, his (3): every loser-preferring constraint is dominated
+by some winner-preferring one. -/
 theorem satisfiedBy_iff_dominance :
     α.SatisfiedBy r ↔ ∀ c, α c = .L → ∃ w, α w = .W ∧ r.Dominates w c := by
   rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
@@ -149,8 +174,8 @@ theorem satisfiedBy_iff_dominance :
 instance : Decidable (α.SatisfiedBy r) :=
   inferInstanceAs (Decidable (toLex 0 ≤ toLex (α ∘ r)))
 
-/-- [prince-2002] §0 (4): the `∀∃` form is equivalent to the `∃∀` form — *some*
-`W`-constraint dominates *every* `L`-constraint — because the ranking is total. -/
+/-- Satisfaction in Prince's `∃∀` form, his (4): some winner-preferring constraint dominates
+every loser-preferring one. The two forms agree because the ranking is total. -/
 theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     α.SatisfiedBy r ↔ ∃ d, ∀ c, α c = .L → (α d = .W ∧ r.Dominates d c) := by
   rw [SatisfiedBy, show toLex (0 : Fin n → ERCVal) = toLex ((0 : ι → ERCVal) ∘ r) from rfl,
@@ -161,8 +186,8 @@ theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking ι
     α.SatisfiedBy r :=
   (satisfiedBy_iff_dominance r α).mpr fun l hl => absurd hl (htriv l)
 
-/-- **W-extension and L-retraction** ([prince-2002] Proposition 1.1(a)): raising coordinates in
-the order `L ≤ e ≤ W` weakens an ERC, so a ranking satisfying `α` satisfies every `β ≥ α`. -/
+/-- W-extension and L-retraction, Prince's Proposition 1.1(a): raising coordinates in the order
+`L ≤ e ≤ W` weakens an ERC, so that a ranking satisfying `α` satisfies every `β ≥ α`. -/
 theorem SatisfiedBy.mono {α β : ERC ι} {r : Ranking ι n} (h : α.SatisfiedBy r) (hαβ : α ≤ β) :
     β.SatisfiedBy r := by
   rw [satisfiedBy_iff_dominance] at h ⊢
@@ -173,8 +198,9 @@ theorem SatisfiedBy.mono {α β : ERC ι} {r : Ranking ι n} (h : α.SatisfiedBy
 /-! ### The earliest non-neutral constraint
 
 A ranking satisfies an ERC with a non-neutral constraint exactly when the earliest of its
-non-neutral constraints is winner-preferring. Every non-neutral constraint comes first equally
-often, so the rankings satisfying an ERC are the fraction `|W| / |W ∪ L|` of all rankings. -/
+non-neutral constraints is winner-preferring. Each non-neutral constraint comes first equally
+often, so that the rankings satisfying the ERC are the fraction `|W| / |W ∪ L|` of all
+rankings. -/
 
 section Earliest
 
@@ -199,9 +225,9 @@ theorem satisfiedBy_iff_exists_isMinOn (hα : ∃ k, α k ≠ .e) :
     obtain rfl := r.symm.injective h
     simp [hc] at hx
 
-/-- An ERC with a non-neutral constraint and its negative ([prince-2002] §2, (20)) hold under no
-common ranking: they share their earliest non-neutral constraint, which prefers the winner of only
-one of them. -/
+/-- An ERC with a non-neutral constraint and its negative hold under no common ranking, since
+they share their earliest non-neutral constraint, which prefers the winner of only one of
+them. -/
 theorem not_satisfiedBy_neg (hα : ∃ k, α k ≠ .e) (h : α.SatisfiedBy r) : ¬ (-α).SatisfiedBy r := by
   have hset : ({k | (-α) k ≠ .e} : Finset ι) = {k | α k ≠ .e} := by ext; simp
   obtain ⟨x, hx, hxm⟩ := (satisfiedBy_iff_exists_isMinOn hα).1 h
@@ -238,15 +264,14 @@ end ERC
 
 /-! ### Linear extensions
 
-Satisfaction of a `Finset (ERC (Fin n))` needs no vocabulary of its own: a ranking
-satisfies the set iff `∀ α ∈ E, α.SatisfiedBy r`, the set is *consistent*
-([prince-2002]) iff `(ERC.linearExtensions E).Nonempty`, and `E` *entails* `E'`
-iff `ERC.linearExtensions E ⊆ ERC.linearExtensions E'`. -/
+A ranking satisfies a finite set of ERCs when it satisfies each member. The set is *consistent*
+when some ranking satisfies it, that is, when `ERC.linearExtensions E` is nonempty, and `E`
+*entails* `E'` when `ERC.linearExtensions E ⊆ ERC.linearExtensions E'`. -/
 
 namespace ERC
 
-/-- The rankings satisfying every member of a set of ERCs, as a `Finset` — its
-*linear extensions* ([merchant-riggle-2016]). -/
+/-- The rankings satisfying every member of a finite set of ERCs, which Merchant and Riggle call
+its *linear extensions*. -/
 def linearExtensions (E : Finset (ERC (Fin n))) : Finset (Ranking (Fin n) n) :=
   Finset.univ.filter fun r => ∀ α ∈ E, ERC.SatisfiedBy r α
 
@@ -270,17 +295,17 @@ private theorem exists_ranking_first_second (p q : Fin n) :
   all_goals (simp only [k]; split_ifs <;> simp_all)
 
 /-- Raising coordinates weakens an ERC: the linear extensions of `α` are among those of every
-`β ≥ α` ([prince-2002] Proposition 1.1(a)). -/
+`β ≥ α`. -/
 theorem linearExtensions_singleton_subset_of_le {α β : ERC (Fin n)} (hαβ : α ≤ β) :
     linearExtensions {α} ⊆ linearExtensions {β} := fun r hr ↦ by
   simp only [mem_linearExtensions, Finset.mem_singleton, forall_eq] at hr ⊢
   exact hr.mono hαβ
 
-/-- **Entailment between single ERCs is the coordinatewise order** ([prince-2002] Proposition
-1.1). Prince assumes both ERCs nontrivial, with a `W` and an `L` each; the proof needs only a `W`
-in the entailing ERC and an `L` in the entailed one. Conversely to W-extension and L-retraction, a
-coordinate on which `α` exceeds `β` yields a ranking satisfying `α` alone, which puts that
-coordinate first and a `W` of `α` or an `L` of `β` second. -/
+/-- Entailment between single ERCs is the coordinatewise order, Prince's Proposition 1.1. Prince
+assumes both ERCs nontrivial, with a `W` and an `L` each, whereas the proof needs only a `W` in
+the entailing ERC and an `L` in the entailed one: a coordinate on which `α` exceeds `β` yields a
+ranking satisfying `α` alone, which puts that coordinate first and a `W` of `α` or an `L` of `β`
+second. -/
 theorem linearExtensions_singleton_subset_iff {α β : ERC (Fin n)} (hα : ∃ k, α k = .W)
     (hβ : ∃ k, β k = .L) : linearExtensions {α} ⊆ linearExtensions {β} ↔ α ≤ β := by
   refine ⟨fun h i ↦ le_of_not_gt fun hlt ↦ ?_, linearExtensions_singleton_subset_of_le⟩
@@ -327,8 +352,8 @@ end ERC
 
 /-! ### Simple ERCs -/
 
-/-- The simple ERC asserting constraint `i` must dominate constraint `j`; all
-other constraints are `e`. -/
+/-- The ERC requiring constraint `i` to dominate constraint `j`, with every other constraint
+neutral. -/
 def simpleERC [DecidableEq ι] (i j : ι) : ERC ι :=
   fun k => if k = i then .W else if k = j then .L else .e
 
@@ -386,10 +411,10 @@ theorem simpleERC_isSimple_or_isTrivial (i j : ι) :
 
 end Simple
 
-/-! ### Bridges: profiles, tableaux, and the Core lex order -/
+/-! ### The ERCs of violation profiles and tableaux -/
 
-/-- The ERC of a winner/loser pair of violation vectors: the coordinatewise sign of
-the violation difference ([prince-2002] §0; [riggle-2009a] Def. 3). -/
+/-- The ERC of a winner and a loser given by their violation vectors: the coordinatewise sign of
+the loser's violations less the winner's, as in Riggle's Definition 3. -/
 def ercOfProfiles (winner loser : ι → ℕ) : ERC ι :=
   fun k => SignType.sign ((loser k : ℤ) - (winner k : ℤ))
 
@@ -405,15 +430,15 @@ theorem ercOfProfiles_eq_e_iff (w l : ι → ℕ) (k : ι) :
     ercOfProfiles w l k = .e ↔ w k = l k := by
   simp only [ercOfProfiles, SignType.zero_eq_zero, sign_eq_zero_iff]; omega
 
-/-- Prince's *negative* of an ERC ([prince-2002] §2, (20)): swapping winner and loser negates
-it. -/
+/-- Swapping winner and loser negates the ERC, which is Prince's *negative* of an ERC, his
+(20). -/
 theorem ercOfProfiles_swap (w l : ι → ℕ) :
     ercOfProfiles l w = -ercOfProfiles w l := by
   funext k
   rw [Pi.neg_apply, ercOfProfiles, ercOfProfiles, ← neg_sub, Left.sign_neg]
 
-/-- Construct an ERC from a list of `ERCVal`, with a length proof discharged by
-`decide` for literals: `def myERC : ERC (Fin 4) := ercOfList [.W, .e, .L, .e]`. -/
+/-- The ERC with the values of a list, with the length proof discharged by `decide` for literals,
+as in `ercOfList [.W, .e, .L, .e] : ERC (Fin 4)`. -/
 def ercOfList (vs : List ERCVal) (h : vs.length = n := by decide) : ERC (Fin n) :=
   fun i => vs[i.val]'(by omega)
 
@@ -426,21 +451,19 @@ theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
         (ERCVal.zero_lt_iff _).trans (ercOfProfiles_eq_W_iff w l q))).trans
     (Pi.lex_le_iff_forall (ofLex w) (ofLex l)).symm
 
-/-- ERC satisfaction *is* lexicographic domination: `r` satisfies the ERC of a
-winner/loser pair iff the winner's violations, read in `r`'s priority order, are lex-≤
-the loser's ([prince-2002]). Precomposition with the ranking is absorbed by
-instantiating `lex_nonneg_ercOfProfiles_iff` at the ranked readings. -/
+/-- A ranking satisfies the ERC of a winner and a loser iff the winner's violations, read in the
+order of the ranking, are lexicographically at most the loser's. -/
 theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking ι n) (w l : ι → ℕ) :
     (ercOfProfiles w l).SatisfiedBy r ↔ toLex (w ∘ r) ≤ toLex (l ∘ r) :=
   lex_nonneg_ercOfProfiles_iff (toLex (w ∘ r)) (toLex (l ∘ r))
 
-/-- The ERC of a winner-loser pair `(w, l)` in tableau `t`: the ranking requirements
-for `w` to beat `l`. -/
+/-- The ERC of a winner `w` against a loser `l` in the tableau `t`: the ranking requirements for
+`w` to beat `l`. -/
 def tableauERC {C : Type*} (t : Tableau C n) (w l : C) : ERC (Fin n) :=
   ercOfProfiles (t.constraints · w) (t.constraints · l)
 
-/-- Tableau form of the bridge: the winner-loser ERC is satisfied by `r` iff `r`
-ranks the winner at-or-above the loser under the tableau's lex evaluation. -/
+/-- A ranking satisfies the ERC of `w` against `l` iff, under that ranking, the profile of `w`
+is at most the profile of `l`. -/
 theorem tableauERC_satisfiedBy_iff {C : Type*} (t : Tableau C n) (r : Ranking (Fin n) n)
     (w l : C) : (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
   satisfiedBy_ercOfProfiles_iff_le r (t.constraints · w) (t.constraints · l)
@@ -456,9 +479,8 @@ theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} (t : Tableau C n) (w : C)
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ =>
     forall₂_congr fun l _ => (tableauERC_satisfiedBy_id_iff t w l).symm
 
-/-- **Optimality under a ranking is ERC satisfaction**: `w` is optimal in `Tableau.ofRanking con r`
-iff `r` satisfies the winner–loser ERC of `w` against every competitor, so factorial typology and
-ERC consistency are two readouts of one constraint set. -/
+/-- A candidate `w` is optimal in `Tableau.ofRanking con r` iff `r` satisfies the ERC of `w`
+against every competitor. -/
 theorem Tableau.ofRanking_mem_optimal_iff_satisfiedBy {C : Type*} (con : ConstraintSet C ι)
     (r : Ranking ι n) (candidates : Finset C) (w : C) :
     w ∈ (Tableau.ofRanking con r candidates).optimal ↔
