@@ -10,17 +10,11 @@ public import Mathlib.Order.Prod.Lex.Basic
 /-!
 # Elementary ranking conditions
 
-Prince's *elementary ranking condition* (ERC) records, for a desired winner against a
-competitor, which constraints prefer the winner (`W`), which prefer the loser (`L`), and which
-are indifferent (`e`). A ranking satisfies the condition when some `W`-constraint dominates
-every `L`-constraint (`ERC.satisfiedBy_iff_dominance`), which is when the winner beats the loser
-under that ranking (`satisfiedBy_ercOfProfiles_iff_le`), so that a candidate is optimal under a
-ranking iff the ranking satisfies its ERC against every competitor
-(`Tableau.ofRanking_mem_optimal_iff_satisfiedBy`). The three values are ordered `L ≤ e ≤ W`,
-and raising a coordinate weakens an ERC (`ERC.SatisfiedBy.mono`); when the entailing ERC has a
-`W` and the entailed one an `L`, entailment is exactly this coordinatewise order
-(`ERC.linearExtensions_singleton_subset_iff`), which is Prince's Proposition 1.1, and an ERC
-with no `L` holds under every ranking (`ERC.trivial_satisfiedBy`).
+This file defines Prince's elementary ranking conditions (ERCs). An ERC records, for a desired
+winner against a competitor, which constraints prefer the winner, which prefer the loser, and
+which are indifferent. A ranking satisfies an ERC when some constraint preferring the winner
+dominates every constraint preferring the loser, so that a candidate is optimal under a ranking
+exactly when the ranking satisfies its ERC against every competitor.
 
 ## Main definitions
 
@@ -39,6 +33,7 @@ with no `L` holds under every ranking (`ERC.trivial_satisfiedBy`).
 * `ERC.satisfiedBy_iff_lead`: a ranking satisfies an ERC iff its earliest non-neutral
   constraint, when one exists, is a `W`.
 * `ERC.SatisfiedBy.mono`: raising coordinates in the order `L ≤ e ≤ W` weakens an ERC.
+* `ERC.trivial_satisfiedBy`: an ERC with no `L` holds under every ranking.
 * `ERC.linearExtensions_singleton_subset_iff`: given a `W` in the entailing ERC and an `L` in
   the entailed one, entailment between single ERCs is the coordinatewise order.
 * `ERC.card_filter_satisfiedBy_mul_card`: the rankings satisfying an ERC with a non-neutral
@@ -68,12 +63,11 @@ with no `L` holds under every ranking (`ERC.trivial_satisfiedBy`).
 ## TODO
 
 Prince's fusion calculus. The fusion of two ERCs is computed coordinatewise, with `L`
-absorbing, `e` the identity, and each value idempotent (Prince's (12) and (13), pp. 8 and 9).
-Its main results, in terms of `ERC.linearExtensions`:
-* a set of ERCs entails its fusion (Proposition 2.1, p. 10);
-* a set is inconsistent iff some subset fuses to an ERC with an `L` and no `W`
-  (Proposition 2.4, p. 11);
-* a set entails an ERC iff the fusion of some subset entails it (Proposition 2.5, p. 14).
+absorbing, `e` the identity, and each value idempotent. Its main results, in terms of
+`ERC.linearExtensions`:
+* a set of ERCs entails its fusion;
+* a set is inconsistent iff some subset fuses to an ERC with an `L` and no `W`;
+* a set entails an ERC iff the fusion of some subset entails it.
 
 ## References
 

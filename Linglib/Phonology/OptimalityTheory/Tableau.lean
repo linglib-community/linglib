@@ -14,16 +14,10 @@ public import Mathlib.Algebra.Order.Group.PiLex
 /-!
 # Tableaux
 
-An Optimality-theoretic tableau, as Prince and Smolensky define it, evaluates a finite set of
-candidates by constraints in rank order. The violations of a candidate, read in rank order, form
-its *violation profile*, and profiles are compared lexicographically, which is Riggle's harmonic
-inequality: the highest-ranked constraint on which two candidates differ decides between them.
-The winners of a tableau are the candidates of least profile (`Tableau.optimal`), the
-`Finset.argmin` of `Tableau.profile` over the candidates, and a candidate is optimal when it
-belongs to this set. Evaluation proceeds constraint by constraint (`Tableau.optimal_tail`): the
-winners are the winners under the lower constraints among the candidates that do best on the top
-one, and a constraint that rates every candidate alike changes nothing
-(`Tableau.optimal_ofList_append_of_forall_eq`).
+This file defines Optimality-theoretic tableaux, which evaluate a finite set of candidates by
+constraints in rank order. The violations of a candidate in rank order form its *violation
+profile*, profiles are compared lexicographically, and the winners of a tableau are the
+candidates of least profile.
 
 ## Main definitions
 
@@ -52,6 +46,8 @@ one, and a constraint that rates every candidate alike changes nothing
 * `Tableau.ofRanking_optimal_eq_argmin_filter`: when some candidate satisfies every constraint
   above the last, the winners are the candidates satisfying all of them that do best on the last.
 * `Tableau.optimal_tail`: the winners of a tableau are the winners of its tail.
+* `Tableau.optimal_ofList_append_of_forall_eq`: a constraint that rates every candidate alike
+  changes no winner.
 * `Tableau.optimal_ofList_antifaithful`: under `¬F ≫ F`, the winners are the candidates that
   violate `F` least among those violating it at all.
 

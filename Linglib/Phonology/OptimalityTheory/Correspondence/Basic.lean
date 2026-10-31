@@ -17,17 +17,11 @@ public import Linglib.Core.Data.Fintype.Fin
 /-!
 # Correspondence theory
 
-McCarthy and Prince's correspondence between two strings is a relation between their
-positions, and a faithfulness constraint is a condition on that relation: MAX reads its domain,
-DEP its range, and IDENT the segments at corresponding positions. `Correspondence Role α`
-carries one string per role (`form`) and a relation `edge r₁ r₂` between the positions of each
-ordered pair of roles, so that the input, base, and reduplicant of a reduplicative candidate
-and the relations between them form one diagram (`Correspondence.reduplication`). The relation
-is directed; being correspondents of one another is the derived property `IsSymmetric`. MAX,
-DEP, INTEGRITY, UNIFORMITY, and LINEARITY vanish iff the relation is left-total, right-total,
-functional, injective, and order-preserving respectively (`Correspondence.maxViol_eq_zero_iff`
-and its siblings), and an edge free of all five violations is the graph of an order isomorphism
-between the two position orders (`Correspondence.isFaithful_iff_exists_orderIso`).
+This file defines McCarthy and Prince's correspondence between strings, a relation between
+their positions, and the faithfulness constraints as conditions on it: MAX reads its domain, DEP
+its range, and IDENT the segments at corresponding positions. A correspondence carries one string
+per role and a relation between the positions of each ordered pair of roles, so that the input,
+base, and reduplicant of a reduplicative candidate form one diagram.
 
 ## Main definitions
 
@@ -49,6 +43,9 @@ between the two position orders (`Correspondence.isFaithful_iff_exists_orderIso`
 
 ## Main statements
 
+* `Correspondence.maxViol_eq_zero_iff` and its siblings: MAX, DEP, INTEGRITY, UNIFORMITY, and
+  LINEARITY vanish iff the relation is left-total, right-total, functional, injective, and
+  order-preserving.
 * `Correspondence.isFaithful_iff_exists_orderIso`: an edge is faithful iff it is the graph of
   an order isomorphism between the two position orders.
 * `Correspondence.diagram_isSymmetric`: a diagonal diagram over a symmetric role predicate is

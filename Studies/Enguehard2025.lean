@@ -10,23 +10,18 @@ public import Mathlib.Tactic.TFAE
 # Enguehard (2025): Upward monotonicity and the strongest answer condition
 
 Enguehard traces the prevalence of upward-monotone logical words to exhaustification. A set of
-alternatives is strongly stable when every world has a strongest true member, Dayal's condition on
-answers, and for finitely many alternatives that is when [exhaustifying the non-dominated ones
-yields exactly the partition they induce](##Enguehard2025.tfae_stronglyStable), for the basic
-exhaustifier, innocent exclusion and minimal worlds alike. Over atoms and symmetric functions of
-them, weak stability of the alternatives and of their negations
-[leaves only *every* and *some*](##Enguehard2025.mem_every_some_of_bilaterallyWeaklyStable).
-Over at least two individuals, strong stability of the atoms and the sentences of a lexicon of
-conservative, quantity-invariant determiners, and of their negations, [makes every determiner
-monotone in its scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable). Among proper
-clones of functions, strong stability of the alternatives and their negations at every number of
-atoms [singles out the upward-monotone
-ones](##Enguehard2025.bilaterallyStronglyStable_iff_eq_isUpperSet).
-The messages a pragmatic speaker can choose as the prior varies [are exactly the minimal true
+alternatives is strongly stable when every world has a strongest true member, which for finitely
+many alternatives holds exactly when [exhaustifying the non-dominated ones yields the partition
+they induce](##Enguehard2025.tfae_stronglyStable). Weak stability of symmetric alternatives and
+their negations [leaves only *every* and
+*some*](##Enguehard2025.mem_every_some_of_bilaterallyWeaklyStable), strong stability of a
+lexicon's determiner sentences and their negations [makes every determiner monotone in its
+scope](##Enguehard2025.scopeMonotone_of_bilaterallyStronglyStable), and among proper clones it
+[singles out the upward-monotone
+functions](##Enguehard2025.bilaterallyStronglyStable_iff_eq_isUpperSet).
+The messages a pragmatic speaker can choose as the prior varies [are the minimal true
 ones](##Enguehard2025.exists_prior_iff_minimal), so that weak stability [is Bar-Lev and Katzir's
-communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal) and, where some message is
-true at every world, strong stability
-[is its strict form](##Enguehard2025.stronglyStable_iff_isOptimal).
+communicative stability](##Enguehard2025.weaklyStable_iff_isOptimal).
 
 ## Implementation notes
 
@@ -38,52 +33,54 @@ true at every world, strong stability
 * Strong stability is `Question.IsExhaustivelyResolvable` at every world. Weak stability is read
   as printed: a strongest true member, or only atoms among the minimal true members. At a world
   where nothing is true this holds vacuously.
-* The statements of (26) assume finitely many alternatives, which the appendix assumes for
-  innocent exclusion and minimal worlds; its basic form needs the assumption too (Errata).
-* The paper compares strong stability with the condition of Fox's 2020 manuscript, that
-  exhaustification yield exactly the induced partition rather than contain it. [fox-2018] states
-  the same condition, Question Partition Matching, so the comparison runs through `Fox2018.QPM`:
-  the monotone propositions over two atoms are strongly stable but [fail
+* The theorem relating strong stability to exhaustification assumes finitely many alternatives,
+  which the appendix assumes for innocent exclusion and minimal worlds; its basic form needs the
+  assumption too (see Errata).
+* The paper compares strong stability with the condition of a 2020 manuscript of Fox's, that
+  exhaustification yield exactly the induced partition rather than contain it. Fox's 2018 paper
+  states the same condition, Question Partition Matching, so the comparison runs through
+  `Fox2018.QPM`: the monotone propositions over two atoms are strongly stable but [fail
   it](##Enguehard2025.not_qpm_isUpperSet).
-* A symmetric proposition (33) is one that, read as a quantifier over the atoms, is
-  `Quantifier.QuantityInvariant`, [mostowski-1957]'s invariance and the counterpart of
-  [keenan-stavi-1986]'s logicality for one argument. A projectively symmetric one (35) lives on a
-  set of atoms and is invariant under the permutations fixing it, which makes it a conservative,
-  quantity-invariant determiner frozen to a restrictor in [peters-westerstahl-2006]'s sense
+* A symmetric proposition is one that, read as a quantifier over the atoms, is
+  `Quantifier.QuantityInvariant`, Mostowski's invariance and the counterpart of Keenan and Stavi's
+  logicality for one argument. A projectively symmetric one lives on a set of atoms and is
+  invariant under the permutations fixing it, which makes it a conservative, quantity-invariant
+  determiner frozen to a restrictor in Peters and Westerståhl's sense
   (`Quantifier.exists_det_apply_eq_iff_livesOn`). Bar-Lev and Katzir's result on binary
-  connectives ([bar-lev-katzir-2025]) is (34c) at two atoms.
+  connectives is the result on symmetric functions at two atoms.
 * A clone assigns propositions to every number of atoms, zero included; the paper's clones start
-  at one atom, and the results quantify over positive numbers. Both halves of (40) are proved
-  without the classification of the maximal clones the paper invokes: conjunction and negation
-  express every proposition, and the two constants with any non-monotone function compose to
-  negation.
-* Optimality in A.3 compares the literal listener's mass at the world,
-  `RSA.listener μ (RSA.truthful sem)`, strictly across the true messages with other meanings,
-  which is the paper's assumption that no two messages tie; the utility is its logarithm, which
-  the comparison drops. A prior is a probability measure giving every world positive mass, and the
-  worlds are finitely many, where the paper also allows countably many.
+  at one atom, and the results quantify over positive numbers. Both halves of the clone result are
+  proved without the classification of the maximal clones the paper invokes: conjunction and
+  negation express every proposition, and the two constants with any non-monotone function
+  compose to negation.
+* Optimality in the probabilistic model of the appendix compares the literal listener's mass at
+  the world, `RSA.listener μ (RSA.truthful sem)`, strictly across the true messages with other
+  meanings, which is the paper's assumption that no two messages tie; the utility is its
+  logarithm, which the comparison drops. A prior is a probability measure giving every world
+  positive mass, and the worlds are finitely many, where the paper also allows countably many.
 
 ## Errata
 
-* (32b) fails when its condition that the atoms are not dominated is read in `A` alone: [six
-  propositions over two atoms](##Enguehard2025.exists_not_isUpperSet_of_bilaterallyStronglyStable),
-  among them *if q then p*, are bilaterally strongly stable with neither atom dominated, yet
-  *if q then p* is not monotone. The result holds when the negated atoms are not dominated among
-  the negations either
-  ([repaired](##Enguehard2025.eq_setOf_isUpperSet_of_bilaterallyStronglyStable)).
-* (26) is stated for any set of alternatives, and the appendix assumes them finite only for
-  innocent exclusion and minimal worlds, but its omitted lemma, that exhaustifying against the
-  non-dominated alternatives changes nothing, fails for infinitely many, and with it (c) ⇒ (a):
-  over `ℕ ∪ {∞}`, [the alternatives `[n, ∞]`, `{n}` and
-  `{0, ∞}`](##Enguehard2025.exists_image_exh_eq_classes_not_stronglyStable) not dominated
-  exhaustify to exactly the induced partition, yet none is strongest at `∞`.
-* The statements of (34c) and (37b) and their proofs assume at least two atoms: [*p* and *not
-  p*](##Enguehard2025.exists_quantityInvariant_not_isUpperSet) over one atom are bilaterally
-  strongly stable and symmetric, and *not p*, the negated existential, is not monotone.
+* The result on two-place connectives fails when its condition that the atoms are not dominated
+  is read among the alternatives alone: [six propositions over two
+  atoms](##Enguehard2025.exists_not_isUpperSet_of_bilaterallyStronglyStable), among them
+  *if q then p*, are bilaterally strongly stable with neither atom dominated, yet *if q then p* is
+  not monotone. The result holds when the negated atoms are not dominated among the negations
+  either ([repaired](##Enguehard2025.eq_setOf_isUpperSet_of_bilaterallyStronglyStable)).
+* The theorem relating strong stability to exhaustification is stated for any set of
+  alternatives, and the appendix assumes them finite only for innocent exclusion and minimal
+  worlds, but its omitted lemma, that exhaustifying against the non-dominated alternatives changes
+  nothing, fails for infinitely many: [over `ℕ ∪ {∞}` the non-dominated
+  alternatives](##Enguehard2025.exists_image_exh_eq_classes_not_stronglyStable) exhaustify to
+  exactly the induced partition, yet none is strongest at `∞`.
+* The results on symmetric and on projectively symmetric functions, and their proofs, assume at
+  least two atoms: [*p* and *not p*](##Enguehard2025.exists_quantityInvariant_not_isUpperSet)
+  over one atom are bilaterally strongly stable and symmetric, and *not p*, the negated
+  existential, is not monotone.
 * Weak stability as defined holds vacuously at a world where no alternative is true, whereas the
-  proof of (40a) assumes that every world has a true and a false alternative, the coverage that
-  fn. 23 asks of STA and that A.3 assumes. Under the definition as printed (40a) fails:
-  [the falsity-preserving
+  proof of the clone result for weak stability assumes that every world has a true and a false
+  alternative, the coverage the paper asks of the strongest answer condition and assumes in its
+  probabilistic model. Under the definition as printed that result fails: [the falsity-preserving
   functions](##Enguehard2025.exists_isClone_bilaterallyWeaklyStable_not_isUpperSet) form a proper
   clone that contains exclusive disjunction and is bilaterally weakly stable,
   vacuously so where no atom holds. With the coverage the result
@@ -91,7 +88,7 @@ true at every world, strong stability
 
 ## TODO
 
-* (38) on convex functions.
+* The paper's result on convex functions.
 
 ## References
 
