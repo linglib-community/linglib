@@ -129,6 +129,17 @@ theorem strongAnswer_subset_weakAnswer : strongAnswer H w ⊆ weakAnswer H w :=
 
 @[simp] theorem self_mem_strongAnswer : w ∈ strongAnswer H w := fun _ _ => Iff.rfl
 
+/-- Adding the negation of every member makes the weak answer the strong one. -/
+theorem weakAnswer_union_image_compl : weakAnswer (H ∪ compl '' H) w = strongAnswer H w := by
+  ext v
+  rw [mem_weakAnswer, mem_strongAnswer]
+  constructor
+  · exact fun h p hp ↦ ⟨h p (.inl hp), fun hv ↦
+      Classical.byContradiction fun hw ↦ h pᶜ (.inr ⟨p, hp, rfl⟩) hw hv⟩
+  · rintro h p (hp | ⟨q, hq, rfl⟩) hw
+    · exact (h p hp).1 hw
+    · exact fun hv ↦ hw ((h q hq).2 hv)
+
 /-- In the partition of [groenendijk-stokhof-1984], two worlds are equivalent when they have the
 same true members: the kernel of the Karttunen denotation, whose cell [heim-1994]'s generalized
 analysis has the agent believe. -/
@@ -210,21 +221,25 @@ theorem IsExhaustivelyResolvable.exists_mem {H : Set (Set W)} {w : W}
 /-! ### Topical properties
 
 A question as a topical property `P : α → Set W`, from short answers to propositions
-([xiang-2022]), has the Hamblin set `Set.range P`, whose true members are the image of the
-true short answers. -/
+([xiang-2022]), has the Hamblin set `Set.range P`, or `P '' D` over a domain `D` of short answers,
+whose true members are the image of the true short answers. -/
 
 section Range
 
 variable {α : Type*}
 
-theorem trueAnswers_range (P : α → Set W) (w : W) :
-    trueAnswers (Set.range P) w = P '' {a | w ∈ P a} := by
+theorem trueAnswers_image (P : α → Set W) (D : Set α) (w : W) :
+    trueAnswers (P '' D) w = P '' {a ∈ D | w ∈ P a} := by
   ext p
   constructor
-  · rintro ⟨⟨a, rfl⟩, hw⟩
-    exact ⟨a, hw, rfl⟩
-  · rintro ⟨a, hw, rfl⟩
-    exact ⟨⟨a, rfl⟩, hw⟩
+  · rintro ⟨⟨a, ha, rfl⟩, hw⟩
+    exact ⟨a, ⟨ha, hw⟩, rfl⟩
+  · rintro ⟨a, ⟨ha, hw⟩, rfl⟩
+    exact ⟨⟨a, ha, rfl⟩, hw⟩
+
+theorem trueAnswers_range (P : α → Set W) (w : W) :
+    trueAnswers (Set.range P) w = P '' {a | w ∈ P a} := by
+  rw [← Set.image_univ, trueAnswers_image, Set.sep_univ]
 
 theorem isExhaustivelyResolvable_range_iff (P : α → Set W) (w : W) :
     IsExhaustivelyResolvable (Set.range P) w ↔

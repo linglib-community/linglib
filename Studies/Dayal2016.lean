@@ -84,6 +84,7 @@ ordinary question suspend it](##coherent_iff).
 namespace Dayal2016
 
 open Question Set Competition
+open Mereology (atom_iff_isAtom)
 open Presupposition (Hardness)
 
 /-! ### Scope marking -/
@@ -118,27 +119,18 @@ def w₀ : World := (.paris, .london)
 
 -- (36b), (37c)
 theorem trueAnswers_whereMary : trueAnswers whereMary w₀ = {isAt .paris} := by
-  ext p
-  constructor
-  · rintro ⟨⟨x, rfl⟩, hw⟩
-    cases x
-    · simp [isAt, w₀] at hw
-    · exact mem_singleton _
-  · intro hp
-    obtain rfl := mem_singleton_iff.1 hp
-    exact ⟨⟨.paris, rfl⟩, rfl⟩
+  rw [whereMary, trueAnswers_range,
+    show {x | w₀ ∈ isAt x} = {.paris} by ext x; simp [isAt, w₀, eq_comm], image_singleton]
 
 -- (35b), (37b)
 theorem trueAnswers_scopeMarked : trueAnswers scopeMarked w₀ = {think (isAt .london)} := by
-  ext p
-  constructor
-  · rintro ⟨⟨q, ⟨x, rfl⟩, rfl⟩, hw⟩
-    cases x
-    · exact mem_singleton _
-    · exact absurd (hw (.london, .london) rfl) (by simp [isAt])
-  · intro hp
-    obtain rfl := mem_singleton_iff.1 hp
-    exact ⟨⟨isAt .london, ⟨.london, rfl⟩, rfl⟩, fun _ hv => hv⟩
+  rw [scopeMarked, whereMary, ← range_comp, trueAnswers_range,
+    show {x | w₀ ∈ (think ∘ isAt) x} = {.london} by
+      ext x
+      simp only [think, ModalLogic.Box, believes, isAt, w₀, mem_ofPred_eq, Function.comp]
+      exact ⟨fun h ↦ (h (.london, .london) rfl).symm, fun h v hv ↦ hv.trans h.symm⟩,
+    image_singleton]
+  rfl
 
 /-- Built on the true members of *Where is Mary?* alone, *What does John think? Where is Mary?*
 has no true member, although *John thinks Mary is in London* answers it. -/
@@ -190,21 +182,6 @@ theorem mem_domain_of_isAtom (n : Option Number) {a : E} (ha : IsAtom a) : a ∈
 member for `x` is `Ici x`, the situations in which John likes `x`. -/
 def hamblin (n : Option Number) : Set (Set E) := Ici '' domain n
 
-theorem trueAnswers_image_Ici (D : Set E) (w : E) :
-    trueAnswers (Ici '' D) w = Ici '' {x ∈ D | x ≤ w} := by
-  ext p
-  constructor
-  · rintro ⟨⟨x, hx, rfl⟩, hw⟩
-    exact ⟨x, ⟨hx, hw⟩, rfl⟩
-  · rintro ⟨x, ⟨hx, hw⟩, rfl⟩
-    exact ⟨⟨x, hx, rfl⟩, hw⟩
-
-theorem weakAnswer_image_Ici (D : Set E) (w : E) :
-    weakAnswer (Ici '' D) w = Ici (sSup {x ∈ D | x ≤ w}) := by
-  rw [weakAnswer, trueAnswers_image_Ici, sInter_image, Ici_sSup]
-
-/-! ### Polar questions with a *wh* phrase -/
-
 -- (51)
 /-- *Does John like which woman/women?*: each member of the Hamblin set and its negation. -/
 def polarWh (n : Option Number) : Set (Set E) := hamblin n ∪ compl '' hamblin n
@@ -219,66 +196,13 @@ theorem mem_polarWh {n : Option Number} {p : Set E} :
   · rintro ⟨x, hx, h | h⟩
     exacts [Or.inl ⟨x, hx, h⟩, Or.inr ⟨x, hx, h⟩]
 
-private theorem not_Ici_subset_compl (a c : E) : ¬ Ici c ⊆ (Ici a)ᶜ :=
-  fun h => h (show a ⊔ c ∈ Ici c from le_sup_right) (show a ≤ a ⊔ c from le_sup_left)
+private theorem eq_of_Ici_eq_singleton {x w y : E} (h : Ici x = {w}) (hy : x ≤ y) : y = x :=
+  (h.symm ▸ hy : y ∈ ({w} : Set E)).trans (h.symm ▸ le_rfl : x ∈ ({w} : Set E)).symm
 
-private theorem not_compl_Ici_subset {a c : E} (ha : a ≠ ⊥) (hc : c ≠ ⊥) :
-    ¬ (Ici c)ᶜ ⊆ Ici a :=
-  fun h => ha (le_bot_iff.1 (h fun hc' => hc (le_bot_iff.1 hc')))
-
-private theorem atom_of_subset {a c : E} (ha : IsAtom a) (hc : IsAtom c) {p q : Set E}
-    (hp : Ici a = p ∨ (Ici a)ᶜ = p) (hq : Ici c = q ∨ (Ici c)ᶜ = q) (h : q ⊆ p) :
-    c = a := by
-  rcases hp with rfl | rfl <;> rcases hq with rfl | rfl
-  · exact ((hc.le_iff_eq ha.ne_bot).1 (Ici_subset_Ici.1 h)).symm
-  · exact (not_compl_Ici_subset ha.ne_bot hc.ne_bot h).elim
-  · exact (not_Ici_subset_compl a c h).elim
-  · exact (ha.le_iff_eq hc.ne_bot).1 (Ici_subset_Ici.1 (compl_subset_compl.1 h))
-
--- (51b)
-/-- With two atoms, a polar question with a singular *wh* phrase has no strongest true member in
-any situation. -/
-theorem not_isExhaustivelyResolvable_polarWh_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b)
-    (hab : a ≠ b) (w : E) : ¬ IsExhaustivelyResolvable (polarWh (some .singular)) w := by
-  rintro ⟨q, hq⟩
-  obtain ⟨c, hc, hcq⟩ := mem_polarWh.1 hq.1.1
-  have hc := mem_domain_singular.1 hc
-  have key : ∀ x : E, IsAtom x → c = x := fun x hx => by
-    by_cases hxw : x ≤ w
-    · exact atom_of_subset hx hc (Or.inl rfl) hcq
-        (hq.2 ⟨mem_polarWh.2 ⟨x, mem_domain_singular.2 hx, Or.inl rfl⟩, hxw⟩)
-    · exact atom_of_subset hx hc (Or.inr rfl) hcq
-        (hq.2 ⟨mem_polarWh.2 ⟨x, mem_domain_singular.2 hx, Or.inr rfl⟩, hxw⟩)
-  exact hab ((key a ha).symm.trans (key b hb))
-
--- (51c)
-theorem isExhaustivelyResolvable_polarWh_plural_iff {a b : E} (ha : IsAtom a) (hb : IsAtom b)
-    (hab : a ≠ b) (w : E) : IsExhaustivelyResolvable (polarWh (some .plural)) w ↔ w = ⊤ := by
-  have hpl : ∀ x : E, x ∈ domain (some .plural) ↔ x ≠ ⊥ := fun _ ↦ mem_domain_plural
-  have htop : (⊤ : E) ≠ ⊥ := fun h => ha.ne_bot (le_bot_iff.1 (h ▸ le_top))
-  constructor
-  · rintro ⟨q, hq⟩
-    obtain ⟨c, hc, hcq⟩ := mem_polarWh.1 hq.1.1
-    rw [hpl] at hc
-    by_contra hw
-    have hqtop : q ⊆ (Ici ⊤)ᶜ :=
-      hq.2 ⟨mem_polarWh.2 ⟨⊤, (hpl _).2 htop, Or.inr rfl⟩, fun h => hw (top_le_iff.1 h)⟩
-    rcases hcq with rfl | rfl
-    · exact hqtop (show (⊤ : E) ∈ Ici c from le_top) le_rfl
-    · rcases eq_or_ne w ⊥ with rfl | hw0
-      · have hle : ∀ x : E, IsAtom x → c ≤ x := fun x hx =>
-          Ici_subset_Ici.1 (compl_subset_compl.1 (hq.2
-            ⟨mem_polarWh.2 ⟨x, (hpl _).2 hx.ne_bot, Or.inr rfl⟩,
-              fun h => hx.ne_bot (le_bot_iff.1 h)⟩))
-        exact hab (((ha.le_iff_eq hc).1 (hle a ha)).symm.trans ((hb.le_iff_eq hc).1 (hle b hb)))
-      · exact not_compl_Ici_subset hw0 hc
-          (hq.2 ⟨mem_polarWh.2 ⟨w, (hpl _).2 hw0, Or.inl rfl⟩, le_rfl⟩)
-  · rintro rfl
-    refine ⟨Ici ⊤, ⟨mem_polarWh.2 ⟨⊤, (hpl _).2 htop, Or.inl rfl⟩, le_rfl⟩, ?_⟩
-    rintro p ⟨hp, hwp⟩
-    obtain ⟨x, -, rfl | rfl⟩ := mem_polarWh.1 hp
-    · exact Ici_subset_Ici.2 le_top
-    · exact (hwp le_top).elim
+private theorem le_of_compl_Ici_eq_singleton {x w c : E} (hx : x ≠ ⊥) (h : (Ici x)ᶜ = {w})
+    (hc : c ≠ ⊥) : x ≤ c :=
+  not_not.1 fun hxc ↦ hc <| (h.symm ▸ hxc : c ∈ ({w} : Set E)).trans
+    (h.symm ▸ fun h0 ↦ hx (le_bot_iff.1 h0) : ⊥ ∈ ({w} : Set E)).symm
 
 /-! ### Ans-D on the number paradigm -/
 
@@ -290,7 +214,8 @@ theorem sSup_domain_le (n : Option Number) (w : E) : sSup {x ∈ domain n | x �
 
 -- (52)
 theorem weakAnswer_hamblin (n : Option Number) (w : E) : weakAnswer (hamblin n) w = Ici w := by
-  rw [hamblin, weakAnswer_image_Ici, sSup_domain_le]
+  rw [hamblin, weakAnswer, trueAnswers_image, sInter_image, ← Ici_sSup]
+  exact congrArg Ici (sSup_domain_le n w)
 
 -- (49), (50), (65), (66)
 /-- Ans-D is defined on the Hamblin set of a *wh* phrase exactly in the situations its domain
@@ -338,6 +263,41 @@ theorem mem_trueAnswers_maxHamblin_iff {n : Option Number} {w : E} {p : Set E} :
   · rintro ⟨hw, rfl⟩
     exact ⟨⟨w, hw, rfl⟩, rfl⟩
 
+/-! ### Polar questions with a *wh* phrase -/
+
+-- the weak answer of the polar question is the strong answer of the wh question
+theorem isExhaustivelyResolvable_polarWh_iff (n : Option Number) (w : E) :
+    IsExhaustivelyResolvable (polarWh n) w ↔ {w} ∈ polarWh n := by
+  rw [isExhaustivelyResolvable_iff, polarWh, weakAnswer_union_image_compl, strongAnswer_hamblin]
+
+-- (51b)
+/-- With two atoms, a polar question with a singular *wh* phrase has no strongest true member in
+any situation. -/
+theorem not_isExhaustivelyResolvable_polarWh_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b)
+    (hab : a ≠ b) (w : E) : ¬ IsExhaustivelyResolvable (polarWh (some .singular)) w := by
+  rw [isExhaustivelyResolvable_polarWh_iff, mem_polarWh]
+  rintro ⟨x, hx, h | h⟩ <;> have hx := mem_domain_singular.1 hx
+  · have key : ∀ {c : E}, IsAtom c → c = x := fun {c} hc ↦ (hx.le_iff_eq hc.ne_bot).1
+      (eq_of_Ici_eq_singleton h (le_sup_right : x ≤ c ⊔ x) ▸ (le_sup_left : c ≤ c ⊔ x))
+    exact hab ((key ha).trans (key hb).symm)
+  · have key : ∀ {c : E}, IsAtom c → x = c := fun {c} hc ↦
+      (hc.le_iff_eq hx.ne_bot).1 (le_of_compl_Ici_eq_singleton hx.ne_bot h hc.ne_bot)
+    exact hab ((key ha).symm.trans (key hb))
+
+-- (51c)
+theorem isExhaustivelyResolvable_polarWh_plural_iff {a b : E} (ha : IsAtom a) (hb : IsAtom b)
+    (hab : a ≠ b) (w : E) : IsExhaustivelyResolvable (polarWh (some .plural)) w ↔ w = ⊤ := by
+  rw [isExhaustivelyResolvable_polarWh_iff, mem_polarWh]
+  constructor
+  · rintro ⟨x, hx, h | h⟩
+    · exact (h.symm ▸ le_top : (⊤ : E) ∈ ({w} : Set E)).symm
+    · have hx := mem_domain_plural.1 hx
+      have key : ∀ {c : E}, IsAtom c → x = c := fun {c} hc ↦
+        (hc.le_iff_eq hx).1 (le_of_compl_Ici_eq_singleton hx h hc.ne_bot)
+      exact absurd ((key ha).symm.trans (key hb)) hab
+  · rintro rfl
+    exact ⟨⊤, mem_domain_plural.2 fun h ↦ ha.ne_bot (le_bot_iff.1 (h ▸ le_top)), .inl Ici_top⟩
+
 /-! ### The plurality implicature -/
 
 /-- The competitors of a *wh* phrase: *which N* competes in number with the singular and the
@@ -378,9 +338,8 @@ theorem felicitous_of_ne_singular {a b : E} (ha : IsAtom a) (hb : IsAtom b) (hab
     have hab' : a ⊔ b ∈ domain (some m) := by
       rw [hne hm]
       exact fun h0 ↦ ha.ne_bot (le_bot_iff.1 (h0 ▸ le_sup_left))
-    have hsup := mem_domain_singular.1 (h hab')
-    exact hab (((hsup.le_iff.1 le_sup_left).resolve_left ha.ne_bot).trans
-      ((hsup.le_iff.1 le_sup_right).resolve_left hb.ne_bot).symm)
+    exact Mereology.not_atom_sup_of_ne (atom_iff_isAtom.2 ha) (atom_iff_isAtom.2 hb) hab <|
+      atom_iff_isAtom.2 (mem_domain_singular.1 (h hab'))
   rw [felicitous_eq_unblocked_domain,
     unblocked_eq_sdiff (alts := numberAlts) (ψ := some .singular) (mem_insert _ _) hss, hne hm]
   · exact ext fun _ ↦ and_congr_right fun _ ↦ not_congr mem_domain_singular
@@ -452,17 +411,13 @@ end Existence
 
 -- (53a), (53b)
 theorem isStrongestTrueAnswer_range_Iic {α : Type*} [Preorder α] (t : α) :
-    IsStrongestTrueAnswer (range (Iic : α → Set α)) t (Iic t) := by
-  refine ⟨⟨⟨t, rfl⟩, le_rfl⟩, ?_⟩
-  rintro q ⟨⟨n, rfl⟩, ht⟩
-  exact Iic_subset_Iic.2 ht
+    IsStrongestTrueAnswer (range (Iic : α → Set α)) t (Iic t) :=
+  isStrongestTrueAnswer_range_iff.2 ⟨le_rfl, fun _ ↦ Iic_subset_Iic.2⟩
 
 -- (53c), (53d)
 theorem isStrongestTrueAnswer_range_Ici {α : Type*} [Preorder α] (c : α) :
-    IsStrongestTrueAnswer (range (Ici : α → Set α)) c (Ici c) := by
-  refine ⟨⟨⟨c, rfl⟩, le_rfl⟩, ?_⟩
-  rintro q ⟨⟨n, rfl⟩, hc⟩
-  exact Ici_subset_Ici.2 hc
+    IsStrongestTrueAnswer (range (Ici : α → Set α)) c (Ici c) :=
+  isStrongestTrueAnswer_range_iff.2 ⟨le_rfl, fun _ ↦ Ici_subset_Ici.2⟩
 
 /-! ### The chapter's women -/
 
@@ -476,11 +431,9 @@ inductive Woman
 open Woman
 
 private theorem not_isAtom_pair {x y : Woman} (h : x ≠ y) : ¬ IsAtom ({x, y} : Set Woman) := by
-  rw [isAtom_iff]
-  rintro ⟨z, hz⟩
-  have hx : x ∈ ({z} : Set Woman) := hz ▸ mem_insert x {y}
-  have hy : y ∈ ({z} : Set Woman) := hz ▸ mem_insert_of_mem x (mem_singleton y)
-  exact h ((mem_singleton_iff.1 hx).trans (mem_singleton_iff.1 hy).symm)
+  rw [insert_eq, ← atom_iff_isAtom]
+  exact Mereology.not_atom_sup_of_ne (atom_iff_isAtom.2 (isAtom_singleton x))
+    (atom_iff_isAtom.2 (isAtom_singleton y)) (by simpa using h)
 
 private theorem mary_ne_sue : ({mary} : Set Woman) ≠ {sue} :=
   fun h => (by decide : mary ≠ sue) (singleton_eq_singleton_iff.1 h)
