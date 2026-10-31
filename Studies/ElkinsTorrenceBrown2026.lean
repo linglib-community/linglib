@@ -45,7 +45,7 @@ do in Mam but are high adjuncts without [appl] in K'ichean, and temporals trigge
   the [Ā]-bearers of those clauses and its `sites` the Voice and Dir heads among them, so the
   reflex in a clause is decided by whether the clause projects Voice (`licensed_iff_mem_voice`).
   The rival mechanisms are predicates on the same dependencies, and the rows discriminate them.
-* The Agree-and-insertion step is the substrate's `applyAgree` and `subsetPrinciple` over the
+* The Agree-and-insertion step is the substrate's `valueFrom` and `subsetPrinciple` over the
   valued features of a Voice head with an unvalued [oblique] probe and the vocabulary item (46a);
   the null exponent (46b) is the independent optionality of each site, `patterns`.
 * [obl] on the movers is the article's featural hypothesis (§1.3, §4.2, §5.3): relational nouns
@@ -341,13 +341,13 @@ def eqYa : VocabularyItem FeatureVal String :=
   {⟨.oblique, true⟩} ⟷ toString Mam.Extraction.movementEnclitic
 
 theorem agree_spellout :
-    (voice.features.applyAgree (.single .oblique true) .oblique).map
+    (voice.features.valueFrom (.single .oblique true) .oblique).map
       (fun b ↦ subsetPrinciple [eqYa] (b.valued.toFinset : Finset FeatureVal)) =
         ↑(some "=(y)a'") := by
   decide
 
-theorem no_obl_no_agree : voice.features.applyAgree ⊥ .oblique = voice.features :=
-  FeatureBundle.applyAgree_bot _ _
+theorem no_obl_no_agree : voice.features.valueFrom ⊥ .oblique = voice.features :=
+  FeatureBundle.valueFrom_bot _ _
 
 /-! ### The rows (§2, §3, §5) -/
 

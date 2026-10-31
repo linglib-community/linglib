@@ -104,10 +104,17 @@ open Nominal
 nominal bears person and number ((8)), and Agree with it iff its Case is unvalued (§2). -/
 def phiProbe : Probe Nominal := .ofInt (·.features.IsActive)
 
-/-- `agreeWith f ns` applies `f` to the goal `phiProbe` Agrees with in `ns`, the closest nominal
-if its Case is unvalued; an inactive closest nominal absorbs the probe ((9)). -/
+/-- `agreeWith f ns` is Agree of `phiProbe` over `ns`, copying by `f`: it applies `f` to the closest
+nominal if its Case is unvalued, and an inactive closest nominal absorbs the probe ((9)). -/
 def agreeWith (f : Nominal → Nominal) (ns : List Nominal) : List Nominal :=
-  ns.modifyHead fun n ↦ if n.features.IsActive then f n else n
+  phiProbe.agreeList f ns
+
+@[simp] theorem agreeWith_nil (f : Nominal → Nominal) : agreeWith f [] = [] := rfl
+
+@[simp] theorem agreeWith_cons (f : Nominal → Nominal) (n : Nominal) (ns : List Nominal) :
+    agreeWith f (n :: ns) = (if n.features.IsActive then f n else n) :: ns := by
+  rw [agreeWith, Probe.agreeList_cons]
+  simp [phiProbe]
 
 theorem agreeWith_eq (f : Nominal → Nominal) (ns : List Nominal) :
     agreeWith f ns = match phiProbe.goal ns with
@@ -116,8 +123,8 @@ theorem agreeWith_eq (f : Nominal → Nominal) (ns : List Nominal) :
   cases ns with
   | nil => rfl
   | cons n ns =>
-    simp only [agreeWith, List.modifyHead_cons, Probe.goal, phiProbe, Probe.ofInt_search,
-      List.head?_cons, Option.filter_some, Probe.ofInt_int, List.tail_cons]
+    simp only [agreeWith_cons, Probe.goal, phiProbe, Probe.ofInt_search, List.head?_cons,
+      Option.filter_some, Probe.ofInt_int, List.tail_cons]
     by_cases h : n.features.IsActive <;> simp [h]
 
 theorem agreeWith_eq_map (f : Nominal → Nominal) {ns : List Nominal} (hns : ns.Nodup) :
@@ -203,14 +210,14 @@ def spanishT : Head := { case := .nom, epp := some fun _ ↦ true, agrX0 := true
 /-- A dative is the nominal its own preposition's derivation yields, inherent Case being
 structural Case valued under Agree with the preposition (§4). -/
 theorem applicative_derive (c : Bundle) : applicative.derive [caseless c] = [dat c] :=
-  by simp [Head.derive, numAgree, piAgree, agreeWith, applicative, caseless, dat]
+  by simp [Head.derive, numAgree, piAgree, applicative, caseless, dat]
 
 /-! ### The double object and prepositional constructions -/
 
 -- (8), (10)
 theorem v_derive_doc (cd ca : Bundle) :
     v.derive [dat cd, caseless ca] = [dat cd, ⟨.nominal ca (.valued .acc), false⟩] :=
-  by simp [Head.derive, numAgree, piAgree, agreeWith, v, caseless, dat]
+  by simp [Head.derive, numAgree, piAgree, v, caseless, dat]
 
 /-- The double object construction obeys the condition iff its theme is 3rd person, whatever the
 dative ((1), (7)). -/
@@ -230,7 +237,7 @@ example :
 -- (11a)
 theorem v_derive_pp (ct cg : Bundle) :
     v.derive [caseless ct, dat cg] = [⟨.nominal ct (.valued .acc), true⟩, dat cg] :=
-  by simp [Head.derive, numAgree, piAgree, agreeWith, v, caseless, dat]
+  by simp [Head.derive, numAgree, piAgree, v, caseless, dat]
 
 /-- The prepositional construction obeys the condition whatever the theme's person ((3)). -/
 theorem pp_plc (ct cg : Bundle) : PLC (v.derive [caseless ct, dat cg]) := by
@@ -247,19 +254,19 @@ example : ¬ PLC (v.derive [caseless (.personNumber .first .singular),
 -- (12), (25c)
 theorem icelandicT_derive (cd cn : Bundle) :
     icelandicT.derive [dat cd, caseless cn] = [dat cd, ⟨.nominal cn (.valued .nom), false⟩] :=
-  by simp [Head.derive, numAgree, piAgree, agreeWith, raise, Probe.search, Probe.relativized,
+  by simp [Head.derive, numAgree, piAgree, raise, Probe.search, Probe.relativized,
       icelandicT, caseless, dat]
 
 -- (16), (17), (25b)
 theorem frenchT_derive (cd cn : Bundle) :
     frenchT.derive [dat cd, caseless cn] = [⟨.nominal cn (.valued .nom), true⟩, dat cd] :=
-  by simp [Head.derive, numAgree, piAgree, agreeWith, raise, Probe.search, Probe.relativized,
+  by simp [Head.derive, numAgree, piAgree, raise, Probe.search, Probe.relativized,
       frenchT, caseless, dat]
 
 -- (25a)
 theorem spanishT_derive (cd cn : Bundle) :
     spanishT.derive [dat cd, caseless cn] = [⟨.nominal cn (.valued .nom), true⟩, dat cd] :=
-  by simp [Head.derive, numAgree, piAgree, agreeWith, raise, Probe.search, Probe.relativized,
+  by simp [Head.derive, numAgree, piAgree, raise, Probe.search, Probe.relativized,
       spanishT, caseless, dat]
 
 /-- A dative–nominative construction obeys the condition iff its nominative is 3rd person or its
@@ -269,7 +276,7 @@ theorem dnc_plc_iff (can : Nominal → Bool) (hcan : ∀ c, can (caseless c) = t
     PLC (({ case := .nom, epp := some can, agrX0 := x0 } : Head).derive [dat cd, caseless cn]) ↔
       (can (dat cd) = true ∧ x0 = false → ¬ cn.IsSAP) := by
   cases h : can (dat cd) <;> cases x0 <;>
-    simp [Head.derive, raise, piAgree, numAgree, agreeWith, Probe.search, Probe.relativized, h,
+    simp [Head.derive, raise, piAgree, numAgree, Probe.search, Probe.relativized, h,
       hcan, PLC]
 
 -- (12) Icelandic *þið* excluded; (13) French *je lui fus présenté* and (18) Spanish

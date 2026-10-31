@@ -394,36 +394,33 @@ def classIV : Valuation := ∅
 
 /-- Class I agrees singular, dual, inverse for one, two, and more referents. -/
 theorem classI_category :
-    (classI.agree (.ofNumber .singular)).category = some .singular ∧
-      (classI.agree (.ofNumber .dual)).category = some .dual ∧
-      (classI.agree (.ofNumber .plural)).category = some .inverse := by
+    (classI ⊔ .ofNumber .singular).category = some .singular ∧
+      (classI ⊔ .ofNumber .dual).category = some .dual ∧
+      (classI ⊔ .ofNumber .plural).category = some .inverse := by
   decide
 
 theorem classII_category :
-    (classII.agree (.ofNumber .singular)).category = some .inverse ∧
-      (classII.agree (.ofNumber .dual)).category = some .dual ∧
-      (classII.agree (.ofNumber .plural)).category = some .plural := by
+    (classII ⊔ .ofNumber .singular).category = some .inverse ∧
+      (classII ⊔ .ofNumber .dual).category = some .dual ∧
+      (classII ⊔ .ofNumber .plural).category = some .plural := by
   decide
 
 theorem classIII_category :
-    (classIII.agree (.ofNumber .singular)).category = some .inverse ∧
-      (classIII.agree (.ofNumber .dual)).category = some .dual ∧
-      (classIII.agree (.ofNumber .plural)).category = some .inverse := by
+    (classIII ⊔ .ofNumber .singular).category = some .inverse ∧
+      (classIII ⊔ .ofNumber .dual).category = some .dual ∧
+      (classIII ⊔ .ofNumber .plural).category = some .inverse := by
   decide
 
 theorem classIV_category :
-    (classIV.agree (.ofNumber .singular)).category = some .singular ∧
-      (classIV.agree (.ofNumber .dual)).category = some .dual ∧
-      (classIV.agree (.ofNumber .plural)).category = some .plural := by
+    (classIV ⊔ .ofNumber .singular).category = some .singular ∧
+      (classIV ⊔ .ofNumber .dual).category = some .dual ∧
+      (classIV ⊔ .ofNumber .plural).category = some .plural := by
   decide
 
-/-- Every inverse valuation of Table 21 contains the dual's values: the dual's features are a
-proper part of the inverse's. -/
+/-- Every inverse valuation of Table 21 contains the dual's values. -/
 theorem dual_le_inverse :
     ∀ c ∈ [classI, classII, classIII, classIV], ∀ n ∈ [Number.singular, .dual, .plural],
-    (c.agree (.ofNumber n)).IsInverse →
-      (Valuation.ofNumber .dual).atomic ⊆ (c.agree (.ofNumber n)).atomic ∧
-        (Valuation.ofNumber .dual).minimal ⊆ (c.agree (.ofNumber n)).minimal := by
+    (c ⊔ .ofNumber n).IsInverse → Valuation.ofNumber .dual ≤ c ⊔ .ofNumber n := by
   decide
 
 end Taos
