@@ -97,28 +97,21 @@ theorem prod_apply_aroundEvent : (μ.prod ν) (AroundEvent d) = ∫⁻ x, around
   rw [Measure.prod_apply (measurableSet_aroundEvent d)]
   rfl
 
+theorem bir_eq : bir μ ν d = (μ.withDensity (aroundWeight ν d))[|Set.univ] :=
+  Measure.fst_cond_prod μ ν (measurableSet_aroundEvent d)
+
 theorem bir_apply_singleton (x : X) :
     bir μ ν d {x} = μ {x} * aroundWeight ν d x / ∫⁻ x', aroundWeight ν d x' ∂μ := by
-  rw [bir, Measure.map_apply measurable_fst (.singleton x),
-    cond_apply' (measurable_fst (.singleton x)), prod_apply_aroundEvent, ENNReal.div_eq_inv_mul,
-    show AroundEvent d ∩ Prod.fst ⁻¹' {x} = {x} ×ˢ Set.Ici (d x) from ?_, Measure.prod_prod]
-  · rfl
-  · ext ⟨x', y⟩
-    simp only [AroundEvent, Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage,
-      Set.mem_singleton_iff, Set.mem_prod, Set.mem_Ici]
-    constructor
-    · rintro ⟨h, rfl⟩
-      exact ⟨rfl, h⟩
-    · rintro ⟨rfl, h⟩
-      exact ⟨h, rfl⟩
+  rw [bir_eq, cond_apply .univ, Set.univ_inter, withDensity_apply _ (.singleton x),
+    lintegral_singleton, withDensity_apply _ .univ, Measure.restrict_univ, ENNReal.div_eq_inv_mul,
+    mul_comm (μ {x})]
 
 /-- By eq. (BIR), the information state after "around" is the literal listener at the graded
 meaning, `P(x = k | around n) ∝ P(x = k) · P(y ≥ |n − k|)`. -/
 theorem bir_eq_ofDensity {U : Type*} [MeasurableSpace U] [Countable U]
     [MeasurableSingletonClass U] {m : U → X → ℝ≥0∞} {u : U} (hm : m u = aroundWeight ν d) :
-    bir μ ν d = Kernel.ofDensity μ m u :=
-  Measure.ext_of_singleton fun x ↦ by
-    rw [bir_apply_singleton, Kernel.ofDensity_apply_singleton', hm, mul_comm]
+    bir μ ν d = Kernel.ofDensity μ m u := by
+  rw [bir_eq, Kernel.ofDensity_apply, hm]
 
 end Around
 

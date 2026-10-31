@@ -8,45 +8,30 @@ public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 /-!
 # Tessler and Goodman (2019): The Language of Generalization
 
-This file formalizes Tessler and Goodman's model of generic, habitual and causal language. A
-generalization has the threshold semantics of a gradable adjective on the scale of prevalence, the
-probability that an instance of the category has the property (2), `genericMeaning`, with the
-threshold underspecified and drawn from a prior. The interpretation model (1) conditions a prior
-over prevalence on the utterance with the threshold integrated out, so the marginalized meaning of
-the generalization at a prevalence is the threshold prior's mass below it, and silence is true
-everywhere, `meaning`, `listener`, the substrate's `Kernel.ofDensity`. The endorsement model (3)
-is the speaker who chooses between the generalization and silence by how well each conveys the
-referent prevalence, `endorser`, the substrate's `RSA.speaker`. Since silence returns the prior,
-`listener_silent_apply`, the speaker endorses the generalization exactly when the marginalized
-meaning at the referent prevalence exceeds its expectation under the prevalence prior,
-`endorse_iff`; with the uniform threshold prior on the unit interval the marginalized meaning is the
-prevalence itself, `meaning_uniformThreshold`, so a generalization is endorsed exactly when the
-referent prevalence exceeds the prior mean prevalence, `endorse_iff_expectation_lt`, the cue
-validity of Appendix A, whose normalizer is that mean, `expectedPrevalence_map`.
-
-The worked examples of Table 1 are consequences of the prior mean. Endorsement is monotone in
-prevalence at a fixed prior (Figure 1), `endorse_mono`; at one referent prevalence a property
-whose prior mean lies below it is endorsed while one whose prior mean lies at or above it is
-not, `endorse_of_expectation_lt`, `not_endorse_of_le_expectation`, which is why *dogs bark* at
-a high prevalence and *mosquitos carry malaria* at a low one are endorsed while *kangaroos
-have spots* is not. A prior symmetric about one half has mean one half,
-`expectedPrevalence_eq_half_of_symm`, so *robins are female* at a prevalence of one half is
-exactly at the boundary, the generalization no more informative than silence,
-`boundary_of_symm`; mixing such a prior with a component at zero prevalence, the categories
-without the mechanism, lowers the mean below one half, `expectedPrevalence_mixture`, so *robins
-lay eggs* at the same prevalence is endorsed, `endorse_of_mixture`. Habituals use the same
-model on the scale of frequency, and causal generalizations on the rate at which the cause
-produces the effect, with the priors elicited in the experiments; the model's fits to the
-endorsement data of the three case studies are the paper's empirical content and are described,
-not formalized.
+This file models generic, habitual and causal language as a threshold on prevalence, the
+probability that an instance of the category has the property, with the threshold left uncertain.
+The interpretation is a joint posterior over prevalence and threshold, the product of their priors
+conditioned on the truth of the utterance, and the endorser chooses between the generalization and
+silence by its prevalence marginal. [Integrating the threshold out](##listener_eq_ofDensity)
+reweights the prevalence prior by the threshold prior's mass below the prevalence, so the
+generalization is [endorsed](##endorse_iff) exactly when that mass at the referent prevalence
+exceeds its prior expectation, and [more readily at higher prevalence](##endorse_mono). Under a
+uniform threshold prior the mass is the prevalence itself, and endorsement is [prevalence above the
+prior mean prevalence](##endorse_iff_expectation_lt), the cue validity of the paper's appendix. At
+prevalence one half, *robins are female* under a symmetric prior is [no more informative than
+silence](##boundary_of_symm), while *robins lay eggs*, whose prior has a component at zero
+prevalence, is [endorsed](##endorse_of_mixture).
 
 ## Implementation notes
 
-The prevalence scale is a finite type carrying a real prevalence, and the prevalence prior a
-probability measure on it; the threshold prior is any finite measure on the reals, the paper's
-uniform prior on the support of the prevalence prior being the case treated on the real face.
-The rationality of the endorser is a parameter, so the theorems hold at every positive
-rationality; the paper's fitted values are not pinned.
+* The prevalence scale is a finite type carrying a real prevalence, and the prevalence prior a
+  probability measure on it; the threshold prior is any nonzero finite measure on the reals, the
+  paper's uniform prior on the unit interval being `uniformThreshold`.
+* Silence is true at every threshold, so its marginalized meaning is the threshold prior's total
+  mass, which the normalization cancels.
+* The rationality of the endorser is a parameter, so the theorems hold at every positive
+  rationality; the paper's fitted values are not pinned. The fits to the endorsement data of the
+  three case studies are the paper's empirical content and are not formalized.
 
 ## References
 
@@ -79,13 +64,43 @@ def genericMeaning (θ p : ℝ) : Prop := θ < p
 
 section Model
 
-variable {W : Type*} [Fintype W] [MeasurableSpace W]
+variable {W : Type*}
 
-/-- With the threshold of (1) integrated out against its prior `ν`, the generalization means
-the prior mass of thresholds below the prevalence, and silence means one. -/
-noncomputable def meaning (ν : Measure ℝ) (prev : W → ℝ) : Utterance → W → ℝ≥0∞
-  | .generic, w => ν {θ | genericMeaning θ (prev w)}
-  | .silent, _ => 1
+/-- The pairs of a state and a threshold at which an utterance is true (2): the generalization
+where the prevalence exceeds the threshold, silence everywhere. -/
+def truthSet (prev : W → ℝ) : Utterance → Set (W × ℝ)
+  | .generic => {x | genericMeaning x.2 (prev x.1)}
+  | .silent => Set.univ
+
+/-- The marginalized meaning of an utterance at a state is the threshold prior's mass on the
+thresholds at which it is true there. -/
+noncomputable def meaning (ν : Measure ℝ) (prev : W → ℝ) (u : Utterance) (w : W) : ℝ≥0∞ :=
+  ν (Prod.mk w ⁻¹' truthSet prev u)
+
+variable [MeasurableSpace W]
+
+/-- The interpretation model (1) conditions the joint prior over prevalence and threshold on the
+truth of the utterance. -/
+noncomputable def interpretation (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) (u : Utterance) :
+    Measure (W × ℝ) :=
+  (μ.prod ν)[|truthSet prev u]
+
+/-- The endorsement model (3) reads the interpretation's marginal on prevalence. -/
+noncomputable def listener (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
+    Kernel Utterance W :=
+  Kernel.ofFunOfCountable fun u ↦ (interpretation μ ν prev u).fst
+
+instance (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) : IsFiniteKernel (listener μ ν prev) :=
+  ⟨⟨1, ENNReal.one_lt_top, fun u ↦ by
+    rw [listener, Kernel.ofFunOfCountable_apply, Measure.fst_univ, interpretation]
+    exact prob_le_one⟩⟩
+
+theorem measurableSet_truthSet [DiscreteMeasurableSpace W] (prev : W → ℝ) :
+    ∀ u, MeasurableSet (truthSet prev u)
+  | .generic => measurableSet_lt measurable_snd (Measurable.of_discrete.comp measurable_fst)
+  | .silent => .univ
+
+variable [Fintype W]
 
 /-- The expectation under the prevalence prior of the marginalized meaning of the
 generalization. -/
@@ -96,16 +111,16 @@ theorem expectedMeaning_ne_top (μ : Measure W) [IsFiniteMeasure μ] (ν : Measu
     [IsFiniteMeasure ν] (prev : W → ℝ) : expectedMeaning μ ν prev ≠ ⊤ :=
   ENNReal.sum_ne_top.2 fun _ _ => ENNReal.mul_ne_top (measure_ne_top ν _) (measure_ne_top μ _)
 
-/-- The interpretation model (1) conditions the prevalence prior on the marginalized
-meaning. -/
-noncomputable def listener (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
-    Kernel Utterance W :=
-  Kernel.ofDensity μ (meaning ν prev)
-
-instance (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) : IsFiniteKernel (listener μ ν prev) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
-
 variable [DiscreteMeasurableSpace W]
+
+/-- Integrating the threshold out of the interpretation reweights the prevalence prior by the
+marginalized meaning. -/
+theorem listener_eq_ofDensity (μ : Measure W) (ν : Measure ℝ) [SFinite ν] (prev : W → ℝ) :
+    listener μ ν prev = Kernel.ofDensity μ (meaning ν prev) :=
+  Kernel.ext fun u ↦ by
+    rw [listener, Kernel.ofFunOfCountable_apply, interpretation,
+      Measure.fst_cond_prod μ ν (measurableSet_truthSet prev u)]
+    rfl
 
 /-- The endorsement model (3) is the speaker at rationality `lam`, choosing between the
 generalization and silence at no cost. -/
@@ -120,28 +135,26 @@ def Endorsed (lam : ℝ) (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) 
 
 variable (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ)
 
-theorem listener_generic_apply (w : W) :
+theorem listener_generic_apply [SFinite ν] (w : W) :
     listener μ ν prev .generic {w} =
       meaning ν prev .generic w * μ {w} / expectedMeaning μ ν prev := by
-  rw [listener, Kernel.ofDensity_apply_singleton]; rfl
+  rw [listener_eq_ofDensity, Kernel.ofDensity_apply_singleton]; rfl
 
-variable [IsProbabilityMeasure μ] {lam : ℝ} {w : W}
+variable [IsProbabilityMeasure μ] [IsFiniteMeasure ν] [NeZero ν] {lam : ℝ} {w : W}
 
-theorem listener_silent_apply (w : W) : listener μ ν prev .silent {w} = μ {w} := by
-  rw [listener, Kernel.ofDensity_apply_singleton]
-  simp only [meaning, one_mul]
-  rw [sum_measure_singleton, Finset.coe_univ, measure_univ, div_one]
-
-variable [IsFiniteMeasure ν]
+theorem listener_silent : listener μ ν prev .silent = μ := by
+  rw [listener_eq_ofDensity, Kernel.ofDensity_apply_eq_of_eq_mul μ (f := 1)
+    (Measure.measure_univ_ne_zero.2 (NeZero.ne ν)) (measure_ne_top ν _) fun _ ↦ (mul_one _).symm,
+    Kernel.ofDensity_apply, Pi.one_apply, withDensity_one, cond_univ]
 
 /-- The generalization is endorsed iff its marginalized meaning at the referent state exceeds its
 prior expectation, the comparison of Figure 1C. -/
 theorem endorse_iff (hlam : 0 < lam) (hw : μ {w} ≠ 0) (hZ : expectedMeaning μ ν prev ≠ 0) :
     Endorsed lam μ ν prev w ↔ expectedMeaning μ ν prev < meaning ν prev .generic w := by
   rw [Endorsed, endorser, speaker_dirac_real_singleton_lt_iff (L := listener μ ν prev) (w := w)
-    hlam.le ⟨.silent, by rwa [listener_silent_apply]⟩]
+    hlam.le ⟨.silent, by rwa [listener_silent]⟩]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
-  rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent_apply, listener_generic_apply,
+  rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent, listener_generic_apply,
     ENNReal.lt_div_iff_mul_lt (Or.inl hZ) (Or.inl (expectedMeaning_ne_top μ ν prev)), mul_comm,
     ENNReal.mul_lt_mul_iff_left hw (measure_ne_top μ _)]
 
@@ -151,7 +164,7 @@ theorem endorse_mono (hlam : 0 < lam) (hZ : expectedMeaning μ ν prev ≠ 0) {w
     Endorsed lam μ ν prev w' := by
   rw [endorse_iff μ ν prev hlam hw hZ] at h
   rw [endorse_iff μ ν prev hlam hw' hZ]
-  exact h.trans_le (measure_mono fun θ hθ => lt_of_lt_of_le hθ hle)
+  exact h.trans_le (measure_mono fun θ (hθ : θ < prev w) => lt_of_lt_of_le hθ hle)
 
 end Model
 
@@ -162,8 +175,9 @@ section Uniform
 /-- The uniform threshold prior on the unit interval, the support of a prevalence prior. -/
 noncomputable def uniformThreshold : Measure ℝ := volume.restrict (Set.Icc 0 1)
 
-instance : IsFiniteMeasure uniformThreshold :=
-  ⟨by rw [uniformThreshold, Measure.restrict_apply_univ, Real.volume_Icc]; simp⟩
+instance : IsProbabilityMeasure uniformThreshold :=
+  ⟨by rw [uniformThreshold, Measure.restrict_apply_univ, Real.volume_Icc, sub_zero,
+    ENNReal.ofReal_one]⟩
 
 theorem uniformThreshold_Iio {p : ℝ} (h1 : p ≤ 1) :
     uniformThreshold (Set.Iio p) = ENNReal.ofReal p := by
@@ -285,9 +299,9 @@ theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ 
       (endorser lam μ uniformThreshold prev w).real {.silent} := by
     rw [endorser,
       speaker_dirac_real_singleton_lt_iff (L := listener μ uniformThreshold prev) (w := w)
-      hlam.le ⟨.silent, by rwa [listener_silent_apply]⟩]
+      hlam.le ⟨.silent, by rwa [listener_silent]⟩]
     simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
-    rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent_apply, listener_generic_apply,
+    rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent, listener_generic_apply,
       expectedMeaning_uniformThreshold prev μ hp, meaning_uniformThreshold prev hp, hE, hhalf,
       ENNReal.div_lt_iff (Or.inl (by simp)) (Or.inl ENNReal.ofReal_ne_top), mul_comm]
     exact lt_irrefl _
