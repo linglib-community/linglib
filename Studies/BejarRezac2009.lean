@@ -217,7 +217,7 @@ theorem highestValue_eq_spec {sys : AgreementSystem} {hasP : Bool} {s : Scenario
 nominal, which bears `π` and so intervenes for every segment (fn. 6), and Agrees with it iff its
 Case is unvalued and it bears the segment. -/
 def segmentProbe (geom : PersonGeometry) (s : PersonSegment) : Probe BejarRezac2003.Nominal :=
-  .ofInt fun n ↦ n.isActive && decide (s ∈ personSpec geom n.cell.person)
+  .ofInt fun n ↦ n.features.IsActive ∧ s ∈ personSpec geom n.features.agreement.person
 
 /-- The root segment `π` is the person probe of [bejar-rezac-2003]. -/
 theorem segmentProbe_pi (geom : PersonGeometry) :
@@ -236,7 +236,7 @@ theorem pcc (geom : PersonGeometry) (s : PersonSegment) (cd cn : Bundle) :
 /-- A segment searching for the closest nominal bearing it would skip a third-person dative and
 reach a participant theme, the prediction fn. 6 excludes. -/
 example : (Probe.relativized fun n : BejarRezac2003.Nominal ↦
-    decide (PersonSegment.participant ∈ personSpec .standard n.cell.person)).search
+    PersonSegment.participant ∈ personSpec .standard n.features.agreement.person).search
       [.dat (.personNumber .third .singular), .caseless (.personNumber .first .singular)] =
     some (.caseless (.personNumber .first .singular)) := by
   decide
