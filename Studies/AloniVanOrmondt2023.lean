@@ -4,6 +4,7 @@ public import Linglib.Logic.Team.QBSML.FreeChoice
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.AloniVanOrmondt2023
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Aloni and van Ormondt (2023): modified numerals and split disjunction

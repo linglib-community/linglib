@@ -2,6 +2,7 @@ module
 
 public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Data.Examples.Alsop2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alsop (2024): The Pragmatics of Free Choice *any*

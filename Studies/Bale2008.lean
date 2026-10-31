@@ -5,6 +5,7 @@ public import Mathlib.Tactic.NormNum
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Degree.UniversalScale
 public import Linglib.Data.Examples.Bale2008
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bale (2008): A universal scale of comparison

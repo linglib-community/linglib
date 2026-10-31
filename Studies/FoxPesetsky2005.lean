@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Data.Examples.FoxPesetsky2005
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Fox and Pesetsky (2005): Cyclic Linearization of Syntactic Structure

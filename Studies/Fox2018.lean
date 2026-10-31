@@ -7,6 +7,7 @@ public import Studies.FoxHackl2006
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Data.Examples.Fox2018
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Fox (2018): Partition by Exhaustification

@@ -5,6 +5,7 @@ public import Linglib.Semantics.Composition.EventIdentification
 public import Linglib.Semantics.Events.Closure
 public import Linglib.Semantics.Mereology.Relation
 public import Linglib.Data.Examples.YuAusensiSmith2023
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Yu, Ausensi & Smith (2023): States and Changes-of-State in the Semantics of Result Roots

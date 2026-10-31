@@ -9,6 +9,7 @@ public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Egressy (2026): Size-Sensitive Sequence of Tense in Hungarian

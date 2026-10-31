@@ -5,6 +5,7 @@ public import Linglib.Morphology.DistributedMorphology.Allosemy
 public import Linglib.Data.Examples.Benz2025
 public import Linglib.Fragments.German.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Benz (2025): Structure and interpretation across categories

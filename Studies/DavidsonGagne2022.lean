@@ -6,6 +6,7 @@ public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Order.Heyting.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Davidson and Gagne (2022): "More is up" for domain restriction in ASL

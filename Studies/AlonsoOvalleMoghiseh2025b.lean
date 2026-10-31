@@ -6,6 +6,7 @@ public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Questions.HamblinSet
 public import Studies.AlonsoOvalleMenendezBenito2010
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alonso-Ovalle & Moghiseh (2025): number marking in Farsi *what* interrogatives

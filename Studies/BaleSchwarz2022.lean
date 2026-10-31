@@ -7,6 +7,7 @@ public import Mathlib.Data.PFun
 public import Mathlib.Data.Rat.Cast.Order
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.NormNum
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bale and Schwarz (2022): Measurements from "per" without complex dimensions

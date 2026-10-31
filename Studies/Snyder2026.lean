@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Snyder2026
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Setoid.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Snyder (2026): Numbers as Kinds

@@ -4,6 +4,7 @@ public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Studies.BakerVinokurova2010
 public import Linglib.Data.Examples.Poole2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Poole (2024): Dependent-case assignment could be Agree

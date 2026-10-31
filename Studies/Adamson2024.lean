@@ -12,6 +12,7 @@ public import Linglib.Fragments.Yanyuwa.Gender
 public import Linglib.Fragments.CoastalMarind.Gender
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Data.Examples.Adamson2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gender assignment is local

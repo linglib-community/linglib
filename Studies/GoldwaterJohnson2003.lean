@@ -4,6 +4,7 @@ public import Linglib.Phonology.HarmonicGrammar.Expressivity
 public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Mathlib.Analysis.Convex.SpecificFunctions.Deriv
 public import Linglib.Data.Examples.GoldwaterJohnson2003
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Goldwater and Johnson (2003): Learning OT Constraint Rankings Using a Maximum Entropy Model

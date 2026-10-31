@@ -4,6 +4,7 @@ public import Linglib.Semantics.Attitudes.Doxastic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Data.Examples.Glass2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Glass (2025): Attested versus unattested contrafactive belief verbs

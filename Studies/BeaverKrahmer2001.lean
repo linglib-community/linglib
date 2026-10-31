@@ -10,6 +10,7 @@ public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Logic.Trivalent.Propositional
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Data.Examples.BeaverKrahmer2001
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Beaver and Krahmer's partial account of presupposition projection

@@ -6,6 +6,7 @@ public import Linglib.Fragments.Washo.Clause
 public import Linglib.Semantics.Presupposition.Verb
 public import Studies.BakerVinokurova2010
 public import Linglib.Syntax.Minimalist.ExtendedProjection
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Major (2024): Re-analyzing 'say' complementation: Implications for case theory and beyond

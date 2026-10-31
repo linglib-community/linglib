@@ -7,6 +7,7 @@ public import Mathlib.Order.Hom.CompleteLattice
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Coppock2018
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Coppock's outlook-based semantics

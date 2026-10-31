@@ -8,6 +8,7 @@ public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Evidential.Basic
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Martínez Vera (2026)

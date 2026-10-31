@@ -4,6 +4,7 @@ public import Linglib.Semantics.Modality.Directive
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Data.Examples.Rubinstein2014
 public import Mathlib.Data.Fintype.Prod
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rubinstein (2014): On Necessity and Comparison

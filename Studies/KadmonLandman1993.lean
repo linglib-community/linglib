@@ -9,6 +9,7 @@ public import Studies.Ladusaw1979
 public import Linglib.Data.Examples.KadmonLandman1993
 public import Linglib.Fragments.English.PolarityItems
 public import Mathlib.Data.Set.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kadmon and Landman (1993): Any

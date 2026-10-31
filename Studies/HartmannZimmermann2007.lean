@@ -7,6 +7,7 @@ public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Syntax.Reflex
 public import Linglib.Data.Examples.HartmannZimmermann2007
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hartmann and Zimmermann (2007): In place — out of place? Focus strategies in Hausa

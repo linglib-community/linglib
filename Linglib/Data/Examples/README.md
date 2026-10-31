@@ -38,8 +38,9 @@ edited by hand; the JSON is the source of truth.
 
 ## Schema
 
-See `Linglib/Data/Examples/Schema.lean` for the canonical type. Quick
-key reference:
+See `Linglib/Data/Examples/Schema.lean` for the canonical type, and
+`Linglib/Data/Examples/Readers.lean` for the lookups and fits a study makes on rows; a study
+that reads rows imports it beside its data module. Quick key reference:
 
 | Key | Type | Notes |
 |---|---|---|

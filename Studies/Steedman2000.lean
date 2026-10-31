@@ -10,6 +10,7 @@ public import Linglib.Syntax.CCG.Interface
 public import Linglib.Syntax.CCG.Intonation
 public import Linglib.Syntax.WordOrder
 public import Studies.BeckmanPierrehumbert1986
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Steedman (2000): The Syntactic Process

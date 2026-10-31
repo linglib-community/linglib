@@ -6,6 +6,7 @@ public import Linglib.Semantics.Modality.Basic
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.Kubota2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kubota (2026): Outlook Management

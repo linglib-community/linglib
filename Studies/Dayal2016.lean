@@ -7,6 +7,7 @@ public import Linglib.Data.Examples.Dayal2016
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Questions.HamblinSet
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dayal (2016): Questions

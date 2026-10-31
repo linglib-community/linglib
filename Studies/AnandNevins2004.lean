@@ -4,6 +4,7 @@ public import Linglib.Semantics.Reference.Context.Overwrite
 public import Studies.Schlenker2003
 public import Studies.Stalnaker1978
 public import Linglib.Data.Examples.AnandNevins2004
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Anand and Nevins (2004): shifty operators in changing contexts

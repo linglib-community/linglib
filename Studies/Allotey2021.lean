@@ -8,6 +8,7 @@ public import Linglib.Syntax.Binding.MinimalPronoun
 public import Linglib.Syntax.Control.Head
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Allotey2021
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Allotey (2021): overt pronouns of infinitival predicates of Gã

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Data.Examples.Gasparri2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gasparri (2025): Bare Singular Names and Genericity

@@ -7,6 +7,7 @@ public import Mathlib.Tactic.IntervalCases
 public import Linglib.Semantics.Causation.Morphological
 public import Linglib.Data.Examples.Song1996
 public import Linglib.Fragments.Korean.Verbs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Song (1996): Causatives and causation

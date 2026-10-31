@@ -19,6 +19,7 @@ public import Linglib.Fragments.Mayan.Kiche.Extraction
 public import Linglib.Fragments.Mayan.Yukatek.Agreement
 public import Linglib.Fragments.Mayan.Yukatek.Extraction
 public import Linglib.Data.Examples.CoonMateoPedroPreminger2014
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Coon, Mateo Pedro and Preminger (2014): The role of Case in A-bar extraction asymmetries

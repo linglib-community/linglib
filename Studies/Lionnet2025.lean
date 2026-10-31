@@ -13,6 +13,7 @@ public import Studies.Hyman2006
 public import Linglib.Data.Examples.Lionnet2025
 import all Init.Data.List.Scan.Basic
 import all Init.Data.List.Control
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Lionnet (2025): Tonal languages without tone

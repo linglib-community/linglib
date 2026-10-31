@@ -16,6 +16,7 @@ public import Linglib.Fragments.Slavic.Serbian.QuestionParticles
 public import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
 public import Linglib.Fragments.Slavic.Czech.Particles
 public import Linglib.Data.Examples.Simik2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Šimík (2024): Polar question semantics and bias: Lessons from Slavic/Czech

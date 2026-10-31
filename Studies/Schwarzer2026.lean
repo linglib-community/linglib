@@ -5,6 +5,7 @@ public import Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Schwarzer2026
 public import Linglib.Data.Experiments.Schwarzer2026
 public import Linglib.Fragments.German.Verbs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Schwarzer 2026: the law and order of selection-violating coordination

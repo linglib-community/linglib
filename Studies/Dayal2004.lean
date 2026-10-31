@@ -7,6 +7,7 @@ public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Romance.Italian.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dayal (2004): Number marking and (in)definiteness in kind terms

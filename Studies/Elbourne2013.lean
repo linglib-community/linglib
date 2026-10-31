@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Elbourne2013
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Presupposition.Basic
 public import Mathlib.Order.Minimal
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Elbourne (2013): Definite Descriptions

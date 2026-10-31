@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Zimmermann2008
 public import Linglib.Fragments.Hausa.Determiners
 public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Data.Finset.Card
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Zimmermann (2008): Quantification in Hausa

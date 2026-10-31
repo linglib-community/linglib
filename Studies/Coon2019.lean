@@ -7,6 +7,7 @@ public import Linglib.Data.Wordlist.Coon2019
 public import Linglib.Fragments.Mayan.Chuj.Voice
 public import Linglib.Data.Examples.Coon2019
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Coon 2019: building verbs in Chuj

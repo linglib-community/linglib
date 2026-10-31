@@ -5,6 +5,7 @@ public import Studies.BobaljikHarley2017
 public import Studies.Embick2004
 public import Studies.DeBelderVanCraenenbroeck2015
 public import Studies.VanCraenenbroeck2014
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alexiadou and Lohndal (2017): The structural configurations of root categorization

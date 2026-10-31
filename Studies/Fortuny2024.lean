@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Linglib.Syntax.Category.Coordinator
 public import Linglib.Data.Examples.Fortuny2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Fortuny (2024): Deducing the Coordinand Constraint

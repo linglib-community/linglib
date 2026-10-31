@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Embick2004
 public import Linglib.Morphology.DistributedMorphology.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Syntax.Tree.Projection
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Embick (2004): On the structure of resultative participles in English

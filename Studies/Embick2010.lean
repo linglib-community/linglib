@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Embick2010
 public import Linglib.Morphology.DistributedMorphology.Locality
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Embick (2010): Localism versus Globalism in Morphology and Phonology

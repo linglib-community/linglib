@@ -4,6 +4,7 @@ public import Linglib.Morphology.DistributedMorphology.Fission
 public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Syntax.Person.Features
 public import Linglib.Data.Examples.GonzalezPootMcGinnis2006
+public import Linglib.Data.Examples.Readers
 
 /-!
 # González Poot and McGinnis (2006): Local versus Long-Distance Fission in Distributed Morphology

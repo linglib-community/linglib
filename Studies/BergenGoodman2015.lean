@@ -4,6 +4,7 @@ public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Data.Examples.BergenGoodman2015
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bergen & Goodman (2015): The strategic use of noise in pragmatic reasoning

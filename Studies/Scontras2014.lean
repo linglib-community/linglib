@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.English.MeasurePhrases
 public import Linglib.Semantics.Mereology.Topology
 public import Linglib.Data.Examples.Scontras2014
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Scontras (2014): The Semantics of Measurement

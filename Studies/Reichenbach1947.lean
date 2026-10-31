@@ -4,6 +4,7 @@ public import Linglib.Semantics.Tense.Reichenbach
 public import Linglib.Syntax.Category.Verb.Tense
 public import Linglib.Data.Examples.Reichenbach1947
 public import Mathlib.Data.Fintype.Prod
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Reichenbach (1947): the tenses of verbs

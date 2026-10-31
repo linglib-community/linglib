@@ -7,6 +7,7 @@ public import Linglib.Fragments.Tigrinya.Phonology
 public import Linglib.Fragments.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
 public import Linglib.Phonology.StrictCV.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre

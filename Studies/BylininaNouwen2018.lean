@@ -6,6 +6,7 @@ public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bylinina and Nouwen (2018): On *zero* and semantic plurality

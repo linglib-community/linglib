@@ -4,6 +4,7 @@ public import Linglib.Semantics.Modality.Basic
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.CiardelliGuerrini2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ciardelli and Guerrini (2026): Against wide scope free choice

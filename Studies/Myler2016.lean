@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.DistributedMorphology.Allosemy
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Myler2016
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Myler (2016): Building and Interpreting Possession Sentences

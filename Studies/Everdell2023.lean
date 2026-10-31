@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Everdell2023
 public import Studies.Krejci2012
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Everdell (2023): Arguments and Adjuncts in O'dam, Chapter 5

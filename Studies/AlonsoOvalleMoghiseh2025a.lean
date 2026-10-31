@@ -6,6 +6,7 @@ public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Semantics.Exhaustification.PreExhaustified
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alonso-Ovalle & Moghiseh (2025): existential free choice items

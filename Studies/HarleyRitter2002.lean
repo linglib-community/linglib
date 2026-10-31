@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Agreement.Geometry
 public import Linglib.Data.Examples.HarleyRitter2002
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Harley and Ritter (2002): Person and number in pronouns

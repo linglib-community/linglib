@@ -9,6 +9,7 @@ public import Linglib.Syntax.Person.Features
 public import Linglib.Fragments.Romance.Spanish.Clitics
 public import Linglib.Fragments.Romance.Spanish.Verbs
 import all Init.Data.String.Defs  -- for unfolding `String.intercalate`
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Muñoz Pérez (2026): Stylistic Applicatives

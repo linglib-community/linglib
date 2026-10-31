@@ -6,6 +6,7 @@ public import Studies.Lassiter2017
 public import Linglib.Fragments.English.Verbs.Attitude
 public import Linglib.Semantics.Attitudes.Doxastic
 public import Linglib.Data.Examples.Koev2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Koev (2026): a strong force semantics of *believe*

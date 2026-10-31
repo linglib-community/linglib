@@ -2,6 +2,7 @@ module
 
 public import Studies.AlexandropoulouGotzner2024a
 public import Linglib.Data.Examples.AlexandropoulouGotzner2024b
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alexandropoulou and Gotzner (2024b): adjective interpretation and competition

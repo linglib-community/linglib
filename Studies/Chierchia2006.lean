@@ -6,6 +6,7 @@ public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.Chierchia2006
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.FinCases
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Chierchia (2006): Broaden your views

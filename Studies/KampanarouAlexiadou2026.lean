@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.KampanarouAlexiadou2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kampanarou and Alexiadou (2026): Genitive Alternation in Possessives and Beyond

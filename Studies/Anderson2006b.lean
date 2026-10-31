@@ -7,6 +7,7 @@ public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Anderson (2006): Modern Grammars of Case: A Retrospective

@@ -5,6 +5,7 @@ public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Semantics.Focus.Unalternatives
 public import Studies.HartmannZimmermann2004
 public import Linglib.Data.Examples.AssmannEtAl2023
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Assmann, Büring, Jordanoska & Prüller 2023: morphosyntactic focus marking

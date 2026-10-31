@@ -12,6 +12,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jansen and Pollmann (2001): On round numbers: Pragmatic aspects of numerical expressions

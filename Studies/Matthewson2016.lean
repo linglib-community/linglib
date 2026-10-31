@@ -12,6 +12,7 @@ public import Studies.Condoravdi2002
 public import Studies.Deal2011
 public import Studies.Kratzer2012
 public import Studies.Matthewson2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Matthewson (2016): Modality

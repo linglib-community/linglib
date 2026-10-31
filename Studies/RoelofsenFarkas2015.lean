@@ -5,6 +5,7 @@ public import Linglib.Semantics.Questions.Highlighting
 public import Linglib.Semantics.Questions.Polar
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.RoelofsenFarkas2015
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Roelofsen and Farkas (2015): Polarity particle responses as a window onto the interpretation of questions and assertions

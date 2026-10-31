@@ -5,6 +5,7 @@ public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Data.Experiments.KrizChemla2015
 public import Linglib.Data.Examples.BarLev2021
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bar-Lev (2021): An Implicature Account of Homogeneity and Non-Maximality

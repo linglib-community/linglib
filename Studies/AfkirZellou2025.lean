@@ -7,6 +7,7 @@ public import Linglib.Data.Examples.AfkirZellou2025
 public import Linglib.Data.Wordlist.AfkirZellou2025
 import Mathlib.Data.Fin.VecNotation
 import all Init.Data.String.Defs  -- for unfolding `String.join`
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Schwa variation and the intensive imperative in Tarifit

@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Istratkova2004
 public import Linglib.Data.Wordlist.Istratkova2004
 public import Studies.Svenonius2004
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Istratkova (2004): On Multiple Prefixation in Bulgarian

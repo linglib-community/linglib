@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Data.Examples.FoxSpector2018
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Fox and Spector (2018): Economy and Embedded Exhaustification

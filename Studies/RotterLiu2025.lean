@@ -3,6 +3,7 @@ module
 public import Studies.LiuRotter2025
 public import Linglib.Data.Examples.RotterLiu2025
 public import Mathlib.Tactic.Ring
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rotter and Liu (2025): A Register Approach to Modal (Non-)Concord in English

@@ -7,6 +7,7 @@ public import Linglib.Core.Data.List.Forall2
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Examples.AkinboFwangwar2026
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Akinbo and Fwangwar (2026): Iconicity and expressiveness of grammatical tones targeting ideophones in Mwaghavul

@@ -8,6 +8,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.ConstructionGrammar.Basic
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.FillmoreKayOConnor1988
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Fillmore, Kay & O'Connor (1988): Regularity and idiomaticity in grammatical constructions

@@ -8,6 +8,7 @@ public import Linglib.Fragments.Japanese.Verbs
 public import Linglib.Fragments.Turkish.Verbs
 public import Linglib.Fragments.Romance.Spanish.Verbs
 public import Linglib.Data.Examples.QingEtAl2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Qing et al. (2025): When Can Non-Veridical Preferential Attitude Predicates Take Questions?

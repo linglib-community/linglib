@@ -7,6 +7,7 @@ public import Linglib.Fragments.Japanese.Morph
 public import Linglib.Fragments.Sesotho.Morph
 public import Studies.Bybee1985
 public import Linglib.Data.Examples.HahnDegenFutrell2021
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hahn, Degen, and Futrell (2021): Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal

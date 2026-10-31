@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Data.Examples.Belnap1982
 public import Studies.Karttunen1977
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Belnap (1982): Questions and Answers in Montague Grammar

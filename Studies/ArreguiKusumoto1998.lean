@@ -6,6 +6,7 @@ public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Arregui and Kusumoto (1998): Tense in Temporal Adjunct Clauses

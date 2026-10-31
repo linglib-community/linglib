@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.Bounds.Basic
 public import Linglib.Data.Examples.Rett2020b
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rett (2020): Separate but equal: a typology of equative constructions

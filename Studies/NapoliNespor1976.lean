@@ -5,6 +5,7 @@ public import Linglib.Discourse.SpeechAct
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Semantics.Mood.Defs
 public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Napoli and Nespor (1976)

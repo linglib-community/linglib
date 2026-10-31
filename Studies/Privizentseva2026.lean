@@ -8,6 +8,7 @@ public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Privizentseva2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Privizentseva (2026): The Syntax of Relative Clauses and the Nature of Merge

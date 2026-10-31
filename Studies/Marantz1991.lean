@@ -4,6 +4,7 @@ public import Linglib.Syntax.Case.Dependent
 public import Linglib.Fragments.Georgian.Agreement
 public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Data.Examples.Marantz1991
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Marantz (1991): Case and Licensing

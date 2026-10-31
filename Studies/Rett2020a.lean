@@ -3,6 +3,7 @@ module
 public import Studies.BeaverCondoravdi2003
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.Rett2020a
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rett (2020): Eliminating EARLIEST: a general semantics for before and after

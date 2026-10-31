@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Data.Examples.HarrisPotts2009
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Harris and Potts (2009): Perspective-shifting with appositives and expressives

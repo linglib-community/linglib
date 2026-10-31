@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.ChengCheng2026
 public import Linglib.Morphology.DistributedMorphology.RootCategorization
 public import Studies.Harley2017
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Cheng and Cheng (2026): Using light verbs as verbalizers

@@ -6,6 +6,7 @@ public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Mathlib.Order.Monotone.Basic
 public import Mathlib.Data.Fin.Rev
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Horn (1972): On the Semantic Properties of Logical Operators in English

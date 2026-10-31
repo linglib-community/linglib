@@ -5,6 +5,7 @@ public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Data.Examples.HammerlyMathieu2026
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hammerly and Mathieu (2026): long-distance agreement in Border Lakes Ojibwe

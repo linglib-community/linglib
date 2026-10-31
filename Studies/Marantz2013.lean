@@ -2,6 +2,7 @@ module
 
 public import Linglib.Morphology.DistributedMorphology.Locality
 public import Linglib.Data.Examples.Marantz2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Marantz (2013): Locality Domains for Contextual Allomorphy Across the Interfaces

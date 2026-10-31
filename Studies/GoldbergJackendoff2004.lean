@@ -8,6 +8,7 @@ public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.GoldbergJackendoff2004
 public import Studies.Goldberg1995
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Goldberg and Jackendoff (2004): The English Resultative as a Family of Constructions

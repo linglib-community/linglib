@@ -5,6 +5,7 @@ public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.Karttunen1971b
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Karttunen (1971): Some observations on factivity

@@ -9,6 +9,7 @@ public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Data.Examples.Cooper2023
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Cooper (2023): From Perception to Communication: A Theory of Types for Action and Meaning

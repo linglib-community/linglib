@@ -9,6 +9,7 @@ public import Linglib.Fragments.Cantonese.Determiners
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Lakhota.Determiners
 public import Linglib.Fragments.Akan.Determiners
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles

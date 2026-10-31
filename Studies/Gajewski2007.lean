@@ -5,6 +5,7 @@ public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Natural.Strawson
 public import Linglib.Data.Examples.Gajewski2007
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gajewski (2007): Neg-Raising and Polarity

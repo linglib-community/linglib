@@ -7,6 +7,7 @@ public import Linglib.Data.Examples.Bochnak2015a
 public import Studies.MocnikAbramovitz2019
 public import Linglib.Fragments.Javanese.Paciran.Modals
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Steinert-Threlkeld, Imel and Guo (2023): A semantic universal for modality

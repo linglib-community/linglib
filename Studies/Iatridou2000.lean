@@ -6,6 +6,7 @@ public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Order.Disjoint
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Iatridou (2000): The grammatical ingredients of counterfactuality

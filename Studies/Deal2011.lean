@@ -4,6 +4,7 @@ public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.NezPerce.Modals
 public import Linglib.Data.Examples.Deal2011
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Deal (2011): Modals without scales

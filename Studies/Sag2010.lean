@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.HPSG.Construction
 public import Linglib.Data.Examples.Sag2010
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Sag (2010): English Filler-Gap Constructions

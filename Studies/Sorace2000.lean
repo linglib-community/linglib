@@ -5,6 +5,7 @@ public import Linglib.Fragments.Dutch.Verbs
 public import Linglib.Fragments.German.Tense
 public import Linglib.Fragments.Romance.French.Verbs
 public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Sorace (2000): Gradients in auxiliary selection with intransitive verbs

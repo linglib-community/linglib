@@ -7,6 +7,7 @@ public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Person.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Just (2024): A structural and functional comparison of differential A and P indexing

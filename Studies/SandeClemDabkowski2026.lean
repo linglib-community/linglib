@@ -9,6 +9,7 @@ public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Data.Examples.SandeClemDabkowski2026
 public import Mathlib.Data.List.Sections
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Sande, Clem and Dąbkowski (2026): Discontinuous vowel harmony in Guébie: Cyclic interleaving of syntax and phonology

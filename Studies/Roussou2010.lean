@@ -6,6 +6,7 @@ public import Linglib.Semantics.Questions.Polar
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Data.Examples.Roussou2010
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Roussou (2010): Selecting complementizers

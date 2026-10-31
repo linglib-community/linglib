@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Kennedy1999
 public import Mathlib.Order.Interval.Set.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kennedy (1999): Projecting the Adjective

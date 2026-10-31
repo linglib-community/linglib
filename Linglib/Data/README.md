@@ -25,7 +25,8 @@ Linglib/Data/
     raw/                     # upstream raw data dump
     {generated subdirs}/     # generator output
   Examples/
-    Schema.lean
+    Schema.lean              # the row type, `Datum`
+    Readers.lean             # the lookups and fits studies make on rows
     README.md                # JSON format + Leipzig conventions
     {AuthorYear}.json        # per-paper example data
     {AuthorYear}.lean        # generated from the JSON

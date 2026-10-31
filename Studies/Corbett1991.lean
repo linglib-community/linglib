@@ -18,6 +18,7 @@ public import Linglib.Fragments.Latin.Gender
 public import Linglib.Fragments.Icelandic.Nouns
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Data.Examples.Corbett1991
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Corbett (1991): Gender

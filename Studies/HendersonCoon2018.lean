@@ -3,6 +3,7 @@ module
 public import Studies.CoonMateoPedroPreminger2014
 public import Studies.Erlewine2016
 public import Linglib.Data.Examples.HendersonCoon2018
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Henderson and Coon (2018): Adverbs and variability in Kaqchikel Agent Focus

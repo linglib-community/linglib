@@ -8,6 +8,7 @@ public import Linglib.Fragments.Statimcets.Modals
 public import Linglib.Fragments.Javanese.Paciran.Modals
 public import Studies.Condoravdi2002
 public import Studies.Deal2011
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Matthewson (2013): Gitksan Modals

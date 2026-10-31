@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Data.Examples.Geurts2005
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Geurts (2005): Entertaining Alternatives: Disjunctions as Modals

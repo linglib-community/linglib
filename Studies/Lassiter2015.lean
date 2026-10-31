@@ -13,6 +13,7 @@ public import Linglib.Data.Examples.Lassiter2015
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Tactic.FinCases
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Lassiter (2015): Epistemic comparison, models of uncertainty, and the disjunction puzzle

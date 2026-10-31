@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.KalinBjorkmanEtAl2026
 public import Studies.ZwickyPullum1983
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kalin et al. (2026): The Morphology/Syntax Interface

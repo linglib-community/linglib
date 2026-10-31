@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.DeBelderVanCraenenbroeck2015
 public import Linglib.Fragments.Dutch.Pronouns
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Mathlib.Logic.Relation
+public import Linglib.Data.Examples.Readers
 
 /-!
 # De Belder and van Craenenbroeck (2015): How to Merge a Root

@@ -6,6 +6,7 @@ public import Linglib.Data.Examples.ArnoldEtAl2000
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.Ring
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Arnold, Wasow, Losongco & Ginstrom 2000: heaviness vs. newness

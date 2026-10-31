@@ -5,6 +5,7 @@ public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Reference.Kaplan
 public import Studies.Pearson2015
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Coppock & Wechsler (2018): The Proper Treatment of Egophoricity in Kathmandu Newari

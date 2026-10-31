@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Pollock1989
 public import Mathlib.Order.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Pollock (1989): Verb Movement, Universal Grammar, and the Structure of IP

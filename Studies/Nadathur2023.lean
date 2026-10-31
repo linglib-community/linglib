@@ -8,6 +8,7 @@ public import Linglib.Fragments.Finnish.Verbs
 public import Linglib.Data.Examples.Nadathur2023
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Nadathur (2023)

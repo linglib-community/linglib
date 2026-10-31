@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Data.Examples.DechaineWiltschko2002
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Déchaine and Wiltschko (2002): Decomposing Pronouns

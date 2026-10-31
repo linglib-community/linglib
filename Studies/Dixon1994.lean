@@ -6,6 +6,7 @@ public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Nominality
 public import Linglib.Data.Examples.Dixon1994
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dixon (1994): Ergativity

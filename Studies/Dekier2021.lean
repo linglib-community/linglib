@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.Exponence.Containment.Contiguity
 public import Studies.Haspelmath1997
 public import Linglib.Data.Examples.Dekier2021
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dekier (2021): Morphosyntax of specific and non-specific indefinite markers

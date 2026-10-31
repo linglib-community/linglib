@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.Condoravdi2002
 public import Linglib.Semantics.Aspect.Instantiation
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Condoravdi 2002: Temporal Interpretation of Modals

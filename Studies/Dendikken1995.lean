@@ -4,6 +4,7 @@ public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.Norwegian.Verbs
 public import Linglib.Data.Examples.Dendikken1995
+public import Linglib.Data.Examples.Readers
 
 /-!
 # den Dikken (1995): Particles
