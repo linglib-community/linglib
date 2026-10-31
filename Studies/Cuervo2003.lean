@@ -13,7 +13,7 @@ public import Linglib.Data.Examples.Readers
 This file formalizes the central claim of [cuervo-2003]: dative arguments have structural
 meanings. A dative is licensed by an applicative head, and what it means is read off where that
 head merges in the event structure, the chain of [cuervo-2003]'s flavors of v
-(`Minimalist.LittleV`); the site is `Minimalist.ApplSite`. Table (28) distinguishes three
+(`Minimalist.LittleV`); the site is `Minimalist.Appl.Site`. Table (28) distinguishes three
 positions. Below every verbal head, the
 applicative takes the theme DP as its complement and relates the dative to an individual, as a
 recipient, a source or a possessor according to the verb and to pragmatics: the low applicative,
@@ -41,16 +41,16 @@ specifier, so an unergative takes a dative clitic and no dative DP (§4.3.2).
 
 ## Main definitions
 
-* `Meaning`, `meaning`: table (40), the meaning of a dative at a `Minimalist.ApplSite`.
+* `Meaning`, `meaning`: table (40), the meaning of a dative at a `Minimalist.Appl.Site`.
 * `Predicate`, `Predicate.ThemeIsRootComplement`: a verb's use with its event structure.
 * `Inventory`, `spanish`, `english`, `Inventory.Licenses`, `meanings`: which datives a language's
   applicative heads license and what they mean.
 
 ## Implementation notes
 
-The merge site of the applicative and the three types of table (28) are the substrate's
-`Minimalist.ApplSite`, a cut of the little-v chain; the empty affected-under-state cell of table
-(40) is its `ApplSite.not_affected_of_state`. Dative case, clitic doubling and the movement of the
+The merge site of the applicative and the three types of table (28) are `Minimalist.Appl.Site`, a
+position in the little-v chain; the empty affected-under-state cell of table (40) is
+`Minimalist.Appl.Site.not_affected_of_state`. Dative case, clitic doubling and the movement of the
 dative to the subject position of unaccusatives (§2.0.5, §3.2.2.1) are not represented, nor are
 the sub-types of low applicative beyond the relation read, the resultatives and particles of
 §3.3, or the defective applicatives of other languages. The low relation is the verb's, as the
@@ -75,7 +75,7 @@ open Minimalist
 /-- The meanings a dative argument can have. -/
 inductive Meaning where
   /-- Related to the theme as a recipient, a source or a possessor. -/
-  | low (relation : LowRelation)
+  | low (relation : Appl.LowRelation)
   | affected
   /-- The experiencer of a state or of a change; over a change, also the person unintentionally
   responsible for it (§4.2.3). -/
@@ -84,14 +84,14 @@ inductive Meaning where
   | ethical
   deriving DecidableEq, Repr
 
-/-- The meaning of a dative at a site, given the low relation the verb supplies: an individual
-related to the theme when low, affected when between two events, and over the whole event the
-experiencer of a state or change or the ethical dative of an activity. -/
-def meaning (s : ApplSite) (r : LowRelation) : Meaning :=
-  match s.above, s.below with
-  | _, [] => .low r
-  | [], v :: _ => if v = .vDO then .ethical else .experiencer
-  | _ :: _, _ :: _ => .affected
+/-- The meaning of a dative at a site, given the low relation the verb supplies: that of the head
+at the site, the high head being the experiencer of a state or change and the ethical dative of an
+activity. -/
+def meaning (s : Appl.Site) (r : Appl.LowRelation) : Meaning :=
+  match s.head r with
+  | .low r => .low r
+  | .affected => .affected
+  | .high => if s.complementHead = some .vDO then .ethical else .experiencer
 
 /-! ### Predicates -/
 
@@ -103,7 +103,7 @@ structure Predicate where
   frame : ArgumentFrame
   heads : List LittleV
   predicational : Bool := false
-  relation : LowRelation := .recipient
+  relation : Appl.LowRelation := .recipient
 
 namespace Predicate
 
@@ -216,7 +216,7 @@ structure Inventory where
   high : Bool
   /-- The low applicatives it has, by the relation read and the head the root combines with;
   English has the low applicative TO under activities alone (§3.2.3). -/
-  low : LowRelation → LittleV → Bool
+  low : Appl.LowRelation → LittleV → Bool
   /-- The high applicative over an activity projects a specifier; the Spanish one is defective
   and spelled out by a clitic alone (§4.3.2). -/
   ethicalSpecifier : Bool
@@ -230,7 +230,7 @@ def english : Inventory := ⟨false, false, fun r v ↦ r = .recipient && v = .v
 /-- A dative argument as the applicative licenses it: its site, whether it is animate and whether
 it is a full DP rather than a clitic alone. -/
 structure Dative where
-  site : ApplSite
+  site : Appl.Site
   animate : Bool
   fullDP : Bool
   deriving DecidableEq, Repr
@@ -240,9 +240,9 @@ predicate's structure; a low applicative needs the theme as the root's complemen
 of the language for that relation and structure; an affected one needs the affected head; a high
 one needs a high head, an animate dative and, over an activity with a full DP, a specifier. -/
 def Inventory.Licenses (i : Inventory) (p : Predicate) (d : Dative) : Prop :=
-  d.site ∈ ApplSite.all p.heads ∧
+  d.site ∈ Appl.Site.all p.heads ∧
     (d.site.Low →
-      p.ThemeIsRootComplement ∧ ∀ v ∈ p.heads.getLast?, i.low p.relation v = true) ∧
+      p.ThemeIsRootComplement ∧ ∀ v ∈ d.site.selector, i.low p.relation v = true) ∧
     (d.site.Affected → i.affected = true) ∧
     (d.site.High →
       i.high = true ∧ d.animate = true ∧
@@ -254,7 +254,7 @@ instance (i : Inventory) (p : Predicate) (d : Dative) : Decidable (i.Licenses p 
 /-- The meanings of a dative of the given animacy and form with `p` in the language `i`: those of
 its licensed sites. -/
 def meanings (i : Inventory) (p : Predicate) (animate fullDP : Bool) : List Meaning :=
-  ((ApplSite.all p.heads).filter fun s ↦ i.Licenses p ⟨s, animate, fullDP⟩).map
+  ((Appl.Site.all p.heads).filter fun s ↦ i.Licenses p ⟨s, animate, fullDP⟩).map
     (meaning · p.relation)
 
 /-! ### The double object construction and Baker's gap (§3.1, §3.2.3) -/
@@ -267,7 +267,7 @@ theorem not_licenses_low_of_biEventive {i : Inventory} {p : Predicate} {d : Dati
 theorem licenses_of_biEventive {i : Inventory} {p : Predicate} {d : Dative}
     (hc : LittleV.BiEventive p.heads) (h : i.Licenses p d) : d.site.Affected ∨ d.site.High := by
   have hne : d.site.heads ≠ [] := by
-    rw [ApplSite.mem_all_iff.1 h.1]; exact fun e ↦ by simp [LittleV.BiEventive, e] at hc
+    rw [Appl.Site.mem_all_iff.1 h.1]; exact fun e ↦ by simp [LittleV.BiEventive, e] at hc
   rcases d.site.low_or_affected_or_high hne with hl | ha | hh
   · exact absurd h (not_licenses_low_of_biEventive hc hl)
   · exact .inl ha
@@ -287,9 +287,11 @@ applicative being confined to activities, (92). -/
 theorem english_not_licenses_change {p : Predicate} {d : Dative} (hp : p.heads = [.vGO]) :
     ¬ english.Licenses p d := by
   intro h
-  rcases d.site.low_or_affected_or_high (by rw [ApplSite.mem_all_iff.1 h.1, hp]; simp) with
+  rcases d.site.low_or_affected_or_high (by rw [Appl.Site.mem_all_iff.1 h.1, hp]; simp) with
     hl | ha | hh
-  · have := (h.2.1 hl).2 .vGO (by simp [hp])
+  · have he := Appl.Site.mem_all_iff.1 h.1
+    rw [Appl.Site.heads, show d.site.below = [] from hl, List.append_nil, hp] at he
+    have := (h.2.1 hl).2 .vGO (by simp [Appl.Site.selector, he])
     revert this; cases p.relation <;> decide
   · exact absurd (h.2.2.1 ha) (by decide)
   · exact absurd (h.2.2.2 hh).1 (by decide)
@@ -304,9 +306,9 @@ theorem unergative_clitic_only {p : Predicate} (hp : p.heads = [.vDO])
     (ho : ¬ p.RootLicensesObject) (d : Dative) :
     spanish.Licenses p d ↔ d = ⟨⟨[], [.vDO]⟩, true, false⟩ := by
   obtain ⟨⟨a, b⟩, an, dp⟩ := d
-  simp only [Inventory.Licenses, ApplSite.mem_all_iff, ApplSite.heads, hp, spanish, ApplSite.Low,
-    ApplSite.High, ApplSite.Affected, Predicate.ThemeIsRootComplement, ho, Dative.mk.injEq,
-    ApplSite.mk.injEq]
+  simp only [Inventory.Licenses, Appl.Site.mem_all_iff, Appl.Site.heads, hp, spanish,
+    Appl.Site.Low, Appl.Site.High, Appl.Site.Affected, Predicate.ThemeIsRootComplement, ho,
+    Dative.mk.injEq, Appl.Site.mk.injEq]
   rcases a with _ | ⟨v, a⟩ <;> rcases b with _ | ⟨w, b⟩ <;> simp
 
 -- (67a)
@@ -321,16 +323,16 @@ theorem inchoative_meanings {p : Predicate} (hp : p.heads = [.vGO, .vBE]) (dp : 
     meanings spanish p true dp = [.experiencer, .affected] ∧
       meanings spanish p false dp = [.affected] := by
   cases dp <;>
-    simp [meanings, hp, ApplSite.all, List.range_succ, Inventory.Licenses, spanish,
-      LittleV.BiEventive, Predicate.ThemeIsRootComplement, ApplSite.Low, ApplSite.High,
-      ApplSite.Affected, meaning]
+    simp [meanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
+      LittleV.BiEventive, Predicate.ThemeIsRootComplement, Appl.Site.Low, Appl.Site.High,
+      Appl.Site.Affected, Appl.Site.head, Appl.Site.complementHead, Appl.Site.selector, meaning]
 
 -- (35), (90a)
 theorem causative_meanings {p : Predicate} (hp : p.heads = [.vDO, .vBE]) :
     meanings spanish p true true = [.affected] := by
-  simp [meanings, hp, ApplSite.all, List.range_succ, Inventory.Licenses, spanish,
-    LittleV.BiEventive, Predicate.ThemeIsRootComplement, ApplSite.Low, ApplSite.High,
-    ApplSite.Affected, meaning]
+  simp [meanings, hp, Appl.Site.all, List.range_succ, Inventory.Licenses, spanish,
+    LittleV.BiEventive, Predicate.ThemeIsRootComplement, Appl.Site.Low, Appl.Site.High,
+    Appl.Site.Affected, Appl.Site.head, Appl.Site.complementHead, Appl.Site.selector, meaning]
 
 /-! ### The rows -/
 
