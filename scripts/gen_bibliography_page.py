@@ -2,11 +2,11 @@
 """Generate the browsable bibliography published at linglib.io/bibliography/.
 
 Every entry of `references.bib` is shown with where linglib uses it. The places are read from
-the repository, not from the entries' hand-kept `sources` fields: the `[key]` citations in the
-tracked Lean files of `Linglib`, `Studies`, `Eval` and `Lab`, and the `bibkey` of the data files
-under `Linglib/Data`. Each entry is formalized, foundational or cited: formalized when its `role`
-says so or a study is named after it, foundational when its `role` says so, cited otherwise. TeX
-accents are rendered as Unicode; `--check` lists entries whose TeX the page cannot render.
+the repository: the `[key]` citations in the tracked Lean files of `Linglib`, `Studies`, `Eval`
+and `Lab`, and the `bibkey` of the data files under `Linglib/Data`. Each entry is formalized,
+foundational or cited: formalized when its `role` says so or a study is named after it,
+foundational when its `role` says so, cited otherwise. TeX accents are rendered as Unicode;
+`--check` lists entries whose TeX the page cannot render.
 
 Usage, from the repository root:
 
