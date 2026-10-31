@@ -4,31 +4,35 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Finset.Max
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
-public import Linglib.Core.SocialChoice.Basic
+public import Linglib.Semantics.Aggregation.Basic
 
 /-!
-# Classical social welfare functionals
+# Classical aggregation rules
 
-Five classical rules with the conditions they meet or fail. Majority rule, after May, meets every
-Arrow condition except weak-ordering outputs. The Pareto rule, after Weymark, is a quasi-ordering
-that leaves every trade-off incomparable. The utilitarian rule meets every Arrow condition except
-ordinal invariance, failing even ratio-scale invariance. The Cobb–Douglas rule, after Tsui and
-Weymark, is ratio-scale invariant on non-negative profiles, and the maximin rule needs only ordinal
-level comparability. The Pareto rule is the unanimous verdict of the utilitarian rules with
-positive weights, so a trade-off is exactly a pair that two positive weightings rank oppositely.
+This file defines five classical aggregation rules and the conditions they meet or fail. Majority
+rule, after May, meets every Arrow condition except weak-ordering outputs. The Pareto rule, after
+Weymark, is a quasi-ordering that leaves every trade-off incomparable. The utilitarian rule meets
+every Arrow condition except ordinal invariance, failing even ratio-scale invariance. The
+Cobb–Douglas rule, after Tsui and Weymark, is ratio-scale invariant on non-negative profiles, and
+the maximin rule needs only ordinal level comparability. The Pareto rule is the unanimous verdict
+of the utilitarian rules with positive weights, so a trade-off is exactly a pair that two positive
+weightings rank oppositely.
 
 ## Main definitions
 
-* `SocialChoice.majority`, `SocialChoice.paretoRule`, `SocialChoice.utilitarian`,
-  `SocialChoice.maximin`, `SocialChoice.cobbDouglas`: the five rules.
+* `Aggregation.majority`: majority rule.
+* `Aggregation.paretoRule`: the Pareto rule.
+* `Aggregation.utilitarian`: weighted sums of values.
+* `Aggregation.maximin`: the lowest value.
+* `Aggregation.cobbDouglas`: weighted products of values.
 
 ## Main statements
 
-* `SocialChoice.paretoRule_iff_forall_utilitarian`: the Pareto rule is the unanimous verdict of
+* `Aggregation.paretoRule_iff_forall_utilitarian`: the Pareto rule is the unanimous verdict of
   the positively weighted utilitarian rules.
-* `SocialChoice.not_ordinalInvariant_utilitarian`: the utilitarian rule needs cardinal
+* `Aggregation.not_ordinalInvariant_utilitarian`: the utilitarian rule needs cardinal
   information.
-* `SocialChoice.maximin_ordinalLevelInvariant`: the maximin rule needs only ordinal level
+* `Aggregation.maximin_ordinalLevelInvariant`: the maximin rule needs only ordinal level
   comparability.
 
 ## References
@@ -41,9 +45,9 @@ positive weights, so a trade-off is exactly a pair that two positive weightings 
 
 @[expose] public section
 
-namespace SocialChoice
+namespace Aggregation
 
-open Finset
+open Finset Function
 
 variable {ι α K : Type*}
 
@@ -51,40 +55,40 @@ variable {ι α K : Type*}
 
 section Majority
 
-variable [Fintype ι] [LinearOrder K]
+variable [Fintype ι] [LinearOrder K] {v : Profile ι α K} {x y : α}
 
 /-- Under majority rule `x ⪰ y` iff at least as many individuals rank `x` weakly above `y` as rank
 `y` weakly above `x`. -/
-def majority : Rule ι α K := fun v x y ↦ #{i | v x i ≤ v y i} ≤ #{i | v y i ≤ v x i}
+def majority : Rule ι α K := fun v ↦ v ⁻¹'o fun p q ↦ #{i | p i ≤ q i} ≤ #{i | q i ≤ p i}
 
-instance (v : Profile ι α K) : DecidableRel (majority v) := fun _ _ ↦ by
-  unfold majority; infer_instance
+@[simp]
+theorem majority_apply : majority v x y ↔ #{i | v x i ≤ v y i} ≤ #{i | v y i ≤ v x i} :=
+  Iff.rfl
+
+instance (v : Profile ι α K) : DecidableRel (majority v) :=
+  Order.Preimage.decidable v _
 
 theorem majority_weakPareto [Nonempty ι] : WeakPareto (majority : Rule ι α K) := by
   intro v x y h
   have h₁ : ({i | v x i ≤ v y i} : Finset ι) = ∅ := filter_false_of_mem fun i _ ↦ (h i).not_ge
   have h₂ : ({i | v y i ≤ v x i} : Finset ι) = univ := filter_true_of_mem fun i _ ↦ (h i).le
-  simp [AsymmRel, majority, h₁, h₂, Fintype.card_ne_zero]
+  simp [AsymmRel, h₁, h₂, Fintype.card_ne_zero]
 
-theorem majority_independent : Independent (majority : Rule ι α K) := by
-  intro v w x y hx hy
-  simp only [majority, hx, hy]
+theorem majority_independent : Independent (majority : Rule ι α K) :=
+  independent_preimage _
 
-theorem majority_ordinalInvariant : Invariant ordinal (majority : Rule ι α K) := by
-  intro f hf v
-  funext x y
-  simp only [majority, Profile.transform, (hf _).le_iff_le]
+theorem majority_paretoIndifferent : ParetoIndifferent (majority : Rule ι α K) :=
+  paretoIndifferent_preimage fun _ ↦ le_rfl
 
-theorem majority_anonymous : Anonymous (majority : Rule ι α K) := by
-  intro σ v
-  funext x y
-  have h : ∀ z w : α, #{i | v z (σ i) ≤ v w (σ i)} = #{i | v z i ≤ v w i} :=
-    fun z w ↦ card_equiv σ (by simp)
-  simp only [majority, Function.comp_apply, h]
+theorem majority_ordinalInvariant : Invariant ordinal (majority : Rule ι α K) :=
+  invariant_preimage fun f hf ↦ funext₂ fun p q ↦ by
+    simp only [Order.Preimage, Pi.map_apply, (mem_ordinal.1 hf _).le_iff_le]
 
-theorem majority_paretoIndifferent : ParetoIndifferent (majority : Rule ι α K) := by
-  intro v x y h
-  simp [AntisymmRel, majority, h]
+theorem majority_anonymous : Anonymous (majority : Rule ι α K) :=
+  anonymous_preimage fun σ ↦ funext₂ fun p q ↦ by
+    have h : ∀ p q : ι → K, #{i | p (σ i) ≤ q (σ i)} = #{i | p i ≤ q i} :=
+      fun p q ↦ card_equiv σ (by simp)
+    simp only [Order.Preimage, comp_apply, h]
 
 theorem majority_nonDictatorial [Nontrivial ι] [Nontrivial α] [Nontrivial K] :
     NonDictatorial (majority : Rule ι α K) := by
@@ -110,7 +114,7 @@ theorem majority_nonDictatorial [Nontrivial ι] [Nontrivial α] [Nontrivial K] :
   have hcard : #(univ.erase i) = #(univ.erase j) := by
     rw [card_erase_of_mem (mem_univ _), card_erase_of_mem (mem_univ _)]
   have := hi v x y hv
-  simp only [AsymmRel, majority, e₁, e₂, hcard, le_refl, not_true, and_false] at this
+  simp only [AsymmRel, majority_apply, e₁, e₂, hcard, le_refl, not_true, and_false] at this
 
 end Majority
 
@@ -118,64 +122,71 @@ end Majority
 
 section Pareto
 
-variable [Preorder K]
+variable [Preorder K] {v : Profile ι α K} {x y : α}
 
-/-- Under the Pareto rule `x ⪰ y` iff every individual ranks `x` weakly above `y`. -/
-def paretoRule : Rule ι α K := fun v x y ↦ v y ≤ v x
+/-- Under the Pareto rule `x ⪰ y` iff every individual ranks `x` weakly above `y`, so that the
+rule ranks objects by the product order on their vectors. -/
+def paretoRule : Rule ι α K := fun v ↦ v ⁻¹'o (· ≥ ·)
+
+@[simp]
+theorem paretoRule_apply : paretoRule v x y ↔ v y ≤ v x :=
+  Iff.rfl
+
+/-- The Pareto rule ranks `x` strictly above `y` iff the vector of `x` lies strictly above that of
+`y`. -/
+@[simp]
+theorem asymmRel_paretoRule_iff : AsymmRel (paretoRule v) x y ↔ v y < v x :=
+  lt_iff_le_not_ge.symm
 
 theorem paretoRule_quasiOrderValued : QuasiOrderValued (paretoRule : Rule ι α K) :=
-  fun _ ↦ { refl := fun _ ↦ le_rfl, trans := fun _ _ _ h h' ↦ h'.trans h }
+  quasiOrderValued_preimage
 
 theorem paretoRule_strongPareto : StrongPareto (paretoRule : Rule ι α K) :=
-  fun _ _ _ h ↦ ⟨h, fun ⟨i, hi⟩ ↦ ⟨h, fun h' ↦ (h' i).not_gt hi⟩⟩
+  fun _ _ _ ↦ ⟨id, asymmRel_paretoRule_iff.2⟩
 
 theorem paretoRule_paretoIndifferent : ParetoIndifferent (paretoRule : Rule ι α K) :=
-  fun _ _ _ h ↦ ⟨h.ge, h.le⟩
+  paretoIndifferent_preimage fun _ ↦ le_rfl
 
-theorem paretoRule_independent : Independent (paretoRule : Rule ι α K) := by
-  intro v w x y hx hy
-  simp only [paretoRule, hx, hy]
+theorem paretoRule_independent : Independent (paretoRule : Rule ι α K) :=
+  independent_preimage _
 
-theorem paretoRule_anonymous : Anonymous (paretoRule : Rule ι α K) := by
-  intro σ v
-  funext x y
-  simp only [paretoRule, Pi.le_def, Function.comp_apply]
-  exact propext ⟨fun h i ↦ by simpa using h (σ.symm i), fun h i ↦ h _⟩
+theorem paretoRule_anonymous : Anonymous (paretoRule : Rule ι α K) :=
+  anonymous_preimage fun σ ↦ funext₂ fun p q ↦ propext
+    ⟨fun h i ↦ by simpa using h (σ.symm i), fun h i ↦ h _⟩
 
-theorem paretoRule_incomparable {v : Profile ι α K} {x y : α} {i j : ι} (hi : v y i < v x i)
-    (hj : v x j < v y j) : ¬ paretoRule v x y ∧ ¬ paretoRule v y x :=
+theorem paretoRule_incomparable {i j : ι} (hi : v y i < v x i) (hj : v x j < v y j) :
+    ¬ paretoRule v x y ∧ ¬ paretoRule v y x :=
   ⟨fun h ↦ (h j).not_gt hj, fun h ↦ (h i).not_gt hi⟩
 
 end Pareto
 
 theorem paretoRule_ordinalInvariant [LinearOrder K] :
-    Invariant ordinal (paretoRule : Rule ι α K) := by
-  intro f hf v
-  funext x y
-  simp only [paretoRule, Profile.transform, Pi.le_def, (hf _).le_iff_le]
+    Invariant ordinal (paretoRule : Rule ι α K) :=
+  invariant_preimage fun f hf ↦ funext₂ fun p q ↦ by
+    simp only [Order.Preimage, ge_iff_le, Pi.le_def, Pi.map_apply, (mem_ordinal.1 hf _).le_iff_le]
 
 /-! ### The utilitarian rule -/
 
 section Utilitarian
 
-variable [Fintype ι] [Field K] [LinearOrder K]
+variable [Fintype ι] [Field K] [LinearOrder K] (c : ι → K) {v : Profile ι α K} {x y : α}
 
-/-- Under the utilitarian rule with weights `c`, `x ⪰ y` iff the weighted sum of values favours `x`.
--/
-def utilitarian (c : ι → K) : Rule ι α K := fun v x y ↦ c ⬝ᵥ v y ≤ c ⬝ᵥ v x
+/-- Under the utilitarian rule with weights `c`, `x ⪰ y` iff the weighted sum of values favours
+`x`: the rule ranks vectors by the linear functional `c ⬝ᵥ ·`. -/
+def utilitarian : Rule ι α K := fun v ↦ v ⁻¹'o ((c ⬝ᵥ ·) ⁻¹'o (· ≥ ·))
 
-variable (c : ι → K)
+@[simp]
+theorem utilitarian_apply : utilitarian c v x y ↔ c ⬝ᵥ v y ≤ c ⬝ᵥ v x :=
+  Iff.rfl
 
 theorem utilitarian_weakOrderValued : WeakOrderValued (utilitarian c : Rule ι α K) :=
-  ⟨fun _ ↦ ⟨fun _ _ _ h h' ↦ h'.trans h⟩, fun _ ↦ ⟨fun _ _ ↦ le_total _ _⟩⟩
+  weakOrderValued_preimage
 
-theorem utilitarian_paretoIndifferent : ParetoIndifferent (utilitarian c : Rule ι α K) := by
-  intro v x y h
-  simp [AntisymmRel, utilitarian, h]
+theorem utilitarian_paretoIndifferent : ParetoIndifferent (utilitarian c : Rule ι α K) :=
+  paretoIndifferent_preimage fun _ ↦ le_rfl
 
-theorem utilitarian_independent : Independent (utilitarian c : Rule ι α K) := by
-  intro v w x y hx hy
-  simp only [utilitarian, hx, hy]
+theorem utilitarian_independent : Independent (utilitarian c : Rule ι α K) :=
+  independent_preimage _
 
 variable [IsStrictOrderedRing K]
 
@@ -190,11 +201,11 @@ theorem utilitarian_weakPareto (hc : ∀ i, 0 ≤ c i) (hpos : ∃ i, 0 < c i) :
 
 theorem utilitarian_cardinalUnitInvariant :
     Invariant cardinalUnit (utilitarian c : Rule ι α K) := by
-  rintro f ⟨s, hs, b, hf⟩ v
-  funext x y
-  have key : ∀ z, (v.transform f) z = s • v z + b := fun z ↦ funext fun i ↦ by
-    simp [Profile.transform, hf]
-  simp only [utilitarian, key, dotProduct_add, dotProduct_smul, smul_eq_mul,
+  refine invariant_preimage ?_
+  rintro f ⟨s, hs, b, hf⟩
+  have key : ∀ p, Pi.map f p = s • p + b := fun p ↦ funext fun i ↦ by simp [hf]
+  funext p q
+  simp only [Order.Preimage, ge_iff_le, key, dotProduct_add, dotProduct_smul, smul_eq_mul,
     add_le_add_iff_right, mul_le_mul_iff_of_pos_left hs]
 
 theorem utilitarian_nonDictatorial [Nontrivial α] (h₂ : ∀ i, ∃ j, j ≠ i ∧ 0 < c j) :
@@ -209,7 +220,7 @@ theorem utilitarian_nonDictatorial [Nontrivial α] (h₂ : ∀ i, ∃ j, j ≠ i
   have hx : c ⬝ᵥ v x = c i * c j := by simp [v]
   have hy : c ⬝ᵥ v y = c j * (c i + c j) := by simp [v, hxy.symm]
   have := (hi v x y hv).1
-  simp only [utilitarian, hx, hy, mul_add, mul_comm (c j) (c i)] at this
+  simp only [utilitarian_apply, hx, hy, mul_add, mul_comm (c j) (c i)] at this
   exact (lt_add_of_pos_right _ (mul_pos hj hj)).not_ge this
 
 theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
@@ -220,8 +231,8 @@ theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j
   let v : Profile ι α K := fun z ↦
     if z = x then Pi.single i (c j) else if z = y then Pi.single j (c i) else 0
   let f : ι → K → K := fun l t ↦ if l = j then 2 * t else t
-  have hf : f ∈ ratio := ⟨fun l ↦ if l = j then 2 else 1,
-    fun l ↦ by dsimp only; split_ifs <;> norm_num, fun l t ↦ by simp only [f]; split_ifs <;> simp⟩
+  have hf : f ∈ ratio := mem_ratio.2 fun l ↦ ⟨if l = j then 2 else 1,
+    by split_ifs <;> norm_num, fun t ↦ by simp only [f]; split_ifs <;> simp⟩
   have hx : (v.transform f) x = Pi.single i (c j) := funext fun l ↦ by
     simp only [Profile.transform, v, f, ite_true, Pi.single_apply]
     split_ifs <;> simp_all
@@ -229,7 +240,7 @@ theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j
     simp only [Profile.transform, v, f, hxy.symm, ite_false, ite_true, Pi.single_apply]
     split_ifs <;> simp_all
   have := congrFun (congrFun (h f hf v) x) y
-  simp only [utilitarian, hx, hy, v, ite_true, hxy.symm, ite_false, dotProduct_single,
+  simp only [utilitarian_apply, hx, hy, v, ite_true, hxy.symm, ite_false, dotProduct_single,
     mul_comm (c j) (c i), eq_iff_iff] at this
   have hpos := mul_pos hi hj
   exact (this.2 le_rfl).not_gt (by linarith)
@@ -238,7 +249,7 @@ theorem not_ordinalInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠
     (hj : 0 < c j) : ¬ Invariant ordinal (utilitarian c : Rule ι α K) :=
   fun h ↦ not_ratioInvariant_utilitarian c hij hi hj (h.mono ratio_subset_ordinal)
 
-variable {v : Profile ι α K} {x y : α}
+omit c
 
 /-- The Pareto rule ranks `x` weakly above `y` iff every utilitarian rule with positive weights
 does. -/
@@ -246,7 +257,7 @@ theorem paretoRule_iff_forall_utilitarian :
     paretoRule v x y ↔ ∀ c : ι → K, (∀ i, 0 < c i) → utilitarian c v x y := by
   refine ⟨fun h c hc ↦ dotProduct_le_dotProduct_of_nonneg_left h fun i ↦ (hc i).le, fun h ↦ ?_⟩
   by_contra hxy
-  obtain ⟨i, hi⟩ : ∃ i, v x i < v y i := by simpa [paretoRule, Pi.le_def] using hxy
+  obtain ⟨i, hi⟩ : ∃ i, v x i < v y i := by simpa [Pi.le_def] using hxy
   classical
   set d := v y - v x
   have hd : 0 < d i := sub_pos.2 hi
@@ -257,7 +268,7 @@ theorem paretoRule_iff_forall_utilitarian :
     · simpa using add_pos one_pos (by positivity : 0 < M)
     · simp [hj]
   have h' := h _ hc
-  rw [utilitarian, ← sub_nonpos, ← dotProduct_sub, add_dotProduct, single_dotProduct] at h'
+  rw [utilitarian_apply, ← sub_nonpos, ← dotProduct_sub, add_dotProduct, single_dotProduct] at h'
   have : M * d i = |1 ⬝ᵥ d| + d i := by simp only [M, add_mul, one_mul, div_mul_cancel₀ _ hd.ne']
   linarith [neg_abs_le (1 ⬝ᵥ d)]
 
@@ -265,7 +276,7 @@ theorem asymmRel_paretoRule_iff_forall_utilitarian :
     AsymmRel (paretoRule v) x y ↔
       ∀ c : ι → K, (∀ i, 0 < c i) → AsymmRel (utilitarian c v) x y := by
   refine ⟨fun ⟨h, h'⟩ c hc ↦ ?_, fun h ↦ ⟨?_, fun h' ↦ ?_⟩⟩
-  · obtain ⟨i, hi⟩ : ∃ i, v y i < v x i := by simpa [paretoRule, Pi.le_def] using h'
+  · obtain ⟨i, hi⟩ : ∃ i, v y i < v x i := by simpa [Pi.le_def] using h'
     have : c ⬝ᵥ v y < c ⬝ᵥ v x :=
       sum_lt_sum (fun j _ ↦ mul_le_mul_of_nonneg_left (h j) (hc j).le)
         ⟨i, mem_univ _, mul_lt_mul_of_pos_left hi (hc i)⟩
@@ -279,23 +290,28 @@ end Utilitarian
 
 section Maximin
 
-variable [Fintype ι] [Nonempty ι] [LinearOrder K]
+variable [Fintype ι] [Nonempty ι] [LinearOrder K] {v : Profile ι α K} {x y : α}
 
 /-- Under the maximin rule, `x ⪰ y` iff the lowest value of `x` is at least the lowest value of
 `y`. -/
-def maximin : Rule ι α K := fun v x y ↦
-  univ.inf' univ_nonempty (v y) ≤ univ.inf' univ_nonempty (v x)
+def maximin : Rule ι α K := fun v ↦ v ⁻¹'o ((univ.inf' univ_nonempty ·) ⁻¹'o (· ≥ ·))
+
+@[simp]
+theorem maximin_apply :
+    maximin v x y ↔ univ.inf' univ_nonempty (v y) ≤ univ.inf' univ_nonempty (v x) :=
+  Iff.rfl
 
 /-- The maximin rule needs only ordinal level comparability, since a common strictly increasing
 map moves every lowest value alike. -/
 theorem maximin_ordinalLevelInvariant : Invariant ordinalLevel (maximin : Rule ι α K) := by
-  rintro f ⟨u, hu, hf⟩ v
-  have key : ∀ z, univ.inf' univ_nonempty ((v.transform f) z) = u (univ.inf' univ_nonempty (v z)) :=
-    fun z ↦ by
-      rw [apply_inf'_eq_inf'_comp univ_nonempty u fun a b ↦ hu.monotone.map_min]
-      simp [Profile.transform, hf]
-  funext x y
-  simp only [maximin, key, hu.le_iff_le]
+  refine invariant_preimage ?_
+  rintro _ ⟨u, hu : StrictMono u, rfl⟩
+  have key (p : ι → K) :
+      univ.inf' univ_nonempty (Pi.map (const ι u) p) = u (univ.inf' univ_nonempty p) := by
+    rw [apply_inf'_eq_inf'_comp univ_nonempty u fun a b ↦ hu.monotone.map_min]
+    rfl
+  funext p q
+  simp only [Order.Preimage, ge_iff_le, key, hu.le_iff_le]
 
 end Maximin
 
@@ -303,31 +319,33 @@ end Maximin
 
 section CobbDouglas
 
-variable [Fintype ι] (c : ι → ℝ)
+variable [Fintype ι] (c : ι → ℝ) {v : Profile ι α ℝ} {x y : α}
 
 /-- Under the Cobb–Douglas rule with exponents `c`, `x ⪰ y` iff the weighted geometric product of
 values favours `x`. -/
-def cobbDouglas : Rule ι α ℝ := fun v x y ↦ ∏ i, v y i ^ c i ≤ ∏ i, v x i ^ c i
+def cobbDouglas : Rule ι α ℝ := fun v ↦ v ⁻¹'o ((fun p ↦ ∏ i, p i ^ c i) ⁻¹'o (· ≥ ·))
+
+@[simp]
+theorem cobbDouglas_apply : cobbDouglas c v x y ↔ ∏ i, v y i ^ c i ≤ ∏ i, v x i ^ c i :=
+  Iff.rfl
 
 theorem cobbDouglas_weakOrderValued : WeakOrderValued (cobbDouglas c : Rule ι α ℝ) :=
-  ⟨fun _ ↦ ⟨fun _ _ _ h h' ↦ h'.trans h⟩, fun _ ↦ ⟨fun _ _ ↦ le_total _ _⟩⟩
+  weakOrderValued_preimage
 
-theorem cobbDouglas_paretoIndifferent : ParetoIndifferent (cobbDouglas c : Rule ι α ℝ) := by
-  intro v x y h
-  simp [AntisymmRel, cobbDouglas, h]
+theorem cobbDouglas_paretoIndifferent : ParetoIndifferent (cobbDouglas c : Rule ι α ℝ) :=
+  paretoIndifferent_preimage fun _ ↦ le_rfl
 
-theorem cobbDouglas_independent : Independent (cobbDouglas c : Rule ι α ℝ) := by
-  intro v w x y hx hy
-  simp only [cobbDouglas, hx, hy]
+theorem cobbDouglas_independent : Independent (cobbDouglas c : Rule ι α ℝ) :=
+  independent_preimage _
 
-theorem cobbDouglas_transform_of_nonneg {f : ι → ℝ → ℝ} (hf : f ∈ ratio) {v : Profile ι α ℝ}
+theorem cobbDouglas_transform_of_nonneg {f : ι → ℝ → ℝ} (hf : f ∈ ratio)
     (hv : ∀ x i, 0 ≤ v x i) : cobbDouglas c (v.transform f) = cobbDouglas c v := by
-  obtain ⟨s, hs, hf⟩ := hf
+  choose s hs hf using mem_ratio.1 hf
   funext x y
-  simp only [cobbDouglas, Profile.transform, hf, Real.mul_rpow (hs _).le (hv _ _),
+  simp only [cobbDouglas_apply, Profile.transform, hf, Real.mul_rpow (hs _).le (hv _ _),
     prod_mul_distrib]
   exact propext (mul_le_mul_iff_of_pos_left (prod_pos fun i _ ↦ Real.rpow_pos_of_pos (hs i) _))
 
 end CobbDouglas
 
-end SocialChoice
+end Aggregation

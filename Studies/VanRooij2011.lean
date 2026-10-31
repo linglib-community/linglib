@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.SocialChoice.Rules
+public import Linglib.Semantics.Aggregation.Rules
 public import Linglib.Semantics.Degree.MeasurePhrase
 public import Linglib.Semantics.Degree.UniversalScale
 
@@ -19,8 +19,8 @@ across adjectives meaningful from merely ordinal measures, which van Rooij count
 
 ## Implementation notes
 
-* A measure on individual–adjective pairs is a profile of `SocialChoice` with adjectives as its
-  individuals, following the paper's analogy with interpersonal comparisons of utility. The
+* A measure on individual–adjective pairs is a `Aggregation.Profile` with adjectives as
+  its individuals, following the paper's analogy with interpersonal comparisons of utility. The
   co-ordinal, co-interval and co-ratio scales are Sen's comparability classes `ordinalLevel`,
   `cardinalFull` and `ratioFull`, and separate scales per adjective are `ordinal`.
 * Measures are real-valued, as in the paper; universal degrees are rational.
@@ -42,7 +42,7 @@ across adjectives meaningful from merely ordinal measures, which van Rooij count
 
 namespace VanRooij2011
 
-open Degree SocialChoice Finset
+open Degree Aggregation Finset
 
 variable {X Ad K : Type*}
 
@@ -77,9 +77,8 @@ variable (x y z w : X) (P Q : Ad)
 
 /-- Comparing across adjectives needs only a co-ordinal scale. -/
 theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) := by
-  rintro f ⟨u, hu, hf⟩ v
-  have : pairs (v.transform f) = u ∘ pairs v := funext fun p ↦ by
-    rw [pairs_transform, hf]; rfl
+  rintro _ ⟨u, hu : StrictMono u, rfl⟩ v
+  have : pairs (v.transform (Function.const Ad u)) = u ∘ pairs v := funext fun _ ↦ rfl
   simp only [comparative, this]
   exact propext hu.lt_iff_lt
 
@@ -90,7 +89,7 @@ theorem not_comparative_ordinal [DecidableEq Ad] (hPQ : P ≠ Q) :
   intro h
   let v : Profile Ad X ℝ := fun _ i ↦ if i = P then 1 else 0
   let f : Ad → ℝ → ℝ := fun i t ↦ if i = Q then t + 2 else t
-  have hf : f ∈ (ordinal : Set (Ad → ℝ → ℝ)) := fun i a b hab ↦ by
+  have hf : f ∈ (ordinal : Set (Ad → ℝ → ℝ)) := mem_ordinal.2 fun i a b hab ↦ by
     by_cases hi : i = Q <;> simp [f, hi, hab]
   have h₁ : comparative x P y Q v := by
     simp [comparative, pairs, v, hPQ.symm]
@@ -110,9 +109,8 @@ theorem differential_cardinalFull {f : Ad → ℝ → ℝ} {a b : ℝ} (ha : 0 <
 
 /-- A factor across adjectives holds up to a common change of unit. -/
 theorem factor_ratioFull (n : ℝ) : Invariant ratioFull (factor x P y Q n) := by
-  rintro f ⟨a, ha, hf⟩ v
-  have : pairs (v.transform f) = fun p ↦ a * pairs v p := funext fun p ↦ by
-    rw [pairs_transform, hf]
+  rintro _ ⟨u, ⟨a, ha, hu⟩, rfl⟩ v
+  have : pairs (v.transform (Function.const Ad u)) = fun p ↦ a * pairs v p := funext fun _ ↦ hu _
   simp only [factor, this]
   exact propext (factorEquative_const_mul _ ha.ne' _ _ n)
 
@@ -123,7 +121,7 @@ theorem not_factor_cardinalFull [DecidableEq X] [DecidableEq Ad] (hne : (x, P) �
   have hyQ : ¬ (y = x ∧ Q = P) := fun ⟨h₁, h₂⟩ ↦ hne (by rw [h₁, h₂])
   let v : Profile Ad X ℝ := fun z i ↦ if z = x ∧ i = P then 2 else 1
   let f : Ad → ℝ → ℝ := fun _ t ↦ 1 * t + 1
-  have hf : f ∈ (cardinalFull : Set (Ad → ℝ → ℝ)) := ⟨1, one_pos, 1, fun _ _ ↦ rfl⟩
+  have hf : f ∈ (cardinalFull : Set (Ad → ℝ → ℝ)) := ⟨_, ⟨1, one_pos, 1, fun _ ↦ rfl⟩, rfl⟩
   have h₁ : factor x P y Q 2 v := by
     simp [factor, FactorEquative, pairs, v, hyQ]
   have h₂ : ¬ factor x P y Q 2 (v.transform f) := by
@@ -153,7 +151,8 @@ noncomputable def universal (v : Profile Ad X ℝ) (C : Finset X) : Profile Ad X
 
 theorem universal_transform {f : Ad → ℝ → ℝ} (hf : f ∈ (ordinal : Set (Ad → ℝ → ℝ)))
     (v : Profile Ad X ℝ) (C : Finset X) : universal (v.transform f) C = universal v C :=
-  funext₂ fun x P ↦ congrFun (universalDegree_comp (OrderEmbedding.ofStrictMono (f P) (hf P))
+  funext₂ fun x P ↦ congrFun (universalDegree_comp
+    (OrderEmbedding.ofStrictMono (f P) (mem_ordinal.1 hf P))
     (v · P) C) x
 
 /-- Read through universal degrees, *x is n times as P as y is Q* survives a separate strictly
@@ -195,9 +194,9 @@ theorem not_utilitarian_ordinalLevel :
   intro h
   let v : Profile (Fin 2) (Fin 2) ℚ := ![![0, 3], ![2, 2]]
   have hf : (fun _ t ↦ t ^ 3 : Fin 2 → ℚ → ℚ) ∈ (ordinalLevel : Set (Fin 2 → ℚ → ℚ)) :=
-    ⟨(· ^ 3), Odd.strictMono_pow (by decide), fun _ ↦ rfl⟩
+    ⟨(· ^ 3), Odd.strictMono_pow (by decide), rfl⟩
   have := congrFun₂ (h _ hf v) 0 1
-  simp [utilitarian, Profile.transform, v, dotProduct, Fin.sum_univ_two] at this
+  simp [Profile.transform, v, dotProduct, Fin.sum_univ_two] at this
   norm_num at this
 
 end VanRooij2011

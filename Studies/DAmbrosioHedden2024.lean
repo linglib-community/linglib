@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Degree.Adjective
-public import Linglib.Core.SocialChoice.Arrow
-public import Linglib.Core.SocialChoice.Rules
+public import Linglib.Semantics.Aggregation.Arrow
+public import Linglib.Semantics.Aggregation.Rules
 public import Studies.Kamp1975
 public import Mathlib.Tactic.DeriveFintype
 
@@ -27,7 +27,7 @@ Sassoon's quantificational comparatives are the Pareto rule for conjunctive adje
 violating strong Pareto for disjunctive ones, and a rule violating weak Pareto for
 dimension-counting ones.
 
-The framework is stated over the social welfare functionals of `SocialChoice`, with the
+The framework is stated over the social welfare functionals of `Aggregation`, with the
 dimensions as its individuals and the objects as its alternatives. This file states the sorites
 on Suzy's cardiovascular health under utilitarian weightings and the three verdicts on Sassoon's
 comparatives.
@@ -52,7 +52,7 @@ comparatives.
 
 namespace DAmbrosioHedden2024
 
-open SocialChoice Finset
+open Aggregation Finset
 
 variable {ι O K : Type*}
 
@@ -169,13 +169,13 @@ theorem health_utilitarian_iff (hw : 0 < w .cardiovascular) :
     utilitarian w (health mS mB cB t) .suzy .bill ↔
       cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t := by
   rw [← mul_le_mul_iff_of_pos_right hw, add_mul, div_mul_eq_mul_div, div_mul_cancel₀ _ hw.ne']
-  simp only [utilitarian, dotProduct, sum_health, health]
+  simp only [utilitarian_apply, dotProduct, sum_health, health]
   constructor <;> intro h <;> linarith
 
 theorem health_mono (hw : 0 ≤ w .cardiovascular) (h : t ≤ t') :
     utilitarian w (health mS mB cB t) .suzy .bill →
       utilitarian w (health mS mB cB t') .suzy .bill := by
-  simp only [utilitarian, dotProduct, sum_health, health]
+  simp only [utilitarian_apply, dotProduct, sum_health, health]
   intro h'
   linarith [mul_le_mul_of_nonneg_left h hw]
 
@@ -229,7 +229,7 @@ def Arrovian [Preorder K] (a : Rule ι O K) : Prop :=
 
 theorem arrow [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O) (a : Rule ι O ℝ) :
     ¬ Arrovian a :=
-  SocialChoice.arrow h₃ a
+  Aggregation.arrow h₃ a
 
 theorem Context.incoherent_of_arrovian [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O)
     (c : Context ι O ℝ) (h : c.Determinately Arrovian) : c.Incoherent :=
@@ -283,7 +283,7 @@ theorem not_strongPareto_sassoon_disjunctive [Nontrivial ι] [Nontrivial O] [Non
     split_ifs <;> simp [hk.le]
   have hlt : ∃ l, v x l < v y l := ⟨j, by simp [v, hxy, hij.symm, hk]⟩
   have hxy' : sassoon θ .disjunctive v x y := ⟨i, by simp [v, hxy]⟩
-  exact ((h v y x hle).2 hlt).2 hxy'
+  exact ((h v y x).2 (Pi.lt_def.2 ⟨hle, hlt⟩)).2 hxy'
 
 theorem not_weakPareto_sassoon_mixed [Nonempty ι] [Nontrivial O] [NoMaxOrder K] :
     ¬ WeakPareto (sassoon θ .mixed : Rule ι O K) := by

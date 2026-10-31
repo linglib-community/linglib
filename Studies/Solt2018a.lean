@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.SocialChoice.Rules
+public import Linglib.Semantics.Aggregation.Rules
 public import Mathlib.Algebra.Order.Archimedean.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Order.Comparable
@@ -67,7 +67,7 @@ matters of opinion, and the rest mixed.
 
 namespace Solt2018a
 
-open SocialChoice Matrix
+open Aggregation Matrix
 
 variable {C E K : Type*}
 
@@ -270,7 +270,7 @@ theorem settled_dirty_iff :
     Settled (dirty amount size) a b ↔ (size b)⁻¹ • amount b < (size a)⁻¹ • amount a := by
   have := asymmRel_paretoRule_iff_forall_utilitarian
     (v := fun x ↦ (size x)⁻¹ • amount x) (x := a) (y := b)
-  simp only [AsymmRel, paretoRule, utilitarian, ← lt_iff_le_not_ge] at this
+  simp only [AsymmRel, paretoRule_apply, utilitarian_apply, ← lt_iff_le_not_ge] at this
   simp only [Settled, dirty_eq, Subtype.forall, this]
 
 end Multidimensional
