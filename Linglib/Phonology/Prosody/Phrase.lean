@@ -10,24 +10,30 @@ public import Linglib.Phonology.Prosody.Word
 /-!
 # Phrase-level prosodic structure
 
-The φ and ι layers sit above the prosodic word. A well-formed phrase is a φ-node licensed by
-Layeredness, so a φ over prosodic words, recursive phrases, or stray feet and syllables, the
-free-clitic site of Selkirk (1996); a well-formed utterance is an ι-node over phrases and
-whatever Layeredness admits below them. Recursion and level skipping are admitted at both
-levels, since Nonrecursivity and Exhaustivity are violable (Selkirk 1996; the recursive φ of
-Match Theory, Selkirk 2011). `HeadUnique` is the culminativity of prominence, at most one head
-child per node, the structural hook that Büring's (2015) metrical weak–strong calculus reads
-(Büring 2016). The φ-constituents of an utterance are its maximal φ-projections
-(`maximalProjections`); φ-edges are what demarcative focus reflexes (`Reflex.boundary`)
-realize.
+The phonological phrase φ and the intonational phrase ι are the levels of the prosodic
+hierarchy above the prosodic word. A well-formed phrase (`IsPhrase`) is a tree rooted in a
+φ-node and licensed by Layeredness, so that a φ dominates prosodic words, recursive phrases, or
+stray feet and syllables, the last being the position of the free clitic in [selkirk-1996]; a
+well-formed utterance (`IsUtterance`) is a tree rooted in an ι-node and licensed in the same
+way. Recursion and level skipping are admitted at both levels, since Nonrecursivity and
+Exhaustivity are violable constraints in [selkirk-1996] rather than conditions on the carrier,
+and the Match Theory of [selkirk-2011] maps syntactic phrases to recursive φ-structures.
+Prominence is culminative at a node (`HeadUnique`) when at most one of its children heads it,
+the configuration of one metrically strong daughter beside weak sisters that [buring-2015]
+annotates on phrase markers and that the metrical trees of [buring-2016] carry as a weak–strong
+relation on sisters.
+
+## Main definitions
+
+* `IsPhrase`, `IsUtterance`: well-formed phonological phrases and intonational phrases.
+* `HeadUnique`: at most one child of a node heads it.
 
 ## References
 
-* [selkirk-1996]
-* [selkirk-2011]
-* [ishihara-kalivoda-2022]
-* [buring-2015]
-* [buring-2016]
+* [E. Selkirk, *The Prosodic Structure of Function Words* (1996)][selkirk-1996]
+* [E. Selkirk, *The Syntax-Phonology Interface* (2011)][selkirk-2011]
+* [D. Büring, *Unalternative Semantics* (2015)][buring-2015]
+* [D. Büring, *Intonation and Meaning* (2016)][buring-2016]
 -/
 
 @[expose] public section
@@ -41,7 +47,7 @@ abbrev IsPhrase : Tree → Prop := IsConstituent .ph
 /-- A well-formed intonational phrase, or utterance, is a licensed tree rooted in an ι-node. -/
 abbrev IsUtterance : Tree → Prop := IsConstituent .iota
 
-/-- Prominence is culminative when at most one child heads its parent. -/
+/-- Prominence is *culminative* at a node when at most one of its children heads it. -/
 def HeadUnique (t : Tree) : Prop :=
   (t.children.filter (fun c => c.value.isHead)).length ≤ 1
 
