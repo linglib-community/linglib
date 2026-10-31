@@ -1,0 +1,301 @@
+[
+  {
+    "id": "buccolacrnic2021_ex2a",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(2a)"},
+    "language": "stan1293",
+    "primaryText": "I doubt that Mary and any boy have blue eyes",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "distributive"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex2b",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(2b)"},
+    "language": "stan1293",
+    "primaryText": "John didn't drink any whisky and the soda",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "distributive"],
+      ["number", "mass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex4a",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(4a)"},
+    "language": "stan1293",
+    "primaryText": "I doubt that Mary or any boy has blue eyes",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "or"],
+      ["predicate", "distributive"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex4b",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "John didn't drink any whisky or the soda",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "or"],
+      ["predicate", "distributive"],
+      ["number", "mass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex7a",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(7a)"},
+    "language": "stan1293",
+    "primaryText": "I don't think that Mary and any boy here have ever laughed at my jokes",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "distributive"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex7b",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(7b)"},
+    "language": "stan1293",
+    "primaryText": "I don't think that Mary and any boy here have ever collaborated",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "collective"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex8a",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(8a)"},
+    "language": "stan1293",
+    "primaryText": "John didn't drink the soda and any whisky",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "distributive"],
+      ["number", "mass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex8b",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(8b)"},
+    "language": "stan1293",
+    "primaryText": "John didn't mix the soda and any whisky",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "collective"],
+      ["number", "mass"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex10a",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "I don't think that Mary and any boy here have ever laughed at each other's jokes",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "collective"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex10b",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "The zookeeper didn't put any monkey and the lion into the same cage",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "collective"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex10c",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(10c)"},
+    "language": "stan1293",
+    "primaryText": "John denies that Mary and any student of hers have ever written a paper together",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "collective"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex26",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(26)"},
+    "language": "stan1293",
+    "primaryText": "I don't think that the girls and any boys have blue eyes",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "distributive"],
+      ["number", "plural"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex29",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(29)"},
+    "language": "stan1293",
+    "primaryText": "I don't think that the girls and any boys have ever written a paper together",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["coordination", "and"],
+      ["predicate", "collective"],
+      ["number", "plural"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex32a",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(32a)"},
+    "language": "stan1293",
+    "primaryText": "I don't have one colleague who has read any paper of mine",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["numeral", "one"],
+      ["predicate", "distributive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex32b",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(32b)"},
+    "language": "stan1293",
+    "primaryText": "I don't have four colleagues who have read any paper of mine",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["numeral", "four"],
+      ["predicate", "distributive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex32c",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(32c)"},
+    "language": "stan1293",
+    "primaryText": "I don't have four colleagues who have written any paper together",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "paperFeatures": [
+      ["numeral", "four"],
+      ["predicate", "collective"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex37a",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(37a)"},
+    "language": "stan1293",
+    "primaryText": "Not all students did any homework",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["quantifier", "all"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "buccolacrnic2021_ex37b",
+    "source": {"bibkey": "buccola-crnic-2021", "paperLabel": "(37b)"},
+    "language": "stan1293",
+    "primaryText": "Mary doesn't always read any books",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "paperFeatures": [
+      ["quantifier", "always"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
