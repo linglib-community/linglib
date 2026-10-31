@@ -70,39 +70,39 @@ variable [DecidableEq L] [DecidableEq V]
 
 instance : DecidableRel s.Shares := fun _ _ ↦ decidable_of_iff _ Setoid.ker_def.symm
 
-/-- Agree, feature sharing version (5): the unvalued feature at `α` is replaced, at every one of
-its instances, by the feature at `β`. -/
-def agree (α β : L) : Option (State L V) :=
+/-- The copying of Agree in its feature-sharing version (5): the unvalued feature at `α` is
+replaced, at every one of its instances, by the feature at `β`. -/
+def share (α β : L) : Option (State L V) :=
   if s.valueAt α = ⊥ then
     some ⟨fun x ↦ if s.feature x = s.feature α then s.feature β else s.feature x, s.value⟩
   else none
 
-/-- Agree, assignment version (2): the unvalued feature at `α` takes the value of the feature at
-`β`, and no link between them remains. -/
+/-- The copying of Agree in its assignment version (2): the unvalued feature at `α` takes the value
+of the feature at `β`, and no link between them remains. -/
 def assign (α β : L) : Option (State L V) :=
   if s.valueAt α = ⊥ then some ⟨s.feature, Function.update s.value (s.feature α) (s.valueAt β)⟩
   else none
 
 variable {s} {α β : L} {s' : State L V}
 
-theorem shares_of_agree (h : s.agree α β = some s') : s'.Shares α β := by
-  unfold agree at h
+theorem shares_of_share (h : s.share α β = some s') : s'.Shares α β := by
+  unfold share at h
   split at h
   · cases h; simp [Setoid.ker_def]
   · cases h
 
-theorem Shares.agree {x y : L} (hxy : s.Shares x y) (h : s.agree α β = some s') :
+theorem Shares.share {x y : L} (hxy : s.Shares x y) (h : s.share α β = some s') :
     s'.Shares x y := by
-  unfold State.agree at h
+  unfold State.share at h
   split at h
   · cases h
     simp only [Setoid.ker_def] at hxy ⊢
     simp [hxy]
   · cases h
 
-theorem valueAt_agree {x : L} (hx : s.Shares x α) (h : s.agree α β = some s') :
+theorem valueAt_share {x : L} (hx : s.Shares x α) (h : s.share α β = some s') :
     s'.valueAt x = s.valueAt β := by
-  unfold agree at h
+  unfold share at h
   split at h
   · cases h
     simp only [Setoid.ker_def] at hx
@@ -144,7 +144,7 @@ def three : State Three Tense := .lexical fun | .α => ⊥ | .β => ⊥ | .γ =>
 
 -- (7), (8)
 theorem ex7_8 :
-    ((three.agree .α .β).bind (·.agree .β .γ)).map (·.valueAt .α) = some ↑Tense.past ∧
+    ((three.share .α .β).bind (·.share .β .γ)).map (·.valueAt .α) = some ↑Tense.past ∧
       ((three.assign .α .β).bind (·.assign .β .γ)).map (·.valueAt .α) = some ⊥ := by
   decide
 
@@ -169,13 +169,13 @@ def finite : State Finite Tense := .lexical fun | .verb => ↑Tense.past | _ => 
 /-- (17): T on Tns probes the subject, valuing nothing, and then the finite verb, which values T
 on Tns and the subject's case at once. -/
 def finiteClause : Option (State Finite Tense) :=
-  (finite.agree .tns .subject).bind (·.agree .tns .verb)
+  (finite.share .tns .subject).bind (·.share .tns .verb)
 
 -- (10), (3)
 theorem ex10 : ¬ Biconditional Finite.Interp finite.value := by decide
 
 -- (17)
-theorem ex17 : (finite.agree .tns .subject).map (·.valueAt .subject) = some ⊥ ∧
+theorem ex17 : (finite.share .tns .subject).map (·.valueAt .subject) = some ⊥ ∧
     finiteClause.map (·.valueAt .subject) = some ↑Tense.past ∧
     (∀ s ∈ finiteClause, RadicallyInterpretable Finite.Interp s) ∧
     ¬ RadicallyInterpretable Finite.Interp finite := by
@@ -202,11 +202,11 @@ def raising : State Raising Tense := .lexical fun | .verb => ↑Tense.past | _ =
 
 /-- (18): infinitival Tns probes the subject and then the infinitival verb, valuing nothing. -/
 def infinitive : Option (State Raising Tense) :=
-  (raising.agree .infTns .subject).bind (·.agree .infTns .infVerb)
+  (raising.share .infTns .subject).bind (·.share .infTns .infVerb)
 
 /-- (16): the subject raises, and finite Tns probes it and then the finite verb. -/
 def raised : Option (State Raising Tense) :=
-  infinitive.bind (·.agree .tns .subject) |>.bind (·.agree .tns .verb)
+  infinitive.bind (·.share .tns .subject) |>.bind (·.share .tns .verb)
 
 -- (16), (18)
 theorem ex16_ex18 : infinitive.map (·.valueAt .subject) = some ⊥ ∧

@@ -19,9 +19,11 @@ Agree with a goal that has no value at the dimension leaves the probe unchanged,
 without causing a crash ([preminger-2014]). The goal a probe agrees with is found by search
 (`Minimalist.LinearizedSyntacticObject.goals`).
 
-The items of a derivation carry their bundles in a `FeatureState`. Agree between a probe and a goal
-at a dimension values each with the value of the other there, so a valued probe, such as a case
-assigner, values an unvalued goal. A goal matches a probe when it bears the dimension, since
+The items of a derivation carry their bundles in a `FeatureState`, and Agree over it is the one Agree
+of `Probe/Agree.lean`, `Probe.agree`, with the probe of an item at a dimension and valuation as its
+copying. Valuation values the probe and the goal each with the value of the other at the dimension,
+so a valued probe, such as a case assigner, values an unvalued goal. A goal matches a probe when it
+bears the dimension, since
 matching is identity of the dimension and not of the value ([chomsky-2000]). The probe of an item
 at a dimension is satisfied by the goals that match it and interacts with those that are also
 active. A matching goal that is not active therefore halts the search without valuing: Chomsky's
@@ -33,11 +35,12 @@ and [a slot valued before Agree keeps its value](##Minimalist.FeatureState.apply
 
 * `Minimalist.FeatureSlot.valueWith`: a slot valued with `v`.
 * `Minimalist.FeatureBundle.valueAt`: a bundle valued with `v` at a dimension.
-* `Minimalist.FeatureBundle.applyAgree`: a probe valued from a goal.
+* `Minimalist.FeatureBundle.valueFrom`: a bundle valued from another at a dimension.
 * `Minimalist.FeatureState`: the feature bundles of the items of a derivation.
 * `Minimalist.FeatureState.Matches`: a goal matches a probe at a dimension.
 * `Minimalist.FeatureState.probe`: the probe of an item at a dimension.
-* `Minimalist.FeatureState.agree`: Agree between two items at a dimension.
+* `Minimalist.FeatureState.value`: two items valued from each other at a dimension, the copying
+  of Agree.
 
 ## References
 
@@ -156,35 +159,35 @@ theorem map_agreement_valueAt {d : Agreement.Dimension} {v : d.Value} {b : Featu
 
 variable (t)
 
-/-- The probe after Agree with the goal at `t`: valued with the value of the goal at `t`, or
-unchanged if the goal has no value there. -/
-def applyAgree : WithTop FeatureBundle :=
+/-- The bundle `probe` valued from `goal` at `t`: valued with the value of `goal` at `t`, or
+unchanged if `goal` has no value there. -/
+def valueFrom : WithTop FeatureBundle :=
   match goal t with
   | .valued v => probe.valueAt t v
   | _ => probe
 
-@[simp] theorem applyAgree_bot : probe.applyAgree ⊥ t = probe := rfl
+@[simp] theorem valueFrom_bot : probe.valueFrom ⊥ t = probe := rfl
 
 variable {probe goal t}
 
-theorem applyAgree_of_forall_ne_valued (h : ∀ v, goal t ≠ .valued v) :
-    probe.applyAgree goal t = probe := by
-  unfold applyAgree
+theorem valueFrom_of_forall_ne_valued (h : ∀ v, goal t ≠ .valued v) :
+    probe.valueFrom goal t = probe := by
+  unfold valueFrom
   split
   · exact absurd ‹_› (h _)
   · rfl
 
-theorem le_of_applyAgree_eq_coe {probe' : FeatureBundle}
-    (h : probe.applyAgree goal t = ↑probe') : probe ≤ probe' := by
-  unfold applyAgree at h
+theorem le_of_valueFrom_eq_coe {probe' : FeatureBundle}
+    (h : probe.valueFrom goal t = ↑probe') : probe ≤ probe' := by
+  unfold valueFrom at h
   split at h
   · exact le_of_valueAt_eq_coe h
   · exact (WithTop.coe_inj.1 h).le
 
-theorem le_untopD_applyAgree : probe ≤ (probe.applyAgree goal t).untopD probe := by
-  cases h : probe.applyAgree goal t with
+theorem le_untopD_valueFrom : probe ≤ (probe.valueFrom goal t).untopD probe := by
+  cases h : probe.valueFrom goal t with
   | top => exact le_rfl
-  | coe b => exact le_of_applyAgree_eq_coe h
+  | coe b => exact le_of_valueFrom_eq_coe h
 
 end FeatureBundle
 
@@ -218,23 +221,23 @@ section Agree
 
 variable [DecidableEq H]
 
-/-- Agree between `α` and `g` at `t`, in which each is valued with the value of the other at `t`.
-A bundle whose value differs from the other's is unchanged. -/
-def agree (g : H) : FeatureState H :=
-  Function.update (Function.update s α (((s α).applyAgree (s g) t).untopD (s α))) g
-    (((s g).applyAgree (s α) t).untopD (s g))
+/-- The valuation of `α` and `g` at `t`, the copying of Agree between them: each is valued with the
+value of the other at `t`, and a bundle whose value differs from the other's is unchanged. -/
+def value (g : H) : FeatureState H :=
+  Function.update (Function.update s α (((s α).valueFrom (s g) t).untopD (s α))) g
+    (((s g).valueFrom (s α) t).untopD (s g))
 
-theorem le_agree (g : H) : s ≤ s.agree α t g := by
+theorem le_value (g : H) : s ≤ s.value α t g := by
   intro h
   rcases eq_or_ne h g with rfl | hg
-  · simpa [agree] using FeatureBundle.le_untopD_applyAgree
+  · simpa [value] using FeatureBundle.le_untopD_valueFrom
   · rcases eq_or_ne h α with rfl | hα
-    · simpa [agree, hg] using FeatureBundle.le_untopD_applyAgree
-    · simp [agree, hg, hα]
+    · simpa [value, hg] using FeatureBundle.le_untopD_valueFrom
+    · simp [value, hg, hα]
 
 theorem le_agree_state (active : H → Prop) [DecidablePred active] (goals : List H) :
-    s ≤ ((s.probe α t active).agree (fun g s ↦ s.agree α t g) s goals).state :=
-  Probe.le_agree_state fun g s ↦ s.le_agree α t g
+    s ≤ ((s.probe α t active).agree (fun g s ↦ s.value α t g) s goals).state :=
+  Probe.le_agree_state fun g s ↦ s.le_value α t g
 
 end Agree
 

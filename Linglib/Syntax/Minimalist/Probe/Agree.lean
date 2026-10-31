@@ -28,6 +28,14 @@ For a fixed probe, a search that meets no interacting goal leaves the state unch
 fails without penalty as Preminger argues; the single goal of `Probe.goal` is the case in which
 every interacting goal satisfies the probe; and Multiple Agree is the case of an insatiable probe.
 
+This is the one Agree of the library. A theory of Agree supplies a probe, which fixes what the
+search finds, and a copying operation, which fixes what Agree does to the state: valuation of
+feature bundles (`Minimalist.FeatureState.value`), the value of a case
+(`Minimalist.agreeValue`), or the features a probe accumulates (`Probe.Spec.agree`). When the
+state is the list of goals itself, Agree replaces each entry it interacts with (`Probe.agreeList`).
+When copying joins the state with what each goal contributes, the order of the goals does not
+matter: [Agree joins the initial state with the contributions of the goals it flags](##Minimalist.Probe.agree_sup_state).
+
 ## Main definitions
 
 * `Minimalist.Probe.Result`: the state Agree leaves, the goals flagged as interacting, and the
@@ -36,6 +44,7 @@ every interacting goal satisfies the probe; and Multiple Agree is the case of an
   its Agree operation.
 * `Minimalist.Probe.agree`: Agree for a fixed probe and a copying operation.
 * `Minimalist.Probe.inspected`: the goals up to and including the first satisfier.
+* `Minimalist.Probe.agreeList`: Agree over the entries of a list that is itself the state.
 * `Minimalist.Probe.Spec`: interaction and satisfaction conditions, each a finite set of feature
   bundles presenting the upper set of bundles containing one of them.
 * `Minimalist.Probe.Spec.ofFeatures`: the conditions met by bearing any one of some features.
@@ -237,6 +246,44 @@ theorem insatiable_agree_interacted (f : α → Prop) [DecidablePred f] :
     search_eq_none_iff.mpr (by simp [insatiable])]
   simp [insatiable]
 
+/-- When copying joins the state with what each goal contributes, Agree joins the initial state
+with the contributions of the goals it flags. -/
+theorem agree_sup_state [SemilatticeSup σ] [OrderBot σ] [DecidableEq α] (δ : α → σ) :
+    (p.agree (fun a s ↦ s ⊔ δ a) s goals).state =
+      s ⊔ ((p.inspected goals).filter (p.int ·)).toFinset.sup δ := by
+  rw [agree_state, agree_interacted]
+  generalize (p.inspected goals).filter (p.int ·) = l
+  induction l generalizing s with
+  | nil => simp
+  | cons a l ih => simp [ih, Finset.sup_insert, sup_assoc]
+
+/-! ### Agree over a list of goals -/
+
+/-- Agree when the state is the list of goals itself: each interacting entry is replaced with `f`
+of it. -/
+def agreeList (p : Probe α) (f : α → α) (l : List α) : List α :=
+  ((p.comap Prod.fst).agree (fun e t ↦ t.set e.2 (f e.1)) l l.zipIdx).state
+
+variable {f : α → α}
+
+private theorem agree_set_zipIdx_succ (q : α) (t l : List α) (n : ℕ) :
+    ((p.comap Prod.fst).agree (fun e t ↦ t.set e.2 (f e.1)) (q :: t) (l.zipIdx (n + 1))).state =
+      q :: ((p.comap Prod.fst).agree (fun e t ↦ t.set e.2 (f e.1)) t (l.zipIdx n)).state := by
+  induction l generalizing n t with
+  | nil => rfl
+  | cons a l ih =>
+    rw [List.zipIdx_cons, List.zipIdx_cons, agree_cons, agree_cons]
+    by_cases hs : p.sat a <;> by_cases hi : p.int a <;> simp [hs, hi, ih]
+
+@[simp] theorem agreeList_nil : p.agreeList f [] = [] := rfl
+
+theorem agreeList_cons (a : α) (l : List α) :
+    p.agreeList f (a :: l) =
+      (if p.int a then f a else a) :: if p.sat a then l else p.agreeList f l := by
+  rw [agreeList, List.zipIdx_cons, agree_cons]
+  by_cases hs : p.sat a <;> by_cases hi : p.int a <;>
+    simp [hs, hi, agreeList, agree_set_zipIdx_succ]
+
 /-! ### Feature specifications -/
 
 /-- A probe specification over a feature type, `[INT:int, SAT:sat]` in [deal-2025a]'s notation.
@@ -430,6 +477,16 @@ theorem agree_empty (goals : List α) :
     rw [Dynamic.agree_cons, Probe.agree_cons]
     dsimp only [toProbe, intFeatures, satFeatures] at ih ⊢
     split_ifs <;> dsimp only <;> rw [ih]
+
+/-- Without dynamic interaction, the features a specification copies are those of the interacting
+goals it inspects, whatever their order. -/
+theorem copied_agree_empty [DecidableEq α] (goals : List α) :
+    (sp.agree feats ∅ goals).state.copied =
+      (((sp.toProbe feats).inspected goals).filter ((sp.toProbe feats).int ·)).toFinset.sup
+        (sp.intFeatures feats) := by
+  rw [agree_empty]
+  simpa using Probe.agree_sup_state (p := sp.toProbe feats) (s := ∅) (goals := goals)
+    (sp.intFeatures feats)
 
 theorem dynamicUpdate_eq_of_nonempty {a : α} (h : (feats a ∩ dyn).Nonempty)
     (int int' : Finset (Finset F)) :

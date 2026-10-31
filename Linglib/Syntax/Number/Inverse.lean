@@ -11,9 +11,9 @@ not a number value alongside the others ([corbett-2000], §5.5: inverse systems 
 morphological arrangement and not of semantic values"); on [harbour-2011]'s analysis it is what
 a D head shows when its `[±atomic]` and `[±minimal]` features are valued from two sources, the
 noun's inherent number and its natural number, and one feature receives both values. A
-`Valuation` records the values each feature has received, `Valuation.agree` merges an inherent
-and a natural valuation, and `Valuation.category` reads off the agreement category: inverse iff
-some feature is valued both ways, otherwise the number the values spell.
+`Valuation` records the values each feature has received, so D receives the join `⊔` of an
+inherent and a natural valuation, and `Valuation.category` reads off the agreement category:
+inverse iff some feature is valued both ways, otherwise the number the values spell.
 
 ## References
 
@@ -47,17 +47,35 @@ namespace Valuation
 /-- No values received. -/
 instance : EmptyCollection Valuation := ⟨⟨∅, ∅⟩⟩
 
+/-- A valuation as the pair of its value sets. -/
+def toProd (v : Valuation) : Finset Bool × Finset Bool := (v.atomic, v.minimal)
+
+theorem toProd_injective : Function.Injective toProd := fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by
+  cases h; rfl
+
+/-- One valuation is below another when each feature has received fewer values. -/
+instance : LE Valuation := ⟨fun a b ↦ a.toProd ≤ b.toProd⟩
+
+instance : LT Valuation := ⟨fun a b ↦ a.toProd < b.toProd⟩
+
+instance : DecidableLE Valuation := fun a b ↦
+  inferInstanceAs (Decidable (a.atomic ⊆ b.atomic ∧ a.minimal ⊆ b.minimal))
+
+/-- The values received from either of two valuations. -/
+instance : Max Valuation := ⟨fun a b ↦ ⟨a.atomic ∪ b.atomic, a.minimal ∪ b.minimal⟩⟩
+
+instance : SemilatticeSup Valuation :=
+  toProd_injective.semilatticeSup _ Iff.rfl Iff.rfl fun _ _ ↦ rfl
+
+@[simp] theorem atomic_sup (a b : Valuation) : (a ⊔ b).atomic = a.atomic ∪ b.atomic := rfl
+@[simp] theorem minimal_sup (a b : Valuation) : (a ⊔ b).minimal = a.minimal ∪ b.minimal := rfl
+
 /-- The valuation a natural number contributes, [harbour-2014]'s decomposition. -/
 def ofNumber : Number → Valuation
   | .singular => ⟨{true}, {true}⟩
   | .dual => ⟨{false}, {true}⟩
   | .plural => ⟨{false}, {false}⟩
   | _ => ∅
-
-/-- D agrees with both the inherent and the natural number, receiving every value of each
-feature even when they clash. -/
-def agree (inherent natural : Valuation) : Valuation :=
-  ⟨inherent.atomic ∪ natural.atomic, inherent.minimal ∪ natural.minimal⟩
 
 /-- Some feature has received both values. -/
 def IsInverse (v : Valuation) : Prop := v.atomic = Finset.univ ∨ v.minimal = Finset.univ

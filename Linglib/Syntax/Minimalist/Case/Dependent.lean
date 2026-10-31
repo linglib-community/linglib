@@ -7,7 +7,7 @@ module
 
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Syntax.Minimalist.Category
-public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Syntax.Minimalist.Probe.Agree
 
 /-!
 # Dependent case by phase
@@ -68,16 +68,20 @@ section Agree
 variable {α β : Type*} {P : α → Prop} [DecidablePred P] {v : β} {s t : Valuation α β}
 
 /-- Agree into the domain `P` values `v` on the highest NP that `P` selects whose case is still
-    unvalued, the activity condition of [chomsky-2000]. -/
-def agreeValue (P : α → Prop) [DecidablePred P] (v : β) : Valuation α β → Valuation α β
-  | [] => []
-  | p :: s => if p.2.isNone ∧ P p.1 then (p.1, some v) :: s else p :: agreeValue P v s
+    unvalued, the activity condition of [chomsky-2000]: the probe relativized to those NPs, over the
+    valuation as its own list of goals. -/
+def agreeValue (P : α → Prop) [DecidablePred P] (v : β) : Valuation α β → Valuation α β :=
+  (Probe.relativized fun q : α × Option β ↦ q.2.isNone ∧ P q.1).agreeList fun q ↦ (q.1, some v)
 
 @[simp] theorem agreeValue_nil : agreeValue P v [] = [] := rfl
 
 @[simp] theorem agreeValue_cons (p : α × Option β) (s : Valuation α β) :
     agreeValue P v (p :: s) =
-      if p.2.isNone ∧ P p.1 then (p.1, some v) :: s else p :: agreeValue P v s := rfl
+      if p.2.isNone ∧ P p.1 then (p.1, some v) :: s else p :: agreeValue P v s := by
+  rw [agreeValue, Probe.agreeList_cons]
+  by_cases h : p.2.isNone ∧ P p.1
+  · simp only [Probe.relativized_int, Probe.relativized_sat, h, and_self, ↓reduceIte]
+  · simp only [Probe.relativized_int, Probe.relativized_sat, h, ↓reduceIte]
 
 /-- Agree values nothing iff the probe seeking an unvalued NP in its domain finds no goal, the
     failed Agree of [preminger-2014]. -/

@@ -16,7 +16,7 @@ probe must exploit the dependency an earlier one established, so its search
 starts from the earlier probe's goal — everything the head c-commands above
 that goal lies outside its domain, and a structurally closer matching goal is
 skipped with minimality respected at every step. `run` is that engine on the
-substrate's `FeatureState.probe` and `FeatureState.agree`: a probe's domain is the
+substrate's `FeatureState.probe` and `FeatureState.value`: a probe's domain is the
 c-command-ordered list of accessible heads (the paper's own notation in (6),
 (8), (32), (34)), read off a projection spine by `domain`, which stops at a
 phase head's complement (PIC); a valued probe (a case assigner, `[∗Infl:perf∗]`)
@@ -81,7 +81,7 @@ where
   go : Option H → List FeatureType → FeatureState H → List (Option H) × FeatureState H
   | _, [], s => ([], s)
   | prev, t :: ts, s =>
-    let r := (s.probe α t (act · t)).agree (fun g s ↦ s.agree α t g) s
+    let r := (s.probe α t (act · t)).agree (fun g s ↦ s.value α t g) s
       (prev.elim dom fun β ↦ dom.dropWhile fun x ↦ decide (x ≠ β))
     let rest := go r.satisfier ts r.state
     (r.satisfier :: rest.1, rest.2)
@@ -111,7 +111,7 @@ theorem notMem_nestedDomain {pre post : List H} {β δ : H}
 
 /-- Under Multiple Agree `[∗wh∗]` reaches every matching goal in c-command order (§4.2.3). -/
 def multipleAgree (s : FeatureState H) (α : H) (t : FeatureType) (dom : List H) : List H :=
-  dom.filter fun g ↦ decide (s.Matches α t g)
+  ((Probe.insatiable (s.Matches α t)).agree (fun g s ↦ s.value α t g) s dom).interacted
 
 /-- In (36) the Merge feature `[·wh·]`, nested under the last goal of `[∗wh∗]`, raises it first, and
 each later application, its landing site being above the probe, searches the remaining domain
