@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Syntax.Agreement.Bundle
-public import Linglib.Syntax.Minimalist.Feature.Slot
+public import Linglib.Syntax.Feature.Slot
 public import Linglib.Syntax.Person.Features
 
 /-!
@@ -12,7 +12,7 @@ This file defines the feature dimensions that Agree checks and the feature bundl
 items. A dimension is an agreement dimension (`Agreement.Dimension`), one of Harbour's person or
 number features (`Person.Feature`, `Number.Feature`), or one of [±wh], [±tense], [Infl] and [obl].
 A dimension takes its values from the type that already defines them; Harbour's features take
-values in `Bool`. A feature bundle has a checking slot (`Minimalist.FeatureSlot`) at each
+values in `Bool`. A feature bundle has a checking slot (`FeatureSlot`) at each
 dimension.
 
 The agreement bundle of a checking bundle (`Agreement.Bundle`) keeps the value at each agreement
@@ -119,7 +119,7 @@ abbrev FeatureVal := Σ t : FeatureType, t.Value
 /-! ### Feature bundles -/
 
 /-- A checking slot at each dimension. -/
-abbrev FeatureBundle := (t : FeatureType) → Minimalist.FeatureSlot t.Value
+abbrev FeatureBundle := (t : FeatureType) → FeatureSlot t.Value
 
 namespace FeatureBundle
 
@@ -133,7 +133,7 @@ def single (t : FeatureType) (v : t.Value) : FeatureBundle :=
 
 /-- The bundle with the slots in `l`, absent elsewhere. An earlier entry of `l` overrides a later
 one at the same dimension. -/
-def ofList (l : List (Σ t : FeatureType, Minimalist.FeatureSlot t.Value)) : FeatureBundle :=
+def ofList (l : List (Σ t : FeatureType, FeatureSlot t.Value)) : FeatureBundle :=
   l.foldr (fun p b ↦ Function.update b p.1 p.2) ⊥
 
 @[simp] theorem ofList_nil : ofList [] = ⊥ := rfl
@@ -149,7 +149,7 @@ def valued (b : FeatureBundle) : List FeatureVal :=
 instance : Inhabited FeatureBundle := ⟨⊥⟩
 
 instance : DecidableEq FeatureBundle :=
-  inferInstanceAs (DecidableEq ((t : FeatureType) → Minimalist.FeatureSlot t.Value))
+  inferInstanceAs (DecidableEq ((t : FeatureType) → FeatureSlot t.Value))
 
 /-- A bundle is printed as its slots that are not absent. Structures with a bundle field rely on
 this instance to derive `Repr`. -/

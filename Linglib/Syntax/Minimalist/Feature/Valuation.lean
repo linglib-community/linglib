@@ -6,34 +6,32 @@ public import Linglib.Syntax.Minimalist.Probe.Agree
 /-!
 # Valuation
 
-This file defines valuation, the part of Agree that copies the value of a goal into a probe
-([chomsky-2000]). Valuing a slot with `v` unifies it with `valued v`. An unvalued slot becomes
-`valued v`, a slot valued `v` is unchanged, and a slot valued `w ≠ v` fails, which is `⊤`. An absent
-slot is unchanged, since an item that lacks a dimension is not a probe for it.
+This file defines valuation of feature bundles, the part of Agree that copies the value of a goal
+into a probe ([chomsky-2000]), from the valuation of a single slot (`FeatureSlot.valueWith`). An
+absent slot is unchanged, since an item that lacks a dimension is not a probe for it.
 
-Valuing a bundle at a dimension it bears is
-[unification with the bundle that bears only the value](##Minimalist.FeatureBundle.valueAt_eq_unify).
-At an agreement dimension, valuation followed by `FeatureBundle.agreement` is
-[unification of agreement bundles](##Minimalist.FeatureBundle.map_agreement_valueAt).
-Agree with a goal that has no value at the dimension leaves the probe unchanged, so Agree can fail
-without causing a crash ([preminger-2014]). The goal a probe agrees with is found by search
+Valuing a bundle at a dimension it bears is [unification with the bundle that bears only the
+value](##Minimalist.FeatureBundle.valueAt_eq_unify). At an agreement dimension, valuation
+followed by `FeatureBundle.agreement` is [unification of agreement
+bundles](##Minimalist.FeatureBundle.map_agreement_valueAt). Agree with a goal that has no value at
+the dimension leaves the probe unchanged, so Agree can fail without causing a crash
+([preminger-2014]). The goal a probe agrees with is found by search
 (`Minimalist.LinearizedSyntacticObject.goals`).
 
-The items of a derivation carry their bundles in a `FeatureState`, and Agree over it is the one Agree
-of `Probe/Agree.lean`, `Probe.agree`, with the probe of an item at a dimension and valuation as its
-copying. Valuation values the probe and the goal each with the value of the other at the dimension,
-so a valued probe, such as a case assigner, values an unvalued goal. A goal matches a probe when it
-bears the dimension, since
-matching is identity of the dimension and not of the value ([chomsky-2000]). The probe of an item
-at a dimension is satisfied by the goals that match it and interacts with those that are also
-active. A matching goal that is not active therefore halts the search without valuing: Chomsky's
-defective intervention is satisfaction without interaction in the sense of [deal-2025a].
-Valuation only adds features, so [a run of Agree extends the state](##Minimalist.FeatureState.le_agree_state),
-and [a slot valued before Agree keeps its value](##Minimalist.FeatureState.apply_eq_valued_of_le).
+The items of a derivation carry their bundles in a `FeatureState`, and Agree over it is the one
+Agree of `Probe/Agree.lean`, `Probe.agree`, with the probe of an item at a dimension and valuation
+as its copying. Valuation values the probe and the goal each with the value of the other at the
+dimension, so a valued probe, such as a case assigner, values an unvalued goal. A goal matches a
+probe when it bears the dimension, since matching is identity of the dimension and not of the
+value ([chomsky-2000]). The probe of an item at a dimension is satisfied by the goals that match
+it and interacts with those that are also active. A matching goal that is not active therefore
+halts the search without valuing: Chomsky's defective intervention is satisfaction without
+interaction in the sense of [deal-2025a]. Valuation only adds features, so [a run of Agree
+extends the state](##Minimalist.FeatureState.le_agree_state), and [a slot valued before Agree
+keeps its value](##Minimalist.FeatureState.apply_eq_valued_of_le).
 
 ## Main definitions
 
-* `Minimalist.FeatureSlot.valueWith`: a slot valued with `v`.
 * `Minimalist.FeatureBundle.valueAt`: a bundle valued with `v` at a dimension.
 * `Minimalist.FeatureBundle.valueFrom`: a bundle valued from another at a dimension.
 * `Minimalist.FeatureState`: the feature bundles of the items of a derivation.
@@ -42,9 +40,23 @@ and [a slot valued before Agree keeps its value](##Minimalist.FeatureState.apply
 * `Minimalist.FeatureState.value`: two items valued from each other at a dimension, the copying
   of Agree.
 
+## Implementation notes
+
+The leaves of a `SyntacticObject` are lexical-item tokens, and the tree records nothing else: in
+[marcolli-chomsky-berwick-2025] the leaves are drawn from a set of lexical items and syntactic
+features, and Merge attaches no label to an internal vertex. Agree changes the features of the
+items it relates, producing what [chomsky-2000] calls modified lexical items. Bundles are therefore
+kept outside the tree: a `FeatureState` assigns a bundle to each item, and valuation changes that
+assignment, not the tree.
+
+## TODO
+
+`LexicalItem.wh` should be read from the [wh] slot of the item's bundle.
+
 ## References
 
 * [chomsky-2000]
+* [marcolli-chomsky-berwick-2025]
 * [deal-2025a]
 * [preminger-2014]
 * [amato-2025]
@@ -53,79 +65,6 @@ and [a slot valued before Agree keeps its value](##Minimalist.FeatureState.apply
 @[expose] public section
 
 namespace Minimalist
-
-namespace FeatureSlot
-
-variable {α : Type*} [DecidableEq α] {v w : α} {s s' : FeatureSlot α}
-
-/-- The slot `s` valued with `v`, or `⊤` if `s` is valued otherwise. An absent slot is
-unchanged. -/
-def valueWith (v : α) (s : FeatureSlot α) : WithTop (FeatureSlot α) :=
-  if s = absent then s else PartialUnify.unify s (valued v)
-
-theorem valueWith_of_ne_absent (hs : s ≠ absent) :
-    valueWith v s = PartialUnify.unify s (valued v) := by
-  simp [valueWith, hs]
-
-@[simp] theorem valueWith_absent (v : α) :
-    valueWith v (absent : FeatureSlot α) = ↑(absent : FeatureSlot α) := by
-  simp [valueWith]
-
-@[simp] theorem valueWith_unvalued (v : α) :
-    valueWith v (unvalued : FeatureSlot α) = valued v := by
-  rw [valueWith_of_ne_absent unvalued_ne_absent]
-  exact PartialUnify.unify_eq_right.2 (WithBot.coe_le_coe.2 bot_le)
-
-@[simp] theorem valueWith_valued (v w : α) :
-    valueWith v (valued w) = if w = v then ↑(valued w : FeatureSlot α) else ⊤ := by
-  rw [valueWith_of_ne_absent (valued_ne_absent w)]
-  split_ifs with h
-  · exact h ▸ PartialUnify.unify_self _
-  · simp [PartialUnify.unify_coe_coe,
-      show PartialUnify.unify (w : Flat α) v = ⊤ from Flat.unify_eq_top_of_ne h]
-
-theorem valueWith_eq_top_iff : valueWith v s = ⊤ ↔ ∃ w, w ≠ v ∧ s = valued w := by
-  cases s with
-  | absent => simp
-  | unvalued => simp
-  | valued w => by_cases h : w = v <;> simp [h]
-
-theorem le_of_valueWith_eq_coe (h : valueWith v s = s') : s ≤ s' := by
-  rcases eq_or_ne s absent with rfl | hs
-  · exact bot_le
-  · rw [valueWith_of_ne_absent hs, PartialUnify.unify_eq_coe_iff_isLUB] at h
-    exact (mem_upperBounds_pair.1 h.1).1
-
-theorem valueWith_mono (v : α) :
-    Monotone (valueWith v : FeatureSlot α → WithTop (FeatureSlot α)) := by
-  intro s s' h
-  cases s with
-  | absent => exact valueWith_absent v ▸ WithTop.coe_bot (α := FeatureSlot α) ▸ bot_le
-  | unvalued =>
-    cases s' with
-    | absent => exact absurd h (WithBot.not_coe_le_bot _)
-    | unvalued => exact le_rfl
-    | valued w => by_cases hw : w = v <;> simp [hw]
-  | valued u =>
-    cases s' with
-    | absent => exact absurd h (WithBot.not_coe_le_bot _)
-    | unvalued => exact absurd (Flat.coe_le_iff.1 (WithBot.coe_le_coe.1 h)) (by simp)
-    | valued w => obtain rfl : u = w := Flat.coe_le_coe.1 (WithBot.coe_le_coe.1 h); exact le_rfl
-
-theorem map_toFlat_valueWith (hs : s ≠ absent) :
-    (valueWith v s).map toFlat = PartialUnify.unify s.toFlat (v : Flat α) := by
-  cases s with
-  | absent => exact absurd rfl hs
-  | unvalued =>
-    rw [valueWith_unvalued, WithTop.map_coe, toFlat_valued, toFlat_unvalued, eq_comm]
-    exact PartialUnify.unify_eq_right.2 bot_le
-  | valued w =>
-    rcases eq_or_ne w v with rfl | hwv
-    · simp
-    · rw [valueWith_eq_top_iff.2 ⟨w, hwv, rfl⟩, WithTop.map_top, toFlat_valued]
-      exact (Flat.unify_eq_top_of_ne hwv).symm
-
-end FeatureSlot
 
 namespace FeatureBundle
 

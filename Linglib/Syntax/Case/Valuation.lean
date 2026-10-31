@@ -6,12 +6,14 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.Forall2
+public import Linglib.Syntax.Feature.Slot
 
 /-!
 # Case valuations
 
-A derivation that values the case of nominals step by step keeps, for each nominal, the value
-its case has received so far, `none` while it is unvalued: a *valuation* of the nominals. Every
+A derivation that values the case of nominals step by step keeps, for each nominal, the checking
+slot of its case (`FeatureSlot`): unvalued until a value is assigned, valued once one is, and
+absent for a nominal that bears no case. This is a *valuation* of the nominals. Every
 step of the formalized case theories, the dependent-case rules of [marantz-1991], Agree
 ([chomsky-2000]) and the licensing of [kalin-2018], keeps the nominals and the values already
 assigned and assigns new values only from what its rules provide: it *extends* the valuation by
@@ -48,6 +50,12 @@ in which adding an assigner may change what values a nominal but never leaves on
 The operations are structurally recursive on the list, rather than defined through
 `List.mapIdx` or `List.lookmap`, whose accumulators `decide` cannot evaluate.
 
+## TODO
+
+PRO competes for dependent case without bearing it, which `Minimalist.PhasedNP.bearsCase` encodes
+as a flag beside an unvalued slot. An absent slot would encode it directly, once the dependent
+rules count absent nominals among the caseless competitors.
+
 ## References
 
 * [marantz-1991]
@@ -59,8 +67,8 @@ The operations are structurally recursive on the list, rather than defined throu
 
 namespace Case
 
-/-- Nominals, from the highest down, each with the value of its case, `none` while unvalued. -/
-abbrev Valuation (α β : Type*) := List (α × Option β)
+/-- Nominals, from the highest down, each with the checking slot of its case. -/
+abbrev Valuation (α β : Type*) := List (α × FeatureSlot β)
 
 namespace Valuation
 
@@ -70,77 +78,102 @@ variable {α β : Type*}
 
 /-! ### Operations -/
 
-/-- The valuation giving each nominal the value `v` gives it. -/
-def initial (v : α → Option β) (xs : List α) : Valuation α β := xs.map fun x ↦ (x, v x)
+/-- The valuation giving each nominal the slot `v` gives it. -/
+def initial (v : α → FeatureSlot β) (xs : List α) : Valuation α β := xs.map fun x ↦ (x, v x)
+
+/-- The slot an unvalued nominal has once offered `o`: valued if `o` is a value, unvalued
+otherwise. -/
+def offer (o : Option β) : FeatureSlot β := o.elim .unvalued .valued
+
+@[simp] theorem offer_none : offer (none : Option β) = .unvalued := rfl
+
+@[simp] theorem offer_some (v : β) : offer (some v) = .valued v := rfl
+
+@[simp] theorem offer_eq_valued_iff {o : Option β} {v : β} : offer o = .valued v ↔ o = some v := by
+  cases o <;> simp
+
+@[simp] theorem offer_ne_absent (o : Option β) : offer o ≠ .absent := by
+  cases o <;> simp
+
+@[simp] theorem map_offer {γ : Type*} (g : β → γ) (o : Option β) :
+    (offer o).map g = offer (o.map g) := by
+  cases o <;> rfl
 
 /-- `fill`, with positions counted from `i`. -/
 def fillFrom (f : ℕ → α → Option β) : ℕ → Valuation α β → Valuation α β
   | _, [] => []
-  | i, (x, none) :: s => (x, f i x) :: fillFrom f (i + 1) s
-  | i, (x, some v) :: s => (x, some v) :: fillFrom f (i + 1) s
+  | i, (x, .unvalued) :: s => (x, offer (f i x)) :: fillFrom f (i + 1) s
+  | i, p :: s => p :: fillFrom f (i + 1) s
 
 /-- Value every unvalued nominal with what `f` proposes for its position, simultaneously. -/
 def fill (f : ℕ → α → Option β) (s : Valuation α β) : Valuation α β := fillFrom f 0 s
 
 /-- The value of nominal `a`, if it has one. -/
-def valueOf [DecidableEq α] (a : α) (s : Valuation α β) : Option β := (s.lookup a).join
+def valueOf [DecidableEq α] (a : α) (s : Valuation α β) : Option β :=
+  match s.lookup a with
+  | some (.valued v) => some v
+  | _ => none
 
 /-- The unvalued nominals `P` selects with their positions, highest first. -/
 def unvaluedEntries (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List (ℕ × α) :=
-  (s.zipIdx.filter fun p ↦ p.1.2.isNone && decide (P p.1.1)).map fun p ↦ (p.2, p.1.1)
+  (s.zipIdx.filter fun p ↦ decide (p.1.2 = .unvalued) && decide (P p.1.1)).map fun p ↦ (p.2, p.1.1)
 
 /-- The positions of the unvalued nominals `P` selects, highest first. -/
 def unvalued (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List ℕ :=
   (unvaluedEntries P s).map Prod.fst
 
-@[simp] theorem length_initial (v : α → Option β) (xs : List α) :
+@[simp] theorem length_initial (v : α → FeatureSlot β) (xs : List α) :
     (initial v xs).length = xs.length := length_map ..
 
-theorem initial_getElem? (v : α → Option β) (xs : List α) (i : ℕ) :
+theorem initial_getElem? (v : α → FeatureSlot β) (xs : List α) (i : ℕ) :
     (initial v xs)[i]? = xs[i]?.map fun x ↦ (x, v x) := getElem?_map ..
 
 theorem fillFrom_getElem? (f : ℕ → α → Option β) (i j : ℕ) (s : Valuation α β) :
-    (fillFrom f i s)[j]? = s[j]?.map fun p ↦ if p.2.isNone then (p.1, f (i + j) p.1) else p := by
+    (fillFrom f i s)[j]? =
+      s[j]?.map fun p ↦ if p.2 = .unvalued then (p.1, offer (f (i + j) p.1)) else p := by
   induction s generalizing i j with
   | nil => simp [fillFrom]
   | cons p s ih =>
-    obtain ⟨x, _ | v⟩ := p <;> cases j <;>
-      simp [fillFrom, ih, Nat.add_assoc, Nat.add_comm 1]
+    obtain ⟨x, k⟩ := p
+    cases k <;> cases j <;> simp [fillFrom, ih, Nat.add_assoc, Nat.add_comm 1]
+    rfl
 
 theorem fill_getElem? (f : ℕ → α → Option β) (s : Valuation α β) (i : ℕ) :
-    (fill f s)[i]? = s[i]?.map fun p ↦ if p.2.isNone then (p.1, f i p.1) else p := by
+    (fill f s)[i]? = s[i]?.map fun p ↦ if p.2 = .unvalued then (p.1, offer (f i p.1)) else p := by
   simp [fill, fillFrom_getElem?]
 
-theorem fill_getElem?_of_none {f : ℕ → α → Option β} {s : Valuation α β} {i : ℕ} {x : α}
-    (h : s[i]? = some (x, none)) : (fill f s)[i]? = some (x, f i x) := by
+theorem fill_getElem?_of_unvalued {f : ℕ → α → Option β} {s : Valuation α β} {i : ℕ} {x : α}
+    (h : s[i]? = some (x, .unvalued)) : (fill f s)[i]? = some (x, offer (f i x)) := by
   simp [fill_getElem?, h]
 
 @[simp] theorem fill_none (s : Valuation α β) : fill (fun _ _ ↦ none) s = s := by
   refine ext_getElem? fun i ↦ ?_
   rw [fill_getElem?]
-  rcases s[i]? with _ | ⟨x, _ | v⟩ <;> simp
+  rcases s[i]? with _ | ⟨x, k⟩
+  · rfl
+  · by_cases hk : k = .unvalued <;> simp [hk]
 
 theorem mem_unvaluedEntries {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} {x : α} :
-    (i, x) ∈ unvaluedEntries P s ↔ s[i]? = some (x, none) ∧ P x := by
+    (i, x) ∈ unvaluedEntries P s ↔ s[i]? = some (x, .unvalued) ∧ P x := by
   simp only [unvaluedEntries, mem_map, mem_filter, mem_zipIdx_iff_getElem?, Bool.and_eq_true,
-    Option.isNone_iff_eq_none, decide_eq_true_eq, Prod.mk.injEq]
+    decide_eq_true_eq, Prod.mk.injEq]
   constructor
   · rintro ⟨⟨⟨y, v⟩, j⟩, ⟨hj, rfl, hy⟩, rfl, rfl⟩
     exact ⟨hj, hy⟩
   · rintro ⟨hx, hP⟩
-    exact ⟨((x, none), i), ⟨hx, rfl, hP⟩, rfl, rfl⟩
+    exact ⟨((x, .unvalued), i), ⟨hx, rfl, hP⟩, rfl, rfl⟩
 
 theorem mem_unvalued {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} :
-    i ∈ unvalued P s ↔ ∃ x, s[i]? = some (x, none) ∧ P x := by
+    i ∈ unvalued P s ↔ ∃ x, s[i]? = some (x, .unvalued) ∧ P x := by
   simp only [unvalued, mem_map, Prod.exists, exists_and_right, exists_eq_right]
   exact exists_congr fun _ ↦ mem_unvaluedEntries
 
 /-! ### Extension -/
 
-/-- `t` extends `s` by values satisfying `p`: it has the same nominals, keeps every value `s`
-assigns, and values a nominal `s` leaves unvalued only with a value satisfying `p`. -/
+/-- `t` extends `s` by values satisfying `p`: it has the same nominals, and each slot is as in `s`
+or was unvalued there and is valued in `t` with a value satisfying `p`. -/
 abbrev Extends (p : β → Prop) (s t : Valuation α β) : Prop :=
-  Forall₂ (fun a b ↦ a.1 = b.1 ∧ (a.2 = b.2 ∨ a.2 = none ∧ ∀ v ∈ b.2, p v)) s t
+  Forall₂ (fun a b ↦ a.1 = b.1 ∧ (a.2 = b.2 ∨ a.2 = .unvalued ∧ ∃ v, b.2 = .valued v ∧ p v)) s t
 
 variable {p q : β → Prop} {s t u : Valuation α β}
 
@@ -148,7 +181,7 @@ variable {p q : β → Prop} {s t u : Valuation α β}
   forall₂_same.2 fun _ _ ↦ ⟨rfl, .inl rfl⟩
 
 theorem Extends.mono (hpq : ∀ v, p v → q v) (h : Extends p s t) : Extends q s t :=
-  h.imp fun _ _ ⟨h₁, h₂⟩ ↦ ⟨h₁, h₂.imp_right fun ⟨hn, hv⟩ ↦ ⟨hn, fun v hv' ↦ hpq v (hv v hv')⟩⟩
+  h.imp fun _ _ ⟨h₁, h₂⟩ ↦ ⟨h₁, h₂.imp_right fun ⟨hn, v, hv, hp⟩ ↦ ⟨hn, v, hv, hpq v hp⟩⟩
 
 theorem Extends.trans (h₁ : Extends p s t) (h₂ : Extends p t u) : Extends p s u := by
   induction h₁ generalizing u with
@@ -157,17 +190,17 @@ theorem Extends.trans (h₁ : Extends p s t) (h₂ : Extends p t u) : Extends p 
     cases h₂ with
     | cons h' h₂ =>
       refine .cons ⟨h.1.trans h'.1, ?_⟩ (ih h₂)
-      rcases h.2 with e | ⟨hn, hv⟩
+      rcases h.2 with e | ⟨hn, v, hv, hp⟩
       · exact e ▸ h'.2
-      · rcases h'.2 with e' | ⟨hn', hv'⟩
-        · exact .inr ⟨hn, e' ▸ hv⟩
-        · exact .inr ⟨hn, fun v hv'' ↦ by simp_all⟩
+      · rcases h'.2 with e' | ⟨hn', -⟩
+        · exact .inr ⟨hn, v, e' ▸ hv, hp⟩
+        · simp_all
 
 theorem Extends.length_eq (h : Extends p s t) : s.length = t.length := Forall₂.length_eq h
 
 /-- A value, once assigned, persists. -/
 theorem Extends.getElem?_of_some (h : Extends p s t) {i : ℕ} {x : α} {v : β}
-    (hs : s[i]? = some (x, some v)) : t[i]? = some (x, some v) := by
+    (hs : s[i]? = some (x, .valued v)) : t[i]? = some (x, .valued v) := by
   induction h generalizing i with
   | nil => simp at hs
   | @cons a b s t hab _ ih =>
@@ -177,20 +210,21 @@ theorem Extends.getElem?_of_some (h : Extends p s t) {i : ℕ} {x : α} {v : β}
 
 /-- A value of the extending valuation was already assigned or satisfies `p`. -/
 theorem Extends.of_getElem? (h : Extends p s t) {i : ℕ} {x : α} {v : β}
-    (ht : t[i]? = some (x, some v)) : s[i]? = some (x, some v) ∨ p v := by
+    (ht : t[i]? = some (x, .valued v)) : s[i]? = some (x, .valued v) ∨ p v := by
   induction h generalizing i with
   | nil => simp at ht
   | @cons a b s t hab _ ih =>
     cases i with
     | zero =>
-      obtain ⟨h₁, h₂ | ⟨hn, hv⟩⟩ := hab
+      obtain ⟨h₁, h₂ | ⟨hn, w, hw, hp⟩⟩ := hab
       · left; simp_all [Prod.ext_iff]
       · right; simp only [getElem?_cons_zero, Option.some.injEq] at ht
-        exact hv v (by simp [ht])
+        rw [ht] at hw
+        exact (FeatureSlot.valued_inj.1 hw) ▸ hp
     | succ i => simpa using ih (by simpa using ht)
 
-theorem Extends.of_mem (h : Extends p s t) {x : α} {v : β} (ht : (x, some v) ∈ t) :
-    (x, some v) ∈ s ∨ p v := by
+theorem Extends.of_mem (h : Extends p s t) {x : α} {v : β} (ht : (x, .valued v) ∈ t) :
+    (x, .valued v) ∈ s ∨ p v := by
   obtain ⟨i, hi⟩ := getElem?_of_mem ht
   exact (h.of_getElem? hi).imp_left mem_of_getElem?
 
@@ -205,8 +239,12 @@ theorem Extends.foldl {γ : Type*} {F : γ → Valuation α β → Valuation α 
 theorem extends_fillFrom {f : ℕ → α → Option β} (hf : ∀ i x v, f i x = some v → p v) :
     ∀ (i : ℕ) (s : Valuation α β), Extends p s (fillFrom f i s)
   | _, [] => .nil
-  | i, (x, none) :: s => .cons ⟨rfl, .inr ⟨rfl, fun v hv ↦ hf i x v hv⟩⟩ (extends_fillFrom hf _ s)
-  | _, (_, some _) :: s => .cons ⟨rfl, .inl rfl⟩ (extends_fillFrom hf _ s)
+  | i, (x, .unvalued) :: s => .cons ⟨rfl, by
+      cases h : f i x with
+      | none => exact .inl rfl
+      | some v => exact .inr ⟨rfl, v, rfl, hf i x v h⟩⟩ (extends_fillFrom hf _ s)
+  | _, (_, .absent) :: s => .cons ⟨rfl, .inl rfl⟩ (extends_fillFrom hf _ s)
+  | _, (_, .valued _) :: s => .cons ⟨rfl, .inl rfl⟩ (extends_fillFrom hf _ s)
 
 /-- Filling the unvalued nominals extends the valuation by the values proposed. -/
 theorem extends_fill {f : ℕ → α → Option β} (hf : ∀ i x v, f i x = some v → p v)
@@ -215,12 +253,14 @@ theorem extends_fill {f : ℕ → α → Option β} (hf : ∀ i x v, f i x = som
 
 /-! ### Comparing derivations -/
 
-/-- `t` has the nominals of `s` and values every nominal `s` values. -/
+/-- `t` has the nominals of `s`, the same of them bear case, and it values every nominal `s`
+values. -/
 abbrev ValuedLE (s t : Valuation α β) : Prop :=
-  Forall₂ (fun a b ↦ a.1 = b.1 ∧ (a.2.isSome → b.2.isSome)) s t
+  Forall₂ (fun a b ↦ a.1 = b.1 ∧ (a.2 = .absent ↔ b.2 = .absent) ∧
+    (a.2.value?.isSome → b.2.value?.isSome)) s t
 
 @[refl] theorem ValuedLE.refl (s : Valuation α β) : ValuedLE s s :=
-  forall₂_same.2 fun _ _ ↦ ⟨rfl, id⟩
+  forall₂_same.2 fun _ _ ↦ ⟨rfl, Iff.rfl, id⟩
 
 theorem ValuedLE.trans : ValuedLE s t → ValuedLE t u → ValuedLE s u := by
   intro h₁ h₂
@@ -228,13 +268,13 @@ theorem ValuedLE.trans : ValuedLE s t → ValuedLE t u → ValuedLE s u := by
   | nil => cases h₂; exact .nil
   | cons h _ ih =>
     cases h₂ with
-    | cons h' h₂ => exact .cons ⟨h.1.trans h'.1, h'.2 ∘ h.2⟩ (ih h₂)
+    | cons h' h₂ => exact .cons ⟨h.1.trans h'.1, h.2.1.trans h'.2.1, h'.2.2 ∘ h.2.2⟩ (ih h₂)
 
 theorem Extends.valuedLE (h : Extends p s t) : ValuedLE s t :=
-  h.imp fun a b ⟨h₁, h₂⟩ ↦ ⟨h₁, fun ha ↦ by
-    rcases h₂ with e | ⟨hn, -⟩
-    · exact e ▸ ha
-    · simp [hn] at ha⟩
+  h.imp fun a b ⟨h₁, h₂⟩ ↦ by
+    rcases h₂ with e | ⟨hn, v, hv, -⟩
+    · exact ⟨h₁, e ▸ Iff.rfl, e ▸ id⟩
+    · simp [h₁, hn, hv]
 
 end Valuation
 

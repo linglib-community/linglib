@@ -203,16 +203,19 @@ theorem extends_defaultCase {α : Type*} (s : Case.Valuation α C) :
 
 theorem mem_defaultCase_of_lexicalCase {xs : List (Arg C)} {x : Arg C} {c : C} (hx : x ∈ xs)
     (hc : x.lexicalCase = some c) :
-    (x, some c) ∈ P.defaultCase (Case.Valuation.initial (·.lexicalCase) xs) := by
+    (x, .valued c) ∈
+      P.defaultCase (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase) xs) := by
   obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hx
-  have h : (Case.Valuation.initial (·.lexicalCase) xs)[i]? = some (x, some c) := by
+  have h : (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase) xs)[i]? =
+      some (x, .valued c) := by
     simp [Case.Valuation.initial_getElem?, hi, hc]
   exact List.mem_of_getElem? ((P.extends_defaultCase _).getElem?_of_some h)
 
 /-- The case array of an association in a voice: the subject's case and then the objects' in
 the order of their functions, the immediately postverbal NP the OBJ. -/
 def caseArray (t : List (Arg C)) (a : Fin t.length → GF) (v : Voice) : List C :=
-  (P.defaultCase (Case.Valuation.initial (·.lexicalCase) (realized t a v))).filterMap (·.2)
+  (P.defaultCase (Case.Valuation.initial (Case.Valuation.offer ·.lexicalCase)
+    (realized t a v))).filterMap (·.2.value?)
 
 /-- The case arrays a thematic structure yields in a voice, one per association. -/
 def arrays [DecidableEq C] (t : List (Arg C)) (v : Voice) : Finset (List C) :=

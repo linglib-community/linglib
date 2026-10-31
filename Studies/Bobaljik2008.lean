@@ -74,7 +74,7 @@ theorem isUpperSet_accessible (t : CaseCategory) : IsUpperSet {c | t ≤ c} := i
 /-- The controller of agreement is the highest noun phrase of the domain whose case is
 accessible. Noun phrases whose case is not accessible are invisible and do not intervene. -/
 def controller (t : CaseCategory) (domain : Valuation α (Case × Mechanism)) : Option ℕ :=
-  domain.findIdx? fun s ↦ s.2.any fun v ↦ t ≤ .ofMechanism v.2
+  domain.findIdx? fun s ↦ s.2.value?.any fun v ↦ t ≤ .ofMechanism v.2
 
 /-- Whether an argument controls agreement in a clause of the given alignment, in a language
 whose least accessible category is `t`. -/

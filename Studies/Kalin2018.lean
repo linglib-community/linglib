@@ -108,7 +108,7 @@ inductive CaseValue where
 
 /-- The Case of each nominal before any licenser probes: valued only by a lexical head. -/
 def initial (nps : List PhasedNP) : Valuation PhasedNP CaseValue :=
-  Valuation.initial (·.lexicalCase.map .lexical) nps
+  Valuation.initial (fun np ↦ Valuation.offer (np.lexicalCase.map .lexical)) nps
 
 /-- The Agree of licenser `l`. -/
 def Licenser.agree (l : Licenser) : Valuation PhasedNP CaseValue → Valuation PhasedNP CaseValue :=
@@ -126,7 +126,8 @@ def license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP) :
 
 /-- A derivation converges iff every nominal that needs licensing has its Case valued. -/
 def Converges (ds : List Cat) (ls : List Licenser) (nps : List LicensedNP) : Prop :=
-  Forall₂ (fun np p ↦ np.needsLicensing → p.2.isSome) nps (license ds ls (nps.map (·.toPhasedNP)))
+  Forall₂ (fun np p ↦ np.needsLicensing → p.2.value?.isSome) nps
+    (license ds ls (nps.map (·.toPhasedNP)))
 
 instance (ds : List Cat) (ls : List Licenser) (nps : List LicensedNP) :
     Decidable (Converges ds ls nps) :=
@@ -145,13 +146,13 @@ section Derivation
 
 variable {l : Licenser} {ds : List Cat} {ls ls' : List Licenser} {nps : List LicensedNP}
 
-theorem agree_cons_none {np : PhasedNP} (hnp : np.visible l.domain)
+theorem agree_cons_unvalued {np : PhasedNP} (hnp : np.visible l.domain)
     (s : Valuation PhasedNP CaseValue) :
-    l.agree ((np, none) :: s) = (np, some (.licenser l)) :: s := by
+    l.agree ((np, .unvalued) :: s) = (np, .valued (.licenser l)) :: s := by
   simp [Licenser.agree, hnp]
 
-theorem agree_cons_some (np : PhasedNP) (v : CaseValue) (s : Valuation PhasedNP CaseValue) :
-    l.agree ((np, some v) :: s) = (np, some v) :: l.agree s := by
+theorem agree_cons_valued (np : PhasedNP) (v : CaseValue) (s : Valuation PhasedNP CaseValue) :
+    l.agree ((np, .valued v) :: s) = (np, .valued v) :: l.agree s := by
   simp [Licenser.agree]
 
 theorem extends_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP) :
@@ -165,7 +166,7 @@ theorem length_license (ds : List Cat) (ls : List Licenser) (nps : List PhasedNP
   simp [← (extends_license ds ls nps).length_eq, initial]
 
 theorem mem_of_mem_license {nps : List PhasedNP} {np : PhasedNP}
-    (h : (np, some (.licenser l)) ∈ license ds ls nps) : l ∈ ls := by
+    (h : (np, .valued (.licenser l)) ∈ license ds ls nps) : l ∈ ls := by
   rcases (extends_license ds ls nps).of_mem h with h | h
   · simp [initial, Valuation.initial] at h
   · exact h l rfl
@@ -197,7 +198,7 @@ theorem license_mono (h : ls <+ ls') (ds : List Cat) (nps : List PhasedNP) :
   | cons c ds ih => exact fun hst ↦ ih (valuedLE_foldl_agree (h.filter _) hst)
 
 theorem Converges.mono (hc : Converges ds ls nps) (h : ls <+ ls') : Converges ds ls' nps :=
-  forall₂_trans (fun _ _ _ h₁ h₂ hn ↦ h₂.2 (h₁ hn)) hc (license_mono h ds _)
+  forall₂_trans (fun _ _ _ h₁ h₂ hn ↦ h₂.2.2 (h₁ hn)) hc (license_mono h ds _)
 
 theorem converges_of_forall_needsLicensing_eq_false
     (h : ∀ np ∈ nps, np.needsLicensing = false) : Converges ds ls nps :=
@@ -262,10 +263,17 @@ theorem Economical.eq_empty (h : Economical ds ls nps S)
 
 theorem Economical.not_isDOMMarked (h : Economical ds ls nps S)
     (h₀ : Converges ds (activate ls ∅) nps) :
-    ∀ p ∈ license ds (activate ls S) (nps.map (·.toPhasedNP)), ¬ IsDOMMarked p.2 := by
-  rintro ⟨np, _ | _ | l⟩ hp hdom <;> simp only [IsDOMMarked] at hdom
-  have hl := mem_of_mem_license hp
-  simp [h.eq_empty h₀, activate, hdom] at hl
+    ∀ p ∈ license ds (activate ls S) (nps.map (·.toPhasedNP)), ¬ IsDOMMarked p.2.value? := by
+  rintro ⟨np, k⟩ hp hdom
+  cases k with
+  | valued v =>
+    cases v with
+    | lexical _ => simp [IsDOMMarked] at hdom
+    | licenser l =>
+      simp only [FeatureSlot.value?_valued, IsDOMMarked] at hdom
+      have hl := mem_of_mem_license hp
+      simp [h.eq_empty h₀, activate, hdom] at hl
+  | _ => simp [IsDOMMarked] at hdom
 
 end Economy
 
@@ -283,9 +291,10 @@ theorem assign_eq_map_license (g : CaseAssigners) (ds : List Cat) (hg : ∀ c �
     (hκ : ∀ l ∈ ls, g.agreeCase l.head = some (κ l.head)) (nps : List PhasedNP)
     (hnps : ∀ np ∈ nps, np.bearsCase = true) :
     g.assign id (ls.map fun l ↦ (l.head, l.domain)) ds nps =
-      (license ds ls nps).map (Prod.map id (Option.map (CaseValue.assigned κ))) := by
-  set φ : PhasedNP × Option CaseValue → PhasedNP × Option (_root_.Case × _root_.Case.Mechanism) :=
-    Prod.map id (Option.map (CaseValue.assigned κ))
+      (license ds ls nps).map (Prod.map id (FeatureSlot.map (CaseValue.assigned κ))) := by
+  set φ : PhasedNP × FeatureSlot CaseValue →
+      PhasedNP × FeatureSlot (_root_.Case × _root_.Case.Mechanism) :=
+    Prod.map id (FeatureSlot.map (CaseValue.assigned κ))
   have hagree (l : Licenser) (st : Valuation PhasedNP CaseValue) :
       (l.agree st).map Prod.fst = st.map Prod.fst := map_fst_agreeValue
   have key (c : Cat) (L : List Licenser)
@@ -440,7 +449,7 @@ def Row.suffixes (r : Row) : List (Option Suffix) :=
 
 /-- The suffixes a derivation spells out, nominal by nominal. -/
 def suffixes (st : Valuation PhasedNP CaseValue) : List (Option Suffix) :=
-  st.map (suffixOf ·.2)
+  st.map (suffixOf ·.2.value?)
 
 private theorem rows_agree_aux : ∀ r ∈ rows, ∀ subject : Bool,
     (r.grammatical = true ↔ Converges domains r.clause (r.nominals subject)) ∧
@@ -464,11 +473,11 @@ theorem imperfective_object (subject : Bool) :
     Economical domains imperfective (transitive subject true) {tImpf} ∧
       (license domains (activate imperfective {tImpf})
         ((transitive subject true).map (·.toPhasedNP))).map (·.2) =
-        [some (.licenser aspImpf), some (.licenser tImpf)] ∧
+        [.valued (.licenser aspImpf), .valued (.licenser tImpf)] ∧
     Economical domains imperfective (transitive subject false) ∅ ∧
       (license domains (activate imperfective ∅)
         ((transitive subject false).map (·.toPhasedNP))).map (·.2) =
-        [some (.licenser aspImpf), none] := by
+        [.valued (.licenser aspImpf), .unvalued] := by
   cases subject <;> decide
 
 /-! ### The toy language of Section 3.1 -/
@@ -495,7 +504,7 @@ theorem toy_animate_object (subject : Bool) :
     ¬ Converges toyDomains (activate toy ∅) (toyTransitive subject true) ∧
     Economical toyDomains toy (toyTransitive subject true) {toyV} ∧
       (license toyDomains toy ((toyTransitive subject true).map (·.toPhasedNP))).map (·.2) =
-        [some (.licenser toyT), some (.licenser toyV)] := by
+        [.valued (.licenser toyT), .valued (.licenser toyV)] := by
   cases subject <;> decide
 
 /-- An inanimate object activates nothing and goes unlicensed and unmarked, (23). -/
@@ -503,7 +512,7 @@ theorem toy_inanimate_object (subject : Bool) :
     Economical toyDomains toy (toyTransitive subject false) ∅ ∧
       (license toyDomains (activate toy ∅)
         ((toyTransitive subject false).map (·.toPhasedNP))).map (·.2) =
-        [some (.licenser toyT), none] := by
+        [.valued (.licenser toyT), .unvalued] := by
   cases subject <;> decide
 
 /-! ### Positions read off derivations
@@ -550,7 +559,7 @@ def underLicensers (ls : List Licenser) : CaseAssigners where
 
 /-- Case read off a clause under licensers `ls`, C the only phase head. -/
 def senayaCases (ls : List Licenser) (object : Bool) :
-    Option (List (Option (_root_.Case × _root_.Case.Mechanism))) :=
+    Option (List (FeatureSlot (_root_.Case × _root_.Case.Mechanism))) :=
   (clause object).externalize?.map fun t ↦
     ((underLicensers ls).assignOn .raising t (complementDomain .raising t ∅) (·.item.cat = .C)
       (fun _ ↦ none) (fun _ ↦ True) (clauseNominals object)).map (·.2)
@@ -565,7 +574,8 @@ theorem senayaCases_eq_license (object : Bool) :
   cases object <;> decide +kernel
 
 /-- Case read off a toy clause, v and C its phase heads. -/
-def toyCases (ls : List Licenser) : Option (List (Option (_root_.Case × _root_.Case.Mechanism))) :=
+def toyCases (ls : List Licenser) :
+    Option (List (FeatureSlot (_root_.Case × _root_.Case.Mechanism))) :=
   (clause true).externalize?.map fun t ↦
     ((underLicensers ls).assignOn .raising t (complementDomain .raising t ∅)
       (fun a ↦ a.item.cat = .v ∨ a.item.cat = .C) (fun _ ↦ none) (fun _ ↦ True)
@@ -585,7 +595,7 @@ theorem toyCases_eq_license :
 and the derivation crashes (Section 2.1.3). -/
 theorem dependentCase_values_banned_object (subject : Bool) :
     ((DependentCase.assignCases .accusative (·.lexicalCase) (transitive subject true))[1]?.bind
-        (·.2.map (·.1))) = some .acc ∧
+        (·.2.value?.map (·.1))) = some .acc ∧
     ¬ Converges domains perfective (transitive subject true) := by
   cases subject <;> decide
 
