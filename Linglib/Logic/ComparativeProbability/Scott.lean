@@ -408,9 +408,8 @@ theorem representable_iff [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpa
     Representable r ↔ IsNontrivial r ∧ (∀ A, r A ∅) ∧ Std.Total r ∧ FiniteCancellation r := by
   refine ⟨fun h ↦ ?_, fun ⟨_, hnn, _, h⟩ ↦ ?_⟩
   · have hfc := h.finiteCancellation
-    obtain ⟨μ, hμ, hm⟩ := h
-    exact ⟨⟨by simp [hm]⟩, fun A ↦ (hm A ∅).2 (by simp),
-      ⟨fun A B ↦ (le_total (μ B) (μ A)).imp (hm A B).2 (hm B A).2⟩, hfc⟩
+    obtain ⟨μ, _, rfl⟩ := h
+    exact ⟨inferInstance, rel_empty, inferInstance, hfc⟩
   · have := h.isQualitativeProbability hnn
     exact cancellation_implies_representable r h.cancellation
 

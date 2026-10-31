@@ -33,7 +33,7 @@ namespace ComparativeProbability
 
 /-- A relation on events is **representable** when some probability measure induces it. -/
 def Representable {W : Type*} [MeasurableSpace W] (r : Set W → Set W → Prop) : Prop :=
-  ∃ μ : Measure W, IsProbabilityMeasure μ ∧ ∀ A B, r A B ↔ μ B ≤ μ A
+  ∃ μ : Measure W, IsProbabilityMeasure μ ∧ μ.inducedGe = r
 
 attribute [local instance] Classical.propDecidable
 
@@ -43,11 +43,10 @@ attribute [local instance] Classical.propDecidable
     every comparison to a disjoint one. -/
 theorem reduce_to_disjoint {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
     {r : Set W → Set W → Prop} [IsQualitativeAdditive r] (μ : Measure W) [IsFiniteMeasure μ]
-    (h : ∀ C D : Set W, Disjoint C D → (r C D ↔ μ D ≤ μ C)) :
-    ∀ A B, r A B ↔ μ B ≤ μ A := by
-  intro A B
+    (h : ∀ C D : Set W, Disjoint C D → (r C D ↔ μ D ≤ μ C)) : μ.inducedGe = r := by
+  funext A B
   rw [qadd (r := r) A B]
-  exact (h _ _ disjoint_sdiff_sdiff).trans (Measure.measure_le_iff_sdiff_le μ B A).symm
+  exact propext ((Measure.measure_le_iff_sdiff_le μ B A).trans (h _ _ disjoint_sdiff_sdiff).symm)
 
 theorem null_removal_disjoint {W : Type*} {r : Set W → Set W → Prop}
     [IsQualitativeProbability r] (j : W) (hj : r ∅ {j}) (C D : Set W) (hdisj : Disjoint C D) :
@@ -90,7 +89,7 @@ theorem null_elem_reduce {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) 
   refine ⟨μ.map Fin.succ, inferInstance, reduce_to_disjoint _ fun C D hdisj ↦ ?_⟩
   rw [null_removal_disjoint 0 hn0 C D hdisj, hmap, hmap,
       ← succ_image_preimage C, ← succ_image_preimage D]
-  exact hm (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
+  exact iff_of_eq (congrFun₂ hm _ _).symm
 
 /-! ### Transport along injections -/
 
@@ -107,13 +106,14 @@ theorem Representable.of_preimage {W α : Type*} [MeasurableSpace W] [DiscreteMe
     {f : W → α} (hf : Function.Injective f) (h : Representable (Set.preimage f ⁻¹'o r)) :
     Representable r := by
   obtain ⟨μ, _, hμ⟩ := h
-  have hnull : μ (Set.range f)ᶜ = 0 := le_zero_iff.mp
-    (((hμ ∅ _).mp (by simpa [Order.Preimage] using refl_of r ∅)).trans_eq measure_empty)
+  have hnull : μ (Set.range f)ᶜ = 0 := by
+    have : μ.inducedGe ∅ (Set.range f)ᶜ := hμ ▸ by simpa [Order.Preimage] using refl_of r ∅
+    simpa [Measure.inducedGe] using this
   have hcomap (A : Set W) : μ.comap f A = μ (f '' A) :=
     Measure.comap_apply _ hf (fun _ _ ↦ .of_discrete) μ .of_discrete
   refine ⟨μ.comap f, isProbabilityMeasure_comap hf (ae_iff.mpr hnull) fun _ _ ↦ .of_discrete,
-    fun A B ↦ ?_⟩
-  rw [hcomap, hcomap, ← hμ]
-  simp [Order.Preimage, Set.preimage_image_eq _ hf]
+    funext₂ fun A B ↦ ?_⟩
+  simpa [Measure.inducedGe, hcomap, Order.Preimage, Set.preimage_image_eq _ hf] using
+    congrFun₂ hμ (f '' A) (f '' B)
 
 end ComparativeProbability

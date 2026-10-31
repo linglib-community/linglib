@@ -16,8 +16,10 @@ worlds to propositions by Lewis's l-lifting, validates the invalid patterns and 
 V13; Kratzer's later k-lifting does no better for disjoint propositions. Finitely additive
 measures validate exactly the intended patterns, but so do the paper's two qualitative
 alternatives, qualitatively additive measures and the m-lifting. What separates the two kinds
-of additivity is Kraft, Pratt and Seidenberg's ordering on five worlds, the paper's World Cup
-comparisons (3)–(6), which the paper doubts speakers find inconsistent.
+of additivity is Kraft, Pratt and Seidenberg's ordering on five worlds: the paper's World Cup
+comparisons (3)–(6) are [consistent with FA](##HollidayIcard2013.worldCup_kpsGe) but
+[no finitely additive measure satisfies them](##HollidayIcard2013.worldCup_not_finitelyAdditive),
+and the paper doubts speakers find them inconsistent.
 
 * `measure_validities`, `qualAddMeasure_validities` and the refutations of I1–I3: Facts 2, 3.
 
@@ -35,11 +37,6 @@ comparisons (3)–(6), which the paper doubts speakers find inconsistent.
   rest on; Theorems 3–5 and 7 and Fact 4 concern the logics themselves.
 * Figure 7's chain of four worlds shows the two liftings apart: only the l-lifting makes `{a}`
   more likely than `{b, c}`, and the m-lifting leaves `{a, d}` and `{b, c}` incomparable.
-
-## TODO
-
-* The FA-consistency of (3)–(6) is witnessed by the Kraft–Pratt–Seidenberg order of the
-  substrate under a different labelling of the worlds; state it for the World Cup labelling.
 
 ## References
 
@@ -179,7 +176,7 @@ theorem qualAddMeasures_refute_I_patterns :
 
 -- Theorem 6
 theorem fa_qualAdd_complete [Fintype W] (r : Set W → Set W → Prop) [IsQualitativeProbability r] :
-    ∃ m : QualAddMeasure ℚ W, ∀ A B, r A B ↔ m.inducedGe A B :=
+    ∃ m : QualAddMeasure ℚ W, m.inducedGe = r :=
   exists_qualAddMeasure_repr r
 
 end Measures
@@ -322,19 +319,40 @@ theorem fa_representable_iff_card_lt_five (n : ℕ) :
       hnr (h r hr),
     fun h r _ ↦ representable_of_card_lt_five r (by simpa using h)⟩
 
-/-- No finite measure satisfies the World Cup comparisons (3)–(6). -/
+/-- `WorldCup r` says that `r` makes strict the comparisons of Theorem 8, the World Cup
+sentences (3)–(6) with Argentina, Brazil, China, Denmark and England as the worlds `0`–`4`. -/
+def WorldCup (r : Set (Fin 5) → Set (Fin 5) → Prop) : Prop :=
+  AsymmRel r {0, 4} {2, 3} ∧ AsymmRel r {1, 2} {0, 3} ∧ AsymmRel r {3} {0, 2} ∧
+    AsymmRel r {0, 2, 3} {1, 4}
+
+/-- No finite measure satisfies the World Cup comparisons (3)–(6): each world lies on as many of
+their more likely sides as less likely sides. -/
 theorem worldCup_not_finitelyAdditive (μ : Measure (Fin 5)) [IsFiniteMeasure μ] :
-    ¬ (AsymmRel μ.inducedGe {0, 4} {2, 3} ∧ AsymmRel μ.inducedGe {1, 2} {0, 3} ∧
-      AsymmRel μ.inducedGe {3} {0, 2} ∧ AsymmRel μ.inducedGe {0, 2, 3} {1, 4}) := by
-  have pair : ∀ a b : Fin 5, a ≠ b → μ.real {a, b} = μ.real {a} + μ.real {b} := fun a b hab ↦ by
-    rw [Set.insert_eq, measureReal_union (Set.disjoint_singleton.mpr hab) (.singleton b)]
-  have triple : μ.real ({0, 2, 3} : Set (Fin 5)) = μ.real {0} + μ.real {2} + μ.real {3} := by
-    rw [Set.insert_eq, measureReal_union (Set.disjoint_singleton_left.mpr (by simp)) .of_discrete,
-      pair 2 3 (by decide), add_assoc]
-  simp only [AsymmRel, Measure.inducedGe_iff_real, not_le, triple,
-    pair 0 4 (by decide), pair 2 3 (by decide), pair 1 2 (by decide), pair 0 3 (by decide),
-    pair 0 2 (by decide), pair 1 4 (by decide)]
-  intro ⟨⟨_, h1⟩, ⟨_, h2⟩, ⟨_, h3⟩, ⟨_, h4⟩⟩
-  linarith
+    ¬WorldCup μ.inducedGe := fun ⟨h₁, h₂, h₃, h₄⟩ ↦
+  μ.not_asymmRel_of_balanced (A := ![{0, 4}, {1, 2}, {3}, {0, 2, 3}])
+    (B := ![{2, 3}, {0, 3}, {0, 2}, {1, 4}]) (fun s ↦ by fin_cases s <;> simp [Fin.sum_univ_four])
+    (fun i ↦ by fin_cases i; exacts [h₁.1, h₂.1, h₃.1, h₄.1]) 0 h₁
+
+/-- The World Cup teams as Kraft, Pratt and Seidenberg's atoms `p, q, r, s, t` (`0`–`4`), with
+Argentina `q`, Brazil `r`, China `s`, Denmark `p` and England `t`. -/
+def worldCupToKps : Fin 5 ≃ Fin 5 := ⟨![1, 2, 3, 0, 4], ![3, 0, 1, 2, 4], by decide, by decide⟩
+
+/-- The World Cup comparisons are consistent with FA (Theorem 8): Kraft, Pratt and Seidenberg's
+order, with the teams as its atoms, makes them strict. -/
+theorem worldCup_kpsGe : WorldCup (Set.preimage worldCupToKps.symm ⁻¹'o kpsGe) := by
+  have key (s t : Finset (Fin 5)) : (Set.preimage worldCupToKps.symm ⁻¹'o kpsGe) ↑s ↑t ↔
+      kpsRank (t.map worldCupToKps.toEmbedding) ≤ kpsRank (s.map worldCupToKps.toEmbedding) := by
+    rw [← kpsGe_coe, Finset.coe_map, Finset.coe_map, Equiv.coe_toEmbedding,
+      Equiv.image_eq_preimage_symm, Equiv.image_eq_preimage_symm]
+    rfl
+  have hr (s t : Finset (Fin 5))
+      (h : kpsRank (t.map worldCupToKps.toEmbedding) < kpsRank (s.map worldCupToKps.toEmbedding)) :
+      AsymmRel (Set.preimage worldCupToKps.symm ⁻¹'o kpsGe) ↑s ↑t :=
+    ⟨(key s t).2 h.le, fun h' ↦ absurd ((key t s).1 h') (not_le.2 h)⟩
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simpa using hr {0, 4} {2, 3} (by decide)
+  · simpa using hr {1, 2} {0, 3} (by decide)
+  · simpa using hr {3} {0, 2} (by decide)
+  · simpa using hr {0, 2, 3} {1, 4} (by decide)
 
 end HollidayIcard2013

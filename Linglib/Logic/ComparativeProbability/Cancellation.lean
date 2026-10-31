@@ -22,6 +22,8 @@ Together these conditions characterize representability (`representable_iff`, `S
 ## Main statements
 
 * `MeasureTheory.Measure.finiteCancellation`, `Representable.finiteCancellation`: soundness.
+* `MeasureTheory.Measure.not_asymmRel_of_balanced`: a balanced family of comparisons is never
+  satisfied with one strict.
 * `FiniteCancellation.isQualitativeProbability`: finite cancellation gives de Finetti's axioms.
 
 ## References
@@ -137,6 +139,20 @@ theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.
   rw [μ.inducedGe_iff_real]
   linarith [measureReal_sum_mono μ hprem]
 
+/-- In the order a finite measure induces, the comparisons `A i ≿ B i` of a balanced family, every
+    state lying in as many `A i` as `B i`, cannot all hold with one strict. -/
+theorem _root_.MeasureTheory.Measure.not_asymmRel_of_balanced {ι : Type*} [Fintype ι]
+    {A B : ι → Set W} (hbal : ∀ s, ∑ i, (A i).indicator 1 s = ∑ i, (B i).indicator (1 : W → ℕ) s)
+    (hle : ∀ i, μ.inducedGe (A i) (B i)) (i : ι) : ¬AsymmRel μ.inducedGe (A i) (B i) := by
+  classical
+  have hseq (C : ι → Set W) (s : W) :
+      seqCount s (C i :: (Finset.univ.erase i).toList.map C) = ∑ j, (C j).indicator 1 s := by
+    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
+    simp [seqCount, Set.indicator_apply, Function.comp_def]
+  refine fun h ↦ h.2 (μ.finiteCancellation ((Finset.univ.erase i).toList.map fun j ↦ (A j, B j))
+    (A i) (B i) (fun s ↦ ?_) (by simp [hle]))
+  simpa [Function.comp_def, hseq] using hbal s
+
 end
 
 /-- A representable relation satisfies finite cancellation (the soundness half of Scott's
@@ -144,8 +160,7 @@ end
 theorem Representable.finiteCancellation [Fintype W] [MeasurableSpace W]
     [DiscreteMeasurableSpace W] {r : Set W → Set W → Prop} (h : Representable r) :
     FiniteCancellation r := by
-  obtain ⟨μ, hμ, hm⟩ := h
-  intro prem X Y hbal hprem
-  exact (hm Y X).mpr (μ.finiteCancellation prem X Y hbal fun p hp ↦ (hm p.1 p.2).mp (hprem p hp))
+  obtain ⟨μ, _, rfl⟩ := h
+  exact μ.finiteCancellation
 
 end ComparativeProbability

@@ -75,26 +75,21 @@ instance : IsQualitativeProbability kpsGe where
   bot_not_ge_top := by simp only [kpsGe, Set.bot_eq_empty, Set.top_eq_univ, Set.toFinset_empty,
     Set.toFinset_univ]; decide
 
-/-- `kpsComparisons` collects the four comparisons `p ≻ qs`, `pqs ≻ rt`, `rs ≻ pq` and
-    `qt ≻ ps` of the Kraft–Pratt–Seidenberg order as sign vectors (p. 414). -/
-private def kpsComparisons : Multiset (Fin 5 → SignType) :=
-  {![1, -1, 0, -1, 0], ![1, 1, -1, 1, -1], ![-1, -1, 1, 1, 0], ![-1, 1, 0, -1, 1]}
+@[simp] theorem kpsGe_coe (A B : Finset (Fin 5)) : kpsGe ↑A ↑B ↔ kpsRank B ≤ kpsRank A := by
+  simp only [kpsGe, Finset.toFinset_coe]
 
-private theorem kpsGe_setOf (v : Fin 5 → SignType) (s t : SignType) :
-    kpsGe {i | v i = s} {i | v i = t} ↔ kpsRank {i | v i = t} ≤ kpsRank {i | v i = s} := by
-  simp only [kpsGe]; congr! <;> ext <;> simp
-
-/-- **The Kraft–Pratt–Seidenberg order is not representable.** The four comparisons
-    `kpsComparisons` hold strictly and cancel, so every probability measure inducing the order
-    would also make `qs` at least as likely as `p` (p. 414). -/
-theorem kps_not_representable : ¬Representable kpsGe := fun h ↦ by
-  have key := (representable_iff_cancellation kpsGe).mp h kpsComparisons (fun v hv ↦ ?_)
-    (by decide) ![1, -1, 0, -1, 0] (by simp [kpsComparisons])
-  · revert key; simp only [negSupport, posSupport, kpsGe_setOf]; decide
-  · simp only [kpsComparisons, Multiset.insert_eq_cons, Multiset.mem_cons,
-      Multiset.mem_singleton] at hv
-    rcases hv with rfl | rfl | rfl | rfl <;> simp only [negSupport, posSupport, kpsGe_setOf] <;>
-      decide
+/-- **The Kraft–Pratt–Seidenberg order is not representable.** It makes the comparisons
+    `p ≻ qs`, `pqs ≻ rt`, `rs ≻ pq` and `qt ≻ ps` strict, yet each atom lies on as many of their
+    left sides as right sides, which no probability measure allows (p. 414). -/
+theorem kps_not_representable : ¬Representable kpsGe := by
+  rintro ⟨μ, _, hμ⟩
+  let A : Fin 4 → Finset (Fin 5) := ![{0}, {0, 1, 3}, {2, 3}, {1, 4}]
+  let B : Fin 4 → Finset (Fin 5) := ![{1, 3}, {2, 4}, {0, 1}, {0, 3}]
+  have hlt (i : Fin 4) : AsymmRel μ.inducedGe (A i) (B i) := by
+    rw [hμ, AsymmRel, kpsGe_coe, kpsGe_coe]; fin_cases i <;> decide
+  refine μ.not_asymmRel_of_balanced (A := fun i ↦ A i) (B := fun i ↦ B i) (fun s ↦ ?_)
+    (fun i ↦ (hlt i).1) 0 (hlt 0)
+  simp only [Set.indicator_apply, Finset.mem_coe]; revert s; decide
 
 end KPS
 
@@ -136,8 +131,7 @@ private theorem ncard_lt_le_ncard_lt_iff (A B : Set W) :
     induced by a qualitatively additive measure: the number of sets strictly less likely than a
     set, divided by the number strictly less likely than the whole space. Holliday and Icard's
     logic FA is complete over these measures (Theorem 6, p. 523). -/
-theorem exists_qualAddMeasure_repr :
-    ∃ m : QualAddMeasure ℚ W, ∀ A B, r A B ↔ m.inducedGe A B := by
+theorem exists_qualAddMeasure_repr : ∃ m : QualAddMeasure ℚ W, m.inducedGe = r := by
   let g : Set W → ℚ := fun A ↦ {S | AsymmRel r A S}.ncard
   have hg (A B : Set W) : r A B ↔ g B ≤ g A := by
     rw [Nat.cast_le, ncard_lt_le_ncard_lt_iff]
@@ -145,7 +139,7 @@ theorem exists_qualAddMeasure_repr :
   have hpos : 0 < g Set.univ := h0 ▸ lt_of_not_ge ((hg ∅ Set.univ).not.mp not_rel_empty_univ)
   have hf (A B : Set W) : r A B ↔ g B / g Set.univ ≤ g A / g Set.univ := by
     rw [div_le_div_iff_of_pos_right hpos, hg]
-  exact ⟨.ofRepr _ hf (by simp [h0]) (div_self hpos.ne'), hf⟩
+  exact ⟨_, QualAddMeasure.inducedGe_ofRepr _ hf (by simp [h0]) (div_self hpos.ne')⟩
 
 end Repr
 

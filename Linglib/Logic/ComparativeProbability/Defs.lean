@@ -83,8 +83,8 @@ instance (priority := 100) instComplementReversingOfQualitativeAdditive
 least as likely as `b`", that is a monotone, non-trivial and qualitatively additive total
 preorder: de Finetti's axioms, the base system of comparative probability. Every qualitative
 probability on a finite carrier is represented by a qualitatively additive measure
-(`exists_qualAddMeasure_repr`), but by a probability measure only below five atoms (Kraft,
-Pratt and Seidenberg; `Completeness.lean`). -/
+(`exists_qualAddMeasure_repr`), but by a probability measure only below five atoms
+(`Completeness.lean`). -/
 class IsQualitativeProbability (r : α → α → Prop) : Prop
     extends IsPreorder α r, Std.Total r, IsLikelihoodMono r, IsQualitativeAdditive r,
       IsNontrivial r
