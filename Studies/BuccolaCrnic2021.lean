@@ -157,7 +157,7 @@ def Licensed (p : Path α (Set W)) (A : α → Set (Set W)) (n : α) : Prop :=
 /-- The path of the item in a clause `S` monotone in its restrictor, under negation. -/
 def negated (S : α → WithAlternatives (Set W)) (hS : Monotone fun x ↦ (S x).ordinary) :
     Path α (Set W) :=
-  ⟨fun x ↦ (S x).ordinary, .mono, soundFor_mono_iff.2 hS, [negation]⟩
+  ⟨fun x ↦ (S x).ordinary, .mono, Signature.holdsFor_mono_iff.2 hS, [negation]⟩
 
 -- a clause below negation that is not constant below the restrictor does not meet the condition
 theorem licensed_negated_iff {S : α → WithAlternatives (Set W)}

@@ -461,6 +461,9 @@ theorem Signature.HoldsFor.of_le {σ τ : Signature} {f : α → β}
     (h : σ.HoldsFor f) (hστ : σ ≤ τ) : τ.HoldsFor f :=
   λ p hp => h p (Signature.le_iff.mp hστ hp)
 
+theorem Signature.holdsFor_mono_iff {f : α → β} : Signature.HoldsFor .mono f ↔ Monotone f := by
+  simp [Signature.HoldsFor, Signature.properties, Signature.Property.HoldsFor]
+
 theorem Signature.holdsFor_anti_iff {f : α → β} : Signature.HoldsFor .anti f ↔ Antitone f := by
   simp [Signature.HoldsFor, Signature.properties, Signature.Property.HoldsFor]
 
@@ -486,6 +489,9 @@ theorem Signature.holdsFor_addMult_of_galoisConnection {f u l : α → α}
   | additive => exact ⟨λ _ _ => gc₁.l_sup, gc₂.u_top⟩
   | multiplicative => exact ⟨λ _ _ => gc₂.u_inf, gc₁.l_bot⟩
   | antitone | antiAdditive | antiMultiplicative => exact absurd hp (by decide)
+
+theorem Signature.holdsFor_addMult_id : Signature.HoldsFor .addMult (id : α → α) :=
+  Signature.holdsFor_addMult_of_galoisConnection GaloisConnection.id GaloisConnection.id
 
 theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
     Signature.HoldsFor .antiAddMult (compl : γ → γ) := by
