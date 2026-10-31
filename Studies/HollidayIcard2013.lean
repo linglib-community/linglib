@@ -318,7 +318,8 @@ theorem fa_representable_iff_card_lt_five (n : ℕ) :
     (∀ r : Set (Fin n) → Set (Fin n) → Prop, IsQualitativeProbability r → Representable r) ↔
       n < 5 :=
   ⟨fun h ↦ by_contra fun hge ↦
-      let ⟨r, hr, hnr⟩ := exists_nonrepresentable_fin (n := n) (by omega); hnr (h r hr),
+      let ⟨r, hr, hnr⟩ := exists_not_representable_of_five_le_card (W := Fin n) (by simp; omega)
+      hnr (h r hr),
     fun h r _ ↦ representable_of_card_lt_five r (by simpa using h)⟩
 
 /-- No finite measure satisfies the World Cup comparisons (3)–(6). -/

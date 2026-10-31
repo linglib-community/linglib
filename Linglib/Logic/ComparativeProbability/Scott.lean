@@ -387,8 +387,8 @@ variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
     satisfying cancellation is represented by a probability measure. -/
 theorem cancellation_implies_representable (h : Cancellation r) : Representable r := by
   classical
-  exact perm_repr (Fintype.equivFin W) r
-    (representable_of_cancellation_fin _ (h.transport (Fintype.equivFin W)))
+  exact (representable_of_cancellation_fin _ (h.transport (Fintype.equivFin W))).of_preimage
+    (Fintype.equivFin W).injective
 
 /-- **Scott's theorem** in sign-vector form, for a qualitative probability. -/
 theorem representable_iff_cancellation : Representable r ↔ Cancellation r :=
@@ -428,6 +428,7 @@ theorem cancellation_of_null_atom {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin 
     obtain ⟨k, hk⟩ := exists_not_rel_empty_singleton (Set.preimage σ ⁻¹'o r)
     obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k := Fin.exists_succ_eq.mpr fun h ↦ hk (h ▸ h0)
     exact ⟨i, hk⟩
-  exact (representable_iff_cancellation r).mp (perm_repr σ r (null_elem_reduce _ h0 hnn sub))
+  exact (representable_iff_cancellation r).mp
+    ((null_elem_reduce _ h0 hnn sub).of_preimage σ.injective)
 
 end ComparativeProbability

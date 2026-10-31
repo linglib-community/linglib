@@ -18,9 +18,14 @@ comparisons merge. On sets, a qualitative probability pulls back along preimages
 
 * `rel_sup_sup_right_iff`, `rel_sup_sup_right`, `rel_sup_sup`: context cancellation and
   merging.
+* `isQualitativeAdditive_iff`: qualitative additivity is context cancellation.
 * `isQualitativeProbability_image`: pulling back along the image of an injection.
 * `not_isQualitativeProbability_of_isEmpty`: an empty carrier has no qualitative probability.
 * `exists_not_rel_empty_singleton`: a finite carrier has a non-null atom.
+
+## References
+
+* [kraft-pratt-seidenberg-1959]
 -/
 
 @[expose] public section
@@ -41,6 +46,14 @@ theorem rel_sup_sup_right_iff [IsQualitativeAdditive r] {a b c : α} (hca : Disj
 theorem rel_sup_sup_right [IsQualitativeAdditive r] {a b c : α} (h : r a b)
     (hca : Disjoint c a) (hcb : Disjoint c b) : r (a ⊔ c) (b ⊔ c) :=
   (rel_sup_sup_right_iff hca hcb).mpr h
+
+/-- A relation is qualitatively additive iff every common context disjoint from both sides
+    cancels, Kraft, Pratt and Seidenberg's additivity axiom (A) (p. 408). -/
+theorem isQualitativeAdditive_iff : IsQualitativeAdditive r ↔
+    ∀ a b c : α, Disjoint c a → Disjoint c b → (r (a ⊔ c) (b ⊔ c) ↔ r a b) := by
+  refine ⟨fun _ _ _ _ ↦ rel_sup_sup_right_iff, fun h ↦ ⟨fun a b ↦ ?_⟩⟩
+  have := h (a \ b) (b \ a) (a ⊓ b) disjoint_inf_sdiff (inf_comm b a ▸ disjoint_inf_sdiff)
+  rwa [sup_sdiff_inf, inf_comm, sup_sdiff_inf] at this
 
 /-- Two comparisons with disjoint left parts and disjoint right parts merge into their joins,
     even with cross overlaps. The proof adds context to each side, passes through `b₁ ⊔ a₂`,

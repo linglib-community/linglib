@@ -788,7 +788,7 @@ theorem worldCup_agree_qualitativeProbability :
     have key (s t : Finset (Fin 5)) : r ↑s ↑t ↔
         kpsRank (t.map worldCupToKps.toEmbedding) ≤ kpsRank (s.map worldCupToKps.toEmbedding) := by
       show kpsGe _ _ ↔ _
-      simp only [kpsGe, kpsRankSet, preimage_worldCupToKps_symm, Finset.toFinset_coe]
+      simp only [kpsGe, preimage_worldCupToKps_symm, Finset.toFinset_coe]
     exact ⟨(key s t).2 h.le, fun h' ↦ absurd ((key t s).1 h') (not_le.2 h)⟩
   have hagree : worldCup.Agree r := fun i ↦ ⟨fun _ ↦ ?_, fun hi ↦ absurd (Finset.mem_univ i) hi⟩
   · exact ⟨r, inferInstance, hagree, fun h ↦ worldCup_not_representable (hagree.representable h)⟩
