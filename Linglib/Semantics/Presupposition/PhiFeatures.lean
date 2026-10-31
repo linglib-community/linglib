@@ -186,6 +186,13 @@ def dom (n : Option Number) : Set E :=
 @[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := by
   simp [dom, Features.ofNumber, pluralF]
 
+/-- Only the singular restricts. -/
+theorem dom_eq_univ_of_ne_singular {n : Option Number} (h : n ≠ some .singular) :
+    dom (E := E) n = Set.univ := by
+  rcases n with _ | n
+  · rfl
+  · cases n <;> first | exact absurd rfl h | rfl | simp
+
 end Number
 
 /-! ### Gender -/

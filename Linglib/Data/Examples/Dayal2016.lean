@@ -351,7 +351,7 @@ def ex57b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "same"), ("cleft", "false")] }
+    paperFeatures := [("section", "2.3.4"), ("existence", "doubted"), ("speaker", "same"), ("cleft", "false")] }
 
 def ex58a : Datum :=
   { id := "dayal2016_ex58a"
