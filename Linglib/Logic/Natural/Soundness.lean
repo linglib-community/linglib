@@ -28,6 +28,8 @@ dual, complementation.
   function.
 * `Signature.soundFor_of_holdsFor`: a signature's projection holds of every function in its class.
 * `Signature.SoundFor.comp`: soundness composes along `Signature.compose`.
+* `Signature.SoundFor.monotone_of_sign_eq_one`, `Signature.SoundFor.antitone_of_sign_eq_neg_one`:
+  the sign of a sound signature fixes the direction of the function.
 * `Signature.HoldsFor.comp`: so do the function classes themselves.
 
 ## Implementation notes
@@ -331,6 +333,24 @@ theorem Signature.SoundFor.comp {ψ φ : Signature} {f : β → γ}
 
 theorem soundFor_addMult_id : Signature.SoundFor .addMult (id : α → α) :=
   soundFor_addMult_iff.2 ⟨monotone_id, fun _ _ h ↦ h, fun _ _ h ↦ h⟩
+
+theorem Signature.project_forward_of_sign_eq_one {σ : Signature} (h : σ.sign = 1) :
+    Signature.project .forward σ = .forward := by
+  revert h; cases σ <;> decide
+
+theorem Signature.project_forward_of_sign_eq_neg_one {σ : Signature} (h : σ.sign = -1) :
+    Signature.project .forward σ = .reverse := by
+  revert h; cases σ <;> decide
+
+/-- A function a signature of positive sign is sound for is monotone. -/
+theorem Signature.SoundFor.monotone_of_sign_eq_one {σ : Signature} {f : α → β}
+    (hf : σ.SoundFor f) (h : σ.sign = 1) : Monotone f := fun x y hxy ↦ by
+  simpa [Signature.project_forward_of_sign_eq_one h, Relation.Holds] using hf .forward x y hxy
+
+/-- A function a signature of negative sign is sound for is antitone. -/
+theorem Signature.SoundFor.antitone_of_sign_eq_neg_one {σ : Signature} {f : α → β}
+    (hf : σ.SoundFor f) (h : σ.sign = -1) : Antitone f := fun x y hxy ↦ by
+  simpa [Signature.project_forward_of_sign_eq_neg_one h, Relation.Holds] using hf .forward x y hxy
 
 end SoundFor
 
