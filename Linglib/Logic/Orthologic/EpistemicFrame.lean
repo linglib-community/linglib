@@ -55,7 +55,7 @@ the second clause of compatibility is `NonemptyInterval.Overlaps`.
 
 namespace Orthologic
 
-open SetRel ModalLogic
+open SetRel
 
 variable {B : Type*} [BooleanAlgebra B]
 
@@ -183,8 +183,8 @@ instance : (access (B := B)).IsTrans :=
 
 /-- Epistemic access is R-regular, witnessed by the point `[a ⊔ d, a ⊔ d]`
 ([holliday-mandelkern-2024] Theorem 5.7.1). -/
-instance : IsRRegular (epistemicFrame B) access where
-  rRegular x y' y hxy' hy'y := by
+instance : IsRRegular (epistemicFrame B) access :=
+  (isRRegular_iff _ _).2 fun x y' y hxy' hy'y ↦ by
     let z := pure (x.fst ⊔ y.fst) (ne_bot_of_le_ne_bot x.fst_ne_bot le_sup_left)
     refine ⟨z, (compat_pure_iff _).2 ⟨le_sup_left, sup_le x.fst_le_snd
       (hy'y.2.2.trans hxy'.2)⟩, fun x'' hx'' ↦ ⟨z, ⟨hx''.2.2, hx''.2.1⟩, compat_of_fst_mem ?_⟩⟩
