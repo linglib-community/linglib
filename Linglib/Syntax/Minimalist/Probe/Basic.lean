@@ -160,6 +160,17 @@ theorem goal_eq_none_of_not_int {a : α} (h : p.search goals = some a) (ha : ¬ 
 
 @[simp] theorem search_nil : p.search [] = none := rfl
 
+/-- Search commutes with a map of goals that carries satisfaction to satisfaction. -/
+theorem search_map {β : Type*} {q : Probe β} (g : α → β) (h : ∀ a ∈ goals, q.sat (g a) ↔ p.sat a) :
+    q.search (goals.map g) = (p.search goals).map g := by
+  induction goals with
+  | nil => rfl
+  | cons a l ih =>
+    have ha := h a List.mem_cons_self
+    have hl := ih fun b hb ↦ h b (List.mem_cons_of_mem _ hb)
+    simp only [search] at hl ⊢
+    by_cases hs : p.sat a <;> simp [hs, ha, hl]
+
 theorem goal_le_search {a : α} (h : p.goal goals = some a) : p.search goals = some a :=
   (goal_eq_some_iff.mp h).1
 

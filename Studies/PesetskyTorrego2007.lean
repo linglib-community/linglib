@@ -8,8 +8,10 @@ public import Mathlib.Tactic.DeriveFintype
 # Pesetsky and Torrego (2007): The syntax of valuation and the interpretability of features
 
 Agree shares features: an unvalued probe feature is replaced by the goal's, so that one feature
-has instances at both locations (5). Agree between two unvalued features is therefore not vacuous,
-since a later Agree that values one instance values them all (7)–(8). Valuation and
+has instances at both locations (5). After a single Agree, sharing and the assignment version of
+Agree [give every location the same value](##PesetskyTorrego2007.State.map_valueAt_share); they
+differ in the link that sharing leaves. Agree between two unvalued features is therefore not
+vacuous, since a later Agree that values one instance values them all (7)–(8). Valuation and
 interpretability are independent (9): Tns bears interpretable unvalued T and the finite verb
 uninterpretable valued T (10), and every feature must be valued and interpreted at one of its
 instances, Radical Interpretability (15). Structural case is an uninterpretable instance of T. In
@@ -108,6 +110,22 @@ theorem valueAt_share {x : L} (hx : s.Shares x α) (h : s.share α β = some s')
     simp only [Setoid.ker_def] at hx
     simp [valueAt, hx]
   · cases h
+
+theorem shares_of_assign (h : s.assign α β = some s') : s'.Shares = s.Shares := by
+  unfold assign at h
+  split at h <;> cases h
+  rfl
+
+/-- After one Agree, sharing and assignment give every location the same value. They part only in
+the link that sharing leaves and a later Agree can use, as in (7)–(8). -/
+theorem map_valueAt_share :
+    (s.share α β).map (·.valueAt) = (s.assign α β).map (·.valueAt) := by
+  unfold share assign
+  split_ifs
+  · simp only [Option.map_some, Option.some.injEq]
+    funext x
+    by_cases hx : s.feature x = s.feature α <;> simp [valueAt, hx]
+  · rfl
 
 end State
 

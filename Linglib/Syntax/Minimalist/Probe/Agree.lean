@@ -235,6 +235,14 @@ theorem agree_interacted_eq_goal (h : ∀ a, p.int a → p.sat a) :
     (p.agree copy s goals).interacted = (p.goal goals).toList := by
   rw [agree_interacted, inspected_filter_int_eq_goal h]
 
+/-- A probe that interacts with exactly the goals that satisfy it copies once, from the goal its
+search finds. -/
+theorem agree_state_eq_elim (h : ∀ a, p.int a ↔ p.sat a) :
+    (p.agree copy s goals).state = (p.search goals).elim s fun a ↦ copy a s := by
+  rw [agree_state, agree_interacted_eq_goal fun a ha ↦ (h a).1 ha,
+    goal_eq_search_of_int fun a ha ↦ (h a).2 ha]
+  cases p.search goals <;> rfl
+
 theorem relativized_agree_interacted (f : α → Prop) [DecidablePred f] :
     ((relativized f).agree copy s goals).interacted = ((relativized f).search goals).toList := by
   rw [agree_interacted_eq_goal (fun _ h ↦ h), relativized_goal]
