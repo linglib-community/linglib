@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.Minimals
+public import Linglib.Semantics.Modality.ComparativePossibility
 public import Mathlib.Order.Filter.Map
 
 /-!
@@ -26,7 +27,9 @@ the domain extends to one true together somewhere in the domain and only at `t`-
 
 Under the Limit Assumption the filter is the principal filter of the minimal worlds, and when one
 world of the domain lies strictly below every other it is the point filter of that world. On a
-total preorder necessity over a nonempty domain is good possibility.
+total preorder necessity over a nonempty domain is good possibility, and good possibility is
+comparative possibility: the worlds of the domain where the proposition holds are more possible
+than those where it fails.
 
 The filters of one preorder over different domains obey the rules of preferential consequence.
 A domain is a necessity over itself, what is necessary over two domains is necessary over their
@@ -170,6 +173,26 @@ theorem mem_necessityFilter_iff_isGoodPossibility_of_total (htot : Std.Total p.l
     (hs : s.Nonempty) : t ∈ necessityFilter p s ↔ IsGoodPossibility p s t :=
   ⟨fun h ↦ isGoodPossibility_of_mem_necessityFilter h hs,
     fun h ↦ h.mem_necessityFilter_of_total htot⟩
+
+/-- On a total preorder `t` is a good possibility over `s` exactly when the `t`-worlds of `s` are
+more possible than its other worlds, in Lewis's sense of comparative possibility. -/
+theorem isGoodPossibility_iff_asymmRel_lewis (htot : Std.Total p.le) :
+    IsGoodPossibility p s t ↔ AsymmRel (ComparativePossibility.Lewis p.le) (s ∩ t) (s \ t) := by
+  rw [@ComparativePossibility.asymmRel_lewis_iff _ _ _ _ htot]
+  refine ⟨fun ⟨v, hv, hvt⟩ ↦ ⟨v, ⟨hv, hvt v hv (p.le_refl v)⟩, fun b hb ↦ ?_⟩,
+    fun ⟨a, ha, h⟩ ↦ ⟨a, ha.1, fun w hw hwa ↦ by_contra fun hwt ↦ (h w ⟨hw, hwt⟩).2 hwa⟩⟩
+  have hbv : ¬ p.le b v := fun hbv ↦ hb.2 (hvt b hb.1 hbv)
+  exact ⟨(htot.total v b).resolve_right hbv, hbv⟩
+
+/-- On a total preorder `t` is necessary over `s` exactly when `s` is empty or the `t`-worlds of
+`s` are more possible than its other worlds. -/
+theorem mem_necessityFilter_iff_asymmRel_lewis (htot : Std.Total p.le) :
+    t ∈ necessityFilter p s ↔
+      s = ∅ ∨ AsymmRel (ComparativePossibility.Lewis p.le) (s ∩ t) (s \ t) := by
+  rcases s.eq_empty_or_nonempty with rfl | hs
+  · exact iff_of_true (fun _ hu ↦ hu.elim) (.inl rfl)
+  · rw [mem_necessityFilter_iff_isGoodPossibility_of_total htot hs,
+      isGoodPossibility_iff_asymmRel_lewis htot, or_iff_right hs.ne_empty]
 
 /-! ### A closest world
 

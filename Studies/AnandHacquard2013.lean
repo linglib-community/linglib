@@ -2,6 +2,7 @@ module
 
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Modality.DomainSemantics
+public import Linglib.Semantics.Modality.ComparativePossibility
 public import Linglib.Data.Examples.AnandHacquard2013
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Basic.Nontrivial.Defs
@@ -68,7 +69,7 @@ imperfect correlate.
 
 namespace AnandHacquard2013
 
-open DomainSemantics
+open DomainSemantics ComparativePossibility
 
 variable {W : Type*}
 
@@ -208,19 +209,19 @@ theorem imagine_epistemic_eq_neg_one (dox : W → Set W) (p : Set W) {w : W}
     exact ⟨⟨u, hu⟩, by simp [conj, hm, hup]⟩
 
 /-- Villalta's lift of a strict ordering to sets (32b) requires that every member of `q` is
-bettered by some member of `p`, and some member of `p` is bettered by no member of `q`. Applied
-to sets of sets it is the ordering of (52). -/
-def Better {α : Type*} (r : α → α → Prop) (p q : Set α) : Prop :=
-  (∀ v ∈ q, ∃ u ∈ p, r u v) ∧ ∃ u ∈ p, ∀ v ∈ q, ¬ r v u
+bettered by some member of `p`, and some member of `p` is bettered by no member of `q`: `p` is
+strictly more possible than `q` in Lewis's sense of comparative possibility. Applied to sets of
+sets it is the ordering of (52). -/
+def Better {α : Type*} (r : α → α → Prop) : Set α → Set α → Prop :=
+  AsymmRel (Lewis r)
 
 theorem Better.mono_left {α : Type*} {r : α → α → Prop} {p p' q : Set α} (h : Better r p q)
     (hp : p ⊆ p') : Better r p' q :=
-  ⟨fun v hv => let ⟨u, hu, hr⟩ := h.1 v hv; ⟨u, hp hu, hr⟩,
-    let ⟨u, hu, hr⟩ := h.2; ⟨u, hp hu, hr⟩⟩
+  ⟨h.1.mono_left hp, fun h' ↦ h.2 (h'.anti_right hp)⟩
 
 theorem Better.anti_right {α : Type*} {r : α → α → Prop} {p q q' : Set α} (h : Better r p q)
     (hq : q' ⊆ q) : Better r p q' :=
-  ⟨fun v hv => h.1 v (hq hv), let ⟨u, hu, hr⟩ := h.2; ⟨u, hu, fun v hv => hr v (hq hv)⟩⟩
+  ⟨h.1.anti_right hq, fun h' ↦ h.2 (h'.mono_left hq)⟩
 
 open Classical in
 /-- Under a non-representational attitude (36) the information state is reset to `∅`, and the
@@ -299,15 +300,15 @@ theorem better_subStates_iff {α : Type*} (r : α → α → Prop) (A B : Set α
   constructor
   · rintro ⟨h1, h2⟩
     rcases B.eq_empty_or_nonempty with rfl | hB
-    · obtain ⟨P, ⟨hPA, u, hu⟩, -⟩ := h2
-      exact ⟨fun v hv => absurd hv (Set.notMem_empty v), u, hPA hu,
-        fun v hv => absurd hv (Set.notMem_empty v)⟩
-    · obtain ⟨p, ⟨hpA, -⟩, hp⟩ := h1 B ⟨Set.Subset.rfl, hB⟩
-      exact hp.mono_left hpA
-  · rintro ⟨h1, u, hu, hr⟩
-    refine ⟨fun q hq => ⟨A, ⟨Set.Subset.rfl, u, hu⟩, Better.anti_right ⟨h1, u, hu, hr⟩ hq.1⟩,
-      {u}, ⟨Set.singleton_subset_iff.mpr hu, Set.singleton_nonempty u⟩, fun q hq hqu => ?_⟩
-    obtain ⟨v, hv, hvr⟩ := hqu.1 u (Set.mem_singleton u)
+    · obtain ⟨P, ⟨hPA, u, hu⟩, -⟩ := not_lewis_iff.1 h2
+      exact ⟨lewis_empty A, fun h ↦ by simpa [lewis_empty_left_iff.1 h] using hPA hu⟩
+    · obtain ⟨p, ⟨hpA, -⟩, hp⟩ := h1 ⟨Set.Subset.rfl, hB⟩
+      exact Better.mono_left hp hpA
+  · intro hAB
+    obtain ⟨u, hu, hr⟩ := not_lewis_iff.1 hAB.2
+    refine ⟨fun q hq ↦ ⟨A, ⟨Set.Subset.rfl, u, hu⟩, Better.anti_right hAB hq.1⟩, not_lewis_iff.2
+      ⟨{u}, ⟨Set.singleton_subset_iff.mpr hu, Set.singleton_nonempty u⟩, fun q hq hqu ↦ ?_⟩⟩
+    obtain ⟨v, hv, hvr⟩ := hqu.1 (Set.mem_singleton u)
     exact hr v (hq.1 hv) hvr
 
 -- (51)
@@ -475,7 +476,7 @@ theorem licensed_emotiveDoxastic_possibility [Nontrivial W] :
       (falsifiers (might (ofSet {a})) Set.univ)
     rw [prefers_iff _ (verifiers_might _ _) (falsifiers_might _ _), Set.univ_inter,
       Set.univ_inter]
-    exact ⟨fun v hv => ⟨a, rfl, rfl, hv⟩, a, rfl, fun v hv h => hv h.1⟩
+    exact ⟨fun v hv => ⟨a, rfl, rfl, hv⟩, not_lewis_iff.2 ⟨a, rfl, fun v hv h => hv h.1⟩⟩
 
 theorem not_licensed_emotiveDoxastic_necessity : ¬ Licensed W .emotiveDoxastic .necessity :=
   fun ⟨r, dox, p, w, h⟩ => hope_must_ne_one r dox p w h
@@ -491,7 +492,8 @@ theorem licensed_dubitative_possibility [Nontrivial W] : Licensed W .dubitative 
   · show Better (Better fun u v => u ≠ a ∧ v = a) (falsifiers (might (ofSet {a})) Set.univ)
       (verifiers (might (ofSet {a})) Set.univ)
     rw [falsifiers_might, verifiers_might, better_subStates_iff, Set.univ_inter, Set.univ_inter]
-    exact ⟨fun v hv => ⟨b, hab.symm, hab.symm, hv⟩, b, hab.symm, fun v hv h => h.1 hv⟩
+    exact ⟨fun v hv => ⟨b, hab.symm, hab.symm, hv⟩,
+      not_lewis_iff.2 ⟨b, hab.symm, fun v hv h => h.1 hv⟩⟩
 
 theorem not_licensed_dubitative_necessity : ¬ Licensed W .dubitative .necessity :=
   fun ⟨r, dox, p, w, h⟩ => doubt_must_ne_one r dox p w h

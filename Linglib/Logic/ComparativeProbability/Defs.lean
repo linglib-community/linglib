@@ -18,14 +18,16 @@ A likelihood order also defines *probably*: `△a` holds when `a` is strictly mo
 its complement, as in the logics of comparative probability that Holliday and Icard compare.
 Over a monotone order the contradiction is never probable and, when the order is non-trivial,
 the tautology always is; over a monotone transitive order *probably* is upward closed.
-`RightUnion` is Halpern's union property `J`.
+`RightUnion` is Halpern's union property `J`, and `DeterminedBySingletons` his property that
+comparisons with a single world reduce to comparisons of single worlds.
 
 ## Main definitions
 
 * `IsLikelihoodMono`, `IsQualitativeAdditive`, `IsNontrivial`, `IsComplementReversing`: the
   axiom mixins on a relation. Its asymmetric part `a ≻ b` is Core's `AsymmRel r`.
 * `IsQualitativeProbability`: de Finetti's axioms on a relation.
-* `Probably`, `RightUnion`: *probably* and Halpern's union property.
+* `Probably`, `RightUnion`, `DeterminedBySingletons`: *probably* and Halpern's two properties of
+  Lewis's comparative possibility.
 
 ## Main statements
 
@@ -98,6 +100,11 @@ def Probably (r : α → α → Prop) (a : α) : Prop := AsymmRel r a aᶜ
 `a ≽ (b ⊔ c)`. This union property separates the l-lifting from the additive semantics. -/
 def RightUnion {β : Type*} [SemilatticeSup β] (r : β → β → Prop) : Prop :=
   ∀ a b c, r a b → r a c → r a (b ⊔ c)
+
+/-- A relation on propositions is determined by singletons when `r A {b}` gives some `a ∈ A`
+with `r {a} {b}`. With `RightUnion` it characterizes Lewis's comparative possibility. -/
+def DeterminedBySingletons {β : Type*} (r : Set β → Set β → Prop) : Prop :=
+  ∀ (A : Set β) (b : β), r A {b} → ∃ a ∈ A, r {a} {b}
 
 variable {r : α → α → Prop} {a b : α}
 

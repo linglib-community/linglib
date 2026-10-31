@@ -37,7 +37,7 @@ likely to win as not; the lottery's probability measure makes the first true and
 ## Errata
 
 * p. 674: when the world order is not connected, the best worlds need not strictly dominate their
-  complement under the revised lift (`not_strict_kratzerLift_bestWorlds`).
+  complement under the revised lift (`not_asymmRel_kratzer_bestWorlds`).
 
 ## References
 
@@ -54,7 +54,7 @@ likely to win as not; the lottery's probability measure makes the first true and
 
 namespace Lassiter2015
 
-open ComparativeProbability Modality MeasureTheory ProbabilityTheory
+open ComparativeProbability ComparativePossibility Modality MeasureTheory ProbabilityTheory
 open scoped Function
 
 variable {W : Type*}
@@ -153,8 +153,8 @@ theorem lottery_wins_le (n : ℕ) :
 
 /-! ### §1.3 The disjunction puzzle in Kratzer 1991 -/
 
-theorem disjunction_puzzle (r : W → W → Prop) : RightUnion (LewisLift r) :=
-  rightUnion_lewisLift
+theorem disjunction_puzzle (r : W → W → Prop) : RightUnion (Lewis r) :=
+  rightUnion_lewis
 
 /-! ### §1.4 Kratzer's revised comparative possibility -/
 
@@ -211,38 +211,38 @@ section Revised
 variable (r : W → W → Prop)
 
 theorem revised_escapes_collapse :
-    ¬EquiprobabilityCollapse (KratzerLift fun _ _ : Fin 2 ↦ True) := by
+    ¬EquiprobabilityCollapse (Kratzer fun _ _ : Fin 2 ↦ True) := by
   intro h
   have := h {0} Set.univ fun ⟨_, _, hall⟩ ↦ (hall 0 ⟨rfl, fun h ↦ h rfl⟩).2 trivial
-  rw [kratzerLift_univ_iff] at this
+  rw [kratzer_univ_iff] at this
   exact absurd (this ▸ Set.mem_univ 1) (by simp)
 
-theorem revised_countermodel_overlap {A B C : Set W} (hB : KratzerLift r A B)
-    (hC : KratzerLift r A C) (hn : ¬KratzerLift r A (B ∪ C)) :
-    (∃ u ∈ B \ A, ∃ v ∈ A ∩ C, ¬(r u v ∧ ¬r v u)) ∨
-      ∃ u ∈ C \ A, ∃ v ∈ A ∩ B, ¬(r u v ∧ ¬r v u) := by
-  have key {B C : Set W} (hB : KratzerLift r A B) {u : W} (hu : u ∈ B \ A)
-      (hall : ∀ v ∈ A \ (B ∪ C), r u v ∧ ¬r v u) : ∃ v ∈ A ∩ C, ¬(r u v ∧ ¬r v u) := by
+theorem revised_countermodel_overlap {A B C : Set W} (hB : Kratzer r A B)
+    (hC : Kratzer r A C) (hn : ¬Kratzer r A (B ∪ C)) :
+    (∃ u ∈ B \ A, ∃ v ∈ A ∩ C, ¬AsymmRel r u v) ∨
+      ∃ u ∈ C \ A, ∃ v ∈ A ∩ B, ¬AsymmRel r u v := by
+  have key {B C : Set W} (hB : Kratzer r A B) {u : W} (hu : u ∈ B \ A)
+      (hall : ∀ v ∈ A \ (B ∪ C), AsymmRel r u v) : ∃ v ∈ A ∩ C, ¬AsymmRel r u v := by
     by_contra hnone
     push Not at hnone
     exact hB ⟨u, hu, fun v hv ↦ (em (v ∈ C)).elim (fun hvC ↦ hnone v ⟨hv.1, hvC⟩)
       fun hvC ↦ hall v ⟨hv.1, fun h ↦ h.elim hv.2 hvC⟩⟩
-  simp only [KratzerLift, not_not] at hn
+  simp only [Kratzer, not_not] at hn
   obtain ⟨u, ⟨huB | huC, huA⟩, hall⟩ := hn
   · exact .inl ⟨u, ⟨huB, huA⟩, key hB ⟨huB, huA⟩ hall⟩
   · exact .inr ⟨u, ⟨huC, huA⟩, key hC ⟨huC, huA⟩ (Set.union_comm B C ▸ hall)⟩
 
-theorem kratzerLift_modifiedDisjunctionPuzzle : ModifiedDisjunctionPuzzle (KratzerLift r) :=
-  fun _ _ _ hB hC _ ↦ kratzerLift_rightUnion_of_disjoint r hB hC
+theorem kratzer_modifiedDisjunctionPuzzle : ModifiedDisjunctionPuzzle (Kratzer r) :=
+  fun _ _ _ hB hC _ ↦ kratzer_union_of_disjoint hB hC
 
 end Revised
 
 theorem lifts_lottery_collapse (r : Ticket → Ticket → Prop) :
-    ((∀ n ≠ 0, LewisLift r (wins {0}) (wins {n})) → LewisLift r (wins {0}) (wins {0})ᶜ) ∧
-      ((∀ n ≠ 0, KratzerLift r (wins {0}) (wins {n})) → KratzerLift r (wins {0}) (wins {0})ᶜ) :=
-  ⟨lottery_collapse (modifiedDisjunctionPuzzle_of_rightUnion rightUnion_lewisLift) holder
+    ((∀ n ≠ 0, Lewis r (wins {0}) (wins {n})) → Lewis r (wins {0}) (wins {0})ᶜ) ∧
+      ((∀ n ≠ 0, Kratzer r (wins {0}) (wins {n})) → Kratzer r (wins {0}) (wins {0})ᶜ) :=
+  ⟨lottery_collapse (modifiedDisjunctionPuzzle_of_rightUnion rightUnion_lewis) holder
       exists_holder_ne,
-    lottery_collapse (kratzerLift_modifiedDisjunctionPuzzle r) holder exists_holder_ne⟩
+    lottery_collapse (kratzer_modifiedDisjunctionPuzzle r) holder exists_holder_ne⟩
 
 /-! ### §1.5 Lifting an order on worlds -/
 
@@ -448,7 +448,7 @@ section Bridges
 variable (r : W → W → Prop) [MeasurableSpace W] (P : Measure W)
 
 /-- BR1 (57): the probability order includes the revised lift. -/
-def Bridge1 : Prop := KratzerLift r ≤ P.inducedGe
+def Bridge1 : Prop := Kratzer r ≤ P.inducedGe
 
 /-- BR2 (59): on singletons the probability order includes the world order. -/
 def Bridge2 : Prop := r ≤ (P.inducedGe on fun u ↦ {u})
@@ -457,9 +457,9 @@ def Bridge2 : Prop := r ≤ (P.inducedGe on fun u ↦ {u})
 def Bridge3 : Prop := MatchingLift r ≤ P.inducedGe
 
 theorem bridge1_disjoint_puzzle (h : Bridge1 r P) {A B C : Set W} (hB : Disjoint A B)
-    (hC : Disjoint A C) (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) :
+    (hC : Disjoint A C) (hAB : Kratzer r A B) (hAC : Kratzer r A C) :
     P.inducedGe A (B ∪ C) :=
-  h _ _ (kratzerLift_rightUnion_of_disjoint r hB hC hAB hAC)
+  h _ _ (kratzer_union_of_disjoint hB hC hAB hAC)
 
 theorem bridge3_of_agree [Fintype W] [MeasurableSingletonClass W]
     (h : r = (P.inducedGe on fun u ↦ {u})) : Bridge3 r P :=
@@ -473,11 +473,11 @@ theorem bridge1_kratzer :
     funext₂ fun w z ↦ propext (Kratzer2012.Grades.atLeastAsGoodAs_ideal_iff 0 w z)
   intro A B h
   rw [hr] at h
-  exact (Kratzer2012.Grades.kratzerLift_iff_measure_le_iff.2
+  exact (Kratzer2012.Grades.kratzer_iff_measure_le_iff.2
     Kratzer2012.Grades.superincreasing_prob A B).1 h
 
 theorem not_bridge1_skewed : ¬Bridge1 (premisePreorder (onlyBest 0)).le skewed := fun h ↦ by
-  have := h {0} {1, 2} (kratzerLift_iff.2 fun _ _ ↦ ⟨0, ⟨rfl, by simp⟩, fun ⟨_, h2⟩ ↦
+  have := h {0} {1, 2} (kratzer_iff.2 fun _ _ ↦ ⟨0, ⟨rfl, by simp⟩, fun ⟨_, h2⟩ ↦
     h2 ((onlyBest_le _ _ _).2 fun _ ↦ rfl)⟩)
   rw [Measure.inducedGe_iff_real, skewed_real, skewed_real] at this
   simp [Fin.sum_univ_three, Set.indicator_apply] at this
@@ -523,7 +523,7 @@ theorem bridge1_thin_margin :
   refine ⟨fun A B hAB ↦ (Measure.inducedGe_iff_real thin).2 ?_, must_onlyBest 0 0, ?_⟩
   · rw [thin_real, thin_real]
     rcases hsets A with rfl | rfl | rfl | rfl <;> rcases hsets B with rfl | rfl | rfl | rfl <;>
-      simp [KratzerLift, onlyBest_le, Fin.sum_univ_two] at hAB ⊢ <;> norm_num at hAB ⊢
+      simp [Kratzer, AsymmRel, onlyBest_le, Fin.sum_univ_two] at hAB ⊢ <;> norm_num at hAB ⊢
   · simp [thin_real]
     norm_num
 
@@ -544,14 +544,14 @@ theorem bestWorlds_crossed : bestWorlds ⊥ (fun _ ↦ crossed) 0 = {0, 1} := by
   revert x
   decide
 
-theorem not_strict_kratzerLift_bestWorlds :
-    ¬AsymmRel (KratzerLift (premisePreorder crossed).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
+theorem not_asymmRel_kratzer_bestWorlds :
+    ¬AsymmRel (Kratzer (premisePreorder crossed).le) (bestWorlds ⊥ (fun _ ↦ crossed) 0)
       (bestWorlds ⊥ (fun _ ↦ crossed) 0)ᶜ := by
   rw [bestWorlds_crossed]
   refine fun ⟨_, h⟩ ↦ h ?_
-  rw [kratzerLift_iff]
+  rw [kratzer_iff]
   simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_compl_iff,
-    crossed_le]
+    AsymmRel, crossed_le]
   decide
 
 /-! ### §4 Probability and the epistemic auxiliaries -/
