@@ -1,40 +1,34 @@
 module
 
+public import Linglib.Core.Relation.SetRel
 public import Linglib.Logic.Orthologic.CompatFrame
 public import Linglib.Logic.Orthologic.Epistemic
-public import Linglib.Logic.Modal.Basic
 
 /-!
 # Modal compatibility frames
 
 This file defines Holliday and Mandelkern's modal compatibility frames, the possibility semantics
-for `must` and `might`. A compatibility frame `F` carries an epistemic accessibility relation
-`R`; necessity is the Kripke operator `□A = {x | R(x) ⊆ A}`, which is `SetRel.core R`, and
-`◇A = ¬□¬A` negates with the orthocomplement of `F` rather than the Boolean complement.
-
-Three conditions on `R` make the regular propositions of `F` an epistemic ortholattice
-(`Logic/Orthologic/Epistemic.lean`). R-regularity is exactly the condition for `□` to preserve
-regularity, which makes the regular propositions with `□` a modal ortholattice; reflexivity makes
-it T; and over these, Knowability is exactly the condition for Wittgenstein's Law.
+for *must* and *might*. An accessibility relation $R$ gives the Kripke necessity
+$\Box A = \{x \mid R(x) \subseteq A\}$, and $\Diamond A = \neg \Box \neg A$ negates with the
+orthocomplement, so [$x$ settles $\Diamond A$](##mem_diamond) when every possibility compatible
+with $x$ accesses one compatible with an $A$-possibility. [R-regularity is exactly the condition
+for $\Box$ to preserve regularity](##isRRegular_iff_isRegular_core), which makes the regular
+propositions a modal ortholattice. Reflexivity makes it T, as does [every possibility accessing
+one it refines](##CompatFrame.necHom_le_of_forall_exists_refines), and over these [Knowability is
+exactly Wittgenstein's Law](##CompatFrame.isKnowable_iff_wittgensteinLaw). Without T,
+[$\neg A$ and $\Diamond^n A$ are disjoint](##disjoint_orthoNeg_diamond_iterate) once every $x$ is
+compatible with a possibility whose $n$-step successors all refine $x$.
 
 ## Main definitions
 
-* `Orthologic.diamond F R`: `◇A = ¬□¬A` on sets.
+* `Orthologic.diamond F R`: $\Diamond A = \neg \Box \neg A$ on sets.
 * `Orthologic.IsRRegular F R`, `Orthologic.IsKnowable F R`: R-regularity and Knowability.
-* `Orthologic.CompatFrame.necHom`: `□` as a map on `F.Regular` preserving meets and `⊤`.
-
-## Main results
-
-* `Orthologic.isRRegular_iff_isRegular_core`: R-regularity iff `□` preserves regularity.
-* `Orthologic.isKnowable_iff`: Knowability iff `□` reflects contradiction on regular sets.
-* `Orthologic.disjoint_orthoNeg_diamond`: `¬A` and `◇A` are disjoint.
-* `Orthologic.CompatFrame.isKnowable_iff_wittgensteinLaw`: over a reflexive R-regular relation,
-  Knowability iff the regular propositions satisfy Wittgenstein's Law.
+* `Orthologic.CompatFrame.necHom`: $\Box$ as a map on `F.Regular` preserving meets and $\top$.
 
 ## Implementation notes
 
 The paper's frame classes are conjunctions of conditions on a bare relation, stated as Prop
-classes like `ModalLogic.IsSerial`: a *modal* compatibility frame is R-regular, a *T* frame is
+classes like mathlib's `SetRel.IsRefl`: a *modal* compatibility frame is R-regular, a *T* frame is
 also reflexive (`R.IsRefl`), and an *epistemic* frame also satisfies Knowability. Each theorem
 assumes only the conditions it uses.
 
@@ -47,13 +41,11 @@ assumes only the conditions it uses.
 
 namespace Orthologic
 
-open ModalLogic SetRel
+open SetRel
 
 variable {S : Type*} (F : CompatFrame S) (R : SetRel S S)
 
-/-- The possibility `◇A = ¬□¬A` negates with the orthocomplement, so `x` makes `◇A` true iff
-every possibility compatible with `x` accesses one compatible with an `A`-possibility
-([holliday-mandelkern-2024] eq. (4)). -/
+/-- The possibility `◇A = ¬□¬A` negates with the orthocomplement. -/
 def diamond (A : Set S) : Set S :=
   orthoNeg F (R.core (orthoNeg F A))
 
@@ -61,13 +53,35 @@ instance [Fintype S] [DecidableRel F.compat] [∀ x y, Decidable (x ~[R] y)] (A 
     [DecidablePred (· ∈ A)] : DecidablePred (· ∈ diamond F R A) := fun x ↦
   inferInstanceAs (Decidable (x ∈ orthoNeg F (R.core (orthoNeg F A))))
 
+variable {F R} in
+/-- `x` makes `◇A` true iff every possibility compatible with `x` accesses one compatible with an
+`A`-possibility ([holliday-mandelkern-2024] eq. (4)). -/
+theorem mem_diamond {A : Set S} {x : S} : x ∈ diamond F R A ↔
+    ∀ x', F.compat x x' → ∃ y', x' ~[R] y' ∧ ∃ y'', F.compat y' y'' ∧ y'' ∈ A := by
+  simp only [diamond, mem_orthoNeg, mem_core, not_forall, not_not, exists_prop]
+
+/-- `◇` sees a set only through its regular closure `¬¬A`. -/
+theorem diamond_orthoNeg_orthoNeg (A : Set S) :
+    diamond F R (orthoNeg F (orthoNeg F A)) = diamond F R A := by
+  unfold diamond
+  rw [orthoNeg_orthoNeg_of_isRegular F (orthoNeg_isRegular F A)]
+
 /-- A relation is R-regular when a possibility accessing one compatible with `y` is compatible
-with a possibility according to which `y` might obtain ([holliday-mandelkern-2024]
-Definition 4.20). -/
+with a possibility according to which `y` might obtain, one in `◇↓y` for `↓y` the refinements of
+`y` ([holliday-mandelkern-2024] Definition 4.20). -/
 class IsRRegular : Prop where
-  /-- The condition is stated in the `◇`-free form of [holliday-mandelkern-2024] Lemma 4.21. -/
   rRegular : ∀ x y' y, x ~[R] y' → F.compat y' y →
-    ∃ x', F.compat x x' ∧ ∀ x'', F.compat x' x'' → ∃ y'', x'' ~[R] y'' ∧ F.compat y'' y
+    ∃ x', F.compat x x' ∧ x' ∈ diamond F R {z | refines F z y}
+
+/-- R-regularity can be written without `◇` ([holliday-mandelkern-2024] Lemma 4.21). -/
+theorem isRRegular_iff : IsRRegular F R ↔ ∀ x y' y, x ~[R] y' → F.compat y' y →
+    ∃ x', F.compat x x' ∧ ∀ x'', F.compat x' x'' → ∃ y'', x'' ~[R] y'' ∧ F.compat y'' y := by
+  have key x' y : x' ∈ diamond F R {z | refines F z y} ↔
+      ∀ x'', F.compat x' x'' → ∃ y'', x'' ~[R] y'' ∧ F.compat y'' y := by
+    rw [show {z | refines F z y} = orthoNeg F (orthoNeg F {y}) from
+      Set.ext fun _ ↦ refines_iff_mem_orthoNeg_orthoNeg F, diamond_orthoNeg_orthoNeg, mem_diamond]
+    simp only [Set.mem_singleton_iff, exists_eq_right]
+  exact ⟨fun ⟨h⟩ ↦ by simpa only [key] using h, fun h ↦ ⟨by simpa only [key] using h⟩⟩
 
 /-- A relation satisfies Knowability when every possibility `x` has one at which everything
 settled true by `x` is known, since all it accesses refine `x` ([holliday-mandelkern-2024]
@@ -88,7 +102,7 @@ theorem isRegular_core [IsRRegular F R] {A : Set S} (hA : IsRegular F A) :
   obtain ⟨y, hxy, hyA⟩ := hx
   obtain hyA' | ⟨z, hyz, hz⟩ := hA y
   · exact absurd hyA' hyA
-  obtain ⟨x', hxx', hx'⟩ := IsRRegular.rRegular x y z hxy hyz
+  obtain ⟨x', hxx', hx'⟩ := (isRRegular_iff F R).1 ‹_› x y z hxy hyz
   refine Or.inr ⟨x', hxx', fun x'' hx'x'' hnec ↦ ?_⟩
   obtain ⟨y'', hy'', hy''z⟩ := hx' x'' hx'x''
   exact hz y'' hy''z.symm (hnec hy'')
@@ -104,7 +118,7 @@ variable (F)
 [holliday-mandelkern-2024] by its converse. -/
 theorem isRRegular_iff_isRegular_core :
     IsRRegular F R ↔ ∀ A, IsRegular F A → IsRegular F (R.core A) := by
-  refine ⟨fun _ _ ↦ isRegular_core R, fun h ↦ ⟨fun x y' y hxy' hy'y ↦ ?_⟩⟩
+  refine ⟨fun _ _ ↦ isRegular_core R, fun h ↦ (isRRegular_iff F R).2 fun x y' y hxy' hy'y ↦ ?_⟩
   obtain hx | ⟨x', hxx', hx'⟩ := h _ (orthoNeg_isRegular F {y}) x
   · exact (hx hxy' y hy'y rfl).elim
   refine ⟨x', hxx', fun x'' hx'x'' ↦ ?_⟩
@@ -123,13 +137,36 @@ theorem isKnowable_iff :
       (mt (h _ (orthoNeg_isRegular F _)) (Set.nonempty_iff_ne_empty.mp ⟨x, hx⟩))
     exact ⟨y, fun _ hyz ↦ (refines_iff_mem_orthoNeg_orthoNeg F).mpr (hy hyz)⟩
 
+variable {F R} in
+private theorem not_image_iterate_subset_orthoNeg :
+    ∀ (n : ℕ) {A : Set S} {x y : S}, x ∈ (diamond F R)^[n] A → F.compat x y →
+      ¬ R.image^[n] {y} ⊆ orthoNeg F A
+  | 0, _, _, _, hx, hxy, h => h rfl _ hxy.symm hx
+  | n + 1, _, _, y, hx, hxy, h => by
+    rw [Function.iterate_succ_apply'] at hx
+    obtain ⟨y', hyy', y'', hy'y'', hy''⟩ := mem_diamond.1 hx y hxy
+    refine not_image_iterate_subset_orthoNeg n hy'' hy'y''.symm (subset_trans ?_ h)
+    rw [Function.iterate_succ_apply]
+    exact image_mono.iterate n (Set.singleton_subset_iff.2 ⟨y, rfl, hyy'⟩)
+
+/-- When every possibility `x` is compatible with some `y` whose possibilities `n` steps of access
+away all refine `x`, `¬A` and `◇ⁿA` are disjoint for every set `A`, with neither reflexivity nor
+R-regularity ([holliday-mandelkern-2024] Remark 4.28). -/
+theorem disjoint_orthoNeg_diamond_iterate {n : ℕ}
+    (h : ∀ x, ∃ y, F.compat y x ∧ ∀ z ∈ R.image^[n] {y}, refines F z x) (A : Set S) :
+    Disjoint (orthoNeg F A) ((diamond F R)^[n] A) := by
+  refine Set.disjoint_left.mpr fun x hxA hx ↦ ?_
+  obtain ⟨y, hyx, hy⟩ := h x
+  exact not_image_iterate_subset_orthoNeg n hx hyx.symm fun z hz ↦
+    (orthoNeg_isRegular F A).mem_of_refines (hy z hz) hxA
+
 /-- Over a reflexive relation with Knowability, `¬A` and `◇A` are disjoint for every set `A`,
 regular or not, and without R-regularity ([holliday-mandelkern-2024] Proposition 4.27). -/
 theorem disjoint_orthoNeg_diamond [R.IsRefl] [IsKnowable F R] (A : Set S) :
     Disjoint (orthoNeg F A) (diamond F R A) := by
-  refine Set.disjoint_left.mpr fun x hxA hx ↦ ?_
+  refine disjoint_orthoNeg_diamond_iterate F R (n := 1) (fun x ↦ ?_) A
   obtain ⟨y, hy⟩ := IsKnowable.knowable (F := F) (R := R) x
-  exact hx y (hy y R.rfl y (F.refl y)) fun z hyz w hzw ↦ hxA w (hy z hyz w hzw)
+  exact ⟨y, (hy y R.rfl y (F.refl y)).symm, fun z ⟨_, hy', hyz⟩ ↦ hy z (hy' ▸ hyz)⟩
 
 /-! ### The modal ortholattice of regular propositions -/
 
@@ -151,10 +188,17 @@ theorem coe_diamondHom_necHom (A : F.Regular) :
     (diamondHom (F.necHom R) A : Set S) = diamond F R A := by
   simp only [diamondHom_apply, Regular.coe_compl, coe_necHom, diamond]
 
-/-- Over a reflexive relation `□A ≤ A` ([holliday-mandelkern-2024] Proposition 4.25; footnote 22
-weakens reflexivity). -/
+/-- `□A ≤ A` holds when every possibility accesses one that it refines
+([holliday-mandelkern-2024] footnote 22). -/
+theorem necHom_le_of_forall_exists_refines (h : ∀ x, ∃ y, x ~[R] y ∧ refines F x y)
+    (A : F.Regular) : F.necHom R A ≤ A :=
+  Concept.extent_subset_extent_iff.mp fun x hx ↦
+    let ⟨_, hxy, hr⟩ := h x
+    A.isRegular.mem_of_refines hr (hx hxy)
+
+/-- Over a reflexive relation `□A ≤ A` ([holliday-mandelkern-2024] Proposition 4.25). -/
 theorem necHom_le [R.IsRefl] (A : F.Regular) : F.necHom R A ≤ A :=
-  Concept.extent_subset_extent_iff.mp fun x hx ↦ hx (R.refl x)
+  necHom_le_of_forall_exists_refines R (fun x ↦ ⟨x, R.rfl, fun _ ↦ id⟩) A
 
 theorem necHom_le_necHom_necHom [R.IsTrans] (A : F.Regular) :
     F.necHom R A ≤ F.necHom R (F.necHom R A) :=
