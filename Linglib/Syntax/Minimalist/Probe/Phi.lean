@@ -1,23 +1,26 @@
 module
 
 public import Linglib.Syntax.Minimalist.Probe.Basic
-public import Linglib.Syntax.Agreement.Bundle
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Minimalist.Feature.Basic
 
 /-!
 # φ-probes
 
-This file specializes `Probe` to φ-features, as probes over `Agreement.Bundle`s relativized by
-the feature they seek, among them Preminger's person probe π⁰, which seeks [participant], and
-number probe #⁰, which seeks [plural], and the φ-goals they search, nominals with or without
-valued Case.
+This file specializes `Probe` to φ-features. A relativized φ-probe seeks one feature and skips the
+φ-cells (`Agreement.Bundle`) that lack it. Preminger's person probe π⁰ seeks [participant], and his
+number probe #⁰ seeks [plural].
+
+The goals of a φ-probe are nominals. The bundle of a nominal carries its φ-cell and a checking slot
+for its case, and the nominal is active, visible to Agree, when that slot is unvalued: an unvalued
+structural case feature makes a goal active ([chomsky-2000]).
 
 ## Main definitions
 
-* `Minimalist.Probe.Target`, `Agreement.Bundle.visibleTo`: the features a relativized probe
-  seeks, and the cells that bear them.
-* `Minimalist.Probe.Target.toProbe`: a target's denotation as a `Probe` over φ-cells.
-* `Minimalist.PhiGoal`: a nominal as a φ-goal, its case if already valued and its φ-cell.
+* `Minimalist.Probe.Target`: the feature a relativized φ-probe seeks.
+* `Agreement.Bundle.visibleTo`: a φ-cell bears the feature a probe seeks.
+* `Minimalist.Probe.Target.toProbe`: the probe over φ-cells that a target denotes.
+* `Minimalist.FeatureBundle.nominal`: the bundle of a nominal with a φ-cell and a case slot.
+* `Minimalist.FeatureBundle.IsActive`: a bundle whose case slot is unvalued.
 
 ## References
 
@@ -37,60 +40,44 @@ inductive Probe.Target where
   | plural
   deriving DecidableEq, Repr
 
-/-- A φ-cell is visible to a relativized probe when it bears the feature the probe seeks; the
-probe skips the cells that lack it. -/
+/-- A φ-cell is visible to a relativized probe when it bears the feature the probe seeks. -/
 def _root_.Agreement.Bundle.visibleTo (c : Agreement.Bundle) : Probe.Target → Bool
   | .participant => decide c.IsSAP
   | .plural => decide c.IsPlural
 
-/-- A `Probe.Target` denotes the probe over φ-cells relativized to the feature it seeks, π⁰ being
-`Probe.Target.participant.toProbe`. -/
+/-- The probe over φ-cells relativized to the feature a target seeks. -/
 def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Bundle :=
   .relativized (·.visibleTo t)
 
-/-- A goal of a φ-probe records the case a head of its own has valued, if any, and its φ-cell. A
-relativized probe reads the cell for visibility, and Agree reads the case for activity, a goal
-being active iff its case is unvalued, as an unchecked structural case feature renders a goal
-active for [chomsky-2000]. -/
-structure PhiGoal where
-  valuedCase : Option Case
-  cell : Agreement.Bundle
-  deriving DecidableEq, Repr
+namespace FeatureBundle
 
-/-- A goal is active, visible to Agree, iff its case is unvalued. -/
-def PhiGoal.isActive (g : PhiGoal) : Bool := g.valuedCase.isNone
+/-- The bundle of a nominal with φ-cell `c` and case slot `k`. -/
+def nominal (c : Agreement.Bundle) (k : FeatureSlot Case) : FeatureBundle :=
+  Function.update (ofAgreement c) .case k
 
-/-- `PhiGoal.valued c cell` is a nominal whose case `c` a head of its own has already valued, so
-that it is inactive for Agree. -/
-def PhiGoal.valued (c : Case) (cell : Agreement.Bundle) : PhiGoal := ⟨some c, cell⟩
+/-- A bundle is active when its case slot is unvalued. -/
+def IsActive (b : FeatureBundle) : Prop := b .case = .unvalued
 
-/-- `PhiGoal.unvalued cell` is a nominal with unvalued case, so that it is active for Agree. -/
-def PhiGoal.unvalued (cell : Agreement.Bundle) : PhiGoal := ⟨none, cell⟩
+instance (b : FeatureBundle) : Decidable b.IsActive := inferInstanceAs (Decidable (_ = _))
 
-@[simp] theorem PhiGoal.cell_valued (c : Case) (cell : Agreement.Bundle) :
-    (PhiGoal.valued c cell).cell = cell := rfl
+variable {c : Agreement.Bundle} {k : FeatureSlot Case}
 
-@[simp] theorem PhiGoal.valuedCase_valued (c : Case) (cell : Agreement.Bundle) :
-    (PhiGoal.valued c cell).valuedCase = some c := rfl
+@[simp] theorem nominal_case : nominal c k .case = k := Function.update_self ..
 
-@[simp] theorem PhiGoal.cell_unvalued (cell : Agreement.Bundle) :
-    (PhiGoal.unvalued cell).cell = cell := rfl
+@[simp] theorem isActive_nominal : (nominal c k).IsActive ↔ k = .unvalued := by
+  simp [IsActive]
 
-@[simp] theorem PhiGoal.valuedCase_unvalued (cell : Agreement.Bundle) :
-    (PhiGoal.unvalued cell).valuedCase = none := rfl
+@[simp] theorem agreement_nominal : (nominal c k).agreement = Function.update c .case k.toFlat := by
+  rw [nominal, agreement_update_agr, agreement_ofAgreement]
 
-@[simp] theorem PhiGoal.isActive_valued (c : Case) (cell : Agreement.Bundle) :
-    (PhiGoal.valued c cell).isActive = false := rfl
+theorem update_case_nominal (k' : FeatureSlot Case) :
+    Function.update (nominal c k) .case k' = nominal c k' :=
+  Function.update_idem ..
 
-@[simp] theorem PhiGoal.isActive_unvalued (cell : Agreement.Bundle) :
-    (PhiGoal.unvalued cell).isActive = true := rfl
+end FeatureBundle
 
-@[simp] theorem PhiGoal.valued_ne_unvalued (c : Case) (cell cell' : Agreement.Bundle) :
-    PhiGoal.valued c cell ≠ PhiGoal.unvalued cell' := by
-  simp [PhiGoal.valued, PhiGoal.unvalued]
-
-@[simp] theorem PhiGoal.unvalued_ne_valued (c : Case) (cell cell' : Agreement.Bundle) :
-    PhiGoal.unvalued cell' ≠ PhiGoal.valued c cell :=
-  (PhiGoal.valued_ne_unvalued c cell cell').symm
+@[simp] theorem _root_.Agreement.Bundle.isSAP_update_case {c : Agreement.Bundle}
+    {x : Flat Case} : Agreement.Bundle.IsSAP (Function.update c .case x) ↔ c.IsSAP := by
+  simp [Agreement.Bundle.IsSAP, Agreement.Bundle.person]
 
 end Minimalist
