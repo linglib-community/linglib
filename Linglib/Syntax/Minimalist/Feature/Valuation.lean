@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Feature.Basic
+public import Linglib.Syntax.Minimalist.Probe.Agree
 
 /-!
 # Valuation
@@ -18,16 +19,32 @@ Agree with a goal that has no value at the dimension leaves the probe unchanged,
 without causing a crash ([preminger-2014]). The goal a probe agrees with is found by search
 (`Minimalist.LinearizedSyntacticObject.goals`).
 
+The items of a derivation carry their bundles in a `FeatureState`. Agree between a probe and a goal
+at a dimension values each with the value of the other there, so a valued probe, such as a case
+assigner, values an unvalued goal. A goal matches a probe when it bears the dimension, since
+matching is identity of the dimension and not of the value ([chomsky-2000]). The probe of an item
+at a dimension is satisfied by the goals that match it and interacts with those that are also
+active. A matching goal that is not active therefore halts the search without valuing: Chomsky's
+defective intervention is satisfaction without interaction in the sense of [deal-2025a].
+Valuation only adds features, so [a run of Agree extends the state](##Minimalist.FeatureState.le_agree_state),
+and [a slot valued before Agree keeps its value](##Minimalist.FeatureState.apply_eq_valued_of_le).
+
 ## Main definitions
 
 * `Minimalist.FeatureSlot.valueWith`: a slot valued with `v`.
 * `Minimalist.FeatureBundle.valueAt`: a bundle valued with `v` at a dimension.
 * `Minimalist.FeatureBundle.applyAgree`: a probe valued from a goal.
+* `Minimalist.FeatureState`: the feature bundles of the items of a derivation.
+* `Minimalist.FeatureState.Matches`: a goal matches a probe at a dimension.
+* `Minimalist.FeatureState.probe`: the probe of an item at a dimension.
+* `Minimalist.FeatureState.agree`: Agree between two items at a dimension.
 
 ## References
 
 * [chomsky-2000]
+* [deal-2025a]
 * [preminger-2014]
+* [amato-2025]
 -/
 
 @[expose] public section
@@ -164,6 +181,69 @@ theorem le_of_applyAgree_eq_coe {probe' : FeatureBundle}
   · exact le_of_valueAt_eq_coe h
   · exact (WithTop.coe_inj.1 h).le
 
+theorem le_untopD_applyAgree : probe ≤ (probe.applyAgree goal t).untopD probe := by
+  cases h : probe.applyAgree goal t with
+  | top => exact le_rfl
+  | coe b => exact le_of_applyAgree_eq_coe h
+
 end FeatureBundle
+
+/-! ### Agree between items -/
+
+/-- The feature bundles of the items of a derivation. -/
+abbrev FeatureState (H : Type*) := H → FeatureBundle
+
+namespace FeatureState
+
+variable {H : Type*} (s : FeatureState H) (α : H) (t : FeatureType)
+
+/-- The goal `g` matches the probe `α` at `t`. An unvalued probe matches a goal that bears `t`,
+whether valued or not. A valued probe, such as a case assigner, matches a goal that bears `t`
+unvalued ([amato-2025]). -/
+def Matches (g : H) : Prop :=
+  match s α t with
+  | .unvalued => s g t ≠ .absent
+  | .valued _ => s g t = .unvalued
+  | .absent => False
+
+instance : DecidablePred (s.Matches α t) := fun g ↦ by
+  unfold Matches; split <;> infer_instance
+
+/-- The probe of `α` at `t`, satisfied by the goals that match it and interacting with the matching
+goals that are also active. -/
+def probe (active : H → Prop) [DecidablePred active] : Probe H :=
+  ⟨fun g ↦ s.Matches α t g ∧ active g, s.Matches α t⟩
+
+section Agree
+
+variable [DecidableEq H]
+
+/-- Agree between `α` and `g` at `t`, in which each is valued with the value of the other at `t`.
+A bundle whose value differs from the other's is unchanged. -/
+def agree (g : H) : FeatureState H :=
+  Function.update (Function.update s α (((s α).applyAgree (s g) t).untopD (s α))) g
+    (((s g).applyAgree (s α) t).untopD (s g))
+
+theorem le_agree (g : H) : s ≤ s.agree α t g := by
+  intro h
+  rcases eq_or_ne h g with rfl | hg
+  · simpa [agree] using FeatureBundle.le_untopD_applyAgree
+  · rcases eq_or_ne h α with rfl | hα
+    · simpa [agree, hg] using FeatureBundle.le_untopD_applyAgree
+    · simp [agree, hg, hα]
+
+theorem le_agree_state (active : H → Prop) [DecidablePred active] (goals : List H) :
+    s ≤ ((s.probe α t active).agree (fun g s ↦ s.agree α t g) s goals).state :=
+  Probe.le_agree_state fun g s ↦ s.le_agree α t g
+
+end Agree
+
+variable {s} {s' : FeatureState H}
+
+theorem apply_eq_valued_of_le (h : s ≤ s') {x : H} {u : FeatureType} {v : u.Value}
+    (hv : s x u = .valued v) : s' x u = .valued v :=
+  FeatureSlot.valued_le_iff.1 (hv ▸ h x u)
+
+end FeatureState
 
 end Minimalist

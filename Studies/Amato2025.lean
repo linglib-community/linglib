@@ -16,13 +16,13 @@ probe must exploit the dependency an earlier one established, so its search
 starts from the earlier probe's goal — everything the head c-commands above
 that goal lies outside its domain, and a structurally closer matching goal is
 skipped with minimality respected at every step. `run` is that engine on the
-substrate's `FeatureBundle` slots and `Probe.search`: a probe's domain is the
+substrate's `FeatureState.probe` and `FeatureState.agree`: a probe's domain is the
 c-command-ordered list of accessible heads (the paper's own notation in (6),
 (8), (32), (34)), read off a projection spine by `domain`, which stops at a
 phase head's complement (PIC); a valued probe (a case assigner, `[∗Infl:perf∗]`)
 matches only an unvalued slot and values its goal, an unvalued probe matches
 any specified slot and is valued by an active goal (fn. 23, defective
-intervention).
+intervention). Since valuation only adds features, [a run extends the state](##le_run).
 
 The paper's derivations then run as stated: Standard Italian auxiliary
 selection ((9)–(20), over the substrate's `TransitivityClass` and impersonal/passive
@@ -54,9 +54,6 @@ variable {H : Type*} [DecidableEq H]
 
 /-! ### The engine -/
 
-/-- The feature state of a derivation assigns every head its bundle. -/
-abbrev State (H : Type*) := H → FeatureBundle
-
 /-- A projection has its specifiers, highest first, over its head. -/
 structure Layer (H : Type*) where
   specs : List H
@@ -69,43 +66,32 @@ def domain (phase : H → Bool) : List (Layer H) → List H
   | [] => []
   | l :: ls => l.specs ++ l.head :: (if phase l.head then [] else domain phase ls)
 
-/-- Goal `g` matches the probe at dimension `t` on `α` (fn. 23). An unvalued probe
-matches any specified slot — an unvalued one too, defective intervention — while a
-valued probe (a case assigner, `[∗Infl:perf∗]`) matches only an unvalued slot, so a
-DP whose case is already valued is invisible to case assignment. -/
-def goalMatches (s : State H) (α : H) (t : FeatureType) (g : H) : Bool :=
-  match s α t with
-  | .unvalued => decide (s g t ≠ .absent)
-  | .valued _ => decide (s g t = .unvalued)
-  | .absent => false
-
-/-- In Agree between `α` and its goal `g` at `t`, an unvalued probe copies the goal's value when the
-goal has one and is active for `t` (an inactive goal is matched but values nothing), and a valued
-probe values the goal. -/
-def agree (act : H → FeatureType → Bool) (s : State H) (α : H) (t : FeatureType) (g : H) :
-    State H :=
-  match s α t, s g t with
-  | .unvalued, .valued v =>
-    if act g t then Function.update s α (((s α).valueAt t v).untopD (s α)) else s
-  | .valued v, .unvalued => Function.update s g (((s g).valueAt t v).untopD (s g))
-  | _, _ => s
+variable (act : H → FeatureType → Prop) [∀ h t, Decidable (act h t)]
 
 /-- Discharge the probes on `α` in their extrinsic order over `dom` (Definition (1)).
 Each probe searches for its closest matching goal from the previous probe's goal on —
 reusing that "Agree-channel", so what `α` c-commands above it is outside the search —
-and from the top of `dom` when the previous probe found no goal (§4.1.2). Returns each
-probe's goal and the resulting state. -/
-def run (act : H → FeatureType → Bool) (α : H) (dom : List H) (ts : List FeatureType)
-    (s : State H) : List (Option H) × State H :=
+and from the top of `dom` when the previous probe found no goal (§4.1.2). A goal that `act`
+marks inactive at a dimension is matched without valuing (fn. 23). Returns each probe's goal and
+the resulting state. -/
+def run (α : H) (dom : List H) (ts : List FeatureType) (s : FeatureState H) :
+    List (Option H) × FeatureState H :=
   go none ts s
 where
-  go : Option H → List FeatureType → State H → List (Option H) × State H
+  go : Option H → List FeatureType → FeatureState H → List (Option H) × FeatureState H
   | _, [], s => ([], s)
   | prev, t :: ts, s =>
-    let r := (Probe.relativized (goalMatches s α t ·)).agree (fun g s ↦ agree act s α t g) s
+    let r := (s.probe α t (act · t)).agree (fun g s ↦ s.agree α t g) s
       (prev.elim dom fun β ↦ dom.dropWhile fun x ↦ decide (x ≠ β))
     let rest := go r.satisfier ts r.state
     (r.satisfier :: rest.1, rest.2)
+
+theorem le_run (α : H) (dom : List H) (ts : List FeatureType) (s : FeatureState H) :
+    s ≤ (run act α dom ts s).2 := by
+  suffices ∀ prev s, s ≤ (run.go act α dom prev ts s).2 from this none s
+  induction ts with
+  | nil => exact fun _ _ ↦ le_rfl
+  | cons t ts ih => exact fun _ s ↦ (s.le_agree_state α t _ _).trans (ih _ _)
 
 theorem nestedDomain {pre post : List H} {β : H} (hβ : β ∉ pre) :
     (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) = β :: post := by
@@ -124,14 +110,14 @@ theorem notMem_nestedDomain {pre post : List H} {β δ : H}
   exact fun h ↦ hdisj δ hδ δ h rfl
 
 /-- Under Multiple Agree `[∗wh∗]` reaches every matching goal in c-command order (§4.2.3). -/
-def multipleAgree (s : State H) (α : H) (t : FeatureType) (dom : List H) : List H :=
-  dom.filter (goalMatches s α t)
+def multipleAgree (s : FeatureState H) (α : H) (t : FeatureType) (dom : List H) : List H :=
+  dom.filter fun g ↦ decide (s.Matches α t g)
 
 /-- In (36) the Merge feature `[·wh·]`, nested under the last goal of `[∗wh∗]`, raises it first, and
 each later application, its landing site being above the probe, searches the remaining domain
 afresh. The result lists the movers in order of movement. -/
-def whFronting (s : State H) (α : H) (dom : List H) : List H :=
-  let p := Probe.relativized (goalMatches s α .wh ·)
+def whFronting (s : FeatureState H) (α : H) (dom : List H) : List H :=
+  let p := Probe.relativized (s.Matches α .wh)
   match (multipleAgree s α .wh dom).getLast? with
   | none => []
   | some β =>
@@ -158,7 +144,9 @@ def isPhase : Head → Bool
   | _ => false
 
 /-- Every goal values its probe. -/
-def allActive : Head → FeatureType → Bool := fun _ _ ↦ true
+def AllActive : Head → FeatureType → Prop := fun _ _ ↦ True
+
+instance (h : Head) (t : FeatureType) : Decidable (AllActive h t) := inferInstanceAs (Decidable True)
 
 /-- `[ϕ:p]`. -/
 def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Value := ⟨.person, .valued p⟩
@@ -224,23 +212,23 @@ def perfSpine (cl : Clause) : List (Layer Head) :=
 
 /-- In v's cycle ((9), (16)) v assigns accusative and then π-agrees with the object; a defective v
 does neither. -/
-def afterV (cl : Clause) (p : Person) : State Head :=
-  (run allActive .v [.verb, .dpObj] (if cl.verb = .unaccusative then [] else [.case, .person])
+def afterV (cl : Clause) (p : Person) : FeatureState Head :=
+  (run AllActive .v [.verb, .dpObj] (if cl.verb = .unaccusative then [] else [.case, .person])
     (initial cl p)).2
 
 /-- Perf's cycle under the feature ordering `ord`. -/
 def perfCycle (ord : List FeatureType) (cl : Clause) (p : Person) :
-    List (Option Head) × State Head :=
-  run allActive .perf (domain isPhase (perfSpine cl)) ord (afterV cl p)
+    List (Option Head) × FeatureState Head :=
+  run AllActive .perf (domain isPhase (perfSpine cl)) ord (afterV cl p)
 
 /-- In T's cycle (11) T assigns nominative and then ϕ-agrees. -/
 def tCycle (ord : List FeatureType) (cl : Clause) (p : Person) :
-    List (Option Head) × State Head :=
-  run allActive .t (domain isPhase (⟨[], .perf⟩ :: perfSpine cl)) [.case, .person]
+    List (Option Head) × FeatureState Head :=
+  run AllActive .t (domain isPhase (⟨[], .perf⟩ :: perfSpine cl)) [.case, .person]
     (perfCycle ord cl p).2
 
 /-- The state after v, Perf and T have probed. -/
-def derive (ord : List FeatureType) (cl : Clause) (p : Person) : State Head :=
+def derive (ord : List FeatureType) (cl : Clause) (p : Person) : FeatureState Head :=
   (tCycle ord cl p).2
 
 /-- Standard Italian orders its probes by argument structure, Infl before person (7). -/
@@ -273,7 +261,7 @@ theorem t_targets_subject (p : Person) :
   revert p; decide
 
 /-- The Vocabulary Items (14) insert `/AVERE/ ↔ Perf[π:α]`, and `/ESSERE/` elsewhere. -/
-def standardItalianAux (s : State Head) : PerfectAuxiliary :=
+def standardItalianAux (s : FeatureState Head) : PerfectAuxiliary :=
   if (s .perf .person).toFlat ≠ ⊥ then .have else .be
 
 -- (4), (5)
@@ -288,7 +276,7 @@ theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
   rcases hf with rfl | rfl <;> (revert c p; decide)
 
 /-- Ariellese (23) inserts `/AVERE/ ↔ Perf[π:-participant]`. -/
-def arielleseAux (s : State Head) : PerfectAuxiliary :=
+def arielleseAux (s : FeatureState Head) : PerfectAuxiliary :=
   if s .perf .person = .valued .third then .have else .be
 
 -- (22), (21), §3.5
@@ -297,7 +285,7 @@ theorem ariellese_aux (c : TransitivityClass) (p : Person) :
   revert c p; decide
 
 /-- Tufillese (24) inserts `/AVERE/ ↔ Perf[π:α] / T[ϕ:3sg]`. -/
-def tufilleseAux (s : State Head) : PerfectAuxiliary :=
+def tufilleseAux (s : FeatureState Head) : PerfectAuxiliary :=
   if (s .perf .person).toFlat ≠ ⊥ ∧ s .t .person = .valued .third then .have else .be
 
 -- §3.5
@@ -329,8 +317,8 @@ def ditransitiveInitial (applDat : Bool) : Head → FeatureBundle
 
 /-- The derivation of (25)–(28), in which v's probes, in order `o`, search the recipient, Appl, the
 verb and the theme. -/
-def ditransitive (o : ProbeOrder) (applDat : Bool) : List (Option Head) × State Head :=
-  run allActive .v [.dpR, .appl, .verb, .dpT] o.probes (ditransitiveInitial applDat)
+def ditransitive (o : ProbeOrder) (applDat : Bool) : List (Option Head) × FeatureState Head :=
+  run AllActive .v [.dpR, .appl, .verb, .dpT] o.probes (ditransitiveInitial applDat)
 
 /-- The goal of v's ϕ-probe. -/
 def phiGoal (o : ProbeOrder) (applDat : Bool) : Option Head :=
@@ -396,9 +384,10 @@ def icelandicInitial : Clausal → Head → FeatureBundle
   | _, _ => ⊥
 
 /-- Datives are defective goals for ϕ-Agree, matched but never valuing. -/
-def icelandicActive : Head → FeatureType → Bool
-  | .dpDat, .number => false
-  | _, _ => true
+def IcelandicActive (h : Head) (t : FeatureType) : Prop := ¬ (h = .dpDat ∧ t = .number)
+
+instance (h : Head) (t : FeatureType) : Decidable (IcelandicActive h t) :=
+  inferInstanceAs (Decidable (¬ _))
 
 /-- The two orderings that coexist on Icelandic T. -/
 def icelandicOrder : ProbeOrder → List FeatureType
@@ -407,7 +396,7 @@ def icelandicOrder : ProbeOrder → List FeatureType
 
 /-- T's number slot after probing. -/
 def icelandic (k : Clausal) (o : ProbeOrder) : FeatureSlot FeatureType.number.Value :=
-  (run icelandicActive .t [.dpDat, .dpNom] (icelandicOrder o) (icelandicInitial k)).2 .t .number
+  (run IcelandicActive .t [.dpDat, .dpNom] (icelandicOrder o) (icelandicInitial k)).2 .t .number
 
 -- (29a)
 theorem icelandic_monoclausal_caseFirst :
@@ -434,8 +423,8 @@ def lakInitial (ps po : Person) : Head → FeatureBundle
 
 /-- Asp's person slot after v has agreed with the object and Asp with v. -/
 def lak (ps po : Person) : FeatureSlot FeatureType.person.Value :=
-  let s := (run allActive .v [.dpObj] [.person] (lakInitial ps po)).2
-  (run allActive .asp (domain isPhase [⟨[.dpSbj], .v⟩, ⟨[], .dpObj⟩]) [.infl, .person] s).2
+  let s := (run AllActive .v [.dpObj] [.person] (lakInitial ps po)).2
+  (run AllActive .asp (domain isPhase [⟨[.dpSbj], .v⟩, ⟨[], .dpObj⟩]) [.infl, .person] s).2
     .asp .person
 
 -- (31c), (31d)
@@ -454,7 +443,7 @@ def vosInitial : Head → FeatureBundle
 
 -- (33)
 theorem vos_subject_agreement :
-    (run allActive .t [.dpObj, .dpSbj] [.case, .person] vosInitial).1 =
+    (run AllActive .t [.dpObj, .dpSbj] [.case, .person] vosInitial).1 =
       [some .dpSbj, some .dpSbj] := by decide
 
 /-! ### Bulgarian multiple wh-fronting (§4.2.3) -/
@@ -475,7 +464,7 @@ theorem bulgarian_order : whFronting bulgarianInitial .c bulgarianDomain = [.whO
 
 /-- Without Multiple Agree the wh-probe's first goal is the subject, the order minimality
 alone predicts. -/
-example : (Probe.relativized (goalMatches bulgarianInitial .c .wh ·)).search bulgarianDomain =
+example : (Probe.relativized (FeatureState.Matches bulgarianInitial .c .wh)).search bulgarianDomain =
     some .whSbj := by decide
 
 /-! ### Agreement with unmarked DPs in Hindi-Urdu (§4.3.1) -/
@@ -507,9 +496,9 @@ def hindiSpine : HindiClause → List (Layer Head)
 /-- T's person slot after v has probed its complement (empty in (40), the object having
 moved, fn. 33) and T has Infl-agreed with Asp and, nested under it, probed for ϕ. -/
 def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Value :=
-  let s := (run allActive .v (if k = .bothMarked then [] else [.verb, .dpObj]) [.person]
+  let s := (run AllActive .v (if k = .bothMarked then [] else [.verb, .dpObj]) [.person]
     (hindiInitial k ps po)).2
-  (run allActive .t (domain isPhase (hindiSpine k)) [.infl, .person] s).2 .t .person
+  (run AllActive .t (domain isPhase (hindiSpine k)) [.infl, .person] s).2 .t .person
 
 -- (37)
 theorem hindi_object_agreement (ps po : Person) : hindi .ergSubject ps po = .valued po := by
