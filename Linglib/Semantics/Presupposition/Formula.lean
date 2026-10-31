@@ -27,8 +27,8 @@ is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_get`).
 * `Presupposition.Formula`: atoms, triggers, negation and the binary connectives.
 * `Presupposition.Formula.truth`: the classical meaning at an interpretation of the atoms.
 * `Presupposition.Formula.eval`: the evaluation under trivalent connectives, with
-  `Presupposition.Formula.strongKleene` and `Presupposition.Formula.middleKleene` its Strong Kleene
-  and filtering instances.
+  `Presupposition.Formula.strongKleene`, `Presupposition.Formula.middleKleene` and
+  `Presupposition.Formula.weakKleene` its Strong Kleene, filtering and Weak Kleene instances.
 * `Presupposition.Formula.ccp`: the dynamic evaluation.
 * `Presupposition.Formula.accommodate`: local accommodation, which keeps the classical meaning.
 
@@ -120,6 +120,9 @@ noncomputable abbrev strongKleene : Formula Atom → W → SignType := eval I .s
 
 /-- The evaluation by [peters-1979]'s filtering connectives, the Middle Kleene tables. -/
 noncomputable abbrev middleKleene : Formula Atom → W → SignType := eval I .middleKleene
+
+/-- The Weak Kleene evaluation. -/
+noncomputable abbrev weakKleene : Formula Atom → W → SignType := eval I .weakKleene
 
 /-- The context change potential of a formula updates an atom or a trigger by its trivalent
 meaning, so a trigger is defined in a context that entails its presupposition. -/
