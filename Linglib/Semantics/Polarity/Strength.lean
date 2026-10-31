@@ -28,6 +28,8 @@ that express negation are in `Syntax/Negation`.
   signature that is not downward entailing.
 * `NaturalLogic.Signature.negationStrength_ne_bot_iff`: a signature realizes a strength exactly
   when it is downward entailing.
+* `NaturalLogic.Signature.le_toSignature_of_le_negationStrength`: a signature realizing a strength
+  is at least as specific as the signature of that strength.
 
 ## References
 
@@ -107,5 +109,11 @@ theorem negationStrength_ne_bot_iff (σ : Signature) : σ.negationStrength ≠ �
 theorem negationStrength_toSignature (s : Negation.Strength) :
     s.toSignature.negationStrength = s := by
   cases s <;> rfl
+
+/-- A signature realizing at least a strength is at least as specific as the signature of that
+strength, so its function class lies in the class of the strength. -/
+theorem le_toSignature_of_le_negationStrength {σ : Signature} {s : Negation.Strength}
+    (h : (s : WithBot Negation.Strength) ≤ σ.negationStrength) : σ ≤ s.toSignature := by
+  revert h; cases σ <;> cases s <;> decide
 
 end NaturalLogic.Signature

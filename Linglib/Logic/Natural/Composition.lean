@@ -11,15 +11,16 @@ public import Mathlib.Algebra.Group.Submonoid.BigOperators
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 
 /-!
-# Composing layers of sound signatures
+# Composing layers of signatures
 
-The maps for which a signature is sound, each paired with that signature, form a submonoid of
-`Function.End α × Signature` (`Signature.soundPairs`), since soundness composes along
-`Signature.compose` and the identity is a morphism. A path of such layers is therefore sound for the
-product of its signatures, the projectivity of a position, and the sign of that product is the
-product of the signs of the layers. The sign fixes the direction of the composite: it is monotone
-under a positive sign and antitone under a negative one, so composing with a layer of negative sign
-reverses the direction ([`antitone_list_prod`](##NaturalLogic.Signature.antitone_list_prod)).
+The maps in the function class of a signature, each paired with that signature, form a submonoid of
+`Function.End α × Signature` (`Signature.classPairs`), since function classes compose along
+`Signature.compose` and the identity is a morphism. A path of such layers is therefore in the class
+of the product of its signatures, the projectivity of a position, and the sign of that product is
+the product of the signs of the layers. The sign fixes the direction of the composite: it is
+monotone under a positive sign and antitone under a negative one, so composing with a layer of
+negative sign reverses the direction
+([`antitone_list_prod`](##NaturalLogic.Signature.antitone_list_prod)).
 
 ## References
 
@@ -32,23 +33,23 @@ namespace NaturalLogic
 
 variable (α : Type*) [Lattice α] [BoundedOrder α]
 
-/-- The maps paired with a signature sound for them, a submonoid of `Function.End α × Signature`:
-soundness composes along `Signature.compose`, and the identity is a morphism. -/
-def Signature.soundPairs : Submonoid (Function.End α × Signature) where
-  carrier := {p | p.2.SoundFor p.1}
-  mul_mem' {a b} ha hb :=
-    show (a.2 * b.2).SoundFor (a.1 ∘ b.1) from Signature.SoundFor.comp ha hb
-  one_mem' := soundFor_addMult_id
+/-- The maps paired with a signature whose function class contains them, a submonoid of
+`Function.End α × Signature`: function classes compose along `Signature.compose`, and the identity
+is a morphism. -/
+def Signature.classPairs : Submonoid (Function.End α × Signature) where
+  carrier := {p | p.2.HoldsFor p.1}
+  mul_mem' {a b} ha hb := show (a.2 * b.2).HoldsFor (a.1 ∘ b.1) from Signature.HoldsFor.comp ha hb
+  one_mem' := Signature.holdsFor_addMult_id
 
 variable {α}
 
-theorem Signature.mem_soundPairs {p : Function.End α × Signature} :
-    p ∈ Signature.soundPairs α ↔ p.2.SoundFor p.1 :=
+theorem Signature.mem_classPairs {p : Function.End α × Signature} :
+    p ∈ Signature.classPairs α ↔ p.2.HoldsFor p.1 :=
   Iff.rfl
 
-theorem Signature.soundFor_list_prod {l : List (Function.End α × Signature)}
-    (h : ∀ p ∈ l, p.2.SoundFor p.1) : l.prod.2.SoundFor l.prod.1 :=
-  list_prod_mem (S := Signature.soundPairs α) h
+theorem Signature.holdsFor_list_prod {l : List (Function.End α × Signature)}
+    (h : ∀ p ∈ l, p.2.HoldsFor p.1) : l.prod.2.HoldsFor l.prod.1 :=
+  list_prod_mem (S := Signature.classPairs α) h
 
 omit [Lattice α] [BoundedOrder α] in
 theorem Signature.sign_list_prod (l : List (Function.End α × Signature)) :
@@ -56,14 +57,16 @@ theorem Signature.sign_list_prod (l : List (Function.End α × Signature)) :
   map_list_prod (Signature.signHom.comp (MonoidHom.snd _ _)) l
 
 theorem Signature.monotone_list_prod {l : List (Function.End α × Signature)}
-    (h : ∀ p ∈ l, p.2.SoundFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = 1) :
+    (h : ∀ p ∈ l, p.2.HoldsFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = 1) :
     Monotone l.prod.1 :=
-  (Signature.soundFor_list_prod h).monotone_of_sign_eq_one (Signature.sign_list_prod l ▸ hs)
+  (Signature.soundFor_of_holdsFor (Signature.holdsFor_list_prod h)).monotone_of_sign_eq_one
+    (Signature.sign_list_prod l ▸ hs)
 
 /-- A path of layers whose signs multiply to the negative sign composes to an antitone map. -/
 theorem Signature.antitone_list_prod {l : List (Function.End α × Signature)}
-    (h : ∀ p ∈ l, p.2.SoundFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = -1) :
+    (h : ∀ p ∈ l, p.2.HoldsFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = -1) :
     Antitone l.prod.1 :=
-  (Signature.soundFor_list_prod h).antitone_of_sign_eq_neg_one (Signature.sign_list_prod l ▸ hs)
+  (Signature.soundFor_of_holdsFor (Signature.holdsFor_list_prod h)).antitone_of_sign_eq_neg_one
+    (Signature.sign_list_prod l ▸ hs)
 
 end NaturalLogic
