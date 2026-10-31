@@ -1,0 +1,1001 @@
+{
+  "description": "The -alis/-aris adjectives of Jacobs (2026), with the paper's underlying forms, in which [lateral] is specified only on liquids and the suffix is /-alis/, and its classification of each form. Segments are phonemic: c is [k], consonantal v is [w], and the e of ae and oe is [j] (Cser 2020, Figure 1).",
+  "Types": {
+    "Status": [
+      {"Value": "regular", "Lean": "regular", "Description": "a form the paper's account derives"},
+      {"Value": "glide", "Lean": "glide", "Description": "a later -alis form the paper derives from a [j] formed from a front vowel in hiatus"},
+      {"Value": "exception", "Lean": "exception", "Description": "a form the paper calls an exception"},
+      {"Value": "unexplained", "Lean": "unexplained", "Description": "a form the paper reports without accounting for it"}
+    ]
+  },
+  "ParameterTable": [
+    {
+      "ID": "navalis",
+      "Name": "naval",
+      "Description": ""
+    },
+    {
+      "ID": "natalis",
+      "Name": "natal",
+      "Description": ""
+    },
+    {
+      "ID": "criminalis",
+      "Name": "criminal",
+      "Description": ""
+    },
+    {
+      "ID": "solaris",
+      "Name": "solar",
+      "Description": ""
+    },
+    {
+      "ID": "militaris",
+      "Name": "military",
+      "Description": ""
+    },
+    {
+      "ID": "lunaris",
+      "Name": "lunar",
+      "Description": ""
+    },
+    {
+      "ID": "floralis",
+      "Name": "floral",
+      "Description": ""
+    },
+    {
+      "ID": "lateralis",
+      "Name": "lateral",
+      "Description": ""
+    },
+    {
+      "ID": "ridicularis",
+      "Name": "ridiculous",
+      "Description": ""
+    },
+    {
+      "ID": "tricliniaris",
+      "Name": "belonging to a dining room",
+      "Description": ""
+    },
+    {
+      "ID": "umbilicalis",
+      "Name": "umbilical",
+      "Description": ""
+    },
+    {
+      "ID": "cloacalis",
+      "Name": "related to a sewer",
+      "Description": ""
+    },
+    {
+      "ID": "vulcanalis",
+      "Name": "related to Vulcanus",
+      "Description": ""
+    },
+    {
+      "ID": "intellectualis",
+      "Name": "relating to the understanding, sensible",
+      "Description": ""
+    },
+    {
+      "ID": "glacialis",
+      "Name": "icy, frozen",
+      "Description": ""
+    },
+    {
+      "ID": "localis",
+      "Name": "belonging to a place, local",
+      "Description": ""
+    },
+    {
+      "ID": "legalis",
+      "Name": "belonging to the law, legal",
+      "Description": ""
+    },
+    {
+      "ID": "lectualis",
+      "Name": "belonging to the bed",
+      "Description": ""
+    },
+    {
+      "ID": "pluvialis",
+      "Name": "belonging to rain, rainy",
+      "Description": ""
+    },
+    {
+      "ID": "fluvialis",
+      "Name": "belonging to a/the river",
+      "Description": ""
+    },
+    {
+      "ID": "flavialis",
+      "Name": "related to Flavius",
+      "Description": ""
+    },
+    {
+      "ID": "lupanaris",
+      "Name": "belonging to a lewd woman",
+      "Description": ""
+    },
+    {
+      "ID": "lapidaris",
+      "Name": "of stone",
+      "Description": ""
+    },
+    {
+      "ID": "lupinaris",
+      "Name": "of a lupin seed",
+      "Description": ""
+    },
+    {
+      "ID": "limitaris",
+      "Name": "that is on the border",
+      "Description": ""
+    },
+    {
+      "ID": "luminaris",
+      "Name": "of light",
+      "Description": ""
+    },
+    {
+      "ID": "palmaris",
+      "Name": "of palms",
+      "Description": ""
+    },
+    {
+      "ID": "elementaris",
+      "Name": "elementary",
+      "Description": ""
+    },
+    {
+      "ID": "caelibaris",
+      "Name": "of an unmarried man",
+      "Description": ""
+    },
+    {
+      "ID": "fulminaris",
+      "Name": "thundering/lightning",
+      "Description": ""
+    },
+    {
+      "ID": "glebalis",
+      "Name": "relating to clods",
+      "Description": ""
+    },
+    {
+      "ID": "latiaris",
+      "Name": "belonging to Latium",
+      "Description": ""
+    },
+    {
+      "ID": "palearis",
+      "Name": "belonging to chaff",
+      "Description": ""
+    },
+    {
+      "ID": "proeliaris",
+      "Name": "belonging to a battle",
+      "Description": ""
+    },
+    {
+      "ID": "linearis",
+      "Name": "belonging to lines",
+      "Description": ""
+    },
+    {
+      "ID": "caligaris",
+      "Name": "caligaris",
+      "Description": ""
+    },
+    {
+      "ID": "vulgaris",
+      "Name": "vulgaris",
+      "Description": ""
+    },
+    {
+      "ID": "letalis",
+      "Name": "deadly, fatal",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "navalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "navalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "natalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "natalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "criminalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "criminalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "solaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "solaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "militaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "militaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "lunaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "lunaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "floralis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "floralis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "lateralis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "lateralis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "ridicularis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "ridicularis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "tricliniaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "tricliniaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "umbilicalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "umbilicalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "cloacalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "cloacalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "vulcanalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "vulcanalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "intellectualis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "intellectualis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "glacialis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "glacialis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "localis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "localis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "legalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "legalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "lectualis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "lectualis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "pluvialis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "pluvialis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "fluvialis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "fluvialis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "flavialis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "flavialis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "lupanaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "lupanaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "lapidaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "lapidaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "lupinaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "lupinaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "limitaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "limitaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "luminaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "luminaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "palmaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "palmaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "elementaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "elementaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "caelibaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "caelibaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "fulminaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "fulminaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "glebalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "glebalis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "latiaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "latiaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "palearis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "palearis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "proeliaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "proeliaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "linearis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "linearis",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "caligaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "caligaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "vulgaris",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "vulgaris",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "letalis",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "letalis",
+      "POS": "ADJ"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "jacobs2026_navalis",
+      "Lexeme_ID": "navalis",
+      "Form": "navalis",
+      "Segments": ["n", "a", "w", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(1a)]"]
+    },
+    {
+      "ID": "jacobs2026_natalis",
+      "Lexeme_ID": "natalis",
+      "Form": "natalis",
+      "Segments": ["n", "a", "t", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(1a)]"]
+    },
+    {
+      "ID": "jacobs2026_criminalis",
+      "Lexeme_ID": "criminalis",
+      "Form": "criminalis",
+      "Segments": ["k", "r", "i", "m", "i", "n", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(1a)]"]
+    },
+    {
+      "ID": "jacobs2026_solaris",
+      "Lexeme_ID": "solaris",
+      "Form": "solaris",
+      "Segments": ["s", "o", "l", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[(1b)]"]
+    },
+    {
+      "ID": "jacobs2026_militaris",
+      "Lexeme_ID": "militaris",
+      "Form": "militaris",
+      "Segments": ["m", "i", "l", "i", "t", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[(1b)]"]
+    },
+    {
+      "ID": "jacobs2026_lunaris",
+      "Lexeme_ID": "lunaris",
+      "Form": "lunaris",
+      "Segments": ["l", "u", "n", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[(1b)]"]
+    },
+    {
+      "ID": "jacobs2026_floralis",
+      "Lexeme_ID": "floralis",
+      "Form": "floralis",
+      "Segments": ["f", "l", "o", "r", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(1c)]"]
+    },
+    {
+      "ID": "jacobs2026_lateralis",
+      "Lexeme_ID": "lateralis",
+      "Form": "lateralis",
+      "Segments": ["l", "a", "t", "e", "r", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(1c)]"]
+    },
+    {
+      "ID": "jacobs2026_ridicularis",
+      "Lexeme_ID": "ridicularis",
+      "Form": "ridicularis",
+      "Segments": ["r", "i", "d", "i", "k", "u", "l", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[(1d)]"]
+    },
+    {
+      "ID": "jacobs2026_tricliniaris",
+      "Lexeme_ID": "tricliniaris",
+      "Form": "tricliniaris",
+      "Segments": ["t", "r", "i", "k", "l", "i", "n", "i", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[(1d)]"]
+    },
+    {
+      "ID": "jacobs2026_umbilicalis",
+      "Lexeme_ID": "umbilicalis",
+      "Form": "umbilicalis",
+      "Segments": ["u", "m", "b", "i", "l", "i", "k", "a", "l", "i", "s"],
+      "Comment": "A hapax in the Library of Latin Texts (p. 130).",
+      "Source": ["jacobs-2026[(15a)]"]
+    },
+    {
+      "ID": "jacobs2026_cloacalis",
+      "Lexeme_ID": "cloacalis",
+      "Form": "cloacalis",
+      "Segments": ["k", "l", "o", "a", "k", "a", "l", "i", "s"],
+      "Comment": "Once before and once after 500 AD (p. 130).",
+      "Source": ["jacobs-2026[(15a)]"]
+    },
+    {
+      "ID": "jacobs2026_vulcanalis",
+      "Lexeme_ID": "vulcanalis",
+      "Form": "vulcanalis",
+      "Segments": ["w", "u", "l", "k", "a", "n", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(15a)]"]
+    },
+    {
+      "ID": "jacobs2026_intellectualis",
+      "Lexeme_ID": "intellectualis",
+      "Form": "intellectualis",
+      "Segments": ["i", "n", "t", "e", "l", "l", "e", "k", "t", "u", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(15a)]"]
+    },
+    {
+      "ID": "jacobs2026_glacialis",
+      "Lexeme_ID": "glacialis",
+      "Form": "glacialis",
+      "Segments": ["g", "l", "a", "k", "i", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(15a)]"]
+    },
+    {
+      "ID": "jacobs2026_localis",
+      "Lexeme_ID": "localis",
+      "Form": "localis",
+      "Segments": ["l", "o", "k", "a", "l", "i", "s"],
+      "Comment": "42 times before 500 AD (p. 130).",
+      "Source": ["jacobs-2026[(15a)]"]
+    },
+    {
+      "ID": "jacobs2026_legalis",
+      "Lexeme_ID": "legalis",
+      "Form": "legalis",
+      "Segments": ["l", "e", "g", "a", "l", "i", "s"],
+      "Comment": "53 times before 500 AD (p. 130).",
+      "Source": ["jacobs-2026[(15a)]"]
+    },
+    {
+      "ID": "jacobs2026_lectualis",
+      "Lexeme_ID": "lectualis",
+      "Form": "lectualis",
+      "Segments": ["l", "e", "k", "t", "u", "a", "l", "i", "s"],
+      "Comment": "20 times in the Library of Latin Texts, twice before 500 AD (p. 131).",
+      "Source": ["jacobs-2026[p. 131]"]
+    },
+    {
+      "ID": "jacobs2026_pluvialis",
+      "Lexeme_ID": "pluvialis",
+      "Form": "pluvialis",
+      "Segments": ["p", "l", "u", "w", "i", "a", "l", "i", "s"],
+      "Comment": "100 times before 500 AD, against one pluviaris (p. 132).",
+      "Source": ["jacobs-2026[(15b)]"]
+    },
+    {
+      "ID": "jacobs2026_fluvialis",
+      "Lexeme_ID": "fluvialis",
+      "Form": "fluvialis",
+      "Segments": ["f", "l", "u", "w", "i", "a", "l", "i", "s"],
+      "Comment": "79 times before 500 AD, no fluviaris (p. 132).",
+      "Source": ["jacobs-2026[(15b)]"]
+    },
+    {
+      "ID": "jacobs2026_flavialis",
+      "Lexeme_ID": "flavialis",
+      "Form": "Flavialis",
+      "Segments": ["f", "l", "a", "w", "i", "a", "l", "i", "s"],
+      "Comment": "Four times, no double forms (p. 132).",
+      "Source": ["jacobs-2026[(15b)]"]
+    },
+    {
+      "ID": "jacobs2026_lupanaris",
+      "Lexeme_ID": "lupanaris",
+      "Form": "lupanaris",
+      "Segments": ["l", "u", "p", "a", "n", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[p. 132]"]
+    },
+    {
+      "ID": "jacobs2026_lapidaris",
+      "Lexeme_ID": "lapidaris",
+      "Form": "lapidaris",
+      "Segments": ["l", "a", "p", "i", "d", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[p. 132]"]
+    },
+    {
+      "ID": "jacobs2026_lupinaris",
+      "Lexeme_ID": "lupinaris",
+      "Form": "lupinaris",
+      "Segments": ["l", "u", "p", "i", "n", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[p. 132]"]
+    },
+    {
+      "ID": "jacobs2026_limitaris",
+      "Lexeme_ID": "limitaris",
+      "Form": "limitaris",
+      "Segments": ["l", "i", "m", "i", "t", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[p. 133]"]
+    },
+    {
+      "ID": "jacobs2026_luminaris",
+      "Lexeme_ID": "luminaris",
+      "Form": "luminaris",
+      "Segments": ["l", "u", "m", "i", "n", "a", "r", "i", "s"],
+      "Comment": "luminalis is a later form (p. 133).",
+      "Source": ["jacobs-2026[p. 133]"]
+    },
+    {
+      "ID": "jacobs2026_palmaris",
+      "Lexeme_ID": "palmaris",
+      "Form": "palmaris",
+      "Segments": ["p", "a", "l", "m", "a", "r", "i", "s"],
+      "Comment": "palmalis is a later form, around 1050 (p. 133).",
+      "Source": ["jacobs-2026[p. 133]"]
+    },
+    {
+      "ID": "jacobs2026_elementaris",
+      "Lexeme_ID": "elementaris",
+      "Form": "elementaris",
+      "Segments": ["e", "l", "e", "m", "e", "n", "t", "a", "r", "i", "s"],
+      "Comment": "Before 500 AD; elementalis only after (p. 133).",
+      "Source": ["jacobs-2026[p. 133]"]
+    },
+    {
+      "ID": "jacobs2026_caelibaris",
+      "Lexeme_ID": "caelibaris",
+      "Form": "caelibaris",
+      "Segments": ["k", "a", "j", "l", "i", "b", "a", "r", "i", "s"],
+      "Comment": "Arnobius Afer, 2nd/3rd century (p. 133); ae is [aj] (Cser 2020, p. 14).",
+      "Source": ["jacobs-2026[p. 133]"]
+    },
+    {
+      "ID": "jacobs2026_fulminaris",
+      "Lexeme_ID": "fulminaris",
+      "Form": "fulminaris",
+      "Segments": ["f", "u", "l", "m", "i", "n", "a", "r", "i", "s"],
+      "Comment": "Twice, 5th century (p. 133).",
+      "Source": ["jacobs-2026[p. 133]"]
+    },
+    {
+      "ID": "jacobs2026_glebalis",
+      "Lexeme_ID": "glebalis",
+      "Form": "glebalis",
+      "Segments": ["g", "l", "e", "b", "a", "l", "i", "s"],
+      "Comment": "A postclassical form of glaebalis; the paper derives it from the [j] of ae (p. 139). Nine times in the Codex Theodosianus, once in the 4th century (p. 133).",
+      "Source": ["jacobs-2026[p. 139]"]
+    },
+    {
+      "ID": "jacobs2026_latiaris",
+      "Lexeme_ID": "latiaris",
+      "Form": "Latiaris",
+      "Segments": ["l", "a", "t", "i", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[p. 137]"]
+    },
+    {
+      "ID": "jacobs2026_palearis",
+      "Lexeme_ID": "palearis",
+      "Form": "palearis",
+      "Segments": ["p", "a", "l", "e", "a", "r", "i", "s"],
+      "Comment": "17 hits for palear* before 200 AD (p. 138). Printed paliaris on p. 137.",
+      "Source": ["jacobs-2026[p. 138]"]
+    },
+    {
+      "ID": "jacobs2026_proeliaris",
+      "Lexeme_ID": "proeliaris",
+      "Form": "proeliaris",
+      "Segments": ["p", "r", "o", "j", "l", "i", "a", "r", "i", "s"],
+      "Comment": "pugna proeliaris in Plautus (p. 138); oe is [oj] (Cser 2020, p. 14).",
+      "Source": ["jacobs-2026[p. 138]"]
+    },
+    {
+      "ID": "jacobs2026_linearis",
+      "Lexeme_ID": "linearis",
+      "Form": "linearis",
+      "Segments": ["l", "i", "n", "e", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[p. 137]"]
+    },
+    {
+      "ID": "jacobs2026_latialis",
+      "Lexeme_ID": "latiaris",
+      "Form": "Latialis",
+      "Segments": ["l", "a", "t", "i", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(23)]"]
+    },
+    {
+      "ID": "jacobs2026_palealis",
+      "Lexeme_ID": "palearis",
+      "Form": "palealis",
+      "Segments": ["p", "a", "l", "e", "a", "l", "i", "s"],
+      "Comment": "Only in the dictionaries, from Caelius Aurelianus, 5th century (p. 138).",
+      "Source": ["jacobs-2026[p. 138]"]
+    },
+    {
+      "ID": "jacobs2026_proelialis",
+      "Lexeme_ID": "proeliaris",
+      "Form": "proelialis",
+      "Segments": ["p", "r", "o", "j", "l", "i", "a", "l", "i", "s"],
+      "Comment": "Once, 4th century (p. 138).",
+      "Source": ["jacobs-2026[p. 138]"]
+    },
+    {
+      "ID": "jacobs2026_linealis",
+      "Lexeme_ID": "linearis",
+      "Form": "linealis",
+      "Segments": ["l", "i", "n", "e", "a", "l", "i", "s"],
+      "Source": ["jacobs-2026[(23)]"]
+    },
+    {
+      "ID": "jacobs2026_caligaris",
+      "Lexeme_ID": "caligaris",
+      "Form": "caligaris",
+      "Segments": ["k", "a", "l", "i", "g", "a", "r", "i", "s"],
+      "Comment": "Seven times before 500 AD (p. 131).",
+      "Source": ["jacobs-2026[p. 131]"]
+    },
+    {
+      "ID": "jacobs2026_vulgaris",
+      "Lexeme_ID": "vulgaris",
+      "Form": "vulgaris",
+      "Segments": ["w", "u", "l", "g", "a", "r", "i", "s"],
+      "Source": ["jacobs-2026[p. 131]"]
+    },
+    {
+      "ID": "jacobs2026_letalis",
+      "Lexeme_ID": "letalis",
+      "Form": "letalis",
+      "Segments": ["l", "e", "t", "a", "l", "i", "s"],
+      "Comment": "A Late Latin form (p. 131).",
+      "Source": ["jacobs-2026[p. 131]"]
+    },
+    {
+      "ID": "jacobs2026_caelibalis",
+      "Lexeme_ID": "caelibaris",
+      "Form": "caelibalis",
+      "Segments": ["k", "a", "j", "l", "i", "b", "a", "l", "i", "s"],
+      "Comment": "Tertullian (3rd century) and Priscian (6th century); the paper's possible exception (p. 133).",
+      "Source": ["jacobs-2026[p. 133]"]
+    },
+    {
+      "ID": "jacobs2026_fulminalis",
+      "Lexeme_ID": "fulminaris",
+      "Form": "fulminalis",
+      "Segments": ["f", "u", "l", "m", "i", "n", "a", "l", "i", "s"],
+      "Comment": "Three times, 5th century, beside fulminaris (p. 133).",
+      "Source": ["jacobs-2026[p. 133]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Underlying",
+      "Lean": "underlying",
+      "Type": "String",
+      "Description": "the underlying form the paper assigns, stem and suffix"
+    },
+    {
+      "Name": "Status",
+      "Lean": "status",
+      "Type": "Status",
+      "Description": "how the paper classifies the form"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "jacobs2026_navalis",
+      "Underlying": "/naw-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_natalis",
+      "Underlying": "/nat-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_criminalis",
+      "Underlying": "/krimin-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_solaris",
+      "Underlying": "/sol-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_militaris",
+      "Underlying": "/milit-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_lunaris",
+      "Underlying": "/lun-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_floralis",
+      "Underlying": "/flor-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_lateralis",
+      "Underlying": "/later-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_ridicularis",
+      "Underlying": "/ridikul-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_tricliniaris",
+      "Underlying": "/triklini-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_umbilicalis",
+      "Underlying": "/umbilik-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_cloacalis",
+      "Underlying": "/kloak-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_vulcanalis",
+      "Underlying": "/wulkan-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_intellectualis",
+      "Underlying": "/intellektu-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_glacialis",
+      "Underlying": "/glaki-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_localis",
+      "Underlying": "/lok-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_legalis",
+      "Underlying": "/leg-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_lectualis",
+      "Underlying": "/lektu-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_pluvialis",
+      "Underlying": "/pluwi-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_fluvialis",
+      "Underlying": "/fluwi-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_flavialis",
+      "Underlying": "/flawi-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_lupanaris",
+      "Underlying": "/lupan-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_lapidaris",
+      "Underlying": "/lapid-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_lupinaris",
+      "Underlying": "/lupin-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_limitaris",
+      "Underlying": "/limit-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_luminaris",
+      "Underlying": "/lumin-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_palmaris",
+      "Underlying": "/palm-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_elementaris",
+      "Underlying": "/element-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_caelibaris",
+      "Underlying": "/kajlib-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_fulminaris",
+      "Underlying": "/fulmin-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_glebalis",
+      "Underlying": "/glajb-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_latiaris",
+      "Underlying": "/lati-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_palearis",
+      "Underlying": "/pale-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_proeliaris",
+      "Underlying": "/projli-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_linearis",
+      "Underlying": "/line-alis/",
+      "Status": "regular"
+    },
+    {
+      "Form_ID": "jacobs2026_latialis",
+      "Underlying": "/latj-alis/",
+      "Status": "glide"
+    },
+    {
+      "Form_ID": "jacobs2026_palealis",
+      "Underlying": "/palj-alis/",
+      "Status": "glide"
+    },
+    {
+      "Form_ID": "jacobs2026_proelialis",
+      "Underlying": "/projlj-alis/",
+      "Status": "glide"
+    },
+    {
+      "Form_ID": "jacobs2026_linealis",
+      "Underlying": "/linj-alis/",
+      "Status": "glide"
+    },
+    {
+      "Form_ID": "jacobs2026_caligaris",
+      "Underlying": "/kalig-alis/",
+      "Status": "exception"
+    },
+    {
+      "Form_ID": "jacobs2026_vulgaris",
+      "Underlying": "/wulg-alis/",
+      "Status": "exception"
+    },
+    {
+      "Form_ID": "jacobs2026_letalis",
+      "Underlying": "/let-alis/",
+      "Status": "exception"
+    },
+    {
+      "Form_ID": "jacobs2026_caelibalis",
+      "Underlying": "/kajlib-alis/",
+      "Status": "exception"
+    },
+    {
+      "Form_ID": "jacobs2026_fulminalis",
+      "Underlying": "/fulmin-alis/",
+      "Status": "unexplained"
+    }
+  ]
+}
