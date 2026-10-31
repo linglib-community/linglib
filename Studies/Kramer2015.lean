@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Gender.Basic
 public import Linglib.Morphology.DistributedMorphology.Gender
+public import Linglib.Data.UD.Features
 
 /-!
 # Kramer (2015): The Morphosyntax of Gender
