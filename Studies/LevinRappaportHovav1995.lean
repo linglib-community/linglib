@@ -8,6 +8,7 @@ public import Linglib.Fragments.Dutch.Verbs
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Levin and Rappaport Hovav (1995): Unaccusativity

@@ -6,6 +6,7 @@ public import Linglib.Fragments.Hebrew.TemporalDeictic
 public import Linglib.Fragments.Japanese.TemporalDeictic
 public import Linglib.Fragments.Slavic.Russian.TemporalDeictic
 public import Linglib.Data.Examples.TsiliaZhao2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Tsilia and Zhao (2026): Tense and perspective

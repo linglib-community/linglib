@@ -7,6 +7,7 @@ public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class
 public import Linglib.Semantics.Causation.Morphological
 public import Linglib.Syntax.Clause.Relative
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Comrie (1989): Language Universals and Linguistic Typology

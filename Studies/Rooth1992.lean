@@ -5,6 +5,7 @@ public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Semantics.Focus.Particles
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rooth (1992): A theory of focus interpretation

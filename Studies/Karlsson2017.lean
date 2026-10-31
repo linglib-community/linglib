@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Karlsson2017
 public import Linglib.Data.Wordlist.Karlsson2017
 public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Karlsson (2017): Finnish: A Comprehensive Grammar

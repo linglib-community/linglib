@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Mereology.Topology
 public import Linglib.Semantics.Plurality.Groups
 public import Linglib.Data.Examples.GrimmDocekal2021
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Grimm and Dočekal (2021): Counting Aggregates, Groups and Kinds

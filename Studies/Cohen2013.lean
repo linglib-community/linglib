@@ -6,6 +6,7 @@ public import Linglib.Semantics.Composition.Coordination
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Quantification.Basic
 public import Studies.Cohen1999
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Cohen (2013): No quantification without reinterpretation

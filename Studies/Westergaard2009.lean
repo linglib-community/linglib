@@ -8,6 +8,7 @@ public import Linglib.Fragments.Danish.WordOrder
 public import Linglib.Data.Examples.Westergaard2009
 public import Linglib.Semantics.Focus.Marking
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Westergaard (2009): The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy

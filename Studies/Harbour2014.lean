@@ -5,6 +5,7 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Semantics.Plurality.Number
 public import Linglib.Core.Order.Concept
 public import Studies.Corbett2000
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Harbour (2014): Paucity, Abundance, and the Theory of Number

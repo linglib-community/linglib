@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Mereological.Derivation
 public import Linglib.Data.Examples.Adger2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Adger (2025): Mereological Syntax: Phrase Structure, Cyclicity, and Islands

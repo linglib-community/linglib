@@ -5,6 +5,7 @@ public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Data.Examples.PurverGinzburg2004
 public import Mathlib.Data.Finset.SDiff
 public import Mathlib.Data.Finset.Union
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Purver and Ginzburg (2004): Clarifying Noun Phrase Semantics

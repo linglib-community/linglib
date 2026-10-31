@@ -8,6 +8,7 @@ public import Linglib.Fragments.HindiUrdu.Particles
 public import Linglib.Fragments.Japanese.Particles
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dayal (2025): The interrogative left periphery

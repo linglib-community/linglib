@@ -8,6 +8,7 @@ public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Adpositions
 public import Linglib.Data.Examples.Levin1993
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Levin (1993): English Verb Classes and Alternations

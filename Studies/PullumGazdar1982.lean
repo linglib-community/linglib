@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Linglib.Data.Examples.PullumGazdar1982
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Pullum and Gazdar (1982): Natural Languages and Context-Free Languages

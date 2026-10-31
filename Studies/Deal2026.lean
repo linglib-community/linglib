@@ -12,6 +12,7 @@ public import Linglib.Semantics.Presupposition.FamilyVariant
 public import Studies.Karttunen1971b
 public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Deal (2026): Clausal complementation as relativization, revisited

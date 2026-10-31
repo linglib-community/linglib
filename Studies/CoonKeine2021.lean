@@ -5,6 +5,7 @@ public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Linglib.Morphology.Exponence.Select
 public import Studies.BejarRezac2003
 public import Linglib.Data.Examples.CoonKeine2021
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Coon and Keine 2021: feature gluttony

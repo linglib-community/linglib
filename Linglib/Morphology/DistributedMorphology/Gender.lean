@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Locality
-public import Linglib.Syntax.Minimalist.Feature.Basic
+public import Linglib.Syntax.Minimalist.Feature.Interpretability
 public import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!

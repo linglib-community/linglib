@@ -4,6 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Alonso-Ovalle & Menéndez-Benito (2010): modal indefinites

@@ -13,6 +13,7 @@ public import Linglib.Syntax.Clause.ArgumentRole
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Syntax.Person.Class
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Haspelmath (2021): Role-reference associations and the explanation of argument coding splits

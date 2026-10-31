@@ -27,6 +27,7 @@ public import Linglib.Fragments.Slavic.Russian.Indefinites
 public import Linglib.Fragments.Swahili.Indefinites
 public import Linglib.Fragments.Turkish.Indefinites
 public import Linglib.Fragments.Yakut.Indefinites
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Haspelmath (1997): Indefinite Pronouns

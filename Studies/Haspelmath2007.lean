@@ -21,6 +21,7 @@ public import Linglib.Fragments.Tibetic.Classical.Coordination
 public import Linglib.Fragments.Turkish.Adpositions
 public import Linglib.Fragments.Turkish.Coordination
 public import Linglib.Fragments.Yoruba.Coordination
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Haspelmath (2007): Coordination

@@ -6,6 +6,7 @@ public import Linglib.Fragments.Mixtec.SMPM.Pronouns
 public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Studies.Landau2013
 public import Linglib.Data.Examples.Landau2024b
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Landau (2024): Empirical challenges to the Form-Copy Theory of Control

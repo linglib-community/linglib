@@ -6,6 +6,7 @@ public import Linglib.Logic.Aristotelian.Square
 public import Studies.GeurtsPouscoulous2009
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Pi
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Chemla and Spector (2011): Experimental evidence for embedded scalar implicatures

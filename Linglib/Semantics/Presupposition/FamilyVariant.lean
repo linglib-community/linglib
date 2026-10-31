@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Data.Examples.Schema
 public import Linglib.Syntax.Person.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # The family of sentences

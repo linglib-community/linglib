@@ -6,6 +6,7 @@ public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Tense.Perspective
 public import Studies.IatridouEtAl2001
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Boneh and Doron (2013): Hab and Gen in the expression of habituality

@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Data.Examples.Szabolcsi2004
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Szabolcsi (2004): Positive Polarity – Negative Polarity

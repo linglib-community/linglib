@@ -4,6 +4,7 @@ public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Mereology
 public import Linglib.Data.Examples.Ferreira2016
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ferreira (2016): The semantic ingredients of imperfectivity

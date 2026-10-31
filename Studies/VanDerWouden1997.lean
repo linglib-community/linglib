@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.Dutch.PolarityItems
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Data.Examples.VanDerWouden1997
+public import Linglib.Data.Examples.Readers
 
 /-!
 # van der Wouden (1997): Negative Contexts: Collocation, Polarity and Multiple Negation

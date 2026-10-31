@@ -7,6 +7,7 @@ public import Studies.SolstadBott2022
 public import Studies.Schlenker2009
 public import Studies.Kalomoiros2023
 public import Studies.TonhauserEtAl2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Solstad & Bott (2024): Cataphoric Resolution of Projective Content: The Case of Occasion Verbs

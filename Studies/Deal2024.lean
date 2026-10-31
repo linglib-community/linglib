@@ -8,6 +8,7 @@ public import Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Person.Class
 public import Linglib.Data.Examples.Deal2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Deal (2024): Interaction, Satisfaction, and the PCC

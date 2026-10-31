@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Evidential.Basic
 public import Linglib.Fragments.Kashaya.Evidentiality
 public import Linglib.Data.Examples.Oswalt1986
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Oswalt (1986): The Evidential System of Kashaya

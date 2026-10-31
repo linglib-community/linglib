@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Adjective
 public import Linglib.Data.Examples.Sassoon2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Sassoon (2013): A Typology of Multidimensional Adjectives

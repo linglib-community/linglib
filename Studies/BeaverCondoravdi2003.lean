@@ -9,6 +9,7 @@ public import Studies.Anscombe1964
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Logic.Natural.Strawson
 public import Linglib.Data.Examples.BeaverCondoravdi2003
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Beaver and Condoravdi (2003): a uniform *before* and *after*

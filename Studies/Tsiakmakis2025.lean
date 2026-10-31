@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Fragments.Greek.StandardModern.Negation
 public import Linglib.Data.Examples.Tsiakmakis2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Tsiakmakis (2025): On the Non-Homogeneity of Expletive Negation in Greek and Beyond

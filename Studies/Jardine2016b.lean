@@ -7,6 +7,7 @@ module
 
 public import Linglib.Phonology.Autosegmental.Correspondence
 public import Linglib.Data.Examples.Jardine2016b
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jardine (2016): intervocalic voicing as a local string relation

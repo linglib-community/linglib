@@ -4,6 +4,7 @@ public import Linglib.Syntax.Anaphora.Basic
 public import Linglib.Syntax.Minimalist.Category
 public import Linglib.Data.Examples.Landau2026
 public import Mathlib.Data.Finset.Disjoint
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Landau (2026): Silent Resumption: A New Test for Ellipsis

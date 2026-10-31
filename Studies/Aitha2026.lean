@@ -12,6 +12,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Phonology.Prosody.Foot
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Aitha2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # The nouns that say -ni

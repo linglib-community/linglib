@@ -5,6 +5,7 @@ public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Discourse.QUD.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Wilder (2013): English emphatic *do*

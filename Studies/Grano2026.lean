@@ -7,6 +7,7 @@ public import Linglib.Semantics.Modality.Typology
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Set.Card
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Grano (2026): Variable-force modality in English infinitival relatives

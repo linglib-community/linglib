@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.Japanese.Nouns
 public import Linglib.Data.Examples.Downing1996
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Downing (1996): Numeral Classifier Systems: The Case of Japanese

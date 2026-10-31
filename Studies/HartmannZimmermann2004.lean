@@ -16,6 +16,7 @@ public import Linglib.Fragments.Tangale.TAM
 public import Linglib.Fragments.Tangale.Focus
 public import Linglib.Fragments.Tangale.Phonology
 public import Linglib.Data.Examples.HartmannZimmermann2004
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hartmann and Zimmermann (2004): Focus strategies in Chadic

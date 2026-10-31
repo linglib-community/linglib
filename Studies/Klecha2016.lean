@@ -4,6 +4,7 @@ public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.Klecha2016
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Klecha (2016): Modality and Embedded Temporal Operators

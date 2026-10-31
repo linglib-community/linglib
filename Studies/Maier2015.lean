@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Dynamic.DRS.Accessibility
 public import Linglib.Data.Examples.Maier2015
 public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Maier (2015): Parasitic Attitudes

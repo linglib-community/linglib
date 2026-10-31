@@ -10,6 +10,7 @@ public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Brodkin2026
 public import Linglib.Data.Wordlist.Brodkin2026
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Brodkin (2026): suppletion in global perspective

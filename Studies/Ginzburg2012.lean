@@ -2,6 +2,7 @@ module
 
 public import Linglib.Discourse.Gameboard.Basic
 public import Linglib.Data.Examples.Ginzburg2012
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ginzburg (2012): The Interactive Stance

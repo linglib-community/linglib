@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Charnavel2019
 public import Linglib.Semantics.Reference.Logophoricity
 public import Linglib.Syntax.Binding.Tree
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Charnavel (2019): Locality and Logophoricity: A Theory of Exempt Anaphora

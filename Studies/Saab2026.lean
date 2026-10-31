@@ -5,6 +5,7 @@ public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Data.Examples.Saab2026
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Saab (2026): NP-Ellipsis Patterns in Spanish Binominals

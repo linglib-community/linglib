@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Noonan2007
 public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Noonan (2007): Complementation

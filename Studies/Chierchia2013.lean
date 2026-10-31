@@ -7,6 +7,7 @@ public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Data.Examples.Chierchia2013
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Chierchia (2013): Logic in Grammar

@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.EnergySource
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Data.Examples.RappaportHovavLevin2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rappaport Hovav and Levin (2024): Variable agentivity: polysemy or underspecification?

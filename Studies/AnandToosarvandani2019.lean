@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.English.TemporalDeictic
 public import Linglib.Data.Examples.AnandToosarvandani2019
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Anand and Toosarvandani (2019): Now and then

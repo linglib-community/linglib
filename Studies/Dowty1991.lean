@@ -4,6 +4,7 @@ public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Fragments.English.Verbs.Basic
 public import Linglib.Data.Examples.Dowty1991
 public import Studies.Cruse1973
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dowty (1991): Thematic proto-roles and argument selection

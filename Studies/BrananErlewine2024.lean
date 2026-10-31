@@ -5,6 +5,7 @@ public import Linglib.Syntax.Minimalist.Copy.Chain
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Branan and Erlewine (2024): Ā-probing for the closest DP

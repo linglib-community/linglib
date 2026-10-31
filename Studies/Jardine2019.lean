@@ -11,6 +11,7 @@ public import Linglib.Phonology.Subregular.AutosegmentalStrictlyLocal
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Data.Examples.Jardine2019
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jardine (2019): The expressivity of autosegmental grammars

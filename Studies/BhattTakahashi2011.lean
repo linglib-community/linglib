@@ -5,6 +5,7 @@ public import Studies.Lechner2004
 public import Linglib.Semantics.Degree.HeimKennedy
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bhatt and Takahashi (2011): Reduced and unreduced phrasal comparatives

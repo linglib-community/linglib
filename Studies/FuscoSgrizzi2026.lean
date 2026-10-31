@@ -6,6 +6,7 @@ public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Fragments.Romance.Italian.Verbs
 public import Linglib.Data.Examples.FuscoSgrizzi2026
 public import Studies.Grano2024
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Fusco and Sgrizzi (2026): Belief or Action? Semantic Ambiguity in the Italian Non-finite Domain

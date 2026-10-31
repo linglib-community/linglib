@@ -8,6 +8,7 @@ public import Linglib.Syntax.Minimalist.Clause.Spine
 public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Syntax.Minimalist.Feature.Valuation
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Elkins, Torrence and Brown (2026): Wh-movement paths and adjunct extraction in Mam

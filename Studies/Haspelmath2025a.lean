@@ -9,6 +9,7 @@ public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Fragments.Turkish.Morphotactics
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Case.Spatial
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Haspelmath (2025): Nonverbal Clause Constructions

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Discourse.Gameboard.Basic
 public import Linglib.Data.Examples.GinzburgCooper2004
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ginzburg and Cooper (2004): Clarification, Ellipsis, and the Nature of Contextual Updates in Dialogue

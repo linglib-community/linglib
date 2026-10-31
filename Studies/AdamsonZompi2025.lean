@@ -8,6 +8,7 @@ public import Linglib.Fragments.German.Pronouns
 public import Studies.Deal2024
 public import Studies.CoonKeine2021
 public import Linglib.Data.Examples.AdamsonZompi2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Polite pronouns and the person-case constraint

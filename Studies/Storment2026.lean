@@ -5,6 +5,7 @@ public import Linglib.Fragments.Setswana.Basic
 public import Linglib.Syntax.Agreement.Bundle
 public import Linglib.Syntax.Minimalist.Probe.Search
 public import Studies.Collins2005
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Storment (2026): Quotative inversion as smuggling

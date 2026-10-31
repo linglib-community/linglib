@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Jaeger2007
 public import Studies.GoldwaterJohnson2003
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Mathlib.Basic.Sign.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jäger (2007): Maximum Entropy Models and Stochastic Optimality Theory

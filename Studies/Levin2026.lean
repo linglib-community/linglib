@@ -5,6 +5,7 @@ public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.Levin2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Levin (2026): The door pushed open

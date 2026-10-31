@@ -13,6 +13,7 @@ public import Linglib.Syntax.Clause.Arguments
 public import Linglib.Data.Examples.Harley2014
 public import Linglib.Morphology.DistributedMorphology.RootCategorization
 public import Studies.Bobaljik2008
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Harley (2014): On the identity of roots

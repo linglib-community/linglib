@@ -7,6 +7,7 @@ public import Linglib.Fragments.Greek.StandardModern.Verbs
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 public import Linglib.Semantics.Attitudes.Anchor
 public import Linglib.Data.Examples.Angelopoulos2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Angelopoulos 2026: on clausal complementation, once more

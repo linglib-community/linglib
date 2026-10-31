@@ -75,8 +75,8 @@ valued probe (a case assigner, `[∗Infl:perf∗]`) matches only an unvalued slo
 DP whose case is already valued is invisible to case assignment. -/
 def goalMatches (s : State H) (α : H) (t : FeatureType) (g : H) : Bool :=
   match s α t with
-  | .unvalued => (s g t).isSpecified
-  | .valued _ => (s g t).isUnvalued
+  | .unvalued => decide (s g t ≠ .absent)
+  | .valued _ => decide (s g t = .unvalued)
   | .absent => false
 
 /-- In Agree between `α` and its goal `g` at `t`, an unvalued probe copies the goal's value when the
@@ -161,7 +161,7 @@ def isPhase : Head → Bool
 def allActive : Head → FeatureType → Bool := fun _ _ ↦ true
 
 /-- `[ϕ:p]`. -/
-def person (p : Person) : Σ t : FeatureType, FeatureSlot t.ValueOf := ⟨.person, .valued p⟩
+def person (p : Person) : Σ t : FeatureType, FeatureSlot t.Value := ⟨.person, .valued p⟩
 
 /-! ### Standard Italian auxiliary selection (§3)
 
@@ -274,7 +274,7 @@ theorem t_targets_subject (p : Person) :
 
 /-- The Vocabulary Items (14) insert `/AVERE/ ↔ Perf[π:α]`, and `/ESSERE/` elsewhere. -/
 def standardItalianAux (s : State Head) : PerfectAuxiliary :=
-  if (s .perf .person).isValued then .have else .be
+  if (s .perf .person).toFlat ≠ ⊥ then .have else .be
 
 -- (4), (5)
 theorem standardItalian_aux (c : TransitivityClass) (p : Person) :
@@ -298,7 +298,7 @@ theorem ariellese_aux (c : TransitivityClass) (p : Person) :
 
 /-- Tufillese (24) inserts `/AVERE/ ↔ Perf[π:α] / T[ϕ:3sg]`. -/
 def tufilleseAux (s : State Head) : PerfectAuxiliary :=
-  if (s .perf .person).isValued ∧ s .t .person = .valued .third then .have else .be
+  if (s .perf .person).toFlat ≠ ⊥ ∧ s .t .person = .valued .third then .have else .be
 
 -- §3.5
 theorem tufillese_aux (c : TransitivityClass) (p : Person) :
@@ -406,7 +406,7 @@ def icelandicOrder : ProbeOrder → List FeatureType
   | .phiFirst => [.number, .case]
 
 /-- T's number slot after probing. -/
-def icelandic (k : Clausal) (o : ProbeOrder) : FeatureSlot FeatureType.number.ValueOf :=
+def icelandic (k : Clausal) (o : ProbeOrder) : FeatureSlot FeatureType.number.Value :=
   (run icelandicActive .t [.dpDat, .dpNom] (icelandicOrder o) (icelandicInitial k)).2 .t .number
 
 -- (29a)
@@ -433,7 +433,7 @@ def lakInitial (ps po : Person) : Head → FeatureBundle
   | _ => ⊥
 
 /-- Asp's person slot after v has agreed with the object and Asp with v. -/
-def lak (ps po : Person) : FeatureSlot FeatureType.person.ValueOf :=
+def lak (ps po : Person) : FeatureSlot FeatureType.person.Value :=
   let s := (run allActive .v [.dpObj] [.person] (lakInitial ps po)).2
   (run allActive .asp (domain isPhase [⟨[.dpSbj], .v⟩, ⟨[], .dpObj⟩]) [.infl, .person] s).2
     .asp .person
@@ -506,7 +506,7 @@ def hindiSpine : HindiClause → List (Layer Head)
 
 /-- T's person slot after v has probed its complement (empty in (40), the object having
 moved, fn. 33) and T has Infl-agreed with Asp and, nested under it, probed for ϕ. -/
-def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.ValueOf :=
+def hindi (k : HindiClause) (ps po : Person) : FeatureSlot FeatureType.person.Value :=
   let s := (run allActive .v (if k = .bothMarked then [] else [.verb, .dpObj]) [.person]
     (hindiInitial k ps po)).2
   (run allActive .t (domain isPhase (hindiSpine k)) [.infl, .person] s).2 .t .person

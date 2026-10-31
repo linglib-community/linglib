@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Bresnan1973
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Adjectives
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bresnan (1973): Syntax of the comparative clause construction in English

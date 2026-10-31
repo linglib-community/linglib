@@ -5,6 +5,7 @@ public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Events.Lifespan
 public import Linglib.Data.Examples.Magri2009
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Magri (2009): A Theory of Individual-Level Predicates Based on Blind Mandatory Scalar Implicatures

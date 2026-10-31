@@ -4,6 +4,7 @@ public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Modification.Basic
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.AhnKocabDavidson2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ahn, Kocab & Davidson 2026: sign language loci as spatial modifiers

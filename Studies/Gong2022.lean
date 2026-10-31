@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.LateMerger
 public import Studies.BakerVinokurova2010
 public import Linglib.Data.Examples.Gong2022
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gong (2022): Case in Wholesale Late Merger: Evidence from Mongolian Scrambling

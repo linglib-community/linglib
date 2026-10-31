@@ -13,6 +13,7 @@ public import Linglib.Fragments.Latin.Determiners
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Mitrović and Sauerland (2016): Two Conjunctions Are Better Than One

@@ -7,6 +7,7 @@ public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Fragments.Romance.French.Determiners
 public import Linglib.Fragments.English.Determiners
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jeretič et al. (2025): Core concepts and indirect alternatives

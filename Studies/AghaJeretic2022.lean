@@ -4,6 +4,7 @@ public import Linglib.Semantics.Homogeneity.Usable
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.AghaJeretic2022
 public import Mathlib.Order.Minimal
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Agha and Jeretič (2022): Weak Necessity Modals as Homogeneous Pluralities of Worlds

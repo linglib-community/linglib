@@ -15,6 +15,7 @@ public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Syntax.Minimalist.Copy.Chain
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Studies.Collins2005
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Cole and Hermon (2008): VP Raising in a VOS Language

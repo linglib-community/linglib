@@ -2,6 +2,7 @@ module
 
 public import Studies.BaleSchwarz2022
 public import Linglib.Data.Examples.BaleSchwarz2026
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bale and Schwarz (2026): Natural language and external conventions: re-examining per

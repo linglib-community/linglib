@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Toosarvandani2016
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Syntax.Clause.Chaining
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Toosarvandani (2016): The Temporal Interpretation of Clause Chaining in Northern Paiute

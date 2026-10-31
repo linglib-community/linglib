@@ -8,6 +8,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.List.Infix
 import all Init.Data.List.SplitOn.Basic  -- for unfolding `List.splitOn`
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Barker (2002): Continuations and the nature of quantification

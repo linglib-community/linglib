@@ -6,6 +6,7 @@ public import Linglib.Fragments.Finnish.Phonology
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.Zify
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Anttila 1997: deriving variation from grammar

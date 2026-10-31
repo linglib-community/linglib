@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.Bruening2025
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Linglib.Data.Experiments.Bruening2025
 public import Linglib.Syntax.Tree.Projection
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bruening 2025: selectional violations in coordination

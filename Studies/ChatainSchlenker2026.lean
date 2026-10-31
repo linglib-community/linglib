@@ -6,6 +6,7 @@ public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Chatain and Schlenker (2026): Local accommodation without covert operators

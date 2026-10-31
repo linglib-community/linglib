@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Gutzmann2015
 public import Linglib.Fragments.German.Particles
 public import Linglib.Fragments.German.WordOrder
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gutzmann (2015): Use-Conditional Meaning

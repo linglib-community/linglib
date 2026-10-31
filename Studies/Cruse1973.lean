@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.EnergySource
 public import Linglib.Data.Examples.Cruse1973
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Cruse (1973): Some thoughts on agentivity

@@ -8,6 +8,7 @@ public import Linglib.Semantics.Questions.Polar
 public import Linglib.Semantics.Questions.Bias
 public import Linglib.Syntax.Negation
 public import Mathlib.Order.Interval.Set.Defs
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Romero and Han (2004): On negative yes/no questions

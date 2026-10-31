@@ -10,6 +10,7 @@ public import Linglib.Syntax.Agreement.Phi
 public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Fragments.Hungarian.Reciprocals
 public import Linglib.Data.Examples.Rakosi2020
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rákosi (2020): Reciprocal anaphors in singular constructions in Hungarian

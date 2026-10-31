@@ -14,6 +14,7 @@ public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Pragmatics.Competition
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Data.Examples.CoppockBeaver2015
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Coppock and Beaver's definiteness and determinacy

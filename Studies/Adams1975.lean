@@ -7,6 +7,7 @@ public import Mathlib.Probability.UniformOn
 public import Mathlib.Tactic.TFAE
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Data.Examples.Adams1975
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Adams (1975): The Logic of Conditionals: An Application of Probability to Deductive Logic

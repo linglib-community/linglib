@@ -8,6 +8,7 @@ public import Linglib.Core.GroupTheory.GroupAction.Blocks
 public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Data.Examples.Gajewski2002
 public import Mathlib.Algebra.Group.Action.End
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gajewski (2002): On Analyticity in Natural Language

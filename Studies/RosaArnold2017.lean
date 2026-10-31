@@ -7,6 +7,7 @@ public import Linglib.Morphology.Word.Agree
 public import Studies.KehlerRohde2013
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Linarith
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Rosa and Arnold (2017): Predictability affects production

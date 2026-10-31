@@ -5,6 +5,7 @@ public import Linglib.Fragments.Akan.Determiners
 public import Linglib.Data.Examples.Owusu2022
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Owusu (2022): the Akan indefinite *bí*

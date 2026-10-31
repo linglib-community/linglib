@@ -4,6 +4,7 @@ public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Data.Examples.GeurtsPouscoulous2009
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Geurts and Pouscoulous (2009): Embedded implicatures?!?

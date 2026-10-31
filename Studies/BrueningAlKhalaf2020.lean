@@ -9,6 +9,7 @@ public import Mathlib.Data.List.Infix
 public import Mathlib.Data.List.ReduceOption
 public import Mathlib.Data.List.Sections
 public import Mathlib.Data.List.TFAE
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bruening and Al Khalaf 2020: category mismatches in coordination

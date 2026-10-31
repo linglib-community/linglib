@@ -7,6 +7,7 @@ public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.Locality.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Syntax.Minimalist.Derivation.Smuggling
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Collins 2005: a smuggling approach to the passive in English

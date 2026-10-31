@@ -5,6 +5,7 @@ public import Linglib.Phonology.Subregular.Agree
 public import Linglib.Phonology.Subregular.Multitier
 public import Linglib.Phonology.Harmony.System
 public import Linglib.Data.Examples.Hansson2010
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Hansson (2010): Consonant Harmony: Long-Distance Interaction in Phonology

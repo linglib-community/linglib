@@ -7,6 +7,7 @@ public import Linglib.Core.Relation.ReflTransGen
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.NormNum
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Tay (2024): Resultative Expressions in Mandarin Chinese

@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Syntax.CCG.Derivation
 public import Linglib.Data.Examples.PickeringBarry1991
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Pickering and Barry (1991): Sentence Processing without Empty Categories

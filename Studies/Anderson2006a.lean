@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Anderson2006a
 public import Mathlib.Data.Finset.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Anderson 2006: auxiliary verb constructions

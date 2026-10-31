@@ -6,6 +6,7 @@ public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Questions.Bias
 public import Linglib.Data.Examples.GartnerGyuris2017
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Gärtner and Gyuris (2017): On Delimiting the Space of Bias Profiles for Polar Interrogatives

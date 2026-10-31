@@ -9,6 +9,7 @@ public import Studies.Ladusaw1979
 public import Linglib.Data.Examples.KadmonLandman1993
 public import Linglib.Fragments.English.PolarityItems
 public import Mathlib.Data.Set.Basic
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Kadmon and Landman (1993): Any
@@ -16,8 +17,9 @@ public import Mathlib.Data.Set.Basic
 Kadmon and Landman analyze *any CN* as the indefinite *a CN* with its domain widened along a
 contextual dimension, licensed only when the widening makes the statement stronger, a condition
 checked at the narrowest operator over the indefinite; free-choice *any* is the same item under a
-generic interpretation. Widening weakens an existential, so strengthening holds exactly under an
-antitone context, which is why Ladusaw's downward-entailing contexts license. Adversatives are
+generic interpretation. Widening weakens an existential, so strengthening holds
+[exactly under an antitone context](##forall_strengthening_iff_antitone), which is why Ladusaw's
+downward-entailing contexts license. Adversatives are
 downward entailing on a constant perspective, a negated *because*-clause licenses only by
 metalinguistic denial, and conditional antecedents strengthen once the implicit restriction is
 fixed. The generic restriction is a vague property set whose precisifications give the normality
@@ -68,6 +70,11 @@ theorem de_satisfies_strengthening {World Entity : Type*} {C : Set World → Set
     (hD : D ⊆ D') : Strengthening C D D' P :=
   hDE (Set.biUnion_subset_biUnion_left hD)
 
+theorem forall_strengthening_iff_antitone {World : Type*} {C : Set World → Set World} :
+    (∀ D D' : Set (Set World), D ⊆ D' → Strengthening C D D' id) ↔ Antitone C := by
+  refine ⟨fun h a b hab ↦ ?_, fun hC D D' hD ↦ de_satisfies_strengthening hC D D' id hD⟩
+  simpa [Strengthening, Set.union_eq_left.2 hab] using h {a} {b, a} (Set.subset_insert b {a})
+
 /-- In a UE (monotone) context, widening *weakens* — the opposite of
 strengthening. This is K&L's explanation for why *any* is out in plain
 positive contexts. -/
@@ -87,9 +94,8 @@ restrictions. -/
 /-- Ladusaw-DE contexts are K&L strengthening contexts; Ladusaw describes *where* NPIs occur, and
 K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (L : PolarityItem.Licenser)
-    (hDE : IsDownwardEntailing L) : L.mechanism = .strengthening := by
-  unfold IsDownwardEntailing at hDE
-  cases L <;> first | rfl | exact hDE.elim
+    (hDE : IsDownwardEntailing L) : L.LicensesByStrengthening :=
+  Licenser.licensesByStrengthening_iff.2 (Licenser.isStrawsonDE_of_holds_anti hDE)
 
 /-! ### Adversative predicates: *sorry* vs *glad*
 

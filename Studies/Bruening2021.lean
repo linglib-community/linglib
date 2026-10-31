@@ -4,6 +4,7 @@ public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.Bruening2021
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Syntax.Minimalist.Category
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Bruening (2021): implicit arguments in English double object constructions

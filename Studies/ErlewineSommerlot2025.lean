@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.ErlewineSommerlot2025
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Erlewine and Sommerlot (2025): Voice and Extraction in Malayic

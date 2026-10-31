@@ -16,6 +16,7 @@ public import Studies.Shieber1986
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Dalrymple and Kaplan, feature indeterminacy and feature resolution (2000)

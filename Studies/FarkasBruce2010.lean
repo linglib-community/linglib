@@ -8,6 +8,7 @@ public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.German.Particles
 public import Linglib.Fragments.Romance.French.Particles
 public import Linglib.Fragments.Romanian.Particles
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Farkas and Bruce (2010): On Reacting to Assertions and Polar Questions

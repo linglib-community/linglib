@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Data.Examples.Funakoshi2016
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Funakoshi (2016): Verb-Stranding Verb Phrase Ellipsis in Japanese

@@ -10,6 +10,7 @@ public import Linglib.Fragments.Romance.French.Negation
 public import Linglib.Fragments.Januubi.Negation
 public import Linglib.Fragments.Mandarin.Negation
 public import Linglib.Fragments.ZarmaSonrai.Negation
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Jin and Koenig (2021): A Cross-Linguistic Study of Expletive Negation

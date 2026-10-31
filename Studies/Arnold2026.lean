@@ -4,6 +4,7 @@ public import Studies.KonnellyCowper2020
 public import Linglib.Data.Examples.Arnold2026
 public import Linglib.Discourse.CommonGround
 public import Mathlib.Order.UpperLower.Closure
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Arnold 2026: two kinds of singular *they*

@@ -7,6 +7,7 @@ public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Syntax.Minimalist.Locality.AntiLocality
 public import Studies.CoonMateoPedroPreminger2014
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus

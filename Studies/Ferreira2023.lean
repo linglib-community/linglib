@@ -5,6 +5,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Linglib.Semantics.Modality.Directive
 public import Linglib.Fragments.Romance.Portuguese.Modals
 public import Linglib.Data.Examples.Ferreira2023
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Ferreira (2023): A square of necessities

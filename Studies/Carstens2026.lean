@@ -3,10 +3,11 @@ module
 public import Linglib.Data.Examples.Carstens2026
 public import Linglib.Fragments.Xhosa.Nouns
 public import Linglib.Fragments.Shona.Nouns
-public import Linglib.Syntax.Minimalist.Feature.DualFeature
+public import Linglib.Syntax.Minimalist.Feature.Interpretability
 public import Linglib.Morphology.DistributedMorphology.Gender
 public import Studies.TaraldsenEtAl2018
 public import Mathlib.Data.Fintype.Inv
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Carstens (2026): The grammar of gender
@@ -98,10 +99,10 @@ theorem visible_eq_agreeingGender (r : Root) (d : G) :
 
 /-- The visible gender's feature as percolation sees it, annotated with the interpretability of
 the gender's n. -/
-def visibleBundle : Bundle G := .single n.visible (interpretability (status n.visible))
+def visibleBundle : Bundle G := .single (interpretability (status n.visible)) {n.visible}
 
 /-- The core's feature, always interpretable. -/
-def coreBundle : Bundle G := .single n.core .interpretable
+def coreBundle : Bundle G := .single .interpretable {n.core}
 
 variable [DecidableEq G]
 

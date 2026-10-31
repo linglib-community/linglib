@@ -5,6 +5,7 @@ public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Syntax.ConstructionGrammar.Licensing
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.GoldbergShirtz2025
+public import Linglib.Data.Examples.Readers
 
 /-!
 # Goldberg and Shirtz (2025): The English Phrase-as-Lemma Construction
