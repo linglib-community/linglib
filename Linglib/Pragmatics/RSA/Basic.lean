@@ -219,9 +219,7 @@ theorem listener_apply_singleton_congr {u : U} {w₁ w₂ : W} (hS : S w₁ {u} 
 
 theorem listener_apply_finset (u : U) (E : Finset W) :
     listener μ S u ↑E = (∑ w ∈ E, S w {u} * μ {w}) / ∑ w, S w {u} * μ {w} := by
-  rw [← sum_measure_singleton]
-  simp_rw [listener_apply_singleton, div_eq_mul_inv]
-  rw [Finset.sum_mul]
+  rw [listener, Kernel.ofDensity_eq_ofWeights, Kernel.ofWeights_apply_finset]
 
 variable [IsFiniteMeasure μ] [∀ w, IsFiniteMeasure (S w)]
 
@@ -235,12 +233,9 @@ theorem isProbabilityMeasure_listener_of_ne_zero {u : U} {w : W} (hμ : μ {w} �
 theorem listener_real_finset (u : U) (E : Finset W) :
     (listener μ S u).real ↑E =
       (∑ w ∈ E, μ.real {w} * (S w).real {u}) / ∑ w, μ.real {w} * (S w).real {u} := by
-  have key (E : Finset W) :
-      (∑ w ∈ E, S w {u} * μ {w}).toReal = ∑ w ∈ E, μ.real {w} * (S w).real {u} := by
-    rw [ENNReal.toReal_sum fun _ _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
-    exact Finset.sum_congr rfl fun w _ ↦ by
-      rw [ENNReal.toReal_mul, mul_comm, measureReal_def, measureReal_def]
-  rw [measureReal_def, listener_apply_finset, ENNReal.toReal_div, key, key]
+  rw [listener, Kernel.ofDensity_eq_ofWeights, Kernel.ofWeights_real_finset]
+  · simp only [ENNReal.toReal_mul, measureReal_def, mul_comm]
+  · exact fun _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
 
 theorem listener_real_singleton (u : U) (w : W) :
     (listener μ S u).real {w} =
@@ -314,12 +309,9 @@ variable [∀ w, IsFiniteMeasure (S w)]
 theorem listener_uniformOn_univ_real_finset [Nonempty W] (u : U) (E : Finset W) :
     (listener (uniformOn Set.univ) S u).real ↑E =
       (∑ w ∈ E, (S w).real {u}) / ∑ w, (S w).real {u} := by
-  rw [measureReal_def, ← sum_measure_singleton]
-  simp_rw [listener_uniformOn_univ_apply_singleton, ENNReal.div_eq_inv_mul]
-  rw [← Finset.mul_sum, ENNReal.toReal_mul, ENNReal.toReal_inv,
-    ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _,
-    ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _, inv_mul_eq_div]
-  simp only [measureReal_def]
+  rw [listener, Kernel.ofDensity_uniformOn_univ, Kernel.ofWeights_real_finset]
+  · rfl
+  · exact fun _ ↦ measure_ne_top _ _
 
 theorem listener_uniformOn_real_lt_iff (u : U) (w₁ w₂ : W) :
     (listener (uniformOn Set.univ) S u).real {w₁} < (listener (uniformOn Set.univ) S u).real {w₂} ↔
