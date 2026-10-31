@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Feature.DualFeature
+public import Linglib.Syntax.Minimalist.Feature.Interpretability
 public import Mathlib.Data.List.Iterate
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
@@ -119,10 +119,10 @@ variable {G : Type*} (L : System G)
 def entailments (n : Node) : Finset Node := (List.iterate L.parent n (Fintype.card Node)).toFinset
 
 /-- The interpretable features of a nominal with referent `r`. -/
-def conceptual (r : Referent) : Bundle Node := .ofInterp (L.entailments (L.iNode r))
+def conceptual (r : Referent) : Bundle Node := .single .interpretable (L.entailments (L.iNode r))
 
 /-- The uninterpretable features of a nominal of grammatical gender `g`. -/
-def arbitrary (g : G) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
+def arbitrary (g : G) : Bundle Node := .single .uninterpretable (L.entailments (L.uNode g))
 
 /-- A nominal headed by `n` and referring to `r` bears the interpretable features of `r` and,
 unless the gender of `n` is the one its referents' gender is assigned, the uninterpretable features
@@ -131,7 +131,7 @@ def nominal [DecidableEq G] (n : GenderedNoun G) (r : Referent) : Bundle Node :=
   if Gender.IsNatural (Option.map L.ofReferentGender) GenderedNoun.referentGender
       GenderedNoun.gender n then
     L.conceptual r
-  else L.conceptual r ∪ L.arbitrary n.gender
+  else L.conceptual r ⊔ L.arbitrary n.gender
 
 /-- The exponent of a feature set under the Subset Principle. -/
 def realize (fs : Finset Node) : Option G :=
@@ -152,15 +152,15 @@ def resolved (r₁ r₂ : Referent) : Option G := L.converted (L.conceptual r₁
 /-- Resolution through uninterpretable features, each conjunct's set realized, converging on
 one exponent or crashing. -/
 def formal [DecidableEq G] (a b : Bundle Node) : Option G :=
-  realizeAll L.realize [a.uninterp, b.uninterp]
+  realizeAll L.realize [a .uninterpretable, b .uninterpretable]
 
 /-- A human's percolated interpretable features beside an inanimate's uninterpretable ones. The
 redundancy rule copies the former to PF, and both sets are realized. -/
 def mixed [DecidableEq G] (human inan : Bundle Node) : Option G :=
-  realizeAll L.realize [human.interp, inan.uninterp]
+  realizeAll L.realize [human .interpretable, inan .uninterpretable]
 
 @[simp] theorem interp_nominal [DecidableEq G] (n : GenderedNoun G) (r : Referent) :
-    (L.nominal n r).interp = (L.conceptual r).interp := by
+    L.nominal n r .interpretable = L.conceptual r .interpretable := by
   unfold nominal; split_ifs <;> simp [conceptual, arbitrary]
 
 theorem converted_nominal [DecidableEq G] (n₁ n₂ : GenderedNoun G) (r₁ r₂ : Referent) :
