@@ -4,19 +4,20 @@ public import Linglib.Logic.ComparativeProbability.Scott
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Tactic.Linarith
 
-/-! # Anti-dominating pairs among balanced comparisons on four atoms
+/-! # Anti-dominating pairs among balanced comparisons on at most four atoms
 
-A comparison on four atoms is a sign vector `v : Fin 4 → SignType`, with positive side
-`posSupport v` and negative side `negSupport v`. Two comparisons are *mergeable* when no atom
-carries the same nonzero sign in both, and *anti-dominating* when the positive side of each lies
-in the negative side of the other. Every nonempty multiset of pairwise non-mergeable comparisons
-with nonempty positive sides that sums to zero contains an anti-dominating pair; this is the
-combinatorial core of cancellation on `Fin 4`.
+A comparison is a sign vector `v : W → SignType`, with positive side `posSupport v` and negative
+side `negSupport v`. Two comparisons are *mergeable* when no atom carries the same nonzero sign in
+both, and *anti-dominating* when the positive side of each lies in the negative side of the other.
+On at most four atoms, every nonempty multiset of pairwise non-mergeable comparisons with nonempty
+positive sides that sums to zero contains an anti-dominating pair; this is the combinatorial core
+of cancellation on at most four atoms.
 
 ## Main declarations
 
 * `ComparativeProbability.Mergeable`, `ComparativeProbability.AntiDominating`: the two relations
   between comparisons.
+* `ComparativeProbability.mergeable_iff`: mergeable comparisons agree only on neutral atoms.
 * `ComparativeProbability.dotProduct_eq_zero_of_comparisonSum_eq_zero`: an integer functional
   that is nonnegative on a multiset of comparisons summing to zero vanishes on it.
 * `ComparativeProbability.exists_antiDominating`: the anti-domination theorem.
@@ -32,7 +33,8 @@ support; otherwise it has the shape `+1` at `p`, `0` at `ζ`, `-1` elsewhere, th
 `e_p + e_ζ` forces a second member of the same shape, and the next iterate closes a 3-cycle that
 `e_p + e_i + e_ζ - e_j` refutes. Once every member has two positive coordinates, `𝟙` forces each
 to have exactly two of each sign, and a pigeonhole on the three complementary pairs of 2-subsets
-of `Fin 4` yields an anti-dominating pair.
+of `Fin 4` yields an anti-dominating pair. Comparisons on fewer atoms are padded with zeros to
+`Fin 4`.
 -/
 
 @[expose] public section
@@ -51,6 +53,14 @@ def Mergeable (v w : W → SignType) : Prop :=
 
 theorem Mergeable.symm {v w : W → SignType} (h : Mergeable v w) : Mergeable w v :=
   ⟨h.1.symm, h.2.symm⟩
+
+/-- Two comparisons are mergeable iff every atom on which they agree is neutral. -/
+theorem mergeable_iff {v w : W → SignType} : Mergeable v w ↔ ∀ i, v i = w i → v i = 0 := by
+  simp only [Mergeable, Set.disjoint_left, mem_posSupport, mem_negSupport]
+  refine ⟨fun h i hvw ↦ ?_, fun h ↦ ⟨fun i h₁ h₂ ↦ ?_, fun i h₁ h₂ ↦ ?_⟩⟩
+  · rcases SignType.trichotomy (v i) with h0 | h0 | h0
+    exacts [(h.2 h0 (hvw ▸ h0)).elim, h0, (h.1 h0 (hvw ▸ h0)).elim]
+  all_goals simp_all [h i (h₁.trans h₂.symm)]
 
 /-- Two comparisons are anti-dominating when the positive side of each lies in the negative side
 of the other. -/
@@ -75,6 +85,41 @@ theorem dotProduct_eq_zero_of_comparisonSum_eq_zero [Fintype W] {M : Multiset (W
   have := (sum_eq_zero_iff_of_nonneg fun w hw ↦ mul_nonneg (Nat.cast_nonneg _)
     (hu w (Multiset.mem_toFinset.1 hw))).1 hsum v (Multiset.mem_toFinset.2 hv)
   exact (mul_eq_zero.1 this).resolve_left (Nat.cast_ne_zero.2 (Multiset.count_ne_zero.2 hv))
+
+/-! ### Padding by zeros -/
+
+section Extend
+
+open Function
+
+variable {V : Type*} {e : W → V}
+
+private lemma posSupport_extend (he : Injective e) (v : W → SignType) :
+    posSupport (extend e v 0) = e '' posSupport v := by
+  ext x
+  by_cases hx : ∃ a, e a = x
+  · obtain ⟨a, rfl⟩ := hx; simp [he.extend_apply, he.mem_set_image]
+  · simp only [mem_posSupport, extend_apply' _ _ _ hx, Pi.zero_apply]
+    exact iff_of_false (by decide) fun ⟨a, _, ha⟩ ↦ hx ⟨a, ha⟩
+
+private lemma negSupport_extend (he : Injective e) (v : W → SignType) :
+    negSupport (extend e v 0) = e '' negSupport v := by
+  ext x
+  by_cases hx : ∃ a, e a = x
+  · obtain ⟨a, rfl⟩ := hx; simp [he.extend_apply, he.mem_set_image]
+  · simp only [mem_negSupport, extend_apply' _ _ _ hx, Pi.zero_apply]
+    exact iff_of_false (by decide) fun ⟨a, _, ha⟩ ↦ hx ⟨a, ha⟩
+
+private lemma comparisonSum_map_extend (he : Injective e) {M : Multiset (W → SignType)}
+    (hM : comparisonSum M = 0) : comparisonSum (M.map (extend e · 0)) = 0 := by
+  funext x
+  by_cases hx : ∃ a, e a = x
+  · obtain ⟨a, rfl⟩ := hx
+    simpa [comparisonSum, Multiset.map_map, Function.comp_def, he.extend_apply] using
+      congrFun hM a
+  · simp [comparisonSum, Multiset.map_map, extend_apply' _ _ _ hx]
+
+end Extend
 
 end General
 
@@ -547,10 +592,8 @@ private lemma false_of_four_le_card (hS : NoWitness S) (hposne : ∀ v ∈ S, �
   rw [← coe_pos, ← coe_pos, disjoint_coe]
   exact disjoint_iff_inter_eq_empty.2 hdisj
 
-/-- **Anti-domination from balance.** A nonempty multiset of pairwise non-mergeable comparisons
-on four atoms, each with a nonempty positive side, that sums to zero contains an anti-dominating
-pair. -/
-theorem exists_antiDominating {M : Multiset (Fin 4 → SignType)} (hM : comparisonSum M = 0)
+private theorem exists_antiDominating_fin_four {M : Multiset (Fin 4 → SignType)}
+    (hM : comparisonSum M = 0)
     (hpos : ∀ v ∈ M, (posSupport v).Nonempty)
     (hmerge : ∀ v ∈ M, ∀ w ∈ M, v ≠ w → ¬Mergeable v w) (hne : M ≠ 0) :
     ∃ v ∈ M, ∃ w ∈ M, v ≠ w ∧ AntiDominating v w := by
@@ -566,5 +609,33 @@ theorem exists_antiDominating {M : Multiset (Fin 4 → SignType)} (hM : comparis
   · exact false_of_card_le_three hS hposne hmerge' (Multiset.toFinset_nonempty.2 hne) h
   · exact false_of_four_le_card hS hposne hmerge'
       (fun v hv w hw ↦ hno v (by simpa using hv) w (by simpa using hw)) h
+
+/-- **Anti-domination from balance.** A nonempty multiset of pairwise non-mergeable comparisons
+on at most four atoms, each with a nonempty positive side, that sums to zero contains an
+anti-dominating pair. Padding the comparisons with zeros reduces it to four atoms. -/
+theorem exists_antiDominating {W : Type*} [Fintype W] (hW : Fintype.card W ≤ 4)
+    {M : Multiset (W → SignType)} (hM : comparisonSum M = 0)
+    (hpos : ∀ v ∈ M, (posSupport v).Nonempty)
+    (hmerge : ∀ v ∈ M, ∀ w ∈ M, v ≠ w → ¬Mergeable v w) (hne : M ≠ 0) :
+    ∃ v ∈ M, ∃ w ∈ M, v ≠ w ∧ AntiDominating v w := by
+  obtain ⟨e⟩ := Function.Embedding.nonempty_of_card_le (hW.trans_eq (Fintype.card_fin 4).symm)
+  have he := e.injective
+  have hpad := Function.extend_injective he (0 : Fin 4 → SignType)
+  obtain ⟨_, hv', _, hw', hvw, had⟩ := exists_antiDominating_fin_four
+    (M := M.map (Function.extend e · 0)) (comparisonSum_map_extend he hM)
+    (Multiset.forall_mem_map_iff.mpr fun v hv ↦ by
+      rw [posSupport_extend he]; exact (hpos v hv).image _)
+    (by
+      simp only [Multiset.mem_map]
+      rintro _ ⟨v, hv, rfl⟩ _ ⟨w, hw, rfl⟩ hvw hm
+      refine hmerge v hv w hw (fun h ↦ hvw (h ▸ rfl)) ⟨?_, ?_⟩
+      · simpa [posSupport_extend he, Set.disjoint_image_iff he] using hm.1
+      · simpa [negSupport_extend he, Set.disjoint_image_iff he] using hm.2)
+    (by simpa using hne)
+  obtain ⟨v, hv, rfl⟩ := Multiset.mem_map.mp hv'
+  obtain ⟨w, hw, rfl⟩ := Multiset.mem_map.mp hw'
+  refine ⟨v, hv, w, hw, fun h ↦ hvw (h ▸ rfl), ?_⟩
+  simpa [AntiDominating, posSupport_extend he, negSupport_extend he,
+    Set.image_subset_image_iff he] using had
 
 end ComparativeProbability

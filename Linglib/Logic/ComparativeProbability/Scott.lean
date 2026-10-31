@@ -413,21 +413,19 @@ theorem representable_iff [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpa
   · have := h.isQualitativeProbability hnn
     exact cancellation_implies_representable r h.cancellation
 
-/-- A null atom and representability one cardinality down yield cancellation, by swapping the
-    null atom to position 0 and applying `null_elem_reduce`. -/
+/-- A null atom and representability one cardinality down yield cancellation: the other atoms
+    embed by `Fin.succAbove`, and the null atom drops out (`Representable.of_image`). -/
 theorem cancellation_of_null_atom {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) → Prop)
     [IsQualitativeProbability r] {j : Fin (n + 2)} (hj : r ∅ {j})
     (sub : ∀ r' : Set (Fin (n + 1)) → Set (Fin (n + 1)) → Prop,
       IsQualitativeProbability r' → Representable r') :
     Cancellation r := by
-  set σ := Equiv.swap (0 : Fin (n + 2)) j with hσ
-  have h0 : (Set.preimage σ ⁻¹'o r) ∅ {0} := by
-    rw [perm_null_iff, show σ.symm 0 = j by simp [hσ]]; exact hj
-  have hnn : ∃ i : Fin (n + 1), ¬(Set.preimage σ ⁻¹'o r) ∅ {Fin.succ i} := by
-    obtain ⟨k, hk⟩ := exists_not_rel_empty_singleton (Set.preimage σ ⁻¹'o r)
-    obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k := Fin.exists_succ_eq.mpr fun h ↦ hk (h ▸ h0)
-    exact ⟨i, hk⟩
-  exact (representable_iff_cancellation r).mp
-    ((null_elem_reduce _ h0 hnn sub).of_preimage σ.injective)
+  have hnt : ¬r ∅ (Set.range j.succAbove) := fun h ↦ by
+    obtain ⟨k, hk⟩ := exists_not_rel_empty_singleton r
+    obtain ⟨i, rfl⟩ := Fin.exists_succAbove_eq fun hkj : k = j ↦ hk (hkj ▸ hj)
+    exact hk (trans_of r h (mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_range_self i))))
+  refine (representable_iff_cancellation r).mp (Representable.of_image ?_
+    (sub _ (isQualitativeProbability_image Fin.succAbove_right_injective hnt)))
+  rwa [Fin.range_succAbove, compl_compl]
 
 end ComparativeProbability

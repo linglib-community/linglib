@@ -2,31 +2,26 @@ module
 
 public import Linglib.Logic.ComparativeProbability.Scott
 public import Linglib.Logic.ComparativeProbability.SignVectors
-public import Mathlib.Tactic.Tauto
-public import Mathlib.Tactic.FinCases
 
 /-! # Cancellation on at most four atoms
 
-This file proves that every qualitative probability order on at most four atoms satisfies Scott
+This file proves that every qualitative probability on at most four atoms satisfies Scott
 cancellation, hence is representable by a probability measure. Kraft, Pratt and Seidenberg remark,
 without proof, that five atoms are the fewest on which this can fail.
 
-## Main declarations
+## Main statements
 
-* `ComparativeProbability.no_null_cancellation`: cancellation on `Fin 4` with no null atoms.
-* `ComparativeProbability.extendLex`: the extension by a dominant world.
-* `ComparativeProbability.cancellation_of_le_four`: every qualitative probability on at most four
-  atoms satisfies cancellation.
+* `ComparativeProbability.no_null_cancellation`: cancellation on at most four atoms, none null.
+* `ComparativeProbability.cancellation_of_le_four`: cancellation on at most four atoms.
 
 ## Implementation notes
 
-On `Fin 4` with no null atom the proof is the merge reduction: a valid family of comparisons
-whose integer sum is a single sign vector proves that comparison (`merge_to_single`), by a
-four-rule recursion whose stuck case is discharged through the sign-vector core
-(`Balanced.exists_antiDominating`) via `v1_tailored`. Comparisons are `Scott.lean`'s sign
-vectors; two comparisons with no shared nonzero coordinate *merge* into the sign of their sum
-(`merge`). Smaller sizes reach this case by the lexicographic extension, and a null atom drops
-to one atom fewer, so a single induction covers every size up to four.
+Comparisons are sign vectors. Two comparisons with no shared nonzero coordinate *merge* into the
+sign of their sum, again a valid comparison. With no null atom, a valid family whose sum is a
+single sign vector proves that comparison by merging recursively. When no pair merges,
+`exists_antiDominating` yields either a pair of members that forces a null atom or a member that
+merges with the reversed target and is peeled off. A null atom drops out by
+`cancellation_of_null_atom`, so one induction covers every size up to four.
 
 ## References
 
@@ -46,63 +41,41 @@ sign in both; their merge is the sign of their sum, which is then their sum. -/
 private def merge {n : ℕ} (v w : Fin n → SignType) (i : Fin n) : SignType :=
   SignType.sign ((v i : ℤ) + w i)
 
-private lemma Mergeable.apply {n : ℕ} {v w : Fin n → SignType} (h : Mergeable v w) (i : Fin n) :
-    v i = w i → v i = 0 := by
-  intro hvw
-  rcases SignType.trichotomy (v i) with h0 | h0 | h0
-  · exact absurd (hvw ▸ h0 : w i = -1) (Set.disjoint_left.mp h.2 h0)
-  · exact h0
-  · exact absurd (hvw ▸ h0 : w i = 1) (Set.disjoint_left.mp h.1 h0)
-
-private lemma mergeable_of_apply {n : ℕ} {v w : Fin n → SignType}
-    (h : ∀ i, v i = w i → v i = 0) : Mergeable v w :=
-  ⟨Set.disjoint_left.mpr fun i h₁ h₂ ↦ by
-      have := h i (h₁.trans h₂.symm); simp_all,
-    Set.disjoint_left.mpr fun i h₁ h₂ ↦ by
-      have := h i (h₁.trans h₂.symm); simp_all⟩
-
 private lemma merge_apply_aux (a b : SignType) (h : a = b → a = 0) :
-    (SignType.sign ((a : ℤ) + b) : ℤ) = a + b := by
-  revert h; revert a b; decide
+    (SignType.sign ((a : ℤ) + b) : ℤ) = a + b := by decide +revert
 
 private lemma sign_add_eq_one_iff (a b : SignType) (h : a = b → a = 0) :
-    SignType.sign ((a : ℤ) + b) = 1 ↔ (a = 1 ∨ b = 1) ∧ ¬(a = -1 ∨ b = -1) := by
-  revert h; revert a b; decide
+    SignType.sign ((a : ℤ) + b) = 1 ↔ (a = 1 ∨ b = 1) ∧ ¬(a = -1 ∨ b = -1) := by decide +revert
 
 private lemma sign_add_eq_neg_one_iff (a b : SignType) (h : a = b → a = 0) :
-    SignType.sign ((a : ℤ) + b) = -1 ↔ (a = -1 ∨ b = -1) ∧ ¬(a = 1 ∨ b = 1) := by
-  revert h; revert a b; decide
+    SignType.sign ((a : ℤ) + b) = -1 ↔ (a = -1 ∨ b = -1) ∧ ¬(a = 1 ∨ b = 1) := by decide +revert
 
 private lemma eq_neg_one_of_add_nonpos (a b : SignType) (ha : a = 1) (h : (a : ℤ) + b ≤ 0) :
-    b = -1 := by
-  revert ha h; revert a b; decide
+    b = -1 := by decide +revert
 
 private lemma or_of_add_neg (a b : SignType) (h : (a : ℤ) + b < 0) :
-    (a = -1 ∧ ¬b = 1) ∨ (b = -1 ∧ ¬a = 1) := by
-  revert h; revert a b; decide
+    (a = -1 ∧ ¬b = 1) ∨ (b = -1 ∧ ¬a = 1) := by decide +revert
 
-private lemma add_self_nonpos (a : SignType) (h : a ≠ 1) : (a : ℤ) + a ≤ 0 := by
-  revert h; revert a; decide
+private lemma add_self_nonpos (a : SignType) (h : a ≠ 1) : (a : ℤ) + a ≤ 0 := by decide +revert
 
 private lemma eq_zero_of_ne_one_of_ne_neg_one (a : SignType) (h₁ : a ≠ 1) (h₂ : a ≠ -1) :
-    a = 0 := by
-  revert h₁ h₂; revert a; decide
+    a = 0 := by decide +revert
 
 private lemma coe_merge {n : ℕ} {v w : Fin n → SignType} (h : Mergeable v w) (i : Fin n) :
     (merge v w i : ℤ) = v i + w i :=
-  merge_apply_aux _ _ (h.apply i)
+  merge_apply_aux _ _ (mergeable_iff.mp h i)
 
 private lemma posSupport_merge {n : ℕ} {v w : Fin n → SignType} (h : Mergeable v w) :
     posSupport (merge v w) = (posSupport v ∪ posSupport w) \ (negSupport v ∪ negSupport w) := by
   ext i
   simp only [mem_posSupport, merge, Set.mem_sdiff, Set.mem_union, mem_negSupport]
-  exact sign_add_eq_one_iff _ _ (h.apply i)
+  exact sign_add_eq_one_iff _ _ (mergeable_iff.mp h i)
 
 private lemma negSupport_merge {n : ℕ} {v w : Fin n → SignType} (h : Mergeable v w) :
     negSupport (merge v w) = (negSupport v ∪ negSupport w) \ (posSupport v ∪ posSupport w) := by
   ext i
   simp only [mem_negSupport, merge, Set.mem_sdiff, Set.mem_union, mem_posSupport]
-  exact sign_add_eq_neg_one_iff _ _ (h.apply i)
+  exact sign_add_eq_neg_one_iff _ _ (mergeable_iff.mp h i)
 
 variable {n : ℕ} {r : Set (Fin n) → Set (Fin n) → Prop}
 
@@ -142,12 +115,10 @@ private lemma null_from_pair [IsQualitativeProbability r] {v w : Fin n → SignT
 /-! ### The stuck case of the merge recursion -/
 
 private lemma add_nonpos_of_imp (a b : SignType) (h₁ : a = 1 → b = -1) (h₂ : b = 1 → a = -1) :
-    (a : ℤ) + b ≤ 0 := by
-  revert h₁ h₂; revert a b; decide
+    (a : ℤ) + b ≤ 0 := by decide +revert
 
 private lemma eq_zero_of_add_eq_zero_of_eq (a b : SignType) (h : (a : ℤ) + b = 0) (hab : a = b) :
-    a = 0 := by
-  revert h hab; revert a b; decide
+    a = 0 := by decide +revert
 
 private lemma comparisonSum_filter_ne_zero {n : ℕ} (M : Multiset (Fin n → SignType)) (i : Fin n) :
     comparisonSum (M.filter (· ≠ 0)) i = comparisonSum M i := by
@@ -159,7 +130,7 @@ private lemma comparisonSum_filter_ne_zero {n : ℕ} (M : Multiset (Fin n → Si
     · rw [Multiset.filter_cons_of_pos _ (by simpa using hv), comparisonSum_cons,
         comparisonSum_cons, ih]
 
-private lemma v1_tailored (M : Multiset (Fin 4 → SignType)) {t : Fin 4 → SignType}
+private lemma v1_tailored (hn : n ≤ 4) (M : Multiset (Fin n → SignType)) {t : Fin n → SignType}
     (hsum : ∀ i, comparisonSum M i = t i) (hne : (negSupport t).Nonempty)
     (hnotdom : ∀ v ∈ M, posSupport v ⊆ posSupport t → ¬ negSupport t ⊆ negSupport v)
     (hnogm : ¬ ∃ v w rest, M = v ::ₘ w ::ₘ rest ∧ Mergeable v w) :
@@ -209,7 +180,7 @@ private lemma v1_tailored (M : Multiset (Fin 4 → SignType)) {t : Fin 4 → Sig
       exact hnogm ⟨x, y, (M.erase x).erase y,
         by rw [Multiset.cons_erase hyx, Multiset.cons_erase hxM], hm⟩
   obtain ⟨x, hxS, y, hyS, hxy, had1, had2⟩ :=
-    exists_antiDominating hbal hpos hmerge (Multiset.cons_ne_zero)
+    exists_antiDominating (by simpa using hn) hbal hpos hmerge (Multiset.cons_ne_zero)
   -- `-t` is excluded by `hnotdom`, so the pair comes from `M` and is a null pair
   rcases hmem x hxS with rfl | hx <;> rcases hmem y hyS with rfl | hy
   · exact (hxy rfl).elim
@@ -221,37 +192,35 @@ private lemma v1_tailored (M : Multiset (Fin 4 → SignType)) {t : Fin 4 → Sig
       add_nonpos_of_imp (x i) (y i) (fun h ↦ had1 h) (fun h ↦ had2 h)
     refine Or.inl ⟨x, Multiset.mem_of_mem_filter hx, y, Multiset.mem_of_mem_filter hy, hle, ?_⟩
     by_contra! hge
-    exact hmerge x hxS y hyS hxy <| mergeable_of_apply fun i hxyi ↦
+    exact hmerge x hxS y hyS hxy <| mergeable_iff.mpr fun i hxyi ↦
       eq_zero_of_add_eq_zero_of_eq (x i) (y i) ((hle i).antisymm (hge i)) hxyi
 
 private lemma merge_residual_aux (a b : SignType) (h : -a = b → -a = 0) :
-    SignType.sign ((SignType.sign ((a : ℤ) + (-b : SignType)) : ℤ) + b) = a := by
-  revert h; revert a b; decide
+    SignType.sign ((SignType.sign ((a : ℤ) + (-b : SignType)) : ℤ) + b) = a := by decide +revert
 
 private lemma mergeable_residual_aux (a b : SignType) (h : -a = b → -a = 0) :
     SignType.sign ((a : ℤ) + (-b : SignType)) = b →
-      SignType.sign ((a : ℤ) + (-b : SignType)) = 0 := by
-  revert h; revert a b; decide
+      SignType.sign ((a : ℤ) + (-b : SignType)) = 0 := by decide +revert
 
 private lemma recombine [IsQualitativeProbability r] {t v : Fin n → SignType}
     (hm : Mergeable (-t) v) (hv : r (posSupport v) (negSupport v))
     (hX : r (posSupport (merge t (-v))) (negSupport (merge t (-v)))) :
     r (posSupport t) (negSupport t) := by
-  have hm' : Mergeable (merge t (-v)) v := mergeable_of_apply fun i ↦ by
-    have := hm.apply i
+  have hm' : Mergeable (merge t (-v)) v := mergeable_iff.mpr fun i ↦ by
+    have := mergeable_iff.mp hm i
     simp only [Pi.neg_apply] at this
     exact mergeable_residual_aux (t i) (v i) this
   have := merge_valid hX hv hm'
   have e : merge (merge t (-v)) v = t := funext fun i ↦ by
-    have := hm.apply i
+    have := mergeable_iff.mp hm i
     simp only [Pi.neg_apply] at this
     exact merge_residual_aux (t i) (v i) this
   rwa [e] at this
 
-private theorem merge_to_single (r : Set (Fin 4) → Set (Fin 4) → Prop)
-    [IsQualitativeProbability r] (hnull : ∀ i : Fin 4, ¬ r ∅ {i})
-    (M : Multiset (Fin 4 → SignType)) (hvalid : ∀ v ∈ M, r (posSupport v) (negSupport v))
-    (t : Fin 4 → SignType) (hsum : ∀ i, comparisonSum M i = t i) :
+private theorem merge_to_single (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
+    [IsQualitativeProbability r] (hnull : ∀ i, ¬ r ∅ {i})
+    (M : Multiset (Fin n → SignType)) (hvalid : ∀ v ∈ M, r (posSupport v) (negSupport v))
+    (t : Fin n → SignType) (hsum : ∀ i, comparisonSum M i = t i) :
     r (posSupport t) (negSupport t) := by
   by_cases hne : (negSupport t).Nonempty
   · by_cases hdom : ∃ v ∈ M, posSupport v ⊆ posSupport t ∧ negSupport t ⊆ negSupport v
@@ -263,7 +232,7 @@ private theorem merge_to_single (r : Set (Fin 4) → Set (Fin 4) → Prop)
       push Not at hdom
       by_cases hgm : ∃ v w rest, M = v ::ₘ w ::ₘ rest ∧ Mergeable v w
       case neg =>
-        rcases v1_tailored M hsum hne hdom hgm with
+        rcases v1_tailored hn M hsum hne hdom hgm with
           ⟨v, hvM, w, hwM, hle, i0, hlt⟩ | ⟨v, hvM, hm⟩
         · -- null pair → null atom → contradicts hnull
           obtain ⟨i, hi⟩ := null_from_pair (hvalid v hvM) (hvalid w hwM) hle i0 hlt
@@ -275,7 +244,7 @@ private theorem merge_to_single (r : Set (Fin 4) → Set (Fin 4) → Prop)
             rw [← Multiset.cons_erase hvM, comparisonSum_cons] at h1
             rw [coe_merge hmt, Pi.neg_apply, SignType.coe_neg]
             omega
-          exact recombine hm (hvalid v hvM) (merge_to_single r hnull (M.erase v)
+          exact recombine hm (hvalid v hvM) (merge_to_single hn r hnull (M.erase v)
             (fun x hx ↦ hvalid x (Multiset.mem_of_mem_erase hx)) (merge t (-v)) hsum')
       obtain ⟨v, w, rest, hM, hm⟩ := hgm
       -- new family: `merge v w ::ₘ rest`, one smaller
@@ -287,7 +256,7 @@ private theorem merge_to_single (r : Set (Fin 4) → Set (Fin 4) → Prop)
       have hsum' : ∀ i, comparisonSum (merge v w ::ₘ rest) i = t i := fun i ↦ by
         rw [comparisonSum_cons, coe_merge hm, ← hsum i, hM]
         simp only [comparisonSum_cons]; omega
-      exact merge_to_single r hnull (merge v w ::ₘ rest) hvalid' t hsum'
+      exact merge_to_single hn r hnull (merge v w ::ₘ rest) hvalid' t hsum'
   · -- trivial-target discharge: `negSupport t = ∅`
     rw [Set.not_nonempty_iff_eq_empty] at hne
     rw [hne]
@@ -298,171 +267,26 @@ decreasing_by
     | exact Multiset.card_erase_lt_of_mem ‹_›
     | (rw [‹M = _›]; simp)
 
-/-- A qualitative probability on `Fin 4` with no null atom satisfies cancellation, by the merge
-    reduction `merge_to_single`. -/
-theorem no_null_cancellation (r : Set (Fin 4) → Set (Fin 4) → Prop) [IsQualitativeProbability r]
-    (hnull : ∀ i : Fin 4, ¬ r ∅ {i}) : Cancellation r := by
+/-- A qualitative probability on at most four atoms with no null atom satisfies cancellation, by
+    the merge reduction `merge_to_single`. -/
+theorem no_null_cancellation (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
+    [IsQualitativeProbability r] (hnull : ∀ i, ¬ r ∅ {i}) : Cancellation r := by
   intro M hvalid hsum v hv
   rw [← posSupport_neg v, ← negSupport_neg v]
-  refine merge_to_single r hnull (M.erase v)
+  refine merge_to_single hn r hnull (M.erase v)
     (fun w hw ↦ hvalid w (Multiset.mem_of_mem_erase hw)) (-v) fun i ↦ ?_
   have h := congrFun hsum i
   rw [← Multiset.cons_erase hv, comparisonSum_cons, Pi.zero_apply] at h
   rw [Pi.neg_apply, SignType.coe_neg]
   omega
 
-/-! ### Fewer atoms by lexicographic extension
-
-A qualitative probability on `Fin n` with no null atom extends to `Fin (n + 1)` by adding a
-*dominant* world: comparisons are decided first by membership of the new world, then by the
-restriction to the original ones. The extension preserves the axioms and the absence of null
-atoms, and reflects cancellation, so iterating it carries the no-null case of every size up to
-four to `no_null_cancellation`; a null atom reduces to one atom fewer. -/
-
-/-- `extendLex r` extends a relation on `Fin n` to `Fin (n + 1)` by a new world `Fin.last n`
-    that dominates: an event holding at the new world is more likely than one that does not, and
-    ties are broken by the restriction along `Fin.castSucc`. -/
-def extendLex (r : Set (Fin n) → Set (Fin n) → Prop) (A B : Set (Fin (n + 1))) : Prop :=
-  (Fin.last n ∈ A ∧ Fin.last n ∉ B) ∨
-    ((Fin.last n ∈ A ↔ Fin.last n ∈ B) ∧ r (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B))
-
-instance [IsQualitativeProbability r] : IsQualitativeProbability (extendLex r) where
-  refl _ := Or.inr ⟨Iff.rfl, refl_of r _⟩
-  trans A B C := by
-    rintro (⟨ha, hnb⟩ | ⟨hab, h1⟩) (⟨hb, hnc⟩ | ⟨hbc, h2⟩)
-    · exact absurd hb hnb
-    · exact Or.inl ⟨ha, fun hc ↦ hnb (hbc.mpr hc)⟩
-    · exact Or.inl ⟨hab.mpr hb, hnc⟩
-    · exact Or.inr ⟨hab.trans hbc, trans_of r h1 h2⟩
-  total A B := by
-    by_cases ha : Fin.last n ∈ A <;> by_cases hb : Fin.last n ∈ B
-    · rcases total_of r (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B) with h | h
-      · exact Or.inl (Or.inr ⟨iff_of_true ha hb, h⟩)
-      · exact Or.inr (Or.inr ⟨iff_of_true hb ha, h⟩)
-    · exact Or.inl (Or.inl ⟨ha, hb⟩)
-    · exact Or.inr (Or.inl ⟨hb, ha⟩)
-    · rcases total_of r (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B) with h | h
-      · exact Or.inl (Or.inr ⟨iff_of_false ha hb, h⟩)
-      · exact Or.inr (Or.inr ⟨iff_of_false hb ha, h⟩)
-  mono A B hAB := by
-    by_cases hb : Fin.last n ∈ B
-    · by_cases ha : Fin.last n ∈ A
-      · exact Or.inr ⟨iff_of_true hb ha, mono (r := r) _ _ (Set.preimage_mono hAB)⟩
-      · exact Or.inl ⟨hb, ha⟩
-    · exact Or.inr ⟨iff_of_false hb fun h ↦ hb (hAB h), mono (r := r) _ _ (Set.preimage_mono hAB)⟩
-  qadd A B := by
-    by_cases ha : Fin.last n ∈ A <;> by_cases hb : Fin.last n ∈ B
-    · -- tie on both sides; restriction additivity carries it
-      have hab : Fin.last n ∉ A \ B := fun h ↦ h.2 hb
-      have hba : Fin.last n ∉ B \ A := fun h ↦ h.2 ha
-      constructor
-      · rintro (⟨-, hnb⟩ | ⟨-, h⟩)
-        · exact absurd hb hnb
-        · exact Or.inr ⟨iff_of_false hab hba, (qadd (r := r) _ _).mp h⟩
-      · rintro (⟨h3, -⟩ | ⟨-, h⟩)
-        · exact absurd h3 hab
-        · exact Or.inr ⟨iff_of_true ha hb, (qadd (r := r) _ _).mpr h⟩
-    · -- the new world sits in `A \ B`: both sides true by dominance
-      exact iff_of_true (Or.inl ⟨ha, hb⟩) (Or.inl ⟨⟨ha, hb⟩, fun h ↦ hb h.1⟩)
-    · -- the new world sits in `B \ A`: both sides false
-      refine iff_of_false ?_ ?_
-      · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-        · exact ha h3
-        · exact ha (hiff.mpr hb)
-      · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-        · exact ha h3.1
-        · exact ha (hiff.mpr ⟨hb, ha⟩).1
-    · -- the new world is absent everywhere; restriction additivity again
-      have hab : Fin.last n ∉ A \ B := fun h ↦ ha h.1
-      have hba : Fin.last n ∉ B \ A := fun h ↦ hb h.1
-      constructor
-      · rintro (⟨h3, -⟩ | ⟨-, h⟩)
-        · exact absurd h3 ha
-        · exact Or.inr ⟨iff_of_false hab hba, (qadd (r := r) _ _).mp h⟩
-      · rintro (⟨h3, -⟩ | ⟨-, h⟩)
-        · exact absurd h3 hab
-        · exact Or.inr ⟨iff_of_false ha hb, (qadd (r := r) _ _).mpr h⟩
-  bot_not_ge_top := by
-    rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-    · exact h3
-    · exact hiff.mpr trivial
-
-section Extend
-
-private lemma extendLex_no_null (hnull : ∀ i, ¬r ∅ {i}) : ∀ j, ¬extendLex r ∅ {j} := by
-  refine Fin.lastCases ?_ fun i ↦ ?_
-  · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-    · exact h3
-    · exact hiff.mpr rfl
-  · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
-    · exact h3
-    · refine hnull i ?_
-      have he : Fin.castSucc ⁻¹' {Fin.castSucc i} = ({i} : Set (Fin n)) := by
-        ext k; simp [Fin.castSucc_inj]
-      rwa [Set.preimage_empty, he] at hge
-
-/-- `embed v` extends a comparison on `Fin n` to `Fin (n + 1)`, neutral at the new world. -/
-private def embed (v : Fin n → SignType) : Fin (n + 1) → SignType := Fin.snoc v 0
-
-private lemma preimage_posSupport_embed (v : Fin n → SignType) :
-    Fin.castSucc ⁻¹' posSupport (embed v) = posSupport v := by
-  ext i; simp [embed]
-
-private lemma preimage_negSupport_embed (v : Fin n → SignType) :
-    Fin.castSucc ⁻¹' negSupport (embed v) = negSupport v := by
-  ext i; simp [embed]
-
-private lemma last_notMem_posSupport_embed (v : Fin n → SignType) :
-    Fin.last n ∉ posSupport (embed v) := by
-  show ¬embed v (Fin.last n) = 1
-  rw [embed, Fin.snoc_last]; decide
-
-private lemma last_notMem_negSupport_embed (v : Fin n → SignType) :
-    Fin.last n ∉ negSupport (embed v) := by
-  show ¬embed v (Fin.last n) = -1
-  rw [embed, Fin.snoc_last]; decide
-
-private theorem cancellation_extendLex (h : Cancellation (extendLex r)) : Cancellation r := by
-  intro M hvalid hsum v hv
-  have key := h (M.map embed) ?_ ?_ (embed v) (Multiset.mem_map_of_mem _ hv)
-  · -- strictness transfers back
-    rcases key with ⟨h3, -⟩ | ⟨-, hge⟩
-    · exact absurd h3 (last_notMem_negSupport_embed v)
-    · rwa [preimage_posSupport_embed, preimage_negSupport_embed] at hge
-  · intro w hw
-    obtain ⟨w, hwL, rfl⟩ := Multiset.mem_map.mp hw
-    refine Or.inr ⟨iff_of_false (last_notMem_posSupport_embed w)
-      (last_notMem_negSupport_embed w), ?_⟩
-    rw [preimage_posSupport_embed, preimage_negSupport_embed]
-    exact hvalid w hwL
-  · -- the new coordinate vanishes; the old ones are unchanged
-    funext i
-    refine Fin.lastCases ?_ (fun i ↦ ?_) i
-    · rw [comparisonSum, Multiset.map_map]
-      refine Multiset.sum_eq_zero fun x hx ↦ ?_
-      obtain ⟨w, -, rfl⟩ := Multiset.mem_map.mp hx
-      show ((embed w (Fin.last n) : ℤ)) = 0
-      rw [embed, Fin.snoc_last]; rfl
-    · simpa [comparisonSum, Multiset.map_map, Function.comp_def, embed] using congrFun hsum i
-
-private theorem no_null_cancellation_of_le_four (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
-    [IsQualitativeProbability r] (hnull : ∀ i, ¬r ∅ {i}) : Cancellation r := by
-  induction h : 4 - n generalizing n with
-  | zero =>
-    obtain rfl : n = 4 := by omega
-    exact no_null_cancellation r hnull
-  | succ k ih =>
-    exact cancellation_extendLex (ih (by omega) (extendLex r) (extendLex_no_null hnull) (by omega))
-
-end Extend
-
 /-- Every qualitative probability on at most four atoms satisfies cancellation. A null atom
-    reduces to one atom fewer (`cancellation_of_null_atom`); otherwise the lexicographic
-    extension to `Fin 4` applies. -/
+    reduces to one atom fewer (`cancellation_of_null_atom`); otherwise the merge reduction
+    applies. -/
 theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
     ∀ (r : Set (Fin n) → Set (Fin n) → Prop) [IsQualitativeProbability r], Cancellation r
   | 0, _, r, hr => (not_isQualitativeProbability_of_isEmpty r hr).elim
-  | 1, hn, r, _ => no_null_cancellation_of_le_four hn r fun i hi ↦ by
+  | 1, hn, r, _ => no_null_cancellation hn r fun i hi ↦ by
       obtain ⟨j, hj⟩ := exists_not_rel_empty_singleton r
       exact hj (Subsingleton.elim i j ▸ hi)
   | n + 2, hn, r, _ => by
@@ -471,6 +295,6 @@ theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
         exact cancellation_of_null_atom r hj fun r' _ ↦
           cancellation_implies_representable r' (cancellation_of_le_four (by omega) r')
       · push Not at h
-        exact no_null_cancellation_of_le_four hn r h
+        exact no_null_cancellation hn r h
 
 end ComparativeProbability

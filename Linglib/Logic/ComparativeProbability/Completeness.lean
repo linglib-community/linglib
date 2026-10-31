@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.ComparativeProbability.CancellationFin4
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Set.Card
+public import Mathlib.Tactic.FinCases
 
 /-! # Representation theorems for qualitative probability
 
