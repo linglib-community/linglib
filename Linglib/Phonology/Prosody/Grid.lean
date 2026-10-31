@@ -6,19 +6,9 @@ public import Mathlib.Data.List.MinMax
 /-!
 # The metrical grid
 
-The *metrical grid* of [hayes-1995] represents the rhythm of a word as a column of beats over
-each syllable, a taller column standing for greater relative prominence. `Grid` records the
-column heights, `Marks` renders them as rows of marks, and `MarkedGrid` adds to each column
-whether it lies on the head spine. `Tree.project` reads a marked grid off a prosodic tree: a
-syllable is a column of height one, and across each head edge the columns on the head spine gain
-a mark, so that on a non-recursive headed word the terminal that head edges alone lead to, the
-designated terminal element of [liberman-prince-1977], is the tallest column
-(`Tree.headHeights_eq_peak`). A rendered grid satisfies the Continuous Column Constraint of
-[prince-1983] and [hayes-1995], that no column has a gap (`Grid.rows_isContinuous`). The grid
-forgets the constituency that Hayes's bracketed grid retains (`Grid.ofTree_not_injective`), and
-under the recursive words of [ito-mester-2009] two columns can tie for the peak
-(`Tree.not_culminative_under_recursion`) or the peak can be a column other than the head
-terminal (`Tree.head_below_peak_under_recursion`).
+This file defines the metrical grid, which represents the rhythm of a word as a column of beats
+over each syllable, and reads it off a prosodic tree. A taller column stands for greater
+relative prominence.
 
 ## Main definitions
 
@@ -50,7 +40,7 @@ terminal (`Tree.head_below_peak_under_recursion`).
 * `Tree.project` is a fold over the tree built from `MarkedGrid.cell`, `juxtapose`, `promote`,
   and `clear`; each reader of a tree is computed from its marked grid, and `Tree.columns_node`
   and its siblings give the recursions on a node.
-* Absolute heights carry no significance, as [prince-1983] notes; the statements concern the
+* Absolute heights carry no significance, as Prince notes; the statements concern the
   peak and the relative heights of columns.
 * Culminativity concerns the grid alone and differs from `Tree.IsHeaded`, a unique head
   terminal: both can hold while the head terminal is not the peak

@@ -7,22 +7,10 @@ public import Linglib.Core.Data.RoseTree.Basic
 /-!
 # Syllables
 
-A *syllable* is a headed moraic constituent: a non-moraic `onset` over a spine of morae whose
-head, the nucleus, comes first and is mandatory, so that a syllable has at least one mora, and
-whose `tail` holds the further morae of a long vowel and of a moraic coda. The nucleus is the
-sonority peak of the syllable under the Sonority Sequencing Principle of [clements-1990], a
-reading the file describes and does not represent. Weight is the number
-of morae (`Syllable.weight`), the weight units of [hyman-1985] and the morae of [hayes-1989],
-where a long vowel has two morae (`Syllable.ofLongVowel`) and Weight by Position gives the first
-coda consonant a mora of its own (`Syllable.ofCV`); a syllable with one mora is light and one
-with two or more is heavy (`Syllable.IsLight`, `Syllable.IsHeavy`). The onset-rime structure of
-a syllable is a re-representation of the same object (`Syllable.toOnsetRime`), whose rime has
-as many morae as the syllable has weight (`Syllable.toOnsetRime_weight`). The file also defines
-the levels of the prosodic hierarchy, of which syllable, foot, and prosodic word are the
-prosodic categories of [selkirk-1980] and all five are among the seven of [nespor-vogel-1986],
-the prosodic constituents and the prosodic tree over them, and the relation
-`Constituent.Licenses` by which a node licenses its daughters, the Layeredness of
-[selkirk-1996].
+This file defines syllables, the levels of the prosodic hierarchy, and the prosodic tree over
+them. A syllable is a non-moraic onset over a spine of morae headed by the nucleus, and its
+weight is its number of morae. A node of the tree may dominate only nodes of its own level or
+below.
 
 ## Main definitions
 
@@ -53,9 +41,9 @@ the prosodic constituents and the prosodic tree over them, and the relation
   the ι root is unrepresentable.
 * The prosodic tree is an ordered rose tree, so No-Tangling holds by construction. It is the
   carrier of candidates for the violable constraints defined with feet and words, so it includes
-  ill-formed structures that `IsWord` rules out; the Nonrecursivity and Exhaustivity of
-  [selkirk-1996], which she takes to be violable, are the constraints `noRec` and `parseInto`,
-  not part of `Constituent.Licenses`.
+  ill-formed structures that `IsWord` rules out; Selkirk's Nonrecursivity and Exhaustivity,
+  which she takes to be violable, are the constraints `noRec` and `parseInto`, not part of
+  `Constituent.Licenses`.
 
 ## References
 
@@ -119,7 +107,8 @@ def nucleusSegments (σ : Syllable) : List Segment := σ.head.dominates
 /-- The number of morae. -/
 def moraCount (σ : Syllable) : Nat := σ.morae.length
 
-/-- The weight of a syllable, its mora count. -/
+/-- The weight of a syllable, its mora count: the weight units of [hyman-1985] and the morae of
+    [hayes-1989]. -/
 abbrev weight (σ : Syllable) : Weight := σ.moraCount
 
 theorem moraCount_pos (σ : Syllable) : 0 < σ.moraCount := Nat.succ_pos _
@@ -181,7 +170,7 @@ end Syllable
 /-! ### Onset-rime structure -/
 
 /-- The *onset-rime structure* of a syllable, an onset over a rime, as a re-representation of the
-    moraic `Syllable`. -/
+    moraic `Syllable`, which [hyman-1985] argues has no onset-rime opposition of its own. -/
 structure OnsetRime where
   /-- The non-moraic onset melody. -/
   onset : List Segment
