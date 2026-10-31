@@ -357,7 +357,7 @@ end CCommand
 /-- The book's structure for an applicative head over the unergative *run*: the high applicative
 in its position of (6a), a low one in the structure of (103b). The static-possession and affected
 applicatives of [cuervo-2003] are outside the book's inventory. -/
-def unergativeTree? : ApplType → Option LinearizedSyntacticObject
+def unergativeTree? : Appl.Head → Option LinearizedSyntacticObject
   | .high => some unergative
   | .low .recipient => some (ranMary applTo)
   | .low .source => some (ranMary applFrom)
@@ -392,7 +392,7 @@ private theorem not_satisfiable_ranMary {h : LexicalItem.Token}
 /-- Diagnostic 1 (17), on the book's account of (103b): over the unergative *run*, an applicative
 head's structure is satisfiable exactly when the head is high, the low applicatives' structure
 being the contradiction where no agent of running is its theme. -/
-theorem unergative_satisfiable_iff {a : ApplType} {t : LinearizedSyntacticObject}
+theorem unergative_satisfiable_iff {a : Appl.Head} {t : LinearizedSyntacticObject}
     (ht : unergativeTree? a = some t) : Satisfiable t ↔ a = .high := by
   rcases a with _ | _ | (_ | _ | _) <;> simp only [unergativeTree?, Option.some.injEq,
     reduceCtorEq] at ht <;> subst ht
@@ -421,7 +421,7 @@ inductive Construction where
   deriving DecidableEq, Repr
 
 /-- `c.head` is the head the book assigns to the construction `c`. -/
-def Construction.head : Construction → ApplType
+def Construction.head : Construction → Appl.Head
   | .chagaBenefactive | .lugandaBenefactive | .vendaBenefactive | .albanianBenefactive
   | .japaneseGaplessAdversity => .high
   | .englishDOC | .japaneseDOC | .koreanDOC => .low .recipient

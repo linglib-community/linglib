@@ -80,13 +80,13 @@ structure Clause where
   voice : Minimalist.Voice.Head
   /-- The verbal heads below Voice, highest first. -/
   heads : List LittleV
-  /-- The bundle of the high applicative head, if the clause has an affected dative. -/
+  /-- The bundle of the applicative head, if the clause has a dative. -/
   appl : Option Category
 
 /-- The applicative head takes as its complement the result state where there is one, the
 affected applicative of [cuervo-2003] the paper adopts for marked anticausatives, and the theme
 otherwise, as under an unmarked anticausative, which lacks the state. -/
-def Clause.site (k : Clause) : ApplSite :=
+def Clause.site (k : Clause) : Appl.Site :=
   ⟨k.heads.takeWhile (· != .vBE), k.heads.dropWhile (· != .vBE)⟩
 
 /-- A marked anticausative is a change and its result state under a Voice head that introduces
@@ -99,7 +99,7 @@ def unmarked (a : Option Category) : Clause :=
 
 theorem site_marked_unmarked (a : Option Category) :
     (marked a).site.Affected ∧ (unmarked a).site.Low := by
-  simp [marked, unmarked, Clause.site, ApplSite.Affected, ApplSite.Low]
+  simp [marked, unmarked, Clause.site, Appl.Site.Affected, Appl.Site.Low]
 
 theorem not_hasSemantics (a : Option Category) :
     ¬ (marked a).voice.IsThematic ∧ ¬ (unmarked a).voice.IsThematic := by

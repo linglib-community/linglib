@@ -1,8 +1,9 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.Locality
-public import Linglib.Syntax.Minimalist.Verbal.Applicative
+public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
+public import Linglib.Syntax.Minimalist.Verbal.Voice
 public import Linglib.Data.Examples.Wood2015
 
 /-!
@@ -70,20 +71,17 @@ def Position.IsSpecifier : Position → Prop
   | .specVoice | .specP | .specAppl => True
   | .directObject => False
 
-/-- This decides whether a position lets a caseless element merge in it: Appl demands dative of its
-specifier, Voice and p demand nothing. -/
-def Position.AdmitsCaseless : Position → Prop
-  | .specAppl => applLowRecipient.SpecCanBearCase none
-  | _ => True
+/-- The case a position demands of what merges in it: Appl demands dative of its specifier, and
+Voice and p demand no case of theirs (§5.3.2). -/
+def Position.caseDemand : Position → Option Case
+  | .specAppl => some .dat
+  | _ => none
 
-/-- *-st* merges in a specifier position with no case requirement. -/
-def Position.AdmitsSt (p : Position) : Prop := p.IsSpecifier ∧ p.AdmitsCaseless
+/-- *-st*, which bears no case, merges in a specifier position that demands no case (§5.3.2). -/
+def Position.AdmitsSt (p : Position) : Prop := p.IsSpecifier ∧ p.caseDemand = none
 
 instance : DecidablePred Position.IsSpecifier := fun p ↦ by
   cases p <;> unfold Position.IsSpecifier <;> infer_instance
-
-instance : DecidablePred Position.AdmitsCaseless := fun p ↦ by
-  cases p <;> unfold Position.AdmitsCaseless <;> infer_instance
 
 instance : DecidablePred Position.AdmitsSt := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
