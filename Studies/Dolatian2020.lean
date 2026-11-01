@@ -104,20 +104,19 @@ def x : Walk := .var
 
 /-- The guard that a term reads a nucleus not carrying the destressing mark. -/
 def nucleusAt (t : Walk) : WindowFormula (Seg × Bool) :=
-  .disj (.label (.h, false) t) (.disj (.label (.v, false) t)
-    (.disj (.label (.uj, false) t) (.label (.schwa, false) t)))
+  .label (.h, false) t ⊔ .label (.v, false) t ⊔ .label (.uj, false) t ⊔ .label (.schwa, false) t
 
 /-- The context in which deletion leaves a syllabifiable cluster, (46): a nucleus and a single
 consonant before the target and a single consonant and a nucleus after it. -/
 def deletable : WindowFormula (Seg × Bool) :=
-  .conj (nucleusAt x.pred.pred) (.conj (.label (.c, false) x.pred)
-    (.conj (.label (.c, false) x.succ) (nucleusAt x.succ.succ)))
+  nucleusAt x.pred.pred ⊓ .label (.c, false) x.pred ⊓ .label (.c, false) x.succ ⊓
+    nucleusAt x.succ.succ
 
 /-- Destressed high vowel reduction as a quantifier-free transduction, (46): the destressed high
 vowel, marked `true`, is deleted where deletion is licensed and becomes schwa elsewhere; every
 other segment is kept, its mark dropped. -/
 def dhr : Transduction (Seg × Bool) Seg :=
-  ⟨[((WindowFormula.label (.h, true) x).conj deletable, []), (.label (.h, true) x, [.schwa])] ++
+  ⟨[(WindowFormula.label (.h, true) x ⊓ deletable, []), (.label (.h, true) x, [.schwa])] ++
     [Seg.c, .h, .v, .uj, .schwa].flatMap fun s ↦
       [(.label (s, false) x, [s]), (.label (s, true) x, [s])]⟩
 

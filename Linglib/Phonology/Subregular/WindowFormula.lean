@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.List.Basic
+public import Mathlib.Order.Notation
 public import Linglib.Core.Data.List.DropRight
 
 /-!
@@ -305,68 +306,85 @@ single position. -/
 inductive WindowFormula (α : Type*) where
   | label : α → Walk → WindowFormula α
   | defined : Walk → WindowFormula α
-  | tru : WindowFormula α
-  | fls : WindowFormula α
-  | neg : WindowFormula α → WindowFormula α
-  | conj : WindowFormula α → WindowFormula α → WindowFormula α
-  | disj : WindowFormula α → WindowFormula α → WindowFormula α
+  | top : WindowFormula α
+  | bot : WindowFormula α
+  | not : WindowFormula α → WindowFormula α
+  | inf : WindowFormula α → WindowFormula α → WindowFormula α
+  | sup : WindowFormula α → WindowFormula α → WindowFormula α
 
 namespace WindowFormula
+
+instance : Top (WindowFormula α) := ⟨.top⟩
+
+instance : Bot (WindowFormula α) := ⟨.bot⟩
+
+instance : Min (WindowFormula α) := ⟨.inf⟩
+
+instance : Max (WindowFormula α) := ⟨.sup⟩
 
 /-- Satisfaction of a formula at position `n` of `w`; tests on an undefined walk are false. -/
 def Realize (w : List α) (n : ℕ) : WindowFormula α → Prop
   | .label a t => (t.eval w n).bind (w[·]?) = some a
   | .defined t => t.eval w n ≠ none
-  | .tru => True
-  | .fls => False
-  | .neg φ => ¬ φ.Realize w n
-  | .conj φ ψ => φ.Realize w n ∧ ψ.Realize w n
-  | .disj φ ψ => φ.Realize w n ∨ ψ.Realize w n
+  | .top => True
+  | .bot => False
+  | .not φ => ¬ φ.Realize w n
+  | .inf φ ψ => φ.Realize w n ∧ ψ.Realize w n
+  | .sup φ ψ => φ.Realize w n ∨ ψ.Realize w n
 
 instance instDecidableRealize [DecidableEq α] (w : List α) (n : ℕ) :
     (φ : WindowFormula α) → Decidable (φ.Realize w n)
   | .label _ t => inferInstanceAs (Decidable ((t.eval w n).bind _ = _))
   | .defined t => inferInstanceAs (Decidable (t.eval w n ≠ none))
-  | .tru => isTrue trivial
-  | .fls => isFalse not_false
-  | .neg φ => @instDecidableNot _ (instDecidableRealize w n φ)
-  | .conj φ ψ => @instDecidableAnd _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
-  | .disj φ ψ => @instDecidableOr _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
+  | .top => isTrue trivial
+  | .bot => isFalse not_false
+  | .not φ => @instDecidableNot _ (instDecidableRealize w n φ)
+  | .inf φ ψ => @instDecidableAnd _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
+  | .sup φ ψ => @instDecidableOr _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
 
-@[simp] theorem realize_neg {w : List α} {n : ℕ} {φ : WindowFormula α} :
-    φ.neg.Realize w n ↔ ¬ φ.Realize w n := Iff.rfl
+section Realize
 
-@[simp] theorem realize_conj {w : List α} {n : ℕ} {φ ψ : WindowFormula α} :
-    (φ.conj ψ).Realize w n ↔ φ.Realize w n ∧ ψ.Realize w n := Iff.rfl
+variable {w : List α} {n : ℕ} {φ ψ : WindowFormula α}
 
-@[simp] theorem realize_label_var {w : List α} {n : ℕ} {a : α} :
-    (label a .var).Realize w n ↔ w[n]? = some a := by
+@[simp] theorem realize_top : (⊤ : WindowFormula α).Realize w n ↔ True := Iff.rfl
+
+@[simp] theorem realize_bot : (⊥ : WindowFormula α).Realize w n ↔ False := Iff.rfl
+
+@[simp] theorem realize_not : φ.not.Realize w n ↔ ¬ φ.Realize w n := Iff.rfl
+
+@[simp] theorem realize_inf : (φ ⊓ ψ).Realize w n ↔ φ.Realize w n ∧ ψ.Realize w n := Iff.rfl
+
+@[simp] theorem realize_sup : (φ ⊔ ψ).Realize w n ↔ φ.Realize w n ∨ ψ.Realize w n := Iff.rfl
+
+@[simp] theorem realize_label_var {a : α} : (label a .var).Realize w n ↔ w[n]? = some a := by
   simp only [Realize, Walk.eval]
   split_ifs with h
   · simp
   · simp [List.getElem?_eq_none (Nat.le_of_not_lt h)]
 
+end Realize
+
 /-- `t` reads an initial position, one in the domain with no predecessor. -/
-def initial (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.pred))
+def initial (t : Walk) : WindowFormula α := defined t ⊓ (defined t.pred).not
 
 /-- `t` reads a final position, one in the domain with no successor. -/
-def final (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.succ))
+def final (t : Walk) : WindowFormula α := defined t ⊓ (defined t.succ).not
 
 /-! ### Bounded formulas read only a window -/
 
 /-- `φ.AllWalks p` holds when every walk occurring in `φ` satisfies `p`. -/
 def AllWalks (p : Walk → Prop) : WindowFormula α → Prop
   | .label _ t | .defined t => p t
-  | .tru | .fls => True
-  | .neg φ => φ.AllWalks p
-  | .conj φ ψ | .disj φ ψ => φ.AllWalks p ∧ ψ.AllWalks p
+  | .top | .bot => True
+  | .not φ => φ.AllWalks p
+  | .inf φ ψ | .sup φ ψ => φ.AllWalks p ∧ ψ.AllWalks p
 
 instance instDecidableAllWalks (p : Walk → Prop) [DecidablePred p] :
     ∀ φ : WindowFormula α, Decidable (φ.AllWalks p)
   | .label _ t | .defined t => inferInstanceAs (Decidable (p t))
-  | .tru | .fls => .isTrue trivial
-  | .neg φ => instDecidableAllWalks p φ
-  | .conj φ ψ | .disj φ ψ =>
+  | .top | .bot => .isTrue trivial
+  | .not φ => instDecidableAllWalks p φ
+  | .inf φ ψ | .sup φ ψ =>
       @instDecidableAnd _ _ (instDecidableAllWalks p φ) (instDecidableAllWalks p ψ)
 
 /-- A formula is bounded by `l` back and `r` forward if every walk it uses reaches at most `l`
@@ -410,9 +428,9 @@ theorem Bounded.realize_congr (hφ : φ.Bounded l r) (hedge : min n l = min n' l
         hleft _ (by omega)]
   | defined t =>
     simpa [Realize, Option.ne_none_iff_isSome] using Walk.isSome_eval_congr hedge hr hφ.1 hφ.2
-  | tru | fls => exact Iff.rfl
-  | neg φ ih => simp only [Realize, ih hφ]
-  | conj φ ψ ihφ ihψ | disj φ ψ ihφ ihψ => simp only [Realize, ihφ hφ.1, ihψ hφ.2]
+  | top | bot => exact Iff.rfl
+  | not φ ih => simp only [Realize, ih hφ]
+  | inf φ ψ ihφ ihψ | sup φ ψ ihφ ihψ => simp only [Realize, ihφ hφ.1, ihψ hφ.2]
 
 /-- A backward-bounded formula reads only the `r + 1` symbols ending at its position. -/
 theorem BackBounded.realize_congr (hφ : φ.BackBounded r) (hedge : min n r = min n' r)
@@ -426,26 +444,25 @@ theorem BackBounded.realize_congr (hφ : φ.BackBounded r) (hedge : min n r = mi
 /-- `readBack v j` holds at a position when the positions `j + 1`, `j + 2`, … back carry `v`,
 nearest first. -/
 def readBack : List α → ℕ → WindowFormula α
-  | [], _ => tru
-  | b :: v, j => (label b (Walk.back (j + 1))).conj (readBack v (j + 1))
+  | [], _ => ⊤
+  | b :: v, j => label b (Walk.back (j + 1)) ⊓ readBack v (j + 1)
 
 /-- `window r u` holds at a position when the last `r` symbols before it, or all of them if there
 are fewer than `r`, spell `u`. -/
 def window (r : ℕ) (u : List α) : WindowFormula α :=
-  (readBack u.reverse 0).conj
-    (if u.length < r then (defined (Walk.back (u.length + 1))).neg else tru)
+  readBack u.reverse 0 ⊓ if u.length < r then (defined (Walk.back (u.length + 1))).not else ⊤
 
 theorem realize_readBack (hn : n < w.length) :
     ∀ {v : List α} {j : ℕ}, j ≤ n →
       ((readBack v j).Realize w n ↔ v <+: (w.take (n - j)).reverse)
-  | [], _, _ => by simp [readBack, Realize]
+  | [], _, _ => by simp [readBack]
   | b :: v, j, hj => by
     rcases Nat.lt_or_ge j n with h | h
     · have htake : w.take (n - j) = w.take (n - (j + 1)) ++ [w[n - (j + 1)]] := by
         rw [show n - j = n - (j + 1) + 1 by omega, List.take_add_one,
           List.getElem?_eq_getElem (by omega)]
         rfl
-      rw [readBack, realize_conj, realize_readBack hn (by omega), htake, List.reverse_append,
+      rw [readBack, realize_inf, realize_readBack hn (by omega), htake, List.reverse_append,
         List.reverse_singleton, List.singleton_append, List.cons_prefix_cons]
       refine and_congr_left' ?_
       simp [Realize, Walk.eval_back hn, show j + 1 ≤ n by omega,
@@ -462,7 +479,7 @@ theorem bounded_readBack :
 position spell `u`. -/
 theorem realize_window {u : List α} (hn : n < w.length) (hu : u.length ≤ r) :
     (window r u).Realize w n ↔ (w.take n).rtake r = u := by
-  rw [List.rtake_eq_iff, window, realize_conj, realize_readBack hn (Nat.zero_le n), Nat.sub_zero,
+  rw [List.rtake_eq_iff, window, realize_inf, realize_readBack hn (Nat.zero_le n), Nat.sub_zero,
     List.reverse_prefix]
   refine and_congr_right fun hs ↦ ?_
   have := hs.length_le

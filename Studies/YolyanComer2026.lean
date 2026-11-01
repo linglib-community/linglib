@@ -73,8 +73,8 @@ apart from the class atoms `nlabel`, so that recursion variables occur only posi
 `final` are the edge tests `min` and `max`; `dia` (`◇`) reads the successor position and
 `bdia` (`♦`) the predecessor. -/
 inductive Formula (α : Type*) (n : ℕ) where
-  | tru
-  | fls
+  | top
+  | bot
   | initial
   | final
   | label (s : Finset α)
@@ -89,8 +89,8 @@ inductive Formula (α : Type*) (n : ℕ) where
 /-- Satisfaction at a pointed word `(w, i)` under a valuation `U` of the recursion
 variables. -/
 def Formula.Realize (w : List α) (U : Fin n → Set ℕ) : ℕ → Formula α n → Prop
-  | _, .tru => True
-  | _, .fls => False
+  | _, .top => True
+  | _, .bot => False
   | i, .initial => i = 0
   | i, .final => i + 1 = w.length
   | i, .label s => ∃ a ∈ s, w[i]? = some a
@@ -105,9 +105,9 @@ section RealizeSimp
 
 variable {w : List α} {U : Fin n → Set ℕ} {i : ℕ} {s : Finset α} {φ ψ : Formula α n}
 
-@[simp] theorem Formula.realize_tru : (Formula.tru : Formula α n).Realize w U i := trivial
+@[simp] theorem Formula.realize_top : (Formula.top : Formula α n).Realize w U i := trivial
 
-@[simp] theorem Formula.realize_fls : ¬ (Formula.fls : Formula α n).Realize w U i :=
+@[simp] theorem Formula.realize_bot : ¬ (Formula.bot : Formula α n).Realize w U i :=
   not_false
 
 @[simp] theorem Formula.realize_initial :
@@ -142,8 +142,8 @@ end RealizeSimp
 instance Formula.instDecidableRealize [DecidableEq α] (w : List α)
     (U : Fin n → Set ℕ) [∀ X, DecidablePred (· ∈ U X)] :
     ∀ (i : ℕ) (φ : Formula α n), Decidable (φ.Realize w U i)
-  | _, .tru => .isTrue trivial
-  | _, .fls => .isFalse not_false
+  | _, .top => .isTrue trivial
+  | _, .bot => .isFalse not_false
   | i, .initial => inferInstanceAs (Decidable (i = 0))
   | i, .final => inferInstanceAs (Decidable (i + 1 = w.length))
   | i, .label s => inferInstanceAs (Decidable (∃ a ∈ s, w[i]? = some a))
@@ -168,8 +168,8 @@ instance Formula.instDecidableRealize [DecidableEq α] (w : List α)
 
 theorem Formula.Realize.mono {w : List α} {U V : Fin n → Set ℕ} (hUV : U ≤ V) :
     ∀ {φ : Formula α n} {i : ℕ}, φ.Realize w U i → φ.Realize w V i
-  | .tru, _, h => h
-  | .fls, _, h => h
+  | .top, _, h => h
+  | .bot, _, h => h
   | .initial, _, h => h
   | .final, _, h => h
   | .label _, _, h => h
@@ -315,9 +315,9 @@ inductive WHead
 /-- The spreading program (6), `N′(x) = if N(x) then ⊤ else if T(x) then ⊥ else if min(x)
 then ⊥ else N′(p(x))`, recursive through the predecessor. -/
 def warao : Program Seg WHead
-  | .N' => .ite (.label nas x) .tru
-      (.ite (.label stop x) .fls
-        (.ite (.initial x) .fls (.call .N' x.pred)))
+  | .N' => .ite (.label nas x) ⊤
+      (.ite (.label stop x) ⊥
+        (.ite (.initial x) ⊥ (.call .N' x.pred)))
 
 /-- Evaluating (6) on /naote/ in rounds reaches the output N′ = ⊤⊤⊤⊥⊥, [nãõte], as in Fig. 4. -/
 theorem warao_rounds :
@@ -402,8 +402,8 @@ theorem warao_agreement (i : ℕ) (hi : i < 5) :
 heads are the recursion variables. Modalities substitute a moved term into the translated
 body, and the connectives are the `if…then…else` forms of footnote 3. -/
 def tr : Formula α n → Expr α (Fin n)
-  | .tru => .tru
-  | .fls => .fls
+  | .top => .top
+  | .bot => .bot
   | .initial => .initial x
   | .final => .final x
   | .label s => .label s x
@@ -411,8 +411,8 @@ def tr : Formula α n → Expr α (Fin n)
   | .var X => .call X x
   | .and φ ψ => (tr φ).and (tr ψ)
   | .or φ ψ => (tr φ).or (tr ψ)
-  | .dia φ => .ite (.final x) .fls ((tr φ).subst x.succ)
-  | .bdia φ => .ite (.initial x) .fls ((tr φ).subst x.pred)
+  | .dia φ => .ite (.final x) ⊥ ((tr φ).subst x.succ)
+  | .bdia φ => .ite (.initial x) ⊥ ((tr φ).subst x.pred)
 
 /-- The translated program of a system has one rule per recursion variable. -/
 def System.trProgram (χ : System α n) : Program α (Fin n) := fun X ↦ tr (χ.eqs X)
@@ -425,8 +425,8 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
     (φ : Formula α n) :
     ∀ {i : ℕ}, i < w.length → Eval P w i (tr φ) (decide (φ.Realize w U i)) := by
   induction φ with
-  | tru => exact fun _ ↦ by simpa [tr] using (Eval.tru : Eval P w _ .tru true)
-  | fls => exact fun _ ↦ by simpa [tr] using (Eval.fls : Eval P w _ .fls false)
+  | top => exact fun _ ↦ by simpa [tr] using (Eval.top : Eval P w _ .top true)
+  | bot => exact fun _ ↦ by simpa [tr] using (Eval.bot : Eval P w _ .bot false)
   | initial => exact fun hi ↦ by simpa [tr] using Eval.initial (P := P) (Walk.eval_var hi)
   | final =>
     intro i hi
@@ -453,7 +453,7 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
         simp only [Formula.realize_dia, succ?_eq_some_iff]
         rintro ⟨j, ⟨rfl, hj⟩, -⟩
         omega)]
-      exact .ite_true (.final_true (by rw [Walk.eval_var hi]; congr 1; omega)) .fls
+      exact .ite_true (.final_true (by rw [Walk.eval_var hi]; congr 1; omega)) .bot
     · have hsucc : i + 1 < w.length := by omega
       rw [show decide (φ.dia.Realize w U i) = decide (φ.Realize w U (i + 1)) from
         decide_eq_decide.mpr (by simp [succ?_eq_some_iff, hsucc])]
@@ -467,7 +467,7 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
         simp only [Formula.realize_bdia, pred?_eq_some_iff]
         rintro ⟨j, ⟨hj, -⟩, -⟩
         omega)]
-      exact .ite_true (.initial_true (by rw [Walk.eval_var hi])) .fls
+      exact .ite_true (.initial_true (by rw [Walk.eval_var hi])) .bot
     · obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
       have hj : j < w.length := by omega
       rw [show decide (φ.bdia.Realize w U (j + 1)) = decide (φ.Realize w U j) from

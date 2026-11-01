@@ -192,7 +192,7 @@ variable {r : ℕ} (ρ : ISLRule (r + 1) α β) (alphabet : List α)
 position carries `a` after the window `u`, the block the rule emits there. -/
 def toTransduction : Transduction α β :=
   ⟨(windows alphabet r).flatMap fun u ↦ alphabet.map fun a ↦
-    ((WindowFormula.label a .var).conj (.window r u), ρ.windowOutput u a)⟩
+    (WindowFormula.label a .var ⊓ .window r u, ρ.windowOutput u a)⟩
 
 theorem leftLocal_toTransduction : (ρ.toTransduction alphabet).LeftLocal r := by
   intro cl hcl
@@ -206,16 +206,16 @@ theorem emitAt_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) {
     (hp : p < w.length) :
     (ρ.toTransduction alphabet).emitAt w p = ρ.windowOutput ((w.take p).rtake r) w[p] := by
   have hguard {u : List α} (hu : u ∈ windows alphabet r) (a : α) :
-      ((WindowFormula.label a .var).conj (.window r u)).Realize w p ↔
+      (WindowFormula.label a .var ⊓ .window r u).Realize w p ↔
         w[p] = a ∧ (w.take p).rtake r = u := by
-    rw [WindowFormula.realize_conj, WindowFormula.realize_label_var,
+    rw [WindowFormula.realize_inf, WindowFormula.realize_label_var,
       WindowFormula.realize_window hp (mem_windows.1 hu).1, List.getElem?_eq_getElem hp,
       Option.some.injEq]
   have hwin : (w.take p).rtake r ∈ windows alphabet r :=
     mem_windows.2 ⟨List.length_rtake_le r _, fun a ha ↦
       hw a (List.mem_of_mem_take ((List.rtake_suffix r _).subset ha))⟩
   have hmem {cl} : cl ∈ (ρ.toTransduction alphabet).clauses ↔ ∃ u ∈ windows alphabet r,
-      ∃ a ∈ alphabet, ((WindowFormula.label a .var).conj (.window r u), ρ.windowOutput u a) = cl :=
+      ∃ a ∈ alphabet, (WindowFormula.label a .var ⊓ .window r u, ρ.windowOutput u a) = cl :=
     by simp [toTransduction]
   refine Transduction.emitAt_eq_of_mem (hmem.2 ⟨_, hwin, w[p], hw _ (List.getElem_mem hp), rfl⟩)
     ((hguard hwin _).2 ⟨rfl, rfl⟩) fun cl hcl h ↦ ?_
@@ -253,7 +253,7 @@ namespace Transduction
 symbols `alphabet`: each symbol is docked where the guard holds and kept elsewhere. -/
 def relabel (φ : WindowFormula α) (dock : α → α) (alphabet : List α) : Transduction α α :=
   ⟨alphabet.flatMap fun a ↦
-    [(φ.conj (.label a .var), [dock a]), (φ.neg.conj (.label a .var), [a])]⟩
+    [(φ ⊓ .label a .var, [dock a]), (φ.not ⊓ .label a .var, [a])]⟩
 
 variable [DecidableEq α]
 
@@ -270,12 +270,12 @@ theorem apply_relabel {φ : WindowFormula α} {dock : α → α} {alphabet : Lis
     (hw : ∀ a ∈ w, a ∈ alphabet) :
     (relabel φ dock alphabet).apply w = (Docking.ofQF φ dock).map w := by
   have hmem {cl} : cl ∈ (relabel φ dock alphabet).clauses ↔ ∃ a ∈ alphabet,
-      cl = (φ.conj (.label a .var), [dock a]) ∨ cl = (φ.neg.conj (.label a .var), [a]) := by
+      cl = (φ ⊓ .label a .var, [dock a]) ∨ cl = (φ.not ⊓ .label a .var, [a]) := by
     simp [relabel]
   have hemit {n : ℕ} (hn : n < w.length) : (relabel φ dock alphabet).emitAt w n =
       (w[n]?.map fun a ↦ if n < w.length ∧ φ.Realize w n then dock a else a).toList := by
     simp only [List.getElem?_eq_getElem hn, Option.map_some, Option.toList_some, hn, true_and]
-    refine emitAt_eq_of_mem (cl := ((if φ.Realize w n then φ else φ.neg).conj (.label w[n] .var),
+    refine emitAt_eq_of_mem (cl := ((if φ.Realize w n then φ else φ.not) ⊓ .label w[n] .var,
       [if φ.Realize w n then dock w[n] else w[n]])) (hmem.2 ⟨_, hw _ (List.getElem_mem hn), ?_⟩)
       (by split_ifs <;> simp [*]) fun cl hcl h ↦ ?_
     · split_ifs <;> simp

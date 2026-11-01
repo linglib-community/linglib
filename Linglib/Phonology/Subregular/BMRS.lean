@@ -67,13 +67,13 @@ variable {α F : Type*}
 
 /-! ### Syntax -/
 
-/-- A BMRS expression is an edge test `initial` or `final` (the literature's `min(T)`,
-`max(T)`), an input class test `label` (the lookup rule, over a `Finset` of symbols, so that
-featural predicates like V or N are single atoms), a rule-head call `call` (the unfolding rule),
-or an `if…then…else`. -/
+/-- A BMRS expression is a constant `⊤` or `⊥`, an edge test `initial` or `final` (the
+literature's `min(T)`, `max(T)`), an input class test `label` (the lookup rule, over a `Finset` of
+symbols, so that featural predicates like V or N are single atoms), a rule-head call `call` (the
+unfolding rule), or an `if…then…else`. -/
 inductive Expr (α F : Type*) where
-  | tru
-  | fls
+  | top
+  | bot
   | initial (t : Walk)
   | final (t : Walk)
   | label (s : Finset α) (t : Walk)
@@ -86,20 +86,24 @@ abbrev Program (α F : Type*) := F → Expr α F
 
 namespace Expr
 
+instance : Top (Expr α F) := ⟨.top⟩
+
+instance : Bot (Expr α F) := ⟨.bot⟩
+
 /-- Conjunction as `if…then…else`. -/
-def and (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ e₂ .fls
+def and (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ e₂ .bot
 
 /-- Disjunction as `if…then…else`. -/
-def or (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ .tru e₂
+def or (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ .top e₂
 
 /-- Negation as `if…then…else`. -/
-def not (e : Expr α F) : Expr α F := .ite e .fls .tru
+def not (e : Expr α F) : Expr α F := .ite e .bot .top
 
 /-- `e.subst u` substitutes the term `u` for the variable throughout `e`, the `e[u/x]` that the
 μ-calculus translation writes `tr(φ)[s(x)]`. -/
 def subst : Expr α F → Walk → Expr α F
-  | .tru, _ => .tru
-  | .fls, _ => .fls
+  | .top, _ => .top
+  | .bot, _ => .bot
   | .initial t, u => .initial (t.comp u)
   | .final t, u => .final (t.comp u)
   | .label s t, u => .label s (t.comp u)
@@ -108,13 +112,13 @@ def subst : Expr α F → Walk → Expr α F
 
 /-- `e.AllWalks p` holds when every walk occurring in `e` satisfies `p`. -/
 def AllWalks (p : Walk → Prop) : Expr α F → Prop
-  | .tru | .fls => True
+  | .top | .bot => True
   | .initial t | .final t | .label _ t | .call _ t => p t
   | .ite c e₁ e₂ => c.AllWalks p ∧ e₁.AllWalks p ∧ e₂.AllWalks p
 
 instance instDecidableAllWalks (p : Walk → Prop) [DecidablePred p] :
     ∀ e : Expr α F, Decidable (e.AllWalks p)
-  | .tru | .fls => .isTrue trivial
+  | .top | .bot => .isTrue trivial
   | .initial t | .final t | .label _ t | .call _ t => inferInstanceAs (Decidable (p t))
   | .ite c e₁ e₂ =>
       @instDecidableAnd _ _ (instDecidableAllWalks p c)
@@ -143,8 +147,8 @@ end Program
 /-- `Eval P w i e b` is the derivation `w, i ⊢_P e → b` of a BMRS expression. It is partial by
 design, a non-halting program deriving nothing. -/
 inductive Eval (P : Program α F) (w : List α) : ℕ → Expr α F → Bool → Prop
-  | tru {i} : Eval P w i .tru true
-  | fls {i} : Eval P w i .fls false
+  | top {i} : Eval P w i .top true
+  | bot {i} : Eval P w i .bot false
   | initial_true {i t} (h : t.eval w i = some 0) : Eval P w i (.initial t) true
   | initial_false {i t v} (h : t.eval w i = some v) (hv : 0 < v) :
       Eval P w i (.initial t) false
@@ -188,18 +192,18 @@ theorem Eval.label [DecidableEq α] {s : Finset α} {a : α} (h : t.eval w i = s
 theorem Eval.and (h₁ : Eval P w i e₁ b₁) (h₂ : Eval P w i e₂ b₂) :
     Eval P w i (e₁.and e₂) (b₁ && b₂) := by
   cases b₁
-  exacts [.ite_false h₁ .fls, .ite_true h₁ h₂]
+  exacts [.ite_false h₁ .bot, .ite_true h₁ h₂]
 
 /-- Boolean-form introduction for disjunction. -/
 theorem Eval.or (h₁ : Eval P w i e₁ b₁) (h₂ : Eval P w i e₂ b₂) :
     Eval P w i (e₁.or e₂) (b₁ || b₂) := by
   cases b₁
-  exacts [.ite_false h₁ h₂, .ite_true h₁ .tru]
+  exacts [.ite_false h₁ h₂, .ite_true h₁ .top]
 
 /-- Boolean-form introduction for negation. -/
 theorem Eval.not (h : Eval P w i e b) : Eval P w i e.not (!b) := by
   cases b
-  exacts [.ite_false h .tru, .ite_true h .fls]
+  exacts [.ite_false h .top, .ite_true h .bot]
 
 theorem Eval.deterministic (h : Eval P w i e b) (h' : Eval P w i e b') : b = b' := by
   induction h generalizing b' with
@@ -227,8 +231,8 @@ private theorem eval_comp_of {z : ℕ} (hu : u.eval w i = some v) (h : t.eval w 
 theorem Eval.subst (hu : u.eval w i = some v) (h : Eval P w v e b) :
     Eval P w i (e.subst u) b := by
   induction h with
-  | tru => exact .tru
-  | fls => exact .fls
+  | top => exact .top
+  | bot => exact .bot
   | initial_true h => exact .initial_true (eval_comp_of hu h)
   | initial_false h hv => exact .initial_false (eval_comp_of hu h) hv
   | final_true h => exact .final_true (eval_comp_of hu h)
@@ -252,8 +256,8 @@ theorem Eval.congr_of_allWalks {p : Walk → Prop} {r : ℕ → ℕ → Prop} [I
     e.AllWalks p → EqOn (w[·]?) (w'[·]?) {v | r v i} → Eval P w' i e b := by
   have ht : ∀ {t : Walk} {j}, t.eval w' j = t.eval w j := (Walk.eval_congr hlen.symm _)
   induction h with
-  | tru => exact fun _ _ ↦ .tru
-  | fls => exact fun _ _ ↦ .fls
+  | top => exact fun _ _ ↦ .top
+  | bot => exact fun _ _ ↦ .bot
   | initial_true h => exact fun _ _ ↦ .initial_true (ht.trans h)
   | initial_false h hv => exact fun _ _ ↦ .initial_false (ht.trans h) hv
   | final_true h => exact fun _ _ ↦ .final_true (ht.trans (hlen ▸ h))
@@ -298,8 +302,8 @@ variable [DecidableEq α] {V V' : F → ℕ → Option Bool} {k m : ℕ}
 /-- `e.evalWith w V i` evaluates `e` at `i` in one round, reading each rule-head call from the
 table `V` instead of unfolding it. -/
 def Expr.evalWith (w : List α) (V : F → ℕ → Option Bool) (i : ℕ) : Expr α F → Option Bool
-  | .tru => some true
-  | .fls => some false
+  | .top => some true
+  | .bot => some false
   | .initial t => (t.eval w i).map fun v ↦ decide (v = 0)
   | .final t => (t.eval w i).map fun v ↦ decide (v = w.length - 1)
   | .label s t => (t.eval w i).bind fun v ↦ w[v]?.map fun a ↦ decide (a ∈ s)
@@ -355,8 +359,8 @@ theorem evalWith_approx_mono (hkm : k ≤ m) :
 theorem eval_of_evalWith (hV : ∀ f j b, V f j = some b → Eval P w j (P f) b) :
     e.evalWith w V i = some b → Eval P w i e b := by
   induction e generalizing b with
-  | tru => rintro ⟨⟩; exact .tru
-  | fls => rintro ⟨⟩; exact .fls
+  | top => rintro ⟨⟩; exact .top
+  | bot => rintro ⟨⟩; exact .bot
   | initial t =>
     simp only [Expr.evalWith, Option.map_eq_some_iff]
     rintro ⟨v, hv, rfl⟩
@@ -385,7 +389,7 @@ theorem eval_of_approx : ∀ {k : ℕ} {f : F} {j : ℕ} {b : Bool},
 theorem exists_evalWith_approx (h : Eval P w i e b) :
     ∃ k, e.evalWith w (P.approx w k) i = some b := by
   induction h with
-  | tru | fls => exact ⟨0, rfl⟩
+  | top | bot => exact ⟨0, rfl⟩
   | initial_true h | final_true h => exact ⟨0, by simp [Expr.evalWith, h]⟩
   | initial_false h hv => exact ⟨0, by simp [Expr.evalWith, h, hv.ne']⟩
   | final_false h hv => exact ⟨0, by simp [Expr.evalWith, h, hv.ne]⟩

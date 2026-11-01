@@ -275,11 +275,11 @@ def empty (t : Walk) : WindowFormula Slot := .label (some []) t
 
 /-- `t` reads a mora bearing a downstep, single or double. -/
 def bearsL (t : Walk) : WindowFormula Slot :=
-  .disj (.label (some [.l]) t) (.label (some [.l, .l]) t)
+  .label (some [.l]) t ⊔ .label (some [.l, .l]) t
 
 /-- The next mora, across a boundary if there is one, bears a downstep. -/
 def nextBearsL : WindowFormula Slot :=
-  .disj (bearsL x.succ) (.conj (bar x.succ) (bearsL x.succ.succ))
+  bearsL x.succ ⊔ (bar x.succ ⊓ bearsL x.succ.succ)
 
 /-- A register feature appended to a mora. -/
 def append (f : RegisterFeature) : Slot → Slot := Option.map (· ++ [f])
@@ -287,7 +287,7 @@ def append (f : RegisterFeature) : Slot → Slot := Option.map (· ++ [f])
 /-- Pre-downstep h-epenthesis (§4.4): a registerless mora before a downstepped one takes `h`,
 unless its own syllable is downstepped before it — one mora back, the syllables being at
 most bimoraic. -/
-def raisingGuard : WindowFormula Slot := .conj (empty x) (.conj nextBearsL (.neg (bearsL x.pred)))
+def raisingGuard : WindowFormula Slot := empty x ⊓ nextBearsL ⊓ (bearsL x.pred).not
 
 /-- Pre-downstep h-epenthesis as a process. -/
 def raising : Docking Slot := .ofQF raisingGuard (append .h)
@@ -305,7 +305,7 @@ def spreading : Docking Slot where
 /-- Utterance-initial neutralisation (§3.5, §4.5): the first mora's downstep is left
 unrealized, there being no preceding register to contrast with; the feature is not
 deleted, so it still blocks h-epenthesis on its syllable. -/
-def neutralizationGuard : WindowFormula Slot := .conj (bar x.pred) (WindowFormula.initial x.pred)
+def neutralizationGuard : WindowFormula Slot := bar x.pred ⊓ WindowFormula.initial x.pred
 
 /-- Utterance-initial neutralisation as a process. -/
 def neutralization : Docking Slot :=
@@ -314,24 +314,21 @@ def neutralization : Docking Slot :=
 /-- Downstep displacement, first half (§4.6): the downstep on the last mora of a bimoraic
 syllable spreads to the next syllable's first mora, stacking on a downstep there. -/
 def spreadLGuard : WindowFormula Slot :=
-  .conj (bar x.pred) (.conj (bearsL x.pred.pred)
-    (.conj (.defined x.pred.pred.pred) (.neg (bar x.pred.pred.pred))))
+  bar x.pred ⊓ bearsL x.pred.pred ⊓ .defined x.pred.pred.pred ⊓ (bar x.pred.pred.pred).not
 
 /-- The spreading half of displacement as a process. -/
 def spreadL : Docking Slot := .ofQF spreadLGuard (append .l)
 
 /-- Downstep displacement, second half: the spread downstep delinks from its host. -/
 def delinkLGuard : WindowFormula Slot :=
-  .conj (bearsL x) (.conj (.defined x.pred) (.conj (.neg (bar x.pred))
-    (.conj (bar x.succ) (.defined x.succ.succ))))
+  bearsL x ⊓ .defined x.pred ⊓ (bar x.pred).not ⊓ bar x.succ ⊓ .defined x.succ.succ
 
 /-- The delinking half of displacement as a process. -/
 def delinkL : Docking Slot := .ofQF delinkLGuard (Option.map (·.erase RegisterFeature.l))
 
 /-- The final syllable bears no register feature. -/
 def finalRegisterless : WindowFormula Slot :=
-  .conj (WindowFormula.final x)
-    (.conj (empty x) (.disj (bar x.pred) (.conj (empty x.pred) (bar x.pred.pred))))
+  WindowFormula.final x ⊓ empty x ⊓ (bar x.pred ⊔ (empty x.pred ⊓ bar x.pred.pred))
 
 /-- Drubea's final raising (§3.3, §4.8): h% docks on an utterance-final registerless
 syllable. -/
@@ -340,8 +337,8 @@ def finalRaising : Docking Slot := .ofQF finalRegisterless (append .h)
 /-- Numèè's final lowering (§3.4, §4.8): l% docks on a light final syllable after a
 registerless syllable, whether the final is registerless or downstepped. -/
 def finalLoweringGuard : WindowFormula Slot :=
-  .conj (WindowFormula.final x) (.conj (bar x.pred) (.conj (empty x.pred.pred)
-    (.disj (bar x.pred.pred.pred) (.conj (empty x.pred.pred.pred) (bar x.pred.pred.pred.pred)))))
+  WindowFormula.final x ⊓ bar x.pred ⊓ empty x.pred.pred ⊓
+    (bar x.pred.pred.pred ⊔ (empty x.pred.pred.pred ⊓ bar x.pred.pred.pred.pred))
 
 /-- Numèè's final lowering as a process. -/
 def finalLowering : Docking Slot := .ofQF finalLoweringGuard (append .l)
