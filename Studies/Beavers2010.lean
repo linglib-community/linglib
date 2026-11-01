@@ -6,7 +6,7 @@ public import Linglib.Logic.Modal.Defs
 public import Linglib.Core.Order.UpperLower.Cover
 public import Linglib.Data.Examples.Beavers2010
 public import Linglib.Data.Examples.Readers
-public import Studies.Dowty1991
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ArgumentSelection
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.WithTopBot
@@ -344,7 +344,7 @@ theorem card_entailments_lt_card_iff {o d : AffectednessDegree} :
   cases o <;> cases d <;> decide
 
 -- p. 846: Dowty's Corollary 2 can prefer as object a role that lacks an entailment of the oblique
-example : ∃ p q : EntailmentProfile, Dowty1991.DirectObjectOver p q ∧ ¬ q ⊆ p :=
+example : ∃ p q : EntailmentProfile, EntailmentProfile.DirectObjectOver p q ∧ ¬ q ⊆ p :=
   ⟨{.changeOfState, .incrementalTheme}, {.stationary}, by decide, by decide⟩
 
 /-! ### The attested alternations (Tables 3–4, (75)) -/
