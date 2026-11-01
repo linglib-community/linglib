@@ -156,7 +156,7 @@ def granularityLevel (n : ℕ) : ℕ :=
   if n = 0 then 0 else if 1000 ∣ n then 3 else if 100 ∣ n then 2 else if 10 ∣ n then 1 else 0
 
 theorem pow_granularityLevel_eq_scaleLcm {n : ℕ} (hn : n ≠ 0) :
-    (10 : ℤ) ^ granularityLevel n = scaleLcm {1000, 100, 10, 1} (n : ℤ) := by
+    10 ^ granularityLevel n = scaleLcm {1000, 100, 10, 1} n := by
   refine ((isGreatest_scaleLcm (by decide) (by unfold IsChain; beta_reduce; decide)
     ⟨1, by decide, one_dvd _⟩).unique ⟨⟨?_, ?_⟩, ?_⟩).symm <;> unfold granularityLevel
   · split_ifs <;> decide

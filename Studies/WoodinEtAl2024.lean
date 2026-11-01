@@ -12,7 +12,9 @@ of a number is a linear function of its log magnitude and of which roundness pro
 The six properties are being a multiple of five or of ten and Jansen and Pollmann's four kinds of
 `k`-ness over positive powers of ten. They nest, since 10-ness, 2-ness and 5-ness make a number a
 multiple of ten and every property makes it a multiple of five, and with non-negative weights the
-predicted frequency is monotone in the roundness ordering of `Numerals.Roundness`.
+predicted frequency is monotone in the roundness ordering of `Numerals.Roundness`. The kinds of
+`k`-ness are not divisibility, however, and that ordering is
+[the ordering of no family of scales of multiples](##WoodinEtAl2024.not_exists_onScale).
 
 ## Implementation notes
 
@@ -74,6 +76,17 @@ theorem dvd_five_of_holds {p : Property} {n : ℕ} (h : p.Holds n) : 5 ∣ n := 
       have : 50 ∣ 2 * n := h.dvd
       omega
     | _ => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (by decide) h)
+
+/-- The kinds of `k`-ness are not divisibility (p. 127): *1,000* and *10* have every property of
+*10*, but *1,010* is a multiple of ten with no `k`-ness. The numbers at least as round as *10* are
+not closed under addition, as they would be on scales of multiples, so the roundness ordering is
+that of no family of scales. -/
+theorem not_exists_onScale : ¬ ∃ W : Finset ℕ, ∀ m n : ℕ,
+    AtLeastAsRound Property.Holds m n ↔ AtLeastAsRound (OnScale W) m n := by
+  rintro ⟨W, hW⟩
+  have h := ((hW 10 10).1 (.refl _ _)).add ((hW 10 1000).1 (profile_subset_profile.1 (by decide)))
+  exact (by decide : ¬ profile Property.Holds 10 ⊆ profile Property.Holds 1010)
+    (profile_subset_profile.2 ((hW 10 1010).2 (by convert h using 2; norm_num)))
 
 /-! ### The frequency model -/
 

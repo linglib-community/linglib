@@ -25,9 +25,10 @@ Numbers and properties form a formal context. A number's profile is the intent o
 concept, and a number is at least as round as another when its profile contains the other's,
 Haslinger's ordering, so the numbers at least as round as `d` are the extent closure of `d`;
 counting properties gives the roundness scores. On scales of multiples the closure is again a
-scale, the multiples of the lcm of the widths through `d`. Scales of different granularity
-should align, Krifka argues, their widths forming a chain under divisibility, and on aligned
-scales that lcm is the coarsest width through `d`.
+scale, the multiples of the lcm of the widths through `d`, so the numbers at least as round as `d`
+are closed under addition. Scales of different granularity should align, Krifka argues, their
+widths forming a chain under divisibility, and on aligned scales that lcm is the coarsest width
+through `d`.
 
 ## Main definitions
 
@@ -46,6 +47,8 @@ scales that lcm is the coarsest width through `d`.
   are its extent closure.
 * `Numerals.Roundness.extentClosure_onScale`: on scales of multiples, that closure is the scale of
   multiples of `scaleLcm W d`.
+* `Numerals.Roundness.AtLeastAsRound.add`: on scales of multiples, the numbers at least as round
+  as `d` are closed under addition.
 * `Numerals.Roundness.atLeastAsRound_onScale_iff_dvd`: roundness on scales of multiples is
   divisibility of these lcms.
 * `Numerals.Roundness.isLeast_atLeastAsRound_onScale`: the least number above `d` at least as
@@ -57,7 +60,8 @@ scales that lcm is the coarsest width through `d`.
 
 A roundness property is an attribute of the formal context `r : D → ι → Prop`, so a family of
 properties and a set of salient scales are the same kind of object. Woodin et al.'s regression
-weights the properties unequally; `score` counts them equally.
+weights the properties unequally; `score` counts them equally. A width is a natural number, since
+the multiples of `w` and of `-w` are one scale; the numbers on it range over `ℤ`.
 
 ## References
 
@@ -135,35 +139,41 @@ end Profile
 
 section Scale
 
-variable {W : Finset ℤ} {d e : ℤ}
+variable {W : Finset ℕ} {d e f : ℤ}
 
 /-- `d` lies on the scale of width `w`, the multiples of `w`, among the widths `W`. -/
-def OnScale (W : Finset ℤ) (d : ℤ) (w : W) : Prop := d ∈ AddSubgroup.zmultiples (w : ℤ)
+def OnScale (W : Finset ℕ) (d : ℤ) (w : W) : Prop := d ∈ AddSubgroup.zmultiples ((w : ℕ) : ℤ)
 
 theorem atLeastAsRound_onScale_iff :
-    AtLeastAsRound (OnScale W) d e ↔ ∀ w ∈ W, w ∣ d → w ∣ e := by
+    AtLeastAsRound (OnScale W) d e ↔ ∀ w ∈ W, (w : ℤ) ∣ d → (w : ℤ) ∣ e := by
   simp [AtLeastAsRound, OnScale, Int.mem_zmultiples_iff]
 
 instance : Decidable (AtLeastAsRound (OnScale W) d e) :=
   decidable_of_iff _ atLeastAsRound_onScale_iff.symm
 
 /-- The lcm of the widths of the scales through `d`. -/
-def scaleLcm (W : Finset ℤ) (d : ℤ) : ℤ := (W.filter (· ∣ d)).lcm id
+def scaleLcm (W : Finset ℕ) (d : ℤ) : ℕ := (W.filter fun w : ℕ ↦ (w : ℤ) ∣ d).lcm id
 
 theorem atLeastAsRound_onScale_iff_scaleLcm_dvd :
-    AtLeastAsRound (OnScale W) d e ↔ scaleLcm W d ∣ e := by
-  simp [atLeastAsRound_onScale_iff, scaleLcm, Finset.lcm_dvd_iff]
+    AtLeastAsRound (OnScale W) d e ↔ (scaleLcm W d : ℤ) ∣ e := by
+  simp [atLeastAsRound_onScale_iff, scaleLcm, Int.natCast_dvd, Finset.lcm_dvd_iff]
 
-theorem scaleLcm_dvd (W : Finset ℤ) (d : ℤ) : scaleLcm W d ∣ d :=
+theorem scaleLcm_dvd (W : Finset ℕ) (d : ℤ) : (scaleLcm W d : ℤ) ∣ d :=
   atLeastAsRound_onScale_iff_scaleLcm_dvd.1 (.refl _ d)
 
 /-- On scales of multiples, the numbers at least as round as `d` are the meet of the scales
 through `d`, the scale of multiples of their lcm. -/
 theorem extentClosure_onScale :
-    extentClosure (OnScale W) {d} = AddSubgroup.zmultiples (scaleLcm W d) := by
+    extentClosure (OnScale W) {d} = AddSubgroup.zmultiples (scaleLcm W d : ℤ) := by
   ext e
   rw [← atLeastAsRound_iff_mem_extentClosure, SetLike.mem_coe, Int.mem_zmultiples_iff,
     atLeastAsRound_onScale_iff_scaleLcm_dvd]
+
+/-- On scales of multiples, the numbers at least as round as `d` are closed under addition. -/
+theorem AtLeastAsRound.add (h₁ : AtLeastAsRound (OnScale W) d e)
+    (h₂ : AtLeastAsRound (OnScale W) d f) : AtLeastAsRound (OnScale W) d (e + f) := by
+  rw [atLeastAsRound_onScale_iff_scaleLcm_dvd] at *
+  exact dvd_add h₁ h₂
 
 /-- On scales of multiples, roundness is divisibility of the lcms of the widths. -/
 theorem atLeastAsRound_onScale_iff_dvd :
@@ -171,22 +181,23 @@ theorem atLeastAsRound_onScale_iff_dvd :
   refine ⟨fun h ↦ Finset.lcm_mono fun w hw ↦ ?_, fun h ↦ ?_⟩
   · rw [Finset.mem_filter] at hw ⊢
     exact ⟨hw.1, atLeastAsRound_onScale_iff.1 h w hw.1 hw.2⟩
-  · exact atLeastAsRound_onScale_iff_scaleLcm_dvd.2 (h.trans (scaleLcm_dvd W e))
+  · exact atLeastAsRound_onScale_iff_scaleLcm_dvd.2
+      ((Int.natCast_dvd_natCast.2 h).trans (scaleLcm_dvd W e))
 
 theorem scaleLcm_pos (hW : 0 ∉ W) (d : ℤ) : 0 < scaleLcm W d := by
-  refine lt_of_le_of_ne (Int.nonneg_of_normalize_eq_self Finset.normalize_lcm) fun h ↦ hW ?_
-  obtain ⟨w, hw, hw0⟩ := Finset.lcm_eq_zero_iff.1 h.symm
+  refine Nat.pos_of_ne_zero fun h ↦ hW ?_
+  obtain ⟨w, hw, hw0⟩ := Finset.lcm_eq_zero_iff.1 h
   exact hw0 ▸ (Finset.mem_filter.1 hw).1
 
 theorem AtLeastAsRound.scaleLcm_dvd_sub (h : AtLeastAsRound (OnScale W) d e) :
-    scaleLcm W d ∣ e - d :=
+    (scaleLcm W d : ℤ) ∣ e - d :=
   dvd_sub (atLeastAsRound_onScale_iff_scaleLcm_dvd.1 h) (scaleLcm_dvd W d)
 
 theorem AtLeastAsRound.scaleLcm_le_abs_sub (h : AtLeastAsRound (OnScale W) d e) (hne : e ≠ d) :
-    scaleLcm W d ≤ |e - d| :=
+    (scaleLcm W d : ℤ) ≤ |e - d| :=
   Int.le_of_dvd (abs_pos.2 (sub_ne_zero.2 hne)) ((dvd_abs _ _).2 h.scaleLcm_dvd_sub)
 
-theorem atLeastAsRound_add_scaleLcm (W : Finset ℤ) (d : ℤ) :
+theorem atLeastAsRound_add_scaleLcm (W : Finset ℕ) (d : ℤ) :
     AtLeastAsRound (OnScale W) d (d + scaleLcm W d) :=
   atLeastAsRound_onScale_iff_scaleLcm_dvd.2 (dvd_add (scaleLcm_dvd W d) dvd_rfl)
 
@@ -194,26 +205,26 @@ theorem atLeastAsRound_add_scaleLcm (W : Finset ℤ) (d : ℤ) :
 of the scale of multiples of `scaleLcm W d`. -/
 theorem isLeast_atLeastAsRound_onScale (hW : 0 ∉ W) (d : ℤ) :
     IsLeast {e | d < e ∧ AtLeastAsRound (OnScale W) d e} (d + scaleLcm W d) :=
-  ⟨⟨lt_add_of_pos_right d (scaleLcm_pos hW d), atLeastAsRound_add_scaleLcm W d⟩,
+  ⟨⟨lt_add_of_pos_right d (by exact_mod_cast scaleLcm_pos hW d), atLeastAsRound_add_scaleLcm W d⟩,
     fun _ ⟨hde, he⟩ ↦ by have := Int.le_of_dvd (sub_pos.2 hde) he.scaleLcm_dvd_sub; omega⟩
 
 /-- On aligned scales, whose widths form a chain under divisibility, the lcm of the widths
 through `d` is the coarsest width through `d`. -/
-theorem isGreatest_scaleLcm (hpos : ∀ w ∈ W, 0 < w) (hW : IsChain (· ∣ ·) (W : Set ℤ))
-    (hd : ∃ w ∈ W, w ∣ d) : IsGreatest {w | w ∈ W ∧ w ∣ d} (scaleLcm W d) := by
-  have hne : (W.filter (· ∣ d)).Nonempty := by simpa [Finset.Nonempty] using hd
-  obtain ⟨hmW, hmd⟩ := Finset.mem_filter.1 ((W.filter (· ∣ d)).max'_mem hne)
-  have hle : ∀ w ∈ W, w ∣ d → w ≤ (W.filter (· ∣ d)).max' hne :=
-    fun w hw hwd ↦ Finset.le_max' _ _ (Finset.mem_filter.2 ⟨hw, hwd⟩)
-  suffices h : scaleLcm W d = (W.filter (· ∣ d)).max' hne from
-    h ▸ ⟨⟨hmW, hmd⟩, fun w hw ↦ hle w hw.1 hw.2⟩
-  refine Int.dvd_antisymm (Int.nonneg_of_normalize_eq_self Finset.normalize_lcm) (hpos _ hmW).le
-    (Finset.lcm_dvd fun w hw ↦ ?_) (Finset.dvd_lcm (Finset.max'_mem _ hne))
+theorem isGreatest_scaleLcm (h0 : 0 ∉ W) (hW : IsChain (· ∣ ·) (W : Set ℕ))
+    (hd : ∃ w ∈ W, (w : ℤ) ∣ d) : IsGreatest {w : ℕ | w ∈ W ∧ (w : ℤ) ∣ d} (scaleLcm W d) := by
+  set s := W.filter fun w : ℕ ↦ (w : ℤ) ∣ d
+  have hne : s.Nonempty := by simpa [s, Finset.Nonempty] using hd
+  obtain ⟨hmW, hmd⟩ := Finset.mem_filter.1 (s.max'_mem hne)
+  have hle : ∀ w ∈ W, (w : ℤ) ∣ d → w ≤ s.max' hne :=
+    fun w hw hwd ↦ s.le_max' _ (Finset.mem_filter.2 ⟨hw, hwd⟩)
+  suffices h : scaleLcm W d = s.max' hne from h ▸ ⟨⟨hmW, hmd⟩, fun w hw ↦ hle w hw.1 hw.2⟩
+  refine Nat.dvd_antisymm (Finset.lcm_dvd fun w hw ↦ ?_) (Finset.dvd_lcm (s.max'_mem hne))
   obtain ⟨hwW, hwd⟩ := Finset.mem_filter.1 hw
-  obtain rfl | hwm := eq_or_ne w ((W.filter (· ∣ d)).max' hne)
+  obtain rfl | hwm := eq_or_ne w (s.max' hne)
   · exact dvd_rfl
   refine (hW hwW hmW hwm).resolve_right fun h ↦ hwm ?_
-  exact le_antisymm (hle w hwW hwd) (Int.le_of_dvd (hpos w hwW) h)
+  exact le_antisymm (hle w hwW hwd)
+    (Nat.le_of_dvd (Nat.pos_of_ne_zero (ne_of_mem_of_not_mem hwW h0)) h)
 
 end Scale
 

@@ -177,17 +177,17 @@ section Roundness
 
 open Numerals.Roundness
 
-variable {W : Finset ℤ} {n : ℤ}
+variable {W : Finset ℕ} {n : ℤ}
 
 /-- The cardinal scales of (15) have widths fifty, twenty-five, ten, five and one. -/
-def decimal : Finset ℤ := {50, 25, 10, 5, 1}
+def decimal : Finset ℕ := {50, 25, 10, 5, 1}
 
 /-- The clock-time scales of (16), over minutes after midnight, count quarter hours, five minutes
 and minutes. -/
-def clock : Finset ℤ := {15, 5, 1}
+def clock : Finset ℕ := {15, 5, 1}
 
 /-- The angle scales of (17) have widths ninety, ten, five and one degrees. -/
-def angle : Finset ℤ := {90, 10, 5, 1}
+def angle : Finset ℕ := {90, 10, 5, 1}
 
 -- (24)
 theorem rounder_examples :
@@ -222,7 +222,7 @@ theorem forall_not_violates_iff (hW : 0 ∉ W) {m : ℚ} :
     linarith
   · intro hm n' hne h
     refine not_numeral_violates_of_lt hne.symm (lt_of_lt_of_le hm ?_)
-    rw [abs_sub_comm, ← Int.cast_sub, ← Int.cast_abs, Int.cast_le]
+    rw [abs_sub_comm, ← Int.cast_sub, ← Int.cast_abs, ← Int.cast_natCast, Int.cast_le]
     exact h.scaleLcm_le_abs_sub hne
 
 /-- *99* lies only on the scale of units, so its imprecise reading is blocked from half a unit of
@@ -247,18 +247,17 @@ infers. -/
 theorem tolerated_deviation_is_inferred_cell
     {μs : Measure W} {ν : Measure ℝ} [SFinite ν] {r : ℝ≥0∞} {I : Set ℝ} {m : ℚ}
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s)
-    (hr : r ≠ 0) (hr' : r ≠ ⊤) (hpos : ∀ w ∈ W, 0 < w)
-    (hWd : IsChain (· ∣ ·) (W : Set ℤ))
+    (hr : r ≠ 0) (hr' : r ≠ ⊤) (h0 : 0 ∉ W) (hWd : IsChain (· ∣ ·) (W : Set ℕ))
     (hs : ∀ v w : W, μs {v} = μs {w}) (hs0 : ∀ w : W, μs {w} ≠ 0) (hs' : ∀ w : W, μs {w} ≠ ⊤)
-    (hI : ∀ w : W, Set.Ico ((n : ℝ) - (w : ℤ) / 2) ((n : ℝ) + (w : ℤ) / 2) ⊆ I)
-    (hne : ∃ w ∈ W, w ∣ n) {w : W}
+    (hI : ∀ w : W, Set.Ico ((n : ℝ) - (w : ℕ) / 2) ((n : ℝ) + (w : ℕ) / 2) ⊆ I)
+    (hne : ∃ w ∈ W, (w : ℤ) ∣ n) {w : W}
     (hw : ∀ v, (μs.prod ν) (Krifka2007.reportedOn v n) ≤
       (μs.prod ν) (Krifka2007.reportedOn w n)) :
     (∀ n' ≠ n, AtLeastAsRound (OnScale W) n n' → ¬ Violates (numeral n m) (numeral n' m)) ↔
-      2 * m < ((w : ℤ) : ℚ) := by
-  have hwL := (Krifka2007.coarsest_scale_most_probable μs ν hν hr hr' hpos hWd hs hs0 hs'
+      2 * m < ((w : ℕ) : ℚ) := by
+  have hwL := (Krifka2007.coarsest_scale_most_probable μs ν hν hr hr' h0 hWd hs hs0 hs'
     hI hne).1 hw
-  rw [forall_not_violates_iff fun h0 ↦ absurd (hpos 0 h0) (lt_irrefl 0), hwL]
+  rw [forall_not_violates_iff h0, hwL]
 
 end Roundness
 

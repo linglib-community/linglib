@@ -214,29 +214,29 @@ theorem approximate_more_probable :
 
 open Degree Numerals.Roundness
 
-private theorem intCast_mem_zmultiples_iff {w n : ℤ} :
-    (n : ℝ) ∈ AddSubgroup.zmultiples (w : ℝ) ↔ w ∣ n := by
+private theorem intCast_mem_zmultiples_iff {w : ℕ} {n : ℤ} :
+    (n : ℝ) ∈ AddSubgroup.zmultiples (w : ℝ) ↔ (w : ℤ) ∣ n := by
   simp only [AddSubgroup.mem_zmultiples_iff, zsmul_eq_mul]
   exact ⟨fun ⟨k, hk⟩ ↦ ⟨k, by rw [mul_comm]; exact_mod_cast hk.symm⟩,
     fun ⟨k, hk⟩ ↦ ⟨k, by push_cast [hk]; ring⟩⟩
 
-variable {W : Finset ℤ} (μs : Measure W) (ν : Measure ℝ) {r : ℝ≥0∞} {I : Set ℝ} {n : ℤ}
+variable {W : Finset ℕ} (μs : Measure W) (ν : Measure ℝ) {r : ℝ≥0∞} {I : Set ℝ} {n : ℤ}
 
 /-- The speaker chooses the scale of width `w` and reports the scale point nearest the value as
 `n`. -/
 def reportedOn (w : W) (n : ℤ) : Set (W × ℝ) :=
-  {w} ×ˢ (representative ((w : ℤ) : ℝ) ⁻¹' {(n : ℝ)})
+  {w} ×ˢ (representative ((w : ℕ) : ℝ) ⁻¹' {(n : ℝ)})
 
 theorem measure_reportedOn_of_dvd [SFinite ν]
-    (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s) {w : W} (hw : 0 < (w : ℤ))
-    (hI : Set.Ico ((n : ℝ) - (w : ℤ) / 2) (n + (w : ℤ) / 2) ⊆ I) (h : (w : ℤ) ∣ n) :
-    (μs.prod ν) (reportedOn w n) = μs {w} * (r * ENNReal.ofReal ((w : ℤ) : ℝ)) := by
+    (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s) {w : W} (hw : 0 < (w : ℕ))
+    (hI : Set.Ico ((n : ℝ) - (w : ℕ) / 2) (n + (w : ℕ) / 2) ⊆ I) (h : ((w : ℕ) : ℤ) ∣ n) :
+    (μs.prod ν) (reportedOn w n) = μs {w} * (r * ENNReal.ofReal ((w : ℕ) : ℝ)) := by
   rw [reportedOn, Measure.prod_prod, preimage_representative (by exact_mod_cast hw)
     (intCast_mem_zmultiples_iff.2 h), hν measurableSet_Ico hI, Real.volume_Ico]
   congr 3
   ring
 
-theorem measure_reportedOn_of_not_dvd {w : W} (h : ¬ (w : ℤ) ∣ n) :
+theorem measure_reportedOn_of_not_dvd {w : W} (h : ¬ ((w : ℕ) : ℤ) ∣ n) :
     (μs.prod ν) (reportedOn w n) = 0 := by
   rw [reportedOn, preimage_representative_of_notMem (mt intCast_mem_zmultiples_iff.1 h),
     Set.prod_empty, measure_empty]
@@ -246,25 +246,26 @@ through `n`: *forty-five minutes* is read at the quarter hours and *forty* at th
 minutes. -/
 theorem coarsest_scale_most_probable [SFinite ν]
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s) (hr : r ≠ 0) (hr' : r ≠ ⊤)
-    (hpos : ∀ w ∈ W, 0 < w) (hW : IsChain (· ∣ ·) (W : Set ℤ))
+    (h0 : 0 ∉ W) (hW : IsChain (· ∣ ·) (W : Set ℕ))
     (hs : ∀ v w : W, μs {v} = μs {w}) (hs0 : ∀ w : W, μs {w} ≠ 0) (hs' : ∀ w : W, μs {w} ≠ ⊤)
-    (hI : ∀ w : W, Set.Ico ((n : ℝ) - (w : ℤ) / 2) (n + (w : ℤ) / 2) ⊆ I)
-    (hne : ∃ w ∈ W, w ∣ n) {w : W} :
+    (hI : ∀ w : W, Set.Ico ((n : ℝ) - (w : ℕ) / 2) (n + (w : ℕ) / 2) ⊆ I)
+    (hne : ∃ w ∈ W, (w : ℤ) ∣ n) {w : W} :
     (∀ v, (μs.prod ν) (reportedOn v n) ≤ (μs.prod ν) (reportedOn w n)) ↔
-      (w : ℤ) = scaleLcm W n := by
-  obtain ⟨⟨hLW, hLn⟩, hLmax⟩ := isGreatest_scaleLcm hpos hW hne
-  have hmass (v : W) (h : (v : ℤ) ∣ n) :=
+      (w : ℕ) = scaleLcm W n := by
+  have hpos (v : ℕ) (hv : v ∈ W) : 0 < v := Nat.pos_of_ne_zero (ne_of_mem_of_not_mem hv h0)
+  obtain ⟨⟨hLW, hLn⟩, hLmax⟩ := isGreatest_scaleLcm h0 hW hne
+  have hmass (v : W) (h : ((v : ℕ) : ℤ) ∣ n) :=
     measure_reportedOn_of_dvd μs ν hν (hpos v v.2) (hI v) h
-  have key : ∀ v u : W, (v : ℤ) ∣ n → (u : ℤ) ∣ n →
-      ((μs.prod ν) (reportedOn v n) ≤ (μs.prod ν) (reportedOn u n) ↔ (v : ℤ) ≤ u) := by
+  have key : ∀ v u : W, ((v : ℕ) : ℤ) ∣ n → ((u : ℕ) : ℤ) ∣ n →
+      ((μs.prod ν) (reportedOn v n) ≤ (μs.prod ν) (reportedOn u n) ↔ (v : ℕ) ≤ u) := by
     intro v u hv hu
     rw [hmass v hv, hmass u hu, hs v u,
       ENNReal.mul_le_mul_iff_right (hs0 u) (hs' u), ENNReal.mul_le_mul_iff_right hr hr',
-      ENNReal.ofReal_le_ofReal_iff (by exact_mod_cast (hpos u u.2).le)]
-    exact Int.cast_le
+      ENNReal.ofReal_le_ofReal_iff (Nat.cast_nonneg _)]
+    exact Nat.cast_le
   constructor
   · intro h
-    have hw : (w : ℤ) ∣ n := by
+    have hw : ((w : ℕ) : ℤ) ∣ n := by
       by_contra hw
       have := h ⟨_, hLW⟩
       rw [measure_reportedOn_of_not_dvd μs ν hw, hmass ⟨_, hLW⟩ hLn,
@@ -273,13 +274,13 @@ theorem coarsest_scale_most_probable [SFinite ν]
       exact (ENNReal.ofReal_pos.2 (by exact_mod_cast hpos _ hLW)).ne'
     exact le_antisymm (hLmax ⟨w.2, hw⟩) ((key ⟨_, hLW⟩ w hLn hw).1 (h _))
   · intro hwL v
-    by_cases hv : (v : ℤ) ∣ n
+    by_cases hv : ((v : ℕ) : ℤ) ∣ n
     · exact (key v w hv (hwL ▸ hLn)).2 (hwL ▸ hLmax ⟨v.2, hv⟩)
     · rw [measure_reportedOn_of_not_dvd μs ν hv]
       exact zero_le
 
 /-- The minute scales count hours, half hours, quarter hours, five minutes and minutes. -/
-def minuteScales : Finset ℤ := {60, 30, 15, 5, 1}
+def minuteScales : Finset ℕ := {60, 30, 15, 5, 1}
 
 theorem fortyFive_quarterHours_forty_fiveMinutes :
     scaleLcm minuteScales 45 = 15 ∧ scaleLcm minuteScales 40 = 5 := by decide
