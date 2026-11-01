@@ -1,0 +1,262 @@
+[
+  {
+    "id": "chomsky1981_92i",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(92i)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John saw my picture of him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 217, repeating (63i) of p. 209; him proximate to John. NP* is the governing category, its subject my being accessible to him. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_92ii",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(92ii)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I saw John's picture of him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 217, repeating (63ii) of p. 209; him proximate to John. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_92iii",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(92iii)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John saw a picture of him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 217, printed with the clause bracketed as S*; him proximate to John. On p. 209 the same sentence, (63iii), is called ungrammatical under the earlier framework, 'which appears to be the correct result'. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_92iv",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(92iv)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John thought I saw a picture of him.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 217, repeating (63iv) of p. 209; him proximate to John. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_92v",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(92v)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John read his book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 217, repeating (64i) of p. 209; his proximate to John. The book calls it the problematic case: the binding theory excludes it, and 'some other condition must permit (92v)'. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_92vi",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(92vi)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John thought I saw his book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 217, repeating (64ii) of p. 209; his proximate to John. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_93",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(93)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They read each other's books.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 217, set against (92v): the anaphor is bound where the pronoun is not free. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_78_my",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(78)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They heard my stories about each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 213, (78) with the specifier my: the noun phrase contains a SUBJECT accessible to each other. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_78_the",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(78)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They heard the stories about each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 213, (78) with the specifier the. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_78_none",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(78)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They heard stories about each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 213, (78) with no specifier. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_79i",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(79i)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They expected me to hear stories about each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 213: the infinitival clause S* contains a SUBJECT accessible to each other, namely me. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_79ii",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(79ii)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They expected that pictures of each other would be on sale.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 213: AGR of the embedded clause is coindexed with the subject containing each other and so not accessible to it (pp. 213-214). Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  },
+  {
+    "id": "chomsky1981_80",
+    "source": {
+      "bibkey": "chomsky-1981",
+      "paperLabel": "(80)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They thought I expected that pictures of each other would be on sale.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 214: AGR of the middle clause is accessible to each other, which is not bound there. Pages of the seventh edition (1993).",
+    "verified": "page-image"
+  }
+]
