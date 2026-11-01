@@ -19,6 +19,7 @@ public import Linglib.Fragments.Romance.Spanish.Negation
 public import Linglib.Fragments.Quechua.Negation
 public import Linglib.Fragments.Tunica.Negation
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Miestamo (2005): Standard Negation
@@ -112,8 +113,8 @@ def Pair.markerForms (p : Pair) : List Form := p.marker.morphs.map (toForm ·.fo
 
 /-- The forms set aside as phonological, by language, with the shape they are cited in. -/
 def citations : List (Glottocode × String × String) :=
-  [("nucl1301", "me", "mA"), ("nucl1301", "yecek", "ecek"), ("tuni1252", "w", "wi"),
-    ("tuni1252", "ɛhɛ", "aha"), ("hixk1239", "hra", "hɨra"), ("stan1290", "n'", "ne")]
+  [(.turkish, "me", "mA"), (.turkish, "yecek", "ecek"), (.tunica, "w", "wi"),
+    (.tunica, "ɛhɛ", "aha"), (.hixkaryána, "hra", "hɨra"), (.french, "n'", "ne")]
 
 /-- The citation form of a morph in a language. -/
 def cite (l : Glottocode) (f : Form) : Form :=
@@ -126,21 +127,14 @@ def forms (e : Datum) : List Form :=
   (Morphology.Morph.wordsOf e.primaryText).flatten.map (cite e.language)
 
 /-- The standard negators of a language, from its fragment. -/
-def standard : Glottocode → List Marker
-  | "stan1288" => Spanish.Negation.standard
-  | "stan1295" => German.Negation.standard
-  | "ital1282" => Italian.Negation.standard
-  | "stan1290" => French.Negation.standard
-  | "russ1263" => Russian.Negation.standard
-  | "finn1318" => Finnish.Negation.standard
-  | "nucl1643" => Japanese.Negation.standard
-  | "maor1246" => Maori.Negation.standard
-  | "hixk1239" => Hixkaryana.Negation.standard
-  | "nucl1301" => Turkish.Negation.standard
-  | "nucl1310" => Burmese.Negation.standard
-  | "stan1293" => English.Negation.standard
-  | "tuni1252" => Tunica.Negation.standard
-  | _ => []
+def standard (l : Glottocode) : List Marker :=
+  (List.lookup l [(.spanish, Spanish.Negation.standard), (.german, German.Negation.standard),
+    (.italian, Italian.Negation.standard), (.french, French.Negation.standard),
+    (.russian, Russian.Negation.standard), (.finnish, Finnish.Negation.standard),
+    (.japanese, Japanese.Negation.standard), (.maori, Maori.Negation.standard),
+    (.hixkaryána, Hixkaryana.Negation.standard), (.turkish, Turkish.Negation.standard),
+    (.burmese, Burmese.Negation.standard), (.english, English.Negation.standard),
+    (.tunica, Tunica.Negation.standard)]).getD []
 
 /-- The rows of a language. -/
 def rows (l : Glottocode) : List Datum := Examples.all.filter (·.language = l)
@@ -278,8 +272,8 @@ end LanguageType
 
 -- (5)
 theorem tunica_displaces :
-    Formed "tuni1252" ∧ (∀ p ∈ pairs "tuni1252", IsSymmetricIn (pairs "tuni1252") p) ∧
-      Displaces (pairs "tuni1252") ∧ ¬ Neutralizes (pairs "tuni1252") := by
+    Formed .tunica ∧ (∀ p ∈ pairs .tunica, IsSymmetricIn (pairs .tunica) p) ∧
+      Displaces (pairs .tunica) ∧ ¬ Neutralizes (pairs .tunica) := by
   decide +kernel
 
 theorem exists_paradigmAsymmetric_not_neutralizes :
@@ -288,31 +282,31 @@ theorem exists_paradigmAsymmetric_not_neutralizes :
 
 /-! ### Symmetric negation: Spanish, German, Italian, French, Russian -/
 
-theorem spanish_symmetric : Formed "stan1288" ∧ pairsType (pairs "stan1288") = .symmetric := by
+theorem spanish_symmetric : Formed .spanish ∧ pairsType (pairs .spanish) = .symmetric := by
   decide +kernel
 
-theorem german_symmetric : Formed "stan1295" ∧ pairsType (pairs "stan1295") = .symmetric := by
+theorem german_symmetric : Formed .german ∧ pairsType (pairs .german) = .symmetric := by
   decide +kernel
 
-theorem italian_symmetric : Formed "ital1282" ∧ pairsType (pairs "ital1282") = .symmetric := by
+theorem italian_symmetric : Formed .italian ∧ pairsType (pairs .italian) = .symmetric := by
   decide +kernel
 
-theorem french_symmetric : Formed "stan1290" ∧ pairsType (pairs "stan1290") = .symmetric := by
+theorem french_symmetric : Formed .french ∧ pairsType (pairs .french) = .symmetric := by
   decide +kernel
 
-theorem russian_symmetric : Formed "russ1263" ∧ pairsType (pairs "russ1263") = .symmetric := by
+theorem russian_symmetric : Formed .russian ∧ pairsType (pairs .russian) = .symmetric := by
   decide +kernel
 
 /-! ### Finiteness asymmetry: Finnish, Japanese, Maori, Hixkaryana -/
 
 theorem finnish_negVerb :
-    Finnish.Negation.ending.cells = Agreement.Bundle.personNumberCells ∧ Formed "finn1318" ∧
-    (∀ p ∈ pairs "finn1318", p.negative = p.markerForms ++ p.affirmative.reverse) ∧
-    pairsType (pairs "finn1318") = .asymmetric := by
+    Finnish.Negation.ending.cells = Agreement.Bundle.personNumberCells ∧ Formed .finnish ∧
+    (∀ p ∈ pairs .finnish, p.negative = p.markerForms ++ p.affirmative.reverse) ∧
+    pairsType (pairs .finnish) = .asymmetric := by
   decide +kernel
 
 theorem japanese_negative_adjectival :
-    Formed "nucl1643" ∧ ∀ p ∈ pairs "nucl1643", p.marker = Japanese.Negation.na →
+    Formed .japanese ∧ ∀ p ∈ pairs .japanese, p.marker = Japanese.Negation.na →
       ∃ e ∈ Japanese.Negation.adjectivalEndings.map (toForm ·.form),
         p.negative = p.affirmative.take 1 ++ p.markerForms ++ [e] ∧
           ∀ m ∈ p.affirmative.drop 1,
@@ -320,16 +314,16 @@ theorem japanese_negative_adjectival :
   decide +kernel
 
 theorem japanese_asymmetric :
-    (∃ p ∈ pairs "nucl1643", p.marker = Japanese.Negation.en ∧ Adds p) ∧
-    ¬ ParadigmAsymmetric (pairs "nucl1643") ∧ pairsType (pairs "nucl1643") = .asymmetric := by
+    (∃ p ∈ pairs .japanese, p.marker = Japanese.Negation.en ∧ Adds p) ∧
+    ¬ ParadigmAsymmetric (pairs .japanese) ∧ pairsType (pairs .japanese) = .asymmetric := by
   decide +kernel
 
-theorem maori_asymmetric : Formed "maor1246" ∧ pairsType (pairs "maor1246") = .asymmetric := by
+theorem maori_asymmetric : Formed .maori ∧ pairsType (pairs .maori) = .asymmetric := by
   decide +kernel
 
 theorem hixkaryana_asymmetric :
-    Formed "hixk1239" ∧ (∀ p ∈ pairs "hixk1239", Adds p) ∧
-      pairsType (pairs "hixk1239") = .asymmetric := by
+    Formed .hixkaryána ∧ (∀ p ∈ pairs .hixkaryána, Adds p) ∧
+      pairsType (pairs .hixkaryána) = .asymmetric := by
   decide +kernel
 
 /-! ### Mixed languages: Mandarin and Turkish -/
@@ -347,24 +341,24 @@ theorem mandarin_both :
   decide +kernel
 
 theorem turkish_both :
-    Formed "nucl1301" ∧ (∀ p ∈ pairs "nucl1301", IsSymmetric p ↔ toForm "ir" ∉ p.affirmative) ∧
-    ¬ ParadigmAsymmetric (pairs "nucl1301") ∧ pairsType (pairs "nucl1301") = .both := by
+    Formed .turkish ∧ (∀ p ∈ pairs .turkish, IsSymmetric p ↔ toForm "ir" ∉ p.affirmative) ∧
+    ¬ ParadigmAsymmetric (pairs .turkish) ∧ pairsType (pairs .turkish) = .both := by
   decide +kernel
 
 /-! ### Paradigmatic neutralization: Burmese and English -/
 
 theorem burmese_neutralizes :
-    Formed "nucl1310" ∧ Neutralizes (pairs "nucl1310") ∧
-      pairsType (pairs "nucl1310") = .asymmetric := by
+    Formed .burmese ∧ Neutralizes (pairs .burmese) ∧
+      pairsType (pairs .burmese) = .asymmetric := by
   decide +kernel
 
 theorem english_both :
-    Formed "stan1293" ∧ (∀ p ∈ pairs "stan1293", ¬ IsSymmetric p → Adds p) ∧
-    Neutralizes (pairs "stan1293") ∧
-    pairsType (pairs "stan1293") = .both := by
-  have h : Formed "stan1293" ∧ (∀ p ∈ pairs "stan1293", ¬ IsSymmetric p → Adds p) ∧
-      Neutralizes (pairs "stan1293") ∧
-      ∃ c ∈ pairs "stan1293", IsSymmetricIn (pairs "stan1293") c := by
+    Formed .english ∧ (∀ p ∈ pairs .english, ¬ IsSymmetric p → Adds p) ∧
+    Neutralizes (pairs .english) ∧
+    pairsType (pairs .english) = .both := by
+  have h : Formed .english ∧ (∀ p ∈ pairs .english, ¬ IsSymmetric p → Adds p) ∧
+      Neutralizes (pairs .english) ∧
+      ∃ c ∈ pairs .english, IsSymmetricIn (pairs .english) c := by
     decide +kernel
   exact ⟨h.1, h.2.1, h.2.2.1, (languageType_eq_both_iff ..).2 ⟨h.2.2.2, .inr (.inl h.2.2.1)⟩⟩
 

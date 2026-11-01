@@ -8,6 +8,7 @@ public import Linglib.Fragments.Japanese.Conditionals
 public import Linglib.Fragments.Mandarin.Conditionals
 public import Linglib.Data.Examples.Mizuno2024
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Mizuno (2024): Strategies for Anderson Conditionals
@@ -355,11 +356,8 @@ instance (κ : Counterfactuality) : ∀ c m, Decidable (Felicitous κ c m)
 /-- English X-marking allows the unlikeliness reading of (8), while Japanese *-ta*
 ([ogihara-2014], [mizuno-kaufmann-2019]) and Mandarin *le* (§4.2) signal strong
 counterfactuality. -/
-def counterfactuality : Glottocode → Option Counterfactuality
-  | "stan1293" => some .weak
-  | "nucl1643" => some .strong
-  | "mand1415" => some .strong
-  | _ => none
+def counterfactuality (l : Glottocode) : Option Counterfactuality :=
+  List.lookup l [(.english, .weak), (.japanese, .strong), (.mandarinChinese, .strong)]
 
 /-- The row's construction. -/
 def constructionOf (e : Datum) : Option Construction :=
@@ -389,11 +387,10 @@ conditionals throughout, which Japanese and Mandarin reject. -/
 
 /-- The X-marking exponents of English and Japanese are the fragments', and that of Mandarin is
 *le*, study-local since it rests on one consultant (fn. 15). -/
-def xExponent : Glottocode → Option XMarkingExponent
-  | "stan1293" => English.Conditionals.xMarking
-  | "nucl1643" => Japanese.Conditionals.xMarking
-  | "mand1415" => some ⟨"le", [.perfective]⟩
-  | _ => none
+def xExponent (l : Glottocode) : Option XMarkingExponent :=
+  (List.lookup l [(.english, English.Conditionals.xMarking),
+    (.japanese, Japanese.Conditionals.xMarking),
+    (.mandarinChinese, some ⟨"le", [.perfective]⟩)]).join
 
 -- (3)
 theorem xExponent_isSome : (∀ e ∈ Examples.all, (xExponent e.language).isSome) ∧
@@ -424,11 +421,9 @@ theorem felicitous_party_iff {A : Type*} {K : Commitment.Table A Party}
 
 /-- The rows of each sampled language are headed by English *if*, by Japanese *-(e)ba*, to which
 the paper restricts its attention (fn. 8), or by Mandarin *rúguǒ*. -/
-def markerOf : Glottocode → Option Conditional.Marker
-  | "stan1293" => some English.Conditionals.if_
-  | "nucl1643" => some Japanese.Conditionals.eba
-  | "mand1415" => some Mandarin.Conditionals.ruguo
-  | _ => none
+def markerOf (l : Glottocode) : Option Conditional.Marker :=
+  List.lookup l [(.english, English.Conditionals.if_), (.japanese, Japanese.Conditionals.eba),
+    (.mandarinChinese, Mandarin.Conditionals.ruguo)]
 
 theorem rows_marker_hypothetical :
     ∀ e ∈ Examples.all, ∀ m ∈ markerOf e.language, .hypothetical ∈ m.readings.fst := by

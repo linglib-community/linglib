@@ -14,6 +14,7 @@ public import Linglib.Fragments.Kashaya.Evidentiality
 public import Linglib.Fragments.WestGreenlandic.Evidentiality
 public import Linglib.Data.Examples.Aikhenvald2004
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Aikhenvald (2004): Evidentiality
@@ -272,16 +273,16 @@ theorem examples_source_mem_cell :
   decide
 
 /-- The terms illustrated by the examples from a language. -/
-def illustrated (lang : String) : Finset Term :=
+def illustrated (lang : Glottocode) : Finset Term :=
   ((Examples.all.filter (·.language = lang)).filterMap (·.parse? "term" termNames)).toFinset
 
-theorem tariana_illustration : illustrated "tari1256" = Kind.D1.terms := by
+theorem tariana_illustration : illustrated .tariana = Kind.D1.terms := by
   decide
 
-theorem wanka_illustration : illustrated "jauj1238" = Kind.B1.terms := by
+theorem wanka_illustration : illustrated .jaujaWancaQuechua = Kind.B1.terms := by
   decide
 
-theorem turkish_illustration : illustrated "nucl1301" = Kind.A2.terms := by
+theorem turkish_illustration : illustrated .turkish = Kind.A2.terms := by
   decide
 
 end Aikhenvald2004

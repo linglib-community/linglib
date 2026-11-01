@@ -9,6 +9,7 @@ public import Studies.Deal2024
 public import Studies.CoonKeine2021
 public import Linglib.Data.Examples.AdamsonZompi2025
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Polite pronouns and the person-case constraint
@@ -189,12 +190,11 @@ open Examples
 /-- The dative and accusative pronouns a row's features name, by digit for the ordinary persons
 and by name for the polite pronouns, per language. -/
 def pair? (e : Datum) : Option (PersonalPronoun × PersonalPronoun) := do
-  let table ← match e.language with
-    | "ital1282" => some [("1", io), ("2", tu), ("3", lui), ("LEI", lei_formal)]
-    | "stan1288" => some [("3", Spanish.Pronouns.el), ("USTED", Spanish.Pronouns.usted)]
-    | "stan1295" => some [("2", German.Pronouns.du), ("3", German.Pronouns.er),
-        ("3PL", German.Pronouns.sie_pl), ("SIE", German.Pronouns.sie_formal)]
-    | _ => none
+  let table ← e.byLanguage
+    [(.italian, [("1", io), ("2", tu), ("3", lui), ("LEI", lei_formal)]),
+      (.spanish, [("3", Spanish.Pronouns.el), ("USTED", Spanish.Pronouns.usted)]),
+      (.german, [("2", German.Pronouns.du), ("3", German.Pronouns.er),
+        ("3PL", German.Pronouns.sie_pl), ("SIE", German.Pronouns.sie_formal)])]
   pure (← e.parse? "dative" table, ← e.parse? "accusative" table)
 
 /-- The band the interpretable valuation predicts: accepted where both grammars license the

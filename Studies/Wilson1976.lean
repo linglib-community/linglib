@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Wilson1976
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Wilson (1976): The o/a distinction in Hawaiian possessives
@@ -121,11 +122,11 @@ def possessed (d : Datum) : Option String :=
 
 /-- The Hawaiian examples. -/
 def hawaiianData : List Datum :=
-  Examples.all.filter (·.language = "hawa1245")
+  Examples.all.filter (·.language = .hawaiian)
 
 /-- The Fijian examples. -/
 def fijianData : List Datum :=
-  Examples.all.filter (·.language = "fiji1243")
+  Examples.all.filter (·.language = .fijian)
 
 /-! ### The relation-based account -/
 

@@ -8,6 +8,7 @@ public import Linglib.Fragments.Tigre.Phonology
 public import Linglib.Data.Examples.FaustLampitelli2026
 public import Linglib.Phonology.StrictCV.Basic
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre
@@ -505,7 +506,7 @@ structure Row where
   forms : List (List Char)
   predicted : Bool
 
-def langTable : List (String × Lang) := [("tigr1271", .tigrinya), ("tigr1270", .tigre)]
+def langTable : List (Glottocode × Lang) := [(.tigrinya, .tigrinya), (.tigre, .tigre)]
 
 /-- The Tigrinya roots of the rows, in the paper's transcription. -/
 def tigrinyaRoots : List (String × ConsonantalRoot String) :=
@@ -590,7 +591,7 @@ def transcribe (s : String) : List Char :=
   (s.toList.filter (· ≠ '-')).map fun c ↦ if c = 'β' then 'b' else c
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let lang ← List.lookup ex.language langTable
+  let lang ← ex.byLanguage langTable
   let root ← ex.parse? "root" (match lang with | .tigrinya => tigrinyaRoots | .tigre => tigreRoots)
   let template ← ex.parse? "template" templateTable
   pure ⟨lang, root, template, ex.parse? "suffix" suffixTable,

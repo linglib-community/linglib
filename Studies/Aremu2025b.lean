@@ -7,6 +7,7 @@ public import Linglib.Fragments.Yoruba.Pronouns
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Syntax.Reflex
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Aremu (2025): the syntax of focus in Ìkálẹ̀
@@ -155,7 +156,7 @@ instance (a : Answer) (r : Datum) : Decidable (Accepts a r) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The Ìkálẹ̀ rows. -/
-def ikaleRows : List Datum := Examples.all.filter (·.language = "ikal1241")
+def ikaleRows : List Datum := Examples.all.filter (·.language = .ikale)
 
 /-- Every Ìkálẹ̀ row records an answer, which the model accepts exactly when the chapter judges
 the row felicitous. -/

@@ -17,6 +17,7 @@ public import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
 public import Linglib.Fragments.Slavic.Czech.Particles
 public import Linglib.Data.Examples.Simik2024
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Šimík (2024): Polar question semantics and bias: Lessons from Slavic/Czech
@@ -226,17 +227,17 @@ inductive Language
   deriving DecidableEq, Repr, Fintype
 
 /-- Glottocode, the key of the example rows. -/
-def Language.glottocode : Language → String
-  | .czech => "czec1258"
-  | .slovak => "slov1269"
-  | .upperSorbian => "uppe1395"
-  | .slovenian => "slov1268"
-  | .ukrainian => "ukra1253"
-  | .polish => "poli1260"
-  | .serbian => "serb1264"
-  | .macedonian => "mace1250"
-  | .bulgarian => "bulg1262"
-  | .russian => "russ1263"
+def Language.glottocode : Language → Glottocode
+  | .czech => .czech
+  | .slovak => .slovak
+  | .upperSorbian => .upperSorbian
+  | .slovenian => .slovenian
+  | .ukrainian => .ukrainian
+  | .polish => .polish
+  | .serbian => .serbianStandard
+  | .macedonian => .macedonian
+  | .bulgarian => .bulgarian
+  | .russian => .russian
 
 /-- The formal means of marking a polar question. -/
 inductive Strategy

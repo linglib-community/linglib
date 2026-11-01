@@ -8,6 +8,7 @@ public import Linglib.Morphology.DistributedMorphology.Gender
 public import Studies.TaraldsenEtAl2018
 public import Mathlib.Data.Fintype.Inv
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Carstens (2026): The grammar of gender
@@ -220,7 +221,7 @@ def shonaNominal (n : Shona.Noun) : Nominal Shona.Gender := .stack (shonaCore n.
 /-! ### The rows -/
 
 /-- The rows of one language. -/
-def rows (glottocode : String) : List Datum :=
+def rows (glottocode : Glottocode) : List Datum :=
   Examples.all.filter (·.language = glottocode)
 
 section Rows
@@ -248,19 +249,19 @@ end Rows
 
 -- (6), (9), (37), (49), (55), (81), (91), (111)
 theorem xhosa_rows :
-    ∀ e ∈ rows "xhos1239", ∃ p ∈ conjuncts Xhosa.Nouns.all (·.form) xhosaNominal e,
+    ∀ e ∈ rows .xhosa, ∃ p ∈ conjuncts Xhosa.Nouns.all (·.form) xhosaNominal e,
       Predicts Xhosa.Gender.status Xhosa.Gender.pluralClass Bantu.NounClass.ofNumeral? p e := by
   decide +kernel
 
 -- (58), (68)
 theorem shona_rows :
-    ∀ e ∈ rows "shon1251", ∃ p ∈ conjuncts Shona.Nouns.all (·.form) shonaNominal e,
+    ∀ e ∈ rows .shona, ∃ p ∈ conjuncts Shona.Nouns.all (·.form) shonaNominal e,
       Predicts Shona.Gender.status Shona.Gender.pluralClass Bantu.NounClass.ofNumeral? p e := by
   decide +kernel
 
 -- Table 13, (52a–b)
 theorem table13 :
-    ∀ e ∈ rows "xhos1239", ∀ m ∈ e.nat? "matching", ∀ d ∈ e.nat? "default",
+    ∀ e ∈ rows .xhosa, ∀ m ∈ e.nat? "matching", ∀ d ∈ e.nat? "default",
       ∀ p ∈ conjuncts Xhosa.Nouns.all (·.form) xhosaNominal e,
         (d ≤ m ↔ interpretability (Xhosa.Gender.status p.1.visible) = .interpretable) := by
   decide +kernel

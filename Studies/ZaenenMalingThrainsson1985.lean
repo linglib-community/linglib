@@ -8,6 +8,7 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Syntax.Case.Valuation
 public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Zaenen, Maling and Thráinsson (1985): Case and grammatical functions
@@ -430,10 +431,10 @@ def ofTestRow {C : Type} (verbs : List (String × List (Arg C))) (ex : Datum) :
   pure (t, v, ρ)
 
 theorem ofRow_isSome : ∀ ex ∈ Examples.all,
-    (ex.language = "icel1247" →
+    (ex.language = .icelandic →
       ((ex.feature? "cases").isSome → (ofCasesRow icelandicVerbs icelandicCases ex).isSome) ∧
       ((ex.feature? "tested").isSome → (ofTestRow icelandicVerbs ex).isSome)) ∧
-    (ex.language = "stan1295" →
+    (ex.language = .german →
       ((ex.feature? "cases").isSome → (ofCasesRow germanVerbs germanCases ex).isSome) ∧
       ((ex.feature? "tested").isSome → (ofTestRow germanVerbs ex).isSome)) := by
   decide

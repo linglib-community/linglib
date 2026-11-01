@@ -3,6 +3,7 @@ module
 public import Studies.Chierchia1998
 public import Linglib.Data.Examples.Longobardi2001
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Longobardi (2001): How Comparative Is Semantics?
@@ -213,11 +214,7 @@ theorem species_iff (dp : DPParameter) :
 
 /-- The parameter of a row's language. -/
 def paramOf (e : Datum) : Option DPParameter :=
-  match e.language with
-  | "ital1282" => some romance
-  | "stan1293" => some english
-  | "mode1248" => some greek
-  | _ => none
+  e.byLanguage [(.italian, romance), (.english, english), (.modernGreek, greek)]
 
 /-- The environment a row records. -/
 def environmentOf (e : Datum) : Option Environment :=
@@ -249,7 +246,7 @@ theorem readings_predicted :
 /-- (5d), (34) to (36): Italian definites are generic in every environment, kind-level and
 episodic included. -/
 theorem definite_generic :
-    ∀ e ∈ Examples.all, e.language = "ital1282" → e.feature? "nominal" = some "definite" →
+    ∀ e ∈ Examples.all, e.language = .italian → e.feature? "nominal" = some "definite" →
       ∀ _ ∈ environmentOf e, Available e "Gen" := by
   decide
 

@@ -5,6 +5,7 @@ public import Linglib.Fragments.Georgian.Agreement
 public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Data.Examples.Marantz1991
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Marantz (1991): Case and Licensing
@@ -244,8 +245,8 @@ theorem unergative_subjectCases :
 
 /-- The setting of an example, by its language and the inflection the paper notes. -/
 def setting? (e : Datum) : Option Setting :=
-  [(("nucl1302", some "I"), georgian .present), (("nucl1302", some "II"), georgian .aorist),
-    (("hind1269", some "perfect"), hindi .perfective), (("basq1248", none), basque)].lookup
+  [((.georgian, some "I"), georgian .present), ((.georgian, some "II"), georgian .aorist),
+    ((.hindi, some "perfect"), hindi .perfective), ((.basque, none), basque)].lookup
     (e.language, e.feature? "inflection")
 
 /-- The clause of an example. -/

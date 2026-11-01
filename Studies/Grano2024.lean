@@ -10,6 +10,7 @@ public import Linglib.Fragments.Romance.Italian.Verbs
 public import Linglib.Fragments.Romance.Spanish.Verbs
 public import Linglib.Fragments.Romanian.Verbs
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Grano (2024): Intention Reports and Eventuality Abstraction in a Theory of Mood Choice
@@ -257,34 +258,34 @@ def Complement.coding? : Complement → Option Clause.ComplementType
   | _ => none
 
 /-- The fragment verb for a language and a class of Table 1. -/
-def verbOf : Glottocode → Class → Option Verb
-  | "stan1288", .want => some Spanish.Verbs.querer
-  | "stan1288", .hope => some Spanish.Verbs.esperar
-  | "stan1288", .causative => some Spanish.Verbs.hacer
-  | "port1283", .want => some Portuguese.Verbs.querer
-  | "port1283", .hope => some Portuguese.Verbs.esperar
-  | "port1283", .intend => some Portuguese.Verbs.pretender
-  | "port1283", .causative => some Portuguese.Verbs.fazer
-  | "ital1282", .want => some Italian.Verbs.volere.toVerb
-  | "ital1282", .hope => some Italian.Verbs.sperare.toVerb
-  | "ital1282", .intend => some Italian.Verbs.intendere.toVerb
-  | "ital1282", .causative => some Italian.Verbs.fare.toVerb
-  | "mode1248", .want => some Greek.StandardModern.Verbs.thelo
-  | "mode1248", .hope => some Greek.StandardModern.Verbs.elpizo
-  | "mode1248", .intend => some Greek.StandardModern.Verbs.protitheme
-  | "mode1248", .causative => some Greek.StandardModern.Verbs.vazo
-  | "roma1327", .want => some Romanian.Verbs.a_vrea
-  | "roma1327", .hope => some Romanian.Verbs.a_spera
-  | "roma1327", .intend => some Romanian.Verbs.a_intentiona
-  | "roma1327", .causative => some Romanian.Verbs.a_face
-  | _, _ => none
+def verbOf (l : Glottocode) (c : Class) : Option Verb :=
+  List.lookup (l, c)
+    [((.spanish, .want), Spanish.Verbs.querer),
+      ((.spanish, .hope), Spanish.Verbs.esperar),
+      ((.spanish, .causative), Spanish.Verbs.hacer),
+      ((.portuguese, .want), Portuguese.Verbs.querer),
+      ((.portuguese, .hope), Portuguese.Verbs.esperar),
+      ((.portuguese, .intend), Portuguese.Verbs.pretender),
+      ((.portuguese, .causative), Portuguese.Verbs.fazer),
+      ((.italian, .want), Italian.Verbs.volere.toVerb),
+      ((.italian, .hope), Italian.Verbs.sperare.toVerb),
+      ((.italian, .intend), Italian.Verbs.intendere.toVerb),
+      ((.italian, .causative), Italian.Verbs.fare.toVerb),
+      ((.modernGreek, .want), Greek.StandardModern.Verbs.thelo),
+      ((.modernGreek, .hope), Greek.StandardModern.Verbs.elpizo),
+      ((.modernGreek, .intend), Greek.StandardModern.Verbs.protitheme),
+      ((.modernGreek, .causative), Greek.StandardModern.Verbs.vazo),
+      ((.romanian, .want), Romanian.Verbs.a_vrea),
+      ((.romanian, .hope), Romanian.Verbs.a_spera),
+      ((.romanian, .intend), Romanian.Verbs.a_intentiona),
+      ((.romanian, .causative), Romanian.Verbs.a_face)]
 
 /-- The cells of Table 1 with a verb entry, and the causatives of section 2.2. Spanish 'intend' is
 the nominal *tener la intención*, and the French and English entries do not record finite mood. -/
 def cells : List (Glottocode × Class) :=
-  (["port1283", "ital1282", "mode1248", "roma1327"].flatMap fun l ↦
+  ([.portuguese, .italian, .modernGreek, .romanian].flatMap fun l ↦
     [(l, .want), (l, .hope), (l, .intend), (l, .causative)]) ++
-  [("stan1288", .want), ("stan1288", .hope), ("stan1288", .causative)]
+  [(.spanish, .want), (.spanish, .hope), (.spanish, .causative)]
 
 theorem verbOf_isSome : ∀ c ∈ cells, (verbOf c.1 c.2).isSome := by decide
 

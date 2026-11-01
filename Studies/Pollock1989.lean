@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Pollock1989
 public import Mathlib.Order.Basic
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Pollock (1989): Verb Movement, Universal Grammar, and the Structure of IP
@@ -168,10 +169,7 @@ theorem precedes_adverb_floatingQ (h : Height) :
 
 /-- A row's clause type, verb, diagnostic, and attested order, read from its features. -/
 def interpret (r : Datum) : Option (Clause × Verb × Diagnostic × Bool) := do
-  let language ← match r.language with
-    | "stan1290" => some Language.french
-    | "stan1293" => some Language.english
-    | _ => none
+  let language ← r.byLanguage [(.french, Language.french), (.english, Language.english)]
   let finite ← match r.feature? "finite" with
     | some "yes" => some true
     | some "no" => some false

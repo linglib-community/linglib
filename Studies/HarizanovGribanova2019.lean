@@ -7,6 +7,7 @@ public import Mathlib.Algebra.Free
 public import Mathlib.Algebra.FreeMonoid.Basic
 public import Mathlib.Data.List.Pairwise
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Harizanov and Gribanova (2019): Whither head movement?
@@ -376,12 +377,9 @@ theorem skipping :
 /-- `spine? r` is the spine of the clause of `r`, a French or Russian finite clause, a Danish
 embedded clause, or a Danish root clause, in which V has moved. -/
 def spine? (r : Datum) : Option (List (Amalgam ClausalHead)) :=
-  match r.language, r.feature? "clause" with
-  | "stan1290", none => some french
-  | "russ1263", none => some russian
-  | "dani1285", some "embedded" => some danish
-  | "dani1285", some "root" => some (moveToRoot danish V)
-  | _, _ => none
+  List.lookup (r.language, r.feature? "clause")
+    [((.french, none), french), ((.russian, none), russian),
+      ((.danish, some "embedded"), danish), ((.danish, some "root"), moveToRoot danish V)]
 
 /-- The canonical tests for verb movement place a finite verb before a low adverb, sentential
 negation or a floating quantifier exactly when it is pronounced in T or above. The paper's

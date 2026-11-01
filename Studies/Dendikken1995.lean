@@ -5,6 +5,7 @@ public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.Norwegian.Verbs
 public import Linglib.Data.Examples.Dendikken1995
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # den Dikken (1995): Particles
@@ -310,12 +311,8 @@ theorem norwegian_incorporates : Language.incorporates .norwegian = {Voice.passi
 /-- The language of a row; both written standards of Norwegian, Bokmål and Nynorsk, count as
 Norwegian. -/
 def languageOf (r : Datum) : Option Language :=
-  match r.language with
-  | "stan1293" => some .english
-  | "norw1259" | "norw1262" => some .norwegian
-  | "swed1254" => some .swedish
-  | "dani1285" => some .danish
-  | _ => none
+  r.byLanguage [(.english, .english), (.norwegianBokmål, .norwegian),
+    (.norwegianNynorsk, .norwegian), (.swedish, .swedish), (.danish, .danish)]
 
 /-- The particle's complement as a row's `construction` and `predicate` features record it. -/
 def complementOf (r : Datum) : Option Complement :=
@@ -348,7 +345,7 @@ instance (r : Datum) : Decidable (Modified r) := inferInstanceAs (Decidable (_ =
 /-- Every English and Norwegian placement row, including (70), (73) and (134), is acceptable exactly
 when its placement is derivable, Danish (137b) aside. -/
 theorem rows_derivable :
-    ∀ r ∈ Examples.all, r.feature? "diagnostic" = none → r.language ≠ "dani1285" →
+    ∀ r ∈ Examples.all, r.feature? "diagnostic" = none → r.language ≠ .danish →
       ∀ k ∈ complementOf r, ∀ p ∈ placementOf r, ∀ L ∈ languageOf r,
         (r.judgment = .acceptable ↔
           Derivable k (voiceOf r ∈ L.incorporates) (Weak r) (Modified r) p) := by

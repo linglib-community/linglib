@@ -7,6 +7,7 @@ public import Linglib.Fragments.English.Tense
 public import Linglib.Fragments.German.Tense
 public import Linglib.Data.Examples.Kratzer1998
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Kratzer (1998): More Structural Analogies between Pronouns and Tenses
@@ -322,7 +323,7 @@ theorem backwardShifted :
   decide
 
 /-- The language codes of the example rows name these varieties. -/
-def varieties : List (String × Variety) := [("stan1293", english), ("stan1295", standardGerman)]
+def varieties : List (Glottocode × Variety) := [(.english, english), (.german, standardGerman)]
 
 /-- The rows name these tense forms. -/
 def forms : List (String × Tense.Form) :=
@@ -331,7 +332,7 @@ def forms : List (String × Tense.Form) :=
 /-- In (40) a form is acceptable out of the blue iff it can describe a past event there. -/
 theorem rows_outOfTheBlue :
     ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
-      ∃ v ∈ varieties.lookup r.language, ∃ f ∈ r.parse? "form" forms,
+      ∃ v ∈ r.byLanguage varieties, ∃ f ∈ r.parse? "form" forms,
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 

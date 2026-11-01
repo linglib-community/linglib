@@ -14,6 +14,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Mitrović and Sauerland (2016): Two Conjunctions Are Better Than One
@@ -171,7 +172,7 @@ theorem mem_attested_iff {h : Finset Head} :
 (27), whose J is adversative, Hungarian (28) and Avar (29). -/
 theorem languages_pronounced_eq_univ :
     (Examples.all.filter (pronounced · = Finset.univ)).map (·.language) =
-      ["mace1250", "sout1528", "hung1274", "avar1256"] := by
+      [.macedonian, .serbianCroatianBosnian, .hungarian, .avar] := by
   decide
 
 /-! ### Other uses, §3 -/

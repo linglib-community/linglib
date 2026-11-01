@@ -7,6 +7,7 @@ public import Linglib.Fragments.Turkish.Phonology
 public import Studies.Yang2016
 public import Linglib.Data.Examples.Belth2026
 public import Linglib.Morphology.Morph
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Belth (2026): A Learning-Based Account of Phonological Tiers
@@ -428,7 +429,7 @@ def latinUR (e : Datum) : List LatSeg :=
 def latinSR (e : Datum) : List LatSeg := latinSegments e.primaryText
 
 /-- The Latin rows, (53). -/
-def latinRows : List Datum := Examples.all.filter (·.language = "lati1261")
+def latinRows : List Datum := Examples.all.filter (·.language = .latin)
 
 /-- Rule (54) derives every form of (53) but *lunaris*, including dissimilation (53b) and its
 blocking by `r` (53c) or a non-coronal (53d). -/

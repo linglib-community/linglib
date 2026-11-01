@@ -12,7 +12,7 @@ struct plus four record-only keys (see Schema below).
 
 ```bash
 python3 scripts/gen_examples.py <AuthorYear>   # generate one paper's module
-python3 scripts/gen_examples.py --all          # regenerate every paper
+python3 scripts/gen_examples.py --all          # regenerate every paper and Languages.lean
 python3 scripts/gen_examples.py --check        # verify modules match JSON (CI)
 python3 scripts/gen_examples.py --fmt <AuthorYear>  # rewrite one JSON in canonical format
 python3 scripts/check_examples.py              # study literals vs rows, bibkeys (CI)
@@ -73,10 +73,17 @@ Printed results (ratings, rates, statistics) go to `Data/Experiments/`, not
 ## Languages
 
 `languages.csv` is the language table of the data: one Glottolog row (name, level, macroarea,
-coordinates) for each Glottocode the examples use, from Glottolog 5.3. The generator rejects a
-`language` not listed there. A new language is added by writing its Glottocode in the JSON and
-running `scripts/export_examples_cldf.py --sync-languages`, which fails on a code Glottolog does
-not have. Use the code of the variety the source names: a dialect Glottolog lists under its own
+coordinates) for each Glottocode the examples use, from Glottolog 5.3, and for each language
+only a study names, added by hand from the same release. The generator rejects a `language` not
+listed there. A new language is added by writing its Glottocode in the JSON and running
+`scripts/export_examples_cldf.py --sync-languages`, which keeps the rows already listed and fails
+on a code Glottolog does not have.
+
+`gen_examples.py --all` also writes `Languages.lean`, one `Glottocode` constant per row named by
+its Glottolog name in lowerCamelCase (`Glottocode.english`, `Glottocode.mandarinChinese`). A
+study names the languages of its sample by these constants, never by a code string, and reads a
+row through them with `Datum.byLanguage [(.english, …), (.japanese, …)]`; a theorem over the rows
+then states that every row is read, since a language missing from the table reads as `none`. Use the code of the variety the source names: a dialect Glottolog lists under its own
 code, otherwise the language; a family code only for a claim about the family.
 
 ## CLDF export

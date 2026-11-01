@@ -5,6 +5,7 @@ public import Linglib.Semantics.Plurality.FeatureAction
 public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Data.Examples.Toosarvandani2023
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Toosarvandani (2023): The Interpretation and Grammatical Representation of Animacy
@@ -277,7 +278,7 @@ def scenario? (e : Datum) : Option (Scenario Pronoun) := do
   return ⟨← pronoun? e "subject", ← pronoun? e "object"⟩
 
 /-- The Yalálag rows. -/
-def yalalag : List Datum := Examples.all.filter (·.language = "yala1267")
+def yalalag : List Datum := Examples.all.filter (·.language = .yalálagZapotec)
 
 /-- Every Yalálag example is grammatical exactly when its head Agrees with both pronouns, so
 the object clitic is blocked in the upstream scenarios and only there. -/

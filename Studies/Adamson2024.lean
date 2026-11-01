@@ -13,6 +13,7 @@ public import Linglib.Fragments.CoastalMarind.Gender
 public import Linglib.Semantics.Possession.Relationalizer
 public import Linglib.Data.Examples.Adamson2024
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Gender assignment is local
@@ -182,7 +183,7 @@ def possession : List (String × List Head) :=
 
 /-- The analysis predicts the class of every attested body-part and kinship phrase from how its
 noun is possessed, (39), (40), (44), (45), (48) and (51). -/
-theorem rows_class (r : Root) : ∀ e ∈ Examples.all, e.language = "teop1238" →
+theorem rows_class (r : Root) : ∀ e ∈ Examples.all, e.language = .teop →
     ∀ s ∈ e.parse? "possession" possession,
       ∀ c ∈ e.parse? "gender" [("I", NounClass.a), ("II", .o)],
         classOf r s = c := by

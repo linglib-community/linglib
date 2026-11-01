@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Baker1985
 public import Linglib.Morphology.Word.Tree
 public import Linglib.Syntax.Voice.Derivation
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Baker 1985: the Mirror Principle
@@ -327,11 +328,9 @@ def initialOf (r : Datum) : Stage :=
 /-- In a row's language settings, Chamorro, Bemba, Huichol and Chi-Mwi:ni have the Chamorro
 causative and Quechua its own, and Kinyarwanda's passive reaches a second object. -/
 def grammar? (r : Datum) : Option Grammar :=
-  match r.language with
-  | "cham1312" | "bemb1257" | "huic1243" | "chim1312" => some ⟨.chamorro, false⟩
-  | "quec1387" => some ⟨.quechua, false⟩
-  | "kiny1244" => some ⟨.chamorro, true⟩
-  | _ => none
+  r.byLanguage [(.chamorro, ⟨.chamorro, false⟩), (.bembaZambia, ⟨.chamorro, false⟩),
+    (.huichol, ⟨.chamorro, false⟩), (.chimwiini, ⟨.chamorro, false⟩),
+    (.quechuan, ⟨.quechua, false⟩), (.kinyarwanda, ⟨.chamorro, true⟩)]
 
 /-- The word a row's derivation builds linearizes to its process-marking morphs around the root
 in the row's order. -/

@@ -6,6 +6,7 @@ public import Linglib.Fragments.Basque.Agreement
 public import Linglib.Fragments.Georgian.Agreement
 public import Linglib.Data.Examples.BejarRezac2009
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Béjar and Rezac 2009: Cyclic Agree
@@ -258,8 +259,8 @@ def person? (e : Datum) (key : String) : Option Person :=
 /-- `config? e` is the agreement system of an example's language with the scenario of its external
 over its internal argument. -/
 def config? (e : Datum) : Option (AgreementSystem × Scenario Person) := do
-  let sys ← [("basq1248", basque), ("nucl1302", basque), ("otta1242", nishnaabemwin),
-    ("kash1277", kashmiri)].lookup e.language
+  let sys ← e.byLanguage [(.basque, basque), (.georgian, basque), (.ottawa, nishnaabemwin),
+    (.kashmiri, kashmiri)]
   return (sys, ⟨← person? e "ea", ← person? e "ia"⟩)
 
 /-- The controller the paper reports for an example in (2), (3), (17) and (18) is the one cyclic
@@ -284,7 +285,7 @@ def slotPrefix? (e : Datum) : Option Morphology.Morph :=
   e.surfaceTokens.getLast?.map fun w ↦ .pref (String.ofList (w.toList.takeWhile (· ≠ '-')))
 
 -- (2), (2d)
-theorem basque_prefix_rows : ∀ e ∈ Examples.all, e.language = "basq1248" →
+theorem basque_prefix_rows : ∀ e ∈ Examples.all, e.language = .basque →
     ∀ c ∈ config? e, ∀ _ ∈ person? e "controller", ∃ n ∈ [Number.singular, .plural],
       ((match c.1.controller c.2 with
         | .ia => Basque.absolutive
@@ -299,7 +300,7 @@ def georgianSet : Argument → Georgian.AffixSet
   | .ea => .A
 
 -- (18)
-theorem georgian_prefix_rows : ∀ e ∈ Examples.all, e.language = "nucl1302" →
+theorem georgian_prefix_rows : ∀ e ∈ Examples.all, e.language = .georgian →
     ∀ c ∈ config? e,
       ((georgianSet (c.1.controller c.2)).paradigm.realize
           (.personNumber (c.1.value c.2) .singular)).bind (·.head?) = slotPrefix? e := by

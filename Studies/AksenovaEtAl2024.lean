@@ -4,6 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Phonology.Harmony.Basic
 public import Linglib.Phonology.Subregular.Agree
 public import Linglib.Data.Wordlist.AksenovaEtAl2024
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Aksënova, Rawski, Graf & Heinz (2024): The computational power of harmonic forms
@@ -127,9 +128,9 @@ abbrev lokaa : TierStrictlyLocalGrammar 2 (Option LokaaV) := tierGrammar lokaaBa
 
 -- (3)
 theorem lokaa_rows :
-    (∀ f ∈ Wordlist.all, f.languageId = "loka1252" →
+    (∀ f ∈ Wordlist.all, f.languageId = .lokaa →
         read LokaaV.ofChar f.form.toList ∈ lokaa.language) ∧
-      ∀ f ∈ Wordlist.marked, f.languageId = "loka1252" →
+      ∀ f ∈ Wordlist.marked, f.languageId = .lokaa →
         read LokaaV.ofChar f.form.toList ∉ lokaa.language := by
   decide
 
@@ -185,9 +186,9 @@ abbrev kirghiz : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar kirg
 
 -- (5), Figure 34.3
 theorem kirghiz_rows :
-    (∀ f ∈ Wordlist.all, f.languageId = "kirg1245" →
+    (∀ f ∈ Wordlist.all, f.languageId = .kirghiz →
         read TurkicV.ofChar f.form.toList ∈ kirghiz.language) ∧
-      ∀ f ∈ Wordlist.marked, f.languageId = "kirg1245" →
+      ∀ f ∈ Wordlist.marked, f.languageId = .kirghiz →
         read TurkicV.ofChar f.form.toList ∉ kirghiz.language := by
   decide
 
@@ -246,9 +247,9 @@ abbrev buryat : TierStrictlyLocalGrammar 2 (Option BuryatV) := tierGrammar burya
 
 -- (9)
 theorem buryat_rows :
-    (∀ f ∈ Wordlist.all, f.languageId = "russ1264" →
+    (∀ f ∈ Wordlist.all, f.languageId = .russiaBuriat →
         read BuryatV.ofChar f.form.toList ∈ buryat.language) ∧
-      ∀ f ∈ Wordlist.marked, f.languageId = "russ1264" →
+      ∀ f ∈ Wordlist.marked, f.languageId = .russiaBuriat →
         read BuryatV.ofChar f.form.toList ∉ buryat.language := by
   decide
 
@@ -293,9 +294,9 @@ instance : DecidableRel yakutBanned := fun _ _ ↦ by unfold yakutBanned; infer_
 abbrev yakut : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar yakutBanned
 
 theorem yakut_rows :
-    (∀ f ∈ Wordlist.all, f.languageId = "yaku1245" →
+    (∀ f ∈ Wordlist.all, f.languageId = .sakha →
         read TurkicV.ofChar f.form.toList ∈ yakut.language) ∧
-      ∀ f ∈ Wordlist.marked, f.languageId = "yaku1245" →
+      ∀ f ∈ Wordlist.marked, f.languageId = .sakha →
         read TurkicV.ofChar f.form.toList ∉ yakut.language := by
   decide
 
@@ -389,9 +390,9 @@ instance : DecidablePred (· ∈ kikongo) := fun w ↦
 
 -- (16), (18), Figure 34.6
 theorem kikongo_rows :
-    (∀ f ∈ Wordlist.all, f.languageId = "koon1247" →
+    (∀ f ∈ Wordlist.all, f.languageId = .koongoKituba →
         KikongoSeg.parse f.form.toList ∈ kikongo) ∧
-      ∀ f ∈ Wordlist.marked, f.languageId = "koon1247" →
+      ∀ f ∈ Wordlist.marked, f.languageId = .koongoKituba →
         KikongoSeg.parse f.form.toList ∉ kikongo := by
   decide
 

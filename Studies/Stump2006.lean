@@ -14,6 +14,7 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Stump (2006): Heteroclisis and paradigm linkage
@@ -111,7 +112,7 @@ def numberOfForm (f : Form Wordlist.Cell) : Option Number :=
   (f.cell.number : Option UD.Number).bind Number.fromUD
 
 /-- `czForms` are the Czech rows of the forms data, those of Tables 1, 6 and 8. -/
-def czForms : List (Form Wordlist.Cell) := Wordlist.all.filter (·.languageId == "czec1258")
+def czForms : List (Form Wordlist.Cell) := Wordlist.all.filter (·.languageId == .czech)
 
 /-- The Czech nouns of Tables 1, 6 and 8 are POKOJ 'room', PRAMEN 'spring', MOST 'bridge',
 ŽENA 'woman', PŘEDSEDA 'president', FILOSOF 'philosopher', SLUHA 'servant', FILOLOG
@@ -1023,7 +1024,7 @@ def weak (g : SktGender) : Finset SktCell := {σ | strength g σ = .weak}
 
 /-- A Sanskrit row expresses the concept `pid` in the gender `g` at the cell `σ`. -/
 def SktRow (pid : String) (g : SktGender) (σ : SktCell) (f : Form Wordlist.Cell) : Bool :=
-  f.languageId == "sans1269" && f.parameterId == pid && f.cell.gender = ↑g.ud &&
+  f.languageId == .sanskrit && f.parameterId == pid && f.cell.gender = ↑g.ud &&
     caseOfForm f == some σ.1.1 && numberOfForm f == some σ.2.1
 
 /-- `sktRows pid g σ` are the Sanskrit rows expressing the concept `pid` in the gender `g` at the

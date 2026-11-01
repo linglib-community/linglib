@@ -28,6 +28,7 @@ public import Linglib.Fragments.Swahili.Indefinites
 public import Linglib.Fragments.Turkish.Indefinites
 public import Linglib.Fragments.Yakut.Indefinites
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Haspelmath (1997): Indefinite Pronouns
@@ -550,23 +551,12 @@ theorem mo_comparative_with_negation :
 
 /-- The paradigm of a language of the sample, by Glottocode; Latin, Yakut and Kannada have no
 example rows. -/
-def paradigm? : String → Option (List Series)
-  | "stan1293" => some english
-  | "russ1263" => some russian
-  | "latv1249" => some latvian
-  | "stan1295" => some german
-  | "nucl1643" => some japanese
-  | "mand1415" => some mandarin
-  | "nucl1301" => some turkish
-  | "hind1269" => some hindi
-  | "ital1282" => some italian
-  | "finn1318" => some finnish
-  | "kore1280" => some korean
-  | "hung1274" => some hungarian
-  | "nucl1302" => some georgian
-  | "huay1240" => some quechua
-  | "swah1253" => some swahili
-  | _ => none
+def paradigm? (l : Glottocode) : Option (List Series) :=
+  List.lookup l [(.english, english), (.russian, russian), (.latvian, latvian),
+    (.german, german), (.japanese, japanese), (.mandarinChinese, mandarin),
+    (.turkish, turkish), (.hindi, hindi), (.italian, italian), (.finnish, finnish),
+    (.korean, korean), (.hungarian, hungarian), (.georgian, georgian),
+    (.huaylasAncashQuechua, quechua), (.swahili, swahili)]
 
 /-- The functions by the names the example rows give them. -/
 def functionTable : List (String × HaspelmathFunction) :=

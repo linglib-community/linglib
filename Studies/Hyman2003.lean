@@ -6,6 +6,7 @@ public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Studies.Baker1985
 public import Mathlib.Data.List.Sections
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Hyman 2003: suffix ordering in Bantu
@@ -525,10 +526,7 @@ def suffixes? (r : Datum) : Option Candidate := exts? r "suffixes"
 
 /-- A row's grammar. -/
 def grammar? (r : Datum) : Option Grammar :=
-  match r.language with
-  | "nyan1308" => some chichewa
-  | "chim1312" => some chimwiini
-  | _ => none
+  r.byLanguage [(.nyanja, chichewa), (.chimwiini, chimwiini)]
 
 /-- The passive subject a row reports. -/
 def subject? (r : Datum) : Option Baker1985.Arg :=

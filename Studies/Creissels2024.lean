@@ -8,6 +8,7 @@ public import Linglib.Data.Examples.Creissels2024
 public import Linglib.Data.Experiments.Creissels2024
 public import Linglib.Fragments.English.Verbs.Causative
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Creissels (2024): Transitivity, Valency, and Voice
@@ -284,18 +285,18 @@ def paired (key : String) (row : Datum) : Option Datum :=
   | _, _ => none
 
 /-- The S flags of a language's intransitive examples. -/
-def sFlags (language : String) : List Flag :=
+def sFlags (language : Glottocode) : List Flag :=
   (all.filter (·.language = language)).filterMap (·.parse? "S" flagNames)
 
 /-- The A and P flags of a language's transitive example. -/
-def flagging (language : String) : Option Flagging :=
+def flagging (language : Glottocode) : Option Flagging :=
   (all.filter (·.language = language)).findSome? fun r ↦ do
     let a ← r.parse? "A" flagNames
     let p ← r.parse? "P" flagNames
     if h : a ≠ p then some ⟨a, p, h⟩ else none
 
 /-- The types a marker of a language codes across the book's examples. -/
-def coExpressed (language marker : String) : List Kind :=
+def coExpressed (language : Glottocode) (marker : String) : List Kind :=
   (all.filter fun r ↦ r.language = language ∧ r.feature? "marker" = some marker).filterMap
     (·.parse? "alternation" kindNames)
 
@@ -330,11 +331,11 @@ theorem mandinka_roles :
 
 -- (23), (24), (22)
 theorem alignment_rows :
-    (∃ t ∈ flagging "russ1263",
-      sFlags "russ1263" ≠ [] ∧ ObligatoryACoding t (sFlags "russ1263")) ∧
-    (∃ t ∈ flagging "avar1256",
-      sFlags "avar1256" ≠ [] ∧ ObligatoryPCoding t (sFlags "avar1256")) ∧
-    ∃ t ∈ flagging "basq1248", SplitS t (sFlags "basq1248") := by
+    (∃ t ∈ flagging .russian,
+      sFlags .russian ≠ [] ∧ ObligatoryACoding t (sFlags .russian)) ∧
+    (∃ t ∈ flagging .avar,
+      sFlags .avar ≠ [] ∧ ObligatoryPCoding t (sFlags .avar)) ∧
+    ∃ t ∈ flagging .basque, SplitS t (sFlags .basque) := by
   decide +kernel
 
 -- (2), (3), (4)
@@ -343,16 +344,16 @@ theorem ambitransitivity_rows : ∀ row ∈ all,
     (construction init).Transitive ∧ ¬ (construction row).Transitive ∧
     (∀ i, construction init i = .term .P → construction row i = .term .S) ∧
     (∀ i, construction init i = .term .A → ¬ (construction row i).Nuclear) ∧
-    ((construction init).PreservesStructure (construction row) ↔ row.language = "bamb1269") := by
+    ((construction init).PreservesStructure (construction row) ↔ row.language = .bambara) := by
   decide +kernel
 
 theorem coexpression :
     [Kind.passivization, .impersonalPassivization, .sDenucleativization] ⊆
-      coExpressed "tswa1253" "-w" ∧
+      coExpressed .tswana "-w" ∧
     [Kind.pApplicativization, .xApplicativization, .aNucleativization] ⊆
-      coExpressed "tswa1253" "-ɛl" ∧
-    [Kind.causativization, .portative] ⊆ coExpressed "tswa1253" "-is" ∧
-    [Kind.causativization, .passivization] ⊆ coExpressed "koyr1240" "-ndi" := by
+      coExpressed .tswana "-ɛl" ∧
+    [Kind.causativization, .portative] ⊆ coExpressed .tswana "-is" ∧
+    [Kind.causativization, .passivization] ⊆ coExpressed .koyraChiiniSonghay "-ndi" := by
   decide +kernel
 
 /-- In Tswana (38), passivizing the applicative of the causative is the composite of the three

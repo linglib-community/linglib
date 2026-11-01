@@ -7,6 +7,7 @@ public import Linglib.Fragments.Romance.Galician.Pronouns
 public import Linglib.Fragments.Tamil.Pronouns
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Alok and Bhalla (2026): allocutivity and the syntax of honorifics
@@ -67,17 +68,18 @@ inductive Language where
   deriving DecidableEq, Fintype, Repr
 
 /-- The languages of the rows by glottocode. -/
-def languages : List (String × Language) :=
-  [("soul1243", .souletinBasque), ("maga1260", .magahi), ("tami1289", .tamil),
-    ("kore1280", .korean), ("nucl1643", .japanese), ("gali1258", .galician)]
+def languages : List (Glottocode × Language) :=
+  [(.souletinBasque, .souletinBasque), (.magahi, .magahi), (.tamil, .tamil),
+    (.korean, .korean), (.japanese, .japanese), (.galician, .galician)]
 
 /-! ### The morphosyntax of the marker -/
 
 theorem marker_rows :
     ∀ row ∈ Examples.all, ∀ m ∈ row.feature? "marker",
-      (row.language = "soul1243" → ∃ g x, (Basque.Pronouns.allocutive g x).map toString = some m) ∧
-      (row.language = "gali1258" → m ∈ Galician.Pronouns.allocutiveClitics.map (·.form)) ∧
-      (row.language = "tami1289" → m = toString Tamil.Pronouns.ŋgæ) := by
+      (row.language = .souletinBasque →
+        ∃ g x, (Basque.Pronouns.allocutive g x).map toString = some m) ∧
+      (row.language = .galician → m ∈ Galician.Pronouns.allocutiveClitics.map (·.form)) ∧
+      (row.language = .tamil → m = toString Tamil.Pronouns.ŋgæ) := by
   decide +kernel
 
 /-- The Magahi grade a row's feature names. -/
@@ -85,7 +87,7 @@ def grades : List (String × Magahi.Grade) :=
   [("nh", .nonhonorific), ("h", .honorific), ("hh", .highHonorific)]
 
 theorem magahi_fusion_rows :
-    ∀ row ∈ Examples.all, row.language = "maga1260" → ∀ m ∈ row.feature? "marker",
+    ∀ row ∈ Examples.all, row.language = .magahi → ∀ m ∈ row.feature? "marker",
       ∀ s ∈ row.parse? "subject" grades, ∀ a ∈ row.parse? "addressee" grades,
         toString (Magahi.Pronouns.allocutive s a) = m := by
   decide +kernel
@@ -130,12 +132,12 @@ def threshold : Language → Context
 /-- A marker in an embedded clause is grammatical exactly where the context is at least its
 language's threshold (exx 9, 12–18, 21, 30–32). -/
 theorem distribution_rows :
-    ∀ row ∈ Examples.all, ∀ l ∈ languages.lookup row.language,
+    ∀ row ∈ Examples.all, ∀ l ∈ row.byLanguage languages,
       ∀ c ∈ row.parse? "embedding" contexts, row.judgment = .acceptable ↔ threshold l ≤ c := by
   decide +kernel
 
 theorem japanese_complementizer_rows :
-    ∀ row ∈ Examples.all, row.language = "nucl1643" →
+    ∀ row ∈ Examples.all, row.language = .japanese →
       ∀ c ∈ row.feature? "embedding", c ∈ ["koto", "yooni", "to"] →
         (row.judgment = .acceptable ↔ c ≠ "to") := by
   decide +kernel
@@ -317,7 +319,7 @@ def profile (row : Datum) (p : Graded row) : Magahi.Grade := (gradeOf row p.1).g
 /-- A Magahi root clause is grammatical exactly when its grades factor through referents (exx 2–6,
 39–45); the ungrammatical (41) puts two grades on the addressee. -/
 theorem rows_relational :
-    ∀ row ∈ Examples.all, row.language = "maga1260" → row.feature? "embedding" = none →
+    ∀ row ∈ Examples.all, row.language = .magahi → row.feature? "embedding" = none →
       (row.judgment = .acceptable ↔ Relational (profile row) (Phrase.referent ∘ Subtype.val)) := by
   decide +kernel
 
@@ -336,13 +338,13 @@ def Phrase.table? : Phrase → Option (Magahi.Case → Magahi.Grade → Personal
   | .addressee | .subject => none
 
 theorem magahi_pronoun_rows :
-    ∀ row ∈ Examples.all, row.language = "maga1260" → ∀ p : Phrase, ∀ t ∈ p.table?,
+    ∀ row ∈ Examples.all, row.language = .magahi → ∀ p : Phrase, ∀ t ∈ p.table?,
       ∀ g ∈ gradeOf row p, ∃ c,
         (t c g).form.toList ∈ row.surfaceTokens.map (·.toList.map Char.toLower) := by
   decide +kernel
 
 theorem hindi_plural_rows :
-    ∀ row ∈ Examples.all, row.language = "hind1269" →
+    ∀ row ∈ Examples.all, row.language = .hindi →
       (row.feature? "agreement" = some "pl" ↔
         row.feature? "subjectNumber" = some "pl" ∨ row.feature? "subjectHon" = some "h") := by
   decide +kernel

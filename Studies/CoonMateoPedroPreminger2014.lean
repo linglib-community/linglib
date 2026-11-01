@@ -20,6 +20,7 @@ public import Linglib.Fragments.Mayan.Yukatek.Agreement
 public import Linglib.Fragments.Mayan.Yukatek.Extraction
 public import Linglib.Data.Examples.CoonMateoPedroPreminger2014
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Coon, Mateo Pedro and Preminger (2014): The role of Case in A-bar extraction asymmetries
@@ -348,15 +349,15 @@ inductive Language where
 namespace Language
 
 /-- The Glottolog code of a language, the key the rows carry. -/
-def glottocode : Language → String
-  | .chol => "chol1282"
-  | .qanjobal => "qanj1241"
-  | .kaqchikel => "kaqc1270"
-  | .tseltal => "tzel1254"
-  | .tsotsil => "tzot1259"
-  | .mam => "mamm1241"
-  | .kiche => "kich1262"
-  | .yukatek => "yuca1254"
+def glottocode : Language → Glottocode
+  | .chol => .chol
+  | .qanjobal => .qanjobal
+  | .kaqchikel => .kaqchikel
+  | .tseltal => .tzeltal
+  | .tsotsil => .tzotzil
+  | .mam => .mam
+  | .kiche => .kiche
+  | .yukatek => .yucatecMaya
 
 /-- The verbal complex of a language, from its fragment. -/
 def template : Language → Morphology.AffixTemplate VerbSlot

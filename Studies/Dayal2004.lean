@@ -8,6 +8,7 @@ public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Romance.Italian.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Dayal (2004): Number marking and (in)definiteness in kind terms
@@ -240,12 +241,10 @@ end Lexicalization
 /-- The paper's analysis gives Hindi, Russian and Mandarin no definite determiner, English *the*
 ι, Italian *il* ι and ∩, p. 438, and German *der* ι and ∩ with Blocking enforced for ι alone,
 p. 442; a language is named by its Glottocode. -/
-def lexicalizationOf : Glottocode → Option Lexicalization
-  | "hind1269" | "russ1263" | "mand1415" => some .articleless
-  | "stan1293" => some .english
-  | "ital1282" => some .romance
-  | "stan1295" => some .german
-  | _ => none
+def lexicalizationOf (l : Glottocode) : Option Lexicalization :=
+  List.lookup l [(.hindi, .articleless), (.russian, .articleless),
+    (.mandarinChinese, .articleless), (.english, .english), (.italian, .romance),
+    (.german, .german)]
 
 open Lexicalization in
 theorem iota_mem_lexicalized_iff :

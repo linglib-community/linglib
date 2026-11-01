@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Agreement.Geometry
 public import Linglib.Data.Examples.HarleyRitter2002
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Harley and Ritter (2002): Person and number in pronouns
@@ -52,17 +53,10 @@ inductive Lang where
   deriving DecidableEq, Repr, Fintype
 
 /-- The language of a pool row, by Glottocode. -/
-def Lang.ofGlottocode : String → Option Lang
-  | "daga1275" => some .daga
-  | "gali1262" => some .kalihna
-  | "tonk1249" => some .tonkawa
-  | "chin1286" => some .chinook
-  | "yima1243" => some .yimas
-  | "fiji1243" => some .fijian
-  | "pira1253" => some .piraha
-  | "maxa1247" => some .maxakali
-  | "kwak1269" => some .kwakiutl
-  | _ => none
+def Lang.ofGlottocode (l : Glottocode) : Option Lang :=
+  List.lookup l [(.daga, .daga), (.galibiCarib, .kalihna), (.tonkawa, .tonkawa),
+    (.clatsopShoalwaterChinook, .chinook), (.yimas, .yimas), (.fijian, .fijian),
+    (.pirahã, .piraha), (.maxakalí, .maxakali), (.kwakwala, .kwakiutl)]
 
 /-- The nodes each language activates ((12)–(17), (25), (27)): Speaker is
 contrastive where there is an inclusive, Minimal where there is a dual,

@@ -6,6 +6,7 @@ public import Linglib.Fragments.Romance.Spanish.Verbs
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Cuervo (2003): Datives at Large
@@ -350,7 +351,7 @@ def predicate? (e : Datum) : Option Predicate :=
 
 /-- The inventory of an example's language. -/
 def inventory? (e : Datum) : Option Inventory :=
-  List.lookup e.language [("stan1288", spanish), ("stan1293", english)]
+  e.byLanguage [(.spanish, spanish), (.english, english)]
 
 /-- The meaning an example reports for its dative. -/
 def meaning? (e : Datum) : Option Meaning :=
