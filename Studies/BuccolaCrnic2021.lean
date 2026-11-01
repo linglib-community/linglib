@@ -3,8 +3,8 @@ module
 public import Mathlib.Data.Set.Card
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Semantics.Polarity.Licenser
-public import Linglib.Semantics.Polarity.Environment
+public import Linglib.Semantics.PolarityItem.Licenser
+public import Linglib.Semantics.PolarityItem.Environment
 public import Studies.Chierchia2004
 public import Linglib.Data.Examples.BuccolaCrnic2021
 

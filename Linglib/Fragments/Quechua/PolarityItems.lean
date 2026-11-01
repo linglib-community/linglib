@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Quechua.Indefinites
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 
 /-!
 # Quechua (Ancash) Polarity-Sensitive Items

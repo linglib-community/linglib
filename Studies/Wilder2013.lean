@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Wilder2013
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Focus.Marking
 public import Linglib.Discourse.QUD.Basic

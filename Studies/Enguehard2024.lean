@@ -7,7 +7,7 @@ public import Linglib.Fragments.English.Pronouns
 public import Linglib.Syntax.Number.Resolve
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Pragmatics.Competition
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Mathlib.Probability.ConditionalProbability

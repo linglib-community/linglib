@@ -7,7 +7,7 @@ public import Mathlib.Algebra.BigOperators.Group.List.Defs
 public import Mathlib.Algebra.Group.Action.Defs
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Basic.Sign.Defs
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 
 /-!
 # The natural-logic relation algebra

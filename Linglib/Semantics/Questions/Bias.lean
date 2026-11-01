@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Mathlib.Data.Finset.Prod
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 
 /-!
 # Polar question bias

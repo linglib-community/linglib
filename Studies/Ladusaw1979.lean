@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Fragments.English.PolarityItems

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Environment
+public import Linglib.Semantics.PolarityItem.Environment
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Data.Examples.Homer2021
 public import Studies.Chierchia2004

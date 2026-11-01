@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Natural.Completeness
-public import Linglib.Semantics.Polarity.Strength
+public import Linglib.Semantics.Negation.Strength
 public import Linglib.Data.Examples.Icard2012
 
 /-!

@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.NapoliNespor1976
 public import Linglib.Discourse.SpeechAct
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Semantics.Mood.Defs
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Data.Examples.Readers
 
 /-!

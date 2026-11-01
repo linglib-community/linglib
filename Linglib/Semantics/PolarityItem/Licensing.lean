@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Polarity.Item
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Polarity licensing
@@ -16,8 +16,8 @@ free choice and the item is a free choice item, after Kadmon and Landman and Chi
 is a question and the item a weak negative polarity item, after van Rooy. It anti-licenses an item
 when its licenser holds outright the strength that blocks it, after van der Wouden and Szabolcsi.
 What each context carries is a theorem about the operators it denotes
-(`Semantics/Polarity/LicensingContext.lean`), so what it licenses follows from what it means, and
-each fragment checks the theory against the contexts its entries are attested and excluded in.
+(`Semantics/PolarityItem/LicensingContext.lean`), so what it licenses follows from what it means,
+and each fragment checks the theory against the contexts its entries are attested and excluded in.
 
 ## Main declarations
 
@@ -98,16 +98,13 @@ private theorem licenses_classical {F : OperatorFamily} {s₀ : Negation.Strengt
   refine licenses_of_carries_iff (by rw [hc]; exact id) (by rw [hc]; exact id) fun s ↦ ?_
   rw [← h, hc, carries_classical_iff, and_iff_left (hc ▸ hn)]
 
-private theorem le_weak_iff {s : Negation.Strength} : s ≤ .weak ↔ s = .weak := by
-  cases s <;> decide
-
 private theorem licenses_weak (hfc : ¬ L.LicensesFreeChoice)
     (hrel : ¬ L.LicensesByRelevance) (hde : L.IsStrawsonDE)
     (hn : ¬ L.IsStrawsonUE) (hx : ¬ L.exhaustified.Holds .anti) :
     L.Licenses e ↔ e.licensor = some .weak := by
   rw [licenses_of_carries_iff hfc hrel fun _ ↦
-    (carries_iff_eq_weak hde hn hx).trans le_weak_iff.symm]
-  simp only [le_weak_iff, exists_eq_right, Option.mem_def]
+    (carries_iff_eq_weak hde hn hx).trans Negation.Strength.le_weak_iff.symm]
+  simp only [Negation.Strength.le_weak_iff, exists_eq_right, Option.mem_def]
 
 private theorem antiLicenses_classical {s₀ : Negation.Strength}
     (h : ∀ s, L.Holds s.toSignature ↔ s ≤ s₀) :
@@ -162,7 +159,8 @@ theorem antiLicenses_iff_licenses {e' : PolarityItem} {F : OperatorFamily}
 /-- A context licensing an item licenses every item with a weaker licensor that is a free choice
 item if the first is. -/
 theorem Licenses.of_licensor_le {e' : PolarityItem} {r r' : Negation.Strength}
-    (he : e.licensor = some r) (he' : e'.licensor = some r') (hr : r' ≤ r) (hf : e.IsFCI → e'.IsFCI) (hl : L.Licenses e) :
+    (he : e.licensor = some r) (he' : e'.licensor = some r') (hr : r' ≤ r)
+    (hf : e.IsFCI → e'.IsFCI) (hl : L.Licenses e) :
     L.Licenses e' := by
   rcases hl with ⟨s, hs, hc⟩ | ⟨hc, hfc⟩ | ⟨hc, hw⟩
   · rw [he, Option.mem_def, Option.some_inj] at hs
@@ -181,19 +179,17 @@ open NaturalLogic Licenser
 
 variable {e : PolarityItem}
 
-private theorem le_antiMorphic (s : Negation.Strength) : s ≤ .antiMorphic := by cases s <;> decide
-
 @[simp] theorem licenses_negation : negation.licenser.Licenses e ↔ e.IsNPI := by
   rw [licenses_classical (L := negation.licenser) (s₀ := .antiMorphic) rfl
-    not_isStrawsonUE_negation fun s ↦ iff_of_true (holds_negation s) (le_antiMorphic s)]
+    not_isStrawsonUE_negation fun s ↦ iff_of_true (holds_negation s) le_top]
   exact ⟨fun ⟨r, hr, _⟩ ↦ Option.isSome_iff_exists.2 ⟨r, hr⟩,
-    fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_antiMorphic r⟩⟩
+    fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_top⟩⟩
 
 @[simp] theorem antiLicenses_negation_iff : negation.licenser.AntiLicenses e ↔ e.IsPPI := by
   rw [antiLicenses_classical (s₀ := .antiMorphic) fun s ↦
-    iff_of_true (holds_negation s) (le_antiMorphic s)]
+    iff_of_true (holds_negation s) le_top]
   exact ⟨fun ⟨r, hr, _⟩ ↦ Option.isSome_iff_exists.2 ⟨r, hr⟩,
-    fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_antiMorphic r⟩⟩
+    fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_top⟩⟩
 
 @[simp] theorem licenses_nobody :
     nobody.licenser.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
@@ -206,7 +202,7 @@ private theorem le_antiMorphic (s : Negation.Strength) : s ≤ .antiMorphic := b
 @[simp] theorem licenses_few : few.licenser.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
   licenses_of_carries_iff id id fun _ ↦
     (carries_iff_eq_weak (isStrawsonDE_of_holds_anti (holds_few_iff.2 le_rfl)) not_isStrawsonUE_few
-      not_holds_exhaustified_few).trans le_weak_iff.symm
+      not_holds_exhaustified_few).trans Negation.Strength.le_weak_iff.symm
 
 @[simp] theorem antiLicenses_few : few.licenser.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
   antiLicenses_classical fun _ ↦ holds_few_iff
@@ -214,7 +210,7 @@ private theorem le_antiMorphic (s : Negation.Strength) : s ≤ .antiMorphic := b
 @[simp] theorem licenses_atMost : atMost.licenser.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
   licenses_of_carries_iff id id fun _ ↦
     (carries_iff_eq_weak (isStrawsonDE_of_holds_anti (holds_atMost_iff.2 le_rfl))
-      not_isStrawsonUE_atMost not_holds_exhaustified_atMost).trans le_weak_iff.symm
+      not_isStrawsonUE_atMost not_holds_exhaustified_atMost).trans Negation.Strength.le_weak_iff.symm
 
 @[simp] theorem antiLicenses_atMost :
     atMost.licenser.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=

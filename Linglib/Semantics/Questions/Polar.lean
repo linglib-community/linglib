@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Basic
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 
 /-!
 # Polar questions

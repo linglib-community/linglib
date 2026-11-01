@@ -6,7 +6,7 @@ public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Questions.Polar
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Data.Examples.TurkHirsch2026
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Slavic.Russian.Indefinites
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 
 /-!
 # Russian polarity items

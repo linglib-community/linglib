@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Polarity.LicensingContext
+public import Linglib.Semantics.PolarityItem.LicensingContext
 public import Linglib.Semantics.Reference.Indefinite
 public import Mathlib.Data.Finset.Grade
 public import Linglib.Data.Examples.Haspelmath1997

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 
 /-!
 # Spanish polarity items

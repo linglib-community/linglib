@@ -6,7 +6,7 @@ public import Mathlib.Order.Max
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.ConstructionGrammar.Basic
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Data.Examples.FillmoreKayOConnor1988
 public import Linglib.Data.Examples.Readers
 

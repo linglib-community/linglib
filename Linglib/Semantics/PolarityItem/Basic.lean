@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Polarity.LicensingContext
-public import Linglib.Semantics.Polarity.Strength
+public import Linglib.Semantics.PolarityItem.LicensingContext
+public import Linglib.Semantics.Negation.Strength
 
 /-!
 # Polarity items
@@ -21,12 +21,8 @@ after Kadmon and Landman and Dayal; English *any* is both a negative polarity it
 item.
 
 The record also holds the contexts in which the item is attested and those in which it is
-attested to be out, the data against which `Semantics/Polarity/Licensing.lean` checks the theory.
-
-## Main declarations
-
-* `PolarityItem`: the lexical record.
-* `PolarityItem.IsNPI`, `PolarityItem.IsPPI`, `PolarityItem.IsFCI`: the classes.
+attested to be out, the data against which `Semantics/PolarityItem/Licensing.lean` checks the
+theory.
 
 ## References
 

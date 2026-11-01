@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.HindiUrdu.Indefinites
-public import Linglib.Semantics.Polarity.Item
+public import Linglib.Semantics.PolarityItem.Basic
 
 /-!
 # Hindi-Urdu polarity items

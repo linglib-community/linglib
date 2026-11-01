@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.English.PolarityItems
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Data.Examples.Szabolcsi2004
 public import Linglib.Data.Examples.Readers
 

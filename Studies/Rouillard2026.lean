@@ -6,7 +6,7 @@ public import Mathlib.MeasureTheory.Measure.AddContent
 public import Linglib.Core.Order.Interval.Set.LinearOrder
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Aspect.SubintervalProperty
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Negation.Polarity
 
 /-!
 # Rouillard 2026: temporal *in*-adverbials and maximal informativity
