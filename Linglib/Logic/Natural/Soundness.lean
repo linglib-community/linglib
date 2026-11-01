@@ -497,7 +497,7 @@ theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
     Signature.HoldsFor .antiAddMult (compl : γ → γ) := by
   intro p hp
   cases p with
-  | antitone => exact antitone_compl
+  | antitone => exact compl_anti
   | antiAdditive => exact ⟨isAntiAdditive_compl, compl_top⟩
   | antiMultiplicative => exact ⟨isAntiMultiplicative_compl, compl_bot⟩
   | monotone | additive | multiplicative => exact absurd hp (by decide)

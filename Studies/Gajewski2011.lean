@@ -218,7 +218,7 @@ theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive
     IsIntolerant f := fun hnt x ↦ by
   by_contra hx
   rw [not_or, not_not, not_not] at hx
-  have huniv := (isAntiAdditive_iff_gq.1 h x xᶜ).2 hx
+  have huniv := (Quantifier.isAntiAdditive_iff.1 h x xᶜ).2 hx
   rw [Set.union_compl_self] at huniv
   exact hnt (Or.inl fun y ↦ h.antitone (Set.subset_univ y) huniv)
 

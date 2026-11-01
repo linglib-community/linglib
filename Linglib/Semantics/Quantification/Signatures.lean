@@ -18,6 +18,7 @@ restrictor and scope positions at the `Prop` instance, and *every* and *no* rece
 
 ## Main results
 
+* `Quantifier.isAntiAdditive_iff`: anti-additivity of a quantifier as `q (A ∪ B) ↔ q A ∧ q B`.
 * `leftAntiAdditive_iff_isAntiAdditive`, `rightAntiAdditive_iff_isAntiAdditive`: the two
   anti-additivities as sectionwise `IsAntiAdditive`.
 * `soundFor_every`, `soundFor_no`: the certified determiner profiles.
@@ -30,7 +31,7 @@ restrictor and scope positions at the `Prop` instance, and *every* and *no* rece
 
 @[expose] public section
 
-namespace Quantifier.Det
+namespace Quantifier
 
 open NaturalLogic
 
@@ -38,16 +39,23 @@ variable {α : Type*}
 
 /-! ### Sectionwise anti-additivity -/
 
+theorem isAntiAdditive_iff {q : Quantifier α} :
+    IsAntiAdditive q ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
+  simp only [IsAntiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
+
+namespace Det
+
 /-- `LeftAntiAdditive` ([peters-westerstahl-2006] §5.9) is sectionwise
 anti-additivity in the restrictor, at the `Prop` instance. -/
 theorem leftAntiAdditive_iff_isAntiAdditive (q : Det α) :
-    LeftAntiAdditive q ↔ ∀ S, IsAntiAdditive (fun R => q R S) :=
-  ⟨fun h S R R' => propext (h R R' S), fun h R R' S => iff_of_eq (h S R R')⟩
+    LeftAntiAdditive q ↔ ∀ S, IsAntiAdditive (fun R ↦ q R S) := by
+  simp only [LeftAntiAdditive, isAntiAdditive_iff]
+  exact ⟨fun h S R R' ↦ h R R' S, fun h R R' S ↦ h S R R'⟩
 
 /-- `RightAntiAdditive` is sectionwise anti-additivity in the scope. -/
 theorem rightAntiAdditive_iff_isAntiAdditive (q : Det α) :
     RightAntiAdditive q ↔ ∀ R, IsAntiAdditive (q R) :=
-  ⟨fun h R S S' => propext (h R S S'), fun h R S S' => iff_of_eq (h R S S')⟩
+  forall_congr' fun _ ↦ isAntiAdditive_iff.symm
 
 /-! ### Certified determiner profiles -/
 
@@ -76,4 +84,6 @@ example : Signature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
     (fun R S => ¬ every (α := α) R S) :=
   not_soundFor_antiAddMult.comp₂ (σ := ⟨.anti, .mono⟩) soundFor_every
 
-end Quantifier.Det
+end Det
+
+end Quantifier
