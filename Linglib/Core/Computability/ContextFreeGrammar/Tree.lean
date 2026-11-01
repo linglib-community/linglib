@@ -8,7 +8,6 @@ module
 public import Linglib.Core.Computability.ContextFreeGrammar
 public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Core.Data.RoseTree.Span
-public import Linglib.Core.Data.RoseTree.Encodable
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic

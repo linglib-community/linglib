@@ -11,12 +11,12 @@ public import Mathlib.Data.W.Basic
 /-!
 # Binary trees are encodable
 
-A binary tree is a W-type: its shapes are a leaf and a node labelled by a value, with no children
-and two children respectively. Mathlib's W-types over encodable shapes with finite encodable
-arities are encodable, so binary trees over an encodable type are too, and binary trees over a
-countable type are countable. `Mathlib.Data.Tree.Basic` provides neither instance.
+This file provides the `Encodable` and `Countable` instances for binary trees, which
+`Mathlib.Data.Tree.Basic` lacks. A binary tree is a W-type whose shapes are a leaf, with no
+children, and a node labelled by a value, with two children. W-types over encodable shapes with
+finite encodable arities are encodable, so binary trees over an encodable type are encodable.
 
-## Main declarations
+## Main definitions
 
 * `BinaryTree.toWType`, `BinaryTree.ofWType`: a binary tree as a W-type and back.
 * The `Encodable` and `Countable` instances for `BinaryTree α`.
