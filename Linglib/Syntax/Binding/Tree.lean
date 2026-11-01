@@ -26,6 +26,9 @@ More bounding nodes give smaller domains.
 * `PhraseStructure.Tree.configuration`: c-command with the two domains of each position bounded
   by sets of nodes.
 * `PhraseStructure.Tree.clauseConfiguration`: the configuration bounded by the clause nodes.
+* `PhraseStructure.Tree.Accessible`, `PhraseStructure.Tree.withAccessibleSubject`: a subject
+  accessible to a position, and the nodes that have one, which bound the domain of Government and
+  Binding.
 
 ## Main statements
 
@@ -76,5 +79,27 @@ theorem configuration_anti (h : ∀ b, P b ⊆ P' b) (h' : ∀ b, Q b ⊆ Q' b) 
 position is the minimal clause containing it. -/
 abbrev clauseConfiguration {W : Type*} (t : Tree Cat W) : Binding.Configuration TreePath :=
   t.configuration fun _ ↦ labeled t {.S}
+
+/-! ### Accessible subjects
+
+A binding domain can be the smallest category containing a subject accessible to the position, one
+that c-commands it and whose index the position could take without lying inside or around a node
+that already bears that index. -/
+
+variable (subject link : TreePath → Option TreePath)
+
+/-- The subject `s` is accessible to the position `b` when it c-commands `b` and `b` neither lies
+properly inside nor properly contains the node `link s` that bears the index of `s`. -/
+def Accessible (s b : TreePath) : Prop := t.CCommands s b ∧ ∀ x ∈ link s, ¬ x < b ∧ ¬ b < x
+
+instance (s b : TreePath) : Decidable (t.Accessible link s b) :=
+  inferInstanceAs (Decidable (_ ∧ ∀ _ ∈ _, _))
+
+/-- The nodes whose subject, as `subject` assigns them, is accessible to `b`. -/
+def withAccessibleSubject (b : TreePath) : Set TreePath :=
+  {m | ∃ s ∈ subject m, t.Accessible link s b}
+
+instance (b : TreePath) : DecidablePred (· ∈ t.withAccessibleSubject subject link b) :=
+  fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 end PhraseStructure.Tree
