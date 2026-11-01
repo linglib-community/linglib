@@ -179,9 +179,9 @@ theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List
     exact ⟨hcomb.1 ▸ hevL, hcomb.2 ▸ hevR⟩
   -- transport each one-sided output to the base word and recombine
   have hevL : Eval PL base i (.call (outL σ) x) true :=
-    hRboth.1.congr_take hPL hRlen trivial hRag.symm
+    hRboth.1.congr_take hPL hRlen rfl hRag.symm
   have hevR : Eval PR base i (.call (outR σ) x) true :=
-    hLboth.2.congr_drop hPR hLlen trivial hLag.symm
+    hLboth.2.congr_drop hPR hLlen rfl hLag.symm
   exact hchange ((((hm base).2 i hi σ).mpr
     ⟨true, true, hevL, hevR, by rw [decide_eq_true hbase]; rfl⟩).trans hbase.symm)
 
