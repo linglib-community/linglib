@@ -167,8 +167,9 @@ end LanguageVariety
 
 namespace Pseudovariety
 
-/-- A member of `V` embeds in the finite product of the syntactic monoids of its fibre languages,
-so `V` is recovered from its variety of languages. -/
+/-- A member `M` of `V` embeds in the product of the syntactic monoids of its singletons, and each
+of these is the syntactic monoid of a fibre language of `V`, so `V` is recovered from its variety
+of languages. -/
 theorem toLanguageVariety_toPseudovariety (V : Pseudovariety.{u}) :
     V.toLanguageVariety.toPseudovariety = V := by
   refine le_antisymm (LanguageVariety.gc_toPseudovariety_toLanguageVariety.l_u_le V) ?_
@@ -176,37 +177,15 @@ theorem toLanguageVariety_toPseudovariety (V : Pseudovariety.{u}) :
   have := V.finite_of_mem hM
   let φ : FreeMonoid M →* M := FreeMonoid.lift id
   have hφ : Function.Surjective φ := fun m ↦ ⟨FreeMonoid.of m, rfl⟩
-  let Lm : M → Language M := fun m ↦ {w | φ (FreeMonoid.ofList w) = m}
-  have hrec (m : M) : Recognizes φ (Lm m) := ⟨{m}, rfl⟩
-  have hLm (m : M) : Lm m ∈ V.languages M := mem_languages_of_recognizes hM (hrec m)
   refine ⟨‹_›, fun W hW ↦ ?_⟩
-  have hWsyn (m : M) : W.mem (Lm m).SyntacticMonoid :=
-    have := V.finite_of_mem (hLm m)
-    hW _ ⟨M, Lm m, hLm m, ⟨MulEquiv.refl _⟩⟩
-  let Ψ : FreeMonoid M →* (∀ m : M, (Lm m).SyntacticMonoid) :=
-    MonoidHom.pi fun m ↦ (Lm m).toSyntacticMonoid
-  -- The joint syntactic morphism has the same kernel as the evaluation map `φ`.
-  have hkereq : Con.ker φ = Con.ker Ψ := by
-    refine le_antisymm (fun u v huv ↦ ?_) (fun u v huv ↦ ?_)
-    · rw [Con.ker_apply]
-      funext m
-      exact (toSyntacticMonoid_eq_iff (L := Lm m)).mpr
-        (ker_le_syntacticCon_of_recognizes (hrec m) huv)
-    · have hcon : (Lm (φ u)).syntacticCon u v :=
-        (toSyntacticMonoid_eq_iff (L := Lm (φ u))).mp (congrFun (Con.ker_apply.mp huv) (φ u))
-      have hmem := (syntacticCon_iff.mp hcon) [] []
-      simp only [List.nil_append, List.append_nil] at hmem
-      have hmemv : φ (FreeMonoid.ofList v.toList) = φ u :=
-        hmem.mp (show φ (FreeMonoid.ofList u.toList) = φ u by rw [FreeMonoid.ofList_toList])
-      rw [FreeMonoid.ofList_toList] at hmemv
-      exact Con.ker_apply.mpr hmemv.symm
-  let g : M →* (∀ m : M, (Lm m).SyntacticMonoid) :=
-    (Con.kerLift Ψ).comp ((Con.quotientKerEquivOfSurjective φ hφ).symm.trans
-      (hkereq ▸ MulEquiv.refl _)).toMonoidHom
-  have hginj : Function.Injective g := by
-    simp only [g, MonoidHom.coe_comp, MulEquiv.coe_toMonoidHom]
-    exact (Con.kerLift_injective Ψ).comp (MulEquiv.injective _)
-  exact W.sub (f := g) hginj (W.pi_mem hWsyn)
+  have h (m : M) : W.mem (Con.syntactic ({m} : Set M)).Quotient := by
+    let L : Language M := {w | φ (FreeMonoid.ofList w) = m}
+    have hL : L ∈ V.languages M := mem_languages_of_recognizes hM ⟨{m}, rfl⟩
+    have := V.finite_of_mem hL
+    exact W.mem_of_mulEquiv ((Con.congr (.refl _) (Con.comap_syntactic hφ {m}).symm).trans
+      ((Con.syntactic {m}).comapQuotientEquivOfSurj φ hφ)) (hW _ ⟨M, L, hL, ⟨.refl _⟩⟩)
+  refine W.sub (f := .pi fun m ↦ (Con.syntactic {m}).mk') (fun u v huv ↦ ?_) (W.pi_mem h)
+  exact (Con.mem_iff_of_syntactic ((Con.eq _).1 (congrFun huv v))).2 rfl
 
 end Pseudovariety
 

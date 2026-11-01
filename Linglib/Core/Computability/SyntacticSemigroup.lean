@@ -162,8 +162,8 @@ theorem syntacticSemigroupCon_le_rightQuotient (L : Language α) (u : List α) :
 theorem syntacticSemigroupCon_congr {L' : Language α}
     (h : ∀ w : List α, w ≠ [] → (w ∈ L ↔ w ∈ L')) :
     L.syntacticSemigroupCon = L'.syntacticSemigroupCon :=
-  Con.ext fun u v ↦ forall_congr' fun x ↦ forall_congr' fun y ↦
-    iff_congr (h _ (by simp)) (h _ (by simp))
+  Con.ext fun _ _ ↦ syntacticCon_iff.trans <| (forall₂_congr fun _ _ ↦
+    iff_congr (h _ (by simp)) (h _ (by simp))).trans syntacticCon_iff.symm
 
 /-- Adjoining the empty word leaves the syntactic congruence unchanged, since the congruence
 quantifies only over nonempty words. -/
@@ -220,7 +220,7 @@ theorem recognizesSemigroup_of_ker_le (h : Con.ker η ≤ L.syntacticSemigroupCo
   recognizesSemigroup_iff.mpr
     ⟨η '' {u | u.toFreeMonoid.toList ∈ L}, fun w ↦
       ⟨fun hw ↦ ⟨w, hw, rfl⟩, fun ⟨_, hu, hη⟩ ↦
-        (SyntacticEquiv.mem_iff (h ((Con.ker_rel η).mpr hη))).mp hu⟩⟩
+        (Con.mem_iff_of_syntactic (h ((Con.ker_rel η).mpr hη))).mp hu⟩⟩
 
 theorem recognizesSemigroup_iff_ker_le :
     L.RecognizesSemigroup η ↔ Con.ker η ≤ L.syntacticSemigroupCon :=

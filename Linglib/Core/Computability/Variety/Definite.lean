@@ -70,15 +70,15 @@ private theorem take_append_middle {u : List α} (hu : k ≤ u.length) (t x y : 
 
 /-! #### Definite languages -/
 
-theorem IsDefinite.syntacticEquiv_append_left (h : L.IsDefinite k) {u : List α}
-    (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (t ++ u) u :=
-  fun x y ↦ iff_of_eq (h (rtake_append_middle hu t x y))
+theorem IsDefinite.syntacticClass_append_left (h : L.IsDefinite k) {u : List α}
+    (hu : k ≤ u.length) (t : List α) : L.syntacticClass (t ++ u) = L.syntacticClass u :=
+  syntacticClass_eq_iff.2 fun x y ↦ iff_of_eq (h (rtake_append_middle hu t x y))
 
 theorem IsDefinite.isRightZero_syntacticClass (h : L.IsDefinite k) {u : List α}
     (hu : k ≤ u.length) : IsRightZero (L.syntacticClass u) := fun m ↦ by
   obtain ⟨t, rfl⟩ := L.syntacticClass_surjective m
-  rw [← syntacticClass_append, syntacticClass_eq_iff]
-  exact h.syntacticEquiv_append_left hu t
+  rw [← syntacticClass_append]
+  exact h.syntacticClass_append_left hu t
 
 /-- A language is `k`-definite exactly when the syntactic class of every word of length at least
 `k` is a right zero of the syntactic monoid. -/
@@ -94,15 +94,15 @@ theorem isDefinite_iff_forall_isRightZero_syntacticClass :
 
 /-! #### Reverse definite languages -/
 
-theorem IsReverseDefinite.syntacticEquiv_append_right (h : L.IsReverseDefinite k) {u : List α}
-    (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (u ++ t) u :=
-  fun x y ↦ iff_of_eq (h (take_append_middle hu t x y))
+theorem IsReverseDefinite.syntacticClass_append_right (h : L.IsReverseDefinite k) {u : List α}
+    (hu : k ≤ u.length) (t : List α) : L.syntacticClass (u ++ t) = L.syntacticClass u :=
+  syntacticClass_eq_iff.2 fun x y ↦ iff_of_eq (h (take_append_middle hu t x y))
 
 theorem IsReverseDefinite.isLeftZero_syntacticClass (h : L.IsReverseDefinite k) {u : List α}
     (hu : k ≤ u.length) : IsLeftZero (L.syntacticClass u) := fun m ↦ by
   obtain ⟨t, rfl⟩ := L.syntacticClass_surjective m
-  rw [← syntacticClass_append, syntacticClass_eq_iff]
-  exact h.syntacticEquiv_append_right hu t
+  rw [← syntacticClass_append]
+  exact h.syntacticClass_append_right hu t
 
 theorem isReverseDefinite_iff_forall_isLeftZero_syntacticClass :
     L.IsReverseDefinite k ↔ ∀ u : List α, k ≤ u.length → IsLeftZero (L.syntacticClass u) := by
@@ -116,9 +116,10 @@ theorem isReverseDefinite_iff_forall_isLeftZero_syntacticClass :
 
 /-! #### Generalized definite languages -/
 
-theorem IsGeneralizedDefinite.syntacticEquiv_append_append (h : L.IsGeneralizedDefinite k)
-    {u : List α} (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (u ++ t ++ u) u :=
-  fun x y ↦ isGeneralizedDefinite_iff_edges.1 h
+theorem IsGeneralizedDefinite.syntacticClass_append_append (h : L.IsGeneralizedDefinite k)
+    {u : List α} (hu : k ≤ u.length) (t : List α) :
+    L.syntacticClass (u ++ t ++ u) = L.syntacticClass u :=
+  syntacticClass_eq_iff.2 fun x y ↦ isGeneralizedDefinite_iff_edges.1 h
     (by rw [Edge.takeAt_left, Edge.takeAt_left, List.append_assoc u t u]
         exact take_append_middle hu _ x y)
     (rtake_append_middle hu _ x y)
@@ -127,8 +128,8 @@ theorem IsGeneralizedDefinite.syntacticClass_mul_mul_self (h : L.IsGeneralizedDe
     {u : List α} (hu : k ≤ u.length) (s : L.SyntacticMonoid) :
     L.syntacticClass u * s * L.syntacticClass u = L.syntacticClass u := by
   obtain ⟨t, rfl⟩ := L.syntacticClass_surjective s
-  rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff]
-  exact h.syntacticEquiv_append_append hu t
+  rw [← syntacticClass_append, ← syntacticClass_append]
+  exact h.syntacticClass_append_append hu t
 
 theorem isGeneralizedDefinite_iff_forall_syntacticClass_mul_mul_self :
     L.IsGeneralizedDefinite k ↔ ∀ u : List α, k ≤ u.length → ∀ s,
