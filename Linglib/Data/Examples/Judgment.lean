@@ -33,7 +33,7 @@ example on which speakers differ.
 * A split mark a paper prints, such as `*/??` for speakers who differ, is several marks for one
   sentence. An example records the first as its `judgment` and each further mark as an
   `alsoJudged` paper feature, and a study reading them all reads `Datum.judgments`. Gradient
-  ratings are results, recorded in `Data/Experiments/`.
+  ratings are results, recorded in `Data/Statistics/`.
 
 ## References
 

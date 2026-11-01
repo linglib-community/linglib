@@ -5,7 +5,7 @@ Every verdict on the page comes from `scripts/eval_page/Export.lean`, which read
 `Eval` and `Lab` about an `Eval.Experiment`, instantiates them at each theory and each cell, and
 reduces their right-hand sides with Lean. The page lays out whatever experiments those theorems
 are about, so a new experiment needs no change here. This script adds what the page shows around
-the verdicts: labels and printed numbers from `Linglib/Data/{Experiments,Corpus}/<Paper>.json`, author-year
+the verdicts: labels and printed numbers from `Linglib/Data/Statistics/<Paper>.json`, author-year
 citations from `references.bib`, and links to each theorem's documentation. It types no verdict by
 hand.
 
@@ -35,7 +35,7 @@ EXPORT = ROOT / "scripts" / "eval_page" / "Export.lean"
 TEMPLATE = ROOT / "scripts" / "eval_page" / "template.html"
 DEFAULT_JSON = ROOT / ".lake" / "build" / "eval-page" / "verdicts.json"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "eval-page"
-DATA_DIRS = [ROOT / "Linglib" / "Data" / k for k in ("Experiments", "Corpus")]
+DATA = ROOT / "Linglib" / "Data" / "Statistics"
 LIBRARIES = ["Eval", "Lab"]
 # The project the page belongs to, cited from `references.bib`.
 PROJECT = "chemla-spector-kalomoiros-schlenker-2026"
@@ -137,8 +137,8 @@ _specs = {}
 def spec(paper):
     """The data file of a paper, if there is one."""
     if paper not in _specs:
-        f = next((d / f"{paper}.json" for d in DATA_DIRS if (d / f"{paper}.json").exists()), None)
-        _specs[paper] = json.loads(f.read_text(encoding="utf-8")) if f else None
+        f = DATA / f"{paper}.json"
+        _specs[paper] = json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
     return _specs[paper]
 
 

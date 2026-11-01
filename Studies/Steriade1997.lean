@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.Steriade1997
+public import Linglib.Data.Statistics.Steriade1997
 public import Linglib.Data.Wordlist.Steriade1997
 public import Linglib.Data.PHOIBLE.Chart
 public import Linglib.Phonology.Hiatus

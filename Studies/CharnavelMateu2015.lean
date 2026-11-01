@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Cover
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Data.Experiments.CharnavelMateu2015
+public import Linglib.Data.Statistics.CharnavelMateu2015
 public import Linglib.Fragments.Romance.Spanish.Clitics
 
 /-!

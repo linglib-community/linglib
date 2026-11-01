@@ -7,7 +7,7 @@ public import Eval.Homogeneity.Account
 # Scoring accounts of homogeneity on Augurzky et al. (2023)
 
 The data are the tests of Augurzky et al.'s two picture-verification experiments, read from
-`Data/Experiments/AugurzkyEtAl2023`: on the mixed pictures, where some boys opened all their
+`Data/Statistics/AugurzkyEtAl2023`: on the mixed pictures, where some boys opened all their
 presents and some opened only some, whether the context, a family rule raising whether any or
 whether all presents were opened, affected the judgments of the negative quantifier, *no* in
 Experiment 1 and *not every* in Experiment 2, and whether it affected them differently for

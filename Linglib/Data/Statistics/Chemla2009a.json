@@ -1,0 +1,142 @@
+{
+ "meta": {
+  "bibkey": "chemla-2009a",
+  "method": "experiment",
+  "description": "Two inferential experiments on French sentences with a presupposition trigger (a definite description, a factive verb or a change-of-state predicate) in the scope or the restrictor of a quantifier, with the universal inference, that every individual of the domain satisfies the presupposition, as the conclusion to be judged. Experiment 1 collected binary judgments about the scope of 'each', 'no', 'less than 3', 'more than 3' and 'exactly 3' over a domain of 10 students; Experiment 2 collected graded judgments over a domain of 20 students for more quantifiers and for triggers in the restrictor. Per-quantifier results are printed only as bar charts (Figs. 4 and 7) and are not recorded; the text prints the pooled acceptance rates recorded here.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Determiner",
+   "doc": "A quantifier whose nuclear scope hosts the trigger in Experiment 1.",
+   "levels": [
+    {
+     "name": "each",
+     "label": "each",
+     "doc": "'each'"
+    },
+    {
+     "name": "no",
+     "label": "no",
+     "doc": "'no'"
+    },
+    {
+     "name": "lessThan3",
+     "label": "less than 3",
+     "doc": "'less than 3'"
+    },
+    {
+     "name": "moreThan3",
+     "label": "more than 3",
+     "doc": "'more than 3'"
+    },
+    {
+     "name": "exactly3",
+     "label": "exactly 3",
+     "doc": "'exactly 3'"
+    }
+   ]
+  },
+  {
+   "name": "QuantifierGroup",
+   "doc": "A group of the quantifiers whose scope hosts the trigger in Experiment 1.",
+   "levels": [
+    {
+     "name": "eachOrNo",
+     "label": "each, no",
+     "doc": "'each' and 'no'"
+    },
+    {
+     "name": "numeral",
+     "label": "less than 3, more than 3, exactly 3",
+     "doc": "the numerical quantifiers 'less than 3', 'more than 3' and 'exactly 3'"
+    }
+   ]
+  }
+ ],
+ "constants": [
+  {
+   "name": "domainSize",
+   "type": "nat",
+   "value": 10,
+   "doc": "The students in the domain of the quantifiers of Experiment 1, 'these 10 students'.",
+   "locator": "§2.1, Fig. 2, (25)–(29)",
+   "verified": "text-layer"
+  }
+ ],
+ "tables": [
+  {
+   "name": "experiment1Groups",
+   "structure": "Experiment1Group",
+   "doc": "the group of quantifiers over which the results for a quantifier of Experiment 1 are pooled.",
+   "locator": "§2.3.4, p. 311",
+   "verified": "page-image",
+   "key": [
+    "determiner"
+   ],
+   "columns": [
+    {
+     "name": "determiner",
+     "type": "Determiner",
+     "doc": "The quantifier."
+    },
+    {
+     "name": "group",
+     "type": "QuantifierGroup",
+     "doc": "The group that pools its results."
+    }
+   ],
+   "rows": [
+    {
+     "determiner": "each",
+     "group": "each, no"
+    },
+    {
+     "determiner": "no",
+     "group": "each, no"
+    },
+    {
+     "determiner": "less than 3",
+     "group": "less than 3, more than 3, exactly 3"
+    },
+    {
+     "determiner": "more than 3",
+     "group": "less than 3, more than 3, exactly 3"
+    },
+    {
+     "determiner": "exactly 3",
+     "group": "less than 3, more than 3, exactly 3"
+    }
+   ]
+  },
+  {
+   "name": "experiment1Universal",
+   "structure": "Experiment1Universal",
+   "doc": "the acceptance rate of the universal inference from a trigger in the scope of the quantifiers of a group in Experiment 1, pooled over the group; the difference between the groups is significant (F(1, 29) = 53.8, p < .05).",
+   "locator": "§2.3.4, p. 311",
+   "verified": "page-image",
+   "columns": [
+    {
+     "name": "group",
+     "type": "QuantifierGroup",
+     "doc": "The quantifiers whose scope hosts the trigger."
+    },
+    {
+     "name": "acceptance",
+     "type": "decimal",
+     "doc": "The acceptance rate of the universal inference, in percent."
+    }
+   ],
+   "rows": [
+    {
+     "group": "each, no",
+     "acceptance": "87"
+    },
+    {
+     "group": "less than 3, more than 3, exactly 3",
+     "acceptance": "53"
+    }
+   ]
+  }
+ ]
+}

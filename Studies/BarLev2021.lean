@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.Homogeneity.Plural
-public import Linglib.Data.Experiments.KrizChemla2015
+public import Linglib.Data.Statistics.KrizChemla2015
 public import Linglib.Data.Examples.BarLev2021
 public import Linglib.Data.Examples.Readers
 

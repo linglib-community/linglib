@@ -1,0 +1,738 @@
+{
+  "meta": {
+    "bibkey": "kehler-rohde-2013",
+    "method": "experiment",
+    "description": "The passage-completion results the paper synthesizes from the authors' earlier experiments: an aspect manipulation, an instruction manipulation, a prompt manipulation and a voice manipulation, each reporting proportions of Source interpretations, coherence relations, next mentions or pronominalized references. Proportions are printed to two places; the paper prints the Violated Expectation relation as Violated Exp in Tables 3, 4 and 6. The first-mention rates of the prompt manipulation and the figures of the worked example from Arnold (2001)'s Source-Goal data are printed in the text, not in a table."
+  },
+  "types": [
+    {
+      "name": "Aspect",
+      "doc": "The aspect of the context sentence, (7) against (8).",
+      "levels": [
+        {
+          "name": "perfective",
+          "label": "Perfective",
+          "doc": "John passed a comic to Bill"
+        },
+        {
+          "name": "imperfective",
+          "label": "Imperfective",
+          "doc": "John was passing a comic to Bill"
+        }
+      ]
+    },
+    {
+      "name": "Relation",
+      "doc": "The five most common coherence relations of the continuations.",
+      "levels": [
+        {
+          "name": "occasion",
+          "label": "Occasion",
+          "doc": "the continuation follows on the end state"
+        },
+        {
+          "name": "elaboration",
+          "label": "Elaboration",
+          "doc": "the continuation redescribes the eventuality"
+        },
+        {
+          "name": "explanation",
+          "label": "Explanation",
+          "doc": "the continuation gives a cause"
+        },
+        {
+          "name": "violatedExpectation",
+          "label": "Violated Expectation",
+          "doc": "the continuation runs against an expectation"
+        },
+        {
+          "name": "result",
+          "label": "Result",
+          "doc": "the continuation gives an effect"
+        }
+      ]
+    },
+    {
+      "name": "Instruction",
+      "doc": "The instruction of the instruction manipulation.",
+      "levels": [
+        {
+          "name": "whatNext",
+          "label": "What next?",
+          "doc": "What happened next?"
+        },
+        {
+          "name": "why",
+          "label": "Why?",
+          "doc": "Why?"
+        }
+      ]
+    },
+    {
+      "name": "Prompt",
+      "doc": "Whether the prompt supplies a pronoun, (10a) against (10b).",
+      "levels": [
+        {
+          "name": "pronoun",
+          "label": "Pronoun",
+          "doc": "the prompt ends in He"
+        },
+        {
+          "name": "noPronoun",
+          "label": "No Pronoun",
+          "doc": "the prompt ends after the context sentence"
+        }
+      ]
+    },
+    {
+      "name": "Voice",
+      "doc": "The voice of the context sentence of the voice manipulation, (20).",
+      "levels": [
+        {
+          "name": "active",
+          "label": "Active",
+          "doc": "Amanda amazed Brittany"
+        },
+        {
+          "name": "passive",
+          "label": "Passive",
+          "doc": "Brittany was amazed by Amanda"
+        }
+      ]
+    },
+    {
+      "name": "Position",
+      "doc": "The grammatical position of the referent in the context sentence.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "Surface Subject",
+          "doc": "the subject"
+        },
+        {
+          "name": "nonSubject",
+          "label": "Surface Non-Subject",
+          "doc": "the non-subject"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "sourceByAspect",
+      "structure": "AspectSource",
+      "doc": "the proportion of Source interpretations by aspect.",
+      "locator": "Table 1, p. 10",
+      "verified": "page-image",
+      "key": [
+        "aspect"
+      ],
+      "columns": [
+        {
+          "name": "aspect",
+          "type": "Aspect",
+          "doc": "The aspect."
+        },
+        {
+          "name": "sourceInterpretation",
+          "type": "decimal",
+          "doc": "The proportion of Source interpretations."
+        }
+      ],
+      "rows": [
+        {
+          "aspect": "Perfective",
+          "sourceInterpretation": "0.57"
+        },
+        {
+          "aspect": "Imperfective",
+          "sourceInterpretation": "0.80"
+        }
+      ]
+    },
+    {
+      "name": "relationsPerfective",
+      "structure": "Perfective",
+      "doc": "the frequency of a coherence relation in the perfective condition and its bias to the Source.",
+      "locator": "Table 2, p. 11",
+      "verified": "page-image",
+      "key": [
+        "relation"
+      ],
+      "columns": [
+        {
+          "name": "relation",
+          "type": "Relation",
+          "doc": "The coherence relation."
+        },
+        {
+          "name": "frequency",
+          "type": "decimal",
+          "doc": "The proportion of continuations with the relation."
+        },
+        {
+          "name": "biasToSource",
+          "type": "decimal",
+          "doc": "The proportion of its pronouns assigned to the Source."
+        }
+      ],
+      "rows": [
+        {
+          "relation": "Occasion",
+          "frequency": "0.38",
+          "biasToSource": "0.18"
+        },
+        {
+          "relation": "Elaboration",
+          "frequency": "0.28",
+          "biasToSource": "0.98"
+        },
+        {
+          "relation": "Explanation",
+          "frequency": "0.18",
+          "biasToSource": "0.80"
+        },
+        {
+          "relation": "Violated Expectation",
+          "frequency": "0.08",
+          "biasToSource": "0.76"
+        },
+        {
+          "relation": "Result",
+          "frequency": "0.06",
+          "biasToSource": "0.08"
+        }
+      ]
+    },
+    {
+      "name": "relationsByInstruction",
+      "structure": "InstructionFrequency",
+      "doc": "the proportion of continuations with a coherence relation under an instruction.",
+      "locator": "Table 3, p. 13",
+      "verified": "page-image",
+      "key": [
+        "relation",
+        "instruction"
+      ],
+      "columns": [
+        {
+          "name": "relation",
+          "type": "Relation",
+          "doc": "The coherence relation."
+        },
+        {
+          "name": "instruction",
+          "type": "Instruction",
+          "doc": "The instruction."
+        },
+        {
+          "name": "frequency",
+          "type": "decimal",
+          "doc": "The proportion of continuations with the relation."
+        }
+      ],
+      "rows": [
+        {
+          "relation": "Occasion",
+          "instruction": "What next?",
+          "frequency": "0.71"
+        },
+        {
+          "relation": "Occasion",
+          "instruction": "Why?",
+          "frequency": "0.01"
+        },
+        {
+          "relation": "Elaboration",
+          "instruction": "What next?",
+          "frequency": "0.05"
+        },
+        {
+          "relation": "Elaboration",
+          "instruction": "Why?",
+          "frequency": "0.08"
+        },
+        {
+          "relation": "Explanation",
+          "instruction": "What next?",
+          "frequency": "0.01"
+        },
+        {
+          "relation": "Explanation",
+          "instruction": "Why?",
+          "frequency": "0.91"
+        },
+        {
+          "relation": "Violated Expectation",
+          "instruction": "What next?",
+          "frequency": "0.08"
+        },
+        {
+          "relation": "Violated Expectation",
+          "instruction": "Why?",
+          "frequency": "0.01"
+        },
+        {
+          "relation": "Result",
+          "instruction": "What next?",
+          "frequency": "0.05"
+        },
+        {
+          "relation": "Result",
+          "instruction": "Why?",
+          "frequency": "0"
+        }
+      ]
+    },
+    {
+      "name": "biasesByRelation",
+      "structure": "ConditionedBias",
+      "doc": "the bias of a coherence relation to the Source in the original experiment and in the instruction manipulation.",
+      "locator": "Table 4, p. 14",
+      "verified": "page-image",
+      "key": [
+        "relation"
+      ],
+      "columns": [
+        {
+          "name": "relation",
+          "type": "Relation",
+          "doc": "The coherence relation."
+        },
+        {
+          "name": "original",
+          "type": "decimal",
+          "doc": "P(pronoun = Source | CR) in the original experiment."
+        },
+        {
+          "name": "instructionManipulation",
+          "type": "decimal",
+          "doc": "P(pronoun = Source | CR) in the instruction manipulation."
+        }
+      ],
+      "rows": [
+        {
+          "relation": "Occasion",
+          "original": "0.18",
+          "instructionManipulation": "0.27"
+        },
+        {
+          "relation": "Elaboration",
+          "original": "0.98",
+          "instructionManipulation": "1.00"
+        },
+        {
+          "relation": "Explanation",
+          "original": "0.80",
+          "instructionManipulation": "0.82"
+        },
+        {
+          "relation": "Violated Expectation",
+          "original": "0.76",
+          "instructionManipulation": "0.74"
+        },
+        {
+          "relation": "Result",
+          "original": "0.08",
+          "instructionManipulation": "0.09"
+        }
+      ]
+    },
+    {
+      "name": "sourceByInstruction",
+      "structure": "InstructionSource",
+      "doc": "the proportion of Source interpretations under an instruction.",
+      "locator": "Table 5, p. 14",
+      "verified": "page-image",
+      "key": [
+        "instruction"
+      ],
+      "columns": [
+        {
+          "name": "instruction",
+          "type": "Instruction",
+          "doc": "The instruction."
+        },
+        {
+          "name": "sourceInterpretation",
+          "type": "decimal",
+          "doc": "The proportion of Source interpretations."
+        }
+      ],
+      "rows": [
+        {
+          "instruction": "What next?",
+          "sourceInterpretation": "0.34"
+        },
+        {
+          "instruction": "Why?",
+          "sourceInterpretation": "0.82"
+        }
+      ]
+    },
+    {
+      "name": "relationsByPrompt",
+      "structure": "PromptFrequency",
+      "doc": "the proportion of continuations with a coherence relation by prompt type.",
+      "locator": "Table 6, p. 17",
+      "verified": "page-image",
+      "key": [
+        "relation",
+        "prompt"
+      ],
+      "columns": [
+        {
+          "name": "relation",
+          "type": "Relation",
+          "doc": "The coherence relation."
+        },
+        {
+          "name": "prompt",
+          "type": "Prompt",
+          "doc": "The prompt type."
+        },
+        {
+          "name": "frequency",
+          "type": "decimal",
+          "doc": "The proportion of continuations with the relation."
+        }
+      ],
+      "rows": [
+        {
+          "relation": "Occasion",
+          "prompt": "No Pronoun",
+          "frequency": "0.36"
+        },
+        {
+          "relation": "Occasion",
+          "prompt": "Pronoun",
+          "frequency": "0.28"
+        },
+        {
+          "relation": "Elaboration",
+          "prompt": "No Pronoun",
+          "frequency": "0.06"
+        },
+        {
+          "relation": "Elaboration",
+          "prompt": "Pronoun",
+          "frequency": "0.20"
+        },
+        {
+          "relation": "Explanation",
+          "prompt": "No Pronoun",
+          "frequency": "0.20"
+        },
+        {
+          "relation": "Explanation",
+          "prompt": "Pronoun",
+          "frequency": "0.28"
+        },
+        {
+          "relation": "Violated Expectation",
+          "prompt": "No Pronoun",
+          "frequency": "0.18"
+        },
+        {
+          "relation": "Violated Expectation",
+          "prompt": "Pronoun",
+          "frequency": "0.14"
+        },
+        {
+          "relation": "Result",
+          "prompt": "No Pronoun",
+          "frequency": "0.13"
+        },
+        {
+          "relation": "Result",
+          "prompt": "Pronoun",
+          "frequency": "0.05"
+        }
+      ]
+    },
+    {
+      "name": "goalFirstMentions",
+      "structure": "GoalMention",
+      "doc": "the percentage of first mentions to the Goal by prompt type, printed in the text.",
+      "locator": "p. 16",
+      "verified": "page-image",
+      "key": [
+        "prompt"
+      ],
+      "columns": [
+        {
+          "name": "prompt",
+          "type": "Prompt",
+          "doc": "The prompt type."
+        },
+        {
+          "name": "percent",
+          "type": "nat",
+          "doc": "The percentage of first mentions to the Goal."
+        }
+      ],
+      "rows": [
+        {
+          "prompt": "No Pronoun",
+          "percent": 84
+        },
+        {
+          "prompt": "Pronoun",
+          "percent": 48
+        }
+      ]
+    },
+    {
+      "name": "causalMentions",
+      "structure": "CausalMention",
+      "doc": "the proportion of next mentions of the causally implicated referent by voice and prompt.",
+      "locator": "Table 7, p. 24",
+      "verified": "page-image",
+      "key": [
+        "voice",
+        "prompt"
+      ],
+      "columns": [
+        {
+          "name": "voice",
+          "type": "Voice",
+          "doc": "The voice."
+        },
+        {
+          "name": "prompt",
+          "type": "Prompt",
+          "doc": "The prompt type."
+        },
+        {
+          "name": "proportion",
+          "type": "decimal",
+          "doc": "The proportion of next mentions of the causally implicated referent."
+        }
+      ],
+      "rows": [
+        {
+          "voice": "Active",
+          "prompt": "Pronoun",
+          "proportion": "0.77"
+        },
+        {
+          "voice": "Active",
+          "prompt": "No Pronoun",
+          "proportion": "0.59"
+        },
+        {
+          "voice": "Passive",
+          "prompt": "Pronoun",
+          "proportion": "0.42"
+        },
+        {
+          "voice": "Passive",
+          "prompt": "No Pronoun",
+          "proportion": "0.76"
+        }
+      ]
+    },
+    {
+      "name": "explanations",
+      "structure": "ExplanationRate",
+      "doc": "the proportion of Explanation relations by voice and prompt.",
+      "locator": "Table 8, p. 24",
+      "verified": "page-image",
+      "key": [
+        "voice",
+        "prompt"
+      ],
+      "columns": [
+        {
+          "name": "voice",
+          "type": "Voice",
+          "doc": "The voice."
+        },
+        {
+          "name": "prompt",
+          "type": "Prompt",
+          "doc": "The prompt type."
+        },
+        {
+          "name": "proportion",
+          "type": "decimal",
+          "doc": "The proportion of Explanation relations."
+        }
+      ],
+      "rows": [
+        {
+          "voice": "Active",
+          "prompt": "Pronoun",
+          "proportion": "0.75"
+        },
+        {
+          "voice": "Active",
+          "prompt": "No Pronoun",
+          "proportion": "0.60"
+        },
+        {
+          "voice": "Passive",
+          "prompt": "Pronoun",
+          "proportion": "0.52"
+        },
+        {
+          "voice": "Passive",
+          "prompt": "No Pronoun",
+          "proportion": "0.72"
+        }
+      ]
+    },
+    {
+      "name": "pronominalizations",
+      "structure": "Pronominalized",
+      "doc": "the proportion of pronominalized references to a position by voice.",
+      "locator": "Table 9, p. 25",
+      "verified": "page-image",
+      "key": [
+        "voice",
+        "position"
+      ],
+      "columns": [
+        {
+          "name": "voice",
+          "type": "Voice",
+          "doc": "The voice."
+        },
+        {
+          "name": "position",
+          "type": "Position",
+          "doc": "The position of the referent."
+        },
+        {
+          "name": "proportion",
+          "type": "decimal",
+          "doc": "The proportion of references that are pronouns."
+        }
+      ],
+      "rows": [
+        {
+          "voice": "Active",
+          "position": "Surface Subject",
+          "proportion": "0.62"
+        },
+        {
+          "voice": "Active",
+          "position": "Surface Non-Subject",
+          "proportion": "0.24"
+        },
+        {
+          "voice": "Passive",
+          "position": "Surface Subject",
+          "proportion": "0.87"
+        },
+        {
+          "voice": "Passive",
+          "position": "Surface Non-Subject",
+          "proportion": "0.23"
+        }
+      ]
+    },
+    {
+      "name": "subjectBiases",
+      "structure": "SubjectBias",
+      "doc": "the predicted and the actual bias of a pronoun to the subject by voice.",
+      "locator": "Table 10, p. 26",
+      "verified": "page-image",
+      "key": [
+        "voice"
+      ],
+      "columns": [
+        {
+          "name": "voice",
+          "type": "Voice",
+          "doc": "The voice."
+        },
+        {
+          "name": "predicted",
+          "type": "decimal",
+          "doc": "The bias predicted from the no-pronoun conditions."
+        },
+        {
+          "name": "actual",
+          "type": "decimal",
+          "doc": "The bias measured with the pronoun prompt."
+        }
+      ],
+      "rows": [
+        {
+          "voice": "Active",
+          "predicted": "0.81",
+          "actual": "0.74"
+        },
+        {
+          "voice": "Passive",
+          "predicted": "0.59",
+          "actual": "0.60"
+        }
+      ]
+    },
+    {
+      "name": "arnoldPronominalizations",
+      "structure": "ArnoldPronominalized",
+      "doc": "the proportion of references to a position that were pronominalized in Arnold (2001)'s Source-Goal contexts, the subject being the Source and the non-subject the Goal, printed in the text.",
+      "locator": "p. 15",
+      "verified": "page-image",
+      "key": [
+        "position"
+      ],
+      "columns": [
+        {
+          "name": "position",
+          "type": "Position",
+          "doc": "The position of the referent."
+        },
+        {
+          "name": "proportion",
+          "type": "decimal",
+          "doc": "The proportion of references that are pronouns."
+        }
+      ],
+      "rows": [
+        {
+          "position": "Surface Subject",
+          "proportion": "0.76"
+        },
+        {
+          "position": "Surface Non-Subject",
+          "proportion": "0.20"
+        }
+      ]
+    },
+    {
+      "name": "arnoldPrediction",
+      "structure": "ArnoldPrediction",
+      "doc": "the worked example of Equation (11) on Arnold (2001)'s data, printed in the text: the next-mention probability of the Goal, the probability of a pronoun, and the predicted interpretation bias of a pronoun toward the Goal.",
+      "locator": "p. 15",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "goalNextMention",
+          "type": "decimal",
+          "doc": "P(Goal), the next-mention probability of the Goal."
+        },
+        {
+          "name": "pronounRate",
+          "type": "decimal",
+          "doc": "P(pronoun), the probability of pronominalization."
+        },
+        {
+          "name": "goalInterpretation",
+          "type": "decimal",
+          "doc": "The interpretation bias toward the Goal that Equation (11) predicts."
+        }
+      ],
+      "rows": [
+        {
+          "goalNextMention": "0.86",
+          "pronounRate": "0.28",
+          "goalInterpretation": "0.61"
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,7 @@ public import Studies.Krifka2007b
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.AlexandropoulouGotzner2024a
 public import Linglib.Data.Examples.Readers
-public import Linglib.Data.Experiments.AlexandropoulouGotzner2024a
+public import Linglib.Data.Statistics.AlexandropoulouGotzner2024a
 
 /-!
 # Alexandropoulou and Gotzner (2024a): relative and absolute adjectives under negation
@@ -52,7 +52,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree Krifka2007b English.Adjectives Data.Experiments
+open Degree Krifka2007b English.Adjectives Data.Statistics
 
 variable {t : AdjectiveType} {s : Strength}
 

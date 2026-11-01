@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.Chemla2009a
+public import Linglib.Data.Statistics.Chemla2009a
 public import Linglib.Semantics.Presupposition.QuantifiedLocalContext
 
 /-!
@@ -8,7 +8,7 @@ public import Linglib.Semantics.Presupposition.QuantifiedLocalContext
 
 Chemla's first experiment finds the universal inference from a trigger in the nuclear scope of
 *each* and *no* endorsed far more often than from the scope of the numerical quantifiers
-(`Data/Experiments/Chemla2009a`). One amendment the paper considers keeps the universal
+(`Data/Statistics/Chemla2009a`). One amendment the paper considers keeps the universal
 presupposition that the transparency theory predicts for every quantifier, and explains why it is
 not accommodated after the numerical quantifiers by how hard it is to derive (§4.1.2). Appendix F
 makes the measure precise. Under *no*, a single instance of transparency's condition, at the

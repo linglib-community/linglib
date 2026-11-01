@@ -1,12 +1,11 @@
 # `Linglib/Data/` — typed datasets and example data
 
-Sibling directories at this level:
+Three sibling directories at this level:
 
 | Subdir | Purpose | Source format | Generated Lean |
 |---|---|---|---|
 | `Examples/` | Per-paper typed examples (`Datum` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
-| `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
-| `Corpus/` | Per-paper corpus counts, the paper's own or those it cites, in the format of `Experiments/` | JSON, one file per paper | `Corpus/{AuthorYear}.lean` |
+| `Statistics/` | Per-paper printed statistics (counts, rates, means, tests, fits), each table with the method that produced it | JSON, one file per paper | `Statistics/{AuthorYear}.lean` |
 | `Wordlist/` | Per-paper word forms, CLDF Wordlist and Paralex (`LexemeTable`, `CellTable`, `FormTable`; custom relation, paradigm, root-class and analysis tables) | JSON, one file per paper | `Wordlist/{AuthorYear}.lean` |
 | `StructureDataset/` | Per-paper CLDF language samples (`ContributionTable`, `LanguageTable`, `ParameterTable`, `CodeTable`, `ValueTable`) | JSON, one file per paper | `StructureDataset/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
@@ -88,12 +87,16 @@ a list-valued field per parameter, so a theorem reads each language once.
 - **Generator**: `scripts/gen_structure_dataset.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/StructureDataset/{AuthorYear}.json` → `{AuthorYear}.lean`
 
-### Experimental results
+### Statistics
 
-The results a paper prints for its experiments, one table per printed table: the stimulus
+The statistics a paper prints, one table per printed table: for an experiment, the stimulus
 inventory with its coding, the design constants, and the statistics (shares of ceiling ratings,
-counts, means) at the precision the paper prints them, as `Decimal`s that keep the printed
-digits. A paper's coding labels (its factors, predictors, response types) are generated enums,
+counts, means, tests) at the precision the paper prints them, as `Decimal`s that keep the printed
+digits; likewise counts over a corpus or a lexicon, rates from a sociolinguistic survey, figures
+from a typological sample, and the values a model fits. The directories of `Data/` are kinds of
+datum (an example, a form, a coded value, a statistic), and how a statistic was obtained is a
+field of its table: `meta.method` gives a paper's method and a table's `method` overrides it, one
+of `experiment`, `corpus`, `lexicon`, `survey`, `typology` and `model`. A paper's coding labels (its factors, predictors, response types) are generated enums,
 declared with the tables in `namespace <Paper>` beside the paper's study, which reads them and
 extends them without opening anything; the study maps them into its theory types by total
 functions and defines there what it concludes from the numbers (a prototype, a preference, a
@@ -104,14 +107,14 @@ it departs from the print.
 The released data behind a paper, where there is any, is linked from its JSON (`meta.rawData`)
 and the generated module's docstring, but not committed: the tables stay at the granularity the
 paper argues at. A table the authors' data reproduces is marked `raw-data`, and
-`scripts/check_experiments.py <Paper>` downloads the data and recomputes it through
-`scripts/experiments/<Paper>.py`.
+`scripts/check_statistics.py <Paper>` downloads the data and recomputes it through
+`scripts/statistics/<Paper>.py`.
 
-- **Schema**: `Linglib/Data/Experiments/Schema.lean`
-- **Generator**: `scripts/gen_experiments.py` (`--check` verifies sync; the column vocabulary is
+- **Schema**: `Linglib/Data/Statistics/Schema.lean`
+- **Generator**: `scripts/gen_statistics.py` (`--check` verifies sync; the column vocabulary is
   in its docstring)
-- **Raw-data check**: `scripts/check_experiments.py` (needs network access; run by hand)
-- **Input/Output**: `Linglib/Data/Experiments/{Paper}.json` → `{Paper}.lean`
+- **Raw-data check**: `scripts/check_statistics.py` (needs network access; run by hand)
+- **Input/Output**: `Linglib/Data/Statistics/{Paper}.json` → `{Paper}.lean`
 
 ### UD dependency length by language
 

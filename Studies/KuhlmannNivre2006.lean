@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Data.Corpus.KuhlmannNivre2006
+public import Linglib.Data.Statistics.KuhlmannNivre2006
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Interval.Finset.Fin
 
@@ -223,7 +223,7 @@ theorem figure4_degrees :
 The rows at degree zero and the rows over the non-projective structures follow from the counts
 over all structures, through the degree-zero theorems and the hierarchy. -/
 
-open Data.Experiments (Decimal)
+open Data.Statistics (Decimal)
 
 /-- What a binary constraint says of a graph. -/
 def Constraint.Holds : Constraint → Graph L n → Prop

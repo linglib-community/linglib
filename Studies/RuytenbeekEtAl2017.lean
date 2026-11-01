@@ -4,7 +4,7 @@ public import Linglib.Discourse.SpeechAct
 public import Linglib.Semantics.Mood.SpeechEvent
 public import Linglib.Fragments.Romance.French.Modals
 public import Linglib.Data.Examples.RuytenbeekEtAl2017
-public import Linglib.Data.Experiments.RuytenbeekEtAl2017
+public import Linglib.Data.Statistics.RuytenbeekEtAl2017
 
 /-!
 # Ruytenbeek et al. (2017): Indirect request processing, sentence types and illocutionary forces
@@ -28,7 +28,7 @@ readings secondary (`literalist_refuted`).
 ## Implementation notes
 
 The corpus counts, the response-time estimates and the paper's findings on each construction's
-interpretations are `Data/Experiments/RuytenbeekEtAl2017`; the stimulus sentences are
+interpretations are `Data/Statistics/RuytenbeekEtAl2017`; the stimulus sentences are
 `Data/Examples/RuytenbeekEtAl2017.json`. A construction is directive when it received directive
 interpretations at all, and unactivated when the paper reports no fixations on the answer buttons
 and response times equal to the imperative's for those interpretations; the regression

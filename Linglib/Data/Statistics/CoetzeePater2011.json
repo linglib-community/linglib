@@ -1,0 +1,1269 @@
+{
+  "meta": {
+    "bibkey": "coetzee-pater-2011",
+    "method": "model",
+    "description": "Coetzee and Pater's printed t/d-deletion data and model results, after the ROA-946 draft of 6 October 2009: deletion rates by morphological status (7) and by following context (10), the deletion probabilities of five partially ordered grammars (13), the Japanese loanword grammars learned by stochastic OT and Noisy HG (21), the grammars learned for each dialect and for the constructed Tejano′ (23), the Goldvarb fits (25), and the lexically indexed Noisy HG grammar (32). The observed rows of (23) for the seven dialects repeat (10) as proportions and are not stored again. Footnote 7 places the input files of the learning simulations in the archive coetzee-pater-variation.zip on Pater's UMass page."
+  },
+  "types": [
+    {
+      "name": "Context",
+      "doc": "What follows the word-final t/d.",
+      "levels": [
+        {
+          "name": "preV",
+          "label": "Pre-V",
+          "doc": "a vowel, *west end*"
+        },
+        {
+          "name": "pause",
+          "label": "Pre-Pause",
+          "doc": "a pause, *west*"
+        },
+        {
+          "name": "preC",
+          "label": "Pre-C",
+          "doc": "a consonant, *west side*"
+        }
+      ]
+    },
+    {
+      "name": "Dialect",
+      "doc": "The dialects of English whose deletion rates the paper reports, with the sources footnote 3 gives for (10).",
+      "levels": [
+        {
+          "name": "aave",
+          "label": "AAVE (Washington, DC)",
+          "doc": "after Fasold 1972"
+        },
+        {
+          "name": "chicano",
+          "label": "Chicano English",
+          "doc": "after Santa Ana 1991"
+        },
+        {
+          "name": "jamaican",
+          "label": "Jamaican English",
+          "doc": "after Patrick 1992"
+        },
+        {
+          "name": "newYorkCity",
+          "label": "New York City English",
+          "doc": "after Guy 1980"
+        },
+        {
+          "name": "tejano",
+          "label": "Tejano English",
+          "doc": "after Bayley 1995"
+        },
+        {
+          "name": "trinidad",
+          "label": "Trinidadian English",
+          "doc": "after Kang 1994"
+        },
+        {
+          "name": "philadelphia",
+          "label": "Philadelphia English",
+          "doc": "after Guy 1980"
+        }
+      ]
+    },
+    {
+      "name": "ImposedRanking",
+      "doc": "The ranking a partially ordered grammar of (13) imposes on the constraints of (11).",
+      "levels": [
+        {
+          "name": "none",
+          "label": "None",
+          "doc": "no ranking imposed"
+        },
+        {
+          "name": "maxPreVOverStarCT",
+          "label": "MAX-PRE-V >> *CT",
+          "doc": "MAX-PRE-V dominates *CT"
+        },
+        {
+          "name": "starCTOverMaxPreV",
+          "label": "*CT >> MAX-PRE-V",
+          "doc": "*CT dominates MAX-PRE-V"
+        },
+        {
+          "name": "maxFinalOverStarCT",
+          "label": "MAX-FIN >> *CT",
+          "doc": "MAX-FINAL dominates *CT"
+        },
+        {
+          "name": "starCTOverMaxFinal",
+          "label": "*CT >> MAX-FIN",
+          "doc": "*CT dominates MAX-FINAL"
+        }
+      ]
+    },
+    {
+      "name": "Model",
+      "doc": "The stochastic grammars the paper's learners use.",
+      "levels": [
+        {
+          "name": "stOT",
+          "label": "St-OT",
+          "doc": "stochastic OT, learned by the OT-GLA"
+        },
+        {
+          "name": "nHG",
+          "label": "N-HG",
+          "doc": "Noisy Harmonic Grammar, learned by the HG-GLA"
+        },
+        {
+          "name": "meHG",
+          "label": "ME-HG",
+          "doc": "Maximum Entropy Harmonic Grammar, learned by the HG-GLA"
+        }
+      ]
+    },
+    {
+      "name": "Loan",
+      "doc": "The Japanese loanwords of (18)–(19).",
+      "levels": [
+        {
+          "name": "bobu",
+          "label": "bobu",
+          "doc": "'Bob', two voiced obstruents"
+        },
+        {
+          "name": "webbu",
+          "label": "webbu",
+          "doc": "'web', a voiced geminate"
+        },
+        {
+          "name": "guddo",
+          "label": "guddo",
+          "doc": "'good', a voiced geminate and another voiced obstruent"
+        }
+      ]
+    },
+    {
+      "name": "Variety",
+      "doc": "The varieties fitted by Goldvarb in (25).",
+      "levels": [
+        {
+          "name": "tejano",
+          "label": "Tejano",
+          "doc": "Bayley's Tejano English"
+        },
+        {
+          "name": "tejanoPrime",
+          "label": "Tejano'",
+          "doc": "Tejano with the pre-vocalic and pre-consonantal rates traded"
+        }
+      ]
+    },
+    {
+      "name": "Lexeme",
+      "doc": "The words of the lexically indexed simulation (32).",
+      "levels": [
+        {
+          "name": "feast",
+          "label": "feast",
+          "doc": "the word *feast*"
+        },
+        {
+          "name": "most",
+          "label": "most",
+          "doc": "the word *most*"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "informalRegisterFactor",
+      "type": "decimal",
+      "value": "0.70",
+      "doc": "The factor weight of a hypothetical informal register in (27).",
+      "locator": "(27), p. 24",
+      "verified": "page-image"
+    },
+    {
+      "name": "indexedStarCT",
+      "type": "decimal",
+      "value": "100.71",
+      "doc": "The weight of *CT in (32).",
+      "locator": "(32), p. 29",
+      "verified": "page-image"
+    },
+    {
+      "name": "indexedMaxPreVFeast",
+      "type": "decimal",
+      "value": "1.18",
+      "doc": "The weight of MAX-PRE-V indexed to *feast* in (32).",
+      "locator": "(32), p. 29",
+      "verified": "page-image"
+    },
+    {
+      "name": "indexedMaxFinalFeast",
+      "type": "decimal",
+      "value": "3.58",
+      "doc": "The weight of MAX-FINAL indexed to *feast* in (32).",
+      "locator": "(32), p. 29",
+      "verified": "page-image"
+    },
+    {
+      "name": "indexedMaxFeast",
+      "type": "decimal",
+      "value": "100.07",
+      "doc": "The weight of MAX indexed to *feast* in (32).",
+      "locator": "(32), p. 29",
+      "verified": "page-image"
+    },
+    {
+      "name": "indexedMaxPreVMost",
+      "type": "decimal",
+      "value": "1.16",
+      "doc": "The weight of MAX-PRE-V indexed to *most* in (32).",
+      "locator": "(32), p. 29",
+      "verified": "page-image"
+    },
+    {
+      "name": "indexedMaxFinalMost",
+      "type": "decimal",
+      "value": "3.27",
+      "doc": "The weight of MAX-FINAL indexed to *most* in (32).",
+      "locator": "(32), p. 29",
+      "verified": "page-image"
+    },
+    {
+      "name": "indexedMaxMost",
+      "type": "decimal",
+      "value": "99.22",
+      "doc": "The weight of MAX indexed to *most* in (32).",
+      "locator": "(32), p. 29",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "morphRates",
+      "method": "survey",
+      "structure": "MorphRate",
+      "doc": "the percentage of t/d deleted by morphological status in a dialect.",
+      "locator": "(7), p. 6",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "dialect",
+          "type": "Dialect",
+          "doc": "The dialect."
+        },
+        {
+          "name": "regularPast",
+          "type": "nat",
+          "doc": "The percentage deleted from a regular past suffix, *missed*."
+        },
+        {
+          "name": "semiWeakPast",
+          "type": "nat",
+          "doc": "The percentage deleted from a semi-weak past, *kept*."
+        },
+        {
+          "name": "monomorpheme",
+          "type": "nat",
+          "doc": "The percentage deleted from a monomorpheme, *mist*."
+        }
+      ],
+      "rows": [
+        {
+          "dialect": "Philadelphia English",
+          "regularPast": 17,
+          "semiWeakPast": 34,
+          "monomorpheme": 38,
+          "note": "Guy 1991b"
+        },
+        {
+          "dialect": "Chicano English",
+          "regularPast": 26,
+          "semiWeakPast": 41,
+          "monomorpheme": 58,
+          "note": "Santa Ana 1992"
+        },
+        {
+          "dialect": "Tejano English",
+          "regularPast": 24,
+          "semiWeakPast": 34,
+          "monomorpheme": 56,
+          "note": "Bayley 1997"
+        }
+      ]
+    },
+    {
+      "name": "contextRates",
+      "method": "survey",
+      "structure": "ContextRate",
+      "doc": "the percentage of t/d deleted in a dialect before a following context.",
+      "locator": "(10), p. 9",
+      "verified": "page-image",
+      "key": [
+        "dialect",
+        "context"
+      ],
+      "columns": [
+        {
+          "name": "dialect",
+          "type": "Dialect",
+          "doc": "The dialect."
+        },
+        {
+          "name": "context",
+          "type": "Context",
+          "doc": "The following context."
+        },
+        {
+          "name": "percent",
+          "type": "nat",
+          "doc": "The percentage deleted."
+        }
+      ],
+      "rows": [
+        {
+          "dialect": "AAVE (Washington, DC)",
+          "context": "Pre-V",
+          "percent": 29
+        },
+        {
+          "dialect": "AAVE (Washington, DC)",
+          "context": "Pre-Pause",
+          "percent": 73
+        },
+        {
+          "dialect": "AAVE (Washington, DC)",
+          "context": "Pre-C",
+          "percent": 76
+        },
+        {
+          "dialect": "Chicano English",
+          "context": "Pre-V",
+          "percent": 45
+        },
+        {
+          "dialect": "Chicano English",
+          "context": "Pre-Pause",
+          "percent": 37
+        },
+        {
+          "dialect": "Chicano English",
+          "context": "Pre-C",
+          "percent": 62
+        },
+        {
+          "dialect": "Jamaican English",
+          "context": "Pre-V",
+          "percent": 63
+        },
+        {
+          "dialect": "Jamaican English",
+          "context": "Pre-Pause",
+          "percent": 71
+        },
+        {
+          "dialect": "Jamaican English",
+          "context": "Pre-C",
+          "percent": 85
+        },
+        {
+          "dialect": "New York City English",
+          "context": "Pre-V",
+          "percent": 66
+        },
+        {
+          "dialect": "New York City English",
+          "context": "Pre-Pause",
+          "percent": 83
+        },
+        {
+          "dialect": "New York City English",
+          "context": "Pre-C",
+          "percent": 100
+        },
+        {
+          "dialect": "Tejano English",
+          "context": "Pre-V",
+          "percent": 25
+        },
+        {
+          "dialect": "Tejano English",
+          "context": "Pre-Pause",
+          "percent": 46
+        },
+        {
+          "dialect": "Tejano English",
+          "context": "Pre-C",
+          "percent": 62
+        },
+        {
+          "dialect": "Trinidadian English",
+          "context": "Pre-V",
+          "percent": 21
+        },
+        {
+          "dialect": "Trinidadian English",
+          "context": "Pre-Pause",
+          "percent": 31
+        },
+        {
+          "dialect": "Trinidadian English",
+          "context": "Pre-C",
+          "percent": 81
+        },
+        {
+          "dialect": "Philadelphia English",
+          "context": "Pre-V",
+          "percent": 38
+        },
+        {
+          "dialect": "Philadelphia English",
+          "context": "Pre-Pause",
+          "percent": 12
+        },
+        {
+          "dialect": "Philadelphia English",
+          "context": "Pre-C",
+          "percent": 100
+        }
+      ]
+    },
+    {
+      "name": "pocRates",
+      "structure": "GrammarRate",
+      "doc": "the number of a partially ordered grammar's linear extensions that delete in a context, out of all of them, and the probability of deletion. Counting the linear extensions of the grammars of rows (b)–(e) does not give the printed counts; the study records the discrepancy.",
+      "locator": "(13), p. 12",
+      "verified": "page-image",
+      "key": [
+        "imposedRanking",
+        "context"
+      ],
+      "columns": [
+        {
+          "name": "imposedRanking",
+          "type": "ImposedRanking",
+          "doc": "The ranking the grammar imposes."
+        },
+        {
+          "name": "context",
+          "type": "Context",
+          "doc": "The following context."
+        },
+        {
+          "name": "rankings",
+          "type": "nat",
+          "doc": "The number of linear extensions that delete."
+        },
+        {
+          "name": "total",
+          "type": "nat",
+          "doc": "The number of linear extensions."
+        },
+        {
+          "name": "probability",
+          "type": "decimal",
+          "doc": "The probability of deletion."
+        }
+      ],
+      "rows": [
+        {
+          "imposedRanking": "None",
+          "context": "Pre-V",
+          "rankings": 8,
+          "total": 24,
+          "probability": "0.33"
+        },
+        {
+          "imposedRanking": "None",
+          "context": "Pre-Pause",
+          "rankings": 8,
+          "total": 24,
+          "probability": "0.33"
+        },
+        {
+          "imposedRanking": "None",
+          "context": "Pre-C",
+          "rankings": 12,
+          "total": 24,
+          "probability": "0.50"
+        },
+        {
+          "imposedRanking": "MAX-PRE-V >> *CT",
+          "context": "Pre-V",
+          "rankings": 0,
+          "total": 12,
+          "probability": "0"
+        },
+        {
+          "imposedRanking": "MAX-PRE-V >> *CT",
+          "context": "Pre-Pause",
+          "rankings": 4,
+          "total": 12,
+          "probability": "0.33"
+        },
+        {
+          "imposedRanking": "MAX-PRE-V >> *CT",
+          "context": "Pre-C",
+          "rankings": 6,
+          "total": 12,
+          "probability": "0.50"
+        },
+        {
+          "imposedRanking": "*CT >> MAX-PRE-V",
+          "context": "Pre-V",
+          "rankings": 6,
+          "total": 12,
+          "probability": "0.50"
+        },
+        {
+          "imposedRanking": "*CT >> MAX-PRE-V",
+          "context": "Pre-Pause",
+          "rankings": 4,
+          "total": 12,
+          "probability": "0.33"
+        },
+        {
+          "imposedRanking": "*CT >> MAX-PRE-V",
+          "context": "Pre-C",
+          "rankings": 6,
+          "total": 12,
+          "probability": "0.50"
+        },
+        {
+          "imposedRanking": "MAX-FIN >> *CT",
+          "context": "Pre-V",
+          "rankings": 4,
+          "total": 12,
+          "probability": "0.33"
+        },
+        {
+          "imposedRanking": "MAX-FIN >> *CT",
+          "context": "Pre-Pause",
+          "rankings": 0,
+          "total": 12,
+          "probability": "0"
+        },
+        {
+          "imposedRanking": "MAX-FIN >> *CT",
+          "context": "Pre-C",
+          "rankings": 6,
+          "total": 12,
+          "probability": "0.50"
+        },
+        {
+          "imposedRanking": "*CT >> MAX-FIN",
+          "context": "Pre-V",
+          "rankings": 4,
+          "total": 12,
+          "probability": "0.33"
+        },
+        {
+          "imposedRanking": "*CT >> MAX-FIN",
+          "context": "Pre-Pause",
+          "rankings": 6,
+          "total": 12,
+          "probability": "0.50"
+        },
+        {
+          "imposedRanking": "*CT >> MAX-FIN",
+          "context": "Pre-C",
+          "rankings": 6,
+          "total": 12,
+          "probability": "0.50"
+        }
+      ]
+    },
+    {
+      "name": "loanwordWeights",
+      "structure": "LoanwordGrammar",
+      "doc": "the constraint values a learner reached on the loanword data of (18)–(19).",
+      "locator": "(21), p. 18",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "model",
+          "type": "Model",
+          "doc": "The learner's grammar."
+        },
+        {
+          "name": "ocpVoice",
+          "type": "decimal",
+          "doc": "The value of OCP-VOICE."
+        },
+        {
+          "name": "voicedGeminate",
+          "type": "decimal",
+          "doc": "The value of *VOICED-GEMINATE."
+        },
+        {
+          "name": "identVoice",
+          "type": "decimal",
+          "doc": "The value of IDENT-VOICE."
+        }
+      ],
+      "rows": [
+        {
+          "model": "St-OT",
+          "ocpVoice": "3113.9",
+          "voicedGeminate": "3113.9",
+          "identVoice": "3113.7"
+        },
+        {
+          "model": "N-HG",
+          "ocpVoice": "66.8",
+          "voicedGeminate": "67.6",
+          "identVoice": "134.4"
+        }
+      ]
+    },
+    {
+      "name": "devoicingRates",
+      "structure": "DevoicingRate",
+      "doc": "the frequency of devoicing of a loanword in the learning data and in the grammars learned from it.",
+      "locator": "(21), p. 18",
+      "verified": "page-image",
+      "key": [
+        "loan"
+      ],
+      "columns": [
+        {
+          "name": "loan",
+          "type": "Loan",
+          "doc": "The loanword."
+        },
+        {
+          "name": "learningData",
+          "type": "decimal",
+          "doc": "The frequency of devoicing in the learning data."
+        },
+        {
+          "name": "stOT",
+          "type": "decimal",
+          "doc": "The frequency of devoicing in the learned stochastic OT grammar."
+        },
+        {
+          "name": "nHG",
+          "type": "decimal",
+          "doc": "The frequency of devoicing in the learned Noisy HG grammar."
+        }
+      ],
+      "rows": [
+        {
+          "loan": "bobu",
+          "learningData": "0.0",
+          "stOT": "0.15",
+          "nHG": "0.0"
+        },
+        {
+          "loan": "webbu",
+          "learningData": "0.0",
+          "stOT": "0.15",
+          "nHG": "0.0"
+        },
+        {
+          "loan": "guddo",
+          "learningData": "0.50",
+          "stOT": "0.25",
+          "nHG": "0.50"
+        }
+      ]
+    },
+    {
+      "name": "learnedGrammars",
+      "structure": "LearnedGrammar",
+      "doc": "the constraint values a learner reached on a dialect's rates of (10), and the probabilities of deletion its grammar encodes.",
+      "locator": "(23), p. 20",
+      "verified": "page-image",
+      "key": [
+        "dialect",
+        "model"
+      ],
+      "columns": [
+        {
+          "name": "dialect",
+          "type": "Dialect",
+          "doc": "The dialect."
+        },
+        {
+          "name": "model",
+          "type": "Model",
+          "doc": "The learner's grammar."
+        },
+        {
+          "name": "starCT",
+          "type": "decimal",
+          "doc": "The value of *CT."
+        },
+        {
+          "name": "maxPreV",
+          "type": "decimal",
+          "doc": "The value of MAX-PRE-V."
+        },
+        {
+          "name": "maxFinal",
+          "type": "decimal",
+          "doc": "The value of MAX-FINAL."
+        },
+        {
+          "name": "maxC",
+          "type": "decimal",
+          "doc": "The value of MAX."
+        },
+        {
+          "name": "preV",
+          "type": "decimal",
+          "doc": "The encoded probability of deletion before a vowel."
+        },
+        {
+          "name": "pause",
+          "type": "decimal",
+          "doc": "The encoded probability of deletion before a pause."
+        },
+        {
+          "name": "preC",
+          "type": "decimal",
+          "doc": "The encoded probability of deletion before a consonant."
+        }
+      ],
+      "rows": [
+        {
+          "dialect": "AAVE (Washington, DC)",
+          "model": "St-OT",
+          "starCT": "101.0",
+          "maxPreV": "102.3",
+          "maxFinal": "96.8",
+          "preV": "0.29",
+          "pause": "0.73",
+          "preC": "0.76",
+          "maxC": "99.0"
+        },
+        {
+          "dialect": "AAVE (Washington, DC)",
+          "model": "N-HG",
+          "starCT": "101.0",
+          "maxPreV": "5.8",
+          "maxFinal": "-1.5",
+          "preV": "0.29",
+          "pause": "0.73",
+          "preC": "0.77",
+          "maxC": "97.2"
+        },
+        {
+          "dialect": "AAVE (Washington, DC)",
+          "model": "ME-HG",
+          "starCT": "100.6",
+          "maxPreV": "2.1",
+          "maxFinal": "0.2",
+          "preV": "0.30",
+          "pause": "0.74",
+          "preC": "0.77",
+          "maxC": "99.4"
+        },
+        {
+          "dialect": "Chicano English",
+          "model": "St-OT",
+          "starCT": "100.4",
+          "maxPreV": "99.7",
+          "maxFinal": "100.6",
+          "preV": "0.45",
+          "pause": "0.37",
+          "preC": "0.62",
+          "maxC": "99.6"
+        },
+        {
+          "dialect": "Chicano English",
+          "model": "N-HG",
+          "starCT": "100.4",
+          "maxPreV": "1.0",
+          "maxFinal": "1.8",
+          "preV": "0.43",
+          "pause": "0.36",
+          "preC": "0.60",
+          "maxC": "99.6"
+        },
+        {
+          "dialect": "Chicano English",
+          "model": "ME-HG",
+          "starCT": "100.2",
+          "maxPreV": "0.7",
+          "maxFinal": "1.0",
+          "preV": "0.44",
+          "pause": "0.36",
+          "preC": "0.61",
+          "maxC": "99.8"
+        },
+        {
+          "dialect": "Jamaican English",
+          "model": "St-OT",
+          "starCT": "101.4",
+          "maxPreV": "100.0",
+          "maxFinal": "99.2",
+          "preV": "0.63",
+          "pause": "0.70",
+          "preC": "0.84",
+          "maxC": "98.6"
+        },
+        {
+          "dialect": "Jamaican English",
+          "model": "N-HG",
+          "starCT": "101.5",
+          "maxPreV": "1.7",
+          "maxFinal": "0.8",
+          "preV": "0.63",
+          "pause": "0.70",
+          "preC": "0.85",
+          "maxC": "98.5"
+        },
+        {
+          "dialect": "Jamaican English",
+          "model": "ME-HG",
+          "starCT": "100.9",
+          "maxPreV": "1.2",
+          "maxFinal": "0.8",
+          "preV": "0.64",
+          "pause": "0.73",
+          "preC": "0.85",
+          "maxC": "99.1"
+        },
+        {
+          "dialect": "New York City English",
+          "model": "St-OT",
+          "starCT": "107.6",
+          "maxPreV": "106.5",
+          "maxFinal": "104.9",
+          "preV": "0.66",
+          "pause": "0.84",
+          "preC": "1.00",
+          "maxC": "92.4"
+        },
+        {
+          "dialect": "New York City English",
+          "model": "N-HG",
+          "starCT": "141.1",
+          "maxPreV": "80.9",
+          "maxFinal": "79.0",
+          "preV": "0.65",
+          "pause": "0.83",
+          "preC": "1.00",
+          "maxC": "58.9"
+        },
+        {
+          "dialect": "New York City English",
+          "model": "ME-HG",
+          "starCT": "140.4",
+          "maxPreV": "80.3",
+          "maxFinal": "79.3",
+          "preV": "0.65",
+          "pause": "0.83",
+          "preC": "1.00",
+          "maxC": "59.6"
+        },
+        {
+          "dialect": "Tejano English",
+          "model": "St-OT",
+          "starCT": "100.4",
+          "maxPreV": "101.9",
+          "maxFinal": "99.6",
+          "preV": "0.25",
+          "pause": "0.46",
+          "preC": "0.62",
+          "maxC": "99.6"
+        },
+        {
+          "dialect": "Tejano English",
+          "model": "N-HG",
+          "starCT": "100.3",
+          "maxPreV": "1.5",
+          "maxFinal": "0.7",
+          "preV": "0.25",
+          "pause": "0.47",
+          "preC": "0.62",
+          "maxC": "99.7"
+        },
+        {
+          "dialect": "Tejano English",
+          "model": "ME-HG",
+          "starCT": "100.4",
+          "maxPreV": "3.2",
+          "maxFinal": "0.7",
+          "preV": "0.27",
+          "pause": "0.46",
+          "preC": "0.63",
+          "maxC": "99.6"
+        },
+        {
+          "dialect": "Trinidadian English",
+          "model": "St-OT",
+          "starCT": "101.2",
+          "maxPreV": "103.4",
+          "maxFinal": "102.5",
+          "preV": "0.21",
+          "pause": "0.31",
+          "preC": "0.80",
+          "maxC": "98.8"
+        },
+        {
+          "dialect": "Trinidadian English",
+          "model": "N-HG",
+          "starCT": "101.2",
+          "maxPreV": "5.2",
+          "maxFinal": "4.1",
+          "preV": "0.21",
+          "pause": "0.31",
+          "preC": "0.80",
+          "maxC": "98.8"
+        },
+        {
+          "dialect": "Trinidadian English",
+          "model": "ME-HG",
+          "starCT": "100.7",
+          "maxPreV": "2.8",
+          "maxFinal": "2.2",
+          "preV": "0.21",
+          "pause": "0.32",
+          "preC": "0.81",
+          "maxC": "99.3"
+        },
+        {
+          "dialect": "Philadelphia English",
+          "model": "St-OT",
+          "starCT": "107.2",
+          "maxPreV": "108.2",
+          "maxFinal": "110.6",
+          "preV": "0.37",
+          "pause": "0.12",
+          "preC": "1.00",
+          "maxC": "92.8"
+        },
+        {
+          "dialect": "Philadelphia English",
+          "model": "N-HG",
+          "starCT": "139.2",
+          "maxPreV": "79.4",
+          "maxFinal": "82.4",
+          "preV": "0.38",
+          "pause": "0.12",
+          "preC": "1.00",
+          "maxC": "60.8"
+        },
+        {
+          "dialect": "Philadelphia English",
+          "model": "ME-HG",
+          "starCT": "139.5",
+          "maxPreV": "79.5",
+          "maxFinal": "81.0",
+          "preV": "0.38",
+          "pause": "0.12",
+          "preC": "1.00",
+          "maxC": "60.5"
+        }
+      ]
+    },
+    {
+      "name": "tejanoPrimeGrammars",
+      "structure": "TejanoPrimeGrammar",
+      "doc": "the constraint values a learner reached on the rates of Tejano′, and the probabilities of deletion its grammar encodes.",
+      "locator": "(23), p. 20",
+      "verified": "page-image",
+      "key": [
+        "model"
+      ],
+      "columns": [
+        {
+          "name": "model",
+          "type": "Model",
+          "doc": "The learner's grammar."
+        },
+        {
+          "name": "starCT",
+          "type": "decimal",
+          "doc": "The value of *CT."
+        },
+        {
+          "name": "maxPreV",
+          "type": "decimal",
+          "doc": "The value of MAX-PRE-V."
+        },
+        {
+          "name": "maxFinal",
+          "type": "decimal",
+          "doc": "The value of MAX-FINAL."
+        },
+        {
+          "name": "maxC",
+          "type": "decimal",
+          "doc": "The value of MAX."
+        },
+        {
+          "name": "preV",
+          "type": "decimal",
+          "doc": "The encoded probability of deletion before a vowel."
+        },
+        {
+          "name": "pause",
+          "type": "decimal",
+          "doc": "The encoded probability of deletion before a pause."
+        },
+        {
+          "name": "preC",
+          "type": "decimal",
+          "doc": "The encoded probability of deletion before a consonant."
+        }
+      ],
+      "rows": [
+        {
+          "model": "St-OT",
+          "starCT": "99.8",
+          "maxPreV": "-6511.3",
+          "maxFinal": "-523.2",
+          "preV": "0.45",
+          "pause": "0.45",
+          "preC": "0.45",
+          "maxC": "100.2"
+        },
+        {
+          "model": "N-HG",
+          "starCT": "99.8",
+          "maxPreV": "-6382.1",
+          "maxFinal": "-735.2",
+          "preV": "0.44",
+          "pause": "0.44",
+          "preC": "0.44",
+          "maxC": "100.2"
+        },
+        {
+          "model": "ME-HG",
+          "starCT": "99.4",
+          "maxPreV": "-1.6",
+          "maxFinal": "-0.8",
+          "preV": "0.61",
+          "pause": "0.42",
+          "preC": "0.24",
+          "maxC": "100.6"
+        }
+      ]
+    },
+    {
+      "name": "tejanoPrimeRates",
+      "structure": "ObservedRate",
+      "doc": "the proportion of deletion in the learning data for Tejano′.",
+      "locator": "(23), p. 20",
+      "verified": "page-image",
+      "key": [
+        "context"
+      ],
+      "columns": [
+        {
+          "name": "context",
+          "type": "Context",
+          "doc": "The following context."
+        },
+        {
+          "name": "rate",
+          "type": "decimal",
+          "doc": "The proportion deleted."
+        }
+      ],
+      "rows": [
+        {
+          "context": "Pre-V",
+          "rate": "0.62"
+        },
+        {
+          "context": "Pre-Pause",
+          "rate": "0.46"
+        },
+        {
+          "context": "Pre-C",
+          "rate": "0.25"
+        }
+      ]
+    },
+    {
+      "name": "goldvarbInputs",
+      "structure": "GoldvarbInput",
+      "doc": "the input probability Goldvarb X fits to a variety.",
+      "locator": "(25), p. 23",
+      "verified": "page-image",
+      "key": [
+        "variety"
+      ],
+      "columns": [
+        {
+          "name": "variety",
+          "type": "Variety",
+          "doc": "The variety."
+        },
+        {
+          "name": "p0",
+          "type": "decimal",
+          "doc": "The input probability p₀."
+        }
+      ],
+      "rows": [
+        {
+          "variety": "Tejano",
+          "p0": "0.44"
+        },
+        {
+          "variety": "Tejano'",
+          "p0": "0.44"
+        }
+      ]
+    },
+    {
+      "name": "goldvarbFactors",
+      "structure": "GoldvarbFactor",
+      "doc": "the factor weight Goldvarb X fits to a following context in a variety, with the observed and expected percentages of deletion.",
+      "locator": "(25), p. 23",
+      "verified": "page-image",
+      "key": [
+        "variety",
+        "context"
+      ],
+      "columns": [
+        {
+          "name": "variety",
+          "type": "Variety",
+          "doc": "The variety."
+        },
+        {
+          "name": "context",
+          "type": "Context",
+          "doc": "The following context."
+        },
+        {
+          "name": "factorWeight",
+          "type": "decimal",
+          "doc": "The factor weight p₁."
+        },
+        {
+          "name": "observed",
+          "type": "nat",
+          "doc": "The observed percentage deleted."
+        },
+        {
+          "name": "expected",
+          "type": "decimal",
+          "doc": "The expected percentage deleted."
+        }
+      ],
+      "rows": [
+        {
+          "variety": "Tejano",
+          "context": "Pre-V",
+          "factorWeight": "0.30",
+          "observed": 25,
+          "expected": "25.03"
+        },
+        {
+          "variety": "Tejano",
+          "context": "Pre-Pause",
+          "factorWeight": "0.52",
+          "observed": 46,
+          "expected": "46.00"
+        },
+        {
+          "variety": "Tejano",
+          "context": "Pre-C",
+          "factorWeight": "0.68",
+          "observed": 62,
+          "expected": "61.97"
+        },
+        {
+          "variety": "Tejano'",
+          "context": "Pre-V",
+          "factorWeight": "0.68",
+          "observed": 62,
+          "expected": "61.97"
+        },
+        {
+          "variety": "Tejano'",
+          "context": "Pre-Pause",
+          "factorWeight": "0.52",
+          "observed": 46,
+          "expected": "46.00"
+        },
+        {
+          "variety": "Tejano'",
+          "context": "Pre-C",
+          "factorWeight": "0.30",
+          "observed": 25,
+          "expected": "25.03"
+        }
+      ]
+    },
+    {
+      "name": "indexedRates",
+      "structure": "IndexedRate",
+      "doc": "the probability of deletion of a word before a following context in the learning data and in the learned lexically indexed Noisy HG grammar.",
+      "locator": "(32), p. 29",
+      "verified": "page-image",
+      "key": [
+        "lexeme",
+        "context"
+      ],
+      "columns": [
+        {
+          "name": "lexeme",
+          "type": "Lexeme",
+          "doc": "The word."
+        },
+        {
+          "name": "context",
+          "type": "Context",
+          "doc": "The following context."
+        },
+        {
+          "name": "learningData",
+          "type": "decimal",
+          "doc": "The probability of deletion in the learning data."
+        },
+        {
+          "name": "learned",
+          "type": "decimal",
+          "doc": "The probability of deletion in the learned grammar."
+        }
+      ],
+      "rows": [
+        {
+          "lexeme": "feast",
+          "context": "Pre-V",
+          "learningData": "0.40",
+          "learned": "0.40"
+        },
+        {
+          "lexeme": "feast",
+          "context": "Pre-Pause",
+          "learningData": "0.20",
+          "learned": "0.20"
+        },
+        {
+          "lexeme": "feast",
+          "context": "Pre-C",
+          "learningData": "0.60",
+          "learned": "0.59"
+        },
+        {
+          "lexeme": "most",
+          "context": "Pre-V",
+          "learningData": "0.50",
+          "learned": "0.50"
+        },
+        {
+          "lexeme": "most",
+          "context": "Pre-Pause",
+          "learningData": "0.30",
+          "learned": "0.30"
+        },
+        {
+          "lexeme": "most",
+          "context": "Pre-C",
+          "learningData": "0.70",
+          "learned": "0.70"
+        }
+      ]
+    }
+  ]
+}

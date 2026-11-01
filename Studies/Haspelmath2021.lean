@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Haspelmath2021
-public import Linglib.Data.Corpus.Haspelmath2021
+public import Linglib.Data.Statistics.Haspelmath2021
 public import Linglib.Discourse.Givenness
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Focus.Marking

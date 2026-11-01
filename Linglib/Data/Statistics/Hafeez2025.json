@@ -1,0 +1,1145 @@
+{
+  "meta": {
+    "bibkey": "hafeez-2025",
+    "method": "experiment",
+    "description": "The acceptability rating study (chapter 5) and the discourse production study (chapter 6) of Urdu causal constructions, run on the 43 video clips of the Causality Across Languages project. Twelve raters judged a description of each clip in each of seven response types; a conditional inference tree per response type splits the clips by the semantic predictors, and Table 18 prints each leaf's share of ceiling ratings and its number of responses. The tables are recorded as printed, including the reversed InanCEAF signs of the ADV tree, the peaks of NCA and NCrA that Table 19 swaps, and the unattainable 0.08 of the LEX-INST tree; the studies that consume them state the discrepancies.",
+    "rawData": [
+      {
+        "url": "https://github.com/JuergenBohnemeyer/cal_stats",
+        "doc": "the R analyses of the Causality Across Languages project, with the project's clip coding in Non_df_input_csvs/ClipVariables.csv, which codes clips 11 and 21 with a human second participant and clip 22 without one, as the clip names do; the rating responses are not included"
+      },
+      {
+        "url": "https://github.com/Saima-Hafeez/Agentivity-and-Causation-Hafeez-Sreeram",
+        "doc": "the dissertation's R code"
+      },
+      {
+        "url": "https://causalityacrosslanguages.wordpress.com/project-summary/field-manual-and-stimuli/",
+        "doc": "the project's field manuals and stimulus clips"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Predictor",
+      "doc": "The semantic predictors coded for each clip (Table 4, Appendix L).",
+      "levels": [
+        {
+          "name": "ihcr",
+          "label": "IHCr",
+          "doc": "intentional human causer"
+        },
+        {
+          "name": "nfcr",
+          "label": "NFCr",
+          "doc": "natural force causer"
+        },
+        {
+          "name": "ahcr",
+          "label": "AHCr",
+          "doc": "accidental human causer"
+        },
+        {
+          "name": "contrHCEAF",
+          "label": "ContrHCEAF",
+          "doc": "controlling human causee or affectee"
+        },
+        {
+          "name": "inanCEAF",
+          "label": "InanCEAF",
+          "doc": "inanimate causee or affectee"
+        },
+        {
+          "name": "mediation",
+          "label": "Mediation",
+          "doc": "a third participant mediates the chain"
+        },
+        {
+          "name": "physImpHCEAF",
+          "label": "PhysImpHCEAF",
+          "doc": "physically impacted human causee or affectee"
+        },
+        {
+          "name": "psychImpHCEAF",
+          "label": "PsychImpHCEAF",
+          "doc": "psychologically impacted human causee or affectee"
+        }
+      ]
+    },
+    {
+      "name": "CauserCode",
+      "doc": "The first letter of a clip name (Appendix L).",
+      "levels": [
+        {
+          "name": "h",
+          "label": "H",
+          "doc": "intentional human causer"
+        },
+        {
+          "name": "u",
+          "label": "U",
+          "doc": "unintentional causer"
+        },
+        {
+          "name": "n",
+          "label": "N",
+          "doc": "natural force causer"
+        }
+      ]
+    },
+    {
+      "name": "ParticipantCode",
+      "doc": "A later letter of a clip name (Appendix L).",
+      "levels": [
+        {
+          "name": "c",
+          "label": "C",
+          "doc": "controlling human causee or affectee"
+        },
+        {
+          "name": "u",
+          "label": "U",
+          "doc": "non-controlling human causee or affectee"
+        },
+        {
+          "name": "m",
+          "label": "M",
+          "doc": "physically impacted human causee or affectee, used once for an umbrella"
+        },
+        {
+          "name": "o",
+          "label": "O",
+          "doc": "inanimate affectee"
+        }
+      ]
+    },
+    {
+      "name": "ResponseType",
+      "doc": "The response types of the two studies (Appendix L).",
+      "levels": [
+        {
+          "name": "lexErg",
+          "label": "LEX-ERG",
+          "doc": "lexical ergative construction"
+        },
+        {
+          "name": "lexNom",
+          "label": "LEX-NOM",
+          "doc": "lexical nominative construction"
+        },
+        {
+          "name": "lexInst",
+          "label": "LEX-INST",
+          "doc": "lexical instrumental construction"
+        },
+        {
+          "name": "lexDat",
+          "label": "LEX-DAT",
+          "doc": "lexical dative response type"
+        },
+        {
+          "name": "mcv",
+          "label": "MCV",
+          "doc": "morphological causative construction"
+        },
+        {
+          "name": "acc",
+          "label": "ACC",
+          "doc": "anaphoric causative construction"
+        },
+        {
+          "name": "adv",
+          "label": "ADV",
+          "doc": "adverbial causal construction"
+        },
+        {
+          "name": "ncrA",
+          "label": "NCrA",
+          "doc": "non-sentential causer adjunct construction"
+        },
+        {
+          "name": "nca",
+          "label": "NCA",
+          "doc": "non-sentential cause adjunct construction"
+        },
+        {
+          "name": "impCausRel",
+          "label": "IMP-CAUS-REL",
+          "doc": "implicit causal relation construction"
+        }
+      ]
+    },
+    {
+      "name": "Answer",
+      "doc": "A yes-or-no cell of Table 25.",
+      "levels": [
+        {
+          "name": "yes",
+          "label": "Yes",
+          "doc": "yes"
+        },
+        {
+          "name": "no",
+          "label": "No",
+          "doc": "no"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "raters",
+      "type": "nat",
+      "value": 12,
+      "doc": "The number of participants in the acceptability rating study, each rating every description.",
+      "locator": "section 5.1, p. 112",
+      "verified": "text-layer"
+    }
+  ],
+  "tables": [
+    {
+      "name": "clips",
+      "structure": "Clip",
+      "doc": "a stimulus clip, with the letters of its name and the predictors Table 4 marks present.",
+      "locator": "Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "number",
+          "type": "nat",
+          "doc": "The clip number, in the first presentation order."
+        },
+        {
+          "name": "causer",
+          "type": "CauserCode",
+          "doc": "The first letter of the clip name."
+        },
+        {
+          "name": "second",
+          "type": "ParticipantCode",
+          "doc": "The second letter of the clip name."
+        },
+        {
+          "name": "third",
+          "type": "option ParticipantCode",
+          "doc": "The third letter of the clip name, when it is the O of an inanimate affectee."
+        },
+        {
+          "name": "present",
+          "type": "list Predictor",
+          "doc": "The predictors Table 4 marks Yes."
+        }
+      ],
+      "rows": [
+        {
+          "number": 1,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF",
+            "PsychImpHCEAF"
+          ],
+          "note": "HO6_paper"
+        },
+        {
+          "number": 2,
+          "causer": "H",
+          "second": "C",
+          "third": null,
+          "present": [
+            "IHCr",
+            "ContrHCEAF"
+          ],
+          "note": "HC1_leave"
+        },
+        {
+          "number": 3,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF"
+          ],
+          "note": "HOIproc1_swing"
+        },
+        {
+          "number": 4,
+          "causer": "H",
+          "second": "U",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "Mediation",
+            "PsychImpHCEAF"
+          ],
+          "note": "HUO3_paper"
+        },
+        {
+          "number": 5,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF"
+          ],
+          "note": "HO2_egg"
+        },
+        {
+          "number": 6,
+          "causer": "N",
+          "second": "M",
+          "third": null,
+          "present": [
+            "NFCr",
+            "PhysImpHCEAF"
+          ],
+          "note": "NM2_reporter"
+        },
+        {
+          "number": 7,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF"
+          ],
+          "note": "HOI4_ball"
+        },
+        {
+          "number": 8,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF"
+          ],
+          "note": "HO5_cuptower"
+        },
+        {
+          "number": 9,
+          "causer": "U",
+          "second": "O",
+          "third": null,
+          "present": [
+            "AHCr",
+            "InanCEAF"
+          ],
+          "note": "UO1_egg"
+        },
+        {
+          "number": 10,
+          "causer": "U",
+          "second": "M",
+          "third": null,
+          "present": [
+            "AHCr",
+            "PhysImpHCEAF"
+          ],
+          "note": "UM3_faint"
+        },
+        {
+          "number": 11,
+          "causer": "H",
+          "second": "M",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "InanCEAF",
+            "Mediation",
+            "PhysImpHCEAF"
+          ],
+          "note": "HMO4_cups"
+        },
+        {
+          "number": 12,
+          "causer": "H",
+          "second": "U",
+          "third": null,
+          "present": [
+            "IHCr",
+            "PsychImpHCEAF"
+          ],
+          "note": "HU2_scare"
+        },
+        {
+          "number": 13,
+          "causer": "U",
+          "second": "O",
+          "third": null,
+          "present": [
+            "AHCr",
+            "InanCEAF"
+          ],
+          "note": "UO2_paper"
+        },
+        {
+          "number": 14,
+          "causer": "H",
+          "second": "C",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "ContrHCEAF",
+            "Mediation"
+          ],
+          "note": "HCO3_egg_new"
+        },
+        {
+          "number": 15,
+          "causer": "N",
+          "second": "C",
+          "third": null,
+          "present": [
+            "NFCr",
+            "ContrHCEAF"
+          ],
+          "note": "NC1_tsunami"
+        },
+        {
+          "number": 16,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF"
+          ],
+          "note": "HOI3_plate"
+        },
+        {
+          "number": 17,
+          "causer": "U",
+          "second": "C",
+          "third": null,
+          "present": [
+            "AHCr",
+            "ContrHCEAF"
+          ],
+          "note": "UC1_sing"
+        },
+        {
+          "number": 18,
+          "causer": "H",
+          "second": "C",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "ContrHCEAF",
+            "Mediation"
+          ],
+          "note": "HCOI2_paper"
+        },
+        {
+          "number": 19,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF"
+          ],
+          "note": "HO4_ball"
+        },
+        {
+          "number": 20,
+          "causer": "H",
+          "second": "M",
+          "third": null,
+          "present": [
+            "IHCr",
+            "PhysImpHCEAF"
+          ],
+          "note": "HM1_fall"
+        },
+        {
+          "number": 21,
+          "causer": "U",
+          "second": "M",
+          "third": "O",
+          "present": [
+            "AHCr",
+            "InanCEAF",
+            "Mediation",
+            "PhysImpHCEAF"
+          ],
+          "note": "UMO2_cups"
+        },
+        {
+          "number": 22,
+          "causer": "N",
+          "second": "M",
+          "third": null,
+          "present": [
+            "NFCr",
+            "PhysImpHCEAF"
+          ],
+          "note": "NM4_umbrella"
+        },
+        {
+          "number": 23,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF",
+            "PhysImpHCEAF"
+          ],
+          "note": "HOI1_paper"
+        },
+        {
+          "number": 24,
+          "causer": "H",
+          "second": "U",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "Mediation",
+            "PsychImpHCEAF"
+          ],
+          "note": "HUO2_cups"
+        },
+        {
+          "number": 25,
+          "causer": "U",
+          "second": "M",
+          "third": null,
+          "present": [
+            "AHCr",
+            "PhysImpHCEAF"
+          ],
+          "note": "UM1_asleep"
+        },
+        {
+          "number": 26,
+          "causer": "N",
+          "second": "U",
+          "third": null,
+          "present": [
+            "NFCr",
+            "PsychImpHCEAF"
+          ],
+          "note": "NU1_thunder"
+        },
+        {
+          "number": 27,
+          "causer": "H",
+          "second": "M",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "Mediation",
+            "PhysImpHCEAF"
+          ],
+          "note": "HMO3_paper"
+        },
+        {
+          "number": 28,
+          "causer": "H",
+          "second": "O",
+          "third": null,
+          "present": [
+            "IHCr",
+            "InanCEAF"
+          ],
+          "note": "HOproc1_swing"
+        },
+        {
+          "number": 29,
+          "causer": "H",
+          "second": "C",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "ContrHCEAF",
+            "Mediation"
+          ],
+          "note": "HCO2_paper"
+        },
+        {
+          "number": 30,
+          "causer": "U",
+          "second": "M",
+          "third": null,
+          "present": [
+            "AHCr",
+            "PhysImpHCEAF"
+          ],
+          "note": "UM2_overboard"
+        },
+        {
+          "number": 31,
+          "causer": "U",
+          "second": "O",
+          "third": null,
+          "present": [
+            "AHCr",
+            "InanCEAF"
+          ],
+          "note": "UOproc1_swing"
+        },
+        {
+          "number": 32,
+          "causer": "H",
+          "second": "C",
+          "third": null,
+          "present": [
+            "IHCr",
+            "ContrHCEAF"
+          ],
+          "note": "HC2_sit"
+        },
+        {
+          "number": 33,
+          "causer": "H",
+          "second": "C",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "ContrHCEAF",
+            "Mediation"
+          ],
+          "note": "HCOproc1_swing"
+        },
+        {
+          "number": 34,
+          "causer": "U",
+          "second": "O",
+          "third": null,
+          "present": [
+            "AHCr",
+            "InanCEAF"
+          ],
+          "note": "UOI1_cuptower"
+        },
+        {
+          "number": 35,
+          "causer": "U",
+          "second": "U",
+          "third": null,
+          "present": [
+            "AHCr",
+            "PsychImpHCEAF"
+          ],
+          "note": "UU2_sneeze"
+        },
+        {
+          "number": 36,
+          "causer": "H",
+          "second": "U",
+          "third": null,
+          "present": [
+            "IHCr",
+            "PsychImpHCEAF"
+          ],
+          "note": "HU1_laugh_new"
+        },
+        {
+          "number": 37,
+          "causer": "N",
+          "second": "C",
+          "third": "O",
+          "present": [
+            "NFCr",
+            "ContrHCEAF",
+            "Mediation"
+          ],
+          "note": "NCO1_umbrella"
+        },
+        {
+          "number": 38,
+          "causer": "H",
+          "second": "C",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "ContrHCEAF",
+            "Mediation"
+          ],
+          "note": "HCOI3_plate"
+        },
+        {
+          "number": 39,
+          "causer": "U",
+          "second": "O",
+          "third": null,
+          "present": [
+            "AHCr",
+            "InanCEAF"
+          ],
+          "note": "UO3_ball"
+        },
+        {
+          "number": 40,
+          "causer": "U",
+          "second": "U",
+          "third": "O",
+          "present": [
+            "AHCr",
+            "Mediation",
+            "PsychImpHCEAF"
+          ],
+          "note": "UUO2_paper"
+        },
+        {
+          "number": 41,
+          "causer": "H",
+          "second": "C",
+          "third": "O",
+          "present": [
+            "IHCr",
+            "ContrHCEAF",
+            "Mediation"
+          ],
+          "note": "HCO4_ball"
+        },
+        {
+          "number": 42,
+          "causer": "H",
+          "second": "M",
+          "third": null,
+          "present": [
+            "IHCr",
+            "PhysImpHCEAF"
+          ],
+          "note": "HM2_strongman"
+        },
+        {
+          "number": 43,
+          "causer": "U",
+          "second": "U",
+          "third": null,
+          "present": [
+            "AHCr",
+            "PsychImpHCEAF"
+          ],
+          "note": "UU1_yawn"
+        }
+      ]
+    },
+    {
+      "name": "leaves",
+      "structure": "Leaf",
+      "doc": "a leaf of a response type's conditional inference tree. Table 18 prints the response types LEX-ERG and MCV as LEX_ERG and MCV_U.",
+      "locator": "Table 18 (pp. 143-144)",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "responseType",
+          "type": "ResponseType",
+          "doc": "The response type whose tree the leaf belongs to."
+        },
+        {
+          "name": "node",
+          "type": "nat",
+          "doc": "The leaf's node number in the tree plot."
+        },
+        {
+          "name": "path",
+          "type": "literals Predictor",
+          "doc": "The scene type of the leaf, as printed."
+        },
+        {
+          "name": "ceilingPercent",
+          "type": "decimal",
+          "doc": "The percentage of the leaf's responses given the ceiling rating."
+        },
+        {
+          "name": "responses",
+          "type": "nat",
+          "doc": "The number of responses in the leaf."
+        }
+      ],
+      "rows": [
+        {
+          "responseType": "LEX-ERG",
+          "node": 2,
+          "path": "[-IHCr]",
+          "ceilingPercent": "7.4",
+          "responses": 216
+        },
+        {
+          "responseType": "LEX-ERG",
+          "node": 4,
+          "path": "[+IHCr, +Mediation]",
+          "ceilingPercent": "2.5",
+          "responses": 120
+        },
+        {
+          "responseType": "LEX-ERG",
+          "node": 6,
+          "path": "[+IHCr, -Mediation, +InanCEAF]",
+          "ceilingPercent": "99.1",
+          "responses": 108
+        },
+        {
+          "responseType": "LEX-ERG",
+          "node": 7,
+          "path": "[+IHCr, -Mediation, -InanCEAF]",
+          "ceilingPercent": "75",
+          "responses": 72
+        },
+        {
+          "responseType": "LEX-INST",
+          "node": 3,
+          "path": "[+IHCr, +PsychImpHCEAF]",
+          "ceilingPercent": "16.7",
+          "responses": 48
+        },
+        {
+          "responseType": "LEX-INST",
+          "node": 4,
+          "path": "[+IHCr, -PsychImpHCEAF]",
+          "ceilingPercent": "0.08",
+          "responses": 252
+        },
+        {
+          "responseType": "LEX-INST",
+          "node": 7,
+          "path": "[-IHCr, -ContrHCEAF, +InanCEAF]",
+          "ceilingPercent": "87.5",
+          "responses": 72
+        },
+        {
+          "responseType": "LEX-INST",
+          "node": 8,
+          "path": "[-IHCr, -ContrHCEAF, -InanCEAF]",
+          "ceilingPercent": "55.6",
+          "responses": 99
+        },
+        {
+          "responseType": "LEX-INST",
+          "node": 9,
+          "path": "[-IHCr, +ContrHCEAF]",
+          "ceilingPercent": "2.8",
+          "responses": 36
+        },
+        {
+          "responseType": "LEX-DAT",
+          "node": 2,
+          "path": "[+ContrHCEAF]",
+          "ceilingPercent": "41.7",
+          "responses": 132
+        },
+        {
+          "responseType": "LEX-DAT",
+          "node": 4,
+          "path": "[-ContrHCEAF, +NFCr]",
+          "ceilingPercent": "5.6",
+          "responses": 36
+        },
+        {
+          "responseType": "LEX-DAT",
+          "node": 5,
+          "path": "[-ContrHCEAF, -NFCr]",
+          "ceilingPercent": "0",
+          "responses": 336
+        },
+        {
+          "responseType": "MCV",
+          "node": 3,
+          "path": "[+Mediation, -IHCr]",
+          "ceilingPercent": "22.2",
+          "responses": 36
+        },
+        {
+          "responseType": "MCV",
+          "node": 5,
+          "path": "[+Mediation, +IHCr, +ContrHCEAF]",
+          "ceilingPercent": "93.1",
+          "responses": 72
+        },
+        {
+          "responseType": "MCV",
+          "node": 6,
+          "path": "[+Mediation, +IHCr, -ContrHCEAF]",
+          "ceilingPercent": "58.3",
+          "responses": 48
+        },
+        {
+          "responseType": "MCV",
+          "node": 8,
+          "path": "[-Mediation, +ContrHCEAF]",
+          "ceilingPercent": "8.3",
+          "responses": 48
+        },
+        {
+          "responseType": "MCV",
+          "node": 9,
+          "path": "[-Mediation, -ContrHCEAF]",
+          "ceilingPercent": "1.3",
+          "responses": 312
+        },
+        {
+          "responseType": "ADV",
+          "node": 3,
+          "path": "[-InanCEAF, +IHCr]",
+          "ceilingPercent": "87",
+          "responses": 108
+        },
+        {
+          "responseType": "ADV",
+          "node": 4,
+          "path": "[-InanCEAF, -IHCr]",
+          "ceilingPercent": "62.5",
+          "responses": 72
+        },
+        {
+          "responseType": "ADV",
+          "node": 5,
+          "path": "[+InanCEAF]",
+          "ceilingPercent": "90.8",
+          "responses": 336
+        },
+        {
+          "responseType": "NCA",
+          "node": 3,
+          "path": "[-InanCEAF, -NFCr]",
+          "ceilingPercent": "95.1",
+          "responses": 288
+        },
+        {
+          "responseType": "NCA",
+          "node": 4,
+          "path": "[-InanCEAF, +NFCr]",
+          "ceilingPercent": "83.3",
+          "responses": 48
+        },
+        {
+          "responseType": "NCA",
+          "node": 5,
+          "path": "[+InanCEAF]",
+          "ceilingPercent": "65.6",
+          "responses": 180
+        },
+        {
+          "responseType": "NCrA",
+          "node": 3,
+          "path": "[+InanCEAF, -IHCr]",
+          "ceilingPercent": "68.1",
+          "responses": 72
+        },
+        {
+          "responseType": "NCrA",
+          "node": 4,
+          "path": "[+InanCEAF, +IHCr]",
+          "ceilingPercent": "46.3",
+          "responses": 108
+        },
+        {
+          "responseType": "NCrA",
+          "node": 6,
+          "path": "[-InanCEAF, +NFCr]",
+          "ceilingPercent": "93.8",
+          "responses": 48
+        },
+        {
+          "responseType": "NCrA",
+          "node": 7,
+          "path": "[-InanCEAF, -NFCr]",
+          "ceilingPercent": "74.6",
+          "responses": 252
+        }
+      ]
+    },
+    {
+      "name": "summary",
+      "structure": "SummaryRow",
+      "doc": "a response type with its semantic prototype and its acceptability peak.",
+      "locator": "Table 19 (pp. 149-150)",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "responseType",
+          "type": "ResponseType",
+          "doc": "The response type."
+        },
+        {
+          "name": "prototype",
+          "type": "option literals Predictor",
+          "doc": "The semantic prototype; none where the table prints NO."
+        },
+        {
+          "name": "percent",
+          "type": "decimal",
+          "doc": "The acceptability percentage printed beside it."
+        }
+      ],
+      "rows": [
+        {
+          "responseType": "LEX-ERG",
+          "prototype": "[+IHCr, +InanCEAF]",
+          "percent": "99.1"
+        },
+        {
+          "responseType": "LEX-INST",
+          "prototype": "[-IHCr, +InanCEAF]",
+          "percent": "87.5",
+          "note": "printed [-IHCr, - +InanCEAF]"
+        },
+        {
+          "responseType": "LEX-DAT",
+          "prototype": null,
+          "percent": "41.7",
+          "note": "printed NO"
+        },
+        {
+          "responseType": "MCV",
+          "prototype": "[+Mediation, +IHCr, +ContrHCEAF]",
+          "percent": "93.1"
+        },
+        {
+          "responseType": "ADV",
+          "prototype": "[+InanCEAF]",
+          "percent": "90.8"
+        },
+        {
+          "responseType": "NCrA",
+          "prototype": "[-InanCEAF, +NFCr]",
+          "percent": "95.1"
+        },
+        {
+          "responseType": "NCA",
+          "prototype": "[-InanCEAF, -NFCr]",
+          "percent": "93.8"
+        }
+      ]
+    },
+    {
+      "name": "comparison",
+      "structure": "ComparisonRow",
+      "doc": "a response type's prototype in the acceptability study and its preferences in the production study.",
+      "locator": "Table 25 (pp. 218-219)",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "responseType",
+          "type": "ResponseType",
+          "doc": "The response type."
+        },
+        {
+          "name": "rated",
+          "type": "Answer",
+          "doc": "Whether the acceptability study tested it."
+        },
+        {
+          "name": "prototype",
+          "type": "option literals Predictor",
+          "doc": "Its prototype in the acceptability study; none where the table prints No or N/A."
+        },
+        {
+          "name": "produced",
+          "type": "Answer",
+          "doc": "Whether it occurred in the production study."
+        },
+        {
+          "name": "combinedPreference",
+          "type": "option literals Predictor",
+          "doc": "The scene type the model of all response types prefers it for (fifth column)."
+        },
+        {
+          "name": "individualPreferences",
+          "type": "list literals Predictor",
+          "doc": "The scene types its own model prefers it for (sixth column)."
+        }
+      ],
+      "rows": [
+        {
+          "responseType": "LEX-ERG",
+          "rated": "Yes",
+          "prototype": "[+IHCr, +InanCEAF]",
+          "produced": "Yes",
+          "combinedPreference": "[+InanCEAF, +IHCr]",
+          "individualPreferences": [
+            "[+InanCEAF, +IHCr]"
+          ]
+        },
+        {
+          "responseType": "LEX-NOM",
+          "rated": "No",
+          "prototype": null,
+          "produced": "Yes",
+          "combinedPreference": null,
+          "individualPreferences": []
+        },
+        {
+          "responseType": "LEX-INST",
+          "rated": "Yes",
+          "prototype": "[-IHCr, +InanCEAF]",
+          "produced": "Yes",
+          "combinedPreference": null,
+          "individualPreferences": [],
+          "note": "prototype printed [-IHCr, - +InanCEAF]"
+        },
+        {
+          "responseType": "LEX-DAT",
+          "rated": "Yes",
+          "prototype": null,
+          "produced": "No",
+          "combinedPreference": null,
+          "individualPreferences": []
+        },
+        {
+          "responseType": "MCV",
+          "rated": "Yes",
+          "prototype": "[+Mediation, +IHCr, +ContrHCEAF]",
+          "produced": "No",
+          "combinedPreference": null,
+          "individualPreferences": []
+        },
+        {
+          "responseType": "ACC",
+          "rated": "No",
+          "prototype": null,
+          "produced": "Yes",
+          "combinedPreference": null,
+          "individualPreferences": []
+        },
+        {
+          "responseType": "ADV",
+          "rated": "Yes",
+          "prototype": "[+InanCEAF]",
+          "produced": "Yes",
+          "combinedPreference": null,
+          "individualPreferences": []
+        },
+        {
+          "responseType": "NCrA",
+          "rated": "Yes",
+          "prototype": "[-InanCEAF, +NFCr]",
+          "produced": "Yes",
+          "combinedPreference": "[+NFCr, +PhysImpHCEAF]",
+          "individualPreferences": [
+            "[-InanCEAF, +NFCr, +PhysImpHCEAF]"
+          ]
+        },
+        {
+          "responseType": "NCA",
+          "rated": "Yes",
+          "prototype": "[-InanCEAF, -NFCr]",
+          "produced": "Yes",
+          "combinedPreference": "[+PsychImpHCEAF]",
+          "individualPreferences": [
+            "[-NFCr, +PsychImpHCEAF]"
+          ]
+        },
+        {
+          "responseType": "IMP-CAUS-REL",
+          "rated": "No",
+          "prototype": null,
+          "produced": "Yes",
+          "combinedPreference": "[+ContrHCEAF, +IHCr]",
+          "individualPreferences": [
+            "[-NFCr, +ContrHCEAF]",
+            "[+InanCEAF, -IHCr, +AHCr]"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "bibkey": "flemming-2021",
+    "method": "experiment",
+    "description": "The observed probabilities of pronouncing schwa in the eight French contexts of (19), from the experiment of Smith and Pater (2020), with the probabilities fitted by the four stochastic Harmonic Grammars and their deviances (Table 2). The text gives the deviances of MaxEnt and censored NHG as 12.8 and 14.6 in that order; the table, and the footnote on censored NHG, give 14.6 to MaxEnt and 12.8 to censored NHG."
+  },
+  "types": [
+    {
+      "name": "Underlying",
+      "doc": "Whether the schwa site is clitic-final, with an underlying schwa, or word-final, with none.",
+      "levels": [
+        {
+          "name": "zero",
+          "label": "/∅/",
+          "doc": "word-final, no underlying schwa"
+        },
+        {
+          "name": "schwa",
+          "label": "/ə/",
+          "doc": "clitic-final, an underlying schwa"
+        }
+      ]
+    },
+    {
+      "name": "Onset",
+      "doc": "How many consonants precede the schwa site.",
+      "levels": [
+        {
+          "name": "c",
+          "label": "C",
+          "doc": "one consonant"
+        },
+        {
+          "name": "cc",
+          "label": "CC",
+          "doc": "two consonants"
+        }
+      ]
+    },
+    {
+      "name": "Following",
+      "doc": "The following word.",
+      "levels": [
+        {
+          "name": "disyllable",
+          "label": "_σσ́",
+          "doc": "a disyllable, stressed on its second syllable"
+        },
+        {
+          "name": "monosyllable",
+          "label": "_σ́",
+          "doc": "a stressed monosyllable"
+        }
+      ]
+    },
+    {
+      "name": "Model",
+      "doc": "The stochastic Harmonic Grammars compared.",
+      "levels": [
+        {
+          "name": "maxEnt",
+          "label": "MaxEnt",
+          "doc": "Maximum Entropy"
+        },
+        {
+          "name": "normalMaxEnt",
+          "label": "Normal MaxEnt",
+          "doc": "MaxEnt with normal noise"
+        },
+        {
+          "name": "nhg",
+          "label": "NHG",
+          "doc": "Noisy Harmonic Grammar"
+        },
+        {
+          "name": "censoredNhg",
+          "label": "Censored NHG",
+          "doc": "Noisy Harmonic Grammar with censored noise"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "schwaRates",
+      "structure": "SchwaRate",
+      "doc": "the observed probability of pronouncing schwa in a context and the probabilities the grammars fit.",
+      "locator": "Table 2, p. 23",
+      "verified": "page-image",
+      "key": [
+        "underlying",
+        "onset",
+        "following"
+      ],
+      "columns": [
+        {
+          "name": "underlying",
+          "type": "Underlying",
+          "doc": "The underlying form."
+        },
+        {
+          "name": "onset",
+          "type": "Onset",
+          "doc": "The preceding consonants."
+        },
+        {
+          "name": "following",
+          "type": "Following",
+          "doc": "The following word."
+        },
+        {
+          "name": "observed",
+          "type": "decimal",
+          "doc": "The observed probability, Pə."
+        },
+        {
+          "name": "maxEnt",
+          "type": "decimal",
+          "doc": "The probability fitted by MaxEnt."
+        },
+        {
+          "name": "normalMaxEnt",
+          "type": "decimal",
+          "doc": "The probability fitted by normal MaxEnt."
+        },
+        {
+          "name": "nhg",
+          "type": "decimal",
+          "doc": "The probability fitted by NHG."
+        },
+        {
+          "name": "censoredNhg",
+          "type": "decimal",
+          "doc": "The probability fitted by censored NHG."
+        }
+      ],
+      "rows": [
+        {
+          "underlying": "/∅/",
+          "onset": "C",
+          "following": "_σσ́",
+          "observed": "0.09",
+          "maxEnt": "0.11",
+          "normalMaxEnt": "0.12",
+          "nhg": "0.10",
+          "censoredNhg": "0.10"
+        },
+        {
+          "underlying": "/∅/",
+          "onset": "C",
+          "following": "_σ́",
+          "observed": "0.12",
+          "maxEnt": "0.17",
+          "normalMaxEnt": "0.18",
+          "nhg": "0.21",
+          "censoredNhg": "0.17"
+        },
+        {
+          "underlying": "/∅/",
+          "onset": "CC",
+          "following": "_σσ́",
+          "observed": "0.68",
+          "maxEnt": "0.68",
+          "normalMaxEnt": "0.67",
+          "nhg": "0.67",
+          "censoredNhg": "0.70"
+        },
+        {
+          "underlying": "/∅/",
+          "onset": "CC",
+          "following": "_σ́",
+          "observed": "0.83",
+          "maxEnt": "0.78",
+          "normalMaxEnt": "0.76",
+          "nhg": "0.75",
+          "censoredNhg": "0.77"
+        },
+        {
+          "underlying": "/ə/",
+          "onset": "C",
+          "following": "_σσ́",
+          "observed": "0.56",
+          "maxEnt": "0.52",
+          "normalMaxEnt": "0.50",
+          "nhg": "0.50",
+          "censoredNhg": "0.54"
+        },
+        {
+          "underlying": "/ə/",
+          "onset": "C",
+          "following": "_σ́",
+          "observed": "0.65",
+          "maxEnt": "0.63",
+          "normalMaxEnt": "0.61",
+          "nhg": "0.61",
+          "censoredNhg": "0.62"
+        },
+        {
+          "underlying": "/ə/",
+          "onset": "CC",
+          "following": "_σσ́",
+          "observed": "0.91",
+          "maxEnt": "0.95",
+          "normalMaxEnt": "0.95",
+          "nhg": "0.96",
+          "censoredNhg": "0.95"
+        },
+        {
+          "underlying": "/ə/",
+          "onset": "CC",
+          "following": "_σ́",
+          "observed": "0.94",
+          "maxEnt": "0.97",
+          "normalMaxEnt": "0.97",
+          "nhg": "0.96",
+          "censoredNhg": "0.96"
+        }
+      ]
+    },
+    {
+      "name": "deviances",
+      "method": "model",
+      "structure": "Fit",
+      "doc": "the deviance of a grammar's fit, lower for a better fit.",
+      "locator": "Table 2, p. 23",
+      "verified": "page-image",
+      "key": [
+        "model"
+      ],
+      "columns": [
+        {
+          "name": "model",
+          "type": "Model",
+          "doc": "The grammar."
+        },
+        {
+          "name": "deviance",
+          "type": "decimal",
+          "doc": "The deviance."
+        }
+      ],
+      "rows": [
+        {
+          "model": "MaxEnt",
+          "deviance": "14.6"
+        },
+        {
+          "model": "Normal MaxEnt",
+          "deviance": "21.7"
+        },
+        {
+          "model": "NHG",
+          "deviance": "26.0"
+        },
+        {
+          "model": "Censored NHG",
+          "deviance": "12.8"
+        }
+      ]
+    }
+  ]
+}

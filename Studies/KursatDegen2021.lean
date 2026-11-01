@@ -1,7 +1,7 @@
 module
 
 public import Studies.DegenEtAl2020
-public import Linglib.Data.Experiments.KursatDegen2021
+public import Linglib.Data.Statistics.KursatDegen2021
 
 /-!
 # Kursat and Degen (2021): Perceptual difficulty differences predict asymmetry in redundant modification with color and material adjectives
@@ -34,7 +34,7 @@ paper's findings off its printed statistics.
 
 namespace KursatDegen2021
 
-open Data.Experiments DegenEtAl2020
+open Data.Statistics DegenEtAl2020
 
 /-! ### The critical display of the production experiment -/
 

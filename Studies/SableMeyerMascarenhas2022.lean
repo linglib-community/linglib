@@ -5,7 +5,7 @@ public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Independence.Basic
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Examples.SableMeyerMascarenhas2022
-public import Linglib.Data.Experiments.SableMeyerMascarenhas2022
+public import Linglib.Data.Statistics.SableMeyerMascarenhas2022
 public import Linglib.Processing.Reasoning.Erotetic
 public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 
@@ -409,7 +409,7 @@ theorem matching_limit :
     (regressions .experimentOne).intercept.map
         (·.toRat + (regressions .experimentOne).slope.toRat) =
       some matchingLimitAcceptance.toRat := by
-  simp [regressions, matchingLimitAcceptance, Data.Experiments.Decimal.toRat]
+  simp [regressions, matchingLimitAcceptance, Data.Statistics.Decimal.toRat]
   norm_num
 
 end SableMeyerMascarenhas2022

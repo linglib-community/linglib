@@ -2,7 +2,7 @@ module
 
 public import Studies.AugurzkyEtAl2023
 public import Studies.GuerriniWehbe2025
-public import Linglib.Data.Experiments.RomoliEtAl2026
+public import Linglib.Data.Statistics.RomoliEtAl2026
 
 /-!
 # Romoli et al. (2026): Putting plural definites into context

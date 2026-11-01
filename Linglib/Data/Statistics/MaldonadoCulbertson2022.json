@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "bibkey": "maldonado-culbertson-2022",
+    "method": "experiment",
+    "description": "Experiment 2: English-speaking participants learned an artificial pronoun system with three plural forms for four plural person categories, first exclusive, inclusive, second and third, the inclusive sharing its form with the first exclusive (First-inclusive), the second (Second-inclusive) or the third person (Third-inclusive), between subjects. Accuracy in the second testing block was analysed by logistic mixed-effects models with treatment coding, first with First-inclusive and then with Second-inclusive as the baseline; the intercept compares the baseline's accuracy with chance.",
+    "rawData": [
+      {
+        "url": "https://osf.io/p2c4r/",
+        "doc": "materials, data and analysis scripts of the three experiments"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Condition",
+      "doc": "The person whose plural form the inclusive shares.",
+      "levels": [
+        {
+          "name": "firstInclusive",
+          "label": "First-inclusive",
+          "doc": "the inclusive shares the first person exclusive plural form"
+        },
+        {
+          "name": "secondInclusive",
+          "label": "Second-inclusive",
+          "doc": "the inclusive shares the second person plural form"
+        },
+        {
+          "name": "thirdInclusive",
+          "label": "Third-inclusive",
+          "doc": "the inclusive shares the third person plural form"
+        }
+      ]
+    }
+  ],
+  "constants": [],
+  "tables": [
+    {
+      "name": "contrasts",
+      "structure": "Contrast",
+      "doc": "a coefficient of a treatment-coded model of accuracy in the second testing block, the intercept or the difference of a condition from the baseline.",
+      "locator": "§3.3, p. 318",
+      "verified": "text-layer",
+      "columns": [
+        {
+          "name": "baseline",
+          "type": "Condition",
+          "doc": "The baseline condition."
+        },
+        {
+          "name": "condition",
+          "type": "option Condition",
+          "doc": "The condition compared with the baseline, none for the intercept."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The coefficient."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "baseline": "First-inclusive",
+          "condition": null,
+          "beta": "1.59",
+          "p": "< 0.001"
+        },
+        {
+          "baseline": "First-inclusive",
+          "condition": "Third-inclusive",
+          "beta": "-1.83",
+          "p": "< 0.001"
+        },
+        {
+          "baseline": "First-inclusive",
+          "condition": "Second-inclusive",
+          "beta": "-0.572",
+          "p": "0.055"
+        },
+        {
+          "baseline": "Second-inclusive",
+          "condition": null,
+          "beta": "0.97",
+          "p": "< 0.001"
+        },
+        {
+          "baseline": "Second-inclusive",
+          "condition": "Third-inclusive",
+          "beta": "-1.2",
+          "p": "< 0.001"
+        }
+      ]
+    }
+  ]
+}
