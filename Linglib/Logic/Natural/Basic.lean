@@ -467,12 +467,7 @@ def signHom : Signature →* SignType where
 
 /-- A polarity as a signature, the positive one the morphism signature `⊕` and the negative one
 the anti-morphism `⊖`. -/
-def ofPolarity : Polarity →* Signature where
-  toFun
-    | .positive => .addMult
-    | .negative => .antiAddMult
-  map_one' := rfl
-  map_mul' := by decide
+def ofPolarity : Polarity →* Signature := Polarity.lift ⟨.antiAddMult, rfl⟩
 
 @[simp] theorem sign_ofPolarity (p : Polarity) : (ofPolarity p).sign = p := by
   cases p <;> rfl

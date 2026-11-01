@@ -275,9 +275,7 @@ def shouldPredict (pol : Polarity) (s : Scenario) : SignType :=
 /-- Domain restriction's value at a cell is universal quantification, negated by strong Kleene
 negation. -/
 def domainRestrictionPredict (pol : Polarity) (s : Scenario) : SignType :=
-  match pol with
-  | .positive => must (fun _ ↦ scenarioDomain s) (· = true) true
-  | .negative => -must (fun _ ↦ scenarioDomain s) (· = true) true
+  pol • must (fun _ ↦ scenarioDomain s) (· = true) true
 
 /-- The plural semantics reproduces every cell of the *should* grid. -/
 theorem should_matches_grid :

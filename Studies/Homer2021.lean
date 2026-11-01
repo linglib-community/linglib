@@ -146,11 +146,8 @@ def consequent : Set World := {w | w.1}
 /-- The path of the indefinite in a clause with polarity head `pol`, under the layers `t`,
 outermost first. -/
 def path (pol : Signature.classPairs (Set World)) (t : List (Signature.classPairs (Set World))) :
-    Path (Quantifier (Fin 2)) (Set World) where
-  minimal := (pol : Function.End (Set World) × Signature).1 ∘ did
-  signature := (pol : Function.End (Set World) × Signature).2 * Signature.addMult
-  holdsFor := (Signature.mem_classPairs.1 pol.2).comp holdsFor_did
-  layers := t
+    Path (Quantifier (Fin 2)) (Set World) :=
+  ⟨pol • ⟨did, .addMult, holdsFor_did⟩, t⟩
 
 /-- The path of the indefinite in a clause with polarity head `pol`, embedded under a polarity
 phrase whose layer is `sup`: the domains are the embedded polarity phrase, TP and CP, and the
@@ -225,68 +222,68 @@ theorem not_licenses_notImpossible : ¬notImpossible.Licenses quoiQueCeSoit :=
 theorem licenses_impossibleNot : impossibleNot.Licenses quoiQueCeSoit :=
   ⟨[], by simp,
     acceptable_of_licensor rfl rfl <|
-      impossibleNot.carries_weak_of_sign_eq_neg_one (by simp [impossibleNot]; decide)
+      Environment.carries_weak_of_sign_eq_neg_one _ (by simp [impossibleNot]; decide)
         (by simp [impossibleNot])⟩
 
 theorem licenses_notImpossibleNot : notImpossibleNot.Licenses quoiQueCeSoit :=
   ⟨[], by simp,
     acceptable_of_licensor rfl rfl <|
-      notImpossibleNot.carries_weak_of_sign_eq_neg_one (by simp [notImpossibleNot]; decide)
+      Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notImpossibleNot]; decide)
         (by simp [notImpossibleNot])⟩
 
 theorem licenses_ifImpossible : ifImpossible.Licenses quoiQueCeSoit :=
   ⟨[impossible, 1, 1], by simp [ifImpossible],
     acceptable_of_licensor rfl rfl <|
-      ifImpossible.carries_weak_of_sign_eq_neg_one (by simp [ifImpossible]; decide)
+      Environment.carries_weak_of_sign_eq_neg_one _ (by simp [ifImpossible]; decide)
         (by simp [ifImpossible])⟩
 
 theorem not_licenses_clausemateNot : ¬clausemateNot.Licenses someItem :=
   clausemateNot.not_licenses_of_mem_antiLicensor rfl fun t ht ↦ by
     simp [clausemateNot] at ht
     rcases ht with rfl | rfl <;>
-      exact clausemateNot.carries_weak_of_sign_eq_neg_one (by simp [clausemateNot]; decide)
+      exact Environment.carries_weak_of_sign_eq_neg_one _ (by simp [clausemateNot]; decide)
         (by simp [clausemateNot])
 
 theorem licenses_notClaim : notClaim.Licenses someItem :=
   ⟨[], by simp,
     acceptable_of_antiLicensor rfl rfl <|
-      notClaim.not_carries_of_sign_eq_one (by simp [notClaim]; decide)⟩
+      Environment.not_carries_of_sign_eq_one _ (by simp [notClaim]; decide)⟩
 
 theorem licenses_impossibleBare : impossibleBare.Licenses someItem :=
   ⟨[], by simp,
     acceptable_of_antiLicensor rfl rfl <|
-      impossibleBare.not_carries_of_sign_eq_one (by simp [impossibleBare]; decide)⟩
+      Environment.not_carries_of_sign_eq_one _ (by simp [impossibleBare]; decide)⟩
 
 theorem licenses_notSureNot : notSureNot.Licenses someItem :=
   ⟨[negation * necessity, 1, 1], by simp [notSureNot],
     acceptable_of_antiLicensor rfl rfl <|
-      notSureNot.not_carries_of_sign_eq_one (by simp [notSureNot]; decide)⟩
+      Environment.not_carries_of_sign_eq_one _ (by simp [notSureNot]; decide)⟩
 
 theorem licenses_impossibleNot_some : impossibleNot.Licenses someItem :=
   ⟨[impossible, 1, 1], by simp [impossibleNot],
     acceptable_of_antiLicensor rfl rfl <|
-      impossibleNot.not_carries_of_sign_eq_one (by simp [impossibleNot]; decide)⟩
+      Environment.not_carries_of_sign_eq_one _ (by simp [impossibleNot]; decide)⟩
 
 theorem not_licenses_notImpossibleNot_some : ¬notImpossibleNot.Licenses someItem :=
   notImpossibleNot.not_licenses_of_mem_antiLicensor rfl fun t ht ↦ by
     simp [notImpossibleNot] at ht
     rcases ht with rfl | rfl | rfl | rfl | rfl <;>
-      exact notImpossibleNot.carries_weak_of_sign_eq_neg_one (by simp [notImpossibleNot]; decide)
+      exact Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notImpossibleNot]; decide)
         (by simp [notImpossibleNot])
 
 theorem licenses_ifNot : ifNot.Licenses someItem :=
   ⟨[conditional consequent, 1], by simp [ifNot],
     acceptable_of_antiLicensor rfl rfl <|
-      ifNot.not_carries_of_sign_eq_one (by simp [ifNot, conditional]; decide)⟩
+      Environment.not_carries_of_sign_eq_one _ (by simp [ifNot, conditional]; decide)⟩
 
 theorem licenses_notThatImpossibleNot : notThatImpossibleNot.Licenses someItem :=
   ⟨[impossible, 1, 1], by simp [notThatImpossibleNot],
     acceptable_of_antiLicensor rfl rfl <|
-      notThatImpossibleNot.not_carries_of_sign_eq_one (by simp [notThatImpossibleNot]; decide)⟩
+      Environment.not_carries_of_sign_eq_one _ (by simp [notThatImpossibleNot]; decide)⟩
 
 theorem antitone_notThatImpossibleNot :
     Antitone (notThatImpossibleNot.environment notThatImpossibleNot.layers) :=
-  notThatImpossibleNot.antitone_environment (by simp [notThatImpossibleNot]; decide)
+  Environment.antitone_of_sign_eq_neg_one _ (by simp [notThatImpossibleNot]; decide)
 
 end FlipFlop
 
@@ -316,8 +313,8 @@ theorem not_isAntiAdditive_notImpossibleNot :
     ¬IsAntiAdditive (notImpossibleNot.environment [negation * impossible, 1, 1]) := fun h ↦ by
   have := congrArg (((false, ∅) : World) ∈ ·)
     (h (Quantifier.Det.some {0}) (Quantifier.Det.some {1}))
-  simp [notImpossibleNot, embedded, path, negation, impossible, Function.End.one_def,
-    Function.End.mul_def, did, modalBase, Quantifier.Det.some] at this
+  simp [notImpossibleNot, embedded, path, negation, impossible, Function.End.mul_def, did,
+    modalBase, Quantifier.Det.some] at this
   rw [disjoint_compl_right_iff_subset, disjoint_compl_right_iff_subset,
     disjoint_compl_right_iff_subset] at this
   refine this.2 ⟨fun h0 ↦ ?_, fun h1 ↦ ?_⟩ fun w ⟨x, hx⟩ ↦ ?_
@@ -333,7 +330,7 @@ theorem notImpossibleNot_someone :
   refine ⟨⟨[negation * impossible, 1, 1], by simp [notImpossibleNot, embedded, path],
     acceptable_of_antiLicensor rfl rfl fun hc ↦ ?_⟩, not_licenses_notImpossibleNot_some⟩
   exact not_isAntiAdditive_notImpossibleNot
-    (Signature.holdsFor_antiAdd_iff.1 (notImpossibleNot.carries_iff.1 hc).1).1
+    (Signature.holdsFor_antiAdd_iff.1 ((Environment.carries_iff _).1 hc).1).1
 
 /-! ### Disruption by scalar implicatures -/
 
@@ -392,29 +389,30 @@ theorem antitone_notConn_disj : Antitone fun Q ↦ (notConn disj Q).strong := fu
 -- (50e), (56d)
 /-- *John didn't drink wine and something*: the strengthened polarity phrase and TP. -/
 noncomputable def notAnd : Path (Quantifier (Fin 2)) (Set World) :=
-  ⟨fun Q ↦ (notConn conj Q).strong, .all, fun _ h ↦ absurd h (by simp [Signature.properties]),
+  ⟨⟨fun Q ↦ (notConn conj Q).strong, .all, fun _ h ↦ absurd h (by simp [Signature.properties])⟩,
     [1]⟩
 
 -- (51b), (56e)
 /-- *John didn't drink wine or something*: the strengthened polarity phrase and TP. -/
 noncomputable def notOr : Path (Quantifier (Fin 2)) (Set World) :=
-  ⟨fun Q ↦ (notConn disj Q).strong, .anti, Signature.holdsFor_anti_iff.2 antitone_notConn_disj,
+  ⟨⟨fun Q ↦ (notConn disj Q).strong, .anti, Signature.holdsFor_anti_iff.2 antitone_notConn_disj⟩,
     [1]⟩
 
 theorem not_carries_notAnd {t : List (Signature.classPairs (Set World))}
-    (ht : t ∈ notAnd.layers.tails) {s : Negation.Strength} : ¬notAnd.Carries t s := fun hc ↦ by
+    (ht : t ∈ notAnd.layers.tails) {s : Negation.Strength} :
+    ¬(notAnd.environment t).Carries s := fun hc ↦ by
   have ha := Signature.holdsFor_anti_iff.1
-    ((notAnd.carries_iff.1 hc).1.of_le (by cases s <;> decide))
+    (((notAnd.environment t).carries_iff.1 hc).1.of_le (by cases s <;> decide))
   simp [notAnd] at ht
   rcases ht with rfl | rfl <;> exact not_antitone_notConn_conj (by simpa [notAnd,
     Function.End.one_def] using ha)
 
 theorem carries_notOr {t : List (Signature.classPairs (Set World))} (ht : t ∈ notOr.layers.tails) :
-    notOr.Carries t .weak := by
+    (notOr.environment t).Carries .weak := by
   simp [notOr] at ht
   rcases ht with rfl | rfl <;>
-    refine notOr.carries_weak_of_sign_eq_neg_one (by simp [notOr]; decide) ?_ <;>
-    simp [notOr, Function.End.one_def, notConn_disj_strong, wine_ne_univ]
+    refine Environment.carries_weak_of_sign_eq_neg_one _ (by simp [notOr]; decide) ?_ <;>
+    simp [notOr, notConn_disj_strong, wine_ne_univ]
 
 theorem not_licenses_notAnd : ¬notAnd.Licenses English.PolarityItems.any :=
   fun ⟨_, ht, ha⟩ ↦ not_carries_notAnd ht (ha.1 .weak rfl)
