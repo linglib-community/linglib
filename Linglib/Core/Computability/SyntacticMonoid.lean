@@ -247,6 +247,24 @@ theorem inf_syntacticCon_le_syntacticCon_inf {L' : Language α} :
     L.syntacticCon ⊓ L'.syntacticCon ≤ (L ⊓ L').syntacticCon :=
   fun {_ _} huv x y ↦ and_congr (huv.1 x y) (huv.2 x y)
 
+theorem inf_syntacticCon_le_syntacticCon_sup {L' : Language α} :
+    L.syntacticCon ⊓ L'.syntacticCon ≤ (L ⊔ L').syntacticCon :=
+  fun {_ _} huv x y ↦ or_congr (huv.1 x y) (huv.2 x y)
+
+/-- The syntactic monoid of `L` is trivial exactly when `L` is empty or full. -/
+theorem subsingleton_syntacticMonoid_iff : Subsingleton L.SyntacticMonoid ↔ L = ⊥ ∨ L = ⊤ := by
+  refine ⟨fun _ ↦ ?_, ?_⟩
+  · have h (w : List α) : w ∈ L ↔ [] ∈ L := mem_iff_of_syntacticClass_eq (Subsingleton.elim _ _)
+    by_cases hnil : [] ∈ L
+    exacts [.inr (eq_top_iff.2 fun w _ ↦ (h w).2 hnil),
+      .inl (eq_bot_iff.2 fun w hw ↦ hnil ((h w).1 hw))]
+  · have h (hL : L = ⊥ ∨ L = ⊤) (u v : List α) : L.syntacticClass u = L.syntacticClass v :=
+      syntacticClass_eq_iff.2 fun _ _ ↦ by rcases hL with rfl | rfl <;> exact Iff.rfl
+    exact fun hL ↦ ⟨fun a b ↦ by
+      obtain ⟨u, rfl⟩ := L.syntacticClass_surjective a
+      obtain ⟨v, rfl⟩ := L.syntacticClass_surjective b
+      exact h hL u v⟩
+
 /-! ### Quotients -/
 
 /-- The *right quotient* of `L` by `u` is the set of prefixes `w` such that `w ++ u` is in `L`. -/

@@ -145,6 +145,10 @@ theorem inf_syntacticSemigroupCon_le_syntacticSemigroupCon_inf {L' : Language α
     L.syntacticSemigroupCon ⊓ L'.syntacticSemigroupCon ≤ (L ⊓ L').syntacticSemigroupCon :=
   fun {_ _} huv ↦ inf_syntacticCon_le_syntacticCon_inf ⟨huv.1, huv.2⟩
 
+theorem inf_syntacticSemigroupCon_le_syntacticSemigroupCon_sup {L' : Language α} :
+    L.syntacticSemigroupCon ⊓ L'.syntacticSemigroupCon ≤ (L ⊔ L').syntacticSemigroupCon :=
+  fun {_ _} huv ↦ inf_syntacticCon_le_syntacticCon_sup ⟨huv.1, huv.2⟩
+
 /-! ### Quotients -/
 
 theorem syntacticSemigroupCon_le_leftQuotient (L : Language α) (u : List α) :

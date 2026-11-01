@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Order.CompleteLattice.Finset
 public import Linglib.Core.Algebra.FreeMonoid.Basic
-public import Linglib.Core.Computability.Variety.Langs
+public import Linglib.Core.Computability.Variety.Basic
 
 /-!
 # Star-free languages
@@ -21,7 +21,7 @@ regular expressions, built from finite sets by union, concatenation and compleme
 Kleene star, are exactly these. McNaughton and Papert show that they are also the counter-free
 and the first-order definable languages. Star-free
 is the instance `Monoid.aperiodicVariety` of the languages of a pseudovariety, so its closure
-properties are corollaries of `Monoid.Pseudovariety.langs`.
+properties come from the Boolean algebra `Monoid.Pseudovariety.languages`.
 
 ## Main definitions
 
@@ -55,7 +55,7 @@ variable {α : Type*} {L : Language α}
 is a language of the pseudovariety of aperiodic monoids. That these are the languages of the
 star-free regular expressions is Schützenberger's theorem, which this definition presupposes
 rather than proves. -/
-def IsStarFree (L : Language α) : Prop := Monoid.aperiodicVariety.langs L
+def IsStarFree (L : Language α) : Prop := L ∈ Monoid.aperiodicVariety.languages α
 
 /-- A language is star-free exactly when it is regular with an aperiodic syntactic monoid. -/
 theorem isStarFree_iff : L.IsStarFree ↔ L.IsRegular ∧ Monoid.IsAperiodic L.SyntacticMonoid :=
@@ -68,20 +68,20 @@ theorem IsStarFree.isAperiodic (h : L.IsStarFree) :
 
 /-- Star-free languages are closed under complement. -/
 theorem IsStarFree.compl (h : L.IsStarFree) : Lᶜ.IsStarFree :=
-  Monoid.aperiodicVariety.langs_compl h
+  (Monoid.aperiodicVariety.languages α).compl_mem h
 
 /-- Star-free languages are closed under intersection. -/
 theorem IsStarFree.inter {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
     (L ⊓ M).IsStarFree :=
-  Monoid.aperiodicVariety.langs_inf hL hM
+  (Monoid.aperiodicVariety.languages α).inf_mem hL hM
 
 /-- Star-free languages are closed under union. -/
 theorem IsStarFree.union {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
     (L ⊔ M).IsStarFree :=
-  Monoid.aperiodicVariety.langs_sup hL hM
+  (Monoid.aperiodicVariety.languages α).sup_mem hL hM
 
 /-- A language recognized by a finite aperiodic monoid is star-free. Unlike
-`Monoid.Pseudovariety.langs_of_recognizes`, the recognizer may live in any universe. -/
+`Monoid.Pseudovariety.mem_languages_of_recognizes`, the recognizer may live in any universe. -/
 theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
@@ -132,17 +132,10 @@ theorem IsStarFree.preimage_filter (h : L.IsStarFree) (p : α → Bool) :
   h.comap (FreeMonoid.filter p)
 
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
-  Monoid.aperiodicVariety.langs_univ
+  (Monoid.aperiodicVariety.languages α).top_mem
 
 theorem IsStarFree.iInter {ι : Type*} [Finite ι] {f : ι → Set (List α)}
-    (h : ∀ i, IsStarFree (f i)) : IsStarFree (⋂ i, f i) := by
-  have := Fintype.ofFinite ι
-  classical
-  rw [show (⋂ i, f i) = ⋂ i ∈ (Finset.univ : Finset ι), f i by simp]
-  induction (Finset.univ : Finset ι) using Finset.induction_on with
-  | empty => simpa using isStarFree_univ
-  | insert a s ha ih =>
-    rw [Finset.set_biInter_insert]
-    exact (h a).inter ih
+    (h : ∀ i, IsStarFree (f i)) : IsStarFree (⋂ i, f i) :=
+  (Monoid.aperiodicVariety.languages α).infClosed.iInf_mem BooleanSubalgebra.top_mem h
 
 end Language

@@ -9,7 +9,7 @@ module
 
 public import Linglib.Core.Algebra.Group.Idempotent
 public import Linglib.Core.Computability.Definite
-public import Linglib.Core.Computability.Variety.Langs
+public import Linglib.Core.Computability.Variety.Basic
 
 /-!
 # Definite languages and the pseudovarieties **D**, **K** and **LI**
@@ -29,8 +29,8 @@ zero, and similarly for the other two classes.
   idempotent class of a nonempty word satisfies the window condition.
 * `Language.isDefinite_natCard_of_isDefinite_syntacticSemigroup` and its two mirrors: a syntactic
   semigroup `S` in the pseudovariety bounds the window by `|S|`.
-* `Language.langs_definiteVariety_iff`, `Language.langs_reverseDefiniteVariety_iff`,
-  `Language.langs_locallyTrivialVariety_iff`: the Eilenberg correspondences.
+* `Language.mem_languages_definiteVariety_iff` and its two mirrors: the Eilenberg
+  correspondences.
 * `Language.isFiniteOrCofinite_iff_syntacticSemigroup`: the finite or cofinite languages.
 
 ## Implementation notes
@@ -304,33 +304,34 @@ end Converse
 
 /-! ### The Eilenberg correspondences -/
 
-theorem IsDefinite.langs [Finite α] (h : L.IsDefinite k) : Semigroup.definiteVariety.langs L :=
+theorem IsDefinite.mem_languages_definiteVariety [Finite α] (h : L.IsDefinite k) :
+    L ∈ Semigroup.definiteVariety.languages α :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isDefinite_syntacticSemigroup⟩
 
-theorem IsReverseDefinite.langs [Finite α] (h : L.IsReverseDefinite k) :
-    Semigroup.reverseDefiniteVariety.langs L :=
+theorem IsReverseDefinite.mem_languages_reverseDefiniteVariety [Finite α]
+    (h : L.IsReverseDefinite k) : L ∈ Semigroup.reverseDefiniteVariety.languages α :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isReverseDefinite_syntacticSemigroup⟩
 
-theorem IsGeneralizedDefinite.langs [Finite α] (h : L.IsGeneralizedDefinite k) :
-    Semigroup.locallyTrivialVariety.langs L :=
+theorem IsGeneralizedDefinite.mem_languages_locallyTrivialVariety [Finite α]
+    (h : L.IsGeneralizedDefinite k) : L ∈ Semigroup.locallyTrivialVariety.languages α :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isLocallyTrivial_syntacticSemigroup⟩
 
 /-- The language variety of **D** consists of the definite languages. -/
-theorem langs_definiteVariety_iff [Finite α] :
-    Semigroup.definiteVariety.langs L ↔ ∃ k, L.IsDefinite k :=
+theorem mem_languages_definiteVariety_iff [Finite α] :
+    L ∈ Semigroup.definiteVariety.languages α ↔ ∃ k, L.IsDefinite k :=
   ⟨fun h ↦ have := h.1; isDefinite_syntacticSemigroup_iff.1 h.2,
-    fun ⟨_, h⟩ ↦ h.langs⟩
+    fun ⟨_, h⟩ ↦ h.mem_languages_definiteVariety⟩
 
 /-- The language variety of **K** consists of the reverse definite languages. -/
-theorem langs_reverseDefiniteVariety_iff [Finite α] :
-    Semigroup.reverseDefiniteVariety.langs L ↔ ∃ k, L.IsReverseDefinite k :=
+theorem mem_languages_reverseDefiniteVariety_iff [Finite α] :
+    L ∈ Semigroup.reverseDefiniteVariety.languages α ↔ ∃ k, L.IsReverseDefinite k :=
   ⟨fun h ↦ have := h.1; isReverseDefinite_syntacticSemigroup_iff.1 h.2,
-    fun ⟨_, h⟩ ↦ h.langs⟩
+    fun ⟨_, h⟩ ↦ h.mem_languages_reverseDefiniteVariety⟩
 
 /-- The language variety of **LI** consists of the generalized definite languages. -/
-theorem langs_locallyTrivialVariety_iff [Finite α] :
-    Semigroup.locallyTrivialVariety.langs L ↔ ∃ k, L.IsGeneralizedDefinite k :=
+theorem mem_languages_locallyTrivialVariety_iff [Finite α] :
+    L ∈ Semigroup.locallyTrivialVariety.languages α ↔ ∃ k, L.IsGeneralizedDefinite k :=
   ⟨fun h ↦ have := h.1; isLocallyTrivial_syntacticSemigroup_iff.1 h.2,
-    fun ⟨_, h⟩ ↦ h.langs⟩
+    fun ⟨_, h⟩ ↦ h.mem_languages_locallyTrivialVariety⟩
 
 end Language
