@@ -6,9 +6,9 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Order.Partition.Finpartition
+public import Linglib.Core.Probability.Distributions.PolyaUrn
 public import Linglib.Core.Probability.Exchangeable
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.SeqLaw
-public import Linglib.Core.Probability.PolyaUrn
 public import Linglib.Core.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.MeasureTheory.Measure.Real
