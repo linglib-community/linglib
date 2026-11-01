@@ -15,7 +15,9 @@ the theme reaches a goal the predicate fixes (a quantized change), that the them
 (potential for change), or nothing about change at all. Each degree is an existential
 generalization of the one above it, over the goal, over the result and over the scalar relation, so
 the degrees form a chain of weakening truth conditions. The three degrees above the bottom are the
-entailments, and each degree is the set of entailments at most as strong as it.
+entailments, and each degree is the set of entailments at most as strong as it. The role a predicate
+assigns its theme is the set of entailments it has, closed under entailment, and every such set is
+the role of some predicate, so exactly four roles are contentful.
 
 ## Main definitions
 
@@ -26,10 +28,13 @@ entailments, and each degree is the set of entailments at most as strong as it.
 * `NonQuantizedChange`: the predicate entails that the theme reaches some goal.
 * `PotentialChange`: the predicate relates the theme to a scale.
 * `AffectednessDegree.Holds`: the condition each degree names.
+* `affectednessRole`: the entailments a predicate has, as a lower set.
 
 ## Main results
 
 * `AffectednessDegree.holds_antitone`: each degree entails every weaker one.
+* `affectednessRole_antitone`: a predicate that entails another has at least its entailments.
+* `exists_affectednessRole_eq`: every lower set of entailments is the role of some predicate.
 
 ## Implementation notes
 
@@ -49,6 +54,8 @@ entailments, and each degree is the set of entailments at most as strong as it.
 ## References
 
 * [J. Beavers, *On Affectedness* (2011)][beavers-2011]
+* [J. Beavers, *The structure of lexical meaning: Why semantics really matters*
+  (2010)][beavers-2010]
 -/
 
 @[expose] public section
@@ -161,6 +168,63 @@ theorem AffectednessDegree.holds_antitone : Antitone (AffectednessDegree.Holds �
     | exact NonQuantizedChange.potentialChange
     | exact fun ⟨_, hq⟩ ↦ hq.nonQuantizedChange.potentialChange
 
+variable {θ R φ} in
+theorem AffectednessDegree.Holds.of_le {ψ : α → β → Prop} (h : φ ≤ ψ) :
+    ∀ {d}, AffectednessDegree.Holds θ R ψ d → AffectednessDegree.Holds θ R φ d
+  | .unspecified, hd => hd
+  | .potential, hd => fun x e hx ↦ hd x e (h x e hx)
+  | .nonquantized, hd => fun x e hx ↦ hd x e (h x e hx)
+  | .quantized, ⟨g, hd⟩ => ⟨g, fun x e hx ↦ hd x e (h x e hx)⟩
+
 end Conditions
+
+/-! ### The role of a predicate -/
+
+section Role
+
+variable {α S G β : Type*} (θ : α → S → β → Prop) (R : α → S → G → β → Prop)
+  (φ : α → β → Prop)
+
+/-- The role a predicate assigns its theme is the set of affectedness entailments it has
+([beavers-2010] (65)), closed under entailment by the Affectedness Hierarchy. -/
+def affectednessRole : LowerSet AffectednessEntailment :=
+  ⟨{e | AffectednessDegree.Holds θ R φ e.1},
+    fun _ _ h ↦ AffectednessDegree.holds_antitone θ R φ h⟩
+
+variable {θ R φ}
+
+@[simp] theorem mem_affectednessRole {e : AffectednessEntailment} :
+    e ∈ affectednessRole θ R φ ↔ AffectednessDegree.Holds θ R φ e.1 :=
+  .rfl
+
+variable (θ R) in
+/-- A predicate that entails another has at least its entailments. -/
+theorem affectednessRole_antitone : Antitone (affectednessRole θ R) :=
+  fun _ _ h _ ↦ AffectednessDegree.Holds.of_le h
+
+theorem affectednessRole_eq_entailments_iff {d : AffectednessDegree} :
+    affectednessRole θ R φ = d.entailments ↔
+      ∀ e : AffectednessEntailment, AffectednessDegree.Holds θ R φ e.1 ↔ e.1 ≤ d := by
+  rw [← SetLike.coe_set_eq, AffectednessDegree.coe_entailments, Set.ext_iff]
+  rfl
+
+/-- Every lower set of affectedness entailments is the role of some predicate, so each of the four
+roles of [beavers-2010] (66) is contentful. -/
+theorem exists_affectednessRole_eq (s : LowerSet AffectednessEntailment) :
+    ∃ (θ : Unit → Unit → Bool → Prop) (R : Unit → Unit → Bool → Bool → Prop)
+      (φ : Unit → Bool → Prop), affectednessRole θ R φ = s := by
+  obtain ⟨d, rfl⟩ := AffectednessDegree.entailments.surjective s
+  cases d
+  on_goal 1 => refine ⟨fun _ _ _ ↦ False, fun _ _ _ _ ↦ False, fun _ _ ↦ True, ?_⟩
+  on_goal 2 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ False, fun _ _ ↦ True, ?_⟩
+  on_goal 3 => refine ⟨fun _ _ _ ↦ True, fun _ _ g e ↦ g = e, fun _ _ ↦ True, ?_⟩
+  on_goal 4 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ True, fun _ _ ↦ True, ?_⟩
+  all_goals
+    refine affectednessRole_eq_entailments_iff.2 fun ⟨e, he⟩ ↦ ?_
+    cases e <;> simp_all [AffectednessDegree.Holds,
+      QuantizedChange, NonQuantizedChange, PotentialChange,
+      AffectednessDegree.le_iff_strength_le, AffectednessDegree.strength]
+
+end Role
 
 end ArgumentStructure

@@ -17,8 +17,8 @@ public import Linglib.Fragments.English.Verbs.Inventory
 
 This file formalizes the binding theory of *Lectures on Government and Binding*: an anaphor is bound
 in its governing category, a pronominal is free there, and an R-expression is free. The positions
-are the noun phrases of a phrase-structure tree, command is c-command, and a reading is the
-dependency among the noun phrases it coindexes; the book's notions are defined from these. The
+are the noun phrases of a phrase-structure tree, command is c-command, and the dependency is
+coindexation, read off the indices the book prints; the book's notions are defined from these. The
 SUBJECT of a finite clause is the agreement of its inflection, that of any other clause or of a noun
 phrase its subject; a SUBJECT is accessible to a position it c-commands unless the position lies
 inside the node that shares its index; and the governing category of a position is the smallest node
@@ -65,75 +65,100 @@ open RoseTree (CCommands)
 
 /-! ### Representations -/
 
+/-- A word with the referential index the book prints on it, if any. -/
+structure Token where
+  /-- The word. -/
+  word : Word
+  /-- The referential index. -/
+  index : Option ℕ := none
+  deriving DecidableEq
+
+/-- A representation is a phrase-structure tree of tokens. -/
+abbrev Rep := Tree Cat Token
+
 /-- `word c w` is the word `w` of category `c`. -/
-abbrev word (c : Cat) (w : Word) : Tree Cat Word := .terminal c w
+abbrev word (c : Cat) (w : Word) : Rep := .terminal c ⟨w, none⟩
 
 /-- `np w` is the one-word noun phrase `w`. -/
-abbrev np (w : Word) : Tree Cat Word := word .N w
+abbrev np (w : Word) : Rep := word .N w
+
+/-- `ix w i` is the one-word noun phrase `w` bearing the index `i`. -/
+abbrev ix (w : Word) (i : ℕ) : Rep := .terminal .N ⟨w, some i⟩
 
 /-- `nphrase cs` is the noun phrase of the daughters `cs`, its head noun among them. -/
-abbrev nphrase (cs : List (Tree Cat Word)) : Tree Cat Word := .node .N cs
+abbrev nphrase (cs : List Rep) : Rep := .node .N cs
 
-/-- `poss w x` is the noun phrase with the subject `w`. -/
-abbrev poss (w : Word) (x : Tree Cat Word) : Tree Cat Word := .node .Det [np w, x]
+/-- `poss s x` is the noun phrase with the subject `s`. -/
+abbrev poss (s x : Rep) : Rep := .node .Det [s, x]
 
 /-- `pp p x` is the prepositional phrase of `p` and `x`. -/
-abbrev pp (p : Word) (x : Tree Cat Word) : Tree Cat Word := .node .P [word .P p, x]
+abbrev pp (p : Word) (x : Rep) : Rep := .node .P [word .P p, x]
 
 /-- `clause subj infl v cs` is the clause `NP INFL VP` of the subject `subj`, the inflection
 `infl` and the verb phrase of `v` and `cs`. -/
-abbrev clause (subj : Tree Cat Word) (infl v : Word) (cs : List (Tree Cat Word)) :
-    Tree Cat Word :=
+abbrev clause (subj : Rep) (infl v : Word) (cs : List Rep) : Rep :=
   .node .S [subj, word .Aux infl, .node .V (word .V v :: cs)]
 
-/-- An inflection is finite, and so bears agreement, when its form is finite. -/
-def IsFinite (w : Word) : Prop := w.features .verbForm = some .Fin
+/-- The token of a terminal. -/
+def token? : Rep → Option Token
+  | PhraseStructure.Tree.terminal _ w => some w
+  | _ => none
 
-instance : DecidablePred IsFinite := fun _ ↦ inferInstanceAs (Decidable (_ = _))
+variable {t : Rep}
 
-variable {t : Tree Cat Word}
+/-- A position is finite, and so bears agreement, when the form of its word is finite. -/
+def IsFiniteAt (t : Rep) (p : TreePath) : Prop :=
+  ∃ w ∈ t[p]?.bind token?, w.word.features .verbForm = some .Fin
+
+instance (p : TreePath) : Decidable (IsFiniteAt t p) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- The first daughter of the node `m` whose category lies in `L`. -/
+def daughter? (t : Rep) (m : TreePath) (L : Set Cat) [DecidablePred (· ∈ L)] : Option TreePath :=
+  ((t[m]?.map RoseTree.children).getD []).zipIdx.findSome? fun x ↦
+    if Tree.cat x.1 ∈ L then some ⟨m.toList ++ [x.2]⟩ else none
 
 /-! ### Noun phrases -/
 
 /-- The noun phrases of `t` with their positions: the maximal projections labelled `N` and the
 phrases labelled `Det`, which have subjects. -/
-def nominals (t : Tree Cat Word) : List (TreePath × Tree Cat Word) :=
+def nominals (t : Rep) : List (TreePath × Rep) :=
   t.positionedSubtrees.filter fun x ↦
     x.1 ∈ maximalProjectionsAt t ∧ (Tree.cat x.2 = .N ∨ Tree.cat x.2 = .Det ∧ x.2.children ≠ [])
 
 /-- The type of noun phrases of `t`. -/
-abbrev Nominal (t : Tree Cat Word) : Type := {x // x ∈ nominals t}
-
-/-- The word of a one-word noun phrase. -/
-def word? : Tree Cat Word → Option Word
-  | PhraseStructure.Tree.terminal _ w => some w
-  | _ => none
+abbrev Nominal (t : Rep) : Type := {x // x ∈ nominals t}
 
 /-- The binding class of a noun phrase: that of its word, and an R-expression's for a phrase. -/
 def classOf (x : Nominal t) : Option BindingClass :=
-  (word? x.1.2).elim (some .rExpression) bindingClassOf
+  (token? x.1.2).elim (some .rExpression) (bindingClassOf ·.word)
+
+/-- Two noun phrases are coindexed when they bear one index. -/
+def Coindexed (a b : Nominal t) : Prop :=
+  ∃ i ∈ (token? a.1.2).bind Token.index, (token? b.1.2).bind Token.index = some i
+
+instance (a b : Nominal t) : Decidable (Coindexed a b) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-! ### The governing category -/
 
-/-- The SUBJECT of a node: the agreement of the inflection of a finite clause, the subject of
-any other clause, and the subject of a noun phrase that has one. -/
-def subject (t : Tree Cat Word) (m : TreePath) : Option TreePath :=
-  match t[m]? with
-  | some (PhraseStructure.Tree.node .S [_, PhraseStructure.Tree.terminal _ infl, _]) =>
-    some ⟨m.toList ++ [if IsFinite infl then 1 else 0]⟩
-  | some (PhraseStructure.Tree.node .Det (_ :: _)) => some ⟨m.toList ++ [0]⟩
-  | _ => none
+/-- The SUBJECT of a node: the agreement of the finite inflection of a clause, else its subject,
+and the subject of a noun phrase that has one. -/
+def subject (t : Rep) (m : TreePath) : Option TreePath :=
+  if m ∈ labeled t {.S} then
+    ((daughter? t m {.Aux}).filter fun i ↦ IsFiniteAt t i).or (daughter? t m {.N, .Det})
+  else if m ∈ labeled t {.Det} then daughter? t m {.N, .Det} else none
 
-/-- Agreement shares the index of the subject it governs: the inflection that is the SUBJECT of
-its clause bears the index of the clause's subject. -/
-def agreement (t : Tree Cat Word) (s : TreePath) : Option TreePath :=
-  if s.toList.getLast? = some 1 ∧ subject t s.parent = some s then
-    some ⟨s.parent.toList ++ [0]⟩
+/-- Agreement shares the index of the subject it governs: a finite inflection bears the index of
+its clause's subject. -/
+def agreement (t : Rep) (s : TreePath) : Option TreePath :=
+  if s ∈ labeled t {.Aux} ∧ IsFiniteAt t s ∧ s.parent ∈ labeled t {.S} then
+    daughter? t s.parent {.N, .Det}
   else none
 
 /-- The configuration on the noun phrases of `t` takes c-command, and the domain of a position
 is its governing category, the smallest node with a SUBJECT accessible to it. -/
-abbrev configuration (t : Tree Cat Word) : Configuration (Nominal t) :=
+abbrev configuration (t : Rep) : Configuration (Nominal t) :=
   (t.configuration (t.withAccessibleSubject (subject t) (agreement t))).comap (·.1.1)
 
 /-- The book's c-command, for a noun phrase `a`, whose projection line is `a` alone: `a` does not
@@ -159,25 +184,26 @@ theorem cCommands12_iff {a b : TreePath} (ha : a ≠ ⊥) (hp : t.IsBranchingAt 
   · rintro (⟨hpb, hab⟩ | rfl)
     exacts [⟨hab, hpb.le⟩, ⟨fun h ↦ hlt.not_ge h, le_rfl⟩]
 
-/-! ### Licit dependencies -/
+/-! ### Licit representations -/
 
-/-- The dependency `L` is licit when the noun phrases it relates agree and it satisfies the three
+/-- Coindexed noun phrases agree in φ-features. -/
+def Agrees (t : Rep) : Prop :=
+  ∀ a b : Nominal t, Coindexed a b → ∀ v ∈ token? a.1.2, ∀ w ∈ token? b.1.2,
+    HasPhi.Agree v.word w.word
+
+instance : Decidable (Agrees t) := inferInstanceAs (Decidable (∀ _ _, _))
+
+/-- A representation is licit when coindexed noun phrases agree and coindexation meets the three
 principles, with no anaphor exempt. -/
-def Licit (t : Tree Cat Word) (L : Nominal t → Nominal t → Prop) : Prop :=
-  (∀ a b, L a b → ∀ v ∈ word? a.1.2, ∀ w ∈ word? b.1.2, HasPhi.Agree v w) ∧
-    (configuration t).Satisfies L ∅ classOf
+def Licit (t : Rep) : Prop := Agrees t ∧ (configuration t).Satisfies Coindexed ∅ classOf
 
-instance (L : Nominal t → Nominal t → Prop) [DecidableRel L] : Decidable (Licit t L) :=
-  have : Decidable ((configuration t).Satisfies L ∅ classOf) := inferInstance
-  have : Decidable (∀ a b, L a b → ∀ v ∈ word? a.1.2, ∀ w ∈ word? b.1.2, HasPhi.Agree v w) :=
-    inferInstance
-  inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (Licit t) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- An anaphor that nothing in its governing category c-commands makes every dependency illicit,
+/-- An anaphor that nothing in its governing category c-commands is out under every indexing,
 which excludes an anaphoric subject of a finite clause. -/
 theorem not_licit_of_not_locallyCommanded {b : Nominal t} {c : BindingClass}
-    (hb : classOf b = some c) (hc : c.IsAnaphor) (hl : ¬ (configuration t).LocallyCommanded b)
-    (L : Nominal t → Nominal t → Prop) : ¬ Licit t L :=
+    (hb : classOf b = some c) (hc : c.IsAnaphor) (hl : ¬ (configuration t).LocallyCommanded b) :
+    ¬ Licit t :=
   fun ⟨_, h⟩ ↦ hl ((Configuration.condition_empty_iff hc).1 (h b c hb)).2
 
 /-- One domain serving both principles, an anaphor meets Principle A exactly where a pronominal
@@ -198,24 +224,6 @@ theorem permits_iff {a b : Nominal t} (hab : a ≠ b) (pron : List TreePath) :
   rfl
 
 /-! ### The examples -/
-
-/-- A reading of an example: its representation and the two noun phrases the book coindexes. -/
-structure Reading where
-  /-- The representation. -/
-  tree : Tree Cat Word
-  /-- The antecedent. -/
-  antecedent : TreePath
-  /-- The noun phrase coindexed with the antecedent. -/
-  dependent : TreePath
-
-/-- A reading is licit when relating its two noun phrases, and no others, is licit. -/
-def Reading.Licit (r : Reading) : Prop :=
-  ∃ a b : Nominal r.tree, a.1.1 = r.antecedent ∧ b.1.1 = r.dependent ∧
-    Chomsky1981.Licit r.tree (pair a b)
-
-instance (r : Reading) : Decidable r.Licit :=
-  have (a b : Nominal r.tree) : Decidable (Chomsky1981.Licit r.tree (pair a b)) := inferInstance
-  inferInstanceAs (Decidable (∃ (_ : Nominal r.tree) (_ : Nominal r.tree), _ ∧ _ ∧ _))
 
 section Examples
 
@@ -247,77 +255,65 @@ abbrev heard := Verbs.hear.toWord .past
 abbrev hear := Verbs.hear.toWord .base
 abbrev expected := Verbs.expect.toWord .past
 
-/-- *John saw my picture of him.* -/
-def r92i : Reading :=
-  ⟨clause (np john) past saw [poss my (nphrase [word .N picture, pp of_ (np him)])], ⟨[0]⟩,
-    ⟨[2, 1, 1, 1, 1]⟩⟩
+/-- *John₁ saw my picture of him₁.* -/
+def r92i : Rep :=
+  clause (ix john 1) past saw [poss (np my) (nphrase [word .N picture, pp of_ (ix him 1)])]
 
-/-- *I saw John's picture of him.* -/
-def r92ii : Reading :=
-  ⟨clause (np i_) past saw [poss john (nphrase [word .N picture, pp of_ (np him)])], ⟨[2, 1, 0]⟩,
-    ⟨[2, 1, 1, 1, 1]⟩⟩
+/-- *I saw John₁'s picture of him₁.* -/
+def r92ii : Rep :=
+  clause (np i_) past saw [poss (ix john 1) (nphrase [word .N picture, pp of_ (ix him 1)])]
 
-/-- *John saw a picture of him.* -/
-def r92iii : Reading :=
-  ⟨clause (np john) past saw [nphrase [word .Det a_, word .N picture, pp of_ (np him)]], ⟨[0]⟩,
-    ⟨[2, 1, 2, 1]⟩⟩
+/-- *John₁ saw a picture of him₁.* -/
+def r92iii : Rep :=
+  clause (ix john 1) past saw [nphrase [word .Det a_, word .N picture, pp of_ (ix him 1)]]
 
-/-- *John thought I saw a picture of him.* -/
-def r92iv : Reading :=
-  ⟨clause (np john) past thought
-      [clause (np i_) past saw [nphrase [word .Det a_, word .N picture, pp of_ (np him)]]],
-    ⟨[0]⟩, ⟨[2, 1, 2, 1, 2, 1]⟩⟩
+/-- *John₁ thought I saw a picture of him₁.* -/
+def r92iv : Rep :=
+  clause (ix john 1) past thought
+    [clause (np i_) past saw [nphrase [word .Det a_, word .N picture, pp of_ (ix him 1)]]]
 
-/-- *John read his book.* -/
-def r92v : Reading :=
-  ⟨clause (np john) past read [poss his (nphrase [word .N book])], ⟨[0]⟩, ⟨[2, 1, 0]⟩⟩
+/-- *John₁ read his₁ book.* -/
+def r92v : Rep := clause (ix john 1) past read [poss (ix his 1) (nphrase [word .N book])]
 
-/-- *John thought I saw his book.* -/
-def r92vi : Reading :=
-  ⟨clause (np john) past thought [clause (np i_) past saw [poss his (nphrase [word .N book])]],
-    ⟨[0]⟩, ⟨[2, 1, 2, 1, 0]⟩⟩
+/-- *John₁ thought I saw his₁ book.* -/
+def r92vi : Rep :=
+  clause (ix john 1) past thought
+    [clause (np i_) past saw [poss (ix his 1) (nphrase [word .N book])]]
 
-/-- *They read each other's books.* -/
-def r93 : Reading :=
-  ⟨clause (np they) past read [poss eachOther (nphrase [word .N book])], ⟨[0]⟩, ⟨[2, 1, 0]⟩⟩
+/-- *They₁ read each other₁'s books.* -/
+def r93 : Rep := clause (ix they 1) past read [poss (ix eachOther 1) (nphrase [word .N book])]
 
-/-- *They heard my stories about each other.* -/
-def r78my : Reading :=
-  ⟨clause (np they) past heard [poss my (nphrase [word .N story, pp about (np eachOther)])],
-    ⟨[0]⟩, ⟨[2, 1, 1, 1, 1]⟩⟩
+/-- *They₁ heard my stories about each other₁.* -/
+def r78my : Rep :=
+  clause (ix they 1) past heard [poss (np my) (nphrase [word .N story, pp about (ix eachOther 1)])]
 
-/-- *They heard the stories about each other.* -/
-def r78the : Reading :=
-  ⟨clause (np they) past heard [nphrase [word .Det the, word .N story, pp about (np eachOther)]],
-    ⟨[0]⟩, ⟨[2, 1, 2, 1]⟩⟩
+/-- *They₁ heard the stories about each other₁.* -/
+def r78the : Rep :=
+  clause (ix they 1) past heard [nphrase [word .Det the, word .N story, pp about (ix eachOther 1)]]
 
-/-- *They heard stories about each other.* -/
-def r78none : Reading :=
-  ⟨clause (np they) past heard [nphrase [word .N story, pp about (np eachOther)]], ⟨[0]⟩,
-    ⟨[2, 1, 1, 1]⟩⟩
+/-- *They₁ heard stories about each other₁.* -/
+def r78none : Rep :=
+  clause (ix they 1) past heard [nphrase [word .N story, pp about (ix eachOther 1)]]
 
-/-- *They expected me to hear stories about each other.* -/
-def r79i : Reading :=
-  ⟨clause (np they) past expected
-      [clause (np me_) to_ hear [nphrase [word .N story, pp about (np eachOther)]]],
-    ⟨[0]⟩, ⟨[2, 1, 2, 1, 1, 1]⟩⟩
+/-- *They₁ expected me to hear stories about each other₁.* -/
+def r79i : Rep :=
+  clause (ix they 1) past expected
+    [clause (np me_) to_ hear [nphrase [word .N story, pp about (ix eachOther 1)]]]
 
-/-- *They expected that pictures of each other would be on sale.* -/
-def r79ii : Reading :=
-  ⟨clause (np they) past expected
-      [clause (nphrase [word .N picture, pp of_ (np eachOther)]) would be []],
-    ⟨[0]⟩, ⟨[2, 1, 0, 1, 1]⟩⟩
+/-- *They₁ expected that pictures of each other₁ would be on sale.* -/
+def r79ii : Rep :=
+  clause (ix they 1) past expected
+    [clause (nphrase [word .N picture, pp of_ (ix eachOther 1)]) would be []]
 
-/-- *They thought I expected that pictures of each other would be on sale.* -/
-def r80 : Reading :=
-  ⟨clause (np they) past thought [clause (np i_) past expected
-      [clause (nphrase [word .N picture, pp of_ (np eachOther)]) would be []]],
-    ⟨[0]⟩, ⟨[2, 1, 2, 1, 0, 1, 1]⟩⟩
+/-- *They₁ thought I expected that pictures of each other₁ would be on sale.* -/
+def r80 : Rep :=
+  clause (ix they 1) past thought [clause (np i_) past expected
+    [clause (nphrase [word .N picture, pp of_ (ix eachOther 1)]) would be []]]
 
 end Examples
 
-/-- The examples with their readings. -/
-def rows : List (Datum × Reading) :=
+/-- The examples with their representations. -/
+def rows : List (Datum × Rep) :=
   [(Examples.ex_92i, r92i), (Examples.ex_92ii, r92ii), (Examples.ex_92iii, r92iii),
     (Examples.ex_92iv, r92iv), (Examples.ex_92v, r92v), (Examples.ex_92vi, r92vi),
     (Examples.ex_93, r93), (Examples.ex_78_my, r78my), (Examples.ex_78_the, r78the),
@@ -326,31 +322,24 @@ def rows : List (Datum × Reading) :=
 
 theorem map_fst_rows : rows.map Prod.fst = Examples.all := rfl
 
-theorem mem_nominals_rows : ∀ p ∈ rows, p.2.antecedent ∈ (nominals p.2.tree).map Prod.fst ∧
-    p.2.dependent ∈ (nominals p.2.tree).map Prod.fst := by
-  decide +kernel
-
-/-- The definitions decide the binding examples of chapter 3 but (92v): each is acceptable
-exactly when its reading is licit. -/
+/-- The definitions decide the binding examples but (92v): each is acceptable exactly when its
+representation is licit. -/
 theorem acceptable_iff_licit :
-    ∀ p ∈ rows, p.1 ≠ Examples.ex_92v → (p.1.judgment = .acceptable ↔ p.2.Licit) := by
+    ∀ p ∈ rows, p.1 ≠ Examples.ex_92v → (p.1.judgment = .acceptable ↔ Licit p.2) := by
   decide +kernel
 
 -- pp. 213-214: in (79ii) the SUBJECT of the embedded clause is its agreement, which shares the
 -- index of the subject containing *each other* and so is not accessible to it; the matrix
 -- clause, whose agreement is, is the governing category.
 theorem governingCategory_79ii :
-    subject r79ii.tree ⟨[2, 1]⟩ = some ⟨[2, 1, 1]⟩ ∧
-      agreement r79ii.tree ⟨[2, 1, 1]⟩ = some ⟨[2, 1, 0]⟩ ∧
-      ⟨[2, 1]⟩ ∉ r79ii.tree.withAccessibleSubject (subject r79ii.tree) (agreement r79ii.tree)
-        r79ii.dependent ∧
-      ⟨[]⟩ ∈ r79ii.tree.withAccessibleSubject (subject r79ii.tree) (agreement r79ii.tree)
-        r79ii.dependent := by
+    subject r79ii ⟨[2, 1]⟩ = some ⟨[2, 1, 1]⟩ ∧ agreement r79ii ⟨[2, 1, 1]⟩ = some ⟨[2, 1, 0]⟩ ∧
+      ⟨[2, 1]⟩ ∉ r79ii.withAccessibleSubject (subject r79ii) (agreement r79ii) ⟨[2, 1, 0, 1, 1]⟩ ∧
+      ⟨[]⟩ ∈ r79ii.withAccessibleSubject (subject r79ii) (agreement r79ii) ⟨[2, 1, 0, 1, 1]⟩ := by
   decide +kernel
 
 /-- *John read his book* is acceptable, but the binding theory excludes it, the clause being the
 governing category of the possessive pronoun ((92v), p. 217). -/
-theorem judgment_92v : Examples.ex_92v.judgment = .acceptable ∧ ¬ r92v.Licit := by
+theorem judgment_92v : Examples.ex_92v.judgment = .acceptable ∧ ¬ Licit r92v := by
   decide +kernel
 
 end Chomsky1981
