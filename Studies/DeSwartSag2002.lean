@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Polyadic
-public import Linglib.Logic.Natural.Additivity
+public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Fragments.Romance.French.Determiners
 
 /-!
@@ -88,18 +88,18 @@ variable {α : Type u}
 /-- *No* is anti-additive in its scope: none of `A` is in `S ∪ S'` iff none is in `S` and none
 in `S'`. -/
 theorem isAntiAdditive_no (A : Set α) : IsAntiAdditive (no A) :=
-  isAntiAdditive_iff_gq.2 (rightAntiAdditive_no A)
+  Quantifier.isAntiAdditive_iff.2 (rightAntiAdditive_no A)
 
 /-- *Few* is downward-entailing (`Quantifier.Det.scopeAntitone_few`) but not anti-additive: of
 three individuals, few are `0` and few are `1`, but not few are `0` or `1`. -/
 theorem not_isAntiAdditive_few : ¬ IsAntiAdditive (few (Set.univ : Set (Fin 3))) := fun h ↦ by
   let U : Set (Fin 3) := Set.univ
   have : few U ({0} ∪ {1}) ↔ few U {0} ∧ few U {1} :=
-    isAntiAdditive_iff_gq.1 h {0} {1}
+    Quantifier.isAntiAdditive_iff.1 h {0} {1}
   revert this; decide
 
 theorem not_isAntiAdditive_some : ¬ IsAntiAdditive (Det.some (Set.univ : Set PUnit.{u + 1})) :=
-  fun h ↦ by simpa [Det.some] using isAntiAdditive_iff_gq.1 h Set.univ ∅
+  fun h ↦ by simpa [Det.some] using Quantifier.isAntiAdditive_iff.1 h Set.univ ∅
 
 /-- Of the readings of *aucun*, the one that is anti-additive on every finite domain, as a
 concord item must be, is the negative quantifier. -/

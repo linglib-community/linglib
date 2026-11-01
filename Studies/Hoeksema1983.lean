@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Hom.CompleteLattice
-public import Linglib.Logic.Natural.Additivity
+public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Quantification.Basic
 
@@ -135,7 +135,7 @@ def notEveryDutchman : Set Dutchman → Prop :=
 /-- In the model (51), *niet iedere Nederlander* is not anti-additive, so by Zwarts's hypothesis it
 cannot trigger *ook maar* (45b) (§4.1). -/
 theorem not_isAntiAdditive_notEveryDutchman : ¬ IsAntiAdditive notEveryDutchman := by
-  rw [isAntiAdditive_iff_gq]
+  rw [Quantifier.isAntiAdditive_iff]
   intro h
   refine (h {.jan} {.piet}).2 ⟨fun h ↦ ?_, fun h ↦ ?_⟩ fun x _ ↦ ?_
   · simpa using h (Set.mem_univ .piet)
