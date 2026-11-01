@@ -46,9 +46,9 @@ copy of a chain read high, so that the type-driven composition engine interprets
   then moves above the head.
 * A remnant read high, with a chain that moved out of it also read high, leaves a free trace and a
   vacuous binder. `PhraseStructure.Tree.Closed` tells such a reading from one the engine can close.
-* Deleting a higher copy is not one of the quotients of Marcolli, Chomsky and Berwick, whose
-  quotients all remove the lower copy. It is the reading of Collins's work on the passive and on
-  reconstruction.
+* Marcolli, Chomsky and Berwick apply their quotients to the lower copy. Deleting the higher copy is
+  their deletion quotient applied to the copy object at the other occurrence, which they do not do;
+  it is the reading of Collins's work on the passive and on reconstruction.
 * Binding at a reading is not in general binding at the copy object: an object that moves from
   itself, read low, comes to c-command the sister of its movement node. The reading `carrying` is
   the one that does agree with it (`Derivation.bindsAtReading_carrying_iff`).

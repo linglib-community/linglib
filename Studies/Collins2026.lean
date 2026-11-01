@@ -39,8 +39,8 @@ readings](##scope_readings) through the composition engine.
   derivational binding condition Cole and Hermon use, and says nothing about whether such a
   condition is available to the framework the paper criticizes.
 * The reading with no chain read low is the book's contraction with a binder the book does not have.
-  The low reading deletes the higher copy, which none of the book's quotients does, so the two scope
-  readings are the copy theory's, not the framework's.
+  The low reading deletes the higher copy, where the book removes only the lower one, so the two
+  scope readings are the copy theory's, not the framework's.
 
 ## References
 
