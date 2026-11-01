@@ -309,6 +309,15 @@ end Det
 /-- A quantifier lives on `A` when `Q B ↔ Q (A ∩ B)` for every `B`. -/
 def LivesOn (Q : Quantifier α) (A : Set α) : Prop := ∀ B, Q B ↔ Q (A ∩ B)
 
+theorem livesOn_univ (Q : Quantifier α) : Q.LivesOn Set.univ := fun B ↦ by rw [Set.univ_inter]
+
+theorem LivesOn.mono {Q : Quantifier α} {A A' : Set α} (h : Q.LivesOn A) (hA : A ⊆ A') :
+    Q.LivesOn A' := fun B ↦ by
+  rw [h B, h (A' ∩ B), ← Set.inter_assoc, Set.inter_eq_left.2 hA]
+
+theorem LivesOn.inter {Q : Quantifier α} {A A' : Set α} (h : Q.LivesOn A) (h' : Q.LivesOn A') :
+    Q.LivesOn (A ∩ A') := fun B ↦ by rw [h B, h' (A ∩ B), Set.inter_left_comm, Set.inter_assoc]
+
 theorem _root_.Quantifier.Det.Conservative.livesOn {d : Det α} (h : d.Conservative)
     (A : Set α) : (d A).LivesOn A :=
   h A
