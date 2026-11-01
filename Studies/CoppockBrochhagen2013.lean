@@ -11,7 +11,7 @@ public import Mathlib.Logic.Relation
 Coppock and Brochhagen analyse *at least* and *at most* as quantifying over a scale of answers to
 the question under discussion: *at least p* is what *only p* presupposes, that some true answer is
 at least as strong as `p`, and *at most p* is what *only p* asserts, that no true answer is
-stronger. These are `Focus.Particles.atLeast` and `Focus.Particles.atMost`, modifiers of
+stronger. These are `Focus.atLeast` and `Focus.atMost`, modifiers of
 propositions. On the question of how many, with answers ranked by number, they give the truth
 conditions of the modified numerals whether the bare numeral is read two-sidedly or one-sidedly,
 and on a scale of mutually exclusive answers, such as academic ranks, *at least* widens its
@@ -54,7 +54,7 @@ the paper derives with Hackl's *-many* (§3.6).
 
 namespace CoppockBrochhagen2013
 
-open Focus.Particles Inquisitive.Unrestricted Set
+open Focus Inquisitive.Unrestricted Set
 
 /-! ### Truth conditions (§2.6) -/
 
@@ -67,7 +67,7 @@ abbrev ranking (P : α → Set W) : Set W → Set W → Prop := Relation.Map (·
 
 -- (30)
 theorem atLeast_map (hP : Function.Injective P) (a : α) :
-    atLeast (ranking P) (range P) (P a) = ⋃ i ∈ Ici a, P i := by
+    atLeast (ranking P) (range P) id (P a) = ⋃ i ∈ Ici a, P i := by
   ext w
   simp only [mem_atLeast, mem_range, exists_exists_eq_and, Relation.map_apply, hP.eq_iff,
     mem_iUnion, mem_Ici, exists_prop]
@@ -79,7 +79,7 @@ theorem atLeast_map (hP : Function.Injective P) (a : α) :
 
 -- (31)
 theorem atMost_map (hP : Function.Injective P) (a : α) :
-    atMost (ranking P) (range P) (P a) = (⋃ i ∈ (Iic a)ᶜ, P i)ᶜ := by
+    atMost (ranking P) (range P) id (P a) = (⋃ i ∈ (Iic a)ᶜ, P i)ᶜ := by
   ext w
   simp only [mem_atMost, mem_range, forall_exists_index, forall_apply_eq_imp_iff,
     Relation.map_apply, hP.eq_iff, mem_compl_iff, mem_iUnion, mem_Iic, exists_prop, not_exists,
@@ -118,12 +118,12 @@ theorem oneSided_injective (hμ : Function.Surjective μ) : Function.Injective (
   hμ.preimage_injective.comp Ici_injective
 
 theorem atLeast_twoSided (hμ : Function.Surjective μ) (a : α) :
-    atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) = μ ⁻¹' Ici a := by
+    atLeast (ranking (twoSided μ)) (range (twoSided μ)) id (twoSided μ a) = μ ⁻¹' Ici a := by
   rw [atLeast_map (twoSided_injective hμ)]
   simp only [twoSided, ← preimage_iUnion₂, biUnion_of_singleton]
 
 theorem atLeast_oneSided (hμ : Function.Surjective μ) (a : α) :
-    atLeast (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) = μ ⁻¹' Ici a := by
+    atLeast (ranking (oneSided μ)) (range (oneSided μ)) id (oneSided μ a) = μ ⁻¹' Ici a := by
   rw [atLeast_map (oneSided_injective hμ)]
   simp only [oneSided, ← preimage_iUnion₂]
   congr 1
@@ -132,12 +132,12 @@ theorem atLeast_oneSided (hμ : Function.Surjective μ) (a : α) :
   exact ⟨fun ⟨_, hai, hix⟩ ↦ hai.trans hix, fun h ↦ ⟨a, le_rfl, h⟩⟩
 
 theorem atMost_twoSided (hμ : Function.Surjective μ) (a : α) :
-    atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) = μ ⁻¹' Iic a := by
+    atMost (ranking (twoSided μ)) (range (twoSided μ)) id (twoSided μ a) = μ ⁻¹' Iic a := by
   rw [atMost_map (twoSided_injective hμ)]
   simp only [twoSided, ← preimage_iUnion₂, biUnion_of_singleton, ← preimage_compl, compl_compl]
 
 theorem atMost_oneSided (hμ : Function.Surjective μ) (a : α) :
-    atMost (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) = μ ⁻¹' Iic a := by
+    atMost (ranking (oneSided μ)) (range (oneSided μ)) id (oneSided μ a) = μ ⁻¹' Iic a := by
   rw [atMost_map (oneSided_injective hμ), compl_Iic]
   simp only [oneSided, ← preimage_iUnion₂, ← preimage_compl]
   congr 1
@@ -148,20 +148,20 @@ theorem atMost_oneSided (hμ : Function.Surjective μ) (a : α) :
 
 -- (32)
 theorem atMost_twoSided_mono (hμ : Function.Surjective μ) {a b : α} (hab : a ≤ b) :
-    atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) ⊆
-      atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ b) := by
+    atMost (ranking (twoSided μ)) (range (twoSided μ)) id (twoSided μ a) ⊆
+      atMost (ranking (twoSided μ)) (range (twoSided μ)) id (twoSided μ b) := by
   rw [atMost_twoSided hμ, atMost_twoSided hμ]
   exact preimage_mono (Iic_subset_Iic.2 hab)
 
 -- (59)
 theorem twoSided_ssubset_atLeast (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
-    twoSided μ a ⊂ atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) := by
+    twoSided μ a ⊂ atLeast (ranking (twoSided μ)) (range (twoSided μ)) id (twoSided μ a) := by
   rw [atLeast_twoSided hμ]
   obtain ⟨w, rfl⟩ := hμ b
   exact ⟨preimage_mono (singleton_subset_iff.2 le_rfl), fun h ↦ hab.ne' (h (hab.le : μ w ∈ Ici a))⟩
 
 theorem atLeast_oneSided_eq (hμ : Function.Surjective μ) (a : α) :
-    atLeast (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) = oneSided μ a :=
+    atLeast (ranking (oneSided μ)) (range (oneSided μ)) id (oneSided μ a) = oneSided μ a :=
   atLeast_oneSided hμ a
 
 end Measure
@@ -176,7 +176,7 @@ variable {W : Type*} {μ : W → ℕ}
 pulled back along the count. -/
 theorem atLeast_fragment (hμ : Function.Surjective μ) (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atLeast⟧,
-      Focus.Particles.atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =
+      Focus.atLeast (ranking (twoSided μ)) (range (twoSided μ)) id (twoSided μ n) =
         μ ⁻¹' m {n} := by
   rintro m (rfl : m = _)
   rw [atLeast_twoSided hμ, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_ge]
@@ -185,7 +185,7 @@ theorem atLeast_fragment (hμ : Function.Surjective μ) (n : ℕ) :
 pulled back along the count. -/
 theorem atMost_fragment (hμ : Function.Surjective μ) (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atMost⟧,
-      Focus.Particles.atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =
+      Focus.atMost (ranking (twoSided μ)) (range (twoSided μ)) id (twoSided μ n) =
         μ ⁻¹' m {n} := by
   rintro m (rfl : m = _)
   rw [atMost_twoSided hμ, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_le]
@@ -203,14 +203,14 @@ def atLeastInq : Set (Set W) := {q ∈ C | S q p}
 
 /-- *At most p* raises every answer at most as strong as `p`, cut down to the worlds where no
 stronger answer is true (60). -/
-def atMostInq : Set (Set W) := (· ∩ atMost S C p) '' {q ∈ C | S p q}
+def atMostInq : Set (Set W) := (· ∩ atMost S C id p) '' {q ∈ C | S p q}
 
 /-- The informational content of inquisitive *at least* is `min` (§3.7). -/
-theorem sUnion_atLeastInq : ⋃₀ atLeastInq S C p = atLeast S C p := by
+theorem sUnion_atLeastInq : ⋃₀ atLeastInq S C p = atLeast S C id p := by
   ext w; simp [atLeastInq, and_assoc, and_comm, and_left_comm]
 
 /-- The informational content of inquisitive *at most* is `max`, within the common ground (§3.7). -/
-theorem sUnion_atMostInq : ⋃₀ atMostInq S C p = atMost S C p ∩ ⋃₀ C := by
+theorem sUnion_atMostInq : ⋃₀ atMostInq S C p = atMost S C id p ∩ ⋃₀ C := by
   ext w
   simp only [atMostInq, sUnion_image, mem_iUnion, mem_ofPred_eq, mem_inter_iff, exists_prop,
     mem_sUnion]
@@ -251,7 +251,7 @@ theorem atLeastInq_ranking (hP : Function.Injective P) (a : α) :
 -- (63), (64)
 theorem atMostInq_ranking (hP : Function.Injective P) (a : α) :
     atMostInq (ranking P) (range P) (P a) =
-      (· ∩ atMost (ranking P) (range P) (P a)) '' (P '' Iic a) := by
+      (· ∩ atMost (ranking P) (range P) id (P a)) '' (P '' Iic a) := by
   rw [atMostInq]
   congr 1
   ext q

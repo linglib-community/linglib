@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Natural.Signature
-public import Linglib.Logic.Natural.Strawson
+public import Linglib.Semantics.Presupposition.Strawson
 public import Linglib.Semantics.Exhaustification.Antiexhaustive
 public import Linglib.Semantics.Questions.Value
 public import Linglib.Semantics.Negation.Strength
@@ -165,14 +165,14 @@ def Holds : Licenser → Signature → Prop
 entailing modulo its presupposition. -/
 def IsStrawsonDE : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p, Antitone (F.op p)
-  | .strawson F => ∀ p, NaturalLogic.IsStrawsonDE (F.op p)
+  | .strawson F => ∀ p, Presupposition.IsStrawsonDE (F.op p)
   | .modal _ | .question => False
 
 /-- A licenser is Strawson upward entailing when every operator in its family is upward entailing
 modulo its presupposition; a constant operator is both this and downward entailing. -/
 def IsStrawsonUE : Licenser → Prop
   | .classical F | .scalar ⟨F, _⟩ => ∀ p, Monotone (F.op p)
-  | .strawson F => ∀ p, NaturalLogic.IsStrawsonUE (F.op p)
+  | .strawson F => ∀ p, Presupposition.IsStrawsonUE (F.op p)
   | .modal _ | .question => False
 
 /-- A licenser carries weak strength when it is downward and not upward entailing modulo
@@ -261,7 +261,7 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   | classical F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
   | scalar F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
   | strawson F =>
-    exact fun p ↦ NaturalLogic.IsStrawsonDE.of_antitone_posSupport
+    exact fun p ↦ Presupposition.IsStrawsonDE.of_antitone_posSupport
       (Signature.holdsFor_anti_iff.mp (h p))
   | modal _ | question => exact h
 

@@ -1,6 +1,11 @@
 module
 
-public import Linglib.Logic.Natural.Strawson
+public import Linglib.Semantics.Presupposition.Strawson
+public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Conditionals.Horizon
+public import Linglib.Semantics.Degree.Superlative
+public import Linglib.Semantics.Focus.Particles
+public import Linglib.Semantics.Tense.Since
 public import Linglib.Semantics.Conditionals.Restrictor
 public import Linglib.Data.Examples.VonFintel1999
 
@@ -10,9 +15,9 @@ public import Linglib.Data.Examples.VonFintel1999
 Von Fintel defends the Fauconnier–Ladusaw theory of negative polarity licensing against four
 licensers that are not downward entailing, focus *only*, the adversative attitudes, superlatives
 and conditional antecedents: each is downward entailing once the inference is checked only where
-the presuppositions hold. The notion is in `Logic/Natural/Strawson.lean` and the operators live
-with their owners, Iatridou's temporal *since* among them; this file carries the paper's
-arguments around them, and its licensing judgments are the rows of
+the presuppositions hold. The notion is in `Semantics/Presupposition/Strawson.lean` and the
+operators live with their owners, Iatridou's temporal *since* among them; this file carries the
+paper's arguments around them, and its licensing judgments are the rows of
 `Data/Examples/VonFintel1999.json`.
 
 *Want* and *glad* are upward entailing in the Strawson sense, on the best-worlds semantics and on
@@ -132,14 +137,14 @@ end Attitudes
 
 Of the two entries for propositional *only* von Fintel compares, (68a) presupposes the prejacent
 and asserts that every true alternative is entailed by it; it is the substrate's
-`Focus.Particles.only (· ⊆ ·)` (`Focus.Particles.only_subset_eq`), Strawson downward entailing
-with the alternatives held fixed (`Focus.Particles.isStrawsonDE_only_subset`). (68b) bars the
+`Focus.only (· ⊆ ·)` (`Focus.only_subset_eq`), Strawson downward entailing
+with the alternatives held fixed (`Focus.isStrawsonDE_only_subset`). (68b) bars the
 prejacent's entailments from the alternatives and asserts that every true alternative is the
 prejacent. -/
 
 section Only
 
-open Focus.Particles
+open Focus
 
 variable (C : Set (Set W)) (p : Set W)
 
@@ -147,7 +152,7 @@ open Classical in
 /-- *Only* in the entry (68b) presupposes the prejacent and that no alternative is entailed by
 it, and asserts that every true alternative is the prejacent. -/
 noncomputable def only68b : W → SignType :=
-  {w | w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r}.indicator fun w ↦ SignType.ofProp (w ∈ atMost (· = ·) C p)
+  {w | w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r}.indicator fun w ↦ SignType.ofProp (w ∈ atMost (· = ·) C id p)
 
 /-- With (68b), no downward inference within one set of alternatives can be assessed (p. 134). -/
 theorem only68b_eq_zero {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) : only68b C q w = 0 :=

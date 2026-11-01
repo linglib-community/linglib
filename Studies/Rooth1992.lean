@@ -29,7 +29,7 @@ antecedent is a `Focus.Antecedent`.
   arguments of its predication, and its focus semantic value is their composition
   (`WithAlternatives.map₂`).
 * *Only* is the substrate's exclusive assertion on the identity scale,
-  `Focus.Particles.atMost (· = ·)`, which is (4b) with the equation reversed. Footnote 2 leaves
+  `Focus.atMost (· = ·)`, which is (4b) with the equation reversed. Footnote 2 leaves
   open whether the prejacent belongs in the presupposition or the assertion, and suggests that
   the property may only need to be the strongest in the domain, the entailment scale.
 
@@ -45,7 +45,7 @@ antecedent is a `Focus.Antecedent`.
 
 namespace Rooth1992
 
-open Exhaustification Focus Focus.Particles WithAlternatives
+open Exhaustification Focus WithAlternatives
 
 /-! ### Focus semantic values (2) -/
 
@@ -56,7 +56,7 @@ universe u
 variable {α β : Type u}
 
 theorem atMost_eq_empty_of_univ_mem {W : Type*} {C : Set (Set W)} {p : Set W}
-    (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : atMost (· = ·) C p = ∅ :=
+    (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : atMost (· = ·) C id p = ∅ :=
   Set.eq_empty_iff_forall_notMem.2 fun w hw ↦ hp (hw _ hC (Set.mem_univ w))
 
 end Values
@@ -87,9 +87,9 @@ end Atoms
 *Only* quantifies over a domain `C` of properties: if Mary has a property in `C`, it is the one
 the VP expresses ((4b), (30b)). Focus constrains `C` to lie inside the focus semantic value of
 the VP ((9c)). At the propositional level the assertion is the exclusive's assertion on the
-identity scale, `Focus.Particles.atMost (· = ·)`, which is the entailment-scale exclusion where
+identity scale, `Focus.atMost (· = ·)`, which is the entailment-scale exclusion where
 the prejacent entails no other member of the domain
-(`Focus.Particles.atMost_eq_eq_atMost_subset`). -/
+(`Focus.atMost_eq_eq_atMost_subset`). -/
 
 section Only
 
@@ -110,16 +110,16 @@ theorem vp_objectFocus :
 /-- (3a) is false in the scenario, since 'Mary introduced Tom to Sue' is a true member of the
 domain distinct from the prejacent. -/
 theorem three_a (hbt : b ≠ t) :
-    scenario m b t s ∉ atMost (· = ·) (Set.range fun y ↦ intro m y s) (intro m b s) :=
-  notMem_atMost (q := intro m t s) ⟨t, rfl⟩ (by simp [scenario, intro])
+    scenario m b t s ∉ atMost (· = ·) (Set.range fun y ↦ intro m y s) id (intro m b s) :=
+  notMem_atMost (j := intro m t s) ⟨t, rfl⟩ (by simp [scenario, intro])
     fun h ↦ hbt (Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).1
 
 /-- (3b) is true in the scenario, since the only true proposition of the form 'Mary introduced
 Bill to z' is the prejacent. -/
 theorem three_b (hbt : b ≠ t) :
-    scenario m b t s ∈ atMost (· = ·) (Set.range fun z ↦ intro m b z) (intro m b s) := by
+    scenario m b t s ∈ atMost (· = ·) (Set.range fun z ↦ intro m b z) id (intro m b s) := by
   rintro q ⟨z, rfl⟩ hw
-  simp only [scenario, intro, mem_atom, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [id, scenario, intro, mem_atom, Set.mem_insert_iff, Set.mem_singleton_iff,
     Prod.mk.injEq] at hw
   rcases hw with ⟨-, -, rfl⟩ | ⟨-, hb, -⟩
   · rfl
@@ -144,14 +144,14 @@ theorem univ_mem_vp_verbFocus :
 unsatisfiable. -/
 theorem recognitions_fixed :
     atMost (· = ·) ((fun R : E → E → Set (Set (Verb × E × E)) ↦ R m c) <$>
-      focused (rel .read)).alternatives (rel .read m c) = ∅ :=
+      focused (rel .read)).alternatives id (rel .read m c) = ∅ :=
   atMost_eq_empty_of_univ_mem (univ_mem_vp_verbFocus m c) (atom_ne_univ _)
 
 /-- With the domain constrained to reading and understanding (37c), (7) is true where Mary read
 without understanding. -/
 theorem recognitions_constrained :
     {(Verb.read, m, c)} ∈
-      atMost (· = ·) {rel .read m c, rel .understand m c} (rel .read m c) := by
+      atMost (· = ·) {rel .read m c, rel .understand m c} id (rel .read m c) := by
   rintro q (rfl | rfl) hw
   · rfl
   · simp [rel] at hw
@@ -380,7 +380,7 @@ def onlyData : List (OnlyFocus × Bool) := Examples.all.filterMap onlyRow
 focus constrains holds there. -/
 theorem only_rows : ∀ d ∈ onlyData, (d.2 = true ↔
     scenario Person.mary .bill .tom .sue ∈
-      atMost (· = ·) d.1.domain (intro Person.mary .bill .sue)) := by
+      atMost (· = ·) d.1.domain id (intro Person.mary .bill .sue)) := by
   intro d hd
   rw [show onlyData = [(.bill, false), (.sue, true)] by decide] at hd
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hd

@@ -17,7 +17,7 @@ Grubic, Renans and Duah analyse the marked focus/background constructions of Aka
 (section 8), whose data, the rows of `Data.Examples.GrubicRenansDuah2019`, they collect in
 sections 5 and 6. In none of the three is the exhaustive inference asserted: negating the
 construction targets the prejacent, so an additive continuation loses its antecedent, where
-negating overt *only*, the substrate's `Focus.Particles.only`, keeps it. The Akan *nà* and Ga
+negating overt *only*, the substrate's `Focus.only`, keeps it. The Akan *nà* and Ga
 *ni* constructions are clefts that assert the prejacent and presuppose conditional exhaustivity,
 that if the prejacent holds no other alternative does, together with existence. The Ngamo
 *=i/ye* construction only presupposes that its background is salient.
@@ -40,7 +40,7 @@ conventional, and section 7's argument that salience is not givenness are not fo
 
 namespace GrubicRenansDuah2019
 
-open Exhaustification Presupposition Focus Focus.Particles
+open Exhaustification Presupposition Focus
 
 variable {W : Type*} (alts : Set (Set W)) (p : Set W)
 
@@ -60,7 +60,7 @@ noncomputable def marked (salient : Set W → Prop) : W → SignType :=
 
 /-- Negated overt *only* keeps the prejacent and verifies a non-entailed alternative, giving *also*
 its antecedent ((36b), (37b)). -/
-theorem negated_only_licenses_also {w : W} (h : -only (· ⊆ ·) alts p w = 1) :
+theorem negated_only_licenses_also {w : W} (h : -only (· ⊆ ·) alts id p w = 1) :
     w ∈ p ∧ ∃ q ∈ alts, ¬ p ⊆ q ∧ w ∈ q := by
   rw [SignType.neg_eq_one_iff, only_eq_neg_one_iff] at h
   refine ⟨atLeast_subset_subset h.1, ?_⟩

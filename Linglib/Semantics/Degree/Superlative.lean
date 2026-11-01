@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Presupposition.Strawson
 
 /-!
 # The presuppositional superlative
@@ -92,5 +93,36 @@ there ([heim-1999]). -/
 theorem superlative_eq_one_iff_absoluteSuperlative [LinearOrder D] {μ : α → D} {C : W → Set α}
     {x : α} {w : W} : superlative μ C x w = 1 ↔ AbsoluteSuperlative μ (C w) x :=
   superlative_eq_one_iff
+
+end Degree
+
+/-! ### Superlatives -/
+
+namespace Degree
+
+open Presupposition Trivalent
+
+variable {α D W : Type*} [Preorder D] (μ : α → D) (x : α)
+
+/-- The superlative is Strawson anti-additive in its comparison class. -/
+theorem isStrawsonAntiAdditive_superlative :
+    IsStrawsonAntiAdditive (superlative (W := W) μ · x) :=
+  .of_isAntiAdditive (isAntiAdditive_superlative_assertion μ x) fun _ _ h ↦ by simp_all
+
+theorem isStrawsonDE_superlative : IsStrawsonDE (superlative (W := W) μ · x) :=
+  (isStrawsonAntiAdditive_superlative μ x).isStrawsonDE
+
+/-- *Emma is the tallest girl in her class* does not classically entail its restriction to girls who
+have learned the alphabet ([von-fintel-1999]'s (76)). -/
+theorem not_antitone_posSupport_superlative :
+    ¬ Antitone fun C : Unit → Set Unit ↦ posSupport (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
+  not_antitone_posSupport (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
+
+/-- *Emma is the tallest girl to have learned the alphabet* does not Strawson-entail *Emma is the
+tallest girl*, defined and false when a taller girl has not learned it. -/
+theorem not_isStrawsonUE_superlative :
+    ¬ IsStrawsonUE (superlative (W := Unit) (fun _ : Bool ↦ (0 : ℕ)) · true) :=
+  not_isStrawsonUE (p := fun _ ↦ {true}) (q := fun _ ↦ .univ) (w := ())
+    (fun _ ↦ Set.subset_univ _) (by simp) (by simp [superlative])
 
 end Degree

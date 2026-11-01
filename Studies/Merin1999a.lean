@@ -22,7 +22,7 @@ blocks *A or B, if not indeed A* (Prediction 1, `exists_not_ifNotIndeed_union`).
 
 *But and even.* Hypothesis 4 (`ButFelicitous`) makes A an argument for the issue and B and A∧B
 arguments against it. Hypothesis 5 (`EvenFelicitous`) is the scalar presupposition of *even*
-(`Focus.Particles.evenPresup`) with relevance in place of likelihood; by Fact 2 the most
+(`Focus.evenPresup`) with relevance in place of likelihood; by Fact 2 the most
 relevant alternative is the one whose truth would be most surprising if ¬H rather than H were
 accepted, Merin's reconciliation of argumentative value with [francescotti-1995]'s surprise and
 against [kay-1990]'s informativeness. With one issue per reading, the two hypotheses clash on
@@ -275,7 +275,7 @@ B, A confirms H and B is more relevant to H than A: the scalar presupposition of
 relevance for likelihood, over the one alternative A. -/
 def EvenFelicitous (ctx : Context W) (a b : Set W) : Prop :=
   ctx.topic ≠ b ∧ posRelevant ctx a ∧
-    Focus.Particles.evenPresup (fun e ↦ OrderDual.toDual (bayesFactor ctx e)) b {a}
+    Focus.evenPresup (fun e ↦ OrderDual.toDual (bayesFactor ctx e)) b {a}
 
 theorem not_butFelicitous_and_evenFelicitous (ctx : Context W) (a b : Set W) :
     ¬ (ButFelicitous ctx a b ∧ EvenFelicitous ctx a b) := by

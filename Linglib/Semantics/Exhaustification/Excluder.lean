@@ -16,7 +16,7 @@ This file defines the selection every theory of *only* and of exhaustification s
 alternatives the prejacent does not entail, and the finite excluders that vary it.
 
 `excludes C p` is the exclusion component, holding where every true alternative in `C` is entailed
-by `p`. It is the assertion of the entailment-scale *only* (`Focus.Particles.only`), as in Horn,
+by `p`. It is the assertion of the entailment-scale *only* (`Focus.only`), as in Horn,
 Rooth and von Fintel, and `exh C p`, the prejacent together with the exclusion, is Chierchia's
 operator `O`. Exclusion is anti-additive in the prejacent (`excludes_union`). Over an `Irredundant`
 family, where each alternative has a world of its own, exclusion separates resolutions of the

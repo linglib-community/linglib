@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Presupposition.Strawson
 
 /-!
 # The modal-horizon counterfactual
@@ -67,5 +68,45 @@ theorem exists_mem_of_horizonCounterfactual_eq_one (h : horizonCounterfactual ho
     ∃ w ∈ horizon i, w ∈ p ∧ w ∈ q :=
   let ⟨⟨w, hw⟩, hs⟩ := horizonCounterfactual_eq_one_iff.1 h
   ⟨w, hw.1, hw.2, hs hw⟩
+
+end Conditional
+
+/-! ### Conditional antecedents -/
+
+namespace Conditional
+
+open Presupposition Trivalent
+
+variable {I W : Type*} (horizon : I → Set W) (q : Set W)
+
+/-- The modal-horizon counterfactual is Strawson anti-additive in its antecedent ([gajewski-2011],
+Appendix 1). -/
+theorem isStrawsonAntiAdditive_horizonCounterfactual :
+    IsStrawsonAntiAdditive (horizonCounterfactual horizon · q) :=
+  .of_isAntiAdditive (a := fun p i ↦ i ∈ strictImp horizon p q)
+    (fun p p' ↦ funext fun i ↦ propext <| by
+      show i ∈ strictImp horizon (p ∪ p') q ↔ i ∈ strictImp horizon p q ∧ i ∈ strictImp horizon p' q
+      rw [strictImp_union_left]
+      exact Iff.rfl)
+    fun _ _ h ↦ by simp_all [mem_strictImp]
+
+theorem isStrawsonDE_horizonCounterfactual :
+    IsStrawsonDE (horizonCounterfactual horizon · q) :=
+  (isStrawsonAntiAdditive_horizonCounterfactual horizon q).isStrawsonDE
+
+/-- Strengthening the antecedent is not classically valid, since a strengthened antecedent can
+fall outside the horizon ([von-fintel-1999], §4.3). -/
+theorem not_antitone_posSupport_horizonCounterfactual :
+    ¬ Antitone fun p : Set Unit ↦
+      posSupport (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
+  not_antitone_posSupport (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
+
+/-- Weakening the antecedent is not Strawson valid either, since the weaker antecedent can admit
+worlds the consequent excludes. -/
+theorem not_isStrawsonUE_horizonCounterfactual :
+    ¬ IsStrawsonUE fun p : Set Bool ↦
+      horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Bool)) p {true} :=
+  not_isStrawsonUE (p := {true}) (q := .univ) (w := ()) (Set.subset_univ _) (by simp)
+    (by simp [Set.subset_def])
 
 end Conditional

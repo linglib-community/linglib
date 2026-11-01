@@ -199,8 +199,8 @@ theorem forall_mem_only_iff [Fintype α] [DecidableEq α] (hC : C ⊆ F)
 the entry of [horn-1969] for *only* on the entailment scale, (13). -/
 theorem exhOnly_eq_only [Fintype α] [DecidableEq α] (hX : X ∈ C) (hC : C ⊆ F)
     (hsingle : ∀ x ∈ X, {x} ∈ C) (hco : ∀ x ∈ X, Finset.univ.erase x ∈ F) :
-    exhOnly F C F X = Focus.Particles.only (· ⊆ ·) (Ici '' C) (Ici X) := by
-  rw [Focus.Particles.only_subset_eq (mem_image_of_mem _ hX), exhOnly_eq_indicator F subset_rfl,
+    exhOnly F C F X = Focus.only (· ⊆ ·) (Ici '' C) id (Ici X) := by
+  rw [Focus.only_subset_eq (mem_image_of_mem _ hX), exhOnly_eq_indicator F subset_rfl,
     only_eq_excludes hC]
   congr 1
   ext w
@@ -359,7 +359,7 @@ theorem isInnocentlyExcludable_galTal :
 
 -- (1), (13)
 theorem exhOnly_gal : exhOnly party partyOnly party {gal} =
-    Focus.Particles.only (· ⊆ ·) (Ici '' partyOnly) (Ici {gal}) :=
+    Focus.only (· ⊆ ·) (Ici '' partyOnly) id (Ici {gal}) :=
   exhOnly_eq_only (by simp [partyOnly]) partyOnly_subset (by simp [partyOnly])
     (by simp only [Finset.mem_singleton, forall_eq]; exact ⟨tal, by decide⟩)
 
@@ -385,7 +385,7 @@ theorem table_1 :
   have hC : {charlie} ∈ excludable party partyOnly {gal} := mem_excludable_party.2 (by decide)
   refine ⟨Presupposition.postAccommodationInformative_iff.2 ⟨{gal, tal}, mem_univ _, ?_⟩,
     (weakening_iff _ ⟨_, hE⟩ subset_rfl).2 rfl, fun h ↦ ?_⟩
-  · rw [exhOnly_gal, Focus.Particles.only_eq_neg_one_iff]
+  · rw [exhOnly_gal, Focus.only_eq_neg_one_iff]
     simp [partyOnly]
   · have := ((weakening_iff _ (singleton_nonempty _) (singleton_subset_iff.2 hC)).1 h).ge hE
     simp at this

@@ -54,7 +54,7 @@ focus of (15).
 
 namespace AssmannEtAl2023
 
-open Focus WithAlternatives
+open WithAlternatives UnalternativeSemantics
 
 /-! ### The clause skeleton -/
 

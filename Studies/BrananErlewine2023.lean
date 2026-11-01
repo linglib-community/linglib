@@ -55,7 +55,7 @@ tell pied-piping from anti-pied-piping.
 
 namespace BrananErlewine2023
 
-open Core.Order PhraseStructure Minimalist Focus.Particles Reflex OrderDual
+open Core.Order PhraseStructure Minimalist Focus Reflex OrderDual
 
 /-! ### The particle is not a quantifier -/
 
@@ -72,10 +72,10 @@ noncomputable def quantifierOnly (C : Set σ) (α : σ) (β : σ → Set W) : W 
 
 -- (73)
 theorem quantifierOnly_eq_only (hα : α ∈ C) (hβ : Set.InjOn β C) :
-    quantifierOnly C α β = only (· = ·) (β '' C) (β α) := by
-  have hL : β α = atLeast (· = ·) (β '' C) (β α) := Set.ext fun _ ↦
+    quantifierOnly C α β = only (· = ·) (β '' C) id (β α) := by
+  have hL : β α = atLeast (· = ·) (β '' C) id (β α) := Set.ext fun _ ↦
     ⟨fun h ↦ ⟨_, Set.mem_image_of_mem β hα, h, rfl⟩, by rintro ⟨_, _, h, rfl⟩; exact h⟩
-  have hM (w : W) : (∀ γ ∈ C, γ ≠ α → w ∉ β γ) ↔ w ∈ atMost (· = ·) (β '' C) (β α) :=
+  have hM (w : W) : (∀ γ ∈ C, γ ≠ α → w ∉ β γ) ↔ w ∈ atMost (· = ·) (β '' C) id (β α) :=
     (forall₂_congr fun γ hγ ↦
       ⟨fun h hw ↦ (congrArg β (not_not.1 fun hne ↦ h hne hw)).symm,
         fun h hne hw ↦ hne (hβ hγ hα (h hw).symm)⟩).trans Set.forall_mem_image.symm
@@ -92,7 +92,7 @@ alternatives it is given, though an alternative `ψ` to the whole focus is true 
 the operator associating with that focus is false. -/
 theorem quantifierOnly_ne_only (C : Set σ) (hψ : ψ ∈ D) (hne : ψ ≠ β α) (hw : w ∈ ψ)
     (hwα : w ∈ β α) (hβ : ∀ γ, γ ≠ α → w ∉ β γ) :
-    quantifierOnly C α β ≠ only (· = ·) D (β α) := by
+    quantifierOnly C α β ≠ only (· = ·) D id (β α) := by
   intro h
   have hq : quantifierOnly C α β w = 1 := by
     simp only [quantifierOnly, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
@@ -109,7 +109,7 @@ def swam : Set (Set Deed) := {w | .swim ∈ w}
 -- (79), (81)
 theorem peter_read_only_hamlet :
     quantifierOnly Set.univ Book.hamlet read {.read .hamlet, .swim} = 1 ∧
-      only (· = ·) {read .hamlet, read .macbeth, swam} (read .hamlet)
+      only (· = ·) {read .hamlet, read .macbeth, swam} id (read .hamlet)
         {.read .hamlet, .swim} = -1 := by
   simp only [quantifierOnly, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff,
     only_eq_neg_one_iff]

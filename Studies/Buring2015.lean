@@ -28,7 +28,7 @@ meaning (Figure 6).
 
 namespace Buring2015
 
-open Set Focus WithAlternatives
+open Set WithAlternatives UnalternativeSemantics
 
 /-- Individuals. -/
 inductive Ent | smith | jones

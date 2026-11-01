@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Modality.Background
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Attitudes.Preference.Conditional
+public import Linglib.Semantics.Presupposition.Strawson
 
 /-!
 # Best-worlds desire semantics
@@ -145,5 +146,78 @@ theorem ssubset_of_glad_ne_zero (h : glad dox base g p w ≠ 0) : dox w ⊂ base
   exact hb.ssubset_of_not_superset fun h ↦ hv.2 (hp (h hv.1))
 
 end Entries
+
+end Desire.BestWorlds
+
+/-! ### Strawson monotonicity
+
+Von Fintel calls *glad* upward entailing; its presupposition that the domain contains non-`p`
+worlds can fail at a larger argument, so `isStrawsonUE_glad` is the Strawson form he states for
+*want*. With suitable ordering sources *sorry* also covers *regret*, *amazed* and *surprised*. -/
+
+namespace Desire.BestWorlds
+
+open Modality Presupposition Trivalent
+
+variable {W : Type*} (dox base : W → Set W) (g : W → Set (W → Prop))
+
+/-- *Want* is Strawson upward entailing in its complement ([von-fintel-1999], §3.2). -/
+theorem isStrawsonUE_want : IsStrawsonUE (want base g) :=
+  .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
+    fun _ _ h ↦ by simp_all
+
+theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
+  .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
+    fun _ _ h ↦ by simp_all [glad]
+
+/-- *Glad* is not Strawson downward entailing ([von-fintel-1999], §3.3). -/
+theorem not_isStrawsonDE_glad :
+    ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
+  have hb : (premisePreorder {(· = 1)}).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
+    ext
+    simp
+  intro h
+  have := h (p := {0}) (q := {0, 1}) (by simp) 0
+  simp [glad, Want, IsContingent, hb] at this
+  exact this ⟨2, by simp⟩ ⟨1, by simp⟩
+
+/-- *Sorry* is Strawson anti-additive in its complement, since wanting a disjunction false is
+wanting each disjunct false. -/
+theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base g) :=
+  .of_isAntiAdditive (a := fun p w ↦ Want (g w) (base w) pᶜ)
+    (fun p q ↦ funext fun w ↦ propext <| by
+      show Want (g w) (base w) (p ∪ q)ᶜ ↔ Want (g w) (base w) pᶜ ∧ Want (g w) (base w) qᶜ
+      rw [Set.compl_union]
+      exact want_inter_iff)
+    fun _ _ h ↦ by simp_all [regret]
+
+theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
+  (isStrawsonAntiAdditive_regret dox base g).isStrawsonDE
+
+/-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
+Civic* ([von-fintel-1999]'s (30)). -/
+theorem not_antitone_posSupport_regret :
+    ¬ Antitone fun p : Set Bool ↦
+      posSupport (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ {(· = false)}) p) := by
+  have hb : (premisePreorder {(· = false)}).minimals ({false, true} : Set Bool) = {false} := by
+    rw [Preorder.minimals_ofCriteria_eq ⟨false, by simp, by simp⟩]
+    ext
+    simp
+  exact not_antitone_posSupport (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
+    (by simp [regret, Want, IsContingent, hb]) (by simp [regret])
+
+/-- *Sorry that Robin bought a Civic* does not Strawson-entail *sorry that Robin bought a Civic or
+a Golf*, defined and false when the subject prefers the Golf. The subject believes world `0` and
+prefers world `1`. -/
+theorem not_isStrawsonUE_regret :
+    ¬ IsStrawsonUE (regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
+  have hb : (premisePreorder {(· = 1)}).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
+    ext
+    simp
+  exact not_isStrawsonUE (p := {0}) (q := {0, 1}) (w := 0) (by simp)
+    (by simp [regret, Want, IsContingent, hb])
+    (by simp [regret, Want, IsContingent, hb]; exact ⟨2, by simp⟩)
 
 end Desire.BestWorlds

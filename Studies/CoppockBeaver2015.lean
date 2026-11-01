@@ -274,16 +274,16 @@ include `X`. -/
 def answer (X : Set E) : Set (Set E) := Set.Ici X
 
 theorem mem_atLeast_answer {w : Set E} {x : E} :
-    w ∈ Focus.Particles.atLeast (· ⊆ ·) (Set.range answer) (answer {x}) ↔ x ∈ w := by
-  simp only [Focus.Particles.mem_atLeast]
+    w ∈ Focus.atLeast (· ⊆ ·) (Set.range answer) id (answer {x}) ↔ x ∈ w := by
+  simp only [Focus.mem_atLeast]
   constructor
   · rintro ⟨_, ⟨X, rfl⟩, hwX, hXx⟩
     exact hwX (Set.singleton_subset_iff.1 (hXx Set.self_mem_Ici))
   · exact fun hx ↦ ⟨answer {x}, ⟨{x}, rfl⟩, Set.singleton_subset_iff.2 hx, subset_rfl⟩
 
 theorem mem_atMost_answer {w : Set E} {x : E} :
-    w ∈ Focus.Particles.atMost (· ⊆ ·) (Set.range answer) (answer {x}) ↔ w ⊆ {x} := by
-  simp only [Focus.Particles.mem_atMost, Set.forall_mem_range]
+    w ∈ Focus.atMost (· ⊆ ·) (Set.range answer) id (answer {x}) ↔ w ⊆ {x} := by
+  simp only [Focus.mem_atMost, Set.forall_mem_range]
   constructor
   · intro h y hy
     exact Set.singleton_subset_iff.1
@@ -294,16 +294,16 @@ theorem mem_atMost_answer {w : Set E} {x : E} :
 are P*, giving the entry (57). -/
 theorem only_answer_apply [DecidableRel (Exclusive (E := E))] (w : Set E)
     [DecidablePred (· ∈ w)] (x : E) :
-    Focus.Particles.only (· ⊆ ·) (Set.range answer) (answer {x}) w =
+    Focus.only (· ⊆ ·) (Set.range answer) id (answer {x}) w =
       only (fun y ↦ ofProp (y ∈ w)) x := by
   have hw : (posSupport fun y : E ↦ ofProp (y ∈ w)) = w := Set.ext fun y ↦ ofProp_eq_one_iff
   have hiff : Exclusive (fun y ↦ ofProp (y ∈ w)) x ↔ w ⊆ {x} := by
     rw [exclusive_iff_subset_singleton, hw]
   refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · rw [Focus.Particles.only_eq_zero_iff, only_eq_zero_iff, ne_eq, ofProp_eq_one_iff,
+  · rw [Focus.only_eq_zero_iff, only_eq_zero_iff, ne_eq, ofProp_eq_one_iff,
       not_iff_not]
     exact mem_atLeast_answer
-  · rw [Focus.Particles.only_eq_one_iff, only_eq_one_iff, ofProp_eq_one_iff]
+  · rw [Focus.only_eq_one_iff, only_eq_one_iff, ofProp_eq_one_iff]
     exact and_congr mem_atLeast_answer (mem_atMost_answer.trans hiff.symm)
 
 end Schema
