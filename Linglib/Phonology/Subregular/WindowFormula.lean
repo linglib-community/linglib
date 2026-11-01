@@ -77,6 +77,13 @@ theorem pred?_eq_some_iff {w : List α} {n m : ℕ} :
 
 @[simp] theorem pred?_zero (w : List α) : pred? w 0 = none := rfl
 
+@[simp] theorem isSome_succ? {w : List α} {n : ℕ} : (succ? w n).isSome ↔ n + 1 < w.length := by
+  unfold succ?; split <;> simp [*]
+
+@[simp] theorem isSome_pred? {w : List α} {n : ℕ} :
+    (pred? w n).isSome ↔ 0 < n ∧ n < w.length := by
+  cases n <;> simp [pred?]
+
 theorem pred?_of_pos {w : List α} {m : ℕ} (h0 : 0 < m) (hm : m < w.length) :
     pred? w m = some (m - 1) :=
   pred?_eq_some_iff.2 ⟨by omega, hm⟩
@@ -179,35 +186,32 @@ def sdepth : Walk → ℕ
   | .pred t => t.sdepth
   | .succ t => t.sdepth + 1
 
-theorem le_eval_add_pdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → n ≤ v + t.pdepth
-  | .var, v, h => by
-    obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
-    simp [pdepth]
-  | .succ t, v, h => by
-    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
-    have := le_eval_add_pdepth hu
-    simp only [pdepth]; omega
-  | .pred t, v, h => by
-    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
-    obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
-    have := le_eval_add_pdepth hu
-    simp only [pdepth]; omega
+/-- The displacement of a walk: its successor steps less its predecessor steps. -/
+def disp : Walk → Int
+  | .var => 0
+  | .pred t => t.disp - 1
+  | .succ t => t.disp + 1
 
-theorem eval_le_add_sdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v ≤ n + t.sdepth
-  | .var, v, h => by
-    obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
-    simp [sdepth]
-  | .succ t, v, h => by
+theorem neg_pdepth_le_disp (t : Walk) : -(t.pdepth : Int) ≤ t.disp := by
+  induction t <;> simp only [pdepth, disp] <;> omega
+
+theorem disp_le_sdepth (t : Walk) : t.disp ≤ t.sdepth := by
+  induction t <;> simp only [sdepth, disp] <;> omega
+
+/-- A walk that reaches a position reaches its start moved by its displacement. -/
+theorem eq_add_disp_of_eval_eq_some :
+    ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → (v : Int) = n + t.disp
+  | .var, _, h => by simp [(eval_var_eq_some_iff.mp h).1, disp]
+  | .succ t, _, h => by
     obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
-    have := eval_le_add_sdepth hu
-    simp only [sdepth]; omega
-  | .pred t, v, h => by
+    have := eq_add_disp_of_eval_eq_some hu
+    simp only [disp]; omega
+  | .pred t, _, h => by
     obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
-    have := eval_le_add_sdepth hu
-    simp only [sdepth]; omega
+    have := eq_add_disp_of_eval_eq_some hu
+    simp only [disp]; omega
 
 /-- A walk is backward if it takes no successor step, so it reaches only positions at or before
 its start. -/
@@ -222,10 +226,16 @@ instance : DecidablePred Backward := fun t ↦ inferInstanceAs (Decidable (t.sde
 instance : DecidablePred Forward := fun t ↦ inferInstanceAs (Decidable (t.pdepth = 0))
 
 theorem eval_le_of_backward (ht : t.Backward) (h : t.eval w n = some v) : v ≤ n := by
-  simpa [show t.sdepth = 0 from ht] using eval_le_add_sdepth h
+  have := eq_add_disp_of_eval_eq_some h
+  have := disp_le_sdepth t
+  rw [show t.sdepth = 0 from ht] at this
+  omega
 
 theorem le_eval_of_forward (ht : t.Forward) (h : t.eval w n = some v) : n ≤ v := by
-  simpa [show t.pdepth = 0 from ht] using le_eval_add_pdepth h
+  have := eq_add_disp_of_eval_eq_some h
+  have := neg_pdepth_le_disp t
+  rw [show t.pdepth = 0 from ht] at this
+  omega
 
 /-- The walk `j` predecessor steps back from the position. -/
 def back : ℕ → Walk
@@ -255,56 +265,36 @@ theorem eval_back (hn : n < w.length) :
 
 /-! ### Bounded windows -/
 
-/-- A walk reaching at most `l` back and `r` forward moves the same displacement from `n` in `w`
-and from `n'` in `w'`, or falls off from both, when the two positions are equally far from the
-left edge up to `l` and the same offsets up to `r` forward are positions. -/
-theorem eval_bounded {l r n' : ℕ} (hedge : min n l = min n' l)
-    (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length))
-    (hp : t.pdepth ≤ l) (hs : t.sdepth ≤ r) :
-    ((t.eval w n).map fun v ↦ (v : Int) - n) = (t.eval w' n').map fun v ↦ (v : Int) - n' := by
-  have hnone {w : List α} {n : ℕ} (h : ¬ n < w.length) (t : Walk) : t.eval w n = none :=
-    Option.eq_none_iff_forall_ne_some.2 fun _ hv ↦ h (lt_length_of_eval_eq_some hv)
-  by_cases hn : n < w.length
-  swap
-  · rw [hnone hn, hnone (by simpa using (hright 0 (Nat.zero_le r)).not.mp hn)]; rfl
-  have hn' : n' < w'.length := by simpa using (hright 0 (Nat.zero_le r)).mp (by simpa using hn)
-  induction t with
-  | var => simp [eval_var hn, eval_var hn']
-  | succ t ih =>
+/-- A walk reaching at most `l` back and `r` forward is defined from `n` in `w` iff it is from `n'`
+in `w'`, when the two positions are equally far from the left edge up to `l` and the same offsets
+up to `r` forward are positions. -/
+theorem isSome_eval_congr {l r n' : ℕ} (hedge : min n l = min n' l)
+    (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length)) :
+    ∀ {t : Walk}, t.pdepth ≤ l → t.sdepth ≤ r → ((t.eval w n).isSome ↔ (t.eval w' n').isSome)
+  | .var, _, _ => by simpa [eval] using hright 0 (Nat.zero_le r)
+  | .succ t, hp, hs => by
     simp only [pdepth, sdepth] at hp hs
-    have ih := ih hp (by omega)
-    simp only [eval_succ]
+    have ih := isSome_eval_congr hedge hright (t := t) hp (by omega)
     rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
       simp [hv, hv'] at ih ⊢
-    have hvn := le_eval_add_pdepth hv
-    have hvs := eval_le_add_sdepth hv
-    have key : v + 1 < w.length ↔ v' + 1 < w'.length := by
-      rcases Nat.lt_or_ge v n with hlt | hge
-      · constructor <;> intro <;> omega
-      · obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hge
-        rw [show v' = n' + j by omega]
-        exact hright (j + 1) (by omega)
-    by_cases h : v + 1 < w.length
-    · rw [succ?_eq_some_iff.mpr ⟨rfl, h⟩, succ?_eq_some_iff.mpr ⟨rfl, key.mp h⟩]
-      simp; omega
-    · rw [show succ? w v = none by simp [succ?, h],
-        show succ? w' v' = none by simp [succ?, mt key.mpr h]]
-      rfl
-  | pred t ih =>
+    have := eq_add_disp_of_eval_eq_some hv
+    have := eq_add_disp_of_eval_eq_some hv'
+    have := lt_length_of_eval_eq_some hv
+    have := lt_length_of_eval_eq_some hv'
+    have := disp_le_sdepth t
+    have := hright (t.disp.toNat + 1) (by omega)
+    omega
+  | .pred t, hp, hs => by
     simp only [pdepth, sdepth] at hp hs
-    have ih := ih (by omega) hs
-    simp only [eval_pred]
+    have ih := isSome_eval_congr hedge hright (t := t) (by omega) hs
     rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
       simp [hv, hv'] at ih ⊢
-    have hvn := le_eval_add_pdepth hv
-    have hvl := eval_lt hv
-    have hvl' := eval_lt hv'
-    by_cases h : 1 ≤ v
-    · have h' : 1 ≤ v' := by omega
-      rw [pred?_of_pos h hvl, pred?_of_pos h' hvl']
-      simp; omega
-    · rw [show v = 0 by omega, show v' = 0 by omega]
-      rfl
+    have := eq_add_disp_of_eval_eq_some hv
+    have := eq_add_disp_of_eval_eq_some hv'
+    have := eval_lt hv
+    have := eval_lt hv'
+    have := neg_pdepth_le_disp t
+    omega
 
 end Walk
 
@@ -364,26 +354,29 @@ def final (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.
 
 /-! ### Bounded formulas read only a window -/
 
+/-- `φ.AllWalks p` holds when every walk occurring in `φ` satisfies `p`. -/
+def AllWalks (p : Walk → Prop) : WindowFormula α → Prop
+  | .label _ t | .defined t => p t
+  | .tru | .fls => True
+  | .neg φ => φ.AllWalks p
+  | .conj φ ψ | .disj φ ψ => φ.AllWalks p ∧ ψ.AllWalks p
+
+instance instDecidableAllWalks (p : Walk → Prop) [DecidablePred p] :
+    ∀ φ : WindowFormula α, Decidable (φ.AllWalks p)
+  | .label _ t | .defined t => inferInstanceAs (Decidable (p t))
+  | .tru | .fls => .isTrue trivial
+  | .neg φ => instDecidableAllWalks p φ
+  | .conj φ ψ | .disj φ ψ =>
+      @instDecidableAnd _ _ (instDecidableAllWalks p φ) (instDecidableAllWalks p ψ)
+
 /-- A formula is bounded by `l` back and `r` forward if every walk it uses reaches at most `l`
 positions back and `r` forward, so it reads only the window from `l` before its position to
 `r` after. -/
-def Bounded (l r : ℕ) : WindowFormula α → Prop
-  | .label _ t => t.pdepth ≤ l ∧ t.sdepth ≤ r
-  | .defined t => t.pdepth ≤ l ∧ t.sdepth ≤ r
-  | .tru => True
-  | .fls => True
-  | .neg φ => φ.Bounded l r
-  | .conj φ ψ => φ.Bounded l r ∧ ψ.Bounded l r
-  | .disj φ ψ => φ.Bounded l r ∧ ψ.Bounded l r
+def Bounded (l r : ℕ) (φ : WindowFormula α) : Prop :=
+  φ.AllWalks fun t ↦ t.pdepth ≤ l ∧ t.sdepth ≤ r
 
-instance instDecidableBounded (l r : ℕ) : ∀ φ : WindowFormula α, Decidable (φ.Bounded l r)
-  | .label _ _ => inferInstanceAs (Decidable (_ ∧ _))
-  | .defined _ => inferInstanceAs (Decidable (_ ∧ _))
-  | .tru => .isTrue trivial
-  | .fls => .isTrue trivial
-  | .neg φ => instDecidableBounded l r φ
-  | .conj φ ψ => @instDecidableAnd _ _ (instDecidableBounded l r φ) (instDecidableBounded l r ψ)
-  | .disj φ ψ => @instDecidableAnd _ _ (instDecidableBounded l r φ) (instDecidableBounded l r ψ)
+instance (l r : ℕ) (φ : WindowFormula α) : Decidable (φ.Bounded l r) :=
+  inferInstanceAs (Decidable (φ.AllWalks _))
 
 /-- A formula is backward-bounded by `r` if it reads only the `r + 1` positions ending at its
 own, bounded by `r` back and nothing forward. -/
@@ -402,21 +395,21 @@ theorem Bounded.realize_congr (hφ : φ.Bounded l r) (hedge : min n l = min n' l
   induction φ with
   | label a t =>
     obtain ⟨hp, hs⟩ := hφ
-    have h := Walk.eval_bounded hedge hr hp hs
+    have h := Walk.isSome_eval_congr hedge hr hp hs
     simp only [Realize]
     rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
       simp [hv, hv'] at h ⊢
-    have hvn := Walk.le_eval_add_pdepth hv
-    have hvs := Walk.eval_le_add_sdepth hv
-    rcases Nat.lt_or_ge v n with hlt | hge
-    · rw [show v = n - (n - v) by omega, show v' = n' - (n - v) by omega, hleft _ (by omega)]
-    · obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hge
-      rw [show v' = n' + j by omega, hright j (by omega)]
+    have := Walk.eq_add_disp_of_eval_eq_some hv
+    have := Walk.eq_add_disp_of_eval_eq_some hv'
+    have := Walk.neg_pdepth_le_disp t
+    have := Walk.disp_le_sdepth t
+    by_cases hd : 0 ≤ t.disp
+    · rw [show v = n + t.disp.toNat by omega, show v' = n' + t.disp.toNat by omega,
+        hright _ (by omega)]
+    · rw [show v = n - (-t.disp).toNat by omega, show v' = n' - (-t.disp).toNat by omega,
+        hleft _ (by omega)]
   | defined t =>
-    have h := Walk.eval_bounded hedge hr hφ.1 hφ.2
-    simp only [Realize]
-    rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
-      simp [hv, hv'] at h ⊢
+    simpa [Realize, Option.ne_none_iff_isSome] using Walk.isSome_eval_congr hedge hr hφ.1 hφ.2
   | tru | fls => exact Iff.rfl
   | neg φ ih => simp only [Realize, ih hφ]
   | conj φ ψ ihφ ihψ | disj φ ψ ihφ ihψ => simp only [Realize, ihφ hφ.1, ihψ hφ.2]
