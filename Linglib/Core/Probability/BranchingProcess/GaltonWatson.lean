@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.RoseTree.Encodable
+public import Linglib.Core.Data.RoseTree.BinaryTree
 public import Linglib.Core.Data.RoseTree.Get
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Mathlib.Order.Iterate
