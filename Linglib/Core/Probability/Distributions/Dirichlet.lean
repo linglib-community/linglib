@@ -7,24 +7,24 @@ module
 
 public import Linglib.Core.Probability.Distributions.Beta
 public import Linglib.Core.Probability.Distributions.PolyaUrn
+public import Mathlib.Geometry.Convex.ConvexSpace.Topology
 
 /-!
 # The Dirichlet distribution
 
-This file defines the Dirichlet distribution with positive parameters `θ` on the finite type `ι`,
-the law of a random probability vector on `ι`, and computes its moments. The moment
-`∫ ∏ i, p i ^ x i` is the probability that the Pólya urn with weights `θ` draws a given sequence
-with counts `x`, so the draws of the urn are a Dirichlet mixture of independent draws.
+This file defines the Dirichlet distribution with positive parameters `θ`, a probability measure
+on the standard simplex `Convexity.StdSimplex ℝ ι` of probability vectors on the finite type `ι`,
+and computes its moments. The moment `∫ ∏ i, p i ^ x i` is the probability that the Pólya urn with
+weights `θ` draws a given sequence with counts `x`, so the draws of the urn are a Dirichlet mixture
+of independent draws.
 
 ## Main definitions
 
 * `ProbabilityTheory.dirichletFin n θ`: the Dirichlet distribution on `Fin n → ℝ`.
-* `ProbabilityTheory.dirichlet θ`: the Dirichlet distribution on `ι → ℝ`.
+* `ProbabilityTheory.dirichlet θ`: the Dirichlet distribution on `Convexity.StdSimplex ℝ ι`.
 
 ## Main statements
 
-* `ProbabilityTheory.ae_nonneg_sum_eq_one_dirichlet`: the Dirichlet distribution lives on the
-  probability vectors.
 * `ProbabilityTheory.lintegral_prod_pow_dirichlet`: the moments are Pólya urn probabilities.
 * `ProbabilityTheory.isProbabilityMeasure_dirichlet`: the Dirichlet distribution is a probability
   measure.
@@ -33,10 +33,12 @@ with counts `x`, so the draws of the urn are a Dirichlet mixture of independent 
 
 ## Implementation notes
 
-The distribution is built by stick-breaking: the first coordinate is beta-distributed with
-parameters `θ 0` and the sum of the other parameters, and the other coordinates are `1 - p 0`
-times an independent Dirichlet vector with the other parameters. On a general finite type the
-construction follows the enumeration `Fintype.equivFin ι`, and the moments do not depend on it.
+The standard simplex carries the Borel σ-algebra of its topology, which for finite `ι` is induced
+by the embedding of the weights into `ι → ℝ`. The distribution is built on `Fin n → ℝ` by
+stick-breaking: the first coordinate is beta-distributed with parameters `θ 0` and the sum of the
+other parameters, and the other coordinates are `1 - p 0` times an independent Dirichlet vector
+with the other parameters. It lives on the probability vectors, and is pulled back to the simplex
+along an enumeration `Fintype.equivFin ι`, on which the moments do not depend.
 
 ## References
 
@@ -47,7 +49,32 @@ construction follows the enumeration `Fintype.equivFin ι`, and the moments do n
 
 open MeasureTheory Finset
 
+namespace Convexity.StdSimplex
+
+theorem exists_weights_eq_iff {R X : Type*} [PartialOrder R] [Semiring R] [Fintype X]
+    {f : X → R} : (∃ t : StdSimplex R X, ⇑t.weights = f) ↔ (∀ i, 0 ≤ f i) ∧ ∑ i, f i = 1 := by
+  simpa using Set.ext_iff.1 (range_toFun_comp_weights (R := R) (X := X)) f
+
+/-! ### The Borel σ-algebra on the standard simplex -/
+
+noncomputable instance {M : Type*} : MeasurableSpace (StdSimplex ℝ M) := borel _
+
+instance {M : Type*} : BorelSpace (StdSimplex ℝ M) := ⟨rfl⟩
+
+theorem measurableEmbedding_weights (M : Type*) [Finite M] :
+    MeasurableEmbedding fun t : StdSimplex ℝ M ↦ ⇑t.weights :=
+  (isClosedEmbedding_toFun_comp_weights ℝ M).measurableEmbedding
+
+@[fun_prop]
+theorem measurable_weights_apply {M : Type*} (m : M) :
+    Measurable fun t : StdSimplex ℝ M ↦ t.weights m :=
+  (continuous_weights_apply ℝ m).measurable
+
+end Convexity.StdSimplex
+
 namespace ProbabilityTheory
+
+open Convexity
 
 /-! ### Stick-breaking on `Fin n` -/
 
@@ -120,25 +147,21 @@ theorem lintegral_prod_pow_dirichletFin : ∀ {n : ℕ} {θ : Fin n → ℝ}, (�
               (ascPochhammer_pos _ _ hR)) (ascPochhammer_pos _ _ (add_pos (hθ 0) hR))).le,
             polyaUrnProb_eq_mul_tail hθ]
 
-theorem measurableSet_nonneg_sum_eq_one (ι : Type*) [Fintype ι] :
-    MeasurableSet {p : ι → ℝ | (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1} := by
-  simp only [Set.ofPred_and, Set.ofPred_forall]
-  exact (MeasurableSet.iInter fun i ↦
-    measurableSet_le measurable_const (measurable_pi_apply i)).inter
-      (measurableSet_eq_fun (by fun_prop) measurable_const)
-
-theorem ae_nonneg_sum_eq_one_dirichletFin : ∀ {n : ℕ} (θ : Fin n → ℝ), n ≠ 0 →
-    ∀ᵐ p ∂dirichletFin n θ, (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1
+theorem ae_exists_weights_eq_dirichletFin : ∀ {n : ℕ} (θ : Fin n → ℝ), n ≠ 0 →
+    ∀ᵐ p ∂dirichletFin n θ, ∃ t : StdSimplex ℝ (Fin n), ⇑t.weights = p
   | 0, _, h => absurd rfl h
   | 1, _, _ => by
-    rw [dirichletFin, ae_dirac_iff (measurableSet_nonneg_sum_eq_one _)]
-    exact ⟨fun _ ↦ zero_le_one, by simp⟩
+    rw [dirichletFin]
+    exact (ae_dirac_iff (StdSimplex.measurableEmbedding_weights _).measurableSet_range).2
+      (StdSimplex.exists_weights_eq_iff.2 ⟨fun _ ↦ zero_le_one, by simp⟩)
   | n + 2, θ, _ => by
-    rw [dirichletFin, ae_map_iff measurable_fin_cons_one_sub_smul.aemeasurable
-      (measurableSet_nonneg_sum_eq_one _)]
+    rw [dirichletFin]
+    refine (ae_map_iff measurable_fin_cons_one_sub_smul.aemeasurable
+      (StdSimplex.measurableEmbedding_weights _).measurableSet_range).2 ?_
     filter_upwards [Measure.quasiMeasurePreserving_fst.ae (ae_mem_Ioo_betaMeasure _ _),
       Measure.quasiMeasurePreserving_snd.ae
-        (ae_nonneg_sum_eq_one_dirichletFin (Fin.tail θ) n.succ_ne_zero)] with z hv hq
+        (ae_exists_weights_eq_dirichletFin (Fin.tail θ) n.succ_ne_zero)] with z hv hq
+    rw [StdSimplex.exists_weights_eq_iff] at hq ⊢
     refine ⟨fun i ↦ ?_, ?_⟩
     · cases i using Fin.cases with
       | zero => simpa using hv.1.le
@@ -149,28 +172,36 @@ theorem ae_nonneg_sum_eq_one_dirichletFin : ∀ {n : ℕ} (θ : Fin n → ℝ), 
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The Dirichlet distribution on `ι → ℝ` with parameters `θ`. -/
-noncomputable def dirichlet (θ : ι → ℝ) : Measure (ι → ℝ) :=
-  (dirichletFin _ (θ ∘ (Fintype.equivFin ι).symm)).map fun q ↦ q ∘ Fintype.equivFin ι
+/-- The Dirichlet distribution with parameters `θ` on the probability vectors over `ι`. -/
+noncomputable def dirichlet (θ : ι → ℝ) : Measure (StdSimplex ℝ ι) :=
+  ((dirichletFin _ (θ ∘ (Fintype.equivFin ι).symm)).map fun q ↦ q ∘ Fintype.equivFin ι).comap
+    fun t ↦ ⇑t.weights
+
+/-- The weights of a Dirichlet-distributed point have the stick-breaking law. -/
+theorem map_weights_dirichlet [Nonempty ι] (θ : ι → ℝ) :
+    (dirichlet θ).map (fun t : StdSimplex ℝ ι ↦ ⇑t.weights) =
+      (dirichletFin _ (θ ∘ (Fintype.equivFin ι).symm)).map fun q ↦ q ∘ Fintype.equivFin ι := by
+  rw [dirichlet, (StdSimplex.measurableEmbedding_weights ι).map_comap,
+    Measure.restrict_eq_self_of_ae_mem]
+  refine (ae_map_iff (Measurable.aemeasurable (by fun_prop))
+    (StdSimplex.measurableEmbedding_weights ι).measurableSet_range).2 ?_
+  filter_upwards [ae_exists_weights_eq_dirichletFin _ Fintype.card_ne_zero] with q hq
+  rw [StdSimplex.exists_weights_eq_iff] at hq ⊢
+  exact ⟨fun i ↦ hq.1 _, (Equiv.sum_comp (Fintype.equivFin ι) q).trans hq.2⟩
 
 /-- The moments of the Dirichlet distribution are the probabilities of the Pólya urn with the same
 weights. -/
-theorem lintegral_prod_pow_dirichlet {θ : ι → ℝ} (hθ : ∀ i, 0 < θ i) (x : ι → ℕ) :
-    ∫⁻ p, ∏ i, ENNReal.ofReal (p i) ^ x i ∂dirichlet θ = ENNReal.ofReal (polyaUrnProb θ x) := by
-  rw [dirichlet, lintegral_map (by fun_prop) (by fun_prop),
+theorem lintegral_prod_pow_dirichlet [Nonempty ι] {θ : ι → ℝ} (hθ : ∀ i, 0 < θ i) (x : ι → ℕ) :
+    ∫⁻ t, ∏ i, ENNReal.ofReal (t.weights i) ^ x i ∂dirichlet θ =
+      ENNReal.ofReal (polyaUrnProb θ x) := by
+  rw [← (StdSimplex.measurableEmbedding_weights ι).lintegral_map
+      fun p ↦ ∏ i, ENNReal.ofReal (p i) ^ x i,
+    map_weights_dirichlet, lintegral_map (by fun_prop) (by fun_prop),
     ← polyaUrnProb_comp_equiv θ (Fintype.equivFin ι).symm,
     ← lintegral_prod_pow_dirichletFin (θ := θ ∘ (Fintype.equivFin ι).symm) (fun j ↦ hθ _)]
   exact lintegral_congr fun q ↦ Fintype.prod_equiv (Fintype.equivFin ι) _ _ fun i ↦ by simp
 
-/-- The Dirichlet distribution is the law of a random probability vector. -/
-theorem ae_nonneg_sum_eq_one_dirichlet [Nonempty ι] (θ : ι → ℝ) :
-    ∀ᵐ p ∂dirichlet θ, (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1 := by
-  rw [dirichlet, ae_map_iff (Measurable.aemeasurable (by fun_prop))
-    (measurableSet_nonneg_sum_eq_one ι)]
-  filter_upwards [ae_nonneg_sum_eq_one_dirichletFin _ Fintype.card_ne_zero] with q hq
-  exact ⟨fun i ↦ hq.1 _, (Equiv.sum_comp (Fintype.equivFin ι) q).trans hq.2⟩
-
-theorem isProbabilityMeasure_dirichlet {θ : ι → ℝ} (hθ : ∀ i, 0 < θ i) :
+theorem isProbabilityMeasure_dirichlet [Nonempty ι] {θ : ι → ℝ} (hθ : ∀ i, 0 < θ i) :
     IsProbabilityMeasure (dirichlet θ) :=
   ⟨by simpa using lintegral_prod_pow_dirichlet hθ 0⟩
 
@@ -180,10 +211,10 @@ independently from a Dirichlet-distributed probability vector, the mixture form 
 theorem polyaUrn_singleton_eq_lintegral_dirichlet {α : Type*} [DecidableEq α] [Fintype α]
     [Nonempty α] [MeasurableSpace α] [MeasurableSingletonClass α] {θ : α → ℝ}
     (hθ : ∀ i, 0 < θ i) {n : ℕ} (s : Fin n → α) :
-    polyaUrn θ n {s} = ∫⁻ p, ∏ i, ENNReal.ofReal (p (s i)) ∂dirichlet θ := by
+    polyaUrn θ n {s} = ∫⁻ t, ∏ i, ENNReal.ofReal (t.weights (s i)) ∂dirichlet θ := by
   rw [polyaUrn_singleton hθ, ← lintegral_prod_pow_dirichlet hθ]
-  refine lintegral_congr fun p ↦ (prod_congr rfl fun c _ ↦ ?_).trans
-    (prod_fiberwise univ s fun i ↦ ENNReal.ofReal (p (s i)))
+  refine lintegral_congr fun t ↦ (prod_congr rfl fun c _ ↦ ?_).trans
+    (prod_fiberwise univ s fun i ↦ ENNReal.ofReal (t.weights (s i)))
   exact (prod_eq_pow_card fun i hi ↦ by rw [(mem_filter.1 hi).2]).symm
 
 end ProbabilityTheory

@@ -115,18 +115,23 @@ theorem countsProb_add (x y : ContextFreeRule T G.NT → ℕ) :
 /-! ### The prior on rule weights -/
 
 /-- The prior on rule weights: at each nonterminal the grammar expands, the Dirichlet distribution
-with the pseudo-counts of its rules, independently across nonterminals. -/
-noncomputable def prior : Measure ((a : G.rules.image (·.input)) → G.RulesWithLHS a → ℝ) :=
+on the probability vectors over its rules with their pseudo-counts as parameters, independently
+across nonterminals. -/
+noncomputable def prior :
+    Measure ((a : G.rules.image (·.input)) → Convexity.StdSimplex ℝ (G.RulesWithLHS a)) :=
   Measure.pi fun a ↦ dirichlet (M.urn a)
 
 /-- The probability of the rule counts `x` is the PCFG probability `∏ r, θ r ^ x r` of a corpus
 with those counts, integrated against the prior ([johnson-griffiths-goldwater-2007] Equation 3). -/
 theorem ofReal_countsProb (x : ContextFreeRule T G.NT → ℕ) :
-    ENNReal.ofReal (M.countsProb x) = ∫⁻ θ, ∏ a, ∏ r, ENNReal.ofReal (θ a r) ^ x r ∂M.prior := by
+    ENNReal.ofReal (M.countsProb x) =
+      ∫⁻ θ, ∏ a, ∏ r, ENNReal.ofReal ((θ a).weights r) ^ x r ∂M.prior := by
+  have (a : G.rules.image (·.input)) : Nonempty (G.RulesWithLHS a) :=
+    ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr a.2
   have (a : G.rules.image (·.input)) : IsProbabilityMeasure (dirichlet (M.urn a)) :=
     isProbabilityMeasure_dirichlet (M.urn_pos a)
-  have hX (a : G.rules.image (·.input)) :
-      Measurable fun q : G.RulesWithLHS a → ℝ ↦ ∏ r, ENNReal.ofReal (q r) ^ x r := by
+  have hX (a : G.rules.image (·.input)) : Measurable fun t : Convexity.StdSimplex ℝ
+      (G.RulesWithLHS a) ↦ ∏ r, ENNReal.ofReal (t.weights r) ^ x r := by
     fun_prop
   rw [prior, lintegral_prod_eq_prod_lintegral_of_indepFun univ _
       (iIndepFun_pi fun a ↦ (hX a).aemeasurable) fun a ↦ (hX a).comp (measurable_pi_apply a),
