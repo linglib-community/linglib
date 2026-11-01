@@ -71,6 +71,53 @@
     "verified": "page-image"
   },
   {
+    "id": "anderson2006a_kokota_neg",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "ch. 1, (50)"},
+    "language": "koko1269",
+    "primaryText": "o-ti dupa-i manei si-ago",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["o-ti", "2-NEG"], ["dupa-i", "punch-3"], ["manei", "s/he"], ["si-ago", "FOC-2"]
+    ],
+    "translation": "don't punch him",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "negVerb"],
+      ["infl_pattern", "split"],
+      ["on_aux", "negation"],
+      ["on_aux", "subj"],
+      ["on_lex", "obj"]
+    ],
+    "comment": "Anderson sect. 1.7.2 classifies the Kokota negative-auxiliary construction as split: the auxiliary carries the subject prefix and the lexical verb the object suffix. Anderson cites Palmer 2002: 513.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anderson2006a_neyo_neg_past",
+    "source": {"bibkey": "anderson-2006a", "paperLabel": "ch. 1, (51a)"},
+    "language": "neyo1238",
+    "primaryText": "ma ne wa yo la",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ma", "but"], ["ne", "NEG.1"], ["wa", "PAST"], ["yo", "child"], ["la", "bring"]
+    ],
+    "translation": "but I didn't bring the child",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "negVerb"],
+      ["infl_pattern", "auxHeaded"],
+      ["on_aux", "negation"],
+      ["on_aux", "subj"]
+    ],
+    "comment": "Anderson sect. 1.7.2 classifies the Neyo negative-auxiliary construction as aux-headed: the auxiliary carries the subject and the lexical verb is bare. Anderson cites Marchese 1986: 32.",
+    "verified": "page-image"
+  },
+  {
     "id": "anderson2006a_kwerba_neg_fut",
     "source": {"bibkey": "anderson-2006a", "paperLabel": "ch. 1, (52a)"},
     "language": "kwer1242",

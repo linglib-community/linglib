@@ -5,26 +5,29 @@ public import Mathlib.Data.Finset.Basic
 public import Linglib.Data.Examples.Readers
 
 /-!
-# Anderson 2006: auxiliary verb constructions
+# Anderson (2006): auxiliary verb constructions
 
-An auxiliary verb construction pairs an auxiliary with a lexical verb that stays the semantic
-head, and languages differ in which element hosts the inflection: the auxiliary (English *have
-eaten*), the lexical verb (Pipil *weli ni-nehnemi*), both with the same categories (Gorum), the
-two dividing the categories (Jakaltek, absolutive on the auxiliary and ergative on the lexical
-verb), or dividing them with some doubled (Hemba, Doyayo, Pipil). The five macro-patterns are
-distinguished by the inflectional head alone, and across the split/doubled languages the doubled
-category is overwhelmingly the subject. Negative auxiliaries head constructions of four of the
-five patterns: aux-headed in Udihe, split in Kokota, lex-headed in Kwerba, doubled in 'Iipay.
-Doyayo, filed as
-lex-headed although its auxiliary partially encodes subject person through tone, comes out split
-by the inflectional-head criterion.
+An auxiliary verb construction pairs an auxiliary with a lexical verb that stays the semantic head.
+Anderson's five macro-patterns are fixed by the inflectional head alone: the auxiliary, the lexical
+verb, both with the same categories, the two dividing the categories, or dividing them with some
+on both. The marking of the book's examples [yields the pattern each is filed
+under](##rows_pattern), [every pattern is attested](##all_patterns_attested), and [in the
+split/doubled examples the shared category is the subject](##splitDoubled_doubles_subject).
+Doyayo's construction, filed as lex-headed though its auxiliary marks the subject by tone, [comes
+out split](##doyayo_split), and negative auxiliaries head [aux-headed and split
+constructions](##negative_auxiliary_patterns).
 
-## Main definitions
+## Implementation notes
 
-* `InflectionPattern`: the five inflectional macro-patterns (13).
-* `Category`: the inflectional categories the book's examples record.
-* `InflectionalMarking`: which categories each element carries;
-  `InflectionalMarking.pattern` reads the macro-pattern (13) off it.
+* Agreement is subject or object agreement, as the book files it: Jakaltek's ergative marker is
+  subject and its absolutive marker object agreement.
+* A negative auxiliary records its negation as a category of the auxiliary.
+
+## TODO
+
+* Kwerba (52) and 'Iipay (53), filed as lex-headed and doubled, come out so only if the negative
+  particle's tense and the lexical verb's irrealis are not inflection; record that analysis and
+  add their marking.
 
 ## References
 
@@ -112,6 +115,7 @@ def InflectionalMarking.ofRow? (r : Datum) : Option InflectionalMarking :=
     some ⟨categories r "on_aux", categories r "on_lex"⟩
   else none
 
+/-- The pattern names used in the example rows. -/
 def InflectionPattern.ofString? : String → Option InflectionPattern
   | "auxHeaded" => some .auxHeaded
   | "lexHeaded" => some .lexHeaded
@@ -120,7 +124,8 @@ def InflectionPattern.ofString? : String → Option InflectionPattern
   | "splitDoubled" => some .splitDoubled
   | _ => none
 
--- (13)
+/-- The inflectional head yields the pattern each example is filed under (13), the examples
+whose auxiliary marking is partial aside. -/
 theorem rows_pattern :
     ∀ r ∈ Examples.all, r.feature? "aux_marking" = none →
       ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
@@ -128,15 +133,18 @@ theorem rows_pattern :
           m.pattern = p := by
   decide +kernel
 
--- (15a), (13)
+/-- Doyayo's construction (ch. 3 (15a)), filed as lex-headed, is split by the inflectional head:
+the auxiliary marks the subject by tone and the lexical verb the tense. -/
 theorem doyayo_split :
     ∀ m ∈ (InflectionalMarking.ofRow? Examples.doyayo_lexheaded).toList, m.pattern = .split := by
   decide +kernel
 
+/-- Every macro-pattern of (13) is attested among the book's examples. -/
 theorem all_patterns_attested (p : InflectionPattern) :
     ∃ r ∈ Examples.all, ∃ m ∈ (InflectionalMarking.ofRow? r).toList, m.pattern = p := by
   cases p <;> decide +kernel
 
+/-- In the split/doubled examples the category carried by both elements is the subject. -/
 theorem splitDoubled_doubles_subject :
     ∀ r ∈ Examples.all, ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
       m.pattern = .splitDoubled → m.doubled = {.subj} := by
@@ -144,12 +152,11 @@ theorem splitDoubled_doubles_subject :
 
 /-! ### Negative auxiliaries -/
 
--- (49), (52), §1.7.2
-theorem negative_auxiliary_patterns :
-    (∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
-      (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .auxHeaded) ∧
+/-- Negative auxiliaries head constructions of different patterns (§1.7.2): by their marking,
+Komi's, Udihe's and Neyo's are aux-headed and Kokota's is split. -/
+theorem negative_auxiliary_patterns : ∀ p ∈ [InflectionPattern.auxHeaded, .split],
     ∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
-      (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .lexHeaded := by
+      ∃ m ∈ (InflectionalMarking.ofRow? r).toList, m.pattern = p := by
   decide +kernel
 
 end Anderson2006a
