@@ -52,9 +52,6 @@ def kpsOrder : List (Finset (Fin 5)) :=
 /-- `kpsRank s` is the position of `s` in the Kraft–Pratt–Seidenberg order. -/
 def kpsRank (s : Finset (Fin 5)) : ℕ := kpsOrder.idxOf s
 
-private theorem kpsRank_mono : ∀ a b : Finset (Fin 5), a ⊆ b → kpsRank a ≤ kpsRank b := by
-  decide
-
 private theorem kpsRank_qadd : ∀ a b : Finset (Fin 5),
     kpsRank b ≤ kpsRank a ↔ kpsRank (b \ a) ≤ kpsRank (a \ b) := by
   decide
@@ -68,10 +65,11 @@ noncomputable def kpsGe (A B : Set (Fin 5)) : Prop := kpsRank B.toFinset ≤ kps
 
 /-- The Kraft–Pratt–Seidenberg order is a qualitative probability. -/
 instance : IsQualitativeProbability kpsGe where
-  refl _ := le_rfl
   trans _ _ _ hab hbc := hbc.trans hab
   total A B := le_total _ _
-  mono A B h := kpsRank_mono _ _ (Set.toFinset_subset_toFinset.mpr h)
+  rel_bot' _ := by
+    simp only [kpsGe, Set.bot_eq_empty, Set.toFinset_empty]
+    exact (show kpsRank ∅ = 0 by decide).trans_le (Nat.zero_le _)
   qadd A B := by simp only [kpsGe, Set.toFinset_sdiff]; exact kpsRank_qadd _ _
   bot_not_ge_top := by simp only [kpsGe, Set.bot_eq_empty, Set.top_eq_univ, Set.toFinset_empty,
     Set.toFinset_univ]; decide

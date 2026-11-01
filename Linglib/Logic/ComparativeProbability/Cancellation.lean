@@ -70,15 +70,11 @@ additivity from totality and cancellation. -/
 theorem FiniteCancellation.isQualitativeProbability {ge : Set W → Set W → Prop} [IsNontrivial ge]
     (hnn : ∀ A, ge A ∅) [Std.Total ge] (h : FiniteCancellation ge) :
     IsQualitativeProbability ge where
-  refl A := h [] A A (fun _ ↦ rfl) (by simp)
   trans A B C hab hbc := h [(A, B), (B, C)] C A (fun s ↦ by
     simp only [List.map_cons, List.map_nil, seqCount_cons, seqCount_nil]; omega)
     (by simp [hab, hbc])
   total := Std.Total.total
-  mono A B hAB := h [(B \ A, ∅)] A B (fun s ↦ by
-    by_cases hA : s ∈ A
-    · simp [hA, hAB hA]
-    · by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hnn])
+  rel_bot' := hnn
   qadd A B :=
     ⟨fun hab ↦ h [(A, B)] (B \ A) (A \ B) (fun s ↦ by
         by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hab]),

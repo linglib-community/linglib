@@ -86,10 +86,9 @@ theorem mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
 
 /-- A qualitatively additive measure induces a qualitative probability. -/
 instance (m : QualAddMeasure K W) : IsQualitativeProbability m.inducedGe where
-  refl _ := le_rfl
   trans _ _ _ hab hbc := le_trans hbc hab
   total A B := le_total (m B) (m A)
-  mono _ _ h := m.mu_mono h
+  rel_bot' A := by rw [inducedGe, Set.bot_eq_empty, m.mu_empty]; exact m.nonneg A
   qadd A B := m.qualAdd B A
   bot_not_ge_top := by simp [inducedGe]
 
@@ -164,10 +163,9 @@ theorem inducedGe_eq_toQualAdd : μ.inducedGe = μ.toQualAdd.inducedGe := by
 
 /-- A probability measure on a discrete space induces a qualitative probability. -/
 instance : IsQualitativeProbability μ.inducedGe where
-  refl _ := le_rfl
   trans _ _ _ hab hbc := le_trans hbc hab
   total A B := le_total (μ B) (μ A)
-  mono _ _ h := measure_mono h
+  rel_bot' _ := by simp [inducedGe]
   qadd A B := μ.measure_le_iff_sdiff_le B A
   bot_not_ge_top := by simp [inducedGe]
 
