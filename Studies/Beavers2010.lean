@@ -21,9 +21,9 @@ the participant ends up, at the goal the predicate supplies, at some goal, or po
 [the role it lexically assigns is the degree that result names](##mem_lexicalRole).
 [Every attested alternation is then a minimal contrast](##lexicalRole_wcovBy_of_mem_attested), as is
 [a conative that embeds the object's result under a modality, unless that result is the
-predicate's goal](##degree_possibly_wcovBy_iff), and [the conatives' judgments under two
-diagnostics of change follow](##diagnostic_rows). The double modality of *hit at* leaves it
-unspecified for change [only along a modal base that is not
+predicate's goal](##degree_possibly_wcovBy_iff), and [the judgments of the conatives and of the
+*load* locative under diagnostics of change follow](##diagnosed_rows). The double modality of
+*hit at* leaves it unspecified for change [only along a modal base that is not
 transitive](##holds_potential_possibly_of_isTrans). Total traversal of a path is quantized change
 read of the scale, and the dative alternation runs on a chain of arrival and possession.
 
@@ -60,7 +60,8 @@ read of the scale, and the dative alternation runs on a chain of arrival and pos
 
 ## TODO
 
-* The telicity diagnostic (32), and the diagnostics of the locatives (50)–(56).
+* The telicity diagnostic (32), *What happened to x* for the *load* locative (53), and the
+  diagnostics of the *cut* locative (55)–(56).
 
 ## References
 
@@ -429,39 +430,49 @@ example : ¬ AffectednessDegree.nonquantized ⩿ .potential := by decide
 -- (77): the contrast skips nonquantized change
 example : ¬ AffectednessDegree.potential ⩿ .quantized := by decide
 
-/-! ### The diagnostics ((34), (39)) -/
+/-! ### The diagnostics ((10), (34), (39)) -/
 
-/-- Two diagnostics of affectedness. -/
+/-- Three diagnostics of affectedness. -/
 inductive Diagnostic where
-  /-- *…, but nothing is different about x*, infelicitous when the predicate entails that `x`
-  changes ((34)). -/
-  | nothingDifferent
+  /-- A continuation denying that `x` changed, *but nothing is different about x* or *but none of
+  the hay moved*, infelicitous when the predicate entails that `x` changes ((10d), (34)). -/
+  | noChange
+  /-- A continuation denying that `x` changed completely, *but still needed a truck for the rest*,
+  infelicitous when the predicate entails a quantized change of `x` ((10a), (11a)). -/
+  | notAll
   /-- *What happened to x is …*, felicitous when the predicate entails potential for change of `x`
   ((39)). -/
   | whatHappened
   deriving DecidableEq, Repr
 
-/-- A diagnostic accepts a predicate whose theme has the degree `d` ((34), (39)). -/
+/-- A diagnostic accepts a predicate that gives the participant tested the degree `d`. -/
 def Diagnostic.Accepts : Diagnostic → AffectednessDegree → Prop
-  | .nothingDifferent, d => d < .nonquantized
+  | .noChange, d => d < .nonquantized
+  | .notAll, d => d < .quantized
   | .whatHappened, d => .potential ≤ d
 
 instance : ∀ t d, Decidable (Diagnostic.Accepts t d)
-  | .nothingDifferent, d => inferInstanceAs (Decidable (d < _))
+  | .noChange, d => inferInstanceAs (Decidable (d < _))
+  | .notAll, d => inferInstanceAs (Decidable (d < _))
   | .whatHappened, d => inferInstanceAs (Decidable (_ ≤ d))
 
-/-- The conative variant a row tests, as its result, and the diagnostic. -/
-def diagnostic? (e : Datum) : Option (Result × Diagnostic) := do
-  pure (← e.parse? "variant"
-      [("eat", eat.direct), ("eat at", eat.oblique), ("cut", cut.direct), ("cut at", cut.oblique),
-        ("hit", hit.direct), ("hit at", hit.oblique)],
-    ← e.parse? "diagnostic"
-      [("nothing different", .nothingDifferent), ("what happened", .whatHappened)])
+/-- The diagnostic rows, each with the result its variant gives the participant tested and the
+diagnostic it applies. -/
+def diagnosed : List (Datum × Result × Diagnostic) :=
+  [(ex_10a, loadTheme.direct, .notAll), (ex_10b, loadTheme.oblique, .notAll),
+    (ex_10d, loadTheme.oblique, .noChange), (ex_11a, loadLocation.direct, .notAll),
+    (ex_11b, loadLocation.oblique, .notAll), (ex_11d, loadLocation.oblique, .noChange),
+    (ex_43a, eat.direct, .noChange), (ex_43b, eat.oblique, .noChange),
+    (ex_43c, eat.direct, .whatHappened), (ex_43d, eat.oblique, .whatHappened),
+    (ex_45a, cut.direct, .noChange), (ex_45b, cut.oblique, .noChange),
+    (ex_45c, cut.direct, .whatHappened), (ex_45d, cut.oblique, .whatHappened),
+    (ex_47a_hit, hit.direct, .noChange), (ex_47a_hitat, hit.oblique, .noChange),
+    (ex_48a, hit.direct, .whatHappened), (ex_48b, hit.oblique, .whatHappened)]
 
-/-- The paper's judgments of the six conative variants under both diagnostics follow from the
+/-- The paper's judgments of the conative and *load* variants under the diagnostics follow from the
 degrees their results name, *hit at* failing *What happened to x* for its double modality. -/
-theorem diagnostic_rows :
-    Datum.Checks diagnostic? (fun p ↦ .ofProp (p.2.Accepts p.1.degree)) Examples.all 12 := by
+theorem diagnosed_rows :
+    ∀ p ∈ diagnosed, p.1.judgment.band = .ofProp (p.2.2.Accepts p.2.1.degree) := by
   decide
 
 /-! ### Total traversal ((84)–(87)) -/

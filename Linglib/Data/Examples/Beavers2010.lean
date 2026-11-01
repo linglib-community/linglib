@@ -27,7 +27,7 @@ def ex_9a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("direct", "theme")] }
+    paperFeatures := [] }
 
 def ex_9b : Datum :=
   { id := "beavers2010_9b"
@@ -41,7 +41,7 @@ def ex_9b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("direct", "location")] }
+    paperFeatures := [] }
 
 def ex_10a : Datum :=
   { id := "beavers2010_10a"
@@ -55,7 +55,77 @@ def ex_10a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("diagnostic", "holistic effect")] }
+    paperFeatures := [] }
+
+def ex_10b : Datum :=
+  { id := "beavers2010_10b"
+    source := ⟨"beavers-2010", "(10b)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Kim loaded the wagon with the hay, but still needed a truck for the rest."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex_10d : Datum :=
+  { id := "beavers2010_10d"
+    source := ⟨"beavers-2010", "(10d)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Kim loaded the wagon with the hay, but none of the hay moved."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex_11a : Datum :=
+  { id := "beavers2010_11a"
+    source := ⟨"beavers-2010", "(11a)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Kim loaded the wagon with the hay, and still had extra room for the grain."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex_11b : Datum :=
+  { id := "beavers2010_11b"
+    source := ⟨"beavers-2010", "(11b)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Kim loaded the hay onto the wagon, and still had extra room for the grain."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
+
+def ex_11d : Datum :=
+  { id := "beavers2010_11d"
+    source := ⟨"beavers-2010", "(11d)"⟩
+    reportedIn := none
+    method := some .introspection
+    language := "stan1293"
+    primaryText := "Kim loaded the hay onto the wagon, but none of the wagon had hay on it."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [] }
 
 def ex_18a : Datum :=
   { id := "beavers2010_18a"
@@ -69,7 +139,7 @@ def ex_18a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("verb class", "cut/slice")] }
+    paperFeatures := [] }
 
 def ex_18b : Datum :=
   { id := "beavers2010_18b"
@@ -83,7 +153,7 @@ def ex_18b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("verb class", "cut/slice")] }
+    paperFeatures := [] }
 
 def ex_20a : Datum :=
   { id := "beavers2010_20a"
@@ -97,7 +167,7 @@ def ex_20a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "conative"), ("verb class", "cut")] }
+    paperFeatures := [] }
 
 def ex_20b : Datum :=
   { id := "beavers2010_20b"
@@ -111,7 +181,7 @@ def ex_20b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "conative"), ("verb class", "cut")] }
+    paperFeatures := [] }
 
 def ex_21a : Datum :=
   { id := "beavers2010_21a"
@@ -125,7 +195,7 @@ def ex_21a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "conative"), ("verb class", "consumption")] }
+    paperFeatures := [] }
 
 def ex_21b : Datum :=
   { id := "beavers2010_21b"
@@ -139,7 +209,7 @@ def ex_21b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "conative"), ("verb class", "consumption")] }
+    paperFeatures := [] }
 
 def ex_22a : Datum :=
   { id := "beavers2010_22a"
@@ -153,7 +223,7 @@ def ex_22a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "conative"), ("verb class", "impact")] }
+    paperFeatures := [] }
 
 def ex_22b : Datum :=
   { id := "beavers2010_22b"
@@ -167,7 +237,7 @@ def ex_22b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "conative"), ("verb class", "impact")] }
+    paperFeatures := [] }
 
 def ex_24a : Datum :=
   { id := "beavers2010_24a"
@@ -181,7 +251,7 @@ def ex_24a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("contrast", "none")] }
+    paperFeatures := [] }
 
 def ex_24b : Datum :=
   { id := "beavers2010_24b"
@@ -195,7 +265,7 @@ def ex_24b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("contrast", "none")] }
+    paperFeatures := [] }
 
 def ex_25a : Datum :=
   { id := "beavers2010_25a"
@@ -209,7 +279,7 @@ def ex_25a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("contrast", "none")] }
+    paperFeatures := [] }
 
 def ex_25b : Datum :=
   { id := "beavers2010_25b"
@@ -223,7 +293,7 @@ def ex_25b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "locative"), ("contrast", "none")] }
+    paperFeatures := [] }
 
 def ex_29 : Datum :=
   { id := "beavers2010_29"
@@ -237,7 +307,7 @@ def ex_29 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("degree", "quantized"), ("diagnostic", "telicity")] }
+    paperFeatures := [] }
 
 def ex_30 : Datum :=
   { id := "beavers2010_30"
@@ -251,7 +321,7 @@ def ex_30 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("degree", "nonquantized"), ("diagnostic", "telicity")] }
+    paperFeatures := [] }
 
 def ex_43a : Datum :=
   { id := "beavers2010_43a"
@@ -265,7 +335,7 @@ def ex_43a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "eat"), ("diagnostic", "nothing different")] }
+    paperFeatures := [] }
 
 def ex_43b : Datum :=
   { id := "beavers2010_43b"
@@ -279,7 +349,7 @@ def ex_43b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "eat at"), ("diagnostic", "nothing different")] }
+    paperFeatures := [] }
 
 def ex_43c : Datum :=
   { id := "beavers2010_43c"
@@ -293,7 +363,7 @@ def ex_43c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "eat"), ("diagnostic", "what happened")] }
+    paperFeatures := [] }
 
 def ex_43d : Datum :=
   { id := "beavers2010_43d"
@@ -307,7 +377,7 @@ def ex_43d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "eat at"), ("diagnostic", "what happened")] }
+    paperFeatures := [] }
 
 def ex_45a : Datum :=
   { id := "beavers2010_45a"
@@ -321,7 +391,7 @@ def ex_45a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "cut"), ("diagnostic", "nothing different")] }
+    paperFeatures := [] }
 
 def ex_45b : Datum :=
   { id := "beavers2010_45b"
@@ -335,7 +405,7 @@ def ex_45b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "cut at"), ("diagnostic", "nothing different")] }
+    paperFeatures := [] }
 
 def ex_45c : Datum :=
   { id := "beavers2010_45c"
@@ -349,7 +419,7 @@ def ex_45c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "cut"), ("diagnostic", "what happened")] }
+    paperFeatures := [] }
 
 def ex_45d : Datum :=
   { id := "beavers2010_45d"
@@ -363,7 +433,7 @@ def ex_45d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "cut at"), ("diagnostic", "what happened")] }
+    paperFeatures := [] }
 
 def ex_47a_hit : Datum :=
   { id := "beavers2010_47a_hit"
@@ -377,7 +447,7 @@ def ex_47a_hit : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "hit"), ("diagnostic", "nothing different")] }
+    paperFeatures := [] }
 
 def ex_47a_hitat : Datum :=
   { id := "beavers2010_47a_hitat"
@@ -391,7 +461,7 @@ def ex_47a_hitat : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "hit at"), ("diagnostic", "nothing different")] }
+    paperFeatures := [] }
 
 def ex_48a : Datum :=
   { id := "beavers2010_48a"
@@ -405,7 +475,7 @@ def ex_48a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "hit"), ("diagnostic", "what happened")] }
+    paperFeatures := [] }
 
 def ex_48b : Datum :=
   { id := "beavers2010_48b"
@@ -419,7 +489,7 @@ def ex_48b : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("variant", "hit at"), ("diagnostic", "what happened")] }
+    paperFeatures := [] }
 
 def ex_81a : Datum :=
   { id := "beavers2010_81a"
@@ -433,7 +503,7 @@ def ex_81a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "traversal"), ("degree", "totally traversed")] }
+    paperFeatures := [] }
 
 def ex_81b : Datum :=
   { id := "beavers2010_81b"
@@ -447,7 +517,7 @@ def ex_81b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "traversal"), ("degree", "traversed")] }
+    paperFeatures := [] }
 
 def ex_88a : Datum :=
   { id := "beavers2010_88a"
@@ -461,7 +531,7 @@ def ex_88a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := [("London as an agency (Scotland Yard reading)", .acceptable)]
-    paperFeatures := [("alternation", "dative"), ("direct", "recipient")] }
+    paperFeatures := [] }
 
 def ex_88b : Datum :=
   { id := "beavers2010_88b"
@@ -475,8 +545,8 @@ def ex_88b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("alternation", "dative"), ("oblique", "goal")] }
+    paperFeatures := [] }
 
-def all : List Datum := [ex_9a, ex_9b, ex_10a, ex_18a, ex_18b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_24a, ex_24b, ex_25a, ex_25b, ex_29, ex_30, ex_43a, ex_43b, ex_43c, ex_43d, ex_45a, ex_45b, ex_45c, ex_45d, ex_47a_hit, ex_47a_hitat, ex_48a, ex_48b, ex_81a, ex_81b, ex_88a, ex_88b]
+def all : List Datum := [ex_9a, ex_9b, ex_10a, ex_10b, ex_10d, ex_11a, ex_11b, ex_11d, ex_18a, ex_18b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_24a, ex_24b, ex_25a, ex_25b, ex_29, ex_30, ex_43a, ex_43b, ex_43c, ex_43d, ex_45a, ex_45b, ex_45c, ex_45d, ex_47a_hit, ex_47a_hitat, ex_48a, ex_48b, ex_81a, ex_81b, ex_88a, ex_88b]
 
 end Beavers2010.Examples
