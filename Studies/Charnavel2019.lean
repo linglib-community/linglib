@@ -24,8 +24,8 @@ the antecedent of an unacceptable anaphor](##exists_unacceptable_mem_centersOf_i
 ## Implementation notes
 
 * A noun phrase with a subject is labelled `Det` and its subject is its first daughter; it is a
-  spell-out domain for every position but that subject, beside the clause `S` and the verb phrase
-  `V`. Other noun phrases are `N`.
+  spell-out domain for every position that subject c-commands, beside the clause `S` and the verb
+  phrase `V`. Other noun phrases are `N`.
 * The logophoric centers of a sentence are entered by index as the book's tests give them, the
   speaker being `0`. The tests themselves are not modelled.
 * The silent pronouns of a representation share one index, so a sentence has one logophoric
@@ -160,13 +160,17 @@ abbrev Overt (t : Rep) : Type := {x : Nominal t // x.1.2 ≠ .logophor}
 
 variable {t : Rep} {v j : ℕ} {c : BindingClass}
 
+/-- The subject of a noun phrase labelled `Det` is its first daughter. -/
+def possessor (t : Rep) (m : TreePath) : Option TreePath :=
+  if m ∈ labeled t {.Det} then some ⟨m.toList ++ [0]⟩ else none
+
 /-- The spell-out domains that bound the domain of the position `b` are the clauses, the verb
-phrases, and the noun phrases with a subject, their first daughter, other than `b`. -/
+phrases, and the noun phrases with a subject that c-commands `b`. -/
 def spellout (t : Rep) (b : TreePath) : Set TreePath :=
-  {m | m ∈ labeled t {.S, .V} ∨ m ∈ labeled t {.Det} ∧ ⟨m.toList ++ [0]⟩ ≠ b}
+  {m | m ∈ labeled t {.S, .V} ∨ m ∈ t.withAccessibleSubject (possessor t) (fun _ ↦ none) b}
 
 instance (t : Rep) (b : TreePath) : DecidablePred (· ∈ spellout t b) :=
-  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∧ _))
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The clauses, the verb phrases and the noun phrases with a subject, which bound the
 co-arguments of every position, a possessor's own noun phrase included. -/

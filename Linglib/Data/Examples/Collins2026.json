@@ -1,0 +1,147 @@
+[
+  {
+    "id": "collins2026_11",
+    "source": {
+      "bibkey": "collins-2026",
+      "paperLabel": "(11)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John loves pictures of himself.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 4; printed with John and himself coindexed; John c-commands and binds the reflexive.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2026_12a",
+    "source": {
+      "bibkey": "collins-2026",
+      "paperLabel": "(12a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Pictures of himself, John loves.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 4; the antecedent of himself is John, which does not c-command it on the surface.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2026_12b",
+    "source": {
+      "bibkey": "collins-2026",
+      "paperLabel": "(12b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Only pictures of himself does John love.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 4; the antecedent of himself is John, which does not c-command it on the surface.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2026_12c",
+    "source": {
+      "bibkey": "collins-2026",
+      "paperLabel": "(12c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is pictures of himself that John loves.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 4; the antecedent of himself is John, which does not c-command it on the surface.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2026_12d",
+    "source": {
+      "bibkey": "collins-2026",
+      "paperLabel": "(12d)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which pictures of himself does John love?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 4; the antecedent of himself is John, which does not c-command it on the surface.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2026_12e",
+    "source": {
+      "bibkey": "collins-2026",
+      "paperLabel": "(12e)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "the pictures of himself that John loves",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "p. 4; the antecedent of himself is John, which does not c-command it on the surface.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2026_15",
+    "source": {
+      "bibkey": "collins-2026",
+      "paperLabel": "(15)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every player didn't score.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not > every",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "p. 5, from McCloskey; the paper's most accessible interpretation has the negation scoping over the universal.",
+    "verified": "page-image"
+  }
+]

@@ -148,7 +148,6 @@ import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.Kernel.OfWeights
 import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.UniformOn
-import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.Bialgebra.Primitive
 import Linglib.Data.Examples.Abusch1997

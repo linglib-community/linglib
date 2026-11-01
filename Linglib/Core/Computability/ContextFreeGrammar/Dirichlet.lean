@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
-public import Linglib.Core.Probability.PolyaUrn
+public import Linglib.Core.Probability.Distributions.Dirichlet
+public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Basic.ENNReal.BigOperators
 
 /-!
@@ -14,12 +15,15 @@ its rules, weighted by their pseudo-counts, and a corpus enters only through its
 ## Main definitions
 
 * `DirichletPCFG G`: positive pseudo-counts on the rules of `G`.
+* `DirichletPCFG.prior`: the prior on rule weights.
 * `DirichletPCFG.countsProb`: the probability of rule counts.
 * `DirichletPCFG.update`: the posterior given rule counts.
 * `DirichletPCFG.mean`: the PCFG of mean rule weights, the predictive rule distribution.
 
 ## Main results
 
+* `DirichletPCFG.ofReal_countsProb`: the probability of rule counts is the PCFG probability of
+  those counts integrated against the prior.
 * `DirichletPCFG.countsProb_add`: the probability of counts `x + y` is that of `x` times that of
   `y` under the posterior given `x`.
 * `DirichletPCFG.derivProb_mean`: on a tree with at most one node per nonterminal, the mean PCFG
@@ -27,9 +31,8 @@ its rules, weighted by their pseudo-counts, and a corpus enters only through its
 
 ## Implementation notes
 
-`countsProb` is Equation 3 of [johnson-griffiths-goldwater-2007], and the mean PCFG of the
-posterior given a corpus is the proposal grammar of their Hastings sampler. With unit
-pseudo-counts the posterior mode is `PCFG.relFreq`.
+The mean PCFG of the posterior given a corpus is the proposal grammar of the Hastings sampler of
+Johnson, Griffiths and Goldwater. With unit pseudo-counts the posterior mode is `PCFG.relFreq`.
 
 ## TODO
 
@@ -42,7 +45,7 @@ pseudo-counts the posterior mode is `PCFG.relFreq`.
 
 @[expose] public section
 
-open Finset ProbabilityTheory RoseTree
+open Finset MeasureTheory ProbabilityTheory RoseTree
 
 /-- A Dirichlet prior on the rule distributions of `G`, with a positive pseudo-count for every
 rule of the grammar. -/
@@ -92,9 +95,7 @@ noncomputable def countsProb (x : ContextFreeRule T G.NT → ℕ) : ℝ :=
   ∏ a ∈ G.rules.image (·.input), polyaUrnProb (M.urn a) fun r ↦ x r
 
 theorem countsProb_pos (x : ContextFreeRule T G.NT → ℕ) : 0 < M.countsProb x :=
-  prod_pos fun a ha ↦
-    have := ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr ha
-    polyaUrnProb_pos (M.urn_pos a) _
+  prod_pos fun a _ ↦ polyaUrnProb_pos (M.urn_pos a) _
 
 @[simp]
 theorem countsProb_zero : M.countsProb 0 = 1 :=
@@ -110,6 +111,36 @@ theorem countsProb_add (x y : ContextFreeRule T G.NT → ℕ) :
     M.countsProb (x + y) = M.countsProb x * (M.update x).countsProb y := by
   rw [countsProb, countsProb, countsProb, ← prod_mul_distrib]
   exact prod_congr rfl fun a _ ↦ polyaUrnProb_add (M.urn a) (fun r ↦ x r) fun r ↦ y r
+
+/-! ### The prior on rule weights -/
+
+/-- The prior on rule weights: at each nonterminal the grammar expands, the Dirichlet distribution
+on the probability vectors over its rules with their pseudo-counts as parameters, independently
+across nonterminals. -/
+noncomputable def prior :
+    Measure ((a : G.rules.image (·.input)) → Convexity.StdSimplex ℝ (G.RulesWithLHS a)) :=
+  Measure.pi fun a ↦ dirichlet (M.urn a)
+
+/-- The probability of the rule counts `x` is the PCFG probability `∏ r, θ r ^ x r` of a corpus
+with those counts, integrated against the prior ([johnson-griffiths-goldwater-2007] Equation 3). -/
+theorem ofReal_countsProb (x : ContextFreeRule T G.NT → ℕ) :
+    ENNReal.ofReal (M.countsProb x) =
+      ∫⁻ θ, ∏ a, ∏ r, ENNReal.ofReal ((θ a).weights r) ^ x r ∂M.prior := by
+  have (a : G.rules.image (·.input)) : Nonempty (G.RulesWithLHS a) :=
+    ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr a.2
+  have (a : G.rules.image (·.input)) : IsProbabilityMeasure (dirichlet (M.urn a)) :=
+    isProbabilityMeasure_dirichlet (M.urn_pos a)
+  have hX (a : G.rules.image (·.input)) : Measurable fun t : Convexity.StdSimplex ℝ
+      (G.RulesWithLHS a) ↦ ∏ r, ENNReal.ofReal (t.weights r) ^ x r := by
+    fun_prop
+  rw [prior, lintegral_prod_eq_prod_lintegral_of_indepFun univ _
+      (iIndepFun_pi fun a ↦ (hX a).aemeasurable) fun a ↦ (hX a).comp (measurable_pi_apply a),
+    countsProb, ← prod_coe_sort, ENNReal.ofReal_prod_of_nonneg
+      fun (a : G.rules.image (·.input)) _ ↦ (polyaUrnProb_pos (M.urn_pos a) _).le]
+  refine prod_congr rfl fun a _ ↦ ?_
+  have h := MeasurePreserving.lintegral_comp
+    (measurePreserving_eval (μ := fun a : G.rules.image (·.input) ↦ dirichlet (M.urn a)) a) (hX a)
+  rw [← lintegral_prod_pow_dirichlet (M.urn_pos a), ← h]
 
 /-! ### Mean rule weights -/
 
@@ -154,9 +185,7 @@ theorem derivProb_mean {t : RoseTree (Symbol T G.NT)} (ht : t.Licensed G.License
   rw [PCFG.derivProb_eq_prod_pow_ruleCount _ ht, countsProb,
     ← prod_fiberwise_of_maps_to (t := G.rules.image (·.input)) (g := (·.input))
       fun r hr ↦ mem_image_of_mem _ hr,
-    ENNReal.ofReal_prod_of_nonneg fun a ha ↦
-      have := ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr ha
-      (polyaUrnProb_pos (M.urn_pos a) _).le]
+    ENNReal.ofReal_prod_of_nonneg fun a _ ↦ (polyaUrnProb_pos (M.urn_pos a) _).le]
   refine prod_congr rfl fun a _ ↦ ?_
   have hcount : ∑ r : G.RulesWithLHS a, ruleCounts {t} r ≤ 1 := by
     rw [sum_coe_sort (G.rules.filter (·.input = a)) (ruleCounts {t})]
