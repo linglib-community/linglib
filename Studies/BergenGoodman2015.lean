@@ -1,43 +1,48 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+public import Linglib.Core.InformationTheory.BinaryEntropy
 public import Linglib.Pragmatics.RSA.Basic
-public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Data.Examples.BergenGoodman2015
 public import Linglib.Data.Examples.Readers
 
 /-!
-# Bergen & Goodman (2015): The strategic use of noise in pragmatic reasoning
+# Bergen and Goodman (2015): The Strategic Use of Noise in Pragmatic Reasoning
 
-This file formalizes Bergen and Goodman's two applications of rational speech acts over a noisy
-channel from the speaker's intended utterances to the perceived ones: the literal listener decodes
-the intended utterance before interpreting it (eq. 6), the speaker's utility is the channel-expected
-log posterior of the intended meaning (eq. 7), and the pragmatic listener inverts the speaker
-composed with the channel (eq. 8). The channel misperceives each utterance as at most one other, at
-a rate the speaker lowers by stressing a word (`slipChannel`). Sentence fragments have no literal
-meaning, yet both listeners read the fragment "Bob" as the point mass on Bob having gone, at every
-positive deletion rate (`Ellipsis.L0_subject`, `Ellipsis.L1_subject`), because only "Bob went to the
-movies" deletes to it. Stress halves the rate at which a subject is misheard as the other, so the
-exponentiated utility of a subject sentence is `exp (-binEntropy rate) / 2`, and a speaker who knows
-that only Bob went prefers "BOB went" to "Bob went" (`Prosody.S1_bobWent_lt_BOB_went`), the form the
-paper's exhaustive row records (`Prosody.model_matches_stress_rows`).
+This file models rational speech acts over a noisy channel from the utterance a speaker intends to
+the one a listener perceives. A listener inverts the channel composed with a speaker, a merely
+truthful one for the literal listener and the pragmatic speaker for the pragmatic listener. The
+speaker's utility is the log listener averaged over what may be perceived, so she addresses the
+geometric pool of the listener over the channel, [which is the listener itself when there is no
+noise](##geomPool_dirac). A sentence fragment has no literal meaning, yet [the pragmatic listener
+reads "Bob" as Bob having gone](##Ellipsis.L1_subject) at every deletion rate strictly between zero
+and one. Stress lowers the rate at which a name is misheard, so [a speaker who knows that only Bob
+went prefers to stress it](##Prosody.S1_bobWent_lt_BOB_went), and [one unsure whether Alice also
+went prefers it less](##Prosody.stressOdds_bobAtLeast_lt_onlyBob).
 
 ## Implementation notes
 
-Priors are unit weights, the rationality parameter is `1`, and costs are zero. The channel runs from
-the speaker's intended utterances to the perceived ones: for ellipsis the intended utterances are
-the three full sentences (the paper's simplification), for prosody all five forms. Prosody is
-perceived, so the stressed and unstressed forms are two copies of the subject-confusion channel at
-rates `ε / 2` and `ε`. The prosody speaker is the paper's knowledgeable one, for whom the divergence
-utility is eq. 7.
+* Priors over meanings and intended utterances are uniform, the rationality is `1` and costs are
+  `0`.
+* The paper's channel inserts, deletes and replaces words independently. Here an intended utterance
+  slips to at most one other, so each row of the channel is a Bernoulli measure: the deletion of the
+  predicate for ellipsis, the replacement of one name by the other for prosody.
+* For ellipsis the speaker chooses among the full sentences, which are indexed by the meanings they
+  express, as in the paper's simplification.
+* Prosody is perceived without noise, so the stressed and unstressed forms have separate channels.
+  Any stressed rate below an unstressed rate of at most a half gives the results, not only the
+  paper's half. The conjunction is never misheard and never stressed.
+* The paper's speaker over a belief maximizes minus the expected divergence of the listener from her
+  belief. This is the expected log listener under her belief plus its entropy, a constant across
+  utterances, so she is `RSA.speaker` at her belief. At depth one her observation enters the
+  literal listener only through a factor the same for every utterance, so she addresses the literal
+  listener over meanings. The paper gives no observation model; the speaker who knows only that Bob
+  went believes the two states in which he went equally likely.
 
 ## TODO
 
-* Fragment production (Fig. 1, right) needs utterance costs; the ignorant speaker's lower
-  stress rate (Fig. 2, right) needs the divergence utility over observations.
-* The listener's exhaustive reading of stress (Fig. 2, left) is the paper's depth-two result
-  over knowledge states; at depth one it reduces to the monotonicity in the rate of the
-  confusion odds `(r ^ (1 - r) * (1 - r) ^ r) / ((1 - r) ^ (1 - r) * r ^ r)`, not yet proved.
+* The speaker's use of fragments needs utterance costs.
+* The listener's exhaustive reading of stress needs her inference over the speaker's observations,
+  whose distribution the paper does not give.
 
 ## References
 
@@ -47,184 +52,44 @@ utility is eq. 7.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA Finset Real
+open MeasureTheory ProbabilityTheory RSA InformationTheory Finset Real unitInterval
 open scoped ENNReal
 
 namespace BergenGoodman2015
 
-/-! ### The slip channel -/
+/-! ## The speaker over a noisy channel -/
 
-section Channel
+section GeomPool
 
-variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
+variable {V U W : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSpace W] [Fintype W]
 
-/-- Under the channel of a slip rate and a slip target, an intended utterance is perceived
-intact with probability `1 - rate u` and as `slip u` with probability `rate u`. -/
-noncomputable def slipChannel (rate : U → ℝ) (slip : U → U) : Kernel U U :=
-  Kernel.ofFunOfCountable fun u =>
-    ENNReal.ofReal (1 - rate u) • Measure.dirac u + ENNReal.ofReal (rate u) • Measure.dirac (slip u)
+/-- The geometric pool of the listener `L` over the channel `N` gives each state, at an intended
+utterance, the geometric mean over the utterance's perceptions of the listener's mass there. -/
+noncomputable def geomPool (N : V → Measure U) (L : U → Measure W) (v : V) : Measure W :=
+  Measure.ofWeights fun w ↦ (N v).geomMean fun u ↦ L u {w}
 
-instance (rate : U → ℝ) (slip : U → U) : IsFiniteKernel (slipChannel rate slip) :=
-  ⟨⟨∑ u, (ENNReal.ofReal (1 - rate u) + ENNReal.ofReal (rate u)),
-    ENNReal.sum_lt_top.mpr fun _ _ => ENNReal.add_lt_top.mpr ⟨ENNReal.ofReal_lt_top,
-      ENNReal.ofReal_lt_top⟩,
-    fun u => by
-      rw [slipChannel, Kernel.ofFunOfCountable_apply, Measure.add_apply, Measure.smul_apply,
-        Measure.smul_apply, smul_eq_mul, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _),
-        Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one, mul_one]
-      exact single_le_sum (f := fun u => ENNReal.ofReal (1 - rate u) + ENNReal.ofReal (rate u))
-        (fun _ _ => zero_le) (mem_univ u)⟩⟩
+variable [MeasurableSingletonClass W]
 
-theorem slipChannel_apply_singleton [DecidableEq U] (rate : U → ℝ) (slip : U → U) (u v : U) :
-    slipChannel rate slip u {v} = ENNReal.ofReal (1 - rate u) * (if u = v then 1 else 0) +
-      ENNReal.ofReal (rate u) * (if slip u = v then 1 else 0) := by
-  rw [slipChannel, Kernel.ofFunOfCountable_apply, Measure.add_apply, Measure.smul_apply,
-    Measure.smul_apply, smul_eq_mul, smul_eq_mul, Measure.dirac_apply' _ (.singleton v),
-    Measure.dirac_apply' _ (.singleton v)]
-  simp only [Set.indicator_apply, Set.mem_singleton_iff, Pi.one_apply]
+@[simp] theorem geomPool_apply_singleton (N : V → Measure U) (L : U → Measure W) (v : V) (w : W) :
+    geomPool N L v {w} = (N v).geomMean fun u ↦ L u {w} :=
+  Measure.ofWeights_apply_singleton _ w
 
-end Channel
+instance (N : V → Measure U) (L : U → Measure W) [∀ u, IsFiniteMeasure (L u)] (v : V) :
+    IsFiniteMeasure (geomPool N L v) :=
+  Measure.isFiniteMeasure_ofWeights fun _ ↦ Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _
 
-/-! ### Rational speech acts over the channel
+/-- With no noise the geometric pool of a listener is the listener, so the speaker over the channel
+(eq. (7)) is the speaker of eq. (3). -/
+theorem geomPool_dirac [MeasurableSingletonClass U] (L : U → Measure W) :
+    geomPool Measure.dirac L = L :=
+  funext fun u ↦ Measure.ext_of_singleton fun w ↦ by simp
 
-The literal listener decodes before interpreting, so the meaning of a perceived utterance is the
-meaning of each intended one weighted by the utterance prior and the channel (eq. 6). The
-speaker's informativity is the channel-expected log listener, whose exponential is the listener
-mass averaged geometrically over perceptions (`channelMix`), and the speaker is the power-weight
-best response to that mix (`noisySpeaker`, eqs. 4 and 7). The pragmatic listener inverts the
-speaker composed with the channel (eq. 8). At the identity channel each operator is its
-noiseless counterpart. -/
-
-section NoisyRSA
-
-variable {W I U : Type*} [MeasurableSpace I] [MeasurableSpace U]
-
-section Meaning
-
-/-- The meaning of a perceived utterance `u_p` is the meaning of each intended utterance,
-weighted by the utterance prior and the channel (eq. 6). -/
-noncomputable def noisyMeaning (N : Kernel I U) (ρ : Measure I) (m : I → W → ℝ≥0∞) (u_p : U)
-    (w : W) : ℝ≥0∞ :=
-  ∫⁻ u_i, N u_i {u_p} * m u_i w ∂ρ
-
-variable [Fintype I] [MeasurableSingletonClass I]
-
-theorem noisyMeaning_apply (N : Kernel I U) (ρ : Measure I) (m : I → W → ℝ≥0∞) (u_p : U)
-    (w : W) : noisyMeaning N ρ m u_p w = ∑ u_i, N u_i {u_p} * m u_i w * ρ {u_i} :=
-  lintegral_fintype _
-
-variable [Fintype U] [MeasurableSingletonClass U]
-
-theorem noisyMeaning_id (ρ : Measure U) (m : U → W → ℝ≥0∞) (u : U) (w : W) :
-    noisyMeaning Kernel.id ρ m u w = ρ {u} * m u w := by
-  rw [noisyMeaning_apply, sum_eq_single u]
-  · rw [Kernel.id_apply, Measure.dirac_apply_of_mem (Set.mem_singleton u), one_mul, mul_comm]
-  · intro v _ hv
-    rw [Kernel.id_apply, Measure.dirac_apply' _ (.singleton u),
-      Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr hv), zero_mul, zero_mul]
-  · exact fun h => absurd (mem_univ u) h
-
-end Meaning
-
-variable [MeasurableSpace W] [Fintype U]
-
-section Speaker
-
-/-- `channelMix N L u_i w` averages the listener mass at `w` geometrically over the
-perceptions of `u_i`; it is the exponential of the channel-expected log listener, eq. 7's
-informativity. -/
-noncomputable def channelMix (N : Kernel I U) (L : Kernel U W) (u_i : I) (w : W) : ℝ≥0∞ :=
-  ∏ u_p, L u_p {w} ^ (N u_i {u_p}).toReal
-
-theorem channelMix_eq_prod (N : Kernel I U) (L : Kernel U W) {u_i : I} {s : Finset U}
-    (hs : ∀ u_p ∉ s, N u_i {u_p} = 0) (w : W) :
-    channelMix N L u_i w = ∏ u_p ∈ s, L u_p {w} ^ (N u_i {u_p}).toReal :=
-  (prod_subset (subset_univ s) fun u_p _ hu => by
-    rw [hs u_p hu, ENNReal.toReal_zero, ENNReal.rpow_zero]).symm
-
-theorem channelMix_ne_top (N : Kernel I U) (L : Kernel U W) [IsFiniteKernel L] (u_i : I)
-    (w : W) : channelMix N L u_i w ≠ ∞ :=
-  ENNReal.prod_ne_top fun _ _ => ENNReal.rpow_ne_top_of_nonneg ENNReal.toReal_nonneg
-    (measure_ne_top _ _)
-
-section
-
-variable [Fintype I] [MeasurableSingletonClass I] [Fintype W] [MeasurableSingletonClass W]
-
-/-- The speaker over the channel (eqs. 4 and 7) weights each utterance by the channel-mixed
-listener to the power `α`, scaled by the cost weight `exp (-(α * C u))`. -/
-noncomputable def noisySpeaker (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
-    Kernel W I :=
-  Kernel.ofWeights fun w u => channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
-
-@[simp] theorem noisySpeaker_apply_singleton (N : Kernel I U) (α : ℝ) (C : I → ℝ)
-    (L : Kernel U W) (w : W) (u : I) :
-    noisySpeaker N α C L w {u} =
-      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
-        / ∑ u', channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
-  Kernel.ofWeights_apply_singleton _ w u
-
-instance (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
-    IsFiniteKernel (noisySpeaker N α C L) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
-
-theorem noisySpeaker_real_singleton_lt_iff {N : Kernel I U} {α : ℝ} (hα : 0 ≤ α) {C : I → ℝ}
-    {L : Kernel U W} [IsFiniteKernel L] {w : W}
-    (h0 : ∃ u, channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) ≠ 0) {u u' : I} :
-    (noisySpeaker N α C L w).real {u} < (noisySpeaker N α C L w).real {u'} ↔
-      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
-        < channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
-  Kernel.ofWeights_real_singleton_lt_iff w
-    (fun h => let ⟨u₀, hu₀⟩ := h0; hu₀ (sum_eq_zero_iff.mp h u₀ (mem_univ _)))
-    (ENNReal.sum_ne_top.mpr fun u _ => ENNReal.mul_ne_top
-      (ENNReal.rpow_ne_top_of_nonneg hα (channelMix_ne_top N L u w)) ENNReal.ofReal_ne_top)
-
-end
-
-variable [MeasurableSingletonClass U]
-
-theorem ofDensity_noisyMeaning_id (μ : Measure W) (ρ : Measure U) (m : U → W → ℝ≥0∞)
-    {u : U} (h0 : ρ {u} ≠ 0) (htop : ρ {u} ≠ ∞) :
-    Kernel.ofDensity μ (noisyMeaning Kernel.id ρ m) u = Kernel.ofDensity μ m u :=
-  Kernel.ofDensity_apply_eq_of_eq_mul μ h0 htop (noisyMeaning_id ρ m u)
-
-theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L u w = L u {w} := by
-  rw [channelMix_eq_prod _ _ (s := {u}) fun v hv => by
-      rw [Kernel.id_apply, Measure.dirac_apply' _ (.singleton v),
-        Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr fun h => hv (by simp [h]))],
-    prod_singleton, Kernel.id_apply, Measure.dirac_apply_of_mem (Set.mem_singleton u),
-    ENNReal.toReal_one, ENNReal.rpow_one]
-
-variable [Fintype W] [MeasurableSingletonClass W]
-
-theorem noisySpeaker_id (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
-    noisySpeaker Kernel.id α C L = speaker α C L Measure.dirac := by
-  rw [speaker_dirac_eq_ofWeights]
-  unfold noisySpeaker
-  congr 1
-  funext w u
-  rw [channelMix_id]
-
-end Speaker
-
-section Listener
-
-variable [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
-
-theorem listener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
-    [IsFiniteKernel L] (μ : Measure W) :
-    listener μ (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) =
-      listener μ (speaker α C L Measure.dirac) := by
-  rw [Kernel.id_comp, noisySpeaker_id]
-
-end Listener
-
-end NoisyRSA
+end GeomPool
 
 /-! ## Ellipsis
 
-Three meanings and the full sentences expressing them; deletion strikes the predicate, leaving a
-subject fragment with no literal meaning. -/
+Three meanings and the full sentences expressing them; deleting the predicate of a sentence leaves
+its subject, a fragment with no literal meaning. -/
 
 namespace Ellipsis
 
@@ -237,159 +102,151 @@ inductive Meaning
 
 instance : MeasurableSpace Meaning := ⊤
 
-/-- The utterances are the full sentences and the fragments deletion leaves, a subject alone
-or the predicate. -/
+/-- A perceived utterance is a full sentence "X went to the movies" or its subject alone. -/
 inductive Utterance
   | full (m : Meaning)
   | subject (m : Meaning)
-  | predicate
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Utterance := ⊤
 
-/-- Full sentences mean what they say; fragments have no literal meaning. -/
-def lit : Utterance → Set Meaning
-  | .full m => {m}
-  | _ => ∅
+/-- The channel deletes the predicate of the intended sentence at rate `δ`. -/
+noncomputable def N (δ : I) : Kernel Meaning Utterance :=
+  Kernel.ofFunOfCountable fun m ↦ Ber(.subject m, .full m, δ)
 
-/-- Deletion strikes the predicate of a full sentence at rate `δ`. -/
-noncomputable def rate (δ : ℝ) : Utterance → ℝ
-  | .full _ => δ
-  | _ => 0
+instance (δ : I) : IsMarkovKernel (N δ) :=
+  ⟨fun m ↦ by rw [N, Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
-/-- Deleting the predicate leaves the subject. -/
-def slip : Utterance → Utterance
-  | .full m => .subject m
-  | u => u
-
-/-- The deletion channel at rate `δ`, from the speaker's full sentences, indexed by the meaning
-they express, to the perceived utterances. -/
-noncomputable abbrev N (δ : ℝ) : Kernel Meaning Utterance :=
-  (slipChannel (rate δ) slip).comap Utterance.full (measurable_of_countable _)
-
-/-- The speaker's full sentences are equally likely. -/
-noncomputable abbrev uttPrior : Measure Meaning := Measure.count
-
-/-- The uniform meaning prior. -/
+/-- The uniform prior over meanings. -/
 noncomputable abbrev μ : Measure Meaning := Measure.count
 
-/-- The graded literal meaning of a full sentence. -/
-noncomputable abbrev lit' : Meaning → Meaning → ℝ≥0∞ := fun m => (lit (.full m)).indicator 1
+/-- A full sentence is true exactly at the meaning it expresses. -/
+def lit (m : Meaning) : Set Meaning := {m}
 
-/-- The literal listener (eq. 6). -/
-noncomputable abbrev L0 (δ : ℝ) : Kernel Utterance Meaning :=
-  Kernel.ofDensity μ (noisyMeaning (N δ) uttPrior lit')
+/-- The literal listener (eq. (6)) inverts the channel composed with a truthful speaker. -/
+noncomputable abbrev L0 (δ : I) : Kernel Utterance Meaning :=
+  listener μ fun m ↦ N δ ∘ₘ truthful lit m
 
-/-- The speaker (eq. 7), choosing among the full sentences. -/
-noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N δ) 1 0 (L0 δ)
+/-- The speaker (eq. (7)), choosing among the full sentences. -/
+noncomputable abbrev S1 (δ : I) : Kernel Meaning Meaning :=
+  speaker 1 0 (geomPool (N δ) (L0 δ)) Measure.dirac
 
-/-- The pragmatic listener (eq. 8). -/
-noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
+/-- The pragmatic listener (eq. (8)) inverts the channel composed with the speaker. -/
+noncomputable abbrev L1 (δ : I) : Kernel Utterance Meaning :=
   listener μ (N δ ∘ₖ S1 δ)
 
-variable {δ : ℝ} (m : Meaning)
+variable {δ : I}
 
-theorem noisyMeaning_subject (w : Meaning) :
-    noisyMeaning (N δ) uttPrior lit' (.subject m) w =
-      ENNReal.ofReal δ * ({m} : Set Meaning).indicator 1 w := by
-  rw [noisyMeaning_apply, sum_eq_single m]
-  · simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit]
-  · intro m' _ h
-    simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit, h]
-  · exact fun h => absurd (mem_univ _) h
+theorem N_apply_singleton (m : Meaning) (u : Utterance) :
+    N δ m {u} = if u = .full m then (unitInterval.toNNReal (σ δ) : ℝ≥0∞) else
+      if u = .subject m then (unitInterval.toNNReal δ : ℝ≥0∞) else 0 := by
+  classical
+  rw [N, Kernel.ofFunOfCountable_apply, bernoulliMeasure_apply _ (.singleton u)]
+  rcases u with m' | m' <;> by_cases h : m' = m <;> simp [h, eq_comm]
 
-theorem noisyMeaning_full (w : Meaning) :
-    noisyMeaning (N δ) uttPrior lit' (.full m) w =
-      ENNReal.ofReal (1 - δ) * ({m} : Set Meaning).indicator 1 w := by
-  rw [noisyMeaning_apply, sum_eq_single m]
-  · simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit]
-  · intro m' _ h
-    simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit, h]
-  · exact fun h => absurd (mem_univ _) h
+-- Each meaning has one sentence, so the literal listener decodes the channel.
+theorem L0_eq_listener : L0 δ = listener μ (N δ) := by
+  refine congrArg (listener μ) (funext fun m ↦ ?_)
+  rw [truthful, show {m' | m ∈ lit m'} = {m} by ext; simp [lit, eq_comm],
+    Measure.restrict_singleton, Measure.count_singleton, one_smul, Measure.dirac_bind
+    (Kernel.measurable _)]
 
-private theorem L0_of_noisyMeaning {c : ℝ} (hc : 0 < c) {u : Utterance}
-    (h : ∀ w, noisyMeaning (N δ) uttPrior lit' u w =
-      ENNReal.ofReal c * ({m} : Set Meaning).indicator 1 w) :
-    L0 δ u = Measure.dirac m := by
-  rw [L0, Kernel.ofDensity_apply_eq_of_eq_mul μ (f := fun _ ↦ ({m} : Set Meaning).indicator 1)
-    (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top h, ← listener_truthful_eq_ofDensity]
-  refine Measure.ext_of_singleton fun w => ?_
-  simp only [Measure.dirac_apply' _ (.singleton w), Set.indicator_apply, Set.mem_singleton_iff,
-    Pi.one_apply]
-  by_cases hw : m = w
+private theorem listener_eq_dirac {κ : Kernel Meaning Utterance} {u : Utterance} {m : Meaning}
+    {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ w, κ w {u} = if w = m then c else 0) :
+    listener μ κ u = Measure.dirac m := by
+  have hmarg : (κ ∘ₘ μ) {u} = c := by
+    rw [Measure.comp_apply_singleton]
+    simp [h]
+  refine Measure.ext_of_singleton fun w ↦ ?_
+  rw [listener_apply_singleton_eq_div, hmarg, h, Measure.dirac_apply' _ (.singleton w)]
+  by_cases hw : w = m
   · subst hw
-    rw [listener_truthful_apply_singleton_of_eq_singleton μ (fun _ => {m}) rfl (by simp)]
-    simp
-  · rw [listener_truthful_apply_singleton_of_notMem μ (fun _ => {m})
-      (by simpa using Ne.symm hw)]
-    simp [hw]
+    simp [ENNReal.div_self hc0 hc]
+  · simp [hw, Ne.symm hw]
 
-/-- A subject fragment is the point mass on the meaning whose full sentence deletes to it, at
-every positive deletion rate. -/
-theorem L0_subject (hδ : 0 < δ) : L0 δ (.subject m) = Measure.dirac m :=
-  L0_of_noisyMeaning m hδ (noisyMeaning_subject m)
+theorem L0_subject (hδ : 0 < δ) (m : Meaning) : L0 δ (.subject m) = Measure.dirac m := by
+  rw [L0_eq_listener]
+  refine listener_eq_dirac (c := unitInterval.toNNReal δ) ?_ ENNReal.coe_ne_top fun w ↦ ?_
+  · simpa [← NNReal.coe_eq_zero] using hδ.ne'
+  · by_cases h : w = m
+    · simp [N_apply_singleton, h]
+    · simp [N_apply_singleton, h, Ne.symm h]
 
-theorem L0_full (hδ : δ < 1) : L0 δ (.full m) = Measure.dirac m :=
-  L0_of_noisyMeaning m (by linarith) (noisyMeaning_full m)
+-- Without noise a fragment is never perceived, so the literal listener has no reading for it.
+theorem L0_subject_zero (m : Meaning) : L0 0 (.subject m) = 0 :=
+  Measure.ext_of_singleton fun w ↦ by
+    rw [L0_eq_listener, listener_apply_singleton_eq_zero (by simp [N_apply_singleton]),
+      Measure.coe_zero, Pi.zero_apply]
+
+theorem L0_full (hδ : δ < 1) (m : Meaning) : L0 δ (.full m) = Measure.dirac m := by
+  rw [L0_eq_listener]
+  refine listener_eq_dirac (c := unitInterval.toNNReal (σ δ)) ?_ ENNReal.coe_ne_top fun w ↦ ?_
+  · simpa [← NNReal.coe_eq_zero, sub_eq_zero] using fun h ↦ hδ.ne (Subtype.ext h.symm)
+  · by_cases h : w = m
+    · simp [N_apply_singleton, h]
+    · simp [N_apply_singleton, h, Ne.symm h]
+
+section
 
 variable (hδ₀ : 0 < δ) (hδ₁ : δ < 1)
 include hδ₀ hδ₁
 
-theorem channelMix_full (m' : Meaning) :
-    channelMix (N δ) (L0 δ) m' m = if m' = m then 1 else 0 := by
-  rw [channelMix_eq_prod _ _ (s := {.full m', .subject m'}) fun u hu => by
-      rcases u with m'' | m'' | _ <;>
-        simp_all [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip] <;>
-        exact fun h => absurd h.symm hu,
-    prod_pair (by simp), L0_full m' hδ₁, L0_subject m' hδ₀]
-  have h1 : (ENNReal.ofReal (1 - δ)).toReal = 1 - δ := ENNReal.toReal_ofReal (by linarith)
-  have h2 : (ENNReal.ofReal δ).toReal = δ := ENNReal.toReal_ofReal hδ₀.le
-  simp only [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, ite_true, mul_one,
-    Measure.dirac_apply' _ (.singleton m), Set.indicator_apply, Set.mem_singleton_iff,
-    Pi.one_apply]
-  by_cases h : m' = m
+-- Every perception of a sentence, whole or fragment, recovers its meaning.
+theorem geomPool_N_L0 : geomPool (N δ) (L0 δ) = Measure.dirac := by
+  funext m
+  refine Measure.ext_of_singleton fun w ↦ ?_
+  rw [geomPool_apply_singleton]
+  refine Measure.geomMean_of_forall_eq fun u hu ↦ ?_
+  rcases u with m' | m' <;> by_cases h : m' = m <;>
+    simp_all [N_apply_singleton, L0_full hδ₁, L0_subject hδ₀]
+
+-- The speaker utters the sentence for her meaning.
+theorem S1_eq_id : S1 δ = Kernel.id := by
+  ext1 w
+  rw [S1, geomPool_N_L0 hδ₀ hδ₁, speaker_dirac_eq_ofWeights, Kernel.id_apply]
+  refine Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun m ↦ ?_
+  by_cases h : m = w
   · simp [h]
-  · simp [h, h1, h2, hδ₀, sub_pos.mpr hδ₁]
+  · simp [h, Measure.dirac_apply']
 
-/-- The speaker utters the full sentence for its meaning. -/
-theorem S1_apply : S1 δ m = Measure.dirac m := by
-  refine Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun m' => ?_
-  rw [channelMix_full m hδ₀ hδ₁, ENNReal.rpow_one]
-  simp [eq_comm]
+theorem L1_eq_L0 : L1 δ = L0 δ := by
+  rw [L1, S1_eq_id hδ₀ hδ₁, Kernel.comp_id, L0_eq_listener]
 
-theorem comp_apply_subject (w : Meaning) :
-    (N δ ∘ₖ S1 δ) w {.subject m} = if w = m then ENNReal.ofReal δ else 0 := by
-  rw [Kernel.comp_apply_singleton, sum_eq_single w]
-  · rw [S1_apply w hδ₀ hδ₁, Measure.dirac_apply_of_mem (Set.mem_singleton _), one_mul]
-    by_cases h : w = m
-    · subst h; simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip]
-    · simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, h]
-  · intro u _ hu
-    rw [S1_apply w hδ₀ hδ₁, Measure.dirac_apply' _ (.singleton u),
-      Set.indicator_of_notMem (by simpa using Ne.symm hu), zero_mul]
-  · exact fun h => absurd (mem_univ _) h
+/-- The pragmatic listener reads a subject fragment as the meaning of the one sentence that deletes
+to it, at every deletion rate strictly between zero and one. -/
+theorem L1_subject (m : Meaning) : L1 δ (.subject m) = Measure.dirac m := by
+  rw [L1_eq_L0 hδ₀ hδ₁, L0_subject hδ₀]
 
-/-- The pragmatic listener also reads a subject fragment as the point mass on its source. -/
-theorem L1_subject : L1 δ (.subject m) = Measure.dirac m := by
-  have hmarg : ((N δ ∘ₖ S1 δ) ∘ₘ μ) {.subject m} = ENNReal.ofReal δ := by
-    rw [Measure.comp_apply_singleton]
-    simp [comp_apply_subject m hδ₀ hδ₁]
-  refine Measure.ext_of_singleton fun w => ?_
-  rw [listener_apply_singleton_eq_div, hmarg, comp_apply_subject m hδ₀ hδ₁]
-  simp only [Measure.dirac_apply' _ (.singleton w), Set.indicator_apply, Set.mem_singleton_iff,
-    Pi.one_apply]
-  by_cases h : w = m
-  · subst h
-    simp [ENNReal.div_self (ENNReal.ofReal_pos.mpr hδ₀).ne' ENNReal.ofReal_ne_top]
-  · simp [h, Ne.symm h]
+end
+
+/-- `fragmentOf` reads a row's `fragment` feature as a subject fragment. -/
+def fragmentOf (row : Datum) : Option Utterance :=
+  match row.feature? "fragment" with
+  | some "Alice" => some (.subject .aliceWent)
+  | some "Bob" => some (.subject .bobWent)
+  | some "Nobody" => some (.subject .nobodyWent)
+  | _ => none
+
+/-- `propositionOf` reads a row's `proposition` feature as a meaning. -/
+def propositionOf (row : Datum) : Option Meaning :=
+  match row.feature? "proposition" with
+  | some "Alice went to the movies" => some .aliceWent
+  | some "Bob went to the movies" => some .bobWent
+  | some "Nobody went to the movies" => some .nobodyWent
+  | _ => none
+
+theorem model_matches_fragment_row (hδ₀ : 0 < δ) (hδ₁ : δ < 1) :
+    ∃ u m, fragmentOf Examples.fragment_answer = some u ∧
+      propositionOf Examples.fragment_answer = some m ∧ L1 δ u = Measure.dirac m :=
+  ⟨_, _, rfl, rfl, L1_subject hδ₀ hδ₁ _⟩
 
 end Ellipsis
 
 /-! ## Prosody
 
-Stress halves the rate at which a subject is misheard as the other (the paper's `ε / n` at
-`n = 2`); the conjunction is never misheard. A speaker who knows that only Bob went must keep
-the listener from hearing "Alice went", so stress is worth more to them. -/
+Stress lowers the rate at which a name is misheard as the other. A speaker who knows that only Bob
+went must keep the listener from hearing "Alice went", so stress is worth more to her than to a
+speaker who knows only that Bob went. -/
 
 namespace Prosody
 
@@ -419,13 +276,7 @@ def lit : Utterance → Set Meaning
   | .bobWent | .BOB_went => {.onlyBob, .both}
   | .aliceAndBobWent => {.both}
 
-/-- Subjects are confused at rate `ε`, halved under stress; the conjunction is safe. -/
-noncomputable def rate (ε : ℝ) : Utterance → ℝ
-  | .aliceWent | .bobWent => ε
-  | .ALICE_went | .BOB_went => ε / 2
-  | .aliceAndBobWent => 0
-
-/-- A subject is misheard as the other subject, with its prosody. -/
+/-- A name is misheard as the other name, with its prosody. -/
 def slip : Utterance → Utterance
   | .aliceWent => .bobWent
   | .bobWent => .aliceWent
@@ -433,27 +284,49 @@ def slip : Utterance → Utterance
   | .BOB_went => .ALICE_went
   | .aliceAndBobWent => .aliceAndBobWent
 
-/-- The subject-confusion channel at rate `ε`. -/
-noncomputable abbrev N (ε : ℝ) : Kernel Utterance Utterance := slipChannel (rate ε) slip
+/-- A name is misheard at rate `ε` without stress and `ε'` with it; the conjunction is safe. -/
+def rate (ε ε' : I) : Utterance → I
+  | .aliceWent | .bobWent => ε
+  | .ALICE_went | .BOB_went => ε'
+  | .aliceAndBobWent => 0
 
-/-- The uniform utterance prior. -/
-noncomputable abbrev uttPrior : Measure Utterance := Measure.count
+/-- The channel replaces the intended name by the other at its rate. -/
+noncomputable def N (ε ε' : I) : Kernel Utterance Utterance :=
+  Kernel.ofFunOfCountable fun u ↦ Ber(slip u, u, rate ε ε' u)
 
-/-- The uniform meaning prior. -/
+instance (ε ε' : I) : IsMarkovKernel (N ε ε') :=
+  ⟨fun u ↦ by rw [N, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+
+/-- The uniform prior over meanings. -/
 noncomputable abbrev μ : Measure Meaning := Measure.count
 
-/-- The graded literal meaning. -/
-noncomputable abbrev lit' : Utterance → Meaning → ℝ≥0∞ := fun u => (lit u).indicator 1
+/-- The literal listener (eq. (6)) inverts the channel composed with a truthful speaker. -/
+noncomputable abbrev L0 (ε ε' : I) : Kernel Utterance Meaning :=
+  listener μ fun m ↦ N ε ε' ∘ₘ truthful lit m
 
-/-- The literal listener (eq. 6). -/
-noncomputable abbrev L0 (ε : ℝ) : Kernel Utterance Meaning :=
-  Kernel.ofDensity μ (noisyMeaning (N ε) uttPrior lit')
+/-- What the speaker has observed: that only Bob went, or only that Bob went. -/
+inductive Observation
+  | onlyBob
+  | bobAtLeast
+  deriving DecidableEq, Fintype
 
-/-- The knowledgeable speaker (eq. 7), over all five forms. -/
-noncomputable abbrev S1 (ε : ℝ) : Kernel Meaning Utterance :=
-  noisySpeaker (N ε) 1 0 (L0 ε)
+instance : MeasurableSpace Observation := ⊤
 
-variable {ε : ℝ}
+/-- A speaker who observed that only Bob went is certain of it; one who observed only that Bob went
+believes the two states in which he went equally likely. -/
+noncomputable def belief : Observation → Measure Meaning
+  | .onlyBob => Measure.dirac .onlyBob
+  | .bobAtLeast => uniformOn ({.onlyBob, .both} : Finset Meaning)
+
+/-- The speaker (eq. (7)), at the belief her observation gives her. -/
+noncomputable abbrev S1 (ε ε' : I) : Kernel Observation Utterance :=
+  speaker 1 0 (geomPool (N ε ε') (L0 ε ε')) belief
+
+/-- The odds with which the speaker stresses "Bob". -/
+noncomputable def stressOdds (ε ε' : I) (o : Observation) : ℝ :=
+  (S1 ε ε' o).real {.BOB_went} / (S1 ε ε' o).real {.bobWent}
+
+variable {ε ε' : I}
 
 private theorem sum_univ_utt {β : Type*} [AddCommMonoid β] (f : Utterance → β) :
     ∑ u, f u = f .aliceWent + f .ALICE_went + f .bobWent + f .BOB_went + f .aliceAndBobWent := by
@@ -463,95 +336,172 @@ private theorem sum_univ_utt {β : Type*} [AddCommMonoid β] (f : Utterance → 
     sum_insert (by decide), sum_singleton]
   simp only [add_assoc]
 
-private theorem sum_univ_mean {β : Type*} [AddCommMonoid β] (f : Meaning → β) :
-    ∑ m, f m = f .onlyAlice + f .onlyBob + f .both := by
+@[to_additive]
+private theorem prod_univ_mean {β : Type*} [CommMonoid β] (f : Meaning → β) :
+    ∏ m, f m = f .onlyAlice * f .onlyBob * f .both := by
   rw [show (univ : Finset Meaning) = {.onlyAlice, .onlyBob, .both} from rfl,
-    sum_insert (by decide), sum_insert (by decide), sum_singleton]
-  simp only [add_assoc]
+    prod_insert (by decide), prod_insert (by decide), prod_singleton]
+  simp only [mul_assoc]
 
-private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
-    L0 ε .bobWent {.onlyBob} = ENNReal.ofReal ((1 - ε) / 2) ∧
-    L0 ε .aliceWent {.onlyBob} = ENNReal.ofReal (ε / 2) ∧
-    L0 ε .BOB_went {.onlyBob} = ENNReal.ofReal ((1 - ε / 2) / 2) ∧
-    L0 ε .ALICE_went {.onlyBob} = ENNReal.ofReal (ε / 2 / 2) := by
-  have h1 : ENNReal.ofReal (1 - ε) + ENNReal.ofReal ε = 1 := by
-    rw [← ENNReal.ofReal_add (by linarith) hε₀, sub_add_cancel, ENNReal.ofReal_one]
-  have h2 : ENNReal.ofReal (1 - ε / 2) + ENNReal.ofReal (ε / 2) = 1 := by
-    rw [← ENNReal.ofReal_add (by linarith) (by linarith), sub_add_cancel, ENNReal.ofReal_one]
-  have h1' := (add_comm _ _).trans h1
-  have h2' := (add_comm _ _).trans h2
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    · rw [L0, Kernel.ofDensity_apply_singleton]
-      simp only [noisyMeaning_apply, sum_univ_utt, sum_univ_mean, slipChannel_apply_singleton,
-        rate, slip, lit', lit, Measure.count_singleton, Pi.one_apply,
-        Set.indicator_apply, Set.mem_insert_iff, Set.mem_singleton_iff]
-      simp only [reduceCtorEq, ite_true, ite_false, or_false, false_or, mul_one, mul_zero,
-        add_zero, zero_add, h1, h1', h2, h2', one_add_one_eq_two]
-      simp only [ENNReal.ofReal_div_of_pos two_pos, ENNReal.ofReal_ofNat]
+theorem N_apply_singleton (u v : Utterance) :
+    N ε ε' u {v} = (if slip u = v then (unitInterval.toNNReal (rate ε ε' u) : ℝ≥0∞) else 0) +
+      if u = v then (unitInterval.toNNReal (σ (rate ε ε' u)) : ℝ≥0∞) else 0 := by
+  rw [N, Kernel.ofFunOfCountable_apply, bernoulliMeasure_def]
+  simp [Measure.dirac_apply', Set.indicator_apply, eq_comm]
 
-theorem rpow_mul_rpow_eq_exp_neg_binEntropy {r : ℝ} (hr₀ : 0 < r) (hr₁ : r < 1) :
-    ((1 - r) / 2) ^ (1 - r) * (r / 2) ^ r = exp (-binEntropy r) / 2 := by
-  rw [rpow_def_of_pos (div_pos (by linarith) two_pos), rpow_def_of_pos (div_pos hr₀ two_pos),
-    ← exp_add, log_div (sub_ne_zero.mpr hr₁.ne') two_ne_zero, log_div hr₀.ne' two_ne_zero,
-    show exp (-binEntropy r) / 2 = exp (-binEntropy r - log 2) by
-      rw [exp_sub, exp_log two_pos],
-    binEntropy_eq_negMulLog_add_negMulLog_one_sub, negMulLog, negMulLog]
-  congr 1; ring
+private theorem coe_toNNReal_add_symm (p : I) :
+    (unitInterval.toNNReal p : ℝ≥0∞) + unitInterval.toNNReal (σ p) = 1 := by
+  rw [← ENNReal.coe_add, toNNReal_add_toNNReal_symm, ENNReal.coe_one]
 
-/-- The knowledgeable speaker's channel-mixed listener for the two forms of "Bob went" is the
-entropy form of their rates. -/
-theorem channelMix_eq_exp_neg_binEntropy (hε₀ : 0 < ε) (hε₁ : ε < 1) :
-    channelMix (N ε) (L0 ε) .bobWent .onlyBob = ENNReal.ofReal (exp (-binEntropy ε) / 2) ∧
-    channelMix (N ε) (L0 ε) .BOB_went .onlyBob =
-      ENNReal.ofReal (exp (-binEntropy (ε / 2)) / 2) := by
-  obtain ⟨hb, ha, hB, hA⟩ := L0_onlyBob hε₀.le hε₁.le
-  refine ⟨?_, ?_⟩
-  · rw [channelMix_eq_prod _ _ (s := {.bobWent, .aliceWent}) fun u hu => by
-        rcases u <;> simp_all [slipChannel_apply_singleton, rate, slip],
-      prod_pair (by decide), hb, ha]
-    simp only [slipChannel_apply_singleton, rate, slip, ite_true, ite_false, mul_one, mul_zero,
-      add_zero, zero_add, reduceCtorEq]
-    rw [ENNReal.toReal_ofReal (by linarith), ENNReal.toReal_ofReal hε₀.le,
-      ENNReal.ofReal_rpow_of_nonneg (by linarith) (by linarith),
-      ENNReal.ofReal_rpow_of_nonneg (by linarith) hε₀.le,
-      ← ENNReal.ofReal_mul (rpow_nonneg (by linarith) _),
-      rpow_mul_rpow_eq_exp_neg_binEntropy hε₀ hε₁]
-  · rw [channelMix_eq_prod _ _ (s := {.BOB_went, .ALICE_went}) fun u hu => by
-        rcases u <;> simp_all [slipChannel_apply_singleton, rate, slip],
-      prod_pair (by decide), hB, hA]
-    simp only [slipChannel_apply_singleton, rate, slip, ite_true, ite_false, mul_one, mul_zero,
-      add_zero, zero_add, reduceCtorEq]
-    rw [ENNReal.toReal_ofReal (by linarith), ENNReal.toReal_ofReal (by linarith),
-      ENNReal.ofReal_rpow_of_nonneg (by linarith) (by linarith),
-      ENNReal.ofReal_rpow_of_nonneg (by linarith) (by linarith),
-      ← ENNReal.ofReal_mul (rpow_nonneg (by linarith) _),
-      rpow_mul_rpow_eq_exp_neg_binEntropy (half_pos hε₀) (by linarith)]
+private theorem coe_toNNReal_symm_add (p : I) :
+    (unitInterval.toNNReal (σ p) : ℝ≥0∞) + unitInterval.toNNReal p = 1 := by
+  rw [add_comm, coe_toNNReal_add_symm]
 
-/-- A speaker who knows only Bob went prefers *BOB went* to *Bob went* (Fig. 2). -/
-theorem S1_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
-    (S1 ε .onlyBob).real {.bobWent} < (S1 ε .onlyBob).real {.BOB_went} := by
-  obtain ⟨hb, hB⟩ := channelMix_eq_exp_neg_binEntropy hε₀ (by linarith)
-  rw [S1, noisySpeaker_real_singleton_lt_iff zero_le_one
-      ⟨.BOB_went, by simpa [hB] using (ENNReal.ofReal_pos.mpr (by positivity)).ne'⟩]
-  simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+-- On each perception of a sentence about Bob, the literal listener's mass at the state in which
+-- only Bob went is half the probability of that perception, and at the state in which both went
+-- it is a half.
+theorem L0_of_bob {u a : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) (ha : N ε ε' u {a} ≠ 0) :
+    L0 ε ε' a {.onlyBob} = 2⁻¹ * N ε ε' u {a} ∧ L0 ε ε' a {.both} = 2⁻¹ := by
+  simp only [L0, listener_apply_singleton]
+  rcases hu with rfl | rfl <;> cases a <;>
+    simp_all [Measure.comp_apply_singleton, truthful_apply_singleton, sum_univ_utt, sum_univ_mean,
+      N_apply_singleton, lit, slip, rate, coe_toNNReal_add_symm, coe_toNNReal_symm_add,
+      one_add_one_eq_two, ENNReal.div_eq_inv_mul]
+
+/-- A speaker who knows that only Bob went weighs a sentence about Bob by half the exponential of
+minus the entropy of its channel. -/
+theorem geomPool_onlyBob {u : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) :
+    geomPool (N ε ε') (L0 ε ε') u {.onlyBob} =
+      2⁻¹ * ENNReal.ofReal (exp (-binEntropy (rate ε ε' u))) := by
+  have hslip : slip u ≠ u := by rcases hu with rfl | rfl <;> decide
+  rw [geomPool_apply_singleton, Measure.geomMean_congr (g := fun a ↦ 2⁻¹ * N ε ε' u {a})
+      fun a ha ↦ (L0_of_bob hu ha).1, Measure.geomMean_mul, Measure.geomMean_const,
+    geomMean_eq_exp_neg_measureEntropy, N, Kernel.ofFunOfCountable_apply,
+    measureEntropy_bernoulliMeasure hslip]
+
+theorem geomPool_both {u : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) :
+    geomPool (N ε ε') (L0 ε ε') u {.both} = 2⁻¹ := by
+  rw [geomPool_apply_singleton]
+  exact Measure.geomMean_of_forall_eq fun a ha ↦ (L0_of_bob hu ha).2
+
+theorem geomMean_belief_onlyBob (u : Utterance) :
+    (belief .onlyBob).geomMean (fun w ↦ geomPool (N ε ε') (L0 ε ε') u {w}) =
+      geomPool (N ε ε') (L0 ε ε') u {.onlyBob} := by
+  rw [belief, Measure.geomMean_dirac]
+
+theorem geomMean_belief_bobAtLeast {u : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) :
+    (belief .bobAtLeast).geomMean (fun w ↦ geomPool (N ε ε') (L0 ε ε') u {w}) =
+      geomPool (N ε ε') (L0 ε ε') u {.onlyBob} ^ (2⁻¹ : ℝ) * 2⁻¹ ^ (2⁻¹ : ℝ) := by
+  rw [belief, Measure.geomMean, prod_univ_mean, uniformOn_finset_real_singleton,
+    uniformOn_finset_real_singleton, uniformOn_finset_real_singleton, geomPool_both hu]
+  simp
+
+private theorem S1_real_div (o : Observation) {u : Utterance}
+    (h : (belief o).geomMean (fun w ↦ geomPool (N ε ε') (L0 ε ε') u {w}) ≠ 0) (u' : Utterance) :
+    (S1 ε ε' o).real {u'} / (S1 ε ε' o).real {u} =
+      ((belief o).geomMean fun w ↦ geomPool (N ε ε') (L0 ε ε') u' {w}).toReal /
+        ((belief o).geomMean fun w ↦ geomPool (N ε ε') (L0 ε ε') u {w}).toReal := by
+  have hw (v : Utterance) :
+      (belief o).geomMean (fun w ↦ geomPool (N ε ε') (L0 ε ε') v {w}) ≠ ∞ :=
+    Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _
+  have hZ : ∑ v, ((belief o).geomMean fun w ↦ geomPool (N ε ε') (L0 ε ε') v {w}).toReal ≠ 0 := by
+    refine (sum_pos' (fun _ _ ↦ ENNReal.toReal_nonneg) ⟨u, mem_univ u, ?_⟩).ne'
+    exact ENNReal.toReal_pos h (hw u)
+  simp only [S1, speaker, ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, exp_zero,
     ENNReal.ofReal_one, mul_one]
-  rw [hb, hB, ENNReal.ofReal_lt_ofReal_iff (by positivity)]
-  refine div_lt_div_of_pos_right (exp_lt_exp.2 (neg_lt_neg ?_)) two_pos
-  exact binEntropy_strictMonoOn ⟨by linarith, by norm_num; linarith⟩
-    ⟨hε₀.le, by norm_num; linarith⟩ (by linarith)
+  rw [Kernel.ofWeights_real_singleton _ _ hw, Kernel.ofWeights_real_singleton _ _ hw,
+    div_div_div_cancel_right₀ hZ]
 
-/-- `uttOf` reads a row's `stress` feature as an utterance. -/
+private theorem geomPool_onlyBob_ne_zero {u : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) :
+    geomPool (N ε ε') (L0 ε ε') u {.onlyBob} ≠ 0 := by
+  rw [geomPool_onlyBob hu]
+  exact mul_ne_zero (by simp) (ENNReal.ofReal_pos.mpr (exp_pos _)).ne'
+
+theorem stressOdds_onlyBob :
+    stressOdds ε ε' .onlyBob = exp (binEntropy ε - binEntropy ε') := by
+  rw [stressOdds, S1_real_div .onlyBob (by
+      rw [geomMean_belief_onlyBob]; exact geomPool_onlyBob_ne_zero (.inl rfl)),
+    geomMean_belief_onlyBob, geomMean_belief_onlyBob, geomPool_onlyBob (.inr rfl),
+    geomPool_onlyBob (.inl rfl)]
+  simp only [rate, ENNReal.toReal_mul, ENNReal.toReal_ofReal (exp_pos _).le]
+  rw [mul_div_mul_left _ _ (by simp), ← exp_sub]
+  ring_nf
+
+-- The odds with which a speaker who knows only that Bob went stresses "Bob" are the square root
+-- of the odds of a speaker who knows that only Bob went.
+theorem stressOdds_bobAtLeast :
+    stressOdds ε ε' .bobAtLeast = √(stressOdds ε ε' .onlyBob) := by
+  rw [stressOdds, stressOdds, S1_real_div .bobAtLeast (by
+      rw [geomMean_belief_bobAtLeast (.inl rfl)]
+      exact mul_ne_zero (ENNReal.rpow_pos (pos_iff_ne_zero.mpr
+        (geomPool_onlyBob_ne_zero (.inl rfl))) (measure_ne_top _ _)).ne' (by simp)),
+    S1_real_div .onlyBob (by
+      rw [geomMean_belief_onlyBob]; exact geomPool_onlyBob_ne_zero (.inl rfl)),
+    geomMean_belief_bobAtLeast (.inr rfl), geomMean_belief_bobAtLeast (.inl rfl),
+    geomMean_belief_onlyBob, geomMean_belief_onlyBob]
+  simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow]
+  rw [mul_div_mul_right _ _ (by simp), ← div_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg,
+    sqrt_eq_rpow, one_div]
+
+private theorem binEntropy_lt (hε' : ε' < ε) (hε : (ε : ℝ) ≤ 2⁻¹) :
+    binEntropy ε' < binEntropy ε :=
+  binEntropy_strictMonoOn ⟨ε'.2.1, by linarith [Subtype.coe_lt_coe.mpr hε']⟩ ⟨ε.2.1, hε⟩
+    (Subtype.coe_lt_coe.mpr hε')
+
+/-- A speaker who knows that only Bob went prefers "BOB went" to "Bob went", at any stressed rate
+below an unstressed rate of at most a half. -/
+theorem S1_bobWent_lt_BOB_went (hε' : ε' < ε) (hε : (ε : ℝ) ≤ 2⁻¹) :
+    (S1 ε ε' .onlyBob).real {.bobWent} < (S1 ε ε' .onlyBob).real {.BOB_went} := by
+  have h0 : ∀ w, belief .onlyBob {w} ≠ 0 → geomPool (N ε ε') (L0 ε ε') .bobWent {w} ≠ 0 :=
+    fun w hw ↦ by
+      obtain rfl : w = .onlyBob := by
+        by_contra h
+        exact hw (by rw [belief, Measure.dirac_apply' _ (.singleton w),
+          Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr (Ne.symm h))])
+      exact geomPool_onlyBob_ne_zero (.inl rfl)
+  have hpos : 0 < (S1 ε ε' .onlyBob).real {.bobWent} :=
+    ENNReal.toReal_pos (speaker_apply_singleton_ne_zero zero_le_one h0) (measure_ne_top _ _)
+  rw [← one_lt_div hpos, ← stressOdds, stressOdds_onlyBob, one_lt_exp_iff, sub_pos]
+  exact binEntropy_lt hε' hε
+
+/-- A speaker who knows only that Bob went is less likely to stress "Bob" than one who knows that
+only Bob went. -/
+theorem stressOdds_bobAtLeast_lt_onlyBob (hε' : ε' < ε) (hε : (ε : ℝ) ≤ 2⁻¹) :
+    stressOdds ε ε' .bobAtLeast < stressOdds ε ε' .onlyBob := by
+  rw [stressOdds_bobAtLeast, stressOdds_onlyBob, ← exp_half, exp_lt_exp]
+  linarith [binEntropy_lt hε' hε]
+
+/-- `uttOf` reads a row's `stress` feature as a sentence about Bob. -/
 def uttOf (row : Datum) : Option Utterance :=
   match row.feature? "stress" with
   | some "subject" => some .BOB_went
-  | some "none"    => some .bobWent
-  | _              => none
+  | some "none" => some .bobWent
+  | _ => none
 
+/-- `observationOf` reads a row's `reading` feature as what the speaker has observed. -/
+def observationOf (row : Datum) : Option Observation :=
+  match row.feature? "reading" with
+  | some "exhaustive" => some .onlyBob
+  | some "nonExhaustive" => some .bobAtLeast
+  | _ => none
+
+-- At the paper's rate of 1%, halved by stress, the speaker whose knowledge the stressed row's
+-- reading attributes prefers the stressed form, and more strongly than the speaker of the
+-- unstressed row's reading.
 theorem model_matches_stress_rows :
-    ∃ u_s u_u, uttOf Examples.stressed_subject = some u_s ∧
+    ∃ u_s u_u o_s o_u, uttOf Examples.stressed_subject = some u_s ∧
       uttOf Examples.unstressed_subject = some u_u ∧
-      (S1 (1 / 100) .onlyBob).real {u_u} < (S1 (1 / 100) .onlyBob).real {u_s} :=
-  ⟨_, _, rfl, rfl, S1_bobWent_lt_BOB_went (by norm_num) (by norm_num)⟩
+      observationOf Examples.stressed_subject = some o_s ∧
+      observationOf Examples.unstressed_subject = some o_u ∧
+      let ε : I := ⟨1 / 100, by norm_num, by norm_num⟩
+      let ε' : I := ⟨1 / 200, by norm_num, by norm_num⟩
+      (S1 ε ε' o_s).real {u_u} < (S1 ε ε' o_s).real {u_s} ∧
+        (S1 ε ε' o_u).real {u_s} / (S1 ε ε' o_u).real {u_u} <
+          (S1 ε ε' o_s).real {u_s} / (S1 ε ε' o_s).real {u_u} :=
+  have hε' : (⟨1 / 200, by norm_num, by norm_num⟩ : I) < ⟨1 / 100, by norm_num, by norm_num⟩ :=
+    Subtype.mk_lt_mk.mpr (by norm_num)
+  ⟨_, _, _, _, rfl, rfl, rfl, rfl, S1_bobWent_lt_BOB_went hε' (by norm_num),
+    stressOdds_bobAtLeast_lt_onlyBob hε' (by norm_num)⟩
 
 end Prosody
 

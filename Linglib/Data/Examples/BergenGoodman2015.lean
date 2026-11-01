@@ -15,6 +15,19 @@ this module; declarations live in `namespace BergenGoodman2015.Examples`.
 
 namespace BergenGoodman2015.Examples
 
+def fragment_answer : Datum :=
+  { id := "bergengoodman2015_fragment_answer"
+    source := ⟨"bergen-goodman-2015", "(1)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Bob"
+    glossedTokens := []
+    context := "A: Who went to the movies?"
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("fragment", "Bob"), ("proposition", "Bob went to the movies")] }
+
 def stressed_subject : Datum :=
   { id := "bergengoodman2015_stressed_subject"
     source := ⟨"bergen-goodman-2015", "(2)"⟩
@@ -41,6 +54,6 @@ def unstressed_subject : Datum :=
     readings := []
     paperFeatures := [("stress", "none"), ("reading", "nonExhaustive")] }
 
-def all : List Datum := [stressed_subject, unstressed_subject]
+def all : List Datum := [fragment_answer, stressed_subject, unstressed_subject]
 
 end BergenGoodman2015.Examples
