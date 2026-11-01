@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
-public import Linglib.Core.Probability.PolyaUrn
+public import Linglib.Core.Probability.Distributions.PolyaUrn
 public import Mathlib.Basic.ENNReal.BigOperators
 
 /-!
