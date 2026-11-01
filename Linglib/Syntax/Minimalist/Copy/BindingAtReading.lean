@@ -1214,7 +1214,8 @@ private theorem distinct_of_mem {v : CopyMark × Vertex} {cs : List MT} {c : MT}
 
 /-- Only a reading's tests of a copy with a marked copy matter. -/
 private theorem lfBy_congr {P Q : MT → Prop} [DecidablePred P] [DecidablePred Q] {T : MT}
-    (h : ∀ r ∈ T.subtrees, (r.value.1.isSome ∨ ∃ q ∈ T.subtrees, q.value.1.isSome ∧ termOf q = termOf r) → (P r ↔ Q r))
+    (h : ∀ r ∈ T.subtrees, (r.value.1.isSome ∨
+      ∃ q ∈ T.subtrees, q.value.1.isSome ∧ termOf q = termOf r) → (P r ↔ Q r))
     {s : MT} (hs : s ∈ T.subtrees) : lfBy P s = lfBy Q s := by
   induction s with
   | node v cs ih =>
@@ -1251,7 +1252,8 @@ private theorem lfBy_congr {P Q : MT → Prop} [DecidablePred P] [DecidablePred 
 
 /-- On a copy with a marked copy, the reading `carrying y` is the test that the copy holds `y`. -/
 private theorem readLow_carrying_iff (t : Marked) {r : MT}
-    (hrel : r.value.1.isSome ∧ r ∈ t.val.subtrees ∨ ∃ q ∈ t.val.subtrees, q.value.1.isSome ∧ termOf q = termOf r) :
+    (hrel : r.value.1.isSome ∧ r ∈ t.val.subtrees ∨
+      ∃ q ∈ t.val.subtrees, q.value.1.isSome ∧ termOf q = termOf r) :
     ReadLow (t.carrying y) r ↔ Has y r := by
   obtain ⟨q₀, hq₀, hk₀, ht₀⟩ : ∃ q ∈ t.val.subtrees, q.value.1.isSome ∧ termOf q = termOf r := by
     rcases hrel with ⟨hk, hr⟩ | h
