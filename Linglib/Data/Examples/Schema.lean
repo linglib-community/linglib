@@ -49,7 +49,7 @@ sentence-level counterpart of `Data/Wordlist/`.
   judgment is of the last utterance in the context of the others.
 * `paperFeatures` are the paper's own columns: what the paper states about the datum, such as
   the cell of its design or the class it assigns. The results a paper prints for an experiment
-  belong in `Data/Experiments/`, and an analysis the formaliser derives belongs in the study. A key
+  belong in `Data/Statistics/`, and an analysis the formaliser derives belongs in the study. A key
   repeats when the expression bears the property twice (two indefinite series in one clause), so
   the list is not a map: `feature?` reads the first value, `features` every value.
 * The file imports no tactic library: every module with example data imports it, and names such

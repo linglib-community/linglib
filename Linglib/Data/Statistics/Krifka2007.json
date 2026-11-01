@@ -1,0 +1,358 @@
+{
+  "meta": {
+    "bibkey": "krifka-2007",
+    "method": "corpus",
+    "description": "Krifka's own corpus counts behind the alignment of expression simplicity with representation simplicity. Average syllable counts of English number words on scales of different granularity, and Google occurrence counts of March 4, 2005 for the words for the multiples of ten from 20 to 90 in decimal Norwegian and vigesimal Danish.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "SyllableScale",
+      "doc": "A scale whose number words are counted for syllables.",
+      "levels": [
+        {
+          "name": "ones",
+          "label": "ones",
+          "doc": "*one, two, three, four, ... one hundred*"
+        },
+        {
+          "name": "fives",
+          "label": "fives",
+          "doc": "*one, five, ten, fifteen, ... one hundred*"
+        },
+        {
+          "name": "tens",
+          "label": "tens",
+          "doc": "*one, ten, twenty, thirty, ... one hundred*"
+        },
+        {
+          "name": "threes",
+          "label": "threes",
+          "doc": "*three, six, nine, twelve, ... ninety-nine*, the odd scale no decimal granularity motivates"
+        },
+        {
+          "name": "monthsByOne",
+          "label": "months by one",
+          "doc": "ages of young children in months, 1 to 24"
+        },
+        {
+          "name": "monthsCoarse",
+          "label": "months coarse",
+          "doc": "ages of young children at 1, 3, 6, 9, 12, 15, 18, 21 and 24 months"
+        }
+      ]
+    },
+    {
+      "name": "Language",
+      "doc": "The two Scandinavian languages compared.",
+      "levels": [
+        {
+          "name": "norwegian",
+          "label": "Norwegian",
+          "doc": "decimal number system"
+        },
+        {
+          "name": "danish",
+          "label": "Danish",
+          "doc": "vigesimal number system from 50 up"
+        }
+      ]
+    },
+    {
+      "name": "Word",
+      "doc": "A Norwegian or Danish word for a multiple of ten.",
+      "levels": [
+        {
+          "name": "tjue",
+          "label": "tjue",
+          "doc": "Norwegian 20"
+        },
+        {
+          "name": "tretti",
+          "label": "tretti",
+          "doc": "Norwegian 30"
+        },
+        {
+          "name": "foerti",
+          "label": "førti",
+          "doc": "Norwegian 40"
+        },
+        {
+          "name": "femti",
+          "label": "femti",
+          "doc": "Norwegian 50"
+        },
+        {
+          "name": "seksti",
+          "label": "seksti",
+          "doc": "Norwegian 60"
+        },
+        {
+          "name": "sytti",
+          "label": "sytti",
+          "doc": "Norwegian 70"
+        },
+        {
+          "name": "aatti",
+          "label": "åtti",
+          "doc": "Norwegian 80"
+        },
+        {
+          "name": "nitti",
+          "label": "nitti",
+          "doc": "Norwegian 90"
+        },
+        {
+          "name": "tyve",
+          "label": "tyve",
+          "doc": "Danish 20"
+        },
+        {
+          "name": "tredive",
+          "label": "tredive",
+          "doc": "Danish 30"
+        },
+        {
+          "name": "fyrre",
+          "label": "fyrre",
+          "doc": "Danish 40"
+        },
+        {
+          "name": "halvtreds",
+          "label": "halvtreds",
+          "doc": "Danish 50, shortened from *halvtredsindstyve*, half-third-times-twenty"
+        },
+        {
+          "name": "tres",
+          "label": "tres",
+          "doc": "Danish 60, a score word"
+        },
+        {
+          "name": "halvfjerds",
+          "label": "halvfjerds",
+          "doc": "Danish 70, a half-score word"
+        },
+        {
+          "name": "firs",
+          "label": "firs",
+          "doc": "Danish 80, a score word"
+        },
+        {
+          "name": "halvfems",
+          "label": "halvfems",
+          "doc": "Danish 90, a half-score word"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "halvtredsindstyveCount",
+      "type": "nat",
+      "value": 1180,
+      "doc": "Occurrences of the complete Danish form *halvtredsindstyve* for 50.",
+      "locator": "(27) discussion, manuscript p. 10",
+      "verified": "page-image"
+    },
+    {
+      "name": "danishFemtiCount",
+      "type": "nat",
+      "value": 988,
+      "doc": "Occurrences of the mostly monetary Danish form *femti* for 50.",
+      "locator": "(27) discussion, manuscript p. 10",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "syllableCounts",
+      "method": "lexicon",
+      "structure": "SyllableCount",
+      "doc": "the total syllables and the number of words on each scale.",
+      "locator": "(19), (20), manuscript p. 8; (22) averages, manuscript p. 9",
+      "verified": "page-image",
+      "key": [
+        "scale"
+      ],
+      "columns": [
+        {
+          "name": "scale",
+          "type": "SyllableScale",
+          "doc": "The scale counted."
+        },
+        {
+          "name": "syllables",
+          "type": "nat",
+          "doc": "The total syllables of its number words."
+        },
+        {
+          "name": "words",
+          "type": "nat",
+          "doc": "The number of its number words."
+        }
+      ],
+      "rows": [
+        {
+          "scale": "ones",
+          "syllables": 273,
+          "words": 100
+        },
+        {
+          "scale": "fives",
+          "syllables": 46,
+          "words": 20
+        },
+        {
+          "scale": "tens",
+          "syllables": 21,
+          "words": 10
+        },
+        {
+          "scale": "threes",
+          "syllables": 92,
+          "words": 33
+        },
+        {
+          "scale": "months by one",
+          "syllables": 44,
+          "words": 24
+        },
+        {
+          "scale": "months coarse",
+          "syllables": 25,
+          "words": 9
+        }
+      ]
+    },
+    {
+      "name": "counts",
+      "structure": "WordCount",
+      "doc": "the Google occurrence counts of March 4, 2005 for each word.",
+      "locator": "(27), manuscript p. 10",
+      "verified": "page-image",
+      "key": [
+        "word"
+      ],
+      "columns": [
+        {
+          "name": "word",
+          "type": "Word",
+          "doc": "The word."
+        },
+        {
+          "name": "language",
+          "type": "Language",
+          "doc": "Its language."
+        },
+        {
+          "name": "number",
+          "type": "nat",
+          "doc": "The multiple of ten it names."
+        },
+        {
+          "name": "count",
+          "type": "nat",
+          "doc": "Its occurrences."
+        }
+      ],
+      "rows": [
+        {
+          "word": "tjue",
+          "language": "Norwegian",
+          "number": 20,
+          "count": 61300
+        },
+        {
+          "word": "tretti",
+          "language": "Norwegian",
+          "number": 30,
+          "count": 43700
+        },
+        {
+          "word": "førti",
+          "language": "Norwegian",
+          "number": 40,
+          "count": 39200
+        },
+        {
+          "word": "femti",
+          "language": "Norwegian",
+          "number": 50,
+          "count": 81200
+        },
+        {
+          "word": "seksti",
+          "language": "Norwegian",
+          "number": 60,
+          "count": 19400
+        },
+        {
+          "word": "sytti",
+          "language": "Norwegian",
+          "number": 70,
+          "count": 10200
+        },
+        {
+          "word": "åtti",
+          "language": "Norwegian",
+          "number": 80,
+          "count": 13100
+        },
+        {
+          "word": "nitti",
+          "language": "Norwegian",
+          "number": 90,
+          "count": 13500
+        },
+        {
+          "word": "tyve",
+          "language": "Danish",
+          "number": 20,
+          "count": 121000
+        },
+        {
+          "word": "tredive",
+          "language": "Danish",
+          "number": 30,
+          "count": 25400
+        },
+        {
+          "word": "fyrre",
+          "language": "Danish",
+          "number": 40,
+          "count": 26800
+        },
+        {
+          "word": "halvtreds",
+          "language": "Danish",
+          "number": 50,
+          "count": 15500
+        },
+        {
+          "word": "tres",
+          "language": "Danish",
+          "number": 60,
+          "count": 36400
+        },
+        {
+          "word": "halvfjerds",
+          "language": "Danish",
+          "number": 70,
+          "count": 581
+        },
+        {
+          "word": "firs",
+          "language": "Danish",
+          "number": 80,
+          "count": 3740
+        },
+        {
+          "word": "halvfems",
+          "language": "Danish",
+          "number": 90,
+          "count": 540
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
-public import Linglib.Data.Experiments.Burnett2019
+public import Linglib.Data.Statistics.Burnett2019
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Studies.Eckert2008

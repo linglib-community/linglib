@@ -6,7 +6,7 @@ public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Logic.Team.Inquisitive
 public import Linglib.Data.Examples.BadeEtAl2022
-public import Linglib.Data.Experiments.BadeEtAl2022
+public import Linglib.Data.Statistics.BadeEtAl2022
 
 /-!
 # Bade, Picat, Chung and Mascarenhas (2022): Alternatives and attention in language and reasoning
@@ -32,7 +32,7 @@ prior asymmetry (`Erotetic.posterior_eq_iff`). The shared apparatus lives in
 excludability asymmetry is derived (`might_not_excludable`, `allowed_excludable`), as is the
 fact that the revised flat premise disarms it for both modals (`revised_flat_not_excludable`).
 
-The experiment's printed contrasts live in `Data.Experiments.BadeEtAl2022`, and §3.2's anatomy
+The experiment's printed contrasts live in `Data.Statistics.BadeEtAl2022`, and §3.2's anatomy
 of the illusion is read off the paper's verdict rows: *might* satisfies criteria A–C
 (`might_anatomy`) while *allowed to* fails the order and dynamics criteria
 (`allowed_not_anatomy`), the paper's ground for classifying the deontic fallacies — about 50%,

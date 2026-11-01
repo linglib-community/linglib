@@ -5,7 +5,7 @@ Every verdict on the page comes from `scripts/eval_page/Export.lean`, which read
 `Eval` and `Lab` about an `Eval.Experiment`, instantiates them at each theory and each cell, and
 reduces their right-hand sides with Lean. The page lays out whatever experiments those theorems
 are about, so a new experiment needs no change here. This script adds what the page shows around
-the verdicts: labels and printed numbers from `Linglib/Data/Experiments/<Paper>.json`, author-year
+the verdicts: labels and printed numbers from `Linglib/Data/Statistics/<Paper>.json`, author-year
 citations from `references.bib`, and links to each theorem's documentation. It types no verdict by
 hand.
 
@@ -35,7 +35,7 @@ EXPORT = ROOT / "scripts" / "eval_page" / "Export.lean"
 TEMPLATE = ROOT / "scripts" / "eval_page" / "template.html"
 DEFAULT_JSON = ROOT / ".lake" / "build" / "eval-page" / "verdicts.json"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "eval-page"
-DATA = ROOT / "Linglib" / "Data" / "Experiments"
+DATA = ROOT / "Linglib" / "Data" / "Statistics"
 LIBRARIES = ["Eval", "Lab"]
 # The project the page belongs to, cited from `references.bib`.
 PROJECT = "chemla-spector-kalomoiros-schlenker-2026"

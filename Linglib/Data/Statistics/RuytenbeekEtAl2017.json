@@ -1,0 +1,413 @@
+{
+  "meta": {
+    "bibkey": "ruytenbeek-etal-2017",
+    "method": "experiment",
+    "description": "A corpus count of two French interrogative requests and two eye-tracking studies in which participants heard a sentence about a grid of shapes and either answered it with a yes/no (Study 1) or true/false (Study 2) button or moved the shape it mentions. The response times are mixed-model estimates with 95% confidence intervals; the interpretations table records the paper's verbal findings, since the response proportions and fixation durations are only plotted, in figures this manuscript does not contain. Page numbers are those of the authors' manuscript.",
+    "rawData": [
+      {
+        "url": "https://osf.io/s9mq8/",
+        "doc": "the data of both studies, as the paper states; the project was not public when checked (2026-09-23)"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Study",
+      "doc": "The two experiments.",
+      "levels": [
+        {
+          "name": "one",
+          "label": "1",
+          "doc": "interrogatives against an imperative and a control question"
+        },
+        {
+          "name": "two",
+          "label": "2",
+          "doc": "declaratives against an imperative and a control declarative"
+        }
+      ]
+    },
+    {
+      "name": "Construction",
+      "doc": "The sentence types of the experiments, (17) to (27).",
+      "levels": [
+        {
+          "name": "imperative",
+          "label": "Imperative",
+          "doc": "Mettez le cercle rouge ..."
+        },
+        {
+          "name": "controlInterrogative",
+          "label": "Interrogative",
+          "doc": "Le cercle rouge est-il ...?"
+        },
+        {
+          "name": "canYou",
+          "label": "Can you",
+          "doc": "Pouvez-vous mettre ...?"
+        },
+        {
+          "name": "isItPossible",
+          "label": "Is it possible",
+          "doc": "Est-il possible de mettre ...?"
+        },
+        {
+          "name": "youMust",
+          "label": "You must",
+          "doc": "Vous devez mettre ..."
+        },
+        {
+          "name": "youCan",
+          "label": "You can",
+          "doc": "Vous pouvez mettre ..."
+        },
+        {
+          "name": "itIsPossible",
+          "label": "It is possible",
+          "doc": "Il est possible de mettre ..."
+        },
+        {
+          "name": "controlDeclarative",
+          "label": "Declarative",
+          "doc": "Le cercle rouge est ..."
+        }
+      ]
+    },
+    {
+      "name": "Form",
+      "doc": "The interrogative requests of the corpus count.",
+      "levels": [
+        {
+          "name": "pouvezVous",
+          "label": "Pouvez-vous VP ?",
+          "doc": "Can you VP?, with a singular addressee"
+        },
+        {
+          "name": "estIlPossible",
+          "label": "Est-il possible de VP ?",
+          "doc": "Is it possible to VP?"
+        }
+      ]
+    },
+    {
+      "name": "Response",
+      "doc": "The response a response time measures.",
+      "levels": [
+        {
+          "name": "move",
+          "label": "move",
+          "doc": "moving the shape the sentence mentions"
+        },
+        {
+          "name": "yes",
+          "label": "yes",
+          "doc": "the yes button of Study 1"
+        }
+      ]
+    },
+    {
+      "name": "Directiveness",
+      "doc": "How often a construction received directive interpretations, in the paper's words.",
+      "levels": [
+        {
+          "name": "almostOnly",
+          "label": "almost only",
+          "doc": "almost only directive interpretations"
+        },
+        {
+          "name": "sometimes",
+          "label": "sometimes",
+          "doc": "directive interpretations beside dominant or many non-directive ones"
+        },
+        {
+          "name": "never",
+          "label": "never",
+          "doc": "no directive interpretations"
+        }
+      ]
+    },
+    {
+      "name": "Answer",
+      "doc": "A yes-or-no finding.",
+      "levels": [
+        {
+          "name": "yes",
+          "label": "yes",
+          "doc": "yes"
+        },
+        {
+          "name": "no",
+          "label": "no",
+          "doc": "no"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "corpus",
+      "method": "corpus",
+      "structure": "CorpusCount",
+      "doc": "the Frantext tokens after 1900 of an interrogative request and the percentage coded as each use.",
+      "locator": "section 2.1, manuscript p. 7",
+      "verified": "page-image",
+      "key": [
+        "form"
+      ],
+      "columns": [
+        {
+          "name": "form",
+          "type": "Form",
+          "doc": "The construction."
+        },
+        {
+          "name": "tokens",
+          "type": "nat",
+          "doc": "The number of tokens."
+        },
+        {
+          "name": "indirectRequest",
+          "type": "nat",
+          "doc": "The percentage coded as indirect requests."
+        },
+        {
+          "name": "genuineQuestion",
+          "type": "nat",
+          "doc": "The percentage coded as genuine questions."
+        },
+        {
+          "name": "rhetoricalQuestion",
+          "type": "nat",
+          "doc": "The percentage coded as rhetorical questions."
+        }
+      ],
+      "rows": [
+        {
+          "form": "Pouvez-vous VP ?",
+          "tokens": 365,
+          "indirectRequest": 71,
+          "genuineQuestion": 25,
+          "rhetoricalQuestion": 4
+        },
+        {
+          "form": "Est-il possible de VP ?",
+          "tokens": 63,
+          "indirectRequest": 16,
+          "genuineQuestion": 70,
+          "rhetoricalQuestion": 14
+        }
+      ]
+    },
+    {
+      "name": "responseTimes",
+      "structure": "ResponseTime",
+      "doc": "the model estimate of the response time of a response to a construction, with its 95% confidence interval, in milliseconds.",
+      "locator": "sections 2.3 and 3.3, manuscript pp. 11 and 15",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "study",
+          "type": "Study",
+          "doc": "The study."
+        },
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The construction."
+        },
+        {
+          "name": "response",
+          "type": "Response",
+          "doc": "The response."
+        },
+        {
+          "name": "estimate",
+          "type": "nat",
+          "doc": "The estimate."
+        },
+        {
+          "name": "ciLow",
+          "type": "nat",
+          "doc": "The lower bound of the confidence interval, as printed."
+        },
+        {
+          "name": "ciHigh",
+          "type": "nat",
+          "doc": "The upper bound, as printed."
+        }
+      ],
+      "rows": [
+        {
+          "study": "1",
+          "construction": "Imperative",
+          "response": "move",
+          "estimate": 2833,
+          "ciLow": 2500,
+          "ciHigh": 3165
+        },
+        {
+          "study": "1",
+          "construction": "Can you",
+          "response": "move",
+          "estimate": 2990,
+          "ciLow": 25345,
+          "ciHigh": 3635,
+          "note": "lower bound printed 25345, above the estimate"
+        },
+        {
+          "study": "1",
+          "construction": "Is it possible",
+          "response": "move",
+          "estimate": 2878,
+          "ciLow": 2237,
+          "ciHigh": 3518
+        },
+        {
+          "study": "1",
+          "construction": "Interrogative",
+          "response": "yes",
+          "estimate": 3707,
+          "ciLow": 3194,
+          "ciHigh": 4221
+        },
+        {
+          "study": "1",
+          "construction": "Can you",
+          "response": "yes",
+          "estimate": 4729,
+          "ciLow": 4162,
+          "ciHigh": 5296
+        },
+        {
+          "study": "1",
+          "construction": "Is it possible",
+          "response": "yes",
+          "estimate": 4409,
+          "ciLow": 3903,
+          "ciHigh": 4916
+        },
+        {
+          "study": "2",
+          "construction": "You must",
+          "response": "move",
+          "estimate": 3133,
+          "ciLow": 2675,
+          "ciHigh": 3591
+        },
+        {
+          "study": "2",
+          "construction": "Imperative",
+          "response": "move",
+          "estimate": 2953,
+          "ciLow": 2509,
+          "ciHigh": 3397
+        },
+        {
+          "study": "2",
+          "construction": "You can",
+          "response": "move",
+          "estimate": 3146,
+          "ciLow": 2590,
+          "ciHigh": 3701
+        },
+        {
+          "study": "2",
+          "construction": "It is possible",
+          "response": "move",
+          "estimate": 3184,
+          "ciLow": 2570,
+          "ciHigh": 3797
+        }
+      ]
+    },
+    {
+      "name": "interpretations",
+      "structure": "Interpretation",
+      "doc": "how often a construction received directive interpretations, and whether those drew fixations on the answer buttons or response times above the imperative's.",
+      "locator": "sections 2.3-2.4 and 3.3-3.4, manuscript pp. 10-11 and 14-15",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "study",
+          "type": "Study",
+          "doc": "The study."
+        },
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The construction."
+        },
+        {
+          "name": "directive",
+          "type": "Directiveness",
+          "doc": "How often it was interpreted as a directive."
+        },
+        {
+          "name": "answerActivity",
+          "type": "option Answer",
+          "doc": "Whether its directive interpretations showed activity toward answering: fixations on the answer buttons or longer response times than the imperative; none when it had none."
+        }
+      ],
+      "rows": [
+        {
+          "study": "1",
+          "construction": "Imperative",
+          "directive": "almost only",
+          "answerActivity": "no",
+          "note": "the control directive; its fixations and response times are the baseline"
+        },
+        {
+          "study": "1",
+          "construction": "Interrogative",
+          "directive": "never",
+          "answerActivity": null,
+          "note": "the control question, from the design; its yes responses are the question baseline"
+        },
+        {
+          "study": "1",
+          "construction": "Can you",
+          "directive": "sometimes",
+          "answerActivity": "no"
+        },
+        {
+          "study": "1",
+          "construction": "Is it possible",
+          "directive": "sometimes",
+          "answerActivity": "no"
+        },
+        {
+          "study": "2",
+          "construction": "You must",
+          "directive": "almost only",
+          "answerActivity": "no"
+        },
+        {
+          "study": "2",
+          "construction": "Imperative",
+          "directive": "almost only",
+          "answerActivity": "no",
+          "note": "nine true/false responses excluded"
+        },
+        {
+          "study": "2",
+          "construction": "You can",
+          "directive": "sometimes",
+          "answerActivity": "no"
+        },
+        {
+          "study": "2",
+          "construction": "It is possible",
+          "directive": "sometimes",
+          "answerActivity": "no"
+        },
+        {
+          "study": "2",
+          "construction": "Declarative",
+          "directive": "never",
+          "answerActivity": null,
+          "note": "the control statement, from the design"
+        }
+      ]
+    }
+  ]
+}

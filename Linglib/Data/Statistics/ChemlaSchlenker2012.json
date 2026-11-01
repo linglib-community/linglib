@@ -1,0 +1,734 @@
+{
+  "meta": {
+    "bibkey": "chemla-schlenker-2012",
+    "method": "experiment",
+    "description": "Five experiments on French sentences with the anaphoric trigger aussi ('too') in if-, or- and unless-sentences, in the canonical order, where the clause that can satisfy the presupposition precedes the trigger, and the inverse order, where it follows. Experiments 1 and 4 collected inferential judgments, rating on a continuous scale from no to yes whether the conditional or the unconditional presupposition follows from a sentence; Experiments 2, 3 and 5 collected acceptability judgments, with control sentences for local accommodation with too and with the, a justified presupposition and no presupposition. Experiments 1 and 2 were run on one group of participants, 3 and 4 on a second, and 5, with complex fillers, on a third (Table 3). The tables print means and, for the inferential experiments, one-way ANOVAs comparing the two inferences; standard errors are shown only as error bars and are not recorded.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Construction",
+      "doc": "The connective of a target sentence (§2.5, (48)–(49)).",
+      "levels": [
+        {
+          "name": "ifSentence",
+          "label": "if",
+          "doc": "a conditional, 'if p, qq'' or 'if not qq', not p'"
+        },
+        {
+          "name": "orSentence",
+          "label": "or",
+          "doc": "a disjunction, '(not p) or qq'' or 'qq' or (not p)'"
+        },
+        {
+          "name": "unlessSentence",
+          "label": "unless",
+          "doc": "an unless-sentence, 'unless qq', not p'; only the inverse order was tested"
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "doc": "The order of the trigger and the clause that can satisfy its presupposition ((48)–(49)).",
+      "levels": [
+        {
+          "name": "canonical",
+          "label": "canonical",
+          "doc": "the satisfying clause precedes the trigger"
+        },
+        {
+          "name": "inverse",
+          "label": "inverse",
+          "doc": "the trigger precedes the satisfying clause"
+        }
+      ]
+    },
+    {
+      "name": "Inference",
+      "doc": "The inference rated in the inferential judgment task ((56)).",
+      "levels": [
+        {
+          "name": "conditional",
+          "label": "conditional",
+          "doc": "the conditional presupposition, 'studying abroad would be stupid of Ann'"
+        },
+        {
+          "name": "unconditional",
+          "label": "unconditional",
+          "doc": "the unconditional presupposition, 'Ann will make a stupid decision'"
+        }
+      ]
+    },
+    {
+      "name": "Control",
+      "doc": "The control sentences of the acceptability judgment tasks ((57)–(60)).",
+      "levels": [
+        {
+          "name": "localAccommodationToo",
+          "label": "(57) local accommodation too",
+          "doc": "a negated too-sentence whose presupposition must be accommodated locally"
+        },
+        {
+          "name": "justifiedPresupposition",
+          "label": "(58) justified presupposition",
+          "doc": "a too-sentence whose presupposition is satisfied by the preceding sentence"
+        },
+        {
+          "name": "nonPresuppositional",
+          "label": "(59) non presuppositional",
+          "doc": "the sentence without a trigger"
+        },
+        {
+          "name": "localAccommodationThe",
+          "label": "(60) local accommodation the",
+          "doc": "a negated definite description whose presupposition must be accommodated locally"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "participantsGroup1",
+      "type": "nat",
+      "value": 18,
+      "doc": "The participants of Experiments 1 and 2.",
+      "locator": "§3.1.1.1, p. 202",
+      "verified": "text-layer"
+    },
+    {
+      "name": "participantsGroup2",
+      "type": "nat",
+      "value": 17,
+      "doc": "The participants of Experiments 3 and 4.",
+      "locator": "§3.3.1.1, p. 210",
+      "verified": "text-layer"
+    },
+    {
+      "name": "participantsGroup3",
+      "type": "nat",
+      "value": 16,
+      "doc": "The participants of Experiment 5.",
+      "locator": "§3.4.1.1, p. 213",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "experiment1Inferences",
+      "structure": "Experiment1Inference",
+      "doc": "the mean rating of an inference drawn from a target sentence in Experiment 1.",
+      "locator": "Table 4, p. 206",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "inference",
+          "type": "Inference",
+          "doc": "The inference whose robustness is rated."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating, normalized per participant, as a percentage of the scale from no to yes."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "canonical",
+          "inference": "conditional",
+          "mean": "87"
+        },
+        {
+          "construction": "if",
+          "order": "canonical",
+          "inference": "unconditional",
+          "mean": "58"
+        },
+        {
+          "construction": "if",
+          "order": "inverse",
+          "inference": "conditional",
+          "mean": "73"
+        },
+        {
+          "construction": "if",
+          "order": "inverse",
+          "inference": "unconditional",
+          "mean": "49"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "inference": "conditional",
+          "mean": "75"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "inference": "unconditional",
+          "mean": "40"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "inference": "conditional",
+          "mean": "75"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "inference": "unconditional",
+          "mean": "58"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "inference": "conditional",
+          "mean": "67"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "inference": "unconditional",
+          "mean": "33"
+        }
+      ]
+    },
+    {
+      "name": "experiment1Tests",
+      "structure": "Experiment1Test",
+      "doc": "the one-way ANOVA comparing the two inferences from a target sentence in Experiment 1.",
+      "locator": "Table 4, p. 206",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "dfError",
+          "type": "nat",
+          "doc": "The error degrees of freedom of the one-way ANOVA F(1, dfError)."
+        },
+        {
+          "name": "f",
+          "type": "decimal",
+          "doc": "The F statistic."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        },
+        {
+          "name": "eta2",
+          "type": "decimal",
+          "doc": "The partial eta squared."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "canonical",
+          "dfError": 17,
+          "f": "32",
+          "p": "< 0.001",
+          "eta2": "0.40"
+        },
+        {
+          "construction": "if",
+          "order": "inverse",
+          "dfError": 17,
+          "f": "16",
+          "p": "< 0.001",
+          "eta2": "0.33"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "dfError": 17,
+          "f": "45",
+          "p": "< 0.001",
+          "eta2": "0.42"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "dfError": 17,
+          "f": "6.6",
+          "p": "< 0.05",
+          "eta2": "0.22"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "dfError": 17,
+          "f": "22",
+          "p": "< 0.001",
+          "eta2": "0.36"
+        }
+      ]
+    },
+    {
+      "name": "experiment2Targets",
+      "structure": "Experiment2Target",
+      "doc": "the mean acceptability of a target sentence in Experiment 2.",
+      "locator": "Table 5, p. 209",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean acceptability rating, as a percentage of the scale."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "inverse",
+          "mean": "60"
+        },
+        {
+          "construction": "if",
+          "order": "canonical",
+          "mean": "87"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "mean": "55"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "mean": "53"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "mean": "64"
+        }
+      ]
+    },
+    {
+      "name": "experiment2Controls",
+      "structure": "Experiment2Control",
+      "doc": "the mean acceptability of a control sentence in Experiment 2.",
+      "locator": "Table 5, p. 209",
+      "verified": "page-image",
+      "key": [
+        "control"
+      ],
+      "columns": [
+        {
+          "name": "control",
+          "type": "Control",
+          "doc": "The control sentence."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean acceptability rating, as a percentage of the scale."
+        }
+      ],
+      "rows": [
+        {
+          "control": "(57) local accommodation too",
+          "mean": "32"
+        },
+        {
+          "control": "(58) justified presupposition",
+          "mean": "80"
+        },
+        {
+          "control": "(59) non presuppositional",
+          "mean": "71"
+        },
+        {
+          "control": "(60) local accommodation the",
+          "mean": "54"
+        }
+      ]
+    },
+    {
+      "name": "experiment3Targets",
+      "structure": "Experiment3Target",
+      "doc": "the mean acceptability of a target sentence in Experiment 3.",
+      "locator": "Table 6, p. 211",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean acceptability rating, as a percentage of the scale."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "inverse",
+          "mean": "41"
+        },
+        {
+          "construction": "if",
+          "order": "canonical",
+          "mean": "83"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "mean": "36"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "mean": "30"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "mean": "42"
+        }
+      ]
+    },
+    {
+      "name": "experiment3Controls",
+      "structure": "Experiment3Control",
+      "doc": "the mean acceptability of a control sentence in Experiment 3.",
+      "locator": "Table 6, p. 211",
+      "verified": "page-image",
+      "key": [
+        "control"
+      ],
+      "columns": [
+        {
+          "name": "control",
+          "type": "Control",
+          "doc": "The control sentence."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean acceptability rating, as a percentage of the scale."
+        }
+      ],
+      "rows": [
+        {
+          "control": "(57) local accommodation too",
+          "mean": "28"
+        },
+        {
+          "control": "(58) justified presupposition",
+          "mean": "80"
+        },
+        {
+          "control": "(59) non presuppositional",
+          "mean": "78"
+        },
+        {
+          "control": "(60) local accommodation the",
+          "mean": "77"
+        }
+      ]
+    },
+    {
+      "name": "experiment4Inferences",
+      "structure": "Experiment4Inference",
+      "doc": "the mean rating of an inference drawn from a target sentence in Experiment 4.",
+      "locator": "Table 7, p. 212",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "inference",
+          "type": "Inference",
+          "doc": "The inference whose robustness is rated."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating, normalized per participant, as a percentage of the scale from no to yes."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "canonical",
+          "inference": "conditional",
+          "mean": "83"
+        },
+        {
+          "construction": "if",
+          "order": "canonical",
+          "inference": "unconditional",
+          "mean": "64"
+        },
+        {
+          "construction": "if",
+          "order": "inverse",
+          "inference": "conditional",
+          "mean": "61"
+        },
+        {
+          "construction": "if",
+          "order": "inverse",
+          "inference": "unconditional",
+          "mean": "50"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "inference": "conditional",
+          "mean": "64"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "inference": "unconditional",
+          "mean": "36"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "inference": "conditional",
+          "mean": "66"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "inference": "unconditional",
+          "mean": "54"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "inference": "conditional",
+          "mean": "63"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "inference": "unconditional",
+          "mean": "39"
+        }
+      ]
+    },
+    {
+      "name": "experiment4Tests",
+      "structure": "Experiment4Test",
+      "doc": "the one-way ANOVA comparing the two inferences from a target sentence in Experiment 4.",
+      "locator": "Table 7, p. 212",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "dfError",
+          "type": "nat",
+          "doc": "The error degrees of freedom of the one-way ANOVA F(1, dfError)."
+        },
+        {
+          "name": "f",
+          "type": "decimal",
+          "doc": "The F statistic."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        },
+        {
+          "name": "eta2",
+          "type": "decimal",
+          "doc": "The partial eta squared."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "canonical",
+          "dfError": 16,
+          "f": "11",
+          "p": "< 0.01",
+          "eta2": "0.29"
+        },
+        {
+          "construction": "if",
+          "order": "inverse",
+          "dfError": 16,
+          "f": "2.0",
+          "p": "0.18",
+          "eta2": "0.10"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "dfError": 16,
+          "f": "23",
+          "p": "< 0.001",
+          "eta2": "0.37"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "dfError": 16,
+          "f": "4.2",
+          "p": "0.056",
+          "eta2": "0.17"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "dfError": 16,
+          "f": "11",
+          "p": "< 0.01",
+          "eta2": "0.29"
+        }
+      ]
+    },
+    {
+      "name": "experiment5Targets",
+      "structure": "Experiment5Target",
+      "doc": "the mean acceptability of a target sentence in Experiment 5.",
+      "locator": "Table 8, p. 214",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "construction",
+          "type": "Construction",
+          "doc": "The connective of the target sentence."
+        },
+        {
+          "name": "order",
+          "type": "Order",
+          "doc": "The order of the trigger and the filtering clause."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean acceptability rating, as a percentage of the scale."
+        }
+      ],
+      "rows": [
+        {
+          "construction": "if",
+          "order": "inverse",
+          "mean": "52"
+        },
+        {
+          "construction": "if",
+          "order": "canonical",
+          "mean": "86"
+        },
+        {
+          "construction": "or",
+          "order": "inverse",
+          "mean": "49"
+        },
+        {
+          "construction": "or",
+          "order": "canonical",
+          "mean": "45"
+        },
+        {
+          "construction": "unless",
+          "order": "inverse",
+          "mean": "60"
+        }
+      ]
+    },
+    {
+      "name": "experiment5Controls",
+      "structure": "Experiment5Control",
+      "doc": "the mean acceptability of a control sentence in Experiment 5.",
+      "locator": "Table 8, p. 214",
+      "verified": "page-image",
+      "key": [
+        "control"
+      ],
+      "columns": [
+        {
+          "name": "control",
+          "type": "Control",
+          "doc": "The control sentence."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean acceptability rating, as a percentage of the scale."
+        }
+      ],
+      "rows": [
+        {
+          "control": "(57) local accommodation too",
+          "mean": "45"
+        },
+        {
+          "control": "(58) justified presupposition",
+          "mean": "78"
+        },
+        {
+          "control": "(59) non presuppositional",
+          "mean": "83"
+        },
+        {
+          "control": "(60) local accommodation the",
+          "mean": "77"
+        }
+      ]
+    }
+  ]
+}

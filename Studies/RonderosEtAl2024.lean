@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.RonderosEtAl2024
-public import Linglib.Data.Experiments.RonderosEtAl2024
+public import Linglib.Data.Statistics.RonderosEtAl2024
 public import Linglib.Semantics.Degree.Adjective
 public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Data.Finset.Basic
@@ -29,7 +29,7 @@ adjectives.
 * Salience and informativity are the paper's premises per adjective type, with size contrasts
   taken as perceptible, as the replicated scalar effect requires.
 * The findings are the statistics of the Results section, in
-  `Data/Experiments/RonderosEtAl2024.json`, pooled over English, Hindi and Hungarian, which the
+  `Data/Statistics/RonderosEtAl2024.json`, pooled over English, Hindi and Hungarian, which the
   paper's models treat as a grouping unit only. An effect is significant when its printed p-value
   is below 0.05.
 
@@ -49,7 +49,7 @@ adjectives.
 
 namespace RonderosEtAl2024
 
-open Data.Experiments
+open Data.Statistics
 
 /-! ### The paradigm (Figure 1) -/
 

@@ -37,7 +37,7 @@ the nouns (`of_iff_relational`, `de_of_relational`).
 
 The Studies' stimuli are printed unmarked, with mean ratings. The rating contrasts, that the bare
 noun bridges relationally better with relational *author* than with sortal *novelist* (Study 4)
-and that English *that* is degraded in bridging (Study 2), are results for `Data/Experiments`;
+and that English *that* is degraded in bridging (Study 2), are results for `Data/Statistics`;
 the claims over them are not yet stated.
 
 ## References

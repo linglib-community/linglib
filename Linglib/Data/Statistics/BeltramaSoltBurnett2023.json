@@ -1,0 +1,2290 @@
+{
+  "meta": {
+    "bibkey": "beltrama-solt-burnett-2023",
+    "method": "experiment",
+    "description": "Two social perception experiments on American English numerals. Precision (approximate *about fifty minutes*, underspecified *fifty minutes*, precise *forty-nine minutes*) was crossed with Scenario (For-the-record, Persuasive, Stranger, Bonding). Participants rated the speaker on ten seven-point scales, which a principal component analysis reduced to Status, Solidarity and anti-Solidarity composite scores. Experiment 1 recruited on Amazon Mechanical Turk with six written items per participant; Experiment 2 showed one illustrated item per participant.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Experiment",
+      "doc": "The two experiments.",
+      "levels": [
+        {
+          "name": "exp1",
+          "label": "Experiment 1",
+          "doc": "six items per participant in a partial Latin square, written scenarios"
+        },
+        {
+          "name": "exp2",
+          "label": "Experiment 2",
+          "doc": "one illustrated item per participant, fully between subjects"
+        }
+      ]
+    },
+    {
+      "name": "Variant",
+      "doc": "A level of the Precision manipulation.",
+      "levels": [
+        {
+          "name": "approximate",
+          "label": "Approximate",
+          "doc": "a round number under an approximator, *about fifty minutes*"
+        },
+        {
+          "name": "underspecified",
+          "label": "Underspecified",
+          "doc": "a bare round number, *fifty minutes*"
+        },
+        {
+          "name": "precise",
+          "label": "Precise",
+          "doc": "a bare sharp number, *forty-nine minutes*"
+        }
+      ]
+    },
+    {
+      "name": "Scenario",
+      "doc": "A level of the Scenario manipulation.",
+      "levels": [
+        {
+          "name": "forTheRecord",
+          "label": "For-the-record",
+          "doc": "testifying for the official record"
+        },
+        {
+          "name": "persuasive",
+          "label": "Persuasive",
+          "doc": "persuading an interlocutor to act"
+        },
+        {
+          "name": "stranger",
+          "label": "Stranger",
+          "doc": "small talk with a stranger"
+        },
+        {
+          "name": "bonding",
+          "label": "Bonding",
+          "doc": "getting to know new colleagues"
+        }
+      ]
+    },
+    {
+      "name": "Factor",
+      "doc": "A principal component of the ten scales, named for the dimension of social evaluation the paper takes it to be.",
+      "levels": [
+        {
+          "name": "status",
+          "label": "Status",
+          "doc": "factor 1"
+        },
+        {
+          "name": "solidarity",
+          "label": "Solidarity",
+          "doc": "factor 2"
+        },
+        {
+          "name": "antiSolidarity",
+          "label": "anti-Solidarity",
+          "doc": "factor 3"
+        }
+      ]
+    },
+    {
+      "name": "Scale",
+      "doc": "A seven-point evaluation scale.",
+      "levels": [
+        {
+          "name": "articulate",
+          "label": "Articulate",
+          "doc": "the speaker rated articulate"
+        },
+        {
+          "name": "intelligent",
+          "label": "Intelligent",
+          "doc": "the speaker rated intelligent"
+        },
+        {
+          "name": "confident",
+          "label": "Confident",
+          "doc": "the speaker rated confident"
+        },
+        {
+          "name": "trustworthy",
+          "label": "Trustworthy",
+          "doc": "the speaker rated trustworthy"
+        },
+        {
+          "name": "likable",
+          "label": "Likable",
+          "doc": "the speaker rated likable"
+        },
+        {
+          "name": "friendly",
+          "label": "Friendly",
+          "doc": "the speaker rated friendly"
+        },
+        {
+          "name": "cool",
+          "label": "Cool",
+          "doc": "the speaker rated cool"
+        },
+        {
+          "name": "laidBack",
+          "label": "Laid-back",
+          "doc": "the speaker rated laid-back"
+        },
+        {
+          "name": "pedantic",
+          "label": "Pedantic",
+          "doc": "the speaker rated pedantic"
+        },
+        {
+          "name": "uptight",
+          "label": "Uptight",
+          "doc": "the speaker rated uptight"
+        }
+      ]
+    },
+    {
+      "name": "Approximator",
+      "doc": "The approximator of an approximate numeral.",
+      "levels": [
+        {
+          "name": "about",
+          "label": "about",
+          "doc": "*about*"
+        },
+        {
+          "name": "around",
+          "label": "around",
+          "doc": "*around*"
+        }
+      ]
+    },
+    {
+      "name": "Comparison",
+      "doc": "A pair of Precision conditions the paper compares.",
+      "levels": [
+        {
+          "name": "preciseApproximate",
+          "label": "Precise vs. Approximate",
+          "doc": "the precise condition against the approximate one (model row 3)"
+        },
+        {
+          "name": "underspecifiedApproximate",
+          "label": "Underspecified vs. Approximate",
+          "doc": "the underspecified condition against the approximate one (model row 2)"
+        },
+        {
+          "name": "preciseUnderspecified",
+          "label": "Precise vs. Underspecified",
+          "doc": "the precise condition against the underspecified one (post-hoc)"
+        }
+      ]
+    },
+    {
+      "name": "Verdict",
+      "doc": "The paper's reading of a comparison of the first condition with the second.",
+      "levels": [
+        {
+          "name": "higher",
+          "label": "rated higher",
+          "doc": "rated higher"
+        },
+        {
+          "name": "lower",
+          "label": "rated lower",
+          "doc": "rated lower"
+        },
+        {
+          "name": "trendHigher",
+          "label": "trended higher",
+          "doc": "trended towards being rated higher"
+        },
+        {
+          "name": "noDifference",
+          "label": "did not differ",
+          "doc": "did not differ"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "exp1Recruited",
+      "type": "nat",
+      "value": 216,
+      "doc": "Participants recruited for Experiment 1, eighteen per list.",
+      "locator": "p. 812",
+      "verified": "page-image"
+    },
+    {
+      "name": "exp1Excluded",
+      "type": "nat",
+      "value": 61,
+      "doc": "Experiment 1 participants excluded for failing a comprehension check.",
+      "locator": "pp. 812–813",
+      "verified": "page-image"
+    },
+    {
+      "name": "exp1Items",
+      "type": "nat",
+      "value": 6,
+      "doc": "Experimental items of Experiment 1, each in twelve versions.",
+      "locator": "p. 812",
+      "verified": "page-image"
+    },
+    {
+      "name": "exp1Fillers",
+      "type": "nat",
+      "value": 6,
+      "doc": "Fillers per list in Experiment 1.",
+      "locator": "p. 812",
+      "verified": "page-image"
+    },
+    {
+      "name": "exp2Recruited",
+      "type": "nat",
+      "value": 960,
+      "doc": "Participants recruited for Experiment 2, eighty per condition.",
+      "locator": "p. 821",
+      "verified": "page-image"
+    },
+    {
+      "name": "exp2Excluded",
+      "type": "nat",
+      "value": 150,
+      "doc": "Experiment 2 participants excluded for failing the comprehension check.",
+      "locator": "p. 821",
+      "verified": "page-image"
+    },
+    {
+      "name": "scalePoints",
+      "type": "nat",
+      "value": 7,
+      "doc": "Points on each evaluation scale.",
+      "locator": "p. 812",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "stimuli",
+      "structure": "Stimulus",
+      "doc": "the two durations of the target utterance in each Precision condition, the usual one and the one since the storm.",
+      "locator": "p. 812, (2) (Experiment 1); p. 820, (3) (Experiment 2)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "variant"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "variant",
+          "type": "Variant",
+          "doc": "The Precision condition."
+        },
+        {
+          "name": "before",
+          "type": "nat",
+          "doc": "The usual duration, in minutes."
+        },
+        {
+          "name": "beforeApproximator",
+          "type": "option Approximator",
+          "doc": "Its approximator, if any."
+        },
+        {
+          "name": "after",
+          "type": "nat",
+          "doc": "The duration since the storm, in minutes."
+        },
+        {
+          "name": "afterApproximator",
+          "type": "option Approximator",
+          "doc": "Its approximator, if any."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "variant": "Approximate",
+          "before": 20,
+          "beforeApproximator": "around",
+          "after": 50,
+          "afterApproximator": "about"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Underspecified",
+          "before": 20,
+          "beforeApproximator": null,
+          "after": 50,
+          "afterApproximator": null
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Precise",
+          "before": 21,
+          "beforeApproximator": null,
+          "after": 49,
+          "afterApproximator": null
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Approximate",
+          "before": 20,
+          "beforeApproximator": "around",
+          "after": 50,
+          "afterApproximator": "about"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Underspecified",
+          "before": 20,
+          "beforeApproximator": null,
+          "after": 50,
+          "afterApproximator": null
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Precise",
+          "before": 21,
+          "beforeApproximator": null,
+          "after": 49,
+          "afterApproximator": null
+        }
+      ]
+    },
+    {
+      "name": "scales",
+      "structure": "ScaleGroup",
+      "doc": "the dimension each evaluation scale was included to measure, before the PCA.",
+      "locator": "p. 812",
+      "verified": "page-image",
+      "key": [
+        "scale"
+      ],
+      "columns": [
+        {
+          "name": "scale",
+          "type": "Scale",
+          "doc": "The scale."
+        },
+        {
+          "name": "dimension",
+          "type": "Factor",
+          "doc": "The dimension it was included to measure."
+        }
+      ],
+      "rows": [
+        {
+          "scale": "Articulate",
+          "dimension": "Status"
+        },
+        {
+          "scale": "Intelligent",
+          "dimension": "Status"
+        },
+        {
+          "scale": "Confident",
+          "dimension": "Status"
+        },
+        {
+          "scale": "Trustworthy",
+          "dimension": "Status"
+        },
+        {
+          "scale": "Likable",
+          "dimension": "Solidarity"
+        },
+        {
+          "scale": "Friendly",
+          "dimension": "Solidarity"
+        },
+        {
+          "scale": "Cool",
+          "dimension": "Solidarity"
+        },
+        {
+          "scale": "Laid-back",
+          "dimension": "Solidarity"
+        },
+        {
+          "scale": "Pedantic",
+          "dimension": "anti-Solidarity"
+        },
+        {
+          "scale": "Uptight",
+          "dimension": "anti-Solidarity"
+        }
+      ]
+    },
+    {
+      "name": "loadings",
+      "structure": "Loading",
+      "doc": "the varimax-rotated loading of a scale on a principal component, the paper taking factors 1, 2 and 3 to be Status, Solidarity and anti-Solidarity.",
+      "locator": "Table 1, p. 814 (Experiment 1); Table 3, p. 822 (Experiment 2)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "scale",
+        "factor"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "scale",
+          "type": "Scale",
+          "doc": "The scale."
+        },
+        {
+          "name": "factor",
+          "type": "Factor",
+          "doc": "The component."
+        },
+        {
+          "name": "loading",
+          "type": "decimal",
+          "doc": "The loading."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "scale": "Articulate",
+          "factor": "Status",
+          "loading": "0.81"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Articulate",
+          "factor": "Solidarity",
+          "loading": "0.09"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Articulate",
+          "factor": "anti-Solidarity",
+          "loading": "0.12"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Intelligent",
+          "factor": "Status",
+          "loading": "0.79"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Intelligent",
+          "factor": "Solidarity",
+          "loading": "0.16"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Intelligent",
+          "factor": "anti-Solidarity",
+          "loading": "0.05"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Confident",
+          "factor": "Status",
+          "loading": "0.81"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Confident",
+          "factor": "Solidarity",
+          "loading": "0.15"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Confident",
+          "factor": "anti-Solidarity",
+          "loading": "0.07"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Trustworthy",
+          "factor": "Status",
+          "loading": "0.71"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Trustworthy",
+          "factor": "Solidarity",
+          "loading": "0.33"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Trustworthy",
+          "factor": "anti-Solidarity",
+          "loading": "0.09"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Likable",
+          "factor": "Status",
+          "loading": "0.41"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Likable",
+          "factor": "Solidarity",
+          "loading": "0.74"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Likable",
+          "factor": "anti-Solidarity",
+          "loading": "0.02"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Friendly",
+          "factor": "Status",
+          "loading": "0.39"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Friendly",
+          "factor": "Solidarity",
+          "loading": "0.66"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Friendly",
+          "factor": "anti-Solidarity",
+          "loading": "0.02"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Cool",
+          "factor": "Status",
+          "loading": "0.24"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Cool",
+          "factor": "Solidarity",
+          "loading": "0.80"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Cool",
+          "factor": "anti-Solidarity",
+          "loading": "0.09"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Laid-back",
+          "factor": "Status",
+          "loading": "0.09"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Laid-back",
+          "factor": "Solidarity",
+          "loading": "0.84"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Laid-back",
+          "factor": "anti-Solidarity",
+          "loading": "0.10"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Pedantic",
+          "factor": "Status",
+          "loading": "0.08"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Pedantic",
+          "factor": "Solidarity",
+          "loading": "0.10"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Pedantic",
+          "factor": "anti-Solidarity",
+          "loading": "0.85"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Uptight",
+          "factor": "Status",
+          "loading": "0.11"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Uptight",
+          "factor": "Solidarity",
+          "loading": "0.00"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Uptight",
+          "factor": "anti-Solidarity",
+          "loading": "0.86"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Articulate",
+          "factor": "Status",
+          "loading": "0.84"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Articulate",
+          "factor": "Solidarity",
+          "loading": "0.14"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Articulate",
+          "factor": "anti-Solidarity",
+          "loading": "0.04"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Intelligent",
+          "factor": "Status",
+          "loading": "0.81"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Intelligent",
+          "factor": "Solidarity",
+          "loading": "0.09"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Intelligent",
+          "factor": "anti-Solidarity",
+          "loading": "0.01"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Confident",
+          "factor": "Status",
+          "loading": "0.80"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Confident",
+          "factor": "Solidarity",
+          "loading": "0.03"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Confident",
+          "factor": "anti-Solidarity",
+          "loading": "0.06"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Trustworthy",
+          "factor": "Status",
+          "loading": "0.77"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Trustworthy",
+          "factor": "Solidarity",
+          "loading": "0.28"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Trustworthy",
+          "factor": "anti-Solidarity",
+          "loading": "0.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Likable",
+          "factor": "Status",
+          "loading": "0.59"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Likable",
+          "factor": "Solidarity",
+          "loading": "0.66"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Likable",
+          "factor": "anti-Solidarity",
+          "loading": "0.04"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Friendly",
+          "factor": "Status",
+          "loading": "0.58"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Friendly",
+          "factor": "Solidarity",
+          "loading": "0.56"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Friendly",
+          "factor": "anti-Solidarity",
+          "loading": "0.02"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Cool",
+          "factor": "Status",
+          "loading": "0.44"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Cool",
+          "factor": "Solidarity",
+          "loading": "0.67"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Cool",
+          "factor": "anti-Solidarity",
+          "loading": "0.016"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Laid-back",
+          "factor": "Status",
+          "loading": "0.10"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Laid-back",
+          "factor": "Solidarity",
+          "loading": "0.84"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Laid-back",
+          "factor": "anti-Solidarity",
+          "loading": "0.20"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Pedantic",
+          "factor": "Status",
+          "loading": "0.03"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Pedantic",
+          "factor": "Solidarity",
+          "loading": "0.13"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Pedantic",
+          "factor": "anti-Solidarity",
+          "loading": "0.87"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Uptight",
+          "factor": "Status",
+          "loading": "0.3"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Uptight",
+          "factor": "Solidarity",
+          "loading": "0.28"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Uptight",
+          "factor": "anti-Solidarity",
+          "loading": "0.80"
+        }
+      ]
+    },
+    {
+      "name": "commonalities",
+      "structure": "Commonality",
+      "doc": "the last column of the PCA tables, headed Commonalities.",
+      "locator": "Table 1, p. 814 (Experiment 1); Table 3, p. 822 (Experiment 2)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "scale"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "scale",
+          "type": "Scale",
+          "doc": "The scale."
+        },
+        {
+          "name": "commonality",
+          "type": "decimal",
+          "doc": "The printed value."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "scale": "Articulate",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Intelligent",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Confident",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Trustworthy",
+          "commonality": "1.4"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Likable",
+          "commonality": "1.6"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Friendly",
+          "commonality": "1.6"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Cool",
+          "commonality": "1.2"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Laid-back",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Pedantic",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 1",
+          "scale": "Uptight",
+          "commonality": "1.0"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Articulate",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Intelligent",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Confident",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Trustworthy",
+          "commonality": "1.4"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Likable",
+          "commonality": "1.6"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Friendly",
+          "commonality": "1.6"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Cool",
+          "commonality": "1.2"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Laid-back",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Pedantic",
+          "commonality": "1.1"
+        },
+        {
+          "experiment": "Experiment 2",
+          "scale": "Uptight",
+          "commonality": "1.0"
+        }
+      ]
+    },
+    {
+      "name": "variance",
+      "structure": "Variance",
+      "doc": "the variance a principal component accounts for.",
+      "locator": "Table 1, p. 814 (Experiment 1); Table 3, p. 822 (Experiment 2)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "factor"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "factor",
+          "type": "Factor",
+          "doc": "The component."
+        },
+        {
+          "name": "ssLoadings",
+          "type": "decimal",
+          "doc": "The sum of squared loadings."
+        },
+        {
+          "name": "proportion",
+          "type": "decimal",
+          "doc": "The proportion of variance."
+        },
+        {
+          "name": "cumulative",
+          "type": "decimal",
+          "doc": "The cumulative proportion of variance."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "ssLoadings": "2.84",
+          "proportion": "0.28",
+          "cumulative": "0.28"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "ssLoadings": "2.51",
+          "proportion": "0.25",
+          "cumulative": "0.53"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "ssLoadings": "1.50",
+          "proportion": "0.15",
+          "cumulative": "0.68"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "ssLoadings": "3.52",
+          "proportion": "0.35",
+          "cumulative": "0.35"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "ssLoadings": "2.11",
+          "proportion": "0.21",
+          "cumulative": "0.56"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "ssLoadings": "1.48",
+          "proportion": "0.15",
+          "cumulative": "0.71"
+        }
+      ]
+    },
+    {
+      "name": "ratings",
+      "structure": "Rating",
+      "doc": "the mean and standard deviation of a composite score by Precision condition, across scenarios.",
+      "locator": "pp. 816–817 (Experiment 1); p. 823 (Experiment 2)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "variant",
+        "factor"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "variant",
+          "type": "Variant",
+          "doc": "The Precision condition."
+        },
+        {
+          "name": "factor",
+          "type": "Factor",
+          "doc": "The composite score."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean."
+        },
+        {
+          "name": "sd",
+          "type": "decimal",
+          "doc": "The standard deviation."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "variant": "Precise",
+          "factor": "Status",
+          "mean": "5.01",
+          "sd": "0.95"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Approximate",
+          "factor": "Status",
+          "mean": "4.84",
+          "sd": "0.99"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Underspecified",
+          "factor": "Status",
+          "mean": "4.96",
+          "sd": "0.99"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Precise",
+          "factor": "Solidarity",
+          "mean": "4.37",
+          "sd": "1.08"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Approximate",
+          "factor": "Solidarity",
+          "mean": "4.58",
+          "sd": "0.99"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Underspecified",
+          "factor": "Solidarity",
+          "mean": "4.49",
+          "sd": "1.00"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Precise",
+          "factor": "anti-Solidarity",
+          "mean": "4.37",
+          "sd": "1.22"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Approximate",
+          "factor": "anti-Solidarity",
+          "mean": "4.10",
+          "sd": "1.24"
+        },
+        {
+          "experiment": "Experiment 1",
+          "variant": "Underspecified",
+          "factor": "anti-Solidarity",
+          "mean": "4.19",
+          "sd": "1.24"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Precise",
+          "factor": "Status",
+          "mean": "5.16",
+          "sd": "0.82"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Approximate",
+          "factor": "Status",
+          "mean": "4.90",
+          "sd": "0.85"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Underspecified",
+          "factor": "Status",
+          "mean": "5.06",
+          "sd": "0.73"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Precise",
+          "factor": "Solidarity",
+          "mean": "4.15",
+          "sd": "0.97"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Approximate",
+          "factor": "Solidarity",
+          "mean": "4.84",
+          "sd": "0.85"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Underspecified",
+          "factor": "Solidarity",
+          "mean": "4.60",
+          "sd": "0.90"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Precise",
+          "factor": "anti-Solidarity",
+          "mean": "3.85",
+          "sd": "1.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Approximate",
+          "factor": "anti-Solidarity",
+          "mean": "3.49",
+          "sd": "1.13"
+        },
+        {
+          "experiment": "Experiment 2",
+          "variant": "Underspecified",
+          "factor": "anti-Solidarity",
+          "mean": "3.59",
+          "sd": "1.14"
+        }
+      ]
+    },
+    {
+      "name": "scenarioRatings",
+      "structure": "ScenarioRating",
+      "doc": "the mean and standard deviation of a composite score in a Precision × Scenario cell, for the cells the text reports with an interaction.",
+      "locator": "pp. 816–817 (Experiment 1); p. 823 (Experiment 2)",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "factor",
+          "type": "Factor",
+          "doc": "The composite score."
+        },
+        {
+          "name": "scenario",
+          "type": "Scenario",
+          "doc": "The scenario."
+        },
+        {
+          "name": "variant",
+          "type": "Variant",
+          "doc": "The Precision condition."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean."
+        },
+        {
+          "name": "sd",
+          "type": "decimal",
+          "doc": "The standard deviation."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "scenario": "For-the-record",
+          "variant": "Precise",
+          "mean": "5.13",
+          "sd": "1.02"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "scenario": "For-the-record",
+          "variant": "Approximate",
+          "mean": "4.74",
+          "sd": "0.97"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "scenario": "Bonding",
+          "variant": "Precise",
+          "mean": "4.93",
+          "sd": "0.96"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "scenario": "Bonding",
+          "variant": "Approximate",
+          "mean": "4.95",
+          "sd": "0.96"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "scenario": "For-the-record",
+          "variant": "Approximate",
+          "mean": "4.21",
+          "sd": "1.09"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "scenario": "For-the-record",
+          "variant": "Underspecified",
+          "mean": "4.20",
+          "sd": "1.15"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "scenario": "Bonding",
+          "variant": "Underspecified",
+          "mean": "4.37",
+          "sd": "1.24"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "scenario": "Bonding",
+          "variant": "Approximate",
+          "mean": "3.98",
+          "sd": "1.33"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "scenario": "For-the-record",
+          "variant": "Underspecified",
+          "mean": "4.84",
+          "sd": "0.74"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "scenario": "For-the-record",
+          "variant": "Precise",
+          "mean": "4.90",
+          "sd": "0.84"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "scenario": "Persuasive",
+          "variant": "Precise",
+          "mean": "5.23",
+          "sd": "0.74"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "scenario": "Persuasive",
+          "variant": "Underspecified",
+          "mean": "4.98",
+          "sd": "0.81"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "scenario": "Stranger",
+          "variant": "Precise",
+          "mean": "4.34",
+          "sd": "1.01"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "scenario": "Stranger",
+          "variant": "Underspecified",
+          "mean": "4.78",
+          "sd": "0.77"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "scenario": "For-the-record",
+          "variant": "Precise",
+          "mean": "3.88",
+          "sd": "0.95"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "scenario": "For-the-record",
+          "variant": "Underspecified",
+          "mean": "3.89",
+          "sd": "0.71"
+        }
+      ]
+    },
+    {
+      "name": "coefficients",
+      "structure": "Coefficient",
+      "doc": "a coefficient of the model of a composite score, simple coded with Approximate and For-the-record as reference levels and the grand mean as intercept; a row with neither level is the intercept, with both an interaction.",
+      "locator": "Table 2, p. 815 (Experiment 1, mixed effects); Table 4, p. 824 (Experiment 2, linear)",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "factor",
+          "type": "Factor",
+          "doc": "The composite score."
+        },
+        {
+          "name": "variant",
+          "type": "option Variant",
+          "doc": "The Precision level compared with Approximate, if any."
+        },
+        {
+          "name": "scenario",
+          "type": "option Scenario",
+          "doc": "The Scenario level compared with For-the-record, if any."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The coefficient."
+        },
+        {
+          "name": "se",
+          "type": "decimal",
+          "doc": "Its standard error."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": null,
+          "scenario": null,
+          "beta": "4.94",
+          "se": "0.09",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": null,
+          "beta": "0.10",
+          "se": "0.05",
+          "p": "0.05"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": null,
+          "beta": "0.15",
+          "se": "0.05",
+          "p": "< 0.01"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": null,
+          "scenario": "Persuasive",
+          "beta": "0.09",
+          "se": "0.06",
+          "p": "0.15"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": null,
+          "scenario": "Stranger",
+          "beta": "-0.04",
+          "se": "0.06",
+          "p": "0.52"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": null,
+          "scenario": "Bonding",
+          "beta": "0.04",
+          "se": "0.06",
+          "p": "0.52"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": "Persuasive",
+          "beta": "-0.05",
+          "se": "0.17",
+          "p": "0.73"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": "Persuasive",
+          "beta": "-0.24",
+          "se": "0.17",
+          "p": "0.15"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": "Stranger",
+          "beta": "-0.08",
+          "se": "0.16",
+          "p": "0.60"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": "Stranger",
+          "beta": "-0.24",
+          "se": "0.16",
+          "p": "0.13"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": "Bonding",
+          "beta": "-0.03",
+          "se": "0.16",
+          "p": "0.83"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": "Bonding",
+          "beta": "-0.38",
+          "se": "0.15",
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": null,
+          "beta": "4.47",
+          "se": "0.09",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": null,
+          "beta": "-0.08",
+          "se": "0.05",
+          "p": "0.13"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": null,
+          "beta": "-0.19",
+          "se": "0.05",
+          "p": "< 0.01"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": "Persuasive",
+          "beta": "-0.06",
+          "se": "0.06",
+          "p": "0.31"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": "Stranger",
+          "beta": "0.20",
+          "se": "0.06",
+          "p": "< 0.01"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": "Bonding",
+          "beta": "0.03",
+          "se": "0.06",
+          "p": "0.55"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Persuasive",
+          "beta": "0.04",
+          "se": "0.18",
+          "p": "0.81"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": "Persuasive",
+          "beta": "0.06",
+          "se": "0.18",
+          "p": "0.71"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Stranger",
+          "beta": "0.19",
+          "se": "0.17",
+          "p": "0.25"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": "Stranger",
+          "beta": "0.17",
+          "se": "0.17",
+          "p": "0.32"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Bonding",
+          "beta": "-0.11",
+          "se": "0.17",
+          "p": "0.52"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": "Bonding",
+          "beta": "0.03",
+          "se": "0.17",
+          "p": "0.85"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": null,
+          "beta": "4.21",
+          "se": "0.09",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": null,
+          "beta": "0.08",
+          "se": "0.06",
+          "p": "0.17"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": null,
+          "beta": "0.27",
+          "se": "0.06",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": "Persuasive",
+          "beta": "-0.05",
+          "se": "0.17",
+          "p": "0.45"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": "Stranger",
+          "beta": "-0.16",
+          "se": "0.07",
+          "p": "< 0.01"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": "Bonding",
+          "beta": "-0.08",
+          "se": "0.07",
+          "p": "0.28"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Persuasive",
+          "beta": "0.22",
+          "se": "0.21",
+          "p": "0.28"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": "Persuasive",
+          "beta": "0.00",
+          "se": "0.21",
+          "p": "0.97"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Stranger",
+          "beta": "0.27",
+          "se": "0.19",
+          "p": "0.16"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": "Stranger",
+          "beta": "0.17",
+          "se": "0.20",
+          "p": "0.38"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Bonding",
+          "beta": "0.47",
+          "se": "0.20",
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": "Bonding",
+          "beta": "0.30",
+          "se": "0.19",
+          "p": "0.11"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": null,
+          "scenario": null,
+          "beta": "5.03",
+          "se": "0.02",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": null,
+          "beta": "0.16",
+          "se": "0.06",
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": null,
+          "beta": "0.25",
+          "se": "0.06",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": null,
+          "scenario": "Persuasive",
+          "beta": "0.37",
+          "se": "0.07",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": null,
+          "scenario": "Stranger",
+          "beta": "0.50",
+          "se": "0.07",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": null,
+          "scenario": "Bonding",
+          "beta": "0.36",
+          "se": "0.07",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": "Persuasive",
+          "beta": "-0.50",
+          "se": "0.19",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": "Persuasive",
+          "beta": "-0.31",
+          "se": "0.19",
+          "p": "0.10"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": "Stranger",
+          "beta": "-0.16",
+          "se": "0.19",
+          "p": "0.40"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": "Stranger",
+          "beta": "-0.26",
+          "se": "0.19",
+          "p": "0.18"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Underspecified",
+          "scenario": "Bonding",
+          "beta": "-0.26",
+          "se": "0.19",
+          "p": "0.15"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "variant": "Precise",
+          "scenario": "Bonding",
+          "beta": "-0.22",
+          "se": "0.19",
+          "p": "0.23"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": null,
+          "beta": "4.46",
+          "se": "0.03",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": null,
+          "beta": "-0.27",
+          "se": "0.07",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": null,
+          "beta": "-0.46",
+          "se": "0.07",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": "Persuasive",
+          "beta": "0.21",
+          "se": "0.08",
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": "Stranger",
+          "beta": "0.65",
+          "se": "0.08",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": null,
+          "scenario": "Bonding",
+          "beta": "0.39",
+          "se": "0.08",
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Persuasive",
+          "beta": "0.22",
+          "se": "0.21",
+          "p": "0.29"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": "Persuasive",
+          "beta": "0.14",
+          "se": "0.21",
+          "p": "0.49"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Stranger",
+          "beta": "0.17",
+          "se": "0.21",
+          "p": "0.25"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": "Stranger",
+          "beta": "-0.17",
+          "se": "0.22",
+          "p": "0.41"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Bonding",
+          "beta": "0.37",
+          "se": "0.21",
+          "p": "0.08"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "variant": "Precise",
+          "scenario": "Bonding",
+          "beta": "0.14",
+          "se": "0.21",
+          "p": "0.48"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": null,
+          "beta": "3.36",
+          "se": "0.03",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": null,
+          "beta": "0.10",
+          "se": "0.00",
+          "p": "0.28"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": null,
+          "beta": "0.36",
+          "se": "0.09",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": "Persuasive",
+          "beta": "-0.05",
+          "se": "0.11",
+          "p": "0.07"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": "Stranger",
+          "beta": "-0.16",
+          "se": "0.11",
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": null,
+          "scenario": "Bonding",
+          "beta": "-0.08",
+          "se": "0.10",
+          "p": "0.38"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Persuasive",
+          "beta": "0.22",
+          "se": "0.27",
+          "p": "0.65"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": "Persuasive",
+          "beta": "0.00",
+          "se": "0.27",
+          "p": "0.99"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Stranger",
+          "beta": "0.27",
+          "se": "0.27",
+          "p": "0.70"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": "Stranger",
+          "beta": "0.17",
+          "se": "0.27",
+          "p": "0.34"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Underspecified",
+          "scenario": "Bonding",
+          "beta": "0.47",
+          "se": "0.26",
+          "p": "0.95"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "variant": "Precise",
+          "scenario": "Bonding",
+          "beta": "0.30",
+          "se": "0.26",
+          "p": "0.26"
+        }
+      ]
+    },
+    {
+      "name": "verdicts",
+      "structure": "VerdictRow",
+      "doc": "the paper's reading of a comparison of two Precision conditions on a composite score, across scenarios.",
+      "locator": "pp. 816–817 (Experiment 1); p. 823 (Experiment 2)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "factor",
+        "comparison"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "factor",
+          "type": "Factor",
+          "doc": "The composite score."
+        },
+        {
+          "name": "comparison",
+          "type": "Comparison",
+          "doc": "The comparison."
+        },
+        {
+          "name": "verdict",
+          "type": "Verdict",
+          "doc": "The paper's reading of it."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "comparison": "Precise vs. Approximate",
+          "verdict": "rated higher"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "comparison": "Underspecified vs. Approximate",
+          "verdict": "trended higher"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "comparison": "Precise vs. Underspecified",
+          "verdict": "did not differ"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "comparison": "Precise vs. Approximate",
+          "verdict": "rated lower"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "comparison": "Underspecified vs. Approximate",
+          "verdict": "did not differ"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "comparison": "Precise vs. Underspecified",
+          "verdict": "did not differ"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "comparison": "Precise vs. Approximate",
+          "verdict": "rated higher"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "comparison": "Underspecified vs. Approximate",
+          "verdict": "did not differ"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "comparison": "Precise vs. Underspecified",
+          "verdict": "rated higher"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "comparison": "Precise vs. Approximate",
+          "verdict": "rated higher"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "comparison": "Underspecified vs. Approximate",
+          "verdict": "rated higher"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "comparison": "Precise vs. Underspecified",
+          "verdict": "did not differ"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "comparison": "Precise vs. Approximate",
+          "verdict": "rated lower"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "comparison": "Underspecified vs. Approximate",
+          "verdict": "rated lower"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "comparison": "Precise vs. Underspecified",
+          "verdict": "rated lower"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "comparison": "Precise vs. Approximate",
+          "verdict": "rated higher"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "comparison": "Underspecified vs. Approximate",
+          "verdict": "did not differ"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "comparison": "Precise vs. Underspecified",
+          "verdict": "rated higher"
+        }
+      ]
+    },
+    {
+      "name": "preciseVsUnderspecified",
+      "structure": "PostHoc",
+      "doc": "the post-hoc comparison of the precise with the underspecified condition.",
+      "locator": "pp. 816–817 (Experiment 1); p. 823 (Experiment 2)",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "factor",
+          "type": "Factor",
+          "doc": "The composite score."
+        },
+        {
+          "name": "t",
+          "type": "decimal",
+          "doc": "The t statistic."
+        },
+        {
+          "name": "df",
+          "type": "nat",
+          "doc": "Its degrees of freedom."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "factor": "Status",
+          "t": "1.00",
+          "df": 759,
+          "p": "0.57"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "Solidarity",
+          "t": "1.89",
+          "df": 759,
+          "p": "0.14"
+        },
+        {
+          "experiment": "Experiment 1",
+          "factor": "anti-Solidarity",
+          "t": "2.76",
+          "df": 759,
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Status",
+          "t": "1.31",
+          "df": 798,
+          "p": "0.34"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "Solidarity",
+          "t": "2.54",
+          "df": 798,
+          "p": "< 0.05"
+        },
+        {
+          "experiment": "Experiment 2",
+          "factor": "anti-Solidarity",
+          "t": "-2.79",
+          "df": 798,
+          "p": "< 0.05"
+        }
+      ]
+    }
+  ]
+}

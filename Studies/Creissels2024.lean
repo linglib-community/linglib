@@ -5,7 +5,7 @@ public import Mathlib.Logic.Relation
 public import Linglib.Syntax.Voice.System
 public import Linglib.Semantics.Plurality.Reciprocal
 public import Linglib.Data.Examples.Creissels2024
-public import Linglib.Data.Experiments.Creissels2024
+public import Linglib.Data.Statistics.Creissels2024
 public import Linglib.Fragments.English.Verbs.Causative
 public import Linglib.Data.Examples.Readers
 public import Linglib.Data.Examples.Languages

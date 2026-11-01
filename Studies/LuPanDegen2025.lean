@@ -54,7 +54,7 @@ overt complementizer of manner-of-speaking complements (22).
 ## TODO
 
 The stimuli of `Data/Examples/LuPanDegen2025` are printed unmarked; which member of each contrast
-is degraded is a rating result of the experiments, for `Data/Experiments`, and the island rule
+is degraded is a rating result of the experiments, for `Data/Statistics`, and the island rule
 is not yet checked against those results.
 
 ## References

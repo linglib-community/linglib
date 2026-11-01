@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.Krifka2007
+public import Linglib.Data.Statistics.Krifka2007
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Semantics.Degree.Granularity
@@ -35,7 +35,7 @@ coarser scale distorts most.
   minutes where the paper prints `10r`, and the approximate mass of *forty* on the uniform prior
   is `9/100` where the paper prints 0.08; neither difference affects a comparison.
 * Expression costs are a parameter, with the paper's cost comparisons as hypotheses; the
-  paper's own syllable and occurrence counts are the rows of `Data/Experiments/Krifka2007.json`.
+  paper's own syllable and occurrence counts are the rows of `Data/Statistics/Krifka2007.json`.
 
 ## References
 

@@ -1,7 +1,7 @@
 module
 
 public import Studies.MitrovicSauerland2016
-public import Linglib.Data.Experiments.BillEtAl2025
+public import Linglib.Data.Statistics.BillEtAl2025
 public import Linglib.Fragments.Georgian.Coordination
 public import Linglib.Fragments.Georgian.FocusParticles
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
@@ -46,7 +46,7 @@ children instead replayed J-μ sentences most, and Hungarian children showed no 
 
 namespace BillEtAl2025
 
-open Data.Experiments MitrovicSauerland2016 Exhaustification
+open Data.Statistics MitrovicSauerland2016 Exhaustification
 
 /-! ### The test sentences -/
 

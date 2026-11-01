@@ -1,0 +1,788 @@
+{
+  "meta": {
+    "bibkey": "sable-meyer-mascarenhas-2022",
+    "method": "experiment",
+    "description": "A norming study and two inference-endorsement experiments on indirect illusory inferences from disjunction. The norming study rated the strength of the causal link in conditionals of three kinds: the crucial dependence from the hint d to the conjunct a, and the control dependences a-to-b and d-to-b; item 0 was removed after the control block showed an effect driven by it. Experiment 1 presented problems of the form (a and b) or c; d, therefore b; Experiment 2 moved the causal step to the conclusion: (b and d) or c; b, therefore a. Acceptance of the fallacy is regressed on the normed strength of the d-to-a link; coefficients, control rates and the binomial model are recorded as printed.",
+    "rawData": [
+      {
+        "url": "https://osf.io/tuc8s/",
+        "doc": "complete materials, collected data, and analysis code"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Study",
+      "doc": "The three studies.",
+      "levels": [
+        {
+          "name": "norming",
+          "label": "Norming study",
+          "doc": "strength ratings of the causal conditionals"
+        },
+        {
+          "name": "experimentOne",
+          "label": "Experiment 1",
+          "doc": "indirect illusory inferences, hint step"
+        },
+        {
+          "name": "experimentTwo",
+          "label": "Experiment 2",
+          "doc": "indirect illusory inferences, conclusion step"
+        }
+      ]
+    },
+    {
+      "name": "Dependence",
+      "doc": "The three normed causal links of the norming study (8).",
+      "levels": [
+        {
+          "name": "hintToConjunct",
+          "label": "d to a",
+          "doc": "the crucial link from the hint to the first conjunct"
+        },
+        {
+          "name": "conjunctToConjunct",
+          "label": "a to b",
+          "doc": "control: from the first to the second conjunct"
+        },
+        {
+          "name": "hintToConclusion",
+          "label": "d to b",
+          "doc": "control: from the hint to the concluded conjunct"
+        }
+      ]
+    },
+    {
+      "name": "Term",
+      "doc": "The terms of the binomial model of Table 2.",
+      "levels": [
+        {
+          "name": "intercept",
+          "label": "Intercept",
+          "doc": ""
+        },
+        {
+          "name": "normedStrength",
+          "label": "Normed d to a",
+          "doc": "the centered normed strength of the crucial link"
+        },
+        {
+          "name": "errorOnControls",
+          "label": "% Error on Controls",
+          "doc": "the centered error rate on controls"
+        },
+        {
+          "name": "interaction",
+          "label": "Interaction",
+          "doc": "their interaction"
+        }
+      ]
+    },
+    {
+      "name": "Experiment",
+      "doc": "The two inference tasks.",
+      "levels": [
+        {
+          "name": "experimentOne",
+          "label": "Experiment 1",
+          "doc": "hint step"
+        },
+        {
+          "name": "experimentTwo",
+          "label": "Experiment 2",
+          "doc": "conclusion step"
+        }
+      ]
+    },
+    {
+      "name": "Item",
+      "doc": "The eight d-to-a item sets of (9).",
+      "levels": [
+        {
+          "name": "item0",
+          "label": "0",
+          "doc": "fertilizer put on the plants, plants grew quickly"
+        },
+        {
+          "name": "item1",
+          "label": "1",
+          "doc": "brake depressed, car slowed down"
+        },
+        {
+          "name": "item2",
+          "label": "2",
+          "doc": "Mary jumped into the pool, Mary got wet"
+        },
+        {
+          "name": "item3",
+          "label": "3",
+          "doc": "trigger pulled, gun fired"
+        },
+        {
+          "name": "item4",
+          "label": "4",
+          "doc": "Larry grasped the glass, fingerprints on the glass"
+        },
+        {
+          "name": "item5",
+          "label": "5",
+          "doc": "gong struck, gong sounded"
+        },
+        {
+          "name": "item6",
+          "label": "6",
+          "doc": "John studied hard, did well on the test"
+        },
+        {
+          "name": "item7",
+          "label": "7",
+          "doc": "apples ripe, fell from the tree"
+        }
+      ]
+    },
+    {
+      "name": "ItemStatus",
+      "doc": "Whether an item set was kept for the inference tasks.",
+      "levels": [
+        {
+          "name": "kept",
+          "label": "kept",
+          "doc": ""
+        },
+        {
+          "name": "removed",
+          "label": "removed",
+          "doc": "removed after the norming analysis"
+        }
+      ]
+    },
+    {
+      "name": "Comparison",
+      "doc": "The comparisons the target acceptance was tested against.",
+      "levels": [
+        {
+          "name": "chance",
+          "label": "chance",
+          "doc": ""
+        },
+        {
+          "name": "validControls",
+          "label": "valid controls",
+          "doc": ""
+        },
+        {
+          "name": "invalidControls",
+          "label": "invalid controls",
+          "doc": ""
+        }
+      ]
+    },
+    {
+      "name": "AnovaOutcome",
+      "doc": "The outcome of the norming ANOVA for a block.",
+      "levels": [
+        {
+          "name": "noEffect",
+          "label": "no effect",
+          "doc": "no significant effect of the materials at the .05 level"
+        },
+        {
+          "name": "effect",
+          "label": "effect",
+          "doc": "a significant effect at the .05 level"
+        }
+      ]
+    },
+    {
+      "name": "Significance",
+      "doc": "Whether a model term is reported significant.",
+      "levels": [
+        {
+          "name": "significant",
+          "label": "significant",
+          "doc": ""
+        },
+        {
+          "name": "notSignificant",
+          "label": "not significant",
+          "doc": ""
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "classicalAcceptancePct",
+      "type": "nat",
+      "value": 85,
+      "doc": "Acceptance of the classical illusory inference from disjunction, about 85% across studies.",
+      "locator": "§1, p. 568",
+      "verified": "text-layer"
+    },
+    {
+      "name": "normingItems",
+      "type": "nat",
+      "value": 24,
+      "doc": "Conditional sentences rated in the norming study, three blocks of eight.",
+      "locator": "§3.1.2, p. 573",
+      "verified": "text-layer"
+    },
+    {
+      "name": "itemSetsKept",
+      "type": "nat",
+      "value": 7,
+      "doc": "Item sets kept for the inference tasks after item 0 was removed.",
+      "locator": "§3.2.1, p. 576",
+      "verified": "text-layer"
+    },
+    {
+      "name": "targetsPerParticipant",
+      "type": "nat",
+      "value": 7,
+      "doc": "Indirect illusory inference trials, interleaved with three valid and three invalid controls.",
+      "locator": "§3.1.2, p. 575",
+      "verified": "text-layer"
+    },
+    {
+      "name": "validControls",
+      "type": "nat",
+      "value": 3,
+      "doc": "Valid modus ponens controls.",
+      "locator": "§3.1.2, p. 575",
+      "verified": "text-layer"
+    },
+    {
+      "name": "invalidControls",
+      "type": "nat",
+      "value": 3,
+      "doc": "Invalid controls denying the antecedent.",
+      "locator": "§3.1.2, p. 575",
+      "verified": "text-layer"
+    },
+    {
+      "name": "recruitedTotal",
+      "type": "nat",
+      "value": 322,
+      "doc": "Individuals recruited across the three studies.",
+      "locator": "§3.1.1, p. 573",
+      "verified": "text-layer"
+    },
+    {
+      "name": "normingBatchOne",
+      "type": "nat",
+      "value": 82,
+      "doc": "Norming participants in the first batch, halted over a reward-wording error.",
+      "locator": "§3.1.1, p. 574",
+      "verified": "text-layer"
+    },
+    {
+      "name": "normingBatchTwoReported",
+      "type": "nat",
+      "value": 156,
+      "doc": "Norming participants reporting back in the second batch of 160.",
+      "locator": "§3.1.1, p. 574",
+      "verified": "text-layer"
+    },
+    {
+      "name": "expOneExcludedNormed",
+      "type": "nat",
+      "value": 14,
+      "doc": "Experiment 1 participants excluded for having taken the norming study.",
+      "locator": "§3.1.1, p. 574",
+      "verified": "text-layer"
+    },
+    {
+      "name": "expTwoExcludedPrior",
+      "type": "nat",
+      "value": 10,
+      "doc": "Experiment 2 participants excluded for an earlier related experiment.",
+      "locator": "§4.1, p. 579",
+      "verified": "text-layer"
+    },
+    {
+      "name": "likertPoints",
+      "type": "nat",
+      "value": 7,
+      "doc": "Points of the causal-strength rating scale.",
+      "locator": "§3.1.2, p. 574",
+      "verified": "text-layer"
+    },
+    {
+      "name": "itemSets",
+      "type": "nat",
+      "value": 8,
+      "doc": "Item sets normed, of which seven were kept.",
+      "locator": "§3.2.1, p. 576",
+      "verified": "text-layer"
+    },
+    {
+      "name": "matchingLimitAcceptance",
+      "type": "decimal",
+      "value": "0.92",
+      "doc": "The acceptance the Experiment 1 model predicts in the matching limit P(a given d) = 1: intercept plus slope.",
+      "locator": "§5, p. 581",
+      "verified": "text-layer"
+    }
+  ],
+  "tables": [
+    {
+      "name": "participants",
+      "structure": "Participants",
+      "doc": "the participant breakdown of Table 1.",
+      "locator": "Table 1, p. 574",
+      "verified": "text-layer",
+      "key": [
+        "study"
+      ],
+      "columns": [
+        {
+          "name": "study",
+          "type": "Study",
+          "doc": "The study."
+        },
+        {
+          "name": "recruited",
+          "type": "nat",
+          "doc": "Participants recruited."
+        },
+        {
+          "name": "analysed",
+          "type": "nat",
+          "doc": "Participants analysed."
+        },
+        {
+          "name": "femalePct",
+          "type": "decimal",
+          "doc": "Percent female."
+        },
+        {
+          "name": "ageMean",
+          "type": "nat",
+          "doc": "Mean age."
+        },
+        {
+          "name": "ageSD",
+          "type": "decimal",
+          "doc": "Standard deviation of age."
+        }
+      ],
+      "rows": [
+        {
+          "study": "Norming study",
+          "recruited": 242,
+          "analysed": 238,
+          "femalePct": "56.3",
+          "ageMean": 32,
+          "ageSD": "13.1"
+        },
+        {
+          "study": "Experiment 1",
+          "recruited": 80,
+          "analysed": 64,
+          "femalePct": "42.1",
+          "ageMean": 34,
+          "ageSD": "10.0"
+        },
+        {
+          "study": "Experiment 2",
+          "recruited": 80,
+          "analysed": 70,
+          "femalePct": "47.1",
+          "ageMean": 34,
+          "ageSD": "10.3"
+        }
+      ]
+    },
+    {
+      "name": "controlRates",
+      "structure": "ControlRate",
+      "doc": "mean acceptance of the valid and invalid controls, with standard errors.",
+      "locator": "§3.2.2, p. 576; §4.2, p. 579",
+      "verified": "text-layer",
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "validPct",
+          "type": "decimal",
+          "doc": "Acceptance of valid controls, percent."
+        },
+        {
+          "name": "validSE",
+          "type": "decimal",
+          "doc": "Its standard error."
+        },
+        {
+          "name": "invalidPct",
+          "type": "decimal",
+          "doc": "Acceptance of invalid controls, percent."
+        },
+        {
+          "name": "invalidSE",
+          "type": "decimal",
+          "doc": "Its standard error."
+        }
+      ],
+      "rows": [
+        {
+          "validPct": "87",
+          "validSE": "2.3",
+          "invalidPct": "26",
+          "invalidSE": "3.2",
+          "experiment": "Experiment 1"
+        },
+        {
+          "validPct": "90",
+          "validSE": "2.1",
+          "invalidPct": "20",
+          "invalidSE": "2.8",
+          "experiment": "Experiment 2"
+        }
+      ],
+      "key": [
+        "experiment"
+      ]
+    },
+    {
+      "name": "regressions",
+      "structure": "Regression",
+      "doc": "the per-item regression of fallacy acceptance on the normed strength of the d-to-a link.",
+      "locator": "§3.2.2, p. 577; §4.2, p. 580",
+      "verified": "text-layer",
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "slope",
+          "type": "decimal",
+          "doc": "The slope."
+        },
+        {
+          "name": "intercept",
+          "type": "option decimal",
+          "doc": "The intercept, when reported."
+        },
+        {
+          "name": "interceptSE",
+          "type": "option decimal",
+          "doc": "Its standard error."
+        },
+        {
+          "name": "slopeSE",
+          "type": "decimal",
+          "doc": "Its standard error."
+        },
+        {
+          "name": "rSquared",
+          "type": "decimal",
+          "doc": "The coefficient of determination."
+        },
+        {
+          "name": "fStat",
+          "type": "decimal",
+          "doc": "The F statistic on 1 and 5 degrees of freedom."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "slope": "0.97",
+          "slopeSE": "0.14",
+          "rSquared": "0.9",
+          "fStat": "45.0",
+          "p": "0.001",
+          "note": "the intercept is not significant; the matching limit P(a given d) = 1 predicts an acceptance of 0.92",
+          "intercept": "-0.05",
+          "interceptSE": "0.10",
+          "experiment": "Experiment 1"
+        },
+        {
+          "slope": "0.69",
+          "slopeSE": "0.26",
+          "rSquared": "0.58",
+          "fStat": "6.92",
+          "p": "0.046",
+          "intercept": null,
+          "interceptSE": null,
+          "experiment": "Experiment 2"
+        }
+      ],
+      "key": [
+        "experiment"
+      ]
+    },
+    {
+      "name": "binomialModel",
+      "structure": "BinomialTerm",
+      "doc": "the binomial model of Table 2: acceptance as a function of the normed d-to-a strength, the error rate on controls, and their interaction (centered predictors).",
+      "locator": "Table 2, p. 578",
+      "verified": "text-layer",
+      "columns": [
+        {
+          "name": "term",
+          "type": "Term",
+          "doc": "The model term."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The coefficient."
+        },
+        {
+          "name": "se",
+          "type": "decimal",
+          "doc": "Its standard error."
+        },
+        {
+          "name": "z",
+          "type": "decimal",
+          "doc": "The z-value."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "term": "Intercept",
+          "beta": "0.50",
+          "se": "0.10",
+          "z": "4.98",
+          "p": "< 0.001"
+        },
+        {
+          "term": "Normed d to a",
+          "beta": "4.14",
+          "se": "0.93",
+          "z": "4.42",
+          "p": "< 0.001"
+        },
+        {
+          "term": "% Error on Controls",
+          "beta": "-0.37",
+          "se": "0.41",
+          "z": "-0.91",
+          "p": "0.36"
+        },
+        {
+          "term": "Interaction",
+          "beta": "13.0",
+          "se": "3.89",
+          "z": "3.35",
+          "p": "< 0.001"
+        }
+      ],
+      "key": [
+        "term"
+      ]
+    },
+    {
+      "name": "items",
+      "structure": "ItemRow",
+      "doc": "the eight item sets and whether they survived the norming analysis.",
+      "locator": "(9) and §3.2.1, pp. 575-576",
+      "verified": "page-image",
+      "key": [
+        "item"
+      ],
+      "columns": [
+        {
+          "name": "item",
+          "type": "Item",
+          "doc": "The item set."
+        },
+        {
+          "name": "status",
+          "type": "ItemStatus",
+          "doc": "Kept or removed."
+        }
+      ],
+      "rows": [
+        {
+          "item": "0",
+          "status": "removed",
+          "note": "the d-to-b control block showed an effect driven by this item"
+        },
+        {
+          "item": "1",
+          "status": "kept"
+        },
+        {
+          "item": "2",
+          "status": "kept"
+        },
+        {
+          "item": "3",
+          "status": "kept"
+        },
+        {
+          "item": "4",
+          "status": "kept"
+        },
+        {
+          "item": "5",
+          "status": "kept"
+        },
+        {
+          "item": "6",
+          "status": "kept"
+        },
+        {
+          "item": "7",
+          "status": "kept"
+        }
+      ]
+    },
+    {
+      "name": "normingBlocks",
+      "structure": "NormingBlock",
+      "doc": "the norming ANOVA outcome per control block; the crucial block was not tested.",
+      "locator": "§3.2.1, p. 576",
+      "verified": "text-layer",
+      "key": [
+        "block"
+      ],
+      "columns": [
+        {
+          "name": "block",
+          "type": "Dependence",
+          "doc": "The block."
+        },
+        {
+          "name": "anova",
+          "type": "option AnovaOutcome",
+          "doc": "The ANOVA outcome, when one was run."
+        }
+      ],
+      "rows": [
+        {
+          "block": "d to a",
+          "anova": null
+        },
+        {
+          "block": "a to b",
+          "anova": "no effect"
+        },
+        {
+          "block": "d to b",
+          "anova": "effect",
+          "note": "Tukey HSD: driven by item 0, which was removed"
+        }
+      ]
+    },
+    {
+      "name": "targetContrasts",
+      "structure": "TargetContrast",
+      "doc": "the t-tests of target acceptance against chance and the controls.",
+      "locator": "§3.2.2, p. 577; §4.2, p. 580",
+      "verified": "text-layer",
+      "key": [
+        "experiment",
+        "comparison"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "comparison",
+          "type": "Comparison",
+          "doc": "The comparison."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "Experiment 1",
+          "comparison": "chance",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 1",
+          "comparison": "valid controls",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 1",
+          "comparison": "invalid controls",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "comparison": "chance",
+          "p": "0.0066"
+        },
+        {
+          "experiment": "Experiment 2",
+          "comparison": "valid controls",
+          "p": "< 0.001"
+        },
+        {
+          "experiment": "Experiment 2",
+          "comparison": "invalid controls",
+          "p": "< 0.001"
+        }
+      ]
+    },
+    {
+      "name": "binomialModelExpTwo",
+      "structure": "BinomialTermTwo",
+      "doc": "the Experiment 2 binomial model, reported qualitatively: only the crucial rating is significant.",
+      "locator": "§4.2, p. 580",
+      "verified": "text-layer",
+      "key": [
+        "term"
+      ],
+      "columns": [
+        {
+          "name": "term",
+          "type": "Term",
+          "doc": "The model term."
+        },
+        {
+          "name": "significance",
+          "type": "option Significance",
+          "doc": "As reported; the intercept is not discussed."
+        }
+      ],
+      "rows": [
+        {
+          "term": "Intercept",
+          "significance": null
+        },
+        {
+          "term": "Normed d to a",
+          "significance": "significant",
+          "note": "at the p < .001 level"
+        },
+        {
+          "term": "% Error on Controls",
+          "significance": "not significant"
+        },
+        {
+          "term": "Interaction",
+          "significance": "not significant"
+        }
+      ]
+    }
+  ]
+}

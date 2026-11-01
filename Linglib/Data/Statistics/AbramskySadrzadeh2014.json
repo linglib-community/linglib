@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "bibkey": "abramsky-sadrzadeh-2014",
+    "method": "corpus",
+    "description": "The corpus frequencies behind the paper's probabilistic anaphora example (John gave the bananas to the monkeys. They were ripe. They were cheeky.): the British News corpus counts of the four adjective-noun patterns, and the printed distribution over the four candidate gluings. Locations are sections of the arXiv preprint (1403.3351v1).",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "Adjective",
+      "doc": "The predicative adjectives of the two anaphoric sentences.",
+      "levels": [
+        { "name": "ripe", "label": "ripe", "doc": "They were ripe." },
+        { "name": "cheeky", "label": "cheeky", "doc": "They were cheeky." }
+      ]
+    },
+    {
+      "name": "Noun",
+      "doc": "The candidate antecedents of the two pronouns.",
+      "levels": [
+        { "name": "banana", "label": "banana", "doc": "the bananas, the referent y" },
+        { "name": "monkey", "label": "monkey", "doc": "the monkeys, the referent z" }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "frequency",
+      "structure": "Frequency",
+      "doc": "the British News corpus frequency of an adjective-noun pattern.",
+      "locator": "section 5, example",
+      "verified": "page-image",
+      "key": ["adjective", "noun"],
+      "columns": [
+        { "name": "adjective", "type": "Adjective", "doc": "The adjective." },
+        { "name": "noun", "type": "Noun", "doc": "The noun." },
+        { "name": "count", "type": "nat", "doc": "The number of occurrences." }
+      ],
+      "rows": [
+        { "adjective": "ripe", "noun": "banana", "count": 14 },
+        { "adjective": "ripe", "noun": "monkey", "count": 0 },
+        { "adjective": "cheeky", "noun": "banana", "count": 0 },
+        { "adjective": "cheeky", "noun": "monkey", "count": 10 }
+      ]
+    },
+    {
+      "name": "gluingProbability",
+      "method": "model",
+      "structure": "GluingProbability",
+      "doc": "the printed probability d(t) of the gluing resolving the first pronoun (ripe) and the second (cheeky) to the given antecedents.",
+      "locator": "section 5, example, the table of d",
+      "verified": "page-image",
+      "key": ["ripe", "cheeky"],
+      "columns": [
+        { "name": "ripe", "type": "Noun", "doc": "The antecedent of the pronoun of They were ripe." },
+        { "name": "cheeky", "type": "Noun", "doc": "The antecedent of the pronoun of They were cheeky." },
+        { "name": "probability", "type": "decimal", "doc": "The printed d(t)." }
+      ],
+      "rows": [
+        { "ripe": "banana", "cheeky": "banana", "probability": "0.29" },
+        { "ripe": "banana", "cheeky": "monkey", "probability": "0.5" },
+        { "ripe": "monkey", "cheeky": "banana", "probability": "0" },
+        { "ripe": "monkey", "cheeky": "monkey", "probability": "0.205", "note": "10/48 is 0.208" }
+      ]
+    }
+  ]
+}

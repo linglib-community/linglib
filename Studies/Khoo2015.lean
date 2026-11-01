@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Khoo2015
-public import Linglib.Data.Experiments.Khoo2015
+public import Linglib.Data.Statistics.Khoo2015
 public import Mathlib.Algebra.Order.Field.Rat
 
 /-!
@@ -18,7 +18,7 @@ readily yet not judged false, a dissociation the control assertion lacks
 
 ## Implementation notes
 
-The cell means and standard deviations of footnote 13 are `Data/Experiments/Khoo2015`, which
+The cell means and standard deviations of footnote 13 are `Data/Statistics/Khoo2015`, which
 the released survey reproduces; "readily" and "not" are read against the scale's midpoint. The
 paper's account of the observation is not formalized.
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Schwab2023
-public import Linglib.Data.Experiments.Schwab2023
+public import Linglib.Data.Statistics.Schwab2023
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Order.SetNotation
 public import Mathlib.Data.Set.Lattice.Bounded
@@ -16,7 +16,7 @@ negative quantifier: in the matrix clause, where it licenses the item, inside a 
 where it cannot, or absent (`Data/Examples/Schwab2023`). Only *jemals* is illusorily licensed by
 the relative-clause quantifier, an asymmetry that the cue-based retrieval, quantifier-scope and
 pragmatic-rescuing accounts of the illusion do not foresee: the paper reads its Bayes factors
-(`Data/Experiments/Schwab2023`) as evidence for the *jemals* illusion in both experiments and for
+(`Data/Statistics/Schwab2023`) as evidence for the *jemals* illusion in both experiments and for
 the *so recht* illusion in neither (`illusion_attested`), and for the difference between the two
 in the second experiment only (`interaction_attested_iff`). Its readings rank the Bayes factors
 consistently (`verdictRank_monotone`).
@@ -46,7 +46,7 @@ scale, so the strengthening mechanism accepts it and the attenuating one rejects
   it (`Informative`), the paper's `c + p + p' ≠ c + p`. Alternatives are an arbitrary set of
   propositions, so the lexical scales are hypotheses on it: the specific times of an
   existential and the lower degrees of a degree modifier.
-* The Bayes factors and the paper's readings of them are `Data/Experiments/Schwab2023`; an
+* The Bayes factors and the paper's readings of them are `Data/Statistics/Schwab2023`; an
   effect counts as attested when the paper reads its Bayes factor as at least moderate evidence
   for it, since the paper states no threshold. The posterior estimates are not recorded. The
   parser's activation story that selects the relative-clause proposition is not modeled, only

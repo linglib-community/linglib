@@ -4,7 +4,7 @@ public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.HarmonicGrammar.Expressivity
 public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Phonology.HarmonicGrammar.Noise
-public import Linglib.Data.Experiments.CoetzeePater2011
+public import Linglib.Data.Statistics.CoetzeePater2011
 
 /-!
 # Coetzee and Pater (2011): The Place of Variation in Phonological Theory
@@ -25,7 +25,7 @@ HG matches exactly.
 ## Implementation notes
 
 Locators follow the ROA-946 draft of 6 October 2009, and the printed tables are read from
-`Data/Experiments/CoetzeePater2011.json`. Constraint indices follow (11): 0 is \*CT, 1 MAX,
+`Data/Statistics/CoetzeePater2011.json`. Constraint indices follow (11): 0 is \*CT, 1 MAX,
 2 MAX-PRE-V and 3 MAX-FINAL, while (23) prints them in the order \*CT, MAX-PRE-V, MAX-FINAL,
 MAX. The constraint values of stochastic OT in (14), (21) and (23) come from Praat simulations
 and are read as data, not derived.
@@ -72,7 +72,7 @@ and are read as data, not derived.
 namespace CoetzeePater2011
 
 open OptimalityTheory HarmonicGrammar MeasureTheory ProbabilityTheory Finset Real
-  Data.Experiments
+  Data.Statistics
 open scoped NNReal ENNReal
 
 /-! ### Deletion rates by context and by morphology ((7), (10)) -/

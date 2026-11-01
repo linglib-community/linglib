@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.RosaArnold2017
-public import Linglib.Data.Experiments.RosaArnold2017
+public import Linglib.Data.Statistics.RosaArnold2017
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Morphology.Word.Agree
 public import Studies.KehlerRohde2013
@@ -27,7 +27,7 @@ topicality account as the vanishing of the thematic effect, and `source_subject_
 shows that a subject source pronominalized above a nonsubject goal, the earlier finding taken as
 evidence against predictability, is consistent with a positive thematic effect whenever the
 subject effect exceeds it. The pronoun rates of the three experiments and the rating study are
-`Data/Experiments/RosaArnold2017`; `topical_not_fits` reads the Experiment 1 contrast at fixed
+`Data/Statistics/RosaArnold2017`; `topical_not_fits` reads the Experiment 1 contrast at fixed
 grammatical role and `goal_expected` the rating study. In Experiment 2 the goal effect is
 significant only in Occasion and Result continuations, the group whose relations focus the end
 state of the previous event, which are the relations where Kehler and Rohde's interpretation is

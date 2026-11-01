@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Kernel.OfDensity
-public import Linglib.Data.Experiments.KehlerRohde2013
+public import Linglib.Data.Statistics.KehlerRohde2013
 public import Linglib.Discourse.Accessibility
 public import Linglib.Discourse.Centering.Basic
 public import Linglib.Discourse.Centering.GrammaticalRole
@@ -216,7 +216,7 @@ instance : MeasurableSpace Position := ⊤
 instance : DiscreteMeasurableSpace Position := ⟨fun _ ↦ trivial⟩
 
 /-- A real value prints as the decimal `d` when it lies within half a unit of `d`'s last place. -/
-def RoundsTo (x : ℝ) (d : Data.Experiments.Decimal) : Prop :=
+def RoundsTo (x : ℝ) (d : Data.Statistics.Decimal) : Prop :=
   |x - d.toRat| ≤ 1 / (2 * 10 ^ d.exponent)
 
 /-! ### Coherence-conditioned interpretation (Tables 1–5) -/
@@ -228,10 +228,10 @@ theorem imperfective_more_source : aspectSource .perfective < aspectSource .impe
   decide
 
 /-- The measure on relations given by a printed column of frequencies. -/
-noncomputable def frequencies (d : Relation → Data.Experiments.Decimal) : Measure Relation :=
+noncomputable def frequencies (d : Relation → Data.Statistics.Decimal) : Measure Relation :=
   Measure.ofRealWeights fun c ↦ ((d c).toRat : ℝ)
 
-instance (d : Relation → Data.Experiments.Decimal) : IsFiniteMeasure (frequencies d) :=
+instance (d : Relation → Data.Statistics.Decimal) : IsFiniteMeasure (frequencies d) :=
   inferInstanceAs (IsFiniteMeasure (Measure.ofRealWeights _))
 
 /-- The interpretation kernel of a column of Source biases in percent. -/
@@ -243,7 +243,7 @@ noncomputable def interpretation (b : Relation → ℕ) : Kernel Relation Role :
 instance (b : Relation → ℕ) : IsFiniteKernel (interpretation b) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
-theorem interpretation_comp_real_source (d : Relation → Data.Experiments.Decimal)
+theorem interpretation_comp_real_source (d : Relation → Data.Statistics.Decimal)
     (hd : ∀ c, (0 : ℝ) ≤ (d c).toRat) (b : Relation → ℕ) (hb : ∀ c, b c ≤ 100) :
     (interpretation b ∘ₘ frequencies d).real {.source} =
       ∑ c, ((d c).toRat : ℝ) * b c / 100 := by
@@ -260,7 +260,7 @@ theorem interpretation_comp_real_source (d : Relation → Data.Experiments.Decim
   ring
 
 /-- The frequency of a relation in the perfective continuations of Table 2. -/
-def perfectiveFrequency (c : Relation) : Data.Experiments.Decimal :=
+def perfectiveFrequency (c : Relation) : Data.Statistics.Decimal :=
   (relationsPerfective c).frequency
 
 /-- The Source bias of a relation in Table 2, in percent. -/
@@ -276,15 +276,15 @@ theorem perfective_mixture_masks_biases :
       ∀ c, (perfectiveFrequency c).hundredths ≤ (perfectiveFrequency .occasion).hundredths := by
   have h := interpretation_comp_real_source perfectiveFrequency
     (fun c ↦ by cases c <;> norm_num [perfectiveFrequency, relationsPerfective,
-      Data.Experiments.Decimal.toRat]) perfectiveSourceGiven (fun c ↦ by cases c <;> decide)
+      Data.Statistics.Decimal.toRat]) perfectiveSourceGiven (fun c ↦ by cases c <;> decide)
   rw [show (Finset.univ : Finset Relation) =
       {.occasion, .elaboration, .explanation, .violatedExpectation, .result} by decide] at h
   simp [Finset.sum_insert, perfectiveFrequency, perfectiveSourceGiven, relationsPerfective,
-    Data.Experiments.Decimal.hundredths, Data.Experiments.Decimal.toRat] at h
+    Data.Statistics.Decimal.hundredths, Data.Statistics.Decimal.toRat] at h
   refine ⟨⟨?_, ?_⟩, by decide, by decide, by decide⟩ <;> rw [h] <;> norm_num
 
 /-- The frequency of a relation under an instruction in Table 3. -/
-def instructionFrequency (i : Instruction) (c : Relation) : Data.Experiments.Decimal :=
+def instructionFrequency (i : Instruction) (c : Relation) : Data.Statistics.Decimal :=
   (relationsByInstruction c i).frequency
 
 /-- The Source bias of a relation in the instruction manipulation of Table 4, in percent. -/
@@ -307,13 +307,13 @@ theorem instruction_mixtures :
       {.occasion, .elaboration, .explanation, .violatedExpectation, .result} := by decide
   have hw := interpretation_comp_real_source (instructionFrequency .why)
     (fun c ↦ by cases c <;> norm_num [instructionFrequency, relationsByInstruction,
-      Data.Experiments.Decimal.toRat]) _ hb
+      Data.Statistics.Decimal.toRat]) _ hb
   have hn := interpretation_comp_real_source (instructionFrequency .whatNext)
     (fun c ↦ by cases c <;> norm_num [instructionFrequency, relationsByInstruction,
-      Data.Experiments.Decimal.toRat]) _ hb
+      Data.Statistics.Decimal.toRat]) _ hb
   rw [hu] at hw hn
   simp [Finset.sum_insert, instructionFrequency, instructionSourceGiven, relationsByInstruction,
-    biasesByRelation, Data.Experiments.Decimal.hundredths, Data.Experiments.Decimal.toRat]
+    biasesByRelation, Data.Statistics.Decimal.hundredths, Data.Statistics.Decimal.toRat]
     at hw hn
   refine ⟨⟨?_, ?_⟩, by decide, by decide⟩
   · rw [hw]; norm_num
@@ -332,7 +332,7 @@ theorem not_heuristic (ν : Measure Role) (ρ : Instruction → Measure Relation
   have h₁ := h .whatNext
   have h₂ := h .why
   rw [e] at h₁
-  simp only [RoundsTo, sourceByInstruction, Data.Experiments.Decimal.toRat, abs_le] at h₁ h₂
+  simp only [RoundsTo, sourceByInstruction, Data.Statistics.Decimal.toRat, abs_le] at h₁ h₂
   norm_num at h₁ h₂
   linarith [h₁.1, h₁.2, h₂.1, h₂.2]
 
@@ -395,7 +395,7 @@ theorem arnold_prediction :
     show (Finset.univ : Finset Role) = {.source, .goal} by decide, Finset.sum_pair (by decide)]
   simp only [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast, RoundsTo, arnoldPrior,
     arnoldLikelihood, arnoldRow, arnoldPrediction, arnoldPronominalizations, Role.position,
-    Data.Experiments.Decimal.hundredths, Data.Experiments.Decimal.toRat, abs_le]
+    Data.Statistics.Decimal.hundredths, Data.Statistics.Decimal.toRat, abs_le]
   norm_num
 
 /-! ### Bidirectionality (Table 6) -/
@@ -426,7 +426,7 @@ theorem not_inert (μ : Measure Role) [IsProbabilityMeasure μ] (η : Kernel Rol
           {.elaboration}) (relationsByPrompt .elaboration .pronoun).frequency) := by
   rw [map_relation_cond_eq_of_forall_eq μ η σ hσ .source h0]
   rintro ⟨h₁, h₂⟩
-  simp only [RoundsTo, relationsByPrompt, Data.Experiments.Decimal.toRat, abs_le] at h₁ h₂
+  simp only [RoundsTo, relationsByPrompt, Data.Statistics.Decimal.toRat, abs_le] at h₁ h₂
   norm_num at h₁ h₂
   linarith [h₁.1, h₁.2, h₂.1, h₂.2]
 
@@ -468,7 +468,7 @@ noncomputable def voiceProduction (v : Voice) : Kernel Position Form :=
 instance (v : Voice) : IsMarkovKernel (voiceProduction v) :=
   Kernel.isMarkovKernel_ofWeights
     (fun pos ↦ ⟨.pronoun, by cases v <;> cases pos <;>
-      simp [voiceLikelihood, pronominalizations, Data.Experiments.Decimal.hundredths]⟩)
+      simp [voiceLikelihood, pronominalizations, Data.Statistics.Decimal.hundredths]⟩)
     (fun _ _ ↦ ENNReal.natCast_ne_top _)
 
 theorem voiceProduction_apply_singleton (v : Voice) (pos : Position) (f : Form) :
@@ -478,7 +478,7 @@ theorem voiceProduction_apply_singleton (v : Voice) (pos : Position) (f : Form) 
     ENNReal.div_eq_inv_mul]
   congr
   cases v <;> cases pos <;> simp [voiceLikelihood, pronominalizations,
-    Data.Experiments.Decimal.hundredths] <;> norm_num
+    Data.Statistics.Decimal.hundredths] <;> norm_num
 
 /-- The predicted bias of an ambiguous pronoun toward the subject is the posterior (13) under the
 no-pronoun prior of Table 7 and the production kernel of Table 9. -/
@@ -506,7 +506,7 @@ theorem bayesSubject_eq : bayesSubject .active = 3658 / 4642 ∧
     show (Finset.univ : Finset Position) = {.subject, .nonSubject} by decide,
     Finset.sum_pair (by decide)]
   simp only [Measure.ofWeights_real_singleton, ENNReal.toReal_natCast, voicePrior, voiceLikelihood,
-    causalMention, causalMentions, pronominalizations, Data.Experiments.Decimal.hundredths]
+    causalMention, causalMentions, pronominalizations, Data.Statistics.Decimal.hundredths]
   norm_num
 
 theorem voice_predictions :
@@ -524,21 +524,21 @@ theorem overlaid_subject_bias :
       (voicePrior .passive .subject : ℝ) / 100 < bayesSubject .passive := by
   obtain ⟨hA, hP⟩ := bayesSubject_eq
   rw [hA, hP]
-  simp only [voicePrior, causalMention, causalMentions, Data.Experiments.Decimal.hundredths]
+  simp only [voicePrior, causalMention, causalMentions, Data.Statistics.Decimal.hundredths]
   norm_num
 
 theorem bayesSubject_lt_predicted (v : Voice) :
     bayesSubject v < (subjectBiases v).predicted.toRat := by
   obtain ⟨hA, hP⟩ := bayesSubject_eq
   cases v
-  · rw [hA]; norm_num [subjectBiases, Data.Experiments.Decimal.toRat]
-  · rw [hP]; norm_num [subjectBiases, Data.Experiments.Decimal.toRat]
+  · rw [hA]; norm_num [subjectBiases, Data.Statistics.Decimal.toRat]
+  · rw [hP]; norm_num [subjectBiases, Data.Statistics.Decimal.toRat]
 
 theorem voiceProduction_subject_lt :
     (voiceProduction .active .subject).real {.pronoun} <
       (voiceProduction .passive .subject).real {.pronoun} := by
   simp only [measureReal_def, voiceProduction_apply_singleton]
-  simp [voiceLikelihood, pronominalizations, Data.Experiments.Decimal.hundredths]
+  simp [voiceLikelihood, pronominalizations, Data.Statistics.Decimal.hundredths]
   norm_num
 
 /-! ### The Centering term
@@ -593,7 +593,7 @@ theorem not_cbFactored (g : Prop → ℝ) (cur : Voice → Utterance Word Gramma
   have h₁ := h .active
   have h₂ := h .passive
   rw [cb_contextSentence _ (hcur _), eq_self_iff_true] at h₁ h₂
-  simp only [RoundsTo, pronominalizations, Data.Experiments.Decimal.toRat, abs_le] at h₁ h₂
+  simp only [RoundsTo, pronominalizations, Data.Statistics.Decimal.toRat, abs_le] at h₁ h₂
   norm_num at h₁ h₂
   linarith [h₁.1, h₁.2, h₂.1, h₂.2]
 

@@ -7,7 +7,7 @@ public import Eval.Homogeneity.Account
 # Scoring accounts of homogeneity on Romoli et al. (2026)
 
 The data are the tests of Romoli et al.'s Experiment 3, read from
-`Data/Experiments/RomoliEtAl2026`: on the target pictures of *exactly two boys opened their
+`Data/Statistics/RomoliEtAl2026`: on the target pictures of *exactly two boys opened their
 presents*, where a non-maximal reading weakens the positive or the negative part of its meaning,
 whether the context affected the negative part, the CONTEXT term with the negative part as the
 reference level of POLARITY, and whether it affected the two parts differently. An effect is

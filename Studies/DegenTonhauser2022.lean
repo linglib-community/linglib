@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.DegenTonhauser2022
+public import Linglib.Data.Statistics.DegenTonhauser2022
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Verbs.Copular
 public import Linglib.Semantics.Presupposition.Verb

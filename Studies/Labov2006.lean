@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.Labov2006
+public import Linglib.Data.Statistics.Labov2006
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.Monotone.Defs
@@ -17,7 +17,7 @@ stable or changing, and of an incoming prestige feature.
 
 ## Implementation notes
 
-* The printed tables are `Data/Experiments/Labov2006.json`. `Variable.toStandard` negates the
+* The printed tables are `Data/Statistics/Labov2006.json`. `Variable.toStandard` negates the
   (th) and (dh) indexes, which score stops and affricates above the prestige fricative, so that
   every signed index grows toward the standard.
 * The models keep the cells the prose explains: an extreme word puts the lowest or highest class
@@ -42,7 +42,7 @@ stable or changing, and of an incoming prestige feature.
 
 namespace Labov2006
 
-open Data.Experiments
+open Data.Statistics
 
 /-! ### The scales -/
 

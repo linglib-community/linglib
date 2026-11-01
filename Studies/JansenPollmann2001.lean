@@ -46,7 +46,7 @@ rule add exactly 2½-ness.
 ## TODO
 
 * The regressions of roundness and frequency on these properties (pp. 198–200) belong in
-  `Data/Experiments`.
+  `Data/Statistics`.
 
 ## References
 

@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "bibkey": "kursat-degen-2021",
+    "method": "experiment",
+    "description": "Three experiments on redundant colour and material adjectives. In Exp. 1 participants judged in a timed forced choice whether a colour or material adjective held of an image, for 81 images of 12 objects. In Exp. 2, an interactive reference game, a speaker described a target among four objects of one kind; on a critical trial colour or material was redundant, the competitor sharing the redundant property with the target and the two distractors sharing the sufficient property with the competitor. In Exp. 3 participants judged descriptions such as '2 green objects' against the displays of Exp. 2. The statistics are fixed effects of mixed-effects regressions, printed in the running text. The proportions of the bar plots are not printed and are not recorded.",
+    "rawData": [
+      {
+        "url": "https://github.com/leylakursat/perceptual_difficulty",
+        "doc": "materials, data and analysis files for the three experiments, as the paper states; the repository was public when checked (2026-10-11)"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Norming",
+      "doc": "The experiments that measure how hard a property is to verify.",
+      "levels": [
+        {"name": "exp1", "label": "Exp. 1", "doc": "an adjective judged against a single image"},
+        {"name": "exp3", "label": "Exp. 3", "doc": "a description judged against a four-object display of the production experiment"}
+      ]
+    },
+    {
+      "name": "DifficultyMeasure",
+      "doc": "The measures of perceptual difficulty.",
+      "levels": [
+        {"name": "error", "label": "error", "doc": "the log odds of an incorrect response, in a logistic regression"},
+        {"name": "responseTime", "label": "response time", "doc": "the log-transformed response time of a correct response, in a linear regression"}
+      ]
+    },
+    {
+      "name": "Predictor",
+      "doc": "The predictors of redundant adjective use in Exp. 2, in logistic regressions.",
+      "levels": [
+        {"name": "redundantProperty", "label": "redundant property", "doc": "which property is redundant, in the analysis of Exp. 2"},
+        {"name": "propertyType", "label": "property type", "doc": "the property type, mean-centred, in the analysis with the response times of Exp. 3"},
+        {"name": "difficulty", "label": "perceptual difficulty", "doc": "the log response time of Exp. 3 residualized on property type, in the same analysis"},
+        {"name": "interaction", "label": "interaction", "doc": "property type by perceptual difficulty, in the same analysis"},
+        {"name": "logRatio", "label": "log ratio", "doc": "the log ratio of the mean response time for the sufficient property to that for the redundant property, residualized on property type, in a second analysis"}
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "verification",
+      "structure": "Verification",
+      "doc": "the effect of material against colour, the reference level, on a measure of perceptual difficulty in a norming experiment.",
+      "locator": "§2.3 and §4.3, pp. 679 and 683",
+      "verified": "page-image",
+      "key": ["experiment", "measure"],
+      "columns": [
+        {"name": "experiment", "type": "Norming", "doc": "The experiment."},
+        {"name": "measure", "type": "DifficultyMeasure", "doc": "The measure."},
+        {"name": "beta", "type": "decimal", "doc": "The coefficient."},
+        {"name": "se", "type": "decimal", "doc": "The standard error."},
+        {"name": "t", "type": "option decimal", "doc": "The t statistic, printed for the linear regressions."},
+        {"name": "p", "type": "pvalue", "doc": "The p-value."}
+      ],
+      "rows": [
+        {"experiment": "Exp. 1", "measure": "error", "beta": "0.48", "se": "0.12", "t": null, "p": "< 0.0001"},
+        {"experiment": "Exp. 1", "measure": "response time", "beta": "5.44", "se": "4.74", "t": "11.49", "p": "< 0.0001", "note": "the printed standard error and t statistic do not agree"},
+        {"experiment": "Exp. 3", "measure": "error", "beta": "0.96", "se": "0.09", "t": null, "p": "< 0.0001"},
+        {"experiment": "Exp. 3", "measure": "response time", "beta": "0.24", "se": "0.018", "t": "-59.62", "p": "< 0.0001", "note": "the t statistic is printed as negative"}
+      ]
+    },
+    {
+      "name": "redundantUse",
+      "structure": "RedundantUse",
+      "doc": "the effect of a predictor on the log odds that the speaker of Exp. 2 mentions the redundant property.",
+      "locator": "§3.3 and §4.3, pp. 681–684",
+      "verified": "page-image",
+      "key": ["predictor"],
+      "columns": [
+        {"name": "predictor", "type": "Predictor", "doc": "The predictor."},
+        {"name": "beta", "type": "decimal", "doc": "The coefficient."},
+        {"name": "se", "type": "decimal", "doc": "The standard error."},
+        {"name": "p", "type": "pvalue", "doc": "The p-value."}
+      ],
+      "rows": [
+        {"predictor": "redundant property", "beta": "2.32", "se": "0.64", "p": "< 0.0001", "note": "the reference level is given as colour, the reading as more colour"},
+        {"predictor": "property type", "beta": "7.43", "se": "2.27", "p": "< 0.001", "note": "the text calls this an effect on response time"},
+        {"predictor": "perceptual difficulty", "beta": "-11.3", "se": "16.41", "p": "0.49"},
+        {"predictor": "interaction", "beta": "13.57", "se": "31.87", "p": "0.67"},
+        {"predictor": "log ratio", "beta": "5.31", "se": "3.87", "p": "0.17"}
+      ]
+    }
+  ]
+}
