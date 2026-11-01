@@ -59,7 +59,7 @@ definition](##Lionnet2025.drubea_tonal) without a stress accent (`drubea_not_str
 
 namespace Lionnet2025
 
-open Tone Tone.Registered Subregular
+open Tone Tone.Registered Subregular Subregular.StringFormula
 open Prosody (Syllable)
 
 /-- The weight a syllable contributes: its mora count. -/
@@ -265,20 +265,20 @@ def alphabet : List Slot :=
   [none, some [], some [.l], some [.l, .l], some [.h], some [.l, .h]]
 
 /-- The position variable. -/
-def x : Walk := .var
+def x : StringTerm Slot := .var 0
 
 /-- `t` reads a syllable boundary. -/
-def bar (t : Walk) : WindowFormula Slot := .label none t
+def bar (t : StringTerm Slot) : StringFormula Slot := label none t
 
 /-- `t` reads a registerless mora. -/
-def empty (t : Walk) : WindowFormula Slot := .label (some []) t
+def empty (t : StringTerm Slot) : StringFormula Slot := label (some []) t
 
 /-- `t` reads a mora bearing a downstep, single or double. -/
-def bearsL (t : Walk) : WindowFormula Slot :=
-  .label (some [.l]) t ⊔ .label (some [.l, .l]) t
+def bearsL (t : StringTerm Slot) : StringFormula Slot :=
+  label (some [.l]) t ⊔ label (some [.l, .l]) t
 
 /-- The next mora, across a boundary if there is one, bears a downstep. -/
-def nextBearsL : WindowFormula Slot :=
+def nextBearsL : StringFormula Slot :=
   bearsL x.succ ⊔ (bar x.succ ⊓ bearsL x.succ.succ)
 
 /-- A register feature appended to a mora. -/
@@ -287,7 +287,7 @@ def append (f : RegisterFeature) : Slot → Slot := Option.map (· ++ [f])
 /-- Pre-downstep h-epenthesis (§4.4): a registerless mora before a downstepped one takes `h`,
 unless its own syllable is downstepped before it — one mora back, the syllables being at
 most bimoraic. -/
-def raisingGuard : WindowFormula Slot := empty x ⊓ nextBearsL ⊓ (bearsL x.pred).not
+def raisingGuard : StringFormula Slot := empty x ⊓ nextBearsL ⊓ (bearsL x.pred).not
 
 /-- Pre-downstep h-epenthesis as a process. -/
 def raising : Docking Slot := .ofQF raisingGuard (append .h)
@@ -304,8 +304,9 @@ def spreading : Docking Slot where
 
 /-- Utterance-initial neutralisation (§3.5, §4.5): the first mora's downstep is left
 unrealized, there being no preceding register to contrast with; the feature is not
-deleted, so it still blocks h-epenthesis on its syllable. -/
-def neutralizationGuard : WindowFormula Slot := bar x.pred ⊓ WindowFormula.initial x.pred
+deleted, so it still blocks h-epenthesis on its syllable. The first mora follows the
+initial boundary. -/
+def neutralizationGuard : StringFormula Slot := (first x).not ⊓ first x.pred ⊓ bar x.pred
 
 /-- Utterance-initial neutralisation as a process. -/
 def neutralization : Docking Slot :=
@@ -313,22 +314,22 @@ def neutralization : Docking Slot :=
 
 /-- Downstep displacement, first half (§4.6): the downstep on the last mora of a bimoraic
 syllable spreads to the next syllable's first mora, stacking on a downstep there. -/
-def spreadLGuard : WindowFormula Slot :=
-  bar x.pred ⊓ bearsL x.pred.pred ⊓ .defined x.pred.pred.pred ⊓ (bar x.pred.pred.pred).not
+def spreadLGuard : StringFormula Slot :=
+  bar x.pred ⊓ bearsL x.pred.pred ⊓ (first x.pred.pred).not ⊓ (bar x.pred.pred.pred).not
 
 /-- The spreading half of displacement as a process. -/
 def spreadL : Docking Slot := .ofQF spreadLGuard (append .l)
 
 /-- Downstep displacement, second half: the spread downstep delinks from its host. -/
-def delinkLGuard : WindowFormula Slot :=
-  bearsL x ⊓ .defined x.pred ⊓ (bar x.pred).not ⊓ bar x.succ ⊓ .defined x.succ.succ
+def delinkLGuard : StringFormula Slot :=
+  bearsL x ⊓ (first x).not ⊓ (bar x.pred).not ⊓ bar x.succ ⊓ (last x.succ).not
 
 /-- The delinking half of displacement as a process. -/
 def delinkL : Docking Slot := .ofQF delinkLGuard (Option.map (·.erase RegisterFeature.l))
 
 /-- The final syllable bears no register feature. -/
-def finalRegisterless : WindowFormula Slot :=
-  WindowFormula.final x ⊓ empty x ⊓ (bar x.pred ⊔ (empty x.pred ⊓ bar x.pred.pred))
+def finalRegisterless : StringFormula Slot :=
+  last x ⊓ empty x ⊓ (bar x.pred ⊔ (empty x.pred ⊓ bar x.pred.pred))
 
 /-- Drubea's final raising (§3.3, §4.8): h% docks on an utterance-final registerless
 syllable. -/
@@ -336,8 +337,8 @@ def finalRaising : Docking Slot := .ofQF finalRegisterless (append .h)
 
 /-- Numèè's final lowering (§3.4, §4.8): l% docks on a light final syllable after a
 registerless syllable, whether the final is registerless or downstepped. -/
-def finalLoweringGuard : WindowFormula Slot :=
-  WindowFormula.final x ⊓ bar x.pred ⊓ empty x.pred.pred ⊓
+def finalLoweringGuard : StringFormula Slot :=
+  last x ⊓ bar x.pred ⊓ empty x.pred.pred ⊓
     (bar x.pred.pred.pred ⊔ (empty x.pred.pred.pred ⊓ bar x.pred.pred.pred.pred))
 
 /-- Numèè's final lowering as a process. -/
@@ -375,9 +376,9 @@ theorem raising_apply_relabel {s : Registered Syllable} (hs : s ∈ Drubea.stems
   Transduction.apply_relabel (marked_mem_alphabet s hs)
 
 theorem guards_bounded :
-    raisingGuard.Bounded 1 2 ∧ neutralizationGuard.Bounded 2 0 ∧ spreadLGuard.Bounded 3 0 ∧
-      delinkLGuard.Bounded 1 2 ∧ finalRegisterless.Bounded 2 1 ∧
-      finalLoweringGuard.Bounded 4 1 := by
+    Bounded 1 2 raisingGuard ∧ Bounded 2 0 neutralizationGuard ∧ Bounded 3 0 spreadLGuard ∧
+      Bounded 1 2 delinkLGuard ∧ Bounded 2 1 finalRegisterless ∧
+      Bounded 4 1 finalLoweringGuard := by
   decide
 
 theorem raising_boundedDependence :
@@ -386,8 +387,8 @@ theorem raising_boundedDependence :
     Docking.ofQF_boundedDependence_right guards_bounded.1 _⟩
 
 theorem spreading_not_qf :
-    ¬ ∃ (l r : ℕ) (φ : WindowFormula Slot), φ.Bounded l r ∧
-      ∀ m i, spreading.Docks m i ↔ i < m.length ∧ φ.Realize m i := by
+    ¬ ∃ (l r : ℕ) (φ : StringFormula Slot), Bounded l r φ ∧
+      ∀ m i, spreading.Docks m i ↔ φ.HoldsAt m i := by
   rintro ⟨l, r, φ, hφ, h⟩
   let m₁ : List Slot := List.replicate (r + 2) (some []) ++ [some [.l]]
   let m₂ : List Slot := List.replicate (r + 3) (some [])
@@ -402,11 +403,10 @@ theorem spreading_not_qf :
     rintro ⟨-, k, hk, -, hk', -⟩
     rw [hlen₂] at hk
     simp [m₂, hk] at hk'
-  refine h₂ ((h m₂ 0).2 ⟨by omega, ?_⟩)
-  refine (hφ.realize_congr (w := m₁) (w' := m₂) (n := 0) (n' := 0) rfl
+  refine h₂ ((h m₂ 0).2 ((hφ.holdsAt_congr (w := m₁) (w' := m₂) (n := 0) (n' := 0) rfl
     (fun j _ ↦ by simp [m₁, m₂])
     (fun j hj ↦ by simp [m₁, m₂, show j < r + 2 by omega, show j < r + 3 by omega])).1
-    ((h m₁ 0).1 h₁).2
+    ((h m₁ 0).1 h₁)))
 
 /-! ### Drubea utterances -/
 

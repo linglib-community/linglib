@@ -426,7 +426,7 @@ def markerOf (l : Glottocode) : Option Conditional.Marker :=
     (.mandarinChinese, Mandarin.Conditionals.ruguo)]
 
 theorem rows_marker_hypothetical :
-    ∀ e ∈ Examples.all, ∀ m ∈ markerOf e.language, .hypothetical ∈ m.readings.fst := by
+    ∀ e ∈ Examples.all, ∃ m ∈ markerOf e.language, .hypothetical ∈ m.readings.fst := by
   decide
 
 end Mizuno2024

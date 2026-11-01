@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.WindowFormula
+public import Linglib.Phonology.Subregular.StringModel
 public import Linglib.Phonology.Subregular.Dependence
 
 /-!
@@ -108,33 +108,32 @@ theorem requiresBothSides_of_flanks {fill xOn yOn xOff yOff : α} {n t : ℕ →
 variable [DecidableEq α]
 
 /-- The docking process whose context is a quantifier-free formula. -/
-def ofQF (φ : WindowFormula α) (dock : α → α) : Docking α where
+def ofQF (φ : StringFormula α) (dock : α → α) : Docking α where
   dock := dock
-  Docks w i := i < w.length ∧ φ.Realize w i
-  lt_length h := h.1
+  Docks w i := φ.HoldsAt w i
+  lt_length h := h.lt_length
   decDocks _ _ := inferInstance
 
 /-- With a guard bounded by `l` back and `r` forward, the output at a position reads only the
 input on that window. -/
-theorem ofQF_map_getElem?_congr {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r) (dock : α → α)
-    {w w' : List α} (hag : ∀ j, i - l ≤ j → j ≤ i + r → w[j]? = w'[j]?) :
+theorem ofQF_map_getElem?_congr {φ : StringFormula α} {l r : ℕ}
+    (hφ : StringFormula.Bounded l r φ) (dock : α → α) {w w' : List α}
+    (hag : ∀ j, i - l ≤ j → j ≤ i + r → w[j]? = w'[j]?) :
     ((ofQF φ dock).map w)[i]? = ((ofQF φ dock).map w')[i]? := by
-  have hi := hag i (by omega) (by omega)
-  have hlt : i < w.length ↔ i < w'.length := by
-    simp only [← Nat.not_le, ← List.getElem?_eq_none_iff, hi]
-  have hR : φ.Realize w i ↔ φ.Realize w' i := hφ.realize_congr rfl
+  have hR : φ.HoldsAt w i ↔ φ.HoldsAt w' i := hφ.holdsAt_congr rfl
     (fun _ _ ↦ hag _ (by omega) (by omega)) fun _ _ ↦ hag _ (by omega) (by omega)
-  simp only [map_getElem?, ofQF, hi, hlt, hR]
+  simp only [map_getElem?, ofQF, hag i (by omega) (by omega), hR]
 
 /-- A quantifier-free docking process with a bounded guard depends boundedly on the left. -/
-theorem ofQF_boundedDependence_left {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r)
-    (dock : α → α) : BoundedDependence (ofQF φ dock).map .left :=
+theorem ofQF_boundedDependence_left {φ : StringFormula α} {l r : ℕ}
+    (hφ : StringFormula.Bounded l r φ) (dock : α → α) : BoundedDependence (ofQF φ dock).map .left :=
   ⟨l, fun _ _ _ h ↦ ofQF_map_getElem?_congr hφ dock fun j h₁ _ ↦
     List.drop_eq_drop_iff_getElem?.mp h j h₁⟩
 
 /-- A quantifier-free docking process with a bounded guard depends boundedly on the right. -/
-theorem ofQF_boundedDependence_right {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r)
-    (dock : α → α) : BoundedDependence (ofQF φ dock).map .right :=
+theorem ofQF_boundedDependence_right {φ : StringFormula α} {l r : ℕ}
+    (hφ : StringFormula.Bounded l r φ) (dock : α → α) :
+    BoundedDependence (ofQF φ dock).map .right :=
   ⟨r, fun _ _ _ h ↦ ofQF_map_getElem?_congr hφ dock fun j _ h₂ ↦
     List.take_eq_take_iff_getElem?.mp h j (by omega)⟩
 
