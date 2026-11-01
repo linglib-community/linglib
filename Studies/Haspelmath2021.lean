@@ -3,6 +3,7 @@ module
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Haspelmath2021
+public import Linglib.Data.Experiments.Haspelmath2021
 public import Linglib.Discourse.Givenness
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Semantics.Focus.Marking
@@ -19,65 +20,63 @@ public import Linglib.Data.Examples.Languages
 /-!
 # Haspelmath (2021): Role-reference associations and the explanation of argument coding splits
 
-Haspelmath's role-reference association universal (Universal 1, (5)) says that deviations
-from the usual associations of role rank and referential prominence are coded by longer
-grammatical forms. `RoleReferenceUniversal` states it for any usualness relation on situations.
-Its single-argument instance is `SingleArgumentUniversal` (Universal 3, whose role instances are
-Universals 4, 6, 7 and 8), and its scenario instance over `Clause.Scenario` is
-`ScenarioUniversal` (Universal 5, which yields Universals 9b, 10 and 11). Universal 12 reads
-Universal 1 with the usage rate of the longer alternant of an alternation as the coding, and
-Universals 13 and 14 are its scenario instances. The explanation of §11.2 is
-`roleReferenceUniversal_of_formFrequency`, by which Universal 2 and the form-frequency
-correspondence universal (68) of Haspelmath's companion paper entail Universal 1.
-
-The coding splits the paper cites are coding-length functions on the prominence scales of (8),
-checked against the universals and against the paper's own examples (`Reproduces`), together
-with the anti-efficient language of §11.3 that the universals exclude.
+This file formalizes Haspelmath's role-reference association universal, that a less usual
+association of role rank and referential prominence is coded no shorter, as
+`RoleReferenceUniversal` over any usualness relation. Its instances are the single-argument
+universal, whose role instances are the split flagging universals; the scenario universal on
+`Clause.Scenario`, whose instances are the ditransitive person-role and the relative scenario
+universals; the inverse universal; and the alternation universal. Each split the paper cites is a
+coding function on a prominence scale, checked against the universals and the paper's examples,
+and [the anti-efficient language violates them](##Haspelmath2021.antiEfficient_violates). [On the
+corpus counts the paper cites, the form-frequency correspondence universal yields the
+single-argument universal](##Haspelmath2021.singleArgumentUniversal_of_frequencies), the
+explanation the paper argues for.
 
 ## Implementation notes
 
-* The scales are the binary versions of (8), which are the two-element bounded orders
-  (`IsSimpleOrder`). On them Universal 5 says exactly that coding is antitone in the order of
-  `Clause.Scenario`, never shorter as the higher-ranked argument's prominence falls or the
-  lower-ranked one's rises (`scenarioUniversal_iff_antitone`), which is what the paper uses
-  tacitly for the monadic splits of fn. 18. The binary scales are load-bearing: on a scale with
-  three levels a monadic scenario split obeys Universal 5 only if it is constant
-  (`ScenarioUniversal.comp_high_le`), since a balanced scenario of two low values is coded no
-  longer than an upstream one and no shorter than a downstream one. Kolyma Yukaghir's and
-  Greek's rules on the ternary person scale are antitone and still violate Universal 5
-  (`yukaghirP_greekT_ternary_antitone`, `yukaghirP_ternary_violates`,
-  `greekT_ternary_violates`). The ternary scales appear only where the paper's rule refers to
-  them: `Person.prominence` for Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw,
-  `Nominality` for Baule.
-* Universal 1's qualification to asymmetric coding is dropped: with coding lengths as the
-  coding, a symmetric split has equal lengths and satisfies the universal vacuously, as
-  Samoan's equal-length ergative alternants do (fn. 14). Its "tends to" is read as
-  exceptionless, an idealization the paper itself qualifies. Universal 3's restriction to
-  flagging (fn. 6) is not encoded, and the paper applies "longer coding" to Georgian (34)
-  and Makassarese (56) itself; the index-based person-role constraint 9a (41) is omitted.
-* `BinaryGivenness` is read as the discourse-given ~ discourse-new scale of (8b), which the
-  paper also calls topicality; Persian's topical indefinite P (19c) counts as given.
-* Coding length is an `ℕ` count of special coding elements in the cited systems; the
-  universals are stated over any preorder, and Universal 12 is Universal 5 read with the
-  usage rate of the longer alternant as the coding.
-* Universal 2 is a claim about discourse frequencies and enters as the hypothesis
-  `UsualIsFrequent` of the reduction rather than as data. It is read within a role, across
-  prominence values (a definite P is rarer than an indefinite P), which is what (68) opposes
-  and what the reduction needs; (6) and the Appendix compare across roles at a fixed value (a
-  definite A is commoner than a definite P), a weaker claim.
-* The example rows carry the coding an example shows (`codingShown`), so a strict split
-  reproduces a row when the coding shown is acceptable exactly when it is the coding the
-  split requires, and a splitting alternation when the construction shown is available in
-  the row's scenario.
+* The scales are the binary versions of the paper's scales, the two-element bounded orders
+  (`IsSimpleOrder`). On them the scenario universal says exactly that [coding is antitone in the
+  order of `Clause.Scenario`](##Haspelmath2021.scenarioUniversal_iff_antitone), which the paper
+  assumes tacitly for monadic splits. The binary scales are load-bearing: on a scale with three
+  levels [a monadic split obeys the scenario universal only if it is
+  constant](##Haspelmath2021.ScenarioUniversal.comp_high_le), since a balanced scenario of two low
+  values is coded no longer than an upstream one and no shorter than a downstream one, so Kolyma
+  Yukaghir's rule and [Greek's on the ternary person scale violate
+  it](##Haspelmath2021.greekT_ternary_violates). Ternary scales appear only where a rule refers to
+  them: the person hierarchy for Kashmiri, animacy for Sardinian, Spanish, Fore and Awtuw, and the
+  nominal types for Baule.
+* The universal's restriction to asymmetric coding is dropped: with coding lengths as the coding, a
+  symmetric split has equal lengths and satisfies it vacuously, as Samoan's ergative flags of equal
+  length do. Its "tends to" is read as exceptionless, an idealization the paper itself qualifies.
+  The single-argument universal's restriction to flagging is not encoded, since the paper applies
+  "longer coding" to the Georgian reinforced pronoun and the Makassarese applicative itself, and
+  the index-based person-role constraint is omitted.
+* `BinaryGivenness` is the scale of discourse-given over discourse-new, which the paper also calls
+  topicality, so Persian's topical indefinite P counts as given.
+* Coding length is an `ℕ` count of special coding elements. The universals are stated over any
+  preorder, and the alternation universal is the scenario universal read with the usage rate of
+  the longer alternant as the coding. The single-argument universal is stated over any partial
+  order, so that [Makassarese's rule, on the definiteness and the nominality of T together, is a
+  monotone coding on the product of the two scales](##Haspelmath2021.makassar_universal8).
+* In the paper's taxonomy the inverse universal is an instance of the role-reference universal
+  beside the scenario universal; here [it follows from the scenario universal read on verb
+  coding](##Haspelmath2021.inverseUniversal_of_scenarioUniversal).
+* The usual associations are a claim about frequencies in use, which the paper glosses across
+  roles at a fixed value (more definite As than definite Ps), while the reduction to form-frequency
+  correspondence needs it within a role across values (a definite P rarer than an indefinite P).
+  The Appendix's counts bear out [the reading within
+  roles](##Haspelmath2021.usualIsFrequent_frequencies) and [the reading across
+  roles](##Haspelmath2021.frequencies_higherRanked) in every table; its tables are one table of the
+  data, keyed by corpus and scale.
+* The example rows carry the coding an example shows (`codingShown`), so a strict split reproduces
+  a row when the coding shown is acceptable exactly when it is the coding the split requires, and
+  a splitting alternation when the construction shown is available in the row's scenario.
 
 ## TODO
 
-* Makassarese (56c), the applicative on a person-form T, is the nominality projection of a
-  rule over definiteness and nominality together; the two projections are checked
-  separately.
-* `lummiPassive`'s availability whenever A is a full nominal is inferred from (64c) and
-  (65b); the paper states only that the passive is obligatory in upstream scenarios and
-  optional in `N > N`. UNVERIFIED against the source grammar.
+* `lummiPassive`'s availability whenever A is a full nominal is inferred from (64c) and (65b); the
+  paper states only that the passive is obligatory in upstream scenarios and optional in `N > N`.
+  UNVERIFIED against the source grammar.
 
 ## References
 
@@ -250,6 +249,9 @@ language use. -/
 def UsualIsFrequent (r : S → S → Prop) (freq : S → F) : Prop :=
   ∀ ⦃s t⦄, r s t → freq t < freq s
 
+instance (r : S → S → Prop) (freq : S → F) [i : Decidable (∀ s t, r s t → freq t < freq s)] :
+    Decidable (UsualIsFrequent r freq) := i
+
 /-- Universal 1 follows from Universal 2 and the form-frequency correspondence universal (68), which
 is Universal 1 for the relation of being more frequent (§11.2). -/
 theorem roleReferenceUniversal_of_formFrequency {r : S → S → Prop} {freq : S → F}
@@ -257,7 +259,9 @@ theorem roleReferenceUniversal_of_formFrequency {r : S → S → Prop} {freq : S
     RoleReferenceUniversal r c :=
   RoleReferenceUniversal.mono hu h
 
-variable {α : Type*} [LinearOrder α]
+section SingleArgument
+
+variable {α : Type*} [PartialOrder α]
 
 /-- Universal 3 (13), the single-argument flagging universal, is Universal 1 for the usual
 associations `ArgumentRole.MoreUsualFor` of the role `r` in (9), which are vacuous for S. -/
@@ -279,6 +283,10 @@ theorem singleArgumentUniversal_iff_monotone {r : ArgumentRole} (h : r.IsLowerRa
     {c : α → L} : SingleArgumentUniversal r c ↔ Monotone c :=
   ⟨fun H ↦ monotone_iff_forall_lt.2 fun _ _ hab ↦ H (.inr ⟨h, hab⟩),
     fun H _ _ hst ↦ hst.elim (fun h' ↦ (h.not_isHigherRanked h'.1).elim) fun h ↦ H h.2.le⟩
+
+end SingleArgument
+
+variable {α : Type*} [LinearOrder α]
 
 /-- Universal 5 (16), the scenario universal, says that coding is longest for upstream, shortest for
 downstream and intermediate for balanced scenarios. Universal 10 (54) is its restriction to
@@ -384,6 +392,43 @@ theorem scenarioUniversal_comp_kind {g : Scenario.Kind → L} (hg : Antitone g) 
   fun _ _ hst ↦ hg hst.le
 
 end Universals
+
+/-! ### Universal 2 in the Appendix
+
+Each table of the Appendix counts how often the arguments of a role take the more and the less
+prominent value of a binary scale, read here as `Bool` with `true` the more prominent. -/
+
+/-- The argument role of the arguments a row of the Appendix counts. -/
+def Role.toArgumentRole : Role → ArgumentRole
+  | .a => .A
+  | .p => .P
+  | .r => .R
+  | .t => .T
+
+/-- The frequencies of a row of the Appendix on the two values of its scale. -/
+def Frequency.freq (f : Frequency) : Bool → ℕ
+  | true => f.prominent
+  | false => f.nonProminent
+
+-- Appendix
+theorem usualIsFrequent_frequencies :
+    ∀ f ∈ frequencies, UsualIsFrequent f.role.toArgumentRole.MoreUsualFor f.freq := by
+  decide
+
+-- (6), Appendix
+theorem frequencies_higherRanked :
+    ∀ f ∈ frequencies, ∀ g ∈ frequencies, f.corpus = g.corpus → f.scale = g.scale →
+      f.role.toArgumentRole.IsHigherRanked → g.role.toArgumentRole.IsLowerRanked →
+      g.prominent < f.prominent ∧ f.nonProminent < g.nonProminent := by
+  decide
+
+/-- On the frequencies of each table of the Appendix, the form-frequency correspondence universal
+(68) yields Universal 3 for the table's role, as §11.2 argues: the reduction's premise about usage
+holds of every corpus the paper cites. -/
+theorem singleArgumentUniversal_of_frequencies {f : Frequency} (hf : f ∈ frequencies)
+    {c : Bool → ℕ} (h : FormFrequencyCorrespondence f.freq c) :
+    SingleArgumentUniversal f.role.toArgumentRole c :=
+  roleReferenceUniversal_of_formFrequency (usualIsFrequent_frequencies f hf) h
 
 /-! ### Single-argument splits (§4, §5) -/
 
@@ -624,16 +669,15 @@ def itonamaV : Scenario Person.Class → ℕ := below .balanced ∘ Scenario.kin
 theorem universal11_itonama : InverseUniversal itonamaV :=
   inverseUniversal_of_scenarioUniversal (scenarioUniversal_comp_kind (below_antitone _))
 
-/-- Makassarese requires the applicative `-ang` on the verb for a definite T, as in (56). -/
-def makassarV : Definiteness → ℕ := atLeast .definite
-
-/-- Makassarese requires the applicative `-ang` on the verb for a person-form T, as in (56c). -/
-def makassarVNominality : BinaryNominality → ℕ := atLeast .personForm
+/-- Makassarese requires the applicative `-ang` on the verb when T is a definite nominal or a
+person form, as in (56), a rule on the definiteness and the nominality of T together. -/
+def makassarV (x : Definiteness × BinaryNominality) : ℕ :=
+  max (atLeast .definite x.1) (atLeast .personForm x.2)
 
 -- §9
-theorem makassar_universal8 :
-    SingleArgumentUniversal .T makassarV ∧ SingleArgumentUniversal .T makassarVNominality :=
-  ⟨singleArgumentUniversal_atLeast (by decide) _, singleArgumentUniversal_atLeast (by decide) _⟩
+theorem makassar_universal8 : SingleArgumentUniversal .T makassarV :=
+  (singleArgumentUniversal_iff_monotone (by decide)).2
+    (((atLeast_monotone _).comp monotone_fst).max ((atLeast_monotone _).comp monotone_snd))
 
 /-! ### Splitting alternations (§10.2) -/
 
@@ -793,10 +837,16 @@ def focusTable : List (String × Markᵒᵈ) :=
 def Nominality.table : List (String × Nominality) :=
   [("pers", .pronoun), ("prop", .properName), ("common", .commonNoun)]
 
+/-- The definiteness and the nominality of a Makassarese row's T. -/
+def makassarProminence? (e : Datum) : Option (Definiteness × BinaryNominality) := do
+  pure (← e.parse? "definiteness" Definiteness.table,
+    ← e.parse? "nominality" BinaryNominality.table)
+
 -- §4.1, §4.2
 theorem rows_splitP_splitA :
     Reproduces (rows .sakha "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows .nuorese "P" "animacy") (prominence? Animacy.table) sardinianP ∧
+      -- Punjabi's split is Sakha's, definiteness-conditioned P flagging (§4.1.2)
       Reproduces (rows .easternPanjabi "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows .westernFarsi "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
       Reproduces (rows .continentalSouthernItalian "P" "person") (prominence? Person.Class.table)
@@ -817,13 +867,13 @@ theorem rows_splitR_splitT :
       Reproduces (rows .ewe "T" "nominality") (prominence? BinaryNominality.table) eweT ∧
       Reproduces (rows .akan "T" "definiteness") (prominence? Definiteness.table) akanT ∧
       Reproduces (rows .georgian "T" "person") (prominence? Person.Class.table) georgianT ∧
-      Reproduces (rows .makasar "T" "definiteness") (prominence? Definiteness.table) makassarV ∧
-      Reproduces (rows .makasar "T" "nominality") (prominence? BinaryNominality.table)
-        makassarVNominality := by
+      Reproduces (rows .makasar "T" "definiteness and nominality") makassarProminence?
+        makassarV := by
   decide
 
 -- §6, §7, §9, (43), (44)
 theorem rows_scenario :
+    -- Teop's split is "completely parallel" to Kolyma Yukaghir's (§6.1)
     Reproduces (rows .teop "P" "person") (scenario? Person.Class.table) yukaghirP ∧
       Reproduces (rows .southernYukaghir "P" "person") (scenario? Person.Class.table) yukaghirP ∧
       Reproduces (rows .sahaptin "A" "person") (scenario? Person.Class.table) sahaptinA ∧
