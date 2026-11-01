@@ -2,6 +2,7 @@
   {
     "id": "stankovasimik2025_ex13_v1_nci",
     "source": {"bibkey": "stankova-simik-2025", "paperLabel": "(13) B"},
+    "method": "experiment",
     "language": "czec1258",
     "primaryText": "Nezasadila tam Dana žádné květiny?",
     "glossedTokens": [
@@ -25,6 +26,7 @@
   {
     "id": "stankovasimik2025_ex13_v1_ppi",
     "source": {"bibkey": "stankova-simik-2025", "paperLabel": "(13) B"},
+    "method": "experiment",
     "language": "czec1258",
     "primaryText": "Nezasadila tam Dana nějaké květiny?",
     "glossedTokens": [
@@ -48,6 +50,7 @@
   {
     "id": "stankovasimik2025_ex13_nonv1_nci",
     "source": {"bibkey": "stankova-simik-2025", "paperLabel": "(13) B′"},
+    "method": "experiment",
     "language": "czec1258",
     "primaryText": "Dana tam nezasadila žádné květiny?",
     "glossedTokens": [
@@ -71,6 +74,7 @@
   {
     "id": "stankovasimik2025_ex13_nonv1_ppi",
     "source": {"bibkey": "stankova-simik-2025", "paperLabel": "(13) B′"},
+    "method": "experiment",
     "language": "czec1258",
     "primaryText": "Dana tam nezasadila nějaké květiny?",
     "glossedTokens": [
@@ -116,6 +120,7 @@
   {
     "id": "stankovasimik2025_ex17_ppi",
     "source": {"bibkey": "stankova-simik-2025", "paperLabel": "(17) B"},
+    "method": "experiment",
     "language": "czec1258",
     "primaryText": "Nezarezervoval si Mikuláš náhodou nějaké sedadlo?",
     "glossedTokens": [
@@ -141,6 +146,7 @@
   {
     "id": "stankovasimik2025_ex17_nci",
     "source": {"bibkey": "stankova-simik-2025", "paperLabel": "(17) B"},
+    "method": "experiment",
     "language": "czec1258",
     "primaryText": "Nezarezervoval si Mikuláš náhodou žádné sedadlo?",
     "glossedTokens": [

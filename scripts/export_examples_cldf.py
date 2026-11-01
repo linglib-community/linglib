@@ -64,6 +64,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 JSON_DIR = ROOT / "Linglib" / "Data" / "Examples"
 LANGUAGES = JSON_DIR / "languages.csv"
+CONTRIBUTIONS = JSON_DIR / "contributions.csv"
 BIB = ROOT / "references.bib"
 META_LANGUAGE = "stan1293"
 GLOTTOLOG = ("https://raw.githubusercontent.com/glottolog/glottolog-cldf/v5.3/cldf/"
@@ -98,7 +99,21 @@ CUSTOM_COLUMNS = [
     {"name": "Verified",
      "dc:description": "How the row was last checked against its source: page-image or "
                        "text-layer; empty when it has not been."},
+    {"name": "Method",
+     "dc:description": "How the example and its judgment were obtained: introspection, "
+                       "elicitation, corpus, experiment or description; empty when not yet "
+                       "classified."},
 ]
+
+
+def contribution_methods():
+    """Each data file's default method, `None` where it is not yet classified."""
+    with open(CONTRIBUTIONS, encoding="utf-8") as f:
+        return {r["ID"]: (None if r["Method"] == "unclassified" else r["Method"])
+                for r in csv.DictReader(f)}
+
+
+CONTRIBUTION_METHODS = contribution_methods()
 
 
 def load():
@@ -165,6 +180,7 @@ def example_row(paper, row):
                      for r in row.get("readings", [])] or None,
         "Paper_Features": features(row) or None,
         "Verified": row.get("verified"),
+        "Method": row.get("method") or CONTRIBUTION_METHODS.get(paper),
     }
 
 
@@ -245,6 +261,9 @@ def export(outdir: Path):
                    *(f"{TERMS}{t}" for t in ("source", "grammaticalityJudgement",
                                              "contributionReference")),
                    *CUSTOM_COLUMNS)
+    ds.add_columns("ContributionTable",
+                   {"name": "Method", "dc:description": "How the file's examples were obtained, "
+                    "unless a row says otherwise; empty when not yet classified."})
     ds.add_columns("LanguageTable",
                    {"name": "Level", "dc:description": "The Glottolog level of the languoid."})
     ds.properties["dc:title"] = "Linglib linguistic examples"
@@ -259,7 +278,8 @@ def export(outdir: Path):
     ds.write(
         ExampleTable=examples,
         LanguageTable=languages,
-        ContributionTable=[{"ID": p, "Name": p} for p in papers],
+        ContributionTable=[{"ID": p, "Name": p, "Method": CONTRIBUTION_METHODS.get(p)}
+                           for p in papers],
     )
     return ds, broken
 

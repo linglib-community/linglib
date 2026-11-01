@@ -318,6 +318,7 @@ def ex_25 : Datum :=
   { id := "denicetal2021_25"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(25)"⟩
     reportedIn := none
+    method := some .experiment
     language := "stan1293"
     primaryText := "Exactly 12 aliens saw some doves. → Exactly 12 aliens saw some birds."
     glossedTokens := []

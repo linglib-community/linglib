@@ -149,6 +149,7 @@ def ch2_164a : Datum :=
   { id := "haslinger2025_ch2_164a"
     source := ⟨"haslinger-2025-diss", "Ch. 2, (164a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "stan1295"
     primaryText := "Bei diesem Spiel hat heute jeder 200 Münzen gesammelt."
     glossedTokens := []

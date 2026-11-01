@@ -5,6 +5,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "Table 1 ∅"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Fred heard some of the Verdi operas.",
     "discourseSegments": [],
@@ -41,6 +42,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "Table 1 all"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "All students heard some of the Verdi operas.",
     "discourseSegments": [],
@@ -77,6 +79,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "Table 1 must"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Fred has to hear some of the Verdi operas.",
     "discourseSegments": [],
@@ -113,6 +116,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "Table 1 think"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Betty thinks Fred heard some of the Verdi operas.",
     "discourseSegments": [],
@@ -149,6 +153,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "Table 1 want"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Betty wants Fred to hear some of the Verdi operas.",
     "discourseSegments": [],
@@ -221,6 +226,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "(26a)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "All the squares are connected with some of the circles.",
     "discourseSegments": [],
@@ -277,6 +283,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "(26b)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "There is more than one square that is connected with some of the circles.",
     "discourseSegments": [],
@@ -333,6 +340,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "(27)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "There are exactly two squares that are connected with some of the circles.",
     "discourseSegments": [],
@@ -389,6 +397,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "(27)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "There are exactly two squares that are connected with some of the circles.",
     "discourseSegments": [],
@@ -445,6 +454,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "(25a)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Not all the squares are connected with some of the circles.",
     "discourseSegments": [],
@@ -501,6 +511,7 @@
       "bibkey": "geurts-pouscoulous-2009",
       "paperLabel": "(25b)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "There isn't more than one square that is connected with some of the circles.",
     "discourseSegments": [],

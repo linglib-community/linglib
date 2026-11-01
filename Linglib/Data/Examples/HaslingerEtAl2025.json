@@ -589,6 +589,7 @@
       "bibkey": "haslinger-etal-2025",
       "paperLabel": "(23b)"
     },
+    "method": "experiment",
     "language": "stan1295",
     "primaryText": "In den Boxen sind jeweils zwei Magnete!",
     "discourseSegments": [],
@@ -654,6 +655,7 @@
       "bibkey": "haslinger-etal-2025",
       "paperLabel": "(23c)"
     },
+    "method": "experiment",
     "language": "stan1295",
     "primaryText": "In jeder Box sind zwei Magnete!",
     "discourseSegments": [],
@@ -715,6 +717,7 @@
       "bibkey": "haslinger-etal-2025",
       "paperLabel": "(24b)"
     },
+    "method": "experiment",
     "language": "stan1295",
     "primaryText": "Die Freiwilligen haben jeweils zwei Hunde an der Leine!",
     "discourseSegments": [],
@@ -788,6 +791,7 @@
       "bibkey": "haslinger-etal-2025",
       "paperLabel": "(24c)"
     },
+    "method": "experiment",
     "language": "stan1295",
     "primaryText": "Die Freiwilligen haben jeder zwei Hunde an der Leine!",
     "discourseSegments": [],
@@ -861,6 +865,7 @@
       "bibkey": "haslinger-etal-2025",
       "paperLabel": "(24d)"
     },
+    "method": "experiment",
     "language": "stan1295",
     "primaryText": "Jeder Freiwillige hat zwei Hunde an der Leine!",
     "discourseSegments": [],

@@ -32,6 +32,7 @@ def ex10a : Datum :=
   { id := "ahnkocabdavidson2026_ex10a"
     source := ⟨"ahn-kocab-davidson-2026", "(10a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "amer1248"
     primaryText := "BOY ENTER CLUB. MUSIC ON. SEE GIRL READ. DANCE."
     glossedTokens := []

@@ -97,6 +97,7 @@ def ex30 : Datum :=
   { id := "bonehdoron2013_ex30"
     source := ⟨"boneh-doron-2013", "(30)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "... revivals of Broadway musicals that your parents used to go to. Still do."
     glossedTokens := []

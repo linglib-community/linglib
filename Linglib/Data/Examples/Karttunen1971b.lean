@@ -110,6 +110,7 @@ def ex_24a : Datum :=
   { id := "karttunen1971b_24a"
     source := ⟨"karttunen-1971b", "(24a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "stan1293"
     primaryText := "Did you regret that you had not told the truth?"
     glossedTokens := []

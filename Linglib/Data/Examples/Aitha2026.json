@@ -1619,6 +1619,7 @@
   {
     "id": "aitha2026_those_all_acc",
     "source": {"bibkey": "aitha-2026", "paperLabel": "(33)"},
+    "method": "elicitation",
     "language": "telu1262",
     "primaryText": "nēnu vāṭ-anniṭi-ni cūs-ā-nu",
     "discourseSegments": [],
@@ -1645,6 +1646,7 @@
   {
     "id": "aitha2026_ocean_whole_acc_sentence",
     "source": {"bibkey": "aitha-2026", "paperLabel": "(34)"},
+    "method": "elicitation",
     "language": "telu1262",
     "primaryText": "nēnu samudram-antaṭi-ni cūs-ā-nu",
     "discourseSegments": [],
@@ -1677,6 +1679,7 @@
   {
     "id": "aitha2026_those_all_nom",
     "source": {"bibkey": "aitha-2026", "paperLabel": "(35)"},
+    "method": "elicitation",
     "language": "telu1262",
     "primaryText": "av-anni bāgun-nā-yi",
     "discourseSegments": [],
@@ -1702,6 +1705,7 @@
   {
     "id": "aitha2026_those_all_nom_obl",
     "source": {"bibkey": "aitha-2026", "paperLabel": "(36)"},
+    "method": "elicitation",
     "language": "telu1262",
     "primaryText": "vāṭ-anni bāgun-nā-yi",
     "discourseSegments": [],

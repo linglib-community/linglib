@@ -175,6 +175,7 @@ def ex58 : Datum :=
   { id := "kalyakin2026_ex58"
     source := ⟨"kalyakin-2026", "(58)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "muir1238"
     primaryText := "Murad duc’ Ø-uq-un, Musa=ra Ø-uq-un"
     glossedTokens := [("Murad", "Murad-ABS"), ("duc’", "run"), ("Ø-uq-un,", "M-move.PFV-AOR"), ("Musa=ra", "Musa.ABS=ADD"), ("Ø-uq-un", "M-move.PFV-AOR")]

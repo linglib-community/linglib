@@ -26,6 +26,7 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
     "id": "charlow2014_donkey1",
     "source":     {"bibkey": "geach-1962", "paperLabel": "ch. III, ..."},
     "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "Ch. 2"},  // optional
+    "method": "corpus",                      // optional: overrides the paper's in contributions.csv
     "language": "stan1293",                  // Glottocode; "" for a constructed string
     "primaryText": "...",
     "discourseSegments": [],                 // empty for single-sentence
@@ -43,6 +44,10 @@ record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
 Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
+- Reads each paper's method from `contributions.csv` (one of `introspection`, `elicitation`,
+  `corpus`, `experiment`, `description`, or `unclassified`) and errors out on a paper with no row
+  there; a row's `method` overrides it, and the method is emitted as `Datum.method` (`none` where
+  unclassified).
 - Validates but does not emit the record-only keys: the CLDF export carries
   them, and no theorem reads them, so the Lean rows that `decide` reduces stay
   small. `verified` (`"page-image"`, `"text-layer"` or `"supplement"`) is how the row was last
@@ -77,6 +82,8 @@ from check_module_frontier import as_module_if_possible  # noqa: E402
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
 LANGUAGES  = JSON_DIR / "languages.csv"
+CONTRIBUTIONS = JSON_DIR / "contributions.csv"
+METHODS = ("introspection", "elicitation", "corpus", "experiment", "description")
 
 
 def known_languages() -> set[str]:
@@ -86,6 +93,21 @@ def known_languages() -> set[str]:
 
 
 KNOWN_LANGUAGES = known_languages()
+
+
+def contribution_methods() -> dict[str, str]:
+    """Each paper's default method from `contributions.csv`, one of `METHODS` or `unclassified`."""
+    with open(CONTRIBUTIONS, encoding="utf-8") as f:
+        rows = {row["ID"]: row["Method"] for row in csv.DictReader(f)}
+    for paper, method in rows.items():
+        if method not in METHODS + ("unclassified",):
+            sys.stderr.write(f"FATAL: {CONTRIBUTIONS.relative_to(ROOT)}: {paper}: method "
+                             f"{method!r}; expected one of {', '.join(METHODS)} or unclassified\n")
+            sys.exit(1)
+    return rows
+
+
+CONTRIBUTION_METHODS = contribution_methods()
 
 VALID_JUDGMENTS = {
     "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical", "variable",
@@ -224,7 +246,7 @@ def emit_form_judgment_list(xs, where: str, key: str) -> str:
     return "[" + ", ".join(items) + "]"
 
 
-def emit_example(ex: dict, author_year_lower: str) -> str:
+def emit_example(ex: dict, author_year_lower: str, default_method: str) -> str:
     ex_id   = (ex.get("id") or "").strip()
     if not ex_id:
         raise ValueError("example missing required `id`")
@@ -240,6 +262,9 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
 
     src         = emit_source_ref(ex.get("source") or {}, where + ".source")
     reported_in = emit_reported_in(ex.get("reportedIn"), where)
+    if "method" in ex and ex["method"] not in METHODS:
+        raise ValueError(f"{where}: method {ex['method']!r}; expected one of {', '.join(METHODS)}")
+    method      = ex.get("method", default_method)
     language    = (ex.get("language") or "").strip()
     if language and language not in KNOWN_LANGUAGES:
         raise ValueError(
@@ -266,13 +291,14 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
         if k == "alsoJudged":
             parse_judgment(v, where + ".paperFeatures.alsoJudged")
 
+    method_line = "" if method == "unclassified" else f"\n    method := some .{method}"
     verdict_line = ""
     if verdict is not None:
         verdict_line = f"\n    verdict := some {'true' if verdict else 'false'}"
     return f"""def {local} : Datum :=
   {{ id := {lean_string(ex_id)}
     source := {src}
-    reportedIn := {reported_in}
+    reportedIn := {reported_in}{method_line}
     language := {lean_string(language)}
     primaryText := {lean_string(primary)}
     glossedTokens := {glossed}
@@ -285,11 +311,15 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
 
 def emit_module(author_year: str, examples: list) -> str:
     ay_lower = author_year.lower()
+    if author_year not in CONTRIBUTION_METHODS:
+        raise ValueError(f"no row in {CONTRIBUTIONS.relative_to(ROOT)}; add `{author_year},<method>` "
+                         f"with the paper's method, or `unclassified`")
+    default_method = CONTRIBUTION_METHODS[author_year]
     if not examples:
         body = "-- (no examples in JSON)"
         all_def = "def all : List Datum := []"
     else:
-        body = "\n\n".join(emit_example(e, ay_lower) for e in examples)
+        body = "\n\n".join(emit_example(e, ay_lower, default_method) for e in examples)
         local_ids = [
             lean_identifier((e.get("id") or "").strip(), ay_lower)
             for e in examples
@@ -464,7 +494,7 @@ def process_languages(check: bool) -> bool:
 # alternative / reading per line) so a python round-trip never explodes them.
 
 KEY_ORDER = [
-    "id", "source", "reportedIn", "language", "primaryText",
+    "id", "source", "reportedIn", "method", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
     "judgment", "verdict", "alternatives", "readings", "paperFeatures", "comment",
     "verified",

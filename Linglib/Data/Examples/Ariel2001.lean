@@ -19,6 +19,7 @@ def ex_1 : Datum :=
   { id := "ariel2001_1"
     source := ⟨"ariel-2001", "(1)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "Melissa: Well, I'll say awakened, cause that's what I have written down. Ron: (Sniff). Frank: Just watch, He'll put a note by it – note by that. I really like that word Melissa."
     glossedTokens := []

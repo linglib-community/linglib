@@ -231,6 +231,7 @@
     "paperLabel": "(14a), Exp 1a materials, sample target stimulus"
   },
   "reportedIn": null,
+  "method": "experiment",
   "language": "stan1293",
   "primaryText": "Ronald asks: Did Richie, a stuntman, break his leg?",
   "discourseSegments": [],

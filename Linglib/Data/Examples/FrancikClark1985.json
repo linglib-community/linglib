@@ -537,6 +537,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "What time is it?",
     "discourseSegments": [],
@@ -573,6 +574,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Do you know what time it is?",
     "discourseSegments": [],
@@ -609,6 +611,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Could you tell me what time it is?",
     "discourseSegments": [],
@@ -645,6 +648,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Do you have the time?",
     "discourseSegments": [],
@@ -681,6 +685,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Do you happen to know what time it is?",
     "discourseSegments": [],
@@ -717,6 +722,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Do you have any idea what time it is?",
     "discourseSegments": [],
@@ -753,6 +759,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "You wouldn't happen to know the time, would you?",
     "discourseSegments": [],
@@ -789,6 +796,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Do you happen to have a watch, or know what time it is, or anything?",
     "discourseSegments": [],
@@ -825,6 +833,7 @@
       "bibkey": "francik-clark-1985",
       "paperLabel": "Table 2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Do you know if there's a clock anywhere around here?",
     "discourseSegments": [],

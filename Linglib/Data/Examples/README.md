@@ -47,6 +47,7 @@ that reads rows imports it beside its data module. Quick key reference:
 | `id` | string | `<authoryear>_<local>`, e.g. `"charlow2014_donkey1"`; only `[A-Za-z0-9_-]` (a CLDF identifier: write `(3.1)` as `3_1`, a prime as `_prime`) |
 | `source` | `{bibkey, paperLabel}` | **originating** paper (e.g. `geach-1962` for the donkey) |
 | `reportedIn` | `{bibkey, paperLabel}` or `null` | citing paper whose file holds the row, when different from `source` |
+| `method` | one of `introspection, elicitation, corpus, experiment, description`, optional | how the example and its judgment were obtained, where it differs from the paper's method in `contributions.csv` (see Methods) |
 | `language` | string (Glottocode) | e.g. `"stan1293"` for Standard English; must be in `languages.csv`; `""` only for a constructed string of no language (a formal-language pattern) |
 | `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
 | `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
@@ -85,6 +86,18 @@ study names the languages of its sample by these constants, never by a code stri
 row through them with `Datum.byLanguage [(.english, …), (.japanese, …)]`; a theorem over the rows
 then states that every row is read, since a language missing from the table reads as `none`. Use the code of the variety the source names: a dialect Glottolog lists under its own
 code, otherwise the language; a family code only for a claim about the family.
+
+## Methods
+
+A row records how the example and its judgment were obtained, as `Datum.method`: by the author's
+introspection, by elicitation from native-speaker consultants, from a corpus (a text, a corpus or
+the web), from an experiment that measured the judgment, or cited from a grammar or dictionary that
+does not say (`description`). It is evidence of different kinds: an attested example is no
+evidence that its alternatives are impossible, and a consultant's or an experiment's judgment is
+not the author's. `contributions.csv` gives each data file's method, or `unclassified` where no
+one has yet read the paper for it, and a row's `method` key overrides it; the generator rejects a
+data file with no row there. A paper is classified when it is audited, from its own statement of
+where its data come from; `unclassified` is never guessed away.
 
 ## CLDF export
 
