@@ -8,7 +8,7 @@ module
 public import Linglib.Data.Examples.Collins2026
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Syntax.Minimalist.Copy.ToTree
+public import Linglib.Syntax.Minimalist.Copy.Cut
 public import Linglib.Syntax.Minimalist.Workspace.Basic
 
 /-!
@@ -25,7 +25,9 @@ holds of a condition read off the final object: a condition evaluated at [some e
 stage](##binds_at_earlier_stage) binds the anaphor with traces alone. With the copies kept, a
 derivation has a reading for each choice of the chains read low: read low, [the antecedent binds the
 anaphor](##binds_at_low_reading) in the fronted phrase's lower copy, and (15) has [both its scope
-readings](##scope_readings) through the composition engine.
+readings](##scope_readings) through the composition engine. Both cut the quantifier phrase from the
+copy object, and [the low reading is no term](##scope_readings_cut) of the coproduct the book sends
+to the semantic interface, which leaves a trace at every cut.
 
 ## Implementation notes
 
@@ -39,8 +41,8 @@ readings](##scope_readings) through the composition engine.
   derivational binding condition Cole and Hermon use, and says nothing about whether such a
   condition is available to the framework the paper criticizes.
 * The reading with no chain read low is the book's contraction with a binder the book does not have.
-  The low reading deletes the higher copy, which none of the book's quotients does, so the two scope
-  readings are the copy theory's, not the framework's.
+  The low reading deletes the higher copy, where the book removes only the lower one, so the two
+  scope readings are the copy theory's, not the framework's.
 
 ## References
 
@@ -119,8 +121,6 @@ theorem bindsAtLF_iff_judgment :
     ¬ fronted.BindsAtLF ↑himself ↑john := by
   decide +kernel
 
-/-- Evaluated at some stage, binding needs no copy: `fronted` leaves a trace, and *John* c-commands
-*himself* before the object moves, exactly because it does so in the copy object. -/
 theorem binds_at_earlier_stage :
     fronted.BindsAtSomeStage ↑john ↑himself ∧ ¬ fronted.BindsAtSurface ↑john ↑himself :=
   ⟨(bindsAtSomeStage_iff_bindsAtLF (by decide) (by decide +kernel) (by decide +kernel)
@@ -237,6 +237,39 @@ example : ¬ Quantifier.Det.every (Set.univ : Set Bool) {true} ∧
   simp [Quantifier.Det.every, Set.subset_def]
 
 end Interpretation
+
+/-! ### The readings as cuts -/
+
+open ConnesKreimer LinearizedSyntacticObject.Marked in
+/-- The readings of (15) both cut the quantifier phrase from the copy object. The high reading is a
+term of `Δ^c`, cutting the lower copy, and the low reading a term of `Δ^d`, cutting the higher copy.
+The low reading is no term of `Δ^c`, whose cuts each leave a trace. -/
+theorem scope_readings_cut : ∃ c ∈ everyDidntScore.replayWithCopies?,
+    let C := UnorderedTree.mk c.current.unmark.val
+    let τ := termTrace SyntacticObject.selHead
+    let lowReading := UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val
+    ({UnorderedTree.mk everyPlayer.val}, UnorderedTree.mk c.current.contract.val) ∈
+        cutSummandsCN τ C ∧
+      ({UnorderedTree.mk everyPlayer.val}, lowReading) ∈ cutSummandsDN C ∧
+      ∀ F, (F, lowReading) ∉ cutSummandsCN τ C := by
+  have h : ∀ c ∈ everyDidntScore.replayWithCopies?,
+      c.current.val.value.1 = none ∧ MarkedBy (termTrace SyntacticObject.selHead) c.current.val ∧
+      c.current.cutForest ∅ = {everyPlayer.val} ∧
+      c.current.cutForest {everyPlayer.toSyntacticObject} = {everyPlayer.val} ∧
+      (∀ r ∈ c.current.val.subtrees, r.value.1.isSome →
+        ReadLow {everyPlayer.toSyntacticObject} r) ∧
+      (UnorderedTree.mk c.current.unmark.val).numTraces = 0 ∧
+      (UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val).numTraces = 0 ∧
+      UnorderedTree.mk (c.current.lf {everyPlayer.toSyntacticObject}).val ≠
+        UnorderedTree.mk c.current.unmark.val := by
+    decide +kernel
+  obtain ⟨c, hc⟩ := Option.isSome_iff_exists.1
+    (by decide +kernel : everyDidntScore.replayWithCopies?.isSome)
+  obtain ⟨hroot, hτ, hhigh, hlow, hall, hC, hL, hne⟩ := h c hc
+  refine ⟨c, hc, ?_, ?_, fun F hF ↦ hne (congrArg Prod.snd
+    (eq_zero_of_mem_cutSummandsCN _ hC hF hL))⟩
+  · simpa [hhigh] using mem_cutSummandsCN_contract c.current hroot hτ
+  · simpa [hlow] using mem_cutSummandsDN_lf c.current _ hall
 
 /-! ### No Tampering -/
 
