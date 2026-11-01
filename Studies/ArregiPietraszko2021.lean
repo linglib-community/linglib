@@ -11,6 +11,7 @@ public import Linglib.Phonology.Hiatus
 public import Studies.HarizanovGribanova2019
 public import Studies.Pollock1989
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Arregi and Pietraszko (2021): The ups and downs of head displacement
@@ -489,7 +490,7 @@ def verbHead : Wordlist.Verb → Head
   | .auxiliary => .Aux
 
 theorem contracted_forms :
-    ∀ a ∈ Wordlist.analyses, a.form.languageId = "stan1293" →
+    ∀ a ∈ Wordlist.analyses, a.form.languageId = .english →
       ∃ verb ∈ a.verb.map verbHead,
         (derive english (.negation english) verb).negativeMerger.finite.word english =
           some (a.form.segments.map fun s ↦ (segmentPieces.lookup s).toList) := by
@@ -498,10 +499,10 @@ theorem contracted_forms :
 /-! ### The paper's examples -/
 
 /-- The settings of a row's language, by Glottocode. -/
-def languages : List (String × Language) :=
-  [("stan1293", english), ("stan1290", french), ("dani1285", danish), ("swed1254", swedish),
-    ("lomb1257", monnese), ("poli1260", polish), ("hebr1245", hebrew), ("east2295", yiddish),
-    ("stan1288", spanish), ("lowe1386", vallader)]
+def languages : List (Glottocode × Language) :=
+  [(.english, english), (.french, french), (.danish, danish), (.swedish, swedish),
+    (.lombard, monnese), (.polish, polish), (.modernHebrew, hebrew), (.easternYiddish, yiddish),
+    (.spanish, spanish), (.lowerEngadine, vallader)]
 
 /-- The context each label of the rows names in a language. The elided verb-second clause is
 subject-initial, and in the fronting ones the subject follows the finite verb. -/
@@ -547,13 +548,14 @@ instance (L : Language) (d : Chains) (r : Datum) : Decidable (d.Matches L r) :=
 
 /-- The settings of a row's language and the chains of its clause. -/
 def derivation? (r : Datum) : Option (Language × Chains) := do
-  let L ← languages.lookup r.language
+  let L ← r.byLanguage languages
   let cx ← r.parse? "context" (contexts L)
   let verb ← r.parse? "verbType" [("lexical", Head.V), ("auxiliary", .Aux)]
   pure (L, derive L cx verb)
 
 theorem rows_derived :
-    ∀ r ∈ Examples.all, r.language ≠ "nort2795" → ∃ p ∈ derivation? r, p.2.Matches p.1 r := by
+    ∀ r ∈ Examples.all, r.language ≠ .zimbabweanNdebele →
+      ∃ p ∈ derivation? r, p.2.Matches p.1 r := by
   decide +kernel
 
 theorem split_words :
@@ -632,7 +634,7 @@ def exponents? (a : Wordlist.Analysis) : Option (Head → Exponent) := do
   pure fun | .Lnk => ⟨lnk⟩ | .D => ⟨d⟩ | .T => ⟨t⟩ | _ => ⟨[]⟩
 
 theorem relative_prefixes :
-    ∀ a ∈ Wordlist.analyses, a.form.languageId = "nort2795" → ∃ e ∈ exponents? a,
+    ∀ a ∈ Wordlist.analyses, a.form.languageId = .zimbabweanNdebele → ∃ e ∈ exponents? a,
       some (lift e relative.mvalue).segments = transcribe? a.form.form.toList ∧
         Hiatus.Free (lift e relative.mvalue).segments ∧
         ¬ Hiatus.Free (relative.terminals.reverse.flatMap fun h ↦ (e h).segments) := by
@@ -718,16 +720,14 @@ the amalgamation study. -/
 def clauseOf (r : Datum) : Option (Language × Context) :=
   let cx (L : Language) : Context :=
     if r.feature? "diagnostic" = some "negation" then .negation L else .declarative
-  match r.language, r.feature? "clause" with
-  | "stan1290", none => some (french, cx french)
-  | "dani1285", some "embedded" => some (danish, cx danish)
-  | "dani1285", some "root" => some (danish, .toC)
-  | _, _ => none
+  List.lookup (r.language, r.feature? "clause")
+    [((.french, none), (french, cx french)), ((.danish, some "embedded"), (danish, cx danish)),
+      ((.danish, some "root"), (danish, .toC))]
 
 theorem amalgamation_rows :
     ∀ r ∈ HarizanovGribanova2019.Examples.all,
       r.feature? "phenomenon" = some "finiteVerbPlacement" →
-      r.feature? "diagnostic" ≠ some "coordination" → r.language ≠ "russ1263" →
+      r.feature? "diagnostic" ≠ some "coordination" → r.language ≠ .russian →
         ∃ p ∈ clauseOf r, ∃ b ∈ r.parse? "verbPrecedes" boolLabels, ∀ verb ∈ [Head.V, .Aux],
           (r.judgment = .acceptable ↔
             (b = true ↔ (derive p.1 p.2 verb).finitePosition p.1 ∈ [some .T, some .C])) := by

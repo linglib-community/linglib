@@ -6,6 +6,7 @@ public import Linglib.Syntax.Agreement.Bundle
 public import Linglib.Syntax.Minimalist.Probe.Search
 public import Studies.Collins2005
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Storment (2026): Quotative inversion as smuggling
@@ -460,7 +461,7 @@ def Clause.ofRow (row : Datum) : Option Clause := do
 
 /-- What a row shows. -/
 def Observation.ofRow (row : Datum) : Option Observation := do
-  let language ← [("stan1293", Language.english), ("tswa1253", .setswana)].lookup row.language
+  let language ← row.byLanguage [(.english, Language.english), (.tswana, .setswana)]
   let construction ← row.parse? "construction" [("qi", Construction.inversion),
     ("li", .inversion), ("preposedQuote", .noninverted), ("canonical", .noninverted)]
   let position ← match row.feature? "dependent" with

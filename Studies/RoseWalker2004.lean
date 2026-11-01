@@ -5,6 +5,7 @@ public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Examples.RoseWalker2004
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Rose & Walker (2004): A Typology of Consonant Agreement as Correspondence
@@ -315,7 +316,7 @@ instance (ranking : List (Constraint (Correspondence BinaryRole Seg))) (w : List
 
 /-- The Ngbaka words of the rows, with their judgments. -/
 def ngbakaData : List (List Seg × Judgment) :=
-  (Examples.all.filter (·.language = "ngba1284")).map fun r ↦
+  (Examples.all.filter (·.language = .ngbakaMabo)).map fun r ↦
     (parse r.primaryText.toList, r.judgment)
 
 theorem ngbaka_tableaux :

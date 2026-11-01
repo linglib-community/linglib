@@ -9,6 +9,7 @@ public import Linglib.Fragments.Turkish.Verbs
 public import Linglib.Fragments.Romance.Spanish.Verbs
 public import Linglib.Data.Examples.QingEtAl2025
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Qing et al. (2025): When Can Non-Veridical Preferential Attitude Predicates Take Questions?
@@ -254,7 +255,7 @@ def turkishInflections : List (List (Σ σ, Turkish.Verb.Exponent σ)) :=
     [⟨_, .di⟩, ⟨_, .person .one (.personNumber .first .singular)⟩]]
 
 theorem turkish_forms :
-    ∀ r ∈ Examples.all, r.language = "nucl1301" →
+    ∀ r ∈ Examples.all, r.language = .turkish →
       ∃ v ∈ (r.feature? "predicate").bind turkishVerb?, ∃ sfx ∈ turkishInflections,
         Turkish.Verb.template.Licensed (v.suffixes sfx) ∧
           ∃ t ∈ r.glossedTokens, Turkish.Phonology.ofSegmented? t.1 = some (v.inflect sfx) := by

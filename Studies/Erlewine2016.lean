@@ -8,6 +8,7 @@ public import Linglib.Syntax.Minimalist.Locality.AntiLocality
 public import Studies.CoonMateoPedroPreminger2014
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus
@@ -247,8 +248,8 @@ def personTable : List (String × Person) := [("1", .first), ("2", .second), ("3
 def verbTable : List (String × Mayan.VerbForm) := [("AF", .agentFocus), ("full", .transitive)]
 
 /-- The grammars by glottocode. -/
-def grammarTable : List (String × Grammar) :=
-  [("kaqc1270", kaqchikel), ("popt1235", popti), ("west2635", akatek), ("chol1282", chol)]
+def grammarTable : List (Glottocode × Grammar) :=
+  [(.kaqchikel, kaqchikel), (.popti, popti), (.akateko, akatek), (.chol, chol)]
 
 /-- A row, with the clause, its language's grammar, the attested form and the judgment. -/
 structure Row where
@@ -265,7 +266,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     | none => pure none
     | some a => do pure (some (a, (← ex.nat? "landing") - 1))
   let subj ← ex.parse? "subject" personTable
-  let grammar ← List.lookup ex.language grammarTable
+  let grammar ← ex.byLanguage grammarTable
   let form ← ex.parse? "verb" verbTable
   pure ⟨⟨transitive, layers, extracted, subj, (ex.parse? "object" personTable).getD .third⟩,
     grammar, form, ex.judgment⟩
@@ -277,7 +278,7 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The Kaqchikel rows. -/
 def kaqchikelRows : List Row :=
-  (Examples.all.filter (·.language = "kaqc1270")).filterMap Row.ofDatum
+  (Examples.all.filter (·.language = .kaqchikel)).filterMap Row.ofDatum
 
 /-- In every row's clause, an extraction is too close exactly when the subject moves from Spec,TP to
 the layer immediately above TP (44). -/

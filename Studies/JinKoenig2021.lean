@@ -11,6 +11,7 @@ public import Linglib.Fragments.Januubi.Negation
 public import Linglib.Fragments.Mandarin.Negation
 public import Linglib.Fragments.ZarmaSonrai.Negation
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Jin and Koenig (2021): A Cross-Linguistic Study of Expletive Negation
@@ -246,13 +247,9 @@ structure Row where
   entrenched : Option Bool
   deriving DecidableEq
 
-def languageOf : String → Option Language
-  | "stan1293" => some .english
-  | "stan1290" => some .french
-  | "gulf1241" => some .januubi
-  | "mand1415" => some .mandarin
-  | "zarm1239" => some .zarmaSonrai
-  | _ => none
+def languageOf (l : Glottocode) : Option Language :=
+  List.lookup l [(.english, .english), (.french, .french), (.gulfArabic, .januubi),
+    (.mandarinChinese, .mandarin), (.zarmaKaado, .zarmaSonrai)]
 
 def conceptOf : String → Option ENConcept
   | "fear" => some .fear

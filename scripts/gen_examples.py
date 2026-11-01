@@ -3,7 +3,7 @@
 
 Usage:
     python3 scripts/gen_examples.py <AuthorYear>
-    python3 scripts/gen_examples.py --all                # regenerate every paper
+    python3 scripts/gen_examples.py --all                # regenerate every paper and the languages
     python3 scripts/gen_examples.py --check [<AuthorYear>]  # verify sync, no writes
     python3 scripts/gen_examples.py --fmt <AuthorYear>   # canonical JSON for one paper
 
@@ -55,6 +55,10 @@ Behavior:
 - Idempotent: re-running on unchanged JSON produces no diff.
 - `--check` regenerates in-memory and exits 1 on any drift (CI guard);
   writes nothing.
+- `--all` and a bare `--check` also generate (or verify) `Linglib/Data/Examples/Languages.lean`
+  from `languages.csv`: one `Glottocode` per row, in `namespace Glottocode`, named by its
+  Glottolog name in lowerCamelCase (`Glottocode.mandarinChinese`), so that a study names the
+  languages of its sample rather than typing their codes.
 - `--fmt` rewrites the named paper's JSON in canonical format. It needs a
   paper name (or `--all` for a PR whose subject is the reformat): most JSON
   files predate the formatter, and reformatting them all buries a diff.
@@ -374,6 +378,87 @@ def process(author_year: str, check: bool) -> bool:
     return True
 
 
+LEAN_KEYWORDS = {
+    "at", "by", "do", "else", "end", "fun", "have", "if", "in", "let", "match", "then", "with",
+    "from", "open", "show", "where", "for", "unless", "return", "mut", "calc", "def", "theorem",
+    "example", "instance", "class", "structure", "inductive", "namespace", "section", "variable",
+    "universe", "import", "axiom", "deriving", "local", "scoped", "private", "protected", "public",
+    "partial", "unsafe", "macro", "syntax", "attribute", "abbrev", "opaque", "omit", "include",
+}
+
+
+def language_identifier(name: str, where: str) -> str:
+    """The lowerCamelCase Lean name of a Glottolog name: its words, the first lowercased, the
+    others capitalized, letters kept as Glottolog writes them (`Hixkaryána` → `hixkaryána`) and
+    apostrophes dropped within a word (`K'iche'` → `kiche`)."""
+    words = re.findall(r"[^\W_]+", re.sub(r"['’ʼ]", "", name))
+    if not words:
+        sys.stderr.write(f"FATAL: {where}: no Lean name for {name!r}\n")
+        sys.exit(1)
+    ident = words[0][0].lower() + words[0][1:] + "".join(w[0].upper() + w[1:] for w in words[1:])
+    return f"«{ident}»" if ident in LEAN_KEYWORDS or ident[0].isdigit() else ident
+
+
+def emit_languages() -> str:
+    with open(LANGUAGES, encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    names: dict[str, str] = {}
+    defs = []
+    for row in rows:
+        where = f"{LANGUAGES.relative_to(ROOT)}: {row['ID']}"
+        ident = language_identifier(row["Name"], where)
+        if ident in names:
+            sys.stderr.write(
+                f"FATAL: {where}: {ident} also names {names[ident]}; the generator needs "
+                f"distinct Glottolog names\n")
+            sys.exit(1)
+        names[ident] = row["ID"]
+        iso = f" (ISO 639-3 `{row['ISO639P3code']}`)" if row["ISO639P3code"] else ""
+        level = "" if row["Level"] == "language" else f", a {row['Level']}"
+        defs.append(f"/-- {row['Name']}, `{row['ID']}`{iso}{level}. -/\n"
+                    f"def {ident} : Glottocode := {lean_string(row['ID'])}")
+    body = "\n\n".join(defs)
+    return f"""import Linglib.Data.Examples.Schema
+
+/-!
+# The languages of the example data
+
+Auto-generated from `Linglib/Data/Examples/languages.csv` by
+`scripts/gen_examples.py --all`. Do not edit by hand; edit the table and re-run
+the generator. Each Glottolog languoid of the table, a language, a dialect or a
+family, is a `Glottocode` named after its Glottolog name, so that a study names
+the languages of its sample, `Glottocode.english`, rather than their codes.
+-/
+
+namespace Glottocode
+
+{body}
+
+end Glottocode
+"""
+
+
+def process_languages(check: bool) -> bool:
+    """Generate (or, with `check`, verify) the module of the language table."""
+    module_text = as_module_if_possible(emit_languages())
+    module_path = JSON_DIR / "Languages.lean"
+    rel_module = module_path.relative_to(ROOT)
+    in_sync = module_path.exists() and module_path.read_text(encoding="utf-8") == module_text
+    if check:
+        if in_sync:
+            sys.stdout.write(f"[check] {rel_module} in sync\n")
+        else:
+            sys.stderr.write(f"[check] DRIFT: {rel_module} does not match "
+                             f"{LANGUAGES.relative_to(ROOT)}; run scripts/gen_examples.py --all\n")
+        return in_sync
+    if in_sync:
+        sys.stdout.write(f"[gen] {rel_module} unchanged\n")
+    else:
+        module_path.write_text(module_text, encoding="utf-8")
+        sys.stdout.write(f"[gen] {rel_module} \u2190 {LANGUAGES.relative_to(ROOT)}\n")
+    return True
+
+
 # Canonical JSON formatting: 2-space indent, schema key order, and compact
 # leaf collections (gloss pairs packed onto wrapped lines; one feature pair /
 # alternative / reading per line) so a python round-trip never explodes them.
@@ -493,7 +578,8 @@ def main():
     do_fmt = "--fmt" in args
     args = [a for a in args if a not in ("--check", "--fmt")]
 
-    if args == ["--all"] or (not args and check):
+    every = args == ["--all"] or (not args and check)
+    if every:
         papers = sorted(p.stem for p in JSON_DIR.glob("*.json"))
     elif len(args) == 1 and not args[0].startswith("-"):
         papers = [args[0]]
@@ -516,6 +602,8 @@ def main():
         return
 
     ok = all([process(p, check) for p in papers])
+    if every and not do_fmt:
+        ok = process_languages(check) and ok
     if not ok:
         sys.exit(1)
 

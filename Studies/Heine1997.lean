@@ -6,6 +6,7 @@ public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.SymmDiff
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Heine (1997): Possession
@@ -226,7 +227,7 @@ def meanings (r : Datum) : Finset Meaning :=
 /-- The meaning sets of the Russian rows (73), stages I, II, and III of the Location Schema's
 grammaticalization. -/
 def russianData : List (Finset Meaning) :=
-  (Examples.all.filter fun r ↦ r.language = "russ1263").map meanings
+  (Examples.all.filter fun r ↦ r.language = .russian).map meanings
 
 /-- The Russian locative construction is attested at each stage of the Overlap Model, with the
 ambiguous (73c) at the overlap stage. -/
@@ -258,7 +259,7 @@ def notion (r : Datum) : Option Notion :=
 
 /-- The schema and notion of each Telugu row (85). -/
 def teluguData : List (Schema × Notion) :=
-  (Examples.all.filter fun r ↦ r.language = "telu1262").filterMap fun r ↦ do
+  (Examples.all.filter fun r ↦ r.language = .telugu).filterMap fun r ↦ do
     pure (← schema r, ← notion r)
 
 theorem telugu_notions : ∀ d ∈ teluguData, d.1 = .location ↔ d.2 = .physical := by

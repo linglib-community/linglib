@@ -5,6 +5,7 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Data.Examples.Ogihara1996
 public import Linglib.Fragments.Japanese.Tense
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Ogihara (1996): Tense, Attitudes, and Scope
@@ -252,8 +253,8 @@ theorem lf_past_future_past :
 /-! ### The sentences -/
 
 /-- The language of a row, by its Glottocode. -/
-def language? (g : String) : Option Language :=
-  [("stan1293", Language.english), ("nucl1643", .japanese)].lookup g
+def language? (g : Glottocode) : Option Language :=
+  [(.english, Language.english), (.japanese, .japanese)].lookup g
 
 /-- A tense form by its name in the rows. -/
 def form? (w : String) : Option Form :=

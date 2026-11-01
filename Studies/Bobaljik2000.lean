@@ -3,6 +3,7 @@ module
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Data.Examples.Bobaljik2000
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Bobaljik (2000): The ins and outs of contextual allomorphy
@@ -120,7 +121,7 @@ def ofRow (ex : Datum) :
 /-- In the forms (9) and (10) the Class II marker appears where insertion finds the class
 diacritic inward, in the shape the agreement outward selects. -/
 theorem rows_morphs :
-    ∀ ex ∈ Examples.all, ex.language = "itel1242" →
+    ∀ ex ∈ Examples.all, ex.language = .westItelmen →
       (ofRow ex).map (morphs .rewriting vocab) = some (exponents ex) := by
   decide
 
@@ -191,7 +192,7 @@ def ofRow (ex : Datum) :
 /-- Across the Past I paradigm (19) and the ditransitive (27), *ne-* is absent exactly where
 *-nin* or *-ninet* is inserted. -/
 theorem rows_morphs :
-    ∀ ex ∈ Examples.all, ex.language = "chuk1273" →
+    ∀ ex ∈ Examples.all, ex.language = .chukchi →
       (ofRow ex).map (morphs .rewriting vocab) = some (exponents ex) := by
   decide
 

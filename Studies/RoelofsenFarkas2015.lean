@@ -6,6 +6,7 @@ public import Linglib.Semantics.Questions.Polar
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.RoelofsenFarkas2015
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Roelofsen and Farkas (2015): Polarity particle responses as a window onto the interpretation of questions and assertions
@@ -250,12 +251,12 @@ theorem usable_iff_mem_marks (x : Response) :
 /-! ### The examples -/
 
 /-- The particles of each language's examples, by Glottocode. -/
-def particlesOf : List (String × List PolarityParticle) :=
-  [("stan1293", english), ("stan1290", french), ("stan1295", german)]
+def particlesOf : List (Glottocode × List PolarityParticle) :=
+  [(.english, english), (.french, french), (.german, german)]
 
 /-- The particle of a row, by its spelling among the particles of the row's language. -/
 def particleOf? (ex : Datum) : Option PolarityParticle := do
-  ex.parse? "particle" ((← List.lookup ex.language particlesOf).map fun p ↦ (p.entry.form, p))
+  ex.parse? "particle" ((← ex.byLanguage particlesOf).map fun p ↦ (p.entry.form, p))
 
 def polarityTable : List (String × Polarity) := [("positive", .positive), ("negative", .negative)]
 

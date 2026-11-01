@@ -9,6 +9,7 @@ public import Linglib.Data.Examples.Westergaard2009
 public import Linglib.Semantics.Focus.Marking
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Westergaard (2009): The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy
@@ -249,15 +250,16 @@ def orderOf (r : Datum) : Option Occurrence :=
 or Danish: its verb-second distribution and its distribution in embedded clauses without a
 complementizer. The Tromsø rows have none. -/
 def fragmentsOf (r : Datum) : Option (Distribution × Distribution) :=
-  match r.feature? "variety", r.language with
-  | some "Nordmøre", _ => some (Norwegian.Nordmore.verbSecond, Distribution.empty)
-  | some "Belfast English", _ =>
+  let norwegian := (Norwegian.verbSecond, (Norwegian.leftEdges.restrict false).verbSecond)
+  match r.feature? "variety" with
+  | some "Nordmøre" => some (Norwegian.Nordmore.verbSecond, Distribution.empty)
+  | some "Belfast English" =>
     some (English.Belfast.verbSecond, English.Belfast.verbSecondWithoutComplementizer)
-  | some "Standard Norwegian", _ | none, "norw1258" =>
-    some (Norwegian.verbSecond, (Norwegian.leftEdges.restrict false).verbSecond)
-  | none, "stan1293" => some (English.verbSecond, Distribution.empty)
-  | none, "dani1285" => some (Danish.verbSecond, (Danish.leftEdges.restrict false).verbSecond)
-  | _, _ => none
+  | some "Standard Norwegian" => some norwegian
+  | none => r.byLanguage [(.norwegian, norwegian),
+      (.english, (English.verbSecond, Distribution.empty)),
+      (.danish, (Danish.verbSecond, (Danish.leftEdges.restrict false).verbSecond))]
+  | _ => none
 
 /-- The distribution a row is judged by: its variety's distribution without a complementizer
 when the row has none, otherwise its verb-second distribution. -/

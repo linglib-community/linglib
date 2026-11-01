@@ -7,6 +7,7 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Order.Disjoint
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Iatridou (2000): The grammatical ingredients of counterfactuality
@@ -220,11 +221,7 @@ def aktionsartTable : List (String × Aktionsart) :=
 
 /-- The language of a row among those of Section 5. -/
 def aspectLanguage? (e : Datum) : Option AspectLanguage :=
-  match e.language with
-  | "stan1293" => some .english
-  | "mode1248" => some .greek
-  | "stan1290" => some .french
-  | _ => none
+  e.byLanguage [(.english, .english), (.modernGreek, .greek), (.french, .french)]
 
 /-- A row's counterfactual type with its layers of past morphology. -/
 def layers? (e : Datum) : Option (CounterfactualType × ℕ) := do

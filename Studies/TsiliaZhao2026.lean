@@ -7,6 +7,7 @@ public import Linglib.Fragments.Japanese.TemporalDeictic
 public import Linglib.Fragments.Slavic.Russian.TemporalDeictic
 public import Linglib.Data.Examples.TsiliaZhao2026
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Tsilia and Zhao (2026): Tense and perspective
@@ -91,11 +92,11 @@ theorem not_restricted_le {a : DeicticAdverb} (ha : a.IsDistal) (r th π : Nonem
     (presup_overlaps.2 (NonemptyInterval.overlaps_of_le (presup_le.1 hr))) hle hth
 
 /-- The ⌜then⌝ adverbs of the paper's sample, by the Glottocode of their language. -/
-def thenAdverbs : List (String × DeicticAdverb) :=
-  [("stan1293", English.TemporalDeictic.then_),
-    ("mode1248", Greek.StandardModern.TemporalDeictic.tote),
-    ("hebr1245", Hebrew.TemporalDeictic.az), ("russ1263", Russian.TemporalDeictic.togda),
-    ("nucl1643", Japanese.TemporalDeictic.tooji)]
+def thenAdverbs : List (Glottocode × DeicticAdverb) :=
+  [(.english, English.TemporalDeictic.then_),
+    (.modernGreek, Greek.StandardModern.TemporalDeictic.tote),
+    (.modernHebrew, Hebrew.TemporalDeictic.az), (.russian, Russian.TemporalDeictic.togda),
+    (.japanese, Japanese.TemporalDeictic.tooji)]
 
 -- (12)
 theorem not_restricted_present_of_mem {a : DeicticAdverb} (ha : a ∈ thenAdverbs.map Prod.snd)
@@ -158,7 +159,7 @@ def tenseCell (row : Datum) : Option (Finset Ordering) :=
 
 /-- The ⌜then⌝ of an example's language, if the example has one. -/
 def adverb (row : Datum) : Option DeicticAdverb :=
-  (row.feature? "then").bind fun _ ↦ thenAdverbs.lookup row.language
+  (row.feature? "then").bind fun _ ↦ row.byLanguage thenAdverbs
 
 /-- An example with ⌜then⌝ is accepted, by some speakers at least, exactly when some perspective
 satisfies the presuppositions of its tense and of the adverb restricting it. -/

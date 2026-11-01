@@ -14,6 +14,7 @@ public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Syntax.Person.Class
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Haspelmath (2021): Role-reference associations and the explanation of argument coding splits
@@ -708,7 +709,7 @@ def codingShown (e : Datum) : Option ℕ :=
 
 /-- The rows on the split of role `role` on scale `scale` in the language with glottocode
 `lang`. -/
-def rows (lang role scale : String) : List Datum :=
+def rows (lang : Glottocode) (role scale : String) : List Datum :=
   Examples.all.filter fun e ↦
     e.language = lang ∧ e.feature? "role" = some role ∧ e.feature? "scale" = some scale
 
@@ -794,59 +795,61 @@ def Nominality.table : List (String × Nominality) :=
 
 -- §4.1, §4.2
 theorem rows_splitP_splitA :
-    Reproduces (rows "yaku1245" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
-      Reproduces (rows "nuor1238" "P" "animacy") (prominence? Animacy.table) sardinianP ∧
-      Reproduces (rows "panj1256" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
-      Reproduces (rows "west2369" "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
-      Reproduces (rows "neap1235" "P" "person") (prominence? Person.Class.table) abruzzeseP ∧
-      Reproduces (rows "taka1261" "A" "person") (prominence? Person.Class.table) godoberiA ∧
-      Reproduces (rows "warr1255" "A" "nominality") (prominence? BinaryNominality.table)
+    Reproduces (rows .sakha "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
+      Reproduces (rows .nuorese "P" "animacy") (prominence? Animacy.table) sardinianP ∧
+      Reproduces (rows .easternPanjabi "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
+      Reproduces (rows .westernFarsi "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
+      Reproduces (rows .continentalSouthernItalian "P" "person") (prominence? Person.Class.table)
+        abruzzeseP ∧
+      Reproduces (rows .takale "A" "person") (prominence? Person.Class.table) godoberiA ∧
+      Reproduces (rows .warrgamay "A" "nominality") (prominence? BinaryNominality.table)
         warrgamayA ∧
-      Reproduces (rows "mang1381" "A" "animacy") (prominence? BinaryAnimacy.table) mangarrayiA ∧
-      Reproduces (rows "cent2346" "A" "focus") (prominence? focusTable) tibetanA := by
+      Reproduces (rows .mangarrayi "A" "animacy") (prominence? BinaryAnimacy.table) mangarrayiA ∧
+      Reproduces (rows .centralTibetan "A" "focus") (prominence? focusTable) tibetanA := by
   decide
 
 -- §5, §9
 theorem rows_splitR_splitT :
-    Reproduces (rows "telk1238" "R" "nominality") (prominence? BinaryNominality.table) neoAramaicR ∧
-      Reproduces (rows "yakk1236" "R" "animacy") (prominence? BinaryAnimacy.table) yakkhaR ∧
-      Reproduces (rows "nucl1347" "R" "definiteness") (prominence? Definiteness.table) wolofR ∧
-      Reproduces (rows "ewee1241" "T" "nominality") (prominence? BinaryNominality.table) eweT ∧
-      Reproduces (rows "akan1250" "T" "definiteness") (prominence? Definiteness.table) akanT ∧
-      Reproduces (rows "nucl1302" "T" "person") (prominence? Person.Class.table) georgianT ∧
-      Reproduces (rows "maka1311" "T" "definiteness") (prominence? Definiteness.table) makassarV ∧
-      Reproduces (rows "maka1311" "T" "nominality") (prominence? BinaryNominality.table)
+    Reproduces (rows .christianTelkepe "R" "nominality") (prominence? BinaryNominality.table)
+        neoAramaicR ∧
+      Reproduces (rows .yakkha "R" "animacy") (prominence? BinaryAnimacy.table) yakkhaR ∧
+      Reproduces (rows .wolof "R" "definiteness") (prominence? Definiteness.table) wolofR ∧
+      Reproduces (rows .ewe "T" "nominality") (prominence? BinaryNominality.table) eweT ∧
+      Reproduces (rows .akan "T" "definiteness") (prominence? Definiteness.table) akanT ∧
+      Reproduces (rows .georgian "T" "person") (prominence? Person.Class.table) georgianT ∧
+      Reproduces (rows .makasar "T" "definiteness") (prominence? Definiteness.table) makassarV ∧
+      Reproduces (rows .makasar "T" "nominality") (prominence? BinaryNominality.table)
         makassarVNominality := by
   decide
 
 -- §6, §7, §9, (43), (44)
 theorem rows_scenario :
-    Reproduces (rows "teop1238" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
-      Reproduces (rows "sout2750" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
-      Reproduces (rows "saha1240" "A" "person") (scenario? Person.Class.table) sahaptinA ∧
-      Reproduces (rows "east2774" "A" "definiteness") (scenario? Definiteness.table) khantyA ∧
-      Reproduces (rows "stan1288" "P" "animacy") (scenario? Animacy.table) spanishP ∧
-      Reproduces (rows "bulg1262" "R" "person") (scenario? Person.Class.table) bulgarianR ∧
-      Reproduces (rows "sham1280" "R" "person") (scenario? Person.Class.table) shambalaR ∧
-      Reproduces ((rows "stan1293" "R" "nominality").filter (·.feature? "variety" = none))
+    Reproduces (rows .teop "P" "person") (scenario? Person.Class.table) yukaghirP ∧
+      Reproduces (rows .southernYukaghir "P" "person") (scenario? Person.Class.table) yukaghirP ∧
+      Reproduces (rows .sahaptin "A" "person") (scenario? Person.Class.table) sahaptinA ∧
+      Reproduces (rows .eastKhanty "A" "definiteness") (scenario? Definiteness.table) khantyA ∧
+      Reproduces (rows .spanish "P" "animacy") (scenario? Animacy.table) spanishP ∧
+      Reproduces (rows .bulgarian "R" "person") (scenario? Person.Class.table) bulgarianR ∧
+      Reproduces (rows .shambala "R" "person") (scenario? Person.Class.table) shambalaR ∧
+      Reproduces ((rows .english "R" "nominality").filter (·.feature? "variety" = none))
         (scenario? BinaryNominality.table) englishR ∧
-      Reproduces ((rows "stan1293" "R" "nominality").filter
+      Reproduces ((rows .english "R" "nominality").filter
           (·.feature? "variety" = some "American"))
         (scenario? BinaryNominality.table) americanEnglishR ∧
-      Reproduces (rows "mode1248" "T" "person") (scenario? Person.Class.table) greekT ∧
-      Reproduces (rows "icel1247" "R" "animacy") (scenario? BinaryAnimacy.table) icelandicR ∧
-      Reproduces (rows "kash1277" "P" "person") (scenario? prominenceTable) kashmiriP ∧
-      Reproduces (rows "baou1238" "T" "nominal type") (scenario? Nominality.table) bauleT ∧
-      Reproduces (rows "iton1250" "verb" "person") (scenario? Person.Class.table) itonamaV := by
+      Reproduces (rows .modernGreek "T" "person") (scenario? Person.Class.table) greekT ∧
+      Reproduces (rows .icelandic "R" "animacy") (scenario? BinaryAnimacy.table) icelandicR ∧
+      Reproduces (rows .kashmiri "P" "person") (scenario? prominenceTable) kashmiriP ∧
+      Reproduces (rows .baoulé "T" "nominal type") (scenario? Nominality.table) bauleT ∧
+      Reproduces (rows .itonama "verb" "person") (scenario? Person.Class.table) itonamaV := by
   decide
 
 -- §10.2, (4)
 theorem rows_alternations :
-    ReproducesAlternation (rows "lumm1243" "A" "nominality") (scenario? BinaryNominality.table)
+    ReproducesAlternation (rows .lummi "A" "nominality") (scenario? BinaryNominality.table)
         lummiActive lummiPassive ∧
-      ReproducesAlternation (rows "koyr1240" "R" "nominality") (scenario? BinaryNominality.table)
-        koyraChiiniDoubleObject (fun _ ↦ True) ∧
-      ReproducesAlternation ((rows "stan1293" "R" "nominality").filter
+      ReproducesAlternation (rows .koyraChiiniSonghay "R" "nominality")
+        (scenario? BinaryNominality.table) koyraChiiniDoubleObject (fun _ ↦ True) ∧
+      ReproducesAlternation ((rows .english "R" "nominality").filter
           (·.feature? "variety" = none))
         (scenario? BinaryNominality.table) englishDoubleObject (fun _ ↦ True) := by
   decide

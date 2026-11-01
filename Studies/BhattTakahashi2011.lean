@@ -6,6 +6,7 @@ public import Linglib.Semantics.Degree.HeimKennedy
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Bhatt and Takahashi (2011): Reduced and unreduced phrasal comparatives
@@ -109,14 +110,14 @@ def bindingOf (e : Datum) : Option BindingDatum :=
     cc.map fun b ↦ ⟨e.id, b, decide (.marginal ≤ e.judgment)⟩
 
 /-- `rowsOf g` lists the rows of the language with Glottocode `g`. -/
-def rowsOf (glottocode : String) : List Datum :=
+def rowsOf (glottocode : Glottocode) : List Datum :=
   Examples.all.filter (·.language = glottocode)
 
 /-- `englishBindingPairs` holds the English minimal pairs (11)–(13). -/
-def englishBindingPairs : List BindingDatum := (rowsOf "stan1293").filterMap bindingOf
+def englishBindingPairs : List BindingDatum := (rowsOf .english).filterMap bindingOf
 
 /-- `hindiUrduBindingPairs` holds the Hindi-Urdu datum (35). -/
-def hindiUrduBindingPairs : List BindingDatum := (rowsOf "hind1269").filterMap bindingOf
+def hindiUrduBindingPairs : List BindingDatum := (rowsOf .hindi).filterMap bindingOf
 
 /-! ### The binding diagnostic (§2, §3.4) -/
 
@@ -176,11 +177,11 @@ instance (e : Datum) : Decidable (RAPredictsScope e) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- The English scope data (43a–b) follow the reduction generalization. -/
-theorem english_scope : ∀ e ∈ rowsOf "stan1293", RAPredictsScope e := by decide
+theorem english_scope : ∀ e ∈ rowsOf .english, RAPredictsScope e := by decide
 
 /-- In Hindi-Urdu (40), a quantifier based below the degree trace still scopes out, against the
 reduction analysis. -/
-theorem hindi_urdu_scope : ∃ e ∈ rowsOf "hind1269", ¬ RAPredictsScope e := by decide
+theorem hindi_urdu_scope : ∃ e ∈ rowsOf .hindi, ¬ RAPredictsScope e := by decide
 
 /-! ### The typology (§6) -/
 

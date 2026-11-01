@@ -6,6 +6,7 @@ public import Studies.Arad2005
 public import Linglib.Syntax.Gender.Basic
 public import Linglib.Data.Examples.Faust2026
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Faust (2026): Intrusion as template satisfaction and the QaTaT–QaTa problem in Semitic
@@ -507,7 +508,7 @@ structure NounRow where
   root : Option (ConsonantalRoot String)
   deriving DecidableEq, Repr
 
-def langTable : List (String × Lang) := [("hebr1245", .hebrew), ("amha1245", .amharic)]
+def langTable : List (Glottocode × Lang) := [(.modernHebrew, .hebrew), (.amharic, .amharic)]
 
 def rootTable : List (String × ConsonantalRoot String) :=
   [("klt", klt), ("kl", kl), ("klj", klj), ("dmj", dmj),
@@ -555,7 +556,7 @@ def cellTable : List (String × Cell) :=
 def genderTable : List (String × UD.Gender) := [("masculine", .Masc), ("feminine", .Fem)]
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let lang ← List.lookup ex.language langTable
+  let lang ← ex.byLanguage langTable
   let root ← ex.parse? "root" rootTable
   let cell ← ex.parse? "cell" cellTable
   pure ⟨lang, root, cell, ex.primaryText⟩

@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Embick2015
 public import Linglib.Fragments.Korean.Phonology
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.InsideOut
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Embick (2015): The Morpheme: A Theoretical Introduction
@@ -144,12 +145,12 @@ def ofRow (ex : Datum) :
   let pl ← ex.parse? "number" numberTable
   pure (word t p₁ p₂ pl, ["m1", "m2", "m3", "m4", "m5"].filterMap ex.feature?)
 
-theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "lati1261" → (ofRow ex).isSome := by
+theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = .latin → (ofRow ex).isSome := by
   decide
 
 /-- The twenty-four forms of (40). -/
 def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × List String) :=
-  (Examples.all.filter (·.language = "lati1261")).filterMap ofRow
+  (Examples.all.filter (·.language = .latin)).filterMap ofRow
 
 -- (40), §7.3.2.1
 theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide +kernel
@@ -197,12 +198,12 @@ def ofRow (ex : Datum) :
     Option (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) := do
   pure (word (← ex.feature? "root") (← ex.parse? "poss" possTable), ← ex.feature? "plExponent")
 
-theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "hung1274" → (ofRow ex).isSome := by
+theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = .hungarian → (ofRow ex).isSome := by
   decide
 
 /-- The plural and possessed plural of the three nouns of (7). -/
 def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) :=
-  (Examples.all.filter (·.language = "hung1274")).filterMap ofRow
+  (Examples.all.filter (·.language = .hungarian)).filterMap ofRow
 
 -- (7)
 theorem rows_plural : ∀ r ∈ rows, plural r.1 = some r.2 := by decide
@@ -257,12 +258,12 @@ def ofRow (ex : Datum) :
     Option (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) := do
   pure (word (← ex.feature? "root"), ← ex.feature? "nomExponent")
 
-theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "kore1280" → (ofRow ex).isSome := by
+theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = .korean → (ofRow ex).isSome := by
   decide
 
 /-- The two hosts of (10). -/
 def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × String) :=
-  (Examples.all.filter (·.language = "kore1280")).filterMap ofRow
+  (Examples.all.filter (·.language = .korean)).filterMap ofRow
 
 -- (10), (43d)
 theorem rows_nominative : ∀ r ∈ rows, nominative r.1 = some r.2 := by decide

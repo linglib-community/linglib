@@ -17,6 +17,7 @@ public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Dalrymple and Kaplan, feature indeterminacy and feature resolution (2000)
@@ -425,7 +426,7 @@ theorem neuters :
 end Slovene
 
 -- (107), (108), (113)
-theorem hindi_rows : ∀ row ∈ Examples.all, row.language = "hind1269" →
+theorem hindi_rows : ∀ row ∈ Examples.all, row.language = .hindi →
     ∀ cs ∈ row.parse? "conjuncts"
       [("MASC and FEM", [Hindi.Value.masc, .fem]), ("FEM and FEM", [.fem, .fem])],
     ∀ g ∈ row.parse? "agreement" [("MASC", Hindi.Value.masc), ("FEM", .fem)],
@@ -433,7 +434,7 @@ theorem hindi_rows : ∀ row ∈ Examples.all, row.language = "hind1269" →
   decide +kernel
 
 -- (115), (117)
-theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
+theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = .icelandic →
     ∀ cs ∈ row.parse? "conjuncts"
       [("MASC and FEM", [_root_.Icelandic.Gender.Value.masculine, .feminine]),
         ("MASC and NEUT", [.masculine, .neuter]), ("FEM and NEUT", [.feminine, .neuter])],
@@ -442,7 +443,7 @@ theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
   decide +kernel
 
 -- (123), (127)
-theorem slovene_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
+theorem slovene_rows : ∀ row ∈ Examples.all, row.language = .slovenian →
     ∀ cs ∈ row.parse? "conjuncts" [("NEUT and NEUT", [Corbett1991.Slovene.Value.neut, .neut])],
     ∀ g ∈ row.parse? "agreement" [("MASC", Corbett1991.Slovene.Value.masc)],
       (row.judgment = .acceptable ↔

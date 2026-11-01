@@ -4,6 +4,7 @@ public import Linglib.Syntax.Case.Dependent
 public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Data.Examples.Baker2015
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Baker 2015: dependent case
@@ -54,14 +55,15 @@ open Case DependentCase
     Warlpiri; and Urdu, split by aspect, in the perfective of its clauses (25). The
     marked-nominative and marked-absolutive languages differ in the realization of the unmarked
     case, which the algorithm does not fix. -/
-def alignment? : String → Option Alignment.AlignmentType
-  | "yaku1245" | "tami1289" | "amha1245" | "cusc1236" | "kore1280" | "finn1318" =>
-    some .accusative
-  | "ship1254" | "buru1296" | "chuk1273" | "lezg1247" | "ingu1240" | "kala1399" | "west2599"
-  | "ward1246" => some .ergative
-  | "nezp1238" | "coas1300" | "seme1247" | "dier1241" | "warl1254" => some .tripartite
-  | "urdu1245" => some (HindiUrdu.alignment .perfective)
-  | _ => none
+def alignment? (l : Glottocode) : Option Alignment.AlignmentType :=
+  List.lookup l <|
+    ([.sakha, .tamil, .amharic, .cuscoQuechua, .korean, .finnish] : List Glottocode).map
+      (·, .accusative) ++
+    ([.shipiboConibo, .burushaski, .chukchi, .lezgian, .ingush, .kalaallisut, .westKewa,
+      .wardaman] : List Glottocode).map (·, .ergative) ++
+    ([.nezPerce, .coastTsimshian, .semelai, .dieri, .warlpiri] : List Glottocode).map
+      (·, .tripartite) ++
+    [(.urdu, HindiUrdu.alignment .perfective)]
 
 /-- The case a gloss shows: a dependent case, or an unmarked form — nominative, absolutive,
     or no marking at all. -/

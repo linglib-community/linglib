@@ -19,6 +19,7 @@ public import Linglib.Fragments.Icelandic.Nouns
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Data.Examples.Corbett1991
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Corbett (1991): Gender
@@ -152,7 +153,7 @@ list itself. -/
 structure SurveyEntry where
   /-- The language, under the book's name. -/
   language : String
-  glottocode : String
+  glottocode : Glottocode
   /-- The kind of assignment system the book describes. -/
   kind : AssignmentKind
   /-- The semantic criteria the book's rules for the language use. -/
@@ -161,26 +162,26 @@ structure SurveyEntry where
 
 /-- The assignment systems of chapters 2 and 3 (Tables 2.1 to 2.8 and §3.1 to §3.2). -/
 def survey : List SurveyEntry :=
-  [⟨"Tamil", "tami1289", .strictSemantic, [.rationality, .sex]⟩,
-    ⟨"Diyari", "dier1241", .strictSemantic, [.sex]⟩,
-    ⟨"Dizi", "dizi1235", .strictSemantic, [.sex, .evaluation]⟩,
-    ⟨"Halkomelem", "halk1245", .strictSemantic, [.sex, .evaluation]⟩,
-    ⟨"Defaka", "defa1248", .strictSemantic, [.humanness, .sex]⟩,
-    ⟨"English", "stan1293", .strictSemantic, [.humanness, .sex]⟩,
-    ⟨"Zande", "zand1248", .predominantlySemantic, [.humanness, .sex, .animacy]⟩,
-    ⟨"Dyirbal", "dyir1250", .predominantlySemantic, [.humanness, .sex, .animacy, .edibility]⟩,
-    ⟨"Ket", "kett1243", .predominantlySemantic, [.animacy, .sex]⟩,
-    ⟨"Ojibwa", "ojib1241", .predominantlySemantic, [.animacy]⟩,
-    ⟨"Lak", "lakk1252", .predominantlySemantic, [.rationality, .sex, .animacy]⟩,
-    ⟨"Archi", "arch1244", .predominantlySemantic,
+  [⟨"Tamil", .tamil, .strictSemantic, [.rationality, .sex]⟩,
+    ⟨"Diyari", .dieri, .strictSemantic, [.sex]⟩,
+    ⟨"Dizi", .dizin, .strictSemantic, [.sex, .evaluation]⟩,
+    ⟨"Halkomelem", .halkomelem, .strictSemantic, [.sex, .evaluation]⟩,
+    ⟨"Defaka", .defaka, .strictSemantic, [.humanness, .sex]⟩,
+    ⟨"English", .english, .strictSemantic, [.humanness, .sex]⟩,
+    ⟨"Zande", .zande, .predominantlySemantic, [.humanness, .sex, .animacy]⟩,
+    ⟨"Dyirbal", .dyirbal, .predominantlySemantic, [.humanness, .sex, .animacy, .edibility]⟩,
+    ⟨"Ket", .ket, .predominantlySemantic, [.animacy, .sex]⟩,
+    ⟨"Ojibwa", .ojibwa, .predominantlySemantic, [.animacy]⟩,
+    ⟨"Lak", .lak, .predominantlySemantic, [.rationality, .sex, .animacy]⟩,
+    ⟨"Archi", .archi, .predominantlySemantic,
       [.rationality, .sex, .animacy, .size, .abstractness, .insect]⟩,
-    ⟨"Russian", "russ1263", .morphological, [.sex, .animacy]⟩,
-    ⟨"Swahili", "swah1253", .morphological, [.animacy, .evaluation]⟩,
-    ⟨"Afar", "afar1241", .phonological, [.sex]⟩,
-    ⟨"Hausa", "haus1257", .phonological, [.sex]⟩,
-    ⟨"Godié", "godi1239", .phonological, [.humanness, .size, .liquidity]⟩,
-    ⟨"Yimas", "yima1243", .phonological, [.sex, .humanness, .animacy]⟩,
-    ⟨"French", "stan1290", .phonological, [.sex]⟩]
+    ⟨"Russian", .russian, .morphological, [.sex, .animacy]⟩,
+    ⟨"Swahili", .swahili, .morphological, [.animacy, .evaluation]⟩,
+    ⟨"Afar", .afar, .phonological, [.sex]⟩,
+    ⟨"Hausa", .hausa, .phonological, [.sex]⟩,
+    ⟨"Godié", .godié, .phonological, [.humanness, .size, .liquidity]⟩,
+    ⟨"Yimas", .yimas, .phonological, [.sex, .humanness, .animacy]⟩,
+    ⟨"French", .french, .phonological, [.sex]⟩]
 
 /-! ### Tamil: a strict semantic system (§2.1.1) -/
 
@@ -431,7 +432,7 @@ theorem card_range_adjForm :
   decide
 
 -- (5), (10)
-theorem rows : ∀ row ∈ Examples.all, row.language = "roma1327" →
+theorem rows : ∀ row ∈ Examples.all, row.language = .romanian →
     ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
       ∀ pl ∈ row.parse? "number"
           [("singular", numberSystem.value .singular), ("plural", numberSystem.value .plural)],
@@ -997,7 +998,7 @@ end Ojibwa
 A row with a `conjuncts` and a `resolved` feature names its conjuncts and the form the
 predicate shows; it is acceptable exactly when the language's rules select that form. -/
 
-theorem czech_rows : ∀ row ∈ Examples.all, row.language = "czec1258" →
+theorem czech_rows : ∀ row ∈ Examples.all, row.language = .czech →
     ∀ cs ∈ row.parse? "conjuncts" [("1+2", [Person.first, .second]), ("3+1", [.third, .first]),
       ("3+2", [.third, .second])],
       ∀ p ∈ row.parse? "resolved" [("1", Person.first), ("2", .second)],
@@ -1005,21 +1006,21 @@ theorem czech_rows : ∀ row ∈ Examples.all, row.language = "czec1258" →
   decide +kernel
 
 open _root_.Tamil.Gender in
-theorem tamil_rows : ∀ row ∈ Examples.all, row.language = "tami1289" →
+theorem tamil_rows : ∀ row ∈ Examples.all, row.language = .tamil →
     ∀ cs ∈ row.parse? "conjuncts" [("masc+masc", [Value.masc, .masc]), ("fem+fem", [.fem, .fem]),
       ("fem+masc", [.fem, .masc]), ("neut+neut", [.neut, .neut]), ("masc+neut", [.masc, .neut])],
       ∀ g ∈ row.parse? "resolved" [("rational", PlConcord.rational), ("neuter", .neuter)],
         (row.judgment = .acceptable ↔ resolve Tamil.rules cs = some g) := by
   decide +kernel
 
-theorem archi_rows : ∀ row ∈ Examples.all, row.language = "arch1244" →
+theorem archi_rows : ∀ row ∈ Examples.all, row.language = .archi →
     ∀ cs ∈ row.parse? "conjuncts" [("rational+rational", [true, true]),
       ("rational+nonrational", [true, false]), ("nonrational+nonrational", [false, false])],
       ∀ g ∈ row.parse? "resolved" [("I/II", Archi.PlForm.I_II), ("III/IV", .III_IV)],
         (row.judgment = .acceptable ↔ resolve Archi.rules cs = some g) := by
   decide +kernel
 
-theorem luganda_rows : ∀ row ∈ Examples.all, row.language = "gand1255" →
+theorem luganda_rows : ∀ row ∈ Examples.all, row.language = .ganda →
     ∀ cs ∈ row.parse? "conjuncts" [("human+human+human", [true, true, true]),
       ("nonhuman+nonhuman+nonhuman+nonhuman", [false, false, false, false]),
       ("human+nonhuman", [true, false])],
@@ -1027,14 +1028,14 @@ theorem luganda_rows : ∀ row ∈ Examples.all, row.language = "gand1255" →
         (row.judgment = .acceptable ↔ resolve Luganda.rules cs = some g) := by
   decide +kernel
 
-theorem french_rows : ∀ row ∈ Examples.all, row.language = "stan1290" →
+theorem french_rows : ∀ row ∈ Examples.all, row.language = .french →
     ∀ cs ∈ row.parse? "conjuncts" [("masc+masc", [French.Value.masc, .masc]),
       ("fem+fem", [.fem, .fem]), ("masc+fem", [.masc, .fem])],
       ∀ g ∈ row.parse? "resolved" [("masc", French.Value.masc), ("fem", .fem)],
         (row.judgment = .acceptable ↔ resolve French.rulesA cs = some g) := by
   decide +kernel
 
-theorem slovene_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
+theorem slovene_rows : ∀ row ∈ Examples.all, row.language = .slovenian →
     ∀ cs ∈ row.parse? "conjuncts" [("masc+fem", [Slovene.Value.masc, .fem]),
       ("masc+neut", [.masc, .neut]), ("fem+neut", [.fem, .neut]), ("neut+neut", [.neut, .neut]),
       ("fem+fem", [.fem, .fem]), ("neut+neut+neut", [.neut, .neut, .neut]),
@@ -1043,14 +1044,14 @@ theorem slovene_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
         (row.judgment = .acceptable ↔ resolve Slovene.rules cs = some g) := by
   decide +kernel
 
-theorem slovene_number_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
+theorem slovene_number_rows : ∀ row ∈ Examples.all, row.language = .slovenian →
     ∀ ns ∈ row.parse? "numbers" [("sg+sg", [Number.singular, .singular]),
       ("sg+sg+sg", [.singular, .singular, .singular]), ("sg+du", [.singular, .dual])],
       ∀ n ∈ row.parse? "number" [("dual", Number.dual), ("plural", .plural)],
         (row.judgment = .acceptable ↔ numberResolve Slovene.numbers ns = some n) := by
   decide +kernel
 
-theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
+theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = .icelandic →
     ∀ cs ∈ row.parse? "conjuncts"
       [("masc+fem", [_root_.Icelandic.Nouns.drengur, _root_.Icelandic.Nouns.telpa]),
         ("fem+neut", [_root_.Icelandic.Nouns.aer, _root_.Icelandic.Nouns.lamb])],
@@ -1058,7 +1059,7 @@ theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
         (row.judgment = .acceptable ↔ resolve Icelandic.rules (cs.map (·.gender)) = some g) := by
   decide +kernel
 
-theorem polish_rows : ∀ row ∈ Examples.all, row.language = "poli1260" →
+theorem polish_rows : ∀ row ∈ Examples.all, row.language = .polish →
     ∀ cs ∈ row.parse? "conjuncts" [("fem+fem", [false, false]),
       ("mascPers+fem+fem", [true, false, false])],
       ∀ g ∈ row.parse? "resolved" [("mascPers", Polish.PlForm.mascPers),
@@ -1066,7 +1067,7 @@ theorem polish_rows : ∀ row ∈ Examples.all, row.language = "poli1260" →
         (row.judgment = .acceptable ↔ resolve Polish.rules cs = some g) := by
   decide +kernel
 
-theorem latin_rows : ∀ row ∈ Examples.all, row.language = "lati1261" →
+theorem latin_rows : ∀ row ∈ Examples.all, row.language = .latin →
     ∀ cs ∈ row.parse? "conjuncts" [("masc.human+fem.human",
       [((Latin.Gender.Value.masc, .human) : Latin.Conjunct), (.fem, .human)]),
       ("masc.inanimate+fem.inanimate", [(.masc, .inanimate), (.fem, .inanimate)])],
@@ -1075,7 +1076,7 @@ theorem latin_rows : ∀ row ∈ Examples.all, row.language = "lati1261" →
   decide +kernel
 
 open _root_.Romanian.Gender in
-theorem romanian_resolution_rows : ∀ row ∈ Examples.all, row.language = "roma1327" →
+theorem romanian_resolution_rows : ∀ row ∈ Examples.all, row.language = .romanian →
     ∀ cs ∈ row.parse? "conjuncts" [("fată+femeie", [fata, femeie]),
       ("băiat+bărbat", [baiat, barbat]), ("băiat+fată", [baiat, fata]),
       ("uşă+perete", [usa, perete]), ("perete+scaun", [perete, scaun]),
@@ -1085,7 +1086,7 @@ theorem romanian_resolution_rows : ∀ row ∈ Examples.all, row.language = "rom
         (row.judgment = .acceptable ↔ resolve Romanian.rules cs = some g) := by
   decide +kernel
 
-theorem ojibwa_rows : ∀ row ∈ Examples.all, row.language = "ojib1241" →
+theorem ojibwa_rows : ∀ row ∈ Examples.all, row.language = .ojibwa →
     ∀ cs ∈ row.parse? "conjuncts" [("animate+animate", [Ojibwa.Value.animate, .animate]),
       ("inanimate+inanimate", [.inanimate, .inanimate]),
       ("animate+inanimate", [.animate, .inanimate])],
@@ -1099,7 +1100,7 @@ A Swahili row with a `noun` and a `concord` feature is acceptable exactly when t
 is the gender the assignment rules give the noun. -/
 
 open _root_.Swahili in
-theorem swahili_rows : ∀ row ∈ Examples.all, row.language = "swah1253" →
+theorem swahili_rows : ∀ row ∈ Examples.all, row.language = .swahili →
     ∀ n ∈ row.parse? "noun" (allNouns.map fun n ↦ (n.form, n)),
       ∀ g ∈ row.parse? "concord" [("1/2", Gender.genderA), ("3/4", .genderB), ("7/8", .genderD)],
         (row.judgment = .acceptable ↔ Swahili.system.assign Swahili.sem Noun.morphClass n = g) := by

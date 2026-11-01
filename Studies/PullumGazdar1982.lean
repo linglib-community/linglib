@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 public import Linglib.Data.Examples.PullumGazdar1982
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Pullum and Gazdar (1982): Natural Languages and Context-Free Languages
@@ -829,7 +830,7 @@ instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
 /-- On (25) to (31), grammar (29) accepts the grammatical clauses and rejects the ungrammatical. -/
-theorem dutch_rows : ∀ r ∈ Examples.all, r.language = "dutc1256" → Predicted r := by decide
+theorem dutch_rows : ∀ r ∈ Examples.all, r.language = .dutch → Predicted r := by decide
 
 /-! ### §6: Mohawk noun incorporation -/
 

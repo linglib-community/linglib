@@ -45,8 +45,9 @@ stop, capitals for retroflexes); the column is a list to look at, not an error. 
 `pycldf`.
 
 `--sync-languages` rewrites `Linglib/Data/Examples/languages.csv` with the Glottolog row of every
-Glottocode the examples use, from a Glottolog CLDF `languages.csv` (by default the pinned release
-below, downloaded), and fails on a code Glottolog does not have. It needs no `pycldf`.
+Glottocode the examples use or the table already lists, from a Glottolog CLDF `languages.csv` (by
+default the pinned release below, downloaded), and fails on a code Glottolog does not have. A row
+added by hand for a language that only a study names is kept. It needs no `pycldf`.
 
 The export and validation need `pycldf` (`pip install pycldf`).
 """
@@ -179,7 +180,9 @@ def sync_languages(glottolog_csv):
     else:
         text = Path(glottolog_csv).read_text(encoding="utf-8")
     glottolog = {r["ID"]: r for r in csv.DictReader(text.splitlines())}
-    codes = used_codes(load())
+    with open(LANGUAGES, encoding="utf-8") as f:
+        listed = {r["ID"] for r in csv.DictReader(f)}
+    codes = sorted(set(used_codes(load())) | listed)
     unknown = [c for c in codes if c not in glottolog]
     if unknown:
         sys.stderr.write(f"not Glottocodes: {', '.join(unknown)}\n")

@@ -6,6 +6,7 @@ public import Linglib.Fragments.German.Tense
 public import Linglib.Fragments.Romance.French.Verbs
 public import Linglib.Fragments.Romance.Italian.Verbs
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Sorace (2000): Gradients in auxiliary selection with intransitive verbs
@@ -135,8 +136,8 @@ structure Row where
 /-- The row of an example, from its language, its `verb`, `position`, `aux`, `predicate` and
 `subject` features, and its alternative with the other auxiliary. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let language ← [("ital1282", Language.italian), ("stan1290", .french), ("dutc1256", .dutch),
-    ("stan1295", .german)].lookup ex.language
+  let language ← ex.byLanguage [(.italian, Language.italian), (.french, .french),
+    (.dutch, .dutch), (.german, .german)]
   let verb ← ex.feature? "verb"
   let position ← ex.parse? "position"
     [("changeOfLocation", AuxiliarySelectionHierarchy.changeOfLocation),

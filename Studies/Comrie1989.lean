@@ -8,6 +8,7 @@ public import Linglib.Syntax.Person.Class
 public import Linglib.Semantics.Causation.Morphological
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Comrie (1989): Language Universals and Linguistic Typology
@@ -275,13 +276,13 @@ structure Parameters where
 /-- Among the languages with causative rows, Turkish doubles indirect objects and
 never demotes further, Sanskrit doubles direct objects and demotes to the instrumental,
 French, Hungarian, Japanese and Kannada demote further, and Hungarian has no passive. -/
-def parameters : List (String × Parameters) :=
-  [("nucl1301", { doubles := [.indirectObject], extended := false, passive := true }),
-    ("sans1269", { doubles := [.directObject], extended := true, passive := true }),
-    ("stan1290", { doubles := [], extended := true, passive := true }),
-    ("hung1274", { doubles := [], extended := true, passive := false }),
-    ("nucl1643", { doubles := [], extended := true, passive := true }),
-    ("nucl1305", { doubles := [], extended := true, passive := true })]
+def parameters : List (Glottocode × Parameters) :=
+  [(.turkish, { doubles := [.indirectObject], extended := false, passive := true }),
+    (.sanskrit, { doubles := [.directObject], extended := true, passive := true }),
+    (.french, { doubles := [], extended := true, passive := true }),
+    (.hungarian, { doubles := [], extended := true, passive := false }),
+    (.japanese, { doubles := [], extended := true, passive := true }),
+    (.kannada, { doubles := [], extended := true, passive := true })]
 
 /-- A causative row's configuration is the base verb's valency, the causee's position, and the
 language's parameters. -/
@@ -299,7 +300,7 @@ def Causative.ofRow (row : Datum) : Option Causative := do
   return ⟨← row.parse? "valency" [("1", 1), ("2", 2), ("3", 3)],
     ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
       ("oblique", .oblique)],
-    ← parameters.lookup row.language⟩
+    ← row.byLanguage parameters⟩
 
 /-- The paradigm position is the highest the base verb's arguments leave free. -/
 def Causative.paradigm (c : Causative) : CauseeSlot := causeeDemotion c.valency

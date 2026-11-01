@@ -4,6 +4,7 @@ public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Fragments.Greek.StandardModern.Negation
 public import Linglib.Data.Examples.Tsiakmakis2025
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Tsiakmakis (2025): On the Non-Homogeneity of Expletive Negation in Greek and Beyond
@@ -168,7 +169,7 @@ def host? (e : Datum) : Option Host :=
 /-- Each Greek host of expletive negation spells out the negator its class assigns, *dhen* or *min*
 (20). -/
 theorem greek_expletive_negator :
-    ∀ e ∈ Examples.all, e.language = "mode1248" → e.feature? "use" = some "expletive" →
+    ∀ e ∈ Examples.all, e.language = .modernGreek → e.feature? "use" = some "expletive" →
       (host? e).map (·.negator.greek.morphs.map (·.form)) = (e.feature? "negator").map ([·]) := by
   decide
 

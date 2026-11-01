@@ -9,6 +9,7 @@ public import Linglib.Fragments.Japanese.Particles
 public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Dayal (2025): The interrogative left periphery
@@ -365,11 +366,8 @@ theorem quasi_rows :
 
 /-- Declarative syntax leaves the WH-feature on C typed early in English and delayable in
 Hindi-Urdu and Italian (§4.4). -/
-def declarativeC : String → Option WHFeature
-  | "stan1293" => some .minusWH
-  | "hind1269" => some .alphaWH
-  | "ital1282" => some .alphaWH
-  | _ => none
+def declarativeC (l : Glottocode) : Option WHFeature :=
+  List.lookup l [(.english, .minusWH), (.hindi, .alphaWH), (.italian, .alphaWH)]
 
 -- (62), (63)
 theorem declarative_question_rows :
@@ -380,12 +378,9 @@ theorem declarative_question_rows :
   decide
 
 /-- A language's polar typing resources, by glottocode. -/
-def typingOf : String → Option PolarTyping
-  | "stan1293" => some english
-  | "ital1282" => some italian
-  | "nucl1643" => some japanese
-  | "hind1269" => some hindiUrdu
-  | _ => none
+def typingOf (l : Glottocode) : Option PolarTyping :=
+  List.lookup l [(.english, english), (.italian, italian), (.japanese, japanese),
+    (.hindi, hindiUrdu)]
 
 -- (69), (71)
 theorem simplex_rows :

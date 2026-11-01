@@ -12,6 +12,7 @@ public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.Holmberg2016
 public import Mathlib.Data.Fintype.Sum
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Holmberg (2016): The Syntax of Yes and No
@@ -552,8 +553,8 @@ theorem exists_mem_negations_tolerant :
 
 
 /-- The particles of each language, by Glottocode. -/
-def particlesOf : List (String × List PolarityParticle) :=
-  [("stan1293", english), ("swed1254", swedish), ("stan1290", french), ("nucl1643", japanese)]
+def particlesOf : List (Glottocode × List PolarityParticle) :=
+  [(.english, english), (.swedish, swedish), (.french, french), (.japanese, japanese)]
 
 /-- The negation of a question, by where the annotation locates it. -/
 def negationTable : List (String × ClauseNegation) :=
@@ -580,7 +581,7 @@ answer is a single particle of one of the four languages. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
   let negation ← if ex.feature? "question" = some "neutral" then some .absent
     else ex.parse? "negation" negationTable
-  let ps ← List.lookup ex.language particlesOf
+  let ps ← ex.byLanguage particlesOf
   let feature ← ex.parse? "answer" (ps.map fun p ↦ (p.entry.form, Holmberg2016.feature p))
   let target := ex.parse? "confirms" polarityTable <|> ex.parse? "intended" polarityTable
   pure ⟨negation, feature, target, ex.judgment⟩

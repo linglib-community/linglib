@@ -7,6 +7,7 @@ public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Semantics.Tense.RunTimes
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Arregui and Kusumoto (1998): Tense in Temporal Adjunct Clauses
@@ -463,8 +464,8 @@ theorem relativeTense_iff_tense :
 /-! ### The examples -/
 
 /-- The languages of the example rows. -/
-def languages : List (String × Language) :=
-  [("stan1293", english), ("poli1260", polish), ("nucl1643", japanese)]
+def languages : List (Glottocode × Language) :=
+  [(.english, english), (.polish, polish), (.japanese, japanese)]
 
 /-- The temporal relations of the adjuncts of the example rows. -/
 def relations : List (String × Connective.Relation) :=
@@ -480,7 +481,7 @@ def positions : List (String × Ordering) :=
 -- (1), (4), (10)
 theorem complement_readings :
     ∀ r ∈ Examples.all, r.feature? "clause" = some "complement" →
-      ∃ L ∈ languages.lookup r.language, ∃ τ ∈ r.parse? "embeddedTense" tenses, ∀ p ∈ positions,
+      ∃ L ∈ r.byLanguage languages, ∃ τ ∈ r.parse? "embeddedTense" tenses, ∀ p ∈ positions,
         (r.readings.lookup p.1 = some .acceptable →
           p.2 ∈ if τ = .past then pastUnderPast L.sot else L.cell τ) ∧
         (τ = .past → p.2 ∈ pastUnderPast L.sot → r.readings.lookup p.1 = some .acceptable) := by
@@ -489,7 +490,7 @@ theorem complement_readings :
 -- (5a), (6b), (11c), (11b), fn. 3
 theorem judgment_iff_interpretable :
     ∀ r ∈ Examples.all, ∀ rel ∈ r.parse? "clause" relations,
-      ∀ τ ∈ r.parse? "embeddedTense" tenses, ∀ h ∈ head? τ, ∃ L ∈ languages.lookup r.language,
+      ∀ τ ∈ r.parse? "embeddedTense" tenses, ∀ h ∈ head? τ, ∃ L ∈ r.byLanguage languages,
         ∃ lf ∈ L.adjunct rel h (.leaf (.vp 0)),
           ((r.judgment = .acceptable ↔ Interpretable lf) ↔
             ¬ (τ = .present ∧ rel ≠ .when_ ∧ rel ∉ L.tensed)) := by
@@ -500,7 +501,7 @@ theorem judgment_iff_interpretable :
 without its habitual reading. -/
 theorem judgment_iff_relativeTense :
     ∀ r ∈ Examples.all, ∀ rel ∈ r.parse? "clause" relations,
-      ∃ τ ∈ r.parse? "embeddedTense" tenses, ∃ L ∈ languages.lookup r.language,
+      ∃ τ ∈ r.parse? "embeddedTense" tenses, ∃ L ∈ r.byLanguage languages,
         ∃ c ∈ adjunctCell? rel,
           ((r.judgment = .acceptable ↔ L.RelativeTense c τ) ↔
             ¬ (¬ L.sot ∧ (τ = .past ∧ (rel = .when_ ∨ rel = .before ∧ rel ∉ L.tensed) ∨
@@ -520,13 +521,13 @@ theorem not_exists_sot_polish :
 -- (14), (20), (22), (32), (26)
 theorem downstairs_iff :
     ∀ r ∈ Examples.all, r.feature? "embeddedClauses" = some "2" →
-      ∃ rel ∈ r.parse? "clause" relations, ∃ L ∈ languages.lookup r.language,
+      ∃ rel ∈ r.parse? "clause" relations, ∃ L ∈ r.byLanguage languages,
         (r.readings.lookup "downstairs" = some .acceptable ↔ rel ∉ L.tensed) := by
   decide
 
 -- (8), (9), (35), (36)
 theorem habitual_iff :
-    ∀ r ∈ Examples.all, r.language = "nucl1643" →
+    ∀ r ∈ Examples.all, r.language = .japanese →
       r.feature? "clause" ∈ [some "when", some "relative"] →
         ∃ τ ∈ r.parse? "embeddedTense" tenses, ∃ h ∈ head? τ,
           (r.readings.lookup "habitual" = some .acceptable ↔

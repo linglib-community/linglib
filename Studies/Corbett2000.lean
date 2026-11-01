@@ -17,6 +17,7 @@ public import Linglib.Data.Examples.Corbett2000
 public import Linglib.Data.Examples.Gloss
 public import Linglib.Morphology.Word.Leipzig
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Corbett (2000): Number
@@ -850,7 +851,7 @@ def markingNames : List (String × Clause.Occurrence) :=
   [("obligatory", .obligatory), ("optional", .optional), ("excluded", .excluded)]
 
 -- (24), (28), Table 3.6
-theorem miya_rows : ∀ row ∈ Examples.all, row.language = "miya1266" →
+theorem miya_rows : ∀ row ∈ Examples.all, row.language = .miya →
     ∀ p ∈ row.parse? "position" rankNames,
       (∀ m ∈ row.parse? "marking" markingNames, m = miyaMarking p) ∧
         ∀ a ∈ row.parse? "agreement" markingNames, a = miyaAgreement p := by
@@ -859,29 +860,29 @@ theorem miya_rows : ∀ row ∈ Examples.all, row.language = "miya1266" →
 -- (21), (23), (5), (6)
 theorem agreement_rows : ∀ row ∈ Examples.all, ∀ p ∈ row.parse? "position" rankNames,
     ∀ a ∈ row.parse? "agreement" markingNames,
-      (row.language = "muna1247" → a = munaAgreement p) ∧
-        (row.language = "gunw1252" → a = mayaliAgreement p) := by
+      (row.language = .muna → a = munaAgreement p) ∧
+        (row.language = .bininjKunWok → a = mayaliAgreement p) := by
   decide +kernel
 
 -- (2), (4)
-theorem slave_rows : ∀ row ∈ Examples.all, row.language = "slav1253" →
+theorem slave_rows : ∀ row ∈ Examples.all, row.language = .slave →
     ∀ p ∈ row.parse? "position" rankNames, ∀ m ∈ row.parse? "marking" markingNames,
       m = slave.range .plural p ∨ p = .higherAnimate := by
   decide +kernel
 
 -- (1), (3)
-theorem hebrew_rows : ∀ row ∈ Examples.all, row.language = "hebr1245" →
+theorem hebrew_rows : ∀ row ∈ Examples.all, row.language = .modernHebrew →
     ∀ c ∈ row.parse? "controller" numberNames, ∀ t ∈ row.parse? "target" numberNames,
       ({} : Choices).toSystem.coarsen c = t := by
   decide +kernel
 
 -- (12), (14)
 theorem default_rows : ∀ row ∈ Examples.all, ∀ d ∈ row.parse? "default" numberNames,
-    (row.language = "stan1293" → d = .singular) ∧ (row.language = "kiow1266" → d = .plural) := by
+    (row.language = .english → d = .singular) ∧ (row.language = .kiowa → d = .plural) := by
   decide +kernel
 
 -- (1), (4), (11)
-theorem bayso_rows : ∀ row ∈ Examples.all, row.language = "bais1246" →
+theorem bayso_rows : ∀ row ∈ Examples.all, row.language = .baiso →
     ∀ n ∈ row.parse? "noun" (Bayso.allNouns.map fun n ↦ (n.form, n)),
     ∀ v ∈ row.parse? "number" [("general", (⟨.general, by decide⟩ : Bayso.nounNumbers)),
       ("singular", ⟨.singular, by decide⟩), ("paucal", ⟨.paucal, by decide⟩),
@@ -912,10 +913,10 @@ two values of Russian; no example of theirs has a dual. -/
 def resolved? (row : Datum) : Option Morphology.Features :=
   (conjuncts? row).bind fun cs ↦
     let number (c : Choices) := some (resolveNumber c (cs.filterMap fun x ↦ x .number))
-    [("slov1268", Morphology.Features.of (number := number slovene)
+    row.byLanguage [(.slovenian, Morphology.Features.of (number := number slovene)
         (gender := sloveneGender (cs.map (· .gender)))),
-      ("russ1263", .of (number := number russian)), ("kash1274", .of (number := number russian)),
-      ("moro1292", .of (number := number russian))].lookup row.language
+      (.russian, .of (number := number russian)), (.kashubian, .of (number := number russian)),
+      (.moroccanArabic, .of (number := number russian))]
 
 /-- Each conjoined example fits the option Corbett names for it, and no other, unless its nearest
 and first conjuncts carry the same features (§6.5.1). -/
@@ -927,7 +928,7 @@ theorem conjoined_rows : ∀ row ∈ Examples.all,
   decide +kernel
 
 -- (28), (30)
-theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = "mace1250" →
+theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = .macedonian →
     ∀ t ∈ row.parse? "target" [("verb", PredicateTarget.verb), ("participle", .participle),
       ("adjective", .adjective), ("noun", .noun)],
     ∀ k ∈ row.parse? "agreement" [("plural", Kind.syntactic), ("singular", .semantic)],
@@ -935,13 +936,13 @@ theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = "mace1250" �
   decide +kernel
 
 -- (19), (22)
-theorem committee_rows : ∀ row ∈ Examples.all, row.language = "stan1293" →
+theorem committee_rows : ∀ row ∈ Examples.all, row.language = .english →
     ∀ t ∈ row.parse? "target" positionNames, ∀ k ∈ row.parse? "agreement" kindNames,
     ∀ a ∈ britishCommittee t, (row.judgment = .acceptable ↔ a.Allows k) := by
   decide +kernel
 
 -- (40), (42)
-theorem hopi_rows : ∀ row ∈ Examples.all, row.language = "hopi1249" →
+theorem hopi_rows : ∀ row ∈ Examples.all, row.language = .hopi →
     ∀ p ∈ row.parse? "pronoun"
       [("sg", Hopi.numberSystem.value .singular), ("pl", Hopi.numberSystem.value .plural)],
     ∀ v ∈ row.parse? "verb"
@@ -951,7 +952,7 @@ theorem hopi_rows : ∀ row ∈ Examples.all, row.language = "hopi1249" →
   decide +kernel
 
 -- (21), (23)
-theorem kiowa_rows : ∀ row ∈ Examples.all, row.language = "kiow1266" →
+theorem kiowa_rows : ∀ row ∈ Examples.all, row.language = .kiowa →
     ∀ k ∈ row.parse? "class" [("animate", Kiowa.Class.animate), ("inanimate", .inanimate)],
     ∀ n ∈ row.parse? "number" numberNames,
     ∀ i ∈ row.parse? "inverse" [("yes", true), ("no", false)],
@@ -959,14 +960,14 @@ theorem kiowa_rows : ∀ row ∈ Examples.all, row.language = "kiow1266" →
   decide +kernel
 
 -- (40), (41)
-theorem hungarian_rows : ∀ row ∈ Examples.all, row.language = "hung1274" →
+theorem hungarian_rows : ∀ row ∈ Examples.all, row.language = .hungarian →
     ∀ an ∈ row.parse? "animate" [("yes", true), ("no", false)],
     ∀ r ∈ row.parse? "agreement" numberNames,
       (row.judgment = .acceptable ↔ (r = .singular ∨ an = true)) := by
   decide +kernel
 
 -- (42), (44), p. 202
-theorem moroccan_rows : ∀ row ∈ Examples.all, row.language = "moro1292" →
+theorem moroccan_rows : ∀ row ∈ Examples.all, row.language = .moroccanArabic →
     ∃ cs ∈ conjuncts? row, ∃ t ∈ target? row, ∃ d ∈ targetSide? row, ∃ r ∈ resolved? row,
       (row.judgment = .acceptable ↔
         Fits r d cs t .all ∨ d = .headInitial ∧ Fits r d cs t .nearest) := by

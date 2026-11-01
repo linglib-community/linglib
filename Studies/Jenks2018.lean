@@ -10,6 +10,7 @@ public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Lakhota.Determiners
 public import Linglib.Fragments.Akan.Determiners
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
@@ -142,10 +143,8 @@ def topicOf : String → Option Topic
 
 /-- A row from the paper's features. -/
 def Row.ofDatum (e : Datum) : Option Row := do
-  let inv ← match e.language with
-    | "mand1415" => some Mandarin.Determiners.inventory
-    | "cant1236" => some Cantonese.Determiners.inventory
-    | _ => none
+  let inv ← e.byLanguage [(.mandarinChinese, Mandarin.Determiners.inventory),
+    (.cantonese, Cantonese.Determiners.inventory)]
   let env ← (e.feature? "environment").bind envOf
   let t ← (e.feature? "topic").bind topicOf
   some ⟨inv, env, t, (e.feature? "bare").map (· == "ok"), (e.feature? "marked").map (· == "ok")⟩

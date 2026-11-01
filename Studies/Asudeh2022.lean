@@ -14,6 +14,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Algebra.BigOperators.Fin
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Asudeh (2022): Glue Semantics
@@ -1130,12 +1131,10 @@ theorem not_derivable_extra_verb_or_np :
 
 /-- The meaning constructors a row's words contribute. -/
 def lexicon? (r : Datum) : Option (List (List (GlueTy Label))) :=
-  match r.language, r.feature? "premises" with
-  | "stan1293", some "likes, alex, blake" => some alexLikesBlake
-  | "stan1293", some "love, every, some" => some everybodyLovesSomebody
-  | "finn1318", some "speaker, drink, water" => some finnish
-  | "stan1293", some "speaker, drink, water" => some english
-  | _, _ => none
+  (r.byLanguage
+    [(.english, [("likes, alex, blake", alexLikesBlake),
+        ("love, every, some", everybodyLovesSomebody), ("speaker, drink, water", english)]),
+      (.finnish, [("speaker, drink, water", finnish)])]).bind (r.parse? "premises")
 
 /-- The number of words of a row's sentence, which are separated by single spaces. -/
 def wordCount (r : Datum) : ℕ := (r.primaryText.toList.filter (· = ' ')).length + 1

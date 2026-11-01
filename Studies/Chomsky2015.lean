@@ -4,6 +4,7 @@ public import Studies.Chomsky2013
 public import Linglib.Data.Examples.Chomsky2015
 public import Linglib.Syntax.Minimalist.Locality.Transfer
 public import Linglib.Syntax.Minimalist.Label.MinimalSearch
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Chomsky (2015): Problems of projection: Extensions
@@ -58,10 +59,8 @@ inductive Agreement
 
 /-- The richness of agreement the paper attributes to a language: weak in English, rich in
 Italian. -/
-def agreementOf : String → Option Agreement
-  | "stan1293" => some .weak
-  | "ital1282" => some .rich
-  | _ => none
+def agreementOf (l : Glottocode) : Option Agreement :=
+  List.lookup l [(.english, .weak), (.italian, .rich)]
 
 theorem agreementOf_examples : ∀ r ∈ Examples.all, agreementOf r.language = some .weak := by
   decide

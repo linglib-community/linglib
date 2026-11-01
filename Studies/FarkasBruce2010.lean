@@ -9,6 +9,7 @@ public import Linglib.Fragments.German.Particles
 public import Linglib.Fragments.Romance.French.Particles
 public import Linglib.Fragments.Romanian.Particles
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Farkas and Bruce (2010): On Reacting to Assertions and Polar Questions
@@ -340,11 +341,11 @@ def moveTable : List (String × InitiatingMove) :=
 def polarityTable : List (String × Polarity) := [("positive", .positive), ("negative", .negative)]
 
 /-- The particles of each language's examples, by Glottocode. -/
-def particlesOf : List (String × List PolarityParticle) :=
-  [("stan1293", english), ("roma1327", romanian), ("stan1290", [.si]), ("stan1295", [.doch])]
+def particlesOf : List (Glottocode × List PolarityParticle) :=
+  [(.english, english), (.romanian, romanian), (.french, [.si]), (.german, [.doch])]
 
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let table := (← List.lookup ex.language particlesOf).map fun p ↦ (p.entry.form, p)
+  let table := (← ex.byLanguage particlesOf).map fun p ↦ (p.entry.form, p)
   let reactsTo ← ex.parse? "reaction" moveTable
   let antecedent ← ex.parse? "input" polarityTable
   let polarity ← ex.parse? "response" polarityTable

@@ -12,6 +12,7 @@ public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Tactic.NormNum.Ineq
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Sharvit (2014): On the universal principles of tense embedding: The lesson from *before*
@@ -418,8 +419,8 @@ theorem polish_present_fails_or_stumpEffect {r : Reading} (h : polish.Available 
   · exact absurd h.2 (by decide)
 
 /-- The languages of the example rows. -/
-def languages : List (String × Language) :=
-  [("stan1293", english), ("nucl1643", japanese), ("poli1260", polish)]
+def languages : List (Glottocode × Language) :=
+  [(.english, english), (.japanese, japanese), (.polish, polish)]
 
 /-- The embedded tenses of the example rows. -/
 def tenses : List (String × Embedded) := [("past", .past), ("present", .present)]
@@ -427,23 +428,23 @@ def tenses : List (String × Embedded) := [("past", .past), ("present", .present
 /-- A tense in a *before*-clause under a past is acceptable exactly where the language's
 parameters make it well-formed. -/
 theorem judgment_iff :
-    ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "before" →
+    ∀ e ∈ Examples.all, e.language ≠ .modernGreek → e.feature? "construction" = some "before" →
       e.feature? "clauseTime" ≠ some "after speech" →
-      ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
+      ∃ L ∈ e.byLanguage languages, ∃ τ ∈ e.parse? "embedded" tenses,
         (e.judgment = .acceptable ↔ L.WellFormed τ) := by
   decide
 
 theorem clauseTime_iff :
     ∀ e ∈ Examples.all, e.feature? "clauseTime" = some "after speech" →
-      ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
+      ∃ L ∈ e.byLanguage languages, ∃ τ ∈ e.parse? "embedded" tenses,
         (e.judgment = .acceptable ↔ L.PShiftable τ) := by
   decide
 
 /-- A tense under a past attitude verb has a simultaneous reading exactly where the language's
 parameters give it one. -/
 theorem simultaneous_iff :
-    ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "attitude" →
-      ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
+    ∀ e ∈ Examples.all, e.language ≠ .modernGreek → e.feature? "construction" = some "attitude" →
+      ∃ L ∈ e.byLanguage languages, ∃ τ ∈ e.parse? "embedded" tenses,
         (e.readings.lookup "simultaneous" = some .acceptable ↔ L.Simultaneous τ) := by
   decide
 

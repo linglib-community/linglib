@@ -8,6 +8,7 @@ public import Linglib.Fragments.Sesotho.Morph
 public import Studies.Bybee1985
 public import Linglib.Data.Examples.HahnDegenFutrell2021
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Hahn, Degen, and Futrell (2021): Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal
@@ -240,7 +241,7 @@ def japaneseSuffixes (r : Datum) : List (Σ σ, Japanese.Verb.Exponent σ) :=
 
 /-- The supplement's Japanese forms. -/
 def japaneseForms : List Datum :=
-  Examples.all.filter (·.language = "nucl1643")
+  Examples.all.filter (·.language = .japanese)
 
 theorem japanese_forms_licensed :
     ∀ r ∈ japaneseForms, (japaneseSuffixes r).length + 1 = r.glossLine.length ∧
@@ -282,7 +283,7 @@ def sesothoAffixes (r : Datum) : List (Σ σ, Sesotho.Verb.Exponent σ) :=
 
 /-- The paper's Sesotho forms. -/
 def sesothoForms : List Datum :=
-  Examples.all.filter (·.language = "sout2807")
+  Examples.all.filter (·.language = .southernSotho)
 
 theorem sesotho_forms_licensed :
     ∀ r ∈ sesothoForms, (r.glossLine.filter fun g ↦ (sesothoAffix g).isEmpty).length = 1 ∧

@@ -6,6 +6,7 @@ public import Linglib.Semantics.Focus.Unalternatives
 public import Studies.HartmannZimmermann2004
 public import Linglib.Data.Examples.AssmannEtAl2023
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Assmann, Büring, Jordanoska & Prüller 2023: morphosyntactic focus marking
@@ -329,39 +330,23 @@ def focus? : String → Option (List Node)
 
 /-- The inventory of a row's language. -/
 def inventory? (r : Datum) : Option (List Node) :=
-  match r.language with
-  | "guru1271" => some guruntum
-  | "buli1254" => some buli
-  | "haus1257" => some hausa
-  | "nucl1347" => some wolof
-  | "cent2142" => some aymara
-  | "awin1248" => some awing
-  | _ => none
+  r.byLanguage [(.guruntumMbaaru, guruntum), (.buliGhana, buli), (.hausa, hausa),
+    (.wolof, wolof), (.centralAymara, aymara), (.awing, awing)]
 
 /-- The constituent a row's marking marks as focal. -/
 def marked? (r : Datum) : Option Node :=
-  match r.language, r.feature? "marking" with
-  | "guru1271", some "a before subject" => some .sbj
-  | "guru1271", some "a between verb and object" => some .vp
-  | "guru1271", some "a clause-final" => some .s
-  | "buli1254", some "le after subject" => some .s
-  | "buli1254", some "ka before object" => some .vp
-  | "buli1254", some "kama after VP" => some .v
-  | "haus1257", some "relative form" => some .sbj
-  | "haus1257", some "absolute form" => some .s
-  | "nucl1347", some "a" => some .sbj
-  | "nucl1347", some "la" => some .obj
-  | "nucl1347", some "dafa" => some .vp
-  | "nucl1347", some "na" | "nucl1347", some "ngi" => some .s
-  | "cent2142", some "wa on verb" => some .s
-  | "awin1248", some "none" => some .s
-  | _, _ => none
+  (r.byLanguage
+    [(.guruntumMbaaru, [("a before subject", .sbj), ("a between verb and object", .vp),
+        ("a clause-final", .s)]),
+      (.buliGhana, [("le after subject", .s), ("ka before object", .vp), ("kama after VP", .v)]),
+      (.hausa, [("relative form", .sbj), ("absolute form", .s)]),
+      (.wolof, [("a", .sbj), ("la", .obj), ("dafa", .vp), ("na", .s), ("ngi", .s)]),
+      (.centralAymara, [("wa on verb", .s)]), (.awing, [("none", .s)])]).bind
+    (r.parse? "marking")
 
 /-- The nodes an English row's prosody marks in the clause and in the VP. -/
 def englishMarked? (r : Datum) : Option (Node × Node) :=
-  match r.language, r.feature? "marking" with
-  | "stan1293", some "nuclear stress on verb" => some (.s, .v)
-  | _, _ => none
+  (r.byLanguage [(.english, [("nuclear stress on verb", (.s, .v))])]).bind (r.parse? "marking")
 
 /-- Every reading of a row is realized by the marking the row shows, which is the marking the
 inventory predicts for that focus. -/

@@ -5,6 +5,7 @@ public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Data.Examples.Rubinstein2014
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Rubinstein (2014): On Necessity and Comparison
@@ -322,7 +323,7 @@ theorem strength_tests :
 
 -- §2.1
 theorem hebrew_comparative_only :
-    ∀ e ∈ Examples.all, e.language = "hebr1245" →
+    ∀ e ∈ Examples.all, e.language = .modernHebrew →
       ∀ s ∈ strategy? e, s = .evaluativeComparative := by
   decide
 

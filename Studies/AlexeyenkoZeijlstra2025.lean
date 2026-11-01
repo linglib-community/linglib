@@ -5,6 +5,7 @@ public import Studies.ZwickyPullum1983
 public import Linglib.Fragments.Slavic.Russian.Agreement
 public import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Alexeyenko and Zeijlstra (2025): linearization of complex modifiers
@@ -196,39 +197,38 @@ end Language
 occupy, and whether an XP can intervene. -/
 structure Sample where
   name : String
-  glottocode : String
+  glottocode : Glottocode
   side : Side
   intervention : Bool
 
 /-- The sample of Table 3. -/
 def table3 : List Sample :=
-  [ ⟨"Abkhaz", "abkh1244", .prenominal, true⟩, ⟨"Bulgarian", "bulg1262", .prenominal, true⟩,
-    ⟨"Polish", "poli1260", .prenominal, true⟩, ⟨"Russian", "russ1263", .prenominal, true⟩,
-    ⟨"Latin", "lati1261", .prenominal, true⟩, ⟨"Lithuanian", "lith1251", .prenominal, true⟩,
-    ⟨"Mandarin", "mand1415", .prenominal, true⟩, ⟨"Modern Greek", "mode1248", .prenominal, true⟩,
-    ⟨"St'át'imcets", "lill1248", .prenominal, true⟩, ⟨"Tagalog", "taga1270", .prenominal, true⟩,
-    ⟨"Armenian", "nucl1235", .prenominal, false⟩, ⟨"Dutch", "dutc1256", .prenominal, false⟩,
-    ⟨"English", "stan1293", .prenominal, false⟩, ⟨"German", "stan1295", .prenominal, false⟩,
-    ⟨"Icelandic", "icel1247", .prenominal, false⟩, ⟨"Estonian", "esto1258", .prenominal, false⟩,
-    ⟨"Finnish", "finn1318", .prenominal, false⟩, ⟨"Hungarian", "hung1274", .prenominal, false⟩,
-    ⟨"French", "stan1290", .prenominal, false⟩, ⟨"Italian", "ital1282", .prenominal, false⟩,
-    ⟨"Portuguese", "port1283", .prenominal, false⟩, ⟨"Romanian", "roma1327", .prenominal, false⟩,
-    ⟨"Spanish", "stan1288", .prenominal, false⟩, ⟨"Georgian", "nucl1302", .prenominal, false⟩,
-    ⟨"Serbo-Croatian", "sout1528", .prenominal, false⟩,
-    ⟨"Atong", "aton1241", .postnominal, true⟩, ⟨"Farsi", "west2369", .postnominal, true⟩,
-    ⟨"Kalaallisut", "kala1399", .postnominal, true⟩,
-    ⟨"Basque", "basq1248", .postnominal, false⟩, ⟨"Chácobo", "chac1251", .postnominal, false⟩,
-    ⟨"Eastern Oromo", "east2652", .postnominal, false⟩ ]
+  [ ⟨"Abkhaz", .abkhaz, .prenominal, true⟩, ⟨"Bulgarian", .bulgarian, .prenominal, true⟩,
+    ⟨"Polish", .polish, .prenominal, true⟩, ⟨"Russian", .russian, .prenominal, true⟩,
+    ⟨"Latin", .latin, .prenominal, true⟩, ⟨"Lithuanian", .lithuanian, .prenominal, true⟩,
+    ⟨"Mandarin", .mandarinChinese, .prenominal, true⟩,
+    ⟨"Modern Greek", .modernGreek, .prenominal, true⟩,
+    ⟨"St'át'imcets", .lillooet, .prenominal, true⟩, ⟨"Tagalog", .tagalog, .prenominal, true⟩,
+    ⟨"Armenian", .easternArmenian, .prenominal, false⟩, ⟨"Dutch", .dutch, .prenominal, false⟩,
+    ⟨"English", .english, .prenominal, false⟩, ⟨"German", .german, .prenominal, false⟩,
+    ⟨"Icelandic", .icelandic, .prenominal, false⟩, ⟨"Estonian", .estonian, .prenominal, false⟩,
+    ⟨"Finnish", .finnish, .prenominal, false⟩, ⟨"Hungarian", .hungarian, .prenominal, false⟩,
+    ⟨"French", .french, .prenominal, false⟩, ⟨"Italian", .italian, .prenominal, false⟩,
+    ⟨"Portuguese", .portuguese, .prenominal, false⟩, ⟨"Romanian", .romanian, .prenominal, false⟩,
+    ⟨"Spanish", .spanish, .prenominal, false⟩, ⟨"Georgian", .georgian, .prenominal, false⟩,
+    ⟨"Serbo-Croatian", .serbianCroatianBosnian, .prenominal, false⟩,
+    ⟨"Atong", .atongIndia, .postnominal, true⟩, ⟨"Farsi", .westernFarsi, .postnominal, true⟩,
+    ⟨"Kalaallisut", .kalaallisut, .postnominal, true⟩,
+    ⟨"Basque", .basque, .postnominal, false⟩, ⟨"Chácobo", .chácobo, .postnominal, false⟩,
+    ⟨"Eastern Oromo", .easternOromo, .postnominal, false⟩ ]
 
 /-- The languages the paper discusses, by glottocode. -/
-def languageOf : String → Option Language
-  | "mode1248" => some .greek | "russ1263" => some .russian | "lati1261" => some .latin
-  | "ital1282" => some .italian | "stan1295" => some .german | "dutc1256" => some .dutch
-  | "stan1293" => some .english | "icel1247" => some .icelandic
-  | "sout1528" => some .serboCroatian | "mand1415" => some .mandarin
-  | "taga1270" => some .tagalog | "west2369" => some .farsi | "aton1241" => some .atong
-  | "kala1399" => some .kalaallisut | "basq1248" => some .basque
-  | _ => none
+def languageOf (l : Glottocode) : Option Language :=
+  List.lookup l [(.modernGreek, .greek), (.russian, .russian), (.latin, .latin),
+    (.italian, .italian), (.german, .german), (.dutch, .dutch), (.english, .english),
+    (.icelandic, .icelandic), (.serbianCroatianBosnian, .serboCroatian),
+    (.mandarinChinese, .mandarin), (.tagalog, .tagalog), (.westernFarsi, .farsi),
+    (.atongIndia, .atong), (.kalaallisut, .kalaallisut), (.basque, .basque)]
 
 -- Table 3
 theorem table3_predicted :

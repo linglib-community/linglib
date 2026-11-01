@@ -16,6 +16,7 @@ public import Linglib.Syntax.Minimalist.Copy.Chain
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Studies.Collins2005
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Cole and Hermon (2008): VP Raising in a VOS Language
@@ -491,10 +492,10 @@ def args : List (String × Arg) :=
   [("agent", .core .external), ("patient", .core .internal), ("goal", .goal)]
 
 /-- Toba Batak's Glottocode. -/
-def tobaBatak : Glottocode := "bata1289"
+def tobaBatak : Glottocode := .batakToba
 
 /-- English's Glottocode. -/
-def english : Glottocode := "stan1293"
+def english : Glottocode := .english
 
 /-- The words of a row's sentence, less the focus particle *do*, which no derivation builds. -/
 def rowWords (row : Datum) : List (List Char) :=

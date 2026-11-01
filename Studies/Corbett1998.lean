@@ -13,6 +13,7 @@ public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Agreement.Resolution
 public import Linglib.Data.Examples.Corbett1998
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Corbett's morphology of agreement
@@ -286,7 +287,7 @@ end Chichewa
 /-! ### The chapter's examples -/
 
 -- (1), (5)
-theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
+theorem russian_rows : ∀ row ∈ Examples.all, row.language = .russian →
     ∀ g ∈ row.parse? "gender"
       [("masc", _root_.Russian.Gender.Value.masc), ("fem", .fem), ("neut", .neut)],
     ∀ n ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
@@ -299,7 +300,7 @@ theorem russian_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
   decide +kernel
 
 -- §2.3
-theorem russian_verb_rows : ∀ row ∈ Examples.all, row.language = "russ1263" →
+theorem russian_verb_rows : ∀ row ∈ Examples.all, row.language = .russian →
     ∀ p ∈ row.parse? "person" [("1", Person.first), ("2", .second), ("3", .third)],
     ∀ n ∈ row.parse? "number" [("sg", _root_.Russian.Gender.numberSystem.value .singular),
       ("pl", _root_.Russian.Gender.numberSystem.value .plural)],
@@ -309,7 +310,7 @@ theorem russian_verb_rows : ∀ row ∈ Examples.all, row.language = "russ1263" 
   decide +kernel
 
 -- (6), (9)
-theorem marind_rows : ∀ row ∈ Examples.all, row.language = "nucl1622" →
+theorem marind_rows : ∀ row ∈ Examples.all, row.language = .marind →
     ∀ g ∈ row.parse? "gender"
       [("I", CoastalMarind.Gender.gI), ("II", .gII), ("III", .gIII), ("IV", .gIV)],
       (∀ a ∈ row.feature? "adjective",
@@ -319,7 +320,7 @@ theorem marind_rows : ∀ row ∈ Examples.all, row.language = "nucl1622" →
   decide +kernel
 
 -- (17)
-theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = "uppe1395" →
+theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = .upperSorbian →
     ∀ t : UpperSorbian.Target, ∀ D ∈ row.parse? t.key
       [("number,person", ({.number, .person} : Finset Dimension)),
         ("number,gender", {.number, .gender})],
@@ -327,7 +328,7 @@ theorem upperSorbian_rows : ∀ row ∈ Examples.all, row.language = "uppe1395" 
   decide +kernel
 
 -- (11), (14)
-theorem somali_rows : ∀ row ∈ Examples.all, row.language = "soma1255" →
+theorem somali_rows : ∀ row ∈ Examples.all, row.language = .somali →
     ∀ n ∈ row.parse? "noun" (_root_.Somali.Gender.allNouns.map fun n ↦ (n.form, n)),
     ∀ pl ∈ row.parse? "number" [("sg", _root_.Somali.Gender.numberSystem.value .singular),
       ("pl", _root_.Somali.Gender.numberSystem.value .plural)],
@@ -338,7 +339,7 @@ theorem somali_rows : ∀ row ∈ Examples.all, row.language = "soma1255" →
   decide +kernel
 
 -- (18), (19)
-theorem chichewa_rows : ∀ row ∈ Examples.all, row.language = "nyan1308" →
+theorem chichewa_rows : ∀ row ∈ Examples.all, row.language = .nyanja →
     ∀ a ∈ row.parse? "conjunct1" (_root_.Chichewa.Gender.allNouns.map fun n ↦ (n.form, n)),
     ∀ b ∈ row.parse? "conjunct2" (_root_.Chichewa.Gender.allNouns.map fun n ↦ (n.form, n)),
     ∀ p ∈ row.parse? "prefix" [("a", _root_.Chichewa.Gender.SubjPrefix.a), ("zi", .zi)],

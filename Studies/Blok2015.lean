@@ -8,6 +8,7 @@ public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Quantification.Counting
 public import Studies.CoppockBrochhagen2013
 public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Blok (2015): The semantics and pragmatics of directional numeral modifiers
@@ -225,19 +226,24 @@ def raised (w : Numerals.NumeralModifier) (s n : ℕ) : Set (Set ℕ) :=
 
 /-- The modifiers the account covers in the language of a row: the Fragment's Class B modifiers
 that set an upper bound. -/
-def upperBounded : Glottocode → List Numerals.NumeralModifier
-  | "stan1293" => [English.NumeralModifiers.atMost, English.NumeralModifiers.maximally,
-      English.NumeralModifiers.upTo]
-  | "dutc1256" => [Dutch.NumeralModifiers.maximaal, Dutch.NumeralModifiers.tot]
-  | _ => []
+def upperBounded (l : Glottocode) : List Numerals.NumeralModifier :=
+  (List.lookup l [(.english, [English.NumeralModifiers.atMost,
+      English.NumeralModifiers.maximally, English.NumeralModifiers.upTo]),
+    (.dutch, [Dutch.NumeralModifiers.maximaal, Dutch.NumeralModifiers.tot])]).getD []
 
 open scoped Denotes in
 theorem mem_upperBounded {l : Glottocode} {w : Numerals.NumeralModifier}
     (h : w ∈ upperBounded l) :
     ⟦w⟧ = {Degree.Comparison.le.modifier} ∧ w.modifierClass = some .classB := by
   unfold upperBounded at h
-  split at h <;> simp only [List.mem_cons, List.not_mem_nil, or_false] at h <;>
+  simp only [List.lookup] at h
+  split at h
+  · simp only [Option.getD_some, List.mem_cons, List.not_mem_nil, or_false] at h
     rcases h with rfl | rfl | rfl <;> exact ⟨rfl, rfl⟩
+  split at h
+  · simp only [Option.getD_some, List.mem_cons, List.not_mem_nil, or_false] at h
+    rcases h with rfl | rfl <;> exact ⟨rfl, rfl⟩
+  simp at h
 
 /-- Read as a quantifier, *maximaal n* asserts the downward entailing *at most n* and admits the
 weak negative polarity item *hoeven*, while *tot n* asserts the upward entailing *at least s* and

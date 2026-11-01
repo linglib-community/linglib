@@ -10,6 +10,7 @@ public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Data.Examples.SandeClemDabkowski2026
 public import Mathlib.Data.List.Sections
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Examples.Languages
 
 /-!
 # Sande, Clem and Dąbkowski (2026): Discontinuous vowel harmony in Guébie: Cyclic interleaving of syntax and phonology
@@ -322,7 +323,7 @@ theorem not_linearizes_lateShift : ¬ lateShift.Linearizes (vPSchedule lateShift
 /-! ### The Guébie examples -/
 
 /-- `rowsIn lang` lists the rows in the language `lang`. -/
-def rowsIn (lang : String) : List Datum := Examples.all.filter (·.language == lang)
+def rowsIn (lang : Glottocode) : List Datum := Examples.all.filter (·.language == lang)
 
 def patterns : List (String × List Terminal) :=
   [("S Aux O Part V", [.subject, .aux, .object, .particle, .verb]),
@@ -340,12 +341,12 @@ def verbs : List (String × Morpheme) := [("ni", ni), ("ngwOsa", ngwOsa)]
 def atrs : List (String × Bool) := [("plus", true), ("minus", false)]
 
 theorem order_rows :
-    ∀ x ∈ rowsIn "gabo1234", ∀ p ∈ x.parse? "pattern" patterns,
+    ∀ x ∈ rowsIn .gabogbo, ∀ p ∈ x.parse? "pattern" patterns,
       (x.judgment = .acceptable ↔ ∃ c : Clause, c.cP = p) := by
   decide +kernel
 
 theorem harmony_rows :
-    ∀ x ∈ rowsIn "gabo1234", ∀ p ∈ x.parse? "pattern" patterns, ∀ v ∈ x.parse? "verb" verbs,
+    ∀ x ∈ rowsIn .gabogbo, ∀ p ∈ x.parse? "pattern" patterns, ∀ v ∈ x.parse? "verb" verbs,
       ∀ c : Clause, c.cP = p →
         (∀ a ∈ x.parse? "particleATR" atrs, a = c.particleATR jOkU v) ∧
           ∀ i ∈ x.parse? "interveningATR" atrs, i ≠ c.particleATR jOkU v := by
@@ -376,7 +377,7 @@ theorem discontinuous_relClause : Discontinuous [dP, relClause] .noun .dem where
   separated := ⟨relClause, by simp, .stative, by decide, by decide⟩
 
 theorem wolof_rows :
-    ∀ x ∈ rowsIn "nucl1347", (∀ s ∈ x.parse? "shape" shapes, Consistent [dP, s]) ∧
+    ∀ x ∈ rowsIn .wolof, (∀ s ∈ x.parse? "shape" shapes, Consistent [dP, s]) ∧
       ∀ h ∈ x.parse? "headATR" atrs, ∀ d ∈ x.parse? "demATR" atrs, d = h := by
   decide +kernel
 
