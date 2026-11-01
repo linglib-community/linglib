@@ -8,6 +8,7 @@ public import Mathlib.Algebra.Group.Subgroup.ZPowers.Lemmas
 public import Mathlib.Algebra.Order.Ring.Abs
 public import Mathlib.Algebra.Ring.Divisibility.Basic
 public import Mathlib.Data.Finset.Max
+public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.DeriveFintype
 
@@ -20,17 +21,21 @@ from ten up or by its half or quarter; for Jansen and Pollmann, 10-ness, 2-ness,
 positive powers of ten together with being a multiple of five or of ten; and for Haslinger, lying
 on the conventionalized scales salient in a context, Krifka's scales of multiples of a width.
 
-Numbers and properties form a formal context. A number is at least as round as another when it
-has every property the other has, Haslinger's ordering, so the numbers at least as round as `d`
-are the extent closure of `d`; counting properties gives the roundness scores. On scales of
-multiples the closure is again a scale, the multiples of the lcm of the widths through `d`.
+Numbers and properties form a formal context. A number's profile is the intent of its object
+concept, and a number is at least as round as another when its profile contains the other's,
+Haslinger's ordering, so the numbers at least as round as `d` are the extent closure of `d`;
+counting properties gives the roundness scores. On scales of multiples the closure is again a
+scale, the multiples of the lcm of the widths through `d`. Scales of different granularity
+should align, Krifka argues, their widths forming a chain under divisibility, and on aligned
+scales that lcm is the coarsest width through `d`.
 
 ## Main definitions
 
 * `Numerals.Roundness.AtLeastAsRound`: having every roundness property of a number, the
   criteria-derived preorder with the roundness properties as criteria
   (`atLeastAsRound_iff_ofCriteria`).
-* `Numerals.Roundness.score`: the number of roundness properties a number has.
+* `Numerals.Roundness.profile`, `Numerals.Roundness.score`: the roundness properties a number
+  has, and their number.
 * `Numerals.Roundness.OnScale`: lying on a scale of multiples.
 * `Numerals.Roundness.HasKness`, `Numerals.Roundness.Kness`: Jansen and Pollmann's `k`-ness and
   its four kinds, over powers of ten from a given one.
@@ -45,6 +50,8 @@ multiples the closure is again a scale, the multiples of the lcm of the widths t
   divisibility of these lcms.
 * `Numerals.Roundness.isLeast_atLeastAsRound_onScale`: the least number above `d` at least as
   round as `d` is `d + scaleLcm W d`, the next point of that scale.
+* `Numerals.Roundness.isGreatest_scaleLcm`: on aligned scales, `scaleLcm W d` is the coarsest
+  width through `d`.
 
 ## Implementation notes
 
@@ -76,7 +83,8 @@ variable {D ι : Type*} {r : D → ι → Prop} {d e f : D}
 /-- `e` is at least as round as `d` when it has every roundness property that `d` has. -/
 def AtLeastAsRound (r : D → ι → Prop) (d e : D) : Prop := ∀ ⦃i⦄, r d i → r e i
 
-/-- Being at least as round is the criteria-derived preorder with every scale as a criterion. -/
+/-- Being at least as round is the criteria-derived preorder with every roundness property as a
+criterion. -/
 theorem atLeastAsRound_iff_ofCriteria :
     AtLeastAsRound r d e ↔ (Preorder.ofCriteria r Set.univ).le e d :=
   ⟨fun h _ _ hi ↦ h hi, fun h _ hi ↦ h _ trivial hi⟩
@@ -103,9 +111,10 @@ def profile (r : D → ι → Prop) [∀ d, DecidablePred (r d)] (d : D) : Finse
 
 @[simp] theorem mem_profile {i : ι} : i ∈ profile r d ↔ r d i := by simp [profile]
 
-theorem coe_profile : (profile r d : Set ι) = Preorder.satisfied r Set.univ d := by
+/-- The profile of `d` is the intent of its object concept. -/
+theorem coe_profile : (profile r d : Set ι) = upperPolar r {d} := by
   ext i
-  simp
+  simp [mem_upperPolar_singleton]
 
 theorem profile_subset_profile : profile r d ⊆ profile r e ↔ AtLeastAsRound r d e := by
   simp only [Finset.subset_iff, mem_profile]
@@ -188,26 +197,23 @@ theorem isLeast_atLeastAsRound_onScale (hW : 0 ∉ W) (d : ℤ) :
   ⟨⟨lt_add_of_pos_right d (scaleLcm_pos hW d), atLeastAsRound_add_scaleLcm W d⟩,
     fun _ ⟨hde, he⟩ ↦ by have := Int.le_of_dvd (sub_pos.2 hde) he.scaleLcm_dvd_sub; omega⟩
 
-theorem scaleLcm_eq_of_aligned (hpos : ∀ w ∈ W, 0 < w)
-    (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a) {m : ℤ} (hm : m ∈ W) (hmd : m ∣ d)
-    (hmax : ∀ w ∈ W, w ∣ d → w ≤ m) : scaleLcm W d = m := by
-  have hm' : m ∈ W.filter (· ∣ d) := Finset.mem_filter.2 ⟨hm, hmd⟩
-  refine Int.dvd_antisymm (Int.nonneg_of_normalize_eq_self Finset.normalize_lcm)
-    (hpos m hm).le (Finset.lcm_dvd fun w hw ↦ ?_) (Finset.dvd_lcm hm')
+/-- On aligned scales, whose widths form a chain under divisibility, the lcm of the widths
+through `d` is the coarsest width through `d`. -/
+theorem isGreatest_scaleLcm (hpos : ∀ w ∈ W, 0 < w) (hW : IsChain (· ∣ ·) (W : Set ℤ))
+    (hd : ∃ w ∈ W, w ∣ d) : IsGreatest {w | w ∈ W ∧ w ∣ d} (scaleLcm W d) := by
+  have hne : (W.filter (· ∣ d)).Nonempty := by simpa [Finset.Nonempty] using hd
+  obtain ⟨hmW, hmd⟩ := Finset.mem_filter.1 ((W.filter (· ∣ d)).max'_mem hne)
+  have hle : ∀ w ∈ W, w ∣ d → w ≤ (W.filter (· ∣ d)).max' hne :=
+    fun w hw hwd ↦ Finset.le_max' _ _ (Finset.mem_filter.2 ⟨hw, hwd⟩)
+  suffices h : scaleLcm W d = (W.filter (· ∣ d)).max' hne from
+    h ▸ ⟨⟨hmW, hmd⟩, fun w hw ↦ hle w hw.1 hw.2⟩
+  refine Int.dvd_antisymm (Int.nonneg_of_normalize_eq_self Finset.normalize_lcm) (hpos _ hmW).le
+    (Finset.lcm_dvd fun w hw ↦ ?_) (Finset.dvd_lcm (Finset.max'_mem _ hne))
   obtain ⟨hwW, hwd⟩ := Finset.mem_filter.1 hw
-  rcases hW w hwW m hm with h | h
-  · exact h
-  · obtain rfl := le_antisymm (hmax w hwW hwd) (Int.le_of_dvd (hpos w hwW) h)
-    exact dvd_rfl
-
-theorem scaleLcm_mem_of_aligned (hpos : ∀ w ∈ W, 0 < w)
-    (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a) (hne : (W.filter (· ∣ d)).Nonempty) :
-    scaleLcm W d ∈ W ∧ scaleLcm W d ∣ d ∧ ∀ w ∈ W, w ∣ d → w ≤ scaleLcm W d := by
-  obtain ⟨m, hm, hmax⟩ := (W.filter (· ∣ d)).exists_max_image id hne
-  obtain ⟨hmW, hmd⟩ := Finset.mem_filter.1 hm
-  rw [scaleLcm_eq_of_aligned hpos hW hmW hmd
-    fun w hw hwd ↦ hmax w (Finset.mem_filter.2 ⟨hw, hwd⟩)]
-  exact ⟨hmW, hmd, fun w hw hwd ↦ hmax w (Finset.mem_filter.2 ⟨hw, hwd⟩)⟩
+  obtain rfl | hwm := eq_or_ne w ((W.filter (· ∣ d)).max' hne)
+  · exact dvd_rfl
+  refine (hW hwW hmW hwm).resolve_right fun h ↦ hwm ?_
+  exact le_antisymm (hle w hwW hwd) (Int.le_of_dvd (hpos w hwW) h)
 
 end Scale
 
@@ -260,7 +266,7 @@ def Kness.Holds (b₀ n : ℕ) : Kness → Prop
   | .five => HasKness (5 * 10 ^ b₀) n
   | .twoAndAHalf => HasKness (5 * 10 ^ b₀) (2 * n)
 
-instance (b₀ n : ℕ) : DecidablePred (Kness.Holds b₀ n) := fun κ ↦ by
-  cases κ <;> unfold Kness.Holds <;> infer_instance
+instance (b₀ n : ℕ) : DecidablePred (Kness.Holds b₀ n)
+  | .ten | .two | .five | .twoAndAHalf => inferInstanceAs (Decidable (HasKness _ _))
 
 end Numerals.Roundness

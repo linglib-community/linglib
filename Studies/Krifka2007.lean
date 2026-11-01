@@ -246,13 +246,13 @@ through `n`: *forty-five minutes* is read at the quarter hours and *forty* at th
 minutes. -/
 theorem coarsest_scale_most_probable [SFinite ν]
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s) (hr : r ≠ 0) (hr' : r ≠ ⊤)
-    (hpos : ∀ w ∈ W, 0 < w) (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a)
+    (hpos : ∀ w ∈ W, 0 < w) (hW : IsChain (· ∣ ·) (W : Set ℤ))
     (hs : ∀ v w : W, μs {v} = μs {w}) (hs0 : ∀ w : W, μs {w} ≠ 0) (hs' : ∀ w : W, μs {w} ≠ ⊤)
     (hI : ∀ w : W, Set.Ico ((n : ℝ) - (w : ℤ) / 2) (n + (w : ℤ) / 2) ⊆ I)
-    (hne : (W.filter (· ∣ n)).Nonempty) {w : W} :
+    (hne : ∃ w ∈ W, w ∣ n) {w : W} :
     (∀ v, (μs.prod ν) (reportedOn v n) ≤ (μs.prod ν) (reportedOn w n)) ↔
       (w : ℤ) = scaleLcm W n := by
-  obtain ⟨hLW, hLn, hLmax⟩ := scaleLcm_mem_of_aligned hpos hW hne
+  obtain ⟨⟨hLW, hLn⟩, hLmax⟩ := isGreatest_scaleLcm hpos hW hne
   have hmass (v : W) (h : (v : ℤ) ∣ n) :=
     measure_reportedOn_of_dvd μs ν hν (hpos v v.2) (hI v) h
   have key : ∀ v u : W, (v : ℤ) ∣ n → (u : ℤ) ∣ n →
@@ -271,10 +271,10 @@ theorem coarsest_scale_most_probable [SFinite ν]
         nonpos_iff_eq_zero] at this
       refine mul_ne_zero (hs0 _) (mul_ne_zero hr ?_) this
       exact (ENNReal.ofReal_pos.2 (by exact_mod_cast hpos _ hLW)).ne'
-    exact le_antisymm (hLmax w w.2 hw) ((key ⟨_, hLW⟩ w hLn hw).1 (h _))
+    exact le_antisymm (hLmax ⟨w.2, hw⟩) ((key ⟨_, hLW⟩ w hLn hw).1 (h _))
   · intro hwL v
     by_cases hv : (v : ℤ) ∣ n
-    · exact (key v w hv (hwL ▸ hLn)).2 (hwL ▸ hLmax v v.2 hv)
+    · exact (key v w hv (hwL ▸ hLn)).2 (hwL ▸ hLmax ⟨v.2, hv⟩)
     · rw [measure_reportedOn_of_not_dvd μs ν hv]
       exact zero_le
 

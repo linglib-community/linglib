@@ -248,10 +248,10 @@ theorem tolerated_deviation_is_inferred_cell
     {μs : Measure W} {ν : Measure ℝ} [SFinite ν] {r : ℝ≥0∞} {I : Set ℝ} {m : ℚ}
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s)
     (hr : r ≠ 0) (hr' : r ≠ ⊤) (hpos : ∀ w ∈ W, 0 < w)
-    (hWd : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a)
+    (hWd : IsChain (· ∣ ·) (W : Set ℤ))
     (hs : ∀ v w : W, μs {v} = μs {w}) (hs0 : ∀ w : W, μs {w} ≠ 0) (hs' : ∀ w : W, μs {w} ≠ ⊤)
     (hI : ∀ w : W, Set.Ico ((n : ℝ) - (w : ℤ) / 2) ((n : ℝ) + (w : ℤ) / 2) ⊆ I)
-    (hne : (W.filter (· ∣ n)).Nonempty) {w : W}
+    (hne : ∃ w ∈ W, w ∣ n) {w : W}
     (hw : ∀ v, (μs.prod ν) (Krifka2007.reportedOn v n) ≤
       (μs.prod ν) (Krifka2007.reportedOn w n)) :
     (∀ n' ≠ n, AtLeastAsRound (OnScale W) n n' → ¬ Violates (numeral n m) (numeral n' m)) ↔

@@ -2,10 +2,10 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Semantics.Quantification.Numerals.Roundness
-public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Dist
+public import Mathlib.Data.Finset.Pairwise
 
 /-!
 # Cummins (2015): Constraints on numerical expressions
@@ -157,31 +157,13 @@ def granularityLevel (n : ℕ) : ℕ :=
 
 theorem pow_granularityLevel_eq_scaleLcm {n : ℕ} (hn : n ≠ 0) :
     (10 : ℤ) ^ granularityLevel n = scaleLcm {1000, 100, 10, 1} (n : ℤ) := by
-  symm
-  unfold granularityLevel
-  split_ifs with h0 h3 h2 h1
-  · exact absurd h0 hn
-  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 3) (by decide)
-      (by exact_mod_cast h3) fun w hw hwn ↦ ?_
-    fin_cases hw <;> norm_num
-  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 2) (by decide)
-      (by exact_mod_cast h2) fun w hw hwn ↦ ?_
-    fin_cases hw
-    · exact absurd (by exact_mod_cast hwn) h3
-    all_goals norm_num
-  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 1) (by decide)
-      (by exact_mod_cast h1) fun w hw hwn ↦ ?_
-    fin_cases hw
-    · exact absurd (by exact_mod_cast hwn) h3
-    · exact absurd (by exact_mod_cast hwn) h2
-    all_goals norm_num
-  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 0) (by norm_num)
-      (by norm_num) fun w hw hwn ↦ ?_
-    fin_cases hw
-    · exact absurd (by exact_mod_cast hwn) h3
-    · exact absurd (by exact_mod_cast hwn) h2
-    · exact absurd (by exact_mod_cast hwn) h1
-    · norm_num
+  refine ((isGreatest_scaleLcm (by decide) (by unfold IsChain; beta_reduce; decide)
+    ⟨1, by decide, one_dvd _⟩).unique ⟨⟨?_, ?_⟩, ?_⟩).symm <;> unfold granularityLevel
+  · split_ifs <;> decide
+  · split_ifs <;> norm_num <;> assumption_mod_cast
+  · rintro w ⟨hw, hwn⟩
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+    rcases hw with rfl | rfl | rfl | rfl <;> norm_cast at hwn <;> split_ifs <;> norm_num <;> omega
 
 /-- Granularity assigns one violation per level of mismatch with the level the context sets, an
 unset level being met by every numeral (constraint 2). -/
