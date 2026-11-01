@@ -15,11 +15,11 @@ public import Mathlib.Data.List.Find
 A **logical transduction** defines an output string inside its input: a fixed number of copies
 of each input position, and for each copy formulas over the input saying which output symbol, if
 any, the copy carries. It is **quantifier-free** when those formulas are, and a quantifier-free
-formula at a position is a `Subregular.WindowFormula`, reading a bounded window through
-successor and predecessor steps. [chandlee-jardine-2019] report that the quantifier-free string
-transductions are exactly the input strictly local functions. This file proves the one-sided
-case: over a finite alphabet, the transductions whose guards read only backward compute exactly
-the left input strictly local functions.
+formula at a position is a `Subregular.StringFormula` of the string model, reading a bounded
+window through the successor and predecessor functions. Chandlee and Jardine report that the
+quantifier-free string transductions are exactly the input strictly local functions. This file
+proves the one-sided case: over a finite alphabet, the transductions whose guards read only
+backward compute exactly the left input strictly local functions.
 
 The transductions here are **order-preserving** in the sense of [dolatian-2020] (§7.4.2): the
 output is read off in the order (input position, copy), so the output successor is induced
@@ -32,7 +32,7 @@ rather than defined by formulas of its own. Transductions that define it, such a
 * `Transduction.apply`: the output string, computably.
 * `Transduction.LeftLocal r`: every guard reads at most `r` positions back and none forward.
 * `ISLRule.toTransduction`: the left-local transduction with a clause for each window and
-  symbol, guarded by `WindowFormula.window`.
+  symbol, guarded by `StringFormula.window`.
 * `Transduction.relabel`: the relabelling transduction of a quantifier-free docking process over
   a finite alphabet.
 
@@ -83,23 +83,23 @@ quantifier-free guard at the input position, paired with the block of output sym
 position yields when that clause is the first to hold. -/
 structure Transduction (α β : Type*) where
   /-- The guarded clauses, in order of precedence. -/
-  clauses : List (WindowFormula α × List β)
+  clauses : List (StringFormula α × List β)
 
 namespace Transduction
 
 variable (T : Transduction α β)
 
-/-- A transduction is **left-local** with radius `r` if every guard is backward-bounded by `r`,
-reading only its position and the `r` positions before it. -/
+/-- A transduction is **left-local** with radius `r` if every guard is bounded by `r` back and
+nothing forward, reading only its position and the `r` positions before it. -/
 def LeftLocal (r : ℕ) : Prop :=
-  ∀ cl ∈ T.clauses, cl.1.BackBounded r
+  ∀ cl ∈ T.clauses, StringFormula.Bounded r 0 cl.1
 
 variable [DecidableEq α]
 
 /-- The block emitted at input position `n`: that of the first clause whose guard holds there,
 or nothing. -/
 def emitAt (w : List α) (n : ℕ) : List β :=
-  ((T.clauses.find? fun cl ↦ cl.1.Realize w n).map Prod.snd).getD []
+  ((T.clauses.find? fun cl ↦ cl.1.HoldsAt w n).map Prod.snd).getD []
 
 /-- The output string: the blocks emitted at the input positions, left to right. -/
 def apply (w : List α) : List β :=
@@ -109,11 +109,11 @@ def apply (w : List α) : List β :=
 
 variable {T} {w : List α} {n : ℕ}
 
-theorem emitAt_eq_of_mem {cl : WindowFormula α × List β} (hcl : cl ∈ T.clauses)
-    (h : cl.1.Realize w n) (huniq : ∀ cl' ∈ T.clauses, cl'.1.Realize w n → cl'.2 = cl.2) :
+theorem emitAt_eq_of_mem {cl : StringFormula α × List β} (hcl : cl ∈ T.clauses)
+    (h : cl.1.HoldsAt w n) (huniq : ∀ cl' ∈ T.clauses, cl'.1.HoldsAt w n → cl'.2 = cl.2) :
     T.emitAt w n = cl.2 := by
   obtain ⟨cl', hcl'⟩ := Option.isSome_iff_exists.1 <|
-    (List.find?_isSome (p := fun cl : WindowFormula α × List β ↦ decide (cl.1.Realize w n))).2
+    (List.find?_isSome (p := fun cl : StringFormula α × List β ↦ decide (cl.1.HoldsAt w n))).2
       ⟨cl, hcl, decide_eq_true h⟩
   rw [emitAt, hcl', Option.map_some, Option.getD_some,
     huniq _ (List.mem_of_find?_eq_some hcl') (by simpa using List.find?_some hcl')]
@@ -130,7 +130,9 @@ agree. -/
 theorem emitAt_congr {w w' : List α} {n n' : ℕ} (hedge : min n r = min n' r)
     (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?) : T.emitAt w n = T.emitAt w' n' :=
   congrArg (fun o ↦ (o.map Prod.snd).getD []) <| List.find?_congr fun cl hcl ↦
-    decide_eq_decide.2 <| (hT cl hcl).realize_congr hedge hlbl
+    decide_eq_decide.2 <| (hT cl hcl).holdsAt_congr hedge hlbl fun j hj ↦ by
+      obtain rfl : j = 0 := Nat.le_zero.mp hj
+      simpa using hlbl 0 (Nat.zero_le r)
 
 theorem emitAt_append {u : List α} (v : List α) {p : ℕ} (hp : p < u.length) :
     T.emitAt (u ++ v) p = T.emitAt u p :=
@@ -192,13 +194,14 @@ variable {r : ℕ} (ρ : ISLRule (r + 1) α β) (alphabet : List α)
 position carries `a` after the window `u`, the block the rule emits there. -/
 def toTransduction : Transduction α β :=
   ⟨(windows alphabet r).flatMap fun u ↦ alphabet.map fun a ↦
-    (WindowFormula.label a .var ⊓ .window r u, ρ.windowOutput u a)⟩
+    (StringFormula.label a (.var 0) ⊓ StringFormula.window r u, ρ.windowOutput u a)⟩
 
 theorem leftLocal_toTransduction : (ρ.toTransduction alphabet).LeftLocal r := by
   intro cl hcl
   simp only [toTransduction, List.mem_flatMap, List.mem_map] at hcl
   obtain ⟨u, hu, a, -, rfl⟩ := hcl
-  exact ⟨⟨Nat.zero_le r, le_rfl⟩, WindowFormula.window_backBounded (mem_windows.1 hu).1⟩
+  rw [StringFormula.bounded_inf, StringFormula.bounded_label]
+  exact ⟨⟨Nat.zero_le r, le_rfl⟩, StringFormula.bounded_window (mem_windows.1 hu).1⟩
 
 variable [DecidableEq α]
 
@@ -206,16 +209,17 @@ theorem emitAt_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) {
     (hp : p < w.length) :
     (ρ.toTransduction alphabet).emitAt w p = ρ.windowOutput ((w.take p).rtake r) w[p] := by
   have hguard {u : List α} (hu : u ∈ windows alphabet r) (a : α) :
-      (WindowFormula.label a .var ⊓ .window r u).Realize w p ↔
+      (StringFormula.label a (.var 0) ⊓ StringFormula.window r u).HoldsAt w p ↔
         w[p] = a ∧ (w.take p).rtake r = u := by
-    rw [WindowFormula.realize_inf, WindowFormula.realize_label_var,
-      WindowFormula.realize_window hp (mem_windows.1 hu).1, List.getElem?_eq_getElem hp,
+    rw [StringFormula.holdsAt_inf, StringFormula.holdsAt_label_var,
+      StringFormula.holdsAt_window hp (mem_windows.1 hu).1, List.getElem?_eq_getElem hp,
       Option.some.injEq]
   have hwin : (w.take p).rtake r ∈ windows alphabet r :=
     mem_windows.2 ⟨List.length_rtake_le r _, fun a ha ↦
       hw a (List.mem_of_mem_take ((List.rtake_suffix r _).subset ha))⟩
   have hmem {cl} : cl ∈ (ρ.toTransduction alphabet).clauses ↔ ∃ u ∈ windows alphabet r,
-      ∃ a ∈ alphabet, (WindowFormula.label a .var ⊓ .window r u, ρ.windowOutput u a) = cl :=
+      ∃ a ∈ alphabet,
+        (StringFormula.label a (.var 0) ⊓ StringFormula.window r u, ρ.windowOutput u a) = cl :=
     by simp [toTransduction]
   refine Transduction.emitAt_eq_of_mem (hmem.2 ⟨_, hwin, w[p], hw _ (List.getElem_mem hp), rfl⟩)
     ((hguard hwin _).2 ⟨rfl, rfl⟩) fun cl hcl h ↦ ?_
@@ -251,9 +255,10 @@ namespace Transduction
 
 /-- The relabelling transduction of the quantifier-free docking process with guard `φ` over the
 symbols `alphabet`: each symbol is docked where the guard holds and kept elsewhere. -/
-def relabel (φ : WindowFormula α) (dock : α → α) (alphabet : List α) : Transduction α α :=
+def relabel (φ : StringFormula α) (dock : α → α) (alphabet : List α) : Transduction α α :=
   ⟨alphabet.flatMap fun a ↦
-    [(φ ⊓ .label a .var, [dock a]), (φ.not ⊓ .label a .var, [a])]⟩
+    [(φ ⊓ StringFormula.label a (.var 0), [dock a]),
+      (φ.not ⊓ StringFormula.label a (.var 0), [a])]⟩
 
 variable [DecidableEq α]
 
@@ -266,17 +271,19 @@ private theorem flatMap_range_toList_eq_mapIdx {γ δ : Type*} (f : ℕ → γ �
     simp
 
 /-- On a word over the alphabet, the relabelling transduction computes the docking map. -/
-theorem apply_relabel {φ : WindowFormula α} {dock : α → α} {alphabet : List α} {w : List α}
+theorem apply_relabel {φ : StringFormula α} {dock : α → α} {alphabet : List α} {w : List α}
     (hw : ∀ a ∈ w, a ∈ alphabet) :
     (relabel φ dock alphabet).apply w = (Docking.ofQF φ dock).map w := by
   have hmem {cl} : cl ∈ (relabel φ dock alphabet).clauses ↔ ∃ a ∈ alphabet,
-      cl = (φ ⊓ .label a .var, [dock a]) ∨ cl = (φ.not ⊓ .label a .var, [a]) := by
+      cl = (φ ⊓ StringFormula.label a (.var 0), [dock a]) ∨
+        cl = (φ.not ⊓ StringFormula.label a (.var 0), [a]) := by
     simp [relabel]
   have hemit {n : ℕ} (hn : n < w.length) : (relabel φ dock alphabet).emitAt w n =
-      (w[n]?.map fun a ↦ if n < w.length ∧ φ.Realize w n then dock a else a).toList := by
-    simp only [List.getElem?_eq_getElem hn, Option.map_some, Option.toList_some, hn, true_and]
-    refine emitAt_eq_of_mem (cl := ((if φ.Realize w n then φ else φ.not) ⊓ .label w[n] .var,
-      [if φ.Realize w n then dock w[n] else w[n]])) (hmem.2 ⟨_, hw _ (List.getElem_mem hn), ?_⟩)
+      (w[n]?.map fun a ↦ if φ.HoldsAt w n then dock a else a).toList := by
+    simp only [List.getElem?_eq_getElem hn, Option.map_some, Option.toList_some]
+    refine emitAt_eq_of_mem
+      (cl := ((if φ.HoldsAt w n then φ else φ.not) ⊓ StringFormula.label w[n] (.var 0),
+        [if φ.HoldsAt w n then dock w[n] else w[n]])) (hmem.2 ⟨_, hw _ (List.getElem_mem hn), ?_⟩)
       (by split_ifs <;> simp [*]) fun cl hcl h ↦ ?_
     · split_ifs <;> simp
     · obtain ⟨a, -, rfl | rfl⟩ := hmem.1 hcl <;> simp_all
