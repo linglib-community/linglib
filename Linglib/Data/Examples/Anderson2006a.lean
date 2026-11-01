@@ -54,6 +54,32 @@ def udihe_neg : Datum :=
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "auxHeaded"), ("on_aux", "negation"), ("on_aux", "subj")] }
 
+def kokota_neg : Datum :=
+  { id := "anderson2006a_kokota_neg"
+    source := ⟨"anderson-2006a", "ch. 1, (50)"⟩
+    reportedIn := none
+    language := "koko1269"
+    primaryText := "o-ti dupa-i manei si-ago"
+    glossedTokens := [("o-ti", "2-NEG"), ("dupa-i", "punch-3"), ("manei", "s/he"), ("si-ago", "FOC-2")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "split"), ("on_aux", "negation"), ("on_aux", "subj"), ("on_lex", "obj")] }
+
+def neyo_neg_past : Datum :=
+  { id := "anderson2006a_neyo_neg_past"
+    source := ⟨"anderson-2006a", "ch. 1, (51a)"⟩
+    reportedIn := none
+    language := "neyo1238"
+    primaryText := "ma ne wa yo la"
+    glossedTokens := [("ma", "but"), ("ne", "NEG.1"), ("wa", "PAST"), ("yo", "child"), ("la", "bring")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "auxHeaded"), ("on_aux", "negation"), ("on_aux", "subj")] }
+
 def kwerba_neg_fut : Datum :=
   { id := "anderson2006a_kwerba_neg_fut"
     source := ⟨"anderson-2006a", "ch. 1, (52a)"⟩
@@ -184,6 +210,6 @@ def jakaltek_completive : Datum :=
     readings := []
     paperFeatures := [("infl_pattern", "split"), ("on_aux", "aspect"), ("on_aux", "obj"), ("on_lex", "subj")] }
 
-def all : List Datum := [komi_neg_pres, komi_neg_past, udihe_neg, kwerba_neg_fut, kwerba_neg_past, doyayo_lexheaded, doyayo_splitdoubled, gorum_tiger, gorum_vigorously, hemba_progressive, pipil_capability, pipil_progressive, jakaltek_completive]
+def all : List Datum := [komi_neg_pres, komi_neg_past, udihe_neg, kokota_neg, neyo_neg_past, kwerba_neg_fut, kwerba_neg_past, doyayo_lexheaded, doyayo_splitdoubled, gorum_tiger, gorum_vigorously, hemba_progressive, pipil_capability, pipil_progressive, jakaltek_completive]
 
 end Anderson2006a.Examples
