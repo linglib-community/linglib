@@ -17,8 +17,8 @@ quantized change to the maximum, and the atelic reading a non-quantized change.
 
 Each degree of affectedness is an existential generalization of the one above it, so the
 entailments a predicate has about its theme form one of four sets. These are exactly the four
-contentful thematic roles of patienthood in Beavers's earlier work, each the entailment set of some
-predicate.
+contentful thematic roles of patienthood in Beavers's earlier work, [each the entailment set of some
+predicate](##ArgumentStructure.exists_affectednessRole_eq).
 
 ## Implementation notes
 
@@ -158,49 +158,5 @@ theorem nonQuantizedChange_iff_minStandard :
   exact and_congr_right fun h ↦ by rw [h]
 
 end KennedyLevin
-
-/-! ### The contentful roles of [beavers-2010] -/
-
-section Roles
-
-variable {α S G β : Type*}
-
-/-- The patient role of a predicate is the set of affectedness entailments it has about its theme
-([beavers-2010] (65)). -/
-def role (θ : α → S → β → Prop) (R : α → S → G → β → Prop) (φ : α → β → Prop) :
-    Set AffectednessEntailment :=
-  {e | AffectednessDegree.Holds θ R φ e.1}
-
-variable {θ : α → S → β → Prop} {R : α → S → G → β → Prop} {φ : α → β → Prop}
-
--- (67) [beavers-2010]
-theorem isLowerSet_role : IsLowerSet (role θ R φ) :=
-  fun _ _ h ↦ AffectednessDegree.holds_antitone θ R φ h
-
--- [beavers-2010]
-theorem role_eq_entailments_iff {d : AffectednessDegree} :
-    role θ R φ = d.entailments ↔
-      ∀ e : AffectednessEntailment, AffectednessDegree.Holds θ R φ e.1 ↔ e.1 ≤ d := by
-  simp [role, Set.ext_iff, AffectednessDegree.coe_entailments]
-
--- (66), (67) [beavers-2010]
-theorem exists_role_eq_iff (s : Set AffectednessEntailment) :
-    (∃ (θ : Unit → Unit → Bool → Prop) (R : Unit → Unit → Bool → Bool → Prop)
-      (φ : Unit → Bool → Prop), role θ R φ = s) ↔ IsLowerSet s := by
-  refine ⟨fun ⟨_, _, _, h⟩ ↦ h ▸ isLowerSet_role, fun hs ↦ ?_⟩
-  obtain ⟨d, hd⟩ := AffectednessDegree.entailments.surjective ⟨s, hs⟩
-  obtain rfl : (d.entailments : Set AffectednessEntailment) = s := by rw [hd]; rfl
-  cases d
-  on_goal 1 => refine ⟨fun _ _ _ ↦ False, fun _ _ _ _ ↦ False, fun _ _ ↦ True, ?_⟩
-  on_goal 2 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ False, fun _ _ ↦ True, ?_⟩
-  on_goal 3 => refine ⟨fun _ _ _ ↦ True, fun _ _ g e ↦ g = e, fun _ _ ↦ True, ?_⟩
-  on_goal 4 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ True, fun _ _ ↦ True, ?_⟩
-  all_goals
-    refine role_eq_entailments_iff.2 fun ⟨e, he⟩ ↦ ?_
-    cases e <;> simp_all [AffectednessDegree.Holds,
-      QuantizedChange, NonQuantizedChange, PotentialChange,
-      AffectednessDegree.le_iff_strength_le, AffectednessDegree.strength]
-
-end Roles
 
 end Beavers2011
