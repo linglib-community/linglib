@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.Labov2012
+public import Linglib.Data.Statistics.Labov2012
 public import Mathlib.Order.Monotone.Defs
 
 /-!

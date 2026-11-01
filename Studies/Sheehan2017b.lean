@@ -1,7 +1,7 @@
 module
 
 public import Studies.Hawkins1994
-public import Linglib.Data.Experiments.Sheehan2017b
+public import Linglib.Data.Statistics.Sheehan2017b
 
 /-!
 # Sheehan (2017b): The Final-over-Final Condition and Processing

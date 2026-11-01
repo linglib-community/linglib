@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Data.Experiments.QingFranke2015
+public import Linglib.Data.Statistics.QingFranke2015
 public import Linglib.Pragmatics.RSA.Decision
 public import Studies.FrankGoodman2012
 public import Mathlib.Analysis.Complex.ExponentialBounds

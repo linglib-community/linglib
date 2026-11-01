@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.IcardEtAl2017
+public import Linglib.Data.Statistics.IcardEtAl2017
 public import Linglib.Semantics.Causation.CausalStrength
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.Independence.InfinitePi

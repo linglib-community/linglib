@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.BachBrownMarslenWilson1986
-public import Linglib.Data.Experiments.BachBrownMarslenWilson1986
+public import Linglib.Data.Statistics.BachBrownMarslenWilson1986
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fin.Rev
@@ -66,7 +66,7 @@ cluster, the time clauses are held and the time they join the matrix
 
 namespace BachBrownMarslenWilson1986
 
-open Finset DependencyGrammar Data.Experiments
+open Finset DependencyGrammar Data.Statistics
 
 variable {n : ℕ} (σ : Equiv.Perm (Fin n))
 

@@ -5038,11 +5038,15 @@
       ],
       [
         "scale",
-        "definiteness"
+        "definiteness and nominality"
       ],
       [
-        "prominence",
+        "definiteness",
         "indefinite"
+      ],
+      [
+        "nominality",
+        "fullNominal"
       ],
       [
         "coding",
@@ -5091,11 +5095,15 @@
       ],
       [
         "scale",
-        "definiteness"
+        "definiteness and nominality"
       ],
       [
-        "prominence",
+        "definiteness",
         "definite"
+      ],
+      [
+        "nominality",
+        "fullNominal"
       ],
       [
         "coding",
@@ -5140,10 +5148,14 @@
       ],
       [
         "scale",
-        "nominality"
+        "definiteness and nominality"
       ],
       [
-        "prominence",
+        "definiteness",
+        "definite"
+      ],
+      [
+        "nominality",
         "personForm"
       ],
       [
@@ -5151,7 +5163,7 @@
         "special"
       ]
     ],
-    "comment": "The applicative suffix -ang with a person-form T. The source cites (Jukes 2006: 341).",
+    "comment": "The applicative suffix -ang with a person-form T, a personal pronoun and so definite. The source cites (Jukes 2006: 341).",
     "verified": "page-image"
   },
   {

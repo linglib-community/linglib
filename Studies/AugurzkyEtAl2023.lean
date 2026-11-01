@@ -3,7 +3,7 @@ module
 public import Studies.KrizChemla2015
 public import Studies.BarLev2021
 public import Linglib.Semantics.Homogeneity.Usable
-public import Linglib.Data.Experiments.AugurzkyEtAl2023
+public import Linglib.Data.Statistics.AugurzkyEtAl2023
 
 /-!
 # Augurzky et al. (2023): Putting plural definites into context

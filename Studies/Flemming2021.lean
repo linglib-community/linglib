@@ -8,7 +8,7 @@ public import Linglib.Phonology.HarmonicGrammar.MaxEnt
 public import Linglib.Phonology.HarmonicGrammar.Noise
 public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Data.Examples.Flemming2021
-public import Linglib.Data.Experiments.Flemming2021
+public import Linglib.Data.Statistics.Flemming2021
 
 /-!
 # Flemming (2021): Comparing MaxEnt and Noisy Harmonic Grammar
@@ -38,7 +38,7 @@ NoSchwa, \*CCC, \*Clash, Max, Dep and \*Cluster (20)–(28).
   fits satisfy. Censored NHG (§7.3) has no closed form and is not formalized.
 * `weightNoiseProb` takes the standard deviation `σ` of the weight noise, the paper's parameter,
   so the noise variance is `σ ^ 2`.
-* The observed and fitted rates and the deviances of Table 2 are `Data/Experiments/Flemming2021`;
+* The observed and fitted rates and the deviances of Table 2 are `Data/Statistics/Flemming2021`;
   `observedRate` reads the observed rates in hundredths, and the interaction is stated on odds
   ratios, the exponential of the logit differences MaxEnt predicts equal.
 

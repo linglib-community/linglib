@@ -6,7 +6,7 @@ public import Mathlib.NumberTheory.Harmonic.Int
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Tactic.Positivity
-public import Linglib.Data.Experiments.Yang2016
+public import Linglib.Data.Statistics.Yang2016
 
 /-!
 # Yang (2016): The Price of Linguistic Productivity
@@ -41,7 +41,7 @@ feminine *-(e)n* plural is [tolerated and productive](##tolerates_productive_fem
   assumes `e ≤ N`, as does every statement about the cost.
 * The threshold is stated with the natural logarithm as in the book. Mathlib's convention that
   division by zero is zero makes the threshold vanish at `N ≤ 1` (`threshold_eq_zero_of_le_one`).
-* The counts of the German feminine plurals are the book's (`Data.Experiments.Yang2016`); the
+* The counts of the German feminine plurals are the book's (`Data.Statistics.Yang2016`); the
   exceptions are the items whose plural does not take *-(e)n*.
 
 ## Errata

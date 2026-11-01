@@ -67,7 +67,7 @@ reduces it. The generator validates them and the CLDF export carries them.
 Translations are English, so there is no metalanguage field. CLDF's
 `LGR_Conformance` is not recorded either: `glossedTokens` pairs are word
 aligned by construction, and morpheme alignment is a property of the pairs.
-Printed results (ratings, rates, statistics) go to `Data/Experiments/`, not
+Printed results (ratings, rates, statistics) go to `Data/Statistics/`, not
 `paperFeatures`.
 
 ## Languages

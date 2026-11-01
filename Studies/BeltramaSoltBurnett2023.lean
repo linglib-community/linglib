@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.BeltramaSoltBurnett2023
+public import Linglib.Data.Statistics.BeltramaSoltBurnett2023
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Linglib.Fragments.English.NumeralModifiers
 public import Linglib.Semantics.Degree.Granularity
@@ -52,7 +52,7 @@ need for precision [does not always favor](##not_needHypothesis) the more precis
 
 namespace BeltramaSoltBurnett2023
 
-open SocialMeaning Data.Experiments
+open SocialMeaning Data.Statistics
 
 /-! ### The variants -/
 

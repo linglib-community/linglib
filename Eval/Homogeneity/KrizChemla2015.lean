@@ -7,7 +7,7 @@ public import Eval.Homogeneity.Account
 # Scoring accounts of homogeneity on Križ and Chemla (2015)
 
 The data are the gap tests of Table 2 of Križ and Chemla, read from
-`Data/Experiments/KrizChemla2015`: for each environment of the definite and each gap condition,
+`Data/Statistics/KrizChemla2015`: for each environment of the definite and each gap condition,
 whether the experiments found a truth-value gap, outside the A2 and B2 tests of *no* that the
 paper discounts (`_root_.KrizChemla2015.GapTest.Discounted`). An account predicts a gap in a
 configuration when it gives every item realizing the configuration the value 0, and no gap when it

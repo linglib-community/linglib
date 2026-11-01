@@ -1,7 +1,7 @@
 module
 
 public import Studies.Schlenker2009
-public import Linglib.Data.Experiments.ChemlaSchlenker2012
+public import Linglib.Data.Statistics.ChemlaSchlenker2012
 
 /-!
 # Chemla & Schlenker (2012): Incremental vs. symmetric accounts of presupposition projection
@@ -24,7 +24,7 @@ In the inverse order the incremental condition predicts the unconditional presup
 (`supervaluationAcceptable_incremental_inverse`), while the symmetric condition still predicts
 `if p, q` ((13b)–(15b), `supervaluationAcceptable_symmetric_inverse`).
 
-The results are `Data/Experiments/ChemlaSchlenker2012`. The conditional inference is endorsed more
+The results are `Data/Statistics/ChemlaSchlenker2012`. The conditional inference is endorsed more
 than the unconditional one for every tested sentence (Tables 4 and 7,
 `experiment1_conditional_gt_unconditional`, `experiment4_conditional_gt_unconditional`), including
 the inverse order, where the Incremental Theory predicts the unconditional presupposition and so an

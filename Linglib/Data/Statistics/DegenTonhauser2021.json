@@ -1,0 +1,1325 @@
+{
+  "meta": {
+    "bibkey": "degen-tonhauser-2021",
+    "method": "experiment",
+    "description": "Two experiments testing whether listeners' prior beliefs in the content of a clausal complement modulate its projection, over twenty clause-embedding predicates and twenty contents, each content paired with a fact expected to raise or lower its prior probability. Experiment 1 measured the prior probability of the contents and the certainty that the speaker of a polar question is committed to them within participants; Experiments 2a and 2b measured the two on separate groups. The by-content prior means and by-predicate certainty means are plotted, not tabulated.",
+    "rawData": [
+      {
+        "url": "https://github.com/judith-tonhauser/projective-probability",
+        "doc": "materials, trial-level data and analysis code of both experiments (footnote 3); the means are recomputed from results/9-prior-projection/data/cd.csv (Exp. 1), results/1-prior/data/cd.csv (Exp. 2a) and results/3-projectivity/data/cd.csv (Exp. 2b), which already apply the paper's participant exclusions"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Predicate",
+      "doc": "The twenty clause-embedding predicates of Figure 1c.",
+      "levels": [
+        {
+          "name": "acknowledge",
+          "label": "acknowledge",
+          "doc": "a verb"
+        },
+        {
+          "name": "admit",
+          "label": "admit",
+          "doc": "a verb"
+        },
+        {
+          "name": "announce",
+          "label": "announce",
+          "doc": "a verb"
+        },
+        {
+          "name": "beAnnoyed",
+          "label": "be annoyed",
+          "doc": "an adjective with the copula"
+        },
+        {
+          "name": "beRight",
+          "label": "be right",
+          "doc": "an adjective with the copula"
+        },
+        {
+          "name": "confess",
+          "label": "confess",
+          "doc": "a verb"
+        },
+        {
+          "name": "confirm",
+          "label": "confirm",
+          "doc": "a verb"
+        },
+        {
+          "name": "demonstrate",
+          "label": "demonstrate",
+          "doc": "a verb"
+        },
+        {
+          "name": "discover",
+          "label": "discover",
+          "doc": "a verb"
+        },
+        {
+          "name": "establish",
+          "label": "establish",
+          "doc": "a verb"
+        },
+        {
+          "name": "hear",
+          "label": "hear",
+          "doc": "a verb"
+        },
+        {
+          "name": "inform",
+          "label": "inform",
+          "doc": "a verb, its indirect object Sam in every stimulus"
+        },
+        {
+          "name": "know",
+          "label": "know",
+          "doc": "a verb"
+        },
+        {
+          "name": "pretend",
+          "label": "pretend",
+          "doc": "a verb"
+        },
+        {
+          "name": "prove",
+          "label": "prove",
+          "doc": "a verb"
+        },
+        {
+          "name": "reveal",
+          "label": "reveal",
+          "doc": "a verb"
+        },
+        {
+          "name": "say",
+          "label": "say",
+          "doc": "a verb"
+        },
+        {
+          "name": "see",
+          "label": "see",
+          "doc": "a verb"
+        },
+        {
+          "name": "suggest",
+          "label": "suggest",
+          "doc": "a verb"
+        },
+        {
+          "name": "think",
+          "label": "think",
+          "doc": "a verb"
+        }
+      ]
+    },
+    {
+      "name": "Content",
+      "doc": "The twenty complement contents, each paired between participants with a fact under which it was expected to have a lower or a higher prior probability (Supplement A).",
+      "levels": [
+        {
+          "name": "mary",
+          "label": "Mary is pregnant",
+          "doc": "lower fact: Mary is a middle school student; higher fact: Mary is taking a prenatal yoga class"
+        },
+        {
+          "name": "josie",
+          "label": "Josie went on vacation to France",
+          "doc": "lower fact: Josie doesn't have a passport; higher fact: Josie loves France"
+        },
+        {
+          "name": "emma",
+          "label": "Emma studied on Saturday morning",
+          "doc": "lower fact: Emma is in first grade; higher fact: Emma is in law school"
+        },
+        {
+          "name": "olivia",
+          "label": "Olivia sleeps until noon",
+          "doc": "lower fact: Olivia has two small children; higher fact: Olivia works the third shift"
+        },
+        {
+          "name": "sophia",
+          "label": "Sophia got a tattoo",
+          "doc": "lower fact: Sophia is a high end fashion model; higher fact: Sophia is a hipster"
+        },
+        {
+          "name": "mia",
+          "label": "Mia drank 2 cocktails last night",
+          "doc": "lower fact: Mia is a nun; higher fact: Mia is a college student"
+        },
+        {
+          "name": "isabella",
+          "label": "Isabella ate a steak on Sunday",
+          "doc": "lower fact: Isabella is a vegetarian; higher fact: Isabella is from Argentina"
+        },
+        {
+          "name": "emily",
+          "label": "Emily bought a car yesterday",
+          "doc": "lower fact: Emily never has any money; higher fact: Emily has been saving for a year"
+        },
+        {
+          "name": "grace",
+          "label": "Grace visited her sister",
+          "doc": "lower fact: Grace hates her sister; higher fact: Grace loves her sister"
+        },
+        {
+          "name": "zoe",
+          "label": "Zoe calculated the tip",
+          "doc": "lower fact: Zoe is 5 years old; higher fact: Zoe is a math major"
+        },
+        {
+          "name": "danny",
+          "label": "Danny ate the last cupcake",
+          "doc": "lower fact: Danny is a diabetic; higher fact: Danny loves cake"
+        },
+        {
+          "name": "frank",
+          "label": "Frank got a cat",
+          "doc": "lower fact: Frank is allergic to cats; higher fact: Frank has always wanted a pet"
+        },
+        {
+          "name": "jackson",
+          "label": "Jackson ran 10 miles",
+          "doc": "lower fact: Jackson is obese; higher fact: Jackson is training for a marathon"
+        },
+        {
+          "name": "jayden",
+          "label": "Jayden rented a car",
+          "doc": "lower fact: Jayden doesn't have a driver's license; higher fact: Jayden's car is in the shop"
+        },
+        {
+          "name": "tony",
+          "label": "Tony had a drink last night",
+          "doc": "lower fact: Tony has been sober for 20 years; higher fact: Tony really likes to party with his friends"
+        },
+        {
+          "name": "josh",
+          "label": "Josh learned to ride a bike yesterday",
+          "doc": "lower fact: Josh is a 75-year old man; higher fact: Josh is a 5-year old boy"
+        },
+        {
+          "name": "owen",
+          "label": "Owen shoveled snow last winter",
+          "doc": "lower fact: Owen lives in New Orleans; higher fact: Owen lives in Chicago"
+        },
+        {
+          "name": "julian",
+          "label": "Julian dances salsa",
+          "doc": "lower fact: Julian is German; higher fact: Julian is Cuban"
+        },
+        {
+          "name": "jon",
+          "label": "Jon walks to work",
+          "doc": "lower fact: Jon lives 10 miles away from work; higher fact: Jon lives 2 blocks away from work"
+        },
+        {
+          "name": "charley",
+          "label": "Charley speaks Spanish",
+          "doc": "lower fact: Charley lives in Korea; higher fact: Charley lives in Mexico"
+        }
+      ]
+    },
+    {
+      "name": "Design",
+      "doc": "Whether the prior probability and certainty ratings came from the same participants.",
+      "levels": [
+        {
+          "name": "withinParticipant",
+          "label": "within participant",
+          "doc": "Experiment 1: each participant rated the priors and, in a separate block, the certainties"
+        },
+        {
+          "name": "betweenParticipants",
+          "label": "between participants",
+          "doc": "Experiments 2a (priors) and 2b (certainties), on separate groups"
+        }
+      ]
+    },
+    {
+      "name": "Fact",
+      "doc": "The fact condition of a content.",
+      "levels": [
+        {
+          "name": "lowerProbability",
+          "label": "lower probability",
+          "doc": "the fact under which the content was expected to be less likely"
+        },
+        {
+          "name": "higherProbability",
+          "label": "higher probability",
+          "doc": "the fact under which the content was expected to be more likely"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "prior",
+      "structure": "PriorRow",
+      "doc": "the mean prior probability rating of a content, given the fact.",
+      "locator": "Figure 2 (Exp. 1); Figure A2, Supplement D (Exp. 2a)",
+      "verified": "raw-data",
+      "columns": [
+        {
+          "name": "design",
+          "type": "Design",
+          "doc": "The design."
+        },
+        {
+          "name": "fact",
+          "type": "Fact",
+          "doc": "The fact condition."
+        },
+        {
+          "name": "content",
+          "type": "Content",
+          "doc": "The content."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating."
+        }
+      ],
+      "key": [
+        "design",
+        "fact",
+        "content"
+      ],
+      "rows": [
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Mary is pregnant",
+          "mean": "0.23"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Josie went on vacation to France",
+          "mean": "0.12"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Emma studied on Saturday morning",
+          "mean": "0.32"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Olivia sleeps until noon",
+          "mean": "0.21"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Sophia got a tattoo",
+          "mean": "0.42"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Mia drank 2 cocktails last night",
+          "mean": "0.22"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Isabella ate a steak on Sunday",
+          "mean": "0.13"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Emily bought a car yesterday",
+          "mean": "0.15"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Grace visited her sister",
+          "mean": "0.25"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Zoe calculated the tip",
+          "mean": "0.19"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Danny ate the last cupcake",
+          "mean": "0.28"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Frank got a cat",
+          "mean": "0.17"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Jackson ran 10 miles",
+          "mean": "0.19"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Jayden rented a car",
+          "mean": "0.18"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Tony had a drink last night",
+          "mean": "0.22"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Josh learned to ride a bike yesterday",
+          "mean": "0.24"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Owen shoveled snow last winter",
+          "mean": "0.28"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Julian dances salsa",
+          "mean": "0.40"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Jon walks to work",
+          "mean": "0.24"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "content": "Charley speaks Spanish",
+          "mean": "0.28"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Mary is pregnant",
+          "mean": "0.82"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Josie went on vacation to France",
+          "mean": "0.73"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Emma studied on Saturday morning",
+          "mean": "0.68"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Olivia sleeps until noon",
+          "mean": "0.66"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Sophia got a tattoo",
+          "mean": "0.63"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Mia drank 2 cocktails last night",
+          "mean": "0.58"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Isabella ate a steak on Sunday",
+          "mean": "0.52"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Emily bought a car yesterday",
+          "mean": "0.56"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Grace visited her sister",
+          "mean": "0.79"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Zoe calculated the tip",
+          "mean": "0.75"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Danny ate the last cupcake",
+          "mean": "0.70"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Frank got a cat",
+          "mean": "0.68"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Jackson ran 10 miles",
+          "mean": "0.77"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Jayden rented a car",
+          "mean": "0.69"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Tony had a drink last night",
+          "mean": "0.75"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Josh learned to ride a bike yesterday",
+          "mean": "0.54"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Owen shoveled snow last winter",
+          "mean": "0.75"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Julian dances salsa",
+          "mean": "0.60"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Jon walks to work",
+          "mean": "0.76"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "content": "Charley speaks Spanish",
+          "mean": "0.80"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Mary is pregnant",
+          "mean": "0.11"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Josie went on vacation to France",
+          "mean": "0.08"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Emma studied on Saturday morning",
+          "mean": "0.26"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Olivia sleeps until noon",
+          "mean": "0.08"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Sophia got a tattoo",
+          "mean": "0.28"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Mia drank 2 cocktails last night",
+          "mean": "0.13"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Isabella ate a steak on Sunday",
+          "mean": "0.06"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Emily bought a car yesterday",
+          "mean": "0.13"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Grace visited her sister",
+          "mean": "0.23"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Zoe calculated the tip",
+          "mean": "0.08"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Danny ate the last cupcake",
+          "mean": "0.25"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Frank got a cat",
+          "mean": "0.10"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Jackson ran 10 miles",
+          "mean": "0.11"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Jayden rented a car",
+          "mean": "0.10"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Tony had a drink last night",
+          "mean": "0.11"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Josh learned to ride a bike yesterday",
+          "mean": "0.21"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Owen shoveled snow last winter",
+          "mean": "0.16"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Julian dances salsa",
+          "mean": "0.33"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Jon walks to work",
+          "mean": "0.12"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "content": "Charley speaks Spanish",
+          "mean": "0.28"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Mary is pregnant",
+          "mean": "0.88"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Josie went on vacation to France",
+          "mean": "0.70"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Emma studied on Saturday morning",
+          "mean": "0.76"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Olivia sleeps until noon",
+          "mean": "0.73"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Sophia got a tattoo",
+          "mean": "0.60"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Mia drank 2 cocktails last night",
+          "mean": "0.53"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Isabella ate a steak on Sunday",
+          "mean": "0.51"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Emily bought a car yesterday",
+          "mean": "0.48"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Grace visited her sister",
+          "mean": "0.84"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Zoe calculated the tip",
+          "mean": "0.77"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Danny ate the last cupcake",
+          "mean": "0.69"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Frank got a cat",
+          "mean": "0.62"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Jackson ran 10 miles",
+          "mean": "0.84"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Jayden rented a car",
+          "mean": "0.67"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Tony had a drink last night",
+          "mean": "0.72"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Josh learned to ride a bike yesterday",
+          "mean": "0.51"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Owen shoveled snow last winter",
+          "mean": "0.82"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Julian dances salsa",
+          "mean": "0.59"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Jon walks to work",
+          "mean": "0.80"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "content": "Charley speaks Spanish",
+          "mean": "0.87"
+        }
+      ]
+    },
+    {
+      "name": "certainty",
+      "structure": "CertaintyRow",
+      "doc": "the mean certainty rating of a predicate's complement, the speaker taken to be certain of it, by the fact condition of the content.",
+      "locator": "Figure 3 (Exp. 1); Figure 6 (Exp. 2b)",
+      "verified": "raw-data",
+      "columns": [
+        {
+          "name": "design",
+          "type": "Design",
+          "doc": "The design."
+        },
+        {
+          "name": "fact",
+          "type": "Fact",
+          "doc": "The fact condition."
+        },
+        {
+          "name": "predicate",
+          "type": "Predicate",
+          "doc": "The predicate."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating."
+        }
+      ],
+      "key": [
+        "design",
+        "fact",
+        "predicate"
+      ],
+      "rows": [
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "acknowledge",
+          "mean": "0.49"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "admit",
+          "mean": "0.43"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "announce",
+          "mean": "0.41"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "be annoyed",
+          "mean": "0.68"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "be right",
+          "mean": "0.20"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "confess",
+          "mean": "0.45"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "confirm",
+          "mean": "0.28"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "demonstrate",
+          "mean": "0.33"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "discover",
+          "mean": "0.55"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "establish",
+          "mean": "0.27"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "hear",
+          "mean": "0.57"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "inform",
+          "mean": "0.57"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "know",
+          "mean": "0.68"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "pretend",
+          "mean": "0.21"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "prove",
+          "mean": "0.25"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "reveal",
+          "mean": "0.47"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "say",
+          "mean": "0.22"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "see",
+          "mean": "0.60"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "suggest",
+          "mean": "0.24"
+        },
+        {
+          "design": "within participant",
+          "fact": "lower probability",
+          "predicate": "think",
+          "mean": "0.20"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "acknowledge",
+          "mean": "0.65"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "admit",
+          "mean": "0.60"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "announce",
+          "mean": "0.53"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "be annoyed",
+          "mean": "0.80"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "be right",
+          "mean": "0.34"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "confess",
+          "mean": "0.58"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "confirm",
+          "mean": "0.37"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "demonstrate",
+          "mean": "0.48"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "discover",
+          "mean": "0.69"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "establish",
+          "mean": "0.43"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "hear",
+          "mean": "0.72"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "inform",
+          "mean": "0.76"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "know",
+          "mean": "0.74"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "pretend",
+          "mean": "0.31"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "prove",
+          "mean": "0.41"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "reveal",
+          "mean": "0.62"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "say",
+          "mean": "0.38"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "see",
+          "mean": "0.69"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "suggest",
+          "mean": "0.32"
+        },
+        {
+          "design": "within participant",
+          "fact": "higher probability",
+          "predicate": "think",
+          "mean": "0.40"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "acknowledge",
+          "mean": "0.41"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "admit",
+          "mean": "0.37"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "announce",
+          "mean": "0.31"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "be annoyed",
+          "mean": "0.54"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "be right",
+          "mean": "0.14"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "confess",
+          "mean": "0.33"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "confirm",
+          "mean": "0.22"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "demonstrate",
+          "mean": "0.28"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "discover",
+          "mean": "0.44"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "establish",
+          "mean": "0.18"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "hear",
+          "mean": "0.43"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "inform",
+          "mean": "0.48"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "know",
+          "mean": "0.57"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "pretend",
+          "mean": "0.11"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "prove",
+          "mean": "0.18"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "reveal",
+          "mean": "0.37"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "say",
+          "mean": "0.17"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "see",
+          "mean": "0.43"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "suggest",
+          "mean": "0.18"
+        },
+        {
+          "design": "between participants",
+          "fact": "lower probability",
+          "predicate": "think",
+          "mean": "0.15"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "acknowledge",
+          "mean": "0.56"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "admit",
+          "mean": "0.56"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "announce",
+          "mean": "0.52"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "be annoyed",
+          "mean": "0.72"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "be right",
+          "mean": "0.33"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "confess",
+          "mean": "0.53"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "confirm",
+          "mean": "0.37"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "demonstrate",
+          "mean": "0.44"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "discover",
+          "mean": "0.60"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "establish",
+          "mean": "0.38"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "hear",
+          "mean": "0.61"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "inform",
+          "mean": "0.67"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "know",
+          "mean": "0.66"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "pretend",
+          "mean": "0.32"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "prove",
+          "mean": "0.34"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "reveal",
+          "mean": "0.54"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "say",
+          "mean": "0.34"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "see",
+          "mean": "0.71"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "suggest",
+          "mean": "0.32"
+        },
+        {
+          "design": "between participants",
+          "fact": "higher probability",
+          "predicate": "think",
+          "mean": "0.38"
+        }
+      ]
+    },
+    {
+      "name": "controls",
+      "structure": "ControlRow",
+      "doc": "the mean certainty rating of the main-clause controls, whose content was expected not to project.",
+      "locator": "Figures 3 and 6",
+      "verified": "raw-data",
+      "columns": [
+        {
+          "name": "design",
+          "type": "Design",
+          "doc": "The design."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean rating."
+        }
+      ],
+      "key": [
+        "design"
+      ],
+      "rows": [
+        {
+          "design": "within participant",
+          "mean": "0.21"
+        },
+        {
+          "design": "between participants",
+          "mean": "0.19"
+        }
+      ]
+    }
+  ]
+}

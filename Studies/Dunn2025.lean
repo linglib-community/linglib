@@ -40,7 +40,7 @@ samples are more or less similar than the average pair.
 
 ## TODO
 
-* The accuracy tables, such as Table 6, belong in `Data/Experiments`.
+* The accuracy tables, such as Table 6, belong in `Data/Statistics`.
 
 ## References
 

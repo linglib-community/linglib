@@ -1,0 +1,210 @@
+{
+  "meta": {
+    "bibkey": "ronderos-etal-2024",
+    "method": "experiment",
+    "description": "A visual-world experiment in the paradigm of [sedivy-etal-1999] with speakers of English, Hindi and Hungarian: a four-object display is previewed for three seconds, a definite description with a colour, material or scalar adjective follows, and the participant clicks on its referent. CONDITION (Contrast, No-Contrast) is run in two blocks and crossed with ADJECTIVE TYPE. Fixations are analysed over the noun window, time-locked to noun onset and offset by 200 ms: by a cluster-based permutation test on target looks and by a mixed model of the target-advantage score, for the effect of condition within each adjective type; the looks to target and competitor together in the No-Contrast condition are modelled with scalar adjectives as the intercept. Language is a grouping unit of the models, so the statistics are pooled over the three languages. The interaction cluster and the control model of the time before the noun are not recorded.",
+    "rawData": [
+      {
+        "url": "https://osf.io/apxtj/",
+        "doc": "data, analysis scripts and materials, as the paper states; the project was public when checked (2026-09-28)"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Condition",
+      "doc": "The factor CONDITION: whether the display holds an object of the target's kind that lacks the property.",
+      "levels": [
+        {
+          "name": "contrast",
+          "label": "Contrast",
+          "doc": "an object of the target's kind lacking the property, and an object of another kind sharing it"
+        },
+        {
+          "name": "noContrast",
+          "label": "No-Contrast",
+          "doc": "only the object of another kind sharing the property"
+        }
+      ]
+    },
+    {
+      "name": "AdjType",
+      "doc": "The factor ADJECTIVE TYPE.",
+      "levels": [
+        {
+          "name": "color",
+          "label": "color",
+          "doc": "black, blue, brown, green, orange, red, white, yellow"
+        },
+        {
+          "name": "material",
+          "label": "material",
+          "doc": "cotton, glass, gold, leather, metal, paper, plastic, wooden, woolen"
+        },
+        {
+          "name": "scalar",
+          "label": "scalar",
+          "doc": "large, narrow, short, small, tall, thick, thin, wide"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "clusters",
+      "structure": "Cluster",
+      "doc": "the cluster of time bins in the noun window over which condition affects looks to the target, for an adjective type.",
+      "locator": "Results, p. 1222",
+      "verified": "page-image",
+      "key": [
+        "adjType"
+      ],
+      "columns": [
+        {
+          "name": "adjType",
+          "type": "AdjType",
+          "doc": "The adjective type."
+        },
+        {
+          "name": "onset",
+          "type": "option nat",
+          "doc": "The start of the cluster, in milliseconds into the noun window."
+        },
+        {
+          "name": "offset",
+          "type": "option nat",
+          "doc": "The end of the cluster, in milliseconds into the noun window."
+        },
+        {
+          "name": "tSum",
+          "type": "option decimal",
+          "doc": "The total sum of t values over the cluster."
+        },
+        {
+          "name": "p",
+          "type": "option pvalue",
+          "doc": "The cluster's permutation p-value."
+        }
+      ],
+      "rows": [
+        {
+          "adjType": "color",
+          "onset": 240,
+          "offset": 600,
+          "tSum": "39.61",
+          "p": "< 0.01"
+        },
+        {
+          "adjType": "scalar",
+          "onset": 260,
+          "offset": 500,
+          "tSum": "33.07",
+          "p": "< 0.01"
+        },
+        {
+          "adjType": "material",
+          "onset": null,
+          "offset": null,
+          "tSum": null,
+          "p": null,
+          "note": "no clusters whatsoever"
+        }
+      ]
+    },
+    {
+      "name": "targetAdvantage",
+      "structure": "TargetAdvantage",
+      "doc": "the effect of condition on the target-advantage score over the noun window, the proportion of time on the target less that on the competitor, for an adjective type.",
+      "locator": "Results, p. 1222",
+      "verified": "page-image",
+      "key": [
+        "adjType"
+      ],
+      "columns": [
+        {
+          "name": "adjType",
+          "type": "AdjType",
+          "doc": "The adjective type."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The estimate of the effect of condition."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value, from the Satterthwaite approximation."
+        },
+        {
+          "name": "t",
+          "type": "decimal",
+          "doc": "The t statistic."
+        }
+      ],
+      "rows": [
+        {
+          "adjType": "color",
+          "beta": "0.24",
+          "p": "< 0.05",
+          "t": "2.41"
+        },
+        {
+          "adjType": "scalar",
+          "beta": "0.19",
+          "p": "< 0.05",
+          "t": "2.02"
+        },
+        {
+          "adjType": "material",
+          "beta": "0.10",
+          "p": "0.28",
+          "t": "1.08"
+        }
+      ]
+    },
+    {
+      "name": "baselineLooks",
+      "structure": "BaselineLooks",
+      "doc": "the difference from scalar adjectives in the looks to target and competitor together over the noun window of the No-Contrast condition, for an adjective type.",
+      "locator": "Results, p. 1223",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "adjType",
+          "type": "AdjType",
+          "doc": "The adjective type compared with scalar adjectives."
+        },
+        {
+          "name": "beta",
+          "type": "decimal",
+          "doc": "The estimate of the difference."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        },
+        {
+          "name": "z",
+          "type": "decimal",
+          "doc": "The z statistic."
+        }
+      ],
+      "rows": [
+        {
+          "adjType": "color",
+          "beta": "0.25",
+          "p": "< 0.01",
+          "z": "2.80"
+        },
+        {
+          "adjType": "material",
+          "beta": "0.24",
+          "p": "< 0.05",
+          "z": "2.40"
+        }
+      ]
+    }
+  ]
+}

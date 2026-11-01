@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "bibkey": "alexandropoulou-gotzner-2024a",
+    "method": "experiment",
+    "description": "Two rating experiments on English antonymic adjectives under negation, Experiment 1 on relative adjectives and Experiment 2 on absolute ones, each with eight items. An item is a context in which a speaker with full knowledge makes eight statements, crossing the evaluative polarity of the adjective (positive or negative), its scalar strength (weak or strong) and the presence of negation; participants saw the eight statements concurrently and rated each individual on a 1-5 scale from the negative strong adjective to the positive strong one. The ratings were analysed with cumulative link mixed models with treatment-coded Negation (negated as the reference level) and Scalar Strength, and sum-coded Evaluative Polarity; a significant effect of Negation indicates an asymmetric interpretation of the positive and negative adjectives under negation at the reference level of Scalar Strength. The rating proportions of the figures are not printed and are not recorded.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "AdjectiveType",
+      "doc": "The type of the antonymic adjectives, one per experiment.",
+      "levels": [
+        {"name": "relative", "label": "relative", "doc": "Experiment 1, adjectives with a context-dependent standard, as large and small"},
+        {"name": "absolute", "label": "absolute", "doc": "Experiment 2, adjectives with a scale-endpoint standard, as clean and dirty"}
+      ]
+    },
+    {
+      "name": "Strength",
+      "doc": "The informational strength of the adjectives, the factor Scalar Strength.",
+      "levels": [
+        {"name": "weak", "label": "weak", "doc": "the weak adjectives of an item, as large and small"},
+        {"name": "strong", "label": "strong", "doc": "the strong adjectives of an item, as gigantic and tiny"}
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "name": "negationEffect",
+      "structure": "NegationEffect",
+      "doc": "the effect of Negation, non-negated against the negated reference level, in the experiment on an adjective type with a strength as the reference level of Scalar Strength.",
+      "locator": "Table 4, p. 390; Table 5, p. 392; text, pp. 390-391",
+      "verified": "page-image",
+      "key": ["adjectiveType", "strength"],
+      "columns": [
+        {"name": "adjectiveType", "type": "AdjectiveType", "doc": "The adjective type, which is the experiment."},
+        {"name": "strength", "type": "Strength", "doc": "The reference level of Scalar Strength."},
+        {"name": "estimate", "type": "option decimal", "doc": "The estimate, where printed."},
+        {"name": "se", "type": "option decimal", "doc": "The standard error, where printed."},
+        {"name": "z", "type": "option decimal", "doc": "The z statistic, where printed."},
+        {"name": "p", "type": "pvalue", "doc": "The p-value."}
+      ],
+      "rows": [
+        {"adjectiveType": "relative", "strength": "weak", "estimate": "0.64392", "se": "0.21714", "z": "2.965", "p": "0.00302", "note": "Table 4; the text rounds it to beta = 0.64, p < 0.01"},
+        {"adjectiveType": "relative", "strength": "strong", "estimate": "0.05", "se": "0.25", "z": "0.18", "p": "0.86", "note": "printed in the text; the full output is in the supplementary materials"},
+        {"adjectiveType": "absolute", "strength": "weak", "estimate": "0.17288", "se": "0.12453", "z": "1.388", "p": "0.165", "note": "Table 5; the text rounds it to p = 0.17"},
+        {"adjectiveType": "absolute", "strength": "strong", "estimate": null, "se": null, "z": null, "p": "0.07", "note": "printed in the text as a marginal effect, with no estimate"}
+      ]
+    }
+  ]
+}

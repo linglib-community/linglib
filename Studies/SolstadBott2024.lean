@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.German.Verbs
 public import Linglib.Semantics.Presupposition.Verb
-public import Linglib.Data.Experiments.SolstadBott2024
+public import Linglib.Data.Statistics.SolstadBott2024
 public import Studies.SolstadBott2022
 public import Studies.Schlenker2009
 public import Studies.Kalomoiros2023
@@ -53,7 +53,7 @@ only.
 
 namespace SolstadBott2024
 
-open Presupposition Data.Experiments
+open Presupposition Data.Statistics
 
 variable {W : Type*}
 
