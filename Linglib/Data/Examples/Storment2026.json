@@ -1924,6 +1924,7 @@
       "bibkey": "storment-2026",
       "paperLabel": "(67a)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "‘Where did the wheat go?’ seemed to say the heron.",
     "discourseSegments": [],
@@ -3281,6 +3282,7 @@
       "bibkey": "storment-2026",
       "paperLabel": "(41a)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "‘God bless you’ says the men.",
     "discourseSegments": [],
@@ -3325,6 +3327,7 @@
       "bibkey": "storment-2026",
       "paperLabel": "(45j)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "‘Giddy up’ says us.",
     "discourseSegments": [],

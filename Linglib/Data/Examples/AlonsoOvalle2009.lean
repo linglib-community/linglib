@@ -192,6 +192,7 @@ def ex_40b : Datum :=
   { id := "alonsoovalle2009_40b"
     source := ⟨"alonso-ovalle-2009", "(40b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "If you had ever heard my album, you would know that I could never consider the music business."
     glossedTokens := []

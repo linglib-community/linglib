@@ -459,6 +459,7 @@
       "bibkey": "fillmore-kay-oconnor-1988",
       "paperLabel": "(71)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "You've got enough material there for a whole semester, let alone a week",
     "discourseSegments": [],
@@ -478,6 +479,7 @@
       "bibkey": "fillmore-kay-oconnor-1988",
       "paperLabel": "(72)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Penutian has been broken up, let alone Macro-Penutian",
     "discourseSegments": [],

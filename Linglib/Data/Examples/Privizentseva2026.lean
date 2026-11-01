@@ -266,6 +266,7 @@ def ch329 : Datum :=
   { id := "privizentseva2026_ch329"
     source := ⟨"privizentseva-2026a", "ch. 3 (29)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "moks1248"
     primaryText := "[Kona Puškin-ənˈ jalga-nzə tˈer-nˈ-əzˈ senat-ənˈ ploščadˈ-tˈi] son ašəzˈ sa-v."
     glossedTokens := [("Kona", "which"), ("Puškin-ənˈ", "Pushkin-GEN"), ("jalga-nzə", "friend-3SG.POSS.PL"), ("tˈer-nˈ-əzˈ", "call-FREQ-PST.3.O.3PL.S"), ("senat-ənˈ", "senate-GEN"), ("ploščadˈ-tˈi", "square-DEF.SG.DAT"), ("son", "PRON.3SG"), ("ašəzˈ", "NEG.PST.3SG"), ("sa-v", "come-PASS")]

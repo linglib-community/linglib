@@ -52,6 +52,7 @@
   {
     "id": "chanshen2026_ex4b",
     "source": {"bibkey": "chan-shen-2026", "paperLabel": "(4b)"},
+    "method": "corpus",
     "language": "sing1272",
     "primaryText": "What the hell you think Natalie is baking at 3am ah?",
     "glossedTokens": [],

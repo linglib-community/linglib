@@ -531,6 +531,7 @@
     "id": "denicetal2021_25",
     "source": {"bibkey": "denic-homer-rothschild-chemla-2021", "paperLabel": "(25)"},
     "reportedIn": null,
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Exactly 12 aliens saw some doves. → Exactly 12 aliens saw some birds.",
     "discourseSegments": [

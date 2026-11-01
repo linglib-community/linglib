@@ -22,6 +22,7 @@
   {
     "id": "levinrappaporthovav1995_ex4_9a",
     "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(9a) of chapter 4"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "The phone rang me out of a dreamless oblivion at seven-fifteen.",
     "discourseSegments": [],
@@ -42,6 +43,7 @@
   {
     "id": "levinrappaporthovav1995_ex4_9c",
     "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(9c) of chapter 4"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Then he watched as it gurgled its way into a whiskey tumbler.",
     "discourseSegments": [],
@@ -661,6 +663,7 @@
   {
     "id": "levinrappaporthovav1995_ex6_22a",
     "source": {"bibkey": "levin-hovav-1995", "paperLabel": "(22a) of chapter 6"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "In the hall ticked the long-case clock that had been a wedding present from her parents.",
     "discourseSegments": [],

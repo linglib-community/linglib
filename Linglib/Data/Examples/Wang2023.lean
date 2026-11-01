@@ -279,6 +279,7 @@ def ex_78a : Datum :=
   { id := "wang2023_78a"
     source := ⟨"wang-r-2023", "(78a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "mele1250"
     primaryText := "korua/koteu ku-roro."
     glossedTokens := [("korua/koteu", "2DU/2PL"), ("ku-roro", "PF-go.NSG")]

@@ -526,6 +526,7 @@ def s100 : Datum :=
   { id := "imanishi2020_s100"
     source := ⟨"imanishi-2020", "(100)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kaqc1270"
     primaryText := "x-ø-u-chäp [q'et-e-n-ik] r-ichin ri ak'wal."
     glossedTokens := [("x-ø-u-chäp", "PFV-B3SG-A3SG-begin"), ("q'et-e-n-ik", "hug-BV-ANTIP-NMLZ"), ("r-ichin", "A3SG-RN"), ("ri", "DET"), ("ak'wal", "child")]

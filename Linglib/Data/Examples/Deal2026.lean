@@ -240,6 +240,7 @@ def ex_66b : Datum :=
   { id := "deal2026_66b"
     source := ⟨"deal-2026", "(66b)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nezp1238"
     primaryText := "Weet’u pro hi-cuukwe-ce-∅ yox̂ ke hi-weeqi-sa-qa watiisx."
     glossedTokens := [("Weet’u", "neg"), ("pro", "3sg"), ("hi-cuukwe-ce-∅", "3subj-know-imperf-pres"), ("yox̂", "rp.nom"), ("ke", "CĀ"), ("hi-weeqi-sa-qa", "3subj-rain-imperf-rec.past"), ("watiisx", "one.day.away")]

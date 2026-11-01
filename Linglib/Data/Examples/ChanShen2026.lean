@@ -58,6 +58,7 @@ def ex4b : Datum :=
   { id := "chanshen2026_ex4b"
     source := ⟨"chan-shen-2026", "(4b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "sing1272"
     primaryText := "What the hell you think Natalie is baking at 3am ah?"
     glossedTokens := []

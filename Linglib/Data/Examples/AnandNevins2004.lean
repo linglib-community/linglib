@@ -435,6 +435,7 @@ def ex_50 : Datum :=
   { id := "anandnevins2004_50"
     source := ⟨"anand-nevins-2004", "(50)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "stan1293"
     primaryText := "I met John a week ago. In precisely two days he was sick."
     glossedTokens := []

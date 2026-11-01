@@ -2,6 +2,7 @@
   {
     "id": "thomasdeo2020_4",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(4)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Miniature amaryllis are apt to be just as tall as hybrid amaryllis.",
     "discourseSegments": [],
@@ -20,6 +21,7 @@
   {
     "id": "thomasdeo2020_5",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(5), (21)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Fafen, the daughter just older than Siri, had done the family duty and become a monk.",
     "discourseSegments": [],
@@ -164,6 +166,7 @@
   {
     "id": "thomasdeo2020_22",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(22)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "The camera was a plastic but weighty box just bigger than a card deck.",
     "discourseSegments": [],
@@ -182,6 +185,7 @@
   {
     "id": "thomasdeo2020_23",
     "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(23)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "At 11, Samantha is just over 5 feet tall and has wavy black hair.",
     "discourseSegments": [],

@@ -435,6 +435,7 @@ def ex41a : Datum :=
   { id := "dayal2025_ex41a"
     source := ⟨"bhatt-dayal-2020", "(10b)"⟩
     reportedIn := some ⟨"dayal-2025", "(41a)"⟩
+    method := some .corpus
     language := "hind1269"
     primaryText := "koi: nahĩ: ja:nta: [ki kya: TiTo sTa:lin-se mile the↑]."
     glossedTokens := [("koi:", "someone"), ("nahĩ:", "not"), ("ja:nta:", "knows"), ("ki", "SUB"), ("kya:", "PQP"), ("TiTo", "Tito"), ("sTa:lin-se", "Stalin-with"), ("mile", "met"), ("the", "")]

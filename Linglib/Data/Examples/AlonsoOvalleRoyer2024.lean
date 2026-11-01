@@ -45,6 +45,7 @@ def ex_22_24 : Datum :=
   { id := "alonsoovalleroyer2024_22_24"
     source := ⟨"alonso-ovalle-royer-2024", "(22)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "chuj1250"
     primaryText := "Yalnhej mach ix-chanhalw-i t'a k'inh."
     glossedTokens := [("Yalnhej", "YALNHEJ"), ("mach", "who"), ("ix-chanhalw-i", "PFV-dance-IV"), ("t'a", "PREP"), ("k'inh", "party")]

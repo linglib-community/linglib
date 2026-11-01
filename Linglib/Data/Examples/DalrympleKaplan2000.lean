@@ -201,6 +201,7 @@ def ex_64 : Datum :=
   { id := "dalrymplekaplan2000_64"
     source := ⟨"pullum-zwicky-1986", "p. 771"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(64)"⟩
+    method := some .elicitation
     language := "stan1295"
     primaryText := "weil ihr das Haus und Franz den Garten kauft"
     glossedTokens := [("weil", "because"), ("ihr", "you"), ("das", "the"), ("Haus", "house"), ("und", "and"), ("Franz", "Franz"), ("den", "the"), ("Garten", "garden"), ("kauft", "buy")]

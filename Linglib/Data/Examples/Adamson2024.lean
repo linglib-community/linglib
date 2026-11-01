@@ -266,6 +266,7 @@ def ex_88 : Datum :=
   { id := "adamson2024_88"
     source := ⟨"adamson-2024", "(88)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nucl1622"
     primaryText := "igih u-pe waninggap k-a."
     glossedTokens := [("igih", "name"), ("u-pe", "II-DIST"), ("waninggap", "good"), ("k-a", "PRS.NEUT-3.A")]

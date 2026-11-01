@@ -32,6 +32,7 @@ def ex_6_25a : Datum :=
   { id := "grubic2015_6_25a"
     source := ⟨"grubic-2015", "ch. 6 (25a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "ngam1282"
     primaryText := "Salko bano=i Dimza yak'i."
     glossedTokens := [("Salko", "build.PFV"), ("bano=i", "house=BM"), ("Dimza", "Dimza"), ("yak'i.", "only")]
@@ -58,6 +59,7 @@ def ex_6_25c : Datum :=
   { id := "grubic2015_6_25c"
     source := ⟨"grubic-2015", "ch. 6 (25c)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "ngam1282"
     primaryText := "Salko bano=i Dimza yak'i ɗo?"
     glossedTokens := [("Salko", "build.PFV"), ("bano=i", "house=BM"), ("Dimza", "Dimza"), ("yak'i", "only"), ("ɗo?", "Q")]
@@ -175,6 +177,7 @@ def ex_6_150a : Datum :=
   { id := "grubic2015_6_150a"
     source := ⟨"grubic-2015", "ch. 6 (150a)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "ngam1282"
     primaryText := "Hasha hoti maɗɗi a esha Lakka, Gamba me esha=i te yak'i."
     glossedTokens := [("Hasha", "Hasha"), ("hoti", "day"), ("maɗɗi", "some"), ("a", "3SG.HAB"), ("esha", "call.HAB"), ("Lakka,", "Lakka"), ("Gamba", "Gamba"), ("me", "but"), ("esha=i", "call.HAB=BM"), ("te", "3SG.F"), ("yak'i.", "only")]

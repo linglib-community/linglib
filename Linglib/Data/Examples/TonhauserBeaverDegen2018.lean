@@ -136,6 +136,7 @@ def tbd2018_1a_sampleTarget_nominalAppositive : Datum :=
   { id := "tbd2018_1a_sampleTarget_nominalAppositive"
     source := ⟨"tonhauser-beaver-degen-2018", "(14a), Exp 1a materials, sample target stimulus"⟩
     reportedIn := none
+    method := some .experiment
     language := "stan1293"
     primaryText := "Ronald asks: Did Richie, a stuntman, break his leg?"
     glossedTokens := []
