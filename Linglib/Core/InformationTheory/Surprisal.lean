@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
+public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.MeasureTheory.Measure.Real
 
@@ -15,7 +16,8 @@ public import Mathlib.MeasureTheory.Measure.Real
 The surprisal, or information content, of a point under a measure is the negative logarithm of
 the mass of the point, an extended nonnegative real: a point of mass zero has infinite surprisal.
 The negative logarithm of a product of masses at most one is the sum of their negative logarithms,
-and the summand of Shannon entropy at a point is the mass of the point times its surprisal.
+and the summand of Shannon entropy at a point is the mass of the point times its surprisal. The
+exponential of minus the surprisal of a point of mass at most one is its mass.
 
 ## Implementation notes
 
@@ -61,6 +63,11 @@ noncomputable def surprisal (μ : Measure S) (s : S) : ℝ≥0∞ := (-ENNReal.l
   rw [surprisal, EReal.toENNReal_eq_top_iff, EReal.neg_eq_top_iff, ENNReal.log_eq_bot_iff]
 
 theorem surprisal_ne_top_iff : surprisal μ s ≠ ∞ ↔ μ {s} ≠ 0 := surprisal_eq_top_iff.not
+
+/-- The exponential of minus the surprisal of a point of mass at most one is its mass. -/
+theorem exp_neg_surprisal (h : μ {s} ≤ 1) : EReal.exp (-(surprisal μ s : EReal)) = μ {s} := by
+  rw [surprisal, EReal.coe_toENNReal (EReal.neg_nonneg.2 (ENNReal.log_le_zero_iff.2 h)), neg_neg,
+    ENNReal.exp_log]
 
 @[simp] theorem surprisal_eq_zero_iff : surprisal μ s = 0 ↔ 1 ≤ μ {s} := by
   rw [surprisal, EReal.toENNReal_eq_zero_iff, EReal.neg_le, neg_zero, ENNReal.zero_le_log_iff]

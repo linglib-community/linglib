@@ -706,6 +706,30 @@ theorem speaker_real_singleton_lt_iff (hα : 0 ≤ α) (h0 : ∃ u, ∀ w, b o {
         (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
     (ENNReal.sum_ne_top.mpr fun _ _ ↦ geomMean_weight_ne_top hα _)
 
+/-- The odds of two utterances under the speaker are the odds of the geometric means of their
+listeners' masses over her belief, to the power `α`, times the exponential of the cost
+difference. -/
+theorem speaker_real_singleton_div (hα : 0 ≤ α) (h : ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0) (u' : U) :
+    (speaker α C L b o).real {u'} / (speaker α C L b o).real {u} =
+      (((b o).geomMean fun w ↦ L u' {w}).toReal / ((b o).geomMean fun w ↦ L u {w}).toReal) ^ α *
+        Real.exp (-(α * (C u' - C u))) := by
+  have hu := Measure.geomMean_ne_zero h
+  have hpos : 0 < ((b o).geomMean fun w ↦ L u {w}).toReal :=
+    ENNReal.toReal_pos hu (Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _)
+  have hZ : (0 : ℝ) < ∑ v, ((b o).geomMean (fun w ↦ L v {w}) ^ α *
+      ENNReal.ofReal (Real.exp (-(α * C v)))).toReal :=
+    Finset.sum_pos' (fun _ _ ↦ ENNReal.toReal_nonneg) ⟨u, Finset.mem_univ u,
+      ENNReal.toReal_pos (weight_ne_zero hα hu _) (geomMean_weight_ne_top hα _)⟩
+  rw [speaker, Kernel.ofWeights_real_singleton _ _ (fun _ ↦ geomMean_weight_ne_top hα _),
+    Kernel.ofWeights_real_singleton _ _ (fun _ ↦ geomMean_weight_ne_top hα _),
+    div_div_div_cancel_right₀ hZ.ne', ENNReal.toReal_mul, ENNReal.toReal_mul,
+    ← ENNReal.toReal_rpow, ← ENNReal.toReal_rpow, ENNReal.toReal_ofReal (Real.exp_pos _).le,
+    ENNReal.toReal_ofReal (Real.exp_pos _).le,
+    Real.div_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg, mul_sub, neg_sub, Real.exp_sub,
+    Real.exp_neg, Real.exp_neg]
+  have := Real.rpow_pos_of_pos hpos α
+  field_simp
+
 /-- The speaker never produces an utterance whose listener rules out a state she entertains. -/
 theorem speaker_apply_singleton_eq_zero_iff [IsFiniteMeasure (b o)] (hα : 0 < α) :
     speaker α C L b o {u} = 0 ↔ ∃ w, b o {w} ≠ 0 ∧ L u {w} = 0 := by
@@ -1052,15 +1076,8 @@ theorem speaker_dirac_real_singleton_div [IsFiniteKernel L] (hα : 0 ≤ α) (h 
     (u' : U) :
     (speaker α C L Measure.dirac w).real {u'} / (speaker α C L Measure.dirac w).real {u} =
       ((L u' {w}).toReal / (L u {w}).toReal) ^ α * Real.exp (-(α * (C u' - C u))) := by
-  have hpos : 0 < (L u {w}).toReal := ENNReal.toReal_pos h (measure_ne_top _ _)
-  have hZ : (0 : ℝ) < ∑ v, (L v {w} ^ α).toReal * Real.exp (-(α * C v)) :=
-    Finset.sum_pos' (fun v _ ↦ by positivity) ⟨u, Finset.mem_univ u, by
-      rw [← ENNReal.toReal_rpow]; positivity⟩
-  rw [speaker_dirac_real_singleton hα, speaker_dirac_real_singleton hα,
-    div_div_div_cancel_right₀ hZ.ne', ← ENNReal.toReal_rpow, ← ENNReal.toReal_rpow,
-    Real.div_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg, mul_sub, neg_sub, Real.exp_sub,
-    Real.exp_neg, Real.exp_neg]
-  field_simp
+  simpa only [Measure.geomMean_dirac] using speaker_real_singleton_div (C := C) (L := L)
+    (b := Measure.dirac) (o := w) hα (fun _ hw' ↦ eq_of_dirac_apply_singleton_ne_zero hw' ▸ h) u'
 
 /-- Of two utterances with listener mass at the state, the speaker prefers the one of greater
 utility, the log of the listener's mass less the cost. -/

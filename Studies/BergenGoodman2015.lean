@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.BinaryEntropy
+public import Linglib.Core.Topology.UnitInterval
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Data.Examples.BergenGoodman2015
 public import Linglib.Data.Examples.Readers
@@ -9,15 +10,15 @@ public import Linglib.Data.Examples.Readers
 # Bergen and Goodman (2015): The Strategic Use of Noise in Pragmatic Reasoning
 
 This file models rational speech acts over a noisy channel from the utterance a speaker intends to
-the one a listener perceives. A listener inverts the channel composed with a speaker, a merely
-truthful one for the literal listener and the pragmatic speaker for the pragmatic listener. The
-speaker's utility is the log listener averaged over what may be perceived, so she addresses the
-geometric pool of the listener over the channel, [which is the listener itself when there is no
-noise](##geomPool_dirac). A sentence fragment has no literal meaning, yet [the pragmatic listener
-reads "Bob" as Bob having gone](##Ellipsis.L1_subject) at every deletion rate strictly between zero
-and one. Stress lowers the rate at which a name is misheard, so [a speaker who knows that only Bob
-went prefers to stress it](##Prosody.S1_bobWent_lt_BOB_went), and [one unsure whether Alice also
-went prefers it less](##Prosody.stressOdds_bobAtLeast_lt_onlyBob).
+the one a listener perceives. Each listener inverts the channel composed with a speaker, merely
+truthful for the literal listener. The speaker addresses the geometric pool of the listener over the
+channel, [which is the listener itself when there is no noise](##geomPool_dirac), and at a belief
+[she is the Luce choice of minus the channel-expected divergence of the listener from her
+belief](##speaker_geomPool_eq_ofWeights). A sentence fragment has no literal meaning, yet [the
+pragmatic listener reads "Bob" as Bob having gone](##Ellipsis.L1_subject) at every deletion rate
+strictly between zero and one. Stress lowers the rate at which a name is misheard, so [a speaker who
+knows that only Bob went prefers to stress it](##Prosody.S1_bobWent_lt_BOB_went), and [one unsure
+whether Alice also went prefers it less](##Prosody.stressOdds_bobAtLeast_lt_onlyBob).
 
 ## Implementation notes
 
@@ -31,12 +32,10 @@ went prefers it less](##Prosody.stressOdds_bobAtLeast_lt_onlyBob).
 * Prosody is perceived without noise, so the stressed and unstressed forms have separate channels.
   Any stressed rate below an unstressed rate of at most a half gives the results, not only the
   paper's half. The conjunction is never misheard and never stressed.
-* The paper's speaker over a belief maximizes minus the expected divergence of the listener from her
-  belief. This is the expected log listener under her belief plus its entropy, a constant across
-  utterances, so she is `RSA.speaker` at her belief. At depth one her observation enters the
-  literal listener only through a factor the same for every utterance, so she addresses the literal
-  listener over meanings. The paper gives no observation model; the speaker who knows only that Bob
-  went believes the two states in which he went equally likely.
+* The paper's listener reasons about the speaker's observation as well as the meaning. At depth one
+  the observation enters the literal listener only through a factor the same for every utterance,
+  so the speaker addresses the literal listener over meanings. The paper gives no observation model;
+  the speaker who knows only that Bob went believes the two states in which he went equally likely.
 
 ## TODO
 
@@ -83,6 +82,36 @@ instance (N : V → Measure U) (L : U → Measure W) [∀ u, IsFiniteMeasure (L 
 theorem geomPool_dirac [MeasurableSingletonClass U] (L : U → Measure W) :
     geomPool Measure.dirac L = L :=
   funext fun u ↦ Measure.ext_of_singleton fun w ↦ by simp
+
+/-- At a belief, the speaker over the channel weighs an utterance by the exponential of minus the
+channel-expected divergence of the listener from her belief, to the power `α`, times the cost
+weight: she is the Luce choice of the divergence utility of p. 345. -/
+theorem speaker_geomPool_eq_ofWeights {O : Type*} [MeasurableSpace O] [Countable O]
+    [MeasurableSingletonClass O] [MeasurableSpace V] [Fintype V] [MeasurableSingletonClass V]
+    [MeasurableSingletonClass U] {α : ℝ} (hα : 0 ≤ α)
+    (C : V → ℝ) (N : V → Measure U) [∀ v, IsProbabilityMeasure (N v)] (L : U → Measure W)
+    [∀ u, IsProbabilityMeasure (L u)] (b : O → Measure W) [∀ o, IsProbabilityMeasure (b o)] :
+    speaker α C (geomPool N L) b = Kernel.ofWeights fun o v ↦
+      EReal.exp (-((∫⁻ u, klDiv (b o) (L u) ∂N v : ℝ≥0∞) : EReal)) ^ α *
+        ENNReal.ofReal (exp (-(α * C v))) := by
+  have hc0 (x : ℝ≥0∞) (hx : x ≠ ∞) : EReal.exp (-(x : EReal)) ^ α ≠ 0 :=
+    (ENNReal.rpow_pos (pos_iff_ne_zero.2 (by simpa using hx))
+      (by simp [EReal.coe_ennreal_ne_bot])).ne'
+  have hct (x : ℝ≥0∞) : EReal.exp (-(x : EReal)) ^ α ≠ ∞ :=
+    ENNReal.rpow_ne_top_of_nonneg hα (by simp [EReal.coe_ennreal_ne_bot])
+  rw [speaker]
+  refine Kernel.ofWeights_eq_of_mul
+    (c := fun o ↦ EReal.exp (-(ENNReal.ofReal (Hm[b o]) : EReal)) ^ α)
+    (fun o ↦ hc0 _ ENNReal.ofReal_ne_top) (fun o ↦ hct _) fun o v ↦ ?_
+  simp_rw [geomPool_apply_singleton]
+  rw [Measure.geomMean_comm (b o) (N v) fun w u ↦ L u {w}]
+  simp_rw [geomMean_eq_exp_neg_lintegral_surprisal, lintegral_surprisal_eq_ofReal_add_klDiv]
+  rw [Measure.geomMean_exp_neg, lintegral_add_left measurable_const, lintegral_const,
+    measure_univ, mul_one, EReal.coe_ennreal_add, EReal.neg_add
+      (.inl (EReal.coe_ennreal_ne_bot _)) (.inr (EReal.coe_ennreal_ne_bot _)), sub_eq_add_neg,
+    EReal.exp_add,
+    ENNReal.mul_rpow_of_nonneg _ _ hα]
+  ring
 
 end GeomPool
 
@@ -349,14 +378,6 @@ theorem N_apply_singleton (u v : Utterance) :
   rw [N, Kernel.ofFunOfCountable_apply, bernoulliMeasure_def]
   simp [Measure.dirac_apply', Set.indicator_apply, eq_comm]
 
-private theorem coe_toNNReal_add_symm (p : I) :
-    (unitInterval.toNNReal p : ℝ≥0∞) + unitInterval.toNNReal (σ p) = 1 := by
-  rw [← ENNReal.coe_add, toNNReal_add_toNNReal_symm, ENNReal.coe_one]
-
-private theorem coe_toNNReal_symm_add (p : I) :
-    (unitInterval.toNNReal (σ p) : ℝ≥0∞) + unitInterval.toNNReal p = 1 := by
-  rw [add_comm, coe_toNNReal_add_symm]
-
 -- On each perception of a sentence about Bob, the literal listener's mass at the state in which
 -- only Bob went is half the probability of that perception, and at the state in which both went
 -- it is a half.
@@ -365,11 +386,10 @@ theorem L0_of_bob {u a : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) (ha : 
   simp only [L0, listener_apply_singleton]
   rcases hu with rfl | rfl <;> cases a <;>
     simp_all [Measure.comp_apply_singleton, truthful_apply_singleton, sum_univ_utt, sum_univ_mean,
-      N_apply_singleton, lit, slip, rate, coe_toNNReal_add_symm, coe_toNNReal_symm_add,
-      one_add_one_eq_two, ENNReal.div_eq_inv_mul]
+      N_apply_singleton, lit, slip, rate, one_add_one_eq_two, ENNReal.div_eq_inv_mul]
 
-/-- A speaker who knows that only Bob went weighs a sentence about Bob by half the exponential of
-minus the entropy of its channel. -/
+-- A speaker who knows that only Bob went weighs a sentence about Bob by half the exponential of
+-- minus the entropy of its channel.
 theorem geomPool_onlyBob {u : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) :
     geomPool (N ε ε') (L0 ε ε') u {.onlyBob} =
       2⁻¹ * ENNReal.ofReal (exp (-binEntropy (rate ε ε' u))) := by
@@ -396,34 +416,30 @@ theorem geomMean_belief_bobAtLeast {u : Utterance} (hu : u = .bobWent ∨ u = .B
     uniformOn_finset_real_singleton, uniformOn_finset_real_singleton, geomPool_both hu]
   simp
 
-private theorem S1_real_div (o : Observation) {u : Utterance}
-    (h : (belief o).geomMean (fun w ↦ geomPool (N ε ε') (L0 ε ε') u {w}) ≠ 0) (u' : Utterance) :
-    (S1 ε ε' o).real {u'} / (S1 ε ε' o).real {u} =
-      ((belief o).geomMean fun w ↦ geomPool (N ε ε') (L0 ε ε') u' {w}).toReal /
-        ((belief o).geomMean fun w ↦ geomPool (N ε ε') (L0 ε ε') u {w}).toReal := by
-  have hw (v : Utterance) :
-      (belief o).geomMean (fun w ↦ geomPool (N ε ε') (L0 ε ε') v {w}) ≠ ∞ :=
-    Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _
-  have hZ : ∑ v, ((belief o).geomMean fun w ↦ geomPool (N ε ε') (L0 ε ε') v {w}).toReal ≠ 0 := by
-    refine (sum_pos' (fun _ _ ↦ ENNReal.toReal_nonneg) ⟨u, mem_univ u, ?_⟩).ne'
-    exact ENNReal.toReal_pos h (hw u)
-  simp only [S1, speaker, ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, exp_zero,
-    ENNReal.ofReal_one, mul_one]
-  rw [Kernel.ofWeights_real_singleton _ _ hw, Kernel.ofWeights_real_singleton _ _ hw,
-    div_div_div_cancel_right₀ hZ]
-
 private theorem geomPool_onlyBob_ne_zero {u : Utterance} (hu : u = .bobWent ∨ u = .BOB_went) :
     geomPool (N ε ε') (L0 ε ε') u {.onlyBob} ≠ 0 := by
   rw [geomPool_onlyBob hu]
   exact mul_ne_zero (by simp) (ENNReal.ofReal_pos.mpr (exp_pos _)).ne'
 
+private theorem geomPool_bobWent_ne_zero (o : Observation) (w : Meaning) (hw : belief o {w} ≠ 0) :
+    geomPool (N ε ε') (L0 ε ε') .bobWent {w} ≠ 0 := by
+  cases w with
+  | onlyAlice =>
+    cases o with
+    | onlyBob => simp [belief, Measure.dirac_apply'] at hw
+    | bobAtLeast =>
+      rw [belief, uniformOn_finset_apply_singleton] at hw
+      simp at hw
+  | onlyBob => exact geomPool_onlyBob_ne_zero (.inl rfl)
+  | both => simp [geomPool_both (.inl rfl)]
+
 theorem stressOdds_onlyBob :
     stressOdds ε ε' .onlyBob = exp (binEntropy ε - binEntropy ε') := by
-  rw [stressOdds, S1_real_div .onlyBob (by
-      rw [geomMean_belief_onlyBob]; exact geomPool_onlyBob_ne_zero (.inl rfl)),
+  rw [stressOdds, S1, speaker_real_singleton_div zero_le_one (geomPool_bobWent_ne_zero _),
     geomMean_belief_onlyBob, geomMean_belief_onlyBob, geomPool_onlyBob (.inr rfl),
     geomPool_onlyBob (.inl rfl)]
-  simp only [rate, ENNReal.toReal_mul, ENNReal.toReal_ofReal (exp_pos _).le]
+  simp only [rate, rpow_one, Pi.zero_apply, sub_zero, mul_zero, neg_zero, exp_zero, mul_one,
+    ENNReal.toReal_mul, ENNReal.toReal_ofReal (exp_pos _).le]
   rw [mul_div_mul_left _ _ (by simp), ← exp_sub]
   ring_nf
 
@@ -431,15 +447,12 @@ theorem stressOdds_onlyBob :
 -- of the odds of a speaker who knows that only Bob went.
 theorem stressOdds_bobAtLeast :
     stressOdds ε ε' .bobAtLeast = √(stressOdds ε ε' .onlyBob) := by
-  rw [stressOdds, stressOdds, S1_real_div .bobAtLeast (by
-      rw [geomMean_belief_bobAtLeast (.inl rfl)]
-      exact mul_ne_zero (ENNReal.rpow_pos (pos_iff_ne_zero.mpr
-        (geomPool_onlyBob_ne_zero (.inl rfl))) (measure_ne_top _ _)).ne' (by simp)),
-    S1_real_div .onlyBob (by
-      rw [geomMean_belief_onlyBob]; exact geomPool_onlyBob_ne_zero (.inl rfl)),
-    geomMean_belief_bobAtLeast (.inr rfl), geomMean_belief_bobAtLeast (.inl rfl),
-    geomMean_belief_onlyBob, geomMean_belief_onlyBob]
-  simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow]
+  rw [stressOdds, stressOdds, S1, speaker_real_singleton_div zero_le_one
+      (geomPool_bobWent_ne_zero _), speaker_real_singleton_div zero_le_one
+      (geomPool_bobWent_ne_zero _), geomMean_belief_bobAtLeast (.inr rfl),
+    geomMean_belief_bobAtLeast (.inl rfl), geomMean_belief_onlyBob, geomMean_belief_onlyBob]
+  simp only [rpow_one, Pi.zero_apply, sub_zero, mul_zero, neg_zero, exp_zero, mul_one,
+    ENNReal.toReal_mul, ← ENNReal.toReal_rpow]
   rw [mul_div_mul_right _ _ (by simp), ← div_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg,
     sqrt_eq_rpow, one_div]
 
@@ -452,15 +465,9 @@ private theorem binEntropy_lt (hε' : ε' < ε) (hε : (ε : ℝ) ≤ 2⁻¹) :
 below an unstressed rate of at most a half. -/
 theorem S1_bobWent_lt_BOB_went (hε' : ε' < ε) (hε : (ε : ℝ) ≤ 2⁻¹) :
     (S1 ε ε' .onlyBob).real {.bobWent} < (S1 ε ε' .onlyBob).real {.BOB_went} := by
-  have h0 : ∀ w, belief .onlyBob {w} ≠ 0 → geomPool (N ε ε') (L0 ε ε') .bobWent {w} ≠ 0 :=
-    fun w hw ↦ by
-      obtain rfl : w = .onlyBob := by
-        by_contra h
-        exact hw (by rw [belief, Measure.dirac_apply' _ (.singleton w),
-          Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr (Ne.symm h))])
-      exact geomPool_onlyBob_ne_zero (.inl rfl)
   have hpos : 0 < (S1 ε ε' .onlyBob).real {.bobWent} :=
-    ENNReal.toReal_pos (speaker_apply_singleton_ne_zero zero_le_one h0) (measure_ne_top _ _)
+    ENNReal.toReal_pos (speaker_apply_singleton_ne_zero zero_le_one (geomPool_bobWent_ne_zero _))
+      (measure_ne_top _ _)
   rw [← one_lt_div hpos, ← stressOdds, stressOdds_onlyBob, one_lt_exp_iff, sub_pos]
   exact binEntropy_lt hε' hε
 

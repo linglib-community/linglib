@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Pow.NNReal
 public import Linglib.Core.MeasureTheory.Measure.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.ERealExp
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Prod
 
@@ -16,7 +17,9 @@ public import Mathlib.MeasureTheory.Measure.Prod
 The geometric mean of a function `f` under a measure `μ` on a finite type is the product of the
 values of `f`, each to the power of the mass of its atom. Under a probability measure it is the
 exponential of the expected logarithm of `f`, so it is the value itself when `f` is constant on
-the atoms of positive mass, and evaluation at a point under a point mass.
+the atoms of positive mass, and evaluation at a point under a point mass. Geometric means under two
+measures commute, and the mean of the exponential of minus a function is the exponential of minus
+its integral.
 
 ## Main definitions
 
@@ -110,6 +113,14 @@ theorem geomMean_prod {β : Type*} [MeasurableSpace β] [Fintype β] (μ : Measu
     measureReal_prod_prod, ← ENNReal.prod_rpow_of_nonneg measureReal_nonneg, ← ENNReal.rpow_mul,
     mul_comm]
 
+/-- Geometric means under two measures commute. -/
+theorem geomMean_comm {β : Type*} [MeasurableSpace β] [Fintype β] (μ : Measure α) (ν : Measure β)
+    (f : α → β → ℝ≥0∞) :
+    (μ.geomMean fun a ↦ ν.geomMean (f a)) = ν.geomMean fun b ↦ μ.geomMean fun a ↦ f a b := by
+  simp only [geomMean, ← ENNReal.prod_rpow_of_nonneg measureReal_nonneg, ← ENNReal.rpow_mul]
+  rw [Finset.prod_comm]
+  exact Finset.prod_congr rfl fun _ _ ↦ Finset.prod_congr rfl fun _ _ ↦ by rw [mul_comm]
+
 variable [MeasurableSingletonClass α]
 
 @[simp] theorem geomMean_const (μ : Measure α) [IsProbabilityMeasure μ] (c : ℝ≥0∞) :
@@ -122,6 +133,31 @@ positive mass is that constant. -/
 theorem geomMean_of_forall_eq [IsProbabilityMeasure μ] (h : ∀ a, μ {a} ≠ 0 → f a = c) :
     μ.geomMean f = c :=
   (geomMean_congr h).trans (geomMean_const μ c)
+
+/-- The geometric mean of the exponential of minus a function is the exponential of minus its
+integral. -/
+theorem geomMean_exp_neg [IsFiniteMeasure μ] (f : α → ℝ≥0∞) :
+    (μ.geomMean fun a ↦ EReal.exp (-(f a : EReal))) =
+      EReal.exp (-((∫⁻ a, f a ∂μ : ℝ≥0∞) : EReal)) := by
+  rw [lintegral_fintype]
+  by_cases h : ∃ a, μ {a} ≠ 0 ∧ f a = ∞
+  · obtain ⟨a, ha, hf⟩ := h
+    rw [geomMean_eq_zero_iff.2 ⟨a, ha, by simp [hf]⟩, ENNReal.sum_eq_top.2
+      ⟨a, Finset.mem_univ a, by rw [hf, ENNReal.top_mul ha]⟩]
+    simp
+  · push Not at h
+    have hterm (a : α) : f a * μ {a} ≠ ∞ := by
+      rcases eq_or_ne (μ {a}) 0 with h0 | h0
+      · simp [h0]
+      · exact ENNReal.mul_ne_top (h a h0) (measure_ne_top _ _)
+    rw [geomMean_congr (g := fun a ↦ ENNReal.ofReal (Real.exp (-(f a).toReal))) fun a ha ↦ by
+        rw [← EReal.coe_ennreal_toReal (h a ha), ← EReal.coe_neg, EReal.exp_coe],
+      geomMean_eq_ofReal_exp_sum_log (fun _ _ ↦ (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne')
+        fun _ _ ↦ ENNReal.ofReal_ne_top,
+      ← EReal.coe_ennreal_toReal (ENNReal.sum_ne_top.2 fun a _ ↦ hterm a), ← EReal.coe_neg,
+      EReal.exp_coe, ENNReal.toReal_sum fun a _ ↦ hterm a, ← Finset.sum_neg_distrib]
+    simp only [ENNReal.toReal_ofReal (Real.exp_pos _).le, Real.log_exp, ENNReal.toReal_mul,
+      measureReal_def, mul_comm, neg_mul]
 
 /-- Under a point mass the geometric mean is evaluation at the point. -/
 @[simp] theorem geomMean_dirac (a : α) (f : α → ℝ≥0∞) : (dirac a).geomMean f = f a :=
