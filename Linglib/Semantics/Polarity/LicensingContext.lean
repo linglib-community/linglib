@@ -369,7 +369,7 @@ theorem holds_negation (s : Negation.Strength) : negation.licenser.Holds s.toSig
 theorem holds_nobody_iff {s : Negation.Strength} :
     nobody.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
-    ⟨(rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no _,
+    ⟨rightAntiAdditive_no _,
       eq_false fun h ↦ p.nonempty.elim fun _ hx ↦ h hx trivial⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
   have := (Signature.holdsFor_antiAddMult_iff.mp (h ⟨⟨Bool, Set.univ⟩, Set.univ_nonempty⟩)).2.1
@@ -400,7 +400,7 @@ theorem holds_atMost_iff {s : Negation.Strength} :
 theorem holds_universalRestrictor_iff {s : Negation.Strength} :
     universalRestrictor.licenser.Holds s.toSignature ↔ s ≤ .antiAdditive := by
   refine holds_toSignature_iff (fun p ↦ Signature.holdsFor_antiAdd_iff.mpr
-    ⟨(leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every _,
+    ⟨leftAntiAdditive_every _,
       eq_false fun h ↦ p.nonuniversal.elim fun _ hx ↦ hx (h trivial)⟩) fun s hs h ↦ ?_
   obtain rfl : s = .antiMorphic := by revert hs; cases s <;> decide
   have := (Signature.holdsFor_antiAddMult_iff.mp
