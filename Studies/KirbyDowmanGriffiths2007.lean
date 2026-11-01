@@ -315,12 +315,10 @@ theorem prior_real_singleton [NeZero k] {α : ℝ} (hα : 0 < α) (h : Fin n →
   have hk : (0 : ℝ) < k := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne k)
   have hΓ := (Real.Gamma_pos_of_pos hα).ne'
   have hΓk := (Real.Gamma_pos_of_pos (mul_pos hk hα)).ne'
-  have hx {x : ℝ} (hx : 0 < x) (j : ℕ) : x ≠ -j := ((neg_nonpos.2 j.cast_nonneg).trans_lt hx).ne'
-  rw [prior, polyaUrn_real_singleton (fun _ ↦ hα), polyaUrnProb, sum_countVec, sum_const,
-    card_univ, Fintype.card_fin, nsmul_eq_mul,
-    ← Real.Gamma_add_nat_div_Gamma_eq _ (hx (mul_pos hk hα))]
-  simp_rw [← Real.Gamma_add_nat_div_Gamma_eq _ (hx hα), countVec]
-  rw [prod_div_distrib, prod_const, card_univ, Fintype.card_fin]
+  rw [prior, polyaUrn_real_singleton (fun _ ↦ hα), polyaUrnProb_eq_prod_Gamma_div (fun _ ↦ hα),
+    sum_countVec, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, prod_div_distrib,
+    prod_const, card_univ, Fintype.card_fin]
+  simp only [countVec]
   field_simp
 
 -- At no noise, at the noise `(k - 1) / k` and at noise one, every datum has the same
