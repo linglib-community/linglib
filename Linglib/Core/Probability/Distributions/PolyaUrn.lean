@@ -45,8 +45,9 @@ draw of `c` adds `Pi.single c 1` to the counts, so each step of a sequence is co
 
 ## TODO
 
-* The limiting frequencies have the Dirichlet law with parameters `θ`, of which the probability
-  of counts `x` is the moment `∫ ∏ c, p c ^ x c`; mathlib has no Dirichlet law yet.
+* The frequencies of the colours among the draws converge almost surely to a limit with the
+  Dirichlet law; the urn as a Dirichlet mixture of independent draws is in
+  `Linglib.Core.Probability.Distributions.Dirichlet`.
 * With `m` colours of weight `κ`, the partition of the draws by colour is the Pitman–Yor
   partition with discount `-κ` and concentration `m κ`.
 
@@ -168,6 +169,11 @@ theorem polyaUrnProb_countVec_cons [DecidableEq α] (c : α) {n : ℕ} (s : Fin 
       polyaUrnProb θ (countVec s) * polyaUrnPredictive θ (countVec s) c := by
   rw [countVec_cons, polyaUrnProb_add_single]
 
+theorem polyaUrnProb_comp_equiv {β : Type*} [Fintype β] (e : β ≃ α) (x : α → ℕ) :
+    polyaUrnProb (θ ∘ e) (x ∘ e) = polyaUrnProb θ x := by
+  simp only [polyaUrnProb, Function.comp_apply, Equiv.sum_comp]
+  exact congrArg (· / _) (Equiv.prod_comp e fun c ↦ (ascPochhammer ℝ (x c)).eval (θ c))
+
 theorem polyaUrnProb_eq_prod_pow_of_sum_le_one {x : α → ℕ} (hx : ∑ c, x c ≤ 1) :
     polyaUrnProb θ x = ∏ c, polyaUrnPredictive θ 0 c ^ x c := by
   have hpow (a : ℝ) {m : ℕ} (hm : m ≤ 1) : (ascPochhammer ℝ m).eval a = a ^ m := by
@@ -204,6 +210,22 @@ theorem polyaUrnProb_pos (hθ : ∀ i, 0 < θ i) (x : α → ℕ) : 0 < polyaUrn
   cases isEmpty_or_nonempty α
   · simp
   · exact ascPochhammer_pos _ _ (sum_pos (fun i _ ↦ hθ i) univ_nonempty)
+
+/-- Merging all colours but the first gives a two-colour urn, and given its counts the remaining
+colours are drawn from their own urn. -/
+theorem polyaUrnProb_eq_mul_tail {n : ℕ} {θ : Fin (n + 2) → ℝ} (hθ : ∀ i, 0 < θ i)
+    (x : Fin (n + 2) → ℕ) :
+    polyaUrnProb θ x = (ascPochhammer ℝ (x 0)).eval (θ 0) *
+        (ascPochhammer ℝ (∑ i : Fin (n + 1), x i.succ)).eval (∑ i : Fin (n + 1), θ i.succ) /
+        (ascPochhammer ℝ (x 0 + ∑ i : Fin (n + 1), x i.succ)).eval
+          (θ 0 + ∑ i : Fin (n + 1), θ i.succ) *
+      polyaUrnProb (Fin.tail θ) (Fin.tail x) := by
+  have hR : 0 < ∑ i : Fin (n + 1), θ i.succ := sum_pos (fun i _ ↦ hθ _) univ_nonempty
+  have h₁ := (ascPochhammer_pos (∑ i : Fin (n + 1), x i.succ) _ hR).ne'
+  have h₂ := (ascPochhammer_pos (x 0 + ∑ i : Fin (n + 1), x i.succ) _ (add_pos (hθ 0) hR)).ne'
+  rw [polyaUrnProb, polyaUrnProb, Fin.prod_univ_succ, Fin.sum_univ_succ x, Fin.sum_univ_succ θ]
+  simp only [Fin.tail]
+  field_simp
 
 /-- The probability of a sequence with counts `x` in Gamma functions: each rising factorial
 `(a)_m` of `polyaUrnProb` is the ratio `Γ(a + m) / Γ(a)`. -/

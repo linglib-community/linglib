@@ -35,8 +35,9 @@ STAR-SUN, the conflict of Figure 6.
 
 ## Implementation notes
 
-* The Dirichlet prior on the scenario mix is integrated out into the Pólya-urn law of the
-  per-node scenario draws, `polyaUrn`.
+* The Dirichlet prior on the scenario mix is
+  [integrated out](##ProbabilityTheory.polyaUrn_singleton_eq_lintegral_dirichlet) into the
+  Pólya-urn law of the per-node scenario draws, `polyaUrn`.
 * Ingredients the paper leaves unspecified are set as follows: HOLD-AGENT and MARRY-AGENT get
   the same constraint as the corresponding theme role, and both cancel since the agent concept
   is observed; MARRY-THEME gives MARRY itself weight `0`, the three stated values already summing
