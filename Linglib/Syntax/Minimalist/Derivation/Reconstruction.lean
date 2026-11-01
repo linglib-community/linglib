@@ -37,19 +37,41 @@ in the relation, and in a derivation of Merge steps that merges no token twice t
   the copy object.
 * `Minimalist.Derivation.cCommandsAt_map_iff`: c-command at a stage is invariant under an
   injective relabelling that preserves selection.
+* `Minimalist.SyntacticObject.not_cCommands_merge_of_notMem_terms`: once a term has moved, nothing
+  below the root of its remnant c-commands into it.
 
 ## Implementation notes
 
 * `CCommandsAt` reads the stages the replay externalizes under the default trace encoder,
   `selHead`, though the stages themselves take the encoder as a parameter.
+* The stages are contractions, so `BindsAtSurface` is binding at the form Marcolli, Chomsky and
+  Berwick send to the semantic interface. Collins's objection to that choice is the contrast
+  between `BindsAtSurface` and `BindsAtLF`.
 
 ## References
 
 * [cole-hermon-2008], fn. 28
 * [chomsky-1995]
+* [marcolli-chomsky-berwick-2025]
+* [collins-2026]
 -/
 
 @[expose] public section
+
+namespace Minimalist.SyntacticObject
+
+/-- Once `β` has moved, leaving the remnant `R`, nothing but `R` and the terms of `β` c-commands a
+term found only in `β`: the sister of anything else lies inside `R`. -/
+theorem not_cCommands_merge_of_notMem_terms {β R x y : SyntacticObject} (hx : x ∉ β.terms)
+    (hR : x ≠ R) (hy : y ∉ R.terms) : ¬ CCommands (merge β R) x y := by
+  rintro ⟨z, -, hs, hzy⟩
+  rcases Sisters.of_merge hs with h | h | ⟨rfl, -⟩ | ⟨rfl, -⟩
+  · exact hx h.mem_left
+  · exact hy (terms_subset_terms (mem_terms.1 h.mem_right) (mem_terms.2 hzy))
+  · exact hx (self_mem_terms _)
+  · exact hR rfl
+
+end Minimalist.SyntacticObject
 
 namespace Minimalist.Derivation
 
