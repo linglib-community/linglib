@@ -11,16 +11,12 @@ public import Linglib.Logic.Natural.Soundness
 /-!
 # Signature profiles of generalized quantifiers
 
-This file instantiates the natural-logic signature calculus at determiner denotations. The
-left and right anti-additivity of Peters and Westerståhl are sectionwise anti-additivity of the
-restrictor and scope positions at the `Prop` instance, and *every* and *no* receive certified
-`Signature₂` profiles, with *not every* derived by profile composition.
+This file instantiates the natural-logic signature calculus at determiner denotations: *every*
+and *no* receive certified `Signature₂` profiles, read off the anti-additivity and monotonicity
+of their sections, and *not every* is derived by profile composition.
 
 ## Main results
 
-* `Quantifier.isAntiAdditive_iff`: anti-additivity of a quantifier as `q (A ∪ B) ↔ q A ∧ q B`.
-* `leftAntiAdditive_iff_isAntiAdditive`, `rightAntiAdditive_iff_isAntiAdditive`: the two
-  anti-additivities as sectionwise `IsAntiAdditive`.
 * `soundFor_every`, `soundFor_no`: the certified determiner profiles.
 
 ## References
@@ -31,31 +27,11 @@ restrictor and scope positions at the `Prop` instance, and *every* and *no* rece
 
 @[expose] public section
 
-namespace Quantifier
+namespace Quantifier.Det
 
 open NaturalLogic
 
 variable {α : Type*}
-
-/-! ### Sectionwise anti-additivity -/
-
-theorem isAntiAdditive_iff {q : Quantifier α} :
-    IsAntiAdditive q ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
-  simp only [IsAntiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
-
-namespace Det
-
-/-- `LeftAntiAdditive` ([peters-westerstahl-2006] §5.9) is sectionwise
-anti-additivity in the restrictor, at the `Prop` instance. -/
-theorem leftAntiAdditive_iff_isAntiAdditive (q : Det α) :
-    LeftAntiAdditive q ↔ ∀ S, IsAntiAdditive (fun R ↦ q R S) := by
-  simp only [LeftAntiAdditive, isAntiAdditive_iff]
-  exact ⟨fun h S R R' ↦ h R R' S, fun h R R' S ↦ h S R R'⟩
-
-/-- `RightAntiAdditive` is sectionwise anti-additivity in the scope. -/
-theorem rightAntiAdditive_iff_isAntiAdditive (q : Det α) :
-    RightAntiAdditive q ↔ ∀ R, IsAntiAdditive (q R) :=
-  forall_congr' fun _ ↦ isAntiAdditive_iff.symm
 
 /-! ### Certified determiner profiles -/
 
@@ -64,7 +40,7 @@ derived from left anti-additivity (`leftAntiAdditive_every`). -/
 theorem soundFor_every :
     Signature₂.SoundFor ⟨.anti, .mono⟩ (every (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr
-      (((leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every S).antitone),
+      ((leftAntiAdditive_every S).antitone),
    fun R => soundFor_mono_iff.mpr
       (scopeMonotone_every R)⟩
 
@@ -73,9 +49,9 @@ theorem soundFor_every :
 theorem soundFor_no :
     Signature₂.SoundFor ⟨.anti, .anti⟩ (no (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr
-      (((leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_no S).antitone),
+      ((leftAntiAdditive_no S).antitone),
    fun R => soundFor_anti_iff.mpr
-      (((rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no R).antitone)⟩
+      ((rightAntiAdditive_no R).antitone)⟩
 
 /-- *Not every* is obtained by composition, since negating *every* composes the anti-morphism
 row into both positions of *every*'s profile; the scope component `.antiAddMult * .mono = .anti`
@@ -84,6 +60,4 @@ example : Signature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
     (fun R S => ¬ every (α := α) R S) :=
   not_soundFor_antiAddMult.comp₂ (σ := ⟨.anti, .mono⟩) soundFor_every
 
-end Det
-
-end Quantifier
+end Quantifier.Det
