@@ -35,7 +35,8 @@ reduces entropy, conditioning on a function of `Y` leaves at least the entropy t
 conditioning on `Y` does, and conditional entropy is the expected conditional surprisal.
 Entropies are invariant under injective recodings and depend only on laws. Entropy is the expected
 surprisal of a measure under itself, and under another measure the expected surprisal exceeds it by
-the Kullback–Leibler divergence.
+the Kullback–Leibler divergence; its exponential, negated, is the geometric mean under the first
+measure of the masses of the second.
 
 ## Main definitions
 
@@ -345,6 +346,14 @@ theorem lintegral_surprisal_eq_ofReal_add_klDiv [Fintype S] {ν : Measure S}
         rw [lintegral_fintype]
         exact Finset.single_le_sum (f := fun s ↦ surprisal ν s * μ {s}) (fun _ _ ↦ zero_le)
           (Finset.mem_univ s)
+
+/-- The geometric mean under `μ` of the masses of a probability measure `ν` is the exponential of
+minus the cross-entropy, the expected surprisal under `μ` of the atoms as `ν` weighs them. -/
+theorem geomMean_eq_exp_neg_lintegral_surprisal [Fintype S] (μ ν : Measure S) [IsFiniteMeasure μ]
+    [IsProbabilityMeasure ν] :
+    (μ.geomMean fun s ↦ ν {s}) = EReal.exp (-((∫⁻ s, surprisal ν s ∂μ : ℝ≥0∞) : EReal)) := by
+  rw [← Measure.geomMean_exp_neg]
+  exact congrArg _ (funext fun s ↦ (exp_neg_surprisal prob_le_one).symm)
 
 /-- Gibbs' inequality: the expected surprisal under another measure is at least the entropy. -/
 theorem ofReal_measureEntropy_le_lintegral_surprisal [Fintype S] {ν : Measure S}
