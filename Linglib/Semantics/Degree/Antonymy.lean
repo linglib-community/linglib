@@ -205,6 +205,18 @@ def strengthenedDenotation [Preorder D] (tp : ThresholdPair D) : AntonymForm →
 
 variable [LinearOrder D] (θ : D) (tp : ThresholdPair D)
 
+instance decidableMemContradictoryDenotation :
+    ∀ f, DecidablePred (· ∈ contradictoryDenotation θ f)
+  | .positive | .notNegative => fun d ↦ inferInstanceAs (Decidable (θ < d))
+  | .notPositive | .negative => fun d ↦ inferInstanceAs (Decidable (d ≤ θ))
+
+instance decidableMemStrengthenedDenotation :
+    ∀ f, DecidablePred (· ∈ strengthenedDenotation tp f)
+  | .positive => fun d ↦ inferInstanceAs (Decidable (tp.pos < d))
+  | .notPositive => fun d ↦ inferInstanceAs (Decidable (d ≤ tp.pos))
+  | .negative => fun d ↦ inferInstanceAs (Decidable (d < tp.neg))
+  | .notNegative => fun d ↦ inferInstanceAs (Decidable (tp.neg ≤ d))
+
 theorem contradictoryDenotation_synonymy :
     contradictoryDenotation θ .negative = contradictoryDenotation θ .notPositive ∧
       contradictoryDenotation θ .notNegative = contradictoryDenotation θ .positive :=

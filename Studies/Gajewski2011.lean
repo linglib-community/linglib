@@ -237,7 +237,8 @@ theorem atMostThree_not_isIntolerant :
     {x | x < 3}).elim (· (by decide)) (· (by decide))
 
 theorem few_not_rightAntiAdditive : ¬ RightAntiAdditive (few : Det (Fin 4)) := fun h ↦
-  absurd ((h Set.univ {0} {1}).mpr ⟨by decide, by decide⟩) (by decide)
+  absurd ((Quantifier.isAntiAdditive_iff.1 (h Set.univ) {0} {1}).mpr ⟨by decide, by decide⟩)
+    (by decide)
 
 /-! ### The paper's sentences -/
 

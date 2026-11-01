@@ -30,8 +30,9 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
   standards.
 * A cell of the design is represented by the pair of its example item, *gigantic* for the relative
   adjectives and *pristine* for the absolute ones.
-* Communicated ranges are sets of Krifka's four regions of a scale. Horn's literal semantics is
-  contrary, the two border regions forming the semantic gap.
+* Communicated ranges are sets of Krifka's four regions, ordered along the scale. Horn's
+  antonyms take the contrary denotation with thresholds at the two border regions, which form the
+  semantic gap; Krifka's take the contradictory one.
 * NACH is a complexity cost of the negative pole. The complexity on which Krifka's quadruplet is
   computed already has that shape (`complexity_eq_cost`), yet weak optimality returns a symmetric
   quadruplet, since it compares two pairs only when they share a form or an interpretation. NACH's
@@ -53,6 +54,7 @@ and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refut
 namespace AlexandropoulouGotzner2024a
 
 open Degree Krifka2007b English.Adjectives Data.Statistics
+open AntonymForm (strengthenedDenotation strengthenedDenotation_notNegative_diff_positive)
 
 variable {t : AdjectiveType} {s : Strength}
 
@@ -97,20 +99,21 @@ instance (r : Ranges) : Decidable r.Symmetric := Fintype.decidableForallFintype
 def Ranges.asymmetry (r : Ranges) : Asymmetry :=
   if r.Symmetric then .symmetric else .asymmetric
 
-/-- Horn's literal semantics is contrary: each simple form leaves out the border regions, the
-semantic gap, and sentential negation is complement. -/
-def hornLiteral : AntonymForm → Finset Region
-  | .positive => {.positive}
-  | .negative => {.negative}
-  | .notPositive => {.positive}ᶜ
-  | .notNegative => {.negative}ᶜ
+/-- Horn's antonyms are contrary, with the thresholds of `hornPair`, whose gap is the two border
+regions. -/
+def hornPair : ThresholdPair Region := ⟨.plateauHigh, .plateauLow⟩
 
 /-- Horn's ranges R-strengthen the negated positive to the antonym it conceals, a face-threatening
 statement, and Q/R-restrict the double negative to what its simpler antonym could not describe. -/
 def hornRanges : Ranges
-  | .notPositive => hornLiteral .negative
-  | .notNegative => hornLiteral .notNegative \ hornLiteral .positive
-  | f => hornLiteral f
+  | .notPositive => (strengthenedDenotation hornPair .negative).toFinset
+  | .notNegative => (strengthenedDenotation hornPair .notNegative \
+      strengthenedDenotation hornPair .positive).toFinset
+  | f => (strengthenedDenotation hornPair f).toFinset
+
+-- (7), p. 376
+theorem coe_hornRanges_notNegative : (hornRanges .notNegative : Set Region) = hornPair.gap :=
+  (Set.coe_toFinset _).trans (strengthenedDenotation_notNegative_diff_positive _)
 
 /-- Krifka's ranges are the quadruplet that weak optimality selects
 (`Krifka2007b.superoptimal_quadruplet`). -/
@@ -174,31 +177,35 @@ theorem table1 (t : AdjectiveType) (s : Strength) (n k : ℕ) :
 def finding (t : AdjectiveType) (s : Strength) : Asymmetry :=
   if (negationEffect t s).p.Significant (1 / 20) then .asymmetric else .symmetric
 
+theorem finding_eq (t : AdjectiveType) (s : Strength) :
+    finding t s = if t = .relative ∧ s = .weak then .asymmetric else .symmetric := by
+  revert t s; decide +kernel
+
 /-- Only the weak relative pairs were interpreted asymmetrically under negation (pp. 390–391). -/
 theorem finding_eq_asymmetric_iff : finding t s = .asymmetric ↔ t = .relative ∧ s = .weak := by
-  revert t s; decide +kernel
+  simp [finding_eq]
 
 /-- Horn's account matches the pattern on both weak pairs, the contradictory absolute pair, to
 which it does not apply, being interpreted symmetrically (pp. 380, 393). -/
 theorem horn_confirmed_on_weak (t : AdjectiveType) :
     (horn t .weak).getD .symmetric = finding t .weak := by
-  revert t; decide +kernel
+  cases t <;> simp [(table1 _ _ 0 0).1, finding_eq]
 
 -- p. 393
 theorem horn_unsupported_on_strong (t : AdjectiveType) :
     horn t .strong ≠ some (finding t .strong) := by
-  revert t; decide +kernel
+  simp [(table1 _ _ 0 0).1, finding_eq]
 
 /-- Whatever the cost of the negative pole, Krifka's account mispredicts one of the weak pairs
 (p. 393). -/
 theorem krifka_refuted (n k : ℕ) : ∃ t, krifka n k t .weak ≠ some (finding t .weak) := by
   rcases eq_or_ne k 0 with rfl | hk
-  · exact ⟨.relative, by simp only [(table1 _ _ n 0).2]; decide +kernel⟩
-  · exact ⟨.absolute, by simp only [(table1 _ _ n k).2, hk]; decide +kernel⟩
+  · exact ⟨.relative, by simp [(table1 _ _ n 0).2, finding_eq]⟩
+  · exact ⟨.absolute, by simp [(table1 _ _ n k).2, hk, finding_eq]⟩
 
 /-- An asymmetry arose only where the pair leaves a semantic gap (p. 393). -/
 theorem gap_precondition : finding t s = .asymmetric → ¬ (pair t s).ComplementaryStandards := by
-  revert t s; decide +kernel
+  simp +contextual [finding_eq_asymmetric_iff, complementaryStandards_pair_iff]
 
 /-! ### Rows -/
 

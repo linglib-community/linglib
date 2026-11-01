@@ -13,11 +13,14 @@ public import Linglib.Morphology.Word.Basic
 /-!
 # Binding theory
 
-A configuration says which positions command which and gives each position a binding domain; an
-anaphoric dependency says which positions are antecedents of which. A position binds another
-when it is an antecedent of it, distinct from it, that commands it. An anaphor is bound in its
-domain (Condition A), a pronominal is not (Condition B), and an R-expression is not bound at all
-(Condition C), the three conditions of Chomsky's binding theory.
+A configuration says which positions command which and gives each position a binding domain and
+a pronominal domain; an anaphoric dependency says which positions are antecedents of which. A
+position binds another when it is an antecedent of it, distinct from it, that commands it. An
+anaphor is bound in its binding domain (Condition A), a pronominal is not bound in its pronominal
+domain (Condition B), and an R-expression is not bound at all (Condition C), the three conditions
+of Chomsky's binding theory. In Chomsky's theory the two domains of a position are one, and an
+anaphor and a pronominal are then in complementary distribution; where they differ, as when a
+possessor's own noun phrase is its pronominal domain but not its binding domain, they need not be.
 
 Frameworks differ in what they supply. Chomsky binds coindexed noun phrases under c-command
 within the governing category, Pollard and Sag under local o-command, and Charnavel within the
@@ -34,9 +37,10 @@ looks exempt when that position is left out of account.
 
 * `Binding.BindingClass`, `Binding.bindingClassOf`: anaphor, pronominal or R-expression, read
   off a word's morphology.
-* `Binding.Configuration`: a command relation and a binding domain, ordered pointwise;
-  `Configuration.comap` pulls one back along a map of positions, and
-  `Configuration.monoclausal` is the configuration of a single binding domain.
+* `Binding.Configuration`: a command relation, a binding domain and a pronominal domain, ordered
+  pointwise; `Configuration.comap` pulls one back along a map of positions,
+  `Configuration.monoclausal` is the configuration of a single binding domain, and
+  `Configuration.pronominal` takes the pronominal domains as binding domains.
 * `Binding.pair`: the dependency relating two positions to each other alone.
 * `Configuration.Binds`, `Bound`, `LocallyBound`, `LocallyCommanded`, `exempt`.
 * `Configuration.Condition`, `Configuration.Satisfies`: Conditions A, B and C.
@@ -46,7 +50,7 @@ looks exempt when that position is left out of account.
 ## Main statements
 
 * `Configuration.condition_iff_not_condition_pronoun`: outside the exempt set an anaphor and a
-  pronominal with one domain are in complementary distribution.
+  pronominal are in complementary distribution at a position whose two domains coincide.
 * `Configuration.condition_exempt_iff`: with the structural exemption, an anaphor meets its
   condition when, if commanded in its domain, it is bound there.
 * `Configuration.condition_mono`, `condition_pronoun_anti`, `condition_rExpression_anti`: more
@@ -123,12 +127,15 @@ def bindingClassOf (w : Morphology.Word) : Option BindingClass :=
 /-! ### Configurations -/
 
 /-- A binding configuration on the positions `ι` says which positions command which and gives
-each position its binding domain. -/
+each position its binding domain, in which an anaphor is bound, and its pronominal domain, in
+which a pronominal is free. -/
 structure Configuration (ι : Type*) where
   /-- `commands a b` holds when `a` commands `b`. -/
   commands : ι → ι → Prop
   /-- `domain b` is the binding domain of `b`. -/
   domain : ι → Set ι
+  /-- `pronominalDomain b` is the pronominal domain of `b`, by default its binding domain. -/
+  pronominalDomain : ι → Set ι := domain
 
 /-- `pair a b` is the dependency that relates `a` and `b` to each other and nothing else. -/
 def pair {ι : Type*} (a b : ι) (x y : ι) : Prop := x = a ∧ y = b ∨ x = b ∧ y = a
@@ -146,22 +153,42 @@ variable {ι : Type*}
 /-- Configurations are ordered pointwise, `s ≤ t` when `t` commands whatever `s` commands and
 each domain of `s` lies in the corresponding domain of `t`. -/
 instance : PartialOrder (Configuration ι) :=
-  PartialOrder.lift (fun s ↦ (s.commands, s.domain)) fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by
-    obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
-    rfl
+  PartialOrder.lift (fun s ↦ (s.commands, s.domain, s.pronominalDomain))
+    fun ⟨_, _, _⟩ ⟨_, _, _⟩ h ↦ by simp_all
 
-theorem le_def {s t : Configuration ι} :
-    s ≤ t ↔ s.commands ≤ t.commands ∧ s.domain ≤ t.domain :=
+theorem le_def {s t : Configuration ι} : s ≤ t ↔ s.commands ≤ t.commands ∧ s.domain ≤ t.domain ∧
+    s.pronominalDomain ≤ t.pronominalDomain :=
   Iff.rfl
+
+/-- `s.pronominal` is the configuration in which a pronominal is checked, whose domains are the
+pronominal domains of `s`. -/
+def pronominal (s : Configuration ι) : Configuration ι where
+  commands := s.commands
+  domain := s.pronominalDomain
+
+theorem pronominal_mono : Monotone (pronominal (ι := ι)) :=
+  fun _ _ h ↦ ⟨h.1, h.2.2, h.2.2⟩
+
+instance (s : Configuration ι) [DecidableRel s.commands] : DecidableRel s.pronominal.commands :=
+  inferInstanceAs (DecidableRel s.commands)
+
+instance (s : Configuration ι) [∀ b, DecidablePred (· ∈ s.pronominalDomain b)] (b : ι) :
+    DecidablePred (· ∈ s.pronominal.domain b) :=
+  inferInstanceAs (DecidablePred (· ∈ s.pronominalDomain b))
 
 /-- `s.comap f` is the configuration that `s` induces along `f`, in which one position commands
 another when their images do and a position's domain is the preimage of its image's. -/
 def comap {κ : Type*} (f : κ → ι) (s : Configuration ι) : Configuration κ where
   commands a b := s.commands (f a) (f b)
   domain b := f ⁻¹' s.domain (f b)
+  pronominalDomain b := f ⁻¹' s.pronominalDomain (f b)
 
 theorem comap_mono {κ : Type*} (f : κ → ι) : Monotone (comap f) :=
-  fun _ _ h ↦ ⟨fun _ _ hc ↦ h.1 _ _ hc, fun _ _ ha ↦ h.2 _ ha⟩
+  fun _ _ h ↦ ⟨fun _ _ hc ↦ h.1 _ _ hc, fun _ _ ha ↦ h.2.1 _ ha, fun _ _ ha ↦ h.2.2 _ ha⟩
+
+theorem pronominal_comap {κ : Type*} (f : κ → ι) (s : Configuration ι) :
+    (s.comap f).pronominal = s.pronominal.comap f :=
+  rfl
 
 instance {κ : Type*} (f : κ → ι) (s : Configuration ι) [DecidableRel s.commands] :
     DecidableRel (s.comap f).commands :=
@@ -170,6 +197,11 @@ instance {κ : Type*} (f : κ → ι) (s : Configuration ι) [DecidableRel s.com
 instance {κ : Type*} (f : κ → ι) (s : Configuration ι) [∀ b, DecidablePred (· ∈ s.domain b)]
     (b : κ) : DecidablePred (· ∈ (s.comap f).domain b) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∈ s.domain _))
+
+instance {κ : Type*} (f : κ → ι) (s : Configuration ι)
+    [∀ b, DecidablePred (· ∈ s.pronominalDomain b)] (b : κ) :
+    DecidablePred (· ∈ (s.comap f).pronominalDomain b) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∈ s.pronominalDomain _))
 
 /-- `monoclausal pos R` is the configuration of a single binding domain. The map `pos` reads a
 position as an object, one position commands another when its object `R`-commands the other's,
@@ -180,7 +212,7 @@ def monoclausal {α : Type*} (pos : ι → Option α) (R : α → α → Prop) :
 
 theorem monoclausal_mono {α : Type*} {pos : ι → Option α} {R R' : α → α → Prop} (h : R ≤ R') :
     monoclausal pos R ≤ monoclausal pos R' :=
-  ⟨fun _ _ ⟨x, hx, y, hy, hr⟩ ↦ ⟨x, hx, y, hy, h x y hr⟩, le_rfl⟩
+  ⟨fun _ _ ⟨x, hx, y, hy, hr⟩ ↦ ⟨x, hx, y, hy, h x y hr⟩, le_rfl, le_rfl⟩
 
 instance {α : Type*} (pos : ι → Option α) (R : α → α → Prop) [DecidableRel R] :
     DecidableRel (monoclausal pos R).commands :=
@@ -188,6 +220,10 @@ instance {α : Type*} (pos : ι → Option α) (R : α → α → Prop) [Decidab
 
 instance {α : Type*} (pos : ι → Option α) (R : α → α → Prop) (b : ι) :
     DecidablePred (· ∈ (monoclausal pos R).domain b) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∈ Set.univ))
+
+instance {α : Type*} (pos : ι → Option α) (R : α → α → Prop) (b : ι) :
+    DecidablePred (· ∈ (monoclausal pos R).pronominalDomain b) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∈ Set.univ))
 
 variable (s : Configuration ι) (L : ι → ι → Prop)
@@ -209,11 +245,11 @@ def LocallyCommanded (b : ι) : Prop := ∃ a ∈ s.domain b, a ≠ b ∧ s.comm
 def exempt : Set ι := {b | ¬ s.LocallyCommanded b}
 
 /-- `Condition E b c` is the condition a nominal of class `c` at `b` must meet when the
-positions in `E` are exempt from Condition A. An anaphor is bound in its domain unless exempt, a
-pronominal is not bound in its domain, and an R-expression is not bound. -/
+positions in `E` are exempt from Condition A. An anaphor is bound in its binding domain unless
+exempt, a pronominal is not bound in its pronominal domain, and an R-expression is not bound. -/
 def Condition (E : Set ι) (b : ι) : BindingClass → Prop
   | .reflexive | .reciprocal => b ∈ E ∨ s.LocallyBound L b
-  | .pronoun => ¬ s.LocallyBound L b
+  | .pronoun => ¬ s.pronominal.LocallyBound L b
   | .rExpression => ¬ s.Bound L b
 
 /-- The dependency `L` satisfies the binding theory, with the positions in `E` exempt from
@@ -246,7 +282,7 @@ theorem Bound.of_le (hst : s ≤ t) (h : s.Bound L b) : t.Bound L b :=
 
 theorem LocallyBound.of_le (hst : s ≤ t) (h : s.LocallyBound L b) : t.LocallyBound L b :=
   let ⟨a, hd, ha⟩ := h
-  ⟨a, hst.2 b hd, ha.of_le hst⟩
+  ⟨a, hst.2.1 b hd, ha.of_le hst⟩
 
 theorem LocallyBound.bound (h : s.LocallyBound L b) : s.Bound L b :=
   let ⟨a, _, ha⟩ := h
@@ -286,11 +322,13 @@ theorem condition_anaphor (hc : c.IsAnaphor) :
     s.Condition L E b c ↔ b ∈ E ∨ s.LocallyBound L b := by
   rcases hc with rfl | rfl <;> rfl
 
-/-- Outside the exempt positions an anaphor meets its condition exactly where a pronominal fails
-its own. -/
-theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E) :
+/-- Outside the exempt positions, and where the two domains of a position coincide, an anaphor
+meets its condition exactly where a pronominal fails its own. -/
+theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E)
+    (hd : s.pronominalDomain b = s.domain b) :
     s.Condition L E b c ↔ ¬ s.Condition L E b .pronoun := by
   rw [condition_anaphor hc, Condition, not_not, or_iff_right hb]
+  exact exists_congr fun _ ↦ and_congr_left' (by rw [← hd]; exact Iff.rfl)
 
 theorem condition_of_mem (hc : c.IsAnaphor) (hb : b ∈ E) : s.Condition L E b c :=
   (condition_anaphor hc).2 (.inl hb)
@@ -328,7 +366,7 @@ theorem condition_mono (hc : c.IsAnaphor) :
 /-- A pronominal's condition is antitone in the configuration. -/
 theorem condition_pronoun_anti :
     Antitone fun s : Configuration ι ↦ s.Condition L E b .pronoun :=
-  fun _ _ hst h hb ↦ h (hb.of_le hst)
+  fun _ _ hst h hb ↦ h (hb.of_le (pronominal_mono hst))
 
 /-- An R-expression's condition is antitone in the configuration. -/
 theorem condition_rExpression_anti :
@@ -392,9 +430,9 @@ theorem mem_covertlyBound_of_condition (hf : f.Injective) (hc : c.IsAnaphor)
   ((locallyBound_comap_or hf).2 (((condition_anaphor hc).1 h).resolve_left id)).resolve_left hb
 
 theorem condition_pronoun_comap (hf : f.Injective) {F : Set κ} :
-    (s.comap f).Condition (L on f) F b .pronoun ∧ b ∉ s.covertlyBound L f ↔
+    (s.comap f).Condition (L on f) F b .pronoun ∧ b ∉ s.pronominal.covertlyBound L f ↔
       s.Condition L E (f b) .pronoun := by
-  simp only [Condition, ← locallyBound_comap_or hf, not_or]
+  simp only [Condition, pronominal_comap, ← locallyBound_comap_or hf, not_or]
 
 theorem condition_rExpression_comap (hf : f.Injective) {F : Set κ} :
     (s.comap f).Condition (L on f) F b .rExpression ∧ (¬ ∃ x ∉ Set.range f, s.Binds L x (f b)) ↔
@@ -422,9 +460,12 @@ instance {κ : Type*} [Fintype κ] (f : κ → ι) (b : κ) : Decidable (b ∈ s
 
 instance : DecidablePred (· ∈ s.exempt) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
 
+variable [∀ b, DecidablePred (· ∈ s.pronominalDomain b)]
+
 instance (E : Set ι) [DecidablePred (· ∈ E)] (b : ι) : ∀ c, Decidable (s.Condition L E b c)
   | .reflexive | .reciprocal => inferInstanceAs (Decidable (_ ∨ _))
-  | .pronoun | .rExpression => inferInstanceAs (Decidable (¬ _))
+  | .pronoun => inferInstanceAs (Decidable (¬ s.pronominal.LocallyBound L b))
+  | .rExpression => inferInstanceAs (Decidable (¬ _))
 
 instance (E : Set ι) [DecidablePred (· ∈ E)] (cls : ι → Option BindingClass) :
     Decidable (s.Satisfies L E cls) :=
