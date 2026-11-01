@@ -108,37 +108,38 @@ section Coincidence
 
 variable [Fintype W] [DecidableEq W] (M : Model W Atom) {φ : Formula Atom}
 
-theorem iSup_ofSet_unrestricted (hφ : φ.IsModalFree) :
-    ⨆ p ∈ unrestricted M.val φ, Question.ofSet p = proposition M φ := by
+theorem generate_unrestricted (hφ : φ.IsModalFree) :
+    Question.generate (unrestricted M.val φ) = proposition M φ := by
   induction φ with
-  | atom p => rw [unrestricted, iSup_singleton, proposition_atom]
-  | bot => rw [unrestricted, iSup_singleton, Question.ofSet_empty, proposition_bot]
+  | atom p => rw [unrestricted, Question.generate_singleton, proposition_atom]
+  | bot => rw [unrestricted, Question.generate_singleton, Question.ofSet_empty, proposition_bot]
   | conj φ ψ ihφ ihψ =>
-    rw [unrestricted, iSup_ofSet_pro, ← Question.biSup_ofSet_inf_biSup_ofSet, ihφ hφ.1, ihψ hφ.2,
+    rw [unrestricted, generate_pro, ← Question.generate_inf_generate, ihφ hφ.1, ihψ hφ.2,
       proposition_conj]
   | impl φ ψ ihφ ihψ =>
-    rw [unrestricted, iSup_ofSet_pro,
-      ← Question.biSup_ofSet_himp_biSup_ofSet (isProposition_unrestricted _ ψ).1, ihφ hφ.1,
+    rw [unrestricted, generate_pro,
+      ← Question.generate_himp_generate (isProposition_unrestricted _ ψ).1, ihφ hφ.1,
       ihψ hφ.2, proposition_impl]
   | inqDisj φ ψ ihφ ihψ =>
-    rw [unrestricted, iSup_ofSet_pro, iSup_union, ihφ hφ.1, ihψ hφ.2, proposition_inqDisj]
+    rw [unrestricted, generate_pro, Question.generate_union, ihφ hφ.1, ihψ hφ.2,
+      proposition_inqDisj]
   | nec => exact hφ.elim
   | ent => exact hφ.elim
 
-theorem iSup_ofSet_restricted (hφ : φ.IsModalFree) :
-    ⨆ p ∈ restricted M.val φ, Question.ofSet p = proposition M φ := by
+theorem generate_restricted (hφ : φ.IsModalFree) :
+    Question.generate (restricted M.val φ) = proposition M φ := by
   induction φ with
-  | atom p => rw [restricted, iSup_singleton, proposition_atom]
-  | bot => rw [restricted, iSup_singleton, Question.ofSet_empty, proposition_bot]
+  | atom p => rw [restricted, Question.generate_singleton, proposition_atom]
+  | bot => rw [restricted, Question.generate_singleton, Question.ofSet_empty, proposition_bot]
   | conj φ ψ ihφ ihψ =>
-    rw [restricted, Question.biSup_ofSet_setOf_maximal (toFinite _),
-      ← Question.biSup_ofSet_inf_biSup_ofSet, ihφ hφ.1, ihψ hφ.2, proposition_conj]
+    rw [restricted, Question.generate_setOf_maximal (toFinite _),
+      ← Question.generate_inf_generate, ihφ hφ.1, ihψ hφ.2, proposition_conj]
   | impl φ ψ ihφ ihψ =>
-    rw [restricted, Question.biSup_ofSet_setOf_maximal (toFinite _),
-      ← Question.biSup_ofSet_himp_biSup_ofSet (restricted_nonempty _ ψ), ihφ hφ.1, ihψ hφ.2,
+    rw [restricted, Question.generate_setOf_maximal (toFinite _),
+      ← Question.generate_himp_generate (restricted_nonempty _ ψ), ihφ hφ.1, ihψ hφ.2,
       proposition_impl]
   | inqDisj φ ψ ihφ ihψ =>
-    rw [restricted, Question.biSup_ofSet_setOf_maximal (toFinite _), iSup_union, ihφ hφ.1,
+    rw [restricted, Question.generate_setOf_maximal (toFinite _), Question.generate_union, ihφ hφ.1,
       ihψ hφ.2, proposition_inqDisj]
   | nec => exact hφ.elim
   | ent => exact hφ.elim
@@ -147,9 +148,9 @@ theorem iSup_ofSet_restricted (hφ : φ.IsModalFree) :
 formula's restricted possibilities (p. 99). -/
 theorem setOf_maximal_unrestricted (hφ : φ.IsModalFree) :
     {p | Maximal (· ∈ unrestricted M.val φ) p} = restricted M.val φ := by
-  rw [← Question.alt_biSup_ofSet_eq (isProposition_unrestricted _ φ).1,
-    iSup_ofSet_unrestricted M hφ, ← iSup_ofSet_restricted M hφ,
-    Question.alt_biSup_ofSet (restricted_nonempty _ φ) (isAntichain_restricted _ φ)]
+  rw [← Question.alt_generate (isProposition_unrestricted _ φ).1,
+    generate_unrestricted M hφ, ← generate_restricted M hφ,
+    Question.alt_generate_of_isAntichain (restricted_nonempty _ φ) (isAntichain_restricted _ φ)]
 
 -- p. 99
 theorem isInquisitive_unrestricted_iff (hφ : φ.IsModalFree) :
@@ -158,10 +159,10 @@ theorem isInquisitive_unrestricted_iff (hφ : φ.IsModalFree) :
 
 /-- The possibilities for a formula cover its truth set (Proposition 15). -/
 theorem sUnion_unrestricted (hφ : φ.IsModalFree) : ⋃₀ unrestricted M.val φ = truthSet M φ := by
-  rw [← Question.info_biSup_ofSet, iSup_ofSet_unrestricted M hφ, info_proposition]
+  rw [← Question.info_generate, generate_unrestricted M hφ, info_proposition]
 
 theorem sUnion_restricted (hφ : φ.IsModalFree) : ⋃₀ restricted M.val φ = truthSet M φ := by
-  rw [← Question.info_biSup_ofSet, iSup_ofSet_restricted M hφ, info_proposition]
+  rw [← Question.info_generate, generate_restricted M hφ, info_proposition]
 
 end Coincidence
 
