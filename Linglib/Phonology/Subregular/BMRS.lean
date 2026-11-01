@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.WindowFormula
+public import Mathlib.Data.List.Basic
+public import Mathlib.Order.Notation
 public import Linglib.Core.Data.List.TakeDrop
 public import Mathlib.Data.Fintype.Prod
 
@@ -26,6 +27,8 @@ rounds settle by round `card F * n`, so evaluation is decidable.
 
 ## Main definitions
 
+* `Subregular.Walk`, `Walk.eval`: terms, successor and predecessor steps from the position
+  variable, and the position a term denotes (`none` off an edge).
 * `BMRS.Expr`, `BMRS.Program`: syntax.
 * `BMRS.Eval`: the derivation system.
 * `Program.approx`, `Program.eval`: the rounds of evaluation and the value they settle on.
@@ -58,6 +61,175 @@ rounds settle by round `card F * n`, so evaluation is decidable.
 -/
 
 @[expose] public section
+
+namespace Subregular
+
+variable {α : Type*}
+
+/-! ### Positions -/
+
+/-- The successor of position `n` of `w`, defined when `n + 1` is a position. -/
+def succ? (w : List α) (n : ℕ) : Option ℕ :=
+  if n + 1 < w.length then some (n + 1) else none
+
+/-- The predecessor of position `n` of `w`, defined when `n` is a position other than the first. -/
+def pred? (w : List α) : ℕ → Option ℕ
+  | 0 => none
+  | n + 1 => if n + 1 < w.length then some n else none
+
+theorem succ?_eq_some_iff {w : List α} {n m : ℕ} :
+    succ? w n = some m ↔ m = n + 1 ∧ n + 1 < w.length := by
+  unfold succ?; split <;> simp_all [eq_comm]
+
+theorem pred?_eq_some_iff {w : List α} {n m : ℕ} :
+    pred? w n = some m ↔ n = m + 1 ∧ n < w.length := by
+  cases n <;> simp [pred?, and_comm]
+
+theorem succ?_congr {w w' : List α} (h : w.length = w'.length) : succ? w = succ? w' := by
+  funext n; simp [succ?, h]
+
+theorem pred?_congr {w w' : List α} (h : w.length = w'.length) : pred? w = pred? w' := by
+  funext n; cases n <;> simp [pred?, h]
+
+/-! ### Terms -/
+
+/-- A walk of successor and predecessor steps from the position variable. Chains of `succ` and
+`pred` reach a bounded window with no quantifier. -/
+inductive Walk where
+  | var : Walk
+  | succ : Walk → Walk
+  | pred : Walk → Walk
+  deriving DecidableEq
+
+namespace Walk
+
+/-- The position a walk from position `n` of `w` reaches, or `none` if it falls off an edge. -/
+def eval (w : List α) (n : ℕ) : Walk → Option ℕ
+  | .var => if n < w.length then some n else none
+  | .succ t => (eval w n t).bind (succ? w)
+  | .pred t => (eval w n t).bind (pred? w)
+
+variable {w w' : List α} {n v : ℕ} {t u : Walk}
+
+@[simp] theorem eval_succ : t.succ.eval w n = (t.eval w n).bind (succ? w) := rfl
+
+@[simp] theorem eval_pred : t.pred.eval w n = (t.eval w n).bind (pred? w) := rfl
+
+theorem eval_var_eq_some_iff : Walk.var.eval w n = some v ↔ v = n ∧ n < w.length := by
+  rw [eval]
+  split <;> simp_all [eq_comm]
+  omega
+
+@[simp] theorem eval_var (h : n < w.length) : Walk.var.eval w n = some n := ite_eq_left h
+
+theorem eval_lt : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v < w.length
+  | .var, _, h => (eval_var_eq_some_iff.mp h).1 ▸ (eval_var_eq_some_iff.mp h).2
+  | .succ t, _, h => by
+    obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, hlt⟩ := succ?_eq_some_iff.mp hu
+    exact hlt
+  | .pred t, _, h => by
+    obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, hlt⟩ := pred?_eq_some_iff.mp hu
+    omega
+
+@[simp] theorem eval_succ_var : Walk.var.succ.eval w n = succ? w n := by
+  by_cases h : n < w.length
+  · rw [eval_succ, eval_var h, Option.bind_some]
+  · simp [eval, succ?, h, show ¬ n + 1 < w.length by omega]
+
+@[simp] theorem eval_pred_var : Walk.var.pred.eval w n = pred? w n := by
+  by_cases h : n < w.length
+  · rw [eval_pred, eval_var h, Option.bind_some]
+  · cases n <;> simp [eval, pred?, h]
+
+theorem eval_congr (hlen : w.length = w'.length) : ∀ t : Walk, t.eval w n = t.eval w' n
+  | .var => by simp [eval, hlen]
+  | .succ t => by rw [eval_succ, eval_succ, eval_congr hlen t, succ?_congr hlen]
+  | .pred t => by rw [eval_pred, eval_pred, eval_congr hlen t, pred?_congr hlen]
+
+/-- The substitution `t.comp u` walks `u` first, then `t`. -/
+def comp : Walk → Walk → Walk
+  | .var, u => u
+  | .succ t, u => .succ (t.comp u)
+  | .pred t, u => .pred (t.comp u)
+
+theorem eval_comp : ∀ t u : Walk, (t.comp u).eval w n = (u.eval w n).bind fun v => t.eval w v
+  | .var, u => by
+    cases hu : u.eval w n with
+    | none => simp [comp, hu]
+    | some v => simp [comp, hu, eval_var (eval_lt hu)]
+  | .succ t, u => by simp only [comp, eval_succ, eval_comp t u, Option.bind_assoc]
+  | .pred t, u => by simp only [comp, eval_pred, eval_comp t u, Option.bind_assoc]
+
+/-! ### Reach -/
+
+/-- The number of predecessor steps of a walk, which bounds how far back it reaches. -/
+def pdepth : Walk → ℕ
+  | .var => 0
+  | .pred t => t.pdepth + 1
+  | .succ t => t.pdepth
+
+/-- The number of successor steps of a walk, which bounds how far forward it reaches. -/
+def sdepth : Walk → ℕ
+  | .var => 0
+  | .pred t => t.sdepth
+  | .succ t => t.sdepth + 1
+
+/-- The displacement of a walk: its successor steps less its predecessor steps. -/
+def disp : Walk → Int
+  | .var => 0
+  | .pred t => t.disp - 1
+  | .succ t => t.disp + 1
+
+theorem neg_pdepth_le_disp (t : Walk) : -(t.pdepth : Int) ≤ t.disp := by
+  induction t <;> simp only [pdepth, disp] <;> omega
+
+theorem disp_le_sdepth (t : Walk) : t.disp ≤ t.sdepth := by
+  induction t <;> simp only [sdepth, disp] <;> omega
+
+/-- A walk that reaches a position reaches its start moved by its displacement. -/
+theorem eq_add_disp_of_eval_eq_some :
+    ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → (v : Int) = n + t.disp
+  | .var, _, h => by simp [(eval_var_eq_some_iff.mp h).1, disp]
+  | .succ t, _, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
+    have := eq_add_disp_of_eval_eq_some hu
+    simp only [disp]; omega
+  | .pred t, _, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
+    have := eq_add_disp_of_eval_eq_some hu
+    simp only [disp]; omega
+
+/-- A walk is backward if it takes no successor step, so it reaches only positions at or before
+its start. -/
+def Backward (t : Walk) : Prop := t.sdepth = 0
+
+/-- A walk is forward if it takes no predecessor step, so it reaches only positions at or after
+its start. -/
+def Forward (t : Walk) : Prop := t.pdepth = 0
+
+instance : DecidablePred Backward := fun t ↦ inferInstanceAs (Decidable (t.sdepth = 0))
+
+instance : DecidablePred Forward := fun t ↦ inferInstanceAs (Decidable (t.pdepth = 0))
+
+theorem eval_le_of_backward (ht : t.Backward) (h : t.eval w n = some v) : v ≤ n := by
+  have := eq_add_disp_of_eval_eq_some h
+  have := disp_le_sdepth t
+  rw [show t.sdepth = 0 from ht] at this
+  omega
+
+theorem le_eval_of_forward (ht : t.Forward) (h : t.eval w n = some v) : n ≤ v := by
+  have := eq_add_disp_of_eval_eq_some h
+  have := neg_pdepth_le_disp t
+  rw [show t.pdepth = 0 from ht] at this
+  omega
+
+end Walk
+
+end Subregular
 
 namespace Subregular.BMRS
 

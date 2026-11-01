@@ -66,7 +66,7 @@ symbol, `dhr` gives schwa where the dissertation deletes, as in *jergír* ~ *jer
 
 namespace Dolatian2020
 
-open Subregular
+open Subregular Subregular.StringFormula
 
 /-! ### Segments and stress, (1) -/
 
@@ -100,25 +100,26 @@ def stress (w : List Seg) : Option ℕ := (w.findIdxs (decide <| Seg.Full ·)).g
 
 /-! ### Reduction as a quantifier-free transduction, (46) and §6.6.1 -/
 
-def x : Walk := .var
+/-- The position variable. -/
+def x : StringTerm (Seg × Bool) := .var 0
 
 /-- The guard that a term reads a nucleus not carrying the destressing mark. -/
-def nucleusAt (t : Walk) : WindowFormula (Seg × Bool) :=
-  .label (.h, false) t ⊔ .label (.v, false) t ⊔ .label (.uj, false) t ⊔ .label (.schwa, false) t
+def nucleusAt (t : StringTerm (Seg × Bool)) : StringFormula (Seg × Bool) :=
+  label (.h, false) t ⊔ label (.v, false) t ⊔ label (.uj, false) t ⊔ label (.schwa, false) t
 
 /-- The context in which deletion leaves a syllabifiable cluster, (46): a nucleus and a single
 consonant before the target and a single consonant and a nucleus after it. -/
-def deletable : WindowFormula (Seg × Bool) :=
-  nucleusAt x.pred.pred ⊓ .label (.c, false) x.pred ⊓ .label (.c, false) x.succ ⊓
+def deletable : StringFormula (Seg × Bool) :=
+  nucleusAt x.pred.pred ⊓ label (.c, false) x.pred ⊓ label (.c, false) x.succ ⊓
     nucleusAt x.succ.succ
 
 /-- Destressed high vowel reduction as a quantifier-free transduction, (46): the destressed high
 vowel, marked `true`, is deleted where deletion is licensed and becomes schwa elsewhere; every
 other segment is kept, its mark dropped. -/
 def dhr : Transduction (Seg × Bool) Seg :=
-  ⟨[(WindowFormula.label (.h, true) x ⊓ deletable, []), (.label (.h, true) x, [.schwa])] ++
+  ⟨[(label (.h, true) x ⊓ deletable, []), (label (.h, true) x, [.schwa])] ++
     [Seg.c, .h, .v, .uj, .schwa].flatMap fun s ↦
-      [(.label (s, false) x, [s]), (.label (s, true) x, [s])]⟩
+      [(label (s, false) x, [s]), (label (s, true) x, [s])]⟩
 
 /-- The string with the destressed position marked. -/
 def mark (w : List Seg) (p : ℕ) : List (Seg × Bool) := w.mapIdx fun n s ↦ (s, decide (n = p))
