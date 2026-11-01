@@ -19,7 +19,8 @@ and presuppositions `φ|ψ`. Truth is defined in `Semantics.lean` and felicity i
 
 ## Main definitions
 
-* `Kind`, `Expr`, `Term`, `Formula`: the syntax, one inductive type indexed by kind.
+* `Kind`, `Expr`, `Term`, `Formula`: the syntax, one inductive type indexed by kind;
+  `LogicalRel`: the logical relations, whose meaning is fixed.
 * `Expr.vars`: the variables occurring in an expression; `Expr.locals`: its local variables;
   `Expr.subst`: substitution for a variable.
 * `Expr.PresupFree`: expressions without presuppositions, decidably.
@@ -38,7 +39,8 @@ and presuppositions `φ|ψ`. Truth is defined in `Semantics.lean` and felicity i
 
 Relation symbols are indexed by the number of their non-world arguments and take a world as a
 distinguished argument, where Abney and Keshet make the first argument of a predicate a world by
-an assumption on models. The set-theoretic vocabulary, which ZF defines, is primitive here.
+an assumption on models. The set-theoretic vocabulary, which ZF defines, is primitive here, its
+relations one signature whose meaning is fixed.
 
 A formula is expanded before the rest of its syntax is read. `Expr.locals` and `Expr.elim` give a
 label no local variables and leave it in place, where Abney and Keshet read a label through a label
@@ -62,13 +64,22 @@ inductive Kind
   | term
   | formula
 
+/-- The logical relations of PIP, by arity: equality, inclusion and membership between terms, and
+the cardinality predicates `SG` and `PL`. -/
+inductive LogicalRel : ℕ → Type
+  | eq : LogicalRel 2
+  | subset : LogicalRel 2
+  | mem : LogicalRel 2
+  | sg : LogicalRel 1
+  | pl : LogicalRel 1
+
 /-- PIP expressions. The terms are external variables, bracketed local variables `[x]`, set
 abstraction `⋃{x : φ}`, summation `Σxφ`, intersection and the empty plurality. The formulas are the
-constant `⊤`, predication `P_w(τ₁, …, τₙ)`, equality, inclusion, membership, the cardinality
-predicates `SG` and `PL`, negation, conjunction, selective existential quantification, label
-definition `X ≡ φ` and label use `X`. An expression of either kind may carry a presupposition,
-`e|ψ`. The world `w` of a predication is a separate argument, where [abney-keshet-2025] (p. 11)
-makes the first argument of a predicate a world by an assumption on models. -/
+constant `⊤`, predication `P_w(τ₁, …, τₙ)`, the logical relations, negation, conjunction,
+selective existential quantification, label definition `X ≡ φ` and label use `X`. An expression of
+either kind may carry a presupposition, `e|ψ`. The world `w` of a predication is a separate
+argument, where [abney-keshet-2025] (p. 11) makes the first argument of a predicate a world by an
+assumption on models. -/
 inductive Expr (V : Type u) (L : Type v) (P : ℕ → Type w) : Kind → Type (max u v w)
   | var (x : V) : Expr V L P .term
   | bvar (x : V) : Expr V L P .term
@@ -79,11 +90,7 @@ inductive Expr (V : Type u) (L : Type v) (P : ℕ → Type w) : Kind → Type (m
   | top : Expr V L P .formula
   | atom {n : ℕ} (r : P n) (w : Expr V L P .term) (ts : Fin n → Expr V L P .term) :
       Expr V L P .formula
-  | eq (s t : Expr V L P .term) : Expr V L P .formula
-  | subset (s t : Expr V L P .term) : Expr V L P .formula
-  | mem (s t : Expr V L P .term) : Expr V L P .formula
-  | sg (t : Expr V L P .term) : Expr V L P .formula
-  | pl (t : Expr V L P .term) : Expr V L P .formula
+  | rel {n : ℕ} (R : LogicalRel n) (ts : Fin n → Expr V L P .term) : Expr V L P .formula
   | neg (φ : Expr V L P .formula) : Expr V L P .formula
   | conj (φ ψ : Expr V L P .formula) : Expr V L P .formula
   | exists_ (x : V) (φ : Expr V L P .formula) : Expr V L P .formula
@@ -98,6 +105,21 @@ abbrev Term (V : Type u) (L : Type v) (P : ℕ → Type w) := Expr V L P .term
 abbrev Formula (V : Type u) (L : Type v) (P : ℕ → Type w) := Expr V L P .formula
 
 variable {V : Type u} {L : Type v} {P : ℕ → Type w}
+
+/-- Equality, `s = t`. -/
+abbrev Expr.eq (s t : Term V L P) : Formula V L P := .rel .eq ![s, t]
+
+/-- Inclusion, `s ⊆ t`. -/
+abbrev Expr.subset (s t : Term V L P) : Formula V L P := .rel .subset ![s, t]
+
+/-- Membership, `s ∈ t`. -/
+abbrev Expr.mem (s t : Term V L P) : Formula V L P := .rel .mem ![s, t]
+
+/-- Singularity, `SG(t)`. -/
+abbrev Expr.sg (t : Term V L P) : Formula V L P := .rel .sg ![t]
+
+/-- Plurality, `PL(t)`. -/
+abbrev Expr.pl (t : Term V L P) : Formula V L P := .rel .pl ![t]
 
 /-- Disjunction, as `¬(¬φ ∧ ¬ψ)`. -/
 def Formula.disj (φ ψ : Formula V L P) : Formula V L P := .neg (.conj (.neg φ) (.neg ψ))
@@ -130,11 +152,7 @@ def Expr.vars : ∀ {k : Kind}, Expr V L P k → Set V
   | _, .empty => ∅
   | _, .top => ∅
   | _, .atom _ w ts => w.vars ∪ ⋃ i, (ts i).vars
-  | _, .eq s t => s.vars ∪ t.vars
-  | _, .subset s t => s.vars ∪ t.vars
-  | _, .mem s t => s.vars ∪ t.vars
-  | _, .sg t => t.vars
-  | _, .pl t => t.vars
+  | _, .rel _ ts => ⋃ i, (ts i).vars
   | _, .neg φ => φ.vars
   | _, .conj φ ψ => φ.vars ∪ ψ.vars
   | _, .exists_ x φ => insert x φ.vars
@@ -158,11 +176,7 @@ def Expr.locals : ∀ {k : Kind}, Expr V L P k → List V
   | _, .empty => []
   | _, .top => []
   | _, .atom _ w ts => w.locals ++ (List.finRange _).flatMap fun i => (ts i).locals
-  | _, .eq s t => s.locals ++ t.locals
-  | _, .subset s t => s.locals ++ t.locals
-  | _, .mem s t => s.locals ++ t.locals
-  | _, .sg t => t.locals
-  | _, .pl t => t.locals
+  | _, .rel _ ts => (List.finRange _).flatMap fun i => (ts i).locals
   | _, .neg φ => φ.locals
   | _, .conj φ ψ => φ.locals ++ ψ.locals
   | _, .exists_ x φ => φ.locals.filter (· ≠ x)
@@ -188,11 +202,7 @@ def Expr.subst (x : V) (t : Term V L P) : ∀ {k : Kind}, Expr V L P k → Expr 
   | _, .empty => .empty
   | _, .top => .top
   | _, .atom r w ts => .atom r (Expr.subst x t w) fun i => Expr.subst x t (ts i)
-  | _, .eq s u => .eq (Expr.subst x t s) (Expr.subst x t u)
-  | _, .subset s u => .subset (Expr.subst x t s) (Expr.subst x t u)
-  | _, .mem s u => .mem (Expr.subst x t s) (Expr.subst x t u)
-  | _, .sg s => .sg (Expr.subst x t s)
-  | _, .pl s => .pl (Expr.subst x t s)
+  | _, .rel R ts => .rel R fun i => Expr.subst x t (ts i)
   | _, .neg φ => .neg (Expr.subst x t φ)
   | _, .conj φ ψ => .conj (Expr.subst x t φ) (Expr.subst x t ψ)
   | _, .exists_ y φ => .exists_ y (if y = x then φ else Expr.subst x t φ)
@@ -214,11 +224,7 @@ def Expr.PresupFree : ∀ {k : Kind}, Expr V L P k → Prop
   | _, .empty => True
   | _, .top => True
   | _, .atom _ w ts => w.PresupFree ∧ ∀ i, (ts i).PresupFree
-  | _, .eq s t => s.PresupFree ∧ t.PresupFree
-  | _, .subset s t => s.PresupFree ∧ t.PresupFree
-  | _, .mem s t => s.PresupFree ∧ t.PresupFree
-  | _, .sg t => t.PresupFree
-  | _, .pl t => t.PresupFree
+  | _, .rel _ ts => ∀ i, (ts i).PresupFree
   | _, .neg φ => φ.PresupFree
   | _, .conj φ ψ => φ.PresupFree ∧ ψ.PresupFree
   | _, .exists_ _ φ => φ.PresupFree
@@ -230,13 +236,12 @@ instance Expr.decidablePresupFree : ∀ {k : Kind} (e : Expr V L P k), Decidable
   | _, .var _ | _, .bvar _ | _, .empty | _, .top => isTrue trivial
   | _, .abs _ φ | _, .sigma _ φ | _, .neg φ | _, .exists_ _ φ | _, .labelDef _ φ =>
       φ.decidablePresupFree
-  | _, .sg t | _, .pl t => t.decidablePresupFree
-  | _, .inter s t | _, .eq s t | _, .subset s t | _, .mem s t =>
-      @instDecidableAnd _ _ s.decidablePresupFree t.decidablePresupFree
+  | _, .inter s t => @instDecidableAnd _ _ s.decidablePresupFree t.decidablePresupFree
   | _, .conj φ ψ => @instDecidableAnd _ _ φ.decidablePresupFree ψ.decidablePresupFree
   | _, .atom _ w ts =>
       @instDecidableAnd _ _ w.decidablePresupFree
         (@Nat.decidableForallFin _ _ fun i => (ts i).decidablePresupFree)
+  | _, .rel _ ts => @Nat.decidableForallFin _ _ fun i => (ts i).decidablePresupFree
   | _, .label _ | _, .presup _ _ => isFalse id
 
 /-! ### Labels -/
@@ -251,11 +256,7 @@ def Expr.labels : ∀ {k : Kind}, Expr V L P k → Set L
   | _, .empty => ∅
   | _, .top => ∅
   | _, .atom _ w ts => w.labels ∪ ⋃ i, (ts i).labels
-  | _, .eq s t => s.labels ∪ t.labels
-  | _, .subset s t => s.labels ∪ t.labels
-  | _, .mem s t => s.labels ∪ t.labels
-  | _, .sg t => t.labels
-  | _, .pl t => t.labels
+  | _, .rel _ ts => ⋃ i, (ts i).labels
   | _, .neg φ => φ.labels
   | _, .conj φ ψ => φ.labels ∪ ψ.labels
   | _, .exists_ _ φ => φ.labels
@@ -273,11 +274,7 @@ def Expr.defs : ∀ {k : Kind}, Expr V L P k → List (L × Formula V L P)
   | _, .empty => []
   | _, .top => []
   | _, .atom _ w ts => w.defs ++ (List.finRange _).flatMap fun i => (ts i).defs
-  | _, .eq s t => s.defs ++ t.defs
-  | _, .subset s t => s.defs ++ t.defs
-  | _, .mem s t => s.defs ++ t.defs
-  | _, .sg t => t.defs
-  | _, .pl t => t.defs
+  | _, .rel _ ts => (List.finRange _).flatMap fun i => (ts i).defs
   | _, .neg φ => φ.defs
   | _, .conj φ ψ => φ.defs ++ ψ.defs
   | _, .exists_ _ φ => φ.defs
@@ -296,11 +293,7 @@ def Expr.substLabels (A : L → Option (Formula V L P)) : ∀ {k : Kind}, Expr V
   | _, .empty => .empty
   | _, .top => .top
   | _, .atom r w ts => .atom r (w.substLabels A) fun i => (ts i).substLabels A
-  | _, .eq s t => .eq (s.substLabels A) (t.substLabels A)
-  | _, .subset s t => .subset (s.substLabels A) (t.substLabels A)
-  | _, .mem s t => .mem (s.substLabels A) (t.substLabels A)
-  | _, .sg t => .sg (t.substLabels A)
-  | _, .pl t => .pl (t.substLabels A)
+  | _, .rel R ts => .rel R fun i => (ts i).substLabels A
   | _, .neg φ => .neg (φ.substLabels A)
   | _, .conj φ χ => .conj (φ.substLabels A) (χ.substLabels A)
   | _, .exists_ x φ => .exists_ x (φ.substLabels A)
@@ -415,11 +408,7 @@ def Expr.elim : ∀ {k : Kind}, Expr V L P k → Expr V L P k
   | _, .empty => .empty
   | _, .top => .top
   | _, .atom r w ts => .atom r w.elim fun i => (ts i).elim
-  | _, .eq s t => .eq s.elim t.elim
-  | _, .subset s t => .subset s.elim t.elim
-  | _, .mem s t => .mem s.elim t.elim
-  | _, .sg t => .sg t.elim
-  | _, .pl t => .pl t.elim
+  | _, .rel R ts => .rel R fun i => (ts i).elim
   | _, .neg φ => .neg φ.elim
   | _, .conj φ ψ => .conj φ.elim ψ.elim
   | _, .exists_ x φ => .exists_ x φ.elim

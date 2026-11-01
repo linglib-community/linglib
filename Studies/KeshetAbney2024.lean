@@ -322,7 +322,8 @@ theorem felicitous_discourseMust_of_realistic (hr : ∀ w, S.acc w w)
 /-- (78): the unembedded discourse (74) is felicitous under every assignment,
 the assertion `single(b)` satisfying the pronoun's presupposition. -/
 theorem felicitous_plain : plain.Felicitous S.model h :=
-  ⟨felicitous_descE S h, fun hd => ⟨trivial, Fin.forall_fin_one.2 ⟨trivial, trivial, hd.2⟩⟩⟩
+  ⟨felicitous_descE S h, fun hd =>
+    ⟨trivial, Fin.forall_fin_one.2 ⟨trivial, Fin.forall_fin_one.2 trivial, hd.2⟩⟩⟩
 
 theorem felicitous_exists_descE : (Expr.exists_ .b descE).Felicitous S.model h :=
   fun g' _ => felicitous_descE S g'

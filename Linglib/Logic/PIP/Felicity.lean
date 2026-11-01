@@ -71,11 +71,7 @@ def Expr.Felicitous (M : Model P α) (g : V → Set α) : ∀ {k : Kind}, Expr V
   | _, .empty => True
   | _, .top => True
   | _, .atom _ w ts => w.Felicitous M g ∧ ∀ i, (ts i).Felicitous M g
-  | _, .eq s t => s.Felicitous M g ∧ t.Felicitous M g
-  | _, .subset s t => s.Felicitous M g ∧ t.Felicitous M g
-  | _, .mem s t => s.Felicitous M g ∧ t.Felicitous M g
-  | _, .sg t => t.Felicitous M g
-  | _, .pl t => t.Felicitous M g
+  | _, .rel _ ts => ∀ i, (ts i).Felicitous M g
   | _, .neg φ => φ.Felicitous M g
   | _, .conj φ ψ => φ.Felicitous M g ∧ (Formula.Realize M g φ → ψ.Felicitous M g)
   | _, .exists_ x φ => ∀ g', Set.EqOn g' g {x}ᶜ → φ.Felicitous M g'
@@ -113,10 +109,8 @@ theorem Term.felicitous_sigma_of_forall {x : V} {φ : Formula V L P}
 
 @[simp] theorem Term.felicitous_sgPronoun (x : V) (φ : Formula V L P) :
     Expr.Felicitous M g (Term.sgPronoun x φ) ↔
-      Expr.Felicitous M g (.sigma x φ) ∧ ∃ a, Term.realize M g (.sigma x φ) = {a} := by
-  show Expr.Felicitous M g (.sigma x φ) ∧ Expr.Felicitous M g (.sigma x φ) ∧
-    (∃ a, Term.realize M g (.sigma x φ) = {a}) ↔ _
-  exact ⟨fun ⟨a, _, c⟩ => ⟨a, c⟩, fun ⟨a, c⟩ => ⟨a, a, c⟩⟩
+      Expr.Felicitous M g (.sigma x φ) ∧ ∃ a, Term.realize M g (.sigma x φ) = {a} :=
+  ⟨fun ⟨a, _, c⟩ => ⟨a, c⟩, fun ⟨a, c⟩ => ⟨a, Fin.forall_fin_one.2 a, c⟩⟩
 
 @[simp] theorem Formula.felicitous_top : Expr.Felicitous M g (.top : Formula V L P) := trivial
 
@@ -125,20 +119,23 @@ theorem Term.felicitous_sigma_of_forall {x : V} {φ : Formula V L P}
     Expr.Felicitous M g (.atom r w ts) ↔ w.Felicitous M g ∧ ∀ i, (ts i).Felicitous M g :=
   Iff.rfl
 
+theorem Formula.felicitous_rel {n : ℕ} (R : LogicalRel n) (ts : Fin n → Term V L P) :
+    Expr.Felicitous M g (.rel R ts) ↔ ∀ i, (ts i).Felicitous M g := Iff.rfl
+
 @[simp] theorem Formula.felicitous_eq (s t : Term V L P) :
-    Expr.Felicitous M g (.eq s t) ↔ s.Felicitous M g ∧ t.Felicitous M g := Iff.rfl
+    Expr.Felicitous M g (.eq s t) ↔ s.Felicitous M g ∧ t.Felicitous M g := Fin.forall_fin_two
 
 @[simp] theorem Formula.felicitous_subset (s t : Term V L P) :
-    Expr.Felicitous M g (.subset s t) ↔ s.Felicitous M g ∧ t.Felicitous M g := Iff.rfl
+    Expr.Felicitous M g (.subset s t) ↔ s.Felicitous M g ∧ t.Felicitous M g := Fin.forall_fin_two
 
 @[simp] theorem Formula.felicitous_mem (s t : Term V L P) :
-    Expr.Felicitous M g (.mem s t) ↔ s.Felicitous M g ∧ t.Felicitous M g := Iff.rfl
+    Expr.Felicitous M g (.mem s t) ↔ s.Felicitous M g ∧ t.Felicitous M g := Fin.forall_fin_two
 
 @[simp] theorem Formula.felicitous_sg (t : Term V L P) :
-    Expr.Felicitous M g (.sg t) ↔ t.Felicitous M g := Iff.rfl
+    Expr.Felicitous M g (.sg t) ↔ t.Felicitous M g := Fin.forall_fin_one
 
 @[simp] theorem Formula.felicitous_pl (t : Term V L P) :
-    Expr.Felicitous M g (.pl t) ↔ t.Felicitous M g := Iff.rfl
+    Expr.Felicitous M g (.pl t) ↔ t.Felicitous M g := Fin.forall_fin_one
 
 @[simp] theorem Formula.felicitous_neg (φ : Formula V L P) :
     Expr.Felicitous M g (.neg φ) ↔ φ.Felicitous M g := Iff.rfl
@@ -172,14 +169,7 @@ theorem Expr.felicitous_of_presupFree :
   | _, .atom _ w ts, h, g =>
       ⟨Expr.felicitous_of_presupFree w h.1 g,
         fun i => Expr.felicitous_of_presupFree (ts i) (h.2 i) g⟩
-  | _, .eq s t, h, g =>
-      ⟨Expr.felicitous_of_presupFree s h.1 g, Expr.felicitous_of_presupFree t h.2 g⟩
-  | _, .subset s t, h, g =>
-      ⟨Expr.felicitous_of_presupFree s h.1 g, Expr.felicitous_of_presupFree t h.2 g⟩
-  | _, .mem s t, h, g =>
-      ⟨Expr.felicitous_of_presupFree s h.1 g, Expr.felicitous_of_presupFree t h.2 g⟩
-  | _, .sg t, h, g => Expr.felicitous_of_presupFree t h g
-  | _, .pl t, h, g => Expr.felicitous_of_presupFree t h g
+  | _, .rel _ ts, h, g => fun i => Expr.felicitous_of_presupFree (ts i) (h i) g
   | _, .neg φ, h, g => Expr.felicitous_of_presupFree φ h g
   | _, .conj φ ψ, h, g =>
       ⟨Expr.felicitous_of_presupFree φ h.1 g, fun _ => Expr.felicitous_of_presupFree ψ h.2 g⟩
@@ -210,17 +200,9 @@ theorem Expr.felicitous_congr :
         (forall_congr' fun i => Expr.felicitous_congr (ts i)
           (h.mono (Set.subset_union_of_subset_right (Set.subset_iUnion (fun i => (ts i).vars) i)
             _)))
-  | _, .eq s t, _, _, h =>
-      and_congr (Expr.felicitous_congr s (h.mono Set.subset_union_left))
-        (Expr.felicitous_congr t (h.mono Set.subset_union_right))
-  | _, .subset s t, _, _, h =>
-      and_congr (Expr.felicitous_congr s (h.mono Set.subset_union_left))
-        (Expr.felicitous_congr t (h.mono Set.subset_union_right))
-  | _, .mem s t, _, _, h =>
-      and_congr (Expr.felicitous_congr s (h.mono Set.subset_union_left))
-        (Expr.felicitous_congr t (h.mono Set.subset_union_right))
-  | _, .sg t, _, _, h => Expr.felicitous_congr t h
-  | _, .pl t, _, _, h => Expr.felicitous_congr t h
+  | _, .rel _ ts, _, _, h =>
+      forall_congr' fun i => Expr.felicitous_congr (ts i)
+        (h.mono (Set.subset_iUnion (fun i => (ts i).vars) i))
   | _, .neg φ, _, _, h => Expr.felicitous_congr φ h
   | _, .conj φ ψ, _, _, h =>
       and_congr (Expr.felicitous_congr φ (h.mono Set.subset_union_left))
@@ -265,7 +247,8 @@ theorem Expr.felicitous_presup_of_presupFree {k : Kind} (e : Expr V L P k) {ψ :
 
 @[simp] theorem Formula.felicitous_some (s t : Term V L P) :
     Expr.Felicitous M g (Formula.some_ s t) ↔ s.Felicitous M g ∧ t.Felicitous M g :=
-  show (s.Felicitous M g ∧ t.Felicitous M g) ∧ True ↔ _ from (and_true _).to_iff
+  show Expr.Felicitous M g (.eq (.inter s t) .empty) ↔ _ from
+    Fin.forall_fin_two.trans (and_true _).to_iff
 
 /-! ### Truth and felicity as one trivalent value -/
 
