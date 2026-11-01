@@ -182,8 +182,9 @@ theorem toLanguageVariety_toPseudovariety (V : Pseudovariety.{u}) :
     let L : Language M := {w | φ (FreeMonoid.ofList w) = m}
     have hL : L ∈ V.languages M := mem_languages_of_recognizes hM ⟨{m}, rfl⟩
     have := V.finite_of_mem hL
-    exact W.mem_of_mulEquiv ((Con.congr (.refl _) (Con.comap_syntactic hφ {m}).symm).trans
-      ((Con.syntactic {m}).comapQuotientEquivOfSurj φ hφ)) (hW _ ⟨M, L, hL, ⟨.refl _⟩⟩)
+    exact W.mem_of_mulEquiv
+      ((Con.congr (.refl _) (Con.comap_syntactic (fun y ↦ .inr (hφ y)) {m}).symm).trans
+        ((Con.syntactic {m}).comapQuotientEquivOfSurj φ hφ)) (hW _ ⟨M, L, hL, ⟨.refl _⟩⟩)
   refine W.sub (f := .pi fun m ↦ (Con.syntactic {m}).mk') (fun u v huv ↦ ?_) (W.pi_mem h)
   exact (Con.mem_iff_of_syntactic ((Con.eq _).1 (congrFun huv v))).2 rfl
 
