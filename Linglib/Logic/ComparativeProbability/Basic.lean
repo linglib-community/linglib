@@ -19,7 +19,6 @@ along preimages of sets and along images of an injection whose range is not null
 ## Main statements
 
 * `isQualitativeAdditive_iff`: qualitative additivity is context cancellation.
-* `isQualitativeProbability_iff`: de Finetti's axioms in their printed form.
 * `rel_sup_sup`: comparisons with disjoint sides merge.
 * `rel_sdiff_sdiff_iff`: removing a null event changes no comparison.
 * `isQualitativeProbability_preimage`, `isQualitativeProbability_image`: pulling back along maps.
@@ -58,18 +57,6 @@ theorem isQualitativeAdditive_iff : IsQualitativeAdditive r ↔
   refine ⟨fun _ _ _ _ ↦ rel_sup_sup_right_iff, fun h ↦ ⟨fun a b ↦ ?_⟩⟩
   have := h (a \ b) (b \ a) (a ⊓ b) disjoint_inf_sdiff (inf_comm b a ▸ disjoint_inf_sdiff)
   rwa [sup_sdiff_inf, inf_comm, sup_sdiff_inf] at this
-
-/-- **De Finetti's axioms as printed.** A relation is a qualitative probability iff `⊥` is not
-    at least as likely as `⊤`, every event is at least as likely as `⊥`, any two events compare,
-    the relation is transitive, and a common context disjoint from both sides cancels: axioms
-    (i)–(v) as [scott-1964] lists them (p. 246). -/
-theorem isQualitativeProbability_iff : IsQualitativeProbability r ↔
-    ¬r ⊥ ⊤ ∧ (∀ a, r a ⊥) ∧ (∀ a b, r a b ∨ r b a) ∧ (∀ a b c, r a b → r b c → r a c) ∧
-      ∀ a b c, Disjoint c a → Disjoint c b → (r a b ↔ r (a ⊔ c) (b ⊔ c)) := by
-  refine ⟨fun _ ↦ ⟨IsNontrivial.bot_not_ge_top, rel_bot, total_of r, fun _ _ _ ↦ trans_of r,
-    fun _ _ _ hca hcb ↦ (rel_sup_sup_right_iff hca hcb).symm⟩, fun ⟨h₁, h₂, h₃, h₄, h₅⟩ ↦ ?_⟩
-  have := isQualitativeAdditive_iff.mpr fun a b c hca hcb ↦ (h₅ a b c hca hcb).symm
-  exact { bot_not_ge_top := h₁, rel_bot' := h₂, total := h₃, trans := h₄ }
 
 /-- Removing an event `n` at most as likely as `⊥` changes no comparison. -/
 theorem rel_sdiff_sdiff_iff [IsLikelihoodMono r] [IsQualitativeAdditive r] [IsTrans α r]
