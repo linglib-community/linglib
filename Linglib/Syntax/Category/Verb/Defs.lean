@@ -11,7 +11,7 @@ public import Linglib.Semantics.Aspect.Defs
 public import Linglib.Semantics.Events.Path
 public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Basic
-public import Linglib.Logic.Natural.Basic
+public import Linglib.Logic.Natural.Signature
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ThetaRole
 public import Linglib.Semantics.Degree.Gradability

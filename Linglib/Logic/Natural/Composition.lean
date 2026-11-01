@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.Soundness
+public import Linglib.Logic.Natural.Signature
 public import Mathlib.Algebra.Group.End
 public import Mathlib.Algebra.Group.Submonoid.BigOperators
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
@@ -59,14 +59,12 @@ theorem Signature.sign_list_prod (l : List (Function.End α × Signature)) :
 theorem Signature.monotone_list_prod {l : List (Function.End α × Signature)}
     (h : ∀ p ∈ l, p.2.HoldsFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = 1) :
     Monotone l.prod.1 :=
-  (Signature.soundFor_of_holdsFor (Signature.holdsFor_list_prod h)).monotone_of_sign_eq_one
-    (Signature.sign_list_prod l ▸ hs)
+  (Signature.holdsFor_list_prod h).monotone_of_sign_eq_one (Signature.sign_list_prod l ▸ hs)
 
 /-- A path of layers whose signs multiply to the negative sign composes to an antitone map. -/
 theorem Signature.antitone_list_prod {l : List (Function.End α × Signature)}
     (h : ∀ p ∈ l, p.2.HoldsFor p.1) (hs : (l.map fun p ↦ p.2.sign).prod = -1) :
     Antitone l.prod.1 :=
-  (Signature.soundFor_of_holdsFor (Signature.holdsFor_list_prod h)).antitone_of_sign_eq_neg_one
-    (Signature.sign_list_prod l ▸ hs)
+  (Signature.holdsFor_list_prod h).antitone_of_sign_eq_neg_one (Signature.sign_list_prod l ▸ hs)
 
 end NaturalLogic
