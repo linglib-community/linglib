@@ -381,6 +381,12 @@ theorem proposition_impl : proposition M (.impl φ ψ) = proposition M φ ⇨ pr
 theorem proposition_bot : proposition M (.bot : Formula Atom) = ⊥ :=
   Question.ext <| Fintype.finsetEquivSet.symm.forall_congr_left.2 fun _ ↦ by simp
 
+/-- An atom expresses the declarative of the worlds where it is true. -/
+theorem proposition_atom (p : Atom) :
+    proposition M (.atom p) = Question.ofSet {w | M.val p w} :=
+  Question.ext <| Fintype.finsetEquivSet.symm.forall_congr_left.2 fun _ ↦ by
+    simp [Set.subset_def]
+
 /-- The truth set is the union of the proposition (Proposition 3.3.5). -/
 theorem info_proposition : (proposition M φ).info = truthSet M φ :=
   Set.ext fun w ↦ by

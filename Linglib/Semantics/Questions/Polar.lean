@@ -39,12 +39,12 @@ def polar (p : Set W) : Question W :=
 theorem polar_eq_sup (p : Set W) :
     polar p = ofSet p ⊔ ofSet pᶜ := rfl
 
-theorem polar_eq_iSup_orbit (p : Set W) :
-    polar p = ⨆ q ∈ MulAction.orbit Polarity p, ofSet q := by
-  rw [polar_eq_sup, Polarity.orbit_eq_pair_compl, iSup_insert, iSup_singleton]
+theorem polar_eq_generate_orbit (p : Set W) :
+    polar p = generate (MulAction.orbit Polarity p) := by
+  rw [polar_eq_sup, Polarity.orbit_eq_pair_compl, generate_pair]
 
 @[simp] theorem polar_smul (s : Polarity) (p : Set W) : polar (s • p) = polar p := by
-  rw [polar_eq_iSup_orbit, polar_eq_iSup_orbit, MulAction.orbit_smul]
+  rw [polar_eq_generate_orbit, polar_eq_generate_orbit, MulAction.orbit_smul]
 
 theorem query_ofSet (p : Set W) : (ofSet p).query = polar p := by
   rw [query, info_ofSet, polar_eq_sup]

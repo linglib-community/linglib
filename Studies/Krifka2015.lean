@@ -309,7 +309,7 @@ open scoped Classical in
 entails, or inside what the root entails when the space has no continuations. -/
 noncomputable def toIssue : Question W :=
   if continuations C = ∅ then Question.ofSet (⋂₀ C.root)
-  else ⨆ c ∈ continuations C, Question.ofSet (⋂₀ c)
+  else Question.generate ((⋂₀ ·) '' continuations C)
 
 theorem mem_toIssue_iff {i : Set W} :
     i ∈ toIssue C ↔
@@ -317,7 +317,7 @@ theorem mem_toIssue_iff {i : Set W} :
   unfold toIssue
   split_ifs with h
   · simp [h, Question.mem_ofSet]
-  · simp only [h, false_and, false_or, Question.mem_biSup_iff, Question.mem_ofSet]
+  · simp only [h, false_and, false_or, Question.mem_generate, Set.exists_mem_image]
     refine ⟨fun h' ↦ h'.elim (fun e ↦ ?_) id, Or.inr⟩
     obtain ⟨c, hc⟩ := Set.nonempty_iff_ne_empty.2 h
     exact ⟨c, hc, e ▸ Set.empty_subset _⟩

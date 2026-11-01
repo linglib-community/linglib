@@ -244,7 +244,7 @@ def Word.sem : (α : Word) → Sem α.ty
   | .it => fun z => .presup z (.sg z)
   | .they => fun z => .presup z (.pl z)
   | .not _ => fun ψ => .neg (.mem (.var .w) ψ)
-  | .might _ => fun β ψ => Formula.some_ β ψ
+  | .might _ => fun β ψ => Formula.some β ψ
   | .must _ => fun β ψ => .subset β ψ
   | .base => modalBase
 
@@ -352,10 +352,7 @@ theorem interp_aFarmerWhoOwnsADonkey :
       restricted .x fun y => .conj (pred₁ .farmer y)
         (.conj (pred₂ .hasGoal (.var .o) (.var .x))
           (restricted .o fun e => .conj (pred₁ .ownEvt e)
-            (.conj (pred₂ .hasPatient e (.var .d)) (restricted .d (pred₁ .donkey))))) := by
-  simp only [aFarmerWhoOwnsADonkey, interp, Word.sem, FA, FX, PM, PA, lift, restricted, pred₁,
-    pred₂, Formula.expand, List.length_nil, Function.iterate_zero_apply, Expr.subst, Term.bracket,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceCtorEq, reduceIte]
+            (.conj (pred₂ .hasPatient e (.var .d)) (restricted .d (pred₁ .donkey))))) := rfl
 
 /-- (66): "every girl wrote a paper", quantifier raising leaving a restricted-variable
 trace in the restriction and a labeled trace in the scope. -/
@@ -413,12 +410,7 @@ theorem interp_mostOfThemUsedIt :
             (.atom (.lex .brought) (.var .w) ![.bvar .b, y, .var .u]))),
         SA .s' .U (.conj (.conj (pred₂ .hasAgent (.var .e) (.var .s')) (.label .M))
           (restricted .e fun e => .conj (pred₁ .useEvt e)
-            (pred₂ .hasPatient e (.presup (.var .u) (.sg (.var .u))))))] := by
-  simp only [mostOfThemUsedIt, interp, Word.sem, FA, FX, PM, PA, SA, lift, restricted, pred₁, pred₂,
-    defs118, Formula.expand, List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, Expr.substLabels, List.lookup_cons, List.lookup_nil,
-    beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq, Expr.subst,
-    Term.bracket, Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceIte, Option.getD_some]
+            (pred₂ .hasPatient e (.presup (.var .u) (.sg (.var .u))))))] := rfl
 
 /-! ### Scenarios -/
 
@@ -632,23 +624,13 @@ theorem expandSelf_shop139 :
     shop139.expandSelf =
       .conj (.conj (.neg (.mem (.var .w) (.sigma .w ownCar)))
           (pred₁ .inShop (Term.sgPronoun .c ownCar)))
-        (.labelDef .O ownCar) := by
-  rw [Formula.expandSelf, show shop139.defs = [(.O, ownCar)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, shop139, notOwn, Term.sgPronoun, pred₁, ownCar, indefOwned, pred₂,
-    Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
-    Option.getD_some]
+        (.labelDef .O ownCar) := rfl
 
 theorem expandSelf_shop138 :
     shop138.expandSelf =
       .conj (.conj (.neg (.mem (.var .w) (.sigma .w (.neg (.mem (.var .w) (.sigma .w ownCar))))))
           (pred₁ .inShop (Term.sgPronoun .c ownCar)))
-        (.labelDef .O ownCar) := by
-  rw [Formula.expandSelf, show shop138.defs = [(.O, ownCar)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, shop138, notOwn, Term.sgPronoun, pred₁, ownCar, indefOwned, pred₂,
-    Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
-    Option.getD_some]
+        (.labelDef .O ownCar) := rfl
 
 /-- (139) is felicitous at `w₀` iff he owns a car there — iff its first sentence is false. -/
 theorem felicitous_shop139_iff (hw : h .w = world w₀) (hx : h .x = {Sum.inr x₀}) :
@@ -710,12 +692,7 @@ theorem expandSelf_bathroom143 :
     bathroom143.expandSelf =
       .conj (Formula.disj (.neg (.mem (.var .w) (.sigma .w bathroomX)))
           (pred₁ .funnyPlace (Term.sgPronoun .b bathroomX)))
-        (.labelDef .X bathroomX) := by
-  rw [Formula.expandSelf, show bathroom143.defs = [(.X, bathroomX)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, bathroom143, Formula.disj, Term.sgPronoun, pred₁, bathroomX,
-    sgIndefWith, sgIndef, Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons',
-    Matrix.comp_vecEmpty', Option.getD_some]
+        (.labelDef .X bathroomX) := rfl
 
 /-- (145): the bathroom disjunction is felicitous at `w₀` iff, if there is a bathroom here,
 there is exactly one. -/
@@ -744,7 +721,7 @@ def wolfE : Fm :=
 /-- (133): "A wolf might enter. It would eat Tasty Tim first.", `MIGHT(β_w, ΣwW) ∧
 MUST(β_w, ΣwW, ΣwE)` (129) with the second modal's restriction the first's nuclear scope. -/
 def wolfDiscourse : Fm :=
-  .conj (.conj (Formula.some_ modalBase (.sigma .w (.label .W)))
+  .conj (.conj (Formula.some modalBase (.sigma .w (.label .W)))
       (.subset (.inter modalBase (.sigma .w (.label .W))) (.sigma .w (.label .E))))
     (.conj (.labelDef .W wolfW) (.labelDef .E wolfE))
 
@@ -753,16 +730,9 @@ def wolfE' : Fm := .conj wolfW (.conj (pred₁ .tim (.bvar .t)) (pred₂ .eats (
 
 theorem expandSelf_wolfDiscourse :
     wolfDiscourse.expandSelf =
-      .conj (.conj (Formula.some_ modalBase (.sigma .w wolfW))
+      .conj (.conj (Formula.some modalBase (.sigma .w wolfW))
           (.subset (.inter modalBase (.sigma .w wolfW)) (.sigma .w wolfE')))
-        (.conj (.labelDef .W wolfW) (.labelDef .E wolfE')) := by
-  rw [Formula.expandSelf, show wolfDiscourse.defs = [(.W, wolfW), (.E, wolfE)] from rfl,
-    Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, wolfDiscourse, wolfW, wolfE, wolfE', modalBase, Formula.some_,
-    pred₁, pred₂, Expr.substLabels, List.lookup_cons, List.lookup_nil, beq_self_eq_true,
-    beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq, Matrix.comp_vecCons',
-    Matrix.comp_vecEmpty', Option.getD_some]
+        (.conj (.labelDef .W wolfW) (.labelDef .E wolfE')) := rfl
 
 theorem locals_wolfE' : wolfE'.locals = [.x, .t] := rfl
 
@@ -877,19 +847,39 @@ theorem expandSelf_theyLoud :
             .sigma .d (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d)))])
           (pred₁ .loud (.sigma .d (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))))
         (.conj (.labelDef .D (pred₁ .dog (.bvar .d)))
-          (.labelDef .B (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))) := by
-  rw [Formula.expandSelf, show theyLoud.defs = [(.D, pred₁ .dog (.bvar .d)),
-    (.B, .conj (.label .D) (pred₁ .barks (.var .d)))] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, theyLoud, pred₁, Expr.substLabels, List.lookup_cons,
-    List.lookup_nil, beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
+          (.labelDef .B (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))) := rfl
 
-/-- A circular definition is never expanded away: `X ∧ X ≡ X` keeps its defined label `X`, and
-so has no translation ((30)). -/
-example : Lab.X ∈ (Formula.expandSelf (.conj (.label .X) (.labelDef .X (.label .X))) : Fm).labels ∧
-    (Expr.defs (.conj (.label .X) (.labelDef .X (.label .X)) : Fm)).lookup .X ≠ none := by
-  simp [Formula.expandSelf, Formula.expand, Expr.defs, Expr.substLabels, Expr.labels]
+/-- (102)–(104) has a translation ((31a)): `B` is defined through `D`, and `D` through no label. -/
+example : theyLoud.HasDiscourseTranslation := by
+  have hdefs : theyLoud.defs = [(.D, pred₁ .dog (.bvar .d)),
+      (.B, .conj (.label .D) (pred₁ .barks (.var .d)))] := rfl
+  let rank : Lab → ℕ := fun Z => if Z = .B then 1 else 0
+  have hrank : ∀ {Z Z'}, DependsOn theyLoud.defs Z Z' → rank Z' < rank Z := by
+    rintro Z Z' ⟨ψ, h, hZ'⟩
+    rw [hdefs] at h
+    cases Z <;> simp [List.lookup_cons, beq_eq_decide] at h <;> subst h <;>
+      simp_all [rank, pred₁, Expr.labels]
+  refine ⟨fun Z ψ ψ' h h' => (Prod.mk.inj (List.inj_on_of_nodup_map (f := Prod.fst)
+    (by rw [hdefs]; decide) h h' rfl)).2, fun Z hZ => ?_, fun Z hZ => ?_⟩
+  · have : ∀ {Z Z'}, Relation.TransGen (DependsOn theyLoud.defs) Z Z' → rank Z' < rank Z := by
+      intro Z Z' h
+      induction h with
+      | single h => exact hrank h
+      | tail _ h ih => exact (hrank h).trans ih
+    exact lt_irrefl _ (this hZ)
+  · have : Z = .D ∨ Z = .B := by
+      simp [theyLoud, pred₁, Expr.labels, Fin.exists_fin_two] at hZ
+      tauto
+    rw [hdefs]
+    rcases this with rfl | rfl <;> simp [List.lookup_cons, beq_eq_decide]
+
+/-- A circular definition is never expanded away: `X ∧ X ≡ X` has no translation, and keeps its
+defined label `X` ((30)). -/
+example : ¬ Formula.HasDiscourseTranslation (.conj (.label .X) (.labelDef .X (.label .X)) : Fm) ∧
+    Lab.X ∈ (Formula.expandSelf (.conj (.label .X) (.labelDef .X (.label .X))) : Fm).labels ∧
+    (Expr.defs (.conj (.label .X) (.labelDef .X (.label .X)) : Fm)).lookup .X ≠ none :=
+  ⟨fun h => h.not_circular .X (.single ⟨_, rfl, rfl⟩), by
+    simp [Formula.expandSelf, Formula.expand, Expr.defs, Expr.substLabels, Expr.labels]⟩
 
 /-! ### Presupposition under quantification -/
 
@@ -935,29 +925,14 @@ theorem expandSelf_everyMonarchy :
     everyMonarchy.expandSelf =
       .conj (.subset (.sigma .m monarchyR) (.sigma .m (cherishBody' monarchyR)))
         (.conj (.labelDef .R monarchyR)
-          (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody' monarchyR)))) := by
-  rw [Formula.expandSelf, show everyMonarchy.defs =
-    [(.R, monarchyR), (.K, monarchK), (.S, cherishBody .R)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, everyMonarchy, cherishBody, cherishBody', monarchyR, sgIndef,
-    monarchK, Term.sgPronoun, pred₁, pred₂, Expr.substLabels, List.lookup_cons, List.lookup_nil,
-    beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq, Matrix.comp_vecCons',
-    Matrix.comp_vecEmpty', Option.getD_some]
+          (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody' monarchyR)))) := rfl
 
 theorem expandSelf_discourse150a :
     discourse150a.expandSelf =
       .conj (.conj (.subset (.sigma .m countryC) (.sigma .m monarchyM'))
           (.atom .most (.var .w) ![.sigma .m monarchyM', .sigma .m (cherishBody' monarchyM')]))
         (.conj (.labelDef .C countryC) (.conj (.labelDef .M monarchyM')
-          (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody' monarchyM'))))) := by
-  rw [Formula.expandSelf, show discourse150a.defs =
-    [(.C, countryC), (.M, monarchyM), (.K, monarchK), (.S, cherishBody .M)] from rfl,
-    Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, discourse150a, cherishBody, cherishBody', countryC, monarchyM,
-    monarchyM', sgIndefWith, sgIndef, monarchK, Term.sgPronoun, pred₁, pred₂, Expr.substLabels,
-    List.lookup_cons, List.lookup_nil, beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true,
-    reduceCtorEq, Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
+          (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody' monarchyM'))))) := rfl
 
 theorem felicitous_monarchK : monarchK.Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (by decide) _

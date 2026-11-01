@@ -316,10 +316,10 @@ theorem reversal_on_scales (ρ : I) :
 
 /-- The pragmatic reading of *more than n* on the scales `W` negates *more than m* for every
 numeral `m` above `n` at least as round as `n` on them. -/
-def enrichment (W : Finset ℤ) (n : ℕ) : Set ℕ :=
+def enrichment (W : Finset ℕ) (n : ℕ) : Set ℕ :=
   Ioi n \ ⋃ m ∈ {m : ℕ | n < m ∧ AtLeastAsRound (OnScale W) (n : ℤ) m}, Ioi m
 
-theorem enrichment_eq {W : Finset ℤ} (hW : 0 ∉ W) {n w : ℕ} (hw : (w : ℤ) = scaleLcm W n) :
+theorem enrichment_eq {W : Finset ℕ} (hW : 0 ∉ W) {n w : ℕ} (hw : w = scaleLcm W n) :
     enrichment W n = Ioc n (n + w) := by
   have h := isLeast_atLeastAsRound_onScale hW n
   rw [← hw] at h
@@ -337,14 +337,14 @@ theorem enrichment_eq {W : Finset ℤ} (hW : 0 ∉ W) {n w : ℕ} (hw : (w : ℤ
     omega
 
 theorem enrichment_singleton {w n : ℕ} (hw : 0 < w) (h : w ∣ n) :
-    enrichment {(w : ℤ)} n = Ioc n (n + w) :=
-  enrichment_eq (fun h0 ↦ (Nat.cast_pos.2 hw).ne (Finset.mem_singleton.1 h0)) (by
+    enrichment {w} n = Ioc n (n + w) :=
+  enrichment_eq (fun h0 ↦ hw.ne (Finset.mem_singleton.1 h0)) (by
     rw [scaleLcm, Finset.filter_true_of_mem fun x hx ↦
         Finset.mem_singleton.1 hx ▸ Int.natCast_dvd_natCast.2 h,
-      Finset.lcm_singleton, id, Int.normalize_of_nonneg (Nat.cast_nonneg w)])
+      Finset.lcm_singleton, id, normalize_eq])
 
 /-- The aligned decimal scales of units, tens, hundreds and thousands. -/
-def decimal : Finset ℤ := {1000, 100, 10, 1}
+def decimal : Finset ℕ := {1000, 100, 10, 1}
 
 theorem enrichment_decimal :
     enrichment decimal 110 = Ioc 110 120 ∧ enrichment decimal 100 = Ioc 100 200 :=
