@@ -108,24 +108,20 @@ theorem isUpperSet_sUnion_upTo : IsUpperSet (⋃₀ upTo s n) := fun _ _ hab h �
 
 /-! ### The implicated upper bound -/
 
-private theorem Ici_diff_sUnion_howMany : Ici m \ ⋃₀ {q ∈ howMany | ¬ Ici m ⊆ q} = {m} := by
+private theorem exh_howMany_Ici : Exhaustification.exh howMany (Ici m) = {m} := by
   ext k
-  refine ⟨fun ⟨hk, hnot⟩ ↦ ?_, ?_⟩
-  · by_contra hne
-    have hlt : m < k := lt_of_le_of_ne hk (Ne.symm hne)
-    exact hnot ⟨Ici k, ⟨⟨k, rfl⟩, fun h ↦ (Ici_subset_Ici.1 h).not_gt hlt⟩, mem_Ici.2 le_rfl⟩
-  · rintro rfl
-    refine ⟨mem_Ici.2 le_rfl, ?_⟩
-    rintro ⟨_, ⟨⟨j, rfl⟩, hj⟩, hkj⟩
-    exact hj (Ici_subset_Ici.2 hkj)
+  simp only [howMany, Exhaustification.mem_exh_range_iff, mem_Ici, Ici_subset_Ici,
+    mem_singleton_iff]
+  exact ⟨fun ⟨hk, h⟩ ↦ le_antisymm (h k le_rfl) hk, by rintro rfl; exact ⟨le_rfl, fun _ ↦ id⟩⟩
 
 -- (50), (51)
-theorem exh_upTo_howMany : exh (upTo s n) howMany = (fun m ↦ {m}) '' Icc s n := by
-  simp only [exh, upTo, image_image, Ici_diff_sUnion_howMany]
+theorem exh_upTo_howMany :
+    Exhaustification.exh howMany '' upTo s n = (fun m ↦ {m}) '' Icc s n := by
+  simp only [upTo, image_image, exh_howMany_Ici]
 
 /-- *Up to n* asserts only its lower bound, and exhaustifying its possibilities against the
 question of how many adds the upper bound `n` (51). -/
-theorem sUnion_exh_upTo : ⋃₀ exh (upTo s n) howMany = Icc s n := by
+theorem sUnion_exh_upTo : ⋃₀ (Exhaustification.exh howMany '' upTo s n) = Icc s n := by
   rw [exh_upTo_howMany, sUnion_image, biUnion_of_singleton]
 
 /-! ### The range requirement -/
@@ -277,7 +273,7 @@ needs. -/
 def Felicitous (P : Set (Set ℕ)) : Diagnostic → Prop
   | .ifAny => 0 ∈ ⋃₀ P
   | .butNone => 0 ∉ ⋃₀ P
-  | .upperBound => ¬ BddAbove (⋃₀ P) ∧ BddAbove (⋃₀ exh P howMany)
+  | .upperBound => ¬ BddAbove (⋃₀ P) ∧ BddAbove (⋃₀ (Exhaustification.exh howMany '' P))
   | .range => P.Nontrivial
   | .precise v => InteractiveSincerity P {v}
   | .npi r => (scopeLicenser P).Carries r

@@ -32,6 +32,8 @@ possibilities does not exclude the stronger answers.
   denote, which is what applying them pointwise yields (`range_choice_apply`).
 * The informational content of inquisitive *at most* is `max` within the common ground of the
   state, the union of its answers.
+* Exhaustification against the question (77) is `Exhaustification.exh` applied to each possibility,
+  whose printed form is `Exhaustification.exh_eq_sdiff`.
 
 ## TODO
 
@@ -104,6 +106,13 @@ abbrev oneSided (μ : W → α) (i : α) : Set W := μ ⁻¹' Ici i
 omit [LinearOrder α] in
 theorem twoSided_injective (hμ : Function.Surjective μ) : Function.Injective (twoSided μ) :=
   hμ.preimage_injective.comp singleton_injective
+
+omit [LinearOrder α] in
+theorem isAntichain_range_twoSided (hμ : Function.Surjective μ) :
+    IsAntichain (· ⊆ ·) (range (twoSided μ)) := by
+  rintro _ ⟨c, rfl⟩ _ ⟨d, rfl⟩ hne hle
+  obtain ⟨w, rfl⟩ := hμ c
+  exact hne (congrArg _ (show μ w = d from hle (rfl : μ w ∈ ({μ w} : Set α))))
 
 theorem oneSided_injective (hμ : Function.Surjective μ) : Function.Injective (oneSided μ) :=
   hμ.preimage_injective.comp Ici_injective
@@ -237,19 +246,19 @@ theorem isAttentive_atLeastInq_oneSided {α : Type*} [LinearOrder α] {μ : W �
   exact (not_le.2 hab) this
 
 -- (59b)
+theorem not_isAttentive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α}
+    (hμ : Function.Surjective μ) (a : α) :
+    ¬ IsAttentive (atLeastInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a)) :=
+  not_isAttentive_iff.2 ((isAntichain_range_twoSided hμ).subset fun _ h ↦ h.1)
+
+-- (59b)
 theorem isInquisitive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
     IsInquisitive (atLeastInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a)) := by
-  have hmax : ∀ c, a ≤ c → Maximal (· ∈ atLeastInq (ranking (twoSided μ)) (range (twoSided μ))
-      (twoSided μ a)) (twoSided μ c) := by
-    intro c hac
-    refine ⟨⟨⟨c, rfl⟩, c, a, hac, rfl, rfl⟩, ?_⟩
-    rintro _ ⟨⟨d, rfl⟩, _⟩ hcd
-    obtain ⟨w, rfl⟩ := hμ c
-    have hd : μ w = d := hcd (rfl : μ w ∈ ({μ w} : Set α))
-    exact hd ▸ le_rfl
-  refine ⟨twoSided μ a, hmax a le_rfl, twoSided μ b, hmax b hab.le, fun h ↦ hab.ne ?_⟩
-  exact twoSided_injective hμ h
+  refine (nontrivial_iff_isInquisitive_or_isAttentive.1 ?_).resolve_right
+    (not_isAttentive_atLeastInq_twoSided hμ a)
+  exact ⟨_, ⟨⟨a, rfl⟩, a, a, le_rfl, rfl, rfl⟩, _, ⟨⟨b, rfl⟩, b, a, hab.le, rfl, rfl⟩,
+    fun h ↦ hab.ne (twoSided_injective hμ h)⟩
 
 -- (64)
 theorem atMostInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : Function.Surjective μ)
@@ -357,15 +366,15 @@ theorem not_interactiveSincerity_hexagon {W : Type*} {μ : W → ℕ} (hμ : Fun
   · intro h
     have hr := restrict_atLeastInq_eq_singleton (twoSided_injective hμ) (by decide : 5 ≤ 6) hk hk6
       (fun i _ ↦ split_twoSided hk6 i)
-    have := h ((nontrivial_iff _).2 (Or.inl (isInquisitive_atLeastInq_twoSided hμ
-      (by decide : 5 < 6))))
+    have := h (nontrivial_iff_isInquisitive_or_isAttentive.2
+      (.inl (isInquisitive_atLeastInq_twoSided hμ (by decide : 5 < 6))))
     rw [hr] at this
     exact this.not_subsingleton subsingleton_singleton
   · intro h
     have hr := restrict_atLeastInq_eq_singleton (oneSided_injective hμ) (by decide : 5 ≤ 6) hk
       (fun w hw ↦ mem_preimage.2 (mem_Ici.2 (hk6 hw).ge)) (fun i _ ↦ split_oneSided hk6 i)
-    have := h ((nontrivial_iff _).2 (Or.inr (isAttentive_atLeastInq_oneSided hμ
-      (by decide : 5 < 6))))
+    have := h (nontrivial_iff_isInquisitive_or_isAttentive.2
+      (.inr (isAttentive_atLeastInq_oneSided hμ (by decide : 5 < 6))))
     rw [hr] at this
     exact this.not_subsingleton subsingleton_singleton
 
@@ -391,21 +400,21 @@ def ann : Set World := {w | w.1}
 def bill : Set World := {w | w.2}
 def whoSnores : Set (Set World) := {ann, bill, ann ∩ bill}
 
--- Figure 4
+-- (77), Figure 4
 theorem exh_contrast :
-    ⋃₀ exh {ann} whoSnores ⊆ billᶜ ∧
-      (true, true) ∈ ⋃₀ exh (atLeastInq (· ⊆ ·) whoSnores ann) whoSnores := by
+    ⋃₀ (Exhaustification.exh whoSnores '' {ann}) ⊆ billᶜ ∧
+      (true, true) ∈ ⋃₀ (Exhaustification.exh whoSnores '' atLeastInq (· ⊆ ·) whoSnores ann) := by
   constructor
-  · rintro w ⟨_, ⟨p, rfl, rfl⟩, hw, hnot⟩ hb
-    exact hnot ⟨bill, ⟨by simp [whoSnores], fun h ↦ by simpa [ann, bill] using h (show (true,
-      false) ∈ ann from rfl)⟩, hb⟩
+  · rw [image_singleton, sUnion_singleton]
+    exact Exhaustification.exh_subset_compl (by simp [whoSnores])
+      fun h ↦ by simpa [ann, bill] using h (show (true, false) ∈ ann from rfl)
   · refine ⟨_, ⟨ann ∩ bill, ⟨by simp [whoSnores], inter_subset_left⟩, rfl⟩, ⟨rfl, rfl⟩, ?_⟩
-    rintro ⟨q, ⟨hq, hnot⟩, hw⟩
+    rintro q hq -
     simp only [whoSnores, mem_insert_iff, mem_singleton_iff] at hq
     rcases hq with rfl | rfl | rfl
-    · exact hnot inter_subset_left
-    · exact hnot inter_subset_right
-    · exact hnot le_rfl
+    · exact inter_subset_left
+    · exact inter_subset_right
+    · exact subset_rfl
 
 end Exhaustivity
 
