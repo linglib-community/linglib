@@ -19,8 +19,8 @@ least m* for each $m$ from the lowest positive point $s$ of the scale to $n$, so
 many](##Blok2015.sUnion_exh_upTo) adds the upper bound. A modifier of Nouwen's Class B must raise
 more than one possibility, which [fails at the bottom of the scale](##Blok2015.nontrivial_upTo)
 and which [the Maxim of Interactive Sincerity cannot
-enforce](##Blok2015.interactiveSincerity_bottom). Asserting a lower bound, *up to* is upward
-entailing and, unlike *at most*, [licenses no negative polarity
+enforce](##Blok2015.forall_interactiveSincerity_upTo_iff). Asserting a lower bound, *up to* is
+upward entailing and, unlike *at most*, [licenses no negative polarity
 item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgment_rows).
 
 ## Implementation notes
@@ -31,12 +31,12 @@ item](##Blok2015.admits_hoeven). [The paper's judgments follow](##Blok2015.judgm
   pointwise yields the set they choose from (`CoppockBrochhagen2013.range_choice_apply`).
 * *At most* is Coppock and Brochhagen's entry on the one-sided answers to the question of how
   many, ranked by their lower bounds.
-* A modifier is directional when its Fragment entry is built on a directional preposition. A
-  row's number is counted in the unit of its scale: eggs one by one, cake by the slice, an
-  absence by the day.
-* The scope of a modified numeral is the cardinal quantifier of what the sentence asserts, over a
-  finite domain with more individuals than the numeral names, so that *at most n* is not
-  trivially true.
+* The account covers the Fragment's Class B modifiers that set an upper bound, checked against
+  their Fragment readings, and a modifier is directional when its entry is built on a directional
+  preposition. A row's number is counted in the unit of its scale: eggs one by one, cake by the
+  slice, an absence by the day.
+* The scope of a modified numeral is the cardinal quantifier of what the sentence asserts, as a
+  licenser indexed by its finite restrictor, as the library's licensing contexts are.
 
 ## Errata
 
@@ -138,33 +138,37 @@ theorem nontrivial_upTo : (upTo s n).Nontrivial ↔ s < n := by
 -- (29)
 theorem nontrivial_atMost : (atMost n).Nontrivial ↔ 0 < n := by
   rw [atMost_eq]
-  have hinj : InjOn (Icc · n) (Iic n) := fun a ha b hb (h : Icc a n = Icc b n) ↦
-    le_antisymm (h ▸ (⟨le_rfl, hb⟩ : b ∈ Icc b n) : b ∈ Icc a n).1
-      (h ▸ (⟨le_rfl, ha⟩ : a ∈ Icc a n) : a ∈ Icc b n).1
-  have hIic : (Iic n).Nontrivial ↔ 0 < n := by
-    rw [← not_subsingleton_iff, show Iic n = Icc 0 n by ext; simp, subsingleton_Icc_iff, not_le]
-  exact ⟨fun h ↦ hIic.1 (nontrivial_of_image _ _ h), fun h ↦ (hIic.2 h).image_of_injOn hinj⟩
+  refine ⟨fun h ↦ Nat.pos_of_ne_zero ?_, fun h ↦ ?_⟩
+  · rintro rfl
+    exact h.not_subsingleton (Subsingleton.image (fun a ha b hb ↦
+      (Nat.le_zero.1 ha).trans (Nat.le_zero.1 hb).symm) _)
+  · refine ⟨Icc 0 n, mem_image_of_mem _ (mem_Iic.2 n.zero_le),
+      Icc n n, mem_image_of_mem _ (mem_Iic.2 le_rfl), fun he ↦ h.not_ge ?_⟩
+    exact (he ▸ (⟨le_rfl, n.zero_le⟩ : 0 ∈ Icc 0 n) : 0 ∈ Icc n n).1
 
-/-- *Up to one* on the whole numbers and *at most zero* each raise a single possibility, so they
-satisfy [coppock-brochhagen-2013]'s Maxim of Interactive Sincerity whatever the speaker knows;
-the maxim cannot rule them out, and the range requirement does (52), (53a). -/
-theorem interactiveSincerity_bottom (k : Set ℕ) :
-    (InteractiveSincerity (upTo 1 1) k ∧ ¬ (upTo 1 1).Nontrivial) ∧
-      InteractiveSincerity (atMost 0) k ∧ ¬ (atMost 0).Nontrivial := by
-  have h₁ : ¬ (upTo 1 1).Nontrivial := by simp [nontrivial_upTo]
-  have h₀ : ¬ (atMost 0).Nontrivial := by simp [nontrivial_atMost]
-  exact ⟨⟨fun h ↦ absurd h h₁, h₁⟩, fun h ↦ absurd h h₀, h₀⟩
+/-- [coppock-brochhagen-2013]'s Maxim of Interactive Sincerity holds of *up to n* whatever the
+speaker knows exactly when *up to n* fails the range requirement: the maxim is silent on (52),
+which the range requirement rules out. -/
+theorem forall_interactiveSincerity_upTo_iff : (∀ k, InteractiveSincerity (upTo s n) k) ↔ n ≤ s :=
+  by rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_upTo, not_lt]
+
+-- (53a)
+theorem forall_interactiveSincerity_atMost_iff :
+    (∀ k, InteractiveSincerity (atMost n) k) ↔ n = 0 := by
+  rw [CoppockBrochhagen2013.forall_interactiveSincerity_iff, nontrivial_atMost, not_lt,
+    Nat.le_zero]
 
 /-! ### Monotonicity -/
+
+/-- The licenser a sentence raising `P` places over its scope, indexed by its finite restrictor:
+the cardinal quantifier of what the sentence asserts. -/
+def scopeLicenser (P : Set (Set ℕ)) : Licenser :=
+  .classical ⟨FinitePredicate, fun p ↦ Set p.ι, fun _ ↦ Prop,
+    fun p ↦ (NumberTree.cardinal (⋃₀ P)).toDet p.A⟩
 
 section Monotonicity
 
 variable {ι : Type} [Finite ι] {A : Set ι}
-
-/-- The licenser over the scope of a sentence raising `P` with the restrictor `A`: the cardinal
-quantifier of what the sentence asserts. -/
-def scopeLicenser (P : Set (Set ℕ)) (A : Set ι) : Licenser :=
-  .ofOperator ((NumberTree.cardinal (⋃₀ P)).toDet A)
 
 omit [Finite ι] in
 -- (31)
@@ -181,24 +185,35 @@ theorem toDet_sUnion_atMost :
 theorem scopeMonotone_upTo : ((NumberTree.cardinal (⋃₀ upTo s n)).toDet : Det ι).ScopeMonotone :=
   NumberTree.ScopeMonotone.toDet fun _ _ h ↦ isUpperSet_sUnion_upTo (Nat.le_succ _) h
 
-theorem not_carries_scopeLicenser_upTo (r : Negation.Strength) :
-    ¬ (scopeLicenser (upTo s n) A).Carries r := fun h ↦
-  (Licenser.carries_ofOperator_iff.1 h.weak).2 (scopeMonotone_upTo A)
-
-theorem carries_scopeLicenser_atMost (hA : n < A.ncard) :
-    (scopeLicenser (atMost n) A).Carries .weak := by
-  rw [scopeLicenser, Licenser.carries_ofOperator_iff, toDet_sUnion_atMost]
-  refine ⟨Signature.holdsFor_anti_iff.2 (Det.scopeAntitone_atMost n A), fun hm ↦ hA.not_ge ?_⟩
-  simpa [Det.atMost_apply] using hm (empty_subset A) (by simp [Det.atMost_apply])
-
-private theorem admits_hoeven_iff {σ : Type} [Lattice σ] [BoundedOrder σ] {f : σ → Prop} :
-    (Licenser.ofOperator f).Admits Dutch.PolarityItems.hoeven ↔
-      (Licenser.ofOperator f).Carries .weak := by
-  rw [Licenser.admits_iff_licenses rfl (Or.inl rfl)]
-  simp [Licenser.Licenses, Dutch.PolarityItems.hoeven, Licenser.ofOperator,
-    Licenser.LicensesFreeChoice, Licenser.LicensesByRelevance]
-
 end Monotonicity
+
+theorem not_carries_scopeLicenser_upTo (r : Negation.Strength) :
+    ¬ (scopeLicenser (upTo s n)).Carries r := fun h ↦
+  h.weak.2 fun p ↦ scopeMonotone_upTo p.A
+
+theorem carries_scopeLicenser_atMost_iff {r : Negation.Strength} :
+    (scopeLicenser (atMost n)).Carries r ↔ r = .weak := by
+  rw [scopeLicenser, Licenser.carries_classical_iff]
+  constructor
+  · rintro ⟨h, -⟩
+    by_contra hr
+    have hf := (Signature.holdsFor_antiAdd_iff.1 ((h.toSignature_of_le (s := .antiAdditive)
+      (by revert hr; cases r <;> decide)) ⟨⟨Unit, ∅⟩⟩)).2
+    exact (eq_iff_iff.1 hf).1 (by simp [NumberTree.toDet_apply, sUnion_atMost])
+  · rintro rfl
+    refine ⟨fun p ↦ Signature.holdsFor_anti_iff.2 ?_, fun hm ↦ ?_⟩
+    · show Antitone ((NumberTree.cardinal (⋃₀ atMost n)).toDet p.A)
+      rw [toDet_sUnion_atMost]; exact Det.scopeAntitone_atMost n p.A
+    · have := hm ⟨⟨Fin (n + 1), univ⟩⟩ (empty_subset (univ : Set (Fin (n + 1))))
+        (by simp [toDet_sUnion_atMost, Det.atMost_apply])
+      simp [toDet_sUnion_atMost, Det.atMost_apply] at this
+
+private theorem admits_hoeven_iff {F : OperatorFamily} :
+    (Licenser.classical F).Admits Dutch.PolarityItems.hoeven ↔
+      (Licenser.classical F).Carries .weak := by
+  rw [Licenser.admits_iff_licenses rfl (Or.inl rfl)]
+  simp [Licenser.Licenses, Dutch.PolarityItems.hoeven, Licenser.LicensesFreeChoice,
+    Licenser.LicensesByRelevance]
 
 /-! ### The modifiers -/
 
@@ -208,82 +223,97 @@ most* for any other. -/
 def raised (w : Numerals.NumeralModifier) (s n : ℕ) : Set (Set ℕ) :=
   if w.kind = some .directional then upTo s n else atMost n
 
-/-- Read as a quantifier over more individuals than its numeral names, *maximaal n* asserts the
-downward entailing *at most n* and admits the weak negative polarity item *hoeven*, while *tot n*
-asserts the upward entailing *at least s* and does not admit it (34). -/
-theorem admits_hoeven {ι : Type} [Finite ι] {A : Set ι} (hA : n < A.ncard) :
-    (scopeLicenser (raised Dutch.NumeralModifiers.maximaal s n) A).Admits
+/-- The modifiers the account covers in the language of a row: the Fragment's Class B modifiers
+that set an upper bound. -/
+def upperBounded : Glottocode → List Numerals.NumeralModifier
+  | "stan1293" => [English.NumeralModifiers.atMost, English.NumeralModifiers.maximally,
+      English.NumeralModifiers.upTo]
+  | "dutc1256" => [Dutch.NumeralModifiers.maximaal, Dutch.NumeralModifiers.tot]
+  | _ => []
+
+open scoped Denotes in
+theorem mem_upperBounded {l : Glottocode} {w : Numerals.NumeralModifier}
+    (h : w ∈ upperBounded l) :
+    ⟦w⟧ = {Degree.Comparison.le.modifier} ∧ w.modifierClass = some .classB := by
+  unfold upperBounded at h
+  split at h <;> simp only [List.mem_cons, List.not_mem_nil, or_false] at h <;>
+    rcases h with rfl | rfl | rfl <;> exact ⟨rfl, rfl⟩
+
+/-- Read as a quantifier, *maximaal n* asserts the downward entailing *at most n* and admits the
+weak negative polarity item *hoeven*, while *tot n* asserts the upward entailing *at least s* and
+does not admit it (34). -/
+theorem admits_hoeven :
+    (scopeLicenser (raised Dutch.NumeralModifiers.maximaal s n)).Admits
         Dutch.PolarityItems.hoeven ∧
-      ¬ (scopeLicenser (raised Dutch.NumeralModifiers.tot s n) A).Admits
+      ¬ (scopeLicenser (raised Dutch.NumeralModifiers.tot s n)).Admits
         Dutch.PolarityItems.hoeven :=
-  ⟨admits_hoeven_iff.2 (carries_scopeLicenser_atMost hA),
+  ⟨admits_hoeven_iff.2 (carries_scopeLicenser_atMost_iff.2 rfl),
     fun h ↦ not_carries_scopeLicenser_upTo .weak (admits_hoeven_iff.1 h)⟩
 
 /-! ### The judgments -/
 
 /-- The diagnostics of the paper's examples: a continuation *if any*, a contrast with *no-one*,
 a continuation that cancels or reinforces the upper bound, a bare sentence, a continuation naming
-the precise number `v`, and a weak negative polarity item in the scope. -/
+the precise number `v`, and a negative polarity item in the scope that needs the strength `r`. -/
 inductive Diagnostic where
   | ifAny | butNone | upperBound | range
   | precise (v : ℕ)
-  | npi
+  | npi (r : Negation.Strength)
   deriving DecidableEq, Repr
 
-/-- What the account predicts felicitous with the number `n`. *If any* needs content compatible
-with none and the contrast with *no-one* content that excludes none; cancelling or reinforcing
-the upper bound needs content that does not settle it. A bare sentence needs more than one
-possibility, a precise continuation sincerity in a speaker who knows the number, and a weak
-negative polarity item a scope that is downward and not upward entailing over every domain with
-more individuals than `n`. -/
-def Felicitous (P : Set (Set ℕ)) (n : ℕ) : Diagnostic → Prop
+/-- What the account predicts felicitous of a sentence raising `P`. *If any* needs asserted
+content compatible with none and the contrast with *no-one* content that excludes none.
+Cancelling or reinforcing the upper bound needs a bound that is implicated and not asserted: the
+content exhaustified against the question of how many is bounded above, and the asserted content
+is not. A bare sentence needs more than one possibility, a precise continuation sincerity in a
+speaker who knows the number, and a negative polarity item a scope that carries the strength it
+needs. -/
+def Felicitous (P : Set (Set ℕ)) : Diagnostic → Prop
   | .ifAny => 0 ∈ ⋃₀ P
   | .butNone => 0 ∉ ⋃₀ P
-  | .upperBound => n + 1 ∈ ⋃₀ P
+  | .upperBound => ¬ BddAbove (⋃₀ P) ∧ BddAbove (⋃₀ exh P howMany)
   | .range => P.Nontrivial
   | .precise v => InteractiveSincerity P {v}
-  | .npi => ∀ (ι : Type) [Finite ι] (A : Set ι), n < A.ncard → (scopeLicenser P A).Carries .weak
+  | .npi r => (scopeLicenser P).Carries r
 
-theorem not_felicitous_upTo_npi : ¬ Felicitous (upTo s n) n .npi := fun h ↦
-  not_carries_scopeLicenser_upTo .weak (h (Fin (n + 1)) univ (by simp [ncard_univ]))
+theorem bddAbove_sUnion_upTo_iff : BddAbove (⋃₀ upTo s n) ↔ n < s := by
+  refine ⟨fun ⟨b, hb⟩ ↦ not_le.1 fun h ↦ ?_,
+    fun h ↦ ⟨0, fun _ hk ↦ absurd (mem_sUnion_upTo.1 hk).2 (not_le.2 h)⟩⟩
+  have hs : s ≤ b := hb (mem_sUnion_upTo.2 ⟨le_rfl, h⟩)
+  exact (Nat.lt_succ_self b).not_ge (hb (mem_sUnion_upTo.2 ⟨hs.trans b.le_succ, h⟩))
 
-instance : ∀ t, Decidable (Felicitous (upTo s n) n t)
+instance : ∀ t, Decidable (Felicitous (upTo s n) t)
   | .ifAny => decidable_of_iff (s = 0 ∧ s ≤ n) (by simp only [Felicitous, mem_sUnion_upTo]; omega)
   | .butNone => decidable_of_iff (¬ (s = 0 ∧ s ≤ n))
       (by simp only [Felicitous, mem_sUnion_upTo]; omega)
-  | .upperBound => decidable_of_iff (s ≤ n) (by simp only [Felicitous, mem_sUnion_upTo]; omega)
+  | .upperBound => decidable_of_iff (s ≤ n) (by
+      rw [Felicitous, bddAbove_sUnion_upTo_iff, sUnion_exh_upTo, not_lt, and_iff_left bddAbove_Icc])
   | .range => decidable_of_iff (s < n) nontrivial_upTo.symm
   | .precise v => decidable_of_iff (n ≤ s)
       (by rw [Felicitous, interactiveSincerity_singleton_iff, nontrivial_upTo, not_lt])
-  | .npi => isFalse not_felicitous_upTo_npi
+  | .npi r => isFalse (not_carries_scopeLicenser_upTo r)
 
-instance : ∀ t, Decidable (Felicitous (atMost n) n t)
+instance : ∀ t, Decidable (Felicitous (atMost n) t)
   | .ifAny => isTrue (by simp [Felicitous, sUnion_atMost])
   | .butNone => isFalse (by simp [Felicitous, sUnion_atMost])
-  | .upperBound => isFalse (by simp [Felicitous, sUnion_atMost])
+  | .upperBound => isFalse fun h ↦ h.1 (sUnion_atMost ▸ bddAbove_Iic)
   | .range => decidable_of_iff (0 < n) nontrivial_atMost.symm
   | .precise v => decidable_of_iff (n = 0)
       (by rw [Felicitous, interactiveSincerity_singleton_iff, nontrivial_atMost]; omega)
-  | .npi => isTrue fun _ _ _ hA ↦ carries_scopeLicenser_atMost hA
+  | .npi _ => decidable_of_iff _ carries_scopeLicenser_atMost_iff.symm
 
 instance (w : Numerals.NumeralModifier) (t : Diagnostic) :
-    Decidable (Felicitous (raised w s n) n t) :=
+    Decidable (Felicitous (raised w s n) t) :=
   if h : w.kind = some .directional then
-    decidable_of_iff (Felicitous (upTo s n) n t) (by simp only [raised, h, ↓reduceIte])
-  else decidable_of_iff (Felicitous (atMost n) n t) (by simp only [raised, h, ↓reduceIte])
+    decidable_of_iff (Felicitous (upTo s n) t) (by simp only [raised, h, ↓reduceIte])
+  else decidable_of_iff (Felicitous (atMost n) t) (by simp only [raised, h, ↓reduceIte])
 
-/-- The Fragment's numeral modifiers in the language of a row. -/
-def inventory : Glottocode → List Numerals.NumeralModifier
-  | "stan1293" => English.NumeralModifiers.inventory
-  | "dutc1256" => Dutch.NumeralModifiers.inventory
-  | _ => []
-
-/-- The modifier a row names, looked up in the Fragment of its language. -/
+/-- The modifier a row names, among those the account covers in its language. -/
 def modifier? (e : Datum) : Option Numerals.NumeralModifier :=
-  (e.feature? "modifier").bind fun f ↦ (inventory e.language).find? (·.form = f)
+  (e.feature? "modifier").bind fun f ↦ (upperBounded e.language).find? (·.form = f)
 
-/-- The diagnostic a row names. A negative polarity item is read when its Fragment entry needs
-weak strength. -/
+/-- The diagnostic a row names; a negative polarity item needs the strength its Fragment entry
+records. -/
 def diagnostic? (e : Datum) : Option Diagnostic :=
   match e.feature? "test" with
   | some "ifAny" => some .ifAny
@@ -291,15 +321,15 @@ def diagnostic? (e : Datum) : Option Diagnostic :=
   | some "evenMore" | some "noMore" => some .upperBound
   | some "range" => some .range
   | some "precise" => (e.nat? "precise").map .precise
-  | some "npi" => (e.parse? "npi" [("hoeven", Dutch.PolarityItems.hoeven)]).bind fun i ↦
-      if i.licensor = some .weak then some .npi else none
+  | some "npi" =>
+      ((e.parse? "npi" [("hoeven", Dutch.PolarityItems.hoeven)]).bind (·.licensor)).map .npi
   | _ => none
 
 /-- Every row is felicitous exactly when the account predicts it, for the modifier it names, read
 off the Fragment, with its number on a scale whose lowest positive point the row gives. -/
 theorem judgment_rows :
     ∀ e ∈ Examples.all, ∃ w ∈ modifier? e, ∃ t ∈ diagnostic? e, ∃ s ∈ e.nat? "scaleBottom",
-      ∃ n ∈ e.nat? "numeral", (e.JudgedFelicitous ↔ Felicitous (raised w s n) n t) := by
+      ∃ n ∈ e.nat? "numeral", (e.JudgedFelicitous ↔ Felicitous (raised w s n) t) := by
   decide +kernel
 
 end Blok2015

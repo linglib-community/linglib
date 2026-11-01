@@ -309,6 +309,11 @@ theorem interactiveSincerity_singleton_iff {P : Set (Set W)} (w : W) :
     InteractiveSincerity P {w} ↔ ¬ P.Nontrivial :=
   ⟨fun h hP ↦ (h hP).not_subsingleton (subsingleton_restrict_singleton w), fun h hP ↦ absurd hP h⟩
 
+theorem forall_interactiveSincerity_iff [Nonempty W] {P : Set (Set W)} :
+    (∀ k, InteractiveSincerity P k) ↔ ¬ P.Nontrivial :=
+  ⟨fun h ↦ (interactiveSincerity_singleton_iff (Classical.arbitrary W)).1 (h _),
+    fun h _ hP ↦ absurd hP h⟩
+
 variable {α : Type*} [Preorder α] {P : α → Set W}
 
 /-- A speaker whose information lies within one answer at or above `a`, and decides each answer from
