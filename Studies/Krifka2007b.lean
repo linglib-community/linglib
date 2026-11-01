@@ -166,7 +166,7 @@ inductive Region
   | plateauHigh
   | plateauLow
   | negative
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Mirror image of a region under the polarity flip. -/
 def Region.flip : Region → Region
