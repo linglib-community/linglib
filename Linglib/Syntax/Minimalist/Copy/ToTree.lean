@@ -47,8 +47,9 @@ copy of a chain read high, so that the type-driven composition engine interprets
 * A remnant read high, with a chain that moved out of it also read high, leaves a free trace and a
   vacuous binder. `PhraseStructure.Tree.Closed` tells such a reading from one the engine can close.
 * Marcolli, Chomsky and Berwick apply their quotients to the lower copy. Deleting the higher copy is
-  their deletion quotient applied to the copy object at the other occurrence, which they do not do;
-  it is the reading of Collins's work on the passive and on reconstruction.
+  their deletion quotient applied to the copy object at the other occurrence, which they do not do
+  (`Marked.mem_cutSummandsDN_lf`); it is the reading of Collins's work on the passive and on
+  reconstruction.
 * Binding at a reading is not in general binding at the copy object: an object that moves from
   itself, read low, comes to c-command the sister of its movement node. The reading `carrying` is
   the one that does agree with it (`Derivation.bindsAtReading_carrying_iff`).
@@ -113,13 +114,13 @@ instance (low : Finset SyntacticObject) : DecidablePred (ReadLow low) :=
 section Reading
 
 variable {β : Type*} (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
-  (tr : Option LexicalItem.Token → β) (nd : Vertex → List β → β)
-  (wrap : Option LexicalItem.Token → β → β)
+  (tr : RoseTree (CopyMark × Vertex) → Option LexicalItem.Token → β) (nd : Vertex → List β → β)
+  (wrap : Option LexicalItem.Token → β → β) (del : RoseTree (CopyMark × Vertex) → Vertex → β → β)
 
 /-- A node with its daughters, each paired with what it reads as. A copy of a chain read low is
-deleted at its movement node, leaving the other daughter, and `wrap` goes around the other
-daughter of a copy of a chain read high. A marked copy reads as `tr` of its mark if its chain is
-read high. -/
+deleted at its movement node by `del`, which receives that copy and what the other daughter reads
+as, and `wrap` goes around the other daughter of a copy of a chain read high. A marked copy reads as
+`tr` of itself and its mark if its chain is read high. -/
 def readStep (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex) × β)) :
     RoseTree (CopyMark × Vertex) × β :=
   let raw := RoseTree.node v (cs.map Prod.fst)
@@ -127,20 +128,20 @@ def readStep (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex) 
     match cs with
     | [x, y] =>
       match lowerCopy? x.1 y.1, lowerCopy? y.1 x.1 with
-      | some l, _ => if low x.1 then y.2 else nd v.2 [x.2, wrap l y.2]
-      | _, some l => if low y.1 then x.2 else nd v.2 [wrap l x.2, y.2]
+      | some l, _ => if low x.1 then del x.1 v.2 y.2 else nd v.2 [x.2, wrap l y.2]
+      | _, some l => if low y.1 then del y.1 v.2 x.2 else nd v.2 [wrap l x.2, y.2]
       | none, none => nd v.2 [x.2, y.2]
     | _ => nd v.2 (cs.map Prod.snd)
   (raw, match v.1 with
-    | some l => if low raw then plain else tr l
+    | some l => if low raw then plain else tr raw l
     | none => plain)
 
 /-- What a marked tree reads as, under `readStep`. -/
 def reading (t : RoseTree (CopyMark × Vertex)) : β :=
-  (fold (readStep low tr nd wrap) t).2
+  (fold (readStep low tr nd wrap del) t).2
 
 theorem fold_readStep (t : RoseTree (CopyMark × Vertex)) :
-    fold (readStep low tr nd wrap) t = (t, reading low tr nd wrap t) := by
+    fold (readStep low tr nd wrap del) t = (t, reading low tr nd wrap del t) := by
   refine Prod.ext ?_ rfl
   induction t with
   | node v cs ih =>
@@ -149,18 +150,18 @@ theorem fold_readStep (t : RoseTree (CopyMark × Vertex)) :
     exact (List.map_congr_left ih).trans (List.map_id' _)
 
 theorem reading_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
-    reading low tr nd wrap (.node v cs) =
-      (readStep low tr nd wrap v (cs.map fun c ↦ (c, reading low tr nd wrap c))).2 := by
+    reading low tr nd wrap del (.node v cs) =
+      (readStep low tr nd wrap del v (cs.map fun c ↦ (c, reading low tr nd wrap del c))).2 := by
   rw [reading, fold_node]
   congr 2
-  exact List.map_congr_left fun c _ ↦ fold_readStep low tr nd wrap c
+  exact List.map_congr_left fun c _ ↦ fold_readStep low tr nd wrap del c
 
 end Reading
 
 /-- The object a test of copies gives, as a tree of vertices. -/
 def lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low] :
     RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
-  reading low (fun l ↦ .node (.inr l) []) .node fun _ y ↦ y
+  reading low (fun _ l ↦ .node (.inr l) []) .node (fun _ y ↦ y) fun _ _ y ↦ y
 
 /-- The object a reading gives, as a tree of vertices. -/
 abbrev lfTree (low : Finset SyntacticObject) : RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
@@ -206,9 +207,9 @@ def lf (t : Marked) (low : Finset SyntacticObject) : LinearizedSyntacticObject :
 of `a`, and the index-free trace no binder. -/
 def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset SyntacticObject) :
     Tree Unit LexicalItem.Token :=
-  reading (ReadLow low) (fun l ↦ RoseTree.node (Vertex.toLabel ι (.inr l)) [])
+  reading (ReadLow low) (fun _ l ↦ RoseTree.node (Vertex.toLabel ι (.inr l)) [])
     (fun v cs ↦ RoseTree.node (Vertex.toLabel ι v) cs)
-    (fun l y ↦ l.elim y fun a ↦ .bind (ι a + 1) () y) t.val
+    (fun l y ↦ l.elim y fun a ↦ .bind (ι a + 1) () y) (fun _ _ y ↦ y) t.val
 
 /-- The chains with a lower copy holding `y`. -/
 def carrying (t : Marked) (y : LexicalItem.Token) : Finset SyntacticObject :=
