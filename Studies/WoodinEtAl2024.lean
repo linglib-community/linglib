@@ -10,10 +10,10 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 Woodin et al. model the frequency of numbers in the British National Corpus: the log frequency
 of a number is a linear function of its log magnitude and of which roundness properties it has.
 The six properties are being a multiple of five or of ten and Jansen and Pollmann's four kinds of
-`k`-ness over positive powers of ten. They nest, since 10-ness, 2-ness and 5-ness make a number a
-multiple of ten and every property makes it a multiple of five, and with non-negative weights the
-predicted frequency is monotone in the roundness ordering of `Numerals.Roundness`. The kinds of
-`k`-ness are not divisibility, however, and that ordering is
+$k$-ness over positive powers of ten. Every property makes a number a multiple of five, and
+10-ness, 2-ness and 5-ness make it a multiple of ten. With non-negative weights, the predicted
+frequency is monotone in the roundness ordering of `Numerals.Roundness`. Unlike divisibility,
+$k$-ness is not closed under addition, so this ordering is
 [the ordering of no family of scales of multiples](##WoodinEtAl2024.not_exists_onScale).
 
 ## Implementation notes
@@ -77,10 +77,9 @@ theorem dvd_five_of_holds {p : Property} {n : ℕ} (h : p.Holds n) : 5 ∣ n := 
       omega
     | _ => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (by decide) h)
 
-/-- The kinds of `k`-ness are not divisibility (p. 127): *1,000* and *10* have every property of
-*10*, but *1,010* is a multiple of ten with no `k`-ness. The numbers at least as round as *10* are
-not closed under addition, as they would be on scales of multiples, so the roundness ordering is
-that of no family of scales. -/
+/-- $k$-ness is not divisibility (p. 127): *10* and *1,000* have every property of *10*, but their
+sum *1,010* is a multiple of ten with no $k$-ness. The numbers at least as round as *10* are thus
+not closed under addition, as they are on any scales of multiples. -/
 theorem not_exists_onScale : ¬ ∃ W : Finset ℕ, ∀ m n : ℕ,
     AtLeastAsRound Property.Holds m n ↔ AtLeastAsRound (OnScale W) m n := by
   rintro ⟨W, hW⟩

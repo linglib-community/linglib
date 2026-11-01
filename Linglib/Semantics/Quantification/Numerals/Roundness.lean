@@ -15,57 +15,22 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Numeral roundness
 
-A number is round by having roundness properties: for Sigurd, divisibility by a power of ten
-from ten up or by its half or quarter; for Jansen and Pollmann, 10-ness, 2-ness, 5-ness and
-2½-ness, `k`-ness being a digit times `k` times a power of ten; for Woodin et al., these over
-positive powers of ten together with being a multiple of five or of ten; and for Haslinger, lying
-on the conventionalized scales salient in a context, Krifka's scales of multiples of a width.
-
-Numbers and properties form a formal context. A number's profile is the intent of its object
-concept, and a number is at least as round as another when its profile contains the other's,
-Haslinger's ordering, so the numbers at least as round as `d` are the extent closure of `d`;
-counting properties gives the roundness scores. On scales of multiples the closure is again a
-scale, the multiples of the lcm of the widths through `d`, so the numbers at least as round as `d`
-are closed under addition. Scales of different granularity should align, Krifka argues, their
-widths forming a chain under divisibility, and on aligned scales that lcm is the coarsest width
-through `d`.
-
-## Main definitions
-
-* `Numerals.Roundness.AtLeastAsRound`: having every roundness property of a number, the
-  criteria-derived preorder with the roundness properties as criteria
-  (`atLeastAsRound_iff_ofCriteria`).
-* `Numerals.Roundness.profile`, `Numerals.Roundness.score`: the roundness properties a number
-  has, and their number.
-* `Numerals.Roundness.OnScale`: lying on a scale of multiples.
-* `Numerals.Roundness.HasKness`, `Numerals.Roundness.Kness`: Jansen and Pollmann's `k`-ness and
-  its four kinds, over powers of ten from a given one.
-
-## Main statements
-
-* `Numerals.Roundness.atLeastAsRound_iff_mem_extentClosure`: the numbers at least as round as `d`
-  are its extent closure.
-* `Numerals.Roundness.extentClosure_onScale`: on scales of multiples, that closure is the scale of
-  multiples of `scaleLcm W d`.
-* `Numerals.Roundness.AtLeastAsRound.add`: on scales of multiples, the numbers at least as round
-  as `d` are closed under addition.
-* `Numerals.Roundness.atLeastAsRound_onScale_iff_dvd`: roundness on scales of multiples is
-  divisibility of these lcms.
-* `Numerals.Roundness.isLeast_atLeastAsRound_onScale`: the least number above `d` at least as
-  round as `d` is `d + scaleLcm W d`, the next point of that scale.
-* `Numerals.Roundness.isGreatest_scaleLcm`: on aligned scales, `scaleLcm W d` is the coarsest
-  width through `d`.
+A number is round by the roundness properties it has, such as Jansen and Pollmann's $k$-ness,
+being $m k 10^b$ for a digit $m$, or lying on one of the scales of multiples salient in a context.
+Numbers and properties form a formal context, ordered by Haslinger's relation
+[*at least as round*](##AtLeastAsRound): the numbers at least as round as $d$ are
+[the extent closure of $d$](##atLeastAsRound_iff_mem_extentClosure). On scales of multiples that
+closure is [the multiples of the lcm of the widths through $d$](##extentClosure_onScale), so it is
+closed under addition, and on aligned scales that lcm is
+[the coarsest width through $d$](##isGreatest_scaleLcm).
 
 ## Implementation notes
 
-A roundness property is an attribute of the formal context `r : D → ι → Prop`, so a family of
-properties and a set of salient scales are the same kind of object. Woodin et al.'s regression
-weights the properties unequally; `score` counts them equally. A width is a natural number, since
-the multiples of `w` and of `-w` are one scale; the numbers on it range over `ℤ`.
+A width is a natural number, since the multiples of $w$ and of $-w$ form one scale. `score`
+counts properties equally, where Woodin et al. weight them.
 
 ## References
 
-* [sigurd-1988]
 * [jansen-pollmann-2001]
 * [krifka-2007]
 * [woodin-etal-2024]
