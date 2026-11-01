@@ -32,6 +32,7 @@ def cm2024_4_linda_original : Datum :=
   { id := "cm2024_4_linda_original"
     source := ⟨"tversky-kahneman-1983", "Linda task"⟩
     reportedIn := some ⟨"chung-mascarenhas-2023", "(4) / (28)"⟩
+    method := some .experiment
     language := "stan1293"
     primaryText := "Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations. Which is more probable?"
     glossedTokens := []

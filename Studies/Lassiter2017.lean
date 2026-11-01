@@ -85,7 +85,7 @@ that yields it is the preceding conclusion $θ_{possible} < θ_{might}$
   measures when connectedness fails.
 * The certainty scales of Analyses 2 and 3 (§5.1.6, §5.1.7), the first a half-open interval
   (`Degree.Boundedness.ofOrder_Ioc`) or a log transform.
-* The experiment of §6.5 as `Data/Experiments`, and the modifier judgments of §4.2 as examples.
+* The experiment of §6.5 as `Data/Statistics`, and the modifier judgments of §4.2 as examples.
 
 ## References
 

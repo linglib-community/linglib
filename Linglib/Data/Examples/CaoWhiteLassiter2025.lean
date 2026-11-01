@@ -58,6 +58,7 @@ def cwl2025_ex4a : Datum :=
   { id := "cwl2025_ex4a"
     source := ⟨"cao-white-lassiter-2025", "(4a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "stan1293"
     primaryText := "He caused cancer in one woman."
     glossedTokens := []

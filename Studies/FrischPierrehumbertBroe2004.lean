@@ -4,7 +4,7 @@ public import Mathlib.Data.Nat.Bitwise
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.List.GetD
 public import Mathlib.Algebra.Order.Field.Rat
-public import Linglib.Data.Experiments.FrischPierrehumbertBroe2004
+public import Linglib.Data.Statistics.FrischPierrehumbertBroe2004
 public import Linglib.Fragments.Arabic.ModernStandard.Phonology
 public import Studies.Broe1993
 
@@ -30,7 +30,7 @@ and the count and the reported value are unaffected (`labialClasses_b_f`).
 
 The paper's quantitative comparison, co-occurrence by similarity (Table IV) and the fits of
 five models of OCP-Place to the O/E of every pair (Table V), is printed data in
-`Data.Experiments.FrischPierrehumbertBroe2004`.
+`Data.Statistics.FrischPierrehumbertBroe2004`.
 
 ## Main definitions
 
@@ -61,7 +61,7 @@ five models of OCP-Place to the O/E of every pair (Table V), is printed data in
 
 namespace FrischPierrehumbertBroe2004
 
-open Arabic.ModernStandard.Phonology Phonology Data.Experiments
+open Arabic.ModernStandard.Phonology Phonology Data.Statistics
 
 /-! ### Sets of columns -/
 

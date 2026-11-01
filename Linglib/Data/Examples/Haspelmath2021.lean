@@ -1066,7 +1066,7 @@ def ex56a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness"), ("prominence", "indefinite"), ("coding", "zero")] }
+    paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness and nominality"), ("definiteness", "indefinite"), ("nominality", "fullNominal"), ("coding", "zero")] }
 
 def ex56b : Datum :=
   { id := "haspelmath2021_ex56b"
@@ -1079,7 +1079,7 @@ def ex56b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness"), ("prominence", "definite"), ("coding", "special")] }
+    paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness and nominality"), ("definiteness", "definite"), ("nominality", "fullNominal"), ("coding", "special")] }
 
 def ex56c : Datum :=
   { id := "haspelmath2021_ex56c"
@@ -1092,7 +1092,7 @@ def ex56c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "special")] }
+    paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness and nominality"), ("definiteness", "definite"), ("nominality", "personForm"), ("coding", "special")] }
 
 def ex58a : Datum :=
   { id := "haspelmath2021_ex58a"

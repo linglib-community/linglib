@@ -21,8 +21,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check generated experimental data
-        run: python3 scripts/gen_experiments.py --check
+      - name: Check generated statistics data
+        run: python3 scripts/gen_statistics.py --check
 
       - name: Check generated WALS data (imported features only, in sync)
         run: python3 scripts/gen_wals.py --check

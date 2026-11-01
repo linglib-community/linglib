@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.BeltramaSchwarz2024
+public import Linglib.Data.Statistics.BeltramaSchwarz2024
 public import Studies.BeltramaSoltBurnett2023
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
@@ -47,7 +47,7 @@ more charitably, which it does not find.
 
 namespace BeltramaSchwarz2024
 
-open SocialMeaning Degree Data.Experiments
+open SocialMeaning Degree Data.Statistics
 open BeltramaSoltBurnett2023 (Variant Factor scales contrastField)
 
 /-! ### The personas -/

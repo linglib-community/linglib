@@ -32,6 +32,7 @@ def degree_yori : Datum :=
   { id := "beckodasugisaki2004_degree_yori"
     source := ⟨"beck-oda-sugisaki-2004", "(4-a), p. 290"⟩
     reportedIn := none
+    method := some .elicitation
     language := "nucl1643"
     primaryText := "Taroo-wa [Hanako-ga katta yori (mo)] nagai kasa-o katta"
     glossedTokens := []

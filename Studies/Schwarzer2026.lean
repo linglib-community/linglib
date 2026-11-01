@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.WordOrder
 public import Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Schwarzer2026
-public import Linglib.Data.Experiments.Schwarzer2026
+public import Linglib.Data.Statistics.Schwarzer2026
 public import Linglib.Fragments.German.Verbs
 public import Linglib.Data.Examples.Readers
 
@@ -23,7 +23,7 @@ much as after it, against both closeness analyses.
 ## Implementation notes
 
 * The verbs' c-selection is read off their entries in `Fragments/German/Verbs`. The results are
-  `Data/Experiments/Schwarzer2026`; the mixed model and the logistic regression are not
+  `Data/Statistics/Schwarzer2026`; the mixed model and the logistic regression are not
   formalized, and the preferred order is the one chosen more often.
 * The bottom-up analyses are given the noun-phrase shell over the clause of the 2020 study; their
   variant that licenses only the first conjunct makes the same predictions here.

@@ -92,6 +92,7 @@
       "bibkey": "klecha-2016",
       "paperLabel": "(2b) — COCA corpus"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "He was going to find that Guardian and do what he had to do. But his gut dropped at the thought of killing anyone in cold blood, even to save his brother. He hoped she tried to kill him first. Then he could behead her with a clean conscience.",
     "discourseSegments": [
@@ -163,6 +164,7 @@
       "bibkey": "klecha-2016",
       "paperLabel": "(3b) — COCA corpus"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Thirteen months and she would legally be able to walk out the door and live on her own. Her trust fund would be hers. She would no longer be dependent on her mother and Victor. Thirteen months. She prayed she survived that long. It wasn't that she was worried about Victor killing her. She feared her own hand.",
     "discourseSegments": [

@@ -787,6 +787,7 @@
   {
     "id": "anttila1997_48a_kamerojen",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48a)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "ka.me.ro.jen",
     "discourseSegments": [],
@@ -812,6 +813,7 @@
   {
     "id": "anttila1997_48a_kameroiden",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48a)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "ka.me.roi.den",
     "discourseSegments": [],
@@ -837,6 +839,7 @@
   {
     "id": "anttila1997_48b_sairaalojen",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48b)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "sai.raa.lo.jen",
     "discourseSegments": [],
@@ -862,6 +865,7 @@
   {
     "id": "anttila1997_48b_sairaaloiden",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48b)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "sai.raa.loi.den",
     "discourseSegments": [],
@@ -887,6 +891,7 @@
   {
     "id": "anttila1997_48c_naapurien",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48c)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "naa.pu.ri.en",
     "discourseSegments": [],
@@ -912,6 +917,7 @@
   {
     "id": "anttila1997_48c_naapureiden",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48c)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "naa.pu.rei.den",
     "discourseSegments": [],
@@ -937,6 +943,7 @@
   {
     "id": "anttila1997_48d_korjaamojen",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48d)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "kor.jaa.mo.jen",
     "discourseSegments": [],
@@ -962,6 +969,7 @@
   {
     "id": "anttila1997_48d_korjaamoiden",
     "source": {"bibkey": "anttila-1997", "paperLabel": "(48d)"},
+    "method": "corpus",
     "language": "finn1318",
     "primaryText": "kor.jaa.moi.den",
     "discourseSegments": [],

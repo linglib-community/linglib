@@ -3,7 +3,7 @@ module
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.VanTielEtAl2021
-public import Linglib.Data.Experiments.VanTielEtAl2021
+public import Linglib.Data.Statistics.VanTielEtAl2021
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Probability.Kernel.Composition.Comp
 
@@ -36,7 +36,7 @@ words built with `Kernel.ofWeights`; the literal listener has a uniform prior ov
 Thresholds, prototypes, spreads and saliences are parameters, not the fitted posterior values,
 and the Weber-fraction confusion kernel of Experiment 3 is an arbitrary kernel on states. The
 words are the paper's seventeen, and the side of a word's threshold is the monotonicity
-Experiment 2 assigned it, read from `Data.Experiments.VanTielEtAl2021`. The model comparison of
+Experiment 2 assigned it, read from `Data.Statistics.VanTielEtAl2021`. The model comparison of
 Table 1 and the ratings of Experiment 4 are not formalized. The examples are the rows of
 `Data.Examples.VanTielEtAl2021`.
 

@@ -1,0 +1,82 @@
+{
+ "meta": {
+  "bibkey": "jacobs-2026",
+  "method": "corpus",
+  "description": "Counts of Latialis/Latiaris and linealis/linearis in the Library of Latin Texts, from the combined searches *latiali/*latiale, *latiari/*latiare, *lineale/*lineali and *lineari/*lineare, per period.",
+  "rawData": []
+ },
+ "types": [
+  {
+   "name": "Period",
+   "doc": "The period of a row.",
+   "levels": [
+    {
+     "name": "before200",
+     "label": "<200",
+     "doc": "before 200 AD"
+    },
+    {
+     "name": "from200To500",
+     "label": "<500",
+     "doc": "between 200 AD and 500 AD, as the text glosses the row"
+    }
+   ]
+  }
+ ],
+ "constants": [],
+ "tables": [
+  {
+   "name": "table23",
+   "structure": "HiatusCounts",
+   "doc": "the occurrences of Latialis, Latiaris, linealis and linearis per period.",
+   "locator": "(23), p. 138",
+   "verified": "page-image",
+   "key": [
+    "period"
+   ],
+   "columns": [
+    {
+     "name": "period",
+     "type": "Period",
+     "doc": "The period."
+    },
+    {
+     "name": "latialis",
+     "type": "nat",
+     "doc": "Occurrences of Latialis."
+    },
+    {
+     "name": "latiaris",
+     "type": "nat",
+     "doc": "Occurrences of Latiaris."
+    },
+    {
+     "name": "linealis",
+     "type": "nat",
+     "doc": "Occurrences of linealis."
+    },
+    {
+     "name": "linearis",
+     "type": "nat",
+     "doc": "Occurrences of linearis."
+    }
+   ],
+   "rows": [
+    {
+     "period": "<200",
+     "latialis": 3,
+     "latiaris": 15,
+     "linealis": 0,
+     "linearis": 7
+    },
+    {
+     "period": "<500",
+     "latialis": 3,
+     "latiaris": 21,
+     "linealis": 1,
+     "linearis": 7
+    }
+   ]
+  }
+ ]
+}

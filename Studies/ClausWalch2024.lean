@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.ClausWalch2024
+public import Linglib.Data.Statistics.ClausWalch2024
 public import Linglib.Fragments.English.NumeralModifiers
 public import Linglib.Fragments.German.NumeralModifiers
 public import Studies.Blok2015
@@ -46,7 +46,7 @@ complement set salient, following Blok.
 
 namespace ClausWalch2024
 
-open Data.Experiments Degree English.NumeralModifiers German.NumeralModifiers Set
+open Data.Statistics Degree English.NumeralModifiers German.NumeralModifiers Set
 open scoped Denotes
 
 variable {N p q n : ℕ}

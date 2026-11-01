@@ -894,6 +894,7 @@
       "bibkey": "hahn-degen-futrell-2021",
       "paperLabel": "SI, Sesotho, completive footnote"
     },
+    "method": "corpus",
     "language": "sout2807",
     "primaryText": "u-neh-el-ets-w-a-ng",
     "discourseSegments": [],
@@ -951,6 +952,7 @@
       "bibkey": "hahn-degen-futrell-2021",
       "paperLabel": "SI, Sesotho, stacking footnote"
     },
+    "method": "corpus",
     "language": "sout2807",
     "primaryText": "ba-arol-el-an-a",
     "discourseSegments": [],

@@ -26,6 +26,7 @@
   {
     "id": "grubic2015_6_25a",
     "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (25a)"},
+    "method": "elicitation",
     "language": "ngam1282",
     "primaryText": "Salko bano=i Dimza yak'i.",
     "discourseSegments": [],
@@ -73,6 +74,7 @@
   {
     "id": "grubic2015_6_25c",
     "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (25c)"},
+    "method": "elicitation",
     "language": "ngam1282",
     "primaryText": "Salko bano=i Dimza yak'i ɗo?",
     "discourseSegments": [],
@@ -279,6 +281,7 @@
   {
     "id": "grubic2015_6_150a",
     "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (150a)"},
+    "method": "elicitation",
     "language": "ngam1282",
     "primaryText": "Hasha hoti maɗɗi a esha Lakka, Gamba me esha=i te yak'i.",
     "discourseSegments": [],

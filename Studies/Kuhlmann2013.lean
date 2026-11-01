@@ -3,7 +3,7 @@ module
 public import Linglib.Data.UD.DepRel
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Data.Experiments.Kuhlmann2013
+public import Linglib.Data.Statistics.Kuhlmann2013
 
 /-!
 # Kuhlmann (2013): Mildly Non-Projective Dependency Grammar
@@ -54,7 +54,7 @@ namespace Kuhlmann2013
 
 open DependencyGrammar Relation
 open Morphology (Word)
-open Data.Experiments (Decimal)
+open Data.Statistics (Decimal)
 
 variable {L : Type*} {n : ℕ} {g : Graph L n}
 

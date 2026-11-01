@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "bibkey": "creissels-2024",
+    "method": "typology",
+    "description": "The survey figures Creissels reports from Bahrt (2021: 144): the percentage of the languages of a 222-language sample, all of different genera, in which synthetic marking of each of seven types of voice alternation is attested, analytic marking excluded.",
+    "rawData": []
+  },
+  "types": [
+    {
+      "name": "BahrtType",
+      "doc": "A type of voice alternation in Bahrt's survey, whose applicativization pools the book's applicativization with non-causative A/S-nucleativization.",
+      "levels": [
+        {
+          "name": "causativization",
+          "label": "causativization",
+          "doc": "a causer nucleativized"
+        },
+        {
+          "name": "reciprocalization",
+          "label": "reciprocalization",
+          "doc": "A and P cumulated in a group S"
+        },
+        {
+          "name": "applicativization",
+          "label": "applicativization",
+          "doc": "an applied phrase added, or a non-causer nucleativized as A or S"
+        },
+        {
+          "name": "reflexivization",
+          "label": "reflexivization",
+          "doc": "A and P cumulated in an individual S"
+        },
+        {
+          "name": "decausativization",
+          "label": "decausativization",
+          "doc": "the initial A suppressed"
+        },
+        {
+          "name": "passivization",
+          "label": "passivization",
+          "doc": "the initial A denucleativized"
+        },
+        {
+          "name": "antipassivization",
+          "label": "antipassivization",
+          "doc": "the initial P denucleativized"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "bahrtSampleSize",
+      "type": "nat",
+      "value": 222,
+      "doc": "The languages of Bahrt's sample.",
+      "locator": "§8.3.8, p. 348",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "bahrtShares",
+      "structure": "BahrtShare",
+      "doc": "the percentage of the sample with synthetic marking of each type.",
+      "locator": "§8.3.8, p. 348",
+      "verified": "page-image",
+      "key": [
+        "type"
+      ],
+      "columns": [
+        {
+          "name": "type",
+          "type": "BahrtType",
+          "doc": "The type of voice alternation."
+        },
+        {
+          "name": "share",
+          "type": "decimal",
+          "doc": "The percentage of the sample with synthetic marking of it."
+        }
+      ],
+      "rows": [
+        {
+          "type": "causativization",
+          "share": "73.9"
+        },
+        {
+          "type": "reciprocalization",
+          "share": "60.4"
+        },
+        {
+          "type": "applicativization",
+          "share": "45.9"
+        },
+        {
+          "type": "reflexivization",
+          "share": "41.9"
+        },
+        {
+          "type": "decausativization",
+          "share": "36.0"
+        },
+        {
+          "type": "passivization",
+          "share": "36.0"
+        },
+        {
+          "type": "antipassivization",
+          "share": "18.5"
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.List.MinMax
-public import Linglib.Data.Experiments.Hafeez2025
+public import Linglib.Data.Statistics.Hafeez2025
 public import Linglib.Semantics.Causation.Morphological
 
 /-!
@@ -27,7 +27,7 @@ verb), the morphological causative verb MCV (the indirect causative *-va*; verbs
 causative *-aa* count as lexical), the adverbial ADV (two clauses joined by *keyoonkeh*
 'because'), the non-sentential cause adjunct NCA (a cause NP with *=par*, *wajhan=se* or *=se*)
 and the non-sentential causer adjunct NCrA (a causer NP with *wajhan=se*). The printed tables are
-`Data/Experiments/Hafeez2025`.
+`Data/Statistics/Hafeez2025`.
 
 * **The coding.** A clip's scene is read off its name by the code of Appendix L
   (`Clip.scene`), and every clip is a scene the design can stage (`clips_stageable`). The
@@ -78,7 +78,7 @@ one.
 
 namespace Hafeez2025
 
-open Causation.Morphological Data.Experiments
+open Causation.Morphological Data.Statistics
 
 /-! ### Scenes -/
 

@@ -42,7 +42,8 @@ looks exempt when that position is left out of account.
   `Configuration.monoclausal` is the configuration of a single binding domain, and
   `Configuration.pronominal` takes the pronominal domains as binding domains.
 * `Binding.pair`: the dependency relating two positions to each other alone.
-* `Configuration.Binds`, `Bound`, `LocallyBound`, `LocallyCommanded`, `exempt`.
+* `Configuration.Binds`, `Bound`, `LocallyBound`, `exempt`; `LocallyCommanded` is local binding
+  along the dependency relating any two positions.
 * `Configuration.Condition`, `Configuration.Satisfies`: Conditions A, B and C.
 * `Configuration.covertlyBound`: the positions bound in their domain by a position that a
   restriction of the configuration leaves out.
@@ -51,6 +52,8 @@ looks exempt when that position is left out of account.
 
 * `Configuration.condition_iff_not_condition_pronoun`: outside the exempt set an anaphor and a
   pronominal are in complementary distribution at a position whose two domains coincide.
+* `Configuration.condition_pair_anaphor`, `condition_pair_pronoun`, `condition_pair_rExpression`:
+  along the dependency of two positions, each condition reads off command and the domains.
 * `Configuration.condition_exempt_iff`: with the structural exemption, an anaphor meets its
   condition when, if commanded in its domain, it is bound there.
 * `Configuration.condition_mono`, `condition_pronoun_anti`, `condition_rExpression_anti`: more
@@ -95,15 +98,7 @@ namespace BindingClass
 /-- A class is an anaphor's, subject to Condition A, when it is reflexive or reciprocal. -/
 def IsAnaphor (c : BindingClass) : Prop := c = .reflexive ∨ c = .reciprocal
 
-/-- A class is a pronominal's, subject to Condition B. -/
-def IsPronominal (c : BindingClass) : Prop := c = .pronoun
-
-/-- A class is a referring expression's, subject to Condition C. -/
-def IsRExpression (c : BindingClass) : Prop := c = .rExpression
-
 instance (c : BindingClass) : Decidable c.IsAnaphor := inferInstanceAs (Decidable (_ ∨ _))
-instance (c : BindingClass) : Decidable c.IsPronominal := inferInstanceAs (Decidable (_ = _))
-instance (c : BindingClass) : Decidable c.IsRExpression := inferInstanceAs (Decidable (_ = _))
 
 end BindingClass
 
@@ -238,8 +233,9 @@ def Bound (b : ι) : Prop := ∃ a, s.Binds L a b
 /-- `b` is locally bound when some position in its domain binds it. -/
 def LocallyBound (b : ι) : Prop := ∃ a ∈ s.domain b, s.Binds L a b
 
-/-- `b` is locally commanded when some position other than `b` in its domain commands it. -/
-def LocallyCommanded (b : ι) : Prop := ∃ a ∈ s.domain b, a ≠ b ∧ s.commands a b
+/-- `b` is locally commanded when it is locally bound along the dependency relating any two
+positions, some position other than `b` in its domain commanding it. -/
+def LocallyCommanded (b : ι) : Prop := s.LocallyBound ⊤ b
 
 /-- `exempt` is the set of positions that nothing in their domain commands. -/
 def exempt : Set ι := {b | ¬ s.LocallyCommanded b}
@@ -257,8 +253,8 @@ Condition A, when every position the classifier `cls` classifies meets its class
 def Satisfies (E : Set ι) (cls : ι → Option BindingClass) : Prop :=
   ∀ b c, cls b = some c → s.Condition L E b c
 
-variable {s L} {t : Configuration ι} {L' : ι → ι → Prop} {E E' : Set ι}
-  {cls : ι → Option BindingClass} {a b x : ι} {c : BindingClass}
+variable {s L} {t : Configuration ι} {L' : ι → ι → Prop} {E : Set ι} {a b x : ι}
+  {c : BindingClass}
 
 theorem Binds.commands (h : s.Binds L a b) : s.commands a b := h.2.2
 
@@ -289,14 +285,7 @@ theorem LocallyBound.bound (h : s.LocallyBound L b) : s.Bound L b :=
   ⟨a, ha⟩
 
 theorem LocallyBound.locallyCommanded (h : s.LocallyBound L b) : s.LocallyCommanded b :=
-  let ⟨a, hd, ha⟩ := h
-  ⟨a, hd, ha.1, ha.commands⟩
-
-theorem not_locallyBound_of_mem_exempt (hb : b ∈ s.exempt) : ¬ s.LocallyBound L b :=
-  fun h ↦ hb h.locallyCommanded
-
-theorem bound_iff_binds (h : ∀ x, L x b → x = a ∨ x = b) : s.Bound L b ↔ s.Binds L a b :=
-  ⟨fun ⟨x, hx⟩ ↦ (h x hx.2.1).elim (· ▸ hx) (absurd · hx.1), fun h ↦ ⟨a, h⟩⟩
+  h.mono le_top
 
 theorem binds_pair_iff (hab : a ≠ b) : s.Binds (pair a b) x b ↔ x = a ∧ s.commands a b := by
   constructor
@@ -322,6 +311,24 @@ theorem condition_anaphor (hc : c.IsAnaphor) :
     s.Condition L E b c ↔ b ∈ E ∨ s.LocallyBound L b := by
   rcases hc with rfl | rfl <;> rfl
 
+/-- Along the dependency of two positions, an anaphor meets its condition when exempt or
+commanded by the other from within its binding domain. -/
+theorem condition_pair_anaphor (hab : a ≠ b) (hc : c.IsAnaphor) :
+    s.Condition (pair a b) E b c ↔ b ∈ E ∨ a ∈ s.domain b ∧ s.commands a b := by
+  rw [condition_anaphor hc, locallyBound_pair_iff hab]
+
+/-- Along the dependency of two positions, a pronominal meets its condition unless the other
+commands it from within its pronominal domain. -/
+theorem condition_pair_pronoun (hab : a ≠ b) :
+    s.Condition (pair a b) E b .pronoun ↔ ¬ (a ∈ s.pronominalDomain b ∧ s.commands a b) :=
+  not_congr (s.pronominal.locallyBound_pair_iff hab)
+
+/-- Along the dependency of two positions, an R-expression meets its condition unless the other
+commands it. -/
+theorem condition_pair_rExpression (hab : a ≠ b) :
+    s.Condition (pair a b) E b .rExpression ↔ ¬ s.commands a b :=
+  not_congr (bound_pair_iff hab)
+
 /-- Outside the exempt positions, and where the two domains of a position coincide, an anaphor
 meets its condition exactly where a pronominal fails its own. -/
 theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E)
@@ -329,9 +336,6 @@ theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E)
     s.Condition L E b c ↔ ¬ s.Condition L E b .pronoun := by
   rw [condition_anaphor hc, Condition, not_not, or_iff_right hb]
   exact exists_congr fun _ ↦ and_congr_left' (by rw [← hd]; exact Iff.rfl)
-
-theorem condition_of_mem (hc : c.IsAnaphor) (hb : b ∈ E) : s.Condition L E b c :=
-  (condition_anaphor hc).2 (.inl hb)
 
 /-- With the structural exemption, an anaphor meets its condition exactly when it is bound in
 its domain if anything there commands it. -/
@@ -345,17 +349,6 @@ theorem condition_empty_iff (hc : c.IsAnaphor) :
   rw [condition_anaphor hc, condition_exempt_iff hc]
   exact ⟨fun h ↦ ⟨fun _ ↦ h.resolve_left id, (h.resolve_left id).locallyCommanded⟩,
     fun h ↦ .inr (h.1 h.2)⟩
-
-theorem condition_pronoun_of_rExpression (h : s.Condition L E b .rExpression) :
-    s.Condition L E b .pronoun :=
-  fun hb ↦ h hb.bound
-
-theorem Satisfies.mono_exempt (hE : E ⊆ E') (h : s.Satisfies L E cls) : s.Satisfies L E' cls := by
-  intro b c hbc
-  have := h b c hbc
-  cases c with
-  | reflexive | reciprocal => exact this.imp_left (hE ·)
-  | pronoun | rExpression => exact this
 
 /-- An anaphor's condition is monotone in the configuration, since more command and larger
 domains bind more. -/
@@ -453,7 +446,7 @@ instance (b : ι) : Decidable (s.Bound L b) := inferInstanceAs (Decidable (∃ _
 instance (b : ι) : Decidable (s.LocallyBound L b) := inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
 instance (b : ι) : Decidable (s.LocallyCommanded b) :=
-  inferInstanceAs (Decidable (∃ _, _ ∧ _))
+  inferInstanceAs (Decidable (∃ _, _ ∧ _ ≠ _ ∧ True ∧ _))
 
 instance {κ : Type*} [Fintype κ] (f : κ → ι) (b : κ) : Decidable (b ∈ s.covertlyBound L f) :=
   inferInstanceAs (Decidable (∃ x, x ∈ s.domain (f b) ∧ x ∉ Set.range f ∧ _))

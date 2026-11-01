@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.DenicEtAl2021
+public import Linglib.Data.Statistics.DenicEtAl2021
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Fragments.English.PolarityItems
@@ -16,7 +16,7 @@ downward-entailing operator inside another. A negative polarity item in the prem
 directional rating of the non-monotone environments in all four experiments and the
 meta-analysis, and the positive polarity item *some* raised that of the doubly negative ones in
 Experiment 3 and the meta-analysis (§8.1); the printed results are in
-`Data/Experiments/DenicEtAl2021.json`. Here each environment denotes a function of its verb phrase
+`Data/Statistics/DenicEtAl2021.json`. Here each environment denotes a function of its verb phrase
 built from the substrate's quantifiers, from which the paper's classes and valid inferences follow.
 The meaning route of §10.2 combines Kadmon and Landman's domain widening for *any* with Chater and
 Oaksford's probabilistic semantics of quantified sentences.

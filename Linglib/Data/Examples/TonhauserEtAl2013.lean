@@ -474,6 +474,7 @@ def ex_46b : Datum :=
   { id := "tonhauseretal2013_46b"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(46b)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "para1311"
     primaryText := "E-ma’ẽ-mi! Upépe o-ĩ peteĩ kuimba’e. Maléna nd-o-hechá-i. Ha’e oi-mo’ã ha’e hasy-ha."
     glossedTokens := [("E-ma’ẽ-mi", "A2SG-look-DIM"), ("Upépe", "there"), ("o-ĩ", "A3-be"), ("peteĩ", "one"), ("kuimba’e", "man"), ("Maléna", "Malena"), ("nd-o-hechá-i", "NEG-A3-see-NEG"), ("Ha’e", "PRON.S.3"), ("oi-mo’ã", "A3-think"), ("ha’e", "PRON.S.3"), ("hasy-ha", "B3.sick-NOM")]
@@ -552,6 +553,7 @@ def ex_51 : Datum :=
   { id := "tonhauseretal2013_51"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(51)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "para1311"
     primaryText := "Brian oi-mo’ã Carmen jagua i-ñaro-ha."
     glossedTokens := [("Brian", "Brian"), ("oi-mo’ã", "A3-think"), ("Carmen", "Carmen"), ("jagua", "dog"), ("i-ñaro-ha", "B3-fierce-NOM")]
@@ -565,6 +567,7 @@ def ex_52_property : Datum :=
   { id := "tonhauseretal2013_52_property"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(52)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "para1311"
     primaryText := "Raul mburuvicha há=katu Maléna nd-oi-kuáa-i. Ha’e oi-mo’ã ko mburuvicha pa’i-ha."
     glossedTokens := [("Raul", "Raul"), ("mburuvicha", "boss"), ("há=katu", "and=CONTR"), ("Maléna", "Malena"), ("nd-oi-kuáa-i", "NEG-A3-know-NEG"), ("Ha’e", "PRON.S.3"), ("oi-mo’ã", "A3-think"), ("ko", "this"), ("mburuvicha", "boss"), ("pa’i-ha", "priest-NOM")]

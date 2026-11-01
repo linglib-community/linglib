@@ -27,7 +27,7 @@ hypothesis over the consultants' judgments.
 ## TODO
 
 The experiment's ratings in the number, animacy and narrative conditions are results for
-`Data/Experiments`; the hypothesis over them, including that the narrative manipulation did not
+`Data/Statistics`; the hypothesis over them, including that the narrative manipulation did not
 disambiguate, is not yet stated. The stimuli of Appendix A1 are printed unmarked.
 
 ## References

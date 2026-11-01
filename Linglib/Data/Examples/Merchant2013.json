@@ -22,6 +22,7 @@
   {
     "id": "merchant2013_ex1b",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(1b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "It engaged them in a way that I did not think they could be that early in the morning.",
     "discourseSegments": [],
@@ -42,6 +43,7 @@
   {
     "id": "merchant2013_ex1c",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(1c)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "No-one can hypnotize me. Usually the people who are certain they can’t be are the easiest to do it to.",
     "discourseSegments": [
@@ -65,6 +67,7 @@
   {
     "id": "merchant2013_ex1d",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(1d)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "There was really no one at the meeting who could answer the question the way it should be.",
     "discourseSegments": [],
@@ -147,6 +150,7 @@
   {
     "id": "merchant2013_ex1h",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(1h)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Nevertheless, I shouldn’t have brought you into this. It seems I already am, thought the piano tuner, but he was silent.",
     "discourseSegments": [
@@ -170,6 +174,7 @@
   {
     "id": "merchant2013_ex1i",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(1i)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "I was disappointed that the author did not include as a source Polish-American Jesuit Walter Ciszek, who spent 23 years in Stalin’s prisons and camps, although the memoirs of American Alexander Dolgun are.",
     "discourseSegments": [],
@@ -253,6 +258,7 @@
   {
     "id": "merchant2013_ex2c",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(2c)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Curacao lies outside the hurricane belt, but can still occasionally be smitten by hurricanes, as for example Omar did in 2008.",
     "discourseSegments": [],
@@ -273,6 +279,7 @@
   {
     "id": "merchant2013_ex2d",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(2d)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "‘Slippery slope’ arguments can be framed by consequentialists (though I wouldn’t in this case).",
     "discourseSegments": [],
@@ -293,6 +300,7 @@
   {
     "id": "merchant2013_ex2e",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(2e)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "This obviously has never been faced or solved properly before and somehow we have to.",
     "discourseSegments": [],
@@ -313,6 +321,7 @@
   {
     "id": "merchant2013_ex2f",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(2f)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "The members are, technically speaking, separate lexemes since partly idiosyncratic morphological changes mark the verbal forms, and must therefore be listed separately in any truly informative dictionary, as indeed Jacobson’s dictionary does.",
     "discourseSegments": [],
@@ -333,6 +342,7 @@
   {
     "id": "merchant2013_ex2g",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(2g)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "This guy’s tape obviously should be scrutinized more than you did.",
     "discourseSegments": [],
@@ -353,6 +363,7 @@
   {
     "id": "merchant2013_ex2h",
     "source": {"bibkey": "merchant-2013", "paperLabel": "(2h)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Bad food, eaten when you could.",
     "discourseSegments": [],

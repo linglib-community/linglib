@@ -97,6 +97,7 @@ def ch2_111 : Datum :=
   { id := "bondarenko2022_ch2_111"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (111)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "kore1280"
     primaryText := "Mina-ka Swuna-ka mwuncey-lul phwul-ess-ta-nun cwucang-ul alachay-ss-ta"
     glossedTokens := [("Mina-ka", "Mina-NOM"), ("Swuna-ka", "Swuna-NOM"), ("mwuncey-lul", "problem-ACC"), ("phwul-ess-ta-nun", "solve-PST-DECL-ADN"), ("cwucang-ul", "claim-ACC"), ("alachay-ss-ta", "notice-PST-DECL")]

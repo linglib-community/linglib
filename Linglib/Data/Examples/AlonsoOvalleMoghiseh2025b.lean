@@ -322,6 +322,7 @@ def ex_64 : Datum :=
   { id := "alonsoovallemoghiseh2025b_64"
     source := ⟨"alonso-ovalle-moghiseh-2025b", "(64)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "west2369"
     primaryText := "Forood bayad chi ro bexar-e?"
     glossedTokens := [("Forood", "Forood"), ("bayad", "must"), ("chi", "what.SG"), ("ro", "ACC"), ("bexar-e", "buy.3SG")]

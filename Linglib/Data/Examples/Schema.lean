@@ -49,7 +49,7 @@ sentence-level counterpart of `Data/Wordlist/`.
   judgment is of the last utterance in the context of the others.
 * `paperFeatures` are the paper's own columns: what the paper states about the datum, such as
   the cell of its design or the class it assigns. The results a paper prints for an experiment
-  belong in `Data/Experiments/`, and an analysis the formaliser derives belongs in the study. A key
+  belong in `Data/Statistics/`, and an analysis the formaliser derives belongs in the study. A key
   repeats when the expression bears the property twice (two indefinite series in one clause), so
   the list is not a map: `feature?` reads the first value, `features` every value.
 * The file imports no tactic library: every module with example data imports it, and names such
@@ -84,6 +84,20 @@ structure SourceRef where
   paperLabel : String
   deriving DecidableEq, Repr
 
+/-- How an example and its judgment were obtained. -/
+inductive Datum.Method where
+  /-- Constructed and judged by the author. -/
+  | introspection
+  /-- Elicited from, or judged by, native-speaker consultants. -/
+  | elicitation
+  /-- Attested in a text, a corpus or on the web. -/
+  | corpus
+  /-- A stimulus whose judgment an experiment measured. -/
+  | experiment
+  /-- Cited from a grammar or dictionary that does not say how it was obtained. -/
+  | description
+  deriving DecidableEq, Repr
+
 /-- A `Datum` is a piece of data a paper reports with one of its examples
 [tonhauser-matthewson-2016]: an expression of a language with its gloss, the context it is judged
 in, the judgment, the forms and readings the paper judges with it, and the paper's own
@@ -95,6 +109,8 @@ structure Datum where
   source : SourceRef
   /-- The paper whose data file holds the row, when it only reports an example from `source`. -/
   reportedIn : Option SourceRef := none
+  /-- How the example and its judgment were obtained; `none` where that is not yet classified. -/
+  method : Option Datum.Method := none
   /-- The `Language_ID` column holds the Glottocode of the language of the expression; empty for
   a constructed string of no language. -/
   language : Glottocode

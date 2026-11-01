@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.Distributions.Bernoulli
-public import Linglib.Data.Experiments.DegenTonhauser2021
+public import Linglib.Data.Statistics.DegenTonhauser2021
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Verbs.Copular
 
@@ -24,8 +24,8 @@ fixed likelihoods, so a more likely content is taken to be more strongly committ
 
 ## Implementation notes
 
-* The means are the generated tables of `Data/Experiments/DegenTonhauser2021.json`, recomputed
-  from the trial-level data of the paper's repository by `scripts/check_experiments.py`.
+* The means are the generated tables of `Data/Statistics/DegenTonhauser2021.json`, recomputed
+  from the trial-level data of the paper's repository by `scripts/check_statistics.py`.
 * The regression coefficients are not encoded: the prior manipulation raised ratings (β = 0.45),
   projection rose with the categorical fact (β = 0.14), with the group-level prior (β = 0.31)
   and with the participant's own prior (β = 0.28), the individual-level model winning by BIC,

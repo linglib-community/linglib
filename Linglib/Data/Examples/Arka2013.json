@@ -436,6 +436,7 @@
   {
     "id": "arka2013_18a",
     "source": {"bibkey": "arka-2013", "paperLabel": "(18a)"},
+    "method": "corpus",
     "language": "indo1316",
     "primaryText": "...di jalan banyak sapi yang sedang memakan rumput.",
     "discourseSegments": [],
@@ -458,6 +459,7 @@
   {
     "id": "arka2013_18b",
     "source": {"bibkey": "arka-2013", "paperLabel": "(18b)"},
+    "method": "corpus",
     "language": "indo1316",
     "primaryText": "Dari salah satu swalayan, petugas menemukan makanan jenis roti yang kemasan dan isi=nya telah rusak dan diduga sudah dimakan tikus.",
     "discourseSegments": [],

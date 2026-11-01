@@ -203,12 +203,12 @@ theorem satisfies_grammar_iff (hr : I.IsRootedAt r) (hirr : ∀ x, ¬ I.R .locO 
     Srt.bindingClass_eq_some_iff]
   refine ⟨fun ⟨hA, hB⟩ x c hc ↦ ?_, fun h ↦ ⟨fun x hx y hy ↦ ?_, fun x hx y hy hc ↦ ?_⟩⟩
   · obtain ⟨hx, rfl⟩ | ⟨hx, rfl⟩ := hc
-    · refine (condition_exempt_iff (.inl rfl)).2 fun ⟨y, _, _, hy⟩ ↦ ?_
+    · refine (condition_exempt_iff (.inl rfl)).2 fun ⟨y, _, _, _, hy⟩ ↦ ?_
       obtain ⟨z, hz, hc⟩ := hA x hx y hy
       exact ⟨z, trivial, hne hz, hc, hz⟩
     · exact fun ⟨y, _, _, hc, hy⟩ ↦ hB x hx y hy hc
   · obtain ⟨z, -, -, hc, hz⟩ := (condition_exempt_iff (.inl rfl)).1 (h x _ (.inl ⟨hx, rfl⟩))
-      ⟨y, trivial, hne hy, hy⟩
+      ⟨y, trivial, hne hy, trivial, hy⟩
     exact ⟨z, hz, hc⟩
   · exact h x _ (.inr ⟨hx, rfl⟩) ⟨y, trivial, hne hy, hc, hy⟩
 

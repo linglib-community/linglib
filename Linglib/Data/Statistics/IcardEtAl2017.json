@@ -1,0 +1,211 @@
+{
+  "meta": {
+    "bibkey": "icard-et-al-2017",
+    "method": "experiment",
+    "description": "Two 2 (causal structure) x 2 (norm violation) x 4 (vignette) between-subjects experiments in which participants rated, on a 1 to 7 scale, their agreement that the varied agent caused the outcome. Experiment 1 varies a prescriptive norm, Experiment 2 a statistical one. The tables record the participant counts and the condition means and standard deviations printed for each causal structure, collapsed over the four vignettes; the by-vignette means are only plotted (Figures A1 and B1). Section numbers are those of the accepted preprint (PsyArXiv g7cqk).",
+    "rawData": [
+      {
+        "url": "https://osf.io/j23gr",
+        "doc": "the raw data of both experiments, as the paper states; not downloaded"
+      }
+    ]
+  },
+  "types": [
+    {
+      "name": "Experiment",
+      "doc": "The two experiments, by the kind of norm the varied agent violates.",
+      "levels": [
+        {
+          "name": "prescriptive",
+          "label": "1",
+          "doc": "Experiment 1, prescriptive norms"
+        },
+        {
+          "name": "statistical",
+          "label": "2",
+          "doc": "Experiment 2, statistical norms"
+        }
+      ]
+    },
+    {
+      "name": "CausalStructure",
+      "doc": "The causal structure of the vignette, how the outcome depends on the two agents.",
+      "levels": [
+        {
+          "name": "conjunctive",
+          "label": "conjunctive",
+          "doc": "the outcome needs both agents"
+        },
+        {
+          "name": "disjunctive",
+          "label": "disjunctive",
+          "doc": "the outcome needs either agent"
+        }
+      ]
+    },
+    {
+      "name": "Normality",
+      "doc": "Whether the varied agent's action violates the norm.",
+      "levels": [
+        {
+          "name": "normative",
+          "label": "normative",
+          "doc": "the varied agent follows the norm"
+        },
+        {
+          "name": "violation",
+          "label": "norm violation",
+          "doc": "the varied agent violates the norm"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "recruited",
+      "type": "nat",
+      "value": 480,
+      "doc": "Workers recruited for each experiment.",
+      "locator": "sections 5.1.1 and 5.2.1",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "participants",
+      "structure": "Participants",
+      "doc": "the participants excluded for failing a manipulation check and those analyzed.",
+      "locator": "sections 5.1.2 and 5.2.2",
+      "verified": "page-image",
+      "key": [
+        "experiment"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "excluded",
+          "type": "nat",
+          "doc": "Participants excluded."
+        },
+        {
+          "name": "analyzed",
+          "type": "nat",
+          "doc": "Participants analyzed."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "1",
+          "excluded": 54,
+          "analyzed": 426
+        },
+        {
+          "experiment": "2",
+          "excluded": 110,
+          "analyzed": 370
+        }
+      ]
+    },
+    {
+      "name": "ratings",
+      "structure": "Rating",
+      "doc": "the mean agreement rating and its standard deviation in each cell, collapsed over vignettes.",
+      "locator": "sections 5.1.2 and 5.2.2",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "structure",
+        "normality"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "structure",
+          "type": "CausalStructure",
+          "doc": "The causal structure."
+        },
+        {
+          "name": "normality",
+          "type": "Normality",
+          "doc": "Whether the varied agent violated the norm."
+        },
+        {
+          "name": "mean",
+          "type": "decimal",
+          "doc": "The mean agreement rating, 1 to 7."
+        },
+        {
+          "name": "sd",
+          "type": "decimal",
+          "doc": "The standard deviation."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "1",
+          "structure": "conjunctive",
+          "normality": "norm violation",
+          "mean": "5.61",
+          "sd": "1.79"
+        },
+        {
+          "experiment": "1",
+          "structure": "conjunctive",
+          "normality": "normative",
+          "mean": "3.37",
+          "sd": "2.11"
+        },
+        {
+          "experiment": "1",
+          "structure": "disjunctive",
+          "normality": "norm violation",
+          "mean": "3.25",
+          "sd": "2.05"
+        },
+        {
+          "experiment": "1",
+          "structure": "disjunctive",
+          "normality": "normative",
+          "mean": "4.18",
+          "sd": "1.93"
+        },
+        {
+          "experiment": "2",
+          "structure": "conjunctive",
+          "normality": "norm violation",
+          "mean": "5.58",
+          "sd": "1.41"
+        },
+        {
+          "experiment": "2",
+          "structure": "conjunctive",
+          "normality": "normative",
+          "mean": "4.58",
+          "sd": "1.88"
+        },
+        {
+          "experiment": "2",
+          "structure": "disjunctive",
+          "normality": "norm violation",
+          "mean": "3.89",
+          "sd": "1.97"
+        },
+        {
+          "experiment": "2",
+          "structure": "disjunctive",
+          "normality": "normative",
+          "mean": "4.67",
+          "sd": "1.73"
+        }
+      ]
+    }
+  ]
+}

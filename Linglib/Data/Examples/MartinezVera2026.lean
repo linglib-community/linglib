@@ -292,6 +292,7 @@ def ex_27c : Datum :=
   { id := "martinezvera2026_27c"
     source := ⟨"martinez-vera-2026", "(27c)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "loja1235"
     primaryText := "Segundo kuchita-ta ranti-rka. Mana, Segundo=mi wakra-ta ranti-rka."
     glossedTokens := [("Segundo", "Segundo"), ("kuchita-ta", "pig-ACC"), ("ranti-rka", "buy-PST1"), ("Mana", "no"), ("Segundo=mi", "Segundo=mi"), ("wakra-ta", "cow-ACC"), ("ranti-rka", "buy-PST1")]

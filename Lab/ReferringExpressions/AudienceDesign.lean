@@ -314,7 +314,7 @@ theorem not_audienceDesign_passive [IsProbabilityMeasure μ] (hμ : 0 < μ.real 
       measureReal_compl (.singleton _)]
     simp
   intro h
-  simp only [RoundsTo, KehlerRohde2013.subjectBiases, Data.Experiments.Decimal.toRat, abs_le] at h
+  simp only [RoundsTo, KehlerRohde2013.subjectBiases, Data.Statistics.Decimal.toRat, abs_le] at h
   norm_num at h
   linarith [h.1]
 

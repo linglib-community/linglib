@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Algebra.Order.Interval.Set.Instances
-public import Linglib.Data.Experiments.TonhauserBeaverDegen2018
+public import Linglib.Data.Statistics.TonhauserBeaverDegen2018
 public import Linglib.Semantics.Presupposition.Trigger
 public import Mathlib.Tactic.Linarith
 
@@ -16,7 +16,7 @@ of Simons, Tonhauser, Beaver and Roberts, that content projects iff it is not at
 (`gppProjection_eq_one_iff`). The categorical analyses the paper reviews predict projection at
 the ceiling (`ceilingProjection`).
 
-Against the observed means of `Data.Experiments.TonhauserBeaverDegen2018`, the principle is the
+Against the observed means of `Data.Statistics.TonhauserBeaverDegen2018`, the principle is the
 closer account on every content but the pre-state of *stop* (`gpp_closer_than_ceiling`,
 `ceiling_closer_on_stop`), the effect it predicts holds in all four experiments
 (`atIssuenessEffect_beta_pos`), and the printed Tukey comparisons divide the contents into more
@@ -51,7 +51,7 @@ than two projectivity classes, cutting across the hard/soft classification (`thr
 
 namespace TonhauserBeaverDegen2018
 
-open Data.Experiments Set.Icc
+open Data.Statistics Set.Icc
 
 /-! ### The Gradient Projection Principle -/
 

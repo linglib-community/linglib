@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.KrizChemla2015
-public import Linglib.Data.Experiments.KrizChemla2015
+public import Linglib.Data.Statistics.KrizChemla2015
 public import Linglib.Logic.Trivalent.Flat
 public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Homogeneity.Plural
@@ -26,7 +26,7 @@ predicts gaps where false was found.
 
 ## Implementation notes
 
-The stimuli and findings are the tables of `Data/Experiments/KrizChemla2015`. The E-neg tests reuse
+The stimuli and findings are the tables of `Data/Statistics/KrizChemla2015`. The E-neg tests reuse
 the E-∅ displays with the negated sentence, whose designed values swap (`negationItems`), and
 sentential negation is the outer negation `notAll` of the unembedded sentence. The weak and strong
 variants are the some- and all-substituted readings, exchanged under a downward-entailing scope,

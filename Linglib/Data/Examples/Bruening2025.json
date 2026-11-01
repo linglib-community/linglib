@@ -341,6 +341,7 @@
   {
     "id": "bruening2025_36a",
     "source": {"bibkey": "bruening-2025", "paperLabel": "(36a)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Reconciliation isn't a destination; it's an always and ongoing effort.",
     "discourseSegments": [],
@@ -423,6 +424,7 @@
   {
     "id": "bruening2025_36e",
     "source": {"bibkey": "bruening-2025", "paperLabel": "(36e)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Common symptoms include an often and intense itching.",
     "discourseSegments": [],
@@ -464,6 +466,7 @@
   {
     "id": "bruening2025_36g",
     "source": {"bibkey": "bruening-2025", "paperLabel": "(36g)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "and mixed lamellar stacks are a seldom and questionable exception",
     "discourseSegments": [],
@@ -890,6 +893,7 @@
   {
     "id": "bruening2025_99a",
     "source": {"bibkey": "bruening-2025", "paperLabel": "(99a)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "In well-drained soil, the planting hole should be at least twice and preferably five times wider than the root ball.",
     "discourseSegments": [],
@@ -911,6 +915,7 @@
   {
     "id": "bruening2025_99b",
     "source": {"bibkey": "bruening-2025", "paperLabel": "(99b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "For isotropic materials, the area and volumetric thermal expansion coefficient are, respectively, approximately twice and three times larger than the linear thermal expansion coefficient.",
     "discourseSegments": [],

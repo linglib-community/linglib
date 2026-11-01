@@ -3,7 +3,7 @@ module
 public import Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Bruening2025
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
-public import Linglib.Data.Experiments.Bruening2025
+public import Linglib.Data.Statistics.Bruening2025
 public import Linglib.Syntax.Tree.Projection
 public import Linglib.Data.Examples.Readers
 
@@ -17,7 +17,7 @@ against the conjunct next to the selector, without the requirement that conjunct
 category (§§5.2–5.4). He maintains that the two selectional violations are real, limited and
 linear, as three surveys bear out, and replaces the 2020 account of the adverbial one by negative
 c-selectional features, which the next item merged checks off (§5.8). The examples are the rows of
-`Data/Examples/Bruening2025` and the survey results are `Data/Experiments/Bruening2025`.
+`Data/Examples/Bruening2025` and the survey results are `Data/Statistics/Bruening2025`.
 
 ## Main definitions
 

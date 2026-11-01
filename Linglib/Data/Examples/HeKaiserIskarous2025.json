@@ -101,6 +101,7 @@
       "bibkey": "he-kaiser-iskarous-2025",
       "paperLabel": "§3.2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The house has a bathroom.",
     "discourseSegments": [],
@@ -133,6 +134,7 @@
       "bibkey": "he-kaiser-iskarous-2025",
       "paperLabel": "§3.2"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The house doesn't have a bathroom.",
     "discourseSegments": [],
@@ -229,6 +231,7 @@
       "bibkey": "he-kaiser-iskarous-2025",
       "paperLabel": "§3.3"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "“The house has a bathroom,” Emma told her partner.",
     "discourseSegments": [],

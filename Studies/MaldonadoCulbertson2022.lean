@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.MaldonadoCulbertson2022
+public import Linglib.Data.Statistics.MaldonadoCulbertson2022
 public import Studies.Harbour2016
 
 /-!

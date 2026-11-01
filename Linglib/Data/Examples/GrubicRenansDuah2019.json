@@ -136,6 +136,7 @@
   {
     "id": "grubicrenansduah2019_39a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(39a)"},
+    "method": "elicitation",
     "language": "ngam1282",
     "primaryText": "kìkà tùkò=ì Kúlè yàk'î.",
     "discourseSegments": [],
@@ -157,6 +158,7 @@
   {
     "id": "grubicrenansduah2019_39b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(39b)"},
+    "method": "elicitation",
     "language": "ngam1282",
     "primaryText": "kìkà tùkò=ì Kúlè.",
     "discourseSegments": [],
@@ -178,6 +180,7 @@
   {
     "id": "grubicrenansduah2019_40a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(40a)"},
+    "method": "elicitation",
     "language": "gaaa1244",
     "primaryText": "éjàákɛ́ Kòfí pɛ́ páásí.",
     "discourseSegments": [],
@@ -199,6 +202,7 @@
   {
     "id": "grubicrenansduah2019_40b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(40b)"},
+    "method": "elicitation",
     "language": "gaaa1244",
     "primaryText": "éjàákɛ́ Kòfí nì páásí.",
     "discourseSegments": [],
@@ -220,6 +224,7 @@
   {
     "id": "grubicrenansduah2019_41a",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(41a)"},
+    "method": "elicitation",
     "language": "akan1250",
     "primaryText": "èfìsɛ́ Yaw ǹkóáá nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó.",
     "discourseSegments": [],
@@ -242,6 +247,7 @@
   {
     "id": "grubicrenansduah2019_41b",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(41b)"},
+    "method": "elicitation",
     "language": "akan1250",
     "primaryText": "èfìsɛ́ Yaw nà ɔ̀-twá-à ǹsɔ́hwɛ́ nó.",
     "discourseSegments": [],
@@ -466,6 +472,7 @@
   {
     "id": "grubicrenansduah2019_49",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(49)"},
+    "method": "elicitation",
     "language": "gaaa1244",
     "primaryText": "Kofi ni hɔ́ɔ̀ adafitswawoji.",
     "discourseSegments": [],
@@ -508,6 +515,7 @@
   {
     "id": "grubicrenansduah2019_50a1",
     "source": {"bibkey": "grubic-renans-duah-2019", "paperLabel": "(50A1)"},
+    "method": "elicitation",
     "language": "akan1250",
     "primaryText": "Ama nà ɔ̀-tɔ́nè bì.",
     "discourseSegments": [],
