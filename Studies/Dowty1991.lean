@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.ArgumentSelection
 public import Linglib.Fragments.English.Verbs.Basic
 public import Linglib.Data.Examples.Dowty1991
 public import Studies.Cruse1973
@@ -22,9 +23,7 @@ verb classes of (64).
 A row attributes some entailments to its argument and denies others; the profiles agreeing with
 it form the interval between the two, and the profile the principle compares is the bottom of that
 interval, so counts are of stated entailments; the parenthesized (27e) and (28e) count like the
-others. `Outranks` reads the Proto-Agent clause of (31) first and lets the
-Proto-Patient clause decide ties, and "approximately equal" in the corollaries is read as equal.
-The incremental theme homomorphism of §6 and the material of §11 are not represented.
+others. The incremental theme homomorphism of §6 and the material of §11 are not represented.
 
 The telicity axis of Table 1 is the telicity of the predicate, not an entailment of the ten: a
 change of state may be indefinite and atelic, as in *dim the lights* (p. 568), and a holistic
@@ -43,7 +42,7 @@ supplies it from its aspectual class.
 
 namespace Dowty1991
 
-open ArgumentStructure
+open ArgumentStructure ArgumentStructure.EntailmentProfile
 open scoped Finset
 
 /-! ### What a row attributes -/
@@ -92,40 +91,6 @@ theorem cruse_volitive_is_volition_alone :
 /-! ### The selection principle and its corollaries, (31) to (34) -/
 
 variable (p q : EntailmentProfile)
-
-/-- By the selection principle (31), `p` is lexicalized as subject over `q` when it has strictly
-more Proto-Agent entailments, or as many and strictly fewer Proto-Patient entailments. -/
-def Outranks : Prop :=
-  #q.protoAgent < #p.protoAgent ∨
-    (#p.protoAgent = #q.protoAgent ∧ #p.protoPatient < #q.protoPatient)
-
-/-- Two arguments with equal counts may be lexicalized either way, Corollary 1 (32). -/
-def Alternates : Prop := #p.protoAgent = #q.protoAgent ∧ #p.protoPatient = #q.protoPatient
-
-/-- Of two nonsubject arguments, the one with more Proto-Patient entailments is lexicalized as
-direct object and the other as oblique, Corollary 2 (33). -/
-def DirectObjectOver : Prop := #q.protoPatient < #p.protoPatient
-
-/-- Two nonsubject arguments with equal Proto-Patient counts may either be direct object
-(33). -/
-def EitherObject : Prop := #p.protoPatient = #q.protoPatient
-
-instance : Decidable (Outranks p q) := by unfold Outranks; infer_instance
-instance : Decidable (Alternates p q) := by unfold Alternates; infer_instance
-instance : Decidable (DirectObjectOver p q) := by unfold DirectObjectOver; infer_instance
-instance : Decidable (EitherObject p q) := by unfold EitherObject; infer_instance
-
-/-- Corollary 1 is exactly the failure of (31) to select either way. -/
-theorem alternates_iff : Alternates p q ↔ ¬ Outranks p q ∧ ¬ Outranks q p := by
-  unfold Alternates Outranks; omega
-
--- (34)
-theorem alternates_self : Alternates p p := ⟨rfl, rfl⟩
-
--- §8.2
-theorem outranks_of_protoAgent_nonempty (hp : p.protoAgent.Nonempty) (hq : q.protoAgent = ∅) :
-    Outranks p q :=
-  .inl (by simpa [hq] using hp.card_pos)
 
 /-- The hierarchies of (36) follow from the selection principle over the canonical role profiles. -/
 theorem hierarchies :

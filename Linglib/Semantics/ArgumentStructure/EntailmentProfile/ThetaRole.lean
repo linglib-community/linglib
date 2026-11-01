@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
+public import Linglib.Core.Order.UpperLower.Finset
 
 /-!
 # Theta roles as proto-role clusters
@@ -85,8 +86,8 @@ theorem canonicalProfile_theme_le_patient :
     canonicalProfile .theme ⊆ canonicalProfile .patient := by
   decide
 
-theorem wellFormedInternal_canonicalProfile (r : ThetaRole) :
-    WellFormedInternal r.canonicalProfile := by
+theorem isLowerSet_canonicalProfile (r : ThetaRole) :
+    IsLowerSet (r.canonicalProfile : Set ProtoRoleFeature) := by
   cases r <;> decide
 
 end ThetaRole
