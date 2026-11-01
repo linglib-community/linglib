@@ -110,23 +110,23 @@ theorem eq_singleton_univ_iff :
 /-- A proposition and the question it generates have the same informative content
 ([ciardelli-groenendijk-roelofsen-2009], p. 99). -/
 theorem isInformative_iff_question :
-    IsInformative P ↔ (⨆ p ∈ P, Question.ofSet p).IsInformative := by
-  rw [Question.IsInformative, Question.info_biSup_ofSet]; rfl
+    IsInformative P ↔ (Question.generate P).IsInformative := by
+  rw [Question.IsInformative, Question.info_generate]; rfl
 
 /-- The maximal possibilities of a proposition are the alternatives of the question it generates,
 so a proposition is inquisitive just in case that question has two alternatives
 ([ciardelli-groenendijk-roelofsen-2009], p. 99). -/
 theorem isInquisitive_iff_nontrivial_alt :
-    IsInquisitive P ↔ (Question.alt (⨆ p ∈ P, Question.ofSet p)).Nontrivial := by
+    IsInquisitive P ↔ (Question.alt (Question.generate P)).Nontrivial := by
   rcases P.eq_empty_or_nonempty with rfl | hP
   · simp [IsInquisitive]
-  · rw [Question.alt_biSup_ofSet_eq hP, IsInquisitive]
+  · rw [Question.alt_generate hP, IsInquisitive]
 
 /-- A finite proposition is inquisitive just in case the question it generates is not resolved by
 its own informative content ([ciardelli-groenendijk-roelofsen-2009], footnote 5). -/
 theorem isInquisitive_iff_question (hP : P.Finite) :
-    IsInquisitive P ↔ (⨆ p ∈ P, Question.ofSet p).IsInquisitive := by
-  have hN := Question.isNormal_biSup_ofSet hP
+    IsInquisitive P ↔ (Question.generate P).IsInquisitive := by
+  have hN := Question.isNormal_generate hP
   rw [isInquisitive_iff_nontrivial_alt, Question.IsInquisitive, Question.mem_props,
     ← hN.exists_alt_eq_singleton_iff, exists_eq_singleton_iff_nonempty_subsingleton,
     ← not_nontrivial_iff, and_iff_right hN.alt_nonempty, not_not]
@@ -136,13 +136,13 @@ nor inquisitive, the conjectures of [ciardelli-groenendijk-roelofsen-2009] (Prop
 theorem univ_mem_iff (hfin : P.Finite) (hne : P.Nonempty) :
     univ ∈ P ↔ ¬ IsInformative P ∧ ¬ IsInquisitive P := by
   rw [isInquisitive_iff_question hfin, isInformative_iff_question, Question.IsInformative,
-    Question.IsInquisitive, not_not, not_not, Question.info_biSup_ofSet, Question.mem_props]
+    Question.IsInquisitive, not_not, not_not, Question.info_generate, Question.mem_props]
   constructor
   · intro h
     have hU : ⋃₀ P = univ := eq_univ_of_univ_subset (subset_sUnion_of_mem h)
-    exact ⟨hU, hU ▸ Question.mem_biSup_ofSet.2 (.inr ⟨univ, h, subset_rfl⟩)⟩
+    exact ⟨hU, hU ▸ Question.mem_generate.2 (.inr ⟨univ, h, subset_rfl⟩)⟩
   · rintro ⟨hU, h⟩
-    rcases Question.mem_biSup_ofSet.1 h with h0 | ⟨a, ha, hUa⟩
+    rcases Question.mem_generate.1 h with h0 | ⟨a, ha, hUa⟩
     · obtain ⟨p, hp⟩ := hne
       have hp0 : p = ∅ := subset_empty_iff.1 (h0 ▸ subset_sUnion_of_mem hp)
       rw [hU] at h0
@@ -182,18 +182,6 @@ theorem isProposition_singleton (p : Set W) : IsProposition {p} := by
   · exact .inr (by rw [h])
   · exact .inl fun h' ↦ h (mem_singleton_iff.1 h').symm
 
-/-- Removing the empty possibility does not change the question a set of possibilities
-generates. -/
-theorem iSup_ofSet_pro : ⨆ p ∈ pro P, Question.ofSet p = ⨆ p ∈ P, Question.ofSet p := by
-  unfold pro
-  split_ifs
-  · rfl
-  refine le_antisymm (biSup_mono fun _ h ↦ h.1) (Question.biSup_ofSet_le_iff.2 fun p hp ↦ ?_)
-  by_cases h0 : p = ∅
-  · rw [h0]
-    exact (⨆ q ∈ P \ {∅}, Question.ofSet q).contains_empty
-  · exact Question.mem_biSup_ofSet.2 (.inr ⟨p, ⟨hp, h0⟩, subset_rfl⟩)
-
 theorem mem_pro {p : Set W} (hp : p.Nonempty) : p ∈ pro P ↔ p ∈ P := by
   unfold pro
   split_ifs
@@ -217,6 +205,15 @@ theorem sUnion_pro : ⋃₀ pro P = ⋃₀ P := by
   split_ifs
   · rfl
   · exact sUnion_sdiff_singleton_empty P
+
+/-- Removing the empty possibility does not change the question a set of possibilities
+generates. -/
+theorem generate_pro : Question.generate (pro P) = Question.generate P := by
+  refine le_antisymm (Question.generate_mono pro_subset) (Question.generate_le_iff.2 fun p hp ↦ ?_)
+  by_cases h0 : p = ∅
+  · exact h0 ▸ (Question.generate (pro P)).contains_empty
+  · exact Question.mem_generate.2
+      (.inr ⟨p, (mem_pro (nonempty_iff_ne_empty.2 h0)).2 hp, subset_rfl⟩)
 
 theorem isAttentive_pro_iff : IsAttentive (pro P) ↔ IsAttentive (P \ {∅}) := by
   unfold pro

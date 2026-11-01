@@ -46,8 +46,8 @@ theorem mem_which {E : Type v} {D : Set E} {P : E → Set W} {q : Set W} :
 
 /-! ### `alt`-characterization of `which` -/
 
-theorem which_eq_biSup_ofSet {E : Type v} (D : Set E) (P : E → Set W) :
-    which D P = ⨆ a ∈ P '' D, ofSet a :=
+theorem which_eq_generate {E : Type v} (D : Set E) (P : E → Set W) :
+    which D P = generate (P '' D) :=
   iSup_image.symm
 
 theorem mem_alt_which_of_maximal {E : Type v} {D : Set E} {P : E → Set W}
@@ -69,8 +69,8 @@ theorem mem_alt_which_of_maximal {E : Type v} {D : Set E} {P : E → Set W}
 theorem alt_which_of_antichain {E : Type v} {D : Set E} {P : E → Set W}
     (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D)) :
     alt (which D P) = P '' D := by
-  rw [which_eq_biSup_ofSet]
-  exact alt_biSup_ofSet (hD.image P) hA
+  rw [which_eq_generate]
+  exact alt_generate_of_isAntichain (hD.image P) hA
 
 theorem alt_which_of_forall_subset_eq {E : Type v} {D : Set E} {P : E → Set W}
     (hD : D.Nonempty) (hP : ∀ e ∈ D, ∀ e' ∈ D, P e ⊆ P e' → P e = P e') :
