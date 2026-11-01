@@ -10,33 +10,30 @@ public import Mathlib.Tactic.Tauto
 /-!
 # Contexts for dynamic predicate logic
 
-Visser's contexts type the relations of dynamic predicate logic by the variables they
-touch. A context is a triple of finite sets of variables: the inputs `I` a relation reads, the
-blocks `B` at which it cuts the link between the input and the output value, and the outputs
-`O` it constrains, with `I` and `O` agreeing off `B`. A relation has a context when it changes
-only the blocks and membership in it is invariant under agreement on the inputs, on the outputs,
-and off the blocks. Contexts compose as relations do, so every formula gets a context by
-recursion, whose inputs are the free variables and whose blocks are the active quantifier
-variables of Groenendijk and Stokhof, and the formula's interpretation has it.
+This file defines Visser's contexts, which type the relations of dynamic predicate logic by the
+variables they touch. A context is a triple of finite sets of variables: the inputs `I` a
+relation reads, the blocks `B` at which it cuts the link between input and output value, and
+the outputs `O` it constrains, with `I` and `O` agreeing off `B`. A relation has a context when
+it changes only the blocks and membership in it is invariant under agreement on the inputs, on
+the outputs, and off the blocks. Contexts compose as relations do, so every formula gets a
+context by recursion, and the formula's interpretation has it.
 
 ## Main definitions
 
-* `DPL.Context`: the contexts, a monoid under composition with an information order; the
-  contexts `Context.test`, `Context.reset`, `Context.impl`.
+* `DPL.Context`: contexts, a monoid under composition, partially ordered by information.
+* `DPL.Context.test`, `DPL.Context.reset`: the contexts of a condition and of a random reset.
 * `DPL.HasContext`: the relations a context types.
 * `DPL.Formula.context`: the context of a formula.
 
 ## Main results
 
-* `DPL.HasContext.mono`: the information order is sound for the typing (Theorem 3.5).
-* `DPL.HasContext.patch`, `DPL.HasContext.patch_unique`: the output of a typed relation over a
-  varied input exists and is unique (Lemma 3.7).
-* `DPL.HasContext.comp`, `DPL.HasContext.impl`, `DPL.HasContext.neg`, `DPL.HasContext.disj`,
-  `DPL.HasContext.dexists`: the typing of the connectives (Theorems 3.8 and 3.9).
+* `DPL.HasContext.mono`: a relation a context types is typed by every less informative context.
+* `DPL.HasContext.patch`, `DPL.HasContext.patch_unique`: over an input agreeing on the inputs,
+  a typed relation has exactly one output agreeing with a given output on the blocks.
 * `DPL.HasContext.dependsOn_dom`: truth depends only on the inputs.
-* `DPL.HasContext.dom_comp`: a relation that blocks no input of another commutes with its truth.
-* `DPL.Formula.hasContext_eval`: a formula's interpretation has its context (Theorem 3.13), with
-  `DPL.Formula.context_I` and `DPL.Formula.context_B` identifying its inputs and blocks.
+* `DPL.HasContext.comp`: composition is typed by the product of the contexts.
+* `DPL.Formula.hasContext_eval`: a formula's interpretation has its context, whose inputs are
+  the free variables and whose blocks are the active quantifier variables.
 * `DPL.Formula.IsScopeBound.mem_dom_eval_iff`: on the scope-bound formulas dynamic truth is
   first-order satisfaction.
 
@@ -44,10 +41,12 @@ variables of Groenendijk and Stokhof, and the formula's interpretation has it.
 
 Coherence is stored in membership form, so that `Context V` needs no decidable equality; the
 paper's `I ∪ B = O ∪ B` is `Context.union_blocks`. The patched output of Lemma 3.7 is
-`Finset.piecewise` at the blocks. The paper's language has neither disjunction nor primitive
+`Finset.piecewise` at the blocks. The only named contexts are the unit and the two generators,
+the test at a set and the reset at a variable: the paper's implication context `c → d` is the
+test at the inputs of `c * d`. The paper's language has neither disjunction nor primitive
 negation and universal quantification; their contexts are those the paper's definitions of them
 yield, tests at the inputs. The context of a formula is not always the least one its
-interpretation has, `x ≐ x` reading `x` and denoting the identity.
+interpretation has: `x ≐ x` reads `x` and denotes the identity.
 
 ## References
 
@@ -87,8 +86,8 @@ instance : One (Context V) := ⟨⟨∅, ∅, ∅, fun _ _ ↦ Iff.rfl⟩⟩
 @[simp] theorem B_one : (1 : Context V).B = ∅ := rfl
 @[simp] theorem O_one : (1 : Context V).O = ∅ := rfl
 
-/-- The test context at `s` reads and writes `s` and blocks nothing. Conditions live here
-(`hasContext_test`), and implication contexts are tests (`Context.impl`). -/
+/-- The test context at `s` reads and writes `s` and blocks nothing, the context of the
+conditions depending only on `s` (`hasContext_test_iff`). -/
 def test (s : Finset V) : Context V := ⟨s, ∅, s, fun _ _ ↦ Iff.rfl⟩
 
 @[simp] theorem I_test (s : Finset V) : (test s).I = s := rfl
@@ -105,7 +104,7 @@ def reset (x : V) : Context V := ⟨∅, {x}, ∅, fun _ _ ↦ Iff.rfl⟩
 
 variable [DecidableEq V]
 
-theorem coh_mem (c : Context V) {v : V} : v ∈ c.I ∪ c.B ↔ v ∈ c.O ∪ c.B := by
+private theorem coh_mem (c : Context V) {v : V} : v ∈ c.I ∪ c.B ↔ v ∈ c.O ∪ c.B := by
   have := c.coh (v := v)
   grind
 
@@ -135,9 +134,9 @@ instance : Monoid (Context V) where
   one_mul c := by ext v <;> simp
   mul_one c := by ext v <;> simp
 
-/-- In the information order on contexts (Definition 3.1), more informative contexts read,
-write, and block more, with new blocks confined to variables the larger context both reads and
-writes. -/
+/-- The information order on contexts (Definition 3.1): `c ≤ d` when `d` reads, writes and
+blocks at least what `c` does, its new blocks among the variables it both reads and writes. The
+smaller context is the more informative, typing fewer relations (`HasContext.mono`). -/
 instance : LE (Context V) :=
   ⟨fun c d ↦ c.I ⊆ d.I ∧ c.O ⊆ d.O ∧ c.B ⊆ d.B ∧ d.B ⊆ c.B ∪ (d.I ∩ d.O)⟩
 
@@ -157,13 +156,6 @@ instance : PartialOrder (Context V) where
     obtain ⟨hI', hO', hB', -⟩ := h'
     exact Context.ext (hI.antisymm hI') (hB.antisymm hB') (hO.antisymm hO')
 
-/-- The implication context (Definition 3.1) is a test reading the combined inputs. -/
-def impl (c d : Context V) : Context V := test (c * d).I
-
-@[simp] theorem I_impl (c d : Context V) : (c.impl d).I = c.I ∪ (d.I \ c.B) := rfl
-@[simp] theorem B_impl (c d : Context V) : (c.impl d).B = ∅ := rfl
-@[simp] theorem O_impl (c d : Context V) : (c.impl d).O = c.I ∪ (d.I \ c.B) := rfl
-
 end Context
 
 /-! ### c-relations (Definition 3.4) -/
@@ -178,36 +170,19 @@ structure HasContext (R : Update (V → E)) (c : Context V) : Prop where
   stable : ∀ ⦃f f' g g'⦄, f ~[R] g → Set.EqOn f' f ↑c.I →
     Set.EqOn g g' ↑c.O → Set.EqOn f' g' (↑c.B)ᶜ → f' ~[R] g'
 
-/-- The `test V`-typed relations are exactly the `V`-invariant tests —
-Definition 2.2's ⟨V⟩-conditions (noted after Definition 3.4). -/
-theorem hasContext_test_iff {s : Finset V} {R : Update (V → E)} :
-    HasContext R (Context.test s) ↔
-      IsTest R ∧
-        ∀ ⦃f f'⦄, Set.EqOn f' f ↑s → f ~[R] f → f' ~[R] f' := by
-  constructor
-  · exact fun h ↦ ⟨fun ⟨f, g⟩ hR ↦ funext fun v ↦ h.blocks hR (by simp),
-      fun f f' hV hR ↦ h.stable hR hV hV.symm (Set.eqOn_refl _ _)⟩
-  · rintro ⟨hdiag, hinv⟩
-    refine ⟨fun f g hR v _ ↦ congrFun (hdiag.eq hR) v,
-      fun f f' g g' hR hI hO hB ↦ ?_⟩
-    obtain rfl : f = g := hdiag.eq hR
-    obtain rfl : f' = g' := funext fun v ↦ hB (by simp)
-    exact hinv hI hR
-
-/-- A condition depending only on `V` is a `Context.test V`-relation as a
-test (the atomic case of the paper's semantic Theorem 3.13). -/
-theorem hasContext_test (s : Finset V) (p : Set (V → E))
-    (hp : ∀ ⦃f f'⦄, Set.EqOn f f' ↑s → f ∈ p → f' ∈ p) :
-    HasContext (test p) (Context.test s) :=
-  hasContext_test_iff.mpr ⟨isTest_test _,
-    fun _ _ hV hR ↦ ⟨rfl, hp hV.symm hR.2⟩⟩
-
-theorem hasContext_test_of_dependsOn {s : Finset V} {p : Set (V → E)}
-    (hp : DependsOn (· ∈ p) (↑s : Set V)) : HasContext (test p) (Context.test s) :=
-  hasContext_test s p fun _ _ hs hf ↦ (hp fun _ hv ↦ hs hv).to_iff.mp hf
+/-- A condition is typed by the test context at `s` exactly when it is an ⟨s⟩-condition of
+Definition 2.2, depending only on `s` (noted after Definition 3.4). -/
+theorem hasContext_test_iff {s : Finset V} {p : Set (V → E)} :
+    HasContext (test p) (Context.test s) ↔ DependsOn (· ∈ p) (↑s : Set V) := by
+  refine ⟨fun h ↦ ?_, fun hp ↦ ⟨fun f g hR v _ ↦ congrFun hR.1 v,
+    fun f f' g g' hR hI hO hB ↦ ⟨funext fun v ↦ hB (by simp),
+      (hp fun _ hv ↦ hO hv).to_iff.mp (hR.1 ▸ hR.2)⟩⟩⟩
+  have key : ∀ ⦃f f' : V → E⦄, Set.EqOn f' f ↑s → f ∈ p → f' ∈ p :=
+    fun f f' hs hf ↦ (h.stable ⟨rfl, hf⟩ hs hs.symm (Set.eqOn_refl _ _)).2
+  exact fun f f' hs ↦ propext ⟨key fun v hv ↦ (hs v hv).symm, key fun v hv ↦ hs v hv⟩
 
 theorem hasContext_id : HasContext (.id : Update (V → E)) 1 :=
-  hasContext_test_iff.mpr ⟨subset_rfl, fun _ _ _ _ ↦ rfl⟩
+  test_univ (S := V → E) ▸ hasContext_test_iff.mpr fun _ _ _ ↦ rfl
 
 variable [DecidableEq V]
 
@@ -301,13 +276,6 @@ theorem hasContext_randomAssign (x : V) :
   ⟨fun f g hR v hv ↦ mem_randomAssign_iff_eqOn.mp hR (by simpa using hv),
    fun f f' g g' _ _ _ hB ↦ mem_randomAssign_iff_eqOn.mpr fun v hv ↦ hB (by simpa using hv)⟩
 
-/-- Blocking `x` before a `c`-relation types `∃x φ` (Definition 3.12's `c_{∃v} • c_φ`). -/
-theorem HasContext.dexists {c : Context V} {φ : Update (V → E)} (x : V)
-    (h : HasContext φ c) :
-    HasContext (dexists x φ) (Context.reset x * c) :=
-  (hasContext_randomAssign x).comp h
-
-
 /-! ### Truth depends on the inputs -/
 
 namespace HasContext
@@ -334,28 +302,21 @@ theorem dom_comp (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B 
         let ⟨j, hj⟩ := (hR.mem_dom_iff hS hd hk).mp hf
         ⟨j, k, hk, hj⟩⟩
 
-theorem impl_eq (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d.I) :
-    Update.impl R S = R.domᶜ ∪ S.dom :=
-  Set.ext fun f ↦
-    ⟨fun hall ↦ (Classical.em (f ∈ R.dom)).elim
-        (fun ⟨_, hk⟩ ↦ .inr ((hR.mem_dom_iff hS hd hk).mpr (hall hk))) .inl,
-      fun h _ hk ↦ (hR.mem_dom_iff hS hd hk).mp (h.resolve_left fun hn ↦ hn ⟨_, hk⟩)⟩
-
 /-- The negation of a `c`-relation is a test at its inputs. -/
 theorem neg (h : HasContext R c) : HasContext (test (Update.neg R)) (Context.test c.I) :=
-  hasContext_test_of_dependsOn fun _ _ hI ↦ congrArg Not (h.dependsOn_dom hI)
+  hasContext_test_iff.mpr fun _ _ hI ↦ congrArg Not (h.dependsOn_dom hI)
 
-/-- The DPL implication of a `c`-relation and a `d`-relation is a `(c → d)`-relation
-(Theorem 3.9), by the typing of composition and negation. -/
+/-- The DPL implication of a `c`-relation and a `d`-relation is typed by the paper's `c → d`, the
+test at the inputs of `c * d` (Theorem 3.9), by the typing of composition and negation. -/
 theorem impl (hR : HasContext R c) (hS : HasContext S d) :
-    HasContext (test (Update.impl R S)) (c.impl d) := by
+    HasContext (test (Update.impl R S)) (Context.test (c * d).I) := by
   rw [impl_eq_neg_comp_test_neg]
   exact (hR.comp hS.neg).neg
 
 /-- The disjunction of a `c`-relation and a `d`-relation is a test at their inputs. -/
 theorem disj (hR : HasContext R c) (hS : HasContext S d) :
     HasContext (test (Update.disj R S)) (Context.test (c.I ∪ d.I)) :=
-  hasContext_test_of_dependsOn fun _ _ hI ↦ by
+  hasContext_test_iff.mpr fun _ _ hI ↦ by
     have h₁ := hR.dependsOn_dom fun v hv ↦ hI v (Finset.coe_subset.mpr Finset.subset_union_left hv)
     have h₂ := hS.dependsOn_dom fun v hv ↦ hI v (Finset.coe_subset.mpr Finset.subset_union_right hv)
     exact congrArg₂ Or h₁ h₂
@@ -379,9 +340,9 @@ def context : Formula L V → Context V
   | neg φ => .test (context φ).I
   | conj φ ψ => context φ * context ψ
   | disj φ ψ => .test ((context φ).I ∪ (context ψ).I)
-  | imp φ ψ => (context φ).impl (context ψ)
+  | imp φ ψ => .test (context φ * context ψ).I
   | ex x φ => .reset x * context φ
-  | all x φ => (Context.reset x).impl (context φ)
+  | all x φ => .test (.reset x * context φ).I
 
 /-- The blocks of a formula's context are its active quantifier variables. -/
 theorem context_B (φ : Formula L V) : φ.context.B = φ.aqv := by
@@ -396,13 +357,13 @@ theorem hasContext_eval (φ : Formula L V) : HasContext (φ.eval M) φ.context :
   induction φ with
   | top => exact hasContext_id
   | rel R ts =>
-    refine hasContext_test_of_dependsOn fun f f' h ↦ ?_
+    refine hasContext_test_iff.mpr fun f f' h ↦ ?_
     have : (fun i ↦ (ts i).realize f) = fun i ↦ (ts i).realize f' := funext fun i ↦
       (ts i).dependsOn_realize fun v hv ↦ h v <| by
         simpa [fv] using ⟨i, hv⟩
     simp only [Set.mem_ofPred_eq, this]
   | equal t₁ t₂ =>
-    refine hasContext_test_of_dependsOn fun f f' h ↦ ?_
+    refine hasContext_test_iff.mpr fun f f' h ↦ ?_
     have h₁ := t₁.dependsOn_realize (M := M) fun v hv ↦ h v (by simp [fv, hv])
     have h₂ := t₂.dependsOn_realize (M := M) fun v hv ↦ h v (by simp [fv, hv])
     simp only [Set.mem_ofPred_eq] at h₁ h₂ ⊢
@@ -411,7 +372,7 @@ theorem hasContext_eval (φ : Formula L V) : HasContext (φ.eval M) φ.context :
   | conj φ ψ ihφ ihψ => exact ihφ.comp ihψ
   | disj φ ψ ihφ ihψ => exact ihφ.disj ihψ
   | imp φ ψ ihφ ihψ => exact ihφ.impl ihψ
-  | ex x φ ih => exact ih.dexists x
+  | ex x φ ih => exact (hasContext_randomAssign x).comp ih
   | all x φ ih => exact (hasContext_randomAssign x).impl ih
 
 /-- A scope-bound formula is true under the dynamic interpretation exactly where it is
@@ -431,9 +392,10 @@ theorem IsScopeBound.mem_dom_eval_iff {φ : Formula L V} (h : φ.IsScopeBound) {
   | disj φ ψ ihφ ihψ => simp [toFormula, disj_eq_dom_union_dom, ihφ h.1, ihψ h.2]
   | imp φ ψ ihφ ihψ =>
     obtain ⟨hφ, hψ, hd⟩ := h
-    rw [eval_imp, dom_test, (φ.hasContext_eval M).impl_eq (ψ.hasContext_eval M)
-      (by rwa [context_B, context_I])]
-    simp [toFormula, ihφ hφ, ihψ hψ, imp_iff_not_or]
+    rw [eval_imp, dom_test, impl_eq_neg_comp_test_neg, neg_eq_compl_dom,
+      (φ.hasContext_eval M).dom_comp (ψ.hasContext_eval M).neg (by rwa [context_B, context_I]),
+      dom_test, neg_eq_compl_dom]
+    simp [toFormula, ihφ hφ, ihψ hψ]
   | ex x φ ih => simp [toFormula, dom_dexists, ih h]
   | all x φ ih => simp [toFormula, mem_dforall, ih h]
 
