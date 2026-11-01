@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -9,7 +10,8 @@ public import Mathlib.Tactic.DeriveFintype
 An `EntailmentProfile` is the set of Dowty's ten proto-role entailments a verb imposes on one of
 its arguments. Proto-Agent and Proto-Patient are cluster concepts: each is a set of five
 entailments, and an argument's agenthood and patienthood are the parts of its profile that fall in
-each cluster, `protoAgent` and `protoPatient`.
+each cluster, `protoAgent` and `protoPatient`. The entailments are ordered by entailment, volition
+entailing sentience, and a profile is well formed when it is closed under entailment, a lower set.
 
 ## Main definitions
 
@@ -18,12 +20,16 @@ each cluster, `protoAgent` and `protoPatient`.
   clusters.
 * `EntailmentProfile.IsComplexRole`: entailments from both clusters.
 
+## Main results
+
+* `EntailmentProfile.isLowerSet_iff`: a profile is closed under entailment iff it imposes sentience
+  wherever it imposes volition.
+
 ## Implementation notes
 
-The entailments are not independent: volition presupposes sentience (`WellFormedInternal`).
 Since profiles are sets, `p ⊆ q` is entailment inclusion and `p ∪ q` imposes both profiles'
-entailments, Reinhart and Siloni's role bundling. Dowty's argument selection principle is in
-`Studies/Dowty1991.lean`, the traditional labels are `ThetaRole`, the class templates are
+entailments, Reinhart and Siloni's role bundling. Dowty's argument selection principle is
+`EntailmentProfile.Outranks`, the traditional labels are `ThetaRole`, the class templates are
 `RoleList`, and the projection to Grimm's agentivity lattice is `EntailmentProfile.toAgentivity`.
 
 ## References
@@ -61,6 +67,26 @@ inductive ProtoRoleFeature where
   /-- Does not exist independently of the event. -/
   | dependentExistence
   deriving DecidableEq, Repr, Fintype
+
+/-- One entailment is below another when an argument with the second has the first: volition
+entails sentience, since only sentient entities act volitionally ([dowty-1991] p.607,
+[levin-2019] §2.1), and the other entailments are independent. -/
+instance : PartialOrder ProtoRoleFeature where
+  le a b := a = b ∨ a = .sentience ∧ b = .volition
+  le_refl _ := .inl rfl
+  le_trans := by
+    rintro a b c (rfl | ⟨rfl, rfl⟩) (rfl | ⟨h, rfl⟩)
+    · exact .inl rfl
+    · exact .inr ⟨h, rfl⟩
+    · exact .inr ⟨rfl, rfl⟩
+    · cases h
+  le_antisymm := by
+    rintro a b (rfl | ⟨rfl, rfl⟩) h
+    · rfl
+    · rcases h with h | ⟨h, -⟩ <;> cases h
+
+instance : DecidableLE ProtoRoleFeature := fun a b ↦
+  inferInstanceAs (Decidable (a = b ∨ a = .sentience ∧ b = .volition))
 
 namespace ProtoRoleFeature
 
@@ -119,17 +145,19 @@ theorem isComplexRole_union (ha : p.protoAgent.Nonempty) (hp : q.protoPatient.No
 
 end EntailmentProfile
 
-open EntailmentProfile
-
-variable (p : EntailmentProfile)
-
 /-! ### Well-formedness -/
 
-/-- Volition presupposes sentience: only sentient entities can act volitionally ([dowty-1991]
-p.607, [levin-2019] §2.1). -/
-def WellFormedInternal : Prop := .volition ∈ p → .sentience ∈ p
+namespace EntailmentProfile
 
-instance : DecidablePred WellFormedInternal := fun _ ↦
-  inferInstanceAs (Decidable (_ → _))
+/-- A profile is closed under entailment exactly when it imposes sentience wherever it imposes
+volition. -/
+theorem isLowerSet_iff (p : EntailmentProfile) :
+    IsLowerSet (p : Set ProtoRoleFeature) ↔ (.volition ∈ p → .sentience ∈ p) := by
+  refine ⟨fun h hv ↦ h (show ProtoRoleFeature.sentience ≤ .volition from .inr ⟨rfl, rfl⟩) hv, ?_⟩
+  rintro h a b (rfl | ⟨rfl, rfl⟩) ha
+  · exact ha
+  · exact h ha
+
+end EntailmentProfile
 
 end ArgumentStructure

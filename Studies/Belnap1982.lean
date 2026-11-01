@@ -19,7 +19,7 @@ question is to know some answer to it, which yields a necessary test for answerh
 A question is its Hamblin set, with Bennett's denotation `Question.trueAnswers` and Karttunen's
 answer `Question.weakAnswer`, and the Distributivity Principle is `Question.KnowsSomeAnswer`. The
 inquisitive `Question.alt` keeps only maximal answers, and so loses *three apples* beside *some
-apples* (`alt_biSup_ofSet_basket`, p. 172).
+apples* (`alt_generate_basket`, p. 172).
 
 ## Errata
 
@@ -175,8 +175,8 @@ theorem basket_answers :
   · have := congrArg (1 ∈ ·) h
     simp at this
 
-theorem alt_biSup_ofSet_basket : alt (⨆ p ∈ basket, ofSet p) = {{n | 0 < n}} := by
-  rw [alt_biSup_ofSet_eq ⟨_, Or.inl rfl⟩]
+theorem alt_generate_basket : alt (generate basket) = {{n | 0 < n}} := by
+  rw [alt_generate ⟨_, Or.inl rfl⟩]
   ext p
   simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
   refine ⟨fun ⟨hp, hmax⟩ ↦ hp.resolve_right fun h ↦ ?_, ?_⟩

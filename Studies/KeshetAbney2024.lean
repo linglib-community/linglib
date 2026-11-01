@@ -163,7 +163,7 @@ inductive Modal
 
 /-- A modal applied to its base and its prejacent. -/
 def Modal.apply : Modal → Tm → Tm → Fm
-  | .might, β, ψ => Formula.some_ β ψ
+  | .might, β, ψ => Formula.some β ψ
   | .must, β, ψ => .subset β ψ
 
 /-- `cont_w(Σbφ | single(Σbφ))`: the continuation (82b), with the summation pronoun
@@ -188,34 +188,19 @@ def plain : Fm := .conj descE (.atom .cont (.var .w) ![.presup (.var .b) (.sg (.
 /-- (95): "Either there's no bathroom in this house or it's in a funny place.",
 `(¬∃bX ∨ cont_w(ΣbX | single(ΣbX))) ∧ X ≡ desc_w([b]) ∧ single(b)`. -/
 def bathroom : Fm :=
-  .conj (Formula.disj (.neg (.exists_ .b (.label .X))) (continuation (.label .X)))
+  .conj (Formula.disj (.neg (.ex .b (.label .X))) (continuation (.label .X)))
     (.labelDef .X descE)
 
 /-! ### Label expansion -/
 
-theorem expandSelf_discourseMight : discourseMight.expandSelf = discourse .might descE := by
-  rw [Formula.expandSelf, show discourseMight.defs = [(.E, descE)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, discourseMight, discourse, Modal.apply, Formula.some_,
-    continuation, Term.sgPronoun, descE, access, base, Expr.substLabels, List.lookup_cons_self,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
+theorem expandSelf_discourseMight : discourseMight.expandSelf = discourse .might descE := rfl
 
-theorem expandSelf_discourseMust : discourseMust.expandSelf = discourse .must descE := by
-  rw [Formula.expandSelf, show discourseMust.defs = [(.E, descE)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, discourseMust, discourse, Modal.apply, continuation,
-    Term.sgPronoun, descE, access, base, Expr.substLabels, List.lookup_cons_self,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
+theorem expandSelf_discourseMust : discourseMust.expandSelf = discourse .must descE := rfl
 
 theorem expandSelf_bathroom :
     bathroom.expandSelf =
-      .conj (Formula.disj (.neg (.exists_ .b descE)) (continuation descE))
-        (.labelDef .X descE) := by
-  rw [Formula.expandSelf, show bathroom.defs = [(.X, descE)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, bathroom, Formula.disj, continuation, Term.sgPronoun, descE,
-    Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
-    Option.getD_some]
+      .conj (Formula.disj (.neg (.ex .b descE)) (continuation descE))
+        (.labelDef .X descE) := rfl
 
 /-! ### Values and felicity at a world of evaluation -/
 
@@ -322,14 +307,15 @@ theorem felicitous_discourseMust_of_realistic (hr : ∀ w, S.acc w w)
 /-- (78): the unembedded discourse (74) is felicitous under every assignment,
 the assertion `single(b)` satisfying the pronoun's presupposition. -/
 theorem felicitous_plain : plain.Felicitous S.model h :=
-  ⟨felicitous_descE S h, fun hd => ⟨trivial, Fin.forall_fin_one.2 ⟨trivial, trivial, hd.2⟩⟩⟩
+  ⟨felicitous_descE S h, fun hd =>
+    ⟨trivial, Fin.forall_fin_one.2 ⟨trivial, Fin.forall_fin_one.2 trivial, hd.2⟩⟩⟩
 
-theorem felicitous_exists_descE : (Expr.exists_ .b descE).Felicitous S.model h :=
+theorem felicitous_exists_descE : (Expr.ex .b descE).Felicitous S.model h :=
   fun g' _ => felicitous_descE S g'
 
 theorem realize_exists_descE (hw : h .w = world w₀) :
-    Formula.Realize S.model h (.exists_ .b descE) ↔ ∃ e, S.desc w₀ e := by
-  simp only [Formula.realize_exists, realize_descE, Function.update_self,
+    Formula.Realize S.model h (.ex .b descE) ↔ ∃ e, S.desc w₀ e := by
+  simp only [Formula.realize_ex, realize_descE, Function.update_self,
     Function.update_of_ne (show Var.w ≠ .b by decide), hw, world_inj]
   constructor
   · rintro ⟨_, _, e, rfl, -, he⟩
