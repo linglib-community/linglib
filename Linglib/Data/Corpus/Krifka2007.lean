@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# Krifka2007: experimental results (generated)
+# Krifka2007: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/Krifka2007.json` by `scripts/gen_experiments.py`.
+Auto-generated from `Linglib/Data/Corpus/Krifka2007.json` by `scripts/gen_experiments.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
 Krifka's own corpus counts behind the alignment of expression simplicity with representation

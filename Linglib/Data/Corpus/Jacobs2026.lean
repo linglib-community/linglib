@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# Jacobs2026: experimental results (generated)
+# Jacobs2026: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/Jacobs2026.json` by `scripts/gen_experiments.py`.
+Auto-generated from `Linglib/Data/Corpus/Jacobs2026.json` by `scripts/gen_experiments.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
 Counts of Latialis/Latiaris and linealis/linearis in the Library of Latin Texts, from the combined

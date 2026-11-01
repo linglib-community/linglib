@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Morphology.Word.Basic
-public import Linglib.Data.Experiments.KuhlmannNivre2006
+public import Linglib.Data.Corpus.KuhlmannNivre2006
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Order.Interval.Finset.Fin
 

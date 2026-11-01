@@ -3,10 +3,10 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# KuhlmannNivre2006: experimental results (generated)
+# KuhlmannNivre2006: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/KuhlmannNivre2006.json` by
-`scripts/gen_experiments.py`. Do not edit by hand: edit the JSON and re-run the generator.
+Auto-generated from `Linglib/Data/Corpus/KuhlmannNivre2006.json` by `scripts/gen_experiments.py`.
+Do not edit by hand: edit the JSON and re-run the generator.
 
 The evaluation of section 4: the dependency analyses of the Danish Dependency Treebank and of the
 Prague Dependency Treebank, measured by gap degree and edge degree and checked for projectivity,

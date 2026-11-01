@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Generate typed experimental-result modules from canonical per-paper JSON.
+"""Generate typed modules of a paper's printed numbers from canonical per-paper JSON.
 
-A paper's experimental results are canonical JSON at
-`Linglib/Data/Experiments/<Paper>.json`; this emits the typed Lean module
-`Linglib/Data/Experiments/<Paper>.lean`, in `namespace <Paper>` beside the paper's study, so
-that the study reads the tables and extends the paper's types without opening anything.
-The generated Lean is never hand-edited: edit the JSON and re-run.
+A paper's experimental results are canonical JSON at `Linglib/Data/Experiments/<Paper>.json`,
+and the corpus counts it prints, its own or those it cites, at `Linglib/Data/Corpus/<Paper>.json`;
+this emits the typed Lean module beside the JSON, `<Paper>.lean`, in `namespace <Paper>` beside
+the paper's study, so that the study reads the tables and extends the paper's types without
+opening anything. Both kinds share one format. The generated Lean is never hand-edited: edit the
+JSON and re-run.
 
 A JSON file has four parts:
 
@@ -45,7 +46,8 @@ import textwrap
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "Linglib" / "Data" / "Experiments"
+DATA = ROOT / "Linglib" / "Data"
+KINDS = {"Experiments": "experimental results", "Corpus": "corpus counts"}
 BIB = ROOT / "references.bib"
 VERIFIED = {"raw-data": "recomputed from the authors' released data by `scripts/check_experiments.py`",
             "page-image": "checked against the page images",
@@ -304,7 +306,7 @@ def bibkeys() -> set:
     return set(re.findall(r"^@\w+\{([^,\s]+),", BIB.read_text(encoding="utf-8"), re.M))
 
 
-def render(paper: str, d: dict) -> str:
+def render(paper: str, d: dict, kind: str) -> str:
     meta = d["meta"]
     if meta.get("bibkey") not in bibkeys():
         fatal(f"{paper}.meta", f"bibkey {meta.get('bibkey')!r} not in references.bib")
@@ -321,7 +323,7 @@ def render(paper: str, d: dict) -> str:
               for i, c in enumerate(d.get("constants", []))]
     parts += [render_table(tb, types, f"{paper}.tables[{i}]")
               for i, tb in enumerate(d.get("tables", []))]
-    first = f"Auto-generated from `Linglib/Data/Experiments/{paper}.json` by"
+    first = f"Auto-generated from `Linglib/Data/{kind}/{paper}.json` by"
     tail = "Do not edit by hand: edit the JSON and re-run the generator."
     if len(first) + len(" `scripts/gen_experiments.py`.") <= 100:
         auto = f"{first} `scripts/gen_experiments.py`.\n{tail}"
@@ -338,7 +340,7 @@ def render(paper: str, d: dict) -> str:
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# {paper}: experimental results (generated)
+# {paper}: {KINDS[kind]} (generated)
 
 {auto}
 
@@ -361,12 +363,19 @@ end {paper}
 """
 
 
+def locate(paper: str) -> str:
+    """The kind of data, the directory under `Linglib/Data/`, that holds the paper's JSON."""
+    kinds = [k for k in KINDS if (DATA / k / f"{paper}.json").exists()]
+    if len(kinds) != 1:
+        fatal(paper, f"JSON found in {kinds or 'none'} of {', '.join(KINDS)}; it must be in one")
+    return kinds[0]
+
+
 def process(paper: str, check: bool) -> bool:
-    src = DATA_DIR / f"{paper}.json"
-    if not src.exists():
-        fatal(paper, f"JSON not found at {src.relative_to(ROOT)}")
-    content = render(paper, json.loads(src.read_text(encoding="utf-8")))
-    out = DATA_DIR / f"{paper}.lean"
+    kind = locate(paper)
+    src = DATA / kind / f"{paper}.json"
+    content = render(paper, json.loads(src.read_text(encoding="utf-8")), kind)
+    out = DATA / kind / f"{paper}.lean"
     if check:
         if not out.exists() or out.read_text(encoding="utf-8") != content:
             sys.stderr.write(f"[check] DRIFT: {out.relative_to(ROOT)} out of sync with JSON\n")
@@ -383,7 +392,7 @@ def main():
     check = "--check" in args
     args = [a for a in args if a != "--check"]
     if args == ["--all"] or (not args and check):
-        papers = sorted(p.stem for p in DATA_DIR.glob("*.json"))
+        papers = sorted(p.stem for k in KINDS for p in (DATA / k).glob("*.json"))
     elif len(args) == 1:
         papers = args
     else:

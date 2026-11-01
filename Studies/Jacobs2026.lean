@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Data.Experiments.Jacobs2026
+public import Linglib.Data.Corpus.Jacobs2026
 public import Linglib.Data.Wordlist.Jacobs2026
 public import Linglib.Fragments.Latin.Phonology
 public import Linglib.Phonology.FeatureGeometry

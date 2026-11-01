@@ -6,7 +6,7 @@ public import Mathlib.MeasureTheory.Measure.Map
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.NormNum
 public import Linglib.Data.Examples.AbramskySadrzadeh2014
-public import Linglib.Data.Experiments.AbramskySadrzadeh2014
+public import Linglib.Data.Corpus.AbramskySadrzadeh2014
 
 /-!
 # Abramsky and Sadrzadeh (2014): Semantic Unification: A Sheaf Theoretic Approach to Natural Language
@@ -41,7 +41,7 @@ image of that distribution along the gluing map ranks *ripe bananas, cheeky monk
 * `D_R` is formalised for probabilities, as image measures (`Measure.map`), not over an
   arbitrary semiring.
 * The corpus frequencies and the printed probabilities are read from
-  `Data.Experiments.AbramskySadrzadeh2014`.
+  `Data.Corpus.AbramskySadrzadeh2014`.
 
 ## References
 

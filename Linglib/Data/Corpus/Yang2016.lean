@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# Yang2016: experimental results (generated)
+# Yang2016: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/Yang2016.json` by `scripts/gen_experiments.py`.
+Auto-generated from `Linglib/Data/Corpus/Yang2016.json` by `scripts/gen_experiments.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
 Yang's counts of the plurals of the German feminine nouns: the feminine nouns of the child-directed
