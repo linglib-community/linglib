@@ -386,9 +386,11 @@ theorem Expr.realize_elim :
   | _, .top, _, _ => Iff.rfl
   | _, .atom r w ts, g, _ =>
       iff_of_eq (congrArg₂ (M.I r) (Set.ext fun a => Expr.realize_elim w g a)
-        (funext fun i => Set.ext fun a => Expr.realize_elim (ts i) g a))
+        (funext fun i => Set.ext fun a => by
+          rw [Set.mem_ofPred_eq, FinVec.etaExpand_eq]; exact Expr.realize_elim (ts i) g a))
   | _, .rel R ts, g, _ =>
-      iff_of_eq (congrArg R.Holds (funext fun i => Set.ext fun a => Expr.realize_elim (ts i) g a))
+      iff_of_eq (congrArg R.Holds (funext fun i => Set.ext fun a => by
+        rw [Set.mem_ofPred_eq, FinVec.etaExpand_eq]; exact Expr.realize_elim (ts i) g a))
   | _, .neg φ, g, _ => not_congr (Expr.realize_elim φ g .unit)
   | _, .conj φ ψ, g, _ => and_congr (Expr.realize_elim φ g .unit) (Expr.realize_elim ψ g .unit)
   | _, .exists_ _ φ, _, _ =>

@@ -193,29 +193,14 @@ def bathroom : Fm :=
 
 /-! ### Label expansion -/
 
-theorem expandSelf_discourseMight : discourseMight.expandSelf = discourse .might descE := by
-  rw [Formula.expandSelf, show discourseMight.defs = [(.E, descE)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, discourseMight, discourse, Modal.apply, Formula.some_,
-    continuation, Term.sgPronoun, descE, access, base, Expr.substLabels, List.lookup_cons_self,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
+theorem expandSelf_discourseMight : discourseMight.expandSelf = discourse .might descE := rfl
 
-theorem expandSelf_discourseMust : discourseMust.expandSelf = discourse .must descE := by
-  rw [Formula.expandSelf, show discourseMust.defs = [(.E, descE)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, discourseMust, discourse, Modal.apply, continuation,
-    Term.sgPronoun, descE, access, base, Expr.substLabels, List.lookup_cons_self,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
+theorem expandSelf_discourseMust : discourseMust.expandSelf = discourse .must descE := rfl
 
 theorem expandSelf_bathroom :
     bathroom.expandSelf =
       .conj (Formula.disj (.neg (.exists_ .b descE)) (continuation descE))
-        (.labelDef .X descE) := by
-  rw [Formula.expandSelf, show bathroom.defs = [(.X, descE)] from rfl, Formula.expand]
-  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
-    Function.iterate_zero_apply, bathroom, Formula.disj, continuation, Term.sgPronoun, descE,
-    Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
-    Option.getD_some]
+        (.labelDef .X descE) := rfl
 
 /-! ### Values and felicity at a world of evaluation -/
 

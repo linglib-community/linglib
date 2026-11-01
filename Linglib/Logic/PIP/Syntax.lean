@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Fin.Tuple.Reflection
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.List.FinRange
 public import Mathlib.Logic.Relation
@@ -201,8 +202,8 @@ def Expr.subst (x : V) (t : Term V L P) : ∀ {k : Kind}, Expr V L P k → Expr 
   | _, .inter s u => .inter (Expr.subst x t s) (Expr.subst x t u)
   | _, .empty => .empty
   | _, .top => .top
-  | _, .atom r w ts => .atom r (Expr.subst x t w) fun i => Expr.subst x t (ts i)
-  | _, .rel R ts => .rel R fun i => Expr.subst x t (ts i)
+  | _, .atom r w ts => .atom r (Expr.subst x t w) (FinVec.etaExpand fun i => Expr.subst x t (ts i))
+  | _, .rel R ts => .rel R (FinVec.etaExpand fun i => Expr.subst x t (ts i))
   | _, .neg φ => .neg (Expr.subst x t φ)
   | _, .conj φ ψ => .conj (Expr.subst x t φ) (Expr.subst x t ψ)
   | _, .exists_ y φ => .exists_ y (if y = x then φ else Expr.subst x t φ)
@@ -292,8 +293,8 @@ def Expr.substLabels (A : L → Option (Formula V L P)) : ∀ {k : Kind}, Expr V
   | _, .inter s t => .inter (s.substLabels A) (t.substLabels A)
   | _, .empty => .empty
   | _, .top => .top
-  | _, .atom r w ts => .atom r (w.substLabels A) fun i => (ts i).substLabels A
-  | _, .rel R ts => .rel R fun i => (ts i).substLabels A
+  | _, .atom r w ts => .atom r (w.substLabels A) (FinVec.etaExpand fun i => (ts i).substLabels A)
+  | _, .rel R ts => .rel R (FinVec.etaExpand fun i => (ts i).substLabels A)
   | _, .neg φ => .neg (φ.substLabels A)
   | _, .conj φ χ => .conj (φ.substLabels A) (χ.substLabels A)
   | _, .exists_ x φ => .exists_ x (φ.substLabels A)
@@ -308,7 +309,8 @@ theorem Expr.labels_substLabels (A : L → Option (Formula V L P)) {k : Kind} (e
   induction e with
   | label X => cases h : A X <;> simp [h, substLabels, labels]
   | _ =>
-    simp only [substLabels, labels, Set.biUnion_union, Set.biUnion_iUnion, Set.biUnion_empty, *]
+    simp only [substLabels, labels, FinVec.etaExpand_eq, Set.biUnion_union, Set.biUnion_iUnion,
+      Set.biUnion_empty, *]
 
 private theorem transGen_of_chain {β : Type*} {R : β → β → Prop} {p : ℕ → β} {n : ℕ}
     (hp : ∀ i < n, R (p i) (p (i + 1))) {i j : ℕ} (hij : i < j) (hjn : j ≤ n) :
@@ -407,8 +409,8 @@ def Expr.elim : ∀ {k : Kind}, Expr V L P k → Expr V L P k
   | _, .inter s t => .inter s.elim t.elim
   | _, .empty => .empty
   | _, .top => .top
-  | _, .atom r w ts => .atom r w.elim fun i => (ts i).elim
-  | _, .rel R ts => .rel R fun i => (ts i).elim
+  | _, .atom r w ts => .atom r w.elim (FinVec.etaExpand fun i => (ts i).elim)
+  | _, .rel R ts => .rel R (FinVec.etaExpand fun i => (ts i).elim)
   | _, .neg φ => .neg φ.elim
   | _, .conj φ ψ => .conj φ.elim ψ.elim
   | _, .exists_ x φ => .exists_ x φ.elim
