@@ -202,12 +202,13 @@ theorem intersective_no : (no : Det α).Intersective := fun A B A' B' h ↦
 /-! ### Anti-additivity -/
 
 theorem leftAntiAdditive_every : (every : Det α).LeftAntiAdditive :=
-  fun _ _ _ ↦ Set.union_subset_iff
+  fun _ _ _ ↦ propext Set.union_subset_iff
 
-theorem leftAntiAdditive_no : (no : Det α).LeftAntiAdditive := fun _ _ _ ↦ Set.union_subset_iff
+theorem leftAntiAdditive_no : (no : Det α).LeftAntiAdditive :=
+  fun _ _ _ ↦ propext Set.union_subset_iff
 
-theorem rightAntiAdditive_no : (no : Det α).RightAntiAdditive := fun A B B' ↦ by
-  rw [no, Set.compl_union, Set.subset_inter_iff]; rfl
+theorem rightAntiAdditive_no : (no : Det α).RightAntiAdditive := fun A ↦
+  isAntiAdditive_iff.2 fun B B' ↦ by rw [no, Set.compl_union, Set.subset_inter_iff]; rfl
 
 /-! ### Duality -/
 

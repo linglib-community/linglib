@@ -5,6 +5,7 @@ public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.Monotone.Defs
+public import Linglib.Logic.Natural.Additivity
 
 /-!
 # Quantifiers and determiner denotations
@@ -17,8 +18,8 @@ that Mostowski introduced and their type ⟨1,1⟩ generalization, and both inhe
 algebra of the Pi type, whose `ᶜ`, `⊓` and `⊔` are outer negation, conjunction and disjunction.
 
 The properties are stated in the lattice of sets: conservativity `d A B ↔ d A (A ∩ B)`, the
-monotonicities as `Monotone` and `Antitone` of the sections, Peters and Westerståhl's left
-monotonicities, van Benthem's relational properties, and invariance under the permutations of
+monotonicities as `Monotone` and `Antitone` of the sections and the anti-additivities as
+`IsAntiAdditive` of the sections, Peters and Westerståhl's left monotonicities, van Benthem's relational properties, and invariance under the permutations of
 the universe. A determiner, though, denotes a global quantifier, a `Det.Family` with a value on
 every finite universe. Two conditions tie the values together:
 [isomorphism closure](##Quantifier.Det.Family.Isom), that equivalent universes carry the same
@@ -99,6 +100,10 @@ instance : BooleanAlgebra Det.Family.{u} :=
 
 variable {α : Type*}
 
+theorem isAntiAdditive_iff {q : Quantifier α} :
+    NaturalLogic.IsAntiAdditive q ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
+  simp only [NaturalLogic.IsAntiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
+
 namespace Det
 
 /-! ### Conservativity and monotonicity -/
@@ -171,13 +176,14 @@ def Smooth (d : Det α) : Prop := DownNEMon d ∧ UpSEMon d
 ↓NW and ↑SW monotone. -/
 def CoSmooth (d : Det α) : Prop := DownNWMon d ∧ UpSWMon d
 
-/-- A determiner denotation is left anti-additive when `d (A ∪ A') B ↔ d A B ∧ d A' B`, the
-restrictor version of [zwarts-1998]'s anti-additivity. -/
-def LeftAntiAdditive (d : Det α) : Prop := ∀ A A' B, d (A ∪ A') B ↔ d A B ∧ d A' B
+/-- A determiner denotation is left anti-additive when every section `d · B` is anti-additive,
+`d (A ∪ A') B ↔ d A B ∧ d A' B` ([peters-westerstahl-2006] §5.9). -/
+def LeftAntiAdditive (d : Det α) : Prop := ∀ B, NaturalLogic.IsAntiAdditive (d · B)
 
-/-- A determiner denotation is right anti-additive when `d A (B ∪ B') ↔ d A B ∧ d A B'`, so
-that its scope is an anti-additive context in the sense of [zwarts-1998]. -/
-def RightAntiAdditive (d : Det α) : Prop := ∀ A B B', d A (B ∪ B') ↔ d A B ∧ d A B'
+/-- A determiner denotation is right anti-additive when every section `d A` is anti-additive,
+`d A (B ∪ B') ↔ d A B ∧ d A B'`, so that its scope is an anti-additive context in the sense of
+[zwarts-1998]. -/
+def RightAntiAdditive (d : Det α) : Prop := ∀ A, NaturalLogic.IsAntiAdditive (d A)
 
 /-! ### Relational properties
 

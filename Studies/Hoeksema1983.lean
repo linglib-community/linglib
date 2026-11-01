@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Order.Hom.CompleteLattice
-public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Quantification.Basic
 

@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Quantification.Polyadic
-public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Fragments.Romance.French.Determiners
 
 /-!
@@ -88,7 +87,7 @@ variable {α : Type u}
 /-- *No* is anti-additive in its scope: none of `A` is in `S ∪ S'` iff none is in `S` and none
 in `S'`. -/
 theorem isAntiAdditive_no (A : Set α) : IsAntiAdditive (no A) :=
-  Quantifier.isAntiAdditive_iff.2 (rightAntiAdditive_no A)
+  rightAntiAdditive_no A
 
 /-- *Few* is downward-entailing (`Quantifier.Det.scopeAntitone_few`) but not anti-additive: of
 three individuals, few are `0` and few are `1`, but not few are `0` or `1`. -/
