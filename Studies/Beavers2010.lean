@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.Affectedness
-public import Linglib.Semantics.ArgumentStructure.LevinClass.Alternation
-public import Linglib.Data.Examples.Levin1993
+public import Linglib.Logic.Modal.Defs
 public import Linglib.Data.Examples.Beavers2010
+public import Linglib.Data.Examples.Readers
 public import Mathlib.Order.Cover
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Sum
@@ -13,60 +13,68 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Beavers (2010): The Structure of Lexical Meaning
 
-This file formalizes Beavers's account of object/oblique alternations. The direct realization of an
-alternating argument carries monotonically stronger lexical entailments than its oblique
-realization, rather than a different event structure. In the conative and locative alternations
-the entailments are the degrees of affectedness, each an existential weakening of the next, so that
-of the eight sets of the three affectedness entailments only four are contentful, and they form a
-chain. The Morphosyntactic Alignment Principle requires the oblique to bear the minimally weaker
-role, which on the chain is weak covering. Every attested contrast satisfies it, the three
-conatives together realize each covering pair, and reversed and level-skipping alternations violate
-it. Total traversal of a path is the same entailment as quantized change, read of the scale rather
-than the theme, and adding it to the entailments of patienthood gives five contentful roles, among
-which *climb the stairs* and *climb up the stairs* are a minimal contrast. The same principle runs
-on the chain of arrival and possession behind the dative alternation.
+This file formalizes Beavers's account of object/oblique alternations. A role is a set of lexical
+entailments, and an alternating participant's role as oblique is minimally weaker than its role as
+direct argument. The affectedness entailments, quantized change, nonquantized change and potential
+for change, each weaken the next, so four roles are contentful. A variant's logical form says where
+the participant ends up, at the goal the predicate supplies, at some goal, or possibly so, and
+[the role it lexically assigns is the degree that result names](##mem_lexicalRole).
+[Every attested alternation is then a minimal contrast](##lexicalRole_wcovBy_of_mem_attested), as is
+[a conative that embeds the object's result under a modality, unless that result is the
+predicate's goal](##degree_possibly_wcovBy_iff), and [the conatives' judgments under two
+diagnostics of change follow](##diagnostic_rows). The double modality of *hit at* leaves it
+unspecified for change [only along a modal base that is not
+transitive](##holds_potential_possibly_of_isTrans). Total traversal of a path is quantized change
+read of the scale, and the dative alternation runs on a chain of arrival and possession.
 
 ## Implementation notes
 
-* A role is a set of entailments. The contentful sets of affectedness entailments are the lower
-  sets, which correspond to the degrees by Birkhoff's representation, so a contrast records the
-  degrees of the alternating participant in its two realizations.
-* The entailments are stated over a result relation relative to a world. Potential for change is
-  modal ((38)), and it is an existential generalization of nonquantized change only when the actual
-  world is among the worlds the modality ranges over, which the paper assumes and the file takes as
-  a hypothesis. Beavers leaves the modal base open.
-* The paper defines the degrees of traversal (85) by the formulas of the degrees of affectedness,
-  abstracting over the scale instead of the theme, so the file states each formula once. Only total
-  traversal enters the roles of (86), and naming a role of (87) by its strongest entailment rules
-  out affected paths, as the paper assumes.
+* The contentful sets of affectedness entailments are the lower sets, which correspond to the
+  degrees by Birkhoff's representation.
+* Potential for change is modal, and it generalizes nonquantized change only when the actual world
+  is among the worlds its modal base admits, which the paper assumes and every model satisfies.
+  Beavers leaves the modal base open.
+* A lexical entailment of a logical form is one it has in every model, whatever the verb's own
+  relation, which can only restrict the events. In a locative variant each participant's role is
+  read off its own conjunct, the other participant's conjunct counting as part of the verb's
+  relation.
+* The paper gives no logical forms for the *clear* and *hit* locatives, only roles: quantized change
+  for both participants of *clear*, potential for change for both of *hit*. Their results are the
+  ones that name these roles.
+* The degrees of traversal are the formulas of the degrees of affectedness abstracted over the
+  scale instead of the theme, so the file states each formula once. Only total traversal enters the
+  extended hierarchy of roles, and naming a role by its strongest entailment rules out affected
+  paths, as the paper assumes.
 * The paper states its conditions of a sentence with the theme, scale and event given; the file
-  states them of a relation, over all themes, scales and events. A predicate-supplied goal is fixed
-  across the predicate's events, so the end of the path in (84a) is read as the endpoint of the
-  goal type.
-* Beavers's rough correspondence between Dowty's proto-patient entailments and his own (Table 5)
-  is not formalized, since it marks two of its cells as uncertain.
+  states them of a relation, over all themes, scales and events. A goal the predicate supplies is
+  fixed across its events and read by the result relation relative to the theme and scale, as the
+  size of the pizza or the end of the stairs.
+* Beavers's rough correspondence with Dowty's proto-patient entailments is not formalized, since
+  it marks two of its cells as uncertain.
+
+## Errata
+
+* Two cross-references in the discussion of *climb* are off by four: the scalar analysis "as in
+  88" is (84), and the degrees of traversal "as in 89" are (85).
+* (38a) writes result′(x, g, s, e), swapping the scale and goal arguments of (31) and (38b).
 
 ## TODO
 
-* Derive the contrasts from the example rows of `Data.Examples.Beavers2010` rather than typing the
-  verbs and degrees in.
+* The telicity diagnostic (32), and the diagnostics of the locatives (50)–(56).
 
 ## References
 
 * [J. Beavers, *The structure of lexical meaning: Why semantics really matters*
   (2010)][beavers-2010]
 * [J. Beavers, *On Affectedness* (2011)][beavers-2011]
-* [B. Levin, *English Verb Classes and Alternations: A Preliminary Investigation*
-  (1993)][levin-1993]
 -/
 
 @[expose] public section
 
 namespace Beavers2010
 
-open ArgumentStructure
-open ArgumentStructure (AffectednessDegree)
-open ArgumentStructure (DiathesisAlternation)
+open ArgumentStructure ModalLogic
+open scoped SetRel
 
 /-! ### L-thematic roles as sets of entailments ((65)–(67))
 
@@ -84,11 +92,12 @@ example : Nat.card (LowerSet AffectednessEntailment) = 4 := by
 /-! ### The entailments ((31), (38))
 
 The result relation `R w x s g e` says that in the world `w` the theme `x` ends the event `e` at
-the goal `g` on the scale `s`, and `w₀` is the actual world. -/
+the goal `g` on the scale `s`, `w₀` is the actual world, and `acc` relates a world to the worlds
+its modal base admits. -/
 
 section Entailments
 
-variable {W α S G β : Type*} (acc : W → W → Prop) (w₀ : W) (R : W → α → S → G → β → Prop)
+variable {W α S G β : Type*} (acc : SetRel W W) (w₀ : W) (R : W → α → S → G → β → Prop)
   (φ : α → S → β → Prop)
 
 /-- A predicate entails a **quantized change** to the goal `g` when its theme ends every event of
@@ -101,9 +110,9 @@ goal on its scale ((31b)). Of the scale, the same condition says it is **travers
 def Nonquantized : Prop := ∀ x s e, φ x s e → ∃ g, R w₀ x s g e
 
 /-- A predicate gives its theme **potential for change** when in every event of it the theme ends
-at some goal on its scale in some world accessible from the actual one ((38a)). Of the scale, the
-same condition says it is **potentially traversed** ((85c)). -/
-def Potential : Prop := ∀ x s e, φ x s e → ∃ w, acc w₀ w ∧ ∃ g, R w x s g e
+at some goal on its scale in some world the modal base admits ((38a)). Of the scale, the same
+condition says it is **potentially traversed** ((85c)). -/
+def Potential : Prop := ∀ x s e, φ x s e → ◇[acc] (fun w ↦ ∃ g, R w x s g e) w₀
 
 variable {acc w₀ R φ}
 
@@ -111,7 +120,7 @@ theorem Quantized.nonquantized {g : G} (h : Quantized w₀ R φ g) : Nonquantize
   fun x s e hx ↦ ⟨g, h x s e hx⟩
 
 -- (38a), (31b)
-theorem Nonquantized.potential (hacc : acc w₀ w₀) (h : Nonquantized w₀ R φ) :
+theorem Nonquantized.potential (hacc : w₀ ~[acc] w₀) (h : Nonquantized w₀ R φ) :
     Potential acc w₀ R φ :=
   fun x s e hx ↦ ⟨w₀, hacc, h x s e hx⟩
 
@@ -123,7 +132,7 @@ def Holds : AffectednessDegree → Prop
   | .nonquantized => Nonquantized w₀ R φ
   | .quantized => ∃ g, Quantized w₀ R φ g
 
-theorem holds_antitone (hacc : acc w₀ w₀) : Antitone (Holds acc w₀ R φ) := by
+theorem holds_antitone (hacc : w₀ ~[acc] w₀) : Antitone (Holds acc w₀ R φ) := by
   intro d d' h
   cases d <;> cases d' <;> first
     | exact absurd h (by decide)
@@ -133,139 +142,327 @@ theorem holds_antitone (hacc : acc w₀ w₀) : Antitone (Holds acc w₀ R φ) :
     | exact Nonquantized.potential hacc
     | exact fun ⟨_, hq⟩ ↦ hq.nonquantized.potential hacc
 
+theorem Holds.of_le {ψ : α → S → β → Prop} (hφ : φ ≤ ψ) :
+    ∀ {d}, Holds acc w₀ R ψ d → Holds acc w₀ R φ d
+  | .unspecified, h => h
+  | .potential, h => fun x s e hx ↦ h x s e (hφ x s e hx)
+  | .nonquantized, h => fun x s e hx ↦ h x s e (hφ x s e hx)
+  | .quantized, ⟨g, h⟩ => ⟨g, fun x s e hx ↦ h x s e (hφ x s e hx)⟩
+
 variable (acc w₀ R φ) in
 /-- The role a predicate assigns its theme is the set of affectedness entailments it has ((65)). -/
 def role : Set AffectednessEntailment := {e | Holds acc w₀ R φ e.1}
 
 -- (67)
-theorem isLowerSet_role (hacc : acc w₀ w₀) : IsLowerSet (role acc w₀ R φ) :=
+theorem isLowerSet_role (hacc : w₀ ~[acc] w₀) : IsLowerSet (role acc w₀ R φ) :=
   fun _ _ h ↦ holds_antitone hacc h
+
+-- (27), p. 831
+theorem role_antitone : Antitone (role acc w₀ R) :=
+  fun _ _ h _ ↦ Holds.of_le h
 
 end Entailments
 
-/-! ### The MAP ((68)–(69)) as weak covering -/
+/-! ### The logical forms of the variants (§3.2)
 
-instance : DecidableRel (· ⩿ · : AffectednessDegree → AffectednessDegree → Prop) :=
-  fun a b ↦ decidable_of_iff (a ≤ b ∧ ∀ c, a < c → ¬c < b) Iff.rfl
+A variant's logical form conjoins the verb's own relation with what it says about where the
+participant ends up, and its lexical entailments are those it has in every model. -/
 
-instance : DecidableRel (· ⋖ · : AffectednessDegree → AffectednessDegree → Prop) :=
-  fun a b ↦ decidable_of_iff (a < b ∧ ∀ c, a < c → ¬c < b) Iff.rfl
+/-- A model of the logical forms: worlds with a modal base under which the actual world is
+accessible from itself, participants, scales, goals with the goal the predicate supplies, events,
+the verb's own relation and the result relation. -/
+structure Model where
+  /-- The worlds. -/
+  W : Type
+  /-- The participants. -/
+  α : Type
+  /-- The scales. -/
+  S : Type
+  /-- The goals. -/
+  G : Type
+  /-- The events. -/
+  β : Type
+  /-- The modal base, relating a world to the worlds it admits. -/
+  acc : SetRel W W
+  /-- The actual world. -/
+  w₀ : W
+  /-- The actual world is among the worlds its modal base admits. -/
+  refl : w₀ ~[acc] w₀
+  /-- The goal the predicate supplies. -/
+  goal : G
+  /-- The verb's own relation between the participant and the event. -/
+  V : α → β → Prop
+  /-- The result relation: at `w`, the participant `x` ends `e` at `g` on `s`. -/
+  R : W → α → S → G → β → Prop
 
-/-- The Morphosyntactic Alignment Principle (69) holds of the roles of an alternating participant's
-direct and oblique realizations on a hierarchy of roles when the oblique role is minimally weaker,
-weakly covered by the direct one ((68)). -/
-def MAP {ρ : Type*} [Preorder ρ] (direct oblique : ρ) : Prop :=
-  oblique ⩿ direct
+/-- What a logical form says about where a participant ends up. -/
+inductive Result where
+  /-- At the goal the predicate supplies, as *ate the pizza* says of the pizza ((42a)). -/
+  | goal
+  /-- At some goal, as *ate at the pizza* and *cut the rope* say ((42b), (44a)). -/
+  | someGoal
+  /-- Possibly as `r` says, embedding `r` under a modality, as *cut at the rope* and *hit the rope*
+  do with some goal and *hit at the rope* with possibly some goal ((44b), (46)). -/
+  | possibly (r : Result)
+  deriving DecidableEq, Repr
 
-instance {ρ : Type*} [Preorder ρ] [DecidableRel (· ⩿ · : ρ → ρ → Prop)] (d o : ρ) :
-    Decidable (MAP d o) := by
-  unfold MAP; infer_instance
+namespace Result
+
+/-- What a result says of a participant, a scale and an event at a world. -/
+def HoldsAt (M : Model) : Result → M.W → M.α → M.S → M.β → Prop
+  | .goal, w, x, s, e => M.R w x s M.goal e
+  | .someGoal, w, x, s, e => ∃ g, M.R w x s g e
+  | .possibly r, w, x, s, e => ◇[M.acc] (fun v ↦ r.HoldsAt M v x s e) w
+
+/-- The logical form of a variant with the result `r`: the verb's relation holds and `r` holds at
+the actual world. -/
+def form (r : Result) (M : Model) : M.α → M.S → M.β → Prop :=
+  fun x s e ↦ M.V x e ∧ r.HoldsAt M M.w₀ x s e
+
+/-- The role a result lexically assigns: the affectedness entailments its logical form has in every
+model. -/
+def lexicalRole (r : Result) : LowerSet AffectednessEntailment :=
+  ⟨⋂ M : Model, role M.acc M.w₀ M.R (r.form M), isLowerSet_iInter fun M ↦ isLowerSet_role M.refl⟩
+
+/-- The degree of affectedness a result names. -/
+def degree : Result → AffectednessDegree
+  | .goal => .quantized
+  | .someGoal => .nonquantized
+  | .possibly .goal | .possibly .someGoal => .potential
+  | .possibly (.possibly _) => .unspecified
+
+theorem holds_degree (M : Model) : ∀ r : Result, Holds M.acc M.w₀ M.R (r.form M) r.degree
+  | .goal => ⟨M.goal, fun _ _ _ h ↦ h.2⟩
+  | .someGoal => fun _ _ _ h ↦ h.2
+  | .possibly .goal => fun _ _ _ ⟨_, v, hv, h⟩ ↦ ⟨v, hv, _, h⟩
+  | .possibly .someGoal => fun _ _ _ h ↦ h.2
+  | .possibly (.possibly _) => trivial
+
+private theorem holdsAt_of_forall {M : Model} {w : M.W} (hw : w ~[M.acc] w)
+    (hR : ∀ x s g e, M.R w x s g e) : ∀ (r : Result) x s e, r.HoldsAt M w x s e
+  | .goal, x, s, e => hR x s _ e
+  | .someGoal, x, s, e => ⟨M.goal, hR x s _ e⟩
+  | .possibly r, x, s, e => ⟨w, hw, holdsAt_of_forall hw hR r x s e⟩
+
+/-- Two events of the predicate end at different goals. -/
+private def twoGoals : Model :=
+  ⟨Unit, Unit, Unit, Bool, Bool, .univ, (), Set.mem_univ _, true, fun _ _ ↦ True,
+    fun _ _ _ g e ↦ g = e⟩
+
+/-- The result holds at a world the actual world accesses, but not at the actual world. -/
+private def elsewhere : Model :=
+  ⟨Bool, Unit, Unit, Unit, Unit, .univ, false, Set.mem_univ _, (), fun _ _ ↦ True,
+    fun w _ _ _ _ ↦ w = true⟩
+
+/-- The actual world reaches in two steps a world it does not access. -/
+private def twoSteps : Model :=
+  ⟨ℕ, Unit, Unit, Unit, Unit, {p | p.2 = p.1 ∨ p.2 = p.1 + 1}, 0, Or.inl rfl, (), fun _ _ ↦ True,
+    fun w _ _ _ _ ↦ w = 2⟩
+
+private theorem not_quantized_twoGoals :
+    ¬ ∃ g, Quantized twoGoals.w₀ twoGoals.R (someGoal.form twoGoals) g := by
+  rintro ⟨g, h⟩
+  have := h () () (!g) ⟨trivial, _, rfl⟩
+  revert this; cases g <;> nofun
+
+private theorem not_nonquantized_elsewhere (r : Result) :
+    ¬ Nonquantized elsewhere.w₀ elsewhere.R ((possibly r).form elsewhere) := fun h ↦
+  let ⟨_, h⟩ := h () () () ⟨trivial, true, Set.mem_univ _,
+    holdsAt_of_forall (M := elsewhere) (w := true) (Set.mem_univ _) (fun _ _ _ _ ↦ rfl) r () () ()⟩
+  Bool.false_ne_true h
+
+private theorem not_potential_twoSteps (r : Result) :
+    ¬ Potential twoSteps.acc twoSteps.w₀ twoSteps.R ((possibly (possibly r)).form twoSteps) :=
+  fun h ↦ by
+    obtain ⟨v, hv, _, rfl⟩ := h () () () ⟨trivial, (1 : ℕ), Or.inr rfl, (2 : ℕ), Or.inr rfl,
+      holdsAt_of_forall (M := twoSteps) (w := (2 : ℕ)) (Or.inl rfl) (fun _ _ _ _ ↦ rfl) r () () ()⟩
+    exact absurd (show (2 : ℕ) = 0 ∨ (2 : ℕ) = 0 + 1 from hv) (by decide)
+
+private theorem exists_not_holds : ∀ {r : Result} {d : AffectednessDegree}, r.degree < d →
+    ∃ M : Model, ¬ Holds M.acc M.w₀ M.R (r.form M) d
+  | .goal, d, h => absurd h (by cases d <;> decide)
+  | .someGoal, d, h => ⟨twoGoals, fun hd ↦ not_quantized_twoGoals <| by
+      cases d <;> first | exact hd | exact absurd h (by decide)⟩
+  | .possibly .goal, d, h | .possibly .someGoal, d, h =>
+      ⟨elsewhere, fun hd ↦ not_nonquantized_elsewhere _ <|
+        holds_antitone elsewhere.refl (show .nonquantized ≤ d by revert h; cases d <;> decide) hd⟩
+  | .possibly (.possibly _), d, h =>
+      ⟨twoSteps, fun hd ↦ not_potential_twoSteps _ <| holds_antitone twoSteps.refl
+        (show .potential ≤ d by change .unspecified < d at h; revert h; cases d <;> decide) hd⟩
+
+/-- A logical form lexically entails exactly the affectedness entailments at most as strong as the
+degree its result names, so the roles of the variants are those Tables 3 and 4 give. -/
+theorem mem_lexicalRole {r : Result} {e : AffectednessEntailment} :
+    e ∈ r.lexicalRole ↔ e.1 ≤ r.degree := by
+  rw [lexicalRole, LowerSet.mem_mk, Set.mem_iInter]
+  exact ⟨fun h ↦ le_of_not_gt fun hlt ↦ let ⟨M, hM⟩ := exists_not_holds hlt; hM (h M),
+    fun h M ↦ holds_antitone M.refl h (holds_degree M r)⟩
+
+theorem lexicalRole_eq (r : Result) : r.lexicalRole = r.degree.entailments :=
+  SetLike.ext fun _ ↦ mem_lexicalRole
+
+/-- Embedding the object variant's result under a modality, as the *cut* and *hit* conatives do,
+gives an oblique minimally weaker than the object unless the object's result is the predicate's
+goal: an *eat at* that said only that the pizza was possibly eaten up would skip nonquantized
+change, so the unified modal analysis of the conative floated on p. 838 must keep the change of
+(42b). -/
+theorem degree_possibly_wcovBy_iff {r : Result} : (possibly r).degree ⩿ r.degree ↔ r ≠ goal := by
+  rcases r with _ | _ | (_ | _ | r)
+  iterate 4 decide
+  exact iff_of_true WCovBy.rfl (by simp)
+
+/-- Along a transitive modal base a result under a modality has potential for change however deeply
+it is embedded, so *hit at* would pass *What happened to x* (39), against (48b): the double modality
+of (46b) is weaker than potential for change only along a modal base that is not transitive. -/
+theorem holds_potential_possibly_of_isTrans (M : Model) [M.acc.IsTrans] (r : Result) :
+    Holds M.acc M.w₀ M.R ((possibly r).form M) .potential := fun x s e h ↦ go r M.w₀ x s e h.2
+where
+  go : ∀ (r : Result) (w : M.W) (x : M.α) (s : M.S) (e : M.β), (possibly r).HoldsAt M w x s e →
+      ◇[M.acc] (fun v ↦ ∃ g, M.R v x s g e) w
+    | .goal, _, _, _, _, ⟨v, hv, h⟩ => ⟨v, hv, _, h⟩
+    | .someGoal, _, _, _, _, h => h
+    | .possibly r, _, x, s, e, ⟨v, hv, h⟩ =>
+      let ⟨u, hu, hg⟩ := go r v x s e h; ⟨u, M.acc.trans hv hu, hg⟩
+
+end Result
+
+open Result
+
+/-! ### The MAP ((68)–(69))
+
+Of two roles on a hierarchy, `Q ⩿ R` says that `Q` is minimally weaker than `R` ((68)). The
+Morphosyntactic Alignment Principle requires an alternating participant's role as oblique to be
+minimally weaker than its role as direct argument ((69)). -/
 
 -- (66)
 theorem entailments_wcovBy_entailments_iff (d d' : AffectednessDegree) :
     d.entailments ⩿ d'.entailments ↔ d ⩿ d' :=
   apply_wcovBy_apply_iff AffectednessDegree.entailments
 
--- (27)
-theorem MAP.oblique_le {ρ : Type*} [Preorder ρ] {d o : ρ} (h : MAP d o) : o ≤ d :=
-  h.le
+/-! ### The attested alternations (Tables 3–4, (75)) -/
 
-/-! ### The attested contrasts (Tables 3–4, (75)) -/
+/-- An alternation: examples of a participant as direct argument and as oblique, with what each
+variant's logical form says about the result of the participant or, for a path, of the theme that
+traverses it. -/
+structure Alternation where
+  /-- The example with the participant as direct argument. -/
+  directEx : Datum
+  /-- The example with the participant as oblique. -/
+  obliqueEx : Datum
+  /-- The participant's result as direct argument. -/
+  direct : Result
+  /-- The participant's result as oblique. -/
+  oblique : Result
 
-/-- An alternation contrast records a verb and the affectedness degrees of its alternating
-participant as direct object and as oblique. -/
-structure AlternationContrast where
-  /-- The verb. -/
-  verb : String
-  /-- The alternation it instantiates. -/
-  alternationType : DiathesisAlternation
-  /-- Degree in direct realization. -/
-  directDegree : AffectednessDegree
-  /-- Degree in oblique realization. -/
-  obliqueDegree : AffectednessDegree
-  deriving Repr, DecidableEq
+open Examples
 
-/-- *Ate her cake* against *ate at her cake* (21) contrasts quantized with non-quantized change. -/
-def eatConative : AlternationContrast :=
-  ⟨"eat", .conative, .quantized, .nonquantized⟩
+/-- *Ate her cake* against *ate at her cake* ((21), (42)). -/
+def eat : Alternation := ⟨ex_21a, ex_21b, .goal, .someGoal⟩
 
-/-- *Cut the rope* against *cut at the rope* (20) contrasts non-quantized change with potential for
-change. -/
-def cutConative : AlternationContrast :=
-  ⟨"cut", .conative, .nonquantized, .potential⟩
+/-- *Cut the rope* against *cut at the rope* ((20), (44)). -/
+def cut : Alternation := ⟨ex_20a, ex_20b, .someGoal, .possibly .someGoal⟩
 
-/-- *Hit Defarge* against *hit at Defarge* (22) contrasts potential for change with no entailment
-about change. -/
-def hitConative : AlternationContrast :=
-  ⟨"hit", .conative, .potential, .unspecified⟩
+/-- *Hit Defarge* against *hit at Defarge* ((22), (46)). -/
+def hit : Alternation := ⟨ex_22a, ex_22b, .possibly .someGoal, .possibly (.possibly .someGoal)⟩
 
-/-- In *loaded the wagon (with hay)* (49) the location is completely filled as object and partly as
-oblique. -/
-def loadLocation : AlternationContrast :=
-  ⟨"load", .locative, .quantized, .nonquantized⟩
+/-- The wagon in *loaded the wagon with the hay* against *loaded the hay onto the wagon*, filled
+as object and partly filled as oblique ((9), (49)). -/
+def loadLocation : Alternation := ⟨ex_9b, ex_9a, .goal, .someGoal⟩
 
-/-- In *loaded the hay (onto the wagon)* (49) the theme is all moved as object and partly as
-oblique. -/
-def loadTheme : AlternationContrast :=
-  ⟨"load", .locative, .quantized, .nonquantized⟩
+/-- The hay in the same pair, all moved as object and partly moved as oblique ((9), (49)). -/
+def loadTheme : Alternation := ⟨ex_9a, ex_9b, .goal, .someGoal⟩
 
-/-- In *cut the window (with the diamond)* (54) the location is damaged as object and potentially
-damaged as oblique. -/
-def cutLocation : AlternationContrast :=
-  ⟨"cut", .locative, .nonquantized, .potential⟩
+/-- The glass in *cut the glass with the diamond* against *cut the diamond on the glass*, damaged
+as object and possibly damaged as oblique ((18), (54)). -/
+def cutLocation : Alternation := ⟨ex_18b, ex_18a, .someGoal, .possibly .someGoal⟩
 
-/-- *Cut the diamond (on the window)* (54) shows the same contrast for the theme. -/
-def cutTheme : AlternationContrast :=
-  ⟨"cut", .locative, .nonquantized, .potential⟩
+/-- The diamond in the same pair ((18), (54)). -/
+def cutTheme : Alternation := ⟨ex_18a, ex_18b, .someGoal, .possibly .someGoal⟩
 
-/-- In *hit the fence with the stick* against *hit the stick against the fence* ((24), (75)) both
-realizations have potential for change, the equal-role alternation the MAP permits with no
-truth-conditional contrast. -/
-def hitLocative : AlternationContrast :=
-  ⟨"hit", .locative, .potential, .potential⟩
+/-- The table in *cleared the table of the dishes* against *cleared the dishes off the table*,
+cleared under both ((25), (75)). -/
+def clearLocation : Alternation := ⟨ex_25a, ex_25b, .goal, .goal⟩
 
-/-- The attested contrasts. -/
-def allContrasts : List AlternationContrast :=
-  [eatConative, cutConative, hitConative,
-   loadLocation, loadTheme, cutLocation, cutTheme, hitLocative]
+/-- The dishes in the same pair ((25), (75)). -/
+def clearTheme : Alternation := ⟨ex_25b, ex_25a, .goal, .goal⟩
 
-/-- The MAP holds of a contrast. -/
-def MapHolds (c : AlternationContrast) : Prop :=
-  MAP c.directDegree c.obliqueDegree
+/-- The fence in *hit the fence with the stick* against *hit the stick against the fence*, impacted
+and so with potential for change under both ((24), p. 851). -/
+def hitLocation : Alternation := ⟨ex_24a, ex_24b, .possibly .someGoal, .possibly .someGoal⟩
 
-instance (c : AlternationContrast) : Decidable (MapHolds c) := by
-  unfold MapHolds; infer_instance
+/-- The stick in the same pair, impacted and moved under both ((24), p. 851). -/
+def hitTheme : Alternation := ⟨ex_24b, ex_24a, .possibly .someGoal, .possibly .someGoal⟩
 
--- (75)
-theorem MAP_holds_all_alternations : ∀ c ∈ allContrasts, MapHolds c := by decide
+/-- The attested alternations of affectedness. -/
+def attested : List Alternation :=
+  [eat, cut, hit, loadLocation, loadTheme, cutLocation, cutTheme, clearLocation, clearTheme,
+    hitLocation, hitTheme]
 
-theorem MapHolds.oblique_le {c : AlternationContrast} (h : MapHolds c) :
-    c.obliqueDegree ≤ c.directDegree :=
-  MAP.oblique_le h
+/-- Every attested alternation satisfies the MAP: the participant's lexical role as oblique is
+minimally weaker than its lexical role as direct argument. -/
+theorem lexicalRole_wcovBy_of_mem_attested :
+    ∀ a ∈ attested, a.oblique.lexicalRole ⩿ a.direct.lexicalRole := by
+  simp only [lexicalRole_eq, entailments_wcovBy_entailments_iff]
+  decide
+
+-- (69): the participant is realized both ways
+theorem acceptable_of_mem_attested :
+    ∀ a ∈ attested, a.directEx.judgment = .acceptable ∧ a.obliqueEx.judgment = .acceptable := by
+  decide
+
+-- p. 831, (27): each conative's object variant entails its oblique variant
+theorem role_oblique_subset_role_direct (M : Model) :
+    ∀ a ∈ [eat, cut, hit], role M.acc M.w₀ M.R (a.oblique.form M) ⊆
+      role M.acc M.w₀ M.R (a.direct.form M) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
+  refine ⟨role_antitone fun _ _ _ ⟨hV, h⟩ ↦ ⟨hV, _, h⟩, role_antitone fun _ _ _ ⟨hV, h⟩ ↦
+    ⟨hV, _, M.refl, h⟩, role_antitone fun _ _ _ ⟨hV, h⟩ ↦ ⟨hV, _, M.refl, h⟩⟩
 
 -- Table 3
-theorem conatives_witness_all_covers :
-    ∀ q r : AffectednessDegree, q ⋖ r ↔
-      ∃ c ∈ [eatConative, cutConative, hitConative],
-        c.directDegree = r ∧ c.obliqueDegree = q := by decide
+theorem covBy_iff_exists_conative (q r : AffectednessDegree) :
+    q ⋖ r ↔ ∃ a ∈ [eat, cut, hit], a.direct.degree = r ∧ a.oblique.degree = q := by
+  revert q r; decide
 
-/-! ### Impossible alternations ((76)–(77)) -/
+-- (76): the oblique has more entailments than the object
+example : ¬ AffectednessDegree.nonquantized ⩿ .potential := by decide
 
-/-- In a reversed contrast (76) the oblique strictly outranks the direct realization. -/
-def reversedConative : AlternationContrast :=
-  ⟨"reversed", .conative, .potential, .quantized⟩
+-- (77): the contrast skips nonquantized change
+example : ¬ AffectednessDegree.potential ⩿ .quantized := by decide
 
-/-- A level-skipping contrast (77) has a quantized direct and a potential oblique realization. -/
-def skippingLocative : AlternationContrast :=
-  ⟨"skipping", .locative, .quantized, .potential⟩
+/-! ### The diagnostics ((34), (39)) -/
 
-theorem reversed_violates_MAP : ¬ MapHolds reversedConative := by decide
+/-- Two diagnostics of affectedness. -/
+inductive Diagnostic where
+  /-- *…, but nothing is different about x*, infelicitous when the predicate entails that `x`
+  changes ((34)). -/
+  | nothingDifferent
+  /-- *What happened to x is …*, felicitous when the predicate entails potential for change of `x`
+  ((39)). -/
+  | whatHappened
+  deriving DecidableEq, Repr
 
-theorem skipping_violates_MAP :
-    ¬ MapHolds skippingLocative ∧
-      skippingLocative.obliqueDegree ≤ skippingLocative.directDegree :=
-  ⟨by decide, by decide⟩
+/-- A diagnostic accepts a predicate whose theme has the degree `d` ((34), (39)). -/
+def Diagnostic.Accepts : Diagnostic → AffectednessDegree → Prop
+  | .nothingDifferent, d => d < .nonquantized
+  | .whatHappened, d => .potential ≤ d
 
+instance : ∀ t d, Decidable (Diagnostic.Accepts t d)
+  | .nothingDifferent, d => inferInstanceAs (Decidable (d < _))
+  | .whatHappened, d => inferInstanceAs (Decidable (_ ≤ d))
+
+/-- The conative variant a row tests, as its result, and the diagnostic. -/
+def diagnostic? (e : Datum) : Option (Result × Diagnostic) := do
+  pure (← e.parse? "variant"
+      [("eat", eat.direct), ("eat at", eat.oblique), ("cut", cut.direct), ("cut at", cut.oblique),
+        ("hit", hit.direct), ("hit at", hit.oblique)],
+    ← e.parse? "diagnostic"
+      [("nothing different", .nothingDifferent), ("what happened", .whatHappened)])
+
+/-- The paper's judgments of the six conative variants under both diagnostics follow from the
+degrees their results name, *hit at* failing *What happened to x* for its double modality. -/
+theorem diagnostic_rows :
+    Datum.Checks diagnostic? (fun p ↦ .ofProp (p.2.Accepts p.1.degree)) Examples.all 12 := by
+  decide
 
 /-! ### Total traversal ((84)–(87)) -/
 
@@ -279,9 +476,19 @@ def Role.totallyTraversed : Role := ↑(Sum.inr () : AffectednessEntailment ⊕ 
 
 example : Fintype.card Role = 5 := by decide
 
--- (81), (84), (69), (86), (87)
-theorem climb_map : MAP Role.totallyTraversed ⊥ := by
-  refine CovBy.wcovBy ?_
+/-- The role of (87) a result gives the scale it is stated on: totally traversed when the result is
+the predicate's goal, which read of the scale is (85a), and otherwise empty, since traversal and
+potential traversal are not among the entailments of (86). -/
+def Result.traversal (r : Result) : Role :=
+  if r.degree = .quantized then Role.totallyTraversed else ⊥
+
+/-- *John climbed the stairs* against *John climbed up the stairs*: John ends at the end of the
+stairs, or somewhere on them ((81), (84)). -/
+def climb : Alternation := ⟨ex_81a, ex_81b, .goal, .someGoal⟩
+
+-- (81), (84), (69), (87)
+theorem climb_traversal_wcovBy : climb.oblique.traversal ⩿ climb.direct.traversal := by
+  refine CovBy.wcovBy (?_ : ⊥ ⋖ Role.totallyTraversed)
   rw [Role.totallyTraversed, WithBot.bot_covBy_coe]
   rintro (e | u) h
   · exact absurd h Sum.not_inl_le_inr
@@ -289,43 +496,23 @@ theorem climb_map : MAP Role.totallyTraversed ⊥ := by
 
 /-! ### The dative chain (90) -/
 
-/-- The roles of the dative chain (90) are being arrived at and being arrived into the possession
-of. -/
+/-- The roles of the dative chain (90), each named by its strongest entailment. -/
 inductive DativeRole where
-  /-- A goal is arrived at. -/
+  /-- `{goal}`: being arrived at. -/
   | goal
-  /-- A recipient-goal is arrived into the possession of. -/
-  | recipientGoal
+  /-- `{recipient-goal, goal}`: being arrived into the possession of. -/
+  | recipient
   deriving DecidableEq, Fintype, Repr
 
 /-- Strength on the dative chain. -/
-def DativeRole.strength : DativeRole → Nat
+def DativeRole.strength : DativeRole → ℕ
   | .goal => 0
-  | .recipientGoal => 1
+  | .recipient => 1
 
 instance : LinearOrder DativeRole :=
-  .lift' DativeRole.strength fun a b ↦ by
-    cases a <;> cases b <;> simp [DativeRole.strength]
+  .lift' DativeRole.strength fun a b ↦ by cases a <;> cases b <;> simp [DativeRole.strength]
 
-instance : DecidableRel (· ⩿ · : DativeRole → DativeRole → Prop) :=
-  fun a b ↦ decidable_of_iff (a ≤ b ∧ ∀ c, a < c → ¬c < b) Iff.rfl
-
--- (88), (89)
-theorem dative_map : MAP DativeRole.recipientGoal .goal := by decide
-
-/-! ### Bridge to [levin-1993]'s judgment rows -/
-
--- Table 3
-theorem conative_data_attested :
-    Levin1993.Examples.con_cut.judgment = .acceptable ∧
-    Levin1993.Examples.con_hit.judgment = .acceptable := ⟨rfl, rfl⟩
-
-theorem break_no_conative :
-    Levin1993.Examples.con_break.judgment = .ungrammatical := rfl
-
--- Table 4
-theorem locative_data_attested :
-    Levin1993.Examples.loc_spray.judgment = .acceptable ∧
-    Levin1993.Examples.loc_load.judgment = .acceptable := ⟨rfl, rfl⟩
+-- (88), (89), (90)
+theorem goal_wcovBy_recipient : DativeRole.goal ⩿ .recipient := by decide
 
 end Beavers2010
