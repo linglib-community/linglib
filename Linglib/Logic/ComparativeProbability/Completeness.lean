@@ -99,8 +99,8 @@ end KPS
 theorem representable_of_card_lt_five {W : Type*} [Fintype W] [MeasurableSpace W]
     [DiscreteMeasurableSpace W] (r : Set W → Set W → Prop) [IsQualitativeProbability r]
     (hcard : Fintype.card W < 5) : Representable r :=
-  (cancellation_implies_representable _
-    (cancellation_of_le_four (n := Fintype.card W) (by omega) _)).of_preimage
+  (SignCancellation.representable
+    (signCancellation_of_le_four (n := Fintype.card W) (by omega) _)).of_preimage
     (Fintype.equivFin W).injective
 
 /-- **From five atoms on.** Some qualitative probability on the set is not representable: the
