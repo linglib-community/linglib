@@ -55,7 +55,7 @@ the second clause of compatibility is `NonemptyInterval.Overlaps`.
 
 namespace Orthologic
 
-open SetRel
+open Order SetRel
 
 variable {B : Type*} [BooleanAlgebra B]
 
@@ -157,7 +157,7 @@ open Possibility
 variable (B) in
 /-- The epistemic frame of `B` is the compatibility frame on `Possibility B`
 ([holliday-mandelkern-2024] Definition 5.1). -/
-def epistemicFrame : CompatFrame (Possibility B) where
+def epistemicFrame : Compatibility (Possibility B) where
   compat := compat
   compat_refl := ⟨fun x ↦ ⟨mt disjoint_self.1 x.fst_ne_bot, NonemptyInterval.overlaps_refl _⟩⟩
   compat_symm := ⟨fun _ _ h ↦ ⟨fun hd ↦ h.1 hd.symm, NonemptyInterval.overlaps_symm h.2⟩⟩
@@ -167,8 +167,9 @@ instance [DecidableEq B] [DecidableLE B] : DecidableRel (epistemicFrame B).compa
 
 /-- Refinement in the epistemic frame keeps the first component and narrows the information
 state, `[a, i] ⊑ [a', i']` iff `a = a'` and `i ≤ i'` ([holliday-mandelkern-2024] Lemma 5.2). -/
-theorem refines_iff (y x : Possibility B) :
-    refines (epistemicFrame B) y x ↔ y.fst = x.fst ∧ y.snd ≤ x.snd := by
+theorem mem_ofObject_epistemicFrame (y x : Possibility B) :
+    y ∈ Concept.ofObject (epistemicFrame B).ortho x ↔ y.fst = x.fst ∧ y.snd ≤ x.snd := by
+  rw [Compatibility.mem_ofObject_ortho]
   refine ⟨fun h ↦ ⟨le_antisymm (by_contra fun hyx ↦ ?_) ?_, ?_⟩, fun ⟨ht, hi⟩ z hz ↦ ?_⟩
   · exact (h _ (y.compat_withFst sdiff_le (mt sdiff_eq_bot_iff.1 hyx))).1
       disjoint_sdiff_self_right
@@ -193,7 +194,7 @@ instance : IsRRegular (epistemicFrame B) access :=
 /-- Epistemic access is knowable, witnessed by the point `[a, a]` ([holliday-mandelkern-2024]
 Theorem 5.7.1). -/
 instance : IsKnowable (epistemicFrame B) access where
-  knowable x := ⟨pure x.fst x.fst_ne_bot, fun z hz ↦ (refines_iff z x).2
+  knowable x := ⟨pure x.fst x.fst_ne_bot, fun z hz ↦ (mem_ofObject_epistemicFrame z x).2
     ⟨le_antisymm (z.fst_le_snd.trans hz.2) hz.1, hz.2.trans x.fst_le_snd⟩⟩
 
 /-! ### The embedding of `B` -/
@@ -202,7 +203,8 @@ instance : IsKnowable (epistemicFrame B) access where
 entails `b`, regular since a possibility `[a, i]` outside it is compatible with `[a \ b, i]`,
 which is compatible with nothing inside it ([holliday-mandelkern-2024] Theorem 5.7.2). -/
 def embed (b : B) : (epistemicFrame B).Regular :=
-  (epistemicFrame B).regOf {x | x.fst ≤ b} fun x ↦ or_iff_not_imp_left.2 fun hx ↦
+  .ofIsExtent _ {x | x.fst ≤ b} <| ((epistemicFrame B).isExtent_ortho_iff _).2 fun x ↦
+    or_iff_not_imp_left.2 fun hx ↦
     ⟨_, x.compat_withFst sdiff_le (mt sdiff_eq_bot_iff.1 hx),
       fun _ hz hzb ↦ hz.1 (disjoint_sdiff_self_left.mono_right hzb)⟩
 
@@ -236,7 +238,8 @@ join is compatible with one below a joinand ([holliday-mandelkern-2024] Theorem 
 theorem isLUB_embed_image {s : Set B} {a : B} (h : IsLUB s a) :
     IsLUB (embed '' s) (embed a) := by
   refine ⟨Set.forall_mem_image.2 fun _ hb ↦ embed_mono (h.1 hb), fun U hU x hx ↦
-    (U.isRegular x).resolve_right fun ⟨y, hxy, hy⟩ ↦ ?_⟩
+    (((epistemicFrame B).isExtent_ortho_iff _).1 U.isExtent_extent x).resolve_right
+      fun ⟨y, hxy, hy⟩ ↦ ?_⟩
   obtain ⟨b, hb, hcb⟩ : ∃ b ∈ s, ¬ Disjoint (x.fst ⊓ y.fst) b := by
     by_contra! hc
     have hca : Disjoint (x.fst ⊓ y.fst) a :=
@@ -260,7 +263,8 @@ theorem embed_bot : embed (⊥ : B) = ⊥ :=
 /-- `embed` sends complements to orthocomplements ([holliday-mandelkern-2024] Theorem 5.7.2). -/
 theorem embed_compl (b : B) : embed bᶜ = (embed b)ᶜ := by
   refine SetLike.coe_injective (Set.ext fun x ↦ ?_)
-  simp only [CompatFrame.Regular.coe_compl, coe_embed, Set.mem_ofPred_eq, mem_orthoNeg]
+  simp only [Concept.coe_compl, coe_embed, Set.mem_ofPred_eq,
+    (epistemicFrame B).mem_upperPolar_ortho]
   refine ⟨fun hx y hxy hy ↦ hxy.1 (disjoint_compl_left.mono hx hy), fun h ↦ ?_⟩
   refine le_compl_iff_disjoint_right.2 (by_contra fun hd ↦ ?_)
   exact h _ (x.compat_withFst inf_le_left (mt disjoint_iff.2 hd)) inf_le_right
@@ -272,18 +276,18 @@ theorem mem_core_embed {b : B} {x : Possibility B} :
     fun h y hy ↦ (y.fst_le_snd.trans hy.2).trans h⟩
 
 /-- `b` cannot be the case at `[a, i]` iff `i` is disjoint from `b`, since `¬◇b = □bᶜ`. -/
-theorem mem_orthoNeg_diamond_embed {b : B} {x : Possibility B} :
-    x ∈ orthoNeg (epistemicFrame B) (diamond (epistemicFrame B) access (embed b)) ↔
+theorem mem_upperPolar_diamond_embed {b : B} {x : Possibility B} :
+    x ∈ upperPolar (epistemicFrame B).ortho (diamond (epistemicFrame B) access (embed b)) ↔
       Disjoint x.snd b := by
-  rw [orthoNeg_diamond, ← CompatFrame.Regular.coe_compl, ← embed_compl, mem_core_embed,
+  rw [upperPolar_diamond, ← Concept.coe_compl, ← embed_compl, mem_core_embed,
     le_compl_iff_disjoint_right]
 
 /-- `b` might be the case at `[a, i]` iff `a` is not disjoint from `b`
 ([holliday-mandelkern-2024] Lemma 5.8.3). -/
 theorem mem_diamond_embed {b : B} {x : Possibility B} :
     x ∈ diamond (epistemicFrame B) access (embed b) ↔ ¬ Disjoint x.fst b := by
-  rw [diamond, ← orthoNeg_diamond, mem_orthoNeg]
-  simp only [mem_orthoNeg_diamond_embed]
+  rw [diamond, ← upperPolar_diamond, Compatibility.mem_upperPolar_ortho]
+  simp only [mem_upperPolar_diamond_embed]
   exact ⟨fun h hd ↦ h _ compat_pure_fst hd, fun h _ hxy hd ↦ h (hd.mono_left hxy.2.1)⟩
 
 /-- The diamond of an embedded proposition other than `⊥` and `⊤` strictly extends it, as the
@@ -296,10 +300,10 @@ theorem not_diamond_embed_subset {b : B} (hb : b ≠ ⊥) (hb' : b ≠ ⊤) :
 section Modalities
 
 /-- `□` on the epistemic extension. -/
-local notation "□ₑ" => CompatFrame.necHom (epistemicFrame _) access
+local notation "□ₑ" => Compatibility.necHom (epistemicFrame _) access
 
 /-- `◇` on the epistemic extension. -/
-local notation "◇ₑ" => diamondHom (CompatFrame.necHom (epistemicFrame _) access)
+local notation "◇ₑ" => diamondHom (Compatibility.necHom (epistemicFrame _) access)
 
 /-! ### The epistemic extension is S5 -/
 
@@ -307,16 +311,17 @@ local notation "◇ₑ" => diamondHom (CompatFrame.necHom (epistemicFrame _) acc
 Theorem 5.7.3). -/
 theorem subset_core_diamond (U : Set (Possibility B)) :
     U ⊆ access.core (diamond (epistemicFrame B) access U) := by
-  intro x hx x' hxx' x'' hc hbox
-  refine @hbox (pure (x.fst ⊔ x''.fst) (ne_bot_of_le_ne_bot x.fst_ne_bot le_sup_left))
-    ⟨le_sup_right, sup_le (hxx'.1.trans hc.2.1) x''.fst_le_snd⟩ x
-    (compat_of_fst_mem ⟨le_sup_left, sup_le x.fst_le_snd (hc.2.2.trans hxx'.2)⟩) hx
+  intro x hx x' hxx'
+  exact mem_diamond.2 fun x'' hc ↦
+    ⟨pure (x.fst ⊔ x''.fst) (ne_bot_of_le_ne_bot x.fst_ne_bot le_sup_left),
+      ⟨le_sup_right, sup_le (hxx'.1.trans hc.2.1) x''.fst_le_snd⟩, x,
+      compat_of_fst_mem ⟨le_sup_left, sup_le x.fst_le_snd (hc.2.2.trans hxx'.2)⟩, hx⟩
 
 /-- The 5 principle `◇U ≤ □◇U` in the epistemic extension of `B`, which is with T and 4 an S5
 epistemic ortholattice ([holliday-mandelkern-2024] Theorem 5.7.3). -/
 theorem diamondHom_le_necHom_diamondHom (U : (epistemicFrame B).Regular) : ◇ₑ U ≤ □ₑ (◇ₑ U) := by
-  refine diamondHom_le_box_diamondHom (CompatFrame.necHom_le_necHom_necHom access) (fun V ↦ ?_) U
-  rw [← SetLike.coe_subset_coe, CompatFrame.coe_necHom, CompatFrame.coe_diamondHom_necHom]
+  refine diamondHom_le_box_diamondHom (Compatibility.necHom_le_necHom_necHom access) (fun V ↦ ?_) U
+  rw [← SetLike.coe_subset_coe, Compatibility.coe_necHom, Compatibility.coe_diamondHom_necHom]
   exact subset_core_diamond (V : Set (Possibility B))
 
 /-! ### Principles beyond EO+
@@ -333,20 +338,21 @@ theorem restricted_diamond_distributivity_embed {ι : Sort*} {κ : ι → Type*}
       ⨆ j, embed (b j) ⊓ ⨅ k, ◇ₑ (embed (c j k)) := by
   have := fun j ↦ Fintype.ofFinite (κ j)
   rw [← SetLike.coe_subset_coe]
-  simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_iInf,
-    CompatFrame.Regular.coe_iSup, CompatFrame.coe_diamondHom_necHom]
+  simp only [Concept.coe_inf, Concept.coe_iInf, Concept.coe_iSup,
+    Compatibility.coe_diamondHom_necHom]
   rintro x ⟨hb, hd⟩
-  simp only [Set.mem_iInter, mem_diamond_embed, mem_orthoNeg, SetLike.mem_coe, mem_embed,
-    not_forall, not_not, exists_prop, Set.mem_inter_iff] at hb hd ⊢
+  simp only [Set.mem_iInter, Set.mem_iUnion, mem_diamond_embed,
+    (epistemicFrame B).mem_extentClosure_ortho, SetLike.mem_coe, mem_embed,
+    Set.mem_inter_iff] at hb hd ⊢
   intro y hxy
-  obtain ⟨j, z, hwz, hzb⟩ := hb _ (x.compat_withFst inf_le_left (mt disjoint_iff.2 hxy.1))
+  obtain ⟨z, hwz, j, hzb⟩ := hb _ (x.compat_withFst inf_le_left (mt disjoint_iff.2 hxy.1))
   have hj : x.fst ⊓ y.fst ⊓ b j ≠ ⊥ := fun h ↦ hwz.1 ((disjoint_iff.2 h).mono_right hzb)
   have hle : x.fst ⊓ y.fst ⊓ b j ⊔ Finset.univ.sup (fun k ↦ x.fst ⊓ c j k) ≤ y.snd :=
     sup_le ((inf_le_left.trans inf_le_right).trans y.fst_le_snd)
       (Finset.sup_le fun _ _ ↦ inf_le_left.trans hxy.2.1)
-  refine ⟨j, ⟨⟨(_, y.snd), hle⟩, ne_bot_of_le_ne_bot hj le_sup_left⟩,
+  refine ⟨⟨⟨(_, y.snd), hle⟩, ne_bot_of_le_ne_bot hj le_sup_left⟩,
     ⟨fun h ↦ hj (disjoint_self.1 (h.mono (inf_le_left.trans inf_le_right) le_sup_left)),
-      y.fst_le_snd, hle⟩,
+      y.fst_le_snd, hle⟩, j,
     sup_le inf_le_right (Finset.sup_le fun k _ ↦ inf_le_right.trans (hc j k)), fun k h ↦ ?_⟩
   refine hd j k (disjoint_iff.2 (disjoint_self.1 (h.mono ?_ inf_le_right)))
   exact (Finset.le_sup (f := fun k ↦ x.fst ⊓ c j k) (Finset.mem_univ k)).trans le_sup_right
@@ -356,20 +362,20 @@ theorem restricted_diamond_distributivity_embed {ι : Sort*} {κ : ι → Type*}
 theorem box_distributivity_embed (b₁ b₂ c : B) :
     (embed b₁ ⊔ embed b₂) ⊓ □ₑ (embed c) ≤ embed b₁ ⊓ □ₑ (embed c) ⊔ embed b₂ ⊓ □ₑ (embed c) := by
   rw [← SetLike.coe_subset_coe]
-  simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup, CompatFrame.coe_necHom]
+  simp only [Concept.coe_inf, Concept.coe_sup, Compatibility.coe_necHom]
   rintro x ⟨hx, hc⟩
-  refine (mem_disj _).2 fun x' hxx' ↦ ?_
-  obtain ⟨x'', hx'x'', hb⟩ := (mem_disj _).1 hx x' hxx'
+  refine (epistemicFrame B).mem_extentClosure_ortho.2 fun x' hxx' ↦ ?_
+  obtain ⟨x'', hx'x'', hb⟩ := (epistemicFrame B).mem_extentClosure_ortho.1 hx x' hxx'
   let z : Possibility B :=
     ⟨⟨(x'.fst ⊓ x''.fst, x'.fst), inf_le_left⟩, mt disjoint_iff.2 hx'x''.1⟩
   have hz : z ∈ access.core (embed c) := mem_core_embed.2 (hxx'.2.2.trans (mem_core_embed.1 hc))
   exact ⟨z, compat_of_fst_mem ⟨inf_le_left, le_rfl⟩,
-    hb.imp (⟨inf_le_right.trans ·, hz⟩) (⟨inf_le_right.trans ·, hz⟩)⟩
+    Or.imp (⟨inf_le_right.trans ·, hz⟩) (⟨inf_le_right.trans ·, hz⟩) hb⟩
 
 /-- Inheritance: `U ∧ ◇V ≤ ◇(U ∧ V)` ([holliday-mandelkern-2024] Proposition 5.12.3). -/
 theorem inheritance_embed (b c : B) : embed b ⊓ ◇ₑ (embed c) ≤ ◇ₑ (embed b ⊓ embed c) := by
   rw [← embed_inf, ← SetLike.coe_subset_coe]
-  simp only [CompatFrame.Regular.coe_inf, CompatFrame.coe_diamondHom_necHom]
+  simp only [Concept.coe_inf, Compatibility.coe_diamondHom_necHom]
   rintro x ⟨hb, hc⟩
   rw [mem_diamond_embed] at hc ⊢
   rwa [← disjoint_assoc, inf_of_le_left hb]
@@ -379,11 +385,11 @@ theorem inheritance_embed (b c : B) : embed b ⊓ ◇ₑ (embed c) ≤ ◇ₑ (e
 theorem diamond_disjunctive_syllogism_a_embed (b c : B) :
     (embed b ⊔ ◇ₑ (embed c)) ⊓ (◇ₑ (embed c))ᶜ ≤ embed b := by
   rw [← SetLike.coe_subset_coe]
-  simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup,
-    CompatFrame.Regular.coe_compl, CompatFrame.coe_diamondHom_necHom]
+  simp only [Concept.coe_inf, Concept.coe_sup, Concept.coe_compl,
+    Compatibility.coe_diamondHom_necHom]
   rintro x ⟨hx, hc⟩
-  rw [mem_orthoNeg_diamond_embed] at hc
-  rw [mem_disj] at hx
+  rw [mem_upperPolar_diamond_embed] at hc
+  rw [Compatibility.mem_extentClosure_ortho] at hx
   refine by_contra fun hxb ↦ ?_
   obtain ⟨z, hwz, hz | hz⟩ := hx _ (x.compat_withFst sdiff_le (mt sdiff_eq_bot_iff.1 hxb))
   · exact hwz.1 (disjoint_sdiff_self_left.mono_right hz)
@@ -394,10 +400,9 @@ theorem diamond_disjunctive_syllogism_a_embed (b c : B) :
 theorem diamond_disjunctive_syllogism_b_embed (b c : B) :
     (embed b ⊔ ◇ₑ (embed c)) ⊓ (embed b)ᶜ ≤ ◇ₑ (embed c) := by
   rw [← embed_compl, ← SetLike.coe_subset_coe]
-  simp only [CompatFrame.Regular.coe_inf, CompatFrame.Regular.coe_sup,
-    CompatFrame.coe_diamondHom_necHom]
+  simp only [Concept.coe_inf, Concept.coe_sup, Compatibility.coe_diamondHom_necHom]
   rintro x ⟨hx, hb : x.fst ≤ bᶜ⟩
-  rw [mem_disj] at hx
+  rw [Compatibility.mem_extentClosure_ortho] at hx
   refine mem_diamond_embed.2 fun hd ↦ ?_
   obtain ⟨z, hz, hzb | hzc⟩ := hx _ compat_pure_fst
   · exact hz.1 (disjoint_compl_left.mono hb hzb)
