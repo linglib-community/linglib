@@ -32,7 +32,7 @@ relation to a point: an atom for a term, nothing for a formula.
 * `Formula.realize_atom`, `Formula.realize_conj`, … — the clauses of truth,
   as simp lemmas; `Formula.realize_disj`, …, `Formula.realize_some` — the
   derived connectives.
-* `Formula.realize_exists_iff_abs_nonempty` — `∃xφ` is true iff `⋃{x : φ}` is
+* `Formula.realize_ex_iff_abs_nonempty` — `∃xφ` is true iff `⋃{x : φ}` is
   nonempty, when `φ` is false of the null plurality.
 * `Term.realize_sigma_eq`, `Term.realize_sigma_eq_of_mem_locals` — the value of a
   summation from a characterization of its body; `Term.realize_sigma_eq_image`,
@@ -100,7 +100,7 @@ def Expr.Realize (M : Model P α) (g : V → Set α) :
   | _, .rel R ts, _ => R.Holds fun i => {a | (ts i).Realize M g a}
   | _, .neg φ, _ => ¬ φ.Realize M g .unit
   | _, .conj φ ψ, _ => φ.Realize M g .unit ∧ ψ.Realize M g .unit
-  | _, .exists_ x φ, _ => ∃ g', Set.EqOn g' g {x}ᶜ ∧ φ.Realize M g' .unit
+  | _, .ex x φ, _ => ∃ g', Set.EqOn g' g {x}ᶜ ∧ φ.Realize M g' .unit
   | _, .labelDef _ _, _ => True
   | _, .label _, _ => False
   | _, .presup e _, a => e.Realize M g a
@@ -171,8 +171,8 @@ theorem Formula.realize_rel {n : ℕ} (R : LogicalRel n) (ts : Fin n → Term V 
 @[simp] theorem Formula.realize_conj (φ ψ : Formula V L P) :
     Formula.Realize M g (.conj φ ψ) ↔ Formula.Realize M g φ ∧ Formula.Realize M g ψ := Iff.rfl
 
-@[simp] theorem Formula.realize_exists (x : V) (φ : Formula V L P) :
-    Formula.Realize M g (.exists_ x φ) ↔ ∃ X, Formula.Realize M (Function.update g x X) φ :=
+@[simp] theorem Formula.realize_ex (x : V) (φ : Formula V L P) :
+    Formula.Realize M g (.ex x φ) ↔ ∃ X, Formula.Realize M (Function.update g x X) φ :=
   Set.exists_eqOn_compl_singleton_iff
 
 @[simp] theorem Formula.realize_presup (φ ψ : Formula V L P) :
@@ -195,26 +195,26 @@ theorem Formula.realize_rel {n : ℕ} (R : LogicalRel n) (ts : Fin n → Term V 
   show ¬(Formula.Realize M g φ ∧ ¬Formula.Realize M g ψ) ↔ _ from not_and_not_right
 
 @[simp] theorem Formula.realize_iff (φ ψ : Formula V L P) :
-    Formula.Realize M g (φ.iff_ ψ) ↔ (Formula.Realize M g φ ↔ Formula.Realize M g ψ) := by
+    Formula.Realize M g (φ.iff ψ) ↔ (Formula.Realize M g φ ↔ Formula.Realize M g ψ) := by
   show Formula.Realize M g (φ.impl ψ) ∧ Formula.Realize M g (ψ.impl φ) ↔ _
   rw [Formula.realize_impl, Formula.realize_impl]
   exact iff_iff_implies_and_implies.symm
 
-@[simp] theorem Formula.realize_forall (x : V) (φ : Formula V L P) :
-    Formula.Realize M g (Formula.forall_ x φ) ↔ ∀ X, Formula.Realize M (Function.update g x X) φ :=
+@[simp] theorem Formula.realize_all (x : V) (φ : Formula V L P) :
+    Formula.Realize M g (Formula.all x φ) ↔ ∀ X, Formula.Realize M (Function.update g x X) φ :=
   (Formula.realize_neg _ _ _).trans <| by simp
 
 @[simp] theorem Formula.realize_some (s t : Term V L P) :
-    Formula.Realize M g (Formula.some_ s t) ↔ (Term.realize M g s ∩ Term.realize M g t).Nonempty :=
+    Formula.Realize M g (Formula.some s t) ↔ (Term.realize M g s ∩ Term.realize M g t).Nonempty :=
   show ¬(Term.realize M g s ∩ Term.realize M g t = ∅) ↔ _ from Set.nonempty_iff_ne_empty.symm
 
 /-- `∃xφ` is true iff `⋃{x : φ}` is nonempty, provided `φ` is false when `x` is
 the null plurality, the standing assumption that predicates are false of the
 null individual. -/
-theorem Formula.realize_exists_iff_abs_nonempty (x : V) (φ : Formula V L P)
+theorem Formula.realize_ex_iff_abs_nonempty (x : V) (φ : Formula V L P)
     (h : ¬ Formula.Realize M (Function.update g x ∅) φ) :
-    Formula.Realize M g (.exists_ x φ) ↔ (Term.realize M g (.abs x φ)).Nonempty := by
-  simp only [Formula.realize_exists, Set.Nonempty, Term.mem_realize_abs]
+    Formula.Realize M g (.ex x φ) ↔ (Term.realize M g (.abs x φ)).Nonempty := by
+  simp only [Formula.realize_ex, Set.Nonempty, Term.mem_realize_abs]
   refine ⟨fun ⟨X, hX⟩ => ?_, fun ⟨_, X, _, hX⟩ => ⟨X, hX⟩⟩
   obtain ⟨a, ha⟩ := Set.nonempty_iff_ne_empty.2 fun he => h (he ▸ hX)
   exact ⟨a, X, ha, hX⟩
@@ -313,7 +313,7 @@ theorem Expr.realize_congr :
   | _, .conj φ ψ, _, _, h, _ =>
       and_congr (Expr.realize_congr φ (h.mono Set.subset_union_left) .unit)
         (Expr.realize_congr ψ (h.mono Set.subset_union_right) .unit)
-  | _, .exists_ x φ, _, _, h, _ =>
+  | _, .ex x φ, _, _, h, _ =>
       Set.exists_eqOn_congr (s := insert x φ.vars) (h.mono Set.inter_subset_left)
         fun _ _ h' => Expr.realize_congr φ (h'.mono (Set.subset_insert _ _)) .unit
   | _, .labelDef _ _, _, _, _, _ => Iff.rfl
@@ -393,7 +393,7 @@ theorem Expr.realize_elim :
         rw [Set.mem_ofPred_eq, FinVec.etaExpand_eq]; exact Expr.realize_elim (ts i) g a))
   | _, .neg φ, g, _ => not_congr (Expr.realize_elim φ g .unit)
   | _, .conj φ ψ, g, _ => and_congr (Expr.realize_elim φ g .unit) (Expr.realize_elim ψ g .unit)
-  | _, .exists_ _ φ, _, _ =>
+  | _, .ex _ φ, _, _ =>
       exists_congr fun _ => and_congr_right fun _ => Expr.realize_elim φ _ .unit
   | _, .labelDef _ _, _, _ => Iff.rfl
   | _, .label _, _, _ => Iff.rfl

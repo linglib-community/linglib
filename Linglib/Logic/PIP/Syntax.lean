@@ -94,7 +94,7 @@ inductive Expr (V : Type u) (L : Type v) (P : ℕ → Type w) : Kind → Type (m
   | rel {n : ℕ} (R : LogicalRel n) (ts : Fin n → Expr V L P .term) : Expr V L P .formula
   | neg (φ : Expr V L P .formula) : Expr V L P .formula
   | conj (φ ψ : Expr V L P .formula) : Expr V L P .formula
-  | exists_ (x : V) (φ : Expr V L P .formula) : Expr V L P .formula
+  | ex (x : V) (φ : Expr V L P .formula) : Expr V L P .formula
   | labelDef (X : L) (φ : Expr V L P .formula) : Expr V L P .formula
   | label (X : L) : Expr V L P .formula
   | presup {k : Kind} (e : Expr V L P k) (ψ : Expr V L P .formula) : Expr V L P k
@@ -129,13 +129,13 @@ def Formula.disj (φ ψ : Formula V L P) : Formula V L P := .neg (.conj (.neg φ
 def Formula.impl (φ ψ : Formula V L P) : Formula V L P := .neg (.conj φ (.neg ψ))
 
 /-- Biconditional, as `(φ → ψ) ∧ (ψ → φ)`. -/
-def Formula.iff_ (φ ψ : Formula V L P) : Formula V L P := (φ.impl ψ).conj (ψ.impl φ)
+def Formula.iff (φ ψ : Formula V L P) : Formula V L P := (φ.impl ψ).conj (ψ.impl φ)
 
 /-- Universal quantification, as `¬∃x¬φ`. -/
-def Formula.forall_ (x : V) (φ : Formula V L P) : Formula V L P := .neg (.exists_ x (.neg φ))
+def Formula.all (x : V) (φ : Formula V L P) : Formula V L P := .neg (.ex x (.neg φ))
 
 /-- Overlap `some(s, t)`, as `¬(s ∩ t = ∅)`. -/
-def Formula.some_ (s t : Term V L P) : Formula V L P := .neg (.eq (.inter s t) .empty)
+def Formula.some (s t : Term V L P) : Formula V L P := .neg (.eq (.inter s t) .empty)
 
 /-- The singular summation pronoun `Σxφ | SG(Σxφ)` over the description `φ`. -/
 def Term.sgPronoun (x : V) (φ : Formula V L P) : Term V L P :=
@@ -156,7 +156,7 @@ def Expr.vars : ∀ {k : Kind}, Expr V L P k → Set V
   | _, .rel _ ts => ⋃ i, (ts i).vars
   | _, .neg φ => φ.vars
   | _, .conj φ ψ => φ.vars ∪ ψ.vars
-  | _, .exists_ x φ => insert x φ.vars
+  | _, .ex x φ => insert x φ.vars
   | _, .labelDef _ φ => φ.vars
   | _, .label _ => ∅
   | _, .presup e ψ => e.vars ∪ ψ.vars
@@ -180,7 +180,7 @@ def Expr.locals : ∀ {k : Kind}, Expr V L P k → List V
   | _, .rel _ ts => (List.finRange _).flatMap fun i => (ts i).locals
   | _, .neg φ => φ.locals
   | _, .conj φ ψ => φ.locals ++ ψ.locals
-  | _, .exists_ x φ => φ.locals.filter (· ≠ x)
+  | _, .ex x φ => φ.locals.filter (· ≠ x)
   | _, .labelDef _ _ => []
   | _, .label _ => []
   | _, .presup e ψ => e.locals ++ ψ.locals
@@ -206,7 +206,7 @@ def Expr.subst (x : V) (t : Term V L P) : ∀ {k : Kind}, Expr V L P k → Expr 
   | _, .rel R ts => .rel R (FinVec.etaExpand fun i => Expr.subst x t (ts i))
   | _, .neg φ => .neg (Expr.subst x t φ)
   | _, .conj φ ψ => .conj (Expr.subst x t φ) (Expr.subst x t ψ)
-  | _, .exists_ y φ => .exists_ y (if y = x then φ else Expr.subst x t φ)
+  | _, .ex y φ => .ex y (if y = x then φ else Expr.subst x t φ)
   | _, .labelDef X φ => .labelDef X (Expr.subst x t φ)
   | _, .label X => .label X
   | _, .presup e ψ => .presup (Expr.subst x t e) (Expr.subst x t ψ)
@@ -228,14 +228,14 @@ def Expr.PresupFree : ∀ {k : Kind}, Expr V L P k → Prop
   | _, .rel _ ts => ∀ i, (ts i).PresupFree
   | _, .neg φ => φ.PresupFree
   | _, .conj φ ψ => φ.PresupFree ∧ ψ.PresupFree
-  | _, .exists_ _ φ => φ.PresupFree
+  | _, .ex _ φ => φ.PresupFree
   | _, .labelDef _ φ => φ.PresupFree
   | _, .label _ => False
   | _, .presup _ _ => False
 
 instance Expr.decidablePresupFree : ∀ {k : Kind} (e : Expr V L P k), Decidable e.PresupFree
   | _, .var _ | _, .bvar _ | _, .empty | _, .top => isTrue trivial
-  | _, .abs _ φ | _, .sigma _ φ | _, .neg φ | _, .exists_ _ φ | _, .labelDef _ φ =>
+  | _, .abs _ φ | _, .sigma _ φ | _, .neg φ | _, .ex _ φ | _, .labelDef _ φ =>
       φ.decidablePresupFree
   | _, .inter s t => @instDecidableAnd _ _ s.decidablePresupFree t.decidablePresupFree
   | _, .conj φ ψ => @instDecidableAnd _ _ φ.decidablePresupFree ψ.decidablePresupFree
@@ -260,7 +260,7 @@ def Expr.labels : ∀ {k : Kind}, Expr V L P k → Set L
   | _, .rel _ ts => ⋃ i, (ts i).labels
   | _, .neg φ => φ.labels
   | _, .conj φ ψ => φ.labels ∪ ψ.labels
-  | _, .exists_ _ φ => φ.labels
+  | _, .ex _ φ => φ.labels
   | _, .labelDef _ φ => φ.labels
   | _, .label X => {X}
   | _, .presup e ψ => e.labels ∪ ψ.labels
@@ -278,7 +278,7 @@ def Expr.defs : ∀ {k : Kind}, Expr V L P k → List (L × Formula V L P)
   | _, .rel _ ts => (List.finRange _).flatMap fun i => (ts i).defs
   | _, .neg φ => φ.defs
   | _, .conj φ ψ => φ.defs ++ ψ.defs
-  | _, .exists_ _ φ => φ.defs
+  | _, .ex _ φ => φ.defs
   | _, .labelDef X φ => (X, φ) :: φ.defs
   | _, .label _ => []
   | _, .presup e ψ => e.defs ++ ψ.defs
@@ -297,7 +297,7 @@ def Expr.substLabels (A : L → Option (Formula V L P)) : ∀ {k : Kind}, Expr V
   | _, .rel R ts => .rel R (FinVec.etaExpand fun i => (ts i).substLabels A)
   | _, .neg φ => .neg (φ.substLabels A)
   | _, .conj φ χ => .conj (φ.substLabels A) (χ.substLabels A)
-  | _, .exists_ x φ => .exists_ x (φ.substLabels A)
+  | _, .ex x φ => .ex x (φ.substLabels A)
   | _, .labelDef X φ => .labelDef X (φ.substLabels A)
   | _, .label X => (A X).getD (.label X)
   | _, .presup e χ => .presup (e.substLabels A) (χ.substLabels A)
@@ -394,7 +394,7 @@ variable [DecidableEq V]
 
 /-- Existential closure over a list of variables, as syntax. -/
 def Formula.closeList (xs : List V) (φ : Formula V L P) : Formula V L P :=
-  xs.foldr Expr.exists_ φ
+  xs.foldr Expr.ex φ
 
 /-- The translation into predicate calculus with set abstraction ((27)–(28) of
 [abney-keshet-2025]). It drops brackets and presuppositions and replaces label definitions by `⊤`;
@@ -413,7 +413,7 @@ def Expr.elim : ∀ {k : Kind}, Expr V L P k → Expr V L P k
   | _, .rel R ts => .rel R (FinVec.etaExpand fun i => (ts i).elim)
   | _, .neg φ => .neg φ.elim
   | _, .conj φ ψ => .conj φ.elim ψ.elim
-  | _, .exists_ x φ => .exists_ x φ.elim
+  | _, .ex x φ => .ex x φ.elim
   | _, .labelDef _ _ => .top
   | _, .label X => .label X
   | _, .presup e _ => e.elim

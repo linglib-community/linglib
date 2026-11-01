@@ -244,7 +244,7 @@ def Word.sem : (α : Word) → Sem α.ty
   | .it => fun z => .presup z (.sg z)
   | .they => fun z => .presup z (.pl z)
   | .not _ => fun ψ => .neg (.mem (.var .w) ψ)
-  | .might _ => fun β ψ => Formula.some_ β ψ
+  | .might _ => fun β ψ => Formula.some β ψ
   | .must _ => fun β ψ => .subset β ψ
   | .base => modalBase
 
@@ -721,7 +721,7 @@ def wolfE : Fm :=
 /-- (133): "A wolf might enter. It would eat Tasty Tim first.", `MIGHT(β_w, ΣwW) ∧
 MUST(β_w, ΣwW, ΣwE)` (129) with the second modal's restriction the first's nuclear scope. -/
 def wolfDiscourse : Fm :=
-  .conj (.conj (Formula.some_ modalBase (.sigma .w (.label .W)))
+  .conj (.conj (Formula.some modalBase (.sigma .w (.label .W)))
       (.subset (.inter modalBase (.sigma .w (.label .W))) (.sigma .w (.label .E))))
     (.conj (.labelDef .W wolfW) (.labelDef .E wolfE))
 
@@ -730,7 +730,7 @@ def wolfE' : Fm := .conj wolfW (.conj (pred₁ .tim (.bvar .t)) (pred₂ .eats (
 
 theorem expandSelf_wolfDiscourse :
     wolfDiscourse.expandSelf =
-      .conj (.conj (Formula.some_ modalBase (.sigma .w wolfW))
+      .conj (.conj (Formula.some modalBase (.sigma .w wolfW))
           (.subset (.inter modalBase (.sigma .w wolfW)) (.sigma .w wolfE')))
         (.conj (.labelDef .W wolfW) (.labelDef .E wolfE')) := rfl
 

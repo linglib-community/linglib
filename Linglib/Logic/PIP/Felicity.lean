@@ -24,7 +24,7 @@ variables and label definitions.
 * `PIP.Expr.felicitous_of_presupFree`: every infelicity traces to a presupposition.
 * `PIP.Expr.felicitous_congr`: felicity depends only on the variables occurring in an
   expression.
-* `PIP.Formula.toTrivalent_conj`, `PIP.Formula.toTrivalent_exists`: conjunction is Middle Kleene
+* `PIP.Formula.toTrivalent_conj`, `PIP.Formula.toTrivalent_ex`: conjunction is Middle Kleene
   and existential quantification Weak Kleene.
 
 ## Implementation notes
@@ -74,7 +74,7 @@ def Expr.Felicitous (M : Model P α) (g : V → Set α) : ∀ {k : Kind}, Expr V
   | _, .rel _ ts => ∀ i, (ts i).Felicitous M g
   | _, .neg φ => φ.Felicitous M g
   | _, .conj φ ψ => φ.Felicitous M g ∧ (Formula.Realize M g φ → ψ.Felicitous M g)
-  | _, .exists_ x φ => ∀ g', Set.EqOn g' g {x}ᶜ → φ.Felicitous M g'
+  | _, .ex x φ => ∀ g', Set.EqOn g' g {x}ᶜ → φ.Felicitous M g'
   | _, .labelDef _ _ => True
   | _, .label _ => False
   | _, .presup e ψ => e.Felicitous M g ∧ ψ.Felicitous M g ∧ Formula.Realize M g ψ
@@ -144,8 +144,8 @@ theorem Formula.felicitous_rel {n : ℕ} (R : LogicalRel n) (ts : Fin n → Term
     Expr.Felicitous M g (.conj φ ψ) ↔
       φ.Felicitous M g ∧ (Formula.Realize M g φ → ψ.Felicitous M g) := Iff.rfl
 
-@[simp] theorem Formula.felicitous_exists (x : V) (φ : Formula V L P) :
-    Expr.Felicitous M g (.exists_ x φ) ↔ ∀ X, φ.Felicitous M (Function.update g x X) :=
+@[simp] theorem Formula.felicitous_ex (x : V) (φ : Formula V L P) :
+    Expr.Felicitous M g (.ex x φ) ↔ ∀ X, φ.Felicitous M (Function.update g x X) :=
   Set.forall_eqOn_compl_singleton_iff
 
 @[simp] theorem Formula.felicitous_labelDef (X : L) (φ : Formula V L P) :
@@ -173,7 +173,7 @@ theorem Expr.felicitous_of_presupFree :
   | _, .neg φ, h, g => Expr.felicitous_of_presupFree φ h g
   | _, .conj φ ψ, h, g =>
       ⟨Expr.felicitous_of_presupFree φ h.1 g, fun _ => Expr.felicitous_of_presupFree ψ h.2 g⟩
-  | _, .exists_ _ φ, h, _ => fun g' _ => Expr.felicitous_of_presupFree φ h g'
+  | _, .ex _ φ, h, _ => fun g' _ => Expr.felicitous_of_presupFree φ h g'
   | _, .labelDef _ _, _, _ => trivial
   | _, .label _, h, _ => h.elim
   | _, .presup _ _, h, _ => h.elim
@@ -208,7 +208,7 @@ theorem Expr.felicitous_congr :
       and_congr (Expr.felicitous_congr φ (h.mono Set.subset_union_left))
         (imp_congr (Formula.realize_congr M (h.mono Set.subset_union_left))
           (Expr.felicitous_congr ψ (h.mono Set.subset_union_right)))
-  | _, .exists_ x φ, _, _, h =>
+  | _, .ex x φ, _, _, h =>
       Set.forall_eqOn_congr (s := insert x φ.vars) (h.mono Set.inter_subset_left)
         fun _ _ h' => Expr.felicitous_congr φ (h'.mono (Set.subset_insert _ _))
   | _, .labelDef _ _, _, _, _ => Iff.rfl
@@ -236,17 +236,17 @@ theorem Expr.felicitous_presup_of_presupFree {k : Kind} (e : Expr V L P k) {ψ :
       φ.Felicitous M g ∧ (Formula.Realize M g φ → ψ.Felicitous M g) := Iff.rfl
 
 @[simp] theorem Formula.felicitous_iff (φ ψ : Formula V L P) :
-    Expr.Felicitous M g (φ.iff_ ψ) ↔ φ.Felicitous M g ∧ ψ.Felicitous M g := by
+    Expr.Felicitous M g (φ.iff ψ) ↔ φ.Felicitous M g ∧ ψ.Felicitous M g := by
   show Expr.Felicitous M g ((φ.impl ψ).conj (ψ.impl φ)) ↔ _
   simp only [felicitous_conj, felicitous_impl, realize_impl]
   tauto
 
-@[simp] theorem Formula.felicitous_forall (x : V) (φ : Formula V L P) :
-    Expr.Felicitous M g (Formula.forall_ x φ) ↔ ∀ X, φ.Felicitous M (Function.update g x X) :=
-  Formula.felicitous_exists M g x (.neg φ)
+@[simp] theorem Formula.felicitous_all (x : V) (φ : Formula V L P) :
+    Expr.Felicitous M g (Formula.all x φ) ↔ ∀ X, φ.Felicitous M (Function.update g x X) :=
+  Formula.felicitous_ex M g x (.neg φ)
 
 @[simp] theorem Formula.felicitous_some (s t : Term V L P) :
-    Expr.Felicitous M g (Formula.some_ s t) ↔ s.Felicitous M g ∧ t.Felicitous M g :=
+    Expr.Felicitous M g (Formula.some s t) ↔ s.Felicitous M g ∧ t.Felicitous M g :=
   show Expr.Felicitous M g (.eq (.inter s t) .empty) ↔ _ from
     Fin.forall_fin_two.trans (and_true _).to_iff
 
@@ -303,19 +303,19 @@ theorem Formula.toTrivalent_presup :
 
 /-- Existential quantification is Weak Kleene: a presupposition projects universally from its
 scope. -/
-theorem Formula.toTrivalent_exists (x : V) :
-    Formula.toTrivalent M g (.exists_ x φ) =
+theorem Formula.toTrivalent_ex (x : V) :
+    Formula.toTrivalent M g (.ex x φ) =
       Trivalent.existsWeak fun X => φ.toTrivalent M (Function.update g x X) :=
   SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) <| by
-    simp only [toTrivalent_eq_one_iff, felicitous_exists, realize_exists,
+    simp only [toTrivalent_eq_one_iff, felicitous_ex, realize_ex,
       Trivalent.existsWeak_eq_one_iff, ne_eq, toTrivalent_eq_zero_iff, not_not]
     exact ⟨fun ⟨hF, X, hX⟩ => ⟨hF, X, hF X, hX⟩, fun ⟨hF, X, _, hX⟩ => ⟨hF, X, hX⟩⟩
 
-theorem Formula.toTrivalent_forall (x : V) :
-    (Formula.forall_ x φ).toTrivalent M g =
+theorem Formula.toTrivalent_all (x : V) :
+    (Formula.all x φ).toTrivalent M g =
       Trivalent.forallWeak fun X => φ.toTrivalent M (Function.update g x X) :=
   SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) <| by
-    simp only [toTrivalent_eq_one_iff, felicitous_forall, realize_forall,
+    simp only [toTrivalent_eq_one_iff, felicitous_all, realize_all,
       Trivalent.forallWeak_eq_one_iff]
     exact ⟨fun ⟨hF, hT⟩ X => ⟨hF X, hT X⟩, fun h => ⟨fun X => (h X).1, fun X => (h X).2⟩⟩
 
