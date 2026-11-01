@@ -19,7 +19,8 @@ non-contradiction, `a ⊓ aᶜ = ⊥`, and so, by De Morgan, excluded middle, `a
 Heyting algebras and ortholattices weaken Boolean algebras in opposite directions. A Heyting
 algebra keeps distributivity and the pseudocomplement law `a ⊓ b = ⊥ → b ≤ aᶜ` but gives up the
 involution; an ortholattice keeps the involution and the complement laws but gives up
-distributivity.
+distributivity. They meet in the Boolean algebras, since [an ortholattice is distributive exactly
+when its orthocomplement is a pseudocomplement](##inf_sup_le_iff_le_compl_of_disjoint).
 
 An ortholattice is *orthomodular* when `a ≤ b` implies `b = a ⊔ (aᶜ ⊓ b)`. Every modular
 ortholattice, and so every Boolean algebra, is orthomodular. The motivating example is the lattice
@@ -36,6 +37,8 @@ form an ortholattice that is not orthomodular.
 
 ## Main results
 
+* `IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint`: an ortholattice is distributive exactly
+  when its orthocomplement is a pseudocomplement.
 * `IsModularLattice.toIsOrthomodularLattice`: a modular ortholattice is orthomodular.
 
 ## TODO
@@ -90,10 +93,31 @@ protected theorem isCompl_compl (a : α) : IsCompl a aᶜ :=
 protected theorem disjoint_compl_right (a : α) : Disjoint a aᶜ :=
   (IsOrtholattice.isCompl_compl a).disjoint
 
-/-- Orthogonal elements are disjoint. The converse is the pseudocomplement law, which holds only
-in Boolean algebras ([holliday-mandelkern-2024] Proposition 3.7). -/
+/-- Orthogonal elements are disjoint. The converse, the pseudocomplement law,
+[characterizes distributivity](##inf_sup_le_iff_le_compl_of_disjoint). -/
 protected theorem disjoint_of_le_compl (h : a ≤ bᶜ) : Disjoint a b :=
   (IsOrtholattice.disjoint_compl_right b).symm.mono_left h
+
+/-- An ortholattice is distributive exactly when its orthocomplement is a pseudocomplement,
+`a ⊓ b = ⊥ → b ≤ aᶜ` ([holliday-mandelkern-2024] Proposition 3.7). -/
+theorem inf_sup_le_iff_le_compl_of_disjoint :
+    (∀ a b c : α, a ⊓ (b ⊔ c) ≤ a ⊓ b ⊔ a ⊓ c) ↔ ∀ a b : α, Disjoint a b → b ≤ aᶜ := by
+  refine ⟨fun h a b hab ↦ ?_, fun h a b c ↦ ?_⟩
+  · calc b = b ⊓ (a ⊔ aᶜ) := by rw [IsOrtholattice.sup_compl_eq_top, inf_top_eq]
+      _ ≤ b ⊓ a ⊔ b ⊓ aᶜ := h b a aᶜ
+      _ ≤ aᶜ := sup_le ((disjoint_iff_inf_le.1 hab.symm).trans bot_le) inf_le_right
+  suffices ∀ d, a ⊓ b ≤ d → a ⊓ c ≤ d → a ⊓ (b ⊔ c) ≤ d from this _ le_sup_left le_sup_right
+  intro d hb hc
+  have key (e : α) (he : a ⊓ e ≤ d) : a ⊓ dᶜ ≤ eᶜ := h e _ <| disjoint_iff_inf_le.2 <|
+    (le_inf ((le_inf (inf_le_right.trans inf_le_left) inf_le_left).trans he)
+      (inf_le_right.trans inf_le_right)).trans (IsOrtholattice.inf_compl_le_bot d)
+  have hbc : a ⊓ dᶜ ≤ (b ⊔ c)ᶜ := by
+    rw [InvolutiveCompl.compl_sup]
+    exact le_inf (key b hb) (key c hc)
+  simpa only [InvolutiveCompl.compl_compl] using h dᶜ _ <| disjoint_iff_inf_le.2 <|
+    (le_inf (inf_le_right.trans inf_le_right)
+      ((le_inf (inf_le_right.trans inf_le_left) inf_le_left).trans hbc)).trans
+      (IsOrtholattice.inf_compl_le_bot _)
 
 end IsOrtholattice
 

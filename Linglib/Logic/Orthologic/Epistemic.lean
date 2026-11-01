@@ -142,8 +142,8 @@ section Pseudocomplement
 /-! ### The collapse under pseudocomplementation
 
 The hypothesis `hp` says that `ᶜ` is a pseudocomplement, `a ⊓ b = ⊥ → b ≤ aᶜ`. It holds in every
-Boolean algebra (`Disjoint.le_compl_left`), and in an ortholattice it is equivalent to
-distributivity ([holliday-mandelkern-2024] Proposition 3.7). -/
+Boolean algebra (`Disjoint.le_compl_left`), and in an ortholattice it is
+[equivalent to distributivity](##IsOrtholattice.inf_sup_le_iff_le_compl_of_disjoint). -/
 
 variable (hp : ∀ a b : L, Disjoint a b → b ≤ aᶜ)
 include hp

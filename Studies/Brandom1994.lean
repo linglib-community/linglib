@@ -73,21 +73,6 @@ instance : Std.Symm R.incompatible := R.incompatible_symm
 of the incompatibility relation that the claim generates. -/
 abbrev content (p : P) : Concept P P R.incompatible := .ofObject R.incompatible p
 
-theorem content_le_iff {c : Concept P P R.incompatible} : R.content p ≤ c ↔ p ∈ c :=
-  Concept.ofObjects_le_iff.trans Set.singleton_subset_iff
-
-theorem mem_content_self (p : P) : p ∈ R.content p :=
-  R.content_le_iff.1 le_rfl
-
--- p. 160
-theorem mem_content_iff : q ∈ R.content p ↔ ∀ ⦃r⦄, R.incompatible p r → R.incompatible q r := by
-  change q ∈ (R.content p).extent ↔ _
-  simp [mem_lowerPolar_iff, mem_upperPolar_iff]
-
-theorem mem_compl_content_iff : q ∈ (R.content p)ᶜ ↔ R.incompatible p q := by
-  change q ∈ (R.content p).intent ↔ _
-  simp [mem_upperPolar_iff]
-
 /-- A role is coherent when committive inference is incompatibility entailment, so that if `p`
 commitment-entails `q`, anything incompatible with `q` is incompatible with `p` (p. 673 n. 27). -/
 def Coherent : Prop := ∀ ⦃p q⦄, R.committive p q → R.content p ≤ R.content q
@@ -96,7 +81,7 @@ variable {R}
 
 theorem Coherent.incompatible (hR : R.Coherent) (hpq : R.committive p q)
     (hqr : R.incompatible q r) : R.incompatible p r :=
-  (R.mem_content_iff.1 <| R.content_le_iff.1 (hR hpq)) hqr
+  (Concept.mem_ofObject_iff.1 <| Concept.ofObject_le_iff.1 (hR hpq)) hqr
 
 theorem Coherent.content_le (hR : R.Coherent) (h : ReflTransGen R.committive p q) :
     R.content p ≤ R.content q := by
@@ -117,12 +102,12 @@ variable {R}
 theorem IsNegation.content_eq_compl (hR : R.Coherent) (h : R.IsNegation p n) :
     R.content n = (R.content p)ᶜ := by
   refine SetLike.ext fun r ↦ ⟨fun hr ↦ ?_, fun hr ↦ ?_⟩
-  · exact R.mem_compl_content_iff.2 <| symm <| R.mem_content_iff.1 hr (symm h.1)
-  · exact hR.content_le (h.2 (R.mem_compl_content_iff.1 hr)) (R.mem_content_self r)
+  · exact Concept.mem_compl_ofObject_iff.2 <| symm <| Concept.mem_ofObject_iff.1 hr (symm h.1)
+  · exact hR.content_le (h.2 (Concept.mem_compl_ofObject_iff.1 hr)) (Concept.mem_ofObject_self r)
 
 theorem IsNegation.incompatible_iff (hR : R.Coherent) (h : R.IsNegation p n) :
     R.incompatible p r ↔ R.content r ≤ R.content n := by
-  rw [h.content_eq_compl hR, content_le_iff, mem_compl_content_iff]
+  rw [h.content_eq_compl hR, Concept.ofObject_le_iff, Concept.mem_compl_ofObject_iff]
 
 theorem IsNegation.content_eq (hR : R.Coherent) {n' : P} (h : R.IsNegation p n)
     (h' : R.IsNegation p n') : R.content n = R.content n' :=
@@ -142,12 +127,12 @@ def ofWorlds (ι : P → Set W) : InferentialRole P where
   incompatible_symm := ⟨fun _ _ h ↦ h.symm⟩
 
 theorem coherent_ofWorlds (ι : P → Set W) : (ofWorlds ι).Coherent := fun _ _ (h : ι _ ⊆ ι _) ↦
-  (content_le_iff _).2 <| (mem_content_iff _).2 fun _ (hr : Disjoint _ _) ↦ hr.mono_left h
+  Concept.ofObject_le_iff.2 <| Concept.mem_ofObject_iff.2 fun _ (hr : Disjoint _ _) ↦ hr.mono_left h
 
 theorem content_le_content_ofWorlds_id_iff {p q : Set W} :
     (ofWorlds id).content p ≤ (ofWorlds id).content q ↔ p ⊆ q :=
   ⟨fun h ↦ Set.disjoint_compl_right_iff_subset.1 <|
-    (mem_content_iff _).1 ((content_le_iff _).1 h) (disjoint_compl_right (a := q)),
+    Concept.mem_ofObject_iff.1 (Concept.ofObject_le_iff.1 h) (disjoint_compl_right (a := q)),
     fun h ↦ coherent_ofWorlds id h⟩
 
 theorem isNegation_ofWorlds_id_compl (p : Set W) : (ofWorlds id).IsNegation p pᶜ :=
@@ -260,8 +245,9 @@ theorem precludes_eq : R.Precludes = Relation.Comp (ReflTransGen R.committive) R
 theorem coherent_iff_precludes_eq : R.Coherent ↔ R.Precludes = R.incompatible := by
   rw [precludes_eq]
   refine ⟨fun hR ↦ funext₂ fun p q ↦ propext ⟨fun ⟨r, hpr, hrq⟩ ↦
-    R.mem_content_iff.1 (R.content_le_iff.1 (hR.content_le hpr)) hrq, fun h ↦ ⟨p, .refl, h⟩⟩,
-    fun h p q hpq ↦ R.content_le_iff.2 <| R.mem_content_iff.2 fun r hqr ↦ ?_⟩
+    Concept.mem_ofObject_iff.1 (Concept.ofObject_le_iff.1 (hR.content_le hpr)) hrq,
+    fun h ↦ ⟨p, .refl, h⟩⟩,
+    fun h p q hpq ↦ Concept.ofObject_le_iff.2 <| Concept.mem_ofObject_iff.2 fun r hqr ↦ ?_⟩
   exact (congrFun₂ h p r).mp ⟨q, .single hpq, hqr⟩
 
 variable {R} in
