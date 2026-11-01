@@ -352,5 +352,26 @@
     "paperFeatures": [],
     "comment": "p. 228. Printed with the silent pronoun, indexed i, at the edge of the subject DP; 'a Condition C violation due to covaluation between pro_log and Lucie'.",
     "verified": "page-image"
+  },
+  {
+    "id": "charnavel2019_4_43a",
+    "source": {"bibkey": "charnavel-2019", "paperLabel": "chapter 4, (43a)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "La Terre tourne sur elle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "[The earth]_i spins on it_i.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "La Terre tourne sur elle-même.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["animacy", "inanimate"]
+    ],
+    "comment": "p. 230, after Charnavel and Sportiche (2016a:59). One of the bindings by a co-argument that Condition B rules out (p. 229); the anaphor in the same position is (3a) of chapter 2.",
+    "verified": "page-image"
   }
 ]

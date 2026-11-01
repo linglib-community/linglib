@@ -262,6 +262,19 @@ def ex_4_38 : Datum :=
     readings := []
     paperFeatures := [] }
 
-def all : List Datum := [ex_2_2a, ex_2_2b, ex_2_8b, ex_2_3a, ex_2_3b, ex_4_5, ex_4_12, ex_4_14, ex_4_17, ex_4_20, ex_4_21a, ex_4_21b, ex_4_25a, ex_4_25, ex_4_25b, ex_4_27, ex_4_39a, ex_4_39b, ex_4_38]
+def ex_4_43a : Datum :=
+  { id := "charnavel2019_4_43a"
+    source := ⟨"charnavel-2019", "chapter 4, (43a)"⟩
+    reportedIn := none
+    language := "stan1290"
+    primaryText := "La Terre tourne sur elle."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := [("La Terre tourne sur elle-même.", .acceptable)]
+    readings := []
+    paperFeatures := [("animacy", "inanimate")] }
+
+def all : List Datum := [ex_2_2a, ex_2_2b, ex_2_8b, ex_2_3a, ex_2_3b, ex_4_5, ex_4_12, ex_4_14, ex_4_17, ex_4_20, ex_4_21a, ex_4_21b, ex_4_25a, ex_4_25, ex_4_25b, ex_4_27, ex_4_39a, ex_4_39b, ex_4_38, ex_4_43a]
 
 end Charnavel2019.Examples

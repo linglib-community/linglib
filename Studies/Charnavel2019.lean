@@ -8,18 +8,18 @@ public import Linglib.Data.Examples.Readers
 /-!
 # Charnavel (2019): Locality and Logophoricity: A Theory of Exempt Anaphora
 
-Charnavel argues that no anaphor is exempt from Condition A. An anaphor that seems to lack a local
-binder is bound by a silent logophoric pronoun in the left periphery of its smallest spell-out
-domain, a pronoun that refers to the logophoric center of the domain, an attitude holder or an
-empathy locus. Plain and exempt anaphors are then one element under one condition, and [they
-differ in whether the binder is pronounced](##condition_overt). Here a sentence is a tree with the
-indices the book prints and a silent pronoun whose index is that of a logophoric center. An anaphor
-with no pronounced binder makes its sentence [grammatical exactly when its antecedent is such a
-center](##grammatical_iff_of_not_locallyBound), and since no inanimate antecedent is one,
-[an anaphor with an inanimate antecedent is plain](##locallyBound_overt_of_inanimate). The
-predictions [match the book's judgments](##acceptable_iff_grammatical), as [no exemption by
-position can](##not_exists_forall_iff_tree). Of the roles of Sells, the source and the pivot
-[each take in the antecedent of an unacceptable anaphor](##exists_unacceptable_mem_centersOf_iff).
+Charnavel argues that no anaphor is exempt from Condition A: one without a pronounced local binder
+is bound by a silent logophoric pronoun in the left periphery of its smallest spell-out domain,
+which refers to the domain's logophoric center, an attitude holder or an empathy locus. Plain and
+exempt anaphors [differ only in whether the binder is pronounced](##condition_overt). Here a
+sentence is a tree with the indices the book prints and a silent pronoun whose index is that of a
+logophoric center. An anaphor without a pronounced binder is [grammatical exactly when its
+antecedent is such a center](##grammatical_iff_of_not_locallyBound), and [one with an inanimate
+antecedent is plain](##locallyBound_overt_of_inanimate). The silent pronoun is no co-argument of a
+pronoun and [never matters to Condition B](##condition_pronoun_iff). The predictions [match the
+book's judgments](##acceptable_iff_grammatical), as [no exemption by position
+can](##not_exists_forall_iff_tree); of the roles of Sells, the source and the pivot [each take in
+the antecedent of an unacceptable anaphor](##exists_unacceptable_mem_centersOf_iff).
 
 ## Implementation notes
 
@@ -30,12 +30,18 @@ position can](##not_exists_forall_iff_tree). Of the roles of Sells, the source a
   speaker being `0`. The tests themselves are not modelled.
 * The silent pronouns of a representation share one index, so a sentence has one logophoric
   center at a time; each example has a single silent pronoun.
-* Condition B is not checked. The book leaves it open and finds that the silent pronoun never
-  triggers it, which a pronoun's having the domain of an anaphor
-  [would not allow](##locallyBound_pronoun).
+* The book leaves Condition B open and suggests that it holds over co-arguments. A pronoun's
+  pronominal domain here holds the noun phrases of its smallest clause, verb phrase or noun phrase
+  with a subject, which for a possessor is its own noun phrase, and leaves out the silent pronoun,
+  which sits outside the complement of the logophoric operator; the trees do not draw that
+  projection. With its binding domain instead, a pronoun would be [bound by the silent
+  pronoun](##locallyBound_pronoun) in an example the book accepts.
 
 ## TODO
 
+* Which bindings by a co-argument Condition B rules out: a strong pronoun escapes it under some
+  predicates and not others, and the trees count every prepositional phrase in a verb phrase as
+  an argument of the verb.
 * Several silent pronouns in one representation, each referring to the center of its own domain,
   as in the shifts of perspective within a clause that the book builds its domains on.
 * Plural and split antecedents, and with them exhaustive binding.
@@ -114,11 +120,12 @@ def index (v : ℕ) : Item → ℕ
 theorem index_congr {i : Item} (hi : i ≠ logophor) (v w : ℕ) : i.index v = i.index w := by
   cases i <;> simp_all [index]
 
-/-- The binding class under which an item is checked. An anaphor falls under Condition A and a
-name under Condition C. -/
+/-- The binding class under which an item is checked. An anaphor falls under Condition A, a
+pronoun under Condition B and a name under Condition C. -/
 def class? : Item → Option BindingClass
   | anaphor _ => some .reflexive
   | name _ => some .rExpression
+  | pronoun _ => some .pronoun
   | _ => none
 
 end Item
@@ -161,10 +168,19 @@ def spellout (t : Rep) (b : TreePath) : Set TreePath :=
 instance (t : Rep) (b : TreePath) : DecidablePred (· ∈ spellout t b) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∧ _))
 
-/-- The configuration on the noun phrases of `t` takes c-command and the smallest spell-out
-domain. -/
+/-- The clauses, the verb phrases and the noun phrases with a subject, which bound the
+co-arguments of every position, a possessor's own noun phrase included. -/
+def predicates (t : Rep) : Set TreePath := labeled t {.S, .V, .Det}
+
+instance (t : Rep) : DecidablePred (· ∈ predicates t) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∈ labeled t _))
+
+/-- The configuration on the noun phrases of `t` takes c-command. The binding domain of a position
+is its smallest spell-out domain, and its pronominal domain holds its co-arguments, the noun
+phrases of its smallest predicate other than the silent pronoun. -/
 abbrev configuration (t : Rep) : Configuration (Nominal t) :=
-  (t.configuration (spellout t)).comap (·.1.1)
+  let s := (t.configuration (spellout t) fun _ ↦ predicates t).comap (·.1.1)
+  { s with pronominalDomain := fun b ↦ {a ∈ s.pronominalDomain b | a.1.2 ≠ .logophor} }
 
 /-- Two noun phrases are coindexed, the silent pronoun bearing `v`, when their items bear the same
 index. -/
@@ -178,11 +194,10 @@ instance : Decidable (Licit t v) :=
   inferInstanceAs (Decidable ((configuration t).Satisfies (Coindexed v) ∅ _))
 
 -- pp. 30, 32: a binder in the smallest spell-out domain is a binder in the clause.
-theorem condition_clause_of_condition {b : Nominal t} (hc : c.IsAnaphor)
-    (h : (configuration t).Condition (Coindexed v) ∅ b c) :
-    (t.clauseConfiguration.comap (·.1.1)).Condition (Coindexed v) ∅ b c :=
-  Configuration.condition_mono hc (Configuration.comap_mono _ <| t.configuration_anti
-    fun _ _ hm ↦ .inl (t.labeled_mono (by simp) hm)) h
+theorem LocallyBound.clause {b : Nominal t} (h : (configuration t).LocallyBound (Coindexed v) b) :
+    (t.clauseConfiguration.comap (·.1.1)).LocallyBound (Coindexed v) b :=
+  let ⟨a, ha, hab⟩ := h
+  ⟨a, upperPolar_anti _ (fun _ hm ↦ .inl (t.labeled_mono (by simp) hm)) ha, hab⟩
 
 /-! ### The silent pronoun
 
@@ -227,6 +242,20 @@ theorem eq_of_licit (ht : Licit t v) (hb : b.1.1.2 = .anaphor j)
     Configuration.mem_covertlyBound_of_condition Subtype.val_injective (.inl rfl)
       (ht b.1 .reflexive (by simp [hb, Item.class?])) hn
   simpa [Item.index, hx, hb] using hxb.2.1.symm
+
+theorem condition_pronoun_overt {E : Set (Nominal t)} {F : Set (Overt t)} :
+    (configuration t).Condition (Coindexed v) E b.1 .pronoun ↔
+      (overtConfiguration t).Condition (Coindexed v on Subtype.val) F b .pronoun := by
+  rw [← Configuration.condition_pronoun_comap Subtype.val_injective, and_iff_left]
+  rintro ⟨x, hx, hxr, -⟩
+  exact hxr ⟨⟨x, hx.2⟩, rfl⟩
+
+/-- The silent pronoun is no co-argument of a pronoun, so whether a pronoun meets Condition B does
+not depend on what the silent pronoun refers to (p. 230). -/
+theorem condition_pronoun_iff (w : ℕ) {E : Set (Nominal t)} :
+    (configuration t).Condition (Coindexed v) E b.1 .pronoun ↔
+      (configuration t).Condition (Coindexed w) E b.1 .pronoun := by
+  rw [condition_pronoun_overt (F := ∅), condition_pronoun_overt (F := ∅), coindexed_onFun_val v w]
 
 /-! ### Sentences -/
 
@@ -283,6 +312,11 @@ def marieHotel : Sentence := { innGarden with centers := {0, 1} }
 /-- *La Terre tourne sur elle-même.* -/
 def earthSpins : Sentence where
   tree := .node .S [dp (.name 1), .node .V [dp (.trace 1), w .V, pp (dp (.anaphor 1))]]
+
+/-- *La Terre tourne sur elle*, where the subject's trace, a co-argument of the pronoun, binds
+it. -/
+def earthSpinsPronoun : Sentence where
+  tree := .node .S [dp (.name 1), .node .V [dp (.trace 1), w .V, pp (dp (.pronoun 1))]]
 
 /-- *La Terre a bénéficié du fait que des photos d'elle-même ont montré les effets de la
 pollution.* -/
@@ -381,7 +415,8 @@ def sentences : List (Datum × Sentence) :=
     (Examples.ex_4_21b, teacherStudent), (Examples.ex_4_25a, mothers .pronoun .anaphor),
     (Examples.ex_4_25, mothers .anaphor .anaphor), (Examples.ex_4_25b, mothers .anaphor .pronoun),
     (Examples.ex_4_27, solangeCyril), (Examples.ex_4_39a, lucieSister .anaphor .pronoun),
-    (Examples.ex_4_39b, lucieSister .pronoun .anaphor), (Examples.ex_4_38, lucieBlog)]
+    (Examples.ex_4_39b, lucieSister .pronoun .anaphor), (Examples.ex_4_38, lucieBlog),
+    (Examples.ex_4_43a, earthSpinsPronoun)]
 
 theorem map_fst_sentences : sentences.map Prod.fst = Examples.all := rfl
 
@@ -396,9 +431,7 @@ theorem acceptable_iff_grammatical :
     ∀ p ∈ sentences, (p.1.judgment = .acceptable ↔ p.2.Grammatical) := by
   decide +kernel
 
-/-- The inn sentence and the Marie sentence have one structure and opposite judgments, so no
-condition on structure alone, as an exemption by position is, separates the acceptable examples
-from the others ((2b), (8b), p. 32). -/
+-- (2b), (8b), p. 32
 theorem not_exists_forall_iff_tree :
     ¬ ∃ P : Rep → Prop, ∀ p ∈ sentences, (p.1.judgment = .acceptable ↔ P p.2.tree) := by
   rintro ⟨P, h⟩
