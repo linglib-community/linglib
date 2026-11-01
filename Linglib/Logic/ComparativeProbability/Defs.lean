@@ -87,10 +87,11 @@ instance (priority := 100) instComplementReversingOfQualitativeAdditive
 /-- A **qualitative probability** on a Boolean algebra `α` is a relation `r`, read "`a` is at
 least as likely as `b`", satisfying de Finetti's axioms as [scott-1964] lists them (p. 246):
 `⊥` is not at least as likely as `⊤`, every event is at least as likely as `⊥`, any two events
-compare, `r` is transitive, and `r` is qualitatively additive. `isQualitativeProbability_iff`
-states the axioms in their printed form. Every qualitative probability on a finite carrier is
-represented by a qualitatively additive measure (`exists_qualAddMeasure_repr`), but by a
-probability measure only below five atoms (`Completeness.lean`). -/
+compare, `r` is transitive, and `r` is qualitatively additive, which is axiom (v) with the
+common part of the two sides cancelled (`isQualitativeAdditive_iff`). Every qualitative
+probability on a finite carrier is represented by a qualitatively additive measure
+(`exists_qualAddMeasure_repr`), but by a probability measure only below five atoms
+(`Completeness.lean`). -/
 class IsQualitativeProbability (r : α → α → Prop) : Prop
     extends IsNontrivial r, Std.Total r, IsTrans α r, IsQualitativeAdditive r where
   /-- Every event is at least as likely as `⊥`. Use the lemma `rel_bot`. -/
