@@ -269,8 +269,8 @@ def Privileged (s : Structure) (r : Role) : Prop :=
 
 theorem privileged_iff_available {s : Structure} {r : Role} (hr : r ≠ .reciprocal) :
     Privileged s r ↔ r.Available s := by
-  rw [Role.Available, Configuration.condition_anaphor (.inr rfl), Set.mem_empty_iff_false,
-    false_or, Configuration.locallyBound_pair_iff hr]
+  rw [Role.Available, Configuration.condition_pair_anaphor hr (.inr rfl),
+    Set.mem_empty_iff_false, false_or]
   rfl
 
 theorem not_privileged_second {s : Structure} (hs : s ≠ .indirectObject) :
