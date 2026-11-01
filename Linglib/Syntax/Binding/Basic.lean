@@ -401,15 +401,6 @@ theorem condition_rExpression_comap (hf : f.Injective) {F : Set κ} :
       s.Condition L E (f b) .rExpression := by
   simp only [Condition, ← bound_comap_or hf, not_or]
 
-theorem rel_of_mem_covertlyBound (hs : ∀ ⦃x y⦄, L x y → L y x)
-    (ht : ∀ ⦃x y z⦄, L x y → L y z → L x z)
-    (h : ∀ x ∈ s.domain (f a), ∀ y ∈ s.domain (f b), x ∉ Set.range f → y ∉ Set.range f → x = y)
-    (ha : a ∈ s.covertlyBound L f) (hb : b ∈ s.covertlyBound L f) : L (f a) (f b) := by
-  obtain ⟨x, hx, hxr, hxa⟩ := ha
-  obtain ⟨y, hy, hyr, hyb⟩ := hb
-  obtain rfl := h x hx y hy hxr hyr
-  exact ht (hs hxa.2.1) hyb.2.1
-
 end Comap
 
 section Decidable
