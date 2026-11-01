@@ -173,12 +173,12 @@ before the rule applied, and agreement attached after it the subject after. -/
 /-- Agreement inside the GF-rule morpheme registers the semantic subject (27a). -/
 theorem registered_agree_apply (s : Stage) (v : Voice) (a : Option Arg) :
     (s.agree.apply v a).registered = s.registered ++ s.subjects :=
-  Voice.Stage.registered_agree_apply s v a
+  rfl
 
 /-- Agreement outside the GF-rule morpheme registers the surface subject (27d). -/
 theorem registered_apply_agree (s : Stage) (v : Voice) (a : Option Arg) :
     (s.apply v a).agree.registered = s.registered ++ (s.apply v a).subjects :=
-  Voice.Stage.registered_apply_agree s v a
+  rfl
 
 /-! ### Processes and grammars -/
 
