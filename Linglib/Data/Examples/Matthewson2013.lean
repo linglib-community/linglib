@@ -487,6 +487,7 @@ def ex66 : Datum :=
   { id := "matthewson2013_ex66"
     source := ⟨"matthewson-2013", "(66)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "gitx1241"
     primaryText := "da'aḵxw-i=hl dim sim siipxw-t"
     glossedTokens := [("da'aḵxw-i=hl", "CIRC.POSS-TRA=CN"), ("dim", "FUT"), ("sim", "very"), ("siipxw-t", "sick-3SG.II")]
@@ -526,6 +527,7 @@ def ex79 : Datum :=
   { id := "matthewson2013_ex79"
     source := ⟨"matthewson-2013", "(79)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "gitx1241"
     primaryText := "anooḵ-xw=hl maa'y dim limx̱s-t"
     glossedTokens := [("anooḵ-xw=hl", "DEON.POSS-MED=CN"), ("maa'y", "berries"), ("dim", "FUT"), ("limx̱s-t", "grow.PL-3SG.II")]
@@ -656,6 +658,7 @@ def ex96 : Datum :=
   { id := "matthewson2013_ex96"
     source := ⟨"matthewson-2013", "(96)"⟩
     reportedIn := none
+    method := some .elicitation
     language := "gitx1241"
     primaryText := "sgi dim hajiswa-'y"
     glossedTokens := [("sgi", "CIRC.NECESS"), ("dim", "FUT"), ("hajiswa-'y", "sneeze-1SG.II")]

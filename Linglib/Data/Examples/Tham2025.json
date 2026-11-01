@@ -69,6 +69,7 @@
   {
     "id": "tham2025_10c",
     "source": {"bibkey": "tham-2025", "paperLabel": "(10c)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "However, rock near the heater borehole sampled in the north heater drift was found to be more cracked than rock near the borehole sampled in the south heater drift.",
     "discourseSegments": [],
@@ -85,6 +86,7 @@
   {
     "id": "tham2025_11a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(11a)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "The replacement is more dented than the first!",
     "discourseSegments": [],
@@ -101,6 +103,7 @@
   {
     "id": "tham2025_11b",
     "source": {"bibkey": "tham-2025", "paperLabel": "(11b)"},
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Rough grit sandpaper will make the dashboard more scratched than it already is.",
     "discourseSegments": [],
@@ -562,6 +565,7 @@
   {
     "id": "tham2025_40a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(40a)"},
+    "method": "elicitation",
     "language": "stan1293",
     "primaryText": "The bumper was dented severely with respect to dent size (although it was just a couple of dents).",
     "discourseSegments": [],
@@ -578,6 +582,7 @@
   {
     "id": "tham2025_40b",
     "source": {"bibkey": "tham-2025", "paperLabel": "(40b)"},
+    "method": "elicitation",
     "language": "stan1293",
     "primaryText": "The bumper dented severely with respect to dent size (although it was just a couple of dents).",
     "discourseSegments": [],
@@ -594,6 +599,7 @@
   {
     "id": "tham2025_41a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(41a)"},
+    "method": "elicitation",
     "language": "stan1293",
     "primaryText": "The windshield is badly cracked in every respect!",
     "discourseSegments": [],
@@ -610,6 +616,7 @@
   {
     "id": "tham2025_41b",
     "source": {"bibkey": "tham-2025", "paperLabel": "(41b)"},
+    "method": "elicitation",
     "language": "stan1293",
     "primaryText": "The windshield cracked badly in every respect!",
     "discourseSegments": [],
@@ -626,6 +633,7 @@
   {
     "id": "tham2025_42a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(42a)"},
+    "method": "elicitation",
     "language": "stan1293",
     "primaryText": "The front bumper is dented more severely with respect to dent size, but the rear bumper is more severely dented with respect to the sheer number of dents.",
     "discourseSegments": [],
@@ -642,6 +650,7 @@
   {
     "id": "tham2025_42b",
     "source": {"bibkey": "tham-2025", "paperLabel": "(42b)"},
+    "method": "elicitation",
     "language": "stan1293",
     "primaryText": "The front bumper dented more severely with respect to dent size, but the rear bumper dented more severely with respect to the sheer number of dents.",
     "discourseSegments": [],
@@ -658,6 +667,7 @@
   {
     "id": "tham2025_43a",
     "source": {"bibkey": "tham-2025", "paperLabel": "(43a)"},
+    "method": "elicitation",
     "language": "stan1293",
     "primaryText": "The hailstones cracked the front windshield badly with respect to the number of cracks (although the cracks weren't too long or deep).",
     "discourseSegments": [],

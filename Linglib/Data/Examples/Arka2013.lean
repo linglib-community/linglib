@@ -266,6 +266,7 @@ def ex_18a : Datum :=
   { id := "arka2013_18a"
     source := ⟨"arka-2013", "(18a)"⟩
     reportedIn := none
+    method := some .corpus
     language := "indo1316"
     primaryText := "...di jalan banyak sapi yang sedang memakan rumput."
     glossedTokens := [("di", "at"), ("jalan", "road"), ("banyak", "plenty"), ("sapi", "cow"), ("yang", "REL"), ("sedang", "PROG"), ("memakan", "AV.eat"), ("rumput", "grass")]
@@ -279,6 +280,7 @@ def ex_18b : Datum :=
   { id := "arka2013_18b"
     source := ⟨"arka-2013", "(18b)"⟩
     reportedIn := none
+    method := some .corpus
     language := "indo1316"
     primaryText := "Dari salah satu swalayan, petugas menemukan makanan jenis roti yang kemasan dan isi=nya telah rusak dan diduga sudah dimakan tikus."
     glossedTokens := []

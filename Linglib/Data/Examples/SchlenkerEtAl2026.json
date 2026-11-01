@@ -247,6 +247,7 @@
   {
     "id": "schlenkeretal2026_ex13d",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(13d)"},
+    "method": "elicitation",
     "language": "amer1248",
     "primaryText": "JOG TREE-passing_right-cl",
     "discourseSegments": [],
@@ -540,6 +541,7 @@
   {
     "id": "schlenkeretal2026_ex21b",
     "source": {"bibkey": "schlenker-lamberton-lamberton-2026", "paperLabel": "(21b)"},
+    "method": "elicitation",
     "language": "amer1248",
     "primaryText": "RS-a hurry b-RUN-a TREE TREE-cl-1[moves and hits the signer's forehead]",
     "discourseSegments": [],

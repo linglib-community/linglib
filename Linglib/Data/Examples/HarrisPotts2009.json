@@ -5,6 +5,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(2a)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Lucille Gorman, an 84-year-old Chicago housewife, has become amazingly immune to stock-market jolts.",
     "discourseSegments": [],
@@ -413,6 +414,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.1)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The other day, she told me that we need to watch out for the mailman, a possible government spy.",
     "discourseSegments": [],
@@ -453,6 +455,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.1)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The other day, she refused to talk with the mailman, a possible government spy.",
     "discourseSegments": [],
@@ -493,6 +496,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.2)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "He told me that the lottery ticket he bought yesterday, a sure winner, is the key to his financial independence.",
     "discourseSegments": [],
@@ -533,6 +537,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.2)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "All he could talk about at dinner was the lottery ticket he bought yesterday, a sure winner.",
     "discourseSegments": [],
@@ -573,6 +578,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.3)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "She says that dentists, who are only in it for the money anyway, are not to be trusted at all.",
     "discourseSegments": [],
@@ -613,6 +619,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.3)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Dentists, who are only in it for the money anyway, are not to be trusted at all.",
     "discourseSegments": [],
@@ -653,6 +660,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.4)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "She says that rock-n-roll, a degenerate genre, is no better than elevator music.",
     "discourseSegments": [],
@@ -693,6 +701,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.4)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "According to her, rock-n-roll, a degenerate genre, is no better than elevator music.",
     "discourseSegments": [],
@@ -733,6 +742,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.5)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "She now claims that her apartment was bugged by the Feds, who are listening to her every word.",
     "discourseSegments": [],
@@ -773,6 +783,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.5)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Her apartment was bugged by the Feds, who are listening to her every word.",
     "discourseSegments": [],
@@ -813,6 +824,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.6)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "He says that he puts off his homework, a complete waste of time, to the last minute.",
     "discourseSegments": [],
@@ -853,6 +865,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.6)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "He puts off his homework, a complete waste of time, to the last minute.",
     "discourseSegments": [],
@@ -893,6 +906,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.7)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "He told me that modern theater, which has been on the decline for years, is near its end.",
     "discourseSegments": [],
@@ -933,6 +947,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.7)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "According to him, modern theater, which has been on the decline for years, is near its end.",
     "discourseSegments": [],
@@ -973,6 +988,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.8)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "She says that a good graphic novel, man's greatest achievement, can keep her up reading until dawn.",
     "discourseSegments": [],
@@ -1013,6 +1029,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(A.8)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "A good graphic novel, man's greatest achievement, can keep her up reading until dawn.",
     "discourseSegments": [],
@@ -1053,6 +1070,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.1)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The jerk always favors long papers.",
     "discourseSegments": [],
@@ -1101,6 +1119,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.1)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The jerk always favors long papers.",
     "discourseSegments": [],
@@ -1149,6 +1168,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.2)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The idiot never stops talking.",
     "discourseSegments": [],
@@ -1197,6 +1217,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.2)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The idiot never stops talking.",
     "discourseSegments": [],
@@ -1245,6 +1266,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.3)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The stooge can never get through a single one of them without giggling.",
     "discourseSegments": [],
@@ -1293,6 +1315,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.3)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The stooge can never get through a single one of them without giggling.",
     "discourseSegments": [],
@@ -1341,6 +1364,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.4)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The idiot spent a lot of money to impress her.",
     "discourseSegments": [],
@@ -1389,6 +1413,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.4)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The idiot spent a lot of money to impress her.",
     "discourseSegments": [],
@@ -1437,6 +1462,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.5)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The twerp never takes a night off.",
     "discourseSegments": [],
@@ -1485,6 +1511,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.5)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The twerp never takes a night off.",
     "discourseSegments": [],
@@ -1533,6 +1560,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.6)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The skinflint has always treated the pretty ones better.",
     "discourseSegments": [],
@@ -1581,6 +1609,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.6)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The skinflint has always treated the pretty ones better.",
     "discourseSegments": [],
@@ -1629,6 +1658,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.7)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The jerk is always nicer when he's paid in advance.",
     "discourseSegments": [],
@@ -1677,6 +1707,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.7)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The jerk is always nicer when he's paid in advance.",
     "discourseSegments": [],
@@ -1725,6 +1756,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.8)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The cretin always invites a lot of people.",
     "discourseSegments": [],
@@ -1773,6 +1805,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.8)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The cretin always invites a lot of people.",
     "discourseSegments": [],
@@ -1821,6 +1854,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.9)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The creep tried to seduce her in the past.",
     "discourseSegments": [],
@@ -1869,6 +1903,7 @@
       "bibkey": "harris-potts-2009",
       "paperLabel": "(B.9)"
     },
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "The creep tried to seduce her in the past.",
     "discourseSegments": [],

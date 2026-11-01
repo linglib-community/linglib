@@ -5,6 +5,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "(1a)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "a trickle-down policy",
     "discourseSegments": [],
@@ -29,6 +30,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "(1b)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "a must-do task",
     "discourseSegments": [],
@@ -53,6 +55,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "(1c)"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "the 'both sides do it' argument",
     "discourseSegments": [],
@@ -77,6 +80,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "Table 2"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Could've tried a simple 'I'm sorry.'",
     "discourseSegments": [],
@@ -101,6 +105,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "Table 2"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "my dad pulled the old 'I'm going to the store for smokes, be back in five'",
     "discourseSegments": [],
@@ -125,6 +130,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "Table 2"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "This show is a must see.",
     "discourseSegments": [],
@@ -149,6 +155,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "Table 2"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "Romney's slogan should be more 'I'm nothing like you.'",
     "discourseSegments": [],
@@ -201,6 +208,7 @@
       "bibkey": "goldberg-shirtz-2025",
       "paperLabel": "Table 2"
     },
+    "method": "corpus",
     "language": "stan1293",
     "primaryText": "A: you're welcome. B: No, don't 'you're welcome' me.",
     "discourseSegments": [],

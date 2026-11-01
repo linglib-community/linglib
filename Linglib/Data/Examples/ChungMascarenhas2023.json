@@ -25,6 +25,7 @@
     "id": "cm2024_4_linda_original",
     "source": {"bibkey": "tversky-kahneman-1983", "paperLabel": "Linda task"},
     "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(4) / (28)"},
+    "method": "experiment",
     "language": "stan1293",
     "primaryText": "Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations. Which is more probable?",
     "discourseSegments": [
