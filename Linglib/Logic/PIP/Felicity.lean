@@ -171,7 +171,7 @@ theorem Expr.felicitous_of_presupFree :
   | _, .top, _, _ => trivial
   | _, .atom _ w ts, h, g =>
       ⟨Expr.felicitous_of_presupFree w h.1 g,
-        fun i => Expr.felicitous_of_presupFree (ts i) (h.2 i (List.mem_finRange i)) g⟩
+        fun i => Expr.felicitous_of_presupFree (ts i) (h.2 i) g⟩
   | _, .eq s t, h, g =>
       ⟨Expr.felicitous_of_presupFree s h.1 g, Expr.felicitous_of_presupFree t h.2 g⟩
   | _, .subset s t, h, g =>
