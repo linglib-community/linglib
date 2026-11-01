@@ -4,6 +4,7 @@ public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Syntax.Minimalist.Verbal.Voice.Denotation
 public import Linglib.Data.Examples.Pylkkanen2008
@@ -508,13 +509,17 @@ inductive Layer where
   | phase
   deriving DecidableEq, Repr, Fintype
 
-/-- Layers are ordered by containment. -/
-def Layer.rank : Layer → ℕ
-  | .root => 0
-  | .verb => 1
-  | .phase => 2
+/-- The size of a layer, its highest head: the root is the lexical head, the verb v, and the
+phase Voice. -/
+def Layer.size : Layer → ComplementSize
+  | .root => ⟨.V⟩
+  | .verb => .vP
+  | .phase => ⟨.Voice⟩
 
-instance : LinearOrder Layer := LinearOrder.lift' Layer.rank (by decide)
+/-- Layers are ordered by containment, as their sizes are in the extension order. -/
+instance : Preorder Layer := Preorder.lift Layer.size
+
+instance : DecidableLE Layer := fun l m ↦ inferInstanceAs (Decidable (l.size ≤ m.size))
 
 /-- A causative head is given by the largest layer its complement may contain (11) and whether
 Cause is bundled with Voice (10). -/
@@ -531,11 +536,11 @@ instance (c : CauseHead) (l : Layer) : Decidable (c.Embeds l) :=
 
 -- Table 3.2
 theorem embeds_verb_iff (c : CauseHead) : c.Embeds .verb ↔ c.selects ≠ .root := by
-  obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide
+  obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide +kernel
 
 -- Table 3.2
 theorem embeds_phase_iff (c : CauseHead) : c.Embeds .phase ↔ c.selects = .phase := by
-  obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide
+  obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide +kernel
 
 /-- A causee position (94) exists inside Cause's complement when that complement is at least a
 verb, or between Cause and Voice when Cause is not bundled with Voice. -/
@@ -548,7 +553,7 @@ instance (c : CauseHead) : Decidable c.HasCauseePosition :=
 Voice-bundling head (Table 3.1, second row). -/
 theorem hasCauseePosition_iff (c : CauseHead) :
     c.HasCauseePosition ↔ ¬ (c.selects = .root ∧ c.bundled = true) := by
-  obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide
+  obtain ⟨s, b⟩ := c; cases b <;> simp [CauseHead.HasCauseePosition, embeds_verb_iff]
 
 /-- The English zero-causative is root-selecting and Voice-bundling. -/
 def englishZero : CauseHead := ⟨.root, true⟩
@@ -563,6 +568,6 @@ def finnishTta : CauseHead := ⟨.verb, false⟩
 theorem root_causativized_unergative :
     (ex95.judgment = .acceptable ↔ englishZero.HasCauseePosition) ∧
       (ex96.judgment = .acceptable ↔ japaneseLexical.HasCauseePosition) := by
-  decide
+  decide +kernel
 
 end Pylkkanen2008
