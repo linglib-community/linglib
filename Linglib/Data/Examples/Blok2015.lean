@@ -26,7 +26,7 @@ def ex_3a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "ifAny"), ("numeral", "3")] }
+    paperFeatures := [("modifier", "at most"), ("test", "ifAny"), ("numeral", "3"), ("scaleBottom", "1")] }
 
 def ex_3b : Datum :=
   { id := "blok2015_3b"
@@ -39,7 +39,7 @@ def ex_3b : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "+"), ("test", "ifAny"), ("numeral", "3")] }
+    paperFeatures := [("modifier", "up to"), ("test", "ifAny"), ("numeral", "3"), ("scaleBottom", "1")] }
 
 def ex_4a : Datum :=
   { id := "blok2015_4a"
@@ -52,7 +52,7 @@ def ex_4a : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "butNone"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "at most"), ("test", "butNone"), ("numeral", "10"), ("scaleBottom", "1")] }
 
 def ex_4b : Datum :=
   { id := "blok2015_4b"
@@ -65,7 +65,7 @@ def ex_4b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "+"), ("test", "butNone"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "up to"), ("test", "butNone"), ("numeral", "10"), ("scaleBottom", "1")] }
 
 def ex_7a : Datum :=
   { id := "blok2015_7a"
@@ -78,7 +78,7 @@ def ex_7a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "evenMore"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "at most"), ("test", "evenMore"), ("numeral", "10"), ("scaleBottom", "1")] }
 
 def ex_7b : Datum :=
   { id := "blok2015_7b"
@@ -91,7 +91,7 @@ def ex_7b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "+"), ("test", "evenMore"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "up to"), ("test", "evenMore"), ("numeral", "10"), ("scaleBottom", "1")] }
 
 def ex_11a : Datum :=
   { id := "blok2015_11a"
@@ -104,7 +104,7 @@ def ex_11a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "noMore"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "at most"), ("test", "noMore"), ("numeral", "10"), ("scaleBottom", "1")] }
 
 def ex_11b : Datum :=
   { id := "blok2015_11b"
@@ -117,7 +117,33 @@ def ex_11b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "+"), ("test", "noMore"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "up to"), ("test", "noMore"), ("numeral", "10"), ("scaleBottom", "1")] }
+
+def ex_18b : Datum :=
+  { id := "blok2015_18b"
+    source := ⟨"blok-2015", "(18b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Stuart was absent for at most two weeks; ten days to be precise."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "at most"), ("test", "precise"), ("numeral", "14"), ("precise", "10"), ("scaleBottom", "1")] }
+
+def ex_19 : Datum :=
+  { id := "blok2015_19"
+    source := ⟨"blok-2015", "(19)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There will be up to 100 people at the party, 90 to be precise."
+    glossedTokens := []
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "up to"), ("test", "precise"), ("numeral", "100"), ("precise", "90"), ("scaleBottom", "1")] }
 
 def ex_22a : Datum :=
   { id := "blok2015_22a"
@@ -130,7 +156,7 @@ def ex_22a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "10"), ("scaleBottom", "1")] }
 
 def ex_22b : Datum :=
   { id := "blok2015_22b"
@@ -143,7 +169,7 @@ def ex_22b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "1")] }
+    paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
 
 def ex_23a : Datum :=
   { id := "blok2015_23a"
@@ -156,7 +182,7 @@ def ex_23a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "+"), ("test", "range"), ("numeral", "10")] }
+    paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "10"), ("scaleBottom", "1")] }
 
 def ex_23b : Datum :=
   { id := "blok2015_23b"
@@ -169,7 +195,111 @@ def ex_23b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "+"), ("test", "range"), ("numeral", "1")] }
+    paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
+
+def ex_24a : Datum :=
+  { id := "blok2015_24a"
+    source := ⟨"schwarz-buccola-hamilton-2012", "(26a)"⟩
+    reportedIn := some ⟨"blok-2015", "(24a)"⟩
+    language := "stan1293"
+    primaryText := "He bought at most a dozen eggs."
+    glossedTokens := []
+    context := "Eggs can be bought in half-dozen cartons only."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "6")] }
+
+def ex_24b : Datum :=
+  { id := "blok2015_24b"
+    source := ⟨"schwarz-buccola-hamilton-2012", "(27a)"⟩
+    reportedIn := some ⟨"blok-2015", "(24b)"⟩
+    language := "stan1293"
+    primaryText := "He bought at most half a dozen eggs."
+    glossedTokens := []
+    context := "Eggs can be bought in half-dozen cartons only."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "6"), ("scaleBottom", "6")] }
+
+def ex_25a : Datum :=
+  { id := "blok2015_25a"
+    source := ⟨"schwarz-buccola-hamilton-2012", "(26b)"⟩
+    reportedIn := some ⟨"blok-2015", "(25a)"⟩
+    language := "stan1293"
+    primaryText := "He bought up to a dozen eggs."
+    glossedTokens := []
+    context := "Eggs can be bought in half-dozen cartons only."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "6")] }
+
+def ex_25b : Datum :=
+  { id := "blok2015_25b"
+    source := ⟨"schwarz-buccola-hamilton-2012", "(27b)"⟩
+    reportedIn := some ⟨"blok-2015", "(25b)"⟩
+    language := "stan1293"
+    primaryText := "He bought up to half a dozen eggs."
+    glossedTokens := []
+    context := "Eggs can be bought in half-dozen cartons only."
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "6"), ("scaleBottom", "6")] }
+
+def ex_26a : Datum :=
+  { id := "blok2015_26a"
+    source := ⟨"blok-2015", "(26a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "She bought at most one cake."
+    glossedTokens := []
+    context := "Cakes are sold per slice, with 12 slices in a cake."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "1")] }
+
+def ex_26b : Datum :=
+  { id := "blok2015_26b"
+    source := ⟨"blok-2015", "(26b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "She bought at most one slice of cake."
+    glossedTokens := []
+    context := "Cakes are sold per slice, with 12 slices in a cake."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
+
+def ex_27a : Datum :=
+  { id := "blok2015_27a"
+    source := ⟨"blok-2015", "(27a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "She bought up to one cake."
+    glossedTokens := []
+    context := "Cakes are sold per slice, with 12 slices in a cake."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "12"), ("scaleBottom", "1")] }
+
+def ex_27b : Datum :=
+  { id := "blok2015_27b"
+    source := ⟨"blok-2015", "(27b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "She bought up to one slice of cake."
+    glossedTokens := []
+    context := "Cakes are sold per slice, with 12 slices in a cake."
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("modifier", "up to"), ("test", "range"), ("numeral", "1"), ("scaleBottom", "1")] }
 
 def ex_29 : Datum :=
   { id := "blok2015_29"
@@ -182,7 +312,7 @@ def ex_29 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "0")] }
+    paperFeatures := [("modifier", "at most"), ("test", "range"), ("numeral", "0"), ("scaleBottom", "1")] }
 
 def ex_34a : Datum :=
   { id := "blok2015_34a"
@@ -195,7 +325,7 @@ def ex_34a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "-"), ("test", "npi"), ("numeral", "5")] }
+    paperFeatures := [("modifier", "maximaal"), ("test", "npi"), ("npi", "hoeven"), ("numeral", "5"), ("scaleBottom", "1")] }
 
 def ex_34b : Datum :=
   { id := "blok2015_34b"
@@ -208,8 +338,8 @@ def ex_34b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("directional", "+"), ("test", "npi"), ("numeral", "5")] }
+    paperFeatures := [("modifier", "tot"), ("test", "npi"), ("npi", "hoeven"), ("numeral", "5"), ("scaleBottom", "1")] }
 
-def all : List Datum := [ex_3a, ex_3b, ex_4a, ex_4b, ex_7a, ex_7b, ex_11a, ex_11b, ex_22a, ex_22b, ex_23a, ex_23b, ex_29, ex_34a, ex_34b]
+def all : List Datum := [ex_3a, ex_3b, ex_4a, ex_4b, ex_7a, ex_7b, ex_11a, ex_11b, ex_18b, ex_19, ex_22a, ex_22b, ex_23a, ex_23b, ex_24a, ex_24b, ex_25a, ex_25b, ex_26a, ex_26b, ex_27a, ex_27b, ex_29, ex_34a, ex_34b]
 
 end Blok2015.Examples

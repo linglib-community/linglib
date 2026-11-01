@@ -305,6 +305,10 @@ possibilities to raise several within the speaker's information set `k`. -/
 def InteractiveSincerity (P : Set (Set W)) (k : Set W) : Prop :=
   P.Nontrivial → (restrict P k).Nontrivial
 
+theorem interactiveSincerity_singleton_iff {P : Set (Set W)} (w : W) :
+    InteractiveSincerity P {w} ↔ ¬ P.Nontrivial :=
+  ⟨fun h hP ↦ (h hP).not_subsingleton (subsingleton_restrict_singleton w), fun h hP ↦ absurd hP h⟩
+
 variable {α : Type*} [Preorder α] {P : α → Set W}
 
 /-- A speaker whose information lies within one answer at or above `a`, and decides each answer from

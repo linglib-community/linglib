@@ -97,4 +97,13 @@ theorem pro_eq_singleton {k : Set W} (hk : k ≠ ∅) (hkP : k ∈ P) (hP : P �
   · rintro rfl
     exact ⟨hkP, hk⟩
 
+/-- Restricted to a single world, a proposition keeps at most one possibility. -/
+theorem subsingleton_restrict_singleton (w : W) : (restrict P {w}).Subsingleton := by
+  unfold restrict pro
+  split_ifs with h
+  · exact h ▸ subsingleton_singleton
+  · refine (subsingleton_singleton (a := {w})).anti ?_
+    rintro _ ⟨⟨p, -, rfl⟩, hne⟩
+    exact singleton_inter_of_mem (not_not.1 (mt singleton_inter_eq_empty.2 hne))
+
 end Inquisitive.Unrestricted

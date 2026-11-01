@@ -13,9 +13,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "at most"],
       ["test", "ifAny"],
-      ["numeral", "3"]
+      ["numeral", "3"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -34,9 +35,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "+"],
+      ["modifier", "up to"],
       ["test", "ifAny"],
-      ["numeral", "3"]
+      ["numeral", "3"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -55,9 +57,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "at most"],
       ["test", "butNone"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
     ],
     "comment": "Provided by a reviewer.",
     "verified": "page-image"
@@ -76,9 +79,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "+"],
+      ["modifier", "up to"],
       ["test", "butNone"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
     ],
     "comment": "Provided by a reviewer.",
     "verified": "page-image"
@@ -97,9 +101,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "at most"],
       ["test", "evenMore"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -118,9 +123,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "+"],
+      ["modifier", "up to"],
       ["test", "evenMore"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -139,9 +145,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "at most"],
       ["test", "noMore"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -160,9 +167,56 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "+"],
+      ["modifier", "up to"],
       ["test", "noMore"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_18b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(18b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Stuart was absent for at most two weeks; ten days to be precise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "at most"],
+      ["test", "precise"],
+      ["numeral", "14"],
+      ["precise", "10"],
+      ["scaleBottom", "1"]
+    ],
+    "comment": "Counted in days.",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_19",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There will be up to 100 people at the party, 90 to be precise.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "up to"],
+      ["test", "precise"],
+      ["numeral", "100"],
+      ["precise", "90"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -181,9 +235,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "at most"],
       ["test", "range"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -202,9 +257,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "at most"],
       ["test", "range"],
-      ["numeral", "1"]
+      ["numeral", "1"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -223,9 +279,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "+"],
+      ["modifier", "up to"],
       ["test", "range"],
-      ["numeral", "10"]
+      ["numeral", "10"],
+      ["scaleBottom", "1"]
     ],
     "comment": "Cited in the source from Nouwen 2008.",
     "verified": "page-image"
@@ -244,11 +301,188 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "+"],
+      ["modifier", "up to"],
       ["test", "range"],
-      ["numeral", "1"]
+      ["numeral", "1"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_24a",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(26a)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "He bought at most a dozen eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Eggs can be bought in half-dozen cartons only.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "at most"],
+      ["test", "range"],
+      ["numeral", "12"],
+      ["scaleBottom", "6"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_24b",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(27a)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(24b)"},
+    "language": "stan1293",
+    "primaryText": "He bought at most half a dozen eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Eggs can be bought in half-dozen cartons only.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "at most"],
+      ["test", "range"],
+      ["numeral", "6"],
+      ["scaleBottom", "6"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_25a",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(26b)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(25a)"},
+    "language": "stan1293",
+    "primaryText": "He bought up to a dozen eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Eggs can be bought in half-dozen cartons only.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "up to"],
+      ["test", "range"],
+      ["numeral", "12"],
+      ["scaleBottom", "6"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_25b",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(27b)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(25b)"},
+    "language": "stan1293",
+    "primaryText": "He bought up to half a dozen eggs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Eggs can be bought in half-dozen cartons only.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "up to"],
+      ["test", "range"],
+      ["numeral", "6"],
+      ["scaleBottom", "6"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_26a",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(26a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She bought at most one cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Cakes are sold per slice, with 12 slices in a cake.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "at most"],
+      ["test", "range"],
+      ["numeral", "12"],
+      ["scaleBottom", "1"]
+    ],
+    "comment": "Counted in slices. Not in Schwarz, Buccola and Hamilton (2012), despite the paper's footnote 7.",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_26b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(26b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She bought at most one slice of cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Cakes are sold per slice, with 12 slices in a cake.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "at most"],
+      ["test", "range"],
+      ["numeral", "1"],
+      ["scaleBottom", "1"]
+    ],
+    "comment": "Counted in slices. Not in Schwarz, Buccola and Hamilton (2012), despite the paper's footnote 7.",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_27a",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(27a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She bought up to one cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Cakes are sold per slice, with 12 slices in a cake.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "up to"],
+      ["test", "range"],
+      ["numeral", "12"],
+      ["scaleBottom", "1"]
+    ],
+    "comment": "Counted in slices. Not in Schwarz, Buccola and Hamilton (2012), despite the paper's footnote 7.",
+    "verified": "page-image"
+  },
+  {
+    "id": "blok2015_27b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(27b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She bought up to one slice of cake.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Cakes are sold per slice, with 12 slices in a cake.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "up to"],
+      ["test", "range"],
+      ["numeral", "1"],
+      ["scaleBottom", "1"]
+    ],
+    "comment": "Counted in slices. Not in Schwarz, Buccola and Hamilton (2012), despite the paper's footnote 7.",
     "verified": "page-image"
   },
   {
@@ -265,9 +499,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "at most"],
       ["test", "range"],
-      ["numeral", "0"]
+      ["numeral", "0"],
+      ["scaleBottom", "1"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -289,9 +524,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "-"],
+      ["modifier", "maximaal"],
       ["test", "npi"],
-      ["numeral", "5"]
+      ["npi", "hoeven"],
+      ["numeral", "5"],
+      ["scaleBottom", "1"]
     ],
     "comment": "The modal hoeven is a negative polarity item.",
     "verified": "page-image"
@@ -313,9 +550,11 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["directional", "+"],
+      ["modifier", "tot"],
       ["test", "npi"],
-      ["numeral", "5"]
+      ["npi", "hoeven"],
+      ["numeral", "5"],
+      ["scaleBottom", "1"]
     ],
     "comment": "The modal hoeven is a negative polarity item.",
     "verified": "page-image"
