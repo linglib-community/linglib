@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Algebra.Group.Action.End
 public import Mathlib.Algebra.Group.Action.Hom
 public import Mathlib.Algebra.Group.Action.Units
 public import Mathlib.Algebra.Module.NatInt
@@ -13,32 +14,20 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Polarity
 
-The polarity of an expression is positive or negative. The two polarities form the group of order
-two, a negation cancelling a negation; they are the units of `ℤ` (`Polarity.unitsEquiv`). Each
-notion of polarity in the library is an action of this one group:
+This file defines the polarity of an expression, positive or negative. The two polarities form the
+group of order two, [the units of `ℤ`](##Polarity.unitsEquiv), and a homomorphism out of it is
+[fixed by an element whose square is one](##Polarity.lift), so that the polarities act through any
+involution. The polarity of a sentence acts on propositions by complement, and
+[the orbit of a proposition](##Polarity.orbit_eq_pair_compl) is the pair of its polarity
+alternatives, the focus value of a focused polarity and the answers of a polar question. The
+polarity of an antonym acts on degrees by negation. A polarity
+[directs a function](##Polarity.StrictMonoBy), and directions compose as polarities multiply.
 
-* the polarity of a sentence acts on propositions, the negative polarity by complement
-  (`negative • p = pᶜ`), the meaning of sentential negation, whose forms are in
-  `Syntax/Negation`, and the orbit of a proposition, the proposition and its negation, is
-  the set of its polarity alternatives (`orbit_eq_pair_compl`): the focus value of a focused
-  polarity and the answers of the polar question. Once there is a world the action is free,
-  no proposition being its own negation;
-* the polarity of an antonym acts on degrees by negation (`negative • x = -x`) and on scales by
-  duality (`Semantics/Degree/Antonymy`);
-* the relative polarity of a response to an antecedent, [same] or [reverse], is the quotient of
-  their polarities, the polarity taking the antecedent's proposition to the response's;
-* the direction of a function, strictly monotone or strictly antitone (`StrictMonoBy`), with
-  directions composing as polarities multiply.
+## Implementation notes
 
-Since these are one group acting in different ways, their interaction is statable: the negative
-antonym *short* measures on the dual scale of *tall*, while sentential negation takes the
-complement, so *not short* does not entail *tall*.
-
-A polarity is a sign: it coerces into `SignType` as `1` or `-1`. The three-valued sign also
-records what a polarity cannot, the absence of a direction: the monotonicity of a context,
-upward, downward or neither (`NaturalLogic.Signature.sign`), and a body of evidence or belief
-bearing on a proposition, for it, against it or neither (`Question.BiasValue`). `UD.Polarity`, a
-morphological feature of the annotation scheme, is a distinct type.
+A polarity coerces into `SignType`, whose third value records the absence of a direction, as for
+a non-monotone context. The action on an additive group goes through `ℤˣ`, so that on a function
+space it is pointwise by definition.
 
 ## References
 
@@ -112,19 +101,55 @@ def unitsEquiv : Polarity ≃* ℤˣ where
   right_inv u := by rcases Int.units_eq_one_or u with rfl | rfl <;> decide
   map_mul' s t := by cases s <;> cases t <;> decide
 
+/-! ### Homomorphisms out of the polarities -/
+
+section Lift
+
+variable {M : Type*} [Monoid M]
+
+/-- A homomorphism out of the polarities is fixed by its value at the negative polarity, an
+element whose square is one. -/
+def lift : {m : M // m * m = 1} ≃ (Polarity →* M) where
+  toFun m :=
+    { toFun
+        | positive => 1
+        | negative => m
+      map_one' := rfl
+      map_mul' := by rintro (_ | _) (_ | _) <;> simp [m.2] }
+  invFun f := ⟨f negative, by rw [← map_mul, mul_self, ← one_eq_positive, map_one]⟩
+  left_inv _ := rfl
+  right_inv f := MonoidHom.ext <| by rintro (_ | _) <;> simp [← one_eq_positive]
+
+@[simp] theorem lift_apply_positive (m : {m : M // m * m = 1}) : lift m positive = 1 := rfl
+
+@[simp] theorem lift_apply_negative (m : {m : M // m * m = 1}) : lift m negative = m := rfl
+
+@[ext] theorem hom_ext {f g : Polarity →* M} (h : f negative = g negative) : f = g :=
+  lift.symm.injective (Subtype.ext h)
+
+end Lift
+
+/-! ### Actions -/
+
 @[simp] theorem positive_smul {M : Type*} [MulAction Polarity M] (x : M) : positive • x = x :=
   one_smul _ x
+
+/-- The orbit of an element under the polarities is the element and its image under the negative
+polarity. -/
+theorem orbit_eq_pair {M : Type*} [MulAction Polarity M] (x : M) :
+    MulAction.orbit Polarity x = {x, negative • x} := by
+  ext y
+  simp only [MulAction.mem_orbit_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨_ | _, rfl⟩ <;> simp
+  · rintro (rfl | rfl)
+    exacts [⟨positive, positive_smul _⟩, ⟨negative, rfl⟩]
 
 variable {α : Type*}
 
 /-- The polarity of a sentence acts on propositions. The positive polarity leaves a proposition,
 the negative one takes its complement. -/
-instance : MulAction Polarity (Set α) where
-  smul
-    | positive, p => p
-    | negative, p => pᶜ
-  one_smul _ := rfl
-  mul_smul s t p := by cases s <;> cases t <;> first | rfl | exact (compl_compl p).symm
+instance : MulAction Polarity (Set α) := .ofEndHom (lift ⟨compl, compl_involutive.comp_self⟩)
 
 @[simp] theorem negative_smul_set (p : Set α) : negative • p = pᶜ := rfl
 
@@ -136,14 +161,9 @@ instance [Nonempty α] : IsCancelSMul Polarity (Set α) :=
     · rfl
     · exact absurd h compl_ne_self
 
-theorem orbit_eq_pair_compl (p : Set α) : MulAction.orbit Polarity p = {p, pᶜ} := by
-  ext q
-  simp only [MulAction.mem_orbit_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨s, rfl⟩
-    cases s <;> simp
-  · rintro (rfl | rfl)
-    exacts [⟨positive, positive_smul _⟩, ⟨negative, negative_smul_set _⟩]
+/-- The polarity alternatives of a proposition are the proposition and its complement. -/
+theorem orbit_eq_pair_compl (p : Set α) : MulAction.orbit Polarity p = {p, pᶜ} :=
+  orbit_eq_pair p
 
 /-- A polarity acts on an additive group through the units of `ℤ`, the negative polarity
 negating. -/
@@ -153,16 +173,15 @@ instance [AddCommGroup α] : MulAction Polarity α :=
 @[simp] theorem negative_smul [AddCommGroup α] (x : α) : negative • x = -x :=
   show ((-1 : ℤˣ) : ℤ) • x = -x by simp
 
-/-- A polarity acts on signs by multiplication, and so pointwise on trivalent propositions, the
-negative polarity acting as Kleene negation. -/
-instance : MulAction Polarity SignType where
-  smul s a := s * a
-  one_smul := one_mul
-  mul_smul s t a := show ((s * t : Polarity) : SignType) * a = s * (t * a) by
-    rw [coe_mul, mul_assoc]
+/-- A polarity acts on signs, and so pointwise on trivalent propositions, the negative polarity
+acting as Kleene negation. -/
+instance : MulAction Polarity SignType := .ofEndHom (lift ⟨Neg.neg, neg_involutive.comp_self⟩)
 
-@[simp] theorem negative_smul_signType (a : SignType) : negative • a = -a :=
-  show (-1 : SignType) * a = -a from neg_one_mul a
+@[simp] theorem negative_smul_signType (a : SignType) : negative • a = -a := rfl
+
+/-- The action on signs is multiplication by the sign of the polarity. -/
+theorem smul_signType (s : Polarity) (a : SignType) : s • a = s * a := by
+  cases s <;> simp
 
 section Directed
 

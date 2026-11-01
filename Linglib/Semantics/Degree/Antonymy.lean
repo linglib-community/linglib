@@ -72,24 +72,16 @@ ordering, so the antonym of *short* is *tall*. Markedness is a separate matter, 
 pairs like *hot* and *cold* have no unmarked member. Sentential negation acts on the adjective's
 denotation by complement instead, so *not short* is the contradictory of *short* and does not
 entail *tall* (`AntonymForm.strengthenedDenotation`). -/
-instance : MulAction Polarity Boundedness where
-  smul
-    | .positive, b => b
-    | .negative, b => b.dual
-  one_smul _ := rfl
-  mul_smul p q b := by cases p <;> cases q <;> simp [HSMul.hSMul, SMul.smul]
+instance : MulAction Polarity Boundedness :=
+  .ofEndHom (Polarity.lift ⟨Boundedness.dual, Boundedness.dual_involutive.comp_self⟩)
 
 @[simp] theorem Boundedness.negative_smul (b : Boundedness) : Polarity.negative • b = b.dual :=
   rfl
 
 /-- The negative member of an antonym pair compares on the reversed scale, so its comparison is
 the dual one, so that *shorter* is `Polarity.negative • Comparison.gt`. -/
-instance : MulAction Polarity Comparison where
-  smul
-    | .positive, c => c
-    | .negative, c => c.dual
-  one_smul _ := rfl
-  mul_smul p q c := by cases p <;> cases q <;> simp [HSMul.hSMul, SMul.smul]
+instance : MulAction Polarity Comparison :=
+  .ofEndHom (Polarity.lift ⟨Comparison.dual, Comparison.dual_involutive.comp_self⟩)
 
 @[simp] theorem Comparison.negative_smul (c : Comparison) : Polarity.negative • c = c.dual :=
   rfl
@@ -166,12 +158,8 @@ theorem flip_involutive : Function.Involutive flip := fun f ↦ by cases f <;> r
 @[simp] theorem flip_flip (f : AntonymForm) : f.flip.flip = f := flip_involutive f
 
 /-- The sign acts on the quadruplet by exchanging its poles. -/
-instance : MulAction Polarity AntonymForm where
-  smul
-    | .positive, f => f
-    | .negative, f => f.flip
-  one_smul _ := rfl
-  mul_smul p q f := by cases p <;> cases q <;> simp [HSMul.hSMul, SMul.smul]
+instance : MulAction Polarity AntonymForm :=
+  .ofEndHom (Polarity.lift ⟨flip, flip_involutive.comp_self⟩)
 
 @[simp] theorem negative_smul (f : AntonymForm) : Polarity.negative • f = f.flip := rfl
 
