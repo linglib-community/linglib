@@ -9,10 +9,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "locative"],
-      ["direct", "theme"]
-    ],
+    "paperFeatures": [],
     "comment": "Theme object: all the hay moved (quantized); the wagon at least partly filled (nonquantized).",
     "verified": "page-image"
   },
@@ -26,10 +23,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "locative"],
-      ["direct", "location"]
-    ],
+    "paperFeatures": [],
     "comment": "Location object: the wagon completely filled (quantized); the hay at least partly moved (nonquantized) — Anderson's holistic effect.",
     "verified": "page-image"
   },
@@ -43,11 +37,78 @@
     "context": "",
     "judgment": "unacceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "locative"],
-      ["diagnostic", "holistic effect"]
-    ],
+    "paperFeatures": [],
     "comment": "Infelicitous: the theme object entails total movement.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_10b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "Kim loaded the wagon with the hay, but still needed a truck for the rest.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The theme as oblique need not all be moved.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_10d",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(10d)"},
+    "language": "stan1293",
+    "primaryText": "Kim loaded the wagon with the hay, but none of the hay moved.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The theme as oblique must be at least partly moved.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_11a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(11a)"},
+    "language": "stan1293",
+    "primaryText": "Kim loaded the wagon with the hay, and still had extra room for the grain.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The location as object must be completely filled.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_11b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(11b)"},
+    "language": "stan1293",
+    "primaryText": "Kim loaded the hay onto the wagon, and still had extra room for the grain.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The location as oblique need not be completely filled.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_11d",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(11d)"},
+    "language": "stan1293",
+    "primaryText": "Kim loaded the hay onto the wagon, but none of the wagon had hay on it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The location as oblique must be at least partly filled.",
     "verified": "page-image"
   },
   {
@@ -60,10 +121,7 @@
     "context": "John moves a sharp-edged diamond forcefully into contact with a piece of glass.",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "locative"],
-      ["verb class", "cut/slice"]
-    ],
+    "paperFeatures": [],
     "comment": "Diamond affected: the object is damaged (nonquantized), the oblique only potentially (potential).",
     "verified": "page-image"
   },
@@ -77,10 +135,7 @@
     "context": "Same scenario; the glass is damaged rather than the diamond.",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "locative"],
-      ["verb class", "cut/slice"]
-    ],
+    "paperFeatures": [],
     "comment": "No holistic effect, so locative alternations are not in general governed by aspect.",
     "verified": "page-image"
   },
@@ -94,10 +149,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "conative"],
-      ["verb class", "cut"]
-    ],
+    "paperFeatures": [],
     "comment": "The rope is cut, to no specific degree: nonquantized change.",
     "verified": "page-image"
   },
@@ -111,10 +163,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "conative"],
-      ["verb class", "cut"]
-    ],
+    "paperFeatures": [],
     "comment": "The rope may or may not be cut: potential for change only.",
     "verified": "page-image"
   },
@@ -128,10 +177,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "conative"],
-      ["verb class", "consumption"]
-    ],
+    "paperFeatures": [],
     "comment": "All (or a contextually significant amount) of the cake consumed: quantized change.",
     "verified": "page-image"
   },
@@ -145,10 +191,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "conative"],
-      ["verb class", "consumption"]
-    ],
+    "paperFeatures": [],
     "comment": "At least some consumed, not necessarily all: nonquantized change.",
     "verified": "page-image"
   },
@@ -162,10 +205,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "conative"],
-      ["verb class", "impact"]
-    ],
+    "paperFeatures": [],
     "comment": "Defarge is hit but not necessarily affected: potential for change.",
     "verified": "page-image"
   },
@@ -179,10 +219,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "conative"],
-      ["verb class", "impact"]
-    ],
+    "paperFeatures": [],
     "comment": "Defarge not necessarily even hit: unspecified for change (double modality).",
     "verified": "page-image"
   },
@@ -196,11 +233,50 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "locative"],
-      ["contrast", "none"]
-    ],
+    "paperFeatures": [],
     "comment": "Alternates with 'John hit the stick against the fence' with no truth-conditional contrast — the equal-role case the MAP permits.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_24b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(24b)"},
+    "language": "stan1293",
+    "primaryText": "John hit the stick against the fence.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Theme as object; no truth-conditional contrast with (24a) (p. 831).",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_25a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(25a)"},
+    "language": "stan1293",
+    "primaryText": "John cleared the table of the dishes.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Location as object; equivalent to (25b) (p. 831), both participants QUANTIZED in (75).",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_25b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(25b)"},
+    "language": "stan1293",
+    "primaryText": "John cleared the dishes off the table.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Theme as object; equivalent to (25a).",
     "verified": "page-image"
   },
   {
@@ -213,10 +289,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["degree", "quantized"],
-      ["diagnostic", "telicity"]
-    ],
+    "paperFeatures": [],
     "comment": "Specific predicate-supplied result state: telic, quantized change.",
     "verified": "page-image"
   },
@@ -230,11 +303,171 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["degree", "nonquantized"],
-      ["diagnostic", "telicity"]
-    ],
+    "paperFeatures": [],
     "comment": "Some result on the length scale, unspecified which: atelic, nonquantized change.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_43a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(43a)"},
+    "language": "stan1293",
+    "primaryText": "John ate the pizza, but nothing is different about it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed as 'John ate the pizza (in/?for an hour), #but nothing is different about it.'; the mark is on the continuation.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_43b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(43b)"},
+    "language": "stan1293",
+    "primaryText": "John ate at the pizza, but nothing is different about it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed as 'John ate at the pizza (for/??in an hour), #but nothing is different about it.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_43c",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(43c)"},
+    "language": "stan1293",
+    "primaryText": "What happened to the pizza is John ate it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_43d",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(43d)"},
+    "language": "stan1293",
+    "primaryText": "What happened to the pizza is John ate at it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_45a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(45a)"},
+    "language": "stan1293",
+    "primaryText": "John cut the rope, but nothing is different about it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed as 'John cut the rope (for/??in an hour), #but nothing is different about it.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_45b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(45b)"},
+    "language": "stan1293",
+    "primaryText": "John cut at the rope, but nothing is different about it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed as 'John cut at the rope (for/??in an hour), but nothing is different about it.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_45c",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(45c)"},
+    "language": "stan1293",
+    "primaryText": "What happened to the rope is that John cut it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_45d",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(45d)"},
+    "language": "stan1293",
+    "primaryText": "What happened to the rope is that John cut at it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_47a_hit",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(47a)"},
+    "language": "stan1293",
+    "primaryText": "John hit the rope, but nothing is different about it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Printed as 'John hit (at) the rope, but nothing is different about it.'; the variant without at.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_47a_hitat",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(47a)"},
+    "language": "stan1293",
+    "primaryText": "John hit at the rope, but nothing is different about it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The variant of (47a) with at.",
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_48a",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(48a)"},
+    "language": "stan1293",
+    "primaryText": "What happened to the rope is John hit it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [],
+    "verified": "page-image"
+  },
+  {
+    "id": "beavers2010_48b",
+    "source": {"bibkey": "beavers-2010", "paperLabel": "(48b)"},
+    "language": "stan1293",
+    "primaryText": "What happened to the rope is John hit at it.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Marked ??; 'markedly worse' than with cut at in (45d) (p. 838).",
     "verified": "page-image"
   },
   {
@@ -247,10 +480,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "traversal"],
-      ["degree", "totally traversed"]
-    ],
+    "paperFeatures": [],
     "comment": "The stairs all traversed; the affected participant is John (quantized change of location).",
     "verified": "page-image"
   },
@@ -264,10 +494,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "traversal"],
-      ["degree", "traversed"]
-    ],
+    "paperFeatures": [],
     "comment": "The stairs all or partly traversed: the oblique weakens total traversal to mere traversal.",
     "verified": "page-image"
   },
@@ -283,10 +510,7 @@
     "readings": [
       {"name": "London as an agency (Scotland Yard reading)", "judgment": "acceptable"}
     ],
-    "paperFeatures": [
-      ["alternation", "dative"],
-      ["direct", "recipient"]
-    ],
+    "paperFeatures": [],
     "comment": "Indirect objects must be prospective possessors: the goal-only reading is out.",
     "verified": "page-image"
   },
@@ -300,10 +524,7 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "paperFeatures": [
-      ["alternation", "dative"],
-      ["oblique", "goal"]
-    ],
+    "paperFeatures": [],
     "comment": "The to-variant needs only a goal: the indirect object monotonically adds prospective possession (90).",
     "verified": "page-image"
   }

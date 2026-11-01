@@ -14,9 +14,9 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 Under the copy theory a moved constituent leaves a copy of itself, and externalization pronounces
 only the highest. A linearized syntactic object with its lower copies marked carries both:
 forgetting the marks gives the copy object, and contracting each marked subtree to the trace leaf of
-its mark gives the object externalization reads, the contraction quotient of the algebraic account
-of Merge (Definition 1.2.4). Marking the outermost copies of a term mirrors replacing them in the
-contraction, and a c-command between pronounced leaves of the contraction holds in the copy object.
+its mark gives the object externalization reads, its traces silent. Marking the outermost copies of
+a term mirrors replacing them in the contraction, and a c-command between pronounced leaves of the
+contraction holds in the copy object.
 
 ## Main definitions
 
@@ -34,9 +34,17 @@ contraction, and a c-command between pronounced leaves of the contraction holds 
 * `Minimalist.LinearizedSyntacticObject.Marked.cCommands_unmark_of_cCommands_contract`: c-command
   between pronounced leaves of the contraction holds in the copy object.
 
+## Implementation notes
+
+* The contraction has the shape of the contraction quotient of Marcolli, Chomsky and Berwick, but
+  plays a different role. Their account sends that quotient to the semantic interface and its
+  deletion to externalization; here externalization reads the contraction, and binding at LF reads
+  the copy object, as Collins argues it must.
+
 ## References
 
 * [marcolli-chomsky-berwick-2025], Definitions 1.2.4–1.2.6 and §1.8
+* [collins-2026]
 -/
 
 @[expose] public section
@@ -93,8 +101,10 @@ variable (t : Marked)
 /-- The copy object, the marks forgotten. -/
 def unmark : LinearizedSyntacticObject := ⟨t.val.map Prod.snd, t.2⟩
 
-/-- The contraction: each lower copy becomes the trace that stands for it, the form
-externalization reads ([marcolli-chomsky-berwick-2025] Definition 1.2.4). -/
+/-- The contraction: each lower copy becomes the trace that stands for it, the form externalization
+reads. It has the shape of the contraction quotient $T/^c F$ of [marcolli-chomsky-berwick-2025]
+(Definition 1.2.4), though the book sends that quotient to the Conceptual-Intensional interface and
+its deletion $T/^d F$ to externalization (pp. 33, 82). -/
 def contract : LinearizedSyntacticObject := ⟨contractTree t.val, isSyntacticObject_contractTree t.2⟩
 
 /-! ### Linearized objects without lower copies -/
