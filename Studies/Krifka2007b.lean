@@ -27,8 +27,9 @@ yields Krifka's assignment.
 * Bidirectional evaluation is the substrate's weak optimality, (14), which compares two pairs
   only when they share a form or an interpretation, by the preference ordering on the other: the
   product of the two orderings, with no ranking between them. The quadruplet game is built from
-  the literal semantics (a form and a region on the same side of the border), form complexity
-  (`AntonymForm.complexity`) and the markedness of the border regions.
+  the literal semantics on the four regions ordered along the scale, with the border between the
+  two middle ones, form complexity (`AntonymForm.complexity`) and the markedness of the border
+  regions.
 * The other uses of double negatives the paper sets aside (denial, irony, amplification) and
   the local strengthening of *neither happy nor unhappy* are not formalized.
 
@@ -168,6 +169,15 @@ inductive Region
   | negative
   deriving DecidableEq, Repr, Fintype
 
+/-- The position of a region on the scale, from safely unhappy up to safely happy. -/
+def Region.rank : Region → ℕ
+  | .negative => 0
+  | .plateauLow => 1
+  | .plateauHigh => 2
+  | .positive => 3
+
+instance : LinearOrder Region := LinearOrder.lift' Region.rank (by decide)
+
 /-- Mirror image of a region under the polarity flip. -/
 def Region.flip : Region → Region
   | .positive => .negative
@@ -177,27 +187,17 @@ def Region.flip : Region → Region
 
 @[simp] theorem Region.flip_flip (r : Region) : r.flip.flip = r := by cases r <;> rfl
 
-/-- The regions above the border. -/
-def Region.above : Region → Bool
-  | .positive | .plateauHigh => true
-  | .plateauLow | .negative => false
-
 /-- The border regions are the non-stereotypical interpretations. -/
 def Region.markedness : Region → ℕ
   | .plateauHigh | .plateauLow => 1
   | .positive | .negative => 0
 
-/-- The forms literally true above the border (16). -/
-def formAbove : AntonymForm → Bool
-  | .positive | .notNegative => true
-  | .notPositive | .negative => false
-
-/-- The literal semantics admits the pairs of a form and a region on the same side of the
-border. -/
+/-- The literal semantics (16), contradictory at the border between the mildly unhappy and the
+mildly happy regions, admits the pairs of a form and a region where the form is true. -/
 def quadrupletPairs : Finset (AntonymForm × Region) :=
   ([.positive, .notPositive, .negative, .notNegative].toFinset ×ˢ
       [.positive, .plateauHigh, .plateauLow, .negative].toFinset).filter
-    fun p ↦ formAbove p.1 = p.2.above
+    fun p ↦ p.2 ∈ AntonymForm.contradictoryDenotation .plateauLow p.1
 
 /-- Krifka's assignment gives the simple forms the safe regions and the complex forms the border
 regions on their side. -/
