@@ -354,7 +354,7 @@ theorem interp_aFarmerWhoOwnsADonkey :
           (restricted .o fun e => .conj (pred₁ .ownEvt e)
             (.conj (pred₂ .hasPatient e (.var .d)) (restricted .d (pred₁ .donkey))))) := by
   simp only [aFarmerWhoOwnsADonkey, interp, Word.sem, FA, FX, PM, PA, lift, restricted, pred₁,
-    pred₂, Formula.expand, List.foldl_nil, Expr.subst, Expr.subst, Term.bracket,
+    pred₂, Formula.expand, List.length_nil, Function.iterate_zero_apply, Expr.subst, Term.bracket,
     Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceCtorEq, reduceIte]
 
 /-- (66): "every girl wrote a paper", quantifier raising leaving a restricted-variable
@@ -415,9 +415,10 @@ theorem interp_mostOfThemUsedIt :
           (restricted .e fun e => .conj (pred₁ .useEvt e)
             (pred₂ .hasPatient e (.presup (.var .u) (.sg (.var .u))))))] := by
   simp only [mostOfThemUsedIt, interp, Word.sem, FA, FX, PM, PA, SA, lift, restricted, pred₁, pred₂,
-    defs118, Formula.expand, List.foldl_cons, List.foldl_nil, Expr.substLabels, Expr.substLabels,
-    assignment, Expr.subst, Expr.subst, Term.bracket, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
-    reduceCtorEq, reduceIte, Option.getD_some]
+    defs118, Formula.expand, List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, Expr.substLabels, List.lookup_cons, List.lookup_nil,
+    beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq, Expr.subst,
+    Term.bracket, Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceIte, Option.getD_some]
 
 /-! ### Scenarios -/
 
@@ -633,9 +634,10 @@ theorem expandSelf_shop139 :
           (pred₁ .inShop (Term.sgPronoun .c ownCar)))
         (.labelDef .O ownCar) := by
   rw [Formula.expandSelf, show shop139.defs = [(.O, ownCar)] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, shop139, notOwn, Term.sgPronoun, pred₁, ownCar,
-    indefOwned, pred₂, Expr.substLabels, assignment, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
-    reduceIte, Option.getD_some]
+  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, shop139, notOwn, Term.sgPronoun, pred₁, ownCar, indefOwned, pred₂,
+    Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
+    Option.getD_some]
 
 theorem expandSelf_shop138 :
     shop138.expandSelf =
@@ -643,9 +645,10 @@ theorem expandSelf_shop138 :
           (pred₁ .inShop (Term.sgPronoun .c ownCar)))
         (.labelDef .O ownCar) := by
   rw [Formula.expandSelf, show shop138.defs = [(.O, ownCar)] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, shop138, notOwn, Term.sgPronoun, pred₁, ownCar,
-    indefOwned, pred₂, Expr.substLabels, assignment, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
-    reduceIte, Option.getD_some]
+  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, shop138, notOwn, Term.sgPronoun, pred₁, ownCar, indefOwned, pred₂,
+    Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons', Matrix.comp_vecEmpty',
+    Option.getD_some]
 
 /-- (139) is felicitous at `w₀` iff he owns a car there — iff its first sentence is false. -/
 theorem felicitous_shop139_iff (hw : h .w = world w₀) (hx : h .x = {Sum.inr x₀}) :
@@ -709,9 +712,10 @@ theorem expandSelf_bathroom143 :
           (pred₁ .funnyPlace (Term.sgPronoun .b bathroomX)))
         (.labelDef .X bathroomX) := by
   rw [Formula.expandSelf, show bathroom143.defs = [(.X, bathroomX)] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, bathroom143, Formula.disj, Term.sgPronoun, pred₁,
-    bathroomX, sgIndefWith, sgIndef, Expr.substLabels, assignment, Matrix.comp_vecCons',
-    Matrix.comp_vecEmpty', reduceIte, Option.getD_some]
+  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, bathroom143, Formula.disj, Term.sgPronoun, pred₁, bathroomX,
+    sgIndefWith, sgIndef, Expr.substLabels, List.lookup_cons_self, Matrix.comp_vecCons',
+    Matrix.comp_vecEmpty', Option.getD_some]
 
 /-- (145): the bathroom disjunction is felicitous at `w₀` iff, if there is a bathroom here,
 there is exactly one. -/
@@ -754,9 +758,11 @@ theorem expandSelf_wolfDiscourse :
         (.conj (.labelDef .W wolfW) (.labelDef .E wolfE')) := by
   rw [Formula.expandSelf, show wolfDiscourse.defs = [(.W, wolfW), (.E, wolfE)] from rfl,
     Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, wolfDiscourse, wolfW, wolfE, wolfE', modalBase,
-    Formula.some_, pred₁, pred₂, Expr.substLabels, assignment, Matrix.comp_vecCons',
-    Matrix.comp_vecEmpty', reduceCtorEq, reduceIte, Option.getD_some]
+  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, wolfDiscourse, wolfW, wolfE, wolfE', modalBase, Formula.some_,
+    pred₁, pred₂, Expr.substLabels, List.lookup_cons, List.lookup_nil, beq_self_eq_true,
+    beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq, Matrix.comp_vecCons',
+    Matrix.comp_vecEmpty', Option.getD_some]
 
 theorem locals_wolfE' : wolfE'.locals = [.x, .t] := rfl
 
@@ -874,8 +880,16 @@ theorem expandSelf_theyLoud :
           (.labelDef .B (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))) := by
   rw [Formula.expandSelf, show theyLoud.defs = [(.D, pred₁ .dog (.bvar .d)),
     (.B, .conj (.label .D) (pred₁ .barks (.var .d)))] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, theyLoud, pred₁, Expr.substLabels, assignment,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceCtorEq, reduceIte, Option.getD_some]
+  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, theyLoud, pred₁, Expr.substLabels, List.lookup_cons,
+    List.lookup_nil, beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq,
+    Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
+
+/-- A circular definition is never expanded away: `X ∧ X ≡ X` keeps its defined label `X`, and
+so has no translation ((30)). -/
+example : Lab.X ∈ (Formula.expandSelf (.conj (.label .X) (.labelDef .X (.label .X))) : Fm).labels ∧
+    (Expr.defs (.conj (.label .X) (.labelDef .X (.label .X)) : Fm)).lookup .X ≠ none := by
+  simp [Formula.expandSelf, Formula.expand, Expr.defs, Expr.substLabels, Expr.labels]
 
 /-! ### Presupposition under quantification -/
 
@@ -924,9 +938,11 @@ theorem expandSelf_everyMonarchy :
           (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody' monarchyR)))) := by
   rw [Formula.expandSelf, show everyMonarchy.defs =
     [(.R, monarchyR), (.K, monarchK), (.S, cherishBody .R)] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, everyMonarchy, cherishBody, cherishBody', monarchyR,
-    sgIndef, monarchK, Term.sgPronoun, pred₁, pred₂, Expr.substLabels, assignment,
-    Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceCtorEq, reduceIte, Option.getD_some]
+  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, everyMonarchy, cherishBody, cherishBody', monarchyR, sgIndef,
+    monarchK, Term.sgPronoun, pred₁, pred₂, Expr.substLabels, List.lookup_cons, List.lookup_nil,
+    beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true, reduceCtorEq, Matrix.comp_vecCons',
+    Matrix.comp_vecEmpty', Option.getD_some]
 
 theorem expandSelf_discourse150a :
     discourse150a.expandSelf =
@@ -937,10 +953,11 @@ theorem expandSelf_discourse150a :
   rw [Formula.expandSelf, show discourse150a.defs =
     [(.C, countryC), (.M, monarchyM), (.K, monarchK), (.S, cherishBody .M)] from rfl,
     Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, discourse150a, cherishBody, cherishBody', countryC,
-    monarchyM, monarchyM', sgIndefWith, sgIndef, monarchK, Term.sgPronoun, pred₁, pred₂,
-    Expr.substLabels, assignment, Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceCtorEq,
-    reduceIte, Option.getD_some]
+  simp only [List.length_cons, Function.iterate_succ_apply', List.length_nil,
+    Function.iterate_zero_apply, discourse150a, cherishBody, cherishBody', countryC, monarchyM,
+    monarchyM', sgIndefWith, sgIndef, monarchK, Term.sgPronoun, pred₁, pred₂, Expr.substLabels,
+    List.lookup_cons, List.lookup_nil, beq_self_eq_true, beq_false_of_ne, ne_eq, not_false_eq_true,
+    reduceCtorEq, Matrix.comp_vecCons', Matrix.comp_vecEmpty', Option.getD_some]
 
 theorem felicitous_monarchK : monarchK.Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (by decide) _
