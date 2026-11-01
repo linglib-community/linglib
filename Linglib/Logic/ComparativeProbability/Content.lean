@@ -8,18 +8,24 @@ public import Mathlib.Tactic.Linarith
 /-!
 # Measures, qualitatively additive contents, and the orders they induce
 
-A probability measure `μ` on a space in which every event is measurable orders events by
-`A ≿ B ↔ μ B ≤ μ A` (`Measure.inducedGe`). A qualitatively additive measure (`QualAddMeasure`)
-need not add over disjoint unions: it fixes the comparison of two events only through their
-differences. A probability measure is a qualitatively additive measure through its real values
-`μ.real` (`Measure.toQualAdd`), and each kind induces a qualitative probability order.
+This file defines the order a set function induces and qualitatively additive measures. A set
+function `f` orders events by `A ≿ B ↔ f B ≤ f A`, and this order is a qualitative probability
+exactly when `f ∅ < f Set.univ`, `f ∅ ≤ f A` for every `A`, and `f` compares two events as it
+compares their differences. A probability measure on a space in which every event is measurable
+meets these conditions. A qualitatively additive measure is a normalized function that meets
+them without adding over disjoint unions; a probability measure is one through its real values.
 
 ## Main definitions
 
+* `inducedGe`: the order a set function induces.
 * `QualAddMeasure`: qualitatively additive contents, applied as functions `m A`.
-* `QualAddMeasure.ofRepr`: a normalized function representing a qualitative probability.
-* `MeasureTheory.Measure.inducedGe`: the order a measure induces.
+* `QualAddMeasure.ofRepr`: a normalized function inducing a qualitative probability.
 * `MeasureTheory.Measure.toQualAdd`: a probability measure as a qualitatively additive measure.
+
+## Main statements
+
+* `isQualitativeProbability_inducedGe_iff`: when the order a set function induces is a
+  qualitative probability.
 
 ## Implementation notes
 
@@ -33,6 +39,34 @@ stays a structure valued in an ordered field.
 open MeasureTheory
 
 namespace ComparativeProbability
+
+/-! ### The order a set function induces -/
+
+section Induced
+
+variable {W β : Type*}
+
+/-- `inducedGe f A B` is the comparative likelihood `A ≿ B ↔ f B ≤ f A` that a set function `f`
+    induces, the preimage `f ⁻¹'o (· ≥ ·)`. -/
+def inducedGe [LE β] (f : Set W → β) (A B : Set W) : Prop := f B ≤ f A
+
+/-- The order a set function `f` induces is a qualitative probability iff `f ∅ < f Set.univ`,
+    `f ∅ ≤ f A` for every `A`, and `f` compares two events as it compares their differences.
+    These are de Finetti's axioms (i), (ii) and (v) read through `f`; every induced order is
+    total and transitive. -/
+theorem isQualitativeProbability_inducedGe_iff [LinearOrder β] {f : Set W → β} :
+    IsQualitativeProbability (inducedGe f) ↔
+      f ∅ < f Set.univ ∧ (∀ A, f ∅ ≤ f A) ∧ ∀ A B, f A ≤ f B ↔ f (A \ B) ≤ f (B \ A) :=
+  ⟨fun _ ↦ ⟨lt_of_not_ge (IsNontrivial.bot_not_ge_top (r := inducedGe f)),
+      rel_bot (r := inducedGe f), fun A B ↦ qadd (r := inducedGe f) B A⟩,
+    fun ⟨h₁, h₂, h₃⟩ ↦
+      { trans _ _ _ hab hbc := hbc.trans hab
+        total A B := le_total (f B) (f A)
+        rel_bot' := h₂
+        qadd A B := h₃ B A
+        bot_not_ge_top := not_le.mpr h₁ }⟩
+
+end Induced
 
 /-! ### Qualitatively additive measures -/
 
@@ -76,39 +110,28 @@ theorem nonneg (m : QualAddMeasure K W) (A : Set W) : 0 ≤ m A := m.nonneg' A
 theorem qualAdd (m : QualAddMeasure K W) (A B : Set W) :
     m A ≤ m B ↔ m (A \ B) ≤ m (B \ A) := m.qualAdd' A B
 
-/-- `m.inducedGe A B` is the comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` that the measure
-    induces. -/
-def inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop := m A ≥ m B
-
-theorem mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
-    m A ≤ m B := by
-  rw [m.qualAdd A B, Set.sdiff_eq_empty.mpr h, m.mu_empty]; exact m.nonneg (B \ A)
-
 /-- A qualitatively additive measure induces a qualitative probability. -/
-instance (m : QualAddMeasure K W) : IsQualitativeProbability m.inducedGe where
-  refl _ := le_rfl
-  trans _ _ _ hab hbc := le_trans hbc hab
-  total A B := le_total (m B) (m A)
-  mono _ _ h := m.mu_mono h
-  qadd A B := m.qualAdd B A
-  bot_not_ge_top := by simp [inducedGe]
+instance (m : QualAddMeasure K W) : IsQualitativeProbability (inducedGe m) :=
+  isQualitativeProbability_inducedGe_iff.mpr
+    ⟨by simp, fun A ↦ by simpa using m.nonneg A, m.qualAdd⟩
 
 variable {r : Set W → Set W → Prop} [IsQualitativeProbability r]
 
-/-- A function representing a qualitative probability and normalized to `0` on `∅` and `1` on
-    the whole space is a qualitatively additive measure, nonnegative by monotonicity and
-    qualitatively additive because the order is. -/
-def ofRepr (f : Set W → K) (hf : ∀ A B, r A B ↔ f B ≤ f A) (h0 : f ∅ = 0)
-    (h1 : f Set.univ = 1) : QualAddMeasure K W where
-  toFun := f
-  nonneg' A := by rw [← h0]; exact (hf A ∅).mp (rel_bot A)
-  empty' := h0
-  total' := h1
-  qualAdd' A B := by rw [← hf, ← hf]; exact qadd B A
+/-- A function inducing a qualitative probability and normalized to `0` on `∅` and `1` on the
+    whole space is a qualitatively additive measure. -/
+def ofRepr (f : Set W → K) (hf : inducedGe f = r) (h0 : f ∅ = 0) (h1 : f Set.univ = 1) :
+    QualAddMeasure K W :=
+  have h := isQualitativeProbability_inducedGe_iff.mp
+    (hf ▸ ‹_› : IsQualitativeProbability (inducedGe f))
+  { toFun := f
+    nonneg' A := h0 ▸ h.2.1 A
+    empty' := h0
+    total' := h1
+    qualAdd' := h.2.2 }
 
-theorem inducedGe_ofRepr (f : Set W → K) (hf : ∀ A B, r A B ↔ f B ≤ f A) (h0 : f ∅ = 0)
-    (h1 : f Set.univ = 1) : (ofRepr f hf h0 h1).inducedGe = r :=
-  funext₂ fun A B ↦ propext (hf A B).symm
+theorem inducedGe_ofRepr (f : Set W → K) (hf : inducedGe f = r) (h0 : f ∅ = 0)
+    (h1 : f Set.univ = 1) : inducedGe (ofRepr f hf h0 h1) = r :=
+  hf
 
 end QualAddMeasure
 
@@ -122,16 +145,16 @@ open ComparativeProbability
 
 variable {W : Type*} [MeasurableSpace W]
 
-/-- `μ.inducedGe A B` is the comparative likelihood `A ≿ B ↔ μ(A) ≥ μ(B)` that the measure
-    induces. -/
-def inducedGe (μ : Measure W) (A B : Set W) : Prop := μ B ≤ μ A
-
 theorem inducedGe_iff_real (μ : Measure W) [IsFiniteMeasure μ] {A B : Set W} :
-    μ.inducedGe A B ↔ μ.real B ≤ μ.real A :=
+    inducedGe μ A B ↔ μ.real B ≤ μ.real A :=
   (ENNReal.toReal_le_toReal (measure_ne_top μ B) (measure_ne_top μ A)).symm
 
+/-- A finite measure and its real values induce the same order. -/
+theorem inducedGe_real (μ : Measure W) [IsFiniteMeasure μ] : inducedGe μ.real = inducedGe μ :=
+  funext₂ fun _ _ ↦ propext μ.inducedGe_iff_real.symm
+
 theorem strict_inducedGe_iff_real (μ : Measure W) [IsFiniteMeasure μ] {A B : Set W} :
-    AsymmRel μ.inducedGe A B ↔ μ.real B < μ.real A := by
+    AsymmRel (inducedGe μ) A B ↔ μ.real B < μ.real A := by
   rw [AsymmRel, μ.inducedGe_iff_real, μ.inducedGe_iff_real, not_le]
   exact ⟨And.right, fun h ↦ ⟨h.le, h⟩⟩
 
@@ -156,19 +179,10 @@ noncomputable def toQualAdd [DiscreteMeasurableSpace W] (μ : Measure W) [IsProb
 
 variable [DiscreteMeasurableSpace W] (μ : Measure W) [IsProbabilityMeasure μ]
 
-@[simp] theorem toQualAdd_apply (A : Set W) : μ.toQualAdd A = μ.real A := rfl
-
-theorem inducedGe_eq_toQualAdd : μ.inducedGe = μ.toQualAdd.inducedGe := by
-  funext A B
-  exact propext μ.inducedGe_iff_real
+@[simp] theorem coe_toQualAdd : ⇑μ.toQualAdd = μ.real := rfl
 
 /-- A probability measure on a discrete space induces a qualitative probability. -/
-instance : IsQualitativeProbability μ.inducedGe where
-  refl _ := le_rfl
-  trans _ _ _ hab hbc := le_trans hbc hab
-  total A B := le_total (μ B) (μ A)
-  mono _ _ h := measure_mono h
-  qadd A B := μ.measure_le_iff_sdiff_le B A
-  bot_not_ge_top := by simp [inducedGe]
+instance : IsQualitativeProbability (inducedGe μ) :=
+  isQualitativeProbability_inducedGe_iff.mpr ⟨by simp, fun _ ↦ by simp, μ.measure_le_iff_sdiff_le⟩
 
 end MeasureTheory.Measure

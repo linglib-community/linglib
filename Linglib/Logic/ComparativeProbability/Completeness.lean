@@ -52,9 +52,6 @@ def kpsOrder : List (Finset (Fin 5)) :=
 /-- `kpsRank s` is the position of `s` in the Kraft–Pratt–Seidenberg order. -/
 def kpsRank (s : Finset (Fin 5)) : ℕ := kpsOrder.idxOf s
 
-private theorem kpsRank_mono : ∀ a b : Finset (Fin 5), a ⊆ b → kpsRank a ≤ kpsRank b := by
-  decide
-
 private theorem kpsRank_qadd : ∀ a b : Finset (Fin 5),
     kpsRank b ≤ kpsRank a ↔ kpsRank (b \ a) ≤ kpsRank (a \ b) := by
   decide
@@ -68,10 +65,11 @@ noncomputable def kpsGe (A B : Set (Fin 5)) : Prop := kpsRank B.toFinset ≤ kps
 
 /-- The Kraft–Pratt–Seidenberg order is a qualitative probability. -/
 instance : IsQualitativeProbability kpsGe where
-  refl _ := le_rfl
   trans _ _ _ hab hbc := hbc.trans hab
   total A B := le_total _ _
-  mono A B h := kpsRank_mono _ _ (Set.toFinset_subset_toFinset.mpr h)
+  rel_bot' _ := by
+    simp only [kpsGe, Set.bot_eq_empty, Set.toFinset_empty]
+    exact (show kpsRank ∅ = 0 by decide).trans_le (Nat.zero_le _)
   qadd A B := by simp only [kpsGe, Set.toFinset_sdiff]; exact kpsRank_qadd _ _
   bot_not_ge_top := by simp only [kpsGe, Set.bot_eq_empty, Set.top_eq_univ, Set.toFinset_empty,
     Set.toFinset_univ]; decide
@@ -86,7 +84,7 @@ theorem kps_not_representable : ¬Representable kpsGe := by
   rintro ⟨μ, _, hμ⟩
   let A : Fin 4 → Finset (Fin 5) := ![{0}, {0, 1, 3}, {2, 3}, {1, 4}]
   let B : Fin 4 → Finset (Fin 5) := ![{1, 3}, {2, 4}, {0, 1}, {0, 3}]
-  have hlt (i : Fin 4) : AsymmRel μ.inducedGe (A i) (B i) := by
+  have hlt (i : Fin 4) : AsymmRel (inducedGe μ) (A i) (B i) := by
     rw [hμ, AsymmRel, kpsGe_coe, kpsGe_coe]; fin_cases i <;> decide
   refine μ.not_asymmRel_of_balanced (A := fun i ↦ A i) (B := fun i ↦ B i) (fun s ↦ ?_)
     (fun i ↦ (hlt i).1) 0 (hlt 0)
@@ -101,8 +99,8 @@ end KPS
 theorem representable_of_card_lt_five {W : Type*} [Fintype W] [MeasurableSpace W]
     [DiscreteMeasurableSpace W] (r : Set W → Set W → Prop) [IsQualitativeProbability r]
     (hcard : Fintype.card W < 5) : Representable r :=
-  (cancellation_implies_representable _
-    (cancellation_of_le_four (n := Fintype.card W) (by omega) _)).of_preimage
+  (SignCancellation.representable
+    (signCancellation_of_le_four (n := Fintype.card W) (by omega) _)).of_preimage
     (Fintype.equivFin W).injective
 
 /-- **From five atoms on.** Some qualitative probability on the set is not representable: the
@@ -132,14 +130,14 @@ private theorem ncard_lt_le_ncard_lt_iff (A B : Set W) :
     induced by a qualitatively additive measure: the number of sets strictly less likely than a
     set, divided by the number strictly less likely than the whole space. Holliday and Icard's
     logic FA is complete over these measures (Theorem 6, p. 523). -/
-theorem exists_qualAddMeasure_repr : ∃ m : QualAddMeasure ℚ W, m.inducedGe = r := by
+theorem exists_qualAddMeasure_repr : ∃ m : QualAddMeasure ℚ W, inducedGe m = r := by
   let g : Set W → ℚ := fun A ↦ {S | AsymmRel r A S}.ncard
   have hg (A B : Set W) : r A B ↔ g B ≤ g A := by
     rw [Nat.cast_le, ncard_lt_le_ncard_lt_iff]
   have h0 : g ∅ = 0 := by simp [g, AsymmRel, rel_empty]
   have hpos : 0 < g Set.univ := h0 ▸ lt_of_not_ge ((hg ∅ Set.univ).not.mp not_rel_empty_univ)
-  have hf (A B : Set W) : r A B ↔ g B / g Set.univ ≤ g A / g Set.univ := by
-    rw [div_le_div_iff_of_pos_right hpos, hg]
+  have hf : inducedGe (fun A ↦ g A / g Set.univ) = r := funext₂ fun A B ↦ propext <| by
+    rw [inducedGe, div_le_div_iff_of_pos_right hpos, hg]
   exact ⟨_, QualAddMeasure.inducedGe_ofRepr _ hf (by simp [h0]) (div_self hpos.ne')⟩
 
 end Repr

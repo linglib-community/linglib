@@ -1,30 +1,31 @@
 module
 
 public import Linglib.Logic.ComparativeProbability.Representability
+public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
-# Cancellation conditions
+# Scott's cancellation condition
 
-A pair of event sequences is *balanced* when every state lies in equally many events on each
-side. Finite cancellation, Scott's reformulation of the condition of Kraft, Pratt and Seidenberg,
-says that when the premise comparisons of a balanced pair hold, the head comparison holds
-reversed. A finite measure's order satisfies it, a balanced pair having
-[equal measure on its two sides](##MeasureTheory.Measure.finiteCancellation), and on a nontrivial
-total relation that puts every set above `∅` it gives
-[de Finetti's axioms](##ComparativeProbability.FiniteCancellation.isQualitativeProbability).
-Together these conditions characterize representability (`representable_iff`, `Scott.lean`).
+This file defines Scott's cancellation condition. Two families of events `x₀, …, xₙ` and
+`y₀, …, yₙ` are *balanced* when every state lies in as many `xᵢ` as `yᵢ`, that is, when the
+indicator functions of the two families have the same sum. Cancellation says that when the
+families are balanced and `xᵢ ≿ yᵢ` for every `i > 0`, then `y₀ ≿ x₀`. The order a finite measure
+induces satisfies it, since a balanced pair of families has equal total measure on its two sides,
+and on a nontrivial total relation that puts every set above `∅` it gives de Finetti's axioms.
+Together these conditions characterize representability (`Scott.lean`).
 
 ## Main definitions
 
-* `BalancedSeqs`, `FiniteCancellation`: balance and finite cancellation.
+* `Cancellation`: Scott's cancellation condition.
 
 ## Main statements
 
-* `MeasureTheory.Measure.finiteCancellation`, `Representable.finiteCancellation`: soundness.
+* `MeasureTheory.Measure.cancellation`, `Representable.cancellation`: soundness.
 * `MeasureTheory.Measure.not_asymmRel_of_balanced`: a balanced family of comparisons is never
   satisfied with one strict.
-* `FiniteCancellation.isQualitativeProbability`: finite cancellation gives de Finetti's axioms.
+* `Cancellation.isQualitativeProbability`: cancellation gives de Finetti's axioms.
 
 ## References
 
@@ -38,55 +39,36 @@ namespace ComparativeProbability
 
 variable {W : Type*}
 
-open scoped Classical in
-/-- `seqCount s Es` counts the events of `Es` that contain `s`. -/
-noncomputable def seqCount (s : W) (Es : List (Set W)) : ℕ :=
-  (Es.map fun E ↦ if s ∈ E then (1 : ℕ) else 0).sum
+/-- **Scott's cancellation condition** (4_B): whenever every state lies in as many of
+    `x₀, …, xₙ` as of `y₀, …, yₙ`, and `xᵢ ≿ yᵢ` for every `i > 0`, then `y₀ ≿ x₀`
+    ([scott-1964], p. 246). -/
+def Cancellation (r : Set W → Set W → Prop) : Prop :=
+  ∀ (n : ℕ) (x y : Fin (n + 1) → Set W),
+    (∀ s, ∑ i, (x i).indicator 1 s = ∑ i, (y i).indicator (1 : W → ℕ) s) →
+      (∀ i : Fin n, r (x i.succ) (y i.succ)) → r (y 0) (x 0)
 
-@[simp] theorem seqCount_nil (s : W) : seqCount s [] = 0 := rfl
+/-! ### De Finetti's axioms from cancellation -/
 
-open scoped Classical in
-@[simp] theorem seqCount_cons (s : W) (E : Set W) (Es : List (Set W)) :
-    seqCount s (E :: Es) = (if s ∈ E then 1 else 0) + seqCount s Es := by
-  simp [seqCount]
-
-/-- Two event sequences are **balanced** when every state lies in equally many events on the
-    left as on the right. -/
-def BalancedSeqs (Es Fs : List (Set W)) : Prop := ∀ s : W, seqCount s Es = seqCount s Fs
-
-/-- **Finite cancellation** holds when `Y ≿ X` for every balanced pair `⟨…, X⟩` / `⟨…, Y⟩`
-    whose premise comparisons all hold. Here `prem` carries the paired premise events and
-    `X`, `Y` are the heads. -/
-def FiniteCancellation (ge : Set W → Set W → Prop) : Prop :=
-  ∀ (prem : List (Set W × Set W)) (X Y : Set W),
-    BalancedSeqs (X :: prem.map Prod.fst) (Y :: prem.map Prod.snd) →
-    (∀ p ∈ prem, ge p.1 p.2) → ge Y X
-
-/-! ### De Finetti's axioms from finite cancellation -/
-
-/-- Finite cancellation gives de Finetti's axioms to a nontrivial total relation that puts every
-set at least as high as `∅`. These are Scott's conditions; [scott-1964] (p. 247) derives
-additivity from totality and cancellation. -/
-theorem FiniteCancellation.isQualitativeProbability {ge : Set W → Set W → Prop} [IsNontrivial ge]
-    (hnn : ∀ A, ge A ∅) [Std.Total ge] (h : FiniteCancellation ge) :
-    IsQualitativeProbability ge where
-  refl A := h [] A A (fun _ ↦ rfl) (by simp)
-  trans A B C hab hbc := h [(A, B), (B, C)] C A (fun s ↦ by
-    simp only [List.map_cons, List.map_nil, seqCount_cons, seqCount_nil]; omega)
-    (by simp [hab, hbc])
+/-- Cancellation gives de Finetti's axioms to a nontrivial total relation that puts every set at
+    least as high as `∅`. These are Scott's conditions; [scott-1964] (p. 247) derives additivity
+    from totality and cancellation. -/
+theorem Cancellation.isQualitativeProbability {r : Set W → Set W → Prop} [IsNontrivial r]
+    (hnn : ∀ A, r A ∅) [Std.Total r] (h : Cancellation r) : IsQualitativeProbability r where
+  trans A B C hab hbc := h 2 ![C, A, B] ![A, B, C]
+    (fun s ↦ by simp only [Fin.sum_univ_succ, Fin.sum_univ_zero]; simp; omega)
+    (fun i ↦ by fin_cases i; exacts [hab, hbc])
   total := Std.Total.total
-  mono A B hAB := h [(B \ A, ∅)] A B (fun s ↦ by
-    by_cases hA : s ∈ A
-    · simp [hA, hAB hA]
-    · by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hnn])
+  rel_bot' := hnn
   qadd A B :=
-    ⟨fun hab ↦ h [(A, B)] (B \ A) (A \ B) (fun s ↦ by
-        by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hab]),
-      fun hd ↦ h [(A \ B, B \ A)] B A (fun s ↦ by
-        by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [hA, hB]) (by simp [hd])⟩
+    ⟨fun hab ↦ h 1 ![B \ A, A] ![A \ B, B] (fun s ↦ by
+        by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [Fin.sum_univ_succ, hA, hB])
+        (fun i ↦ by fin_cases i; exact hab),
+      fun hd ↦ h 1 ![B, A \ B] ![A, B \ A] (fun s ↦ by
+        by_cases hA : s ∈ A <;> by_cases hB : s ∈ B <;> simp [Fin.sum_univ_succ, hA, hB])
+        (fun i ↦ by fin_cases i; exact hd)⟩
   bot_not_ge_top := IsNontrivial.bot_not_ge_top
 
-/-! ### Measures satisfy finite cancellation -/
+/-! ### Measures satisfy cancellation -/
 
 section
 
@@ -95,72 +77,48 @@ open MeasureTheory
 variable [Fintype W] [MeasurableSpace W] [MeasurableSingletonClass W] (μ : Measure W)
   [IsFiniteMeasure μ]
 
-open scoped Classical in
-private lemma measureReal_eq_sum_ite (E : Set W) :
-    μ.real E = ∑ s, if s ∈ E then μ.real {s} else 0 := by
-  conv_lhs => rw [show E = ↑(Finset.univ.filter (· ∈ E)) by ext; simp]
-  rw [← sum_measureReal_singleton, Finset.sum_filter]
-
-private lemma measureReal_listSum (L : List (Set W)) :
-    (L.map μ.real).sum = ∑ s, μ.real {s} * (seqCount s L : ℝ) := by
+/-- Balanced families of events have equal total measure. -/
+private lemma sum_measureReal_eq_of_balanced {ι : Type*} [Fintype ι] {A B : ι → Set W}
+    (hbal : ∀ s, ∑ i, (A i).indicator 1 s = ∑ i, (B i).indicator (1 : W → ℕ) s) :
+    ∑ i, μ.real (A i) = ∑ i, μ.real (B i) := by
   classical
-  induction L with
-  | nil => simp [seqCount]
-  | cons E L ih =>
-    rw [List.map_cons, List.sum_cons, ih, measureReal_eq_sum_ite μ E, ← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl fun s _ ↦ ?_
-    rw [seqCount_cons]; push_cast
-    by_cases hs : s ∈ E
-    · simp only [hs, ite_true]; ring
-    · simp [hs]
+  have key (C : ι → Set W) :
+      ∑ i, μ.real (C i) = ∑ s, ((∑ i, (C i).indicator (1 : W → ℕ) s : ℕ) : ℝ) * μ.real {s} := by
+    simp only [Nat.cast_sum, Finset.sum_mul]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun i _ ↦ ?_
+    conv_lhs => rw [show C i = ↑(Finset.univ.filter (· ∈ C i)) by ext; simp]
+    rw [← sum_measureReal_singleton, Finset.sum_filter]
+    exact Finset.sum_congr rfl fun s _ ↦ by by_cases hs : s ∈ C i <;> simp [hs]
+  rw [key, key]
+  exact Finset.sum_congr rfl fun s _ ↦ by rw [hbal s]
 
-private lemma measureReal_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : BalancedSeqs L₁ L₂) :
-    (L₁.map μ.real).sum = (L₂.map μ.real).sum := by
-  rw [measureReal_listSum μ L₁, measureReal_listSum μ L₂]
-  exact Finset.sum_congr rfl fun s _ ↦ by rw [h s]
-
-omit [Fintype W] [MeasurableSingletonClass W] in
-private lemma measureReal_sum_mono {prem : List (Set W × Set W)}
-    (hprem : ∀ p ∈ prem, μ.inducedGe p.1 p.2) :
-    ((prem.map Prod.snd).map μ.real).sum ≤ ((prem.map Prod.fst).map μ.real).sum := by
-  induction prem with
-  | nil => simp
-  | cons p ps ih =>
-    simp only [List.map_cons, List.sum_cons]
-    exact add_le_add ((μ.inducedGe_iff_real).1 (hprem p (List.mem_cons_self ..)))
-      (ih fun q hq ↦ hprem q (List.mem_cons_of_mem _ hq))
-
-/-- The order a finite measure induces satisfies finite cancellation, since a balanced pair of
-    sequences has equal total measure on its two sides. -/
-theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.inducedGe := by
-  intro prem X Y hbal hprem
-  have hsum := measureReal_listSum_eq_of_balanced μ hbal
-  simp only [List.map_cons, List.sum_cons] at hsum
+/-- The order a finite measure induces satisfies cancellation, since a balanced pair of families
+    has equal total measure on its two sides. -/
+theorem _root_.MeasureTheory.Measure.cancellation : Cancellation (inducedGe μ) := by
+  intro n x y hbal hprem
+  have hsum := sum_measureReal_eq_of_balanced μ hbal
+  rw [Fin.sum_univ_succ, Fin.sum_univ_succ] at hsum
+  have := Finset.sum_le_sum fun i (_ : i ∈ Finset.univ) ↦ μ.inducedGe_iff_real.mp (hprem i)
   rw [μ.inducedGe_iff_real]
-  linarith [measureReal_sum_mono μ hprem]
+  linarith
 
 /-- In the order a finite measure induces, the comparisons `A i ≿ B i` of a balanced family, every
     state lying in as many `A i` as `B i`, cannot all hold with one strict. -/
 theorem _root_.MeasureTheory.Measure.not_asymmRel_of_balanced {ι : Type*} [Fintype ι]
     {A B : ι → Set W} (hbal : ∀ s, ∑ i, (A i).indicator 1 s = ∑ i, (B i).indicator (1 : W → ℕ) s)
-    (hle : ∀ i, μ.inducedGe (A i) (B i)) (i : ι) : ¬AsymmRel μ.inducedGe (A i) (B i) := by
-  classical
-  have hseq (C : ι → Set W) (s : W) :
-      seqCount s (C i :: (Finset.univ.erase i).toList.map C) = ∑ j, (C j).indicator 1 s := by
-    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
-    simp [seqCount, Set.indicator_apply, Function.comp_def]
-  refine fun h ↦ h.2 (μ.finiteCancellation ((Finset.univ.erase i).toList.map fun j ↦ (A j, B j))
-    (A i) (B i) (fun s ↦ ?_) (by simp [hle]))
-  simpa [Function.comp_def, hseq] using hbal s
+    (hle : ∀ i, inducedGe μ (A i) (B i)) (i : ι) : ¬AsymmRel (inducedGe μ) (A i) (B i) :=
+  fun h ↦ (Finset.sum_lt_sum (fun j _ ↦ μ.inducedGe_iff_real.mp (hle j))
+    ⟨i, Finset.mem_univ _, μ.strict_inducedGe_iff_real.mp h⟩).ne'
+    (sum_measureReal_eq_of_balanced μ hbal)
 
 end
 
-/-- A representable relation satisfies finite cancellation (the soundness half of Scott's
-    theorem, in balanced-sequence form). -/
-theorem Representable.finiteCancellation [Fintype W] [MeasurableSpace W]
+/-- A representable relation satisfies cancellation (the soundness half of Scott's theorem). -/
+theorem Representable.cancellation [Fintype W] [MeasurableSpace W]
     [DiscreteMeasurableSpace W] {r : Set W → Set W → Prop} (h : Representable r) :
-    FiniteCancellation r := by
+    Cancellation r := by
   obtain ⟨μ, _, rfl⟩ := h
-  exact μ.finiteCancellation
+  exact μ.cancellation
 
 end ComparativeProbability

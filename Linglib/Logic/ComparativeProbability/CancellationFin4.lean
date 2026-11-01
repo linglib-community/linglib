@@ -11,8 +11,9 @@ without proof, that five atoms are the fewest on which this can fail.
 
 ## Main statements
 
-* `ComparativeProbability.no_null_cancellation`: cancellation on at most four atoms, none null.
-* `ComparativeProbability.cancellation_of_le_four`: cancellation on at most four atoms.
+* `ComparativeProbability.no_null_signCancellation`: cancellation on at most four atoms, none
+  null.
+* `ComparativeProbability.signCancellation_of_le_four`: cancellation on at most four atoms.
 
 ## Implementation notes
 
@@ -21,7 +22,7 @@ sign of their sum, again a valid comparison. With no null atom, a valid family w
 single sign vector proves that comparison by merging recursively. When no pair merges,
 `exists_antiDominating` yields either a pair of members that forces a null atom or a member that
 merges with the reversed target and is peeled off. A null atom drops out by
-`cancellation_of_null_atom`, so one induction covers every size up to four.
+`signCancellation_of_null_atom`, so one induction covers every size up to four.
 
 ## References
 
@@ -269,8 +270,8 @@ decreasing_by
 
 /-- A qualitative probability on at most four atoms with no null atom satisfies cancellation, by
     the merge reduction `merge_to_single`. -/
-theorem no_null_cancellation (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
-    [IsQualitativeProbability r] (hnull : ∀ i, ¬ r ∅ {i}) : Cancellation r := by
+theorem no_null_signCancellation (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
+    [IsQualitativeProbability r] (hnull : ∀ i, ¬ r ∅ {i}) : SignCancellation r := by
   intro M hvalid hsum v hv
   rw [← posSupport_neg v, ← negSupport_neg v]
   refine merge_to_single hn r hnull (M.erase v)
@@ -281,20 +282,20 @@ theorem no_null_cancellation (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) →
   omega
 
 /-- Every qualitative probability on at most four atoms satisfies cancellation. A null atom
-    reduces to one atom fewer (`cancellation_of_null_atom`); otherwise the merge reduction
+    reduces to one atom fewer (`signCancellation_of_null_atom`); otherwise the merge reduction
     applies. -/
-theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
-    ∀ (r : Set (Fin n) → Set (Fin n) → Prop) [IsQualitativeProbability r], Cancellation r
+theorem signCancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
+    ∀ (r : Set (Fin n) → Set (Fin n) → Prop) [IsQualitativeProbability r], SignCancellation r
   | 0, _, r, hr => (not_isQualitativeProbability_of_isEmpty r hr).elim
-  | 1, hn, r, _ => no_null_cancellation hn r fun i hi ↦ by
+  | 1, hn, r, _ => no_null_signCancellation hn r fun i hi ↦ by
       obtain ⟨j, hj⟩ := exists_not_rel_empty_singleton r
       exact hj (Subsingleton.elim i j ▸ hi)
   | n + 2, hn, r, _ => by
       by_cases h : ∃ j, r ∅ {j}
       · obtain ⟨j, hj⟩ := h
-        exact cancellation_of_null_atom r hj fun r' _ ↦
-          cancellation_implies_representable r' (cancellation_of_le_four (by omega) r')
+        exact signCancellation_of_null_atom r hj fun r' _ ↦
+          (signCancellation_of_le_four (by omega) r').representable
       · push Not at h
-        exact no_null_cancellation hn r h
+        exact no_null_signCancellation hn r h
 
 end ComparativeProbability

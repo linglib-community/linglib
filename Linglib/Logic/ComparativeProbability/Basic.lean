@@ -3,31 +3,31 @@ module
 public import Linglib.Logic.ComparativeProbability.Defs
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Data.Set.Image
-public import Mathlib.Logic.Equiv.Set
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.RelClasses
 
 /-!
 # Basic API for qualitative probabilities
 
-On any Boolean algebra the axioms let a disjoint common context cancel, let a null event be
-removed, and let disjoint comparisons merge. On sets, a qualitative probability pulls back along
-preimages (`Set.preimage f ⁻¹'o r`) and, when the range is not null, along images of an
-injection.
+This file proves the basic API of qualitative probabilities. On a Boolean algebra, qualitative
+additivity is equivalent to cancelling a common context disjoint from both sides, the form in
+which Kraft, Pratt and Seidenberg and Scott print additivity; with it, comparisons with
+disjoint sides merge and removing a null event changes no comparison. A qualitative probability
+pulls back along any map that preserves differences and does not send `⊤` to a null event, so
+along preimages of sets and along images of an injection whose range is not null.
 
 ## Main statements
 
-* `rel_sup_sup_right_iff`, `rel_sup_sup_right`, `rel_sup_sup`: context cancellation and
-  merging.
 * `isQualitativeAdditive_iff`: qualitative additivity is context cancellation.
+* `rel_sup_sup`: comparisons with disjoint sides merge.
 * `rel_sdiff_sdiff_iff`: removing a null event changes no comparison.
-* `isQualitativeProbability_image`: pulling back along the image of an injection.
-* `not_isQualitativeProbability_of_isEmpty`: an empty carrier has no qualitative probability.
-* `exists_not_rel_empty_singleton`: a finite carrier has a non-null atom.
+* `isQualitativeProbability_preimage`, `isQualitativeProbability_image`: pulling back along maps.
+* `exists_not_rel_empty_singleton`: a finite carrier has an atom that is not null.
 
 ## References
 
 * [kraft-pratt-seidenberg-1959]
+* [scott-1964]
 -/
 
 @[expose] public section
@@ -50,27 +50,28 @@ theorem rel_sup_sup_right [IsQualitativeAdditive r] {a b c : α} (h : r a b)
   (rel_sup_sup_right_iff hca hcb).mpr h
 
 /-- A relation is qualitatively additive iff every common context disjoint from both sides
-    cancels, Kraft, Pratt and Seidenberg's additivity axiom (A) (p. 408). -/
+    cancels, the additivity axiom (A) of [kraft-pratt-seidenberg-1959] (p. 408) and axiom (v)
+    of de Finetti's in [scott-1964] (p. 246). -/
 theorem isQualitativeAdditive_iff : IsQualitativeAdditive r ↔
     ∀ a b c : α, Disjoint c a → Disjoint c b → (r (a ⊔ c) (b ⊔ c) ↔ r a b) := by
   refine ⟨fun _ _ _ _ ↦ rel_sup_sup_right_iff, fun h ↦ ⟨fun a b ↦ ?_⟩⟩
   have := h (a \ b) (b \ a) (a ⊓ b) disjoint_inf_sdiff (inf_comm b a ▸ disjoint_inf_sdiff)
   rwa [sup_sdiff_inf, inf_comm, sup_sdiff_inf] at this
 
-/-- Removing an event at most as likely as `⊥` changes no comparison. -/
-theorem rel_sdiff_sdiff_iff [IsQualitativeProbability r] {n : α} (hn : r ⊥ n) {a b : α} :
-    r (a \ n) (b \ n) ↔ r a b := by
+/-- Removing an event `n` at most as likely as `⊥` changes no comparison. -/
+theorem rel_sdiff_sdiff_iff [IsLikelihoodMono r] [IsQualitativeAdditive r] [IsTrans α r]
+    {n : α} (hn : r ⊥ n) {a b : α} : r (a \ n) (b \ n) ↔ r a b := by
   have h (x : α) : r (x \ n) x := by
     rw [qadd (r := r), sdiff_eq_bot_iff.mpr sdiff_le, sdiff_sdiff_right_self]
     exact trans_of r hn (mono _ _ inf_le_right)
   exact ⟨fun hab ↦ trans_of r (mono _ _ sdiff_le) (trans_of r hab (h b)),
     fun hab ↦ trans_of r (h a) (trans_of r hab (mono _ _ sdiff_le))⟩
 
-/-- Two comparisons with disjoint left parts and disjoint right parts merge into their joins,
-    even with cross overlaps. The proof adds context to each side, passes through `b₁ ⊔ a₂`,
-    and restores the pivot `a₂ ⊓ b₁` by additivity. -/
+/-- Two comparisons with disjoint left sides and disjoint right sides merge into their joins,
+    even when a left side overlaps a right side. -/
 theorem rel_sup_sup [IsQualitativeAdditive r] [IsTrans α r] {a₁ b₁ a₂ b₂ : α} (h₁ : r a₁ b₁)
     (h₂ : r a₂ b₂) (ha : Disjoint a₁ a₂) (hb : Disjoint b₁ b₂) : r (a₁ ⊔ a₂) (b₁ ⊔ b₂) := by
+  -- add context to each side, pass through `b₂ ⊔ a₁`, and restore the pivot `a₁ ⊓ b₂`
   have e₁ : (a₂ ⊔ a₁ \ b₂) ⊔ a₁ ⊓ b₂ = a₁ ⊔ a₂ := by
     rw [sup_assoc, sup_comm (a₁ \ b₂), sup_inf_sdiff, sup_comm]
   have e₂ : (b₁ ⊔ b₂ \ a₁) ⊔ a₁ ⊓ b₂ = b₁ ⊔ b₂ := by
@@ -83,6 +84,17 @@ theorem rel_sup_sup [IsQualitativeAdditive r] [IsTrans α r] {a₁ b₁ a₂ b�
     rwa [sup_sdiff_self_right] at h
   · have h := rel_sup_sup_right h₁ disjoint_sdiff_self_left (hb.symm.mono_left sdiff_le)
     rwa [sup_sdiff_self_right, sup_comm a₁ b₂] at h
+
+/-- A qualitative probability pulls back along a map `f` that preserves differences, comparing
+    events by their images under `f`, provided `f ⊤` is not at most as likely as `⊥`. -/
+theorem isQualitativeProbability_preimage {β : Type*} [BooleanAlgebra β]
+    [IsQualitativeProbability r] {f : β → α} (hf : ∀ a b, f (a \ b) = f a \ f b)
+    (htop : ¬r ⊥ (f ⊤)) : IsQualitativeProbability (f ⁻¹'o r) := by
+  have hbot : f ⊥ = ⊥ := by simpa using hf ⊥ ⊥
+  exact
+    { bot_not_ge_top := by rwa [Order.Preimage, hbot]
+      rel_bot' a := by rw [Order.Preimage, hbot]; exact rel_bot _
+      qadd a b := by rw [Order.Preimage, Order.Preimage, hf, hf]; exact qadd _ _ }
 
 end Context
 
@@ -97,25 +109,16 @@ theorem not_rel_empty_univ [IsNontrivial r] : ¬r ∅ Set.univ :=
 
 /-- A qualitative probability pulls back along preimages, comparing sets by their preimages. -/
 instance [IsQualitativeProbability r] (f : W → α) :
-    IsQualitativeProbability (Set.preimage f ⁻¹'o r) where
-  mono _ _ h := mono (r := r) _ _ (Set.preimage_mono h)
-  qadd A B := by
-    show r _ _ ↔ r _ _
-    rw [Set.preimage_sdiff, Set.preimage_sdiff]; exact qadd (r := r) _ _
-  bot_not_ge_top := not_rel_empty_univ (r := r)
+    IsQualitativeProbability (Set.preimage f ⁻¹'o r) :=
+  isQualitativeProbability_preimage (Set.preimage_sdiff f) not_rel_empty_univ
 
 /-- A qualitative probability pulls back along the image of an injection `f`, comparing sets by
     their images, when the range of `f` is not null. -/
 theorem isQualitativeProbability_image [IsQualitativeProbability r] {f : α → W}
     (hf : Function.Injective f) (hnt : ¬r ∅ (Set.range f)) :
-    IsQualitativeProbability (Set.image f ⁻¹'o r) where
-  mono _ _ h := mono (r := r) _ _ (Set.image_mono h)
-  qadd A B := by
-    show r _ _ ↔ r _ _
-    rw [Set.image_sdiff hf, Set.image_sdiff hf]; exact qadd (r := r) _ _
-  bot_not_ge_top := by
-    show ¬r (f '' ∅) (f '' Set.univ)
-    rwa [Set.image_empty, Set.image_univ]
+    IsQualitativeProbability (Set.image f ⁻¹'o r) :=
+  isQualitativeProbability_preimage (Set.image_sdiff hf)
+    (by rwa [Set.top_eq_univ, Set.image_univ])
 
 /-- An empty carrier has no qualitative probability, since there `∅ = Set.univ`. -/
 theorem not_isQualitativeProbability_of_isEmpty [IsEmpty W] (r : Set W → Set W → Prop) :
@@ -124,10 +127,11 @@ theorem not_isQualitativeProbability_of_isEmpty [IsEmpty W] (r : Set W → Set W
 
 /-- On a finite carrier some atom is not null, since were every singleton at most as likely
     as `∅`, so would be `Set.univ`. -/
-theorem exists_not_rel_empty_singleton [Fintype W] (r : Set W → Set W → Prop)
+theorem exists_not_rel_empty_singleton [Finite W] (r : Set W → Set W → Prop)
     [IsQualitativeProbability r] : ∃ i, ¬r ∅ {i} := by
   by_contra hall
   push Not at hall
+  cases nonempty_fintype W
   suffices h : ∀ S : Finset W, r ∅ ↑S from
     not_rel_empty_univ (by simpa using h Finset.univ)
   intro S

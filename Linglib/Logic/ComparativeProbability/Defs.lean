@@ -11,8 +11,9 @@ Comparative probability reads a relation `r a b` on a Boolean algebra `α` as "`
 least as likely as `b`". This file states the axioms of the subject as unbundled mixin
 classes on such a relation, in the style of `IsTrans`, and collects de Finetti's system, the
 standard base of comparative probability that Kraft, Pratt and Seidenberg and Scott build
-on, as the class `IsQualitativeProbability`: a monotone, non-trivial and qualitatively
-additive (`a ≿ b ↔ a \ b ≿ b \ a`) total preorder.
+on, as the class `IsQualitativeProbability`: `⊥` is not at least as likely as `⊤`, every
+event is at least as likely as `⊥`, and the relation is total, transitive and qualitatively
+additive (`a ≿ b ↔ a \ b ≿ b \ a`). Monotonicity follows from these axioms.
 
 A likelihood order also defines *probably*: `△a` holds when `a` is strictly more likely than
 its complement, as in the logics of comparative probability that Holliday and Icard compare.
@@ -33,6 +34,7 @@ comparisons with a single world reduce to comparisons of single worlds.
 
 * `instComplementReversingOfQualitativeAdditive`: qualitative additivity implies complement
   reversal, via `bᶜ \ aᶜ = a \ b` (`compl_sdiff_compl`).
+* `IsQualitativeProbability.isLikelihoodMono`: a qualitative probability is monotone.
 
 ## References
 
@@ -58,8 +60,9 @@ class IsLikelihoodMono (r : α → α → Prop) : Prop where
 class IsComplementReversing (r : α → α → Prop) : Prop where
   complRev : ∀ a b : α, r a b → r bᶜ aᶜ
 
-/-- A relation is qualitatively additive, de Finetti's axiom, when `a ≽ b` holds exactly when
-`a \ b ≽ b \ a`. -/
+/-- A relation is qualitatively additive when `a ≽ b` holds exactly when `a \ b ≽ b \ a`. This
+is de Finetti's additivity axiom with the common part `a ⊓ b` cancelled from both sides;
+`isQualitativeAdditive_iff` recovers the axiom as printed. -/
 class IsQualitativeAdditive (r : α → α → Prop) : Prop where
   qadd : ∀ a b : α, r a b ↔ r (a \ b) (b \ a)
 
@@ -82,14 +85,27 @@ instance (priority := 100) instComplementReversingOfQualitativeAdditive
 /-! ### Qualitative probabilities -/
 
 /-- A **qualitative probability** on a Boolean algebra `α` is a relation `r`, read "`a` is at
-least as likely as `b`", that is a monotone, non-trivial and qualitatively additive total
-preorder: de Finetti's axioms, the base system of comparative probability. Every qualitative
+least as likely as `b`", satisfying de Finetti's axioms as [scott-1964] lists them (p. 246):
+`⊥` is not at least as likely as `⊤`, every event is at least as likely as `⊥`, any two events
+compare, `r` is transitive, and `r` is qualitatively additive, which is axiom (v) with the
+common part of the two sides cancelled (`isQualitativeAdditive_iff`). Every qualitative
 probability on a finite carrier is represented by a qualitatively additive measure
 (`exists_qualAddMeasure_repr`), but by a probability measure only below five atoms
 (`Completeness.lean`). -/
 class IsQualitativeProbability (r : α → α → Prop) : Prop
-    extends IsPreorder α r, Std.Total r, IsLikelihoodMono r, IsQualitativeAdditive r,
-      IsNontrivial r
+    extends IsNontrivial r, Std.Total r, IsTrans α r, IsQualitativeAdditive r where
+  /-- Every event is at least as likely as `⊥`. Use the lemma `rel_bot`. -/
+  rel_bot' : ∀ a, r a ⊥
+
+/-- A qualitative probability is monotone: for `a ≤ b`, qualitative additivity reduces `b ≽ a`
+to `b \ a ≽ ⊥`. -/
+instance (priority := 100) IsQualitativeProbability.isLikelihoodMono {r : α → α → Prop}
+    [IsQualitativeProbability r] : IsLikelihoodMono r where
+  mono a b h := by
+    rw [qadd (r := r), sdiff_eq_bot_iff.mpr h]; exact IsQualitativeProbability.rel_bot' _
+
+instance (priority := 100) IsQualitativeProbability.isPreorder {r : α → α → Prop}
+    [IsQualitativeProbability r] : IsPreorder α r where
 
 /-! ### *Probably* -/
 
