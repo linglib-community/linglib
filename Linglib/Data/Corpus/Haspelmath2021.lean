@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# Haspelmath2021: experimental results (generated)
+# Haspelmath2021: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/Haspelmath2021.json` by `scripts/gen_experiments.py`.
+Auto-generated from `Linglib/Data/Corpus/Haspelmath2021.json` by `scripts/gen_experiments.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
 The illustrative frequency figures of the paper's Appendix, gathered from the earlier literature to
