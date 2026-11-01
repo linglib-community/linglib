@@ -1,5 +1,24 @@
 [
   {
+    "id": "bergengoodman2015_fragment_answer",
+    "source": {"bibkey": "bergen-goodman-2015", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "Bob",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Who went to the movies?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["fragment", "Bob"],
+      ["proposition", "Bob went to the movies"]
+    ],
+    "comment": "p. 337: the fragment expresses the proposition that Bob went to the movies, which the full sentence could also have expressed.",
+    "verified": "page-image"
+  },
+  {
     "id": "bergengoodman2015_stressed_subject",
     "source": {"bibkey": "bergen-goodman-2015", "paperLabel": "(2)"},
     "language": "stan1293",
@@ -15,7 +34,7 @@
       ["stress", "subject"],
       ["reading", "exhaustive"]
     ],
-    "comment": "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress halves the rate at which the subject is misheard).",
+    "comment": "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress lowers the rate at which the subject is misheard).",
     "verified": "page-image"
   },
   {

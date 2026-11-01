@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.InformationTheory.Surprisal
+public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.Prod
 public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.ConditionalProbability
@@ -93,6 +94,14 @@ theorem measureEntropy_of_isProbabilityMeasure (μ : Measure S) [IsZeroOrProbabi
 theorem measureEntropy_eq_sum [Fintype S] (μ : Measure S) [IsZeroOrProbabilityMeasure μ] :
     Hm[μ] = ∑ s, negMulLog (μ.real {s}) := by
   rw [measureEntropy_of_isProbabilityMeasure, tsum_fintype]
+
+/-- The geometric mean of the masses of a probability measure under itself is the exponential of
+minus its entropy. -/
+theorem geomMean_eq_exp_neg_measureEntropy [Fintype S] (μ : Measure S) [IsProbabilityMeasure μ] :
+    μ.geomMean (fun s ↦ μ {s}) = ENNReal.ofReal (exp (-Hm[μ])) := by
+  rw [Measure.geomMean_eq_ofReal_exp_sum_log (fun _ h ↦ h) fun _ _ ↦ measure_ne_top _ _,
+    measureEntropy_eq_sum, ← Finset.sum_neg_distrib]
+  simp only [negMulLog, neg_mul, neg_neg, measureReal_def]
 
 /-- The entropy of a probability measure carried by a finite set is a sum over that set. -/
 theorem measureEntropy_of_isProbabilityMeasure_finite {A : Finset S} (hA : μ (↑A)ᶜ = 0)
