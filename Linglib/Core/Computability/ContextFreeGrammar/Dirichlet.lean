@@ -92,9 +92,7 @@ noncomputable def countsProb (x : ContextFreeRule T G.NT → ℕ) : ℝ :=
   ∏ a ∈ G.rules.image (·.input), polyaUrnProb (M.urn a) fun r ↦ x r
 
 theorem countsProb_pos (x : ContextFreeRule T G.NT → ℕ) : 0 < M.countsProb x :=
-  prod_pos fun a ha ↦
-    have := ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr ha
-    polyaUrnProb_pos (M.urn_pos a) _
+  prod_pos fun a _ ↦ polyaUrnProb_pos (M.urn_pos a) _
 
 @[simp]
 theorem countsProb_zero : M.countsProb 0 = 1 :=
@@ -154,9 +152,7 @@ theorem derivProb_mean {t : RoseTree (Symbol T G.NT)} (ht : t.Licensed G.License
   rw [PCFG.derivProb_eq_prod_pow_ruleCount _ ht, countsProb,
     ← prod_fiberwise_of_maps_to (t := G.rules.image (·.input)) (g := (·.input))
       fun r hr ↦ mem_image_of_mem _ hr,
-    ENNReal.ofReal_prod_of_nonneg fun a ha ↦
-      have := ContextFreeGrammar.nonempty_rulesWithLHS_iff.mpr ha
-      (polyaUrnProb_pos (M.urn_pos a) _).le]
+    ENNReal.ofReal_prod_of_nonneg fun a _ ↦ (polyaUrnProb_pos (M.urn_pos a) _).le]
   refine prod_congr rfl fun a _ ↦ ?_
   have hcount : ∑ r : G.RulesWithLHS a, ruleCounts {t} r ≤ 1 := by
     rw [sum_coe_sort (G.rules.filter (·.input = a)) (ruleCounts {t})]

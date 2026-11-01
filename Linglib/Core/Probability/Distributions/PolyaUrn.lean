@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Analysis.SpecialFunctions.Gamma.Basic
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Probability.Exchangeable
@@ -16,20 +17,20 @@ public import Mathlib.MeasureTheory.Measure.Real
 /-!
 # The law of the Pólya urn
 
-`polyaUrn θ n` is the law of the first `n` draws from the Pólya urn with weights `θ`: the
-sequence drawn, by `seqLaw`, from the prediction rule `polyaUrnPredictive`. Each sequence has
-probability `polyaUrnProb θ (countVec s)` (`polyaUrn_real_singleton`), which depends only on the
-counts, so the sequence is exchangeable (`exchangeable_polyaUrn`). When every colour has the same
-positive weight, the most probable sequences are the constant ones (`argmax_polyaUrn_const`).
+This file defines the law of the first `n` draws from the Pólya urn with weights `θ`, the
+sequence law of its prediction rule. The probability of a sequence depends only on its counts, so
+the sequence is exchangeable, and in Gamma functions it is the Dirichlet-multinomial formula.
+Under equal weights the most probable sequences are the constant ones.
 
 ## Main definitions
 
 * `ProbabilityTheory.polyaUrnRule θ n`: the prediction rule as a kernel.
 * `ProbabilityTheory.polyaUrn θ n`: the law of the first `n` draws.
 
-## Main results
+## Main statements
 
 * `ProbabilityTheory.polyaUrn_real_singleton`: the probability of a sequence.
+* `ProbabilityTheory.polyaUrnProb_eq_prod_Gamma_div`: that probability in Gamma functions.
 * `ProbabilityTheory.exchangeable_polyaUrn`: the drawn sequence is exchangeable.
 * `ProbabilityTheory.argmax_polyaUrn_const`: under equal weights the modes are the constant
   sequences.
@@ -44,6 +45,18 @@ positive weight, the most probable sequences are the constant ones (`argmax_poly
 open MeasureTheory
 
 namespace ProbabilityTheory
+
+/-- The probability of a sequence with counts `x` in Gamma functions: each rising factorial
+`(a)_m` of `polyaUrnProb` is the ratio `Γ(a + m) / Γ(a)`. -/
+theorem polyaUrnProb_eq_prod_Gamma_div {α : Type*} [Fintype α] [Nonempty α] {θ : α → ℝ}
+    (hθ : ∀ c, 0 < θ c) (x : α → ℕ) :
+    polyaUrnProb θ x = (∏ c, Real.Gamma (θ c + x c) / Real.Gamma (θ c)) /
+      (Real.Gamma (∑ c, θ c + (∑ c, x c : ℕ)) / Real.Gamma (∑ c, θ c)) := by
+  have hne {a : ℝ} (ha : 0 < a) (k : ℕ) : a ≠ -k := ((neg_nonpos.2 k.cast_nonneg).trans_lt ha).ne'
+  rw [polyaUrnProb, Real.Gamma_add_nat_div_Gamma_eq _
+    (hne (Finset.sum_pos (fun c _ ↦ hθ c) Finset.univ_nonempty))]
+  exact congrArg (· / _) (Finset.prod_congr rfl fun c _ ↦
+    (Real.Gamma_add_nat_div_Gamma_eq _ (hne (hθ c))).symm)
 
 variable {α : Type*} [DecidableEq α] [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
   (θ : α → ℝ)
