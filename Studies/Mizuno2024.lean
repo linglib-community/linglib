@@ -431,7 +431,7 @@ def markerOf : Glottocode → Option Conditional.Marker
   | _ => none
 
 theorem rows_marker_hypothetical :
-    ∀ e ∈ Examples.all, ∀ m ∈ markerOf e.language, .hypothetical ∈ m.readings.fst := by
+    ∀ e ∈ Examples.all, ∃ m ∈ markerOf e.language, .hypothetical ∈ m.readings.fst := by
   decide
 
 end Mizuno2024
