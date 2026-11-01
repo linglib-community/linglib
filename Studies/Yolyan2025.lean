@@ -354,13 +354,13 @@ inductive RHead
 
 /-- The backward program, (5.8) and (5.12), stresses a heavy with no heavy to its left. -/
 def lholL : Program Syll LHead
-  | .noHL => .ite (.initial x) .tru (.ite (.label {.H} x.pred) .fls (.call .noHL x.pred))
+  | .noHL => .ite (.initial x) ⊤ (.ite (.label {.H} x.pred) ⊥ (.call .noHL x.pred))
   | .stressL => (Expr.label {.H} x).and (.call .noHL x)
 
 /-- The forward program, (5.9) and (5.11), stresses an initial light with no heavy to its
 right. -/
 def lholR : Program Syll RHead
-  | .noHR => .ite (.final x) .tru (.ite (.label {.H} x.succ) .fls (.call .noHR x.succ))
+  | .noHR => .ite (.final x) ⊤ (.ite (.label {.H} x.succ) ⊥ (.call .noHR x.succ))
   | .stressR => (Expr.label {.L} x).and ((Expr.initial x).and (.call .noHR x))
 
 theorem lholL_backward : lholL.Backward := by decide
