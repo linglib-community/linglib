@@ -9,27 +9,29 @@ public import Linglib.Core.Data.RoseTree.Basic
 public import Linglib.Core.Data.Tree.Encodable
 
 /-!
-# Forests are binary trees
+# Forests as binary trees
 
-A forest, a list of rose trees, is either empty or a first tree followed by a forest, and the
-first tree is a value over the forest of its children. A binary tree is either `nil` or a value
-with a left and a right subtree. Reading the left subtree as the children of the first tree and
-the right subtree as the rest of the forest identifies the two: this is the natural
-correspondence between forests and binary trees of [knuth-1997], the left-child right-sibling
-representation. A rose tree is a value together with the forest of its children, hence a value
-together with a binary tree, and rose trees over an encodable type are encodable.
+This file defines Knuth's natural correspondence between forests of rose trees and binary trees,
+and deduces that rose trees over an encodable type are encodable. The binary tree of a nonempty
+forest has the root of the first tree as its root, the binary tree of that tree's children as its
+left subtree and the binary tree of the remaining trees as its right subtree: this is the
+left-child right-sibling representation. A rose tree is its root value together with the forest of
+its children, hence a value together with a binary tree.
 
-## Main declarations
+## Main definitions
 
-* `BinaryTree.ofForest`, `BinaryTree.toForest`: the natural correspondence and its inverse,
-  bundled as `BinaryTree.equivForest`; `BinaryTree.cons` is the list cons transported along it.
-* `RoseTree.equivProdBinaryTree`: a rose tree is a value together with a binary tree.
+* `BinaryTree.ofForest`: the binary tree of a forest, with inverse `BinaryTree.toForest`, bundled
+  as `BinaryTree.equivForest`.
+* `RoseTree.equivProdBinaryTree`: a rose tree as a value together with a binary tree.
 * `RoseTree.encodable`, `RoseTree.countable`: the instances transported along it.
 
 ## Main results
 
-* `BinaryTree.numNodes_ofForest`, `BinaryTree.numNodes_cons`: the correspondence preserves the
-  number of nodes.
+* `BinaryTree.numNodes_ofForest`: the correspondence preserves the number of nodes.
+
+## References
+
+* [knuth-1997]
 -/
 
 @[expose] public section
@@ -40,20 +42,20 @@ variable {α : Type*}
 
 mutual
 
-/-- The natural correspondence sends a forest to the binary tree obtained by `cons`ing its
-trees, in order, onto `nil`. -/
+/-- The binary tree of a forest under the natural correspondence: `nil` for the empty forest,
+otherwise its first tree `cons`ed onto the binary tree of the rest. -/
 def ofForest : List (RoseTree α) → BinaryTree α
   | [] => nil
   | t :: rest => cons t (ofForest rest)
 
-/-- The list `cons` transported along the natural correspondence makes a tree a node whose left
-subtree is the forest of its children and whose right subtree is the rest of the forest. -/
+/-- `cons t r` is the binary tree of the forest `t :: toForest r`: a node with the root value of
+`t`, the binary tree of the children of `t` on the left and `r` on the right. -/
 def cons : RoseTree α → BinaryTree α → BinaryTree α
   | .node a cs, r => node a (ofForest cs) r
 
 end
 
-/-- The inverse of the natural correspondence `BinaryTree.ofForest`. -/
+/-- The forest of a binary tree, inverse to `BinaryTree.ofForest`. -/
 def toForest : BinaryTree α → List (RoseTree α)
   | nil => []
   | node a l r => RoseTree.node a (toForest l) :: toForest r
@@ -84,9 +86,7 @@ mutual
 end
 
 @[simp] theorem ofForest_toForest (t : BinaryTree α) : ofForest (toForest t) = t := by
-  induction t with
-  | nil => rfl
-  | node a l r hl hr => rw [toForest_node, ofForest_cons, cons_node, hl, hr]
+  induction t <;> simp [*]
 
 /-- The natural correspondence between binary trees and forests. -/
 @[simps] def equivForest : BinaryTree α ≃ List (RoseTree α) :=
