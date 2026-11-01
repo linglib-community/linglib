@@ -1,11 +1,12 @@
 # `Linglib/Data/` — typed datasets and example data
 
-Three sibling directories at this level:
+Sibling directories at this level:
 
 | Subdir | Purpose | Source format | Generated Lean |
 |---|---|---|---|
 | `Examples/` | Per-paper typed examples (`Datum` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
+| `Corpus/` | Per-paper corpus counts, the paper's own or those it cites, in the format of `Experiments/` | JSON, one file per paper | `Corpus/{AuthorYear}.lean` |
 | `Wordlist/` | Per-paper word forms, CLDF Wordlist and Paralex (`LexemeTable`, `CellTable`, `FormTable`; custom relation, paradigm, root-class and analysis tables) | JSON, one file per paper | `Wordlist/{AuthorYear}.lean` |
 | `StructureDataset/` | Per-paper CLDF language samples (`ContributionTable`, `LanguageTable`, `ParameterTable`, `CodeTable`, `ValueTable`) | JSON, one file per paper | `StructureDataset/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |

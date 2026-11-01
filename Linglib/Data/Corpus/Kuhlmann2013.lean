@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# Kuhlmann2013: experimental results (generated)
+# Kuhlmann2013: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/Kuhlmann2013.json` by `scripts/gen_experiments.py`.
+Auto-generated from `Linglib/Data/Corpus/Kuhlmann2013.json` by `scripts/gen_experiments.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
 The evaluation of sections 7.4 and 8.4: the lexicalized LCFRS rules extracted from the training

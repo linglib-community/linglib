@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# AbramskySadrzadeh2014: experimental results (generated)
+# AbramskySadrzadeh2014: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/AbramskySadrzadeh2014.json` by
+Auto-generated from `Linglib/Data/Corpus/AbramskySadrzadeh2014.json` by
 `scripts/gen_experiments.py`. Do not edit by hand: edit the JSON and re-run the generator.
 
 The corpus frequencies behind the paper's probabilistic anaphora example (John gave the bananas to

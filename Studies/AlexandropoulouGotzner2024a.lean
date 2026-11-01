@@ -4,88 +4,77 @@ public import Studies.Krifka2007b
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.AlexandropoulouGotzner2024a
 public import Linglib.Data.Examples.Readers
+public import Linglib.Data.Experiments.AlexandropoulouGotzner2024a
 
 /-!
 # Alexandropoulou and Gotzner (2024a): relative and absolute adjectives under negation
 
-Two rating experiments set Horn's face-based account of negative strengthening
-against Krifka's complexity-based one on three kinds of negated antonym pairs:
-weak relative (*not large* vs *not small*), weak absolute (*not clean* vs *not
-dirty*) and strong (*not gigantic* vs *not tiny*, *not pristine* vs *not
-filthy*). The accounts' applicability conditions differ — Horn needs a semantic
-extension gap, Krifka's M-principle needs semantically equivalent competitors —
-so the three cases pull them apart (the paper's Table 1).
+This file sets Horn's account of negative strengthening against Krifka's on antonymic adjectives
+under negation. On Horn's, *not large* is R-strengthened to its antonym *small* and *not small* is
+restricted to the semantic gap left by its simpler antonym *large*, an asymmetric pattern. On
+Krifka's, the M principle gives each negated form the non-stereotypical part of its co-extensive
+antonym's range, a symmetric pattern, unless *small* carries a covert negative morpheme, as
+Ruytenbeek, Verheyen and Spector's Negative Adjectives Complexity Hypothesis (NACH) has it, so that
+[*not small* deviates further](##deviation_eq_iff). Horn's account needs a semantic gap and
+Krifka's a co-extensive antonym, so [weak relative, weak absolute and strong pairs pull the two
+apart](##table1). Two rating experiments found [an asymmetry for the weak relative pair
+only](##finding_eq_asymmetric_iff), the pattern [Horn's account predicts](##horn_confirmed_on_weak)
+and [Krifka's does not, whatever the cost of the covert morpheme](##krifka_refuted).
 
-The predictions are computed from the mechanisms over the four surface forms:
-Horn's R-strengthening of the face-threatening negated positive and Q/R
-middling of the double negative (`hornRanges`), Krifka's BiOT quadruplet from
-`Krifka2007b` (`krifkaRanges`), and its NACH extension as a comparison of
-complexity deviations (`deviation`). The design's factors and the gap condition
-are read off the Fragment: strength from the extreme standards of *gigantic* and
-*pristine*, adjective type from the scale, and the gap from the standards. The
-reported findings — an asymmetry for
-weak relatives only — confirm Horn on the weak cases, refute both Krifka
-variants, and leave Horn's strong-adjective prediction unsupported.
+## Implementation notes
+
+* The paper's positive and negative adjectives are the evaluatively positive and negative ones.
+  On the four pairs used here they are the Fragment's positive and negative poles, which
+  `row_factors` checks on the stimuli. The paper itself orients the absolute scale by dirtiness,
+  with *dirty* the dimensionally positive pole; either orientation gives the same complementary
+  standards.
+* A cell of the design is represented by the pair of its example item, *gigantic* for the relative
+  adjectives and *pristine* for the absolute ones.
+* Communicated ranges are sets of Krifka's four regions of a scale. Horn's literal semantics is
+  contrary, the two border regions forming the semantic gap.
+* NACH is a complexity cost of the negative pole. The complexity on which Krifka's quadruplet is
+  computed already has that shape (`complexity_eq_cost`), yet weak optimality returns a symmetric
+  quadruplet, since it compares two pairs only when they share a form or an interpretation. NACH's
+  asymmetry is one of degree, the difference in stereotype deviation of the two negated forms.
+* A cell is interpreted asymmetrically when its Negation effect is significant at .05; the
+  marginal effect for strong absolute pairs counts as no asymmetry, as in the paper.
 
 ## References
 
 * [alexandropoulou-gotzner-2024a]
 * [horn-1989]
 * [krifka-2007b]
-* [ruytenbeek-etal-2017]
+* [ruytenbeek-verheyen-spector-2017]
+* [buring-2007]
 -/
 
 @[expose] public section
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree Krifka2007b English.Adjectives
+open Degree Krifka2007b English.Adjectives Data.Experiments
+
+variable {t : AdjectiveType} {s : Strength}
 
 /-! ### Design cells -/
 
-/-- A design cell pairs an adjective type with an informational strength; Table 1 pools the two
-strong cells. -/
-inductive Cell
-  | weakRelative
-  | weakAbsolute
-  | strongRelative
-  | strongAbsolute
-  deriving DecidableEq, Fintype
+/-- The antonym pair of a cell in the example items *gigantic* and *pristine* (Tables 2 and 3),
+its positive pole the evaluatively positive member. -/
+def pair : AdjectiveType → Strength → AntonymPair
+  | .relative, .weak => size
+  | .relative, .strong => extremeSize
+  | .absolute, .weak => cleanliness
+  | .absolute, .strong => pristineness
 
-/-- `c.pair` is the cell's antonym pair, whose positive pole is the evaluatively positive
-member. -/
-def Cell.pair : Cell → AntonymPair
-  | .weakRelative   => size
-  | .weakAbsolute   => cleanliness
-  | .strongRelative => extremeSize
-  | .strongAbsolute => pristineness
+theorem pair_standard_eq_extreme_iff : (pair t s).pos.standard = .extreme ↔ s = .strong := by
+  revert t s; decide
 
-/-- A cell is strong when its adjectives are extreme, with standards beyond the weak pair's. -/
-def Cell.IsStrong (c : Cell) : Prop := c.pair.pos.standard = .extreme
+theorem pair_isRelative_iff : (pair t s).pos.boundedness.IsRelative ↔ t = .relative := by
+  revert t s; decide
 
-instance : DecidablePred Cell.IsStrong :=
-  fun c ↦ inferInstanceAs (Decidable (c.pair.pos.standard = .extreme))
-
-/-- A cell is relative when its scale is, an open scale with no endpoint to fix a standard. -/
-def Cell.IsRelative (c : Cell) : Prop := c.pair.pos.boundedness.IsRelative
-
-instance : DecidablePred Cell.IsRelative :=
-  fun c ↦ inferInstanceAs (Decidable c.pair.pos.boundedness.IsRelative)
-
-/-- The pair leaves a semantic extension gap when its poles do not take complementary standards. -/
-def Cell.HasGap (c : Cell) : Prop := ¬ c.pair.ComplementaryStandards
-
-instance : DecidablePred Cell.HasGap :=
-  fun c ↦ inferInstanceAs (Decidable (¬ c.pair.ComplementaryStandards))
-
-theorem isStrong_iff (c : Cell) : c.IsStrong ↔ c = .strongRelative ∨ c = .strongAbsolute := by
-  cases c <;> decide
-
-theorem isRelative_iff (c : Cell) : c.IsRelative ↔ c = .weakRelative ∨ c = .strongRelative := by
-  cases c <;> decide
-
-theorem hasGap_iff (c : Cell) : c.HasGap ↔ c ≠ .weakAbsolute := by
-  cases c <;> decide
+theorem complementaryStandards_pair_iff :
+    (pair t s).ComplementaryStandards ↔ t = .absolute ∧ s = .weak := by
+  revert t s; decide
 
 /-! ### Communicated ranges -/
 
@@ -104,19 +93,27 @@ def Ranges.Symmetric (r : Ranges) : Prop := ∀ f, r f.flip = (r f).image Region
 
 instance (r : Ranges) : Decidable r.Symmetric := Fintype.decidableForallFintype
 
+/-- The interpretation pattern of a `Ranges`. -/
 def Ranges.asymmetry (r : Ranges) : Asymmetry :=
   if r.Symmetric then .symmetric else .asymmetric
 
-/-- Horn's ranges assume a semantic gap. The negated positive is R-strengthened to the
-    face-threatening antonym it conceals, while the prolix double negative is Q/R-restricted to the
-    gap the simpler positive could not describe. -/
-def hornRanges : Ranges
-  | .positive    => {.positive}
-  | .negative    => {.negative}
-  | .notPositive => {.negative}
-  | .notNegative => {.plateauLow, .plateauHigh}
+/-- Horn's literal semantics is contrary: each simple form leaves out the border regions, the
+semantic gap, and sentential negation is complement. -/
+def hornLiteral : AntonymForm → Finset Region
+  | .positive => {.positive}
+  | .negative => {.negative}
+  | .notPositive => {.positive}ᶜ
+  | .notNegative => {.negative}ᶜ
 
-/-- Krifka's ranges are the BiOT quadruplet of `Krifka2007b`. -/
+/-- Horn's ranges R-strengthen the negated positive to the antonym it conceals, a face-threatening
+statement, and Q/R-restrict the double negative to what its simpler antonym could not describe. -/
+def hornRanges : Ranges
+  | .notPositive => hornLiteral .negative
+  | .notNegative => hornLiteral .notNegative \ hornLiteral .positive
+  | f => hornLiteral f
+
+/-- Krifka's ranges are the quadruplet that weak optimality selects
+(`Krifka2007b.superoptimal_quadruplet`). -/
 def krifkaRanges : Ranges := fun f ↦ (krifkaQuadruplet.filter (·.1 = f)).image (·.2)
 
 theorem hornRanges_asymmetric : hornRanges.asymmetry = .asymmetric := by decide
@@ -125,98 +122,85 @@ theorem krifkaRanges_symmetric : krifkaRanges.asymmetry = .symmetric := by decid
 
 /-! ### The Negative Adjectives Complexity Hypothesis -/
 
-/-- `complexity nach f` is the complexity of the form `f` with (`true`) or without (`false`)
-    NACH. Under NACH the negative
-    adjective carries a covert negative morpheme, so *small* counts like *unhappy*;
-    without it the simple antonyms are equally simple and their negations equally
-    complex. -/
-def complexity : Bool → AntonymForm → ℕ
-  | true, f => f.complexity
-  | false, .positive | false, .negative => 0
-  | false, .notPositive | false, .notNegative => 3
+/-- The complexity of a form whose sentential negation costs `n` and whose negative pole costs `k`
+more than its positive pole, as the covert negative morpheme of [buring-2007] would under NACH
+([ruytenbeek-verheyen-spector-2017]); without NACH, `k = 0`. -/
+def cost (n k : ℕ) : AntonymForm → ℕ
+  | .positive => 0
+  | .negative => k
+  | .notPositive => n
+  | .notNegative => n + k
 
-/-- `simpleOf f` is the simple form co-extensive with `f` under bivalent semantics. -/
-def simpleOf : AntonymForm → AntonymForm
-  | .notPositive => .negative
-  | .notNegative => .positive
-  | f => f
+theorem complexity_eq_cost : AntonymForm.complexity = cost 3 2 := by
+  funext f; cases f <;> rfl
 
-/-- `deviation nach f` is the excess complexity of `f` over its co-extensive simple form, the
-    stereotype deviation the M-principle assigns it. -/
-def deviation (nach : Bool) (f : AntonymForm) : ℕ :=
-  complexity nach f - complexity nach (simpleOf f)
+/-- The stereotype deviation of a form is its excess complexity over the co-extensive simple form,
+which the M principle turns into a non-stereotypical reading. -/
+def deviation (n k : ℕ) (f : AntonymForm) : ℤ := cost n k f - cost n k (simple f)
 
-theorem deviation_nach :
-    deviation false .notPositive = deviation false .notNegative ∧
-    deviation true .notPositive < deviation true .notNegative := by
-  decide
+-- p. 378
+theorem deviation_eq_iff (n k : ℕ) :
+    deviation n k .notPositive = deviation n k .notNegative ↔ k = 0 := by
+  simp only [deviation, cost, simple]
+  omega
 
-/-! ### Table 1 -/
+/-! ### Predictions -/
 
-/-- `horn c` is Horn's prediction for a cell, made where a semantic gap makes the account
-applicable. -/
-def horn (c : Cell) : Option Asymmetry :=
-  if c.HasGap then some hornRanges.asymmetry else none
+/-- Horn's prediction for a cell, made where its pair leaves a semantic gap. -/
+def horn (t : AdjectiveType) (s : Strength) : Option Asymmetry :=
+  if (pair t s).ComplementaryStandards then none else some hornRanges.asymmetry
 
-/-- Krifka's account, with or without NACH, makes a prediction only for weak pairs, since the
-    M-principle needs semantically equivalent competitors, which only weak pairs provide (by
-    bivalence for relatives, by entailment for absolutes). -/
-def krifka (nach : Bool) (c : Cell) : Option Asymmetry :=
-  if c.IsStrong then none
-  else some (if deviation nach .notPositive = deviation nach .notNegative then .symmetric
+/-- Krifka's prediction for a cell, with negation cost `n` and negative-pole cost `k`. It is made
+where the negated forms have co-extensive simple antonyms, by bivalence for relative pairs and by
+entailment for absolute ones, which an extreme pair with its semantic gap lacks. Negated forms
+that deviate equally get Krifka's ranges, and unequal deviations an asymmetry. -/
+def krifka (n k : ℕ) (t : AdjectiveType) (s : Strength) : Option Asymmetry :=
+  if (pair t s).pos.standard = .extreme then none
+  else some (if deviation n k .notPositive = deviation n k .notNegative then krifkaRanges.asymmetry
     else .asymmetric)
 
-theorem table1_weakRelative :
-    horn .weakRelative = some .asymmetric ∧ krifka false .weakRelative = some .symmetric ∧
-    krifka true .weakRelative = some .asymmetric := by
-  decide
-
-theorem table1_weakAbsolute :
-    horn .weakAbsolute = none ∧ krifka false .weakAbsolute = some .symmetric ∧
-    krifka true .weakAbsolute = some .asymmetric := by
-  decide
-
-theorem table1_strong :
-    ∀ c : Cell, c.IsStrong →
-      horn c = some .asymmetric ∧ krifka false c = none ∧ krifka true c = none := by
-  decide
+/-- Table 1: Horn's account predicts an asymmetry except for the gapless weak absolute pairs, and
+Krifka's predicts symmetry without NACH and an asymmetry with it, for the weak pairs only. -/
+theorem table1 (t : AdjectiveType) (s : Strength) (n k : ℕ) :
+    horn t s = (if t = .absolute ∧ s = .weak then none else some .asymmetric) ∧
+      krifka n k t s =
+        if s = .strong then none else some (if k = 0 then .symmetric else .asymmetric) := by
+  simp only [horn, krifka, complementaryStandards_pair_iff, pair_standard_eq_extreme_iff,
+    deviation_eq_iff, hornRanges_asymmetric, krifkaRanges_symmetric, and_self]
 
 /-! ### Findings -/
 
-/-- `finding c` is the reported interpretation pattern of a cell. Experiment 1 found a Negation
-    effect for weak relatives (β = 0.64, p < .01) and none with strong as the reference level
-    (p = 0.86); Experiment 2 found none for weak absolutes (p = 0.17) and only a marginal one for
-    strong absolutes (p = 0.07). -/
-def finding : Cell → Asymmetry
-  | .weakRelative => .asymmetric
-  | _ => .symmetric
+/-- A cell is interpreted asymmetrically when its Negation effect is significant at .05. -/
+def finding (t : AdjectiveType) (s : Strength) : Asymmetry :=
+  if (negationEffect t s).p.Significant (1 / 20) then .asymmetric else .symmetric
 
-theorem horn_confirmed_on_weak :
-    ∀ c : Cell, ¬ c.IsStrong → ∀ p ∈ horn c, p = finding c := by
-  decide
+/-- Only the weak relative pairs were interpreted asymmetrically under negation (pp. 390–391). -/
+theorem finding_eq_asymmetric_iff : finding t s = .asymmetric ↔ t = .relative ∧ s = .weak := by
+  revert t s; decide +kernel
 
-theorem horn_unsupported_on_strong :
-    ∀ c : Cell, c.IsStrong → horn c ≠ some (finding c) := by
-  decide
+/-- Horn's account matches the pattern on both weak pairs, the contradictory absolute pair, to
+which it does not apply, being interpreted symmetrically (pp. 380, 393). -/
+theorem horn_confirmed_on_weak (t : AdjectiveType) :
+    (horn t .weak).getD .symmetric = finding t .weak := by
+  revert t; decide +kernel
 
-theorem krifka_refuted :
-    krifka false .weakRelative ≠ some (finding .weakRelative) ∧
-    krifka true .weakAbsolute ≠ some (finding .weakAbsolute) := by
-  decide
+-- p. 393
+theorem horn_unsupported_on_strong (t : AdjectiveType) :
+    horn t .strong ≠ some (finding t .strong) := by
+  revert t; decide +kernel
 
-theorem gap_precondition : ∀ c : Cell, finding c = .asymmetric → c.HasGap := by
-  decide
+/-- Whatever the cost of the negative pole, Krifka's account mispredicts one of the weak pairs
+(p. 393). -/
+theorem krifka_refuted (n k : ℕ) : ∃ t, krifka n k t .weak ≠ some (finding t .weak) := by
+  rcases eq_or_ne k 0 with rfl | hk
+  · exact ⟨.relative, by simp only [(table1 _ _ n 0).2]; decide +kernel⟩
+  · exact ⟨.absolute, by simp only [(table1 _ _ n k).2, hk]; decide +kernel⟩
+
+/-- An asymmetry arose only where the pair leaves a semantic gap (p. 393). -/
+theorem gap_precondition : finding t s = .asymmetric → ¬ (pair t s).ComplementaryStandards := by
+  revert t s; decide +kernel
 
 /-! ### Rows -/
-
-/-- `entryOf a` is the Fragment entry for the adjective `a` of the size and cleanliness
-items. -/
-def entryOf : String → Option GradableAdjective
-  | "large" => some large | "small" => some small
-  | "gigantic" => some gigantic | "tiny" => some tiny
-  | "clean" => some clean | "dirty" => some dirty
-  | "pristine" => some pristine | "filthy" => some filthy
-  | _ => none
 
 /-- `formOf row` is the surface form of a statement row, read off its polarity and negation
 conditions. -/
@@ -229,9 +213,10 @@ def formOf (row : Datum) : Option AntonymForm :=
   | _, _ => none
 
 theorem row_factors :
-    ∀ row ∈ Examples.all, ∀ a ∈ (row.feature? "adjective").bind entryOf,
+    ∀ row ∈ Examples.all, ∀ a ∈ (row.feature? "adjective").bind lookup,
       (row.feature? "strength" = some "strong" ↔ a.standard = .extreme) ∧
-        (row.feature? "adjectiveType" = some "relative" ↔ a.boundedness.IsRelative) := by
+        (row.feature? "adjectiveType" = some "relative" ↔ a.boundedness.IsRelative) ∧
+        (row.feature? "polarity" = some "positive" ↔ a.polarity = .positive) := by
   decide
 
 theorem negated_iff_not :

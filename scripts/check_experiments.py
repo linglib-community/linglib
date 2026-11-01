@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Recompute printed experimental results from the authors' released data.
 
-A paper whose tables in `Linglib/Data/Experiments/<Paper>.json` are marked
+A paper whose tables in `Linglib/Data/Experiments/<Paper>.json` or `Linglib/Data/Corpus/<Paper>.json`
+are marked
 `verified: raw-data` has a recompute module `scripts/experiments/<Paper>.py`
 defining
 
@@ -27,7 +28,7 @@ from decimal import Decimal
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "Linglib" / "Data" / "Experiments"
+DATA_DIRS = [ROOT / "Linglib" / "Data" / k for k in ("Experiments", "Corpus")]
 MODULES = ROOT / "scripts" / "experiments"
 CACHE = ROOT / "scratch" / "experiment-data"
 
@@ -60,7 +61,8 @@ def check(paper: str) -> bool:
     spec = importlib.util.spec_from_file_location(paper, MODULES / f"{paper}.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    doc = json.loads((DATA_DIR / f"{paper}.json").read_text(encoding="utf-8"))
+    src = next(d / f"{paper}.json" for d in DATA_DIRS if (d / f"{paper}.json").exists())
+    doc = json.loads(src.read_text(encoding="utf-8"))
     tables = {tb["name"]: tb for tb in doc["tables"]}
     got = mod.recompute(fetch(paper, mod.SOURCES))
     ok = True

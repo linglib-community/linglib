@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# ODonnell2015: experimental results (generated)
+# ODonnell2015: corpus counts (generated)
 
-Auto-generated from `Linglib/Data/Experiments/ODonnell2015.json` by `scripts/gen_experiments.py`.
+Auto-generated from `Linglib/Data/Corpus/ODonnell2015.json` by `scripts/gen_experiments.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
 O'Donnell's counts for the nominalizers *-ness*:Adj>N and *-ion*:V>N in the CELEX-derived training
