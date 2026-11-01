@@ -104,6 +104,7 @@ def table : Noun := .common "table"
 def squirrel : Noun := .common "squirrel"
 def kitchen : Noun := .common "kitchen"
 def story : Noun := .common "story"
+def picture : Noun := .common "picture"
 def lawyer : Noun := .common "lawyer"
 def student : Noun := .common "student"
 def teacher : Noun := .common "teacher"
@@ -144,10 +145,10 @@ def mold : Noun := .mass "mold"
 
 /-- The common nouns. -/
 def nouns : List Noun :=
-  [pizza, year, book, cat, dog, girl, boy, ball, table, squirrel, kitchen, story, lawyer, student,
-    teacher, soldier, horse, brother, spy, idea, lot, bean, lentil, spider, pollenGrain, father,
-    mother, man, woman, fireman, person, child, water, sand, trash, furniture, rice, gold, air,
-    wine, coffee, beer, milk, tea, pollen, mold]
+  [pizza, year, book, cat, dog, girl, boy, ball, table, squirrel, kitchen, story, picture, lawyer,
+    student, teacher, soldier, horse, brother, spy, idea, lot, bean, lentil, spider, pollenGrain,
+    father, mother, man, woman, fireman, person, child, water, sand, trash, furniture, rice, gold,
+    air, wine, coffee, beer, milk, tea, pollen, mold]
 
 /-! ### Proper names -/
 

@@ -142,6 +142,24 @@ theorem paradigm_speakerAddressee : paradigm .speakerAddressee = paradigm .speak
 theorem paradigm_others_subset : paradigm .others ⊆ paradigm .other := by
   decide +kernel
 
+/-! ### Genitive pronouns
+
+The genitive forms are pronouns, the subjects of the noun phrases they introduce, as Universal
+Dependencies tags them; `English.Determiners.my` records *my* as a determiner instead. -/
+
+/-- The first person singular genitive *my*. -/
+def my : PersonalPronoun :=
+  { form := "my", person := some .first, number := some .singular, cases := {.gen} }
+
+/-- The third person singular masculine genitive *his*. -/
+def his : PersonalPronoun :=
+  { form := "his", person := some .third, number := some .singular, cases := {.gen},
+    gender := some .Masc }
+
+/-- The third person plural genitive *their*. -/
+def their : PersonalPronoun :=
+  { form := "their", person := some .third, number := some .plural, cases := {.gen} }
+
 /-! ### Reflexive pronouns -/
 
 /-- The reflexive of a personal pronoun, with its person, number and gender. -/

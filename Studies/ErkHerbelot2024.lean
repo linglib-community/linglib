@@ -35,8 +35,9 @@ STAR-SUN, the conflict of Figure 6.
 
 ## Implementation notes
 
-* The Dirichlet prior on the scenario mix is integrated out into the Pólya-urn law of the
-  per-node scenario draws, `polyaUrn`.
+* The Dirichlet prior on the scenario mix is
+  [integrated out](##ProbabilityTheory.polyaUrn_singleton_eq_lintegral_dirichlet) into the
+  Pólya-urn law of the per-node scenario draws, `polyaUrn`.
 * Ingredients the paper leaves unspecified are set as follows: HOLD-AGENT and MARRY-AGENT get
   the same constraint as the corresponding theme role, and both cancel since the agent concept
   is observed; MARRY-THEME gives MARRY itself weight `0`, the three stated values already summing
@@ -315,7 +316,7 @@ private theorem uniformOn_real_preimage {C L : Type*} [MeasurableSpace C]
   uniformOn_finset_real_setOf A (f · = y)
 
 private theorem countVec_vecCons {S : Type*} [DecidableEq S] {N : ℕ} (c : S) (seq : Fin N → S) :
-    countVec (Matrix.vecCons c seq) = Function.update (countVec seq) c (countVec seq c + 1) :=
+    countVec (Matrix.vecCons c seq) = countVec seq + Pi.single c 1 :=
   countVec_cons c seq
 
 private theorem polyaUrnProb_countVec_vecCons {S : Type*} [Fintype S] [DecidableEq S]
@@ -354,7 +355,7 @@ private theorem bat_den (α : ℝ) (hα : 0 < α) :
     uniformOn_real_preimage,
     bat_cards, bat_cards_den]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
-    polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
+    polyaUrnPredictive, Pi.zero_apply, Pi.add_apply, Pi.single_apply,
     sum_batScenario, ↓reduceIte]
   push_cast
   field_simp
@@ -371,7 +372,7 @@ private theorem bat_num (α : ℝ) (hα : 0 < α) :
     polyaUrnProb_countVec_vecCons, false_implies, true_implies, and_true,
     uniformOn_finset_real_setOf, bat_cards, bat_cards_num]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
-    polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
+    polyaUrnPredictive, Pi.zero_apply, Pi.add_apply, Pi.single_apply,
     sum_batScenario, ↓reduceIte]
   push_cast
   field_simp
@@ -540,7 +541,7 @@ private theorem star_den (α : ℝ) (hα : 0 < α) :
     Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_prior, polyaUrnProb_countVec_vecCons,
     Set.preimage_singleton, starSDS_poe_real, uniformOn_finset_real_setOf, star_cards]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
-    polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
+    polyaUrnPredictive, Pi.zero_apply, Pi.add_apply, Pi.single_apply,
     sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,
     marryFiller, star_cards, ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast,
     ENNReal.toReal_div, ENNReal.toReal_ofNat, ENNReal.toReal_one, ENNReal.toReal_zero,
@@ -560,7 +561,7 @@ private theorem star_num (α : ℝ) (hα : 0 < α) :
     false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_finset_real_setOf,
     star_cards]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
-    polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
+    polyaUrnPredictive, Pi.zero_apply, Pi.add_apply, Pi.single_apply,
     sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,
     marryFiller, star_cards, ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast,
     ENNReal.toReal_div, ENNReal.toReal_ofNat, ENNReal.toReal_one, ENNReal.toReal_zero,
@@ -580,7 +581,7 @@ private theorem star_num_sun (α : ℝ) (hα : 0 < α) :
     false_implies, true_implies, and_true, starSDS_poe_real, uniformOn_finset_real_setOf,
     star_cards]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
-    polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
+    polyaUrnPredictive, Pi.zero_apply, Pi.add_apply, Pi.single_apply,
     sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,
     marryFiller, star_cards, ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_natCast,
     ENNReal.toReal_div, ENNReal.toReal_ofNat, ENNReal.toReal_one, ENNReal.toReal_zero,
