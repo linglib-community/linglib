@@ -25,11 +25,13 @@ anaphor is exempt. An indexing is licit when coindexed noun phrases agree in φ-
 and it satisfies the three principles, and a tree is grammatical when some indexing is licit.
 
 Since nothing is exempt, an anaphor that nothing in its clause c-commands is out under every
-indexing, which excludes an anaphoric subject. For two noun phrases coindexed with each other
-alone, Principle C is Reinhart's restriction (10b) read with c-command. The textbook paradigm
-checks the instance: a reflexive object must corefer with its subject and agree with it, a
-pronominal object cannot corefer with it, locality separates the two in an embedded clause, and
-an R-expression cannot corefer with a c-commanding pronoun at any distance.
+indexing, which excludes an anaphoric subject. Since one domain serves Principles A and B, an
+anaphor and a pronominal are predicted to be in complementary distribution, a prediction the book
+itself finds to fail for possessive pronouns. For two noun phrases coindexed with each other alone,
+Principle C is Reinhart's restriction (10b) read with c-command. The textbook paradigm checks the
+instance: a reflexive object must corefer with its subject and agree with it, a pronominal object
+cannot corefer with it, locality separates the two in an embedded clause, and an R-expression cannot
+corefer with a c-commanding pronoun at any distance.
 
 ## Main definitions
 
@@ -38,15 +40,18 @@ an R-expression cannot corefer with a c-commanding pronoun at any distance.
 
 ## Implementation notes
 
-A one-word noun phrase is a terminal of category `NP`, and the positions are those terminals.
+A one-word noun phrase is a terminal of category `N`, and the positions are those terminals.
 The governing category is approximated by the minimal clause: the governor and the accessible
 subject that refine it are not modelled, nor are noun phrases with subjects. Indexings range
-over maps from the noun phrases to themselves, which realize every partition of them.
+over maps from the noun phrases to themselves, which realize every partition of them. Page
+numbers are those of the seventh edition (1993).
 
 ## TODO
 
-The paradigm is the textbook one; check each sentence against Chapter 3 of the book, which was
-not available, and move the verified ones to `Data/Examples`.
+The paradigm is a textbook one, and none of its sentences is in chapter 3 of the book. Replace it
+with the chapter's own examples as `Data/Examples` rows, among them the possessive pair, *John
+read his book* and *they read each other's books*, on which the predicted complementary
+distribution fails.
 
 ## References
 
@@ -123,6 +128,15 @@ theorem not_grammatical_of_not_locallyCommanded {b : Nominal t} {c : BindingClas
     (hb : classOf b = some c) (hc : c.IsAnaphor)
     (hl : ¬ (configuration t).LocallyCommanded b) : ¬ Grammatical t :=
   fun ⟨_, _, h⟩ ↦ hl ((Configuration.condition_empty_iff hc).1 (h b c hb)).2
+
+/-! ### Complementary distribution -/
+
+/-- The minimal clause being the domain of both principles, an anaphor meets Principle A exactly
+where a pronominal in its place would violate Principle B, under any indexing ((12), p. 188). -/
+theorem condition_iff_not_condition_pronoun {b : Nominal t} {c : BindingClass} (hc : c.IsAnaphor)
+    (L : Nominal t → Nominal t → Prop) :
+    (configuration t).Condition L ∅ b c ↔ ¬ (configuration t).Condition L ∅ b .pronoun :=
+  Configuration.condition_iff_not_condition_pronoun hc (Set.notMem_empty b) rfl
 
 /-! ### Principle C and Reinhart's restriction -/
 
