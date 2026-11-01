@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.CompleteLattice.Basic
 
 /-!
 # Anti-additive and anti-multiplicative maps
@@ -20,6 +21,9 @@ anti-multiplicative and exchange `⊥` with `⊤`.
 
 ## Main statements
 
+* `NaturalLogic.IsAntiAdditive.comp_map_sup`, `NaturalLogic.IsAntiAdditive.map_inf_comp`,
+  `NaturalLogic.isAntiAdditive_iInf`: closure under composition with join- and meet-preserving
+  maps and under pointwise infima.
 * `NaturalLogic.isAntiAdditive_compl`: complementation in a Heyting algebra is anti-additive.
 * `NaturalLogic.IsAntiAdditive.map_compl_iff`: an anti-additive map between Boolean algebras
   commutes with complementation iff it is anti-multiplicative and exchanges `⊥` with `⊤`.
@@ -27,7 +31,8 @@ anti-multiplicative and exchange `⊥` with `⊤`.
 ## Implementation notes
 
 Zwarts and Icard state the definitions for maps between Boolean algebras; only the join and the
-meet are needed.
+meet are needed. Anti-multiplicativity and its lemmas are generated from anti-additivity by
+`to_dual`.
 
 ## References
 
@@ -39,27 +44,37 @@ meet are needed.
 
 namespace NaturalLogic
 
-variable {α β : Type*}
-
-section Semilattice
+variable {α β γ : Type*}
 
 /-- A map is anti-additive if it sends joins to meets ([zwarts-1998] (107)). -/
-def IsAntiAdditive [SemilatticeSup α] [SemilatticeInf β] (f : α → β) : Prop :=
+@[to_dual IsAntiMultiplicative
+  /-- A map is anti-multiplicative if it sends meets to joins ([icard-2012] Definition 1.7). -/]
+def IsAntiAdditive [Max α] [Min β] (f : α → β) : Prop :=
   ∀ p q, f (p ⊔ q) = f p ⊓ f q
 
-/-- A map is anti-multiplicative if it sends meets to joins ([icard-2012] Definition 1.7). -/
-def IsAntiMultiplicative [SemilatticeInf α] [SemilatticeSup β] (f : α → β) : Prop :=
-  ∀ p q, f (p ⊓ q) = f p ⊔ f q
-
+@[to_dual]
 theorem IsAntiAdditive.antitone [SemilatticeSup α] [SemilatticeInf β] {f : α → β}
     (h : IsAntiAdditive f) : Antitone f :=
   Monotone.of_map_sup (β := βᵒᵈ) h
 
-theorem IsAntiMultiplicative.antitone [SemilatticeInf α] [SemilatticeSup β] {f : α → β}
-    (h : IsAntiMultiplicative f) : Antitone f :=
-  Monotone.of_map_inf (β := βᵒᵈ) h
+/-! ### Closure -/
 
-end Semilattice
+@[to_dual]
+theorem IsAntiAdditive.comp_map_sup [Max α] [Min β] [Max γ] {f : α → β} {g : γ → α}
+    (hf : IsAntiAdditive f) (hg : ∀ a b, g (a ⊔ b) = g a ⊔ g b) : IsAntiAdditive (f ∘ g) :=
+  fun p q ↦ (congrArg f (hg p q)).trans (hf _ _)
+
+@[to_dual]
+theorem IsAntiAdditive.map_inf_comp [Max α] [Min β] [Min γ] {f : α → β} {g : β → γ}
+    (hf : IsAntiAdditive f) (hg : ∀ a b, g (a ⊓ b) = g a ⊓ g b) : IsAntiAdditive (g ∘ f) :=
+  fun p q ↦ (congrArg g (hf p q)).trans (hg _ _)
+
+/-- Anti-additive maps are closed under pointwise infima, generalizing the binary case of
+[icard-2012] Lemma 1.12. -/
+@[to_dual isAntiMultiplicative_iSup]
+theorem isAntiAdditive_iInf {ι : Sort*} [Max α] [CompleteLattice β] {f : ι → α → β}
+    (h : ∀ i, IsAntiAdditive (f i)) : IsAntiAdditive fun a ↦ ⨅ i, f i a :=
+  fun p q ↦ (iInf_congr fun i ↦ h i p q).trans iInf_inf_eq
 
 /-! ### Complementation -/
 
@@ -87,7 +102,7 @@ theorem IsAntiAdditive.map_compl_iff [BooleanAlgebra α] [BooleanAlgebra β] {f 
 
 section Set
 
-variable {γ δ : Type*}
+variable {δ : Type*}
 
 theorem isAntiAdditive_iff_mem {f : Set γ → Set δ} :
     IsAntiAdditive f ↔ ∀ p q x, x ∈ f (p ∪ q) ↔ x ∈ f p ∧ x ∈ f q := by

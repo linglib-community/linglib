@@ -112,14 +112,15 @@ theorem nrp_self_eq_neg_one_iff :
 successors of a world, as a function on propositions. -/
 def every (R : SetRel W W) (s : Set W) : Set W := {w | (∃ u, w ~[R] u) ∧ □[R] (· ∈ s) w}
 
+theorem every_inter (R : SetRel W W) (p q : Set W) : every R (p ∩ q) = every R p ∩ every R q := by
+  ext w
+  simp only [every, Set.mem_ofPred_eq, Set.mem_inter_iff, box_and]
+  tauto
+
 -- (92a)
 theorem isAntiAdditive_every {V : Type*} {g : Set V → Set W} (hg : IsAntiAdditive g) :
-    IsAntiAdditive (every R ∘ g) := by
-  rw [isAntiAdditive_iff_mem] at hg ⊢
-  intro p q x
-  simp only [Function.comp_apply, every, Box, Set.mem_ofPred_eq, hg]
-  exact ⟨fun ⟨hne, h⟩ ↦ ⟨⟨hne, fun u hu ↦ (h u hu).1⟩, hne, fun u hu ↦ (h u hu).2⟩,
-    fun ⟨⟨hne, h₁⟩, _, h₂⟩ ↦ ⟨hne, fun u hu ↦ ⟨h₁ u hu, h₂ u hu⟩⟩⟩
+    IsAntiAdditive (every R ∘ g) :=
+  hg.map_inf_comp (every_inter R)
 
 open Classical in
 /-- The environment of a negated neg-raising predicate. -/
@@ -165,14 +166,9 @@ def negExistential (R : SetRel W W) (p : Set W) : Set W := {w | ¬ ◇[R] (· �
 
 -- (51a), (52), (71)
 theorem isAntiAdditive_negExistential (R : SetRel W W) :
-    IsAntiAdditive (negExistential R) := by
-  rw [isAntiAdditive_iff_mem]
-  intro p q x
-  simp only [negExistential, Diamond, Set.mem_ofPred_eq, Set.mem_union]
-  refine ⟨fun h ↦ ⟨fun ⟨u, hu, hp⟩ ↦ h ⟨u, hu, .inl hp⟩, fun ⟨u, hu, hq⟩ ↦ h ⟨u, hu, .inr hq⟩⟩,
-    ?_⟩
-  rintro ⟨h₁, h₂⟩ ⟨u, hu, hp | hq⟩
-  exacts [h₁ ⟨u, hu, hp⟩, h₂ ⟨u, hu, hq⟩]
+    IsAntiAdditive (negExistential R) :=
+  isAntiAdditive_compl.comp_map_sup (g := fun p : Set W ↦ {w | ◇[R] (· ∈ p) w})
+    fun _ _ ↦ diamond_sup R
 
 open Classical in
 /-- The environment of a neg-raising predicate under stressed negation, where the assertion
@@ -224,12 +220,10 @@ theorem noOneNR_eq {E : Type*} (O : Set E) (B : E → SetRel W W) (p : Set W) :
 /-- *No one thinks* is anti-additive (90). -/
 theorem isAntiAdditive_noOneNR {E : Type*} (O : Set E) (B : E → SetRel W W) :
     IsAntiAdditive (noOneNR O B) := by
-  have hB x := isAntiAdditive_iff_mem.1 (isAntiAdditive_every (R := B x) isAntiAdditive_compl)
-  rw [isAntiAdditive_iff_mem]
-  intro p q w
-  simp only [noOneNR_eq, Set.mem_ofPred_eq]
-  exact ⟨fun h ↦ ⟨fun x hx ↦ ((hB x p q w).1 (h x hx)).1, fun x hx ↦ ((hB x p q w).1 (h x hx)).2⟩,
-    fun ⟨h₁, h₂⟩ x hx ↦ (hB x p q w).2 ⟨h₁ x hx, h₂ x hx⟩⟩
+  rw [show noOneNR O B = fun p ↦ ⋂ x ∈ O, every (B x) pᶜ from
+    funext fun p ↦ by rw [noOneNR_eq]; ext; simp]
+  exact isAntiAdditive_iInf fun _ ↦ isAntiAdditive_iInf fun _ ↦
+    isAntiAdditive_every isAntiAdditive_compl
 
 /-! ### Stacked neg-raising predicates (§3.2–3.3) -/
 
