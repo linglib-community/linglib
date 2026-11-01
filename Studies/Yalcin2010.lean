@@ -396,35 +396,35 @@ section Probability
 
 variable {W : Type*} [MeasurableSpace W] (P : Measure W)
 
-theorem prob_V1 : ProbablyToNotProbablyNot P.inducedGe := probablyToNotProbablyNot
+theorem prob_V1 : ProbablyToNotProbablyNot (inducedGe P) := probablyToNotProbablyNot
 
 variable [DiscreteMeasurableSpace W] [IsProbabilityMeasure P]
 
-theorem prob_V2 : ProbablyDistribInf P.inducedGe := probablyDistribInf
-theorem prob_V3 : ChancyDisjunctionIntro P.inducedGe := chancyDisjunctionIntro
-theorem prob_V4 : Minimality P.inducedGe := minimality
-theorem prob_V5 : Maximality P.inducedGe := maximality
+theorem prob_V2 : ProbablyDistribInf (inducedGe P) := probablyDistribInf
+theorem prob_V3 : ChancyDisjunctionIntro (inducedGe P) := chancyDisjunctionIntro
+theorem prob_V4 : Minimality (inducedGe P) := minimality
+theorem prob_V5 : Maximality (inducedGe P) := maximality
 
-theorem prob_V6 : MustToProbably P.inducedGe (· = Set.univ) := mustToProbably
+theorem prob_V6 : MustToProbably (inducedGe P) (· = Set.univ) := mustToProbably
 
-theorem prob_V7 : ProbablyToMight P.inducedGe Set.Nonempty :=
+theorem prob_V7 : ProbablyToMight (inducedGe P) Set.Nonempty :=
   fun A hA ↦ Set.nonempty_iff_ne_empty.2 (probablyToMight A hA)
 
-theorem prob_V8 : ChancyModusPonens P.inducedGe (· ⊆ ·) := chancyModusPonens_le
-theorem prob_V9 : ChancyModusTollens P.inducedGe (· ⊆ ·) := chancyModusTollens_le
-theorem prob_V10 : ConditionalToComparative P.inducedGe (· ⊆ ·) := conditionalToComparative_le
-theorem prob_V11 : PositiveFormTransfer P.inducedGe := positiveFormTransfer
-theorem prob_V12 : ComplementTransfer P.inducedGe := complementTransfer
+theorem prob_V8 : ChancyModusPonens (inducedGe P) (· ⊆ ·) := chancyModusPonens_le
+theorem prob_V9 : ChancyModusTollens (inducedGe P) (· ⊆ ·) := chancyModusTollens_le
+theorem prob_V10 : ConditionalToComparative (inducedGe P) (· ⊆ ·) := conditionalToComparative_le
+theorem prob_V11 : PositiveFormTransfer (inducedGe P) := positiveFormTransfer
+theorem prob_V12 : ComplementTransfer (inducedGe P) := complementTransfer
 
 end Probability
 
 private theorem uniform_inducedGe_iff {n : ℕ} [NeZero n] {A B : Set (Fin n)} :
-    (uniformOn (Set.univ : Set (Fin n))).inducedGe A B ↔ B.ncard ≤ A.ncard :=
+    inducedGe (uniformOn (Set.univ : Set (Fin n))) A B ↔ B.ncard ≤ A.ncard :=
   uniformOn_univ_le_iff
 
 theorem prob_refutes_I1_I2 :
-    ¬RightUnion (uniformOn (Set.univ : Set (Fin 2))).inducedGe ∧
-      ¬EquiprobabilityCollapse (uniformOn (Set.univ : Set (Fin 2))).inducedGe := by
+    ¬RightUnion (inducedGe (uniformOn (Set.univ : Set (Fin 2)))) ∧
+      ¬EquiprobabilityCollapse (inducedGe (uniformOn (Set.univ : Set (Fin 2)))) := by
   have hc : ({0} : Set (Fin 2))ᶜ = {1} := by ext x; fin_cases x <;> simp
   have hu : ({1} : Set (Fin 2)) ⊔ {0} = Set.univ := by ext x; fin_cases x <;> simp
   constructor
@@ -437,7 +437,7 @@ theorem prob_refutes_I1_I2 :
     rw [uniform_inducedGe_iff] at this
     simp at this
 
-theorem prob_refutes_I3 : ¬HamblinCollapse (uniformOn (Set.univ : Set (Fin 3))).inducedGe := by
+theorem prob_refutes_I3 : ¬HamblinCollapse (inducedGe (uniformOn (Set.univ : Set (Fin 3)))) := by
   intro h
   have hA : ({0, 1} : Set (Fin 3)).ncard = 2 := Set.ncard_pair (by decide)
   have hc : ({0, 1} : Set (Fin 3))ᶜ = {2} := by ext x; fin_cases x <;> simp
@@ -447,12 +447,12 @@ theorem prob_refutes_I3 : ¬HamblinCollapse (uniformOn (Set.univ : Set (Fin 3)))
   simp at this
 
 -- §4
-theorem prob_refutes_E1 : ¬Conjunctivitis (uniformOn (Set.univ : Set (Fin 12))).inducedGe := by
+theorem prob_refutes_E1 : ¬Conjunctivitis (inducedGe (uniformOn (Set.univ : Set (Fin 12)))) := by
   intro h
   have hcard : ∀ A : Set (Fin 12), A.ncard + Aᶜ.ncard = 12 := fun A ↦ by
     rw [Set.ncard_add_ncard_compl, Nat.card_eq_fintype_card, Fintype.card_fin]
   have hprob : ∀ A : Set (Fin 12), 6 < A.ncard →
-      Probably (uniformOn (Set.univ : Set (Fin 12))).inducedGe A := fun A hA ↦ by
+      Probably (inducedGe (uniformOn (Set.univ : Set (Fin 12)))) A := fun A hA ↦ by
     have := hcard A
     exact ⟨uniform_inducedGe_iff.2 (by omega), fun h ↦ by rw [uniform_inducedGe_iff] at h; omega⟩
   have hlow : ({n : Fin 12 | n.val < 8} : Set (Fin 12)).ncard = 8 := by

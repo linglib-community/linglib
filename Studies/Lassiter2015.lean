@@ -73,7 +73,7 @@ def wins (s : Set ℕ) : Set Ticket := holder ⁻¹' s
 /-- The fair lottery draws every ticket with the same probability. -/
 noncomputable abbrev lottery : Measure Ticket := uniformOn Set.univ
 
-theorem lottery_inducedGe_iff {A B : Set Ticket} : lottery.inducedGe A B ↔ B.ncard ≤ A.ncard :=
+theorem lottery_inducedGe_iff {A B : Set Ticket} : inducedGe lottery A B ↔ B.ncard ≤ A.ncard :=
   uniformOn_univ_le_iff
 
 theorem ncard_wins_zero : (wins {0}).ncard = 2 := by
@@ -104,35 +104,35 @@ theorem ncard_wins_one_two : (wins {1, 2}).ncard = 4 := by
 
 theorem exists_holder_ne : ∃ t, holder t ≠ 0 := ⟨⟨2, by norm_num⟩, by decide⟩
 
-theorem lottery_four : ∀ n ≠ 0, lottery.inducedGe (wins {0}) (wins {n}) := fun n _ ↦
+theorem lottery_four : ∀ n ≠ 0, inducedGe lottery (wins {0}) (wins {n}) := fun n _ ↦
   lottery_inducedGe_iff.2 (ncard_wins_zero ▸ ncard_wins_le n)
 
-theorem lottery_not_nine : ¬lottery.inducedGe (wins {0}) (wins {1, 2}) := by
+theorem lottery_not_nine : ¬inducedGe lottery (wins {0}) (wins {1, 2}) := by
   rw [lottery_inducedGe_iff, ncard_wins_zero, ncard_wins_one_two]
   omega
 
-theorem lottery_not_fourteen : ¬lottery.inducedGe (wins {0}) (wins {0})ᶜ := by
+theorem lottery_not_fourteen : ¬inducedGe lottery (wins {0}) (wins {0})ᶜ := by
   rw [lottery_inducedGe_iff, Set.ncard_compl, ncard_wins_zero]
   simp
 
 /-- The fair lottery makes (4) and the conjunctive reading of (5) true, and (2b), (8), (9), (12)
 and (33c) false. -/
 theorem lottery_rows :
-    (lottery.inducedGe (wins {0}) (wins {0})ᶜ ↔
+    (inducedGe lottery (wins {0}) (wins {0})ᶜ ↔
       Examples.ex2b.feature? "truthValue" = some "true") ∧
-    ((∀ n ≠ 0, lottery.inducedGe (wins {0}) (wins {n})) ↔
+    ((∀ n ≠ 0, inducedGe lottery (wins {0}) (wins {n})) ↔
       Examples.ex4.feature? "truthValue" = some "true") ∧
-    (lottery.inducedGe (wins {0}) (wins {1}) ∧ lottery.inducedGe (wins {0}) (wins {2}) ↔
+    (inducedGe lottery (wins {0}) (wins {1}) ∧ inducedGe lottery (wins {0}) (wins {2}) ↔
       Examples.ex5.feature? "truthValue" = some "true") ∧
-    (lottery.inducedGe (wins {0}) (wins {1, 2}) ↔
+    (inducedGe lottery (wins {0}) (wins {1, 2}) ↔
       Examples.ex8.feature? "truthValue" = some "true") ∧
-    (lottery.inducedGe (wins {0}) (wins {1, 2}) ↔
+    (inducedGe lottery (wins {0}) (wins {1, 2}) ↔
       Examples.ex9.feature? "truthValue" = some "true") ∧
-    (lottery.inducedGe (wins {0}) (wins (Set.Icc 1 7)) ↔
+    (inducedGe lottery (wins {0}) (wins (Set.Icc 1 7)) ↔
       Examples.ex12.feature? "truthValue" = some "true") ∧
-    (lottery.inducedGe (wins {0}) (wins {1, 2}) ↔
+    (inducedGe lottery (wins {0}) (wins {1, 2}) ↔
       Examples.ex33c.feature? "truthValue" = some "true") := by
-  have h12 : ¬lottery.inducedGe (wins {0}) (wins (Set.Icc 1 7)) := fun h ↦
+  have h12 : ¬inducedGe lottery (wins {0}) (wins (Set.Icc 1 7)) := fun h ↦
     lottery_not_nine ((lottery_inducedGe_iff.2 (Set.ncard_le_ncard fun t ht ↦ by
       simp only [wins, holder, Set.mem_preimage, Set.mem_insert_iff, Set.mem_singleton_iff,
         Set.mem_Icc] at ht ⊢
@@ -291,13 +291,13 @@ theorem peaked_real (A : Set (Fin 3)) :
     peaked.real A = ∑ i, A.indicator ![6 / 10, 2 / 10, 2 / 10] i :=
   Measure.sum_ofReal_smul_dirac_real_apply peaked_nonneg A
 
-theorem skewed_agrees : (premisePreorder (onlyBest 0)).le = (skewed.inducedGe on fun u ↦ {u}) :=
+theorem skewed_agrees : (premisePreorder (onlyBest 0)).le = (inducedGe skewed on fun u ↦ {u}) :=
   funext₂ fun u v ↦ propext <| by
     rw [Function.onFun, Measure.inducedGe_iff_real, skewed_real, skewed_real]
     rw [onlyBest_le]
     fin_cases u <;> fin_cases v <;> simp <;> norm_num
 
-theorem peaked_agrees : (premisePreorder (onlyBest 0)).le = (peaked.inducedGe on fun u ↦ {u}) :=
+theorem peaked_agrees : (premisePreorder (onlyBest 0)).le = (inducedGe peaked on fun u ↦ {u}) :=
   funext₂ fun u v ↦ propext <| by
     rw [Function.onFun, Measure.inducedGe_iff_real, peaked_real, peaked_real]
     rw [onlyBest_le]
@@ -307,7 +307,7 @@ theorem peaked_agrees : (premisePreorder (onlyBest 0)).le = (peaked.inducedGe on
 of every probability measure agreeing with it on singletons (p. 662). -/
 theorem not_exists_lift :
     ¬∃ ge : Set (Fin 3) → Set (Fin 3) → Prop, ∀ P : Measure (Fin 3), IsProbabilityMeasure P →
-      (premisePreorder (onlyBest 0)).le = (P.inducedGe on fun u ↦ {u}) → P.inducedGe = ge := by
+      (premisePreorder (onlyBest 0)).le = (inducedGe P on fun u ↦ {u}) → inducedGe P = ge := by
   rintro ⟨ge, h⟩
   have := congrFun₂ ((h skewed inferInstance skewed_agrees).trans
     (h peaked inferInstance peaked_agrees).symm) {0} {1, 2}
@@ -333,10 +333,10 @@ theorem mLift_refutes_V6 :
 
 /-! ### §2.1 Scales of probability -/
 
-theorem lottery_not_modifiedDisjunctionPuzzle : ¬ModifiedDisjunctionPuzzle lottery.inducedGe :=
+theorem lottery_not_modifiedDisjunctionPuzzle : ¬ModifiedDisjunctionPuzzle (inducedGe lottery) :=
   fun h ↦ lottery_not_fourteen (lottery_collapse h holder exists_holder_ne lottery_four)
 
-theorem prob_refutes_rightUnion : ¬RightUnion skewed.inducedGe := by
+theorem prob_refutes_rightUnion : ¬RightUnion (inducedGe skewed) := by
   intro h
   have := h {0} {1} {2}
     (by simp [Measure.inducedGe_iff_real, skewed_real, Set.indicator_apply]; norm_num)
@@ -365,9 +365,6 @@ namespace SymmetricFuzzyMeasure
 
 variable (μ : SymmetricFuzzyMeasure W)
 
-/-- `μ.inducedGe A B` holds when `A` measures at least as much as `B`. -/
-def inducedGe (A B : Set W) : Prop := μ.mu B ≤ μ.mu A
-
 /-- A probability measure is a symmetric fuzzy measure through its real values. -/
 noncomputable def ofMeasure [MeasurableSpace W] [DiscreteMeasurableSpace W] (P : Measure W)
     [IsProbabilityMeasure P] : SymmetricFuzzyMeasure W :=
@@ -395,8 +392,8 @@ def toQualAdd (h : μ.EqualShares) : QualAddMeasure ℝ W where
 variable {μ}
 
 theorem EqualShares.strictDisjunctionIntro (h : μ.EqualShares) :
-    StrictDisjunctionIntro μ.inducedGe :=
-  show StrictDisjunctionIntro (μ.toQualAdd h).inducedGe from
+    StrictDisjunctionIntro (inducedGe μ.mu) :=
+  show StrictDisjunctionIntro (inducedGe (μ.toQualAdd h)) from
     ComparativeProbability.strictDisjunctionIntro
 
 theorem EqualShares.union_le_iff (h : μ.EqualShares) {A B : Set W} :
@@ -427,18 +424,18 @@ noncomputable def cutClass : SymmetricFuzzyMeasure (Fin 3) where
         | exact absurd (h a2) b2
         | norm_num
 
-theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro cutClass.inducedGe := fun h ↦
-  (h {1} {0} ⟨by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass],
-    by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass]⟩).2
-    (by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass])
+theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro (inducedGe cutClass.mu) := fun h ↦
+  (h {1} {0} ⟨by norm_num [inducedGe, cutClass],
+    by norm_num [inducedGe, cutClass]⟩).2
+    (by norm_num [inducedGe, cutClass])
 
 theorem rows_48 :
-    ¬(cutClass.inducedGe {0} ({0} ∪ {1}) ↔ Examples.ex48.feature? "truthValue" = some "true") ∧
+    ¬(inducedGe cutClass.mu {0} ({0} ∪ {1}) ↔ Examples.ex48.feature? "truthValue" = some "true") ∧
       ∀ μ : SymmetricFuzzyMeasure W, μ.EqualShares → ∀ movies school : Set W,
         μ.mu (school \ movies) ≠ 0 →
-        (μ.inducedGe movies (movies ∪ school) ↔
+        (inducedGe μ.mu movies (movies ∪ school) ↔
           Examples.ex48.feature? "truthValue" = some "true") :=
-  ⟨fun h ↦ absurd (h.1 (by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass])) (by decide),
+  ⟨fun h ↦ absurd (h.1 (by norm_num [inducedGe, cutClass])) (by decide),
     fun _ h _ _ hs ↦ iff_of_false (fun h' ↦ hs (h.union_le_iff.1 h')) (by decide)⟩
 
 /-! ### §3 Bridging rules -/
@@ -448,21 +445,21 @@ section Bridges
 variable (r : W → W → Prop) [MeasurableSpace W] (P : Measure W)
 
 /-- BR1 (57): the probability order includes the revised lift. -/
-def Bridge1 : Prop := Kratzer r ≤ P.inducedGe
+def Bridge1 : Prop := Kratzer r ≤ inducedGe P
 
 /-- BR2 (59): on singletons the probability order includes the world order. -/
-def Bridge2 : Prop := r ≤ (P.inducedGe on fun u ↦ {u})
+def Bridge2 : Prop := r ≤ (inducedGe P on fun u ↦ {u})
 
 /-- BR3 (61): the probability order includes the m-lifting. -/
-def Bridge3 : Prop := MatchingLift r ≤ P.inducedGe
+def Bridge3 : Prop := MatchingLift r ≤ inducedGe P
 
 theorem bridge1_disjoint_puzzle (h : Bridge1 r P) {A B C : Set W} (hB : Disjoint A B)
     (hC : Disjoint A C) (hAB : Kratzer r A B) (hAC : Kratzer r A C) :
-    P.inducedGe A (B ∪ C) :=
+    (inducedGe P) A (B ∪ C) :=
   h _ _ (kratzer_union_of_disjoint hB hC hAB hAC)
 
 theorem bridge3_of_agree [Fintype W] [MeasurableSingletonClass W]
-    (h : r = (P.inducedGe on fun u ↦ {u})) : Bridge3 r P :=
+    (h : r = (inducedGe P on fun u ↦ {u})) : Bridge3 r P :=
   fun _ _ ↦ HollidayIcard2013.measure_le_of_matchingLift P r fun v u ↦ by rw [h]; rfl
 
 end Bridges
@@ -485,7 +482,7 @@ theorem not_bridge1_skewed : ¬Bridge1 (premisePreorder (onlyBest 0)).le skewed 
 
 theorem bridge2_refutes_V6 :
     Bridge2 (premisePreorder (onlyBest 0)).le skewed ∧
-      ¬MustToProbably skewed.inducedGe (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) := by
+      ¬MustToProbably (inducedGe skewed) (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) := by
   refine ⟨skewed_agrees.le, fun hV6 ↦ ?_⟩
   have h := (hV6 _ (must_onlyBest 0 0)).1
   simp [Measure.inducedGe_iff_real, skewed_real, Fin.sum_univ_three, Set.indicator_apply] at h
@@ -493,7 +490,7 @@ theorem bridge2_refutes_V6 :
 
 theorem bridge3_refutes_V6 :
     Bridge3 (premisePreorder (onlyBest 0)).le skewed ∧
-      ¬MustToProbably skewed.inducedGe (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) :=
+      ¬MustToProbably (inducedGe skewed) (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) :=
   ⟨bridge3_of_agree _ _ skewed_agrees, bridge2_refutes_V6.2⟩
 
 /-- Masses `0.5001` and `0.4999` on two worlds, the model of BR1 on p. 674. -/
@@ -576,20 +573,20 @@ theorem quant_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : P A �
   h (measure_eq_zero_iff_ae_notMem.2 (quant_must P (A := Aᶜ) hP hn))
 
 theorem quant_moreLikely_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w)
-    (h : AsymmRel P.inducedGe A B) : humanPossibility f ⊥ (· ∈ A) w :=
-  quant_might P hP fun h0 ↦ h.2 (by simp [Measure.inducedGe, h0])
+    (h : AsymmRel (inducedGe P) A B) : humanPossibility f ⊥ (· ∈ A) w :=
+  quant_might P hP fun h0 ↦ h.2 (by simp [inducedGe, h0])
 
 variable [IsProbabilityMeasure P]
 
 theorem quant_mustToProbably [DiscreteMeasurableSpace W]
     (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
-    MustToProbably P.inducedGe (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) := fun A h ↦ by
+    MustToProbably (inducedGe P) (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) := fun A h ↦ by
   have h0 : P Aᶜ = 0 := quant_must P hP h
   have h1 := (prob_compl_eq_zero_iff (.of_discrete : MeasurableSet A)).1 h0
-  refine ⟨?_, ?_⟩ <;> simp [Measure.inducedGe, h0, h1]
+  refine ⟨?_, ?_⟩ <;> simp [inducedGe, h0, h1]
 
 theorem rows_35 [DiscreteMeasurableSpace W] (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
-    (MustToProbably P.inducedGe (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) ↔
+    (MustToProbably (inducedGe P) (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) ↔
         Examples.ex35.judgment = .acceptable) ∧
       ¬(MustToProbably (MatchingLift (premisePreorder (onlyBest 0)).le)
           (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) ↔
@@ -619,7 +616,7 @@ theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) 
   rw [not_le]
   constructor <;> intro h <;> linarith
 
-theorem moreLikely_might (h : AsymmRel P.inducedGe A B) : probMight P 1 A := by
+theorem moreLikely_might (h : AsymmRel (inducedGe P) A B) : probMight P 1 A := by
   have hlt := h.2
   rw [Measure.inducedGe_iff_real, not_le] at hlt
   have := measureReal_nonneg (μ := P) (s := B)
@@ -628,11 +625,11 @@ theorem moreLikely_might (h : AsymmRel P.inducedGe A B) : probMight P 1 A := by
 
 theorem weak_refutes_moreLikely_might :
     ∃ P : Measure (Fin 100), IsProbabilityMeasure P ∧ ∃ A B : Set (Fin 100),
-      AsymmRel P.inducedGe A B ∧ ¬probMight P (9 / 10) A := by
+      AsymmRel (inducedGe P) A B ∧ ¬probMight P (9 / 10) A := by
   have hpair : ({0, 1} : Set (Fin 100)).ncard = 2 := Set.ncard_pair (by decide)
   refine ⟨uniformOn Set.univ, inferInstance, {0, 1}, {0}, ⟨?_, ?_⟩, ?_⟩
   · exact measure_mono (Set.singleton_subset_iff.2 (by simp))
-  · rw [Measure.inducedGe, uniformOn_univ_le_iff, hpair, Set.ncard_singleton]
+  · rw [inducedGe, uniformOn_univ_le_iff, hpair, Set.ncard_singleton]
     omega
   · simp only [probMight, Set.mem_preimage, Set.mem_Ioi,
       uniformOn_univ_real_apply, hpair, Fintype.card_fin, not_lt]

@@ -231,7 +231,7 @@ variable [MeasurableSpace Ω]
 omit [Fintype Ω] [Fintype ι] [DecidableEq ι] in
 /-- `P` represents the judgments (p. 359), `P(E) > P(F)` on strict comparisons and
 `P(E) = P(F)` on indifferences, when the order it induces agrees with them. -/
-def Represents (P : Measure Ω) : Prop := J.Agree P.inducedGe
+def Represents (P : Measure Ω) : Prop := J.Agree (inducedGe P)
 
 omit [Fintype Ω] [Fintype ι] [DecidableEq ι] in
 /-- The judgments are probabilistically representable. -/

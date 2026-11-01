@@ -117,7 +117,7 @@ private lemma measureReal_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h :
 
 omit [Fintype W] [MeasurableSingletonClass W] in
 private lemma measureReal_sum_mono {prem : List (Set W × Set W)}
-    (hprem : ∀ p ∈ prem, μ.inducedGe p.1 p.2) :
+    (hprem : ∀ p ∈ prem, inducedGe μ p.1 p.2) :
     ((prem.map Prod.snd).map μ.real).sum ≤ ((prem.map Prod.fst).map μ.real).sum := by
   induction prem with
   | nil => simp
@@ -128,7 +128,7 @@ private lemma measureReal_sum_mono {prem : List (Set W × Set W)}
 
 /-- The order a finite measure induces satisfies finite cancellation, since a balanced pair of
     sequences has equal total measure on its two sides. -/
-theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.inducedGe := by
+theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation (inducedGe μ) := by
   intro prem X Y hbal hprem
   have hsum := measureReal_listSum_eq_of_balanced μ hbal
   simp only [List.map_cons, List.sum_cons] at hsum
@@ -139,7 +139,7 @@ theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.
     state lying in as many `A i` as `B i`, cannot all hold with one strict. -/
 theorem _root_.MeasureTheory.Measure.not_asymmRel_of_balanced {ι : Type*} [Fintype ι]
     {A B : ι → Set W} (hbal : ∀ s, ∑ i, (A i).indicator 1 s = ∑ i, (B i).indicator (1 : W → ℕ) s)
-    (hle : ∀ i, μ.inducedGe (A i) (B i)) (i : ι) : ¬AsymmRel μ.inducedGe (A i) (B i) := by
+    (hle : ∀ i, inducedGe μ (A i) (B i)) (i : ι) : ¬AsymmRel (inducedGe μ) (A i) (B i) := by
   classical
   have hseq (C : ι → Set W) (s : W) :
       seqCount s (C i :: (Finset.univ.erase i).toList.map C) = ∑ j, (C j).indicator 1 s := by

@@ -84,7 +84,7 @@ theorem kps_not_representable : ¬Representable kpsGe := by
   rintro ⟨μ, _, hμ⟩
   let A : Fin 4 → Finset (Fin 5) := ![{0}, {0, 1, 3}, {2, 3}, {1, 4}]
   let B : Fin 4 → Finset (Fin 5) := ![{1, 3}, {2, 4}, {0, 1}, {0, 3}]
-  have hlt (i : Fin 4) : AsymmRel μ.inducedGe (A i) (B i) := by
+  have hlt (i : Fin 4) : AsymmRel (inducedGe μ) (A i) (B i) := by
     rw [hμ, AsymmRel, kpsGe_coe, kpsGe_coe]; fin_cases i <;> decide
   refine μ.not_asymmRel_of_balanced (A := fun i ↦ A i) (B := fun i ↦ B i) (fun s ↦ ?_)
     (fun i ↦ (hlt i).1) 0 (hlt 0)
@@ -130,14 +130,14 @@ private theorem ncard_lt_le_ncard_lt_iff (A B : Set W) :
     induced by a qualitatively additive measure: the number of sets strictly less likely than a
     set, divided by the number strictly less likely than the whole space. Holliday and Icard's
     logic FA is complete over these measures (Theorem 6, p. 523). -/
-theorem exists_qualAddMeasure_repr : ∃ m : QualAddMeasure ℚ W, m.inducedGe = r := by
+theorem exists_qualAddMeasure_repr : ∃ m : QualAddMeasure ℚ W, inducedGe m = r := by
   let g : Set W → ℚ := fun A ↦ {S | AsymmRel r A S}.ncard
   have hg (A B : Set W) : r A B ↔ g B ≤ g A := by
     rw [Nat.cast_le, ncard_lt_le_ncard_lt_iff]
   have h0 : g ∅ = 0 := by simp [g, AsymmRel, rel_empty]
   have hpos : 0 < g Set.univ := h0 ▸ lt_of_not_ge ((hg ∅ Set.univ).not.mp not_rel_empty_univ)
-  have hf (A B : Set W) : r A B ↔ g B / g Set.univ ≤ g A / g Set.univ := by
-    rw [div_le_div_iff_of_pos_right hpos, hg]
+  have hf : inducedGe (fun A ↦ g A / g Set.univ) = r := funext₂ fun A B ↦ propext <| by
+    rw [inducedGe, div_le_div_iff_of_pos_right hpos, hg]
   exact ⟨_, QualAddMeasure.inducedGe_ofRepr _ hf (by simp [h0]) (div_self hpos.ne')⟩
 
 end Repr

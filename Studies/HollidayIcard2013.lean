@@ -120,11 +120,11 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 /-- Every probability measure validates V1–V7 and V11–V13 (Fact 2). -/
 theorem measure_validities [MeasurableSpace W] [DiscreteMeasurableSpace W] (μ : Measure W)
     [IsProbabilityMeasure μ] :
-    ProbablyToNotProbablyNot μ.inducedGe ∧ ProbablyDistribInf μ.inducedGe ∧
-      ChancyDisjunctionIntro μ.inducedGe ∧ Minimality μ.inducedGe ∧ Maximality μ.inducedGe ∧
-      MustToProbably μ.inducedGe (· = Set.univ) ∧ ProbablyToMight μ.inducedGe (· ≠ ∅) ∧
-      PositiveFormTransfer μ.inducedGe ∧ ComplementTransfer μ.inducedGe ∧
-      StrictDisjunctionIntro μ.inducedGe :=
+    ProbablyToNotProbablyNot (inducedGe μ) ∧ ProbablyDistribInf (inducedGe μ) ∧
+      ChancyDisjunctionIntro (inducedGe μ) ∧ Minimality (inducedGe μ) ∧ Maximality (inducedGe μ) ∧
+      MustToProbably (inducedGe μ) (· = Set.univ) ∧ ProbablyToMight (inducedGe μ) (· ≠ ∅) ∧
+      PositiveFormTransfer (inducedGe μ) ∧ ComplementTransfer (inducedGe μ) ∧
+      StrictDisjunctionIntro (inducedGe μ) :=
   ⟨probablyToNotProbablyNot, probablyDistribInf, chancyDisjunctionIntro, minimality,
     maximality, mustToProbably, probablyToMight, positiveFormTransfer, complementTransfer,
     strictDisjunctionIntro⟩
@@ -132,58 +132,58 @@ theorem measure_validities [MeasurableSpace W] [DiscreteMeasurableSpace W] (μ :
 /-- `uniform3` is the uniform measure on three worlds. -/
 local notation "uniform3" => uniformOn (Set.univ : Set (Fin 3))
 
-private theorem uniform3_not_I1 : ¬RightUnion (uniform3).inducedGe := fun h ↦ by
-  have := h {0} {1} {2} (by simp [Measure.inducedGe, uniformOn_univ_le_iff])
-    (by simp [Measure.inducedGe, uniformOn_univ_le_iff])
-  simp only [Measure.inducedGe, uniformOn_univ_le_iff, Set.sup_eq_union, Set.singleton_union]
+private theorem uniform3_not_I1 : ¬RightUnion (inducedGe (uniform3)) := fun h ↦ by
+  have := h {0} {1} {2} (by simp [inducedGe, uniformOn_univ_le_iff])
+    (by simp [inducedGe, uniformOn_univ_le_iff])
+  simp only [inducedGe, uniformOn_univ_le_iff, Set.sup_eq_union, Set.singleton_union]
     at this
   rw [Set.ncard_pair (by decide), Set.ncard_singleton] at this
   omega
 
-private theorem uniform3_probably_pair : Probably (uniform3).inducedGe {0, 1} := by
+private theorem uniform3_probably_pair : Probably (inducedGe (uniform3)) {0, 1} := by
   have hc : ({0, 1} : Set (Fin 3))ᶜ = {2} := by ext x; fin_cases x <;> simp
   constructor <;>
-    rw [Measure.inducedGe, uniformOn_univ_le_iff, hc, Set.ncard_pair (by decide),
+    rw [inducedGe, uniformOn_univ_le_iff, hc, Set.ncard_pair (by decide),
       Set.ncard_singleton] <;> omega
 
-private theorem uniform3_not_pair_univ : ¬(uniform3).inducedGe {0, 1} Set.univ := by
-  rw [Measure.inducedGe, uniformOn_univ_le_iff, Set.ncard_pair (by decide), Set.ncard_univ,
+private theorem uniform3_not_pair_univ : ¬inducedGe (uniform3) {0, 1} Set.univ := by
+  rw [inducedGe, uniformOn_univ_le_iff, Set.ncard_pair (by decide), Set.ncard_univ,
     Nat.card_eq_fintype_card, Fintype.card_fin]
   omega
 
 -- Fact 2
 theorem measures_refute_I_patterns :
-    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬RightUnion μ.inducedGe) ∧
-    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬EquiprobabilityCollapse μ.inducedGe) ∧
-    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬HamblinCollapse μ.inducedGe) :=
+    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬RightUnion (inducedGe μ)) ∧
+    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬EquiprobabilityCollapse (inducedGe μ)) ∧
+    (∃ μ : Measure (Fin 3), IsProbabilityMeasure μ ∧ ¬HamblinCollapse (inducedGe μ)) :=
   ⟨⟨uniform3, inferInstance, uniform3_not_I1⟩,
     ⟨uniform3, inferInstance, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1)⟩,
     ⟨uniform3, inferInstance, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)⟩⟩
 
 /-- Qualitative additivity already yields V1–V7 and V11–V13 (Fact 3). -/
 theorem qualAddMeasure_validities (m : QualAddMeasure K W) :
-    ProbablyToNotProbablyNot m.inducedGe ∧ ProbablyDistribInf m.inducedGe ∧
-      ChancyDisjunctionIntro m.inducedGe ∧ Minimality m.inducedGe ∧ Maximality m.inducedGe ∧
-      MustToProbably m.inducedGe (· = Set.univ) ∧ ProbablyToMight m.inducedGe (· ≠ ∅) ∧
-      PositiveFormTransfer m.inducedGe ∧ ComplementTransfer m.inducedGe ∧
-      StrictDisjunctionIntro m.inducedGe :=
+    ProbablyToNotProbablyNot (inducedGe m) ∧ ProbablyDistribInf (inducedGe m) ∧
+      ChancyDisjunctionIntro (inducedGe m) ∧ Minimality (inducedGe m) ∧ Maximality (inducedGe m) ∧
+      MustToProbably (inducedGe m) (· = Set.univ) ∧ ProbablyToMight (inducedGe m) (· ≠ ∅) ∧
+      PositiveFormTransfer (inducedGe m) ∧ ComplementTransfer (inducedGe m) ∧
+      StrictDisjunctionIntro (inducedGe m) :=
   ⟨probablyToNotProbablyNot, probablyDistribInf, chancyDisjunctionIntro, minimality,
     maximality, mustToProbably, probablyToMight, positiveFormTransfer, complementTransfer,
     strictDisjunctionIntro⟩
 
 -- Fact 3
 theorem qualAddMeasures_refute_I_patterns :
-    (∃ m : QualAddMeasure ℝ (Fin 3), ¬RightUnion m.inducedGe) ∧
-    (∃ m : QualAddMeasure ℝ (Fin 3), ¬EquiprobabilityCollapse m.inducedGe) ∧
-    (∃ m : QualAddMeasure ℝ (Fin 3), ¬HamblinCollapse m.inducedGe) := by
+    (∃ m : QualAddMeasure ℝ (Fin 3), ¬RightUnion (inducedGe m)) ∧
+    (∃ m : QualAddMeasure ℝ (Fin 3), ¬EquiprobabilityCollapse (inducedGe m)) ∧
+    (∃ m : QualAddMeasure ℝ (Fin 3), ¬HamblinCollapse (inducedGe m)) := by
   refine ⟨⟨(uniform3).toQualAdd, ?_⟩, ⟨(uniform3).toQualAdd, ?_⟩, ⟨(uniform3).toQualAdd, ?_⟩⟩ <;>
-    rw [← Measure.inducedGe_eq_toQualAdd]
+    rw [Measure.coe_toQualAdd, Measure.inducedGe_real]
   exacts [uniform3_not_I1, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1),
     fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)]
 
 -- Theorem 6
 theorem fa_qualAdd_complete [Fintype W] (r : Set W → Set W → Prop) [IsQualitativeProbability r] :
-    ∃ m : QualAddMeasure ℚ W, m.inducedGe = r :=
+    ∃ m : QualAddMeasure ℚ W, inducedGe m = r :=
   exists_qualAddMeasure_repr r
 
 end Measures
@@ -335,7 +335,7 @@ def WorldCup (r : Set (Fin 5) → Set (Fin 5) → Prop) : Prop :=
 /-- No finite measure satisfies the World Cup comparisons (3)–(6): each world lies on as many of
 their more likely sides as less likely sides. -/
 theorem worldCup_not_finitelyAdditive (μ : Measure (Fin 5)) [IsFiniteMeasure μ] :
-    ¬WorldCup μ.inducedGe := fun ⟨h₁, h₂, h₃, h₄⟩ ↦
+    ¬WorldCup (inducedGe μ) := fun ⟨h₁, h₂, h₃, h₄⟩ ↦
   μ.not_asymmRel_of_balanced (A := ![{0, 4}, {1, 2}, {3}, {0, 2, 3}])
     (B := ![{2, 3}, {0, 3}, {0, 2}, {1, 4}]) (fun s ↦ by fin_cases s <;> simp [Fin.sum_univ_four])
     (fun i ↦ by fin_cases i; exacts [h₁.1, h₂.1, h₃.1, h₄.1]) 0 h₁
