@@ -233,17 +233,47 @@ theorem range_choice_apply {T : Set (Set W)} (hT : T.Nonempty) :
     · simpa [h, hU] using hU.some_mem
   · simp [hp]
 
+section Indexed
+
+variable {α : Type*} [Preorder α] {P : α → Set W}
+
+-- (58)
+theorem atLeastInq_ranking (hP : Function.Injective P) (a : α) :
+    atLeastInq (ranking P) (range P) (P a) = P '' Ici a := by
+  ext q
+  constructor
+  · rintro ⟨⟨i, rfl⟩, i', j', hij, hi, hj⟩
+    rw [hP hi, hP hj] at hij
+    exact ⟨i, hij, rfl⟩
+  · rintro ⟨i, hai, rfl⟩
+    exact ⟨⟨i, rfl⟩, i, a, hai, rfl, rfl⟩
+
+-- (63), (64)
+theorem atMostInq_ranking (hP : Function.Injective P) (a : α) :
+    atMostInq (ranking P) (range P) (P a) =
+      (· ∩ atMost (ranking P) (range P) (P a)) '' (P '' Iic a) := by
+  rw [atMostInq]
+  congr 1
+  ext q
+  constructor
+  · rintro ⟨⟨i, rfl⟩, i', j', hij, hi, hj⟩
+    rw [hP hi, hP hj] at hij
+    exact ⟨i, hij, rfl⟩
+  · rintro ⟨i, hia, rfl⟩
+    exact ⟨⟨i, rfl⟩, a, i, hia, rfl, rfl⟩
+
+end Indexed
+
 variable {S C p}
 
 -- (58)
 theorem isAttentive_atLeastInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
     IsAttentive (atLeastInq (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a)) := by
-  refine ⟨oneSided μ b, ⟨⟨b, rfl⟩, b, a, hab.le, rfl, rfl⟩, fun hmax ↦ ?_⟩
-  obtain ⟨w, rfl⟩ := hμ a
-  have hle : oneSided μ b ≤ oneSided μ (μ w) := preimage_mono (Ici_subset_Ici.2 hab.le)
-  have := hmax.2 ⟨⟨μ w, rfl⟩, μ w, μ w, le_rfl, rfl, rfl⟩ hle (mem_Ici.2 le_rfl : μ w ∈ Ici (μ w))
-  exact (not_le.2 hab) this
+  rw [atLeastInq_ranking (oneSided_injective hμ)]
+  exact isAttentive_of_ssubset (mem_image_of_mem _ (hab.le : b ∈ Ici a))
+    (mem_image_of_mem _ self_mem_Ici) ((preimage_mono (Ici_subset_Ici.2 hab.le)).ssubset_of_ne
+      ((oneSided_injective hμ).ne hab.ne'))
 
 -- (59b)
 theorem not_isAttentive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α}
@@ -255,45 +285,24 @@ theorem not_isAttentive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : 
 theorem isInquisitive_atLeastInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α}
     (hμ : Function.Surjective μ) {a b : α} (hab : a < b) :
     IsInquisitive (atLeastInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a)) := by
-  refine (nontrivial_iff_isInquisitive_or_isAttentive.1 ?_).resolve_right
-    (not_isAttentive_atLeastInq_twoSided hμ a)
-  exact ⟨_, ⟨⟨a, rfl⟩, a, a, le_rfl, rfl, rfl⟩, _, ⟨⟨b, rfl⟩, b, a, hab.le, rfl, rfl⟩,
-    fun h ↦ hab.ne (twoSided_injective hμ h)⟩
+  rw [atLeastInq_ranking (twoSided_injective hμ),
+    isInquisitive_iff_nontrivial ((isAntichain_range_twoSided hμ).subset (image_subset_range _ _))]
+  exact (nontrivial_of_lt self_mem_Ici hab.le hab).image (twoSided_injective hμ)
 
 -- (64)
 theorem atMostInq_oneSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : Function.Surjective μ)
     (a : α) :
     atMostInq (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) =
       (fun i ↦ μ ⁻¹' Icc i a) '' Iic a := by
-  rw [atMostInq, atMost_oneSided hμ a]
-  ext q
-  simp only [mem_image, mem_ofPred_eq, mem_range, Relation.map_apply,
-    (oneSided_injective hμ).eq_iff, mem_Iic]
-  constructor
-  · rintro ⟨_, ⟨⟨i, rfl⟩, a', i', hai, ha, hi⟩, rfl⟩
-    obtain rfl := ha
-    obtain rfl := oneSided_injective hμ hi
-    exact ⟨i', hai, by rw [oneSided, ← preimage_inter, Ici_inter_Iic]⟩
-  · rintro ⟨i, hia, rfl⟩
-    exact ⟨oneSided μ i, ⟨⟨i, rfl⟩, a, i, hia, rfl, rfl⟩,
-      by rw [oneSided, ← preimage_inter, Ici_inter_Iic]⟩
+  rw [atMostInq_ranking (oneSided_injective hμ), atMost_oneSided hμ, image_image]
+  simp only [oneSided, ← preimage_inter, Ici_inter_Iic]
 
 -- (63)
 theorem atMostInq_twoSided {α : Type*} [LinearOrder α] {μ : W → α} (hμ : Function.Surjective μ)
     (a : α) :
     atMostInq (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ a) = twoSided μ '' Iic a := by
-  rw [atMostInq, atMost_twoSided hμ a]
-  ext q
-  simp only [mem_image, mem_ofPred_eq, mem_range, Relation.map_apply,
-    (twoSided_injective hμ).eq_iff, mem_Iic]
-  constructor
-  · rintro ⟨_, ⟨⟨i, rfl⟩, a', i', hai, ha, hi⟩, rfl⟩
-    obtain rfl := ha
-    obtain rfl := twoSided_injective hμ hi
-    exact ⟨i', hai, (inter_eq_left.2 (preimage_mono (singleton_subset_iff.2 (mem_Iic.2 hai)))).symm⟩
-  · rintro ⟨i, hia, rfl⟩
-    exact ⟨twoSided μ i, ⟨⟨i, rfl⟩, a, i, hia, rfl, rfl⟩,
-      inter_eq_left.2 (preimage_mono (singleton_subset_iff.2 (mem_Iic.2 hia)))⟩
+  rw [atMostInq_ranking (twoSided_injective hμ), atMost_twoSided hμ, image_image]
+  exact image_congr fun i hi ↦ inter_eq_left.2 (preimage_mono (singleton_subset_iff.2 hi))
 
 -- (64)
 theorem atMostInq_oneSided_id (a : ℕ) :
@@ -331,11 +340,10 @@ theorem restrict_atLeastInq_eq_singleton (hP : Function.Injective P) {a b : α} 
     {k : Set W} (hk : k ≠ ∅) (hkb : k ⊆ P b)
     (hsplit : ∀ i, a ≤ i → k ∩ P i = k ∨ k ∩ P i = ∅) :
     restrict (atLeastInq (ranking P) (range P) (P a)) k = {k} := by
-  apply pro_eq_singleton hk
-  · exact ⟨P b, ⟨⟨b, rfl⟩, b, a, hab, rfl, rfl⟩, inter_eq_left.2 hkb⟩
-  · rintro _ ⟨q, ⟨⟨i, rfl⟩, i', j', hij, hi, hj⟩, rfl⟩
-    rw [hP hi, hP hj] at hij
-    rcases hsplit i hij with h | h <;> simp [h]
+  rw [atLeastInq_ranking hP]
+  refine pro_eq_singleton hk ⟨P b, mem_image_of_mem _ hab, inter_eq_left.2 hkb⟩ ?_
+  rintro _ ⟨_, ⟨i, hai, rfl⟩, rfl⟩
+  exact hsplit i hai
 
 omit [Preorder α] in
 theorem split_twoSided {μ : W → α} {b : α} {k : Set W} (hkb : k ⊆ μ ⁻¹' {b}) (i : α) :

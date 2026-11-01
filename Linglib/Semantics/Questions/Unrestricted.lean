@@ -29,6 +29,8 @@ the same inquisitive content.
   neither informative, inquisitive nor attentive.
 * `Inquisitive.Unrestricted.isInquisitive_iff_question`: a finite proposition is inquisitive iff
   the question it generates is.
+* `Inquisitive.Unrestricted.univ_mem_iff`: a finite proposition contains the trivial possibility
+  iff it is neither informative nor inquisitive.
 
 ## References
 
@@ -70,6 +72,16 @@ theorem not_isAttentive_iff : ¬ IsAttentive P ↔ IsAntichain (· ⊆ ·) P := 
   exact ⟨fun h p hp q hq hpq hle ↦ hpq ((h p hp).eq_of_subset hq hle),
     fun h _ ↦ h.maximal_mem_iff.2⟩
 
+theorem isAttentive_of_ssubset {p q : Set W} (hp : p ∈ P) (hq : q ∈ P) (h : p ⊂ q) :
+    IsAttentive P :=
+  ⟨p, hp, fun hmax ↦ h.ne (hmax.eq_of_subset hq h.subset)⟩
+
+/-- A proposition whose possibilities form an antichain is inquisitive just in case it has more
+than one possibility. -/
+theorem isInquisitive_iff_nontrivial (h : IsAntichain (· ⊆ ·) P) :
+    IsInquisitive P ↔ P.Nontrivial := by
+  rw [IsInquisitive, show {p | Maximal (· ∈ P) p} = P from ext fun _ ↦ h.maximal_mem_iff]
+
 /-- A proposition has more than one possibility just in case it is inquisitive or attentive,
 which [coppock-brochhagen-2013] call interactive ((51)); the propositions with one possibility
 are the assertions of [ciardelli-groenendijk-roelofsen-2009] (Proposition 21). -/
@@ -79,8 +91,7 @@ theorem nontrivial_iff_isInquisitive_or_isAttentive :
   · obtain ⟨p, hp, hnm⟩ := h
     obtain ⟨q, hpq, hq⟩ := (not_maximal_iff_exists_gt hp).1 hnm
     exact iff_of_true ⟨p, hp, q, hq, hpq.ne⟩ (.inr ⟨p, hp, hnm⟩)
-  · rw [or_iff_left h, IsInquisitive,
-      show {p | Maximal (· ∈ P) p} = P from ext fun _ ↦ (not_isAttentive_iff.1 h).maximal_mem_iff]
+  · rw [or_iff_left h, isInquisitive_iff_nontrivial (not_isAttentive_iff.1 h)]
 
 /-- The tautology `{univ}` is the one proposition that is neither informative, inquisitive nor
 attentive ([ciardelli-groenendijk-roelofsen-2009], Proposition 19). -/
@@ -100,7 +111,7 @@ theorem eq_singleton_univ_iff :
 ([ciardelli-groenendijk-roelofsen-2009], p. 99). -/
 theorem isInformative_iff_question :
     IsInformative P ↔ (⨆ p ∈ P, Question.ofSet p).IsInformative := by
-  simp [IsInformative, Question.IsInformative, Question.info_iSup, sUnion_eq_biUnion]
+  rw [Question.IsInformative, Question.info_biSup_ofSet]; rfl
 
 /-- The maximal possibilities of a proposition are the alternatives of the question it generates,
 so a proposition is inquisitive just in case that question has two alternatives
@@ -119,6 +130,25 @@ theorem isInquisitive_iff_question (hP : P.Finite) :
   rw [isInquisitive_iff_nontrivial_alt, Question.IsInquisitive, Question.mem_props,
     ← hN.exists_alt_eq_singleton_iff, exists_eq_singleton_iff_nonempty_subsingleton,
     ← not_nontrivial_iff, and_iff_right hN.alt_nonempty, not_not]
+
+/-- A finite proposition contains the trivial possibility just in case it is neither informative
+nor inquisitive, the conjectures of [ciardelli-groenendijk-roelofsen-2009] (Proposition 25). -/
+theorem univ_mem_iff (hfin : P.Finite) (hne : P.Nonempty) :
+    univ ∈ P ↔ ¬ IsInformative P ∧ ¬ IsInquisitive P := by
+  rw [isInquisitive_iff_question hfin, isInformative_iff_question, Question.IsInformative,
+    Question.IsInquisitive, not_not, not_not, Question.info_biSup_ofSet, Question.mem_props]
+  constructor
+  · intro h
+    have hU : ⋃₀ P = univ := eq_univ_of_univ_subset (subset_sUnion_of_mem h)
+    exact ⟨hU, hU ▸ Question.mem_biSup_ofSet.2 (.inr ⟨univ, h, subset_rfl⟩)⟩
+  · rintro ⟨hU, h⟩
+    rcases Question.mem_biSup_ofSet.1 h with h0 | ⟨a, ha, hUa⟩
+    · obtain ⟨p, hp⟩ := hne
+      have hp0 : p = ∅ := subset_empty_iff.1 (h0 ▸ subset_sUnion_of_mem hp)
+      rw [hU] at h0
+      exact (hp0.trans h0.symm) ▸ hp
+    · rw [hU] at hUa
+      exact univ_subset_iff.1 hUa ▸ ha
 
 /-! ### Propositional closure and restriction -/
 
@@ -145,6 +175,55 @@ theorem IsProposition.pro_eq (hP : IsProposition P) : pro P = P := by
   split_ifs with h
   · rfl
   · exact sdiff_singleton_eq_self (hP.2.resolve_right h)
+
+theorem isProposition_singleton (p : Set W) : IsProposition {p} := by
+  refine ⟨singleton_nonempty p, ?_⟩
+  by_cases h : p = ∅
+  · exact .inr (by rw [h])
+  · exact .inl fun h' ↦ h (mem_singleton_iff.1 h').symm
+
+/-- Removing the empty possibility does not change the question a set of possibilities
+generates. -/
+theorem iSup_ofSet_pro : ⨆ p ∈ pro P, Question.ofSet p = ⨆ p ∈ P, Question.ofSet p := by
+  unfold pro
+  split_ifs
+  · rfl
+  refine le_antisymm (biSup_mono fun _ h ↦ h.1) (Question.biSup_ofSet_le_iff.2 fun p hp ↦ ?_)
+  by_cases h0 : p = ∅
+  · rw [h0]
+    exact (⨆ q ∈ P \ {∅}, Question.ofSet q).contains_empty
+  · exact Question.mem_biSup_ofSet.2 (.inr ⟨p, ⟨hp, h0⟩, subset_rfl⟩)
+
+theorem mem_pro {p : Set W} (hp : p.Nonempty) : p ∈ pro P ↔ p ∈ P := by
+  unfold pro
+  split_ifs
+  · rfl
+  · exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, hp.ne_empty⟩⟩
+
+theorem empty_mem_pro_iff : ∅ ∈ pro P ↔ P = {∅} := by
+  unfold pro
+  split_ifs with h
+  · exact iff_of_true (by rw [h]; exact mem_singleton _) h
+  · exact iff_of_false (fun h' ↦ h'.2 rfl) h
+
+theorem pro_subset : pro P ⊆ P := by
+  unfold pro
+  split_ifs
+  · exact subset_rfl
+  · exact sdiff_subset
+
+theorem sUnion_pro : ⋃₀ pro P = ⋃₀ P := by
+  unfold pro
+  split_ifs
+  · rfl
+  · exact sUnion_sdiff_singleton_empty P
+
+theorem isAttentive_pro_iff : IsAttentive (pro P) ↔ IsAttentive (P \ {∅}) := by
+  unfold pro
+  split_ifs with h
+  · subst h
+    simp [IsAttentive]
+  · rfl
 
 theorem pro_eq_singleton {k : Set W} (hk : k ≠ ∅) (hkP : k ∈ P) (hP : P ⊆ {k, ∅}) :
     pro P = {k} := by
