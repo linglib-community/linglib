@@ -127,21 +127,19 @@ include hT
 
 /-- A left-local transduction emits the same block at positions whose bounded left contexts
 agree. -/
-theorem emitAt_congr {w w' : List α} {n n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?) (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
-    T.emitAt w n = T.emitAt w' n' :=
+theorem emitAt_congr {w w' : List α} {n n' : ℕ} (hedge : min n r = min n' r)
+    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?) : T.emitAt w n = T.emitAt w' n' :=
   congrArg (fun o ↦ (o.map Prod.snd).getD []) <| List.find?_congr fun cl hcl ↦
-    decide_eq_decide.2 <| WindowFormula.BackBounded.realize_congr hn hn' hlbl hedge (hT cl hcl)
+    decide_eq_decide.2 <| (hT cl hcl).realize_congr hedge hlbl
 
 theorem emitAt_append {u : List α} (v : List α) {p : ℕ} (hp : p < u.length) :
     T.emitAt (u ++ v) p = T.emitAt u p :=
-  hT.emitAt_congr (by simp; omega) hp (fun _ _ ↦ List.getElem?_append_left (by omega))
-    fun _ _ ↦ Iff.rfl
+  hT.emitAt_congr rfl fun _ _ ↦ List.getElem?_append_left (by omega)
 
 theorem emitAt_eq_emitAt_rtake {w : List α} {p : ℕ} (hp : p < w.length) :
     T.emitAt w p = T.emitAt ((w.take (p + 1)).rtake (r + 1)) (min r p) := by
   have hlen : (w.take (p + 1)).length = p + 1 := by simp; omega
-  refine hT.emitAt_congr hp (by simp [hlen]) (fun j hj ↦ ?_) fun _ _ ↦ by omega
+  refine hT.emitAt_congr (by omega) fun j hj ↦ ?_
   rw [List.getElem?_rtake, hlen, List.getElem?_take, ite_eq_left (by omega)]
   congr 1
   omega

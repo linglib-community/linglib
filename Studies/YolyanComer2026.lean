@@ -471,9 +471,9 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
     · obtain ⟨j, rfl⟩ : ∃ j, i = j + 1 := ⟨i - 1, by omega⟩
       have hj : j < w.length := by omega
       rw [show decide (φ.bdia.Realize w U (j + 1)) = decide (φ.Realize w U j) from
-        decide_eq_decide.mpr (by simp [pred?_eq_some_iff, hj])]
+        decide_eq_decide.mpr (by simp [pred?_eq_some_iff, hi])]
       exact .ite_false (.initial_false (Walk.eval_var hi) (by omega))
-        (Eval.subst (by rw [Walk.eval_pred_var hi]; simp [pred?, hj]) (ih hj))
+        (Eval.subst (by rw [Walk.eval_pred_var]; simp [pred?, hi]) (ih hj))
 
 theorem warao_tr_agreement (i : ℕ) (hi : i < 5) :
     Eval waraoChi.trProgram naote i (tr (waraoChi.eqs 0))

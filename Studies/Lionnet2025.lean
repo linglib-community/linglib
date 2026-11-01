@@ -406,15 +406,10 @@ theorem spreading_not_qf :
     rw [hlen₂] at hk
     simp [m₂, hk] at hk'
   refine h₂ ((h m₂ 0).2 ⟨by omega, ?_⟩)
-  refine (WindowFormula.Bounded.realize_congr (w := m₁) (w' := m₂) (n := 0) (n' := 0)
-    (by omega) (by omega)
-    (fun j _ ↦ ⟨Iff.rfl, fun hj ↦ by
-      obtain rfl : j = 0 := Nat.le_zero.mp hj
-      simp [m₁, m₂]⟩)
-    (fun j hj ↦ ⟨by rw [hlen₁, hlen₂], by
-      simp [m₁, m₂, show j < r + 2 by omega,
-        show j < r + 3 by omega]⟩)
-    hφ).1 ((h m₁ 0).1 h₁).2
+  refine (hφ.realize_congr (w := m₁) (w' := m₂) (n := 0) (n' := 0) rfl
+    (fun j _ ↦ by simp [m₁, m₂])
+    (fun j hj ↦ by simp [m₁, m₂, show j < r + 2 by omega, show j < r + 3 by omega])).1
+    ((h m₁ 0).1 h₁).2
 
 /-! ### Drubea utterances -/
 
