@@ -6,7 +6,9 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Examples.Collins2026
-public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
+public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Syntax.Minimalist.Copy.ToTree
 public import Linglib.Syntax.Minimalist.Workspace.Basic
 
 /-!
@@ -20,7 +22,10 @@ theory of movement it does; negation likewise [loses the quantifier](##no_scope_
 scopes over. The quotient alters one of the two objects merged, which [MERGE leaving copies never
 does](##no_tampering). Collins concludes that the framework cannot capture reconstruction. That
 holds of a condition read off the final object: a condition evaluated at [some earlier
-stage](##binds_at_earlier_stage) binds the anaphor with traces alone.
+stage](##binds_at_earlier_stage) binds the anaphor with traces alone. With the copies kept, a
+derivation has a reading for each choice of the chains read low: read low, [the antecedent binds the
+anaphor](##binds_at_low_reading) in the fronted phrase's lower copy, and (15) has [both its scope
+readings](##scope_readings) through the composition engine.
 
 ## Implementation notes
 
@@ -33,6 +38,9 @@ stage](##binds_at_earlier_stage) binds the anaphor with traces alone.
 * That a condition at an earlier stage recovers the binding is not the paper's claim. It applies the
   derivational binding condition Cole and Hermon use, and says nothing about whether such a
   condition is available to the framework the paper criticizes.
+* The reading with no chain read low is the book's contraction with a binder the book does not have.
+  The low reading deletes the higher copy, which none of the book's quotients does, so the two scope
+  readings are the copy theory's, not the framework's.
 
 ## References
 
@@ -47,7 +55,7 @@ stage](##binds_at_earlier_stage) binds the anaphor with traces alone.
 
 namespace Collins2026
 
-open Minimalist Minimalist.Derivation
+open Minimalist Minimalist.Derivation Montague PhraseStructure
 
 /-! ### Reconstruction for Principle A -/
 
@@ -104,8 +112,7 @@ example : fronted.replay?.isSome ∧ fronted.BindsAtSurface ↑john ↑loves ∧
 /-- The trace the moved phrase leaves carries its head. -/
 example : picturesOfHimself.toSyntacticObject.headTrace = .traceOf pictures := by decide +kernel
 
-/-- Binding at the copy object tells the acceptable sentences (11) and (12a) from a condition that
-is not met: the anaphor does not bind its antecedent. -/
+-- (11), (12a)
 theorem bindsAtLF_iff_judgment :
     (basic.BindsAtLF ↑john ↑himself ↔ Examples.ex_11.judgment = .acceptable) ∧
     (fronted.BindsAtLF ↑john ↑himself ↔ Examples.ex_12a.judgment = .acceptable) ∧
@@ -150,6 +157,86 @@ theorem no_scope_reconstruction :
 example : everyDidntScore.replay?.isSome ∧
     everyDidntScore.BindsAtSurface everyPlayer.toSyntacticObject ↑didnt := by
   decide +kernel
+
+/-! ### The readings of one derivation -/
+
+-- (13), (14)
+theorem binds_at_low_reading :
+    fronted.BindsAtReading {picturesOfHimself.toSyntacticObject} ↑john ↑himself ∧
+      ¬ fronted.BindsAtReading ∅ ↑john ↑himself :=
+  ⟨by decide +kernel, fun h ↦ no_reconstruction.2 (bindsAtReading_empty_iff.1 h)⟩
+
+/-- Read low, the fronted phrase is where it started: the object is that of *John loves pictures of
+himself*. -/
+example : fronted.lf? {picturesOfHimself.toSyntacticObject} = basic.externalize? := by
+  decide +kernel
+
+/-- The tree of (15) with the quantifier read low, in the scope of negation. -/
+def lowTree : Tree Unit LexicalItem.Token :=
+  .phrase () .projection [.terminal () didnt, .phrase () .projection
+    [.phrase () .projection [.terminal () every, .terminal () player], .terminal () score]]
+
+/-- The tree of (15) with the quantifier read high, over a binder and its trace. -/
+def highTree : Tree Unit LexicalItem.Token :=
+  .phrase () .projection [.phrase () .projection [.terminal () every, .terminal () player],
+    .bind (every.id + 1) () (.phrase () .projection [.terminal () didnt,
+      .phrase () .projection [.trace (every.id + 1) (), .terminal () score]])]
+
+theorem toTree?_low :
+    everyDidntScore.toTree? (·.id) {everyPlayer.toSyntacticObject} = some lowTree := by
+  decide +kernel
+
+theorem toTree?_high : everyDidntScore.toTree? (·.id) ∅ = some highTree := by
+  decide +kernel
+
+section Interpretation
+
+variable {E : Type} (pl sc : Set E)
+
+/-- The lexicon of (15), *every* being the determiner of the quantification substrate, for a set of
+players and a set of those who scored. -/
+def lex (tok : LexicalItem.Token) : Option (Denotation E Unit) :=
+  if tok = every then
+    some ⟨(Ty.e ⇒ Ty.t) ⇒ (Ty.e ⇒ Ty.t) ⇒ Ty.t,
+      fun P Q ↦ Quantifier.Det.every {x | P x} {x | Q x}⟩
+  else if tok = player then some ⟨Ty.e ⇒ Ty.t, (· ∈ pl)⟩
+  else if tok = didnt then some ⟨Ty.t ⇒ Ty.t, Not⟩
+  else if tok = score then some ⟨Ty.e ⇒ Ty.t, (· ∈ sc)⟩
+  else none
+
+theorem lex_every : lex pl sc every =
+    some ⟨(Ty.e ⇒ Ty.t) ⇒ (Ty.e ⇒ Ty.t) ⇒ Ty.t,
+      fun P Q ↦ Quantifier.Det.every {x | P x} {x | Q x}⟩ :=
+  ite_eq_left rfl
+
+theorem lex_player : lex pl sc player = some ⟨Ty.e ⇒ Ty.t, (· ∈ pl)⟩ := by
+  rw [lex, ite_eq_right (by decide), ite_eq_left rfl]
+
+theorem lex_didnt : lex pl sc didnt = some ⟨Ty.t ⇒ Ty.t, Not⟩ := by
+  rw [lex, ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_left rfl]
+
+theorem lex_score : lex pl sc score = some ⟨Ty.e ⇒ Ty.t, (· ∈ sc)⟩ := by
+  rw [lex, ite_eq_right (by decide), ite_eq_right (by decide), ite_eq_right (by decide),
+    ite_eq_left rfl]
+
+/-- One derivation of (15) has both scope readings through the composition engine: read low, not
+every player scored, the reading the paper describes in (16); read high, every player failed to. -/
+theorem scope_readings (g : Assignment E) :
+    (∃ t ∈ everyDidntScore.toTree? (·.id) {everyPlayer.toSyntacticObject},
+      t.interp (lex pl sc) g = some ⟨.t, ¬ Quantifier.Det.every pl sc⟩) ∧
+    (∃ t ∈ everyDidntScore.toTree? (·.id) ∅,
+      t.interp (lex pl sc) g = some ⟨.t, Quantifier.Det.every pl scᶜ⟩) := by
+  refine ⟨⟨lowTree, toTree?_low, ?_⟩, ⟨highTree, toTree?_high, ?_⟩⟩
+  · simp [lowTree, lex_every, lex_player, lex_didnt, lex_score, Mode.combine?]
+  · simp [highTree, lex_every, lex_player, lex_didnt, lex_score, Mode.combine?]
+    rfl
+
+/-- The two readings come apart when some player scored and another did not. -/
+example : ¬ Quantifier.Det.every (Set.univ : Set Bool) {true} ∧
+    ¬ Quantifier.Det.every (Set.univ : Set Bool) ({true} : Set Bool)ᶜ := by
+  simp [Quantifier.Det.every, Set.subset_def]
+
+end Interpretation
 
 /-! ### No Tampering -/
 
