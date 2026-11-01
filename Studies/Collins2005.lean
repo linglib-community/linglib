@@ -6,6 +6,7 @@ public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
 public import Linglib.Syntax.Minimalist.Locality.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
+public import Linglib.Syntax.Minimalist.Copy.ToTree
 public import Linglib.Syntax.Minimalist.Derivation.Smuggling
 public import Linglib.Data.Examples.Readers
 
@@ -673,6 +674,20 @@ def Licensing.verdict (c : Licensing) : Verdict :=
 theorem licensing_rows :
     (∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.verdict.Admits row.judgment) ∧
       Datum.ReadCount Licensing.ofRow Examples.all 14 := by
+  decide +kernel
+
+-- (73): an anaphor or bound variable marked as reconstructed is one that the reading with no chain
+-- read low does not bind and the reading deleting the highest copy of the phrase carrying it does.
+-- Principle B stays on the stages: (83) is derivational, and reading it off an LF is the obligatory
+-- reconstruction the paper rejects in (82).
+theorem reconstructed_iff_reading :
+    ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row,
+      (c.dependency = .condition .reflexive ∨ c.dependency = .condition .reciprocal ∨
+        c.dependency = .variable) →
+      ∀ x ∈ c.clause.at? c.antecedent, ∀ y ∈ c.clause.at? c.dependent,
+        ∀ m ∈ c.derivation.replayWithCopies?,
+          (c.verdict = .reconstructed ↔ ¬ c.derivation.BindsAtReading ∅ ↑x ↑y ∧
+            c.derivation.BindsAtReading (m.current.carrying y) ↑x ↑y) := by
   decide +kernel
 
 /-- The rows of a binding class fit its condition evaluated at level `ℓ`, each row acceptable
