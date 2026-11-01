@@ -30,11 +30,11 @@ variables and label definitions.
 ## Implementation notes
 
 `Expr.Felicitous` is the presuppositional condition on the felicity of a discourse. PIP also
-requires a discourse to have no free variables and consistent definitions for the labels it uses,
-which are not modelled here. A label is interpreted by expanding it (`Formula.expand`) before
-evaluation, and a label left unexpanded is false and infelicitous. A meaning in PIP takes a label
-assignment as an argument, which plays no role on formulas without label uses, so
-intersubstitutability quantifies over models and assignments only.
+requires a discourse to have a translation, `Formula.HasDiscourseTranslation` in `Syntax.lean`, and
+the translation to have no free variables, which is not modelled here. A label is interpreted by
+expanding it (`Formula.expand`) before evaluation, and a label left unexpanded is false and
+infelicitous. A meaning in PIP takes a label assignment as an argument, which plays no role on
+formulas without label uses, so intersubstitutability quantifies over models and assignments only.
 
 ## References
 

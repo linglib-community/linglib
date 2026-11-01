@@ -29,12 +29,16 @@ and presuppositions `φ|ψ`. Truth is defined in `Semantics.lean` and felicity i
   `DependsOn`: the use of a label in another label's definition.
 * `Expr.substLabels`, `Formula.expand`, `Formula.expandSelf`: label expansion, as a bounded
   fixpoint of simultaneous substitution.
+* `Formula.HasDiscourseTranslation`: the label definitions of a discourse are consistent, not
+  circular, and cover every label used.
 * `Expr.elim`: the translation into predicate calculus with set abstraction.
 
 ## Main statements
 
 * `Formula.lookup_eq_none_of_mem_labels_expand`: expansion by definitions without circular
   dependencies leaves only undefined labels.
+* `Formula.HasDiscourseTranslation.labels_expandSelf`: a discourse with a translation expands to a
+  formula without labels.
 
 ## Implementation notes
 
@@ -312,6 +316,28 @@ theorem Expr.labels_substLabels (A : L → Option (Formula V L P)) {k : Kind} (e
     simp only [substLabels, labels, FinVec.etaExpand_eq, Set.biUnion_union, Set.biUnion_iUnion,
       Set.biUnion_empty, *]
 
+/-- A label definition in an expression uses only labels the expression uses. -/
+theorem Expr.labels_subset_of_mem_defs {k : Kind} (e : Expr V L P k) {X : L} {ψ : Formula V L P}
+    (h : (X, ψ) ∈ e.defs) : ψ.labels ⊆ e.labels := by
+  induction e with
+  | labelDef Y φ ih =>
+    rcases List.mem_cons.1 h with h | h
+    · cases h; exact subset_rfl
+    · exact ih h
+  | atom r w ts ihw ih =>
+    rcases List.mem_append.1 h with h | h
+    · exact (ihw h).trans Set.subset_union_left
+    · obtain ⟨i, -, hi⟩ := List.mem_flatMap.1 h
+      exact (ih i hi).trans
+        (Set.subset_union_of_subset_right (Set.subset_iUnion (fun i => (ts i).labels) i) _)
+  | rel R ts ih =>
+    obtain ⟨i, -, hi⟩ := List.mem_flatMap.1 h
+    exact (ih i hi).trans (Set.subset_iUnion (fun i => (ts i).labels) i)
+  | inter _ _ ihs iht | conj _ _ ihs iht | presup _ _ ihs iht =>
+    rcases List.mem_append.1 h with h | h
+    exacts [(ihs h).trans Set.subset_union_left, (iht h).trans Set.subset_union_right]
+  | _ => simp_all [defs, labels]
+
 private theorem transGen_of_chain {β : Type*} {R : β → β → Prop} {p : ℕ → β} {n : ℕ}
     (hp : ∀ i < n, R (p i) (p (i + 1))) {i j : ℕ} (hij : i < j) (hjn : j ≤ n) :
     Relation.TransGen R (p i) (p j) := by
@@ -383,6 +409,38 @@ theorem Formula.lookup_eq_none_of_mem_labels_expand
   rcases hij.lt_or_gt with h | h
   · exact hA _ (hpij ▸ transGen_of_chain hp h (by omega))
   · exact hA _ (hpij.symm ▸ transGen_of_chain hp h (by omega))
+
+private theorem labels_iterate_subset {S : Set L} (hA : ∀ p ∈ A, p.2.labels ⊆ S)
+    {φ : Formula V L P} (hφ : φ.labels ⊆ S) :
+    ∀ n, ((Expr.substLabels fun X => A.lookup X)^[n] φ).labels ⊆ S
+  | 0 => hφ
+  | n + 1 => by
+    rw [Function.iterate_succ_apply', Expr.labels_substLabels]
+    refine Set.iUnion₂_subset fun X hX => ?_
+    cases h : A.lookup X with
+    | none => simpa using labels_iterate_subset hA hφ n hX
+    | some ψ =>
+      obtain ⟨l₁, l₂, hA', -⟩ := List.lookup_eq_some_iff.1 h
+      exact hA (X, ψ) (hA' ▸ List.mem_append_right _ List.mem_cons_self)
+
+/-- A discourse has a translation ((30)–(31a) of [abney-keshet-2025]): no label has two
+definitions, no definition is circular, and every label the discourse uses is defined. This is how
+the paper states (31a) (p. 14); by (30) alone, a circular definition that is never used would not
+block the translation. -/
+structure Formula.HasDiscourseTranslation (φ : Formula V L P) : Prop where
+  /-- No label has two definitions. -/
+  functional : ∀ X ψ ψ', (X, ψ) ∈ φ.defs → (X, ψ') ∈ φ.defs → ψ = ψ'
+  /-- No definition is circular. -/
+  not_circular : ∀ X, ¬ Relation.TransGen (DependsOn φ.defs) X X
+  /-- Every label used is defined. -/
+  defined : ∀ X ∈ φ.labels, φ.defs.lookup X ≠ none
+
+/-- A discourse with a translation expands to a formula without labels. -/
+theorem Formula.HasDiscourseTranslation.labels_expandSelf {φ : Formula V L P}
+    (h : φ.HasDiscourseTranslation) : φ.expandSelf.labels = ∅ :=
+  Set.eq_empty_of_forall_notMem fun Y hY =>
+    h.defined Y (labels_iterate_subset (fun _ hp => φ.labels_subset_of_mem_defs hp) subset_rfl _ hY)
+      (Formula.lookup_eq_none_of_mem_labels_expand h.not_circular hY)
 
 end Expand
 

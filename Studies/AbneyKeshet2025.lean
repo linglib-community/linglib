@@ -849,11 +849,37 @@ theorem expandSelf_theyLoud :
         (.conj (.labelDef .D (pred₁ .dog (.bvar .d)))
           (.labelDef .B (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))) := rfl
 
-/-- A circular definition is never expanded away: `X ∧ X ≡ X` keeps its defined label `X`, and
-so has no translation ((30)). -/
-example : Lab.X ∈ (Formula.expandSelf (.conj (.label .X) (.labelDef .X (.label .X))) : Fm).labels ∧
-    (Expr.defs (.conj (.label .X) (.labelDef .X (.label .X)) : Fm)).lookup .X ≠ none := by
-  simp [Formula.expandSelf, Formula.expand, Expr.defs, Expr.substLabels, Expr.labels]
+/-- (102)–(104) has a translation ((31a)): `B` is defined through `D`, and `D` through no label. -/
+example : theyLoud.HasDiscourseTranslation := by
+  have hdefs : theyLoud.defs = [(.D, pred₁ .dog (.bvar .d)),
+      (.B, .conj (.label .D) (pred₁ .barks (.var .d)))] := rfl
+  let rank : Lab → ℕ := fun Z => if Z = .B then 1 else 0
+  have hrank : ∀ {Z Z'}, DependsOn theyLoud.defs Z Z' → rank Z' < rank Z := by
+    rintro Z Z' ⟨ψ, h, hZ'⟩
+    rw [hdefs] at h
+    cases Z <;> simp [List.lookup_cons, beq_eq_decide] at h <;> subst h <;>
+      simp_all [rank, pred₁, Expr.labels]
+  refine ⟨fun Z ψ ψ' h h' => (Prod.mk.inj (List.inj_on_of_nodup_map (f := Prod.fst)
+    (by rw [hdefs]; decide) h h' rfl)).2, fun Z hZ => ?_, fun Z hZ => ?_⟩
+  · have : ∀ {Z Z'}, Relation.TransGen (DependsOn theyLoud.defs) Z Z' → rank Z' < rank Z := by
+      intro Z Z' h
+      induction h with
+      | single h => exact hrank h
+      | tail _ h ih => exact (hrank h).trans ih
+    exact lt_irrefl _ (this hZ)
+  · have : Z = .D ∨ Z = .B := by
+      simp [theyLoud, pred₁, Expr.labels, Fin.exists_fin_two] at hZ
+      tauto
+    rw [hdefs]
+    rcases this with rfl | rfl <;> simp [List.lookup_cons, beq_eq_decide]
+
+/-- A circular definition is never expanded away: `X ∧ X ≡ X` has no translation, and keeps its
+defined label `X` ((30)). -/
+example : ¬ Formula.HasDiscourseTranslation (.conj (.label .X) (.labelDef .X (.label .X)) : Fm) ∧
+    Lab.X ∈ (Formula.expandSelf (.conj (.label .X) (.labelDef .X (.label .X))) : Fm).labels ∧
+    (Expr.defs (.conj (.label .X) (.labelDef .X (.label .X)) : Fm)).lookup .X ≠ none :=
+  ⟨fun h => h.not_circular .X (.single ⟨_, rfl, rfl⟩), by
+    simp [Formula.expandSelf, Formula.expand, Expr.defs, Expr.substLabels, Expr.labels]⟩
 
 /-! ### Presupposition under quantification -/
 
