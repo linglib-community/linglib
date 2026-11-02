@@ -154,6 +154,13 @@ theorem algClosure_finsetSup' {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {f 
     (hf : ∀ i ∈ s, AlgClosure P (f i)) : AlgClosure P (s.sup' hs f) :=
   SupClosed.finsetSup'_mem algClosure_cum hs hf
 
+theorem AlgClosure.map {β : Type*} [SemilatticeSup β] {Q : β → Prop} {f : α → β}
+    (hf : ∀ x y, f (x ⊔ y) = f x ⊔ f y) (h : ∀ x, P x → Q (f x)) {x : α}
+    (hx : AlgClosure P x) : AlgClosure Q (f x) := by
+  induction hx with
+  | base hx => exact .base (h _ hx)
+  | sum _ _ ih ih' => exact hf _ _ ▸ .sum ih ih'
+
 theorem algClosure_has_base {x : α} (h : AlgClosure P x) : ∃ a, P a ∧ a ≤ x := by
   induction h with
   | base hp => exact ⟨_, hp, le_rfl⟩
@@ -356,6 +363,12 @@ theorem atomize_ne_bot : atomize (· ≠ (⊥ : α)) = IsAtom := by
   funext x; exact propext isAtom_iff_le_of_ge.symm
 
 end OrderBot
+
+theorem atom_singleton {β : Type*} (b : β) : Atom ({b} : Finset β) :=
+  atom_iff_isAtom.2 (Finset.isAtom_singleton b)
+
+theorem atom_finset_iff {β : Type*} {s : Finset β} : Atom s ↔ ∃ b, s = {b} := by
+  rw [atom_iff_isAtom, Finset.isAtom_iff]
 
 /-- The atomic parts of a finite set are its singletons. -/
 theorem atomsBelow_finset {β : Type*} (s : Finset β) :

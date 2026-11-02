@@ -92,6 +92,19 @@ variable {E : Type*} {referent : W → Option E} {scope : E → W → Prop} {w :
     presupOfReferent referent scope w = 0 ↔ referent w = none := by
   cases h : referent w <;> simp [presupOfReferent, h]
 
+@[simp] theorem presupOfReferent_eq_one_iff :
+    presupOfReferent referent scope w = 1 ↔ ∃ e, referent w = some e ∧ scope e w := by
+  cases h : referent w <;> simp [presupOfReferent, h]
+
+@[simp] theorem presupOfReferent_eq_neg_one_iff :
+    presupOfReferent referent scope w = -1 ↔ ∃ e, referent w = some e ∧ ¬ scope e w := by
+  cases h : referent w <;> simp [presupOfReferent, h]
+
+/-- Negation is a hole for the presupposition of a definite. -/
+theorem presupOfReferent_not :
+    presupOfReferent referent (fun e w ↦ ¬ scope e w) w = -presupOfReferent referent scope w :=
+  SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp)
+
 theorem presupOfReferent_of_some {e : E} (h : referent w = some e) :
     presupOfReferent referent scope w = SignType.ofProp (scope e w) := by
   simp [presupOfReferent, h]
