@@ -23,9 +23,8 @@ quantificational subordination](##felicitous_discourse150a_iff).
 * Variables range over all pluralities; where the paper reads the variable `w` as a world, the
   assignment's value for it is a world by hypothesis.
 * Singular restricted variables carry `SG`, as in the paper's bathroom sentence.
-* The paper prints no translation of "Every monarchy cherishes its monarch" or of the European
-  monarchies discourse. Ours follow its quantified sentences, with "its monarch" and "their
-  monarchs" a singular summation over each monarchy's monarchs.
+* The paper prints no translation of the European monarchies discourse. Ours follows its
+  quantified sentences, with "their monarchs" a singular summation over each monarchy's monarchs.
 * `IT` and `THEY` are not among the paper's defined constants; they presuppose `SG` and `PL`, as
   its singular and plural summation pronouns do.
 * The `↑`-lift is defined on functions into formulas; on terms it is the identity, so `FX` on a
@@ -44,9 +43,8 @@ quantificational subordination](##felicitous_discourse150a_iff).
 
 ## TODO
 
-* The paper's summation pronoun `ΣuB` after the umbrella sentence, said to denote every umbrella
-  brought, leaves `x` free in `B`; its value depends on `x`, which the discourse does not fix.
-* Attitude reports and the conditional donkey sentence are not encoded.
+* Of the paper's applications, only the paycheck and negated-indefinite pronouns, the bathroom
+  disjunction, the valuables sentence and the European monarchies discourse are encoded.
 
 ## References
 
@@ -67,12 +65,12 @@ open PIP
 /-- The variables of the fragment: the world `w`, the modal-base world `u`, and the indices
 of the paper's trees. -/
 inductive Var
-  | w | u | d | b | c | x | z | o | g | p | s | s' | e | t | m | k | v
+  | w | u | d | b | c | x | s | s' | e | t | m | k | v
   deriving DecidableEq
 
 /-- Formula labels, as in the paper's trees and translations. -/
 inductive Lab
-  | G | P | B | D | S | M | U | W | E | O | X | Y | R | K | C | A | L | V
+  | B | S | M | U | W | O | X | K | C | A | L | V
   deriving DecidableEq
 
 /-- Lexical relation symbols, by number of non-world arguments: the word senses of the
@@ -83,27 +81,12 @@ inductive Lex : ℕ → Type
   | barkEvt : Lex 1
   | hasAgent : Lex 2
   | hasPatient : Lex 2
-  | hasGoal : Lex 2
-  | chaseEvt : Lex 1
-  | cat : Lex 1
-  | farmer : Lex 1
-  | donkey : Lex 1
-  | ownEvt : Lex 1
-  | girl : Lex 1
-  | paper : Lex 1
-  | writeEvt : Lex 1
-  | barks : Lex 1
-  | loud : Lex 1
-  | diorama : Lex 1
-  | made : Lex 2
   | student : Lex 1
   | umbrella : Lex 1
   | brought : Lex 3
   | useEvt : Lex 1
   | wolf : Lex 1
   | enters : Lex 1
-  | tim : Lex 1
-  | eats : Lex 2
   | car : Lex 1
   | owns : Lex 2
   | inShop : Lex 1
@@ -331,63 +314,6 @@ theorem not_intersubstitutable_bvar_var (c : Lex 1) (i : Var) :
 theorem not_intersubstitutable_conj_comm :
     ¬ ∀ φ ψ : Fm, Formula.Intersubstitutable (Atom W E) (φ.conj ψ) (ψ.conj φ) := fun h => by
   simpa using ((h (.neg .top) (.presup .top (.neg .top))).1 ⟨fun _ _ _ => False⟩ fun _ => ∅).2
-
-/-- (56): "chased a cat", a VP. -/
-def chasedACat : Tree (.fn .e .t) :=
-  .pm (.lex (.pred .chaseEvt))
-    (.fx (.lex (.role .hasPatient)) .c (.fa (.lex (.a .c)) (.lex (.pred .cat))))
-
--- (57)
-theorem interp_chasedACat :
-    interp [] chasedACat = fun e =>
-      .conj (pred₁ .chaseEvt e)
-        (.conj (pred₂ .hasPatient e (.var .c)) (restricted .c (pred₁ .cat))) := rfl
-
-/-- (59): "a farmer who owns a donkey", with the relative pronoun's trace a simple
-variable combined by `FA` and the clause abstracted by `PA`. -/
-def aFarmerWhoOwnsADonkey : Tree .t :=
-  .fa (.lex (.a .x)) (.pm (.lex (.pred .farmer))
-    (.pa .z (.fx (.fa (.lex (.role .hasGoal)) (.lex (.dpTrace .z))) .o
-      (.fa (.lex (.tense .o)) (.pm (.lex (.pred .ownEvt))
-        (.fx (.lex (.role .hasPatient)) .d (.fa (.lex (.a .d)) (.lex (.pred .donkey)))))))))
-
--- (65)
-theorem interp_aFarmerWhoOwnsADonkey :
-    interp [] aFarmerWhoOwnsADonkey =
-      restricted .x fun y => .conj (pred₁ .farmer y)
-        (.conj (pred₂ .hasGoal (.var .o) (.var .x))
-          (restricted .o fun e => .conj (pred₁ .ownEvt e)
-            (.conj (pred₂ .hasPatient e (.var .d)) (restricted .d (pred₁ .donkey))))) := rfl
-
-/-- (66): "every girl wrote a paper", quantifier raising leaving a restricted-variable
-trace in the restriction and a labeled trace in the scope. -/
-def everyGirlWroteAPaper : Tree .t :=
-  .fa (.fa (.lex .every) (.sa .g .G (.fa (.lex (.dTrace .g)) (.lex (.pred .girl)))))
-    (.sa .g .P (.fx (.fx (.lex (.role .hasAgent)) .g (.lex (.ldpTrace .G))) .u
-      (.fa (.lex (.tense .u)) (.pm (.lex (.pred .writeEvt))
-        (.fx (.lex (.role .hasPatient)) .p (.fa (.lex (.a .p)) (.lex (.pred .paper))))))))
-
--- (79)
-theorem interp_everyGirlWroteAPaper :
-    interp [] everyGirlWroteAPaper =
-      .subset (SA .g .G (restricted .g (pred₁ .girl)))
-        (SA .g .P (.conj (.conj (pred₂ .hasAgent (.var .u) (.var .g)) (.label .G))
-          (restricted .u fun e => .conj (pred₁ .writeEvt e)
-            (.conj (pred₂ .hasPatient e (.var .p)) (restricted .p (pred₁ .paper)))))) := rfl
-
-/-- (93): the simple pronoun "she_x". -/
-def sheX : Tree .e := .fa (.lex .she) (.lex (.core .x))
-
--- (94c)
-theorem interp_sheX :
-    interp [] sheX = .presup (.var .x) (.conj (pred₁ .fem (.var .x)) (.sg (.var .x))) := rfl
-
-/-- (99): the summation pronoun "they^P_p" after (66). -/
-def theyP : Tree .e := .fa (.lex .they) (.sa .p .Y (.lex (.ldpTrace .P)))
-
--- (100)
-theorem interp_theyP :
-    interp [] theyP = .presup (SA .p .Y (.label .P)) (.pl (SA .p .Y (.label .P))) := rfl
 
 /-- (118): the label definitions of "Almost every student brought an umbrella today",
 `S ≡ STUDENT([s])`, `B ≡ (S ∧ UMBRELLA([u]) ∧ BROUGHT([b], s, u))`. -/
@@ -737,135 +663,7 @@ theorem felicitous_bathroom143_iff (hw : h .w = world w₀) :
     realize_sigmaB_bathroomX S h hw, Sum.inr_injective.exists_image_eq_singleton_iff,
     Set.singleton_iff_unique_mem, implies_true, true_and, and_true]
 
-/-! ### Modal subordination -/
-
-/-- `W ≡ WOLF_w([x]) ∧ ENTERS_w(x)` (133a). -/
-def wolfW : Fm := .conj (pred₁ .wolf (.bvar .x)) (pred₁ .enters (.var .x))
-
-/-- `E ≡ W ∧ TIM_w([t]) ∧ EATS_w(x, t)` (133b): Tasty Tim an indefinite related to the wolf. -/
-def wolfE : Fm := .conj (.label .W) (indefOwned .tim .eats .t)
-
-/-- (133): "A wolf might enter. It would eat Tasty Tim first.", `MIGHT(β_w, ΣwW) ∧
-MUST(β_w, ΣwW, ΣwE)` (129) with the second modal's restriction the first's nuclear scope. -/
-def wolfDiscourse : Fm :=
-  .conj (.conj (Formula.some (Term.modalBase .acc .w .u) (.sigma .w (.label .W)))
-      (.subset (.inter (Term.modalBase .acc .w .u) (.sigma .w (.label .W))) (.sigma .w (.label .E))))
-    (.conj (.labelDef .W wolfW) (.labelDef .E wolfE))
-
-/-- `E` with `W` expanded. -/
-def wolfE' : Fm := .conj wolfW (indefOwned .tim .eats .t)
-
-theorem expandSelf_wolfDiscourse :
-    wolfDiscourse.expandSelf =
-      .conj (.conj (Formula.some (Term.modalBase .acc .w .u) (.sigma .w wolfW))
-          (.subset (.inter (Term.modalBase .acc .w .u) (.sigma .w wolfW)) (.sigma .w wolfE')))
-        (.conj (.labelDef .W wolfW) (.labelDef .E wolfE')) := rfl
-
-theorem locals_wolfW : wolfW.locals = [.x] := rfl
-
-theorem locals_wolfE' : wolfE'.locals = [.x, .t] := rfl
-
-theorem realize_sigmaW_wolfW :
-    Term.realize S.model h (.sigma .w wolfW) =
-      Sum.inl '' {w | ∃ e, S.rel .wolf w ![e] ∧ S.rel .enters w ![e]} := by
-  rw [Term.realize_sigma_eq_of_isConjunctive _ _ S.divisive rfl]
-  ext a
-  have : Nonempty (Atom W E) := ⟨a⟩
-  simp only [locals_wolfW]
-  rcases a with w | _ <;> simp [wolfW, realize_pred₁, world]
-  exact ⟨fun ⟨_, ⟨e, h₁, he⟩, _, h₂, he'⟩ => ⟨e, h₁, Sum.inr_injective (he.trans he'.symm) ▸ h₂⟩,
-    fun ⟨e, h₁, h₂⟩ => ⟨fun _ => .inr e, ⟨e, h₁, rfl⟩, e, h₂, rfl⟩⟩
-
-theorem realize_sigmaW_wolfE' :
-    Term.realize S.model h (.sigma .w wolfE') =
-      Sum.inl '' {w | ∃ e t, (S.rel .wolf w ![e] ∧ S.rel .enters w ![e]) ∧
-        S.rel .tim w ![t] ∧ S.rel .eats w ![e, t]} := by
-  rw [Term.realize_sigma_eq_of_isConjunctive _ _ S.divisive rfl]
-  ext a
-  have : Nonempty (Atom W E) := ⟨a⟩
-  simp only [locals_wolfE']
-  rcases a with w | _ <;> simp [wolfE', wolfW, indefOwned, realize_pred₁, realize_pred₂, world]
-  constructor
-  · rintro ⟨b, ⟨⟨e, h₁, he⟩, _, h₂, he₂⟩, ⟨t, h₃, ht⟩, _, hx, _, ht₃, h₄⟩
-    obtain rfl := Sum.inr_injective (he.trans he₂.symm)
-    obtain rfl := Sum.inr_injective (he.trans hx)
-    obtain rfl := Sum.inr_injective (ht.trans ht₃)
-    exact ⟨e, ⟨h₁, h₂⟩, t, h₃, h₄⟩
-  · rintro ⟨e, ⟨h₁, h₂⟩, t, h₃, h₄⟩
-    exact ⟨fun y => if y = .x then .inr e else .inr t, ⟨⟨e, h₁, rfl⟩, e, h₂, rfl⟩, ⟨t, h₃, rfl⟩,
-      e, rfl, t, rfl, h₄⟩
-
--- (133)
-theorem realize_wolfDiscourse_iff (hw : h .w = world w₀) :
-    wolfDiscourse.expandSelf.Realize S.model h ↔
-      (∃ u e, S.acc w₀ u ∧ S.rel .wolf u ![e] ∧ S.rel .enters u ![e]) ∧
-        ∀ u, S.acc w₀ u → (∃ e, S.rel .wolf u ![e] ∧ S.rel .enters u ![e]) →
-          ∃ e t, (S.rel .wolf u ![e] ∧ S.rel .enters u ![e]) ∧ S.rel .tim u ![t] ∧
-            S.rel .eats u ![e, t] := by
-  rw [expandSelf_wolfDiscourse]
-  simp only [Formula.realize_conj, Formula.realize_some, Formula.realize_subset,
-    Term.realize_inter, Formula.realize_labelDef, and_true,
-    Term.realize_modalBase S.model h (acc := .acc) (R := S.acc) (fun _ _ => Iff.rfl)
-      (by decide : Var.w ≠ .u) hw,
-    realize_sigmaW_wolfW, realize_sigmaW_wolfE', ← Set.image_inter Sum.inl_injective,
-    Set.image_nonempty, Set.image_subset_image_iff Sum.inl_injective]
-  exact and_congr ⟨fun ⟨u, hu, e, he⟩ => ⟨u, e, hu, he⟩, fun ⟨u, e, hu, he⟩ => ⟨u, hu, e, he⟩⟩
-    ⟨fun H u hu he => H ⟨hu, he⟩, fun H u ⟨hu, he⟩ => H u hu he⟩
-
 /-! ### Donkey pronouns -/
-
-/-- `O ≡ UMBRELLA_w([u]) ∧ OWNS_w(x, u)` (113). -/
-def umbrellaO : Fm := indefOwned .umbrella .owns .u
-
-/-- `O ∧ BROUGHT_w(x, u)`: the body of `B` (113). -/
-def umbrellaB : Fm := .conj umbrellaO (pred₂ .bring (.var .x) (.var .u))
-
-/-- (113): "Everyone who owns an umbrella brought it to school today", `EVERY(ΣxO, ΣxB)` with
-`B ≡ O ∧ BROUGHT_w(x, u)`. -/
-def umbrella113 : Fm :=
-  .conj (.subset (.sigma .x (.label .O)) (.sigma .x (.label .B)))
-    (.conj (.labelDef .O umbrellaO)
-      (.labelDef .B (.conj (.label .O) (pred₂ .bring (.var .x) (.var .u)))))
-
-theorem expandSelf_umbrella113 :
-    umbrella113.expandSelf =
-      .conj (.subset (.sigma .x umbrellaO) (.sigma .x umbrellaB))
-        (.conj (.labelDef .O umbrellaO) (.labelDef .B umbrellaB)) := rfl
-
-theorem realize_sigmaX_umbrellaO (hw : h .w = world w₀) :
-    Term.realize S.model h (.sigma .x umbrellaO) =
-      Sum.inr '' {e | ∃ u, S.rel .umbrella w₀ ![u] ∧ S.rel .owns w₀ ![e, u]} := by
-  rw [Term.realize_sigma_eq_of_isConjunctive _ _ S.divisive rfl]
-  ext a
-  have : Nonempty (Atom W E) := ⟨a⟩
-  simp only [umbrellaO, locals_indefOwned]
-  rcases a with _ | e <;> simp [indefOwned, realize_pred₁, realize_pred₂, hw, world_inj]
-  exact ⟨fun ⟨_, ⟨u, h₁, hu⟩, _, hu', h₂⟩ => ⟨u, h₁, Sum.inr_injective (hu.trans hu') ▸ h₂⟩,
-    fun ⟨u, h₁, h₂⟩ => ⟨fun _ => .inr u, ⟨u, h₁, rfl⟩, u, rfl, h₂⟩⟩
-
-theorem realize_sigmaX_umbrellaB (hw : h .w = world w₀) :
-    Term.realize S.model h (.sigma .x umbrellaB) =
-      Sum.inr '' {e | ∃ u, (S.rel .umbrella w₀ ![u] ∧ S.rel .owns w₀ ![e, u]) ∧
-        S.rel .bring w₀ ![e, u]} := by
-  rw [Term.realize_sigma_eq_of_isConjunctive _ _ S.divisive rfl]
-  ext a
-  have : Nonempty (Atom W E) := ⟨a⟩
-  simp only [umbrellaB, umbrellaO, show (Expr.conj (indefOwned .umbrella .owns .u)
-    (pred₂ .bring (.var .x) (.var .u)) : Fm).locals = [.u] from rfl]
-  rcases a with _ | e <;> simp [indefOwned, realize_pred₁, realize_pred₂, hw, world_inj]
-  exact ⟨fun ⟨_, ⟨⟨u, h₁, hu⟩, _, hu', h₂⟩, _, hu'', h₃⟩ => ⟨u,
-    ⟨h₁, Sum.inr_injective (hu.trans hu') ▸ h₂⟩, Sum.inr_injective (hu.trans hu'') ▸ h₃⟩,
-    fun ⟨u, ⟨h₁, h₂⟩, h₃⟩ => ⟨fun _ => .inr u, ⟨⟨u, h₁, rfl⟩, u, rfl, h₂⟩, u, rfl, h₃⟩⟩
-
--- (113)
-theorem realize_umbrella113_iff (hw : h .w = world w₀) :
-    umbrella113.expandSelf.Realize S.model h ↔
-      ∀ e, (∃ u, S.rel .umbrella w₀ ![u] ∧ S.rel .owns w₀ ![e, u]) →
-        ∃ u, (S.rel .umbrella w₀ ![u] ∧ S.rel .owns w₀ ![e, u]) ∧ S.rel .bring w₀ ![e, u] := by
-  rw [expandSelf_umbrella113]
-  simp only [Formula.realize_conj, Formula.realize_subset, Formula.realize_labelDef, and_true,
-    realize_sigmaX_umbrellaO S h hw, realize_sigmaX_umbrellaB S h hw,
-    Set.image_subset_image_iff Sum.inr_injective, Set.ofPred_subset_ofPred]
 
 theorem realize_sigma_pred₁ (c : Lex 1) {i : Var} (hi : i ≠ .w) (hw : h .w = world w₀) :
     Term.realize S.model h (.sigma i (pred₁ c (.bvar i))) = Sum.inr '' {e | S.rel c w₀ ![e]} := by
@@ -1022,57 +820,6 @@ theorem realize_valuables116_not_strong :
     Set.singleton_nonempty _, ?_⟩
   rintro _ (rfl | rfl) _ rfl <;> exact ⟨_, _, rfl, rfl, by simp [lockScenario]⟩
 
-/-! ### Summation pronouns -/
-
-/-- (102)–(103): "Most dogs bark. They are loud.", `MOST(ΣdD, ΣdB) ∧ LOUD(ΣdB)` with
-`D ≡ DOG([d])`, `B ≡ (D ∧ BARKS(d))`. -/
-def theyLoud : Fm :=
-  .conj (.conj (.atom .most (.var .w) ![.sigma .d (.label .D), .sigma .d (.label .B)])
-      (pred₁ .loud (.sigma .d (.label .B))))
-    (.conj (.labelDef .D (pred₁ .dog (.bvar .d)))
-      (.labelDef .B (.conj (.label .D) (pred₁ .barks (.var .d)))))
-
--- (104)
-theorem expandSelf_theyLoud :
-    theyLoud.expandSelf =
-      .conj (.conj (.atom .most (.var .w) ![.sigma .d (pred₁ .dog (.bvar .d)),
-            .sigma .d (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d)))])
-          (pred₁ .loud (.sigma .d (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))))
-        (.conj (.labelDef .D (pred₁ .dog (.bvar .d)))
-          (.labelDef .B (.conj (pred₁ .dog (.bvar .d)) (pred₁ .barks (.var .d))))) := rfl
-
-/-- (102)–(104) has a translation ((31a)): `B` is defined through `D`, and `D` through no label. -/
-example : theyLoud.HasDiscourseTranslation := by
-  have hdefs : theyLoud.defs = [(.D, pred₁ .dog (.bvar .d)),
-      (.B, .conj (.label .D) (pred₁ .barks (.var .d)))] := rfl
-  let rank : Lab → ℕ := fun Z => if Z = .B then 1 else 0
-  have hrank : ∀ {Z Z'}, DependsOn theyLoud.defs Z Z' → rank Z' < rank Z := by
-    rintro Z Z' ⟨ψ, h, hZ'⟩
-    rw [hdefs] at h
-    cases Z <;> simp [List.lookup_cons, beq_eq_decide] at h <;> subst h <;>
-      simp_all [rank, pred₁, Expr.labels]
-  refine ⟨fun Z ψ ψ' h h' => (Prod.mk.inj (List.inj_on_of_nodup_map (f := Prod.fst)
-    (by rw [hdefs]; decide) h h' rfl)).2, fun Z hZ => ?_, fun Z hZ => ?_⟩
-  · have : ∀ {Z Z'}, Relation.TransGen (DependsOn theyLoud.defs) Z Z' → rank Z' < rank Z := by
-      intro Z Z' h
-      induction h with
-      | single h => exact hrank h
-      | tail _ h ih => exact (hrank h).trans ih
-    exact lt_irrefl _ (this hZ)
-  · have : Z = .D ∨ Z = .B := by
-      simp [theyLoud, pred₁, Expr.labels, Fin.exists_fin_two] at hZ
-      tauto
-    rw [hdefs]
-    rcases this with rfl | rfl <;> simp [List.lookup_cons, beq_eq_decide]
-
-/-- A circular definition is never expanded away: `X ∧ X ≡ X` has no translation, and keeps its
-defined label `X` ((30)). -/
-example : ¬ Formula.HasDiscourseTranslation (.conj (.label .X) (.labelDef .X (.label .X)) : Fm) ∧
-    Lab.X ∈ (Formula.expandSelf (.conj (.label .X) (.labelDef .X (.label .X))) : Fm).labels ∧
-    (Expr.defs (.conj (.label .X) (.labelDef .X (.label .X)) : Fm)).lookup .X ≠ none :=
-  ⟨fun h => h.not_circular .X (.single ⟨_, rfl, rfl⟩), by
-    simp [Formula.expandSelf, Formula.expand, Expr.defs, Expr.substLabels, Expr.labels]⟩
-
 /-! ### Presupposition under quantification -/
 
 /-- `K ≡ MONARCH-OF_w([k], m)`; `ΣkK | SG(ΣkK)` is "its monarch". -/
@@ -1082,15 +829,6 @@ def monarchK : Fm := pred₂ .monarchOf (.bvar .k) (.var .m)
 restriction `Z`, the pronoun's presupposition to be satisfied by `Z`. -/
 def cherishBody (Z : Lab) : Fm :=
   .conj (.label Z) (pred₂ .cherish (.var .m) (Term.sgPronoun .k (.label .K)))
-
-/-- `R ≡ SG(m) ∧ MONARCHY_w([m])`. -/
-def monarchyR : Fm := sgIndef .monarchy .m
-
-/-- (146a): "Every monarchy cherishes its monarch", in our translation `EVERY(ΣmR, ΣmS)` with
-`S ≡ R ∧ CHERISH(m, ΣkK | SG(ΣkK))`; the paper prints none. -/
-def everyMonarchy : Fm :=
-  .conj (.subset (.sigma .m (.label .R)) (.sigma .m (.label .S)))
-    (.conj (.labelDef .R monarchyR) (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody .R))))
 
 /-- `C ≡ SG(m) ∧ COUNTRY_w([m])`. -/
 def countryC : Fm := sgIndef .country .m
@@ -1113,12 +851,6 @@ def cherishBody' (ρ : Fm) : Fm :=
 
 /-- `M` with `C` expanded. -/
 def monarchyM' : Fm := sgIndefWith .country .monarchy .m
-
-theorem expandSelf_everyMonarchy :
-    everyMonarchy.expandSelf =
-      .conj (.subset (.sigma .m monarchyR) (.sigma .m (cherishBody' monarchyR)))
-        (.conj (.labelDef .R monarchyR)
-          (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody' monarchyR)))) := rfl
 
 theorem expandSelf_discourse150a :
     discourse150a.expandSelf =
@@ -1171,17 +903,6 @@ theorem felicitous_sigmaM_cherishBody'_iff {ρ : Fm} {Q : E → Prop} (hw : h .w
     obtain ⟨m₀, hm, hq⟩ := (hρ g' hw').1 hr
     exact (felicitous_sgPronoun_monarchK_iff S g' hw' hm).2 (H m₀ hq)
 
--- (146a)
-theorem felicitous_everyMonarchy_iff (hw : h .w = world w₀) :
-    everyMonarchy.expandSelf.Felicitous S.model h ↔
-      ∀ m₀, S.rel .monarchy w₀ ![m₀] → ∃! e, S.rel .monarchOf w₀ ![e, m₀] := by
-  rw [expandSelf_everyMonarchy]
-  simp only [Formula.felicitous_conj, Formula.felicitous_subset, Formula.felicitous_labelDef,
-    Formula.realize_labelDef, monarchyR,
-    Term.felicitous_sigma_of_forall _ _ fun g => felicitous_sgIndef S g _ _, implies_true, and_true,
-    true_and, felicitous_sigmaM_cherishBody'_iff S h hw (by decide)
-      (fun g => felicitous_sgIndef S g _ _) (fun g hg => realize_sgIndef S g .monarchy .m hg)]
-
 /-- (150a) is felicitous at `w₀` iff, granted its first sentence, every country that is a monarchy
 has exactly one monarch. -/
 theorem felicitous_discourse150a_iff (hw : h .w = world w₀) :
@@ -1202,5 +923,42 @@ theorem felicitous_discourse150a_iff (hw : h .w = world w₀) :
       (fun g => felicitous_sgIndefWith S g _ _ _)
       (fun g hg => realize_sgIndefWith S g .country .monarchy .m hg)]
   exact imp_congr_left ⟨fun H e he => (H e he).2, fun H e he => ⟨he, H e he⟩⟩
+
+/-! ### Discourse translation -/
+
+/-- (150a) has a translation ((31a)): `S` is defined through `M` and `K`, `M` through `C`. -/
+example : discourse150a.HasDiscourseTranslation := by
+  have hdefs : discourse150a.defs =
+      [(.C, countryC), (.M, monarchyM), (.K, monarchK), (.S, cherishBody .M)] := rfl
+  let rank : Lab → ℕ := fun Z => if Z = .S then 2 else if Z = .M then 1 else 0
+  have hrank : ∀ {Z Z'}, DependsOn discourse150a.defs Z Z' → rank Z' < rank Z := by
+    rintro Z Z' ⟨ψ, h, hZ'⟩
+    rw [hdefs] at h
+    cases Z <;> simp [List.lookup_cons, beq_eq_decide] at h <;> subst h <;>
+      simp_all [rank, countryC, monarchyM, monarchK, cherishBody, sgIndef, pred₁, pred₂,
+        Term.sgPronoun, Expr.labels, Fin.exists_fin_two]
+    rcases hZ' with rfl | rfl <;> decide
+  refine ⟨fun Z ψ ψ' h h' => (Prod.mk.inj (List.inj_on_of_nodup_map (f := Prod.fst)
+    (by rw [hdefs]; decide) h h' rfl)).2, fun Z hZ => ?_, fun Z hZ => ?_⟩
+  · have : ∀ {Z Z'}, Relation.TransGen (DependsOn discourse150a.defs) Z Z' → rank Z' < rank Z := by
+      intro Z Z' h
+      induction h with
+      | single h => exact hrank h
+      | tail _ h ih => exact (hrank h).trans ih
+    exact lt_irrefl _ (this hZ)
+  · have : Z = .C ∨ Z = .M ∨ Z = .K ∨ Z = .S := by
+      simp [discourse150a, countryC, monarchyM, monarchK, cherishBody, sgIndef, pred₁, pred₂,
+        Term.sgPronoun, Expr.labels, Fin.exists_fin_two] at hZ
+      tauto
+    rw [hdefs]
+    rcases this with rfl | rfl | rfl | rfl <;> simp [List.lookup_cons, beq_eq_decide]
+
+/-- A circular definition is never expanded away: `X ∧ X ≡ X` has no translation, and keeps its
+defined label `X` ((30)). -/
+example : ¬ Formula.HasDiscourseTranslation (.conj (.label .X) (.labelDef .X (.label .X)) : Fm) ∧
+    Lab.X ∈ (Formula.expandSelf (.conj (.label .X) (.labelDef .X (.label .X))) : Fm).labels ∧
+    (Expr.defs (.conj (.label .X) (.labelDef .X (.label .X)) : Fm)).lookup .X ≠ none :=
+  ⟨fun h => h.not_circular .X (.single ⟨_, rfl, rfl⟩), by
+    simp [Formula.expandSelf, Formula.expand, Expr.defs, Expr.substLabels, Expr.labels]⟩
 
 end AbneyKeshet2025
