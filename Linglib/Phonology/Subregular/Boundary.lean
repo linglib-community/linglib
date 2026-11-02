@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.List.Chain
 public import Linglib.Core.Data.List.Factors
 public import Linglib.Core.Data.List.TakeDrop
 public import Mathlib.Data.Int.Notation
