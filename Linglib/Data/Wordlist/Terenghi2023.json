@@ -1,0 +1,395 @@
+{
+  "description": "The demonstrative paradigms of Terenghi (2023): Mundari (19), with three degrees of distance for each of three terms; spoken Brazilian Portuguese nominal demonstratives (3), sg.m, with reinforcers; and Satawal (7), with contact oppositions for the first and second terms. Cells are the printed columns and rows.",
+  "Types": {
+    "Term": [
+      {
+        "Value": "DEM.1",
+        "Lean": "dem1",
+        "Description": "the first term, speaker-related"
+      },
+      {
+        "Value": "DEM.2",
+        "Lean": "dem2",
+        "Description": "the second term, hearer-related"
+      },
+      {
+        "Value": "DEM.3",
+        "Lean": "dem3",
+        "Description": "the third term"
+      },
+      {
+        "Value": "Local",
+        "Lean": "local",
+        "Description": "the term of the area related to the discourse participants"
+      },
+      {
+        "Value": "Non-local",
+        "Lean": "nonLocal",
+        "Description": "the term of the area not related to the discourse participants"
+      }
+    ],
+    "Subdivision": [
+      {
+        "Value": "Nearest",
+        "Lean": "nearest",
+        "Description": "the nearest degree of distance"
+      },
+      {
+        "Value": "Nearer",
+        "Lean": "nearer",
+        "Description": "the nearer degree of distance"
+      },
+      {
+        "Value": "Near",
+        "Lean": "near",
+        "Description": "the near degree of distance"
+      },
+      {
+        "Value": "Unmarked",
+        "Lean": "unmarked",
+        "Description": "the term without a reinforcer"
+      },
+      {
+        "Value": "S-centred",
+        "Lean": "speakerCentred",
+        "Description": "speaker-related, with the reinforcer aqui"
+      },
+      {
+        "Value": "A-centred",
+        "Lean": "addresseeCentred",
+        "Description": "hearer-related, with the reinforcer aí"
+      },
+      {
+        "Value": "Proximal",
+        "Lean": "proximal",
+        "Description": "proximal, with the reinforcer ali"
+      },
+      {
+        "Value": "Distal",
+        "Lean": "distal",
+        "Description": "distal, with the reinforcer lá"
+      },
+      {
+        "Value": "+",
+        "Lean": "contact",
+        "Description": "contact with the participant"
+      }
+    ]
+  },
+  "CellTable": [
+    {
+      "ID": "dem1_nearest",
+      "Name": "DEM.1, nearest",
+      "Features": "PronType=Dem|Term=DEM.1|Subdivision=Nearest"
+    },
+    {
+      "ID": "dem2_nearest",
+      "Name": "DEM.2, nearest",
+      "Features": "PronType=Dem|Term=DEM.2|Subdivision=Nearest"
+    },
+    {
+      "ID": "dem3_nearest",
+      "Name": "DEM.3, nearest",
+      "Features": "PronType=Dem|Term=DEM.3|Subdivision=Nearest"
+    },
+    {
+      "ID": "dem1_nearer",
+      "Name": "DEM.1, nearer",
+      "Features": "PronType=Dem|Term=DEM.1|Subdivision=Nearer"
+    },
+    {
+      "ID": "dem2_nearer",
+      "Name": "DEM.2, nearer",
+      "Features": "PronType=Dem|Term=DEM.2|Subdivision=Nearer"
+    },
+    {
+      "ID": "dem3_nearer",
+      "Name": "DEM.3, nearer",
+      "Features": "PronType=Dem|Term=DEM.3|Subdivision=Nearer"
+    },
+    {
+      "ID": "dem1_near",
+      "Name": "DEM.1, near",
+      "Features": "PronType=Dem|Term=DEM.1|Subdivision=Near"
+    },
+    {
+      "ID": "dem2_near",
+      "Name": "DEM.2, near",
+      "Features": "PronType=Dem|Term=DEM.2|Subdivision=Near"
+    },
+    {
+      "ID": "dem3_near",
+      "Name": "DEM.3, near",
+      "Features": "PronType=Dem|Term=DEM.3|Subdivision=Near"
+    },
+    {
+      "ID": "local_unmarked",
+      "Name": "Local, Unmarked",
+      "Features": "PronType=Dem|Term=Local|Subdivision=Unmarked"
+    },
+    {
+      "ID": "local_speakerCentred",
+      "Name": "Local, S-centred",
+      "Features": "PronType=Dem|Term=Local|Subdivision=S-centred"
+    },
+    {
+      "ID": "local_addresseeCentred",
+      "Name": "Local, A-centred",
+      "Features": "PronType=Dem|Term=Local|Subdivision=A-centred"
+    },
+    {
+      "ID": "nonLocal_unmarked",
+      "Name": "Non-local, Unmarked",
+      "Features": "PronType=Dem|Term=Non-local|Subdivision=Unmarked"
+    },
+    {
+      "ID": "nonLocal_proximal",
+      "Name": "Non-local, Proximal",
+      "Features": "PronType=Dem|Term=Non-local|Subdivision=Proximal"
+    },
+    {
+      "ID": "nonLocal_distal",
+      "Name": "Non-local, Distal",
+      "Features": "PronType=Dem|Term=Non-local|Subdivision=Distal"
+    },
+    {
+      "ID": "dem1_contact",
+      "Name": "DEM.1+",
+      "Features": "PronType=Dem|Term=DEM.1|Subdivision=+"
+    },
+    {
+      "ID": "dem1",
+      "Name": "DEM.1",
+      "Features": "PronType=Dem|Term=DEM.1"
+    },
+    {
+      "ID": "dem2_contact",
+      "Name": "DEM.2+",
+      "Features": "PronType=Dem|Term=DEM.2|Subdivision=+"
+    },
+    {
+      "ID": "dem2",
+      "Name": "DEM.2",
+      "Features": "PronType=Dem|Term=DEM.2"
+    },
+    {
+      "ID": "dem3",
+      "Name": "DEM.3",
+      "Features": "PronType=Dem|Term=DEM.3"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "demonstrative",
+      "Name": "demonstrative",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "dem_mundari",
+      "Language_ID": "mund1320",
+      "Parameter_ID": "demonstrative",
+      "Name": "ni"
+    },
+    {
+      "ID": "dem_portuguese",
+      "Language_ID": "braz1246",
+      "Parameter_ID": "demonstrative",
+      "Name": "esse"
+    },
+    {
+      "ID": "dem_satawal",
+      "Language_ID": "sata1237",
+      "Parameter_ID": "demonstrative",
+      "Name": "minne"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "terenghi2023_mundari_ni",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem1_nearest",
+      "Form": "ni",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_in",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem2_nearest",
+      "Form": "in",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_hin",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem3_nearest",
+      "Form": "hin",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_ne",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem1_nearer",
+      "Form": "ne",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_en",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem2_nearer",
+      "Form": "en",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_hen",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem3_nearer",
+      "Form": "hen",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_na",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem1_near",
+      "Form": "na",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_an",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem2_near",
+      "Form": "an",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_mundari_han",
+      "Lexeme_ID": "dem_mundari",
+      "Cell": "dem3_near",
+      "Form": "han",
+      "Source": [
+        "terenghi-2023[(19)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_portuguese_esse",
+      "Lexeme_ID": "dem_portuguese",
+      "Cell": "local_unmarked",
+      "Form": "esse",
+      "Source": [
+        "terenghi-2023[(3)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_portuguese_esse_aqui",
+      "Lexeme_ID": "dem_portuguese",
+      "Cell": "local_speakerCentred",
+      "Form": "esse aqui",
+      "Source": [
+        "terenghi-2023[(3)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_portuguese_esse_ai",
+      "Lexeme_ID": "dem_portuguese",
+      "Cell": "local_addresseeCentred",
+      "Form": "esse aí",
+      "Source": [
+        "terenghi-2023[(3)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_portuguese_aquele",
+      "Lexeme_ID": "dem_portuguese",
+      "Cell": "nonLocal_unmarked",
+      "Form": "aquele",
+      "Source": [
+        "terenghi-2023[(3)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_portuguese_aquele_ali",
+      "Lexeme_ID": "dem_portuguese",
+      "Cell": "nonLocal_proximal",
+      "Form": "aquele ali",
+      "Source": [
+        "terenghi-2023[(3)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_portuguese_aquele_la",
+      "Lexeme_ID": "dem_portuguese",
+      "Cell": "nonLocal_distal",
+      "Form": "aquele lá",
+      "Source": [
+        "terenghi-2023[(3)]"
+      ]
+    },
+    {
+      "ID": "terenghi2023_satawal_minne",
+      "Lexeme_ID": "dem_satawal",
+      "Cell": "dem1_contact",
+      "Form": "minne",
+      "Source": [
+        "terenghi-2023[(7)]"
+      ],
+      "Comment": "'in S's hand'"
+    },
+    {
+      "ID": "terenghi2023_satawal_minnen",
+      "Lexeme_ID": "dem_satawal",
+      "Cell": "dem1",
+      "Form": "minnen",
+      "Source": [
+        "terenghi-2023[(7)]"
+      ],
+      "Comment": "'reachable by S's hand'"
+    },
+    {
+      "ID": "terenghi2023_satawal_minna",
+      "Lexeme_ID": "dem_satawal",
+      "Cell": "dem2_contact",
+      "Form": "minna",
+      "Source": [
+        "terenghi-2023[(7)]"
+      ],
+      "Comment": "'in A's hand'"
+    },
+    {
+      "ID": "terenghi2023_satawal_minimu",
+      "Lexeme_ID": "dem_satawal",
+      "Cell": "dem2",
+      "Form": "minimu",
+      "Source": [
+        "terenghi-2023[(7)]"
+      ],
+      "Comment": "'close to A'"
+    },
+    {
+      "ID": "terenghi2023_satawal_minnan",
+      "Lexeme_ID": "dem_satawal",
+      "Cell": "dem3",
+      "Form": "minnan",
+      "Source": [
+        "terenghi-2023[(7)]"
+      ],
+      "Comment": "'Dist'"
+    }
+  ]
+}
