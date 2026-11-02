@@ -18,9 +18,9 @@ fixes which consonants trigger assimilation and which substitute.
 ## Implementation notes
 
 Assimilation copies the whole place class, as Hayes's rule does, and the class contains [strident]
-and [lateral]. A nasal assimilated to a sibilant or a lateral therefore copies `+` for them, which
-`nonstrident` and `nonlateral` reset, and a nasal assimilated to a consonant with no oral
-articulator loses its place, which `defaultPlace` restores.
+and [lateral]. A nasal assimilated to a sibilant or a lateral therefore copies `+` for them, and a
+nasal assimilated to a consonant with no oral articulator loses its place. `repair` resets the
+first two and restores the place, segment by segment, since it reads no context.
 
 Pater analyses substitution as fusion, one nasal that corresponds to both input segments, rather
 than as the loss of the consonant. The two give the same string, and only strings are computed here.
@@ -54,122 +54,87 @@ def placeAssimilation (trigger : Segment) : Rule where
   effect := .copyRight FeatureClass.place
   rightContext := [.seg trigger]
 
-/-- A nasal is not strident. -/
-def nonstrident : Rule where
-  target := Segment.ofSpecs [(.nasal, true), (.strident, true)]
-  effect := .changeFeatures (Segment.ofSpecs [(.strident, false)])
-
-/-- A nasal is not lateral. -/
-def nonlateral : Rule where
-  target := Segment.ofSpecs [(.nasal, true), (.lateral, true)]
-  effect := .changeFeatures (Segment.ofSpecs [(.lateral, false)])
-
-/-- A nasal with no oral articulator is the nasal `N`. -/
-def defaultPlace (N : Segment) : Rule where
-  target := Segment.ofSpecs [(.nasal, true), (.labial, false), (.coronal, false), (.dorsal, false)]
-  effect := .replace N
-
-/-- The rules of nasal place assimilation, for the triggers `trigger` and the default nasal
-`N`. -/
-def rules (trigger N : Segment) : List Rule :=
-  [placeAssimilation trigger, nonstrident, nonlateral, defaultPlace N]
+/-- `repair N s` keeps a nasal a possible nasal: a nasal with no oral articulator is the nasal
+`N`, and otherwise a nasal is neither strident nor lateral. Other segments are unchanged. -/
+def repair (N s : Segment) : Segment :=
+  if s.HasValue .nasal true then
+    if s.HasValue .labial false ∧ s.HasValue .coronal false ∧ s.HasValue .dorsal false then N
+    else
+      let s' := if s.HasValue .strident true then s.setFeature .strident false else s
+      if s.HasValue .lateral true then s'.setFeature .lateral false else s'
+  else s
 
 /-- `assimilate trigger N w` is the word `w` with each nasal assimilated to a following segment
-of the class `trigger`. -/
-def assimilate (trigger N : Segment) : List Segment → List Segment := derive (rules trigger N)
+of the class `trigger`, the nasal `N` standing in for one left with no place. -/
+def assimilate (trigger N : Segment) (w : List Segment) : List Segment :=
+  ((placeAssimilation trigger).apply w).map (repair N)
 
 /-- Assimilation neither deletes nor inserts a segment. -/
 theorem length_assimilate (trigger N : Segment) (w : List Segment) :
-    (assimilate trigger N w).length = w.length :=
-  length_derive (by simp [rules, placeAssimilation, nonstrident, nonlateral, defaultPlace]) w
+    (assimilate trigger N w).length = w.length := by
+  simp [assimilate, Rule.length_apply (r := placeAssimilation trigger) nofun]
 
 /-- `substitute trigger N x` is the nasal that `N` and a following `x` surface as under nasal
 substitution, which is the nasal that `N` assimilates to before `x`. -/
 def substitute (trigger N x : Segment) : Segment :=
   (assimilate trigger N [N, x]).head (List.ne_nil_of_length_pos (by simp [length_assimilate]))
 
-/-! ### What the rules compute -/
+variable {trigger N s x : Segment}
 
-variable {trigger N x : Segment}
+/-! ### Repair -/
 
-private theorem verdict_placeAssimilation (s : Segment) (w : List Segment) :
-    (placeAssimilation trigger).verdict [] s (x :: w) =
-      [if (placeAssimilation trigger).target ≤ s ∧ trigger ≤ x then
-        FeatureClass.place.piecewise x s else s] := by
-  simp only [Rule.verdict, MatchesLeft, MatchesRight, placeAssimilation, List.reverse_nil,
-    and_true, true_and]
-  split_ifs <;> simp_all [Effect.apply]
+theorem repair_of_not_hasValue_nasal (h : ¬ s.HasValue .nasal true) : repair N s = s := by
+  simp [repair, h]
 
-private theorem verdict_changeFeatures {r : Rule} {f : Feature} {v : Bool}
-    (he : r.effect = .changeFeatures (Segment.ofSpecs [(f, v)])) (hl : r.leftContext = [])
-    (hr : r.rightContext = []) (s : Segment) (d : List Segment) :
-    r.verdict [] s d = [if r.target ≤ s then s.setFeature f v else s] := by
-  simp only [Rule.verdict, MatchesLeft, MatchesRight, hl, hr, List.reverse_nil, and_true]
-  split_ifs
-  · simp only [he, Effect.apply, Option.toList_some, List.cons.injEq, and_true]
-    funext g
-    by_cases h : g = f
-    · subst h
-      rw [show s.setFeature g v g = some v from Segment.setFeature_hasValue s g v,
-        Segment.ofSpecs_apply, List.lookup_cons, beq_self_eq_true]
-      rfl
-    · rw [Segment.setFeature_apply_of_ne s (Ne.symm h), Segment.ofSpecs_apply,
-        List.lookup_cons, beq_false_of_ne h, List.lookup_nil]
-      rfl
-  · rfl
+theorem repair_of_placeless (h : s.HasValue .nasal true) (hl : s.HasValue .labial false)
+    (hc : s.HasValue .coronal false) (hd : s.HasValue .dorsal false) : repair N s = N := by
+  simp [repair, h, hl, hc, hd]
 
-private theorem verdict_defaultPlace (s : Segment) (d : List Segment) :
-    (defaultPlace N).verdict [] s d = [if (defaultPlace N).target ≤ s then N else s] := by
-  simp only [Rule.verdict, MatchesLeft, MatchesRight, defaultPlace, List.reverse_nil, and_true]
-  split_ifs <;> simp_all [Effect.apply]
+theorem repair_apply_of_ne (h : ¬ (s.HasValue .labial false ∧ s.HasValue .coronal false ∧
+      s.HasValue .dorsal false)) {f : Feature} (hs : f ≠ .strident) (hl : f ≠ .lateral) :
+    repair N s f = s f := by
+  unfold repair
+  split_ifs <;> simp_all [Segment.setFeature_apply_of_ne, Ne.symm]
 
-private theorem assimilate_cons_cons (w : List Segment) :
-    assimilate trigger N (N :: x :: w) =
-      (let s₁ : Segment := if (placeAssimilation trigger).target ≤ N ∧ trigger ≤ x then
-          FeatureClass.place.piecewise x N else N
-        let s₂ : Segment := if nonstrident.target ≤ s₁ then s₁.setFeature .strident false else s₁
-        let s₃ : Segment := if nonlateral.target ≤ s₂ then s₂.setFeature .lateral false else s₂
-        if (defaultPlace N).target ≤ s₃ then N else s₃) :: assimilate trigger N (x :: w) := by
-  simp only [assimilate, derive, rules, List.foldl_cons, List.foldl_nil]
-  rw [Rule.apply_cons_of_leftReach_eq_zero rfl, verdict_placeAssimilation, List.singleton_append,
-    Rule.apply_cons_of_leftReach_eq_zero rfl, verdict_changeFeatures rfl rfl rfl,
-    List.singleton_append, Rule.apply_cons_of_leftReach_eq_zero rfl,
-    verdict_changeFeatures rfl rfl rfl, List.singleton_append,
-    Rule.apply_cons_of_leftReach_eq_zero rfl, verdict_defaultPlace, List.singleton_append]
+theorem repair_hasValue_nasal (hN : N.HasValue .nasal true) (h : s.HasValue .nasal true) :
+    (repair N s).HasValue .nasal true := by
+  unfold repair
+  split_ifs <;> simp_all [Segment.HasValue, Segment.setFeature_apply_of_ne]
 
-private theorem substitute_eq : substitute trigger N x =
-    let s₁ : Segment := if (placeAssimilation trigger).target ≤ N ∧ trigger ≤ x then
-        FeatureClass.place.piecewise x N else N
-      let s₂ : Segment := if nonstrident.target ≤ s₁ then s₁.setFeature .strident false else s₁
-      let s₃ : Segment := if nonlateral.target ≤ s₂ then s₂.setFeature .lateral false else s₂
-      if (defaultPlace N).target ≤ s₃ then N else s₃ := by
-  simp only [substitute, assimilate_cons_cons, List.head_cons]
+/-! ### Substitution -/
 
-/-- Assimilation leaves a segment that is not a nasal as it is. -/
-theorem assimilate_singleton (hx : ¬ x.HasValue .nasal true) : assimilate trigger N [x] = [x] := by
-  have h (l : List (Feature × Bool)) : ¬ Segment.ofSpecs ((.nasal, true) :: l) ≤ x :=
-    fun hle ↦ hx ((Segment.le_iff_forall_hasValue x).1 hle _ _ rfl)
-  have h₁ {r : Rule} (hl : r.leftReach = 0) (ht : ¬ r.target ≤ x) : r.apply [x] = [x] := by
-    rw [Rule.apply_cons_of_leftReach_eq_zero hl]
-    simp [Rule.verdict, ht, Rule.apply, Rule.apply.go]
-  simp only [assimilate, derive, rules, List.foldl_cons, List.foldl_nil]
-  rw [h₁ rfl (h _), h₁ rfl (h _), h₁ rfl (h _), h₁ rfl (h _)]
+/-- Before a second segment `x`, a nasal takes the place of `x` when `x` is a trigger, and `x`
+itself is unchanged. -/
+theorem placeAssimilation_apply_pair (y : Segment) :
+    (placeAssimilation trigger).apply [y, x] =
+      [if y.HasValue .nasal true ∧ trigger ≤ x then FeatureClass.place.piecewise x y else y,
+        x] := by
+  rw [Rule.apply_cons_of_leftReach_eq_zero rfl, Rule.apply_cons_of_leftReach_eq_zero rfl]
+  by_cases h : y.HasValue .nasal true ∧ trigger ≤ x <;>
+    simp [h, Rule.verdict, placeAssimilation, MatchesLeft, MatchesRight, Effect.apply,
+      ← Segment.hasValue_iff_ofSpecs_le]
+
+theorem substitute_eq : substitute trigger N x =
+    repair N (if N.HasValue .nasal true ∧ trigger ≤ x then FeatureClass.place.piecewise x N
+      else N) := by
+  simp only [substitute, assimilate, placeAssimilation_apply_pair, List.map_cons, List.head_cons]
 
 /-- Substitution is assimilation together with the loss of the consonant: the nasal `N` and a
 following `x` that is not a nasal assimilate to the substituted nasal followed by `x`
 ([donohue-2024] p. 719). -/
 theorem assimilate_pair (hx : ¬ x.HasValue .nasal true) :
     assimilate trigger N [N, x] = [substitute trigger N x, x] := by
-  simp only [substitute, assimilate_cons_cons, List.head_cons, assimilate_singleton hx]
+  simp only [substitute, assimilate, placeAssimilation_apply_pair, List.map_cons, List.map_nil,
+    List.head_cons, repair_of_not_hasValue_nasal hx]
 
 /-- The substituted segment of a nasal is a nasal. -/
 theorem substitute_hasValue_nasal (hN : N.HasValue .nasal true) :
     (substitute trigger N x).HasValue .nasal true := by
-  rw [substitute_eq, Segment.HasValue]
-  simp only [ite_apply, ne_eq, reduceCtorEq, not_false_eq_true, Segment.setFeature_apply_of_ne,
-    Finset.piecewise_eq_of_notMem _ _ _ (by decide : Feature.nasal ∉ FeatureClass.place),
-    ite_self]
-  exact hN
+  rw [substitute_eq]
+  refine repair_hasValue_nasal hN ?_
+  split_ifs
+  · rwa [Segment.HasValue, Finset.piecewise_eq_of_notMem _ _ _ (by decide)]
+  · exact hN
 
 /-- The substituted nasal is homorganic with a consonant that has an oral articulator: it agrees
 with the consonant on every place feature but [strident] and [lateral]. -/
@@ -179,47 +144,24 @@ theorem substitute_apply_of_mem_place (hN : N.HasValue .nasal true) (hx : trigge
   obtain ⟨a, ha⟩ := ha
   simp only [Segment.articulators, Finset.mem_filter, Finset.mem_insert,
     Finset.mem_singleton] at ha
-  obtain ⟨hmem, hxa⟩ := ha
-  have hpa : a ∈ FeatureClass.place ∧ a ≠ .strident ∧ a ≠ .lateral := by
-    rcases hmem with rfl | rfl | rfl <;> decide
-  have hN' : (placeAssimilation trigger).target ≤ N := (Segment.hasValue_iff_ofSpecs_le N _ _).1 hN
-  rw [substitute_eq]
-  dsimp only
-  simp only [hN', hx, and_self, ite_true]
-  rw [ite_eq_right]
-  · simp only [ite_apply, ne_eq, hs.symm, hl.symm, not_false_eq_true,
-      Segment.setFeature_apply_of_ne, ite_self, Finset.piecewise_eq_of_mem _ _ _ hf]
-  · intro h
-    have h := (Segment.le_iff_forall_hasValue _).1 h a false
-      (by rcases hmem with rfl | rfl | rfl <;> rfl)
-    simp only [Segment.HasValue, ite_apply, ne_eq, hpa.2.1.symm, hpa.2.2.symm,
-      not_false_eq_true, Segment.setFeature_apply_of_ne, ite_self,
-      Finset.piecewise_eq_of_mem _ _ _ hpa.1] at h
-    cases h.symm.trans hxa
+  obtain ⟨hmem, ha⟩ := ha
+  rw [substitute_eq, ite_eq_left ⟨hN, hx⟩, repair_apply_of_ne _ hs hl,
+    Finset.piecewise_eq_of_mem _ _ _ hf]
+  rintro ⟨hl, hc, hd⟩
+  have hpa : a ∈ FeatureClass.place := by rcases hmem with rfl | rfl | rfl <;> decide
+  have h : Segment.HasValue (FeatureClass.place.piecewise x N) a false := by
+    rcases hmem with rfl | rfl | rfl <;> assumption
+  rw [Segment.HasValue, Finset.piecewise_eq_of_mem _ _ _ hpa] at h
+  cases h.symm.trans ha
 
 /-- A consonant with no oral articulator, such as the glottal stop, leaves the place of the nasal
 unchanged: the two substitute to the nasal `N` itself. -/
 theorem substitute_eq_of_placeless (hN : N.HasValue .nasal true) (hx : trigger ≤ x)
-    (hp : Segment.ofSpecs [(.labial, false), (.coronal, false), (.dorsal, false)] ≤ x) :
-    substitute trigger N x = N := by
-  obtain ⟨hl, hc, hd⟩ : x.HasValue .labial false ∧ x.HasValue .coronal false ∧
-      x.HasValue .dorsal false := by
-    simpa using (Segment.ofSpecs_le_iff_forall_mem
-      (specs := [(.labial, false), (.coronal, false), (.dorsal, false)]) x (by decide)).1 hp
-  have hN' : (placeAssimilation trigger).target ≤ N := (Segment.hasValue_iff_ofSpecs_le N _ _).1 hN
-  rw [substitute_eq]
-  dsimp only
-  simp only [hN', hx, and_self, ite_true]
-  rw [ite_eq_left]
-  refine (Segment.ofSpecs_le_iff_forall_mem (specs := [(.nasal, true), (.labial, false),
-    (.coronal, false), (.dorsal, false)]) _ (by decide)).2 ?_
-  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
-    Segment.HasValue, ite_apply, ne_eq, reduceCtorEq, not_false_eq_true,
-    Segment.setFeature_apply_of_ne, ite_self,
-    Finset.piecewise_eq_of_notMem _ _ _ (by decide : Feature.nasal ∉ FeatureClass.place),
-    Finset.piecewise_eq_of_mem _ _ _ (by decide : Feature.labial ∈ FeatureClass.place),
-    Finset.piecewise_eq_of_mem _ _ _ (by decide : Feature.coronal ∈ FeatureClass.place),
-    Finset.piecewise_eq_of_mem _ _ _ (by decide : Feature.dorsal ∈ FeatureClass.place)]
-  exact ⟨hN, hl, hc, hd⟩
+    (hl : x.HasValue .labial false) (hc : x.HasValue .coronal false)
+    (hd : x.HasValue .dorsal false) : substitute trigger N x = N := by
+  rw [substitute_eq, ite_eq_left ⟨hN, hx⟩]
+  apply repair_of_placeless <;>
+    simpa [Segment.HasValue, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem,
+      FeatureClass.mem_place, Feature.featureClass?]
 
 end Phonology.NasalSubstitution
