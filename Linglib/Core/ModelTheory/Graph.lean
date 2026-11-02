@@ -57,9 +57,8 @@ namespace LindstromQuantifier
 relation has `P`; relabelling along a bijection preserves `P`. -/
 def ofGraphProperty (P : ∀ {M : Type u}, (M → M → Prop) → Prop)
     (hP : ∀ {M N : Type u} (e : M ≃ N) (s : N → N → Prop), P (fun x y ↦ s (e x) (e y)) ↔ P s) :
-    LindstromQuantifier.{0, 0, u} Language.graph where
-  carrier := {M | P fun x y : M ↦ RelMap adj ![x, y]}
-  is_equiv_invariant' := fun {M N} ⟨e⟩ ↦ by
+    LindstromQuantifier.{0, 0, u} Language.graph :=
+  {q | q.liftOn (fun M ↦ P fun x y : M ↦ RelMap adj ![x, y]) fun M N ⟨e⟩ ↦ propext <| by
     have hv (x y : M) : ⇑e ∘ ![x, y] = ![e x, e y] := by
       ext i
       fin_cases i <;> rfl
@@ -67,7 +66,7 @@ def ofGraphProperty (P : ∀ {M : Type u}, (M → M → Prop) → Prop)
       funext₂ fun x y ↦ propext (by rw [← hv]; exact (e.map_rel adj ![x, y]).symm)
     show @P M _ ↔ @P N _
     rw [this]
-    exact hP e.toEquiv fun x y : N ↦ RelMap adj ![x, y]
+    exact hP e.toEquiv fun x y : N ↦ RelMap adj ![x, y]}
 
 end LindstromQuantifier
 

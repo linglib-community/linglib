@@ -75,8 +75,8 @@ def Realize : ∀ {n}, L.MonFormula n → (Fin n → M) → Prop
   | _, rel R ts, v => Structure.RelMap R fun i ↦ (ts i).realize (Sum.elim default v)
   | _, falsum, _ => False
   | _, imp φ ψ, v => φ.Realize v → ψ.Realize v
-  | _, quant Q ψ, v => (⟨M, monadic.structure fun i a ↦ (ψ i).Realize (Fin.snoc v a)⟩ :
-      Bundled.{w} (Language.monadic (Fin _)).Structure) ∈ Q
+  | _, quant Q ψ, v => ⟦(⟨M, monadic.structure fun i a ↦ (ψ i).Realize (Fin.snoc v a)⟩ :
+      Bundled.{w} (Language.monadic (Fin _)).Structure)⟧ ∈ Q
 
 /-- The quantifier rank of a formula of `FO(Mon)`, the greatest nesting depth of quantifiers. -/
 def qr : ∀ {n}, L.MonFormula n → ℕ

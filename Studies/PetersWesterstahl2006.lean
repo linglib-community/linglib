@@ -127,11 +127,11 @@ theorem duplicatorWinsBijective_oneCycle_twoCycles (r : ℕ) :
     (fun _ _ hd ↦ eq_zero_of_addRight_one_zpow (hd.trans hlt))
     (fun _ _ hd ↦ eq_zero_of_addRight_zero_one_zpow (by exact_mod_cast hd))
 
-theorem oneCycle_mem_lin (r : ℕ) : oneCycle r ∈ Reciprocal.lin :=
+theorem oneCycle_mem_lin (r : ℕ) : ⟦oneCycle r⟧ ∈ Reciprocal.lin :=
   ⟨ZMod.nontrivial_iff.2 (by have := Nat.one_lt_two_pow_iff.2 r.succ_ne_zero; omega),
     fun _ _ hxy ↦ transGen_add_one hxy⟩
 
-theorem twoCycles_not_mem_lin (r : ℕ) : twoCycles r ∉ Reciprocal.lin := by
+theorem twoCycles_not_mem_lin (r : ℕ) : ⟦twoCycles r⟧ ∉ Reciprocal.lin := by
   rintro ⟨-, h⟩
   have hfst {a b : ZMod 2 × ZMod (2 ^ r)}
       (hab : TransGen (fun x y ↦ y = Equiv.addRight ((0 : ZMod 2), (1 : ZMod (2 ^ r))) x) a b) :
@@ -144,7 +144,7 @@ theorem twoCycles_not_mem_lin (r : ℕ) : twoCycles r ∉ Reciprocal.lin := by
 
 /-- `LIN` is not definable in `FO(Mon)` (Corollary 8). -/
 theorem lin_not_monDefinable :
-    ¬ Language.graph.MonDefinable Set.univ (Reciprocal.lin.{0} : Set _) :=
+    ¬ Language.graph.MonDefinable Set.univ (Quotient.mk _ ⁻¹' Reciprocal.lin.{0}) :=
   not_monDefinable_of_duplicatorWinsBijective fun r ↦
     ⟨oneCycle r, trivial, twoCycles r, trivial, duplicatorWinsBijective_oneCycle_twoCycles r,
       oneCycle_mem_lin r, twoCycles_not_mem_lin r⟩
@@ -198,7 +198,7 @@ cardinal numbers, holding of `|M - A|` and `|A|`. -/
 theorem existsUnique_cardinal_relation
     (Q : LindstromQuantifier.{0, 0, u} (Language.monadic (Fin 1))) :
     ∃! R : Cardinal.{u} → Cardinal.{u} → Prop, ∀ (M : Type u) (A : Set M),
-      (⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure) ∈ Q ↔
+      ⟦(⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
         R #↥Aᶜ #↥A := by
   classical
   let c (k m : Cardinal.{u}) (S : (Language.monadic (Fin 1)).Relations 1 → Prop) : Cardinal.{u} :=
@@ -213,10 +213,11 @@ theorem existsUnique_cardinal_relation
     rw [hcell]
     by_cases hS : S (.pred 0) <;> simp [c, hS, Set.compl_def]
   have key (M : Type u) (A : Set M) :
-      (⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure) ∈ Q ↔
-        c #↥Aᶜ #↥A ∈ LindstromQuantifier.ofTypeCount.symm Q := by
-    rw [← hc, ← LindstromQuantifier.mem_ofTypeCount, OrderIso.apply_symm_apply]
-  refine ⟨fun k m ↦ c k m ∈ LindstromQuantifier.ofTypeCount.symm Q, key, fun R' hR' ↦ ?_⟩
+      ⟦(⟨M, monadic.structure ![A]⟩ : Bundled.{u} (Language.monadic (Fin 1)).Structure)⟧ ∈ Q ↔
+        LindstromQuantifier.typeCountEquiv.symm (c #↥Aᶜ #↥A) ∈ Q := by
+    rw [← hc]
+    exact iff_of_eq (congrArg (· ∈ Q) (LindstromQuantifier.typeCountEquiv.symm_apply_apply _).symm)
+  refine ⟨fun k m ↦ LindstromQuantifier.typeCountEquiv.symm (c k m) ∈ Q, key, fun R' hR' ↦ ?_⟩
   funext k m
   obtain ⟨⟨M, S⟩, hM⟩ := LindstromQuantifier.typeCount_surjective (c k m)
   obtain ⟨A, rfl⟩ : ∃ A : Set M, S = monadic.structure ![A] :=

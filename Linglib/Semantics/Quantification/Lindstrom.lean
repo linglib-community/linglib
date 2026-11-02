@@ -54,7 +54,8 @@ namespace Det
 
 /-- `Q.toDet α` holds of `(A, B)` iff the structure `(α, A, B)` is in the class `Q`. -/
 def toDet (Q : Det.{u}) (α : Type u) : Quantifier.Det α :=
-  fun A B ↦ (⟨α, monadic.structure ![A, B]⟩ : Bundled.{u} (Language.monadic (Fin 2)).Structure) ∈ Q
+  fun A B ↦
+    ⟦(⟨α, monadic.structure ![A, B]⟩ : Bundled.{u} (Language.monadic (Fin 2)).Structure)⟧ ∈ Q
 
 /-- Every realized Lindström quantifier is permutation invariant, derived from its isomorphism
 closure rather than stipulated on the denotation. -/
@@ -111,8 +112,9 @@ theorem noDet_toDet (α : Type u) : noDet.toDet α = (no : Quantifier.Det α) :=
 /-- As isomorphism-closed classes, *some* is the complement of *no*, since `∃x. Ux ∧ Vx` is the
 negation of `∀x. Ux → ¬Vx`. -/
 theorem someDet_eq_compl_noDet : someDet.{u} = noDetᶜ := by
-  ext M
-  simp [someDet, noDet, Sentence.Realize, Formula.Realize]
+  ext q
+  induction q using Quotient.inductionOn with
+  | _ M => simp [someDet, noDet, Sentence.Realize, Formula.Realize]
 
 /-! ### The four regions -/
 
@@ -158,8 +160,10 @@ private def extension (i : Fin 2) (M : Bundled.{u} (Language.monadic (Fin 2)).St
 of a Lindström quantifier. -/
 theorem isom_iff_exists_toFamily {F : Quantifier.Det.Family.{u}} :
     F.Isom ↔ ∃ D : Det.{u}, D.toFamily = F := by
-  refine ⟨fun hF ↦ ⟨⟨{M | ∃ _ : Finite M, F M (extension 0 M) (extension 1 M)}, ?_⟩, ?_⟩, ?_⟩
+  refine ⟨fun hF ↦ ⟨{q | q.liftOn
+    (fun M ↦ ∃ _ : Finite M, F M (extension 0 M) (extension 1 M)) ?_}, ?_⟩, ?_⟩
   · rintro M N ⟨e⟩
+    refine propext ?_
     have hext (i : Fin 2) : e ⁻¹' extension i N = extension i M :=
       Set.ext fun a ↦ (congrFun (e.unaryType_apply a) (.pred i)).to_iff
     refine ⟨fun ⟨_, h⟩ ↦ ?_, fun ⟨_, h⟩ ↦ ?_⟩
