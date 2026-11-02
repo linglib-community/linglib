@@ -10,8 +10,7 @@ public import Mathlib.Order.Setoid.Basic
 Cresswell builds degrees from a comparison instead of assuming them. Two things are
 indistinguishable under a comparison $φ$ when they stand in $φ$ to the same things on both sides,
 the degrees are the classes of indistinguishable things, and $φ$ induces a
-[well-defined comparison](##Degree.CresswellDegree.mk_lt_mk) that
-[tells distinct degrees apart](##Degree.cresswellSetoid_lt_eq_bot). The degrees form a scale, a
+[well-defined comparison](##Degree.CresswellDegree.mk_lt_mk) on them. The degrees form a scale, a
 strict total order, [exactly when $φ$ is a strict weak order](##Degree.isStrictTotalOrder_lt_iff),
 and then being indistinguishable is [being incomparable](##Degree.cresswellSetoid_iff_incompRel).
 On a preorder the construction is
@@ -59,12 +58,6 @@ instance : LT (CresswellDegree φ) :=
 @[simp] theorem CresswellDegree.mk_lt_mk : (⟦b⟧ : CresswellDegree φ) < ⟦a⟧ ↔ φ a b :=
   Iff.rfl
 
-/-- The induced comparison tells distinct degrees apart: quotienting again identifies nothing. -/
-theorem cresswellSetoid_lt_eq_bot (φ : E → E → Prop) :
-    cresswellSetoid ((· < ·) : CresswellDegree φ → CresswellDegree φ → Prop) = ⊥ :=
-  le_bot_iff.1 fun x y ↦ Quotient.inductionOn₂ x y fun _ _ h ↦
-    Quotient.sound ⟨fun c ↦ h.2 ⟦c⟧, fun c ↦ h.1 ⟦c⟧⟩
-
 /-! ### Scales -/
 
 /-- On a strict weak order, being indistinguishable is being incomparable. -/
@@ -102,6 +95,15 @@ theorem isStrictTotalOrder_lt_iff :
         irrefl := fun x ↦ Quotient.inductionOn x (irrefl (r := φ))
         trans := fun x y z ↦ Quotient.inductionOn₃ x y z fun _ _ _ hab hbc ↦
           _root_.trans (r := φ) hbc hab }
+
+instance [DecidableRel φ] : DecidableRel ((· < ·) : CresswellDegree φ → CresswellDegree φ → Prop) :=
+  fun x y ↦ Quotient.recOnSubsingleton₂ x y fun _ _ ↦ inferInstanceAs (Decidable (φ _ _))
+
+/-- On a strict weak order the degrees are linearly ordered, as mathlib's `Antisymmetrization` is
+on a total preorder. -/
+instance [IsStrictWeakOrder E φ] [DecidableRel φ] : LinearOrder (CresswellDegree φ) :=
+  have := isStrictTotalOrder_lt_iff.2 ‹IsStrictWeakOrder E φ›
+  linearOrderOfSTO (· < ·)
 
 /-! ### Preorders -/
 
