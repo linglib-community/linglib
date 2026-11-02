@@ -26,7 +26,8 @@ falsity under a necessity modal (59) gives Modal Variation (`modalVariation_of_b
 and under a possibility modal, where some competitor must be true
 (`exists_singleton_of_diamond`), the anti-exhaustivity implicatures (67)–(68) do
 (`modalVariation_of_singletons`). A domain widener competes with every proper
-subdomain (70), and the same reasoning yields Free Choice (`freeChoice_of_proper`).
+subdomain (70), and the same reasoning yields Free Choice
+(`freeChoice_iff_forall_antiExhaustivity`).
 Without uniqueness the blocked exhaustivity inference (76) and the plural competitor (77)
 give ignorance of number (`numberIgnorance_of_competition`), which uniqueness makes
 unavailable (`not_numberIgnorance_of_uniqueness`) — the two parameters of Table 1. The

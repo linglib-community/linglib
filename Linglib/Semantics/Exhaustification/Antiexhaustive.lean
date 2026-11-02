@@ -94,6 +94,23 @@ theorem antiExh_biUnion (hD : D.Nonempty) :
     exact ⟨Set.mem_biUnion ha (h a ha), fun _ _ T hT _ ⟨b, hb⟩ _ _ ↦
       Set.mem_biUnion hb (h b (hT hb))⟩
 
+/-- On an existential the implicature says that the alternative over each nonempty proper subdomain
+implies the alternative over the rest of the domain, the form in which footnote 29 negates the
+exhaustified alternatives. -/
+theorem mem_antiExh_biUnion_iff [DecidableEq E] {w : W} :
+    w ∈ antiExh (fun S ↦ ⋃ a ∈ S, P a) D ↔ w ∈ ⋃ a ∈ D, P a ∧
+      ∀ S ⊂ D, S.Nonempty → w ∈ ⋃ a ∈ S, P a → w ∈ ⋃ a ∈ D \ S, P a := by
+  refine ⟨fun h ↦ ⟨h.1, fun S hS hS' ↦ h.2 S hS.subset _ Finset.sdiff_subset hS'
+    (Finset.sdiff_nonempty.2 hS.not_subset) Finset.disjoint_sdiff⟩, fun ⟨hw, h⟩ ↦ ?_⟩
+  obtain ⟨x, hx, hPx⟩ := Set.mem_iUnion₂.1 hw
+  rw [antiExh_biUnion P ⟨x, hx⟩]
+  refine Set.mem_iInter₂.2 fun a ha ↦ ?_
+  obtain rfl | hxa := eq_or_ne x a
+  · exact hPx
+  have hxS : x ∈ D.erase a := Finset.mem_erase.2 ⟨hxa, hx⟩
+  simpa [Finset.sdiff_erase_self ha] using
+    h _ (Finset.erase_ssubset ha) ⟨x, hxS⟩ (Set.mem_biUnion hxS hPx)
+
 /-- On an existential the simpler (62) agrees with (108c), the enrichment asserting the statement
 and every alternative over a nonempty subdomain, as in (63c). -/
 theorem antiExh_biUnion_eq_inter_sInter (hD : D.Nonempty) :
