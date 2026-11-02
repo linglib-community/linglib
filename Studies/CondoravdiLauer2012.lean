@@ -279,7 +279,7 @@ theorem toState_imperative (K : State (Discourse.Role × Force) W) (p : Set W) :
   cases r
   · rw [Discourse.SpeechAct.Force.update_promise_speaker]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
-    show premisePreorder _ = DynamicSemantics.ExpState.refine (premisePreorder _) (· ∈ p)
+    show premisePreorder _ = premisePreorder _ ⊓ .ofCriterion (· ∈ p)
     rw [State.contents_insert_self, Set.image_insert_eq, premisePreorder_insert]
   · rw [Discourse.SpeechAct.Force.update_promise_addressee]
     refine Mood.State.ext (State.commitmentSet_insert_of_ne (by simp)) ?_ rfl
@@ -318,9 +318,9 @@ example :
 example : Discourse.SpeechAct.Force.update .promise (⊤ : Discourse.Role → Mood.State Bool)
     (· = true) ≠ Discourse.SpeechAct.Force.update .directive ⊤ (· = true) :=
   fun h ↦ Bool.false_ne_true <|
-  DynamicSemantics.ExpState.respects_iff.1
-    ((Discourse.SpeechAct.Force.update_promise_eq_directive_iff _ _).1 h .speaker)
-    (w := false) (v := true) trivial rfl
+  (Preorder.le_ofCriterion_iff.1
+    ((Discourse.SpeechAct.Force.update_promise_eq_directive_iff _ _).1 h .speaker))
+    (a := false) (b := true) trivial rfl
 
 /-- §5: the To-Do List update by itself does not register contrary imperatives. Directing a
 content and then its negation excludes no world that was optimal for the addressee, so in the
@@ -336,7 +336,6 @@ theorem portner_contrary_imperatives (d : Discourse.Role → Mood.State W) (φ :
     DynamicSemantics.ExpState.optimal, DynamicSemantics.ExpState.promote_order,
     DynamicSemantics.ExpState.promote_info]
   refine fun w hw ↦ Preorder.mem_minimals_iff.2 ⟨hw.1, fun b hb hbw ↦ ?_⟩
-  rw [DynamicSemantics.ExpState.refine_le, DynamicSemantics.ExpState.refine_le] at hbw ⊢
   exact ⟨⟨hw.2 hb hbw.1.1, fun hb' ↦ by_contra fun hw' ↦ hbw.2 hw' hb'⟩,
     fun hb' hw' ↦ hb' (hbw.1.2 hw')⟩
 

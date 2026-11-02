@@ -89,7 +89,7 @@ theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
 /-- Every world is in the context set, and `false`, the one `sepProp`-world, is the one optimal
 world. -/
 def sepState : State Bool :=
-  State.ofExpState ⟨Set.univ, ExpState.crit State.sepProp⟩
+  State.ofExpState ⟨Set.univ, .ofCriterion State.sepProp⟩
 
 /-- The indicative and the subjunctive disagree on some state and proposition. -/
 theorem indicative_ne_subjunctive :

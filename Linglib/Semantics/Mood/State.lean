@@ -135,11 +135,12 @@ theorem inquire_inquire_self (c : State W) (q : Setoid W) :
     (c.inquire q).inquire q = c.inquire q :=
   congrArg (State.mk c.toExpState) (inf_right_idem _ _)
 
-/-- Promotion changes nothing exactly when the ordering already respects the content. -/
+/-- Promotion changes nothing exactly when the content's worlds form a lower set of the
+ordering. -/
 theorem promote_eq_self_iff {c : State W} {p : W → Prop} :
-    c.promote p = c ↔ ExpState.Respects c.order p := by
-  rw [← ExpState.refine_eq_self_iff]
-  exact ⟨congrArg fun c : State W ↦ c.order, fun h ↦ State.ext rfl h rfl⟩
+    c.promote p = c ↔ c.order ≤ .ofCriterion p :=
+  ⟨fun h ↦ ExpState.isFixedPt_promote_iff.1 (congrArg toExpState h),
+    fun h ↦ congrArg (State.mk · c.inquiry) (ExpState.isFixedPt_promote_iff.2 h)⟩
 
 @[simp] theorem foldl_assert_toExpState (ps : List (W → Prop)) (c : State W) :
     (ps.foldl assert c).toExpState = ps.foldl ExpState.assert c.toExpState := by
@@ -350,9 +351,9 @@ theorem goodPossibility_iff_localNecessity (p : W → Prop) (w : W) :
     goodPossibility f g p w ↔ (stateAt f g w).localNecessity p :=
   Iff.rfl
 
-theorem le_assert_iff_simpleNecessity (p : W → Prop) (w : W) :
-    stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
-  (stateAt f g w).le_assert_iff p
+theorem isFixedPt_assert_iff_simpleNecessity (p : W → Prop) (w : W) :
+    Function.IsFixedPt (·.assert p) (stateAt f g w) ↔ simpleNecessity f p w :=
+  ExpState.isFixedPt_assert_iff
 
 theorem isRealistic_iff_mem_stateAt_info : f.IsRealistic ↔ ∀ w, w ∈ (stateAt f g w).info :=
   Iff.rfl

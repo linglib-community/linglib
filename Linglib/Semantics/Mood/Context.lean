@@ -146,7 +146,7 @@ theorem update_apply_of_notMem {f : Force} {r : Role} (hr : r ∉ f.holders) :
 orderings already respect the content, since a promise promotes it for the speaker and a directive
 for the addressee ([zanuttini-pak-portner-2012], their (49)). -/
 theorem update_promise_eq_directive_iff :
-    promise.update d φ = directive.update d φ ↔ ∀ r, ExpState.Respects (d r).order φ := by
+    promise.update d φ = directive.update d φ ↔ ∀ r, (d r).order ≤ .ofCriterion φ := by
   simp only [funext_iff, Role.forall_role, update_promise_speaker, update_directive_speaker,
     update_promise_addressee, update_directive_addressee]
   rw [State.promote_eq_self_iff, eq_comm, State.promote_eq_self_iff]

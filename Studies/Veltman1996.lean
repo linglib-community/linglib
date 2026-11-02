@@ -51,7 +51,8 @@ the near-validity of Strengthening with a Consequent and Disjunction of Antecede
 ## Implementation notes
 
 The update with *normally φ* of `DynamicSemantics.ExpState` does not crash, so the second clause of
-Example 3.10(i) is stated as the failure of the acceptability condition, `ex310_conflict`.
+Example 3.10(i), where the opposite rule crashes the state, is checked in the system of section 4,
+in which *normally ψ* is the rule `(ψ ∨ ¬ψ) ⇝ ψ`, `ex310_conflict`.
 
 Every frame an agent reaches from the minimal state is the total frame refined by the rules it has
 accepted, so a frame of section 4 is presented by its list of rules, `Frame.ofRules`, which makes
@@ -212,25 +213,20 @@ private theorem atomQ_w₂ : atomQ w₂ := trivial
 private theorem atomQ_w₃ : atomQ w₃ := trivial
 
 /-- The minimal state `0`. -/
-def σ₀ : ExpState PQWorld := ExpState.init
+def σ₀ : ExpState PQWorld := ⊤
 
 section Validity
 
 open Function
 open ExpState (promote assert)
 
-theorem ex310_exception : ((σ₀.promote atomP).assert (¬atomP ·)).info.Nonempty :=
-  ⟨w₀, Set.mem_univ _, atomP_w₀⟩
-
-theorem ex310_conflict :
-    ¬∃ w ∈ (σ₀.promote atomP).order.minimals Set.univ, ¬atomP w := by
-  rintro ⟨w, hw, hnp⟩
-  have hw' : w ∈ (refine ⊤ atomP).minimals Set.univ := hw
-  rw [minimals_refine_top atomP Set.univ ⟨w₁, Set.mem_univ _, atomP_w₁⟩] at hw'
-  exact hnp hw'.2
+-- Examples 3.10(i): a rule can have exceptions
+theorem ex310_exception : (σ₀.promote atomP).assert (¬atomP ·) ≠ ⊥ := fun h ↦
+  Set.notMem_empty w₀ (h ▸ ⟨Set.mem_univ _, atomP_w₀⟩ : w₀ ∈ (⊥ : ExpState PQWorld).info)
 
 theorem ex310_presumably : [(promote · atomP)] ⊩₁ presumablyTest atomP :=
-  normally_presumably_succeeds atomP Set.univ ⟨w₁, Set.mem_univ _, atomP_w₁⟩
+  isFixedPt_presumablyTest_iff.2 fun _ hw ↦
+    ((optimal_promote_of_order_eq_top (σ := σ₀) rfl ⟨w₁, Set.mem_univ _, atomP_w₁⟩).subset hw).2
 
 private theorem not_presumably_w₀ :
     ¬IsFixedPt (presumablyTest atomP) ((⟨{w₀}, ⊤⟩ : ExpState PQWorld).promote atomP) :=
@@ -243,7 +239,7 @@ theorem not_valid₂_presumably : ¬[(promote · atomP)] ⊩₂ presumablyTest a
 
 theorem not_valid₃_presumably : ¬[(promote · atomP)] ⊩₃ presumablyTest atomP :=
   fun h ↦ not_presumably_w₀ <| h _ fun _ hψ ↦ by
-    obtain rfl := List.mem_singleton.1 hψ; exact promote_promote_self _ atomP
+    obtain rfl := List.mem_singleton.1 hψ; exact isFixedPt_promote_iff.2 inf_le_right
 
 private theorem w₀_optimal : w₀ ∈ ((σ₀.promote atomP).assert (¬atomP ·)).optimal :=
   ⟨⟨Set.mem_univ _, atomP_w₀⟩, fun _ ⟨_, hnpv⟩ _ ↦ ⟨trivial, fun hpv ↦ absurd hpv hnpv⟩⟩
@@ -254,8 +250,7 @@ theorem ex310_defeat :
 
 theorem ex310_rule_persists :
     [(promote · atomP), (assert · (¬atomP ·))] ⊩₁ (promote · atomP) :=
-  promote_respects_idempotent ((σ₀.promote atomP).assert (¬atomP ·)) atomP
-    (persistence_assert _ atomP _ (normally_creates_respect σ₀ atomP))
+  isFixedPt_promote_iff.2 inf_le_right
 
 /-- Rules and facts are additive, so the persistence of the rule holds under every notion of
 validity (Proposition 1.3), unlike the presumption. -/
@@ -319,13 +314,9 @@ theorem rain_or_snow :
     (Or.inr atomQ_w₂)).elim hnpw hnqw
 
 theorem normally_not_normally_or :
-    ¬[(promote · atomP)] ⊩₁ (promote · fun w ↦ atomP w ∨ atomQ w) := by
-  intro h
-  have h' : refine (refine ⊤ atomP) (fun w ↦ atomP w ∨ atomQ w) = refine ⊤ atomP :=
-    congrArg ExpState.order h
-  have hle : (refine (refine ⊤ atomP) fun w ↦ atomP w ∨ atomQ w).le w₀ w₂ := by
-    rw [h']; exact ⟨trivial, fun hp ↦ absurd hp atomP_w₂⟩
-  exact (hle.2 (Or.inr atomQ_w₂)).elim atomP_w₀ atomQ_w₀
+    ¬[(promote · atomP)] ⊩₁ (promote · fun w ↦ atomP w ∨ atomQ w) := fun h ↦
+  ((Preorder.le_ofCriterion_iff.1 (isFixedPt_promote_iff.1 h)) (a := w₀) (b := w₂)
+    ⟨trivial, fun hp ↦ absurd hp atomP_w₂⟩ (Or.inr atomQ_w₂)).elim atomP_w₀ atomQ_w₀
 
 end Validity
 
@@ -351,7 +342,7 @@ of the rules with domain `d` (Proposition 4.14). -/
 4.5(ii)(b)). -/
 theorem Frame.ofRules_cons_self (r : Rule W) (R : List (Rule W)) :
     Frame.ofRules (r :: R) r.domain =
-      refine (Frame.ofRules R r.domain) (fun w ↦ w.1 ∈ r.default) :=
+      Frame.ofRules R r.domain ⊓ .ofCriterion (fun w ↦ w.1 ∈ r.default) :=
   Preorder.ext fun w v ↦
     ⟨fun h ↦ ⟨fun c hc ↦ h c ⟨List.mem_cons_of_mem _ hc.1, hc.2⟩, h r ⟨List.mem_cons_self, rfl⟩⟩,
      fun h c hc ↦ by
@@ -410,10 +401,10 @@ def Complies (w : W) (D : List (Rule W)) : Prop := ∀ r ∈ D, w ∈ r.domain �
 instance (w : W) (D : List (Rule W)) : Decidable (Complies w D) :=
   inferInstanceAs (Decidable (∀ r ∈ D, w ∈ r.domain → w ∈ r.default))
 
-/-- A proposition `e` is a default in `πd` when `d ∩ e ≠ ∅` and `πd ∘ e = πd`, that is, when `πd`
-already respects `e` (Definition 4.2(ii)). -/
+/-- A proposition `e` is a default in `πd` when `d ∩ e ≠ ∅` and `πd ∘ e = πd`, that is, when the
+worlds of `e` form a lower set of `πd` (Definition 4.2(ii)). -/
 def IsDefault (π : Frame W) (d e : Finset W) : Prop :=
-  (d ∩ e).Nonempty ∧ Respects (π d) (fun w ↦ w.1 ∈ e)
+  (d ∩ e).Nonempty ∧ π d ≤ .ofCriterion (fun w ↦ w.1 ∈ e)
 
 theorem isDefault_of_mem {R : List (Rule W)} {r : Rule W} (hr : r ∈ R)
     (hne : (r.domain ∩ r.default).Nonempty) : IsDefault (Frame.ofRules R) r.domain r.default :=
@@ -594,6 +585,10 @@ abbrev World := Fin 8
 def p : Finset World := Finset.univ.filter (·.val % 2 = 1)
 def q : Finset World := Finset.univ.filter (·.val / 2 % 2 = 1)
 def r : Finset World := Finset.univ.filter (·.val / 4 % 2 = 1)
+
+-- Examples 3.10(i): once *normally p* is accepted, the opposite rule crashes the state
+theorem ex310_conflict : (State.init |> normally p |> normally pᶜ) = State.absurd := by
+  decide +kernel
 
 -- Examples 4.8, (iii)
 theorem ex48 :

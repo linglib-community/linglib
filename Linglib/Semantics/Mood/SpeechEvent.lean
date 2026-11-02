@@ -109,7 +109,7 @@ theorem SpeechEvent.toContext_imperative_le (todo : W → List (W → Prop)) (w�
     ((SpeechEvent.imperative todo).toContext w₀ .addressee).order.le w v ↔
       ∀ p ∈ todo w₀, p v → p w := by
   rw [SpeechEvent.toContext_imperative_addressee, State.foldl_promote_toExpState,
-    ExpState.foldl_promote_order_le]
+    ExpState.foldl_promote_order]
   exact ⟨And.right, fun h ↦ ⟨trivial, h⟩⟩
 
 @[simp] theorem SpeechEvent.toContext_imperative_info (todo : W → List (W → Prop)) (w₀ : W) :
