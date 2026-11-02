@@ -124,7 +124,7 @@ theorem supports.seq_apply (h : supports s φ) (ψ : PartialUpdate α) : seq φ 
 
 theorem supports_iff_isFixedPt :
     supports s φ ↔ Function.IsFixedPt (· >>= φ) (pure s : Part α) :=
-  supports_iff_eq_some.trans isFixedPt_bind_pure_iff.symm
+  supports_iff_eq_some.trans <| by rw [Function.IsFixedPt, pure_bind]; rfl
 
 /-- Dynamic entailment between partial updates, every defined update with `φ` supporting `ψ`
 ([veltman-1996]'s acceptance consequence; [heim-1982]'s entailment between file change

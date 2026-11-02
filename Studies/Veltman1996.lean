@@ -9,7 +9,8 @@ public import Mathlib.Data.Fintype.Powerset
 This file formalizes the paper of Veltman, which treats *normally φ* as an update of an agent's
 expectations rather than a sentence about them. The framework of section 1, acceptance as a fixed
 point of the update, the three notions of validity and additivity, with Propositions 1.2 and 1.3,
-is `Semantics/Dynamic/Consequence.lean`.
+is `Semantics/Dynamic/Consequence.lean`, as is the characterization of validity₁ by its structural
+rules that the section states without proof.
 
 Section 2 studies *might* on sets of worlds, whose updates of Definition 2.3 are `CCP.up`,
 `CCP.neg` and `CCP.might`. The test *might φ* satisfies Strengthening, Idempotence and Monotony,
@@ -89,7 +90,9 @@ section Might
 
 open Function
 
-variable {W : Type*} {φ : CCP W} {c d : Set W}
+universe u
+
+variable {W : Type u} {φ : CCP W} {c d : Set W}
 
 /-- The test *might φ* never adds possibilities (Lemma 2.8(i)). -/
 theorem might_le (φ : CCP W) (σ : Set W) : CCP.might φ σ ⊆ σ := fun _ h ↦ h.1
@@ -107,7 +110,7 @@ theorem might_monotone (hφ : Monotone φ) : Monotone (CCP.might φ) :=
 
 /-- A text is consistent when updating some state with it does not yield the absurd state
 (Definition 2.4). -/
-def Consistent (ψs : List (CCP W)) : Prop := ∃ σ : Set W, (ψs.foldl (fun σ ψ ↦ ψ σ) σ).Nonempty
+def Consistent (ψs : List (CCP W)) : Prop := ∃ σ : Set W, (text ψs σ).Nonempty
 
 private theorem neg_up_top_nonempty (hc : cᶜ.Nonempty) : (CCP.neg (CCP.up c) ⊤).Nonempty :=
   let ⟨v, hv⟩ := hc; ⟨v, trivial, fun h ↦ hv h.2⟩
@@ -130,12 +133,12 @@ private theorem might_up_neg_up (σ : Set W) :
 /-- *Might ¬p, p* is consistent, but *p, might ¬p* is not (Example 2.7(i)). -/
 theorem consistent_might_neg (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
     Consistent [CCP.might (CCP.neg (CCP.up c)), CCP.up c] :=
-  ⟨⊤, by simpa only [List.foldl_cons, List.foldl_nil, might_neg_up_top hc'] using
+  ⟨⊤, by simpa only [text_cons, text_nil, might_neg_up_top hc'] using
     up_top_nonempty hc⟩
 
 theorem not_consistent_up_might_neg : ¬Consistent [CCP.up c, CCP.might (CCP.neg (CCP.up c))] :=
   fun ⟨σ, h⟩ ↦ by
-    simp only [List.foldl_cons, List.foldl_nil, might_neg_up_up] at h
+    simp only [text_cons, text_nil, might_neg_up_up] at h
     exact Set.not_nonempty_empty h
 
 -- Example 2.7
@@ -173,23 +176,49 @@ theorem not_isLowerSet_might (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
 (§2). -/
 theorem not_isAdditive_might (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
     ¬IsAdditive (CCP.might (CCP.up c)) :=
-  fun h ↦ not_isLowerSet_might hc hc' (isAdditive_iff.1 h).2.2.2
+  fun h ↦ not_isLowerSet_might hc hc' h.isLowerSet_fixedPoints
 
-private theorem mem_text_up {cs : List (Set W)} {σ : Set W} {w : W} :
-    w ∈ text (cs.map CCP.up) σ ↔ w ∈ σ ∧ ∀ c ∈ cs, w ∈ c := by
-  induction cs generalizing σ with
-  | nil => simp
-  | cons c cs ih =>
-    simp only [List.map_cons, text_cons, ih, List.forall_mem_cons]
-    exact ⟨fun ⟨⟨hσ, hc⟩, hcs⟩ ↦ ⟨hσ, hc, hcs⟩, fun ⟨hσ, hc, hcs⟩ ↦ ⟨⟨hσ, hc⟩, hcs⟩⟩
+/-- Validity₁ is not left monotonic (Example 2.7(iii)), so it is not validity₂ of any update
+system. -/
+theorem not_exists_update_entails_valid₁ (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
+    ¬∃ (α : Type u) (u : CCP W → α → α), (∀ φ σ, IsFixedPt (u φ) (u φ σ)) ∧
+      ∀ ψs φ, ψs ⊩₁ φ ↔ Entails (ψs.map u) (u φ) := fun h ↦
+  not_valid₁_neg_might hc' <| by
+    simpa using (exists_update_entails_iff.1 h).2.2 [CCP.neg (CCP.up c)] [] _ (valid₁_might hc)
+
+/-- Nor is it validity₃ of any update system, since a premise need not follow from a text
+containing it: *might ¬p, p* does not yield *might ¬p* (Example 2.7(ii)). -/
+theorem not_exists_update_preservesAcceptance_valid₁ (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
+    ¬∃ (α : Type u) (u : CCP W → α → α), (∀ φ σ, IsFixedPt (u φ) (u φ σ)) ∧
+      ∀ ψs φ, ψs ⊩₁ φ ↔ PreservesAcceptance (ψs.map u) (u φ) := fun h ↦
+  not_valid₁_might_neg_up hc hc' <|
+    (exists_update_preservesAcceptance_iff.1 h).1 _ _ (by simp)
+
+-- A relation that is no classical consequence relation, that the conclusion be the last premise,
+-- is validity₁ of an update system satisfying Idempotence.
+example {L : Type u} :
+    ∃ (α : Type u) (σ₀ : α) (u : L → α → α), (∀ φ σ, IsFixedPt (u φ) (u φ σ)) ∧
+      ∀ (ψs : List L) φ, ψs.getLast? = some φ ↔ EntailsFrom σ₀ (ψs.map u) (u φ) :=
+  exists_update_entailsFrom_iff.2 ⟨by simp, fun ψs θs φ χ h ↦ by
+    simp [List.getLast?_append, List.getLast?_cons, h]⟩
+
+-- Monotony of the premises and Persistence of the conclusion suffice, although *might* is not
+-- persistent.
+example : [CCP.might (CCP.up c)] ⊩₁ CCP.up d ↔ [CCP.might (CCP.up c)] ⊩₂ CCP.up d :=
+  entailsFrom_top_iff_entails (by simpa using might_monotone (CCP.isAdditive_up c).monotone)
+    (CCP.isAdditive_up d).isLowerSet_fixedPoints
 
 /-- On the fragment without *might* validity is classical: the conclusion holds at every world
 at which all the premises hold (§2). -/
 theorem valid₁_up_iff {cs : List (Set W)} :
     cs.map CCP.up ⊩₁ CCP.up d ↔ ∀ w, (∀ c ∈ cs, w ∈ c) → w ∈ d := by
-  rw [EntailsFrom, (CCP.isAdditive_up d).isFixedPt_iff]
-  exact ⟨fun h w hw ↦ (h (mem_text_up.2 ⟨trivial, hw⟩)).2,
-    fun h w hw ↦ ⟨trivial, h w (mem_text_up.1 hw).2⟩⟩
+  have hadd : ∀ ψ ∈ cs.map CCP.up, IsAdditive ψ :=
+    List.forall_mem_map.2 fun c _ ↦ CCP.isAdditive_up c
+  have hd := CCP.isAdditive_up d
+  refine ((tfae_entails hadd hd).out 1 3).trans <|
+    (preservesAcceptance_iff_forall_le hadd hd).trans ?_
+  simp only [List.forall_mem_map, CCP.up, Set.top_eq_univ, Set.univ_inter]
+  exact ⟨fun h w hw ↦ h {w} (by simpa using hw) rfl, fun h σ hσ w hw ↦ h w fun c hc ↦ hσ c hc hw⟩
 
 end Might
 
@@ -244,12 +273,12 @@ private theorem not_presumably_w₀ :
     ⟨rfl, fun _ hv _ ↦ by obtain rfl : _ = w₀ := hv; exact ⟨trivial, id⟩⟩
 
 /-- The default inference *normally p ⊩ presumably p* is not valid₂ (§1.3). -/
-theorem not_valid₂_presumably : ¬[(promote · atomP)] ⊩₂ presumablyTest atomP :=
-  fun h ↦ not_presumably_w₀ (h ⟨{w₀}, ⊤⟩)
-
 theorem not_valid₃_presumably : ¬[(promote · atomP)] ⊩₃ presumablyTest atomP :=
   fun h ↦ not_presumably_w₀ <| h _ fun _ hψ ↦ by
     obtain rfl := List.mem_singleton.1 hψ; exact isFixedPt_promote_iff.2 inf_le_right
+
+theorem not_valid₂_presumably : ¬[(promote · atomP)] ⊩₂ presumablyTest atomP :=
+  fun h ↦ not_valid₃_presumably h.preservesAcceptance
 
 private theorem w₀_optimal : w₀ ∈ ((σ₀.promote atomP).assert (¬atomP ·)).optimal :=
   ⟨⟨Set.mem_univ _, atomP_w₀⟩, fun _ ⟨_, hnpv⟩ _ ↦ ⟨trivial, fun hpv ↦ absurd hpv hnpv⟩⟩
@@ -567,7 +596,7 @@ def presumably (φ : Finset W) (σ : State W) : State W :=
 /-- An argument is valid₁ when the minimal state updated with the premises in order accepts the
 conclusion (§1.2). -/
 def Valid (prems : List (State W → State W)) (concl : State W → State W) : Prop :=
-  (prems.foldl (fun σ φ ↦ φ σ) State.init).Accepts concl
+  (text prems State.init).Accepts concl
 
 instance (prems : List (State W → State W)) (concl : State W → State W) :
     Decidable (Valid prems concl) :=
