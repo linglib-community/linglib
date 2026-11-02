@@ -31,8 +31,6 @@ contraction holds in the copy object.
 * `Minimalist.LinearizedSyntacticObject.Marked.contract_mark`: marking contracts to replacement.
 * `Minimalist.LinearizedSyntacticObject.Marked.map_contract_find?`: the occurrence found contracts
   to the occurrence found in the contraction.
-* `Minimalist.LinearizedSyntacticObject.Marked.cCommands_unmark_of_cCommands_contract`: c-command
-  between pronounced leaves of the contraction holds in the copy object.
 
 ## Implementation notes
 
@@ -302,78 +300,6 @@ theorem eq_leaf_of_find? {t s : Marked} {target : SyntacticObject} {x : LexicalI
   · exact Subtype.ext (by rw [← hc, contractTree_none, SyntacticObject.leaf_val]; rfl)
   · rw [← hc, contractTree_some] at ht
     simp at ht
-
-/-! ### C-command in the contraction and in the copy object -/
-
-theorem eq_of_mk_contractTree_eq_leaf {r : RoseTree (CopyMark × Vertex)} {x : LexicalItem.Token}
-    (h : UnorderedTree.mk (contractTree r) = (SyntacticObject.leaf x).val) :
-    r = .node (none, .inl (some x)) [] := by
-  obtain ⟨⟨k, a⟩, cs⟩ := r
-  rcases k with _ | l
-  · rw [contractTree_none, SyntacticObject.leaf_val, UnorderedTree.leaf,
-      UnorderedTree.mk_node_eq_mk_node_iff] at h
-    obtain ⟨rfl, hcs⟩ := h
-    have hc : cs = [] := by simpa using congrArg Multiset.card hcs
-    rw [hc]
-  · rw [contractTree_some, SyntacticObject.leaf_val, UnorderedTree.leaf,
-      UnorderedTree.mk_node_eq_mk_node_iff] at h
-    exact absurd h.1 (by simp)
-
-private theorem isSyntacticObject_of_isSubtree {t : Marked} {r : RoseTree (CopyMark × Vertex)}
-    (hr : IsSubtree r t.val) : IsSyntacticObject (UnorderedTree.mk (r.map Prod.snd)) :=
-  (isSyntacticObject_mk _).2 (((isSyntacticObject_mk _).1 t.2).of_isSubtree (hr.map _))
-
-private theorem mem_terms_unmark {t : Marked} {r : RoseTree (CopyMark × Vertex)}
-    (hr : IsSubtree r t.val) :
-    (⟨_, isSyntacticObject_of_isSubtree hr⟩ : SyntacticObject) ∈ t.unmark.toSyntacticObject.terms :=
-  LinearizedSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 (hr.map _), rfl⟩
-
-/-- A c-command between two pronounced leaves of the contraction holds between the same leaves of
-the copy object, the contraction changing nothing outside the lower copies. -/
-theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.Token}
-    (hxy : x ≠ y) (h : t.contract.toSyntacticObject.CCommands ↑x ↑y) :
-    t.unmark.toSyntacticObject.CCommands ↑x ↑y := by
-  obtain ⟨z, -, ⟨w, hw, hwx, hwz, hxz⟩, hzy⟩ := h
-  obtain ⟨q, hq, hqw⟩ := LinearizedSyntacticObject.mem_terms_toSyntacticObject.1 hw
-  rw [show t.contract.val = contractTree t.val from rfl, ← map_contractTree_outerSubtrees] at hq
-  obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hq
-  have hrt := isSubtree_of_mem_subtreesUntil hr
-  obtain ⟨⟨k, a⟩, rs⟩ := r
-  rcases k with _ | l
-  swap
-  · simp [ImmediatelyContains, ← hqw] at hwx
-  simp only [ImmediatelyContains, ← hqw, contractTree_none, UnorderedTree.children_mk,
-    Multiset.mem_coe, List.mem_map] at hwx hwz
-  obtain ⟨ci, hci, hix⟩ := hwx
-  obtain ⟨ri, hri, rfl⟩ := List.mem_map.1 (show ci ∈ rs.map contractTree from hci)
-  obtain rfl := eq_of_mk_contractTree_eq_leaf hix
-  obtain ⟨cj, hcj, hjz⟩ := hwz
-  obtain ⟨rj, hrj, rfl⟩ := List.mem_map.1 (show cj ∈ rs.map contractTree from hcj)
-  -- `y` is a pronounced leaf of `rj`
-  have hy : ∃ r' ∈ outerSubtrees rj, r' = .node (none, .inl (some y)) [] := by
-    have := (val_mem_subtrees.2 (mem_terms.2 hzy))
-    rw [← hjz, UnorderedTree.subtrees_mk, unorderedSubtrees_eq_map, Multiset.mem_coe,
-      List.mem_map, ← map_contractTree_outerSubtrees] at this
-    obtain ⟨q', hq', hq'y⟩ := this
-    obtain ⟨r', hr', rfl⟩ := List.mem_map.1 hq'
-    exact ⟨r', hr', eq_of_mk_contractTree_eq_leaf hq'y⟩
-  obtain ⟨r', hr', rfl⟩ := hy
-  have hjt : IsSubtree rj t.val := (IsSubtree.of_mem_children hrj).trans hrt
-  set zc : SyntacticObject := ⟨_, isSyntacticObject_of_isSubtree hjt⟩
-  have hzcy : SyntacticObject.leaf y ∈ zc.terms :=
-    val_mem_subtrees.1 (by
-      rw [UnorderedTree.subtrees_mk, unorderedSubtrees_eq_map, Multiset.mem_coe]
-      exact List.mem_map.2 ⟨_, mem_subtrees.2 ((isSubtree_of_mem_subtreesUntil hr').map _), rfl⟩)
-  refine ⟨zc, mem_terms_unmark hjt, ⟨_, mem_terms_unmark hrt, ?_, ?_, fun he ↦ ?_⟩,
-    mem_terms.1 hzcy⟩
-  · simp only [ImmediatelyContains, map_node, UnorderedTree.children_mk, Multiset.mem_coe,
-      List.mem_map]
-    exact ⟨_, show _ ∈ rs.map (RoseTree.map Prod.snd) from List.mem_map_of_mem hri, rfl⟩
-  · simp only [ImmediatelyContains, map_node, UnorderedTree.children_mk, Multiset.mem_coe,
-      List.mem_map]
-    exact ⟨_, show _ ∈ rs.map (RoseTree.map Prod.snd) from List.mem_map_of_mem hrj, rfl⟩
-  · rw [← he, terms_leaf, Multiset.mem_singleton, leaf_inj] at hzcy
-    exact hxy hzcy.symm
 
 end LinearizedSyntacticObject.Marked
 
