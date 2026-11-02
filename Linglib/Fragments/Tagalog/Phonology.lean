@@ -134,7 +134,7 @@ def assimilate : List Segment → List Segment := NasalSubstitution.assimilate t
 
 /-- `substitute x` is the nasal that the prefix nasal and a stem-initial `x` surface as under
 substitution. -/
-def substitute : Segment → List Segment := NasalSubstitution.substitute trigger ŋ
+def substitute : Segment → Segment := NasalSubstitution.substitute trigger ŋ
 
 /-- `cluster pre stem` attaches the prefix that consists of `pre` and the nasal to `stem`, with
 assimilation of the nasal to the stem-initial segment alone. -/
@@ -146,13 +146,13 @@ def cluster (pre : List Segment) : List Segment → List Segment
 with substitution of the stem-initial segment. -/
 def substituted (pre : List Segment) : List Segment → List Segment
   | [] => pre ++ [ŋ]
-  | x :: rest => pre ++ substitute x ++ rest
+  | x :: rest => pre ++ substitute x :: rest
 
 /-- Each obstruent substitutes to the nasal of its place, and the glottal stop, which has no
 place, to the velar nasal. -/
 theorem substitute_eq :
-    substitute p = [m] ∧ substitute b = [m] ∧ substitute t = [n] ∧ substitute d = [n] ∧
-      substitute s = [n] ∧ substitute k = [ŋ] ∧ substitute g = [ŋ] ∧ substitute «ʔ» = [ŋ] := by
+    substitute p = m ∧ substitute b = m ∧ substitute t = n ∧ substitute d = n ∧
+      substitute s = n ∧ substitute k = ŋ ∧ substitute g = ŋ ∧ substitute «ʔ» = ŋ := by
   decide
 
 /-- The prefix nasal is unchanged before a nasal, a glide, `h` or a vowel. -/
@@ -174,7 +174,11 @@ theorem pansulat : cluster [p, a] [s, u, l, a, t] = [p, a, n, s, u, l, a, t] := 
 
 theorem panlabas : cluster [p, a] [l, a, b, a, s] = [p, a, n, l, a, b, a, s] := by decide
 
-theorem mangulol : substituted [m, a] [«ʔ», u, l, o, l] = [m, a, ŋ, u, l, o, l] := by decide
+-- [zuraw-2010] (3): *ʔisdáʔ* substitutes, *ʔulól* keeps the cluster
+theorem mangisda : substituted [m, a] [«ʔ», i, s, d, a, «ʔ»] = [m, a, ŋ, i, s, d, a, «ʔ»] := by
+  decide
+
+theorem mangulol : cluster [m, a] [«ʔ», u, l, o, l] = [m, a, ŋ, «ʔ», u, l, o, l] := by decide
 
 theorem mapangamkam :
     substituted [m, a, p, a] [k, a, m, k, a, m] = [m, a, p, a, ŋ, a, m, k, a, m] ∧

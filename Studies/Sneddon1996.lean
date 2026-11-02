@@ -42,7 +42,7 @@ theorem voicelessObstruents_sdiff_substituting :
   decide +kernel
 
 theorem juncture_of_mem_substituting {x : Segment} (hx : x ∈ substituting) :
-    juncture x = fuse x := by
+    juncture x = [fuse x] := by
   simp only [juncture, hx, ↓reduceIte]
 
 /-- The nasal is lost before *l*, *r*, *m*, *n*, *ny*, *ng*, *w* and *y*, "other initial
@@ -69,7 +69,7 @@ theorem juncture_head_agrees :
 
 /-- The fused nasals are phonemes, the nasal of the place of each stop and the palatal for
 `s` (pp. 9–10). -/
-theorem fuse_eq : fuse p = [m] ∧ fuse t = [n] ∧ fuse k = [ng] ∧ fuse s = [ny] := by
+theorem fuse_eq : fuse p = m ∧ fuse t = n ∧ fuse k = ng ∧ fuse s = ny := by
   decide +kernel
 
 /-! ### Kept initials in borrowings -/

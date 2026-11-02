@@ -83,7 +83,7 @@ def StemC.nasal : StemC → Phonology.Segment
   | .t | .d => Tagalog.n
   | .k | .g => Tagalog.ŋ
 
-theorem substitute_segment (c : StemC) : Tagalog.substitute c.segment = [c.nasal] := by
+theorem substitute_segment (c : StemC) : Tagalog.substitute c.segment = c.nasal := by
   cases c <;> decide
 
 /-! ### The six constraints -/
