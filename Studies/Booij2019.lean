@@ -31,11 +31,12 @@ alone carries.
 
 ## Implementation notes
 
-* The words are the CLDF forms of `Data/Wordlist/Booij2019.json`, read one segment per slot on
-  the flat carrier by `CLDF.Wordlist.Form.slots`.
-* A variable is a slot at `⊥`, which any segment fills, where Booij's `C` takes a consonant and
-  `V` a vowel. His `y` ranges over sequences of sounds; here it is one slot, so the wordlist
-  stores the residue of a Javanese base as one segment.
+* The words are the CLDF forms of `Data/Wordlist/Booij2019.json`. The Arabic words are read one
+  segment per slot by `CLDF.Wordlist.Form.slots`; the Javanese words are read by `baseOf` and
+  `reduplicantOf`, whose slots hold sequences of segments, so that `y` takes the residue after
+  the initial consonant.
+* A variable is a slot at `⊥`, which any filler fills, where Booij's `C` takes a consonant and
+  `V` a vowel.
 * Booij offers (2), after the unproductive Dutch diminutive verbs, as an example of the primarily
   motivating function of schemas, so its variables are closed; those of (13) and (16) are open.
 * Only the phonological level of each schema is encoded, not the syntactic and semantic levels or
@@ -43,8 +44,8 @@ alone carries.
 
 ## TODO
 
-* Typed variables and sequence variables need slots that hold descriptions strictly between `⊥`
-  and a segment, which `ConstructionMorphology.Schema.opens_subset` does not let be open.
+* Typed variables need slots that hold descriptions strictly between `⊥` and a segment, which
+  `ConstructionMorphology.Schema.opens_subset` does not let be open.
 * The higher-order schema (5) for Dutch *-er* and its four subschemas, the sister schemas (10)′,
   (11) and (14), the allomorphy schema (18), whose `f/s` and `v/z` are classes of segments, and
   the affixoid subschemas of Section 4.
@@ -81,15 +82,10 @@ consonants $C_1$, $C_2$ and $C_3$. -/
 theorem occupation_instantiatesAt_iff {w : Fin 6 → Flat String} :
     occupation.InstantiatesAt occupationSub w ↔
       ∃ c₁ c₂ c₃, w = ![c₁, ↑"a", c₂, c₂, ↑"aa", c₃] := by
-  refine ⟨fun ⟨u, hu, hw⟩ ↦ ⟨u .c1, u .c2, u .c3, ?_⟩, fun ⟨c₁, c₂, c₃, hw⟩ ↦ ?_⟩
-  · have ha : u .a = ↑"a" := Flat.coe_le_iff.1 (hu .a)
-    have haa : u .aa = ↑"aa" := Flat.coe_le_iff.1 (hu .aa)
-    subst hw
-    funext i
-    fin_cases i <;> simp [occupationSub, ha, haa]
-  · refine ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .a => ↑"a" | .aa => ↑"aa",
-      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_⟩
-    subst hw
+  rw [Schema.instantiatesAt_iff_exists_fill]
+  refine ⟨fun ⟨x, hw⟩ ↦ ⟨x .c1, x .c2, x .c3, ?_⟩,
+    fun ⟨c₁, c₂, c₃, hw⟩ ↦ ⟨fun | .c1 => c₁ | .c2 => c₂ | _ => c₃, ?_⟩⟩ <;>
+  · subst hw
     funext i
     fin_cases i <;> rfl
 
@@ -113,9 +109,10 @@ inductive RedPart
   | c1 | schwa | y
   deriving DecidableEq
 
-/-- The reduplication schema (13) pins the schwa and leaves the consonant and residue open. -/
-def reduplication : Schema RedPart (Flat String) :=
-  .productive fun | .schwa => ↑"ə" | _ => ⊥
+/-- The reduplication schema (13) pins the schwa and leaves the consonant and residue open. Its
+slots hold sequences of segments. -/
+def reduplication : Schema RedPart (Flat (List String)) :=
+  .productive fun | .schwa => ↑["ə"] | _ => ⊥
 
 /-- The reduplicant `C₁əC₁y`, whose initial consonant occupies two slots. -/
 def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
@@ -123,39 +120,42 @@ def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
 /-- The base `C₁y`. -/
 def baseSub : Fin 2 → RedPart := ![.c1, .y]
 
+/-- A base read as `C₁y`, its initial segment and the rest. -/
+def baseOf {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 2 → Flat (List String) :=
+  ![↑(f.segments.take 1), ↑(f.segments.drop 1)]
+
+/-- A reduplicant read as `C₁əC₁y`, its first three segments one by one and the rest. -/
+def reduplicantOf {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 4 → Flat (List String) :=
+  ![↑(f.segments.take 1), ↑((f.segments.drop 1).take 1), ↑((f.segments.drop 2).take 1),
+    ↑(f.segments.drop 3)]
+
 /-- A reduplicant and a base are paired by (13) exactly when they are $C_1\text{ə}C_1y$ and
 $C_1y$ for one consonant $C_1$ and one residue $y$. -/
-theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat String} :
+theorem reduplication_pairs_iff {r : Fin 4 → Flat (List String)}
+    {b : Fin 2 → Flat (List String)} :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim r b) ↔
-      ∃ c y, r = ![c, ↑"ə", c, y] ∧ b = ![c, y] := by
-  rw [Schema.instantiatesAt_elim_iff_exists]
-  refine ⟨fun ⟨u, hu, hr, hb⟩ ↦ ⟨u .c1, u .y, ?_, ?_⟩, fun ⟨c, y, hr, hb⟩ ↦ ?_⟩
-  · have hs : u .schwa = ↑"ə" := Flat.coe_le_iff.1 (hu .schwa)
-    subst hr
-    funext i
-    fin_cases i <;> simp [redSub, hs]
-  · subst hb
+      ∃ c y, r = ![c, ↑["ə"], c, y] ∧ b = ![c, y] := by
+  rw [Schema.instantiatesAt_elim_iff_exists_fill]
+  refine ⟨fun ⟨x, hr, hb⟩ ↦ ⟨x .c1, x .y, ?_, ?_⟩,
+    fun ⟨c, y, hr, hb⟩ ↦ ⟨fun | .c1 => c | _ => y, ?_, ?_⟩⟩ <;>
+  · subst_vars
     funext i
     fin_cases i <;> rfl
-  · refine ⟨fun | .c1 => c | .schwa => ↑"ə" | .y => y,
-      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_, ?_⟩ <;>
-      · subst_vars
-        funext i
-        fin_cases i <;> rfl
 
 -- (12)
 theorem reduplication_verbs :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Wordlist.tetamu.slots Wordlist.tamu.slots) ∧
+        (Sum.elim (reduplicantOf Wordlist.tetamu) (baseOf Wordlist.tamu)) ∧
       reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Wordlist.jejawah.slots Wordlist.jawah.slots) ∧
+        (Sum.elim (reduplicantOf Wordlist.jejawah) (baseOf Wordlist.jawah)) ∧
       reduplication.InstantiatesAt (Sum.elim redSub baseSub)
-        (Sum.elim Wordlist.gegeni.slots Wordlist.geni.slots) := by
+        (Sum.elim (reduplicantOf Wordlist.gegeni) (baseOf Wordlist.geni)) := by
   decide
 
 /-- No condition on reduplicants and bases separately pairs them as (13) does, since
 *tətamu* pairs with *tamu* and *jəjawah* with *jawah* but *tətamu* not with *jawah*. -/
-theorem reduplication_ne_prod (R : Set (Fin 4 → Flat String)) (B : Set (Fin 2 → Flat String)) :
+theorem reduplication_ne_prod (R : Set (Fin 4 → Flat (List String)))
+    (B : Set (Fin 2 → Flat (List String))) :
     {p | reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim p.1 p.2)} ≠ R ×ˢ B :=
   Schema.setOf_instantiatesAt_elim_ne_prod reduplication_verbs.1 reduplication_verbs.2.1
     (a := 0) (b := 0) rfl (by decide) R B
@@ -183,21 +183,13 @@ $aC_1C_2aC_3$ over the same three consonants. -/
 theorem comparative_pairs_iff {p q : Fin 5 → Flat String} :
     comparative.InstantiatesAt (Sum.elim adjSub cmpSub) (Sum.elim p q) ↔
       ∃ c₁ c₂ c₃ v₁ v₂, p = ![c₁, v₁, c₂, v₂, c₃] ∧ q = ![↑"a", c₁, c₂, ↑"a", c₃] := by
-  rw [Schema.instantiatesAt_elim_iff_exists]
-  refine ⟨fun ⟨u, hu, hp, hq⟩ ↦ ⟨u .c1, u .c2, u .c3, u .v1, u .v2, ?_, ?_⟩,
-    fun ⟨c₁, c₂, c₃, v₁, v₂, hp, hq⟩ ↦ ?_⟩
-  · subst hp
+  rw [Schema.instantiatesAt_elim_iff_exists_fill]
+  refine ⟨fun ⟨x, hp, hq⟩ ↦ ⟨x .c1, x .c2, x .c3, x .v1, x .v2, ?_, ?_⟩,
+    fun ⟨c₁, c₂, c₃, v₁, v₂, hp, hq⟩ ↦
+      ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .v1 => v₁ | _ => v₂, ?_, ?_⟩⟩ <;>
+  · subst_vars
     funext i
     fin_cases i <;> rfl
-  · have ha : u .a = ↑"a" := Flat.coe_le_iff.1 (hu .a)
-    subst hq
-    funext i
-    fin_cases i <;> simp [cmpSub, ha]
-  · refine ⟨fun | .c1 => c₁ | .c2 => c₂ | .c3 => c₃ | .v1 => v₁ | .v2 => v₂ | .a => ↑"a",
-      fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl, ?_, ?_⟩ <;>
-      · subst_vars
-        funext i
-        fin_cases i <;> rfl
 
 -- (15)
 theorem comparative_pairs :

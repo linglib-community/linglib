@@ -118,7 +118,7 @@
       "ID": "bybee1995_strung",
       "Lexeme_ID": "string_past",
       "Form": "strung",
-      "Segments": ["str", "ʌ", "ŋ"],
+      "Segments": ["s", "t", "ɹ", "ʌ", "ŋ"],
       "Comment": "central member of the product-oriented class",
       "Source": ["bybee-1995[2]"]
     },
@@ -126,7 +126,7 @@
       "ID": "bybee1995_stung",
       "Lexeme_ID": "sting_past",
       "Form": "stung",
-      "Segments": ["st", "ʌ", "ŋ"],
+      "Segments": ["s", "t", "ʌ", "ŋ"],
       "Comment": "member of the product-oriented class",
       "Source": ["bybee-1995[2]"]
     },
@@ -134,7 +134,7 @@
       "ID": "bybee1995_flung",
       "Lexeme_ID": "fling_past",
       "Form": "flung",
-      "Segments": ["fl", "ʌ", "ŋ"],
+      "Segments": ["f", "l", "ʌ", "ŋ"],
       "Comment": "member of the product-oriented class",
       "Source": ["bybee-1995[2]"]
     },
@@ -150,7 +150,7 @@
       "ID": "bybee1995_strike",
       "Lexeme_ID": "strike",
       "Form": "strike",
-      "Segments": ["str", "aɪ", "k"],
+      "Segments": ["s", "t", "ɹ", "aɪ", "k"],
       "Comment": "base of a dialectal new member; its vowel is not /ɪ/",
       "Source": ["bybee-1995[2]"]
     },
@@ -158,7 +158,7 @@
       "ID": "bybee1995_struck",
       "Lexeme_ID": "strike_past",
       "Form": "struck",
-      "Segments": ["str", "ʌ", "k"],
+      "Segments": ["s", "t", "ɹ", "ʌ", "k"],
       "Comment": "dialectal new member of the class",
       "Source": ["bybee-1995[2]"]
     },
@@ -166,7 +166,7 @@
       "ID": "bybee1995_sneak",
       "Lexeme_ID": "sneak",
       "Form": "sneak",
-      "Segments": ["sn", "i", "k"],
+      "Segments": ["s", "n", "i", "k"],
       "Comment": "base of a dialectal new member; its vowel is not /ɪ/",
       "Source": ["bybee-1995[2]"]
     },
@@ -174,7 +174,7 @@
       "ID": "bybee1995_snuck",
       "Lexeme_ID": "sneak_past",
       "Form": "snuck",
-      "Segments": ["sn", "ʌ", "k"],
+      "Segments": ["s", "n", "ʌ", "k"],
       "Comment": "dialectal new member of the class",
       "Source": ["bybee-1995[2]"]
     },
@@ -182,7 +182,7 @@
       "ID": "bybee1995_drag",
       "Lexeme_ID": "drag",
       "Form": "drag",
-      "Segments": ["dr", "æ", "g"],
+      "Segments": ["d", "ɹ", "æ", "ɡ"],
       "Comment": "base of a dialectal new member; its vowel is not /ɪ/",
       "Source": ["bybee-1995[2]"]
     },
@@ -190,7 +190,7 @@
       "ID": "bybee1995_drug",
       "Lexeme_ID": "drag_past",
       "Form": "drug",
-      "Segments": ["dr", "ʌ", "g"],
+      "Segments": ["d", "ɹ", "ʌ", "ɡ"],
       "Comment": "dialectal new member of the class",
       "Source": ["bybee-1995[2]"]
     },
@@ -198,7 +198,7 @@
       "ID": "bybee1995_string",
       "Lexeme_ID": "string",
       "Form": "string",
-      "Segments": ["str", "ɪ", "ŋ"],
+      "Segments": ["s", "t", "ɹ", "ɪ", "ŋ"],
       "Comment": "base of strung",
       "Source": ["bybee-1995[2]"]
     }

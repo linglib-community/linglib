@@ -51,7 +51,7 @@ def carlessness : Form Cell :=
     lexeme := Lexemes.carlessness
     cell := {}
     form := "carlessness"
-    segments := ["carless", "ness"]
+    morphs := ["carless", "ness"]
     source := [
       ⟨"booij-2010-compass", ""⟩
     ] }
@@ -61,7 +61,7 @@ def baldness : Form Cell :=
     lexeme := Lexemes.baldness
     cell := {}
     form := "baldness"
-    segments := ["bald", "ness"]
+    morphs := ["bald", "ness"]
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -71,7 +71,7 @@ def bigness : Form Cell :=
     lexeme := Lexemes.bigness
     cell := {}
     form := "bigness"
-    segments := ["big", "ness"]
+    morphs := ["big", "ness"]
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -81,7 +81,7 @@ def blackness : Form Cell :=
     lexeme := Lexemes.blackness
     cell := {}
     form := "blackness"
-    segments := ["black", "ness"]
+    morphs := ["black", "ness"]
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -91,7 +91,7 @@ def britishness : Form Cell :=
     lexeme := Lexemes.britishness
     cell := {}
     form := "Britishness"
-    segments := ["British", "ness"]
+    morphs := ["British", "ness"]
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -101,7 +101,7 @@ def awareness : Form Cell :=
     lexeme := Lexemes.awareness
     cell := {}
     form := "awareness"
-    segments := ["aware", "ness"]
+    morphs := ["aware", "ness"]
     source := [
       ⟨"booij-2010-compass", "(2)"⟩
     ] }
@@ -111,7 +111,7 @@ def leesbaar : Form Cell :=
     lexeme := Lexemes.readable
     cell := {}
     form := "leesbaar"
-    segments := ["lees", "baar"]
+    morphs := ["lees", "baar"]
     source := [
       ⟨"booij-2010-compass", ""⟩
     ] }
@@ -121,7 +121,7 @@ def werkbaar : Form Cell :=
     lexeme := Lexemes.workable
     cell := {}
     form := "werkbaar"
-    segments := ["werk", "baar"]
+    morphs := ["werk", "baar"]
     source := [
       ⟨"booij-2010-compass", ""⟩
     ] }
@@ -131,7 +131,7 @@ def onbedwingbaar : Form Cell :=
     lexeme := Lexemes.unsuppressable
     cell := {}
     form := "onbedwingbaar"
-    segments := ["on", "bedwing", "baar"]
+    morphs := ["on", "bedwing", "baar"]
     source := [
       ⟨"booij-2010-compass", "(15)"⟩
     ] }
