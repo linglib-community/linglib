@@ -46,7 +46,6 @@ dropping this requirement yields the same logic.
   (2015)][ciardelli-roelofsen-2015]
 * [I. Ciardelli, J. Groenendijk and F. Roelofsen, *Inquisitive Semantics*
   (2018)][ciardelli-groenendijk-roelofsen-2018]
-* [A. Anttila, *Not Nothing: Nonemptiness in Team Semantics* (2025)][anttila-2025]
 -/
 
 @[expose] public section
@@ -468,7 +467,7 @@ theorem support_ent_toInquisitive (M : ModalLogic.KripkeModel W Atom) :
     support M.toInquisitive (.ent φ) = support M.toInquisitive (.nec φ) :=
   SetLike.ext fun _ ↦ by simp [ModalLogic.KripkeModel.toInquisitive, Model.access]
 
-/-! ### The closure cell -/
+/-! ### Union closure -/
 
 /-- Inquisitive disjunction breaks union closure. With `p` true only at `w₁` and `q` only at
 `w₂`, the singletons support `p \\/ q` but their union supports neither disjunct. -/
@@ -477,12 +476,5 @@ theorem not_supClosed_support_inqDisj {p q : Atom} {w₁ w₂ : W}
     ¬ SupClosed (support M (.inqDisj (.atom p) (.atom q)) : Set (Finset W)) := fun h ↦ by
   have := h (a := {w₁}) (b := {w₂}) (by simp [hp₁]) (by simp [hq₂])
   simp [hp₂, hq₁] at this
-
-open Team in
-/-- Inquisitive modal logic is sound for the downward-closed, empty-team cell of
-[anttila-2025]'s programme, which it shares with dependence logic. -/
-theorem definableClass_support_subset :
-    definableClass (fun φ t ↦ t ∈ support M φ) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
-  definableClass_subset fun φ ↦ ⟨(support M φ).lower, empty_mem_support M φ⟩
 
 end Inquisitive

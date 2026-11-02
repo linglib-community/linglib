@@ -50,6 +50,12 @@ structure KripkeModel (W : Type*) (Atom : Type*) where
 
 variable {W : Type*} {Atom : Type*}
 
+/-- The disjoint union of two Kripke models. -/
+def KripkeModel.sum {W' : Type*} (M : KripkeModel W Atom) (M' : KripkeModel W' Atom) :
+    KripkeModel (W ⊕ W') Atom where
+  access := Sum.elim (fun w ↦ (M.access w).map .inl) (fun w ↦ (M'.access w).map .inr)
+  val p := Sum.elim (M.val p) (M'.val p)
+
 open SetRel in
 /-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
 This is the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take. -/

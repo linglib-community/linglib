@@ -554,11 +554,6 @@ theorem neFree_succPart (e : Fin n → Atom) {k : ℕ} (S : Finset (WorldType n 
    neFree_bigDisj _ fun x hx ↦ by
     obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact neFree_hintikka e k σ⟩
 
-theorem neFree_bigDisj_hintikka (e : Fin n → Atom) {k : ℕ} (L : List (WorldType n k)) :
-    (bigDisj (L.map (hintikka e k))).NEFree :=
-  neFree_bigDisj _ fun x hx ↦ by
-    obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact neFree_hintikka e k σ
-
 /-- **Exhaustiveness.** Every world has some type of each depth. -/
 theorem derives_bigDisj_hintikka (e : Fin n → Atom) :
     ∀ (k : ℕ) (Γ : Set (Formula Atom)),

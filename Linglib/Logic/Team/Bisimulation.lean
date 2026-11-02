@@ -13,14 +13,14 @@ point of each team is `r`-related to a point of the other. Team properties `P` a
 invariant under `r` when teams related in this way agree on them. Every connective of
 `Team/Operations.lean` preserves invariance, the modalities one step down a chain of relations,
 so a team logic whose evaluation is a fold over these connectives is invariant under bounded
-bisimulation of Kripke models.
+bisimulation of Kripke models. A class of [pointed team models](##ModalLogic.PointedTeam) is
+[invariant under bounded bisimulation](##ModalLogic.BoundedBisimInvariant) across models.
 
 ## Main definitions
 
 * `Team.Invariant r P P'`: teams related by the lifting of `r` agree on `P` and `P'`.
 * `ModalLogic.WorldBisim k M w M' w'`: `k`-bisimilarity of pointed Kripke models.
 * `ModalLogic.StateBisim k M s M' s'`: its lifting to teams.
-* `ModalLogic.BisimClosed M P`: closure of a team property of `M` under bounded bisimulation.
 
 ## Main results
 
@@ -39,10 +39,10 @@ every atom of the atom type, which is the paper's notion when that type is the f
 
 ## References
 
-* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
-* [anttila-haggblom-yang-2025] Anttila, Häggblom and Yang, Axiomatizing modal inclusion logic
-  and its variants
-* [vaananen-2008] Väänänen, Modal Dependence Logic
+* [aloni-anttila-yang-2024]
+* [anttila-2025]
+* [anttila-haggblom-yang-2025]
+* [vaananen-2008]
 -/
 
 @[expose] public section
@@ -273,9 +273,27 @@ def StateBisim (k : ℕ) (M : KripkeModel W Atom) (s : Finset W) (M' : KripkeMod
     (s' : Finset W') : Prop :=
   Set.LiftRel (WorldBisim k M · M' ·) ↑s ↑s'
 
-/-- A team property of `M` is closed under bounded bisimulation when, for some depth `k`, it is
-    invariant under `k`-bisimilarity within `M`. -/
-def BisimClosed (M : KripkeModel W Atom) (P : Team.TeamProperty W) : Prop :=
-  ∃ k : ℕ, Team.Invariant (WorldBisim k M · M ·) P P
+/-! ### Pointed team models -/
+
+universe u
+
+/-- A pointed team model, a Kripke model with a team on it, is a point of a modal property
+    ([anttila-2025] Definition 2.3.9). -/
+structure PointedTeam (Atom : Type*) where
+  /-- The worlds of the model. -/
+  World : Type u
+  [decEq : DecidableEq World]
+  /-- The model. -/
+  model : KripkeModel World Atom
+  /-- The team. -/
+  team : Finset World
+
+attribute [instance] PointedTeam.decEq
+
+/-- A class of pointed team models is invariant under bounded bisimulation when, for some depth
+    `k`, it is closed under `k`-bisimilarity across models ([anttila-2025] Definition 2.3.9). -/
+def BoundedBisimInvariant (P : Set (PointedTeam.{u} Atom)) : Prop :=
+  ∃ k : ℕ, ∀ p ∈ P, ∀ p' : PointedTeam.{u} Atom,
+    StateBisim k p.model p.team p'.model p'.team → p' ∈ P
 
 end ModalLogic

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Logic.Function.FactorsThrough
-public import Linglib.Logic.Team.Definability
+public import Linglib.Logic.Team.Closure
 public import Mathlib.Data.Set.Restrict
 
 /-!

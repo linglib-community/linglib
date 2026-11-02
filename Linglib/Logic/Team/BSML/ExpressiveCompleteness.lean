@@ -6,28 +6,50 @@ public import Linglib.Logic.Team.BSML.Characteristic
 /-!
 # Expressive completeness for BSML
 
-Anttila, with Knudstorp, proves that BSML is expressively complete for the convex, union-closed,
-bounded-bisimulation-invariant team properties, a question Aloni, Anttila and Yang left open. In
-the vocabulary of `Team/Definability.lean` this is `definableClass (support M) =
-{P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P}`. One inclusion collects the closure
-properties of support; the other is proved within one model over finitely many atoms, from the
-characteristic formulas of `Characteristic.lean`. The `NE`-free fragment, classical modal logic,
-is likewise complete for the flat bounded-bisimulation-invariant properties.
+The expressive power of a logic over the atoms $\mathsf{X}$ is the class $\|L\|_{\mathsf{X}}$ of
+properties its formulas express, here the `Set.range` of support over [pointed team
+models](##ModalLogic.PointedTeam). BSML is, by a result of Knudstorp's, [expressively
+complete](##BSML.range_support_eq) for the classes that are convex, union closed and invariant under
+bounded bisimulation; [convexity cannot be dropped](##BSML.range_support_ssubset_supClosed). Its
+`NE`-free fragment, classical modal logic, is [complete for the flat
+classes](##BSML.range_support_neFree_eq) and [expresses strictly
+less](##BSML.range_support_neFree_ssubset). An invariant class reads only [the depth `k` world types
+of a team](##BSML.image_worldType_eq_iff_stateBisim), so [a convex union-closed property of sets of
+types is one formula across all models](##BSML.exists_formula_iff_image_mem).
 
-## Main results
+## Implementation notes
 
-* `bisimClosed_support`: support is closed under bounded bisimulation.
-* `definableClass_support_eq`: BSML defines exactly the convex, union-closed,
-  bisimulation-invariant properties.
-* `definableClass_support_neFree_eq`: the `NE`-free fragment defines exactly the flat,
-  bisimulation-invariant properties.
+Successor sets and teams are `Finset`s, so the classes range over image-finite pointed models with
+finite teams and worlds in one universe, and a model may have no worlds, where the source takes
+arbitrary models with nonempty sets of worlds. At a fixed depth nothing is lost: over finitely many
+atoms there are finitely many types, so every pointed model is `k`-bisimilar to an image-finite one
+with a finite team. Union closure is binary and per model, which on finite teams is the source's
+closure under nonempty unions; the proof carries it across models through their disjoint union.
+
+The atoms are finite and there is at least one, which drops the source's case of no atoms.
+`Formula` has no primitive `⊥`, and over no atoms its `NE`-free fragment is empty, so
+`range_support_neFree_eq` would fail there; `⊥` and `⊤` are `p ∧ ¬p` and `p ∨ ¬p` for some
+atom.
+
+## Errata
+
+Anttila's thesis misprints two statements this file encodes: invariance under bounded bisimulation
+(p. 24) omits the antecedent $(M, s) ∈ P$, and the conclusion of Lemma 3.3.2 (p. 80) prints the
+characteristic formula for $\mathbb{D}$ where its hypothesis and proof use the one for $\mathbb{F}$.
+
+## TODO
+
+Theorem 3.3.7 of Anttila's thesis proper, for the fragments without bilateral negation, and the
+completeness of BSML with global disjunction and with the emptiness operator (Theorems 2.3.15 and
+2.3.17 there); `Formula` has neither of these connectives.
 
 ## References
 
-* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
-* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
-* [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
-* [anttila-knudstorp-2025] Anttila and Knudstorp, Convex Team Logics
+* [aloni-2022]
+* [aloni-anttila-yang-2024]
+* [anttila-2025]
+* [anttila-knudstorp-2025]
+* [knudstorp-2023]
 -/
 
 @[expose] public section
@@ -36,147 +58,183 @@ namespace BSML
 
 open Team ModalLogic
 
-variable {W : Type*} [DecidableEq W] {Atom : Type*}
+universe u
 
-/-! ### Bounded-bisimulation closure -/
+variable {Atom : Type*}
 
-/-- The support of a formula is closed under bisimulation at its modal depth. -/
-theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
-    BisimClosed M {t | support M φ t} :=
-  ⟨φ.modalDepth, invariant_eval φ le_rfl true⟩
+/-! ### Sets of types -/
+
+section Types
+
+variable [Inhabited Atom] {n k : ℕ} {e : Fin n → Atom} {W : Type*} [DecidableEq W]
+
+private theorem support_disj_conj_ne_verum_iff (M : KripkeModel W Atom)
+    (S : Finset (WorldType n k)) (t : Finset W) :
+    support M (.disj (.conj (typeDisj e S) .ne) verum) t ↔
+      ¬Disjoint (t.image (worldType e M k)) S := by
+  rw [Finset.not_disjoint_iff]
+  constructor
+  · rintro ⟨t₁, ⟨h₁, x, hx⟩, t₂, -, rfl⟩
+    exact ⟨_, Finset.mem_image_of_mem _ (Finset.mem_union_left _ hx),
+      (support_typeDisj_iff M S t₁).1 h₁ (Finset.mem_image_of_mem _ hx)⟩
+  · rintro ⟨_, ht, ha⟩
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_image.1 ht
+    exact ⟨{v}, ⟨(support_typeDisj_iff M S {v}).2 (by simpa using ha), Finset.singleton_nonempty v⟩,
+      t, support_verum M t, Finset.union_eq_right.2 (Finset.singleton_subset_iff.2 hv)⟩
+
+variable (e) in
+/-- A convex union-closed property of sets of types is expressed by one formula across all models:
+a team supports the formula exactly when its worlds' types form a set with the property. This is the
+first proof of [anttila-2025] Theorem 3.3.5 (Lemmas 3.3.2, 3.2.10 and 3.3.3, assembled on p. 82) on
+types in place of valuations, with one conjunct for each set of types meeting every set in `T` in
+place of its tuples of valuations. -/
+theorem exists_formula_iff_image_mem (T : Set (Finset (WorldType n k))) (hc : T.OrdConnected)
+    (hs : SupClosed T) :
+    ∃ φ : Formula Atom, ∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom) (t : Finset W),
+      support M φ t ↔ t.image (worldType e M k) ∈ T := by
+  classical
+  let U := T.toFinset.sup id
+  let H := Finset.univ.filter fun S ↦ ∀ s ∈ T, ¬Disjoint s S
+  refine ⟨.conj (typeDisj e U)
+    (bigConj (H.toList.map fun S ↦ .disj (.conj (typeDisj e S) .ne) verum)), fun {W} _ M t ↦ ?_⟩
+  simp only [support_conj, support_typeDisj_iff, support_bigConj_iff, List.forall_mem_map,
+    Finset.mem_toList, support_disj_conj_ne_verum_iff]
+  generalize t.image (worldType e M k) = σ
+  refine ⟨fun ⟨hU, hH⟩ ↦ ?_, fun hσ ↦ ⟨Finset.le_sup (f := id) (Set.mem_toFinset.2 hσ),
+    fun S hS ↦ (Finset.mem_filter.1 hS).2 σ hσ⟩⟩
+  obtain ⟨s, hsT, hsσ⟩ : ∃ s ∈ T, Disjoint s σᶜ := by
+    by_contra! h
+    exact hH σᶜ (Finset.mem_filter.2 ⟨Finset.mem_univ _, h⟩) disjoint_compl_right
+  exact hc.out hsT (hs.finsetSup_mem ⟨s, Set.mem_toFinset.2 hsT⟩ fun _ h ↦ Set.mem_toFinset.1 h)
+    ⟨disjoint_compl_right_iff.1 hsσ, hU⟩
+
+end Types
 
 /-! ### Expressive completeness -/
 
-/-- Every BSML-definable team property is convex, union-closed and
-    bounded-bisimulation-closed ([anttila-2025] §3.3.2). -/
-theorem definableClass_support_subset (M : KripkeModel W Atom) :
-    definableClass (support M) ⊆ {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} :=
-  definableClass_subset fun φ ↦
-    ⟨ordConnected_support M φ, supClosed_support M φ, bisimClosed_support M φ⟩
+section Completeness
 
-/-- Every convex, union-closed, bounded-bisimulation-closed team property is BSML-definable within
-one model over finitely many atoms ([anttila-2025] Theorem 3.3.7, p. 83). -/
-theorem subset_definableClass_support [Fintype W] [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) :
-    {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} ⊆ definableClass (support M) := by
-  classical
-  rintro P ⟨hconv', hsup', k, hbisim⟩
-  rw [mem_definableClass]
-  rcases Set.eq_empty_or_nonempty P with rfl | hP
-  · refine ⟨.strongFalsum, Eq.symm ?_⟩
-    ext t
-    exact iff_of_false (Set.notMem_empty t) (not_support_strongFalsum M t)
-  · set PF : Finset (Finset W) := P.toFinset with hPF
-    have hPFne : PF.Nonempty := Set.toFinset_nonempty.mpr hP
-    set U : Finset W := PF.sup id with hUdef
-    have hUP : U ∈ P :=
-      hsup'.finsetSup_mem hPFne (fun s hs => Set.mem_toFinset.mp hs)
-    have hsubU : ∀ s ∈ P, s ⊆ U :=
-      fun s hs => Finset.le_sup (f := id) (Set.mem_toFinset.mpr hs)
-    set 𝒯 : Finset (Finset W) := Finset.univ.filter
-      (fun T => ∀ s ∈ PF, ∃ v ∈ s, ∃ w ∈ T, WorldBisim k M w M v) with h𝒯
-    set e : Fin (Fintype.card Atom) → Atom := fun i ↦ (Fintype.equivFin Atom).symm i
-    have he : Function.Surjective e := (Fintype.equivFin Atom).symm.surjective
-    set δ : Finset W → Formula Atom :=
-      fun S ↦ bigDisj ((S.toList.map (worldType e M k)).map (hintikka e k)) with hδdef
-    have hδ : ∀ S t : Finset W, support M (δ S) t ↔ ∀ v ∈ t, ∃ w ∈ S, WorldBisim k M w M v :=
-      fun S t ↦ by
-        simp only [hδdef, support_bigDisj_hintikka_iff, List.mem_map, Finset.mem_toList]
-        exact forall₂_congr fun v _ ↦ exists_congr fun w ↦
-          and_congr_right fun _ ↦ worldType_eq_iff_worldBisim he k w v
-    refine ⟨.conj (δ U)
-      (bigConj (𝒯.toList.map (fun T => .disj (.conj (δ T) .ne) (δ U)))), Eq.symm ?_⟩
-    ext t
-    constructor
-    · intro htP
-      refine ⟨(hδ U t).mpr
-        (fun v hv => ⟨v, hsubU t htP hv, WorldBisim.refl k M v⟩), ?_⟩
-      refine (support_bigConj_iff M _ t).mpr (fun ψ hψ => ?_)
-      obtain ⟨T, hT, rfl⟩ := List.mem_map.mp hψ
-      have hTtrans := (Finset.mem_filter.mp (Finset.mem_toList.mp hT)).2
-      obtain ⟨v, hvt, w, hwT, hb⟩ := hTtrans t (Set.mem_toFinset.mpr htP)
-      refine ⟨{v}, ⟨?_, Finset.singleton_nonempty v⟩, t, ?_, ?_⟩
-      · refine (hδ T {v}).mpr (fun x hx => ?_)
-        obtain rfl := Finset.mem_singleton.mp hx
-        exact ⟨w, hwT, hb⟩
-      · exact (hδ U t).mpr
-          (fun x hx => ⟨x, hsubU t htP hx, WorldBisim.refl k M x⟩)
-      · show {v} ∪ t = t
-        exact Finset.union_eq_right.mpr (Finset.singleton_subset_iff.mpr hvt)
-    · rintro ⟨hupper, hhits⟩
-      have hcov : ∀ v ∈ t, ∃ w ∈ U, WorldBisim k M w M v :=
-        (hδ U t).mp hupper
-      set T₀ : Finset W := Finset.univ.filter
-        (fun w => ¬ ∃ v ∈ t, WorldBisim k M w M v) with hT₀def
-      have hT₀notin : T₀ ∉ 𝒯 := by
-        intro hmem
-        have hhit := (support_bigConj_iff M _ t).mp hhits _
-          (List.mem_map.mpr ⟨T₀, Finset.mem_toList.mpr hmem, rfl⟩)
-        obtain ⟨t₁, ⟨hδ₁, hne₁⟩, t₂, -, hsplit⟩ := hhit
-        obtain ⟨x, hx⟩ := hne₁
-        obtain ⟨w, hwT₀, hb⟩ := (hδ T₀ t₁).mp hδ₁ x hx
-        exact (Finset.mem_filter.mp hwT₀).2
-          ⟨x, le_sup_left.trans_eq hsplit hx, hb⟩
-      have hs₀ : ∃ s₀ ∈ PF, ∀ w ∈ s₀, ∃ v ∈ t, WorldBisim k M w M v := by
-        by_contra hno
-        refine hT₀notin (Finset.mem_filter.mpr ⟨Finset.mem_univ _, fun s hs => ?_⟩)
-        by_contra hall
-        refine hno ⟨s, hs, fun w hw => ?_⟩
-        by_contra hwnc
-        exact hall ⟨w, hw, w,
-          Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwnc⟩, WorldBisim.refl k M w⟩
-      obtain ⟨s₀, hs₀PF, hs₀cov⟩ := hs₀
-      have hs₀P : s₀ ∈ P := Set.mem_toFinset.mp hs₀PF
-      set t'' : Finset W :=
-        s₀ ∪ U.filter (fun w => ∃ v ∈ t, WorldBisim k M w M v) with ht''def
-      have hbis : StateBisim k M t'' M t := by
-        constructor
-        · intro w hw
-          rcases Finset.mem_union.mp hw with hw₀ | hwU
-          · exact hs₀cov w hw₀
-          · exact (Finset.mem_filter.mp hwU).2
-        · intro v hv
-          obtain ⟨w, hwU, hb⟩ := hcov v hv
-          exact ⟨w, Finset.mem_union_right _ (Finset.mem_filter.mpr ⟨hwU, v, hv, hb⟩), hb⟩
-      have ht''P : t'' ∈ P :=
-        hconv'.out hs₀P hUP (Set.mem_Icc.mpr
-          ⟨Finset.subset_union_left,
-           Finset.union_subset (hsubU s₀ hs₀P) (Finset.filter_subset _ _)⟩)
-      exact (hbisim hbis).mp ht''P
+/-- The class a formula expresses is invariant under bounded bisimulation, at the formula's modal
+depth ([aloni-anttila-yang-2024] Theorem 3.8). -/
+theorem boundedBisimInvariant_support (φ : Formula Atom) :
+    BoundedBisimInvariant {p : PointedTeam.{u} Atom | support p.model φ p.team} :=
+  ⟨φ.modalDepth, fun _ hp _ hb ↦ (invariant_eval φ le_rfl true hb).1 hp⟩
 
-/-- **BSML is expressively complete** for the convex, union-closed,
-    bounded-bisimulation-closed team properties ([anttila-2025] Theorem 3.3.7 and the remark
-    after it, p. 83, in within-model finite-atom form). -/
-theorem definableClass_support_eq [Fintype W] [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) :
-    definableClass (support M) = {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} :=
-  (definableClass_support_subset M).antisymm (subset_definableClass_support M)
+/-- **BSML is not expressively complete** for the union-closed classes invariant under bounded
+bisimulation: the teams holding both a `p`-world and a `¬p`-world, with the empty team, are such a
+class, but no convex one ([anttila-2025] Fact 2.3.19, p. 30). -/
+theorem range_support_ssubset_supClosed [Nonempty Atom] :
+    (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) ⊂
+      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
+        SupClosed (PointedTeam.mk W M ⁻¹' P)) ∧ BoundedBisimInvariant P} := by
+  refine ⟨Set.range_subset_iff.2 fun φ ↦ ⟨fun M ↦ supClosed_support M φ,
+    boundedBisimInvariant_support φ⟩, fun h ↦ ?_⟩
+  inhabit Atom
+  let ψ : Formula Atom := .disj (.conj (.atom default) .ne) (.conj (.neg (.atom default)) .ne)
+  let Q : Set (PointedTeam.{u} Atom) :=
+    {q | support q.model ψ q.team ∨ support q.model .falsum q.team}
+  have hsup {W : Type u} [DecidableEq W] (M : KripkeModel W Atom) :
+      SupClosed (PointedTeam.mk W M ⁻¹' Q) := by
+    rintro s (hs | hs) t (ht | ht)
+    · exact .inl (supClosed_support M ψ hs ht)
+    · rw [(support_falsum M t).1 ht, Finset.sup_eq_union, Finset.union_empty]; exact .inl hs
+    · rw [(support_falsum M s).1 hs, Finset.sup_eq_union, Finset.empty_union]; exact .inl ht
+    · rw [(support_falsum M s).1 hs, (support_falsum M t).1 ht]
+      exact .inr ((support_falsum M _).2 (Finset.union_empty _))
+  have hinv : BoundedBisimInvariant Q := ⟨0, by
+    rintro ⟨W, M, s⟩ (hs | hs) ⟨W', M', s'⟩ hb
+    · exact .inl ((invariant_eval ψ (by simp [ψ, Formula.modalDepth]) true hb).1 hs)
+    · exact .inr ((invariant_eval .falsum (by simp [Formula.falsum, Formula.modalDepth])
+        true hb).1 hs)⟩
+  obtain ⟨φ, hφ⟩ := h ⟨hsup, hinv⟩
+  let M : KripkeModel (ULift.{u} Bool) Atom := ⟨fun _ ↦ ∅, fun _ w ↦ w.down = true⟩
+  let a : ULift.{u} Bool := ⟨true⟩
+  have hiff (t : Finset (ULift.{u} Bool)) : support M φ t ↔ t ∈ PointedTeam.mk _ M ⁻¹' Q :=
+    Set.ext_iff.1 hφ (.mk _ M t)
+  have hbot : (∅ : Finset (ULift.{u} Bool)) ∈ PointedTeam.mk _ M ⁻¹' Q :=
+    .inr ((support_falsum M _).2 rfl)
+  have htop : ({a, ⟨false⟩} : Finset (ULift.{u} Bool)) ∈ PointedTeam.mk _ M ⁻¹' Q :=
+    .inl ⟨{a}, ⟨by simp [a, M, Team.flat, eval], Finset.singleton_nonempty _⟩, {⟨false⟩},
+      ⟨by simp [M, Team.flat, eval], Finset.singleton_nonempty _⟩, rfl⟩
+  rcases (hiff _).1 ((ordConnected_support M φ).out ((hiff _).2 hbot) ((hiff _).2 htop)
+    (show _ ∈ Set.Icc _ _ from ⟨Finset.empty_subset {a}, by simp⟩)) with hmid | hmid
+  · obtain ⟨_, _, u, ⟨hu, x, hx⟩, hsplit⟩ := hmid
+    have hxa : x = a := Finset.mem_singleton.1 (le_sup_right.trans_eq hsplit hx)
+    subst hxa
+    exact hu _ hx rfl
+  · exact Finset.singleton_ne_empty a ((support_falsum M _).1 hmid)
 
-/-! ### The `NE`-free fragment -/
+/-- Classical modal logic expresses strictly less than BSML ([anttila-2025] p. 25). -/
+theorem range_support_neFree_ssubset :
+    (Set.range fun φ : {φ : Formula Atom // φ.NEFree} ↦
+        {p : PointedTeam.{u} Atom | support p.model φ.1 p.team}) ⊂
+      (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) := by
+  refine ⟨fun _ ⟨φ, h⟩ ↦ ⟨φ.1, h⟩, fun h ↦ ?_⟩
+  obtain ⟨φ, hφ⟩ := h ⟨.ne, rfl⟩
+  let M : KripkeModel PUnit.{u + 1} Atom := ⟨fun _ ↦ ∅, fun _ _ ↦ False⟩
+  exact Finset.not_nonempty_empty
+    ((Set.ext_iff.1 hφ ⟨PUnit, M, ∅⟩).1 (isFlat_support_of_neFree φ.2 M).empty_mem)
 
-theorem definableClass_support_neFree_subset (M : KripkeModel W Atom) :
-    definableClass (fun φ : {φ : Formula Atom // φ.NEFree} ↦ support M φ.1) ⊆
-      {P | IsFlat P ∧ BisimClosed M P} :=
-  definableClass_subset fun φ ↦ ⟨isFlat_support_of_neFree φ.2 M, bisimClosed_support M φ.1⟩
+variable [Finite Atom] [Nonempty Atom]
 
-/-- The `NE`-free fragment of BSML is expressively complete for the flat,
-bounded-bisimulation-closed team properties ([aloni-anttila-yang-2024] Proposition 3.13). -/
-theorem definableClass_support_neFree_eq [Fintype W] [Fintype Atom] [Inhabited Atom]
-    (M : KripkeModel W Atom) :
-    definableClass (fun φ : {φ : Formula Atom // φ.NEFree} ↦ support M φ.1) =
-      {P | IsFlat P ∧ BisimClosed M P} := by
-  classical
-  refine (definableClass_support_neFree_subset M).antisymm ?_
-  rintro P ⟨hP, k, hk⟩
-  obtain ⟨e, he⟩ : ∃ e : Fin (Fintype.card Atom) → Atom, e.Surjective :=
-    ⟨_, (Fintype.equivFin Atom).symm.surjective⟩
-  set L := ((Finset.univ.filter fun w ↦ {w} ∈ P).image (worldType e M k)).toList
-  refine ⟨⟨bigDisj (L.map (hintikka e k)), neFree_bigDisj _ ?_⟩, Set.ext fun t ↦ ?_⟩
-  · simpa using fun τ _ ↦ neFree_hintikka e k τ
-  simp only [Set.mem_ofPred_eq, support_bigDisj_hintikka_iff, L, Finset.mem_toList,
-    Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
-  rw [hP t]
-  refine forall₂_congr fun v _ ↦ ⟨fun ⟨w, hw, hwv⟩ ↦ ?_, fun hv ↦ ⟨v, hv, rfl⟩⟩
-  exact (hk.singleton ((worldType_eq_iff_worldBisim he k w v).mp hwv)).mp hw
+/-- **BSML is expressively complete** for the convex, union-closed classes of pointed team models
+invariant under bounded bisimulation: the remark after [anttila-2025] Theorem 3.3.7, p. 83, which
+the conclusion of [aloni-anttila-yang-2024] reports as [knudstorp-2023]'s unpublished result. -/
+theorem range_support_eq :
+    (Set.range fun φ : Formula Atom ↦ {p : PointedTeam.{u} Atom | support p.model φ p.team}) =
+      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
+        (PointedTeam.mk W M ⁻¹' P).OrdConnected ∧ SupClosed (PointedTeam.mk W M ⁻¹' P)) ∧
+        BoundedBisimInvariant P} := by
+  refine Set.Subset.antisymm (Set.range_subset_iff.2 fun φ ↦
+    ⟨fun M ↦ ⟨ordConnected_support M φ, supClosed_support M φ⟩,
+      boundedBisimInvariant_support φ⟩) ?_
+  rintro P ⟨hclosed, k, hk⟩
+  inhabit Atom
+  obtain ⟨n, ⟨e⟩⟩ := Finite.exists_equiv_fin Atom
+  let τ (p : PointedTeam.{u} Atom) := p.team.image (worldType e.symm p.model k)
+  have hmem {p} : p ∈ P ↔ τ p ∈ τ '' P := ⟨Set.mem_image_of_mem τ, fun ⟨q, hq, h⟩ ↦
+    hk q hq p ((image_worldType_eq_iff_stateBisim e.symm.surjective).1 h)⟩
+  have hc : (τ '' P).OrdConnected := ⟨by
+    rintro _ ⟨q, hq, rfl⟩ _ ⟨⟨W, M, s₂⟩, h₂, rfl⟩ σ ⟨hqσ, hσ⟩
+    obtain ⟨s, hs, rfl⟩ := Finset.subset_image_iff.1 hσ
+    obtain ⟨s₁, hs₁, h₁⟩ := Finset.subset_image_iff.1 hqσ
+    exact ⟨⟨W, M, s⟩, (hclosed M).1.out (hmem.2 ⟨q, hq, h₁.symm⟩) h₂ ⟨hs₁, hs⟩, rfl⟩⟩
+  have hs : SupClosed (τ '' P) := by
+    rintro _ ⟨⟨W₁, M₁, s₁⟩, h₁, rfl⟩ _ ⟨⟨W₂, M₂, s₂⟩, h₂, rfl⟩
+    have h₁' : (s₁.map .inl).image (worldType e.symm (M₁.sum M₂) k) =
+        s₁.image (worldType e.symm M₁ k) := by ext; simp [worldType_sum]
+    have h₂' : (s₂.map .inr).image (worldType e.symm (M₁.sum M₂) k) =
+        s₂.image (worldType e.symm M₂ k) := by ext; simp [worldType_sum]
+    have h : s₁.map .inl ⊔ s₂.map .inr ∈ PointedTeam.mk _ (M₁.sum M₂) ⁻¹' P :=
+      (hclosed _).2 (hmem.2 ⟨_, h₁, h₁'.symm⟩) (hmem.2 ⟨_, h₂, h₂'.symm⟩)
+    exact ⟨_, h, by simp only [τ, Finset.sup_eq_union, Finset.image_union, h₁', h₂']⟩
+  obtain ⟨φ, hφ⟩ := exists_formula_iff_image_mem.{u} e.symm _ hc hs
+  exact ⟨φ, Set.ext fun p ↦ (hφ p.model p.team).trans hmem.symm⟩
+
+/-- The `NE`-free fragment of BSML is expressively complete for the flat classes invariant under
+bounded bisimulation ([aloni-anttila-yang-2024] Proposition 3.13; [anttila-2025] Proposition 2.3.13,
+p. 27). -/
+theorem range_support_neFree_eq :
+    (Set.range fun φ : {φ : Formula Atom // φ.NEFree} ↦
+        {p : PointedTeam.{u} Atom | support p.model φ.1 p.team}) =
+      {P | (∀ {W : Type u} [DecidableEq W] (M : KripkeModel W Atom),
+        IsFlat (PointedTeam.mk W M ⁻¹' P)) ∧ BoundedBisimInvariant P} := by
+  refine Set.Subset.antisymm (Set.range_subset_iff.2 fun φ ↦
+    ⟨fun M ↦ isFlat_support_of_neFree φ.2 M, boundedBisimInvariant_support φ.1⟩) ?_
+  rintro P ⟨hflat, k, hk⟩
+  inhabit Atom
+  obtain ⟨n, ⟨e⟩⟩ := Finite.exists_equiv_fin Atom
+  obtain ⟨L, hL⟩ := (Set.toFinite {σ : WorldType n k | ∃ p ∈ P, ∃ w, p.team = {w} ∧
+    worldType e.symm p.model k w = σ}).exists_finset
+  refine ⟨⟨typeDisj e.symm L, neFree_typeDisj L⟩, Set.ext fun p ↦ ?_⟩
+  obtain ⟨W, M, t⟩ := p
+  change support M (typeDisj e.symm L) t ↔ t ∈ PointedTeam.mk W M ⁻¹' P
+  rw [support_typeDisj_iff, hflat M t, Finset.image_subset_iff]
+  refine forall₂_congr fun v _ ↦ ⟨fun hv ↦ ?_, fun hv ↦ (hL _).2 ⟨⟨W, M, {v}⟩, hv, v, rfl, rfl⟩⟩
+  obtain ⟨q, hq, w, hs₀, hw⟩ := (hL _).1 hv
+  exact hk q hq ⟨W, M, {v}⟩ ((image_worldType_eq_iff_stateBisim e.symm.surjective).1
+    (by simp [hs₀, hw]))
+
+end Completeness
 
 end BSML

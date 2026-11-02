@@ -32,6 +32,7 @@ counterpart of `Computation.LiftRel`, and at a homogeneous relation the functor-
   restriction, and as `Functor.Liftr`.
 * `Set.liftRel_eq`, `Set.liftRel_comp`: the lifting sends equality to equality and relational
   composition to composition.
+* `Set.liftRel_iff_image_eq`: the lifting of equality along two maps is equality of their images.
 * `Set.LiftRel.union`, `Set.LiftRel.biUnion`: closure under unions, and under the indexed unions
   of related families, the `bind` of `Computation.liftRel_bind`.
 * The lifting of a reflexive, symmetric or transitive relation is reflexive, symmetric or
@@ -92,6 +93,13 @@ theorem liftRel_iff_liftr {r : α → α → Prop} {s t : Set α} :
 
 theorem liftRel_swap : LiftRel (Function.swap r) t s ↔ LiftRel r s t :=
   and_comm
+
+/-- The lifting of equality along two maps is equality of their images. -/
+theorem liftRel_iff_image_eq {f : α → γ} {g : β → γ} :
+    LiftRel (fun a b ↦ f a = g b) s t ↔ f '' s = g '' t := by
+  rw [Subset.antisymm_iff, image_subset_iff, image_subset_iff]
+  exact and_congr (forall₂_congr fun _ _ ↦ exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm)
+    Iff.rfl
 
 theorem LiftRel.imp (H : ∀ {a b}, r a b → p a b) (h : LiftRel r s t) : LiftRel p s t :=
   ⟨fun a ha ↦ (h.1 a ha).imp fun _ ⟨hb, hab⟩ ↦ ⟨hb, H hab⟩,
