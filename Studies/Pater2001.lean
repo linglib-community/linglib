@@ -5,6 +5,7 @@ public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.PHOIBLE.Inventories.Muna
 public import Linglib.Data.Wordlist.Pater2001
+public import Linglib.Morphology.Morph
 public import Mathlib.Data.Fintype.Perm
 
 /-!
@@ -29,11 +30,13 @@ stops fuse](##fusingStops_mem), as the intermediate types of Newman's typology d
   faithfulness the relation, markedness the output. The Indonesian fused nasal is the nasal that
   the Indonesian rules assimilate the prefix nasal to (`NasalSubstitution.substitute`), so fusion
   and assimilation followed by loss of the consonant give one string. The Muna fused nasal is
-  the *m* of *-um-*, as printed.
+  Muna's nasal homorganic with the consonant in the same way: *m* before *p* and *f*, and the *m*
+  of *-um-* unchanged before *w*, whose double articulation no Muna nasal has.
 * [Pharyngeal Expansion] is [−sonorant, +voice], and two segments are homorganic when they agree
-  on place but [strident] and [lateral]. CRISPEDGE[PRWD] counts homorganic pairs at the left edge
-  of a root, which gradient ALIGN-WD makes the left edge of a Prosodic Word. *PL/LAB² counts
-  non-syllabic labials, since PHOIBLE makes round vowels [+labial].
+  on the major articulators (`Segment.Homorganic`). The input carries the morph of each segment
+  and the Prosodic Word is read off it, prefixes outside and an output segment inside when one
+  of its correspondents is. *PL/LAB² counts non-syllabic labials, since PHOIBLE makes round
+  vowels [+labial].
 * With NASASSIM dominated, [the velars alone fuse](##exists_fusingStops_eq_velars), a type
   Newman's typology lacks.
 
@@ -66,6 +69,7 @@ stops fuse](##fusingStops_mem), as the intermediate types of Newman's typology d
 namespace Pater2001
 
 open Phonology OptimalityTheory
+open Morphology (Morph)
 
 /-! ### Features -/
 
@@ -74,13 +78,6 @@ nasals and voiceless obstruents: here the [−sonorant, +voice] segments. -/
 def PharExp (s : Segment) : Prop := s.HasValue .sonorant false ∧ s.HasValue .voice true
 
 instance : DecidablePred PharExp := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Two segments are homorganic when they agree on every place feature but [strident] and
-[lateral], the agreement that nasal substitution's nasal has with its consonant. -/
-def Homorganic (a b : Segment) : Prop :=
-  ∀ f ∈ FeatureClass.place, f ≠ .strident → f ≠ .lateral → a f = b f
-
-instance : DecidableRel Homorganic := fun _ _ ↦ Finset.decidableDforallFinset
 
 /-- The adjacent pairs of a word. -/
 def pairs (w : List Segment) : List (Segment × Segment) := w.zip w.tail
@@ -101,7 +98,7 @@ def nc : Constraint Cand := fun c ↦
 /-- NASASSIM (36): a nasal not homorganic with the consonant after it. -/
 def nasAssim : Constraint Cand := fun c ↦
   (pairs (c.form .rhs)).countP fun p ↦
-    p.1.HasValue .nasal true ∧ p.2.IsConsonant ∧ ¬ Homorganic p.1 p.2
+    p.1.HasValue .nasal true ∧ p.2.IsConsonant ∧ ¬ p.1.Homorganic p.2
 
 /-- *PL/LAB², the self-conjunction of *PL/LAB (15): two labial consonants or glides in a
 word, the non-syllabic segments with labial place. -/
@@ -123,24 +120,38 @@ def identPharExp : Constraint Cand := fun c ↦
 def identPlace : Constraint Cand := fun c ↦
   c.identViolFeature (Segment.restrict FeatureClass.place) .lhs .rhs
 
-/-! ### A nasal before a consonant -/
+/-! ### The Prosodic Word
 
-/-- Where a nasal meets the consonant after it: at the left edge of a root, which is the left
-edge of a Prosodic Word; between two prefixes; or inside a root. -/
-inductive Boundary
-  | rootEdge
-  | prefixes
-  | root
-  deriving DecidableEq
+The input carries the morph each segment belongs to, and the Prosodic Word is read off it as
+ALIGN-WD places it: prefixes lie outside, and roots and suffixes inside. -/
 
-/-- CRISPEDGE[PRWD] (32): place shared across the left edge of a Prosodic Word, which is where
-the nasal and the consonant meet at the left edge of a root. -/
-def crispEdge (b : Boundary) : Constraint Cand := fun c ↦
-  if b = .rootEdge then (pairs (c.form .rhs)).countP fun p ↦ Homorganic p.1 p.2 else 0
+/-- The kind of a prefix. -/
+abbrev prefixKind : Morph.Kind := .bound .before .affix
 
-/-- UNIFORMITY of roots: two root segments with one output correspondent. -/
-def uniformityRt (b : Boundary) : Constraint Cand := fun c ↦
-  if b = .root then uniformity c else 0
+/-- A morph is inside the Prosodic Word unless it is bound before its host, as a prefix is. -/
+def InPrWd (k : Morph.Kind) : Prop := k.side? ≠ some .before
+
+instance : DecidablePred InPrWd := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- The output segment at `j` is in the Prosodic Word when one of its input correspondents
+belongs to a morph inside it, `kinds` giving the morph of each input segment. -/
+def OutInPrWd (kinds : List Morph.Kind) (c : Cand) (j : ℕ) : Prop :=
+  ∃ p ∈ c.edge .lhs .rhs, p.2.val = j ∧ ∃ k ∈ kinds[p.1.val]?, InPrWd k
+
+instance (kinds : List Morph.Kind) (c : Cand) : DecidablePred (OutInPrWd kinds c) := fun j ↦
+  inferInstanceAs
+    (Decidable (∃ p ∈ c.edge .lhs .rhs, p.2.val = j ∧ ∃ k ∈ kinds[p.1.val]?, InPrWd k))
+
+/-- CRISPEDGE[PRWD] (32): homorganic neighbours on the two sides of an edge of the Prosodic
+Word, whose place is linked across it. -/
+def crispEdge (kinds : List Morph.Kind) : Constraint Cand := fun c ↦
+  (pairs (c.form .rhs)).zipIdx.countP fun q ↦
+    ¬ (OutInPrWd kinds c q.2 ↔ OutInPrWd kinds c (q.2 + 1)) ∧ q.1.1.Homorganic q.1.2
+
+/-- UNIFORMITY of roots: an output segment with two input correspondents in a root. -/
+def uniformityRt (kinds : List Morph.Kind) : Constraint Cand := fun c ↦
+  ((Finset.univ : Finset (Fin (c.form .rhs).length)).filter fun j ↦
+    1 < ((c.edge .lhs .rhs).filter fun p ↦ p.2 = j ∧ kinds[p.1.val]? = some .root).card).card
 
 /-- The outcomes of Pater's tableaux: fusion of the nasal and the consonant into one nasal,
 assimilation of the nasal, and the faithful cluster. -/
@@ -165,20 +176,22 @@ open Indonesian.Phonology
 /-- The Indonesian candidates of a nasal `N` before `x`, whose assimilated and fused nasal is the
 one the Indonesian rules give. -/
 def corr (N x : Segment) : Outcome → Cand :=
-  junctureCorr N x (NasalSubstitution.substitute trigger N x)
+  junctureCorr N x (NasalSubstitution.substitute consonants trigger N x)
 
-/-- The tableau of the nasal `N` before `x` at `b` under the constraints `cs` in rank order. -/
-def tableau (cs : Boundary → List (Constraint Cand)) (N x : Segment) (b : Boundary)
+/-- The tableau of the nasal `N` of a morph of kind `kN` before the consonant `x` of a morph of
+kind `kx`, under the constraints `cs` in rank order. -/
+def tableau (cs : List Morph.Kind → List (Constraint Cand)) (N x : Segment) (kN kx : Morph.Kind)
     (cands : Finset Outcome) :=
-  Tableau.ofList cands ((cs b).map (Constraint.comap (corr N x)))
+  Tableau.ofList cands ((cs [kN, kx]).map (Constraint.comap (corr N x)))
 
 /-- [pater-1999]'s analysis as (3) and (4) state it: UNIFORMITY of roots ≫ *NC̥ ≫ UNIFORMITY. -/
-def ncRanking (b : Boundary) : List (Constraint Cand) := [uniformityRt b, nc, uniformity]
+def ncRanking (kinds : List Morph.Kind) : List (Constraint Cand) :=
+  [uniformityRt kinds, nc, uniformity]
 
 /-- The reanalysis (38), (39) and (42): NASASSIM, IDENT[PHAREXP] ≫ CRISPEDGE[PRWD] ≫ UNIFORMITY
 ≫ IDENT[PLACE]. -/
-def ranking (b : Boundary) : List (Constraint Cand) :=
-  [nasAssim, identPharExp, crispEdge b, uniformity, identPlace]
+def ranking (kinds : List Morph.Kind) : List (Constraint Cand) :=
+  [nasAssim, identPharExp, crispEdge kinds, uniformity, identPlace]
 
 /-- The output of the winners of a tableau over the outcomes of the nasal `N` before `x`, if
 they have one output. -/
@@ -189,21 +202,21 @@ def winningOutput {n : ℕ} (N x : Segment) (t : Tableau Outcome n) : Option (Li
   | _ => none
 
 /-- What *meN-* before `base` comes out as under `cs`, among the outcomes `cands`. -/
-def meN (cs : Boundary → List (Constraint Cand)) (cands : Finset Outcome) :
+def meN (cs : List Morph.Kind → List (Constraint Cand)) (cands : Finset Outcome) :
     List Segment → Option (List Segment)
-  | x :: w => (winningOutput ng x (tableau cs ng x .rootEdge cands)).map fun o ↦
+  | x :: w => (winningOutput ng x (tableau cs ng x prefixKind .root cands)).map fun o ↦
       [m, e] ++ o ++ w
   | [] => none
 
 /-- What *meN-* before *per-* before `base` comes out as under `cs`, among the outcomes
 `cands`. -/
-def meNper (cs : Boundary → List (Constraint Cand)) (cands : Finset Outcome)
+def meNper (cs : List Morph.Kind → List (Constraint Cand)) (cands : Finset Outcome)
     (base : List Segment) : Option (List Segment) :=
-  (winningOutput ng p (tableau cs ng p .prefixes cands)).map fun o ↦
+  (winningOutput ng p (tableau cs ng p prefixKind prefixKind cands)).map fun o ↦
     [m, e] ++ o ++ [e, r] ++ base
 
 /-- What an Indonesian relation of the table predicts for its base. -/
-def predict (cs : Boundary → List (Constraint Cand)) (cands : Finset Outcome) :
+def predict (cs : List Morph.Kind → List (Constraint Cand)) (cands : Finset Outcome) :
     String → List Segment → Option (List Segment)
   | "meN-", w => meN cs cands w
   | "meN- per-", w => meNper cs cands w
@@ -224,14 +237,18 @@ namespace Muna
 /-- The vowel /u/ of *-um-*. -/
 def u : Segment := .ofChart .«u»
 
-/-- The nasal /m/ of *-um-*, which is also the fused nasal. -/
+/-- The nasal /m/ of *-um-*. -/
 def m : Segment := .ofChart .«m»
+
+/-- The consonants a nasal fuses with, Hayes's [−syllabic] segments. -/
+def trigger : Segment := Segment.ofSpecs [(.syllabic, false)]
 
 /-- The output of each outcome of *-um-* before the root `x :: w`. -/
 def output (x : Segment) (w : List Segment) : UmOutcome → List Segment
   | .infix => x :: u :: m :: w
   | .delete => x :: w
-  | .fuse => m :: w
+  | .fuse =>
+    NasalSubstitution.substitute Data.PHOIBLE.Inventories.Muna.mnb.segments trigger m x :: w
 
 /-- The correspondence of each outcome, from the positions of `u :: m :: x :: w` to those of its
 output: infixation reorders, deletion leaves the affix without correspondents, and fusion maps
@@ -283,9 +300,9 @@ open Data.PHOIBLE.Inventories
 def ncCands : Finset Outcome := {.fuse, .assimilate}
 
 -- (3), and (4) at the left edge of a root
-theorem optimal_ncRanking_rootEdge :
-    (tableau ncRanking ng p .rootEdge ncCands).optimal = {.fuse} ∧
-      (tableau ncRanking ng b .rootEdge ncCands).optimal = {.assimilate} := by
+theorem optimal_ncRanking_prefix_root :
+    (tableau ncRanking ng p prefixKind .root ncCands).optimal = {.fuse} ∧
+      (tableau ncRanking ng b prefixKind .root ncCands).optimal = {.assimilate} := by
   decide +kernel
 
 -- (4), left: the fused candidate violates UNIFORMITY, the faithful one *NC̥
@@ -294,7 +311,8 @@ theorem uniformity_empat : uniformity (corr m p .fuse) = 1 ∧ uniformity (corr 
   decide +kernel
 
 -- (4) inside a root, *əmpat*
-theorem optimal_ncRanking_root : (tableau ncRanking m p .root ncCands).optimal = {.assimilate} := by
+theorem optimal_ncRanking_root :
+    (tableau ncRanking m p .root .root ncCands).optimal = {.assimilate} := by
   decide +kernel
 
 /-- UNIFORMITY of roots keeps *NC̥ from fusing inside a root but not between two prefixes, so
@@ -338,7 +356,7 @@ theorem indonesian_predicts : ∀ r ∈ Wordlist.relations, r.relation ≠ "-um-
 
 -- (4) inside a root under the reanalysis: assimilation and the faithful cluster are one output
 theorem optimal_ranking_root :
-    (tableau ranking m p .root .univ).optimal = {.assimilate, .faithful} := by
+    (tableau ranking m p .root .root .univ).optimal = {.assimilate, .faithful} := by
   decide +kernel
 
 -- (42): the fused nasal corresponds to the prefix's ŋ
@@ -347,21 +365,21 @@ theorem identPlace_fuse : identPlace (corr ng p .fuse) = 1 := by
 
 -- (40)
 theorem optimal_kalinga :
-    (tableau (fun b ↦ [nasAssim, crispEdge b, identPharExp, uniformity, identPlace])
-      ng b .rootEdge .univ).optimal = {.fuse} := by
+    (tableau (fun kinds ↦ [nasAssim, crispEdge kinds, identPharExp, uniformity, identPlace])
+      ng b prefixKind .root .univ).optimal = {.fuse} := by
   decide +kernel
 
 -- the voiceless obstruents, which add *c* and the loan fricatives to the substituting
 -- consonants of Sneddon's grammar
 theorem consonants_filter_fuse :
     consonants.filter (fun x ↦ x.IsObstruent ∧
-        (tableau ranking ng x .rootEdge .univ).optimal = {.fuse}) =
+        (tableau ranking ng x prefixKind .root .univ).optimal = {.fuse}) =
       substituting ∪ {c, f, sy, kh} := by
   decide +kernel
 
 -- before *l*, which the paper does not discuss, the nasal fuses; Indonesian loses it, as in
 -- *melihat*, and loss is not among the candidates
-theorem optimal_ranking_l : (tableau ranking ng l .rootEdge .univ).optimal = {.fuse} := by
+theorem optimal_ranking_l : (tableau ranking ng l prefixKind .root .univ).optimal = {.fuse} := by
   decide +kernel
 
 /-! ### Typology -/
@@ -369,7 +387,8 @@ theorem optimal_ranking_l : (tableau ranking ng l .rootEdge .univ).optimal = {.f
 /-- The constraints of (38) to (40), NASASSIM, IDENT[PHAREXP], CRISPEDGE[PRWD] and UNIFORMITY,
 on the candidates of the prefix nasal before `x` at the left edge of a root. -/
 def typologyCon (x : Segment) : ConstraintSet Outcome (Fin 4) :=
-  ConstraintSet.comap (corr ng x) ![nasAssim, identPharExp, crispEdge .rootEdge, uniformity]
+  ConstraintSet.comap (corr ng x)
+    ![nasAssim, identPharExp, crispEdge [prefixKind, .root], uniformity]
 
 /-- The stops of Newman's typology (41) that fuse with the prefix nasal under the ranking `ρ`. -/
 def fusingStops (ρ : Ranking (Fin 4) 4) : List Segment :=

@@ -9,14 +9,16 @@ public import Mathlib.Data.Finset.Card
 Hayes's grouping of the distinctive features into manner, laryngeal and place features, with the
 place features split among the three major articulators [labial], [coronal] and [dorsal]. The
 classes are finite sets of features, the place class is their union, and a complex segment is one
-with more than one major articulator.
+with more than one major articulator. Two segments are homorganic when they agree on the major
+articulator features.
 
 ## Main definitions
 
 * `FeatureClass`, `Feature.featureClass?`: the five classes and the class of each feature.
 * `FeatureClass.features`, `FeatureClass.place`: the features of a class, and the place class.
-* `Segment.articulators`, `Segment.IsComplex`: the major articulators of a segment, and complex
-  segments.
+* `Feature.majorArticulators`, `Segment.articulators`, `Segment.IsComplex`: the major articulator
+  features, the major articulators of a segment, and complex segments.
+* `Segment.Homorganic`: agreement on the major articulator features.
 
 ## Implementation notes
 
@@ -79,13 +81,27 @@ theorem mem_place :
 
 end FeatureClass
 
-/-! ### Complex segments -/
+/-! ### Major articulators -/
 
-/-- The major articulators of a segment, the major articulator features ([hayes-2009] §4.6.1) it
-is specified `+` for: Halle, Vaux and Wolfe's designated articulators ([halle-vaux-wolfe-2000]
-§1.2.2). -/
+/-- The major articulator features [labial], [coronal] and [dorsal] ([hayes-2009] §4.6.1). -/
+def Feature.majorArticulators : Finset Feature := {.labial, .coronal, .dorsal}
+
+@[simp] theorem Feature.mem_majorArticulators {f : Feature} :
+    f ∈ Feature.majorArticulators ↔ f = .labial ∨ f = .coronal ∨ f = .dorsal := by
+  simp [Feature.majorArticulators]
+
+/-- The major articulators of a segment, the major articulator features it is specified `+` for:
+Halle, Vaux and Wolfe's designated articulators ([halle-vaux-wolfe-2000] §1.2.2). -/
 def Segment.articulators (s : Segment) : Finset Feature :=
-  ({.labial, .coronal, .dorsal} : Finset Feature).filter (s.HasValue · true)
+  Feature.majorArticulators.filter (s.HasValue · true)
+
+/-- Two segments are homorganic when they agree on the major articulator features. -/
+def Segment.Homorganic (s t : Segment) : Prop := Set.EqOn s t ↑Feature.majorArticulators
+
+instance : DecidableRel Segment.Homorganic := fun s t ↦
+  inferInstanceAs (Decidable (∀ f ∈ Feature.majorArticulators, s f = t f))
+
+/-! ### Complex segments -/
 
 /-- A complex segment has more than one major articulator, as the labial-velars are [+labial,
 +dorsal] and the palatals [+coronal, +dorsal] ([hayes-2009] p. 84, Table 4.8). Whether [kʷ] is

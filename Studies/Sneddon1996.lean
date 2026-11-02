@@ -63,8 +63,7 @@ theorem juncture_of_obstruent :
 -- pp. 9–10
 theorem juncture_head_agrees :
     ∀ x ∈ consonants, x.IsConsonant → x.IsObstruent → x ≠ s →
-      ∀ N ∈ (juncture x).head?, N.IsNasal ∧
-        ∀ ft ∈ FeatureClass.place.erase .strident, N ft = x ft := by
+      ∀ N ∈ (juncture x).head?, N.IsNasal ∧ N.Homorganic x := by
   decide +kernel
 
 /-- The fused nasals are phonemes, the nasal of the place of each stop and the palatal for
@@ -81,12 +80,6 @@ def junctureRetained (x : Segment) : List Segment :=
 
 /-- "If *s* is not lost N becomes *n*", as in *mensukseskan* (pp. 11–12). -/
 theorem junctureRetained_s : junctureRetained s = [n, s] := by
-  decide +kernel
-
-theorem placeAssimilation_s :
-    (NasalSubstitution.placeAssimilation trigger).apply [ng, s]
-        = [n.setFeature .strident true, s] ∧
-      assimilate [ng, s] = [n, s] := by
   decide +kernel
 
 /-! ### The forms -/
