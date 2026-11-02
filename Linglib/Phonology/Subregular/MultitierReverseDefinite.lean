@@ -188,8 +188,8 @@ theorem IsReverseDefinite.isMultitierReverseDefinite_syntacticMonoid [Finite α]
   have hz := h.isLeftZero_syntacticClass_of_isIdempotentElem hu he
   rw [mul_assoc, hz, hz]
 
-theorem IsBTK.mem_multitierReverseDefiniteVariety [Finite α] (h : IsBTK k L) :
-    Monoid.multitierReverseDefiniteVariety.langs L :=
+theorem IsBTK.mem_languages_multitierReverseDefiniteVariety [Finite α] (h : IsBTK k L) :
+    L ∈ Monoid.multitierReverseDefiniteVariety.languages α :=
   h.mem_languageVariety (𝒱 := Monoid.multitierReverseDefiniteVariety.toLanguageVariety)
     fun _ hL ↦ ⟨hL.isRegular.finite_syntacticMonoid, hL.isMultitierReverseDefinite_syntacticMonoid⟩
 
@@ -337,8 +337,8 @@ private theorem syntacticClass_append_eq_of_take_filter_eq [Fintype α]
 
 end Converse
 
-theorem isBTK_of_mem_multitierReverseDefiniteVariety [Fintype α]
-    (h : Monoid.multitierReverseDefiniteVariety.langs L) :
+theorem isBTK_of_mem_languages_multitierReverseDefiniteVariety [Fintype α]
+    (h : L ∈ Monoid.multitierReverseDefiniteVariety.languages α) :
     IsBTK (Fintype.card α * Nat.card L.SyntacticMonoid) L := by
   classical
   have := h.1
@@ -350,8 +350,8 @@ theorem isBTK_of_mem_multitierReverseDefiniteVariety [Fintype α]
 /-- Over a finite alphabet, a language is multitier reverse definite exactly when its syntactic
 monoid is, which is Lambert's (62). -/
 theorem exists_isBTK_iff [Fintype α] :
-    (∃ k, IsBTK k L) ↔ Monoid.multitierReverseDefiniteVariety.langs L :=
-  ⟨fun ⟨_, h⟩ ↦ h.mem_multitierReverseDefiniteVariety,
-    fun h ↦ ⟨_, isBTK_of_mem_multitierReverseDefiniteVariety h⟩⟩
+    (∃ k, IsBTK k L) ↔ L ∈ Monoid.multitierReverseDefiniteVariety.languages α :=
+  ⟨fun ⟨_, h⟩ ↦ h.mem_languages_multitierReverseDefiniteVariety,
+    fun h ↦ ⟨_, isBTK_of_mem_languages_multitierReverseDefiniteVariety h⟩⟩
 
 end Language

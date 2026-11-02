@@ -9,7 +9,7 @@ module
 
 public import Linglib.Core.Algebra.Group.Idempotent
 public import Linglib.Core.Computability.Definite
-public import Linglib.Core.Computability.Variety.Langs
+public import Linglib.Core.Computability.Variety.Basic
 
 /-!
 # Definite languages and the pseudovarieties **D**, **K** and **LI**
@@ -29,8 +29,8 @@ zero, and similarly for the other two classes.
   idempotent class of a nonempty word satisfies the window condition.
 * `Language.isDefinite_natCard_of_isDefinite_syntacticSemigroup` and its two mirrors: a syntactic
   semigroup `S` in the pseudovariety bounds the window by `|S|`.
-* `Language.langs_definiteVariety_iff`, `Language.langs_reverseDefiniteVariety_iff`,
-  `Language.langs_locallyTrivialVariety_iff`: the Eilenberg correspondences.
+* `Language.mem_languages_definiteVariety_iff` and its two mirrors: the Eilenberg
+  correspondences.
 * `Language.isFiniteOrCofinite_iff_syntacticSemigroup`: the finite or cofinite languages.
 
 ## Implementation notes
@@ -70,15 +70,15 @@ private theorem take_append_middle {u : List α} (hu : k ≤ u.length) (t x y : 
 
 /-! #### Definite languages -/
 
-theorem IsDefinite.syntacticEquiv_append_left (h : L.IsDefinite k) {u : List α}
-    (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (t ++ u) u :=
-  fun x y ↦ iff_of_eq (h (rtake_append_middle hu t x y))
+theorem IsDefinite.syntacticClass_append_left (h : L.IsDefinite k) {u : List α}
+    (hu : k ≤ u.length) (t : List α) : L.syntacticClass (t ++ u) = L.syntacticClass u :=
+  syntacticClass_eq_iff.2 fun x y ↦ iff_of_eq (h (rtake_append_middle hu t x y))
 
 theorem IsDefinite.isRightZero_syntacticClass (h : L.IsDefinite k) {u : List α}
     (hu : k ≤ u.length) : IsRightZero (L.syntacticClass u) := fun m ↦ by
   obtain ⟨t, rfl⟩ := L.syntacticClass_surjective m
-  rw [← syntacticClass_append, syntacticClass_eq_iff]
-  exact h.syntacticEquiv_append_left hu t
+  rw [← syntacticClass_append]
+  exact h.syntacticClass_append_left hu t
 
 /-- A language is `k`-definite exactly when the syntactic class of every word of length at least
 `k` is a right zero of the syntactic monoid. -/
@@ -94,15 +94,15 @@ theorem isDefinite_iff_forall_isRightZero_syntacticClass :
 
 /-! #### Reverse definite languages -/
 
-theorem IsReverseDefinite.syntacticEquiv_append_right (h : L.IsReverseDefinite k) {u : List α}
-    (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (u ++ t) u :=
-  fun x y ↦ iff_of_eq (h (take_append_middle hu t x y))
+theorem IsReverseDefinite.syntacticClass_append_right (h : L.IsReverseDefinite k) {u : List α}
+    (hu : k ≤ u.length) (t : List α) : L.syntacticClass (u ++ t) = L.syntacticClass u :=
+  syntacticClass_eq_iff.2 fun x y ↦ iff_of_eq (h (take_append_middle hu t x y))
 
 theorem IsReverseDefinite.isLeftZero_syntacticClass (h : L.IsReverseDefinite k) {u : List α}
     (hu : k ≤ u.length) : IsLeftZero (L.syntacticClass u) := fun m ↦ by
   obtain ⟨t, rfl⟩ := L.syntacticClass_surjective m
-  rw [← syntacticClass_append, syntacticClass_eq_iff]
-  exact h.syntacticEquiv_append_right hu t
+  rw [← syntacticClass_append]
+  exact h.syntacticClass_append_right hu t
 
 theorem isReverseDefinite_iff_forall_isLeftZero_syntacticClass :
     L.IsReverseDefinite k ↔ ∀ u : List α, k ≤ u.length → IsLeftZero (L.syntacticClass u) := by
@@ -116,9 +116,10 @@ theorem isReverseDefinite_iff_forall_isLeftZero_syntacticClass :
 
 /-! #### Generalized definite languages -/
 
-theorem IsGeneralizedDefinite.syntacticEquiv_append_append (h : L.IsGeneralizedDefinite k)
-    {u : List α} (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (u ++ t ++ u) u :=
-  fun x y ↦ isGeneralizedDefinite_iff_edges.1 h
+theorem IsGeneralizedDefinite.syntacticClass_append_append (h : L.IsGeneralizedDefinite k)
+    {u : List α} (hu : k ≤ u.length) (t : List α) :
+    L.syntacticClass (u ++ t ++ u) = L.syntacticClass u :=
+  syntacticClass_eq_iff.2 fun x y ↦ isGeneralizedDefinite_iff_edges.1 h
     (by rw [Edge.takeAt_left, Edge.takeAt_left, List.append_assoc u t u]
         exact take_append_middle hu _ x y)
     (rtake_append_middle hu _ x y)
@@ -127,8 +128,8 @@ theorem IsGeneralizedDefinite.syntacticClass_mul_mul_self (h : L.IsGeneralizedDe
     {u : List α} (hu : k ≤ u.length) (s : L.SyntacticMonoid) :
     L.syntacticClass u * s * L.syntacticClass u = L.syntacticClass u := by
   obtain ⟨t, rfl⟩ := L.syntacticClass_surjective s
-  rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff]
-  exact h.syntacticEquiv_append_append hu t
+  rw [← syntacticClass_append, ← syntacticClass_append]
+  exact h.syntacticClass_append_append hu t
 
 theorem isGeneralizedDefinite_iff_forall_syntacticClass_mul_mul_self :
     L.IsGeneralizedDefinite k ↔ ∀ u : List α, k ≤ u.length → ∀ s,
@@ -304,33 +305,34 @@ end Converse
 
 /-! ### The Eilenberg correspondences -/
 
-theorem IsDefinite.langs [Finite α] (h : L.IsDefinite k) : Semigroup.definiteVariety.langs L :=
+theorem IsDefinite.mem_languages_definiteVariety [Finite α] (h : L.IsDefinite k) :
+    L ∈ Semigroup.definiteVariety.languages α :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isDefinite_syntacticSemigroup⟩
 
-theorem IsReverseDefinite.langs [Finite α] (h : L.IsReverseDefinite k) :
-    Semigroup.reverseDefiniteVariety.langs L :=
+theorem IsReverseDefinite.mem_languages_reverseDefiniteVariety [Finite α]
+    (h : L.IsReverseDefinite k) : L ∈ Semigroup.reverseDefiniteVariety.languages α :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isReverseDefinite_syntacticSemigroup⟩
 
-theorem IsGeneralizedDefinite.langs [Finite α] (h : L.IsGeneralizedDefinite k) :
-    Semigroup.locallyTrivialVariety.langs L :=
+theorem IsGeneralizedDefinite.mem_languages_locallyTrivialVariety [Finite α]
+    (h : L.IsGeneralizedDefinite k) : L ∈ Semigroup.locallyTrivialVariety.languages α :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isLocallyTrivial_syntacticSemigroup⟩
 
 /-- The language variety of **D** consists of the definite languages. -/
-theorem langs_definiteVariety_iff [Finite α] :
-    Semigroup.definiteVariety.langs L ↔ ∃ k, L.IsDefinite k :=
+theorem mem_languages_definiteVariety_iff [Finite α] :
+    L ∈ Semigroup.definiteVariety.languages α ↔ ∃ k, L.IsDefinite k :=
   ⟨fun h ↦ have := h.1; isDefinite_syntacticSemigroup_iff.1 h.2,
-    fun ⟨_, h⟩ ↦ h.langs⟩
+    fun ⟨_, h⟩ ↦ h.mem_languages_definiteVariety⟩
 
 /-- The language variety of **K** consists of the reverse definite languages. -/
-theorem langs_reverseDefiniteVariety_iff [Finite α] :
-    Semigroup.reverseDefiniteVariety.langs L ↔ ∃ k, L.IsReverseDefinite k :=
+theorem mem_languages_reverseDefiniteVariety_iff [Finite α] :
+    L ∈ Semigroup.reverseDefiniteVariety.languages α ↔ ∃ k, L.IsReverseDefinite k :=
   ⟨fun h ↦ have := h.1; isReverseDefinite_syntacticSemigroup_iff.1 h.2,
-    fun ⟨_, h⟩ ↦ h.langs⟩
+    fun ⟨_, h⟩ ↦ h.mem_languages_reverseDefiniteVariety⟩
 
 /-- The language variety of **LI** consists of the generalized definite languages. -/
-theorem langs_locallyTrivialVariety_iff [Finite α] :
-    Semigroup.locallyTrivialVariety.langs L ↔ ∃ k, L.IsGeneralizedDefinite k :=
+theorem mem_languages_locallyTrivialVariety_iff [Finite α] :
+    L ∈ Semigroup.locallyTrivialVariety.languages α ↔ ∃ k, L.IsGeneralizedDefinite k :=
   ⟨fun h ↦ have := h.1; isLocallyTrivial_syntacticSemigroup_iff.1 h.2,
-    fun ⟨_, h⟩ ↦ h.langs⟩
+    fun ⟨_, h⟩ ↦ h.mem_languages_locallyTrivialVariety⟩
 
 end Language

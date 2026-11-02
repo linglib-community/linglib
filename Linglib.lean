@@ -53,7 +53,6 @@ import Linglib.Core.Computability.Subsequential
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.SyntacticSemigroup
 import Linglib.Core.Computability.TransitionMonoid
-import Linglib.Core.Computability.Variety.Langs
 import Linglib.Core.Computability.Variety.Definite
 import Linglib.Core.Data.Fin.VecNotation
 import Linglib.Core.Data.Fintype.List

@@ -12,11 +12,11 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.ToTree
 # The readings of a marked object
 
 This file defines the objects a linearized object with its lower copies marked gives to the
-semantic interface. A reading is the finite set of chains read low, a chain being named by its
-mover. A chain read high keeps its higher copy, and its lower copies contract to traces. A chain
-read low keeps its lowest copy, and its higher copies are deleted. With no chain read low the result
-is the contraction, and a constituency tree adds a binder under each higher copy of a chain read
-high, so that the type-driven composition engine interprets it.
+semantic interface. A reading is the finite set of chains read low, a chain being named by its term
+in the copy object. A chain read high keeps its higher copy, and its lower copies contract to
+traces. A chain read low keeps its lowest copy, and its higher copies are deleted. With no chain
+read low the result is the contraction, and a constituency tree adds a binder under each higher
+copy of a chain read high, so that the type-driven composition engine interprets it.
 
 ## Main definitions
 
@@ -36,7 +36,7 @@ high, so that the type-driven composition engine interprets it.
 
 ## Implementation notes
 
-* A movement node is found by search: a binary node one of whose daughters has the mover of a marked
+* A movement node is found by search: a binary node one of whose daughters has the term of a marked
   subtree of the other. Recording it would put on the object a datum externalization never reads.
 * A lower copy that is itself the higher copy of a lower one, at an intermediate site of a chain
   read high, gets a trace and a binder, `[t [λ …]]`, which denotes what its second daughter does.
@@ -46,11 +46,13 @@ high, so that the type-driven composition engine interprets it.
   then moves above the head.
 * A remnant read high, with a chain that moved out of it also read high, leaves a free trace and a
   vacuous binder. `PhraseStructure.Tree.Closed` tells such a reading from one the engine can close.
-* Deleting a higher copy is not one of the quotients of Marcolli, Chomsky and Berwick, whose
-  quotients all remove the lower copy. It is the reading of Collins's work on the passive and on
+* Marcolli, Chomsky and Berwick apply their quotients to the lower copy. Deleting the higher copy is
+  their deletion quotient applied to the copy object at the other occurrence, which they do not do
+  (`Marked.mem_cutSummandsDN_lf`); it is the reading of Collins's work on the passive and on
   reconstruction.
 * Binding at a reading is not in general binding at the copy object: an object that moves from
-  itself, read low, comes to c-command the sister of its movement node.
+  itself, read low, comes to c-command the sister of its movement node. The reading `carrying` is
+  the one that does agree with it (`Derivation.bindsAtReading_carrying_iff`).
 
 ## References
 
@@ -89,21 +91,19 @@ namespace Minimalist.LinearizedSyntacticObject.Marked
 
 open RoseTree SyntacticObject PhraseStructure
 
-/-- The tree with its root's mark cleared. -/
-def clearRoot : RoseTree (CopyMark × Vertex) → RoseTree (CopyMark × Vertex)
-  | .node (_, a) cs => .node (none, a) cs
+/-- The term of the copy object a tree is a copy of, its marks forgotten. Marking leaves it
+unchanged,
+so it names a chain at every stage of a derivation. -/
+def termOf (r : RoseTree (CopyMark × Vertex)) : UnorderedTree Vertex :=
+  UnorderedTree.mk (r.map Prod.snd)
 
-/-- The mover a tree is a copy of: its contraction, the mark on its root aside. -/
-def moverOf (r : RoseTree (CopyMark × Vertex)) : UnorderedTree Vertex :=
-  UnorderedTree.mk (contractTree (clearRoot r))
-
-/-- The mark of a lower copy of `x` in `y`: a marked subtree of `y` with the mover of `x`. -/
+/-- The mark of a lower copy of `x` in `y`: a marked subtree of `y` with the term of `x`. -/
 def lowerCopy? (x y : RoseTree (CopyMark × Vertex)) : Option (Option LexicalItem.Token) :=
-  y.subtrees.findSome? fun r ↦ r.value.1.bind fun l ↦ if moverOf r = moverOf x then some l else none
+  y.subtrees.findSome? fun r ↦ r.value.1.bind fun l ↦ if termOf r = termOf x then some l else none
 
 /-- The chain of the copy `r` is read low in the reading `low`. -/
 def ReadLow (low : Finset SyntacticObject) (r : RoseTree (CopyMark × Vertex)) : Prop :=
-  ∃ m ∈ low, m.val = moverOf r
+  ∃ m ∈ low, m.val = termOf r
 
 instance (low : Finset SyntacticObject) : DecidablePred (ReadLow low) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ low, _))
@@ -113,13 +113,14 @@ instance (low : Finset SyntacticObject) : DecidablePred (ReadLow low) :=
 
 section Reading
 
-variable {β : Type*} (low : Finset SyntacticObject) (tr : Option LexicalItem.Token → β)
-  (nd : Vertex → List β → β) (wrap : Option LexicalItem.Token → β → β)
+variable {β : Type*} (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
+  (tr : RoseTree (CopyMark × Vertex) → Option LexicalItem.Token → β) (nd : Vertex → List β → β)
+  (wrap : Option LexicalItem.Token → β → β) (del : RoseTree (CopyMark × Vertex) → Vertex → β → β)
 
 /-- A node with its daughters, each paired with what it reads as. A copy of a chain read low is
-deleted at its movement node, leaving the other daughter, and `wrap` goes around the other
-daughter of a copy of a chain read high. A marked copy reads as `tr` of its mark if its chain is
-read high. -/
+deleted at its movement node by `del`, which receives that copy and what the other daughter reads
+as, and `wrap` goes around the other daughter of a copy of a chain read high. A marked copy reads as
+`tr` of itself and its mark if its chain is read high. -/
 def readStep (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex) × β)) :
     RoseTree (CopyMark × Vertex) × β :=
   let raw := RoseTree.node v (cs.map Prod.fst)
@@ -127,20 +128,20 @@ def readStep (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex) 
     match cs with
     | [x, y] =>
       match lowerCopy? x.1 y.1, lowerCopy? y.1 x.1 with
-      | some l, _ => if ReadLow low x.1 then y.2 else nd v.2 [x.2, wrap l y.2]
-      | _, some l => if ReadLow low y.1 then x.2 else nd v.2 [wrap l x.2, y.2]
+      | some l, _ => if low x.1 then del x.1 v.2 y.2 else nd v.2 [x.2, wrap l y.2]
+      | _, some l => if low y.1 then del y.1 v.2 x.2 else nd v.2 [wrap l x.2, y.2]
       | none, none => nd v.2 [x.2, y.2]
     | _ => nd v.2 (cs.map Prod.snd)
   (raw, match v.1 with
-    | some l => if ReadLow low raw then plain else tr l
+    | some l => if low raw then plain else tr raw l
     | none => plain)
 
 /-- What a marked tree reads as, under `readStep`. -/
 def reading (t : RoseTree (CopyMark × Vertex)) : β :=
-  (fold (readStep low tr nd wrap) t).2
+  (fold (readStep low tr nd wrap del) t).2
 
 theorem fold_readStep (t : RoseTree (CopyMark × Vertex)) :
-    fold (readStep low tr nd wrap) t = (t, reading low tr nd wrap t) := by
+    fold (readStep low tr nd wrap del) t = (t, reading low tr nd wrap del t) := by
   refine Prod.ext ?_ rfl
   induction t with
   | node v cs ih =>
@@ -149,39 +150,45 @@ theorem fold_readStep (t : RoseTree (CopyMark × Vertex)) :
     exact (List.map_congr_left ih).trans (List.map_id' _)
 
 theorem reading_node (v : CopyMark × Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
-    reading low tr nd wrap (.node v cs) =
-      (readStep low tr nd wrap v (cs.map fun c ↦ (c, reading low tr nd wrap c))).2 := by
+    reading low tr nd wrap del (.node v cs) =
+      (readStep low tr nd wrap del v (cs.map fun c ↦ (c, reading low tr nd wrap del c))).2 := by
   rw [reading, fold_node]
   congr 2
-  exact List.map_congr_left fun c _ ↦ fold_readStep low tr nd wrap c
+  exact List.map_congr_left fun c _ ↦ fold_readStep low tr nd wrap del c
 
 end Reading
 
-/-- The object a reading gives, as a tree of vertices. -/
-def lfTree (low : Finset SyntacticObject) : RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
-  reading low (fun l ↦ .node (.inr l) []) .node fun _ y ↦ y
+/-- The object a test of copies gives, as a tree of vertices. -/
+def lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low] :
+    RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
+  reading low (fun _ l ↦ .node (.inr l) []) .node (fun _ y ↦ y) fun _ _ y ↦ y
 
-/-- The object a reading gives at a node is a trace, the node with its daughters' objects, or a
+/-- The object a reading gives, as a tree of vertices. -/
+abbrev lfTree (low : Finset SyntacticObject) : RoseTree (CopyMark × Vertex) → RoseTree Vertex :=
+  lfBy (ReadLow low)
+
+/-- The object a test gives at a node is a trace, the node with its daughters' objects, or a
 daughter's object. -/
-theorem lfTree_node_cases (low : Finset SyntacticObject) (k : CopyMark) (a : Vertex)
-    (cs : List (RoseTree (CopyMark × Vertex))) :
-    (∃ l, lfTree low (.node (k, a) cs) = .node (.inr l) []) ∨
-      lfTree low (.node (k, a) cs) = .node a (cs.map (lfTree low)) ∨
-      ∃ c ∈ cs, lfTree low (.node (k, a) cs) = lfTree low c := by
-  unfold lfTree
+theorem lfBy_node_cases (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low] (k :
+    CopyMark)
+    (a : Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
+    (∃ l, lfBy low (.node (k, a) cs) = .node (.inr l) []) ∨
+      lfBy low (.node (k, a) cs) = .node a (cs.map (lfBy low)) ∨
+      ∃ c ∈ cs, lfBy low (.node (k, a) cs) = lfBy low c := by
+  unfold lfBy
   rw [reading_node]
   simp only [readStep]
   rcases cs with _ | ⟨x, _ | ⟨y, _ | ⟨z, zs⟩⟩⟩ <;> cases k <;> simp only [List.map] <;>
     (try split) <;> (try split) <;> (try split_ifs) <;> simp_all
 
-theorem isSyntacticObject_lfTree (low : Finset SyntacticObject) {t : RoseTree (CopyMark × Vertex)}
-    (h : IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))) :
-    IsSyntacticObject (UnorderedTree.mk (lfTree low t)) := by
+theorem isSyntacticObject_lfBy (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
+    {t : RoseTree (CopyMark × Vertex)} (h : IsSyntacticObject (UnorderedTree.mk (t.map Prod.snd))) :
+    IsSyntacticObject (UnorderedTree.mk (lfBy low t)) := by
   induction t with
   | node v cs ih =>
     obtain ⟨k, a⟩ := v
     rw [isSyntacticObject_mk, map_node, licensed_node_iff] at h
-    rcases lfTree_node_cases low k a cs with ⟨l, hl⟩ | hn | ⟨c, hc, hl⟩
+    rcases lfBy_node_cases low k a cs with ⟨l, hl⟩ | hn | ⟨c, hc, hl⟩
     · rw [hl]
       exact isSyntacticObject_mk_leaf (by simp)
     · rw [hn, isSyntacticObject_mk, licensed_node_iff]
@@ -194,21 +201,21 @@ theorem isSyntacticObject_lfTree (low : Finset SyntacticObject) {t : RoseTree (C
 /-- The object a reading gives: each chain in `low` keeps its lowest copy, and every other its
 highest, its lower copies contracted. -/
 def lf (t : Marked) (low : Finset SyntacticObject) : LinearizedSyntacticObject :=
-  ⟨lfTree low t.val, isSyntacticObject_lfTree low t.2⟩
+  ⟨lfTree low t.val, isSyntacticObject_lfBy _ t.2⟩
 
 /-- The constituency tree of a reading, the binder of a mark `some a` having the index of the trace
 of `a`, and the index-free trace no binder. -/
 def toTree (ι : LexicalItem.Token → ℕ) (t : Marked) (low : Finset SyntacticObject) :
     Tree Unit LexicalItem.Token :=
-  reading low (fun l ↦ RoseTree.node (Vertex.toLabel ι (.inr l)) [])
+  reading (ReadLow low) (fun _ l ↦ RoseTree.node (Vertex.toLabel ι (.inr l)) [])
     (fun v cs ↦ RoseTree.node (Vertex.toLabel ι v) cs)
-    (fun l y ↦ l.elim y fun a ↦ .bind (ι a + 1) () y) t.val
+    (fun l y ↦ l.elim y fun a ↦ .bind (ι a + 1) () y) (fun _ _ y ↦ y) t.val
 
-/-- The chains with a lower copy holding `y`, its own lower copies uncontracted. -/
+/-- The chains with a lower copy holding `y`. -/
 def carrying (t : Marked) (y : LexicalItem.Token) : Finset SyntacticObject :=
   ((t.val.subtrees.filter fun r ↦
-      r.value.1.isSome ∧ ∃ s ∈ r.subtrees, s.value.2 = .inl (some y)).filterMap fun r ↦
-    if h : IsSyntacticObject (moverOf r) then some ⟨moverOf r, h⟩ else none).toFinset
+      r.value.1.isSome ∧ Sum.inl (some y) ∈ (r.map Prod.snd).leaves).filterMap fun r ↦
+    if h : IsSyntacticObject (termOf r) then some ⟨termOf r, h⟩ else none).toFinset
 
 /-! ### The contraction -/
 
@@ -216,7 +223,7 @@ theorem lfTree_empty (t : RoseTree (CopyMark × Vertex)) : lfTree ∅ t = contra
   induction t with
   | node v cs ih =>
     obtain ⟨k, a⟩ := v
-    simp only [lfTree] at ih ⊢
+    simp only [lfTree, lfBy] at ih ⊢
     rw [reading_node]
     simp only [readStep]
     rcases cs with _ | ⟨x, _ | ⟨y, _ | ⟨z, zs⟩⟩⟩ <;> cases k <;> simp only [List.map] <;>
@@ -236,11 +243,11 @@ theorem lowerCopy?_map_none (x : RoseTree (CopyMark × Vertex)) (s : RoseTree Ve
   cases q
   simp
 
-theorem lfTree_map_none (low : Finset SyntacticObject) (s : RoseTree Vertex) :
-    lfTree low (s.map ((none, ·) : Vertex → CopyMark × Vertex)) = s := by
+theorem lfBy_map_none (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
+    (s : RoseTree Vertex) : lfBy low (s.map ((none, ·) : Vertex → CopyMark × Vertex)) = s := by
   induction s with
   | node a cs ih =>
-    simp only [lfTree] at ih ⊢
+    simp only [lfBy] at ih ⊢
     rw [map_node, reading_node]
     simp only [readStep, List.map_map]
     rcases cs with _ | ⟨x, _ | ⟨y, _ | ⟨z, zs⟩⟩⟩ <;>
@@ -250,7 +257,7 @@ theorem lfTree_map_none (low : Finset SyntacticObject) (s : RoseTree Vertex) :
 /-- An object with no lower copy gives itself under every reading. -/
 @[simp] theorem lf_ofLinearized (p : LinearizedSyntacticObject) (low : Finset SyntacticObject) :
     (ofLinearized p).lf low = p :=
-  Subtype.ext (lfTree_map_none low p.val)
+  Subtype.ext (lfBy_map_none _ p.val)
 
 /-- An object with no lower copy has the tree it has as a linearized object. -/
 @[simp] theorem toTree_ofLinearized (ι : LexicalItem.Token → ℕ) (p : LinearizedSyntacticObject)
@@ -287,7 +294,7 @@ theorem eraseBinders_toTree (ι : LexicalItem.Token → ℕ) (t : Marked)
   induction s with
   | node v cs ih =>
     obtain ⟨k, a⟩ := v
-    simp only [lfTree] at ih ⊢
+    simp only [lfTree, lfBy] at ih ⊢
     rw [reading_node, reading_node]
     simp only [readStep]
     rcases cs with _ | ⟨x, _ | ⟨y, _ | ⟨z, zs⟩⟩⟩ <;> cases k <;> simp only [List.map] <;>
