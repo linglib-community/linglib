@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Logic.Natural.Soundness
+public import Linglib.Logic.Natural.Projection
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Logic.Trivalent.Pointwise
 
@@ -138,13 +138,13 @@ the antecedent, and every other clause is monotone. The material and the strict 
 have such domains; the conditional of the closest antecedent-worlds does not, since antecedent
 strengthening fails for it. -/
 
-section Signature
+section ProjectivitySignature
 
 variable {W : Type*} {D : W → Set W → Set W} (cond : Set W → Set W → Set W) (p q : Set W)
 
 /-- The projectivity signature of a clause under a reading is antitone for the hypothetical
 antecedent and monotone for every other clause. -/
-def clauseSignature : Reading → Clause → Signature
+def clauseSignature : Reading → Clause → ProjectivitySignature
   | .hypothetical, .antecedent => .anti
   | _, _ => .mono
 
@@ -180,10 +180,10 @@ clause's function. -/
 theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct : Reading)
     (c : Clause) : (clauseSignature ct c).SoundFor (clauseMap (ofDomain D) p q ct c) := by
   cases ct <;> cases c
-  · exact soundFor_anti_iff.2 (antitone_posSupport_hypothetical hD q)
-  · exact soundFor_mono_iff.2 (monotone_posSupport_consequent .hypothetical p)
-  · exact soundFor_mono_iff.2 (monotone_posSupport_premise _ q)
-  · exact soundFor_mono_iff.2 (monotone_posSupport_consequent .premise p)
+  · exact ProjectivitySignature.soundFor_anti_iff.2 (antitone_posSupport_hypothetical hD q)
+  · exact ProjectivitySignature.soundFor_mono_iff.2 (monotone_posSupport_consequent .hypothetical p)
+  · exact ProjectivitySignature.soundFor_mono_iff.2 (monotone_posSupport_premise _ q)
+  · exact ProjectivitySignature.soundFor_mono_iff.2 (monotone_posSupport_consequent .premise p)
 
 /-- Over the closest antecedent-worlds the hypothetical antecedent is not antitone — with three
 worlds ranked `0 < 1 < 2` from `0`, *if 1 or 2, then 1* holds at `0` while *if 2, then 1* does
@@ -200,7 +200,7 @@ theorem exists_not_antitone_hypothetical_closestImp :
   simp only [mem_posSupport, denote_hypothetical_eq_one_iff] at h2
   revert h2; decide
 
-end Signature
+end ProjectivitySignature
 
 end Reading
 

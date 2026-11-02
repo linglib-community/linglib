@@ -77,7 +77,7 @@ theorem superlative_assertion_iff {s : Set α} :
 /-- The assertion is anti-additive in the comparison class, by the anti-additivity of the
 set-standard comparative ([hoeksema-1983]). -/
 theorem isAntiAdditive_superlative_assertion (μ : α → D) (x : α) :
-    NaturalLogic.IsAntiAdditive fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x :=
+    IsAntiAdditive fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x :=
   fun C C' ↦ funext fun w ↦ propext <| by
     simp only [Pi.inf_apply, inf_Prop_eq, superlative_assertion_iff, Pi.sup_apply, sup_eq_union,
       union_sdiff_distrib, image_union]

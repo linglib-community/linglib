@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Natural.Soundness
+public import Linglib.Logic.Natural.Projection
 public import Linglib.Semantics.PolarityItem.Licensing
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Exhaustification.Excluder
@@ -89,7 +89,8 @@ def maximizeStrength : SignType → Option DisjunctionReading
   | .neg => some .inclusive
   | .zero => none
 
-theorem isStrongest_maximizeStrength {φ : Signature} {C : Set W → Set W} (hφ : φ.SoundFor C) :
+theorem isStrongest_maximizeStrength {φ : ProjectivitySignature} {C : Set W → Set W}
+    (hφ : φ.SoundFor C) :
     ∀ r ∈ maximizeStrength φ.sign, IsStrongest p q C r := by
   intro r hr
   cases hpol : φ.sign <;> rw [hpol] at hr <;>

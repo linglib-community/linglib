@@ -5,7 +5,7 @@ public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Order.Monotone.Defs
-public import Linglib.Logic.Natural.Additivity
+public import Linglib.Core.Order.AntiAdditive
 
 /-!
 # Quantifiers and determiner denotations
@@ -101,8 +101,8 @@ instance : BooleanAlgebra Det.Family.{u} :=
 variable {α : Type*}
 
 theorem isAntiAdditive_iff {q : Quantifier α} :
-    NaturalLogic.IsAntiAdditive q ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
-  simp only [NaturalLogic.IsAntiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
+    IsAntiAdditive q ↔ ∀ A B, q (A ∪ B) ↔ q A ∧ q B := by
+  simp only [IsAntiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
 
 namespace Det
 
@@ -178,12 +178,12 @@ def CoSmooth (d : Det α) : Prop := DownNWMon d ∧ UpSWMon d
 
 /-- A determiner denotation is left anti-additive when every section `d · B` is anti-additive,
 `d (A ∪ A') B ↔ d A B ∧ d A' B` ([peters-westerstahl-2006] §5.9). -/
-def LeftAntiAdditive (d : Det α) : Prop := ∀ B, NaturalLogic.IsAntiAdditive (d · B)
+def LeftAntiAdditive (d : Det α) : Prop := ∀ B, IsAntiAdditive (d · B)
 
 /-- A determiner denotation is right anti-additive when every section `d A` is anti-additive,
 `d A (B ∪ B') ↔ d A B ∧ d A B'`, so that its scope is an anti-additive context in the sense of
 [zwarts-1998]. -/
-def RightAntiAdditive (d : Det α) : Prop := ∀ A, NaturalLogic.IsAntiAdditive (d A)
+def RightAntiAdditive (d : Det α) : Prop := ∀ A, IsAntiAdditive (d A)
 
 /-! ### Relational properties
 
