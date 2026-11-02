@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Relation.ReflTransGen
-public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Order.Closure
 public import Mathlib.Order.Iterate
@@ -52,7 +51,6 @@ measurements and the (DH) discussion are not represented.
 
 namespace Eckert2008
 
-open SocialMeaning
 open Relation.ReflTransGen (closeStep mem_closeStep subset_closeStep monotone_closeStep)
 
 /-! ### Indexical order and the indexical field -/

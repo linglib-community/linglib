@@ -1,81 +1,50 @@
 module
 
 public import Linglib.Core.Basic.Sign
-public import Mathlib.Algebra.Order.Group.Unbundled.Basic
-public import Mathlib.Data.Fintype.Basic
+public import Linglib.Pragmatics.SocialMeaning.Dimension
+public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Mathlib.LinearAlgebra.Matrix.Defs
 
 /-!
-# Indexical fields
+# Association fields
 
-An indexical field, in Eckert's sense, assigns each variant of a linguistic variable the meanings
-a use of it may activate, stances, qualities or persona traits, as a function
-`Variant → Finset Meaning`. An association field grades the assignment, giving each variant a
-signed strength toward each trait, positive when the variant indexes the trait and negative when
-it indexes away from it, and the traits a variant indexes toward form its indexical field.
-
-## Main definitions
-
-* `AssociationField`: the signed strength with which each variant indexes each trait, a matrix
-  over an ordered ring.
-* `AssociationField.Indexes`: a variant indexes a trait, the strength being positive.
-* `AssociationField.Antipodal`: two variants index every trait in opposite directions.
-* `AssociationField.support`: the indexical field of the traits a variant indexes.
-* `AssociationField.contrast`: each variant's strengths less those of a reference variant.
-* `AssociationField.signs`: the sign field of a field.
-
-## Main results
-
-* `AssociationField.Antipodal.disjoint_support`: an antipodal pair index no trait in common.
-* `AssociationField.antipodal_signs_contrast_iff`: two variants are antipodal in the signs of
-  their contrasts with a reference exactly when the reference lies strictly between them, or
-  ties with both, on every trait.
+An association field gives each variant of a variable a signed strength toward each trait,
+positive when the variant indexes the trait and negative when it indexes away from it. Two variants
+are [antipodal](##SocialMeaning.AssociationField.Antipodal) when they index every trait in
+opposite directions. Over the dimensions of social evaluation a field grounds each variant in the
+poles its signs point to, its Eckert field in Burnett's sense. The field of a variant is a persona
+exactly when its association with
+[every dimension is nonzero](##SocialMeaning.AssociationField.ground_indexes_mem_maximalIndepSets_iff),
+a variant with $z$ null associations is compatible with
+[$2^z$ personae](##SocialMeaning.AssociationField.card_compatiblePersonae_ground), and two variants
+ground in [complementary personae](##SocialMeaning.AssociationField.complementary_ground_iff)
+exactly when the first is associated with every dimension and the second's signs negate it.
 
 ## Implementation notes
 
-An association field is a `Matrix`, so composing associations through a mediating domain, Ochs's
-indirect indexicality, is matrix multiplication, and inheriting a field along a map of variant
-spaces is `Matrix.submatrix`. The carrier is any type with a zero and an order, `SignType` for the
-sign-valued fields of Beltrama, Solt and Burnett, an ordered semiring for strengths that compose;
-Burnett's grounded fields are indexical fields over the Stereotype Content Model properties.
+An association field is a `Matrix`, so composing associations through a mediating domain, as in
+Ochs's indirect indexicality, is matrix multiplication. The carrier is `SignType` for fields that
+record only the direction of an association, and an ordered semiring for strengths that compose.
 
 ## References
 
 * [eckert-2008]
+* [burnett-2019]
 * [ochs-1992]
 * [beltrama-solt-burnett-2023]
-* [burnett-2019]
 -/
 
 @[expose] public section
 
 namespace SocialMeaning
 
-/-- An association field assigns each variant of a variable a signed strength toward each
-trait, positive when the variant indexes the trait and negative when it indexes away. -/
+/-- An association field gives each variant of a variable a signed strength toward each trait,
+positive when the variant indexes the trait and negative when it indexes away from it. -/
 abbrev AssociationField (Variant Trait R : Type*) := Matrix Variant Trait R
 
 namespace AssociationField
 
-variable {Variant Trait R : Type*} {v v₁ v₂ w : Variant} {t : Trait}
-
-section Indexes
-
-variable [Zero R] [LT R] (M : AssociationField Variant Trait R)
-
-/-- A variant indexes a trait when its association with the trait is positive. -/
-def Indexes (v : Variant) (t : Trait) : Prop := 0 < M v t
-
-instance [DecidableLT R] : DecidableRel M.Indexes := fun _ _ ↦ inferInstanceAs (Decidable (_ < _))
-
-variable [Fintype Trait] [DecidableLT R]
-
-/-- The support of a variant is the indexical field of the traits it indexes. -/
-def support (v : Variant) : Finset Trait := Finset.univ.filter (M.Indexes v)
-
-@[simp] theorem mem_support : t ∈ M.support v ↔ M.Indexes v t := by simp [support]
-
-end Indexes
+variable {Variant Trait R : Type*} {v v₁ v₂ : Variant}
 
 section Antipodal
 
@@ -95,55 +64,77 @@ theorem antipodal_comm : M.Antipodal v₁ v₂ ↔ M.Antipodal v₂ v₁ := ⟨A
 
 end Antipodal
 
-section AddGroup
+section Ground
 
-variable [AddGroup R] [Preorder R] [AddLeftStrictMono R] {M : AssociationField Variant Trait R}
+/-- An association field over the dimensions grounds each variant in the poles its signs point
+to. -/
+def ground [Zero R] [Preorder R] [DecidableLT R] (M : AssociationField Variant Dimension R) :
+    GroundedField Variant (dimensionalIncompatibility Pole.dimension) where
+  indexes v := poles Pole.dimension Pole.polarity fun d ↦ SignType.sign (M v d)
+  isIndepSet _ := isIndepSet_poles Pole.bijOn _
 
-theorem Antipodal.indexes_iff (h : M.Antipodal v₁ v₂) : M.Indexes v₁ t ↔ M v₂ t < 0 := by
-  rw [Indexes, h, Pi.neg_apply, neg_pos]
+@[simp] theorem mem_ground_indexes [Zero R] [Preorder R] [DecidableLT R]
+    {M : AssociationField Variant Dimension R} {p : Pole} :
+    p ∈ M.ground.indexes v ↔ SignType.sign (M v p.dimension) = p.polarity :=
+  mem_poles
 
-/-- An antipodal pair index no trait in common. -/
-theorem Antipodal.disjoint_support [Fintype Trait] [DecidableLT R] (h : M.Antipodal v₁ v₂) :
-    Disjoint (M.support v₁) (M.support v₂) :=
-  Finset.disjoint_left.2 fun _ h₁ h₂ ↦
-    lt_asymm (M.mem_support.1 h₂) (h.indexes_iff.1 (M.mem_support.1 h₁))
+section LinearOrder
 
-end AddGroup
+variable [Zero R] [LinearOrder R] {M : AssociationField Variant Dimension R}
 
-section Contrast
+theorem ground_indexes_mem_maximalIndepSets_iff :
+    M.ground.indexes v ∈ (dimensionalIncompatibility Pole.dimension).maximalIndepSets ↔
+      ∀ d, M v d ≠ 0 :=
+  (poles_mem_maximalIndepSets_iff Pole.bijOn).trans (forall_congr' fun _ ↦ sign_ne_zero)
 
-/-- The contrast of a field with a reference variant takes each variant's strengths less those of
-the reference. -/
-def contrast [Sub R] (M : AssociationField Variant Trait R) (v₀ : Variant) :
-    AssociationField Variant Trait R :=
-  .of fun v t ↦ M v t - M v₀ t
+/-- Two variants ground in complementary personae exactly when the first is associated with every
+dimension and the second's signs are the negations of the first's. -/
+theorem complementary_ground_iff :
+    M.ground.Complementary v₁ v₂ ↔
+      (∀ d, M v₁ d ≠ 0) ∧ ∀ d, SignType.sign (M v₂ d) = -SignType.sign (M v₁ d) := by
+  have key := poles_eq_compl_poles_iff Pole.bijOn (σ := fun d ↦ SignType.sign (M v₂ d))
+    (τ := fun d ↦ SignType.sign (M v₁ d))
+  refine ⟨fun h ↦ ?_, fun ⟨h₁, h₂⟩ ↦ ⟨ground_indexes_mem_maximalIndepSets_iff.2 h₁,
+    ground_indexes_mem_maximalIndepSets_iff.2 fun d ↦ ?_, key.2 ⟨fun d ↦ ?_, funext fun d ↦ ?_⟩⟩⟩
+  · obtain ⟨-, h₂⟩ := key.1 h.indexes_eq_compl
+    refine ⟨ground_indexes_mem_maximalIndepSets_iff.1 h.left_mem, fun d ↦ ?_⟩
+    rw [congrFun h₂ d, Pi.neg_apply, neg_neg]
+  · rw [← sign_ne_zero, h₂, Ne, SignType.neg_eq_zero_iff, sign_eq_zero_iff]
+    exact h₁ d
+  · rw [h₂, Ne, SignType.neg_eq_zero_iff, sign_eq_zero_iff]
+    exact h₁ d
+  · rw [Pi.neg_apply, h₂, neg_neg]
 
-@[simp] theorem contrast_apply [Sub R] (M : AssociationField Variant Trait R) (v₀ v : Variant)
-    (t : Trait) : M.contrast v₀ v t = M v t - M v₀ t := rfl
+/-- The personae compatible with a variant number two to the power of the dimensions it is not
+associated with. -/
+theorem card_compatiblePersonae_ground :
+    (M.ground.compatiblePersonae v).card = 2 ^ (Finset.univ.filter (M v · = 0)).card := by
+  rw [GroundedField.card_compatiblePersonae]
+  refine (card_filter_poles_subset Pole.bijOn _).trans ?_
+  simp only [sign_eq_zero_iff]
 
-/-- The sign field of a field. -/
-def signs [Zero R] [Preorder R] [DecidableLT R] (M : AssociationField Variant Trait R) :
-    AssociationField Variant Trait SignType :=
-  M.map SignType.sign
+end LinearOrder
 
-@[simp] theorem signs_apply [Zero R] [Preorder R] [DecidableLT R]
-    (M : AssociationField Variant Trait R) (v : Variant) (t : Trait) :
-    M.signs v t = SignType.sign (M v t) := rfl
+variable {M : AssociationField Variant Dimension SignType}
 
-variable [AddCommGroup R] [LinearOrder R] [IsOrderedAddMonoid R]
-  {M : AssociationField Variant Trait R} {v₀ : Variant}
+/-- Of an antipodal pair of sign fields, the second grounds in the opposites of the poles the
+first grounds in. -/
+theorem Antipodal.ground_indexes (h : M.Antipodal v₁ v₂) :
+    M.ground.indexes v₂ = (M.ground.indexes v₁).map Pole.oppositeEquiv.toEmbedding := by
+  ext p
+  rw [Finset.mem_map_equiv, mem_ground_indexes, mem_ground_indexes, h.symm]
+  simp only [Pole.oppositeEquiv_symm, Pole.oppositeEquiv_apply, Pole.dimension_opposite,
+    Pole.polarity_opposite, Pi.neg_apply, SignType.sign_self]
+  exact neg_eq_iff_eq_neg
 
-theorem lt_of_signs_contrast_lt (h : (M.contrast v₀).signs v t < (M.contrast v₀).signs w t) :
-    M v t < M w t :=
-  lt_of_not_ge fun hwv ↦ h.not_ge (SignType.sign.monotone (sub_le_sub_right hwv _))
+/-- An antipodal pair of sign fields that index every dimension ground in complementary
+personae. -/
+theorem Antipodal.complementary (h : M.Antipodal v₁ v₂) (hv : ∀ d, M v₁ d ≠ 0) :
+    M.ground.Complementary v₁ v₂ :=
+  complementary_ground_iff.2 ⟨hv, fun d ↦ by rw [SignType.sign_self, SignType.sign_self, h.symm,
+    Pi.neg_apply]⟩
 
-theorem antipodal_signs_contrast_iff :
-    (M.contrast v₀).signs.Antipodal v₁ v₂ ↔
-      ∀ t, M v₀ t ∈ Set.uIoo (M v₁ t) (M v₂ t) ∨ M v₁ t = M v₀ t ∧ M v₂ t = M v₀ t := by
-  simp only [Antipodal, funext_iff, Pi.neg_apply, signs_apply, contrast_apply,
-    sign_sub_eq_neg_sign_sub_iff]
-
-end Contrast
+end Ground
 
 end AssociationField
 

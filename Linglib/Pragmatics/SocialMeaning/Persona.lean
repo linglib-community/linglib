@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Pragmatics.SocialMeaning.Dimension
-public import Linglib.Pragmatics.SocialMeaning.IndexicalField
+public import Linglib.Core.Combinatorics.SimpleGraph.MaximalIndepSet
 
 /-!
 # Personae and grounded fields
@@ -12,8 +11,7 @@ independent set, its Eckert field, whose Eckert–Montague field is the set of p
 some property with it. A persona with every property a variant indexes
 [meets it](##SocialMeaning.GroundedField.compatiblePersonae_subset_personae) when the variant
 indexes any, and a variant that indexes nothing
-[meets none](##SocialMeaning.GroundedField.personae_eq_empty). An association field over the
-dimensions of social evaluation grounds as the poles whose polarity is the sign of the association.
+[meets none](##SocialMeaning.GroundedField.personae_eq_empty).
 
 ## Main definitions
 
@@ -24,7 +22,6 @@ dimensions of social evaluation grounds as the poles whose polarity is the sign 
   or has every property it indexes.
 * `GroundedField.personae`: the Eckert–Montague field of a variant, the personae that meet it.
 * `GroundedField.compatiblePersonae`: the personae compatible with a variant.
-* `AssociationField.ground`: the grounded field of an association field over the dimensions.
 * `GroundedField.Complementary`: two variants indexing complementary personae.
 
 ## Implementation notes
@@ -97,6 +94,13 @@ variable {F v}
   simp [compatiblePersonae]
 
 variable (F)
+
+theorem card_compatiblePersonae :
+    (F.compatiblePersonae v).card = (G.maximalIndepSets.filter (F.indexes v ⊆ ·)).card := by
+  rw [← Finset.card_map (.subtype _)]
+  congr 1
+  ext s
+  simp [Compatible, and_comm]
 
 theorem personae_mono (h : F.indexes v₁ ⊆ F.indexes v₂) : F.personae v₁ ⊆ F.personae v₂ :=
   Finset.monotone_filter_right _ fun _ _ hπ hd ↦ hπ (hd.mono_left h)
@@ -194,76 +198,5 @@ theorem compatiblePersonae_eq_singleton : F.compatiblePersonae v = {h.persona} :
 end Complementary
 
 end GroundedField
-
-/-- An association field over the dimensions grounds as the poles whose polarity is the sign
-of the variant's association with their dimension. -/
-def AssociationField.ground {Variant R : Type*} [Zero R] [Preorder R] [DecidableLT R]
-    (M : AssociationField Variant Dimension R) :
-    GroundedField Variant (dimensionalIncompatibility Pole.dimension) where
-  indexes v := Finset.univ.filter fun p ↦ SignType.sign (M v p.dimension) = p.polarity
-  isIndepSet v p hp q hq hne hadj := hne <| Pole.eq_iff.2 ⟨hadj.2, by
-    rw [← (Finset.mem_filter.1 hp).2, ← (Finset.mem_filter.1 hq).2, hadj.2]⟩
-
-@[simp] theorem AssociationField.mem_ground_indexes {Variant R : Type*} [Zero R] [Preorder R]
-    [DecidableLT R] {M : AssociationField Variant Dimension R} {v : Variant} {p : Pole} :
-    p ∈ M.ground.indexes v ↔ SignType.sign (M v p.dimension) = p.polarity := by
-  simp [AssociationField.ground]
-
-namespace AssociationField
-
-variable {Variant R : Type*} {v v₁ v₂ : Variant}
-
-private theorem card_filter_dimension_polarity (d : Dimension) (s : SignType) :
-    (Finset.univ.filter fun p : Pole ↦ p.dimension = d ∧ s = p.polarity).card =
-      if s = 0 then 0 else 1 := by
-  revert d s; decide
-
-theorem ground_indexes_mem_maximalIndepSets_iff [Zero R] [LinearOrder R]
-    {M : AssociationField Variant Dimension R} :
-    M.ground.indexes v ∈ (dimensionalIncompatibility Pole.dimension).maximalIndepSets ↔
-      ∀ d, M v d ≠ 0 := by
-  rw [Pole.mem_maximalIndepSets_iff]
-  refine forall_congr' fun d ↦ ?_
-  have : (M.ground.indexes v).filter (·.dimension = d) =
-      Finset.univ.filter fun p : Pole ↦ p.dimension = d ∧ SignType.sign (M v d) = p.polarity := by
-    ext p
-    simp only [Finset.mem_filter, Finset.mem_univ, mem_ground_indexes, true_and]
-    exact ⟨fun ⟨h, hp⟩ ↦ ⟨hp, hp ▸ h⟩, fun ⟨hp, h⟩ ↦ ⟨hp ▸ h, hp⟩⟩
-  rw [this, card_filter_dimension_polarity]
-  split_ifs with h <;> simp_all [sign_eq_zero_iff]
-
-/-- Of an antipodal pair of sign fields, the second grounds as the opposites of the poles the
-first grounds as. -/
-theorem Antipodal.ground_indexes {M : AssociationField Variant Dimension SignType}
-    (h : M.Antipodal v₁ v₂) :
-    M.ground.indexes v₂ = (M.ground.indexes v₁).map Pole.oppositeEquiv.toEmbedding := by
-  ext p
-  have hs (s : SignType) : SignType.sign s = s := by cases s <;> rfl
-  rw [Finset.mem_map_equiv, mem_ground_indexes, mem_ground_indexes, h.symm]
-  simp only [Pole.oppositeEquiv_symm, Pole.oppositeEquiv_apply, Pole.dimension_opposite,
-    Pole.polarity_opposite, Pi.neg_apply, hs]
-  exact neg_eq_iff_eq_neg
-
-/-- An antipodal pair of sign fields that index every dimension ground as complementary
-personae. -/
-theorem Antipodal.complementary {M : AssociationField Variant Dimension SignType}
-    (h : M.Antipodal v₁ v₂) (hv : ∀ d, M v₁ d ≠ 0) : M.ground.Complementary v₁ v₂ := by
-  have h₂ (d : Dimension) : M v₂ d = -M v₁ d := by rw [congrFun h d, Pi.neg_apply, neg_neg]
-  refine ⟨ground_indexes_mem_maximalIndepSets_iff.2 hv,
-    ground_indexes_mem_maximalIndepSets_iff.2 fun d ↦ by
-      have := hv d
-      rw [h₂]
-      revert this
-      generalize M v₁ d = s
-      revert s
-      decide, ?_⟩
-  ext p
-  rw [Finset.mem_compl, mem_ground_indexes, mem_ground_indexes, h₂]
-  have := hv p.dimension
-  revert this
-  generalize M v₁ p.dimension = s
-  cases p <;> revert s <;> decide
-
-end AssociationField
 
 end SocialMeaning
