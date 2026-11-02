@@ -22,6 +22,7 @@ modalities.
 * `Inquisitive.Model`: a valuation and a map from worlds to sets of information states.
 * `Inquisitive.Formula`: formulas with `\\/`, `□` and `⊞`; the modal-free ones
   (`Inquisitive.Formula.IsModalFree`) are those of InqB.
+* `Inquisitive.Formula.cl`: the classical variant, with every `\\/` replaced by `∨`.
 * `Inquisitive.support`: the lower set of states supporting a formula.
 * `Inquisitive.TruthConditional`: the formulas whose support in a model is truth at every world.
 * `Inquisitive.proposition`: the proposition a formula expresses, as a `Question`.
@@ -140,6 +141,23 @@ def IsClassical : Formula Atom → Prop
   | inqDisj _ _ => False
   | nec φ => φ.IsClassical
   | ent φ => φ.IsClassical
+
+/-- The classical variant `φᶜˡ` replaces every inquisitive disjunction in `φ` by a classical one
+(Definition 3.4.2). -/
+def cl : Formula Atom → Formula Atom
+  | atom p => atom p
+  | bot => bot
+  | conj φ ψ => conj φ.cl ψ.cl
+  | impl φ ψ => impl φ.cl ψ.cl
+  | inqDisj φ ψ => disj φ.cl ψ.cl
+  | nec φ => nec φ.cl
+  | ent φ => ent φ.cl
+
+theorem isClassical_cl : ∀ φ : Formula Atom, φ.cl.IsClassical
+  | atom _ | bot => trivial
+  | conj φ ψ | impl φ ψ => ⟨isClassical_cl φ, isClassical_cl ψ⟩
+  | inqDisj φ ψ => ⟨⟨⟨isClassical_cl φ, trivial⟩, isClassical_cl ψ, trivial⟩, trivial⟩
+  | nec φ | ent φ => isClassical_cl φ
 
 end Formula
 
@@ -337,6 +355,34 @@ theorem truthConditional_iff_support_neg_neg :
   simp only [TruthConditional, SetLike.ext_iff, mem_support_neg_neg]
   exact forall_congr' fun s ↦ Iff.comm
 
+/-- A modal-free formula and its classical variant are true at the same worlds
+(Proposition 3.4.3). -/
+theorem truthSet_cl (h : φ.IsModalFree) : truthSet M φ.cl = truthSet M φ := by
+  induction φ with
+  | atom _ | bot => rfl
+  | conj φ ψ ihφ ihψ =>
+    ext w; exact and_congr (Set.ext_iff.1 (ihφ h.1) w) (Set.ext_iff.1 (ihψ h.2) w)
+  | impl φ ψ ihφ ihψ =>
+    ext w
+    simp only [truthSet, Set.mem_ofPred_eq, Formula.cl, singleton_mem_support_impl]
+    exact imp_congr (Set.ext_iff.1 (ihφ h.1) w) (Set.ext_iff.1 (ihψ h.2) w)
+  | inqDisj φ ψ ihφ ihψ =>
+    ext w
+    simp only [truthSet, Set.mem_ofPred_eq, Formula.cl, singleton_mem_support_disj,
+      mem_support_inqDisj]
+    exact or_congr (Set.ext_iff.1 (ihφ h.1) w) (Set.ext_iff.1 (ihψ h.2) w)
+  | nec _ _ | ent _ _ => exact h.elim
+
+/-- A modal-free formula is truth-conditional iff it is equivalent to its classical variant
+(Proposition 3.4.4), so every statement of InqB is equivalent to a classical formula
+(Corollary 3.4.5). -/
+theorem truthConditional_iff_support_cl_eq (h : φ.IsModalFree) :
+    TruthConditional M φ ↔ support M φ.cl = support M φ := by
+  refine ⟨fun hφ ↦ (truthConditional_of_isClassical M _ φ.isClassical_cl).support_eq hφ
+    fun w ↦ Set.ext_iff.1 (truthSet_cl M φ h) w, fun e ↦ ?_⟩
+  rw [TruthConditional, ← e]
+  exact truthConditional_of_isClassical M _ φ.isClassical_cl
+
 /-- For a statement `α`, `α → ψ` is supported at `s` iff `ψ` is supported at the `α`-worlds of `s`
 (Proposition 2.5.2). -/
 theorem mem_support_impl_iff_of_truthConditional [DecidableRel M.val] {α : Formula Atom}
@@ -462,10 +508,38 @@ theorem support_ent_eq_nec_of_truthConditional (h : TruthConditional M φ) :
       exact (h t).1 (hent w hw t ht) v hvt)
     (support_nec_le_ent M φ)
 
+/-- When each world's epistemic state is among the states related to it, knowledge settles every
+issue and `⊞` coincides with `□`. -/
+theorem support_ent_eq_nec_of_access_mem (h : ∀ w, M.access w ∈ M.inq w) :
+    support M (.ent φ) = support M (.nec φ) :=
+  le_antisymm (fun _ hs w hw ↦ hs w hw _ (h w)) (support_nec_le_ent M φ)
+
 /-- On a Kripke model `⊞` is `□`, the only related state being `R[w]`. -/
 theorem support_ent_toInquisitive (M : ModalLogic.KripkeModel W Atom) :
     support M.toInquisitive (.ent φ) = support M.toInquisitive (.nec φ) :=
-  SetLike.ext fun _ ↦ by simp [ModalLogic.KripkeModel.toInquisitive, Model.access]
+  support_ent_eq_nec_of_access_mem _ φ fun w ↦ by
+    simp [ModalLogic.KripkeModel.toInquisitive, Model.access]
+
+/-- The support of a classical formula depends only on the valuation and the induced
+accessibility, so the classical fragment is standard modal logic with `⊞` collapsing onto `□`
+(§8.3). -/
+theorem support_eq_of_isClassical {M M' : Model W Atom} (hval : M.val = M'.val)
+    (hacc : M.access = M'.access) :
+    ∀ {φ : Formula Atom}, φ.IsClassical → support M φ = support M' φ
+  | .atom p, _ => by simp only [support, hval]
+  | .bot, _ => rfl
+  | .conj φ ψ, h => by
+    simp only [support, support_eq_of_isClassical hval hacc h.1,
+      support_eq_of_isClassical hval hacc h.2]
+  | .impl φ ψ, h => by
+    simp only [support, support_eq_of_isClassical hval hacc h.1,
+      support_eq_of_isClassical hval hacc h.2]
+  | .inqDisj _ _, h => h.elim
+  | .nec φ, h => by simp only [support, hacc, support_eq_of_isClassical hval hacc (φ := φ) h]
+  | .ent φ, h => by
+    rw [support_ent_eq_nec_of_truthConditional M φ (truthConditional_of_isClassical M φ h),
+      support_ent_eq_nec_of_truthConditional M' φ (truthConditional_of_isClassical M' φ h)]
+    simp only [support, hacc, support_eq_of_isClassical hval hacc (φ := φ) h]
 
 /-! ### Union closure -/
 
