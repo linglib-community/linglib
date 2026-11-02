@@ -9,7 +9,7 @@ public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Core.Order.Argmax
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.ChannelCapacity
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Linglib.Core.Probability.GibbsVariational
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv

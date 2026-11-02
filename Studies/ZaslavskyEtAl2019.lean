@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.Probability.ConditionalProbability
 public import Studies.ZaslavskyKempRegierTishby2018

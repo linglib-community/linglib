@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Empirical
 public import Studies.Aikhenvald2000
 
 /-!

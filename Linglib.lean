@@ -73,7 +73,6 @@ import Linglib.Core.Data.RoseTree.Perm
 import Linglib.Core.Data.RoseTree.FilterMap
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.GroupTheory.Congruence.Hom
-import Linglib.Core.InformationTheory.Entropy
 import Linglib.Core.InformationTheory.Hellinger
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 import Linglib.Core.LinearAlgebra.AffineSpace.Centroid

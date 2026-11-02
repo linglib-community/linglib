@@ -144,7 +144,7 @@ theorem condEntropy_block_le_sum (hw : ∀ t, Measurable (w t)) (hm₀ : Measura
     H[block w 0 T | m₀ ; μ] ≤ ∑ t ∈ range T, H[w t | memoryState M m₀ w t ; μ] := by
   suffices h : H[fun ω ↦ (block w 0 T ω, m₀ ω) ; μ]
       ≤ H[m₀ ; μ] + ∑ t ∈ range T, H[w t | memoryState M m₀ w t ; μ] by
-    linarith [chain_rule μ (measurable_block hw 0 T) hm₀]
+    linarith [entropy_pair_eq_add_condEntropy μ (measurable_block hw 0 T) hm₀]
   induction T with
   | zero =>
     have : (fun ω ↦ (block w 0 0 ω, m₀ ω)) = (fun m ↦ (Fin.elim0, m)) ∘ m₀ :=
@@ -159,7 +159,7 @@ theorem condEntropy_block_le_sum (hw : ∀ t, Measurable (w t)) (hm₀ : Measura
     have hrec : (fun ω ↦ (block w 0 (T + 1) ω, m₀ ω)) = e ∘ fun ω ↦ (w T ω, block w 0 T ω, m₀ ω) :=
       funext fun ω ↦ Prod.ext (congrFun (block_zero_succ T) ω) rfl
     rw [hrec, entropy_comp_of_injective μ ((hw T).prodMk hZ) (measurable_of_finite _) e.injective,
-      chain_rule μ (hw T) hZ, sum_range_succ, hg]
+      entropy_pair_eq_add_condEntropy μ (hw T) hZ, sum_range_succ, hg]
     linarith [condEntropy_le_condEntropy_comp μ (hw T) hZ g]
 
 theorem condEntropy_memoryState_eq (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀)
@@ -180,7 +180,8 @@ theorem pastCondEntropy_le_condEntropy : pastCondEntropy w μ T ≤ H[w 0 | m₀
   have hb := measurable_block hw 0 T
   rw [sum_Icc_mul_distanceInfo hw (hs.comp measurable_fst), ← entropy_block hw] at hmem
   refine le_of_mul_le_mul_left ?_ (by exact_mod_cast hT : (0 : ℝ) < T)
-  linarith [chain_rule μ hb hm₀, chain_rule μ hm₀ hb, entropy_comm μ hb hm₀,
+  linarith [entropy_pair_eq_add_condEntropy μ hb hm₀, entropy_pair_eq_add_condEntropy μ hm₀ hb,
+    entropy_comm μ hb hm₀,
     condEntropy_nonneg m₀ (block w 0 T) μ]
 
 /-- A listener whose memory entropy is at most `∑ t ∈ Icc 1 T, t * I t` has average surprisal at

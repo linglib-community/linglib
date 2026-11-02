@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Basic
+public import Linglib.Core.InformationTheory.Entropy.Surprisal
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Distributions.Bernoulli
 public import Mathlib.Probability.Kernel.Composition.MapComap

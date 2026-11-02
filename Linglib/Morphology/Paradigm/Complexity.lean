@@ -2,7 +2,7 @@ module
 
 public import Linglib.Morphology.Paradigm.Analogy
 public import Linglib.Morphology.Paradigm.Basic
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Basic
 public import Mathlib.Data.Fintype.Pi
 
 /-!
@@ -16,7 +16,7 @@ determine the form filling the target across the inflection classes
 complexity is counted by the realizations of each cell: their product bounds the number of
 distinct paradigms, and *paradigm economy* bounds the classes by the most varied cell.
 
-The quantitative face is `Core/InformationTheory/Entropy.lean` applied to the data: under a
+The quantitative face is `Core/InformationTheory/Entropy/Basic.lean` applied to the data: under a
 probability measure `μ` on the classes — uniform in every computation of
 [ackerman-malouf-2013], type frequencies in its general definitions — the cell `c` is the
 random variable `(M · c)`, so declension entropy is `Hm[μ]`, cell entropy is `H[(M · c) ; μ]`,

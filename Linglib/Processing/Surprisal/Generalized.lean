@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.Entropy.Surprisal
 public import Mathlib.Probability.Kernel.Defs
 
 /-!
