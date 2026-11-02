@@ -312,6 +312,15 @@ def smart : GradableAdjective :=
   { form := "smart", dimension := some .intelligence, comparison := inflectional "smart"
   , antonymForm := some "dumb" }
 
+/-- *Clever* measures intelligence, as *smart* does. -/
+def clever : GradableAdjective :=
+  { form := "clever", dimension := some .intelligence, comparison := inflectional "clever" }
+
+/-- *Wise* measures wisdom, which *clever* does not: *clever but not wise* is consistent. -/
+def wise : GradableAdjective :=
+  { form := "wise", dimension := some .wisdom, comparison := inflectional "wise"
+  , antonymForm := some "foolish" }
+
 /-- *Confident* is relative on the upper-closed confidence scale. [cariani-santorio-wellwood-2024]
 give it the ordering of *certain* with a contextual contrast state below *certain*'s maximal
 states ((40), Figure 3), so that *confident but not certain* (65a) is consistent while
@@ -572,7 +581,8 @@ def pairs : List AntonymPair := [
 
 /-- The entries outside an antonym pair. -/
 def singletons : List GradableAdjective := [
-  high, sad, flat, shut, free_, loose, tight, pure_, pregnant, long, wide, smart, confident,
+  high, sad, flat, shut, free_, loose, tight, pure_, pregnant, long, wide, smart, clever, wise,
+  confident,
   doubtful, important, cracked, dented, scratched, shattered, nice, decent,
   acceptable, adequate, horrible, terrible, awful, dreadful, frightening, disgusting, annoying,
   scary, wonderful, delightful, gorgeous, surprising, remarkable, stunning, expected]

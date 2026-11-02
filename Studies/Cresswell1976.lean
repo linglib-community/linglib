@@ -5,7 +5,8 @@ public import Linglib.Semantics.Degree.Quotient
 public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Data.Examples.Cresswell1976
-public import Linglib.Data.Examples.Readers
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Fragments.English.Nouns
 
 /-!
 # The semantics of degree
@@ -19,9 +20,10 @@ since a comparison relation yields its own degrees by quotienting, and the count
 *shorter than he is* compares heights across worlds.
 
 We take degrees on a family of scales to be mathlib's disjoint sum of the scales' orders and
-prove the same-scale restriction, the universal reading of disjoined standards, the reduction
-of the totality comparatives to volumes and cardinalities, the synonymy of *all* and *every*
-given that there are men, the [comparative](##erThan_singleton_mk) and the
+prove the same-scale restriction, on which [the judgments follow from the scales of the
+fragment's words](##scale_eq_iff_acceptable), the universal reading of disjoined standards, the
+reduction of the totality comparatives to volumes and cardinalities, the synonymy of *all* and
+*every* given that there are men, the [comparative](##erThan_singleton_mk) and the
 [*exactly*](##exactly_singleton_mk) on constructed degrees, and the counterfactual through a
 Stalnaker selection function.
 
@@ -34,9 +36,18 @@ Stalnaker selection function.
   scale's relation is not imposed on the family; for constructed degrees the field of the induced
   comparison is [the set of classes of the field of the comparison](##field_lt), and everything
   outside that field [falls into one class](##mk_eq_mk_of_notMem_field).
+* The scale of an example is read from `English.Adjectives` and `English.Nouns`. A scale with a
+  physical dimension is that dimension, so *tall* and *long* share one, and any other is the
+  adjective's own. The fragment's *long* is the spatial clause of (4.3); the temporal clause is
+  the paper's and stays here.
+* (66) lies outside the prediction. Cresswell takes it to use the words as if they produced a
+  common scale, and says that he does not know how this should be represented.
 
 ## Errata
 
+* (50) is printed without an asterisk and (65) with one, but both compare across scales, so
+  *er than* [fails on both alike](##unstarred_crosses_scales). The paper offers (50) as an instance
+  of the single meaning of *more* and does not comment on the difference.
 * The consistency proof for (4.2) opens by supposing $a ≈ c$, $b ≈ c$ and $b ≈ d$. The middle
   hypothesis is a slip: it would make all four equivalent, and the proof uses only the other two.
 * §2 remarks that whether the relation of a scale is strict or total "seems unimportant". For the
@@ -110,15 +121,9 @@ theorem erThan_image_toDual : ErThan (toDual '' ω) (toDual '' ω') ↔ ErThan �
 
 end Comparative
 
-section Substrate
-
-variable {E α : Type*} {μ : E → α} {x y : E}
-
 -- (2.7)
-theorem asAs_singleton_iff_le [PartialOrder α] : AsAs {μ x} {μ y} ↔ μ y ≤ μ x :=
+theorem asAs_singleton_iff_le {D : Type*} [PartialOrder D] {a b : D} : AsAs {a} {b} ↔ b ≤ a :=
   asAs_singleton.trans le_iff_lt_or_eq.symm
-
-end Substrate
 
 /-! ### Degrees on a family of scales (2.1) -/
 
@@ -143,50 +148,144 @@ end Scales
 
 /-! ### The scales of the paper's comparatives -/
 
-/-- The examples compare on spatial and temporal distances, volumes, the numbers of (3.6), and the
-unit-free scales of §4. -/
-inductive Scale where
-  | distance
-  | time
-  | volume
-  | number
-  | cleverness
-  | beauty
-  deriving DecidableEq
+/-- A scale is the physical dimension of what is measured or, where there is none, the adjective's
+own dimension: *clever* "will induce its own" scale (2.2), (2.4). -/
+abbrev Scale := QuantityDimension ⊕ ScalarDimension
 
 /-- A directed scale is the relation of a degree read upward or, for *short*, downward (2.1). -/
 abbrev DirectedScale := Scale × Polarity
 
-/-- The scale a `paperFeatures` label names. -/
-def DirectedScale.ofLabel : String → Option DirectedScale
-  | "distance" => some (.distance, .positive)
-  | "distanceDownward" => some (.distance, .negative)
-  | "time" => some (.time, .positive)
-  | "volume" => some (.volume, .positive)
-  | "number" => some (.number, .positive)
-  | "cleverness" => some (.cleverness, .positive)
-  | "beauty" => some (.beauty, .positive)
-  | _ => none
+/-- The directed scale of a gradable adjective. -/
+def adjectiveScale (g : GradableAdjective) : Option DirectedScale :=
+  g.dimension.map fun d ↦ (d.dimension?.elim (.inr d) .inl, g.polarity)
 
-/-- The scales of an example's two terms and its judgment. -/
-def datum (e : Datum) :
-    Option (DirectedScale × DirectedScale × Judgment) := do
-  let l ← DirectedScale.ofLabel (← e.feature? "leftScale")
-  let r ← DirectedScale.ofLabel (← e.feature? "rightScale")
-  pure (l, r, e.judgment)
+/-- Spatial distance read upward, the scale of *tall* (2.2) and of *six feet* (35). -/
+def spatial : DirectedScale := (.inl (.of .length), .positive)
 
-/-- The comparatives whose scales the paper records. -/
-def data : List (DirectedScale × DirectedScale × Judgment) :=
-  Examples.all.filterMap datum
+/-- Temporal distance read upward, the scale of *long* of an event (4.3). -/
+def temporal : DirectedScale := (.inl (.of .time), .positive)
 
-theorem scale_ne_of_unacceptable : ∀ d ∈ data, d.2.2 = .unacceptable → d.1 ≠ d.2.1 := by
+/-- A mass noun carries degrees of volume (40) and a count noun, through the plural, a number
+(3.6). -/
+def nounScale (n : English.Nouns.Noun) : DirectedScale :=
+  (.inl (if n.IsCount then 1 else .volume), .positive)
+
+section Scales
+
+variable {P : DirectedScale → Type*} [∀ s, LT (P s)] {ω ω' : Set (Σ s, P s)}
+
+/-- *Er than* "works only when its terms have the same scale": across two scales it fails in every
+model (p. 271). -/
+theorem not_erThan_of_scale_ne {l r : Option DirectedScale} (h : l ≠ r)
+    (hω : ∀ a ∈ ω, some a.1 = l) (hω' : ∀ b ∈ ω', some b.1 = r) : ¬ ErThan ω ω' :=
+  not_erThan_of_fst_ne fun a ha b hb hab ↦ h <| by rw [← hω a ha, ← hω' b hb, hab]
+
+end Scales
+
+section Long
+
+variable {E : Type*} {P : DirectedScale → Type*} (ω object event : Set E) (extent : E → P spatial)
+  (duration : E → P temporal) {a b : E}
+
+/-- *Long* gives a physical object the distance between its extremities and an event the temporal
+distance between its beginning and end (4.3). -/
+def long (a : E) : Set (Σ s, P s) :=
+  {d | a ∈ ω ∧ (a ∈ object ∧ d = ⟨spatial, extent a⟩ ∨ a ∈ event ∧ d = ⟨temporal, duration a⟩)}
+
+-- The fragment's *long* is the spatial clause.
+example : adjectiveScale English.Adjectives.long = some spatial := rfl
+
+variable {ω object event extent duration}
+
+theorem long_of_object (ha : a ∈ ω) (ho : a ∈ object) (he : a ∉ event) :
+    long ω object event extent duration a = {⟨spatial, extent a⟩} := by
+  ext d; simp [long, ha, ho, he]
+
+theorem long_of_event (ha : a ∈ ω) (ho : a ∉ object) (he : a ∈ event) :
+    long ω object event extent duration a = {⟨temporal, duration a⟩} := by
+  ext d; simp [long, ha, ho, he]
+
+variable [∀ s, LT (P s)]
+
+-- (68)
+theorem erThan_long_of_object (ha : a ∈ ω) (hao : a ∈ object) (hae : a ∉ event) (hb : b ∈ ω)
+    (hbo : b ∈ object) (hbe : b ∉ event) :
+    ErThan (long ω object event extent duration a) (long ω object event extent duration b) ↔
+      extent b < extent a := by
+  rw [long_of_object ha hao hae, long_of_object hb hbo hbe, erThan_singleton, Sigma.mk_lt_mk_iff]
+
+-- (67)
+theorem erThan_long_of_event (ha : a ∈ ω) (hao : a ∉ object) (hae : a ∈ event) (hb : b ∈ ω)
+    (hbo : b ∉ object) (hbe : b ∈ event) :
+    ErThan (long ω object event extent duration a) (long ω object event extent duration b) ↔
+      duration b < duration a := by
+  rw [long_of_event ha hao hae, long_of_event hb hbo hbe, erThan_singleton, Sigma.mk_lt_mk_iff]
+
+/-- *Long* puts an event and a physical object on different scales, which "explains the semantic
+anomaly of (69)". -/
+theorem not_erThan_long_event_object (ha : a ∈ ω) (hao : a ∉ object) (hae : a ∈ event)
+    (hb : b ∈ ω) (hbo : b ∈ object) (hbe : b ∉ event) :
+    ¬ ErThan (long ω object event extent duration a) (long ω object event extent duration b) := by
+  rw [long_of_event ha hao hae, long_of_object hb hbo hbe]
+  exact not_erThan_of_fst_ne fun _ h₁ _ h₂ ↦ by
+    rw [Set.mem_singleton_iff.1 h₁, Set.mem_singleton_iff.1 h₂]
+    exact show temporal ≠ spatial by decide
+
+end Long
+
+/-- An example comparing two terms: their scales and its row. -/
+structure Compared where
+  /-- The scale of the first term. -/
+  left : Option DirectedScale
+  /-- The scale of the second term. -/
+  right : Option DirectedScale
+  /-- The example. -/
+  row : Datum
+
+section Rows
+
+open English.Adjectives English.Nouns Examples
+
+/-- The examples whose judgments follow from their scales. (56) and (57) compare nothing, and
+(50) and (66) are `crossScale`. -/
+def comparisons : List Compared :=
+  [⟨adjectiveScale tall, adjectiveScale tall, ex_13⟩,
+   ⟨adjectiveScale tall, adjectiveScale English.Adjectives.long, ex_15⟩,
+   ⟨adjectiveScale tall, adjectiveScale clever, ex_23⟩,
+   ⟨adjectiveScale tall, some spatial, ex_35⟩,
+   ⟨adjectiveScale tall, some spatial, ex_37⟩,
+   ⟨adjectiveScale short, some spatial, ex_39⟩,
+   ⟨some (nounScale water), some (nounScale mud), ex_41⟩,
+   ⟨some (nounScale man), some (nounScale bird), ex_52⟩,
+   ⟨adjectiveScale beautiful, adjectiveScale beautiful, ex_62⟩,
+   ⟨adjectiveScale tall, adjectiveScale beautiful, ex_65⟩,
+   ⟨some temporal, adjectiveScale English.Adjectives.long, ex_69⟩,
+   ⟨adjectiveScale short, adjectiveScale short, ex_70⟩,
+   ⟨adjectiveScale tall, adjectiveScale tall, fn10_iii⟩]
+
+/-- An example is acceptable exactly when its terms lie on the same scale, *short* and *six feet*
+being opposed in direction. -/
+theorem scale_eq_iff_acceptable :
+    ∀ c ∈ comparisons, c.left = c.right ↔ c.row.judgment = .acceptable := by
   decide
 
-theorem not_erThan_of_unacceptable {P : DirectedScale → Type*} [∀ s, LT (P s)] {d}
-    (hd : d ∈ data) (hj : d.2.2 = .unacceptable) {ω ω' : Set (Σ s, P s)}
-    (hω : ∀ a ∈ ω, a.1 = d.1) (hω' : ∀ b ∈ ω', b.1 = d.2.1) : ¬ ErThan ω ω' :=
-  not_erThan_of_fst_ne fun a ha b hb ↦ by
-    rw [hω a ha, hω' b hb]; exact scale_ne_of_unacceptable d hd hj
+/-- The examples printed without an asterisk although their terms lie on different scales. -/
+def crossScale : List Compared :=
+  [⟨adjectiveScale beautiful, adjectiveScale clever, ex_50⟩,
+   ⟨adjectiveScale old, adjectiveScale wise, ex_66⟩]
+
+theorem scale_ne_of_mem_crossScale :
+    ∀ c ∈ crossScale, c.left ≠ c.right ∧ c.row.judgment = .acceptable := by
+  decide
+
+/-- (50) has no asterisk and (65) has one, yet the two compare across scales alike, so the account
+gives them no different verdict. -/
+theorem unstarred_crosses_scales :
+    adjectiveScale beautiful ≠ adjectiveScale clever ∧
+      adjectiveScale tall ≠ adjectiveScale beautiful ∧ ex_50.judgment ≠ ex_65.judgment := by
+  decide
+
+end Rows
 
 /-! ### Superlatives, mass nouns and plurals ((2.6), §3) -/
 
@@ -273,7 +372,7 @@ theorem erThan_singleton_mk (a b : E) :
 -- p. 274, (4.1)
 theorem exactly_singleton_mk (a b : E) :
     Exactly ({⟦a⟧} : Set (CresswellDegree φ)) {⟦b⟧} ↔ cresswellSetoid φ a b :=
-  exactly_singleton.trans CresswellDegree.mk_eq_mk
+  exactly_singleton.trans Quotient.eq
 
 /-- The field of a relation is the set of things it relates to something in one direction or the
 other (2.1). -/

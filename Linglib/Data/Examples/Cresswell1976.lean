@@ -26,7 +26,7 @@ def ex_13 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
+    paperFeatures := [] }
 
 def ex_15 : Datum :=
   { id := "cresswell1976_15"
@@ -39,7 +39,7 @@ def ex_15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
+    paperFeatures := [] }
 
 def ex_23 : Datum :=
   { id := "cresswell1976_23"
@@ -52,7 +52,7 @@ def ex_23 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "distance"), ("rightScale", "cleverness")] }
+    paperFeatures := [] }
 
 def ex_35 : Datum :=
   { id := "cresswell1976_35"
@@ -65,7 +65,7 @@ def ex_35 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
+    paperFeatures := [] }
 
 def ex_37 : Datum :=
   { id := "cresswell1976_37"
@@ -104,7 +104,7 @@ def ex_41 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "volume"), ("rightScale", "volume")] }
+    paperFeatures := [] }
 
 def ex_50 : Datum :=
   { id := "cresswell1976_50"
@@ -117,7 +117,7 @@ def ex_50 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "beauty"), ("rightScale", "cleverness")] }
+    paperFeatures := [] }
 
 def ex_52 : Datum :=
   { id := "cresswell1976_52"
@@ -130,7 +130,7 @@ def ex_52 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "number"), ("rightScale", "number")] }
+    paperFeatures := [] }
 
 def ex_56 : Datum :=
   { id := "cresswell1976_56"
@@ -169,7 +169,7 @@ def ex_62 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "beauty"), ("rightScale", "beauty")] }
+    paperFeatures := [] }
 
 def ex_65 : Datum :=
   { id := "cresswell1976_65"
@@ -182,7 +182,7 @@ def ex_65 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "distance"), ("rightScale", "beauty")] }
+    paperFeatures := [] }
 
 def ex_66 : Datum :=
   { id := "cresswell1976_66"
@@ -208,7 +208,7 @@ def ex_69 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "time"), ("rightScale", "distance")] }
+    paperFeatures := [] }
 
 def ex_70 : Datum :=
   { id := "cresswell1976_70"
@@ -221,7 +221,7 @@ def ex_70 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "distanceDownward"), ("rightScale", "distanceDownward")] }
+    paperFeatures := [] }
 
 def fn10_iii : Datum :=
   { id := "cresswell1976_fn10_iii"
@@ -234,7 +234,7 @@ def fn10_iii : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")] }
+    paperFeatures := [] }
 
 def all : List Datum := [ex_13, ex_15, ex_23, ex_35, ex_37, ex_39, ex_41, ex_50, ex_52, ex_56, ex_57, ex_62, ex_65, ex_66, ex_69, ex_70, fn10_iii]
 

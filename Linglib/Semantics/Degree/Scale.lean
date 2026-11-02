@@ -73,7 +73,7 @@ inductive ScalarDimension
   -- Evaluative
   | happiness | cost | price | quality | value | danger | beauty | importance | safety
   -- Psychological
-  | intelligence | expectation | possibility | confidence
+  | intelligence | wisdom | expectation | possibility | confidence
   -- State (adjective + deadjectival-verb change dimensions)
   | fullness | wetness | cleanliness | straightness | flatness | openness
   | freedom | tightness | alive | pregnancy | hardness | smoothness | purity
@@ -100,7 +100,7 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .height | .width | .length | .weight | .thickness | .depth | .speed
   | .strength | .age | .generalSize | .temperature | .brightness | .volume | .taste
   | .happiness | .cost | .price | .quality | .value | .danger | .beauty
-  | .importance | .intelligence | .expectation
+  | .importance | .intelligence | .wisdom | .expectation
   | .hardness | .color | .corrosion | .quantity
   | .unspecified => .open_
 

@@ -31,12 +31,16 @@ not taller for a man than he is wide for a man.
   than-clause reaches is `Degree.MaxComparative .gt` over the two measures (`more_iff`), stated as
   the point comparison `μ ⁻¹' Set.Ioi n`.
 * Universal degrees are rationals: the paper's universal scale is the rationals from zero to one.
+* The paper sets this against analyses that take indirect comparisons to be metaphorical extensions
+  of a single-scale comparative, as Cresswell's is: there *er than* across two scales
+  [fails in every model](##Cresswell1976.not_erThan_of_scale_ne).
 * Measurements are individuals `.inr n` of `n` inches, bounded by the comparison class; heights
   and widths are in inches as printed, and the committee's rankings count from the bottom.
 
 ## References
 
 * [bale-2008]
+* [cresswell-1976]
 * [kennedy-1999]
 * [klein-1980]
 -/

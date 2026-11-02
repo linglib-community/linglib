@@ -12,10 +12,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "distance"],
-      ["rightScale", "distance"]
-    ],
+    "paperFeatures": [],
     "comment": "A comparison of two degrees of height, both on the scale of spatial distances."
   },
   {
@@ -31,10 +28,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "distance"],
-      ["rightScale", "distance"]
-    ],
+    "paperFeatures": [],
     "comment": "Tall and long both measure spatial distance, so the two degrees lie on one scale."
   },
   {
@@ -50,10 +44,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "distance"],
-      ["rightScale", "cleverness"]
-    ],
+    "paperFeatures": [],
     "comment": "Grammatical but semantically anomalous: the degrees of height and of cleverness lie on different scales."
   },
   {
@@ -69,10 +60,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "distance"],
-      ["rightScale", "distance"]
-    ],
+    "paperFeatures": [],
     "comment": "Six feet names a degree on the upward scale of spatial distances."
   },
   {
@@ -120,10 +108,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "volume"],
-      ["rightScale", "volume"]
-    ],
+    "paperFeatures": [],
     "comment": "The degree of the totality of ebbing water exceeds that of flowing mud, both volumes."
   },
   {
@@ -139,10 +124,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "beauty"],
-      ["rightScale", "cleverness"]
-    ],
+    "paperFeatures": [],
     "comment": "Listed without an asterisk as an instance of the single meaning of more, although beauty and cleverness are distinct scales, as in the starred (65)."
   },
   {
@@ -158,10 +140,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "number"],
-      ["rightScale", "number"]
-    ],
+    "paperFeatures": [],
     "comment": "Pluralization supplies the numerical scale: the number of walking men exceeds the number of flying birds."
   },
   {
@@ -209,10 +188,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "beauty"],
-      ["rightScale", "beauty"]
-    ],
+    "paperFeatures": [],
     "comment": "The scale of beauty has no unit; its degrees are the classes of the comparison relation."
   },
   {
@@ -228,10 +204,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "distance"],
-      ["rightScale", "beauty"]
-    ],
+    "paperFeatures": [],
     "comment": "Anomalous: Bill's tallness and Arabella's beauty are represented on different scales."
   },
   {
@@ -263,10 +236,7 @@
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "time"],
-      ["rightScale", "distance"]
-    ],
+    "paperFeatures": [],
     "comment": "Long measures an event on the temporal scale and a physical object on the spatial one."
   },
   {
@@ -282,10 +252,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "distanceDownward"],
-      ["rightScale", "distanceDownward"]
-    ],
+    "paperFeatures": [],
     "comment": "A trans-world comparison: Bill's height in the nearest world where he smokes against his height in the actual world."
   },
   {
@@ -301,10 +268,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [
-      ["leftScale", "distance"],
-      ["rightScale", "distance"]
-    ],
+    "paperFeatures": [],
     "comment": "Means, at least usually, that Bill is taller than Arabella and taller than Clarissa, not the disjunction of the two comparisons."
   }
 ]
