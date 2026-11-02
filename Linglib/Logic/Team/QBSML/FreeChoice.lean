@@ -23,6 +23,8 @@ does not.
 * `QBSML.boxExiFC`: quantified box free choice, `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ`.
 * `QBSML.ignorance`, `QBSML.distribution`, `QBSML.distributionEpi`, `QBSML.negationStrip`:
   Facts 3, 5, 6 and 10.
+* `QBSML.ignorance_of_assign_eq`: Fact 3 for any `NE`-free disjuncts on a state whose indices share
+  one assignment.
 
 ## Implementation notes
 
@@ -165,6 +167,26 @@ theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : IsStateBased M.access 
       h₁.2 h₁.1,
     poss_predc_of_stateBased M hSB (le_sup_right.trans_eq hsplit)
       h₂.2 h₂.1⟩
+
+private theorem poss_of_subset_of_assign_eq {γ : Formula Var Const Pred}
+    {g : PartialAssign Var Domain} {t : Finset (Index W Var Domain)}
+    (hSB : IsStateBased M.access (State.worldProj s)) (hg : ∀ i ∈ s, i.assign = g) (hts : t ⊆ s)
+    (htne : t.Nonempty) (h : support M γ t) : support M (.poss γ) s :=
+  support_poss_iff.mpr fun i hi ↦
+    ⟨State.worldProj t, hSB i.world (State.mem_worldProj.mpr ⟨i, hi, rfl⟩) ▸
+      State.worldProj_mono hts, State.worldProj_nonempty htne, by
+        rwa [State.modalLift_worldProj_of_subset fun j hj ↦ State.mem_modalLift.mpr
+          ⟨State.mem_worldProj.mpr ⟨j, hts hj, rfl⟩, (hg j (hts hj)).trans (hg i hi).symm⟩]⟩
+
+/-- Ignorance `[α ∨ β]⁺ ⊨ ◇α ∧ ◇β` holds for `NE`-free `α`, `β` on a state-based `R` when the
+indices of the state share one assignment, the generalisation of Fact 3 to arbitrary disjuncts. -/
+theorem ignorance_of_assign_eq {g : PartialAssign Var Domain} (hα : α.NEFree) (hβ : β.NEFree)
+    (hSB : IsStateBased M.access (State.worldProj s)) (hg : ∀ i ∈ s, i.assign = g)
+    (h : support M (Formula.disj α β).enrich s) :
+    support M (.poss α) s ∧ support M (.poss β) s :=
+  have ⟨⟨_, ht₁, hne₁, h₁⟩, _, ht₂, hne₂, h₂⟩ := witnesses_of_enrich_disj M hα hβ h
+  ⟨poss_of_subset_of_assign_eq M hSB hg ht₁ hne₁ h₁,
+    poss_of_subset_of_assign_eq M hSB hg ht₂ hne₂ h₂⟩
 
 /-! ### Negation behaviour (Fact 10) -/
 

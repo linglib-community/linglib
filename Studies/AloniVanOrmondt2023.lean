@@ -4,147 +4,197 @@ public import Linglib.Logic.Team.QBSML.FreeChoice
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.AloniVanOrmondt2023
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Data.Examples.Readers
 
 /-!
 # Aloni and van Ormondt (2023): modified numerals and split disjunction
 
-Superlative modifiers (*at least n*, *at most n*) generate ignorance inferences
-that comparative modifiers (*more than n*, *fewer than n*) do not, and the
-inferences are obviated under universal quantifiers and modals, distribute
-under universals, license free choice under modals, and vanish under negation
-— exactly the profile of plain disjunction. Following Büring, superlative
-modifiers are split disjunctions, `at least n ↦ n ∨ more` and
-`at most n ↦ n ∨ less`, and the whole profile falls out of [aloni-2022]'s
-neglect-zero enrichment `[·]⁺` once BSML is raised to the first-order QBSML.
+Superlative modifiers (*at least n*, *at most n*) convey that the speaker does not know the amount,
+where comparative modifiers (*more than n*, *fewer than n*) with the same truth conditions do not.
+Following Büring, a superlative is the split disjunction of the bare numeral and a comparative,
+*at least n* as *n or more*, and Aloni's neglect-zero enrichment, raised to the first-order logic
+QBSML, derives the difference. A numeral predicate is a set of amounts. The split [keeps the truth
+conditions](##support_translate_iff), but the enriched superlative [leaves the amount
+open](##exists_eq_and_exists_gt_of_support_enrich), so [a speaker who knows the amount can assert
+only the comparative](##support_enrich_translate_iff_of_settled). Negated, the superlative [says
+what the comparative says](##support_enrich_neg_translate_ge), and under a universal quantifier its
+disjuncts split over individuals, [obviating the ignorance](##obviation).
 
-The QBSML facts of §5 are the universal theorems of
-`Logic/Team/QBSML/FreeChoice`; here the denotations (14) and (16) are the
-split of the `≥` and `≤` intervals of `Degree.Comparison`, the
-results (56)–(61) and (63) are those facts for the paper's `three`/`more`
-predicates in every model, under the paper's side conditions, and the
-obviation claim (57) is the Fig. 14 countermodel. Its worlds are, as
-throughout the paper, the sets of atomic facts true at them: `w_{Pa}` is "the
-world `w` in which some object `a` has property `P`" (Example 3.1, p. 549).
-The example rows record the inference profile the analysis answers to.
+## Implementation notes
+
+* The amount of an individual at a world is a function `μ`. A world of the obviation model is the
+  amount of each of its two objects, so `w_{PaQb}` is the world where `a` has three and `b` four.
+* The free-choice, distribution and negation facts hold for any `NE`-free disjuncts and are the
+  theorems of `Logic/Team/QBSML/FreeChoice.lean`; with a state-based accessibility relation,
+  `QBSML.ignorance` turns the open amount into the possibilities of exactly `n` and more.
+
+## Errata
+
+* After Fact 3 the paper says the ignorance fact generalises to arbitrary disjuncts. It does on
+  states whose indices [share one assignment](##QBSML.ignorance_of_assign_eq), but Definition 4.12
+  admits states with several: the universal extension in the proof of Fact 4 is state-based and
+  [supports `[three(x) ∨ more(x)]⁺` but not `◇three(x)`](##not_ignorance_fig15).
+* On p. 542 example (4a) is repeated as "(3-b)", and on p. 546 the blocked (41) is called "(42)".
 
 ## References
 
 * [aloni-vanormondt-2023]
 * [aloni-2022]
-* [chemla-2009b]
 -/
 
 @[expose] public section
 
 namespace AloniVanOrmondt2023
 
-open QBSML Degree FirstOrder Language
-
-/-! ### Superlative modifiers as disjunctions -/
-
--- (14)
-theorem atLeast_eq_bare_union_moreThan (m : ℕ) :
-    Comparison.ge.interval m = Comparison.eq.interval m ∪ Comparison.gt.interval m := by
-  simp [Set.Ioi_insert]
-
--- (16)
-theorem atMost_eq_bare_union_fewerThan (m : ℕ) :
-    Comparison.le.interval m = Comparison.eq.interval m ∪ Comparison.lt.interval m := by
-  simp [Set.Iio_insert]
-
--- (2), (7)
-theorem modifier_rows :
-    ∀ row ∈ Examples.all, ∀ m ∈ row.feature? "modifier", ∀ i ∈ row.feature? "inference",
-      (m = "comparative" → i = "none") ∧
-      (m = "superlative" → row.feature? "embedding" = none → i = "ignorance") := by
-  decide +kernel
-
-/-! ### The predicates -/
-
-/-- `three` and `more` are the paper's numeral predicates; they instantiate the `P` and `Q`
-    of the §5 facts. -/
-inductive Predicate
-  | three
-  | more
-  deriving DecidableEq, Repr, Fintype
+open QBSML Degree
 
 inductive Var
   | x
   deriving DecidableEq, Repr, Fintype
 
 variable {W Domain Const : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
-  {M : Model W Domain Const Predicate} {s : Finset (Index W Var Domain)} {c : Const}
 
-/-- `threeOrMore c` is `three ∨ more` (45b) said of the individual `c`. -/
-def threeOrMore (c : Const) : Formula Var Const Predicate :=
-  .disj (.predc .three c) (.predc .more c)
+/-! ### Numerals as sets of amounts -/
 
-def three : Formula Var Const Predicate := .pred .three .x
+/-- The model in which a set of amounts holds of an individual at a world when it contains the
+individual's amount `μ w d` there, the cardinality `|P ∩ Q|` of the paper's numeral denotations. -/
+def amountModel (R : W → Finset W) (κ : W → Const → Domain) (μ : W → Domain → ℕ) :
+    Model W Domain Const (Set ℕ) :=
+  .ofMonadic R κ fun w A d ↦ μ w d ∈ A
 
-def more : Formula Var Const Predicate := .pred .more .x
+/-- The paper's translation of a numeral modified by `c`, said of `k`: a superlative is the split
+disjunction of the bare numeral and the strict comparative, *at least n* as *n or more* and *at most
+n* as *n or less*, and a bare or comparative numeral is atomic. -/
+def translate (c : Comparison) (n : ℕ) (k : Const) : Formula Var Const (Set ℕ) :=
+  match c with
+  | .ge => .disj (.predc (Comparison.eq.interval n) k) (.predc (Comparison.gt.interval n) k)
+  | .le => .disj (.predc (Comparison.eq.interval n) k) (.predc (Comparison.lt.interval n) k)
+  | c => .predc (c.interval n) k
 
-theorem three_neFree : (three (Const := Const)).NEFree := .pred _ _
-theorem more_neFree : (more (Const := Const)).NEFree := .pred _ _
+variable {R : W → Finset W} {κ : W → Const → Domain} {μ : W → Domain → ℕ}
+  {s : Finset (Index W Var Domain)} {A B : Set ℕ} {k : Const} {c : Comparison} {n m : ℕ}
 
--- Proposition 4.1
-theorem classicality_univ {v : Index W Var Domain → Var → Domain}
-    (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
-    support M (.univ .x (.disj three more)) s ↔
-      ∀ i ∈ s,
-        (FirstOrder.Language.Formula.all₁ Var.x
-          ((predSymb Predicate.three).formula₁ (FirstOrder.Language.Term.var Var.x) ⊔
-            (predSymb Predicate.more).formula₁
-              (FirstOrder.Language.Term.var Var.x))).RealizeAt
-          M.interp i.world (v i) :=
-  support_iff_forall_realizeAt M rfl s v hv
+@[simp] theorem support_predc_amountModel :
+    support (amountModel R κ μ) (.predc A k) s ↔ ∀ i ∈ s, μ i.world (κ i.world k) ∈ A :=
+  Iff.rfl
 
-/-! ### The results (56)–(61) -/
+@[simp] theorem antiSupport_predc_amountModel :
+    antiSupport (amountModel R κ μ) (.predc A k) s ↔ ∀ i ∈ s, μ i.world (κ i.world k) ∉ A :=
+  Iff.rfl
 
--- (56), Fact 3
-theorem ignorance (hSB : Team.IsStateBased M.access (State.worldProj s))
-    (h : support M (threeOrMore c).enrich s) :
-    support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
-  QBSML.ignorance M hSB h
+theorem support_enrich_predc_amountModel :
+    support (amountModel R κ μ) (Formula.predc A k).enrich s ↔
+      (∀ i ∈ s, μ i.world (κ i.world k) ∈ A) ∧ s.Nonempty :=
+  Iff.rfl
 
--- (51), Fact 5
-theorem distribution {i : Index W Var Domain}
-    (h : support M (Formula.univ .x (.disj three more)).enrich {i}) :
-    support M (.exi .x three) {i} ∧ support M (.exi .x more) {i} :=
-  QBSML.distribution M three_neFree more_neFree h
+theorem support_disj_predc_amountModel :
+    support (amountModel R κ μ) (.disj (.predc A k) (.predc B k)) s ↔
+      support (amountModel R κ μ) (.predc (A ∪ B) k) s :=
+  Team.mem_tensor_flat
 
--- (58), Fact 6
-theorem distributionEpi (hSB : Team.IsStateBased M.access (State.worldProj s))
-    (h : support M (Formula.univ .x (.disj three more)).enrich s) :
-    support M (.exi .x (.poss three)) s ∧ support M (.exi .x (.poss more)) s :=
-  QBSML.distributionEpi M hSB h
+/-- The translation of a modified numeral is supported exactly where the comparison holds of the
+amount, so splitting a superlative keeps its truth conditions ((8), (14), (16)). -/
+theorem support_translate_iff :
+    support (amountModel R κ μ) (translate c n k) s ↔
+      ∀ i ∈ s, μ i.world (κ i.world k) ∈ c.interval n := by
+  cases c with
+  | ge =>
+    rw [translate, support_disj_predc_amountModel, Comparison.interval_eq, Comparison.interval_gt,
+      Set.singleton_union, Set.Ioi_insert]
+    rfl
+  | le =>
+    rw [translate, support_disj_predc_amountModel, Comparison.interval_eq, Comparison.interval_lt,
+      Set.singleton_union, Set.Iio_insert]
+    rfl
+  | _ => rfl
 
--- (59), Fact 7
-theorem boxFreeChoice (h : support M (Formula.enrich (Formula.nec (threeOrMore c))) s) :
-    support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
-  QBSML.boxFC M (.predc _ _) (.predc _ _) h
+/-! ### Ignorance -/
 
--- (60), Fact 8
-theorem diamondFreeChoice (h : support M (Formula.enrich (.poss (threeOrMore c))) s) :
-    support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
-  QBSML.narrowScopeFC M (.predc _ _) (.predc _ _) h
+private theorem exists_mem_of_support_enrich_disj
+    (h : support (amountModel R κ μ) (Formula.disj (.predc A k) (.predc B k)).enrich s) :
+    (∃ i ∈ s, μ i.world (κ i.world k) ∈ A) ∧ ∃ i ∈ s, μ i.world (κ i.world k) ∈ B :=
+  have ⟨⟨_, hts, ⟨i, hi⟩, ht⟩, _, hus, ⟨j, hj⟩, hu⟩ :=
+    witnesses_of_enrich_disj _ (.predc A k) (.predc B k) h
+  ⟨⟨i, hts hi, ht i hi⟩, j, hus hj, hu j hj⟩
 
--- (63), Fact 9 [chemla-2009b]
-theorem universalFreeChoice
-    (h : support M (Formula.univ .x (.poss (.disj three more))).enrich s) :
-    support M (.univ .x (.poss three)) s ∧ support M (.univ .x (.poss more)) s :=
-  QBSML.universalFC M three_neFree more_neFree h
+/-- A state supporting the enriched *at least n* has an index where the amount is exactly `n` and
+one where it exceeds `n`: the speaker does not know how many ((2a), (19), (56)). -/
+theorem exists_eq_and_exists_gt_of_support_enrich
+    (h : support (amountModel R κ μ) (translate .ge n k).enrich s) :
+    (∃ i ∈ s, μ i.world (κ i.world k) = n) ∧ ∃ i ∈ s, n < μ i.world (κ i.world k) :=
+  exists_mem_of_support_enrich_disj h
 
--- (61), Fact 10, (61a)
-theorem negation (h : support M (Formula.enrich (.neg (threeOrMore c))) s) :
-    support M (.neg (.predc .three c)) s ∧ support M (.neg (.predc .more c)) s :=
-  QBSML.negationStrip M (.predc _ _) (.predc _ _) h
+/-- At a non-empty state where the amount is known to be `m`, the enriched translation of a modified
+numeral is supported exactly when the modifier is not a superlative and `m` satisfies it ((2)). -/
+theorem support_enrich_translate_iff_of_settled (hne : s.Nonempty)
+    (hs : ∀ i ∈ s, μ i.world (κ i.world k) = m) :
+    support (amountModel R κ μ) (translate c n k).enrich s ↔
+      (c ≠ .ge ∧ c ≠ .le) ∧ m ∈ c.interval n := by
+  have hsettled {A : Set ℕ} : (∀ i ∈ s, μ i.world (κ i.world k) ∈ A) ↔ m ∈ A :=
+    ⟨fun h ↦ have ⟨i, hi⟩ := hne; hs i hi ▸ h i hi, fun h i hi ↦ hs i hi ▸ h⟩
+  cases c with
+  | ge | le =>
+    refine iff_of_false (fun h ↦ ?_) (by simp)
+    obtain ⟨⟨i, hi, h₁⟩, j, hj, h₂⟩ := exists_mem_of_support_enrich_disj h
+    rw [hs i hi] at h₁
+    rw [hs j hj] at h₂
+    simp_all
+  | _ =>
+    dsimp only [translate]
+    rw [support_enrich_predc_amountModel, hsettled, and_iff_left hne]
+    exact ⟨fun h ↦ ⟨⟨by decide, by decide⟩, h⟩, And.right⟩
 
-/-! ### Obviation: the Fig. 14 countermodel
+/-- The modified numerals of (3) and (4), each with its comparison and number. -/
+def knownAmountRows : List (Datum × Comparison × ℕ) :=
+  [(Examples.ex_3a, .ge, 3), (Examples.ex_3b, .gt, 2), (Examples.ex_4a, .le, 10),
+    (Examples.ex_4b, .lt, 11)]
 
-A single index at the world `w_{PaQb}` with the empty assignment; that world alone
-sees itself. The domain is the paper's two objects, and a world is the set of
-atomic facts true at it. -/
+-- (3), (4)
+theorem knownAmountRows_judgment (hne : s.Nonempty) (hs : ∀ i ∈ s, μ i.world (κ i.world k) = m) :
+    ∀ r ∈ knownAmountRows, m ∈ r.2.1.interval r.2.2 →
+      (support (amountModel R κ μ) (translate r.2.1 r.2.2 k).enrich s ↔
+        r.1.judgment = .acceptable) := by
+  simp only [knownAmountRows, List.mem_cons, List.not_mem_nil, or_false]
+  rintro r (rfl | rfl | rfl | rfl) hm <;> simp at hm <;>
+    simp [support_enrich_translate_iff_of_settled hne hs, hm, Examples.ex_3a, Examples.ex_3b,
+      Examples.ex_4a, Examples.ex_4b]
+
+example : support (amountModel (fun _ ↦ ∅) (fun _ _ ↦ ()) fun w _ ↦ w) (translate .ge 3 ()).enrich
+    (State.modalLift {3, 4} fun (_ : Var) ↦ (none : Option Unit)) :=
+  ⟨⟨State.modalLift {3} fun _ ↦ none, ⟨by simp, (Finset.singleton_nonempty _).image _⟩,
+    State.modalLift {4} fun _ ↦ none, ⟨by simp, (Finset.singleton_nonempty _).image _⟩, by decide⟩,
+    (Finset.insert_nonempty _ _).image _⟩
+
+/-! ### Negation -/
+
+private theorem support_enrich_neg_disj_predc :
+    support (amountModel R κ μ) (Formula.neg (.disj (.predc A k) (.predc B k))).enrich s ↔
+      support (amountModel R κ μ) (Formula.predc (A ∪ B)ᶜ k).enrich s := by
+  simp only [Formula.enrich, support_conj, support_neg, antiSupport_conj_ne, antiSupport_disj,
+    antiSupport_predc_amountModel, support_predc_amountModel, ← forall₂_and, Set.mem_compl_iff,
+    Set.mem_union, not_or]
+
+/-- Enriched, *not at least n* is equivalent to *fewer than n*, which blocks it ((41), (42)). -/
+theorem support_enrich_neg_translate_ge :
+    support (amountModel R κ μ) (Formula.neg (translate .ge n k)).enrich s ↔
+      support (amountModel R κ μ) (translate .lt n k).enrich s :=
+  support_enrich_neg_disj_predc.trans <| by
+    rw [Comparison.interval_eq, Comparison.interval_gt, Set.singleton_union, Set.Ioi_insert,
+      Set.compl_Ici]
+    rfl
+
+-- (41), (42)
+theorem support_enrich_neg_translate_le :
+    support (amountModel R κ μ) (Formula.neg (translate .le n k)).enrich s ↔
+      support (amountModel R κ μ) (translate .gt n k).enrich s :=
+  support_enrich_neg_disj_predc.trans <| by
+    rw [Comparison.interval_eq, Comparison.interval_lt, Set.singleton_union, Set.Iio_insert,
+      Set.compl_Iic]
+    rfl
+
+/-! ### Obviation
+
+The model of Fig. 14 has one index, at the world `w_{PaQb}` with the empty assignment, and that
+world alone sees itself. Its universal extension is the state of Fig. 15. -/
 
 /-- `Entity` is the Fig. 14 domain of two objects, each its own individual constant. -/
 inductive Entity
@@ -152,61 +202,71 @@ inductive Entity
   | b
   deriving DecidableEq, Repr, Fintype
 
-/-- `wPaQb` is the world `w_{PaQb}`, where `three` (the figure's `P`) holds of `a` and
-    `more` (`Q`) holds of `b`. -/
-def wPaQb : Finset (Predicate × Entity) := {(.three, .a), (.more, .b)}
+/-- `three` and `more`, said of `x`, are the disjuncts of *at least three*. -/
+def three : Formula Var Entity (Set ℕ) := .pred (Comparison.eq.interval 3) .x
 
-/-- In the Fig. 14 model only `w_{PaQb}` has an arrow, to itself. -/
-def fig14Model : Model (Finset (Predicate × Entity)) Entity Entity Predicate :=
-  .ofMonadic (fun w ↦ if w = wPaQb then {wPaQb} else ∅) (fun _ ↦ id) fun w P d ↦ (P, d) ∈ w
+@[inherit_doc three]
+def more : Formula Var Entity (Set ℕ) := .pred (Comparison.gt.interval 3) .x
 
-def fig14Index : Index (Finset (Predicate × Entity)) Var Entity := (wPaQb, fun _ ↦ none)
+/-- `wPaQb` is the world `w_{PaQb}`, where `a` has three (the figure's `P`) and `b` has four
+(`Q`). -/
+def wPaQb : Entity → ℕ
+  | .a => 3
+  | .b => 4
 
-def fig14State : Finset (Index (Finset (Predicate × Entity)) Var Entity) := {fig14Index}
+def fig14Model : Model (Entity → ℕ) Entity Entity (Set ℕ) :=
+  amountModel (fun w ↦ if w = wPaQb then {wPaQb} else ∅) (fun _ ↦ id) id
+
+def fig14Index : Index (Entity → ℕ) Var Entity := (wPaQb, fun _ ↦ none)
+
+def fig14State : Finset (Index (Entity → ℕ) Var Entity) := {fig14Index}
+
+def fig15State : Finset (Index (Entity → ℕ) Var Entity) := State.extendUniversal fig14State .x
 
 -- Fig. 14
-theorem fig14_stateBased :
-    Team.IsStateBased fig14Model.access (State.worldProj fig14State) := by decide
+theorem fig14_stateBased : Team.IsStateBased fig14Model.access (State.worldProj fig14State) := by
+  decide
 
 -- Fig. 15
-theorem fig14_premise :
-    support fig14Model (Formula.univ .x (.disj three more)).enrich fig14State := by
-  refine ⟨?_, Finset.singleton_nonempty _⟩
-  show support fig14Model (Formula.disj three more).enrich
-    (State.extendUniversal fig14State Var.x)
+theorem fig15_stateBased : Team.IsStateBased fig14Model.access (State.worldProj fig15State) := by
+  decide
+
+-- Fig. 15
+theorem support_enrich_fig15 : support fig14Model (Formula.disj three more).enrich fig15State := by
   refine ⟨⟨{fig14Index.update .x .a}, ⟨?_, Finset.singleton_nonempty _⟩,
-    {fig14Index.update .x .b}, ⟨?_, Finset.singleton_nonempty _⟩, ?_⟩,
-    ⟨fig14Index.update .x .a, ?_⟩⟩
+    {fig14Index.update .x .b}, ⟨?_, Finset.singleton_nonempty _⟩, by decide⟩,
+    ⟨_, (by decide : fig14Index.update .x .a ∈ fig15State)⟩⟩ <;>
   · intro j hj
     obtain rfl := Finset.mem_singleton.mp hj
-    exact ⟨.a, rfl, by simp [fig14Model, wPaQb, fig14Index, Index.world]⟩
-  · intro j hj
-    obtain rfl := Finset.mem_singleton.mp hj
-    exact ⟨.b, rfl, by simp [fig14Model, wPaQb, fig14Index, Index.world]⟩
-  · show ({fig14Index.update .x .a} ∪ {fig14Index.update .x .b} : Finset _)
-      = State.extendUniversal fig14State Var.x
-    decide
-  · decide
+    exact ⟨_, rfl, by simp [fig14Model, amountModel, fig14Index, Index.world, wPaQb]⟩
 
 -- Fig. 16
-theorem fig14_conclusion_fails :
-    ¬ support fig14Model (.univ .x (.conj (.poss three) (.poss more))) fig14State := by
+theorem not_support_poss_three_fig15 : ¬ support fig14Model (.poss three) fig15State := by
   intro h
-  obtain ⟨X, hX, hne, hsupp⟩ := support_poss_iff.mp h.1 (fig14Index.update .x .b) (by decide)
-  have hX' : X ⊆ {wPaQb} := by
-    simpa [fig14Model, Model.ofMonadic, Index.update, fig14Index] using hX
-  obtain rfl : X = {wPaQb} := hne.subset_singleton_iff.mp hX'
-  obtain ⟨d, hd, hP⟩ := hsupp (wPaQb, (fig14Index.update .x .b).assign)
-    (State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩)
+  obtain ⟨X, hX, hne, hsupp⟩ :=
+    support_poss_iff.mp h (fig14Index.update .x .b) (by decide)
+  obtain rfl : X = {wPaQb} := hne.subset_singleton_iff.mp <| by
+    simpa [fig14Model, amountModel, Model.ofMonadic, fig14Index] using hX
+  obtain ⟨d, hd, hP⟩ := hsupp _ (State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩)
   obtain rfl := Option.some.inj hd
-  simp [fig14Model, wPaQb, Index.world] at hP
+  simp [fig14Model, amountModel, fig14Index, Index.world, wPaQb] at hP
 
--- (57), Fact 4
+-- Fact 3, Fig. 15
+theorem not_ignorance_fig15 :
+    Team.IsStateBased fig14Model.access (State.worldProj fig15State) ∧
+      support fig14Model (Formula.disj three more).enrich fig15State ∧
+        ¬ support fig14Model (.poss three) fig15State :=
+  ⟨fig15_stateBased, support_enrich_fig15, not_support_poss_three_fig15⟩
+
+/-- Under a universal quantifier the enriched *at least three* conveys no ignorance: a speaker who
+knows how many each individual has can assert it, though no individual has both amounts possible
+((20), (57), Fact 4). -/
 theorem obviation :
-    ∃ (M : Model (Finset (Predicate × Entity)) Entity Entity Predicate)
-      (s : Finset (Index (Finset (Predicate × Entity)) Var Entity)),
-      support M (Formula.univ .x (.disj three more)).enrich s ∧
+    ∃ (M : Model (Entity → ℕ) Entity Entity (Set ℕ)) (s : Finset (Index (Entity → ℕ) Var Entity)),
+      Team.IsStateBased M.access (State.worldProj s) ∧
+        support M (Formula.univ .x (.disj three more)).enrich s ∧
         ¬ support M (.univ .x (.conj (.poss three) (.poss more))) s :=
-  ⟨fig14Model, fig14State, fig14_premise, fig14_conclusion_fails⟩
+  ⟨fig14Model, fig14State, fig14_stateBased, ⟨support_enrich_fig15, Finset.singleton_nonempty _⟩,
+    fun h ↦ not_support_poss_three_fig15 h.1⟩
 
 end AloniVanOrmondt2023
