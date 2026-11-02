@@ -76,7 +76,7 @@ def Realize : ∀ {n}, L.MonFormula n → (Fin n → M) → Prop
   | _, falsum, _ => False
   | _, imp φ ψ, v => φ.Realize v → ψ.Realize v
   | _, quant Q ψ, v => (⟨M, monadic.structure fun i a ↦ (ψ i).Realize (Fin.snoc v a)⟩ :
-      Bundled.{w} (Language.monadic (Fin _)).Structure) ∈ Q.holds
+      Bundled.{w} (Language.monadic (Fin _)).Structure) ∈ Q
 
 /-- The quantifier rank of a formula of `FO(Mon)`, the greatest nesting depth of quantifiers. -/
 def qr : ∀ {n}, L.MonFormula n → ℕ
@@ -130,7 +130,8 @@ theorem realize_iff : ∀ {n} {φ : L.MonFormula n} {k} {v : Fin n → M} {w : F
     have hψ (i) : (ψ i).qr ≤ _ :=
       (Finset.le_sup (f := fun i ↦ (ψ i).qr) (Finset.mem_univ i)).trans
         (Nat.le_of_succ_le_succ hφ)
-    refine Q.iso_inv ⟨monadic.structureEquiv (P := fun i a ↦ (ψ i).Realize (Fin.snoc v a))
+    refine Q.is_equiv_invariant ⟨monadic.structureEquiv
+      (P := fun i a ↦ (ψ i).Realize (Fin.snoc v a))
       (Q := fun i b ↦ (ψ i).Realize (Fin.snoc w b)) g fun i a ↦ ?_⟩
     exact (realize_iff (hg a) (hψ i)).symm
 
