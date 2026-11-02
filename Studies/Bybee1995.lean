@@ -50,6 +50,7 @@ their bases lack the vowel a source-oriented pairing from *string* would demand
 * [bybee-1995]
 * [bybee-2007]
 * [bybee-moder-1983]
+* [clements-1990]
 -/
 
 @[expose] public section

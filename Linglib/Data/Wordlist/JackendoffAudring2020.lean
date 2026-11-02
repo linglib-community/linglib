@@ -98,7 +98,7 @@ def sprech : Form Cell :=
     lexeme := Lexemes.speak_stem
     cell := {}
     form := "sprech-"
-    segments := ["ʃ", "p", "r", "ɛ", "x"]
+    segments := ["ʃ", "p", "ʁ", "ɛ", "x"]
     source := [
       ⟨"jackendoff-audring-2020", "(43)"⟩
     ] }
@@ -108,7 +108,7 @@ def sprich : Form Cell :=
     lexeme := Lexemes.speak_stem_present_2_3_sg
     cell := {}
     form := "sprich-"
-    segments := ["ʃ", "p", "r", "ɪ", "x"]
+    segments := ["ʃ", "p", "ʁ", "ɪ", "x"]
     source := [
       ⟨"jackendoff-audring-2020", "(43)"⟩
     ] }

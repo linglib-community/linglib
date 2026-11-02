@@ -150,7 +150,7 @@
       "ID": "jackendoffaudring2020_sprech",
       "Lexeme_ID": "speak_stem",
       "Form": "sprech-",
-      "Segments": ["ʃ", "p", "r", "ɛ", "x"],
+      "Segments": ["ʃ", "p", "ʁ", "ɛ", "x"],
       "Comment": "default stem of sprechen",
       "Source": ["jackendoff-audring-2020[(43)]"]
     },
@@ -158,7 +158,7 @@
       "ID": "jackendoffaudring2020_sprich",
       "Lexeme_ID": "speak_stem_present_2_3_sg",
       "Form": "sprich-",
-      "Segments": ["ʃ", "p", "r", "ɪ", "x"],
+      "Segments": ["ʃ", "p", "ʁ", "ɪ", "x"],
       "Comment": "special stem of the present 2nd and 3rd singular",
       "Source": ["jackendoff-audring-2020[(43)]"]
     },

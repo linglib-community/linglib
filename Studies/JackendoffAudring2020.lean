@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.JackendoffAudring2020
 public import Linglib.Data.Wordlist.JackendoffAudring2020
 public import Linglib.Fragments.English.Phonology
+public import Linglib.Fragments.German.Phonology
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Phonology.Prosody.Syllable
 public import Linglib.Logic.Nonmonotonic.Inheritance
@@ -12,7 +13,6 @@ public import Linglib.Morphology.Paradigm.Morphome
 public import Linglib.Core.Order.Flat
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.List.DropRight
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.DeriveFintype
 
@@ -61,10 +61,9 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
   well-foundedness claim.
 * The syllables, the *-ish* adjectives and the toponyms are the CLDF forms of
   `Data/Wordlist/JackendoffAudring2020.json`. An adjective or a toponym is read one morph per
-  slot by `CLDF.Wordlist.Form.morphSlots`. An English syllable is read through the English
+  slot by `CLDF.Wordlist.Form.morphSlots`. A syllable is read through its language's
   transcription and split at its nucleus, so the slot before the nucleus also holds the *s* of
-  *str-*, which core syllabification leaves outside the onset; the German stems, with no German
-  transcription yet, are read by position.
+  *str-* and the *ʃ* of *spr-*, which core syllabification leaves outside the onset.
 * The correspondence between a schema's variable coindices and the constant coindices of its
   instances, left unformalized in Section 4.13.2, is the subscripting of
   `ConstructionMorphology.Schema.InstantiatesAt`; a productive variable is one marked open
@@ -77,6 +76,7 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 * [aronoff-1994]
 * [spencer-2013]
 * [albright-hayes-2003]
+* [clements-1990]
 -/
 
 @[expose] public section
@@ -372,23 +372,20 @@ theorem ismist_pairs (b : B) (i : I) :
 
 /-! ### Ablaut as a link off the nucleus -/
 
-/-- An English form read through its segments as what precedes its nucleus, the nucleus and the
-coda, or as `⊥` throughout if a glyph is not English. -/
-def syllable {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List Segment) :=
-  (English.Phonology.transcribe f.segments).elim ⊥ fun w ↦
+/-- A form read through a transcription as what precedes its nucleus, the nucleus and the coda,
+or as `⊥` throughout if the transcription fails. -/
+def syllable (transcribe : List String → Option (List Segment)) {C : Type*}
+    (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List Segment) :=
+  (transcribe f.segments).elim ⊥ fun w ↦
     ![↑(Prosody.nucleusSplit w).1, ↑(Prosody.nucleusSplit w).2.1, ↑(Prosody.nucleusSplit w).2.2]
 
-/-- The English stems and pasts are in the English transcription, so `syllable` reads none of
-them as `⊥`. -/
+/-- The English and German stems and pasts are in their language's transcription, so `syllable`
+reads none of them as `⊥`. -/
 theorem transcribe_ne_none :
-    ∀ f ∈ [Wordlist.sing, Wordlist.sang, Wordlist.string, Wordlist.strung],
-      English.Phonology.transcribe f.segments ≠ none := by
+    (∀ f ∈ [Wordlist.sing, Wordlist.sang, Wordlist.string, Wordlist.strung],
+      English.Phonology.transcribe f.segments ≠ none) ∧
+      ∀ f ∈ [Wordlist.sprech, Wordlist.sprich], German.Phonology.transcribe f.segments ≠ none := by
   decide
-
-/-- A German stem read by position, its last glyph the coda, the one before it the nucleus and the
-rest before the nucleus, the shape of *sprech-* and *sprich-*. -/
-def germanSyllable {C : Type*} (f : CLDF.Wordlist.Form C) : Fin 3 → Flat (List String) :=
-  ![↑(f.segments.rdrop 2), ↑((f.segments.rtake 2).take 1), ↑(f.segments.rtake 1)]
 
 /-- The variables of the ablaut schemas are the onset and the coda, shared by stem and past,
 and the two nuclei. -/
@@ -483,11 +480,14 @@ theorem syllable_pairs {σ : Type*} (o v w c : List σ) :
 -- (24), (26), (43), (45)
 theorem ablaut_words :
     singSang.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim (syllable Wordlist.sing) (syllable Wordlist.sang)) ∧
+        (Sum.elim (syllable English.Phonology.transcribe Wordlist.sing)
+          (syllable English.Phonology.transcribe Wordlist.sang)) ∧
       stringStrung.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim (syllable Wordlist.string) (syllable Wordlist.strung)) ∧
+        (Sum.elim (syllable English.Phonology.transcribe Wordlist.string)
+          (syllable English.Phonology.transcribe Wordlist.strung)) ∧
       ablaut.InstantiatesAt (Sum.elim stemSub pastSub)
-        (Sum.elim (germanSyllable Wordlist.sprech) (germanSyllable Wordlist.sprich)) := by
+        (Sum.elim (syllable German.Phonology.transcribe Wordlist.sprech)
+          (syllable German.Phonology.transcribe Wordlist.sprich)) := by
   decide
 
 /-! ### The present-tense cells of (45) as a morphome -/
