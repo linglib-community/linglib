@@ -7,36 +7,46 @@ public import Linglib.Logic.PIP.Intensional
 public import Linglib.Data.Examples.AbneyKeshet2025
 
 /-!
-# Abney & Keshet (2025): Plural Intensional Presuppositional semantics
+# Abney and Keshet (2025): Plural Intensional Presuppositional predicate calculus (PIP)
 
-The paper gives PIP (`Logic/PIP/`) its formal definition and a compositional fragment
-recasting the textbook rules of interpretation as semantic operations. Indefinites, tense
-and the traces of determiners are restricted variables, a variable paired with an
-assertion; `FX` lifts a predicate to take one, conjoining its assertion (`lift`);
-quantifier raising inserts a summation operator labeled with the quantifier's restriction
-or reference set (`SA`); modals and negation store their prejacent in a label through
-intensional functional application (`IFA`). The fragment is `Tree` and `interp` over the
-typed metalanguage `Sem`, and the paper's worked trees (47), (56), (59), (66), (93), (99)
-and (121) are derived (`interp_aRedDogBarked`, …, `interp_mostOfThemUsedIt`), the last
-reading the preceding sentence's labels through `PA`; `intersubstitutable_aRedDogBarked`
-checks intersubstitutability with the paper's abbreviated form, and
-`not_intersubstitutable_bvar_var` and `not_intersubstitutable_conj_comm` that truth-equivalent
-formulas need not be intersubstitutable, through bracketing and through the order of
-conjuncts.
+The paper gives PIP a compositional fragment: indefinites, tense and determiner traces are
+restricted variables, quantifier raising inserts summations labeled with a quantifier's restriction
+and reference set, and modals and negation store their prejacent in a label. `interp` evaluates its
+trees; on scenario models at a world of evaluation, [a pronoun anaphoric to a negated indefinite
+is never true and felicitous](##judgment_139), [the bathroom disjunction presupposes at most one
+bathroom](##felicitous_bathroom143_iff), [an indefinite read as a quantifier gives the strong
+donkey reading](##realize_valuables116_sgIndef_iff), and [a presupposition is satisfied across
+quantificational subordination](##felicitous_discourse150a_iff).
 
-The applications are stated as PIP translations and their truth and felicity conditions
-proved on scenario models (`Scenario.model`) at a world of evaluation `w₀`: the paycheck
-pronoun's value follows its external variable (`realize_sigma_indefOwned`), (139) is
-felicitous only where its first sentence is false (`felicitous_shop139_iff`), the bathroom
-disjunction needs at most one bathroom (`felicitous_bathroom143_iff`), modal subordination
-quantifies over the accessible worlds where a wolf enters (`realize_wolfDiscourse_iff`), and
-a nuclear-scope presupposition is satisfied pointwise by the restriction within a sentence
-and across quantificational subordination (`felicitous_everyMonarchy_iff`,
-`felicitous_discourse150a_iff`). Variables of the formal system range over all pluralities,
-so where the paper reads a summation variable as a world that is a hypothesis on the
-assignment, and singular restricted variables carry `SG` as in the paper's (143); for
-negation as summation over worlds the two readings come apart, and the double negation of
-(138b) is false in any model with a second atom (`not_realize_shop138`).
+## Implementation notes
+
+* Variables range over all pluralities; where the paper reads the variable `w` as a world, the
+  assignment's value for it is a world by hypothesis.
+* Singular restricted variables carry `SG`, as in the paper's bathroom sentence.
+* The paper prints no translation of "Every monarchy cherishes its monarch" or of the European
+  monarchies discourse. Ours follow its quantified sentences, with "its monarch" and "their
+  monarchs" a singular summation over each monarchy's monarchs.
+* `IT` and `THEY` are not among the paper's defined constants; they presuppose `SG` and `PL`, as
+  its singular and plural summation pronouns do.
+* The `↑`-lift is defined on functions into formulas; on terms it is the identity, so `FX` on a
+  function into terms drops the restricted variable's assertion.
+* Label definitions nested in another's body are floated to the top of the discourse.
+
+## Errata
+
+* Summation abstracts over every set, and `w ∉ ψ` holds of every plurality that is not a world,
+  so the translation of "It's not like he doesn't own a car. It is just in the shop" is [false in
+  every model with an entity](##judgment_138a), though the paper judges it acceptable.
+* "Everyone who brought something valuable locked it up" gets the strong reading only with a
+  singular restriction: as printed, [a plurality of people who brought the same valuable and
+  locked it verifies it](##realize_valuables116_not_strong) where one of them left another
+  valuable unlocked.
+
+## TODO
+
+* The paper's summation pronoun `ΣuB` after the umbrella sentence, said to denote every umbrella
+  brought, leaves `x` free in `B`; its value depends on `x`, which the discourse does not fix.
+* Attitude reports and the conditional donkey sentence are not encoded.
 
 ## References
 
@@ -57,12 +67,12 @@ open PIP
 /-- The variables of the fragment: the world `w`, the modal-base world `u`, and the indices
 of the paper's trees. -/
 inductive Var
-  | w | u | d | b | c | x | z | o | g | p | s | s' | e | t | m | k
+  | w | u | d | b | c | x | z | o | g | p | s | s' | e | t | m | k | v
   deriving DecidableEq
 
 /-- Formula labels, as in the paper's trees and translations. -/
 inductive Lab
-  | G | P | B | D | S | M | U | W | E | O | X | Y | R | K | C
+  | G | P | B | D | S | M | U | W | E | O | X | Y | R | K | C | A | L | V
   deriving DecidableEq
 
 /-- Lexical relation symbols, by number of non-world arguments: the word senses of the
@@ -105,6 +115,10 @@ inductive Lex : ℕ → Type
   | monarchOf : Lex 2
   | cherish : Lex 2
   | fem : Lex 1
+  | bring : Lex 2
+  | person : Lex 1
+  | valuable : Lex 1
+  | lock : Lex 2
 
 /-- Relation symbols: the lexical ones, accessibility between worlds, and the proportional
 quantifier `most`. -/
@@ -127,7 +141,7 @@ def pred₂ (c : Lex 2) (x y : Tm) : Fm := .atom (.lex c) (.var .w) ![x, y]
 
 /-- A restricted variable: `[x] = x ∧ P(x)`, the common denotation of the indefinite
 article, tense and the trace of a determiner (50). -/
-def restricted (v : Var) (P : Tm → Fm) : Fm := .conj (.eq (.bvar v) (.var v)) (P (.var v))
+def restricted (i : Var) (P : Tm → Fm) : Fm := .conj (.eq (.bvar i) (.var i)) (P (.var i))
 
 /-- `β_w = Σu acc(w, u)`: the modal base. -/
 def modalBase : Tm := .sigma .u (.atom .acc (.var .w) ![.var .u])
@@ -170,17 +184,17 @@ def IFA (Z : Lab) (φ : Tm → Fm) (ψ : Fm) : Fm := .conj (φ (.sigma .w (.labe
 
 /-- Application to a restricted variable: the lifted predicate takes the index and the
 assertion. -/
-def FX {τ : Ty} (P : Sem (.fn .e τ)) (v : Var) (φ : Fm) : Sem τ := lift (P (.var v)) φ
+def FX {τ : Ty} (P : Sem (.fn .e τ)) (i : Var) (φ : Fm) : Sem τ := lift (P (.var i)) φ
 
 /-- Predicate modification. -/
 def PM (φ ψ : Tm → Fm) : Tm → Fm := fun a => .conj (φ a) (ψ a)
 
 /-- Predicate abstraction `λxφ`, reading through the labels `A` of the preceding
 discourse before substituting for `x` (123). -/
-def PA (A : List (Lab × Fm)) (v : Var) (φ : Fm) : Tm → Fm := fun t => Expr.subst v t (φ.expand A)
+def PA (A : List (Lab × Fm)) (i : Var) (φ : Fm) : Tm → Fm := fun t => Expr.subst i t (φ.expand A)
 
 /-- Summation with a label: `ΣxZ where Z ≡ φ`, the definition attached to the use. -/
-def SA (v : Var) (Z : Lab) (φ : Fm) : Tm := .sigma v (.conj (.label Z) (.labelDef Z φ))
+def SA (i : Var) (Z : Lab) (φ : Fm) : Tm := .sigma i (.conj (.label Z) (.labelDef Z φ))
 
 /-! ### The lexicon -/
 
@@ -191,11 +205,11 @@ inductive Word
   | role (c : Lex 2)
   | every
   | most
-  | a (v : Var)
-  | tense (v : Var)
-  | dTrace (v : Var)
-  | dpTrace (v : Var)
-  | core (v : Var)
+  | a (i : Var)
+  | tense (i : Var)
+  | dTrace (i : Var)
+  | dpTrace (i : Var)
+  | core (i : Var)
   | ldpTrace (Z : Lab)
   | she
   | it
@@ -234,11 +248,11 @@ def Word.sem : (α : Word) → Sem α.ty
   | .role c => fun a e => pred₂ c e a
   | .every => fun a b => .subset a b
   | .most => fun a b => .atom .most (.var .w) ![a, b]
-  | .a v => restricted v
-  | .tense v => restricted v
-  | .dTrace v => restricted v
-  | .dpTrace v => .var v
-  | .core v => .var v
+  | .a i => restricted i
+  | .tense i => restricted i
+  | .dTrace i => restricted i
+  | .dpTrace i => .var i
+  | .core i => .var i
   | .ldpTrace Z => .label Z
   | .she => fun z => .presup z (.conj (pred₁ .fem z) (.sg z))
   | .it => fun z => .presup z (.sg z)
@@ -258,10 +272,10 @@ inductive Tree : Ty → Type
   | fa {σ τ : Ty} (β : Tree (.fn σ τ)) (γ : Tree σ) : Tree τ
   | af {σ τ : Ty} (β : Tree σ) (γ : Tree (.fn σ τ)) : Tree τ
   | ifa (Z : Lab) (β : Tree (.fn .s .t)) (γ : Tree .t) : Tree .t
-  | fx {τ : Ty} (β : Tree (.fn .e τ)) (v : Var) (γ : Tree .t) : Tree τ
+  | fx {τ : Ty} (β : Tree (.fn .e τ)) (i : Var) (γ : Tree .t) : Tree τ
   | pm (β γ : Tree (.fn .e .t)) : Tree (.fn .e .t)
-  | pa (v : Var) (γ : Tree .t) : Tree (.fn .e .t)
-  | sa (v : Var) (Z : Lab) (γ : Tree .t) : Tree .e
+  | pa (i : Var) (γ : Tree .t) : Tree (.fn .e .t)
+  | sa (i : Var) (Z : Lab) (γ : Tree .t) : Tree .e
 
 /-- The meaning of a tree, relative to the label definitions `A` of the preceding
 discourse. -/
@@ -271,10 +285,10 @@ def interp (A : List (Lab × Fm)) : {τ : Ty} → Tree τ → Sem τ
   | _, .fa β γ => FA (interp A β) (interp A γ)
   | _, .af β γ => AF (interp A β) (interp A γ)
   | _, .ifa Z β γ => IFA Z (interp A β) (interp A γ)
-  | _, .fx β v γ => FX (interp A β) v (interp A γ)
+  | _, .fx β i γ => FX (interp A β) i (interp A γ)
   | _, .pm β γ => PM (interp A β) (interp A γ)
-  | _, .pa v γ => PA A v (interp A γ)
-  | _, .sa v Z γ => SA v Z (interp A γ)
+  | _, .pa i γ => PA A i (interp A γ)
+  | _, .sa i Z γ => SA i Z (interp A γ)
 
 /-! ### The paper's trees -/
 
@@ -284,7 +298,7 @@ def aRedDogBarked : Tree .t :=
       (.fa (.lex (.a .d)) (.pm (.lex (.pred .red)) (.lex (.pred .dog)))))
     .b (.fa (.lex (.tense .b)) (.nn (.lex (.pred .barkEvt))))
 
-/-- (91)–(92): the meaning of (47). -/
+-- (91), (92), (47)
 theorem interp_aRedDogBarked :
     interp [] aRedDogBarked =
       .conj (.conj (pred₂ .hasAgent (.var .b) (.var .d))
@@ -299,7 +313,7 @@ def form92 : Fm :=
 
 variable {W E : Type}
 
-/-- The meaning of (47) is intersubstitutable with its abbreviation (92). -/
+-- (47), (92)
 theorem intersubstitutable_aRedDogBarked :
     (interp [] aRedDogBarked).Intersubstitutable (Atom W E) form92 := by
   rw [interp_aRedDogBarked]
@@ -312,17 +326,16 @@ theorem intersubstitutable_aRedDogBarked :
       IsEmpty.forall_iff, Term.felicitous_var, Term.felicitous_bvar, and_self, implies_true]
 
 theorem realize_bvar_iff_var (M : Model Sym (Atom W E)) (g : Var → Set (Atom W E)) (c : Lex 1)
-    (v : Var) : (pred₁ c (.bvar v)).Realize M g ↔ (pred₁ c (.var v)).Realize M g := by
+    (i : Var) : (pred₁ c (.bvar i)).Realize M g ↔ (pred₁ c (.var i)).Realize M g := by
   simp only [pred₁, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
     Term.realize_var, Term.realize_bvar]
 
-/-- `DOG_w([d])` and `DOG_w(d)` are truth-equivalent but not intersubstitutable (fn. 7). -/
-theorem not_intersubstitutable_bvar_var (c : Lex 1) (v : Var) :
-    ¬ (pred₁ c (.bvar v)).Intersubstitutable (Atom W E) (pred₁ c (.var v)) :=
-  fun h => by simpa [pred₁, Expr.locals] using (h.2.1 v).1
+-- fn. 7
+theorem not_intersubstitutable_bvar_var (c : Lex 1) (i : Var) :
+    ¬ (pred₁ c (.bvar i)).Intersubstitutable (Atom W E) (pred₁ c (.var i)) :=
+  fun h => by simpa [pred₁, Expr.locals] using (h.2.1 i).1
 
-/-- A conjunction and its converse are truth-equivalent but need not be intersubstitutable,
-since the first conjunct may satisfy a presupposition of the second ((34), fn. 13). -/
+-- (34), fn. 13
 theorem not_intersubstitutable_conj_comm :
     ¬ ∀ φ ψ : Fm, Formula.Intersubstitutable (Atom W E) (φ.conj ψ) (ψ.conj φ) := fun h => by
   simpa using ((h (.neg .top) (.presup .top (.neg .top))).1 ⟨fun _ _ _ => False⟩ fun _ => ∅).2
@@ -400,8 +413,7 @@ def mostOfThemUsedIt : Tree .t :=
       (.fa (.lex (.tense .e)) (.pm (.lex (.pred .useEvt))
         (.fa (.lex (.role .hasPatient)) (.fa (.lex .it) (.lex (.core .u))))))))
 
-/-- (128): `MOST(Σs′M, Σs′U)` with `M` the definition of `B` under `s ↦ s′` (127) and
-`U ≡ M ∧ USED([e], s′, u)`. -/
+-- (128), (127)
 theorem interp_mostOfThemUsedIt :
     interp defs118 mostOfThemUsedIt =
       .atom .most (.var .w) ![
@@ -411,6 +423,18 @@ theorem interp_mostOfThemUsedIt :
         SA .s' .U (.conj (.conj (pred₂ .hasAgent (.var .e) (.var .s')) (.label .M))
           (restricted .e fun e => .conj (pred₁ .useEvt e)
             (pred₂ .hasPatient e (.presup (.var .u) (.sg (.var .u))))))] := rfl
+
+/-- (132a): "A wolf might enter", the modal applied to the modal base and, by `IFA`, to the
+worlds of its labeled prejacent. -/
+def aWolfMightEnter : Tree .t :=
+  .ifa .W (.fa (.lex (.might .W)) (.lex .base))
+    (.fx (.lex (.pred .enters)) .x (.fa (.lex (.a .x)) (.lex (.pred .wolf))))
+
+-- (133a), (82)
+theorem interp_aWolfMightEnter :
+    interp [] aWolfMightEnter =
+      .conj (Formula.some modalBase (.sigma .w (.label .W)))
+        (.labelDef .W (.conj (pred₁ .enters (.var .x)) (restricted .x (pred₁ .wolf)))) := rfl
 
 /-! ### Scenarios -/
 
@@ -466,76 +490,96 @@ theorem realize_modalBase (hw : h .w = world w₀) :
       Matrix.cons_val_zero, hgw, hw, world_inj, exists_and_left, exists_eq_left']
     rfl
 
+theorem realize_pred₁ (c : Lex 1) (t : Tm) :
+    (pred₁ c t).Realize S.model h ↔ ∃ w, h .w = world w ∧ (t.realize S.model h).Nonempty ∧
+      t.realize S.model h ⊆ Sum.inr '' {e | S.rel₁ c w e} := by
+  simp only [pred₁, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
+    Term.realize_var, Scenario.model, Model.intensional_apply₁, Scenario.rel, Matrix.cons_val_zero,
+    Set.subset_def, Set.mem_image, Set.mem_ofPred_eq]
+  exact exists_congr fun _ => and_congr_right fun _ => and_congr_right fun _ =>
+    forall₂_congr fun _ _ => exists_congr fun _ => by rw [and_comm, eq_comm]
+
+theorem realize_pred₂ (c : Lex 2) (s t : Tm) :
+    (pred₂ c s t).Realize S.model h ↔ ∃ w, h .w = world w ∧ (s.realize S.model h).Nonempty ∧
+      (t.realize S.model h).Nonempty ∧ ∀ a ∈ s.realize S.model h, ∀ b ∈ t.realize S.model h,
+        ∃ e e', a = .inr e ∧ b = .inr e' ∧ S.rel₂ c w e e' := by
+  simp only [pred₂, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
+    Term.realize_var, Scenario.model, Model.intensional_apply₂, Scenario.rel, Matrix.cons_val_zero,
+    Matrix.cons_val_one]
+
+private theorem exists_world_and {P Q : W → Prop} :
+    ((∃ w, h .w = world w ∧ P w) ∧ ∃ w, h .w = world w ∧ Q w) ↔
+      ∃ w, h .w = world w ∧ P w ∧ Q w :=
+  ⟨fun ⟨⟨w, hw, hp⟩, _, hw', hq⟩ => ⟨w, hw, hp, world_inj.1 (hw'.symm.trans hw) ▸ hq⟩,
+    fun ⟨w, hw, hp, hq⟩ => ⟨⟨w, hw, hp⟩, w, hw, hq⟩⟩
+
 /-! ### Singular indefinites -/
 
-/-- `SG(v) ∧ c_w([v])`: a singular indefinite `[v]` of kind `c`. -/
-def sgIndef (c : Lex 1) (v : Var) : Fm := .conj (.sg (.var v)) (pred₁ c (.bvar v))
+/-- `SG(i) ∧ c_w([i])`: a singular indefinite `[i]` of kind `c`. -/
+def sgIndef (c : Lex 1) (i : Var) : Fm := .conj (.sg (.var i)) (pred₁ c (.bvar i))
 
-/-- `SG(v) ∧ c_w([v]) ∧ c′_w(v)`: a singular indefinite with a further predicate. -/
-def sgIndefWith (c c' : Lex 1) (v : Var) : Fm := .conj (sgIndef c v) (pred₁ c' (.var v))
+/-- `SG(i) ∧ c_w([i]) ∧ c′_w(i)`: a singular indefinite with a further predicate. -/
+def sgIndefWith (c c' : Lex 1) (i : Var) : Fm := .conj (sgIndef c i) (pred₁ c' (.var i))
 
-theorem locals_sgIndef (c : Lex 1) (v : Var) : (sgIndef c v).locals = [v] := rfl
+theorem locals_sgIndef (c : Lex 1) (i : Var) : (sgIndef c i).locals = [i] := rfl
 
-theorem locals_sgIndefWith (c c' : Lex 1) (v : Var) : (sgIndefWith c c' v).locals = [v] := rfl
+theorem locals_sgIndefWith (c c' : Lex 1) (i : Var) : (sgIndefWith c c' i).locals = [i] := rfl
 
-theorem felicitous_sgIndef (c : Lex 1) (v : Var) : (sgIndef c v).Felicitous S.model h :=
+theorem felicitous_sgIndef (c : Lex 1) (i : Var) : (sgIndef c i).Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (of_decide_eq_true rfl) _
 
-theorem felicitous_sgIndefWith (c c' : Lex 1) (v : Var) :
-    (sgIndefWith c c' v).Felicitous S.model h :=
+theorem felicitous_sgIndefWith (c c' : Lex 1) (i : Var) :
+    (sgIndefWith c c' i).Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (of_decide_eq_true rfl) _
 
-theorem realize_sgIndef (c : Lex 1) (v : Var) :
-    Formula.Realize S.model h (sgIndef c v) ↔
-      ∃ w, h .w = world w ∧ ∃ e, h v = {Sum.inr e} ∧ S.rel₁ c w e := by
-  simp only [sgIndef, pred₁, Formula.realize_conj, Formula.realize_sg, Formula.realize_atom,
-    Matrix.comp_vecCons, Matrix.comp_vecEmpty, Term.realize_var, Term.realize_bvar, Scenario.model,
-    Model.intensional_apply₁, Scenario.rel, Matrix.cons_val_zero]
+theorem realize_sgIndef (c : Lex 1) (i : Var) :
+    Formula.Realize S.model h (sgIndef c i) ↔
+      ∃ w, h .w = world w ∧ ∃ e, h i = {Sum.inr e} ∧ S.rel₁ c w e := by
+  rw [sgIndef, Formula.realize_conj, Formula.realize_sg, realize_pred₁, Term.realize_var,
+    Term.realize_bvar]
   constructor
-  · rintro ⟨⟨a, hv⟩, w, hw, -, H⟩
-    obtain ⟨e, rfl, he⟩ := H a (by rw [hv]; exact Set.mem_singleton a)
-    exact ⟨w, hw, e, hv, he⟩
-  · rintro ⟨w, hw, e, hv, he⟩
-    exact ⟨⟨_, hv⟩, w, hw, ⟨_, by rw [hv]; exact Set.mem_singleton _⟩,
-      fun a ha => ⟨e, by rw [hv] at ha; exact ha, he⟩⟩
+  · rintro ⟨⟨a, ha⟩, w, hw, -, hs⟩
+    obtain ⟨e, he, rfl⟩ := hs (by rw [ha]; exact Set.mem_singleton _)
+    exact ⟨w, hw, e, ha, he⟩
+  · rintro ⟨w, hw, e, ha, he⟩
+    rw [ha]
+    exact ⟨⟨_, rfl⟩, w, hw, Set.singleton_nonempty _, Set.singleton_subset_iff.2 ⟨e, he, rfl⟩⟩
 
-theorem realize_sgIndefWith (c c' : Lex 1) (v : Var) :
-    Formula.Realize S.model h (sgIndefWith c c' v) ↔
-      ∃ w, h .w = world w ∧ ∃ e, h v = {Sum.inr e} ∧ S.rel₁ c w e ∧ S.rel₁ c' w e := by
-  rw [sgIndefWith, Formula.realize_conj, realize_sgIndef S h c v]
-  simp only [pred₁, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
-    Term.realize_var, Scenario.model, Model.intensional_apply₁, Scenario.rel, Matrix.cons_val_zero]
-  constructor
-  · rintro ⟨⟨w, hw, e, hv, he⟩, w', hw', -, H⟩
-    obtain rfl := world_inj.1 (hw.symm.trans hw')
-    obtain ⟨e', he', he''⟩ := H _ (by rw [hv]; exact Set.mem_singleton _)
-    cases Sum.inr.inj he'
-    exact ⟨w, hw, e, hv, he, he''⟩
-  · rintro ⟨w, hw, e, hv, he, he'⟩
-    exact ⟨⟨w, hw, e, hv, he⟩, w, hw, ⟨_, by rw [hv]; exact Set.mem_singleton _⟩,
-      fun a ha => ⟨e, by rw [hv] at ha; exact ha, he'⟩⟩
+theorem realize_sgIndefWith (c c' : Lex 1) (i : Var) :
+    Formula.Realize S.model h (sgIndefWith c c' i) ↔
+      ∃ w, h .w = world w ∧ ∃ e, h i = {Sum.inr e} ∧ S.rel₁ c w e ∧ S.rel₁ c' w e := by
+  rw [sgIndefWith, Formula.realize_conj, realize_sgIndef, realize_pred₁, exists_world_and,
+    Term.realize_var]
+  refine exists_congr fun w => and_congr_right fun _ => ⟨?_, ?_⟩
+  · rintro ⟨⟨e, ha, he⟩, -, hs⟩
+    obtain ⟨e', he', hee⟩ := hs (by rw [ha]; exact Set.mem_singleton _)
+    cases Sum.inr_injective hee
+    exact ⟨e, ha, he, he'⟩
+  · rintro ⟨e, ha, he, he'⟩
+    rw [ha]
+    exact ⟨⟨e, rfl, he⟩, Set.singleton_nonempty _, Set.singleton_subset_iff.2 ⟨e, he', rfl⟩⟩
 
-theorem realize_sgIndef_world (c : Lex 1) (v : Var) (hw : h .w = world w₀) :
-    Formula.Realize S.model h (sgIndef c v) ↔ ∃ e, h v = {Sum.inr e} ∧ S.rel₁ c w₀ e := by
-  rw [realize_sgIndef S h c v, hw]
+theorem realize_sgIndef_world (c : Lex 1) (i : Var) (hw : h .w = world w₀) :
+    Formula.Realize S.model h (sgIndef c i) ↔ ∃ e, h i = {Sum.inr e} ∧ S.rel₁ c w₀ e := by
+  rw [realize_sgIndef S h c i, hw]
   simp only [world_inj, exists_eq_left']
 
-theorem realize_sgIndefWith_world (c c' : Lex 1) (v : Var) (hw : h .w = world w₀) :
-    Formula.Realize S.model h (sgIndefWith c c' v) ↔
-      ∃ e, h v = {Sum.inr e} ∧ S.rel₁ c w₀ e ∧ S.rel₁ c' w₀ e := by
-  rw [realize_sgIndefWith S h c c' v, hw]
+theorem realize_sgIndefWith_world (c c' : Lex 1) (i : Var) (hw : h .w = world w₀) :
+    Formula.Realize S.model h (sgIndefWith c c' i) ↔
+      ∃ e, h i = {Sum.inr e} ∧ S.rel₁ c w₀ e ∧ S.rel₁ c' w₀ e := by
+  rw [realize_sgIndefWith S h c c' i, hw]
   simp only [world_inj, exists_eq_left']
 
-theorem realize_sigma_sgIndef (c : Lex 1) {v : Var} (hv : v ≠ .w) (hw : h .w = world w₀) :
-    Term.realize S.model h (.sigma v (sgIndef c v)) = Sum.inr '' {e | S.rel₁ c w₀ e} :=
-  Term.realize_sigma_eq_image S.model h fun g' hg => realize_sgIndef_world S g' c v (by
-    rw [hg ⟨fun hm => hv (List.mem_singleton.1 (locals_sgIndef c v ▸ hm)).symm, hv.symm⟩, hw])
+theorem realize_sigma_sgIndef (c : Lex 1) {i : Var} (hi : i ≠ .w) (hw : h .w = world w₀) :
+    Term.realize S.model h (.sigma i (sgIndef c i)) = Sum.inr '' {e | S.rel₁ c w₀ e} :=
+  Term.realize_sigma_eq_image S.model h fun g' hg => realize_sgIndef_world S g' c i (by
+    rw [hg ⟨fun hm => hi (List.mem_singleton.1 (locals_sgIndef c i ▸ hm)).symm, hi.symm⟩, hw])
 
-theorem realize_sigma_sgIndefWith (c c' : Lex 1) {v : Var} (hv : v ≠ .w) (hw : h .w = world w₀) :
-    Term.realize S.model h (.sigma v (sgIndefWith c c' v)) =
+theorem realize_sigma_sgIndefWith (c c' : Lex 1) {i : Var} (hi : i ≠ .w) (hw : h .w = world w₀) :
+    Term.realize S.model h (.sigma i (sgIndefWith c c' i)) =
       Sum.inr '' {e | S.rel₁ c w₀ e ∧ S.rel₁ c' w₀ e} :=
-  Term.realize_sigma_eq_image S.model h fun g' hg => realize_sgIndefWith_world S g' c c' v (by
-    rw [hg ⟨fun hm => hv (List.mem_singleton.1 (locals_sgIndefWith c c' v ▸ hm)).symm, hv.symm⟩,
+  Term.realize_sigma_eq_image S.model h fun g' hg => realize_sgIndefWith_world S g' c c' i (by
+    rw [hg ⟨fun hm => hi (List.mem_singleton.1 (locals_sgIndefWith c c' i ▸ hm)).symm, hi.symm⟩,
       hw])
 
 /-! ### Paycheck pronouns and negation -/
@@ -553,35 +597,42 @@ theorem locals_indefOwned : (indefOwned c₁ c₂ y).locals = [y] := rfl
 theorem felicitous_indefOwned : (indefOwned c₁ c₂ y).Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (of_decide_eq_true rfl) _
 
-theorem realize_indefOwned (hx : h .x = {Sum.inr x₀}) :
+theorem realize_indefOwned :
+    (indefOwned c₁ c₂ y).Realize S.model h ↔ ∃ w, h .w = world w ∧ (h .x).Nonempty ∧
+      (h y).Nonempty ∧ ∀ a ∈ h .x, ∀ b ∈ h y,
+        ∃ e e', a = .inr e ∧ b = .inr e' ∧ S.rel₁ c₁ w e' ∧ S.rel₂ c₂ w e e' := by
+  rw [indefOwned, Formula.realize_conj, realize_pred₁, realize_pred₂, exists_world_and]
+  simp only [Term.realize_bvar, Term.realize_var]
+  refine exists_congr fun w => and_congr_right fun _ => ⟨?_, ?_⟩
+  · rintro ⟨⟨-, hs⟩, hx, hy, H⟩
+    refine ⟨hx, hy, fun a ha b hb => ?_⟩
+    obtain ⟨e, e', rfl, rfl, hr⟩ := H a ha b hb
+    obtain ⟨_, he, hee⟩ := hs hb
+    exact ⟨e, e', rfl, rfl, Sum.inr_injective hee ▸ he, hr⟩
+  · rintro ⟨⟨a, ha⟩, hy, H⟩
+    refine ⟨⟨hy, fun b hb => ?_⟩, ⟨a, ha⟩, hy, fun a ha b hb => ?_⟩
+    · obtain ⟨e, e', -, rfl, he, -⟩ := H a ha b hb
+      exact ⟨e', he, rfl⟩
+    · obtain ⟨e, e', h₁, h₂, -, hr⟩ := H a ha b hb
+      exact ⟨e, e', h₁, h₂, hr⟩
+
+private theorem realize_indefOwned_of_singleton (hx : h .x = {Sum.inr x₀}) :
     (indefOwned c₁ c₂ y).Realize S.model h ↔
       ∃ w, h .w = world w ∧ (h y).Nonempty ∧
         h y ⊆ Sum.inr '' {e | S.rel₁ c₁ w e ∧ S.rel₂ c₂ w x₀ e} := by
-  simp only [indefOwned, pred₁, pred₂, Formula.realize_conj, Formula.realize_atom,
-    Matrix.comp_vecCons, Matrix.comp_vecEmpty, Term.realize_var, Term.realize_bvar, Scenario.model,
-    Model.intensional_apply₁, Model.intensional_apply₂, Scenario.rel, Matrix.cons_val_zero,
-    Matrix.cons_val_one, hx, Set.mem_singleton_iff, forall_eq, Set.singleton_nonempty, true_and]
-  constructor
-  · rintro ⟨⟨w, hw, hne, h₁⟩, w', hw', -, h₂⟩
-    obtain rfl := world_inj.1 (hw.symm.trans hw')
-    refine ⟨w, hw, hne, fun a ha => ?_⟩
-    obtain ⟨e, rfl, he⟩ := h₁ a ha
-    obtain ⟨e₁, e₂, h₁', h₂', he₂⟩ := h₂ _ ha
-    cases Sum.inr.inj h₁'
-    cases Sum.inr.inj h₂'
-    exact ⟨e, ⟨he, he₂⟩, rfl⟩
-  · rintro ⟨w, hw, hne, H⟩
-    exact ⟨⟨w, hw, hne, fun a ha => (H ha).imp fun e he => ⟨he.2.symm, he.1.1⟩⟩, w, hw, hne,
-      fun a ha => (H ha).elim fun e he => ⟨x₀, e, rfl, he.2.symm, he.1.2⟩⟩
+  simp only [realize_indefOwned, hx, Set.singleton_nonempty, true_and, Set.mem_singleton_iff,
+    forall_eq, Sum.inr.injEq, Set.subset_def, Set.mem_image, Set.mem_ofPred_eq]
+  exact exists_congr fun _ => and_congr_right fun _ => and_congr_right fun _ =>
+    forall₂_congr fun _ _ => ⟨fun ⟨_, e, rfl, h₁, h₂⟩ => ⟨e, h₂, h₁.symm⟩,
+      fun ⟨e, h₂, h₁⟩ => ⟨x₀, e, rfl, h₁.symm, h₂⟩⟩
 
-/-- The summation over the indefinite takes its value from the external variable: the
-paycheck pronoun `ΣdD` denotes the dioramas made by whatever `x` is (112). -/
+-- (112)
 theorem realize_sigma_indefOwned (hw : h .w = world w₀) (hx : h .x = {Sum.inr x₀})
     (hyw : y ≠ .w) (hyx : y ≠ .x) :
     Term.realize S.model h (.sigma y (indefOwned c₁ c₂ y)) =
       Sum.inr '' {e | S.rel₁ c₁ w₀ e ∧ S.rel₂ c₂ w₀ x₀ e} :=
   Term.realize_sigma_eq_of_distributive S.model h fun g' hg => by
-    rw [realize_indefOwned S g' c₁ c₂
+    rw [realize_indefOwned_of_singleton S g' c₁ c₂
       ((hg ⟨fun hm => hyx (List.mem_singleton.1 hm).symm, hyx.symm⟩).trans hx),
       hg ⟨fun hm => hyw (List.mem_singleton.1 hm).symm, hyw.symm⟩, hw]
     simp only [world_inj, exists_eq_left']
@@ -590,7 +641,7 @@ theorem realize_sigmaW_indefOwned (hx : h .x = {Sum.inr x₀}) (hyw : y ≠ .w) 
     Term.realize S.model h (.sigma .w (indefOwned c₁ c₂ y)) =
       Sum.inl '' {w | ∃ e, S.rel₁ c₁ w e ∧ S.rel₂ c₂ w x₀ e} := by
   rw [Term.realize_sigma_world_eq_of_distributive S.model h hyw
-    (fun g' hg => realize_indefOwned S g' c₁ c₂
+    (fun g' hg => realize_indefOwned_of_singleton S g' c₁ c₂
       ((hg ⟨fun hm => hyx (List.mem_singleton.1 hm).symm, by decide⟩).trans hx))
     (List.mem_singleton_self y)]
   simp only [Set.image_nonempty]
@@ -632,7 +683,7 @@ theorem expandSelf_shop138 :
           (pred₁ .inShop (Term.sgPronoun .c ownCar)))
         (.labelDef .O ownCar) := rfl
 
-/-- (139) is felicitous at `w₀` iff he owns a car there — iff its first sentence is false. -/
+-- (139)
 theorem felicitous_shop139_iff (hw : h .w = world w₀) (hx : h .x = {Sum.inr x₀}) :
     shop139.expandSelf.Felicitous S.model h ↔ ∃ c, S.rel₁ .car w₀ c ∧ S.rel₂ .owns w₀ x₀ c := by
   rw [expandSelf_shop139]
@@ -646,7 +697,7 @@ theorem felicitous_shop139_iff (hw : h .w = world w₀) (hx : h .x = {Sum.inr x�
     and_true]
   exact ⟨fun H => not_not.1 fun hn => hn (H hn).exists, fun H hn => absurd H hn⟩
 
-/-- The double negation of (138b) is false at any world once the model has a second atom. -/
+-- (138b)
 theorem not_realize_shop138 (hw : h .w = world w₀) (a₁ : Atom W E) (ha : a₁ ≠ Sum.inl w₀) :
     ¬ shop138.expandSelf.Realize S.model h := by
   rw [expandSelf_shop138]
@@ -659,6 +710,26 @@ theorem not_realize_shop138 (hw : h .w = world w₀) (a₁ : Atom W E) (ha : a�
   have hd' : ({Sum.inl w₀, a₁} : Set (Atom W E)) = {a} := hd
   exact ha ((Set.mem_singleton_iff.1 (hd' ▸ Set.mem_insert_of_mem _ (Set.mem_singleton a₁))).trans
     (Set.mem_singleton_iff.1 (hd' ▸ Set.mem_insert _ _)).symm)
+
+/-- (139) is never both true and felicitous, as its `#` records: the first sentence denies the
+car whose uniqueness the pronoun presupposes. -/
+theorem judgment_139 (hw : h .w = world w₀) (hx : h .x = {Sum.inr x₀}) :
+    shop139.expandSelf.Realize S.model h ∧ shop139.expandSelf.Felicitous S.model h ↔
+      Examples.ex_139.judgment = .acceptable := by
+  refine iff_of_false (fun ⟨hr, hf⟩ => ?_) (by decide)
+  rw [felicitous_shop139_iff S h hw hx] at hf
+  rw [expandSelf_shop139] at hr
+  refine hr.1.1 ((realize_mem_world S h hw _).2 ?_)
+  rw [ownCar, realize_sigmaW_indefOwned S h _ _ hx (show Var.c ≠ Var.w by decide)
+    (show Var.c ≠ Var.x by decide)]
+  exact ⟨w₀, hf, rfl⟩
+
+/-- (138a) is acceptable, but its translation (138b) is false in every model with an entity:
+`w ∉ ΣwO` is true of every plurality that is not a world, so `w` belongs to the summation over
+it. -/
+theorem judgment_138a (hw : h .w = world w₀) (e : E) :
+    Examples.ex_138a.judgment = .acceptable ∧ ¬ shop138.expandSelf.Realize S.model h :=
+  ⟨rfl, not_realize_shop138 S h hw (Sum.inr e) Sum.inr_ne_inl⟩
 
 /-! ### Negation and disjunction -/
 
@@ -714,9 +785,8 @@ theorem felicitous_bathroom143_iff (hw : h .w = world w₀) :
 /-- `W ≡ WOLF_w([x]) ∧ ENTERS_w(x)` (133a). -/
 def wolfW : Fm := .conj (pred₁ .wolf (.bvar .x)) (pred₁ .enters (.var .x))
 
-/-- `E ≡ W ∧ TIM_w([t]) ∧ EATS_w(x, t)` (133b). -/
-def wolfE : Fm :=
-  .conj (.label .W) (.conj (pred₁ .tim (.bvar .t)) (pred₂ .eats (.var .x) (.var .t)))
+/-- `E ≡ W ∧ TIM_w([t]) ∧ EATS_w(x, t)` (133b): Tasty Tim an indefinite related to the wolf. -/
+def wolfE : Fm := .conj (.label .W) (indefOwned .tim .eats .t)
 
 /-- (133): "A wolf might enter. It would eat Tasty Tim first.", `MIGHT(β_w, ΣwW) ∧
 MUST(β_w, ΣwW, ΣwE)` (129) with the second modal's restriction the first's nuclear scope. -/
@@ -726,7 +796,7 @@ def wolfDiscourse : Fm :=
     (.conj (.labelDef .W wolfW) (.labelDef .E wolfE))
 
 /-- `E` with `W` expanded. -/
-def wolfE' : Fm := .conj wolfW (.conj (pred₁ .tim (.bvar .t)) (pred₂ .eats (.var .x) (.var .t)))
+def wolfE' : Fm := .conj wolfW (indefOwned .tim .eats .t)
 
 theorem expandSelf_wolfDiscourse :
     wolfDiscourse.expandSelf =
@@ -740,39 +810,19 @@ theorem realize_wolfW :
     wolfW.Realize S.model h ↔
       ∃ w, h .w = world w ∧ (h .x).Nonempty ∧
         h .x ⊆ Sum.inr '' {e | S.rel₁ .wolf w e ∧ S.rel₁ .enters w e} := by
-  simp only [wolfW, pred₁, Formula.realize_conj, Formula.realize_atom, Matrix.comp_vecCons,
-    Matrix.comp_vecEmpty, Term.realize_var, Term.realize_bvar, Scenario.model,
-    Model.intensional_apply₁, Scenario.rel, Matrix.cons_val_zero]
-  constructor
-  · rintro ⟨⟨w, hw, hne, h₁⟩, w', hw', -, h₂⟩
-    obtain rfl := world_inj.1 (hw.symm.trans hw')
-    refine ⟨w, hw, hne, fun a ha => ?_⟩
-    obtain ⟨e, rfl, he⟩ := h₁ a ha
-    obtain ⟨e', he', he''⟩ := h₂ _ ha
-    cases Sum.inr.inj he'
-    exact ⟨e, ⟨he, he''⟩, rfl⟩
-  · rintro ⟨w, hw, hne, H⟩
-    exact ⟨⟨w, hw, hne, fun a ha => (H ha).imp fun e he => ⟨he.2.symm, he.1.1⟩⟩, w, hw, hne,
-      fun a ha => (H ha).imp fun e he => ⟨he.2.symm, he.1.2⟩⟩
+  rw [wolfW, Formula.realize_conj, realize_pred₁, realize_pred₁, exists_world_and]
+  simp only [Term.realize_bvar, Term.realize_var, Set.ofPred_and,
+    Set.image_inter Sum.inr_injective, Set.subset_inter_iff]
+  exact exists_congr fun _ => and_congr_right fun _ =>
+    ⟨fun ⟨⟨hne, h₁⟩, _, h₂⟩ => ⟨hne, h₁, h₂⟩, fun ⟨hne, h₁, h₂⟩ => ⟨⟨hne, h₁⟩, hne, h₂⟩⟩
 
 theorem realize_wolfE' :
-    wolfE'.Realize S.model h ↔
-      ∃ w, h .w = world w ∧ (h .x).Nonempty ∧ (h .t).Nonempty ∧
-        h .x ⊆ Sum.inr '' {e | S.rel₁ .wolf w e ∧ S.rel₁ .enters w e} ∧
-        (∀ b ∈ h .t, ∃ t, b = Sum.inr t ∧ S.rel₁ .tim w t) ∧
-        ∀ a ∈ h .x, ∀ b ∈ h .t, ∃ e t, a = Sum.inr e ∧ b = Sum.inr t ∧ S.rel₂ .eats w e t := by
-  rw [wolfE', Formula.realize_conj, realize_wolfW]
-  simp only [pred₁, pred₂, Formula.realize_conj, Formula.realize_atom, Matrix.comp_vecCons,
-    Matrix.comp_vecEmpty, Term.realize_var, Term.realize_bvar, Scenario.model,
-    Model.intensional_apply₁, Model.intensional_apply₂, Scenario.rel, Matrix.cons_val_zero,
-    Matrix.cons_val_one]
-  constructor
-  · rintro ⟨⟨w, hw, hne, H⟩, ⟨w₁, hw₁, hne', H₁⟩, w₂, hw₂, -, -, H₂⟩
-    obtain rfl := world_inj.1 (hw.symm.trans hw₁)
-    obtain rfl := world_inj.1 (hw.symm.trans hw₂)
-    exact ⟨w, hw, hne, hne', H, H₁, H₂⟩
-  · rintro ⟨w, hw, hne, hne', H, H₁, H₂⟩
-    exact ⟨⟨w, hw, hne, H⟩, ⟨w, hw, hne', H₁⟩, w, hw, hne, hne', H₂⟩
+    wolfE'.Realize S.model h ↔ ∃ w, h .w = world w ∧ (h .x).Nonempty ∧ (h .t).Nonempty ∧
+      h .x ⊆ Sum.inr '' {e | S.rel₁ .wolf w e ∧ S.rel₁ .enters w e} ∧ ∀ a ∈ h .x, ∀ b ∈ h .t,
+        ∃ e t, a = .inr e ∧ b = .inr t ∧ S.rel₁ .tim w t ∧ S.rel₂ .eats w e t := by
+  rw [wolfE', Formula.realize_conj, realize_wolfW, realize_indefOwned, exists_world_and]
+  exact exists_congr fun _ => and_congr_right fun _ =>
+    ⟨fun ⟨⟨hx, hs⟩, _, ht, H⟩ => ⟨hx, ht, hs, H⟩, fun ⟨hx, ht, hs, H⟩ => ⟨⟨hx, hs⟩, hx, ht, H⟩⟩
 
 theorem realize_sigmaW_wolfW :
     Term.realize S.model h (.sigma .w wolfW) =
@@ -790,32 +840,27 @@ theorem realize_sigmaW_wolfE' :
   rw [Term.mem_realize_sigma, Set.mem_image]
   simp only [realize_wolfE']
   constructor
-  · rintro ⟨g', -, ha, w, hw', ⟨b, hb⟩, ⟨b', hb'⟩, H, H₁, H₂⟩
+  · rintro ⟨g', -, ha, w, hw', ⟨b, hb⟩, ⟨b', hb'⟩, H, H₂⟩
     rw [hw'] at ha
     obtain ⟨e, ⟨h₁, h₂⟩, rfl⟩ := H hb
-    obtain ⟨t, rfl, ht⟩ := H₁ b' hb'
-    obtain ⟨e', t', he', ht', het⟩ := H₂ _ hb _ hb'
+    obtain ⟨e', t, he', rfl, ht, het⟩ := H₂ _ hb _ hb'
     cases Sum.inr.inj he'
-    cases Sum.inr.inj ht'
     exact ⟨w, ⟨e, t, ⟨h₁, h₂⟩, ht, het⟩, (Set.mem_singleton_iff.1 ha).symm⟩
   · rintro ⟨w, ⟨e, t, ⟨h₁, h₂⟩, ht, het⟩, rfl⟩
     refine ⟨Function.update (Function.update (Function.update h .w (world w)) .x {Sum.inr e})
       .t {Sum.inr t}, fun y hy => ?_, by simp [world], w, by simp, by simp, by simp,
-      fun a ha => ?_, fun b hb => ?_, fun a ha b hb => ?_⟩
+      fun a ha => ?_, fun a ha b hb => ?_⟩
     · simp only [Set.mem_ofPred_eq, locals_wolfE', List.mem_cons, List.not_mem_nil, or_false,
         not_or] at hy
       rw [Function.update_of_ne hy.1.2, Function.update_of_ne hy.1.1, Function.update_of_ne hy.2]
     · simp only [Function.update_of_ne (show Var.x ≠ Var.t by decide), Function.update_self,
         Set.mem_singleton_iff] at ha
       exact ⟨e, ⟨h₁, h₂⟩, ha.symm⟩
-    · simp only [Function.update_self, Set.mem_singleton_iff] at hb
-      exact ⟨t, hb, ht⟩
     · simp only [Function.update_of_ne (show Var.x ≠ Var.t by decide), Function.update_self,
         Set.mem_singleton_iff] at ha hb
-      exact ⟨e, t, ha, hb, het⟩
+      exact ⟨e, t, ha, hb, ht, het⟩
 
-/-- (133) at `w₀`: some accessible world has a wolf entering, and in every accessible
-world where a wolf enters, a wolf that enters eats Tim. -/
+-- (133)
 theorem realize_wolfDiscourse_iff (hw : h .w = world w₀) :
     wolfDiscourse.expandSelf.Realize S.model h ↔
       (∃ u e, S.acc w₀ u ∧ S.rel₁ .wolf u e ∧ S.rel₁ .enters u e) ∧
@@ -829,6 +874,250 @@ theorem realize_wolfDiscourse_iff (hw : h .w = world w₀) :
     Set.image_nonempty, Set.image_subset_image_iff Sum.inl_injective]
   exact and_congr ⟨fun ⟨u, hu, e, he⟩ => ⟨u, e, hu, he⟩, fun ⟨u, e, hu, he⟩ => ⟨u, hu, e, he⟩⟩
     ⟨fun H u hu he => H ⟨hu, he⟩, fun H u ⟨hu, he⟩ => H u hu he⟩
+
+/-! ### Donkey pronouns -/
+
+private theorem forall_mem_and_forall_mem {X Y : Set (Atom W E)} {R Q : E → E → Prop} :
+    ((∀ a ∈ X, ∀ b ∈ Y, ∃ e e', a = .inr e ∧ b = .inr e' ∧ R e e') ∧
+      ∀ a ∈ X, ∀ b ∈ Y, ∃ e e', a = .inr e ∧ b = .inr e' ∧ Q e e') ↔
+    ∀ a ∈ X, ∀ b ∈ Y, ∃ e e', a = .inr e ∧ b = .inr e' ∧ R e e' ∧ Q e e' := by
+  refine ⟨fun ⟨H₁, H₂⟩ a ha b hb => ?_, fun H => ⟨fun a ha b hb => ?_, fun a ha b hb => ?_⟩⟩
+  · obtain ⟨e, e', rfl, rfl, hR⟩ := H₁ a ha b hb
+    obtain ⟨_, _, h₁, h₂, hQ⟩ := H₂ _ ha _ hb
+    rw [← Sum.inr_injective h₁, ← Sum.inr_injective h₂] at hQ
+    exact ⟨e, e', rfl, rfl, hR, hQ⟩
+  · obtain ⟨e, e', h₁, h₂, hR, -⟩ := H a ha b hb
+    exact ⟨e, e', h₁, h₂, hR⟩
+  · obtain ⟨e, e', h₁, h₂, -, hQ⟩ := H a ha b hb
+    exact ⟨e, e', h₁, h₂, hQ⟩
+
+theorem realize_sigmaX_eq {φ : Fm} {R : E → E → Prop} (hw : h .w = world w₀)
+    (hy : y ∈ φ.locals) (hyx : y ≠ .x) (hwl : Var.w ∉ φ.locals)
+    (hφ : ∀ g : Var → Set (Atom W E), g .w = world w₀ → (φ.Realize S.model g ↔
+      (g .x).Nonempty ∧ (g y).Nonempty ∧
+        ∀ a ∈ g .x, ∀ b ∈ g y, ∃ e e', a = .inr e ∧ b = .inr e' ∧ R e e')) :
+    Term.realize S.model h (.sigma .x φ) = Sum.inr '' {e | ∃ e', R e e'} := by
+  rw [Term.realize_sigma_eq_of_mem_locals S.model h hyx (C := fun X Y => X.Nonempty ∧
+    Y.Nonempty ∧ ∀ a ∈ X, ∀ b ∈ Y, ∃ e e', a = .inr e ∧ b = .inr e' ∧ R e e')
+    (fun g' hg => hφ g' ((hg ⟨hwl, by decide⟩).trans hw)) hy]
+  ext a
+  simp only [Set.mem_sUnion, Set.mem_ofPred_eq, Set.mem_image]
+  constructor
+  · rintro ⟨X, ⟨Y, -, ⟨b, hb⟩, H⟩, ha⟩
+    obtain ⟨e, e', rfl, -, hR⟩ := H a ha b hb
+    exact ⟨e, ⟨e', hR⟩, rfl⟩
+  · rintro ⟨e, ⟨e', hR⟩, rfl⟩
+    refine ⟨_, ⟨{Sum.inr e'}, Set.singleton_nonempty (Sum.inr e), Set.singleton_nonempty _, ?_⟩,
+      rfl⟩
+    simp only [Set.mem_singleton_iff, forall_eq]
+    exact ⟨e, e', rfl, rfl, hR⟩
+
+/-- `O ≡ UMBRELLA_w([u]) ∧ OWNS_w(x, u)` (113). -/
+def umbrellaO : Fm := indefOwned .umbrella .owns .u
+
+/-- `O ∧ BROUGHT_w(x, u)`: the body of `B` (113). -/
+def umbrellaB : Fm := .conj umbrellaO (pred₂ .bring (.var .x) (.var .u))
+
+/-- (113): "Everyone who owns an umbrella brought it to school today", `EVERY(ΣxO, ΣxB)` with
+`B ≡ O ∧ BROUGHT_w(x, u)`. -/
+def umbrella113 : Fm :=
+  .conj (.subset (.sigma .x (.label .O)) (.sigma .x (.label .B)))
+    (.conj (.labelDef .O umbrellaO)
+      (.labelDef .B (.conj (.label .O) (pred₂ .bring (.var .x) (.var .u)))))
+
+theorem expandSelf_umbrella113 :
+    umbrella113.expandSelf =
+      .conj (.subset (.sigma .x umbrellaO) (.sigma .x umbrellaB))
+        (.conj (.labelDef .O umbrellaO) (.labelDef .B umbrellaB)) := rfl
+
+theorem realize_sigmaX_umbrellaO (hw : h .w = world w₀) :
+    Term.realize S.model h (.sigma .x umbrellaO) =
+      Sum.inr '' {e | ∃ u, S.rel₁ .umbrella w₀ u ∧ S.rel₂ .owns w₀ e u} :=
+  realize_sigmaX_eq S h (y := .u) hw (by decide) (by decide) (by decide) fun g hg => by
+    rw [umbrellaO, realize_indefOwned, hg]
+    simp only [world_inj, exists_eq_left']
+
+theorem realize_sigmaX_umbrellaB (hw : h .w = world w₀) :
+    Term.realize S.model h (.sigma .x umbrellaB) =
+      Sum.inr '' {e | ∃ u, (S.rel₁ .umbrella w₀ u ∧ S.rel₂ .owns w₀ e u) ∧
+        S.rel₂ .bring w₀ e u} :=
+  realize_sigmaX_eq S h (y := .u) hw (by decide) (by decide) (by decide) fun g hg => by
+    rw [umbrellaB, Formula.realize_conj, umbrellaO, realize_indefOwned, realize_pred₂,
+      exists_world_and, hg]
+    simp only [world_inj, exists_eq_left', Term.realize_var, ← forall_mem_and_forall_mem]
+    exact ⟨fun ⟨⟨hx, hu, H₁⟩, _, _, H₂⟩ => ⟨hx, hu, H₁, H₂⟩,
+      fun ⟨hx, hu, H₁, H₂⟩ => ⟨⟨hx, hu, H₁⟩, hx, hu, H₂⟩⟩
+
+-- (113)
+theorem realize_umbrella113_iff (hw : h .w = world w₀) :
+    umbrella113.expandSelf.Realize S.model h ↔
+      ∀ e, (∃ u, S.rel₁ .umbrella w₀ u ∧ S.rel₂ .owns w₀ e u) →
+        ∃ u, (S.rel₁ .umbrella w₀ u ∧ S.rel₂ .owns w₀ e u) ∧ S.rel₂ .bring w₀ e u := by
+  rw [expandSelf_umbrella113]
+  simp only [Formula.realize_conj, Formula.realize_subset, Formula.realize_labelDef, and_true,
+    realize_sigmaX_umbrellaO S h hw, realize_sigmaX_umbrellaB S h hw,
+    Set.image_subset_image_iff Sum.inr_injective, Set.ofPred_subset_ofPred]
+
+theorem realize_sigma_pred₁ (c : Lex 1) {i : Var} (hi : i ≠ .w) (hw : h .w = world w₀) :
+    Term.realize S.model h (.sigma i (pred₁ c (.bvar i))) = Sum.inr '' {e | S.rel₁ c w₀ e} :=
+  Term.realize_sigma_eq_of_distributive S.model h fun g' hg => by
+    rw [realize_pred₁, hg ⟨fun hm => hi (List.mem_singleton.1 hm).symm, hi.symm⟩, hw]
+    simp only [world_inj, exists_eq_left', Term.realize_bvar]
+
+/-- `V ≡ VALUABLES_w([v])` (116). -/
+def valuableV : Fm := pred₁ .valuable (.bvar .v)
+
+/-- `B ≡ V ∧ BROUGHT_w(x, v)` (116): the valuables that `x` brought. -/
+def broughtB : Fm := indefOwned .valuable .bring .v
+
+/-- The restriction `A ≡ ρ ∧ SOME(ΣvV, ΣvB)` of (116), for a description `ρ` of `x`. -/
+def valuablesA (ρ : Fm) : Fm := .conj ρ (Formula.some (.sigma .v valuableV) (.sigma .v broughtB))
+
+/-- The reference set `L ≡ A ∧ LOCKED_w(x, ΣvB)` of (116). -/
+def valuablesL (ρ : Fm) : Fm := .conj (valuablesA ρ) (pred₂ .lock (.var .x) (.sigma .v broughtB))
+
+/-- (116): "Everyone who brought something valuable locked it up", `EVERY(ΣxA, ΣxL)` with the
+indefinite a quantifier `SOME(ΣvV, ΣvB)` and `it` the summation pronoun `ΣvB`, for a
+description `ρ` of `x`: `PERSON_w([x])` as printed. -/
+def valuables116 (ρ : Fm) : Fm :=
+  .conj (.subset (.sigma .x (.label .A)) (.sigma .x (.label .L)))
+    (.conj (.labelDef .V valuableV)
+      (.conj (.labelDef .B (.conj (.label .V) (pred₂ .bring (.var .x) (.var .v))))
+        (.conj (.labelDef .A (.conj ρ (Formula.some (.sigma .v (.label .V))
+            (.sigma .v (.label .B)))))
+          (.labelDef .L (.conj (.label .A) (pred₂ .lock (.var .x) (.sigma .v (.label .B))))))))
+
+theorem expandSelf_valuables116_sgIndef :
+    (valuables116 (sgIndef .person .x)).expandSelf =
+      .conj (.subset (.sigma .x (valuablesA (sgIndef .person .x)))
+          (.sigma .x (valuablesL (sgIndef .person .x))))
+        (.conj (.labelDef .V valuableV) (.conj (.labelDef .B broughtB)
+          (.conj (.labelDef .A (valuablesA (sgIndef .person .x)))
+            (.labelDef .L (valuablesL (sgIndef .person .x)))))) := rfl
+
+theorem expandSelf_valuables116_person :
+    (valuables116 (pred₁ .person (.bvar .x))).expandSelf =
+      .conj (.subset (.sigma .x (valuablesA (pred₁ .person (.bvar .x))))
+          (.sigma .x (valuablesL (pred₁ .person (.bvar .x)))))
+        (.conj (.labelDef .V valuableV) (.conj (.labelDef .B broughtB)
+          (.conj (.labelDef .A (valuablesA (pred₁ .person (.bvar .x))))
+            (.labelDef .L (valuablesL (pred₁ .person (.bvar .x))))))) := rfl
+
+theorem realize_valuablesA_sgIndef (hw : h .w = world w₀) :
+    (valuablesA (sgIndef .person .x)).Realize S.model h ↔ ∃ p, h .x = {Sum.inr p} ∧
+      S.rel₁ .person w₀ p ∧ ∃ v, S.rel₁ .valuable w₀ v ∧ S.rel₂ .bring w₀ p v := by
+  rw [valuablesA, Formula.realize_conj, realize_sgIndef_world S h _ _ hw, Formula.realize_some,
+    valuableV, realize_sigma_pred₁ S h _ (by decide) hw]
+  constructor
+  · rintro ⟨⟨p, hx, hp⟩, hs⟩
+    rw [broughtB, realize_sigma_indefOwned S h _ _ hw hx (by decide) (by decide),
+      ← Set.image_inter Sum.inr_injective, Set.image_nonempty] at hs
+    obtain ⟨v, -, hv⟩ := hs
+    exact ⟨p, hx, hp, v, hv⟩
+  · rintro ⟨p, hx, hp, v, hv⟩
+    rw [broughtB, realize_sigma_indefOwned S h _ _ hw hx (by decide) (by decide),
+      ← Set.image_inter Sum.inr_injective, Set.image_nonempty]
+    exact ⟨⟨p, hx, hp⟩, v, hv.1, hv⟩
+
+theorem realize_valuablesL_sgIndef (hw : h .w = world w₀) :
+    (valuablesL (sgIndef .person .x)).Realize S.model h ↔ ∃ p, h .x = {Sum.inr p} ∧
+      S.rel₁ .person w₀ p ∧ (∃ v, S.rel₁ .valuable w₀ v ∧ S.rel₂ .bring w₀ p v) ∧
+        ∀ v, S.rel₁ .valuable w₀ v → S.rel₂ .bring w₀ p v → S.rel₂ .lock w₀ p v := by
+  rw [valuablesL, Formula.realize_conj, realize_valuablesA_sgIndef S h hw, realize_pred₂, hw]
+  simp only [world_inj, exists_eq_left', Term.realize_var]
+  constructor
+  · rintro ⟨⟨p, hx, hp, hv⟩, -, -, H⟩
+    refine ⟨p, hx, hp, hv, fun v hv₁ hv₂ => ?_⟩
+    rw [broughtB, realize_sigma_indefOwned S h _ _ hw hx (by decide) (by decide)] at H
+    obtain ⟨_, _, h₁, h₂, hl⟩ := H _ (by rw [hx]; exact Set.mem_singleton _) _ ⟨v, ⟨hv₁, hv₂⟩, rfl⟩
+    rwa [← Sum.inr_injective h₁, ← Sum.inr_injective h₂] at hl
+  · rintro ⟨p, hx, hp, ⟨v, hv⟩, H⟩
+    rw [broughtB, realize_sigma_indefOwned S h _ _ hw hx (by decide) (by decide), hx]
+    refine ⟨⟨p, rfl, hp, v, hv⟩, Set.singleton_nonempty _, ⟨_, v, hv, rfl⟩, ?_⟩
+    rintro _ rfl _ ⟨v', hv', rfl⟩
+    exact ⟨p, v', rfl, rfl, H v' hv'.1 hv'.2⟩
+
+/-- (116) with a singular restriction has the strong reading at `w₀`: everyone who brought
+something valuable locked up every valuable they brought. -/
+theorem realize_valuables116_sgIndef_iff (hw : h .w = world w₀) :
+    (valuables116 (sgIndef .person .x)).expandSelf.Realize S.model h ↔
+      ∀ p, S.rel₁ .person w₀ p → (∃ v, S.rel₁ .valuable w₀ v ∧ S.rel₂ .bring w₀ p v) →
+        ∀ v, S.rel₁ .valuable w₀ v → S.rel₂ .bring w₀ p v → S.rel₂ .lock w₀ p v := by
+  have hl : ∀ {g : Var → Set (Atom W E)}, Set.EqOn g h
+      {y | y ∉ (sgIndef .person .x).locals ∧ y ≠ .x} → g .w = world w₀ :=
+    fun hg => (hg ⟨by decide, by decide⟩).trans hw
+  rw [expandSelf_valuables116_sgIndef]
+  simp only [Formula.realize_conj, Formula.realize_subset, Formula.realize_labelDef, and_true,
+    Term.realize_sigma_eq_image S.model h (f := Sum.inr) fun g hg =>
+      realize_valuablesA_sgIndef S g (hl hg),
+    Term.realize_sigma_eq_image S.model h (f := Sum.inr) fun g hg =>
+      realize_valuablesL_sgIndef S g (hl hg),
+    Set.image_subset_image_iff Sum.inr_injective]
+  exact ⟨fun H p hp hv => (@H p ⟨hp, hv⟩).2.2, fun H p ⟨hp, hv⟩ => ⟨hp, hv, H p hp hv⟩⟩
+
+/-- The entities of a scenario for (116): two people and two valuables. -/
+inductive Thing
+  | a | b | v₁ | v₂
+  deriving DecidableEq
+
+/-- Both people brought the first valuable and locked it up; the first also brought the second
+valuable and left it out. -/
+def lockScenario : Scenario Unit Thing where
+  acc _ _ := False
+  most _ _ := False
+  rel₁ c _ e := match c, e with
+    | .person, .a | .person, .b | .valuable, .v₁ | .valuable, .v₂ => True
+    | _, _ => False
+  rel₂ c _ e e' := match c, e, e' with
+    | .bring, .a, .v₁ | .bring, .b, .v₁ | .bring, .a, .v₂ | .lock, .a, .v₁ | .lock, .b, .v₁ => True
+    | _, _, _ => False
+  rel₃ _ _ _ _ _ := False
+
+-- (116)
+theorem realize_valuables116_not_strong :
+    (valuables116 (pred₁ .person (.bvar .x))).expandSelf.Realize lockScenario.model
+        (fun _ => world ()) ∧
+      lockScenario.rel₂ .bring () .a .v₂ ∧ ¬ lockScenario.rel₂ .lock () .a .v₂ := by
+  refine ⟨?_, trivial, id⟩
+  have hB : ∀ g : Var → Set (Atom Unit Thing), g .w = world () → g .x = {.inr .a, .inr .b} →
+      Term.realize lockScenario.model g (.sigma .v broughtB) = {.inr .v₁} := fun g hw hx =>
+    Term.realize_sigma_eq_of_distributive _ g fun g' hg => by
+      have hgw : g' .w = g .w := hg (by decide)
+      have hgx : g' .x = g .x := hg (by decide)
+      rw [broughtB, realize_indefOwned, hgw, hgx, hw, hx]
+      simp only [Set.insert_nonempty, true_and, Set.forall_mem_insert,
+        Set.mem_singleton_iff, forall_eq, Sum.inr.injEq, Unique.exists_iff]
+      refine and_congr_right fun _ =>
+        ⟨fun ⟨_, H⟩ b hb => ?_, fun H => ⟨fun b hb => ?_, fun b hb => ?_⟩⟩
+      · obtain ⟨_, e', rfl, rfl, -, hb'⟩ := H b hb
+        cases e' <;> first | rfl | exact absurd hb' id
+      · obtain rfl := H hb
+        exact ⟨_, _, rfl, rfl, trivial, trivial⟩
+      · obtain rfl := H hb
+        exact ⟨_, _, rfl, rfl, trivial, trivial⟩
+  rw [expandSelf_valuables116_person]
+  simp only [Formula.realize_conj, Formula.realize_subset, Formula.realize_labelDef, and_true]
+  intro _ ha
+  rw [Term.mem_realize_sigma] at ha
+  obtain ⟨g, -, ha, hA⟩ := ha
+  rw [valuablesA, Formula.realize_conj, realize_pred₁, Term.realize_bvar] at hA
+  obtain ⟨⟨_, -, -, hs⟩, -⟩ := hA
+  obtain ⟨p, hp, rfl⟩ := hs ha
+  let G := Function.update (fun _ => world ()) Var.x {.inr Thing.a, .inr Thing.b}
+  have hGx : G .x = {.inr .a, .inr .b} := Function.update_self ..
+  have hGw : G .w = world () := Function.update_of_ne (by decide) ..
+  rw [Term.mem_realize_sigma]
+  refine ⟨G, fun y hy => Function.update_of_ne hy.2 _ _, ?_, ?_⟩
+  · rw [hGx]
+    cases p <;> first | exact Or.inl rfl | exact Or.inr rfl | exact absurd hp id
+  rw [valuablesL, valuablesA, Formula.realize_conj, Formula.realize_conj, realize_pred₁,
+    Formula.realize_some, valuableV, realize_sigma_pred₁ _ G .valuable (i := .v) (by decide) hGw,
+    realize_pred₂, hB G hGw hGx]
+  simp only [Term.realize_bvar, Term.realize_var, hGx, hGw, true_and]
+  refine ⟨⟨⟨(), Set.insert_nonempty _ _, Set.insert_subset_iff.2 ⟨⟨.a, trivial, rfl⟩,
+    Set.singleton_subset_iff.2 ⟨.b, trivial, rfl⟩⟩⟩, ⟨.inr .v₁, ⟨.v₁, trivial, rfl⟩, rfl⟩⟩, (),
+    Set.insert_nonempty _ _, Set.singleton_nonempty _, ?_⟩
+  rintro _ (rfl | rfl) _ rfl <;> exact ⟨_, _, rfl, rfl, trivial⟩
 
 /-! ### Summation pronouns -/
 
@@ -894,8 +1183,8 @@ def cherishBody (Z : Lab) : Fm :=
 /-- `R ≡ SG(m) ∧ MONARCHY_w([m])`. -/
 def monarchyR : Fm := sgIndef .monarchy .m
 
-/-- (146a): "Every monarchy cherishes its monarch", `EVERY(ΣmR, ΣmS)` with `S ≡ R ∧
-CHERISH(m, ΣkK | SG(ΣkK))`. -/
+/-- (146a): "Every monarchy cherishes its monarch", in our translation `EVERY(ΣmR, ΣmS)` with
+`S ≡ R ∧ CHERISH(m, ΣkK | SG(ΣkK))`; the paper prints none. -/
 def everyMonarchy : Fm :=
   .conj (.subset (.sigma .m (.label .R)) (.sigma .m (.label .S)))
     (.conj (.labelDef .R monarchyR) (.conj (.labelDef .K monarchK) (.labelDef .S (cherishBody .R))))
@@ -907,7 +1196,8 @@ def countryC : Fm := sgIndef .country .m
 def monarchyM : Fm := .conj (.label .C) (pred₁ .monarchy (.var .m))
 
 /-- (150a): "Every European country was a monarchy. Most of them cherished their monarchs.",
-the subordinate quantifier's restriction the first sentence's reference-set label `M`. -/
+in our translation the subordinate quantifier's restriction the first sentence's reference-set
+label `M`; the paper prints none. -/
 def discourse150a : Fm :=
   .conj (.conj (.subset (.sigma .m (.label .C)) (.sigma .m (.label .M)))
       (.atom .most (.var .w) ![.sigma .m (.label .M), .sigma .m (.label .S)]))
@@ -937,21 +1227,12 @@ theorem expandSelf_discourse150a :
 theorem felicitous_monarchK : monarchK.Felicitous S.model h :=
   Expr.felicitous_of_presupFree _ _ (by decide) _
 
-theorem realize_monarchK :
-    monarchK.Realize S.model h ↔
-      ∃ w, h .w = world w ∧ (h .k).Nonempty ∧ (h .m).Nonempty ∧
-        ∀ a ∈ h .k, ∀ b ∈ h .m, ∃ e e', a = Sum.inr e ∧ b = Sum.inr e' ∧
-          S.rel₂ .monarchOf w e e' := by
-  simp only [monarchK, pred₂, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
-    Term.realize_var, Term.realize_bvar, Scenario.model, Model.intensional_apply₂, Scenario.rel,
-    Matrix.cons_val_zero, Matrix.cons_val_one]
-
 theorem realize_sigmaK_monarchK {m₀ : E} (hw : h .w = world w₀) (hm : h .m = {Sum.inr m₀}) :
     Term.realize S.model h (.sigma .k monarchK) = Sum.inr '' {e | S.rel₂ .monarchOf w₀ e m₀} :=
   Term.realize_sigma_eq_of_distributive S.model h fun g' hg => by
     have hgw : g' .w = h .w := hg (by decide)
     have hgm : g' .m = h .m := hg (by decide)
-    rw [realize_monarchK, hgw, hgm, hw, hm]
+    rw [monarchK, realize_pred₂, Term.realize_bvar, Term.realize_var, hgw, hgm, hw, hm]
     simp only [world_inj, exists_eq_left', Set.singleton_nonempty, true_and, Set.mem_singleton_iff,
       forall_eq, Sum.inr.injEq, exists_and_left]
     exact and_congr_right fun _ => forall₂_congr fun a _ =>
@@ -990,8 +1271,7 @@ theorem felicitous_sigmaM_cherishBody'_iff {ρ : Fm} {Q : E → Prop} (hw : h .w
     obtain ⟨m₀, hm, hq⟩ := (hρ g' hw').1 hr
     exact (felicitous_sgPronoun_monarchK_iff S g' hw' hm).2 (H m₀ hq)
 
-/-- (146a) is felicitous at `w₀` iff every monarchy there has exactly one monarch: the
-restriction satisfies the presupposition of the nuclear scope pointwise. -/
+-- (146a)
 theorem felicitous_everyMonarchy_iff (hw : h .w = world w₀) :
     everyMonarchy.expandSelf.Felicitous S.model h ↔
       ∀ m₀, S.rel₁ .monarchy w₀ m₀ → ∃! e, S.rel₂ .monarchOf w₀ e m₀ := by
@@ -1015,8 +1295,8 @@ theorem felicitous_discourse150a_iff (hw : h .w = world w₀) :
     Term.felicitous_var, Fin.forall_fin_two, Matrix.cons_val_zero, Matrix.cons_val_one, countryC,
     monarchyM', Term.felicitous_sigma_of_forall _ _ fun g => felicitous_sgIndef S g _ _,
     Term.felicitous_sigma_of_forall _ _ fun g => felicitous_sgIndefWith S g _ _ _, implies_true,
-    and_true, true_and, realize_sigma_sgIndef S h .country (v := .m) (by decide) hw,
-    realize_sigma_sgIndefWith S h .country .monarchy (v := .m) (by decide) hw,
+    and_true, true_and, realize_sigma_sgIndef S h .country (i := .m) (by decide) hw,
+    realize_sigma_sgIndefWith S h .country .monarchy (i := .m) (by decide) hw,
     Set.image_subset_image_iff Sum.inr_injective, Set.ofPred_subset_ofPred,
     felicitous_sigmaM_cherishBody'_iff S h hw (by decide)
       (fun g => felicitous_sgIndefWith S g _ _ _)
