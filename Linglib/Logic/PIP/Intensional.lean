@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Logic.PIP.Semantics
 
 /-!
@@ -19,7 +20,8 @@ of their members, and it holds of nothing whose world argument is not a world.
 ## Main statements
 
 * `Model.intensional_apply₁`, `Model.intensional_apply₂` — the lifting on one
-  and two arguments.
+  and two arguments; `Model.divisive_intensional` — every symbol is divisive.
+* `Term.realize_modalBase` — the modal base of a world is the worlds accessible from it.
 * `Term.realize_sigma_world_eq` — a summation over worlds whose body relates each
   world to the value of a local: the plurality of the worlds so related to some
   plurality; `Term.realize_sigma_world_eq_of_distributive` — for a body distributive
@@ -83,6 +85,23 @@ theorem Model.intensional_apply₂ (r : P 2) (Wp X Y : Set (Atom W E)) :
     and_congr_right fun _ => ⟨fun H a ha b hb => H ![a, b] ⟨ha, hb⟩, fun H as h => ?_⟩
   rw [show as = ![as 0, as 1] from funext (Fin.forall_fin_two.2 ⟨rfl, rfl⟩)]
   exact H _ h.1 _ h.2
+
+theorem Model.divisive_intensional {n : ℕ} (r : P n) : (Model.intensional rel).Divisive r := by
+  rintro Wp ts ⟨w, rfl, hne, h⟩
+  exact ⟨Set.singleton_nonempty _, hne, fun Wp' ts' hW hW' hts hts' =>
+    ⟨w, hW'.subset_singleton_iff.1 hW, hts', fun as has => h as fun i => hts i (has i)⟩⟩
+
+/-- The modal base of a world, for a symbol true of a world and the nonempty pluralities of the
+worlds accessible from it. -/
+theorem Term.realize_modalBase [DecidableEq V] (M : Model P (Atom W E)) (g : V → Set (Atom W E))
+    {acc : P 1} {R : W → W → Prop} (hacc : ∀ Wp X, M.I acc Wp ![X] ↔
+      ∃ w, Wp = world w ∧ X.Nonempty ∧ X ⊆ Sum.inl '' {u | R w u})
+    {w u : V} (hwu : w ≠ u) {w₀ : W} (hw : g w = world w₀) :
+    Term.realize M g (Term.modalBase acc w u : Term V L P) = Sum.inl '' {u | R w₀ u} :=
+  Term.realize_sigma_eq_of_distributive M g fun g' hg => by
+    rw [Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty, Term.realize_var,
+      Term.realize_var, hacc, hg ⟨by simp [Expr.locals], hwu⟩, hw]
+    simp only [world_inj, exists_eq_left']
 
 /-- The value of a summation over a world variable whose body, on the assignments
 agreeing outside the summation variable and its locals, holds iff the variable is a
