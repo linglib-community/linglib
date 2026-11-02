@@ -1,0 +1,131 @@
+[
+  {
+    "id": "knicksharf2026_5",
+    "source": {"bibkey": "knick-sharf-2026", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How is Ursula? Ursula has been happy ever since Monday, but she's not anymore.",
+    "discourseSegments": [
+      "How is Ursula?",
+      "Ursula has been happy ever since Monday, but she's not anymore."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "universal"],
+      ["adverbial", "ever since Monday"]
+    ],
+    "comment": "The overt durative adverbial makes the perfect universal, and the completion continuation contradicts it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knicksharf2026_6",
+    "source": {"bibkey": "knick-sharf-2026", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How is Ursula? Ursula has been happy, but she's not anymore.",
+    "discourseSegments": [
+      "How is Ursula?",
+      "Ursula has been happy, but she's not anymore."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "experiential"]
+    ],
+    "comment": "Without a durative adverbial only the experiential reading arises.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knicksharf2026_8a",
+    "source": {"bibkey": "knick-sharf-2026", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Louis has been crying, but he's not anymore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "experiential"]
+    ],
+    "comment": "With no adverbial the universal inference of a progressive eventive is cancelable.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knicksharf2026_8b",
+    "source": {"bibkey": "knick-sharf-2026", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Louis has been crying ever since this morning, but he's not anymore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "universal"],
+      ["adverbial", "ever since this morning"]
+    ],
+    "comment": "With an overt durative adverbial the universal inference is entailed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knicksharf2026_10",
+    "source": {"bibkey": "knick-sharf-2026", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sadie is sick right now. Sadie has been sick, but she's not anymore.",
+    "discourseSegments": [
+      "Sadie is sick right now.",
+      "Sadie has been sick, but she's not anymore."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "universal"],
+      ["focus", "been"]
+    ],
+    "comment": "Narrow focus on the participle, with an H* accent (footnote 4: a rise-fall-rise contour on been is felicitous); the universal inference is not cancelable.",
+    "verified": "page-image"
+  },
+  {
+    "id": "knicksharf2026_12",
+    "source": {"bibkey": "knick-sharf-2026", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How is Sadie? Well, she has been sick, but she isn't anymore.",
+    "discourseSegments": [
+      "How is Sadie?",
+      "Well, she has been sick, but she isn't anymore."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "experiential"]
+    ],
+    "comment": "Under broad focus the universal inference of (11) is an implicature of an experiential perfect, and cancelable.",
+    "verified": "page-image"
+  }
+]
