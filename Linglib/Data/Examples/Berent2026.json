@@ -1,0 +1,38 @@
+[
+  {
+    "id": "berent2026_dideb",
+    "source": {"bibkey": "berent-2026", "paperLabel": "p. 11"},
+    "reportedIn": null,
+    "method": "introspection",
+    "language": "hebr1245",
+    "primaryText": "dideb",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A form on the root d-d-b, which begins with two identical consonants.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Hebrew, like all Semitic languages, bans *XXY roots.",
+    "verified": "page-image"
+  },
+  {
+    "id": "berent2026_bided",
+    "source": {"bibkey": "berent-2026", "paperLabel": "p. 11"},
+    "reportedIn": null,
+    "method": "description",
+    "language": "hebr1245",
+    "primaryText": "bided",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "he isolated",
+    "context": "A form on the root b-d-d, which ends with two identical consonants.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "Hebrew allows YXX forms.",
+    "verified": "page-image"
+  }
+]
