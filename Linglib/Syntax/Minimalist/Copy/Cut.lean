@@ -103,41 +103,12 @@ end Mem
 variable (low : RoseTree (CopyMark × Vertex) → Prop) [DecidablePred low]
   (e : RoseTree Vertex → Option (List (RoseTree Vertex)))
 
-private theorem map_fst_pair {β : Type*} (f : RoseTree (CopyMark × Vertex) → β)
+theorem readCut_some (l : Option LexicalItem.Token) (a : Vertex)
     (cs : List (RoseTree (CopyMark × Vertex))) :
-    (cs.map fun c ↦ (c, f c)).map Prod.fst = cs := by
-  simp [Function.comp_def]
-
-/-- A lower copy of a chain read high is cut whole, and leaves its trace. -/
-theorem readCut_of_not_low {l : Option LexicalItem.Token} {a : Vertex}
-    {cs : List (RoseTree (CopyMark × Vertex))} (h : ¬ low (.node (some l, a) cs)) :
     readCut low (.node (some l, a) cs) =
-      ({(RoseTree.node (some l, a) cs).map Prod.snd}, [.node (.inr l) []]) := by
-  simp only [readCut]
-  rw [reading_node]
-  simp only [readStep, map_fst_pair, h, ↓reduceIte]
-
-/-- A lower copy of a chain read low reads as if it were not one. -/
-theorem readCut_of_low {l : Option LexicalItem.Token} {a : Vertex}
-    {cs : List (RoseTree (CopyMark × Vertex))} (h : low (.node (some l, a) cs)) :
-    readCut low (.node (some l, a) cs) = readCut low (.node (none, a) cs) := by
-  simp only [readCut]
-  rw [reading_node, reading_node]
-  simp only [readStep, map_fst_pair, h, ↓reduceIte]
-
-private theorem lfBy_of_not_low {l : Option LexicalItem.Token} {a : Vertex}
-    {cs : List (RoseTree (CopyMark × Vertex))} (h : ¬ low (.node (some l, a) cs)) :
-    lfBy low (.node (some l, a) cs) = .node (.inr l) [] := by
-  simp only [lfBy]
-  rw [reading_node]
-  simp only [readStep, map_fst_pair, h, ↓reduceIte]
-
-private theorem lfBy_of_low {l : Option LexicalItem.Token} {a : Vertex}
-    {cs : List (RoseTree (CopyMark × Vertex))} (h : low (.node (some l, a) cs)) :
-    lfBy low (.node (some l, a) cs) = lfBy low (.node (none, a) cs) := by
-  simp only [lfBy]
-  rw [reading_node, reading_node]
-  simp only [readStep, map_fst_pair, h, ↓reduceIte]
+      if low (.node (some l, a) cs) then readCut low (.node (none, a) cs)
+      else ({(RoseTree.node (some l, a) cs).map Prod.snd}, [.node (.inr l) []]) :=
+  reading_some ..
 
 /-- An unmarked node reads as a node over its daughters, or as a daughter with the other cut. -/
 private theorem readCut_none_cases (a : Vertex) (cs : List (RoseTree (CopyMark × Vertex))) :
@@ -149,26 +120,23 @@ private theorem readCut_none_cases (a : Vertex) (cs : List (RoseTree (CopyMark �
       readCut low (.node (none, a) cs) =
         (x.map Prod.snd ::ₘ (readCut low y).1, [.node a (readCut low y).2]) ∧
       lfBy low (.node (none, a) cs) = lfBy low y := by
-  simp only [readCut, lfBy]
-  rw [reading_node, reading_node]
-  simp only [readStep]
-  rcases cs with _ | ⟨x, _ | ⟨y, _ | ⟨z, zs⟩⟩⟩
-  · simp
-  · simp
-  · simp only [List.map]
-    cases h1 : lowerCopy? x y with
-    | some l =>
-      by_cases hx : low x
-      · exact .inr ⟨x, y, .inl rfl, hx, by simp [hx], by simp [hx]⟩
-      · exact .inl ⟨by simp [hx], by simp [hx]⟩
-    | none =>
-      cases h2 : lowerCopy? y x with
-      | some l =>
-        by_cases hy : low y
-        · exact .inr ⟨y, x, .inr rfl, hy, by simp [hy], by simp [hy]⟩
-        · exact .inl ⟨by simp [hy], by simp [hy]⟩
-      | none => exact .inl ⟨by simp, by simp⟩
-  · simp [Function.comp_def]
+  by_cases hlen : cs.length = 2
+  · obtain ⟨u, v, rfl⟩ := List.length_eq_two.1 hlen
+    have hcut := reading_pair low (fun r l ↦ (({r.map Prod.snd} : Multiset (RoseTree Vertex)),
+        [RoseTree.node (.inr l) []]))
+      (fun v bs ↦ ((bs.map Prod.fst).sum, [RoseTree.node v (bs.flatMap Prod.snd)]))
+      (fun _ b ↦ b) (fun x v b ↦ (x.map Prod.snd ::ₘ b.1, [RoseTree.node v b.2])) (fun _ _ ↦ rfl) a
+      u v
+    rw [lfBy_pair]
+    change readCut low _ = _ at hcut
+    rw [hcut]
+    split_ifs with h1 h2 h3 h4
+    · exact .inr ⟨u, v, .inl rfl, h2, rfl, rfl⟩
+    · exact .inl ⟨rfl, rfl⟩
+    · exact .inr ⟨v, u, .inr rfl, h4, rfl, rfl⟩
+    · exact .inl ⟨rfl, rfl⟩
+    · exact .inl ⟨rfl, rfl⟩
+  · exact .inl ⟨reading_of_length_ne _ _ _ _ _ a hlen, lfBy_of_length_ne _ a hlen⟩
 
 /-- An unmarked node reads as one cut of the copy object, with its root as the root of the trunk. -/
 private theorem exists_mem_cutSummandsG_none {a : Vertex}
@@ -196,9 +164,8 @@ private theorem exists_mem_cutSummandsG_none {a : Vertex}
 
 private theorem subtrees_subset {v : CopyMark × Vertex} {cs : List (RoseTree (CopyMark × Vertex))}
     {c : RoseTree (CopyMark × Vertex)} (hc : c ∈ cs) {r : RoseTree (CopyMark × Vertex)}
-    (hr : r ∈ c.subtrees) : r ∈ (RoseTree.node v cs).subtrees := by
-  simp only [subtrees_node, List.mem_cons, List.mem_flatMap]
-  exact .inr ⟨c, hc, hr⟩
+    (hr : r ∈ c.subtrees) : r ∈ (RoseTree.node v cs).subtrees :=
+  mem_subtrees.2 ((mem_subtrees.1 hr).trans (.of_mem_children hc))
 
 variable {low e} {s : RoseTree (CopyMark × Vertex)}
 
@@ -223,11 +190,10 @@ theorem readCut_mem_augActionG
       rwa [← hT] at this
     rcases k with _ | l
     · simpa [map_node] using hnone
-    · by_cases hlow : low (.node (some l, a) cs)
-      · rw [readCut_of_low low hlow]
-        simpa [map_node] using hnone
-      · rw [readCut_of_not_low low hlow]
-        exact mem_augActionG_self (hh _ (self_mem_subtrees _) l rfl hlow)
+    · rw [readCut_some]
+      split_ifs with hlow
+      · simpa [map_node] using hnone
+      · exact mem_augActionG_self (hh _ (self_mem_subtrees _) l rfl hlow)
 
 /-- A tree whose root is not a lower copy of a chain read high reads as one cut of it, with what
 stays in place a single tree. -/
@@ -245,7 +211,7 @@ theorem exists_mem_cutSummandsG_readCut (hroot : ∀ l, s.value.1 = some l → l
   have hnone := exists_mem_cutSummandsG_none low e (a := a) ih' hl'
   rcases k with _ | l
   · simpa [map_node] using hnone
-  · rw [readCut_of_low low (hroot l rfl)]
+  · rw [readCut_some, ite_eq_left (hroot l rfl)]
     simpa [map_node] using hnone
 
 /-- The trunk of a reading, its unary vertices contracted, is the object the reading gives. -/
@@ -275,11 +241,10 @@ theorem map_contractUnary_readCut (hs : IsSyntacticObject (UnorderedTree.mk (s.m
         simp [h, hf, hTy, hy]
     rcases k with _ | l
     · exact hnone
-    · by_cases hlow : low (.node (some l, a) cs)
-      · rw [readCut_of_low low hlow, lfBy_of_low low hlow]
-        exact hnone
-      · rw [readCut_of_not_low low hlow, lfBy_of_not_low low hlow]
-        simp
+    · rw [readCut_some, lfBy_some]
+      split_ifs
+      · exact hnone
+      · simp
 
 /-- With no chain read low, the trunk of a reading is the contraction. -/
 theorem readCut_readLow_empty (s : RoseTree (CopyMark × Vertex)) :
@@ -299,7 +264,7 @@ theorem readCut_readLow_empty (s : RoseTree (CopyMark × Vertex)) :
             simp [hds d (by simp), ihd fun c hc ↦ hds c (by simp [hc])]
         rw [h, contractTree_none, key cs ih]
       · exact absurd hx (not_readLow_empty x)
-    · rw [readCut_of_not_low _ (not_readLow_empty _), contractTree_some]
+    · rw [readCut_some, ite_eq_right (not_readLow_empty _), contractTree_some]
 
 /-! ### Readings and the coproducts -/
 

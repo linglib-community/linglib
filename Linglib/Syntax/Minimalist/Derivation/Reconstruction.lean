@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Syntax.Minimalist.Copy.Reading
 public import Linglib.Syntax.Minimalist.Copy.Replay
 public import Linglib.Syntax.Minimalist.Linearization.ChainReduction
 public import Linglib.Syntax.Minimalist.Linearization.Replay
