@@ -26,7 +26,7 @@ def cpa_long_short : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def cpa_short_long : Datum :=
   { id := "kennedy1999_cpa_short_long"
@@ -39,7 +39,7 @@ def cpa_short_long : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def subdel_pos_pos : Datum :=
   { id := "kennedy1999_subdel_pos_pos"
@@ -52,7 +52,7 @@ def subdel_pos_pos : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def subdel_neg_neg : Datum :=
   { id := "kennedy1999_subdel_neg_neg"
@@ -65,7 +65,7 @@ def subdel_neg_neg : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def ficus_tall_high : Datum :=
   { id := "kennedy1999_ficus_tall_high"
@@ -78,7 +78,7 @@ def ficus_tall_high : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def ficus_tall_low : Datum :=
   { id := "kennedy1999_ficus_tall_low"
@@ -91,7 +91,7 @@ def ficus_tall_low : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def ficus_short_low : Datum :=
   { id := "kennedy1999_ficus_short_low"
@@ -104,7 +104,7 @@ def ficus_short_low : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "negative"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def ficus_short_high : Datum :=
   { id := "kennedy1999_ficus_short_high"
@@ -117,7 +117,7 @@ def ficus_short_high : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "positive"), ("shared_scale", "true")] }
+    paperFeatures := [] }
 
 def incomm_tall_clever : Datum :=
   { id := "kennedy1999_incomm_tall_clever"
@@ -130,7 +130,7 @@ def incomm_tall_clever : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "false")] }
+    paperFeatures := [] }
 
 def incomm_tragic_heavy : Datum :=
   { id := "kennedy1999_incomm_tragic_heavy"
@@ -143,7 +143,7 @@ def incomm_tragic_heavy : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "false")] }
+    paperFeatures := [] }
 
 def mp_cadillac : Datum :=
   { id := "kennedy1999_mp_cadillac"
@@ -156,7 +156,7 @@ def mp_cadillac : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("polarity", "positive"), ("construction", "absolute")] }
+    paperFeatures := [] }
 
 def mp_fiat : Datum :=
   { id := "kennedy1999_mp_fiat"
@@ -169,7 +169,7 @@ def mp_fiat : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("polarity", "negative"), ("construction", "absolute")] }
+    paperFeatures := [] }
 
 def mp_fiat_comparative : Datum :=
   { id := "kennedy1999_mp_fiat_comparative"
@@ -182,7 +182,7 @@ def mp_fiat_comparative : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("polarity", "negative"), ("construction", "comparative")] }
+    paperFeatures := [] }
 
 def mp_reich : Datum :=
   { id := "kennedy1999_mp_reich"
@@ -195,7 +195,7 @@ def mp_reich : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("polarity", "negative"), ("construction", "absolute")] }
+    paperFeatures := [] }
 
 def mp_slow : Datum :=
   { id := "kennedy1999_mp_slow"
@@ -208,7 +208,7 @@ def mp_slow : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("polarity", "negative"), ("construction", "absolute")] }
+    paperFeatures := [] }
 
 def all : List Datum := [cpa_long_short, cpa_short_long, subdel_pos_pos, subdel_neg_neg, ficus_tall_high, ficus_tall_low, ficus_short_low, ficus_short_high, incomm_tall_clever, incomm_tragic_heavy, mp_cadillac, mp_fiat, mp_fiat_comparative, mp_reich, mp_slow]
 
