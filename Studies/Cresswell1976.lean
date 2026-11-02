@@ -6,6 +6,7 @@ public import Linglib.Semantics.Negation.Polarity
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Data.Examples.Cresswell1976
 public import Linglib.Fragments.English.Adjectives
+public import Linglib.Fragments.English.MeasurePhrases
 public import Linglib.Fragments.English.Nouns
 
 /-!
@@ -159,11 +160,16 @@ abbrev DirectedScale := Scale × Polarity
 def adjectiveScale (g : GradableAdjective) : Option DirectedScale :=
   g.dimension.map fun d ↦ (d.dimension?.elim (.inr d) .inl, g.polarity)
 
-/-- Spatial distance read upward, the scale of *tall* (2.2) and of *six feet* (35). -/
+/-- Spatial distance read upward, the scale of *tall* (2.2). -/
 def spatial : DirectedScale := (.inl (.of .length), .positive)
 
 /-- Temporal distance read upward, the scale of *long* of an event (4.3). -/
 def temporal : DirectedScale := (.inl (.of .time), .positive)
+
+/-- A measure phrase names a degree on the relation ordering its unit's dimension, read upward:
+if *six feet* is the name of $⟨u, >⟩$ it cannot also be the name of $⟨u, <⟩$ (p. 274). -/
+def measureScale (t : English.MeasurePhrases.MeasureTerm) : DirectedScale :=
+  (.inl t.dimension, .positive)
 
 /-- A mass noun carries degrees of volume (40) and a count noun, through the plural, a number
 (3.6). -/
@@ -244,7 +250,7 @@ structure Compared where
 
 section Rows
 
-open English.Adjectives English.Nouns Examples
+open English.Adjectives English.MeasurePhrases English.Nouns Examples
 
 /-- The examples whose judgments follow from their scales. (56) and (57) compare nothing, and
 (50) and (66) are `crossScale`. -/
@@ -252,9 +258,9 @@ def comparisons : List Compared :=
   [⟨adjectiveScale tall, adjectiveScale tall, ex_13⟩,
    ⟨adjectiveScale tall, adjectiveScale English.Adjectives.long, ex_15⟩,
    ⟨adjectiveScale tall, adjectiveScale clever, ex_23⟩,
-   ⟨adjectiveScale tall, some spatial, ex_35⟩,
-   ⟨adjectiveScale tall, some spatial, ex_37⟩,
-   ⟨adjectiveScale short, some spatial, ex_39⟩,
+   ⟨adjectiveScale tall, some (measureScale foot), ex_35⟩,
+   ⟨adjectiveScale tall, some (measureScale foot), ex_37⟩,
+   ⟨adjectiveScale short, some (measureScale foot), ex_39⟩,
    ⟨some (nounScale water), some (nounScale mud), ex_41⟩,
    ⟨some (nounScale man), some (nounScale bird), ex_52⟩,
    ⟨adjectiveScale beautiful, adjectiveScale beautiful, ex_62⟩,
