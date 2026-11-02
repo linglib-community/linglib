@@ -83,6 +83,12 @@ theorem block_zero_succ (t : ℕ) :
     block X 0 (t + 1) = (Fin.snocEquiv fun _ ↦ α) ∘ fun ω ↦ (X t ω, block X 0 t ω) :=
   funext fun _ ↦ (Fin.snoc_init_self _).symm
 
+omit [MeasurableSpace α] in
+/-- The block read from the front: its first value, then the block starting one step later. -/
+theorem block_zero_succ' (t : ℕ) :
+    block X 0 (t + 1) = (Fin.consEquiv fun _ ↦ α) ∘ fun ω ↦ (X 0 ω, block X 1 t ω) :=
+  funext fun _ ↦ funext fun i ↦ i.cases rfl fun _ ↦ rfl
+
 theorem measurable_block (hX : ∀ t, Measurable (X t)) (a n : ℕ) : Measurable (block X a n) :=
   measurable_pi_iff.mpr fun i ↦ hX (i + a)
 

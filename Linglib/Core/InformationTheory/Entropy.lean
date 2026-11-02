@@ -21,40 +21,16 @@ public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 /-!
 # Entropy of a measure
 
-This file defines the Shannon entropy of a measure on a measurable space, following the PFR
-project's `ForMathlib` entropy, `Hm[μ] = ∑' s, negMulLog (((μ univ)⁻¹ • μ).real {s})`,
-normalized so that a finite measure has the entropy of its probability normalization. Mutual
-information is the entropy difference `Im[μ] = Hm[μ.fst] + Hm[μ.snd] - Hm[μ]`; on a finite
-type it is the real part of the Kullback–Leibler divergence of the joint from the product of its
-marginals, hence nonnegative.
-
-Random variables carry the same quantities through their laws: `H[X ; μ] = Hm[μ.map X]`,
-the conditional entropy `H[X | Y ; μ]` as the expected entropy of `X` under `Y = y`, and
-`I[X : Y ; μ]`; on finite types the chain rule `H[X, Y] = H[Y] + H[X | Y]` holds, conditioning
-reduces entropy, conditioning on a function of `Y` leaves at least the entropy that
-conditioning on `Y` does, and conditional entropy is the expected conditional surprisal.
-Entropies are invariant under injective recodings and depend only on laws. Entropy is the expected
-surprisal of a measure under itself, and under another measure the expected surprisal exceeds it by
-the Kullback–Leibler divergence; its exponential, negated, is the geometric mean under the first
-measure of the masses of the second.
-
-## Main definitions
-
-* `measureEntropy`, notation `Hm[μ]`; `measureMutualInfo`, notation `Im[μ]`
-* `entropy`, notation `H[X ; μ]`; `condEntropy`, notation `H[X | Y ; μ]`;
-  `mutualInfo`, notation `I[X : Y ; μ]`
-
-## Main results
-
-* `measureEntropy_le_log_card`: entropy is at most the log of the cardinality, which the uniform
-  measure attains.
-* `measureMutualInfo_eq_toReal_klDiv`: on a finite product, mutual information is the divergence
-  of the joint from the product of its marginals.
-* `lintegral_surprisal_eq_ofReal_add_klDiv`: on a finite type, the expected surprisal under `ν` of
-  the atoms of `μ` is the entropy of `μ` plus the divergence of `μ` from `ν`, so it is at least the
-  entropy (Gibbs' inequality, `ofReal_measureEntropy_le_lintegral_surprisal`).
-* `chain_rule`: `H[X, Y] = H[Y] + H[X | Y]`.
-* `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent random variables.
+The Shannon entropy of a measure, following the PFR project's `ForMathlib` entropy, is
+`Hm[μ] = ∑' s, negMulLog (((μ univ)⁻¹ • μ).real {s})`, normalized so that a finite measure has the
+entropy of its probability normalization. Mutual information is `Im[μ] = Hm[μ.fst] + Hm[μ.snd] -
+Hm[μ]`, on a finite type [the Kullback–Leibler divergence](##measureMutualInfo_eq_toReal_klDiv) of
+the joint from the product of its marginals. Random variables carry these through their laws as
+`H[X ; μ]`, `H[X | Y ; μ]`, `I[X : Y ; μ]` and `I[X : Y | Z ; μ]`, which on finite types obey the
+[chain rule](##chain_rule) and vanish exactly on [independent](##mutualInfo_eq_zero_iff) and
+[conditionally independent](##condMutualInfo_eq_zero_iff) variables. Entropy is
+[expected surprisal](##lintegral_surprisal_eq_ofReal_add_klDiv) under itself, exceeded under
+another measure by the Kullback–Leibler divergence.
 
 ## References
 
@@ -584,6 +560,15 @@ theorem mutualInfo_comm [MeasurableSingletonClass S] [MeasurableSingletonClass T
   rw [mutualInfo_def, mutualInfo_def, entropy_comm μ hX hY]
   ring
 
+/-- The conditional mutual information of `X` and `Y` given `Z` is the expectation, under the law of
+`Z`, of the mutual information of `X` and `Y` conditioned on `Z = z`. -/
+noncomputable def condMutualInfo {U : Type*} [MeasurableSpace U] (X : Ω → S) (Y : Ω → T)
+    (Z : Ω → U) (μ : Measure Ω) : ℝ :=
+  ∫ z, I[X : Y ; μ[|Z ⁻¹' {z}]] ∂(μ.map Z)
+
+@[inherit_doc condMutualInfo]
+scoped notation3:max "I[" X " : " Y " | " Z " ; " μ "]" => condMutualInfo X Y Z μ
+
 variable [Fintype S] [Fintype T] [MeasurableSingletonClass S] [MeasurableSingletonClass T]
   (hX : Measurable X) (hY : Measurable Y) (μ : Measure Ω) [IsProbabilityMeasure μ]
 
@@ -644,6 +629,25 @@ theorem mutualInfo_eq_entropy_sub_condEntropy (hX : Measurable X) (hY : Measurab
 theorem condEntropy_le_entropy (hX : Measurable X) (hY : Measurable Y) :
     H[X | Y ; μ] ≤ H[X ; μ] :=
   sub_nonneg.mp (mutualInfo_eq_entropy_sub_condEntropy μ hX hY ▸ mutualInfo_nonneg μ hX hY)
+
+/-- On finite types, mutual information is the expected logarithm of the ratio of the joint mass to
+the product of the marginal masses. -/
+theorem mutualInfo_eq_sum_log (hX : Measurable X) (hY : Measurable Y) :
+    I[X : Y ; μ] = ∑ x, ∑ y, μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y}) *
+      log (μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y}) / (μ.real (X ⁻¹' {x}) * μ.real (Y ⁻¹' {y}))) := by
+  have := (Measure.isProbabilityMeasure_map_iff (hX.prodMk hY).aemeasurable).2 ‹_›
+  have hj (x : S) (y : T) : (μ.map fun ω ↦ (X ω, Y ω)).real {(x, y)}
+      = μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y}) := by
+    rw [map_measureReal_apply (hX.prodMk hY) (.singleton _)]
+    congr 1
+    ext ω
+    simp
+  rw [mutualInfo_eq_measureMutualInfo hX hY, measureMutualInfo_eq_toReal_klDiv,
+    toReal_klDiv_eq_sum_log_div (Measure.absolutelyContinuous_fst_prod_snd _),
+    Fintype.sum_prod_type]
+  simp_rw [hj, Measure.prod_real_singleton, Measure.fst_map_prodMk hX hY,
+    Measure.snd_map_prodMk hX hY, map_measureReal_apply hX (.singleton _),
+    map_measureReal_apply hY (.singleton _)]
 
 /-- Mutual information vanishes exactly on independent random variables. -/
 theorem mutualInfo_eq_zero_iff (hX : Measurable X) (hY : Measurable Y) :
@@ -747,6 +751,80 @@ theorem entropy_le_measureEntropy [Fintype Ω] [MeasurableSingletonClass Ω] (X 
   rwa [Function.comp_id, entropy_def id μ, Measure.map_id] at h
 
 end comp
+
+section condMutualInfo
+
+variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U] {Z : Ω → U}
+
+omit [Fintype S] [Fintype T] [MeasurableSingletonClass S] [MeasurableSingletonClass T] in
+theorem condMutualInfo_eq_sum (X : Ω → S) (Y : Ω → T) (hZ : Measurable Z) :
+    I[X : Y | Z ; μ] = ∑ z, μ.real (Z ⁻¹' {z}) * I[X : Y ; μ[|Z ⁻¹' {z}]] := by
+  rw [condMutualInfo, integral_fintype .of_finite]
+  simp_rw [smul_eq_mul, map_measureReal_apply hZ (.singleton _)]
+
+omit [Fintype S] [Fintype T] [MeasurableSingletonClass S] [MeasurableSingletonClass T] in
+theorem condMutualInfo_eq_condEntropy_add_sub (X : Ω → S) (Y : Ω → T) (hZ : Measurable Z) :
+    I[X : Y | Z ; μ] = H[X | Z ; μ] + H[Y | Z ; μ] - H[fun ω ↦ (X ω, Y ω) | Z ; μ] := by
+  simp_rw [condMutualInfo_eq_sum μ X Y hZ, condEntropy_eq_sum _ hZ, mutualInfo_def, mul_sub,
+    mul_add, Finset.sum_sub_distrib, Finset.sum_add_distrib]
+
+theorem condMutualInfo_eq_condEntropy_sub_condEntropy (hX : Measurable X) (hY : Measurable Y)
+    (hZ : Measurable Z) : I[X : Y | Z ; μ] = H[X | Z ; μ] - H[X | fun ω ↦ (Y ω, Z ω) ; μ] := by
+  have e : H[fun ω ↦ ((X ω, Y ω), Z ω) ; μ] = H[fun ω ↦ (X ω, Y ω, Z ω) ; μ] :=
+    entropy_comp_of_injective μ (hX.prodMk (hY.prodMk hZ)) (f := (Equiv.prodAssoc S T U).symm)
+      (measurable_of_finite _) (Equiv.prodAssoc S T U).symm.injective
+  linarith [condMutualInfo_eq_condEntropy_add_sub μ X Y hZ, chain_rule μ hX (hY.prodMk hZ),
+    chain_rule μ (hX.prodMk hY) hZ, chain_rule μ hY hZ]
+
+theorem condMutualInfo_nonneg (hX : Measurable X) (hY : Measurable Y) (hZ : Measurable Z) :
+    0 ≤ I[X : Y | Z ; μ] := by
+  rw [condMutualInfo_eq_condEntropy_sub_condEntropy μ hX hY hZ]
+  exact sub_nonneg.2 (condEntropy_le_condEntropy_comp μ hX (hY.prodMk hZ) Prod.snd)
+
+/-- Conditional mutual information vanishes exactly when `X` and `Y` are independent given each
+value of `Z`. -/
+theorem condMutualInfo_eq_zero_iff (hX : Measurable X) (hY : Measurable Y) (hZ : Measurable Z) :
+    I[X : Y | Z ; μ] = 0 ↔ ∀ z, X ⟂ᵢ[μ[|Z ⁻¹' {z}]] Y := by
+  have hfib (z : U) : 0 ≤ μ.real (Z ⁻¹' {z}) * I[X : Y ; μ[|Z ⁻¹' {z}]] ∧
+      (μ.real (Z ⁻¹' {z}) * I[X : Y ; μ[|Z ⁻¹' {z}]] = 0 ↔ X ⟂ᵢ[μ[|Z ⁻¹' {z}]] Y) := by
+    obtain hz | hz := eq_or_ne (μ (Z ⁻¹' {z})) 0
+    · rw [cond_eq_zero_of_meas_eq_zero hz]
+      exact ⟨by simp [measureReal_def, hz], by simp [measureReal_def, hz,
+        indepFun_iff_measure_inter_preimage_eq_mul]⟩
+    · have := cond_isProbabilityMeasure (μ := μ) hz
+      exact ⟨mul_nonneg measureReal_nonneg (mutualInfo_nonneg _ hX hY), by
+        rw [mul_eq_zero, or_iff_right ((measureReal_eq_zero_iff (measure_ne_top _ _)).not.2 hz),
+          mutualInfo_eq_zero_iff _ hX hY]⟩
+  rw [condMutualInfo_eq_sum μ X Y hZ, Finset.sum_eq_zero_iff_of_nonneg fun z _ ↦ (hfib z).1]
+  simp only [Finset.mem_univ, forall_const, (hfib _).2]
+
+/-- On finite types, conditional mutual information is the expected logarithm of the ratio of the
+conditional joint mass to the product of the conditional marginal masses. -/
+theorem condMutualInfo_eq_sum_log (hX : Measurable X) (hY : Measurable Y) (hZ : Measurable Z) :
+    I[X : Y | Z ; μ] = ∑ x, ∑ y, ∑ z, μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y} ∩ Z ⁻¹' {z}) *
+      log ((μ[|Z ⁻¹' {z}]).real (X ⁻¹' {x} ∩ Y ⁻¹' {y}) /
+        ((μ[|Z ⁻¹' {z}]).real (X ⁻¹' {x}) * (μ[|Z ⁻¹' {z}]).real (Y ⁻¹' {y}))) := by
+  have hw (z : U) (A : Set Ω) :
+      μ.real (Z ⁻¹' {z}) * (μ[|Z ⁻¹' {z}]).real A = μ.real (A ∩ Z ⁻¹' {z}) := by
+    obtain hq | hq := eq_or_ne (μ.real (Z ⁻¹' {z})) 0
+    · rw [hq, zero_mul, measureReal_mono_null Set.inter_subset_right hq (measure_ne_top _ _)]
+    · rw [cond_real_apply μ (hZ (.singleton z)), Set.inter_comm]
+      field_simp
+  have hz (z : U) : μ.real (Z ⁻¹' {z}) * I[X : Y ; μ[|Z ⁻¹' {z}]] =
+      ∑ x, ∑ y, μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y} ∩ Z ⁻¹' {z}) *
+        log ((μ[|Z ⁻¹' {z}]).real (X ⁻¹' {x} ∩ Y ⁻¹' {y}) /
+          ((μ[|Z ⁻¹' {z}]).real (X ⁻¹' {x}) * (μ[|Z ⁻¹' {z}]).real (Y ⁻¹' {y}))) := by
+    simp_rw [← hw z, mul_assoc, ← Finset.mul_sum]
+    obtain hq | hq := eq_or_ne (μ (Z ⁻¹' {z})) 0
+    · simp [measureReal_def, hq]
+    · have := cond_isProbabilityMeasure (μ := μ) hq
+      rw [mutualInfo_eq_sum_log _ hX hY]
+  rw [condMutualInfo_eq_sum μ X Y hZ]
+  simp_rw [hz]
+  rw [Finset.sum_comm]
+  exact Finset.sum_congr rfl fun x _ ↦ Finset.sum_comm
+
+end condMutualInfo
 
 variable {μ} in
 /-- Conditional entropy is determined by the joint law. -/

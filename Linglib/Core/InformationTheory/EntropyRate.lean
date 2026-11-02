@@ -19,11 +19,11 @@ here as the infimum of the conditional entropies `pastCondEntropy X μ n` of the
 given the `n` values before it. For a stationary process these
 [fall to the rate](##tendsto_pastCondEntropy), and
 [the entropy per value of a block tends to it](##tendsto_inv_mul_entropy_block). Their
-[drop from a past of `t` values to a past of `t + 1`](##distanceInfo_succ) is the information
-`distanceInfo X μ (t + 1)` between values at that distance given the values between them, so
-[the rate plus the information beyond distance `T`](##entropyRate_add_tsum) is the conditional
-entropy given `T` values. When the blocks of one process have the laws of the reversed blocks of
-another, the two have
+[drop from a past of `t` values to a past of `t + 1`](##distanceInfo_succ) is the conditional mutual
+information `distanceInfo X μ (t + 1)` between values at that distance given the values between
+them, so [the rate plus the information beyond distance `T`](##entropyRate_add_tsum) is the
+conditional entropy given `T` values. When the blocks of one process have the laws of the reversed
+blocks of another, the two have
 [the same information at each positive distance](##distanceInfo_succ_eq_of_map_rev) and
 [the same rate](##entropyRate_eq_of_map_rev).
 
@@ -47,11 +47,10 @@ values before it. -/
 noncomputable def pastCondEntropy (X : ℕ → Ω → S) (μ : Measure Ω) (n : ℕ) : ℝ :=
   H[X n | block X 0 n ; μ]
 
-/-- `distanceInfo X μ t` is the mutual information `I[X t : X 0 | X 1, …, X (t - 1)]` between
-values at distance `t` given the values between them, which is the entropy of `X t` that `X 0`
-removes. -/
+/-- `distanceInfo X μ t` is the mutual information between values at distance `t` given the values
+between them, the quantity `I_t` of [hahn-degen-futrell-2021]. -/
 noncomputable def distanceInfo (X : ℕ → Ω → S) (μ : Measure Ω) (t : ℕ) : ℝ :=
-  H[X t | block X 1 (t - 1) ; μ] - H[X t | block X 0 t ; μ]
+  I[X t : X 0 | block X 1 (t - 1) ; μ]
 
 /-- The entropy rate is the infimum of the conditional entropies of a value given its past. For a
 stationary process this is their limit and the limit of the entropy per value of a block; other
@@ -68,8 +67,25 @@ theorem pastCondEntropy_zero : pastCondEntropy X μ 0 = H[X 0 ; μ] := by
       Set.eq_univ_of_forall fun _ ↦ Subsingleton.elim _ _]
   simp
 
-theorem distanceInfo_succ_nonneg (t : ℕ) : 0 ≤ distanceInfo X μ (t + 1) :=
-  sub_nonneg.mpr <| condEntropy_le_condEntropy_comp μ (hX _) (measurable_block hX 0 _) Fin.tail
+theorem distanceInfo_nonneg (t : ℕ) : 0 ≤ distanceInfo X μ t :=
+  condMutualInfo_nonneg μ (hX _) (hX _) (measurable_block hX 1 _)
+
+/-- The value at distance `t` carries no information about the value at time `0` beyond the values
+between them exactly when the two are independent given those values. -/
+theorem distanceInfo_eq_zero_iff (t : ℕ) :
+    distanceInfo X μ t = 0 ↔ ∀ z, X t ⟂ᵢ[μ[|block X 1 (t - 1) ⁻¹' {z}]] X 0 :=
+  condMutualInfo_eq_zero_iff μ (hX _) (hX _) (measurable_block hX 1 _)
+
+/-- The information at distance `t + 1` is the entropy of the value at that distance that the value
+at time `0` removes, given the values between them. -/
+theorem distanceInfo_succ_eq_sub (t : ℕ) :
+    distanceInfo X μ (t + 1) = H[X (t + 1) | block X 1 t ; μ] - pastCondEntropy X μ (t + 1) := by
+  have he : MeasurableEmbedding (Fin.consEquiv fun _ : Fin (t + 1) ↦ S) :=
+    (MeasurableEquiv.mk (Fin.consEquiv fun _ ↦ S) (measurable_of_finite _)
+      (measurable_of_finite _)).measurableEmbedding
+  rw [pastCondEntropy, block_zero_succ', condEntropy_comp_right_of_measurableEmbedding _ _
+    ((hX 0).prodMk (measurable_block hX 1 t)) he]
+  exact condMutualInfo_eq_condEntropy_sub_condEntropy μ (hX _) (hX _) (measurable_block hX 1 t)
 
 /-- The entropy of a block is the sum of the conditional entropies of its values given their
 predecessors. -/
@@ -89,13 +105,14 @@ include hs
 /-- Under stationarity, `distanceInfo X μ (t + 1)` is the drop in conditional entropy as the past
 grows from `t` values to `t + 1`. -/
 theorem distanceInfo_succ (t : ℕ) :
-    distanceInfo X μ (t + 1) = pastCondEntropy X μ t - pastCondEntropy X μ (t + 1) :=
-  congrArg (· - _) <| ((hs 1).comp (u := fun x : ℕ → S ↦ (x t, fun i : Fin t ↦ x i))
+    distanceInfo X μ (t + 1) = pastCondEntropy X μ t - pastCondEntropy X μ (t + 1) := by
+  rw [distanceInfo_succ_eq_sub hX]
+  exact congrArg (· - _) <| ((hs 1).comp (u := fun x : ℕ → S ↦ (x t, fun i : Fin t ↦ x i))
     (by fun_prop)).condEntropy_eq (hX _) (measurable_block hX 1 t) (hX _) (measurable_block hX 0 t)
 
 theorem pastCondEntropy_antitone : Antitone (pastCondEntropy X μ) :=
   antitone_nat_of_succ_le fun t ↦ by
-    linarith [distanceInfo_succ hX hs t, distanceInfo_succ_nonneg (μ := μ) hX t]
+    linarith [distanceInfo_succ hX hs t, distanceInfo_nonneg (μ := μ) hX (t + 1)]
 
 theorem sum_Icc_mul_distanceInfo (T : ℕ) :
     ∑ t ∈ Icc 1 T, t * distanceInfo X μ t
@@ -128,7 +145,7 @@ theorem entropyRate_add_tsum (T : ℕ) :
     sum_range_sub' (fun t ↦ pastCondEntropy X μ (T + t)) n
   have hsum : HasSum (fun t ↦ distanceInfo X μ (T + t + 1))
       (pastCondEntropy X μ T - entropyRate X μ) := by
-    refine (hasSum_iff_tendsto_nat_of_nonneg (fun t ↦ distanceInfo_succ_nonneg hX _) _).mpr ?_
+    refine (hasSum_iff_tendsto_nat_of_nonneg (fun _ ↦ distanceInfo_nonneg hX _) _).mpr ?_
     simp_rw [distanceInfo_succ hX hs, htel]
     exact tendsto_const_nhds.sub ((tendsto_pastCondEntropy hX hs).comp
       (tendsto_atTop_mono (fun n ↦ Nat.le_add_left n T) tendsto_id))
