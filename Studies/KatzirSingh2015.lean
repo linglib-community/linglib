@@ -125,20 +125,25 @@ theorem not_goodAnswer_of_stronger {w : W} (hc : s.complexity v ≤ s.complexity
     ¬ s.GoodAnswer u w :=
   fun h ↦ h.2.2 ⟨v, ⟨⟨hc, hs.1⟩, fun h' ↦ hs.2 h'.2⟩, hw, hr⟩
 
-/-- A disjunction whose second disjunct entails the first is a needlessly complex answer (22) where
-the first disjunct is true and relevant. -/
+/-- An answer is needlessly complex, and so not good, when a true relevant alternative of lower
+complexity is at least as strong. -/
+theorem not_goodAnswer_of_simpler {w : W} (hc : s.complexity v < s.complexity u)
+    (hs : s.meaning v ⊆ s.meaning u) (hw : w ∈ s.meaning v) (hr : s.Relevant v) :
+    ¬ s.GoodAnswer u w :=
+  fun h ↦ h.2.2 ⟨v, ⟨⟨hc.le, hs⟩, fun h' ↦ hc.not_ge h'.1⟩, hw, hr⟩
+
+/-- A disjunction is a needlessly complex answer where a simpler disjunct is true and relevant, as
+the first disjunct of (22) is, whether or not the second entails it. -/
 theorem not_goodAnswer_disj {d φ ψ : U} {w : W} (hd : s.meaning d = s.meaning φ ∪ s.meaning ψ)
-    (hψ : s.meaning ψ ⊆ s.meaning φ) (hc : s.complexity φ < s.complexity d)
-    (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) : ¬ s.GoodAnswer d w := by
-  have heq : s.meaning d = s.meaning φ := by rw [hd, Set.union_eq_left.mpr hψ]
-  exact fun h ↦ h.2.2 ⟨φ, ⟨⟨hc.le, by rw [heq]⟩, fun h' ↦ absurd h'.1 (not_le.mpr hc)⟩, hw, hr⟩
+    (hc : s.complexity φ < s.complexity d) (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) :
+    ¬ s.GoodAnswer d w :=
+  s.not_goodAnswer_of_simpler hc (hd ▸ Set.subset_union_left) hw hr
 
 /-- Likewise a conjunction whose second conjunct is entailed by the first, (23). -/
 theorem not_goodAnswer_conj {c φ ψ : U} {w : W} (hc' : s.meaning c = s.meaning φ ∩ s.meaning ψ)
     (hψ : s.meaning φ ⊆ s.meaning ψ) (hc : s.complexity φ < s.complexity c)
-    (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) : ¬ s.GoodAnswer c w := by
-  have heq : s.meaning c = s.meaning φ := by rw [hc', Set.inter_eq_left.mpr hψ]
-  exact fun h ↦ h.2.2 ⟨φ, ⟨⟨hc.le, by rw [heq]⟩, fun h' ↦ absurd h'.1 (not_le.mpr hc)⟩, hw, hr⟩
+    (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) : ¬ s.GoodAnswer c w :=
+  s.not_goodAnswer_of_simpler hc (hc' ▸ Set.subset_inter le_rfl hψ) hw hr
 
 end Scenario
 
