@@ -10,13 +10,15 @@ public import Mathlib.Probability.StrongLaw
 /-!
 # Icard, Kominsky and Knobe (2017): Normality and actual causal strength
 
-Icard, Kominsky and Knobe explain the influence of normality on judgments of actual causation by a
-measure that weights a cause's sufficiency by its probability and its necessity by the probability
-of its absence, the probabilities being sampling propensities that rise with normality. On the
-collider C → E ← A, with E the conjunction or the disjunction of its causes, the measure is
-`P(C) P(A) - P(C) + 1` or `P(C)`, so a less normal C counts as more causal when the causes are
-conjoined and as less causal when they are disjoined. None of the measures in the literature
-predicts the second effect, abnormal deflation, which the paper's two experiments find.
+Icard, Kominsky and Knobe measure actual causal strength by a cause's sufficiency weighted by its
+probability plus its necessity weighted by the probability of its absence, the probabilities being
+sampling propensities that rise with normality and the measure the limit of a
+[sampling algorithm](##ae_tendsto_hits). On the collider $C \to E \leftarrow A$ it is
+$P(C)P(A) - P(C) + 1$ for conjoined causes and $P(C)$ for disjoined ones, so it
+[meets](##strength_desiderata) the three desiderata drawn from earlier findings and a fourth,
+abnormal deflation (with disjoined causes, a less normal $C$ is less causal), which
+[no existing measure meets](##not_abnormalDeflation) and both experiments'
+[mean ratings](##strength_lt_iff_ratings) bear out.
 
 ## Implementation notes
 
@@ -25,9 +27,15 @@ predicts the second effect, abnormal deflation, which the paper's two experiment
   `CausalStrength.score` in the round C = A = E = 1.
 * The paper names two candidates for sufficiency (§4.3); the substrate takes Cheng and Pearl's,
   conditioned on the absence of cause and effect, and `resampleSufficiency_eq_sufficiency` shows
-  the other agrees on the collider. As `cond` of a null event is the zero measure, the theorems
-  assume priors below one.
-* Locators are sections, equations and tables of the accepted preprint.
+  the other agrees on the collider. As `cond` of a null event is the zero measure, the closed forms
+  assume priors below one, and the desiderata compare priors strictly between zero and one, where
+  every existing measure is defined.
+
+## Errata
+
+* The conjunctive bars of Experiment 1 in Fig. 2a stand near 4.1 and 5.4, while §5.1.2 prints the
+  means 3.37 and 5.61, which agree with the by-vignette bars of Fig. A1. The data take the printed
+  means.
 
 ## References
 
@@ -41,9 +49,9 @@ open scoped ENNReal
 
 namespace IcardEtAl2017
 
-/-! ### The unshielded collider -/
+/-! ### The unshielded collider (§3.2) -/
 
-/-- The collider has a focal cause `c` and an alternative cause `a` (§3.2). -/
+/-- The collider has a focal cause `c` and an alternative cause `a`. -/
 inductive Cause | c | a
   deriving DecidableEq, Fintype
 
@@ -54,7 +62,7 @@ noncomputable abbrev prior (p : Cause → I) : Measure (Cause → Bool) :=
   Measure.pi fun i ↦ Ber(true, false, p i)
 
 /-- The effect of a causal structure is the minimum of the two causes if they are conjoined and
-their maximum if they are disjoined (§3.2). -/
+their maximum if they are disjoined. -/
 def effect : CausalStructure → Set (Cause → Bool)
   | .conjunctive => {w | min (w c) (w a) = true}
   | .disjunctive => {w | max (w c) (w a) = true}
@@ -68,9 +76,9 @@ eq. (1). -/
 noncomputable def strength (p : Cause → I) (s : CausalStructure) : ℝ≥0∞ :=
   score (prior p) (fun _ ↦ true) (effect s) {c}
 
-variable {p p₁ p₂ : Cause → I} {s : CausalStructure}
+variable {p : Cause → I}
 
-theorem strength_ne_top : strength p s ≠ ∞ := score_ne_top
+theorem strength_ne_top {s : CausalStructure} : strength p s ≠ ∞ := score_ne_top
 
 private theorem ber_real_true (q : I) : Ber(true, false, q).real {true} = q := by
   simp
@@ -94,114 +102,54 @@ private theorem preimage_update_c (s : CausalStructure) (b : Bool) :
       | .disjunctive, false => cause (fun _ ↦ true) {a} := by
   cases s <;> cases b <;> ext w <;> simp [effect, mem_cause]
 
-/-! ### Necessity, sufficiency and the measure (Table 2, eqs. (2) and (3)) -/
+/-! ### The desiderata (§3.2, §5)
 
--- Table 2
-theorem necessity_disjunctive (μ : Measure (Cause → Bool)) :
-    necessity μ (fun _ ↦ true) (effect .disjunctive) {c} = 0 :=
-  necessity_eq_zero (by decide)
+A measure of the strength of `C = 1` for `E = 1` is a function of the priors and the causal
+structure. Each desideratum compares two priors strictly between zero and one. -/
 
--- Table 2
-theorem necessity_conjunctive (hc : p c < 1) :
-    necessity (prior p) (fun _ ↦ true) (effect .conjunctive) {c} = 1 :=
-  necessity_eq_one (by decide)
-    (by rw [measure_pi_compl_cause_singleton]; exact ber_false_ne_zero hc)
+section Desiderata
 
--- Table 2
-theorem sufficiency_collider (hc : p c < 1) (ha : p a < 1) :
-    sufficiency (prior p) (fun _ ↦ true) (effect .conjunctive) {c} = Ber(true, false, p a) {true} ∧
-      sufficiency (prior p) (fun _ ↦ true) (effect .disjunctive) {c} = 1 := by
-  have ha' : Measure.pi (fun i ↦ Ber(true, false, p i)) (cause (fun _ ↦ true) {a})ᶜ ≠ 0 := by
-    rw [measure_pi_compl_cause_singleton]; exact ber_false_ne_zero ha
-  rw [sufficiency_singleton (X := c) (by exact ber_false_ne_zero hc),
-    sufficiency_singleton (X := c) (by exact ber_false_ne_zero hc)]
-  simp only [Bool.not_true, preimage_update_c]
-  refine ⟨by simp [measure_pi_cause], ?_⟩
-  rw [← compl_eq_univ_sdiff, ENNReal.div_self ha' (measure_ne_top _ _)]
+variable {β : Type*} [Preorder β] (κ : (Cause → I) → CausalStructure → β)
 
--- (3), (2)
-theorem strength_collider (hc : p c < 1) (ha : p a < 1) :
-    strength p .conjunctive = Ber(true, false, p c) {true} * Ber(true, false, p a) {true} +
-        Ber(true, false, p c) {false} ∧
-      strength p .disjunctive = Ber(true, false, p c) {true} := by
-  obtain ⟨h₁, h₂⟩ := sufficiency_collider hc ha
-  unfold strength at *
-  rw [score_singleton (X := c) (by exact ber_false_ne_zero hc),
-    score_singleton (X := c) (by exact ber_false_ne_zero hc), h₁, h₂]
-  simp only [Bool.not_true]
-  rw [ite_eq_right (show Function.update (fun _ : Cause ↦ true) c false ∉ effect .conjunctive
-      by decide),
-    ite_eq_left (show Function.update (fun _ : Cause ↦ true) c false ∈ effect .disjunctive
-      by decide)]
-  simp
+/-- Abnormal inflation: when the causes are conjoined, a less normal `C` is more causal. -/
+def AbnormalInflation : Prop :=
+  ∀ ⦃p₁ p₂ : Cause → I⦄, (∀ i, p₁ i ∈ Ioo 0 1) → (∀ i, p₂ i ∈ Ioo 0 1) → p₂ c < p₁ c →
+    p₁ a = p₂ a → κ p₁ .conjunctive < κ p₂ .conjunctive
 
-private theorem strength_toReal (hc : p c < 1) (ha : p a < 1) :
-    (strength p .conjunctive).toReal = p c * p a - p c + 1 ∧
-      (strength p .disjunctive).toReal = p c := by
-  obtain ⟨h₁, h₂⟩ := strength_collider hc ha
-  rw [h₁, h₂, ENNReal.toReal_add (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
-    (measure_ne_top _ _), ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def,
-    ← measureReal_def]
-  simp only [ber_real_true, ber_real_false, and_true]
-  ring
+/-- Supersession: when the causes are conjoined, a less normal `A` makes `C` less causal. -/
+def Supersession : Prop :=
+  ∀ ⦃p₁ p₂ : Cause → I⦄, (∀ i, p₁ i ∈ Ioo 0 1) → (∀ i, p₂ i ∈ Ioo 0 1) → p₂ a < p₁ a →
+    p₁ c = p₂ c → κ p₂ .conjunctive < κ p₁ .conjunctive
 
-/-! ### The four effects (§3.2, §5, Table 5) -/
+/-- No supersession with disjunction: when the causes are disjoined, the normality of `A` leaves
+the strength of `C` unchanged. -/
+def NoSupersessionWithDisjunction : Prop :=
+  ∀ ⦃p₁ p₂ : Cause → I⦄, (∀ i, p₁ i ∈ Ioo 0 1) → (∀ i, p₂ i ∈ Ioo 0 1) → p₂ a < p₁ a →
+    p₁ c = p₂ c → κ p₁ .disjunctive = κ p₂ .disjunctive
 
-/-- When the causes are conjoined a less normal focal cause is more causal, provided `P(A) < 1`
-(abnormal inflation). -/
-theorem abnormal_inflation (h : p₂ c < p₁ c) (hc : p₁ c < 1) (ha : p₁ a = p₂ a) (ha' : p₁ a < 1) :
-    strength p₁ .conjunctive < strength p₂ .conjunctive := by
-  rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top, (strength_toReal hc ha').1,
-    (strength_toReal (h.trans hc) (ha ▸ ha')).1, ← ha]
-  have : (p₂ c : ℝ) < p₁ c := h
-  have : (p₁ a : ℝ) < 1 := ha'
-  nlinarith
+/-- Abnormal deflation: when the causes are disjoined, a less normal `C` is less causal. -/
+def AbnormalDeflation : Prop :=
+  ∀ ⦃p₁ p₂ : Cause → I⦄, (∀ i, p₁ i ∈ Ioo 0 1) → (∀ i, p₂ i ∈ Ioo 0 1) → p₂ c < p₁ c →
+    κ p₂ .disjunctive < κ p₁ .disjunctive
 
-/-- When the causes are conjoined a less normal alternative makes the focal cause less causal,
-provided `0 < P(C)` (supersession). -/
-theorem supersession (h : p₂ a < p₁ a) (ha : p₁ a < 1) (hc : p₁ c = p₂ c) (hc₀ : 0 < p₁ c)
-    (hc₁ : p₁ c < 1) : strength p₂ .conjunctive < strength p₁ .conjunctive := by
-  rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top, (strength_toReal hc₁ ha).1,
-    (strength_toReal (hc ▸ hc₁) (h.trans ha)).1, ← hc]
-  have : (p₂ a : ℝ) < p₁ a := h
-  have : (0 : ℝ) < p₁ c := hc₀
-  nlinarith
+end Desiderata
 
-/-- When the causes are disjoined the alternative's normality does not affect the focal cause (no
-supersession with disjunction). -/
-theorem no_supersession (hc : p₁ c = p₂ c) (hc₁ : p₁ c < 1) (ha₁ : p₁ a < 1) (ha₂ : p₂ a < 1) :
-    strength p₁ .disjunctive = strength p₂ .disjunctive := by
-  rw [(strength_collider hc₁ ha₁).2, (strength_collider (hc ▸ hc₁) ha₂).2, hc]
+/-- Two priors strictly between zero and one that differ only in the prior of `X`, which is
+lower in the second. -/
+private theorem exists_lt (X : Cause) : ∃ p₁ p₂ : Cause → I, (∀ i, p₁ i ∈ Ioo 0 1) ∧
+    (∀ i, p₂ i ∈ Ioo 0 1) ∧ p₂ X < p₁ X ∧ ∀ i ≠ X, p₁ i = p₂ i := by
+  let t : I := ⟨1 / 3, by norm_num, by norm_num⟩
+  have ht : t ∈ Ioo 0 1 := ⟨show (0 : ℝ) < 1 / 3 by norm_num, show (1 / 3 : ℝ) < 1 by norm_num⟩
+  have hσ : σ t ∈ Ioo 0 1 :=
+    ⟨show (0 : ℝ) < 1 - 1 / 3 by norm_num, show (1 - 1 / 3 : ℝ) < 1 by norm_num⟩
+  refine ⟨Function.update (fun _ ↦ t) X (σ t), fun _ ↦ t, fun i ↦ ?_, fun _ ↦ ht, ?_,
+    fun i hi ↦ Function.update_of_ne hi _ _⟩
+  · by_cases hi : i = X
+    · subst hi; simpa using hσ
+    · simpa [Function.update_of_ne hi] using ht
+  · rw [Function.update_self]; exact show (1 / 3 : ℝ) < 1 - 1 / 3 by norm_num
 
-/-- When the causes are disjoined a less normal focal cause is less causal (abnormal deflation,
-§5). -/
-theorem abnormal_deflation (h : p₂ c < p₁ c) (hc : p₁ c < 1) (ha₁ : p₁ a < 1) (ha₂ : p₂ a < 1) :
-    strength p₂ .disjunctive < strength p₁ .disjunctive := by
-  rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top, (strength_toReal hc ha₁).2,
-    (strength_toReal (h.trans hc) ha₂).2]
-  exact h
-
-/-! ### The other candidate for sufficiency (§4.3) -/
-
-/-- The sufficiency that forces the cause on and redraws every other variable,
-`P(E | do(C = 1))`. -/
-noncomputable def resampleSufficiency {ι : Type*} [DecidableEq ι] (μ : Measure (ι → Bool))
-    (w₀ : ι → Bool) (E : Set (ι → Bool)) (S : Finset ι) : ℝ≥0∞ :=
-  μ {w | S.piecewise w₀ w ∈ E}
-
-theorem resampleSufficiency_eq_sufficiency (s : CausalStructure) (hc : p c < 1) (ha : p a < 1) :
-    resampleSufficiency (prior p) (fun _ ↦ true) (effect s) {c} =
-      sufficiency (prior p) (fun _ ↦ true) (effect s) {c} := by
-  have h (s : CausalStructure) : {w : Cause → Bool | ({c} : Finset Cause).piecewise
-      (fun _ ↦ true) w ∈ effect s} = (Function.update · c true) ⁻¹' effect s := by
-    ext w; simp [Finset.piecewise_singleton]
-  obtain ⟨h₁, h₂⟩ := sufficiency_collider hc ha
-  unfold resampleSufficiency
-  cases s
-  · rw [h₁, h, preimage_update_c, measure_pi_cause, Finset.prod_singleton]
-  · rw [h₂, h, preimage_update_c, measure_univ]
-
-/-! ### The measures in the literature (§3.3, Table 1) -/
+/-! ### The existing measures (§3.3, §3.4, Table 1) -/
 
 section Measures
 
@@ -269,8 +217,7 @@ private theorem PNS_eq {μ : Measure (ι → Bool)} [IsFiniteMeasure μ] :
     · rintro ⟨⟨h, hE⟩, h'⟩; exact ⟨h, ⟨h', by rwa [← h, Function.update_eq_self]⟩⟩
     · rintro ⟨h, h₁, h₀⟩; exact ⟨⟨h, by rwa [← h, Function.update_eq_self] at h₀⟩, h₁⟩
 
-/-- Under a product measure, PNS is ΔP for an outcome monotone in the cause, the "certain
-assumptions" under which §3.3 says the two agree. -/
+-- §3.3: under a product measure, PNS is ΔP for an outcome monotone in the cause
 theorem PNS_eq_deltaP (h₁ : ν X {true} ≠ 0) (h₀ : ν X {false} ≠ 0)
     (hmono : (Function.update · X false) ⁻¹' E ⊆ (Function.update · X true) ⁻¹' E) :
     PNS (Measure.pi ν) X E = deltaP (Measure.pi ν) (cause (fun _ ↦ true) {X}) E := by
@@ -285,7 +232,17 @@ theorem PNS_eq_deltaP (h₁ : ν X {true} ≠ 0) (h₀ : ν X {false} ≠ 0)
 
 end Measures
 
-section Table1
+/-- The existing measures of Table 1. -/
+inductive ExistingMeasure | sp | deltaP | powerPC | pns
+  deriving DecidableEq, Fintype
+
+/-- The strength of `C = 1` for `E = 1` that an existing measure assigns on the collider. -/
+noncomputable def ExistingMeasure.strength :
+    ExistingMeasure → (Cause → I) → CausalStructure → ℝ
+  | .sp, p, s => SP (prior p) (cause (fun _ ↦ true) {c}) (effect s)
+  | .deltaP, p, s => IcardEtAl2017.deltaP (prior p) (cause (fun _ ↦ true) {c}) (effect s)
+  | .powerPC, p, s => IcardEtAl2017.powerPC (prior p) (cause (fun _ ↦ true) {c}) (effect s)
+  | .pns, p, s => PNS (prior p) c (effect s)
 
 private theorem real_cause_true (X : Cause) : (prior p).real (cause (fun _ ↦ true) {X}) = p X := by
   rw [measureReal_pi_cause, Finset.prod_singleton, ber_real_true]
@@ -298,44 +255,44 @@ private theorem monotone_effect (s : CausalStructure) :
     (Function.update · c false) ⁻¹' effect s ⊆ (Function.update · c true) ⁻¹' effect s := by
   cases s <;> simp [preimage_update_c]
 
-/-- On conjoined causes SP is `(1 - P(C)) P(A)`, and ΔP, power-PC and PNS are `P(A)` (Table 1). -/
-theorem table1_conjunctive (hc₀ : 0 < p c) (hc₁ : p c < 1) :
-    SP (prior p) (cause (fun _ ↦ true) {c}) (effect .conjunctive) = (1 - p c) * p a ∧
-      deltaP (prior p) (cause (fun _ ↦ true) {c}) (effect .conjunctive) = p a ∧
-      powerPC (prior p) (cause (fun _ ↦ true) {c}) (effect .conjunctive) = p a ∧
-      PNS (prior p) c (effect .conjunctive) = p a := by
+-- Table 1
+theorem table1_conjunctive (hc₀ : 0 < p c) (hc₁ : p c < 1) (m : ExistingMeasure) :
+    m.strength p .conjunctive = match m with
+      | .sp => (1 - p c) * p a
+      | .deltaP | .powerPC | .pns => p a := by
   have hΔ : deltaP (prior p) (cause (fun _ ↦ true) {c}) (effect .conjunctive) = p a := by
     rw [deltaP_pi (X := c) (ber_true_ne_zero hc₀) (ber_false_ne_zero hc₁), preimage_update_c,
       preimage_update_c, measureReal_empty, sub_zero, real_cause_true]
   have hE : effect .conjunctive = cause (fun _ ↦ true) {c, a} := by ext w; simp [effect, mem_cause]
-  refine ⟨?_, hΔ, ?_, ?_⟩
+  cases m <;> dsimp only [ExistingMeasure.strength]
   · rw [SP, cond_real_pi_cause_singleton (X := c) (ber_true_ne_zero hc₀), preimage_update_c,
       real_cause_true, hE, measureReal_pi_cause, Finset.prod_pair (by decide), ber_real_true,
       ber_real_true]
     ring
+  · exact hΔ
   · rw [powerPC, hΔ, compl_cause_singleton, Bool.not_true,
       cond_real_pi_cause_singleton (X := c) (ber_false_ne_zero hc₁), preimage_compl,
       preimage_update_c, compl_empty, probReal_univ, div_one]
   · rw [PNS_eq_deltaP (X := c) (ber_true_ne_zero hc₀) (ber_false_ne_zero hc₁) (monotone_effect _),
       hΔ]
 
-/-- On disjoined causes SP is `(1 - P(C)) (1 - P(A))`, ΔP and PNS are `1 - P(A)`, and power-PC
-is one (Table 1). -/
-theorem table1_disjunctive (hc₀ : 0 < p c) (hc₁ : p c < 1) (ha : p a < 1) :
-    SP (prior p) (cause (fun _ ↦ true) {c}) (effect .disjunctive) = (1 - p c) * (1 - p a) ∧
-      deltaP (prior p) (cause (fun _ ↦ true) {c}) (effect .disjunctive) = 1 - p a ∧
-      powerPC (prior p) (cause (fun _ ↦ true) {c}) (effect .disjunctive) = 1 ∧
-      PNS (prior p) c (effect .disjunctive) = 1 - p a := by
+-- Table 1
+theorem table1_disjunctive (hc₀ : 0 < p c) (hc₁ : p c < 1) (ha : p a < 1) (m : ExistingMeasure) :
+    m.strength p .disjunctive = match m with
+      | .sp => (1 - p c) * (1 - p a)
+      | .deltaP | .pns => 1 - p a
+      | .powerPC => 1 := by
   have hΔ : deltaP (prior p) (cause (fun _ ↦ true) {c}) (effect .disjunctive) = 1 - p a := by
     rw [deltaP_pi (X := c) (ber_true_ne_zero hc₀) (ber_false_ne_zero hc₁), preimage_update_c,
       preimage_update_c, probReal_univ, real_cause_true]
   have hE : (effect .disjunctive)ᶜ = cause (fun _ ↦ false) {c, a} := by
     ext w; simp [effect, mem_cause]
-  refine ⟨?_, hΔ, ?_, ?_⟩
+  cases m <;> dsimp only [ExistingMeasure.strength]
   · rw [SP, cond_real_pi_cause_singleton (X := c) (ber_true_ne_zero hc₀), preimage_update_c,
       probReal_univ, ← compl_compl (effect .disjunctive), probReal_compl_eq_one_sub .of_discrete,
       hE, measureReal_pi_cause, Finset.prod_pair (by decide), ber_real_false, ber_real_false]
     ring
+  · exact hΔ
   · rw [powerPC, hΔ, compl_cause_singleton, Bool.not_true,
       cond_real_pi_cause_singleton (X := c) (ber_false_ne_zero hc₁), preimage_compl,
       preimage_update_c, compl_cause_singleton, Bool.not_true, real_cause_false]
@@ -343,26 +300,159 @@ theorem table1_disjunctive (hc₀ : 0 < p c) (hc₁ : p c < 1) (ha : p a < 1) :
   · rw [PNS_eq_deltaP (X := c) (ber_true_ne_zero hc₀) (ber_false_ne_zero hc₁) (monotone_effect _),
       hΔ]
 
-/-- No measure in the literature predicts abnormal deflation, since SP rises while ΔP, PNS and
-power-PC stay put (§3.4). -/
-theorem no_abnormal_deflation (h : p₂ c < p₁ c) (hc₀ : 0 < p₂ c) (hc₁ : p₁ c < 1)
-    (ha : p₁ a = p₂ a) (ha' : p₁ a < 1) :
-    SP (prior p₁) (cause (fun _ ↦ true) {c}) (effect .disjunctive) <
-        SP (prior p₂) (cause (fun _ ↦ true) {c}) (effect .disjunctive) ∧
-      deltaP (prior p₁) (cause (fun _ ↦ true) {c}) (effect .disjunctive) =
-        deltaP (prior p₂) (cause (fun _ ↦ true) {c}) (effect .disjunctive) ∧
-      PNS (prior p₁) c (effect .disjunctive) = PNS (prior p₂) c (effect .disjunctive) ∧
-      powerPC (prior p₁) (cause (fun _ ↦ true) {c}) (effect .disjunctive) =
-        powerPC (prior p₂) (cause (fun _ ↦ true) {c}) (effect .disjunctive) := by
-  obtain ⟨s₁, d₁, w₁, n₁⟩ := table1_disjunctive (hc₀.trans h) hc₁ ha'
-  obtain ⟨s₂, d₂, w₂, n₂⟩ := table1_disjunctive hc₀ (h.trans hc₁) (ha ▸ ha')
-  refine ⟨?_, by rw [d₁, d₂, ha], by rw [n₁, n₂, ha], by rw [w₁, w₂]⟩
-  rw [s₁, s₂, ← ha]
-  have : (p₂ c : ℝ) < p₁ c := h
-  have : (p₁ a : ℝ) < 1 := ha'
-  nlinarith
+namespace ExistingMeasure
 
-end Table1
+variable (m : ExistingMeasure)
+
+-- §3.4: every existing measure shows supersession
+theorem supersession : Supersession m.strength := by
+  intro p₁ p₂ h₁ h₂ ha hc
+  have ha' : (p₂ a : ℝ) < p₁ a := ha
+  have hc' : (p₁ c : ℝ) < 1 := (h₁ c).2
+  rw [table1_conjunctive (h₁ c).1 (h₁ c).2, table1_conjunctive (h₂ c).1 (h₂ c).2, ← hc]
+  cases m
+  · exact mul_lt_mul_of_pos_left ha' (sub_pos.2 hc')
+  all_goals exact ha'
+
+-- §3.4: only SP shows abnormal inflation
+theorem abnormalInflation_iff : AbnormalInflation m.strength ↔ m = .sp := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · obtain ⟨p₁, p₂, h₁, h₂, hc, ha⟩ := exists_lt c
+    have := h h₁ h₂ hc (ha a (by decide))
+    rw [table1_conjunctive (h₁ c).1 (h₁ c).2, table1_conjunctive (h₂ c).1 (h₂ c).2,
+      ha a (by decide)] at this
+    cases m
+    · rfl
+    all_goals exact absurd this (lt_irrefl _)
+  · rintro rfl p₁ p₂ h₁ h₂ hc ha
+    rw [table1_conjunctive (h₁ c).1 (h₁ c).2, table1_conjunctive (h₂ c).1 (h₂ c).2, ← ha]
+    exact mul_lt_mul_of_pos_right (sub_lt_sub_left (show (p₂ c : ℝ) < p₁ c from hc) 1) (h₁ a).1
+
+-- §3.4: only power-PC shows no supersession with disjunction
+theorem noSupersessionWithDisjunction_iff :
+    NoSupersessionWithDisjunction m.strength ↔ m = .powerPC := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · obtain ⟨p₁, p₂, h₁, h₂, ha, hc⟩ := exists_lt a
+    have := h h₁ h₂ ha (hc c (by decide))
+    rw [table1_disjunctive (h₁ c).1 (h₁ c).2 (h₁ a).2,
+      table1_disjunctive (h₂ c).1 (h₂ c).2 (h₂ a).2, hc c (by decide)] at this
+    have ha' : (p₂ a : ℝ) < p₁ a := ha
+    have hc' : (0 : ℝ) < 1 - p₂ c := sub_pos.2 (h₂ c).2
+    cases m
+    · exact absurd (mul_left_cancel₀ hc'.ne' this) (by linarith)
+    · exact absurd this (by dsimp only; linarith)
+    · rfl
+    · exact absurd this (by dsimp only; linarith)
+  · rintro rfl p₁ p₂ h₁ h₂ - -
+    rw [table1_disjunctive (h₁ c).1 (h₁ c).2 (h₁ a).2,
+      table1_disjunctive (h₂ c).1 (h₂ c).2 (h₂ a).2]
+
+/-- No existing measure predicts abnormal deflation (§3.4). -/
+theorem not_abnormalDeflation : ¬AbnormalDeflation m.strength := by
+  intro h
+  obtain ⟨p₁, p₂, h₁, h₂, hc, ha⟩ := exists_lt c
+  have := h h₁ h₂ hc
+  rw [table1_disjunctive (h₁ c).1 (h₁ c).2 (h₁ a).2,
+    table1_disjunctive (h₂ c).1 (h₂ c).2 (h₂ a).2, ha a (by decide)] at this
+  have hc' : (p₂ c : ℝ) < p₁ c := hc
+  have ha' : (0 : ℝ) < 1 - p₂ a := sub_pos.2 (h₂ a).2
+  cases m
+  · exact absurd this (not_lt.2 (mul_le_mul_of_nonneg_right (by linarith) ha'.le))
+  all_goals exact absurd this (lt_irrefl _)
+
+end ExistingMeasure
+
+/-! ### Necessity and sufficiency (§4.3, Table 2) -/
+
+-- Table 2
+theorem necessity_disjunctive (μ : Measure (Cause → Bool)) :
+    necessity μ (fun _ ↦ true) (effect .disjunctive) {c} = 0 :=
+  necessity_eq_zero (by decide)
+
+-- Table 2
+theorem necessity_conjunctive (hc : p c < 1) :
+    necessity (prior p) (fun _ ↦ true) (effect .conjunctive) {c} = 1 :=
+  necessity_eq_one (by decide)
+    (by rw [measure_pi_compl_cause_singleton]; exact ber_false_ne_zero hc)
+
+-- Table 2
+theorem sufficiency_conjunctive (hc : p c < 1) :
+    sufficiency (prior p) (fun _ ↦ true) (effect .conjunctive) {c} =
+      Ber(true, false, p a) {true} := by
+  rw [sufficiency_singleton (X := c) (by exact ber_false_ne_zero hc)]
+  simp [preimage_update_c, measure_pi_cause]
+
+-- Table 2
+theorem sufficiency_disjunctive (hc : p c < 1) (ha : p a < 1) :
+    sufficiency (prior p) (fun _ ↦ true) (effect .disjunctive) {c} = 1 := by
+  have ha' : prior p (cause (fun _ ↦ true) {a})ᶜ ≠ 0 := by
+    rw [measure_pi_compl_cause_singleton]; exact ber_false_ne_zero ha
+  rw [sufficiency_singleton (X := c) (by exact ber_false_ne_zero hc)]
+  simp only [Bool.not_true, preimage_update_c]
+  rw [← compl_eq_univ_sdiff, ENNReal.div_self ha' (measure_ne_top _ _)]
+
+/-- The sufficiency that forces the cause on and redraws every other variable,
+`P(E | do(C = 1))`. -/
+noncomputable def resampleSufficiency {ι : Type*} [DecidableEq ι] (μ : Measure (ι → Bool))
+    (w₀ : ι → Bool) (E : Set (ι → Bool)) (S : Finset ι) : ℝ≥0∞ :=
+  μ {w | S.piecewise w₀ w ∈ E}
+
+-- §4.3
+theorem resampleSufficiency_eq_sufficiency (s : CausalStructure) (hc : p c < 1) (ha : p a < 1) :
+    resampleSufficiency (prior p) (fun _ ↦ true) (effect s) {c} =
+      sufficiency (prior p) (fun _ ↦ true) (effect s) {c} := by
+  have h (s : CausalStructure) : {w : Cause → Bool | ({c} : Finset Cause).piecewise
+      (fun _ ↦ true) w ∈ effect s} = (Function.update · c true) ⁻¹' effect s := by
+    ext w; simp [Finset.piecewise_singleton]
+  unfold resampleSufficiency
+  cases s
+  · rw [sufficiency_conjunctive hc, h, preimage_update_c, measure_pi_cause, Finset.prod_singleton]
+  · rw [sufficiency_disjunctive hc ha, h, preimage_update_c, measure_univ]
+
+/-! ### The measure (§4.4) -/
+
+-- (3)
+theorem toReal_strength_conjunctive (hc : p c < 1) :
+    (strength p .conjunctive).toReal = p c * p a - p c + 1 := by
+  rw [strength, score_singleton (X := c) (by exact ber_false_ne_zero hc),
+    sufficiency_conjunctive hc]
+  simp only [Bool.not_true]
+  rw [ite_eq_right (show Function.update (fun _ : Cause ↦ true) c false ∉ effect .conjunctive
+      by decide), ENNReal.toReal_add (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
+    (measure_ne_top _ _), ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def,
+    ← measureReal_def, ber_real_true, ber_real_true, ber_real_false]
+  ring
+
+-- (2)
+theorem toReal_strength_disjunctive (hc : p c < 1) (ha : p a < 1) :
+    (strength p .disjunctive).toReal = p c := by
+  rw [strength, score_singleton (X := c) (by exact ber_false_ne_zero hc),
+    sufficiency_disjunctive hc ha]
+  simp only [Bool.not_true]
+  rw [ite_eq_left (show Function.update (fun _ : Cause ↦ true) c false ∈ effect .disjunctive
+      by decide), mul_one, add_zero, ← measureReal_def, ber_real_true]
+
+/-- The measure meets all four desiderata (§4.4, §5). -/
+theorem strength_desiderata : AbnormalInflation strength ∧ Supersession strength ∧
+    NoSupersessionWithDisjunction strength ∧ AbnormalDeflation strength := by
+  refine ⟨fun p₁ p₂ h₁ h₂ hc ha ↦ ?_, fun p₁ p₂ h₁ h₂ ha hc ↦ ?_, fun p₁ p₂ h₁ h₂ _ hc ↦ ?_,
+    fun p₁ p₂ h₁ h₂ hc ↦ ?_⟩
+  · rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top,
+      toReal_strength_conjunctive (h₁ c).2, toReal_strength_conjunctive (h₂ c).2, ← ha]
+    have : (p₂ c : ℝ) < p₁ c := hc
+    have : (p₁ a : ℝ) < 1 := (h₁ a).2
+    nlinarith
+  · rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top,
+      toReal_strength_conjunctive (h₁ c).2, toReal_strength_conjunctive (h₂ c).2, ← hc]
+    have : (p₂ a : ℝ) < p₁ a := ha
+    have : (0 : ℝ) < p₁ c := (h₁ c).1
+    nlinarith
+  · rw [← ENNReal.toReal_eq_toReal_iff' strength_ne_top strength_ne_top,
+      toReal_strength_disjunctive (h₁ c).2 (h₁ a).2, toReal_strength_disjunctive (h₂ c).2 (h₂ a).2,
+      hc]
+  · rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top,
+      toReal_strength_disjunctive (h₁ c).2 (h₁ a).2, toReal_strength_disjunctive (h₂ c).2 (h₂ a).2]
+    exact hc
 
 /-! ### The sampling algorithm (§4.4) -/
 
@@ -418,7 +508,7 @@ theorem integral_hit_step [IsFiniteMeasure μ] :
   simp [sufficiency, necessity, measureReal_def, smul_eq_mul]
 
 /-- The sampling algorithm converges, in that on almost every run of independent steps the
-proportion of hits tends to the actual causal strength, eq. (1) (§4.4). -/
+proportion of hits tends to the actual causal strength, eq. (1). -/
 theorem ae_tendsto_hits [IsFiniteMeasure μ] [IsProbabilityMeasure (step μ w₀ E S)] :
     ∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ ↦ step μ w₀ E S),
       Tendsto (fun K : ℕ ↦ (K : ℝ)⁻¹ * ∑ k ∈ Finset.range K, hit w₀ E S (ω k)) atTop
@@ -442,17 +532,18 @@ theorem ae_tendsto_hits [IsFiniteMeasure μ] [IsProbabilityMeasure (step μ w₀
 
 end Algorithm
 
-/-! ### The experiments (§5)
+/-! ### The experiments (§5) -/
 
-In both experiments, with prescriptive norms and with statistical ones, a norm-violating cause was
-rated more causal than a normative one when the causes were conjoined and less causal when they
-were disjoined, as `abnormal_inflation` and `abnormal_deflation` predict when norm violation
-lowers the sampling propensity (§4.2); the interaction is significant in both. -/
-
-example : ∀ e, (ratings e .conjunctive .normative).mean.toRat <
-      (ratings e .conjunctive .violation).mean.toRat ∧
-    (ratings e .disjunctive .violation).mean.toRat <
-      (ratings e .disjunctive .normative).mean.toRat := by
-  decide +kernel
+/-- The measure orders the mean ratings of both experiments: if norm violation lowers the varied
+agent's sampling propensity (§4.2), the measure ranks the violating agent above the normative one
+exactly where participants did, in the conjunctive vignettes. -/
+theorem strength_lt_iff_ratings (e : Experiment) (s : CausalStructure) {pN pV : Cause → I}
+    (hN : ∀ i, pN i ∈ Ioo 0 1) (hV : ∀ i, pV i ∈ Ioo 0 1) (hc : pV c < pN c) (ha : pN a = pV a) :
+    strength pN s < strength pV s ↔
+      (ratings e s .normative).mean.toRat < (ratings e s .violation).mean.toRat := by
+  obtain ⟨hinf, -, -, hdef⟩ := strength_desiderata
+  cases s
+  · exact iff_of_true (hinf hN hV hc ha) (by cases e <;> decide +kernel)
+  · exact iff_of_false (hdef hN hV hc).asymm (by cases e <;> decide +kernel)
 
 end IcardEtAl2017

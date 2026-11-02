@@ -298,7 +298,6 @@ Hyman2003
 HymanMchombo1992
 IatridouEtAl2001
 IatridouZeijlstra2021
-IcardEtAl2017
 ImelGuoSteinertThrelkeld2026
 IoninMatushansky2006
 IppolitoKissWilliams2022

@@ -13,7 +13,7 @@ participants rated, on a 1 to 7 scale, their agreement that the varied agent cau
 Experiment 1 varies a prescriptive norm, Experiment 2 a statistical one. The tables record the
 participant counts and the condition means and standard deviations printed for each causal
 structure, collapsed over the four vignettes; the by-vignette means are only plotted (Figures A1 and
-B1). Section numbers are those of the accepted preprint (PsyArXiv g7cqk).
+B1). Section numbers are those of the published paper.
 
 ## Raw data
 
