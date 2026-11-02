@@ -1,8 +1,8 @@
 [
   {
-    "id": "rett2015_positive_tall",
+    "id": "rett2015b_positive_tall",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -33,9 +33,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_positive_short",
+    "id": "rett2015b_positive_short",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -66,9 +66,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_comparative_tall",
+    "id": "rett2015b_comparative_tall",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -99,9 +99,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_comparative_short",
+    "id": "rett2015b_comparative_short",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -132,9 +132,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_equative_tall",
+    "id": "rett2015b_equative_tall",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -165,9 +165,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_equative_short",
+    "id": "rett2015b_equative_short",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -198,9 +198,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_mp_tall",
+    "id": "rett2015b_mp_tall",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -231,9 +231,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_mp_short",
+    "id": "rett2015b_mp_short",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -260,9 +260,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_question_tall",
+    "id": "rett2015b_question_tall",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,
@@ -293,9 +293,9 @@
     "verified": "page-image"
   },
   {
-    "id": "rett2015_question_short",
+    "id": "rett2015b_question_short",
     "source": {
-      "bibkey": "rett-2015",
+      "bibkey": "rett-2015b",
       "paperLabel": "Table 3.1"
     },
     "reportedIn": null,

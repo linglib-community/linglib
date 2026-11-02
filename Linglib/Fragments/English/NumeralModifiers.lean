@@ -27,7 +27,7 @@ classes of modifier are derived from the kind of construction, not stored.
 
 * `English.NumeralModifiers.approximator`, `English.NumeralModifiers.shortOf`: the modifiers
   with a reading for each tolerance, around the number and short of it.
-* `English.NumeralModifiers.inventory`: the eighteen modifiers.
+* `English.NumeralModifiers.inventory`: the nineteen modifiers.
 
 ## Main results
 
@@ -55,6 +55,7 @@ to the study of that paper.
 * [R. Nouwen, *Two kinds of modified numerals* (2010)][nouwen-2010]
 * [C. Kennedy, *A "de-Fregean" semantics (and neo-Gricean pragmatics) for modified and
   unmodified numerals* (2015)][kennedy-2015]
+* [J. Rett, *Measure phrase equatives and modified numerals* (2015)][rett-2015a]
 * [D. Blok, *The semantics and pragmatics of directional numeral modifiers* (2015)][blok-2015]
 * [P. Égré, B. Spector, A. Mortier and S. Verheyen, *On the Optimality of Vagueness: "Around",
   "Between" and the Gricean Maxims* (2023)][egre-etal-2023]
@@ -90,6 +91,9 @@ def maximally : NumeralModifier := .ofComparison "maximally" (some .adverbial) .
 def upTo : NumeralModifier := .ofComparison "up to" (some .directional) .le
 /-- *from*, a directional preposition, bounds the amount from below. -/
 def from_ : NumeralModifier := .ofComparison "from" (some .directional) .ge
+/-- *as many as*, an equative, bounds the amount from below; its upper-bound use is an implicature
+([rett-2015a]). -/
+def asManyAs : NumeralModifier := .ofComparison "as many as" (some .equative) .ge
 /-- *exactly* fixes the amount. -/
 def exactly : NumeralModifier := .ofComparison "exactly" none .eq
 /-- *precisely* fixes the amount. -/
@@ -122,7 +126,7 @@ def nearly : NumeralModifier := shortOf "nearly"
 
 /-- The English numeral modifiers. -/
 def inventory : List NumeralModifier :=
-  [moreThan, fewerThan, over, under, atLeast, atMost, minimally, maximally, upTo, from_,
+  [moreThan, fewerThan, over, under, atLeast, atMost, minimally, maximally, upTo, from_, asManyAs,
     exactly, precisely, about, around, approximately, roughly, almost, nearly]
 
 variable {form : String} {m : Modifier (Set ℕ)}

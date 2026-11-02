@@ -1,6 +1,6 @@
 module
 
-public import Studies.Rett2015
+public import Studies.Rett2015b
 public import Linglib.Pragmatics.RSA.LexicalUncertainty
 public import Mathlib.Probability.Distributions.Gaussian.Real
 
@@ -59,7 +59,7 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 * [bumford-rett-2021]
 * [barker-2002-vagueness]
 * [bergen-levy-goodman-2016]
-* [rett-2015]
+* [rett-2015b]
 -/
 
 @[expose] public section
@@ -627,7 +627,7 @@ theorem antonymsExclusive_comparative : AntonymsExclusive (some .gt) := fun σ w
 where Rett's classification makes the construction polar-variant. -/
 theorem antonymsExclusive_iff_not_isPolarInvariant {r : Comparison}
     (hr : r = .eq ∨ r = .ge ∨ r = .gt) :
-    AntonymsExclusive (some r) ↔ ¬ Rett2015.IsPolarInvariant (construction (some r)) := by
+    AntonymsExclusive (some r) ↔ ¬ Rett2015b.IsPolarInvariant (construction (some r)) := by
   have hboth : ∀ r, r = .eq ∨ r = .ge → ¬ AntonymsExclusive (some r) := by
     rintro r (rfl | rfl) h <;>
       exact h ⟨0, by decide⟩ ⟨⟨0, by decide⟩, ⟨9, by decide⟩⟩ (by decide)
